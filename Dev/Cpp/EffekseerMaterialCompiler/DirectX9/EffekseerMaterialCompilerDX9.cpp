@@ -190,7 +190,7 @@ public:
 	}
 };
 
-CompiledMaterialBinary* MaterialCompilerDX9::Compile(MaterialFile* materialFile, int32_t maximumTextureCount)
+CompiledMaterialBinary* MaterialCompilerDX9::Compile(MaterialFile* materialFile, int32_t maximumUniformCount, int32_t maximumTextureCount)
 {
 	auto binary = new CompiledMaterialBinaryDX9();
 
@@ -242,7 +242,7 @@ CompiledMaterialBinary* MaterialCompilerDX9::Compile(MaterialFile* materialFile,
 		return ret;
 	};
 
-	auto saveBinary = [&materialFile, &binary, &convertToVectorVS, &convertToVectorPS, &maximumTextureCount](MaterialShaderType type) {
+	auto saveBinary = [&materialFile, &binary, &convertToVectorVS, &convertToVectorPS, &maximumUniformCount, &maximumTextureCount](MaterialShaderType type) {
 		auto generator = DirectX::ShaderGenerator(DX9::material_common_define,
 												  DX9::material_common_functions,
 												  DX9::material_common_vs_functions,
@@ -261,7 +261,7 @@ CompiledMaterialBinary* MaterialCompilerDX9::Compile(MaterialFile* materialFile,
 												  DX9::g_material_ps_suf2_refraction,
 												  DirectX::ShaderGeneratorTarget::DirectX9);
 
-		auto shader = generator.GenerateShader(materialFile, type, maximumTextureCount, 0, DX9_ModelRendererInstanceCount);
+		auto shader = generator.GenerateShader(materialFile, type, maximumUniformCount, maximumTextureCount, 0, DX9_ModelRendererInstanceCount);
 
 		binary->SetVertexShaderData(type, convertToVectorVS(shader.CodeVS));
 		binary->SetPixelShaderData(type, convertToVectorPS(shader.CodePS));
@@ -281,7 +281,7 @@ CompiledMaterialBinary* MaterialCompilerDX9::Compile(MaterialFile* materialFile,
 
 CompiledMaterialBinary* MaterialCompilerDX9::Compile(MaterialFile* materialFile)
 {
-	return Compile(materialFile, Effekseer::UserTextureSlotMax);
+	return Compile(materialFile, Effekseer::UserUniformSlotMax, Effekseer::UserTextureSlotMax);
 }
 
 } // namespace Effekseer

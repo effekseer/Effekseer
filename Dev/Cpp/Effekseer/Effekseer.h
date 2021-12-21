@@ -169,6 +169,9 @@ typedef void(EFK_STDCALL* EffectInstanceRemovingCallback)(Manager* manager, Hand
 //! the maximum number of texture slot which can be specified by an user
 const int32_t UserTextureSlotMax = 6;
 
+//! the maximum number of uniform slot which can be specified by an user
+const int32_t UserUniformSlotMax = 16;
+
 //! the maximum number of texture slot including textures system specified
 const int32_t TextureSlotMax = 8;
 
