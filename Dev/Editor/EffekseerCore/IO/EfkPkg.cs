@@ -550,6 +550,14 @@ namespace Effekseer.IO
 							node["Props"][0]["Value"] = callback(path);
 						}
 					}
+					else if (type == "TextureObject")
+					{
+						string path = (string)node["Props"][0]["Value"];
+						if (!string.IsNullOrEmpty(path))
+						{
+							node["Props"][0]["Value"] = callback(path);
+						}
+					}
 					else if (type == "TextureObjectParameter")
 					{
 						string path = (string)node["Props"][2]["Value"];
