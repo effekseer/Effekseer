@@ -49,7 +49,7 @@ if (BUILD_VIEWER OR BUILD_EDITOR)
         find_package(X11 REQUIRED)
         find_package(PkgConfig REQUIRED)
         pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
-        list(APPEND nfd_src nativefiledialog/src/nfd_gtk.c)
+        list(APPEND nfd_src nativefiledialog/src/nfd_zenity.c) # replaced from gtk because it doesn't run on Ubunutu 21.10 why...
     endif()
 
     add_library(nfd STATIC ${nfd_src})
