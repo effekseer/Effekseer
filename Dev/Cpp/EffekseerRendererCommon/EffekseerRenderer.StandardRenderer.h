@@ -376,8 +376,7 @@ public:
 			return;
 		}
 
-		if (requiredSize + EffekseerRenderer::VertexBufferBase::GetNextAliginedVertexRingOffset(vertexCacheOffset_, spriteStride) > vertexCacheMaxSize_ ||
-			currentVertexCountOffset + count > maxVertexCount)
+		if (requiredSize + EffekseerRenderer::VertexBufferBase::GetNextAliginedVertexRingOffset(vertexCacheOffset_, spriteStride) > vertexCacheMaxSize_ || count > maxVertexCount)
 		{
 			Rendering();
 		}
