@@ -1314,6 +1314,7 @@ void AddPixelUniformLayout(Effekseer::CustomVector<Effekseer::Backend::UniformLa
 	storeVector("CBPS0.reconstructionParam1");
 	storeVector("CBPS0.reconstructionParam2");
 	storeVector("CBPS0.mUVInversedBack");
+	storeVector("CBPS0.miscFlags");
 }
 
 void AddDistortionPixelUniformLayout(Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>& uniformLayout)
