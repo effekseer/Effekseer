@@ -90,7 +90,7 @@ float4 ConvertFromSRGBTexture(thread const float4& c, constant float4& predefine
 static inline __attribute__((always_inline))
 float3 SRGBToLinear(thread const float3& c)
 {
-	return fast::min(c * (c * (c * 0.305306011 + 0.682171111) + 0.012522878));
+	return fast::min(c, c * (c * (c * 0.305306011 + 0.682171111) + 0.012522878));
 }
 
 static inline __attribute__((always_inline))
