@@ -367,6 +367,8 @@ public:
 
 		const int32_t requiredSize = count * stride;
 		const auto spriteStride = stride * 4;
+		const auto currentVertexCountOffset = vertexCacheOffset_ / stride;
+		const auto maxVertexCount = m_renderer->GetSquareMaxCount() * 4;
 
 		if (requiredSize > vertexCacheMaxSize_ || requiredSize == 0)
 		{
@@ -374,7 +376,8 @@ public:
 			return;
 		}
 
-		if (requiredSize + EffekseerRenderer::VertexBufferBase::GetNextAliginedVertexRingOffset(vertexCacheOffset_, spriteStride) > vertexCacheMaxSize_)
+		if (requiredSize + EffekseerRenderer::VertexBufferBase::GetNextAliginedVertexRingOffset(vertexCacheOffset_, spriteStride) > vertexCacheMaxSize_ ||
+			currentVertexCountOffset + count > maxVertexCount)
 		{
 			Rendering();
 		}
@@ -509,6 +512,13 @@ public:
 				{
 					assert(renderInfos_.size() == 1 && renderInfos_[0].offset == 0);
 					renderBufferSize = (vertexCacheMaxSize_ / (stride * 4)) * (stride * 4);
+				}
+
+				const auto maxVertexCount = m_renderer->GetSquareMaxCount() * 4;
+				const auto currentVertexCount = renderBufferSize / stride;
+				if (currentVertexCount > maxVertexCount)
+				{
+					renderBufferSize = m_renderer->GetSquareMaxCount() * (stride * 4);
 				}
 
 				Rendering_(m_renderer->GetCameraMatrix(), mProj, info.offset, renderBufferSize, info.stride, passInd, state);
