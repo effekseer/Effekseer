@@ -367,7 +367,6 @@ public:
 
 		const int32_t requiredSize = count * stride;
 		const auto spriteStride = stride * 4;
-		const auto currentVertexCountOffset = vertexCacheOffset_ / stride;
 		const auto maxVertexCount = m_renderer->GetSquareMaxCount() * 4;
 
 		if (requiredSize > vertexCacheMaxSize_ || requiredSize == 0)
