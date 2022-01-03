@@ -52,6 +52,7 @@ namespace Effekseer.Utl
 		Version0 = 0,
 		Version15 = 1,
 		Version16 = 1610,
+		Version162 = 1612,
 	}
 
 	/// <summary>
@@ -59,8 +60,8 @@ namespace Effekseer.Utl
 	/// </summary>
 	public class CompiledMaterialInformation
 	{
-		const CompiledMaterialVersion LatestSupportVersion = CompiledMaterialVersion.Version16;
-		const CompiledMaterialVersion OldestSupportVersion = CompiledMaterialVersion.Version16;
+		const CompiledMaterialVersion LatestSupportVersion = CompiledMaterialVersion.Version162;
+		const CompiledMaterialVersion OldestSupportVersion = CompiledMaterialVersion.Version162;
 
 		public UInt64 GUID;
 		public int Version;
