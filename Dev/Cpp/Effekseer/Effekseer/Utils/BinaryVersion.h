@@ -21,6 +21,7 @@ const int32_t Version16 = 1610;
 
 const int32_t CompiledMaterialVersion15 = 1;
 const int32_t CompiledMaterialVersion16 = 1610;
+const int32_t CompiledMaterialVersion162 = 1612;
 
 const int32_t MaterialVersion15 = 3;
 const int32_t MaterialVersion16 = 1610;
