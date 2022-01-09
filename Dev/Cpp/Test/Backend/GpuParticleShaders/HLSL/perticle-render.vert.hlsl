@@ -118,7 +118,7 @@ float3 noise3(float3 seed) {
 struct VS_INPUT {
 
     uint instanceID : SV_InstanceID;
-    float2 a_VertexPosition: TEXCOORD0;
+    float2 a_VertexPosition: POSITION0;
 };
 
 struct VS_OUTPUT {
