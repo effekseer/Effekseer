@@ -522,7 +522,8 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param, const Effe
 	EffekseerRenderer::CalculateAlignedTextureInformation(param.Format, {param.Size[0], param.Size[1]}, sizePerWidth, height);
 
 	const int32_t blockSize = 4;
-	auto aligned = [](int32_t size, int32_t alignement) -> int32_t {
+	auto aligned = [](int32_t size, int32_t alignement) -> int32_t
+	{
 		return ((size + alignement - 1) / alignement) * alignement;
 	};
 
@@ -1330,11 +1331,20 @@ Effekseer::Backend::ShaderRef GraphicsDevice::CreateShaderFromCodes(const Effeks
 
 	if (vsb != nullptr && psb != nullptr)
 	{
+		if (log.size() > 0)
+		{
+			Effekseer::Log(Effekseer::LogType::Warning, log);
+		}
+
 		return CreateShaderFromBinary(
 			vsb->GetBufferPointer(),
 			static_cast<int32_t>(vsb->GetBufferSize()),
 			psb->GetBufferPointer(),
 			static_cast<int32_t>(psb->GetBufferSize()));
+	}
+	else
+	{
+		Effekseer::Log(Effekseer::LogType::Error, log);
 	}
 
 	return nullptr;
@@ -1423,7 +1433,6 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 		auto texture = static_cast<Texture*>(drawParam.TexturePtrs[i].Get());
 		if (texture != nullptr)
 		{
-
 			ID3D11SamplerState* samplerTbl[] = {samplers_[static_cast<int>(drawParam.TextureSamplingTypes[i])][static_cast<int>(drawParam.TextureWrapTypes[i])].get()};
 			context_->VSSetSamplers(i, 1, samplerTbl);
 			context_->PSSetSamplers(i, 1, samplerTbl);
@@ -1432,6 +1441,27 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 			GetContext()->VSSetShaderResources(i, 1, &srv);
 			GetContext()->PSSetShaderResources(i, 1, &srv);
 		}
+		else
+		{
+			ID3D11SamplerState* samplerTbl[] = {nullptr};
+			ID3D11ShaderResourceView* srvTbl[] = {nullptr};
+
+			GetContext()->VSSetSamplers(i, 1, samplerTbl);
+			GetContext()->PSSetSamplers(i, 1, samplerTbl);
+			GetContext()->VSSetShaderResources(i, 1, srvTbl);
+			GetContext()->PSSetShaderResources(i, 1, srvTbl);
+		}
+	}
+
+	for (int32_t i = drawParam.TextureCount; i < Effekseer::Backend::DrawParameter::TextureSlotCount; i++)
+	{
+		ID3D11SamplerState* samplerTbl[] = {nullptr};
+		ID3D11ShaderResourceView* srvTbl[] = {nullptr};
+
+		GetContext()->VSSetSamplers(i, 1, samplerTbl);
+		GetContext()->PSSetSamplers(i, 1, samplerTbl);
+		GetContext()->VSSetShaderResources(i, 1, srvTbl);
+		GetContext()->PSSetShaderResources(i, 1, srvTbl);
 	}
 
 	// topology
