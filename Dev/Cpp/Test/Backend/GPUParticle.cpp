@@ -392,7 +392,7 @@ class GpuParticleContext
 		}
 
 		Effekseer::Backend::TextureParameter texParam;
-		texParam.Format = Effekseer::Backend::TextureFormatType::B8G8R8A8_UNORM;
+		texParam.Format = Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM;
 		texParam.Size = {width, 1, 0};
 		texParam.Dimension = 2;
 
@@ -423,6 +423,8 @@ class GpuParticleContext
 				{ ReadFileAll(DirectoryPath + "GpuParticleShaders/HLSL/perticle-update.frag.hlsl").c_str() },
 				updateUniformLayout);
 		}
+		assert(updateShader != nullptr);
+
 
 		Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> emitUniformLayoutElements;
 		emitUniformLayoutElements.resize(2);
@@ -449,6 +451,7 @@ class GpuParticleContext
 				{ ReadFileAll(DirectoryPath + "GpuParticleShaders/HLSL/perticle-emit.frag.hlsl").c_str() },
 				emitUniformLayout);
 		}
+		assert(emitShader != nullptr);
 
 		Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> renderUniformLayoutElements;
 		renderUniformLayoutElements.resize(3);
@@ -480,7 +483,9 @@ class GpuParticleContext
 				renderUniformLayout);
 		}
 
+		assert(renderShader != nullptr);
 		colorTableTexture = createColorTableTexture();
+		assert(colorTableTexture != nullptr);		
 	}
 
 	void initTraitUniformLayoutAndShaders()
@@ -519,6 +524,7 @@ class GpuParticleContext
 				{ ReadFileAll(DirectoryPath + "GpuParticleShaders/HLSL/trail-render.frag.hlsl").c_str() },
 				renderUniformLayout);
 		}
+		assert(trailRenderShader != nullptr);
 
 		TrailRenderUniformBufferVS trailRenderUniformBufferVSInitData = {
 			{static_cast<float>(texWidth - 1), static_cast<float>(31 - clz32(texWidth)), 0, 0}, matTo2DArray(viewMatrix), matTo2DArray(projMatrix), { static_cast<float>(trailOffset), static_cast<float>(TrailBufferSize) }
