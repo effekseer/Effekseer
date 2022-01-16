@@ -230,12 +230,12 @@ class GpuParticleContext
 
 	void initUpdateVertex()
 	{
-		std::array<std::array<float, 2>, 4> vbData;
-		vbData[0] = {-1, 1};
-		vbData[1] = {-1, -1};
-		vbData[2] = {1, 1};
-		vbData[3] = {1, -1};
-		updateVB = graphicsDevice->CreateVertexBuffer(sizeof(std::array<float, 2>) * 4, vbData.data(), false);
+		std::array<std::array<float, 4>, 4> vbData;	// {.x, .y, .u, .v}
+		vbData[0] = { -1, 1, 0, 0 };
+		vbData[1] = { -1, -1, 0, 1 };
+		vbData[2] = { 1, 1, 1, 0 };
+		vbData[3] = { 1, -1, 1, 1 };
+		updateVB = graphicsDevice->CreateVertexBuffer(sizeof(std::array<float, 4>) * 4, vbData.data(), false);
 
 		std::array<int32_t, 6> ibData;
 		ibData[0] = 0;
@@ -247,11 +247,15 @@ class GpuParticleContext
 		updateIB = graphicsDevice->CreateIndexBuffer(6, ibData.data(), Effekseer::Backend::IndexBufferStrideType::Stride4);
 
 		std::vector<Effekseer::Backend::VertexLayoutElement> vertexLayoutElements;
-		vertexLayoutElements.resize(1);
+		vertexLayoutElements.resize(2);
 		vertexLayoutElements[0].Format = Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT;
 		vertexLayoutElements[0].Name = "a_Position";
 		vertexLayoutElements[0].SemanticIndex = 0;
 		vertexLayoutElements[0].SemanticName = "POSITION";
+		vertexLayoutElements[1].Format = Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT;
+		vertexLayoutElements[1].Name = "a_TexUV";
+		vertexLayoutElements[1].SemanticIndex = 0;
+		vertexLayoutElements[1].SemanticName = "TEXCOORD";
 		updateVL = graphicsDevice->CreateVertexLayout(vertexLayoutElements.data(), static_cast<int32_t>(vertexLayoutElements.size()));
 	}
 

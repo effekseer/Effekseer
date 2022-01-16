@@ -127,7 +127,7 @@ cbuffer CB : register(b0) {
 
 struct PS_INPUT {
     float4 Position: SV_POSITION; // for disable DX11 validation error.
- float2 ScreenUV: TEXCOORD0;
+ float2 TexUV: TEXCOORD0;
 };
 
 struct VS_OUTPUT {
@@ -181,8 +181,8 @@ VS_OUTPUT main(PS_INPUT input) {
 
 
 
- float4 data0 = i_ParticleData0.Sample(i_ParticleData0Sampler, float4(input.ScreenUV, 0, 0));
- float4 data1 = i_ParticleData1.Sample(i_ParticleData1Sampler, float4(input.ScreenUV, 0, 0));
+ float4 data0 = i_ParticleData0.Sample(i_ParticleData0Sampler, float4(input.TexUV, 0, 0));
+ float4 data1 = i_ParticleData1.Sample(i_ParticleData1Sampler, float4(input.TexUV, 0, 0));
  float3 position = data0.xyz;
  float3 direction = unpackVec3(data1.w);
 
@@ -220,5 +220,7 @@ VS_OUTPUT main(PS_INPUT input) {
  output.o_ParticleData0 = float4(position, packVec3(direction));
  output.o_ParticleData1 = data1;
 
+ // TEST
+ output.o_ParticleData0 = data0;
  return output;
 }
