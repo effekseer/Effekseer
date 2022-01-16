@@ -1,7 +1,8 @@
 #line 1 "trail-render.frag.hlsl"
 
 struct PS_INPUT {
-    float4 v_Color : COLOR0;
+    float4 Position : SV_POSITION;
+    float4 v_Color: COLOR0;
 };
 
 struct PS_OUTPUT {

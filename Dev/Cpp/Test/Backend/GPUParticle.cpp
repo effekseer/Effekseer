@@ -293,11 +293,12 @@ class GpuParticleContext
 			Effekseer::Backend::TextureParameter param;
 			param.Usage = Effekseer::Backend::TextureUsageType::Array;
 			param.Format = Effekseer::Backend::TextureFormatType::R32G32B32A32_FLOAT;
-			param.Dimension = 3;
+			param.Dimension = 2;
 			param.Size = { texWidth, texHeight, TrailBufferSize };
 			param.MipLevelCount = 1;
 			param.SampleCount = 1;
 			trailHistoriesTexture = graphicsDevice->CreateTexture(param);
+			assert(trailHistoriesTexture != nullptr);
 		}
 	}
 
