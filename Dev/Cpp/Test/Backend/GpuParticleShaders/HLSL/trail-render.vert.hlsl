@@ -238,7 +238,9 @@ VS_OUTPUT main(VS_INPUT input) {
    int texIndex = (int(Trail.x) + int(historyID) - 1) % int(Trail.y);
 
    //float4 trailData = Histories.Sample(HistoriesSampler, float4(texPos, texIndex, 0));
-   float4 trailData = Histories.SampleLevel(HistoriesSampler, float3(texPos, texIndex), 0);
+   //float4 trailData = Histories.SampleLevel(HistoriesSampler, float3(texPos, texIndex), 0);
+   float4 trailData = Histories.Load(int4(texPos, 0, texIndex)); // is it correct?
+
    position = trailData.xyz;
    direction = unpackVec3(trailData.w);
   } else {
