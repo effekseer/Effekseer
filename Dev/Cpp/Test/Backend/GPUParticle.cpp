@@ -776,15 +776,18 @@ void GpuParticle(GraphicsDeviceType deviceType)
 	int windowHeight = 720;
 	GpuParticleContext gpuParticleContext(deviceType, 1024 * 128, windowWidth, windowHeight);
 	int count = 0;
-	int emitNum = 128;
+	int emitNum = 1;
 	while (count < 1000 && gpuParticleContext.window->DoEvent())
 	{
-		for (int i = 0; i < emitNum; i++)
-		{
-			std::array<float, 3> position = {-0.5f - (i - emitNum / 2) * (i - emitNum / 2) / 10.0f / emitNum, -1 + i * 2.0f / emitNum, 0};
-			std::array<float, 3> direction = {1, 1, 0};
-			gpuParticleContext.Emit(500, position, direction);
+		if (count == 1) {
+			for (int i = 0; i < emitNum; i++)
+			{
+				std::array<float, 3> position = { -0.5, -0.1, 0 };//{-0.5f - (i - emitNum / 2) * (i - emitNum / 2) / 10.0f / emitNum, -1 + i * 2.0f / emitNum, 0};
+				std::array<float, 3> direction = { 1, 1, 0 };
+				gpuParticleContext.Emit(500, position, direction);
+			}
 		}
+
 		gpuParticleContext.Update();
 
 		gpuParticleContext.Render();

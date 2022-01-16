@@ -7,7 +7,7 @@ struct VS_INPUT {
 
 struct VS_OUTPUT {
     float4 Position : SV_POSITION;
-    float3 v_Particle: TEXCOORD0;
+    float3 v_Particle: TEXCOORD0;   // .x:ParticleID, .y:LifeTime
     float3 v_Position : TEXCOORD1;
     float3 v_Direction : TEXCOORD2;
 };

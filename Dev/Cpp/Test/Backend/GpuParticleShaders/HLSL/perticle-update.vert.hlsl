@@ -11,6 +11,7 @@ struct VS_OUTPUT {
 VS_OUTPUT main(VS_INPUT input) {
     VS_OUTPUT output;
     output.Position = float4(input.a_Position, 0.0, 1.0);
- output.ScreenUV = input.a_Position;
+    output.ScreenUV = input.a_Position;
+    //output.ScreenUV.y = (-1.0 * output.ScreenUV.y) + 1.0;
     return output;
 }
