@@ -644,6 +644,41 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			// GenerationLocation
 			if (GenerationLocation.type == ParameterGenerationLocation::TYPE_POINT)
 			{
+				GenerationLocation.point.location.min.z *= -1.0f;
+				GenerationLocation.point.location.max.z *= -1.0f;
+			}
+			else if (GenerationLocation.type == ParameterGenerationLocation::TYPE_LINE)
+			{
+				GenerationLocation.line.position_start.min.z *= -1.0f;
+				GenerationLocation.line.position_start.max.z *= -1.0f;
+				GenerationLocation.line.position_end.min.z *= -1.0f;
+				GenerationLocation.line.position_end.max.z *= -1.0f;
+			}
+			else if (GenerationLocation.type == ParameterGenerationLocation::TYPE_CIRCLE)
+			{
+				if (GenerationLocation.circle.axisDirection == ParameterGenerationLocation::AxisType::X)
+				{
+					GenerationLocation.circle.angle_start.min *= -1.0f;
+					GenerationLocation.circle.angle_start.max *= -1.0f;
+					GenerationLocation.circle.angle_end.min *= -1.0f;
+					GenerationLocation.circle.angle_end.max *= -1.0f;
+
+					GenerationLocation.circle.angle_noize.min *= -1.0f;
+					GenerationLocation.circle.angle_noize.max *= -1.0f;
+
+					GenerationLocation.circle.radius.min *= -1.0f;
+					GenerationLocation.circle.radius.max *= -1.0f;
+				}
+				else if (GenerationLocation.circle.axisDirection == ParameterGenerationLocation::AxisType::Y)
+				{
+					GenerationLocation.circle.angle_start.min *= -1.0f;
+					GenerationLocation.circle.angle_start.max *= -1.0f;
+					GenerationLocation.circle.angle_end.min *= -1.0f;
+					GenerationLocation.circle.angle_end.max *= -1.0f;
+
+					GenerationLocation.circle.angle_noize.min *= -1.0f;
+					GenerationLocation.circle.angle_noize.max *= -1.0f;
+				}
 			}
 			else if (GenerationLocation.type == ParameterGenerationLocation::TYPE_SPHERE)
 			{
