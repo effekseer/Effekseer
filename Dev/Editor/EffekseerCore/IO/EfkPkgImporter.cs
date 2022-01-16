@@ -135,6 +135,7 @@ namespace Effekseer.IO
 		{
 			resourceRoots.Add(new ResourceRoot(FileType.Effect) { RootPath = "Effects/" });
 			resourceRoots.Add(new ResourceRoot(FileType.Texture) { RootPath = "Textures/" });
+			resourceRoots.Add(new ResourceRoot(FileType.Model) { RootPath = "Models/" });
 			resourceRoots.Add(new ResourceRoot(FileType.Material) { RootPath = "Materials/" });
 			resourceRoots.Add(new ResourceRoot(FileType.Sound) { RootPath = "Sounds/" });
 			resourceRoots.Add(new ResourceRoot(FileType.Curve) { RootPath = "Curves/" });
