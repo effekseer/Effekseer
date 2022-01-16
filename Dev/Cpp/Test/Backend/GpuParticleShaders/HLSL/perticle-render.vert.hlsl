@@ -183,8 +183,8 @@ VS_OUTPUT main(VS_INPUT input) {
         position.xyz += float3(rotate(input.a_VertexPosition * 0.003, 45.0), 0.0);
         //output.Position = ProjMatrix * ViewMatrix * float4(position, 1.0);
         output.Position = float4(position, 1.0);
-        output.Position = mul(output.Position, ViewMatrix);
-        output.Position = mul(output.Position, ProjMatrix);
+        output.Position = mul(ViewMatrix, output.Position);
+        output.Position = mul(ProjMatrix, output.Position);
 
         float v = snoise(float3(texPos, 0) / 512.0);
         float2 texCoord = float2(v,v);

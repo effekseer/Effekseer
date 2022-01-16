@@ -220,7 +220,5 @@ VS_OUTPUT main(PS_INPUT input) {
  output.o_ParticleData0 = float4(position, packVec3(direction));
  output.o_ParticleData1 = data1;
 
- // TEST
- output.o_ParticleData0 = data0;
  return output;
 }
