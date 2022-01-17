@@ -222,8 +222,10 @@ VS_OUTPUT main(VS_INPUT input) {
  int2 texPos = int2(particleID & ID2TPos2i.x, particleID >> ID2TPos2i.y);
  //float4 data0 = ParticleData0.Sample(ParticleData0Sampler, float4(texPos, 0, 0));
  //float4 data1 = ParticleData1.Sample(ParticleData1Sampler, float4(texPos, 0, 0));
- float4 data0 = ParticleData0.SampleLevel(ParticleData0Sampler, (float2)texPos, 0);
- float4 data1 = ParticleData1.SampleLevel(ParticleData1Sampler, (float2)texPos, 0);
+ //float4 data0 = ParticleData0.SampleLevel(ParticleData0Sampler, (float2)texPos, 0);
+ //float4 data1 = ParticleData1.SampleLevel(ParticleData1Sampler, (float2)texPos, 0);
+ float4 data0 = ParticleData0.Load(int3(texPos, 0));
+ float4 data1 = ParticleData1.Load(int3(texPos, 0));
 
  float age = data1.x;
  float lifetime = data1.y;
@@ -239,7 +241,7 @@ VS_OUTPUT main(VS_INPUT input) {
 
    //float4 trailData = Histories.Sample(HistoriesSampler, float4(texPos, texIndex, 0));
    //float4 trailData = Histories.SampleLevel(HistoriesSampler, float3(texPos, texIndex), 0);
-   float4 trailData = Histories.Load(int4(texPos, 0, texIndex)); // is it correct?
+   float4 trailData = Histories.Load(int4(texPos, texIndex, 0)); // is it correct?
 
    position = trailData.xyz;
    direction = unpackVec3(trailData.w);
