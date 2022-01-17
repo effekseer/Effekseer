@@ -1,10 +1,10 @@
-#include "../TestHelper.h"
-#include "../RenderingEnvironment/RenderingEnvironmentGL.h"
 #include "../RenderingEnvironment/RenderingEnvironmentDX11.h"
+#include "../RenderingEnvironment/RenderingEnvironmentGL.h"
+#include "../TestHelper.h"
 #include "Effekseer.h"
 #include <Effekseer/Utils/Effekseer.CustomAllocator.h>
-#include <EffekseerRendererGL.h>
 #include <EffekseerRendererDX11.h>
+#include <EffekseerRendererGL.h>
 #include <fstream>
 #include <iostream>
 #include <random>
@@ -12,8 +12,6 @@
 #define _USE_MATH_DEFINES
 #include <Effekseer/Effekseer.Matrix44.h>
 #include <math.h>
-
-#define USE_TRAL 0
 
 enum class GraphicsDeviceType
 {
@@ -185,7 +183,7 @@ class GpuParticleContext
 	Effekseer::Backend::UniformBufferRef emitUniformBufferVS;
 	Effekseer::Backend::UniformBufferRef renderUniformBufferVS;
 
-	bool trailMode = USE_TRAL;
+	bool trailMode;
 	int32_t trailOffset = 0;
 	Effekseer::Backend::TextureRef trailHistoriesTexture;
 	Effekseer::Backend::VertexBufferRef trailVertexBuffer;
@@ -230,11 +228,11 @@ class GpuParticleContext
 
 	void initUpdateVertex()
 	{
-		std::array<std::array<float, 4>, 4> vbData;	// {.x, .y, .u, .v}
-		vbData[0] = { -1, 1, 0, 0 };
-		vbData[1] = { -1, -1, 0, 1 };
-		vbData[2] = { 1, 1, 1, 0 };
-		vbData[3] = { 1, -1, 1, 1 };
+		std::array<std::array<float, 4>, 4> vbData; // {.x, .y, .u, .v}
+		vbData[0] = {-1, 1, 0, 0};
+		vbData[1] = {-1, -1, 0, 1};
+		vbData[2] = {1, 1, 1, 0};
+		vbData[3] = {1, -1, 1, 1};
 		updateVB = graphicsDevice->CreateVertexBuffer(sizeof(std::array<float, 4>) * 4, vbData.data(), false);
 
 		std::array<int32_t, 6> ibData;
@@ -289,12 +287,13 @@ class GpuParticleContext
 
 	void initTrailHistoriesTexture()
 	{
-		if (trailMode) {
+		if (trailMode)
+		{
 			Effekseer::Backend::TextureParameter param;
 			param.Usage = Effekseer::Backend::TextureUsageType::Array;
 			param.Format = Effekseer::Backend::TextureFormatType::R32G32B32A32_FLOAT;
 			param.Dimension = 2;
-			param.Size = { texWidth, texHeight, TrailBufferSize };
+			param.Size = {texWidth, texHeight, TrailBufferSize};
 			param.MipLevelCount = 1;
 			param.SampleCount = 1;
 			trailHistoriesTexture = graphicsDevice->CreateTexture(param);
@@ -306,7 +305,8 @@ class GpuParticleContext
 	{
 		std::vector<Effekseer::Vector2D> trailVertexData;
 		trailVertexData.resize((TrailBufferSize + 1) * 2);
-		for (int i = 0; i <= TrailBufferSize; i++) {
+		for (int i = 0; i <= TrailBufferSize; i++)
+		{
 			// Right
 			trailVertexData[i * 2 + 0].X = static_cast<float>(+i) / TrailBufferSize;
 			trailVertexData[i * 2 + 0].Y = +0.5;
@@ -330,7 +330,8 @@ class GpuParticleContext
 		int quadCount = (TrailBufferSize + 1);
 		ibData.resize(quadCount * 6);
 		int32_t ofs = 0;
-		for (int i = 0; i < quadCount; i++) {
+		for (int i = 0; i < quadCount; i++)
+		{
 			ibData[i * 6 + 0] = ofs + 0;
 			ibData[i * 6 + 1] = ofs + 1;
 			ibData[i * 6 + 2] = ofs + 2;
@@ -416,20 +417,21 @@ class GpuParticleContext
 		auto updateUniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(
 			Effekseer::CustomVector<Effekseer::CustomString<char>>{"i_ParticleData0", "i_ParticleData1"},
 			updateUniformLayoutElements);
-		if (deviceType == GraphicsDeviceType::OpenGL) {
+		if (deviceType == GraphicsDeviceType::OpenGL)
+		{
 			updateShader = graphicsDevice->CreateShaderFromCodes(
 				{ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-update.vert.glsl").c_str()},
 				{ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-update.frag.glsl").c_str()},
 				updateUniformLayout);
 		}
-		else {
+		else
+		{
 			updateShader = graphicsDevice->CreateShaderFromCodes(
-				{ ReadFileAll(DirectoryPath + "GpuParticleShaders/HLSL/perticle-update.vert.hlsl").c_str() },
-				{ ReadFileAll(DirectoryPath + "GpuParticleShaders/HLSL/perticle-update.frag.hlsl").c_str() },
+				{ReadFileAll(DirectoryPath + "GpuParticleShaders/HLSL/perticle-update.vert.hlsl").c_str()},
+				{ReadFileAll(DirectoryPath + "GpuParticleShaders/HLSL/perticle-update.frag.hlsl").c_str()},
 				updateUniformLayout);
 		}
 		assert(updateShader != nullptr);
-
 
 		Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> emitUniformLayoutElements;
 		emitUniformLayoutElements.resize(2);
@@ -444,16 +446,18 @@ class GpuParticleContext
 		auto emitUniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(
 			Effekseer::CustomVector<Effekseer::CustomString<char>>{},
 			emitUniformLayoutElements);
-		if (deviceType == GraphicsDeviceType::OpenGL) {
+		if (deviceType == GraphicsDeviceType::OpenGL)
+		{
 			emitShader = graphicsDevice->CreateShaderFromCodes(
 				{ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-emit.vert.glsl").c_str()},
 				{ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-emit.frag.glsl").c_str()},
 				emitUniformLayout);
 		}
-		else {
+		else
+		{
 			emitShader = graphicsDevice->CreateShaderFromCodes(
-				{ ReadFileAll(DirectoryPath + "GpuParticleShaders/HLSL/perticle-emit.vert.hlsl").c_str() },
-				{ ReadFileAll(DirectoryPath + "GpuParticleShaders/HLSL/perticle-emit.frag.hlsl").c_str() },
+				{ReadFileAll(DirectoryPath + "GpuParticleShaders/HLSL/perticle-emit.vert.hlsl").c_str()},
+				{ReadFileAll(DirectoryPath + "GpuParticleShaders/HLSL/perticle-emit.frag.hlsl").c_str()},
 				emitUniformLayout);
 		}
 		assert(emitShader != nullptr);
@@ -475,22 +479,24 @@ class GpuParticleContext
 		auto renderUniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(
 			Effekseer::CustomVector<Effekseer::CustomString<char>>{"ParticleData0", "ParticleData1", "ColorTable"},
 			renderUniformLayoutElements);
-		if (deviceType == GraphicsDeviceType::OpenGL) {
+		if (deviceType == GraphicsDeviceType::OpenGL)
+		{
 			renderShader = graphicsDevice->CreateShaderFromCodes(
 				{ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-render.vert.glsl").c_str()},
 				{ReadFileAll(DirectoryPath + "GpuParticleShaders/perticle-render.frag.glsl").c_str()},
 				renderUniformLayout);
 		}
-		else {
+		else
+		{
 			renderShader = graphicsDevice->CreateShaderFromCodes(
-				{ ReadFileAll(DirectoryPath + "GpuParticleShaders/HLSL/perticle-render.vert.hlsl").c_str() },
-				{ ReadFileAll(DirectoryPath + "GpuParticleShaders/HLSL/perticle-render.frag.hlsl").c_str() },
+				{ReadFileAll(DirectoryPath + "GpuParticleShaders/HLSL/perticle-render.vert.hlsl").c_str()},
+				{ReadFileAll(DirectoryPath + "GpuParticleShaders/HLSL/perticle-render.frag.hlsl").c_str()},
 				renderUniformLayout);
 		}
 
 		assert(renderShader != nullptr);
 		colorTableTexture = createColorTableTexture();
-		assert(colorTableTexture != nullptr);		
+		assert(colorTableTexture != nullptr);
 	}
 
 	void initTraitUniformLayoutAndShaders()
@@ -517,23 +523,24 @@ class GpuParticleContext
 		auto renderUniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(
 			Effekseer::CustomVector<Effekseer::CustomString<char>>{"ParticleData0", "ParticleData1", "ColorTable", "Histories"},
 			renderUniformLayoutElements);
-		if (deviceType == GraphicsDeviceType::OpenGL) {
+		if (deviceType == GraphicsDeviceType::OpenGL)
+		{
 			trailRenderShader = graphicsDevice->CreateShaderFromCodes(
-				{ ReadFileAll(DirectoryPath + "GpuParticleShaders/trail-render.vert.glsl").c_str() },
-				{ ReadFileAll(DirectoryPath + "GpuParticleShaders/trail-render.frag.glsl").c_str() },
+				{ReadFileAll(DirectoryPath + "GpuParticleShaders/trail-render.vert.glsl").c_str()},
+				{ReadFileAll(DirectoryPath + "GpuParticleShaders/trail-render.frag.glsl").c_str()},
 				renderUniformLayout);
 		}
-		else {
+		else
+		{
 			trailRenderShader = graphicsDevice->CreateShaderFromCodes(
-				{ ReadFileAll(DirectoryPath + "GpuParticleShaders/HLSL/trail-render.vert.hlsl").c_str() },
-				{ ReadFileAll(DirectoryPath + "GpuParticleShaders/HLSL/trail-render.frag.hlsl").c_str() },
+				{ReadFileAll(DirectoryPath + "GpuParticleShaders/HLSL/trail-render.vert.hlsl").c_str()},
+				{ReadFileAll(DirectoryPath + "GpuParticleShaders/HLSL/trail-render.frag.hlsl").c_str()},
 				renderUniformLayout);
 		}
 		assert(trailRenderShader != nullptr);
 
 		TrailRenderUniformBufferVS trailRenderUniformBufferVSInitData = {
-			{static_cast<float>(texWidth - 1), static_cast<float>(31 - clz32(texWidth)), 0, 0}, matTo2DArray(viewMatrix), matTo2DArray(projMatrix), { static_cast<float>(trailOffset), static_cast<float>(TrailBufferSize) }
-		};
+			{static_cast<float>(texWidth - 1), static_cast<float>(31 - clz32(texWidth)), 0, 0}, matTo2DArray(viewMatrix), matTo2DArray(projMatrix), {static_cast<float>(trailOffset), static_cast<float>(TrailBufferSize)}};
 		trailRenderUniformBufferVS = graphicsDevice->CreateUniformBuffer(sizeof(TrailRenderUniformBufferVS), &trailRenderUniformBufferVSInitData);
 	}
 
@@ -541,8 +548,9 @@ public:
 	std::shared_ptr<RenderingEnvironment> window;
 	GraphicsDeviceType deviceType;
 
-	GpuParticleContext(GraphicsDeviceType deviceType, int maxParticleCount, int windowWidth, int windowHeight)
+	GpuParticleContext(GraphicsDeviceType deviceType, int maxParticleCount, int windowWidth, int windowHeight, bool isTrailMode)
 	{
+		this->trailMode = isTrailMode;
 		this->deviceType = deviceType;
 		this->windowWidth = windowWidth;
 		this->windowHeight = windowHeight;
@@ -551,11 +559,13 @@ public:
 		texHeight = ((maxParticleCount + texWidth - 1) / texWidth) | 0;
 		this->maxParticleCount = texWidth * texHeight;
 
-		if (deviceType == GraphicsDeviceType::OpenGL) {
-			window = std::make_shared<RenderingEnvironmentGL>(std::array<int, 2>({ windowWidth, windowHeight }), "Backend.GpuParticle");
+		if (deviceType == GraphicsDeviceType::OpenGL)
+		{
+			window = std::make_shared<RenderingEnvironmentGL>(std::array<int, 2>({windowWidth, windowHeight}), "Backend.GpuParticle");
 		}
-		else if (deviceType == GraphicsDeviceType::DirectX11) {
-			window = std::make_shared<RenderingEnvironmentDX11>(std::array<int, 2>({ windowWidth, windowHeight }), "Backend.GpuParticle");
+		else if (deviceType == GraphicsDeviceType::DirectX11)
+		{
+			window = std::make_shared<RenderingEnvironmentDX11>(std::array<int, 2>({windowWidth, windowHeight}), "Backend.GpuParticle");
 		}
 		graphicsDevice = window->GetGraphicsDevice();
 		buffers.push_back(GpuParticleBuffer(graphicsDevice, texWidth, texHeight));
@@ -602,8 +612,10 @@ public:
 		const int sourceIndex = pingpong;
 		const int targetIndex = (pingpong + 1) % 2;
 
-		if (trailMode) {
-			if (--trailOffset < 0) {
+		if (trailMode)
+		{
+			if (--trailOffset < 0)
+			{
 				trailOffset = TrailBufferSize - 1;
 			}
 
@@ -622,19 +634,14 @@ public:
 			//gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
 			// Position texture to
-			graphicsDevice->CopyTexture(trailHistoriesTexture, buffers[sourceIndex].textures.at(0),
-				{ 0, 0, 0 },
-				{ 0, 0, 0 },
-				{ texWidth, texHeight , 1 }, trailOffset, 0);
-			
+			graphicsDevice->CopyTexture(trailHistoriesTexture, buffers[sourceIndex].textures.at(0), {0, 0, 0}, {0, 0, 0}, {texWidth, texHeight, 1}, trailOffset, 0);
 
-			//gl.bindFramebuffer(gl.FRAMEBUFFER, );	
+			//gl.bindFramebuffer(gl.FRAMEBUFFER, );
 			//gl.bindTexture(gl.TEXTURE_2D_ARRAY, this.trailBufferTexture, );
 			//gl.copyTexSubImage3D(gl.TEXTURE_2D_ARRAY, 0, 0, 0, this.trailOffset, 0, 0, this.texWidth, this.texHeight);
 			//gl.bindTexture(gl.TEXTURE_2D_ARRAY, null);
 			//gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 		}
-
 
 		Effekseer::Backend::PipelineStateParameter pipParam;
 
@@ -650,17 +657,16 @@ public:
 		graphicsDevice->SetViewport(0, 0, texWidth, texHeight);
 		graphicsDevice->BeginRenderPass(buffers[targetIndex].renderPass, true, true, Effekseer::Color(0, 0, 0, 255));
 
-
-		if (trailMode) {
+		if (trailMode)
+		{
 			TrailRenderUniformBufferVS trailRenderUniformBufferVSInitData = {
-				{static_cast<float>(texWidth - 1), static_cast<float>(31 - clz32(texWidth)), 0, 0}, matTo2DArray(viewMatrix), matTo2DArray(projMatrix), { static_cast<float>(trailOffset), static_cast<float>(TrailBufferSize), 0.0f, 0.0f }
-			};
+				{static_cast<float>(texWidth - 1), static_cast<float>(31 - clz32(texWidth)), 0, 0}, matTo2DArray(viewMatrix), matTo2DArray(projMatrix), {static_cast<float>(trailOffset), static_cast<float>(TrailBufferSize), 0.0f, 0.0f}};
 			graphicsDevice->UpdateUniformBuffer(trailRenderUniformBufferVS, sizeof(TrailRenderUniformBufferVS), 0, &trailRenderUniformBufferVSInitData);
 		}
-		else {
+		else
+		{
 			RenderUniformBufferVS renderUniformBufferVSData = {
-				{static_cast<float>(texWidth - 1), static_cast<float>(31 - clz32(texWidth)), 0, 0}, matTo2DArray(viewMatrix), matTo2DArray(projMatrix)
-			};
+				{static_cast<float>(texWidth - 1), static_cast<float>(31 - clz32(texWidth)), 0, 0}, matTo2DArray(viewMatrix), matTo2DArray(projMatrix)};
 			graphicsDevice->UpdateUniformBuffer(renderUniformBufferVS, sizeof(RenderUniformBufferVS), 0, &renderUniformBufferVSData);
 		}
 
@@ -697,7 +703,8 @@ public:
 	void Render()
 	{
 		Effekseer::Backend::PipelineStateRef pip;
-		if (trailMode) {
+		if (trailMode)
+		{
 			Effekseer::Backend::PipelineStateParameter pipParam;
 			pipParam.FrameBufferPtr = nullptr;
 			pipParam.VertexLayoutPtr = renderVL;
@@ -710,7 +717,8 @@ public:
 			pipParam.BlendDstFuncAlpha = Effekseer::Backend::BlendFuncType::One;
 			pip = graphicsDevice->CreatePipelineState(pipParam);
 		}
-		else {
+		else
+		{
 			Effekseer::Backend::PipelineStateParameter pipParam;
 			// OpenGL doesn't require it
 			pipParam.FrameBufferPtr = nullptr;
@@ -740,15 +748,13 @@ public:
 		drawParam.TextureSamplingTypes[colorTableTextureIndex] = Effekseer::Backend::TextureSamplingType::Linear;
 		drawParam.TextureWrapTypes[colorTableTextureIndex] = Effekseer::Backend::TextureWrapType::Clamp;
 
-
-
-		if (trailMode) {
+		if (trailMode)
+		{
 			drawParam.TextureCount++;
 			int historiesTextureIndex = colorTableTextureIndex + 1;
 			drawParam.TexturePtrs[historiesTextureIndex] = trailHistoriesTexture;
 			drawParam.TextureSamplingTypes[historiesTextureIndex] = Effekseer::Backend::TextureSamplingType::Linear;
 			drawParam.TextureWrapTypes[historiesTextureIndex] = Effekseer::Backend::TextureWrapType::Clamp;
-
 
 			drawParam.VertexBufferPtr = trailVertexBuffer;
 			drawParam.IndexBufferPtr = trailRenderIndexBuffer;
@@ -759,7 +765,8 @@ public:
 
 			graphicsDevice->Draw(drawParam);
 		}
-		else {
+		else
+		{
 			drawParam.VertexBufferPtr = renderVB;
 			drawParam.IndexBufferPtr = renderIB;
 			drawParam.PipelineStatePtr = pip;
@@ -774,11 +781,11 @@ public:
 	}
 };
 
-void GpuParticle(GraphicsDeviceType deviceType)
+void GpuParticle(GraphicsDeviceType deviceType, bool trailMode)
 {
 	int windowWidth = 1280;
 	int windowHeight = 720;
-	GpuParticleContext gpuParticleContext(deviceType, 1024 * 128, windowWidth, windowHeight);
+	GpuParticleContext gpuParticleContext(deviceType, 1024 * 128, windowWidth, windowHeight, trailMode);
 	int count = 0;
 	int emitNum = 128;
 	while (count < 1000 && gpuParticleContext.window->DoEvent())
@@ -786,9 +793,9 @@ void GpuParticle(GraphicsDeviceType deviceType)
 		for (int i = 0; i < emitNum; i++)
 		{
 			std::array<float, 3> position = {-0.5f - (i - emitNum / 2) * (i - emitNum / 2) / 10.0f / emitNum, -1 + i * 2.0f / emitNum, 0};
-			std::array<float, 3> direction = { 1, 1, 0 };
+			std::array<float, 3> direction = {1, 1, 0};
 			gpuParticleContext.Emit(500, position, direction);
-		}	
+		}
 
 		gpuParticleContext.Update();
 
@@ -801,7 +808,14 @@ void GpuParticle(GraphicsDeviceType deviceType)
 }
 
 #if !defined(__FROM_CI__)
-//TestRegister Test_GpuParticle_GL("Backend.GpuParticle_GL", []() -> void { GpuParticle(GraphicsDeviceType::OpenGL); });
-TestRegister Test_GpuParticle_GL("Backend.GpuParticle_GL", []() -> void { GpuParticle(GraphicsDeviceType::DirectX11); });
-//TestRegister Test_GpuParticle_DX11("Backend.GpuParticle_DX11", []() -> void { GpuParticle(GraphicsDeviceType::DirectX11); });
+TestRegister Test_GpuParticle_GL("Backend.GpuParticle_GL", []() -> void
+								 { GpuParticle(GraphicsDeviceType::OpenGL, false); });
+TestRegister Test_GpuParticle_DX11("Backend.GpuParticle_DX11", []() -> void
+								   { GpuParticle(GraphicsDeviceType::DirectX11, false); });
+
+TestRegister Test_GpuParticleTrail_GL("Backend.GpuParticle_Trail_GL", []() -> void
+									  { GpuParticle(GraphicsDeviceType::OpenGL, true); });
+TestRegister Test_GpuParticleTrail_DX11("Backend.GpuParticle_Trail_DX11", []() -> void
+										{ GpuParticle(GraphicsDeviceType::DirectX11, true); });
+
 #endif
