@@ -1253,6 +1253,31 @@ Effekseer::Backend::TextureRef GraphicsDevice::CreateDepthTexture(const Effeksee
 
 bool GraphicsDevice::CopyTexture(Effekseer::Backend::TextureRef& dst, Effekseer::Backend::TextureRef& src, const std::array<int, 3>& dstPos, const std::array<int, 3>& srcPos, const std::array<int, 3>& size, int32_t dstLayer, int32_t srcLayer)
 {
+	// validate
+	if ((src->GetParameter().Usage & Effekseer::Backend::TextureUsageType::Array) == Effekseer::Backend::TextureUsageType::None && srcLayer != 0)
+	{
+		Effekseer::Log(Effekseer::LogType::Error, "srcLayer must be 0 when an usage contains Array");
+		return false;
+	}
+
+	if ((dst->GetParameter().Usage & Effekseer::Backend::TextureUsageType::Array) == Effekseer::Backend::TextureUsageType::None && dstLayer != 0)
+	{
+		Effekseer::Log(Effekseer::LogType::Error, "dstLayer must be 0 when an usage contains Array");
+		return false;
+	}
+
+	if (src->GetParameter().Dimension != 3 && srcPos[2] != 0)
+	{
+		Effekseer::Log(Effekseer::LogType::Error, "srcPos[2] must be 0 when a dimention is 2");
+		return false;
+	}
+
+	if (dst->GetParameter().Dimension != 3 && dstPos[2] != 0)
+	{
+		Effekseer::Log(Effekseer::LogType::Error, "dstPos[2] must be 0 when a dimention is 2");
+		return false;
+	}
+
 	auto dstdx11 = dst.DownCast<Texture>()->GetResource();
 	auto srcdx11 = src.DownCast<Texture>()->GetResource();
 
