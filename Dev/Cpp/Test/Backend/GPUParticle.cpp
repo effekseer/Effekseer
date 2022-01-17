@@ -623,10 +623,9 @@ public:
 
 			// Position texture to
 			graphicsDevice->CopyTexture(trailHistoriesTexture, buffers[sourceIndex].textures.at(0),
-				{ 0, 0, trailOffset },
 				{ 0, 0, 0 },
-				{ texWidth, texHeight , 1 },
-				0, 0);
+				{ 0, 0, 0 },
+				{ texWidth, texHeight , 1 }, trailOffset, 0);
 			
 
 			//gl.bindFramebuffer(gl.FRAMEBUFFER, );	
