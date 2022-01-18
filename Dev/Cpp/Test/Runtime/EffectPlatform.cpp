@@ -78,20 +78,45 @@ void EffectPlatform::Initialize(const EffectPlatformInitializingParameter& param
 
 	if (renderer_ != nullptr)
 	{
-		auto position = ::Effekseer::Vector3D(10.0f, 5.0f, 10.0f) / 2.0f;
-		auto focus = ::Effekseer::Vector3D(0.0f, 0.0f, 0.0f);
-
-		renderer_->SetCameraMatrix(::Effekseer::Matrix44().LookAtRH(position, focus, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
-
-		if (isOpenGLMode_)
+		if (param.CoordinateSyatem == Effekseer::CoordinateSystem::RH)
 		{
-			renderer_->SetProjectionMatrix(
-				::Effekseer::Matrix44().PerspectiveFovRH_OpenGL(90.0f / 180.0f * 3.14f, (float)initParam_.WindowSize[0] / (float)initParam_.WindowSize[1], 1.0f, 50.0f));
+			auto position = ::Effekseer::Vector3D(10.0f, 5.0f, 10.0f) / 2.0f;
+			auto focus = ::Effekseer::Vector3D(0.0f, 0.0f, 0.0f);
+
+			renderer_->SetCameraMatrix(::Effekseer::Matrix44().LookAtRH(position, focus, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
+
+			if (isOpenGLMode_)
+			{
+				renderer_->SetProjectionMatrix(
+					::Effekseer::Matrix44().PerspectiveFovRH_OpenGL(90.0f / 180.0f * 3.14f, (float)initParam_.WindowSize[0] / (float)initParam_.WindowSize[1], 1.0f, 50.0f));
+			}
+			else
+			{
+				renderer_->SetProjectionMatrix(
+					::Effekseer::Matrix44().PerspectiveFovRH(90.0f / 180.0f * 3.14f, (float)initParam_.WindowSize[0] / (float)initParam_.WindowSize[1], 1.0f, 50.0f));
+			}
 		}
 		else
 		{
-			renderer_->SetProjectionMatrix(
-				::Effekseer::Matrix44().PerspectiveFovRH(90.0f / 180.0f * 3.14f, (float)initParam_.WindowSize[0] / (float)initParam_.WindowSize[1], 1.0f, 50.0f));
+			auto position = ::Effekseer::Vector3D(10.0f, 5.0f, -10.0f) / 2.0f;
+			auto focus = ::Effekseer::Vector3D(0.0f, 0.0f, 0.0f);
+
+			renderer_->SetCameraMatrix(::Effekseer::Matrix44().LookAtLH(position, focus, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
+
+			if (isOpenGLMode_)
+			{
+				renderer_->SetProjectionMatrix(
+					::Effekseer::Matrix44().PerspectiveFovLH_OpenGL(90.0f / 180.0f * 3.14f, (float)initParam_.WindowSize[0] / (float)initParam_.WindowSize[1], 1.0f, 50.0f));
+			}
+			else
+			{
+				renderer_->SetProjectionMatrix(
+					::Effekseer::Matrix44().PerspectiveFovLH(90.0f / 180.0f * 3.14f, (float)initParam_.WindowSize[0] / (float)initParam_.WindowSize[1], 1.0f, 50.0f));
+			}
+
+			auto lightDirection = renderer_->GetLightDirection();
+			lightDirection.Z = -lightDirection.Z;
+			renderer_->SetLightDirection(lightDirection);
 		}
 
 		manager_->SetSpriteRenderer(renderer_->CreateSpriteRenderer());
@@ -105,7 +130,7 @@ void EffectPlatform::Initialize(const EffectPlatformInitializingParameter& param
 		manager_->SetMaterialLoader(renderer_->CreateMaterialLoader());
 	}
 
-	manager_->SetCoordinateSystem(::Effekseer::CoordinateSystem::RH);
+	manager_->SetCoordinateSystem(param.CoordinateSyatem);
 
 	if (param.IsCullingCreated)
 	{

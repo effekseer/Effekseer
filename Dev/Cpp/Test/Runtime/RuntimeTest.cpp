@@ -23,10 +23,13 @@
 #include "../TestHelper.h"
 #include <iostream>
 
-void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPath, std::string suffix)
+void BasicRuntimeTestPlatform(EffectPlatformInitializingParameter param, EffectPlatform* platform, std::string baseResultPath, std::string suffix)
 {
-	EffectPlatformInitializingParameter param;
 	platform->Initialize(param);
+	if (param.CoordinateSyatem == Effekseer::CoordinateSystem::LH)
+	{
+		suffix += ".LH";
+	}
 
 	auto single10Test = [&](const char16_t* name, const char* savename) -> void {
 		srand(0);
@@ -93,7 +96,14 @@ void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPa
 		auto cameraMat = platform->GetRenderer()->GetCameraMatrix();
 
 		Effekseer::Matrix44 mat;
-		mat.LookAtRH({0, 20, 20}, {0, 20, 0}, {0, 1, 0});
+		if (param.CoordinateSyatem == Effekseer::CoordinateSystem::RH)
+		{
+			mat.LookAtRH({0, 20, 20}, {0, 20, 0}, {0, 1, 0});
+		}
+		else
+		{
+			mat.LookAtLH({0, 20, -20}, {0, 20, 0}, {0, 1, 0});
+		}
 		platform->GetRenderer()->SetCameraMatrix(mat);
 
 		singleResourceData_00_Basic_Test(u"Simple_Turbulence_Fireworks", "Simple_Turbulence_Fireworks", 180);
@@ -148,7 +158,14 @@ void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPa
 		auto cameraMat = platform->GetRenderer()->GetCameraMatrix();
 
 		Effekseer::Matrix44 mat;
-		mat.LookAtRH({0, 0, 10}, {0, 0, 0}, {0, 1, 0});
+		if (param.CoordinateSyatem == Effekseer::CoordinateSystem::RH)
+		{
+			mat.LookAtRH({0, 0, 10}, {0, 0, 0}, {0, 1, 0});
+		}
+		else
+		{
+			mat.LookAtLH({0, 0, -10}, {0, 0, 0}, {0, 1, 0});
+		}
 		platform->GetRenderer()->SetCameraMatrix(mat);
 		platform->GenerateDepth();
 
@@ -161,7 +178,15 @@ void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPa
 		auto cameraMat = platform->GetRenderer()->GetCameraMatrix();
 
 		Effekseer::Matrix44 mat;
-		mat.LookAtRH({0, 0, 10}, {0, 0, 0}, {0, 1, 0});
+
+		if (param.CoordinateSyatem == Effekseer::CoordinateSystem::RH)
+		{
+			mat.LookAtRH({0, 0, 10}, {0, 0, 0}, {0, 1, 0});
+		}
+		else
+		{
+			mat.LookAtLH({0, 0, -10}, {0, 0, 0}, {0, 1, 0});
+		}
 		platform->GetRenderer()->SetCameraMatrix(mat);
 		platform->GetRenderer()->SetBackgroundTextureUVStyle(EffekseerRenderer::UVStyle::VerticalFlipped);
 		platform->GenerateDepth();
@@ -617,11 +642,13 @@ void UpdateToMoveTest()
 
 void BasicRuntimeTest()
 {
+	EffectPlatformInitializingParameter param;
+	// param.CoordinateSyatem = Effekseer::CoordinateSystem::LH;
 
 #ifdef _WIN32
 	{
 		auto platform = std::make_shared<EffectPlatformDX11>();
-		BasicRuntimeTestPlatform(platform.get(), "", "_DX11");
+		BasicRuntimeTestPlatform(param, platform.get(), "", "_DX11");
 		platform->Terminate();
 	}
 #endif
@@ -630,7 +657,7 @@ void BasicRuntimeTest()
 #ifdef __EFFEKSEER_BUILD_VULKAN__
 	{
 		auto platform = std::make_shared<EffectPlatformVulkan>();
-		BasicRuntimeTestPlatform(platform.get(), "", "_Vulkan");
+		BasicRuntimeTestPlatform(param, platform.get(), "", "_Vulkan");
 		platform->Terminate();
 	}
 #endif
@@ -641,20 +668,20 @@ void BasicRuntimeTest()
 #ifdef __EFFEKSEER_BUILD_DX12__
 		{
 			auto platform = std::make_shared<EffectPlatformDX12>();
-			BasicRuntimeTestPlatform(platform.get(), "", "_DX12");
+			BasicRuntimeTestPlatform(param, platform.get(), "", "_DX12");
 			platform->Terminate();
 		}
 #endif
 
 		{
 			auto platform = std::make_shared<EffectPlatformDX9>();
-			BasicRuntimeTestPlatform(platform.get(), "", "_DX9");
+			BasicRuntimeTestPlatform(param, platform.get(), "", "_DX9");
 			platform->Terminate();
 		}
 
 		{
 			auto platform = std::make_shared<EffectPlatformGL>();
-			BasicRuntimeTestPlatform(platform.get(), "", "_GL");
+			BasicRuntimeTestPlatform(param, platform.get(), "", "_GL");
 			platform->Terminate();
 		}
 	}
@@ -663,13 +690,13 @@ void BasicRuntimeTest()
 
 	{
 		auto platform = std::make_shared<EffectPlatformMetal>();
-		BasicRuntimeTestPlatform(platform.get(), "", "_Metal");
+		BasicRuntimeTestPlatform(param, platform.get(), "", "_Metal");
 		platform->Terminate();
 	}
 
 	{
 		auto platform = std::make_shared<EffectPlatformGL>();
-		BasicRuntimeTestPlatform(platform.get(), "", "_GL");
+		BasicRuntimeTestPlatform(param, platform.get(), "", "_GL");
 		platform->Terminate();
 	}
 
@@ -677,7 +704,7 @@ void BasicRuntimeTest()
 #ifndef __EFFEKSEER_BUILD_VERSION16__
 	{
 		auto platform = std::make_shared<EffectPlatformGL>();
-		BasicRuntimeTestPlatform(platform.get(), "", "_GL");
+		BasicRuntimeTestPlatform(param, platform.get(), "", "_GL");
 		platform->Terminate();
 	}
 #endif

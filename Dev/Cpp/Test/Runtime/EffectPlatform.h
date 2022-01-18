@@ -14,6 +14,7 @@ struct EffectPlatformInitializingParameter
 	bool IsCullingCreated = true;
 	int InstanceCount = 8000;
 	int SpriteCount = 2000;
+	::Effekseer::CoordinateSystem CoordinateSyatem = ::Effekseer::CoordinateSystem::RH;
 	std::array<int32_t, 2> WindowSize = {320, 240};
 };
 
@@ -123,6 +124,11 @@ public:
 		posMiddleArray[0] = posMiddle.Z;
 
 		Effekseer::Vector3D posNear{0.0f, 0.0f, 1.0f};
+
+		if (manager_->GetCoordinateSystem() == Effekseer::CoordinateSystem::LH)
+		{
+			posNear.Z = -posNear.Z;
+		}
 
 		Effekseer::Vector3D::TransformWithW(posNear, posNear, cameraMat);
 		Effekseer::Vector3D::TransformWithW(posNear, posNear, projMat);
