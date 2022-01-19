@@ -668,10 +668,10 @@ protected:
 				{
 					const auto packedNormal = PackVector3DF(normal);
 					const auto packedTangent = PackVector3DF(tangent);
-					vs_[0].SetPackedNormal(packedNormal);
-					vs_[0].SetPackedTangent(packedTangent);
-					vs_[1].SetPackedNormal(packedNormal);
-					vs_[1].SetPackedTangent(packedTangent);
+					vs_[0].SetPackedNormal(packedNormal, FLIP_RGB);
+					vs_[0].SetPackedTangent(packedTangent, FLIP_RGB);
+					vs_[1].SetPackedNormal(packedNormal, FLIP_RGB);
+					vs_[1].SetPackedTangent(packedTangent, FLIP_RGB);
 
 					vs_ += 2;
 				}
@@ -679,10 +679,10 @@ protected:
 				{
 					const auto packedNormal = PackVector3DF(normal);
 					const auto packedTangent = PackVector3DF(tangent);
-					vs_[0].SetPackedNormal(packedNormal);
-					vs_[0].SetPackedTangent(packedTangent);
-					vs_[1].SetPackedNormal(packedNormal);
-					vs_[1].SetPackedTangent(packedTangent);
+					vs_[0].SetPackedNormal(packedNormal, FLIP_RGB);
+					vs_[0].SetPackedTangent(packedTangent, FLIP_RGB);
+					vs_[1].SetPackedNormal(packedNormal, FLIP_RGB);
+					vs_[1].SetPackedTangent(packedTangent, FLIP_RGB);
 
 					vs_ += 2;
 				}
@@ -690,14 +690,14 @@ protected:
 				{
 					const auto packedNormal = PackVector3DF(normal);
 					const auto packedTangent = PackVector3DF(tangent);
-					vs_[0].SetPackedNormal(packedNormal);
-					vs_[0].SetPackedTangent(packedTangent);
-					vs_[1].SetPackedNormal(packedNormal);
-					vs_[1].SetPackedTangent(packedTangent);
-					vs_[2].SetPackedNormal(packedNormal);
-					vs_[2].SetPackedTangent(packedTangent);
-					vs_[3].SetPackedNormal(packedNormal);
-					vs_[3].SetPackedTangent(packedTangent);
+					vs_[0].SetPackedNormal(packedNormal, FLIP_RGB);
+					vs_[0].SetPackedTangent(packedTangent, FLIP_RGB);
+					vs_[1].SetPackedNormal(packedNormal, FLIP_RGB);
+					vs_[1].SetPackedTangent(packedTangent, FLIP_RGB);
+					vs_[2].SetPackedNormal(packedNormal, FLIP_RGB);
+					vs_[2].SetPackedTangent(packedTangent, FLIP_RGB);
+					vs_[3].SetPackedNormal(packedNormal, FLIP_RGB);
+					vs_[3].SetPackedTangent(packedTangent, FLIP_RGB);
 
 					vs_ += 4;
 				}

@@ -595,25 +595,25 @@ protected:
 				const auto packedTangentCurrent = PackVector3DF(tangentCurrent);
 				const auto packedTangentNext = PackVector3DF(tangentNext);
 
-				vs[0].SetPackedNormal(packedNormalCurrent);
-				vs[1].SetPackedNormal(packedNormalCurrent);
-				vs[2].SetPackedNormal(packedNormalNext);
-				vs[3].SetPackedNormal(packedNormalNext);
+				vs[0].SetPackedNormal(packedNormalCurrent, FLIP_RGB);
+				vs[1].SetPackedNormal(packedNormalCurrent, FLIP_RGB);
+				vs[2].SetPackedNormal(packedNormalNext, FLIP_RGB);
+				vs[3].SetPackedNormal(packedNormalNext, FLIP_RGB);
 
-				vs[4].SetPackedNormal(packedNormalCurrent);
-				vs[5].SetPackedNormal(packedNormalCurrent);
-				vs[6].SetPackedNormal(packedNormalNext);
-				vs[7].SetPackedNormal(packedNormalNext);
+				vs[4].SetPackedNormal(packedNormalCurrent, FLIP_RGB);
+				vs[5].SetPackedNormal(packedNormalCurrent, FLIP_RGB);
+				vs[6].SetPackedNormal(packedNormalNext, FLIP_RGB);
+				vs[7].SetPackedNormal(packedNormalNext, FLIP_RGB);
 
-				vs[0].SetPackedTangent(packedTangentCurrent);
-				vs[1].SetPackedTangent(packedTangentCurrent);
-				vs[2].SetPackedTangent(packedTangentNext);
-				vs[3].SetPackedTangent(packedTangentNext);
+				vs[0].SetPackedTangent(packedTangentCurrent, FLIP_RGB);
+				vs[1].SetPackedTangent(packedTangentCurrent, FLIP_RGB);
+				vs[2].SetPackedTangent(packedTangentNext, FLIP_RGB);
+				vs[3].SetPackedTangent(packedTangentNext, FLIP_RGB);
 
-				vs[4].SetPackedTangent(packedTangentCurrent);
-				vs[5].SetPackedTangent(packedTangentCurrent);
-				vs[6].SetPackedTangent(packedTangentNext);
-				vs[7].SetPackedTangent(packedTangentNext);
+				vs[4].SetPackedTangent(packedTangentCurrent, FLIP_RGB);
+				vs[5].SetPackedTangent(packedTangentCurrent, FLIP_RGB);
+				vs[6].SetPackedTangent(packedTangentNext, FLIP_RGB);
+				vs[7].SetPackedTangent(packedTangentNext, FLIP_RGB);
 
 				// uv1
 				uv1texNext = uv1Current + uv1Step;

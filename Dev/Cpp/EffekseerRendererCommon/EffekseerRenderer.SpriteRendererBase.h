@@ -332,8 +332,8 @@ protected:
 				StrideView<VERTEX> vs(verteies.pointerOrigin_, stride_, 4);
 				for (auto i = 0; i < 4; i++)
 				{
-					vs[i].SetPackedNormal(PackVector3DF(F));
-					vs[i].SetPackedTangent(PackVector3DF(R));
+					vs[i].SetPackedNormal(PackVector3DF(F), FLIP_RGB);
+					vs[i].SetPackedTangent(PackVector3DF(R), FLIP_RGB);
 				}
 			}
 		}
@@ -373,8 +373,8 @@ protected:
 						tangentZ = -tangentZ;
 					}
 
-					vs[i].SetPackedNormal(PackVector3DF(tangentZ));
-					vs[i].SetPackedTangent(PackVector3DF(tangentX));
+					vs[i].SetPackedNormal(PackVector3DF(tangentZ), FLIP_RGB);
+					vs[i].SetPackedTangent(PackVector3DF(tangentX), FLIP_RGB);
 				}
 			}
 		}
