@@ -83,14 +83,24 @@ struct DynamicVertex
 		}
 	}
 
-	void SetPackedNormal(const VertexColor& normal)
+	void SetPackedNormal(const VertexColor& normal, bool flipRGB)
 	{
 		Normal = normal;
+
+		if (flipRGB)
+		{
+			std::swap(Normal.R, Normal.B);
+		}
 	}
 
-	void SetPackedTangent(const VertexColor& tangent)
+	void SetPackedTangent(const VertexColor& tangent, bool flipRGB)
 	{
 		Tangent = tangent;
+
+		if (flipRGB)
+		{
+			std::swap(Tangent.R, Tangent.B);
+		}
 	}
 
 	void SetUV2(float u, float v)
@@ -142,14 +152,24 @@ struct LightingVertex
 		}
 	}
 
-	void SetPackedNormal(const VertexColor& normal)
+	void SetPackedNormal(const VertexColor& normal, bool flipRGB)
 	{
 		Normal = normal;
+
+		if (flipRGB)
+		{
+			std::swap(Normal.R, Normal.B);
+		}
 	}
 
-	void SetPackedTangent(const VertexColor& tangent)
+	void SetPackedTangent(const VertexColor& tangent, bool flipRGB)
 	{
 		Tangent = tangent;
+
+		if (flipRGB)
+		{
+			std::swap(Tangent.R, Tangent.B);
+		}
 	}
 
 	void SetUV2(float u, float v)
@@ -188,11 +208,11 @@ struct SimpleVertex
 		}
 	}
 
-	void SetPackedNormal(const VertexColor& normal)
+	void SetPackedNormal(const VertexColor& normal, bool flipRGB)
 	{
 	}
 
-	void SetPackedTangent(const VertexColor& tangent)
+	void SetPackedTangent(const VertexColor& tangent, bool flipRGB)
 	{
 	}
 
@@ -246,14 +266,24 @@ struct AdvancedLightingVertex
 		}
 	}
 
-	void SetPackedNormal(const VertexColor& normal)
+	void SetPackedNormal(const VertexColor& normal, bool flipRGB)
 	{
 		Normal = normal;
+
+		if (flipRGB)
+		{
+			std::swap(Normal.R, Normal.B);
+		}
 	}
 
-	void SetPackedTangent(const VertexColor& tangent)
+	void SetPackedTangent(const VertexColor& tangent, bool flipRGB)
 	{
 		Tangent = tangent;
+
+		if (flipRGB)
+		{
+			std::swap(Tangent.R, Tangent.B);
+		}
 	}
 
 	void SetUV2(float u, float v)
@@ -304,11 +334,11 @@ struct AdvancedSimpleVertex
 		}
 	}
 
-	void SetPackedNormal(const VertexColor& normal)
+	void SetPackedNormal(const VertexColor& normal, bool flipRGB)
 	{
 	}
 
-	void SetPackedTangent(const VertexColor& tangent)
+	void SetPackedTangent(const VertexColor& tangent, bool flipRGB)
 	{
 	}
 
