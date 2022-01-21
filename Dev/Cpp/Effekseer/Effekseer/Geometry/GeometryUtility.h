@@ -38,7 +38,7 @@ public:
 		return true;
 	}
 
-	static std::array<Plane, 6> CalculateFrustumPlanes(const Matrix44& viewProjectionMatrix, float projectedNear, float projectedFar)
+	static std::array<Plane, 6> CalculateFrustumPlanes(const Matrix44& viewProjectionMatrix, float projectedNear, float projectedFar, CoordinateSystem coordinateSystem)
 	{
 		std::array<SIMD::Vec4f, 8> points4;
 
@@ -84,6 +84,14 @@ public:
 		planeComponents[3] = {4, 6, 7};
 		planeComponents[4] = {0, 2, 6};
 		planeComponents[5] = {7, 3, 1};
+
+		if (coordinateSystem == CoordinateSystem::LH)
+		{
+			for (size_t i = 0; i < planeComponents.size(); i++)
+			{
+				std::swap(planeComponents[i][0], planeComponents[i][2]);
+			}
+		}
 
 		std::array<Plane, 6> ret;
 
