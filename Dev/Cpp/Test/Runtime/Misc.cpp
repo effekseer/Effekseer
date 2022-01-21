@@ -18,8 +18,7 @@ void TestGeometryUtility()
 		Effekseer::Matrix44 transform;
 	};
 
-	const auto isRH = [](CoordinateStyleType style)
-	{
+	const auto isRH = [](CoordinateStyleType style) {
 		if (style == CoordinateStyleType::RH || style == CoordinateStyleType::RH_Reversed)
 		{
 			return true;
@@ -27,8 +26,7 @@ void TestGeometryUtility()
 		return false;
 	};
 
-	const auto isRevresed = [](CoordinateStyleType style)
-	{
+	const auto isRevresed = [](CoordinateStyleType style) {
 		if (style == CoordinateStyleType::RH_Reversed)
 		{
 			return true;
@@ -36,8 +34,7 @@ void TestGeometryUtility()
 		return false;
 	};
 
-	const auto getSystem = [](CoordinateStyleType style)
-	{
+	const auto getSystem = [](CoordinateStyleType style) {
 		if (style == CoordinateStyleType::RH || style == CoordinateStyleType::RH_Reversed)
 		{
 			return Effekseer::CoordinateSystem::RH;
@@ -45,8 +42,7 @@ void TestGeometryUtility()
 		return Effekseer::CoordinateSystem::LH;
 	};
 
-	const auto getReversedPerspectiveMatrixRH = [](float ovY, float aspect, float zn, float zf)
-	{
+	const auto getReversedPerspectiveMatrixRH = [](float ovY, float aspect, float zn, float zf) {
 		Effekseer::Matrix44 mat;
 		float yScale = 1 / tanf(ovY / 2);
 		float xScale = yScale / aspect;
@@ -73,8 +69,7 @@ void TestGeometryUtility()
 		return mat;
 	};
 
-	const auto getProjectionMatrix = [&](float ovY, float aspect, float zn, float zf, CoordinateStyleType coodinateStyle)
-	{
+	const auto getProjectionMatrix = [&](float ovY, float aspect, float zn, float zf, CoordinateStyleType coodinateStyle) {
 		Effekseer::Matrix44 projMat;
 		if (coodinateStyle == CoordinateStyleType::RH)
 		{
@@ -92,23 +87,21 @@ void TestGeometryUtility()
 		return projMat;
 	};
 
-	const auto getCameraMatrix = [&](Effekseer::Vector3D position, Effekseer::Vector3D focus, CoordinateStyleType coodinateStyle)
-	{
+	const auto getCameraMatrix = [&](Effekseer::Vector3D position, Effekseer::Vector3D focus, Effekseer::Vector3D up, CoordinateStyleType coodinateStyle) {
 		Effekseer::Matrix44 cameraMat;
 		if (isRH(coodinateStyle))
 		{
-			cameraMat.LookAtRH(position, focus, {0, 1, 0});
+			cameraMat.LookAtRH(position, focus, up);
 		}
 		else
 		{
-			cameraMat.LookAtLH(position, focus, {0, 1, 0});
+			cameraMat.LookAtLH(position, focus, up);
 		}
 
 		return cameraMat;
 	};
 
-	const auto getCoordinatePosition = [](Effekseer::Vector3D position, bool isRightHand)
-	{
+	const auto getCoordinatePosition = [](Effekseer::Vector3D position, bool isRightHand) {
 		if (!isRightHand)
 		{
 			position.Z = -position.Z;
@@ -117,17 +110,20 @@ void TestGeometryUtility()
 		return position;
 	};
 
-	const auto run = [&](State state)
-	{
+	const auto run = [&](State state) {
 		bool isRightHand = isRH(state.coordinateStyle);
 
 		Effekseer::Vector3D cameraPos = getCoordinatePosition({0, 0, 20}, isRightHand);
 		Effekseer::Vector3D cameraFocus = getCoordinatePosition({0, 0, 0}, isRightHand);
+		Effekseer::Vector3D cameraUp = {0, 1, 0};
+		Effekseer::Vector3D zero = {0, 0, 0};
 
 		Effekseer::Vector3D::Transform(cameraPos, cameraPos, state.transform);
 		Effekseer::Vector3D::Transform(cameraFocus, cameraFocus, state.transform);
+		Effekseer::Vector3D::Transform(cameraUp, cameraUp, state.transform);
+		Effekseer::Vector3D::Transform(zero, zero, state.transform);
 
-		Effekseer::Matrix44 cameraMat = getCameraMatrix(cameraPos, cameraFocus, state.coordinateStyle);
+		Effekseer::Matrix44 cameraMat = getCameraMatrix(cameraPos, cameraFocus, cameraUp - zero, state.coordinateStyle);
 		Effekseer::Matrix44 projMat = getProjectionMatrix(90.0f, 4.0f / 3.0, 1.0f, 30.0f, state.coordinateStyle);
 
 		Effekseer::Sphare sphere;
@@ -165,6 +161,54 @@ void TestGeometryUtility()
 		}
 
 		Effekseer::Vector3D::Transform(sphere.Center, getCoordinatePosition({0, 0, 30}, isRightHand), state.transform);
+		if (Effekseer::GeometryUtility::IsContain(planes, sphere))
+		{
+			throw "Failed";
+		}
+
+		Effekseer::Vector3D::Transform(sphere.Center, getCoordinatePosition({0, 25, 0}, isRightHand), state.transform);
+		if (!Effekseer::GeometryUtility::IsContain(planes, sphere))
+		{
+			throw "Failed";
+		}
+
+		Effekseer::Vector3D::Transform(sphere.Center, getCoordinatePosition({0, 28, 0}, isRightHand), state.transform);
+		if (Effekseer::GeometryUtility::IsContain(planes, sphere))
+		{
+			throw "Failed";
+		}
+
+		Effekseer::Vector3D::Transform(sphere.Center, getCoordinatePosition({0, -25, 0}, isRightHand), state.transform);
+		if (!Effekseer::GeometryUtility::IsContain(planes, sphere))
+		{
+			throw "Failed";
+		}
+
+		Effekseer::Vector3D::Transform(sphere.Center, getCoordinatePosition({0, -28, 0}, isRightHand), state.transform);
+		if (Effekseer::GeometryUtility::IsContain(planes, sphere))
+		{
+			throw "Failed";
+		}
+
+		Effekseer::Vector3D::Transform(sphere.Center, getCoordinatePosition({34, 0, 0}, isRightHand), state.transform);
+		if (!Effekseer::GeometryUtility::IsContain(planes, sphere))
+		{
+			throw "Failed";
+		}
+
+		Effekseer::Vector3D::Transform(sphere.Center, getCoordinatePosition({38, 0, 0}, isRightHand), state.transform);
+		if (Effekseer::GeometryUtility::IsContain(planes, sphere))
+		{
+			throw "Failed";
+		}
+
+		Effekseer::Vector3D::Transform(sphere.Center, getCoordinatePosition({-34, 0, 0}, isRightHand), state.transform);
+		if (!Effekseer::GeometryUtility::IsContain(planes, sphere))
+		{
+			throw "Failed";
+		}
+
+		Effekseer::Vector3D::Transform(sphere.Center, getCoordinatePosition({-38, 0, 0}, isRightHand), state.transform);
 		if (Effekseer::GeometryUtility::IsContain(planes, sphere))
 		{
 			throw "Failed";
@@ -214,5 +258,4 @@ void TestGeometryUtility()
 	}
 }
 
-TestRegister Misc_TestGeometryUtility("Misc.TestGeometryUtility", []() -> void
-									  { TestGeometryUtility(); });
+TestRegister Misc_TestGeometryUtility("Misc.TestGeometryUtility", []() -> void { TestGeometryUtility(); });
