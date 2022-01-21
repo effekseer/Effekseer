@@ -22,6 +22,7 @@ set(effekseer_test_src
     Runtime/TextureFormats.cpp
     Runtime/Vertex.cpp
     Runtime/ResourceManager.cpp
+    Runtime/Misc.cpp
     Backend/Helper.h
     Backend/Helper.cpp
     Backend/Textures.cpp
