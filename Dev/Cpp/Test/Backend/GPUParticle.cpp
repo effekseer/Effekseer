@@ -1,4 +1,6 @@
+#ifdef _WIN32
 #include "../RenderingEnvironment/RenderingEnvironmentDX11.h"
+#endif
 #include "../RenderingEnvironment/RenderingEnvironmentGL.h"
 #include "../TestHelper.h"
 #include "Effekseer.h"
@@ -565,7 +567,9 @@ public:
 		}
 		else if (deviceType == GraphicsDeviceType::DirectX11)
 		{
+#ifdef _WIN32
 			window = std::make_shared<RenderingEnvironmentDX11>(std::array<int, 2>({windowWidth, windowHeight}), "Backend.GpuParticle");
+#endif
 		}
 		graphicsDevice = window->GetGraphicsDevice();
 		buffers.push_back(GpuParticleBuffer(graphicsDevice, texWidth, texHeight));
