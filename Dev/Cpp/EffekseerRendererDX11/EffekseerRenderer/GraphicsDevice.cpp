@@ -1387,6 +1387,18 @@ Effekseer::Backend::PipelineStateRef GraphicsDevice::CreatePipelineState(const E
 	return ret;
 }
 
+void GraphicsDevice::SetViewport(int32_t x, int32_t y, int32_t width, int32_t height)
+{
+	//D3D11_VIEWPORT vp;
+	//vp.TopLeftX = x;
+	//vp.TopLeftY = y;
+	//vp.Width = (float)width;
+	//vp.Height = (float)height;
+	//vp.MinDepth = 0.0f;
+	//vp.MaxDepth = 1.0f;
+	//context->RSSetViewports(1, &vp);
+}
+
 void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 {
 	if (drawParam.VertexBufferPtr == nullptr ||
