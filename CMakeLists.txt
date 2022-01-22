@@ -273,8 +273,7 @@ if(BUILD_VIEWER)
     if(WIN32)
     ExternalProject_Add(
         ExternalProject_glew
-        URL https://sourceforge.net/projects/glew/files/glew/1.13.0/glew-1.13.0.zip
-        DOWNLOAD_DIR    ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Download/glew
+        SOURCE_DIR      ${CMAKE_CURRENT_SOURCE_DIR}/Downloads/glew
         PREFIX          ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Build/glew
         INSTALL_DIR     ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glew
         PATCH_COMMAND   ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Dev/3rdPartyPatch/glew-CMakeLists.txt <SOURCE_DIR>/CMakeLists.txt
