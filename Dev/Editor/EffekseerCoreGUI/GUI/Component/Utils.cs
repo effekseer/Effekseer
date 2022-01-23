@@ -79,7 +79,7 @@ namespace Effekseer.GUI.Component
 		}
 	}
 
-	class Functions
+	public class Functions
 	{
 		public static string GetFilepathWithExtentions(string filepath, string extention)
 		{

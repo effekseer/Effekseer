@@ -101,16 +101,21 @@ namespace Effekseer.GUI.Dock
 			}
 
 			{
-				Manager.NativeManager.Text("Triggers:");
+				float spacing = Manager.NativeManager.GetStyleVar2(swig.ImGuiStyleVarFlags.ItemSpacing).X;
 				float buttonWidth = Manager.NativeManager.GetTextLineHeightWithSpacing();
 
 				for (int i = 0; i < 4; i++)
 				{
-					Manager.NativeManager.SameLine();
+					Manager.NativeManager.SameLine(0.0f, i == 0 ? spacing * 1.5f : spacing * 0.5f);
 
 					if (Manager.NativeManager.Button(i.ToString(), buttonWidth))
 					{
 						Manager.Viewer.SendTrigger(i);
+					}
+
+					if (Component.Functions.CanShowTip())
+					{
+						Manager.NativeManager.SetTooltip(Resources.GetString("SendTrigger_Desc"));
 					}
 				}
 			}

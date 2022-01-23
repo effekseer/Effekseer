@@ -343,3 +343,5 @@ ImportRemoveDirPath,Remove directory names from the path
 ImportAvoidOverwrite,Rename to avoid overwriting
 ImportMergeSameFiles,Rename same files to make them common
 ImportUseRootDir,Use the root directory
+,,
+SendTrigger_Desc,Send a trigger to the currently playing effect
