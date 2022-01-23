@@ -3,6 +3,7 @@
 %{
 #include "efk.Base.h"
 #include "GUI/efk.ImageResource.h"
+#include "Recorder/EffectRecorder.h"
 #include "dll.h"
 #include "GUI/efk.GUIManager.h"
 #include "GUI/efk.FileDialog.h"
@@ -94,6 +95,7 @@ class"
 %shared_ptr(Effekseer::StaticFile);
 %shared_ptr(Effekseer::IO);
 %shared_ptr(Effekseer::IOCallback);
+%shared_ptr(Effekseer::Tool::EffectRecorder);
 
 // Timeline
 %apply int *INOUT { int* frameMin }
@@ -110,6 +112,7 @@ class"
 %include "Cpp/Viewer/GUI/efk.ImageResource.h"
 %include "Cpp/Viewer/ViewerEffectBehavior.h"
 %include "Cpp/Viewer/Recorder/RecordingParameter.h"
+%include "Cpp/Viewer/Recorder/EffectRecorder.h"
 %include "Cpp/Viewer/dll.h"
 %include "Cpp/Viewer/GUI/efk.GUIManager.h"
 %include "Cpp/Viewer/GUI/efk.FileDialog.h"

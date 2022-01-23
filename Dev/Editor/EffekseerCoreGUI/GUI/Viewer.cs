@@ -118,7 +118,7 @@ namespace Effekseer.GUI
 			return true;
 		}
 
-		public bool RecordSprite(string path, swig.RecordingParameter recordingParameter)
+		public swig.EffectRecorder RecordSprite(string path, swig.RecordingParameter recordingParameter)
 		{
 			var dir = System.IO.Path.GetDirectoryName(path);
 			var fileWExt = System.IO.Path.GetFileNameWithoutExtension(path);
@@ -127,10 +127,10 @@ namespace Effekseer.GUI
             recordingParameter.SetPath(dir + "/" + fileWExt);
             recordingParameter.SetExt(ext);
             recordingParameter.RecordingMode = swig.RecordingModeType.Sprite;
-            return native.BeginRecord(recordingParameter);
+			return native.CreateRecorder(recordingParameter);
 		}
 
-		public bool RecordSpriteSheet(string path, swig.RecordingParameter recordingParameter)
+		public swig.EffectRecorder RecordSpriteSheet(string path, swig.RecordingParameter recordingParameter)
 		{
 			var dir = System.IO.Path.GetDirectoryName(path);
 			var fileWExt = System.IO.Path.GetFileNameWithoutExtension(path);
@@ -139,10 +139,10 @@ namespace Effekseer.GUI
 			recordingParameter.SetPath(dir + "/" + fileWExt);
 			recordingParameter.SetExt(ext);
 			recordingParameter.RecordingMode = swig.RecordingModeType.SpriteSheet;
-            return native.BeginRecord(recordingParameter);
+			return native.CreateRecorder(recordingParameter);
 		}
 
-		public bool RecordAsGifAnimation(string path, swig.RecordingParameter recordingParameter)
+		public swig.EffectRecorder RecordAsGifAnimation(string path, swig.RecordingParameter recordingParameter)
         {
 			var dir = System.IO.Path.GetDirectoryName(path);
 			var fileWExt = System.IO.Path.GetFileNameWithoutExtension(path);
@@ -151,10 +151,10 @@ namespace Effekseer.GUI
 			recordingParameter.SetPath(dir + "/" + fileWExt);
 			recordingParameter.SetExt(ext);
 			recordingParameter.RecordingMode = swig.RecordingModeType.Gif;
-            return native.BeginRecord(recordingParameter);
-        }
+			return native.CreateRecorder(recordingParameter);
+		}
 
-		public bool RecordAsAVI(string path, swig.RecordingParameter recordingParameter)
+		public swig.EffectRecorder RecordAsAVI(string path, swig.RecordingParameter recordingParameter)
         {
 			var dir = System.IO.Path.GetDirectoryName(path);
 			var fileWExt = System.IO.Path.GetFileNameWithoutExtension(path);
@@ -163,10 +163,10 @@ namespace Effekseer.GUI
 			recordingParameter.SetPath(dir + "/" + fileWExt);
 			recordingParameter.SetExt(ext);
 			recordingParameter.RecordingMode = swig.RecordingModeType.Avi;
-            return native.BeginRecord(recordingParameter);
-        }
+			return native.CreateRecorder(recordingParameter);
+		}
 
-		public bool RecordAsH264(string path, swig.RecordingParameter recordingParameter)
+		public swig.EffectRecorder RecordAsH264(string path, swig.RecordingParameter recordingParameter)
 		{
 			var dir = System.IO.Path.GetDirectoryName(path);
 			var fileWExt = System.IO.Path.GetFileNameWithoutExtension(path);
@@ -175,28 +175,7 @@ namespace Effekseer.GUI
 			recordingParameter.SetPath(dir + "/" + fileWExt);
 			recordingParameter.SetExt(ext);
 			recordingParameter.RecordingMode = swig.RecordingModeType.H264;
-			return native.BeginRecord(recordingParameter);
-		}
-
-
-		public bool EndRecord()
-		{
-			return native.EndRecord();
-		}
-
-		public bool StepRecord(int frames = 1)
-		{
-			return native.StepRecord(frames);
-		}
-
-		public bool IsRecordCompleted()
-		{
-			return native.IsRecordCompleted();
-		}
-	
-		public float GetRecordingProgress()
-		{
-			return native.GetRecordingProgress();
+			return native.CreateRecorder(recordingParameter);
 		}
 
 		public swig.ViewerParamater GetViewerParamater()

@@ -186,6 +186,7 @@
     <Compile Include="swig\DistortionType.cs" />
     <Compile Include="swig\DockNodeFlags.cs" />
     <Compile Include="swig\DockSplitDir.cs" />
+    <Compile Include="swig\EffectRecorder.cs" />
     <Compile Include="swig\EffekseerNative.cs" />
     <Compile Include="swig\EffekseerNativePINVOKE.cs" />
     <Compile Include="swig\FCurveEdgeType.cs" />

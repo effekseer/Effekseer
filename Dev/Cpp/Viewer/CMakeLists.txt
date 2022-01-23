@@ -38,7 +38,7 @@ list(APPEND cpps
     Graphics/RenderPass.cpp
     Graphics/StaticMeshRenderer.cpp
     Graphics/PostProcess.cpp
-    Recorder/Recorder.cpp
+    Recorder/EffectRecorder.cpp
     Recorder/AVIExporter.cpp
     Recorder/GifHelper.cpp
     Recorder/PNGHelper.cpp
@@ -50,7 +50,7 @@ list(APPEND hs
     Graphics/RenderPass.h
     Graphics/StaticMeshRenderer.h
     Graphics/PostProcess.h
-    Recorder/Recorder.h
+    Recorder/EffectRecorder.h
 )
 
 # OS Dependency

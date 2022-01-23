@@ -10,7 +10,7 @@ namespace Tool
 {
 class RecorderCallback;
 
-class Recorder
+class EffectRecorder
 {
 private:
 	std::shared_ptr<RecorderCallback> recorderCallback;
@@ -28,11 +28,13 @@ private:
 	bool completed = false;
 
 	std::shared_ptr<Effekseer::Tool::RenderedEffectGenerator> generator_;
-	std::shared_ptr<EffekseerTool::MainScreenRenderedEffectGenerator> mainScreen_;
 	efk::Graphics* graphics_ = nullptr;
 
 public:
+#if !SWIG
 	bool Begin(std::shared_ptr<EffekseerTool::MainScreenRenderedEffectGenerator> mainScreen,
+			   Effekseer::Tool::RenderedEffectGeneratorConfig config,
+			   Vector2DI screenSize,
 			   efk::Graphics* graphics,
 			   Effekseer::RefPtr<Effekseer::Setting> setting,
 			   const RecordingParameter& recordingParameter,
@@ -40,10 +42,10 @@ public:
 			   bool isSRGBMode,
 			   Effekseer::Tool::ViewerEffectBehavior behavior,
 			   Effekseer::EffectRef effect);
+#endif
+	bool Step(int frames);
 
-	bool Step(Native* native, int frames);
-
-	bool End(Native* native);
+	bool End();
 
 	bool IsCompleted() const;
 
