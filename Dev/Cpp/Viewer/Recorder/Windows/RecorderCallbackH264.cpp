@@ -284,7 +284,9 @@ void RecorderCallbackH264::OnEndFrameRecord(int index, std::vector<Effekseer::Co
 			const auto pixel = pixels[x + y * imageSize_.X];
 
 			auto p = reinterpret_cast<Effekseer::Color*>(buffer_.data());
-			p[x + (imageSize_.Y - 1 - y) * imageSize_.X + 0] = pixels[x + y * imageSize_.X];
+			auto c = pixels[x + y * imageSize_.X];
+			std::swap(c.R, c.B);
+			p[x + (imageSize_.Y - 1 - y) * imageSize_.X + 0] = c;
 		}
 	}
 
