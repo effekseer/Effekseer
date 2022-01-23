@@ -33,20 +33,22 @@ public:
 	// Identifier to use when referring to a node from the editor.
 	int32_t editorNodeId_ = 0;
 
-
 	static ::Effekseer::EffectNodeImplemented* FindNodeByEditorNodeId(::Effekseer::EffectImplemented* effect, int32_t editorNodeId)
 	{
 		auto* root = effect->GetRoot();
-		if (!root) return nullptr;
+		if (!root)
+			return nullptr;
 
 		::Effekseer::EffectNodeImplemented* result = nullptr;
 
 		const auto& visitor = [&](::Effekseer::EffectNodeImplemented* node) -> bool {
 			const auto userData = node->GetRenderingUserData();
-			if (userData != nullptr) {
+			if (userData != nullptr)
+			{
 				const auto* editorUserData = static_cast<EditorEffectNodeUserData*>(userData.Get());
 
-				if (editorUserData->editorNodeId_ == editorNodeId) {
+				if (editorUserData->editorNodeId_ == editorNodeId)
+				{
 					result = node;
 					return false;
 				}
@@ -843,7 +845,17 @@ bool Native::BeginRecord(const Effekseer::Tool::RecordingParameter& recordingPar
 		return false;
 
 	recorder.reset(new Effekseer::Tool::Recorder());
-	return recorder->Begin(mainScreen_, graphics_, setting_, recordingParameter, Effekseer::Tool::Vector2DI(mainScreen_->GuideWidth, mainScreen_->GuideHeight), mainScreen_->GetIsSRGBMode(), mainScreen_->GetBehavior(), effect_);
+	return recorder->Begin(
+		mainScreen_,
+		mainScreen_->GetConfig(),
+		mainScreen_->GetView()->GetSize(),
+		graphics_,
+		setting_,
+		recordingParameter,
+		Effekseer::Tool::Vector2DI(mainScreen_->GuideWidth, mainScreen_->GuideHeight),
+		mainScreen_->GetIsSRGBMode(),
+		behavior_,
+		effect_);
 }
 
 bool Native::StepRecord(int frames)
@@ -852,7 +864,7 @@ bool Native::StepRecord(int frames)
 	{
 		return false;
 	}
-	return recorder->Step(this, frames);
+	return recorder->Step(frames);
 }
 
 bool Native::EndRecord()
@@ -861,7 +873,7 @@ bool Native::EndRecord()
 	{
 		return false;
 	}
-	bool result = recorder->End(this);
+	bool result = recorder->End();
 	recorder.reset();
 	return true;
 }
@@ -1270,10 +1282,13 @@ bool Native::GetIsUpdateMaterialRequiredAndReset()
 
 bool Native::GetNodeLifeTimes(int32_t nodeId, int32_t* frameMin, int32_t* frameMax)
 {
-	if (!effect_.Get()) return false;
+	if (!effect_.Get())
+		return false;
 
-	if (auto* effect = dynamic_cast<Effekseer::EffectImplemented*>(effect_.Get())) {
-		if (auto* node = EditorEffectNodeUserData::FindNodeByEditorNodeId(effect, nodeId)) {
+	if (auto* effect = dynamic_cast<Effekseer::EffectImplemented*>(effect_.Get()))
+	{
+		if (auto* node = EditorEffectNodeUserData::FindNodeByEditorNodeId(effect, nodeId))
+		{
 			Effekseer::EffectInstanceTerm term;
 			auto cterm = node->CalculateInstanceTerm(term);
 			*frameMin = cterm.FirstInstanceStartMin;

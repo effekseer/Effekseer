@@ -304,6 +304,8 @@ public:
 };
 
 bool Recorder::Begin(std::shared_ptr<EffekseerTool::MainScreenRenderedEffectGenerator> mainScreen,
+					 Effekseer::Tool::RenderedEffectGeneratorConfig config,
+					 Vector2DI screenSize,
 					 efk::Graphics* graphics,
 					 Effekseer::RefPtr<Effekseer::Setting> setting,
 					 const RecordingParameter& recordingParameter,
@@ -312,7 +314,6 @@ bool Recorder::Begin(std::shared_ptr<EffekseerTool::MainScreenRenderedEffectGene
 					 Effekseer::Tool::ViewerEffectBehavior behavior,
 					 Effekseer::EffectRef effect)
 {
-	mainScreen_ = mainScreen;
 	graphics_ = graphics;
 	recordingParameter_ = recordingParameter;
 	int recScale = Effekseer::Max(1, recordingParameter.Scale);
@@ -401,15 +402,12 @@ bool Recorder::Begin(std::shared_ptr<EffekseerTool::MainScreenRenderedEffectGene
 
 	generator_ = std::make_shared<Effekseer::Tool::RenderedEffectGenerator>();
 
-	if (!generator_->Initialize(graphics_, setting, mainScreen_->GetRenderer()->GetSquareMaxCount(), isSRGBMode))
+	if (!generator_->Initialize(graphics_, setting, mainScreen->GetRenderer()->GetSquareMaxCount(), isSRGBMode))
 	{
 		return false;
 	}
 
 	generator_->Resize(imageSize_);
-
-	Effekseer::Tool::RenderedEffectGeneratorConfig config = mainScreen_->GetConfig();
-	auto screenSize = mainScreen_->GetView()->GetSize();
 
 	::Effekseer::Matrix44 mat;
 	mat.Values[0][0] = (float)screenSize.X / (float)imageSize.X;
@@ -430,15 +428,15 @@ bool Recorder::Begin(std::shared_ptr<EffekseerTool::MainScreenRenderedEffectGene
 	float bloomTh = 0.0f;
 	float bloomK = 0.0f;
 
-	mainScreen_->GetBloomEffect()->GetParameters(bloomIntencity, bloomTh, bloomK);
+	mainScreen->GetBloomEffect()->GetParameters(bloomIntencity, bloomTh, bloomK);
 	generator_->GetBloomEffect()->SetParameters(bloomIntencity, bloomTh, bloomK);
-	generator_->GetBloomEffect()->SetEnabled(mainScreen_->GetBloomEffect()->GetEnabled());
+	generator_->GetBloomEffect()->SetEnabled(mainScreen->GetBloomEffect()->GetEnabled());
 
 	efk::TonemapEffect::Algorithm toneA;
 	float toneE = 0.0f;
-	mainScreen_->GetTonemapEffect()->GetParameters(toneA, toneE);
+	mainScreen->GetTonemapEffect()->GetParameters(toneA, toneE);
 	generator_->GetTonemapEffect()->SetParameters(toneA, toneE);
-	generator_->GetTonemapEffect()->SetEnabled(mainScreen_->GetTonemapEffect()->GetEnabled());
+	generator_->GetTonemapEffect()->SetEnabled(mainScreen->GetTonemapEffect()->GetEnabled());
 
 	generator_->PlayEffect();
 	generator_->Update(recordingParameter_.OffsetFrame);
@@ -446,7 +444,7 @@ bool Recorder::Begin(std::shared_ptr<EffekseerTool::MainScreenRenderedEffectGene
 	return true;
 }
 
-bool Recorder::Step(Native* native, int frames)
+bool Recorder::Step(int frames)
 {
 	for (int32_t i = 0; i < frames; i++)
 	{
@@ -559,7 +557,7 @@ bool Recorder::Step(Native* native, int frames)
 	return true;
 }
 
-bool Recorder::End(Native* native)
+bool Recorder::End()
 {
 	generator_->Reset();
 

@@ -28,11 +28,12 @@ private:
 	bool completed = false;
 
 	std::shared_ptr<Effekseer::Tool::RenderedEffectGenerator> generator_;
-	std::shared_ptr<EffekseerTool::MainScreenRenderedEffectGenerator> mainScreen_;
 	efk::Graphics* graphics_ = nullptr;
 
 public:
 	bool Begin(std::shared_ptr<EffekseerTool::MainScreenRenderedEffectGenerator> mainScreen,
+			   Effekseer::Tool::RenderedEffectGeneratorConfig config,
+			   Vector2DI screenSize,
 			   efk::Graphics* graphics,
 			   Effekseer::RefPtr<Effekseer::Setting> setting,
 			   const RecordingParameter& recordingParameter,
@@ -41,9 +42,9 @@ public:
 			   Effekseer::Tool::ViewerEffectBehavior behavior,
 			   Effekseer::EffectRef effect);
 
-	bool Step(Native* native, int frames);
+	bool Step(int frames);
 
-	bool End(Native* native);
+	bool End();
 
 	bool IsCompleted() const;
 
