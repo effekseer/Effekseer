@@ -13,30 +13,15 @@
 
 #endif
 
-#ifdef _WIN32
-
-#include <gdiplus.h>
-
-#else
-
 #define Z_SOLO
 #include <png.h>
 //#include <pngstruct.h>
 //#include <pnginfo.h>
 
-#endif
-
 namespace efk
 {
 class PNGHelper
 {
-private:
-#ifdef _WIN32
-	std::vector<uint8_t> tempBuffer1;
-	Gdiplus::GdiplusStartupInput gdiplusStartupInput;
-	ULONG_PTR gdiplusToken;
-#endif
-
 public:
 	PNGHelper();
 
