@@ -952,7 +952,7 @@ namespace Effekseer.Binary
 					}
 				}
 
-				node_data.Add(CommonValues.GetBytes(n.CommonValues));
+				node_data.Add(CommonValues.GetBytes(n.CommonValues, exporterVersion));
 				node_data.Add(LocationValues.GetBytes(n.LocationValues, n.CommonValues.ScaleEffectType, curve_and_index, exporterVersion));
 
 				node_data.Add(LocationAbsValues.GetBytes(n.LocationAbsValues, n.CommonValues.ScaleEffectType, exporterVersion));

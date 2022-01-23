@@ -154,7 +154,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			}
 		}
 
-		if (ef->GetVersion() >= 1700)
+		if (ef->GetVersion() >= Version17Alpha1)
 		{
 			uint8_t flags = 0;
 			memcpy(&flags, pos, sizeof(uint8_t));
