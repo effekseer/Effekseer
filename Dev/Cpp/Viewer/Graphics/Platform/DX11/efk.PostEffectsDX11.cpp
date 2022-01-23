@@ -1,7 +1,3 @@
-#if _WIN32
-#define NOMINMAX
-#endif
-
 #include "efk.PostEffectsDX11.h"
 #include <algorithm>
 #include <spdlog/sinks/basic_file_sink.h>

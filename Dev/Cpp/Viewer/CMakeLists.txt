@@ -39,6 +39,9 @@ list(APPEND cpps
     Graphics/StaticMeshRenderer.cpp
     Graphics/PostProcess.cpp
     Recorder/Recorder.cpp
+    Recorder/AVIExporter.cpp
+    Recorder/GifHelper.cpp
+    Recorder/PNGHelper.cpp
 )
 
 list(APPEND hs
@@ -240,6 +243,10 @@ target_link_libraries(
 endif()
 
 add_definitions(-D__EFFEKSEER_VIEWER_BUILD_AS_CMAKE__)
+
+if (WIN32)
+    target_compile_definitions(Viewer PRIVATE NOMINMAX)
+endif()
 
 set_target_properties(Viewer PROPERTIES LINKER_LANGUAGE CXX)
 

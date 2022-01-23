@@ -1,10 +1,6 @@
 
-#include "Graphics/efk.AVIExporter.h"
-#include "Graphics/efk.GifHelper.h"
-#include "Graphics/efk.PNGHelper.h"
 #include "Recorder/Recorder.h"
 #include "RenderedEffectGenerator.h"
-#define NOMINMAX
 
 #ifdef _WIN32
 #include "Graphics/Platform/DX11/efk.GraphicsDX11.h"

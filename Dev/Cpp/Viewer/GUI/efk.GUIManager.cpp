@@ -1,5 +1,3 @@
-#define NOMINMAX
-
 #ifdef _WIN32
 #define GLEW_STATIC 1
 #include <GL/glew.h>

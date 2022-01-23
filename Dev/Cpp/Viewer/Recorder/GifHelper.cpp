@@ -1,4 +1,4 @@
-#include "efk.GifHelper.h"
+#include "GifHelper.h"
 #include <math.h>
 
 namespace efk

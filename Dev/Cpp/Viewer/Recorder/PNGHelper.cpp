@@ -1,4 +1,4 @@
-#include "efk.PNGHelper.h"
+#include "PNGHelper.h"
 
 namespace efk
 {

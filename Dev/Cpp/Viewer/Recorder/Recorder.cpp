@@ -9,9 +9,9 @@
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/spdlog.h>
 
-#include "../Graphics/efk.AVIExporter.h"
-#include "../Graphics/efk.GifHelper.h"
-#include "../Graphics/efk.PNGHelper.h"
+#include "AVIExporter.h"
+#include "GifHelper.h"
+#include "PNGHelper.h"
 
 #include <sstream>
 
