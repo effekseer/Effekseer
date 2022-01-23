@@ -63,7 +63,10 @@ void InstanceGroup::Initialize(RandObject& rand, Instance* parent)
 		m_maxGenerationCount = m_effectNode->CommonValues.MaxGeneration;
 	}
 
-	m_generationEnabled = m_effectNode->TriggerParam.GenerationEnabled;
+	if (m_effectNode->TriggerParam.ToStartGeneration.type == TriggerType::None)
+	{
+		m_generationState = GenerationState::Generating;
+	}
 }
 
 Instance* InstanceGroup::CreateRootInstance()
@@ -83,48 +86,44 @@ Instance* InstanceGroup::CreateRootInstance()
 //----------------------------------------------------------------------------------
 void InstanceGroup::GenerateInstancesInRequirred(float localTime, RandObject& rand, Instance* parent)
 {
-	if (m_effectNode->TriggerParam.ToStartGeneration.type != TriggerType::None)
+	if (m_generationState == GenerationState::BeforeStart &&
+		m_effectNode->TriggerParam.ToStartGeneration.type != TriggerType::None)
 	{
 		if (m_global->GetInputTriggerCount(m_effectNode->TriggerParam.ToStartGeneration.index) > 0)
 		{
-			m_generationEnabled = true;
-			m_generatedCount = 0;
+			m_generationState = GenerationState::Generating;
 			m_nextGenerationTime = m_generationOffsetTime + localTime;
 		}
 	}
-	if (m_effectNode->TriggerParam.ToStopGeneration.type != TriggerType::None)
+	if (m_generationState == GenerationState::Generating && 
+		m_effectNode->TriggerParam.ToStopGeneration.type != TriggerType::None)
 	{
 		if (m_global->GetInputTriggerCount(m_effectNode->TriggerParam.ToStopGeneration.index) > 0)
 		{
-			m_generationEnabled = false;
+			m_generationState = GenerationState::Ended;
 		}
 	}
 
-	while (true)
+	// GenerationTimeOffset can be minus value.
+	// Minus frame particles is generated simultaniously at frame 0.
+	while (m_generationState == GenerationState::Generating &&
+		m_maxGenerationCount > m_generatedCount &&
+		localTime >= m_nextGenerationTime)
 	{
-		// GenerationTimeOffset can be minus value.
-		// Minus frame particles is generated simultaniously at frame 0.
-		if (m_generationEnabled && m_maxGenerationCount > m_generatedCount && localTime >= m_nextGenerationTime)
+		// Create a particle
+		auto instance = m_manager->CreateInstance(m_effectNode, m_container, this);
+		if (instance != nullptr)
 		{
-			// Create a particle
-			auto instance = m_manager->CreateInstance(m_effectNode, m_container, this);
-			if (instance != nullptr)
-			{
-				m_instances.push_back(instance);
-				m_global->IncInstanceCount();
+			m_instances.push_back(instance);
+			m_global->IncInstanceCount();
 
-				instance->Initialize(parent, m_generatedCount, SIMD::Mat43f::Identity);
-			}
-
-			m_generatedCount++;
-
-			auto gt = ApplyEq(m_effectNode->GetEffect(), m_global, parent, &rand, m_effectNode->CommonValues.RefEqGenerationTime, m_effectNode->CommonValues.GenerationTime);
-			m_nextGenerationTime += Max(0.0f, gt.getValue(rand));
+			instance->Initialize(parent, m_generatedCount, SIMD::Mat43f::Identity);
 		}
-		else
-		{
-			break;
-		}
+
+		m_generatedCount++;
+
+		auto gt = ApplyEq(m_effectNode->GetEffect(), m_global, parent, &rand, m_effectNode->CommonValues.RefEqGenerationTime, m_effectNode->CommonValues.GenerationTime);
+		m_nextGenerationTime += Max(0.0f, gt.getValue(rand));
 	}
 }
 
@@ -285,7 +284,9 @@ void InstanceGroup::KillAllInstances()
 
 bool InstanceGroup::IsActive() const
 {
-	return GetInstanceCount() > 0 || (m_generationEnabled && m_generatedCount < m_maxGenerationCount);
+	return GetInstanceCount() > 0 || 
+		(m_generationState != GenerationState::Ended && 
+		m_generatedCount < m_maxGenerationCount);
 }
 
 //----------------------------------------------------------------------------------

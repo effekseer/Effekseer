@@ -16,6 +16,17 @@
 //----------------------------------------------------------------------------------
 namespace Effekseer
 {
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+enum class GenerationState
+{
+	BeforeStart,
+	Generating,
+	Ended,
+};
+	
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -36,7 +47,7 @@ private:
 	InstanceContainer* m_container = nullptr;
 	InstanceGlobal* m_global = nullptr;
 	
-	bool m_generationEnabled = true;
+	GenerationState m_generationState = GenerationState::BeforeStart;
 	
 	// The number of generated instances.
 	int32_t m_generatedCount = 0;

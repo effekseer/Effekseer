@@ -156,9 +156,6 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 
 		if (ef->GetVersion() >= 1700)
 		{
-			memcpy(&TriggerParam.GenerationEnabled, pos, sizeof(uint8_t));
-			pos += sizeof(uint8_t);
-
 			uint8_t flags = 0;
 			memcpy(&flags, pos, sizeof(uint8_t));
 			pos += sizeof(uint8_t);

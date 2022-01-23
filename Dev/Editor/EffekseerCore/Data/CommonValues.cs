@@ -115,13 +115,6 @@ namespace Effekseer.Data
 
 		public class TriggerParameter
 		{
-			[Key(key = "BasicSettings_Trigger_GenerationEnabled")]
-			public Value.Boolean GenerationEnabled
-			{
-				get;
-				private set;
-			}
-
 			[Key(key = "BasicSettings_Trigger_ToStartGeneration")]
 			public Value.Enum<TriggerType> ToStartGeneration
 			{
@@ -145,7 +138,6 @@ namespace Effekseer.Data
 
 			public TriggerParameter()
 			{
-				GenerationEnabled = new Value.Boolean(true);
 				ToStartGeneration = new Value.Enum<TriggerType>(TriggerType.None);
 				ToStopGeneration = new Value.Enum<TriggerType>(TriggerType.None);
 				ToRemove = new Value.Enum<TriggerType>(TriggerType.None);

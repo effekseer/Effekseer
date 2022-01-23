@@ -225,7 +225,6 @@ struct SteeringBehaviorParameter
 
 struct TriggerParameter
 {
-	bool GenerationEnabled = false;
 	TriggerValues ToStartGeneration;
 	TriggerValues ToStopGeneration;
 	TriggerValues ToRemove;

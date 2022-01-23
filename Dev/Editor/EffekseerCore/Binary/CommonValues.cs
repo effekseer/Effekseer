@@ -50,7 +50,6 @@ namespace Effekseer.Binary
 			}
 
 			// Trigger's parameters
-			data.Add(((byte)(value.TriggerParam.GenerationEnabled.GetValue() ? 1 : 0)).GetBytes());
 			int triggerFlags =
 				((value.TriggerParam.ToStartGeneration.Value != Data.TriggerType.None) ? (1 << 0) : 0) |
 				((value.TriggerParam.ToStopGeneration.Value != Data.TriggerType.None) ? (1 << 1) : 0) |
