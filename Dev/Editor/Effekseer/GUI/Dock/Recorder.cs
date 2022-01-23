@@ -34,9 +34,10 @@ namespace Effekseer.GUI.Dock
 			"2",
 		};
 
-
 		MultiLanguageString scale_name = new MultiLanguageString("Recording_Scale_Name");
 		MultiLanguageString scale_desc = new MultiLanguageString("Recording_Scale_Desc");
+
+		swig.EffectRecorder effectRecorder = null;
 
 		public Recorder()
 		{
@@ -65,6 +66,18 @@ namespace Effekseer.GUI.Dock
 			Label = Icons.PanelRecorder + Resources.GetString("Recorder") + "###Recorder";
 
 			TabToolTip = Resources.GetString("Recorder");
+		}
+
+		public override void OnDisposed()
+		{
+			if(effectRecorder != null)
+			{
+				effectRecorder.End();
+				effectRecorder.Dispose();
+				effectRecorder = null;
+			}
+
+			base.OnDisposed();
 		}
 
 		protected override void UpdateInternal()
@@ -438,39 +451,38 @@ namespace Effekseer.GUI.Dock
 
 					errorMessage = MultiLanguageTextProvider.GetText("Error_FailedToSave");
 
-					bool recordResult = false;
-
 					if (selectedTypeIndex == 0)
 					{
 						Utils.Logger.Write(string.Format("RecordSpriteSheet : {0}", filename));
 
-						recordResult = viewer.RecordSpriteSheet(filename, recordingParameter);
+						effectRecorder = viewer.RecordSpriteSheet(filename, recordingParameter);
 					}
 					else if (selectedTypeIndex == 1)
 					{
 						Utils.Logger.Write(string.Format("RecordSprite : {0}", filename));
 
-						recordResult = viewer.RecordSprite(filename, recordingParameter);
+						effectRecorder = viewer.RecordSprite(filename, recordingParameter);
 					}
 					else if (selectedTypeIndex == 2)
 					{
 						Utils.Logger.Write(string.Format("RecordAsGifAnimation : {0}", filename));
 
-						recordResult = viewer.RecordAsGifAnimation(filename, recordingParameter);
+						effectRecorder = viewer.RecordAsGifAnimation(filename, recordingParameter);
 					}
 					else if (selectedTypeIndex == 3)
 					{
 						Utils.Logger.Write(string.Format("RecordAsAVI : {0}", filename));
 
-						recordResult = viewer.RecordAsAVI(filename, recordingParameter);
+						effectRecorder = viewer.RecordAsAVI(filename, recordingParameter);
 					}
 					else if (selectedTypeIndex == 4)
 					{
 						Utils.Logger.Write(string.Format("RecordAsH264 : {0}", filename));
 
-						recordResult = viewer.RecordAsH264(filename, recordingParameter);
+						effectRecorder = viewer.RecordAsH264(filename, recordingParameter);
 					}
-					if (recordResult)
+
+					if (effectRecorder != null)
 					{
 						Manager.NativeManager.OpenPopup("###RecorderProgress");
 					}
@@ -500,17 +512,20 @@ namespace Effekseer.GUI.Dock
 				var viewer = Manager.Viewer;
 				float progress;
 
-				viewer.StepRecord(4);
+				effectRecorder.Step(4);
 
-				if (viewer.IsRecordCompleted())
+				if (effectRecorder.IsCompleted())
 				{
-					viewer.EndRecord();
+					effectRecorder.End();
+					effectRecorder.Dispose();
+					effectRecorder = null;
+
 					progress = 1.0f;
 					Manager.NativeManager.CloseCurrentPopup();
 				}
 				else
 				{
-					progress = viewer.GetRecordingProgress();
+					progress = effectRecorder.GetProgress();
 				}
 
 				Manager.NativeManager.PushItemWidth(-1);
@@ -525,7 +540,9 @@ namespace Effekseer.GUI.Dock
 				Manager.NativeManager.SetCursorPosX(Manager.NativeManager.GetContentRegionAvail().X / 2 - buttonWidth / 2 + 8 * dpiScale);
 				if (Manager.NativeManager.Button(Resources.GetString("RecorderAbort"), buttonWidth))
 				{
-					viewer.EndRecord();
+					effectRecorder.End();
+					effectRecorder.Dispose();
+					effectRecorder = null;
 					Manager.NativeManager.CloseCurrentPopup();
 				}
 

@@ -1,5 +1,5 @@
 
-#include "Recorder/Recorder.h"
+#include "Recorder/EffectRecorder.h"
 #include "RenderedEffectGenerator.h"
 
 #ifdef _WIN32
@@ -839,81 +839,28 @@ void* Native::RenderView(int32_t width, int32_t height)
 	return (void*)mainScreen_->GetView()->GetViewID();
 }
 
-bool Native::BeginRecord(const Effekseer::Tool::RecordingParameter& recordingParameter)
+std::shared_ptr<Effekseer::Tool::EffectRecorder> Native::CreateRecorder(const Effekseer::Tool::RecordingParameter& recordingParameter)
 {
 	if (effect_ == nullptr)
-		return false;
+		return nullptr;
 
-	recorder.reset(new Effekseer::Tool::Recorder());
-	return recorder->Begin(
-		mainScreen_,
-		mainScreen_->GetConfig(),
-		mainScreen_->GetView()->GetSize(),
-		graphics_,
-		setting_,
-		recordingParameter,
-		Effekseer::Tool::Vector2DI(mainScreen_->GuideWidth, mainScreen_->GuideHeight),
-		mainScreen_->GetIsSRGBMode(),
-		behavior_,
-		effect_);
-}
-
-bool Native::StepRecord(int frames)
-{
-	if (recorder == nullptr)
+	auto recorder = std::make_shared<Effekseer::Tool::EffectRecorder>();
+	if (recorder->Begin(
+			mainScreen_,
+			mainScreen_->GetConfig(),
+			mainScreen_->GetView()->GetSize(),
+			graphics_,
+			setting_,
+			recordingParameter,
+			Effekseer::Tool::Vector2DI(mainScreen_->GuideWidth, mainScreen_->GuideHeight),
+			mainScreen_->GetIsSRGBMode(),
+			mainScreen_->GetBehavior(),
+			effect_))
 	{
-		return false;
-	}
-	return recorder->Step(frames);
-}
-
-bool Native::EndRecord()
-{
-	if (recorder == nullptr)
-	{
-		return false;
-	}
-	bool result = recorder->End();
-	recorder.reset();
-	return true;
-}
-
-bool Native::IsRecording() const
-{
-	return recorder != nullptr;
-}
-
-float Native::GetRecordingProgress() const
-{
-	return (recorder) ? recorder->GetProgress() : 0.0f;
-}
-
-bool Native::IsRecordCompleted() const
-{
-	return (recorder) ? recorder->IsCompleted() : false;
-}
-
-bool Native::Record(const Effekseer::Tool::RecordingParameter& recordingParameter)
-{
-	if (BeginRecord(recordingParameter) == false)
-	{
-		return false;
+		return recorder;
 	}
 
-	while (!IsRecordCompleted())
-	{
-		if (StepRecord(1) == false)
-		{
-			break;
-		}
-	}
-
-	if (EndRecord() == false)
-	{
-		return false;
-	}
-
-	return true;
+	return nullptr;
 }
 
 ViewerParamater Native::GetViewerParamater()

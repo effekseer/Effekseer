@@ -4,7 +4,7 @@
 #include "Windows/RecorderCallbackH264.h"
 #endif
 
-#include "Recorder.h"
+#include "EffectRecorder.h"
 
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/spdlog.h>
@@ -303,7 +303,7 @@ public:
 	}
 };
 
-bool Recorder::Begin(std::shared_ptr<EffekseerTool::MainScreenRenderedEffectGenerator> mainScreen,
+bool EffectRecorder::Begin(std::shared_ptr<EffekseerTool::MainScreenRenderedEffectGenerator> mainScreen,
 					 Effekseer::Tool::RenderedEffectGeneratorConfig config,
 					 Vector2DI screenSize,
 					 efk::Graphics* graphics,
@@ -444,7 +444,7 @@ bool Recorder::Begin(std::shared_ptr<EffekseerTool::MainScreenRenderedEffectGene
 	return true;
 }
 
-bool Recorder::Step(int frames)
+bool EffectRecorder::Step(int frames)
 {
 	for (int32_t i = 0; i < frames; i++)
 	{
@@ -557,7 +557,7 @@ bool Recorder::Step(int frames)
 	return true;
 }
 
-bool Recorder::End()
+bool EffectRecorder::End()
 {
 	generator_->Reset();
 
@@ -573,12 +573,12 @@ bool Recorder::End()
 	return true;
 }
 
-bool Recorder::IsCompleted() const
+bool EffectRecorder::IsCompleted() const
 {
 	return recordedCount >= recordingParameter_.Count;
 }
 
-float Recorder::GetProgress() const
+float EffectRecorder::GetProgress() const
 {
 	return static_cast<float>(recordedCount) / static_cast<float>(recordingParameter_.Count);
 }

@@ -23,7 +23,7 @@ namespace Effekseer
 {
 namespace Tool
 {
-class Recorder;
+class EffectRecorder;
 }
 } // namespace Effekseer
 
@@ -172,8 +172,6 @@ private:
 
 	bool isUpdateMaterialRequired_ = false;
 
-	std::unique_ptr<Effekseer::Tool::Recorder> recorder;
-
 	efk::Graphics* graphics_ = nullptr;
 
 	Effekseer::RefPtr<Effekseer::Setting> setting_;
@@ -241,19 +239,7 @@ public:
 
 	void* RenderView(int32_t width, int32_t height);
 
-	bool BeginRecord(const Effekseer::Tool::RecordingParameter & recordingParameter);
-
-	bool StepRecord(int frames);
-
-	bool EndRecord();
-
-	bool IsRecording() const;
-
-	float GetRecordingProgress() const;
-
-	bool IsRecordCompleted() const;
-
-	bool Record(const Effekseer::Tool::RecordingParameter& recordingParameter);
+	std::shared_ptr<Effekseer::Tool::EffectRecorder> CreateRecorder(const Effekseer::Tool::RecordingParameter & recordingParameter);
 
 	ViewerParamater GetViewerParamater();
 
@@ -333,3 +319,4 @@ public:
 	const EffekseerRenderer::RendererRef& GetRenderer();
 #endif
 };
+

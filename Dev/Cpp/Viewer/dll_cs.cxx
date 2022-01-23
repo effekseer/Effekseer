@@ -380,6 +380,7 @@ namespace Swig {
 
 #include "efk.Base.h"
 #include "GUI/efk.ImageResource.h"
+#include "Recorder/EffectRecorder.h"
 #include "dll.h"
 #include "GUI/efk.GUIManager.h"
 #include "GUI/efk.FileDialog.h"
@@ -1832,6 +1833,91 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_RecordingParameter___(v
 }
 
 
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_EffectRecorder_Step___(void * jarg1, int jarg2) {
+  unsigned int jresult ;
+  Effekseer::Tool::EffectRecorder *arg1 = (Effekseer::Tool::EffectRecorder *) 0 ;
+  int arg2 ;
+  std::shared_ptr< Effekseer::Tool::EffectRecorder > *smartarg1 = 0 ;
+  bool result;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::Tool::EffectRecorder > *)jarg1;
+  arg1 = (Effekseer::Tool::EffectRecorder *)(smartarg1 ? smartarg1->get() : 0); 
+  arg2 = (int)jarg2; 
+  result = (bool)(arg1)->Step(arg2);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_EffectRecorder_End___(void * jarg1) {
+  unsigned int jresult ;
+  Effekseer::Tool::EffectRecorder *arg1 = (Effekseer::Tool::EffectRecorder *) 0 ;
+  std::shared_ptr< Effekseer::Tool::EffectRecorder > *smartarg1 = 0 ;
+  bool result;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::Tool::EffectRecorder > *)jarg1;
+  arg1 = (Effekseer::Tool::EffectRecorder *)(smartarg1 ? smartarg1->get() : 0); 
+  result = (bool)(arg1)->End();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_EffectRecorder_IsCompleted___(void * jarg1) {
+  unsigned int jresult ;
+  Effekseer::Tool::EffectRecorder *arg1 = (Effekseer::Tool::EffectRecorder *) 0 ;
+  std::shared_ptr< Effekseer::Tool::EffectRecorder const > *smartarg1 = 0 ;
+  bool result;
+  
+  
+  smartarg1 = (std::shared_ptr< const Effekseer::Tool::EffectRecorder > *)jarg1;
+  arg1 = (Effekseer::Tool::EffectRecorder *)(smartarg1 ? smartarg1->get() : 0); 
+  result = (bool)((Effekseer::Tool::EffectRecorder const *)arg1)->IsCompleted();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_EffectRecorder_GetProgress___(void * jarg1) {
+  float jresult ;
+  Effekseer::Tool::EffectRecorder *arg1 = (Effekseer::Tool::EffectRecorder *) 0 ;
+  std::shared_ptr< Effekseer::Tool::EffectRecorder const > *smartarg1 = 0 ;
+  float result;
+  
+  
+  smartarg1 = (std::shared_ptr< const Effekseer::Tool::EffectRecorder > *)jarg1;
+  arg1 = (Effekseer::Tool::EffectRecorder *)(smartarg1 ? smartarg1->get() : 0); 
+  result = (float)((Effekseer::Tool::EffectRecorder const *)arg1)->GetProgress();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_EffectRecorder___() {
+  void * jresult ;
+  Effekseer::Tool::EffectRecorder *result = 0 ;
+  
+  result = (Effekseer::Tool::EffectRecorder *)new Effekseer::Tool::EffectRecorder();
+  
+  jresult = result ? new std::shared_ptr<  Effekseer::Tool::EffectRecorder >(result SWIG_NO_NULL_DELETER_1) : 0;
+  
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_EffectRecorder___(void * jarg1) {
+  Effekseer::Tool::EffectRecorder *arg1 = (Effekseer::Tool::EffectRecorder *) 0 ;
+  std::shared_ptr< Effekseer::Tool::EffectRecorder > *smartarg1 = 0 ;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::Tool::EffectRecorder > *)jarg1;
+  arg1 = (Effekseer::Tool::EffectRecorder *)(smartarg1 ? smartarg1->get() : 0); 
+  (void)arg1; delete smartarg1;
+}
+
+
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_GuideWidth_set___(void * jarg1, int jarg2) {
   ViewerParamater *arg1 = (ViewerParamater *) 0 ;
   int32_t arg2 ;
@@ -2608,11 +2694,11 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_Native_RenderView___(void * 
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_BeginRecord___(void * jarg1, void * jarg2) {
-  unsigned int jresult ;
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_Native_CreateRecorder___(void * jarg1, void * jarg2) {
+  void * jresult ;
   Native *arg1 = (Native *) 0 ;
   Effekseer::Tool::RecordingParameter *arg2 = 0 ;
-  bool result;
+  std::shared_ptr< Effekseer::Tool::EffectRecorder > result;
   
   arg1 = (Native *)jarg1; 
   arg2 = (Effekseer::Tool::RecordingParameter *)jarg2;
@@ -2620,88 +2706,8 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_BeginRecord___(
     SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Effekseer::Tool::RecordingParameter const & type is null", 0);
     return 0;
   } 
-  result = (bool)(arg1)->BeginRecord((Effekseer::Tool::RecordingParameter const &)*arg2);
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_StepRecord___(void * jarg1, int jarg2) {
-  unsigned int jresult ;
-  Native *arg1 = (Native *) 0 ;
-  int arg2 ;
-  bool result;
-  
-  arg1 = (Native *)jarg1; 
-  arg2 = (int)jarg2; 
-  result = (bool)(arg1)->StepRecord(arg2);
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_EndRecord___(void * jarg1) {
-  unsigned int jresult ;
-  Native *arg1 = (Native *) 0 ;
-  bool result;
-  
-  arg1 = (Native *)jarg1; 
-  result = (bool)(arg1)->EndRecord();
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_IsRecording___(void * jarg1) {
-  unsigned int jresult ;
-  Native *arg1 = (Native *) 0 ;
-  bool result;
-  
-  arg1 = (Native *)jarg1; 
-  result = (bool)((Native const *)arg1)->IsRecording();
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_Native_GetRecordingProgress___(void * jarg1) {
-  float jresult ;
-  Native *arg1 = (Native *) 0 ;
-  float result;
-  
-  arg1 = (Native *)jarg1; 
-  result = (float)((Native const *)arg1)->GetRecordingProgress();
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_IsRecordCompleted___(void * jarg1) {
-  unsigned int jresult ;
-  Native *arg1 = (Native *) 0 ;
-  bool result;
-  
-  arg1 = (Native *)jarg1; 
-  result = (bool)((Native const *)arg1)->IsRecordCompleted();
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_Record___(void * jarg1, void * jarg2) {
-  unsigned int jresult ;
-  Native *arg1 = (Native *) 0 ;
-  Effekseer::Tool::RecordingParameter *arg2 = 0 ;
-  bool result;
-  
-  arg1 = (Native *)jarg1; 
-  arg2 = (Effekseer::Tool::RecordingParameter *)jarg2;
-  if (!arg2) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Effekseer::Tool::RecordingParameter const & type is null", 0);
-    return 0;
-  } 
-  result = (bool)(arg1)->Record((Effekseer::Tool::RecordingParameter const &)*arg2);
-  jresult = result; 
+  result = (arg1)->CreateRecorder((Effekseer::Tool::RecordingParameter const &)*arg2);
+  jresult = result ? new std::shared_ptr< Effekseer::Tool::EffectRecorder >(result) : 0; 
   return jresult;
 }
 
@@ -2746,15 +2752,17 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_Native_GetEffectBehavior___(
 
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_SetViewerEffectBehavior___(void * jarg1, void * jarg2) {
   Native *arg1 = (Native *) 0 ;
-  Effekseer::Tool::ViewerEffectBehavior *arg2 = 0 ;
+  Effekseer::Tool::ViewerEffectBehavior arg2 ;
+  Effekseer::Tool::ViewerEffectBehavior *argp2 ;
   
   arg1 = (Native *)jarg1; 
-  arg2 = (Effekseer::Tool::ViewerEffectBehavior *)jarg2;
-  if (!arg2) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Effekseer::Tool::ViewerEffectBehavior & type is null", 0);
+  argp2 = (Effekseer::Tool::ViewerEffectBehavior *)jarg2; 
+  if (!argp2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Attempt to dereference null Effekseer::Tool::ViewerEffectBehavior", 0);
     return ;
-  } 
-  (arg1)->SetViewerEffectBehavior(*arg2);
+  }
+  arg2 = *argp2; 
+  (arg1)->SetViewerEffectBehavior(arg2);
 }
 
 

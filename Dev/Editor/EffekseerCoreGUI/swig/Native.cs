@@ -131,39 +131,9 @@ public class Native : global::System.IDisposable {
 
   public System.IntPtr RenderView(int width, int height) { return EffekseerNativePINVOKE.Native_RenderView(swigCPtr, width, height); }
 
-  public bool BeginRecord(RecordingParameter recordingParameter) {
-    bool ret = EffekseerNativePINVOKE.Native_BeginRecord(swigCPtr, RecordingParameter.getCPtr(recordingParameter));
-    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
-    return ret;
-  }
-
-  public bool StepRecord(int frames) {
-    bool ret = EffekseerNativePINVOKE.Native_StepRecord(swigCPtr, frames);
-    return ret;
-  }
-
-  public bool EndRecord() {
-    bool ret = EffekseerNativePINVOKE.Native_EndRecord(swigCPtr);
-    return ret;
-  }
-
-  public bool IsRecording() {
-    bool ret = EffekseerNativePINVOKE.Native_IsRecording(swigCPtr);
-    return ret;
-  }
-
-  public float GetRecordingProgress() {
-    float ret = EffekseerNativePINVOKE.Native_GetRecordingProgress(swigCPtr);
-    return ret;
-  }
-
-  public bool IsRecordCompleted() {
-    bool ret = EffekseerNativePINVOKE.Native_IsRecordCompleted(swigCPtr);
-    return ret;
-  }
-
-  public bool Record(RecordingParameter recordingParameter) {
-    bool ret = EffekseerNativePINVOKE.Native_Record(swigCPtr, RecordingParameter.getCPtr(recordingParameter));
+  public EffectRecorder CreateRecorder(RecordingParameter recordingParameter) {
+    global::System.IntPtr cPtr = EffekseerNativePINVOKE.Native_CreateRecorder(swigCPtr, RecordingParameter.getCPtr(recordingParameter));
+    EffectRecorder ret = (cPtr == global::System.IntPtr.Zero) ? null : new EffectRecorder(cPtr, true);
     if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
