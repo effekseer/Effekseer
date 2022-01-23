@@ -427,6 +427,19 @@ namespace Effekseer.GUI
 			native.SetViewerEffectBehavior(behavior);
 		}
 
+		public void SendTrigger(int index)
+		{
+			var behavior = native.GetEffectBehavior();
+			switch (index)
+			{
+				case 0: behavior.TriggerInput0 = true; break;
+				case 1: behavior.TriggerInput1 = true; break;
+				case 2: behavior.TriggerInput2 = true; break;
+				case 3: behavior.TriggerInput3 = true; break;
+			}
+			native.SetViewerEffectBehavior(behavior);
+		}
+
 		public bool ShowViewer(IntPtr handle, int width, int height, swig.DeviceType deviceType)
 		{
 			if (isViewerShown) return false;

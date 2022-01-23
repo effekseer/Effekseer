@@ -154,6 +154,29 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			}
 		}
 
+		if (ef->GetVersion() >= Version17Alpha1)
+		{
+			uint8_t flags = 0;
+			memcpy(&flags, pos, sizeof(uint8_t));
+			pos += sizeof(uint8_t);
+
+			if (flags & (1 << 0))
+			{
+				memcpy(&TriggerParam.ToStartGeneration, pos, sizeof(TriggerValues));
+				pos += sizeof(TriggerValues);
+			}
+			if (flags & (1 << 1))
+			{
+				memcpy(&TriggerParam.ToStopGeneration, pos, sizeof(TriggerValues));
+				pos += sizeof(TriggerValues);
+			}
+			if (flags & (1 << 2))
+			{
+				memcpy(&TriggerParam.ToRemove, pos, sizeof(TriggerValues));
+				pos += sizeof(TriggerValues);
+			}
+		}
+
 		memcpy(&TranslationType, pos, sizeof(int));
 		pos += sizeof(int);
 
@@ -1115,17 +1138,30 @@ float EffectNodeImplemented::GetFadeAlpha(const Instance& instance)
 		alpha *= v;
 	}
 
-	if (RendererCommon.FadeOutType == ParameterRendererCommon::FADEOUT_ON &&
-		instance.m_LivingTime + RendererCommon.FadeOut.Frame > instance.m_LivedTime)
+	if (RendererCommon.FadeOutType == ParameterRendererCommon::FADEOUT_WITHIN_LIFETIME)
 	{
-		float v = 1.0f;
-		RendererCommon.FadeOut.Value.setValueToArg(v,
-												   1.0f,
-												   0.0f,
-												   (float)(instance.m_LivingTime + RendererCommon.FadeOut.Frame - instance.m_LivedTime) /
-													   (float)RendererCommon.FadeOut.Frame);
+		if (instance.m_LivingTime + RendererCommon.FadeOut.Frame > instance.m_LivedTime)
+		{
+			float v = 1.0f;
+			RendererCommon.FadeOut.Value.setValueToArg(v,
+													   1.0f,
+													   0.0f,
+													   (float)(instance.m_LivingTime + RendererCommon.FadeOut.Frame - instance.m_LivedTime) /
+														   (float)RendererCommon.FadeOut.Frame);
 
-		alpha *= v;
+			alpha *= v;
+		}
+	}
+	else if (RendererCommon.FadeOutType == ParameterRendererCommon::FADEOUT_AFTER_REMOVED)
+	{
+		if (instance.IsActive())
+		{
+			float v = 1.0f;
+			RendererCommon.FadeOut.Value.setValueToArg(v,
+				1.0f, 0.0f, instance.m_RemovingTime / RendererCommon.FadeOut.Frame);
+
+			alpha *= v;
+		}
 	}
 
 	return Clamp(alpha, 1.0f, 0.0f);

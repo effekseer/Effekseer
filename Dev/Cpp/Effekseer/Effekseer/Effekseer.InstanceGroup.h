@@ -16,6 +16,17 @@
 //----------------------------------------------------------------------------------
 namespace Effekseer
 {
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+enum class GenerationState
+{
+	BeforeStart,
+	Generating,
+	Ended,
+};
+	
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -35,8 +46,9 @@ private:
 	EffectNodeImplemented* m_effectNode = nullptr;
 	InstanceContainer* m_container = nullptr;
 	InstanceGlobal* m_global = nullptr;
-	//int32_t m_time = 0;
-
+	
+	GenerationState m_generationState = GenerationState::BeforeStart;
+	
 	// The number of generated instances.
 	int32_t m_generatedCount = 0;
 
@@ -45,6 +57,7 @@ private:
 
 	// The time to generate next instance.
 	float m_nextGenerationTime = 0.0f;
+	float m_generationOffsetTime = 0.0f;
 
 	SIMD::Mat43f parentMatrix_;
 	SIMD::Mat43f parentRotation_;

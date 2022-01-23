@@ -499,6 +499,13 @@ public:
 	virtual void SetDynamicInput(Handle handle, int32_t index, float value) = 0;
 
 	/**
+		@brief
+		\~English Sends the specified trigger to the currently playing effect.
+		\~Japanese トリガーを再生中のエフェクトに送信します。
+	*/
+	virtual void SendTrigger(Handle handle, int32_t index) = 0;
+
+	/**
 		@brief	エフェクトのベース行列を取得する。
 		@param	handle	[in]	インスタンスのハンドル
 		@return	ベース行列

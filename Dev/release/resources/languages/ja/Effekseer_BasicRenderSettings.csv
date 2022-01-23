@@ -60,10 +60,10 @@ BRS_FadeOut_StartSpeed_Name,始点速度
 BRS_FadeOut_StartSpeed_Desc,始点速度
 BRS_FadeOut_EndSpeed_Name,終点速度
 BRS_FadeOut_EndSpeed_Desc,終点速度
-FadeType_Use_Name,有り
 FadeType_None_Name,無し
 FadeType_Use_Name,有り
-FadeType_None_Name,無し
+FadeType_WithinLifetime_Name,生存時間内にフェードアウト
+FadeType_AfterRemoved_Name,削除後にフェードアウト
 UVType_Default_Name,標準
 UVType_Fixed_Name,固定
 UVType_Animation_Name,アニメーション

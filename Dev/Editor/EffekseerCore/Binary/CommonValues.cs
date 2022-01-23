@@ -32,7 +32,7 @@ namespace Effekseer.Binary
 		public float CreationTimeOffset_Max;
 		public float CreationTimeOffset_Min;
 
-		public static byte[] GetBytes(Data.CommonValues value)
+		public static byte[] GetBytes(Data.CommonValues value, ExporterVersion version)
 		{
 			List<byte[]> data = new List<byte[]>();
 
@@ -47,6 +47,29 @@ namespace Effekseer.Binary
 				data.Add(value.SteeringBehaviorParam.MaxFollowSpeed.Min.GetBytes());
 				data.Add(value.SteeringBehaviorParam.SteeringSpeed.Max.GetBytes());
 				data.Add(value.SteeringBehaviorParam.SteeringSpeed.Min.GetBytes());
+			}
+
+			if(version >= ExporterVersion.Ver17Alpha1)
+			{
+				// Trigger's parameters
+				int triggerFlags =
+					((value.TriggerParam.ToStartGeneration.Value != Data.TriggerType.None) ? (1 << 0) : 0) |
+					((value.TriggerParam.ToStopGeneration.Value != Data.TriggerType.None) ? (1 << 1) : 0) |
+					((value.TriggerParam.ToRemove.Value != Data.TriggerType.None) ? (1 << 2) : 0);
+				data.Add(((byte)triggerFlags).GetBytes());
+
+				if (value.TriggerParam.ToStartGeneration.Value != Data.TriggerType.None)
+				{
+					data.Add(((ushort)value.TriggerParam.ToStartGeneration.GetValue()).GetBytes());
+				}
+				if (value.TriggerParam.ToStopGeneration.Value != Data.TriggerType.None)
+				{
+					data.Add(((ushort)value.TriggerParam.ToStopGeneration.GetValue()).GetBytes());
+				}
+				if (value.TriggerParam.ToRemove.Value != Data.TriggerType.None)
+				{
+					data.Add(((ushort)value.TriggerParam.ToRemove.GetValue()).GetBytes());
+				}
 			}
 
 			return data.ToArray().ToArray();

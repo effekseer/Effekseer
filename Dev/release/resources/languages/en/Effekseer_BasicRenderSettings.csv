@@ -61,10 +61,10 @@ BRS_FadeOut_StartSpeed_Name,Ease In
 BRS_FadeOut_StartSpeed_Desc,Initial speed (of the tween)
 BRS_FadeOut_EndSpeed_Name,Ease Out
 BRS_FadeOut_EndSpeed_Desc,Final speed (of the tween)
-FadeType_Use_Name,Enabled
 FadeType_None_Name,Disabled
 FadeType_Use_Name,Enabled
-FadeType_None_Name,Disabled
+FadeType_WithinLifetime_Name,Fadeout within lifetime
+FadeType_AfterRemoved_Name,Fadeout after destroyed
 UVType_Default_Name,Standard
 UVType_Fixed_Name,Fixed
 UVType_Animation_Name,Animation

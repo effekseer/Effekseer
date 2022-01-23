@@ -362,6 +362,8 @@ public:
 
 	void SetDynamicInput(Handle handle, int32_t index, float value) override;
 
+	void SendTrigger(Handle handle, int32_t index) override;
+
 	Matrix43 GetBaseMatrix(Handle handle) override;
 
 	void SetBaseMatrix(Handle handle, const Matrix43& mat) override;

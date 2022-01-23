@@ -33,6 +33,7 @@ InstanceGlobal::InstanceGlobal()
 	, m_rootContainer(nullptr)
 {
 	dynamicInputParameters.fill(0);
+	m_inputTriggerCounts.fill(0);
 }
 
 //----------------------------------------------------------------------------------
@@ -56,12 +57,34 @@ void InstanceGlobal::EndDeltaFrame()
 {
 	m_updatedFrame += nextDeltaFrame_;
 	nextDeltaFrame_ = 0.0f;
+
+	// Reset the all trigger's count
+	m_inputTriggerCounts.fill(0);
 }
 
 std::array<float, 4> InstanceGlobal::GetDynamicEquationResult(int32_t index)
 {
 	assert(0 <= index && index < dynamicEqResults.size());
 	return dynamicEqResults[index];
+}
+
+uint32_t InstanceGlobal::GetInputTriggerCount(uint32_t index) const
+{
+	if (index < m_inputTriggerCounts.size())
+	{
+		return m_inputTriggerCounts[index];
+	}
+	return 0;
+}
+
+void InstanceGlobal::AddInputTriggerCount(uint32_t index)
+{
+	if (index < m_inputTriggerCounts.size())
+	{
+		m_inputTriggerCounts[index] = (uint8_t)Min(
+			(uint32_t)m_inputTriggerCounts[index] + 1, 
+			(uint32_t)std::numeric_limits<uint8_t>::max());
+	}
 }
 
 //----------------------------------------------------------------------------------

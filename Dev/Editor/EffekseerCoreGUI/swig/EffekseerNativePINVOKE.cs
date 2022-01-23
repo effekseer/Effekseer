@@ -477,6 +477,30 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerEffectBehavior_PlaybackSpeed_get___")]
   public static extern float ViewerEffectBehavior_PlaybackSpeed_get(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerEffectBehavior_TriggerInput0_set___")]
+  public static extern void ViewerEffectBehavior_TriggerInput0_set(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerEffectBehavior_TriggerInput0_get___")]
+  public static extern bool ViewerEffectBehavior_TriggerInput0_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerEffectBehavior_TriggerInput1_set___")]
+  public static extern void ViewerEffectBehavior_TriggerInput1_set(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerEffectBehavior_TriggerInput1_get___")]
+  public static extern bool ViewerEffectBehavior_TriggerInput1_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerEffectBehavior_TriggerInput2_set___")]
+  public static extern void ViewerEffectBehavior_TriggerInput2_set(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerEffectBehavior_TriggerInput2_get___")]
+  public static extern bool ViewerEffectBehavior_TriggerInput2_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerEffectBehavior_TriggerInput3_set___")]
+  public static extern void ViewerEffectBehavior_TriggerInput3_set(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerEffectBehavior_TriggerInput3_get___")]
+  public static extern bool ViewerEffectBehavior_TriggerInput3_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_ViewerEffectBehavior___")]
   public static extern global::System.IntPtr new_ViewerEffectBehavior();
 

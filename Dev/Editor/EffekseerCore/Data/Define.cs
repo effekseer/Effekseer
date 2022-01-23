@@ -224,6 +224,20 @@ namespace Effekseer.Data
 		Fixed = 0,
 	}
 
+	public enum TriggerType : int
+	{
+		[Key(key = "TriggerType_None")]
+		None = 0,
+		[Key(key = "TriggerType_Trigger0")]
+		Trigger0 = 1 + (0 << 8),
+		[Key(key = "TriggerType_Trigger1")]
+		Trigger1 = 1 + (1 << 8),
+		[Key(key = "TriggerType_Trigger2")]
+		Trigger2 = 1 + (2 << 8),
+		[Key(key = "TriggerType_Trigger3")]
+		Trigger3 = 1 + (3 << 8),
+	}
+
 	public class ColorEasingParamater
 	{
 		[Key(key = "Easing_Start")]

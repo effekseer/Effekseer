@@ -796,7 +796,7 @@ namespace Effekseer.Data
 
 		[Selector(ID = 0)]
 		[Key(key = "BRS_FadeInType")]
-		public Value.Enum<FadeType> FadeInType
+		public Value.Enum<FadeInMethod> FadeInType
 		{
 			get;
 			private set;
@@ -820,7 +820,7 @@ namespace Effekseer.Data
 
 		[Selector(ID = 1)]
 		[Key(key = "BRS_FadeOutType")]
-		public Value.Enum<FadeType> FadeOutType
+		public Value.Enum<FadeOutMethod> FadeOutType
 		{
 			get;
 			private set;
@@ -835,6 +835,7 @@ namespace Effekseer.Data
 		}
 
 		[Selected(ID = 1, Value = 1)]
+		[Selected(ID = 1, Value = 2)]
 		[IO(Export = true)]
 		public FadeOutParamater FadeOut
 		{
@@ -919,11 +920,11 @@ namespace Effekseer.Data
 
 			AlphaBlend = new Value.Enum<AlphaBlendType>(AlphaBlendType.Blend);
 			
-			FadeInType = new Value.Enum<FadeType>(FadeType.None);
+			FadeInType = new Value.Enum<FadeInMethod>(FadeInMethod.None);
 			FadeInNone = new NoneParamater();
 			FadeIn = new FadeInParamater();
 
-			FadeOutType = new Value.Enum<FadeType>();
+			FadeOutType = new Value.Enum<FadeOutMethod>(FadeOutMethod.None);
 			FadeOutNone = new NoneParamater();
 			FadeOut = new FadeOutParamater();
 
@@ -1129,12 +1130,23 @@ namespace Effekseer.Data
 			[Key(key = "MaterialType_File")]
 			File = 128,
 		}
-		public enum FadeType : int
+
+		public enum FadeInMethod : int
 		{
-			[Key(key = "FadeType_Use")]
-			Use = 1,
 			[Key(key = "FadeType_None")]
 			None = 0,
+			[Key(key = "FadeType_Use")]
+			Use = 1,
+		}
+
+		public enum FadeOutMethod : int
+		{
+			[Key(key = "FadeType_None")]
+			None = 0,
+			[Key(key = "FadeType_WithinLifetime")]
+			WithinLifetime = 1,
+			[Key(key = "FadeType_AfterRemoved")]
+			AfterRemoved = 2,
 		}
 
 		public enum FilterType : int

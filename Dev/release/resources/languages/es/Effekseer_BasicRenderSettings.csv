@@ -67,10 +67,10 @@ BRS_FadeOut_StartSpeed_Name,Inicio
 BRS_FadeOut_StartSpeed_Desc,Velocidad inicial (de entre
 BRS_FadeOut_EndSpeed_Name,Final
 BRS_FadeOut_EndSpeed_Desc,Velocidad final (de entre)
-FadeType_Use_Name,Activar
 FadeType_None_Name,Desactivado
 FadeType_Use_Name,Activar
-FadeType_None_Name,Desactivado
+FadeType_WithinLifetime_Name,Desvanecimiento dentro de la vida útil
+FadeType_AfterRemoved_Name,Desvanecimiento después de la destrucción
 UVType_Default_Name,Standard
 UVType_Fixed_Name,Sheet fijo
 UVType_Animation_Name,Animación por SpriteSheet

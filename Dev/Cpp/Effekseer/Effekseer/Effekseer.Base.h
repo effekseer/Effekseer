@@ -74,13 +74,19 @@ enum eInstanceState
 	INSTANCE_STATE_ACTIVE,
 
 	/**
-		@brief	Removing
+		@brief	Removing (Fadeout)
 	*/
 	INSTANCE_STATE_REMOVING,
+
 	/**
 		@brief	Removed
 	*/
 	INSTANCE_STATE_REMOVED,
+
+	/**
+		@brief	Destroyed
+	*/
+	INSTANCE_STATE_DISPOSING,
 
 	INSTANCE_STATE_DWORD = 0x7fffffff,
 };

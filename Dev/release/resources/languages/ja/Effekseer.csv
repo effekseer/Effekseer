@@ -343,3 +343,5 @@ ImportRemoveDirPath,ディレクトリ名をパスから除去
 ImportAvoidOverwrite,上書きを避けるように名前を変更
 ImportMergeSameFiles,同一ファイルを共通化するように名前を変更
 ImportUseRootDir,ルートディレクトリの使用
+,,
+SendTrigger_Desc,再生中のエフェクトにトリガーを送信します

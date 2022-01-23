@@ -60,6 +60,11 @@ public:
 	float DynamicInput4 = 0.0f;
 
 	float PlaybackSpeed = 1.0f;
+
+	bool TriggerInput0 = false;
+	bool TriggerInput1 = false;
+	bool TriggerInput2 = false;
+	bool TriggerInput3 = false;
 };
 
 } // namespace Tool
