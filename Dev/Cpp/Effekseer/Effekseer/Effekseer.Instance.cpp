@@ -887,12 +887,18 @@ void Instance::FirstUpdate()
 		}
 	}
 
-	if (!m_pEffectNode->GenerationLocation.EffectsRotation)
+	if (m_pEffectNode->GenerationLocation.EffectsRotation)
+	{
+		auto tempPrevPosition = prevPosition_;
+		tempPrevPosition += m_GenerationLocation.GetTranslation();
+		prevGlobalPosition_ = SIMD::Vec3f::Transform(tempPrevPosition, m_ParentMatrix);
+	}
+	else
 	{
 		prevPosition_ += m_GenerationLocation.GetTranslation();
+		prevGlobalPosition_ = SIMD::Vec3f::Transform(prevPosition_, m_ParentMatrix);
 	}
-
-	prevGlobalPosition_ = SIMD::Vec3f::Transform(prevPosition_, m_ParentMatrix);
+	
 	m_pEffectNode->InitializeRenderedInstance(*this, *ownGroup_, m_pManager);
 }
 
