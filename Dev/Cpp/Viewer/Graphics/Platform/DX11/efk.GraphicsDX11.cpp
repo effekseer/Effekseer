@@ -79,10 +79,7 @@ GraphicsDX11::~GraphicsDX11()
 	ES_SAFE_RELEASE(dxgiDevice);
 	ES_SAFE_RELEASE(context);
 	ES_SAFE_RELEASE(device_);
-
-	ES_SAFE_RELEASE(rasterizerState);
-	ES_SAFE_RELEASE(savedRasterizerState);
-
+	
 	if (d3dDebug != nullptr)
 	{
 		// d3dDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
@@ -215,20 +212,10 @@ bool GraphicsDX11::Initialize(void* windowHandle, int32_t windowWidth, int32_t w
 	this->windowWidth = windowWidth;
 	this->windowHeight = windowHeight;
 
-	D3D11_RASTERIZER_DESC rasterizerDesc;
-	ZeroMemory(&rasterizerDesc, sizeof(rasterizerDesc));
-	rasterizerDesc.FillMode = D3D11_FILL_SOLID;
-	rasterizerDesc.CullMode = D3D11_CULL_NONE;
-	rasterizerDesc.ScissorEnable = false;
-	rasterizerDesc.DepthClipEnable = false;
-	rasterizerDesc.MultisampleEnable = true;
-	device_->CreateRasterizerState(&rasterizerDesc, &rasterizerState);
-
 	graphicsDevice_ = Effekseer::MakeRefPtr<EffekseerRendererDX11::Backend::GraphicsDevice>(device_, context);
 
 	return true;
 End:
-	ES_SAFE_RELEASE(rasterizerState);
 	ES_SAFE_RELEASE(renderTargetView);
 	ES_SAFE_RELEASE(defaultRenderTarget);
 	ES_SAFE_RELEASE(depthStencilView);
@@ -285,19 +272,6 @@ bool GraphicsDX11::Present()
 	}
 
 	return true;
-}
-
-void GraphicsDX11::BeginScene()
-{
-	assert(savedRasterizerState == nullptr);
-	context->RSGetState(&savedRasterizerState);
-	context->RSSetState(rasterizerState);
-}
-
-void GraphicsDX11::EndScene()
-{
-	context->RSSetState(savedRasterizerState);
-	ES_SAFE_RELEASE(savedRasterizerState);
 }
 
 void GraphicsDX11::SetRenderTarget(std::vector<Effekseer::Backend::TextureRef> renderTextures, Effekseer::Backend::TextureRef depthTexture)

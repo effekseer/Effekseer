@@ -171,6 +171,24 @@ public:
 
 		return ret;
 	}
+
+	template <typename T>
+	static std::basic_string<T> Join(const std::vector<std::basic_string<T>>& elems, std::basic_string<T> separator)
+	{
+		std::basic_string<T> ret;
+
+		for (size_t i = 0; i < elems.size(); i++)
+		{
+			ret += elems[i];
+
+			if (i != elems.size() - 1)
+			{
+				ret += separator;
+			}
+		}
+
+		return ret;
+	}
 };
 
 class PathHelper
@@ -200,19 +218,7 @@ private:
 			}
 		}
 
-		std::basic_string<T> ret;
-
-		for (size_t i = 0; i < elems.size(); i++)
-		{
-			ret += elems[i];
-
-			if (i != elems.size() - 1)
-			{
-				ret += StringHelper::To<T>("/");
-			}
-		}
-
-		return ret;
+		return StringHelper::Join(elems, StringHelper::To<T>("/"));
 	}
 
 public:

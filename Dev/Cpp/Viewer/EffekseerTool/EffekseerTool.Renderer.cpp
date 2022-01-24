@@ -24,7 +24,7 @@ MainScreenRenderedEffectGenerator::~MainScreenRenderedEffectGenerator()
 
 bool MainScreenRenderedEffectGenerator::InitializedPrePost()
 {
-	grid_ = std::shared_ptr<::EffekseerRenderer::Grid>(::EffekseerRenderer::Grid::Create(graphics_, renderer_));
+	grid_ = std::shared_ptr<::EffekseerRenderer::Grid>(::EffekseerRenderer::Grid::Create(graphics_.get(), renderer_));
 	if (grid_ == nullptr)
 	{
 		return false;
@@ -32,7 +32,7 @@ bool MainScreenRenderedEffectGenerator::InitializedPrePost()
 
 	spdlog::trace("OK Grid");
 
-	guide_ = std::shared_ptr<::EffekseerRenderer::Guide>(::EffekseerRenderer::Guide::Create(graphics_, renderer_));
+	guide_ = std::shared_ptr<::EffekseerRenderer::Guide>(::EffekseerRenderer::Guide::Create(graphics_.get(), renderer_));
 	if (guide_ == nullptr)
 	{
 		return false;
@@ -40,7 +40,7 @@ bool MainScreenRenderedEffectGenerator::InitializedPrePost()
 
 	spdlog::trace("OK Guide");
 
-	culling_ = std::shared_ptr<::EffekseerRenderer::Culling>(::EffekseerRenderer::Culling::Create(graphics_, renderer_));
+	culling_ = std::shared_ptr<::EffekseerRenderer::Culling>(::EffekseerRenderer::Culling::Create(graphics_.get(), renderer_));
 	if (culling_ == nullptr)
 	{
 		return false;

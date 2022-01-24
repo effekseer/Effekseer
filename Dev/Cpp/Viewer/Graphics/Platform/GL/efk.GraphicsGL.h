@@ -94,10 +94,6 @@ public:
 
 	bool Present() override;
 
-	void BeginScene() override;
-
-	void EndScene() override;
-
 	void SetRenderTarget(std::vector<Effekseer::Backend::TextureRef> renderTextures, Effekseer::Backend::TextureRef depthTexture) override;
 
 	void SaveTexture(Effekseer::Backend::TextureRef texture, std::vector<Effekseer::Color>& pixels) override;
