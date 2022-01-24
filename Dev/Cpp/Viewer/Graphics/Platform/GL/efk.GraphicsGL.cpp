@@ -212,14 +212,6 @@ bool GraphicsGL::Present()
 	return true;
 }
 
-void GraphicsGL::BeginScene()
-{
-}
-
-void GraphicsGL::EndScene()
-{
-}
-
 void GraphicsGL::SetRenderTarget(std::vector<Effekseer::Backend::TextureRef> renderTextures, Effekseer::Backend::TextureRef depthTexture)
 {
 	assert(renderTextures.size() > 0);

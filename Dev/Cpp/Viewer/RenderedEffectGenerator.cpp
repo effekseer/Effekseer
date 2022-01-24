@@ -298,7 +298,7 @@ RenderedEffectGenerator ::~RenderedEffectGenerator()
 {
 }
 
-bool RenderedEffectGenerator::Initialize(efk::Graphics* graphics, Effekseer::RefPtr<Effekseer::Setting> setting, int32_t spriteCount, bool isSRGBMode)
+bool RenderedEffectGenerator::Initialize(std::shared_ptr<efk::Graphics> graphics, Effekseer::RefPtr<Effekseer::Setting> setting, int32_t spriteCount, bool isSRGBMode)
 {
 	graphics_ = graphics;
 
@@ -310,24 +310,24 @@ bool RenderedEffectGenerator::Initialize(efk::Graphics* graphics, Effekseer::Ref
 #ifdef _WIN32
 	if (graphics->GetDeviceType() == efk::DeviceType::DirectX11)
 	{
-		auto g = (efk::GraphicsDX11*)graphics;
+		auto g = (efk::GraphicsDX11*)graphics.get();
 		renderer_ = ::EffekseerRendererDX11::Renderer::Create(g->GetDevice(), g->GetContext(), spriteCount, D3D11_COMPARISON_LESS_EQUAL, true);
 	}
 #endif
 
 	if (graphics->GetDeviceType() == efk::DeviceType::OpenGL)
 	{
-		auto g = (efk::GraphicsGL*)graphics;
+		auto g = (efk::GraphicsGL*)graphics.get();
 		renderer_ = ::EffekseerRendererGL::Renderer::Create(spriteCount, EffekseerRendererGL::OpenGLDeviceType::OpenGL3);
 	}
 
-	m_distortionCallback = new DistortingCallback(graphics, this);
+	m_distortionCallback = new DistortingCallback(graphics.get(), this);
 	renderer_->SetDistortingCallback(m_distortionCallback);
 
 	// create postprocessings
-	m_bloomEffect.reset(efk::PostEffect::CreateBloom(graphics, renderer_));
-	m_tonemapEffect.reset(efk::PostEffect::CreateTonemap(graphics, renderer_));
-	m_linearToSRGBEffect.reset(efk::PostEffect::CreateLinearToSRGB(graphics, renderer_));
+	m_bloomEffect.reset(efk::PostEffect::CreateBloom(graphics.get(), renderer_));
+	m_tonemapEffect.reset(efk::PostEffect::CreateTonemap(graphics.get(), renderer_));
+	m_linearToSRGBEffect.reset(efk::PostEffect::CreateLinearToSRGB(graphics.get(), renderer_));
 
 	if (!(m_bloomEffect != nullptr && m_bloomEffect->GetIsValid() &&
 		  m_tonemapEffect != nullptr && m_tonemapEffect->GetIsValid() &&
@@ -515,36 +515,36 @@ void RenderedEffectGenerator::Resize(const Vector2DI screenSize)
 
 	hdrRenderTextureMSAA = nullptr;
 
-	hdrRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics_));
+	hdrRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics_.get()));
 	hdrRenderTexture->Initialize(screenSize, textureFormat_);
-	depthTexture = std::shared_ptr<efk::DepthTexture>(efk::DepthTexture::Create(graphics_));
+	depthTexture = std::shared_ptr<efk::DepthTexture>(efk::DepthTexture::Create(graphics_.get()));
 	depthTexture->Initialize(screenSize_.X, screenSize_.Y, msaaSamples);
 
 	if (msaaSamples > 1)
 	{
-		depthRenderTextureMSAA = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics_));
+		depthRenderTextureMSAA = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics_.get()));
 		depthRenderTextureMSAA->Initialize(screenSize, Effekseer::Backend::TextureFormatType::R32_FLOAT, msaaSamples);
 	}
 
-	depthRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics_));
+	depthRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics_.get()));
 	depthRenderTexture->Initialize(screenSize, Effekseer::Backend::TextureFormatType::R32_FLOAT, 1);
 
 	if (msaaSamples > 1)
 	{
-		hdrRenderTextureMSAA = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics_));
+		hdrRenderTextureMSAA = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics_.get()));
 		hdrRenderTextureMSAA->Initialize(screenSize, textureFormat_, msaaSamples);
 	}
 
-	backTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics_));
+	backTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics_.get()));
 	backTexture->Initialize(screenSize, textureFormat_, 1);
 
 	if (m_isSRGBMode)
 	{
-		linearRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics_));
+		linearRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics_.get()));
 		linearRenderTexture->Initialize(screenSize, textureFormat_);
 	}
 
-	viewRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics_));
+	viewRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics_.get()));
 	viewRenderTexture->Initialize(screenSize, Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM);
 }
 
@@ -566,11 +566,10 @@ void RenderedEffectGenerator::Update()
 
 	// send triggers
 	std::array<bool*, 4> triggers = {
-		&behavior_.TriggerInput0, 
-		&behavior_.TriggerInput1, 
-		&behavior_.TriggerInput2, 
-		&behavior_.TriggerInput3
-	};
+		&behavior_.TriggerInput0,
+		&behavior_.TriggerInput1,
+		&behavior_.TriggerInput2,
+		&behavior_.TriggerInput3};
 	for (size_t i = 0; i < triggers.size(); i++)
 	{
 		bool& trigger = *triggers[i];
@@ -578,7 +577,7 @@ void RenderedEffectGenerator::Update()
 		{
 			for (auto h : handles_)
 			{
-				if (trigger) 
+				if (trigger)
 				{
 					manager_->SendTrigger(h.Handle, (int32_t)i);
 				}
@@ -946,6 +945,11 @@ void RenderedEffectGenerator::Reset()
 	handles_.clear();
 
 	manager_->Update();
+}
+
+Effekseer::EffectRef RenderedEffectGenerator::GetEffect()
+{
+	return effect_;
 }
 
 void RenderedEffectGenerator::SetEffect(Effekseer::EffectRef effect)

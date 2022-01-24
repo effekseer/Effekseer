@@ -26,7 +26,8 @@ void GenerateExportedImageWithBlendAndAdd(std::vector<Effekseer::Color>& pixelsB
 {
 	assert(pixels.size() == 9);
 
-	auto f2b = [](float v) -> uint8_t {
+	auto f2b = [](float v) -> uint8_t
+	{
 		auto v_ = v * 255;
 		if (v_ > 255)
 			v_ = 255;
@@ -35,7 +36,8 @@ void GenerateExportedImageWithBlendAndAdd(std::vector<Effekseer::Color>& pixelsB
 		return static_cast<uint8_t>(v_);
 	};
 
-	auto b2f = [](uint8_t v) -> float {
+	auto b2f = [](uint8_t v) -> float
+	{
 		return static_cast<float>(v) / 255.0f;
 	};
 
@@ -304,15 +306,15 @@ public:
 };
 
 bool EffectRecorder::Begin(std::shared_ptr<EffekseerTool::MainScreenRenderedEffectGenerator> mainScreen,
-					 Effekseer::Tool::RenderedEffectGeneratorConfig config,
-					 Vector2DI screenSize,
-					 efk::Graphics* graphics,
-					 Effekseer::RefPtr<Effekseer::Setting> setting,
-					 const RecordingParameter& recordingParameter,
-					 Effekseer::Tool::Vector2DI imageSize,
-					 bool isSRGBMode,
-					 Effekseer::Tool::ViewerEffectBehavior behavior,
-					 Effekseer::EffectRef effect)
+						   Effekseer::Tool::RenderedEffectGeneratorConfig config,
+						   Vector2DI screenSize,
+						   std::shared_ptr<efk::Graphics> graphics,
+						   Effekseer::RefPtr<Effekseer::Setting> setting,
+						   const RecordingParameter& recordingParameter,
+						   Effekseer::Tool::Vector2DI imageSize,
+						   bool isSRGBMode,
+						   Effekseer::Tool::ViewerEffectBehavior behavior,
+						   Effekseer::EffectRef effect)
 {
 	graphics_ = graphics;
 	recordingParameter_ = recordingParameter;
@@ -483,7 +485,8 @@ bool EffectRecorder::Step(int frames)
 
 			auto& pixels = pixelss[loop];
 
-			auto f2b = [](float v) -> uint8_t {
+			auto f2b = [](float v) -> uint8_t
+			{
 				auto v_ = v * 255;
 				if (v_ > 255)
 					v_ = 255;
@@ -492,7 +495,8 @@ bool EffectRecorder::Step(int frames)
 				return static_cast<uint8_t>(v_);
 			};
 
-			auto b2f = [](uint8_t v) -> float {
+			auto b2f = [](uint8_t v) -> float
+			{
 				auto v_ = (float)v / 255.0f;
 				return v_;
 			};

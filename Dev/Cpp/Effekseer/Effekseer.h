@@ -2226,8 +2226,14 @@ enum class TextureFormatType
 	BC1_SRGB,
 	BC2_SRGB,
 	BC3_SRGB,
+
+	//! You don't need to implement DepthTexture for a runtime
 	D32,
+
+	//! You don't need to implement DepthTexture for a runtime
 	D24S8,
+
+	//! You don't need to implement DepthTexture for a runtime
 	D32S8,
 	Unknown,
 };
@@ -2359,6 +2365,7 @@ public:
 enum class TextureUsageType : uint32_t
 {
 	None = 0,
+	//! You don't need to implement RenderTarget flag for a runtime
 	RenderTarget = 1 << 0,
 	Array = 1 << 1,
 	External = 1 << 2,
@@ -2381,6 +2388,8 @@ struct TextureParameter
 	int32_t Dimension = 2;
 	std::array<int32_t, 3> Size = {1, 1, 1};
 	int32_t MipLevelCount = 1;
+
+	//! You don't need to implement SampleCount for a runtime
 	int SampleCount = 1;
 };
 

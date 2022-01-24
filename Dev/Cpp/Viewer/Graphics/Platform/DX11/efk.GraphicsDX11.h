@@ -93,8 +93,7 @@ private:
 	RenderTexture* backupRenderTarget = nullptr;
 	DepthTexture* backupDepthStencil = nullptr;
 
-	ID3D11RasterizerState* rasterizerState = nullptr;
-	ID3D11RasterizerState* savedRasterizerState = nullptr;
+	//ID3D11RasterizerState* rasterizerState = nullptr;
 	Effekseer::RefPtr<Effekseer::Backend::GraphicsDevice> graphicsDevice_;
 	D3D_FEATURE_LEVEL flevel_{};
 
@@ -109,10 +108,6 @@ public:
 	void Resize(int32_t width, int32_t height) override;
 
 	bool Present() override;
-
-	void BeginScene() override;
-
-	void EndScene() override;
 
 	void SetRenderTarget(std::vector<Effekseer::Backend::TextureRef> renderTextures, Effekseer::Backend::TextureRef depthTexture) override;
 

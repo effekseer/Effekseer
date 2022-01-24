@@ -28,14 +28,14 @@ private:
 	bool completed = false;
 
 	std::shared_ptr<Effekseer::Tool::RenderedEffectGenerator> generator_;
-	efk::Graphics* graphics_ = nullptr;
+	std::shared_ptr<efk::Graphics> graphics_ = nullptr;
 
 public:
 #if !SWIG
 	bool Begin(std::shared_ptr<EffekseerTool::MainScreenRenderedEffectGenerator> mainScreen,
 			   Effekseer::Tool::RenderedEffectGeneratorConfig config,
 			   Vector2DI screenSize,
-			   efk::Graphics* graphics,
+			   std::shared_ptr<efk::Graphics> graphics,
 			   Effekseer::RefPtr<Effekseer::Setting> setting,
 			   const RecordingParameter& recordingParameter,
 			   Effekseer::Tool::Vector2DI imageSize,

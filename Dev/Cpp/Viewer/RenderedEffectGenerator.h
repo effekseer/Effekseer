@@ -90,7 +90,7 @@ class RenderedEffectGenerator
 	};
 
 protected:
-	efk::Graphics* graphics_ = nullptr;
+	std::shared_ptr<efk::Graphics> graphics_ = nullptr;
 	Effekseer::ManagerRef manager_;
 	EffekseerRenderer::RendererRef renderer_;
 	Effekseer::EffectRef effect_;
@@ -157,12 +157,14 @@ public:
 	RenderedEffectGenerator();
 	virtual ~RenderedEffectGenerator();
 
-	bool Initialize(efk::Graphics* graphics, Effekseer::RefPtr<Effekseer::Setting> setting, int32_t spriteCount, bool isSRGBMode);
+	bool Initialize(std::shared_ptr<efk::Graphics> graphics, Effekseer::RefPtr<Effekseer::Setting> setting, int32_t spriteCount, bool isSRGBMode);
 	void Resize(const Vector2DI screenSize);
 	void Update();
 	void Update(int32_t frame);
 	void Render();
 	void Reset();
+
+	Effekseer::EffectRef GetEffect();
 	void SetEffect(Effekseer::EffectRef effect);
 	
 	void SetBehavior(const ViewerEffectBehavior& behavior);

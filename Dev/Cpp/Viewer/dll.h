@@ -85,7 +85,6 @@ private:
 		{
 			return m_originalTextureLoader;
 		}
-		std::u16string RootPath;
 	};
 
 	class SoundLoader : public ::Effekseer::SoundLoader
@@ -101,8 +100,6 @@ private:
 		::Effekseer::SoundDataRef Load(const char16_t* path) override;
 
 		void Unload(::Effekseer::SoundDataRef soundData) override;
-
-		std::u16string RootPath;
 	};
 
 	class ModelLoader : public ::Effekseer::ModelLoader
@@ -118,8 +115,6 @@ private:
 		Effekseer::ModelRef Load(const char16_t* path);
 
 		void Unload(Effekseer::ModelRef data);
-
-		std::u16string RootPath;
 	};
 
 	class MaterialLoader : public ::Effekseer::MaterialLoader
@@ -134,7 +129,6 @@ private:
 
 	public:
 		Effekseer::MaterialRef Load(const char16_t* path) override;
-		std::u16string RootPath;
 
 		::Effekseer::MaterialLoaderRef GetOriginalLoader()
 		{
@@ -161,8 +155,6 @@ private:
 	bool g_mouseSlideDirectionInvX = false;
 	bool g_mouseSlideDirectionInvY = false;
 
-	::Effekseer::EffectRef effect_ = nullptr;
-
 	::Effekseer::Vector3D m_rootLocation;
 	::Effekseer::Vector3D m_rootRotation;
 	::Effekseer::Vector3D m_rootScale;
@@ -172,7 +164,7 @@ private:
 
 	bool isUpdateMaterialRequired_ = false;
 
-	efk::Graphics* graphics_ = nullptr;
+	std::shared_ptr<efk::Graphics> graphics_ = nullptr;
 
 	Effekseer::RefPtr<Effekseer::Setting> setting_;
 
@@ -189,8 +181,6 @@ private:
 	Effekseer::Tool::RenderedEffectGeneratorConfig mainScreenConfig_;
 
 	EffekseerTool::ViewPointController viewPointCtrl_;
-
-	::Effekseer::EffectRef GetEffect();
 
 	void SetZoom(float zoom);
 
@@ -239,7 +229,7 @@ public:
 
 	void* RenderView(int32_t width, int32_t height);
 
-	std::shared_ptr<Effekseer::Tool::EffectRecorder> CreateRecorder(const Effekseer::Tool::RecordingParameter & recordingParameter);
+	std::shared_ptr<Effekseer::Tool::EffectRecorder> CreateRecorder(const Effekseer::Tool::RecordingParameter& recordingParameter);
 
 	ViewerParamater GetViewerParamater();
 
@@ -319,4 +309,3 @@ public:
 	const EffekseerRenderer::RendererRef& GetRenderer();
 #endif
 };
-

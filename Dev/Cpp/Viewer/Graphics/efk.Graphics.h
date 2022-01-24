@@ -104,10 +104,6 @@ public:
 
 	virtual bool Present() = 0;
 
-	virtual void BeginScene() = 0;
-
-	virtual void EndScene() = 0;
-
 	virtual void SetRenderTarget(std::vector<Effekseer::Backend::TextureRef> renderTextures, Effekseer::Backend::TextureRef depthTexture) = 0;
 
 	virtual void SaveTexture(Effekseer::Backend::TextureRef texture, std::vector<Effekseer::Color>& pixels) = 0;
