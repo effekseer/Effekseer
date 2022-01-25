@@ -146,8 +146,6 @@ public:
 		}
 		else
 		{
-			auto len = strlen(str.data());
-
 			std::vector<char16_t> buffer(requiredBufferSize);
 			const auto size = ConvertUtf8ToUtf16(buffer.data(), static_cast<int32_t>(buffer.size()), str.data(), str.size());
 			return std::u16string(buffer.data());
