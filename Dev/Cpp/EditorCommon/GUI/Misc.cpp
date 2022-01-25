@@ -52,7 +52,7 @@ void AddFontFromFileTTF(const char* fontFilepath, const char* commonCharacterTab
 		if (f.is_open())
 		{
 			auto str = std::string((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
-			auto str16 = utf8_to_utf16(str);
+			auto str16 = Tool::StringHelper::ConvertUtf8ToUtf16(str);
 
 			for (const auto c : str16)
 			{

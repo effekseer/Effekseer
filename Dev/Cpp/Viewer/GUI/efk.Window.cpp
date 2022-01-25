@@ -1,6 +1,7 @@
 #include "efk.Window.h"
 #include "../Effekseer/Effekseer/Effekseer.DefaultFile.h"
 #include "../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
+#include <Common/StringHelper.h>
 #include <imgui.h>
 #include <imgui_internal.h>
 #include <memory>
@@ -12,20 +13,6 @@
 
 namespace efk
 {
-// http://hasenpfote36.blogspot.jp/2016/09/stdcodecvt.html
-static constexpr std::codecvt_mode mode = std::codecvt_mode::little_endian;
-
-static std::string utf16_to_utf8(const std::u16string& s)
-{
-#if defined(_WIN32)
-	std::wstring_convert<std::codecvt_utf8_utf16<std::uint16_t, 0x10ffff, mode>, std::uint16_t> conv;
-	auto p = reinterpret_cast<const std::uint16_t*>(s.c_str());
-	return conv.to_bytes(p, p + s.length());
-#else
-	std::wstring_convert<std::codecvt_utf8_utf16<char16_t, 0x10ffff, mode>, char16_t> conv;
-	return conv.to_bytes(s);
-#endif
-}
 
 void GLFW_ResizeCallback(GLFWwindow* w, int x, int y)
 {
@@ -194,7 +181,7 @@ bool Window::DoEvents()
 
 void Window::SetTitle(const char16_t* title)
 {
-	glfwSetWindowTitle(window, utf16_to_utf8(title).c_str());
+	glfwSetWindowTitle(window, Effekseer::Tool::StringHelper::ConvertUtf16ToUtf8(title).c_str());
 }
 
 void Window::SetWindowIcon(const char16_t* iconPath)

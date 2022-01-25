@@ -43,8 +43,6 @@ const char16_t* FileDialog::OpenDialog(const char16_t* filterList, const char16_
 
 const char16_t* FileDialog::SaveDialog(const char16_t* filterList, const char16_t* defaultPath)
 {
-	// auto filterList_ = utf16_to_utf8(filterList);
-	// auto defaultPath_ = utf16_to_utf8(defaultPath);
 	char filterList_[256], defaultPath_[1024];
 	Effekseer::ConvertUtf16ToUtf8(filterList_, sizeof(filterList_), filterList);
 	Effekseer::ConvertUtf16ToUtf8(defaultPath_, sizeof(defaultPath_), defaultPath);

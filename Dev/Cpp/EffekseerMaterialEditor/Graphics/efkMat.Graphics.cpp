@@ -60,7 +60,7 @@ bool Texture::Validate()
 
 	Invalidate();
 
-	auto path16 = Effekseer::utf8_to_utf16(path_);
+	auto path16 = Effekseer::Tool::StringHelper::ConvertUtf8ToUtf16(path_);
 
 	auto file = Effekseer::IO::GetInstance()->LoadFile(path16.c_str());
 	if (file == nullptr)

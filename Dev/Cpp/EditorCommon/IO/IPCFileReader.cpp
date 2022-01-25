@@ -9,7 +9,7 @@ const int MAX_STORAGE = 104857600;
 IPCFileReader::IPCFileReader(const std::u16string& path, std::shared_ptr<IPC::KeyValueFileStorage> storage)
 	: StaticFileReader(path)
 {
-	path_ = utf16_to_utf8(path);
+	path_ = Tool::StringHelper::ConvertUtf16ToUtf8(path);
 
 	storage->Lock();
 

@@ -29,6 +29,9 @@
 #ifdef __linux__
 #include <gtk/gtk.h>
 #endif
+
+#include <Common/StringHelper.h>
+
 namespace ImGui
 {
 static ImVec2 operator+(const ImVec2& lhs, const ImVec2& rhs)
@@ -459,51 +462,6 @@ void ResizeBicubic(uint32_t* dst,
 	}
 }
 
-size_t ConvertUTF16ToUTF8(char* dst, size_t dstSize, const char16_t* src)
-{
-	if (src == nullptr)
-		return 0;
-
-	const uint16_t* wp = (const uint16_t*)src;
-	uint8_t* cp = (uint8_t*)dst;
-
-	if (dstSize == 0)
-		return 0;
-
-	dstSize -= 3;
-
-	size_t count = 0;
-	for (count = 0; count < dstSize;)
-	{
-		uint16_t wc = *wp++;
-		if (wc == 0)
-		{
-			break;
-		}
-
-		if ((wc & ~0x7f) == 0)
-		{
-			*cp++ = wc & 0x7f;
-			count += 1;
-		}
-		else if ((wc & ~0x7ff) == 0)
-		{
-			*cp++ = ((wc >> 6) & 0x1f) | 0xc0;
-			*cp++ = ((wc)&0x3f) | 0x80;
-			count += 2;
-		}
-		else
-		{
-			*cp++ = ((wc >> 12) & 0xf) | 0xe0;
-			*cp++ = ((wc >> 6) & 0x3f) | 0x80;
-			*cp++ = ((wc)&0x3f) | 0x80;
-			count += 3;
-		}
-	}
-	*cp = '\0';
-	return count;
-}
-
 template <size_t SIZE>
 struct utf8str
 {
@@ -515,41 +473,13 @@ struct utf8str
 	utf8str(const char16_t* u16str)
 	{
 		data[0] = 0;
-		ConvertUTF16ToUTF8(data, SIZE, u16str);
+		Effekseer::Tool::StringHelper::ConvertUtf16ToUtf8(data, SIZE, u16str);
 	}
 	operator const char*() const
 	{
 		return data;
 	}
 };
-
-// http://hasenpfote36.blogspot.jp/2016/09/stdcodecvt.html
-static constexpr std::codecvt_mode mode = std::codecvt_mode::little_endian;
-
-static std::string utf16_to_utf8(const std::u16string& s)
-{
-#if defined(_WIN32)
-	std::wstring_convert<std::codecvt_utf8_utf16<std::uint16_t, 0x10ffff, mode>, std::uint16_t> conv;
-	auto p = reinterpret_cast<const std::uint16_t*>(s.c_str());
-	return conv.to_bytes(p, p + s.length());
-#else
-	std::wstring_convert<std::codecvt_utf8_utf16<char16_t, 0x10ffff, mode>, char16_t> conv;
-	return conv.to_bytes(s);
-#endif
-}
-
-static std::u16string utf8_to_utf16(const std::string& s)
-{
-
-#if defined(_WIN32)
-	std::wstring_convert<std::codecvt_utf8_utf16<std::uint16_t, 0x10ffff, mode>, std::uint16_t> conv;
-	auto p = reinterpret_cast<const std::uint16_t*>(s.c_str());
-	return std::u16string((const char16_t*)conv.from_bytes(s).c_str());
-#else
-	std::wstring_convert<std::codecvt_utf8_utf16<char16_t, 0x10ffff, mode>, char16_t> conv;
-	return conv.from_bytes(s);
-#endif
-}
 
 static ImTextureID ToImTextureID(ImageResource* image)
 {
@@ -656,7 +586,7 @@ void GUIManager::MarkdownLinkCallback(ImGui::MarkdownLinkCallbackData data)
 {
 
 	std::string url(data.link, data.linkLength);
-	auto url16 = utf8_to_utf16(url);
+	auto url16 = Effekseer::Tool::StringHelper::ConvertUtf8ToUtf16(url);
 
 	auto self = reinterpret_cast<GUIManager*>(data.userData);
 
@@ -705,7 +635,7 @@ bool GUIManager::Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, e
 	window->Droped = [this](const char* path) -> void {
 		if (this->callback != nullptr)
 		{
-			this->callback->SetPath(utf8_to_utf16(path).c_str());
+			this->callback->SetPath(Effekseer::Tool::StringHelper::ConvertUtf8ToUtf16(path).c_str());
 			this->callback->Droped();
 		}
 	};
@@ -1036,13 +966,13 @@ const char16_t* GUIManager::GetClipboardText()
 		static std::u16string empty;
 		return empty.c_str();
 	}
-	clipboard = utf8_to_utf16(ret);
+	clipboard = Effekseer::Tool::StringHelper::ConvertUtf8ToUtf16(ret);
 	return clipboard.c_str();
 }
 
 void GUIManager::SetClipboardText(const char16_t* text)
 {
-	glfwSetClipboardString(window->GetGLFWWindows(), utf16_to_utf8(text).c_str());
+	glfwSetClipboardString(window->GetGLFWWindows(), Effekseer::Tool::StringHelper::ConvertUtf16ToUtf8(text).c_str());
 }
 
 bool GUIManager::Begin(const char16_t* name, bool* p_open)
@@ -1468,7 +1398,7 @@ void CallWithEscaped(const std::function<void(const char*)>& f, const char16_t* 
 		}
 		else
 		{
-			f(utf16_to_utf8(text_).c_str());
+			f(Effekseer::Tool::StringHelper::ConvertUtf16ToUtf8(text_).c_str());
 		}
 	}
 	else
@@ -1479,7 +1409,7 @@ void CallWithEscaped(const std::function<void(const char*)>& f, const char16_t* 
 		}
 		else
 		{
-			f(utf16_to_utf8(text).c_str());
+			f(Effekseer::Tool::StringHelper::ConvertUtf16ToUtf8(text).c_str());
 		}
 	}
 }
@@ -1498,7 +1428,7 @@ void GUIManager::TextWrapped(const char16_t* text)
 	}
 	else
 	{
-		ImGui::TextWrapped(utf16_to_utf8(text).c_str());
+		ImGui::TextWrapped(Effekseer::Tool::StringHelper::ConvertUtf16ToUtf8(text).c_str());
 	}
 }
 
@@ -1512,7 +1442,7 @@ Vec2 GUIManager::CalcTextSize(const char16_t* text)
 	}
 	else
 	{
-		result = ImGui::CalcTextSize(utf16_to_utf8(text).c_str());
+		result = ImGui::CalcTextSize(Effekseer::Tool::StringHelper::ConvertUtf16ToUtf8(text).c_str());
 	}
 
 	return {result.x, result.y};
@@ -1808,7 +1738,7 @@ bool GUIManager::InputText(const char16_t* label, const char16_t* text, InputTex
 
 	auto ret = ImGui::InputText(utf8str<256>(label), buf, 260, (ImGuiWindowFlags)flags);
 
-	inputTextResult = utf8_to_utf16(buf);
+	inputTextResult = Effekseer::Tool::StringHelper::ConvertUtf8ToUtf16(buf);
 
 	return ret;
 }
@@ -1823,7 +1753,7 @@ bool GUIManager::InputTextMultiline(const char16_t* label, const char16_t* text)
 
 	auto ret = ImGui::InputTextMultiline(utf8str<512>(label), buf, 512);
 
-	inputTextResult = utf8_to_utf16(buf);
+	inputTextResult = Effekseer::Tool::StringHelper::ConvertUtf8ToUtf16(buf);
 
 	return ret;
 }

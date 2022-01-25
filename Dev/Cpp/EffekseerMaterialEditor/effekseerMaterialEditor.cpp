@@ -74,7 +74,7 @@ class IOCallback : public Effekseer::IOCallback
 public:
 	void OnFileChanged(Effekseer::StaticFileType fileType, const char16_t* path)
 	{
-		auto pathu8 = Effekseer::utf16_to_utf8(path);
+		auto pathu8 = Effekseer::Tool::StringHelper::ConvertUtf16ToUtf8(path);
 		EffekseerMaterial::TextureCache::NotifyFileChanged(pathu8.c_str());
 	}
 };

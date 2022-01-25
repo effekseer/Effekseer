@@ -15,18 +15,18 @@ DefaultStaticFileReader::DefaultStaticFileReader(const std::u16string& path)
 #ifdef _WIN32
 	stream_.open((wchar_t*)path.c_str(), std::basic_ios<char>::in | std::basic_ios<char>::binary);
 #else
-	stream_.open(utf16_to_utf8(path).c_str(), std::basic_ios<char>::in | std::basic_ios<char>::binary);
+	stream_.open(Effekseer::Tool::StringHelper::ConvertUtf16ToUtf8(path).c_str(), std::basic_ios<char>::in | std::basic_ios<char>::binary);
 #endif
 
 	if (stream_.fail())
 	{
-		spdlog::trace("DefaultStaticFileReader : {} : Failed to load.", utf16_to_utf8(path));
+		spdlog::trace("DefaultStaticFileReader : {} : Failed to load.", Tool::StringHelper::ConvertUtf16ToUtf8(path));
 		length_ = 0;
 		return;
 	}
 	else
 	{
-		spdlog::trace("DefaultStaticFileReader : {} : Succseeded in loading.", utf16_to_utf8(path));
+		spdlog::trace("DefaultStaticFileReader : {} : Succseeded in loading.", Tool::StringHelper::ConvertUtf16ToUtf8(path));
 	}
 
 	if (length_ < 0)
@@ -46,7 +46,7 @@ DefaultStaticFileReader::DefaultStaticFileReader(const std::u16string& path)
 	}
 	else
 	{
-		spdlog::trace("DefaultStaticFileReader : {} : Size is zero.", utf16_to_utf8(path));
+		spdlog::trace("DefaultStaticFileReader : {} : Size is zero.", Tool::StringHelper::ConvertUtf16ToUtf8(path));
 	}
 	stream_.close();
 }
