@@ -7,6 +7,7 @@
 //----------------------------------------------------------------------------------
 #include "../Graphics/efk.ImageRenderer.h"
 #include "EffekseerTool.Renderer.h"
+#include "../Graphics/ImageRenderer.h"
 
 //-----------------------------------------------------------------------------------
 //
@@ -19,7 +20,7 @@ namespace EffekseerRenderer
 class Paste
 {
 private:
-	efk::ImageRenderer* imageRenderer = nullptr;
+	std::shared_ptr<Effekseer::Tool::ImageRenderer> imageRenderer_ = nullptr;
 
 	Paste(efk::Graphics* graphics, const EffekseerRenderer::RendererRef& renderer);
 

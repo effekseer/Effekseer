@@ -10,6 +10,8 @@
 #include "../Math/Vector2DI.h"
 #include "../efk.Base.h"
 
+/*
+
 namespace Effekseer
 {
 namespace Tool
@@ -20,6 +22,8 @@ class CommandList;
 
 } // namespace Tool
 } // namespace Effekseer
+
+*/
 
 namespace efk
 {
@@ -111,8 +115,6 @@ public:
 	virtual void Clear(Effekseer::Color color) = 0;
 
 	virtual void ResetDevice() = 0;
-
-	//virtual void* GetBack() = 0;
 
 	virtual DeviceType GetDeviceType() const = 0;
 

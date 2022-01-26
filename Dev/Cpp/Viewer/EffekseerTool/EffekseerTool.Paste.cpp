@@ -6,12 +6,11 @@ namespace EffekseerRenderer
 
 Paste::Paste(efk::Graphics* graphics, const EffekseerRenderer::RendererRef& renderer)
 {
-	imageRenderer = efk::ImageRenderer::Create(graphics, renderer);
+	imageRenderer_ = Effekseer::Tool::ImageRenderer::Create(graphics->GetGraphicsDevice());
 }
 
 Paste::~Paste()
 {
-	ES_SAFE_DELETE(imageRenderer);
 }
 
 Paste* Paste::Create(efk::Graphics* graphics, const EffekseerRenderer::RendererRef& renderer)
@@ -60,9 +59,9 @@ void Paste::Rendering(::Effekseer::TextureRef texture, int32_t width, int32_t he
 		colors[i] = Effekseer::Color(255, 255, 255, 255);
 	}
 
-	imageRenderer->ClearCache();
-	imageRenderer->Draw(pos, uv, colors, texture);
-	imageRenderer->Render();
+	imageRenderer_->ClearCache();
+	imageRenderer_->Draw(pos, uv, colors, texture);
+	imageRenderer_->Render();
 }
 
 } // namespace EffekseerRenderer
