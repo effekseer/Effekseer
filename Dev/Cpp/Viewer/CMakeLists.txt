@@ -34,9 +34,8 @@ FILE(GLOB cpps
 
 list(APPEND cpps
     RenderedEffectGenerator.cpp
-	Graphics/CommandList.cpp
-    Graphics/RenderPass.cpp
     Graphics/StaticMeshRenderer.cpp
+    Graphics/ImageRenderer.cpp
     Graphics/PostProcess.cpp
     Recorder/EffectRecorder.cpp
     Recorder/AVIExporter.cpp
@@ -46,9 +45,8 @@ list(APPEND cpps
 
 list(APPEND hs
     RenderedEffectGenerator.h
-	Graphics/CommandList.h
-    Graphics/RenderPass.h
     Graphics/StaticMeshRenderer.h
+    Graphics/ImageRenderer.h
     Graphics/PostProcess.h
     Recorder/EffectRecorder.h
 )
@@ -115,7 +113,6 @@ FilterFolder("${cpps}")
 include_directories(
 	${EFK_THIRDPARTY_INCLUDES}
 	../include/
-	../EffekseerRendererDX9/
 	../EffekseerRendererGL/
 	../EffekseerSoundOSMixer/
 	../
@@ -177,7 +174,6 @@ if (WIN32)
     target_link_libraries(
         Viewer
         PRIVATE
-        EffekseerRendererDX9
         EffekseerRendererDX11
         EffekseerRendererGL
         EffekseerSoundOSMixer

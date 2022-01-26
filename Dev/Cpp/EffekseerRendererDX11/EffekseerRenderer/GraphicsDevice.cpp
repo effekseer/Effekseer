@@ -1045,8 +1045,8 @@ bool PipelineState::Init(const Effekseer::Backend::PipelineStateParameter& param
 		blendDesc.RenderTarget[i].DestBlend = blendFuncs[static_cast<int32_t>(param.BlendDstFunc)];
 		blendDesc.RenderTarget[i].SrcBlend = blendFuncs[static_cast<int32_t>(param.BlendSrcFunc)];
 		blendDesc.RenderTarget[i].BlendOp = equations[static_cast<int32_t>(param.BlendEquationRGB)];
-		blendDesc.RenderTarget[i].SrcBlendAlpha = blendFuncs[static_cast<int32_t>(param.BlendDstFuncAlpha)];
-		blendDesc.RenderTarget[i].DestBlendAlpha = blendFuncs[static_cast<int32_t>(param.BlendSrcFuncAlpha)];
+		blendDesc.RenderTarget[i].DestBlendAlpha = blendFuncs[static_cast<int32_t>(param.BlendDstFuncAlpha)];
+		blendDesc.RenderTarget[i].SrcBlendAlpha = blendFuncs[static_cast<int32_t>(param.BlendSrcFuncAlpha)];
 		blendDesc.RenderTarget[i].BlendOpAlpha = equations[static_cast<int32_t>(param.BlendEquationAlpha)];
 	}
 
@@ -1525,11 +1525,11 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 
 	if (drawParam.InstanceCount == 1)
 	{
-		context_->DrawIndexed(indexPerPrimitive * drawParam.PrimitiveCount, 0, 0);
+		context_->DrawIndexed(indexPerPrimitive * drawParam.PrimitiveCount, drawParam.IndexOffset, 0);
 	}
 	else
 	{
-		context_->DrawIndexedInstanced(indexPerPrimitive * drawParam.PrimitiveCount, drawParam.InstanceCount, 0, 0, 0);
+		context_->DrawIndexedInstanced(indexPerPrimitive * drawParam.PrimitiveCount, drawParam.InstanceCount, drawParam.IndexOffset, 0, 0);
 	}
 }
 

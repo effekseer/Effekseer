@@ -304,6 +304,7 @@ public:
 
 	int32_t PrimitiveCount = 0;
 	int32_t InstanceCount = 0;
+	int32_t IndexOffset = 0;
 };
 
 enum class VertexLayoutFormat

@@ -5,9 +5,9 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include "../Graphics/efk.ImageRenderer.h"
+//#include "../Graphics/efk.ImageRenderer.h"
 #include "EffekseerTool.Renderer.h"
-
+#include "../Graphics/ImageRenderer.h"
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
@@ -19,7 +19,7 @@ namespace EffekseerRenderer
 class Guide
 {
 private:
-	efk::ImageRenderer* imageRenderer = nullptr;
+	std::shared_ptr<Effekseer::Tool::ImageRenderer> imageRenderer_ = nullptr;
 
 	Guide(efk::Graphics* graphics, const EffekseerRenderer::RendererRef& renderer);
 

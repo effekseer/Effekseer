@@ -1501,22 +1501,25 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 		indexPerPrimitive = 1;
 	}
 
+	int32_t indexStride = {};
 	if (drawParam.IndexBufferPtr->GetStrideType() == Effekseer::Backend::IndexBufferStrideType::Stride4)
 	{
 		indexStrideType = GL_UNSIGNED_INT;
+		indexStride = 4;
 	}
 	else if (drawParam.IndexBufferPtr->GetStrideType() == Effekseer::Backend::IndexBufferStrideType::Stride2)
 	{
 		indexStrideType = GL_UNSIGNED_SHORT;
+		indexStride = 2;
 	}
 
 	if (drawParam.InstanceCount > 1)
 	{
-		GLExt::glDrawElementsInstanced(primitiveMode, indexPerPrimitive * drawParam.PrimitiveCount, indexStrideType, nullptr, drawParam.InstanceCount);
+		GLExt::glDrawElementsInstanced(primitiveMode, indexPerPrimitive * drawParam.PrimitiveCount, indexStrideType, (void*)(drawParam.IndexOffset * indexStride), drawParam.InstanceCount);
 	}
 	else
 	{
-		glDrawElements(primitiveMode, indexPerPrimitive * drawParam.PrimitiveCount, indexStrideType, nullptr);
+		glDrawElements(primitiveMode, indexPerPrimitive * drawParam.PrimitiveCount, indexStrideType, (void*)(drawParam.IndexOffset * indexStride));
 	}
 
 	DisableLayouts(pip->GetAttribLocations());
