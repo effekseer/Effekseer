@@ -5,7 +5,6 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include "../Graphics/efk.ImageRenderer.h"
 #include "EffekseerTool.Renderer.h"
 #include "../Graphics/ImageRenderer.h"
 
