@@ -2,8 +2,11 @@
 
 #include <array>
 #include <string>
+#include <vector>
 
-namespace Effekseer::Tool
+namespace Effekseer
+{
+namespace Tool
 {
 
 class StringHelper
@@ -21,7 +24,7 @@ public:
 	{
 		int32_t cnt = 0;
 		int32_t src_pos = 0;
-		
+
 		char* cp = dst;
 
 		if (dst_size == 0)
@@ -146,7 +149,8 @@ public:
 		}
 		else
 		{
-			std::vector<char16_t> buffer(requiredBufferSize);
+			std::vector<char16_t> buffer;
+			buffer.resize(requiredBufferSize);
 			const auto size = ConvertUtf8ToUtf16(buffer.data(), static_cast<int32_t>(buffer.size()), str.data(), str.size());
 			return std::u16string(buffer.data());
 		}
@@ -164,11 +168,13 @@ public:
 		}
 		else
 		{
-			std::vector<char> buffer(requiredBufferSize);
+			std::vector<char> buffer;
+			buffer.resize(requiredBufferSize);
 			const auto size = ConvertUtf16ToUtf8(buffer.data(), static_cast<int32_t>(buffer.size()), str.data(), str.size());
 			return std::string(buffer.data());
 		}
 	}
 };
 
-} // namespace Effekseer::Tool
+} // namespace Tool
+} // namespace Effekseer
