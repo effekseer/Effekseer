@@ -102,9 +102,6 @@ protected:
 	Effekseer::TextureRef backgroundTexture_;
 	Effekseer::Color backgroundMeshColor_{};
 
-	efk::RenderTexture* renderTexture_ = nullptr;
-	efk::DepthTexture* depthTexture_ = nullptr;
-
 	Vector2DI screenSize_;
 	ViewerEffectBehavior behavior_;
 

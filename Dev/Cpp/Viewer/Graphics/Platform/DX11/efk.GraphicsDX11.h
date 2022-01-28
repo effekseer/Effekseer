@@ -90,10 +90,6 @@ private:
 	std::array<ID3D11RenderTargetView*, 4> currentRenderTargetViews;
 	ID3D11DepthStencilView* currentDepthStencilView = nullptr;
 
-	RenderTexture* backupRenderTarget = nullptr;
-	DepthTexture* backupDepthStencil = nullptr;
-
-	//ID3D11RasterizerState* rasterizerState = nullptr;
 	Effekseer::RefPtr<Effekseer::Backend::GraphicsDevice> graphicsDevice_;
 	D3D_FEATURE_LEVEL flevel_{};
 
