@@ -463,21 +463,17 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
-  public void Image(ImageResource user_texture_id, float x, float y) {
-    EffekseerNativePINVOKE.GUIManager_Image__SWIG_0(swigCPtr, ImageResource.getCPtr(user_texture_id), x, y);
+  public void ImageData(Image user_texture_id, float x, float y) {
+    EffekseerNativePINVOKE.GUIManager_ImageData(swigCPtr, Image.getCPtr(user_texture_id), x, y);
   }
 
-  public void Image(System.IntPtr user_texture_id, float x, float y) {
-    EffekseerNativePINVOKE.GUIManager_Image__SWIG_1(swigCPtr, user_texture_id, x, y);
-  }
-
-  public bool ImageButton(ImageResource user_texture_id, float x, float y) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_ImageButton(swigCPtr, ImageResource.getCPtr(user_texture_id), x, y);
+  public bool ImageButton(Image user_texture_id, float x, float y) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_ImageButton(swigCPtr, Image.getCPtr(user_texture_id), x, y);
     return ret;
   }
 
-  public bool ImageButtonOriginal(ImageResource user_texture_id, float x, float y) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_ImageButtonOriginal(swigCPtr, ImageResource.getCPtr(user_texture_id), x, y);
+  public bool ImageButtonOriginal(Image user_texture_id, float x, float y) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_ImageButtonOriginal(swigCPtr, Image.getCPtr(user_texture_id), x, y);
     return ret;
   }
 
@@ -521,8 +517,8 @@ public class GUIManager : global::System.IDisposable {
     if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
   }
 
-  public bool BeginCombo(string label, string preview_value, ComboFlags flags, ImageResource user_texture_id) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_BeginCombo__SWIG_0(swigCPtr, label, preview_value, (int)flags, ImageResource.getCPtr(user_texture_id));
+  public bool BeginCombo(string label, string preview_value, ComboFlags flags, Image user_texture_id) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginCombo__SWIG_0(swigCPtr, label, preview_value, (int)flags, Image.getCPtr(user_texture_id));
     return ret;
   }
 
@@ -1092,13 +1088,13 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
-  public bool SelectableContent(string idstr, string label, bool selected, ImageResource thumbnail, float size_x, float size_y, SelectableFlags flags) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_SelectableContent__SWIG_0(swigCPtr, idstr, label, selected, ImageResource.getCPtr(thumbnail), size_x, size_y, (int)flags);
+  public bool SelectableContent(string idstr, string label, bool selected, Image thumbnail, float size_x, float size_y, SelectableFlags flags) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_SelectableContent__SWIG_0(swigCPtr, idstr, label, selected, Image.getCPtr(thumbnail), size_x, size_y, (int)flags);
     return ret;
   }
 
-  public bool SelectableContent(string idstr, string label, bool selected, ImageResource thumbnail, float size_x, float size_y) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_SelectableContent__SWIG_1(swigCPtr, idstr, label, selected, ImageResource.getCPtr(thumbnail), size_x, size_y);
+  public bool SelectableContent(string idstr, string label, bool selected, Image thumbnail, float size_x, float size_y) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_SelectableContent__SWIG_1(swigCPtr, idstr, label, selected, Image.getCPtr(thumbnail), size_x, size_y);
     return ret;
   }
 

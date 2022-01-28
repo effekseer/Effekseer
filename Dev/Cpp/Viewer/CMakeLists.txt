@@ -37,6 +37,9 @@ list(APPEND cpps
     Graphics/StaticMeshRenderer.cpp
     Graphics/ImageRenderer.cpp
     Graphics/PostProcess.cpp
+    GUI/Image.cpp
+    GUI/ReloadableImage.cpp
+    GUI/RenderImage.cpp
     Recorder/EffectRecorder.cpp
     Recorder/AVIExporter.cpp
     Recorder/GifHelper.cpp
@@ -48,6 +51,9 @@ list(APPEND hs
     Graphics/StaticMeshRenderer.h
     Graphics/ImageRenderer.h
     Graphics/PostProcess.h
+    GUI/Image.h
+    GUI/ReloadableImage.h
+    GUI/RenderImage.h
     Recorder/EffectRecorder.h
 )
 

@@ -15,7 +15,6 @@
 #include <unordered_set>
 
 #include "../IPC/IPC.h"
-#include "GUI/efk.ImageResource.h"
 #include "ViewerEffectBehavior.h"
 #include "efk.Base.h"
 
@@ -23,8 +22,10 @@ namespace Effekseer
 {
 namespace Tool
 {
+class ReloadableImage;
+class RenderImage;
 class EffectRecorder;
-}
+} // namespace Tool
 } // namespace Effekseer
 
 enum class ViewMode
@@ -199,8 +200,6 @@ public:
 
 	void ClearWindow(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 
-	void RenderWindow();
-
 	void Present();
 
 	bool ResizeWindow(int width, int height);
@@ -227,7 +226,7 @@ public:
 
 	bool SetRandomSeed(int seed);
 
-	void* RenderView(int32_t width, int32_t height);
+	void RenderView(int32_t width, int32_t height, std::shared_ptr<Effekseer::Tool::RenderImage> renderImage);
 
 	std::shared_ptr<Effekseer::Tool::EffectRecorder> CreateRecorder(const Effekseer::Tool::RecordingParameter& recordingParameter);
 
@@ -279,8 +278,6 @@ public:
 
 	void SetCullingParameter(bool isCullingShown, float cullingRadius, float cullingX, float cullingY, float cullingZ);
 
-	efk::ImageResource* LoadImageResource(const char16_t* path);
-
 	int32_t GetAndResetDrawCall();
 
 	int32_t GetAndResetVertexCount();
@@ -302,6 +299,10 @@ public:
 	bool GetIsUpdateMaterialRequiredAndReset();
 
 	bool GetNodeLifeTimes(int32_t nodeId, int32_t* frameMin, int32_t* frameMax);
+
+	std::shared_ptr<Effekseer::Tool::ReloadableImage> CreateReloadableImage(const char16_t* path);
+
+	std::shared_ptr<Effekseer::Tool::RenderImage> CreateRenderImage();
 
 	static void SetFileLogger(const char16_t* path);
 

@@ -379,11 +379,13 @@ namespace Swig {
 
 
 #include "efk.Base.h"
-#include "GUI/efk.ImageResource.h"
 #include "Recorder/EffectRecorder.h"
 #include "dll.h"
 #include "GUI/efk.GUIManager.h"
 #include "GUI/efk.FileDialog.h"
+#include "GUI/Image.h"
+#include "GUI/ReloadableImage.h"
+#include "GUI/RenderImage.h"
 #include "CompiledMaterialGenerator.h"
 #include "../EditorCommon/Platform/PlatformMisc.h"
 #include "../EditorCommon/GUI/MainWindow.h"
@@ -630,92 +632,6 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_Vec2___(void * jarg1) {
   
   arg1 = (efk::Vec2 *)jarg1; 
   delete arg1;
-}
-
-
-SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_ImageResource___() {
-  void * jresult ;
-  efk::ImageResource *result = 0 ;
-  
-  result = (efk::ImageResource *)new efk::ImageResource();
-  jresult = (void *)result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_ImageResource___(void * jarg1) {
-  efk::ImageResource *arg1 = (efk::ImageResource *) 0 ;
-  
-  arg1 = (efk::ImageResource *)jarg1; 
-  delete arg1;
-}
-
-
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_ImageResource_Validate___(void * jarg1) {
-  unsigned int jresult ;
-  efk::ImageResource *arg1 = (efk::ImageResource *) 0 ;
-  bool result;
-  
-  arg1 = (efk::ImageResource *)jarg1; 
-  result = (bool)(arg1)->Validate();
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ImageResource_Invalidate___(void * jarg1) {
-  efk::ImageResource *arg1 = (efk::ImageResource *) 0 ;
-  
-  arg1 = (efk::ImageResource *)jarg1; 
-  (arg1)->Invalidate();
-}
-
-
-SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_ImageResource_GetPath___(void * jarg1) {
-  void * jresult ;
-  efk::ImageResource *arg1 = (efk::ImageResource *) 0 ;
-  char16_t *result = 0 ;
-  
-  arg1 = (efk::ImageResource *)jarg1; 
-  result = (char16_t *)((efk::ImageResource const *)arg1)->GetPath();
-  jresult = (char16_t *)result; 
-  return jresult;
-}
-
-
-SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_ImageResource_GetWidth___(void * jarg1) {
-  int jresult ;
-  efk::ImageResource *arg1 = (efk::ImageResource *) 0 ;
-  int32_t result;
-  
-  arg1 = (efk::ImageResource *)jarg1; 
-  result = (int32_t)((efk::ImageResource const *)arg1)->GetWidth();
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_ImageResource_GetHeight___(void * jarg1) {
-  int jresult ;
-  efk::ImageResource *arg1 = (efk::ImageResource *) 0 ;
-  int32_t result;
-  
-  arg1 = (efk::ImageResource *)jarg1; 
-  result = (int32_t)((efk::ImageResource const *)arg1)->GetHeight();
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_ImageResource_GetDeviceType___(void * jarg1) {
-  int jresult ;
-  efk::ImageResource *arg1 = (efk::ImageResource *) 0 ;
-  efk::DeviceType result;
-  
-  arg1 = (efk::ImageResource *)jarg1; 
-  result = (efk::DeviceType)((efk::ImageResource const *)arg1)->GetDeviceType();
-  jresult = (int)result; 
-  return jresult;
 }
 
 
@@ -2490,14 +2406,6 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_ClearWindow___(void * j
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_RenderWindow___(void * jarg1) {
-  Native *arg1 = (Native *) 0 ;
-  
-  arg1 = (Native *)jarg1; 
-  (arg1)->RenderWindow();
-}
-
-
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_Present___(void * jarg1) {
   Native *arg1 = (Native *) 0 ;
   
@@ -2676,21 +2584,17 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_SetRandomSeed__
 }
 
 
-SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_Native_RenderView___(void * jarg1, int jarg2, int jarg3) {
-  void * jresult ;
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_RenderView___(void * jarg1, int jarg2, int jarg3, void * jarg4) {
   Native *arg1 = (Native *) 0 ;
   int32_t arg2 ;
   int32_t arg3 ;
-  void *result = 0 ;
+  std::shared_ptr< Effekseer::Tool::RenderImage > arg4 ;
   
   arg1 = (Native *)jarg1; 
   arg2 = (int32_t)jarg2; 
   arg3 = (int32_t)jarg3; 
-  result = (void *)(arg1)->RenderView(arg2,arg3);
-  {
-    jresult = result; 
-  }
-  return jresult;
+  if (jarg4) arg4 = *(std::shared_ptr< Effekseer::Tool::RenderImage > *)jarg4; 
+  (arg1)->RenderView(arg2,arg3,arg4);
 }
 
 
@@ -3040,20 +2944,6 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_SetCullingParameter___(
 }
 
 
-SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_Native_LoadImageResource___(void * jarg1, void * jarg2) {
-  void * jresult ;
-  Native *arg1 = (Native *) 0 ;
-  char16_t *arg2 = (char16_t *) 0 ;
-  efk::ImageResource *result = 0 ;
-  
-  arg1 = (Native *)jarg1; 
-  arg2 = (char16_t *)jarg2; 
-  result = (efk::ImageResource *)(arg1)->LoadImageResource((char16_t const *)arg2);
-  jresult = (void *)result; 
-  return jresult;
-}
-
-
 SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_Native_GetAndResetDrawCall___(void * jarg1) {
   int jresult ;
   Native *arg1 = (Native *) 0 ;
@@ -3184,6 +3074,32 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_GetNodeLifeTime
   arg4 = (int32_t *)jarg4; 
   result = (bool)(arg1)->GetNodeLifeTimes(arg2,arg3,arg4);
   jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_Native_CreateReloadableImage___(void * jarg1, void * jarg2) {
+  void * jresult ;
+  Native *arg1 = (Native *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  std::shared_ptr< Effekseer::Tool::ReloadableImage > result;
+  
+  arg1 = (Native *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  result = (arg1)->CreateReloadableImage((char16_t const *)arg2);
+  jresult = result ? new std::shared_ptr< Effekseer::Tool::ReloadableImage >(result) : 0; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_Native_CreateRenderImage___(void * jarg1) {
+  void * jresult ;
+  Native *arg1 = (Native *) 0 ;
+  std::shared_ptr< Effekseer::Tool::RenderImage > result;
+  
+  arg1 = (Native *)jarg1; 
+  result = (arg1)->CreateRenderImage();
+  jresult = result ? new std::shared_ptr< Effekseer::Tool::RenderImage >(result) : 0; 
   return jresult;
 }
 
@@ -4507,46 +4423,30 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Button__SWI
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Image__SWIG_0___(void * jarg1, void * jarg2, float jarg3, float jarg4) {
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_ImageData___(void * jarg1, void * jarg2, float jarg3, float jarg4) {
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
-  efk::ImageResource *arg2 = (efk::ImageResource *) 0 ;
+  std::shared_ptr< Effekseer::Tool::Image > arg2 ;
   float arg3 ;
   float arg4 ;
   
   arg1 = (efk::GUIManager *)jarg1; 
-  arg2 = (efk::ImageResource *)jarg2; 
+  if (jarg2) arg2 = *(std::shared_ptr< Effekseer::Tool::Image > *)jarg2; 
   arg3 = (float)jarg3; 
   arg4 = (float)jarg4; 
-  (arg1)->Image(arg2,arg3,arg4);
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Image__SWIG_1___(void * jarg1, void * jarg2, float jarg3, float jarg4) {
-  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
-  void *arg2 = (void *) 0 ;
-  float arg3 ;
-  float arg4 ;
-  
-  arg1 = (efk::GUIManager *)jarg1; 
-  {
-    arg2 = jarg2; 
-  }
-  arg3 = (float)jarg3; 
-  arg4 = (float)jarg4; 
-  (arg1)->Image(arg2,arg3,arg4);
+  (arg1)->ImageData(arg2,arg3,arg4);
 }
 
 
 SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_ImageButton___(void * jarg1, void * jarg2, float jarg3, float jarg4) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
-  efk::ImageResource *arg2 = (efk::ImageResource *) 0 ;
+  std::shared_ptr< Effekseer::Tool::Image > arg2 ;
   float arg3 ;
   float arg4 ;
   bool result;
   
   arg1 = (efk::GUIManager *)jarg1; 
-  arg2 = (efk::ImageResource *)jarg2; 
+  if (jarg2) arg2 = *(std::shared_ptr< Effekseer::Tool::Image > *)jarg2; 
   arg3 = (float)jarg3; 
   arg4 = (float)jarg4; 
   result = (bool)(arg1)->ImageButton(arg2,arg3,arg4);
@@ -4558,13 +4458,13 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_ImageButton
 SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_ImageButtonOriginal___(void * jarg1, void * jarg2, float jarg3, float jarg4) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
-  efk::ImageResource *arg2 = (efk::ImageResource *) 0 ;
+  std::shared_ptr< Effekseer::Tool::Image > arg2 ;
   float arg3 ;
   float arg4 ;
   bool result;
   
   arg1 = (efk::GUIManager *)jarg1; 
-  arg2 = (efk::ImageResource *)jarg2; 
+  if (jarg2) arg2 = *(std::shared_ptr< Effekseer::Tool::Image > *)jarg2; 
   arg3 = (float)jarg3; 
   arg4 = (float)jarg4; 
   result = (bool)(arg1)->ImageButtonOriginal(arg2,arg3,arg4);
@@ -4729,14 +4629,14 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginCombo_
   char16_t *arg2 = (char16_t *) 0 ;
   char16_t *arg3 = (char16_t *) 0 ;
   efk::ComboFlags arg4 ;
-  efk::ImageResource *arg5 = (efk::ImageResource *) 0 ;
+  std::shared_ptr< Effekseer::Tool::Image > arg5 ;
   bool result;
   
   arg1 = (efk::GUIManager *)jarg1; 
   arg2 = (char16_t *)jarg2; 
   arg3 = (char16_t *)jarg3; 
   arg4 = (efk::ComboFlags)jarg4; 
-  arg5 = (efk::ImageResource *)jarg5; 
+  if (jarg5) arg5 = *(std::shared_ptr< Effekseer::Tool::Image > *)jarg5; 
   result = (bool)(arg1)->BeginCombo((char16_t const *)arg2,(char16_t const *)arg3,arg4,arg5);
   jresult = result; 
   return jresult;
@@ -7359,7 +7259,7 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SelectableC
   char16_t *arg2 = (char16_t *) 0 ;
   char16_t *arg3 = (char16_t *) 0 ;
   bool arg4 ;
-  efk::ImageResource *arg5 = (efk::ImageResource *) 0 ;
+  std::shared_ptr< Effekseer::Tool::Image > arg5 ;
   float arg6 ;
   float arg7 ;
   efk::SelectableFlags arg8 ;
@@ -7369,7 +7269,7 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SelectableC
   arg2 = (char16_t *)jarg2; 
   arg3 = (char16_t *)jarg3; 
   arg4 = jarg4 ? true : false; 
-  arg5 = (efk::ImageResource *)jarg5; 
+  if (jarg5) arg5 = *(std::shared_ptr< Effekseer::Tool::Image > *)jarg5; 
   arg6 = (float)jarg6; 
   arg7 = (float)jarg7; 
   arg8 = (efk::SelectableFlags)jarg8; 
@@ -7385,7 +7285,7 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SelectableC
   char16_t *arg2 = (char16_t *) 0 ;
   char16_t *arg3 = (char16_t *) 0 ;
   bool arg4 ;
-  efk::ImageResource *arg5 = (efk::ImageResource *) 0 ;
+  std::shared_ptr< Effekseer::Tool::Image > arg5 ;
   float arg6 ;
   float arg7 ;
   bool result;
@@ -7394,7 +7294,7 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SelectableC
   arg2 = (char16_t *)jarg2; 
   arg3 = (char16_t *)jarg3; 
   arg4 = jarg4 ? true : false; 
-  arg5 = (efk::ImageResource *)jarg5; 
+  if (jarg5) arg5 = *(std::shared_ptr< Effekseer::Tool::Image > *)jarg5; 
   arg6 = (float)jarg6; 
   arg7 = (float)jarg7; 
   result = (bool)(arg1)->SelectableContent((char16_t const *)arg2,(char16_t const *)arg3,arg4,arg5,arg6,arg7);
@@ -8987,6 +8887,146 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_FileDialog___(void * ja
 }
 
 
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_Image_GetWidth___(void * jarg1) {
+  int jresult ;
+  Effekseer::Tool::Image *arg1 = (Effekseer::Tool::Image *) 0 ;
+  std::shared_ptr< Effekseer::Tool::Image const > *smartarg1 = 0 ;
+  int32_t result;
+  
+  
+  smartarg1 = (std::shared_ptr< const Effekseer::Tool::Image > *)jarg1;
+  arg1 = (Effekseer::Tool::Image *)(smartarg1 ? smartarg1->get() : 0); 
+  result = (int32_t)((Effekseer::Tool::Image const *)arg1)->GetWidth();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_Image_GetHeight___(void * jarg1) {
+  int jresult ;
+  Effekseer::Tool::Image *arg1 = (Effekseer::Tool::Image *) 0 ;
+  std::shared_ptr< Effekseer::Tool::Image const > *smartarg1 = 0 ;
+  int32_t result;
+  
+  
+  smartarg1 = (std::shared_ptr< const Effekseer::Tool::Image > *)jarg1;
+  arg1 = (Effekseer::Tool::Image *)(smartarg1 ? smartarg1->get() : 0); 
+  result = (int32_t)((Effekseer::Tool::Image const *)arg1)->GetHeight();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_Image___() {
+  void * jresult ;
+  Effekseer::Tool::Image *result = 0 ;
+  
+  result = (Effekseer::Tool::Image *)new Effekseer::Tool::Image();
+  
+  jresult = result ? new std::shared_ptr<  Effekseer::Tool::Image >(result SWIG_NO_NULL_DELETER_1) : 0;
+  
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_Image___(void * jarg1) {
+  Effekseer::Tool::Image *arg1 = (Effekseer::Tool::Image *) 0 ;
+  std::shared_ptr< Effekseer::Tool::Image > *smartarg1 = 0 ;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::Tool::Image > *)jarg1;
+  arg1 = (Effekseer::Tool::Image *)(smartarg1 ? smartarg1->get() : 0); 
+  (void)arg1; delete smartarg1;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_ReloadableImage___() {
+  void * jresult ;
+  Effekseer::Tool::ReloadableImage *result = 0 ;
+  
+  result = (Effekseer::Tool::ReloadableImage *)new Effekseer::Tool::ReloadableImage();
+  
+  jresult = result ? new std::shared_ptr<  Effekseer::Tool::ReloadableImage >(result SWIG_NO_NULL_DELETER_1) : 0;
+  
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_ReloadableImage___(void * jarg1) {
+  Effekseer::Tool::ReloadableImage *arg1 = (Effekseer::Tool::ReloadableImage *) 0 ;
+  std::shared_ptr< Effekseer::Tool::ReloadableImage > *smartarg1 = 0 ;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::Tool::ReloadableImage > *)jarg1;
+  arg1 = (Effekseer::Tool::ReloadableImage *)(smartarg1 ? smartarg1->get() : 0); 
+  (void)arg1; delete smartarg1;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_ReloadableImage_Validate___(void * jarg1) {
+  unsigned int jresult ;
+  Effekseer::Tool::ReloadableImage *arg1 = (Effekseer::Tool::ReloadableImage *) 0 ;
+  std::shared_ptr< Effekseer::Tool::ReloadableImage > *smartarg1 = 0 ;
+  bool result;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::Tool::ReloadableImage > *)jarg1;
+  arg1 = (Effekseer::Tool::ReloadableImage *)(smartarg1 ? smartarg1->get() : 0); 
+  result = (bool)(arg1)->Validate();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ReloadableImage_Invalidate___(void * jarg1) {
+  Effekseer::Tool::ReloadableImage *arg1 = (Effekseer::Tool::ReloadableImage *) 0 ;
+  std::shared_ptr< Effekseer::Tool::ReloadableImage > *smartarg1 = 0 ;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::Tool::ReloadableImage > *)jarg1;
+  arg1 = (Effekseer::Tool::ReloadableImage *)(smartarg1 ? smartarg1->get() : 0); 
+  (arg1)->Invalidate();
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_RenderImage___() {
+  void * jresult ;
+  Effekseer::Tool::RenderImage *result = 0 ;
+  
+  result = (Effekseer::Tool::RenderImage *)new Effekseer::Tool::RenderImage();
+  
+  jresult = result ? new std::shared_ptr<  Effekseer::Tool::RenderImage >(result SWIG_NO_NULL_DELETER_1) : 0;
+  
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_RenderImage_Resize___(void * jarg1, int jarg2, int jarg3) {
+  Effekseer::Tool::RenderImage *arg1 = (Effekseer::Tool::RenderImage *) 0 ;
+  int32_t arg2 ;
+  int32_t arg3 ;
+  std::shared_ptr< Effekseer::Tool::RenderImage > *smartarg1 = 0 ;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::Tool::RenderImage > *)jarg1;
+  arg1 = (Effekseer::Tool::RenderImage *)(smartarg1 ? smartarg1->get() : 0); 
+  arg2 = (int32_t)jarg2; 
+  arg3 = (int32_t)jarg3; 
+  (arg1)->Resize(arg2,arg3);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_RenderImage___(void * jarg1) {
+  Effekseer::Tool::RenderImage *arg1 = (Effekseer::Tool::RenderImage *) 0 ;
+  std::shared_ptr< Effekseer::Tool::RenderImage > *smartarg1 = 0 ;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::Tool::RenderImage > *)jarg1;
+  arg1 = (Effekseer::Tool::RenderImage *)(smartarg1 ? smartarg1->get() : 0); 
+  (void)arg1; delete smartarg1;
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_CompiledMaterialGenerator___() {
   void * jresult ;
   CompiledMaterialGenerator *result = 0 ;
@@ -9605,6 +9645,14 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_IO_AddCallback___(void * jarg1
   (arg1)->AddCallback(arg2);
 }
 
+
+SWIGEXPORT std::shared_ptr< Effekseer::Tool::Image > * SWIGSTDCALL CSharp_Effekseerfswig_ReloadableImage_SWIGSmartPtrUpcast___(std::shared_ptr< Effekseer::Tool::ReloadableImage > *jarg1) {
+    return jarg1 ? new std::shared_ptr< Effekseer::Tool::Image >(*jarg1) : 0;
+}
+
+SWIGEXPORT std::shared_ptr< Effekseer::Tool::Image > * SWIGSTDCALL CSharp_Effekseerfswig_RenderImage_SWIGSmartPtrUpcast___(std::shared_ptr< Effekseer::Tool::RenderImage > *jarg1) {
+    return jarg1 ? new std::shared_ptr< Effekseer::Tool::Image >(*jarg1) : 0;
+}
 
 #ifdef __cplusplus
 }

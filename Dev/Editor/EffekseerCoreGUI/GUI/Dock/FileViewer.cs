@@ -312,7 +312,7 @@ namespace Effekseer.GUI.Dock
 						Manager.NativeManager.SameLine();
 						Manager.NativeManager.SetCursorPosX(item.DrawPosX);
 						float listIconSize = Manager.NativeManager.GetTextLineHeight();
-						Manager.NativeManager.Image(item.Image, listIconSize, listIconSize);
+						Manager.NativeManager.ImageData(item.Image, listIconSize, listIconSize);
 					}
 				}
 			}
@@ -475,7 +475,7 @@ namespace Effekseer.GUI.Dock
 
 			public FileType Type { get; private set; }
 
-			public swig.ImageResource Image { get; private set; }
+			public swig.ReloadableImage Image { get; private set; }
 
 			public bool Selected { get; set; }
 

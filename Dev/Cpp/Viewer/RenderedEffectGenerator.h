@@ -15,6 +15,8 @@ namespace Effekseer
 namespace Tool
 {
 
+class RenderImage;
+
 struct RenderedEffectGeneratorConfig
 {
 	Effekseer::Manager::DrawParameter DrawParameter;
@@ -100,9 +102,6 @@ protected:
 	Effekseer::TextureRef backgroundTexture_;
 	Effekseer::Color backgroundMeshColor_{};
 
-	efk::RenderTexture* renderTexture_ = nullptr;
-	efk::DepthTexture* depthTexture_ = nullptr;
-
 	Vector2DI screenSize_;
 	ViewerEffectBehavior behavior_;
 
@@ -161,7 +160,7 @@ public:
 	void Resize(const Vector2DI screenSize);
 	void Update();
 	void Update(int32_t frame);
-	void Render();
+	void Render(std::shared_ptr<RenderImage> renderImage = nullptr);
 	void Reset();
 
 	Effekseer::EffectRef GetEffect();

@@ -111,6 +111,7 @@ namespace Effekseer.GUI
 
 		public static swig.GUIManager NativeManager;
 		public static swig.Native Native;
+		public static swig.RenderImage MainViewImage;
 		public static swig.MainWindow MainWindow;
 		public static swig.IO IO;
 		static ManagerIOCallback ioCallback;
@@ -266,7 +267,7 @@ namespace Effekseer.GUI
 			}
 
 			Native = new swig.Native();
-
+			
 			Viewer = new Viewer(Native);
 			if (!Viewer.ShowViewer(mgr.GetNativeHandle(), state.Width, state.Height, deviceType))
 			{
@@ -278,6 +279,8 @@ namespace Effekseer.GUI
             mgr.InitializeGUI(Native);
 			
 			NativeManager = mgr;
+
+			MainViewImage = Native.CreateRenderImage();
 
 			Images.Load(GUI.Manager.Native);
 
@@ -437,6 +440,12 @@ namespace Effekseer.GUI
 			RecentFiles.SaveRecentConfig();
 
 			Viewer.HideViewer();
+
+			if(MainViewImage != null)
+			{
+				MainViewImage.Dispose();
+				MainViewImage = null;
+			}
 
 			NativeManager.SetCallback(null);
 			NativeManager.Terminate();

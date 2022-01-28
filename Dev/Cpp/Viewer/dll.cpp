@@ -25,6 +25,10 @@
 #include "Effekseer/Effekseer.EffectImplemented.h"
 #include "Effekseer/Effekseer.EffectNode.h"
 
+#include "GUI/Image.h"
+#include "GUI/ReloadableImage.h"
+#include "GUI/RenderImage.h"
+
 class EditorEffectNodeUserData : public ::Effekseer::RenderingUserData
 {
 public:
@@ -107,7 +111,6 @@ static Effekseer::Manager::DrawParameter drawParameter;
 static ::EffekseerTool::Sound* sound_ = nullptr;
 static std::map<std::u16string, Effekseer::TextureRef> m_textures;
 static std::map<std::u16string, Effekseer::ModelRef> m_models;
-static std::map<std::u16string, std::shared_ptr<efk::ImageResource>> g_imageResources;
 static std::map<std::u16string, Effekseer::MaterialRef> g_materials_;
 
 static ::Effekseer::Vector3D g_focus_position;
@@ -472,11 +475,6 @@ bool Native::UpdateWindow()
 	return true;
 }
 
-void Native::RenderWindow()
-{
-	mainScreen_->Render();
-}
-
 void Native::Present()
 {
 	graphics_->Present();
@@ -491,8 +489,6 @@ bool Native::ResizeWindow(int width, int height)
 bool Native::DestroyWindow()
 {
 	InvalidateTextureCache();
-
-	g_imageResources.clear();
 
 	mainScreen_.reset();
 	graphics_.reset();
@@ -669,7 +665,7 @@ bool Native::SetRandomSeed(int seed)
 	return true;
 }
 
-void* Native::RenderView(int32_t width, int32_t height)
+void Native::RenderView(int32_t width, int32_t height, std::shared_ptr<Effekseer::Tool::RenderImage> renderImage)
 {
 	viewPointCtrl_.SetScreenSize(width, height);
 	mainScreenConfig_.DrawParameter = drawParameter;
@@ -678,8 +674,13 @@ void* Native::RenderView(int32_t width, int32_t height)
 	mainScreenConfig_.RenderingMethod = viewPointCtrl_.RenderingMode;
 	mainScreen_->SetConfig(mainScreenConfig_);
 	mainScreen_->Resize(Effekseer::Tool::Vector2DI(width, height));
-	mainScreen_->Render();
-	return (void*)mainScreen_->GetView()->GetViewID();
+
+	if (renderImage != nullptr)
+	{
+		renderImage->Resize(width, height);
+	}
+
+	mainScreen_->Render(renderImage);
 }
 
 std::shared_ptr<Effekseer::Tool::EffectRecorder> Native::CreateRecorder(const Effekseer::Tool::RecordingParameter& recordingParameter)
@@ -953,27 +954,6 @@ void Native::SetCullingParameter(bool isCullingShown, float cullingRadius, float
 	mainScreen_->CullingPosition.Z = cullingZ;
 }
 
-efk::ImageResource* Native::LoadImageResource(const char16_t* path)
-{
-	auto it = g_imageResources.find(path);
-	if (it != g_imageResources.end())
-	{
-		return it->second.get();
-	}
-
-	auto loader = EffekseerRenderer::CreateTextureLoader(graphics_->GetGraphicsDevice());
-	auto resource = std::make_shared<efk::ImageResource>(g_deviceType, loader);
-	resource->SetPath(path);
-
-	if (resource->Validate())
-	{
-		g_imageResources[path] = resource;
-		return resource.get();
-	}
-
-	return nullptr;
-}
-
 int32_t Native::GetAndResetDrawCall()
 {
 	auto call = mainScreen_->GetRenderer()->GetDrawCallCount();
@@ -1088,6 +1068,17 @@ bool Native::GetNodeLifeTimes(int32_t nodeId, int32_t* frameMin, int32_t* frameM
 	}
 
 	return false;
+}
+
+std::shared_ptr<Effekseer::Tool::ReloadableImage> Native::CreateReloadableImage(const char16_t* path)
+{
+	auto loader = EffekseerRenderer::CreateTextureLoader(graphics_->GetGraphicsDevice());
+	return std::make_shared<Effekseer::Tool::ReloadableImage>(path, loader);
+}
+
+std::shared_ptr<Effekseer::Tool::RenderImage> Native::CreateRenderImage()
+{
+	return std::make_shared<Effekseer::Tool::RenderImage>(graphics_->GetGraphicsDevice());
 }
 
 void Native::SetFileLogger(const char16_t* path)

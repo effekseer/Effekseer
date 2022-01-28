@@ -8,7 +8,7 @@ namespace Effekseer.GUI
 {
 	class Thumbnail
 	{
-		public swig.ImageResource Image = null;
+		public swig.ReloadableImage Image = null;
 	}
 
 	class ThumbnailManager
@@ -37,7 +37,7 @@ namespace Effekseer.GUI
 				return thumbnails[path];
 			}
 
-			var image = Manager.Native.LoadImageResource(path);
+			var image = Manager.Native.CreateReloadableImage(path);
 			if (image == null) return null;
 
 			Thumbnail thumbnail = new Thumbnail();
