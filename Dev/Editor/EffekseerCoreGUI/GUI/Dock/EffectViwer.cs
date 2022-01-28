@@ -48,8 +48,8 @@ namespace Effekseer.GUI.Dock
 			contentSize.X = System.Math.Max(1, contentSize.X);
 			contentSize.Y = System.Math.Max(1, contentSize.Y - frameHeight - padding);
 
-			var p = Manager.Native.RenderView((int)contentSize.X, (int)contentSize.Y);
-			Manager.NativeManager.Image(p, (int)contentSize.X, (int)contentSize.Y);
+			Manager.Native.RenderView((int)contentSize.X, (int)contentSize.Y, Manager.MainViewImage);
+			Manager.NativeManager.ImageData(Manager.MainViewImage, (int)contentSize.X, (int)contentSize.Y);
 
 			IsHovered = Manager.NativeManager.IsWindowHovered();
 

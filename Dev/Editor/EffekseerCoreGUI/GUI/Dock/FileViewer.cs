@@ -312,7 +312,7 @@ namespace Effekseer.GUI.Dock
 						Manager.NativeManager.SameLine();
 						Manager.NativeManager.SetCursorPosX(item.DrawPosX);
 						float listIconSize = Manager.NativeManager.GetTextLineHeight();
-						Manager.NativeManager.Image(item.Image, listIconSize, listIconSize);
+						Manager.NativeManager.ImageData(item.Image, listIconSize, listIconSize);
 					}
 				}
 			}

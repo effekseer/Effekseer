@@ -22,6 +22,11 @@
 
 class Native;
 
+namespace Effekseer::Tool
+{
+class Image;
+}
+
 namespace efk
 {
 // Flags for ImGui::Begin()
@@ -540,13 +545,17 @@ public:
 	// Main
 	bool Button(const char16_t* label, float size_x = 0.0f, float size_y = 0.0f);
 
-	void Image(ImageResource* user_texture_id, float x, float y);
-
-	void Image(void* user_texture_id, float x, float y);
+	void ImageData(ImageResource* user_texture_id, float x, float y);
+	
+	void ImageData(std::shared_ptr<Effekseer::Tool::Image> user_texture_id, float x, float y);
 
 	bool ImageButton(ImageResource* user_texture_id, float x, float y);
 
+	bool ImageButton(std::shared_ptr<Effekseer::Tool::Image> user_texture_id, float x, float y);
+
 	bool ImageButtonOriginal(ImageResource* user_texture_id, float x, float y);
+
+	bool ImageButtonOriginal(std::shared_ptr<Effekseer::Tool::Image> user_texture_id, float x, float y);
 
 	bool Checkbox(const char16_t* label, bool* v);
 
@@ -691,6 +700,8 @@ public:
 	bool Selectable(const char16_t* label, bool selected = false, SelectableFlags flags = SelectableFlags::None);
 
 	bool SelectableContent(const char16_t* idstr, const char16_t* label, bool selected, ImageResource* thumbnail, float size_x, float size_y, SelectableFlags flags = SelectableFlags::None);
+
+	bool SelectableContent(const char16_t* idstr, const char16_t* label, bool selected, std::shared_ptr<Effekseer::Tool::Image> thumbnail, float size_x, float size_y, SelectableFlags flags = SelectableFlags::None);
 
 	// Tooltips
 	void SetTooltip(const char16_t* text);

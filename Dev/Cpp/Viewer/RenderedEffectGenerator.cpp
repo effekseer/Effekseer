@@ -46,6 +46,8 @@ namespace PostEffect_Overdraw_PS
 #include "../EffekseerRendererGL/EffekseerRenderer/ShaderHeader/model_unlit_vs.h"
 #include "../EffekseerRendererGL/EffekseerRenderer/ShaderHeader/sprite_unlit_vs.h"
 
+#include "GUI/RenderImage.h"
+
 namespace Effekseer
 {
 namespace Tool
@@ -543,9 +545,6 @@ void RenderedEffectGenerator::Resize(const Vector2DI screenSize)
 		linearRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics_.get()));
 		linearRenderTexture->Initialize(screenSize, textureFormat_);
 	}
-
-	viewRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics_.get()));
-	viewRenderTexture->Initialize(screenSize, Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM);
 }
 
 void RenderedEffectGenerator::Update()
@@ -715,7 +714,7 @@ void RenderedEffectGenerator::Update(int32_t frame)
 	}
 }
 
-void RenderedEffectGenerator::Render()
+void RenderedEffectGenerator::Render(std::shared_ptr<RenderImage> renderImage)
 {
 	// Clear a destination texture
 	if (config_.RenderingMethod == RenderingMethodType::Overdraw)
@@ -731,7 +730,9 @@ void RenderedEffectGenerator::Render()
 		UpdateBackgroundMesh(config_.BackgroundColor);
 	}
 
-	graphics_->SetRenderTarget({viewRenderTexture->GetAsBackend()}, nullptr);
+	auto renderTargetImage = renderImage->GetTexture();
+
+	graphics_->SetRenderTarget({renderTargetImage}, nullptr);
 	graphics_->Clear({0, 0, 0, 0});
 
 	// clear
@@ -908,7 +909,7 @@ void RenderedEffectGenerator::Render()
 
 	if (config_.RenderingMethod == RenderingMethodType::Overdraw)
 	{
-		graphics_->SetRenderTarget({viewRenderTexture->GetAsBackend()}, nullptr);
+		graphics_->SetRenderTarget({renderTargetImage}, nullptr);
 		overdrawEffect_->GetDrawParameter().TexturePtrs[0] = hdrRenderTexture->GetAsBackend();
 		overdrawEffect_->GetDrawParameter().TextureCount = 1;
 		overdrawEffect_->Render();
@@ -919,7 +920,7 @@ void RenderedEffectGenerator::Render()
 		m_bloomEffect->Render(hdrRenderTexture->GetAsBackend(), hdrRenderTexture->GetAsBackend());
 
 		// Tone map processing
-		auto tonemapTerget = viewRenderTexture->GetAsBackend();
+		auto tonemapTerget = renderTargetImage;
 		if (m_isSRGBMode)
 		{
 			tonemapTerget = linearRenderTexture->GetAsBackend();
@@ -929,7 +930,7 @@ void RenderedEffectGenerator::Render()
 
 		if (m_isSRGBMode)
 		{
-			m_linearToSRGBEffect->Render(tonemapTerget, viewRenderTexture->GetAsBackend());
+			m_linearToSRGBEffect->Render(tonemapTerget, renderTargetImage);
 		}
 	}
 

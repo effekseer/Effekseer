@@ -15,6 +15,7 @@
 
 #include "NodeFrameTimeline.h"
 #include "efk.GUIManager.h"
+#include "Image.h"
 
 #include "../EditorCommon/GUI/JapaneseFont.h"
 
@@ -480,6 +481,31 @@ struct utf8str
 		return data;
 	}
 };
+
+static ImTextureID ToImTextureID(std::shared_ptr<Effekseer::Tool::Image> image)
+{
+	if (image != nullptr)
+	{
+		auto texture = image->GetTexture();
+		if (texture != nullptr)
+		{
+#ifdef _WIN32
+			auto t_dx11 = dynamic_cast<EffekseerRendererDX11::Backend::Texture*>(texture.Get());
+			if (t_dx11 != nullptr)
+			{
+				return reinterpret_cast<ImTextureID>(t_dx11->GetSRV());
+			}
+#endif
+			auto t_gl = dynamic_cast<EffekseerRendererGL::Backend::Texture*>(texture.Get());
+			if (t_gl != nullptr)
+			{
+				return reinterpret_cast<ImTextureID>(static_cast<size_t>(t_gl->GetBuffer()));
+			}
+		}
+	}
+	return nullptr;
+}
+
 
 static ImTextureID ToImTextureID(ImageResource* image)
 {
@@ -1453,21 +1479,14 @@ bool GUIManager::Button(const char16_t* label, float size_x, float size_y)
 	return ImGui::Button(utf8str<256>(label), ImVec2(size_x, size_y));
 }
 
-void GUIManager::Image(ImageResource* user_texture_id, float x, float y)
+void GUIManager::ImageData(ImageResource* user_texture_id, float x, float y)
 {
 	ImGui::Image(ToImTextureID(user_texture_id), ImVec2(x, y));
 }
 
-void GUIManager::Image(void* user_texture_id, float x, float y)
+void GUIManager::ImageData(std::shared_ptr<Effekseer::Tool::Image> user_texture_id, float x, float y)
 {
-	if (deviceType != DeviceType::OpenGL)
-	{
-		ImGui::Image((ImTextureID)user_texture_id, ImVec2(x, y), ImVec2(0, 0), ImVec2(1, 1));
-	}
-	else
-	{
-		ImGui::Image((ImTextureID)user_texture_id, ImVec2(x, y), ImVec2(0, 1), ImVec2(1, 0));
-	}
+	ImGui::Image(ToImTextureID(user_texture_id), ImVec2(x, y));
 }
 
 bool GUIManager::ImageButton(ImageResource* user_texture_id, float x, float y)
@@ -1476,7 +1495,18 @@ bool GUIManager::ImageButton(ImageResource* user_texture_id, float x, float y)
 		ToImTextureID(user_texture_id), ImVec2(x, y), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1));
 }
 
+bool GUIManager::ImageButton(std::shared_ptr<Effekseer::Tool::Image> user_texture_id, float x, float y)
+{
+	return ImGui::ImageButton_(
+		ToImTextureID(user_texture_id), ImVec2(x, y), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1));
+}
+
 bool GUIManager::ImageButtonOriginal(ImageResource* user_texture_id, float x, float y)
+{
+	return ImGui::ImageButton(ToImTextureID(user_texture_id), ImVec2(x, y), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1));
+}
+
+bool GUIManager::ImageButtonOriginal(std::shared_ptr<Effekseer::Tool::Image> user_texture_id, float x, float y)
 {
 	return ImGui::ImageButton(ToImTextureID(user_texture_id), ImVec2(x, y), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1));
 }
@@ -1843,6 +1873,28 @@ bool GUIManager::SelectableContent(const char16_t* idstr, const char16_t* label,
 		ImGui::GetColorU32(ImGuiCol_WindowBg, 0.8f), utf8str<256>(label), nullptr, size_x, &clipRect);
 	drawList->AddText(GImGui->Font, GImGui->FontSize, cursorPos, 
 		ImGui::GetColorU32(ImGuiCol_Text), utf8str<256>(label), nullptr, size_x, &clipRect);
+
+	return result;
+}
+
+bool GUIManager::SelectableContent(const char16_t* idstr, const char16_t* label, bool selected, std::shared_ptr<Effekseer::Tool::Image> thumbnail, float size_x, float size_y, SelectableFlags flags)
+{
+	ImVec2 cursorPos = ImGui::GetCursorScreenPos();
+	ImDrawList* drawList = ImGui::GetWindowDrawList();
+	const auto& style = ImGui::GetStyle();
+
+	ImVec2 screenPos = ImGui::GetCursorScreenPos();
+	ImVec4 clipRect = {screenPos.x, screenPos.y, screenPos.x + size_x, screenPos.y + size_y};
+
+	if (thumbnail)
+	{
+		drawList->AddImage(ToImTextureID(thumbnail), cursorPos, ImVec2(cursorPos.x + size_x, cursorPos.y + size_y));
+	}
+
+	bool result = ImGui::Selectable(utf8str<256>(idstr), selected, (int)flags, ImVec2(size_x, size_y));
+
+	drawList->AddText(GImGui->Font, GImGui->FontSize, ImVec2(cursorPos.x + 1, cursorPos.y + 1), ImGui::GetColorU32(ImGuiCol_WindowBg, 0.8f), utf8str<256>(label), nullptr, size_x, &clipRect);
+	drawList->AddText(GImGui->Font, GImGui->FontSize, cursorPos, ImGui::GetColorU32(ImGuiCol_Text), utf8str<256>(label), nullptr, size_x, &clipRect);
 
 	return result;
 }

@@ -7,6 +7,9 @@
 #include "dll.h"
 #include "GUI/efk.GUIManager.h"
 #include "GUI/efk.FileDialog.h"
+#include "GUI/Image.h"
+#include "GUI/ReloadableImage.h"
+#include "GUI/RenderImage.h"
 #include "CompiledMaterialGenerator.h"
 #include "../EditorCommon/Platform/PlatformMisc.h"
 #include "../EditorCommon/GUI/MainWindow.h"
@@ -96,6 +99,9 @@ class"
 %shared_ptr(Effekseer::IO);
 %shared_ptr(Effekseer::IOCallback);
 %shared_ptr(Effekseer::Tool::EffectRecorder);
+%shared_ptr(Effekseer::Tool::Image);
+%shared_ptr(Effekseer::Tool::RenderImage);
+%shared_ptr(Effekseer::Tool::ReloadableImage);
 
 // Timeline
 %apply int *INOUT { int* frameMin }
@@ -116,6 +122,9 @@ class"
 %include "Cpp/Viewer/dll.h"
 %include "Cpp/Viewer/GUI/efk.GUIManager.h"
 %include "Cpp/Viewer/GUI/efk.FileDialog.h"
+%include "Cpp/Viewer/GUI/Image.h"
+%include "Cpp/Viewer/GUI/ReloadableImage.h"
+%include "Cpp/Viewer/GUI/RenderImage.h"
 %include "Cpp/Viewer/CompiledMaterialGenerator.h"
 
 %include "Cpp/EditorCommon/Platform/PlatformMisc.h"

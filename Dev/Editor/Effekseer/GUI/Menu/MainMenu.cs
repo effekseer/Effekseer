@@ -128,7 +128,7 @@ namespace Effekseer.GUI.Menu
 		{
 			float iconSize = 28.0f * Manager.DpiScale;
 			Manager.NativeManager.SetCursorPosY((Manager.NativeManager.GetFrameHeight() - iconSize) / 2);
-			Manager.NativeManager.Image(Images.GetIcon("AppIcon"), iconSize, iconSize);
+			Manager.NativeManager.ImageData(Images.GetIcon("AppIcon"), iconSize, iconSize);
 			Manager.NativeManager.SetCursorPosY(0);
 		}
 

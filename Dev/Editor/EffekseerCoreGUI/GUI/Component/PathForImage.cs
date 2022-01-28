@@ -167,15 +167,15 @@ namespace Effekseer.GUI.Component
 					float imageSizeY = image.GetHeight();
 					if (imageSizeX < imageSizeY)
 					{
-						Manager.NativeManager.Image(image, 128 * imageSizeX / imageSizeY, 128);
+						Manager.NativeManager.ImageData(image, 128 * imageSizeX / imageSizeY, 128);
 					}
 					else if (imageSizeX > imageSizeY)
 					{
-						Manager.NativeManager.Image(image, 128, 128 * imageSizeY / imageSizeX);
+						Manager.NativeManager.ImageData(image, 128, 128 * imageSizeY / imageSizeX);
 					}
 					else
 					{
-						Manager.NativeManager.Image(image, 128, 128);
+						Manager.NativeManager.ImageData(image, 128, 128);
 					}
 
 					Popup();

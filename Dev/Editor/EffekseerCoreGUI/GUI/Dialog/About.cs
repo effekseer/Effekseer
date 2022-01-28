@@ -68,7 +68,7 @@ THE SOFTWARE.
             {
 				const float iconSize = 64;
 
-				Manager.NativeManager.Image(Images.GetIcon("AppIcon"), iconSize, iconSize);
+				Manager.NativeManager.ImageData(Images.GetIcon("AppIcon"), iconSize, iconSize);
 
 				Manager.NativeManager.SameLine();
 				

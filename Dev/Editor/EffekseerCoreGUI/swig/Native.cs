@@ -61,10 +61,6 @@ public class Native : global::System.IDisposable {
     EffekseerNativePINVOKE.Native_ClearWindow(swigCPtr, r, g, b, a);
   }
 
-  public void RenderWindow() {
-    EffekseerNativePINVOKE.Native_RenderWindow(swigCPtr);
-  }
-
   public void Present() {
     EffekseerNativePINVOKE.Native_Present(swigCPtr);
   }
@@ -129,7 +125,9 @@ public class Native : global::System.IDisposable {
     return ret;
   }
 
-  public System.IntPtr RenderView(int width, int height) { return EffekseerNativePINVOKE.Native_RenderView(swigCPtr, width, height); }
+  public void RenderView(int width, int height, RenderImage renderImage) {
+    EffekseerNativePINVOKE.Native_RenderView(swigCPtr, width, height, RenderImage.getCPtr(renderImage));
+  }
 
   public EffectRecorder CreateRecorder(RecordingParameter recordingParameter) {
     global::System.IntPtr cPtr = EffekseerNativePINVOKE.Native_CreateRecorder(swigCPtr, RecordingParameter.getCPtr(recordingParameter));
@@ -243,12 +241,6 @@ public class Native : global::System.IDisposable {
     EffekseerNativePINVOKE.Native_SetCullingParameter(swigCPtr, isCullingShown, cullingRadius, cullingX, cullingY, cullingZ);
   }
 
-  public ImageResource LoadImageResource(string path) {
-    global::System.IntPtr cPtr = EffekseerNativePINVOKE.Native_LoadImageResource(swigCPtr, path);
-    ImageResource ret = (cPtr == global::System.IntPtr.Zero) ? null : new ImageResource(cPtr, false);
-    return ret;
-  }
-
   public int GetAndResetDrawCall() {
     int ret = EffekseerNativePINVOKE.Native_GetAndResetDrawCall(swigCPtr);
     return ret;
@@ -297,6 +289,24 @@ public class Native : global::System.IDisposable {
 
   public bool GetNodeLifeTimes(int nodeId, ref int frameMin, ref int frameMax) {
     bool ret = EffekseerNativePINVOKE.Native_GetNodeLifeTimes(swigCPtr, nodeId, ref frameMin, ref frameMax);
+    return ret;
+  }
+
+  public ImageResource LoadImageResource(string path) {
+    global::System.IntPtr cPtr = EffekseerNativePINVOKE.Native_LoadImageResource(swigCPtr, path);
+    ImageResource ret = (cPtr == global::System.IntPtr.Zero) ? null : new ImageResource(cPtr, false);
+    return ret;
+  }
+
+  public ReloadableImage CreateReloadableImage(string path) {
+    global::System.IntPtr cPtr = EffekseerNativePINVOKE.Native_CreateReloadableImage(swigCPtr, path);
+    ReloadableImage ret = (cPtr == global::System.IntPtr.Zero) ? null : new ReloadableImage(cPtr, true);
+    return ret;
+  }
+
+  public RenderImage CreateRenderImage() {
+    global::System.IntPtr cPtr = EffekseerNativePINVOKE.Native_CreateRenderImage(swigCPtr);
+    RenderImage ret = (cPtr == global::System.IntPtr.Zero) ? null : new RenderImage(cPtr, true);
     return ret;
   }
 

@@ -463,21 +463,31 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
-  public void Image(ImageResource user_texture_id, float x, float y) {
-    EffekseerNativePINVOKE.GUIManager_Image__SWIG_0(swigCPtr, ImageResource.getCPtr(user_texture_id), x, y);
+  public void ImageData(ImageResource user_texture_id, float x, float y) {
+    EffekseerNativePINVOKE.GUIManager_ImageData__SWIG_0(swigCPtr, ImageResource.getCPtr(user_texture_id), x, y);
   }
 
-  public void Image(System.IntPtr user_texture_id, float x, float y) {
-    EffekseerNativePINVOKE.GUIManager_Image__SWIG_1(swigCPtr, user_texture_id, x, y);
+  public void ImageData(Image user_texture_id, float x, float y) {
+    EffekseerNativePINVOKE.GUIManager_ImageData__SWIG_1(swigCPtr, Image.getCPtr(user_texture_id), x, y);
   }
 
   public bool ImageButton(ImageResource user_texture_id, float x, float y) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_ImageButton(swigCPtr, ImageResource.getCPtr(user_texture_id), x, y);
+    bool ret = EffekseerNativePINVOKE.GUIManager_ImageButton__SWIG_0(swigCPtr, ImageResource.getCPtr(user_texture_id), x, y);
+    return ret;
+  }
+
+  public bool ImageButton(Image user_texture_id, float x, float y) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_ImageButton__SWIG_1(swigCPtr, Image.getCPtr(user_texture_id), x, y);
     return ret;
   }
 
   public bool ImageButtonOriginal(ImageResource user_texture_id, float x, float y) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_ImageButtonOriginal(swigCPtr, ImageResource.getCPtr(user_texture_id), x, y);
+    bool ret = EffekseerNativePINVOKE.GUIManager_ImageButtonOriginal__SWIG_0(swigCPtr, ImageResource.getCPtr(user_texture_id), x, y);
+    return ret;
+  }
+
+  public bool ImageButtonOriginal(Image user_texture_id, float x, float y) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_ImageButtonOriginal__SWIG_1(swigCPtr, Image.getCPtr(user_texture_id), x, y);
     return ret;
   }
 
@@ -1099,6 +1109,16 @@ public class GUIManager : global::System.IDisposable {
 
   public bool SelectableContent(string idstr, string label, bool selected, ImageResource thumbnail, float size_x, float size_y) {
     bool ret = EffekseerNativePINVOKE.GUIManager_SelectableContent__SWIG_1(swigCPtr, idstr, label, selected, ImageResource.getCPtr(thumbnail), size_x, size_y);
+    return ret;
+  }
+
+  public bool SelectableContent(string idstr, string label, bool selected, Image thumbnail, float size_x, float size_y, SelectableFlags flags) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_SelectableContent__SWIG_2(swigCPtr, idstr, label, selected, Image.getCPtr(thumbnail), size_x, size_y, (int)flags);
+    return ret;
+  }
+
+  public bool SelectableContent(string idstr, string label, bool selected, Image thumbnail, float size_x, float size_y) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_SelectableContent__SWIG_3(swigCPtr, idstr, label, selected, Image.getCPtr(thumbnail), size_x, size_y);
     return ret;
   }
 

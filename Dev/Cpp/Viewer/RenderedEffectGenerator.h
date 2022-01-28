@@ -15,6 +15,8 @@ namespace Effekseer
 namespace Tool
 {
 
+class RenderImage;
+
 struct RenderedEffectGeneratorConfig
 {
 	Effekseer::Manager::DrawParameter DrawParameter;
@@ -161,7 +163,7 @@ public:
 	void Resize(const Vector2DI screenSize);
 	void Update();
 	void Update(int32_t frame);
-	void Render();
+	void Render(std::shared_ptr<RenderImage> renderImage = nullptr);
 	void Reset();
 
 	Effekseer::EffectRef GetEffect();
