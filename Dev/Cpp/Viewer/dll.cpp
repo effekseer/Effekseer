@@ -111,7 +111,6 @@ static Effekseer::Manager::DrawParameter drawParameter;
 static ::EffekseerTool::Sound* sound_ = nullptr;
 static std::map<std::u16string, Effekseer::TextureRef> m_textures;
 static std::map<std::u16string, Effekseer::ModelRef> m_models;
-static std::map<std::u16string, std::shared_ptr<efk::ImageResource>> g_imageResources;
 static std::map<std::u16string, Effekseer::MaterialRef> g_materials_;
 
 static ::Effekseer::Vector3D g_focus_position;
@@ -490,8 +489,6 @@ bool Native::ResizeWindow(int width, int height)
 bool Native::DestroyWindow()
 {
 	InvalidateTextureCache();
-
-	g_imageResources.clear();
 
 	mainScreen_.reset();
 	graphics_.reset();
@@ -1071,27 +1068,6 @@ bool Native::GetNodeLifeTimes(int32_t nodeId, int32_t* frameMin, int32_t* frameM
 	}
 
 	return false;
-}
-
-efk::ImageResource* Native::LoadImageResource(const char16_t* path)
-{
-	auto it = g_imageResources.find(path);
-	if (it != g_imageResources.end())
-	{
-		return it->second.get();
-	}
-
-	auto loader = EffekseerRenderer::CreateTextureLoader(graphics_->GetGraphicsDevice());
-	auto resource = std::make_shared<efk::ImageResource>(g_deviceType, loader);
-	resource->SetPath(path);
-
-	if (resource->Validate())
-	{
-		g_imageResources[path] = resource;
-		return resource.get();
-	}
-
-	return nullptr;
 }
 
 std::shared_ptr<Effekseer::Tool::ReloadableImage> Native::CreateReloadableImage(const char16_t* path)

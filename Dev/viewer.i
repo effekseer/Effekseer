@@ -2,7 +2,6 @@
 
 %{
 #include "efk.Base.h"
-#include "GUI/efk.ImageResource.h"
 #include "Recorder/EffectRecorder.h"
 #include "dll.h"
 #include "GUI/efk.GUIManager.h"
@@ -115,7 +114,6 @@ class"
 //-----------------------------------------------------------------------------------
 %include "Cpp/Viewer/efk.Base.h"
 %include "Cpp/Viewer/GUI/efk.Vec2.h"
-%include "Cpp/Viewer/GUI/efk.ImageResource.h"
 %include "Cpp/Viewer/ViewerEffectBehavior.h"
 %include "Cpp/Viewer/Recorder/RecordingParameter.h"
 %include "Cpp/Viewer/Recorder/EffectRecorder.h"

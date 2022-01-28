@@ -475,7 +475,7 @@ namespace Effekseer.GUI.Dock
 
 			public FileType Type { get; private set; }
 
-			public swig.ImageResource Image { get; private set; }
+			public swig.ReloadableImage Image { get; private set; }
 
 			public bool Selected { get; set; }
 

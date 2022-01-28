@@ -6,17 +6,17 @@ namespace Effekseer.GUI
 {
 	public class Images
 	{
-		public static swig.ImageResource Play;
-		public static swig.ImageResource Stop;
-		public static swig.ImageResource Pause;
-		public static swig.ImageResource Step;
-		public static swig.ImageResource BackStep;
+		public static swig.ReloadableImage Play;
+		public static swig.ReloadableImage Stop;
+		public static swig.ReloadableImage Pause;
+		public static swig.ReloadableImage Step;
+		public static swig.ReloadableImage BackStep;
 
-		public static Dictionary<string, swig.ImageResource> Icons = new Dictionary<string, swig.ImageResource>();
+		public static Dictionary<string, swig.ReloadableImage> Icons = new Dictionary<string, swig.ReloadableImage>();
 
-		public static Dictionary<string, swig.ImageResource> tempImages = new Dictionary<string, swig.ImageResource>();
+		public static Dictionary<string, swig.ReloadableImage> tempImages = new Dictionary<string, swig.ReloadableImage>();
 
-		public static swig.ImageResource Load(swig.Native native, string path, bool isRequiredToReload = false)
+		public static swig.ReloadableImage Load(swig.Native native, string path, bool isRequiredToReload = false)
 		{
 			if (tempImages.ContainsKey(path) && !isRequiredToReload)
 			{
@@ -31,7 +31,7 @@ namespace Effekseer.GUI
 					return tempImages[path];
 				}
 
-				var img = native.LoadImageResource(path);
+				var img = native.CreateReloadableImage(path);
 				if (img != null)
 				{
 					tempImages.Add(path, img);
@@ -40,11 +40,11 @@ namespace Effekseer.GUI
 			}
 		}
 
-		public static swig.ImageResource LoadAppResource(swig.Native native, string path)
+		public static swig.ReloadableImage LoadAppResource(swig.Native native, string path)
 		{
 			string appDirectory = GUI.Manager.GetEntryDirectory();
 			string fullPath = Path.Combine(appDirectory, path);
-			return native.LoadImageResource(fullPath);
+			return native.CreateReloadableImage(fullPath);
 		}
 
 		public static void Load(swig.Native native)
@@ -105,7 +105,7 @@ namespace Effekseer.GUI
 			}
 		}
 
-		public static swig.ImageResource GetIcon(string resourceName)
+		public static swig.ReloadableImage GetIcon(string resourceName)
 		{
 			return Icons.ContainsKey(resourceName) ? Icons[resourceName] : null;
 		}

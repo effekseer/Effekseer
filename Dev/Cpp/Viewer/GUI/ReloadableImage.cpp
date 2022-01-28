@@ -8,6 +8,7 @@ ReloadableImage::ReloadableImage(const std::u16string& path, Effekseer::TextureL
 	: path_(path)
 	, loader_(textureLoader)
 {
+	Validate();
 }
 
 ReloadableImage::~ReloadableImage()

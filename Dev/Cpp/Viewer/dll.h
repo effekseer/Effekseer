@@ -15,7 +15,6 @@
 #include <unordered_set>
 
 #include "../IPC/IPC.h"
-#include "GUI/efk.ImageResource.h"
 #include "ViewerEffectBehavior.h"
 #include "efk.Base.h"
 
@@ -26,7 +25,7 @@ namespace Tool
 class ReloadableImage;
 class RenderImage;
 class EffectRecorder;
-}
+} // namespace Tool
 } // namespace Effekseer
 
 enum class ViewMode
@@ -300,8 +299,6 @@ public:
 	bool GetIsUpdateMaterialRequiredAndReset();
 
 	bool GetNodeLifeTimes(int32_t nodeId, int32_t* frameMin, int32_t* frameMax);
-
-	efk::ImageResource* LoadImageResource(const char16_t* path);
 
 	std::shared_ptr<Effekseer::Tool::ReloadableImage> CreateReloadableImage(const char16_t* path);
 

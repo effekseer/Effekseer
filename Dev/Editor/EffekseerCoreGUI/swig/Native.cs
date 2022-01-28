@@ -292,12 +292,6 @@ public class Native : global::System.IDisposable {
     return ret;
   }
 
-  public ImageResource LoadImageResource(string path) {
-    global::System.IntPtr cPtr = EffekseerNativePINVOKE.Native_LoadImageResource(swigCPtr, path);
-    ImageResource ret = (cPtr == global::System.IntPtr.Zero) ? null : new ImageResource(cPtr, false);
-    return ret;
-  }
-
   public ReloadableImage CreateReloadableImage(string path) {
     global::System.IntPtr cPtr = EffekseerNativePINVOKE.Native_CreateReloadableImage(swigCPtr, path);
     ReloadableImage ret = (cPtr == global::System.IntPtr.Zero) ? null : new ReloadableImage(cPtr, true);
