@@ -194,7 +194,7 @@
     <Compile Include="swig\FileDialog.cs" />
     <Compile Include="swig\GUIManager.cs" />
     <Compile Include="swig\GUIManagerCallback.cs" />
-    <Compile Include="swig\ImageResource.cs" />
+    <Compile Include="swig\Image.cs" />
     <Compile Include="swig\ImGuiColFlags.cs" />
     <Compile Include="swig\ImGuiStyleVarFlags.cs" />
     <Compile Include="swig\InputTextFlags.cs" />
@@ -207,6 +207,8 @@
     <Compile Include="swig\Native.cs" />
     <Compile Include="swig\RecordingModeType.cs" />
     <Compile Include="swig\RecordingParameter.cs" />
+    <Compile Include="swig\ReloadableImage.cs" />
+    <Compile Include="swig\RenderImage.cs" />
     <Compile Include="swig\RenderingMethodType.cs" />
     <Compile Include="swig\SelectableFlags.cs" />
     <Compile Include="swig\StaticFile.cs" />
