@@ -2,7 +2,6 @@
 #ifndef __EFFEKSEER_MANAGER_IMPLEMENTED_H__
 #define __EFFEKSEER_MANAGER_IMPLEMENTED_H__
 
-#include "Culling/Culling3D.h"
 #include "Effekseer.Base.h"
 #include "Effekseer.InstanceChunk.h"
 #include "Effekseer.IntrusiveList.h"
@@ -10,6 +9,7 @@
 #include "Effekseer.Matrix43.h"
 #include "Effekseer.Matrix44.h"
 #include "Effekseer.WorkerThread.h"
+#include "Geometry/GeometryUtility.h"
 #include "Utils/Effekseer.CustomAllocator.h"
 
 namespace Effekseer
@@ -29,7 +29,7 @@ private:
 		EffectRef ParameterPointer;
 		InstanceContainer* InstanceContainerPointer;
 		InstanceGlobal* GlobalPointer;
-		Culling3D::Object* CullingObjectPointer;
+		//Culling3D::Object* CullingObjectPointer;
 		int RandomSeed = 0;
 		bool IsPaused;
 		bool IsShown;
@@ -42,7 +42,7 @@ private:
 		EffectInstanceRemovingCallback RemovingCallback;
 
 		Matrix43 Rotation;
-		Vector3D Scaling = { 1.f, 1.f, 1.f };
+		Vector3D Scaling = {1.f, 1.f, 1.f};
 
 		SIMD::Mat43f BaseMatrix;
 		SIMD::Mat43f GlobalMatrix;
@@ -69,11 +69,14 @@ private:
 		//! a bit mask for group
 		int64_t GroupMask = 0;
 
+		Vector3D CullingPosition{};
+		float CullingRadius{};
+
 		DrawSet(const EffectRef& effect, InstanceContainer* pContainer, InstanceGlobal* pGlobal)
 			: ParameterPointer(effect)
 			, InstanceContainerPointer(pContainer)
 			, GlobalPointer(pGlobal)
-			, CullingObjectPointer(nullptr)
+			//, CullingObjectPointer(nullptr)
 			, IsPaused(false)
 			, IsShown(true)
 			, IsAutoDrawing(true)
@@ -93,7 +96,7 @@ private:
 			: ParameterPointer(nullptr)
 			, InstanceContainerPointer(nullptr)
 			, GlobalPointer(nullptr)
-			, CullingObjectPointer(nullptr)
+			//, CullingObjectPointer(nullptr)
 			, IsPaused(false)
 			, IsShown(true)
 			, IsRemoving(false)
@@ -110,23 +113,6 @@ private:
 
 		void CopyMatrixFromInstanceToRoot();
 	};
-
-	struct CullingParameter
-	{
-		float SizeX;
-		float SizeY;
-		float SizeZ;
-		int32_t LayerCount;
-
-		CullingParameter()
-		{
-			SizeX = 0.0f;
-			SizeY = 0.0f;
-			SizeZ = 0.0f;
-			LayerCount = 0;
-		}
-
-	} cullingCurrent, cullingNext;
 
 private:
 	CustomVector<WorkerThread> m_WorkerThreads;
@@ -184,12 +170,6 @@ private:
 
 	uint32_t m_sequenceNumber;
 
-	Culling3D::World* m_cullingWorld;
-
-	std::vector<DrawSet*> m_culledObjects;
-	std::set<Handle> m_culledObjectSets;
-	bool m_culled;
-
 	SpriteRendererRef m_spriteRenderer;
 
 	RibbonRendererRef m_ribbonRenderer;
@@ -231,6 +211,8 @@ private:
 	void ExecuteSounds();
 
 	void StoreSortingDrawSets(const Manager::DrawParameter& drawParameter);
+
+	static bool CanDraw(const DrawSet& drawSet, const Manager::DrawParameter& drawParameter, const std::array<Plane, 6>& planes);
 
 public:
 	ManagerImplemented(int instance_max, bool autoFlip);
@@ -464,11 +446,11 @@ public:
 
 	void EndReloadEffect(const EffectRef& effect, bool doLockThread);
 
-	void CreateCullingWorld(float xsize, float ysize, float zsize, int32_t layerCount) override;
+	//void CreateCullingWorld(float xsize, float ysize, float zsize, int32_t layerCount) override;
+	//
+	//void CalcCulling(const Matrix44& cameraProjMat, bool isOpenGL) override;
 
-	void CalcCulling(const Matrix44& cameraProjMat, bool isOpenGL) override;
-
-	void RessignCulling() override;
+	//void RessignCulling() override;
 
 	virtual int GetRef() override
 	{

@@ -38,7 +38,6 @@ if(WIN32)
         add_subdirectory(DirectX12)
     endif()
 
-    add_subdirectory(Culling)
     add_subdirectory(Distortion)
     add_subdirectory(Multithread)
     add_subdirectory(NetworkServer)
