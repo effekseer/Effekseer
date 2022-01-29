@@ -18,9 +18,28 @@ enum class ProjectionType
 	Orthographic,
 };
 
+enum class CoordinateType
+{
+	RH,
+	LH,
+};
+
 class ViewPointController
 {
 private:
+	const float DistanceBase = 15.0f;
+	const float OrthoScaleBase = 16.0f;
+	const float ZoomDistanceFactor = 1.125f;
+	const float MaxZoom = 40.0f;
+	const float MinZoom = -40.0f;
+	const float PI = 3.14159265f;
+
+	bool g_mouseRotDirectionInvX = false;
+	bool g_mouseRotDirectionInvY = false;
+
+	bool g_mouseSlideDirectionInvX = false;
+	bool g_mouseSlideDirectionInvY = false;
+
 	float m_orthoScale = 1.0f;
 	ProjectionType m_projection;
 	Effekseer::Matrix44 m_cameraMat;
@@ -29,6 +48,20 @@ private:
 
 	int32_t screenWidth = 0;
 	int32_t screenHeight = 0;
+
+	float g_RotX = 30.0f;
+	float g_RotY = -30.0f;
+	float g_Zoom = 0.0f;
+	::Effekseer::Vector3D g_focus_position;
+
+	void SetZoom(float zoom)
+	{
+		g_Zoom = Effekseer::Max(MinZoom, Effekseer::Min(MaxZoom, zoom));
+	}
+
+	float GetDistance();
+
+	float GetOrthoScale();
 
 public:
 	ViewPointController();
@@ -64,6 +97,12 @@ public:
 	bool IsRightHand;
 
 	void SetScreenSize(int32_t width, int32_t height);
+
+	bool Rotate(float x, float y);
+
+	bool Slide(float x, float y);
+
+	bool Zoom(float zoom);
 
 	Effekseer::Tool::Vector2DI GetScreenSize() const
 	{
