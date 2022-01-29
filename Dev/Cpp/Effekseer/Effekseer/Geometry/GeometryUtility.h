@@ -40,6 +40,11 @@ public:
 
 	static std::array<Plane, 6> CalculateFrustumPlanes(const Matrix44& viewProjectionMatrix, float projectedNear, float projectedFar, CoordinateSystem coordinateSystem)
 	{
+		if (projectedNear == projectedFar)
+		{
+			return std::array<Plane, 6>{};
+		}
+
 		std::array<SIMD::Vec4f, 8> points4;
 
 		points4[0] = SIMD::Float4{-1.0f, -1.0f, projectedNear, 1.0f};

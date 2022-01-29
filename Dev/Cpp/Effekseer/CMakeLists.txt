@@ -8,7 +8,6 @@ file(GLOB effekseer_h
     *.h
     Effekseer/*.h
     Effekseer/Renderer/*.h
-    Effekseer/Culling/*.h
     Effekseer/Material/*.h
     Effekseer/Parameter/*.h
     Effekseer/IO/*.h
@@ -57,13 +56,6 @@ set(effekseer_src
     Effekseer/Effekseer.Vector2D.cpp
     Effekseer/Effekseer.Vector3D.cpp
     Effekseer/Effekseer.WorkerThread.cpp
-    Effekseer/Culling/Culling3D.Grid.cpp
-    Effekseer/Culling/Culling3D.Layer.cpp
-    Effekseer/Culling/Culling3D.Matrix44.cpp
-    Effekseer/Culling/Culling3D.ObjectInternal.cpp
-    Effekseer/Culling/Culling3D.ReferenceObject.cpp
-    Effekseer/Culling/Culling3D.Vector3DF.cpp
-    Effekseer/Culling/Culling3D.WorldInternal.cpp
     Effekseer/Material/Effekseer.MaterialFile.cpp
     Effekseer/Material/Effekseer.CompiledMaterial.cpp
     Effekseer/Material/Effekseer.MaterialCompiler.cpp

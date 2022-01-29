@@ -34,6 +34,7 @@
 #include <algorithm>
 #include <iostream>
 
+#include "Geometry/GeometryUtility.h"
 #include "Utils/Profiler.h"
 
 namespace Effekseer
@@ -209,11 +210,6 @@ void ManagerImplemented::GCDrawSet(bool isRemovingManager)
 			drawset.ParameterPointer = nullptr;
 			ES_SAFE_DELETE(drawset.GlobalPointer);
 
-			if (m_cullingWorld != nullptr && drawset.CullingObjectPointer != nullptr)
-			{
-				Culling3D::SafeRelease(drawset.CullingObjectPointer);
-			}
-
 			it = m_RemovingDrawSets[1].erase(it);
 		}
 		m_RemovingDrawSets[1].clear();
@@ -249,11 +245,6 @@ void ManagerImplemented::GCDrawSet(bool isRemovingManager)
 				if ((*it).second.RemovingCallback != nullptr)
 				{
 					(*it).second.RemovingCallback(this, (*it).first, isRemovingManager);
-				}
-
-				if (m_cullingWorld != NULL && (*it).second.CullingObjectPointer != nullptr)
-				{
-					m_cullingWorld->RemoveObject((*it).second.CullingObjectPointer);
 				}
 
 				m_RemovingDrawSets[0][(*it).first] = (*it).second;
@@ -377,20 +368,9 @@ void ManagerImplemented::StoreSortingDrawSets(const Manager::DrawParameter& draw
 {
 	sortedRenderingDrawSets_.clear();
 
-	if (m_culled)
+	for (const auto& ds : m_renderingDrawSets)
 	{
-		for (size_t i = 0; i < m_culledObjects.size(); i++)
-		{
-			DrawSet& drawSet = *m_culledObjects[i];
-			sortedRenderingDrawSets_.emplace_back(drawSet);
-		}
-	}
-	else
-	{
-		for (const auto& ds : m_renderingDrawSets)
-		{
-			sortedRenderingDrawSets_.emplace_back(ds);
-		}
+		sortedRenderingDrawSets_.emplace_back(ds);
 	}
 
 	if (drawParameter.IsSortingEffectsEnabled)
@@ -403,16 +383,44 @@ void ManagerImplemented::StoreSortingDrawSets(const Manager::DrawParameter& draw
 	}
 }
 
+bool ManagerImplemented::CanDraw(const DrawSet& drawSet, const Manager::DrawParameter& drawParameter, const std::array<Plane, 6>& planes)
+{
+	if (drawSet.InstanceContainerPointer == nullptr ||
+		!drawSet.IsShown)
+	{
+		return false;
+	}
+
+	if ((drawParameter.CameraCullingMask & (1 << drawSet.Layer)) == 0)
+	{
+		return false;
+	}
+
+	if (drawParameter.ZNear != drawParameter.ZFar)
+	{
+		auto effect = (EffectImplemented*)drawSet.ParameterPointer.Get();
+
+		if (effect->Culling.Shape == CullingShape::Sphere)
+		{
+			Sphare s;
+			s.Center = drawSet.CullingPosition;
+			s.Radius = drawSet.CullingRadius;
+			if (!GeometryUtility::IsContain(planes, s))
+			{
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
 ManagerImplemented::ManagerImplemented(int instance_max, bool autoFlip)
 	: m_autoFlip(autoFlip)
 	, m_NextHandle(0)
 	, m_instance_max(instance_max)
 	, m_setting(nullptr)
 	, m_sequenceNumber(0)
-
-	, m_cullingWorld(nullptr)
-	, m_culled(false)
-
 	, m_spriteRenderer(nullptr)
 	, m_ribbonRenderer(nullptr)
 	, m_ringRenderer(nullptr)
@@ -480,11 +488,6 @@ ManagerImplemented::~ManagerImplemented()
 	{
 		GCDrawSet(true);
 	}
-
-	// assert( m_reserved_instances.size() == m_instance_max );
-	// ES_SAFE_DELETE_ARRAY( m_reserved_instances_buffer );
-
-	Culling3D::SafeRelease(m_cullingWorld);
 }
 
 Instance* ManagerImplemented::CreateInstance(EffectNodeImplemented* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup)
@@ -1260,23 +1263,6 @@ void ManagerImplemented::Flip()
 	m_renderingDrawSets.clear();
 	m_renderingDrawSetMaps.clear();
 
-	// Generate culling
-	if (cullingNext.SizeX != cullingCurrent.SizeX || cullingNext.SizeY != cullingCurrent.SizeY ||
-		cullingNext.SizeZ != cullingCurrent.SizeZ || cullingNext.LayerCount != cullingCurrent.LayerCount)
-	{
-		Culling3D::SafeRelease(m_cullingWorld);
-
-		for (auto& it : m_DrawSets)
-		{
-			DrawSet& ds = it.second;
-			Culling3D::SafeRelease(ds.CullingObjectPointer);
-		}
-
-		m_cullingWorld = Culling3D::World::Create(cullingNext.SizeX, cullingNext.SizeY, cullingNext.SizeZ, cullingNext.LayerCount);
-
-		cullingCurrent = cullingNext;
-	}
-
 	{
 		for (auto& it : m_DrawSets)
 		{
@@ -1290,88 +1276,47 @@ void ManagerImplemented::Flip()
 
 			if (ds.IsParameterChanged)
 			{
-				if (m_cullingWorld != nullptr)
+				Vector3D location;
+
+				auto mat_ = ds.GetEnabledGlobalMatrix();
+
+				if (mat_ != nullptr)
 				{
-					auto isCreated = false;
+					location.X = mat_->X.GetW();
+					location.Y = mat_->Y.GetW();
+					location.Z = mat_->Z.GetW();
+				}
 
-					if (ds.CullingObjectPointer == nullptr)
-					{
-						ds.CullingObjectPointer = Culling3D::Object::Create();
-						if (effect->Culling.Shape == CullingShape::Sphere)
-						{
-							ds.CullingObjectPointer->ChangeIntoSphere(0.0f);
-						}
-
-						if (effect->Culling.Shape == CullingShape::NoneShape)
-						{
-							ds.CullingObjectPointer->ChangeIntoAll();
-						}
-
-						isCreated = true;
-					}
-
-					InstanceContainer* pContainer = ds.InstanceContainerPointer;
-
-					Vector3D location;
-
-					auto mat_ = ds.GetEnabledGlobalMatrix();
+				if (effect->Culling.Shape == CullingShape::Sphere)
+				{
+					float radius = effect->Culling.Sphere.Radius;
+					SIMD::Vec3f culling_pos = {0, 0, 0};
 
 					if (mat_ != nullptr)
 					{
-						location.X = mat_->X.GetW();
-						location.Y = mat_->Y.GetW();
-						location.Z = mat_->Z.GetW();
+						SIMD::Vec3f s = mat_->GetScale();
+						radius *= s.GetLength();
+						culling_pos = SIMD::Vec3f::Transform(SIMD::Vec3f(effect->Culling.Location), *mat_);
 					}
 
-					ds.CullingObjectPointer->SetPosition(Culling3D::Vector3DF(location.X, location.Y, location.Z));
-
-					if (effect->Culling.Shape == CullingShape::Sphere)
+					if (ds.DoUseBaseMatrix)
 					{
-						float radius = effect->Culling.Sphere.Radius;
-
-						if (mat_ != nullptr)
-						{
-							SIMD::Vec3f s = mat_->GetScale();
-							radius *= s.GetLength();
-							SIMD::Vec3f culling_pos = SIMD::Vec3f::Transform(SIMD::Vec3f(effect->Culling.Location), *mat_);
-							ds.CullingObjectPointer->SetPosition(Culling3D::Vector3DF(culling_pos.GetX(), culling_pos.GetY(), culling_pos.GetZ()));
-						}
-
-						if (ds.DoUseBaseMatrix)
-						{
-							SIMD::Vec3f s = ds.BaseMatrix.GetScale();
-							radius *= s.GetLength();
-							SIMD::Vec3f culling_pos = SIMD::Vec3f::Transform(SIMD::Vec3f(effect->Culling.Location), ds.BaseMatrix);
-							ds.CullingObjectPointer->SetPosition(Culling3D::Vector3DF(culling_pos.GetX(), culling_pos.GetY(), culling_pos.GetZ()));
-						}
-
-						ds.CullingObjectPointer->ChangeIntoSphere(radius);
+						SIMD::Vec3f s = ds.BaseMatrix.GetScale();
+						radius *= s.GetLength();
+						culling_pos = SIMD::Vec3f::Transform(SIMD::Vec3f(effect->Culling.Location), ds.BaseMatrix);
 					}
 
-					if (isCreated)
-					{
-						m_cullingWorld->AddObject(ds.CullingObjectPointer);
-					}
+					ds.CullingPosition = SIMD::ToStruct(culling_pos);
+					ds.CullingRadius = radius;
 				}
+
 				ds.IsParameterChanged = false;
 			}
 
 			m_renderingDrawSets.push_back(ds);
 			m_renderingDrawSetMaps[it.first] = it.second;
 		}
-
-		if (m_cullingWorld != nullptr)
-		{
-			for (size_t i = 0; i < m_renderingDrawSets.size(); i++)
-			{
-				m_renderingDrawSets[i].CullingObjectPointer->SetUserData(&(m_renderingDrawSets[i]));
-			}
-		}
 	}
-
-	m_culledObjects.clear();
-	m_culledObjectSets.clear();
-	m_culled = false;
 
 	if (!m_autoFlip)
 	{
@@ -1748,7 +1693,6 @@ void ManagerImplemented::StopWithoutRemoveDrawSet(DrawSet& drawSet)
 	drawSet.InstanceContainerPointer->RemoveForcibly(true);
 	ReleaseInstanceContainer(drawSet.InstanceContainerPointer);
 	drawSet.InstanceContainerPointer = nullptr;
-	ES_SAFE_RELEASE(drawSet.CullingObjectPointer);
 }
 
 void ManagerImplemented::ResetAndPlayWithDataSet(DrawSet& drawSet, float frame)
@@ -1821,13 +1765,15 @@ void ManagerImplemented::Draw(const Manager::DrawParameter& drawParameter)
 	// start to record a time
 	int64_t beginTime = ::Effekseer::GetTime();
 
-	const auto render = [this, &drawParameter](DrawSet& drawSet) -> void {
-		if (drawSet.InstanceContainerPointer == nullptr)
+	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, GetSetting()->GetCoordinateSystem());
+
+	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void {
+		if (!CanDraw(drawSet, drawParameter, cullingPlanes))
 		{
 			return;
 		}
 
-		if (drawSet.IsShown && drawSet.IsAutoDrawing && ((drawParameter.CameraCullingMask & (1 << drawSet.Layer)) != 0))
+		if (drawSet.IsAutoDrawing)
 		{
 			if (drawSet.GlobalPointer->RenderedInstanceContainers.size() > 0)
 			{
@@ -1857,19 +1803,9 @@ void ManagerImplemented::Draw(const Manager::DrawParameter& drawParameter)
 	}
 	else
 	{
-		if (m_culled)
+		for (size_t i = 0; i < m_renderingDrawSets.size(); i++)
 		{
-			for (size_t i = 0; i < m_culledObjects.size(); i++)
-			{
-				render(*m_culledObjects[i]);
-			}
-		}
-		else
-		{
-			for (size_t i = 0; i < m_renderingDrawSets.size(); i++)
-			{
-				render(m_renderingDrawSets[i]);
-			}
+			render(m_renderingDrawSets[i]);
 		}
 	}
 
@@ -1884,13 +1820,15 @@ void ManagerImplemented::DrawBack(const Manager::DrawParameter& drawParameter)
 	// start to record a time
 	int64_t beginTime = ::Effekseer::GetTime();
 
-	const auto render = [this, &drawParameter](DrawSet& drawSet) -> void {
-		if (drawSet.InstanceContainerPointer == nullptr)
+	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, GetSetting()->GetCoordinateSystem());
+
+	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void {
+		if (!CanDraw(drawSet, drawParameter, cullingPlanes))
 		{
 			return;
 		}
 
-		if (drawSet.IsShown && drawSet.IsAutoDrawing && ((drawParameter.CameraCullingMask & (1 << drawSet.Layer)) != 0))
+		if (drawSet.IsAutoDrawing)
 		{
 			auto e = (EffectImplemented*)drawSet.ParameterPointer.Get();
 			for (int32_t j = 0; j < e->renderingNodesThreshold; j++)
@@ -1914,19 +1852,9 @@ void ManagerImplemented::DrawBack(const Manager::DrawParameter& drawParameter)
 	}
 	else
 	{
-		if (m_culled)
+		for (size_t i = 0; i < m_renderingDrawSets.size(); i++)
 		{
-			for (size_t i = 0; i < m_culledObjects.size(); i++)
-			{
-				render(*m_culledObjects[i]);
-			}
-		}
-		else
-		{
-			for (size_t i = 0; i < m_renderingDrawSets.size(); i++)
-			{
-				render(m_renderingDrawSets[i]);
-			}
+			render(m_renderingDrawSets[i]);
 		}
 	}
 
@@ -1941,13 +1869,15 @@ void ManagerImplemented::DrawFront(const Manager::DrawParameter& drawParameter)
 	// start to record a time
 	int64_t beginTime = ::Effekseer::GetTime();
 
-	const auto render = [this, &drawParameter](DrawSet& drawSet) -> void {
-		if (drawSet.InstanceContainerPointer == nullptr)
+	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, GetSetting()->GetCoordinateSystem());
+
+	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void {
+		if (!CanDraw(drawSet, drawParameter, cullingPlanes))
 		{
 			return;
 		}
 
-		if (drawSet.IsShown && drawSet.IsAutoDrawing && ((drawParameter.CameraCullingMask & (1 << drawSet.Layer)) != 0))
+		if (drawSet.IsAutoDrawing)
 		{
 			if (drawSet.GlobalPointer->RenderedInstanceContainers.size() > 0)
 			{
@@ -1978,19 +1908,9 @@ void ManagerImplemented::DrawFront(const Manager::DrawParameter& drawParameter)
 	}
 	else
 	{
-		if (m_culled)
+		for (size_t i = 0; i < m_renderingDrawSets.size(); i++)
 		{
-			for (size_t i = 0; i < m_culledObjects.size(); i++)
-			{
-				render(*m_culledObjects[i]);
-			}
-		}
-		else
-		{
-			for (size_t i = 0; i < m_renderingDrawSets.size(); i++)
-			{
-				render(m_renderingDrawSets[i]);
-			}
+			render(m_renderingDrawSets[i]);
 		}
 	}
 
@@ -2070,58 +1990,31 @@ void ManagerImplemented::DrawHandle(Handle handle, const Manager::DrawParameter&
 
 	std::lock_guard<std::recursive_mutex> lock(m_renderingMutex);
 
+	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, GetSetting()->GetCoordinateSystem());
+
 	auto it = m_renderingDrawSetMaps.find(handle);
 	if (it != m_renderingDrawSetMaps.end())
 	{
 		DrawSet& drawSet = it->second;
 
-		if (drawSet.InstanceContainerPointer == nullptr)
+		if (!CanDraw(drawSet, drawParameter, cullingPlanes))
 		{
 			return;
 		}
 
-		if (m_culled)
+		if (drawSet.GlobalPointer->RenderedInstanceContainers.size() > 0)
 		{
-			if (m_culledObjectSets.find(drawSet.Self) != m_culledObjectSets.end())
+			for (auto& c : drawSet.GlobalPointer->RenderedInstanceContainers)
 			{
-				if (drawSet.IsShown)
-				{
-					if (drawSet.GlobalPointer->RenderedInstanceContainers.size() > 0)
-					{
-						for (auto& c : drawSet.GlobalPointer->RenderedInstanceContainers)
-						{
-							if (IsClippedWithDepth(drawSet, c, drawParameter))
-								continue;
+				if (IsClippedWithDepth(drawSet, c, drawParameter))
+					continue;
 
-							c->Draw(false);
-						}
-					}
-					else
-					{
-						drawSet.InstanceContainerPointer->Draw(true);
-					}
-				}
+				c->Draw(false);
 			}
 		}
 		else
 		{
-			if (drawSet.IsShown)
-			{
-				if (drawSet.GlobalPointer->RenderedInstanceContainers.size() > 0)
-				{
-					for (auto& c : drawSet.GlobalPointer->RenderedInstanceContainers)
-					{
-						if (IsClippedWithDepth(drawSet, c, drawParameter))
-							continue;
-
-						c->Draw(false);
-					}
-				}
-				else
-				{
-					drawSet.InstanceContainerPointer->Draw(true);
-				}
-			}
+			drawSet.InstanceContainerPointer->Draw(true);
 		}
 	}
 }
@@ -2135,40 +2028,25 @@ void ManagerImplemented::DrawHandleBack(Handle handle, const Manager::DrawParame
 
 	std::lock_guard<std::recursive_mutex> lock(m_renderingMutex);
 
+	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, GetSetting()->GetCoordinateSystem());
+
 	std::map<Handle, DrawSet>::iterator it = m_renderingDrawSetMaps.find(handle);
 	if (it != m_renderingDrawSetMaps.end())
 	{
 		DrawSet& drawSet = it->second;
 		auto e = (EffectImplemented*)drawSet.ParameterPointer.Get();
 
-		if (m_culled)
+		if (!CanDraw(drawSet, drawParameter, cullingPlanes))
 		{
-			if (m_culledObjectSets.find(drawSet.Self) != m_culledObjectSets.end())
-			{
-				if (drawSet.IsShown)
-				{
-					for (int32_t i = 0; i < e->renderingNodesThreshold; i++)
-					{
-						if (IsClippedWithDepth(drawSet, drawSet.GlobalPointer->RenderedInstanceContainers[i], drawParameter))
-							continue;
-
-						drawSet.GlobalPointer->RenderedInstanceContainers[i]->Draw(false);
-					}
-				}
-			}
+			return;
 		}
-		else
-		{
-			if (drawSet.IsShown)
-			{
-				for (int32_t i = 0; i < e->renderingNodesThreshold; i++)
-				{
-					if (IsClippedWithDepth(drawSet, drawSet.GlobalPointer->RenderedInstanceContainers[i], drawParameter))
-						continue;
 
-					drawSet.GlobalPointer->RenderedInstanceContainers[i]->Draw(false);
-				}
-			}
+		for (int32_t i = 0; i < e->renderingNodesThreshold; i++)
+		{
+			if (IsClippedWithDepth(drawSet, drawSet.GlobalPointer->RenderedInstanceContainers[i], drawParameter))
+				continue;
+
+			drawSet.GlobalPointer->RenderedInstanceContainers[i]->Draw(false);
 		}
 	}
 }
@@ -2182,59 +2060,32 @@ void ManagerImplemented::DrawHandleFront(Handle handle, const Manager::DrawParam
 
 	std::lock_guard<std::recursive_mutex> lock(m_renderingMutex);
 
+	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, GetSetting()->GetCoordinateSystem());
+
 	std::map<Handle, DrawSet>::iterator it = m_renderingDrawSetMaps.find(handle);
 	if (it != m_renderingDrawSetMaps.end())
 	{
 		DrawSet& drawSet = it->second;
 		auto e = (EffectImplemented*)drawSet.ParameterPointer.Get();
 
-		if (drawSet.InstanceContainerPointer == nullptr)
+		if (!CanDraw(drawSet, drawParameter, cullingPlanes))
 		{
 			return;
 		}
 
-		if (m_culled)
+		if (drawSet.GlobalPointer->RenderedInstanceContainers.size() > 0)
 		{
-			if (m_culledObjectSets.find(drawSet.Self) != m_culledObjectSets.end())
+			for (size_t i = e->renderingNodesThreshold; i < drawSet.GlobalPointer->RenderedInstanceContainers.size(); i++)
 			{
-				if (drawSet.IsShown)
-				{
-					if (drawSet.GlobalPointer->RenderedInstanceContainers.size() > 0)
-					{
-						for (size_t i = e->renderingNodesThreshold; i < drawSet.GlobalPointer->RenderedInstanceContainers.size(); i++)
-						{
-							if (IsClippedWithDepth(drawSet, drawSet.GlobalPointer->RenderedInstanceContainers[i], drawParameter))
-								continue;
+				if (IsClippedWithDepth(drawSet, drawSet.GlobalPointer->RenderedInstanceContainers[i], drawParameter))
+					continue;
 
-							drawSet.GlobalPointer->RenderedInstanceContainers[i]->Draw(false);
-						}
-					}
-					else
-					{
-						drawSet.InstanceContainerPointer->Draw(true);
-					}
-				}
+				drawSet.GlobalPointer->RenderedInstanceContainers[i]->Draw(false);
 			}
 		}
 		else
 		{
-			if (drawSet.IsShown)
-			{
-				if (drawSet.GlobalPointer->RenderedInstanceContainers.size() > 0)
-				{
-					for (size_t i = e->renderingNodesThreshold; i < drawSet.GlobalPointer->RenderedInstanceContainers.size(); i++)
-					{
-						if (IsClippedWithDepth(drawSet, drawSet.GlobalPointer->RenderedInstanceContainers[i], drawParameter))
-							continue;
-
-						drawSet.GlobalPointer->RenderedInstanceContainers[i]->Draw(false);
-					}
-				}
-				else
-				{
-					drawSet.InstanceContainerPointer->Draw(true);
-				}
-			}
+			drawSet.InstanceContainerPointer->Draw(true);
 		}
 	}
 }
@@ -2301,63 +2152,6 @@ void ManagerImplemented::EndReloadEffect(const EffectRef& effect, bool doLockThr
 		m_renderingMutex.unlock();
 		m_isLockedWithRenderingMutex = false;
 	}
-}
-
-void ManagerImplemented::CreateCullingWorld(float xsize, float ysize, float zsize, int32_t layerCount)
-{
-	cullingNext.SizeX = xsize;
-	cullingNext.SizeY = ysize;
-	cullingNext.SizeZ = zsize;
-	cullingNext.LayerCount = layerCount;
-}
-
-void ManagerImplemented::CalcCulling(const Matrix44& cameraProjMat, bool isOpenGL)
-{
-	if (m_cullingWorld == nullptr)
-		return;
-
-	m_culledObjects.clear();
-	m_culledObjectSets.clear();
-
-	Matrix44 mat = cameraProjMat;
-	mat.Transpose();
-
-	Culling3D::Matrix44 cullingMat;
-
-	for (int32_t c = 0; c < 4; c++)
-	{
-		for (int32_t r = 0; r < 4; r++)
-		{
-			cullingMat.Values[c][r] = mat.Values[c][r];
-		}
-	}
-
-	m_cullingWorld->Culling(cullingMat, isOpenGL, m_setting->GetCoordinateSystem() == CoordinateSystem::RH);
-
-	for (int32_t i = 0; i < m_cullingWorld->GetObjectCount(); i++)
-	{
-		Culling3D::Object* o = m_cullingWorld->GetObject(i);
-		DrawSet* ds = (DrawSet*)o->GetUserData();
-
-		m_culledObjects.push_back(ds);
-		m_culledObjectSets.insert(ds->Self);
-	}
-
-	// sort with handle
-	std::sort(m_culledObjects.begin(), m_culledObjects.end(), [](DrawSet* const& lhs, DrawSet* const& rhs) { return lhs->Self < rhs->Self; });
-
-	m_culled = true;
-}
-
-void ManagerImplemented::RessignCulling()
-{
-	if (m_cullingWorld == nullptr)
-		return;
-
-	m_culledObjects.clear();
-	m_culledObjectSets.clear();
-
-	m_cullingWorld->Reassign();
 }
 
 void ManagerImplemented::LockRendering()

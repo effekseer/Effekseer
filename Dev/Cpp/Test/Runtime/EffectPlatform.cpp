@@ -132,11 +132,6 @@ void EffectPlatform::Initialize(const EffectPlatformInitializingParameter& param
 
 	manager_->SetCoordinateSystem(param.CoordinateSyatem);
 
-	if (param.IsCullingCreated)
-	{
-		manager_->CreateCullingWorld(100.0f, 100.0f, 100.0f, 6);
-	}
-
 	// support multithread in 1.6
 	manager_->LaunchWorkerThreads(4);
 
@@ -225,9 +220,14 @@ bool EffectPlatform::Update()
 
 	if (renderer_ != nullptr)
 	{
+		Effekseer::Manager::DrawParameter param;
+		param.ViewProjectionMatrix = renderer_->GetCameraProjectionMatrix();
+		param.ZNear = 0.0f;
+		param.ZFar = 1.0f;
+
 		renderer_->SetTime(time_);
 		renderer_->BeginRendering();
-		manager_->Draw();
+		manager_->Draw(param);
 		renderer_->EndRendering();
 	}
 
@@ -249,9 +249,14 @@ bool EffectPlatform::Draw()
 
 	if (renderer_ != nullptr)
 	{
+		Effekseer::Manager::DrawParameter param;
+		param.ViewProjectionMatrix = renderer_->GetCameraProjectionMatrix();
+		param.ZNear = 0.0f;
+		param.ZFar = 1.0f;
+
 		renderer_->SetTime(time_);
 		renderer_->BeginRendering();
-		manager_->Draw();
+		manager_->Draw(param);
 		renderer_->EndRendering();
 	}
 
