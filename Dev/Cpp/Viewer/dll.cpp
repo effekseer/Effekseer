@@ -43,8 +43,7 @@ public:
 
 		::Effekseer::EffectNodeImplemented* result = nullptr;
 
-		const auto& visitor = [&](::Effekseer::EffectNodeImplemented* node) -> bool
-		{
+		const auto& visitor = [&](::Effekseer::EffectNodeImplemented* node) -> bool {
 			const auto userData = node->GetRenderingUserData();
 			if (userData != nullptr)
 			{
@@ -456,6 +455,12 @@ bool Native::UpdateWindow()
 
 	viewPointCtrl_.SetOrthographicScale(GetOrthoScale());
 
+	Effekseer::Matrix44 vpm;
+	Effekseer::Matrix44::Mul(vpm, viewPointCtrl_.GetCameraMatrix(), viewPointCtrl_.GetProjectionMatrix());
+	drawParameter.ViewProjectionMatrix = vpm;
+	drawParameter.ZNear = 0.0f;
+	drawParameter.ZFar = 1.0f;
+
 	sound_->SetListener(position, g_focus_position, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f));
 	sound_->Update();
 
@@ -522,8 +527,7 @@ bool Native::LoadEffect(void* pData, int size, const char16_t* Path)
 	// Create UserData while assigning NodeId.
 	{
 		int nextEditorNodeId = 1;
-		const auto& visitor = [&](::Effekseer::EffectNodeImplemented* node)
-		{
+		const auto& visitor = [&](::Effekseer::EffectNodeImplemented* node) {
 			auto userData = ::Effekseer::MakeRefPtr<EditorEffectNodeUserData>();
 			userData->editorNodeId_ = nextEditorNodeId;
 			node->SetRenderingUserData(userData);

@@ -220,9 +220,14 @@ bool EffectPlatform::Update()
 
 	if (renderer_ != nullptr)
 	{
+		Effekseer::Manager::DrawParameter param;
+		param.ViewProjectionMatrix = renderer_->GetCameraProjectionMatrix();
+		param.ZNear = 0.0f;
+		param.ZFar = 1.0f;
+
 		renderer_->SetTime(time_);
 		renderer_->BeginRendering();
-		manager_->Draw();
+		manager_->Draw(param);
 		renderer_->EndRendering();
 	}
 
@@ -244,9 +249,14 @@ bool EffectPlatform::Draw()
 
 	if (renderer_ != nullptr)
 	{
+		Effekseer::Manager::DrawParameter param;
+		param.ViewProjectionMatrix = renderer_->GetCameraProjectionMatrix();
+		param.ZNear = 0.0f;
+		param.ZFar = 1.0f;
+
 		renderer_->SetTime(time_);
 		renderer_->BeginRendering();
-		manager_->Draw();
+		manager_->Draw(param);
 		renderer_->EndRendering();
 	}
 

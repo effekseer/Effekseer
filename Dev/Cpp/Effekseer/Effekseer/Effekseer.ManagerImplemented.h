@@ -29,7 +29,6 @@ private:
 		EffectRef ParameterPointer;
 		InstanceContainer* InstanceContainerPointer;
 		InstanceGlobal* GlobalPointer;
-		//Culling3D::Object* CullingObjectPointer;
 		int RandomSeed = 0;
 		bool IsPaused;
 		bool IsShown;
@@ -76,7 +75,6 @@ private:
 			: ParameterPointer(effect)
 			, InstanceContainerPointer(pContainer)
 			, GlobalPointer(pGlobal)
-			//, CullingObjectPointer(nullptr)
 			, IsPaused(false)
 			, IsShown(true)
 			, IsAutoDrawing(true)
@@ -96,7 +94,6 @@ private:
 			: ParameterPointer(nullptr)
 			, InstanceContainerPointer(nullptr)
 			, GlobalPointer(nullptr)
-			//, CullingObjectPointer(nullptr)
 			, IsPaused(false)
 			, IsShown(true)
 			, IsRemoving(false)
@@ -445,12 +442,6 @@ public:
 	void BeginReloadEffect(const EffectRef& effect, bool doLockThread);
 
 	void EndReloadEffect(const EffectRef& effect, bool doLockThread);
-
-	//void CreateCullingWorld(float xsize, float ysize, float zsize, int32_t layerCount) override;
-	//
-	//void CalcCulling(const Matrix44& cameraProjMat, bool isOpenGL) override;
-
-	//void RessignCulling() override;
 
 	virtual int GetRef() override
 	{
