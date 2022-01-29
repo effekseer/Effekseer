@@ -55,10 +55,12 @@ set_target_properties(EffekseerCore PROPERTIES
 set_property(TARGET EffekseerCore PROPERTY VS_PACKAGE_REFERENCES "Newtonsoft.Json_12.0.1;DynamicLanguageRuntime_1.2.2;IronPython_2.7.9") 
 
 target_compile_options(EffekseerCore PRIVATE "/unsafe")
+set_target_properties (EffekseerCore PROPERTIES FOLDER Editor)
 
 
 
 add_subdirectory(EffekseerCoreGUI)
+set_target_properties (EffekseerCoreGUI PROPERTIES FOLDER Editor)
 
 
 
@@ -100,6 +102,7 @@ if (MSVC)
     set_target_properties(EffekseerEditor PROPERTIES OUTPUT_NAME_RELEASE "Effekseer" )
 endif()
 
+set_target_properties (EffekseerEditor PROPERTIES FOLDER Editor)
 
 if (BUILD_TEST)
     file(GLOB files_test
@@ -117,6 +120,8 @@ if (BUILD_TEST)
         set_target_properties(TestCSharp PROPERTIES OUTPUT_NAME_DEBUG "Effekseer.TestCSharp" )
         set_target_properties(TestCSharp PROPERTIES OUTPUT_NAME_RELEASE "Effekseer.TestCSharp" )
     endif()
+    set_target_properties (TestCSharp PROPERTIES FOLDER Tests)
 endif()
 
 add_subdirectory(EffekseerLit)
+set_target_properties (EffekseerEditorLit PROPERTIES FOLDER Editor)

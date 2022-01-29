@@ -24,6 +24,7 @@ if (BUILD_VIEWER OR BUILD_EDITOR)
     add_library(Boxer STATIC ${boxer_src})
 
     target_include_directories(Boxer PUBLIC Boxer/)
+    set_target_properties (Boxer PROPERTIES FOLDER Thirdparty)
 
     if(UNIX AND NOT APPLE)
         target_include_directories(Boxer 
@@ -54,6 +55,7 @@ if (BUILD_VIEWER OR BUILD_EDITOR)
 
     add_library(nfd STATIC ${nfd_src})
     target_include_directories(nfd PUBLIC nativefiledialog/src/include/)
+    set_target_properties (nfd PROPERTIES FOLDER Thirdparty)
 
     if(UNIX AND NOT APPLE)
         target_include_directories(nfd 
@@ -73,6 +75,7 @@ if (BUILD_VIEWER OR BUILD_EDITOR)
         imgui/imgui_widgets.cpp)
     add_library(imgui STATIC ${imgui_src})
     target_include_directories(imgui PUBLIC imgui/)
+    set_target_properties (imgui PROPERTIES FOLDER Thirdparty)
 
     set(imgui-node-editor_src
         imgui-node-editor/crude_json.cpp
@@ -82,5 +85,6 @@ if (BUILD_VIEWER OR BUILD_EDITOR)
     add_library(imgui-node-editor STATIC ${imgui-node-editor_src})
     target_include_directories(imgui-node-editor PUBLIC imgui-node-editor/)
     target_link_libraries(imgui-node-editor PRIVATE imgui)
+    set_target_properties (imgui-node-editor PROPERTIES FOLDER Thirdparty)
 endif()
 

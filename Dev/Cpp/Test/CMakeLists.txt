@@ -1,7 +1,7 @@
 
 cmake_minimum_required(VERSION 3.10)
 
-project(Test)
+project(TestCpp)
 
 set(effekseer_test_src
     main.cpp
@@ -149,27 +149,27 @@ else()
 
 endif()
 
-add_executable(Test ${effekseer_test_src} )
-target_link_directories(Test PRIVATE ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES})
+add_executable(TestCpp ${effekseer_test_src} )
+target_link_directories(TestCpp PRIVATE ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES})
 
 if(BUILD_VULKAN)
     find_package(Vulkan REQUIRED)
 
     target_include_directories(
-        Test
+        TestCpp
         PRIVATE
         ${Vulkan_INCLUDE_DIRS}
     )
     
     target_link_libraries(
-        Test
+        TestCpp
         PRIVATE 
         ${Vulkan_LIBRARIES}
     )
 
     # TODO Improve it
     target_link_libraries(
-        Test
+        TestCpp
         PRIVATE 
         glslang
         SPIRV
@@ -178,21 +178,21 @@ if(BUILD_VULKAN)
     )
     
     target_link_directories(
-        Test
+        TestCpp
         PRIVATE
         ${CMAKE_CURRENT_BINARY_DIR}/../3rdParty/LLGI/EP/Install/glslang/lib
     )
 endif()
 
-add_dependencies(Test ExternalProject_glfw)
+add_dependencies(TestCpp ExternalProject_glfw)
 
 if(BUILD_WITH_EASY_PROFILER)
-    add_dependencies(Test ExternalProject_easy_profiler)
+    add_dependencies(TestCpp ExternalProject_easy_profiler)
 endif()
 
 if (BUILD_WITH_POSTFIX)
 target_link_libraries(
-    Test
+    TestCpp
     PRIVATE 
     ${common_lib}
     debug glfw3d
@@ -200,7 +200,7 @@ target_link_libraries(
 )
 else()
 target_link_libraries(
-    Test
+    TestCpp
     PRIVATE 
     ${common_lib}
     glfw3
@@ -210,13 +210,13 @@ endif()
 
 if(UNIX AND NOT APPLE)
     find_package(X11 REQUIRED)
-    target_link_libraries(Test PRIVATE ${X11_LIBRARIES})
+    target_link_libraries(TestCpp PRIVATE ${X11_LIBRARIES})
     find_package(Threads REQUIRED)
-    target_link_libraries(Test PRIVATE ${CMAKE_THREAD_LIBS_INIT})
+    target_link_libraries(TestCpp PRIVATE ${CMAKE_THREAD_LIBS_INIT})
 endif()
 
 if(FROM_CI)
-    target_compile_definitions(Test PRIVATE __FROM_CI__)
+    target_compile_definitions(TestCpp PRIVATE __FROM_CI__)
 endif()
 
 add_definitions(-D__EFFEKSEER_RENDERER_INTERNAL_LOADER__)
@@ -229,20 +229,20 @@ if (APPLE)
 endif()
 
 if (MSVC)
-    set_target_properties(Test PROPERTIES OUTPUT_NAME_DEBUG "Test")
-    set_target_properties(Test PROPERTIES OUTPUT_NAME_RELEASE "Test")
+    set_target_properties(TestCpp PROPERTIES OUTPUT_NAME_DEBUG "TestCpp")
+    set_target_properties(TestCpp PROPERTIES OUTPUT_NAME_RELEASE "TestCpp")
 else()
-    set_target_properties(Test PROPERTIES OUTPUT_NAME "Test")
+    set_target_properties(TestCpp PROPERTIES OUTPUT_NAME "TestCpp")
 endif()
 
 FilterFolder("${effekseer_test_src}")
 
 if(CLANG_FORMAT_ENABLED)
-    clang_format(Test)
+    clang_format(TestCpp)
 endif()
 
 if(USE_LIBPNG_LOADER)
-    add_dependencies(Test ExternalProject_libpng)
+    add_dependencies(TestCpp ExternalProject_libpng)
 
 
     target_link_directories(

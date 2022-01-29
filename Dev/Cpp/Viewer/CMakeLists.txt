@@ -155,6 +155,7 @@ add_dependencies(Viewer
 
 if(WIN32)
     add_dependencies(Viewer ExternalProject_glew)
+    add_definitions(-DIMGUI_IMPL_OPENGL_LOADER_GLEW)
 endif()
 
 link_directories(

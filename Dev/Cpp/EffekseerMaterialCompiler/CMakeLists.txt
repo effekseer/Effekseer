@@ -32,7 +32,7 @@ if(MSVC OR APPLE)
         DEBUG_POSTFIX ".Debug")
 endif()
 
-set_property(TARGET EffekseerMaterialCompilerGL PROPERTY FOLDER "Compiler") 
+set_property(TARGET EffekseerMaterialCompilerGL PROPERTY FOLDER Libraries) 
 
 # Metal (Metal is a code as binary)
 
@@ -67,7 +67,7 @@ if(MSVC OR APPLE)
         DEBUG_POSTFIX ".Debug")
 endif()
 
-set_property(TARGET EffekseerMaterialCompilerMetal PROPERTY FOLDER "Compiler") 
+set_property(TARGET EffekseerMaterialCompilerMetal PROPERTY FOLDER Libraries) 
 
 if(WIN32)
     add_library(
@@ -97,7 +97,7 @@ if(WIN32)
     set_target_properties(EffekseerMaterialCompilerDX11
         PROPERTIES
         DEBUG_POSTFIX ".Debug")
-    set_property(TARGET EffekseerMaterialCompilerDX11 PROPERTY FOLDER "Compiler") 
+    set_property(TARGET EffekseerMaterialCompilerDX11 PROPERTY FOLDER Libraries) 
 
     add_library(
         EffekseerMaterialCompilerDX9
@@ -126,7 +126,7 @@ if(WIN32)
     set_target_properties(EffekseerMaterialCompilerDX9
         PROPERTIES
         DEBUG_POSTFIX ".Debug")
-    set_property(TARGET EffekseerMaterialCompilerDX9 PROPERTY FOLDER "Compiler") 
+    set_property(TARGET EffekseerMaterialCompilerDX9 PROPERTY FOLDER Libraries) 
 endif()
 
 if(WIN32 AND BUILD_DX12)
@@ -159,7 +159,7 @@ if(WIN32 AND BUILD_DX12)
         PROPERTIES
         DEBUG_POSTFIX ".Debug")
 
-    set_property(TARGET EffekseerMaterialCompilerDX12 PROPERTY FOLDER "Compiler") 
+    set_property(TARGET EffekseerMaterialCompilerDX12 PROPERTY FOLDER Libraries) 
 endif()
 
 if(EXISTS "${CMAKE_SOURCE_DIR}/Dev/Cpp/EffekseerMaterialCompiler/Switch")
@@ -185,7 +185,7 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/Dev/Cpp/EffekseerMaterialCompiler/Switch")
         PROPERTIES
         DEBUG_POSTFIX ".Debug")
 
-    set_property(TARGET EffekseerMaterialCompilerSwitch PROPERTY FOLDER "Compiler") 
+    set_property(TARGET EffekseerMaterialCompilerSwitch PROPERTY FOLDER Libraries) 
 endif()
 
 if(EXISTS "${CMAKE_SOURCE_DIR}/Dev/Cpp/EffekseerMaterialCompiler/PS4/")
@@ -211,7 +211,7 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/Dev/Cpp/EffekseerMaterialCompiler/PS4/")
         PROPERTIES
         DEBUG_POSTFIX ".Debug")
 
-    set_property(TARGET EffekseerMaterialCompilerPS4 PROPERTY FOLDER "Compiler") 
+    set_property(TARGET EffekseerMaterialCompilerPS4 PROPERTY FOLDER Libraries) 
 endif()
 
 
@@ -238,7 +238,7 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/Dev/Cpp/EffekseerMaterialCompiler/PS5/")
         PROPERTIES
         DEBUG_POSTFIX ".Debug")
 
-    set_property(TARGET EffekseerMaterialCompilerPS5 PROPERTY FOLDER "Compiler") 
+    set_property(TARGET EffekseerMaterialCompilerPS5 PROPERTY FOLDER Libraries) 
 endif()
 
 if(APPLE)
