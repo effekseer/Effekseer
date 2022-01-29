@@ -4507,6 +4507,13 @@ public:
 	virtual void DrawHandleFront(Handle handle, const Manager::DrawParameter& drawParameter = Manager::DrawParameter()) = 0;
 
 	/**
+	@brief
+	\~English	Get whether the effect will be culled.
+	\~Japanese	エフェクトがカリングされるか取得する。
+	*/	
+	virtual bool GetIsCulled(Handle handle, const Manager::DrawParameter& drawParameter) = 0;
+
+	/**
 		@brief	再生する。
 		@param	effect	[in]	エフェクト
 		@param	x	[in]	X座標

@@ -427,6 +427,8 @@ public:
 
 	void DrawHandleFront(Handle handle, const Manager::DrawParameter& drawParameter) override;
 
+	bool GetIsCulled(Handle handle, const Manager::DrawParameter& drawParameter) override;
+
 	Handle Play(const EffectRef& effect, float x, float y, float z) override;
 
 	Handle Play(const EffectRef& effect, const Vector3D& position, int32_t startFrame) override;

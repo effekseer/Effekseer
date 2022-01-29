@@ -2090,6 +2090,18 @@ void ManagerImplemented::DrawHandleFront(Handle handle, const Manager::DrawParam
 	}
 }
 
+bool ManagerImplemented::GetIsCulled(Handle handle, const Manager::DrawParameter& drawParameter)
+{
+	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, GetSetting()->GetCoordinateSystem());
+
+	if (m_DrawSets.count(handle) > 0)
+	{
+		return !CanDraw(m_DrawSets[handle], drawParameter, cullingPlanes);
+	}
+
+	return true;
+}
+
 int ManagerImplemented::GetUpdateTime() const
 {
 	return m_updateTime;
