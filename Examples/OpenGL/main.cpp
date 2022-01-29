@@ -97,7 +97,11 @@ int main(int argc, char** argv)
 
 		// Render effects
 		// エフェクトの描画を行う。
-		manager->Draw();
+		Effekseer::Manager::DrawParameter drawParameter;
+		drawParameter.ZNear = -1.0f;
+		drawParameter.ZFar = 1.0f;
+		drawParameter.ViewProjectionMatrix = renderer->GetCameraProjectionMatrix();
+		manager->Draw(drawParameter);
 
 		// Finish to rendering effects
 		// エフェクトの描画終了処理を行う。

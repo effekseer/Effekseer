@@ -2,6 +2,9 @@
 
 ### Broken changes
 
+Culling system was replaced.
+You need to specify Effekseer::Manager::DrawParameter's ViewProjectionMatrix, ZNear and ZFar when Effekseer::Manager::Draw is called.
+
 Effekseer::Backend::TextureParameter was changed.
 
 It was combined to RenderTextureParameter and DepthTextureParameter.
