@@ -149,16 +149,13 @@ private:
 	float g_RotX = 30.0f;
 	float g_RotY = -30.0f;
 	float g_Zoom = 0.0f;
+	::Effekseer::Vector3D g_focus_position;
 
 	bool g_mouseRotDirectionInvX = false;
 	bool g_mouseRotDirectionInvY = false;
 
 	bool g_mouseSlideDirectionInvX = false;
 	bool g_mouseSlideDirectionInvY = false;
-
-	::Effekseer::Vector3D m_rootLocation;
-	::Effekseer::Vector3D m_rootRotation;
-	::Effekseer::Vector3D m_rootScale;
 
 	std::shared_ptr<IPC::CommandQueue> commandQueueToMaterialEditor_;
 	std::shared_ptr<IPC::CommandQueue> commandQueueFromMaterialEditor_;
@@ -182,6 +179,8 @@ private:
 	Effekseer::Tool::RenderedEffectGeneratorConfig mainScreenConfig_;
 
 	EffekseerTool::ViewPointController viewPointCtrl_;
+
+	Effekseer::Tool::RenderingMethodType renderingMode_ = Effekseer::Tool::RenderingMethodType::Normal;
 
 	void SetZoom(float zoom);
 

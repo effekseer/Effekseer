@@ -105,8 +105,6 @@ public:
 
 	bool IsRightHand;
 
-	Effekseer::Tool::RenderingMethodType RenderingMode;
-
 	void SetScreenSize(int32_t width, int32_t height);
 
 	Effekseer::Tool::Vector2DI GetScreenSize() const

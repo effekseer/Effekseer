@@ -105,7 +105,6 @@ ViewPointController::ViewPointController()
 	: m_projection(PROJECTION_TYPE_PERSPECTIVE)
 	, RateOfMagnification(1.0f)
 	, IsRightHand(true)
-	, RenderingMode(Effekseer::Tool::RenderingMethodType::Normal)
 {
 }
 

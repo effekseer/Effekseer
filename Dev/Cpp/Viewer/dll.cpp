@@ -112,8 +112,6 @@ static std::map<std::u16string, Effekseer::TextureRef> m_textures;
 static std::map<std::u16string, Effekseer::ModelRef> m_models;
 static std::map<std::u16string, Effekseer::MaterialRef> g_materials_;
 
-static ::Effekseer::Vector3D g_focus_position;
-
 static ::Effekseer::Client* g_client = nullptr;
 
 static efk::DeviceType g_deviceType = efk::DeviceType::OpenGL;
@@ -675,7 +673,7 @@ void Native::RenderView(int32_t width, int32_t height, std::shared_ptr<Effekseer
 	mainScreenConfig_.DrawParameter = drawParameter;
 	mainScreenConfig_.CameraMatrix = viewPointCtrl_.GetCameraMatrix();
 	mainScreenConfig_.ProjectionMatrix = viewPointCtrl_.GetProjectionMatrix();
-	mainScreenConfig_.RenderingMethod = viewPointCtrl_.RenderingMode;
+	mainScreenConfig_.RenderingMethod = renderingMode_;
 	mainScreen_->SetConfig(mainScreenConfig_);
 	mainScreen_->Resize(Effekseer::Tool::Vector2DI(width, height));
 
@@ -731,7 +729,7 @@ ViewerParamater Native::GetViewerParamater()
 	paramater.RateOfMagnification = viewPointCtrl_.RateOfMagnification;
 
 	paramater.Distortion = (Effekseer::Tool::DistortionType)mainScreenConfig_.Distortion;
-	paramater.RenderingMode = viewPointCtrl_.RenderingMode;
+	paramater.RenderingMode = renderingMode_;
 
 	return paramater;
 }
@@ -765,7 +763,7 @@ void Native::SetViewerParamater(ViewerParamater& paramater)
 
 	mainScreen_->RendersGuide = paramater.RendersGuide;
 	mainScreenConfig_.Distortion = (Effekseer::Tool::DistortionType)paramater.Distortion;
-	viewPointCtrl_.RenderingMode = paramater.RenderingMode;
+	renderingMode_ = paramater.RenderingMode;
 }
 
 Effekseer::Tool::ViewerEffectBehavior Native::GetEffectBehavior()
