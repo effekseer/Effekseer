@@ -3,6 +3,11 @@
 namespace Effekseer::Tool
 {
 
+void ViewPointController::SetDistance(float distance)
+{
+	SetZoom(logf(Effekseer::Max(FLT_MIN, distance / DistanceBase)) / logf(ZoomDistanceFactor));
+}
+
 float ViewPointController::GetDistance() const
 {
 	return DistanceBase * powf(ZoomDistanceFactor, g_Zoom);
@@ -265,13 +270,13 @@ void ViewPointController::Update()
 	{
 		::Effekseer::Matrix44 cameraMat;
 		SetCameraMatrix(
-			::Effekseer::Matrix44().LookAtLH(ray.Origin, ray.Origin + ray.Direction, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
+			::Effekseer::Matrix44().LookAtRH(ray.Origin, ray.Origin + ray.Direction, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
 	}
 	else
 	{
 		::Effekseer::Matrix44 cameraMat;
 		SetCameraMatrix(
-			::Effekseer::Matrix44().LookAtRH(ray.Origin, ray.Origin + ray.Direction, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
+			::Effekseer::Matrix44().LookAtLH(ray.Origin, ray.Origin + ray.Direction, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
 	}
 
 	SetOrthographicScale(GetOrthoScale());

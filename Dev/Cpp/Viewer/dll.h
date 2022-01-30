@@ -16,6 +16,7 @@
 
 #include "../IPC/IPC.h"
 #include "ViewerEffectBehavior.h"
+#include "3D/ViewPointController.h"
 #include "efk.Base.h"
 
 namespace Effekseer
@@ -139,24 +140,6 @@ private:
 		void ReleaseAll();
 	};
 
-	const float DistanceBase = 15.0f;
-	const float OrthoScaleBase = 16.0f;
-	const float ZoomDistanceFactor = 1.125f;
-	const float MaxZoom = 40.0f;
-	const float MinZoom = -40.0f;
-	const float PI = 3.14159265f;
-
-	float g_RotX = 30.0f;
-	float g_RotY = -30.0f;
-	float g_Zoom = 0.0f;
-	::Effekseer::Vector3D g_focus_position;
-
-	bool g_mouseRotDirectionInvX = false;
-	bool g_mouseRotDirectionInvY = false;
-
-	bool g_mouseSlideDirectionInvX = false;
-	bool g_mouseSlideDirectionInvY = false;
-
 	std::shared_ptr<IPC::CommandQueue> commandQueueToMaterialEditor_;
 	std::shared_ptr<IPC::CommandQueue> commandQueueFromMaterialEditor_;
 
@@ -178,15 +161,9 @@ private:
 
 	Effekseer::Tool::RenderedEffectGeneratorConfig mainScreenConfig_;
 
-	EffekseerTool::ViewPointController viewPointCtrl_;
+	Effekseer::Tool::ViewPointController viewPointCtrl_;
 
 	Effekseer::Tool::RenderingMethodType renderingMode_ = Effekseer::Tool::RenderingMethodType::Normal;
-
-	void SetZoom(float zoom);
-
-	float GetDistance();
-
-	float GetOrthoScale();
 
 public:
 	Native();

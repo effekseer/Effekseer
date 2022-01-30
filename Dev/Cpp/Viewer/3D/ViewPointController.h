@@ -47,32 +47,30 @@ private:
 	bool g_mouseSlideDirectionInvY = false;
 
 	float m_orthoScale = 1.0f;
-	ProjectionType m_projection;
+	ProjectionType m_projection = ProjectionType::Perspective;
 	Effekseer::Matrix44 m_cameraMat;
 	Effekseer::Matrix44 m_projMat;
-	ProjectionMatrixStyle projectionStyle_;
+	ProjectionMatrixStyle projectionStyle_ = ProjectionMatrixStyle::DirectXStyle;
 
 	int32_t screenWidth = 0;
 	int32_t screenHeight = 0;
-
-	float g_RotX = 30.0f;
-	float g_RotY = -30.0f;
-	float g_Zoom = 0.0f;
-	::Effekseer::Vector3D g_focus_position;
 
 	void SetZoom(float zoom)
 	{
 		g_Zoom = Effekseer::Max(MinZoom, Effekseer::Min(MaxZoom, zoom));
 	}
 
-	float GetDistance() const;
 
 	float GetOrthoScale();
 
 public:
-	ViewPointController();
+	void SetDistance(float distance);
+	float GetDistance() const;
 
-	~ViewPointController();
+	float g_RotX = 30.0f;
+	float g_RotY = -30.0f;
+	float g_Zoom = 0.0f;
+	::Effekseer::Vector3D g_focus_position;
 
 	void SetMouseInverseFlag(bool rotX, bool rotY, bool slideX, bool slideY);
 
@@ -90,7 +88,7 @@ public:
 
 	void SetOrthographicScale(float scale);
 
-	float RateOfMagnification;
+	float RateOfMagnification = 1.0f;
 
 	/**
 		@brief	Z near
@@ -102,7 +100,7 @@ public:
 	*/
 	float ClippingEnd = 300.0f;
 
-	bool IsRightHand;
+	bool IsRightHand = true;
 
 	void SetScreenSize(int32_t width, int32_t height);
 
