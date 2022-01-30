@@ -64,116 +64,6 @@ public class ViewerParamater : global::System.IDisposable {
     } 
   }
 
-  public float RateOfMagnification {
-    set {
-      EffekseerNativePINVOKE.ViewerParamater_RateOfMagnification_set(swigCPtr, value);
-    } 
-    get {
-      float ret = EffekseerNativePINVOKE.ViewerParamater_RateOfMagnification_get(swigCPtr);
-      return ret;
-    } 
-  }
-
-  public bool IsPerspective {
-    set {
-      EffekseerNativePINVOKE.ViewerParamater_IsPerspective_set(swigCPtr, value);
-    } 
-    get {
-      bool ret = EffekseerNativePINVOKE.ViewerParamater_IsPerspective_get(swigCPtr);
-      return ret;
-    } 
-  }
-
-  public bool IsOrthographic {
-    set {
-      EffekseerNativePINVOKE.ViewerParamater_IsOrthographic_set(swigCPtr, value);
-    } 
-    get {
-      bool ret = EffekseerNativePINVOKE.ViewerParamater_IsOrthographic_get(swigCPtr);
-      return ret;
-    } 
-  }
-
-  public float FocusX {
-    set {
-      EffekseerNativePINVOKE.ViewerParamater_FocusX_set(swigCPtr, value);
-    } 
-    get {
-      float ret = EffekseerNativePINVOKE.ViewerParamater_FocusX_get(swigCPtr);
-      return ret;
-    } 
-  }
-
-  public float FocusY {
-    set {
-      EffekseerNativePINVOKE.ViewerParamater_FocusY_set(swigCPtr, value);
-    } 
-    get {
-      float ret = EffekseerNativePINVOKE.ViewerParamater_FocusY_get(swigCPtr);
-      return ret;
-    } 
-  }
-
-  public float FocusZ {
-    set {
-      EffekseerNativePINVOKE.ViewerParamater_FocusZ_set(swigCPtr, value);
-    } 
-    get {
-      float ret = EffekseerNativePINVOKE.ViewerParamater_FocusZ_get(swigCPtr);
-      return ret;
-    } 
-  }
-
-  public float AngleX {
-    set {
-      EffekseerNativePINVOKE.ViewerParamater_AngleX_set(swigCPtr, value);
-    } 
-    get {
-      float ret = EffekseerNativePINVOKE.ViewerParamater_AngleX_get(swigCPtr);
-      return ret;
-    } 
-  }
-
-  public float AngleY {
-    set {
-      EffekseerNativePINVOKE.ViewerParamater_AngleY_set(swigCPtr, value);
-    } 
-    get {
-      float ret = EffekseerNativePINVOKE.ViewerParamater_AngleY_get(swigCPtr);
-      return ret;
-    } 
-  }
-
-  public float Distance {
-    set {
-      EffekseerNativePINVOKE.ViewerParamater_Distance_set(swigCPtr, value);
-    } 
-    get {
-      float ret = EffekseerNativePINVOKE.ViewerParamater_Distance_get(swigCPtr);
-      return ret;
-    } 
-  }
-
-  public float ClippingStart {
-    set {
-      EffekseerNativePINVOKE.ViewerParamater_ClippingStart_set(swigCPtr, value);
-    } 
-    get {
-      float ret = EffekseerNativePINVOKE.ViewerParamater_ClippingStart_get(swigCPtr);
-      return ret;
-    } 
-  }
-
-  public float ClippingEnd {
-    set {
-      EffekseerNativePINVOKE.ViewerParamater_ClippingEnd_set(swigCPtr, value);
-    } 
-    get {
-      float ret = EffekseerNativePINVOKE.ViewerParamater_ClippingEnd_get(swigCPtr);
-      return ret;
-    } 
-  }
-
   public bool RendersGuide {
     set {
       EffekseerNativePINVOKE.ViewerParamater_RendersGuide_set(swigCPtr, value);
@@ -250,16 +140,6 @@ public class ViewerParamater : global::System.IDisposable {
     } 
     get {
       RenderingMethodType ret = (RenderingMethodType)EffekseerNativePINVOKE.ViewerParamater_RenderingMode_get(swigCPtr);
-      return ret;
-    } 
-  }
-
-  public ViewMode ViewerMode {
-    set {
-      EffekseerNativePINVOKE.ViewerParamater_ViewerMode_set(swigCPtr, (int)value);
-    } 
-    get {
-      ViewMode ret = (ViewMode)EffekseerNativePINVOKE.ViewerParamater_ViewerMode_get(swigCPtr);
       return ret;
     } 
   }

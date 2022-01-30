@@ -33,6 +33,7 @@ FILE(GLOB cpps
 )
 
 list(APPEND cpps
+    3D/ViewPointController.cpp
     RenderedEffectGenerator.cpp
     Graphics/StaticMeshRenderer.cpp
     Graphics/ImageRenderer.cpp
@@ -47,6 +48,7 @@ list(APPEND cpps
 )
 
 list(APPEND hs
+    3D/ViewPointController.h
     RenderedEffectGenerator.h
     Graphics/StaticMeshRenderer.h
     Graphics/ImageRenderer.h
@@ -54,6 +56,8 @@ list(APPEND hs
     GUI/Image.h
     GUI/ReloadableImage.h
     GUI/RenderImage.h
+    Math/Vector2I.h
+    Math/Vector3F.h
     Recorder/EffectRecorder.h
 )
 

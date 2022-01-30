@@ -64,32 +64,9 @@ public:
 	}
 };
 
-void Native::SetZoom(float zoom)
-{
-	g_Zoom = Effekseer::Max(MinZoom, Effekseer::Min(MaxZoom, zoom));
-}
-
-float Native::GetDistance()
-{
-	return DistanceBase * powf(ZoomDistanceFactor, g_Zoom);
-}
-
-float Native::GetOrthoScale()
-{
-	return OrthoScaleBase / powf(ZoomDistanceFactor, g_Zoom);
-}
-
 ViewerParamater::ViewerParamater()
 	: GuideWidth(0)
 	, GuideHeight(0)
-	, IsPerspective(false)
-	, IsOrthographic(false)
-	, FocusX(0)
-	, FocusY(0)
-	, FocusZ(0)
-	, AngleX(0)
-	, AngleY(0)
-	, Distance(0)
 	, RendersGuide(false)
 
 	, IsCullingShown(false)
@@ -100,8 +77,6 @@ ViewerParamater::ViewerParamater()
 
 	, Distortion(Effekseer::Tool::DistortionType::Current)
 	, RenderingMode(Effekseer::Tool::RenderingMethodType::Normal)
-	, ViewerMode(ViewMode::_3D)
-
 {
 }
 
@@ -111,8 +86,6 @@ static ::EffekseerTool::Sound* sound_ = nullptr;
 static std::map<std::u16string, Effekseer::TextureRef> m_textures;
 static std::map<std::u16string, Effekseer::ModelRef> m_models;
 static std::map<std::u16string, Effekseer::MaterialRef> g_materials_;
-
-static ::Effekseer::Vector3D g_focus_position;
 
 static ::Effekseer::Client* g_client = nullptr;
 
@@ -330,7 +303,6 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 		return false;
 	}
 
-	viewPointCtrl_.Initialize(deviceType, width, height);
 	{
 		spdlog::trace("OK : ::EffekseerTool::Renderer::Initialize");
 
@@ -405,63 +377,11 @@ void Native::ClearWindow(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 	graphics_->Clear(Effekseer::Color(r, g, b, a));
 }
 
-bool Native::UpdateWindow()
+bool Native::UpdateWindow(std::shared_ptr<Effekseer::Tool::ViewPointController> viewPointCtrl)
 {
-	::Effekseer::Vector3D position(0, 0, GetDistance());
-	::Effekseer::Matrix43 mat, mat_rot_x, mat_rot_y;
-	mat_rot_x.RotationX(-g_RotX / 180.0f * PI);
+	const auto ray = viewPointCtrl->GetCameraRay();
 
-	drawParameter.IsSortingEffectsEnabled = true;
-
-	if (viewPointCtrl_.IsRightHand)
-	{
-		mat_rot_y.RotationY(-g_RotY / 180.0f * PI);
-		::Effekseer::Matrix43::Multiple(mat, mat_rot_x, mat_rot_y);
-		::Effekseer::Vector3D::Transform(position, position, mat);
-
-		Effekseer::Vector3D::Normal(drawParameter.CameraFrontDirection, -position);
-
-		position.X += g_focus_position.X;
-		position.Y += g_focus_position.Y;
-		position.Z += g_focus_position.Z;
-
-		::Effekseer::Matrix44 cameraMat;
-		viewPointCtrl_.SetCameraMatrix(
-			::Effekseer::Matrix44().LookAtRH(position, g_focus_position, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
-
-		drawParameter.CameraPosition = position;
-	}
-	else
-	{
-		mat_rot_y.RotationY((g_RotY + 180.0f) / 180.0f * PI);
-		::Effekseer::Matrix43::Multiple(mat, mat_rot_x, mat_rot_y);
-		::Effekseer::Vector3D::Transform(position, position, mat);
-
-		::Effekseer::Vector3D temp_focus = g_focus_position;
-		temp_focus.Z = -temp_focus.Z;
-
-		Effekseer::Vector3D::Normal(drawParameter.CameraFrontDirection, -position);
-
-		position.X += temp_focus.X;
-		position.Y += temp_focus.Y;
-		position.Z += temp_focus.Z;
-
-		::Effekseer::Matrix44 cameraMat;
-		viewPointCtrl_.SetCameraMatrix(
-			::Effekseer::Matrix44().LookAtLH(position, temp_focus, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
-
-		drawParameter.CameraPosition = position;
-	}
-
-	viewPointCtrl_.SetOrthographicScale(GetOrthoScale());
-
-	Effekseer::Matrix44 vpm;
-	Effekseer::Matrix44::Mul(vpm, viewPointCtrl_.GetCameraMatrix(), viewPointCtrl_.GetProjectionMatrix());
-	drawParameter.ViewProjectionMatrix = vpm;
-	drawParameter.ZNear = 0.0f;
-	drawParameter.ZFar = 1.0f;
-
-	sound_->SetListener(position, g_focus_position, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f));
+	sound_->SetListener(ray.Origin, ray.Origin + ray.Direction, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f));
 	sound_->Update();
 
 	// command
@@ -576,92 +496,6 @@ bool Native::StepEffect()
 	return true;
 }
 
-bool Native::Rotate(float x, float y)
-{
-	if (g_mouseRotDirectionInvX)
-	{
-		x = -x;
-	}
-
-	if (g_mouseRotDirectionInvY)
-	{
-		y = -y;
-	}
-
-	g_RotY += x;
-	g_RotX += y;
-
-	while (g_RotY >= 180.0f)
-	{
-		g_RotY -= 180.0f * 2.0f;
-	}
-
-	while (g_RotY <= -180.0f)
-	{
-		g_RotY += 180.0f * 2.0f;
-	}
-
-	if (g_RotX > 180.0f / 2.0f)
-	{
-		g_RotX = 180.0f / 2.0f;
-	}
-
-	if (g_RotX < -180.0f / 2.0f)
-	{
-		g_RotX = -180.0f / 2.0f;
-	}
-
-	return true;
-}
-
-bool Native::Slide(float x, float y)
-{
-	if (g_mouseSlideDirectionInvX)
-	{
-		x = -x;
-	}
-
-	if (g_mouseSlideDirectionInvY)
-	{
-		y = -y;
-	}
-
-	::Effekseer::Vector3D up(0, 1, 0);
-	::Effekseer::Vector3D right(1, 0, 0);
-	::Effekseer::Matrix43 mat, mat_rot_x, mat_rot_y;
-	mat_rot_x.RotationX(-g_RotX / 180.0f * PI);
-	mat_rot_y.RotationY(-g_RotY / 180.0f * PI);
-	::Effekseer::Matrix43::Multiple(mat, mat_rot_x, mat_rot_y);
-	::Effekseer::Vector3D::Transform(up, up, mat);
-	::Effekseer::Vector3D::Transform(right, right, mat);
-
-	up.X = up.X * y;
-	up.Y = up.Y * y;
-	up.Z = up.Z * y;
-	right.X = right.X * (-x);
-	right.Y = right.Y * (-x);
-	right.Z = right.Z * (-x);
-
-	::Effekseer::Vector3D v;
-	v.X = up.X + right.X;
-	v.Y = up.Y + right.Y;
-	v.Z = up.Z + right.Z;
-
-	float moveFactor = powf(ZoomDistanceFactor, g_Zoom);
-	g_focus_position.X += v.X * moveFactor;
-	g_focus_position.Y += v.Y * moveFactor;
-	g_focus_position.Z += v.Z * moveFactor;
-
-	return true;
-}
-
-bool Native::Zoom(float zoom)
-{
-	SetZoom(g_Zoom - zoom);
-
-	return true;
-}
-
 bool Native::SetRandomSeed(int seed)
 {
 	srand(seed);
@@ -669,15 +503,28 @@ bool Native::SetRandomSeed(int seed)
 	return true;
 }
 
-void Native::RenderView(int32_t width, int32_t height, std::shared_ptr<Effekseer::Tool::RenderImage> renderImage)
+void Native::RenderView(int32_t width, int32_t height, std::shared_ptr<Effekseer::Tool::ViewPointController> viewPointCtrl, std::shared_ptr<Effekseer::Tool::RenderImage> renderImage)
 {
-	viewPointCtrl_.SetScreenSize(width, height);
+	viewPointCtrl->SetScreenSize(width, height);
+	viewPointCtrl->Update();
+
+	const auto ray = viewPointCtrl->GetCameraRay();
+	drawParameter.IsSortingEffectsEnabled = true;
+	drawParameter.CameraPosition = ray.Origin;
+	drawParameter.CameraFrontDirection = ray.Direction;
+
+	Effekseer::Matrix44 vpm;
+	Effekseer::Matrix44::Mul(vpm, viewPointCtrl->GetCameraMatrix(), viewPointCtrl->GetProjectionMatrix());
+	drawParameter.ViewProjectionMatrix = vpm;
+	drawParameter.ZNear = 0.0f;
+	drawParameter.ZFar = 1.0f;
+
 	mainScreenConfig_.DrawParameter = drawParameter;
-	mainScreenConfig_.CameraMatrix = viewPointCtrl_.GetCameraMatrix();
-	mainScreenConfig_.ProjectionMatrix = viewPointCtrl_.GetProjectionMatrix();
-	mainScreenConfig_.RenderingMethod = viewPointCtrl_.RenderingMode;
+	mainScreenConfig_.CameraMatrix = viewPointCtrl->GetCameraMatrix();
+	mainScreenConfig_.ProjectionMatrix = viewPointCtrl->GetProjectionMatrix();
+	mainScreenConfig_.RenderingMethod = renderingMode_;
 	mainScreen_->SetConfig(mainScreenConfig_);
-	mainScreen_->Resize(Effekseer::Tool::Vector2DI(width, height));
+	mainScreen_->Resize(Effekseer::Tool::Vector2I(width, height));
 
 	if (renderImage != nullptr)
 	{
@@ -700,7 +547,7 @@ std::shared_ptr<Effekseer::Tool::EffectRecorder> Native::CreateRecorder(const Ef
 			graphics_,
 			setting_,
 			recordingParameter,
-			Effekseer::Tool::Vector2DI(mainScreen_->GuideWidth, mainScreen_->GuideHeight),
+			Effekseer::Tool::Vector2I(mainScreen_->GuideWidth, mainScreen_->GuideHeight),
 			mainScreen_->GetIsSRGBMode(),
 			mainScreen_->GetBehavior(),
 			mainScreen_->GetEffect()))
@@ -714,58 +561,22 @@ std::shared_ptr<Effekseer::Tool::EffectRecorder> Native::CreateRecorder(const Ef
 ViewerParamater Native::GetViewerParamater()
 {
 	ViewerParamater paramater;
-
+	paramater.RendersGuide = mainScreen_->RendersGuide;
 	paramater.GuideWidth = mainScreen_->GuideWidth;
 	paramater.GuideHeight = mainScreen_->GuideHeight;
-	paramater.ClippingStart = viewPointCtrl_.ClippingStart;
-	paramater.ClippingEnd = viewPointCtrl_.ClippingEnd;
-	paramater.IsPerspective = viewPointCtrl_.GetProjectionType() == ::EffekseerTool::PROJECTION_TYPE_PERSPECTIVE;
-	paramater.IsOrthographic = viewPointCtrl_.GetProjectionType() == ::EffekseerTool::PROJECTION_TYPE_ORTHOGRAPHIC;
-	paramater.FocusX = g_focus_position.X;
-	paramater.FocusY = g_focus_position.Y;
-	paramater.FocusZ = g_focus_position.Z;
-	paramater.AngleX = g_RotX;
-	paramater.AngleY = g_RotY;
-	paramater.Distance = GetDistance();
-	paramater.RendersGuide = mainScreen_->RendersGuide;
-	paramater.RateOfMagnification = viewPointCtrl_.RateOfMagnification;
-
 	paramater.Distortion = (Effekseer::Tool::DistortionType)mainScreenConfig_.Distortion;
-	paramater.RenderingMode = viewPointCtrl_.RenderingMode;
+	paramater.RenderingMode = renderingMode_;
 
 	return paramater;
 }
 
 void Native::SetViewerParamater(ViewerParamater& paramater)
 {
-	viewPointCtrl_.ClippingStart = paramater.ClippingStart;
-	viewPointCtrl_.ClippingEnd = paramater.ClippingEnd;
 	mainScreen_->GuideWidth = paramater.GuideWidth;
 	mainScreen_->GuideHeight = paramater.GuideHeight;
-
-	viewPointCtrl_.RateOfMagnification = paramater.RateOfMagnification;
-
-	if (paramater.IsPerspective)
-	{
-		viewPointCtrl_.SetProjectionType(::EffekseerTool::PROJECTION_TYPE_PERSPECTIVE);
-	}
-
-	if (paramater.IsOrthographic)
-	{
-		viewPointCtrl_.SetProjectionType(::EffekseerTool::PROJECTION_TYPE_ORTHOGRAPHIC);
-	}
-
-	g_focus_position.X = paramater.FocusX;
-	g_focus_position.Y = paramater.FocusY;
-	g_focus_position.Z = paramater.FocusZ;
-	g_RotX = paramater.AngleX;
-	g_RotY = paramater.AngleY;
-
-	SetZoom(logf(Effekseer::Max(FLT_MIN, paramater.Distance / DistanceBase)) / logf(ZoomDistanceFactor));
-
 	mainScreen_->RendersGuide = paramater.RendersGuide;
 	mainScreenConfig_.Distortion = (Effekseer::Tool::DistortionType)paramater.Distortion;
-	viewPointCtrl_.RenderingMode = paramater.RenderingMode;
+	renderingMode_ = paramater.RenderingMode;
 }
 
 Effekseer::Tool::ViewerEffectBehavior Native::GetEffectBehavior()
@@ -867,15 +678,6 @@ void Native::SetGridColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 	mainScreen_->GridColor = Effekseer::Color(r, g, b, a);
 }
 
-void Native::SetMouseInverseFlag(bool rotX, bool rotY, bool slideX, bool slideY)
-{
-	g_mouseRotDirectionInvX = rotX;
-	g_mouseRotDirectionInvY = rotY;
-
-	g_mouseSlideDirectionInvX = slideX;
-	g_mouseSlideDirectionInvY = slideY;
-}
-
 void Native::SetStep(int32_t step)
 {
 	mainScreen_->SetStep(step);
@@ -905,7 +707,7 @@ void Native::SetLightDirection(float x, float y, float z)
 {
 	Effekseer::Vector3D temp = Effekseer::Vector3D(x, y, z);
 
-	if (!viewPointCtrl_.IsRightHand)
+	if (setting_->GetCoordinateSystem() == Effekseer::CoordinateSystem::LH)
 	{
 		temp.Z = -temp.Z;
 	}
@@ -923,24 +725,14 @@ void Native::SetLightAmbientColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 	mainScreenConfig_.LightAmbientColor = Effekseer::Color(r, g, b, a);
 }
 
-void Native::SetIsRightHand(bool value)
+void Native::SetCoordinateSystem(Effekseer::Tool::CoordinateSystemType coordinateSystem)
 {
-	viewPointCtrl_.IsRightHand = value;
-	if (viewPointCtrl_.IsRightHand)
-	{
-		setting_->SetCoordinateSystem(Effekseer::CoordinateSystem::RH);
-	}
-	else
-	{
-		setting_->SetCoordinateSystem(Effekseer::CoordinateSystem::LH);
-	}
-
-	viewPointCtrl_.RecalcProjection();
+	setting_->SetCoordinateSystem(coordinateSystem == Effekseer::Tool::CoordinateSystemType::RH ? Effekseer::CoordinateSystem::RH : Effekseer::CoordinateSystem::LH);
 
 	{
 		Effekseer::Vector3D temp = mainScreenConfig_.LightDirection;
 
-		if (!viewPointCtrl_.IsRightHand)
+		if (setting_->GetCoordinateSystem() == Effekseer::CoordinateSystem::LH)
 		{
 			temp.Z = -temp.Z;
 		}

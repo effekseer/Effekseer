@@ -52,8 +52,8 @@ public class Native : global::System.IDisposable {
     return ret;
   }
 
-  public bool UpdateWindow() {
-    bool ret = EffekseerNativePINVOKE.Native_UpdateWindow(swigCPtr);
+  public bool UpdateWindow(ViewPointController viewPointCtrl) {
+    bool ret = EffekseerNativePINVOKE.Native_UpdateWindow(swigCPtr, ViewPointController.getCPtr(viewPointCtrl));
     return ret;
   }
 
@@ -105,28 +105,13 @@ public class Native : global::System.IDisposable {
     return ret;
   }
 
-  public bool Rotate(float x, float y) {
-    bool ret = EffekseerNativePINVOKE.Native_Rotate(swigCPtr, x, y);
-    return ret;
-  }
-
-  public bool Slide(float x, float y) {
-    bool ret = EffekseerNativePINVOKE.Native_Slide(swigCPtr, x, y);
-    return ret;
-  }
-
-  public bool Zoom(float zoom) {
-    bool ret = EffekseerNativePINVOKE.Native_Zoom(swigCPtr, zoom);
-    return ret;
-  }
-
   public bool SetRandomSeed(int seed) {
     bool ret = EffekseerNativePINVOKE.Native_SetRandomSeed(swigCPtr, seed);
     return ret;
   }
 
-  public void RenderView(int width, int height, RenderImage renderImage) {
-    EffekseerNativePINVOKE.Native_RenderView(swigCPtr, width, height, RenderImage.getCPtr(renderImage));
+  public void RenderView(int width, int height, ViewPointController viewPointCtrl, RenderImage renderImage) {
+    EffekseerNativePINVOKE.Native_RenderView(swigCPtr, width, height, ViewPointController.getCPtr(viewPointCtrl), RenderImage.getCPtr(renderImage));
   }
 
   public EffectRecorder CreateRecorder(RecordingParameter recordingParameter) {
@@ -195,10 +180,6 @@ public class Native : global::System.IDisposable {
     EffekseerNativePINVOKE.Native_SetGridColor(swigCPtr, r, g, b, a);
   }
 
-  public void SetMouseInverseFlag(bool rotX, bool rotY, bool slideX, bool slideY) {
-    EffekseerNativePINVOKE.Native_SetMouseInverseFlag(swigCPtr, rotX, rotY, slideX, slideY);
-  }
-
   public void SetStep(int step) {
     EffekseerNativePINVOKE.Native_SetStep(swigCPtr, step);
   }
@@ -233,8 +214,8 @@ public class Native : global::System.IDisposable {
     EffekseerNativePINVOKE.Native_SetLightAmbientColor(swigCPtr, r, g, b, a);
   }
 
-  public void SetIsRightHand(bool value) {
-    EffekseerNativePINVOKE.Native_SetIsRightHand(swigCPtr, value);
+  public void SetCoordinateSystem(CoordinateSystemType coordinateSystem) {
+    EffekseerNativePINVOKE.Native_SetCoordinateSystem(swigCPtr, (int)coordinateSystem);
   }
 
   public void SetCullingParameter(bool isCullingShown, float cullingRadius, float cullingX, float cullingY, float cullingZ) {

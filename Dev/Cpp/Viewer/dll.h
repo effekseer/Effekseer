@@ -15,6 +15,7 @@
 #include <unordered_set>
 
 #include "../IPC/IPC.h"
+#include "3D/ViewPointController.h"
 #include "ViewerEffectBehavior.h"
 #include "efk.Base.h"
 
@@ -39,17 +40,6 @@ class ViewerParamater
 public:
 	int32_t GuideWidth;
 	int32_t GuideHeight;
-	float RateOfMagnification;
-	bool IsPerspective;
-	bool IsOrthographic;
-	float FocusX;
-	float FocusY;
-	float FocusZ;
-	float AngleX;
-	float AngleY;
-	float Distance;
-	float ClippingStart;
-	float ClippingEnd;
 	bool RendersGuide;
 
 	bool IsCullingShown;
@@ -60,7 +50,6 @@ public:
 
 	Effekseer::Tool::DistortionType Distortion;
 	Effekseer::Tool::RenderingMethodType RenderingMode;
-	ViewMode ViewerMode;
 
 	ViewerParamater();
 };
@@ -139,27 +128,6 @@ private:
 		void ReleaseAll();
 	};
 
-	const float DistanceBase = 15.0f;
-	const float OrthoScaleBase = 16.0f;
-	const float ZoomDistanceFactor = 1.125f;
-	const float MaxZoom = 40.0f;
-	const float MinZoom = -40.0f;
-	const float PI = 3.14159265f;
-
-	float g_RotX = 30.0f;
-	float g_RotY = -30.0f;
-	float g_Zoom = 0.0f;
-
-	bool g_mouseRotDirectionInvX = false;
-	bool g_mouseRotDirectionInvY = false;
-
-	bool g_mouseSlideDirectionInvX = false;
-	bool g_mouseSlideDirectionInvY = false;
-
-	::Effekseer::Vector3D m_rootLocation;
-	::Effekseer::Vector3D m_rootRotation;
-	::Effekseer::Vector3D m_rootScale;
-
 	std::shared_ptr<IPC::CommandQueue> commandQueueToMaterialEditor_;
 	std::shared_ptr<IPC::CommandQueue> commandQueueFromMaterialEditor_;
 
@@ -181,13 +149,7 @@ private:
 
 	Effekseer::Tool::RenderedEffectGeneratorConfig mainScreenConfig_;
 
-	EffekseerTool::ViewPointController viewPointCtrl_;
-
-	void SetZoom(float zoom);
-
-	float GetDistance();
-
-	float GetOrthoScale();
+	Effekseer::Tool::RenderingMethodType renderingMode_ = Effekseer::Tool::RenderingMethodType::Normal;
 
 public:
 	Native();
@@ -196,7 +158,7 @@ public:
 
 	bool CreateWindow_Effekseer(void* handle, int width, int height, bool isSRGBMode, efk::DeviceType deviceType);
 
-	bool UpdateWindow();
+	bool UpdateWindow(std::shared_ptr<Effekseer::Tool::ViewPointController> viewPointCtrl);
 
 	void ClearWindow(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 
@@ -218,15 +180,9 @@ public:
 
 	bool StepEffect();
 
-	bool Rotate(float x, float y);
-
-	bool Slide(float x, float y);
-
-	bool Zoom(float zoom);
-
 	bool SetRandomSeed(int seed);
 
-	void RenderView(int32_t width, int32_t height, std::shared_ptr<Effekseer::Tool::RenderImage> renderImage);
+	void RenderView(int32_t width, int32_t height, std::shared_ptr<Effekseer::Tool::ViewPointController> viewPointCtrl, std::shared_ptr<Effekseer::Tool::RenderImage> renderImage);
 
 	std::shared_ptr<Effekseer::Tool::EffectRecorder> CreateRecorder(const Effekseer::Tool::RecordingParameter& recordingParameter);
 
@@ -256,8 +212,6 @@ public:
 
 	void SetGridColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 
-	void SetMouseInverseFlag(bool rotX, bool rotY, bool slideX, bool slideY);
-
 	void SetStep(int32_t step);
 
 	bool StartNetwork(const char* host, uint16_t port);
@@ -274,7 +228,7 @@ public:
 
 	void SetLightAmbientColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 
-	void SetIsRightHand(bool value);
+	void SetCoordinateSystem(Effekseer::Tool::CoordinateSystemType coordinateSystem);
 
 	void SetCullingParameter(bool isCullingShown, float cullingRadius, float cullingX, float cullingY, float cullingZ);
 

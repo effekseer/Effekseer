@@ -15,7 +15,7 @@ RenderTextureDX11::~RenderTextureDX11()
 {
 }
 
-bool RenderTextureDX11::Initialize(Effekseer::Tool::Vector2DI size, Effekseer::Backend::TextureFormatType format, uint32_t multisample)
+bool RenderTextureDX11::Initialize(Effekseer::Tool::Vector2I size, Effekseer::Backend::TextureFormatType format, uint32_t multisample)
 {
 	auto g = (GraphicsDX11*)graphics;
 	auto gd = g->GetGraphicsDevice().DownCast<EffekseerRendererDX11::Backend::GraphicsDevice>();

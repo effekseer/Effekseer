@@ -179,6 +179,7 @@
     <Compile Include="swig\ComboFlags.cs" />
     <Compile Include="swig\CompiledMaterialGenerator.cs" />
     <Compile Include="swig\Cond.cs" />
+    <Compile Include="swig\CoordinateSystemType.cs" />
     <Compile Include="swig\DeviceType.cs" />
     <Compile Include="swig\DialogButtons.cs" />
     <Compile Include="swig\DialogSelection.cs" />
@@ -205,6 +206,9 @@
     <Compile Include="swig\MainWindowState.cs" />
     <Compile Include="swig\MouseCursor.cs" />
     <Compile Include="swig\Native.cs" />
+    <Compile Include="swig\ProjectionMatrixStyle.cs" />
+    <Compile Include="swig\ProjectionType.cs" />
+    <Compile Include="swig\Ray.cs" />
     <Compile Include="swig\RecordingModeType.cs" />
     <Compile Include="swig\RecordingParameter.cs" />
     <Compile Include="swig\ReloadableImage.cs" />
@@ -217,9 +221,12 @@
     <Compile Include="swig\TransparenceType.cs" />
     <Compile Include="swig\TreeNodeFlags.cs" />
     <Compile Include="swig\Vec2.cs" />
+    <Compile Include="swig\Vector2I.cs" />
+    <Compile Include="swig\Vector3F.cs" />
     <Compile Include="swig\ViewerEffectBehavior.cs" />
     <Compile Include="swig\ViewerParamater.cs" />
     <Compile Include="swig\ViewMode.cs" />
+    <Compile Include="swig\ViewPointController.cs" />
     <Compile Include="swig\WindowFlags.cs" />
     <Compile Include="Utils\DelayedList.cs" />
   </ItemGroup>

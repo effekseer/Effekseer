@@ -8,6 +8,7 @@ namespace Effekseer.GUI
 	public class Viewer
 	{
 		public swig.Native native = null;
+		public swig.ViewPointController ViewPointController = null;
 		string backgroundImagePath = string.Empty;
 		bool isViewerShown = false;
 
@@ -86,18 +87,18 @@ namespace Effekseer.GUI
 
 		public bool Rotate(float x, float y)
 		{
-			return native.Rotate(x, y);
+			return ViewPointController.Rotate(x, y);
 		}
 
 		public bool Slide(float x, float y)
 		{
-			return native.Slide(x, y);
+			return ViewPointController.Slide(x, y);
 		}
 
 		public bool Zoom(float zoom)
 		{
 			if (!isViewerShown) return false;
-			return native.Zoom(zoom);
+			return ViewPointController.Zoom(zoom);
 		}
 
 		public bool SetRandomSeed(int seed)
@@ -377,23 +378,11 @@ namespace Effekseer.GUI
 			native.SetViewerParamater(param);
 		}
 
-		public void SetViewMode(int viewMode)
-		{
-			var param = native.GetViewerParamater();
-
-			param.ViewerMode = (swig.ViewMode)viewMode;
-
-			native.SetViewerParamater(param);
-		}
-
 		public void SetIsRightHand(bool value)
 		{
-			native.SetIsRightHand(value);
-		}
-
-		public void SetMouseInverseFlag(bool rotX, bool rotY, bool slideX, bool slideY)
-		{
-			native.SetMouseInverseFlag(rotX, rotY, slideX, slideY);
+			var cs = value ? swig.CoordinateSystemType.RH : swig.CoordinateSystemType.LH;
+			ViewPointController.SetCoordinateSystem(cs);
+			native.SetCoordinateSystem(cs);
 		}
 
 		public void SetDynamicInput(float v1, float v2, float v3, float v4)
@@ -427,6 +416,10 @@ namespace Effekseer.GUI
 			{
 				throw new Exception("native is null.");
 			}
+
+			ViewPointController = new swig.ViewPointController();
+
+			ViewPointController.ProjectionStyle = deviceType == swig.DeviceType.OpenGL ? swig.ProjectionMatrixStyle.OpenGLStyle : swig.ProjectionMatrixStyle.DirectXStyle;
 
 			if (native.CreateWindow_Effekseer(
 				handle, 
@@ -566,7 +559,7 @@ namespace Effekseer.GUI
 					(byte)Core.Environment.Lighting.LightAmbientColor.B,
 					(byte)Core.Environment.Lighting.LightAmbientColor.A);
 
-				native.SetMouseInverseFlag(
+				ViewPointController.SetMouseInverseFlag(
 					Core.Option.MouseRotInvX,
 					Core.Option.MouseRotInvY,
 					Core.Option.MouseSlideInvX,
@@ -725,7 +718,6 @@ namespace Effekseer.GUI
 
 			SetDistortionType((int)Core.Option.DistortionType.Value);
 			SetRenderMode((int)Core.Option.RenderingMode.Value);
-			SetViewMode((int)Core.Option.ViewerMode.Value);
 
 			if (Core.Culling.Type.Value == Data.EffectCullingValues.ParamaterType.Sphere)
 			{
@@ -852,32 +844,20 @@ namespace Effekseer.GUI
 
 			if (viewerMode == Data.OptionValues.ViewMode._3D)
 			{
-				var param = Manager.Viewer.GetViewerParamater();
-				param.ViewerMode = (swig.ViewMode)viewerMode;
-				param.IsPerspective = true;
-				param.IsOrthographic = false;
-				param.FocusX = 0.0f;
-				param.FocusY = 0.0f;
-				param.FocusZ = 0.0f;
-				param.AngleX = 30.0f;
-				param.AngleY = -30.0f;
-				Manager.Viewer.SetViewerParamater(param);
+				ViewPointController.SetFocusPosition(new swig.Vector3F(0, 0, 0));
+				ViewPointController.SetProjectionType(swig.ProjectionType.Perspective);
+				ViewPointController.SetAngleX(30.0f);
+				ViewPointController.SetAngleY(-30.0f);
 				Core.Option.IsXYGridShown.SetValueDirectly(false);
 				Core.Option.IsXZGridShown.SetValueDirectly(true);
 				Core.Option.IsYZGridShown.SetValueDirectly(false);
 			}
 			else if (viewerMode == Data.OptionValues.ViewMode._2D)
 			{
-				var param = Manager.Viewer.GetViewerParamater();
-				param.ViewerMode = (swig.ViewMode)viewerMode;
-				param.IsPerspective = false;
-				param.IsOrthographic = true;
-				param.FocusX = 0.0f;
-				param.FocusY = 0.0f;
-				param.FocusZ = 0.0f;
-				param.AngleX = 0.0f;
-				param.AngleY = 0.0f;
-				Manager.Viewer.SetViewerParamater(param);
+				ViewPointController.SetFocusPosition(new swig.Vector3F(0, 0, 0));
+				ViewPointController.SetProjectionType(swig.ProjectionType.Orthographic);
+				ViewPointController.SetAngleX(0.0f);
+				ViewPointController.SetAngleY(0.0f);
 				Core.Option.IsXYGridShown.SetValueDirectly(true);
 				Core.Option.IsXZGridShown.SetValueDirectly(false);
 				Core.Option.IsYZGridShown.SetValueDirectly(false);
