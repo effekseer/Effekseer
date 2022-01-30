@@ -335,7 +335,7 @@ void BloomEffectDX11::SetupBuffers(std::array<int32_t, 2> size)
 
 		if (extractBuffer != nullptr)
 		{
-			extractBuffer->Initialize(Effekseer::Tool::Vector2DI(size[0], size[1]), Effekseer::Backend::TextureFormatType::R16G16B16A16_FLOAT);
+			extractBuffer->Initialize(Effekseer::Tool::Vector2I(size[0], size[1]), Effekseer::Backend::TextureFormatType::R16G16B16A16_FLOAT);
 		}
 		else
 		{
@@ -348,7 +348,7 @@ void BloomEffectDX11::SetupBuffers(std::array<int32_t, 2> size)
 	// Create low-resolution buffers
 	for (int i = 0; i < BlurBuffers; i++)
 	{
-		auto bufferSize = Effekseer::Tool::Vector2DI(size[0], size[1]);
+		auto bufferSize = Effekseer::Tool::Vector2I(size[0], size[1]);
 		for (int j = 0; j < BlurIterations; j++)
 		{
 			bufferSize.X = std::max(1, (bufferSize.X + 1) / 2);

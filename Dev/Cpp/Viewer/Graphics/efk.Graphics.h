@@ -7,7 +7,7 @@
 #include <vector>
 
 #include "../../EffekseerRendererCommon/EffekseerRenderer.Renderer.h"
-#include "../Math/Vector2DI.h"
+#include "../Math/Vector2I.h"
 #include "../efk.Base.h"
 
 /*
@@ -40,14 +40,14 @@ class RenderTexture
 {
 protected:
 	int32_t samplingCount_ = 1;
-	Effekseer::Tool::Vector2DI size_;
+	Effekseer::Tool::Vector2I size_;
 	Effekseer::Backend::TextureFormatType format_;
 
 public:
 	RenderTexture() = default;
 	virtual ~RenderTexture() = default;
 
-	virtual bool Initialize(Effekseer::Tool::Vector2DI size, Effekseer::Backend::TextureFormatType format, uint32_t multisample = 1) = 0;
+	virtual bool Initialize(Effekseer::Tool::Vector2I size, Effekseer::Backend::TextureFormatType format, uint32_t multisample = 1) = 0;
 
 	virtual uint64_t GetViewID() = 0;
 
@@ -56,7 +56,7 @@ public:
 		return nullptr;
 	}
 
-	Effekseer::Tool::Vector2DI GetSize() const
+	Effekseer::Tool::Vector2I GetSize() const
 	{
 		return size_;
 	}

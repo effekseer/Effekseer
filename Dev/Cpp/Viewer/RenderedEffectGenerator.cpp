@@ -506,7 +506,7 @@ bool RenderedEffectGenerator::Initialize(std::shared_ptr<efk::Graphics> graphics
 	return true;
 }
 
-void RenderedEffectGenerator::Resize(const Vector2DI screenSize)
+void RenderedEffectGenerator::Resize(const Vector2I screenSize)
 {
 	if (screenSize_ == screenSize)
 	{

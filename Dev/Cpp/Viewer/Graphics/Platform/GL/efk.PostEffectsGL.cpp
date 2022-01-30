@@ -416,7 +416,7 @@ void BloomEffectGL::SetupBuffers(int32_t width, int32_t height)
 
 	// Create high brightness extraction buffer
 	{
-		auto bufferSize = Effekseer::Tool::Vector2DI(width, height);
+		auto bufferSize = Effekseer::Tool::Vector2I(width, height);
 		extractBuffer.reset(RenderTexture::Create(graphics));
 		extractBuffer->Initialize(bufferSize, Effekseer::Backend::TextureFormatType::R16G16B16A16_FLOAT);
 	}
@@ -424,7 +424,7 @@ void BloomEffectGL::SetupBuffers(int32_t width, int32_t height)
 	// Create low-resolution buffers
 	for (int i = 0; i < BlurBuffers; i++)
 	{
-		auto bufferSize = Effekseer::Tool::Vector2DI(width, height);
+		auto bufferSize = Effekseer::Tool::Vector2I(width, height);
 		for (int j = 0; j < BlurIterations; j++)
 		{
 			bufferSize.X = std::max(1, (bufferSize.X + 1) / 2);

@@ -19,7 +19,7 @@ RenderTextureGL::~RenderTextureGL()
 {
 }
 
-bool RenderTextureGL::Initialize(Effekseer::Tool::Vector2DI size, Effekseer::Backend::TextureFormatType format, uint32_t multisample)
+bool RenderTextureGL::Initialize(Effekseer::Tool::Vector2I size, Effekseer::Backend::TextureFormatType format, uint32_t multisample)
 {
 	auto g = (GraphicsGL*)graphics;
 	auto gd = g->GetGraphicsDevice().DownCast<EffekseerRendererGL::Backend::GraphicsDevice>();

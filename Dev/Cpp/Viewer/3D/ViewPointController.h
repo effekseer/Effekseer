@@ -1,6 +1,8 @@
 #pragma once
 
-#include "../Math/Vector2DI.h"
+#include "../Math/Vector2I.h"
+#include "../Math/Vector3F.h"
+
 #include <Effekseer.h>
 
 namespace Effekseer::Tool
@@ -18,7 +20,7 @@ enum class ProjectionType
 	Orthographic,
 };
 
-enum class CoordinateType
+enum class CoordinateSystemType
 {
 	RH,
 	LH,
@@ -26,8 +28,8 @@ enum class CoordinateType
 
 struct Ray
 {
-	Vector3D Origin;
-	Vector3D Direction;
+	Vector3F Origin;
+	Vector3F Direction;
 };
 
 class ViewPointController
@@ -40,14 +42,14 @@ private:
 	const float MinZoom = -40.0f;
 	const float PI = 3.14159265f;
 
-	bool g_mouseRotDirectionInvX = false;
-	bool g_mouseRotDirectionInvY = false;
+	bool mouseRotDirectionInvX_ = false;
+	bool mouseRotDirectionInvY_ = false;
 
-	bool g_mouseSlideDirectionInvX = false;
-	bool g_mouseSlideDirectionInvY = false;
+	bool mouseSlideDirectionInvX_ = false;
+	bool mouseSlideDirectionInvY_ = false;
 
 	float m_orthoScale = 1.0f;
-	ProjectionType m_projection = ProjectionType::Perspective;
+	ProjectionType projectionType_ = ProjectionType::Perspective;
 	Effekseer::Matrix44 m_cameraMat;
 	Effekseer::Matrix44 m_projMat;
 	ProjectionMatrixStyle projectionStyle_ = ProjectionMatrixStyle::DirectXStyle;
@@ -55,30 +57,24 @@ private:
 	int32_t screenWidth = 0;
 	int32_t screenHeight = 0;
 
+	::Effekseer::Vector3D focusPosition_;
+
+	CoordinateSystemType coordinateSystem_ = CoordinateSystemType::RH;
+
 	void SetZoom(float zoom)
 	{
-		g_Zoom = Effekseer::Max(MinZoom, Effekseer::Min(MaxZoom, zoom));
+		zoom_ = Effekseer::Max(MinZoom, Effekseer::Min(MaxZoom, zoom));
 	}
-
 
 	float GetOrthoScale();
 
 public:
-	void SetDistance(float distance);
-	float GetDistance() const;
-
-	float g_RotX = 30.0f;
-	float g_RotY = -30.0f;
-	float g_Zoom = 0.0f;
-	::Effekseer::Vector3D g_focus_position;
-
-	void SetMouseInverseFlag(bool rotX, bool rotY, bool slideX, bool slideY);
+#if !defined(SWIG)
+	float angleX_ = 30.0f;
+	float angleY_ = -30.0f;
+	float zoom_ = 0.0f;
 
 	void Initialize(ProjectionMatrixStyle style, int width, int height);
-
-	ProjectionType GetProjectionType();
-
-	void SetProjectionType(ProjectionType type);
 
 	void RecalcProjection();
 
@@ -90,29 +86,15 @@ public:
 
 	float RateOfMagnification = 1.0f;
 
-	/**
-		@brief	Z near
-	*/
 	float ClippingStart = 1.0f;
 
-	/**
-		@brief	Z far
-	*/
 	float ClippingEnd = 300.0f;
-
-	bool IsRightHand = true;
 
 	void SetScreenSize(int32_t width, int32_t height);
 
-	bool Rotate(float x, float y);
-
-	bool Slide(float x, float y);
-
-	bool Zoom(float zoom);
-
-	Effekseer::Tool::Vector2DI GetScreenSize() const
+	Effekseer::Tool::Vector2I GetScreenSize() const
 	{
-		return Effekseer::Tool::Vector2DI(screenWidth, screenHeight);
+		return Effekseer::Tool::Vector2I(screenWidth, screenHeight);
 	}
 
 	Effekseer::Matrix44 GetCameraMatrix() const
@@ -130,9 +112,34 @@ public:
 		return m_projMat;
 	}
 
+	void Update();
+#endif
+
 	Ray GetCameraRay() const;
 
-	void Update();
+	bool Rotate(float x, float y);
+
+	bool Slide(float x, float y);
+
+	bool Zoom(float delta);
+
+	void SetMouseInverseFlag(bool rotX, bool rotY, bool slideX, bool slideY);
+
+	ProjectionType GetProjectionType() const;
+
+	void SetProjectionType(ProjectionType type);
+
+	CoordinateSystemType GetCoordinateSystem() const;
+
+	void SetCoordinateSystem(CoordinateSystemType type);
+
+	Vector3F GetFocusPosition() const;
+
+	void SetFocusPosition(const Vector3F& position);
+
+	float GetDistance() const;
+
+	void SetDistance(float distance);
 };
 
 } // namespace Effekseer::Tool

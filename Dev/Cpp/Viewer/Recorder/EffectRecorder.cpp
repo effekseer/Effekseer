@@ -101,10 +101,10 @@ class RecorderCallbackSprite : public RecorderCallback
 {
 private:
 	RecordingParameter& recordingParameter_;
-	Effekseer::Tool::Vector2DI imageSize_;
+	Effekseer::Tool::Vector2I imageSize_;
 
 public:
-	RecorderCallbackSprite(RecordingParameter& recordingParameter, Effekseer::Tool::Vector2DI imageSize)
+	RecorderCallbackSprite(RecordingParameter& recordingParameter, Effekseer::Tool::Vector2I imageSize)
 		: recordingParameter_(recordingParameter)
 		, imageSize_(imageSize)
 	{
@@ -149,12 +149,12 @@ class RecorderCallbackSpriteSheet : public RecorderCallback
 {
 private:
 	RecordingParameter& recordingParameter_;
-	Effekseer::Tool::Vector2DI imageSize_;
+	Effekseer::Tool::Vector2I imageSize_;
 	int yCount = 0;
 	std::vector<Effekseer::Color> pixels_out;
 
 public:
-	RecorderCallbackSpriteSheet(RecordingParameter& recordingParameter, Effekseer::Tool::Vector2DI imageSize)
+	RecorderCallbackSpriteSheet(RecordingParameter& recordingParameter, Effekseer::Tool::Vector2I imageSize)
 		: recordingParameter_(recordingParameter)
 		, imageSize_(imageSize)
 	{
@@ -219,11 +219,11 @@ class RecorderCallbackGif : public RecorderCallback
 {
 private:
 	RecordingParameter& recordingParameter_;
-	Effekseer::Tool::Vector2DI imageSize_;
+	Effekseer::Tool::Vector2I imageSize_;
 	efk::GifHelper helper;
 
 public:
-	RecorderCallbackGif(RecordingParameter& recordingParameter, Effekseer::Tool::Vector2DI imageSize)
+	RecorderCallbackGif(RecordingParameter& recordingParameter, Effekseer::Tool::Vector2I imageSize)
 		: recordingParameter_(recordingParameter)
 		, imageSize_(imageSize)
 	{
@@ -253,13 +253,13 @@ class RecorderCallbackAvi : public RecorderCallback
 {
 private:
 	RecordingParameter& recordingParameter_;
-	Effekseer::Tool::Vector2DI imageSize_;
+	Effekseer::Tool::Vector2I imageSize_;
 	efk::AVIExporter exporter;
 	std::vector<uint8_t> d;
 	FILE* fp = nullptr;
 
 public:
-	RecorderCallbackAvi(RecordingParameter& recordingParameter, Effekseer::Tool::Vector2DI imageSize)
+	RecorderCallbackAvi(RecordingParameter& recordingParameter, Effekseer::Tool::Vector2I imageSize)
 		: recordingParameter_(recordingParameter)
 		, imageSize_(imageSize)
 	{
@@ -307,11 +307,11 @@ public:
 
 bool EffectRecorder::Begin(std::shared_ptr<EffekseerTool::MainScreenRenderedEffectGenerator> mainScreen,
 						   Effekseer::Tool::RenderedEffectGeneratorConfig config,
-						   Vector2DI screenSize,
+						   Vector2I screenSize,
 						   std::shared_ptr<efk::Graphics> graphics,
 						   Effekseer::RefPtr<Effekseer::Setting> setting,
 						   const RecordingParameter& recordingParameter,
-						   Effekseer::Tool::Vector2DI imageSize,
+						   Effekseer::Tool::Vector2I imageSize,
 						   bool isSRGBMode,
 						   Effekseer::Tool::ViewerEffectBehavior behavior,
 						   Effekseer::EffectRef effect)
@@ -319,7 +319,7 @@ bool EffectRecorder::Begin(std::shared_ptr<EffekseerTool::MainScreenRenderedEffe
 	graphics_ = graphics;
 	recordingParameter_ = recordingParameter;
 	int recScale = Effekseer::Max(1, recordingParameter.Scale);
-	imageSize_ = Effekseer::Tool::Vector2DI(imageSize.X * recScale, imageSize.Y * recScale);
+	imageSize_ = Effekseer::Tool::Vector2I(imageSize.X * recScale, imageSize.Y * recScale);
 
 	if (recordingParameter_.Transparence == TransparenceType::Generate2)
 	{

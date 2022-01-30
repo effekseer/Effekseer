@@ -47,8 +47,8 @@ public class Native : global::System.IDisposable {
   public Native() : this(EffekseerNativePINVOKE.new_Native(), true) {
   }
 
-  public bool CreateWindow_Effekseer(System.IntPtr handle, int width, int height, bool isSRGBMode, DeviceType deviceType) {
-    bool ret = EffekseerNativePINVOKE.Native_CreateWindow_Effekseer(swigCPtr, handle, width, height, isSRGBMode, (int)deviceType);
+  public bool CreateWindow_Effekseer(System.IntPtr handle, int width, int height, bool isSRGBMode, DeviceType deviceType, ViewPointController viewPointCtrl) {
+    bool ret = EffekseerNativePINVOKE.Native_CreateWindow_Effekseer(swigCPtr, handle, width, height, isSRGBMode, (int)deviceType, ViewPointController.getCPtr(viewPointCtrl));
     return ret;
   }
 
@@ -102,21 +102,6 @@ public class Native : global::System.IDisposable {
 
   public bool StepEffect() {
     bool ret = EffekseerNativePINVOKE.Native_StepEffect__SWIG_1(swigCPtr);
-    return ret;
-  }
-
-  public bool Rotate(float x, float y) {
-    bool ret = EffekseerNativePINVOKE.Native_Rotate(swigCPtr, x, y);
-    return ret;
-  }
-
-  public bool Slide(float x, float y) {
-    bool ret = EffekseerNativePINVOKE.Native_Slide(swigCPtr, x, y);
-    return ret;
-  }
-
-  public bool Zoom(float zoom) {
-    bool ret = EffekseerNativePINVOKE.Native_Zoom(swigCPtr, zoom);
     return ret;
   }
 

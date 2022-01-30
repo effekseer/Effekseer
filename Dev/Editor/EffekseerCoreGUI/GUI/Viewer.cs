@@ -8,6 +8,7 @@ namespace Effekseer.GUI
 	public class Viewer
 	{
 		public swig.Native native = null;
+		public swig.ViewPointController ViewPointController = null;
 		string backgroundImagePath = string.Empty;
 		bool isViewerShown = false;
 
@@ -86,18 +87,18 @@ namespace Effekseer.GUI
 
 		public bool Rotate(float x, float y)
 		{
-			return native.Rotate(x, y);
+			return ViewPointController.Rotate(x, y);
 		}
 
 		public bool Slide(float x, float y)
 		{
-			return native.Slide(x, y);
+			return ViewPointController.Slide(x, y);
 		}
 
 		public bool Zoom(float zoom)
 		{
 			if (!isViewerShown) return false;
-			return native.Zoom(zoom);
+			return ViewPointController.Zoom(zoom);
 		}
 
 		public bool SetRandomSeed(int seed)
@@ -428,12 +429,15 @@ namespace Effekseer.GUI
 				throw new Exception("native is null.");
 			}
 
+			ViewPointController = new swig.ViewPointController();
+
 			if (native.CreateWindow_Effekseer(
 				handle, 
 				width <= 0 ? 1 : width,
 				height <= 0 ? 1 : height,
 				Core.Option.ColorSpace.Value == Data.OptionValues.ColorSpaceType.LinearSpace,
-				deviceType))
+				deviceType,
+				ViewPointController))
 			{
 				isViewerShown = true;
 			}

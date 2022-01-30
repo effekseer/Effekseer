@@ -56,7 +56,8 @@ list(APPEND hs
     GUI/Image.h
     GUI/ReloadableImage.h
     GUI/RenderImage.h
-    Math/Vector2DI.h
+    Math/Vector2I.h
+    Math/Vector3F.h
     Recorder/EffectRecorder.h
 )
 

@@ -161,7 +161,7 @@ private:
 
 	Effekseer::Tool::RenderedEffectGeneratorConfig mainScreenConfig_;
 
-	Effekseer::Tool::ViewPointController viewPointCtrl_;
+	std::shared_ptr<Effekseer::Tool::ViewPointController> viewPointCtrl_;
 
 	Effekseer::Tool::RenderingMethodType renderingMode_ = Effekseer::Tool::RenderingMethodType::Normal;
 
@@ -170,7 +170,7 @@ public:
 
 	~Native();
 
-	bool CreateWindow_Effekseer(void* handle, int width, int height, bool isSRGBMode, efk::DeviceType deviceType);
+	bool CreateWindow_Effekseer(void* handle, int width, int height, bool isSRGBMode, efk::DeviceType deviceType, std::shared_ptr<Effekseer::Tool::ViewPointController> viewPointCtrl);
 
 	bool UpdateWindow();
 
@@ -193,12 +193,6 @@ public:
 	bool StepEffect(int frame);
 
 	bool StepEffect();
-
-	bool Rotate(float x, float y);
-
-	bool Slide(float x, float y);
-
-	bool Zoom(float zoom);
 
 	bool SetRandomSeed(int seed);
 

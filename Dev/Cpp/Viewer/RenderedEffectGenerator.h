@@ -6,7 +6,7 @@
 #include "Graphics/StaticMeshRenderer.h"
 #include "Graphics/efk.Graphics.h"
 #include "Graphics/efk.PostEffects.h"
-#include "Math/Vector2DI.h"
+#include "Math/Vector2I.h"
 #include "ViewerEffectBehavior.h"
 #include <Effekseer.h>
 
@@ -102,7 +102,7 @@ protected:
 	Effekseer::TextureRef backgroundTexture_;
 	Effekseer::Color backgroundMeshColor_{};
 
-	Vector2DI screenSize_;
+	Vector2I screenSize_;
 	ViewerEffectBehavior behavior_;
 
 	std::unique_ptr<efk::BloomEffect> bloomEffect_;
@@ -157,7 +157,7 @@ public:
 	virtual ~RenderedEffectGenerator();
 
 	bool Initialize(std::shared_ptr<efk::Graphics> graphics, Effekseer::RefPtr<Effekseer::Setting> setting, int32_t spriteCount, bool isSRGBMode);
-	void Resize(const Vector2DI screenSize);
+	void Resize(const Vector2I screenSize);
 	void Update();
 	void Update(int32_t frame);
 	void Render(std::shared_ptr<RenderImage> renderImage = nullptr);

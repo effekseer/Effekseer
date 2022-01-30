@@ -15,7 +15,7 @@ class EffectRecorder
 private:
 	std::shared_ptr<RecorderCallback> recorderCallback;
 	std::shared_ptr<RecorderCallback> recorderCallback2;
-	Effekseer::Tool::Vector2DI imageSize_;
+	Effekseer::Tool::Vector2I imageSize_;
 
 	bool isRecording = false;
 	bool isRecordCompleted = false;
@@ -34,11 +34,11 @@ public:
 #if !SWIG
 	bool Begin(std::shared_ptr<EffekseerTool::MainScreenRenderedEffectGenerator> mainScreen,
 			   Effekseer::Tool::RenderedEffectGeneratorConfig config,
-			   Vector2DI screenSize,
+			   Vector2I screenSize,
 			   std::shared_ptr<efk::Graphics> graphics,
 			   Effekseer::RefPtr<Effekseer::Setting> setting,
 			   const RecordingParameter& recordingParameter,
-			   Effekseer::Tool::Vector2DI imageSize,
+			   Effekseer::Tool::Vector2I imageSize,
 			   bool isSRGBMode,
 			   Effekseer::Tool::ViewerEffectBehavior behavior,
 			   Effekseer::EffectRef effect);
