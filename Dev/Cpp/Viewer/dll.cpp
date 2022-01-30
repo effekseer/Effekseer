@@ -69,9 +69,6 @@ ViewerParamater::ViewerParamater()
 	, GuideHeight(0)
 	, IsPerspective(false)
 	, IsOrthographic(false)
-	, FocusX(0)
-	, FocusY(0)
-	, FocusZ(0)
 	, AngleX(0)
 	, AngleY(0)
 	, Distance(0)
@@ -579,9 +576,6 @@ ViewerParamater Native::GetViewerParamater()
 	paramater.ClippingEnd = viewPointCtrl_->ClippingEnd;
 	paramater.IsPerspective = viewPointCtrl_->GetProjectionType() == ::Effekseer::Tool::ProjectionType::Perspective;
 	paramater.IsOrthographic = viewPointCtrl_->GetProjectionType() == ::Effekseer::Tool::ProjectionType::Orthographic;
-	paramater.FocusX = viewPointCtrl_->GetFocusPosition().X;
-	paramater.FocusY = viewPointCtrl_->GetFocusPosition().Y;
-	paramater.FocusZ = viewPointCtrl_->GetFocusPosition().Z;
 	paramater.AngleX = viewPointCtrl_->angleX_;
 	paramater.AngleY = viewPointCtrl_->angleY_;
 	paramater.Distance = viewPointCtrl_->GetDistance();
@@ -613,7 +607,6 @@ void Native::SetViewerParamater(ViewerParamater& paramater)
 		viewPointCtrl_->SetProjectionType(::Effekseer::Tool::ProjectionType::Orthographic);
 	}
 
-	viewPointCtrl_->SetFocusPosition({paramater.FocusX, paramater.FocusY, paramater.FocusZ});
 	viewPointCtrl_->angleX_ = paramater.AngleX;
 	viewPointCtrl_->angleY_ = paramater.AngleY;
 	viewPointCtrl_->SetDistance(paramater.Distance);
@@ -722,11 +715,6 @@ void Native::SetBackgroundImage(const char16_t* path)
 void Native::SetGridColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 {
 	mainScreen_->GridColor = Effekseer::Color(r, g, b, a);
-}
-
-void Native::SetMouseInverseFlag(bool rotX, bool rotY, bool slideX, bool slideY)
-{
-	viewPointCtrl_->SetMouseInverseFlag(rotX, rotY, slideX, slideY);
 }
 
 void Native::SetStep(int32_t step)

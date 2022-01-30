@@ -94,36 +94,6 @@ public class ViewerParamater : global::System.IDisposable {
     } 
   }
 
-  public float FocusX {
-    set {
-      EffekseerNativePINVOKE.ViewerParamater_FocusX_set(swigCPtr, value);
-    } 
-    get {
-      float ret = EffekseerNativePINVOKE.ViewerParamater_FocusX_get(swigCPtr);
-      return ret;
-    } 
-  }
-
-  public float FocusY {
-    set {
-      EffekseerNativePINVOKE.ViewerParamater_FocusY_set(swigCPtr, value);
-    } 
-    get {
-      float ret = EffekseerNativePINVOKE.ViewerParamater_FocusY_get(swigCPtr);
-      return ret;
-    } 
-  }
-
-  public float FocusZ {
-    set {
-      EffekseerNativePINVOKE.ViewerParamater_FocusZ_set(swigCPtr, value);
-    } 
-    get {
-      float ret = EffekseerNativePINVOKE.ViewerParamater_FocusZ_get(swigCPtr);
-      return ret;
-    } 
-  }
-
   public float AngleX {
     set {
       EffekseerNativePINVOKE.ViewerParamater_AngleX_set(swigCPtr, value);

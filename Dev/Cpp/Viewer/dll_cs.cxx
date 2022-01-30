@@ -2411,72 +2411,6 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_IsOrth
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_FocusX_set___(void * jarg1, float jarg2) {
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  float arg2 ;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  arg2 = (float)jarg2; 
-  if (arg1) (arg1)->FocusX = arg2;
-}
-
-
-SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_FocusX_get___(void * jarg1) {
-  float jresult ;
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  float result;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  result = (float) ((arg1)->FocusX);
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_FocusY_set___(void * jarg1, float jarg2) {
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  float arg2 ;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  arg2 = (float)jarg2; 
-  if (arg1) (arg1)->FocusY = arg2;
-}
-
-
-SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_FocusY_get___(void * jarg1) {
-  float jresult ;
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  float result;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  result = (float) ((arg1)->FocusY);
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_FocusZ_set___(void * jarg1, float jarg2) {
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  float arg2 ;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  arg2 = (float)jarg2; 
-  if (arg1) (arg1)->FocusZ = arg2;
-}
-
-
-SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_FocusZ_get___(void * jarg1) {
-  float jresult ;
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  float result;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  result = (float) ((arg1)->FocusZ);
-  jresult = result; 
-  return jresult;
-}
-
-
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_AngleX_set___(void * jarg1, float jarg2) {
   ViewerParamater *arg1 = (ViewerParamater *) 0 ;
   float arg2 ;
@@ -3210,22 +3144,6 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_SetGridColor___(void * 
   arg4 = (uint8_t)jarg4; 
   arg5 = (uint8_t)jarg5; 
   (arg1)->SetGridColor(arg2,arg3,arg4,arg5);
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_SetMouseInverseFlag___(void * jarg1, unsigned int jarg2, unsigned int jarg3, unsigned int jarg4, unsigned int jarg5) {
-  Native *arg1 = (Native *) 0 ;
-  bool arg2 ;
-  bool arg3 ;
-  bool arg4 ;
-  bool arg5 ;
-  
-  arg1 = (Native *)jarg1; 
-  arg2 = jarg2 ? true : false; 
-  arg3 = jarg3 ? true : false; 
-  arg4 = jarg4 ? true : false; 
-  arg5 = jarg5 ? true : false; 
-  (arg1)->SetMouseInverseFlag(arg2,arg3,arg4,arg5);
 }
 
 

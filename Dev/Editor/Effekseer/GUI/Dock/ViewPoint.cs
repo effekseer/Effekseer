@@ -53,11 +53,8 @@ namespace Effekseer.GUI.Dock
 			}
 
 			var viewerParameter = Manager.Viewer.GetViewerParamater();
-
-			var fx = viewerParameter.FocusX;
-			var fy = viewerParameter.FocusY;
-			var fz = viewerParameter.FocusZ;
-			var f = new float[] { fx, fy, fz };
+			var focusPosition = Manager.Viewer.ViewPointController.GetFocusPosition();
+			var f = new float[] { focusPosition.X, focusPosition.Y, focusPosition.Z };
 
 			var rx = viewerParameter.AngleX;
 			var ry = viewerParameter.AngleY;
@@ -75,10 +72,7 @@ namespace Effekseer.GUI.Dock
 
             if (Manager.NativeManager.DragFloat3(Resources.GetString("Viewpoint") + id_f, f))
 			{
-				viewerParameter.FocusX = f[0];
-				viewerParameter.FocusY = f[1];
-				viewerParameter.FocusZ = f[2];
-				dirty = true;
+				Manager.Viewer.ViewPointController.SetFocusPosition(new swig.Vector3F(f[0], f[1], f[2]));
 			}
 
 			if (Manager.NativeManager.DragFloat(Resources.GetString("XRotation") + id_rx, rx_))
@@ -153,10 +147,12 @@ namespace Effekseer.GUI.Dock
                         filename += "." + filter;
                     }
 
-                    Data.ViewPoint viewPoint = new Data.ViewPoint();
-                    viewPoint.FocusX = viewerParameter.FocusX;
-                    viewPoint.FocusY = viewerParameter.FocusY;
-                    viewPoint.FocusZ = viewerParameter.FocusZ;
+					var focusPositionSaved = Manager.Viewer.ViewPointController.GetFocusPosition();
+
+					Data.ViewPoint viewPoint = new Data.ViewPoint();
+                    viewPoint.FocusX = focusPositionSaved.X;
+                    viewPoint.FocusY = focusPositionSaved.Y;
+                    viewPoint.FocusZ = focusPositionSaved.Z;
                     viewPoint.Distance = viewerParameter.Distance;
                     viewPoint.AngleX = viewerParameter.AngleX;
                     viewPoint.AngleY = viewerParameter.AngleY;
@@ -179,9 +175,8 @@ namespace Effekseer.GUI.Dock
                     var viewPoint = Data.ViewPoint.Load(result);
                     if(viewPoint != null)
                     {
-                        viewerParameter.FocusX = viewPoint.FocusX;
-                        viewerParameter.FocusY = viewPoint.FocusY;
-                        viewerParameter.FocusZ = viewPoint.FocusZ;
+						Manager.Viewer.ViewPointController.SetFocusPosition(new swig.Vector3F(viewPoint.FocusX, viewPoint.FocusY, viewPoint.FocusZ));
+
                         viewerParameter.Distance = viewPoint.Distance;
                         viewerParameter.AngleX = viewPoint.AngleX;
                         viewerParameter.AngleY = viewPoint.AngleY;

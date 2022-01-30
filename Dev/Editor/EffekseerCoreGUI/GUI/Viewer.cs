@@ -392,11 +392,6 @@ namespace Effekseer.GUI
 			native.SetIsRightHand(value);
 		}
 
-		public void SetMouseInverseFlag(bool rotX, bool rotY, bool slideX, bool slideY)
-		{
-			native.SetMouseInverseFlag(rotX, rotY, slideX, slideY);
-		}
-
 		public void SetDynamicInput(float v1, float v2, float v3, float v4)
 		{
 			var behavior = native.GetEffectBehavior();
@@ -570,7 +565,7 @@ namespace Effekseer.GUI
 					(byte)Core.Environment.Lighting.LightAmbientColor.B,
 					(byte)Core.Environment.Lighting.LightAmbientColor.A);
 
-				native.SetMouseInverseFlag(
+				ViewPointController.SetMouseInverseFlag(
 					Core.Option.MouseRotInvX,
 					Core.Option.MouseRotInvY,
 					Core.Option.MouseSlideInvX,
@@ -857,12 +852,10 @@ namespace Effekseer.GUI
 			if (viewerMode == Data.OptionValues.ViewMode._3D)
 			{
 				var param = Manager.Viewer.GetViewerParamater();
+				ViewPointController.SetFocusPosition(new swig.Vector3F(0, 0, 0));
 				param.ViewerMode = (swig.ViewMode)viewerMode;
 				param.IsPerspective = true;
 				param.IsOrthographic = false;
-				param.FocusX = 0.0f;
-				param.FocusY = 0.0f;
-				param.FocusZ = 0.0f;
 				param.AngleX = 30.0f;
 				param.AngleY = -30.0f;
 				Manager.Viewer.SetViewerParamater(param);
@@ -873,12 +866,10 @@ namespace Effekseer.GUI
 			else if (viewerMode == Data.OptionValues.ViewMode._2D)
 			{
 				var param = Manager.Viewer.GetViewerParamater();
+				ViewPointController.SetFocusPosition(new swig.Vector3F(0, 0, 0));
 				param.ViewerMode = (swig.ViewMode)viewerMode;
 				param.IsPerspective = false;
 				param.IsOrthographic = true;
-				param.FocusX = 0.0f;
-				param.FocusY = 0.0f;
-				param.FocusZ = 0.0f;
 				param.AngleX = 0.0f;
 				param.AngleY = 0.0f;
 				Manager.Viewer.SetViewerParamater(param);

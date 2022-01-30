@@ -180,10 +180,6 @@ public class Native : global::System.IDisposable {
     EffekseerNativePINVOKE.Native_SetGridColor(swigCPtr, r, g, b, a);
   }
 
-  public void SetMouseInverseFlag(bool rotX, bool rotY, bool slideX, bool slideY) {
-    EffekseerNativePINVOKE.Native_SetMouseInverseFlag(swigCPtr, rotX, rotY, slideX, slideY);
-  }
-
   public void SetStep(int step) {
     EffekseerNativePINVOKE.Native_SetStep(swigCPtr, step);
   }

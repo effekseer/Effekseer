@@ -43,9 +43,6 @@ public:
 	float RateOfMagnification;
 	bool IsPerspective;
 	bool IsOrthographic;
-	float FocusX;
-	float FocusY;
-	float FocusZ;
 	float AngleX;
 	float AngleY;
 	float Distance;
@@ -225,8 +222,6 @@ public:
 	void SetBackgroundImage(const char16_t* path);
 
 	void SetGridColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-
-	void SetMouseInverseFlag(bool rotX, bool rotY, bool slideX, bool slideY);
 
 	void SetStep(int32_t step);
 

@@ -702,24 +702,6 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_IsOrthographic_get___")]
   public static extern bool ViewerParamater_IsOrthographic_get(global::System.Runtime.InteropServices.HandleRef jarg1);
 
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_FocusX_set___")]
-  public static extern void ViewerParamater_FocusX_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_FocusX_get___")]
-  public static extern float ViewerParamater_FocusX_get(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_FocusY_set___")]
-  public static extern void ViewerParamater_FocusY_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_FocusY_get___")]
-  public static extern float ViewerParamater_FocusY_get(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_FocusZ_set___")]
-  public static extern void ViewerParamater_FocusZ_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_FocusZ_get___")]
-  public static extern float ViewerParamater_FocusZ_get(global::System.Runtime.InteropServices.HandleRef jarg1);
-
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_AngleX_set___")]
   public static extern void ViewerParamater_AngleX_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
 
@@ -899,9 +881,6 @@ class EffekseerNativePINVOKE {
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_SetGridColor___")]
   public static extern void Native_SetGridColor(global::System.Runtime.InteropServices.HandleRef jarg1, byte jarg2, byte jarg3, byte jarg4, byte jarg5);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_SetMouseInverseFlag___")]
-  public static extern void Native_SetMouseInverseFlag(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2, bool jarg3, bool jarg4, bool jarg5);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_SetStep___")]
   public static extern void Native_SetStep(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
