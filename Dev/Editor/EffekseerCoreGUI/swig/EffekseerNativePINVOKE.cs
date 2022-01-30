@@ -666,6 +666,18 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewPointController_SetDistance___")]
   public static extern void ViewPointController_SetDistance(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewPointController_GetAngleX___")]
+  public static extern float ViewPointController_GetAngleX(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewPointController_SetAngleX___")]
+  public static extern void ViewPointController_SetAngleX(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewPointController_GetAngleY___")]
+  public static extern float ViewPointController_GetAngleY(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewPointController_SetAngleY___")]
+  public static extern void ViewPointController_SetAngleY(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_ViewPointController___")]
   public static extern global::System.IntPtr new_ViewPointController();
 
@@ -689,18 +701,6 @@ class EffekseerNativePINVOKE {
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_RateOfMagnification_get___")]
   public static extern float ViewerParamater_RateOfMagnification_get(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_AngleX_set___")]
-  public static extern void ViewerParamater_AngleX_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_AngleX_get___")]
-  public static extern float ViewerParamater_AngleX_get(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_AngleY_set___")]
-  public static extern void ViewerParamater_AngleY_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_AngleY_get___")]
-  public static extern float ViewerParamater_AngleY_get(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_ClippingStart_set___")]
   public static extern void ViewerParamater_ClippingStart_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
@@ -761,12 +761,6 @@ class EffekseerNativePINVOKE {
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_RenderingMode_get___")]
   public static extern int ViewerParamater_RenderingMode_get(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_ViewerMode_set___")]
-  public static extern void ViewerParamater_ViewerMode_set(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_ViewerMode_get___")]
-  public static extern int ViewerParamater_ViewerMode_get(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_ViewerParamater___")]
   public static extern global::System.IntPtr new_ViewerParamater();

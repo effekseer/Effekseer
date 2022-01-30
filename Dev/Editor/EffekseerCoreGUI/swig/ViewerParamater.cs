@@ -74,26 +74,6 @@ public class ViewerParamater : global::System.IDisposable {
     } 
   }
 
-  public float AngleX {
-    set {
-      EffekseerNativePINVOKE.ViewerParamater_AngleX_set(swigCPtr, value);
-    } 
-    get {
-      float ret = EffekseerNativePINVOKE.ViewerParamater_AngleX_get(swigCPtr);
-      return ret;
-    } 
-  }
-
-  public float AngleY {
-    set {
-      EffekseerNativePINVOKE.ViewerParamater_AngleY_set(swigCPtr, value);
-    } 
-    get {
-      float ret = EffekseerNativePINVOKE.ViewerParamater_AngleY_get(swigCPtr);
-      return ret;
-    } 
-  }
-
   public float ClippingStart {
     set {
       EffekseerNativePINVOKE.ViewerParamater_ClippingStart_set(swigCPtr, value);
@@ -190,16 +170,6 @@ public class ViewerParamater : global::System.IDisposable {
     } 
     get {
       RenderingMethodType ret = (RenderingMethodType)EffekseerNativePINVOKE.ViewerParamater_RenderingMode_get(swigCPtr);
-      return ret;
-    } 
-  }
-
-  public ViewMode ViewerMode {
-    set {
-      EffekseerNativePINVOKE.ViewerParamater_ViewerMode_set(swigCPtr, (int)value);
-    } 
-    get {
-      ViewMode ret = (ViewMode)EffekseerNativePINVOKE.ViewerParamater_ViewerMode_get(swigCPtr);
       return ret;
     } 
   }

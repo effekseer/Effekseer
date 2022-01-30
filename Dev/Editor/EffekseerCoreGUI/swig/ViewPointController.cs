@@ -117,6 +117,28 @@ public class ViewPointController : global::System.IDisposable {
     if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
   }
 
+  public float GetAngleX() {
+    float ret = EffekseerNativePINVOKE.ViewPointController_GetAngleX(swigCPtr);
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+    return ret;
+  }
+
+  public void SetAngleX(float value) {
+    EffekseerNativePINVOKE.ViewPointController_SetAngleX(swigCPtr, value);
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+  }
+
+  public float GetAngleY() {
+    float ret = EffekseerNativePINVOKE.ViewPointController_GetAngleY(swigCPtr);
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+    return ret;
+  }
+
+  public void SetAngleY(float value) {
+    EffekseerNativePINVOKE.ViewPointController_SetAngleY(swigCPtr, value);
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+  }
+
   public ViewPointController() : this(EffekseerNativePINVOKE.new_ViewPointController(), true) {
   }
 

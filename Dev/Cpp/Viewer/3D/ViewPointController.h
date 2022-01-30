@@ -58,6 +58,8 @@ private:
 	int32_t screenHeight = 0;
 
 	::Effekseer::Vector3D focusPosition_;
+	float angleX_ = 30.0f;
+	float angleY_ = -30.0f;
 
 	CoordinateSystemType coordinateSystem_ = CoordinateSystemType::RH;
 
@@ -70,8 +72,7 @@ private:
 
 public:
 #if !defined(SWIG)
-	float angleX_ = 30.0f;
-	float angleY_ = -30.0f;
+
 	float zoom_ = 0.0f;
 
 	void Initialize(ProjectionMatrixStyle style, int width, int height);
@@ -140,6 +141,14 @@ public:
 	float GetDistance() const;
 
 	void SetDistance(float distance);
+
+	float GetAngleX() const;
+
+	void SetAngleX(float value);
+
+	float GetAngleY() const;
+
+	void SetAngleY(float value);
 };
 
 } // namespace Effekseer::Tool

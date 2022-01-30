@@ -378,15 +378,6 @@ namespace Effekseer.GUI
 			native.SetViewerParamater(param);
 		}
 
-		public void SetViewMode(int viewMode)
-		{
-			var param = native.GetViewerParamater();
-
-			param.ViewerMode = (swig.ViewMode)viewMode;
-
-			native.SetViewerParamater(param);
-		}
-
 		public void SetIsRightHand(bool value)
 		{
 			native.SetIsRightHand(value);
@@ -724,7 +715,6 @@ namespace Effekseer.GUI
 
 			SetDistortionType((int)Core.Option.DistortionType.Value);
 			SetRenderMode((int)Core.Option.RenderingMode.Value);
-			SetViewMode((int)Core.Option.ViewerMode.Value);
 
 			if (Core.Culling.Type.Value == Data.EffectCullingValues.ParamaterType.Sphere)
 			{
@@ -851,26 +841,20 @@ namespace Effekseer.GUI
 
 			if (viewerMode == Data.OptionValues.ViewMode._3D)
 			{
-				var param = Manager.Viewer.GetViewerParamater();
 				ViewPointController.SetFocusPosition(new swig.Vector3F(0, 0, 0));
-				param.ViewerMode = (swig.ViewMode)viewerMode;
 				ViewPointController.SetProjectionType(swig.ProjectionType.Perspective);
-				param.AngleX = 30.0f;
-				param.AngleY = -30.0f;
-				Manager.Viewer.SetViewerParamater(param);
+				ViewPointController.SetAngleX(30.0f);
+				ViewPointController.SetAngleY(-30.0f);
 				Core.Option.IsXYGridShown.SetValueDirectly(false);
 				Core.Option.IsXZGridShown.SetValueDirectly(true);
 				Core.Option.IsYZGridShown.SetValueDirectly(false);
 			}
 			else if (viewerMode == Data.OptionValues.ViewMode._2D)
 			{
-				var param = Manager.Viewer.GetViewerParamater();
 				ViewPointController.SetFocusPosition(new swig.Vector3F(0, 0, 0));
-				param.ViewerMode = (swig.ViewMode)viewerMode;
 				ViewPointController.SetProjectionType(swig.ProjectionType.Orthographic);
-				param.AngleX = 0.0f;
-				param.AngleY = 0.0f;
-				Manager.Viewer.SetViewerParamater(param);
+				ViewPointController.SetAngleX(0.0f);
+				ViewPointController.SetAngleY(0.0f);
 				Core.Option.IsXYGridShown.SetValueDirectly(true);
 				Core.Option.IsXZGridShown.SetValueDirectly(false);
 				Core.Option.IsYZGridShown.SetValueDirectly(false);

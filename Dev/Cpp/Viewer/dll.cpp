@@ -67,8 +67,6 @@ public:
 ViewerParamater::ViewerParamater()
 	: GuideWidth(0)
 	, GuideHeight(0)
-	, AngleX(0)
-	, AngleY(0)
 	, RendersGuide(false)
 
 	, IsCullingShown(false)
@@ -79,8 +77,6 @@ ViewerParamater::ViewerParamater()
 
 	, Distortion(Effekseer::Tool::DistortionType::Current)
 	, RenderingMode(Effekseer::Tool::RenderingMethodType::Normal)
-	, ViewerMode(ViewMode::_3D)
-
 {
 }
 
@@ -571,8 +567,6 @@ ViewerParamater Native::GetViewerParamater()
 
 	paramater.ClippingStart = viewPointCtrl_->ClippingStart;
 	paramater.ClippingEnd = viewPointCtrl_->ClippingEnd;
-	paramater.AngleX = viewPointCtrl_->angleX_;
-	paramater.AngleY = viewPointCtrl_->angleY_;
 	paramater.RateOfMagnification = viewPointCtrl_->RateOfMagnification;
 
 	paramater.RendersGuide = mainScreen_->RendersGuide;
@@ -590,9 +584,6 @@ void Native::SetViewerParamater(ViewerParamater& paramater)
 	viewPointCtrl_->ClippingEnd = paramater.ClippingEnd;
 
 	viewPointCtrl_->RateOfMagnification = paramater.RateOfMagnification;
-
-	viewPointCtrl_->angleX_ = paramater.AngleX;
-	viewPointCtrl_->angleY_ = paramater.AngleY;
 
 	mainScreen_->GuideWidth = paramater.GuideWidth;
 	mainScreen_->GuideHeight = paramater.GuideHeight;
@@ -729,7 +720,7 @@ void Native::SetLightDirection(float x, float y, float z)
 {
 	Effekseer::Vector3D temp = Effekseer::Vector3D(x, y, z);
 
-	if (viewPointCtrl_->GetCoordinateSystem() == Effekseer::Tool::CoordinateSystemType::LH)
+	if (setting_->GetCoordinateSystem() == Effekseer::CoordinateSystem::LH)
 	{
 		temp.Z = -temp.Z;
 	}
@@ -750,19 +741,12 @@ void Native::SetLightAmbientColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 void Native::SetIsRightHand(bool value)
 {
 	viewPointCtrl_->SetCoordinateSystem(value ? Effekseer::Tool::CoordinateSystemType::RH : Effekseer::Tool::CoordinateSystemType::LH);
-	if (viewPointCtrl_->GetCoordinateSystem() == Effekseer::Tool::CoordinateSystemType::RH)
-	{
-		setting_->SetCoordinateSystem(Effekseer::CoordinateSystem::RH);
-	}
-	else
-	{
-		setting_->SetCoordinateSystem(Effekseer::CoordinateSystem::LH);
-	}
+	setting_->SetCoordinateSystem(value ? Effekseer::CoordinateSystem::RH : Effekseer::CoordinateSystem::LH);
 
 	{
 		Effekseer::Vector3D temp = mainScreenConfig_.LightDirection;
 
-		if (viewPointCtrl_->GetCoordinateSystem() == Effekseer::Tool::CoordinateSystemType::LH)
+		if (setting_->GetCoordinateSystem() == Effekseer::CoordinateSystem::LH)
 		{
 			temp.Z = -temp.Z;
 		}

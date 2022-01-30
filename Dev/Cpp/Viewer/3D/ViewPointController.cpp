@@ -303,4 +303,24 @@ void ViewPointController::SetDistance(float distance)
 	SetZoom(logf(Effekseer::Max(FLT_MIN, distance / DistanceBase)) / logf(ZoomDistanceFactor));
 }
 
+float ViewPointController::GetAngleX() const
+{
+	return angleX_;
+}
+
+void ViewPointController::SetAngleX(float value)
+{
+	angleX_ = value;
+}
+
+float ViewPointController::GetAngleY() const
+{
+	return angleY_;
+}
+
+void ViewPointController::SetAngleY(float value)
+{
+	angleY_ = value;
+}
+
 } // namespace Effekseer::Tool

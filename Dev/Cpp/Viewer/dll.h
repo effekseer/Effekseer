@@ -41,8 +41,6 @@ public:
 	int32_t GuideWidth;
 	int32_t GuideHeight;
 	float RateOfMagnification;
-	float AngleX;
-	float AngleY;
 	float ClippingStart;
 	float ClippingEnd;
 	bool RendersGuide;
@@ -55,7 +53,6 @@ public:
 
 	Effekseer::Tool::DistortionType Distortion;
 	Effekseer::Tool::RenderingMethodType RenderingMode;
-	ViewMode ViewerMode;
 
 	ViewerParamater();
 };

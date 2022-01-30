@@ -58,8 +58,8 @@ namespace Effekseer.GUI.Dock
 			var focusPosition = ctrl.GetFocusPosition();
 			var f = new float[] { focusPosition.X, focusPosition.Y, focusPosition.Z };
 
-			var rx = viewerParameter.AngleX;
-			var ry = viewerParameter.AngleY;
+			var rx = ctrl.GetAngleX();
+			var ry = ctrl.GetAngleY();
 
 			var rx_ = new float[] { rx };
 			var ry_ = new float[] { ry };
@@ -79,14 +79,12 @@ namespace Effekseer.GUI.Dock
 
 			if (Manager.NativeManager.DragFloat(Resources.GetString("XRotation") + id_rx, rx_))
 			{
-				viewerParameter.AngleX = rx_[0];
-				dirty = true;
+				ctrl.SetAngleX(rx_[0]);
 			}
 
 			if (Manager.NativeManager.DragFloat(Resources.GetString("YRotation") + id_ry, ry_))
 			{
-				viewerParameter.AngleY = ry_[0];
-				dirty = true;
+				ctrl.SetAngleY(ry_[0]);
 			}
 
 			if (Manager.NativeManager.DragFloat(Resources.GetString("PoVDistance") + id_d, d))
@@ -151,8 +149,8 @@ namespace Effekseer.GUI.Dock
                     viewPoint.FocusY = focusPositionSaved.Y;
                     viewPoint.FocusZ = focusPositionSaved.Z;
 					viewPoint.Distance = ctrl.GetDistance();
-					viewPoint.AngleX = viewerParameter.AngleX;
-                    viewPoint.AngleY = viewerParameter.AngleY;
+					viewPoint.AngleX = ctrl.GetAngleX();
+                    viewPoint.AngleY = ctrl.GetAngleY();
                     viewPoint.ClippingStart = viewerParameter.ClippingStart;
                     viewPoint.ClippingEnd = viewerParameter.ClippingEnd;
                     viewPoint.CameraMode = ctrl.GetProjectionType() == swig.ProjectionType.Perspective ? 0 : 1;
@@ -175,8 +173,8 @@ namespace Effekseer.GUI.Dock
 						ctrl.SetFocusPosition(new swig.Vector3F(viewPoint.FocusX, viewPoint.FocusY, viewPoint.FocusZ));
 						ctrl.SetDistance(viewPoint.Distance);
 						ctrl.SetProjectionType(viewPoint.CameraMode == 0 ? swig.ProjectionType.Perspective : swig.ProjectionType.Orthographic);
-                        viewerParameter.AngleX = viewPoint.AngleX;
-                        viewerParameter.AngleY = viewPoint.AngleY;
+                        ctrl.SetAngleX(viewPoint.AngleX);
+                        ctrl.SetAngleY(viewPoint.AngleY);
                         viewerParameter.ClippingStart = viewPoint.ClippingStart;
                         viewerParameter.ClippingEnd = viewPoint.ClippingEnd;
 						viewerParameter.RateOfMagnification = viewPoint.RateOfMagnification;

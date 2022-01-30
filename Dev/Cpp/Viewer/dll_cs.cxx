@@ -2278,6 +2278,62 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewPointController_SetDistanc
 }
 
 
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewPointController_GetAngleX___(void * jarg1) {
+  float jresult ;
+  Effekseer::Tool::ViewPointController *arg1 = (Effekseer::Tool::ViewPointController *) 0 ;
+  std::shared_ptr< Effekseer::Tool::ViewPointController const > *smartarg1 = 0 ;
+  float result;
+  
+  
+  smartarg1 = (std::shared_ptr< const Effekseer::Tool::ViewPointController > *)jarg1;
+  arg1 = (Effekseer::Tool::ViewPointController *)(smartarg1 ? smartarg1->get() : 0); 
+  result = (float)((Effekseer::Tool::ViewPointController const *)arg1)->GetAngleX();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewPointController_SetAngleX___(void * jarg1, float jarg2) {
+  Effekseer::Tool::ViewPointController *arg1 = (Effekseer::Tool::ViewPointController *) 0 ;
+  float arg2 ;
+  std::shared_ptr< Effekseer::Tool::ViewPointController > *smartarg1 = 0 ;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::Tool::ViewPointController > *)jarg1;
+  arg1 = (Effekseer::Tool::ViewPointController *)(smartarg1 ? smartarg1->get() : 0); 
+  arg2 = (float)jarg2; 
+  (arg1)->SetAngleX(arg2);
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewPointController_GetAngleY___(void * jarg1) {
+  float jresult ;
+  Effekseer::Tool::ViewPointController *arg1 = (Effekseer::Tool::ViewPointController *) 0 ;
+  std::shared_ptr< Effekseer::Tool::ViewPointController const > *smartarg1 = 0 ;
+  float result;
+  
+  
+  smartarg1 = (std::shared_ptr< const Effekseer::Tool::ViewPointController > *)jarg1;
+  arg1 = (Effekseer::Tool::ViewPointController *)(smartarg1 ? smartarg1->get() : 0); 
+  result = (float)((Effekseer::Tool::ViewPointController const *)arg1)->GetAngleY();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewPointController_SetAngleY___(void * jarg1, float jarg2) {
+  Effekseer::Tool::ViewPointController *arg1 = (Effekseer::Tool::ViewPointController *) 0 ;
+  float arg2 ;
+  std::shared_ptr< Effekseer::Tool::ViewPointController > *smartarg1 = 0 ;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::Tool::ViewPointController > *)jarg1;
+  arg1 = (Effekseer::Tool::ViewPointController *)(smartarg1 ? smartarg1->get() : 0); 
+  arg2 = (float)jarg2; 
+  (arg1)->SetAngleY(arg2);
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_ViewPointController___() {
   void * jresult ;
   Effekseer::Tool::ViewPointController *result = 0 ;
@@ -2362,50 +2418,6 @@ SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_RateOfMagnifi
   
   arg1 = (ViewerParamater *)jarg1; 
   result = (float) ((arg1)->RateOfMagnification);
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_AngleX_set___(void * jarg1, float jarg2) {
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  float arg2 ;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  arg2 = (float)jarg2; 
-  if (arg1) (arg1)->AngleX = arg2;
-}
-
-
-SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_AngleX_get___(void * jarg1) {
-  float jresult ;
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  float result;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  result = (float) ((arg1)->AngleX);
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_AngleY_set___(void * jarg1, float jarg2) {
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  float arg2 ;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  arg2 = (float)jarg2; 
-  if (arg1) (arg1)->AngleY = arg2;
-}
-
-
-SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_AngleY_get___(void * jarg1) {
-  float jresult ;
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  float result;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  result = (float) ((arg1)->AngleY);
   jresult = result; 
   return jresult;
 }
@@ -2626,28 +2638,6 @@ SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_RenderingMode_g
   
   arg1 = (ViewerParamater *)jarg1; 
   result = (Effekseer::Tool::RenderingMethodType) ((arg1)->RenderingMode);
-  jresult = (int)result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_ViewerMode_set___(void * jarg1, int jarg2) {
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  ViewMode arg2 ;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  arg2 = (ViewMode)jarg2; 
-  if (arg1) (arg1)->ViewerMode = arg2;
-}
-
-
-SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_ViewerMode_get___(void * jarg1) {
-  int jresult ;
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  ViewMode result;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  result = (ViewMode) ((arg1)->ViewerMode);
   jresult = (int)result; 
   return jresult;
 }
