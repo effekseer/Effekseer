@@ -15,7 +15,7 @@ on:
       - 16x_ex
 
 env:
-  EFFEKSEER_VERSION: 162a
+  EFFEKSEER_VERSION: 162b
 
 jobs:
   tests:
