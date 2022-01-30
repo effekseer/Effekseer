@@ -28,7 +28,7 @@ public:
 
 	bool IsValid() const { return isValid_; }
 
-	bool GetVersion() const { return version_; }
+	int32_t GetVersion() const { return version_; }
 
 	Chunk ReadChunk(const char* forcc) const;
 
