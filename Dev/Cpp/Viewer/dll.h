@@ -15,8 +15,8 @@
 #include <unordered_set>
 
 #include "../IPC/IPC.h"
-#include "ViewerEffectBehavior.h"
 #include "3D/ViewPointController.h"
+#include "ViewerEffectBehavior.h"
 #include "efk.Base.h"
 
 namespace Effekseer
@@ -40,9 +40,6 @@ class ViewerParamater
 public:
 	int32_t GuideWidth;
 	int32_t GuideHeight;
-	float RateOfMagnification;
-	float ClippingStart;
-	float ClippingEnd;
 	bool RendersGuide;
 
 	bool IsCullingShown;
@@ -152,8 +149,6 @@ private:
 
 	Effekseer::Tool::RenderedEffectGeneratorConfig mainScreenConfig_;
 
-	std::shared_ptr<Effekseer::Tool::ViewPointController> viewPointCtrl_;
-
 	Effekseer::Tool::RenderingMethodType renderingMode_ = Effekseer::Tool::RenderingMethodType::Normal;
 
 public:
@@ -161,9 +156,9 @@ public:
 
 	~Native();
 
-	bool CreateWindow_Effekseer(void* handle, int width, int height, bool isSRGBMode, efk::DeviceType deviceType, std::shared_ptr<Effekseer::Tool::ViewPointController> viewPointCtrl);
+	bool CreateWindow_Effekseer(void* handle, int width, int height, bool isSRGBMode, efk::DeviceType deviceType);
 
-	bool UpdateWindow();
+	bool UpdateWindow(std::shared_ptr<Effekseer::Tool::ViewPointController> viewPointCtrl);
 
 	void ClearWindow(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 
@@ -187,7 +182,7 @@ public:
 
 	bool SetRandomSeed(int seed);
 
-	void RenderView(int32_t width, int32_t height, std::shared_ptr<Effekseer::Tool::RenderImage> renderImage);
+	void RenderView(int32_t width, int32_t height, std::shared_ptr<Effekseer::Tool::ViewPointController> viewPointCtrl, std::shared_ptr<Effekseer::Tool::RenderImage> renderImage);
 
 	std::shared_ptr<Effekseer::Tool::EffectRecorder> CreateRecorder(const Effekseer::Tool::RecordingParameter& recordingParameter);
 
@@ -233,7 +228,7 @@ public:
 
 	void SetLightAmbientColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 
-	void SetIsRightHand(bool value);
+	void SetCoordinateSystem(Effekseer::Tool::CoordinateSystemType coordinateSystem);
 
 	void SetCullingParameter(bool isCullingShown, float cullingRadius, float cullingX, float cullingY, float cullingZ);
 

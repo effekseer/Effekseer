@@ -8,20 +8,11 @@ float ViewPointController::GetOrthoScale()
 	return OrthoScaleBase / powf(ZoomDistanceFactor, zoom_);
 }
 
-void ViewPointController::Initialize(ProjectionMatrixStyle style, int width, int height)
-{
-	projectionStyle_ = style;
-	screenWidth = width;
-	screenHeight = height;
-
-	RecalcProjection();
-}
-
 void ViewPointController::SetPerspectiveFov(int width, int height)
 {
 	::Effekseer::Matrix44 proj;
 
-	if (projectionStyle_ == ProjectionMatrixStyle::OpenGLStyle)
+	if (ProjectionStyle == ProjectionMatrixStyle::OpenGLStyle)
 	{
 		if (coordinateSystem_ == CoordinateSystemType::RH)
 		{
@@ -115,6 +106,8 @@ void ViewPointController::Update()
 	}
 
 	SetOrthographicScale(GetOrthoScale());
+
+	RecalcProjection();
 }
 
 Ray ViewPointController::GetCameraRay() const

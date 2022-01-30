@@ -54,7 +54,6 @@ namespace Effekseer.GUI.Dock
 
 			var ctrl = Manager.Viewer.ViewPointController;
 
-			var viewerParameter = Manager.Viewer.GetViewerParamater();
 			var focusPosition = ctrl.GetFocusPosition();
 			var f = new float[] { focusPosition.X, focusPosition.Y, focusPosition.Z };
 
@@ -65,12 +64,10 @@ namespace Effekseer.GUI.Dock
 			var ry_ = new float[] { ry };
 
 			var d = new float[] { ctrl.GetDistance() };
-			var s = new float[] { viewerParameter.RateOfMagnification };
+			var s = new float[] { ctrl.RateOfMagnification };
 
-            var cs = new float[] { viewerParameter.ClippingStart };
-            var ce = new float[] { viewerParameter.ClippingEnd };
-
-			bool dirty = false;
+            var cs = new float[] { ctrl.ClippingStart };
+            var ce = new float[] { ctrl.ClippingEnd };
 
             if (Manager.NativeManager.DragFloat3(Resources.GetString("Viewpoint") + id_f, f))
 			{
@@ -94,20 +91,17 @@ namespace Effekseer.GUI.Dock
 
 			if (Manager.NativeManager.DragFloat(Resources.GetString("Zoom") + id_s, s))
 			{
-				viewerParameter.RateOfMagnification = s[0];
-				dirty = true;
+				ctrl.RateOfMagnification = s[0];
 			}
 
 			if (Manager.NativeManager.DragFloat(Resources.GetString("Clipping") + "\n" + Resources.GetString("Start") + id_cs, cs))
             {
-                viewerParameter.ClippingStart = cs[0];
-				dirty = true;
+				ctrl.ClippingStart = cs[0];
 			}
 
 			if (Manager.NativeManager.DragFloat(Resources.GetString("Clipping") + "\n" + Resources.GetString("End") + id_ce, ce))
             {
-                viewerParameter.ClippingEnd = ce[0];
-				dirty = true;
+				ctrl.ClippingEnd = ce[0];
 			}
 
 			if (Manager.NativeManager.BeginCombo(Resources.GetString("CameraMode") + id_t, viewTypes[ctrl.GetProjectionType() == swig.ProjectionType.Perspective ? 0 : 1], swig.ComboFlags.None))
@@ -151,10 +145,10 @@ namespace Effekseer.GUI.Dock
 					viewPoint.Distance = ctrl.GetDistance();
 					viewPoint.AngleX = ctrl.GetAngleX();
                     viewPoint.AngleY = ctrl.GetAngleY();
-                    viewPoint.ClippingStart = viewerParameter.ClippingStart;
-                    viewPoint.ClippingEnd = viewerParameter.ClippingEnd;
+                    viewPoint.ClippingStart = ctrl.ClippingStart;
+                    viewPoint.ClippingEnd = ctrl.ClippingEnd;
                     viewPoint.CameraMode = ctrl.GetProjectionType() == swig.ProjectionType.Perspective ? 0 : 1;
-					viewPoint.RateOfMagnification = viewerParameter.RateOfMagnification;
+					viewPoint.RateOfMagnification = ctrl.RateOfMagnification;
                     viewPoint.Save(filename);
                 }
             }
@@ -175,17 +169,11 @@ namespace Effekseer.GUI.Dock
 						ctrl.SetProjectionType(viewPoint.CameraMode == 0 ? swig.ProjectionType.Perspective : swig.ProjectionType.Orthographic);
                         ctrl.SetAngleX(viewPoint.AngleX);
                         ctrl.SetAngleY(viewPoint.AngleY);
-                        viewerParameter.ClippingStart = viewPoint.ClippingStart;
-                        viewerParameter.ClippingEnd = viewPoint.ClippingEnd;
-						viewerParameter.RateOfMagnification = viewPoint.RateOfMagnification;
+						ctrl.ClippingStart = viewPoint.ClippingStart;
+                        ctrl.ClippingEnd = viewPoint.ClippingEnd;
+						ctrl.RateOfMagnification = viewPoint.RateOfMagnification;
 					}
                 }
-				dirty = true;
-			}
-
-			if (dirty)
-			{
-				Manager.Viewer.SetViewerParamater(viewerParameter);
 			}
 		}
 	}

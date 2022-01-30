@@ -641,7 +641,7 @@ namespace Effekseer.GUI
 
 			Viewer.UpdateViewer();
 
-			Native.UpdateWindow();
+			Native.UpdateWindow(Viewer.ViewPointController);
 
 			Native.ClearWindow(50, 50, 50, 0);
 

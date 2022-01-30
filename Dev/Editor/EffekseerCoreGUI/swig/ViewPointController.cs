@@ -44,6 +44,54 @@ public class ViewPointController : global::System.IDisposable {
     }
   }
 
+  public ProjectionMatrixStyle ProjectionStyle {
+    set {
+      EffekseerNativePINVOKE.ViewPointController_ProjectionStyle_set(swigCPtr, (int)value);
+      if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+    } 
+    get {
+      ProjectionMatrixStyle ret = (ProjectionMatrixStyle)EffekseerNativePINVOKE.ViewPointController_ProjectionStyle_get(swigCPtr);
+      if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+      return ret;
+    } 
+  }
+
+  public float RateOfMagnification {
+    set {
+      EffekseerNativePINVOKE.ViewPointController_RateOfMagnification_set(swigCPtr, value);
+      if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+    } 
+    get {
+      float ret = EffekseerNativePINVOKE.ViewPointController_RateOfMagnification_get(swigCPtr);
+      if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+      return ret;
+    } 
+  }
+
+  public float ClippingStart {
+    set {
+      EffekseerNativePINVOKE.ViewPointController_ClippingStart_set(swigCPtr, value);
+      if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+    } 
+    get {
+      float ret = EffekseerNativePINVOKE.ViewPointController_ClippingStart_get(swigCPtr);
+      if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+      return ret;
+    } 
+  }
+
+  public float ClippingEnd {
+    set {
+      EffekseerNativePINVOKE.ViewPointController_ClippingEnd_set(swigCPtr, value);
+      if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+    } 
+    get {
+      float ret = EffekseerNativePINVOKE.ViewPointController_ClippingEnd_get(swigCPtr);
+      if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+      return ret;
+    } 
+  }
+
   public Ray GetCameraRay() {
     Ray ret = new Ray(EffekseerNativePINVOKE.ViewPointController_GetCameraRay(swigCPtr), true);
     if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();

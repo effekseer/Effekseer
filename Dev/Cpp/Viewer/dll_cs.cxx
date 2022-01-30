@@ -2073,6 +2073,118 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_Ray___(void * jarg1) {
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewPointController_ProjectionStyle_set___(void * jarg1, int jarg2) {
+  Effekseer::Tool::ViewPointController *arg1 = (Effekseer::Tool::ViewPointController *) 0 ;
+  Effekseer::Tool::ProjectionMatrixStyle arg2 ;
+  std::shared_ptr< Effekseer::Tool::ViewPointController > *smartarg1 = 0 ;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::Tool::ViewPointController > *)jarg1;
+  arg1 = (Effekseer::Tool::ViewPointController *)(smartarg1 ? smartarg1->get() : 0); 
+  arg2 = (Effekseer::Tool::ProjectionMatrixStyle)jarg2; 
+  if (arg1) (arg1)->ProjectionStyle = arg2;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_ViewPointController_ProjectionStyle_get___(void * jarg1) {
+  int jresult ;
+  Effekseer::Tool::ViewPointController *arg1 = (Effekseer::Tool::ViewPointController *) 0 ;
+  std::shared_ptr< Effekseer::Tool::ViewPointController > *smartarg1 = 0 ;
+  Effekseer::Tool::ProjectionMatrixStyle result;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::Tool::ViewPointController > *)jarg1;
+  arg1 = (Effekseer::Tool::ViewPointController *)(smartarg1 ? smartarg1->get() : 0); 
+  result = (Effekseer::Tool::ProjectionMatrixStyle) ((arg1)->ProjectionStyle);
+  jresult = (int)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewPointController_RateOfMagnification_set___(void * jarg1, float jarg2) {
+  Effekseer::Tool::ViewPointController *arg1 = (Effekseer::Tool::ViewPointController *) 0 ;
+  float arg2 ;
+  std::shared_ptr< Effekseer::Tool::ViewPointController > *smartarg1 = 0 ;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::Tool::ViewPointController > *)jarg1;
+  arg1 = (Effekseer::Tool::ViewPointController *)(smartarg1 ? smartarg1->get() : 0); 
+  arg2 = (float)jarg2; 
+  if (arg1) (arg1)->RateOfMagnification = arg2;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewPointController_RateOfMagnification_get___(void * jarg1) {
+  float jresult ;
+  Effekseer::Tool::ViewPointController *arg1 = (Effekseer::Tool::ViewPointController *) 0 ;
+  std::shared_ptr< Effekseer::Tool::ViewPointController > *smartarg1 = 0 ;
+  float result;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::Tool::ViewPointController > *)jarg1;
+  arg1 = (Effekseer::Tool::ViewPointController *)(smartarg1 ? smartarg1->get() : 0); 
+  result = (float) ((arg1)->RateOfMagnification);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewPointController_ClippingStart_set___(void * jarg1, float jarg2) {
+  Effekseer::Tool::ViewPointController *arg1 = (Effekseer::Tool::ViewPointController *) 0 ;
+  float arg2 ;
+  std::shared_ptr< Effekseer::Tool::ViewPointController > *smartarg1 = 0 ;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::Tool::ViewPointController > *)jarg1;
+  arg1 = (Effekseer::Tool::ViewPointController *)(smartarg1 ? smartarg1->get() : 0); 
+  arg2 = (float)jarg2; 
+  if (arg1) (arg1)->ClippingStart = arg2;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewPointController_ClippingStart_get___(void * jarg1) {
+  float jresult ;
+  Effekseer::Tool::ViewPointController *arg1 = (Effekseer::Tool::ViewPointController *) 0 ;
+  std::shared_ptr< Effekseer::Tool::ViewPointController > *smartarg1 = 0 ;
+  float result;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::Tool::ViewPointController > *)jarg1;
+  arg1 = (Effekseer::Tool::ViewPointController *)(smartarg1 ? smartarg1->get() : 0); 
+  result = (float) ((arg1)->ClippingStart);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewPointController_ClippingEnd_set___(void * jarg1, float jarg2) {
+  Effekseer::Tool::ViewPointController *arg1 = (Effekseer::Tool::ViewPointController *) 0 ;
+  float arg2 ;
+  std::shared_ptr< Effekseer::Tool::ViewPointController > *smartarg1 = 0 ;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::Tool::ViewPointController > *)jarg1;
+  arg1 = (Effekseer::Tool::ViewPointController *)(smartarg1 ? smartarg1->get() : 0); 
+  arg2 = (float)jarg2; 
+  if (arg1) (arg1)->ClippingEnd = arg2;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewPointController_ClippingEnd_get___(void * jarg1) {
+  float jresult ;
+  Effekseer::Tool::ViewPointController *arg1 = (Effekseer::Tool::ViewPointController *) 0 ;
+  std::shared_ptr< Effekseer::Tool::ViewPointController > *smartarg1 = 0 ;
+  float result;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::Tool::ViewPointController > *)jarg1;
+  arg1 = (Effekseer::Tool::ViewPointController *)(smartarg1 ? smartarg1->get() : 0); 
+  result = (float) ((arg1)->ClippingEnd);
+  jresult = result; 
+  return jresult;
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_ViewPointController_GetCameraRay___(void * jarg1) {
   void * jresult ;
   Effekseer::Tool::ViewPointController *arg1 = (Effekseer::Tool::ViewPointController *) 0 ;
@@ -2401,72 +2513,6 @@ SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_GuideHeight_get
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_RateOfMagnification_set___(void * jarg1, float jarg2) {
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  float arg2 ;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  arg2 = (float)jarg2; 
-  if (arg1) (arg1)->RateOfMagnification = arg2;
-}
-
-
-SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_RateOfMagnification_get___(void * jarg1) {
-  float jresult ;
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  float result;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  result = (float) ((arg1)->RateOfMagnification);
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_ClippingStart_set___(void * jarg1, float jarg2) {
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  float arg2 ;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  arg2 = (float)jarg2; 
-  if (arg1) (arg1)->ClippingStart = arg2;
-}
-
-
-SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_ClippingStart_get___(void * jarg1) {
-  float jresult ;
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  float result;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  result = (float) ((arg1)->ClippingStart);
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_ClippingEnd_set___(void * jarg1, float jarg2) {
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  float arg2 ;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  arg2 = (float)jarg2; 
-  if (arg1) (arg1)->ClippingEnd = arg2;
-}
-
-
-SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_ClippingEnd_get___(void * jarg1) {
-  float jresult ;
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  float result;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  result = (float) ((arg1)->ClippingEnd);
-  jresult = result; 
-  return jresult;
-}
-
-
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_RendersGuide_set___(void * jarg1, unsigned int jarg2) {
   ViewerParamater *arg1 = (ViewerParamater *) 0 ;
   bool arg2 ;
@@ -2679,7 +2725,7 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_Native___(void * jarg1)
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_CreateWindow_Effekseer___(void * jarg1, void * jarg2, int jarg3, int jarg4, unsigned int jarg5, int jarg6, void * jarg7) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_CreateWindow_Effekseer___(void * jarg1, void * jarg2, int jarg3, int jarg4, unsigned int jarg5, int jarg6) {
   unsigned int jresult ;
   Native *arg1 = (Native *) 0 ;
   void *arg2 = (void *) 0 ;
@@ -2687,7 +2733,6 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_CreateWindow_Ef
   int arg4 ;
   bool arg5 ;
   efk::DeviceType arg6 ;
-  std::shared_ptr< Effekseer::Tool::ViewPointController > arg7 ;
   bool result;
   
   arg1 = (Native *)jarg1; 
@@ -2698,20 +2743,21 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_CreateWindow_Ef
   arg4 = (int)jarg4; 
   arg5 = jarg5 ? true : false; 
   arg6 = (efk::DeviceType)jarg6; 
-  if (jarg7) arg7 = *(std::shared_ptr< Effekseer::Tool::ViewPointController > *)jarg7; 
-  result = (bool)(arg1)->CreateWindow_Effekseer(arg2,arg3,arg4,arg5,arg6,arg7);
+  result = (bool)(arg1)->CreateWindow_Effekseer(arg2,arg3,arg4,arg5,arg6);
   jresult = result; 
   return jresult;
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_UpdateWindow___(void * jarg1) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_UpdateWindow___(void * jarg1, void * jarg2) {
   unsigned int jresult ;
   Native *arg1 = (Native *) 0 ;
+  std::shared_ptr< Effekseer::Tool::ViewPointController > arg2 ;
   bool result;
   
   arg1 = (Native *)jarg1; 
-  result = (bool)(arg1)->UpdateWindow();
+  if (jarg2) arg2 = *(std::shared_ptr< Effekseer::Tool::ViewPointController > *)jarg2; 
+  result = (bool)(arg1)->UpdateWindow(arg2);
   jresult = result; 
   return jresult;
 }
@@ -2865,17 +2911,19 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_SetRandomSeed__
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_RenderView___(void * jarg1, int jarg2, int jarg3, void * jarg4) {
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_RenderView___(void * jarg1, int jarg2, int jarg3, void * jarg4, void * jarg5) {
   Native *arg1 = (Native *) 0 ;
   int32_t arg2 ;
   int32_t arg3 ;
-  std::shared_ptr< Effekseer::Tool::RenderImage > arg4 ;
+  std::shared_ptr< Effekseer::Tool::ViewPointController > arg4 ;
+  std::shared_ptr< Effekseer::Tool::RenderImage > arg5 ;
   
   arg1 = (Native *)jarg1; 
   arg2 = (int32_t)jarg2; 
   arg3 = (int32_t)jarg3; 
-  if (jarg4) arg4 = *(std::shared_ptr< Effekseer::Tool::RenderImage > *)jarg4; 
-  (arg1)->RenderView(arg2,arg3,arg4);
+  if (jarg4) arg4 = *(std::shared_ptr< Effekseer::Tool::ViewPointController > *)jarg4; 
+  if (jarg5) arg5 = *(std::shared_ptr< Effekseer::Tool::RenderImage > *)jarg5; 
+  (arg1)->RenderView(arg2,arg3,arg4,arg5);
 }
 
 
@@ -3181,13 +3229,13 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_SetLightAmbientColor___
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_SetIsRightHand___(void * jarg1, unsigned int jarg2) {
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_SetCoordinateSystem___(void * jarg1, int jarg2) {
   Native *arg1 = (Native *) 0 ;
-  bool arg2 ;
+  Effekseer::Tool::CoordinateSystemType arg2 ;
   
   arg1 = (Native *)jarg1; 
-  arg2 = jarg2 ? true : false; 
-  (arg1)->SetIsRightHand(arg2);
+  arg2 = (Effekseer::Tool::CoordinateSystemType)jarg2; 
+  (arg1)->SetCoordinateSystem(arg2);
 }
 
 

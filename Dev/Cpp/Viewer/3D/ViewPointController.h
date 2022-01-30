@@ -52,7 +52,6 @@ private:
 	ProjectionType projectionType_ = ProjectionType::Perspective;
 	Effekseer::Matrix44 m_cameraMat;
 	Effekseer::Matrix44 m_projMat;
-	ProjectionMatrixStyle projectionStyle_ = ProjectionMatrixStyle::DirectXStyle;
 
 	int32_t screenWidth = 0;
 	int32_t screenHeight = 0;
@@ -60,6 +59,7 @@ private:
 	::Effekseer::Vector3D focusPosition_;
 	float angleX_ = 30.0f;
 	float angleY_ = -30.0f;
+	float zoom_ = 0.0f;
 
 	CoordinateSystemType coordinateSystem_ = CoordinateSystemType::RH;
 
@@ -72,11 +72,6 @@ private:
 
 public:
 #if !defined(SWIG)
-
-	float zoom_ = 0.0f;
-
-	void Initialize(ProjectionMatrixStyle style, int width, int height);
-
 	void RecalcProjection();
 
 	void SetPerspectiveFov(int width, int height);
@@ -84,12 +79,6 @@ public:
 	void SetOrthographic(int width, int height);
 
 	void SetOrthographicScale(float scale);
-
-	float RateOfMagnification = 1.0f;
-
-	float ClippingStart = 1.0f;
-
-	float ClippingEnd = 300.0f;
 
 	void SetScreenSize(int32_t width, int32_t height);
 
@@ -115,6 +104,14 @@ public:
 
 	void Update();
 #endif
+	
+	ProjectionMatrixStyle ProjectionStyle = ProjectionMatrixStyle::DirectXStyle;
+
+	float RateOfMagnification = 1.0f;
+
+	float ClippingStart = 1.0f;
+
+	float ClippingEnd = 300.0f;
 
 	Ray GetCameraRay() const;
 

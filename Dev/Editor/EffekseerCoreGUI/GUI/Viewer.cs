@@ -380,7 +380,9 @@ namespace Effekseer.GUI
 
 		public void SetIsRightHand(bool value)
 		{
-			native.SetIsRightHand(value);
+			var cs = value ? swig.CoordinateSystemType.RH : swig.CoordinateSystemType.LH;
+			ViewPointController.SetCoordinateSystem(cs);
+			native.SetCoordinateSystem(cs);
 		}
 
 		public void SetDynamicInput(float v1, float v2, float v3, float v4)
@@ -417,13 +419,14 @@ namespace Effekseer.GUI
 
 			ViewPointController = new swig.ViewPointController();
 
+			ViewPointController.ProjectionStyle = deviceType == swig.DeviceType.OpenGL ? swig.ProjectionMatrixStyle.OpenGLStyle : swig.ProjectionMatrixStyle.DirectXStyle;
+
 			if (native.CreateWindow_Effekseer(
 				handle, 
 				width <= 0 ? 1 : width,
 				height <= 0 ? 1 : height,
 				Core.Option.ColorSpace.Value == Data.OptionValues.ColorSpaceType.LinearSpace,
-				deviceType,
-				ViewPointController))
+				deviceType))
 			{
 				isViewerShown = true;
 			}

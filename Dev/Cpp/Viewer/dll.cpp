@@ -272,9 +272,8 @@ Native::~Native()
 	spdlog::trace("End Native::~Native()");
 }
 
-bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool isSRGBMode, efk::DeviceType deviceType, std::shared_ptr<Effekseer::Tool::ViewPointController> viewPointCtrl)
+bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool isSRGBMode, efk::DeviceType deviceType)
 {
-	viewPointCtrl_ = viewPointCtrl;
 	spdlog::trace("Begin Native::CreateWindow_Effekseer");
 	g_deviceType = deviceType;
 
@@ -304,8 +303,6 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 		return false;
 	}
 
-	viewPointCtrl_->Initialize(
-		deviceType == efk::DeviceType::DirectX11 ? Effekseer::Tool::ProjectionMatrixStyle::DirectXStyle : Effekseer::Tool::ProjectionMatrixStyle::OpenGLStyle, width, height);
 	{
 		spdlog::trace("OK : ::EffekseerTool::Renderer::Initialize");
 
@@ -380,10 +377,9 @@ void Native::ClearWindow(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 	graphics_->Clear(Effekseer::Color(r, g, b, a));
 }
 
-bool Native::UpdateWindow()
+bool Native::UpdateWindow(std::shared_ptr<Effekseer::Tool::ViewPointController> viewPointCtrl)
 {
-	viewPointCtrl_->Update();
-	const auto ray = viewPointCtrl_->GetCameraRay();
+	const auto ray = viewPointCtrl->GetCameraRay();
 
 	sound_->SetListener(ray.Origin, ray.Origin + ray.Direction, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f));
 	sound_->Update();
@@ -507,24 +503,25 @@ bool Native::SetRandomSeed(int seed)
 	return true;
 }
 
-void Native::RenderView(int32_t width, int32_t height, std::shared_ptr<Effekseer::Tool::RenderImage> renderImage)
+void Native::RenderView(int32_t width, int32_t height, std::shared_ptr<Effekseer::Tool::ViewPointController> viewPointCtrl, std::shared_ptr<Effekseer::Tool::RenderImage> renderImage)
 {
-	viewPointCtrl_->SetScreenSize(width, height);
+	viewPointCtrl->SetScreenSize(width, height);
+	viewPointCtrl->Update();
 
-	const auto ray = viewPointCtrl_->GetCameraRay();
+	const auto ray = viewPointCtrl->GetCameraRay();
 	drawParameter.IsSortingEffectsEnabled = true;
 	drawParameter.CameraPosition = ray.Origin;
 	drawParameter.CameraFrontDirection = ray.Direction;
 
 	Effekseer::Matrix44 vpm;
-	Effekseer::Matrix44::Mul(vpm, viewPointCtrl_->GetCameraMatrix(), viewPointCtrl_->GetProjectionMatrix());
+	Effekseer::Matrix44::Mul(vpm, viewPointCtrl->GetCameraMatrix(), viewPointCtrl->GetProjectionMatrix());
 	drawParameter.ViewProjectionMatrix = vpm;
 	drawParameter.ZNear = 0.0f;
 	drawParameter.ZFar = 1.0f;
 
 	mainScreenConfig_.DrawParameter = drawParameter;
-	mainScreenConfig_.CameraMatrix = viewPointCtrl_->GetCameraMatrix();
-	mainScreenConfig_.ProjectionMatrix = viewPointCtrl_->GetProjectionMatrix();
+	mainScreenConfig_.CameraMatrix = viewPointCtrl->GetCameraMatrix();
+	mainScreenConfig_.ProjectionMatrix = viewPointCtrl->GetProjectionMatrix();
 	mainScreenConfig_.RenderingMethod = renderingMode_;
 	mainScreen_->SetConfig(mainScreenConfig_);
 	mainScreen_->Resize(Effekseer::Tool::Vector2I(width, height));
@@ -564,11 +561,6 @@ std::shared_ptr<Effekseer::Tool::EffectRecorder> Native::CreateRecorder(const Ef
 ViewerParamater Native::GetViewerParamater()
 {
 	ViewerParamater paramater;
-
-	paramater.ClippingStart = viewPointCtrl_->ClippingStart;
-	paramater.ClippingEnd = viewPointCtrl_->ClippingEnd;
-	paramater.RateOfMagnification = viewPointCtrl_->RateOfMagnification;
-
 	paramater.RendersGuide = mainScreen_->RendersGuide;
 	paramater.GuideWidth = mainScreen_->GuideWidth;
 	paramater.GuideHeight = mainScreen_->GuideHeight;
@@ -580,11 +572,6 @@ ViewerParamater Native::GetViewerParamater()
 
 void Native::SetViewerParamater(ViewerParamater& paramater)
 {
-	viewPointCtrl_->ClippingStart = paramater.ClippingStart;
-	viewPointCtrl_->ClippingEnd = paramater.ClippingEnd;
-
-	viewPointCtrl_->RateOfMagnification = paramater.RateOfMagnification;
-
 	mainScreen_->GuideWidth = paramater.GuideWidth;
 	mainScreen_->GuideHeight = paramater.GuideHeight;
 	mainScreen_->RendersGuide = paramater.RendersGuide;
@@ -738,10 +725,9 @@ void Native::SetLightAmbientColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 	mainScreenConfig_.LightAmbientColor = Effekseer::Color(r, g, b, a);
 }
 
-void Native::SetIsRightHand(bool value)
+void Native::SetCoordinateSystem(Effekseer::Tool::CoordinateSystemType coordinateSystem)
 {
-	viewPointCtrl_->SetCoordinateSystem(value ? Effekseer::Tool::CoordinateSystemType::RH : Effekseer::Tool::CoordinateSystemType::LH);
-	setting_->SetCoordinateSystem(value ? Effekseer::CoordinateSystem::RH : Effekseer::CoordinateSystem::LH);
+	setting_->SetCoordinateSystem(coordinateSystem == Effekseer::Tool::CoordinateSystemType::RH ? Effekseer::CoordinateSystem::RH : Effekseer::CoordinateSystem::LH);
 
 	{
 		Effekseer::Vector3D temp = mainScreenConfig_.LightDirection;

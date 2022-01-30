@@ -64,36 +64,6 @@ public class ViewerParamater : global::System.IDisposable {
     } 
   }
 
-  public float RateOfMagnification {
-    set {
-      EffekseerNativePINVOKE.ViewerParamater_RateOfMagnification_set(swigCPtr, value);
-    } 
-    get {
-      float ret = EffekseerNativePINVOKE.ViewerParamater_RateOfMagnification_get(swigCPtr);
-      return ret;
-    } 
-  }
-
-  public float ClippingStart {
-    set {
-      EffekseerNativePINVOKE.ViewerParamater_ClippingStart_set(swigCPtr, value);
-    } 
-    get {
-      float ret = EffekseerNativePINVOKE.ViewerParamater_ClippingStart_get(swigCPtr);
-      return ret;
-    } 
-  }
-
-  public float ClippingEnd {
-    set {
-      EffekseerNativePINVOKE.ViewerParamater_ClippingEnd_set(swigCPtr, value);
-    } 
-    get {
-      float ret = EffekseerNativePINVOKE.ViewerParamater_ClippingEnd_get(swigCPtr);
-      return ret;
-    } 
-  }
-
   public bool RendersGuide {
     set {
       EffekseerNativePINVOKE.ViewerParamater_RendersGuide_set(swigCPtr, value);
