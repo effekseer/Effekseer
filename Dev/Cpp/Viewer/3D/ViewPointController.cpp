@@ -3,7 +3,7 @@
 namespace Effekseer::Tool
 {
 
-float ViewPointController::GetDistance()
+float ViewPointController::GetDistance() const
 {
 	return DistanceBase * powf(ZoomDistanceFactor, g_Zoom);
 }
@@ -11,6 +11,15 @@ float ViewPointController::GetDistance()
 float ViewPointController::GetOrthoScale()
 {
 	return OrthoScaleBase / powf(ZoomDistanceFactor, g_Zoom);
+}
+
+void ViewPointController::SetMouseInverseFlag(bool rotX, bool rotY, bool slideX, bool slideY)
+{
+	g_mouseRotDirectionInvX = rotX;
+	g_mouseRotDirectionInvY = rotY;
+
+	g_mouseSlideDirectionInvX = slideX;
+	g_mouseSlideDirectionInvY = slideY;
 }
 
 void ViewPointController::Initialize(ProjectionMatrixStyle style, int width, int height)
@@ -202,8 +211,70 @@ bool ViewPointController::Slide(float x, float y)
 bool ViewPointController::Zoom(float zoom)
 {
 	SetZoom(g_Zoom - zoom);
-
 	return true;
+}
+
+Ray ViewPointController::GetCameraRay() const
+{
+	Ray ret;
+
+	::Effekseer::Vector3D position(0, 0, GetDistance());
+	::Effekseer::Matrix43 mat, mat_rot_x, mat_rot_y;
+	mat_rot_x.RotationX(-g_RotX / 180.0f * PI);
+
+	if (IsRightHand)
+	{
+		mat_rot_y.RotationY(-g_RotY / 180.0f * PI);
+		::Effekseer::Matrix43::Multiple(mat, mat_rot_x, mat_rot_y);
+		::Effekseer::Vector3D::Transform(position, position, mat);
+
+		Effekseer::Vector3D::Normal(ret.Direction, -position);
+
+		position.X += g_focus_position.X;
+		position.Y += g_focus_position.Y;
+		position.Z += g_focus_position.Z;
+
+		ret.Origin = position;
+	}
+	else
+	{
+		mat_rot_y.RotationY((g_RotY + 180.0f) / 180.0f * PI);
+		::Effekseer::Matrix43::Multiple(mat, mat_rot_x, mat_rot_y);
+		::Effekseer::Vector3D::Transform(position, position, mat);
+
+		::Effekseer::Vector3D temp_focus = g_focus_position;
+		temp_focus.Z = -temp_focus.Z;
+
+		Effekseer::Vector3D::Normal(ret.Direction, -position);
+
+		position.X += temp_focus.X;
+		position.Y += temp_focus.Y;
+		position.Z += temp_focus.Z;
+
+		ret.Origin = position;
+	}
+
+	return ret;
+}
+
+void ViewPointController::Update()
+{
+	const auto ray = GetCameraRay();
+
+	if (IsRightHand)
+	{
+		::Effekseer::Matrix44 cameraMat;
+		SetCameraMatrix(
+			::Effekseer::Matrix44().LookAtLH(ray.Origin, ray.Origin + ray.Direction, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
+	}
+	else
+	{
+		::Effekseer::Matrix44 cameraMat;
+		SetCameraMatrix(
+			::Effekseer::Matrix44().LookAtRH(ray.Origin, ray.Origin + ray.Direction, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
+	}
+
+	SetOrthographicScale(GetOrthoScale());
 }
 
 } // namespace Effekseer::Tool

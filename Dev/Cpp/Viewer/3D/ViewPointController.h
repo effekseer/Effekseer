@@ -24,6 +24,12 @@ enum class CoordinateType
 	LH,
 };
 
+struct Ray
+{
+	Vector3D Origin;
+	Vector3D Direction;
+};
+
 class ViewPointController
 {
 private:
@@ -59,7 +65,7 @@ private:
 		g_Zoom = Effekseer::Max(MinZoom, Effekseer::Min(MaxZoom, zoom));
 	}
 
-	float GetDistance();
+	float GetDistance() const;
 
 	float GetOrthoScale();
 
@@ -67,6 +73,8 @@ public:
 	ViewPointController();
 
 	~ViewPointController();
+
+	void SetMouseInverseFlag(bool rotX, bool rotY, bool slideX, bool slideY);
 
 	void Initialize(ProjectionMatrixStyle style, int width, int height);
 
@@ -123,6 +131,10 @@ public:
 	{
 		return m_projMat;
 	}
+
+	Ray GetCameraRay() const;
+
+	void Update();
 };
 
 } // namespace Effekseer::Tool

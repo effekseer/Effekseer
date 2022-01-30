@@ -405,11 +405,11 @@ void Native::ClearWindow(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 
 bool Native::UpdateWindow()
 {
+	drawParameter.IsSortingEffectsEnabled = true;
+
 	::Effekseer::Vector3D position(0, 0, GetDistance());
 	::Effekseer::Matrix43 mat, mat_rot_x, mat_rot_y;
 	mat_rot_x.RotationX(-g_RotX / 180.0f * PI);
-
-	drawParameter.IsSortingEffectsEnabled = true;
 
 	if (viewPointCtrl_.IsRightHand)
 	{
