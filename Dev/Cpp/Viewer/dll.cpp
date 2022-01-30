@@ -67,11 +67,8 @@ public:
 ViewerParamater::ViewerParamater()
 	: GuideWidth(0)
 	, GuideHeight(0)
-	, IsPerspective(false)
-	, IsOrthographic(false)
 	, AngleX(0)
 	, AngleY(0)
-	, Distance(0)
 	, RendersGuide(false)
 
 	, IsCullingShown(false)
@@ -574,11 +571,8 @@ ViewerParamater Native::GetViewerParamater()
 
 	paramater.ClippingStart = viewPointCtrl_->ClippingStart;
 	paramater.ClippingEnd = viewPointCtrl_->ClippingEnd;
-	paramater.IsPerspective = viewPointCtrl_->GetProjectionType() == ::Effekseer::Tool::ProjectionType::Perspective;
-	paramater.IsOrthographic = viewPointCtrl_->GetProjectionType() == ::Effekseer::Tool::ProjectionType::Orthographic;
 	paramater.AngleX = viewPointCtrl_->angleX_;
 	paramater.AngleY = viewPointCtrl_->angleY_;
-	paramater.Distance = viewPointCtrl_->GetDistance();
 	paramater.RateOfMagnification = viewPointCtrl_->RateOfMagnification;
 
 	paramater.RendersGuide = mainScreen_->RendersGuide;
@@ -597,19 +591,8 @@ void Native::SetViewerParamater(ViewerParamater& paramater)
 
 	viewPointCtrl_->RateOfMagnification = paramater.RateOfMagnification;
 
-	if (paramater.IsPerspective)
-	{
-		viewPointCtrl_->SetProjectionType(::Effekseer::Tool::ProjectionType::Perspective);
-	}
-
-	if (paramater.IsOrthographic)
-	{
-		viewPointCtrl_->SetProjectionType(::Effekseer::Tool::ProjectionType::Orthographic);
-	}
-
 	viewPointCtrl_->angleX_ = paramater.AngleX;
 	viewPointCtrl_->angleY_ = paramater.AngleY;
-	viewPointCtrl_->SetDistance(paramater.Distance);
 
 	mainScreen_->GuideWidth = paramater.GuideWidth;
 	mainScreen_->GuideHeight = paramater.GuideHeight;

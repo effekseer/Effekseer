@@ -854,8 +854,7 @@ namespace Effekseer.GUI
 				var param = Manager.Viewer.GetViewerParamater();
 				ViewPointController.SetFocusPosition(new swig.Vector3F(0, 0, 0));
 				param.ViewerMode = (swig.ViewMode)viewerMode;
-				param.IsPerspective = true;
-				param.IsOrthographic = false;
+				ViewPointController.SetProjectionType(swig.ProjectionType.Perspective);
 				param.AngleX = 30.0f;
 				param.AngleY = -30.0f;
 				Manager.Viewer.SetViewerParamater(param);
@@ -868,8 +867,7 @@ namespace Effekseer.GUI
 				var param = Manager.Viewer.GetViewerParamater();
 				ViewPointController.SetFocusPosition(new swig.Vector3F(0, 0, 0));
 				param.ViewerMode = (swig.ViewMode)viewerMode;
-				param.IsPerspective = false;
-				param.IsOrthographic = true;
+				ViewPointController.SetProjectionType(swig.ProjectionType.Orthographic);
 				param.AngleX = 0.0f;
 				param.AngleY = 0.0f;
 				Manager.Viewer.SetViewerParamater(param);

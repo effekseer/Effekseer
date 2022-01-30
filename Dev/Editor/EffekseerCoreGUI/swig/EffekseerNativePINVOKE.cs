@@ -690,18 +690,6 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_RateOfMagnification_get___")]
   public static extern float ViewerParamater_RateOfMagnification_get(global::System.Runtime.InteropServices.HandleRef jarg1);
 
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_IsPerspective_set___")]
-  public static extern void ViewerParamater_IsPerspective_set(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_IsPerspective_get___")]
-  public static extern bool ViewerParamater_IsPerspective_get(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_IsOrthographic_set___")]
-  public static extern void ViewerParamater_IsOrthographic_set(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_IsOrthographic_get___")]
-  public static extern bool ViewerParamater_IsOrthographic_get(global::System.Runtime.InteropServices.HandleRef jarg1);
-
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_AngleX_set___")]
   public static extern void ViewerParamater_AngleX_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
 
@@ -713,12 +701,6 @@ class EffekseerNativePINVOKE {
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_AngleY_get___")]
   public static extern float ViewerParamater_AngleY_get(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_Distance_set___")]
-  public static extern void ViewerParamater_Distance_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_Distance_get___")]
-  public static extern float ViewerParamater_Distance_get(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_ClippingStart_set___")]
   public static extern void ViewerParamater_ClippingStart_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);

@@ -74,26 +74,6 @@ public class ViewerParamater : global::System.IDisposable {
     } 
   }
 
-  public bool IsPerspective {
-    set {
-      EffekseerNativePINVOKE.ViewerParamater_IsPerspective_set(swigCPtr, value);
-    } 
-    get {
-      bool ret = EffekseerNativePINVOKE.ViewerParamater_IsPerspective_get(swigCPtr);
-      return ret;
-    } 
-  }
-
-  public bool IsOrthographic {
-    set {
-      EffekseerNativePINVOKE.ViewerParamater_IsOrthographic_set(swigCPtr, value);
-    } 
-    get {
-      bool ret = EffekseerNativePINVOKE.ViewerParamater_IsOrthographic_get(swigCPtr);
-      return ret;
-    } 
-  }
-
   public float AngleX {
     set {
       EffekseerNativePINVOKE.ViewerParamater_AngleX_set(swigCPtr, value);
@@ -110,16 +90,6 @@ public class ViewerParamater : global::System.IDisposable {
     } 
     get {
       float ret = EffekseerNativePINVOKE.ViewerParamater_AngleY_get(swigCPtr);
-      return ret;
-    } 
-  }
-
-  public float Distance {
-    set {
-      EffekseerNativePINVOKE.ViewerParamater_Distance_set(swigCPtr, value);
-    } 
-    get {
-      float ret = EffekseerNativePINVOKE.ViewerParamater_Distance_get(swigCPtr);
       return ret;
     } 
   }

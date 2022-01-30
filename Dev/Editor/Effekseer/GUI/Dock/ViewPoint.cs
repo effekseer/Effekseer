@@ -52,8 +52,10 @@ namespace Effekseer.GUI.Dock
 			{
 			}
 
+			var ctrl = Manager.Viewer.ViewPointController;
+
 			var viewerParameter = Manager.Viewer.GetViewerParamater();
-			var focusPosition = Manager.Viewer.ViewPointController.GetFocusPosition();
+			var focusPosition = ctrl.GetFocusPosition();
 			var f = new float[] { focusPosition.X, focusPosition.Y, focusPosition.Z };
 
 			var rx = viewerParameter.AngleX;
@@ -62,7 +64,7 @@ namespace Effekseer.GUI.Dock
 			var rx_ = new float[] { rx };
 			var ry_ = new float[] { ry };
 
-			var d = new float[] { viewerParameter.Distance };
+			var d = new float[] { ctrl.GetDistance() };
 			var s = new float[] { viewerParameter.RateOfMagnification };
 
             var cs = new float[] { viewerParameter.ClippingStart };
@@ -72,7 +74,7 @@ namespace Effekseer.GUI.Dock
 
             if (Manager.NativeManager.DragFloat3(Resources.GetString("Viewpoint") + id_f, f))
 			{
-				Manager.Viewer.ViewPointController.SetFocusPosition(new swig.Vector3F(f[0], f[1], f[2]));
+				ctrl.SetFocusPosition(new swig.Vector3F(f[0], f[1], f[2]));
 			}
 
 			if (Manager.NativeManager.DragFloat(Resources.GetString("XRotation") + id_rx, rx_))
@@ -89,8 +91,7 @@ namespace Effekseer.GUI.Dock
 
 			if (Manager.NativeManager.DragFloat(Resources.GetString("PoVDistance") + id_d, d))
 			{
-				viewerParameter.Distance = d[0];
-				dirty = true;
+				ctrl.SetDistance(d[0]);
 			}
 
 			if (Manager.NativeManager.DragFloat(Resources.GetString("Zoom") + id_s, s))
@@ -111,22 +112,18 @@ namespace Effekseer.GUI.Dock
 				dirty = true;
 			}
 
-			if (Manager.NativeManager.BeginCombo(Resources.GetString("CameraMode") + id_t, viewTypes[viewerParameter.IsPerspective ? 0 : 1], swig.ComboFlags.None))
+			if (Manager.NativeManager.BeginCombo(Resources.GetString("CameraMode") + id_t, viewTypes[ctrl.GetProjectionType() == swig.ProjectionType.Perspective ? 0 : 1], swig.ComboFlags.None))
 			{
 				if(Manager.NativeManager.Selectable(viewTypes[0]))
 				{
-					viewerParameter.IsPerspective = true;
-					viewerParameter.IsOrthographic = false;
+					ctrl.SetProjectionType(swig.ProjectionType.Perspective);
 					Manager.NativeManager.SetItemDefaultFocus();
-					dirty = true;
 				}
 
 				if (Manager.NativeManager.Selectable(viewTypes[1]))
 				{
-					viewerParameter.IsOrthographic = true;
-					viewerParameter.IsPerspective = false;
+					ctrl.SetProjectionType(swig.ProjectionType.Orthographic);
 					Manager.NativeManager.SetItemDefaultFocus();
-					dirty = true;
 				}
 
 				Manager.NativeManager.EndCombo();
@@ -147,18 +144,18 @@ namespace Effekseer.GUI.Dock
                         filename += "." + filter;
                     }
 
-					var focusPositionSaved = Manager.Viewer.ViewPointController.GetFocusPosition();
+					var focusPositionSaved = ctrl.GetFocusPosition();
 
 					Data.ViewPoint viewPoint = new Data.ViewPoint();
                     viewPoint.FocusX = focusPositionSaved.X;
                     viewPoint.FocusY = focusPositionSaved.Y;
                     viewPoint.FocusZ = focusPositionSaved.Z;
-                    viewPoint.Distance = viewerParameter.Distance;
-                    viewPoint.AngleX = viewerParameter.AngleX;
+					viewPoint.Distance = ctrl.GetDistance();
+					viewPoint.AngleX = viewerParameter.AngleX;
                     viewPoint.AngleY = viewerParameter.AngleY;
                     viewPoint.ClippingStart = viewerParameter.ClippingStart;
                     viewPoint.ClippingEnd = viewerParameter.ClippingEnd;
-                    viewPoint.CameraMode = viewerParameter.IsPerspective ? 0 : 1;
+                    viewPoint.CameraMode = ctrl.GetProjectionType() == swig.ProjectionType.Perspective ? 0 : 1;
 					viewPoint.RateOfMagnification = viewerParameter.RateOfMagnification;
                     viewPoint.Save(filename);
                 }
@@ -175,15 +172,13 @@ namespace Effekseer.GUI.Dock
                     var viewPoint = Data.ViewPoint.Load(result);
                     if(viewPoint != null)
                     {
-						Manager.Viewer.ViewPointController.SetFocusPosition(new swig.Vector3F(viewPoint.FocusX, viewPoint.FocusY, viewPoint.FocusZ));
-
-                        viewerParameter.Distance = viewPoint.Distance;
+						ctrl.SetFocusPosition(new swig.Vector3F(viewPoint.FocusX, viewPoint.FocusY, viewPoint.FocusZ));
+						ctrl.SetDistance(viewPoint.Distance);
+						ctrl.SetProjectionType(viewPoint.CameraMode == 0 ? swig.ProjectionType.Perspective : swig.ProjectionType.Orthographic);
                         viewerParameter.AngleX = viewPoint.AngleX;
                         viewerParameter.AngleY = viewPoint.AngleY;
                         viewerParameter.ClippingStart = viewPoint.ClippingStart;
                         viewerParameter.ClippingEnd = viewPoint.ClippingEnd;
-                        viewerParameter.IsPerspective = viewPoint.CameraMode == 0;
-						viewerParameter.IsOrthographic = !viewerParameter.IsPerspective;
 						viewerParameter.RateOfMagnification = viewPoint.RateOfMagnification;
 					}
                 }

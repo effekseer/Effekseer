@@ -41,11 +41,8 @@ public:
 	int32_t GuideWidth;
 	int32_t GuideHeight;
 	float RateOfMagnification;
-	bool IsPerspective;
-	bool IsOrthographic;
 	float AngleX;
 	float AngleY;
-	float Distance;
 	float ClippingStart;
 	float ClippingEnd;
 	bool RendersGuide;

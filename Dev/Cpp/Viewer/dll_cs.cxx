@@ -2367,50 +2367,6 @@ SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_RateOfMagnifi
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_IsPerspective_set___(void * jarg1, unsigned int jarg2) {
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  bool arg2 ;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  arg2 = jarg2 ? true : false; 
-  if (arg1) (arg1)->IsPerspective = arg2;
-}
-
-
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_IsPerspective_get___(void * jarg1) {
-  unsigned int jresult ;
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  bool result;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  result = (bool) ((arg1)->IsPerspective);
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_IsOrthographic_set___(void * jarg1, unsigned int jarg2) {
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  bool arg2 ;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  arg2 = jarg2 ? true : false; 
-  if (arg1) (arg1)->IsOrthographic = arg2;
-}
-
-
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_IsOrthographic_get___(void * jarg1) {
-  unsigned int jresult ;
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  bool result;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  result = (bool) ((arg1)->IsOrthographic);
-  jresult = result; 
-  return jresult;
-}
-
-
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_AngleX_set___(void * jarg1, float jarg2) {
   ViewerParamater *arg1 = (ViewerParamater *) 0 ;
   float arg2 ;
@@ -2450,28 +2406,6 @@ SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_AngleY_get___
   
   arg1 = (ViewerParamater *)jarg1; 
   result = (float) ((arg1)->AngleY);
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_Distance_set___(void * jarg1, float jarg2) {
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  float arg2 ;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  arg2 = (float)jarg2; 
-  if (arg1) (arg1)->Distance = arg2;
-}
-
-
-SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_Distance_get___(void * jarg1) {
-  float jresult ;
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  float result;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  result = (float) ((arg1)->Distance);
   jresult = result; 
   return jresult;
 }
