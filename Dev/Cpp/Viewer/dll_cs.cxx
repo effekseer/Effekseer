@@ -381,6 +381,8 @@ namespace Swig {
 #include "efk.Base.h"
 #include "Recorder/EffectRecorder.h"
 #include "3D/ViewPointController.h"
+#include "3D/Effect.h"
+#include "3D/EffectFActory.h"
 #include "dll.h"
 #include "GUI/efk.GUIManager.h"
 #include "GUI/efk.FileDialog.h"
@@ -2469,6 +2471,109 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_ViewPointController___(
 }
 
 
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Effect_GetNodeLifeTimes___(void * jarg1, int jarg2, int * jarg3, int * jarg4) {
+  unsigned int jresult ;
+  Effekseer::Tool::Effect *arg1 = (Effekseer::Tool::Effect *) 0 ;
+  int32_t arg2 ;
+  int32_t *arg3 = (int32_t *) 0 ;
+  int32_t *arg4 = (int32_t *) 0 ;
+  std::shared_ptr< Effekseer::Tool::Effect > *smartarg1 = 0 ;
+  bool result;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::Tool::Effect > *)jarg1;
+  arg1 = (Effekseer::Tool::Effect *)(smartarg1 ? smartarg1->get() : 0); 
+  arg2 = (int32_t)jarg2; 
+  arg3 = (int32_t *)jarg3; 
+  arg4 = (int32_t *)jarg4; 
+  result = (bool)(arg1)->GetNodeLifeTimes(arg2,arg3,arg4);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_Effect___() {
+  void * jresult ;
+  Effekseer::Tool::Effect *result = 0 ;
+  
+  result = (Effekseer::Tool::Effect *)new Effekseer::Tool::Effect();
+  
+  jresult = result ? new std::shared_ptr<  Effekseer::Tool::Effect >(result SWIG_NO_NULL_DELETER_1) : 0;
+  
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_Effect___(void * jarg1) {
+  Effekseer::Tool::Effect *arg1 = (Effekseer::Tool::Effect *) 0 ;
+  std::shared_ptr< Effekseer::Tool::Effect > *smartarg1 = 0 ;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::Tool::Effect > *)jarg1;
+  arg1 = (Effekseer::Tool::Effect *)(smartarg1 ? smartarg1->get() : 0); 
+  (void)arg1; delete smartarg1;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_EffectFactory___(void * jarg1) {
+  void * jresult ;
+  Native *arg1 = (Native *) 0 ;
+  Effekseer::Tool::EffectFactory *result = 0 ;
+  
+  arg1 = (Native *)jarg1; 
+  result = (Effekseer::Tool::EffectFactory *)new Effekseer::Tool::EffectFactory(arg1);
+  
+  jresult = result ? new std::shared_ptr<  Effekseer::Tool::EffectFactory >(result SWIG_NO_NULL_DELETER_1) : 0;
+  
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_EffectFactory_LoadEffect___(void * jarg1, void * jarg2, int jarg3, void * jarg4) {
+  void * jresult ;
+  Effekseer::Tool::EffectFactory *arg1 = (Effekseer::Tool::EffectFactory *) 0 ;
+  void *arg2 = (void *) 0 ;
+  int arg3 ;
+  char16_t *arg4 = (char16_t *) 0 ;
+  std::shared_ptr< Effekseer::Tool::EffectFactory > *smartarg1 = 0 ;
+  std::shared_ptr< Effekseer::Tool::Effect > result;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::Tool::EffectFactory > *)jarg1;
+  arg1 = (Effekseer::Tool::EffectFactory *)(smartarg1 ? smartarg1->get() : 0); 
+  {
+    arg2 = jarg2; 
+  }
+  arg3 = (int)jarg3; 
+  arg4 = (char16_t *)jarg4; 
+  result = (arg1)->LoadEffect((void const *)arg2,arg3,(char16_t const *)arg4);
+  jresult = result ? new std::shared_ptr< Effekseer::Tool::Effect >(result) : 0; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectFactory_ReloadAllResources___(void * jarg1) {
+  Effekseer::Tool::EffectFactory *arg1 = (Effekseer::Tool::EffectFactory *) 0 ;
+  std::shared_ptr< Effekseer::Tool::EffectFactory > *smartarg1 = 0 ;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::Tool::EffectFactory > *)jarg1;
+  arg1 = (Effekseer::Tool::EffectFactory *)(smartarg1 ? smartarg1->get() : 0); 
+  (arg1)->ReloadAllResources();
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_EffectFactory___(void * jarg1) {
+  Effekseer::Tool::EffectFactory *arg1 = (Effekseer::Tool::EffectFactory *) 0 ;
+  std::shared_ptr< Effekseer::Tool::EffectFactory > *smartarg1 = 0 ;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::Tool::EffectFactory > *)jarg1;
+  arg1 = (Effekseer::Tool::EffectFactory *)(smartarg1 ? smartarg1->get() : 0); 
+  (void)arg1; delete smartarg1;
+}
+
+
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_GuideWidth_set___(void * jarg1, int jarg2) {
   ViewerParamater *arg1 = (ViewerParamater *) 0 ;
   int32_t arg2 ;
@@ -2815,21 +2920,15 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_DestroyWindow__
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_LoadEffect___(void * jarg1, void * jarg2, int jarg3, void * jarg4) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_LoadEffect___(void * jarg1, void * jarg2) {
   unsigned int jresult ;
   Native *arg1 = (Native *) 0 ;
-  void *arg2 = (void *) 0 ;
-  int arg3 ;
-  char16_t *arg4 = (char16_t *) 0 ;
+  std::shared_ptr< Effekseer::Tool::Effect > arg2 ;
   bool result;
   
   arg1 = (Native *)jarg1; 
-  {
-    arg2 = jarg2; 
-  }
-  arg3 = (int)jarg3; 
-  arg4 = (char16_t *)jarg4; 
-  result = (bool)(arg1)->LoadEffect(arg2,arg3,(char16_t const *)arg4);
+  if (jarg2) arg2 = *(std::shared_ptr< Effekseer::Tool::Effect > *)jarg2; 
+  result = (bool)(arg1)->LoadEffect(arg2);
   jresult = result; 
   return jresult;
 }
@@ -3368,24 +3467,6 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_GetIsUpdateMate
   
   arg1 = (Native *)jarg1; 
   result = (bool)(arg1)->GetIsUpdateMaterialRequiredAndReset();
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_GetNodeLifeTimes___(void * jarg1, int jarg2, int * jarg3, int * jarg4) {
-  unsigned int jresult ;
-  Native *arg1 = (Native *) 0 ;
-  int32_t arg2 ;
-  int32_t *arg3 = (int32_t *) 0 ;
-  int32_t *arg4 = (int32_t *) 0 ;
-  bool result;
-  
-  arg1 = (Native *)jarg1; 
-  arg2 = (int32_t)jarg2; 
-  arg3 = (int32_t *)jarg3; 
-  arg4 = (int32_t *)jarg4; 
-  result = (bool)(arg1)->GetNodeLifeTimes(arg2,arg3,arg4);
   jresult = result; 
   return jresult;
 }

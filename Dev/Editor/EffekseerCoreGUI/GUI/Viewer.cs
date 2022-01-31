@@ -5,9 +5,12 @@ using System.Text;
 
 namespace Effekseer.GUI
 {
-	public class Viewer
+	public class Viewer : IDisposable
 	{
 		public swig.Native native = null;
+		public swig.Effect CurrentEffect { get; private set; }
+		swig.EffectFactory effectFactory;
+
 		public swig.ViewPointController ViewPointController = null;
 		string backgroundImagePath = string.Empty;
 		bool isViewerShown = false;
@@ -57,27 +60,27 @@ namespace Effekseer.GUI
 			this.native = native;
 		}
 
+		public void Dispose()
+		{
+			if(CurrentEffect != null)
+			{
+				CurrentEffect.Dispose();
+				CurrentEffect = null;
+			}
+
+			if (effectFactory != null)
+			{
+				effectFactory.Dispose();
+				effectFactory = null;
+			}
+		}
+
 		public bool ResizeWindow(int width, int height)
 		{
 			// Hack for old GUI
 			if (!isViewerShown) return true;
 
 			return native.ResizeWindow(width, height);
-		}
-
-		public bool LoadEffect(IntPtr data, int size, string path)
-		{
-			return native.LoadEffect(data, size, path);
-		}
-
-		public bool RemoveEffect()
-		{
-			return native.RemoveEffect();
-		}
-
-		public bool PlayEffect()
-		{
-			return native.PlayEffect();
 		}
 
 		public bool StepEffectFrame(int frame)
@@ -110,7 +113,7 @@ namespace Effekseer.GUI
 		{
 			StopViewer();
 
-			RemoveEffect();
+			native.RemoveEffect();
 
 			Export();
 
@@ -197,11 +200,6 @@ namespace Effekseer.GUI
 		public void SetSoundVolume(float volume)
 		{
 			native.SetSoundVolume(volume);
-		}
-
-		public void InvalidateTextureCache()
-		{
-			native.InvalidateTextureCache();
 		}
 
 		public void SetLotation(float x, float y, float z)
@@ -452,7 +450,9 @@ namespace Effekseer.GUI
 			Tonemap_OnChanged(null, null);
 			Core.Environment.PostEffect.TonemapSelector.OnChanged += Tonemap_OnChanged;
 			Core.Environment.PostEffect.TonemapReinhard.Exposure.OnChanged += Tonemap_OnChanged;
-			
+
+			effectFactory = new swig.EffectFactory(native);
+
 			return true;
 		}
 
@@ -730,10 +730,19 @@ namespace Effekseer.GUI
 
 			var binaryExporter = new Binary.Exporter();
 			var data = binaryExporter.Export(Core.Root, Core.Option.Magnification);
+			var path = Utils.Misc.BackSlashToSlash(Core.Root.GetFullPath());
 			fixed (byte* p = &data[0])
 			{
-				// TODO refactor replace
-				LoadEffect(new IntPtr(p), data.Length, Core.Root.GetFullPath().Replace('\\', '/'));
+				var newEffect = effectFactory.LoadEffect(new IntPtr(p), data.Length, path);
+
+				native.LoadEffect(newEffect);
+
+				if (CurrentEffect != null)
+				{
+					CurrentEffect.Dispose();
+				}
+
+				CurrentEffect = newEffect;
 			}
 		}
 
@@ -743,7 +752,7 @@ namespace Effekseer.GUI
 
 			if (IsChanged)
 			{
-				RemoveEffect();
+				native.RemoveEffect();
 
 				Export();
 
@@ -752,7 +761,7 @@ namespace Effekseer.GUI
 
 			random_seed = rand.Next(0, 0xffff);
 			SetRandomSeed(random_seed);
-			PlayEffect();
+			native.PlayEffect();
 			IsPlaying = true;
 
 			if (Core.StartFrame > 0)
@@ -774,12 +783,12 @@ namespace Effekseer.GUI
 
 			native.StopEffect();
 
-			RemoveEffect();
+			native.RemoveEffect();
 
 			Export();
 
 			SetRandomSeed(random_seed);
-			PlayEffect();
+			native.PlayEffect();
 			StepEffectFrame((int)Current);
 		}
 
@@ -808,7 +817,7 @@ namespace Effekseer.GUI
 					{
 						native.StopEffect();
 						SetRandomSeed(random_seed);
-						PlayEffect();
+						native.PlayEffect();
 						StepEffectFrame((int)new_frame);
 					}
 					else
@@ -825,7 +834,7 @@ namespace Effekseer.GUI
 					{
 						native.StopEffect();
 
-						PlayEffect();
+						native.PlayEffect();
 						StepEffectFrame((int)new_frame);
 					}
 					else

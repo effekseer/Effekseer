@@ -75,8 +75,8 @@ public class Native : global::System.IDisposable {
     return ret;
   }
 
-  public bool LoadEffect(System.IntPtr data, int size, string path) {
-    bool ret = EffekseerNativePINVOKE.Native_LoadEffect(swigCPtr, data, size, path);
+  public bool LoadEffect(Effect effect) {
+    bool ret = EffekseerNativePINVOKE.Native_LoadEffect(swigCPtr, Effect.getCPtr(effect));
     return ret;
   }
 
@@ -265,11 +265,6 @@ public class Native : global::System.IDisposable {
 
   public bool GetIsUpdateMaterialRequiredAndReset() {
     bool ret = EffekseerNativePINVOKE.Native_GetIsUpdateMaterialRequiredAndReset(swigCPtr);
-    return ret;
-  }
-
-  public bool GetNodeLifeTimes(int nodeId, ref int frameMin, ref int frameMax) {
-    bool ret = EffekseerNativePINVOKE.Native_GetNodeLifeTimes(swigCPtr, nodeId, ref frameMin, ref frameMax);
     return ret;
   }
 

@@ -119,7 +119,7 @@ namespace Effekseer.GUI.Dock
 
 					int frameStart = 0;
 					int frameLast = 0;
-					if (!Manager.Viewer.native.GetNodeLifeTimes(node.EditorNodeId, ref frameStart, ref frameLast))
+					if (Manager.Viewer.CurrentEffect != null && !Manager.Viewer.CurrentEffect.GetNodeLifeTimes(node.EditorNodeId, ref frameStart, ref frameLast))
 					{
 						// エディタ起動直後など、Native 側のインスタンスが作られていないことがある。
 						// その場合は空のタイムラインにしておく。
