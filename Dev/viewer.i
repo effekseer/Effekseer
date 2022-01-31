@@ -5,7 +5,7 @@
 #include "Recorder/EffectRecorder.h"
 #include "3D/ViewPointController.h"
 #include "3D/Effect.h"
-#include "3D/EffectFActory.h"
+#include "3D/EffectFactory.h"
 #include "dll.h"
 #include "GUI/efk.GUIManager.h"
 #include "GUI/efk.FileDialog.h"
