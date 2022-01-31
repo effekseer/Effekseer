@@ -29,40 +29,7 @@
 #include "GUI/ReloadableImage.h"
 #include "GUI/RenderImage.h"
 
-class EditorEffectNodeUserData : public ::Effekseer::RenderingUserData
-{
-public:
-	// Identifier to use when referring to a node from the editor.
-	int32_t editorNodeId_ = 0;
-
-	static ::Effekseer::EffectNodeImplemented* FindNodeByEditorNodeId(::Effekseer::EffectImplemented* effect, int32_t editorNodeId)
-	{
-		auto* root = effect->GetRoot();
-		if (!root)
-			return nullptr;
-
-		::Effekseer::EffectNodeImplemented* result = nullptr;
-
-		const auto& visitor = [&](::Effekseer::EffectNodeImplemented* node) -> bool {
-			const auto userData = node->GetRenderingUserData();
-			if (userData != nullptr)
-			{
-				const auto* editorUserData = static_cast<EditorEffectNodeUserData*>(userData.Get());
-
-				if (editorUserData->editorNodeId_ == editorNodeId)
-				{
-					result = node;
-					return false;
-				}
-			}
-			return true;
-		};
-
-		static_cast<::Effekseer::EffectNodeImplemented*>(root)->Traverse(visitor);
-
-		return result;
-	}
-};
+#include "3D/Effect.h"
 
 ViewerParamater::ViewerParamater()
 	: GuideWidth(0)
@@ -424,38 +391,13 @@ bool Native::DestroyWindow()
 	return true;
 }
 
-bool Native::LoadEffect(void* pData, int size, const char16_t* Path)
+bool Native::LoadEffect(std::shared_ptr<Effekseer::Tool::Effect> effect)
 {
 	mainScreen_->SetEffect(nullptr);
 
-	const auto path = Effekseer::PathHelper::Normalize(std::u16string(Path));
-	auto pathElements = Effekseer::StringHelper::Split(path, u'/');
-	if (pathElements.size() > 0)
-	{
-		pathElements.pop_back();
-	}
-	const auto dirPath = Effekseer::StringHelper::Join(pathElements, std::u16string(u"/"));
-
-	auto effect = Effekseer::Effect::Create(setting_, pData, size, 1.0f, dirPath.c_str());
-	assert(effect != nullptr);
-
 	if (mainScreen_ != nullptr)
 	{
-		mainScreen_->SetEffect(effect);
-	}
-
-	// Create UserData while assigning NodeId.
-	{
-		int nextEditorNodeId = 1;
-		const auto& visitor = [&](::Effekseer::EffectNodeImplemented* node) {
-			auto userData = ::Effekseer::MakeRefPtr<EditorEffectNodeUserData>();
-			userData->editorNodeId_ = nextEditorNodeId;
-			node->SetRenderingUserData(userData);
-			nextEditorNodeId++;
-			return true;
-		};
-
-		static_cast<::Effekseer::EffectNodeImplemented*>(mainScreen_->GetEffect()->GetRoot())->Traverse(visitor);
+		mainScreen_->SetEffect(effect->GetEffect());
 	}
 
 	return true;
@@ -844,26 +786,6 @@ bool Native::GetIsUpdateMaterialRequiredAndReset()
 	auto ret = isUpdateMaterialRequired_;
 	isUpdateMaterialRequired_ = false;
 	return ret;
-}
-
-bool Native::GetNodeLifeTimes(int32_t nodeId, int32_t* frameMin, int32_t* frameMax)
-{
-	if (mainScreen_->GetEffect() == nullptr)
-		return false;
-
-	if (auto* effect = dynamic_cast<Effekseer::EffectImplemented*>(mainScreen_->GetEffect().Get()))
-	{
-		if (auto* node = EditorEffectNodeUserData::FindNodeByEditorNodeId(effect, nodeId))
-		{
-			Effekseer::EffectInstanceTerm term;
-			auto cterm = node->CalculateInstanceTerm(term);
-			*frameMin = cterm.FirstInstanceStartMin;
-			*frameMax = cterm.LastInstanceEndMax;
-			return true;
-		}
-	}
-
-	return false;
 }
 
 std::shared_ptr<Effekseer::Tool::ReloadableImage> Native::CreateReloadableImage(const char16_t* path)

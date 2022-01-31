@@ -26,6 +26,7 @@ namespace Tool
 class ReloadableImage;
 class RenderImage;
 class EffectRecorder;
+class Effect;
 } // namespace Tool
 } // namespace Effekseer
 
@@ -135,7 +136,7 @@ private:
 
 	std::shared_ptr<efk::Graphics> graphics_ = nullptr;
 
-	Effekseer::RefPtr<Effekseer::Setting> setting_;
+	Effekseer::SettingRef setting_;
 
 	Effekseer::RefPtr<TextureLoader> textureLoader_;
 
@@ -168,7 +169,7 @@ public:
 
 	bool DestroyWindow();
 
-	bool LoadEffect(void* data, int size, const char16_t* path);
+	bool LoadEffect(std::shared_ptr<Effekseer::Tool::Effect> effect);
 
 	bool RemoveEffect();
 
@@ -252,8 +253,6 @@ public:
 
 	bool GetIsUpdateMaterialRequiredAndReset();
 
-	bool GetNodeLifeTimes(int32_t nodeId, int32_t* frameMin, int32_t* frameMax);
-
 	std::shared_ptr<Effekseer::Tool::ReloadableImage> CreateReloadableImage(const char16_t* path);
 
 	std::shared_ptr<Effekseer::Tool::RenderImage> CreateRenderImage();
@@ -262,5 +261,11 @@ public:
 
 #if !SWIG
 	const EffekseerRenderer::RendererRef& GetRenderer();
+
+	Effekseer::SettingRef GetSetting()
+	{
+		return setting_;
+	}
+
 #endif
 };

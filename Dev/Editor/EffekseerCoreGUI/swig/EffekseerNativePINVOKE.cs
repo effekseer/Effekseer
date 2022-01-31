@@ -708,6 +708,27 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_ViewPointController___")]
   public static extern void delete_ViewPointController(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Effect_GetNodeLifeTimes___")]
+  public static extern bool Effect_GetNodeLifeTimes(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, ref int jarg3, ref int jarg4);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_Effect___")]
+  public static extern global::System.IntPtr new_Effect();
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_Effect___")]
+  public static extern void delete_Effect(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_EffectFactory___")]
+  public static extern global::System.IntPtr new_EffectFactory(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectFactory_LoadEffect___")]
+  public static extern global::System.IntPtr EffectFactory_LoadEffect(global::System.Runtime.InteropServices.HandleRef jarg1, System.IntPtr jarg2, int jarg3, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg4);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectFactory_ReloadAllResources___")]
+  public static extern void EffectFactory_ReloadAllResources(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_EffectFactory___")]
+  public static extern void delete_EffectFactory(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_GuideWidth_set___")]
   public static extern void ViewerParamater_GuideWidth_set(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
 
@@ -799,7 +820,7 @@ class EffekseerNativePINVOKE {
   public static extern bool Native_DestroyWindow(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_LoadEffect___")]
-  public static extern bool Native_LoadEffect(global::System.Runtime.InteropServices.HandleRef jarg1, System.IntPtr jarg2, int jarg3, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg4);
+  public static extern bool Native_LoadEffect(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_RemoveEffect___")]
   public static extern bool Native_RemoveEffect(global::System.Runtime.InteropServices.HandleRef jarg1);
@@ -923,9 +944,6 @@ class EffekseerNativePINVOKE {
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_GetIsUpdateMaterialRequiredAndReset___")]
   public static extern bool Native_GetIsUpdateMaterialRequiredAndReset(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_GetNodeLifeTimes___")]
-  public static extern bool Native_GetNodeLifeTimes(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, ref int jarg3, ref int jarg4);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_CreateReloadableImage___")]
   public static extern global::System.IntPtr Native_CreateReloadableImage(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2);

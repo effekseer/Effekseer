@@ -4,6 +4,8 @@
 #include "efk.Base.h"
 #include "Recorder/EffectRecorder.h"
 #include "3D/ViewPointController.h"
+#include "3D/Effect.h"
+#include "3D/EffectFactory.h"
 #include "dll.h"
 #include "GUI/efk.GUIManager.h"
 #include "GUI/efk.FileDialog.h"
@@ -103,6 +105,8 @@ class"
 %shared_ptr(Effekseer::Tool::RenderImage);
 %shared_ptr(Effekseer::Tool::ReloadableImage);
 %shared_ptr(Effekseer::Tool::ViewPointController);
+%shared_ptr(Effekseer::Tool::Effect);
+%shared_ptr(Effekseer::Tool::EffectFactory);
 
 // Timeline
 %apply int *INOUT { int* frameMin }
@@ -123,6 +127,8 @@ class"
 %include "Cpp/Viewer/Math/Vector2I.h"
 %include "Cpp/Viewer/Math/Vector3F.h"
 %include "Cpp/Viewer/3D/ViewPointController.h"
+%include "Cpp/Viewer/3D/Effect.h"
+%include "Cpp/Viewer/3D/EffectFactory.h"
 
 %include "Cpp/Viewer/dll.h"
 %include "Cpp/Viewer/GUI/efk.GUIManager.h"

@@ -440,6 +440,8 @@ namespace Effekseer.GUI
 			RecentFiles.SaveRecentConfig();
 
 			Viewer.HideViewer();
+			Viewer.Dispose();
+			Viewer = null;
 
 			if(MainViewImage != null)
 			{
