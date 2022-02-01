@@ -138,10 +138,10 @@ struct DepthReconstructionParameter
 };
 
 ::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice,
-												  ::Effekseer::FileInterface* fileInterface = nullptr,
+												  ::Effekseer::FileInterfaceRef fileInterface = nullptr,
 												  ::Effekseer::ColorSpaceType colorSpaceType = ::Effekseer::ColorSpaceType::Gamma);
 
-::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice, ::Effekseer::FileInterface* fileInterface = nullptr);
+::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice, ::Effekseer::FileInterfaceRef fileInterface = nullptr);
 
 class Renderer : public ::Effekseer::IReference
 {
@@ -294,12 +294,12 @@ public:
 	/**
 		@brief	標準のテクスチャ読込クラスを生成する。
 	*/
-	virtual ::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::FileInterface* fileInterface = nullptr) = 0;
+	virtual ::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::FileInterfaceRef fileInterface = nullptr) = 0;
 
 	/**
 		@brief	標準のモデル読込クラスを生成する。
 	*/
-	virtual ::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::FileInterface* fileInterface = nullptr) = 0;
+	virtual ::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::FileInterfaceRef fileInterface = nullptr) = 0;
 
 	/**
 	@brief
@@ -307,7 +307,7 @@ public:
 	\~japanese 標準のマテリアル読込クラスを生成する。
 
 	*/
-	virtual ::Effekseer::MaterialLoaderRef CreateMaterialLoader(::Effekseer::FileInterface* fileInterface = nullptr) = 0;
+	virtual ::Effekseer::MaterialLoaderRef CreateMaterialLoader(::Effekseer::FileInterfaceRef fileInterface = nullptr) = 0;
 
 	/**
 		@brief	レンダーステートを強制的にリセットする。

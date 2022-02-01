@@ -15,8 +15,7 @@ namespace EffekseerRenderer
 class TextureLoader : public ::Effekseer::TextureLoader
 {
 private:
-	::Effekseer::FileInterface* m_fileInterface;
-	::Effekseer::DefaultFileInterface m_defaultFileInterface;
+	::Effekseer::FileInterfaceRef m_fileInterface;
 	::Effekseer::ColorSpaceType colorSpaceType_;
 	::Effekseer::Backend::GraphicsDevice* graphicsDevice_ = nullptr;
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
@@ -27,7 +26,7 @@ private:
 
 public:
 	TextureLoader(::Effekseer::Backend::GraphicsDevice* graphicsDevice,
-				  ::Effekseer::FileInterface* fileInterface = nullptr,
+				  ::Effekseer::FileInterfaceRef fileInterface = nullptr,
 				  ::Effekseer::ColorSpaceType colorSpaceType = ::Effekseer::ColorSpaceType::Gamma);
 	virtual ~TextureLoader();
 

@@ -64,39 +64,8 @@ namespace EffekseerRendererGL
 	return g;
 }
 
-::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::FileInterface* fileInterface, ::Effekseer::ColorSpaceType colorSpaceType)
-{
-#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	auto gd = new Backend::GraphicsDevice(OpenGLDeviceType::OpenGL2);
-	auto ret = ::Effekseer::TextureLoaderRef(new EffekseerRenderer::TextureLoader(gd, fileInterface));
-	ES_SAFE_RELEASE(gd);
-	return ret;
-#else
-	return nullptr;
-#endif
-}
-
-::Effekseer::TextureLoaderRef CreateTextureLoader(
-	Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
-	::Effekseer::FileInterface* fileInterface,
-	::Effekseer::ColorSpaceType colorSpaceType)
-{
-#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return ::Effekseer::MakeRefPtr<EffekseerRenderer::TextureLoader>(graphicsDevice.Get(), fileInterface, colorSpaceType);
-#else
-	return nullptr;
-#endif
-}
-
-::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::FileInterface* fileInterface, OpenGLDeviceType deviceType)
-{
-	auto gd = ::Effekseer::MakeRefPtr<Backend::GraphicsDevice>(OpenGLDeviceType::OpenGL2);
-	auto ret = ::Effekseer::MakeRefPtr<EffekseerRenderer::ModelLoader>(gd, fileInterface);
-	return ret;
-}
-
 ::Effekseer::MaterialLoaderRef CreateMaterialLoader(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
-													::Effekseer::FileInterface* fileInterface)
+													::Effekseer::FileInterfaceRef fileInterface)
 {
 	return ::Effekseer::MakeRefPtr<MaterialLoader>(graphicsDevice.DownCast<Backend::GraphicsDevice>(), fileInterface);
 }
@@ -797,7 +766,7 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-::Effekseer::TextureLoaderRef RendererImplemented::CreateTextureLoader(::Effekseer::FileInterface* fileInterface)
+::Effekseer::TextureLoaderRef RendererImplemented::CreateTextureLoader(::Effekseer::FileInterfaceRef fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	return ::Effekseer::MakeRefPtr<EffekseerRenderer::TextureLoader>(graphicsDevice_.Get(), fileInterface);
@@ -809,12 +778,12 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-::Effekseer::ModelLoaderRef RendererImplemented::CreateModelLoader(::Effekseer::FileInterface* fileInterface)
+::Effekseer::ModelLoaderRef RendererImplemented::CreateModelLoader(::Effekseer::FileInterfaceRef fileInterface)
 {
 	return ::Effekseer::MakeRefPtr<EffekseerRenderer::ModelLoader>(graphicsDevice_, fileInterface);
 }
 
-::Effekseer::MaterialLoaderRef RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterface* fileInterface)
+::Effekseer::MaterialLoaderRef RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterfaceRef fileInterface)
 {
 	return ::Effekseer::MakeRefPtr<MaterialLoader>(GetInternalGraphicsDevice(), fileInterface);
 }

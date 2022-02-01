@@ -41,7 +41,7 @@ public:
 	
 	::Effekseer::SoundPlayerRef CreateSoundPlayer() override;
 
-	::Effekseer::SoundLoaderRef CreateSoundLoader( ::Effekseer::FileInterface* fileInterface = NULL ) override;
+	::Effekseer::SoundLoaderRef CreateSoundLoader( ::Effekseer::FileInterfaceRef fileInterface = NULL ) override;
 	
 	void StopAllVoices() override;
 

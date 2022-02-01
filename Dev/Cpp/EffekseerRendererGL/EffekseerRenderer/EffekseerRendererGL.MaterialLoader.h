@@ -19,13 +19,13 @@ private:
 	Backend::GraphicsDeviceRef graphicsDevice_ = nullptr;
 	bool canLoadFromCache_ = false;
 
-	::Effekseer::FileInterface* fileInterface_ = nullptr;
+	::Effekseer::FileInterfaceRef fileInterface_ = nullptr;
 	::Effekseer::DefaultFileInterface defaultFileInterface_;
 
 	::Effekseer::MaterialRef LoadAcutually(::Effekseer::MaterialFile& materialFile, ::Effekseer::CompiledMaterialBinary* binary);
 
 public:
-	MaterialLoader(Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterface* fileInterface, bool canLoadFromCache = true);
+	MaterialLoader(Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterfaceRef fileInterface, bool canLoadFromCache = true);
 	virtual ~MaterialLoader();
 
 	::Effekseer::MaterialRef Load(const char16_t* path) override;

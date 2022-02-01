@@ -6,7 +6,7 @@ namespace EffekseerRenderer
 {
 
 TextureLoader::TextureLoader(::Effekseer::Backend::GraphicsDevice* graphicsDevice,
-							 ::Effekseer::FileInterface* fileInterface,
+							 ::Effekseer::FileInterfaceRef fileInterface,
 							 ::Effekseer::ColorSpaceType colorSpaceType)
 	: graphicsDevice_(graphicsDevice)
 	, m_fileInterface(fileInterface)
@@ -15,7 +15,7 @@ TextureLoader::TextureLoader(::Effekseer::Backend::GraphicsDevice* graphicsDevic
 	ES_SAFE_ADDREF(graphicsDevice_);
 	if (fileInterface == nullptr)
 	{
-		m_fileInterface = &m_defaultFileInterface;
+		m_fileInterface = Effekseer::MakeRefPtr<Effekseer::DefaultFileInterface>();
 	}
 }
 
@@ -26,9 +26,9 @@ TextureLoader::~TextureLoader()
 
 Effekseer::TextureRef TextureLoader::Load(const char16_t* path, ::Effekseer::TextureType textureType)
 {
-	std::unique_ptr<::Effekseer::FileReader> reader(m_fileInterface->OpenRead(path));
+	auto reader = m_fileInterface->OpenRead(path);
 
-	if (reader.get() != nullptr)
+	if (reader != nullptr)
 	{
 		auto path16 = std::u16string(path);
 		auto isMipEnabled = path16.find(u"_NoMip") == std::u16string::npos;

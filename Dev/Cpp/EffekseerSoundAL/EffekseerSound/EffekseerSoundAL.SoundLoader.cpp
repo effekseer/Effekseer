@@ -40,18 +40,18 @@ public:
 
 	void Seek(int position) override { pos = position; }
 
-	int GetPosition() override { return pos; }
+	int GetPosition() const override { return pos; }
 
-	size_t GetLength() override { return size_; }
+	size_t GetLength() const override { return size_; }
 };
 }
 
-SoundLoader::SoundLoader( ::Effekseer::FileInterface* fileInterface )
+SoundLoader::SoundLoader( ::Effekseer::FileInterfaceRef fileInterface )
 	: m_fileInterface( fileInterface )
 {
-	if( m_fileInterface == NULL )
-	{ 
-		m_fileInterface = &m_defaultFileInterface;
+	if (m_fileInterface == nullptr)
+	{
+		m_fileInterface = Effekseer::MakeRefPtr<Effekseer::DefaultFileInterface>();
 	}
 }
 
@@ -59,7 +59,7 @@ SoundLoader::~SoundLoader()
 {
 }
 
-::Effekseer::SoundDataRef SoundLoader::Load(::Effekseer::FileReader* reader) {
+::Effekseer::SoundDataRef SoundLoader::Load(::Effekseer::FileReaderRef reader) {
 	uint32_t chunkIdent, chunkSize;
 	// check RIFF chunk
 	reader->Read(&chunkIdent, 4);
@@ -179,19 +179,19 @@ SoundLoader::~SoundLoader()
 
 ::Effekseer::SoundDataRef SoundLoader::Load( const char16_t* path )
 {
-	assert( path != NULL );
-	
-	std::unique_ptr<::Effekseer::FileReader> 
-		reader( m_fileInterface->OpenRead( path ) );
-	if( reader.get() == NULL ) return NULL;
+	assert(path != nullptr);
 
-	return Load(reader.get());
+	auto reader = m_fileInterface->OpenRead(path);
+	if (reader == nullptr)
+		return nullptr;
+
+	return Load(reader);
 }
 	
 ::Effekseer::SoundDataRef SoundLoader::Load(const void* data, int32_t size)
 {
-	auto reader = SupportOpenAL::BinaryFileReader(data, size);
-	return Load(&reader);
+	auto reader = Effekseer::MakeRefPtr<SupportOpenAL::BinaryFileReader>(data, size);
+	return Load(reader);
 }
 
 void SoundLoader::Unload( ::Effekseer::SoundDataRef soundData )

@@ -368,13 +368,13 @@ Effekseer::CustomVector<Effekseer::CustomString<char>> StoreTextureLocations(con
 	return material;
 }
 
-MaterialLoader::MaterialLoader(Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterface* fileInterface, bool canLoadFromCache)
+MaterialLoader::MaterialLoader(Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterfaceRef fileInterface, bool canLoadFromCache)
 	: fileInterface_(fileInterface)
 	, canLoadFromCache_(canLoadFromCache)
 {
 	if (fileInterface == nullptr)
 	{
-		fileInterface_ = &defaultFileInterface_;
+		fileInterface_ = Effekseer::MakeRefPtr<Effekseer::DefaultFileInterface>();
 	}
 
 	graphicsDevice_ = graphicsDevice;
@@ -390,9 +390,9 @@ MaterialLoader ::~MaterialLoader()
 	if (canLoadFromCache_)
 	{
 		auto binaryPath = std::u16string(path) + u"d";
-		std::unique_ptr<Effekseer::FileReader> reader(fileInterface_->TryOpenRead(binaryPath.c_str()));
+		auto reader = fileInterface_->TryOpenRead(binaryPath.c_str());
 
-		if (reader.get() != nullptr)
+		if (reader != nullptr)
 		{
 			size_t size = reader->GetLength();
 			std::vector<char> data;
@@ -410,9 +410,9 @@ MaterialLoader ::~MaterialLoader()
 
 	// code file
 	{
-		std::unique_ptr<Effekseer::FileReader> reader(fileInterface_->OpenRead(path));
+		auto reader = fileInterface_->OpenRead(path);
 
-		if (reader.get() != nullptr)
+		if (reader != nullptr)
 		{
 			size_t size = reader->GetLength();
 			std::vector<char> data;

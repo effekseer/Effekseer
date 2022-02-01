@@ -1,6 +1,6 @@
 ﻿
-#ifndef	__EFFEKSEERSOUND_BASE_PRE_H__
-#define	__EFFEKSEERSOUND_BASE_PRE_H__
+#ifndef __EFFEKSEERSOUND_BASE_PRE_H__
+#define __EFFEKSEERSOUND_BASE_PRE_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -20,14 +20,14 @@ class Sound;
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerSound
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERSOUND_BASE_PRE_H__
+#endif // __EFFEKSEERSOUND_BASE_PRE_H__
 
-#ifndef	__EFFEKSEERSOUND_OSMIXER_H__
-#define	__EFFEKSEERSOUND_OSMIXER_H__
+#ifndef __EFFEKSEERSOUND_OSMIXER_H__
+#define __EFFEKSEERSOUND_OSMIXER_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -49,7 +49,10 @@ namespace EffekseerSound
 class SoundData : public ::Effekseer::SoundData
 {
 public:
-	const osm::Sound* GetOsmSound() const { return osmSound; }
+	const osm::Sound* GetOsmSound() const
+	{
+		return osmSound;
+	}
 
 private:
 	friend class SoundLoader;
@@ -57,23 +60,23 @@ private:
 	/**
 		@brief	チャンネル数。
 	*/
-	int32_t			channels;
-	
+	int32_t channels;
+
 	/**
 		@brief	サンプリング周波数。
 	*/
-	int32_t			sampleRate;
+	int32_t sampleRate;
 
 	/**
 		@brief	OpenSoundMixerバッファ。
 	*/
-	osm::Sound*		osmSound;
+	osm::Sound* osmSound;
 };
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-	
+
 /**
 	@brief	サウンドクラス
 */
@@ -83,8 +86,12 @@ using SoundRef = Effekseer::RefPtr<Sound>;
 class Sound : public Effekseer::IReference
 {
 protected:
-	Sound() {}
-	virtual ~Sound() {}
+	Sound()
+	{
+	}
+	virtual ~Sound()
+	{
+	}
 
 public:
 	/**
@@ -94,8 +101,8 @@ public:
 		@param	voiceCount2ch	[in]	ステレオボイス数
 		@return	インスタンス
 	*/
-	static SoundRef Create( osm::Manager* soundManager );
-	
+	static SoundRef Create(osm::Manager* soundManager);
+
 	/**
 		@brief	このインスタンスを破棄する。
 	*/
@@ -109,9 +116,10 @@ public:
 	/**
 		@brief	リスナー設定
 	*/
-	virtual void SetListener( const ::Effekseer::Vector3D& pos, 
-		const ::Effekseer::Vector3D& at, const ::Effekseer::Vector3D& up ) = 0;
-	
+	virtual void SetListener(const ::Effekseer::Vector3D& pos,
+							 const ::Effekseer::Vector3D& at,
+							 const ::Effekseer::Vector3D& up) = 0;
+
 	/**
 		@brief	サウンドプレイヤを生成する。
 	*/
@@ -120,20 +128,19 @@ public:
 	/**
 		@brief	標準のサウンド読込インスタンスを生成する。
 	*/
-	virtual ::Effekseer::SoundLoaderRef CreateSoundLoader( ::Effekseer::FileInterface* fileInterface = NULL ) = 0;
-	
+	virtual ::Effekseer::SoundLoaderRef CreateSoundLoader(::Effekseer::FileInterfaceRef fileInterface = NULL) = 0;
+
 	/**
 		@brief	ミュート設定
 	*/
-	virtual void SetMute( bool mute ) = 0;
-
+	virtual void SetMute(bool mute) = 0;
 };
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerSound
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERSOUND_OSMIXER_H__
+#endif // __EFFEKSEERSOUND_OSMIXER_H__

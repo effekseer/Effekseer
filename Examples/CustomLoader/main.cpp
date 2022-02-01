@@ -50,9 +50,9 @@ public:
 public:
 	Effekseer::TextureRef Load(const EFK_CHAR* path, ::Effekseer::TextureType textureType) override
 	{
-		std::unique_ptr<::Effekseer::FileReader> reader(fileInterface_->OpenRead(path));
+		auto reader = fileInterface_->OpenRead(path);
 
-		if (reader.get() != nullptr)
+		if (reader != nullptr)
 		{
 			size_t size_texture = reader->GetLength();
 			std::vector<char> data_texture;
@@ -136,8 +136,8 @@ public:
 public:
 	Effekseer::ModelRef Load(const char16_t* path) override
 	{
-		std::unique_ptr<::Effekseer::FileReader> reader(fileInterface_->OpenRead(path));
-		if (reader.get() == nullptr)
+		auto reader = fileInterface_->OpenRead(path);
+		if (reader == nullptr)
 		{
 			return nullptr;
 		}
@@ -192,8 +192,8 @@ int main(int argc, char** argv)
 
 	// You can specify only a file loader
 	// ファイルローダーのみを指定することもできる。
-	::Effekseer::DefaultFileInterface fileInterface;
-	manager->SetMaterialLoader(renderer->CreateMaterialLoader(&fileInterface));
+	::Effekseer::FileInterfaceRef fileInterface = Effekseer::MakeRefPtr<Effekseer::DefaultFileInterface>();
+	manager->SetMaterialLoader(renderer->CreateMaterialLoader(fileInterface));
 
 	// Specify a position of view
 	// 視点位置を確定

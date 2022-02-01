@@ -1998,56 +1998,40 @@ public:
 #ifndef __EFFEKSEER_FILE_H__
 #define __EFFEKSEER_FILE_H__
 
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 namespace Effekseer
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-/**
-	@brief	ファイル読み込みクラス
-*/
-class FileReader
+
+class FileReader;
+class FileWriter;
+class FileInterface;
+
+using FileReaderRef = RefPtr<FileReader>;
+using FileWriterRef = RefPtr<FileWriter>;
+using FileInterfaceRef = RefPtr<FileInterface>;
+
+class FileReader : public ReferenceObject
 {
 private:
 public:
-	FileReader()
-	{
-	}
-
-	virtual ~FileReader()
-	{
-	}
+	FileReader() = default;
+	virtual ~FileReader() override = default;
 
 	virtual size_t Read(void* buffer, size_t size) = 0;
 
 	virtual void Seek(int position) = 0;
 
-	virtual int GetPosition() = 0;
+	virtual int GetPosition() const = 0;
 
-	virtual size_t GetLength() = 0;
+	virtual size_t GetLength() const = 0;
 };
 
-/**
-	@brief	ファイル書き込みクラス
-*/
-class FileWriter
+class FileWriter : public ReferenceObject
 {
 private:
 public:
-	FileWriter()
-	{
-	}
-
-	virtual ~FileWriter()
-	{
-	}
+	FileWriter() = default;
+	virtual ~FileWriter() override = default;
 
 	virtual size_t Write(const void* buffer, size_t size) = 0;
 
@@ -2055,9 +2039,9 @@ public:
 
 	virtual void Seek(int position) = 0;
 
-	virtual int GetPosition() = 0;
+	virtual int GetPosition() const = 0;
 
-	virtual size_t GetLength() = 0;
+	virtual size_t GetLength() const = 0;
 };
 
 /**
@@ -2065,53 +2049,44 @@ public:
 	\~English	factory class for io
 	\~Japanese	IOのためのファクトリークラス
 */
-class FileInterface
+class FileInterface : public ReferenceObject
 {
 private:
 public:
 	FileInterface() = default;
-	virtual ~FileInterface() = default;
+	virtual ~FileInterface() override = default;
 
-	virtual FileReader* OpenRead(const char16_t* path) = 0;
+	virtual FileReaderRef OpenRead(const char16_t* path) = 0;
 
 	/**
 		@brief
 		\~English	try to open a reader. It need not to succeeds in opening it.
 		\~Japanese	リーダーを開くことを試します。成功する必要はありません。
 	*/
-	virtual FileReader* TryOpenRead(const char16_t* path)
+	virtual FileReaderRef TryOpenRead(const char16_t* path)
 	{
 		return OpenRead(path);
 	}
 
-	virtual FileWriter* OpenWrite(const char16_t* path) = 0;
+	virtual FileWriterRef OpenWrite(const char16_t* path) = 0;
 };
 
 } // namespace Effekseer
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
 #endif // __EFFEKSEER_FILE_H__
 
 #ifndef __EFFEKSEER_DEFAULT_FILE_H__
 #define __EFFEKSEER_DEFAULT_FILE_H__
 
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 namespace Effekseer
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-/**
-	@brief	標準のファイル読み込みクラス
-*/
 
+/**
+	@brief	
+	\~English	Default file loader
+	\~Japanese	標準のファイル読み込みクラス
+*/
 class DefaultFileReader : public FileReader
 {
 private:
@@ -2120,15 +2095,15 @@ private:
 public:
 	DefaultFileReader(FILE* filePtr);
 
-	~DefaultFileReader();
+	~DefaultFileReader() override;
 
-	size_t Read(void* buffer, size_t size);
+	size_t Read(void* buffer, size_t size) override;
 
-	void Seek(int position);
+	void Seek(int position) override;
 
-	int GetPosition();
+	int GetPosition() const override;
 
-	size_t GetLength();
+	size_t GetLength() const override;
 };
 
 class DefaultFileWriter : public FileWriter
@@ -2139,35 +2114,29 @@ private:
 public:
 	DefaultFileWriter(FILE* filePtr);
 
-	~DefaultFileWriter();
+	~DefaultFileWriter() override;
 
-	size_t Write(const void* buffer, size_t size);
+	size_t Write(const void* buffer, size_t size) override;
 
-	void Flush();
+	void Flush() override;
 
-	void Seek(int position);
+	void Seek(int position) override;
 
-	int GetPosition();
+	int GetPosition() const override;
 
-	size_t GetLength();
+	size_t GetLength() const override;
 };
 
 class DefaultFileInterface : public FileInterface
 {
-private:
 public:
-	FileReader* OpenRead(const char16_t* path);
+	FileReaderRef OpenRead(const char16_t* path) override;
 
-	FileWriter* OpenWrite(const char16_t* path);
+	FileWriterRef OpenWrite(const char16_t* path) override;
 };
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 } // namespace Effekseer
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
 #endif // __EFFEKSEER_DEFAULT_FILE_H__
 
 #ifndef __EFFEKSEER_GRAPHICS_DEVICE_H__
@@ -3214,7 +3183,7 @@ public:
 	/**
 	@brief	標準のエフェクト読込インスタンスを生成する。
 	*/
-	static ::Effekseer::EffectLoaderRef CreateEffectLoader(::Effekseer::FileInterface* fileInterface = nullptr);
+	static ::Effekseer::EffectLoaderRef CreateEffectLoader(::Effekseer::FileInterfaceRef fileInterface = nullptr);
 
 	/**
 	@brief

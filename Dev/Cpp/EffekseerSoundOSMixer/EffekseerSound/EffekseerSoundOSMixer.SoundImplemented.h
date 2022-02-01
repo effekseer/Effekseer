@@ -1,13 +1,13 @@
 ﻿
-#ifndef	__EFFEKSEERRSOUND_SOUND_IMPLEMENTED_H__
-#define	__EFFEKSEERRSOUND_SOUND_IMPLEMENTED_H__
+#ifndef __EFFEKSEERRSOUND_SOUND_IMPLEMENTED_H__
+#define __EFFEKSEERRSOUND_SOUND_IMPLEMENTED_H__
 
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include <vector>
-#include <OpenSoundMixer.h>
 #include "../EffekseerSoundOSMixer.h"
+#include <OpenSoundMixer.h>
+#include <vector>
 
 //----------------------------------------------------------------------------------
 //
@@ -38,49 +38,58 @@ public:
 	};
 
 private:
-	osm::Manager*			m_manager;
-	bool					m_mute;
+	osm::Manager* m_manager;
+	bool m_mute;
 
-	std::vector<Instance>	m_instances;
-	Listener				m_listener;
+	std::vector<Instance> m_instances;
+	Listener m_listener;
 
 public:
 	SoundImplemented();
 	virtual ~SoundImplemented();
 
 	void Destroy();
-	
-	bool Initialize( osm::Manager* soundManager );
-	
-	void SetListener( const ::Effekseer::Vector3D& pos, 
-		const ::Effekseer::Vector3D& at, const ::Effekseer::Vector3D& up );
-	
+
+	bool Initialize(osm::Manager* soundManager);
+
+	void SetListener(const ::Effekseer::Vector3D& pos,
+					 const ::Effekseer::Vector3D& at,
+					 const ::Effekseer::Vector3D& up);
+
 	void Update();
 
-	::Effekseer::SoundPlayerRef CreateSoundPlayer();
+	::Effekseer::SoundPlayerRef CreateSoundPlayer() override;
 
-	::Effekseer::SoundLoaderRef CreateSoundLoader( ::Effekseer::FileInterface* fileInterface = NULL );
-	
+	::Effekseer::SoundLoaderRef CreateSoundLoader(::Effekseer::FileInterfaceRef fileInterface = nullptr) override;
+
 	void StopAll();
 
-	void SetMute( bool mute );
+	void SetMute(bool mute);
 
-	bool GetMute()			{return m_mute;}
+	bool GetMute()
+	{
+		return m_mute;
+	}
 
-	osm::Manager* GetDevice()	{return m_manager;}
+	osm::Manager* GetDevice()
+	{
+		return m_manager;
+	}
 
-	void AddInstance( const Instance& instance );
+	void AddInstance(const Instance& instance);
 
-	void StopTag( ::Effekseer::SoundTag tag );
+	void StopTag(::Effekseer::SoundTag tag);
 
-	void PauseTag( ::Effekseer::SoundTag tag, bool pause );
-	
-	bool CheckPlayingTag( ::Effekseer::SoundTag tag );
+	void PauseTag(::Effekseer::SoundTag tag, bool pause);
 
-	void StopData( const ::Effekseer::SoundDataRef& soundData );
+	bool CheckPlayingTag(::Effekseer::SoundTag tag);
 
-	void Calculate3DSound( const ::Effekseer::Vector3D& position, 
-		float rolloffDistance, float& rolloff, float& pan );
+	void StopData(const ::Effekseer::SoundDataRef& soundData);
+
+	void Calculate3DSound(const ::Effekseer::Vector3D& position,
+						  float rolloffDistance,
+						  float& rolloff,
+						  float& pan);
 
 	virtual int GetRef() override
 	{
@@ -100,8 +109,8 @@ using SoundImplementedRef = ::Effekseer::RefPtr<SoundImplemented>;
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerSound
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERRSOUND_SOUND_IMPLEMENTED_H__
+#endif // __EFFEKSEERRSOUND_SOUND_IMPLEMENTED_H__

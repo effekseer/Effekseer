@@ -2,6 +2,10 @@
 
 ### Broken changes
 
+Effekseer::FileInterface, Effekseer::FileReader and Effekseer::FileWriter were changed.
+Classes inherit ReferenceObject.
+These class should be creted with MakeRefPtr and deleteed automatically.
+
 Culling system was replaced.
 You need to specify Effekseer::Manager::DrawParameter's ViewProjectionMatrix, ZNear and ZFar when Effekseer::Manager::Draw is called.
 

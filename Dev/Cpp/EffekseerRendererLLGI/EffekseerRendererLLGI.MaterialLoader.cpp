@@ -40,7 +40,7 @@ void MaterialLoader::Deserialize(uint8_t* data, uint32_t datasize, LLGI::Compile
 }
 
 MaterialLoader::MaterialLoader(Backend::GraphicsDevice* graphicsDevice,
-							   ::Effekseer::FileInterface* fileInterface,
+							   ::Effekseer::FileInterfaceRef fileInterface,
 							   ::Effekseer::CompiledMaterialPlatformType platformType,
 							   ::Effekseer::MaterialCompiler* materialCompiler)
 	: fileInterface_(fileInterface)
@@ -49,7 +49,7 @@ MaterialLoader::MaterialLoader(Backend::GraphicsDevice* graphicsDevice,
 {
 	if (fileInterface == nullptr)
 	{
-		fileInterface_ = &defaultFileInterface_;
+		fileInterface_ = Effekseer::MakeRefPtr<Effekseer::DefaultFileInterface>();
 	}
 
 	graphicsDevice_ = graphicsDevice;
@@ -68,9 +68,9 @@ MaterialLoader ::~MaterialLoader()
 	// code file
 	{
 		auto binaryPath = std::u16string(path) + u"d";
-		std::unique_ptr<Effekseer::FileReader> reader(fileInterface_->OpenRead(binaryPath.c_str()));
+		auto reader = fileInterface_->OpenRead(binaryPath.c_str());
 
-		if (reader.get() != nullptr)
+		if (reader != nullptr)
 		{
 			size_t size = reader->GetLength();
 			std::vector<char> data;
@@ -89,9 +89,9 @@ MaterialLoader ::~MaterialLoader()
 	// code file
 	if (materialCompiler_ != nullptr)
 	{
-		std::unique_ptr<Effekseer::FileReader> reader(fileInterface_->OpenRead(path));
+		auto reader = fileInterface_->OpenRead(path);
 
-		if (reader.get() != nullptr)
+		if (reader != nullptr)
 		{
 			size_t size = reader->GetLength();
 			std::vector<char> data;

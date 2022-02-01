@@ -52,25 +52,25 @@ public:
 		pos = position;
 	}
 
-	int GetPosition() override
+	int GetPosition() const override
 	{
 		return pos;
 	}
 
-	size_t GetLength() override
+	size_t GetLength() const override
 	{
 		return size_;
 	}
 };
 } // namespace SupportXAudio2
 
-SoundLoader::SoundLoader(const SoundImplementedRef& sound, ::Effekseer::FileInterface* fileInterface)
+SoundLoader::SoundLoader(const SoundImplementedRef& sound, ::Effekseer::FileInterfaceRef fileInterface)
 	: m_sound(sound)
 	, m_fileInterface(fileInterface)
 {
 	if (m_fileInterface == nullptr)
 	{
-		m_fileInterface = &m_defaultFileInterface;
+		m_fileInterface = Effekseer::MakeRefPtr<Effekseer::DefaultFileInterface>();
 	}
 }
 
@@ -81,7 +81,7 @@ SoundLoader::~SoundLoader()
 {
 }
 
-::Effekseer::SoundDataRef SoundLoader::Load(::Effekseer::FileReader* reader)
+::Effekseer::SoundDataRef SoundLoader::Load(::Effekseer::FileReaderRef reader)
 {
 	uint32_t chunkIdent, chunkSize;
 	// check RIFF chunk
@@ -192,17 +192,17 @@ SoundLoader::~SoundLoader()
 {
 	assert(path != nullptr);
 
-	std::unique_ptr<::Effekseer::FileReader> reader(m_fileInterface->OpenRead(path));
-	if (reader.get() == nullptr)
-		return false;
+	auto reader = m_fileInterface->OpenRead(path);
+	if (reader == nullptr)
+		return nullptr;
 
-	return Load(reader.get());
+	return Load(reader);
 }
 
 ::Effekseer::SoundDataRef SoundLoader::Load(const void* data, int32_t size)
 {
-	auto reader = SupportXAudio2::BinaryFileReader(data, size);
-	return Load(&reader);
+	auto reader = Effekseer::MakeRefPtr<SupportXAudio2::BinaryFileReader>(data, size);
+	return Load(reader);
 }
 
 void SoundLoader::Unload(::Effekseer::SoundDataRef soundData)
