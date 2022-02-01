@@ -15,11 +15,235 @@
 #include "Effekseer.Setting.h"
 #include "Model/Model.h"
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+#define REFACTOR_GP
+
 namespace Effekseer
 {
+
+namespace
+{
+SIMD::Mat43f GenerateGenerationPosition(const ParameterGenerationLocation& param, const Effect& effect, int instanceNumber, int parentTime, float magnification, CoordinateSystem coordinateSystem, RandObject& rand)
+{
+	SIMD::Mat43f ret;
+
+	if (param.type == ParameterGenerationLocation::TYPE_POINT)
+	{
+		SIMD::Vec3f p = param.point.location.getValue(rand);
+		ret = SIMD::Mat43f::Translation(p.GetX(), p.GetY(), p.GetZ());
+	}
+	else if (param.type == ParameterGenerationLocation::TYPE_LINE)
+	{
+		SIMD::Vec3f s = param.line.position_start.getValue(rand);
+		SIMD::Vec3f e = param.line.position_end.getValue(rand);
+		auto noize = param.line.position_noize.getValue(rand);
+		auto division = Max(1, param.line.division);
+
+		SIMD::Vec3f dir = e - s;
+
+		if (dir.IsZero())
+		{
+			ret = SIMD::Mat43f::Translation(0, 0, 0);
+		}
+		else
+		{
+			auto len = dir.GetLength();
+			dir /= len;
+
+			int32_t target = 0;
+			if (param.line.type == ParameterGenerationLocation::LineType::Order)
+			{
+				target = instanceNumber % division;
+			}
+			else if (param.line.type == ParameterGenerationLocation::LineType::Random)
+			{
+				target = (int32_t)((division)*rand.GetRand());
+				if (target == division)
+					target -= 1;
+			}
+
+			auto d = 0.0f;
+			if (division > 1)
+			{
+				d = (len / (float)(division - 1)) * target;
+			}
+
+			d += noize;
+
+			s += dir * d;
+
+			SIMD::Vec3f xdir;
+			SIMD::Vec3f ydir;
+			SIMD::Vec3f zdir;
+
+			if (fabs(dir.GetY()) > 0.999f)
+			{
+				xdir = dir;
+				zdir = SIMD::Vec3f::Cross(xdir, SIMD::Vec3f(-1, 0, 0)).Normalize();
+				ydir = SIMD::Vec3f::Cross(zdir, xdir).Normalize();
+			}
+			else
+			{
+				xdir = dir;
+				ydir = SIMD::Vec3f::Cross(SIMD::Vec3f(0, 0, 1), xdir).Normalize();
+				zdir = SIMD::Vec3f::Cross(xdir, ydir).Normalize();
+			}
+
+			if (param.EffectsRotation)
+			{
+				ret.X.SetX(xdir.GetX());
+				ret.Y.SetX(xdir.GetY());
+				ret.Z.SetX(xdir.GetZ());
+
+				ret.X.SetY(ydir.GetX());
+				ret.Y.SetY(ydir.GetY());
+				ret.Z.SetY(ydir.GetZ());
+
+				ret.X.SetZ(zdir.GetX());
+				ret.Y.SetZ(zdir.GetY());
+				ret.Z.SetZ(zdir.GetZ());
+			}
+			else
+			{
+				ret = SIMD::Mat43f::Identity;
+			}
+
+			ret.X.SetW(s.GetX());
+			ret.Y.SetW(s.GetY());
+			ret.Z.SetW(s.GetZ());
+		}
+	}
+	else if (param.type == ParameterGenerationLocation::TYPE_SPHERE)
+	{
+		SIMD::Mat43f mat_x = SIMD::Mat43f::RotationX(param.sphere.rotation_x.getValue(rand));
+		SIMD::Mat43f mat_y = SIMD::Mat43f::RotationY(param.sphere.rotation_y.getValue(rand));
+		float r = param.sphere.radius.getValue(rand);
+		ret = SIMD::Mat43f::Translation(0, r, 0) * mat_x * mat_y;
+	}
+	else if (param.type == ParameterGenerationLocation::TYPE_MODEL)
+	{
+		ret = SIMD::Mat43f::Identity;
+		ModelRef model = nullptr;
+		const ParameterGenerationLocation::eModelType type = param.model.type;
+
+		if (param.model.Reference == ModelReferenceType::File)
+		{
+			model = effect.GetModel(param.model.index);
+		}
+		else if (param.model.Reference == ModelReferenceType::Procedural)
+		{
+			model = effect.GetProceduralModel(param.model.index);
+		}
+
+		{
+			if (model != nullptr)
+			{
+				Model::Emitter emitter;
+
+				if (type == ParameterGenerationLocation::MODELTYPE_RANDOM)
+				{
+					emitter = model->GetEmitter(&rand,
+												parentTime,
+												coordinateSystem,
+												magnification);
+				}
+				else if (type == ParameterGenerationLocation::MODELTYPE_VERTEX)
+				{
+					emitter = model->GetEmitterFromVertex(instanceNumber,
+														  parentTime,
+														  coordinateSystem,
+														  magnification);
+				}
+				else if (type == ParameterGenerationLocation::MODELTYPE_VERTEX_RANDOM)
+				{
+					emitter = model->GetEmitterFromVertex(&rand,
+														  parentTime,
+														  coordinateSystem,
+														  magnification);
+				}
+				else if (type == ParameterGenerationLocation::MODELTYPE_FACE)
+				{
+					emitter = model->GetEmitterFromFace(instanceNumber,
+														parentTime,
+														coordinateSystem,
+														magnification);
+				}
+				else if (type == ParameterGenerationLocation::MODELTYPE_FACE_RANDOM)
+				{
+					emitter = model->GetEmitterFromFace(&rand,
+														parentTime,
+														coordinateSystem,
+														magnification);
+				}
+
+				ret = SIMD::Mat43f::Translation(emitter.Position);
+
+				if (param.EffectsRotation)
+				{
+					ret.X.SetX(emitter.Binormal.X);
+					ret.Y.SetX(emitter.Binormal.Y);
+					ret.Z.SetX(emitter.Binormal.Z);
+
+					ret.X.SetY(emitter.Tangent.X);
+					ret.Y.SetY(emitter.Tangent.Y);
+					ret.Z.SetY(emitter.Tangent.Z);
+
+					ret.X.SetZ(emitter.Normal.X);
+					ret.Y.SetZ(emitter.Normal.Y);
+					ret.Z.SetZ(emitter.Normal.Z);
+				}
+			}
+		}
+	}
+	else if (param.type == ParameterGenerationLocation::TYPE_CIRCLE)
+	{
+		ret = SIMD::Mat43f::Identity;
+		float radius = param.circle.radius.getValue(rand);
+		float start = param.circle.angle_start.getValue(rand);
+		float end = param.circle.angle_end.getValue(rand);
+		int32_t div = Max(param.circle.division, 1);
+
+		int32_t target = 0;
+		if (param.circle.type == ParameterGenerationLocation::CIRCLE_TYPE_ORDER)
+		{
+			target = instanceNumber % div;
+		}
+		else if (param.circle.type == ParameterGenerationLocation::CIRCLE_TYPE_REVERSE_ORDER)
+		{
+			target = div - 1 - (instanceNumber % div);
+		}
+		else if (param.circle.type == ParameterGenerationLocation::CIRCLE_TYPE_RANDOM)
+		{
+			target = (int32_t)((div)*rand.GetRand());
+			if (target == div)
+				target -= 1;
+		}
+
+		float angle = (end - start) * ((float)target / (float)div) + start;
+
+		angle += param.circle.angle_noize.getValue(rand);
+
+		switch (param.circle.axisDirection)
+		{
+		case ParameterGenerationLocation::AxisType::X:
+			ret = SIMD::Mat43f::Translation(0, 0, radius) * SIMD::Mat43f::RotationX(angle);
+			break;
+		case ParameterGenerationLocation::AxisType::Y:
+			ret = SIMD::Mat43f::Translation(radius, 0, 0) * SIMD::Mat43f::RotationY(angle);
+			break;
+		case ParameterGenerationLocation::AxisType::Z:
+			ret = SIMD::Mat43f::Translation(0, radius, 0) * SIMD::Mat43f::RotationZ(angle);
+			break;
+		}
+	}
+	else
+	{
+		ret = SIMD::Mat43f::Identity;
+	}
+
+	return ret;
+}
+
+} // namespace
 
 static bool IsInfiniteValue(int value)
 {
@@ -117,9 +341,6 @@ InstanceGlobal* Instance::GetInstanceGlobal()
 	return m_pContainer->GetRootInstance();
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 eInstanceState Instance::GetState() const
 {
 	return m_State;
@@ -558,6 +779,18 @@ void Instance::FirstUpdate()
 	}
 
 	// Spawning Method
+#ifdef REFACTOR_GP
+	const auto magnification = ((EffectImplemented*)m_pEffectNode->GetEffect())->GetMaginification();
+	m_GenerationLocation = GenerateGenerationPosition(
+		m_pEffectNode->GenerationLocation,
+		*(m_pEffectNode->GetEffect()),
+		m_InstanceNumber,
+		parentTime,
+		magnification,
+		m_pManager->GetCoordinateSystem(),
+		rand);
+#else
+
 	if (m_pEffectNode->GenerationLocation.type == ParameterGenerationLocation::TYPE_POINT)
 	{
 		SIMD::Vec3f p = m_pEffectNode->GenerationLocation.point.location.getValue(rand);
@@ -767,6 +1000,7 @@ void Instance::FirstUpdate()
 			break;
 		}
 	}
+#endif
 
 	if (m_pEffectNode->SoundType == ParameterSoundType_Use)
 	{
@@ -898,7 +1132,7 @@ void Instance::FirstUpdate()
 		prevPosition_ += m_GenerationLocation.GetTranslation();
 		prevGlobalPosition_ = SIMD::Vec3f::Transform(prevPosition_, m_ParentMatrix);
 	}
-	
+
 	m_pEffectNode->InitializeRenderedInstance(*this, *ownGroup_, m_pManager);
 }
 
@@ -1424,8 +1658,7 @@ void Instance::CalculateMatrix(float deltaFrame)
 			// It should be used a result of past frame
 			auto location = SIMD::Mat43f::Translation(localPosition);
 			location *= m_GenerationLocation;
-			
-			
+
 			localVelocity = SIMD::Vec3f::Transform(localVelocity, m_GenerationLocation.GetRotation());
 			currentLocalPosition = location.GetTranslation();
 		}
