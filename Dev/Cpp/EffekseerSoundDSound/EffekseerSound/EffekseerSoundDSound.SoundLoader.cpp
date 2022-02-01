@@ -227,7 +227,7 @@ SoundLoader::~SoundLoader()
 
 	auto reader = m_fileInterface->OpenRead(path);
 	if (reader == nullptr)
-		return false;
+		return nullptr;
 
 	return Load(reader);
 }
