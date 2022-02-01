@@ -59,7 +59,7 @@ SoundLoader::~SoundLoader()
 {
 }
 
-::Effekseer::SoundDataRef SoundLoader::Load(::Effekseer::FileReader* reader) {
+::Effekseer::SoundDataRef SoundLoader::Load(::Effekseer::FileReaderRef reader) {
 	uint32_t chunkIdent, chunkSize;
 	// check RIFF chunk
 	reader->Read(&chunkIdent, 4);
