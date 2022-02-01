@@ -40,9 +40,9 @@ public:
 
 	void Seek(int position) override { pos = position; }
 
-	int GetPosition() override { return pos; }
+	int GetPosition() const override { return pos; }
 
-	size_t GetLength() override { return size_; }
+	size_t GetLength() const override { return size_; }
 };
 }
 

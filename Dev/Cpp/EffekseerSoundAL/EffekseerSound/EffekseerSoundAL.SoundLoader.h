@@ -19,15 +19,14 @@ namespace EffekseerSound
 class SoundLoader
 	: public ::Effekseer::SoundLoader
 {
-	::Effekseer::FileInterface* m_fileInterface;
-	::Effekseer::DefaultFileInterface m_defaultFileInterface;
+	::Effekseer::FileInterfaceRef m_fileInterface;
 
 public:
-	SoundLoader( ::Effekseer::FileInterface* fileInterface = NULL );
+	SoundLoader( ::Effekseer::FileInterfaceRef fileInterface = NULL );
 
 	virtual ~SoundLoader();
 
-	::Effekseer::SoundDataRef Load(::Effekseer::FileReader* reader);
+	::Effekseer::SoundDataRef Load(::Effekseer::FileReaderRef reader);
 
 public:
 	::Effekseer::SoundDataRef Load( const char16_t* path ) override;
