@@ -46,12 +46,12 @@ public:
 };
 }
 
-SoundLoader::SoundLoader( ::Effekseer::FileInterface* fileInterface )
+SoundLoader::SoundLoader( ::Effekseer::FileInterfaceRef fileInterface )
 	: m_fileInterface( fileInterface )
 {
-	if( m_fileInterface == NULL )
-	{ 
-		m_fileInterface = &m_defaultFileInterface;
+	if (m_fileInterface == nullptr)
+	{
+		m_fileInterface = Effekseer::MakeRefPtr<Effekseer::DefaultFileInterface>();
 	}
 }
 
@@ -179,19 +179,19 @@ SoundLoader::~SoundLoader()
 
 ::Effekseer::SoundDataRef SoundLoader::Load( const char16_t* path )
 {
-	assert( path != NULL );
-	
-	std::unique_ptr<::Effekseer::FileReader> 
-		reader( m_fileInterface->OpenRead( path ) );
-	if( reader.get() == NULL ) return NULL;
+	assert(path != nullptr);
 
-	return Load(reader.get());
+	auto reader = m_fileInterface->OpenRead(path);
+	if (reader == nullptr)
+		return false;
+
+	return Load(reader);
 }
 	
 ::Effekseer::SoundDataRef SoundLoader::Load(const void* data, int32_t size)
 {
-	auto reader = SupportOpenAL::BinaryFileReader(data, size);
-	return Load(&reader);
+	auto reader = Effekseer::MakeRefPtr<SupportOpenAL::BinaryFileReader>(data, size);
+	return Load(reader);
 }
 
 void SoundLoader::Unload( ::Effekseer::SoundDataRef soundData )
