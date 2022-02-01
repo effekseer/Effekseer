@@ -14,7 +14,7 @@
 namespace EffekseerRendererMetal
 {
 
-::Effekseer::MaterialLoaderRef CreateMaterialLoader(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterface* fileInterface = NULL);
+::Effekseer::MaterialLoaderRef CreateMaterialLoader(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterfaceRef fileInterface = NULL);
 
 ::Effekseer::Backend::GraphicsDeviceRef CreateDevice();
 
