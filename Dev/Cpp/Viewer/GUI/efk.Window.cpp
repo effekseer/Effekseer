@@ -186,9 +186,9 @@ void Window::SetTitle(const char16_t* title)
 
 void Window::SetWindowIcon(const char16_t* iconPath)
 {
-	Effekseer::DefaultFileInterface file;
-	std::unique_ptr<Effekseer::FileReader> reader(file.OpenRead(iconPath));
-	if (reader.get() != nullptr)
+	auto file = Effekseer::MakeRefPtr<Effekseer::DefaultFileInterface>();
+	auto reader = file->OpenRead(iconPath);
+	if (reader != nullptr)
 	{
 		size_t size = reader->GetLength();
 		std::vector<uint8_t> data(size);

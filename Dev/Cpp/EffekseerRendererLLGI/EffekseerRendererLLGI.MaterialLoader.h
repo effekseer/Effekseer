@@ -23,7 +23,7 @@ class MaterialLoader : public ::Effekseer::MaterialLoader
 {
 private:
 	Backend::GraphicsDevice* graphicsDevice_ = nullptr;
-	::Effekseer::FileInterface* fileInterface_ = nullptr;
+	::Effekseer::FileInterfaceRef fileInterface_ = nullptr;
 	::Effekseer::CompiledMaterialPlatformType platformType_;
 	::Effekseer::MaterialCompiler* materialCompiler_ = nullptr;
 	::Effekseer::DefaultFileInterface defaultFileInterface_;
@@ -35,7 +35,7 @@ protected:
 
 public:
 	MaterialLoader(Backend::GraphicsDevice* graphicsDevice,
-				   ::Effekseer::FileInterface* fileInterface,
+				   ::Effekseer::FileInterfaceRef fileInterface,
 				   ::Effekseer::CompiledMaterialPlatformType platformType,
 				   ::Effekseer::MaterialCompiler* materialCompiler);
 	virtual ~MaterialLoader();

@@ -1,47 +1,33 @@
 ﻿
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
 #include "EffekseerSoundOSMixer.SoundLoader.h"
 #include "EffekseerSoundOSMixer.SoundImplemented.h"
 #include <assert.h>
 #include <memory>
 #include <string.h>
 
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
 namespace EffekseerSound
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-SoundLoader::SoundLoader(const SoundImplementedRef& sound, ::Effekseer::FileInterface* fileInterface)
+
+SoundLoader::SoundLoader(const SoundImplementedRef& sound, ::Effekseer::FileInterfaceRef fileInterface)
 	: m_sound(sound)
 	, m_fileInterface(fileInterface)
 {
 	if (m_fileInterface == nullptr)
 	{
-		m_fileInterface = &m_defaultFileInterface;
+		m_fileInterface = Effekseer::MakeRefPtr<Effekseer::DefaultFileInterface>();
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 SoundLoader::~SoundLoader()
 {
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 ::Effekseer::SoundDataRef SoundLoader::Load(const char16_t* path)
 {
 	assert(path != nullptr);
 
-	std::unique_ptr<::Effekseer::FileReader> reader(m_fileInterface->OpenRead(path));
-	if (reader.get() == nullptr)
+	auto reader = m_fileInterface->OpenRead(path);
+	if (reader == nullptr)
 		return nullptr;
 
 	size_t size = reader->GetLength();
@@ -74,10 +60,4 @@ void SoundLoader::Unload(::Effekseer::SoundDataRef soundData)
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 } // namespace EffekseerSound
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------

@@ -10,12 +10,11 @@ class ModelLoader : public ::Effekseer::ModelLoader
 {
 private:
 	::Effekseer::Backend::GraphicsDeviceRef graphicsDevice_;
-	::Effekseer::DefaultFileInterface defaultFileInterface_;
-	::Effekseer::FileInterface* fileInterface_;
+	::Effekseer::FileInterfaceRef fileInterface_;
 
 public:
 	ModelLoader(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
-				::Effekseer::FileInterface* fileInterface = nullptr);
+				::Effekseer::FileInterfaceRef fileInterface = nullptr);
 	virtual ~ModelLoader();
 
 public:

@@ -10,7 +10,7 @@ namespace EffekseerRenderer
 {
 
 ::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice,
-												  ::Effekseer::FileInterface* fileInterface,
+												  ::Effekseer::FileInterfaceRef fileInterface,
 												  ::Effekseer::ColorSpaceType colorSpaceType)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
@@ -20,7 +20,7 @@ namespace EffekseerRenderer
 #endif
 }
 
-::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice, ::Effekseer::FileInterface* fileInterface)
+::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice, ::Effekseer::FileInterfaceRef fileInterface)
 {
 	return ::Effekseer::MakeRefPtr<ModelLoader>(gprahicsDevice, fileInterface);
 }

@@ -14,13 +14,13 @@ namespace EffekseerRendererDX9
 
 const int32_t ModelRendererInstanceCount = 10;
 
-MaterialLoader::MaterialLoader(const RendererImplementedRef& renderer, ::Effekseer::FileInterface* fileInterface)
+MaterialLoader::MaterialLoader(const RendererImplementedRef& renderer, ::Effekseer::FileInterfaceRef fileInterface)
 	: renderer_(renderer)
 	, fileInterface_(fileInterface)
 {
 	if (fileInterface == nullptr)
 	{
-		fileInterface_ = &defaultFileInterface_;
+		fileInterface_ = Effekseer::MakeRefPtr<Effekseer::DefaultFileInterface>();
 	}
 }
 
@@ -33,9 +33,9 @@ MaterialLoader ::~MaterialLoader()
 	// code file
 	{
 		auto binaryPath = std::u16string(path) + u"d";
-		std::unique_ptr<Effekseer::FileReader> reader(fileInterface_->OpenRead(binaryPath.c_str()));
+		auto reader = fileInterface_->OpenRead(binaryPath.c_str());
 
-		if (reader.get() != nullptr)
+		if (reader != nullptr)
 		{
 			size_t size = reader->GetLength();
 			std::vector<char> data;
@@ -53,9 +53,9 @@ MaterialLoader ::~MaterialLoader()
 
 	// code file
 	{
-		std::unique_ptr<Effekseer::FileReader> reader(fileInterface_->OpenRead(path));
+		auto reader = fileInterface_->OpenRead(path);
 
-		if (reader.get() != nullptr)
+		if (reader != nullptr)
 		{
 			size_t size = reader->GetLength();
 			std::vector<char> data;

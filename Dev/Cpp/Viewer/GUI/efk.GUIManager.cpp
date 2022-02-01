@@ -1951,16 +1951,15 @@ void GUIManager::AddFontFromAtlasImage(const char16_t* filename, uint16_t baseCo
 {
 	ImGuiIO& io = ImGui::GetIO();
 
-	Effekseer::DefaultFileInterface fi;
-	std::unique_ptr<Effekseer::FileReader> reader(fi.OpenRead(filename));
-	if (!reader)
+	auto fi = Effekseer::MakeRefPtr<Effekseer::DefaultFileInterface>();
+	auto reader = fi->OpenRead(filename);
+	if (reader == nullptr)
 	{
 		return;
 	}
 
 	std::vector<uint8_t> buffer(reader->GetLength());
 	reader->Read(&buffer[0], buffer.size());
-	reader.reset();
 
 	EffekseerRenderer::PngTextureLoader pngloader;
 	if (!pngloader.Load(&buffer[0], (int32_t)buffer.size(), false))

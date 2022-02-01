@@ -25,11 +25,10 @@ namespace Effekseer
 class CurveLoader : public ReferenceObject
 {
 private:
-	::Effekseer::DefaultFileInterface defaultFileInterface_;
-	::Effekseer::FileInterface* fileInterface_ = nullptr;
+	::Effekseer::FileInterfaceRef fileInterface_ = nullptr;
 
 public:
-	CurveLoader(::Effekseer::FileInterface* fileInterface = nullptr);
+	CurveLoader(::Effekseer::FileInterfaceRef fileInterface = nullptr);
 
 	virtual ~CurveLoader() = default;
 

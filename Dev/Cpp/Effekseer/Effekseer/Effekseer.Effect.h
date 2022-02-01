@@ -6,6 +6,7 @@
 // Include
 //----------------------------------------------------------------------------------
 #include "Effekseer.Base.h"
+#include "Effekseer.File.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -281,7 +282,7 @@ public:
 	/**
 	@brief	標準のエフェクト読込インスタンスを生成する。
 	*/
-	static ::Effekseer::EffectLoaderRef CreateEffectLoader(::Effekseer::FileInterface* fileInterface = nullptr);
+	static ::Effekseer::EffectLoaderRef CreateEffectLoader(::Effekseer::FileInterfaceRef fileInterface = nullptr);
 
 	/**
 	@brief

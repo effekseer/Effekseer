@@ -2,24 +2,17 @@
 #ifndef __EFFEKSEER_DEFAULT_FILE_H__
 #define __EFFEKSEER_DEFAULT_FILE_H__
 
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
 #include "Effekseer.Base.h"
 #include "Effekseer.File.h"
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 namespace Effekseer
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-/**
-	@brief	標準のファイル読み込みクラス
-*/
 
+/**
+	@brief	
+	\~English	Default file loader
+	\~Japanese	標準のファイル読み込みクラス
+*/
 class DefaultFileReader : public FileReader
 {
 private:
@@ -28,15 +21,15 @@ private:
 public:
 	DefaultFileReader(FILE* filePtr);
 
-	~DefaultFileReader();
+	~DefaultFileReader() override;
 
 	size_t Read(void* buffer, size_t size);
 
 	void Seek(int position);
 
-	int GetPosition();
+	int GetPosition() const;
 
-	size_t GetLength();
+	size_t GetLength() const;
 };
 
 class DefaultFileWriter : public FileWriter
@@ -47,7 +40,7 @@ private:
 public:
 	DefaultFileWriter(FILE* filePtr);
 
-	~DefaultFileWriter();
+	~DefaultFileWriter() override;
 
 	size_t Write(const void* buffer, size_t size);
 
@@ -55,25 +48,19 @@ public:
 
 	void Seek(int position);
 
-	int GetPosition();
+	int GetPosition() const;
 
-	size_t GetLength();
+	size_t GetLength() const;
 };
 
 class DefaultFileInterface : public FileInterface
 {
-private:
 public:
-	FileReader* OpenRead(const char16_t* path);
+	FileReaderRef OpenRead(const char16_t* path);
 
-	FileWriter* OpenWrite(const char16_t* path);
+	FileWriterRef OpenWrite(const char16_t* path);
 };
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 } // namespace Effekseer
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
 #endif // __EFFEKSEER_DEFAULT_FILE_H__

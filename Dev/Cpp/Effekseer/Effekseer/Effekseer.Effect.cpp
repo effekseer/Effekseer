@@ -807,9 +807,9 @@ EffectRef EffectImplemented::Create(const SettingRef& setting, const void* pData
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-::Effekseer::EffectLoaderRef Effect::CreateEffectLoader(::Effekseer::FileInterface* fileInterface)
+::Effekseer::EffectLoaderRef Effect::CreateEffectLoader(::Effekseer::FileInterfaceRef fileInterface)
 {
-	return EffectLoaderRef(new ::Effekseer::DefaultEffectLoader(fileInterface));
+	return MakeRefPtr<::Effekseer::DefaultEffectLoader>(fileInterface);
 }
 
 //----------------------------------------------------------------------------------

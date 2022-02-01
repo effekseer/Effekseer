@@ -4,7 +4,7 @@
 namespace Effekseer
 {
 
-CurveLoader::CurveLoader(::Effekseer::FileInterface* fileInterface)
+CurveLoader::CurveLoader(::Effekseer::FileInterfaceRef fileInterface)
 {
 	if (fileInterface != nullptr)
 	{
@@ -12,14 +12,14 @@ CurveLoader::CurveLoader(::Effekseer::FileInterface* fileInterface)
 	}
 	else
 	{
-		fileInterface_ = &defaultFileInterface_;
+		fileInterface_ = MakeRefPtr<DefaultFileInterface>();
 	}
 }
 
 CurveRef CurveLoader::Load(const char16_t* path)
 {
-	std::unique_ptr<::Effekseer::FileReader> reader(fileInterface_->OpenRead(path));
-	if (reader.get() == nullptr)
+	auto reader = fileInterface_->OpenRead(path);
+	if (reader == nullptr)
 	{
 		return nullptr;
 	}

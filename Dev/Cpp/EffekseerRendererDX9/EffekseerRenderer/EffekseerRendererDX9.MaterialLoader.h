@@ -19,13 +19,12 @@ class MaterialLoader : public ::Effekseer::MaterialLoader
 {
 private:
 	RendererImplementedRef renderer_ = nullptr;
-	::Effekseer::FileInterface* fileInterface_ = nullptr;
-	::Effekseer::DefaultFileInterface defaultFileInterface_;
-
+	::Effekseer::FileInterfaceRef fileInterface_ = nullptr;
+	
 	::Effekseer::MaterialRef LoadAcutually(::Effekseer::MaterialFile& materialFile, ::Effekseer::CompiledMaterialBinary* binary);
 
 public:
-	MaterialLoader(const RendererImplementedRef& renderer, ::Effekseer::FileInterface* fileInterface);
+	MaterialLoader(const RendererImplementedRef& renderer, ::Effekseer::FileInterfaceRef fileInterface);
 	virtual ~MaterialLoader();
 
 	::Effekseer::MaterialRef Load(const char16_t* path) override;

@@ -1,38 +1,24 @@
 ﻿
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
 #include "Effekseer.DefaultEffectLoader.h"
 #include "../Effekseer.h"
 #include <memory>
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 namespace Effekseer
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-DefaultEffectLoader::DefaultEffectLoader(FileInterface* fileInterface)
+
+DefaultEffectLoader::DefaultEffectLoader(FileInterfaceRef fileInterface)
 	: m_fileInterface(fileInterface)
 {
 	if (m_fileInterface == nullptr)
 	{
-		m_fileInterface = &m_defaultFileInterface;
+		m_fileInterface = MakeRefPtr<DefaultFileInterface>();
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 DefaultEffectLoader::~DefaultEffectLoader()
 {
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 bool DefaultEffectLoader::Load(const char16_t* path, void*& data, int32_t& size)
 {
 	assert(path != nullptr);
@@ -40,8 +26,8 @@ bool DefaultEffectLoader::Load(const char16_t* path, void*& data, int32_t& size)
 	data = nullptr;
 	size = 0;
 
-	std::unique_ptr<FileReader> reader(m_fileInterface->OpenRead(path));
-	if (reader.get() == nullptr)
+	auto reader = m_fileInterface->OpenRead(path);
+	if (reader == nullptr)
 		return false;
 
 	size = (int32_t)reader->GetLength();
@@ -51,19 +37,10 @@ bool DefaultEffectLoader::Load(const char16_t* path, void*& data, int32_t& size)
 	return true;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void DefaultEffectLoader::Unload(void* data, int32_t size)
 {
 	uint8_t* data8 = (uint8_t*)data;
 	ES_SAFE_DELETE_ARRAY(data8);
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 } // namespace Effekseer
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
