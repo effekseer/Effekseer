@@ -463,8 +463,24 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public void ImageData(Image user_texture_id, float x, float y, float uv0_x, float uv0_y, float uv1_x, float uv1_y) {
+    EffekseerNativePINVOKE.GUIManager_ImageData__SWIG_0(swigCPtr, Image.getCPtr(user_texture_id), x, y, uv0_x, uv0_y, uv1_x, uv1_y);
+  }
+
+  public void ImageData(Image user_texture_id, float x, float y, float uv0_x, float uv0_y, float uv1_x) {
+    EffekseerNativePINVOKE.GUIManager_ImageData__SWIG_1(swigCPtr, Image.getCPtr(user_texture_id), x, y, uv0_x, uv0_y, uv1_x);
+  }
+
+  public void ImageData(Image user_texture_id, float x, float y, float uv0_x, float uv0_y) {
+    EffekseerNativePINVOKE.GUIManager_ImageData__SWIG_2(swigCPtr, Image.getCPtr(user_texture_id), x, y, uv0_x, uv0_y);
+  }
+
+  public void ImageData(Image user_texture_id, float x, float y, float uv0_x) {
+    EffekseerNativePINVOKE.GUIManager_ImageData__SWIG_3(swigCPtr, Image.getCPtr(user_texture_id), x, y, uv0_x);
+  }
+
   public void ImageData(Image user_texture_id, float x, float y) {
-    EffekseerNativePINVOKE.GUIManager_ImageData(swigCPtr, Image.getCPtr(user_texture_id), x, y);
+    EffekseerNativePINVOKE.GUIManager_ImageData__SWIG_4(swigCPtr, Image.getCPtr(user_texture_id), x, y);
   }
 
   public bool ImageButton(Image user_texture_id, float x, float y) {

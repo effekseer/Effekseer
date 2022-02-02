@@ -10,62 +10,6 @@
 
 namespace efk
 {
-class RenderTextureGL : public RenderTexture
-{
-private:
-	Graphics* graphics = nullptr;
-	EffekseerRendererGL::Backend::TextureRef texture_;
-
-public:
-	RenderTextureGL(Graphics* graphics);
-	virtual ~RenderTextureGL();
-	bool Initialize(Effekseer::Tool::Vector2I size, Effekseer::Backend::TextureFormatType format, uint32_t multisample = 1);
-
-	Effekseer::Backend::TextureRef GetAsBackend() override
-	{
-		return texture_;
-	}
-
-	GLuint GetTexture()
-	{
-		return texture_->GetBuffer();
-	}
-	GLuint GetBuffer()
-	{
-		return texture_->GetRenderBuffer();
-	}
-
-	uint64_t GetViewID() override
-	{
-		return texture_->GetBuffer();
-	}
-};
-
-class DepthTextureGL : public DepthTexture
-{
-private:
-	Graphics* graphics_ = nullptr;
-	EffekseerRendererGL::Backend::TextureRef texture_;
-
-public:
-	DepthTextureGL(Graphics* graphics);
-	virtual ~DepthTextureGL();
-	bool Initialize(int32_t width, int32_t height, uint32_t multisample = 1);
-
-	Effekseer::Backend::TextureRef GetAsBackend() override
-	{
-		return texture_;
-	}
-
-	GLuint GetTexture()
-	{
-		return texture_->GetBuffer();
-	}
-	GLuint GetBuffer()
-	{
-		return texture_->GetRenderBuffer();
-	}
-};
 
 class GraphicsGL : public Graphics
 {
@@ -75,7 +19,6 @@ private:
 	int32_t windowHeight = 0;
 	GLuint frameBuffer = 0;
 
-	std::shared_ptr<RenderTextureGL> backTarget;
 	GLuint frameBufferForCopySrc = 0;
 	GLuint frameBufferForCopyDst = 0;
 	Effekseer::RefPtr<Effekseer::Backend::GraphicsDevice> graphicsDevice_;

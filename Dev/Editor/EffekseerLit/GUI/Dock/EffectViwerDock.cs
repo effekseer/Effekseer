@@ -8,10 +8,8 @@ namespace Effekseer.GUI.Dock
 {
 	class EffectViwerDock : EffectViwerPaneBase
 	{
-		public EffectViwerDock()
-		{
-		}
-
+		public EffectViwerDock(swig.DeviceType deviceType)
+			: base(deviceType) { }
 
 		protected override void UpdateInternal()
 		{
@@ -25,11 +23,7 @@ namespace Effekseer.GUI.Dock
 			var contentSize = Manager.NativeManager.GetContentRegionAvail();
 
 			// Menu
-			contentSize.X = System.Math.Max(1, contentSize.X);
-			contentSize.Y = System.Math.Max(1, contentSize.Y - frameHeight - padding);
-
-			Manager.Native.RenderView((int)contentSize.X, (int)contentSize.Y, Manager.Viewer.ViewPointController, Manager.MainViewImage);
-			Manager.NativeManager.ImageData(Manager.MainViewImage, (int)contentSize.X, (int)contentSize.Y);
+			DrawMainImage(contentSize, frameHeight, padding);
 
 			if (Manager.NativeManager.BeginDragDropTarget())
 			{

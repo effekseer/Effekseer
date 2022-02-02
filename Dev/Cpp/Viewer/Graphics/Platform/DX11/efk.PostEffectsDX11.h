@@ -53,8 +53,8 @@ class BloomEffectDX11 : public BloomEffect
 	std::unique_ptr<EffekseerRendererDX11::Shader> shaderBlurV;
 
 	std::array<int32_t, 2> renderTextureSize_;
-	std::unique_ptr<RenderTexture> extractBuffer;
-	std::unique_ptr<RenderTexture> lowresBuffers[BlurBuffers][BlurIterations];
+	Effekseer::Backend::TextureRef extractBuffer;
+	Effekseer::Backend::TextureRef lowresBuffers[BlurBuffers][BlurIterations];
 
 public:
 	BloomEffectDX11(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer);

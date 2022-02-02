@@ -499,7 +499,15 @@ static ImTextureID ToImTextureID(std::shared_ptr<Effekseer::Tool::Image> image)
 			auto t_gl = dynamic_cast<EffekseerRendererGL::Backend::Texture*>(texture.Get());
 			if (t_gl != nullptr)
 			{
-				return reinterpret_cast<ImTextureID>(static_cast<size_t>(t_gl->GetBuffer()));
+				auto buffer = t_gl->GetBuffer();
+				GLint bound;
+				glGetIntegerv(GL_TEXTURE_BINDING_2D, &bound);
+				glBindTexture(GL_TEXTURE_2D, buffer);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glBindTexture(GL_TEXTURE_2D, bound);
+
+				return reinterpret_cast<ImTextureID>(static_cast<size_t>(buffer));
 			}
 		}
 	}
@@ -1454,9 +1462,9 @@ bool GUIManager::Button(const char16_t* label, float size_x, float size_y)
 	return ImGui::Button(utf8str<256>(label), ImVec2(size_x, size_y));
 }
 
-void GUIManager::ImageData(std::shared_ptr<Effekseer::Tool::Image> user_texture_id, float x, float y)
+void GUIManager::ImageData(std::shared_ptr<Effekseer::Tool::Image> user_texture_id, float x, float y, float uv0_x, float uv0_y, float uv1_x, float uv1_y)
 {
-	ImGui::Image(ToImTextureID(user_texture_id), ImVec2(x, y));
+	ImGui::Image(ToImTextureID(user_texture_id), ImVec2(x, y), {uv0_x, uv0_y}, {uv1_x, uv1_y});
 }
 
 bool GUIManager::ImageButton(std::shared_ptr<Effekseer::Tool::Image> user_texture_id, float x, float y)

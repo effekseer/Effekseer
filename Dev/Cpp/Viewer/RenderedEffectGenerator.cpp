@@ -517,33 +517,43 @@ void RenderedEffectGenerator::Resize(const Vector2I screenSize)
 
 	hdrRenderTextureMSAA = nullptr;
 
-	hdrRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics_.get()));
-	hdrRenderTexture->Initialize(screenSize, textureFormat_);
-	depthTexture = std::shared_ptr<efk::DepthTexture>(efk::DepthTexture::Create(graphics_.get()));
-	depthTexture->Initialize(screenSize_.X, screenSize_.Y, msaaSamples);
+	const auto createRenderTexture = [&](Effekseer::Tool::Vector2I size, Effekseer::Backend::TextureFormatType format, int samples)
+	{
+		Effekseer::Backend::TextureParameter param;
+		param.Format = format;
+		param.Size[0] = size.X;
+		param.Size[1] = size.Y;
+		param.SampleCount = samples;
+		param.Usage = Effekseer::Backend::TextureUsageType::RenderTarget;
+		return graphics_->GetGraphicsDevice()->CreateTexture(param);
+	};
+
+	hdrRenderTexture = createRenderTexture(screenSize, textureFormat_, 1);
+
+	Effekseer::Backend::DepthTextureParameter depthTextureParam;
+	depthTextureParam.Format = Effekseer::Backend::TextureFormatType::D24S8;
+	depthTextureParam.Size[0] = screenSize.X;
+	depthTextureParam.Size[1] = screenSize.Y;
+	depthTextureParam.SamplingCount = msaaSamples;
+	depthTexture = graphics_->GetGraphicsDevice()->CreateDepthTexture(depthTextureParam);
 
 	if (msaaSamples > 1)
 	{
-		depthRenderTextureMSAA = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics_.get()));
-		depthRenderTextureMSAA->Initialize(screenSize, Effekseer::Backend::TextureFormatType::R32_FLOAT, msaaSamples);
+		depthRenderTextureMSAA = createRenderTexture(screenSize, Effekseer::Backend::TextureFormatType::R32_FLOAT, msaaSamples);
 	}
 
-	depthRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics_.get()));
-	depthRenderTexture->Initialize(screenSize, Effekseer::Backend::TextureFormatType::R32_FLOAT, 1);
+	depthRenderTexture = createRenderTexture(screenSize, Effekseer::Backend::TextureFormatType::R32_FLOAT, 1);
 
 	if (msaaSamples > 1)
 	{
-		hdrRenderTextureMSAA = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics_.get()));
-		hdrRenderTextureMSAA->Initialize(screenSize, textureFormat_, msaaSamples);
+		hdrRenderTextureMSAA = createRenderTexture(screenSize, textureFormat_, msaaSamples);
 	}
 
-	backTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics_.get()));
-	backTexture->Initialize(screenSize, textureFormat_, 1);
+	backTexture = createRenderTexture(screenSize, textureFormat_, 1);
 
 	if (m_isSRGBMode)
 	{
-		linearRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics_.get()));
-		linearRenderTexture->Initialize(screenSize, textureFormat_);
+		linearRenderTexture = createRenderTexture(screenSize, textureFormat_, 1);
 	}
 }
 
@@ -738,11 +748,11 @@ void RenderedEffectGenerator::Render(std::shared_ptr<RenderImage> renderImage)
 	// clear
 	if (msaaSamples > 1)
 	{
-		graphics_->SetRenderTarget({hdrRenderTextureMSAA->GetAsBackend(), depthRenderTextureMSAA->GetAsBackend()}, depthTexture->GetAsBackend());
+		graphics_->SetRenderTarget({hdrRenderTextureMSAA, depthRenderTextureMSAA}, depthTexture);
 	}
 	else
 	{
-		graphics_->SetRenderTarget({hdrRenderTexture->GetAsBackend(), depthRenderTexture->GetAsBackend()}, depthTexture->GetAsBackend());
+		graphics_->SetRenderTarget({hdrRenderTexture, depthRenderTexture}, depthTexture);
 	}
 
 	graphics_->Clear({0, 0, 0, 0});
@@ -784,16 +794,16 @@ void RenderedEffectGenerator::Render(std::shared_ptr<RenderImage> renderImage)
 
 	if (msaaSamples > 1)
 	{
-		graphics_->SetRenderTarget({hdrRenderTextureMSAA->GetAsBackend()}, depthTexture->GetAsBackend());
+		graphics_->SetRenderTarget({hdrRenderTextureMSAA}, depthTexture);
 	}
 	else
 	{
-		graphics_->SetRenderTarget({hdrRenderTexture->GetAsBackend()}, depthTexture->GetAsBackend());
+		graphics_->SetRenderTarget({hdrRenderTexture}, depthTexture);
 	}
 
 	if (msaaSamples > 1)
 	{
-		graphics_->ResolveRenderTarget(depthRenderTextureMSAA->GetAsBackend(), depthRenderTexture->GetAsBackend());
+		graphics_->ResolveRenderTarget(depthRenderTextureMSAA, depthRenderTexture);
 	}
 
 	EffekseerRenderer::DepthReconstructionParameter reconstructionParam;
@@ -804,7 +814,7 @@ void RenderedEffectGenerator::Render(std::shared_ptr<RenderImage> renderImage)
 	reconstructionParam.ProjectionMatrix34 = config_.ProjectionMatrix.Values[3][2];
 	reconstructionParam.ProjectionMatrix44 = config_.ProjectionMatrix.Values[3][3];
 
-	renderer_->SetDepth(depthRenderTexture->GetAsBackend(), reconstructionParam);
+	renderer_->SetDepth(depthRenderTexture, reconstructionParam);
 
 	if (config_.RenderingMethod == RenderingMethodType::Overdraw)
 	{
@@ -904,29 +914,29 @@ void RenderedEffectGenerator::Render(std::shared_ptr<RenderImage> renderImage)
 
 	if (msaaSamples > 1)
 	{
-		graphics_->ResolveRenderTarget(hdrRenderTextureMSAA->GetAsBackend(), hdrRenderTexture->GetAsBackend());
+		graphics_->ResolveRenderTarget(hdrRenderTextureMSAA, hdrRenderTexture);
 	}
 
 	if (config_.RenderingMethod == RenderingMethodType::Overdraw)
 	{
 		graphics_->SetRenderTarget({renderTargetImage}, nullptr);
-		overdrawEffect_->GetDrawParameter().TexturePtrs[0] = hdrRenderTexture->GetAsBackend();
+		overdrawEffect_->GetDrawParameter().TexturePtrs[0] = hdrRenderTexture;
 		overdrawEffect_->GetDrawParameter().TextureCount = 1;
 		overdrawEffect_->Render();
 	}
 	else
 	{
 		// Bloom processing (specifying the same target for src and dest is faster)
-		m_bloomEffect->Render(hdrRenderTexture->GetAsBackend(), hdrRenderTexture->GetAsBackend());
+		m_bloomEffect->Render(hdrRenderTexture, hdrRenderTexture);
 
 		// Tone map processing
 		auto tonemapTerget = renderTargetImage;
 		if (m_isSRGBMode)
 		{
-			tonemapTerget = linearRenderTexture->GetAsBackend();
+			tonemapTerget = linearRenderTexture;
 		}
 
-		m_tonemapEffect->Render(hdrRenderTexture->GetAsBackend(), tonemapTerget);
+		m_tonemapEffect->Render(hdrRenderTexture, tonemapTerget);
 
 		if (m_isSRGBMode)
 		{
@@ -973,14 +983,14 @@ void RenderedEffectGenerator::CopyToBack()
 {
 	if (msaaSamples > 1)
 	{
-		graphics_->CopyTo(hdrRenderTextureMSAA->GetAsBackend(), backTexture->GetAsBackend());
+		graphics_->CopyTo(hdrRenderTextureMSAA, backTexture);
 	}
 	else
 	{
-		graphics_->CopyTo(hdrRenderTexture->GetAsBackend(), backTexture->GetAsBackend());
+		graphics_->CopyTo(hdrRenderTexture, backTexture);
 	}
 
-	renderer_->SetBackground(backTexture->GetAsBackend());
+	renderer_->SetBackground(backTexture);
 }
 
 void RenderedEffectGenerator::ResetBack()

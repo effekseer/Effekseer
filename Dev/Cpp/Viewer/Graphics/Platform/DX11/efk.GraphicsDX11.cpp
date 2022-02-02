@@ -6,54 +6,6 @@
 
 namespace efk
 {
-RenderTextureDX11::RenderTextureDX11(Graphics* graphics)
-	: graphics(graphics)
-{
-}
-
-RenderTextureDX11::~RenderTextureDX11()
-{
-}
-
-bool RenderTextureDX11::Initialize(Effekseer::Tool::Vector2I size, Effekseer::Backend::TextureFormatType format, uint32_t multisample)
-{
-	auto g = (GraphicsDX11*)graphics;
-	auto gd = g->GetGraphicsDevice().DownCast<EffekseerRendererDX11::Backend::GraphicsDevice>();
-
-	Effekseer::Backend::RenderTextureParameter param;
-	param.Format = format;
-	param.SamplingCount = multisample;
-	param.Size = {size.X, size.Y};
-	texture_ = gd->CreateRenderTexture(param).DownCast<EffekseerRendererDX11::Backend::Texture>();
-
-	this->size_ = size;
-	this->samplingCount_ = multisample;
-	this->format_ = format;
-
-	return texture_ != nullptr;
-}
-
-DepthTextureDX11::DepthTextureDX11(Graphics* graphics)
-	: graphics(graphics)
-{
-}
-
-DepthTextureDX11::~DepthTextureDX11()
-{
-}
-
-bool DepthTextureDX11::Initialize(int32_t width, int32_t height, uint32_t multisample)
-{
-	auto g = (GraphicsDX11*)graphics;
-	auto gd = g->GetGraphicsDevice().DownCast<EffekseerRendererDX11::Backend::GraphicsDevice>();
-
-	Effekseer::Backend::DepthTextureParameter param;
-	param.Format = Effekseer::Backend::TextureFormatType::D24S8;
-	param.SamplingCount = multisample;
-	param.Size = {width, height};
-	texture_ = gd->CreateDepthTexture(param).DownCast<EffekseerRendererDX11::Backend::Texture>();
-	return texture_ != nullptr;
-}
 
 GraphicsDX11::GraphicsDX11()
 {
@@ -79,7 +31,7 @@ GraphicsDX11::~GraphicsDX11()
 	ES_SAFE_RELEASE(dxgiDevice);
 	ES_SAFE_RELEASE(context);
 	ES_SAFE_RELEASE(device_);
-	
+
 	if (d3dDebug != nullptr)
 	{
 		// d3dDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);

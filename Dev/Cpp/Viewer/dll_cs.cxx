@@ -4817,7 +4817,83 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Button__SWI
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_ImageData___(void * jarg1, void * jarg2, float jarg3, float jarg4) {
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_ImageData__SWIG_0___(void * jarg1, void * jarg2, float jarg3, float jarg4, float jarg5, float jarg6, float jarg7, float jarg8) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  std::shared_ptr< Effekseer::Tool::Image > arg2 ;
+  float arg3 ;
+  float arg4 ;
+  float arg5 ;
+  float arg6 ;
+  float arg7 ;
+  float arg8 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  if (jarg2) arg2 = *(std::shared_ptr< Effekseer::Tool::Image > *)jarg2; 
+  arg3 = (float)jarg3; 
+  arg4 = (float)jarg4; 
+  arg5 = (float)jarg5; 
+  arg6 = (float)jarg6; 
+  arg7 = (float)jarg7; 
+  arg8 = (float)jarg8; 
+  (arg1)->ImageData(arg2,arg3,arg4,arg5,arg6,arg7,arg8);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_ImageData__SWIG_1___(void * jarg1, void * jarg2, float jarg3, float jarg4, float jarg5, float jarg6, float jarg7) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  std::shared_ptr< Effekseer::Tool::Image > arg2 ;
+  float arg3 ;
+  float arg4 ;
+  float arg5 ;
+  float arg6 ;
+  float arg7 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  if (jarg2) arg2 = *(std::shared_ptr< Effekseer::Tool::Image > *)jarg2; 
+  arg3 = (float)jarg3; 
+  arg4 = (float)jarg4; 
+  arg5 = (float)jarg5; 
+  arg6 = (float)jarg6; 
+  arg7 = (float)jarg7; 
+  (arg1)->ImageData(arg2,arg3,arg4,arg5,arg6,arg7);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_ImageData__SWIG_2___(void * jarg1, void * jarg2, float jarg3, float jarg4, float jarg5, float jarg6) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  std::shared_ptr< Effekseer::Tool::Image > arg2 ;
+  float arg3 ;
+  float arg4 ;
+  float arg5 ;
+  float arg6 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  if (jarg2) arg2 = *(std::shared_ptr< Effekseer::Tool::Image > *)jarg2; 
+  arg3 = (float)jarg3; 
+  arg4 = (float)jarg4; 
+  arg5 = (float)jarg5; 
+  arg6 = (float)jarg6; 
+  (arg1)->ImageData(arg2,arg3,arg4,arg5,arg6);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_ImageData__SWIG_3___(void * jarg1, void * jarg2, float jarg3, float jarg4, float jarg5) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  std::shared_ptr< Effekseer::Tool::Image > arg2 ;
+  float arg3 ;
+  float arg4 ;
+  float arg5 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  if (jarg2) arg2 = *(std::shared_ptr< Effekseer::Tool::Image > *)jarg2; 
+  arg3 = (float)jarg3; 
+  arg4 = (float)jarg4; 
+  arg5 = (float)jarg5; 
+  (arg1)->ImageData(arg2,arg3,arg4,arg5);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_ImageData__SWIG_4___(void * jarg1, void * jarg2, float jarg3, float jarg4) {
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   std::shared_ptr< Effekseer::Tool::Image > arg2 ;
   float arg3 ;

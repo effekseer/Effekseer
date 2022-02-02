@@ -10,60 +10,6 @@
 
 namespace efk
 {
-class RenderTextureDX11 : public RenderTexture
-{
-private:
-	Graphics* graphics = nullptr;
-	EffekseerRendererDX11::Backend::TextureRef texture_;
-
-public:
-	RenderTextureDX11(Graphics* graphics);
-	virtual ~RenderTextureDX11();
-	bool Initialize(Effekseer::Tool::Vector2I size, Effekseer::Backend::TextureFormatType format, uint32_t multisample = 1);
-
-	Effekseer::Backend::TextureRef GetAsBackend() override
-	{
-		return texture_;
-	}
-
-	ID3D11Texture2D* GetTexture() const
-	{
-		return texture_->GetTexture();
-	}
-
-	uint64_t GetViewID() override
-	{
-		return (uint64_t)texture_->GetSRV();
-	}
-
-	DXGI_FORMAT GetDXGIFormat() const
-	{
-		const auto param = texture_->GetParameter();
-		return EffekseerRendererDX11::Backend::GetTextureFormatType(param.Format);
-	}
-};
-
-class DepthTextureDX11 : public DepthTexture
-{
-private:
-	Graphics* graphics = nullptr;
-	EffekseerRendererDX11::Backend::TextureRef texture_;
-
-public:
-	DepthTextureDX11(Graphics* graphics);
-	virtual ~DepthTextureDX11();
-	bool Initialize(int32_t width, int32_t height, uint32_t multisample = 1);
-
-	Effekseer::Backend::TextureRef GetAsBackend() override
-	{
-		return texture_;
-	}
-
-	ID3D11Texture2D* GetTexture() const
-	{
-		return texture_->GetTexture();
-	}
-};
 
 class GraphicsDX11 : public Graphics
 {

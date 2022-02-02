@@ -62,8 +62,8 @@ class BloomEffectGL : public BloomEffect
 
 	int32_t renderTextureWidth = 0;
 	int32_t renderTextureHeight = 0;
-	std::unique_ptr<RenderTexture> extractBuffer;
-	std::unique_ptr<RenderTexture> lowresBuffers[BlurBuffers][BlurIterations];
+	Effekseer::Backend::TextureRef extractBuffer;
+	Effekseer::Backend::TextureRef lowresBuffers[BlurBuffers][BlurIterations];
 
 public:
 	BloomEffectGL(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer);

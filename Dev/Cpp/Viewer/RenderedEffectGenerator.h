@@ -109,17 +109,17 @@ protected:
 	std::unique_ptr<efk::TonemapEffect> tonemapEffect_;
 	std::unique_ptr<efk::LinearToSRGBEffect> linearToSRGBEffect_;
 
-	std::shared_ptr<efk::RenderTexture> hdrRenderTextureMSAA;
-	std::shared_ptr<efk::RenderTexture> hdrRenderTexture;
-	std::shared_ptr<efk::RenderTexture> linearRenderTexture;
-	std::shared_ptr<efk::DepthTexture> depthTexture;
+	Effekseer::Backend::TextureRef hdrRenderTextureMSAA;
+	Effekseer::Backend::TextureRef hdrRenderTexture;
+	Effekseer::Backend::TextureRef linearRenderTexture;
+	Effekseer::Backend::TextureRef depthTexture;
 
 	//! depth texture to send a renderer for softparticles
-	std::shared_ptr<efk::RenderTexture> depthRenderTextureMSAA;
-	std::shared_ptr<efk::RenderTexture> depthRenderTexture;
+	Effekseer::Backend::TextureRef depthRenderTextureMSAA;
+	Effekseer::Backend::TextureRef depthRenderTexture;
 
-	std::shared_ptr<efk::RenderTexture> backTexture;
-	std::shared_ptr<efk::RenderTexture> viewRenderTexture;
+	Effekseer::Backend::TextureRef backTexture;
+	Effekseer::Backend::TextureRef viewRenderTexture;
 
 	std::unique_ptr<efk::BloomEffect> m_bloomEffect;
 	std::unique_ptr<efk::TonemapEffect> m_tonemapEffect;
@@ -235,7 +235,7 @@ public:
 		}
 	}
 
-	std::shared_ptr<efk::RenderTexture> GetView() const
+	Effekseer::Backend::TextureRef GetView() const
 	{
 		return viewRenderTexture;
 	}

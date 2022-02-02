@@ -6,7 +6,4 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Dock
 {
-	class EffectViwer : EffectViwerPaneBase
-	{
-	}
 }

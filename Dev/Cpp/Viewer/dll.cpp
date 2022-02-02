@@ -481,11 +481,13 @@ std::shared_ptr<Effekseer::Tool::EffectRecorder> Native::CreateRecorder(const Ef
 	if (mainScreen_->GetEffect() == nullptr)
 		return nullptr;
 
+	Effekseer::Tool::Vector2I screenSize = {mainScreen_->GetView()->GetParameter().Size[0], mainScreen_->GetView()->GetParameter().Size[1]};
+
 	auto recorder = std::make_shared<Effekseer::Tool::EffectRecorder>();
 	if (recorder->Begin(
 			mainScreen_,
 			mainScreen_->GetConfig(),
-			mainScreen_->GetView()->GetSize(),
+			screenSize,
 			graphics_,
 			setting_,
 			recordingParameter,

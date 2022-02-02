@@ -280,36 +280,36 @@ void BloomEffectDX11::Render(Effekseer::Backend::TextureRef src, Effekseer::Back
 			intensity,
 		};
 
-		blitter.Blit(shaderExtract.get(), {src}, constantData, sizeof(constantData), extractBuffer->GetAsBackend());
+		blitter.Blit(shaderExtract.get(), {src}, constantData, sizeof(constantData), extractBuffer);
 	}
 
 	// Shrink pass
 	for (int i = 0; i < BlurIterations; i++)
 	{
-		auto textures = (i == 0) ? extractBuffer->GetAsBackend()
-								 : lowresBuffers[0][i - 1]->GetAsBackend();
+		auto textures = (i == 0) ? extractBuffer
+								 : lowresBuffers[0][i - 1];
 
-		blitter.Blit(shaderDownsample.get(), {textures}, nullptr, 0, lowresBuffers[0][i]->GetAsBackend());
+		blitter.Blit(shaderDownsample.get(), {textures}, nullptr, 0, lowresBuffers[0][i]);
 	}
 
 	// Horizontal gaussian blur pass
 	for (int i = 0; i < BlurIterations; i++)
 	{
-		blitter.Blit(shaderBlurH.get(), {lowresBuffers[0][i]->GetAsBackend()}, nullptr, 0, lowresBuffers[1][i]->GetAsBackend());
+		blitter.Blit(shaderBlurH.get(), {lowresBuffers[0][i]}, nullptr, 0, lowresBuffers[1][i]);
 	}
 
 	// Vertical gaussian blur pass
 	for (int i = 0; i < BlurIterations; i++)
 	{
-		blitter.Blit(shaderBlurV.get(), {lowresBuffers[1][i]->GetAsBackend()}, nullptr, 0, lowresBuffers[0][i]->GetAsBackend());
+		blitter.Blit(shaderBlurV.get(), {lowresBuffers[1][i]}, nullptr, 0, lowresBuffers[0][i]);
 	}
 
 	// Blending pass
 	{
-		auto textures = {lowresBuffers[0][0]->GetAsBackend(),
-						 lowresBuffers[0][1]->GetAsBackend(),
-						 lowresBuffers[0][2]->GetAsBackend(),
-						 lowresBuffers[0][3]->GetAsBackend()};
+		auto textures = {lowresBuffers[0][0],
+						 lowresBuffers[0][1],
+						 lowresBuffers[0][2],
+						 lowresBuffers[0][3]};
 		blitter.Blit(shaderBlend.get(), textures, nullptr, 0, dest, AlphaBlendType::Add);
 	}
 }
@@ -325,19 +325,25 @@ void BloomEffectDX11::OnResetDevice()
 
 void BloomEffectDX11::SetupBuffers(std::array<int32_t, 2> size)
 {
+	const auto createRenderTexture = [&](Effekseer::Tool::Vector2I size, Effekseer::Backend::TextureFormatType format)
+	{
+		Effekseer::Backend::TextureParameter param;
+		param.Format = format;
+		param.Size[0] = size.X;
+		param.Size[1] = size.Y;
+		param.Usage = Effekseer::Backend::TextureUsageType::RenderTarget;
+		return graphics->GetGraphicsDevice()->CreateTexture(param);
+	};
+
 	ReleaseBuffers();
 
 	renderTextureSize_ = size;
 
 	// Create high brightness extraction buffer
 	{
-		extractBuffer.reset(RenderTexture::Create(graphics));
+		extractBuffer = createRenderTexture(Effekseer::Tool::Vector2I(size[0], size[1]), Effekseer::Backend::TextureFormatType::R16G16B16A16_FLOAT);
 
-		if (extractBuffer != nullptr)
-		{
-			extractBuffer->Initialize(Effekseer::Tool::Vector2I(size[0], size[1]), Effekseer::Backend::TextureFormatType::R16G16B16A16_FLOAT);
-		}
-		else
+		if (extractBuffer == nullptr)
 		{
 			spdlog::trace("FAIL Create extractBuffer");
 			isValid_ = false;
@@ -353,13 +359,9 @@ void BloomEffectDX11::SetupBuffers(std::array<int32_t, 2> size)
 		{
 			bufferSize.X = std::max(1, (bufferSize.X + 1) / 2);
 			bufferSize.Y = std::max(1, (bufferSize.Y + 1) / 2);
-			lowresBuffers[i][j].reset(RenderTexture::Create(graphics));
+			lowresBuffers[i][j] = createRenderTexture(bufferSize, Effekseer::Backend::TextureFormatType::R16G16B16A16_FLOAT);
 
-			if (lowresBuffers[i][j] != nullptr)
-			{
-				lowresBuffers[i][j]->Initialize(bufferSize, Effekseer::Backend::TextureFormatType::R16G16B16A16_FLOAT);
-			}
-			else
+			if (lowresBuffers[i][j] == nullptr)
 			{
 				spdlog::trace("FAIL Create lowresBuffers[i][j]");
 				isValid_ = false;
@@ -373,12 +375,12 @@ void BloomEffectDX11::ReleaseBuffers()
 {
 	renderTextureSize_.fill(0);
 
-	extractBuffer.reset();
+	extractBuffer.Reset();
 	for (int i = 0; i < BlurBuffers; i++)
 	{
 		for (int j = 0; j < BlurIterations; j++)
 		{
-			lowresBuffers[i][j].reset();
+			lowresBuffers[i][j].Reset();
 		}
 	}
 }
@@ -489,9 +491,6 @@ LinearToSRGBEffectDX11::~LinearToSRGBEffectDX11()
 
 void LinearToSRGBEffectDX11::Render(Effekseer::Backend::TextureRef src, Effekseer::Backend::TextureRef dest)
 {
-	using namespace Effekseer;
-	using namespace EffekseerRendererDX11;
-
 	// LinearToSRGB pass
 	const auto textures = {src};
 

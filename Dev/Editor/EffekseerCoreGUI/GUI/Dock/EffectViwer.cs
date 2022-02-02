@@ -10,12 +10,12 @@ namespace Effekseer.GUI.Dock
 	{
 		public bool IsHovered = false;
 
-
-
 		protected Component.Enum renderMode;
 		protected Component.Enum viewMode;
 
-		public EffectViwerPaneBase()
+		swig.DeviceType deviceType;
+
+		public EffectViwerPaneBase(swig.DeviceType deviceType)
 		{
 			Label = Resources.GetString("Viewer") + "###Viewer";
 			renderMode = new Component.Enum();
@@ -31,6 +31,26 @@ namespace Effekseer.GUI.Dock
 			NoScrollBar = true;
 			NoCloseButton = true;
 			AllowsShortTab = false;
+
+			this.deviceType = deviceType;
+		}
+
+		protected void DrawMainImage(swig.Vec2 contentSize, float frameHeight, float padding)
+		{
+			// Menu
+			contentSize.X = System.Math.Max(1, contentSize.X);
+			contentSize.Y = System.Math.Max(1, contentSize.Y - frameHeight - padding);
+
+			Manager.Native.RenderView((int)contentSize.X, (int)contentSize.Y, Manager.Viewer.ViewPointController, Manager.MainViewImage);
+
+			if (deviceType == swig.DeviceType.OpenGL)
+			{
+				Manager.NativeManager.ImageData(Manager.MainViewImage, (int)contentSize.X, (int)contentSize.Y, 0, 1, 1, 0);
+			}
+			else
+			{
+				Manager.NativeManager.ImageData(Manager.MainViewImage, (int)contentSize.X, (int)contentSize.Y);
+			}
 		}
 
 		protected override void UpdateInternal()
@@ -45,11 +65,7 @@ namespace Effekseer.GUI.Dock
 			var contentSize = Manager.NativeManager.GetContentRegionAvail();
 
 			// Menu
-			contentSize.X = System.Math.Max(1, contentSize.X);
-			contentSize.Y = System.Math.Max(1, contentSize.Y - frameHeight - padding);
-
-			Manager.Native.RenderView((int)contentSize.X, (int)contentSize.Y, Manager.Viewer.ViewPointController, Manager.MainViewImage);
-			Manager.NativeManager.ImageData(Manager.MainViewImage, (int)contentSize.X, (int)contentSize.Y);
+			DrawMainImage(contentSize, frameHeight, padding);
 
 			IsHovered = Manager.NativeManager.IsWindowHovered();
 
@@ -66,8 +82,8 @@ namespace Effekseer.GUI.Dock
 			viewMode.Update();
 			Manager.NativeManager.PopItemWidth();
 
-			string perfText = 
-				"D:" + Manager.Native.GetAndResetDrawCall().ToString("D3") + "  " + 
+			string perfText =
+				"D:" + Manager.Native.GetAndResetDrawCall().ToString("D3") + "  " +
 				"V:" + Manager.Native.GetAndResetVertexCount().ToString("D5") + "  " +
 				"P:" + Manager.Native.GetInstanceCount().ToString("D5") + " ";
 

@@ -13,6 +13,8 @@ namespace Effekseer
 
 	public class App : Application
 	{
+		swig.DeviceType deviceType;
+
 		protected override void OnInitialize()
 		{
 			var dockTypes = new Type[]
@@ -45,7 +47,7 @@ namespace Effekseer
 			};
 
 			System.OperatingSystem os = System.Environment.OSVersion;
-			swig.DeviceType deviceType = swig.DeviceType.DirectX11;
+			deviceType = swig.DeviceType.DirectX11;
 
 			if (!(os.Platform == PlatformID.Win32NT ||
 			os.Platform == PlatformID.Win32S ||
@@ -78,7 +80,7 @@ namespace Effekseer
 		protected override void OnCreateEffectViwer()
 		{
 			Debug.Assert(Manager.effectViewer == null);
-			Manager.effectViewer = new Dock.EffectViwer();
+			Manager.effectViewer = new Dock.EffectViwerPaneBase(deviceType);
 			Manager.dockManager.Controls.Add(Manager.effectViewer);
 		}
 

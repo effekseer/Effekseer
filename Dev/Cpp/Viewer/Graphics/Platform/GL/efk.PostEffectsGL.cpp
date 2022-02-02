@@ -357,38 +357,38 @@ void BloomEffectGL::Render(Effekseer::Backend::TextureRef src, Effekseer::Backen
 			0.25f / (knee + 0.00001f),
 			intensity,
 		};
-		blitter.Blit(shaderExtract.get(), vaoExtract.get(), std::vector<Effekseer::Backend::TextureRef>{src}, constantData, sizeof(constantData), extractBuffer->GetAsBackend());
+		blitter.Blit(shaderExtract.get(), vaoExtract.get(), std::vector<Effekseer::Backend::TextureRef>{src}, constantData, sizeof(constantData), extractBuffer);
 	}
 
 	// Shrink pass
 	for (int i = 0; i < BlurIterations; i++)
 	{
-		const auto textures = (i == 0) ? extractBuffer->GetAsBackend() : lowresBuffers[0][i - 1]->GetAsBackend();
-		blitter.Blit(shaderDownsample.get(), vaoDownsample.get(), std::vector<Effekseer::Backend::TextureRef>{textures}, nullptr, 0, lowresBuffers[0][i]->GetAsBackend());
+		const auto textures = (i == 0) ? extractBuffer : lowresBuffers[0][i - 1];
+		blitter.Blit(shaderDownsample.get(), vaoDownsample.get(), std::vector<Effekseer::Backend::TextureRef>{textures}, nullptr, 0, lowresBuffers[0][i]);
 	}
 
 	// Horizontal gaussian blur pass
 	for (int i = 0; i < BlurIterations; i++)
 	{
-		const std::vector<Effekseer::Backend::TextureRef> textures{lowresBuffers[0][i]->GetAsBackend()};
-		blitter.Blit(shaderBlurH.get(), vaoBlurH.get(), textures, nullptr, 0, lowresBuffers[1][i]->GetAsBackend());
+		const std::vector<Effekseer::Backend::TextureRef> textures{lowresBuffers[0][i]};
+		blitter.Blit(shaderBlurH.get(), vaoBlurH.get(), textures, nullptr, 0, lowresBuffers[1][i]);
 	}
 
 	// Vertical gaussian blur pass
 	for (int i = 0; i < BlurIterations; i++)
 	{
-		const std::vector<Effekseer::Backend::TextureRef> textures{lowresBuffers[1][i]->GetAsBackend()};
-		blitter.Blit(shaderBlurV.get(), vaoBlurV.get(), textures, nullptr, 0, lowresBuffers[0][i]->GetAsBackend());
+		const std::vector<Effekseer::Backend::TextureRef> textures{lowresBuffers[1][i]};
+		blitter.Blit(shaderBlurV.get(), vaoBlurV.get(), textures, nullptr, 0, lowresBuffers[0][i]);
 	}
 
 	// Blending pass
 	state.AlphaBlend = AlphaBlendType::Add;
 	renderer_->GetRenderState()->Update(false);
 	{
-		const std::vector<Effekseer::Backend::TextureRef> textures{lowresBuffers[0][0]->GetAsBackend(),
-																   lowresBuffers[0][1]->GetAsBackend(),
-																   lowresBuffers[0][2]->GetAsBackend(),
-																   lowresBuffers[0][3]->GetAsBackend()};
+		const std::vector<Effekseer::Backend::TextureRef> textures{lowresBuffers[0][0],
+																   lowresBuffers[0][1],
+																   lowresBuffers[0][2],
+																   lowresBuffers[0][3]};
 		blitter.Blit(shaderBlend.get(), vaoBlend.get(), textures, nullptr, 0, dest, false);
 	}
 
@@ -409,6 +409,16 @@ void BloomEffectGL::OnResetDevice()
 
 void BloomEffectGL::SetupBuffers(int32_t width, int32_t height)
 {
+	const auto createRenderTexture = [&](Effekseer::Tool::Vector2I size, Effekseer::Backend::TextureFormatType format)
+	{
+		Effekseer::Backend::TextureParameter param;
+		param.Format = format;
+		param.Size[0] = size.X;
+		param.Size[1] = size.Y;
+		param.Usage = Effekseer::Backend::TextureUsageType::RenderTarget;
+		return graphics->GetGraphicsDevice()->CreateTexture(param);
+	};
+
 	ReleaseBuffers();
 
 	renderTextureWidth = width;
@@ -417,8 +427,7 @@ void BloomEffectGL::SetupBuffers(int32_t width, int32_t height)
 	// Create high brightness extraction buffer
 	{
 		auto bufferSize = Effekseer::Tool::Vector2I(width, height);
-		extractBuffer.reset(RenderTexture::Create(graphics));
-		extractBuffer->Initialize(bufferSize, Effekseer::Backend::TextureFormatType::R16G16B16A16_FLOAT);
+		extractBuffer = createRenderTexture(bufferSize, Effekseer::Backend::TextureFormatType::R16G16B16A16_FLOAT);
 	}
 
 	// Create low-resolution buffers
@@ -429,8 +438,7 @@ void BloomEffectGL::SetupBuffers(int32_t width, int32_t height)
 		{
 			bufferSize.X = std::max(1, (bufferSize.X + 1) / 2);
 			bufferSize.Y = std::max(1, (bufferSize.Y + 1) / 2);
-			lowresBuffers[i][j].reset(RenderTexture::Create(graphics));
-			lowresBuffers[i][j]->Initialize(bufferSize, Effekseer::Backend::TextureFormatType::R16G16B16A16_FLOAT);
+			lowresBuffers[i][j] = createRenderTexture(bufferSize, Effekseer::Backend::TextureFormatType::R16G16B16A16_FLOAT);
 		}
 	}
 }
@@ -440,12 +448,12 @@ void BloomEffectGL::ReleaseBuffers()
 	renderTextureWidth = 0;
 	renderTextureHeight = 0;
 
-	extractBuffer.reset();
+	extractBuffer.Reset();
 	for (int i = 0; i < BlurBuffers; i++)
 	{
 		for (int j = 0; j < BlurIterations; j++)
 		{
-			lowresBuffers[i][j].reset();
+			lowresBuffers[i][j].Reset();
 		}
 	}
 }

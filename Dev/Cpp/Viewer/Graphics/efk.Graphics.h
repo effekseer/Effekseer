@@ -10,21 +10,6 @@
 #include "../Math/Vector2I.h"
 #include "../efk.Base.h"
 
-/*
-
-namespace Effekseer
-{
-namespace Tool
-{
-
-class RenderPass;
-class CommandList;
-
-} // namespace Tool
-} // namespace Effekseer
-
-*/
-
 namespace efk
 {
 class Graphics;
@@ -34,60 +19,6 @@ enum class TextureFeatureType
 	Texture2D,
 	MultisampledTexture2DRenderTarget,
 	MultisampledTexture2DResolve,
-};
-
-class RenderTexture
-{
-protected:
-	int32_t samplingCount_ = 1;
-	Effekseer::Tool::Vector2I size_;
-	Effekseer::Backend::TextureFormatType format_;
-
-public:
-	RenderTexture() = default;
-	virtual ~RenderTexture() = default;
-
-	virtual bool Initialize(Effekseer::Tool::Vector2I size, Effekseer::Backend::TextureFormatType format, uint32_t multisample = 1) = 0;
-
-	virtual uint64_t GetViewID() = 0;
-
-	virtual Effekseer::Backend::TextureRef GetAsBackend()
-	{
-		return nullptr;
-	}
-
-	Effekseer::Tool::Vector2I GetSize() const
-	{
-		return size_;
-	}
-
-	int32_t GetSamplingCount() const
-	{
-		return samplingCount_;
-	}
-
-	Effekseer::Backend::TextureFormatType GetFormat() const
-	{
-		return format_;
-	}
-
-	static RenderTexture* Create(Graphics* graphics);
-};
-
-class DepthTexture
-{
-public:
-	DepthTexture() = default;
-	virtual ~DepthTexture() = default;
-
-	virtual Effekseer::Backend::TextureRef GetAsBackend()
-	{
-		return nullptr;
-	}
-
-	virtual bool Initialize(int32_t width, int32_t height, uint32_t multisample = 1) = 0;
-
-	static DepthTexture* Create(Graphics* graphics);
 };
 
 class Graphics

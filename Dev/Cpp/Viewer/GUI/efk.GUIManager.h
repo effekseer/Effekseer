@@ -544,7 +544,7 @@ public:
 	// Main
 	bool Button(const char16_t* label, float size_x = 0.0f, float size_y = 0.0f);
 
-	void ImageData(std::shared_ptr<Effekseer::Tool::Image> user_texture_id, float x, float y);
+	void ImageData(std::shared_ptr<Effekseer::Tool::Image> user_texture_id, float x, float y, float uv0_x = 0.0f, float uv0_y = 0.0f, float uv1_x = 1.0f, float uv1_y = 1.0f);
 
 	bool ImageButton(std::shared_ptr<Effekseer::Tool::Image> user_texture_id, float x, float y);
 

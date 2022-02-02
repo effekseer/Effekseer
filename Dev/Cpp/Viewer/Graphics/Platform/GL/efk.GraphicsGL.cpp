@@ -10,77 +10,6 @@
 
 namespace efk
 {
-RenderTextureGL::RenderTextureGL(Graphics* graphics)
-	: graphics(graphics)
-{
-}
-
-RenderTextureGL::~RenderTextureGL()
-{
-}
-
-bool RenderTextureGL::Initialize(Effekseer::Tool::Vector2I size, Effekseer::Backend::TextureFormatType format, uint32_t multisample)
-{
-	auto g = (GraphicsGL*)graphics;
-	auto gd = g->GetGraphicsDevice().DownCast<EffekseerRendererGL::Backend::GraphicsDevice>();
-
-	Effekseer::Backend::RenderTextureParameter param;
-	param.Format = format;
-	param.SamplingCount = multisample;
-	param.Size = {size.X, size.Y};
-	texture_ = gd->CreateRenderTexture(param).DownCast<EffekseerRendererGL::Backend::Texture>();
-
-	this->size_ = size;
-	this->samplingCount_ = multisample;
-	this->format_ = format;
-
-	if (multisample <= 1 && texture_ != nullptr)
-	{
-		GLint bound;
-		glGetIntegerv(GL_TEXTURE_BINDING_2D, &bound);
-		glBindTexture(GL_TEXTURE_2D, texture_->GetBuffer());
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glBindTexture(GL_TEXTURE_2D, bound);
-	}
-
-	return texture_ != nullptr;
-}
-
-DepthTextureGL::DepthTextureGL(Graphics* graphics)
-	: graphics_(graphics)
-{
-}
-
-DepthTextureGL::~DepthTextureGL()
-{
-}
-
-bool DepthTextureGL::Initialize(int32_t width, int32_t height, uint32_t multisample)
-{
-	if (glGetError() != GL_NO_ERROR)
-		return false;
-	auto g = (GraphicsGL*)graphics_;
-	auto gd = g->GetGraphicsDevice().DownCast<EffekseerRendererGL::Backend::GraphicsDevice>();
-
-	Effekseer::Backend::DepthTextureParameter param;
-	param.Format = Effekseer::Backend::TextureFormatType::D32;
-	param.SamplingCount = multisample;
-	param.Size = {width, height};
-	texture_ = gd->CreateDepthTexture(param).DownCast<EffekseerRendererGL::Backend::Texture>();
-
-	if (multisample <= 1 && texture_ != nullptr)
-	{
-		glBindTexture(GL_TEXTURE_2D, texture_->GetBuffer());
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
-
-	return texture_ != nullptr;
-}
 
 bool SaveTextureGL(std::vector<Effekseer::Color>& dst, GLuint texture, int32_t width, int32_t height)
 {
@@ -123,8 +52,6 @@ GraphicsGL::~GraphicsGL()
 	glDeleteFramebuffers(1, &frameBuffer);
 	glDeleteFramebuffers(1, &frameBufferForCopySrc);
 	glDeleteFramebuffers(1, &frameBufferForCopyDst);
-
-	backTarget.reset();
 }
 
 bool GraphicsGL::Initialize(void* windowHandle, int32_t windowWidth, int32_t windowHeight)
@@ -216,7 +143,7 @@ void GraphicsGL::SetRenderTarget(std::vector<Effekseer::Backend::TextureRef> ren
 {
 	assert(renderTextures.size() > 0);
 	GLCheckError();
-	
+
 	// reset
 	for (int32_t i = 0; i < 4; i++)
 	{
