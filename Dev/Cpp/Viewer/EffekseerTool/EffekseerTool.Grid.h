@@ -1,37 +1,26 @@
 ﻿
-#ifndef __EFFEKSEERRENDERER_GRID_H__
-#define __EFFEKSEERRENDERER_GRID_H__
+#pragma once
 
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
-#include "../Graphics/efk.LineRenderer.h"
+#include "../Graphics/LineRenderer.h"
 
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
 namespace EffekseerRenderer
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
 class Grid
 {
-
-	efk::LineRenderer* lineRenderer = nullptr;
+	std::shared_ptr<Effekseer::Tool::LineRenderer> lineRenderer_;
 
 	int32_t m_lineCount;
 	float m_gridLength;
 
-	Grid(efk::Graphics* graphics, const EffekseerRenderer::RendererRef& renderer);
+	Grid(Effekseer::Backend::GraphicsDeviceRef graphicsDevice);
 
 public:
-	virtual ~Grid();
-
-	static Grid* Create(efk::Graphics* graphics, const EffekseerRenderer::RendererRef& renderer);
+	
+	static Grid* Create(Effekseer::Backend::GraphicsDeviceRef graphicsDevice);
 
 public:
-	void Rendering(::Effekseer::Color& gridColor, bool isRightHand);
+	void Rendering(::Effekseer::Color& gridColor, bool isRightHand, Effekseer::Matrix44 cameraMatrix, Effekseer::Matrix44 projectionMatrix);
 	void SetLength(float gridLength)
 	{
 		m_gridLength = gridLength;
@@ -41,11 +30,5 @@ public:
 	bool IsShownXZ;
 	bool IsShownYZ;
 };
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
 } // namespace EffekseerRenderer
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-#endif // __EFFEKSEERRENDERER_GRID_H__

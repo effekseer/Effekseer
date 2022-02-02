@@ -38,6 +38,7 @@ list(APPEND cpps
     3D/ViewPointController.cpp
     RenderedEffectGenerator.cpp
     Graphics/StaticMeshRenderer.cpp
+    Graphics/LineRenderer.cpp
     Graphics/ImageRenderer.cpp
     Graphics/PostProcess.cpp
     GUI/Image.cpp
@@ -55,6 +56,7 @@ list(APPEND hs
     3D/ViewPointController.h
     RenderedEffectGenerator.h
     Graphics/StaticMeshRenderer.h
+    Graphics/LineRenderer.h
     Graphics/ImageRenderer.h
     Graphics/PostProcess.h
     GUI/Image.h

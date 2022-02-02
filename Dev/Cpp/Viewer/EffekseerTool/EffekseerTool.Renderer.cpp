@@ -24,7 +24,7 @@ MainScreenRenderedEffectGenerator::~MainScreenRenderedEffectGenerator()
 
 bool MainScreenRenderedEffectGenerator::InitializedPrePost()
 {
-	grid_ = std::shared_ptr<::EffekseerRenderer::Grid>(::EffekseerRenderer::Grid::Create(graphics_.get(), renderer_));
+	grid_ = std::shared_ptr<::EffekseerRenderer::Grid>(::EffekseerRenderer::Grid::Create(graphics_->GetGraphicsDevice()));
 	if (grid_ == nullptr)
 	{
 		return false;
@@ -40,7 +40,7 @@ bool MainScreenRenderedEffectGenerator::InitializedPrePost()
 
 	spdlog::trace("OK Guide");
 
-	culling_ = std::shared_ptr<::EffekseerRenderer::Culling>(::EffekseerRenderer::Culling::Create(graphics_.get(), renderer_));
+	culling_ = std::shared_ptr<::EffekseerRenderer::Culling>(::EffekseerRenderer::Culling::Create(graphics_->GetGraphicsDevice()));
 	if (culling_ == nullptr)
 	{
 		return false;
@@ -55,6 +55,9 @@ bool MainScreenRenderedEffectGenerator::InitializedPrePost()
 
 void MainScreenRenderedEffectGenerator::OnAfterClear()
 {
+	const auto cameraMat = renderer_->GetCameraMatrix();
+	const auto projMat = renderer_->GetProjectionMatrix();
+
 	if (config_.RenderingMethod != Effekseer::Tool::RenderingMethodType::Overdraw)
 	{
 		if (IsGridShown)
@@ -63,7 +66,7 @@ void MainScreenRenderedEffectGenerator::OnAfterClear()
 			grid_->IsShownXY = IsGridXYShown;
 			grid_->IsShownXZ = IsGridXZShown;
 			grid_->IsShownYZ = IsGridYZShown;
-			grid_->Rendering(GridColor, IsRightHand);
+			grid_->Rendering(GridColor, IsRightHand, cameraMat, projMat);
 		}
 
 		{
@@ -72,7 +75,7 @@ void MainScreenRenderedEffectGenerator::OnAfterClear()
 			culling_->X = CullingPosition.X;
 			culling_->Y = CullingPosition.Y;
 			culling_->Z = CullingPosition.Z;
-			culling_->Rendering(IsRightHand);
+			culling_->Rendering(IsRightHand, cameraMat, projMat);
 		}
 	}
 }

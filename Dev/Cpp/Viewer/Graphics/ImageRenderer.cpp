@@ -118,8 +118,6 @@ std::shared_ptr<ImageRenderer> ImageRenderer::Create(RefPtr<Backend::GraphicsDev
 	ret->dummyTexture_ = graphicsDevice->CreateTexture(texParam, initialTexData);
 
 	return ret;
-
-	return nullptr;
 }
 
 void ImageRenderer::Draw(const Effekseer::Vector3D positions[],

@@ -985,7 +985,7 @@ bool PipelineState::Init(const Effekseer::Backend::PipelineStateParameter& param
 	rsDesc.CullMode = cullTbl[static_cast<int32_t>(param.Culling)];
 	rsDesc.FillMode = D3D11_FILL_SOLID;
 	rsDesc.DepthClipEnable = TRUE;
-	rsDesc.MultisampleEnable = FALSE;
+	rsDesc.MultisampleEnable = param.IsMSAAEnabled ? TRUE : FALSE;
 	rsDesc.FrontCounterClockwise = FALSE;
 	graphicsDevice_->GetDevice()->CreateRasterizerState(&rsDesc, &rasterizerState);
 

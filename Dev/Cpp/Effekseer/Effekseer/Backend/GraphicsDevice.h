@@ -410,6 +410,7 @@ struct PipelineStateParameter
 
 	bool IsDepthTestEnabled = false;
 	bool IsDepthWriteEnabled = false;
+	bool IsMSAAEnabled = false;
 	DepthFuncType DepthFunc = DepthFuncType::Less;
 
 	ShaderRef ShaderPtr;

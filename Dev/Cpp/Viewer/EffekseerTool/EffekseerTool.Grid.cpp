@@ -13,59 +13,45 @@ namespace EffekseerRenderer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Grid::Grid(efk::Graphics* graphics, const EffekseerRenderer::RendererRef& renderer)
+Grid::Grid(Effekseer::Backend::GraphicsDeviceRef graphicsDevice)
 	: m_lineCount(0)
 	, m_gridLength(2.0f)
 	, IsShownXY(false)
 	, IsShownXZ(true)
 	, IsShownYZ(false)
 {
-	lineRenderer = efk::LineRenderer::Create(graphics, renderer);
+	lineRenderer_ = std::make_shared<Effekseer::Tool::LineRenderer>(graphicsDevice);
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-Grid::~Grid()
+Grid* Grid::Create(Effekseer::Backend::GraphicsDeviceRef graphicsDevice)
 {
-	ES_SAFE_DELETE(lineRenderer);
+	return new Grid(graphicsDevice);
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-Grid* Grid::Create(efk::Graphics* graphics, const EffekseerRenderer::RendererRef& renderer)
+void Grid::Rendering(::Effekseer::Color& gridColor, bool isRightHand, Effekseer::Matrix44 cameraMatrix, Effekseer::Matrix44 projectionMatrix)
 {
-	return new Grid(graphics, renderer);
-}
+	lineRenderer_->ClearCache();
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void Grid::Rendering(::Effekseer::Color& gridColor, bool isRightHand)
-{
-	lineRenderer->ClearCache();
-
-	lineRenderer->DrawLine(
+	lineRenderer_->DrawLine(
 		::Effekseer::Vector3D(0.0f, 0.0f, 0.0f), ::Effekseer::Vector3D(m_gridLength, 0.0f, 0.0f), ::Effekseer::Color(255, 0, 0, 255));
 
-	lineRenderer->DrawLine(
+	lineRenderer_->DrawLine(
 		::Effekseer::Vector3D(0.0f, 0.0f, 0.0f), ::Effekseer::Vector3D(0.0f, m_gridLength, 0.0f), ::Effekseer::Color(0, 255, 0, 255));
 
-	lineRenderer->DrawLine(
+	lineRenderer_->DrawLine(
 		::Effekseer::Vector3D(0.0f, 0.0f, 0.0f), ::Effekseer::Vector3D(0.0f, 0.0f, m_gridLength), ::Effekseer::Color(0, 0, 255, 255));
 
 	if (IsShownXZ)
 	{
 		for (int i = -5; i <= 5; i++)
 		{
-			lineRenderer->DrawLine(::Effekseer::Vector3D(i * m_gridLength, 0.0f, m_gridLength * 5.0f),
-								   ::Effekseer::Vector3D(i * m_gridLength, 0.0f, -m_gridLength * 5.0f),
-								   gridColor);
+			lineRenderer_->DrawLine(::Effekseer::Vector3D(i * m_gridLength, 0.0f, m_gridLength * 5.0f),
+									::Effekseer::Vector3D(i * m_gridLength, 0.0f, -m_gridLength * 5.0f),
+									gridColor);
 
-			lineRenderer->DrawLine(::Effekseer::Vector3D(m_gridLength * 5.0f, 0.0f, i * m_gridLength),
-								   ::Effekseer::Vector3D(-m_gridLength * 5.0f, 0.0f, i * m_gridLength),
-								   gridColor);
+			lineRenderer_->DrawLine(::Effekseer::Vector3D(m_gridLength * 5.0f, 0.0f, i * m_gridLength),
+									::Effekseer::Vector3D(-m_gridLength * 5.0f, 0.0f, i * m_gridLength),
+									gridColor);
 		}
 	}
 
@@ -73,13 +59,13 @@ void Grid::Rendering(::Effekseer::Color& gridColor, bool isRightHand)
 	{
 		for (int i = -5; i <= 5; i++)
 		{
-			lineRenderer->DrawLine(::Effekseer::Vector3D(i * m_gridLength, m_gridLength * 5.0f, 0.0f),
-								   ::Effekseer::Vector3D(i * m_gridLength, -m_gridLength * 5.0f, 0.0f),
-								   gridColor);
+			lineRenderer_->DrawLine(::Effekseer::Vector3D(i * m_gridLength, m_gridLength * 5.0f, 0.0f),
+									::Effekseer::Vector3D(i * m_gridLength, -m_gridLength * 5.0f, 0.0f),
+									gridColor);
 
-			lineRenderer->DrawLine(::Effekseer::Vector3D(m_gridLength * 5.0f, i * m_gridLength, 0.0f),
-								   ::Effekseer::Vector3D(-m_gridLength * 5.0f, i * m_gridLength, 0.0f),
-								   gridColor);
+			lineRenderer_->DrawLine(::Effekseer::Vector3D(m_gridLength * 5.0f, i * m_gridLength, 0.0f),
+									::Effekseer::Vector3D(-m_gridLength * 5.0f, i * m_gridLength, 0.0f),
+									gridColor);
 		}
 	}
 
@@ -87,32 +73,26 @@ void Grid::Rendering(::Effekseer::Color& gridColor, bool isRightHand)
 	{
 		for (int i = -5; i <= 5; i++)
 		{
-			lineRenderer->DrawLine(::Effekseer::Vector3D(0.0f, i * m_gridLength, m_gridLength * 5.0f),
-								   ::Effekseer::Vector3D(0.0f, i * m_gridLength, -m_gridLength * 5.0f),
-								   gridColor);
+			lineRenderer_->DrawLine(::Effekseer::Vector3D(0.0f, i * m_gridLength, m_gridLength * 5.0f),
+									::Effekseer::Vector3D(0.0f, i * m_gridLength, -m_gridLength * 5.0f),
+									gridColor);
 
-			lineRenderer->DrawLine(::Effekseer::Vector3D(0.0f, m_gridLength * 5.0f, i * m_gridLength),
-								   ::Effekseer::Vector3D(0.0f, -m_gridLength * 5.0f, i * m_gridLength),
-								   gridColor);
+			lineRenderer_->DrawLine(::Effekseer::Vector3D(0.0f, m_gridLength * 5.0f, i * m_gridLength),
+									::Effekseer::Vector3D(0.0f, -m_gridLength * 5.0f, i * m_gridLength),
+									gridColor);
 		}
 	}
 
-	lineRenderer->DrawLine(
+	lineRenderer_->DrawLine(
 		::Effekseer::Vector3D(0.0f, 0.0f, 0.0f), ::Effekseer::Vector3D(m_gridLength, 0.0f, 0.0f), ::Effekseer::Color(255, 0, 0, 255));
 
-	lineRenderer->DrawLine(
+	lineRenderer_->DrawLine(
 		::Effekseer::Vector3D(0.0f, 0.0f, 0.0f), ::Effekseer::Vector3D(0.0f, m_gridLength, 0.0f), ::Effekseer::Color(0, 255, 0, 255));
 
-	lineRenderer->DrawLine(
+	lineRenderer_->DrawLine(
 		::Effekseer::Vector3D(0.0f, 0.0f, 0.0f), ::Effekseer::Vector3D(0.0f, 0.0f, m_gridLength), ::Effekseer::Color(0, 0, 255, 255));
 
-	lineRenderer->Render();
+	lineRenderer_->Render(cameraMatrix, projectionMatrix);
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 } // namespace EffekseerRenderer
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------

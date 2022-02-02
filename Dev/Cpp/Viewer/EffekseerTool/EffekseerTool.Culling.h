@@ -1,33 +1,22 @@
 ﻿
-#ifndef __EFFEKSEERRENDERER_CULLING_H__
-#define __EFFEKSEERRENDERER_CULLING_H__
+#pragma once
 
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
-#include "../Graphics/efk.LineRenderer.h"
+#include "../Graphics/LineRenderer.h"
 
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
 namespace EffekseerRenderer
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
 class Culling
 {
 private:
-	efk::LineRenderer* lineRenderer = nullptr;
-	Culling(efk::Graphics* graphics, const EffekseerRenderer::RendererRef& renderer);
+	std::shared_ptr<Effekseer::Tool::LineRenderer> lineRenderer_;
+	Culling(Effekseer::Backend::GraphicsDeviceRef graphicsDevice);
 
 public:
-	virtual ~Culling();
-
-	static Culling* Create(efk::Graphics* graphics, const EffekseerRenderer::RendererRef& renderer);
+	static Culling* Create(Effekseer::Backend::GraphicsDeviceRef graphicsDevice);
 
 public:
-	void Rendering(bool isRightHand);
+	void Rendering(bool isRightHand, Effekseer::Matrix44 cameraMatrix, Effekseer::Matrix44 projectionMatrix);
 
 	bool IsShown;
 	float Radius;
@@ -35,11 +24,5 @@ public:
 	float Y;
 	float Z;
 };
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
 } // namespace EffekseerRenderer
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-#endif // __EFFEKSEERRENDERER_CULLING_H__
