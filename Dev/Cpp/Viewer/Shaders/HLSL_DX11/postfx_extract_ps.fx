@@ -1,14 +1,14 @@
 
-Texture2D		g_texture		: register( t0 );
-SamplerState	g_sampler		: register( s0 );
+Texture2D g_texture : register(t0);
+SamplerState g_sampler : register(s0);
 
-float4		g_filterParams		: register( c0 );
-float4		g_intensity			: register( c1 );
+float4 g_filterParams : register(c0);
+float4 g_intensity : register(c1);
 
 struct PS_Input
 {
-	float4 Pos		: SV_POSITION;
-	float2 UV		: TEXCOORD0;
+	float4 Pos : SV_POSITION;
+	float2 UV : TEXCOORD0;
 };
 
 bool isNan(float val)
@@ -16,7 +16,8 @@ bool isNan(float val)
 	return (val < 0.0 || 0.0 < val || val == 0.0) ? false : true;
 }
 
-float4 PS( const PS_Input Input ) : SV_Target
+float4 main(const PS_Input Input)
+	: SV_Target
 {
 	float3 color = g_texture.Sample(g_sampler, Input.UV).rgb;
 

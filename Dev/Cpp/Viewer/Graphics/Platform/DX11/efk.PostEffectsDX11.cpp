@@ -8,55 +8,55 @@ namespace efk
 namespace PostFX_Basic_VS
 {
 static
-#include "Shader/efk.GraphicsDX11.PostFX_Basic_VS.h"
+#include "../../../Shaders/HLSL_DX11_Header/postfx_basic_vs.h"
 } // namespace PostFX_Basic_VS
 
 namespace PostFX_Copy_PS
 {
 static
-#include "Shader/efk.GraphicsDX11.PostFX_Copy_PS.h"
+#include "../../../Shaders/HLSL_DX11_Header/postfx_copy_ps.h"
 } // namespace PostFX_Copy_PS
 
 namespace PostFX_Extract_PS
 {
 static
-#include "Shader/efk.GraphicsDX11.PostFX_Extract_PS.h"
+#include "../../../Shaders/HLSL_DX11_Header/postfx_extract_ps.h"
 } // namespace PostFX_Extract_PS
 
 namespace PostFX_Downsample_PS
 {
 static
-#include "Shader/efk.GraphicsDX11.PostFX_Downsample_PS.h"
+#include "../../../Shaders/HLSL_DX11_Header/postfx_downsample_ps.h"
 } // namespace PostFX_Downsample_PS
 
 namespace PostFX_Blend_PS
 {
 static
-#include "Shader/efk.GraphicsDX11.PostFX_Blend_PS.h"
+#include "../../../Shaders/HLSL_DX11_Header/postfx_blend_ps.h"
 } // namespace PostFX_Blend_PS
 
 namespace PostFX_BlurH_PS
 {
 static
-#include "Shader/efk.GraphicsDX11.PostFX_BlurH_PS.h"
+#include "../../../Shaders/HLSL_DX11_Header/postfx_blur_h_ps.h"
 } // namespace PostFX_BlurH_PS
 
 namespace PostFX_BlurV_PS
 {
 static
-#include "Shader/efk.GraphicsDX11.PostFX_BlurV_PS.h"
+#include "../../../Shaders/HLSL_DX11_Header/postfx_blur_v_ps.h"
 } // namespace PostFX_BlurV_PS
 
 namespace PostFX_Tonemap_PS
 {
 static
-#include "Shader/efk.GraphicsDX11.PostFX_Tonemap_PS.h"
+#include "../../../Shaders/HLSL_DX11_Header/postfx_tonemap_ps.h"
 } // namespace PostFX_Tonemap_PS
 
 namespace PostFX_LinearToSRGB_PS
 {
 static
-#include "Shader/efk.GraphicsDX11.PostFX_LinearToSRGB_PS.h"
+#include "../../../Shaders/HLSL_DX11_Header/postfx_linear_to_srgb_ps.h"
 } // namespace PostFX_LinearToSRGB_PS
 
 // Position(2) UV(2)
@@ -178,10 +178,10 @@ BloomEffectDX11::BloomEffectDX11(Graphics* graphics, const EffekseerRenderer::Re
 	// Extract shader
 	shaderExtract.reset(Shader::Create(renderer_.Get(),
 									   graphics->GetGraphicsDevice()->CreateShaderFromBinary(
-										   PostFX_Basic_VS::g_VS,
-										   sizeof(PostFX_Basic_VS::g_VS),
-										   PostFX_Extract_PS::g_PS,
-										   sizeof(PostFX_Extract_PS::g_PS)),
+										   PostFX_Basic_VS::g_main,
+										   sizeof(PostFX_Basic_VS::g_main),
+										   PostFX_Extract_PS::g_main,
+										   sizeof(PostFX_Extract_PS::g_main)),
 									   "Bloom extract",
 									   PostFx_ShaderDecl,
 									   2,
@@ -201,10 +201,10 @@ BloomEffectDX11::BloomEffectDX11(Graphics* graphics, const EffekseerRenderer::Re
 	// Downsample shader
 	shaderDownsample.reset(Shader::Create(renderer_.Get(),
 										  graphics->GetGraphicsDevice()->CreateShaderFromBinary(
-											  PostFX_Basic_VS::g_VS,
-											  sizeof(PostFX_Basic_VS::g_VS),
-											  PostFX_Downsample_PS::g_PS,
-											  sizeof(PostFX_Downsample_PS::g_PS)),
+											  PostFX_Basic_VS::g_main,
+											  sizeof(PostFX_Basic_VS::g_main),
+											  PostFX_Downsample_PS::g_main,
+											  sizeof(PostFX_Downsample_PS::g_main)),
 										  "Bloom downsample",
 										  PostFx_ShaderDecl,
 										  2,
@@ -213,10 +213,10 @@ BloomEffectDX11::BloomEffectDX11(Graphics* graphics, const EffekseerRenderer::Re
 	// Blend shader
 	shaderBlend.reset(Shader::Create(renderer_.Get(),
 									 graphics->GetGraphicsDevice()->CreateShaderFromBinary(
-										 PostFX_Basic_VS::g_VS,
-										 sizeof(PostFX_Basic_VS::g_VS),
-										 PostFX_Blend_PS::g_PS,
-										 sizeof(PostFX_Blend_PS::g_PS)),
+										 PostFX_Basic_VS::g_main,
+										 sizeof(PostFX_Basic_VS::g_main),
+										 PostFX_Blend_PS::g_main,
+										 sizeof(PostFX_Blend_PS::g_main)),
 									 "Bloom blend",
 									 PostFx_ShaderDecl,
 									 2,
@@ -225,10 +225,10 @@ BloomEffectDX11::BloomEffectDX11(Graphics* graphics, const EffekseerRenderer::Re
 	// Blur(horizontal) shader
 	shaderBlurH.reset(Shader::Create(renderer_.Get(),
 									 graphics->GetGraphicsDevice()->CreateShaderFromBinary(
-										 PostFX_Basic_VS::g_VS,
-										 sizeof(PostFX_Basic_VS::g_VS),
-										 PostFX_BlurH_PS::g_PS,
-										 sizeof(PostFX_BlurH_PS::g_PS)),
+										 PostFX_Basic_VS::g_main,
+										 sizeof(PostFX_Basic_VS::g_main),
+										 PostFX_BlurH_PS::g_main,
+										 sizeof(PostFX_BlurH_PS::g_main)),
 									 "Bloom blurH",
 									 PostFx_ShaderDecl,
 									 2,
@@ -238,14 +238,18 @@ BloomEffectDX11::BloomEffectDX11(Graphics* graphics, const EffekseerRenderer::Re
 	shaderBlurV.reset(Shader::Create(renderer_.Get(),
 									 graphics->GetGraphicsDevice()
 										 ->CreateShaderFromBinary(
-											 PostFX_Basic_VS::g_VS,
-											 sizeof(PostFX_Basic_VS::g_VS),
-											 PostFX_BlurV_PS::g_PS,
-											 sizeof(PostFX_BlurV_PS::g_PS)),
+											 PostFX_Basic_VS::g_main,
+											 sizeof(PostFX_Basic_VS::g_main),
+											 PostFX_BlurV_PS::g_main,
+											 sizeof(PostFX_BlurV_PS::g_main)),
 									 "Bloom blurV",
 									 PostFx_ShaderDecl,
 									 2,
 									 false));
+
+	shaderDownsample->SetPixelConstantBufferSize(sizeof(float) * 4);
+	shaderBlurH->SetPixelConstantBufferSize(sizeof(float) * 4);
+	shaderBlurV->SetPixelConstantBufferSize(sizeof(float) * 4);
 }
 
 BloomEffectDX11::~BloomEffectDX11()
@@ -286,22 +290,33 @@ void BloomEffectDX11::Render(Effekseer::Backend::TextureRef src, Effekseer::Back
 	// Shrink pass
 	for (int i = 0; i < BlurIterations; i++)
 	{
-		auto textures = (i == 0) ? extractBuffer
-								 : lowresBuffers[0][i - 1];
+		auto texture = (i == 0) ? extractBuffer
+								: lowresBuffers[0][i - 1];
 
-		blitter.Blit(shaderDownsample.get(), {textures}, nullptr, 0, lowresBuffers[0][i]);
+		std::array<float, 4> uniforms;
+		uniforms[0] = texture->GetParameter().Size[0];
+		uniforms[1] = texture->GetParameter().Size[1];
+		blitter.Blit(shaderDownsample.get(), {texture}, uniforms.data(), sizeof(float) * 4, lowresBuffers[0][i]);
 	}
 
 	// Horizontal gaussian blur pass
 	for (int i = 0; i < BlurIterations; i++)
 	{
-		blitter.Blit(shaderBlurH.get(), {lowresBuffers[0][i]}, nullptr, 0, lowresBuffers[1][i]);
+		auto texture = lowresBuffers[0][i];
+		std::array<float, 4> uniforms;
+		uniforms[0] = texture->GetParameter().Size[0];
+		uniforms[1] = texture->GetParameter().Size[1];
+		blitter.Blit(shaderBlurH.get(), {texture}, uniforms.data(), sizeof(float) * 4, lowresBuffers[1][i]);
 	}
 
 	// Vertical gaussian blur pass
 	for (int i = 0; i < BlurIterations; i++)
 	{
-		blitter.Blit(shaderBlurV.get(), {lowresBuffers[1][i]}, nullptr, 0, lowresBuffers[0][i]);
+		auto texture = lowresBuffers[1][i];
+		std::array<float, 4> uniforms;
+		uniforms[0] = texture->GetParameter().Size[0];
+		uniforms[1] = texture->GetParameter().Size[1];
+		blitter.Blit(shaderBlurV.get(), {texture}, uniforms.data(), sizeof(float) * 4, lowresBuffers[0][i]);
 	}
 
 	// Blending pass
@@ -397,10 +412,10 @@ TonemapEffectDX11::TonemapEffectDX11(Graphics* graphics, const EffekseerRenderer
 	// Copy shader
 	shaderCopy.reset(Shader::Create(renderer_.Get(),
 									graphics->GetGraphicsDevice()->CreateShaderFromBinary(
-										PostFX_Basic_VS::g_VS,
-										sizeof(PostFX_Basic_VS::g_VS),
-										PostFX_Copy_PS::g_PS,
-										sizeof(PostFX_Copy_PS::g_PS)),
+										PostFX_Basic_VS::g_main,
+										sizeof(PostFX_Basic_VS::g_main),
+										PostFX_Copy_PS::g_main,
+										sizeof(PostFX_Copy_PS::g_main)),
 									"Tonemap Copy",
 									PostFx_ShaderDecl,
 									2,
@@ -409,10 +424,10 @@ TonemapEffectDX11::TonemapEffectDX11(Graphics* graphics, const EffekseerRenderer
 	// Reinhard shader
 	shaderReinhard.reset(Shader::Create(renderer_.Get(),
 										graphics->GetGraphicsDevice()->CreateShaderFromBinary(
-											PostFX_Basic_VS::g_VS,
-											sizeof(PostFX_Basic_VS::g_VS),
-											PostFX_Tonemap_PS::g_PS,
-											sizeof(PostFX_Tonemap_PS::g_PS)),
+											PostFX_Basic_VS::g_main,
+											sizeof(PostFX_Basic_VS::g_main),
+											PostFX_Tonemap_PS::g_main,
+											sizeof(PostFX_Tonemap_PS::g_main)),
 										"Tonemap Reinhard",
 										PostFx_ShaderDecl,
 										2,
@@ -465,10 +480,10 @@ LinearToSRGBEffectDX11::LinearToSRGBEffectDX11(Graphics* graphics, const Effekse
 	// Copy shader
 	shader_.reset(Shader::Create(renderer_.Get(),
 								 graphics->GetGraphicsDevice()->CreateShaderFromBinary(
-									 PostFX_Basic_VS::g_VS,
-									 sizeof(PostFX_Basic_VS::g_VS),
-									 PostFX_LinearToSRGB_PS::g_PS,
-									 sizeof(PostFX_LinearToSRGB_PS::g_PS)),
+									 PostFX_Basic_VS::g_main,
+									 sizeof(PostFX_Basic_VS::g_main),
+									 PostFX_LinearToSRGB_PS::g_main,
+									 sizeof(PostFX_LinearToSRGB_PS::g_main)),
 								 "LinearToSRGB",
 								 PostFx_ShaderDecl,
 								 2,

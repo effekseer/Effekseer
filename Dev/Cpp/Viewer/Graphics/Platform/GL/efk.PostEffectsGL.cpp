@@ -7,163 +7,23 @@
 
 namespace efk
 {
-static const char g_basic_vs_src[] =
-	R"(
-IN vec4 a_Position;
-IN vec2 a_TexCoord;
-OUT vec2 v_TexCoord;
-void main() {
-	gl_Position = a_Position;
-	v_TexCoord = a_TexCoord.xy;
-}
-)";
 
-static const char g_copy_fs_src[] =
-	R"(
-IN vec2 v_TexCoord;
-uniform sampler2D u_Texture0;
-void main() {
-	vec4 color = TEX2D(u_Texture0, v_TexCoord);
-	FRAGCOLOR = vec4(color.xyz, 1.0);
-}
-)";
-
-static const char g_extract_fs_src[] =
-	R"(
-IN vec2 v_TexCoord;
-uniform sampler2D u_Texture0;
-uniform vec4 u_FilterParams;
-uniform vec4 u_Intensity;
-
-bool isNan(float val) {
-	return (val < 0.0 || 0.0 < val || val == 0.0) ? false : true;
-}
-
-void main() {
-	vec3 color = TEX2D(u_Texture0, v_TexCoord).rgb;
-
-	if (isNan(color.r)) {
-		color.r = 0.0f;
-	}
-
-	if (isNan(color.g)) {
-		color.g = 0.0f;
-	}
-
-	if (isNan(color.b)) {
-		color.b = 0.0f;
-	}
-
-	float brightness = dot(color, vec3(0.299, 0.587, 0.114));
-	float soft = brightness - u_FilterParams.y;
-	soft = clamp(soft, 0.0, u_FilterParams.z);
-	soft = soft * soft * u_FilterParams.w;
-	float contribution = max(soft, brightness - u_FilterParams.x);
-	contribution /= max(brightness, 0.00001);
-	FRAGCOLOR = vec4(color.rgb * contribution * u_Intensity.x, 1.0);
-}
-)";
-
-static const char g_downsample_fs_src[] =
-	R"(
-IN vec2 v_TexCoord;
-uniform sampler2D u_Texture0;
-const vec4 gain = vec4(0.25, 0.5, 1.0, 2.0);
-void main() {
-	ivec2 size = textureSize(u_Texture0, 0);
-	vec2 scale = vec2(1.0 / size.x, 1.0 / size.y);
-	vec4 c0 = TEX2D(u_Texture0, v_TexCoord + vec2(-0.5, -0.5) * scale);
-	vec4 c1 = TEX2D(u_Texture0, v_TexCoord + vec2(+0.5, -0.5) * scale);
-	vec4 c2 = TEX2D(u_Texture0, v_TexCoord + vec2(-0.5, +0.5) * scale);
-	vec4 c3 = TEX2D(u_Texture0, v_TexCoord + vec2(+0.5, +0.5) * scale);
-	FRAGCOLOR = (c0 + c1 + c2 + c3) * 0.25;
-}
-)";
-
-static const char g_blend_fs_src[] =
-	R"(
-IN vec2 v_TexCoord;
-uniform sampler2D u_Texture0;
-uniform sampler2D u_Texture1;
-uniform sampler2D u_Texture2;
-uniform sampler2D u_Texture3;
-void main() {
-	vec3 c0 = TEX2D(u_Texture0, v_TexCoord).rgb;
-	vec3 c1 = TEX2D(u_Texture1, v_TexCoord).rgb;
-	vec3 c2 = TEX2D(u_Texture2, v_TexCoord).rgb;
-	vec3 c3 = TEX2D(u_Texture3, v_TexCoord).rgb;
-	FRAGCOLOR = vec4(c0 + c1 + c2 + c3, 1.0);
-}
-)";
-
-static const char g_blur_h_fs_src[] =
-	R"(
-IN vec2 v_TexCoord;
-uniform sampler2D u_Texture0;
-void main() {
-
-	ivec2 size = textureSize(u_Texture0, 0);
-	float div = float(size.x);
-
-	vec4 color = TEX2D(u_Texture0, v_TexCoord) * 0.223067435;
-	color += TEX2D(u_Texture0, v_TexCoord + vec2(-5.152032242 / div, 0)) * 0.005291685;
-	color += TEX2D(u_Texture0, v_TexCoord + vec2(-3.250912787 / div, 0)) * 0.072975516;
-	color += TEX2D(u_Texture0, v_TexCoord + vec2(-1.384912144 / div, 0)) * 0.310199082;
-	color += TEX2D(u_Texture0, v_TexCoord + vec2(+1.384912144 / div, 0)) * 0.310199082;
-	color += TEX2D(u_Texture0, v_TexCoord + vec2(+3.250912787 / div, 0)) * 0.072975516;
-	color += TEX2D(u_Texture0, v_TexCoord + vec2(+5.152032242 / div, 0)) * 0.005291685;
-
-	FRAGCOLOR = vec4(color.rgb, 1.0);
-}
-)";
-
-static const char g_blur_v_fs_src[] =
-	R"(
-IN vec2 v_TexCoord;
-uniform sampler2D u_Texture0;
-void main() {
-
-	ivec2 size = textureSize(u_Texture0, 0);
-	float div = float(size.y);
-
-	vec4 color = TEX2D(u_Texture0, v_TexCoord) * 0.223067435;
-	color += TEX2D(u_Texture0, v_TexCoord + vec2(0.0, -5.152032242 / div)) * 0.005291685;
-	color += TEX2D(u_Texture0, v_TexCoord + vec2(0.0, -3.250912787 / div)) * 0.072975516;
-	color += TEX2D(u_Texture0, v_TexCoord + vec2(0.0, -1.384912144 / div)) * 0.310199082;
-	color += TEX2D(u_Texture0, v_TexCoord + vec2(0.0, +1.384912144 / div)) * 0.310199082;
-	color += TEX2D(u_Texture0, v_TexCoord + vec2(0.0, +3.250912787 / div)) * 0.072975516;
-	color += TEX2D(u_Texture0, v_TexCoord + vec2(0.0, +5.152032242 / div)) * 0.005291685;
-
-	FRAGCOLOR = vec4(color.rgb, 1.0);
-}
-)";
-
-static const char g_tonemap_reinhard_fs_src[] =
-	R"(
-IN mediump vec2 v_TexCoord;
-uniform sampler2D u_Texture0;
-uniform vec4 u_Exposure;
-void main() {
-	vec3 color = texture(u_Texture0, v_TexCoord).rgb;
-	float lum = u_Exposure.x * dot(color, vec3(0.299, 0.587, 0.114));
-	lum = lum / (1.0 + lum);
-	FRAGCOLOR = vec4(lum * color, 1.0f);
-}
-)";
-
-static const char g_linear_to_srgb_fs_src[] =
-	R"(
-IN vec2 v_TexCoord;
-uniform sampler2D u_Texture0;
-void main() {
-	vec4 color = TEX2D(u_Texture0, v_TexCoord);
-	FRAGCOLOR = vec4(pow(color.xyz, vec3(1.0 / 2.2, 1.0 / 2.2, 1.0 / 2.2)), 1.0);
-}
-)";
+namespace
+{
+#include "../../../Shaders/GLSL_GL_Header/postfx_basic_vs.h"
+#include "../../../Shaders/GLSL_GL_Header/postfx_blend_ps.h"
+#include "../../../Shaders/GLSL_GL_Header/postfx_blur_h_ps.h"
+#include "../../../Shaders/GLSL_GL_Header/postfx_blur_v_ps.h"
+#include "../../../Shaders/GLSL_GL_Header/postfx_copy_ps.h"
+#include "../../../Shaders/GLSL_GL_Header/postfx_downsample_ps.h"
+#include "../../../Shaders/GLSL_GL_Header/postfx_extract_ps.h"
+#include "../../../Shaders/GLSL_GL_Header/postfx_linear_to_srgb_ps.h"
+#include "../../../Shaders/GLSL_GL_Header/postfx_tonemap_ps.h"
+} // namespace
 
 const Effekseer::Backend::VertexLayoutElement vlElem[2] = {
-	{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "a_Position", "POSITION", 0},
-	{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "a_TexCoord", "TEXCOORD", 0},
+	{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "Input_Pos", "POSITION", 0},
+	{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "Input_UV", "TEXCOORD", 0},
 };
 
 BlitterGL::BlitterGL(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer)
@@ -180,10 +40,10 @@ BlitterGL::BlitterGL(Graphics* graphics, const EffekseerRenderer::RendererRef& r
 	vertexBuffer->Lock();
 	{
 		Vertex* verteces = (Vertex*)vertexBuffer->GetBufferDirect(sizeof(Vertex) * 4);
-		verteces[0] = Vertex{-1.0f, 1.0f, 0.0f, 1.0f};
-		verteces[1] = Vertex{-1.0f, -1.0f, 0.0f, 0.0f};
-		verteces[2] = Vertex{1.0f, 1.0f, 1.0f, 1.0f};
-		verteces[3] = Vertex{1.0f, -1.0f, 1.0f, 0.0f};
+		verteces[0] = Vertex{-1.0f, 1.0f, 0.0f, 0.0f};
+		verteces[1] = Vertex{-1.0f, -1.0f, 0.0f, 1.0f};
+		verteces[2] = Vertex{1.0f, 1.0f, 1.0f, 0.0f};
+		verteces[3] = Vertex{1.0f, -1.0f, 1.0f, 1.0f};
 	}
 	vertexBuffer->Unlock();
 }
@@ -266,48 +126,56 @@ BloomEffectGL::BloomEffectGL(Graphics* graphics, const EffekseerRenderer::Render
 {
 	auto vl = renderer->GetGraphicsDevice()->CreateVertexLayout(vlElem, 2).DownCast<EffekseerRendererGL::Backend::VertexLayout>();
 
-	EffekseerRendererGL::ShaderCodeView basicVS(g_basic_vs_src);
+	EffekseerRendererGL::ShaderCodeView basicVS(gl_postfx_basic_vs);
 
 	// Extract shader
-	EffekseerRendererGL::ShaderCodeView extractPS(g_extract_fs_src);
+	EffekseerRendererGL::ShaderCodeView extractPS(gl_postfx_extract_ps);
 
 	using namespace Effekseer::Backend;
 	Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> uniformLayoutElm;
-	uniformLayoutElm.emplace_back(UniformLayoutElement{ShaderStageType::Pixel, "u_FilterParams", UniformBufferLayoutElementType::Vector4, 1, 0});
-	uniformLayoutElm.emplace_back(UniformLayoutElement{ShaderStageType::Pixel, "u_Intensity", UniformBufferLayoutElementType::Vector4, 1, sizeof(float) * 4});
-	auto uniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{"u_Texture0"}, uniformLayoutElm);
+	uniformLayoutElm.emplace_back(UniformLayoutElement{ShaderStageType::Pixel, "CBPS0.g_filterParams", UniformBufferLayoutElementType::Vector4, 1, 0});
+	uniformLayoutElm.emplace_back(UniformLayoutElement{ShaderStageType::Pixel, "CBPS0.g_intensity", UniformBufferLayoutElementType::Vector4, 1, sizeof(float) * 4});
+	auto uniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{"Sampler_g_sampler"}, uniformLayoutElm);
 
-	auto uniformLayoutSingleImage = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{"u_Texture0"}, Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>{});
-	auto uniformLayoutImages = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{"u_Texture0", "u_Texture1", "u_Texture2", "u_Texture3"}, Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>{});
+	Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> uniformLayoutElmSingleImage;
+	uniformLayoutElmSingleImage.emplace_back(UniformLayoutElement{ShaderStageType::Pixel, "CBPS0.g_size", UniformBufferLayoutElementType::Vector4, 1, 0});
 
-	shaderExtract.reset(EffekseerRendererGL::Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, extractPS, uniformLayout, "Bloom extract"));
+	auto uniformLayoutSingleImage = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(
+		Effekseer::CustomVector<Effekseer::CustomString<char>>{"Sampler_g_sampler"},
+		uniformLayoutElmSingleImage);
+
+	auto uniformLayoutImages = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(
+		Effekseer::CustomVector<Effekseer::CustomString<char>>{"Sampler_g_sampler", "Sampler_g_sampler_1", "Sampler_g_sampler_2", "Sampler_g_sampler_3"},
+		Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>{});
+
+	shaderExtract.reset(EffekseerRendererGL::Shader::Create(renderer_->GetInternalGraphicsDevice(), {basicVS}, {extractPS}, uniformLayout, "Bloom extract"));
 
 	shaderExtract->SetVertexLayout(vl);
 	shaderExtract->SetPixelConstantBufferSize(sizeof(float) * 8);
 
 	// Downsample shader
 
-	EffekseerRendererGL::ShaderCodeView downSamplePS(g_downsample_fs_src);
+	EffekseerRendererGL::ShaderCodeView downSamplePS(gl_postfx_downsample_ps);
 
-	shaderDownsample.reset(EffekseerRendererGL::Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, downSamplePS, uniformLayoutSingleImage, "Bloom downsample"));
+	shaderDownsample.reset(EffekseerRendererGL::Shader::Create(renderer_->GetInternalGraphicsDevice(), {basicVS}, {downSamplePS}, uniformLayoutSingleImage, "Bloom downsample"));
 	shaderDownsample->SetVertexLayout(vl);
 
 	// Blend shader
-	EffekseerRendererGL::ShaderCodeView blendPS(g_blend_fs_src);
+	EffekseerRendererGL::ShaderCodeView blendPS(gl_postfx_blend_ps);
 
-	shaderBlend.reset(EffekseerRendererGL::Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, blendPS, uniformLayoutImages, "Bloom blend"));
+	shaderBlend.reset(EffekseerRendererGL::Shader::Create(renderer_->GetInternalGraphicsDevice(), {basicVS}, {blendPS}, uniformLayoutImages, "Bloom blend"));
 	shaderBlend->SetVertexLayout(vl);
 
 	// Blur(horizontal) shader
-	EffekseerRendererGL::ShaderCodeView blend_h_PS(g_blur_h_fs_src);
+	EffekseerRendererGL::ShaderCodeView blend_h_PS(gl_postfx_blur_h_ps);
 
-	shaderBlurH.reset(EffekseerRendererGL::Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, blend_h_PS, uniformLayoutSingleImage, "Bloom blurH"));
+	shaderBlurH.reset(EffekseerRendererGL::Shader::Create(renderer_->GetInternalGraphicsDevice(), {basicVS}, {blend_h_PS}, uniformLayoutSingleImage, "Bloom blurH"));
 	shaderBlurH->SetVertexLayout(vl);
 
 	// Blur(vertical) shader
-	EffekseerRendererGL::ShaderCodeView blend_v_PS(g_blur_v_fs_src);
+	EffekseerRendererGL::ShaderCodeView blend_v_PS(gl_postfx_blur_v_ps);
 
-	shaderBlurV.reset(EffekseerRendererGL::Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, blend_v_PS, uniformLayoutSingleImage, "Bloom blurV"));
+	shaderBlurV.reset(EffekseerRendererGL::Shader::Create(renderer_->GetInternalGraphicsDevice(), {basicVS}, {blend_v_PS}, uniformLayoutSingleImage, "Bloom blurV"));
 	shaderBlurV->SetVertexLayout(vl);
 
 	// Setup VAOs
@@ -316,6 +184,10 @@ BloomEffectGL::BloomEffectGL(Graphics* graphics, const EffekseerRenderer::Render
 	vaoBlend = blitter.CreateVAO(renderer->GetGraphicsDevice(), shaderBlend.get());
 	vaoBlurH = blitter.CreateVAO(renderer->GetGraphicsDevice(), shaderBlurH.get());
 	vaoBlurV = blitter.CreateVAO(renderer->GetGraphicsDevice(), shaderBlurV.get());
+
+	shaderDownsample->SetPixelConstantBufferSize(sizeof(float) * 4);
+	shaderBlurH->SetPixelConstantBufferSize(sizeof(float) * 4);
+	shaderBlurV->SetPixelConstantBufferSize(sizeof(float) * 4);
 }
 
 BloomEffectGL::~BloomEffectGL()
@@ -363,22 +235,36 @@ void BloomEffectGL::Render(Effekseer::Backend::TextureRef src, Effekseer::Backen
 	// Shrink pass
 	for (int i = 0; i < BlurIterations; i++)
 	{
-		const auto textures = (i == 0) ? extractBuffer : lowresBuffers[0][i - 1];
-		blitter.Blit(shaderDownsample.get(), vaoDownsample.get(), std::vector<Effekseer::Backend::TextureRef>{textures}, nullptr, 0, lowresBuffers[0][i]);
+		auto texture = (i == 0) ? extractBuffer
+								: lowresBuffers[0][i - 1];
+
+		std::array<float, 4> uniforms;
+		uniforms[0] = texture->GetParameter().Size[0];
+		uniforms[1] = texture->GetParameter().Size[1];
+
+		blitter.Blit(shaderDownsample.get(), vaoDownsample.get(), {texture}, uniforms.data(), sizeof(float) * 4, lowresBuffers[0][i]);
 	}
 
 	// Horizontal gaussian blur pass
 	for (int i = 0; i < BlurIterations; i++)
 	{
-		const std::vector<Effekseer::Backend::TextureRef> textures{lowresBuffers[0][i]};
-		blitter.Blit(shaderBlurH.get(), vaoBlurH.get(), textures, nullptr, 0, lowresBuffers[1][i]);
+		auto texture = lowresBuffers[0][i];
+		std::array<float, 4> uniforms;
+		uniforms[0] = texture->GetParameter().Size[0];
+		uniforms[1] = texture->GetParameter().Size[1];
+
+		blitter.Blit(shaderBlurH.get(), vaoBlurH.get(), {texture}, uniforms.data(), sizeof(float) * 4, lowresBuffers[1][i]);
 	}
 
 	// Vertical gaussian blur pass
 	for (int i = 0; i < BlurIterations; i++)
 	{
-		const std::vector<Effekseer::Backend::TextureRef> textures{lowresBuffers[1][i]};
-		blitter.Blit(shaderBlurV.get(), vaoBlurV.get(), textures, nullptr, 0, lowresBuffers[0][i]);
+		auto texture = lowresBuffers[1][i];
+		std::array<float, 4> uniforms;
+		uniforms[0] = texture->GetParameter().Size[0];
+		uniforms[1] = texture->GetParameter().Size[1];
+
+		blitter.Blit(shaderBlurV.get(), vaoBlurV.get(), {texture}, uniforms.data(), sizeof(float) * 4, lowresBuffers[0][i]);
 	}
 
 	// Blending pass
@@ -466,25 +352,25 @@ TonemapEffectGL::TonemapEffectGL(Graphics* graphics, const EffekseerRenderer::Re
 	using namespace EffekseerRendererGL;
 
 	auto vl = renderer->GetGraphicsDevice()->CreateVertexLayout(vlElem, 2).DownCast<EffekseerRendererGL::Backend::VertexLayout>();
-	auto uniformLayoutSingleImage = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{"u_Texture0"}, Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>{});
+	auto uniformLayoutSingleImage = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{"Sampler_g_sampler"}, Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>{});
 
-	EffekseerRendererGL::ShaderCodeView basicVS(g_basic_vs_src);
+	EffekseerRendererGL::ShaderCodeView basicVS(gl_postfx_basic_vs);
 
 	// Copy shader
-	EffekseerRendererGL::ShaderCodeView copyPS(g_copy_fs_src);
+	EffekseerRendererGL::ShaderCodeView copyPS(gl_postfx_copy_ps);
 
-	shaderCopy.reset(Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, copyPS, uniformLayoutSingleImage, "Tonemap copy"));
+	shaderCopy.reset(Shader::Create(renderer_->GetInternalGraphicsDevice(), {basicVS}, {copyPS}, uniformLayoutSingleImage, "Tonemap copy"));
 	shaderCopy->SetVertexLayout(vl);
 
 	// Reinhard shader
-	EffekseerRendererGL::ShaderCodeView tonemapPS(g_tonemap_reinhard_fs_src);
+	EffekseerRendererGL::ShaderCodeView tonemapPS(gl_postfx_tonemap_ps);
 
 	using namespace Effekseer::Backend;
 	Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> uniformLayoutElm;
-	uniformLayoutElm.emplace_back(UniformLayoutElement{ShaderStageType::Pixel, "u_Exposure", UniformBufferLayoutElementType::Vector4, 1, 0});
-	auto uniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{"u_Texture0"}, uniformLayoutElm);
+	uniformLayoutElm.emplace_back(UniformLayoutElement{ShaderStageType::Pixel, "CBPS0.g_toneparams", UniformBufferLayoutElementType::Vector4, 1, 0});
+	auto uniformLayout = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{"Sampler_g_sampler"}, uniformLayoutElm);
 
-	shaderReinhard.reset(EffekseerRendererGL::Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, tonemapPS, uniformLayout, "Tonemap Reinhard"));
+	shaderReinhard.reset(EffekseerRendererGL::Shader::Create(renderer_->GetInternalGraphicsDevice(), {basicVS}, {tonemapPS}, uniformLayout, "Tonemap Reinhard"));
 	shaderReinhard->SetVertexLayout(vl);
 	shaderReinhard->SetPixelConstantBufferSize(sizeof(float) * 4);
 
@@ -536,13 +422,13 @@ LinearToSRGBEffectGL::LinearToSRGBEffectGL(Graphics* graphics, const EffekseerRe
 	using namespace EffekseerRendererGL;
 
 	auto vl = renderer->GetGraphicsDevice()->CreateVertexLayout(vlElem, 2).DownCast<EffekseerRendererGL::Backend::VertexLayout>();
-	auto uniformLayoutSingleImage = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{"u_Texture0"}, Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>{});
+	auto uniformLayoutSingleImage = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(Effekseer::CustomVector<Effekseer::CustomString<char>>{"Sampler_g_sampler"}, Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>{});
 
-	EffekseerRendererGL::ShaderCodeView basicVS(g_basic_vs_src);
-	EffekseerRendererGL::ShaderCodeView linierToSrgbPS(g_linear_to_srgb_fs_src);
+	EffekseerRendererGL::ShaderCodeView basicVS(gl_postfx_basic_vs);
+	EffekseerRendererGL::ShaderCodeView linierToSrgbPS(gl_postfx_linear_to_srgb_ps);
 
 	// Copy shader
-	shader_.reset(Shader::CreateWithHeader(renderer_->GetInternalGraphicsDevice(), basicVS, linierToSrgbPS, uniformLayoutSingleImage, "LinearToSRGB"));
+	shader_.reset(Shader::Create(renderer_->GetInternalGraphicsDevice(), {basicVS}, {linierToSrgbPS}, uniformLayoutSingleImage, "LinearToSRGB"));
 	shader_->SetVertexLayout(vl);
 
 	// Setup VAOs
