@@ -313,6 +313,11 @@ public:
 
 	bool Init(Effekseer::FixedSizeVector<Effekseer::Backend::TextureRef, Effekseer::Backend::RenderTargetMax>& textures, Effekseer::Backend::TextureRef depthTexture);
 
+	const Effekseer::FixedSizeVector<Effekseer::Backend::TextureRef, Effekseer::Backend::RenderTargetMax>& GetTextures() const
+	{
+		return textures_;
+	}
+
 	GLuint GetBuffer() const
 	{
 		return buffer_;

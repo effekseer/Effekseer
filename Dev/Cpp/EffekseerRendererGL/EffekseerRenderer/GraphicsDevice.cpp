@@ -1133,7 +1133,7 @@ bool GraphicsDevice::CopyTexture(Effekseer::Backend::TextureRef& dst, Effekseer:
 		return false;
 	}
 
-	if (dstgl->GetTarget() != GL_TEXTURE_3D && dstgl->GetTarget() != GL_TEXTURE_2D_ARRAY)	// use glCopyTexSubImage2D?
+	if (dstgl->GetTarget() != GL_TEXTURE_3D && dstgl->GetTarget() != GL_TEXTURE_2D_ARRAY) // use glCopyTexSubImage2D?
 	{
 		if (dstPos[2] != 0)
 		{
@@ -1534,6 +1534,7 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 
 void GraphicsDevice::BeginRenderPass(Effekseer::Backend::RenderPassRef& renderPass, bool isColorCleared, bool isDepthCleared, Effekseer::Color clearColor)
 {
+	const auto renderPassGL = static_cast<RenderPass*>(renderPass.Get());
 	if (renderPass != nullptr)
 	{
 		GLExt::glBindFramebuffer(GL_FRAMEBUFFER, static_cast<RenderPass*>(renderPass.Get())->GetBuffer());
@@ -1546,6 +1547,10 @@ void GraphicsDevice::BeginRenderPass(Effekseer::Backend::RenderPassRef& renderPa
 		glDrawBuffer(GL_BACK);
 #endif
 	}
+
+	auto texture = renderPassGL->GetTextures().at(0);
+
+	glViewport(0, 0, texture->GetParameter().Size[0], texture->GetParameter().Size[1]);
 
 	GLCheckError();
 

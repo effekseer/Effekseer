@@ -2,10 +2,11 @@
 #pragma once
 
 #include "EffekseerTool/EffekseerTool.Sound.h"
+#include "Graphics/PostEffects.h"
 #include "Graphics/PostProcess.h"
 #include "Graphics/StaticMeshRenderer.h"
 #include "Graphics/efk.Graphics.h"
-#include "Graphics/efk.PostEffects.h"
+//#include "Graphics/efk.PostEffects.h"
 #include "Math/Vector2I.h"
 #include "ViewerEffectBehavior.h"
 #include <Effekseer.h>
@@ -105,9 +106,8 @@ protected:
 	Vector2I screenSize_;
 	ViewerEffectBehavior behavior_;
 
-	std::unique_ptr<efk::BloomEffect> bloomEffect_;
-	std::unique_ptr<efk::TonemapEffect> tonemapEffect_;
-	std::unique_ptr<efk::LinearToSRGBEffect> linearToSRGBEffect_;
+	//std::unique_ptr<efk::BloomEffect> bloomEffect_;
+	//std::unique_ptr<efk::TonemapEffect> tonemapEffect_;
 
 	Effekseer::Backend::TextureRef hdrRenderTextureMSAA;
 	Effekseer::Backend::TextureRef hdrRenderTexture;
@@ -121,11 +121,13 @@ protected:
 	Effekseer::Backend::TextureRef backTexture;
 	Effekseer::Backend::TextureRef viewRenderTexture;
 
-	std::unique_ptr<efk::BloomEffect> m_bloomEffect;
-	std::unique_ptr<efk::TonemapEffect> m_tonemapEffect;
-	std::unique_ptr<efk::LinearToSRGBEffect> m_linearToSRGBEffect;
+	//std::unique_ptr<efk::BloomEffect> m_bloomEffect;
+	//std::unique_ptr<efk::TonemapEffect> m_tonemapEffect;
 
 	std::unique_ptr<PostProcess> overdrawEffect_;
+	std::unique_ptr<BloomPostEffect> bloomEffect_;
+	std::unique_ptr<LinearToSRGBPostEffect> linearToSRGBEffect_;
+	std::unique_ptr<TonemapPostEffect> tonemapEffect_;
 
 	bool m_isSRGBMode = false;
 	uint32_t msaaSamples = 4;
@@ -165,7 +167,7 @@ public:
 
 	Effekseer::EffectRef GetEffect();
 	void SetEffect(Effekseer::EffectRef effect);
-	
+
 	void SetBehavior(const ViewerEffectBehavior& behavior);
 	const ViewerEffectBehavior& GetBehavior() const;
 
@@ -240,13 +242,14 @@ public:
 		return viewRenderTexture;
 	}
 
-	efk::BloomEffect* GetBloomEffect() const
+	BloomPostEffect* GetBloomEffect() const
 	{
-		return m_bloomEffect.get();
+		return bloomEffect_.get();
 	}
-	efk::TonemapEffect* GetTonemapEffect() const
+
+	TonemapPostEffect* GetTonemapEffect() const
 	{
-		return m_tonemapEffect.get();
+		return tonemapEffect_.get();
 	}
 
 	void SetSound(EffekseerTool::Sound* sound)
