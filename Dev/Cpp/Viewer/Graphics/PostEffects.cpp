@@ -218,7 +218,8 @@ void BloomPostEffect::Render(Effekseer::Backend::TextureRef dst, Effekseer::Back
 		extract_->GetDrawParameter().TextureCount = 1;
 		extract_->GetDrawParameter().TexturePtrs[0] = src;
 
-		graphicsDevice_->UpdateUniformBuffer(extract_->GetUniformBufferPS(), sizeof(float) * 8, 0, constantData.data());
+		auto uniformBuffer = extract_->GetUniformBufferPS();
+		graphicsDevice_->UpdateUniformBuffer(uniformBuffer, sizeof(float) * 8, 0, constantData.data());
 
 		extract_->Render();
 
@@ -240,7 +241,8 @@ void BloomPostEffect::Render(Effekseer::Backend::TextureRef dst, Effekseer::Back
 		downsample_->GetDrawParameter().TextureCount = 1;
 		downsample_->GetDrawParameter().TexturePtrs[0] = texture;
 
-		graphicsDevice_->UpdateUniformBuffer(downsample_->GetUniformBufferPS(), sizeof(float) * 4, 0, uniforms.data());
+		auto uniformBuffer = downsample_->GetUniformBufferPS();
+		graphicsDevice_->UpdateUniformBuffer(uniformBuffer, sizeof(float) * 4, 0, uniforms.data());
 
 		downsample_->Render();
 
@@ -260,7 +262,8 @@ void BloomPostEffect::Render(Effekseer::Backend::TextureRef dst, Effekseer::Back
 		blurH_->GetDrawParameter().TextureCount = 1;
 		blurH_->GetDrawParameter().TexturePtrs[0] = texture;
 
-		graphicsDevice_->UpdateUniformBuffer(blurH_->GetUniformBufferPS(), sizeof(float) * 4, 0, uniforms.data());
+		auto uniformBuffer = blurH_->GetUniformBufferPS();
+		graphicsDevice_->UpdateUniformBuffer(uniformBuffer, sizeof(float) * 4, 0, uniforms.data());
 
 		blurH_->Render();
 
@@ -280,7 +283,8 @@ void BloomPostEffect::Render(Effekseer::Backend::TextureRef dst, Effekseer::Back
 		blurV_->GetDrawParameter().TextureCount = 1;
 		blurV_->GetDrawParameter().TexturePtrs[0] = texture;
 
-		graphicsDevice_->UpdateUniformBuffer(blurV_->GetUniformBufferPS(), sizeof(float) * 4, 0, uniforms.data());
+		auto uniformBuffer = blurV_->GetUniformBufferPS();
+		graphicsDevice_->UpdateUniformBuffer(uniformBuffer, sizeof(float) * 4, 0, uniforms.data());
 
 		blurV_->Render();
 
@@ -461,7 +465,8 @@ void TonemapPostEffect::Render(Effekseer::Backend::TextureRef dst, Effekseer::Ba
 
 		const std::array<float, 4> constantData = {exposure_, 16.0f * 16.0f};
 
-		graphicsDevice_->UpdateUniformBuffer(postProcessTone_->GetUniformBufferPS(), sizeof(float) * 4, 0, constantData.data());
+		auto uniformBuffer = postProcessTone_->GetUniformBufferPS();
+		graphicsDevice_->UpdateUniformBuffer(uniformBuffer, sizeof(float) * 4, 0, constantData.data());
 
 		postProcessTone_->Render();
 	}
