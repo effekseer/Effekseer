@@ -107,6 +107,7 @@ BloomPostEffect::BloomPostEffect(Backend::GraphicsDeviceRef graphicsDevice)
 
 	if (graphicsDevice->GetDeviceName() == "DirectX11")
 	{
+#ifdef _WIN32
 		shaderExtract = graphicsDevice->CreateShaderFromBinary(
 			PostFX_Basic_VS::g_main,
 			sizeof(PostFX_Basic_VS::g_main),
@@ -138,6 +139,7 @@ BloomPostEffect::BloomPostEffect(Backend::GraphicsDeviceRef graphicsDevice)
 			sizeof(PostFX_Basic_VS::g_main),
 			PostFX_BlurV_PS::g_main,
 			sizeof(PostFX_BlurV_PS::g_main));
+#endif
 	}
 	else
 	{
@@ -169,7 +171,7 @@ BloomPostEffect::BloomPostEffect(Backend::GraphicsDeviceRef graphicsDevice)
 
 	if (shaderExtract != nullptr)
 	{
-		extract_ = std::make_unique<PostProcess>(graphicsDevice, shaderExtract, 0, sizeof(float) * 8);	
+		extract_ = std::make_unique<PostProcess>(graphicsDevice, shaderExtract, 0, sizeof(float) * 8);
 	}
 
 	downsample_ = std::make_unique<PostProcess>(graphicsDevice, shaderDownsample, 0, sizeof(float) * 4);
@@ -302,8 +304,7 @@ void BloomPostEffect::Render(Effekseer::Backend::TextureRef dst, Effekseer::Back
 
 void BloomPostEffect::SetupBuffers(int32_t width, int32_t height)
 {
-	const auto createRenderTexture = [&](Effekseer::Tool::Vector2I size, Effekseer::Backend::TextureFormatType format)
-	{
+	const auto createRenderTexture = [&](Effekseer::Tool::Vector2I size, Effekseer::Backend::TextureFormatType format) {
 		Effekseer::Backend::TextureParameter param;
 		param.Format = format;
 		param.Size[0] = size.X;
@@ -312,8 +313,7 @@ void BloomPostEffect::SetupBuffers(int32_t width, int32_t height)
 		return graphicsDevice_->CreateTexture(param);
 	};
 
-	const auto createRenderPass = [&](Effekseer::Backend::TextureRef texture)
-	{
+	const auto createRenderPass = [&](Effekseer::Backend::TextureRef texture) {
 		Effekseer::FixedSizeVector<Effekseer::Backend::TextureRef, Effekseer::Backend::RenderTargetMax> textures;
 		textures.resize(1);
 		textures.at(0) = texture;
