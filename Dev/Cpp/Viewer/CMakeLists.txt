@@ -41,6 +41,7 @@ list(APPEND cpps
     Graphics/LineRenderer.cpp
     Graphics/ImageRenderer.cpp
     Graphics/PostProcess.cpp
+    Graphics/PostEffects.cpp
     GUI/Image.cpp
     GUI/ReloadableImage.cpp
     GUI/RenderImage.cpp
@@ -59,6 +60,7 @@ list(APPEND hs
     Graphics/LineRenderer.h
     Graphics/ImageRenderer.h
     Graphics/PostProcess.h
+    Graphics/PostEffects.h
     GUI/Image.h
     GUI/ReloadableImage.h
     GUI/RenderImage.h

@@ -81,45 +81,4 @@ public:
 	}
 };
 
-class TonemapEffect : public PostEffect
-{
-public:
-	enum class Algorithm
-	{
-		Off,
-		Reinhard,
-	};
-
-	TonemapEffect(Graphics* graphics)
-		: PostEffect(graphics)
-	{
-	}
-	virtual ~TonemapEffect() = default;
-
-	void GetParameters(Algorithm& algorithm, float& exposure)
-	{
-		algorithm = this->algorithm;
-		exposure = this->exposure;
-	}
-
-	virtual void SetParameters(Algorithm algorithm, float exposure)
-	{
-		this->algorithm = algorithm;
-		this->exposure = exposure;
-	}
-
-protected:
-	Algorithm algorithm = Algorithm::Reinhard;
-	float exposure = 1.0f;
-};
-
-class LinearToSRGBEffect : public PostEffect
-{
-public:
-	LinearToSRGBEffect(Graphics* graphics)
-		: PostEffect(graphics)
-	{
-	}
-	virtual ~LinearToSRGBEffect() = default;
-};
 } // namespace efk

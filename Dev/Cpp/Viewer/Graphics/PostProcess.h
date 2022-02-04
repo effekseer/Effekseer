@@ -8,6 +8,13 @@ namespace Effekseer
 namespace Tool
 {
 
+enum class PostProcessBlendType
+{
+	None,
+	Blend,
+	Add,
+};
+
 class PostProcess
 {
 private:
@@ -28,7 +35,7 @@ private:
 	Backend::DrawParameter drawParam_;
 
 public:
-	PostProcess(Backend::GraphicsDeviceRef graphicsDevice, Backend::ShaderRef shader, size_t uniformBufferVSSize, size_t uniformBufferPSSize);
+	PostProcess(Backend::GraphicsDeviceRef graphicsDevice, Backend::ShaderRef shader, size_t uniformBufferVSSize, size_t uniformBufferPSSize, PostProcessBlendType blendType = PostProcessBlendType::None);
 	void Render();
 
 	Backend::UniformBufferRef GetUniformBufferVS()

@@ -5,7 +5,7 @@ namespace Effekseer
 namespace Tool
 {
 
-PostProcess::PostProcess(Backend::GraphicsDeviceRef graphicsDevice, Backend::ShaderRef shader, size_t uniformBufferVSSize, size_t uniformBufferPSSize)
+PostProcess::PostProcess(Backend::GraphicsDeviceRef graphicsDevice, Backend::ShaderRef shader, size_t uniformBufferVSSize, size_t uniformBufferPSSize, PostProcessBlendType blendType)
 	: graphicsDevice_(graphicsDevice)
 	, shader_(shader)
 {
@@ -46,7 +46,37 @@ PostProcess::PostProcess(Backend::GraphicsDeviceRef graphicsDevice, Backend::Sha
 	pipParam.ShaderPtr = shader;
 	pipParam.IsDepthTestEnabled = false;
 	pipParam.IsDepthWriteEnabled = false;
-	pipParam.IsBlendEnabled = false;
+
+	if (blendType == PostProcessBlendType::None)
+	{
+		pipParam.IsBlendEnabled = false;	
+	}
+	else if (blendType == PostProcessBlendType::Blend)
+	{
+		using namespace Effekseer::Backend;
+
+		pipParam.IsBlendEnabled = true;
+		pipParam.BlendSrcFunc = BlendFuncType::SrcAlpha;
+		pipParam.BlendDstFunc = BlendFuncType::OneMinusSrcAlpha;
+		pipParam.BlendSrcFuncAlpha = BlendFuncType::SrcAlpha;
+		pipParam.BlendDstFuncAlpha = BlendFuncType::OneMinusSrcAlpha;
+
+		pipParam.BlendEquationRGB = BlendEquationType::Add;
+		pipParam.BlendEquationAlpha = BlendEquationType::Add;
+	}
+	else if (blendType == PostProcessBlendType::Add)
+	{
+		using namespace Effekseer::Backend;
+
+		pipParam.IsBlendEnabled = true;
+		pipParam.BlendSrcFunc = BlendFuncType::SrcAlpha;
+		pipParam.BlendDstFunc = BlendFuncType::One;
+		pipParam.BlendSrcFuncAlpha = BlendFuncType::SrcAlpha;
+		pipParam.BlendDstFuncAlpha = BlendFuncType::One;
+
+		pipParam.BlendEquationRGB = BlendEquationType::Add;
+		pipParam.BlendEquationAlpha = BlendEquationType::Add;
+	}
 
 	pip_ = graphicsDevice->CreatePipelineState(pipParam);
 
@@ -55,14 +85,14 @@ PostProcess::PostProcess(Backend::GraphicsDeviceRef graphicsDevice, Backend::Sha
 		uniformBufferVS_ = graphicsDevice->CreateUniformBuffer(uniformBufferVSSize, nullptr);
 	}
 
-	if (uniformBufferVSSize > 0)
+	if (uniformBufferPSSize > 0)
 	{
 		uniformBufferPS_ = graphicsDevice->CreateUniformBuffer(uniformBufferPSSize, nullptr);
 	}
 
 	drawParam_.TextureCount = 0;
-	drawParam_.TextureSamplingTypes[0] = Backend::TextureSamplingType::Linear;
-	drawParam_.TextureWrapTypes[0] = Backend::TextureWrapType::Repeat;
+	drawParam_.TextureSamplingTypes.fill(Backend::TextureSamplingType::Linear);
+	drawParam_.TextureWrapTypes.fill(Backend::TextureWrapType::Clamp);
 
 	drawParam_.VertexBufferPtr = vb_;
 	drawParam_.IndexBufferPtr = ib_;

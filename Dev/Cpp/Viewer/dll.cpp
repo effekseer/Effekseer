@@ -748,7 +748,7 @@ void Native::SetTonemapParameters(int32_t algorithm, float exposure)
 		if (tonemap)
 		{
 			tonemap->SetEnabled(algorithm != 0);
-			tonemap->SetParameters((efk::TonemapEffect::Algorithm)algorithm, exposure);
+			tonemap->SetParameters((Effekseer::Tool::TonemapPostEffect::Algorithm)algorithm, exposure);
 		}
 	}
 }

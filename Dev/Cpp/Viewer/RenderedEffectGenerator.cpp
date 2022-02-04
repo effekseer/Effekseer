@@ -327,13 +327,13 @@ bool RenderedEffectGenerator::Initialize(std::shared_ptr<efk::Graphics> graphics
 	renderer_->SetDistortingCallback(m_distortionCallback);
 
 	// create postprocessings
-	m_bloomEffect.reset(efk::PostEffect::CreateBloom(graphics.get(), renderer_));
-	m_tonemapEffect.reset(efk::PostEffect::CreateTonemap(graphics.get(), renderer_));
-	m_linearToSRGBEffect.reset(efk::PostEffect::CreateLinearToSRGB(graphics.get(), renderer_));
+	bloomEffect_ = std::make_unique<BloomPostEffect>(graphics->GetGraphicsDevice());
+	linearToSRGBEffect_ = std::make_unique<LinearToSRGBPostEffect>(graphics->GetGraphicsDevice());
+	tonemapEffect_ = std::make_unique<TonemapPostEffect>(graphics->GetGraphicsDevice());
 
-	if (!(m_bloomEffect != nullptr && m_bloomEffect->GetIsValid() &&
-		  m_tonemapEffect != nullptr && m_tonemapEffect->GetIsValid() &&
-		  m_linearToSRGBEffect != nullptr && m_linearToSRGBEffect->GetIsValid()))
+	if (!(bloomEffect_ != nullptr && bloomEffect_->GetIsValid() &&
+		  tonemapEffect_ != nullptr && tonemapEffect_->GetIsValid() &&
+		  linearToSRGBEffect_ != nullptr && linearToSRGBEffect_->GetIsValid()))
 	{
 		spdlog::trace("Failed PostProcessing");
 		return false;
@@ -907,7 +907,7 @@ void RenderedEffectGenerator::Render(std::shared_ptr<RenderImage> renderImage)
 	OnBeforePostprocess();
 
 	// all post effects are disabled
-	if (m_bloomEffect == nullptr && m_tonemapEffect == nullptr && m_linearToSRGBEffect == nullptr)
+	if (bloomEffect_ == nullptr && tonemapEffect_ == nullptr && linearToSRGBEffect_ == nullptr)
 	{
 		return;
 	}
@@ -927,7 +927,7 @@ void RenderedEffectGenerator::Render(std::shared_ptr<RenderImage> renderImage)
 	else
 	{
 		// Bloom processing (specifying the same target for src and dest is faster)
-		m_bloomEffect->Render(hdrRenderTexture, hdrRenderTexture);
+		bloomEffect_->Render(hdrRenderTexture, hdrRenderTexture);
 
 		// Tone map processing
 		auto tonemapTerget = renderTargetImage;
@@ -936,11 +936,11 @@ void RenderedEffectGenerator::Render(std::shared_ptr<RenderImage> renderImage)
 			tonemapTerget = linearRenderTexture;
 		}
 
-		m_tonemapEffect->Render(hdrRenderTexture, tonemapTerget);
+		tonemapEffect_->Render(tonemapTerget, hdrRenderTexture);
 
 		if (m_isSRGBMode)
 		{
-			m_linearToSRGBEffect->Render(tonemapTerget, renderTargetImage);
+			linearToSRGBEffect_->Render(renderTargetImage, tonemapTerget);
 		}
 	}
 

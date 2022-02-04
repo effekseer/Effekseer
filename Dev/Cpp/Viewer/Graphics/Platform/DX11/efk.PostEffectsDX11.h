@@ -71,46 +71,4 @@ private:
 	void ReleaseBuffers();
 };
 
-class TonemapEffectDX11 : public TonemapEffect
-{
-	EffekseerRendererDX11::RendererImplementedRef renderer_;
-	BlitterDX11 blitter;
-	std::unique_ptr<EffekseerRendererDX11::Shader> shaderCopy;
-	std::unique_ptr<EffekseerRendererDX11::Shader> shaderReinhard;
-
-public:
-	TonemapEffectDX11(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer);
-	virtual ~TonemapEffectDX11();
-
-	void Render(Effekseer::Backend::TextureRef src, Effekseer::Backend::TextureRef dest) override;
-
-	void OnLostDevice() override
-	{
-	}
-
-	void OnResetDevice() override
-	{
-	}
-};
-
-class LinearToSRGBEffectDX11 : public LinearToSRGBEffect
-{
-	EffekseerRendererDX11::RendererImplementedRef renderer_;
-	BlitterDX11 blitter_;
-	std::unique_ptr<EffekseerRendererDX11::Shader> shader_;
-
-public:
-	LinearToSRGBEffectDX11(Graphics* graphics, const EffekseerRenderer::RendererRef& renderer);
-	virtual ~LinearToSRGBEffectDX11();
-
-	void Render(Effekseer::Backend::TextureRef src, Effekseer::Backend::TextureRef dest) override;
-
-	void OnLostDevice() override
-	{
-	}
-
-	void OnResetDevice() override
-	{
-	}
-};
 } // namespace efk

@@ -434,7 +434,7 @@ bool EffectRecorder::Begin(std::shared_ptr<EffekseerTool::MainScreenRenderedEffe
 	generator_->GetBloomEffect()->SetParameters(bloomIntencity, bloomTh, bloomK);
 	generator_->GetBloomEffect()->SetEnabled(mainScreen->GetBloomEffect()->GetEnabled());
 
-	efk::TonemapEffect::Algorithm toneA;
+	Effekseer::Tool::TonemapPostEffect::Algorithm toneA;
 	float toneE = 0.0f;
 	mainScreen->GetTonemapEffect()->GetParameters(toneA, toneE);
 	generator_->GetTonemapEffect()->SetParameters(toneA, toneE);
