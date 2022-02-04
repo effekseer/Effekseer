@@ -347,9 +347,6 @@ void BloomPostEffect::SetupBuffers(int32_t width, int32_t height)
 
 	for (int j = 0; j < BlurIterations; j++)
 	{
-		auto texture = (j == 0) ? extractBuffer
-								: lowresBuffers[0][j - 1];
-
 		renderPassDownscales_[j] = createRenderPass(lowresBuffers[0][j]);
 
 		renderPassBlurs_[0][j] = createRenderPass(lowresBuffers[0][j]);
