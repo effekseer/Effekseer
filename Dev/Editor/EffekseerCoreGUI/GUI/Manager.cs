@@ -319,7 +319,7 @@ namespace Effekseer.GUI
 
 			TextOffsetY = (NativeManager.GetTextLineHeightWithSpacing() - NativeManager.GetTextLineHeight()) / 2;
 
-			Network = new Network(Native);
+			Network = new Network();
 			Network.Load();
 
 			Command.CommandManager.Changed += OnChanged;
@@ -438,6 +438,9 @@ namespace Effekseer.GUI
 			Network.Save();
 			Shortcuts.SeveShortcuts();
 			RecentFiles.SaveRecentConfig();
+
+			Network.Dispose();
+			Network = null;
 
 			Viewer.HideViewer();
 			Viewer.Dispose();

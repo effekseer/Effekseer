@@ -6,6 +6,7 @@
 #include "3D/ViewPointController.h"
 #include "3D/Effect.h"
 #include "3D/EffectFactory.h"
+#include "Network/Network.h"
 #include "dll.h"
 #include "GUI/efk.GUIManager.h"
 #include "GUI/efk.FileDialog.h"
@@ -129,6 +130,8 @@ class"
 %include "Cpp/Viewer/3D/ViewPointController.h"
 %include "Cpp/Viewer/3D/Effect.h"
 %include "Cpp/Viewer/3D/EffectFactory.h"
+
+%include "Cpp/Viewer/Network/Network.h"
 
 %include "Cpp/Viewer/dll.h"
 %include "Cpp/Viewer/GUI/efk.GUIManager.h"

@@ -184,24 +184,6 @@ public class Native : global::System.IDisposable {
     EffekseerNativePINVOKE.Native_SetStep(swigCPtr, step);
   }
 
-  public bool StartNetwork(string host, ushort port) {
-    bool ret = EffekseerNativePINVOKE.Native_StartNetwork(swigCPtr, host, port);
-    return ret;
-  }
-
-  public void StopNetwork() {
-    EffekseerNativePINVOKE.Native_StopNetwork(swigCPtr);
-  }
-
-  public bool IsConnectingNetwork() {
-    bool ret = EffekseerNativePINVOKE.Native_IsConnectingNetwork(swigCPtr);
-    return ret;
-  }
-
-  public void SendDataByNetwork(string key, System.IntPtr data, int size, string path) {
-    EffekseerNativePINVOKE.Native_SendDataByNetwork(swigCPtr, key, data, size, path);
-  }
-
   public void SetLightDirection(float x, float y, float z) {
     EffekseerNativePINVOKE.Native_SetLightDirection(swigCPtr, x, y, z);
   }

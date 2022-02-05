@@ -45,6 +45,7 @@ list(APPEND cpps
     GUI/Image.cpp
     GUI/ReloadableImage.cpp
     GUI/RenderImage.cpp
+    Network/Network.cpp
     Recorder/EffectRecorder.cpp
     Recorder/AVIExporter.cpp
     Recorder/GifHelper.cpp
@@ -64,6 +65,7 @@ list(APPEND hs
     GUI/Image.h
     GUI/ReloadableImage.h
     GUI/RenderImage.h
+    Network/Network.h
     Math/Vector2I.h
     Math/Vector3F.h
     Recorder/EffectRecorder.h

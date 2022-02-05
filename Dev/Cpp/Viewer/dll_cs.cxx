@@ -383,6 +383,7 @@ namespace Swig {
 #include "3D/ViewPointController.h"
 #include "3D/Effect.h"
 #include "3D/EffectFactory.h"
+#include "Network/Network.h"
 #include "dll.h"
 #include "GUI/efk.GUIManager.h"
 #include "GUI/efk.FileDialog.h"
@@ -2574,6 +2575,78 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_EffectFactory___(void *
 }
 
 
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_NetworkClient___() {
+  void * jresult ;
+  Effekseer::Tool::NetworkClient *result = 0 ;
+  
+  result = (Effekseer::Tool::NetworkClient *)new Effekseer::Tool::NetworkClient();
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_NetworkClient_StartNetwork___(void * jarg1, char * jarg2, unsigned short jarg3) {
+  unsigned int jresult ;
+  Effekseer::Tool::NetworkClient *arg1 = (Effekseer::Tool::NetworkClient *) 0 ;
+  char *arg2 = (char *) 0 ;
+  uint16_t arg3 ;
+  bool result;
+  
+  arg1 = (Effekseer::Tool::NetworkClient *)jarg1; 
+  arg2 = (char *)jarg2; 
+  arg3 = (uint16_t)jarg3; 
+  result = (bool)(arg1)->StartNetwork((char const *)arg2,arg3);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_NetworkClient_StopNetwork___(void * jarg1) {
+  Effekseer::Tool::NetworkClient *arg1 = (Effekseer::Tool::NetworkClient *) 0 ;
+  
+  arg1 = (Effekseer::Tool::NetworkClient *)jarg1; 
+  (arg1)->StopNetwork();
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_NetworkClient_IsConnectingNetwork___(void * jarg1) {
+  unsigned int jresult ;
+  Effekseer::Tool::NetworkClient *arg1 = (Effekseer::Tool::NetworkClient *) 0 ;
+  bool result;
+  
+  arg1 = (Effekseer::Tool::NetworkClient *)jarg1; 
+  result = (bool)(arg1)->IsConnectingNetwork();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_NetworkClient_SendDataByNetwork___(void * jarg1, void * jarg2, void * jarg3, int jarg4, void * jarg5) {
+  Effekseer::Tool::NetworkClient *arg1 = (Effekseer::Tool::NetworkClient *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  void *arg3 = (void *) 0 ;
+  int arg4 ;
+  char16_t *arg5 = (char16_t *) 0 ;
+  
+  arg1 = (Effekseer::Tool::NetworkClient *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  {
+    arg3 = jarg3; 
+  }
+  arg4 = (int)jarg4; 
+  arg5 = (char16_t *)jarg5; 
+  (arg1)->SendDataByNetwork((char16_t const *)arg2,arg3,arg4,(char16_t const *)arg5);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_NetworkClient___(void * jarg1) {
+  Effekseer::Tool::NetworkClient *arg1 = (Effekseer::Tool::NetworkClient *) 0 ;
+  
+  arg1 = (Effekseer::Tool::NetworkClient *)jarg1; 
+  delete arg1;
+}
+
+
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_GuideWidth_set___(void * jarg1, int jarg2) {
   ViewerParamater *arg1 = (ViewerParamater *) 0 ;
   int32_t arg2 ;
@@ -3225,60 +3298,6 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_SetStep___(void * jarg1
   arg1 = (Native *)jarg1; 
   arg2 = (int32_t)jarg2; 
   (arg1)->SetStep(arg2);
-}
-
-
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_StartNetwork___(void * jarg1, char * jarg2, unsigned short jarg3) {
-  unsigned int jresult ;
-  Native *arg1 = (Native *) 0 ;
-  char *arg2 = (char *) 0 ;
-  uint16_t arg3 ;
-  bool result;
-  
-  arg1 = (Native *)jarg1; 
-  arg2 = (char *)jarg2; 
-  arg3 = (uint16_t)jarg3; 
-  result = (bool)(arg1)->StartNetwork((char const *)arg2,arg3);
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_StopNetwork___(void * jarg1) {
-  Native *arg1 = (Native *) 0 ;
-  
-  arg1 = (Native *)jarg1; 
-  (arg1)->StopNetwork();
-}
-
-
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_IsConnectingNetwork___(void * jarg1) {
-  unsigned int jresult ;
-  Native *arg1 = (Native *) 0 ;
-  bool result;
-  
-  arg1 = (Native *)jarg1; 
-  result = (bool)(arg1)->IsConnectingNetwork();
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_SendDataByNetwork___(void * jarg1, void * jarg2, void * jarg3, int jarg4, void * jarg5) {
-  Native *arg1 = (Native *) 0 ;
-  char16_t *arg2 = (char16_t *) 0 ;
-  void *arg3 = (void *) 0 ;
-  int arg4 ;
-  char16_t *arg5 = (char16_t *) 0 ;
-  
-  arg1 = (Native *)jarg1; 
-  arg2 = (char16_t *)jarg2; 
-  {
-    arg3 = jarg3; 
-  }
-  arg4 = (int)jarg4; 
-  arg5 = (char16_t *)jarg5; 
-  (arg1)->SendDataByNetwork((char16_t const *)arg2,arg3,arg4,(char16_t const *)arg5);
 }
 
 

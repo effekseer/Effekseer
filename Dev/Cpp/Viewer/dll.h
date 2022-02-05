@@ -215,14 +215,6 @@ public:
 
 	void SetStep(int32_t step);
 
-	bool StartNetwork(const char* host, uint16_t port);
-
-	void StopNetwork();
-
-	bool IsConnectingNetwork();
-
-	void SendDataByNetwork(const char16_t* key, void* data, int size, const char16_t* path);
-
 	void SetLightDirection(float x, float y, float z);
 
 	void SetLightColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a);

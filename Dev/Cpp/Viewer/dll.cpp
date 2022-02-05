@@ -54,8 +54,6 @@ static std::map<std::u16string, Effekseer::TextureRef> m_textures;
 static std::map<std::u16string, Effekseer::ModelRef> m_models;
 static std::map<std::u16string, Effekseer::MaterialRef> g_materials_;
 
-static ::Effekseer::ClientRef g_client = nullptr;
-
 static efk::DeviceType g_deviceType = efk::DeviceType::OpenGL;
 
 Native::TextureLoader::TextureLoader(efk::Graphics* graphics, Effekseer::ColorSpaceType colorSpaceType)
@@ -215,8 +213,6 @@ void Native::MaterialLoader::ReleaseAll()
 
 Native::Native()
 {
-	g_client = Effekseer::Client::Create();
-
 	commandQueueToMaterialEditor_ = std::make_shared<IPC::CommandQueue>();
 	commandQueueToMaterialEditor_->Start("EfkCmdToMatEdit", 1024 * 1024);
 
@@ -227,8 +223,6 @@ Native::Native()
 Native::~Native()
 {
 	spdlog::trace("Begin Native::~Native()");
-
-	g_client.Reset();
 
 	commandQueueToMaterialEditor_->Stop();
 	commandQueueToMaterialEditor_.reset();
@@ -625,26 +619,6 @@ void Native::SetGridColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 void Native::SetStep(int32_t step)
 {
 	mainScreen_->SetStep(step);
-}
-
-bool Native::StartNetwork(const char* host, uint16_t port)
-{
-	return g_client->Start((char*)host, port);
-}
-
-void Native::StopNetwork()
-{
-	g_client->Stop();
-}
-
-bool Native::IsConnectingNetwork()
-{
-	return g_client->IsConnected();
-}
-
-void Native::SendDataByNetwork(const char16_t* key, void* data, int size, const char16_t* path)
-{
-	g_client->Reload((const char16_t*)key, data, size);
 }
 
 void Native::SetLightDirection(float x, float y, float z)

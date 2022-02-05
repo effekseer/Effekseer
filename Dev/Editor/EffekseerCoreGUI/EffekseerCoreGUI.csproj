@@ -208,6 +208,7 @@
     <Compile Include="swig\MainWindowState.cs" />
     <Compile Include="swig\MouseCursor.cs" />
     <Compile Include="swig\Native.cs" />
+    <Compile Include="swig\NetworkClient.cs" />
     <Compile Include="swig\ProjectionMatrixStyle.cs" />
     <Compile Include="swig\ProjectionType.cs" />
     <Compile Include="swig\Ray.cs" />
