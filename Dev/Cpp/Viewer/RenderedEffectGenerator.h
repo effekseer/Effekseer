@@ -106,9 +106,6 @@ protected:
 	Vector2I screenSize_;
 	ViewerEffectBehavior behavior_;
 
-	//std::unique_ptr<efk::BloomEffect> bloomEffect_;
-	//std::unique_ptr<efk::TonemapEffect> tonemapEffect_;
-
 	Effekseer::Backend::TextureRef hdrRenderTextureMSAA;
 	Effekseer::Backend::TextureRef hdrRenderTexture;
 	Effekseer::Backend::TextureRef linearRenderTexture;
@@ -120,9 +117,6 @@ protected:
 
 	Effekseer::Backend::TextureRef backTexture;
 	Effekseer::Backend::TextureRef viewRenderTexture;
-
-	//std::unique_ptr<efk::BloomEffect> m_bloomEffect;
-	//std::unique_ptr<efk::TonemapEffect> m_tonemapEffect;
 
 	std::unique_ptr<PostProcess> overdrawEffect_;
 	std::unique_ptr<BloomPostEffect> bloomEffect_;

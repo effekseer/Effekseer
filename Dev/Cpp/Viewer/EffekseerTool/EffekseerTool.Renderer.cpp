@@ -32,7 +32,7 @@ bool MainScreenRenderedEffectGenerator::InitializedPrePost()
 
 	spdlog::trace("OK Grid");
 
-	guide_ = std::shared_ptr<::EffekseerRenderer::Guide>(::EffekseerRenderer::Guide::Create(graphics_.get(), renderer_));
+	guide_ = std::shared_ptr<::EffekseerRenderer::Guide>(::EffekseerRenderer::Guide::Create(graphics_->GetGraphicsDevice()));
 	if (guide_ == nullptr)
 	{
 		return false;

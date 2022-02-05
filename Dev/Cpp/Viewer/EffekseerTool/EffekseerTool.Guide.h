@@ -1,41 +1,25 @@
-﻿
-#ifndef __EFFEKSEERRENDERER_GUIDE_H__
-#define __EFFEKSEERRENDERER_GUIDE_H__
+﻿#pragma once
 
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
-//#include "../Graphics/efk.ImageRenderer.h"
-#include "EffekseerTool.Renderer.h"
 #include "../Graphics/ImageRenderer.h"
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
+#include "EffekseerTool.Renderer.h"
+
 namespace EffekseerRenderer
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
 class Guide
 {
 private:
 	std::shared_ptr<Effekseer::Tool::ImageRenderer> imageRenderer_ = nullptr;
 
-	Guide(efk::Graphics* graphics, const EffekseerRenderer::RendererRef& renderer);
+	Guide(Effekseer::Backend::GraphicsDeviceRef graphicsDevice);
 
 public:
 	virtual ~Guide();
 
-	static Guide* Create(efk::Graphics* graphics, const EffekseerRenderer::RendererRef& renderer);
+	static Guide* Create(Effekseer::Backend::GraphicsDeviceRef graphicsDevice);
 
 public:
 	void Rendering(int32_t width, int32_t height, int32_t guide_width, int32_t guide_height);
 };
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
 } // namespace EffekseerRenderer
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-#endif // __EFFEKSEERRENDERER_GUIDE_H__

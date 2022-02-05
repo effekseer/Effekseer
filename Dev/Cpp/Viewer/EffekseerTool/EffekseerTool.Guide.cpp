@@ -4,18 +4,18 @@
 namespace EffekseerRenderer
 {
 
-Guide::Guide(efk::Graphics* graphics, const EffekseerRenderer::RendererRef& renderer)
+Guide::Guide(Effekseer::Backend::GraphicsDeviceRef graphicsDevice)
 {
-	imageRenderer_ = Effekseer::Tool::ImageRenderer::Create(graphics->GetGraphicsDevice());
+	imageRenderer_ = Effekseer::Tool::ImageRenderer::Create(graphicsDevice);
 }
 
 Guide::~Guide()
 {
 }
 
-Guide* Guide::Create(efk::Graphics* graphics, const EffekseerRenderer::RendererRef& renderer)
+Guide* Guide::Create(Effekseer::Backend::GraphicsDeviceRef graphicsDevice)
 {
-	return new Guide(graphics, renderer);
+	return new Guide(graphicsDevice);
 }
 
 void Guide::Rendering(int32_t width, int32_t height, int32_t guide_width, int32_t guide_height)
