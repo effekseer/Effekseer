@@ -5,30 +5,22 @@
 #if !(defined(__EFFEKSEER_NETWORK_DISABLED__))
 #if !(defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE))
 
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
 #include "Effekseer.Base.h"
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 namespace Effekseer
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-class Client
+
+class Client;
+using ClientRef = RefPtr<Client>;
+
+class Client : public IReference
 {
 public:
-	Client()
-	{
-	}
-	virtual ~Client()
-	{
-	}
+	Client() = default;
 
-	static Client* Create();
+	virtual ~Client() = default;
+
+	static ClientRef Create();
 
 	virtual bool Start(char* host, uint16_t port) = 0;
 	virtual void Stop() = 0;
@@ -38,13 +30,7 @@ public:
 	virtual bool IsConnected() = 0;
 };
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 } // namespace Effekseer
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 
 #endif // #if !( defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE) )
 #endif

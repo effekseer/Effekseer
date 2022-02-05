@@ -5,9 +5,6 @@
 #if !(defined(__EFFEKSEER_NETWORK_DISABLED__))
 #if !(defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE))
 
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
 #include "Effekseer.Base.h"
 #include "Effekseer.Client.h"
 
@@ -15,15 +12,10 @@
 #include <set>
 #include <vector>
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 namespace Effekseer
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-class ClientImplemented : public Client
+
+class ClientImplemented : public Client, public ReferenceObject
 {
 private:
 	bool isThreadRunning = false;
@@ -43,7 +35,7 @@ private:
 
 public:
 	ClientImplemented();
-	~ClientImplemented();
+	~ClientImplemented() override;
 
 	bool Start(char* host, uint16_t port);
 	void Stop();
@@ -54,15 +46,22 @@ public:
 	void Reload(ManagerRef manager, const char16_t* path, const char16_t* key);
 
 	bool IsConnected();
+
+	virtual int GetRef() override
+	{
+		return ReferenceObject::GetRef();
+	}
+	virtual int AddRef() override
+	{
+		return ReferenceObject::AddRef();
+	}
+	virtual int Release() override
+	{
+		return ReferenceObject::Release();
+	}
 };
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 } // namespace Effekseer
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 
 #endif // #if !( defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE) )
 

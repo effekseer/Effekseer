@@ -61,41 +61,10 @@ ClientImplemented::~ClientImplemented()
 	Socket::Finalize();
 }
 
-Client* Client::Create()
+ClientRef Client::Create()
 {
-	return new ClientImplemented();
+	return MakeRefPtr<ClientImplemented>();
 }
-
-/*
-HOSTENT* ClientImplemented::GetHostEntry( const char* host )
-{
-	HOSTENT* hostEntry = nullptr;
-	IN_ADDR InAddrHost;
-
-	// check ip adress or DNS
-	InAddrHost.s_addr = ::inet_addr( host );
-	if ( InAddrHost.s_addr == InaddrNone )
-	{
-		// DNS
-		hostEntry = ::gethostbyname( host );
-		if ( hostEntry == nullptr)
-		{
-			return nullptr;
-		}
-	}
-	else
-	{
-		// Ip address
-		hostEntry = ::gethostbyaddr( (const char*)(&InAddrHost), sizeof(IN_ADDR), AF_INET );
-		if ( hostEntry == nullptr)
-		{
-			return nullptr;
-		}
-	}
-
-	return hostEntry;
-}
-*/
 
 bool ClientImplemented::GetAddr(const char* host, IN_ADDR* addr)
 {
@@ -245,9 +214,6 @@ void ClientImplemented::Reload(const char16_t* key, void* data, int32_t size)
 	Send(&(buf[0]), (int32_t)buf.size());
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void ClientImplemented::Reload(ManagerRef manager, const char16_t* path, const char16_t* key)
 {
 	EffectLoaderRef loader = manager->GetEffectLoader();
@@ -263,21 +229,12 @@ void ClientImplemented::Reload(ManagerRef manager, const char16_t* path, const c
 	loader->Unload(data, size);
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 bool ClientImplemented::IsConnected()
 {
 	return m_running;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 } // namespace Effekseer
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 
 #endif // #if !( defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE) )
 #endif

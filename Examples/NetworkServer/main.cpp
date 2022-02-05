@@ -39,7 +39,7 @@ static LPDIRECT3DDEVICE9				g_d3d_device = NULL;
 static IXAudio2*						g_xa2 = NULL;
 static IXAudio2MasteringVoice*			g_xa2_master = NULL;
 
-static ::Effekseer::Server*				g_server = NULL;
+static ::Effekseer::ServerRef			g_server = NULL;
 
 static int32_t							g_timer = 0;
 
@@ -301,7 +301,7 @@ int main(int argc, char **argv)
 	MainLoop();
 
 	// サーバーの破棄
-	ES_SAFE_DELETE( g_server );
+	g_server.Reset();
 
 	// 先にエフェクト管理用インスタンスを破棄
 	g_manager.Reset();

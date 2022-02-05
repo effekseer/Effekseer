@@ -5,9 +5,6 @@
 #if !(defined(__EFFEKSEER_NETWORK_DISABLED__))
 #if !(defined(_PSVITA) || defined(_SWITCH) || defined(_XBOXONE))
 
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
 #include "Effekseer.Base.h"
 #include "Effekseer.Server.h"
 
@@ -19,15 +16,10 @@
 #include <set>
 #include <vector>
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 namespace Effekseer
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-class ServerImplemented : public Server
+
+class ServerImplemented : public Server, public ReferenceObject
 {
 private:
 	class InternalClient
@@ -94,15 +86,22 @@ public:
 	void Update(ManagerRef* managers, int32_t managerCount, ReloadingThreadType reloadingThreadType) override;
 
 	void SetMaterialPath(const char16_t* materialPath) override;
+
+	virtual int GetRef() override
+	{
+		return ReferenceObject::GetRef();
+	}
+	virtual int AddRef() override
+	{
+		return ReferenceObject::AddRef();
+	}
+	virtual int Release() override
+	{
+		return ReferenceObject::Release();
+	}
 };
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 } // namespace Effekseer
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 
 #endif // #if !( defined(_PSVITA) || defined(_SWITCH) || defined(_XBOXONE) )
 #endif

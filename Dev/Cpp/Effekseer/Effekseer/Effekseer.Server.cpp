@@ -14,14 +14,9 @@
 #include <unistd.h>
 #endif
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 namespace Effekseer
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
 void ServerImplemented::InternalClient::RecvAsync(void* data)
 {
 	InternalClient* client = (InternalClient*)data;
@@ -77,9 +72,6 @@ void ServerImplemented::InternalClient::RecvAsync(void* data)
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 ServerImplemented::InternalClient::InternalClient(EfkSocket socket_, ServerImplemented* server)
 	: m_socket(socket_)
 	, m_server(server)
@@ -88,17 +80,11 @@ ServerImplemented::InternalClient::InternalClient(EfkSocket socket_, ServerImple
 	m_threadRecv = std::thread([this]() { RecvAsync(this); });
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 ServerImplemented::InternalClient::~InternalClient()
 {
 	m_threadRecv.join();
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void ServerImplemented::InternalClient::ShutDown()
 {
 	if (m_socket != InvalidSocket)
@@ -110,17 +96,11 @@ void ServerImplemented::InternalClient::ShutDown()
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 ServerImplemented::ServerImplemented()
 {
 	Socket::Initialize();
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 ServerImplemented::~ServerImplemented()
 {
 	Stop();
@@ -128,26 +108,17 @@ ServerImplemented::~ServerImplemented()
 	Socket::Finalize();
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-Server* Server::Create()
+ServerRef Server::Create()
 {
-	return new ServerImplemented();
+	return MakeRefPtr<ServerImplemented>();
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void ServerImplemented::AddClient(InternalClient* client)
 {
 	std::lock_guard<std::mutex> lock(m_ctrlClients);
 	m_clients.insert(client);
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void ServerImplemented::RemoveClient(InternalClient* client)
 {
 	std::lock_guard<std::mutex> lock(m_ctrlClients);
@@ -158,9 +129,6 @@ void ServerImplemented::RemoveClient(InternalClient* client)
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void ServerImplemented::AcceptAsync(void* data)
 {
 	ServerImplemented* server = (ServerImplemented*)data;
@@ -184,9 +152,6 @@ void ServerImplemented::AcceptAsync(void* data)
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 bool ServerImplemented::Start(uint16_t port)
 {
 	if (m_running)
@@ -239,9 +204,6 @@ bool ServerImplemented::Start(uint16_t port)
 	return true;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void ServerImplemented::Stop()
 {
 	if (!m_running)
@@ -287,9 +249,6 @@ void ServerImplemented::Stop()
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void ServerImplemented::Register(const char16_t* key, const EffectRef& effect)
 {
 	if (effect == nullptr)
@@ -299,9 +258,6 @@ void ServerImplemented::Register(const char16_t* key, const EffectRef& effect)
 	m_effects[key_] = {effect, false};
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void ServerImplemented::Unregister(const EffectRef& effect)
 {
 	if (effect == nullptr)
@@ -322,9 +278,6 @@ void ServerImplemented::Unregister(const EffectRef& effect)
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void ServerImplemented::Update(ManagerRef* managers, int32_t managerCount, ReloadingThreadType reloadingThreadType)
 {
 	m_ctrlClients.lock();
@@ -422,9 +375,6 @@ void ServerImplemented::Update(ManagerRef* managers, int32_t managerCount, Reloa
 	m_ctrlClients.unlock();
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void ServerImplemented::SetMaterialPath(const char16_t* materialPath)
 {
 	m_materialPath.clear();
@@ -438,13 +388,8 @@ void ServerImplemented::SetMaterialPath(const char16_t* materialPath)
 	m_materialPath.push_back(0);
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 } // namespace Effekseer
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
 
 #endif // #if !( defined(_PSVITA) || defined(_XBOXONE) )
 #endif

@@ -2,14 +2,20 @@
 
 ### Broken changes
 
-Effekseer::FileInterface, Effekseer::FileReader and Effekseer::FileWriter were changed.
+#### Effekseer::Server, Effekseer::Client
+
+Classes inherited ReferenceObject.
+
+#### Effekseer::FileInterface, Effekseer::FileReader and Effekseer::FileWriter were changed.
+
 Classes inherit ReferenceObject.
 These class should be creted with MakeRefPtr and deleteed automatically.
 
-Culling system was replaced.
+#### Culling system was replaced.
+
 You need to specify Effekseer::Manager::DrawParameter's ViewProjectionMatrix, ZNear and ZFar when Effekseer::Manager::Draw is called.
 
-Effekseer::Backend::TextureParameter was changed.
+#### Effekseer::Backend::TextureParameter was changed.
 
 It was combined to RenderTextureParameter and DepthTextureParameter.
 It supported Texture3D and Texture2DArray.

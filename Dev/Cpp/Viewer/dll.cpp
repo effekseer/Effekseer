@@ -54,7 +54,7 @@ static std::map<std::u16string, Effekseer::TextureRef> m_textures;
 static std::map<std::u16string, Effekseer::ModelRef> m_models;
 static std::map<std::u16string, Effekseer::MaterialRef> g_materials_;
 
-static ::Effekseer::Client* g_client = nullptr;
+static ::Effekseer::ClientRef g_client = nullptr;
 
 static efk::DeviceType g_deviceType = efk::DeviceType::OpenGL;
 
@@ -228,7 +228,7 @@ Native::~Native()
 {
 	spdlog::trace("Begin Native::~Native()");
 
-	ES_SAFE_DELETE(g_client);
+	g_client.Reset();
 
 	commandQueueToMaterialEditor_->Stop();
 	commandQueueToMaterialEditor_.reset();

@@ -37,7 +37,7 @@ static LPDIRECT3DDEVICE9				g_d3d_device = NULL;
 static IXAudio2*						g_xa2 = NULL;
 static IXAudio2MasteringVoice*			g_xa2_master = NULL;
 
-static ::Effekseer::Client*				g_client = NULL;
+static ::Effekseer::ClientRef			g_client = NULL;
 
 static int32_t							g_timer = 0;
 
@@ -272,7 +272,7 @@ int main(int argc, char **argv)
 	MainLoop();
 
 	// クライアントの破棄
-	ES_SAFE_DELETE( g_client );
+	g_client.Reset();
 
 	// 先にエフェクト管理用インスタンスを破棄
 	g_manager.Reset();
