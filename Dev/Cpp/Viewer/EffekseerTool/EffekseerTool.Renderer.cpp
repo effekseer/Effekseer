@@ -3,7 +3,6 @@
 #include "EffekseerTool.Culling.h"
 #include "EffekseerTool.Grid.h"
 #include "EffekseerTool.Guide.h"
-#include "EffekseerTool.Paste.h"
 
 #include "../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
 #include "../RenderedEffectGenerator.h"
