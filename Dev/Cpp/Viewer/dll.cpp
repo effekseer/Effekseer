@@ -47,8 +47,6 @@ ViewerParamater::ViewerParamater()
 {
 }
 
-static Effekseer::Manager::DrawParameter drawParameter;
-
 static ::EffekseerTool::Sound* sound_ = nullptr;
 static std::map<std::u16string, Effekseer::TextureRef> m_textures;
 static std::map<std::u16string, Effekseer::ModelRef> m_models;
@@ -320,11 +318,6 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 		setting_->SetSoundLoader(soundLoader_);
 	}
 
-	if (mainScreen_ != nullptr && sound_ != nullptr)
-	{
-		mainScreen_->SetSound(sound_);
-	}
-
 	materialLoader_ = Effekseer::RefPtr<MaterialLoader>(new MaterialLoader(mainScreen_->GetRenderer()));
 	setting_->SetMaterialLoader(materialLoader_);
 
@@ -343,7 +336,6 @@ bool Native::UpdateWindow(std::shared_ptr<Effekseer::Tool::ViewPointController> 
 	const auto ray = viewPointCtrl->GetCameraRay();
 
 	sound_->SetListener(ray.Origin, ray.Origin + ray.Direction, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f));
-	sound_->Update();
 
 	// command
 	if (commandQueueFromMaterialEditor_ != nullptr)
@@ -445,6 +437,7 @@ void Native::RenderView(int32_t width, int32_t height, std::shared_ptr<Effekseer
 	viewPointCtrl->Update();
 
 	const auto ray = viewPointCtrl->GetCameraRay();
+	Effekseer::Manager::DrawParameter drawParameter;
 	drawParameter.IsSortingEffectsEnabled = true;
 	drawParameter.CameraPosition = ray.Origin;
 	drawParameter.CameraFrontDirection = ray.Direction;
@@ -535,18 +528,6 @@ void Native::SetViewerEffectBehavior(Effekseer::Tool::ViewerEffectBehavior behav
 	{
 		mainScreen_->SetBehavior(behavior);
 	}
-}
-
-bool Native::SetSoundMute(bool mute)
-{
-	sound_->SetMute(mute);
-	return true;
-}
-
-bool Native::SetSoundVolume(float volume)
-{
-	sound_->SetVolume(volume);
-	return true;
 }
 
 bool Native::InvalidateTextureCache()

@@ -3171,34 +3171,6 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_SetViewerEffectBehavior
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_SetSoundMute___(void * jarg1, unsigned int jarg2) {
-  unsigned int jresult ;
-  Native *arg1 = (Native *) 0 ;
-  bool arg2 ;
-  bool result;
-  
-  arg1 = (Native *)jarg1; 
-  arg2 = jarg2 ? true : false; 
-  result = (bool)(arg1)->SetSoundMute(arg2);
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_SetSoundVolume___(void * jarg1, float jarg2) {
-  unsigned int jresult ;
-  Native *arg1 = (Native *) 0 ;
-  float arg2 ;
-  bool result;
-  
-  arg1 = (Native *)jarg1; 
-  arg2 = (float)jarg2; 
-  result = (bool)(arg1)->SetSoundVolume(arg2);
-  jresult = result; 
-  return jresult;
-}
-
-
 SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_InvalidateTextureCache___(void * jarg1) {
   unsigned int jresult ;
   Native *arg1 = (Native *) 0 ;

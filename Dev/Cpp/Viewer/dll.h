@@ -195,10 +195,6 @@ public:
 
 	void SetViewerEffectBehavior(Effekseer::Tool::ViewerEffectBehavior behavior);
 
-	bool SetSoundMute(bool mute);
-
-	bool SetSoundVolume(float volume);
-
 	bool InvalidateTextureCache();
 
 	void SetGroundParameters(bool shown, float height, int32_t extent);

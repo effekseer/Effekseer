@@ -141,16 +141,6 @@ public class Native : global::System.IDisposable {
     if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
   }
 
-  public bool SetSoundMute(bool mute) {
-    bool ret = EffekseerNativePINVOKE.Native_SetSoundMute(swigCPtr, mute);
-    return ret;
-  }
-
-  public bool SetSoundVolume(float volume) {
-    bool ret = EffekseerNativePINVOKE.Native_SetSoundVolume(swigCPtr, volume);
-    return ret;
-  }
-
   public bool InvalidateTextureCache() {
     bool ret = EffekseerNativePINVOKE.Native_InvalidateTextureCache(swigCPtr);
     return ret;

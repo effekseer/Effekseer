@@ -192,16 +192,6 @@ namespace Effekseer.GUI
 			native.SetViewerParamater(paramater);
 		}
 
-		public void SetSoundMute(bool mute)
-		{
-			native.SetSoundMute(mute);
-		}
-
-		public void SetSoundVolume(float volume)
-		{
-			native.SetSoundVolume(volume);
-		}
-
 		public void SetLotation(float x, float y, float z)
 		{
 			var behavior = native.GetEffectBehavior();

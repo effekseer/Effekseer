@@ -7,15 +7,9 @@
 #include "EffekseerSoundOSMixer.SoundLoader.h"
 #include "EffekseerSoundOSMixer.SoundPlayer.h"
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 namespace EffekseerSound
 {
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 SoundRef Sound::Create(osm::Manager* soundManager)
 {
 	auto sound = Effekseer::MakeRefPtr<SoundImplemented>();
@@ -26,26 +20,17 @@ SoundRef Sound::Create(osm::Manager* soundManager)
 	return nullptr;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 SoundImplemented::SoundImplemented()
 	: m_manager(nullptr)
 	, m_mute(false)
 {
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 SoundImplemented::~SoundImplemented()
 {
 	StopAll();
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 bool SoundImplemented::Initialize(osm::Manager* soundManager)
 {
 	m_manager = soundManager;
@@ -53,9 +38,6 @@ bool SoundImplemented::Initialize(osm::Manager* soundManager)
 	return true;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void SoundImplemented::SetListener(const ::Effekseer::Vector3D& pos, const ::Effekseer::Vector3D& at, const ::Effekseer::Vector3D& up)
 {
 	using Vector3D = ::Effekseer::Vector3D;
@@ -67,17 +49,11 @@ void SoundImplemented::SetListener(const ::Effekseer::Vector3D& pos, const ::Eff
 	Vector3D::Cross(m_listener.rightVector, m_listener.forwardVector, m_listener.upVector);
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void SoundImplemented::Destroy()
 {
 	Release();
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void SoundImplemented::Update()
 {
 	for (auto it = m_instances.begin(); it != m_instances.end();)
@@ -93,49 +69,31 @@ void SoundImplemented::Update()
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 ::Effekseer::SoundPlayerRef SoundImplemented::CreateSoundPlayer()
 {
 	return ::Effekseer::MakeRefPtr<SoundPlayer>(SoundImplementedRef::FromPinned(this));
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 ::Effekseer::SoundLoaderRef SoundImplemented::CreateSoundLoader(::Effekseer::FileInterfaceRef fileInterface)
 {
 	return ::Effekseer::MakeRefPtr<SoundLoader>(SoundImplementedRef::FromPinned(this), fileInterface);
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void SoundImplemented::StopAll()
 {
 	m_manager->StopAll();
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void SoundImplemented::SetMute(bool mute)
 {
 	m_mute = mute;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void SoundImplemented::AddInstance(const Instance& instance)
 {
 	m_instances.push_back(instance);
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void SoundImplemented::StopTag(::Effekseer::SoundTag tag)
 {
 	for (auto it = m_instances.begin(); it != m_instances.end(); it++)
@@ -147,9 +105,6 @@ void SoundImplemented::StopTag(::Effekseer::SoundTag tag)
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void SoundImplemented::PauseTag(::Effekseer::SoundTag tag, bool pause)
 {
 	for (auto it = m_instances.begin(); it != m_instances.end(); it++)
@@ -168,9 +123,6 @@ void SoundImplemented::PauseTag(::Effekseer::SoundTag tag, bool pause)
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 bool SoundImplemented::CheckPlayingTag(::Effekseer::SoundTag tag)
 {
 	bool isPlaying = false;
@@ -184,9 +136,6 @@ bool SoundImplemented::CheckPlayingTag(::Effekseer::SoundTag tag)
 	return isPlaying;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void SoundImplemented::StopData(const ::Effekseer::SoundDataRef& soundData)
 {
 	for (auto it = m_instances.begin(); it != m_instances.end(); it++)
@@ -198,9 +147,6 @@ void SoundImplemented::StopData(const ::Effekseer::SoundDataRef& soundData)
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void SoundImplemented::Calculate3DSound(const ::Effekseer::Vector3D& position, float rolloffDistance, float& rolloff, float& pan)
 {
 	using Vector3D = ::Effekseer::Vector3D;
@@ -234,10 +180,4 @@ void SoundImplemented::Calculate3DSound(const ::Effekseer::Vector3D& position, f
 	pan = Vector3D::Dot(relativeVector, m_listener.rightVector);
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 } // namespace EffekseerSound
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------

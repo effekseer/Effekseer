@@ -687,14 +687,6 @@ void RenderedEffectGenerator::Update(int32_t frame)
 	}
 	else
 	{
-		bool mute = false;
-
-		if (sound_ != nullptr)
-		{
-			mute = sound_->GetMute();
-			sound_->SetMute(true);
-		}
-
 		for (size_t i = 0; i < handles_.size(); i++)
 		{
 			manager_->SetShown(handles_[i].Handle, false);
@@ -710,11 +702,6 @@ void RenderedEffectGenerator::Update(int32_t frame)
 		for (size_t i = 0; i < handles_.size(); i++)
 		{
 			manager_->SetShown(handles_[i].Handle, true);
-		}
-
-		if (sound_ != nullptr)
-		{
-			sound_->SetMute(mute);
 		}
 
 		for (int i = 0; i < frame - updatingTime; i++)

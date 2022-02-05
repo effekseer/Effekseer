@@ -6,7 +6,6 @@
 #include "Graphics/PostProcess.h"
 #include "Graphics/StaticMeshRenderer.h"
 #include "Graphics/efk.Graphics.h"
-//#include "Graphics/efk.PostEffects.h"
 #include "Math/Vector2I.h"
 #include "ViewerEffectBehavior.h"
 #include <Effekseer.h>
@@ -134,8 +133,6 @@ protected:
 	int m_step = 1;
 	std::vector<HandleHolder> handles_;
 
-	EffekseerTool::Sound* sound_ = nullptr;
-
 	DistortingCallback* m_distortionCallback = nullptr;
 
 	Effekseer::Backend::ShaderRef whiteParticleSpriteShader_;
@@ -244,11 +241,6 @@ public:
 	TonemapPostEffect* GetTonemapEffect() const
 	{
 		return tonemapEffect_.get();
-	}
-
-	void SetSound(EffekseerTool::Sound* sound)
-	{
-		sound_ = sound;
 	}
 
 	bool GetIsSRGBMode() const
