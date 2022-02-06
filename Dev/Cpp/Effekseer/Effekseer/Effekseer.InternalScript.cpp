@@ -26,7 +26,7 @@ bool InternalScript::IsValidRegister(int index) const
 	if (index < 0)
 		return false;
 
-	if (static_cast<uint32_t>(index) < registers.size())
+	if (static_cast<uint32_t>(index) < registers_.size())
 		return true;
 
 	if (0x1000 + 0 <= index && index <= 0x1000 + 3)
@@ -47,9 +47,9 @@ float InternalScript::GetRegisterValue(int index,
 									   const std::array<float, 5>& locals) const
 {
 	auto ind = static_cast<uint32_t>(index);
-	if (ind < registers.size())
+	if (ind < registers_.size())
 	{
-		return registers[ind];
+		return registers_[ind];
 	}
 	else if (0x1000 + 0 <= ind && ind <= 0x1000 + 3)
 	{
@@ -94,7 +94,7 @@ bool InternalScript::Load(uint8_t* data, int size)
 	if (registerCount < 0)
 		return false;
 
-	registers.resize(registerCount);
+	registers_.resize(registerCount);
 
 	for (size_t i = 0; i < 4; i++)
 	{
@@ -149,7 +149,7 @@ bool InternalScript::Load(uint8_t* data, int size)
 		{
 			int index = 0;
 			operatorReader.Read(index);
-			if ((index < 0 || index >= static_cast<int32_t>(registers.size())))
+			if ((index < 0 || index >= static_cast<int32_t>(registers_.size())))
 			{
 				return false;
 			}
@@ -176,8 +176,11 @@ std::array<float, 4> InternalScript::Execute(const std::array<float, 4>& externa
 											 const std::array<float, 5>& locals,
 											 RandFuncCallback* randFuncCallback,
 											 RandWithSeedFuncCallback* randSeedFuncCallback,
-											 void* userData)
+											 void* userData) const
 {
+	// Because this is a temporary registers
+	auto& registers = const_cast<std::vector<float>&>(registers_);
+
 	std::array<float, 4> ret;
 	ret.fill(0.0f);
 

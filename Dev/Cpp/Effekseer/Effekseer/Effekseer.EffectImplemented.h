@@ -234,6 +234,11 @@ public:
 		return dynamicEquation;
 	}
 
+	const std::vector<InternalScript>& GetDynamicEquation() const
+	{
+		return dynamicEquation;
+	}
+
 public:
 	const char16_t* GetName() const override;
 

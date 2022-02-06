@@ -1315,9 +1315,6 @@ protected:
 
 	void LoadParameter(unsigned char*& pos, EffectNode* parent, const SettingRef& setting);
 
-	// 初期化
-	void Initialize();
-
 	//! calculate custom data
 	void CalcCustomData(const Instance* instance, std::array<float, 4>& customData1, std::array<float, 4>& customData2);
 

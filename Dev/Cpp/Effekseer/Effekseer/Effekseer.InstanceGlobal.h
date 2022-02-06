@@ -95,7 +95,7 @@ public:
 
 	int GetInstanceCount();
 
-	float GetUpdatedFrame();
+	float GetUpdatedFrame() const;
 
 	void ResetUpdatedFrame();
 

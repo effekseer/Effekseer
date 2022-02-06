@@ -46,7 +46,7 @@ private:
 
 private:
 	RunningPhaseType runningPhase = RunningPhaseType::Local;
-	std::vector<float> registers;
+	std::vector<float> registers_;
 	std::vector<uint8_t> operators;
 	int32_t version_ = 0;
 	int32_t operatorCount_ = 0;
@@ -69,7 +69,7 @@ public:
 								 const std::array<float, 5>& locals,
 								 RandFuncCallback* randFuncCallback,
 								 RandWithSeedFuncCallback* randSeedFuncCallback,
-								 void* userData);
+								 void* userData) const;
 	RunningPhaseType GetRunningPhase() const
 	{
 		return runningPhase;
