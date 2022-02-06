@@ -248,12 +248,14 @@ public:
 	static void SetFileLogger(const char16_t* path);
 
 #if !SWIG
-	const EffekseerRenderer::RendererRef& GetRenderer();
-
 	Effekseer::SettingRef GetSetting()
 	{
 		return setting_;
 	}
 
+	Effekseer::Backend::GraphicsDeviceRef GetGraphicsDevice()
+	{
+		return graphics_->GetGraphicsDevice();
+	}
 #endif
 };

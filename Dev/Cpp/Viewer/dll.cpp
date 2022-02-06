@@ -427,7 +427,6 @@ bool Native::StepEffect()
 bool Native::SetRandomSeed(int seed)
 {
 	srand(seed);
-
 	return true;
 }
 
@@ -780,9 +779,4 @@ void Native::SetFileLogger(const char16_t* path)
 #endif
 
 	spdlog::trace("End Native::SetFileLogger");
-}
-
-const EffekseerRenderer::RendererRef& Native::GetRenderer()
-{
-	return mainScreen_->GetRenderer();
 }
