@@ -136,6 +136,7 @@ void BasicRuntimeTestPlatform(EffectPlatformInitializingParameter param, EffectP
 
 	single15Test(u"Material_UV1", "Material_UV1");
 	single15Test(u"Material_UV2", "Material_UV2");
+	single15Test(u"SpawnMethodParameter1", "SpawnMethodParameter1");
 
 	{
 		single16Test(u"DrawWithoutInstancing", "DrawWithoutInstancing");
