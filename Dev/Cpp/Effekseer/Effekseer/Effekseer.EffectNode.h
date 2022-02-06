@@ -19,6 +19,7 @@
 #include "Parameter/DynamicParameter.h"
 #include "Parameter/Easing.h"
 #include "Parameter/Effekseer.Parameters.h"
+#include "Parameter/SpawnMethod.h"
 #include "SIMD/Utils.h"
 #include "Utils/BinaryVersion.h"
 
@@ -50,12 +51,6 @@ enum class TranslationParentBindType : int32_t
 };
 
 bool operator==(const TranslationParentBindType& lhs, const BindType& rhs);
-
-enum class ModelReferenceType : int32_t
-{
-	File,
-	Procedural,
-};
 
 //----------------------------------------------------------------------------------
 //
@@ -448,155 +443,6 @@ struct ParameterScalingSinglePVA
 	random_float Position;
 	random_float Velocity;
 	random_float Acceleration;
-};
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-struct ParameterGenerationLocation
-{
-	int EffectsRotation;
-
-	enum class AxisType : int32_t
-	{
-		X,
-		Y,
-		Z,
-	};
-
-	enum
-	{
-		TYPE_POINT = 0,
-		TYPE_SPHERE = 1,
-		TYPE_MODEL = 2,
-		TYPE_CIRCLE = 3,
-		TYPE_LINE = 4,
-
-		TYPE_DWORD = 0x7fffffff,
-	} type;
-
-	enum eModelType
-	{
-		MODELTYPE_RANDOM = 0,
-		MODELTYPE_VERTEX = 1,
-		MODELTYPE_VERTEX_RANDOM = 2,
-		MODELTYPE_FACE = 3,
-		MODELTYPE_FACE_RANDOM = 4,
-
-		MODELTYPE_DWORD = 0x7fffffff,
-	};
-
-	enum eCircleType
-	{
-		CIRCLE_TYPE_RANDOM = 0,
-		CIRCLE_TYPE_ORDER = 1,
-		CIRCLE_TYPE_REVERSE_ORDER = 2,
-	};
-
-	enum class LineType : int32_t
-	{
-		Random = 0,
-		Order = 1,
-	};
-
-	union
-	{
-		struct
-		{
-			random_vector3d location;
-		} point;
-
-		struct
-		{
-			random_float radius;
-			random_float rotation_x;
-			random_float rotation_y;
-		} sphere;
-
-		struct
-		{
-			ModelReferenceType Reference;
-			int32_t index;
-			eModelType type;
-		} model;
-
-		struct
-		{
-			int32_t division;
-			random_float radius;
-			random_float angle_start;
-			random_float angle_end;
-			eCircleType type;
-			AxisType axisDirection;
-			random_float angle_noize;
-		} circle;
-
-		struct
-		{
-			int32_t division;
-			random_vector3d position_start;
-			random_vector3d position_end;
-			random_float position_noize;
-			LineType type;
-		} line;
-	};
-
-	void load(uint8_t*& pos, int32_t version)
-	{
-		memcpy(&EffectsRotation, pos, sizeof(int));
-		pos += sizeof(int);
-
-		memcpy(&type, pos, sizeof(int));
-		pos += sizeof(int);
-
-		if (type == TYPE_POINT)
-		{
-			memcpy(&point, pos, sizeof(point));
-			pos += sizeof(point);
-		}
-		else if (type == TYPE_SPHERE)
-		{
-			memcpy(&sphere, pos, sizeof(sphere));
-			pos += sizeof(sphere);
-		}
-		else if (type == TYPE_MODEL)
-		{
-			model.Reference = ModelReferenceType::File;
-
-			if (version >= Version16Alpha3)
-			{
-				memcpy(&model.Reference, pos, sizeof(int32_t));
-				pos += sizeof(int32_t);
-			}
-
-			memcpy(&model.index, pos, sizeof(int32_t));
-			pos += sizeof(int32_t);
-
-			memcpy(&model.type, pos, sizeof(int32_t));
-			pos += sizeof(int32_t);
-		}
-		else if (type == TYPE_CIRCLE)
-		{
-			if (version < 10)
-			{
-				memcpy(&circle, pos, sizeof(circle) - sizeof(circle.axisDirection) - sizeof(circle.angle_noize));
-				pos += sizeof(circle) - sizeof(circle.axisDirection) - sizeof(circle.angle_noize);
-				circle.axisDirection = AxisType::Z;
-				circle.angle_noize.max = 0;
-				circle.angle_noize.min = 0;
-			}
-			else
-			{
-				memcpy(&circle, pos, sizeof(circle));
-				pos += sizeof(circle);
-			}
-		}
-		else if (type == TYPE_LINE)
-		{
-			memcpy(&line, pos, sizeof(line));
-			pos += sizeof(line);
-		}
-	}
 };
 
 enum ParameterCustomDataType : int32_t
