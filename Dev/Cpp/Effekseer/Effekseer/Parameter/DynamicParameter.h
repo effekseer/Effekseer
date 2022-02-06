@@ -8,6 +8,29 @@
 namespace Effekseer
 {
 
+/**
+	@brief	a factor to calculate original parameter for dynamic parameter
+*/
+struct DynamicFactorParameter
+{
+	std::array<float, 3> Tra;
+	std::array<float, 3> TraInv;
+	std::array<float, 3> Rot;
+	std::array<float, 3> RotInv;
+	std::array<float, 3> Scale;
+	std::array<float, 3> ScaleInv;
+
+	DynamicFactorParameter()
+	{
+		Tra.fill(1.0f);
+		TraInv.fill(1.0f);
+		Rot.fill(1.0f);
+		RotInv.fill(1.0f);
+		Scale.fill(1.0f);
+		ScaleInv.fill(1.0f);
+	}
+};
+
 /**!
 	@brief indexes of dynamic parameter
 */

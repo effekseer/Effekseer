@@ -144,7 +144,7 @@ void EffectNodeModel::BeginRendering(int32_t count, Manager* manager, void* user
 
 		nodeParameter.EnableFalloff = EnableFalloff;
 		nodeParameter.FalloffParam = FalloffParam;
-		nodeParameter.EnableViewOffset = (TranslationType == ParameterTranslationType_ViewOffset);
+		nodeParameter.EnableViewOffset = (TranslationParam.TranslationType == ParameterTranslationType_ViewOffset);
 
 		nodeParameter.IsProceduralMode = Mode == ModelReferenceType::Procedural;
 		nodeParameter.UserData = GetRenderingUserData();
@@ -184,7 +184,7 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 		nodeParameter.EnableFalloff = EnableFalloff;
 		nodeParameter.FalloffParam = FalloffParam;
 
-		nodeParameter.EnableViewOffset = (TranslationType == ParameterTranslationType_ViewOffset);
+		nodeParameter.EnableViewOffset = (TranslationParam.TranslationType == ParameterTranslationType_ViewOffset);
 
 		nodeParameter.IsProceduralMode = Mode == ModelReferenceType::Procedural;
 
@@ -264,7 +264,7 @@ void EffectNodeModel::EndRendering(Manager* manager, void* userData)
 		nodeParameter.EnableFalloff = EnableFalloff;
 		nodeParameter.FalloffParam = FalloffParam;
 
-		nodeParameter.EnableViewOffset = (TranslationType == ParameterTranslationType_ViewOffset);
+		nodeParameter.EnableViewOffset = (TranslationParam.TranslationType == ParameterTranslationType_ViewOffset);
 
 		nodeParameter.IsProceduralMode = Mode == ModelReferenceType::Procedural;
 

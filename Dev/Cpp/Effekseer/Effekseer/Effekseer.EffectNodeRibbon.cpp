@@ -155,7 +155,7 @@ void EffectNodeRibbon::BeginRendering(int32_t count, Manager* manager, void* use
 		m_nodeParameter.IsRightHand = manager->GetCoordinateSystem() == CoordinateSystem::RH;
 		m_nodeParameter.Maginification = GetEffect()->GetMaginification();
 
-		m_nodeParameter.EnableViewOffset = (TranslationType == ParameterTranslationType_ViewOffset);
+		m_nodeParameter.EnableViewOffset = (TranslationParam.TranslationType == ParameterTranslationType_ViewOffset);
 		m_nodeParameter.UserData = GetRenderingUserData();
 
 		renderer->BeginRendering(m_nodeParameter, count, userData);

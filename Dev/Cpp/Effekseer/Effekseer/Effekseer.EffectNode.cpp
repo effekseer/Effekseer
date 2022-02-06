@@ -44,7 +44,6 @@ EffectNodeImplemented::EffectNodeImplemented(Effect* effect, unsigned char*& pos
 	: m_effect(effect)
 	, generation_(0)
 	, IsRendered(true)
-	, TranslationFCurve(nullptr)
 	, RotationFCurve(nullptr)
 	, ScalingFCurve(nullptr)
 	, SoundType(ParameterSoundType_None)
@@ -75,7 +74,6 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 
 	if (node_type == -1)
 	{
-		TranslationType = ParameterTranslationType_None;
 		RotationType = ParameterRotationType_None;
 		ScalingType = ParameterScalingType_None;
 		CommonValues.MaxGeneration = 1;
@@ -177,111 +175,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			}
 		}
 
-		memcpy(&TranslationType, pos, sizeof(int));
-		pos += sizeof(int);
-
-		if (TranslationType == ParameterTranslationType_Fixed)
-		{
-			int32_t translationSize = 0;
-			memcpy(&translationSize, pos, sizeof(int));
-			pos += sizeof(int);
-
-			if (ef->GetVersion() >= 14)
-			{
-				memcpy(&TranslationFixed, pos, sizeof(ParameterTranslationFixed));
-			}
-			else
-			{
-				memcpy(&(TranslationFixed.Position), pos, sizeof(float) * 3);
-
-				// make invalid
-				if (TranslationFixed.Position.X == 0.0f && TranslationFixed.Position.Y == 0.0f && TranslationFixed.Position.Z == 0.0f)
-				{
-					TranslationType = ParameterTranslationType_None;
-					EffekseerPrintDebug("LocationType Change None\n");
-				}
-			}
-
-			pos += translationSize;
-		}
-		else if (TranslationType == ParameterTranslationType_PVA)
-		{
-			if (ef->GetVersion() >= 14)
-			{
-				memcpy(&size, pos, sizeof(int));
-				pos += sizeof(int);
-				assert(size == sizeof(ParameterTranslationPVA));
-				memcpy(&TranslationPVA, pos, size);
-				pos += size;
-			}
-			else
-			{
-				memcpy(&size, pos, sizeof(int));
-				pos += sizeof(int);
-				memcpy(&TranslationPVA.location, pos, size);
-				pos += size;
-			}
-		}
-		else if (TranslationType == ParameterTranslationType_Easing)
-		{
-			memcpy(&size, pos, sizeof(int));
-			pos += sizeof(int);
-			TranslationEasing.Load(pos, size, ef->GetVersion());
-			pos += size;
-		}
-		else if (TranslationType == ParameterTranslationType_FCurve)
-		{
-			memcpy(&size, pos, sizeof(int));
-			pos += sizeof(int);
-
-			TranslationFCurve = new FCurveVector3D();
-			pos += TranslationFCurve->Load(pos, m_effect->GetVersion());
-		}
-		else if (TranslationType == ParameterTranslationType_NurbsCurve)
-		{
-			memcpy(&TranslationNurbsCurve, pos, sizeof(ParameterTranslationNurbsCurve));
-			pos += sizeof(ParameterTranslationNurbsCurve);
-		}
-		else if (TranslationType == ParameterTranslationType_ViewOffset)
-		{
-			memcpy(&TranslationViewOffset, pos, sizeof(ParameterTranslationViewOffset));
-			pos += sizeof(ParameterTranslationViewOffset);
-		}
-
-		/* 位置拡大処理 */
-		if (ef->IsDyanamicMagnificationValid())
-		{
-			DynamicFactor.Tra[0] *= m_effect->GetMaginification();
-			DynamicFactor.Tra[1] *= m_effect->GetMaginification();
-			DynamicFactor.Tra[2] *= m_effect->GetMaginification();
-
-			if (TranslationType == ParameterTranslationType_Fixed)
-			{
-				TranslationFixed.Position *= m_effect->GetMaginification();
-			}
-			else if (TranslationType == ParameterTranslationType_PVA)
-			{
-				TranslationPVA.location.min *= m_effect->GetMaginification();
-				TranslationPVA.location.max *= m_effect->GetMaginification();
-				TranslationPVA.velocity.min *= m_effect->GetMaginification();
-				TranslationPVA.velocity.max *= m_effect->GetMaginification();
-				TranslationPVA.acceleration.min *= m_effect->GetMaginification();
-				TranslationPVA.acceleration.max *= m_effect->GetMaginification();
-			}
-			else if (TranslationType == ParameterTranslationType_Easing)
-			{
-				TranslationEasing.start.min *= m_effect->GetMaginification();
-				TranslationEasing.start.max *= m_effect->GetMaginification();
-				TranslationEasing.end.min *= m_effect->GetMaginification();
-				TranslationEasing.end.max *= m_effect->GetMaginification();
-			}
-			else if (TranslationType == ParameterTranslationType_FCurve)
-			{
-				TranslationFCurve->X.Maginify(m_effect->GetMaginification());
-				TranslationFCurve->Y.Maginify(m_effect->GetMaginification());
-				TranslationFCurve->Z.Maginify(m_effect->GetMaginification());
-			}
-		}
+		TranslationParam.Load(pos, ef);
 
 		// Local force field
 		if (ef->GetVersion() >= 1500)
@@ -589,29 +483,9 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		// Convert right handle coordinate system into left handle coordinate system
 		if (setting->GetCoordinateSystem() == CoordinateSystem::LH)
 		{
-			// Translation
 			DynamicFactor.Tra[2] *= -1.0f;
 
-			if (TranslationType == ParameterTranslationType_Fixed)
-			{
-				TranslationFixed.Position.Z *= -1.0f;
-			}
-			else if (TranslationType == ParameterTranslationType_PVA)
-			{
-				TranslationPVA.location.max.z *= -1.0f;
-				TranslationPVA.location.min.z *= -1.0f;
-				TranslationPVA.velocity.max.z *= -1.0f;
-				TranslationPVA.velocity.min.z *= -1.0f;
-				TranslationPVA.acceleration.max.z *= -1.0f;
-				TranslationPVA.acceleration.min.z *= -1.0f;
-			}
-			else if (TranslationType == ParameterTranslationType_Easing)
-			{
-				TranslationEasing.start.max.z *= -1.0f;
-				TranslationEasing.start.min.z *= -1.0f;
-				TranslationEasing.end.max.z *= -1.0f;
-				TranslationEasing.end.min.z *= -1.0f;
-			}
+			TranslationParam.MakeLeftCoordinate();
 
 			// Rotation
 			DynamicFactor.Rot[0] *= -1.0f;
@@ -802,7 +676,6 @@ EffectNodeImplemented::~EffectNodeImplemented()
 		ES_SAFE_DELETE(m_Nodes[i]);
 	}
 
-	ES_SAFE_DELETE(TranslationFCurve);
 	ES_SAFE_DELETE(RotationFCurve);
 	ES_SAFE_DELETE(ScalingFCurve);
 	ES_SAFE_DELETE(ScalingSingleFCurve);

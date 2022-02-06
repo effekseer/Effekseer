@@ -20,12 +20,10 @@
 #include "Parameter/Easing.h"
 #include "Parameter/Effekseer.Parameters.h"
 #include "Parameter/SpawnMethod.h"
+#include "Parameter/Translation.h"
 #include "SIMD/Utils.h"
 #include "Utils/BinaryVersion.h"
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 namespace Effekseer
 {
 
@@ -224,70 +222,6 @@ struct TriggerParameter
 	TriggerValues ToStopGeneration;
 	TriggerValues ToRemove;
 };
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-enum ParameterTranslationType
-{
-	ParameterTranslationType_Fixed = 0,
-	ParameterTranslationType_PVA = 1,
-	ParameterTranslationType_Easing = 2,
-	ParameterTranslationType_FCurve = 3,
-	ParameterTranslationType_NurbsCurve = 4,
-	ParameterTranslationType_ViewOffset = 5,
-
-	ParameterTranslationType_None = 0x7fffffff - 1,
-
-	ParameterTranslationType_DWORD = 0x7fffffff,
-};
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-struct ParameterTranslationFixed
-{
-	int32_t RefEq = -1;
-
-	Vector3D Position;
-};
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-struct ParameterTranslationPVA
-{
-	RefMinMax RefEqP;
-	RefMinMax RefEqV;
-	RefMinMax RefEqA;
-	random_vector3d location;
-	random_vector3d velocity;
-	random_vector3d acceleration;
-};
-
-struct ParameterTranslationEasing
-{
-	RefMinMax RefEqS;
-	RefMinMax RefEqE;
-	easing_vector3d location;
-};
-
-struct ParameterTranslationNurbsCurve
-{
-	int32_t Index;
-	float Scale;
-	float MoveSpeed;
-	int32_t LoopType;
-};
-
-struct ParameterTranslationViewOffset
-{
-	random_float distance;
-};
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 
 enum class LocationAbsType : int32_t
 {
@@ -1250,29 +1184,6 @@ struct ParameterSound
 	random_int Delay;
 };
 
-/**
-	@brief	a factor to calculate original parameter for dynamic parameter
-*/
-struct DynamicFactorParameter
-{
-	std::array<float, 3> Tra;
-	std::array<float, 3> TraInv;
-	std::array<float, 3> Rot;
-	std::array<float, 3> RotInv;
-	std::array<float, 3> Scale;
-	std::array<float, 3> ScaleInv;
-
-	DynamicFactorParameter()
-	{
-		Tra.fill(1.0f);
-		TraInv.fill(1.0f);
-		Rot.fill(1.0f);
-		RotInv.fill(1.0f);
-		Scale.fill(1.0f);
-		ScaleInv.fill(1.0f);
-	}
-};
-
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -1335,14 +1246,8 @@ public:
 	SteeringBehaviorParameter SteeringBehaviorParam;
 	TriggerParameter TriggerParam;
 
-	ParameterTranslationType TranslationType;
-	ParameterTranslationFixed TranslationFixed;
-	ParameterTranslationPVA TranslationPVA;
-	ParameterEasingSIMDVec3 TranslationEasing;
-	// ParameterTranslationEasing TranslationEasing;
-	FCurveVector3D* TranslationFCurve;
-	ParameterTranslationNurbsCurve TranslationNurbsCurve;
-	ParameterTranslationViewOffset TranslationViewOffset;
+	TranslationParameter TranslationParam;
+
 	LocalForceFieldParameter LocalForceField;
 
 	ParameterRotationType RotationType;
