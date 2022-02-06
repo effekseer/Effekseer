@@ -107,6 +107,12 @@ enum eEffectNodeType
 	EFFECT_NODE_TYPE_DWORD = 0x7fffffff,
 };
 
+enum class ModelReferenceType : int32_t
+{
+	File,
+	Procedural,
+};
+
 class StringHelper
 {
 public:

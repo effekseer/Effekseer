@@ -1,8 +1,4 @@
-﻿
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-#include "Effekseer.Instance.h"
+﻿#include "Effekseer.Instance.h"
 #include "Effekseer.Curve.h"
 #include "Effekseer.Effect.h"
 #include "Effekseer.EffectImplemented.h"
@@ -15,243 +11,14 @@
 #include "Effekseer.Setting.h"
 #include "Model/Model.h"
 
-#define REFACTOR_GP
-
 namespace Effekseer
 {
-
-namespace
-{
-SIMD::Mat43f GenerateGenerationPosition(const ParameterGenerationLocation& param, const Effect& effect, int instanceNumber, int parentTime, float magnification, CoordinateSystem coordinateSystem, RandObject& rand)
-{
-	SIMD::Mat43f ret;
-
-	if (param.type == ParameterGenerationLocation::TYPE_POINT)
-	{
-		SIMD::Vec3f p = param.point.location.getValue(rand);
-		ret = SIMD::Mat43f::Translation(p.GetX(), p.GetY(), p.GetZ());
-	}
-	else if (param.type == ParameterGenerationLocation::TYPE_LINE)
-	{
-		SIMD::Vec3f s = param.line.position_start.getValue(rand);
-		SIMD::Vec3f e = param.line.position_end.getValue(rand);
-		auto noize = param.line.position_noize.getValue(rand);
-		auto division = Max(1, param.line.division);
-
-		SIMD::Vec3f dir = e - s;
-
-		if (dir.IsZero())
-		{
-			ret = SIMD::Mat43f::Translation(0, 0, 0);
-		}
-		else
-		{
-			auto len = dir.GetLength();
-			dir /= len;
-
-			int32_t target = 0;
-			if (param.line.type == ParameterGenerationLocation::LineType::Order)
-			{
-				target = instanceNumber % division;
-			}
-			else if (param.line.type == ParameterGenerationLocation::LineType::Random)
-			{
-				target = (int32_t)((division)*rand.GetRand());
-				if (target == division)
-					target -= 1;
-			}
-
-			auto d = 0.0f;
-			if (division > 1)
-			{
-				d = (len / (float)(division - 1)) * target;
-			}
-
-			d += noize;
-
-			s += dir * d;
-
-			SIMD::Vec3f xdir;
-			SIMD::Vec3f ydir;
-			SIMD::Vec3f zdir;
-
-			if (fabs(dir.GetY()) > 0.999f)
-			{
-				xdir = dir;
-				zdir = SIMD::Vec3f::Cross(xdir, SIMD::Vec3f(-1, 0, 0)).Normalize();
-				ydir = SIMD::Vec3f::Cross(zdir, xdir).Normalize();
-			}
-			else
-			{
-				xdir = dir;
-				ydir = SIMD::Vec3f::Cross(SIMD::Vec3f(0, 0, 1), xdir).Normalize();
-				zdir = SIMD::Vec3f::Cross(xdir, ydir).Normalize();
-			}
-
-			if (param.EffectsRotation)
-			{
-				ret.X.SetX(xdir.GetX());
-				ret.Y.SetX(xdir.GetY());
-				ret.Z.SetX(xdir.GetZ());
-
-				ret.X.SetY(ydir.GetX());
-				ret.Y.SetY(ydir.GetY());
-				ret.Z.SetY(ydir.GetZ());
-
-				ret.X.SetZ(zdir.GetX());
-				ret.Y.SetZ(zdir.GetY());
-				ret.Z.SetZ(zdir.GetZ());
-			}
-			else
-			{
-				ret = SIMD::Mat43f::Identity;
-			}
-
-			ret.X.SetW(s.GetX());
-			ret.Y.SetW(s.GetY());
-			ret.Z.SetW(s.GetZ());
-		}
-	}
-	else if (param.type == ParameterGenerationLocation::TYPE_SPHERE)
-	{
-		SIMD::Mat43f mat_x = SIMD::Mat43f::RotationX(param.sphere.rotation_x.getValue(rand));
-		SIMD::Mat43f mat_y = SIMD::Mat43f::RotationY(param.sphere.rotation_y.getValue(rand));
-		float r = param.sphere.radius.getValue(rand);
-		ret = SIMD::Mat43f::Translation(0, r, 0) * mat_x * mat_y;
-	}
-	else if (param.type == ParameterGenerationLocation::TYPE_MODEL)
-	{
-		ret = SIMD::Mat43f::Identity;
-		ModelRef model = nullptr;
-		const ParameterGenerationLocation::eModelType type = param.model.type;
-
-		if (param.model.Reference == ModelReferenceType::File)
-		{
-			model = effect.GetModel(param.model.index);
-		}
-		else if (param.model.Reference == ModelReferenceType::Procedural)
-		{
-			model = effect.GetProceduralModel(param.model.index);
-		}
-
-		{
-			if (model != nullptr)
-			{
-				Model::Emitter emitter;
-
-				if (type == ParameterGenerationLocation::MODELTYPE_RANDOM)
-				{
-					emitter = model->GetEmitter(&rand,
-												parentTime,
-												coordinateSystem,
-												magnification);
-				}
-				else if (type == ParameterGenerationLocation::MODELTYPE_VERTEX)
-				{
-					emitter = model->GetEmitterFromVertex(instanceNumber,
-														  parentTime,
-														  coordinateSystem,
-														  magnification);
-				}
-				else if (type == ParameterGenerationLocation::MODELTYPE_VERTEX_RANDOM)
-				{
-					emitter = model->GetEmitterFromVertex(&rand,
-														  parentTime,
-														  coordinateSystem,
-														  magnification);
-				}
-				else if (type == ParameterGenerationLocation::MODELTYPE_FACE)
-				{
-					emitter = model->GetEmitterFromFace(instanceNumber,
-														parentTime,
-														coordinateSystem,
-														magnification);
-				}
-				else if (type == ParameterGenerationLocation::MODELTYPE_FACE_RANDOM)
-				{
-					emitter = model->GetEmitterFromFace(&rand,
-														parentTime,
-														coordinateSystem,
-														magnification);
-				}
-
-				ret = SIMD::Mat43f::Translation(emitter.Position);
-
-				if (param.EffectsRotation)
-				{
-					ret.X.SetX(emitter.Binormal.X);
-					ret.Y.SetX(emitter.Binormal.Y);
-					ret.Z.SetX(emitter.Binormal.Z);
-
-					ret.X.SetY(emitter.Tangent.X);
-					ret.Y.SetY(emitter.Tangent.Y);
-					ret.Z.SetY(emitter.Tangent.Z);
-
-					ret.X.SetZ(emitter.Normal.X);
-					ret.Y.SetZ(emitter.Normal.Y);
-					ret.Z.SetZ(emitter.Normal.Z);
-				}
-			}
-		}
-	}
-	else if (param.type == ParameterGenerationLocation::TYPE_CIRCLE)
-	{
-		ret = SIMD::Mat43f::Identity;
-		float radius = param.circle.radius.getValue(rand);
-		float start = param.circle.angle_start.getValue(rand);
-		float end = param.circle.angle_end.getValue(rand);
-		int32_t div = Max(param.circle.division, 1);
-
-		int32_t target = 0;
-		if (param.circle.type == ParameterGenerationLocation::CIRCLE_TYPE_ORDER)
-		{
-			target = instanceNumber % div;
-		}
-		else if (param.circle.type == ParameterGenerationLocation::CIRCLE_TYPE_REVERSE_ORDER)
-		{
-			target = div - 1 - (instanceNumber % div);
-		}
-		else if (param.circle.type == ParameterGenerationLocation::CIRCLE_TYPE_RANDOM)
-		{
-			target = (int32_t)((div)*rand.GetRand());
-			if (target == div)
-				target -= 1;
-		}
-
-		float angle = (end - start) * ((float)target / (float)div) + start;
-
-		angle += param.circle.angle_noize.getValue(rand);
-
-		switch (param.circle.axisDirection)
-		{
-		case ParameterGenerationLocation::AxisType::X:
-			ret = SIMD::Mat43f::Translation(0, 0, radius) * SIMD::Mat43f::RotationX(angle);
-			break;
-		case ParameterGenerationLocation::AxisType::Y:
-			ret = SIMD::Mat43f::Translation(radius, 0, 0) * SIMD::Mat43f::RotationY(angle);
-			break;
-		case ParameterGenerationLocation::AxisType::Z:
-			ret = SIMD::Mat43f::Translation(0, radius, 0) * SIMD::Mat43f::RotationZ(angle);
-			break;
-		}
-	}
-	else
-	{
-		ret = SIMD::Mat43f::Identity;
-	}
-
-	return ret;
-}
-
-} // namespace
 
 static bool IsInfiniteValue(int value)
 {
 	return std::numeric_limits<int32_t>::max() / 1000 < value;
 }
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
 Instance::Instance(ManagerImplemented* pManager, EffectNodeImplemented* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup)
 	: m_pManager(pManager)
 	, m_pEffectNode(pEffectNode)
@@ -304,9 +71,6 @@ Instance::Instance(ManagerImplemented* pManager, EffectNodeImplemented* pEffectN
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 Instance::~Instance()
 {
 	assert(m_State != INSTANCE_STATE_ACTIVE);
@@ -333,9 +97,6 @@ void Instance::UpdateChildrenGroupMatrix()
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 InstanceGlobal* Instance::GetInstanceGlobal()
 {
 	return m_pContainer->GetRootInstance();
@@ -346,17 +107,11 @@ eInstanceState Instance::GetState() const
 	return m_State;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 const SIMD::Mat43f& Instance::GetGlobalMatrix43() const
 {
 	return m_GlobalMatrix43;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Instance::Initialize(Instance* parent, int32_t instanceNumber, const SIMD::Mat43f& globalMatrix)
 {
 	assert(this->m_pContainer != nullptr);
@@ -387,9 +142,6 @@ void Instance::Initialize(Instance* parent, int32_t instanceNumber, const SIMD::
 	prevPosition_ = SIMD::Vec3f(0, 0, 0);
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Instance::FirstUpdate()
 {
 	m_IsFirstTime = false;
@@ -779,228 +531,14 @@ void Instance::FirstUpdate()
 	}
 
 	// Spawning Method
-#ifdef REFACTOR_GP
 	const auto magnification = ((EffectImplemented*)m_pEffectNode->GetEffect())->GetMaginification();
-	m_GenerationLocation = GenerateGenerationPosition(
-		m_pEffectNode->GenerationLocation,
+	m_GenerationLocation = m_pEffectNode->GenerationLocation.GenerateGenerationPosition(
 		*(m_pEffectNode->GetEffect()),
 		m_InstanceNumber,
 		parentTime,
 		magnification,
 		m_pManager->GetCoordinateSystem(),
 		rand);
-#else
-
-	if (m_pEffectNode->GenerationLocation.type == ParameterGenerationLocation::TYPE_POINT)
-	{
-		SIMD::Vec3f p = m_pEffectNode->GenerationLocation.point.location.getValue(rand);
-		m_GenerationLocation = SIMD::Mat43f::Translation(p.GetX(), p.GetY(), p.GetZ());
-	}
-	else if (m_pEffectNode->GenerationLocation.type == ParameterGenerationLocation::TYPE_LINE)
-	{
-		SIMD::Vec3f s = m_pEffectNode->GenerationLocation.line.position_start.getValue(rand);
-		SIMD::Vec3f e = m_pEffectNode->GenerationLocation.line.position_end.getValue(rand);
-		auto noize = m_pEffectNode->GenerationLocation.line.position_noize.getValue(rand);
-		auto division = Max(1, m_pEffectNode->GenerationLocation.line.division);
-
-		SIMD::Vec3f dir = e - s;
-
-		if (dir.IsZero())
-		{
-			m_GenerationLocation = SIMD::Mat43f::Translation(0, 0, 0);
-		}
-		else
-		{
-			auto len = dir.GetLength();
-			dir /= len;
-
-			int32_t target = 0;
-			if (m_pEffectNode->GenerationLocation.line.type == ParameterGenerationLocation::LineType::Order)
-			{
-				target = m_InstanceNumber % division;
-			}
-			else if (m_pEffectNode->GenerationLocation.line.type == ParameterGenerationLocation::LineType::Random)
-			{
-				target = (int32_t)((division)*rand.GetRand());
-				if (target == division)
-					target -= 1;
-			}
-
-			auto d = 0.0f;
-			if (division > 1)
-			{
-				d = (len / (float)(division - 1)) * target;
-			}
-
-			d += noize;
-
-			s += dir * d;
-
-			SIMD::Vec3f xdir;
-			SIMD::Vec3f ydir;
-			SIMD::Vec3f zdir;
-
-			if (fabs(dir.GetY()) > 0.999f)
-			{
-				xdir = dir;
-				zdir = SIMD::Vec3f::Cross(xdir, SIMD::Vec3f(-1, 0, 0)).Normalize();
-				ydir = SIMD::Vec3f::Cross(zdir, xdir).Normalize();
-			}
-			else
-			{
-				xdir = dir;
-				ydir = SIMD::Vec3f::Cross(SIMD::Vec3f(0, 0, 1), xdir).Normalize();
-				zdir = SIMD::Vec3f::Cross(xdir, ydir).Normalize();
-			}
-
-			if (m_pEffectNode->GenerationLocation.EffectsRotation)
-			{
-				m_GenerationLocation.X.SetX(xdir.GetX());
-				m_GenerationLocation.Y.SetX(xdir.GetY());
-				m_GenerationLocation.Z.SetX(xdir.GetZ());
-
-				m_GenerationLocation.X.SetY(ydir.GetX());
-				m_GenerationLocation.Y.SetY(ydir.GetY());
-				m_GenerationLocation.Z.SetY(ydir.GetZ());
-
-				m_GenerationLocation.X.SetZ(zdir.GetX());
-				m_GenerationLocation.Y.SetZ(zdir.GetY());
-				m_GenerationLocation.Z.SetZ(zdir.GetZ());
-			}
-			else
-			{
-				m_GenerationLocation = SIMD::Mat43f::Identity;
-			}
-
-			m_GenerationLocation.X.SetW(s.GetX());
-			m_GenerationLocation.Y.SetW(s.GetY());
-			m_GenerationLocation.Z.SetW(s.GetZ());
-		}
-	}
-	else if (m_pEffectNode->GenerationLocation.type == ParameterGenerationLocation::TYPE_SPHERE)
-	{
-		SIMD::Mat43f mat_x = SIMD::Mat43f::RotationX(m_pEffectNode->GenerationLocation.sphere.rotation_x.getValue(rand));
-		SIMD::Mat43f mat_y = SIMD::Mat43f::RotationY(m_pEffectNode->GenerationLocation.sphere.rotation_y.getValue(rand));
-		float r = m_pEffectNode->GenerationLocation.sphere.radius.getValue(rand);
-		m_GenerationLocation = SIMD::Mat43f::Translation(0, r, 0) * mat_x * mat_y;
-	}
-	else if (m_pEffectNode->GenerationLocation.type == ParameterGenerationLocation::TYPE_MODEL)
-	{
-		m_GenerationLocation = SIMD::Mat43f::Identity;
-		ModelRef model = nullptr;
-		const ParameterGenerationLocation::eModelType type = m_pEffectNode->GenerationLocation.model.type;
-
-		if (m_pEffectNode->GenerationLocation.model.Reference == ModelReferenceType::File)
-		{
-			model = m_pEffectNode->GetEffect()->GetModel(m_pEffectNode->GenerationLocation.model.index);
-		}
-		else if (m_pEffectNode->GenerationLocation.model.Reference == ModelReferenceType::Procedural)
-		{
-			model = m_pEffectNode->GetEffect()->GetProceduralModel(m_pEffectNode->GenerationLocation.model.index);
-		}
-
-		{
-			if (model != nullptr)
-			{
-				Model::Emitter emitter;
-
-				if (type == ParameterGenerationLocation::MODELTYPE_RANDOM)
-				{
-					emitter = model->GetEmitter(&rand,
-												parentTime,
-												m_pManager->GetCoordinateSystem(),
-												((EffectImplemented*)m_pEffectNode->GetEffect())->GetMaginification());
-				}
-				else if (type == ParameterGenerationLocation::MODELTYPE_VERTEX)
-				{
-					emitter = model->GetEmitterFromVertex(m_InstanceNumber,
-														  parentTime,
-														  m_pManager->GetCoordinateSystem(),
-														  ((EffectImplemented*)m_pEffectNode->GetEffect())->GetMaginification());
-				}
-				else if (type == ParameterGenerationLocation::MODELTYPE_VERTEX_RANDOM)
-				{
-					emitter = model->GetEmitterFromVertex(&rand,
-														  parentTime,
-														  m_pManager->GetCoordinateSystem(),
-														  ((EffectImplemented*)m_pEffectNode->GetEffect())->GetMaginification());
-				}
-				else if (type == ParameterGenerationLocation::MODELTYPE_FACE)
-				{
-					emitter = model->GetEmitterFromFace(m_InstanceNumber,
-														parentTime,
-														m_pManager->GetCoordinateSystem(),
-														((EffectImplemented*)m_pEffectNode->GetEffect())->GetMaginification());
-				}
-				else if (type == ParameterGenerationLocation::MODELTYPE_FACE_RANDOM)
-				{
-					emitter = model->GetEmitterFromFace(&rand,
-														parentTime,
-														m_pManager->GetCoordinateSystem(),
-														((EffectImplemented*)m_pEffectNode->GetEffect())->GetMaginification());
-				}
-
-				m_GenerationLocation = SIMD::Mat43f::Translation(emitter.Position);
-
-				if (m_pEffectNode->GenerationLocation.EffectsRotation)
-				{
-					m_GenerationLocation.X.SetX(emitter.Binormal.X);
-					m_GenerationLocation.Y.SetX(emitter.Binormal.Y);
-					m_GenerationLocation.Z.SetX(emitter.Binormal.Z);
-
-					m_GenerationLocation.X.SetY(emitter.Tangent.X);
-					m_GenerationLocation.Y.SetY(emitter.Tangent.Y);
-					m_GenerationLocation.Z.SetY(emitter.Tangent.Z);
-
-					m_GenerationLocation.X.SetZ(emitter.Normal.X);
-					m_GenerationLocation.Y.SetZ(emitter.Normal.Y);
-					m_GenerationLocation.Z.SetZ(emitter.Normal.Z);
-				}
-			}
-		}
-	}
-	else if (m_pEffectNode->GenerationLocation.type == ParameterGenerationLocation::TYPE_CIRCLE)
-	{
-		m_GenerationLocation = SIMD::Mat43f::Identity;
-		float radius = m_pEffectNode->GenerationLocation.circle.radius.getValue(rand);
-		float start = m_pEffectNode->GenerationLocation.circle.angle_start.getValue(rand);
-		float end = m_pEffectNode->GenerationLocation.circle.angle_end.getValue(rand);
-		int32_t div = Max(m_pEffectNode->GenerationLocation.circle.division, 1);
-
-		int32_t target = 0;
-		if (m_pEffectNode->GenerationLocation.circle.type == ParameterGenerationLocation::CIRCLE_TYPE_ORDER)
-		{
-			target = m_InstanceNumber % div;
-		}
-		else if (m_pEffectNode->GenerationLocation.circle.type == ParameterGenerationLocation::CIRCLE_TYPE_REVERSE_ORDER)
-		{
-			target = div - 1 - (m_InstanceNumber % div);
-		}
-		else if (m_pEffectNode->GenerationLocation.circle.type == ParameterGenerationLocation::CIRCLE_TYPE_RANDOM)
-		{
-			target = (int32_t)((div)*rand.GetRand());
-			if (target == div)
-				target -= 1;
-		}
-
-		float angle = (end - start) * ((float)target / (float)div) + start;
-
-		angle += m_pEffectNode->GenerationLocation.circle.angle_noize.getValue(rand);
-
-		switch (m_pEffectNode->GenerationLocation.circle.axisDirection)
-		{
-		case ParameterGenerationLocation::AxisType::X:
-			m_GenerationLocation = SIMD::Mat43f::Translation(0, 0, radius) * SIMD::Mat43f::RotationX(angle);
-			break;
-		case ParameterGenerationLocation::AxisType::Y:
-			m_GenerationLocation = SIMD::Mat43f::Translation(radius, 0, 0) * SIMD::Mat43f::RotationY(angle);
-			break;
-		case ParameterGenerationLocation::AxisType::Z:
-			m_GenerationLocation = SIMD::Mat43f::Translation(0, radius, 0) * SIMD::Mat43f::RotationZ(angle);
-			break;
-		}
-	}
-#endif
 
 	if (m_pEffectNode->SoundType == ParameterSoundType_Use)
 	{
@@ -1136,9 +674,6 @@ void Instance::FirstUpdate()
 	m_pEffectNode->InitializeRenderedInstance(*this, *ownGroup_, m_pManager);
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Instance::Update(float deltaFrame, bool shown)
 {
 	assert(this->m_pContainer != nullptr);
@@ -1413,9 +948,6 @@ bool Instance::AreChildrenActive() const
 	return false;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Instance::CalculateMatrix(float deltaFrame)
 {
 	// 計算済なら終了
@@ -1834,9 +1366,6 @@ void Instance::ApplyDynamicParameterToFixedScaling()
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Instance::Draw(Instance* next, void* userData)
 {
 	assert(m_pEffectNode != nullptr);
@@ -1852,9 +1381,6 @@ void Instance::Draw(Instance* next, void* userData)
 	m_pEffectNode->Rendering(*this, next, m_pManager, userData);
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Instance::Kill()
 {
 	if (IsActive())
@@ -1868,9 +1394,6 @@ void Instance::Kill()
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 RectF Instance::GetUV(const int32_t index) const
 {
 	RectF uv(0.0f, 0.0f, 1.0f, 1.0f);
@@ -2059,11 +1582,4 @@ std::array<float, 4> Instance::GetCustomData(int32_t index) const
 	return std::array<float, 4>{0, 0, 0, 0};
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 } // namespace Effekseer
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
