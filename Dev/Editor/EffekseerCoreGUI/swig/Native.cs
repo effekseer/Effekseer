@@ -141,11 +141,6 @@ public class Native : global::System.IDisposable {
     if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
   }
 
-  public bool InvalidateTextureCache() {
-    bool ret = EffekseerNativePINVOKE.Native_InvalidateTextureCache(swigCPtr);
-    return ret;
-  }
-
   public void SetGroundParameters(bool shown, float height, int extent) {
     EffekseerNativePINVOKE.Native_SetGroundParameters(swigCPtr, shown, height, extent);
   }

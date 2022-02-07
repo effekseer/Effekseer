@@ -768,7 +768,7 @@ namespace Effekseer.GUI
 		{
 			if (isResourceReloaded)
 			{
-				native.InvalidateTextureCache();
+				effectFactory.ReloadAllResources();
 			}
 
 			native.StopEffect();

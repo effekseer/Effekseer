@@ -876,9 +876,6 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_SetViewerEffectBehavior___")]
   public static extern void Native_SetViewerEffectBehavior(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
 
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_InvalidateTextureCache___")]
-  public static extern bool Native_InvalidateTextureCache(global::System.Runtime.InteropServices.HandleRef jarg1);
-
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_SetGroundParameters___")]
   public static extern void Native_SetGroundParameters(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2, float jarg3, int jarg4);
 

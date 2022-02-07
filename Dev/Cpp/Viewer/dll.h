@@ -58,77 +58,6 @@ public:
 class Native
 {
 private:
-	class TextureLoader : public ::Effekseer::TextureLoader
-	{
-	private:
-		Effekseer::TextureLoaderRef m_originalTextureLoader;
-
-	public:
-		TextureLoader(efk::Graphics* graphics, Effekseer::ColorSpaceType colorSpaceType);
-		virtual ~TextureLoader();
-
-	public:
-		Effekseer::TextureRef Load(const char16_t* path, ::Effekseer::TextureType textureType) override;
-
-		void Unload(Effekseer::TextureRef data) override;
-
-		Effekseer::TextureLoaderRef GetOriginalTextureLoader() const
-		{
-			return m_originalTextureLoader;
-		}
-	};
-
-	class SoundLoader : public ::Effekseer::SoundLoader
-	{
-	private:
-		::Effekseer::SoundLoaderRef m_loader;
-
-	public:
-		SoundLoader(Effekseer::SoundLoaderRef loader);
-		virtual ~SoundLoader();
-
-	public:
-		::Effekseer::SoundDataRef Load(const char16_t* path) override;
-
-		void Unload(::Effekseer::SoundDataRef soundData) override;
-	};
-
-	class ModelLoader : public ::Effekseer::ModelLoader
-	{
-	private:
-		efk::Graphics* graphics_ = nullptr;
-
-	public:
-		ModelLoader(efk::Graphics* graphics);
-		virtual ~ModelLoader();
-
-	public:
-		Effekseer::ModelRef Load(const char16_t* path);
-
-		void Unload(Effekseer::ModelRef data);
-	};
-
-	class MaterialLoader : public ::Effekseer::MaterialLoader
-	{
-	private:
-		Effekseer::MaterialLoaderRef loader_ = nullptr;
-		std::unordered_map<std::u16string, std::shared_ptr<Effekseer::StaticFile>> materialFiles_;
-
-	public:
-		MaterialLoader(const EffekseerRenderer::RendererRef& renderer);
-		virtual ~MaterialLoader();
-
-	public:
-		Effekseer::MaterialRef Load(const char16_t* path) override;
-
-		::Effekseer::MaterialLoaderRef GetOriginalLoader()
-		{
-			return loader_;
-		}
-
-		void ReleaseAll();
-	};
-
 	std::shared_ptr<IPC::CommandQueue> commandQueueToMaterialEditor_;
 	std::shared_ptr<IPC::CommandQueue> commandQueueFromMaterialEditor_;
 
@@ -137,14 +66,6 @@ private:
 	std::shared_ptr<efk::Graphics> graphics_ = nullptr;
 
 	Effekseer::SettingRef setting_;
-
-	Effekseer::RefPtr<TextureLoader> textureLoader_;
-
-	Effekseer::RefPtr<MaterialLoader> materialLoader_;
-
-	Effekseer::RefPtr<ModelLoader> modelLoader_;
-
-	Effekseer::RefPtr<SoundLoader> soundLoader_;
 
 	std::shared_ptr<EffekseerTool::MainScreenRenderedEffectGenerator> mainScreen_;
 
@@ -194,8 +115,6 @@ public:
 	Effekseer::Tool::ViewerEffectBehavior GetEffectBehavior();
 
 	void SetViewerEffectBehavior(Effekseer::Tool::ViewerEffectBehavior behavior);
-
-	bool InvalidateTextureCache();
 
 	void SetGroundParameters(bool shown, float height, int32_t extent);
 

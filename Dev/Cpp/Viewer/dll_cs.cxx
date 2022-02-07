@@ -3171,18 +3171,6 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_SetViewerEffectBehavior
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_InvalidateTextureCache___(void * jarg1) {
-  unsigned int jresult ;
-  Native *arg1 = (Native *) 0 ;
-  bool result;
-  
-  arg1 = (Native *)jarg1; 
-  result = (bool)(arg1)->InvalidateTextureCache();
-  jresult = result; 
-  return jresult;
-}
-
-
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_SetGroundParameters___(void * jarg1, unsigned int jarg2, float jarg3, int jarg4) {
   Native *arg1 = (Native *) 0 ;
   bool arg2 ;

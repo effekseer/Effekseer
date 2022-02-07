@@ -30,6 +30,7 @@
 #include "GUI/RenderImage.h"
 
 #include "3D/Effect.h"
+#include "3D/FileInterface.h"
 
 ViewerParamater::ViewerParamater()
 	: GuideWidth(0)
@@ -48,166 +49,8 @@ ViewerParamater::ViewerParamater()
 }
 
 static ::EffekseerTool::Sound* sound_ = nullptr;
-static std::map<std::u16string, Effekseer::TextureRef> m_textures;
-static std::map<std::u16string, Effekseer::ModelRef> m_models;
-static std::map<std::u16string, Effekseer::MaterialRef> g_materials_;
 
 static efk::DeviceType g_deviceType = efk::DeviceType::OpenGL;
-
-Native::TextureLoader::TextureLoader(efk::Graphics* graphics, Effekseer::ColorSpaceType colorSpaceType)
-{
-	m_originalTextureLoader = EffekseerRenderer::CreateTextureLoader(graphics->GetGraphicsDevice(), nullptr, colorSpaceType);
-}
-
-Native::TextureLoader::~TextureLoader()
-{
-}
-
-Effekseer::TextureRef Native::TextureLoader::Load(const char16_t* path, ::Effekseer::TextureType textureType)
-{
-	std::u16string key(path);
-
-	if (m_textures.count(key) > 0)
-	{
-		return m_textures[key];
-	}
-	else
-	{
-		auto t = m_originalTextureLoader->Load(path, textureType);
-
-		if (t != nullptr)
-		{
-			m_textures[key] = t;
-		}
-
-		return t;
-	}
-
-	return nullptr;
-}
-
-void Native::TextureLoader::Unload(Effekseer::TextureRef data)
-{
-}
-
-Native::SoundLoader::SoundLoader(Effekseer::SoundLoaderRef loader)
-	: m_loader(loader)
-{
-}
-
-Native::SoundLoader::~SoundLoader()
-{
-}
-
-::Effekseer::SoundDataRef Native::SoundLoader::Load(const char16_t* path)
-{
-	return m_loader->Load(path);
-}
-
-void Native::SoundLoader::Unload(::Effekseer::SoundDataRef soundData)
-{
-	m_loader->Unload(soundData);
-}
-
-Native::ModelLoader::ModelLoader(efk::Graphics* graphics)
-	: graphics_(graphics)
-{
-}
-
-Native::ModelLoader::~ModelLoader()
-{
-}
-
-Effekseer::ModelRef Native::ModelLoader::Load(const char16_t* path)
-{
-	std::u16string key(path);
-	Effekseer::ModelRef model = nullptr;
-
-	if (m_models.count(key) > 0)
-	{
-		return m_models[key];
-	}
-	else
-	{
-		auto loader = ::EffekseerRenderer::CreateModelLoader(graphics_->GetGraphicsDevice());
-		auto m = loader->Load(path);
-
-		if (m != nullptr)
-		{
-			m_models[key] = m;
-		}
-
-		return m;
-	}
-}
-
-void Native::ModelLoader::Unload(Effekseer::ModelRef data)
-{
-}
-
-Native::MaterialLoader::MaterialLoader(const EffekseerRenderer::RendererRef& renderer)
-{
-	loader_ = renderer->CreateMaterialLoader();
-}
-
-Native::MaterialLoader::~MaterialLoader()
-{
-}
-
-Effekseer::MaterialRef Native::MaterialLoader::Load(const char16_t* path)
-{
-	if (loader_ == nullptr)
-	{
-		return nullptr;
-	}
-
-	std::u16string key(path);
-
-	if (g_materials_.count(key) > 0)
-	{
-		return g_materials_[key];
-	}
-	else
-	{
-		std::shared_ptr<Effekseer::StaticFile> staticFile;
-		::Effekseer::MaterialRef t = nullptr;
-
-		if (staticFile == nullptr)
-		{
-			staticFile = ::Effekseer::IO::GetInstance()->LoadIPCFile(path);
-		}
-
-		if (staticFile == nullptr)
-		{
-			staticFile = ::Effekseer::IO::GetInstance()->LoadFile(path);
-		}
-
-		if (staticFile != nullptr)
-		{
-			t = loader_->Load(staticFile->GetData(), staticFile->GetSize(), ::Effekseer::MaterialFileType::Code);
-			materialFiles_[path] = staticFile;
-		}
-
-		if (t != nullptr)
-		{
-			g_materials_[key] = t;
-		}
-
-		return t;
-	}
-
-	return nullptr;
-}
-
-void Native::MaterialLoader::ReleaseAll()
-{
-	for (auto it : g_materials_)
-	{
-		loader_->Unload(it.second);
-	}
-	g_materials_.clear();
-	materialFiles_.clear();
-}
 
 Native::Native()
 {
@@ -253,6 +96,9 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 		assert(0);
 	}
 #endif
+
+	auto fileInterface = Effekseer::MakeRefPtr<Effekseer::Tool::EffekseerFile>();
+
 	spdlog::trace("OK new ::efk::Graphics");
 
 	if (!graphics_->Initialize(pHandle, width, height))
@@ -274,16 +120,18 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 			{
 				setting_ = Effekseer::Setting::Create();
 
-				textureLoader_ = Effekseer::RefPtr<TextureLoader>(new TextureLoader(graphics_.get(),
-																					isSRGBMode ? ::Effekseer::ColorSpaceType::Linear : ::Effekseer::ColorSpaceType::Gamma));
+				auto textureLoader = EffekseerRenderer::CreateTextureLoader(
+					graphics_->GetGraphicsDevice(),
+					fileInterface,
+					isSRGBMode ? ::Effekseer::ColorSpaceType::Linear : ::Effekseer::ColorSpaceType::Gamma);
 
-				setting_->SetTextureLoader(textureLoader_);
+				setting_->SetTextureLoader(textureLoader);
 
-				modelLoader_ = Effekseer::RefPtr<ModelLoader>(new ModelLoader(graphics_.get()));
+				auto modelLoader = EffekseerRenderer::CreateModelLoader(graphics_->GetGraphicsDevice(), fileInterface);
 
-				setting_->SetModelLoader(modelLoader_);
+				setting_->SetModelLoader(modelLoader);
 
-				setting_->SetCurveLoader(Effekseer::CurveLoaderRef(new ::Effekseer::CurveLoader()));
+				setting_->SetCurveLoader(Effekseer::CurveLoaderRef(new ::Effekseer::CurveLoader(fileInterface)));
 			}
 
 			spdlog::trace("OK : SetLoaders");
@@ -313,13 +161,10 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 	if (sound_->Initialize())
 	{
 		mainScreen_->GetMamanager()->SetSoundPlayer(sound_->GetSound()->CreateSoundPlayer());
-
-		soundLoader_ = Effekseer::RefPtr<SoundLoader>(new SoundLoader(sound_->GetSound()->CreateSoundLoader()));
-		setting_->SetSoundLoader(soundLoader_);
+		setting_->SetSoundLoader(sound_->GetSound()->CreateSoundLoader(fileInterface));
 	}
 
-	materialLoader_ = Effekseer::RefPtr<MaterialLoader>(new MaterialLoader(mainScreen_->GetRenderer()));
-	setting_->SetMaterialLoader(materialLoader_);
+	setting_->SetMaterialLoader(mainScreen_->GetRenderer()->CreateMaterialLoader(fileInterface));
 
 	spdlog::trace("End Native::CreateWindow_Effekseer (true)");
 
@@ -366,13 +211,9 @@ bool Native::ResizeWindow(int width, int height)
 
 bool Native::DestroyWindow()
 {
-	InvalidateTextureCache();
-
 	mainScreen_.reset();
 	graphics_.reset();
-	textureLoader_.Reset();
 	setting_.Reset();
-	materialLoader_.Reset();
 
 	return true;
 }
@@ -527,38 +368,6 @@ void Native::SetViewerEffectBehavior(Effekseer::Tool::ViewerEffectBehavior behav
 	{
 		mainScreen_->SetBehavior(behavior);
 	}
-}
-
-bool Native::InvalidateTextureCache()
-{
-	{
-		auto it = m_textures.begin();
-		auto it_end = m_textures.end();
-		while (it != it_end)
-		{
-			textureLoader_->GetOriginalTextureLoader()->Unload((*it).second);
-			++it;
-		}
-		m_textures.clear();
-	}
-
-	{
-		auto it = m_models.begin();
-		auto it_end = m_models.end();
-		while (it != it_end)
-		{
-			modelLoader_->Unload((*it).second);
-			++it;
-		}
-		m_models.clear();
-	}
-
-	if (materialLoader_ != nullptr)
-	{
-		materialLoader_->ReleaseAll();
-	}
-
-	return true;
 }
 
 void Native::SetGroundParameters(bool shown, float height, int32_t extent)

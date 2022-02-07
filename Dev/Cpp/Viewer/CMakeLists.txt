@@ -35,6 +35,7 @@ FILE(GLOB cpps
 list(APPEND cpps
     3D/Effect.cpp
     3D/EffectFactory.cpp
+    3D/FileInterface.cpp
     3D/ViewPointController.cpp
     RenderedEffectGenerator.cpp
     Graphics/StaticMeshRenderer.cpp
@@ -55,6 +56,7 @@ list(APPEND cpps
 list(APPEND hs
     3D/Effect.h
     3D/EffectFactory.h
+    3D/FileInterface.h
     3D/ViewPointController.h
     RenderedEffectGenerator.h
     Graphics/StaticMeshRenderer.h
