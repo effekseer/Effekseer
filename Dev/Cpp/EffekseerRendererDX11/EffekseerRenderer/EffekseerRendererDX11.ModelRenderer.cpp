@@ -167,7 +167,7 @@ ModelRendererRef ModelRenderer::Create(const RendererImplementedRef& renderer)
 		{"NORMAL", 3, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 14, D3D11_INPUT_PER_VERTEX_DATA, 0},
 	};
 
-	Shader* shader_advanced_lit = Shader::Create(renderer.Get(),
+	Shader* shader_advanced_lit = Shader::Create(renderer->GetGraphicsDevice(),
 												 renderer->GetGraphicsDevice()->CreateShaderFromBinary(
 													 ShaderLightingVS_::g_main,
 													 sizeof(ShaderLightingVS_::g_main),
@@ -175,10 +175,9 @@ ModelRendererRef ModelRenderer::Create(const RendererImplementedRef& renderer)
 													 sizeof(ShaderLightingPS_::g_main)),
 												 "ModelRendererLightingTextureNormal",
 												 decl,
-												 ARRAYSIZE(decl),
-												 false);
+												 ARRAYSIZE(decl));
 
-	Shader* shader_advanced_unlit = Shader::Create(renderer.Get(),
+	Shader* shader_advanced_unlit = Shader::Create(renderer->GetGraphicsDevice(),
 												   renderer->GetGraphicsDevice()->CreateShaderFromBinary(
 													   ShaderVS_::g_main,
 													   sizeof(ShaderVS_::g_main),
@@ -186,10 +185,9 @@ ModelRendererRef ModelRenderer::Create(const RendererImplementedRef& renderer)
 													   sizeof(ShaderPS_::g_main)),
 												   "ModelRendererTexture",
 												   decl,
-												   ARRAYSIZE(decl),
-												   false);
+												   ARRAYSIZE(decl));
 
-	auto shader_advanced_distortion = Shader::Create(renderer.Get(),
+	auto shader_advanced_distortion = Shader::Create(renderer->GetGraphicsDevice(),
 													 renderer->GetGraphicsDevice()->CreateShaderFromBinary(
 														 ShaderDistortionVS_::g_main,
 														 sizeof(ShaderDistortionVS_::g_main),
@@ -197,10 +195,9 @@ ModelRendererRef ModelRenderer::Create(const RendererImplementedRef& renderer)
 														 sizeof(ShaderDistortionPS_::g_main)),
 													 "ModelRendererDistortionTexture",
 													 decl,
-													 ARRAYSIZE(decl),
-													 false);
+													 ARRAYSIZE(decl));
 
-	Shader* shader_lit = Shader::Create(renderer.Get(),
+	Shader* shader_lit = Shader::Create(renderer->GetGraphicsDevice(),
 										renderer->GetGraphicsDevice()->CreateShaderFromBinary(
 											ShaderLightingVS_15_::g_main,
 											sizeof(ShaderLightingVS_15_::g_main),
@@ -208,10 +205,9 @@ ModelRendererRef ModelRenderer::Create(const RendererImplementedRef& renderer)
 											sizeof(ShaderLightingPS_15_::g_main)),
 										"ModelRendererLightingTextureNormal",
 										decl,
-										ARRAYSIZE(decl),
-										false);
+										ARRAYSIZE(decl));
 
-	Shader* shader_unlit = Shader::Create(renderer.Get(),
+	Shader* shader_unlit = Shader::Create(renderer->GetGraphicsDevice(),
 										  renderer->GetGraphicsDevice()->CreateShaderFromBinary(
 											  ShaderVS_15_::g_main,
 											  sizeof(ShaderVS_15_::g_main),
@@ -219,10 +215,9 @@ ModelRendererRef ModelRenderer::Create(const RendererImplementedRef& renderer)
 											  sizeof(ShaderPS_15_::g_main)),
 										  "ModelRendererTexture",
 										  decl,
-										  ARRAYSIZE(decl),
-										  false);
+										  ARRAYSIZE(decl));
 
-	auto shader_distortion = Shader::Create(renderer.Get(),
+	auto shader_distortion = Shader::Create(renderer->GetGraphicsDevice(),
 											renderer->GetGraphicsDevice()->CreateShaderFromBinary(
 												ShaderDistortionVS_15_::g_main,
 												sizeof(ShaderDistortionVS_15_::g_main),
@@ -230,8 +225,7 @@ ModelRendererRef ModelRenderer::Create(const RendererImplementedRef& renderer)
 												sizeof(ShaderDistortionPS_15_::g_main)),
 											"ModelRendererDistortionTexture",
 											decl,
-											ARRAYSIZE(decl),
-											false);
+											ARRAYSIZE(decl));
 
 	if (shader_advanced_lit == nullptr || shader_advanced_unlit == nullptr || shader_advanced_distortion == nullptr || shader_lit == nullptr || shader_unlit == nullptr || shader_distortion == nullptr)
 	{

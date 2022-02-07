@@ -12,8 +12,8 @@
 namespace EffekseerRendererDX11
 {
 
-MaterialLoader::MaterialLoader(const RendererImplementedRef& renderer, ::Effekseer::FileInterfaceRef fileInterface)
-	: renderer_(renderer)
+MaterialLoader::MaterialLoader(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterfaceRef fileInterface)
+	: graphicsDevice_(graphicsDevice)
 	, fileInterface_(fileInterface)
 {
 	if (fileInterface == nullptr)
@@ -101,16 +101,15 @@ MaterialLoader ::~MaterialLoader()
 				{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 4, D3D11_INPUT_PER_VERTEX_DATA, 0},
 			};
 
-			shader = Shader::Create(renderer_.Get(),
-									renderer_->GetGraphicsDevice()->CreateShaderFromBinary(
+			shader = Shader::Create(graphicsDevice_,
+									graphicsDevice_->CreateShaderFromBinary(
 										(uint8_t*)binary->GetVertexShaderData(shaderTypes[st]),
 										binary->GetVertexShaderSize(shaderTypes[st]),
 										(uint8_t*)binary->GetPixelShaderData(shaderTypes[st]),
 										binary->GetPixelShaderSize(shaderTypes[st])),
 									"MaterialStandardRenderer",
 									decl,
-									ARRAYSIZE(decl),
-									true);
+									ARRAYSIZE(decl));
 		}
 		else
 		{
@@ -162,16 +161,15 @@ MaterialLoader ::~MaterialLoader()
 				offset += sizeof(float) * materialFile.GetCustomData2Count();
 			}
 
-			shader = Shader::Create(renderer_.Get(),
-									renderer_->GetGraphicsDevice()->CreateShaderFromBinary(
+			shader = Shader::Create(graphicsDevice_,
+									graphicsDevice_->CreateShaderFromBinary(
 										(uint8_t*)binary->GetVertexShaderData(shaderTypes[st]),
 										binary->GetVertexShaderSize(shaderTypes[st]),
 										(uint8_t*)binary->GetPixelShaderData(shaderTypes[st]),
 										binary->GetPixelShaderSize(shaderTypes[st])),
 									"MaterialStandardRenderer",
 									decl,
-									count,
-									true);
+									count);
 		}
 
 		if (shader == nullptr)
@@ -212,16 +210,15 @@ MaterialLoader ::~MaterialLoader()
 		// compile
 		std::string log;
 
-		auto shader = Shader::Create(renderer_.Get(),
-									 renderer_->GetGraphicsDevice()->CreateShaderFromBinary(
+		auto shader = Shader::Create(graphicsDevice_,
+									 graphicsDevice_->CreateShaderFromBinary(
 										 (uint8_t*)binary->GetVertexShaderData(shaderTypesModel[st]),
 										 binary->GetVertexShaderSize(shaderTypesModel[st]),
 										 (uint8_t*)binary->GetPixelShaderData(shaderTypesModel[st]),
 										 binary->GetPixelShaderSize(shaderTypesModel[st])),
 									 "MaterialStandardModelRenderer",
 									 decl,
-									 ARRAYSIZE(decl),
-									 true);
+									 ARRAYSIZE(decl));
 		if (shader == nullptr)
 			return false;
 

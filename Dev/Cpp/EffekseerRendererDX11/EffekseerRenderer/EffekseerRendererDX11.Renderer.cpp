@@ -128,6 +128,11 @@ static
 	return ::Effekseer::MakeRefPtr<EffekseerRenderer::ModelLoader>(gprahicsDevice, fileInterface);
 }
 
+::Effekseer::MaterialLoaderRef CreateMaterialLoader(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterfaceRef fileInterface)
+{
+	return ::Effekseer::MakeRefPtr<MaterialLoader>(graphicsDevice, fileInterface);
+}
+
 ::Effekseer::Backend::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice, ID3D11ShaderResourceView* srv, ID3D11RenderTargetView* rtv, ID3D11DepthStencilView* dsv)
 {
 	auto gd = gprahicsDevice.DownCast<Backend::GraphicsDevice>();
@@ -465,7 +470,7 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 		{"TEXCOORD", 1, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 8, D3D11_INPUT_PER_VERTEX_DATA, 0},
 	};
 
-	shader_unlit_ = Shader::Create(this,
+	shader_unlit_ = Shader::Create(graphicsDevice_,
 								   graphicsDevice_->CreateShaderFromBinary(
 									   Standard_VS::g_main,
 									   sizeof(Standard_VS::g_main),
@@ -473,12 +478,11 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 									   sizeof(Standard_PS::g_main)),
 								   "StandardRenderer",
 								   decl,
-								   ARRAYSIZE(decl),
-								   false);
+								   ARRAYSIZE(decl));
 	if (shader_unlit_ == nullptr)
 		return false;
 
-	shader_ad_unlit_ = Shader::Create(this,
+	shader_ad_unlit_ = Shader::Create(graphicsDevice_,
 									  graphicsDevice_->CreateShaderFromBinary(
 										  Standard_VS_Ad::g_main,
 										  sizeof(Standard_VS_Ad::g_main),
@@ -486,12 +490,11 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 										  sizeof(Standard_PS_Ad::g_main)),
 									  "StandardRenderer",
 									  decl_advanced,
-									  ARRAYSIZE(decl_advanced),
-									  false);
+									  ARRAYSIZE(decl_advanced));
 	if (shader_ad_unlit_ == nullptr)
 		return false;
 
-	shader_distortion_ = Shader::Create(this,
+	shader_distortion_ = Shader::Create(graphicsDevice_,
 										graphicsDevice_->CreateShaderFromBinary(
 											Standard_Distortion_VS::g_main,
 											sizeof(Standard_Distortion_VS::g_main),
@@ -499,12 +502,11 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 											sizeof(Standard_Distortion_PS::g_main)),
 										"StandardRenderer Distortion",
 										decl_normal,
-										ARRAYSIZE(decl_normal),
-										false);
+										ARRAYSIZE(decl_normal));
 	if (shader_distortion_ == nullptr)
 		return false;
 
-	shader_ad_distortion_ = Shader::Create(this,
+	shader_ad_distortion_ = Shader::Create(graphicsDevice_,
 										   graphicsDevice_->CreateShaderFromBinary(
 											   Standard_Distortion_VS_Ad::g_main,
 											   sizeof(Standard_Distortion_VS_Ad::g_main),
@@ -512,12 +514,11 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 											   sizeof(Standard_Distortion_PS_Ad::g_main)),
 										   "StandardRenderer Distortion",
 										   decl_normal_advanced,
-										   ARRAYSIZE(decl_normal_advanced),
-										   false);
+										   ARRAYSIZE(decl_normal_advanced));
 	if (shader_ad_distortion_ == nullptr)
 		return false;
 
-	shader_lit_ = Shader::Create(this,
+	shader_lit_ = Shader::Create(graphicsDevice_,
 								 graphicsDevice_->CreateShaderFromBinary(
 									 Standard_Lighting_VS::g_main,
 									 sizeof(Standard_Lighting_VS::g_main),
@@ -525,12 +526,11 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 									 sizeof(Standard_Lighting_PS::g_main)),
 								 "StandardRenderer Lighting",
 								 decl_normal,
-								 ARRAYSIZE(decl_normal),
-								 false);
+								 ARRAYSIZE(decl_normal));
 	if (shader_lit_ == nullptr)
 		return false;
 
-	shader_ad_lit_ = Shader::Create(this,
+	shader_ad_lit_ = Shader::Create(graphicsDevice_,
 									graphicsDevice_->CreateShaderFromBinary(
 										Standard_Lighting_VS_Ad::g_main,
 										sizeof(Standard_Lighting_VS_Ad::g_main),
@@ -538,8 +538,7 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 										sizeof(Standard_Lighting_PS_Ad::g_main)),
 									"StandardRenderer Lighting",
 									decl_normal_advanced,
-									ARRAYSIZE(decl_normal_advanced),
-									false);
+									ARRAYSIZE(decl_normal_advanced));
 	if (shader_ad_lit_ == nullptr)
 		return false;
 
@@ -741,7 +740,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 
 ::Effekseer::MaterialLoaderRef RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterfaceRef fileInterface)
 {
-	return ::Effekseer::MakeRefPtr<MaterialLoader>(RendererImplementedRef::FromPinned(this), fileInterface);
+	return ::Effekseer::MakeRefPtr<MaterialLoader>(graphicsDevice_, fileInterface);
 }
 
 void RendererImplemented::SetBackground(ID3D11ShaderResourceView* background)

@@ -2,24 +2,17 @@
 #ifndef __EFFEKSEERRENDERER_DX11_SHADER_H__
 #define __EFFEKSEERRENDERER_DX11_SHADER_H__
 
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
 #include "../../EffekseerRendererCommon/EffekseerRenderer.ShaderBase.h"
 #include "EffekseerRendererDX11.DeviceObject.h"
 #include "EffekseerRendererDX11.RendererImplemented.h"
 
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
 namespace EffekseerRendererDX11
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-class Shader : public DeviceObject, public ::EffekseerRenderer::ShaderBase
+
+class Shader : public ::EffekseerRenderer::ShaderBase
 {
 private:
+	Effekseer::Backend::GraphicsDeviceRef graphicsDevice_;
 	Backend::ShaderRef shader_;
 	Backend::ShaderRef shaderOverride_;
 
@@ -32,25 +25,20 @@ private:
 	int32_t vertexConstantBufferSize_ = 0;
 	int32_t pixelConstantBufferSize_ = 0;
 
-	Shader(RendererImplemented* renderer,
+	Shader(Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
 		   Backend::ShaderRef shader,
-		   ID3D11InputLayout* vertexDeclaration,
-		   bool hasRefCount);
+		   ID3D11InputLayout* vertexDeclaration);
 
 public:
 	virtual ~Shader();
 
-	static Shader* Create(RendererImplemented* renderer,
+	static Shader* Create(Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
 						  Effekseer::Backend::ShaderRef shader,
 						  const char* name,
 						  const D3D11_INPUT_ELEMENT_DESC decl[],
-						  int32_t layoutCount,
-						  bool hasRefCount);
+						  int32_t layoutCount);
 
 public:
-	virtual void OnLostDevice();
-	virtual void OnResetDevice();
-
 	void OverrideShader(::Effekseer::Backend::ShaderRef shader) override
 	{
 		shaderOverride_ = shader.DownCast<Backend::Shader>();
@@ -103,11 +91,7 @@ public:
 
 	void SetConstantBuffer();
 };
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
 } // namespace EffekseerRendererDX11
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
 #endif // __EFFEKSEERRENDERER_DX11_SHADER_H__
