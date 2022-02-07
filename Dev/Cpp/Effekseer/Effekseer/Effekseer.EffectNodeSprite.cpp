@@ -165,7 +165,7 @@ void EffectNodeSprite::BeginRendering(int32_t count, Manager* manager, void* use
 
 		nodeParameter.ZSort = DepthValues.ZSort;
 
-		nodeParameter.EnableViewOffset = (TranslationType == ParameterTranslationType_ViewOffset);
+		nodeParameter.EnableViewOffset = (TranslationParam.TranslationType == ParameterTranslationType_ViewOffset);
 
 		nodeParameter.UserData = GetRenderingUserData();
 		nodeParameter.Maginification = GetEffect()->GetMaginification();
@@ -197,7 +197,7 @@ void EffectNodeSprite::Rendering(const Instance& instance, const Instance* next_
 
 		nodeParameter.ZSort = DepthValues.ZSort;
 
-		nodeParameter.EnableViewOffset = (TranslationType == ParameterTranslationType_ViewOffset);
+		nodeParameter.EnableViewOffset = (TranslationParam.TranslationType == ParameterTranslationType_ViewOffset);
 		nodeParameter.Maginification = GetEffect()->GetMaginification();
 
 		SpriteRenderer::InstanceParameter instanceParameter;

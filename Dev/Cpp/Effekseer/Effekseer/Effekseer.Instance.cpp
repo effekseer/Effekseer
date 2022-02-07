@@ -224,132 +224,7 @@ void Instance::FirstUpdate()
 		followParentParam.steeringSpeed = m_pEffectNode->SteeringBehaviorParam.SteeringSpeed.getValue(rand) / 100.0f;
 	}
 
-	// Translation
-	if (m_pEffectNode->TranslationType == ParameterTranslationType_Fixed)
-	{
-		translation_values.fixed.location = m_pEffectNode->TranslationFixed.Position;
-		ApplyDynamicParameterToFixedLocation();
-
-		prevPosition_ = translation_values.fixed.location;
-	}
-	else if (m_pEffectNode->TranslationType == ParameterTranslationType_PVA)
-	{
-		auto rvl = ApplyEq(effect,
-						   instanceGlobal,
-						   m_pParent,
-						   &rand,
-						   m_pEffectNode->TranslationPVA.RefEqP,
-						   m_pEffectNode->TranslationPVA.location,
-						   m_pEffectNode->DynamicFactor.Tra,
-						   m_pEffectNode->DynamicFactor.TraInv);
-		translation_values.random.location = rvl.getValue(rand);
-
-		auto rvv = ApplyEq(effect,
-						   instanceGlobal,
-						   m_pParent,
-						   &rand,
-						   m_pEffectNode->TranslationPVA.RefEqV,
-						   m_pEffectNode->TranslationPVA.velocity,
-						   m_pEffectNode->DynamicFactor.Tra,
-						   m_pEffectNode->DynamicFactor.TraInv);
-		translation_values.random.velocity = rvv.getValue(rand);
-
-		auto rva = ApplyEq(effect,
-						   instanceGlobal,
-						   m_pParent,
-						   &rand,
-						   m_pEffectNode->TranslationPVA.RefEqA,
-						   m_pEffectNode->TranslationPVA.acceleration,
-						   m_pEffectNode->DynamicFactor.Tra,
-						   m_pEffectNode->DynamicFactor.TraInv);
-		translation_values.random.acceleration = rva.getValue(rand);
-
-		prevPosition_ = translation_values.random.location;
-
-		steeringVec_ = translation_values.random.velocity;
-	}
-	else if (m_pEffectNode->TranslationType == ParameterTranslationType_Easing)
-	{
-		m_pEffectNode->TranslationEasing.Init(translation_values.easing, effect, instanceGlobal, m_pParent, &rand, m_pEffectNode->DynamicFactor.Tra, m_pEffectNode->DynamicFactor.TraInv);
-		/*
-		auto rvs = ApplyEq(effect,
-						   instanceGlobal,
-						   m_pParent,
-						   &rand,
-						   m_pEffectNode->TranslationEasing.RefEqS,
-						   m_pEffectNode->TranslationEasing.location.start,
-						   m_pEffectNode->DynamicFactor.Tra,
-						   m_pEffectNode->DynamicFactor.TraInv);
-		auto rve = ApplyEq(effect,
-						   instanceGlobal,
-						   m_pParent,
-						   &rand,
-						   m_pEffectNode->TranslationEasing.RefEqE,
-						   m_pEffectNode->TranslationEasing.location.end,
-						   m_pEffectNode->DynamicFactor.Tra,
-						   m_pEffectNode->DynamicFactor.TraInv);
-
-		translation_values.easing.start = rvs.getValue(rand);
-		translation_values.easing.end = rve.getValue(rand);
-		*/
-
-		prevPosition_ = translation_values.easing.start;
-	}
-	else if (m_pEffectNode->TranslationType == ParameterTranslationType_FCurve)
-	{
-		assert(m_pEffectNode->TranslationFCurve != nullptr);
-		const auto coordinateSystem = m_pEffectNode->GetEffect()->GetSetting()->GetCoordinateSystem();
-
-		translation_values.fcruve.offset = m_pEffectNode->TranslationFCurve->GetOffsets(rand);
-
-		prevPosition_ = translation_values.fcruve.offset + m_pEffectNode->TranslationFCurve->GetValues(m_LivingTime, m_LivedTime);
-
-		if (coordinateSystem == CoordinateSystem::LH)
-		{
-			prevPosition_.SetZ(-prevPosition_.GetZ());
-		}
-	}
-	else if (m_pEffectNode->TranslationType == ParameterTranslationType_NurbsCurve)
-	{
-		// TODO refactoring
-		auto& NurbsCurveParam = m_pEffectNode->TranslationNurbsCurve;
-		CurveRef curve = static_cast<CurveRef>(m_pEffectNode->m_effect->GetCurve(NurbsCurveParam.Index));
-		if (curve != nullptr)
-		{
-			float moveSpeed = NurbsCurveParam.MoveSpeed;
-			int32_t loopType = NurbsCurveParam.LoopType;
-
-			float speed = 1.0f / (curve->GetLength() * NurbsCurveParam.Scale);
-
-			float t = speed * m_LivingTime * moveSpeed;
-
-			switch (loopType)
-			{
-			default:
-			case 0:
-				t = fmod(t, 1.0f);
-				break;
-
-			case 1:
-				if (t > 1.0f)
-				{
-					t = 1.0f;
-				}
-				break;
-			}
-
-			prevPosition_ = curve->CalcuratePoint(t, NurbsCurveParam.Scale * m_pEffectNode->m_effect->GetMaginification());
-		}
-		else
-		{
-			prevPosition_ = {0, 0, 0};
-		}
-	}
-	else if (m_pEffectNode->TranslationType == ParameterTranslationType_ViewOffset)
-	{
-		translation_values.view_offset.distance = m_pEffectNode->TranslationViewOffset.distance.getValue(rand);
-		prevPosition_ = {0, 0, 0};
-	}
+	m_pEffectNode->TranslationParam.InitializeTranslationState(translation_values, prevPosition_, steeringVec_, rand, effect, instanceGlobal, m_LivingTime, m_LivedTime, m_pParent, m_pEffectNode->DynamicFactor);
 
 	// Rotation
 	if (m_pEffectNode->RotationType == ParameterRotationType_Fixed)
@@ -974,79 +849,7 @@ void Instance::CalculateMatrix(float deltaFrame)
 		SIMD::Vec3f localAngle;
 		SIMD::Vec3f localScaling;
 
-		/* 位置の更新(時間から直接求めれるよう対応済み) */
-		if (m_pEffectNode->TranslationType == ParameterTranslationType_None)
-		{
-			localPosition = {0, 0, 0};
-		}
-		else if (m_pEffectNode->TranslationType == ParameterTranslationType_Fixed)
-		{
-			ApplyDynamicParameterToFixedLocation();
-
-			localPosition = translation_values.fixed.location;
-		}
-		else if (m_pEffectNode->TranslationType == ParameterTranslationType_PVA)
-		{
-			/* 現在位置 = 初期座標 + (初期速度 * t) + (初期加速度 * t * t * 0.5)*/
-			localPosition = translation_values.random.location + (translation_values.random.velocity * m_LivingTime) +
-							(translation_values.random.acceleration * (m_LivingTime * m_LivingTime * 0.5f));
-		}
-		else if (m_pEffectNode->TranslationType == ParameterTranslationType_Easing)
-		{
-			localPosition = m_pEffectNode->TranslationEasing.GetValue(translation_values.easing, m_LivingTime / m_LivedTime);
-			//localPosition = m_pEffectNode->TranslationEasing.location.getValue(
-			//	translation_values.easing.start, translation_values.easing.end, m_LivingTime / m_LivedTime);
-		}
-		else if (m_pEffectNode->TranslationType == ParameterTranslationType_FCurve)
-		{
-			assert(m_pEffectNode->TranslationFCurve != nullptr);
-			auto fcurve = m_pEffectNode->TranslationFCurve->GetValues(m_LivingTime, m_LivedTime);
-			localPosition = fcurve + translation_values.fcruve.offset;
-
-			if (coordinateSystem == CoordinateSystem::LH)
-			{
-				localPosition.SetZ(-localPosition.GetZ());
-			}
-		}
-		else if (m_pEffectNode->TranslationType == ParameterTranslationType_NurbsCurve)
-		{
-			auto& NurbsCurveParam = m_pEffectNode->TranslationNurbsCurve;
-			CurveRef curve = static_cast<CurveRef>(m_pEffectNode->m_effect->GetCurve(NurbsCurveParam.Index));
-			if (curve != nullptr)
-			{
-				float moveSpeed = NurbsCurveParam.MoveSpeed;
-				int32_t loopType = NurbsCurveParam.LoopType;
-
-				float speed = 1.0f / (curve->GetLength() * NurbsCurveParam.Scale);
-
-				float t = speed * m_LivingTime * moveSpeed;
-
-				switch (loopType)
-				{
-				default:
-				case 0:
-					t = fmod(t, 1.0f);
-					break;
-
-				case 1:
-					if (t > 1.0f)
-					{
-						t = 1.0f;
-					}
-					break;
-				}
-
-				localPosition = curve->CalcuratePoint(t, NurbsCurveParam.Scale * m_pEffectNode->m_effect->GetMaginification());
-			}
-			else
-			{
-				localPosition = {0, 0, 0};
-			}
-		}
-		else if (m_pEffectNode->TranslationType == ParameterTranslationType_ViewOffset)
-		{
-			localPosition = {0, 0, 0};
-		}
+		m_pEffectNode->TranslationParam.CalculateTranslationState(translation_values, localPosition, m_randObject, m_pEffectNode->GetEffect(), m_pContainer->GetRootInstance(), m_LivingTime, m_LivedTime, m_pParent, coordinateSystem, m_pEffectNode->DynamicFactor);
 
 		if (!m_pEffectNode->GenerationLocation.EffectsRotation)
 		{
@@ -1247,7 +1050,7 @@ void Instance::CalculateMatrix(float deltaFrame)
 			assert(m_GlobalMatrix43.IsValid());
 		}
 
-		if (m_pEffectNode->TranslationType != ParameterTranslationType_ViewOffset)
+		if (m_pEffectNode->TranslationParam.TranslationType != ParameterTranslationType_ViewOffset)
 		{
 			m_GlobalMatrix43 *= m_ParentMatrix;
 			assert(m_GlobalMatrix43.IsValid());
@@ -1319,21 +1122,6 @@ void Instance::CalculateParentMatrix(float deltaFrame)
 	}
 
 	m_ParentMatrix43Calculated = true;
-}
-
-void Instance::ApplyDynamicParameterToFixedLocation()
-{
-	if (m_pEffectNode->TranslationFixed.RefEq >= 0)
-	{
-		translation_values.fixed.location = ApplyEq(m_pEffectNode->GetEffect(),
-													m_pContainer->GetRootInstance(),
-													m_pParent,
-													&m_randObject,
-													m_pEffectNode->TranslationFixed.RefEq,
-													m_pEffectNode->TranslationFixed.Position,
-													m_pEffectNode->DynamicFactor.Tra,
-													m_pEffectNode->DynamicFactor.TraInv);
-	}
 }
 
 void Instance::ApplyDynamicParameterToFixedRotation()

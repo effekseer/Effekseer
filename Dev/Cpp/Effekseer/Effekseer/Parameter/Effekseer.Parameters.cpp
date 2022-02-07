@@ -32,7 +32,7 @@ void NodeRendererTextureUVTypeParameter::Load(uint8_t*& pos, int32_t version)
 }
 
 template <typename T, typename U>
-void ApplyEq_(T& dstParam, Effect* e, InstanceGlobal* instg, Instance* parrentInstance, IRandObject* rand, int dpInd, const U& originalParam)
+void ApplyEq_(T& dstParam, const Effect* e, const InstanceGlobal* instg, const Instance* parrentInstance, IRandObject* rand, int dpInd, const U& originalParam)
 {
 	static_assert(sizeof(T) == sizeof(U), "size is not mismatched");
 	const int count = sizeof(T) / 4;
@@ -61,7 +61,7 @@ void ApplyEq_(T& dstParam, Effect* e, InstanceGlobal* instg, Instance* parrentIn
 
 	locals[4] = parrentInstance != nullptr ? parrentInstance->m_LivingTime / 60.0f : 0.0f;
 
-	auto e_ = static_cast<EffectImplemented*>(e);
+	auto e_ = static_cast<const EffectImplemented*>(e);
 	auto& dp = e_->GetDynamicEquation()[dpInd];
 
 	if (dp.GetRunningPhase() == InternalScript::RunningPhaseType::Local)
@@ -75,14 +75,14 @@ void ApplyEq_(T& dstParam, Effect* e, InstanceGlobal* instg, Instance* parrentIn
 	}
 }
 
-void ApplyEq(float& dstParam, Effect* e, InstanceGlobal* instg, Instance* parrentInstance, IRandObject* rand, int dpInd, const float& originalParam)
+void ApplyEq(float& dstParam, const Effect* e, const InstanceGlobal* instg, const Instance* parrentInstance, IRandObject* rand, int dpInd, const float& originalParam)
 {
 	ApplyEq_(dstParam, e, instg, parrentInstance, rand, dpInd, originalParam);
 }
 
 template <typename S>
 SIMD::Vec3f ApplyEq_(
-	Effect* e, InstanceGlobal* instg, Instance* parrentInstance, IRandObject* rand, const int& dpInd, const SIMD::Vec3f& originalParam, const S& scale, const S& scaleInv)
+	const Effect* e, const InstanceGlobal* instg, const Instance* parrentInstance, IRandObject* rand, const int& dpInd, const SIMD::Vec3f& originalParam, const S& scale, const S& scaleInv)
 {
 	SIMD::Vec3f param = originalParam;
 	if (dpInd >= 0)
@@ -97,12 +97,12 @@ SIMD::Vec3f ApplyEq_(
 }
 
 SIMD::Vec3f ApplyEq(
-	Effect* e, InstanceGlobal* instg, Instance* parrentInstance, IRandObject* rand, const int& dpInd, const SIMD::Vec3f& originalParam, const std::array<float, 3>& scale, const std::array<float, 3>& scaleInv)
+	const Effect* e, const InstanceGlobal* instg, const Instance* parrentInstance, IRandObject* rand, const int& dpInd, const SIMD::Vec3f& originalParam, const std::array<float, 3>& scale, const std::array<float, 3>& scaleInv)
 {
 	return ApplyEq_(e, instg, parrentInstance, rand, dpInd, originalParam, scale, scaleInv);
 }
 
-random_float ApplyEq(Effect* e, InstanceGlobal* instg, Instance* parrentInstance, IRandObject* rand, const RefMinMax& dpInd, random_float originalParam)
+random_float ApplyEq(const Effect* e, const InstanceGlobal* instg, const Instance* parrentInstance, IRandObject* rand, const RefMinMax& dpInd, random_float originalParam)
 {
 	if (dpInd.Max >= 0)
 	{
@@ -118,9 +118,9 @@ random_float ApplyEq(Effect* e, InstanceGlobal* instg, Instance* parrentInstance
 }
 
 template <typename S>
-random_vector3d ApplyEq_(Effect* e,
-						 InstanceGlobal* instg,
-						 Instance* parrentInstance,
+random_vector3d ApplyEq_(const Effect* e,
+						 const InstanceGlobal* instg,
+						 const Instance* parrentInstance,
 						 IRandObject* rand,
 						 const RefMinMax& dpInd,
 						 random_vector3d originalParam,
@@ -156,9 +156,9 @@ random_vector3d ApplyEq_(Effect* e,
 	return originalParam;
 }
 
-random_vector3d ApplyEq(Effect* e,
-						InstanceGlobal* instg,
-						Instance* parrentInstance,
+random_vector3d ApplyEq(const Effect* e,
+						const InstanceGlobal* instg,
+						const Instance* parrentInstance,
 						IRandObject* rand,
 						const RefMinMax& dpInd,
 						random_vector3d originalParam,
@@ -175,7 +175,7 @@ random_vector3d ApplyEq(Effect* e,
 					scaleInv);
 }
 
-random_int ApplyEq(Effect* e, InstanceGlobal* instg, Instance* parrentInstance, IRandObject* rand, const RefMinMax& dpInd, random_int originalParam)
+random_int ApplyEq(const Effect* e, const InstanceGlobal* instg, const Instance* parrentInstance, IRandObject* rand, const RefMinMax& dpInd, random_int originalParam)
 {
 	if (dpInd.Max >= 0)
 	{

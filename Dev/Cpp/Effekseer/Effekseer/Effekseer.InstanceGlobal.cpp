@@ -114,7 +114,7 @@ int InstanceGlobal::GetInstanceCount()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-float InstanceGlobal::GetUpdatedFrame()
+float InstanceGlobal::GetUpdatedFrame() const
 {
 	return m_updatedFrame;
 }

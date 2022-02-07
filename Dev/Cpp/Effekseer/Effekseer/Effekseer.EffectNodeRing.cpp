@@ -255,7 +255,7 @@ void EffectNodeRing::BeginRendering(int32_t count, Manager* manager, void* userD
 		nodeParameter.StartingFade = Shape.StartingFade;
 		nodeParameter.EndingFade = Shape.EndingFade;
 
-		nodeParameter.EnableViewOffset = (TranslationType == ParameterTranslationType_ViewOffset);
+		nodeParameter.EnableViewOffset = (TranslationParam.TranslationType == ParameterTranslationType_ViewOffset);
 
 		nodeParameter.UserData = GetRenderingUserData();
 
@@ -284,7 +284,7 @@ void EffectNodeRing::Rendering(const Instance& instance, const Instance* next_in
 		nodeParameter.StartingFade = Shape.StartingFade;
 		nodeParameter.EndingFade = Shape.EndingFade;
 
-		nodeParameter.EnableViewOffset = (TranslationType == ParameterTranslationType_ViewOffset);
+		nodeParameter.EnableViewOffset = (TranslationParam.TranslationType == ParameterTranslationType_ViewOffset);
 
 		Color _outerColor;
 		Color _centerColor;
@@ -337,7 +337,7 @@ void EffectNodeRing::Rendering(const Instance& instance, const Instance* next_in
 
 		instanceParameter.AlphaThreshold = instance.m_AlphaThreshold;
 
-		if (instance.m_pEffectNode->TranslationType == ParameterTranslationType_ViewOffset)
+		if (instance.m_pEffectNode->TranslationParam.TranslationType == ParameterTranslationType_ViewOffset)
 		{
 			instanceParameter.ViewOffsetDistance = instance.translation_values.view_offset.distance;
 		}

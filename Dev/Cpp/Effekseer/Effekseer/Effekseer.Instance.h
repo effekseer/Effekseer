@@ -2,9 +2,6 @@
 #ifndef __EFFEKSEER_INSTANCE_H__
 #define __EFFEKSEER_INSTANCE_H__
 
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
 #include "Effekseer.Base.h"
 
 #include "SIMD/Mat43f.h"
@@ -26,9 +23,6 @@
 #include "Effekseer.EffectNodeTrack.h"
 #include "ForceField/ForceFields.h"
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 namespace Effekseer
 {
 
@@ -59,9 +53,6 @@ struct InstanceCustomData
 	};
 };
 
-/**
-	@brief	エフェクトの実体
-*/
 class alignas(16) Instance : public IntrusiveList<Instance>::Node
 {
 	friend class Manager;
@@ -118,40 +109,7 @@ public:
 		float steeringSpeed;
 	} followParentParam;
 
-	union
-	{
-		struct
-		{
-			SIMD::Vec3f location;
-		} fixed;
-
-		struct
-		{
-			SIMD::Vec3f location;
-			SIMD::Vec3f velocity;
-			SIMD::Vec3f acceleration;
-		} random;
-
-		InstanceEasing<SIMD::Vec3f> easing;
-		/*
-		struct
-		{
-			SIMD::Vec3f start;
-			SIMD::Vec3f end;
-		} easing;
-		*/
-
-		struct
-		{
-			SIMD::Vec3f offset;
-		} fcruve;
-
-		struct
-		{
-			float distance;
-		} view_offset;
-
-	} translation_values;
+	InstanceTranslationState translation_values;
 
 	union
 	{
@@ -425,8 +383,6 @@ private:
 		@brief	行列の更新
 	*/
 	void CalculateParentMatrix(float deltaFrame);
-
-	void ApplyDynamicParameterToFixedLocation();
 
 	void ApplyDynamicParameterToFixedRotation();
 
