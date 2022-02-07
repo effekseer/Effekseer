@@ -130,6 +130,7 @@ public:
 
 			if (src_size > 0 && static_cast<int>(srci - srci0) >= src_size)
 			{
+				i++;
 				break;
 			}
 		}
@@ -139,7 +140,7 @@ public:
 
 	static std::u16string ConvertUtf8ToUtf16(const std::string& str)
 	{
-		const auto requiredBufferSize = str.size() * 2;
+		const auto requiredBufferSize = str.size() * 2 + 1;
 
 		if (requiredBufferSize < 1024)
 		{
@@ -158,7 +159,7 @@ public:
 
 	static std::string ConvertUtf16ToUtf8(const std::u16string& str)
 	{
-		const auto requiredBufferSize = str.size() * 4;
+		const auto requiredBufferSize = str.size() * 8 + 1;
 
 		if (requiredBufferSize < 1024)
 		{
