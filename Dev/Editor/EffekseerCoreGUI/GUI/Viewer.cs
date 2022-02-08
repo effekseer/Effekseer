@@ -8,6 +8,13 @@ namespace Effekseer.GUI
 	public class Viewer : IDisposable
 	{
 		public swig.Native native = null;
+
+
+		swig.GraphicsDevice graphicsDevice;
+		public swig.SoundDevice soundDevice;
+		swig.EffectSetting effectSetting;
+
+
 		public swig.Effect CurrentEffect { get; private set; }
 		swig.EffectFactory effectFactory;
 
@@ -72,6 +79,24 @@ namespace Effekseer.GUI
 			{
 				effectFactory.Dispose();
 				effectFactory = null;
+			}
+
+			if(graphicsDevice != null)
+			{
+				graphicsDevice.Dispose();
+				graphicsDevice = null;
+			}
+
+			if (soundDevice != null)
+			{
+				soundDevice.Dispose();
+				soundDevice = null;
+			}
+
+			if (effectSetting != null)
+			{
+				effectSetting.Dispose();
+				effectSetting = null;
 			}
 		}
 
@@ -409,12 +434,11 @@ namespace Effekseer.GUI
 
 			ViewPointController.ProjectionStyle = deviceType == swig.DeviceType.OpenGL ? swig.ProjectionMatrixStyle.OpenGLStyle : swig.ProjectionMatrixStyle.DirectXStyle;
 
-			if (native.CreateWindow_Effekseer(
-				handle, 
-				width <= 0 ? 1 : width,
-				height <= 0 ? 1 : height,
-				Core.Option.ColorSpace.Value == Data.OptionValues.ColorSpaceType.LinearSpace,
-				deviceType))
+			graphicsDevice = swig.GraphicsDevice.Create(handle, width, height, Core.Option.ColorSpace.Value == Data.OptionValues.ColorSpaceType.LinearSpace, deviceType);
+			soundDevice = swig.SoundDevice.Create();
+			effectSetting = swig.EffectSetting.Create(graphicsDevice, soundDevice);
+
+			if (native.CreateWindow_Effekseer(graphicsDevice, soundDevice, effectSetting))
 			{
 				isViewerShown = true;
 			}

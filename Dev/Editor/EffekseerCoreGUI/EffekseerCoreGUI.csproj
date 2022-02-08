@@ -190,11 +190,13 @@
     <Compile Include="swig\Effect.cs" />
     <Compile Include="swig\EffectFactory.cs" />
     <Compile Include="swig\EffectRecorder.cs" />
+    <Compile Include="swig\EffectSetting.cs" />
     <Compile Include="swig\EffekseerNative.cs" />
     <Compile Include="swig\EffekseerNativePINVOKE.cs" />
     <Compile Include="swig\FCurveEdgeType.cs" />
     <Compile Include="swig\FCurveInterporationType.cs" />
     <Compile Include="swig\FileDialog.cs" />
+    <Compile Include="swig\GraphicsDevice.cs" />
     <Compile Include="swig\GUIManager.cs" />
     <Compile Include="swig\GUIManagerCallback.cs" />
     <Compile Include="swig\Image.cs" />
@@ -204,6 +206,7 @@
     <Compile Include="swig\IO.cs" />
     <Compile Include="swig\IOCallback.cs" />
     <Compile Include="swig\Key.cs" />
+    <Compile Include="swig\Logger.cs" />
     <Compile Include="swig\MainWindow.cs" />
     <Compile Include="swig\MainWindowState.cs" />
     <Compile Include="swig\MouseCursor.cs" />
@@ -218,6 +221,7 @@
     <Compile Include="swig\RenderImage.cs" />
     <Compile Include="swig\RenderingMethodType.cs" />
     <Compile Include="swig\SelectableFlags.cs" />
+    <Compile Include="swig\SoundDevice.cs" />
     <Compile Include="swig\StaticFile.cs" />
     <Compile Include="swig\StaticFileType.cs" />
     <Compile Include="swig\SystemLanguage.cs" />

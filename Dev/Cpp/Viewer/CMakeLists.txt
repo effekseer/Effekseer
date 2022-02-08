@@ -35,6 +35,7 @@ FILE(GLOB cpps
 list(APPEND cpps
     3D/Effect.cpp
     3D/EffectFactory.cpp
+    3D/EffectSetting.cpp
     3D/FileInterface.cpp
     3D/ViewPointController.cpp
     RenderedEffectGenerator.cpp
@@ -43,6 +44,7 @@ list(APPEND cpps
     Graphics/ImageRenderer.cpp
     Graphics/PostProcess.cpp
     Graphics/PostEffects.cpp
+    Graphics/GraphicsDevice.cpp
     GUI/Image.cpp
     GUI/ReloadableImage.cpp
     GUI/RenderImage.cpp
@@ -51,11 +53,14 @@ list(APPEND cpps
     Recorder/AVIExporter.cpp
     Recorder/GifHelper.cpp
     Recorder/PNGHelper.cpp
+    Sound/SoundDevice.cpp
+    Utils/Logger.cpp
 )
 
 list(APPEND hs
     3D/Effect.h
     3D/EffectFactory.h
+    3D/EffectSetting.h
     3D/FileInterface.h
     3D/ViewPointController.h
     RenderedEffectGenerator.h
@@ -64,6 +69,7 @@ list(APPEND hs
     Graphics/ImageRenderer.h
     Graphics/PostProcess.h
     Graphics/PostEffects.h
+    Graphics/GraphicsDevice.h
     GUI/Image.h
     GUI/ReloadableImage.h
     GUI/RenderImage.h
@@ -71,6 +77,8 @@ list(APPEND hs
     Math/Vector2I.h
     Math/Vector3F.h
     Recorder/EffectRecorder.h
+    Sound/SoundDevice.h
+    Utils/Logger.h
 )
 
 # OS Dependency

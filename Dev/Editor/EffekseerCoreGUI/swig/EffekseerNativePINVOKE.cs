@@ -609,6 +609,27 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_Vector3F___")]
   public static extern void delete_Vector3F(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GraphicsDevice_Create___")]
+  public static extern global::System.IntPtr GraphicsDevice_Create(System.IntPtr jarg1, int jarg2, int jarg3, bool jarg4, int jarg5);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_GraphicsDevice___")]
+  public static extern global::System.IntPtr new_GraphicsDevice();
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_GraphicsDevice___")]
+  public static extern void delete_GraphicsDevice(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_SoundDevice___")]
+  public static extern global::System.IntPtr new_SoundDevice();
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_SoundDevice___")]
+  public static extern void delete_SoundDevice(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_SoundDevice_SetListener___")]
+  public static extern void SoundDevice_SetListener(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2, global::System.Runtime.InteropServices.HandleRef jarg3, global::System.Runtime.InteropServices.HandleRef jarg4);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_SoundDevice_Create___")]
+  public static extern global::System.IntPtr SoundDevice_Create();
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Ray_Origin_set___")]
   public static extern void Ray_Origin_set(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
 
@@ -717,6 +738,15 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_Effect___")]
   public static extern void delete_Effect(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectSetting_Create___")]
+  public static extern global::System.IntPtr EffectSetting_Create(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_EffectSetting___")]
+  public static extern global::System.IntPtr new_EffectSetting();
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_EffectSetting___")]
+  public static extern void delete_EffectSetting(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_EffectFactory___")]
   public static extern global::System.IntPtr new_EffectFactory(global::System.Runtime.InteropServices.HandleRef jarg1);
 
@@ -746,6 +776,15 @@ class EffekseerNativePINVOKE {
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_NetworkClient___")]
   public static extern void delete_NetworkClient(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Logger_SetFileLogger___")]
+  public static extern void Logger_SetFileLogger([global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_Logger___")]
+  public static extern global::System.IntPtr new_Logger();
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_Logger___")]
+  public static extern void delete_Logger(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_GuideWidth_set___")]
   public static extern void ViewerParamater_GuideWidth_set(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
@@ -820,7 +859,7 @@ class EffekseerNativePINVOKE {
   public static extern void delete_Native(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_CreateWindow_Effekseer___")]
-  public static extern bool Native_CreateWindow_Effekseer(global::System.Runtime.InteropServices.HandleRef jarg1, System.IntPtr jarg2, int jarg3, int jarg4, bool jarg5, int jarg6);
+  public static extern bool Native_CreateWindow_Effekseer(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2, global::System.Runtime.InteropServices.HandleRef jarg3, global::System.Runtime.InteropServices.HandleRef jarg4);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_UpdateWindow___")]
   public static extern bool Native_UpdateWindow(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
@@ -947,9 +986,6 @@ class EffekseerNativePINVOKE {
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_CreateRenderImage___")]
   public static extern global::System.IntPtr Native_CreateRenderImage(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_SetFileLogger___")]
-  public static extern void Native_SetFileLogger([global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_GUIManagerCallback___")]
   public static extern global::System.IntPtr new_GUIManagerCallback();

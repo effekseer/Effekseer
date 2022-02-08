@@ -646,6 +646,14 @@ namespace Effekseer.GUI
 
 			Viewer.UpdateViewer();
 
+			{
+				var ray = Viewer.ViewPointController.GetCameraRay();
+				var rayOrigin = ray.Origin;
+				var rayDirection = ray.Direction;
+				var rayPos = new swig.Vector3F(rayOrigin.X + rayDirection.X, rayOrigin.Y + rayDirection.Y, rayOrigin.Z + rayDirection.Z);
+				Viewer.soundDevice.SetListener(ray.Origin, rayPos, new Vector3F(0, 1, 0));
+			}
+
 			Native.UpdateWindow(Viewer.ViewPointController);
 
 			Native.ClearWindow(50, 50, 50, 0);

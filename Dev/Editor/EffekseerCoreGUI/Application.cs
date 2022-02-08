@@ -85,7 +85,7 @@ namespace Effekseer
 #endif
 			if (System.IO.File.Exists(Path.Combine(EntryDirectory, "debug.txt")) || isDebugMode)
 			{
-				swig.Native.SetFileLogger(Path.Combine(GUI.Manager.GetEntryDirectory(), "Effekseer.log.txt"));
+				swig.Logger.SetFileLogger(Path.Combine(GUI.Manager.GetEntryDirectory(), "Effekseer.log.txt"));
 				Utils.Logger.LogPath = Path.Combine(GUI.Manager.GetEntryDirectory(), "Effekseer.Managed.log.txt");
 			}
 

@@ -30,7 +30,7 @@
 #include "GUI/RenderImage.h"
 
 #include "3D/Effect.h"
-#include "3D/FileInterface.h"
+#include "3D/EffectSetting.h"
 
 ViewerParamater::ViewerParamater()
 	: GuideWidth(0)
@@ -47,10 +47,6 @@ ViewerParamater::ViewerParamater()
 	, RenderingMode(Effekseer::Tool::RenderingMethodType::Normal)
 {
 }
-
-static ::EffekseerTool::Sound* sound_ = nullptr;
-
-static efk::DeviceType g_deviceType = efk::DeviceType::OpenGL;
 
 Native::Native()
 {
@@ -74,73 +70,22 @@ Native::~Native()
 	spdlog::trace("End Native::~Native()");
 }
 
-bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool isSRGBMode, efk::DeviceType deviceType)
+bool Native::CreateWindow_Effekseer(
+	std::shared_ptr<Effekseer::Tool::GraphicsDevice> graphicsDevice,
+	std::shared_ptr<Effekseer::Tool::SoundDevice> soundDevice,
+	std::shared_ptr<Effekseer::Tool::EffectSetting> effectSetting)
 {
 	spdlog::trace("Begin Native::CreateWindow_Effekseer");
-	g_deviceType = deviceType;
 
 	// because internal buffer is 16bit
 	int32_t spriteCount = 65000 / 4;
 
-	if (deviceType == efk::DeviceType::OpenGL)
-	{
-		graphics_ = std::make_shared<efk::GraphicsGL>();
-	}
-#ifdef _WIN32
-	else if (deviceType == efk::DeviceType::DirectX11)
-	{
-		graphics_ = std::make_shared<efk::GraphicsDX11>();
-	}
-	else
-	{
-		assert(0);
-	}
-#endif
-
-	auto fileInterface = Effekseer::MakeRefPtr<Effekseer::Tool::EffekseerFile>();
-
-	spdlog::trace("OK new ::efk::Graphics");
-
-	if (!graphics_->Initialize(pHandle, width, height))
-	{
-		spdlog::trace("Graphics::Initialize(false)");
-		graphics_.reset();
-		return false;
-	}
+	graphics_ = graphicsDevice->GetGraphics();
+	setting_ = effectSetting->GetSetting();
 
 	{
-		spdlog::trace("OK : ::EffekseerTool::Renderer::Initialize");
-
-		//manager_ = ::Effekseer::Manager::Create(spriteCount);
-		spdlog::trace("OK : ::Effekseer::Manager::Create");
-
-		{
-			spdlog::trace("OK : SetRenderers");
-
-			{
-				setting_ = Effekseer::Setting::Create();
-
-				auto textureLoader = EffekseerRenderer::CreateTextureLoader(
-					graphics_->GetGraphicsDevice(),
-					fileInterface,
-					isSRGBMode ? ::Effekseer::ColorSpaceType::Linear : ::Effekseer::ColorSpaceType::Gamma);
-
-				setting_->SetTextureLoader(textureLoader);
-
-				auto modelLoader = EffekseerRenderer::CreateModelLoader(graphics_->GetGraphicsDevice(), fileInterface);
-
-				setting_->SetModelLoader(modelLoader);
-
-				setting_->SetCurveLoader(Effekseer::CurveLoaderRef(new ::Effekseer::CurveLoader(fileInterface)));
-			}
-
-			spdlog::trace("OK : SetLoaders");
-		}
-
-		spdlog::trace("OK : AssignFunctions");
-
 		mainScreen_ = std::make_shared<EffekseerTool::MainScreenRenderedEffectGenerator>();
-		if (!mainScreen_->Initialize(graphics_, setting_, spriteCount, isSRGBMode))
+		if (!mainScreen_->Initialize(graphics_, setting_, spriteCount, graphicsDevice->GetIsSRGBMode()))
 		{
 			graphics_.reset();
 			spdlog::trace("End Native::CreateWindow_Effekseer (false)");
@@ -157,14 +102,10 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 		}
 	}
 
-	sound_ = new ::EffekseerTool::Sound();
-	if (sound_->Initialize())
+	if (soundDevice != nullptr)
 	{
-		mainScreen_->GetMamanager()->SetSoundPlayer(sound_->GetSound()->CreateSoundPlayer());
-		setting_->SetSoundLoader(sound_->GetSound()->CreateSoundLoader(fileInterface));
+		mainScreen_->GetMamanager()->SetSoundPlayer(soundDevice->GetSound()->CreateSoundPlayer());
 	}
-
-	setting_->SetMaterialLoader(mainScreen_->GetRenderer()->CreateMaterialLoader(fileInterface));
 
 	spdlog::trace("End Native::CreateWindow_Effekseer (true)");
 
@@ -178,11 +119,6 @@ void Native::ClearWindow(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 
 bool Native::UpdateWindow(std::shared_ptr<Effekseer::Tool::ViewPointController> viewPointCtrl)
 {
-	const auto ray = viewPointCtrl->GetCameraRay();
-
-	sound_->SetListener(ray.Origin, ray.Origin + ray.Direction, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f));
-
-	// command
 	if (commandQueueFromMaterialEditor_ != nullptr)
 	{
 		IPC::CommandData commandDataFromMaterialEditor;
@@ -478,7 +414,7 @@ int32_t Native::GetInstanceCount()
 
 float Native::GetFPS()
 {
-	return 60.0;
+	return 60.0f;
 }
 
 bool Native::IsDebugMode()
@@ -562,30 +498,4 @@ std::shared_ptr<Effekseer::Tool::ReloadableImage> Native::CreateReloadableImage(
 std::shared_ptr<Effekseer::Tool::RenderImage> Native::CreateRenderImage()
 {
 	return std::make_shared<Effekseer::Tool::RenderImage>(graphics_->GetGraphicsDevice());
-}
-
-void Native::SetFileLogger(const char16_t* path)
-{
-	spdlog::flush_on(spdlog::level::trace);
-	spdlog::set_level(spdlog::level::trace);
-	spdlog::trace("Begin Native::SetFileLogger");
-
-#if defined(_WIN32)
-	auto wpath = std::filesystem::path(reinterpret_cast<const wchar_t*>(path));
-	auto fileLogger = spdlog::basic_logger_mt("logger", wpath.generic_string().c_str());
-#else
-	char cpath[512];
-	Effekseer::ConvertUtf16ToUtf8(cpath, 512, path);
-	auto fileLogger = spdlog::basic_logger_mt("logger", cpath);
-#endif
-
-	spdlog::set_default_logger(fileLogger);
-
-#if defined(_WIN32)
-	spdlog::trace("Native::SetFileLogger : {}", wpath.generic_string().c_str());
-#else
-	spdlog::trace("Native::SetFileLogger : {}", cpath);
-#endif
-
-	spdlog::trace("End Native::SetFileLogger");
 }
