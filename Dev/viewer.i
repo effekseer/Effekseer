@@ -5,6 +5,7 @@
 #include "Recorder/EffectRecorder.h"
 #include "3D/ViewPointController.h"
 #include "3D/Effect.h"
+#include "3D/EffectSetting.h"
 #include "3D/EffectFactory.h"
 #include "Network/Network.h"
 #include "dll.h"
@@ -13,6 +14,7 @@
 #include "GUI/Image.h"
 #include "GUI/ReloadableImage.h"
 #include "GUI/RenderImage.h"
+#include "Utils/Logger.h"
 #include "CompiledMaterialGenerator.h"
 #include "../EditorCommon/Platform/PlatformMisc.h"
 #include "../EditorCommon/GUI/MainWindow.h"
@@ -108,6 +110,9 @@ class"
 %shared_ptr(Effekseer::Tool::ViewPointController);
 %shared_ptr(Effekseer::Tool::Effect);
 %shared_ptr(Effekseer::Tool::EffectFactory);
+%shared_ptr(Effekseer::Tool::EffectSetting);
+%shared_ptr(Effekseer::Tool::GraphicsDevice);
+%shared_ptr(Effekseer::Tool::SoundDevice);
 
 // Timeline
 %apply int *INOUT { int* frameMin }
@@ -127,11 +132,18 @@ class"
 
 %include "Cpp/Viewer/Math/Vector2I.h"
 %include "Cpp/Viewer/Math/Vector3F.h"
+
+%include "Cpp/Viewer/Graphics/GraphicsDevice.h"
+%include "Cpp/Viewer/Sound/SoundDevice.h"
+
 %include "Cpp/Viewer/3D/ViewPointController.h"
 %include "Cpp/Viewer/3D/Effect.h"
+%include "Cpp/Viewer/3D/EffectSetting.h"
 %include "Cpp/Viewer/3D/EffectFactory.h"
 
 %include "Cpp/Viewer/Network/Network.h"
+
+%include "Cpp/Viewer/Utils/Logger.h"
 
 %include "Cpp/Viewer/dll.h"
 %include "Cpp/Viewer/GUI/efk.GUIManager.h"

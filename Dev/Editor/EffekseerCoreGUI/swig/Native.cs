@@ -47,8 +47,8 @@ public class Native : global::System.IDisposable {
   public Native() : this(EffekseerNativePINVOKE.new_Native(), true) {
   }
 
-  public bool CreateWindow_Effekseer(System.IntPtr handle, int width, int height, bool isSRGBMode, DeviceType deviceType) {
-    bool ret = EffekseerNativePINVOKE.Native_CreateWindow_Effekseer(swigCPtr, handle, width, height, isSRGBMode, (int)deviceType);
+  public bool CreateWindow_Effekseer(GraphicsDevice graphicsDevice, SoundDevice soundDevice, EffectSetting effectSetting) {
+    bool ret = EffekseerNativePINVOKE.Native_CreateWindow_Effekseer(swigCPtr, GraphicsDevice.getCPtr(graphicsDevice), SoundDevice.getCPtr(soundDevice), EffectSetting.getCPtr(effectSetting));
     return ret;
   }
 
@@ -245,10 +245,6 @@ public class Native : global::System.IDisposable {
     global::System.IntPtr cPtr = EffekseerNativePINVOKE.Native_CreateRenderImage(swigCPtr);
     RenderImage ret = (cPtr == global::System.IntPtr.Zero) ? null : new RenderImage(cPtr, true);
     return ret;
-  }
-
-  public static void SetFileLogger(string path) {
-    EffekseerNativePINVOKE.Native_SetFileLogger(path);
   }
 
 }

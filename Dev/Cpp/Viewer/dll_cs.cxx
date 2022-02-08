@@ -382,6 +382,7 @@ namespace Swig {
 #include "Recorder/EffectRecorder.h"
 #include "3D/ViewPointController.h"
 #include "3D/Effect.h"
+#include "3D/EffectSetting.h"
 #include "3D/EffectFactory.h"
 #include "Network/Network.h"
 #include "dll.h"
@@ -390,6 +391,7 @@ namespace Swig {
 #include "GUI/Image.h"
 #include "GUI/ReloadableImage.h"
 #include "GUI/RenderImage.h"
+#include "Utils/Logger.h"
 #include "CompiledMaterialGenerator.h"
 #include "../EditorCommon/Platform/PlatformMisc.h"
 #include "../EditorCommon/GUI/MainWindow.h"
@@ -2014,6 +2016,113 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_Vector3F___(void * jarg
 }
 
 
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_GraphicsDevice_Create___(void * jarg1, int jarg2, int jarg3, unsigned int jarg4, int jarg5) {
+  void * jresult ;
+  void *arg1 = (void *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  bool arg4 ;
+  efk::DeviceType arg5 ;
+  std::shared_ptr< Effekseer::Tool::GraphicsDevice > result;
+  
+  {
+    arg1 = jarg1; 
+  }
+  arg2 = (int)jarg2; 
+  arg3 = (int)jarg3; 
+  arg4 = jarg4 ? true : false; 
+  arg5 = (efk::DeviceType)jarg5; 
+  result = Effekseer::Tool::GraphicsDevice::Create(arg1,arg2,arg3,arg4,arg5);
+  jresult = result ? new std::shared_ptr< Effekseer::Tool::GraphicsDevice >(result) : 0; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_GraphicsDevice___() {
+  void * jresult ;
+  Effekseer::Tool::GraphicsDevice *result = 0 ;
+  
+  result = (Effekseer::Tool::GraphicsDevice *)new Effekseer::Tool::GraphicsDevice();
+  
+  jresult = result ? new std::shared_ptr<  Effekseer::Tool::GraphicsDevice >(result SWIG_NO_NULL_DELETER_1) : 0;
+  
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_GraphicsDevice___(void * jarg1) {
+  Effekseer::Tool::GraphicsDevice *arg1 = (Effekseer::Tool::GraphicsDevice *) 0 ;
+  std::shared_ptr< Effekseer::Tool::GraphicsDevice > *smartarg1 = 0 ;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::Tool::GraphicsDevice > *)jarg1;
+  arg1 = (Effekseer::Tool::GraphicsDevice *)(smartarg1 ? smartarg1->get() : 0); 
+  (void)arg1; delete smartarg1;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_SoundDevice___() {
+  void * jresult ;
+  Effekseer::Tool::SoundDevice *result = 0 ;
+  
+  result = (Effekseer::Tool::SoundDevice *)new Effekseer::Tool::SoundDevice();
+  
+  jresult = result ? new std::shared_ptr<  Effekseer::Tool::SoundDevice >(result SWIG_NO_NULL_DELETER_1) : 0;
+  
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_SoundDevice___(void * jarg1) {
+  Effekseer::Tool::SoundDevice *arg1 = (Effekseer::Tool::SoundDevice *) 0 ;
+  std::shared_ptr< Effekseer::Tool::SoundDevice > *smartarg1 = 0 ;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::Tool::SoundDevice > *)jarg1;
+  arg1 = (Effekseer::Tool::SoundDevice *)(smartarg1 ? smartarg1->get() : 0); 
+  (void)arg1; delete smartarg1;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_SoundDevice_SetListener___(void * jarg1, void * jarg2, void * jarg3, void * jarg4) {
+  Effekseer::Tool::SoundDevice *arg1 = (Effekseer::Tool::SoundDevice *) 0 ;
+  Effekseer::Tool::Vector3F *arg2 = 0 ;
+  Effekseer::Tool::Vector3F *arg3 = 0 ;
+  Effekseer::Tool::Vector3F *arg4 = 0 ;
+  std::shared_ptr< Effekseer::Tool::SoundDevice > *smartarg1 = 0 ;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::Tool::SoundDevice > *)jarg1;
+  arg1 = (Effekseer::Tool::SoundDevice *)(smartarg1 ? smartarg1->get() : 0); 
+  arg2 = (Effekseer::Tool::Vector3F *)jarg2;
+  if (!arg2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Effekseer::Tool::Vector3F const & type is null", 0);
+    return ;
+  } 
+  arg3 = (Effekseer::Tool::Vector3F *)jarg3;
+  if (!arg3) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Effekseer::Tool::Vector3F const & type is null", 0);
+    return ;
+  } 
+  arg4 = (Effekseer::Tool::Vector3F *)jarg4;
+  if (!arg4) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Effekseer::Tool::Vector3F const & type is null", 0);
+    return ;
+  } 
+  (arg1)->SetListener((Effekseer::Tool::Vector3F const &)*arg2,(Effekseer::Tool::Vector3F const &)*arg3,(Effekseer::Tool::Vector3F const &)*arg4);
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_SoundDevice_Create___() {
+  void * jresult ;
+  std::shared_ptr< Effekseer::Tool::SoundDevice > result;
+  
+  result = Effekseer::Tool::SoundDevice::Create();
+  jresult = result ? new std::shared_ptr< Effekseer::Tool::SoundDevice >(result) : 0; 
+  return jresult;
+}
+
+
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Ray_Origin_set___(void * jarg1, void * jarg2) {
   Effekseer::Tool::Ray *arg1 = (Effekseer::Tool::Ray *) 0 ;
   Effekseer::Tool::Vector3F *arg2 = (Effekseer::Tool::Vector3F *) 0 ;
@@ -2516,6 +2625,43 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_Effect___(void * jarg1)
 }
 
 
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_EffectSetting_Create___(void * jarg1, void * jarg2) {
+  void * jresult ;
+  std::shared_ptr< Effekseer::Tool::GraphicsDevice > arg1 ;
+  std::shared_ptr< Effekseer::Tool::SoundDevice > arg2 ;
+  std::shared_ptr< Effekseer::Tool::EffectSetting > result;
+  
+  if (jarg1) arg1 = *(std::shared_ptr< Effekseer::Tool::GraphicsDevice > *)jarg1; 
+  if (jarg2) arg2 = *(std::shared_ptr< Effekseer::Tool::SoundDevice > *)jarg2; 
+  result = Effekseer::Tool::EffectSetting::Create(arg1,arg2);
+  jresult = result ? new std::shared_ptr< Effekseer::Tool::EffectSetting >(result) : 0; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_EffectSetting___() {
+  void * jresult ;
+  Effekseer::Tool::EffectSetting *result = 0 ;
+  
+  result = (Effekseer::Tool::EffectSetting *)new Effekseer::Tool::EffectSetting();
+  
+  jresult = result ? new std::shared_ptr<  Effekseer::Tool::EffectSetting >(result SWIG_NO_NULL_DELETER_1) : 0;
+  
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_EffectSetting___(void * jarg1) {
+  Effekseer::Tool::EffectSetting *arg1 = (Effekseer::Tool::EffectSetting *) 0 ;
+  std::shared_ptr< Effekseer::Tool::EffectSetting > *smartarg1 = 0 ;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::Tool::EffectSetting > *)jarg1;
+  arg1 = (Effekseer::Tool::EffectSetting *)(smartarg1 ? smartarg1->get() : 0); 
+  (void)arg1; delete smartarg1;
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_EffectFactory___(void * jarg1) {
   void * jresult ;
   Native *arg1 = (Native *) 0 ;
@@ -2643,6 +2789,32 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_NetworkClient___(void *
   Effekseer::Tool::NetworkClient *arg1 = (Effekseer::Tool::NetworkClient *) 0 ;
   
   arg1 = (Effekseer::Tool::NetworkClient *)jarg1; 
+  delete arg1;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Logger_SetFileLogger___(void * jarg1) {
+  char16_t *arg1 = (char16_t *) 0 ;
+  
+  arg1 = (char16_t *)jarg1; 
+  Effekseer::Tool::Logger::SetFileLogger((char16_t const *)arg1);
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_Logger___() {
+  void * jresult ;
+  Effekseer::Tool::Logger *result = 0 ;
+  
+  result = (Effekseer::Tool::Logger *)new Effekseer::Tool::Logger();
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_Logger___(void * jarg1) {
+  Effekseer::Tool::Logger *arg1 = (Effekseer::Tool::Logger *) 0 ;
+  
+  arg1 = (Effekseer::Tool::Logger *)jarg1; 
   delete arg1;
 }
 
@@ -2903,25 +3075,19 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_Native___(void * jarg1)
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_CreateWindow_Effekseer___(void * jarg1, void * jarg2, int jarg3, int jarg4, unsigned int jarg5, int jarg6) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_CreateWindow_Effekseer___(void * jarg1, void * jarg2, void * jarg3, void * jarg4) {
   unsigned int jresult ;
   Native *arg1 = (Native *) 0 ;
-  void *arg2 = (void *) 0 ;
-  int arg3 ;
-  int arg4 ;
-  bool arg5 ;
-  efk::DeviceType arg6 ;
+  std::shared_ptr< Effekseer::Tool::GraphicsDevice > arg2 ;
+  std::shared_ptr< Effekseer::Tool::SoundDevice > arg3 ;
+  std::shared_ptr< Effekseer::Tool::EffectSetting > arg4 ;
   bool result;
   
   arg1 = (Native *)jarg1; 
-  {
-    arg2 = jarg2; 
-  }
-  arg3 = (int)jarg3; 
-  arg4 = (int)jarg4; 
-  arg5 = jarg5 ? true : false; 
-  arg6 = (efk::DeviceType)jarg6; 
-  result = (bool)(arg1)->CreateWindow_Effekseer(arg2,arg3,arg4,arg5,arg6);
+  if (jarg2) arg2 = *(std::shared_ptr< Effekseer::Tool::GraphicsDevice > *)jarg2; 
+  if (jarg3) arg3 = *(std::shared_ptr< Effekseer::Tool::SoundDevice > *)jarg3; 
+  if (jarg4) arg4 = *(std::shared_ptr< Effekseer::Tool::EffectSetting > *)jarg4; 
+  result = (bool)(arg1)->CreateWindow_Effekseer(arg2,arg3,arg4);
   jresult = result; 
   return jresult;
 }
@@ -3474,14 +3640,6 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_Native_CreateRenderImage___(
   result = (arg1)->CreateRenderImage();
   jresult = result ? new std::shared_ptr< Effekseer::Tool::RenderImage >(result) : 0; 
   return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_SetFileLogger___(void * jarg1) {
-  char16_t *arg1 = (char16_t *) 0 ;
-  
-  arg1 = (char16_t *)jarg1; 
-  Native::SetFileLogger((char16_t const *)arg1);
 }
 
 

@@ -19,6 +19,9 @@
 #include "ViewerEffectBehavior.h"
 #include "efk.Base.h"
 
+#include "Graphics/GraphicsDevice.h"
+#include "Sound/SoundDevice.h"
+
 namespace Effekseer
 {
 namespace Tool
@@ -27,14 +30,11 @@ class ReloadableImage;
 class RenderImage;
 class EffectRecorder;
 class Effect;
+class EffectSetting;
+class GraphicsDevice;
+class SoundDevice;
 } // namespace Tool
 } // namespace Effekseer
-
-enum class ViewMode
-{
-	_3D,
-	_2D,
-};
 
 class ViewerParamater
 {
@@ -78,7 +78,10 @@ public:
 
 	~Native();
 
-	bool CreateWindow_Effekseer(void* handle, int width, int height, bool isSRGBMode, efk::DeviceType deviceType);
+	bool CreateWindow_Effekseer(
+		std::shared_ptr<Effekseer::Tool::GraphicsDevice> graphicsDevice,
+		std::shared_ptr<Effekseer::Tool::SoundDevice> soundDevice,
+		std::shared_ptr<Effekseer::Tool::EffectSetting> effectSetting);
 
 	bool UpdateWindow(std::shared_ptr<Effekseer::Tool::ViewPointController> viewPointCtrl);
 
@@ -163,8 +166,6 @@ public:
 	std::shared_ptr<Effekseer::Tool::ReloadableImage> CreateReloadableImage(const char16_t* path);
 
 	std::shared_ptr<Effekseer::Tool::RenderImage> CreateRenderImage();
-
-	static void SetFileLogger(const char16_t* path);
 
 #if !SWIG
 	Effekseer::SettingRef GetSetting()
