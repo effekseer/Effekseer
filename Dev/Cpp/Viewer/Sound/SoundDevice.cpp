@@ -29,20 +29,20 @@ std::shared_ptr<SoundDevice> SoundDevice::Create()
 	auto manager = osm::Manager::Create();
 	if (manager == nullptr)
 	{
-		return false;
+		return nullptr;
 	}
 
 	if (!manager->Initialize())
 	{
 		manager->Release();
-		return false;
+		return nullptr;
 	}
 
 	auto sound = EffekseerSound::Sound::Create(manager);
 	if (sound == nullptr)
 	{
 		manager->Release();
-		return false;
+		return nullptr;
 	}
 
 	// EffekseeSound doesn't increament ref counter
