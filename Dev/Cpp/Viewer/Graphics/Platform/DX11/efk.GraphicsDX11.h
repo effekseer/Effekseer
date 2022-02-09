@@ -69,9 +69,9 @@ public:
 
 	ID3D11DeviceContext* GetContext() const;
 
-	DeviceType GetDeviceType() const override
+	Effekseer::Tool::DeviceType GetDeviceType() const override
 	{
-		return DeviceType::DirectX11;
+		return Effekseer::Tool::DeviceType::DirectX11;
 	}
 
 	Effekseer::RefPtr<Effekseer::Backend::GraphicsDevice> GetGraphicsDevice() override

@@ -26,4 +26,9 @@ void RenderImage::Resize(int32_t width, int32_t height)
 	texture_ = graphicsDevice_->CreateTexture(param);
 }
 
+std::shared_ptr<Effekseer::Tool::RenderImage> RenderImage::Create(std::shared_ptr<GraphicsDevice> graphicsDevice)
+{
+	return std::make_shared<Effekseer::Tool::RenderImage>(graphicsDevice->GetGraphics()->GetGraphicsDevice());
+}
+
 } // namespace Effekseer::Tool

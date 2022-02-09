@@ -55,6 +55,7 @@ list(APPEND cpps
     Recorder/PNGHelper.cpp
     Sound/SoundDevice.cpp
     Utils/Logger.cpp
+    ProcessConnector.cpp
 )
 
 list(APPEND hs
@@ -79,6 +80,7 @@ list(APPEND hs
     Recorder/EffectRecorder.h
     Sound/SoundDevice.h
     Utils/Logger.h
+    ProcessConnector.h
 )
 
 # OS Dependency

@@ -40,13 +40,13 @@ std::shared_ptr<EffectSetting> EffectSetting::Create(std::shared_ptr<Effekseer::
 		setting->SetSoundLoader(soundDevice->GetSound()->CreateSoundLoader(fileInterface));
 	}
 
-	if (graphicsDevice->GetDeviceType() == efk::DeviceType::DirectX11)
+	if (graphicsDevice->GetDeviceType() == DeviceType::DirectX11)
 	{
 #ifdef _WIN32
 		setting->SetMaterialLoader(EffekseerRendererDX11::CreateMaterialLoader(gd, fileInterface));
 #endif
 	}
-	else if (graphicsDevice->GetDeviceType() == efk::DeviceType::OpenGL)
+	else if (graphicsDevice->GetDeviceType() == DeviceType::OpenGL)
 	{
 		setting->SetMaterialLoader(EffekseerRendererGL::CreateMaterialLoader(gd, fileInterface));
 	}

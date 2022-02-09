@@ -398,7 +398,7 @@ private:
 	GUIManagerCallback* callback = nullptr;
 	efk::Window* window = nullptr;
 	std::shared_ptr<Effekseer::MainWindow> mainWindow_;
-	efk::DeviceType deviceType;
+	Effekseer::Tool::DeviceType deviceType;
 	std::u16string clipboard;
 	ImGuiID imguiWindowID;
 
@@ -413,7 +413,7 @@ public:
 
 	virtual ~GUIManager();
 
-	bool Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, efk::DeviceType deviceType);
+	bool Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, Effekseer::Tool::DeviceType deviceType);
 
 	void InitializeGUI(Native* native);
 

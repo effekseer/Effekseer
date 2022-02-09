@@ -11,7 +11,7 @@
 namespace Effekseer::Tool
 {
 
-bool GraphicsDevice::Initialize(void* handle, int width, int height, bool isSRGBMode, efk::DeviceType deviceType)
+bool GraphicsDevice::Initialize(void* handle, int width, int height, bool isSRGBMode, Effekseer::Tool::DeviceType deviceType)
 {
 	spdlog::trace("GraphicsWindow::Initialize : Begin");
 	isSRGBMode_ = isSRGBMode;
@@ -20,12 +20,12 @@ bool GraphicsDevice::Initialize(void* handle, int width, int height, bool isSRGB
 	// because internal buffer is 16bit
 	int32_t spriteCount = 65000 / 4;
 
-	if (deviceType == efk::DeviceType::OpenGL)
+	if (deviceType == Effekseer::Tool::DeviceType::OpenGL)
 	{
 		graphics_ = std::make_shared<efk::GraphicsGL>();
 	}
 #ifdef _WIN32
-	else if (deviceType == efk::DeviceType::DirectX11)
+	else if (deviceType == Effekseer::Tool::DeviceType::DirectX11)
 	{
 		graphics_ = std::make_shared<efk::GraphicsDX11>();
 	}
@@ -48,7 +48,22 @@ bool GraphicsDevice::Initialize(void* handle, int width, int height, bool isSRGB
 	return true;
 }
 
-std::shared_ptr<GraphicsDevice> GraphicsDevice::Create(void* handle, int width, int height, bool isSRGBMode, efk::DeviceType deviceType)
+void GraphicsDevice::Resize(int32_t width, int32_t height)
+{
+	graphics_->Resize(width, height);
+}
+
+void GraphicsDevice::ClearColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+{
+	graphics_->Clear({r, g, b, a});
+}
+
+void GraphicsDevice::Present()
+{
+	graphics_->Present();
+}
+
+std::shared_ptr<GraphicsDevice> GraphicsDevice::Create(void* handle, int width, int height, bool isSRGBMode, Effekseer::Tool::DeviceType deviceType)
 {
 	auto ret = std::make_shared<GraphicsDevice>();
 	if (ret->Initialize(handle, width, height, isSRGBMode, deviceType))

@@ -44,6 +44,21 @@ public class GraphicsDevice : global::System.IDisposable {
     }
   }
 
+  public void Resize(int width, int height) {
+    EffekseerNativePINVOKE.GraphicsDevice_Resize(swigCPtr, width, height);
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+  }
+
+  public void ClearColor(byte r, byte g, byte b, byte a) {
+    EffekseerNativePINVOKE.GraphicsDevice_ClearColor(swigCPtr, r, g, b, a);
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+  }
+
+  public void Present() {
+    EffekseerNativePINVOKE.GraphicsDevice_Present(swigCPtr);
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+  }
+
   public static GraphicsDevice Create(System.IntPtr handle, int width, int height, bool isSRGBMode, DeviceType deviceType) {
     global::System.IntPtr cPtr = EffekseerNativePINVOKE.GraphicsDevice_Create(handle, width, height, isSRGBMode, (int)deviceType);
     GraphicsDevice ret = (cPtr == global::System.IntPtr.Zero) ? null : new GraphicsDevice(cPtr, true);

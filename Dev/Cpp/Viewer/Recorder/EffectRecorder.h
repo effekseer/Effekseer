@@ -32,7 +32,7 @@ private:
 
 public:
 #if !SWIG
-	bool Begin(std::shared_ptr<EffekseerTool::MainScreenRenderedEffectGenerator> mainScreen,
+	bool Begin(int32_t squareMaxCount,
 			   Effekseer::Tool::RenderedEffectGeneratorConfig config,
 			   Vector2I screenSize,
 			   std::shared_ptr<efk::Graphics> graphics,
@@ -41,6 +41,7 @@ public:
 			   Effekseer::Tool::Vector2I imageSize,
 			   bool isSRGBMode,
 			   Effekseer::Tool::ViewerEffectBehavior behavior,
+			   Effekseer::Tool::PostEffectParameter postEffectParameter,
 			   Effekseer::EffectRef effect);
 #endif
 	bool Step(int frames);

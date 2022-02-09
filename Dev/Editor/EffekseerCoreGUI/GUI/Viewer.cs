@@ -10,7 +10,7 @@ namespace Effekseer.GUI
 		public swig.Native native = null;
 
 
-		swig.GraphicsDevice graphicsDevice;
+		public swig.GraphicsDevice graphicsDevice;
 		public swig.SoundDevice soundDevice;
 		swig.EffectSetting effectSetting;
 
@@ -100,12 +100,12 @@ namespace Effekseer.GUI
 			}
 		}
 
-		public bool ResizeWindow(int width, int height)
+		public void ResizeWindow(int width, int height)
 		{
 			// Hack for old GUI
-			if (!isViewerShown) return true;
+			if (!isViewerShown) return;
 
-			return native.ResizeWindow(width, height);
+			graphicsDevice.Resize(width, height);
 		}
 
 		public bool StepEffectFrame(int frame)
@@ -598,7 +598,7 @@ namespace Effekseer.GUI
 		{
 			if (isViewerShown)
 			{
-				native.Present();
+				graphicsDevice.Present();
 			}
 		}
 
@@ -887,22 +887,28 @@ namespace Effekseer.GUI
 			}
 		}
 
+		void PostEffectChanged()
+		{
+			var postEffectParam = new swig.PostEffectParameter();
+			postEffectParam.BloomEnabled = Core.Environment.PostEffect.BloomSwitch.Value == Data.EnvironmentPostEffectValues.EffectSwitch.On;
+			postEffectParam.BoomIntensity = Core.Environment.PostEffect.Bloom.Intensity.Value;
+			postEffectParam.BloomThreshold = Core.Environment.PostEffect.Bloom.Threshold.Value;
+			postEffectParam.BloomSoftKnee = Core.Environment.PostEffect.Bloom.SoftKnee.Value;
+
+			postEffectParam.ToneMapAlgorithm = (int)Core.Environment.PostEffect.TonemapSelector.Value;
+			postEffectParam.ToneMapExposure = Core.Environment.PostEffect.TonemapReinhard.Exposure.Value;
+
+			native.SetPostEffectParameter(postEffectParam);
+		}
+
 		private void Bloom_OnChanged(object sender, ChangedValueEventArgs e)
 		{
-			bool enabled = Core.Environment.PostEffect.BloomSwitch.Value == Data.EnvironmentPostEffectValues.EffectSwitch.On;
-
-			native.SetBloomParameters(enabled, 
-				Core.Environment.PostEffect.Bloom.Intensity.Value,
-				Core.Environment.PostEffect.Bloom.Threshold.Value,
-				Core.Environment.PostEffect.Bloom.SoftKnee.Value);
+			PostEffectChanged();
 		}
 		
 		private void Tonemap_OnChanged(object sender, ChangedValueEventArgs e)
 		{
-			int algorithm = (int)Core.Environment.PostEffect.TonemapSelector.Value;
-
-			native.SetTonemapParameters(algorithm, 
-				Core.Environment.PostEffect.TonemapReinhard.Exposure.Value);
+			PostEffectChanged();
 		}
 	}
 }

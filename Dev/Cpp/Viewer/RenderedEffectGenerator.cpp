@@ -310,14 +310,14 @@ bool RenderedEffectGenerator::Initialize(std::shared_ptr<efk::Graphics> graphics
 	m_isSRGBMode = isSRGBMode;
 
 #ifdef _WIN32
-	if (graphics->GetDeviceType() == efk::DeviceType::DirectX11)
+	if (graphics->GetDeviceType() == Effekseer::Tool::DeviceType::DirectX11)
 	{
 		auto g = (efk::GraphicsDX11*)graphics.get();
 		renderer_ = ::EffekseerRendererDX11::Renderer::Create(g->GetDevice(), g->GetContext(), spriteCount, D3D11_COMPARISON_LESS_EQUAL, true);
 	}
 #endif
 
-	if (graphics->GetDeviceType() == efk::DeviceType::OpenGL)
+	if (graphics->GetDeviceType() == Effekseer::Tool::DeviceType::OpenGL)
 	{
 		auto g = (efk::GraphicsGL*)graphics.get();
 		renderer_ = ::EffekseerRendererGL::Renderer::Create(spriteCount, EffekseerRendererGL::OpenGLDeviceType::OpenGL3);
@@ -502,6 +502,8 @@ bool RenderedEffectGenerator::Initialize(std::shared_ptr<efk::Graphics> graphics
 	{
 		spdlog::warn("Overdraw is not suppoted.");
 	}
+
+	SetPostEffectParameter(Effekseer::Tool::PostEffectParameter{});
 
 	return true;
 }
@@ -983,6 +985,28 @@ void RenderedEffectGenerator::CopyToBack()
 void RenderedEffectGenerator::ResetBack()
 {
 	renderer_->SetBackground(nullptr);
+}
+
+Effekseer::Tool::PostEffectParameter RenderedEffectGenerator::GetPostEffectParameter() const
+{
+	return postEffectParameter_;
+}
+
+void RenderedEffectGenerator::SetPostEffectParameter(const Effekseer::Tool::PostEffectParameter& param)
+{
+	if (bloomEffect_ != nullptr)
+	{
+		bloomEffect_->SetEnabled(param.BloomEnabled);
+		bloomEffect_->SetParameters(param.BoomIntensity, param.BloomThreshold, param.BloomSoftKnee);
+	}
+
+	if (tonemapEffect_ != nullptr)
+	{
+		tonemapEffect_->SetEnabled(param.ToneMapAlgorithm != 0);
+		tonemapEffect_->SetParameters((Effekseer::Tool::TonemapPostEffect::Algorithm)param.ToneMapAlgorithm, param.ToneMapExposure);
+	}
+
+	postEffectParameter_ = param;
 }
 
 } // namespace Tool

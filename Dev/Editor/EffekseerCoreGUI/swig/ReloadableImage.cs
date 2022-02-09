@@ -50,6 +50,12 @@ public class ReloadableImage : Image {
     if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
   }
 
+  public static ReloadableImage Create(GraphicsDevice graphicsDevice, string path) {
+    global::System.IntPtr cPtr = EffekseerNativePINVOKE.ReloadableImage_Create(GraphicsDevice.getCPtr(graphicsDevice), path);
+    ReloadableImage ret = (cPtr == global::System.IntPtr.Zero) ? null : new ReloadableImage(cPtr, true);
+    return ret;
+  }
+
 }
 
 }

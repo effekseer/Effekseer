@@ -22,9 +22,6 @@
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/spdlog.h>
 
-#include "Effekseer/Effekseer.EffectImplemented.h"
-#include "Effekseer/Effekseer.EffectNode.h"
-
 #include "GUI/Image.h"
 #include "GUI/ReloadableImage.h"
 #include "GUI/RenderImage.h"
@@ -32,43 +29,7 @@
 #include "3D/Effect.h"
 #include "3D/EffectSetting.h"
 
-ViewerParamater::ViewerParamater()
-	: GuideWidth(0)
-	, GuideHeight(0)
-	, RendersGuide(false)
-
-	, IsCullingShown(false)
-	, CullingRadius(0)
-	, CullingX(0)
-	, CullingY(0)
-	, CullingZ(0)
-
-	, Distortion(Effekseer::Tool::DistortionType::Current)
-	, RenderingMode(Effekseer::Tool::RenderingMethodType::Normal)
-{
-}
-
-Native::Native()
-{
-	commandQueueToMaterialEditor_ = std::make_shared<IPC::CommandQueue>();
-	commandQueueToMaterialEditor_->Start("EfkCmdToMatEdit", 1024 * 1024);
-
-	commandQueueFromMaterialEditor_ = std::make_shared<IPC::CommandQueue>();
-	commandQueueFromMaterialEditor_->Start("EfkCmdFromMatEdit", 1024 * 1024);
-}
-
-Native::~Native()
-{
-	spdlog::trace("Begin Native::~Native()");
-
-	commandQueueToMaterialEditor_->Stop();
-	commandQueueToMaterialEditor_.reset();
-
-	commandQueueFromMaterialEditor_->Stop();
-	commandQueueFromMaterialEditor_.reset();
-
-	spdlog::trace("End Native::~Native()");
-}
+#include <EffekseerSoundOSMixer.h>
 
 bool Native::CreateWindow_Effekseer(
 	std::shared_ptr<Effekseer::Tool::GraphicsDevice> graphicsDevice,
@@ -80,24 +41,20 @@ bool Native::CreateWindow_Effekseer(
 	// because internal buffer is 16bit
 	int32_t spriteCount = 65000 / 4;
 
-	graphics_ = graphicsDevice->GetGraphics();
+	graphicsDevice_ = graphicsDevice;
 	setting_ = effectSetting->GetSetting();
 
 	{
 		mainScreen_ = std::make_shared<EffekseerTool::MainScreenRenderedEffectGenerator>();
-		if (!mainScreen_->Initialize(graphics_, setting_, spriteCount, graphicsDevice->GetIsSRGBMode()))
+		if (!mainScreen_->Initialize(graphicsDevice_->GetGraphics(), setting_, spriteCount, graphicsDevice->GetIsSRGBMode()))
 		{
-			graphics_.reset();
 			spdlog::trace("End Native::CreateWindow_Effekseer (false)");
-
 			return false;
 		}
 
 		if (!mainScreen_->InitializedPrePost())
 		{
-			graphics_.reset();
 			spdlog::trace("End Native::CreateWindow_Effekseer (false)");
-
 			return false;
 		}
 	}
@@ -112,43 +69,9 @@ bool Native::CreateWindow_Effekseer(
 	return true;
 }
 
-void Native::ClearWindow(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
-{
-	graphics_->Clear(Effekseer::Color(r, g, b, a));
-}
-
-bool Native::UpdateWindow(std::shared_ptr<Effekseer::Tool::ViewPointController> viewPointCtrl)
-{
-	if (commandQueueFromMaterialEditor_ != nullptr)
-	{
-		IPC::CommandData commandDataFromMaterialEditor;
-		while (commandQueueFromMaterialEditor_->Dequeue(&commandDataFromMaterialEditor))
-		{
-			if (commandDataFromMaterialEditor.Type == IPC::CommandType::NotifyUpdate)
-			{
-				isUpdateMaterialRequired_ = true;
-			}
-		}
-	}
-
-	return true;
-}
-
-void Native::Present()
-{
-	graphics_->Present();
-}
-
-bool Native::ResizeWindow(int width, int height)
-{
-	graphics_->Resize(width, height);
-	return true;
-}
-
 bool Native::DestroyWindow()
 {
 	mainScreen_.reset();
-	graphics_.reset();
 	setting_.Reset();
 
 	return true;
@@ -248,15 +171,16 @@ std::shared_ptr<Effekseer::Tool::EffectRecorder> Native::CreateRecorder(const Ef
 
 	auto recorder = std::make_shared<Effekseer::Tool::EffectRecorder>();
 	if (recorder->Begin(
-			mainScreen_,
+			mainScreen_->GetRenderer()->GetSquareMaxCount(),
 			mainScreen_->GetConfig(),
 			screenSize,
-			graphics_,
+			graphicsDevice_->GetGraphics(),
 			setting_,
 			recordingParameter,
 			Effekseer::Tool::Vector2I(mainScreen_->GuideWidth, mainScreen_->GuideHeight),
 			mainScreen_->GetIsSRGBMode(),
 			mainScreen_->GetBehavior(),
+			mainScreen_->GetPostEffectParameter(),
 			mainScreen_->GetEffect()))
 	{
 		return recorder;
@@ -265,9 +189,9 @@ std::shared_ptr<Effekseer::Tool::EffectRecorder> Native::CreateRecorder(const Ef
 	return nullptr;
 }
 
-ViewerParamater Native::GetViewerParamater()
+Effekseer::Tool::ViewerParamater Native::GetViewerParamater()
 {
-	ViewerParamater paramater;
+	Effekseer::Tool::ViewerParamater paramater;
 	paramater.RendersGuide = mainScreen_->RendersGuide;
 	paramater.GuideWidth = mainScreen_->GuideWidth;
 	paramater.GuideHeight = mainScreen_->GuideHeight;
@@ -277,7 +201,7 @@ ViewerParamater Native::GetViewerParamater()
 	return paramater;
 }
 
-void Native::SetViewerParamater(ViewerParamater& paramater)
+void Native::SetViewerParamater(Effekseer::Tool::ViewerParamater& paramater)
 {
 	mainScreen_->GuideWidth = paramater.GuideWidth;
 	mainScreen_->GuideHeight = paramater.GuideHeight;
@@ -426,76 +350,10 @@ bool Native::IsDebugMode()
 #endif
 }
 
-void Native::SetBloomParameters(bool enabled, float intensity, float threshold, float softKnee)
+void Native::SetPostEffectParameter(const Effekseer::Tool::PostEffectParameter& parameter)
 {
 	if (mainScreen_ != nullptr)
 	{
-		auto bloom = mainScreen_->GetBloomEffect();
-		if (bloom)
-		{
-			bloom->SetEnabled(enabled);
-			bloom->SetParameters(intensity, threshold, softKnee);
-		}
+		mainScreen_->SetPostEffectParameter(parameter);
 	}
-}
-
-void Native::SetTonemapParameters(int32_t algorithm, float exposure)
-{
-	if (mainScreen_ != nullptr)
-	{
-		auto tonemap = mainScreen_->GetTonemapEffect();
-		if (tonemap)
-		{
-			tonemap->SetEnabled(algorithm != 0);
-			tonemap->SetParameters((Effekseer::Tool::TonemapPostEffect::Algorithm)algorithm, exposure);
-		}
-	}
-}
-
-void Native::OpenOrCreateMaterial(const char16_t* path)
-{
-	if (commandQueueToMaterialEditor_ == nullptr)
-		return;
-
-	char u8path[260];
-
-	Effekseer::ConvertUtf16ToUtf8(u8path, 260, path);
-
-	IPC::CommandData commandData;
-	commandData.Type = IPC::CommandType::OpenOrCreateMaterial;
-	commandData.SetStr(u8path);
-	commandQueueToMaterialEditor_->Enqueue(&commandData);
-
-	spdlog::trace("ICP - Send - OpenOrCreateMaterial : {}", u8path);
-}
-
-void Native::TerminateMaterialEditor()
-{
-	if (commandQueueToMaterialEditor_ == nullptr)
-		return;
-
-	IPC::CommandData commandData;
-	commandData.Type = IPC::CommandType::Terminate;
-	commandQueueToMaterialEditor_->Enqueue(&commandData);
-
-	spdlog::trace("ICP - Send - Terminate");
-}
-
-bool Native::GetIsUpdateMaterialRequiredAndReset()
-{
-	return false;
-	auto ret = isUpdateMaterialRequired_;
-	isUpdateMaterialRequired_ = false;
-	return ret;
-}
-
-std::shared_ptr<Effekseer::Tool::ReloadableImage> Native::CreateReloadableImage(const char16_t* path)
-{
-	auto loader = EffekseerRenderer::CreateTextureLoader(graphics_->GetGraphicsDevice());
-	return std::make_shared<Effekseer::Tool::ReloadableImage>(path, loader);
-}
-
-std::shared_ptr<Effekseer::Tool::RenderImage> Native::CreateRenderImage()
-{
-	return std::make_shared<Effekseer::Tool::RenderImage>(graphics_->GetGraphicsDevice());
 }

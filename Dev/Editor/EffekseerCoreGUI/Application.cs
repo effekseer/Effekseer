@@ -44,7 +44,7 @@ namespace Effekseer
 			get;
 			private set;
 		}
-		
+
 		protected Application()
 		{
 			if (Current != null) throw new InvalidOperationException(); // Prohibit multiple instances.
@@ -74,7 +74,8 @@ namespace Effekseer
 			// Register UI
 			GUI.Component.ParameterListComponentFactory.Register(typeof(Data.LanguageSelector), () => { return new GUI.Component.LanguageSelector(); });
 
-			GUI.Component.ParameterListComponentFactory.Register(typeof(Data.ProceduralModelReference), () => {
+			GUI.Component.ParameterListComponentFactory.Register(typeof(Data.ProceduralModelReference), () =>
+			{
 				return new GUI.Component.ObjectReference<Data.ProceduralModelParameter>(Core.ProceduralModel.ProceduralModels);
 			});
 
@@ -160,8 +161,11 @@ namespace Effekseer
 
 		public void Run()
 		{
+			Process.MaterialEditor.Init();
+
 			while (GUI.Manager.NativeManager.DoEvents())
 			{
+				Process.MaterialEditor.Update();
 				GUI.Manager.Update();
 				OnUpdate();
 			}

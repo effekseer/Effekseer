@@ -44,29 +44,8 @@ public class Native : global::System.IDisposable {
     }
   }
 
-  public Native() : this(EffekseerNativePINVOKE.new_Native(), true) {
-  }
-
   public bool CreateWindow_Effekseer(GraphicsDevice graphicsDevice, SoundDevice soundDevice, EffectSetting effectSetting) {
     bool ret = EffekseerNativePINVOKE.Native_CreateWindow_Effekseer(swigCPtr, GraphicsDevice.getCPtr(graphicsDevice), SoundDevice.getCPtr(soundDevice), EffectSetting.getCPtr(effectSetting));
-    return ret;
-  }
-
-  public bool UpdateWindow(ViewPointController viewPointCtrl) {
-    bool ret = EffekseerNativePINVOKE.Native_UpdateWindow(swigCPtr, ViewPointController.getCPtr(viewPointCtrl));
-    return ret;
-  }
-
-  public void ClearWindow(byte r, byte g, byte b, byte a) {
-    EffekseerNativePINVOKE.Native_ClearWindow(swigCPtr, r, g, b, a);
-  }
-
-  public void Present() {
-    EffekseerNativePINVOKE.Native_Present(swigCPtr);
-  }
-
-  public bool ResizeWindow(int width, int height) {
-    bool ret = EffekseerNativePINVOKE.Native_ResizeWindow(swigCPtr, width, height);
     return ret;
   }
 
@@ -214,37 +193,12 @@ public class Native : global::System.IDisposable {
     return ret;
   }
 
-  public void SetBloomParameters(bool enabled, float intensity, float threshold, float softKnee) {
-    EffekseerNativePINVOKE.Native_SetBloomParameters(swigCPtr, enabled, intensity, threshold, softKnee);
+  public void SetPostEffectParameter(PostEffectParameter parameter) {
+    EffekseerNativePINVOKE.Native_SetPostEffectParameter(swigCPtr, PostEffectParameter.getCPtr(parameter));
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
   }
 
-  public void SetTonemapParameters(int algorithm, float exposure) {
-    EffekseerNativePINVOKE.Native_SetTonemapParameters(swigCPtr, algorithm, exposure);
-  }
-
-  public void OpenOrCreateMaterial(string path) {
-    EffekseerNativePINVOKE.Native_OpenOrCreateMaterial(swigCPtr, path);
-  }
-
-  public void TerminateMaterialEditor() {
-    EffekseerNativePINVOKE.Native_TerminateMaterialEditor(swigCPtr);
-  }
-
-  public bool GetIsUpdateMaterialRequiredAndReset() {
-    bool ret = EffekseerNativePINVOKE.Native_GetIsUpdateMaterialRequiredAndReset(swigCPtr);
-    return ret;
-  }
-
-  public ReloadableImage CreateReloadableImage(string path) {
-    global::System.IntPtr cPtr = EffekseerNativePINVOKE.Native_CreateReloadableImage(swigCPtr, path);
-    ReloadableImage ret = (cPtr == global::System.IntPtr.Zero) ? null : new ReloadableImage(cPtr, true);
-    return ret;
-  }
-
-  public RenderImage CreateRenderImage() {
-    global::System.IntPtr cPtr = EffekseerNativePINVOKE.Native_CreateRenderImage(swigCPtr);
-    RenderImage ret = (cPtr == global::System.IntPtr.Zero) ? null : new RenderImage(cPtr, true);
-    return ret;
+  public Native() : this(EffekseerNativePINVOKE.new_Native(), true) {
   }
 
 }

@@ -2,6 +2,8 @@
 
 #include "../Math/Vector3F.h"
 #include <Effekseer.h>
+#include <EffekseerSoundOSMixer.h>
+#include <OpenSoundMixer.h>
 
 namespace osm
 {

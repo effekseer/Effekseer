@@ -1,13 +1,15 @@
 %module(directors="1") EffekseerNative
 
 %{
-#include "efk.Base.h"
+#include "Parameters.h"
+#include "ProcessConnector.h"
 #include "Recorder/EffectRecorder.h"
 #include "3D/ViewPointController.h"
 #include "3D/Effect.h"
 #include "3D/EffectSetting.h"
 #include "3D/EffectFactory.h"
 #include "Network/Network.h"
+#include "Sound/SoundDevice.h"
 #include "dll.h"
 #include "GUI/efk.GUIManager.h"
 #include "GUI/efk.FileDialog.h"
@@ -124,9 +126,9 @@ class"
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-%include "Cpp/Viewer/efk.Base.h"
+%include "Cpp/Viewer/Parameters.h"
+%include "Cpp/Viewer/ProcessConnector.h"
 %include "Cpp/Viewer/GUI/efk.Vec2.h"
-%include "Cpp/Viewer/ViewerEffectBehavior.h"
 %include "Cpp/Viewer/Recorder/RecordingParameter.h"
 %include "Cpp/Viewer/Recorder/EffectRecorder.h"
 

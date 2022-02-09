@@ -47,9 +47,9 @@ public:
 
 	void ResetDevice() override;
 
-	DeviceType GetDeviceType() const override
+	Effekseer::Tool::DeviceType GetDeviceType() const override
 	{
-		return DeviceType::OpenGL;
+		return Effekseer::Tool::DeviceType::OpenGL;
 	}
 
 	Effekseer::RefPtr<Effekseer::Backend::GraphicsDevice> GetGraphicsDevice() override

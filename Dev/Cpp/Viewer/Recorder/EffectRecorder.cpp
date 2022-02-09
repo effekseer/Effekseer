@@ -305,7 +305,7 @@ public:
 	}
 };
 
-bool EffectRecorder::Begin(std::shared_ptr<EffekseerTool::MainScreenRenderedEffectGenerator> mainScreen,
+bool EffectRecorder::Begin(int32_t squareMaxCount,
 						   Effekseer::Tool::RenderedEffectGeneratorConfig config,
 						   Vector2I screenSize,
 						   std::shared_ptr<efk::Graphics> graphics,
@@ -314,6 +314,7 @@ bool EffectRecorder::Begin(std::shared_ptr<EffekseerTool::MainScreenRenderedEffe
 						   Effekseer::Tool::Vector2I imageSize,
 						   bool isSRGBMode,
 						   Effekseer::Tool::ViewerEffectBehavior behavior,
+						   Effekseer::Tool::PostEffectParameter postEffectParameter,
 						   Effekseer::EffectRef effect)
 {
 	graphics_ = graphics;
@@ -404,7 +405,7 @@ bool EffectRecorder::Begin(std::shared_ptr<EffekseerTool::MainScreenRenderedEffe
 
 	generator_ = std::make_shared<Effekseer::Tool::RenderedEffectGenerator>();
 
-	if (!generator_->Initialize(graphics_, setting, mainScreen->GetRenderer()->GetSquareMaxCount(), isSRGBMode))
+	if (!generator_->Initialize(graphics_, setting, squareMaxCount, isSRGBMode))
 	{
 		return false;
 	}
@@ -426,19 +427,7 @@ bool EffectRecorder::Begin(std::shared_ptr<EffekseerTool::MainScreenRenderedEffe
 
 	generator_->SetBehavior(behavior);
 
-	float bloomIntencity = 0.0f;
-	float bloomTh = 0.0f;
-	float bloomK = 0.0f;
-
-	mainScreen->GetBloomEffect()->GetParameters(bloomIntencity, bloomTh, bloomK);
-	generator_->GetBloomEffect()->SetParameters(bloomIntencity, bloomTh, bloomK);
-	generator_->GetBloomEffect()->SetEnabled(mainScreen->GetBloomEffect()->GetEnabled());
-
-	Effekseer::Tool::TonemapPostEffect::Algorithm toneA;
-	float toneE = 0.0f;
-	mainScreen->GetTonemapEffect()->GetParameters(toneA, toneE);
-	generator_->GetTonemapEffect()->SetParameters(toneA, toneE);
-	generator_->GetTonemapEffect()->SetEnabled(mainScreen->GetTonemapEffect()->GetEnabled());
+	generator_->SetPostEffectParameter(postEffectParameter);
 
 	generator_->PlayEffect();
 	generator_->Update(recordingParameter_.OffsetFrame);

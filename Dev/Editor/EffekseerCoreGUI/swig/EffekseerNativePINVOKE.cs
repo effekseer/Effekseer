@@ -216,26 +216,83 @@ class EffekseerNativePINVOKE {
   static protected SWIGWStringHelper swigWStringHelper = new SWIGWStringHelper();
 
 
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Vec2_X_set___")]
-  public static extern void Vec2_X_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_PostEffectParameter_BloomEnabled_set___")]
+  public static extern void PostEffectParameter_BloomEnabled_set(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2);
 
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Vec2_X_get___")]
-  public static extern float Vec2_X_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_PostEffectParameter_BloomEnabled_get___")]
+  public static extern bool PostEffectParameter_BloomEnabled_get(global::System.Runtime.InteropServices.HandleRef jarg1);
 
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Vec2_Y_set___")]
-  public static extern void Vec2_Y_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_PostEffectParameter_BoomIntensity_set___")]
+  public static extern void PostEffectParameter_BoomIntensity_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
 
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Vec2_Y_get___")]
-  public static extern float Vec2_Y_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_PostEffectParameter_BoomIntensity_get___")]
+  public static extern float PostEffectParameter_BoomIntensity_get(global::System.Runtime.InteropServices.HandleRef jarg1);
 
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_Vec2__SWIG_0___")]
-  public static extern global::System.IntPtr new_Vec2__SWIG_0();
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_PostEffectParameter_BloomThreshold_set___")]
+  public static extern void PostEffectParameter_BloomThreshold_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
 
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_Vec2__SWIG_1___")]
-  public static extern global::System.IntPtr new_Vec2__SWIG_1(float jarg1, float jarg2);
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_PostEffectParameter_BloomThreshold_get___")]
+  public static extern float PostEffectParameter_BloomThreshold_get(global::System.Runtime.InteropServices.HandleRef jarg1);
 
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_Vec2___")]
-  public static extern void delete_Vec2(global::System.Runtime.InteropServices.HandleRef jarg1);
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_PostEffectParameter_BloomSoftKnee_set___")]
+  public static extern void PostEffectParameter_BloomSoftKnee_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_PostEffectParameter_BloomSoftKnee_get___")]
+  public static extern float PostEffectParameter_BloomSoftKnee_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_PostEffectParameter_ToneMapAlgorithm_set___")]
+  public static extern void PostEffectParameter_ToneMapAlgorithm_set(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_PostEffectParameter_ToneMapAlgorithm_get___")]
+  public static extern int PostEffectParameter_ToneMapAlgorithm_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_PostEffectParameter_ToneMapExposure_set___")]
+  public static extern void PostEffectParameter_ToneMapExposure_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_PostEffectParameter_ToneMapExposure_get___")]
+  public static extern float PostEffectParameter_ToneMapExposure_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_PostEffectParameter___")]
+  public static extern global::System.IntPtr new_PostEffectParameter();
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_PostEffectParameter___")]
+  public static extern void delete_PostEffectParameter(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_GuideWidth_set___")]
+  public static extern void ViewerParamater_GuideWidth_set(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_GuideWidth_get___")]
+  public static extern int ViewerParamater_GuideWidth_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_GuideHeight_set___")]
+  public static extern void ViewerParamater_GuideHeight_set(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_GuideHeight_get___")]
+  public static extern int ViewerParamater_GuideHeight_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_RendersGuide_set___")]
+  public static extern void ViewerParamater_RendersGuide_set(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_RendersGuide_get___")]
+  public static extern bool ViewerParamater_RendersGuide_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_Distortion_set___")]
+  public static extern void ViewerParamater_Distortion_set(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_Distortion_get___")]
+  public static extern int ViewerParamater_Distortion_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_RenderingMode_set___")]
+  public static extern void ViewerParamater_RenderingMode_set(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_RenderingMode_get___")]
+  public static extern int ViewerParamater_RenderingMode_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_ViewerParamater___")]
+  public static extern global::System.IntPtr new_ViewerParamater();
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_ViewerParamater___")]
+  public static extern void delete_ViewerParamater(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerEffectBehavior_CountX_set___")]
   public static extern void ViewerEffectBehavior_CountX_set(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
@@ -483,6 +540,45 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_ViewerEffectBehavior___")]
   public static extern void delete_ViewerEffectBehavior(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_ProcessConnector___")]
+  public static extern global::System.IntPtr new_ProcessConnector();
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_ProcessConnector___")]
+  public static extern void delete_ProcessConnector(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProcessConnector_Update___")]
+  public static extern void ProcessConnector_Update(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProcessConnector_OpenOrCreateMaterial___")]
+  public static extern void ProcessConnector_OpenOrCreateMaterial(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProcessConnector_TerminateMaterialEditor___")]
+  public static extern void ProcessConnector_TerminateMaterialEditor(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProcessConnector_GetIsUpdateMaterialRequiredAndReset___")]
+  public static extern bool ProcessConnector_GetIsUpdateMaterialRequiredAndReset(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Vec2_X_set___")]
+  public static extern void Vec2_X_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Vec2_X_get___")]
+  public static extern float Vec2_X_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Vec2_Y_set___")]
+  public static extern void Vec2_Y_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Vec2_Y_get___")]
+  public static extern float Vec2_Y_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_Vec2__SWIG_0___")]
+  public static extern global::System.IntPtr new_Vec2__SWIG_0();
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_Vec2__SWIG_1___")]
+  public static extern global::System.IntPtr new_Vec2__SWIG_1(float jarg1, float jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_Vec2___")]
+  public static extern void delete_Vec2(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_RecordingParameter_GetPath___")]
   public static extern System.IntPtr RecordingParameter_GetPath(global::System.Runtime.InteropServices.HandleRef jarg1);
 
@@ -608,6 +704,15 @@ class EffekseerNativePINVOKE {
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_Vector3F___")]
   public static extern void delete_Vector3F(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GraphicsDevice_Resize___")]
+  public static extern void GraphicsDevice_Resize(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, int jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GraphicsDevice_ClearColor___")]
+  public static extern void GraphicsDevice_ClearColor(global::System.Runtime.InteropServices.HandleRef jarg1, byte jarg2, byte jarg3, byte jarg4, byte jarg5);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GraphicsDevice_Present___")]
+  public static extern void GraphicsDevice_Present(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GraphicsDevice_Create___")]
   public static extern global::System.IntPtr GraphicsDevice_Create(System.IntPtr jarg1, int jarg2, int jarg3, bool jarg4, int jarg5);
@@ -786,92 +891,8 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_Logger___")]
   public static extern void delete_Logger(global::System.Runtime.InteropServices.HandleRef jarg1);
 
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_GuideWidth_set___")]
-  public static extern void ViewerParamater_GuideWidth_set(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_GuideWidth_get___")]
-  public static extern int ViewerParamater_GuideWidth_get(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_GuideHeight_set___")]
-  public static extern void ViewerParamater_GuideHeight_set(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_GuideHeight_get___")]
-  public static extern int ViewerParamater_GuideHeight_get(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_RendersGuide_set___")]
-  public static extern void ViewerParamater_RendersGuide_set(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_RendersGuide_get___")]
-  public static extern bool ViewerParamater_RendersGuide_get(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_IsCullingShown_set___")]
-  public static extern void ViewerParamater_IsCullingShown_set(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_IsCullingShown_get___")]
-  public static extern bool ViewerParamater_IsCullingShown_get(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_CullingRadius_set___")]
-  public static extern void ViewerParamater_CullingRadius_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_CullingRadius_get___")]
-  public static extern float ViewerParamater_CullingRadius_get(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_CullingX_set___")]
-  public static extern void ViewerParamater_CullingX_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_CullingX_get___")]
-  public static extern float ViewerParamater_CullingX_get(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_CullingY_set___")]
-  public static extern void ViewerParamater_CullingY_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_CullingY_get___")]
-  public static extern float ViewerParamater_CullingY_get(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_CullingZ_set___")]
-  public static extern void ViewerParamater_CullingZ_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_CullingZ_get___")]
-  public static extern float ViewerParamater_CullingZ_get(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_Distortion_set___")]
-  public static extern void ViewerParamater_Distortion_set(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_Distortion_get___")]
-  public static extern int ViewerParamater_Distortion_get(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_RenderingMode_set___")]
-  public static extern void ViewerParamater_RenderingMode_set(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_RenderingMode_get___")]
-  public static extern int ViewerParamater_RenderingMode_get(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_ViewerParamater___")]
-  public static extern global::System.IntPtr new_ViewerParamater();
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_ViewerParamater___")]
-  public static extern void delete_ViewerParamater(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_Native___")]
-  public static extern global::System.IntPtr new_Native();
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_Native___")]
-  public static extern void delete_Native(global::System.Runtime.InteropServices.HandleRef jarg1);
-
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_CreateWindow_Effekseer___")]
   public static extern bool Native_CreateWindow_Effekseer(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2, global::System.Runtime.InteropServices.HandleRef jarg3, global::System.Runtime.InteropServices.HandleRef jarg4);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_UpdateWindow___")]
-  public static extern bool Native_UpdateWindow(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_ClearWindow___")]
-  public static extern void Native_ClearWindow(global::System.Runtime.InteropServices.HandleRef jarg1, byte jarg2, byte jarg3, byte jarg4, byte jarg5);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_Present___")]
-  public static extern void Native_Present(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_ResizeWindow___")]
-  public static extern bool Native_ResizeWindow(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, int jarg3);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_DestroyWindow___")]
   public static extern bool Native_DestroyWindow(global::System.Runtime.InteropServices.HandleRef jarg1);
@@ -966,26 +987,14 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_IsDebugMode___")]
   public static extern bool Native_IsDebugMode();
 
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_SetBloomParameters___")]
-  public static extern void Native_SetBloomParameters(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2, float jarg3, float jarg4, float jarg5);
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_SetPostEffectParameter___")]
+  public static extern void Native_SetPostEffectParameter(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
 
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_SetTonemapParameters___")]
-  public static extern void Native_SetTonemapParameters(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, float jarg3);
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_Native___")]
+  public static extern global::System.IntPtr new_Native();
 
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_OpenOrCreateMaterial___")]
-  public static extern void Native_OpenOrCreateMaterial(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_TerminateMaterialEditor___")]
-  public static extern void Native_TerminateMaterialEditor(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_GetIsUpdateMaterialRequiredAndReset___")]
-  public static extern bool Native_GetIsUpdateMaterialRequiredAndReset(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_CreateReloadableImage___")]
-  public static extern global::System.IntPtr Native_CreateReloadableImage(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_CreateRenderImage___")]
-  public static extern global::System.IntPtr Native_CreateRenderImage(global::System.Runtime.InteropServices.HandleRef jarg1);
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_Native___")]
+  public static extern void delete_Native(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_GUIManagerCallback___")]
   public static extern global::System.IntPtr new_GUIManagerCallback();
@@ -2067,11 +2076,17 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ReloadableImage_Invalidate___")]
   public static extern void ReloadableImage_Invalidate(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ReloadableImage_Create___")]
+  public static extern global::System.IntPtr ReloadableImage_Create(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_RenderImage___")]
   public static extern global::System.IntPtr new_RenderImage();
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_RenderImage_Resize___")]
   public static extern void RenderImage_Resize(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, int jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_RenderImage_Create___")]
+  public static extern global::System.IntPtr RenderImage_Create(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_RenderImage___")]
   public static extern void delete_RenderImage(global::System.Runtime.InteropServices.HandleRef jarg1);

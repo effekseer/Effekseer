@@ -16,7 +16,7 @@ namespace Effekseer.GUI
 
 		public static Dictionary<string, swig.ReloadableImage> tempImages = new Dictionary<string, swig.ReloadableImage>();
 
-		public static swig.ReloadableImage Load(swig.Native native, string path, bool isRequiredToReload = false)
+		public static swig.ReloadableImage Load(swig.GraphicsDevice graphicsDevice, string path, bool isRequiredToReload = false)
 		{
 			if (tempImages.ContainsKey(path) && !isRequiredToReload)
 			{
@@ -31,7 +31,7 @@ namespace Effekseer.GUI
 					return tempImages[path];
 				}
 
-				var img = native.CreateReloadableImage(path);
+				var img = swig.ReloadableImage.Create(graphicsDevice, path);
 				if (img != null)
 				{
 					tempImages.Add(path, img);
@@ -40,42 +40,42 @@ namespace Effekseer.GUI
 			}
 		}
 
-		public static swig.ReloadableImage LoadAppResource(swig.Native native, string path)
+		public static swig.ReloadableImage LoadAppResource(swig.GraphicsDevice graphicsDevice, string path)
 		{
 			string appDirectory = GUI.Manager.GetEntryDirectory();
 			string fullPath = Path.Combine(appDirectory, path);
-			return native.CreateReloadableImage(fullPath);
+			return swig.ReloadableImage.Create(graphicsDevice, fullPath);
 		}
 
-		public static void Load(swig.Native native)
+		public static void Load(swig.GraphicsDevice graphicsDevice)
 		{
-			Play = LoadAppResource(native, "resources/Play.png");
-			Stop = LoadAppResource(native, "resources/Stop.png");
-			Pause = LoadAppResource(native, "resources/Pause.png");
-			Step = LoadAppResource(native, "resources/Step.png");
-			BackStep = LoadAppResource(native, "resources/BackStep.png");
+			Play = LoadAppResource(graphicsDevice, "resources/Play.png");
+			Stop = LoadAppResource(graphicsDevice, "resources/Stop.png");
+			Pause = LoadAppResource(graphicsDevice, "resources/Pause.png");
+			Step = LoadAppResource(graphicsDevice, "resources/Step.png");
+			BackStep = LoadAppResource(graphicsDevice, "resources/BackStep.png");
 
-			Icons["Copy"] = LoadAppResource(native, "resources/icons/Copy.png");
-			Icons["Paste"] = LoadAppResource(native, "resources/icons/Paste.png");
+			Icons["Copy"] = LoadAppResource(graphicsDevice, "resources/icons/Copy.png");
+			Icons["Paste"] = LoadAppResource(graphicsDevice, "resources/icons/Paste.png");
 
-			Icons["AppIcon"] = LoadAppResource(native, "resources/icon.png");
+			Icons["AppIcon"] = LoadAppResource(graphicsDevice, "resources/icon.png");
 
-			Icons["VisibleShow"] = LoadAppResource(native, "resources/icons/Visible_Show.png");
-			Icons["VisibleHide"] = LoadAppResource(native, "resources/icons/Visible_Hide.png");
+			Icons["VisibleShow"] = LoadAppResource(graphicsDevice, "resources/icons/Visible_Show.png");
+			Icons["VisibleHide"] = LoadAppResource(graphicsDevice, "resources/icons/Visible_Hide.png");
 
-			Icons["EnlargeAnchor"] = LoadAppResource(native, "resources/icons/EnlargeAnchor.png");
-			Icons["ShrinkAnchor"] = LoadAppResource(native, "resources/icons/ShrinkAnchor.png");
+			Icons["EnlargeAnchor"] = LoadAppResource(graphicsDevice, "resources/icons/EnlargeAnchor.png");
+			Icons["ShrinkAnchor"] = LoadAppResource(graphicsDevice, "resources/icons/ShrinkAnchor.png");
 
-			Icons["AutoZoom_On"] = LoadAppResource(native, "resources/icons/AutoZoom_On.png");
-			Icons["AutoZoom_Off"] = LoadAppResource(native, "resources/icons/AutoZoom_Off.png");
+			Icons["AutoZoom_On"] = LoadAppResource(graphicsDevice, "resources/icons/AutoZoom_On.png");
+			Icons["AutoZoom_Off"] = LoadAppResource(graphicsDevice, "resources/icons/AutoZoom_Off.png");
 
-			Icons["FileViewer_Directory"] = LoadAppResource(native, "resources/icons/FileViewer_Directory.png");
-			Icons["FileViewer_EffekseerProj"] = LoadAppResource(native, "resources/icons/FileViewer_EffekseerProj.png");
+			Icons["FileViewer_Directory"] = LoadAppResource(graphicsDevice, "resources/icons/FileViewer_Directory.png");
+			Icons["FileViewer_EffekseerProj"] = LoadAppResource(graphicsDevice, "resources/icons/FileViewer_EffekseerProj.png");
 
-			Icons["ButtonMin"] = LoadAppResource(native, "resources/icons/Button_Min.png");
-			Icons["ButtonMax"] = LoadAppResource(native, "resources/icons/Button_Max.png");
-			Icons["ButtonMaxCancel"] = LoadAppResource(native, "resources/icons/Button_MaxCancel.png");
-			Icons["ButtonClose"] = LoadAppResource(native, "resources/icons/Button_Close.png");
+			Icons["ButtonMin"] = LoadAppResource(graphicsDevice, "resources/icons/Button_Min.png");
+			Icons["ButtonMax"] = LoadAppResource(graphicsDevice, "resources/icons/Button_Max.png");
+			Icons["ButtonMaxCancel"] = LoadAppResource(graphicsDevice, "resources/icons/Button_MaxCancel.png");
+			Icons["ButtonClose"] = LoadAppResource(graphicsDevice, "resources/icons/Button_Close.png");
 		}
 
 		public static void Unload()
