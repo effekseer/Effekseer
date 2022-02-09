@@ -1,13 +1,7 @@
 
 #pragma once
 
-/**
-	@file
-	@brief	DLL export for tool
-*/
-
 #include "EffekseerTool/EffekseerTool.Renderer.h"
-#include "EffekseerTool/EffekseerTool.Sound.h"
 #include "Recorder/RecordingParameter.h"
 #include <Effekseer.h>
 #include <IO/IO.h>
@@ -16,10 +10,8 @@
 
 #include "../IPC/IPC.h"
 #include "3D/ViewPointController.h"
-#include "ViewerEffectBehavior.h"
-#include "efk.Base.h"
-
 #include "Graphics/GraphicsDevice.h"
+#include "Parameters.h"
 #include "Sound/SoundDevice.h"
 
 namespace Effekseer
@@ -36,34 +28,10 @@ class SoundDevice;
 } // namespace Tool
 } // namespace Effekseer
 
-class ViewerParamater
-{
-public:
-	int32_t GuideWidth;
-	int32_t GuideHeight;
-	bool RendersGuide;
-
-	bool IsCullingShown;
-	float CullingRadius;
-	float CullingX;
-	float CullingY;
-	float CullingZ;
-
-	Effekseer::Tool::DistortionType Distortion;
-	Effekseer::Tool::RenderingMethodType RenderingMode;
-
-	ViewerParamater();
-};
-
 class Native
 {
 private:
-	std::shared_ptr<IPC::CommandQueue> commandQueueToMaterialEditor_;
-	std::shared_ptr<IPC::CommandQueue> commandQueueFromMaterialEditor_;
-
-	bool isUpdateMaterialRequired_ = false;
-
-	std::shared_ptr<efk::Graphics> graphics_ = nullptr;
+	std::shared_ptr<Effekseer::Tool::GraphicsDevice> graphicsDevice_ = nullptr;
 
 	Effekseer::SettingRef setting_;
 
@@ -74,22 +42,10 @@ private:
 	Effekseer::Tool::RenderingMethodType renderingMode_ = Effekseer::Tool::RenderingMethodType::Normal;
 
 public:
-	Native();
-
-	~Native();
-
 	bool CreateWindow_Effekseer(
 		std::shared_ptr<Effekseer::Tool::GraphicsDevice> graphicsDevice,
 		std::shared_ptr<Effekseer::Tool::SoundDevice> soundDevice,
 		std::shared_ptr<Effekseer::Tool::EffectSetting> effectSetting);
-
-	bool UpdateWindow(std::shared_ptr<Effekseer::Tool::ViewPointController> viewPointCtrl);
-
-	void ClearWindow(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-
-	void Present();
-
-	bool ResizeWindow(int width, int height);
 
 	bool DestroyWindow();
 
@@ -111,9 +67,9 @@ public:
 
 	std::shared_ptr<Effekseer::Tool::EffectRecorder> CreateRecorder(const Effekseer::Tool::RecordingParameter& recordingParameter);
 
-	ViewerParamater GetViewerParamater();
+	Effekseer::Tool::ViewerParamater GetViewerParamater();
 
-	void SetViewerParamater(ViewerParamater& paramater);
+	void SetViewerParamater(Effekseer::Tool::ViewerParamater& paramater);
 
 	Effekseer::Tool::ViewerEffectBehavior GetEffectBehavior();
 
@@ -153,19 +109,7 @@ public:
 
 	static bool IsDebugMode();
 
-	void SetBloomParameters(bool enabled, float intensity, float threshold, float softKnee);
-
-	void SetTonemapParameters(int32_t algorithm, float exposure);
-
-	void OpenOrCreateMaterial(const char16_t* path);
-
-	void TerminateMaterialEditor();
-
-	bool GetIsUpdateMaterialRequiredAndReset();
-
-	std::shared_ptr<Effekseer::Tool::ReloadableImage> CreateReloadableImage(const char16_t* path);
-
-	std::shared_ptr<Effekseer::Tool::RenderImage> CreateRenderImage();
+	void SetPostEffectParameter(const Effekseer::Tool::PostEffectParameter& parameter);
 
 #if !SWIG
 	Effekseer::SettingRef GetSetting()
@@ -173,9 +117,9 @@ public:
 		return setting_;
 	}
 
-	Effekseer::Backend::GraphicsDeviceRef GetGraphicsDevice()
+	std::shared_ptr<Effekseer::Tool::GraphicsDevice> GetGraphicsDevice()
 	{
-		return graphics_->GetGraphicsDevice();
+		return graphicsDevice_;
 	}
 #endif
 };

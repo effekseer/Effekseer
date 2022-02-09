@@ -378,13 +378,15 @@ namespace Swig {
 }
 
 
-#include "efk.Base.h"
+#include "Parameters.h"
+#include "ProcessConnector.h"
 #include "Recorder/EffectRecorder.h"
 #include "3D/ViewPointController.h"
 #include "3D/Effect.h"
 #include "3D/EffectSetting.h"
 #include "3D/EffectFactory.h"
 #include "Network/Network.h"
+#include "Sound/SoundDevice.h"
 #include "dll.h"
 #include "GUI/efk.GUIManager.h"
 #include "GUI/efk.FileDialog.h"
@@ -565,78 +567,280 @@ void SwigDirector_IOCallback::swig_init_callbacks() {
 extern "C" {
 #endif
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Vec2_X_set___(void * jarg1, float jarg2) {
-  efk::Vec2 *arg1 = (efk::Vec2 *) 0 ;
-  float arg2 ;
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_PostEffectParameter_BloomEnabled_set___(void * jarg1, unsigned int jarg2) {
+  Effekseer::Tool::PostEffectParameter *arg1 = (Effekseer::Tool::PostEffectParameter *) 0 ;
+  bool arg2 ;
   
-  arg1 = (efk::Vec2 *)jarg1; 
-  arg2 = (float)jarg2; 
-  if (arg1) (arg1)->X = arg2;
+  arg1 = (Effekseer::Tool::PostEffectParameter *)jarg1; 
+  arg2 = jarg2 ? true : false; 
+  if (arg1) (arg1)->BloomEnabled = arg2;
 }
 
 
-SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_Vec2_X_get___(void * jarg1) {
-  float jresult ;
-  efk::Vec2 *arg1 = (efk::Vec2 *) 0 ;
-  float result;
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_PostEffectParameter_BloomEnabled_get___(void * jarg1) {
+  unsigned int jresult ;
+  Effekseer::Tool::PostEffectParameter *arg1 = (Effekseer::Tool::PostEffectParameter *) 0 ;
+  bool result;
   
-  arg1 = (efk::Vec2 *)jarg1; 
-  result = (float) ((arg1)->X);
+  arg1 = (Effekseer::Tool::PostEffectParameter *)jarg1; 
+  result = (bool) ((arg1)->BloomEnabled);
   jresult = result; 
   return jresult;
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Vec2_Y_set___(void * jarg1, float jarg2) {
-  efk::Vec2 *arg1 = (efk::Vec2 *) 0 ;
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_PostEffectParameter_BoomIntensity_set___(void * jarg1, float jarg2) {
+  Effekseer::Tool::PostEffectParameter *arg1 = (Effekseer::Tool::PostEffectParameter *) 0 ;
   float arg2 ;
   
-  arg1 = (efk::Vec2 *)jarg1; 
+  arg1 = (Effekseer::Tool::PostEffectParameter *)jarg1; 
   arg2 = (float)jarg2; 
-  if (arg1) (arg1)->Y = arg2;
+  if (arg1) (arg1)->BoomIntensity = arg2;
 }
 
 
-SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_Vec2_Y_get___(void * jarg1) {
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_PostEffectParameter_BoomIntensity_get___(void * jarg1) {
   float jresult ;
-  efk::Vec2 *arg1 = (efk::Vec2 *) 0 ;
+  Effekseer::Tool::PostEffectParameter *arg1 = (Effekseer::Tool::PostEffectParameter *) 0 ;
   float result;
   
-  arg1 = (efk::Vec2 *)jarg1; 
-  result = (float) ((arg1)->Y);
+  arg1 = (Effekseer::Tool::PostEffectParameter *)jarg1; 
+  result = (float) ((arg1)->BoomIntensity);
   jresult = result; 
   return jresult;
 }
 
 
-SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_Vec2__SWIG_0___() {
-  void * jresult ;
-  efk::Vec2 *result = 0 ;
-  
-  result = (efk::Vec2 *)new efk::Vec2();
-  jresult = (void *)result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_Vec2__SWIG_1___(float jarg1, float jarg2) {
-  void * jresult ;
-  float arg1 ;
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_PostEffectParameter_BloomThreshold_set___(void * jarg1, float jarg2) {
+  Effekseer::Tool::PostEffectParameter *arg1 = (Effekseer::Tool::PostEffectParameter *) 0 ;
   float arg2 ;
-  efk::Vec2 *result = 0 ;
   
-  arg1 = (float)jarg1; 
+  arg1 = (Effekseer::Tool::PostEffectParameter *)jarg1; 
   arg2 = (float)jarg2; 
-  result = (efk::Vec2 *)new efk::Vec2(arg1,arg2);
+  if (arg1) (arg1)->BloomThreshold = arg2;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_PostEffectParameter_BloomThreshold_get___(void * jarg1) {
+  float jresult ;
+  Effekseer::Tool::PostEffectParameter *arg1 = (Effekseer::Tool::PostEffectParameter *) 0 ;
+  float result;
+  
+  arg1 = (Effekseer::Tool::PostEffectParameter *)jarg1; 
+  result = (float) ((arg1)->BloomThreshold);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_PostEffectParameter_BloomSoftKnee_set___(void * jarg1, float jarg2) {
+  Effekseer::Tool::PostEffectParameter *arg1 = (Effekseer::Tool::PostEffectParameter *) 0 ;
+  float arg2 ;
+  
+  arg1 = (Effekseer::Tool::PostEffectParameter *)jarg1; 
+  arg2 = (float)jarg2; 
+  if (arg1) (arg1)->BloomSoftKnee = arg2;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_PostEffectParameter_BloomSoftKnee_get___(void * jarg1) {
+  float jresult ;
+  Effekseer::Tool::PostEffectParameter *arg1 = (Effekseer::Tool::PostEffectParameter *) 0 ;
+  float result;
+  
+  arg1 = (Effekseer::Tool::PostEffectParameter *)jarg1; 
+  result = (float) ((arg1)->BloomSoftKnee);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_PostEffectParameter_ToneMapAlgorithm_set___(void * jarg1, int jarg2) {
+  Effekseer::Tool::PostEffectParameter *arg1 = (Effekseer::Tool::PostEffectParameter *) 0 ;
+  int arg2 ;
+  
+  arg1 = (Effekseer::Tool::PostEffectParameter *)jarg1; 
+  arg2 = (int)jarg2; 
+  if (arg1) (arg1)->ToneMapAlgorithm = arg2;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_PostEffectParameter_ToneMapAlgorithm_get___(void * jarg1) {
+  int jresult ;
+  Effekseer::Tool::PostEffectParameter *arg1 = (Effekseer::Tool::PostEffectParameter *) 0 ;
+  int result;
+  
+  arg1 = (Effekseer::Tool::PostEffectParameter *)jarg1; 
+  result = (int) ((arg1)->ToneMapAlgorithm);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_PostEffectParameter_ToneMapExposure_set___(void * jarg1, float jarg2) {
+  Effekseer::Tool::PostEffectParameter *arg1 = (Effekseer::Tool::PostEffectParameter *) 0 ;
+  float arg2 ;
+  
+  arg1 = (Effekseer::Tool::PostEffectParameter *)jarg1; 
+  arg2 = (float)jarg2; 
+  if (arg1) (arg1)->ToneMapExposure = arg2;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_PostEffectParameter_ToneMapExposure_get___(void * jarg1) {
+  float jresult ;
+  Effekseer::Tool::PostEffectParameter *arg1 = (Effekseer::Tool::PostEffectParameter *) 0 ;
+  float result;
+  
+  arg1 = (Effekseer::Tool::PostEffectParameter *)jarg1; 
+  result = (float) ((arg1)->ToneMapExposure);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_PostEffectParameter___() {
+  void * jresult ;
+  Effekseer::Tool::PostEffectParameter *result = 0 ;
+  
+  result = (Effekseer::Tool::PostEffectParameter *)new Effekseer::Tool::PostEffectParameter();
   jresult = (void *)result; 
   return jresult;
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_Vec2___(void * jarg1) {
-  efk::Vec2 *arg1 = (efk::Vec2 *) 0 ;
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_PostEffectParameter___(void * jarg1) {
+  Effekseer::Tool::PostEffectParameter *arg1 = (Effekseer::Tool::PostEffectParameter *) 0 ;
   
-  arg1 = (efk::Vec2 *)jarg1; 
+  arg1 = (Effekseer::Tool::PostEffectParameter *)jarg1; 
+  delete arg1;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_GuideWidth_set___(void * jarg1, int jarg2) {
+  Effekseer::Tool::ViewerParamater *arg1 = (Effekseer::Tool::ViewerParamater *) 0 ;
+  int32_t arg2 ;
+  
+  arg1 = (Effekseer::Tool::ViewerParamater *)jarg1; 
+  arg2 = (int32_t)jarg2; 
+  if (arg1) (arg1)->GuideWidth = arg2;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_GuideWidth_get___(void * jarg1) {
+  int jresult ;
+  Effekseer::Tool::ViewerParamater *arg1 = (Effekseer::Tool::ViewerParamater *) 0 ;
+  int32_t result;
+  
+  arg1 = (Effekseer::Tool::ViewerParamater *)jarg1; 
+  result = (int32_t) ((arg1)->GuideWidth);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_GuideHeight_set___(void * jarg1, int jarg2) {
+  Effekseer::Tool::ViewerParamater *arg1 = (Effekseer::Tool::ViewerParamater *) 0 ;
+  int32_t arg2 ;
+  
+  arg1 = (Effekseer::Tool::ViewerParamater *)jarg1; 
+  arg2 = (int32_t)jarg2; 
+  if (arg1) (arg1)->GuideHeight = arg2;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_GuideHeight_get___(void * jarg1) {
+  int jresult ;
+  Effekseer::Tool::ViewerParamater *arg1 = (Effekseer::Tool::ViewerParamater *) 0 ;
+  int32_t result;
+  
+  arg1 = (Effekseer::Tool::ViewerParamater *)jarg1; 
+  result = (int32_t) ((arg1)->GuideHeight);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_RendersGuide_set___(void * jarg1, unsigned int jarg2) {
+  Effekseer::Tool::ViewerParamater *arg1 = (Effekseer::Tool::ViewerParamater *) 0 ;
+  bool arg2 ;
+  
+  arg1 = (Effekseer::Tool::ViewerParamater *)jarg1; 
+  arg2 = jarg2 ? true : false; 
+  if (arg1) (arg1)->RendersGuide = arg2;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_RendersGuide_get___(void * jarg1) {
+  unsigned int jresult ;
+  Effekseer::Tool::ViewerParamater *arg1 = (Effekseer::Tool::ViewerParamater *) 0 ;
+  bool result;
+  
+  arg1 = (Effekseer::Tool::ViewerParamater *)jarg1; 
+  result = (bool) ((arg1)->RendersGuide);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_Distortion_set___(void * jarg1, int jarg2) {
+  Effekseer::Tool::ViewerParamater *arg1 = (Effekseer::Tool::ViewerParamater *) 0 ;
+  Effekseer::Tool::DistortionType arg2 ;
+  
+  arg1 = (Effekseer::Tool::ViewerParamater *)jarg1; 
+  arg2 = (Effekseer::Tool::DistortionType)jarg2; 
+  if (arg1) (arg1)->Distortion = arg2;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_Distortion_get___(void * jarg1) {
+  int jresult ;
+  Effekseer::Tool::ViewerParamater *arg1 = (Effekseer::Tool::ViewerParamater *) 0 ;
+  Effekseer::Tool::DistortionType result;
+  
+  arg1 = (Effekseer::Tool::ViewerParamater *)jarg1; 
+  result = (Effekseer::Tool::DistortionType) ((arg1)->Distortion);
+  jresult = (int)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_RenderingMode_set___(void * jarg1, int jarg2) {
+  Effekseer::Tool::ViewerParamater *arg1 = (Effekseer::Tool::ViewerParamater *) 0 ;
+  Effekseer::Tool::RenderingMethodType arg2 ;
+  
+  arg1 = (Effekseer::Tool::ViewerParamater *)jarg1; 
+  arg2 = (Effekseer::Tool::RenderingMethodType)jarg2; 
+  if (arg1) (arg1)->RenderingMode = arg2;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_RenderingMode_get___(void * jarg1) {
+  int jresult ;
+  Effekseer::Tool::ViewerParamater *arg1 = (Effekseer::Tool::ViewerParamater *) 0 ;
+  Effekseer::Tool::RenderingMethodType result;
+  
+  arg1 = (Effekseer::Tool::ViewerParamater *)jarg1; 
+  result = (Effekseer::Tool::RenderingMethodType) ((arg1)->RenderingMode);
+  jresult = (int)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_ViewerParamater___() {
+  void * jresult ;
+  Effekseer::Tool::ViewerParamater *result = 0 ;
+  
+  result = (Effekseer::Tool::ViewerParamater *)new Effekseer::Tool::ViewerParamater();
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_ViewerParamater___(void * jarg1) {
+  Effekseer::Tool::ViewerParamater *arg1 = (Effekseer::Tool::ViewerParamater *) 0 ;
+  
+  arg1 = (Effekseer::Tool::ViewerParamater *)jarg1; 
   delete arg1;
 }
 
@@ -1539,6 +1743,138 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_ViewerEffectBehavior___
 }
 
 
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_ProcessConnector___() {
+  void * jresult ;
+  Effekseer::Tool::ProcessConnector *result = 0 ;
+  
+  result = (Effekseer::Tool::ProcessConnector *)new Effekseer::Tool::ProcessConnector();
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_ProcessConnector___(void * jarg1) {
+  Effekseer::Tool::ProcessConnector *arg1 = (Effekseer::Tool::ProcessConnector *) 0 ;
+  
+  arg1 = (Effekseer::Tool::ProcessConnector *)jarg1; 
+  delete arg1;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProcessConnector_Update___(void * jarg1) {
+  Effekseer::Tool::ProcessConnector *arg1 = (Effekseer::Tool::ProcessConnector *) 0 ;
+  
+  arg1 = (Effekseer::Tool::ProcessConnector *)jarg1; 
+  (arg1)->Update();
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProcessConnector_OpenOrCreateMaterial___(void * jarg1, void * jarg2) {
+  Effekseer::Tool::ProcessConnector *arg1 = (Effekseer::Tool::ProcessConnector *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  
+  arg1 = (Effekseer::Tool::ProcessConnector *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  (arg1)->OpenOrCreateMaterial((char16_t const *)arg2);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProcessConnector_TerminateMaterialEditor___(void * jarg1) {
+  Effekseer::Tool::ProcessConnector *arg1 = (Effekseer::Tool::ProcessConnector *) 0 ;
+  
+  arg1 = (Effekseer::Tool::ProcessConnector *)jarg1; 
+  (arg1)->TerminateMaterialEditor();
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_ProcessConnector_GetIsUpdateMaterialRequiredAndReset___(void * jarg1) {
+  unsigned int jresult ;
+  Effekseer::Tool::ProcessConnector *arg1 = (Effekseer::Tool::ProcessConnector *) 0 ;
+  bool result;
+  
+  arg1 = (Effekseer::Tool::ProcessConnector *)jarg1; 
+  result = (bool)(arg1)->GetIsUpdateMaterialRequiredAndReset();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Vec2_X_set___(void * jarg1, float jarg2) {
+  efk::Vec2 *arg1 = (efk::Vec2 *) 0 ;
+  float arg2 ;
+  
+  arg1 = (efk::Vec2 *)jarg1; 
+  arg2 = (float)jarg2; 
+  if (arg1) (arg1)->X = arg2;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_Vec2_X_get___(void * jarg1) {
+  float jresult ;
+  efk::Vec2 *arg1 = (efk::Vec2 *) 0 ;
+  float result;
+  
+  arg1 = (efk::Vec2 *)jarg1; 
+  result = (float) ((arg1)->X);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Vec2_Y_set___(void * jarg1, float jarg2) {
+  efk::Vec2 *arg1 = (efk::Vec2 *) 0 ;
+  float arg2 ;
+  
+  arg1 = (efk::Vec2 *)jarg1; 
+  arg2 = (float)jarg2; 
+  if (arg1) (arg1)->Y = arg2;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_Vec2_Y_get___(void * jarg1) {
+  float jresult ;
+  efk::Vec2 *arg1 = (efk::Vec2 *) 0 ;
+  float result;
+  
+  arg1 = (efk::Vec2 *)jarg1; 
+  result = (float) ((arg1)->Y);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_Vec2__SWIG_0___() {
+  void * jresult ;
+  efk::Vec2 *result = 0 ;
+  
+  result = (efk::Vec2 *)new efk::Vec2();
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_Vec2__SWIG_1___(float jarg1, float jarg2) {
+  void * jresult ;
+  float arg1 ;
+  float arg2 ;
+  efk::Vec2 *result = 0 ;
+  
+  arg1 = (float)jarg1; 
+  arg2 = (float)jarg2; 
+  result = (efk::Vec2 *)new efk::Vec2(arg1,arg2);
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_Vec2___(void * jarg1) {
+  efk::Vec2 *arg1 = (efk::Vec2 *) 0 ;
+  
+  arg1 = (efk::Vec2 *)jarg1; 
+  delete arg1;
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_GetPath___(void * jarg1) {
   void * jresult ;
   Effekseer::Tool::RecordingParameter *arg1 = (Effekseer::Tool::RecordingParameter *) 0 ;
@@ -2016,13 +2352,58 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_Vector3F___(void * jarg
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GraphicsDevice_Resize___(void * jarg1, int jarg2, int jarg3) {
+  Effekseer::Tool::GraphicsDevice *arg1 = (Effekseer::Tool::GraphicsDevice *) 0 ;
+  int32_t arg2 ;
+  int32_t arg3 ;
+  std::shared_ptr< Effekseer::Tool::GraphicsDevice > *smartarg1 = 0 ;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::Tool::GraphicsDevice > *)jarg1;
+  arg1 = (Effekseer::Tool::GraphicsDevice *)(smartarg1 ? smartarg1->get() : 0); 
+  arg2 = (int32_t)jarg2; 
+  arg3 = (int32_t)jarg3; 
+  (arg1)->Resize(arg2,arg3);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GraphicsDevice_ClearColor___(void * jarg1, unsigned char jarg2, unsigned char jarg3, unsigned char jarg4, unsigned char jarg5) {
+  Effekseer::Tool::GraphicsDevice *arg1 = (Effekseer::Tool::GraphicsDevice *) 0 ;
+  uint8_t arg2 ;
+  uint8_t arg3 ;
+  uint8_t arg4 ;
+  uint8_t arg5 ;
+  std::shared_ptr< Effekseer::Tool::GraphicsDevice > *smartarg1 = 0 ;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::Tool::GraphicsDevice > *)jarg1;
+  arg1 = (Effekseer::Tool::GraphicsDevice *)(smartarg1 ? smartarg1->get() : 0); 
+  arg2 = (uint8_t)jarg2; 
+  arg3 = (uint8_t)jarg3; 
+  arg4 = (uint8_t)jarg4; 
+  arg5 = (uint8_t)jarg5; 
+  (arg1)->ClearColor(arg2,arg3,arg4,arg5);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GraphicsDevice_Present___(void * jarg1) {
+  Effekseer::Tool::GraphicsDevice *arg1 = (Effekseer::Tool::GraphicsDevice *) 0 ;
+  std::shared_ptr< Effekseer::Tool::GraphicsDevice > *smartarg1 = 0 ;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::Tool::GraphicsDevice > *)jarg1;
+  arg1 = (Effekseer::Tool::GraphicsDevice *)(smartarg1 ? smartarg1->get() : 0); 
+  (arg1)->Present();
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_GraphicsDevice_Create___(void * jarg1, int jarg2, int jarg3, unsigned int jarg4, int jarg5) {
   void * jresult ;
   void *arg1 = (void *) 0 ;
   int arg2 ;
   int arg3 ;
   bool arg4 ;
-  efk::DeviceType arg5 ;
+  Effekseer::Tool::DeviceType arg5 ;
   std::shared_ptr< Effekseer::Tool::GraphicsDevice > result;
   
   {
@@ -2031,7 +2412,7 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_GraphicsDevice_Create___(voi
   arg2 = (int)jarg2; 
   arg3 = (int)jarg3; 
   arg4 = jarg4 ? true : false; 
-  arg5 = (efk::DeviceType)jarg5; 
+  arg5 = (Effekseer::Tool::DeviceType)jarg5; 
   result = Effekseer::Tool::GraphicsDevice::Create(arg1,arg2,arg3,arg4,arg5);
   jresult = result ? new std::shared_ptr< Effekseer::Tool::GraphicsDevice >(result) : 0; 
   return jresult;
@@ -2819,262 +3200,6 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_Logger___(void * jarg1)
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_GuideWidth_set___(void * jarg1, int jarg2) {
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  int32_t arg2 ;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  arg2 = (int32_t)jarg2; 
-  if (arg1) (arg1)->GuideWidth = arg2;
-}
-
-
-SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_GuideWidth_get___(void * jarg1) {
-  int jresult ;
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  int32_t result;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  result = (int32_t) ((arg1)->GuideWidth);
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_GuideHeight_set___(void * jarg1, int jarg2) {
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  int32_t arg2 ;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  arg2 = (int32_t)jarg2; 
-  if (arg1) (arg1)->GuideHeight = arg2;
-}
-
-
-SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_GuideHeight_get___(void * jarg1) {
-  int jresult ;
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  int32_t result;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  result = (int32_t) ((arg1)->GuideHeight);
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_RendersGuide_set___(void * jarg1, unsigned int jarg2) {
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  bool arg2 ;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  arg2 = jarg2 ? true : false; 
-  if (arg1) (arg1)->RendersGuide = arg2;
-}
-
-
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_RendersGuide_get___(void * jarg1) {
-  unsigned int jresult ;
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  bool result;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  result = (bool) ((arg1)->RendersGuide);
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_IsCullingShown_set___(void * jarg1, unsigned int jarg2) {
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  bool arg2 ;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  arg2 = jarg2 ? true : false; 
-  if (arg1) (arg1)->IsCullingShown = arg2;
-}
-
-
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_IsCullingShown_get___(void * jarg1) {
-  unsigned int jresult ;
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  bool result;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  result = (bool) ((arg1)->IsCullingShown);
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_CullingRadius_set___(void * jarg1, float jarg2) {
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  float arg2 ;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  arg2 = (float)jarg2; 
-  if (arg1) (arg1)->CullingRadius = arg2;
-}
-
-
-SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_CullingRadius_get___(void * jarg1) {
-  float jresult ;
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  float result;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  result = (float) ((arg1)->CullingRadius);
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_CullingX_set___(void * jarg1, float jarg2) {
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  float arg2 ;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  arg2 = (float)jarg2; 
-  if (arg1) (arg1)->CullingX = arg2;
-}
-
-
-SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_CullingX_get___(void * jarg1) {
-  float jresult ;
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  float result;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  result = (float) ((arg1)->CullingX);
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_CullingY_set___(void * jarg1, float jarg2) {
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  float arg2 ;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  arg2 = (float)jarg2; 
-  if (arg1) (arg1)->CullingY = arg2;
-}
-
-
-SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_CullingY_get___(void * jarg1) {
-  float jresult ;
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  float result;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  result = (float) ((arg1)->CullingY);
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_CullingZ_set___(void * jarg1, float jarg2) {
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  float arg2 ;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  arg2 = (float)jarg2; 
-  if (arg1) (arg1)->CullingZ = arg2;
-}
-
-
-SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_CullingZ_get___(void * jarg1) {
-  float jresult ;
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  float result;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  result = (float) ((arg1)->CullingZ);
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_Distortion_set___(void * jarg1, int jarg2) {
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  Effekseer::Tool::DistortionType arg2 ;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  arg2 = (Effekseer::Tool::DistortionType)jarg2; 
-  if (arg1) (arg1)->Distortion = arg2;
-}
-
-
-SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_Distortion_get___(void * jarg1) {
-  int jresult ;
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  Effekseer::Tool::DistortionType result;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  result = (Effekseer::Tool::DistortionType) ((arg1)->Distortion);
-  jresult = (int)result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_RenderingMode_set___(void * jarg1, int jarg2) {
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  Effekseer::Tool::RenderingMethodType arg2 ;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  arg2 = (Effekseer::Tool::RenderingMethodType)jarg2; 
-  if (arg1) (arg1)->RenderingMode = arg2;
-}
-
-
-SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_RenderingMode_get___(void * jarg1) {
-  int jresult ;
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  Effekseer::Tool::RenderingMethodType result;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  result = (Effekseer::Tool::RenderingMethodType) ((arg1)->RenderingMode);
-  jresult = (int)result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_ViewerParamater___() {
-  void * jresult ;
-  ViewerParamater *result = 0 ;
-  
-  result = (ViewerParamater *)new ViewerParamater();
-  jresult = (void *)result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_ViewerParamater___(void * jarg1) {
-  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
-  
-  arg1 = (ViewerParamater *)jarg1; 
-  delete arg1;
-}
-
-
-SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_Native___() {
-  void * jresult ;
-  Native *result = 0 ;
-  
-  result = (Native *)new Native();
-  jresult = (void *)result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_Native___(void * jarg1) {
-  Native *arg1 = (Native *) 0 ;
-  
-  arg1 = (Native *)jarg1; 
-  delete arg1;
-}
-
-
 SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_CreateWindow_Effekseer___(void * jarg1, void * jarg2, void * jarg3, void * jarg4) {
   unsigned int jresult ;
   Native *arg1 = (Native *) 0 ;
@@ -3088,60 +3213,6 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_CreateWindow_Ef
   if (jarg3) arg3 = *(std::shared_ptr< Effekseer::Tool::SoundDevice > *)jarg3; 
   if (jarg4) arg4 = *(std::shared_ptr< Effekseer::Tool::EffectSetting > *)jarg4; 
   result = (bool)(arg1)->CreateWindow_Effekseer(arg2,arg3,arg4);
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_UpdateWindow___(void * jarg1, void * jarg2) {
-  unsigned int jresult ;
-  Native *arg1 = (Native *) 0 ;
-  std::shared_ptr< Effekseer::Tool::ViewPointController > arg2 ;
-  bool result;
-  
-  arg1 = (Native *)jarg1; 
-  if (jarg2) arg2 = *(std::shared_ptr< Effekseer::Tool::ViewPointController > *)jarg2; 
-  result = (bool)(arg1)->UpdateWindow(arg2);
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_ClearWindow___(void * jarg1, unsigned char jarg2, unsigned char jarg3, unsigned char jarg4, unsigned char jarg5) {
-  Native *arg1 = (Native *) 0 ;
-  uint8_t arg2 ;
-  uint8_t arg3 ;
-  uint8_t arg4 ;
-  uint8_t arg5 ;
-  
-  arg1 = (Native *)jarg1; 
-  arg2 = (uint8_t)jarg2; 
-  arg3 = (uint8_t)jarg3; 
-  arg4 = (uint8_t)jarg4; 
-  arg5 = (uint8_t)jarg5; 
-  (arg1)->ClearWindow(arg2,arg3,arg4,arg5);
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_Present___(void * jarg1) {
-  Native *arg1 = (Native *) 0 ;
-  
-  arg1 = (Native *)jarg1; 
-  (arg1)->Present();
-}
-
-
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_ResizeWindow___(void * jarg1, int jarg2, int jarg3) {
-  unsigned int jresult ;
-  Native *arg1 = (Native *) 0 ;
-  int arg2 ;
-  int arg3 ;
-  bool result;
-  
-  arg1 = (Native *)jarg1; 
-  arg2 = (int)jarg2; 
-  arg3 = (int)jarg3; 
-  result = (bool)(arg1)->ResizeWindow(arg2,arg3);
   jresult = result; 
   return jresult;
 }
@@ -3286,23 +3357,23 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_Native_CreateRecorder___(voi
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_Native_GetViewerParamater___(void * jarg1) {
   void * jresult ;
   Native *arg1 = (Native *) 0 ;
-  ViewerParamater result;
+  Effekseer::Tool::ViewerParamater result;
   
   arg1 = (Native *)jarg1; 
   result = (arg1)->GetViewerParamater();
-  jresult = new ViewerParamater((const ViewerParamater &)result); 
+  jresult = new Effekseer::Tool::ViewerParamater((const Effekseer::Tool::ViewerParamater &)result); 
   return jresult;
 }
 
 
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_SetViewerParamater___(void * jarg1, void * jarg2) {
   Native *arg1 = (Native *) 0 ;
-  ViewerParamater *arg2 = 0 ;
+  Effekseer::Tool::ViewerParamater *arg2 = 0 ;
   
   arg1 = (Native *)jarg1; 
-  arg2 = (ViewerParamater *)jarg2;
+  arg2 = (Effekseer::Tool::ViewerParamater *)jarg2;
   if (!arg2) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "ViewerParamater & type is null", 0);
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Effekseer::Tool::ViewerParamater & type is null", 0);
     return ;
   } 
   (arg1)->SetViewerParamater(*arg2);
@@ -3559,87 +3630,35 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_IsDebugMode___(
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_SetBloomParameters___(void * jarg1, unsigned int jarg2, float jarg3, float jarg4, float jarg5) {
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_SetPostEffectParameter___(void * jarg1, void * jarg2) {
   Native *arg1 = (Native *) 0 ;
-  bool arg2 ;
-  float arg3 ;
-  float arg4 ;
-  float arg5 ;
+  Effekseer::Tool::PostEffectParameter *arg2 = 0 ;
   
   arg1 = (Native *)jarg1; 
-  arg2 = jarg2 ? true : false; 
-  arg3 = (float)jarg3; 
-  arg4 = (float)jarg4; 
-  arg5 = (float)jarg5; 
-  (arg1)->SetBloomParameters(arg2,arg3,arg4,arg5);
+  arg2 = (Effekseer::Tool::PostEffectParameter *)jarg2;
+  if (!arg2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Effekseer::Tool::PostEffectParameter const & type is null", 0);
+    return ;
+  } 
+  (arg1)->SetPostEffectParameter((Effekseer::Tool::PostEffectParameter const &)*arg2);
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_SetTonemapParameters___(void * jarg1, int jarg2, float jarg3) {
-  Native *arg1 = (Native *) 0 ;
-  int32_t arg2 ;
-  float arg3 ;
-  
-  arg1 = (Native *)jarg1; 
-  arg2 = (int32_t)jarg2; 
-  arg3 = (float)jarg3; 
-  (arg1)->SetTonemapParameters(arg2,arg3);
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_OpenOrCreateMaterial___(void * jarg1, void * jarg2) {
-  Native *arg1 = (Native *) 0 ;
-  char16_t *arg2 = (char16_t *) 0 ;
-  
-  arg1 = (Native *)jarg1; 
-  arg2 = (char16_t *)jarg2; 
-  (arg1)->OpenOrCreateMaterial((char16_t const *)arg2);
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_TerminateMaterialEditor___(void * jarg1) {
-  Native *arg1 = (Native *) 0 ;
-  
-  arg1 = (Native *)jarg1; 
-  (arg1)->TerminateMaterialEditor();
-}
-
-
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_GetIsUpdateMaterialRequiredAndReset___(void * jarg1) {
-  unsigned int jresult ;
-  Native *arg1 = (Native *) 0 ;
-  bool result;
-  
-  arg1 = (Native *)jarg1; 
-  result = (bool)(arg1)->GetIsUpdateMaterialRequiredAndReset();
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_Native_CreateReloadableImage___(void * jarg1, void * jarg2) {
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_Native___() {
   void * jresult ;
-  Native *arg1 = (Native *) 0 ;
-  char16_t *arg2 = (char16_t *) 0 ;
-  std::shared_ptr< Effekseer::Tool::ReloadableImage > result;
+  Native *result = 0 ;
   
-  arg1 = (Native *)jarg1; 
-  arg2 = (char16_t *)jarg2; 
-  result = (arg1)->CreateReloadableImage((char16_t const *)arg2);
-  jresult = result ? new std::shared_ptr< Effekseer::Tool::ReloadableImage >(result) : 0; 
+  result = (Native *)new Native();
+  jresult = (void *)result; 
   return jresult;
 }
 
 
-SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_Native_CreateRenderImage___(void * jarg1) {
-  void * jresult ;
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_Native___(void * jarg1) {
   Native *arg1 = (Native *) 0 ;
-  std::shared_ptr< Effekseer::Tool::RenderImage > result;
   
   arg1 = (Native *)jarg1; 
-  result = (arg1)->CreateRenderImage();
-  jresult = result ? new std::shared_ptr< Effekseer::Tool::RenderImage >(result) : 0; 
-  return jresult;
+  delete arg1;
 }
 
 
@@ -3860,12 +3879,12 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Initialize_
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   std::shared_ptr< Effekseer::MainWindow > arg2 ;
-  efk::DeviceType arg3 ;
+  Effekseer::Tool::DeviceType arg3 ;
   bool result;
   
   arg1 = (efk::GUIManager *)jarg1; 
   if (jarg2) arg2 = *(std::shared_ptr< Effekseer::MainWindow > *)jarg2; 
-  arg3 = (efk::DeviceType)jarg3; 
+  arg3 = (Effekseer::Tool::DeviceType)jarg3; 
   result = (bool)(arg1)->Initialize(arg2,arg3);
   jresult = result; 
   return jresult;
@@ -9596,6 +9615,20 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ReloadableImage_Invalidate___(
 }
 
 
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_ReloadableImage_Create___(void * jarg1, void * jarg2) {
+  void * jresult ;
+  std::shared_ptr< Effekseer::Tool::GraphicsDevice > arg1 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  std::shared_ptr< Effekseer::Tool::ReloadableImage > result;
+  
+  if (jarg1) arg1 = *(std::shared_ptr< Effekseer::Tool::GraphicsDevice > *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  result = Effekseer::Tool::ReloadableImage::Create(arg1,(char16_t const *)arg2);
+  jresult = result ? new std::shared_ptr< Effekseer::Tool::ReloadableImage >(result) : 0; 
+  return jresult;
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_RenderImage___() {
   void * jresult ;
   Effekseer::Tool::RenderImage *result = 0 ;
@@ -9620,6 +9653,18 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_RenderImage_Resize___(void * j
   arg2 = (int32_t)jarg2; 
   arg3 = (int32_t)jarg3; 
   (arg1)->Resize(arg2,arg3);
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_RenderImage_Create___(void * jarg1) {
+  void * jresult ;
+  std::shared_ptr< Effekseer::Tool::GraphicsDevice > arg1 ;
+  std::shared_ptr< Effekseer::Tool::RenderImage > result;
+  
+  if (jarg1) arg1 = *(std::shared_ptr< Effekseer::Tool::GraphicsDevice > *)jarg1; 
+  result = Effekseer::Tool::RenderImage::Create(arg1);
+  jresult = result ? new std::shared_ptr< Effekseer::Tool::RenderImage >(result) : 0; 
+  return jresult;
 }
 
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Graphics/GraphicsDevice.h"
 #include "Image.h"
 
 namespace Effekseer::Tool
@@ -23,6 +24,8 @@ public:
 
 	bool Validate();
 	void Invalidate();
+
+	static std::shared_ptr<Effekseer::Tool::ReloadableImage> Create(std::shared_ptr<GraphicsDevice> graphicsDevice, const char16_t* path);
 };
 
 } // namespace Effekseer::Tool

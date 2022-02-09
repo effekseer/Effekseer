@@ -105,7 +105,7 @@ Window::~Window()
 {
 }
 
-bool Window::Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, DeviceType deviceType)
+bool Window::Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, Effekseer::Tool::DeviceType deviceType)
 {
 	this->deviceType = deviceType;
 

@@ -1,8 +1,5 @@
 #include "SoundDevice.h"
 
-#include <EffekseerSoundOSMixer.h>
-#include <OpenSoundMixer.h>
-
 namespace Effekseer::Tool
 {
 

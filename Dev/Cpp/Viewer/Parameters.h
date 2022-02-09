@@ -1,16 +1,54 @@
 #pragma once
 
 #include <stdint.h>
-#include "efk.Base.h"
 
-namespace Effekseer
-{
-namespace Tool
+namespace Effekseer::Tool
 {
 
-class ViewerEffectBehavior
+enum class DeviceType
 {
-public:
+	DirectX11,
+	OpenGL,
+};
+
+enum class DistortionType : int32_t
+{
+	Current,
+	Effekseer120,
+	Disabled,
+};
+
+enum class RenderingMethodType
+{
+	Normal,
+	Wireframe,
+	NormalWithWireframe,
+	Overdraw,
+};
+
+struct PostEffectParameter
+{
+	bool BloomEnabled = false;
+	float BoomIntensity = 1.0f;
+	float BloomThreshold = 1.0f;
+	float BloomSoftKnee = 0.5f;
+
+	int ToneMapAlgorithm = 0;
+	float ToneMapExposure = 1.0f;
+};
+
+struct ViewerParamater
+{
+	int32_t GuideWidth = 0;
+	int32_t GuideHeight = 0;
+	bool RendersGuide = false;
+
+	Effekseer::Tool::DistortionType Distortion = Effekseer::Tool::DistortionType::Current;
+	Effekseer::Tool::RenderingMethodType RenderingMode = Effekseer::Tool::RenderingMethodType::Normal;
+};
+
+struct ViewerEffectBehavior
+{
 	int32_t CountX = 1;
 	int32_t CountY = 1;
 	int32_t CountZ = 1;
@@ -67,5 +105,4 @@ public:
 	bool TriggerInput3 = false;
 };
 
-} // namespace Tool
-} // namespace Effekseer
+} // namespace Effekseer::Tool

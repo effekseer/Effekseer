@@ -19,7 +19,7 @@ namespace Effekseer.GUI
 		{			
 			if(x > 0 && y > 0)
 			{
-				Manager.Native.ResizeWindow(x, y);
+				Manager.Viewer.graphicsDevice.Resize(x, y);
 
 				Manager.WindowSize.X = x;
 				Manager.WindowSize.Y = y;
@@ -280,9 +280,9 @@ namespace Effekseer.GUI
 			
 			NativeManager = mgr;
 
-			MainViewImage = Native.CreateRenderImage();
+			MainViewImage = RenderImage.Create(Viewer.graphicsDevice);
 
-			Images.Load(GUI.Manager.Native);
+			Images.Load(Viewer.graphicsDevice);
 
 			guiManagerCallback = new GUIManagerCallback();
 			NativeManager.SetCallback(guiManagerCallback);
@@ -654,9 +654,7 @@ namespace Effekseer.GUI
 				Viewer.soundDevice.SetListener(ray.Origin, rayPos, new Vector3F(0, 1, 0));
 			}
 
-			Native.UpdateWindow(Viewer.ViewPointController);
-
-			Native.ClearWindow(50, 50, 50, 0);
+			Viewer.graphicsDevice.ClearColor(50, 50, 50, 0);
 
 			//if(effectViewer == null)
 			//{
@@ -715,7 +713,7 @@ namespace Effekseer.GUI
 
 			NativeManager.RenderGUI(resizedCount == 0);
 
-			Native.Present();
+			Viewer.graphicsDevice.Present();
 			NativeManager.Present();
 
 			isFirstUpdate = false;

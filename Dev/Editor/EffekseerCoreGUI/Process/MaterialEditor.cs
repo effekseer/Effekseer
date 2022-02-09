@@ -11,6 +11,7 @@ namespace Effekseer.Process
 	public class MaterialEditor
 	{
 		static System.Diagnostics.Process process = null;
+		static swig.ProcessConnector processConnector = null;
 
 		public static bool Run()
 		{
@@ -19,6 +20,7 @@ namespace Effekseer.Process
 
 			try
 			{
+
 				var app = new ProcessStartInfo();
 
 				string appDirectory = GUI.Manager.GetEntryDirectory();
@@ -39,17 +41,35 @@ namespace Effekseer.Process
 			}
 		}
 
+		public static void Update()
+		{
+			if (processConnector != null)
+			{
+				processConnector.Update();
+			}
+		}
+
+		public static void Init()
+		{
+			if (processConnector == null)
+			{
+				processConnector = new swig.ProcessConnector();
+			}
+		}
+
+
 		public static void Terminate()
 		{
 			if (!IsRunning)
 				return;
-			GUI.Manager.Native.TerminateMaterialEditor();
+			processConnector.TerminateMaterialEditor();
 		}
 
 		public static bool IsRunning
 		{
 			get
 			{
+				if (processConnector == null) return false;
 				if (process == null) return false;
 				return !process.HasExited;
 			}
@@ -57,7 +77,7 @@ namespace Effekseer.Process
 
 		public static void OpenOrCreateMaterial(string path)
 		{
-			GUI.Manager.Native.OpenOrCreateMaterial(path);
+			processConnector.OpenOrCreateMaterial(path);
 
 			if (Environment.OSVersion.Platform == PlatformID.Win32NT)
 			{

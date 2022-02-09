@@ -8,7 +8,7 @@
 
 #include "../../EffekseerRendererCommon/EffekseerRenderer.Renderer.h"
 #include "../Math/Vector2I.h"
-#include "../efk.Base.h"
+#include "../Parameters.h"
 
 namespace efk
 {
@@ -47,7 +47,7 @@ public:
 
 	virtual void ResetDevice() = 0;
 
-	virtual DeviceType GetDeviceType() const = 0;
+	virtual Effekseer::Tool::DeviceType GetDeviceType() const = 0;
 
 	virtual void ResolveRenderTarget(Effekseer::Backend::TextureRef src, Effekseer::Backend::TextureRef dest)
 	{

@@ -5,7 +5,6 @@
 
 #include "../Graphics/StaticMeshRenderer.h"
 #include "../RenderedEffectGenerator.h"
-#include "../efk.Base.h"
 #include <functional>
 #include <string>
 

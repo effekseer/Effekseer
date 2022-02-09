@@ -44,6 +44,12 @@ public class RenderImage : Image {
     if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
   }
 
+  public static RenderImage Create(GraphicsDevice graphicsDevice) {
+    global::System.IntPtr cPtr = EffekseerNativePINVOKE.RenderImage_Create(GraphicsDevice.getCPtr(graphicsDevice));
+    RenderImage ret = (cPtr == global::System.IntPtr.Zero) ? null : new RenderImage(cPtr, true);
+    return ret;
+  }
+
 }
 
 }

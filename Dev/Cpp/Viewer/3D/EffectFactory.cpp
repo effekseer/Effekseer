@@ -3,6 +3,7 @@
 #include "Effect.h"
 
 #include <Effekseer/Effekseer.Base.h>
+#include <EffekseerSoundOSMixer.h>
 
 #include <algorithm>
 

@@ -13,9 +13,9 @@
 #include "../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
 #include "../EffekseerTool/EffekseerTool.Renderer.h"
 
+#include "Image.h"
 #include "NodeFrameTimeline.h"
 #include "efk.GUIManager.h"
-#include "Image.h"
 
 #include "../EditorCommon/GUI/JapaneseFont.h"
 
@@ -77,7 +77,8 @@ bool ImageButton_(ImTextureID user_texture_id,
 	bool pressed = ButtonBehavior(bb, id, &hovered, &held, ImGuiButtonFlags_PressedOnClick);
 
 	// Render
-	const ImU32 col = GetColorU32((held && hovered) ? ImGuiCol_ButtonActive : hovered ? ImGuiCol_ButtonHovered : ImGuiCol_Button);
+	const ImU32 col = GetColorU32((held && hovered) ? ImGuiCol_ButtonActive : hovered ? ImGuiCol_ButtonHovered
+																					  : ImGuiCol_Button);
 	RenderNavHighlight(bb, id);
 	RenderFrame(bb.Min, bb.Max, col, true, ImClamp((float)ImMin(padding.x, padding.y), 0.0f, style.FrameRounding));
 	if (bg_col.w > 0.0f)
@@ -176,7 +177,8 @@ bool ColorEdit4_(const char* label, float col[4], ImGuiColorEditFlags flags)
 			{"R:%0.3f", "G:%0.3f", "B:%0.3f", "A:%0.3f"}, // Long display for RGBA
 			{"H:%0.3f", "S:%0.3f", "V:%0.3f", "A:%0.3f"}  // Long display for HSVA
 		};
-		const int fmt_idx = hide_prefix ? 0 : (flags & ImGuiColorEditFlags_HSV) ? 2 : 1;
+		const int fmt_idx = hide_prefix ? 0 : (flags & ImGuiColorEditFlags_HSV) ? 2
+																				: 1;
 
 		PushItemWidth(w_item_one);
 		for (int n = 0; n < components; n++)
@@ -423,11 +425,12 @@ void ResizeBicubic(uint32_t* dst,
 	float hf = (float)srcHeight / dstHeight;
 
 	// bicubic weight function
-	auto weight = [](float d) -> float {
+	auto weight = [](float d) -> float
+	{
 		const float a = -1.0f;
-		return d <= 1.0f ? ((a + 2.0f) * d * d * d) - ((a + 3.0f) * d * d) + 1
-						 : d <= 2.0f ? (a * d * d * d) - (5.0f * a * d * d) + (8.0f * a * d) - (4.0f * a)
-									 : 0.0f;
+		return d <= 1.0f   ? ((a + 2.0f) * d * d * d) - ((a + 3.0f) * d * d) + 1
+			   : d <= 2.0f ? (a * d * d * d) - (5.0f * a * d * d) + (8.0f * a * d) - (4.0f * a)
+						   : 0.0f;
 	};
 
 	for (int32_t iy = 0; iy < dstHeight; iy++)
@@ -610,7 +613,7 @@ GUIManager::~GUIManager()
 {
 }
 
-bool GUIManager::Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, efk::DeviceType deviceType)
+bool GUIManager::Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, Effekseer::Tool::DeviceType deviceType)
 {
 #ifdef __linux__
 	gtk_disable_setlocale();
@@ -627,21 +630,24 @@ bool GUIManager::Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, e
 
 	mainWindow_ = mainWindow;
 
-	window->Resized = [this](int x, int y) -> void {
+	window->Resized = [this](int x, int y) -> void
+	{
 		if (this->callback != nullptr)
 		{
 			this->callback->Resized(x, y);
 		}
 	};
 
-	window->Focused = [this]() -> void {
+	window->Focused = [this]() -> void
+	{
 		if (this->callback != nullptr)
 		{
 			this->callback->Focused();
 		}
 	};
 
-	window->Droped = [this](const char* path) -> void {
+	window->Droped = [this](const char* path) -> void
+	{
 		if (this->callback != nullptr)
 		{
 			this->callback->SetPath(Effekseer::Tool::StringHelper::ConvertUtf8ToUtf16(path).c_str());
@@ -649,7 +655,8 @@ bool GUIManager::Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, e
 		}
 	};
 
-	window->Closing = [this]() -> bool {
+	window->Closing = [this]() -> bool
+	{
 		if (this->callback != nullptr)
 		{
 			return this->callback->Closing();
@@ -658,14 +665,16 @@ bool GUIManager::Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, e
 		return true;
 	};
 
-	window->Iconify = [this](int f) -> void {
+	window->Iconify = [this](int f) -> void
+	{
 		if (this->callback != nullptr)
 		{
 			this->callback->Iconify(f);
 		}
 	};
 
-	window->DpiChanged = [this](float scale) -> void {
+	window->DpiChanged = [this](float scale) -> void
+	{
 		this->ResetGUIStyle();
 
 		if (this->callback != nullptr)
@@ -674,7 +683,7 @@ bool GUIManager::Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, e
 		}
 	};
 
-	if (deviceType == DeviceType::OpenGL)
+	if (deviceType == Effekseer::Tool::DeviceType::OpenGL)
 	{
 		window->MakeCurrent();
 
@@ -693,7 +702,7 @@ void GUIManager::InitializeGUI(Native* native)
 
 	ImGuiIO& io = ImGui::GetIO();
 
-	if (deviceType == DeviceType::OpenGL)
+	if (deviceType == Effekseer::Tool::DeviceType::OpenGL)
 	{
 		// It causes bugs on some mac pc
 		// io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
@@ -709,13 +718,13 @@ void GUIManager::InitializeGUI(Native* native)
 		ImGui_ImplOpenGL3_Init(glsl_version);
 	}
 #ifdef _WIN32
-	else if (deviceType == DeviceType::DirectX11)
+	else if (deviceType == Effekseer::Tool::DeviceType::DirectX11)
 	{
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
 		ImGui_ImplGlfw_InitForVulkan(window->GetGLFWWindows(), true);
 
-		auto gd = native->GetGraphicsDevice().DownCast<EffekseerRendererDX11::Backend::GraphicsDevice>();
+		auto gd = native->GetGraphicsDevice()->GetGraphics()->GetGraphicsDevice().DownCast<EffekseerRendererDX11::Backend::GraphicsDevice>();
 		ImGui_ImplDX11_Init(gd->GetDevice(), gd->GetContext());
 	}
 	else
@@ -785,12 +794,12 @@ void GUIManager::SetSize(int32_t width, int32_t height)
 
 void GUIManager::Terminate()
 {
-	if (deviceType == DeviceType::OpenGL)
+	if (deviceType == Effekseer::Tool::DeviceType::OpenGL)
 	{
 		ImGui_ImplOpenGL3_Shutdown();
 	}
 #ifdef _WIN32
-	else if (deviceType == DeviceType::DirectX11)
+	else if (deviceType == Effekseer::Tool::DeviceType::DirectX11)
 	{
 		ImGui_ImplDX11_Shutdown();
 	}
@@ -876,12 +885,12 @@ void GUIManager::SetCallback(GUIManagerCallback* callback)
 
 void GUIManager::InvalidateFont()
 {
-	if (deviceType == DeviceType::OpenGL)
+	if (deviceType == Effekseer::Tool::DeviceType::OpenGL)
 	{
 		ImGui_ImplOpenGL3_DestroyFontsTexture();
 	}
 #if _WIN32
-	else if (deviceType == DeviceType::DirectX11)
+	else if (deviceType == Effekseer::Tool::DeviceType::DirectX11)
 	{
 		ImGui_ImplDX11_InvalidateDeviceObjects();
 	}
@@ -894,12 +903,12 @@ void GUIManager::InvalidateFont()
 
 void GUIManager::ResetGUI()
 {
-	if (deviceType == DeviceType::OpenGL)
+	if (deviceType == Effekseer::Tool::DeviceType::OpenGL)
 	{
 		ImGui_ImplOpenGL3_NewFrame();
 	}
 #if _WIN32
-	else if (deviceType == DeviceType::DirectX11)
+	else if (deviceType == Effekseer::Tool::DeviceType::DirectX11)
 	{
 		ImGui_ImplDX11_NewFrame();
 	}
@@ -919,13 +928,13 @@ void GUIManager::RenderGUI(bool isValid)
 
 	if (isValid)
 	{
-		if (deviceType == DeviceType::OpenGL)
+		if (deviceType == Effekseer::Tool::DeviceType::OpenGL)
 		{
 			ImGui::Render();
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		}
 #if _WIN32
-		else if (deviceType == DeviceType::DirectX11)
+		else if (deviceType == Effekseer::Tool::DeviceType::DirectX11)
 		{
 			ImGui::Render();
 			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
@@ -956,7 +965,7 @@ void GUIManager::RenderGUI(bool isValid)
 			}
 		}
 
-		if (deviceType == DeviceType::OpenGL)
+		if (deviceType == Effekseer::Tool::DeviceType::OpenGL)
 		{
 			glfwMakeContextCurrent(window->GetGLFWWindows());
 		}
@@ -1064,21 +1073,36 @@ float GUIManager::GetStyleVar(ImGuiStyleVarFlags idx)
 	auto& style = ImGui::GetStyle();
 	switch (idx)
 	{
-	case Alpha:			    return style.Alpha;
-	case WindowRounding:	return style.WindowRounding;
-	case WindowBorderSize:  return style.WindowBorderSize;
-	case ChildRounding:	    return style.ChildRounding;
-	case ChildBorderSize:   return style.ChildBorderSize;
-	case PopupRounding:	    return style.PopupRounding;
-	case PopupBorderSize:   return style.PopupBorderSize;
-	case FrameRounding:	    return style.FrameRounding;
-	case FrameBorderSize:   return style.FrameBorderSize;
-	case IndentSpacing:	    return style.IndentSpacing;
-	case ScrollbarSize:	    return style.ScrollbarSize;
-	case ScrollbarRounding: return style.ScrollbarRounding;
-	case GrabMinSize:	    return style.GrabMinSize;
-	case GrabRounding:	    return style.GrabRounding;
-	default:                return 0.0f;
+	case Alpha:
+		return style.Alpha;
+	case WindowRounding:
+		return style.WindowRounding;
+	case WindowBorderSize:
+		return style.WindowBorderSize;
+	case ChildRounding:
+		return style.ChildRounding;
+	case ChildBorderSize:
+		return style.ChildBorderSize;
+	case PopupRounding:
+		return style.PopupRounding;
+	case PopupBorderSize:
+		return style.PopupBorderSize;
+	case FrameRounding:
+		return style.FrameRounding;
+	case FrameBorderSize:
+		return style.FrameBorderSize;
+	case IndentSpacing:
+		return style.IndentSpacing;
+	case ScrollbarSize:
+		return style.ScrollbarSize;
+	case ScrollbarRounding:
+		return style.ScrollbarRounding;
+	case GrabMinSize:
+		return style.GrabMinSize;
+	case GrabRounding:
+		return style.GrabRounding;
+	default:
+		return 0.0f;
 	}
 }
 
@@ -1087,14 +1111,22 @@ Vec2 GUIManager::GetStyleVar2(ImGuiStyleVarFlags idx)
 	auto& style = ImGui::GetStyle();
 	switch (idx)
 	{
-	case WindowPadding:	    return *(Vec2*)&style.WindowPadding;
-	case WindowMinSize:	    return *(Vec2*)&style.WindowMinSize;
-	case WindowTitleAlign:  return *(Vec2*)&style.WindowTitleAlign;
-	case FramePadding:	    return *(Vec2*)&style.FramePadding;
-	case ItemSpacing:	    return *(Vec2*)&style.ItemSpacing;
-	case ItemInnerSpacing:  return *(Vec2*)&style.ItemInnerSpacing;
-	case ButtonTextAlign:   return *(Vec2*)&style.ButtonTextAlign;
-	default:                return Vec2();
+	case WindowPadding:
+		return *(Vec2*)&style.WindowPadding;
+	case WindowMinSize:
+		return *(Vec2*)&style.WindowMinSize;
+	case WindowTitleAlign:
+		return *(Vec2*)&style.WindowTitleAlign;
+	case FramePadding:
+		return *(Vec2*)&style.FramePadding;
+	case ItemSpacing:
+		return *(Vec2*)&style.ItemSpacing;
+	case ItemInnerSpacing:
+		return *(Vec2*)&style.ItemInnerSpacing;
+	case ButtonTextAlign:
+		return *(Vec2*)&style.ButtonTextAlign;
+	default:
+		return Vec2();
 	}
 }
 
@@ -1331,7 +1363,7 @@ Vec2 GUIManager::ScrollToBringRectIntoView(Vec2 rect_min, Vec2 rect_max)
 	rect.Min.x += rect_min.X;
 	rect.Min.y += rect_min.Y;
 	ImVec2 deltaScroll = ImGui::ScrollToBringRectIntoView(window, rect);
-	return { deltaScroll.x, deltaScroll.y };
+	return {deltaScroll.x, deltaScroll.y};
 }
 
 void GUIManager::Columns(int count, const char* id, bool border)
@@ -1426,7 +1458,8 @@ void CallWithEscaped(const std::function<void(const char*)>& f, const char16_t* 
 
 void GUIManager::Text(const char16_t* text)
 {
-	auto func = [](const char* c) -> void { ImGui::Text(c); };
+	auto func = [](const char* c) -> void
+	{ ImGui::Text(c); };
 	CallWithEscaped(func, text);
 }
 
@@ -1845,7 +1878,8 @@ bool GUIManager::SelectableContent(const char16_t* idstr, const char16_t* label,
 
 void GUIManager::SetTooltip(const char16_t* text)
 {
-	auto func = [](const char* c) -> void { ImGui::SetTooltip(c); };
+	auto func = [](const char* c) -> void
+	{ ImGui::SetTooltip(c); };
 	CallWithEscaped(func, text);
 }
 

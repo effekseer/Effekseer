@@ -44,4 +44,12 @@ void ReloadableImage::Invalidate()
 	textureOriginal_ = nullptr;
 }
 
+
+std::shared_ptr<Effekseer::Tool::ReloadableImage> ReloadableImage::Create(std::shared_ptr<GraphicsDevice> graphicsDevice, const char16_t* path)
+{
+	auto loader = EffekseerRenderer::CreateTextureLoader(graphicsDevice->GetGraphics()->GetGraphicsDevice());
+	return std::make_shared<Effekseer::Tool::ReloadableImage>(path, loader);
+}
+
+
 } // namespace Effekseer::Tool

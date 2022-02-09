@@ -1,13 +1,11 @@
 
 #pragma once
 
-#include "EffekseerTool/EffekseerTool.Sound.h"
 #include "Graphics/PostEffects.h"
 #include "Graphics/PostProcess.h"
 #include "Graphics/StaticMeshRenderer.h"
 #include "Graphics/efk.Graphics.h"
 #include "Math/Vector2I.h"
-#include "ViewerEffectBehavior.h"
 #include <Effekseer.h>
 
 namespace Effekseer
@@ -142,6 +140,8 @@ protected:
 
 	std::shared_ptr<GroundRenderer> groundRenderer_;
 
+	Effekseer::Tool::PostEffectParameter postEffectParameter_;
+
 	bool UpdateBackgroundMesh(const Color& backgroundColor);
 
 public:
@@ -247,6 +247,10 @@ public:
 	{
 		return m_isSRGBMode;
 	}
+
+	Effekseer::Tool::PostEffectParameter GetPostEffectParameter() const;
+
+	void SetPostEffectParameter(const Effekseer::Tool::PostEffectParameter& param);
 };
 
 } // namespace Tool

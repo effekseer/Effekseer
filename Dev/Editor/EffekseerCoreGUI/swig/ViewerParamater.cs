@@ -74,56 +74,6 @@ public class ViewerParamater : global::System.IDisposable {
     } 
   }
 
-  public bool IsCullingShown {
-    set {
-      EffekseerNativePINVOKE.ViewerParamater_IsCullingShown_set(swigCPtr, value);
-    } 
-    get {
-      bool ret = EffekseerNativePINVOKE.ViewerParamater_IsCullingShown_get(swigCPtr);
-      return ret;
-    } 
-  }
-
-  public float CullingRadius {
-    set {
-      EffekseerNativePINVOKE.ViewerParamater_CullingRadius_set(swigCPtr, value);
-    } 
-    get {
-      float ret = EffekseerNativePINVOKE.ViewerParamater_CullingRadius_get(swigCPtr);
-      return ret;
-    } 
-  }
-
-  public float CullingX {
-    set {
-      EffekseerNativePINVOKE.ViewerParamater_CullingX_set(swigCPtr, value);
-    } 
-    get {
-      float ret = EffekseerNativePINVOKE.ViewerParamater_CullingX_get(swigCPtr);
-      return ret;
-    } 
-  }
-
-  public float CullingY {
-    set {
-      EffekseerNativePINVOKE.ViewerParamater_CullingY_set(swigCPtr, value);
-    } 
-    get {
-      float ret = EffekseerNativePINVOKE.ViewerParamater_CullingY_get(swigCPtr);
-      return ret;
-    } 
-  }
-
-  public float CullingZ {
-    set {
-      EffekseerNativePINVOKE.ViewerParamater_CullingZ_set(swigCPtr, value);
-    } 
-    get {
-      float ret = EffekseerNativePINVOKE.ViewerParamater_CullingZ_get(swigCPtr);
-      return ret;
-    } 
-  }
-
   public DistortionType Distortion {
     set {
       EffekseerNativePINVOKE.ViewerParamater_Distortion_set(swigCPtr, (int)value);
