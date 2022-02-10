@@ -35,10 +35,11 @@ FILE(GLOB cpps
 list(APPEND cpps
     3D/Effect.cpp
     3D/EffectFactory.cpp
+    3D/EffectRenderer.cpp
     3D/EffectSetting.cpp
     3D/FileInterface.cpp
+    3D/MainScreenEffectRenderer.cpp
     3D/ViewPointController.cpp
-    RenderedEffectGenerator.cpp
     Graphics/StaticMeshRenderer.cpp
     Graphics/LineRenderer.cpp
     Graphics/ImageRenderer.cpp
@@ -61,10 +62,12 @@ list(APPEND cpps
 list(APPEND hs
     3D/Effect.h
     3D/EffectFactory.h
+    3D/EffectRenderer.h
     3D/EffectSetting.h
     3D/FileInterface.h
+    3D/MainScreenEffectRenderer.h
     3D/ViewPointController.h
-    RenderedEffectGenerator.h
+    Graphics/Color.h
     Graphics/StaticMeshRenderer.h
     Graphics/LineRenderer.h
     Graphics/ImageRenderer.h
@@ -75,6 +78,7 @@ list(APPEND hs
     GUI/ReloadableImage.h
     GUI/RenderImage.h
     Network/Network.h
+    Math/Matrix44F.h
     Math/Vector2I.h
     Math/Vector3F.h
     Recorder/EffectRecorder.h

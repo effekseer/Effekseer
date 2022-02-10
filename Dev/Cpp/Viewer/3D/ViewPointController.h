@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Math/Matrix44F.h"
 #include "../Math/Vector2I.h"
 #include "../Math/Vector3F.h"
 
@@ -87,24 +88,24 @@ public:
 		return Effekseer::Tool::Vector2I(screenWidth, screenHeight);
 	}
 
-	Effekseer::Matrix44 GetCameraMatrix() const
-	{
-		return m_cameraMat;
-	}
-
 	void SetCameraMatrix(Effekseer::Matrix44 value)
 	{
 		m_cameraMat = value;
 	}
 
-	Effekseer::Matrix44 GetProjectionMatrix() const
+	void Update();
+#endif
+
+	Effekseer::Tool::Matrix44F GetCameraMatrix() const
+	{
+		return m_cameraMat;
+	}
+
+	Effekseer::Tool::Matrix44F GetProjectionMatrix() const
 	{
 		return m_projMat;
 	}
 
-	void Update();
-#endif
-	
 	ProjectionMatrixStyle ProjectionStyle = ProjectionMatrixStyle::DirectXStyle;
 
 	float RateOfMagnification = 1.0f;

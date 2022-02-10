@@ -27,13 +27,13 @@ private:
 	int recordedCount = 0;
 	bool completed = false;
 
-	std::shared_ptr<Effekseer::Tool::RenderedEffectGenerator> generator_;
+	std::shared_ptr<Effekseer::Tool::EffectRenderer> generator_;
 	std::shared_ptr<efk::Graphics> graphics_ = nullptr;
 
 public:
 #if !SWIG
 	bool Begin(int32_t squareMaxCount,
-			   Effekseer::Tool::RenderedEffectGeneratorConfig config,
+			   Effekseer::Tool::EffectRendererParameter config,
 			   Vector2I screenSize,
 			   std::shared_ptr<efk::Graphics> graphics,
 			   Effekseer::RefPtr<Effekseer::Setting> setting,

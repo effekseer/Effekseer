@@ -28,7 +28,7 @@ Grid* Grid::Create(Effekseer::Backend::GraphicsDeviceRef graphicsDevice)
 	return new Grid(graphicsDevice);
 }
 
-void Grid::Rendering(::Effekseer::Color& gridColor, bool isRightHand, Effekseer::Matrix44 cameraMatrix, Effekseer::Matrix44 projectionMatrix)
+void Grid::Rendering(const ::Effekseer::Color& gridColor, bool isRightHand, Effekseer::Matrix44 cameraMatrix, Effekseer::Matrix44 projectionMatrix)
 {
 	lineRenderer_->ClearCache();
 

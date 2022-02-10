@@ -44,6 +44,18 @@ public class ViewPointController : global::System.IDisposable {
     }
   }
 
+  public Matrix44F GetCameraMatrix() {
+    Matrix44F ret = new Matrix44F(EffekseerNativePINVOKE.ViewPointController_GetCameraMatrix(swigCPtr), true);
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+    return ret;
+  }
+
+  public Matrix44F GetProjectionMatrix() {
+    Matrix44F ret = new Matrix44F(EffekseerNativePINVOKE.ViewPointController_GetProjectionMatrix(swigCPtr), true);
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+    return ret;
+  }
+
   public ProjectionMatrixStyle ProjectionStyle {
     set {
       EffekseerNativePINVOKE.ViewPointController_ProjectionStyle_set(swigCPtr, (int)value);

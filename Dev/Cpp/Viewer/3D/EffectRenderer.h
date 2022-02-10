@@ -1,11 +1,14 @@
 
 #pragma once
 
-#include "Graphics/PostEffects.h"
-#include "Graphics/PostProcess.h"
-#include "Graphics/StaticMeshRenderer.h"
-#include "Graphics/efk.Graphics.h"
-#include "Math/Vector2I.h"
+#include "../Graphics/Color.h"
+#include "../Graphics/PostEffects.h"
+#include "../Graphics/PostProcess.h"
+#include "../Graphics/StaticMeshRenderer.h"
+#include "../Graphics/efk.Graphics.h"
+#include "../Math/Matrix44F.h"
+#include "../Math/Vector2I.h"
+#include "../Math/Vector3F.h"
 #include <Effekseer.h>
 
 namespace Effekseer
@@ -13,19 +16,20 @@ namespace Effekseer
 namespace Tool
 {
 
+#if !defined(SWIG)
 class RenderImage;
 
-struct RenderedEffectGeneratorConfig
+struct EffectRendererParameter
 {
 	Effekseer::Manager::DrawParameter DrawParameter;
 	DistortionType Distortion = DistortionType::Current;
-	Effekseer::Color BackgroundColor;
-	Effekseer::Matrix44 CameraMatrix;
-	Effekseer::Matrix44 ProjectionMatrix;
+	Effekseer::Tool::Matrix44F CameraMatrix;
+	Effekseer::Tool::Matrix44F ProjectionMatrix;
 
-	Effekseer::Vector3D LightDirection;
-	Effekseer::Color LightColor;
-	Effekseer::Color LightAmbientColor;
+	Effekseer::Tool::Color BackgroundColor;
+	Effekseer::Tool::Vector3F LightDirection;
+	Effekseer::Tool::Color LightColor;
+	Effekseer::Tool::Color LightAmbientColor;
 	RenderingMethodType RenderingMethod;
 
 	bool IsGroundShown = false;
@@ -52,7 +56,9 @@ public:
 	void Render(EffekseerRenderer::RendererRef renderer);
 };
 
-class RenderedEffectGenerator
+#endif
+
+class EffectRenderer
 {
 	struct HandleHolder
 	{
@@ -77,10 +83,10 @@ class RenderedEffectGenerator
 	{
 	private:
 		efk::Graphics* graphics_ = nullptr;
-		RenderedEffectGenerator* generator_ = nullptr;
+		EffectRenderer* generator_ = nullptr;
 
 	public:
-		DistortingCallback(efk::Graphics* graphics, RenderedEffectGenerator* generator);
+		DistortingCallback(efk::Graphics* graphics, EffectRenderer* generator);
 		virtual ~DistortingCallback();
 
 		bool OnDistorting(EffekseerRenderer::Renderer* renderer) override;
@@ -136,18 +142,32 @@ protected:
 	Effekseer::Backend::ShaderRef whiteParticleSpriteShader_;
 	Effekseer::Backend::ShaderRef whiteParticleModelShader_;
 
-	RenderedEffectGeneratorConfig config_;
-
 	std::shared_ptr<GroundRenderer> groundRenderer_;
 
+	EffectRendererParameter parameter_;
 	Effekseer::Tool::PostEffectParameter postEffectParameter_;
 
 	bool UpdateBackgroundMesh(const Color& backgroundColor);
 
+	virtual bool OnAfterInitialize()
+	{
+		return true;
+	}
+
+	virtual void OnAfterClear()
+	{
+	}
+
+	virtual void OnBeforePostprocess()
+	{
+	}
+
 public:
+	EffectRenderer();
+	virtual ~EffectRenderer();
+
+#if !defined(SWIG)
 	void PlayEffect();
-	RenderedEffectGenerator();
-	virtual ~RenderedEffectGenerator();
 
 	bool Initialize(std::shared_ptr<efk::Graphics> graphics, Effekseer::RefPtr<Effekseer::Setting> setting, int32_t spriteCount, bool isSRGBMode);
 	void Resize(const Vector2I screenSize);
@@ -200,31 +220,23 @@ public:
 		return manager_;
 	}
 
-	virtual void OnAfterClear()
-	{
-	}
-
-	virtual void OnBeforePostprocess()
-	{
-	}
-
 	void CopyToBack();
 
 	void ResetBack();
 
-	RenderedEffectGeneratorConfig GetConfig() const
+	EffectRendererParameter GetConfig() const
 	{
-		return config_;
+		return parameter_;
 	}
 
-	void SetConfig(const RenderedEffectGeneratorConfig& config)
+	void SetConfig(const EffectRendererParameter& config)
 	{
-		config_ = config;
+		parameter_ = config;
 
 		if (groundRenderer_ != nullptr)
 		{
-			groundRenderer_->SetExtent(config_.GroundExtent);
-			groundRenderer_->GroundHeight = config_.GroundHeight;
+			groundRenderer_->SetExtent(parameter_.GroundExtent);
+			groundRenderer_->GroundHeight = parameter_.GroundHeight;
 		}
 	}
 
@@ -251,6 +263,7 @@ public:
 	Effekseer::Tool::PostEffectParameter GetPostEffectParameter() const;
 
 	void SetPostEffectParameter(const Effekseer::Tool::PostEffectParameter& param);
+#endif
 };
 
 } // namespace Tool

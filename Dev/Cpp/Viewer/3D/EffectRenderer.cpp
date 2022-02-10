@@ -1,7 +1,7 @@
-#include "RenderedEffectGenerator.h"
+#include "EffectRenderer.h"
 
 #ifdef _WIN32
-#include "Graphics/Platform/DX11/efk.GraphicsDX11.h"
+#include "../Graphics/Platform/DX11/efk.GraphicsDX11.h"
 
 namespace WhiteParticle_Model_VS
 {
@@ -15,38 +15,38 @@ namespace WhiteParticle_Sprite_VS
 
 namespace WhiteParticle_PS
 {
-#include "Shaders/HLSL_DX11_Header/white_particle_ps.h"
+#include "../Shaders/HLSL_DX11_Header/white_particle_ps.h"
 }
 
 namespace PostEffect_Basic_VS
 {
-#include "Shaders/HLSL_DX11_Header/postfx_basic_vs.h"
+#include "../Shaders/HLSL_DX11_Header/postfx_basic_vs.h"
 }
 
 namespace PostEffect_Overdraw_PS
 {
-#include "Shaders/HLSL_DX11_Header/postfx_overdraw_ps.h"
+#include "../Shaders/HLSL_DX11_Header/postfx_overdraw_ps.h"
 }
 
 #endif
 
 #include "../EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.ModelRenderer.h"
 
-#include "Shaders/GLSL_GL_Header/line_ps.h"
-#include "Shaders/GLSL_GL_Header/line_vs.h"
+#include "../Shaders/GLSL_GL_Header/line_ps.h"
+#include "../Shaders/GLSL_GL_Header/line_vs.h"
 
-#include "Shaders/GLSL_GL_Header/postfx_basic_vs.h"
-#include "Shaders/GLSL_GL_Header/postfx_overdraw_ps.h"
-#include "Shaders/GLSL_GL_Header/white_particle_ps.h"
+#include "../Shaders/GLSL_GL_Header/postfx_basic_vs.h"
+#include "../Shaders/GLSL_GL_Header/postfx_overdraw_ps.h"
+#include "../Shaders/GLSL_GL_Header/white_particle_ps.h"
 
-#include "Graphics/Platform/GL/efk.GraphicsGL.h"
+#include "../Graphics/Platform/GL/efk.GraphicsGL.h"
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/spdlog.h>
 
 #include "../EffekseerRendererGL/EffekseerRenderer/ShaderHeader/model_unlit_vs.h"
 #include "../EffekseerRendererGL/EffekseerRenderer/ShaderHeader/sprite_unlit_vs.h"
 
-#include "GUI/RenderImage.h"
+#include "../GUI/RenderImage.h"
 
 namespace Effekseer
 {
@@ -162,17 +162,17 @@ std::shared_ptr<GroundRenderer> GroundRenderer::Create(Effekseer::RefPtr<Effekse
 	return nullptr;
 }
 
-RenderedEffectGenerator::DistortingCallback::DistortingCallback(efk::Graphics* graphics, RenderedEffectGenerator* generator)
+EffectRenderer::DistortingCallback::DistortingCallback(efk::Graphics* graphics, EffectRenderer* generator)
 	: graphics_(graphics)
 	, generator_(generator)
 {
 }
 
-RenderedEffectGenerator::DistortingCallback::~DistortingCallback()
+EffectRenderer::DistortingCallback::~DistortingCallback()
 {
 }
 
-bool RenderedEffectGenerator::DistortingCallback::OnDistorting(EffekseerRenderer::Renderer* renderer)
+bool EffectRenderer::DistortingCallback::OnDistorting(EffekseerRenderer::Renderer* renderer)
 {
 	if (Blit)
 	{
@@ -182,7 +182,7 @@ bool RenderedEffectGenerator::DistortingCallback::OnDistorting(EffekseerRenderer
 	return IsEnabled;
 }
 
-bool RenderedEffectGenerator::UpdateBackgroundMesh(const Color& backgroundColor)
+bool EffectRenderer::UpdateBackgroundMesh(const Color& backgroundColor)
 {
 	if (backgroundMesh_ != nullptr && !(backgroundColor != backgroundMeshColor_))
 		return true;
@@ -228,7 +228,7 @@ bool RenderedEffectGenerator::UpdateBackgroundMesh(const Color& backgroundColor)
 	return true;
 }
 
-void RenderedEffectGenerator::PlayEffect()
+void EffectRenderer::PlayEffect()
 {
 	assert(effect_ != nullptr);
 
@@ -292,15 +292,15 @@ void RenderedEffectGenerator::PlayEffect()
 	m_rootScale.Z = behavior_.ScaleZ;
 }
 
-RenderedEffectGenerator::RenderedEffectGenerator()
+EffectRenderer::EffectRenderer()
 {
 }
 
-RenderedEffectGenerator ::~RenderedEffectGenerator()
+EffectRenderer ::~EffectRenderer()
 {
 }
 
-bool RenderedEffectGenerator::Initialize(std::shared_ptr<efk::Graphics> graphics, Effekseer::RefPtr<Effekseer::Setting> setting, int32_t spriteCount, bool isSRGBMode)
+bool EffectRenderer::Initialize(std::shared_ptr<efk::Graphics> graphics, Effekseer::RefPtr<Effekseer::Setting> setting, int32_t spriteCount, bool isSRGBMode)
 {
 	graphics_ = graphics;
 
@@ -410,7 +410,7 @@ bool RenderedEffectGenerator::Initialize(std::shared_ptr<efk::Graphics> graphics
 
 		backgroundRenderer_ = Effekseer::Tool::StaticMeshRenderer::Create(graphics_->GetGraphicsDevice());
 
-		if (backgroundRenderer_ != nullptr && UpdateBackgroundMesh(config_.BackgroundColor))
+		if (backgroundRenderer_ != nullptr && UpdateBackgroundMesh(parameter_.BackgroundColor))
 		{
 			spdlog::trace("OK : Background");
 		}
@@ -505,10 +505,15 @@ bool RenderedEffectGenerator::Initialize(std::shared_ptr<efk::Graphics> graphics
 
 	SetPostEffectParameter(Effekseer::Tool::PostEffectParameter{});
 
+	if(!OnAfterInitialize())
+	{
+		return false;
+	}
+
 	return true;
 }
 
-void RenderedEffectGenerator::Resize(const Vector2I screenSize)
+void EffectRenderer::Resize(const Vector2I screenSize)
 {
 	if (screenSize_ == screenSize)
 	{
@@ -519,8 +524,7 @@ void RenderedEffectGenerator::Resize(const Vector2I screenSize)
 
 	hdrRenderTextureMSAA = nullptr;
 
-	const auto createRenderTexture = [&](Effekseer::Tool::Vector2I size, Effekseer::Backend::TextureFormatType format, int samples)
-	{
+	const auto createRenderTexture = [&](Effekseer::Tool::Vector2I size, Effekseer::Backend::TextureFormatType format, int samples) {
 		Effekseer::Backend::TextureParameter param;
 		param.Format = format;
 		param.Size[0] = size.X;
@@ -559,7 +563,7 @@ void RenderedEffectGenerator::Resize(const Vector2I screenSize)
 	}
 }
 
-void RenderedEffectGenerator::Update()
+void EffectRenderer::Update()
 {
 	if (behavior_.TimeSpan > 0 && m_time > 0 && m_time % behavior_.TimeSpan == 0)
 	{
@@ -678,7 +682,7 @@ void RenderedEffectGenerator::Update()
 	m_time += 1;
 }
 
-void RenderedEffectGenerator::Update(int32_t frame)
+void EffectRenderer::Update(int32_t frame)
 {
 	if (frame <= 0)
 	{
@@ -713,10 +717,10 @@ void RenderedEffectGenerator::Update(int32_t frame)
 	}
 }
 
-void RenderedEffectGenerator::Render(std::shared_ptr<RenderImage> renderImage)
+void EffectRenderer::Render(std::shared_ptr<RenderImage> renderImage)
 {
 	// Clear a destination texture
-	if (config_.RenderingMethod == RenderingMethodType::Overdraw)
+	if (parameter_.RenderingMethod == RenderingMethodType::Overdraw)
 	{
 		UpdateBackgroundMesh({0, 0, 0, 0});
 	}
@@ -726,7 +730,7 @@ void RenderedEffectGenerator::Render(std::shared_ptr<RenderImage> renderImage)
 	}
 	else
 	{
-		UpdateBackgroundMesh(config_.BackgroundColor);
+		UpdateBackgroundMesh(parameter_.BackgroundColor);
 	}
 
 	auto renderTargetImage = renderImage->GetTexture();
@@ -747,11 +751,11 @@ void RenderedEffectGenerator::Render(std::shared_ptr<RenderImage> renderImage)
 	graphics_->Clear({0, 0, 0, 0});
 
 	// TODO : refactor
-	renderer_->SetCameraMatrix(config_.CameraMatrix);
-	renderer_->SetProjectionMatrix(config_.ProjectionMatrix);
-	renderer_->SetLightDirection(config_.LightDirection);
-	renderer_->SetLightColor(config_.LightColor);
-	renderer_->SetLightAmbientColor(config_.LightAmbientColor);
+	renderer_->SetCameraMatrix(parameter_.CameraMatrix);
+	renderer_->SetProjectionMatrix(parameter_.ProjectionMatrix);
+	renderer_->SetLightDirection(parameter_.LightDirection);
+	renderer_->SetLightColor(parameter_.LightColor);
+	renderer_->SetLightAmbientColor(parameter_.LightAmbientColor);
 
 	if (backgroundRenderer_ != nullptr && backgroundMesh_ != nullptr)
 	{
@@ -771,9 +775,9 @@ void RenderedEffectGenerator::Render(std::shared_ptr<RenderImage> renderImage)
 		backgroundRenderer_->Render(param);
 	}
 
-	if (config_.RenderingMethod != RenderingMethodType::Overdraw)
+	if (parameter_.RenderingMethod != RenderingMethodType::Overdraw)
 	{
-		if (groundRenderer_ != nullptr && config_.IsGroundShown)
+		if (groundRenderer_ != nullptr && parameter_.IsGroundShown)
 		{
 			groundRenderer_->Render(renderer_);
 		}
@@ -798,14 +802,14 @@ void RenderedEffectGenerator::Render(std::shared_ptr<RenderImage> renderImage)
 	EffekseerRenderer::DepthReconstructionParameter reconstructionParam;
 	reconstructionParam.DepthBufferScale = 1.0f;
 	reconstructionParam.DepthBufferOffset = 0.0f;
-	reconstructionParam.ProjectionMatrix33 = config_.ProjectionMatrix.Values[2][2];
-	reconstructionParam.ProjectionMatrix43 = config_.ProjectionMatrix.Values[2][3];
-	reconstructionParam.ProjectionMatrix34 = config_.ProjectionMatrix.Values[3][2];
-	reconstructionParam.ProjectionMatrix44 = config_.ProjectionMatrix.Values[3][3];
+	reconstructionParam.ProjectionMatrix33 = parameter_.ProjectionMatrix.Value.Values[2][2];
+	reconstructionParam.ProjectionMatrix43 = parameter_.ProjectionMatrix.Value.Values[2][3];
+	reconstructionParam.ProjectionMatrix34 = parameter_.ProjectionMatrix.Value.Values[3][2];
+	reconstructionParam.ProjectionMatrix44 = parameter_.ProjectionMatrix.Value.Values[3][3];
 
 	renderer_->SetDepth(depthRenderTexture, reconstructionParam);
 
-	if (config_.RenderingMethod == RenderingMethodType::Overdraw)
+	if (parameter_.RenderingMethod == RenderingMethodType::Overdraw)
 	{
 		auto external = std::make_shared<EffekseerRenderer::ExternalShaderSettings>();
 		external->Blend = Effekseer::AlphaBlendType::Add;
@@ -814,9 +818,9 @@ void RenderedEffectGenerator::Render(std::shared_ptr<RenderImage> renderImage)
 		renderer_->SetExternalShaderSettings(external);
 	}
 
-	if (config_.RenderingMethod == RenderingMethodType::Normal ||
-		config_.RenderingMethod == RenderingMethodType::NormalWithWireframe ||
-		config_.RenderingMethod == RenderingMethodType::Overdraw)
+	if (parameter_.RenderingMethod == RenderingMethodType::Normal ||
+		parameter_.RenderingMethod == RenderingMethodType::NormalWithWireframe ||
+		parameter_.RenderingMethod == RenderingMethodType::Overdraw)
 	{
 		renderer_->SetRenderMode(Effekseer::RenderMode::Normal);
 	}
@@ -826,14 +830,14 @@ void RenderedEffectGenerator::Render(std::shared_ptr<RenderImage> renderImage)
 	}
 
 	// Distoriton
-	if (config_.Distortion == DistortionType::Current)
+	if (parameter_.Distortion == DistortionType::Current)
 	{
 		CopyToBack();
 
 		m_distortionCallback->Blit = false;
 		m_distortionCallback->IsEnabled = true;
 	}
-	else if (config_.Distortion == DistortionType::Effekseer120)
+	else if (parameter_.Distortion == DistortionType::Effekseer120)
 	{
 		m_distortionCallback->Blit = true;
 		m_distortionCallback->IsEnabled = true;
@@ -848,9 +852,9 @@ void RenderedEffectGenerator::Render(std::shared_ptr<RenderImage> renderImage)
 
 	renderer_->BeginRendering();
 
-	if (config_.Distortion == DistortionType::Current)
+	if (parameter_.Distortion == DistortionType::Current)
 	{
-		manager_->DrawBack(config_.DrawParameter);
+		manager_->DrawBack(parameter_.DrawParameter);
 
 		// HACK
 		renderer_->EndRendering();
@@ -859,16 +863,16 @@ void RenderedEffectGenerator::Render(std::shared_ptr<RenderImage> renderImage)
 
 		// HACK
 		renderer_->BeginRendering();
-		manager_->DrawFront(config_.DrawParameter);
+		manager_->DrawFront(parameter_.DrawParameter);
 	}
 	else
 	{
-		manager_->Draw(config_.DrawParameter);
+		manager_->Draw(parameter_.DrawParameter);
 	}
 
 	renderer_->EndRendering();
 
-	if (config_.RenderingMethod == RenderingMethodType::NormalWithWireframe)
+	if (parameter_.RenderingMethod == RenderingMethodType::NormalWithWireframe)
 	{
 		auto external = std::make_shared<EffekseerRenderer::ExternalShaderSettings>();
 		external->Blend = Effekseer::AlphaBlendType::Opacity;
@@ -880,13 +884,13 @@ void RenderedEffectGenerator::Render(std::shared_ptr<RenderImage> renderImage)
 
 		renderer_->BeginRendering();
 
-		manager_->Draw(config_.DrawParameter);
+		manager_->Draw(parameter_.DrawParameter);
 
 		renderer_->EndRendering();
 	}
 
-	if (config_.RenderingMethod == RenderingMethodType::NormalWithWireframe ||
-		config_.RenderingMethod == RenderingMethodType::Overdraw)
+	if (parameter_.RenderingMethod == RenderingMethodType::NormalWithWireframe ||
+		parameter_.RenderingMethod == RenderingMethodType::Overdraw)
 	{
 		renderer_->SetExternalShaderSettings(nullptr);
 	}
@@ -906,7 +910,7 @@ void RenderedEffectGenerator::Render(std::shared_ptr<RenderImage> renderImage)
 		graphics_->ResolveRenderTarget(hdrRenderTextureMSAA, hdrRenderTexture);
 	}
 
-	if (config_.RenderingMethod == RenderingMethodType::Overdraw)
+	if (parameter_.RenderingMethod == RenderingMethodType::Overdraw)
 	{
 		graphics_->SetRenderTarget({renderTargetImage}, nullptr);
 		overdrawEffect_->GetDrawParameter().TexturePtrs[0] = hdrRenderTexture;
@@ -936,7 +940,7 @@ void RenderedEffectGenerator::Render(std::shared_ptr<RenderImage> renderImage)
 	graphics_->SetRenderTarget({nullptr}, nullptr);
 }
 
-void RenderedEffectGenerator::Reset()
+void EffectRenderer::Reset()
 {
 	for (size_t i = 0; i < handles_.size(); i++)
 	{
@@ -947,28 +951,28 @@ void RenderedEffectGenerator::Reset()
 	manager_->Update();
 }
 
-Effekseer::EffectRef RenderedEffectGenerator::GetEffect()
+Effekseer::EffectRef EffectRenderer::GetEffect()
 {
 	return effect_;
 }
 
-void RenderedEffectGenerator::SetEffect(Effekseer::EffectRef effect)
+void EffectRenderer::SetEffect(Effekseer::EffectRef effect)
 {
 	handles_.clear();
 	effect_ = effect;
 }
 
-void RenderedEffectGenerator::SetBehavior(const ViewerEffectBehavior& behavior)
+void EffectRenderer::SetBehavior(const ViewerEffectBehavior& behavior)
 {
 	behavior_ = behavior;
 }
 
-const ViewerEffectBehavior& RenderedEffectGenerator::GetBehavior() const
+const ViewerEffectBehavior& EffectRenderer::GetBehavior() const
 {
 	return behavior_;
 }
 
-void RenderedEffectGenerator::CopyToBack()
+void EffectRenderer::CopyToBack()
 {
 	if (msaaSamples > 1)
 	{
@@ -982,17 +986,17 @@ void RenderedEffectGenerator::CopyToBack()
 	renderer_->SetBackground(backTexture);
 }
 
-void RenderedEffectGenerator::ResetBack()
+void EffectRenderer::ResetBack()
 {
 	renderer_->SetBackground(nullptr);
 }
 
-Effekseer::Tool::PostEffectParameter RenderedEffectGenerator::GetPostEffectParameter() const
+Effekseer::Tool::PostEffectParameter EffectRenderer::GetPostEffectParameter() const
 {
 	return postEffectParameter_;
 }
 
-void RenderedEffectGenerator::SetPostEffectParameter(const Effekseer::Tool::PostEffectParameter& param)
+void EffectRenderer::SetPostEffectParameter(const Effekseer::Tool::PostEffectParameter& param)
 {
 	if (bloomEffect_ != nullptr)
 	{

@@ -1,17 +1,24 @@
 ﻿
 #pragma once
 
-#include "EffekseerTool.Base.h"
-
-#include "../Graphics/StaticMeshRenderer.h"
-#include "../RenderedEffectGenerator.h"
+#include "../3D/EffectRenderer.h"
+#include "../Math/Vector3F.h"
+#include <Effekseer.h>
 #include <functional>
 #include <string>
 
-namespace EffekseerTool
+namespace EffekseerRenderer
+{
+class Grid;
+class Guide;
+class Culling;
+class Paste;
+} // namespace EffekseerRenderer
+
+namespace Effekseer::Tool
 {
 
-class MainScreenRenderedEffectGenerator : public Effekseer::Tool::RenderedEffectGenerator
+class MainScreenEffectRenderer : public Effekseer::Tool::EffectRenderer
 {
 private:
 	std::shared_ptr<::EffekseerRenderer::Grid> grid_;
@@ -21,16 +28,16 @@ private:
 	Effekseer::TextureLoaderRef textureLoader_;
 	std::u16string backgroundPath;
 
-public:
-	virtual ~MainScreenRenderedEffectGenerator();
-
-	bool InitializedPrePost();
-
 	void OnAfterClear() override;
 
 	void OnBeforePostprocess() override;
 
-	Effekseer::Color GridColor = Effekseer::Color(255, 255, 255, 255);
+	bool OnAfterInitialize() override;
+
+public:
+	virtual ~MainScreenEffectRenderer();
+
+	Effekseer::Tool::Color GridColor = Effekseer::Tool::Color(255, 255, 255, 255);
 
 	int32_t GuideWidth = 100;
 
@@ -54,9 +61,9 @@ public:
 
 	bool IsRightHand = true;
 
-	Effekseer::Vector3D CullingPosition;
+	Vector3F CullingPosition;
 
 	void LoadBackgroundImage(const char16_t* path);
 };
 
-} // namespace EffekseerTool
+} // namespace Effekseer::Tool
