@@ -1,6 +1,6 @@
 
+#include "3D/EffectRenderer.h"
 #include "Recorder/EffectRecorder.h"
-#include "RenderedEffectGenerator.h"
 
 #ifdef _WIN32
 #include "Graphics/Platform/DX11/efk.GraphicsDX11.h"
@@ -45,14 +45,8 @@ bool Native::CreateWindow_Effekseer(
 	setting_ = effectSetting->GetSetting();
 
 	{
-		mainScreen_ = std::make_shared<EffekseerTool::MainScreenRenderedEffectGenerator>();
+		mainScreen_ = std::make_shared<Effekseer::Tool::MainScreenEffectRenderer>();
 		if (!mainScreen_->Initialize(graphicsDevice_->GetGraphics(), setting_, spriteCount, graphicsDevice->GetIsSRGBMode()))
-		{
-			spdlog::trace("End Native::CreateWindow_Effekseer (false)");
-			return false;
-		}
-
-		if (!mainScreen_->InitializedPrePost())
 		{
 			spdlog::trace("End Native::CreateWindow_Effekseer (false)");
 			return false;

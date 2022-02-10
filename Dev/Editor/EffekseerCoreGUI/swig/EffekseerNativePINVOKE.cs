@@ -657,6 +657,12 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_EffectRecorder___")]
   public static extern void delete_EffectRecorder(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_Matrix44F___")]
+  public static extern global::System.IntPtr new_Matrix44F();
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_Matrix44F___")]
+  public static extern void delete_Matrix44F(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Vector2I_X_set___")]
   public static extern void Vector2I_X_set(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
 
@@ -705,6 +711,39 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_Vector3F___")]
   public static extern void delete_Vector3F(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Color_R_set___")]
+  public static extern void Color_R_set(global::System.Runtime.InteropServices.HandleRef jarg1, byte jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Color_R_get___")]
+  public static extern byte Color_R_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Color_G_set___")]
+  public static extern void Color_G_set(global::System.Runtime.InteropServices.HandleRef jarg1, byte jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Color_G_get___")]
+  public static extern byte Color_G_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Color_B_set___")]
+  public static extern void Color_B_set(global::System.Runtime.InteropServices.HandleRef jarg1, byte jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Color_B_get___")]
+  public static extern byte Color_B_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Color_A_set___")]
+  public static extern void Color_A_set(global::System.Runtime.InteropServices.HandleRef jarg1, byte jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Color_A_get___")]
+  public static extern byte Color_A_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_Color__SWIG_0___")]
+  public static extern global::System.IntPtr new_Color__SWIG_0();
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_Color__SWIG_1___")]
+  public static extern global::System.IntPtr new_Color__SWIG_1(byte jarg1, byte jarg2, byte jarg3, byte jarg4);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_Color___")]
+  public static extern void delete_Color(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GraphicsDevice_Resize___")]
   public static extern void GraphicsDevice_Resize(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, int jarg3);
 
@@ -752,6 +791,12 @@ class EffekseerNativePINVOKE {
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_Ray___")]
   public static extern void delete_Ray(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewPointController_GetCameraMatrix___")]
+  public static extern global::System.IntPtr ViewPointController_GetCameraMatrix(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewPointController_GetProjectionMatrix___")]
+  public static extern global::System.IntPtr ViewPointController_GetProjectionMatrix(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewPointController_ProjectionStyle_set___")]
   public static extern void ViewPointController_ProjectionStyle_set(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);

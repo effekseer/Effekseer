@@ -2176,6 +2176,24 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_EffectRecorder___(void 
 }
 
 
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_Matrix44F___() {
+  void * jresult ;
+  Effekseer::Tool::Matrix44F *result = 0 ;
+  
+  result = (Effekseer::Tool::Matrix44F *)new Effekseer::Tool::Matrix44F();
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_Matrix44F___(void * jarg1) {
+  Effekseer::Tool::Matrix44F *arg1 = (Effekseer::Tool::Matrix44F *) 0 ;
+  
+  arg1 = (Effekseer::Tool::Matrix44F *)jarg1; 
+  delete arg1;
+}
+
+
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Vector2I_X_set___(void * jarg1, int jarg2) {
   Effekseer::Tool::Vector2I *arg1 = (Effekseer::Tool::Vector2I *) 0 ;
   int32_t arg2 ;
@@ -2348,6 +2366,130 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_Vector3F___(void * jarg
   Effekseer::Tool::Vector3F *arg1 = (Effekseer::Tool::Vector3F *) 0 ;
   
   arg1 = (Effekseer::Tool::Vector3F *)jarg1; 
+  delete arg1;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Color_R_set___(void * jarg1, unsigned char jarg2) {
+  Effekseer::Tool::Color *arg1 = (Effekseer::Tool::Color *) 0 ;
+  uint8_t arg2 ;
+  
+  arg1 = (Effekseer::Tool::Color *)jarg1; 
+  arg2 = (uint8_t)jarg2; 
+  if (arg1) (arg1)->R = arg2;
+}
+
+
+SWIGEXPORT unsigned char SWIGSTDCALL CSharp_Effekseerfswig_Color_R_get___(void * jarg1) {
+  unsigned char jresult ;
+  Effekseer::Tool::Color *arg1 = (Effekseer::Tool::Color *) 0 ;
+  uint8_t result;
+  
+  arg1 = (Effekseer::Tool::Color *)jarg1; 
+  result = (uint8_t) ((arg1)->R);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Color_G_set___(void * jarg1, unsigned char jarg2) {
+  Effekseer::Tool::Color *arg1 = (Effekseer::Tool::Color *) 0 ;
+  uint8_t arg2 ;
+  
+  arg1 = (Effekseer::Tool::Color *)jarg1; 
+  arg2 = (uint8_t)jarg2; 
+  if (arg1) (arg1)->G = arg2;
+}
+
+
+SWIGEXPORT unsigned char SWIGSTDCALL CSharp_Effekseerfswig_Color_G_get___(void * jarg1) {
+  unsigned char jresult ;
+  Effekseer::Tool::Color *arg1 = (Effekseer::Tool::Color *) 0 ;
+  uint8_t result;
+  
+  arg1 = (Effekseer::Tool::Color *)jarg1; 
+  result = (uint8_t) ((arg1)->G);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Color_B_set___(void * jarg1, unsigned char jarg2) {
+  Effekseer::Tool::Color *arg1 = (Effekseer::Tool::Color *) 0 ;
+  uint8_t arg2 ;
+  
+  arg1 = (Effekseer::Tool::Color *)jarg1; 
+  arg2 = (uint8_t)jarg2; 
+  if (arg1) (arg1)->B = arg2;
+}
+
+
+SWIGEXPORT unsigned char SWIGSTDCALL CSharp_Effekseerfswig_Color_B_get___(void * jarg1) {
+  unsigned char jresult ;
+  Effekseer::Tool::Color *arg1 = (Effekseer::Tool::Color *) 0 ;
+  uint8_t result;
+  
+  arg1 = (Effekseer::Tool::Color *)jarg1; 
+  result = (uint8_t) ((arg1)->B);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Color_A_set___(void * jarg1, unsigned char jarg2) {
+  Effekseer::Tool::Color *arg1 = (Effekseer::Tool::Color *) 0 ;
+  uint8_t arg2 ;
+  
+  arg1 = (Effekseer::Tool::Color *)jarg1; 
+  arg2 = (uint8_t)jarg2; 
+  if (arg1) (arg1)->A = arg2;
+}
+
+
+SWIGEXPORT unsigned char SWIGSTDCALL CSharp_Effekseerfswig_Color_A_get___(void * jarg1) {
+  unsigned char jresult ;
+  Effekseer::Tool::Color *arg1 = (Effekseer::Tool::Color *) 0 ;
+  uint8_t result;
+  
+  arg1 = (Effekseer::Tool::Color *)jarg1; 
+  result = (uint8_t) ((arg1)->A);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_Color__SWIG_0___() {
+  void * jresult ;
+  Effekseer::Tool::Color *result = 0 ;
+  
+  result = (Effekseer::Tool::Color *)new Effekseer::Tool::Color();
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_Color__SWIG_1___(unsigned char jarg1, unsigned char jarg2, unsigned char jarg3, unsigned char jarg4) {
+  void * jresult ;
+  uint8_t arg1 ;
+  uint8_t arg2 ;
+  uint8_t arg3 ;
+  uint8_t arg4 ;
+  Effekseer::Tool::Color *result = 0 ;
+  
+  arg1 = (uint8_t)jarg1; 
+  arg2 = (uint8_t)jarg2; 
+  arg3 = (uint8_t)jarg3; 
+  arg4 = (uint8_t)jarg4; 
+  result = (Effekseer::Tool::Color *)new Effekseer::Tool::Color(arg1,arg2,arg3,arg4);
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_Color___(void * jarg1) {
+  Effekseer::Tool::Color *arg1 = (Effekseer::Tool::Color *) 0 ;
+  
+  arg1 = (Effekseer::Tool::Color *)jarg1; 
   delete arg1;
 }
 
@@ -2563,6 +2705,36 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_Ray___(void * jarg1) {
   
   arg1 = (Effekseer::Tool::Ray *)jarg1; 
   delete arg1;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_ViewPointController_GetCameraMatrix___(void * jarg1) {
+  void * jresult ;
+  Effekseer::Tool::ViewPointController *arg1 = (Effekseer::Tool::ViewPointController *) 0 ;
+  std::shared_ptr< Effekseer::Tool::ViewPointController const > *smartarg1 = 0 ;
+  Effekseer::Tool::Matrix44F result;
+  
+  
+  smartarg1 = (std::shared_ptr< const Effekseer::Tool::ViewPointController > *)jarg1;
+  arg1 = (Effekseer::Tool::ViewPointController *)(smartarg1 ? smartarg1->get() : 0); 
+  result = ((Effekseer::Tool::ViewPointController const *)arg1)->GetCameraMatrix();
+  jresult = new Effekseer::Tool::Matrix44F((const Effekseer::Tool::Matrix44F &)result); 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_ViewPointController_GetProjectionMatrix___(void * jarg1) {
+  void * jresult ;
+  Effekseer::Tool::ViewPointController *arg1 = (Effekseer::Tool::ViewPointController *) 0 ;
+  std::shared_ptr< Effekseer::Tool::ViewPointController const > *smartarg1 = 0 ;
+  Effekseer::Tool::Matrix44F result;
+  
+  
+  smartarg1 = (std::shared_ptr< const Effekseer::Tool::ViewPointController > *)jarg1;
+  arg1 = (Effekseer::Tool::ViewPointController *)(smartarg1 ? smartarg1->get() : 0); 
+  result = ((Effekseer::Tool::ViewPointController const *)arg1)->GetProjectionMatrix();
+  jresult = new Effekseer::Tool::Matrix44F((const Effekseer::Tool::Matrix44F &)result); 
+  return jresult;
 }
 
 

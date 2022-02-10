@@ -132,9 +132,11 @@ class"
 %include "Cpp/Viewer/Recorder/RecordingParameter.h"
 %include "Cpp/Viewer/Recorder/EffectRecorder.h"
 
+%include "Cpp/Viewer/Math/Matrix44F.h"
 %include "Cpp/Viewer/Math/Vector2I.h"
 %include "Cpp/Viewer/Math/Vector3F.h"
 
+%include "Cpp/Viewer/Graphics/Color.h"
 %include "Cpp/Viewer/Graphics/GraphicsDevice.h"
 %include "Cpp/Viewer/Sound/SoundDevice.h"
 

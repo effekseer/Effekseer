@@ -26,8 +26,7 @@ void GenerateExportedImageWithBlendAndAdd(std::vector<Effekseer::Color>& pixelsB
 {
 	assert(pixels.size() == 9);
 
-	auto f2b = [](float v) -> uint8_t
-	{
+	auto f2b = [](float v) -> uint8_t {
 		auto v_ = v * 255;
 		if (v_ > 255)
 			v_ = 255;
@@ -36,8 +35,7 @@ void GenerateExportedImageWithBlendAndAdd(std::vector<Effekseer::Color>& pixelsB
 		return static_cast<uint8_t>(v_);
 	};
 
-	auto b2f = [](uint8_t v) -> float
-	{
+	auto b2f = [](uint8_t v) -> float {
 		return static_cast<float>(v) / 255.0f;
 	};
 
@@ -306,7 +304,7 @@ public:
 };
 
 bool EffectRecorder::Begin(int32_t squareMaxCount,
-						   Effekseer::Tool::RenderedEffectGeneratorConfig config,
+						   Effekseer::Tool::EffectRendererParameter config,
 						   Vector2I screenSize,
 						   std::shared_ptr<efk::Graphics> graphics,
 						   Effekseer::RefPtr<Effekseer::Setting> setting,
@@ -403,7 +401,7 @@ bool EffectRecorder::Begin(int32_t squareMaxCount,
 		return false;
 	}
 
-	generator_ = std::make_shared<Effekseer::Tool::RenderedEffectGenerator>();
+	generator_ = std::make_shared<Effekseer::Tool::EffectRenderer>();
 
 	if (!generator_->Initialize(graphics_, setting, squareMaxCount, isSRGBMode))
 	{
@@ -415,7 +413,7 @@ bool EffectRecorder::Begin(int32_t squareMaxCount,
 	::Effekseer::Matrix44 mat;
 	mat.Values[0][0] = (float)screenSize.X / (float)imageSize.X;
 	mat.Values[1][1] = (float)screenSize.Y / (float)imageSize.Y;
-	::Effekseer::Matrix44::Mul(config.ProjectionMatrix, config.ProjectionMatrix, mat);
+	::Effekseer::Matrix44::Mul(config.ProjectionMatrix.Value, config.ProjectionMatrix.Value, mat);
 
 	if (recordingParameter_.Transparence == TransparenceType::Original)
 	{
@@ -474,8 +472,7 @@ bool EffectRecorder::Step(int frames)
 
 			auto& pixels = pixelss[loop];
 
-			auto f2b = [](float v) -> uint8_t
-			{
+			auto f2b = [](float v) -> uint8_t {
 				auto v_ = v * 255;
 				if (v_ > 255)
 					v_ = 255;
@@ -484,8 +481,7 @@ bool EffectRecorder::Step(int frames)
 				return static_cast<uint8_t>(v_);
 			};
 
-			auto b2f = [](uint8_t v) -> float
-			{
+			auto b2f = [](uint8_t v) -> float {
 				auto v_ = (float)v / 255.0f;
 				return v_;
 			};

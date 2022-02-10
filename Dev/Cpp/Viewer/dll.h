@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "EffekseerTool/EffekseerTool.Renderer.h"
+#include "3D/MainScreenEffectRenderer.h"
 #include "Recorder/RecordingParameter.h"
 #include <Effekseer.h>
 #include <IO/IO.h>
@@ -35,9 +35,9 @@ private:
 
 	Effekseer::SettingRef setting_;
 
-	std::shared_ptr<EffekseerTool::MainScreenRenderedEffectGenerator> mainScreen_;
+	std::shared_ptr<Effekseer::Tool::MainScreenEffectRenderer> mainScreen_;
 
-	Effekseer::Tool::RenderedEffectGeneratorConfig mainScreenConfig_;
+	Effekseer::Tool::EffectRendererParameter mainScreenConfig_;
 
 	Effekseer::Tool::RenderingMethodType renderingMode_ = Effekseer::Tool::RenderingMethodType::Normal;
 

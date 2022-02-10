@@ -20,7 +20,7 @@ public:
 	static Grid* Create(Effekseer::Backend::GraphicsDeviceRef graphicsDevice);
 
 public:
-	void Rendering(::Effekseer::Color& gridColor, bool isRightHand, Effekseer::Matrix44 cameraMatrix, Effekseer::Matrix44 projectionMatrix);
+	void Rendering(const ::Effekseer::Color& gridColor, bool isRightHand, Effekseer::Matrix44 cameraMatrix, Effekseer::Matrix44 projectionMatrix);
 	void SetLength(float gridLength)
 	{
 		m_gridLength = gridLength;

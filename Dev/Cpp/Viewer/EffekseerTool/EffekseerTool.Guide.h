@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include "../Graphics/ImageRenderer.h"
-#include "EffekseerTool.Renderer.h"
 
 namespace EffekseerRenderer
 {
