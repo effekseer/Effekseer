@@ -16,6 +16,9 @@ namespace Effekseer
 namespace Tool
 {
 
+class Effect;
+class RenderImage;
+
 struct EffectRendererParameter
 {
 	DistortionType Distortion = DistortionType::Current;
@@ -35,7 +38,6 @@ struct EffectRendererParameter
 };
 
 #if !defined(SWIG)
-class RenderImage;
 
 class GroundRenderer
 {
@@ -99,7 +101,7 @@ protected:
 	std::shared_ptr<efk::Graphics> graphics_ = nullptr;
 	Effekseer::ManagerRef manager_;
 	EffekseerRenderer::RendererRef renderer_;
-	Effekseer::EffectRef effect_;
+	std::shared_ptr<Effekseer::Tool::Effect> effect_;
 
 	std::shared_ptr<Effekseer::Tool::StaticMesh> backgroundMesh_;
 	std::shared_ptr<Effekseer::Tool::StaticMeshRenderer> backgroundRenderer_;
@@ -182,14 +184,14 @@ public:
 	void Update(int32_t frame);
 	void Render(std::shared_ptr<RenderImage> renderImage);
 
-	Effekseer::EffectRef GetEffect();
-	void SetEffect(Effekseer::EffectRef effect);
+	std::shared_ptr<Effekseer::Tool::Effect> GetEffect() const;
+	void SetEffect(std::shared_ptr<Effekseer::Tool::Effect> effect);
 	void ResetEffect();
-
-#if !defined(SWIG)
 
 	const ViewerEffectBehavior& GetBehavior() const;
 	void SetBehavior(const ViewerEffectBehavior& behavior);
+
+#if !defined(SWIG)
 
 	int32_t GetInstanceCount() const
 	{
@@ -243,21 +245,6 @@ public:
 			groundRenderer_->SetExtent(parameter_.GroundExtent);
 			groundRenderer_->GroundHeight = parameter_.GroundHeight;
 		}
-	}
-
-	//Effekseer::Backend::TextureRef GetView() const
-	//{
-	//	return viewRenderTexture;
-	//}
-
-	BloomPostEffect* GetBloomEffect() const
-	{
-		return bloomEffect_.get();
-	}
-
-	TonemapPostEffect* GetTonemapEffect() const
-	{
-		return tonemapEffect_.get();
 	}
 
 	bool GetIsSRGBMode() const

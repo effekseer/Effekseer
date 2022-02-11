@@ -315,7 +315,7 @@ bool EffectRecorder::Begin(int32_t squareMaxCount,
 						   bool isSRGBMode,
 						   Effekseer::Tool::ViewerEffectBehavior behavior,
 						   Effekseer::Tool::PostEffectParameter postEffectParameter,
-						   Effekseer::EffectRef effect)
+						   std::shared_ptr<Effekseer::Tool::Effect> effect)
 {
 	graphicsDevice_ = graphicsDevice;
 	recordingParameter_ = recordingParameter;

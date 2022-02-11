@@ -47,6 +47,56 @@ public class EffectRenderer : global::System.IDisposable {
   public EffectRenderer() : this(EffekseerNativePINVOKE.new_EffectRenderer(), true) {
   }
 
+  public Vector2I GetScreenSize() {
+    Vector2I ret = new Vector2I(EffekseerNativePINVOKE.EffectRenderer_GetScreenSize(swigCPtr), true);
+    return ret;
+  }
+
+  public void ResizeScreen(Vector2I screenSize) {
+    EffekseerNativePINVOKE.EffectRenderer_ResizeScreen(swigCPtr, Vector2I.getCPtr(screenSize));
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+  }
+
+  public void PlayEffect() {
+    EffekseerNativePINVOKE.EffectRenderer_PlayEffect(swigCPtr);
+  }
+
+  public void Update() {
+    EffekseerNativePINVOKE.EffectRenderer_Update__SWIG_0(swigCPtr);
+  }
+
+  public void Update(int frame) {
+    EffekseerNativePINVOKE.EffectRenderer_Update__SWIG_1(swigCPtr, frame);
+  }
+
+  public void Render(RenderImage renderImage) {
+    EffekseerNativePINVOKE.EffectRenderer_Render(swigCPtr, RenderImage.getCPtr(renderImage));
+  }
+
+  public Effect GetEffect() {
+    global::System.IntPtr cPtr = EffekseerNativePINVOKE.EffectRenderer_GetEffect(swigCPtr);
+    Effect ret = (cPtr == global::System.IntPtr.Zero) ? null : new Effect(cPtr, true);
+    return ret;
+  }
+
+  public void SetEffect(Effect effect) {
+    EffekseerNativePINVOKE.EffectRenderer_SetEffect(swigCPtr, Effect.getCPtr(effect));
+  }
+
+  public void ResetEffect() {
+    EffekseerNativePINVOKE.EffectRenderer_ResetEffect(swigCPtr);
+  }
+
+  public ViewerEffectBehavior GetBehavior() {
+    ViewerEffectBehavior ret = new ViewerEffectBehavior(EffekseerNativePINVOKE.EffectRenderer_GetBehavior(swigCPtr), false);
+    return ret;
+  }
+
+  public void SetBehavior(ViewerEffectBehavior behavior) {
+    EffekseerNativePINVOKE.EffectRenderer_SetBehavior(swigCPtr, ViewerEffectBehavior.getCPtr(behavior));
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+  }
+
 }
 
 }

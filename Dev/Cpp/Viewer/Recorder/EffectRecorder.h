@@ -43,7 +43,7 @@ public:
 			   bool isSRGBMode,
 			   Effekseer::Tool::ViewerEffectBehavior behavior,
 			   Effekseer::Tool::PostEffectParameter postEffectParameter,
-			   Effekseer::EffectRef effect);
+			   std::shared_ptr<Effekseer::Tool::Effect> effect);
 #endif
 	bool Step(int frames);
 

@@ -1,4 +1,5 @@
 #include "EffectRenderer.h"
+#include "Effect.h"
 
 #ifdef _WIN32
 #include "../Graphics/Platform/DX11/efk.GraphicsDX11.h"
@@ -545,7 +546,7 @@ void EffectRenderer::PlayEffect()
 				posY += behavior_.PositionY;
 				posZ += behavior_.PositionZ;
 
-				HandleHolder handleHolder(manager_->Play(effect_, posX, posY, posZ));
+				HandleHolder handleHolder(manager_->Play(effect_->GetEffect(), posX, posY, posZ));
 
 				Effekseer::Matrix43 mat, matTra, matRot, matScale;
 				matTra.Translation(posX, posY, posZ);
@@ -974,12 +975,12 @@ void EffectRenderer::Render(std::shared_ptr<RenderImage> renderImage)
 	graphics_->SetRenderTarget({nullptr}, nullptr);
 }
 
-Effekseer::EffectRef EffectRenderer::GetEffect()
+std::shared_ptr<Effekseer::Tool::Effect> EffectRenderer::GetEffect() const
 {
 	return effect_;
 }
 
-void EffectRenderer::SetEffect(Effekseer::EffectRef effect)
+void EffectRenderer::SetEffect(std::shared_ptr<Effekseer::Tool::Effect> effect)
 {
 	handles_.clear();
 	effect_ = effect;

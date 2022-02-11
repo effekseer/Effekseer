@@ -3650,16 +3650,10 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_Update__SWIG_1_
 
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_Render___(void * jarg1, void * jarg2) {
   Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
-  SwigValueWrapper< std::shared_ptr< RenderImage > > arg2 ;
-  std::shared_ptr< RenderImage > *argp2 ;
+  std::shared_ptr< Effekseer::Tool::RenderImage > arg2 ;
   
   arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
-  argp2 = (std::shared_ptr< RenderImage > *)jarg2; 
-  if (!argp2) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Attempt to dereference null std::shared_ptr< RenderImage >", 0);
-    return ;
-  }
-  arg2 = *argp2; 
+  if (jarg2) arg2 = *(std::shared_ptr< Effekseer::Tool::RenderImage > *)jarg2; 
   (arg1)->Render(arg2);
 }
 
@@ -3667,27 +3661,21 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_Render___(void 
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_GetEffect___(void * jarg1) {
   void * jresult ;
   Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
-  Effekseer::EffectRef result;
+  std::shared_ptr< Effekseer::Tool::Effect > result;
   
   arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
-  result = (arg1)->GetEffect();
-  jresult = new Effekseer::EffectRef((const Effekseer::EffectRef &)result); 
+  result = ((Effekseer::Tool::EffectRenderer const *)arg1)->GetEffect();
+  jresult = result ? new std::shared_ptr< Effekseer::Tool::Effect >(result) : 0; 
   return jresult;
 }
 
 
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_SetEffect___(void * jarg1, void * jarg2) {
   Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
-  Effekseer::EffectRef arg2 ;
-  Effekseer::EffectRef *argp2 ;
+  std::shared_ptr< Effekseer::Tool::Effect > arg2 ;
   
   arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
-  argp2 = (Effekseer::EffectRef *)jarg2; 
-  if (!argp2) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Attempt to dereference null Effekseer::EffectRef", 0);
-    return ;
-  }
-  arg2 = *argp2; 
+  if (jarg2) arg2 = *(std::shared_ptr< Effekseer::Tool::Effect > *)jarg2; 
   (arg1)->SetEffect(arg2);
 }
 
@@ -3697,6 +3685,32 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_ResetEffect___(
   
   arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
   (arg1)->ResetEffect();
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_GetBehavior___(void * jarg1) {
+  void * jresult ;
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  Effekseer::Tool::ViewerEffectBehavior *result = 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  result = (Effekseer::Tool::ViewerEffectBehavior *) &((Effekseer::Tool::EffectRenderer const *)arg1)->GetBehavior();
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_SetBehavior___(void * jarg1, void * jarg2) {
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  Effekseer::Tool::ViewerEffectBehavior *arg2 = 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  arg2 = (Effekseer::Tool::ViewerEffectBehavior *)jarg2;
+  if (!arg2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Effekseer::Tool::ViewerEffectBehavior const & type is null", 0);
+    return ;
+  } 
+  (arg1)->SetBehavior((Effekseer::Tool::ViewerEffectBehavior const &)*arg2);
 }
 
 

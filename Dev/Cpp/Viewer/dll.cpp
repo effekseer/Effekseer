@@ -77,7 +77,7 @@ bool Native::LoadEffect(std::shared_ptr<Effekseer::Tool::Effect> effect)
 
 	if (mainScreen_ != nullptr)
 	{
-		mainScreen_->SetEffect(effect->GetEffect());
+		mainScreen_->SetEffect(effect);
 	}
 
 	return true;
