@@ -999,6 +999,9 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_EffectRenderer___")]
   public static extern void delete_EffectRenderer(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRenderer_Initialize___")]
+  public static extern bool EffectRenderer_Initialize(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2, global::System.Runtime.InteropServices.HandleRef jarg3, global::System.Runtime.InteropServices.HandleRef jarg4, int jarg5, bool jarg6);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRenderer_GetScreenSize___")]
   public static extern global::System.IntPtr EffectRenderer_GetScreenSize(global::System.Runtime.InteropServices.HandleRef jarg1);
 
@@ -1047,11 +1050,20 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRenderer_GetIsSRGBMode___")]
   public static extern bool EffectRenderer_GetIsSRGBMode(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRenderer_GetSquareMaxCount___")]
+  public static extern int EffectRenderer_GetSquareMaxCount(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRenderer_GetPostEffectParameter___")]
   public static extern global::System.IntPtr EffectRenderer_GetPostEffectParameter(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRenderer_SetPostEffectParameter___")]
   public static extern void EffectRenderer_SetPostEffectParameter(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRenderer_GetAndResetDrawCall___")]
+  public static extern int EffectRenderer_GetAndResetDrawCall(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRenderer_GetAndResetVertexCount___")]
+  public static extern int EffectRenderer_GetAndResetVertexCount(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_MainScreenEffectRenderer___")]
   public static extern void delete_MainScreenEffectRenderer(global::System.Runtime.InteropServices.HandleRef jarg1);

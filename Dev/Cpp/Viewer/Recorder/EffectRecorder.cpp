@@ -309,7 +309,7 @@ bool EffectRecorder::Begin(int32_t squareMaxCount,
 						   Effekseer::Tool::EffectRendererParameter config,
 						   Vector2I screenSize,
 						   std::shared_ptr<Effekseer::Tool::GraphicsDevice> graphicsDevice,
-						   Effekseer::RefPtr<Effekseer::Setting> setting,
+						   std::shared_ptr<Effekseer::Tool::EffectSetting> setting,
 						   const RecordingParameter& recordingParameter,
 						   Effekseer::Tool::Vector2I imageSize,
 						   bool isSRGBMode,
@@ -405,7 +405,7 @@ bool EffectRecorder::Begin(int32_t squareMaxCount,
 
 	generator_ = std::make_shared<Effekseer::Tool::EffectRenderer>();
 
-	if (!generator_->Initialize(graphicsDevice_->GetGraphics(), setting, squareMaxCount, isSRGBMode))
+	if (!generator_->Initialize(graphicsDevice_, nullptr, setting, squareMaxCount, isSRGBMode))
 	{
 		return false;
 	}
@@ -424,7 +424,7 @@ bool EffectRecorder::Begin(int32_t squareMaxCount,
 		config.BackgroundColor = Color(0, 0, 0, 0);
 	}
 
-	generator_->SetConfig(config);
+	generator_->SetParameter(config);
 	generator_->SetEffect(effect);
 
 	generator_->SetBehavior(behavior);
@@ -453,7 +453,7 @@ bool EffectRecorder::Step(int frames)
 		{
 			auto colorValue = Effekseer::Clamp(32 * loop, 255, 0);
 
-			auto config = generator_->GetConfig();
+			auto config = generator_->GetParameter();
 			if (recordingParameter_.Transparence == TransparenceType::None)
 			{
 				// not change
@@ -466,7 +466,7 @@ bool EffectRecorder::Step(int frames)
 			{
 				config.BackgroundColor = Effekseer::Color(colorValue, colorValue, colorValue, 255);
 			}
-			generator_->SetConfig(config);
+			generator_->SetParameter(config);
 
 			generator_->Render(renderTarget_);
 			graphicsDevice_->GetGraphics()->SaveTexture(renderTarget_->GetTexture(), pixelss[loop]);

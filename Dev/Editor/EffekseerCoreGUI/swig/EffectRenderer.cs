@@ -47,6 +47,11 @@ public class EffectRenderer : global::System.IDisposable {
   public EffectRenderer() : this(EffekseerNativePINVOKE.new_EffectRenderer(), true) {
   }
 
+  public bool Initialize(GraphicsDevice graphicsDevice, SoundDevice soundDevice, EffectSetting setting, int spriteCount, bool isSRGBMode) {
+    bool ret = EffekseerNativePINVOKE.EffectRenderer_Initialize(swigCPtr, GraphicsDevice.getCPtr(graphicsDevice), SoundDevice.getCPtr(soundDevice), EffectSetting.getCPtr(setting), spriteCount, isSRGBMode);
+    return ret;
+  }
+
   public Vector2I GetScreenSize() {
     Vector2I ret = new Vector2I(EffekseerNativePINVOKE.EffectRenderer_GetScreenSize(swigCPtr), true);
     return ret;
@@ -121,6 +126,11 @@ public class EffectRenderer : global::System.IDisposable {
     return ret;
   }
 
+  public int GetSquareMaxCount() {
+    int ret = EffekseerNativePINVOKE.EffectRenderer_GetSquareMaxCount(swigCPtr);
+    return ret;
+  }
+
   public PostEffectParameter GetPostEffectParameter() {
     PostEffectParameter ret = new PostEffectParameter(EffekseerNativePINVOKE.EffectRenderer_GetPostEffectParameter(swigCPtr), true);
     return ret;
@@ -129,6 +139,16 @@ public class EffectRenderer : global::System.IDisposable {
   public void SetPostEffectParameter(PostEffectParameter param) {
     EffekseerNativePINVOKE.EffectRenderer_SetPostEffectParameter(swigCPtr, PostEffectParameter.getCPtr(param));
     if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+  }
+
+  public int GetAndResetDrawCall() {
+    int ret = EffekseerNativePINVOKE.EffectRenderer_GetAndResetDrawCall(swigCPtr);
+    return ret;
+  }
+
+  public int GetAndResetVertexCount() {
+    int ret = EffekseerNativePINVOKE.EffectRenderer_GetAndResetVertexCount(swigCPtr);
+    return ret;
   }
 
 }

@@ -16,7 +16,10 @@ namespace Effekseer
 namespace Tool
 {
 
+class GraphicsDevice;
+class SoundDevice;
 class Effect;
+class EffectSetting;
 class RenderImage;
 
 struct EffectRendererParameter
@@ -98,7 +101,7 @@ class EffectRenderer
 	};
 
 protected:
-	std::shared_ptr<efk::Graphics> graphics_ = nullptr;
+	std::shared_ptr<GraphicsDevice> graphics_ = nullptr;
 	Effekseer::ManagerRef manager_;
 	EffekseerRenderer::RendererRef renderer_;
 	std::shared_ptr<Effekseer::Tool::Effect> effect_;
@@ -172,9 +175,12 @@ public:
 	EffectRenderer();
 	virtual ~EffectRenderer();
 
-#if !defined(SWIG)
-	bool Initialize(std::shared_ptr<efk::Graphics> graphics, Effekseer::RefPtr<Effekseer::Setting> setting, int32_t spriteCount, bool isSRGBMode);
-#endif
+	bool Initialize(
+		std::shared_ptr<GraphicsDevice> graphicsDevice, 
+		std::shared_ptr<SoundDevice> soundDevice,
+		std::shared_ptr<EffectSetting> setting, 
+		int32_t spriteCount, 
+		bool isSRGBMode);
 
 	Vector2I GetScreenSize() const;
 	void ResizeScreen(const Vector2I& screenSize);
@@ -216,12 +222,31 @@ public:
 		return m_isSRGBMode;
 	}
 
+	int32_t GetSquareMaxCount() const
+	{
+		return renderer_->GetSquareMaxCount();
+	}
+
 	Effekseer::Tool::PostEffectParameter GetPostEffectParameter() const;
 
 	void SetPostEffectParameter(const Effekseer::Tool::PostEffectParameter& param);
 
-#if !defined(SWIG)
+	int32_t GetAndResetDrawCall() const
+	{
+		auto call = renderer_->GetDrawCallCount();
+		renderer_->ResetDrawCallCount();
+		return call;
+	}
 
+	int32_t GetAndResetVertexCount() const
+	{
+		auto call = renderer_->GetDrawVertexCount();
+		renderer_->ResetDrawVertexCount();
+		return call;
+	}
+
+#if !defined(SWIG)
+	/*
 	const EffekseerRenderer::RendererRef& GetRenderer() const
 	{
 		return renderer_;
@@ -231,7 +256,7 @@ public:
 	{
 		return manager_;
 	}
-
+	*/
 #endif
 };
 

@@ -1,5 +1,7 @@
 #include "EffectRenderer.h"
+#include "../Sound/SoundDevice.h"
 #include "Effect.h"
+#include "EffectSetting.h"
 
 #ifdef _WIN32
 #include "../Graphics/Platform/DX11/efk.GraphicsDX11.h"
@@ -216,7 +218,7 @@ bool EffectRenderer::UpdateBackgroundMesh(const Color& backgroundColor)
 	ibData[4] = 2;
 	ibData[5] = 3;
 
-	backgroundMesh_ = Effekseer::Tool::StaticMesh::Create(graphics_->GetGraphicsDevice(), vbData, ibData);
+	backgroundMesh_ = Effekseer::Tool::StaticMesh::Create(graphics_->GetGraphics()->GetGraphicsDevice(), vbData, ibData);
 	if (!backgroundMesh_)
 	{
 		return false;
@@ -233,11 +235,11 @@ void EffectRenderer::CopyToBack()
 {
 	if (msaaSamples > 1)
 	{
-		graphics_->CopyTo(hdrRenderTextureMSAA, backTexture);
+		graphics_->GetGraphics()->CopyTo(hdrRenderTextureMSAA, backTexture);
 	}
 	else
 	{
-		graphics_->CopyTo(hdrRenderTexture, backTexture);
+		graphics_->GetGraphics()->CopyTo(hdrRenderTexture, backTexture);
 	}
 
 	renderer_->SetBackground(backTexture);
@@ -256,17 +258,23 @@ EffectRenderer ::~EffectRenderer()
 {
 }
 
-bool EffectRenderer::Initialize(std::shared_ptr<efk::Graphics> graphics, Effekseer::RefPtr<Effekseer::Setting> setting, int32_t spriteCount, bool isSRGBMode)
+bool EffectRenderer::Initialize(std::shared_ptr<GraphicsDevice> graphicsDevice,
+								std::shared_ptr<SoundDevice> soundDevice,
+								std::shared_ptr<EffectSetting> setting,
+								int32_t spriteCount,
+								bool isSRGBMode)
 {
-	graphics_ = graphics;
+	graphics_ = graphicsDevice;
 
 	manager_ = ::Effekseer::Manager::Create(spriteCount);
 	// manager_->LaunchWorkerThreads(4);
-	manager_->SetSetting(setting);
+	manager_->SetSetting(setting->GetSetting());
 	m_isSRGBMode = isSRGBMode;
 
+	auto graphics = graphicsDevice->GetGraphics();
+
 #ifdef _WIN32
-	if (graphics->GetDeviceType() == Effekseer::Tool::DeviceType::DirectX11)
+	if (graphicsDevice->GetGraphics()->GetDeviceType() == Effekseer::Tool::DeviceType::DirectX11)
 	{
 		auto g = (efk::GraphicsDX11*)graphics.get();
 		renderer_ = ::EffekseerRendererDX11::Renderer::Create(g->GetDevice(), g->GetContext(), spriteCount, D3D11_COMPARISON_LESS_EQUAL, true);
@@ -361,10 +369,10 @@ bool EffectRenderer::Initialize(std::shared_ptr<efk::Graphics> graphics, Effekse
 	manager_->SetModelRenderer(model_renderer);
 	manager_->SetTrackRenderer(track_renderer);
 
-	if (graphics_->GetGraphicsDevice() != nullptr)
+	if (graphics_->GetGraphics()->GetGraphicsDevice() != nullptr)
 	{
 
-		backgroundRenderer_ = Effekseer::Tool::StaticMeshRenderer::Create(graphics_->GetGraphicsDevice());
+		backgroundRenderer_ = Effekseer::Tool::StaticMeshRenderer::Create(graphics_->GetGraphics()->GetGraphicsDevice());
 
 		if (backgroundRenderer_ != nullptr && UpdateBackgroundMesh(parameter_.BackgroundColor))
 		{
@@ -404,13 +412,13 @@ bool EffectRenderer::Initialize(std::shared_ptr<efk::Graphics> graphics, Effekse
 				WhiteParticle_PS::g_main,
 				sizeof(WhiteParticle_PS::g_main));
 
-		auto shader = graphics_->GetGraphicsDevice()->CreateShaderFromBinary(
+		auto shader = graphics_->GetGraphics()->GetGraphicsDevice()->CreateShaderFromBinary(
 			PostEffect_Basic_VS::g_main,
 			sizeof(PostEffect_Basic_VS::g_main),
 			PostEffect_Overdraw_PS::g_main,
 			sizeof(PostEffect_Overdraw_PS::g_main));
 
-		overdrawEffect_ = std::make_unique<PostProcess>(graphics_->GetGraphicsDevice(), shader, 0, 0);
+		overdrawEffect_ = std::make_unique<PostProcess>(graphics_->GetGraphics()->GetGraphicsDevice(), shader, 0, 0);
 #endif
 	}
 	else if (graphics->GetGraphicsDevice()->GetDeviceName() == "OpenGL")
@@ -446,12 +454,12 @@ bool EffectRenderer::Initialize(std::shared_ptr<efk::Graphics> graphics, Effekse
 			Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> elms;
 			auto uniformLayoutUnlitAd = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(tecLoc, elms);
 
-			auto shader = graphics_->GetGraphicsDevice()->CreateShaderFromCodes(
+			auto shader = graphics_->GetGraphics()->GetGraphicsDevice()->CreateShaderFromCodes(
 				{gl_postfx_basic_vs},
 				{gl_postfx_overdraw_ps},
 				uniformLayoutUnlitAd);
 
-			overdrawEffect_ = std::make_unique<PostProcess>(graphics_->GetGraphicsDevice(), shader, 0, 0);
+			overdrawEffect_ = std::make_unique<PostProcess>(graphics_->GetGraphics()->GetGraphicsDevice(), shader, 0, 0);
 		}
 	}
 	else
@@ -464,6 +472,11 @@ bool EffectRenderer::Initialize(std::shared_ptr<efk::Graphics> graphics, Effekse
 	if (!OnAfterInitialize())
 	{
 		return false;
+	}
+
+	if (soundDevice != nullptr)
+	{
+		manager_->SetSoundPlayer(soundDevice->GetSound()->CreateSoundPlayer());
 	}
 
 	return true;
@@ -492,7 +505,7 @@ void EffectRenderer::ResizeScreen(const Vector2I& screenSize)
 		param.Size[1] = size.Y;
 		param.SampleCount = samples;
 		param.Usage = Effekseer::Backend::TextureUsageType::RenderTarget;
-		return graphics_->GetGraphicsDevice()->CreateTexture(param);
+		return graphics_->GetGraphics()->GetGraphicsDevice()->CreateTexture(param);
 	};
 
 	hdrRenderTexture = createRenderTexture(screenSize, textureFormat_, 1);
@@ -502,7 +515,7 @@ void EffectRenderer::ResizeScreen(const Vector2I& screenSize)
 	depthTextureParam.Size[0] = screenSize.X;
 	depthTextureParam.Size[1] = screenSize.Y;
 	depthTextureParam.SamplingCount = msaaSamples;
-	depthTexture = graphics_->GetGraphicsDevice()->CreateDepthTexture(depthTextureParam);
+	depthTexture = graphics_->GetGraphics()->GetGraphicsDevice()->CreateDepthTexture(depthTextureParam);
 
 	if (msaaSamples > 1)
 	{
@@ -760,20 +773,20 @@ void EffectRenderer::Render(std::shared_ptr<RenderImage> renderImage)
 
 	auto renderTargetImage = renderImage->GetTexture();
 
-	graphics_->SetRenderTarget({renderTargetImage}, nullptr);
-	graphics_->Clear({0, 0, 0, 0});
+	graphics_->GetGraphics()->SetRenderTarget({renderTargetImage}, nullptr);
+	graphics_->GetGraphics()->Clear({0, 0, 0, 0});
 
 	// clear
 	if (msaaSamples > 1)
 	{
-		graphics_->SetRenderTarget({hdrRenderTextureMSAA, depthRenderTextureMSAA}, depthTexture);
+		graphics_->GetGraphics()->SetRenderTarget({hdrRenderTextureMSAA, depthRenderTextureMSAA}, depthTexture);
 	}
 	else
 	{
-		graphics_->SetRenderTarget({hdrRenderTexture, depthRenderTexture}, depthTexture);
+		graphics_->GetGraphics()->SetRenderTarget({hdrRenderTexture, depthRenderTexture}, depthTexture);
 	}
 
-	graphics_->Clear({0, 0, 0, 0});
+	graphics_->GetGraphics()->Clear({0, 0, 0, 0});
 
 	// TODO : refactor
 	renderer_->SetCameraMatrix(parameter_.CameraMatrix);
@@ -812,16 +825,16 @@ void EffectRenderer::Render(std::shared_ptr<RenderImage> renderImage)
 
 	if (msaaSamples > 1)
 	{
-		graphics_->SetRenderTarget({hdrRenderTextureMSAA}, depthTexture);
+		graphics_->GetGraphics()->SetRenderTarget({hdrRenderTextureMSAA}, depthTexture);
 	}
 	else
 	{
-		graphics_->SetRenderTarget({hdrRenderTexture}, depthTexture);
+		graphics_->GetGraphics()->SetRenderTarget({hdrRenderTexture}, depthTexture);
 	}
 
 	if (msaaSamples > 1)
 	{
-		graphics_->ResolveRenderTarget(depthRenderTextureMSAA, depthRenderTexture);
+		graphics_->GetGraphics()->ResolveRenderTarget(depthRenderTextureMSAA, depthRenderTexture);
 	}
 
 	EffekseerRenderer::DepthReconstructionParameter reconstructionParam;
@@ -942,12 +955,12 @@ void EffectRenderer::Render(std::shared_ptr<RenderImage> renderImage)
 
 	if (msaaSamples > 1)
 	{
-		graphics_->ResolveRenderTarget(hdrRenderTextureMSAA, hdrRenderTexture);
+		graphics_->GetGraphics()->ResolveRenderTarget(hdrRenderTextureMSAA, hdrRenderTexture);
 	}
 
 	if (parameter_.RenderingMethod == RenderingMethodType::Overdraw)
 	{
-		graphics_->SetRenderTarget({renderTargetImage}, nullptr);
+		graphics_->GetGraphics()->SetRenderTarget({renderTargetImage}, nullptr);
 		overdrawEffect_->GetDrawParameter().TexturePtrs[0] = hdrRenderTexture;
 		overdrawEffect_->GetDrawParameter().TextureCount = 1;
 		overdrawEffect_->Render();
@@ -972,7 +985,7 @@ void EffectRenderer::Render(std::shared_ptr<RenderImage> renderImage)
 		}
 	}
 
-	graphics_->SetRenderTarget({nullptr}, nullptr);
+	graphics_->GetGraphics()->SetRenderTarget({nullptr}, nullptr);
 }
 
 std::shared_ptr<Effekseer::Tool::Effect> EffectRenderer::GetEffect() const

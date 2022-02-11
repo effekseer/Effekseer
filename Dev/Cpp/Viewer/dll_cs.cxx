@@ -3596,6 +3596,28 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_EffectRenderer___(void 
 }
 
 
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_Initialize___(void * jarg1, void * jarg2, void * jarg3, void * jarg4, int jarg5, unsigned int jarg6) {
+  unsigned int jresult ;
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  std::shared_ptr< Effekseer::Tool::GraphicsDevice > arg2 ;
+  std::shared_ptr< Effekseer::Tool::SoundDevice > arg3 ;
+  std::shared_ptr< Effekseer::Tool::EffectSetting > arg4 ;
+  int32_t arg5 ;
+  bool arg6 ;
+  bool result;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  if (jarg2) arg2 = *(std::shared_ptr< Effekseer::Tool::GraphicsDevice > *)jarg2; 
+  if (jarg3) arg3 = *(std::shared_ptr< Effekseer::Tool::SoundDevice > *)jarg3; 
+  if (jarg4) arg4 = *(std::shared_ptr< Effekseer::Tool::EffectSetting > *)jarg4; 
+  arg5 = (int32_t)jarg5; 
+  arg6 = jarg6 ? true : false; 
+  result = (bool)(arg1)->Initialize(arg2,arg3,arg4,arg5,arg6);
+  jresult = result; 
+  return jresult;
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_GetScreenSize___(void * jarg1) {
   void * jresult ;
   Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
@@ -3774,6 +3796,18 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_GetIsSR
 }
 
 
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_GetSquareMaxCount___(void * jarg1) {
+  int jresult ;
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  int32_t result;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  result = (int32_t)((Effekseer::Tool::EffectRenderer const *)arg1)->GetSquareMaxCount();
+  jresult = result; 
+  return jresult;
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_GetPostEffectParameter___(void * jarg1) {
   void * jresult ;
   Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
@@ -3797,6 +3831,30 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_SetPostEffectPa
     return ;
   } 
   (arg1)->SetPostEffectParameter((Effekseer::Tool::PostEffectParameter const &)*arg2);
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_GetAndResetDrawCall___(void * jarg1) {
+  int jresult ;
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  int32_t result;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  result = (int32_t)((Effekseer::Tool::EffectRenderer const *)arg1)->GetAndResetDrawCall();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_GetAndResetVertexCount___(void * jarg1) {
+  int jresult ;
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  int32_t result;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  result = (int32_t)((Effekseer::Tool::EffectRenderer const *)arg1)->GetAndResetVertexCount();
+  jresult = result; 
+  return jresult;
 }
 
 

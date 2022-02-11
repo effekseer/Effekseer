@@ -37,7 +37,7 @@ public:
 			   Effekseer::Tool::EffectRendererParameter config,
 			   Vector2I screenSize,
 			   std::shared_ptr<Effekseer::Tool::GraphicsDevice> graphicsDevice,
-			   Effekseer::RefPtr<Effekseer::Setting> setting,
+			   std::shared_ptr<Effekseer::Tool::EffectSetting> setting,
 			   const RecordingParameter& recordingParameter,
 			   Effekseer::Tool::Vector2I imageSize,
 			   bool isSRGBMode,
