@@ -1007,6 +1007,34 @@ void EffectRenderer::SetBehavior(const ViewerEffectBehavior& behavior)
 	behavior_ = behavior;
 }
 
+int32_t EffectRenderer::GetInstanceCount() const
+{
+	if (m_time == 0)
+		return 0;
+
+	int32_t sum = 0;
+	for (int i = 0; i < handles_.size(); i++)
+	{
+		auto count = manager_->GetInstanceCount(handles_[i].Handle);
+
+		// Root
+		if (!handles_[i].IsRootStopped)
+			count--;
+
+		if (!manager_->Exists(handles_[i].Handle))
+			count = 0;
+
+		sum += count;
+	}
+
+	return sum;
+}
+
+void EffectRenderer::SetStep(int32_t step)
+{
+	m_step = step;
+}
+
 Effekseer::Tool::PostEffectParameter EffectRenderer::GetPostEffectParameter() const
 {
 	return postEffectParameter_;

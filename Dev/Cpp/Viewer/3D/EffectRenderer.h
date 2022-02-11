@@ -191,52 +191,16 @@ public:
 	const ViewerEffectBehavior& GetBehavior() const;
 	void SetBehavior(const ViewerEffectBehavior& behavior);
 
-#if !defined(SWIG)
+	int32_t GetInstanceCount() const;
 
-	int32_t GetInstanceCount() const
-	{
-		if (m_time == 0)
-			return 0;
+	void SetStep(int32_t step);
 
-		int32_t sum = 0;
-		for (int i = 0; i < handles_.size(); i++)
-		{
-			auto count = manager_->GetInstanceCount(handles_[i].Handle);
-
-			// Root
-			if (!handles_[i].IsRootStopped)
-				count--;
-
-			if (!manager_->Exists(handles_[i].Handle))
-				count = 0;
-
-			sum += count;
-		}
-
-		return sum;
-	}
-
-	void SetStep(int32_t step)
-	{
-		m_step = step;
-	}
-
-	const EffekseerRenderer::RendererRef& GetRenderer() const
-	{
-		return renderer_;
-	}
-
-	Effekseer::ManagerRef GetMamanager() const
-	{
-		return manager_;
-	}
-
-	EffectRendererParameter GetConfig() const
+	EffectRendererParameter GetParameter() const
 	{
 		return parameter_;
 	}
 
-	void SetConfig(const EffectRendererParameter& config)
+	void SetParameter(const EffectRendererParameter& config)
 	{
 		parameter_ = config;
 
@@ -255,6 +219,19 @@ public:
 	Effekseer::Tool::PostEffectParameter GetPostEffectParameter() const;
 
 	void SetPostEffectParameter(const Effekseer::Tool::PostEffectParameter& param);
+
+#if !defined(SWIG)
+
+	const EffekseerRenderer::RendererRef& GetRenderer() const
+	{
+		return renderer_;
+	}
+
+	Effekseer::ManagerRef GetMamanager() const
+	{
+		return manager_;
+	}
+
 #endif
 };
 

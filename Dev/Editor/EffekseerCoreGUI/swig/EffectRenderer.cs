@@ -97,6 +97,40 @@ public class EffectRenderer : global::System.IDisposable {
     if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
   }
 
+  public int GetInstanceCount() {
+    int ret = EffekseerNativePINVOKE.EffectRenderer_GetInstanceCount(swigCPtr);
+    return ret;
+  }
+
+  public void SetStep(int step) {
+    EffekseerNativePINVOKE.EffectRenderer_SetStep(swigCPtr, step);
+  }
+
+  public EffectRendererParameter GetParameter() {
+    EffectRendererParameter ret = new EffectRendererParameter(EffekseerNativePINVOKE.EffectRenderer_GetParameter(swigCPtr), true);
+    return ret;
+  }
+
+  public void SetParameter(EffectRendererParameter config) {
+    EffekseerNativePINVOKE.EffectRenderer_SetParameter(swigCPtr, EffectRendererParameter.getCPtr(config));
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+  }
+
+  public bool GetIsSRGBMode() {
+    bool ret = EffekseerNativePINVOKE.EffectRenderer_GetIsSRGBMode(swigCPtr);
+    return ret;
+  }
+
+  public PostEffectParameter GetPostEffectParameter() {
+    PostEffectParameter ret = new PostEffectParameter(EffekseerNativePINVOKE.EffectRenderer_GetPostEffectParameter(swigCPtr), true);
+    return ret;
+  }
+
+  public void SetPostEffectParameter(PostEffectParameter param) {
+    EffekseerNativePINVOKE.EffectRenderer_SetPostEffectParameter(swigCPtr, PostEffectParameter.getCPtr(param));
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+  }
+
 }
 
 }
