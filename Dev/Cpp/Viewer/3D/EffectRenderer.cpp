@@ -228,68 +228,23 @@ bool EffectRenderer::UpdateBackgroundMesh(const Color& backgroundColor)
 	return true;
 }
 
-void EffectRenderer::PlayEffect()
+void EffectRenderer::CopyToBack()
 {
-	assert(effect_ != nullptr);
-
-	for (int32_t z = 0; z < behavior_.CountZ; z++)
+	if (msaaSamples > 1)
 	{
-		for (int32_t y = 0; y < behavior_.CountY; y++)
-		{
-			for (int32_t x = 0; x < behavior_.CountX; x++)
-			{
-				auto lenX = behavior_.Distance * (behavior_.CountX - 1);
-				auto lenY = behavior_.Distance * (behavior_.CountY - 1);
-				auto lenZ = behavior_.Distance * (behavior_.CountZ - 1);
-
-				auto posX = behavior_.Distance * x - lenX / 2.0f;
-				auto posY = behavior_.Distance * y - lenY / 2.0f;
-				auto posZ = behavior_.Distance * z - lenZ / 2.0f;
-
-				posX += behavior_.PositionX;
-				posY += behavior_.PositionY;
-				posZ += behavior_.PositionZ;
-
-				HandleHolder handleHolder(manager_->Play(effect_, posX, posY, posZ));
-
-				Effekseer::Matrix43 mat, matTra, matRot, matScale;
-				matTra.Translation(posX, posY, posZ);
-				matRot.RotationZXY(m_rootRotation.Z, m_rootRotation.X, m_rootRotation.Y);
-				matScale.Scaling(m_rootScale.X, m_rootScale.Y, m_rootScale.Z);
-
-				mat.Indentity();
-				Effekseer::Matrix43::Multiple(mat, mat, matScale);
-				Effekseer::Matrix43::Multiple(mat, mat, matRot);
-				Effekseer::Matrix43::Multiple(mat, mat, matTra);
-
-				manager_->SetMatrix(handleHolder.Handle, mat);
-				manager_->SetSpeed(handleHolder.Handle, behavior_.PlaybackSpeed);
-
-				handles_.push_back(handleHolder);
-
-				if (behavior_.AllColorR != 255 || behavior_.AllColorG != 255 || behavior_.AllColorB != 255 ||
-					behavior_.AllColorA != 255)
-				{
-					manager_->SetAllColor(handleHolder.Handle,
-										  Effekseer::Color(behavior_.AllColorR,
-														   behavior_.AllColorG,
-														   behavior_.AllColorB,
-														   behavior_.AllColorA));
-				}
-			}
-		}
+		graphics_->CopyTo(hdrRenderTextureMSAA, backTexture);
+	}
+	else
+	{
+		graphics_->CopyTo(hdrRenderTexture, backTexture);
 	}
 
-	m_time = 0;
-	m_rootLocation.X = behavior_.PositionX;
-	m_rootLocation.Y = behavior_.PositionY;
-	m_rootLocation.Z = behavior_.PositionZ;
-	m_rootRotation.X = behavior_.RotationX;
-	m_rootRotation.Y = behavior_.RotationY;
-	m_rootRotation.Z = behavior_.RotationZ;
-	m_rootScale.X = behavior_.ScaleX;
-	m_rootScale.Y = behavior_.ScaleY;
-	m_rootScale.Z = behavior_.ScaleZ;
+	renderer_->SetBackground(backTexture);
+}
+
+void EffectRenderer::ResetBack()
+{
+	renderer_->SetBackground(nullptr);
 }
 
 EffectRenderer::EffectRenderer()
@@ -513,7 +468,12 @@ bool EffectRenderer::Initialize(std::shared_ptr<efk::Graphics> graphics, Effekse
 	return true;
 }
 
-void EffectRenderer::Resize(const Vector2I screenSize)
+Vector2I EffectRenderer::GetScreenSize() const
+{
+	return screenSize_;
+}
+
+void EffectRenderer::ResizeScreen(const Vector2I& screenSize)
 {
 	if (screenSize_ == screenSize)
 	{
@@ -561,6 +521,70 @@ void EffectRenderer::Resize(const Vector2I screenSize)
 	{
 		linearRenderTexture = createRenderTexture(screenSize, textureFormat_, 1);
 	}
+}
+
+void EffectRenderer::PlayEffect()
+{
+	assert(effect_ != nullptr);
+
+	for (int32_t z = 0; z < behavior_.CountZ; z++)
+	{
+		for (int32_t y = 0; y < behavior_.CountY; y++)
+		{
+			for (int32_t x = 0; x < behavior_.CountX; x++)
+			{
+				auto lenX = behavior_.Distance * (behavior_.CountX - 1);
+				auto lenY = behavior_.Distance * (behavior_.CountY - 1);
+				auto lenZ = behavior_.Distance * (behavior_.CountZ - 1);
+
+				auto posX = behavior_.Distance * x - lenX / 2.0f;
+				auto posY = behavior_.Distance * y - lenY / 2.0f;
+				auto posZ = behavior_.Distance * z - lenZ / 2.0f;
+
+				posX += behavior_.PositionX;
+				posY += behavior_.PositionY;
+				posZ += behavior_.PositionZ;
+
+				HandleHolder handleHolder(manager_->Play(effect_, posX, posY, posZ));
+
+				Effekseer::Matrix43 mat, matTra, matRot, matScale;
+				matTra.Translation(posX, posY, posZ);
+				matRot.RotationZXY(m_rootRotation.Z, m_rootRotation.X, m_rootRotation.Y);
+				matScale.Scaling(m_rootScale.X, m_rootScale.Y, m_rootScale.Z);
+
+				mat.Indentity();
+				Effekseer::Matrix43::Multiple(mat, mat, matScale);
+				Effekseer::Matrix43::Multiple(mat, mat, matRot);
+				Effekseer::Matrix43::Multiple(mat, mat, matTra);
+
+				manager_->SetMatrix(handleHolder.Handle, mat);
+				manager_->SetSpeed(handleHolder.Handle, behavior_.PlaybackSpeed);
+
+				handles_.push_back(handleHolder);
+
+				if (behavior_.AllColorR != 255 || behavior_.AllColorG != 255 || behavior_.AllColorB != 255 ||
+					behavior_.AllColorA != 255)
+				{
+					manager_->SetAllColor(handleHolder.Handle,
+										  Effekseer::Color(behavior_.AllColorR,
+														   behavior_.AllColorG,
+														   behavior_.AllColorB,
+														   behavior_.AllColorA));
+				}
+			}
+		}
+	}
+
+	m_time = 0;
+	m_rootLocation.X = behavior_.PositionX;
+	m_rootLocation.Y = behavior_.PositionY;
+	m_rootLocation.Z = behavior_.PositionZ;
+	m_rootRotation.X = behavior_.RotationX;
+	m_rootRotation.Y = behavior_.RotationY;
+	m_rootRotation.Z = behavior_.RotationZ;
+	m_rootScale.X = behavior_.ScaleX;
+	m_rootScale.Y = behavior_.ScaleY;
+	m_rootScale.Z = behavior_.ScaleZ;
 }
 
 void EffectRenderer::Update()
@@ -950,17 +974,6 @@ void EffectRenderer::Render(std::shared_ptr<RenderImage> renderImage)
 	graphics_->SetRenderTarget({nullptr}, nullptr);
 }
 
-void EffectRenderer::Reset()
-{
-	for (size_t i = 0; i < handles_.size(); i++)
-	{
-		manager_->StopEffect(handles_[i].Handle);
-	}
-	handles_.clear();
-
-	manager_->Update();
-}
-
 Effekseer::EffectRef EffectRenderer::GetEffect()
 {
 	return effect_;
@@ -972,9 +985,15 @@ void EffectRenderer::SetEffect(Effekseer::EffectRef effect)
 	effect_ = effect;
 }
 
-void EffectRenderer::SetBehavior(const ViewerEffectBehavior& behavior)
+void EffectRenderer::ResetEffect()
 {
-	behavior_ = behavior;
+	for (size_t i = 0; i < handles_.size(); i++)
+	{
+		manager_->StopEffect(handles_[i].Handle);
+	}
+	handles_.clear();
+
+	manager_->Update();
 }
 
 const ViewerEffectBehavior& EffectRenderer::GetBehavior() const
@@ -982,23 +1001,9 @@ const ViewerEffectBehavior& EffectRenderer::GetBehavior() const
 	return behavior_;
 }
 
-void EffectRenderer::CopyToBack()
+void EffectRenderer::SetBehavior(const ViewerEffectBehavior& behavior)
 {
-	if (msaaSamples > 1)
-	{
-		graphics_->CopyTo(hdrRenderTextureMSAA, backTexture);
-	}
-	else
-	{
-		graphics_->CopyTo(hdrRenderTexture, backTexture);
-	}
-
-	renderer_->SetBackground(backTexture);
-}
-
-void EffectRenderer::ResetBack()
-{
-	renderer_->SetBackground(nullptr);
+	behavior_ = behavior;
 }
 
 Effekseer::Tool::PostEffectParameter EffectRenderer::GetPostEffectParameter() const

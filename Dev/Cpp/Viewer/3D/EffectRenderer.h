@@ -149,6 +149,10 @@ protected:
 
 	bool UpdateBackgroundMesh(const Color& backgroundColor);
 
+	void CopyToBack();
+
+	void ResetBack();
+
 	virtual bool OnAfterInitialize()
 	{
 		return true;
@@ -167,22 +171,27 @@ public:
 	virtual ~EffectRenderer();
 
 #if !defined(SWIG)
-	void PlayEffect();
-
 	bool Initialize(std::shared_ptr<efk::Graphics> graphics, Effekseer::RefPtr<Effekseer::Setting> setting, int32_t spriteCount, bool isSRGBMode);
-	void Resize(const Vector2I screenSize);
+#endif
+
+	Vector2I GetScreenSize() const;
+	void ResizeScreen(const Vector2I& screenSize);
+
+	void PlayEffect();
 	void Update();
 	void Update(int32_t frame);
-	void Render(std::shared_ptr<RenderImage> renderImage = nullptr);
-	void Reset();
+	void Render(std::shared_ptr<RenderImage> renderImage);
 
 	Effekseer::EffectRef GetEffect();
 	void SetEffect(Effekseer::EffectRef effect);
+	void ResetEffect();
 
-	void SetBehavior(const ViewerEffectBehavior& behavior);
+#if !defined(SWIG)
+
 	const ViewerEffectBehavior& GetBehavior() const;
+	void SetBehavior(const ViewerEffectBehavior& behavior);
 
-	int32_t GetInstanceCount()
+	int32_t GetInstanceCount() const
 	{
 		if (m_time == 0)
 			return 0;
@@ -220,10 +229,6 @@ public:
 		return manager_;
 	}
 
-	void CopyToBack();
-
-	void ResetBack();
-
 	EffectRendererParameter GetConfig() const
 	{
 		return parameter_;
@@ -240,10 +245,10 @@ public:
 		}
 	}
 
-	Effekseer::Backend::TextureRef GetView() const
-	{
-		return viewRenderTexture;
-	}
+	//Effekseer::Backend::TextureRef GetView() const
+	//{
+	//	return viewRenderTexture;
+	//}
 
 	BloomPostEffect* GetBloomEffect() const
 	{

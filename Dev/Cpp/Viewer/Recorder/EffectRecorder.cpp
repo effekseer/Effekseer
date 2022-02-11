@@ -4,6 +4,8 @@
 #include "Windows/RecorderCallbackH264.h"
 #endif
 
+#include "../GUI/RenderImage.h"
+
 #include "EffectRecorder.h"
 
 #include <spdlog/sinks/basic_file_sink.h>
@@ -306,7 +308,7 @@ public:
 bool EffectRecorder::Begin(int32_t squareMaxCount,
 						   Effekseer::Tool::EffectRendererParameter config,
 						   Vector2I screenSize,
-						   std::shared_ptr<efk::Graphics> graphics,
+						   std::shared_ptr<Effekseer::Tool::GraphicsDevice> graphicsDevice,
 						   Effekseer::RefPtr<Effekseer::Setting> setting,
 						   const RecordingParameter& recordingParameter,
 						   Effekseer::Tool::Vector2I imageSize,
@@ -315,7 +317,7 @@ bool EffectRecorder::Begin(int32_t squareMaxCount,
 						   Effekseer::Tool::PostEffectParameter postEffectParameter,
 						   Effekseer::EffectRef effect)
 {
-	graphics_ = graphics;
+	graphicsDevice_ = graphicsDevice;
 	recordingParameter_ = recordingParameter;
 	int recScale = Effekseer::Max(1, recordingParameter.Scale);
 	imageSize_ = Effekseer::Tool::Vector2I(imageSize.X * recScale, imageSize.Y * recScale);
@@ -403,12 +405,14 @@ bool EffectRecorder::Begin(int32_t squareMaxCount,
 
 	generator_ = std::make_shared<Effekseer::Tool::EffectRenderer>();
 
-	if (!generator_->Initialize(graphics_, setting, squareMaxCount, isSRGBMode))
+	if (!generator_->Initialize(graphicsDevice_->GetGraphics(), setting, squareMaxCount, isSRGBMode))
 	{
 		return false;
 	}
 
-	generator_->Resize(imageSize_);
+	renderTarget_ = Effekseer::Tool::RenderImage::Create(graphicsDevice_);
+	renderTarget_->Resize(imageSize_.X, imageSize_.Y);
+	generator_->ResizeScreen(imageSize_);
 
 	::Effekseer::Matrix44 mat;
 	mat.Values[0][0] = (float)screenSize.X / (float)imageSize.X;
@@ -464,8 +468,8 @@ bool EffectRecorder::Step(int frames)
 			}
 			generator_->SetConfig(config);
 
-			generator_->Render();
-			graphics_->SaveTexture(generator_->GetView(), pixelss[loop]);
+			generator_->Render(renderTarget_);
+			graphicsDevice_->GetGraphics()->SaveTexture(renderTarget_->GetTexture(), pixelss[loop]);
 
 			auto generateAlpha = recordingParameter_.Transparence == TransparenceType::Generate;
 			auto removeAlpha = recordingParameter_.Transparence == TransparenceType::None;
@@ -548,7 +552,7 @@ bool EffectRecorder::Step(int frames)
 
 bool EffectRecorder::End()
 {
-	generator_->Reset();
+	generator_->ResetEffect();
 
 	recorderCallback->OnEndRecord();
 

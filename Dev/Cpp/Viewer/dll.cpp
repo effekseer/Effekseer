@@ -88,7 +88,7 @@ bool Native::RemoveEffect()
 	if (mainScreen_ != nullptr)
 	{
 		mainScreen_->SetEffect(nullptr);
-		mainScreen_->Reset();
+		mainScreen_->ResetEffect();
 	}
 
 	return true;
@@ -102,7 +102,7 @@ bool Native::PlayEffect()
 
 bool Native::StopEffect()
 {
-	mainScreen_->Reset();
+	mainScreen_->ResetEffect();
 	return true;
 }
 
@@ -137,7 +137,7 @@ void Native::RenderView(int32_t width, int32_t height, std::shared_ptr<Effekseer
 	mainScreenConfig_.CameraFrontDirection = ray.Direction;
 
 	mainScreen_->SetConfig(mainScreenConfig_);
-	mainScreen_->Resize(Effekseer::Tool::Vector2I(width, height));
+	mainScreen_->ResizeScreen(Effekseer::Tool::Vector2I(width, height));
 
 	if (renderImage != nullptr)
 	{
@@ -152,14 +152,14 @@ std::shared_ptr<Effekseer::Tool::EffectRecorder> Native::CreateRecorder(const Ef
 	if (mainScreen_->GetEffect() == nullptr)
 		return nullptr;
 
-	Effekseer::Tool::Vector2I screenSize = {mainScreen_->GetView()->GetParameter().Size[0], mainScreen_->GetView()->GetParameter().Size[1]};
+	const auto screenSize = mainScreen_->GetScreenSize();
 
 	auto recorder = std::make_shared<Effekseer::Tool::EffectRecorder>();
 	if (recorder->Begin(
 			mainScreen_->GetRenderer()->GetSquareMaxCount(),
 			mainScreen_->GetConfig(),
 			screenSize,
-			graphicsDevice_->GetGraphics(),
+			graphicsDevice_,
 			setting_,
 			recordingParameter,
 			Effekseer::Tool::Vector2I(mainScreen_->GuideWidth, mainScreen_->GuideHeight),

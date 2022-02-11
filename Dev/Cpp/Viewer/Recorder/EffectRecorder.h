@@ -27,15 +27,16 @@ private:
 	int recordedCount = 0;
 	bool completed = false;
 
+	std::shared_ptr<Effekseer::Tool::GraphicsDevice> graphicsDevice_ = nullptr;
+	std::shared_ptr<Effekseer::Tool::RenderImage> renderTarget_;
 	std::shared_ptr<Effekseer::Tool::EffectRenderer> generator_;
-	std::shared_ptr<efk::Graphics> graphics_ = nullptr;
 
 public:
 #if !SWIG
 	bool Begin(int32_t squareMaxCount,
 			   Effekseer::Tool::EffectRendererParameter config,
 			   Vector2I screenSize,
-			   std::shared_ptr<efk::Graphics> graphics,
+			   std::shared_ptr<Effekseer::Tool::GraphicsDevice> graphicsDevice,
 			   Effekseer::RefPtr<Effekseer::Setting> setting,
 			   const RecordingParameter& recordingParameter,
 			   Effekseer::Tool::Vector2I imageSize,

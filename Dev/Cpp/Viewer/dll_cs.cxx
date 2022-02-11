@@ -3596,6 +3596,110 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_EffectRenderer___(void 
 }
 
 
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_GetScreenSize___(void * jarg1) {
+  void * jresult ;
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  Effekseer::Tool::Vector2I result;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  result = ((Effekseer::Tool::EffectRenderer const *)arg1)->GetScreenSize();
+  jresult = new Effekseer::Tool::Vector2I((const Effekseer::Tool::Vector2I &)result); 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_ResizeScreen___(void * jarg1, void * jarg2) {
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  Effekseer::Tool::Vector2I *arg2 = 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  arg2 = (Effekseer::Tool::Vector2I *)jarg2;
+  if (!arg2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Effekseer::Tool::Vector2I const & type is null", 0);
+    return ;
+  } 
+  (arg1)->ResizeScreen((Effekseer::Tool::Vector2I const &)*arg2);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_PlayEffect___(void * jarg1) {
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  (arg1)->PlayEffect();
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_Update__SWIG_0___(void * jarg1) {
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  (arg1)->Update();
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_Update__SWIG_1___(void * jarg1, int jarg2) {
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  int32_t arg2 ;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  arg2 = (int32_t)jarg2; 
+  (arg1)->Update(arg2);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_Render___(void * jarg1, void * jarg2) {
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  SwigValueWrapper< std::shared_ptr< RenderImage > > arg2 ;
+  std::shared_ptr< RenderImage > *argp2 ;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  argp2 = (std::shared_ptr< RenderImage > *)jarg2; 
+  if (!argp2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Attempt to dereference null std::shared_ptr< RenderImage >", 0);
+    return ;
+  }
+  arg2 = *argp2; 
+  (arg1)->Render(arg2);
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_GetEffect___(void * jarg1) {
+  void * jresult ;
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  Effekseer::EffectRef result;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  result = (arg1)->GetEffect();
+  jresult = new Effekseer::EffectRef((const Effekseer::EffectRef &)result); 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_SetEffect___(void * jarg1, void * jarg2) {
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  Effekseer::EffectRef arg2 ;
+  Effekseer::EffectRef *argp2 ;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  argp2 = (Effekseer::EffectRef *)jarg2; 
+  if (!argp2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Attempt to dereference null Effekseer::EffectRef", 0);
+    return ;
+  }
+  arg2 = *argp2; 
+  (arg1)->SetEffect(arg2);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_ResetEffect___(void * jarg1) {
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  (arg1)->ResetEffect();
+}
+
+
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_MainScreenEffectRenderer___(void * jarg1) {
   Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
   
