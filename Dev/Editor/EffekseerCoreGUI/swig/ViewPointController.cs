@@ -44,6 +44,22 @@ public class ViewPointController : global::System.IDisposable {
     }
   }
 
+  public Vector2I GetScreenSize() {
+    Vector2I ret = new Vector2I(EffekseerNativePINVOKE.ViewPointController_GetScreenSize(swigCPtr), true);
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+    return ret;
+  }
+
+  public void SetScreenSize(int width, int height) {
+    EffekseerNativePINVOKE.ViewPointController_SetScreenSize(swigCPtr, width, height);
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+  }
+
+  public void Update() {
+    EffekseerNativePINVOKE.ViewPointController_Update(swigCPtr);
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+  }
+
   public Matrix44F GetCameraMatrix() {
     Matrix44F ret = new Matrix44F(EffekseerNativePINVOKE.ViewPointController_GetCameraMatrix(swigCPtr), true);
     if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();

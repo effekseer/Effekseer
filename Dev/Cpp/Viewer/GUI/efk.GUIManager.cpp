@@ -22,8 +22,6 @@
 
 #include "../3rdParty/Boxer/boxer.h"
 
-#include "../dll.h"
-
 #include <GUI/Misc.h>
 
 #ifdef __linux__
@@ -424,8 +422,7 @@ void ResizeBicubic(uint32_t* dst,
 	float hf = (float)srcHeight / dstHeight;
 
 	// bicubic weight function
-	auto weight = [](float d) -> float
-	{
+	auto weight = [](float d) -> float {
 		const float a = -1.0f;
 		return d <= 1.0f   ? ((a + 2.0f) * d * d * d) - ((a + 3.0f) * d * d) + 1
 			   : d <= 2.0f ? (a * d * d * d) - (5.0f * a * d * d) + (8.0f * a * d) - (4.0f * a)
@@ -629,24 +626,21 @@ bool GUIManager::Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, E
 
 	mainWindow_ = mainWindow;
 
-	window->Resized = [this](int x, int y) -> void
-	{
+	window->Resized = [this](int x, int y) -> void {
 		if (this->callback != nullptr)
 		{
 			this->callback->Resized(x, y);
 		}
 	};
 
-	window->Focused = [this]() -> void
-	{
+	window->Focused = [this]() -> void {
 		if (this->callback != nullptr)
 		{
 			this->callback->Focused();
 		}
 	};
 
-	window->Droped = [this](const char* path) -> void
-	{
+	window->Droped = [this](const char* path) -> void {
 		if (this->callback != nullptr)
 		{
 			this->callback->SetPath(Effekseer::Tool::StringHelper::ConvertUtf8ToUtf16(path).c_str());
@@ -654,8 +648,7 @@ bool GUIManager::Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, E
 		}
 	};
 
-	window->Closing = [this]() -> bool
-	{
+	window->Closing = [this]() -> bool {
 		if (this->callback != nullptr)
 		{
 			return this->callback->Closing();
@@ -664,16 +657,14 @@ bool GUIManager::Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, E
 		return true;
 	};
 
-	window->Iconify = [this](int f) -> void
-	{
+	window->Iconify = [this](int f) -> void {
 		if (this->callback != nullptr)
 		{
 			this->callback->Iconify(f);
 		}
 	};
 
-	window->DpiChanged = [this](float scale) -> void
-	{
+	window->DpiChanged = [this](float scale) -> void {
 		this->ResetGUIStyle();
 
 		if (this->callback != nullptr)
@@ -694,7 +685,7 @@ bool GUIManager::Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, E
 	return true;
 }
 
-void GUIManager::InitializeGUI(Native* native)
+void GUIManager::InitializeGUI(std::shared_ptr<Effekseer::Tool::GraphicsDevice> graphicsDevice)
 {
 	ImGui::CreateContext();
 	ImGui::GetCurrentContext()->PlatformLocaleDecimalPoint = *localeconv()->decimal_point;
@@ -723,7 +714,7 @@ void GUIManager::InitializeGUI(Native* native)
 
 		ImGui_ImplGlfw_InitForVulkan(window->GetGLFWWindows(), true);
 
-		auto gd = native->GetGraphicsDevice()->GetGraphics()->GetGraphicsDevice().DownCast<EffekseerRendererDX11::Backend::GraphicsDevice>();
+		auto gd = graphicsDevice->GetGraphics()->GetGraphicsDevice().DownCast<EffekseerRendererDX11::Backend::GraphicsDevice>();
 		ImGui_ImplDX11_Init(gd->GetDevice(), gd->GetContext());
 	}
 	else
@@ -1457,8 +1448,7 @@ void CallWithEscaped(const std::function<void(const char*)>& f, const char16_t* 
 
 void GUIManager::Text(const char16_t* text)
 {
-	auto func = [](const char* c) -> void
-	{ ImGui::Text(c); };
+	auto func = [](const char* c) -> void { ImGui::Text(c); };
 	CallWithEscaped(func, text);
 }
 
@@ -1877,8 +1867,7 @@ bool GUIManager::SelectableContent(const char16_t* idstr, const char16_t* label,
 
 void GUIManager::SetTooltip(const char16_t* text)
 {
-	auto func = [](const char* c) -> void
-	{ ImGui::SetTooltip(c); };
+	auto func = [](const char* c) -> void { ImGui::SetTooltip(c); };
 	CallWithEscaped(func, text);
 }
 

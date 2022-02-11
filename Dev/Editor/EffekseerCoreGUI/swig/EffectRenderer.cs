@@ -151,6 +151,16 @@ public class EffectRenderer : global::System.IDisposable {
     return ret;
   }
 
+  public int RandomSeed {
+    set {
+      EffekseerNativePINVOKE.EffectRenderer_RandomSeed_set(swigCPtr, value);
+    } 
+    get {
+      int ret = EffekseerNativePINVOKE.EffectRenderer_RandomSeed_get(swigCPtr);
+      return ret;
+    } 
+  }
+
 }
 
 }

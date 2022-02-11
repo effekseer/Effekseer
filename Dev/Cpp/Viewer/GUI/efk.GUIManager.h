@@ -19,12 +19,13 @@
 #include <EditorCommon/GUI/FramerateController.h>
 #include <EditorCommon/GUI/MainWindow.h>
 
-class Native;
+#include "../Graphics/GraphicsDevice.h"
 
 namespace Effekseer::Tool
 {
 class Image;
-}
+class GraphicsDevice;
+} // namespace Effekseer::Tool
 
 namespace efk
 {
@@ -415,7 +416,7 @@ public:
 
 	bool Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, Effekseer::Tool::DeviceType deviceType);
 
-	void InitializeGUI(Native* native);
+	void InitializeGUI(std::shared_ptr<Effekseer::Tool::GraphicsDevice> graphicsDevice);
 
 	void ResetGUIStyle();
 
@@ -830,16 +831,16 @@ public:
 						int* newCount);
 
 	bool RemoveFCurvePoint(Vec2 v,
-					   float* keys,
-					   float* values,
-					   float* leftHandleKeys,
-					   float* leftHandleValues,
-					   float* rightHandleKeys,
-					   float* rightHandleValues,
-					   int* interporations,
-					   uint8_t* kv_selected,
-					   int count,
-					   int* newCount);
+						   float* keys,
+						   float* values,
+						   float* leftHandleKeys,
+						   float* leftHandleValues,
+						   float* rightHandleKeys,
+						   float* rightHandleValues,
+						   int* interporations,
+						   uint8_t* kv_selected,
+						   int count,
+						   int* newCount);
 
 	// Drag
 	bool BeginDragDropSource();

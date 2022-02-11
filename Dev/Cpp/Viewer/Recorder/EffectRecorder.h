@@ -1,8 +1,9 @@
-#pragma
+#pragma once
 
+#include "../3D/EffectRenderer.h"
 #include "../Graphics/efk.Graphics.h"
-#include "../dll.h"
-#include "RecorderCallback.h"
+#include "../Parameters.h"
+#include "RecordingParameter.h"
 
 namespace Effekseer
 {
@@ -32,7 +33,6 @@ private:
 	std::shared_ptr<Effekseer::Tool::EffectRenderer> generator_;
 
 public:
-#if !SWIG
 	bool Begin(int32_t squareMaxCount,
 			   Effekseer::Tool::EffectRendererParameter config,
 			   Vector2I screenSize,
@@ -44,7 +44,7 @@ public:
 			   Effekseer::Tool::ViewerEffectBehavior behavior,
 			   Effekseer::Tool::PostEffectParameter postEffectParameter,
 			   std::shared_ptr<Effekseer::Tool::Effect> effect);
-#endif
+
 	bool Step(int frames);
 
 	bool End();

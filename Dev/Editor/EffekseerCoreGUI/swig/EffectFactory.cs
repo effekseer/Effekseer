@@ -44,7 +44,7 @@ public class EffectFactory : global::System.IDisposable {
     }
   }
 
-  public EffectFactory(Native native) : this(EffekseerNativePINVOKE.new_EffectFactory(Native.getCPtr(native)), true) {
+  public EffectFactory(EffectSetting setting) : this(EffekseerNativePINVOKE.new_EffectFactory(EffectSetting.getCPtr(setting)), true) {
   }
 
   public Effect LoadEffect(System.IntPtr data, int size, string path) {

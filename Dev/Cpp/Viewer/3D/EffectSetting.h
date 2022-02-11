@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Parameters.h"
 #include <Effekseer.h>
 
 namespace Effekseer::Tool
@@ -13,6 +14,11 @@ class EffectSetting
 	Effekseer::SettingRef setting_;
 
 public:
+	void SetCoordinateSyatem(CoordinateSystemType coordinateSystem)
+	{
+		setting_->SetCoordinateSystem(coordinateSystem == Effekseer::Tool::CoordinateSystemType::RH ? Effekseer::CoordinateSystem::RH : Effekseer::CoordinateSystem::LH);
+	}
+
 #ifndef SWIG
 	Effekseer::SettingRef GetSetting() const
 	{

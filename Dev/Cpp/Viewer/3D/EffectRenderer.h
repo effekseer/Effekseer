@@ -245,19 +245,8 @@ public:
 		return call;
 	}
 
-#if !defined(SWIG)
-	/*
-	const EffekseerRenderer::RendererRef& GetRenderer() const
-	{
-		return renderer_;
-	}
+	int32_t RandomSeed = -1;
 
-	Effekseer::ManagerRef GetMamanager() const
-	{
-		return manager_;
-	}
-	*/
-#endif
 };
 
 } // namespace Tool

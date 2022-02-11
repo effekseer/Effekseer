@@ -41,7 +41,22 @@ namespace Effekseer.GUI.Dock
 			contentSize.X = System.Math.Max(1, contentSize.X);
 			contentSize.Y = System.Math.Max(1, contentSize.Y - frameHeight - padding);
 
-			Manager.Native.RenderView((int)contentSize.X, (int)contentSize.Y, Manager.Viewer.ViewPointController, Manager.MainViewImage);
+			Manager.Viewer.ViewPointController.SetScreenSize((int)contentSize.X, (int)contentSize.Y);
+			Manager.Viewer.ViewPointController.Update();
+
+			var ray = Manager.Viewer.ViewPointController.GetCameraRay();
+
+			var renderParam = Manager.Viewer.EffectRenderer.GetParameter();
+			renderParam.CameraMatrix = Manager.Viewer.ViewPointController.GetCameraMatrix();
+			renderParam.ProjectionMatrix = Manager.Viewer.ViewPointController.GetProjectionMatrix();
+			renderParam.CameraPosition = ray.Origin;
+			renderParam.CameraFrontDirection = ray.Direction;
+			Manager.Viewer.EffectRenderer.SetParameter(renderParam);
+
+			Manager.Viewer.EffectRenderer.ResizeScreen(Manager.Viewer.ViewPointController.GetScreenSize());
+			Manager.MainViewImage.Resize((int)contentSize.X, (int)contentSize.Y);
+
+			Manager.Viewer.EffectRenderer.Render(Manager.MainViewImage);
 
 			if (deviceType == swig.DeviceType.OpenGL)
 			{
@@ -83,9 +98,9 @@ namespace Effekseer.GUI.Dock
 			Manager.NativeManager.PopItemWidth();
 
 			string perfText =
-				"D:" + Manager.Native.GetAndResetDrawCall().ToString("D3") + "  " +
-				"V:" + Manager.Native.GetAndResetVertexCount().ToString("D5") + "  " +
-				"P:" + Manager.Native.GetInstanceCount().ToString("D5") + " ";
+				"D:" + Manager.Viewer.EffectRenderer.GetAndResetDrawCall().ToString("D3") + "  " +
+				"V:" + Manager.Viewer.EffectRenderer.GetAndResetVertexCount().ToString("D5") + "  " +
+				"P:" + Manager.Viewer.EffectRenderer.GetInstanceCount().ToString("D5") + " ";
 
 			Manager.NativeManager.SameLine(contentSize.X - Manager.NativeManager.CalcTextSize(perfText).X);
 

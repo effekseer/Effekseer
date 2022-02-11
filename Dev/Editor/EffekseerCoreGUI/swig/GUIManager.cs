@@ -52,8 +52,8 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
-  public void InitializeGUI(Native native) {
-    EffekseerNativePINVOKE.GUIManager_InitializeGUI(swigCPtr, Native.getCPtr(native));
+  public void InitializeGUI(GraphicsDevice graphicsDevice) {
+    EffekseerNativePINVOKE.GUIManager_InitializeGUI(swigCPtr, GraphicsDevice.getCPtr(graphicsDevice));
   }
 
   public void ResetGUIStyle() {

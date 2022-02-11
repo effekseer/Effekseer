@@ -15,7 +15,7 @@
 				newTitle += Resources.GetString("UnsavedChanges");
 			}
 
-			if (swig.Native.IsDebugMode())
+			if (swig.NativeStatus.IsDebugMode())
 			{
 				newTitle += " - DebugMode";
 			}

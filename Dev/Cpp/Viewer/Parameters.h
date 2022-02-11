@@ -5,6 +5,12 @@
 namespace Effekseer::Tool
 {
 
+enum class CoordinateSystemType
+{
+	RH,
+	LH,
+};
+
 enum class DeviceType
 {
 	DirectX11,
@@ -103,6 +109,20 @@ struct ViewerEffectBehavior
 	bool TriggerInput1 = false;
 	bool TriggerInput2 = false;
 	bool TriggerInput3 = false;
+};
+
+class NativeStatus
+{
+private:
+public:
+	static bool IsDebugMode()
+	{
+#ifdef _DEBUG
+		return true;
+#else
+		return false;
+#endif
+	}
 };
 
 } // namespace Effekseer::Tool

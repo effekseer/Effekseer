@@ -3,12 +3,11 @@
 #include <Effekseer.h>
 #include <memory>
 
-class Native;
-
 namespace Effekseer::Tool
 {
 
 class Effect;
+class EffectSetting;
 
 class EffectFactory
 {
@@ -19,7 +18,7 @@ class EffectFactory
 
 public:
 
-	EffectFactory(Native* native);
+	EffectFactory(std::shared_ptr<Effekseer::Tool::EffectSetting> setting);
 
 	std::shared_ptr<Effect> LoadEffect(const void* data, int size, const char16_t* path);
 

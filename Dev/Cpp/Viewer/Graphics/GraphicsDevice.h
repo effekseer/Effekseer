@@ -25,16 +25,16 @@ public:
 
 	static std::shared_ptr<GraphicsDevice> Create(void* handle, int width, int height, bool isSRGBMode, DeviceType deviceType);
 
+	bool GetIsSRGBMode() const
+	{
+		return isSRGBMode_;
+	}
+
 #ifndef SWIG
 
 	DeviceType GetDeviceType() const
 	{
 		return deviceType_;
-	}
-
-	bool GetIsSRGBMode() const
-	{
-		return isSRGBMode_;
 	}
 
 	std::shared_ptr<efk::Graphics> GetGraphics() const
