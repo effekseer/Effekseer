@@ -16,16 +16,19 @@ namespace Effekseer
 namespace Tool
 {
 
-#if !defined(SWIG)
+class GraphicsDevice;
+class SoundDevice;
+class Effect;
+class EffectSetting;
 class RenderImage;
 
 struct EffectRendererParameter
 {
-	Effekseer::Manager::DrawParameter DrawParameter;
 	DistortionType Distortion = DistortionType::Current;
 	Effekseer::Tool::Matrix44F CameraMatrix;
 	Effekseer::Tool::Matrix44F ProjectionMatrix;
-
+	Effekseer::Tool::Vector3F CameraPosition;
+	Effekseer::Tool::Vector3F CameraFrontDirection;
 	Effekseer::Tool::Color BackgroundColor;
 	Effekseer::Tool::Vector3F LightDirection;
 	Effekseer::Tool::Color LightColor;
@@ -36,6 +39,8 @@ struct EffectRendererParameter
 	int32_t GroundExtent = 10;
 	float GroundHeight = 0.0f;
 };
+
+#if !defined(SWIG)
 
 class GroundRenderer
 {
@@ -96,10 +101,10 @@ class EffectRenderer
 	};
 
 protected:
-	std::shared_ptr<efk::Graphics> graphics_ = nullptr;
+	std::shared_ptr<GraphicsDevice> graphics_ = nullptr;
 	Effekseer::ManagerRef manager_;
 	EffekseerRenderer::RendererRef renderer_;
-	Effekseer::EffectRef effect_;
+	std::shared_ptr<Effekseer::Tool::Effect> effect_;
 
 	std::shared_ptr<Effekseer::Tool::StaticMesh> backgroundMesh_;
 	std::shared_ptr<Effekseer::Tool::StaticMeshRenderer> backgroundRenderer_;
@@ -149,6 +154,10 @@ protected:
 
 	bool UpdateBackgroundMesh(const Color& backgroundColor);
 
+	void CopyToBack();
+
+	void ResetBack();
+
 	virtual bool OnAfterInitialize()
 	{
 		return true;
@@ -166,70 +175,38 @@ public:
 	EffectRenderer();
 	virtual ~EffectRenderer();
 
-#if !defined(SWIG)
-	void PlayEffect();
+	bool Initialize(
+		std::shared_ptr<GraphicsDevice> graphicsDevice, 
+		std::shared_ptr<SoundDevice> soundDevice,
+		std::shared_ptr<EffectSetting> setting, 
+		int32_t spriteCount, 
+		bool isSRGBMode);
 
-	bool Initialize(std::shared_ptr<efk::Graphics> graphics, Effekseer::RefPtr<Effekseer::Setting> setting, int32_t spriteCount, bool isSRGBMode);
-	void Resize(const Vector2I screenSize);
+	Vector2I GetScreenSize() const;
+	void ResizeScreen(const Vector2I& screenSize);
+
+	void PlayEffect();
 	void Update();
 	void Update(int32_t frame);
-	void Render(std::shared_ptr<RenderImage> renderImage = nullptr);
-	void Reset();
+	void Render(std::shared_ptr<RenderImage> renderImage);
 
-	Effekseer::EffectRef GetEffect();
-	void SetEffect(Effekseer::EffectRef effect);
+	std::shared_ptr<Effekseer::Tool::Effect> GetEffect() const;
+	void SetEffect(std::shared_ptr<Effekseer::Tool::Effect> effect);
+	void ResetEffect();
 
-	void SetBehavior(const ViewerEffectBehavior& behavior);
 	const ViewerEffectBehavior& GetBehavior() const;
+	void SetBehavior(const ViewerEffectBehavior& behavior);
 
-	int32_t GetInstanceCount()
-	{
-		if (m_time == 0)
-			return 0;
+	int32_t GetInstanceCount() const;
 
-		int32_t sum = 0;
-		for (int i = 0; i < handles_.size(); i++)
-		{
-			auto count = manager_->GetInstanceCount(handles_[i].Handle);
+	void SetStep(int32_t step);
 
-			// Root
-			if (!handles_[i].IsRootStopped)
-				count--;
-
-			if (!manager_->Exists(handles_[i].Handle))
-				count = 0;
-
-			sum += count;
-		}
-
-		return sum;
-	}
-
-	void SetStep(int32_t step)
-	{
-		m_step = step;
-	}
-
-	const EffekseerRenderer::RendererRef& GetRenderer() const
-	{
-		return renderer_;
-	}
-
-	Effekseer::ManagerRef GetMamanager() const
-	{
-		return manager_;
-	}
-
-	void CopyToBack();
-
-	void ResetBack();
-
-	EffectRendererParameter GetConfig() const
+	EffectRendererParameter GetParameter() const
 	{
 		return parameter_;
 	}
 
-	void SetConfig(const EffectRendererParameter& config)
+	void SetParameter(const EffectRendererParameter& config)
 	{
 		parameter_ = config;
 
@@ -240,29 +217,46 @@ public:
 		}
 	}
 
-	Effekseer::Backend::TextureRef GetView() const
-	{
-		return viewRenderTexture;
-	}
-
-	BloomPostEffect* GetBloomEffect() const
-	{
-		return bloomEffect_.get();
-	}
-
-	TonemapPostEffect* GetTonemapEffect() const
-	{
-		return tonemapEffect_.get();
-	}
-
 	bool GetIsSRGBMode() const
 	{
 		return m_isSRGBMode;
 	}
 
+	int32_t GetSquareMaxCount() const
+	{
+		return renderer_->GetSquareMaxCount();
+	}
+
 	Effekseer::Tool::PostEffectParameter GetPostEffectParameter() const;
 
 	void SetPostEffectParameter(const Effekseer::Tool::PostEffectParameter& param);
+
+	int32_t GetAndResetDrawCall() const
+	{
+		auto call = renderer_->GetDrawCallCount();
+		renderer_->ResetDrawCallCount();
+		return call;
+	}
+
+	int32_t GetAndResetVertexCount() const
+	{
+		auto call = renderer_->GetDrawVertexCount();
+		renderer_->ResetDrawVertexCount();
+		return call;
+	}
+
+#if !defined(SWIG)
+	/*
+	const EffekseerRenderer::RendererRef& GetRenderer() const
+	{
+		return renderer_;
+	}
+
+	Effekseer::ManagerRef GetMamanager() const
+	{
+		return manager_;
+	}
+	*/
 #endif
 };
 

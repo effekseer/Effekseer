@@ -1,6 +1,7 @@
 #include "EffectFactory.h"
 
 #include "Effect.h"
+#include "EffectSetting.h"
 
 #include <Effekseer/Effekseer.Base.h>
 #include <EffekseerSoundOSMixer.h>
@@ -14,15 +15,14 @@ namespace Effekseer::Tool
 
 void EffectFactory::ClearInvalidEffects()
 {
-	const auto it = std::remove_if(effects_.begin(), effects_.end(), [](const std::weak_ptr<Effect>& effect)
-								   { return effect.lock() == nullptr; });
+	const auto it = std::remove_if(effects_.begin(), effects_.end(), [](const std::weak_ptr<Effect>& effect) { return effect.lock() == nullptr; });
 
 	effects_.erase(it, effects_.end());
 }
 
 EffectFactory::EffectFactory(Native* native)
 {
-	setting_ = native->GetSetting();
+	setting_ = native->GetSetting()->GetSetting();
 }
 
 std::shared_ptr<Effect> EffectFactory::LoadEffect(const void* data, int size, const char16_t* path)
@@ -42,8 +42,7 @@ std::shared_ptr<Effect> EffectFactory::LoadEffect(const void* data, int size, co
 	// Create UserData while assigning NodeId.
 	{
 		int nextEditorNodeId = 1;
-		const auto& visitor = [&](::Effekseer::EffectNodeImplemented* node)
-		{
+		const auto& visitor = [&](::Effekseer::EffectNodeImplemented* node) {
 			auto userData = ::Effekseer::MakeRefPtr<EditorEffectNodeUserData>();
 			userData->editorNodeId_ = nextEditorNodeId;
 			node->SetRenderingUserData(userData);

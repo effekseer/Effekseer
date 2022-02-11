@@ -3274,6 +3274,904 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_EffectFactory___(void *
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRendererParameter_Distortion_set___(void * jarg1, int jarg2) {
+  Effekseer::Tool::EffectRendererParameter *arg1 = (Effekseer::Tool::EffectRendererParameter *) 0 ;
+  Effekseer::Tool::DistortionType arg2 ;
+  
+  arg1 = (Effekseer::Tool::EffectRendererParameter *)jarg1; 
+  arg2 = (Effekseer::Tool::DistortionType)jarg2; 
+  if (arg1) (arg1)->Distortion = arg2;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_EffectRendererParameter_Distortion_get___(void * jarg1) {
+  int jresult ;
+  Effekseer::Tool::EffectRendererParameter *arg1 = (Effekseer::Tool::EffectRendererParameter *) 0 ;
+  Effekseer::Tool::DistortionType result;
+  
+  arg1 = (Effekseer::Tool::EffectRendererParameter *)jarg1; 
+  result = (Effekseer::Tool::DistortionType) ((arg1)->Distortion);
+  jresult = (int)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRendererParameter_CameraMatrix_set___(void * jarg1, void * jarg2) {
+  Effekseer::Tool::EffectRendererParameter *arg1 = (Effekseer::Tool::EffectRendererParameter *) 0 ;
+  Effekseer::Tool::Matrix44F *arg2 = (Effekseer::Tool::Matrix44F *) 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRendererParameter *)jarg1; 
+  arg2 = (Effekseer::Tool::Matrix44F *)jarg2; 
+  if (arg1) (arg1)->CameraMatrix = *arg2;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_EffectRendererParameter_CameraMatrix_get___(void * jarg1) {
+  void * jresult ;
+  Effekseer::Tool::EffectRendererParameter *arg1 = (Effekseer::Tool::EffectRendererParameter *) 0 ;
+  Effekseer::Tool::Matrix44F *result = 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRendererParameter *)jarg1; 
+  result = (Effekseer::Tool::Matrix44F *)& ((arg1)->CameraMatrix);
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRendererParameter_ProjectionMatrix_set___(void * jarg1, void * jarg2) {
+  Effekseer::Tool::EffectRendererParameter *arg1 = (Effekseer::Tool::EffectRendererParameter *) 0 ;
+  Effekseer::Tool::Matrix44F *arg2 = (Effekseer::Tool::Matrix44F *) 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRendererParameter *)jarg1; 
+  arg2 = (Effekseer::Tool::Matrix44F *)jarg2; 
+  if (arg1) (arg1)->ProjectionMatrix = *arg2;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_EffectRendererParameter_ProjectionMatrix_get___(void * jarg1) {
+  void * jresult ;
+  Effekseer::Tool::EffectRendererParameter *arg1 = (Effekseer::Tool::EffectRendererParameter *) 0 ;
+  Effekseer::Tool::Matrix44F *result = 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRendererParameter *)jarg1; 
+  result = (Effekseer::Tool::Matrix44F *)& ((arg1)->ProjectionMatrix);
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRendererParameter_CameraPosition_set___(void * jarg1, void * jarg2) {
+  Effekseer::Tool::EffectRendererParameter *arg1 = (Effekseer::Tool::EffectRendererParameter *) 0 ;
+  Effekseer::Tool::Vector3F *arg2 = (Effekseer::Tool::Vector3F *) 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRendererParameter *)jarg1; 
+  arg2 = (Effekseer::Tool::Vector3F *)jarg2; 
+  if (arg1) (arg1)->CameraPosition = *arg2;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_EffectRendererParameter_CameraPosition_get___(void * jarg1) {
+  void * jresult ;
+  Effekseer::Tool::EffectRendererParameter *arg1 = (Effekseer::Tool::EffectRendererParameter *) 0 ;
+  Effekseer::Tool::Vector3F *result = 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRendererParameter *)jarg1; 
+  result = (Effekseer::Tool::Vector3F *)& ((arg1)->CameraPosition);
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRendererParameter_CameraFrontDirection_set___(void * jarg1, void * jarg2) {
+  Effekseer::Tool::EffectRendererParameter *arg1 = (Effekseer::Tool::EffectRendererParameter *) 0 ;
+  Effekseer::Tool::Vector3F *arg2 = (Effekseer::Tool::Vector3F *) 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRendererParameter *)jarg1; 
+  arg2 = (Effekseer::Tool::Vector3F *)jarg2; 
+  if (arg1) (arg1)->CameraFrontDirection = *arg2;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_EffectRendererParameter_CameraFrontDirection_get___(void * jarg1) {
+  void * jresult ;
+  Effekseer::Tool::EffectRendererParameter *arg1 = (Effekseer::Tool::EffectRendererParameter *) 0 ;
+  Effekseer::Tool::Vector3F *result = 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRendererParameter *)jarg1; 
+  result = (Effekseer::Tool::Vector3F *)& ((arg1)->CameraFrontDirection);
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRendererParameter_BackgroundColor_set___(void * jarg1, void * jarg2) {
+  Effekseer::Tool::EffectRendererParameter *arg1 = (Effekseer::Tool::EffectRendererParameter *) 0 ;
+  Effekseer::Tool::Color *arg2 = (Effekseer::Tool::Color *) 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRendererParameter *)jarg1; 
+  arg2 = (Effekseer::Tool::Color *)jarg2; 
+  if (arg1) (arg1)->BackgroundColor = *arg2;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_EffectRendererParameter_BackgroundColor_get___(void * jarg1) {
+  void * jresult ;
+  Effekseer::Tool::EffectRendererParameter *arg1 = (Effekseer::Tool::EffectRendererParameter *) 0 ;
+  Effekseer::Tool::Color *result = 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRendererParameter *)jarg1; 
+  result = (Effekseer::Tool::Color *)& ((arg1)->BackgroundColor);
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRendererParameter_LightDirection_set___(void * jarg1, void * jarg2) {
+  Effekseer::Tool::EffectRendererParameter *arg1 = (Effekseer::Tool::EffectRendererParameter *) 0 ;
+  Effekseer::Tool::Vector3F *arg2 = (Effekseer::Tool::Vector3F *) 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRendererParameter *)jarg1; 
+  arg2 = (Effekseer::Tool::Vector3F *)jarg2; 
+  if (arg1) (arg1)->LightDirection = *arg2;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_EffectRendererParameter_LightDirection_get___(void * jarg1) {
+  void * jresult ;
+  Effekseer::Tool::EffectRendererParameter *arg1 = (Effekseer::Tool::EffectRendererParameter *) 0 ;
+  Effekseer::Tool::Vector3F *result = 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRendererParameter *)jarg1; 
+  result = (Effekseer::Tool::Vector3F *)& ((arg1)->LightDirection);
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRendererParameter_LightColor_set___(void * jarg1, void * jarg2) {
+  Effekseer::Tool::EffectRendererParameter *arg1 = (Effekseer::Tool::EffectRendererParameter *) 0 ;
+  Effekseer::Tool::Color *arg2 = (Effekseer::Tool::Color *) 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRendererParameter *)jarg1; 
+  arg2 = (Effekseer::Tool::Color *)jarg2; 
+  if (arg1) (arg1)->LightColor = *arg2;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_EffectRendererParameter_LightColor_get___(void * jarg1) {
+  void * jresult ;
+  Effekseer::Tool::EffectRendererParameter *arg1 = (Effekseer::Tool::EffectRendererParameter *) 0 ;
+  Effekseer::Tool::Color *result = 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRendererParameter *)jarg1; 
+  result = (Effekseer::Tool::Color *)& ((arg1)->LightColor);
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRendererParameter_LightAmbientColor_set___(void * jarg1, void * jarg2) {
+  Effekseer::Tool::EffectRendererParameter *arg1 = (Effekseer::Tool::EffectRendererParameter *) 0 ;
+  Effekseer::Tool::Color *arg2 = (Effekseer::Tool::Color *) 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRendererParameter *)jarg1; 
+  arg2 = (Effekseer::Tool::Color *)jarg2; 
+  if (arg1) (arg1)->LightAmbientColor = *arg2;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_EffectRendererParameter_LightAmbientColor_get___(void * jarg1) {
+  void * jresult ;
+  Effekseer::Tool::EffectRendererParameter *arg1 = (Effekseer::Tool::EffectRendererParameter *) 0 ;
+  Effekseer::Tool::Color *result = 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRendererParameter *)jarg1; 
+  result = (Effekseer::Tool::Color *)& ((arg1)->LightAmbientColor);
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRendererParameter_RenderingMethod_set___(void * jarg1, int jarg2) {
+  Effekseer::Tool::EffectRendererParameter *arg1 = (Effekseer::Tool::EffectRendererParameter *) 0 ;
+  Effekseer::Tool::RenderingMethodType arg2 ;
+  
+  arg1 = (Effekseer::Tool::EffectRendererParameter *)jarg1; 
+  arg2 = (Effekseer::Tool::RenderingMethodType)jarg2; 
+  if (arg1) (arg1)->RenderingMethod = arg2;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_EffectRendererParameter_RenderingMethod_get___(void * jarg1) {
+  int jresult ;
+  Effekseer::Tool::EffectRendererParameter *arg1 = (Effekseer::Tool::EffectRendererParameter *) 0 ;
+  Effekseer::Tool::RenderingMethodType result;
+  
+  arg1 = (Effekseer::Tool::EffectRendererParameter *)jarg1; 
+  result = (Effekseer::Tool::RenderingMethodType) ((arg1)->RenderingMethod);
+  jresult = (int)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRendererParameter_IsGroundShown_set___(void * jarg1, unsigned int jarg2) {
+  Effekseer::Tool::EffectRendererParameter *arg1 = (Effekseer::Tool::EffectRendererParameter *) 0 ;
+  bool arg2 ;
+  
+  arg1 = (Effekseer::Tool::EffectRendererParameter *)jarg1; 
+  arg2 = jarg2 ? true : false; 
+  if (arg1) (arg1)->IsGroundShown = arg2;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_EffectRendererParameter_IsGroundShown_get___(void * jarg1) {
+  unsigned int jresult ;
+  Effekseer::Tool::EffectRendererParameter *arg1 = (Effekseer::Tool::EffectRendererParameter *) 0 ;
+  bool result;
+  
+  arg1 = (Effekseer::Tool::EffectRendererParameter *)jarg1; 
+  result = (bool) ((arg1)->IsGroundShown);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRendererParameter_GroundExtent_set___(void * jarg1, int jarg2) {
+  Effekseer::Tool::EffectRendererParameter *arg1 = (Effekseer::Tool::EffectRendererParameter *) 0 ;
+  int32_t arg2 ;
+  
+  arg1 = (Effekseer::Tool::EffectRendererParameter *)jarg1; 
+  arg2 = (int32_t)jarg2; 
+  if (arg1) (arg1)->GroundExtent = arg2;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_EffectRendererParameter_GroundExtent_get___(void * jarg1) {
+  int jresult ;
+  Effekseer::Tool::EffectRendererParameter *arg1 = (Effekseer::Tool::EffectRendererParameter *) 0 ;
+  int32_t result;
+  
+  arg1 = (Effekseer::Tool::EffectRendererParameter *)jarg1; 
+  result = (int32_t) ((arg1)->GroundExtent);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRendererParameter_GroundHeight_set___(void * jarg1, float jarg2) {
+  Effekseer::Tool::EffectRendererParameter *arg1 = (Effekseer::Tool::EffectRendererParameter *) 0 ;
+  float arg2 ;
+  
+  arg1 = (Effekseer::Tool::EffectRendererParameter *)jarg1; 
+  arg2 = (float)jarg2; 
+  if (arg1) (arg1)->GroundHeight = arg2;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_EffectRendererParameter_GroundHeight_get___(void * jarg1) {
+  float jresult ;
+  Effekseer::Tool::EffectRendererParameter *arg1 = (Effekseer::Tool::EffectRendererParameter *) 0 ;
+  float result;
+  
+  arg1 = (Effekseer::Tool::EffectRendererParameter *)jarg1; 
+  result = (float) ((arg1)->GroundHeight);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_EffectRendererParameter___() {
+  void * jresult ;
+  Effekseer::Tool::EffectRendererParameter *result = 0 ;
+  
+  result = (Effekseer::Tool::EffectRendererParameter *)new Effekseer::Tool::EffectRendererParameter();
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_EffectRendererParameter___(void * jarg1) {
+  Effekseer::Tool::EffectRendererParameter *arg1 = (Effekseer::Tool::EffectRendererParameter *) 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRendererParameter *)jarg1; 
+  delete arg1;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_EffectRenderer___() {
+  void * jresult ;
+  Effekseer::Tool::EffectRenderer *result = 0 ;
+  
+  result = (Effekseer::Tool::EffectRenderer *)new Effekseer::Tool::EffectRenderer();
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_EffectRenderer___(void * jarg1) {
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  delete arg1;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_Initialize___(void * jarg1, void * jarg2, void * jarg3, void * jarg4, int jarg5, unsigned int jarg6) {
+  unsigned int jresult ;
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  std::shared_ptr< Effekseer::Tool::GraphicsDevice > arg2 ;
+  std::shared_ptr< Effekseer::Tool::SoundDevice > arg3 ;
+  std::shared_ptr< Effekseer::Tool::EffectSetting > arg4 ;
+  int32_t arg5 ;
+  bool arg6 ;
+  bool result;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  if (jarg2) arg2 = *(std::shared_ptr< Effekseer::Tool::GraphicsDevice > *)jarg2; 
+  if (jarg3) arg3 = *(std::shared_ptr< Effekseer::Tool::SoundDevice > *)jarg3; 
+  if (jarg4) arg4 = *(std::shared_ptr< Effekseer::Tool::EffectSetting > *)jarg4; 
+  arg5 = (int32_t)jarg5; 
+  arg6 = jarg6 ? true : false; 
+  result = (bool)(arg1)->Initialize(arg2,arg3,arg4,arg5,arg6);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_GetScreenSize___(void * jarg1) {
+  void * jresult ;
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  Effekseer::Tool::Vector2I result;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  result = ((Effekseer::Tool::EffectRenderer const *)arg1)->GetScreenSize();
+  jresult = new Effekseer::Tool::Vector2I((const Effekseer::Tool::Vector2I &)result); 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_ResizeScreen___(void * jarg1, void * jarg2) {
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  Effekseer::Tool::Vector2I *arg2 = 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  arg2 = (Effekseer::Tool::Vector2I *)jarg2;
+  if (!arg2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Effekseer::Tool::Vector2I const & type is null", 0);
+    return ;
+  } 
+  (arg1)->ResizeScreen((Effekseer::Tool::Vector2I const &)*arg2);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_PlayEffect___(void * jarg1) {
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  (arg1)->PlayEffect();
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_Update__SWIG_0___(void * jarg1) {
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  (arg1)->Update();
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_Update__SWIG_1___(void * jarg1, int jarg2) {
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  int32_t arg2 ;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  arg2 = (int32_t)jarg2; 
+  (arg1)->Update(arg2);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_Render___(void * jarg1, void * jarg2) {
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  std::shared_ptr< Effekseer::Tool::RenderImage > arg2 ;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  if (jarg2) arg2 = *(std::shared_ptr< Effekseer::Tool::RenderImage > *)jarg2; 
+  (arg1)->Render(arg2);
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_GetEffect___(void * jarg1) {
+  void * jresult ;
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  std::shared_ptr< Effekseer::Tool::Effect > result;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  result = ((Effekseer::Tool::EffectRenderer const *)arg1)->GetEffect();
+  jresult = result ? new std::shared_ptr< Effekseer::Tool::Effect >(result) : 0; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_SetEffect___(void * jarg1, void * jarg2) {
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  std::shared_ptr< Effekseer::Tool::Effect > arg2 ;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  if (jarg2) arg2 = *(std::shared_ptr< Effekseer::Tool::Effect > *)jarg2; 
+  (arg1)->SetEffect(arg2);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_ResetEffect___(void * jarg1) {
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  (arg1)->ResetEffect();
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_GetBehavior___(void * jarg1) {
+  void * jresult ;
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  Effekseer::Tool::ViewerEffectBehavior *result = 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  result = (Effekseer::Tool::ViewerEffectBehavior *) &((Effekseer::Tool::EffectRenderer const *)arg1)->GetBehavior();
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_SetBehavior___(void * jarg1, void * jarg2) {
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  Effekseer::Tool::ViewerEffectBehavior *arg2 = 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  arg2 = (Effekseer::Tool::ViewerEffectBehavior *)jarg2;
+  if (!arg2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Effekseer::Tool::ViewerEffectBehavior const & type is null", 0);
+    return ;
+  } 
+  (arg1)->SetBehavior((Effekseer::Tool::ViewerEffectBehavior const &)*arg2);
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_GetInstanceCount___(void * jarg1) {
+  int jresult ;
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  int32_t result;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  result = (int32_t)((Effekseer::Tool::EffectRenderer const *)arg1)->GetInstanceCount();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_SetStep___(void * jarg1, int jarg2) {
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  int32_t arg2 ;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  arg2 = (int32_t)jarg2; 
+  (arg1)->SetStep(arg2);
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_GetParameter___(void * jarg1) {
+  void * jresult ;
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  Effekseer::Tool::EffectRendererParameter result;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  result = ((Effekseer::Tool::EffectRenderer const *)arg1)->GetParameter();
+  jresult = new Effekseer::Tool::EffectRendererParameter((const Effekseer::Tool::EffectRendererParameter &)result); 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_SetParameter___(void * jarg1, void * jarg2) {
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  Effekseer::Tool::EffectRendererParameter *arg2 = 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  arg2 = (Effekseer::Tool::EffectRendererParameter *)jarg2;
+  if (!arg2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Effekseer::Tool::EffectRendererParameter const & type is null", 0);
+    return ;
+  } 
+  (arg1)->SetParameter((Effekseer::Tool::EffectRendererParameter const &)*arg2);
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_GetIsSRGBMode___(void * jarg1) {
+  unsigned int jresult ;
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  bool result;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  result = (bool)((Effekseer::Tool::EffectRenderer const *)arg1)->GetIsSRGBMode();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_GetSquareMaxCount___(void * jarg1) {
+  int jresult ;
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  int32_t result;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  result = (int32_t)((Effekseer::Tool::EffectRenderer const *)arg1)->GetSquareMaxCount();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_GetPostEffectParameter___(void * jarg1) {
+  void * jresult ;
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  Effekseer::Tool::PostEffectParameter result;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  result = ((Effekseer::Tool::EffectRenderer const *)arg1)->GetPostEffectParameter();
+  jresult = new Effekseer::Tool::PostEffectParameter((const Effekseer::Tool::PostEffectParameter &)result); 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_SetPostEffectParameter___(void * jarg1, void * jarg2) {
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  Effekseer::Tool::PostEffectParameter *arg2 = 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  arg2 = (Effekseer::Tool::PostEffectParameter *)jarg2;
+  if (!arg2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Effekseer::Tool::PostEffectParameter const & type is null", 0);
+    return ;
+  } 
+  (arg1)->SetPostEffectParameter((Effekseer::Tool::PostEffectParameter const &)*arg2);
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_GetAndResetDrawCall___(void * jarg1) {
+  int jresult ;
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  int32_t result;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  result = (int32_t)((Effekseer::Tool::EffectRenderer const *)arg1)->GetAndResetDrawCall();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_GetAndResetVertexCount___(void * jarg1) {
+  int jresult ;
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  int32_t result;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  result = (int32_t)((Effekseer::Tool::EffectRenderer const *)arg1)->GetAndResetVertexCount();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_MainScreenEffectRenderer___(void * jarg1) {
+  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
+  
+  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
+  delete arg1;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_GridColor_set___(void * jarg1, void * jarg2) {
+  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
+  Effekseer::Tool::Color *arg2 = (Effekseer::Tool::Color *) 0 ;
+  
+  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
+  arg2 = (Effekseer::Tool::Color *)jarg2; 
+  if (arg1) (arg1)->GridColor = *arg2;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_GridColor_get___(void * jarg1) {
+  void * jresult ;
+  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
+  Effekseer::Tool::Color *result = 0 ;
+  
+  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
+  result = (Effekseer::Tool::Color *)& ((arg1)->GridColor);
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_GuideWidth_set___(void * jarg1, int jarg2) {
+  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
+  int32_t arg2 ;
+  
+  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
+  arg2 = (int32_t)jarg2; 
+  if (arg1) (arg1)->GuideWidth = arg2;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_GuideWidth_get___(void * jarg1) {
+  int jresult ;
+  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
+  int32_t result;
+  
+  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
+  result = (int32_t) ((arg1)->GuideWidth);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_GuideHeight_set___(void * jarg1, int jarg2) {
+  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
+  int32_t arg2 ;
+  
+  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
+  arg2 = (int32_t)jarg2; 
+  if (arg1) (arg1)->GuideHeight = arg2;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_GuideHeight_get___(void * jarg1) {
+  int jresult ;
+  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
+  int32_t result;
+  
+  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
+  result = (int32_t) ((arg1)->GuideHeight);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_RendersGuide_set___(void * jarg1, unsigned int jarg2) {
+  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
+  bool arg2 ;
+  
+  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
+  arg2 = jarg2 ? true : false; 
+  if (arg1) (arg1)->RendersGuide = arg2;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_RendersGuide_get___(void * jarg1) {
+  unsigned int jresult ;
+  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
+  bool result;
+  
+  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
+  result = (bool) ((arg1)->RendersGuide);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_IsGridShown_set___(void * jarg1, unsigned int jarg2) {
+  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
+  bool arg2 ;
+  
+  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
+  arg2 = jarg2 ? true : false; 
+  if (arg1) (arg1)->IsGridShown = arg2;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_IsGridShown_get___(void * jarg1) {
+  unsigned int jresult ;
+  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
+  bool result;
+  
+  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
+  result = (bool) ((arg1)->IsGridShown);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_IsGridXYShown_set___(void * jarg1, unsigned int jarg2) {
+  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
+  bool arg2 ;
+  
+  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
+  arg2 = jarg2 ? true : false; 
+  if (arg1) (arg1)->IsGridXYShown = arg2;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_IsGridXYShown_get___(void * jarg1) {
+  unsigned int jresult ;
+  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
+  bool result;
+  
+  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
+  result = (bool) ((arg1)->IsGridXYShown);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_IsGridXZShown_set___(void * jarg1, unsigned int jarg2) {
+  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
+  bool arg2 ;
+  
+  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
+  arg2 = jarg2 ? true : false; 
+  if (arg1) (arg1)->IsGridXZShown = arg2;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_IsGridXZShown_get___(void * jarg1) {
+  unsigned int jresult ;
+  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
+  bool result;
+  
+  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
+  result = (bool) ((arg1)->IsGridXZShown);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_IsGridYZShown_set___(void * jarg1, unsigned int jarg2) {
+  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
+  bool arg2 ;
+  
+  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
+  arg2 = jarg2 ? true : false; 
+  if (arg1) (arg1)->IsGridYZShown = arg2;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_IsGridYZShown_get___(void * jarg1) {
+  unsigned int jresult ;
+  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
+  bool result;
+  
+  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
+  result = (bool) ((arg1)->IsGridYZShown);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_GridLength_set___(void * jarg1, float jarg2) {
+  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
+  float arg2 ;
+  
+  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
+  arg2 = (float)jarg2; 
+  if (arg1) (arg1)->GridLength = arg2;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_GridLength_get___(void * jarg1) {
+  float jresult ;
+  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
+  float result;
+  
+  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
+  result = (float) ((arg1)->GridLength);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_IsCullingShown_set___(void * jarg1, unsigned int jarg2) {
+  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
+  bool arg2 ;
+  
+  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
+  arg2 = jarg2 ? true : false; 
+  if (arg1) (arg1)->IsCullingShown = arg2;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_IsCullingShown_get___(void * jarg1) {
+  unsigned int jresult ;
+  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
+  bool result;
+  
+  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
+  result = (bool) ((arg1)->IsCullingShown);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_CullingRadius_set___(void * jarg1, float jarg2) {
+  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
+  float arg2 ;
+  
+  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
+  arg2 = (float)jarg2; 
+  if (arg1) (arg1)->CullingRadius = arg2;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_CullingRadius_get___(void * jarg1) {
+  float jresult ;
+  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
+  float result;
+  
+  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
+  result = (float) ((arg1)->CullingRadius);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_IsRightHand_set___(void * jarg1, unsigned int jarg2) {
+  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
+  bool arg2 ;
+  
+  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
+  arg2 = jarg2 ? true : false; 
+  if (arg1) (arg1)->IsRightHand = arg2;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_IsRightHand_get___(void * jarg1) {
+  unsigned int jresult ;
+  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
+  bool result;
+  
+  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
+  result = (bool) ((arg1)->IsRightHand);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_CullingPosition_set___(void * jarg1, void * jarg2) {
+  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
+  Effekseer::Tool::Vector3F *arg2 = (Effekseer::Tool::Vector3F *) 0 ;
+  
+  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
+  arg2 = (Effekseer::Tool::Vector3F *)jarg2; 
+  if (arg1) (arg1)->CullingPosition = *arg2;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_CullingPosition_get___(void * jarg1) {
+  void * jresult ;
+  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
+  Effekseer::Tool::Vector3F *result = 0 ;
+  
+  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
+  result = (Effekseer::Tool::Vector3F *)& ((arg1)->CullingPosition);
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_LoadBackgroundImage___(void * jarg1, void * jarg2) {
+  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  
+  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  (arg1)->LoadBackgroundImage((char16_t const *)arg2);
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_MainScreenEffectRenderer___() {
+  void * jresult ;
+  Effekseer::Tool::MainScreenEffectRenderer *result = 0 ;
+  
+  result = (Effekseer::Tool::MainScreenEffectRenderer *)new Effekseer::Tool::MainScreenEffectRenderer();
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_NetworkClient___() {
   void * jresult ;
   Effekseer::Tool::NetworkClient *result = 0 ;
@@ -10469,6 +11367,10 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_IO_AddCallback___(void * jarg1
   (arg1)->AddCallback(arg2);
 }
 
+
+SWIGEXPORT Effekseer::Tool::EffectRenderer * SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_SWIGUpcast___(Effekseer::Tool::MainScreenEffectRenderer *jarg1) {
+    return (Effekseer::Tool::EffectRenderer *)jarg1;
+}
 
 SWIGEXPORT std::shared_ptr< Effekseer::Tool::Image > * SWIGSTDCALL CSharp_Effekseerfswig_ReloadableImage_SWIGSmartPtrUpcast___(std::shared_ptr< Effekseer::Tool::ReloadableImage > *jarg1) {
     return jarg1 ? new std::shared_ptr< Effekseer::Tool::Image >(*jarg1) : 0;

@@ -3,7 +3,7 @@
 #include "../EffekseerTool/EffekseerTool.Culling.h"
 #include "../EffekseerTool/EffekseerTool.Grid.h"
 #include "../EffekseerTool/EffekseerTool.Guide.h"
-
+#include "../Graphics/GraphicsDevice.h"
 #include "../3D/EffectRenderer.h"
 #include "../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
 #include <spdlog/sinks/basic_file_sink.h>
@@ -58,7 +58,7 @@ void MainScreenEffectRenderer::OnBeforePostprocess()
 
 bool MainScreenEffectRenderer::OnAfterInitialize()
 {
-	grid_ = std::shared_ptr<::EffekseerRenderer::Grid>(::EffekseerRenderer::Grid::Create(graphics_->GetGraphicsDevice()));
+	grid_ = std::shared_ptr<::EffekseerRenderer::Grid>(::EffekseerRenderer::Grid::Create(graphics_->GetGraphics()->GetGraphicsDevice()));
 	if (grid_ == nullptr)
 	{
 		return false;
@@ -66,7 +66,7 @@ bool MainScreenEffectRenderer::OnAfterInitialize()
 
 	spdlog::trace("OK Grid");
 
-	guide_ = std::shared_ptr<::EffekseerRenderer::Guide>(::EffekseerRenderer::Guide::Create(graphics_->GetGraphicsDevice()));
+	guide_ = std::shared_ptr<::EffekseerRenderer::Guide>(::EffekseerRenderer::Guide::Create(graphics_->GetGraphics()->GetGraphicsDevice()));
 	if (guide_ == nullptr)
 	{
 		return false;
@@ -74,7 +74,7 @@ bool MainScreenEffectRenderer::OnAfterInitialize()
 
 	spdlog::trace("OK Guide");
 
-	culling_ = std::shared_ptr<::EffekseerRenderer::Culling>(::EffekseerRenderer::Culling::Create(graphics_->GetGraphicsDevice()));
+	culling_ = std::shared_ptr<::EffekseerRenderer::Culling>(::EffekseerRenderer::Culling::Create(graphics_->GetGraphics()->GetGraphicsDevice()));
 	if (culling_ == nullptr)
 	{
 		return false;

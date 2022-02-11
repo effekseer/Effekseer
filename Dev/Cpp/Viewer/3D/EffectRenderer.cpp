@@ -1,4 +1,7 @@
 #include "EffectRenderer.h"
+#include "../Sound/SoundDevice.h"
+#include "Effect.h"
+#include "EffectSetting.h"
 
 #ifdef _WIN32
 #include "../Graphics/Platform/DX11/efk.GraphicsDX11.h"
@@ -215,7 +218,7 @@ bool EffectRenderer::UpdateBackgroundMesh(const Color& backgroundColor)
 	ibData[4] = 2;
 	ibData[5] = 3;
 
-	backgroundMesh_ = Effekseer::Tool::StaticMesh::Create(graphics_->GetGraphicsDevice(), vbData, ibData);
+	backgroundMesh_ = Effekseer::Tool::StaticMesh::Create(graphics_->GetGraphics()->GetGraphicsDevice(), vbData, ibData);
 	if (!backgroundMesh_)
 	{
 		return false;
@@ -228,68 +231,23 @@ bool EffectRenderer::UpdateBackgroundMesh(const Color& backgroundColor)
 	return true;
 }
 
-void EffectRenderer::PlayEffect()
+void EffectRenderer::CopyToBack()
 {
-	assert(effect_ != nullptr);
-
-	for (int32_t z = 0; z < behavior_.CountZ; z++)
+	if (msaaSamples > 1)
 	{
-		for (int32_t y = 0; y < behavior_.CountY; y++)
-		{
-			for (int32_t x = 0; x < behavior_.CountX; x++)
-			{
-				auto lenX = behavior_.Distance * (behavior_.CountX - 1);
-				auto lenY = behavior_.Distance * (behavior_.CountY - 1);
-				auto lenZ = behavior_.Distance * (behavior_.CountZ - 1);
-
-				auto posX = behavior_.Distance * x - lenX / 2.0f;
-				auto posY = behavior_.Distance * y - lenY / 2.0f;
-				auto posZ = behavior_.Distance * z - lenZ / 2.0f;
-
-				posX += behavior_.PositionX;
-				posY += behavior_.PositionY;
-				posZ += behavior_.PositionZ;
-
-				HandleHolder handleHolder(manager_->Play(effect_, posX, posY, posZ));
-
-				Effekseer::Matrix43 mat, matTra, matRot, matScale;
-				matTra.Translation(posX, posY, posZ);
-				matRot.RotationZXY(m_rootRotation.Z, m_rootRotation.X, m_rootRotation.Y);
-				matScale.Scaling(m_rootScale.X, m_rootScale.Y, m_rootScale.Z);
-
-				mat.Indentity();
-				Effekseer::Matrix43::Multiple(mat, mat, matScale);
-				Effekseer::Matrix43::Multiple(mat, mat, matRot);
-				Effekseer::Matrix43::Multiple(mat, mat, matTra);
-
-				manager_->SetMatrix(handleHolder.Handle, mat);
-				manager_->SetSpeed(handleHolder.Handle, behavior_.PlaybackSpeed);
-
-				handles_.push_back(handleHolder);
-
-				if (behavior_.AllColorR != 255 || behavior_.AllColorG != 255 || behavior_.AllColorB != 255 ||
-					behavior_.AllColorA != 255)
-				{
-					manager_->SetAllColor(handleHolder.Handle,
-										  Effekseer::Color(behavior_.AllColorR,
-														   behavior_.AllColorG,
-														   behavior_.AllColorB,
-														   behavior_.AllColorA));
-				}
-			}
-		}
+		graphics_->GetGraphics()->CopyTo(hdrRenderTextureMSAA, backTexture);
+	}
+	else
+	{
+		graphics_->GetGraphics()->CopyTo(hdrRenderTexture, backTexture);
 	}
 
-	m_time = 0;
-	m_rootLocation.X = behavior_.PositionX;
-	m_rootLocation.Y = behavior_.PositionY;
-	m_rootLocation.Z = behavior_.PositionZ;
-	m_rootRotation.X = behavior_.RotationX;
-	m_rootRotation.Y = behavior_.RotationY;
-	m_rootRotation.Z = behavior_.RotationZ;
-	m_rootScale.X = behavior_.ScaleX;
-	m_rootScale.Y = behavior_.ScaleY;
-	m_rootScale.Z = behavior_.ScaleZ;
+	renderer_->SetBackground(backTexture);
+}
+
+void EffectRenderer::ResetBack()
+{
+	renderer_->SetBackground(nullptr);
 }
 
 EffectRenderer::EffectRenderer()
@@ -300,17 +258,23 @@ EffectRenderer ::~EffectRenderer()
 {
 }
 
-bool EffectRenderer::Initialize(std::shared_ptr<efk::Graphics> graphics, Effekseer::RefPtr<Effekseer::Setting> setting, int32_t spriteCount, bool isSRGBMode)
+bool EffectRenderer::Initialize(std::shared_ptr<GraphicsDevice> graphicsDevice,
+								std::shared_ptr<SoundDevice> soundDevice,
+								std::shared_ptr<EffectSetting> setting,
+								int32_t spriteCount,
+								bool isSRGBMode)
 {
-	graphics_ = graphics;
+	graphics_ = graphicsDevice;
 
 	manager_ = ::Effekseer::Manager::Create(spriteCount);
 	// manager_->LaunchWorkerThreads(4);
-	manager_->SetSetting(setting);
+	manager_->SetSetting(setting->GetSetting());
 	m_isSRGBMode = isSRGBMode;
 
+	auto graphics = graphicsDevice->GetGraphics();
+
 #ifdef _WIN32
-	if (graphics->GetDeviceType() == Effekseer::Tool::DeviceType::DirectX11)
+	if (graphicsDevice->GetGraphics()->GetDeviceType() == Effekseer::Tool::DeviceType::DirectX11)
 	{
 		auto g = (efk::GraphicsDX11*)graphics.get();
 		renderer_ = ::EffekseerRendererDX11::Renderer::Create(g->GetDevice(), g->GetContext(), spriteCount, D3D11_COMPARISON_LESS_EQUAL, true);
@@ -405,10 +369,10 @@ bool EffectRenderer::Initialize(std::shared_ptr<efk::Graphics> graphics, Effekse
 	manager_->SetModelRenderer(model_renderer);
 	manager_->SetTrackRenderer(track_renderer);
 
-	if (graphics_->GetGraphicsDevice() != nullptr)
+	if (graphics_->GetGraphics()->GetGraphicsDevice() != nullptr)
 	{
 
-		backgroundRenderer_ = Effekseer::Tool::StaticMeshRenderer::Create(graphics_->GetGraphicsDevice());
+		backgroundRenderer_ = Effekseer::Tool::StaticMeshRenderer::Create(graphics_->GetGraphics()->GetGraphicsDevice());
 
 		if (backgroundRenderer_ != nullptr && UpdateBackgroundMesh(parameter_.BackgroundColor))
 		{
@@ -448,13 +412,13 @@ bool EffectRenderer::Initialize(std::shared_ptr<efk::Graphics> graphics, Effekse
 				WhiteParticle_PS::g_main,
 				sizeof(WhiteParticle_PS::g_main));
 
-		auto shader = graphics_->GetGraphicsDevice()->CreateShaderFromBinary(
+		auto shader = graphics_->GetGraphics()->GetGraphicsDevice()->CreateShaderFromBinary(
 			PostEffect_Basic_VS::g_main,
 			sizeof(PostEffect_Basic_VS::g_main),
 			PostEffect_Overdraw_PS::g_main,
 			sizeof(PostEffect_Overdraw_PS::g_main));
 
-		overdrawEffect_ = std::make_unique<PostProcess>(graphics_->GetGraphicsDevice(), shader, 0, 0);
+		overdrawEffect_ = std::make_unique<PostProcess>(graphics_->GetGraphics()->GetGraphicsDevice(), shader, 0, 0);
 #endif
 	}
 	else if (graphics->GetGraphicsDevice()->GetDeviceName() == "OpenGL")
@@ -490,12 +454,12 @@ bool EffectRenderer::Initialize(std::shared_ptr<efk::Graphics> graphics, Effekse
 			Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> elms;
 			auto uniformLayoutUnlitAd = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(tecLoc, elms);
 
-			auto shader = graphics_->GetGraphicsDevice()->CreateShaderFromCodes(
+			auto shader = graphics_->GetGraphics()->GetGraphicsDevice()->CreateShaderFromCodes(
 				{gl_postfx_basic_vs},
 				{gl_postfx_overdraw_ps},
 				uniformLayoutUnlitAd);
 
-			overdrawEffect_ = std::make_unique<PostProcess>(graphics_->GetGraphicsDevice(), shader, 0, 0);
+			overdrawEffect_ = std::make_unique<PostProcess>(graphics_->GetGraphics()->GetGraphicsDevice(), shader, 0, 0);
 		}
 	}
 	else
@@ -505,15 +469,25 @@ bool EffectRenderer::Initialize(std::shared_ptr<efk::Graphics> graphics, Effekse
 
 	SetPostEffectParameter(Effekseer::Tool::PostEffectParameter{});
 
-	if(!OnAfterInitialize())
+	if (!OnAfterInitialize())
 	{
 		return false;
+	}
+
+	if (soundDevice != nullptr)
+	{
+		manager_->SetSoundPlayer(soundDevice->GetSound()->CreateSoundPlayer());
 	}
 
 	return true;
 }
 
-void EffectRenderer::Resize(const Vector2I screenSize)
+Vector2I EffectRenderer::GetScreenSize() const
+{
+	return screenSize_;
+}
+
+void EffectRenderer::ResizeScreen(const Vector2I& screenSize)
 {
 	if (screenSize_ == screenSize)
 	{
@@ -531,7 +505,7 @@ void EffectRenderer::Resize(const Vector2I screenSize)
 		param.Size[1] = size.Y;
 		param.SampleCount = samples;
 		param.Usage = Effekseer::Backend::TextureUsageType::RenderTarget;
-		return graphics_->GetGraphicsDevice()->CreateTexture(param);
+		return graphics_->GetGraphics()->GetGraphicsDevice()->CreateTexture(param);
 	};
 
 	hdrRenderTexture = createRenderTexture(screenSize, textureFormat_, 1);
@@ -541,7 +515,7 @@ void EffectRenderer::Resize(const Vector2I screenSize)
 	depthTextureParam.Size[0] = screenSize.X;
 	depthTextureParam.Size[1] = screenSize.Y;
 	depthTextureParam.SamplingCount = msaaSamples;
-	depthTexture = graphics_->GetGraphicsDevice()->CreateDepthTexture(depthTextureParam);
+	depthTexture = graphics_->GetGraphics()->GetGraphicsDevice()->CreateDepthTexture(depthTextureParam);
 
 	if (msaaSamples > 1)
 	{
@@ -561,6 +535,70 @@ void EffectRenderer::Resize(const Vector2I screenSize)
 	{
 		linearRenderTexture = createRenderTexture(screenSize, textureFormat_, 1);
 	}
+}
+
+void EffectRenderer::PlayEffect()
+{
+	assert(effect_ != nullptr);
+
+	for (int32_t z = 0; z < behavior_.CountZ; z++)
+	{
+		for (int32_t y = 0; y < behavior_.CountY; y++)
+		{
+			for (int32_t x = 0; x < behavior_.CountX; x++)
+			{
+				auto lenX = behavior_.Distance * (behavior_.CountX - 1);
+				auto lenY = behavior_.Distance * (behavior_.CountY - 1);
+				auto lenZ = behavior_.Distance * (behavior_.CountZ - 1);
+
+				auto posX = behavior_.Distance * x - lenX / 2.0f;
+				auto posY = behavior_.Distance * y - lenY / 2.0f;
+				auto posZ = behavior_.Distance * z - lenZ / 2.0f;
+
+				posX += behavior_.PositionX;
+				posY += behavior_.PositionY;
+				posZ += behavior_.PositionZ;
+
+				HandleHolder handleHolder(manager_->Play(effect_->GetEffect(), posX, posY, posZ));
+
+				Effekseer::Matrix43 mat, matTra, matRot, matScale;
+				matTra.Translation(posX, posY, posZ);
+				matRot.RotationZXY(m_rootRotation.Z, m_rootRotation.X, m_rootRotation.Y);
+				matScale.Scaling(m_rootScale.X, m_rootScale.Y, m_rootScale.Z);
+
+				mat.Indentity();
+				Effekseer::Matrix43::Multiple(mat, mat, matScale);
+				Effekseer::Matrix43::Multiple(mat, mat, matRot);
+				Effekseer::Matrix43::Multiple(mat, mat, matTra);
+
+				manager_->SetMatrix(handleHolder.Handle, mat);
+				manager_->SetSpeed(handleHolder.Handle, behavior_.PlaybackSpeed);
+
+				handles_.push_back(handleHolder);
+
+				if (behavior_.AllColorR != 255 || behavior_.AllColorG != 255 || behavior_.AllColorB != 255 ||
+					behavior_.AllColorA != 255)
+				{
+					manager_->SetAllColor(handleHolder.Handle,
+										  Effekseer::Color(behavior_.AllColorR,
+														   behavior_.AllColorG,
+														   behavior_.AllColorB,
+														   behavior_.AllColorA));
+				}
+			}
+		}
+	}
+
+	m_time = 0;
+	m_rootLocation.X = behavior_.PositionX;
+	m_rootLocation.Y = behavior_.PositionY;
+	m_rootLocation.Z = behavior_.PositionZ;
+	m_rootRotation.X = behavior_.RotationX;
+	m_rootRotation.Y = behavior_.RotationY;
+	m_rootRotation.Z = behavior_.RotationZ;
+	m_rootScale.X = behavior_.ScaleX;
+	m_rootScale.Y = behavior_.ScaleY;
+	m_rootScale.Z = behavior_.ScaleZ;
 }
 
 void EffectRenderer::Update()
@@ -735,20 +773,20 @@ void EffectRenderer::Render(std::shared_ptr<RenderImage> renderImage)
 
 	auto renderTargetImage = renderImage->GetTexture();
 
-	graphics_->SetRenderTarget({renderTargetImage}, nullptr);
-	graphics_->Clear({0, 0, 0, 0});
+	graphics_->GetGraphics()->SetRenderTarget({renderTargetImage}, nullptr);
+	graphics_->GetGraphics()->Clear({0, 0, 0, 0});
 
 	// clear
 	if (msaaSamples > 1)
 	{
-		graphics_->SetRenderTarget({hdrRenderTextureMSAA, depthRenderTextureMSAA}, depthTexture);
+		graphics_->GetGraphics()->SetRenderTarget({hdrRenderTextureMSAA, depthRenderTextureMSAA}, depthTexture);
 	}
 	else
 	{
-		graphics_->SetRenderTarget({hdrRenderTexture, depthRenderTexture}, depthTexture);
+		graphics_->GetGraphics()->SetRenderTarget({hdrRenderTexture, depthRenderTexture}, depthTexture);
 	}
 
-	graphics_->Clear({0, 0, 0, 0});
+	graphics_->GetGraphics()->Clear({0, 0, 0, 0});
 
 	// TODO : refactor
 	renderer_->SetCameraMatrix(parameter_.CameraMatrix);
@@ -787,16 +825,16 @@ void EffectRenderer::Render(std::shared_ptr<RenderImage> renderImage)
 
 	if (msaaSamples > 1)
 	{
-		graphics_->SetRenderTarget({hdrRenderTextureMSAA}, depthTexture);
+		graphics_->GetGraphics()->SetRenderTarget({hdrRenderTextureMSAA}, depthTexture);
 	}
 	else
 	{
-		graphics_->SetRenderTarget({hdrRenderTexture}, depthTexture);
+		graphics_->GetGraphics()->SetRenderTarget({hdrRenderTexture}, depthTexture);
 	}
 
 	if (msaaSamples > 1)
 	{
-		graphics_->ResolveRenderTarget(depthRenderTextureMSAA, depthRenderTexture);
+		graphics_->GetGraphics()->ResolveRenderTarget(depthRenderTextureMSAA, depthRenderTexture);
 	}
 
 	EffekseerRenderer::DepthReconstructionParameter reconstructionParam;
@@ -852,9 +890,19 @@ void EffectRenderer::Render(std::shared_ptr<RenderImage> renderImage)
 
 	renderer_->BeginRendering();
 
+	Effekseer::Manager::DrawParameter drawParameter;
+	drawParameter.ZFar = 1.0f;
+	drawParameter.ZNear = 0.0f;
+	drawParameter.IsSortingEffectsEnabled = true;
+	drawParameter.CameraPosition = parameter_.CameraPosition;
+	drawParameter.CameraFrontDirection = parameter_.CameraFrontDirection;
+	Effekseer::Matrix44 vpm;
+	Effekseer::Matrix44::Mul(vpm, parameter_.CameraMatrix, parameter_.ProjectionMatrix);
+	drawParameter.ViewProjectionMatrix = vpm;
+
 	if (parameter_.Distortion == DistortionType::Current)
 	{
-		manager_->DrawBack(parameter_.DrawParameter);
+		manager_->DrawBack(drawParameter);
 
 		// HACK
 		renderer_->EndRendering();
@@ -863,11 +911,11 @@ void EffectRenderer::Render(std::shared_ptr<RenderImage> renderImage)
 
 		// HACK
 		renderer_->BeginRendering();
-		manager_->DrawFront(parameter_.DrawParameter);
+		manager_->DrawFront(drawParameter);
 	}
 	else
 	{
-		manager_->Draw(parameter_.DrawParameter);
+		manager_->Draw(drawParameter);
 	}
 
 	renderer_->EndRendering();
@@ -884,7 +932,7 @@ void EffectRenderer::Render(std::shared_ptr<RenderImage> renderImage)
 
 		renderer_->BeginRendering();
 
-		manager_->Draw(parameter_.DrawParameter);
+		manager_->Draw(drawParameter);
 
 		renderer_->EndRendering();
 	}
@@ -907,12 +955,12 @@ void EffectRenderer::Render(std::shared_ptr<RenderImage> renderImage)
 
 	if (msaaSamples > 1)
 	{
-		graphics_->ResolveRenderTarget(hdrRenderTextureMSAA, hdrRenderTexture);
+		graphics_->GetGraphics()->ResolveRenderTarget(hdrRenderTextureMSAA, hdrRenderTexture);
 	}
 
 	if (parameter_.RenderingMethod == RenderingMethodType::Overdraw)
 	{
-		graphics_->SetRenderTarget({renderTargetImage}, nullptr);
+		graphics_->GetGraphics()->SetRenderTarget({renderTargetImage}, nullptr);
 		overdrawEffect_->GetDrawParameter().TexturePtrs[0] = hdrRenderTexture;
 		overdrawEffect_->GetDrawParameter().TextureCount = 1;
 		overdrawEffect_->Render();
@@ -937,10 +985,21 @@ void EffectRenderer::Render(std::shared_ptr<RenderImage> renderImage)
 		}
 	}
 
-	graphics_->SetRenderTarget({nullptr}, nullptr);
+	graphics_->GetGraphics()->SetRenderTarget({nullptr}, nullptr);
 }
 
-void EffectRenderer::Reset()
+std::shared_ptr<Effekseer::Tool::Effect> EffectRenderer::GetEffect() const
+{
+	return effect_;
+}
+
+void EffectRenderer::SetEffect(std::shared_ptr<Effekseer::Tool::Effect> effect)
+{
+	handles_.clear();
+	effect_ = effect;
+}
+
+void EffectRenderer::ResetEffect()
 {
 	for (size_t i = 0; i < handles_.size(); i++)
 	{
@@ -951,15 +1010,9 @@ void EffectRenderer::Reset()
 	manager_->Update();
 }
 
-Effekseer::EffectRef EffectRenderer::GetEffect()
+const ViewerEffectBehavior& EffectRenderer::GetBehavior() const
 {
-	return effect_;
-}
-
-void EffectRenderer::SetEffect(Effekseer::EffectRef effect)
-{
-	handles_.clear();
-	effect_ = effect;
+	return behavior_;
 }
 
 void EffectRenderer::SetBehavior(const ViewerEffectBehavior& behavior)
@@ -967,28 +1020,32 @@ void EffectRenderer::SetBehavior(const ViewerEffectBehavior& behavior)
 	behavior_ = behavior;
 }
 
-const ViewerEffectBehavior& EffectRenderer::GetBehavior() const
+int32_t EffectRenderer::GetInstanceCount() const
 {
-	return behavior_;
+	if (m_time == 0)
+		return 0;
+
+	int32_t sum = 0;
+	for (int i = 0; i < handles_.size(); i++)
+	{
+		auto count = manager_->GetInstanceCount(handles_[i].Handle);
+
+		// Root
+		if (!handles_[i].IsRootStopped)
+			count--;
+
+		if (!manager_->Exists(handles_[i].Handle))
+			count = 0;
+
+		sum += count;
+	}
+
+	return sum;
 }
 
-void EffectRenderer::CopyToBack()
+void EffectRenderer::SetStep(int32_t step)
 {
-	if (msaaSamples > 1)
-	{
-		graphics_->CopyTo(hdrRenderTextureMSAA, backTexture);
-	}
-	else
-	{
-		graphics_->CopyTo(hdrRenderTexture, backTexture);
-	}
-
-	renderer_->SetBackground(backTexture);
-}
-
-void EffectRenderer::ResetBack()
-{
-	renderer_->SetBackground(nullptr);
+	m_step = step;
 }
 
 Effekseer::Tool::PostEffectParameter EffectRenderer::GetPostEffectParameter() const

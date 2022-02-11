@@ -42,20 +42,15 @@ bool Native::CreateWindow_Effekseer(
 	int32_t spriteCount = 65000 / 4;
 
 	graphicsDevice_ = graphicsDevice;
-	setting_ = effectSetting->GetSetting();
+	setting_ = effectSetting;
 
 	{
 		mainScreen_ = std::make_shared<Effekseer::Tool::MainScreenEffectRenderer>();
-		if (!mainScreen_->Initialize(graphicsDevice_->GetGraphics(), setting_, spriteCount, graphicsDevice->GetIsSRGBMode()))
+		if (!mainScreen_->Initialize(graphicsDevice_, soundDevice, effectSetting, spriteCount, graphicsDevice->GetIsSRGBMode()))
 		{
 			spdlog::trace("End Native::CreateWindow_Effekseer (false)");
 			return false;
 		}
-	}
-
-	if (soundDevice != nullptr)
-	{
-		mainScreen_->GetMamanager()->SetSoundPlayer(soundDevice->GetSound()->CreateSoundPlayer());
 	}
 
 	spdlog::trace("End Native::CreateWindow_Effekseer (true)");
@@ -66,7 +61,7 @@ bool Native::CreateWindow_Effekseer(
 bool Native::DestroyWindow()
 {
 	mainScreen_.reset();
-	setting_.Reset();
+	setting_.reset();
 
 	return true;
 }
@@ -77,7 +72,7 @@ bool Native::LoadEffect(std::shared_ptr<Effekseer::Tool::Effect> effect)
 
 	if (mainScreen_ != nullptr)
 	{
-		mainScreen_->SetEffect(effect->GetEffect());
+		mainScreen_->SetEffect(effect);
 	}
 
 	return true;
@@ -88,7 +83,7 @@ bool Native::RemoveEffect()
 	if (mainScreen_ != nullptr)
 	{
 		mainScreen_->SetEffect(nullptr);
-		mainScreen_->Reset();
+		mainScreen_->ResetEffect();
 	}
 
 	return true;
@@ -102,7 +97,7 @@ bool Native::PlayEffect()
 
 bool Native::StopEffect()
 {
-	mainScreen_->Reset();
+	mainScreen_->ResetEffect();
 	return true;
 }
 
@@ -130,23 +125,14 @@ void Native::RenderView(int32_t width, int32_t height, std::shared_ptr<Effekseer
 	viewPointCtrl->Update();
 
 	const auto ray = viewPointCtrl->GetCameraRay();
-	Effekseer::Manager::DrawParameter drawParameter;
-	drawParameter.IsSortingEffectsEnabled = true;
-	drawParameter.CameraPosition = ray.Origin;
-	drawParameter.CameraFrontDirection = ray.Direction;
-
-	Effekseer::Matrix44 vpm;
-	Effekseer::Matrix44::Mul(vpm, viewPointCtrl->GetCameraMatrix(), viewPointCtrl->GetProjectionMatrix());
-	drawParameter.ViewProjectionMatrix = vpm;
-	drawParameter.ZNear = 0.0f;
-	drawParameter.ZFar = 1.0f;
-
-	mainScreenConfig_.DrawParameter = drawParameter;
 	mainScreenConfig_.CameraMatrix = viewPointCtrl->GetCameraMatrix();
 	mainScreenConfig_.ProjectionMatrix = viewPointCtrl->GetProjectionMatrix();
 	mainScreenConfig_.RenderingMethod = renderingMode_;
-	mainScreen_->SetConfig(mainScreenConfig_);
-	mainScreen_->Resize(Effekseer::Tool::Vector2I(width, height));
+	mainScreenConfig_.CameraPosition = ray.Origin;
+	mainScreenConfig_.CameraFrontDirection = ray.Direction;
+
+	mainScreen_->SetParameter(mainScreenConfig_);
+	mainScreen_->ResizeScreen(Effekseer::Tool::Vector2I(width, height));
 
 	if (renderImage != nullptr)
 	{
@@ -161,14 +147,14 @@ std::shared_ptr<Effekseer::Tool::EffectRecorder> Native::CreateRecorder(const Ef
 	if (mainScreen_->GetEffect() == nullptr)
 		return nullptr;
 
-	Effekseer::Tool::Vector2I screenSize = {mainScreen_->GetView()->GetParameter().Size[0], mainScreen_->GetView()->GetParameter().Size[1]};
+	const auto screenSize = mainScreen_->GetScreenSize();
 
 	auto recorder = std::make_shared<Effekseer::Tool::EffectRecorder>();
 	if (recorder->Begin(
-			mainScreen_->GetRenderer()->GetSquareMaxCount(),
-			mainScreen_->GetConfig(),
+			mainScreen_->GetSquareMaxCount(),
+			mainScreen_->GetParameter(),
 			screenSize,
-			graphicsDevice_->GetGraphics(),
+			graphicsDevice_,
 			setting_,
 			recordingParameter,
 			Effekseer::Tool::Vector2I(mainScreen_->GuideWidth, mainScreen_->GuideHeight),
@@ -268,7 +254,7 @@ void Native::SetLightDirection(float x, float y, float z)
 {
 	Effekseer::Vector3D temp = Effekseer::Vector3D(x, y, z);
 
-	if (setting_->GetCoordinateSystem() == Effekseer::CoordinateSystem::LH)
+	if (setting_->GetSetting()->GetCoordinateSystem() == Effekseer::CoordinateSystem::LH)
 	{
 		temp.Z = -temp.Z;
 	}
@@ -288,12 +274,12 @@ void Native::SetLightAmbientColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 
 void Native::SetCoordinateSystem(Effekseer::Tool::CoordinateSystemType coordinateSystem)
 {
-	setting_->SetCoordinateSystem(coordinateSystem == Effekseer::Tool::CoordinateSystemType::RH ? Effekseer::CoordinateSystem::RH : Effekseer::CoordinateSystem::LH);
+	setting_->GetSetting()->SetCoordinateSystem(coordinateSystem == Effekseer::Tool::CoordinateSystemType::RH ? Effekseer::CoordinateSystem::RH : Effekseer::CoordinateSystem::LH);
 
 	{
 		Effekseer::Vector3D temp = mainScreenConfig_.LightDirection;
 
-		if (setting_->GetCoordinateSystem() == Effekseer::CoordinateSystem::LH)
+		if (setting_->GetSetting()->GetCoordinateSystem() == Effekseer::CoordinateSystem::LH)
 		{
 			temp.Z = -temp.Z;
 		}
@@ -313,16 +299,12 @@ void Native::SetCullingParameter(bool isCullingShown, float cullingRadius, float
 
 int32_t Native::GetAndResetDrawCall()
 {
-	auto call = mainScreen_->GetRenderer()->GetDrawCallCount();
-	mainScreen_->GetRenderer()->ResetDrawCallCount();
-	return call;
+	return mainScreen_->GetAndResetDrawCall();
 }
 
 int32_t Native::GetAndResetVertexCount()
 {
-	auto call = mainScreen_->GetRenderer()->GetDrawVertexCount();
-	mainScreen_->GetRenderer()->ResetDrawVertexCount();
-	return call;
+	return mainScreen_->GetAndResetVertexCount();
 }
 
 int32_t Native::GetInstanceCount()

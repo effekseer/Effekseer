@@ -144,6 +144,8 @@ class"
 %include "Cpp/Viewer/3D/Effect.h"
 %include "Cpp/Viewer/3D/EffectSetting.h"
 %include "Cpp/Viewer/3D/EffectFactory.h"
+%include "Cpp/Viewer/3D/EffectRenderer.h"
+%include "Cpp/Viewer/3D/MainScreenEffectRenderer.h"
 
 %include "Cpp/Viewer/Network/Network.h"
 

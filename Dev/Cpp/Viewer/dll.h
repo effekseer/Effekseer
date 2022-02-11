@@ -33,7 +33,7 @@ class Native
 private:
 	std::shared_ptr<Effekseer::Tool::GraphicsDevice> graphicsDevice_ = nullptr;
 
-	Effekseer::SettingRef setting_;
+	std::shared_ptr<Effekseer::Tool::EffectSetting> setting_;
 
 	std::shared_ptr<Effekseer::Tool::MainScreenEffectRenderer> mainScreen_;
 
@@ -112,7 +112,7 @@ public:
 	void SetPostEffectParameter(const Effekseer::Tool::PostEffectParameter& parameter);
 
 #if !SWIG
-	Effekseer::SettingRef GetSetting()
+	std::shared_ptr<Effekseer::Tool::EffectSetting> GetSetting()
 	{
 		return setting_;
 	}
