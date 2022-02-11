@@ -3,6 +3,7 @@
 #include "../Math/Matrix44F.h"
 #include "../Math/Vector2I.h"
 #include "../Math/Vector3F.h"
+#include "../Parameters.h"
 
 #include <Effekseer.h>
 
@@ -19,12 +20,6 @@ enum class ProjectionType
 {
 	Perspective,
 	Orthographic,
-};
-
-enum class CoordinateSystemType
-{
-	RH,
-	LH,
 };
 
 struct Ray
@@ -72,6 +67,13 @@ private:
 	float GetOrthoScale();
 
 public:
+	Effekseer::Tool::Vector2I GetScreenSize() const
+	{
+		return Effekseer::Tool::Vector2I(screenWidth, screenHeight);
+	}
+
+	void SetScreenSize(int32_t width, int32_t height);
+
 #if !defined(SWIG)
 	void RecalcProjection();
 
@@ -81,20 +83,13 @@ public:
 
 	void SetOrthographicScale(float scale);
 
-	void SetScreenSize(int32_t width, int32_t height);
-
-	Effekseer::Tool::Vector2I GetScreenSize() const
-	{
-		return Effekseer::Tool::Vector2I(screenWidth, screenHeight);
-	}
-
 	void SetCameraMatrix(Effekseer::Matrix44 value)
 	{
 		m_cameraMat = value;
 	}
 
-	void Update();
 #endif
+	void Update();
 
 	Effekseer::Tool::Matrix44F GetCameraMatrix() const
 	{

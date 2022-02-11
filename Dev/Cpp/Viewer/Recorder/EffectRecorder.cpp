@@ -1,3 +1,5 @@
+#include "EffectRecorder.h"
+#include "RecorderCallback.h"
 
 #ifdef _WIN32
 #include "../Graphics/Platform/DX11/efk.GraphicsDX11.h"
@@ -5,8 +7,6 @@
 #endif
 
 #include "../GUI/RenderImage.h"
-
-#include "EffectRecorder.h"
 
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/spdlog.h>

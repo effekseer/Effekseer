@@ -37,7 +37,7 @@ namespace Effekseer.GUI
 				return thumbnails[path];
 			}
 
-			var image = ReloadableImage.Create(Manager.Viewer.graphicsDevice, path);
+			var image = ReloadableImage.Create(Manager.HardwareDevice.GraphicsDevice, path);
 			if (image == null) return null;
 
 			Thumbnail thumbnail = new Thumbnail();

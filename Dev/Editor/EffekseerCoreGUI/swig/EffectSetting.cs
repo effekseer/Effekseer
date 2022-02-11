@@ -44,6 +44,11 @@ public class EffectSetting : global::System.IDisposable {
     }
   }
 
+  public void SetCoordinateSyatem(CoordinateSystemType coordinateSystem) {
+    EffekseerNativePINVOKE.EffectSetting_SetCoordinateSyatem(swigCPtr, (int)coordinateSystem);
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+  }
+
   public static EffectSetting Create(GraphicsDevice graphicsDevice, SoundDevice soundDevice) {
     global::System.IntPtr cPtr = EffekseerNativePINVOKE.EffectSetting_Create(GraphicsDevice.getCPtr(graphicsDevice), SoundDevice.getCPtr(soundDevice));
     EffectSetting ret = (cPtr == global::System.IntPtr.Zero) ? null : new EffectSetting(cPtr, true);

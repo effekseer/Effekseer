@@ -14,12 +14,11 @@ namespace Effekseer.GUI
 		{
 		}
 
-
 		public override void Resized(int x, int y)
-		{			
-			if(x > 0 && y > 0)
+		{
+			if (x > 0 && y > 0)
 			{
-				Manager.Viewer.graphicsDevice.Resize(x, y);
+				Manager.HardwareDevice.GraphicsDevice.Resize(x, y);
 
 				Manager.WindowSize.X = x;
 				Manager.WindowSize.Y = y;
@@ -47,8 +46,8 @@ namespace Effekseer.GUI
 			}
 
 			Manager.Controls.Unlock();
-		
-			if(!handle)
+
+			if (!handle)
 			{
 				Commands.Open(this.GetPath());
 			}
@@ -94,6 +93,33 @@ namespace Effekseer.GUI
 		}
 	}
 
+	public class HardwareDevice : IDisposable
+	{
+		public swig.GraphicsDevice GraphicsDevice { get; private set; }
+
+		public swig.SoundDevice SoundDevice { get; private set; }
+
+		public bool Initialize(IntPtr handle, int width, int height, swig.DeviceType deviceType)
+		{
+			GraphicsDevice = swig.GraphicsDevice.Create(handle, width, height, Core.Option.ColorSpace.Value == Data.OptionValues.ColorSpaceType.LinearSpace, deviceType);
+			SoundDevice = swig.SoundDevice.Create();
+			return GraphicsDevice != null;
+		}
+
+		public void Dispose()
+		{
+			if (GraphicsDevice != null)
+			{
+				GraphicsDevice.Dispose();
+			}
+
+			if (SoundDevice != null)
+			{
+				SoundDevice.Dispose();
+			}
+		}
+	}
+
 	public class Manager
 	{
 		class ManagerIOCallback : swig.IOCallback
@@ -110,7 +136,9 @@ namespace Effekseer.GUI
 		}
 
 		public static swig.GUIManager NativeManager;
-		public static swig.Native Native;
+		
+		public static HardwareDevice HardwareDevice { get; private set; }
+
 		public static swig.RenderImage MainViewImage;
 		public static swig.MainWindow MainWindow;
 		public static swig.IO IO;
@@ -187,7 +215,7 @@ namespace Effekseer.GUI
 
 			// TODO : refactor
 			var windowConfig = new Configs.WindowConfig();
-			if(windowConfig.Load(ConfigFilePath))
+			if (windowConfig.Load(ConfigFilePath))
 			{
 				state.PosX = windowConfig.WindowPosX;
 				state.PosY = windowConfig.WindowPosY;
@@ -216,21 +244,22 @@ namespace Effekseer.GUI
 			ioCallback = new ManagerIOCallback();
 			IO.AddCallback(ioCallback);
 
-			Core.OnFileLoaded += (string path) => {
+			Core.OnFileLoaded += (string path) =>
+			{
 
 #if DEBUG
 				Console.WriteLine("OnFileLoaded : " + path);
 #endif
 
 				var f = IO.LoadIPCFile(path);
-				if(f == null)
+				if (f == null)
 				{
 					f = IO.LoadFile(path);
 				}
 
 				// TODO : refactor it
 				// Permission error
-				if(f != null && f.GetSize() == 0)
+				if (f != null && f.GetSize() == 0)
 				{
 					var message = MultiLanguageTextProvider.GetText("PermissionError_File");
 
@@ -254,7 +283,7 @@ namespace Effekseer.GUI
 			};
 
 			ThumbnailManager.Initialize();
-		
+
 			var mgr = new swig.GUIManager();
 			if (mgr.Initialize(MainWindow, deviceType))
 			{
@@ -266,23 +295,27 @@ namespace Effekseer.GUI
 				return false;
 			}
 
-			Native = new swig.Native();
-			
-			Viewer = new Viewer(Native);
-			if (!Viewer.ShowViewer(mgr.GetNativeHandle(), state.Width, state.Height, deviceType))
+			HardwareDevice = new HardwareDevice();
+			if(!HardwareDevice.Initialize(mgr.GetNativeHandle(), state.Width, state.Height, deviceType))
+			{
+				return false;
+			}
+
+			Viewer = new Viewer(HardwareDevice);
+			if (!Viewer.Initialize(deviceType))
 			{
 				mgr.Dispose();
 				mgr = null;
 				return false;
 			}
 
-            mgr.InitializeGUI(Native);
-			
+			mgr.InitializeGUI(HardwareDevice.GraphicsDevice);
+
 			NativeManager = mgr;
 
-			MainViewImage = RenderImage.Create(Viewer.graphicsDevice);
+			MainViewImage = RenderImage.Create(HardwareDevice.GraphicsDevice);
 
-			Images.Load(Viewer.graphicsDevice);
+			Images.Load(HardwareDevice.GraphicsDevice);
 
 			guiManagerCallback = new GUIManagerCallback();
 			NativeManager.SetCallback(guiManagerCallback);
@@ -402,7 +435,7 @@ namespace Effekseer.GUI
 			swig.GUIManager.SetIniFilename(ImGuiIniFilePath);
 
 			// check files
-			if(!System.IO.File.Exists(System.IO.Path.Combine(appDirectory, "resources/fonts/GenShinGothic-Monospace-Bold.ttf")))
+			if (!System.IO.File.Exists(System.IO.Path.Combine(appDirectory, "resources/fonts/GenShinGothic-Monospace-Bold.ttf")))
 			{
 				ErrorUtils.ThrowFileNotfound();
 			}
@@ -424,7 +457,7 @@ namespace Effekseer.GUI
 
 			foreach (var p in panels)
 			{
-				if(p != null)
+				if (p != null)
 				{
 					p.DispatchDisposed();
 				}
@@ -446,7 +479,7 @@ namespace Effekseer.GUI
 			Viewer.Dispose();
 			Viewer = null;
 
-			if(MainViewImage != null)
+			if (MainViewImage != null)
 			{
 				MainViewImage.Dispose();
 				MainViewImage = null;
@@ -456,6 +489,12 @@ namespace Effekseer.GUI
 			NativeManager.Terminate();
 
 			Images.Unload();
+
+			if(HardwareDevice != null)
+			{
+				HardwareDevice.Dispose();
+				HardwareDevice = null;
+			}
 
 			swig.MainWindow.Terminate();
 			MainWindow.Dispose();
@@ -583,7 +622,7 @@ namespace Effekseer.GUI
 			Network.Update();
 
 			var handle = false;
-			if(!handle)
+			if (!handle)
 			{
 				if (!NativeManager.IsAnyItemActive())
 				{
@@ -598,7 +637,7 @@ namespace Effekseer.GUI
 				mousePos_pre = mousePos;
 			}
 
-			if((effectViewer == null && !NativeManager.IsAnyWindowHovered()) || (effectViewer != null && effectViewer.IsHovered))
+			if ((effectViewer == null && !NativeManager.IsAnyWindowHovered()) || (effectViewer != null && effectViewer.IsHovered))
 			{
 				var result = ControllViewport();
 
@@ -646,15 +685,16 @@ namespace Effekseer.GUI
 
 			Viewer.UpdateViewer();
 
+			if(HardwareDevice.SoundDevice != null)
 			{
 				var ray = Viewer.ViewPointController.GetCameraRay();
 				var rayOrigin = ray.Origin;
 				var rayDirection = ray.Direction;
 				var rayPos = new swig.Vector3F(rayOrigin.X + rayDirection.X, rayOrigin.Y + rayDirection.Y, rayOrigin.Z + rayDirection.Z);
-				Viewer.soundDevice.SetListener(ray.Origin, rayPos, new Vector3F(0, 1, 0));
+				HardwareDevice.SoundDevice.SetListener(ray.Origin, rayPos, new Vector3F(0, 1, 0));
 			}
 
-			Viewer.graphicsDevice.ClearColor(50, 50, 50, 0);
+			HardwareDevice.GraphicsDevice.ClearColor(50, 50, 50, 0);
 
 			//if(effectViewer == null)
 			//{
@@ -672,7 +712,7 @@ namespace Effekseer.GUI
 				}
 			}
 
-			if(resizedCount > 0)
+			if (resizedCount > 0)
 			{
 				resizedCount--;
 			}
@@ -684,12 +724,12 @@ namespace Effekseer.GUI
 				c.Update();
 			}
 
-			foreach(var _ in Controls.Internal)
+			foreach (var _ in Controls.Internal)
 			{
 				if (!_.ShouldBeRemoved) continue;
 
 				var dp = _ as Dock.DockPanel;
-				if(dp != null)
+				if (dp != null)
 				{
 					dp.DispatchDisposed();
 				}
@@ -713,7 +753,8 @@ namespace Effekseer.GUI
 
 			NativeManager.RenderGUI(resizedCount == 0);
 
-			Viewer.graphicsDevice.Present();
+			HardwareDevice.GraphicsDevice.Present();
+			
 			NativeManager.Present();
 
 			isFirstUpdate = false;
@@ -741,7 +782,7 @@ namespace Effekseer.GUI
 
 		public static Dock.DockPanel GetWindow(Type t)
 		{
-			foreach(var panel in panels)
+			foreach (var panel in panels)
 			{
 				if (panel != null && panel.GetType() == t) return panel;
 			}
@@ -751,13 +792,13 @@ namespace Effekseer.GUI
 
 		public static Dock.DockPanel SelectOrShowWindow(Type t, swig.Vec2 defaultSize = null, bool resetSize = false, bool requireClose = true)
 		{
-			for(int i = 0; i < dockTypes.Length; i++)
+			for (int i = 0; i < dockTypes.Length; i++)
 			{
 				if (dockTypes[i] != t) continue;
 
 				if (panels[i] != null)
 				{
-					if(panels[i].Visibled && requireClose)
+					if (panels[i].Visibled && requireClose)
 					{
 						panels[i].Close();
 					}
@@ -770,7 +811,7 @@ namespace Effekseer.GUI
 				}
 				else
 				{
-					if(defaultSize == null)
+					if (defaultSize == null)
 					{
 						defaultSize = new swig.Vec2();
 					}
@@ -828,7 +869,7 @@ namespace Effekseer.GUI
 		static void OnChanged(object sender, EventArgs e)
 		{
 			Viewer.IsChanged = true;
-			
+
 			if (Network.SendOnEdit)
 			{
 				Network.Send();
@@ -905,9 +946,9 @@ namespace Effekseer.GUI
 
 			System.Xml.XmlElement docks = doc.CreateElement("Docks");
 
-			foreach(var panel in panels)
+			foreach (var panel in panels)
 			{
-				if(panel != null)
+				if (panel != null)
 				{
 					docks.AppendChild(doc.CreateTextElement(panel.GetType().ToString(), "Open"));
 				}

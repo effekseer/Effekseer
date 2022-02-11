@@ -8,9 +8,9 @@
 #include "3D/Effect.h"
 #include "3D/EffectSetting.h"
 #include "3D/EffectFactory.h"
+#include "3D/MainScreenEffectRenderer.h"
 #include "Network/Network.h"
 #include "Sound/SoundDevice.h"
-#include "dll.h"
 #include "GUI/efk.GUIManager.h"
 #include "GUI/efk.FileDialog.h"
 #include "GUI/Image.h"
@@ -126,15 +126,15 @@ class"
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
+%include "Cpp/Viewer/Math/Matrix44F.h"
+%include "Cpp/Viewer/Math/Vector2I.h"
+%include "Cpp/Viewer/Math/Vector3F.h"
+
 %include "Cpp/Viewer/Parameters.h"
 %include "Cpp/Viewer/ProcessConnector.h"
 %include "Cpp/Viewer/GUI/efk.Vec2.h"
 %include "Cpp/Viewer/Recorder/RecordingParameter.h"
 %include "Cpp/Viewer/Recorder/EffectRecorder.h"
-
-%include "Cpp/Viewer/Math/Matrix44F.h"
-%include "Cpp/Viewer/Math/Vector2I.h"
-%include "Cpp/Viewer/Math/Vector3F.h"
 
 %include "Cpp/Viewer/Graphics/Color.h"
 %include "Cpp/Viewer/Graphics/GraphicsDevice.h"
@@ -151,7 +151,6 @@ class"
 
 %include "Cpp/Viewer/Utils/Logger.h"
 
-%include "Cpp/Viewer/dll.h"
 %include "Cpp/Viewer/GUI/efk.GUIManager.h"
 %include "Cpp/Viewer/GUI/efk.FileDialog.h"
 %include "Cpp/Viewer/GUI/Image.h"

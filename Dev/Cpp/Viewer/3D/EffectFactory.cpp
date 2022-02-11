@@ -8,8 +8,6 @@
 
 #include <algorithm>
 
-#include "../dll.h"
-
 namespace Effekseer::Tool
 {
 
@@ -20,9 +18,9 @@ void EffectFactory::ClearInvalidEffects()
 	effects_.erase(it, effects_.end());
 }
 
-EffectFactory::EffectFactory(Native* native)
+EffectFactory::EffectFactory(std::shared_ptr<Effekseer::Tool::EffectSetting> setting)
 {
-	setting_ = native->GetSetting()->GetSetting();
+	setting_ = setting->GetSetting();
 }
 
 std::shared_ptr<Effect> EffectFactory::LoadEffect(const void* data, int size, const char16_t* path)

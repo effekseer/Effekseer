@@ -82,15 +82,15 @@ namespace Effekseer.GUI.Dock
 
 		protected override void UpdateInternal()
 		{
-			var viewerParameter = Manager.Viewer.GetViewerParamater();
-            viewerParameter.GuideWidth = Core.Recording.RecordingWidth.Value;
-            viewerParameter.GuideHeight = Core.Recording.RecordingHeight.Value;
-            viewerParameter.RendersGuide = Core.Recording.IsRecordingGuideShown;
+			var mainRenderer = Manager.Viewer.EffectRenderer;
+            mainRenderer.GuideWidth = Core.Recording.RecordingWidth.Value;
+            mainRenderer.GuideHeight = Core.Recording.RecordingHeight.Value;
+            mainRenderer.RendersGuide = Core.Recording.IsRecordingGuideShown;
 
 			float dpiScale = Manager.DpiScale;
-			var w = new int [] { Manager.Viewer.GetViewerParamater().GuideWidth };
-			var h = new int [] { Manager.Viewer.GetViewerParamater().GuideHeight };
-			var showGuide = new bool[] { Manager.Viewer.GetViewerParamater().RendersGuide };
+			var w = new int [] { mainRenderer.GuideWidth };
+			var h = new int [] { mainRenderer.GuideHeight };
+			var showGuide = new bool[] { mainRenderer.RendersGuide };
 
             var startingFrame_ = new int[] { Core.Recording.RecordingStartingFrame.Value };
 			var endingFrame_ = new int[] { Core.Recording.RecordingEndingFrame.Value };
@@ -130,7 +130,7 @@ namespace Effekseer.GUI.Dock
 				Manager.NativeManager.PushItemWidth(-1);
 				if (Manager.NativeManager.DragInt("###w", w))
 				{
-					viewerParameter.GuideWidth = w[0];
+					mainRenderer.GuideWidth = w[0];
 					Core.Recording.RecordingWidth.SetValueDirectly(w[0]);
 				}
 				Manager.NativeManager.PopItemWidth();
@@ -144,7 +144,7 @@ namespace Effekseer.GUI.Dock
 				Manager.NativeManager.PushItemWidth(-1);
 				if (Manager.NativeManager.DragInt("###h", h))
 				{
-					viewerParameter.GuideHeight = h[0];
+					mainRenderer.GuideHeight = h[0];
 					Core.Recording.RecordingHeight.SetValueDirectly(h[0]);
 				}
 				Manager.NativeManager.PopItemWidth();
@@ -157,7 +157,7 @@ namespace Effekseer.GUI.Dock
 
 				if (Manager.NativeManager.Checkbox("###sg", showGuide))
 				{
-					viewerParameter.RendersGuide = showGuide[0];
+					mainRenderer.RendersGuide = showGuide[0];
 					Core.Recording.IsRecordingGuideShown.SetValueDirectly(showGuide[0]);
 				}
 
@@ -366,8 +366,9 @@ namespace Effekseer.GUI.Dock
 
 			Manager.NativeManager.EndChild();
 
-
-			Manager.Viewer.SetViewerParamater(viewerParameter);
+			mainRenderer.GuideWidth = Core.Recording.RecordingWidth.Value;
+			mainRenderer.GuideHeight = Core.Recording.RecordingHeight.Value;
+			mainRenderer.RendersGuide = Core.Recording.IsRecordingGuideShown;
 
 			float buttonWidth = 100 * dpiScale;
 			Manager.NativeManager.SetCursorPosX(Manager.NativeManager.GetContentRegionAvail().X / 2 - buttonWidth / 2);
@@ -423,8 +424,7 @@ namespace Effekseer.GUI.Dock
                     }
 
 					var viewer = Manager.Viewer;
-					var param = Manager.Viewer.GetViewerParamater();
-
+					
 					//if (viewer.LoadEffectFunc != null)
 					{
 						viewer.LoadEffectFunc();

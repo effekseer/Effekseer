@@ -503,7 +503,7 @@ namespace Effekseer.GUI.Dock
 							break;
 						case ".png":
 							Type = FileType.Texture;
-							Image = Images.Load(Manager.Viewer.graphicsDevice, filePath);
+							Image = Images.Load(Manager.HardwareDevice.GraphicsDevice, filePath);
 							break;
 						case ".wav":
 							Type = FileType.Sound;

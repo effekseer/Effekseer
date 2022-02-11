@@ -65,6 +65,12 @@ public class GraphicsDevice : global::System.IDisposable {
     return ret;
   }
 
+  public bool GetIsSRGBMode() {
+    bool ret = EffekseerNativePINVOKE.GraphicsDevice_GetIsSRGBMode(swigCPtr);
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+    return ret;
+  }
+
   public GraphicsDevice() : this(EffekseerNativePINVOKE.new_GraphicsDevice(), true) {
   }
 

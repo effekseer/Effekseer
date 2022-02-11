@@ -44,6 +44,12 @@ public class EffectRecorder : global::System.IDisposable {
     }
   }
 
+  public bool Begin(int squareMaxCount, EffectRendererParameter config, Vector2I screenSize, GraphicsDevice graphicsDevice, EffectSetting setting, RecordingParameter recordingParameter, Vector2I imageSize, bool isSRGBMode, ViewerEffectBehavior behavior, PostEffectParameter postEffectParameter, Effect effect) {
+    bool ret = EffekseerNativePINVOKE.EffectRecorder_Begin(swigCPtr, squareMaxCount, EffectRendererParameter.getCPtr(config), Vector2I.getCPtr(screenSize), GraphicsDevice.getCPtr(graphicsDevice), EffectSetting.getCPtr(setting), RecordingParameter.getCPtr(recordingParameter), Vector2I.getCPtr(imageSize), isSRGBMode, ViewerEffectBehavior.getCPtr(behavior), PostEffectParameter.getCPtr(postEffectParameter), Effect.getCPtr(effect));
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+    return ret;
+  }
+
   public bool Step(int frames) {
     bool ret = EffekseerNativePINVOKE.EffectRecorder_Step(swigCPtr, frames);
     if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();

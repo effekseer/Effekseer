@@ -215,7 +215,7 @@
     <Compile Include="swig\MainWindowState.cs" />
     <Compile Include="swig\Matrix44F.cs" />
     <Compile Include="swig\MouseCursor.cs" />
-    <Compile Include="swig\Native.cs" />
+    <Compile Include="swig\NativeStatus.cs" />
     <Compile Include="swig\NetworkClient.cs" />
     <Compile Include="swig\PostEffectParameter.cs" />
     <Compile Include="swig\ProcessConnector.cs" />

@@ -539,6 +539,9 @@ void EffectRenderer::ResizeScreen(const Vector2I& screenSize)
 
 void EffectRenderer::PlayEffect()
 {
+	// TODO : Refactor
+	srand(RandomSeed);
+
 	assert(effect_ != nullptr);
 
 	for (int32_t z = 0; z < behavior_.CountZ; z++)
@@ -791,7 +794,18 @@ void EffectRenderer::Render(std::shared_ptr<RenderImage> renderImage)
 	// TODO : refactor
 	renderer_->SetCameraMatrix(parameter_.CameraMatrix);
 	renderer_->SetProjectionMatrix(parameter_.ProjectionMatrix);
-	renderer_->SetLightDirection(parameter_.LightDirection);
+
+	if (manager_->GetSetting()->GetCoordinateSystem() == Effekseer::CoordinateSystem::RH)
+	{
+		renderer_->SetLightDirection(parameter_.LightDirection);
+	}
+	else
+	{
+		auto temp = parameter_.LightDirection;
+		temp.Z = -temp.Z;
+		renderer_->SetLightDirection(temp);
+	}
+
 	renderer_->SetLightColor(parameter_.LightColor);
 	renderer_->SetLightAmbientColor(parameter_.LightAmbientColor);
 
