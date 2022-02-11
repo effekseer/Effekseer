@@ -505,7 +505,7 @@ bool EffectRenderer::Initialize(std::shared_ptr<efk::Graphics> graphics, Effekse
 
 	SetPostEffectParameter(Effekseer::Tool::PostEffectParameter{});
 
-	if(!OnAfterInitialize())
+	if (!OnAfterInitialize())
 	{
 		return false;
 	}
@@ -852,9 +852,19 @@ void EffectRenderer::Render(std::shared_ptr<RenderImage> renderImage)
 
 	renderer_->BeginRendering();
 
+	Effekseer::Manager::DrawParameter drawParameter;
+	drawParameter.ZFar = 1.0f;
+	drawParameter.ZNear = 0.0f;
+	drawParameter.IsSortingEffectsEnabled = true;
+	drawParameter.CameraPosition = parameter_.CameraPosition;
+	drawParameter.CameraFrontDirection = parameter_.CameraFrontDirection;
+	Effekseer::Matrix44 vpm;
+	Effekseer::Matrix44::Mul(vpm, parameter_.CameraMatrix, parameter_.ProjectionMatrix);
+	drawParameter.ViewProjectionMatrix = vpm;
+
 	if (parameter_.Distortion == DistortionType::Current)
 	{
-		manager_->DrawBack(parameter_.DrawParameter);
+		manager_->DrawBack(drawParameter);
 
 		// HACK
 		renderer_->EndRendering();
@@ -863,11 +873,11 @@ void EffectRenderer::Render(std::shared_ptr<RenderImage> renderImage)
 
 		// HACK
 		renderer_->BeginRendering();
-		manager_->DrawFront(parameter_.DrawParameter);
+		manager_->DrawFront(drawParameter);
 	}
 	else
 	{
-		manager_->Draw(parameter_.DrawParameter);
+		manager_->Draw(drawParameter);
 	}
 
 	renderer_->EndRendering();
@@ -884,7 +894,7 @@ void EffectRenderer::Render(std::shared_ptr<RenderImage> renderImage)
 
 		renderer_->BeginRendering();
 
-		manager_->Draw(parameter_.DrawParameter);
+		manager_->Draw(drawParameter);
 
 		renderer_->EndRendering();
 	}

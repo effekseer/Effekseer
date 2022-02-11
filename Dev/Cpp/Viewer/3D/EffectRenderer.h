@@ -16,16 +16,13 @@ namespace Effekseer
 namespace Tool
 {
 
-#if !defined(SWIG)
-class RenderImage;
-
 struct EffectRendererParameter
 {
-	Effekseer::Manager::DrawParameter DrawParameter;
 	DistortionType Distortion = DistortionType::Current;
 	Effekseer::Tool::Matrix44F CameraMatrix;
 	Effekseer::Tool::Matrix44F ProjectionMatrix;
-
+	Effekseer::Tool::Vector3F CameraPosition;
+	Effekseer::Tool::Vector3F CameraFrontDirection;
 	Effekseer::Tool::Color BackgroundColor;
 	Effekseer::Tool::Vector3F LightDirection;
 	Effekseer::Tool::Color LightColor;
@@ -36,6 +33,9 @@ struct EffectRendererParameter
 	int32_t GroundExtent = 10;
 	float GroundHeight = 0.0f;
 };
+
+#if !defined(SWIG)
+class RenderImage;
 
 class GroundRenderer
 {

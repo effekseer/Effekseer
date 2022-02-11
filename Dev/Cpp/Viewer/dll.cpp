@@ -130,21 +130,12 @@ void Native::RenderView(int32_t width, int32_t height, std::shared_ptr<Effekseer
 	viewPointCtrl->Update();
 
 	const auto ray = viewPointCtrl->GetCameraRay();
-	Effekseer::Manager::DrawParameter drawParameter;
-	drawParameter.IsSortingEffectsEnabled = true;
-	drawParameter.CameraPosition = ray.Origin;
-	drawParameter.CameraFrontDirection = ray.Direction;
-
-	Effekseer::Matrix44 vpm;
-	Effekseer::Matrix44::Mul(vpm, viewPointCtrl->GetCameraMatrix(), viewPointCtrl->GetProjectionMatrix());
-	drawParameter.ViewProjectionMatrix = vpm;
-	drawParameter.ZNear = 0.0f;
-	drawParameter.ZFar = 1.0f;
-
-	mainScreenConfig_.DrawParameter = drawParameter;
 	mainScreenConfig_.CameraMatrix = viewPointCtrl->GetCameraMatrix();
 	mainScreenConfig_.ProjectionMatrix = viewPointCtrl->GetProjectionMatrix();
 	mainScreenConfig_.RenderingMethod = renderingMode_;
+	mainScreenConfig_.CameraPosition = ray.Origin;
+	mainScreenConfig_.CameraFrontDirection = ray.Direction;
+
 	mainScreen_->SetConfig(mainScreenConfig_);
 	mainScreen_->Resize(Effekseer::Tool::Vector2I(width, height));
 
