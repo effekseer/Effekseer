@@ -180,6 +180,9 @@ static void CalculateNormal(ProceduralMesh& mesh)
 		const auto key = generateKey(mesh.Vertexes[i].Position);
 		mesh.Vertexes[i].Normal = normals[key] / static_cast<float>(vertexCounts[key]);
 		mesh.Vertexes[i].Tangent = tangents[key] / static_cast<float>(vertexCounts[key]);
+
+		mesh.Vertexes[i].Normal = mesh.Vertexes[i].Normal.Normalize();
+		mesh.Vertexes[i].Tangent = mesh.Vertexes[i].Tangent.Normalize();
 	}
 }
 
