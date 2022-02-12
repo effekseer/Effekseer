@@ -431,7 +431,6 @@ namespace Effekseer.GUI
 		{
 			if (isViewerShown)
 			{
-				EffectRenderer.SetEffect(null);
 				EffectRenderer.ResetEffect();
 
 				IsPlaying = false;
@@ -584,8 +583,6 @@ namespace Effekseer.GUI
 			{
 				effectFactory.ReloadAllResources();
 			}
-
-			EffectRenderer.ResetEffect();
 
 			EffectRenderer.SetEffect(null);
 			EffectRenderer.ResetEffect();

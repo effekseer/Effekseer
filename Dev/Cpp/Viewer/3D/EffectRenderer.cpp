@@ -1009,7 +1009,6 @@ std::shared_ptr<Effekseer::Tool::Effect> EffectRenderer::GetEffect() const
 
 void EffectRenderer::SetEffect(std::shared_ptr<Effekseer::Tool::Effect> effect)
 {
-	handles_.clear();
 	effect_ = effect;
 }
 
