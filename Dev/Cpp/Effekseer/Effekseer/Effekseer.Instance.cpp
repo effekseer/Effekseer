@@ -166,6 +166,7 @@ RectF GetUVInternal(const UVAnimationInstanceData& data, const UVAnimationType& 
 
 	return uv;
 }
+
 } // namespace
 
 Instance::Instance(ManagerImplemented* pManager, EffectNodeImplemented* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup)
@@ -734,54 +735,10 @@ void Instance::Update(float deltaFrame, bool shown)
 
 	{
 		auto& CommonValue = m_pEffectNode->RendererCommon;
-		auto& UV = CommonValue.UVs[0];
-		const auto UVType = CommonValue.UVTypes[0];
-
-		if (UVType == UVAnimationType::Animation)
-		{
-			auto time = m_LivingTime + uvAnimationData_[0].uvTimeOffset;
-
-			// 経過時間を取得
-			if (m_pEffectNode->GetType() == eEffectNodeType::EFFECT_NODE_TYPE_RIBBON ||
-				m_pEffectNode->GetType() == eEffectNodeType::EFFECT_NODE_TYPE_TRACK)
-			{
-				auto baseInstance = this->m_pContainer->GetFirstGroup()->GetFirst();
-				if (baseInstance != nullptr)
-				{
-					time = baseInstance->m_LivingTime + baseInstance->uvAnimationData_[0].uvTimeOffset;
-				}
-			}
-
-			float fFrameNum = time / (float)UV.Animation.FrameLength;
-			int32_t frameNum = (int32_t)fFrameNum;
-			int32_t frameCount = UV.Animation.FrameCountX * UV.Animation.FrameCountY;
-
-			if (UV.Animation.LoopType == UV.Animation.LOOPTYPE_ONCE)
-			{
-				if (frameNum >= frameCount)
-				{
-					frameNum = frameCount - 1;
-				}
-			}
-			else if (UV.Animation.LoopType == UV.Animation.LOOPTYPE_LOOP)
-			{
-				frameNum %= frameCount;
-			}
-			else if (UV.Animation.LoopType == UV.Animation.LOOPTYPE_REVERSELOOP)
-			{
-				bool rev = (frameNum / frameCount) % 2 == 1;
-				frameNum %= frameCount;
-				if (rev)
-				{
-					frameNum = frameCount - 1 - frameNum;
-				}
-			}
-
-			flipbookIndexAndNextRate_ = static_cast<float>(frameNum);
-			flipbookIndexAndNextRate_ += fFrameNum - static_cast<float>(frameNum);
-		}
+		flipbookIndexAndNextRate_ = GetFlipbookIndexAndNextRate(CommonValue.UVTypes[0], CommonValue.UVs[0], uvAnimationData_[0]);
 	}
 
+	// Alpha cutoff
 	if (m_pEffectNode->m_effect->GetVersion() >= 1600)
 	{
 		auto effect = this->m_pEffectNode->m_effect;
@@ -1265,6 +1222,63 @@ void Instance::ApplyDynamicParameterToFixedScaling()
 											 m_pEffectNode->DynamicFactor.Scale,
 											 m_pEffectNode->DynamicFactor.ScaleInv);
 	}
+}
+
+float Instance::GetFlipbookIndexAndNextRate(const UVAnimationType& UVType, const UVParameter& UV, const UVAnimationInstanceData& data) const
+{
+	if (UVType == UVAnimationType::Animation)
+	{
+		auto time = GetUVTime();
+
+		// 経過時間を取得
+		if (m_pEffectNode->GetType() == eEffectNodeType::EFFECT_NODE_TYPE_RIBBON ||
+			m_pEffectNode->GetType() == eEffectNodeType::EFFECT_NODE_TYPE_TRACK)
+		{
+			// is GetFirstGroup bug?
+			auto baseInstance = this->m_pContainer->GetFirstGroup()->GetFirst();
+			if (baseInstance != nullptr)
+			{
+				time = baseInstance->GetUVTime();
+			}
+		}
+
+		float fFrameNum = time / (float)UV.Animation.FrameLength;
+		int32_t frameNum = (int32_t)fFrameNum;
+		int32_t frameCount = UV.Animation.FrameCountX * UV.Animation.FrameCountY;
+
+		if (UV.Animation.LoopType == UV.Animation.LOOPTYPE_ONCE)
+		{
+			if (frameNum >= frameCount)
+			{
+				frameNum = frameCount - 1;
+			}
+		}
+		else if (UV.Animation.LoopType == UV.Animation.LOOPTYPE_LOOP)
+		{
+			frameNum %= frameCount;
+		}
+		else if (UV.Animation.LoopType == UV.Animation.LOOPTYPE_REVERSELOOP)
+		{
+			bool rev = (frameNum / frameCount) % 2 == 1;
+			frameNum %= frameCount;
+			if (rev)
+			{
+				frameNum = frameCount - 1 - frameNum;
+			}
+		}
+
+		float flipbookIndexAndNextRate = 0;
+		flipbookIndexAndNextRate = static_cast<float>(frameNum);
+		flipbookIndexAndNextRate += fFrameNum - static_cast<float>(frameNum);
+		return flipbookIndexAndNextRate;
+	}
+
+	return 0;
+}
+
+float Instance::GetUVTime() const
+{
+	return m_LivingTime + uvAnimationData_[0].uvTimeOffset;
 }
 
 void Instance::Draw(Instance* next, void* userData)

@@ -392,6 +392,10 @@ private:
 	void ApplyDynamicParameterToFixedRotation();
 
 	void ApplyDynamicParameterToFixedScaling();
+
+	float GetFlipbookIndexAndNextRate(const UVAnimationType& UVType, const UVParameter& UV, const UVAnimationInstanceData& data) const;
+
+	float GetUVTime() const;
 };
 
 //----------------------------------------------------------------------------------
