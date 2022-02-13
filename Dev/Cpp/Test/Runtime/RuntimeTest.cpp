@@ -146,6 +146,7 @@ void BasicRuntimeTestPlatform(EffectPlatformInitializingParameter param, EffectP
 		single16Test(u"Curve01", "Curve01");
 		single16Test(u"EdgeFallOff01", "EdgeFallOff01");
 		single16Test(u"Flip01", "Flip01");
+		single16Test(u"Flip_UV_01", "Flip_UV_01");
 		single16Test(u"ForceFieldLocal02", "ForceFieldLocal02");
 		single16Test(u"ForceFieldLocal03", "ForceFieldLocal03");
 		single16Test(u"Material_EffectScale", "Material_EffectScale");
