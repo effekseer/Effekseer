@@ -182,7 +182,6 @@ Instance::Instance(ManagerImplemented* pManager, EffectNodeImplemented* pEffectN
 	, m_ParentMatrix43Calculated(false)
 	, is_time_step_allowed(false)
 	, m_sequenceNumber(0)
-	, m_flipbookIndexAndNextRate(0)
 	, m_AlphaThreshold(0.0f)
 {
 	ColorInheritance = Color(255, 255, 255, 255);
@@ -574,6 +573,7 @@ void Instance::FirstUpdate()
 	{
 		InitUVAnimationData(uvAnimationData_[i], rand, m_pEffectNode->RendererCommon.UVTypes[i], m_pEffectNode->RendererCommon.UVs[i]);
 	}
+	flipbookIndexAndNextRate_ = 0;
 
 	// Alpha Cutoff
 	if (m_pEffectNode->AlphaCutoff.Type == ParameterAlphaCutoff::EType::FIXED)
@@ -777,8 +777,8 @@ void Instance::Update(float deltaFrame, bool shown)
 				}
 			}
 
-			m_flipbookIndexAndNextRate = static_cast<float>(frameNum);
-			m_flipbookIndexAndNextRate += fFrameNum - static_cast<float>(frameNum);
+			flipbookIndexAndNextRate_ = static_cast<float>(frameNum);
+			flipbookIndexAndNextRate_ += fFrameNum - static_cast<float>(frameNum);
 		}
 	}
 

@@ -272,7 +272,7 @@ public:
 	/* 更新番号 */
 	uint32_t m_sequenceNumber;
 
-	float m_flipbookIndexAndNextRate;
+	float flipbookIndexAndNextRate_ = 0;
 
 	union
 	{

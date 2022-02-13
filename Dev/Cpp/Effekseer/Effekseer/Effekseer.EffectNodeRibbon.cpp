@@ -180,7 +180,7 @@ void EffectNodeRibbon::BeginRenderingGroup(InstanceGroup* group, Manager* manage
 			m_instanceParameter.BlendAlphaUV = groupFirst->GetUV(4);
 			m_instanceParameter.BlendUVDistortionUV = groupFirst->GetUV(5);
 
-			m_instanceParameter.FlipbookIndexAndNextRate = groupFirst->m_flipbookIndexAndNextRate;
+			m_instanceParameter.FlipbookIndexAndNextRate = groupFirst->flipbookIndexAndNextRate_;
 
 			m_instanceParameter.AlphaThreshold = groupFirst->m_AlphaThreshold;
 
