@@ -500,7 +500,12 @@ namespace Effekseer.IO
 				{
 					bool result = ReplaceMaterialPaths(material, (path) =>
 					{
-						var resfile = AllFiles.First(f => f.HashName == path);
+						var resfile = AllFiles.FirstOrDefault(f => f.HashName == path);
+						if(resfile == null)
+						{
+							return path;
+						}
+
 						var fullPath = Path.Combine(exportDirPath, resfile.RelativePath);
 						fullPath = Utils.Misc.BackSlashToSlash(fullPath);
 						path = Utils.Misc.GetRelativePath(resourcePath, fullPath);
