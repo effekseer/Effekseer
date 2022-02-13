@@ -494,6 +494,69 @@ struct ParameterCustomData
 	}
 };
 
+enum class UVAnimationType : int32_t
+{
+	Default = 0,
+	Fixed = 1,
+	Animation = 2,
+	Scroll = 3,
+	FCurve = 4,
+};
+
+struct UVParameter
+{
+	union
+	{
+		struct
+		{
+		} Default;
+
+		struct
+		{
+			rectf Position;
+		} Fixed;
+
+		struct
+		{
+			rectf Position;
+			int32_t FrameLength;
+			int32_t FrameCountX;
+			int32_t FrameCountY;
+
+			enum
+			{
+				LOOPTYPE_ONCE = 0,
+				LOOPTYPE_LOOP = 1,
+				LOOPTYPE_REVERSELOOP = 2,
+
+				LOOPTYPE_DWORD = 0x7fffffff,
+			} LoopType;
+
+			random_int StartFrame;
+
+			enum
+			{
+				NONE = 0,
+				LERP = 1,
+			} InterpolationType;
+
+		} Animation;
+
+		struct
+		{
+			random_vector2d Position;
+			random_vector2d Size;
+			random_vector2d Speed;
+		} Scroll;
+
+		struct
+		{
+			FCurveVector2D* Position;
+			FCurveVector2D* Size;
+		} FCurve;
+	};
+};
+
 struct ParameterRendererCommon
 {
 	static const int32_t UVParameterNum = 6;
@@ -583,16 +646,7 @@ struct ParameterRendererCommon
 		easing_float_without_random Value;
 	} FadeOut;
 
-	enum
-	{
-		UV_DEFAULT = 0,
-		UV_FIXED = 1,
-		UV_ANIMATION = 2,
-		UV_SCROLL = 3,
-		UV_FCURVE = 4,
-
-		UV_DWORD = 0x7fffffff,
-	} UVTypes[UVParameterNum];
+	UVAnimationType UVTypes[UVParameterNum];
 
 	/**
 	@brief	UV Parameter
@@ -605,56 +659,7 @@ struct ParameterRendererCommon
 		vector2d Speed;
 	};
 
-	union
-	{
-		struct
-		{
-		} Default;
-
-		struct
-		{
-			rectf Position;
-		} Fixed;
-
-		struct
-		{
-			rectf Position;
-			int32_t FrameLength;
-			int32_t FrameCountX;
-			int32_t FrameCountY;
-
-			enum
-			{
-				LOOPTYPE_ONCE = 0,
-				LOOPTYPE_LOOP = 1,
-				LOOPTYPE_REVERSELOOP = 2,
-
-				LOOPTYPE_DWORD = 0x7fffffff,
-			} LoopType;
-
-			random_int StartFrame;
-
-			enum
-			{
-				NONE = 0,
-				LERP = 1,
-			} InterpolationType;
-
-		} Animation;
-
-		struct
-		{
-			random_vector2d Position;
-			random_vector2d Size;
-			random_vector2d Speed;
-		} Scroll;
-
-		struct
-		{
-			FCurveVector2D* Position;
-			FCurveVector2D* Size;
-		} FCurve;
-	} UVs[UVParameterNum];
+	UVParameter UVs[UVParameterNum];
 
 	ParameterRendererCommon()
 	{
@@ -663,7 +668,7 @@ struct ParameterRendererCommon
 		const int32_t ArraySize = sizeof(UVTypes) / sizeof(UVTypes[0]);
 		for (int32_t i = 0; i < ArraySize; i++)
 		{
-			UVTypes[i] = UV_DEFAULT;
+			UVTypes[i] = UVAnimationType::Default;
 		}
 
 		FilterTypes.fill(TextureFilterType::Nearest);
@@ -675,7 +680,7 @@ struct ParameterRendererCommon
 		const int32_t ArraySize = sizeof(UVTypes) / sizeof(UVTypes[0]);
 		for (int32_t i = 0; i < ArraySize; i++)
 		{
-			if (UVTypes[i] == UV_FCURVE)
+			if (UVTypes[i] == UVAnimationType::FCurve)
 			{
 				ES_SAFE_DELETE(UVs[i].FCurve.Position);
 				ES_SAFE_DELETE(UVs[i].FCurve.Size);
@@ -862,15 +867,15 @@ struct ParameterRendererCommon
 			const auto& UVType = UVTypes[UVIndex];
 			auto& UV = UVs[UVIndex];
 
-			if (UVType == UV_DEFAULT)
+			if (UVType == UVAnimationType::Default)
 			{
 			}
-			else if (UVType == UV_FIXED)
+			else if (UVType == UVAnimationType::Fixed)
 			{
 				memcpy(&UV.Fixed, pos, sizeof(UV.Fixed));
 				pos += sizeof(UV.Fixed);
 			}
-			else if (UVType == UV_ANIMATION)
+			else if (UVType == UVAnimationType::Animation)
 			{
 				memcpy(&UV.Animation.Position, pos, sizeof(UV.Animation.Position));
 				pos += sizeof(UV.Animation.Position);
@@ -896,12 +901,12 @@ struct ParameterRendererCommon
 					pos += sizeof(UV.Animation.InterpolationType);
 				}
 			}
-			else if (UVType == UV_SCROLL)
+			else if (UVType == UVAnimationType::Scroll)
 			{
 				memcpy(&UV.Scroll, pos, sizeof(UV.Scroll));
 				pos += sizeof(UV.Scroll);
 			}
-			else if (UVType == UV_FCURVE)
+			else if (UVType == UVAnimationType::FCurve)
 			{
 				UV.FCurve.Position = new FCurveVector2D();
 				UV.FCurve.Size = new FCurveVector2D();
@@ -1015,7 +1020,7 @@ struct ParameterRendererCommon
 
 		BasicParameter.BlendUVDistortionIntensity = BlendUVDistortionIntensity;
 
-		if (UVTypes[0] == UV_ANIMATION)
+		if (UVTypes[0] == UVAnimationType::Animation)
 		{
 			BasicParameter.EnableInterpolation = (UVs[0].Animation.InterpolationType != UVs[0].Animation.NONE);
 			BasicParameter.UVLoopType = UVs[0].Animation.LoopType;

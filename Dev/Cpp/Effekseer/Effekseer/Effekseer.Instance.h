@@ -53,6 +53,18 @@ struct InstanceCustomData
 	};
 };
 
+struct UVAnimationInstanceData
+{
+	//! The time offset for UV animation
+	int32_t uvTimeOffset;
+
+	// Scroll, FCurve area for UV
+	RectF uvAreaOffset;
+
+	// Scroll speed for UV
+	SIMD::Vec2f uvScrollSpeed;
+};
+
 class alignas(16) Instance : public IntrusiveList<Instance>::Node
 {
 	friend class Manager;
@@ -232,14 +244,7 @@ public:
 	// 削除されてからの時間
 	float m_RemovingTime;
 
-	//! The time offset for UV animation
-	int32_t uvTimeOffsets[ParameterRendererCommon::UVParameterNum];
-
-	// Scroll, FCurve area for UV
-	RectF uvAreaOffsets[ParameterRendererCommon::UVParameterNum];
-
-	// Scroll speed for UV
-	SIMD::Vec2f uvScrollSpeeds[ParameterRendererCommon::UVParameterNum];
+	std::array<UVAnimationInstanceData, ParameterRendererCommon::UVParameterNum> uvAnimationData_;
 
 	// Spawning Method matrix
 	SIMD::Mat43f m_GenerationLocation;
