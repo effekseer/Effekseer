@@ -417,7 +417,7 @@ void Instance::FirstUpdate()
 	// UV
 	for (int32_t i = 0; i < ParameterRendererCommon::UVParameterNum; i++)
 	{
-		UVFunc::InitUVAnimationData(uvAnimationData_[i], rand, m_pEffectNode->RendererCommon.UVs[i]);
+		UVFunctions::InitUVState(uvAnimationData_[i], rand, m_pEffectNode->RendererCommon.UVs[i]);
 	}
 
 	// Alpha Cutoff
@@ -1069,7 +1069,7 @@ void Instance::ApplyDynamicParameterToFixedScaling()
 	}
 }
 
-float Instance::GetFlipbookIndexAndNextRate(const UVAnimationType& UVType, const UVParameter& UV, const UVAnimationInstanceData& data) const
+float Instance::GetFlipbookIndexAndNextRate(const UVAnimationType& UVType, const UVParameter& UV, const InstanceUVState& data) const
 {
 	if (UVType == UVAnimationType::Animation)
 	{
@@ -1156,7 +1156,7 @@ void Instance::Kill()
 
 RectF Instance::GetUV(const int32_t index) const
 {
-	return UVFunc::GetUVInternal(
+	return UVFunctions::GetUV(
 		uvAnimationData_[index],
 		m_pEffectNode->RendererCommon.UVs[index],
 		m_LivingTime,

@@ -234,7 +234,7 @@ public:
 	// 削除されてからの時間
 	float m_RemovingTime;
 
-	std::array<UVAnimationInstanceData, ParameterRendererCommon::UVParameterNum> uvAnimationData_;
+	std::array<InstanceUVState, ParameterRendererCommon::UVParameterNum> uvAnimationData_;
 
 	// Spawning Method matrix
 	SIMD::Mat43f m_GenerationLocation;
@@ -385,7 +385,7 @@ private:
 
 	void ApplyDynamicParameterToFixedScaling();
 
-	float GetFlipbookIndexAndNextRate(const UVAnimationType& UVType, const UVParameter& UV, const UVAnimationInstanceData& data) const;
+	float GetFlipbookIndexAndNextRate(const UVAnimationType& UVType, const UVParameter& UV, const InstanceUVState& data) const;
 
 	float GetUVTime() const;
 

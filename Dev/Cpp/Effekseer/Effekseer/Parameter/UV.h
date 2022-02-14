@@ -18,7 +18,7 @@ enum class UVAnimationType : int32_t
 	FCurve = 4,
 };
 
-struct UVAnimationInstanceData
+struct InstanceUVState
 {
 	//! The time offset for UV animation
 	int32_t uvTimeOffset;
@@ -148,14 +148,14 @@ struct UVParameter
 	}
 };
 
-struct UVFunc
+struct UVFunctions
 {
 	static bool IsInfiniteValue(int value)
 	{
 		return std::numeric_limits<int32_t>::max() / 1000 < value;
 	}
 
-	static void InitUVAnimationData(UVAnimationInstanceData& data, RandObject& rand, const UVParameter& UV)
+	static void InitUVState(InstanceUVState& data, RandObject& rand, const UVParameter& UV)
 	{
 		const auto UVType = UV.Type;
 
@@ -195,7 +195,7 @@ struct UVFunc
 		}
 	}
 
-	static RectF GetUVInternal(const UVAnimationInstanceData& data, const UVParameter& UV, float m_LivingTime, float m_LivedTime)
+	static RectF GetUV(const InstanceUVState& data, const UVParameter& UV, float m_LivingTime, float m_LivedTime)
 	{
 		const auto uvType = UV.Type;
 
