@@ -770,14 +770,27 @@ struct ParameterRendererCommon
 
 		if (version >= 1600)
 		{
-			for (int i = 1; i < 6; i++)
+			for (int i = 1; i < 3; i++)
+			{
+				UVs[i].Load(pos, version, i);
+			}
+
+			memcpy(&UVDistortionIntensity, pos, sizeof(float));
+			pos += sizeof(float);
+
+			UVs[3].Load(pos, version, 3);
+
+			memcpy(&TextureBlendType, pos, sizeof(int));
+			pos += sizeof(int);
+
+			for (int i = 4; i < 6; i++)
 			{
 				UVs[i].Load(pos, version, i);
 			}
 
 			// blend uv distortion intensity
 			memcpy(&BlendUVDistortionIntensity, pos, sizeof(float));
-			pos += sizeof(int);
+			pos += sizeof(float);
 		}
 
 		if (version >= 10)
