@@ -23,6 +23,8 @@
 #include "Effekseer.EffectNodeTrack.h"
 #include "ForceField/ForceFields.h"
 
+#include "Parameter/UV.h"
+
 namespace Effekseer
 {
 
@@ -51,18 +53,6 @@ struct InstanceCustomData
 			std::array<float, 4> offset;
 		} fcurveColor;
 	};
-};
-
-struct UVAnimationInstanceData
-{
-	//! The time offset for UV animation
-	int32_t uvTimeOffset;
-
-	// Scroll, FCurve area for UV
-	RectF uvAreaOffset;
-
-	// Scroll speed for UV
-	SIMD::Vec2f uvScrollSpeed;
 };
 
 class alignas(16) Instance : public IntrusiveList<Instance>::Node
@@ -272,7 +262,7 @@ public:
 	/* 更新番号 */
 	uint32_t m_sequenceNumber;
 
-	float flipbookIndexAndNextRate_ = 0;
+	//float flipbookIndexAndNextRate_ = 0;
 
 	union
 	{
@@ -378,6 +368,8 @@ public:
 
 	bool AreChildrenActive() const;
 
+	float GetFlipbookIndexAndNextRate() const;
+
 private:
 	/**
 		@brief	行列の更新
@@ -396,6 +388,21 @@ private:
 	float GetFlipbookIndexAndNextRate(const UVAnimationType& UVType, const UVParameter& UV, const UVAnimationInstanceData& data) const;
 
 	float GetUVTime() const;
+
+	EffectNode* GetEffectNode() const
+	{
+		return m_pEffectNode;
+	}
+
+	InstanceContainer* GetContainer() const
+	{
+		return m_pContainer;
+	}
+
+	InstanceGroup* GetOwnGroup() const
+	{
+		return ownGroup_;
+	}
 };
 
 //----------------------------------------------------------------------------------
