@@ -23,37 +23,11 @@
 #include "Effekseer.EffectNodeTrack.h"
 #include "ForceField/ForceFields.h"
 
+#include "Parameter/CustomData.h"
 #include "Parameter/UV.h"
 
 namespace Effekseer
 {
-
-struct InstanceCustomData
-{
-	union
-	{
-		struct
-		{
-			SIMD::Vec2f start;
-			SIMD::Vec2f end;
-		} easing;
-
-		struct
-		{
-			SIMD::Vec2f value;
-		} random;
-
-		struct
-		{
-			SIMD::Vec2f offset;
-		} fcruve;
-
-		struct
-		{
-			std::array<float, 4> offset;
-		} fcurveColor;
-	};
-};
 
 class alignas(16) Instance : public IntrusiveList<Instance>::Node
 {
