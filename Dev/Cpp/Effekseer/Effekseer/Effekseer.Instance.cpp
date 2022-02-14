@@ -14,11 +14,6 @@
 namespace Effekseer
 {
 
-static bool IsInfiniteValue(int value)
-{
-	return std::numeric_limits<int32_t>::max() / 1000 < value;
-}
-
 Instance::Instance(ManagerImplemented* pManager, EffectNodeImplemented* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup)
 	: m_pManager(pManager)
 	, m_pEffectNode(pEffectNode)
@@ -33,7 +28,6 @@ Instance::Instance(ManagerImplemented* pManager, EffectNodeImplemented* pEffectN
 	, m_ParentMatrix43Calculated(false)
 	, is_time_step_allowed(false)
 	, m_sequenceNumber(0)
-	, m_flipbookIndexAndNextRate(0)
 	, m_AlphaThreshold(0.0f)
 {
 	ColorInheritance = Color(255, 255, 255, 255);
@@ -65,9 +59,9 @@ Instance::Instance(ManagerImplemented* pManager, EffectNodeImplemented* pEffectN
 		}
 	}
 
-	for (auto& it : uvTimeOffsets)
+	for (auto& data : uvAnimationData_)
 	{
-		it = 0;
+		data.uvTimeOffset = 0;
 	}
 }
 
@@ -423,43 +417,7 @@ void Instance::FirstUpdate()
 	// UV
 	for (int32_t i = 0; i < ParameterRendererCommon::UVParameterNum; i++)
 	{
-		const auto& UVType = m_pEffectNode->RendererCommon.UVTypes[i];
-		const auto& UV = m_pEffectNode->RendererCommon.UVs[i];
-
-		if (UVType == ParameterRendererCommon::UV_ANIMATION)
-		{
-			auto& uvTimeOffset = uvTimeOffsets[i];
-			uvTimeOffset = (int32_t)UV.Animation.StartFrame.getValue(rand);
-
-			if (!IsInfiniteValue(UV.Animation.FrameLength))
-			{
-				uvTimeOffset *= UV.Animation.FrameLength;
-			}
-		}
-		else if (UVType == ParameterRendererCommon::UV_SCROLL)
-		{
-			auto& uvAreaOffset = uvAreaOffsets[i];
-			auto& uvScrollSpeed = uvScrollSpeeds[i];
-
-			auto xy = UV.Scroll.Position.getValue(rand);
-			auto zw = UV.Scroll.Size.getValue(rand);
-
-			uvAreaOffset.X = xy.GetX();
-			uvAreaOffset.Y = xy.GetY();
-			uvAreaOffset.Width = zw.GetX();
-			uvAreaOffset.Height = zw.GetY();
-
-			uvScrollSpeed = UV.Scroll.Speed.getValue(rand);
-		}
-		else if (UVType == ParameterRendererCommon::UV_FCURVE)
-		{
-			auto& uvAreaOffset = uvAreaOffsets[i];
-
-			uvAreaOffset.X = UV.FCurve.Position->X.GetOffset(rand);
-			uvAreaOffset.Y = UV.FCurve.Position->Y.GetOffset(rand);
-			uvAreaOffset.Width = UV.FCurve.Size->X.GetOffset(rand);
-			uvAreaOffset.Height = UV.FCurve.Size->Y.GetOffset(rand);
-		}
+		UVFunctions::InitUVState(uvAnimationData_[i], rand, m_pEffectNode->RendererCommon.UVs[i]);
 	}
 
 	// Alpha Cutoff
@@ -619,56 +577,7 @@ void Instance::Update(float deltaFrame, bool shown)
 
 	UpdateChildrenGroupMatrix();
 
-	{
-		auto& CommonValue = m_pEffectNode->RendererCommon;
-		auto& UV = CommonValue.UVs[0];
-		int UVType = CommonValue.UVTypes[0];
-
-		if (UVType == ParameterRendererCommon::UV_ANIMATION)
-		{
-			auto time = m_LivingTime + uvTimeOffsets[0];
-
-			// 経過時間を取得
-			if (m_pEffectNode->GetType() == eEffectNodeType::EFFECT_NODE_TYPE_RIBBON ||
-				m_pEffectNode->GetType() == eEffectNodeType::EFFECT_NODE_TYPE_TRACK)
-			{
-				auto baseInstance = this->m_pContainer->GetFirstGroup()->GetFirst();
-				if (baseInstance != nullptr)
-				{
-					time = baseInstance->m_LivingTime + baseInstance->uvTimeOffsets[0];
-				}
-			}
-
-			float fFrameNum = time / (float)UV.Animation.FrameLength;
-			int32_t frameNum = (int32_t)fFrameNum;
-			int32_t frameCount = UV.Animation.FrameCountX * UV.Animation.FrameCountY;
-
-			if (UV.Animation.LoopType == UV.Animation.LOOPTYPE_ONCE)
-			{
-				if (frameNum >= frameCount)
-				{
-					frameNum = frameCount - 1;
-				}
-			}
-			else if (UV.Animation.LoopType == UV.Animation.LOOPTYPE_LOOP)
-			{
-				frameNum %= frameCount;
-			}
-			else if (UV.Animation.LoopType == UV.Animation.LOOPTYPE_REVERSELOOP)
-			{
-				bool rev = (frameNum / frameCount) % 2 == 1;
-				frameNum %= frameCount;
-				if (rev)
-				{
-					frameNum = frameCount - 1 - frameNum;
-				}
-			}
-
-			m_flipbookIndexAndNextRate = static_cast<float>(frameNum);
-			m_flipbookIndexAndNextRate += fFrameNum - static_cast<float>(frameNum);
-		}
-	}
-
+	// Alpha cutoff
 	if (m_pEffectNode->m_effect->GetVersion() >= 1600)
 	{
 		auto effect = this->m_pEffectNode->m_effect;
@@ -821,6 +730,12 @@ bool Instance::AreChildrenActive() const
 		}
 	}
 	return false;
+}
+
+float Instance::GetFlipbookIndexAndNextRate() const
+{
+	auto& CommonValue = this->m_pEffectNode->RendererCommon;
+	return GetFlipbookIndexAndNextRate(CommonValue.UVs[0].Type, CommonValue.UVs[0], uvAnimationData_[0]);
 }
 
 void Instance::CalculateMatrix(float deltaFrame)
@@ -1154,6 +1069,63 @@ void Instance::ApplyDynamicParameterToFixedScaling()
 	}
 }
 
+float Instance::GetFlipbookIndexAndNextRate(const UVAnimationType& UVType, const UVParameter& UV, const InstanceUVState& data) const
+{
+	if (UVType == UVAnimationType::Animation)
+	{
+		auto time = GetUVTime();
+
+		// 経過時間を取得
+		if (m_pEffectNode->GetType() == eEffectNodeType::EFFECT_NODE_TYPE_RIBBON ||
+			m_pEffectNode->GetType() == eEffectNodeType::EFFECT_NODE_TYPE_TRACK)
+		{
+			// is GetFirstGroup bug?
+			auto baseInstance = this->GetContainer()->GetFirstGroup()->GetFirst();
+			if (baseInstance != nullptr)
+			{
+				time = baseInstance->GetUVTime();
+			}
+		}
+
+		float fFrameNum = time / (float)UV.Animation.FrameLength;
+		int32_t frameNum = (int32_t)fFrameNum;
+		int32_t frameCount = UV.Animation.FrameCountX * UV.Animation.FrameCountY;
+
+		if (UV.Animation.LoopType == UV.Animation.LOOPTYPE_ONCE)
+		{
+			if (frameNum >= frameCount)
+			{
+				frameNum = frameCount - 1;
+			}
+		}
+		else if (UV.Animation.LoopType == UV.Animation.LOOPTYPE_LOOP)
+		{
+			frameNum %= frameCount;
+		}
+		else if (UV.Animation.LoopType == UV.Animation.LOOPTYPE_REVERSELOOP)
+		{
+			bool rev = (frameNum / frameCount) % 2 == 1;
+			frameNum %= frameCount;
+			if (rev)
+			{
+				frameNum = frameCount - 1 - frameNum;
+			}
+		}
+
+		float flipbookIndexAndNextRate = 0;
+		flipbookIndexAndNextRate = static_cast<float>(frameNum);
+		flipbookIndexAndNextRate += fFrameNum - static_cast<float>(frameNum);
+		return flipbookIndexAndNextRate;
+	}
+
+	return 0;
+}
+
+float Instance::GetUVTime() const
+{
+	return m_LivingTime + uvAnimationData_[0].uvTimeOffset;
+}
+
 void Instance::Draw(Instance* next, void* userData)
 {
 	assert(m_pEffectNode != nullptr);
@@ -1184,117 +1156,11 @@ void Instance::Kill()
 
 RectF Instance::GetUV(const int32_t index) const
 {
-	RectF uv(0.0f, 0.0f, 1.0f, 1.0f);
-
-	const auto& UVType = m_pEffectNode->RendererCommon.UVTypes[index];
-	const auto& UV = m_pEffectNode->RendererCommon.UVs[index];
-
-	if (UVType == ParameterRendererCommon::UV_DEFAULT)
-	{
-		return RectF(0.0f, 0.0f, 1.0f, 1.0f);
-	}
-	else if (UVType == ParameterRendererCommon::UV_FIXED)
-	{
-		uv = RectF(UV.Fixed.Position.x, UV.Fixed.Position.y, UV.Fixed.Position.w, UV.Fixed.Position.h);
-	}
-	else if (UVType == ParameterRendererCommon::UV_ANIMATION)
-	{
-		auto uvTimeOffset = static_cast<float>(uvTimeOffsets[index]);
-
-		float time{};
-		int frameLength = UV.Animation.FrameLength;
-
-		if (IsInfiniteValue(frameLength))
-		{
-			time = uvTimeOffset;
-			frameLength = 1;
-		}
-		else
-		{
-			time = m_LivingTime + uvTimeOffset;
-		}
-
-		int32_t frameNum = (int32_t)(time / frameLength);
-		int32_t frameCount = UV.Animation.FrameCountX * UV.Animation.FrameCountY;
-
-		if (UV.Animation.LoopType == UV.Animation.LOOPTYPE_ONCE)
-		{
-			if (frameNum >= frameCount)
-			{
-				frameNum = frameCount - 1;
-			}
-		}
-		else if (UV.Animation.LoopType == UV.Animation.LOOPTYPE_LOOP)
-		{
-			frameNum %= frameCount;
-		}
-		else if (UV.Animation.LoopType == UV.Animation.LOOPTYPE_REVERSELOOP)
-		{
-			bool rev = (frameNum / frameCount) % 2 == 1;
-			frameNum %= frameCount;
-			if (rev)
-			{
-				frameNum = frameCount - 1 - frameNum;
-			}
-		}
-
-		int32_t frameX = frameNum % UV.Animation.FrameCountX;
-		int32_t frameY = frameNum / UV.Animation.FrameCountX;
-
-		uv = RectF(UV.Animation.Position.x + UV.Animation.Position.w * frameX,
-				   UV.Animation.Position.y + UV.Animation.Position.h * frameY,
-				   UV.Animation.Position.w,
-				   UV.Animation.Position.h);
-	}
-	else if (UVType == ParameterRendererCommon::UV_SCROLL)
-	{
-		auto& uvAreaOffset = uvAreaOffsets[index];
-		auto& uvScrollSpeed = uvScrollSpeeds[index];
-
-		auto time = (int32_t)m_LivingTime;
-
-		uv = RectF(uvAreaOffset.X + uvScrollSpeed.GetX() * time,
-				   uvAreaOffset.Y + uvScrollSpeed.GetY() * time,
-				   uvAreaOffset.Width,
-				   uvAreaOffset.Height);
-	}
-	else if (UVType == ParameterRendererCommon::UV_FCURVE)
-	{
-		auto& uvAreaOffset = uvAreaOffsets[index];
-
-		auto fcurvePos = UV.FCurve.Position->GetValues(m_LivingTime, m_LivedTime);
-		auto fcurveSize = UV.FCurve.Size->GetValues(m_LivingTime, m_LivedTime);
-
-		uv = RectF(uvAreaOffset.X + fcurvePos.GetX(),
-				   uvAreaOffset.Y + fcurvePos.GetY(),
-				   uvAreaOffset.Width + fcurveSize.GetX(),
-				   uvAreaOffset.Height + fcurveSize.GetY());
-	}
-
-	// For webgl bug (it makes slow if sampling points are too far on WebGL)
-	const float looppoint_uv = 4.0f;
-
-	if (uv.X < -looppoint_uv && uv.X + uv.Width < -looppoint_uv)
-	{
-		uv.X += (-static_cast<int32_t>(uv.X) - looppoint_uv);
-	}
-
-	if (uv.X > looppoint_uv && uv.X + uv.Width > looppoint_uv)
-	{
-		uv.X -= (static_cast<int32_t>(uv.X) - looppoint_uv);
-	}
-
-	if (uv.Y < -looppoint_uv && uv.Y + uv.Height < -looppoint_uv)
-	{
-		uv.Y += (-static_cast<int32_t>(uv.Y) - looppoint_uv);
-	}
-
-	if (uv.Y > looppoint_uv && uv.Y + uv.Height > looppoint_uv)
-	{
-		uv.Y -= (static_cast<int32_t>(uv.Y) - looppoint_uv);
-	}
-
-	return uv;
+	return UVFunctions::GetUV(
+		uvAnimationData_[index],
+		m_pEffectNode->RendererCommon.UVs[index],
+		m_LivingTime,
+		m_LivedTime);
 }
 
 std::array<float, 4> Instance::GetCustomData(int32_t index) const

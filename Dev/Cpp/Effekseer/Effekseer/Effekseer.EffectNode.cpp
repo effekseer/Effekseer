@@ -770,7 +770,7 @@ EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter()
 	param.BlendUVDistortionTextureIndex = RendererCommon.BlendUVDistortionTextureIndex;
 	param.BlendUVDistortionTexWrapType = RendererCommon.WrapTypes[6];
 
-	if (RendererCommon.UVTypes[0] == ParameterRendererCommon::UV_ANIMATION && RendererCommon.UVs[0].Animation.InterpolationType != 0)
+	if (RendererCommon.UVs[0].Type == UVAnimationType::Animation && RendererCommon.UVs[0].Animation.InterpolationType != 0)
 	{
 		param.FlipbookParams.Enable = true;
 		param.FlipbookParams.LoopType = RendererCommon.UVs[0].Animation.LoopType;
@@ -853,7 +853,7 @@ void EffectNodeImplemented::SetBasicRenderParameter(EffectBasicRenderParameter p
 
 	if (param.FlipbookParams.Enable)
 	{
-		RendererCommon.UVTypes[0] = ParameterRendererCommon::UV_ANIMATION;
+		RendererCommon.UVs[0].Type = UVAnimationType::Animation;
 		RendererCommon.UVs[0].Animation.LoopType =
 			static_cast<decltype(RendererCommon.UVs[0].Animation.LoopType)>(param.FlipbookParams.LoopType);
 		RendererCommon.UVs[0].Animation.FrameCountX = param.FlipbookParams.DivideX;

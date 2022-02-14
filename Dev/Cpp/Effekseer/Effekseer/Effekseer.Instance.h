@@ -23,6 +23,8 @@
 #include "Effekseer.EffectNodeTrack.h"
 #include "ForceField/ForceFields.h"
 
+#include "Parameter/UV.h"
+
 namespace Effekseer
 {
 
@@ -232,14 +234,7 @@ public:
 	// 削除されてからの時間
 	float m_RemovingTime;
 
-	//! The time offset for UV animation
-	int32_t uvTimeOffsets[ParameterRendererCommon::UVParameterNum];
-
-	// Scroll, FCurve area for UV
-	RectF uvAreaOffsets[ParameterRendererCommon::UVParameterNum];
-
-	// Scroll speed for UV
-	SIMD::Vec2f uvScrollSpeeds[ParameterRendererCommon::UVParameterNum];
+	std::array<InstanceUVState, ParameterRendererCommon::UVParameterNum> uvAnimationData_;
 
 	// Spawning Method matrix
 	SIMD::Mat43f m_GenerationLocation;
@@ -267,7 +262,7 @@ public:
 	/* 更新番号 */
 	uint32_t m_sequenceNumber;
 
-	float m_flipbookIndexAndNextRate;
+	//float flipbookIndexAndNextRate_ = 0;
 
 	union
 	{
@@ -373,6 +368,8 @@ public:
 
 	bool AreChildrenActive() const;
 
+	float GetFlipbookIndexAndNextRate() const;
+
 private:
 	/**
 		@brief	行列の更新
@@ -387,6 +384,25 @@ private:
 	void ApplyDynamicParameterToFixedRotation();
 
 	void ApplyDynamicParameterToFixedScaling();
+
+	float GetFlipbookIndexAndNextRate(const UVAnimationType& UVType, const UVParameter& UV, const InstanceUVState& data) const;
+
+	float GetUVTime() const;
+
+	EffectNode* GetEffectNode() const
+	{
+		return m_pEffectNode;
+	}
+
+	InstanceContainer* GetContainer() const
+	{
+		return m_pContainer;
+	}
+
+	InstanceGroup* GetOwnGroup() const
+	{
+		return ownGroup_;
+	}
 };
 
 //----------------------------------------------------------------------------------

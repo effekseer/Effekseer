@@ -21,6 +21,7 @@
 #include "Parameter/Effekseer.Parameters.h"
 #include "Parameter/SpawnMethod.h"
 #include "Parameter/Translation.h"
+#include "Parameter/UV.h"
 #include "SIMD/Utils.h"
 #include "Utils/BinaryVersion.h"
 
@@ -583,104 +584,14 @@ struct ParameterRendererCommon
 		easing_float_without_random Value;
 	} FadeOut;
 
-	enum
-	{
-		UV_DEFAULT = 0,
-		UV_FIXED = 1,
-		UV_ANIMATION = 2,
-		UV_SCROLL = 3,
-		UV_FCURVE = 4,
-
-		UV_DWORD = 0x7fffffff,
-	} UVTypes[UVParameterNum];
-
-	/**
-	@brief	UV Parameter
-	@note
-	for Compatibility
-	*/
-	struct UVScroll_09
-	{
-		rectf Position;
-		vector2d Speed;
-	};
-
-	union
-	{
-		struct
-		{
-		} Default;
-
-		struct
-		{
-			rectf Position;
-		} Fixed;
-
-		struct
-		{
-			rectf Position;
-			int32_t FrameLength;
-			int32_t FrameCountX;
-			int32_t FrameCountY;
-
-			enum
-			{
-				LOOPTYPE_ONCE = 0,
-				LOOPTYPE_LOOP = 1,
-				LOOPTYPE_REVERSELOOP = 2,
-
-				LOOPTYPE_DWORD = 0x7fffffff,
-			} LoopType;
-
-			random_int StartFrame;
-
-			enum
-			{
-				NONE = 0,
-				LERP = 1,
-			} InterpolationType;
-
-		} Animation;
-
-		struct
-		{
-			random_vector2d Position;
-			random_vector2d Size;
-			random_vector2d Speed;
-		} Scroll;
-
-		struct
-		{
-			FCurveVector2D* Position;
-			FCurveVector2D* Size;
-		} FCurve;
-	} UVs[UVParameterNum];
+	std::array<UVParameter, UVParameterNum> UVs;
 
 	ParameterRendererCommon()
 	{
 		FadeInType = FADEIN_OFF;
 		FadeOutType = FADEOUT_NONE;
-		const int32_t ArraySize = sizeof(UVTypes) / sizeof(UVTypes[0]);
-		for (int32_t i = 0; i < ArraySize; i++)
-		{
-			UVTypes[i] = UV_DEFAULT;
-		}
-
 		FilterTypes.fill(TextureFilterType::Nearest);
 		WrapTypes.fill(TextureWrapType::Repeat);
-	}
-
-	~ParameterRendererCommon()
-	{
-		const int32_t ArraySize = sizeof(UVTypes) / sizeof(UVTypes[0]);
-		for (int32_t i = 0; i < ArraySize; i++)
-		{
-			if (UVTypes[i] == UV_FCURVE)
-			{
-				ES_SAFE_DELETE(UVs[i].FCurve.Position);
-				ES_SAFE_DELETE(UVs[i].FCurve.Size);
-			}
-		}
 	}
 
 	void reset()
@@ -855,106 +766,31 @@ struct ParameterRendererCommon
 			pos += sizeof(FadeOut);
 		}
 
-		memcpy(&UVTypes[0], pos, sizeof(int));
-		pos += sizeof(int);
-
-		auto LoadUVParameter = [&](const int UVIndex) {
-			const auto& UVType = UVTypes[UVIndex];
-			auto& UV = UVs[UVIndex];
-
-			if (UVType == UV_DEFAULT)
-			{
-			}
-			else if (UVType == UV_FIXED)
-			{
-				memcpy(&UV.Fixed, pos, sizeof(UV.Fixed));
-				pos += sizeof(UV.Fixed);
-			}
-			else if (UVType == UV_ANIMATION)
-			{
-				memcpy(&UV.Animation.Position, pos, sizeof(UV.Animation.Position));
-				pos += sizeof(UV.Animation.Position);
-
-				memcpy(&UV.Animation.FrameLength, pos, sizeof(UV.Animation.FrameLength));
-				pos += sizeof(UV.Animation.FrameLength);
-
-				memcpy(&UV.Animation.FrameCountX, pos, sizeof(UV.Animation.FrameCountX));
-				pos += sizeof(UV.Animation.FrameCountX);
-
-				memcpy(&UV.Animation.FrameCountY, pos, sizeof(UV.Animation.FrameCountY));
-				pos += sizeof(UV.Animation.FrameCountY);
-
-				memcpy(&UV.Animation.LoopType, pos, sizeof(UV.Animation.LoopType));
-				pos += sizeof(UV.Animation.LoopType);
-
-				memcpy(&UV.Animation.StartFrame, pos, sizeof(UV.Animation.StartFrame));
-				pos += sizeof(UV.Animation.StartFrame);
-
-				if (version >= 1600 && UVIndex == 0)
-				{
-					memcpy(&UV.Animation.InterpolationType, pos, sizeof(UV.Animation.InterpolationType));
-					pos += sizeof(UV.Animation.InterpolationType);
-				}
-			}
-			else if (UVType == UV_SCROLL)
-			{
-				memcpy(&UV.Scroll, pos, sizeof(UV.Scroll));
-				pos += sizeof(UV.Scroll);
-			}
-			else if (UVType == UV_FCURVE)
-			{
-				UV.FCurve.Position = new FCurveVector2D();
-				UV.FCurve.Size = new FCurveVector2D();
-				pos += UV.FCurve.Position->Load(pos, version);
-				pos += UV.FCurve.Size->Load(pos, version);
-			}
-		};
-
-		LoadUVParameter(0);
+		UVs[0].Load(pos, version, 0);
 
 		if (version >= 1600)
 		{
-			// alpha texture
-			memcpy(&UVTypes[1], pos, sizeof(int));
-			pos += sizeof(int);
+			for (int i = 1; i < 3; i++)
+			{
+				UVs[i].Load(pos, version, i);
+			}
 
-			LoadUVParameter(1);
+			memcpy(&UVDistortionIntensity, pos, sizeof(float));
+			pos += sizeof(float);
 
-			// uv distortion texture
-			memcpy(&UVTypes[2], pos, sizeof(int));
-			pos += sizeof(int);
+			UVs[3].Load(pos, version, 3);
 
-			LoadUVParameter(2);
-
-			// uv distortion intensity
-			memcpy(&UVDistortionIntensity, pos, sizeof(int));
-			pos += sizeof(int);
-
-			// blend texture
-			memcpy(&UVTypes[3], pos, sizeof(int));
-			pos += sizeof(int);
-
-			LoadUVParameter(3);
-
-			// blend type
 			memcpy(&TextureBlendType, pos, sizeof(int));
 			pos += sizeof(int);
 
-			// blend alpha texture
-			memcpy(&UVTypes[4], pos, sizeof(int));
-			pos += sizeof(int);
-
-			LoadUVParameter(4);
-
-			// blend alpha texture
-			memcpy(&UVTypes[5], pos, sizeof(int));
-			pos += sizeof(int);
-
-			LoadUVParameter(5);
+			for (int i = 4; i < 6; i++)
+			{
+				UVs[i].Load(pos, version, i);
+			}
 
 			// blend uv distortion intensity
-			memcpy(&BlendUVDistortionIntensity, pos, sizeof(int));
-			pos += sizeof(int);
+			memcpy(&BlendUVDistortionIntensity, pos, sizeof(float));
+			pos += sizeof(float);
 		}
 
 		if (version >= 10)
@@ -1015,7 +851,7 @@ struct ParameterRendererCommon
 
 		BasicParameter.BlendUVDistortionIntensity = BlendUVDistortionIntensity;
 
-		if (UVTypes[0] == UV_ANIMATION)
+		if (UVs[0].Type == UVAnimationType::Animation)
 		{
 			BasicParameter.EnableInterpolation = (UVs[0].Animation.InterpolationType != UVs[0].Animation.NONE);
 			BasicParameter.UVLoopType = UVs[0].Animation.LoopType;
