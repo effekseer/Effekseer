@@ -154,6 +154,8 @@ void BasicRuntimeTestPlatform(EffectPlatformInitializingParameter param, EffectP
 		single16Test(u"ProcedualModel01", "ProcedualModel01");
 		single16Test(u"ProcedualModel02", "ProcedualModel02");
 		single16Test(u"ProcedualModel03", "ProcedualModel03");
+		single16Test(u"AlphaCutoffParameter01", "AlphaCutoffParameter01");
+		single16Test(u"RotateScale01", "RotateScale01");
 	}
 
 	{
@@ -1118,7 +1120,6 @@ void SRGBLinearTest()
 #endif
 #endif
 }
-
 
 #if defined(__linux__) || defined(__APPLE__) || defined(WIN32)
 
