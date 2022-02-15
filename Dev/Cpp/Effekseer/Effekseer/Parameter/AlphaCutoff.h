@@ -131,7 +131,7 @@ struct AlphaCuttoffState
 
 struct AlphaCutoffFunctions
 {
-	static float CalcAlphaThreshold(RandObject& rand, const Instance* parent, const ParameterAlphaCutoff& alphaCutoff, const AlphaCuttoffState alpha_cutoff_values, const Effect* effect, const InstanceGlobal* instanceGlobal, float livingTime, float livedTime)
+	static float CalcAlphaThreshold(RandObject& rand, const Instance* parent, const ParameterAlphaCutoff& alphaCutoff, const AlphaCuttoffState& alpha_cutoff_values, const Effect* effect, const InstanceGlobal* instanceGlobal, float livingTime, float livedTime)
 	{
 		if (alphaCutoff.Type == ParameterAlphaCutoff::EType::FIXED)
 		{
@@ -192,7 +192,7 @@ struct AlphaCutoffFunctions
 		return 1.0f;
 	}
 
-	static float InitAlphaThreshold(AlphaCuttoffState alpha_cutoff_values, RandObject& rand, const ParameterAlphaCutoff& alphaCutoff, const Instance* parent, const Effect* effect, const InstanceGlobal* instanceGlobal)
+	static float InitAlphaThreshold(AlphaCuttoffState& alpha_cutoff_values, RandObject& rand, const ParameterAlphaCutoff& alphaCutoff, const Instance* parent, const Effect* effect, const InstanceGlobal* instanceGlobal)
 	{
 		if (alphaCutoff.Type == ParameterAlphaCutoff::EType::FIXED)
 		{
