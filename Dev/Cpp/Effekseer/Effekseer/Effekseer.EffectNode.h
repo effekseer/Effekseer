@@ -16,6 +16,7 @@
 #include "Effekseer.Effect.h"
 #include "ForceField/ForceFields.h"
 #include "Noise/CurlNoise.h"
+#include "Parameter/CustomData.h"
 #include "Parameter/DynamicParameter.h"
 #include "Parameter/Easing.h"
 #include "Parameter/Effekseer.Parameters.h"
@@ -378,121 +379,6 @@ struct ParameterScalingSinglePVA
 	random_float Position;
 	random_float Velocity;
 	random_float Acceleration;
-};
-
-enum ParameterCustomDataType : int32_t
-{
-	None = 0,
-	Fixed2D = 20,
-	Random2D = 21,
-	Easing2D = 22,
-	FCurve2D = 23,
-	Fixed4D = 40,
-	FCurveColor = 53,
-	DynamicInput = 60,
-	Unknown,
-};
-
-struct ParameterCustomDataFixed
-{
-	vector2d Values;
-};
-
-struct ParameterCustomDataRandom
-{
-	random_vector2d Values;
-};
-
-struct ParameterCustomDataEasing
-{
-	easing_vector2d Values;
-};
-
-struct ParameterCustomDataFCurve
-{
-	FCurveVector2D* Values;
-};
-
-struct ParameterCustomDataFCurveColor
-{
-	FCurveVectorColor* Values;
-};
-
-struct ParameterCustomData
-{
-	ParameterCustomDataType Type = ParameterCustomDataType::None;
-
-	union
-	{
-		ParameterCustomDataFixed Fixed;
-		ParameterCustomDataRandom Random;
-		ParameterCustomDataEasing Easing;
-		ParameterCustomDataFCurve FCurve;
-		std::array<float, 4> Fixed4D;
-		ParameterCustomDataFCurveColor FCurveColor;
-	};
-
-	ParameterCustomData() = default;
-
-	~ParameterCustomData()
-	{
-		if (Type == ParameterCustomDataType::FCurve2D)
-		{
-			ES_SAFE_DELETE(FCurve.Values);
-		}
-
-		if (Type == ParameterCustomDataType::FCurveColor)
-		{
-			ES_SAFE_DELETE(FCurveColor.Values);
-		}
-	}
-
-	void load(uint8_t*& pos, int32_t version)
-	{
-		memcpy(&Type, pos, sizeof(int));
-		pos += sizeof(int);
-
-		if (Type == ParameterCustomDataType::None)
-		{
-		}
-		else if (Type == ParameterCustomDataType::Fixed2D)
-		{
-			memcpy(&Fixed.Values, pos, sizeof(Fixed));
-			pos += sizeof(Fixed);
-		}
-		else if (Type == ParameterCustomDataType::Random2D)
-		{
-			memcpy(&Random.Values, pos, sizeof(Random));
-			pos += sizeof(Random);
-		}
-		else if (Type == ParameterCustomDataType::Easing2D)
-		{
-			memcpy(&Easing.Values, pos, sizeof(Easing));
-			pos += sizeof(Easing);
-		}
-		else if (Type == ParameterCustomDataType::FCurve2D)
-		{
-			FCurve.Values = new FCurveVector2D();
-			pos += FCurve.Values->Load(pos, version);
-		}
-		else if (Type == ParameterCustomDataType::Fixed4D)
-		{
-			memcpy(Fixed4D.data(), pos, sizeof(float) * 4);
-			pos += sizeof(float) * 4;
-		}
-		else if (Type == ParameterCustomDataType::FCurveColor)
-		{
-			FCurveColor.Values = new FCurveVectorColor();
-			pos += FCurveColor.Values->Load(pos, version);
-		}
-		else if (Type == ParameterCustomDataType::DynamicInput)
-		{
-		}
-		else
-		{
-			assert(0);
-		}
-	}
 };
 
 struct ParameterRendererCommon

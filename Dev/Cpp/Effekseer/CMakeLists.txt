@@ -10,6 +10,7 @@ file(GLOB effekseer_h
     Effekseer/Renderer/*.h
     Effekseer/Material/*.h
     Effekseer/Parameter/*.h
+    Effekseer/Parameter/CustomData.h
     Effekseer/Parameter/UV.h
     Effekseer/IO/*.h
     Effekseer/Utils/*.h

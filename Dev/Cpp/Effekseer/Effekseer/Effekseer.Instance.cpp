@@ -469,27 +469,7 @@ void Instance::FirstUpdate()
 			instanceCustomData = &customDataValues2;
 		}
 
-		if (parameterCustomData->Type == ParameterCustomDataType::Fixed2D)
-		{
-			// none
-		}
-		else if (parameterCustomData->Type == ParameterCustomDataType::Easing2D)
-		{
-			instanceCustomData->easing.start = parameterCustomData->Easing.Values.start.getValue(rand);
-			instanceCustomData->easing.end = parameterCustomData->Easing.Values.end.getValue(rand);
-		}
-		else if (parameterCustomData->Type == ParameterCustomDataType::Random2D)
-		{
-			instanceCustomData->random.value = parameterCustomData->Random.Values.getValue(rand);
-		}
-		else if (parameterCustomData->Type == ParameterCustomDataType::FCurve2D)
-		{
-			instanceCustomData->fcruve.offset = parameterCustomData->FCurve.Values->GetOffsets(rand);
-		}
-		else if (parameterCustomData->Type == ParameterCustomDataType::FCurveColor)
-		{
-			instanceCustomData->fcurveColor.offset = parameterCustomData->FCurveColor.Values->GetOffsets(rand);
-		}
+		CustomDataFunctions::InitCustomData(*instanceCustomData, rand, parameterCustomData);
 	}
 
 	if (m_pEffectNode->GenerationLocation.EffectsRotation)
@@ -1185,55 +1165,7 @@ std::array<float, 4> Instance::GetCustomData(int32_t index) const
 		return std::array<float, 4>{0.0f, 0.0f, 0, 0};
 	}
 
-	if (parameterCustomData->Type == ParameterCustomDataType::None)
-	{
-		return std::array<float, 4>{0, 0, 0, 0};
-	}
-	else if (parameterCustomData->Type == ParameterCustomDataType::Fixed2D)
-	{
-		auto v = parameterCustomData->Fixed.Values;
-		return std::array<float, 4>{v.x, v.y, 0, 0};
-	}
-	else if (parameterCustomData->Type == ParameterCustomDataType::Random2D)
-	{
-		auto v = instanceCustomData->random.value;
-		return std::array<float, 4>{v.GetX(), v.GetY(), 0, 0};
-	}
-	else if (parameterCustomData->Type == ParameterCustomDataType::Easing2D)
-	{
-		SIMD::Vec2f v = parameterCustomData->Easing.Values.getValue(
-			instanceCustomData->easing.start, instanceCustomData->easing.end, m_LivingTime / m_LivedTime);
-		return std::array<float, 4>{v.GetX(), v.GetY(), 0, 0};
-	}
-	else if (parameterCustomData->Type == ParameterCustomDataType::FCurve2D)
-	{
-		auto values = parameterCustomData->FCurve.Values->GetValues(m_LivingTime, m_LivedTime);
-		return std::array<float, 4>{
-			values.GetX() + instanceCustomData->fcruve.offset.GetX(), values.GetY() + instanceCustomData->fcruve.offset.GetY(), 0, 0};
-	}
-	else if (parameterCustomData->Type == ParameterCustomDataType::Fixed4D)
-	{
-		return parameterCustomData->Fixed4D;
-	}
-	else if (parameterCustomData->Type == ParameterCustomDataType::FCurveColor)
-	{
-		auto values = parameterCustomData->FCurveColor.Values->GetValues(m_LivingTime, m_LivedTime);
-		return std::array<float, 4>{(values[0] + instanceCustomData->fcurveColor.offset[0]) / 255.0f,
-									(values[1] + instanceCustomData->fcurveColor.offset[1]) / 255.0f,
-									(values[2] + instanceCustomData->fcurveColor.offset[2]) / 255.0f,
-									(values[3] + instanceCustomData->fcurveColor.offset[3]) / 255.0f};
-	}
-	else if (parameterCustomData->Type == ParameterCustomDataType::DynamicInput)
-	{
-		auto instanceGlobal = this->m_pContainer->GetRootInstance();
-		return instanceGlobal->GetDynamicInputParameters();
-	}
-	else
-	{
-		assert(false);
-	}
-
-	return std::array<float, 4>{0, 0, 0, 0};
+	return CustomDataFunctions::GetCustomData(parameterCustomData, instanceCustomData, this->m_pContainer->GetRootInstance(), m_LivingTime, m_LivedTime);
 }
 
 } // namespace Effekseer
