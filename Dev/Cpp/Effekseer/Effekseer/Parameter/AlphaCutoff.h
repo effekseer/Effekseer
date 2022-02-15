@@ -189,7 +189,7 @@ struct AlphaCutoffFunctions
 			return alphaThreshold;
 		}
 
-		return 1.0f;
+		return 0.0f;
 	}
 
 	static float InitAlphaThreshold(AlphaCuttoffState& alpha_cutoff_values, RandObject& rand, const ParameterAlphaCutoff& alphaCutoff, const Instance* parent, const Effect* effect, const InstanceGlobal* instanceGlobal)
