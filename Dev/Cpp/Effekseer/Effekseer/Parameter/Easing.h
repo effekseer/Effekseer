@@ -561,7 +561,7 @@ public:
 	}
 
 	virtual float GetValue(const InstanceEasingType& instance, float time) const override;
-	void Init(InstanceEasingType& instance, Effect* e, InstanceGlobal* instg, Instance* parent, IRandObject* rand);
+	void Init(InstanceEasingType& instance, const Effect* e, const InstanceGlobal* instg, const Instance* parent, IRandObject* rand) const;
 };
 
 class ParameterEasingSIMDVec3 : public ParameterEasing<SIMD::Vec3f>

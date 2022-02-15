@@ -16,6 +16,7 @@
 #include "Effekseer.Effect.h"
 #include "ForceField/ForceFields.h"
 #include "Noise/CurlNoise.h"
+#include "Parameter/AlphaCutoff.h"
 #include "Parameter/CustomData.h"
 #include "Parameter/DynamicParameter.h"
 #include "Parameter/Easing.h"
@@ -765,107 +766,6 @@ struct ParameterRendererCommon
 		{
 			BasicParameter.TextureFilters[1] = TextureFilterType::Nearest;
 			BasicParameter.TextureWraps[1] = TextureWrapType::Clamp;
-		}
-	}
-};
-
-struct ParameterAlphaCutoff
-{
-	enum EType : int32_t
-	{
-		FIXED,
-		FOUR_POINT_INTERPOLATION,
-		EASING,
-		F_CURVE,
-
-		FPI = FOUR_POINT_INTERPOLATION,
-	} Type;
-
-	struct
-	{
-		int32_t RefEq = -1;
-		float Threshold = 0.0f;
-	} Fixed;
-
-	struct
-	{
-		random_float BeginThreshold;
-		random_int TransitionFrameNum;
-		random_float No2Threshold;
-		random_float No3Threshold;
-		random_int TransitionFrameNum2;
-		random_float EndThreshold;
-	} FourPointInterpolation;
-
-	ParameterEasingFloat Easing{Version16Alpha1, Version16Alpha1};
-
-	struct
-	{
-		FCurveScalar* Threshold;
-	} FCurve;
-
-	float EdgeThreshold = 0.0f;
-	Color EdgeColor = Color(0, 0, 0, 0);
-	float EdgeColorScaling = 0.0f;
-
-	ParameterAlphaCutoff()
-		: Type(ParameterAlphaCutoff::EType::FIXED)
-	{
-	}
-
-	~ParameterAlphaCutoff()
-	{
-		if (Type == EType::F_CURVE)
-		{
-			ES_SAFE_DELETE(FCurve.Threshold);
-		}
-	}
-
-	void load(uint8_t*& pos, int32_t version)
-	{
-		memcpy(&Type, pos, sizeof(int32_t));
-		pos += sizeof(int32_t);
-
-		int32_t BufferSize = 0;
-		memcpy(&BufferSize, pos, sizeof(int32_t));
-		pos += sizeof(int32_t);
-
-		switch (Type)
-		{
-		case Effekseer::ParameterAlphaCutoff::EType::FIXED:
-			memcpy(&Fixed, pos, BufferSize);
-			break;
-		case Effekseer::ParameterAlphaCutoff::EType::FPI:
-			memcpy(&FourPointInterpolation, pos, BufferSize);
-			break;
-		case Effekseer::ParameterAlphaCutoff::EType::EASING:
-			Easing.Load(pos, BufferSize, version);
-			break;
-		case Effekseer::ParameterAlphaCutoff::EType::F_CURVE:
-			FCurve.Threshold = new FCurveScalar();
-			FCurve.Threshold->Load(pos, version);
-			break;
-		}
-
-		pos += BufferSize;
-
-		memcpy(&EdgeThreshold, pos, sizeof(int32_t));
-		pos += sizeof(int32_t);
-
-		memcpy(&EdgeColor, pos, sizeof(Color));
-		pos += sizeof(int32_t);
-
-		if (version >= Version16Alpha7)
-		{
-			memcpy(&EdgeColorScaling, pos, sizeof(float));
-			pos += sizeof(float);
-		}
-		else
-		{
-			int32_t temp = 0;
-			memcpy(&temp, pos, sizeof(int32_t));
-			pos += sizeof(int32_t);
-			EdgeColorScaling = static_cast<float>(temp);
 		}
 	}
 };

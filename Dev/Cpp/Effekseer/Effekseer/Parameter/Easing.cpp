@@ -20,7 +20,7 @@ float ParameterEasingFloat::GetValue(const InstanceEasingType& instance, float t
 	return get2Point(instance, t);
 }
 
-void ParameterEasingFloat::Init(InstanceEasingType& instance, Effect* e, InstanceGlobal* instg, Instance* parent, IRandObject* rand)
+void ParameterEasingFloat::Init(InstanceEasingType& instance, const Effect* e, const InstanceGlobal* instg, const Instance* parent, IRandObject* rand) const
 {
 	auto rvs = ApplyEq(e,
 					   instg,
