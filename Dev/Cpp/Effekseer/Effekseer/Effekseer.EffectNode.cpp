@@ -466,10 +466,6 @@ EffectNodeImplemented::~EffectNodeImplemented()
 	{
 		ES_SAFE_DELETE(m_Nodes[i]);
 	}
-
-	ES_SAFE_DELETE(RotationParam.RotationFCurve);
-	ES_SAFE_DELETE(ScalingParam.ScalingFCurve);
-	ES_SAFE_DELETE(ScalingParam.ScalingSingleFCurve);
 }
 
 void EffectNodeImplemented::CalcCustomData(const Instance* instance, std::array<float, 4>& customData1, std::array<float, 4>& customData2)

@@ -117,7 +117,7 @@ struct RotationParameter
 	ParameterRotationPVA RotationPVA;
 
 	ParameterEasingSIMDVec3 RotationEasing;
-	FCurveVector3D* RotationFCurve = nullptr;
+	std::unique_ptr<FCurveVector3D> RotationFCurve = nullptr;
 
 	ParameterRotationAxisPVA RotationAxisPVA;
 	ParameterRotationAxisEasing RotationAxisEasing;
@@ -198,7 +198,7 @@ struct RotationParameter
 			memcpy(&size, pos, sizeof(int));
 			pos += sizeof(int);
 
-			RotationFCurve = new FCurveVector3D();
+			RotationFCurve = std::make_unique<FCurveVector3D>();
 			pos += RotationFCurve->Load(pos, version);
 		}
 	}

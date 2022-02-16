@@ -108,8 +108,8 @@ struct ScalingParameter
 	// ParameterScalingEasing ScalingEasing;
 	ParameterScalingSinglePVA ScalingSinglePVA;
 	ParameterEasingFloat ScalingSingleEasing{Version16Alpha9, Version16Alpha9};
-	FCurveVector3D* ScalingFCurve = nullptr;
-	FCurveScalar* ScalingSingleFCurve = nullptr;
+	std::unique_ptr<FCurveVector3D> ScalingFCurve = nullptr;
+	std::unique_ptr<FCurveScalar> ScalingSingleFCurve = nullptr;
 
 	void Load(unsigned char*& pos, int version)
 	{
@@ -186,7 +186,7 @@ struct ScalingParameter
 			memcpy(&size, pos, sizeof(int));
 			pos += sizeof(int);
 
-			ScalingFCurve = new FCurveVector3D();
+			ScalingFCurve = std::make_unique<FCurveVector3D>();
 			pos += ScalingFCurve->Load(pos, version);
 			ScalingFCurve->X.SetDefaultValue(1.0f);
 			ScalingFCurve->Y.SetDefaultValue(1.0f);
@@ -197,7 +197,7 @@ struct ScalingParameter
 			memcpy(&size, pos, sizeof(int));
 			pos += sizeof(int);
 
-			ScalingSingleFCurve = new FCurveScalar();
+			ScalingSingleFCurve = std::make_unique<FCurveScalar>();
 			pos += ScalingSingleFCurve->Load(pos, version);
 			ScalingSingleFCurve->S.SetDefaultValue(1.0f);
 		}
