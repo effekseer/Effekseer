@@ -112,7 +112,7 @@ struct ParameterRotationAxisEasing
 
 struct RotationParameter
 {
-	ParameterRotationType RotationType = ParameterRotationType::ParameterRotationType_Fixed;
+	ParameterRotationType RotationType = ParameterRotationType::ParameterRotationType_None;
 	ParameterRotationFixed RotationFixed;
 	ParameterRotationPVA RotationPVA;
 
@@ -129,7 +129,7 @@ struct RotationParameter
 		memcpy(&RotationType, pos, sizeof(int));
 		pos += sizeof(int);
 		EffekseerPrintDebug("RotationType %d\n", RotationType);
-		if (RotationType == ParameterRotationType::ParameterRotationType_None)
+		if (RotationType == ParameterRotationType::ParameterRotationType_Fixed)
 		{
 			memcpy(&size, pos, sizeof(int));
 			pos += sizeof(int);
