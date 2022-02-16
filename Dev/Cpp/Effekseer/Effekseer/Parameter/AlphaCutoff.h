@@ -148,6 +148,10 @@ struct AlphaCutoffFunctions
 
 				return alphaThreshold;
 			}
+			else
+			{
+				return alphaCutoff.Fixed.Threshold;
+			}
 		}
 		else if (alphaCutoff.Type == ParameterAlphaCutoff::EType::FPI)
 		{
