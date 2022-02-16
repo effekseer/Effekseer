@@ -202,6 +202,56 @@ struct RotationParameter
 			pos += RotationFCurve->Load(pos, version);
 		}
 	}
+
+	void MakeCoordinateSystemLH()
+	{
+		if (RotationType == ParameterRotationType::ParameterRotationType_Fixed)
+		{
+			RotationFixed.Position.X *= -1.0f;
+			RotationFixed.Position.Y *= -1.0f;
+		}
+		else if (RotationType == ParameterRotationType::ParameterRotationType_PVA)
+		{
+			RotationPVA.rotation.max.x *= -1.0f;
+			RotationPVA.rotation.min.x *= -1.0f;
+			RotationPVA.rotation.max.y *= -1.0f;
+			RotationPVA.rotation.min.y *= -1.0f;
+			RotationPVA.velocity.max.x *= -1.0f;
+			RotationPVA.velocity.min.x *= -1.0f;
+			RotationPVA.velocity.max.y *= -1.0f;
+			RotationPVA.velocity.min.y *= -1.0f;
+			RotationPVA.acceleration.max.x *= -1.0f;
+			RotationPVA.acceleration.min.x *= -1.0f;
+			RotationPVA.acceleration.max.y *= -1.0f;
+			RotationPVA.acceleration.min.y *= -1.0f;
+		}
+		else if (RotationType == ParameterRotationType::ParameterRotationType_Easing)
+		{
+			RotationEasing.start.max.x *= -1.0f;
+			RotationEasing.start.min.x *= -1.0f;
+			RotationEasing.start.max.y *= -1.0f;
+			RotationEasing.start.min.y *= -1.0f;
+			RotationEasing.end.max.x *= -1.0f;
+			RotationEasing.end.min.x *= -1.0f;
+			RotationEasing.end.max.y *= -1.0f;
+			RotationEasing.end.min.y *= -1.0f;
+		}
+		else if (RotationType == ParameterRotationType::ParameterRotationType_AxisPVA)
+		{
+			RotationAxisPVA.axis.max.z *= -1.0f;
+			RotationAxisPVA.axis.min.z *= -1.0f;
+		}
+		else if (RotationType == ParameterRotationType::ParameterRotationType_AxisEasing)
+		{
+			RotationAxisEasing.axis.max.z *= -1.0f;
+			RotationAxisEasing.axis.min.z *= -1.0f;
+		}
+		else if (RotationType == ParameterRotationType::ParameterRotationType_FCurve)
+		{
+			RotationFCurve->X.ChangeCoordinate();
+			RotationFCurve->Y.ChangeCoordinate();
+		}
+	}
 };
 
 struct RotationFunctions

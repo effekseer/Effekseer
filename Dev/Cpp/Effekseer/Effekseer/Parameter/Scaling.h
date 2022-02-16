@@ -101,7 +101,7 @@ struct ParameterScalingSinglePVA
 
 struct ScalingParameter
 {
-	ParameterScalingType ScalingType;
+	ParameterScalingType ScalingType = ParameterScalingType::ParameterScalingType_None;
 	ParameterScalingFixed ScalingFixed;
 	ParameterScalingPVA ScalingPVA;
 	ParameterEasingSIMDVec3 ScalingEasing;
@@ -110,18 +110,110 @@ struct ScalingParameter
 	ParameterEasingFloat ScalingSingleEasing{Version16Alpha9, Version16Alpha9};
 	FCurveVector3D* ScalingFCurve = nullptr;
 	FCurveScalar* ScalingSingleFCurve = nullptr;
+
+	void Load(unsigned char*& pos, int version)
+	{
+		int32_t size = 0;
+
+		memcpy(&ScalingType, pos, sizeof(int));
+		pos += sizeof(int);
+		EffekseerPrintDebug("ScalingType %d\n", ScalingType);
+		if (ScalingType == ParameterScalingType::ParameterScalingType_Fixed)
+		{
+			memcpy(&size, pos, sizeof(int));
+			pos += sizeof(int);
+
+			if (version >= 14)
+			{
+				assert(size == sizeof(ParameterScalingFixed));
+				memcpy(&ScalingFixed, pos, size);
+				pos += size;
+			}
+			else
+			{
+				memcpy(&ScalingFixed.Position, pos, size);
+				pos += size;
+			}
+
+			// make invalid
+			if (ScalingFixed.RefEq < 0 && ScalingFixed.Position.X == 1.0f && ScalingFixed.Position.Y == 1.0f &&
+				ScalingFixed.Position.Z == 1.0f)
+			{
+				ScalingType = ParameterScalingType::ParameterScalingType_None;
+				EffekseerPrintDebug("ScalingType Change None\n");
+			}
+		}
+		else if (ScalingType == ParameterScalingType::ParameterScalingType_PVA)
+		{
+			memcpy(&size, pos, sizeof(int));
+			pos += sizeof(int);
+			if (version >= 14)
+			{
+				assert(size == sizeof(ParameterScalingPVA));
+				memcpy(&ScalingPVA, pos, size);
+			}
+			else
+			{
+				memcpy(&ScalingPVA.Position, pos, size);
+			}
+			pos += size;
+		}
+		else if (ScalingType == ParameterScalingType::ParameterScalingType_Easing)
+		{
+			memcpy(&size, pos, sizeof(int));
+			pos += sizeof(int);
+			ScalingEasing.Load(pos, size, version);
+			pos += size;
+		}
+		else if (ScalingType == ParameterScalingType::ParameterScalingType_SinglePVA)
+		{
+			memcpy(&size, pos, sizeof(int));
+			pos += sizeof(int);
+			assert(size == sizeof(ParameterScalingSinglePVA));
+			memcpy(&ScalingSinglePVA, pos, size);
+			pos += size;
+		}
+		else if (ScalingType == ParameterScalingType::ParameterScalingType_SingleEasing)
+		{
+			memcpy(&size, pos, sizeof(int));
+			pos += sizeof(int);
+
+			ScalingSingleEasing.Load(pos, size, version);
+			pos += size;
+		}
+		else if (ScalingType == ParameterScalingType::ParameterScalingType_FCurve)
+		{
+			memcpy(&size, pos, sizeof(int));
+			pos += sizeof(int);
+
+			ScalingFCurve = new FCurveVector3D();
+			pos += ScalingFCurve->Load(pos, version);
+			ScalingFCurve->X.SetDefaultValue(1.0f);
+			ScalingFCurve->Y.SetDefaultValue(1.0f);
+			ScalingFCurve->Z.SetDefaultValue(1.0f);
+		}
+		else if (ScalingType == ParameterScalingType::ParameterScalingType_SingleFCurve)
+		{
+			memcpy(&size, pos, sizeof(int));
+			pos += sizeof(int);
+
+			ScalingSingleFCurve = new FCurveScalar();
+			pos += ScalingSingleFCurve->Load(pos, version);
+			ScalingSingleFCurve->S.SetDefaultValue(1.0f);
+		}
+	}
 };
 
 struct ScalingFunctions
 {
 
 	static void ApplyDynamicParameterToFixedScaling(ScalingState& scaling_values,
-											 const ScalingParameter& scalingParam,
-											 RandObject& rand,
-											 const Effect* effect,
-											 const InstanceGlobal* instanceGlobal,
-											 const Instance* m_pParent,
-											 const DynamicFactorParameter& dynamicFactor)
+													const ScalingParameter& scalingParam,
+													RandObject& rand,
+													const Effect* effect,
+													const InstanceGlobal* instanceGlobal,
+													const Instance* m_pParent,
+													const DynamicFactorParameter& dynamicFactor)
 	{
 		if (scalingParam.ScalingFixed.RefEq >= 0)
 		{
