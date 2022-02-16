@@ -112,4 +112,147 @@ struct ScalingParameter
 	FCurveScalar* ScalingSingleFCurve = nullptr;
 };
 
+struct ScalingFunctions
+{
+
+	static void ApplyDynamicParameterToFixedScaling(ScalingState& scaling_values,
+											 const ScalingParameter& scalingParam,
+											 RandObject& rand,
+											 const Effect* effect,
+											 const InstanceGlobal* instanceGlobal,
+											 const Instance* m_pParent,
+											 const DynamicFactorParameter& dynamicFactor)
+	{
+		if (scalingParam.ScalingFixed.RefEq >= 0)
+		{
+			scaling_values.fixed.scale = ApplyEq(effect,
+												 instanceGlobal,
+												 m_pParent,
+												 &rand,
+												 scalingParam.ScalingFixed.RefEq,
+												 scalingParam.ScalingFixed.Position,
+												 dynamicFactor.Scale,
+												 dynamicFactor.ScaleInv);
+		}
+	}
+
+	static void InitScaling(ScalingState& scaling_values, const ScalingParameter& scalingParam, RandObject& rand, const Effect* effect, const InstanceGlobal* instanceGlobal, float m_LivingTime, float m_LivedTime, const Instance* m_pParent, const DynamicFactorParameter& dynamicFactor)
+	{
+		if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_Fixed)
+		{
+			scaling_values.fixed.scale = scalingParam.ScalingFixed.Position;
+			ApplyDynamicParameterToFixedScaling(scaling_values, scalingParam, rand, effect, instanceGlobal, m_pParent, dynamicFactor);
+		}
+		else if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_PVA)
+		{
+			auto rvl = ApplyEq(effect,
+							   instanceGlobal,
+							   m_pParent,
+							   &rand,
+							   scalingParam.ScalingPVA.RefEqP,
+							   scalingParam.ScalingPVA.Position,
+							   dynamicFactor.Scale,
+							   dynamicFactor.ScaleInv);
+			auto rvv = ApplyEq(effect,
+							   instanceGlobal,
+							   m_pParent,
+							   &rand,
+							   scalingParam.ScalingPVA.RefEqV,
+							   scalingParam.ScalingPVA.Velocity,
+							   dynamicFactor.Scale,
+							   dynamicFactor.ScaleInv);
+			auto rva = ApplyEq(effect,
+							   instanceGlobal,
+							   m_pParent,
+							   &rand,
+							   scalingParam.ScalingPVA.RefEqA,
+							   scalingParam.ScalingPVA.Acceleration,
+							   dynamicFactor.Scale,
+							   dynamicFactor.ScaleInv);
+
+			scaling_values.random.scale = rvl.getValue(rand);
+			scaling_values.random.velocity = rvv.getValue(rand);
+			scaling_values.random.acceleration = rva.getValue(rand);
+		}
+		else if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_Easing)
+		{
+			scalingParam.ScalingEasing.Init(scaling_values.easing, effect, instanceGlobal, m_pParent, &rand, dynamicFactor.Scale, dynamicFactor.ScaleInv);
+		}
+		else if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_SinglePVA)
+		{
+			scaling_values.single_random.scale = scalingParam.ScalingSinglePVA.Position.getValue(rand);
+			scaling_values.single_random.velocity = scalingParam.ScalingSinglePVA.Velocity.getValue(rand);
+			scaling_values.single_random.acceleration = scalingParam.ScalingSinglePVA.Acceleration.getValue(rand);
+		}
+		else if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_SingleEasing)
+		{
+			scalingParam.ScalingSingleEasing.Init(scaling_values.single_easing, effect, instanceGlobal, m_pParent, &rand);
+		}
+		else if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_FCurve)
+		{
+			assert(scalingParam.ScalingFCurve != nullptr);
+
+			scaling_values.fcruve.offset = scalingParam.ScalingFCurve->GetOffsets(rand);
+		}
+		else if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_SingleFCurve)
+		{
+			assert(scalingParam.ScalingSingleFCurve != nullptr);
+
+			scaling_values.single_fcruve.offset = scalingParam.ScalingSingleFCurve->S.GetOffset(rand);
+		}
+	}
+
+	static void UpdateScaling(SIMD::Vec3f& localScaling, ScalingState& scaling_values, const ScalingParameter& scalingParam, RandObject& rand, const Effect* effect, const InstanceGlobal* instanceGlobal, float m_LivingTime, float m_LivedTime, const Instance* m_pParent, const DynamicFactorParameter& dynamicFactor)
+	{
+		/* 拡大の更新(時間から直接求めれるよう対応済み) */
+		if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_None)
+		{
+			localScaling = {1.0f, 1.0f, 1.0f};
+		}
+		else if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_Fixed)
+		{
+			ApplyDynamicParameterToFixedScaling(scaling_values, scalingParam, rand, effect, instanceGlobal, m_pParent, dynamicFactor);
+
+			localScaling = scaling_values.fixed.scale;
+		}
+		else if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_PVA)
+		{
+			/* 現在位置 = 初期座標 + (初期速度 * t) + (初期加速度 * t * t * 0.5)*/
+			localScaling = scaling_values.random.scale + (scaling_values.random.velocity * m_LivingTime) +
+						   (scaling_values.random.acceleration * (m_LivingTime * m_LivingTime * 0.5f));
+		}
+		else if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_Easing)
+		{
+			localScaling = scalingParam.ScalingEasing.GetValue(scaling_values.easing, m_LivingTime / m_LivedTime);
+			/*
+			localScaling = m_pEffectNode->ScalingEasing.Position.getValue(
+				scaling_values.easing.start, scaling_values.easing.end, m_LivingTime / m_LivedTime);
+			*/
+		}
+		else if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_SinglePVA)
+		{
+			float s = scaling_values.single_random.scale + scaling_values.single_random.velocity * m_LivingTime +
+					  scaling_values.single_random.acceleration * m_LivingTime * m_LivingTime * 0.5f;
+			localScaling = {s, s, s};
+		}
+		else if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_SingleEasing)
+		{
+			float s = scalingParam.ScalingSingleEasing.GetValue(scaling_values.single_easing, m_LivingTime / m_LivedTime);
+			localScaling = {s, s, s};
+		}
+		else if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_FCurve)
+		{
+			assert(scalingParam.ScalingFCurve != nullptr);
+			auto fcurve = scalingParam.ScalingFCurve->GetValues(m_LivingTime, m_LivedTime);
+			localScaling = fcurve + scaling_values.fcruve.offset;
+		}
+		else if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_SingleFCurve)
+		{
+			assert(scalingParam.ScalingSingleFCurve != nullptr);
+			auto s = scalingParam.ScalingSingleFCurve->GetValues(m_LivingTime, m_LivedTime) + scaling_values.single_fcruve.offset;
+			localScaling = {s, s, s};
+		}
+	}
+};
+
 } // namespace Effekseer
