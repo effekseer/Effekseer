@@ -10,7 +10,7 @@
 namespace Effekseer
 {
 
-enum ParameterCustomDataType : int32_t
+enum class ParameterCustomDataType : int32_t
 {
 	None = 0,
 	Fixed2D = 20,

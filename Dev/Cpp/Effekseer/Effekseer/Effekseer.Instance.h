@@ -23,6 +23,7 @@
 #include "Effekseer.EffectNodeTrack.h"
 #include "ForceField/ForceFields.h"
 
+#include "Parameter/AlphaCutoff.h"
 #include "Parameter/CustomData.h"
 #include "Parameter/UV.h"
 
@@ -236,34 +237,9 @@ public:
 	/* 更新番号 */
 	uint32_t m_sequenceNumber;
 
-	//float flipbookIndexAndNextRate_ = 0;
+	AlphaCuttoffState alpha_cutoff_values;
 
-	union
-	{
-		struct
-		{
-		} fixed;
-
-		struct
-		{
-			float begin_threshold;
-			int32_t transition_frame;
-			float no2_threshold;
-			float no3_threshold;
-			int32_t transition_frame2;
-			float end_threshold;
-		} four_point_interpolation;
-
-		InstanceEasing<float> easing;
-
-		struct
-		{
-			float offset;
-		} fcurve;
-
-	} alpha_cutoff_values;
-
-	float m_AlphaThreshold;
+	float m_AlphaThreshold = 0.0f;
 
 	// コンストラクタ
 	Instance(ManagerImplemented* pManager, EffectNodeImplemented* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup);

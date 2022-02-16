@@ -28,7 +28,6 @@ Instance::Instance(ManagerImplemented* pManager, EffectNodeImplemented* pEffectN
 	, m_ParentMatrix43Calculated(false)
 	, is_time_step_allowed(false)
 	, m_sequenceNumber(0)
-	, m_AlphaThreshold(0.0f)
 {
 	ColorInheritance = Color(255, 255, 255, 255);
 	ColorParent = Color(255, 255, 255, 255);
@@ -420,37 +419,7 @@ void Instance::FirstUpdate()
 		UVFunctions::InitUVState(uvAnimationData_[i], rand, m_pEffectNode->RendererCommon.UVs[i]);
 	}
 
-	// Alpha Cutoff
-	if (m_pEffectNode->AlphaCutoff.Type == ParameterAlphaCutoff::EType::FIXED)
-	{
-		if (m_pEffectNode->AlphaCutoff.Fixed.RefEq < 0)
-		{
-			m_AlphaThreshold = m_pEffectNode->AlphaCutoff.Fixed.Threshold;
-		}
-	}
-	else if (m_pEffectNode->AlphaCutoff.Type == ParameterAlphaCutoff::EType::FPI)
-	{
-		auto& fpiValue = alpha_cutoff_values.four_point_interpolation;
-		auto& nodeAlphaCutoffValue = m_pEffectNode->AlphaCutoff.FourPointInterpolation;
-
-		fpiValue.begin_threshold = nodeAlphaCutoffValue.BeginThreshold.getValue(rand);
-		fpiValue.transition_frame = static_cast<int32_t>(nodeAlphaCutoffValue.TransitionFrameNum.getValue(rand));
-		fpiValue.no2_threshold = nodeAlphaCutoffValue.No2Threshold.getValue(rand);
-		fpiValue.no3_threshold = nodeAlphaCutoffValue.No3Threshold.getValue(rand);
-		fpiValue.transition_frame2 = static_cast<int32_t>(nodeAlphaCutoffValue.TransitionFrameNum2.getValue(rand));
-		fpiValue.end_threshold = nodeAlphaCutoffValue.EndThreshold.getValue(rand);
-	}
-	else if (m_pEffectNode->AlphaCutoff.Type == ParameterAlphaCutoff::EType::EASING)
-	{
-		m_pEffectNode->AlphaCutoff.Easing.Init(alpha_cutoff_values.easing, effect, instanceGlobal, m_pParent, &rand);
-	}
-	else if (m_pEffectNode->AlphaCutoff.Type == ParameterAlphaCutoff::EType::F_CURVE)
-	{
-		auto& fcurveValue = alpha_cutoff_values.fcurve;
-		auto& nodeAlphaCutoffValue = m_pEffectNode->AlphaCutoff.FCurve;
-
-		fcurveValue.offset = nodeAlphaCutoffValue.Threshold->GetOffsets(rand);
-	}
+	m_AlphaThreshold = AlphaCutoffFunctions::InitAlphaThreshold(alpha_cutoff_values, rand, m_pEffectNode->AlphaCutoff, m_pParent, effect, instanceGlobal);
 
 	// CustomData
 	for (int32_t index = 0; index < 2; index++)
@@ -557,63 +526,13 @@ void Instance::Update(float deltaFrame, bool shown)
 
 	UpdateChildrenGroupMatrix();
 
-	// Alpha cutoff
 	if (m_pEffectNode->m_effect->GetVersion() >= 1600)
 	{
 		auto effect = this->m_pEffectNode->m_effect;
 		auto instanceGlobal = this->m_pContainer->GetRootInstance();
 		auto& rand = m_randObject;
 
-		if (m_pEffectNode->AlphaCutoff.Type == ParameterAlphaCutoff::EType::FIXED)
-		{
-			if (m_pEffectNode->AlphaCutoff.Fixed.RefEq >= 0)
-			{
-				auto alphaThreshold = static_cast<float>(m_pEffectNode->AlphaCutoff.Fixed.Threshold);
-				ApplyEq(alphaThreshold,
-						effect,
-						instanceGlobal,
-						m_pParent,
-						&rand,
-						m_pEffectNode->AlphaCutoff.Fixed.RefEq,
-						alphaThreshold);
-
-				m_AlphaThreshold = alphaThreshold;
-			}
-		}
-		else if (m_pEffectNode->AlphaCutoff.Type == ParameterAlphaCutoff::EType::FPI)
-		{
-			float t = m_LivingTime / m_LivedTime;
-			auto val = alpha_cutoff_values.four_point_interpolation;
-
-			float p[4][2] = {0.0f,
-							 val.begin_threshold,
-							 float(val.transition_frame) / m_LivedTime,
-							 val.no2_threshold,
-							 (m_LivedTime - float(val.transition_frame2)) / m_LivedTime,
-							 val.no3_threshold,
-							 1.0f,
-							 val.end_threshold};
-
-			for (int32_t i = 1; i < 4; i++)
-			{
-				if (0 < p[i][0] && p[i - 1][0] <= t && t <= p[i][0])
-				{
-					float r = (t - p[i - 1][0]) / (p[i][0] - p[i - 1][0]);
-					m_AlphaThreshold = p[i - 1][1] + (p[i][1] - p[i - 1][1]) * r;
-					break;
-				}
-			}
-		}
-		else if (m_pEffectNode->AlphaCutoff.Type == ParameterAlphaCutoff::EType::EASING)
-		{
-			m_AlphaThreshold = m_pEffectNode->AlphaCutoff.Easing.GetValue(alpha_cutoff_values.easing, m_LivingTime / m_LivedTime);
-		}
-		else if (m_pEffectNode->AlphaCutoff.Type == ParameterAlphaCutoff::EType::F_CURVE)
-		{
-			auto fcurve = m_pEffectNode->AlphaCutoff.FCurve.Threshold->GetValues(m_LivingTime, m_LivedTime);
-			m_AlphaThreshold = fcurve + alpha_cutoff_values.fcurve.offset;
-			m_AlphaThreshold /= 100.0f;
-		}
+		m_AlphaThreshold = AlphaCutoffFunctions::CalcAlphaThreshold(rand, m_pParent, m_pEffectNode->AlphaCutoff, alpha_cutoff_values, effect, instanceGlobal, m_LivingTime, m_LivedTime);
 	}
 
 	if (m_State == INSTANCE_STATE_ACTIVE)
