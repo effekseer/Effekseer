@@ -25,6 +25,8 @@
 
 #include "Parameter/AlphaCutoff.h"
 #include "Parameter/CustomData.h"
+#include "Parameter/Rotation.h"
+#include "Parameter/Scaling.h"
 #include "Parameter/UV.h"
 
 namespace Effekseer
@@ -88,98 +90,9 @@ public:
 
 	InstanceTranslationState translation_values;
 
-	union
-	{
-		struct
-		{
-			SIMD::Vec3f rotation;
-		} fixed;
+	RotationState rotation_values;
 
-		struct
-		{
-			SIMD::Vec3f rotation;
-			SIMD::Vec3f velocity;
-			SIMD::Vec3f acceleration;
-		} random;
-
-		InstanceEasing<SIMD::Vec3f> easing;
-		/*
-		struct
-		{
-			SIMD::Vec3f start;
-			SIMD::Vec3f end;
-		} easing;
-		*/
-
-		struct
-		{
-			float rotation;
-			SIMD::Vec3f axis;
-
-			union
-			{
-				struct
-				{
-					float rotation;
-					float velocity;
-					float acceleration;
-				} random;
-
-				InstanceEasing<float> easing;
-			};
-		} axis;
-
-		struct
-		{
-			SIMD::Vec3f offset;
-		} fcruve;
-
-	} rotation_values;
-
-	union
-	{
-		struct
-		{
-			SIMD::Vec3f scale;
-		} fixed;
-
-		struct
-		{
-			SIMD::Vec3f scale;
-			SIMD::Vec3f velocity;
-			SIMD::Vec3f acceleration;
-		} random;
-
-		InstanceEasing<SIMD::Vec3f> easing;
-
-		/*
-		struct
-		{
-			SIMD::Vec3f start;
-			SIMD::Vec3f end;
-		} easing;
-		*/
-
-		struct
-		{
-			float scale;
-			float velocity;
-			float acceleration;
-		} single_random;
-
-		InstanceEasing<float> single_easing;
-
-		struct
-		{
-			SIMD::Vec3f offset;
-		} fcruve;
-
-		struct
-		{
-			float offset;
-		} single_fcruve;
-
-	} scaling_values;
+	ScalingState scaling_values;
 
 	// 描画
 	union
@@ -355,11 +268,6 @@ private:
 	}
 };
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 } // namespace Effekseer
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
 #endif // __EFFEKSEER_INSTANCE_H__

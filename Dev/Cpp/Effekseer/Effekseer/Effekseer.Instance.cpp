@@ -14,6 +14,287 @@
 namespace Effekseer
 {
 
+namespace
+{
+
+void ApplyDynamicParameterToFixedRotation(RotationState& rotation_values,
+										  const RotationParameter& rotationParam,
+										  RandObject& rand,
+										  const Effect* effect,
+										  const InstanceGlobal* instanceGlobal,
+										  const Instance* m_pParent,
+										  const DynamicFactorParameter& dynamicFactor)
+{
+	if (rotationParam.RotationFixed.RefEq >= 0)
+	{
+		rotation_values.fixed.rotation = ApplyEq(effect,
+												 instanceGlobal,
+												 m_pParent,
+												 &rand,
+												 rotationParam.RotationFixed.RefEq,
+												 rotationParam.RotationFixed.Position,
+												 dynamicFactor.Rot,
+												 dynamicFactor.RotInv);
+	}
+}
+
+void InitRotation(RotationState& rotation_values, const RotationParameter& rotationParam, RandObject& rand, const Effect* effect, const InstanceGlobal* instanceGlobal, float m_LivingTime, float m_LivedTime, const Instance* m_pParent, const DynamicFactorParameter& dynamicFactor)
+{
+	// Rotation
+	if (rotationParam.RotationType == ParameterRotationType::ParameterRotationType_Fixed)
+	{
+		rotation_values.fixed.rotation = rotationParam.RotationFixed.Position;
+		ApplyDynamicParameterToFixedRotation(rotation_values, rotationParam, rand, effect, instanceGlobal, m_pParent, dynamicFactor);
+	}
+	else if (rotationParam.RotationType == ParameterRotationType::ParameterRotationType_PVA)
+	{
+		auto rvl = ApplyEq(effect,
+						   instanceGlobal,
+						   m_pParent,
+						   &rand,
+						   rotationParam.RotationPVA.RefEqP,
+						   rotationParam.RotationPVA.rotation,
+						   dynamicFactor.Rot,
+						   dynamicFactor.RotInv);
+		auto rvv = ApplyEq(effect,
+						   instanceGlobal,
+						   m_pParent,
+						   &rand,
+						   rotationParam.RotationPVA.RefEqV,
+						   rotationParam.RotationPVA.velocity,
+						   dynamicFactor.Rot,
+						   dynamicFactor.RotInv);
+		auto rva = ApplyEq(effect,
+						   instanceGlobal,
+						   m_pParent,
+						   &rand,
+						   rotationParam.RotationPVA.RefEqA,
+						   rotationParam.RotationPVA.acceleration,
+						   dynamicFactor.Rot,
+						   dynamicFactor.RotInv);
+
+		rotation_values.random.rotation = rvl.getValue(rand);
+		rotation_values.random.velocity = rvv.getValue(rand);
+		rotation_values.random.acceleration = rva.getValue(rand);
+	}
+	else if (rotationParam.RotationType == ParameterRotationType::ParameterRotationType_Easing)
+	{
+		rotationParam.RotationEasing.Init(rotation_values.easing, effect, instanceGlobal, m_pParent, &rand, dynamicFactor.Rot, dynamicFactor.RotInv);
+	}
+	else if (rotationParam.RotationType == ParameterRotationType::ParameterRotationType_AxisPVA)
+	{
+		rotation_values.axis.random.rotation = rotationParam.RotationAxisPVA.rotation.getValue(rand);
+		rotation_values.axis.random.velocity = rotationParam.RotationAxisPVA.velocity.getValue(rand);
+		rotation_values.axis.random.acceleration = rotationParam.RotationAxisPVA.acceleration.getValue(rand);
+		rotation_values.axis.rotation = rotation_values.axis.random.rotation;
+		rotation_values.axis.axis = rotationParam.RotationAxisPVA.axis.getValue(rand);
+		if (rotation_values.axis.axis.GetLength() < 0.001f)
+		{
+			rotation_values.axis.axis = SIMD::Vec3f(0, 1, 0);
+		}
+		rotation_values.axis.axis.Normalize();
+	}
+	else if (rotationParam.RotationType == ParameterRotationType::ParameterRotationType_AxisEasing)
+	{
+		rotation_values.axis.easing.start = rotationParam.RotationAxisEasing.easing.start.getValue(rand);
+		rotation_values.axis.easing.end = rotationParam.RotationAxisEasing.easing.end.getValue(rand);
+		rotation_values.axis.rotation = rotation_values.axis.easing.start;
+		rotation_values.axis.axis = rotationParam.RotationAxisEasing.axis.getValue(rand);
+		if (rotation_values.axis.axis.GetLength() < 0.001f)
+		{
+			rotation_values.axis.axis = SIMD::Vec3f(0, 1, 0);
+		}
+		rotation_values.axis.axis.Normalize();
+	}
+	else if (rotationParam.RotationType == ParameterRotationType::ParameterRotationType_FCurve)
+	{
+		assert(rotationParam.RotationFCurve != nullptr);
+
+		rotation_values.fcruve.offset = rotationParam.RotationFCurve->GetOffsets(rand);
+	}
+}
+
+void CalculateRotation(SIMD::Vec3f& localAngle, RotationState& rotation_values, const RotationParameter& rotationParam, RandObject& rand, const Effect* effect, const InstanceGlobal* instanceGlobal, float m_LivingTime, float m_LivedTime, const Instance* m_pParent, const DynamicFactorParameter& dynamicFactor)
+{
+
+	/* 回転の更新(時間から直接求めれるよう対応済み) */
+	if (rotationParam.RotationType == ParameterRotationType::ParameterRotationType_None)
+	{
+		localAngle = {0, 0, 0};
+	}
+	else if (rotationParam.RotationType == ParameterRotationType::ParameterRotationType_Fixed)
+	{
+		ApplyDynamicParameterToFixedRotation(rotation_values, rotationParam, rand, effect, instanceGlobal, m_pParent, dynamicFactor);
+		localAngle = rotation_values.fixed.rotation;
+	}
+	else if (rotationParam.RotationType == ParameterRotationType::ParameterRotationType_PVA)
+	{
+		/* 現在位置 = 初期座標 + (初期速度 * t) + (初期加速度 * t * t * 0.5)*/
+		localAngle = rotation_values.random.rotation + (rotation_values.random.velocity * m_LivingTime) +
+					 (rotation_values.random.acceleration * (m_LivingTime * m_LivingTime * 0.5f));
+	}
+	else if (rotationParam.RotationType == ParameterRotationType::ParameterRotationType_Easing)
+	{
+		localAngle = rotationParam.RotationEasing.GetValue(rotation_values.easing, m_LivingTime / m_LivedTime);
+	}
+	else if (rotationParam.RotationType == ParameterRotationType::ParameterRotationType_AxisPVA)
+	{
+		rotation_values.axis.rotation = rotation_values.axis.random.rotation + rotation_values.axis.random.velocity * m_LivingTime +
+										rotation_values.axis.random.acceleration * (m_LivingTime * m_LivingTime * 0.5f);
+	}
+	else if (rotationParam.RotationType == ParameterRotationType::ParameterRotationType_AxisEasing)
+	{
+		rotation_values.axis.rotation = rotationParam.RotationAxisEasing.easing.GetValue(rotation_values.axis.easing, m_LivingTime / m_LivedTime);
+	}
+	else if (rotationParam.RotationType == ParameterRotationType::ParameterRotationType_FCurve)
+	{
+		assert(rotationParam.RotationFCurve != nullptr);
+		auto fcurve = rotationParam.RotationFCurve->GetValues(m_LivingTime, m_LivedTime);
+		localAngle = fcurve + rotation_values.fcruve.offset;
+	}
+}
+
+void ApplyDynamicParameterToFixedScaling(ScalingState& scaling_values,
+										 const ScalingParameter& scalingParam,
+										 RandObject& rand,
+										 const Effect* effect,
+										 const InstanceGlobal* instanceGlobal,
+										 const Instance* m_pParent,
+										 const DynamicFactorParameter& dynamicFactor)
+{
+	if (scalingParam.ScalingFixed.RefEq >= 0)
+	{
+		scaling_values.fixed.scale = ApplyEq(effect,
+											 instanceGlobal,
+											 m_pParent,
+											 &rand,
+											 scalingParam.ScalingFixed.RefEq,
+											 scalingParam.ScalingFixed.Position,
+											 dynamicFactor.Scale,
+											 dynamicFactor.ScaleInv);
+	}
+}
+
+void InitScaling(ScalingState& scaling_values, const ScalingParameter& scalingParam, RandObject& rand, const Effect* effect, const InstanceGlobal* instanceGlobal, float m_LivingTime, float m_LivedTime, const Instance* m_pParent, const DynamicFactorParameter& dynamicFactor)
+{
+	if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_Fixed)
+	{
+		scaling_values.fixed.scale = scalingParam.ScalingFixed.Position;
+		ApplyDynamicParameterToFixedScaling(scaling_values, scalingParam, rand, effect, instanceGlobal, m_pParent, dynamicFactor);
+	}
+	else if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_PVA)
+	{
+		auto rvl = ApplyEq(effect,
+						   instanceGlobal,
+						   m_pParent,
+						   &rand,
+						   scalingParam.ScalingPVA.RefEqP,
+						   scalingParam.ScalingPVA.Position,
+						   dynamicFactor.Scale,
+						   dynamicFactor.ScaleInv);
+		auto rvv = ApplyEq(effect,
+						   instanceGlobal,
+						   m_pParent,
+						   &rand,
+						   scalingParam.ScalingPVA.RefEqV,
+						   scalingParam.ScalingPVA.Velocity,
+						   dynamicFactor.Scale,
+						   dynamicFactor.ScaleInv);
+		auto rva = ApplyEq(effect,
+						   instanceGlobal,
+						   m_pParent,
+						   &rand,
+						   scalingParam.ScalingPVA.RefEqA,
+						   scalingParam.ScalingPVA.Acceleration,
+						   dynamicFactor.Scale,
+						   dynamicFactor.ScaleInv);
+
+		scaling_values.random.scale = rvl.getValue(rand);
+		scaling_values.random.velocity = rvv.getValue(rand);
+		scaling_values.random.acceleration = rva.getValue(rand);
+	}
+	else if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_Easing)
+	{
+		scalingParam.ScalingEasing.Init(scaling_values.easing, effect, instanceGlobal, m_pParent, &rand, dynamicFactor.Scale, dynamicFactor.ScaleInv);
+	}
+	else if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_SinglePVA)
+	{
+		scaling_values.single_random.scale = scalingParam.ScalingSinglePVA.Position.getValue(rand);
+		scaling_values.single_random.velocity = scalingParam.ScalingSinglePVA.Velocity.getValue(rand);
+		scaling_values.single_random.acceleration = scalingParam.ScalingSinglePVA.Acceleration.getValue(rand);
+	}
+	else if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_SingleEasing)
+	{
+		scalingParam.ScalingSingleEasing.Init(scaling_values.single_easing, effect, instanceGlobal, m_pParent, &rand);
+	}
+	else if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_FCurve)
+	{
+		assert(scalingParam.ScalingFCurve != nullptr);
+
+		scaling_values.fcruve.offset = scalingParam.ScalingFCurve->GetOffsets(rand);
+	}
+	else if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_SingleFCurve)
+	{
+		assert(scalingParam.ScalingSingleFCurve != nullptr);
+
+		scaling_values.single_fcruve.offset = scalingParam.ScalingSingleFCurve->S.GetOffset(rand);
+	}
+}
+
+void UpdateScaling(SIMD::Vec3f& localScaling, ScalingState& scaling_values, const ScalingParameter& scalingParam, RandObject& rand, const Effect* effect, const InstanceGlobal* instanceGlobal, float m_LivingTime, float m_LivedTime, const Instance* m_pParent, const DynamicFactorParameter& dynamicFactor)
+{
+	/* 拡大の更新(時間から直接求めれるよう対応済み) */
+	if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_None)
+	{
+		localScaling = {1.0f, 1.0f, 1.0f};
+	}
+	else if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_Fixed)
+	{
+		ApplyDynamicParameterToFixedScaling(scaling_values, scalingParam, rand, effect, instanceGlobal, m_pParent, dynamicFactor);
+
+		localScaling = scaling_values.fixed.scale;
+	}
+	else if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_PVA)
+	{
+		/* 現在位置 = 初期座標 + (初期速度 * t) + (初期加速度 * t * t * 0.5)*/
+		localScaling = scaling_values.random.scale + (scaling_values.random.velocity * m_LivingTime) +
+					   (scaling_values.random.acceleration * (m_LivingTime * m_LivingTime * 0.5f));
+	}
+	else if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_Easing)
+	{
+		localScaling = scalingParam.ScalingEasing.GetValue(scaling_values.easing, m_LivingTime / m_LivedTime);
+		/*
+			localScaling = m_pEffectNode->ScalingEasing.Position.getValue(
+				scaling_values.easing.start, scaling_values.easing.end, m_LivingTime / m_LivedTime);
+			*/
+	}
+	else if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_SinglePVA)
+	{
+		float s = scaling_values.single_random.scale + scaling_values.single_random.velocity * m_LivingTime +
+				  scaling_values.single_random.acceleration * m_LivingTime * m_LivingTime * 0.5f;
+		localScaling = {s, s, s};
+	}
+	else if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_SingleEasing)
+	{
+		float s = scalingParam.ScalingSingleEasing.GetValue(scaling_values.single_easing, m_LivingTime / m_LivedTime);
+		localScaling = {s, s, s};
+	}
+	else if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_FCurve)
+	{
+		assert(scalingParam.ScalingFCurve != nullptr);
+		auto fcurve = scalingParam.ScalingFCurve->GetValues(m_LivingTime, m_LivedTime);
+		localScaling = fcurve + scaling_values.fcruve.offset;
+	}
+	else if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_SingleFCurve)
+	{
+		assert(scalingParam.ScalingSingleFCurve != nullptr);
+		auto s = scalingParam.ScalingSingleFCurve->GetValues(m_LivingTime, m_LivedTime) + scaling_values.single_fcruve.offset;
+		localScaling = {s, s, s};
+	}
+}
+
+} // namespace
+
 Instance::Instance(ManagerImplemented* pManager, EffectNodeImplemented* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup)
 	: m_pManager(pManager)
 	, m_pEffectNode(pEffectNode)
@@ -219,36 +500,40 @@ void Instance::FirstUpdate()
 
 	m_pEffectNode->TranslationParam.InitializeTranslationState(translation_values, prevPosition_, steeringVec_, rand, effect, instanceGlobal, m_LivingTime, m_LivedTime, m_pParent, m_pEffectNode->DynamicFactor);
 
+	InitRotation(rotation_values, m_pEffectNode->RotationParam, rand, effect, instanceGlobal, m_LivingTime, m_LivedTime, m_pParent, m_pEffectNode->DynamicFactor);
+	InitScaling(scaling_values, m_pEffectNode->ScalingParam, rand, effect, instanceGlobal, m_LivingTime, m_LivedTime, m_pParent, m_pEffectNode->DynamicFactor);
+
+	/*
 	// Rotation
-	if (m_pEffectNode->RotationType == ParameterRotationType_Fixed)
+	if (m_pEffectNode->RotationParam.RotationType == ParameterRotationType::ParameterRotationType_Fixed)
 	{
-		rotation_values.fixed.rotation = m_pEffectNode->RotationFixed.Position;
+		rotation_values.fixed.rotation = m_pEffectNode->RotationParam.RotationFixed.Position;
 		ApplyDynamicParameterToFixedRotation();
 	}
-	else if (m_pEffectNode->RotationType == ParameterRotationType_PVA)
+	else if (m_pEffectNode->RotationParam.RotationType == ParameterRotationType::ParameterRotationType_PVA)
 	{
 		auto rvl = ApplyEq(effect,
 						   instanceGlobal,
 						   m_pParent,
 						   &rand,
-						   m_pEffectNode->RotationPVA.RefEqP,
-						   m_pEffectNode->RotationPVA.rotation,
+						   m_pEffectNode->RotationParam.RotationPVA.RefEqP,
+						   m_pEffectNode->RotationParam.RotationPVA.rotation,
 						   m_pEffectNode->DynamicFactor.Rot,
 						   m_pEffectNode->DynamicFactor.RotInv);
 		auto rvv = ApplyEq(effect,
 						   instanceGlobal,
 						   m_pParent,
 						   &rand,
-						   m_pEffectNode->RotationPVA.RefEqV,
-						   m_pEffectNode->RotationPVA.velocity,
+						   m_pEffectNode->RotationParam.RotationPVA.RefEqV,
+						   m_pEffectNode->RotationParam.RotationPVA.velocity,
 						   m_pEffectNode->DynamicFactor.Rot,
 						   m_pEffectNode->DynamicFactor.RotInv);
 		auto rva = ApplyEq(effect,
 						   instanceGlobal,
 						   m_pParent,
 						   &rand,
-						   m_pEffectNode->RotationPVA.RefEqA,
-						   m_pEffectNode->RotationPVA.acceleration,
+						   m_pEffectNode->RotationParam.RotationPVA.RefEqA,
+						   m_pEffectNode->RotationParam.RotationPVA.acceleration,
 						   m_pEffectNode->DynamicFactor.Rot,
 						   m_pEffectNode->DynamicFactor.RotInv);
 
@@ -256,93 +541,72 @@ void Instance::FirstUpdate()
 		rotation_values.random.velocity = rvv.getValue(rand);
 		rotation_values.random.acceleration = rva.getValue(rand);
 	}
-	else if (m_pEffectNode->RotationType == ParameterRotationType_Easing)
+	else if (m_pEffectNode->RotationParam.RotationType == ParameterRotationType::ParameterRotationType_Easing)
 	{
-		m_pEffectNode->RotationEasing.Init(rotation_values.easing, effect, instanceGlobal, m_pParent, &rand, m_pEffectNode->DynamicFactor.Rot, m_pEffectNode->DynamicFactor.RotInv);
-		/*
-		auto rvs = ApplyEq(effect,
-						   instanceGlobal,
-						   m_pParent,
-						   &rand,
-						   m_pEffectNode->RotationEasing.RefEqS,
-						   m_pEffectNode->RotationEasing.rotation.start,
-						   m_pEffectNode->DynamicFactor.Rot,
-						   m_pEffectNode->DynamicFactor.RotInv);
-		auto rve = ApplyEq(effect,
-						   instanceGlobal,
-						   m_pParent,
-						   &rand,
-						   m_pEffectNode->RotationEasing.RefEqE,
-						   m_pEffectNode->RotationEasing.rotation.end,
-						   m_pEffectNode->DynamicFactor.Rot,
-						   m_pEffectNode->DynamicFactor.RotInv);
-
-		rotation_values.easing.start = rvs.getValue(rand);
-		rotation_values.easing.end = rve.getValue(rand);
-		*/
+		m_pEffectNode->RotationParam.RotationEasing.Init(rotation_values.easing, effect, instanceGlobal, m_pParent, &rand, m_pEffectNode->DynamicFactor.Rot, m_pEffectNode->DynamicFactor.RotInv);
 	}
-	else if (m_pEffectNode->RotationType == ParameterRotationType_AxisPVA)
+	else if (m_pEffectNode->RotationParam.RotationType == ParameterRotationType::ParameterRotationType_AxisPVA)
 	{
-		rotation_values.axis.random.rotation = m_pEffectNode->RotationAxisPVA.rotation.getValue(rand);
-		rotation_values.axis.random.velocity = m_pEffectNode->RotationAxisPVA.velocity.getValue(rand);
-		rotation_values.axis.random.acceleration = m_pEffectNode->RotationAxisPVA.acceleration.getValue(rand);
+		rotation_values.axis.random.rotation = m_pEffectNode->RotationParam.RotationAxisPVA.rotation.getValue(rand);
+		rotation_values.axis.random.velocity = m_pEffectNode->RotationParam.RotationAxisPVA.velocity.getValue(rand);
+		rotation_values.axis.random.acceleration = m_pEffectNode->RotationParam.RotationAxisPVA.acceleration.getValue(rand);
 		rotation_values.axis.rotation = rotation_values.axis.random.rotation;
-		rotation_values.axis.axis = m_pEffectNode->RotationAxisPVA.axis.getValue(rand);
+		rotation_values.axis.axis = m_pEffectNode->RotationParam.RotationAxisPVA.axis.getValue(rand);
 		if (rotation_values.axis.axis.GetLength() < 0.001f)
 		{
 			rotation_values.axis.axis = SIMD::Vec3f(0, 1, 0);
 		}
 		rotation_values.axis.axis.Normalize();
 	}
-	else if (m_pEffectNode->RotationType == ParameterRotationType_AxisEasing)
+	else if (m_pEffectNode->RotationParam.RotationType == ParameterRotationType::ParameterRotationType_AxisEasing)
 	{
-		rotation_values.axis.easing.start = m_pEffectNode->RotationAxisEasing.easing.start.getValue(rand);
-		rotation_values.axis.easing.end = m_pEffectNode->RotationAxisEasing.easing.end.getValue(rand);
+		rotation_values.axis.easing.start = m_pEffectNode->RotationParam.RotationAxisEasing.easing.start.getValue(rand);
+		rotation_values.axis.easing.end = m_pEffectNode->RotationParam.RotationAxisEasing.easing.end.getValue(rand);
 		rotation_values.axis.rotation = rotation_values.axis.easing.start;
-		rotation_values.axis.axis = m_pEffectNode->RotationAxisEasing.axis.getValue(rand);
+		rotation_values.axis.axis = m_pEffectNode->RotationParam.RotationAxisEasing.axis.getValue(rand);
 		if (rotation_values.axis.axis.GetLength() < 0.001f)
 		{
 			rotation_values.axis.axis = SIMD::Vec3f(0, 1, 0);
 		}
 		rotation_values.axis.axis.Normalize();
 	}
-	else if (m_pEffectNode->RotationType == ParameterRotationType_FCurve)
+	else if (m_pEffectNode->RotationParam.RotationType == ParameterRotationType::ParameterRotationType_FCurve)
 	{
-		assert(m_pEffectNode->RotationFCurve != nullptr);
+		assert(m_pEffectNode->RotationParam.RotationFCurve != nullptr);
 
-		rotation_values.fcruve.offset = m_pEffectNode->RotationFCurve->GetOffsets(rand);
+		rotation_values.fcruve.offset = m_pEffectNode->RotationParam.RotationFCurve->GetOffsets(rand);
 	}
 
 	// Scaling
-	if (m_pEffectNode->ScalingType == ParameterScalingType_Fixed)
+	if (m_pEffectNode->ScalingParam.ScalingType == ParameterScalingType::ParameterScalingType_Fixed)
 	{
-		scaling_values.fixed.scale = m_pEffectNode->ScalingFixed.Position;
+		scaling_values.fixed.scale = m_pEffectNode->ScalingParam.ScalingFixed.Position;
 		ApplyDynamicParameterToFixedScaling();
 	}
-	else if (m_pEffectNode->ScalingType == ParameterScalingType_PVA)
+	else if (m_pEffectNode->ScalingParam.ScalingType == ParameterScalingType::ParameterScalingType_PVA)
 	{
 		auto rvl = ApplyEq(effect,
 						   instanceGlobal,
 						   m_pParent,
 						   &rand,
-						   m_pEffectNode->ScalingPVA.RefEqP,
-						   m_pEffectNode->ScalingPVA.Position,
+						   m_pEffectNode->ScalingParam.ScalingPVA.RefEqP,
+						   m_pEffectNode->ScalingParam.ScalingPVA.Position,
 						   m_pEffectNode->DynamicFactor.Scale,
 						   m_pEffectNode->DynamicFactor.ScaleInv);
 		auto rvv = ApplyEq(effect,
 						   instanceGlobal,
 						   m_pParent,
 						   &rand,
-						   m_pEffectNode->ScalingPVA.RefEqV,
-						   m_pEffectNode->ScalingPVA.Velocity,
+						   m_pEffectNode->ScalingParam.ScalingPVA.RefEqV,
+						   m_pEffectNode->ScalingParam.ScalingPVA.Velocity,
 						   m_pEffectNode->DynamicFactor.Scale,
 						   m_pEffectNode->DynamicFactor.ScaleInv);
 		auto rva = ApplyEq(effect,
 						   instanceGlobal,
 						   m_pParent,
 						   &rand,
-						   m_pEffectNode->ScalingPVA.RefEqA,
-						   m_pEffectNode->ScalingPVA.Acceleration,
+						   m_pEffectNode->ScalingParam.ScalingPVA.RefEqA,
+						   m_pEffectNode->ScalingParam.ScalingPVA.Acceleration,
 						   m_pEffectNode->DynamicFactor.Scale,
 						   m_pEffectNode->DynamicFactor.ScaleInv);
 
@@ -350,53 +614,33 @@ void Instance::FirstUpdate()
 		scaling_values.random.velocity = rvv.getValue(rand);
 		scaling_values.random.acceleration = rva.getValue(rand);
 	}
-	else if (m_pEffectNode->ScalingType == ParameterScalingType_Easing)
+	else if (m_pEffectNode->ScalingParam.ScalingType == ParameterScalingType::ParameterScalingType_Easing)
 	{
-		m_pEffectNode->ScalingEasing.Init(scaling_values.easing, effect, instanceGlobal, m_pParent, &rand, m_pEffectNode->DynamicFactor.Scale, m_pEffectNode->DynamicFactor.ScaleInv);
-		/*
-		auto rvs = ApplyEq(effect,
-						   instanceGlobal,
-						   m_pParent,
-						   &rand,
-						   m_pEffectNode->ScalingEasing.RefEqS,
-						   m_pEffectNode->ScalingEasing.Position.start,
-						   m_pEffectNode->DynamicFactor.Scale,
-						   m_pEffectNode->DynamicFactor.ScaleInv);
-		auto rve = ApplyEq(effect,
-						   instanceGlobal,
-						   m_pParent,
-						   &rand,
-						   m_pEffectNode->ScalingEasing.RefEqE,
-						   m_pEffectNode->ScalingEasing.Position.end,
-						   m_pEffectNode->DynamicFactor.Scale,
-						   m_pEffectNode->DynamicFactor.ScaleInv);
+		m_pEffectNode->ScalingParam.ScalingEasing.Init(scaling_values.easing, effect, instanceGlobal, m_pParent, &rand, m_pEffectNode->DynamicFactor.Scale, m_pEffectNode->DynamicFactor.ScaleInv);
+	}
+	else if (m_pEffectNode->ScalingParam.ScalingType == ParameterScalingType::ParameterScalingType_SinglePVA)
+	{
+		scaling_values.single_random.scale = m_pEffectNode->ScalingParam.ScalingSinglePVA.Position.getValue(rand);
+		scaling_values.single_random.velocity = m_pEffectNode->ScalingParam.ScalingSinglePVA.Velocity.getValue(rand);
+		scaling_values.single_random.acceleration = m_pEffectNode->ScalingParam.ScalingSinglePVA.Acceleration.getValue(rand);
+	}
+	else if (m_pEffectNode->ScalingParam.ScalingType == ParameterScalingType::ParameterScalingType_SingleEasing)
+	{
+		m_pEffectNode->ScalingParam.ScalingSingleEasing.Init(scaling_values.single_easing, effect, instanceGlobal, m_pParent, &rand);
+	}
+	else if (m_pEffectNode->ScalingParam.ScalingType == ParameterScalingType::ParameterScalingType_FCurve)
+	{
+		assert(m_pEffectNode->ScalingParam.ScalingFCurve != nullptr);
 
-		scaling_values.easing.start = rvs.getValue(rand);
-		scaling_values.easing.end = rve.getValue(rand);
-		*/
+		scaling_values.fcruve.offset = m_pEffectNode->ScalingParam.ScalingFCurve->GetOffsets(rand);
 	}
-	else if (m_pEffectNode->ScalingType == ParameterScalingType_SinglePVA)
+	else if (m_pEffectNode->ScalingParam.ScalingType == ParameterScalingType::ParameterScalingType_SingleFCurve)
 	{
-		scaling_values.single_random.scale = m_pEffectNode->ScalingSinglePVA.Position.getValue(rand);
-		scaling_values.single_random.velocity = m_pEffectNode->ScalingSinglePVA.Velocity.getValue(rand);
-		scaling_values.single_random.acceleration = m_pEffectNode->ScalingSinglePVA.Acceleration.getValue(rand);
-	}
-	else if (m_pEffectNode->ScalingType == ParameterScalingType_SingleEasing)
-	{
-		m_pEffectNode->ScalingSingleEasing.Init(scaling_values.single_easing, effect, instanceGlobal, m_pParent, &rand);
-	}
-	else if (m_pEffectNode->ScalingType == ParameterScalingType_FCurve)
-	{
-		assert(m_pEffectNode->ScalingFCurve != nullptr);
+		assert(m_pEffectNode->ScalingParam.ScalingSingleFCurve != nullptr);
 
-		scaling_values.fcruve.offset = m_pEffectNode->ScalingFCurve->GetOffsets(rand);
+		scaling_values.single_fcruve.offset = m_pEffectNode->ScalingParam.ScalingSingleFCurve->S.GetOffset(rand);
 	}
-	else if (m_pEffectNode->ScalingType == ParameterScalingType_SingleFCurve)
-	{
-		assert(m_pEffectNode->ScalingSingleFCurve != nullptr);
-
-		scaling_values.single_fcruve.offset = m_pEffectNode->ScalingSingleFCurve->S.GetOffset(rand);
-	}
+	*/
 
 	// Spawning Method
 	const auto magnification = ((EffectImplemented*)m_pEffectNode->GetEffect())->GetMaginification();
@@ -708,95 +952,88 @@ void Instance::CalculateMatrix(float deltaFrame)
 
 		prevPosition_ = localPosition;
 
-		/* 回転の更新(時間から直接求めれるよう対応済み) */
-		if (m_pEffectNode->RotationType == ParameterRotationType_None)
+		CalculateRotation(localAngle, rotation_values, m_pEffectNode->RotationParam, m_randObject, m_pEffectNode->GetEffect(), m_pContainer->GetRootInstance(), m_LivingTime, m_LivedTime, m_pParent, m_pEffectNode->DynamicFactor);
+		UpdateScaling(localScaling, scaling_values, m_pEffectNode->ScalingParam, m_randObject, m_pEffectNode->GetEffect(), m_pContainer->GetRootInstance(), m_LivingTime, m_LivedTime, m_pParent, m_pEffectNode->DynamicFactor);
+
+		/*
+		if (m_pEffectNode->RotationParam.RotationType == ParameterRotationType::ParameterRotationType_None)
 		{
 			localAngle = {0, 0, 0};
 		}
-		else if (m_pEffectNode->RotationType == ParameterRotationType_Fixed)
+		else if (m_pEffectNode->RotationParam.RotationType == ParameterRotationType::ParameterRotationType_Fixed)
 		{
 			ApplyDynamicParameterToFixedRotation();
 
 			localAngle = rotation_values.fixed.rotation;
 		}
-		else if (m_pEffectNode->RotationType == ParameterRotationType_PVA)
+		else if (m_pEffectNode->RotationParam.RotationType == ParameterRotationType::ParameterRotationType_PVA)
 		{
-			/* 現在位置 = 初期座標 + (初期速度 * t) + (初期加速度 * t * t * 0.5)*/
 			localAngle = rotation_values.random.rotation + (rotation_values.random.velocity * m_LivingTime) +
 						 (rotation_values.random.acceleration * (m_LivingTime * m_LivingTime * 0.5f));
 		}
-		else if (m_pEffectNode->RotationType == ParameterRotationType_Easing)
+		else if (m_pEffectNode->RotationParam.RotationType == ParameterRotationType::ParameterRotationType_Easing)
 		{
-			localAngle = m_pEffectNode->RotationEasing.GetValue(rotation_values.easing, m_LivingTime / m_LivedTime);
-			/*
-			localAngle = m_pEffectNode->RotationEasing.rotation.getValue(
-				rotation_values.easing.start, rotation_values.easing.end, m_LivingTime / m_LivedTime);
-			*/
+			localAngle = m_pEffectNode->RotationParam.RotationEasing.GetValue(rotation_values.easing, m_LivingTime / m_LivedTime);
 		}
-		else if (m_pEffectNode->RotationType == ParameterRotationType_AxisPVA)
+		else if (m_pEffectNode->RotationParam.RotationType == ParameterRotationType::ParameterRotationType_AxisPVA)
 		{
 			rotation_values.axis.rotation = rotation_values.axis.random.rotation + rotation_values.axis.random.velocity * m_LivingTime +
 											rotation_values.axis.random.acceleration * (m_LivingTime * m_LivingTime * 0.5f);
 		}
-		else if (m_pEffectNode->RotationType == ParameterRotationType_AxisEasing)
+		else if (m_pEffectNode->RotationParam.RotationType == ParameterRotationType::ParameterRotationType_AxisEasing)
 		{
-			rotation_values.axis.rotation = m_pEffectNode->RotationAxisEasing.easing.GetValue(rotation_values.axis.easing, m_LivingTime / m_LivedTime);
+			rotation_values.axis.rotation = m_pEffectNode->RotationParam.RotationAxisEasing.easing.GetValue(rotation_values.axis.easing, m_LivingTime / m_LivedTime);
 		}
-		else if (m_pEffectNode->RotationType == ParameterRotationType_FCurve)
+		else if (m_pEffectNode->RotationParam.RotationType == ParameterRotationType::ParameterRotationType_FCurve)
 		{
-			assert(m_pEffectNode->RotationFCurve != nullptr);
-			auto fcurve = m_pEffectNode->RotationFCurve->GetValues(m_LivingTime, m_LivedTime);
+			assert(m_pEffectNode->RotationParam.RotationFCurve != nullptr);
+			auto fcurve = m_pEffectNode->RotationParam.RotationFCurve->GetValues(m_LivingTime, m_LivedTime);
 			localAngle = fcurve + rotation_values.fcruve.offset;
 		}
 
-		/* 拡大の更新(時間から直接求めれるよう対応済み) */
-		if (m_pEffectNode->ScalingType == ParameterScalingType_None)
+		if (m_pEffectNode->ScalingParam.ScalingType == ParameterScalingType::ParameterScalingType_None)
 		{
 			localScaling = {1.0f, 1.0f, 1.0f};
 		}
-		else if (m_pEffectNode->ScalingType == ParameterScalingType_Fixed)
+		else if (m_pEffectNode->ScalingParam.ScalingType == ParameterScalingType::ParameterScalingType_Fixed)
 		{
 			ApplyDynamicParameterToFixedScaling();
 
 			localScaling = scaling_values.fixed.scale;
 		}
-		else if (m_pEffectNode->ScalingType == ParameterScalingType_PVA)
+		else if (m_pEffectNode->ScalingParam.ScalingType == ParameterScalingType::ParameterScalingType_PVA)
 		{
-			/* 現在位置 = 初期座標 + (初期速度 * t) + (初期加速度 * t * t * 0.5)*/
 			localScaling = scaling_values.random.scale + (scaling_values.random.velocity * m_LivingTime) +
 						   (scaling_values.random.acceleration * (m_LivingTime * m_LivingTime * 0.5f));
 		}
-		else if (m_pEffectNode->ScalingType == ParameterScalingType_Easing)
+		else if (m_pEffectNode->ScalingParam.ScalingType == ParameterScalingType::ParameterScalingType_Easing)
 		{
-			localScaling = m_pEffectNode->ScalingEasing.GetValue(scaling_values.easing, m_LivingTime / m_LivedTime);
-			/*
-			localScaling = m_pEffectNode->ScalingEasing.Position.getValue(
-				scaling_values.easing.start, scaling_values.easing.end, m_LivingTime / m_LivedTime);
-			*/
+			localScaling = m_pEffectNode->ScalingParam.ScalingEasing.GetValue(scaling_values.easing, m_LivingTime / m_LivedTime);
 		}
-		else if (m_pEffectNode->ScalingType == ParameterScalingType_SinglePVA)
+		else if (m_pEffectNode->ScalingParam.ScalingType == ParameterScalingType::ParameterScalingType_SinglePVA)
 		{
 			float s = scaling_values.single_random.scale + scaling_values.single_random.velocity * m_LivingTime +
 					  scaling_values.single_random.acceleration * m_LivingTime * m_LivingTime * 0.5f;
 			localScaling = {s, s, s};
 		}
-		else if (m_pEffectNode->ScalingType == ParameterScalingType_SingleEasing)
+		else if (m_pEffectNode->ScalingParam.ScalingType == ParameterScalingType::ParameterScalingType_SingleEasing)
 		{
-			float s = m_pEffectNode->ScalingSingleEasing.GetValue(scaling_values.single_easing, m_LivingTime / m_LivedTime);
+			float s = m_pEffectNode->ScalingParam.ScalingSingleEasing.GetValue(scaling_values.single_easing, m_LivingTime / m_LivedTime);
 			localScaling = {s, s, s};
 		}
-		else if (m_pEffectNode->ScalingType == ParameterScalingType_FCurve)
+		else if (m_pEffectNode->ScalingParam.ScalingType == ParameterScalingType::ParameterScalingType_FCurve)
 		{
-			assert(m_pEffectNode->ScalingFCurve != nullptr);
-			auto fcurve = m_pEffectNode->ScalingFCurve->GetValues(m_LivingTime, m_LivedTime);
+			assert(m_pEffectNode->ScalingParam.ScalingFCurve != nullptr);
+			auto fcurve = m_pEffectNode->ScalingParam.ScalingFCurve->GetValues(m_LivingTime, m_LivedTime);
 			localScaling = fcurve + scaling_values.fcruve.offset;
 		}
-		else if (m_pEffectNode->ScalingType == ParameterScalingType_SingleFCurve)
+		else if (m_pEffectNode->ScalingParam.ScalingType == ParameterScalingType::ParameterScalingType_SingleFCurve)
 		{
-			assert(m_pEffectNode->ScalingSingleFCurve != nullptr);
-			auto s = m_pEffectNode->ScalingSingleFCurve->GetValues(m_LivingTime, m_LivedTime) + scaling_values.single_fcruve.offset;
+			assert(m_pEffectNode->ScalingParam.ScalingSingleFCurve != nullptr);
+			auto s = m_pEffectNode->ScalingParam.ScalingSingleFCurve->GetValues(m_LivingTime, m_LivedTime) + scaling_values.single_fcruve.offset;
 			localScaling = {s, s, s};
 		}
+		*/
 
 		// update local fields
 		SIMD::Vec3f currentLocalPosition;
@@ -828,13 +1065,13 @@ void Instance::CalculateMatrix(float deltaFrame)
 
 		// 回転行列の作成
 		SIMD::Mat43f MatRot;
-		if (m_pEffectNode->RotationType == ParameterRotationType_Fixed || m_pEffectNode->RotationType == ParameterRotationType_PVA ||
-			m_pEffectNode->RotationType == ParameterRotationType_Easing || m_pEffectNode->RotationType == ParameterRotationType_FCurve)
+		if (m_pEffectNode->RotationParam.RotationType == ParameterRotationType::ParameterRotationType_Fixed || m_pEffectNode->RotationParam.RotationType == ParameterRotationType::ParameterRotationType_PVA ||
+			m_pEffectNode->RotationParam.RotationType == ParameterRotationType::ParameterRotationType_Easing || m_pEffectNode->RotationParam.RotationType == ParameterRotationType::ParameterRotationType_FCurve)
 		{
 			MatRot = SIMD::Mat43f::RotationZXY(localAngle.GetZ(), localAngle.GetX(), localAngle.GetY());
 		}
-		else if (m_pEffectNode->RotationType == ParameterRotationType_AxisPVA ||
-				 m_pEffectNode->RotationType == ParameterRotationType_AxisEasing)
+		else if (m_pEffectNode->RotationParam.RotationType == ParameterRotationType::ParameterRotationType_AxisPVA ||
+				 m_pEffectNode->RotationParam.RotationType == ParameterRotationType::ParameterRotationType_AxisEasing)
 		{
 			SIMD::Vec3f axis = rotation_values.axis.axis;
 
@@ -940,14 +1177,14 @@ void Instance::CalculateParentMatrix(float deltaFrame)
 
 void Instance::ApplyDynamicParameterToFixedRotation()
 {
-	if (m_pEffectNode->RotationFixed.RefEq >= 0)
+	if (m_pEffectNode->RotationParam.RotationFixed.RefEq >= 0)
 	{
 		rotation_values.fixed.rotation = ApplyEq(m_pEffectNode->GetEffect(),
 												 m_pContainer->GetRootInstance(),
 												 m_pParent,
 												 &m_randObject,
-												 m_pEffectNode->RotationFixed.RefEq,
-												 m_pEffectNode->RotationFixed.Position,
+												 m_pEffectNode->RotationParam.RotationFixed.RefEq,
+												 m_pEffectNode->RotationParam.RotationFixed.Position,
 												 m_pEffectNode->DynamicFactor.Rot,
 												 m_pEffectNode->DynamicFactor.RotInv);
 	}
@@ -955,14 +1192,14 @@ void Instance::ApplyDynamicParameterToFixedRotation()
 
 void Instance::ApplyDynamicParameterToFixedScaling()
 {
-	if (m_pEffectNode->ScalingFixed.RefEq >= 0)
+	if (m_pEffectNode->ScalingParam.ScalingFixed.RefEq >= 0)
 	{
 		scaling_values.fixed.scale = ApplyEq(m_pEffectNode->GetEffect(),
 											 m_pContainer->GetRootInstance(),
 											 m_pParent,
 											 &m_randObject,
-											 m_pEffectNode->ScalingFixed.RefEq,
-											 m_pEffectNode->ScalingFixed.Position,
+											 m_pEffectNode->ScalingParam.ScalingFixed.RefEq,
+											 m_pEffectNode->ScalingParam.ScalingFixed.Position,
 											 m_pEffectNode->DynamicFactor.Scale,
 											 m_pEffectNode->DynamicFactor.ScaleInv);
 	}

@@ -44,8 +44,6 @@ EffectNodeImplemented::EffectNodeImplemented(Effect* effect, unsigned char*& pos
 	: m_effect(effect)
 	, generation_(0)
 	, IsRendered(true)
-	, RotationFCurve(nullptr)
-	, ScalingFCurve(nullptr)
 	, SoundType(ParameterSoundType_None)
 	, RenderingOrder(RenderingOrder_FirstCreatedInstanceIsFirst)
 {
@@ -74,8 +72,8 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 
 	if (node_type == -1)
 	{
-		RotationType = ParameterRotationType_None;
-		ScalingType = ParameterScalingType_None;
+		RotationParam.RotationType = ParameterRotationType::ParameterRotationType_None;
+		ScalingParam.ScalingType = ParameterScalingType::ParameterScalingType_None;
 		CommonValues.MaxGeneration = 1;
 
 		GenerationLocation.EffectsRotation = 0;
@@ -231,10 +229,10 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			}
 		}
 
-		memcpy(&RotationType, pos, sizeof(int));
+		memcpy(&RotationParam.RotationType, pos, sizeof(int));
 		pos += sizeof(int);
 		EffekseerPrintDebug("RotationType %d\n", RotationType);
-		if (RotationType == ParameterRotationType_Fixed)
+		if (RotationParam.RotationType == ParameterRotationType::ParameterRotationType_Fixed)
 		{
 			memcpy(&size, pos, sizeof(int));
 			pos += sizeof(int);
@@ -242,75 +240,75 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			if (ef->GetVersion() >= 14)
 			{
 				assert(size == sizeof(ParameterRotationFixed));
-				memcpy(&RotationFixed, pos, size);
+				memcpy(&RotationParam.RotationFixed, pos, size);
 			}
 			else
 			{
-				memcpy(&RotationFixed.Position, pos, size);
+				memcpy(&RotationParam.RotationFixed.Position, pos, size);
 			}
 			pos += size;
 
 			// make invalid
-			if (RotationFixed.RefEq < 0 && RotationFixed.Position.X == 0.0f && RotationFixed.Position.Y == 0.0f &&
-				RotationFixed.Position.Z == 0.0f)
+			if (RotationParam.RotationFixed.RefEq < 0 && RotationParam.RotationFixed.Position.X == 0.0f && RotationParam.RotationFixed.Position.Y == 0.0f &&
+				RotationParam.RotationFixed.Position.Z == 0.0f)
 			{
-				RotationType = ParameterRotationType_None;
+				RotationParam.RotationType = ParameterRotationType::ParameterRotationType_None;
 				EffekseerPrintDebug("RotationType Change None\n");
 			}
 		}
-		else if (RotationType == ParameterRotationType_PVA)
+		else if (RotationParam.RotationType == ParameterRotationType::ParameterRotationType_PVA)
 		{
 			memcpy(&size, pos, sizeof(int));
 			pos += sizeof(int);
 			if (ef->GetVersion() >= 14)
 			{
 				assert(size == sizeof(ParameterRotationPVA));
-				memcpy(&RotationPVA, pos, size);
+				memcpy(&RotationParam.RotationPVA, pos, size);
 			}
 			else
 			{
-				memcpy(&RotationPVA.rotation, pos, size);
+				memcpy(&RotationParam.RotationPVA.rotation, pos, size);
 			}
 			pos += size;
 		}
-		else if (RotationType == ParameterRotationType_Easing)
+		else if (RotationParam.RotationType == ParameterRotationType::ParameterRotationType_Easing)
 		{
 			memcpy(&size, pos, sizeof(int));
 			pos += sizeof(int);
-			RotationEasing.Load(pos, size, ef->GetVersion());
+			RotationParam.RotationEasing.Load(pos, size, ef->GetVersion());
 			pos += size;
 		}
-		else if (RotationType == ParameterRotationType_AxisPVA)
+		else if (RotationParam.RotationType == ParameterRotationType::ParameterRotationType_AxisPVA)
 		{
 			memcpy(&size, pos, sizeof(int));
 			pos += sizeof(int);
 			assert(size == sizeof(ParameterRotationAxisPVA));
-			memcpy(&RotationAxisPVA, pos, size);
+			memcpy(&RotationParam.RotationAxisPVA, pos, size);
 			pos += size;
 		}
-		else if (RotationType == ParameterRotationType_AxisEasing)
+		else if (RotationParam.RotationType == ParameterRotationType::ParameterRotationType_AxisEasing)
 		{
 			memcpy(&size, pos, sizeof(int));
 			pos += sizeof(int);
 
-			memcpy(&RotationAxisEasing.axis, pos, sizeof(RotationAxisEasing.axis));
-			pos += sizeof(RotationAxisEasing.axis);
+			memcpy(&RotationParam.RotationAxisEasing.axis, pos, sizeof(RotationParam.RotationAxisEasing.axis));
+			pos += sizeof(RotationParam.RotationAxisEasing.axis);
 
-			LoadFloatEasing(RotationAxisEasing.easing, pos, m_effect->GetVersion());
+			LoadFloatEasing(RotationParam.RotationAxisEasing.easing, pos, m_effect->GetVersion());
 		}
-		else if (RotationType == ParameterRotationType_FCurve)
+		else if (RotationParam.RotationType == ParameterRotationType::ParameterRotationType_FCurve)
 		{
 			memcpy(&size, pos, sizeof(int));
 			pos += sizeof(int);
 
-			RotationFCurve = new FCurveVector3D();
-			pos += RotationFCurve->Load(pos, m_effect->GetVersion());
+			RotationParam.RotationFCurve = new FCurveVector3D();
+			pos += RotationParam.RotationFCurve->Load(pos, m_effect->GetVersion());
 		}
 
-		memcpy(&ScalingType, pos, sizeof(int));
+		memcpy(&ScalingParam.ScalingType, pos, sizeof(int));
 		pos += sizeof(int);
 		EffekseerPrintDebug("ScalingType %d\n", ScalingType);
-		if (ScalingType == ParameterScalingType_Fixed)
+		if (ScalingParam.ScalingType == ParameterScalingType::ParameterScalingType_Fixed)
 		{
 			memcpy(&size, pos, sizeof(int));
 			pos += sizeof(int);
@@ -318,80 +316,80 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			if (ef->GetVersion() >= 14)
 			{
 				assert(size == sizeof(ParameterScalingFixed));
-				memcpy(&ScalingFixed, pos, size);
+				memcpy(&ScalingParam.ScalingFixed, pos, size);
 				pos += size;
 			}
 			else
 			{
-				memcpy(&ScalingFixed.Position, pos, size);
+				memcpy(&ScalingParam.ScalingFixed.Position, pos, size);
 				pos += size;
 			}
 
 			// make invalid
-			if (ScalingFixed.RefEq < 0 && ScalingFixed.Position.X == 1.0f && ScalingFixed.Position.Y == 1.0f &&
-				ScalingFixed.Position.Z == 1.0f)
+			if (ScalingParam.ScalingFixed.RefEq < 0 && ScalingParam.ScalingFixed.Position.X == 1.0f && ScalingParam.ScalingFixed.Position.Y == 1.0f &&
+				ScalingParam.ScalingFixed.Position.Z == 1.0f)
 			{
-				ScalingType = ParameterScalingType_None;
+				ScalingParam.ScalingType = ParameterScalingType::ParameterScalingType_None;
 				EffekseerPrintDebug("ScalingType Change None\n");
 			}
 		}
-		else if (ScalingType == ParameterScalingType_PVA)
+		else if (ScalingParam.ScalingType == ParameterScalingType::ParameterScalingType_PVA)
 		{
 			memcpy(&size, pos, sizeof(int));
 			pos += sizeof(int);
 			if (ef->GetVersion() >= 14)
 			{
 				assert(size == sizeof(ParameterScalingPVA));
-				memcpy(&ScalingPVA, pos, size);
+				memcpy(&ScalingParam.ScalingPVA, pos, size);
 			}
 			else
 			{
-				memcpy(&ScalingPVA.Position, pos, size);
+				memcpy(&ScalingParam.ScalingPVA.Position, pos, size);
 			}
 			pos += size;
 		}
-		else if (ScalingType == ParameterScalingType_Easing)
+		else if (ScalingParam.ScalingType == ParameterScalingType::ParameterScalingType_Easing)
 		{
 			memcpy(&size, pos, sizeof(int));
 			pos += sizeof(int);
-			ScalingEasing.Load(pos, size, ef->GetVersion());
+			ScalingParam.ScalingEasing.Load(pos, size, ef->GetVersion());
 			pos += size;
 		}
-		else if (ScalingType == ParameterScalingType_SinglePVA)
+		else if (ScalingParam.ScalingType == ParameterScalingType::ParameterScalingType_SinglePVA)
 		{
 			memcpy(&size, pos, sizeof(int));
 			pos += sizeof(int);
 			assert(size == sizeof(ParameterScalingSinglePVA));
-			memcpy(&ScalingSinglePVA, pos, size);
+			memcpy(&ScalingParam.ScalingSinglePVA, pos, size);
 			pos += size;
 		}
-		else if (ScalingType == ParameterScalingType_SingleEasing)
+		else if (ScalingParam.ScalingType == ParameterScalingType::ParameterScalingType_SingleEasing)
 		{
 			memcpy(&size, pos, sizeof(int));
 			pos += sizeof(int);
 
-			ScalingSingleEasing.Load(pos, size, m_effect->GetVersion());
+			ScalingParam.ScalingSingleEasing.Load(pos, size, m_effect->GetVersion());
 			pos += size;
 		}
-		else if (ScalingType == ParameterScalingType_FCurve)
+		else if (ScalingParam.ScalingType == ParameterScalingType::ParameterScalingType_FCurve)
 		{
 			memcpy(&size, pos, sizeof(int));
 			pos += sizeof(int);
 
-			ScalingFCurve = new FCurveVector3D();
-			pos += ScalingFCurve->Load(pos, m_effect->GetVersion());
-			ScalingFCurve->X.SetDefaultValue(1.0f);
-			ScalingFCurve->Y.SetDefaultValue(1.0f);
-			ScalingFCurve->Z.SetDefaultValue(1.0f);
+			ScalingParam.ScalingFCurve = new FCurveVector3D();
+			pos += ScalingParam.ScalingFCurve->Load(pos, m_effect->GetVersion());
+			ScalingParam.ScalingFCurve->X.SetDefaultValue(1.0f);
+			ScalingParam.ScalingFCurve->Y.SetDefaultValue(1.0f);
+			ScalingParam.ScalingFCurve->Z.SetDefaultValue(1.0f);
 		}
-		else if (ScalingType == ParameterScalingType_SingleFCurve)
+		else if (ScalingParam.ScalingType == ParameterScalingType::ParameterScalingType_SingleFCurve)
 		{
 			memcpy(&size, pos, sizeof(int));
 			pos += sizeof(int);
 
-			ScalingSingleFCurve = new FCurveScalar();
-			pos += ScalingSingleFCurve->Load(pos, m_effect->GetVersion());
-			ScalingSingleFCurve->S.SetDefaultValue(1.0f);
+			ScalingParam.ScalingSingleFCurve = new FCurveScalar();
+			pos += ScalingParam.ScalingSingleFCurve->Load(pos, m_effect->GetVersion());
+			ScalingParam.ScalingSingleFCurve->S.SetDefaultValue(1.0f);
 		}
 
 		/* Spawning Method */
@@ -491,51 +489,51 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			DynamicFactor.Rot[0] *= -1.0f;
 			DynamicFactor.Rot[1] *= -1.0f;
 
-			if (RotationType == ParameterRotationType_Fixed)
+			if (RotationParam.RotationType == ParameterRotationType::ParameterRotationType_Fixed)
 			{
-				RotationFixed.Position.X *= -1.0f;
-				RotationFixed.Position.Y *= -1.0f;
+				RotationParam.RotationFixed.Position.X *= -1.0f;
+				RotationParam.RotationFixed.Position.Y *= -1.0f;
 			}
-			else if (RotationType == ParameterRotationType_PVA)
+			else if (RotationParam.RotationType == ParameterRotationType::ParameterRotationType_PVA)
 			{
-				RotationPVA.rotation.max.x *= -1.0f;
-				RotationPVA.rotation.min.x *= -1.0f;
-				RotationPVA.rotation.max.y *= -1.0f;
-				RotationPVA.rotation.min.y *= -1.0f;
-				RotationPVA.velocity.max.x *= -1.0f;
-				RotationPVA.velocity.min.x *= -1.0f;
-				RotationPVA.velocity.max.y *= -1.0f;
-				RotationPVA.velocity.min.y *= -1.0f;
-				RotationPVA.acceleration.max.x *= -1.0f;
-				RotationPVA.acceleration.min.x *= -1.0f;
-				RotationPVA.acceleration.max.y *= -1.0f;
-				RotationPVA.acceleration.min.y *= -1.0f;
+				RotationParam.RotationPVA.rotation.max.x *= -1.0f;
+				RotationParam.RotationPVA.rotation.min.x *= -1.0f;
+				RotationParam.RotationPVA.rotation.max.y *= -1.0f;
+				RotationParam.RotationPVA.rotation.min.y *= -1.0f;
+				RotationParam.RotationPVA.velocity.max.x *= -1.0f;
+				RotationParam.RotationPVA.velocity.min.x *= -1.0f;
+				RotationParam.RotationPVA.velocity.max.y *= -1.0f;
+				RotationParam.RotationPVA.velocity.min.y *= -1.0f;
+				RotationParam.RotationPVA.acceleration.max.x *= -1.0f;
+				RotationParam.RotationPVA.acceleration.min.x *= -1.0f;
+				RotationParam.RotationPVA.acceleration.max.y *= -1.0f;
+				RotationParam.RotationPVA.acceleration.min.y *= -1.0f;
 			}
-			else if (RotationType == ParameterRotationType_Easing)
+			else if (RotationParam.RotationType == ParameterRotationType::ParameterRotationType_Easing)
 			{
-				RotationEasing.start.max.x *= -1.0f;
-				RotationEasing.start.min.x *= -1.0f;
-				RotationEasing.start.max.y *= -1.0f;
-				RotationEasing.start.min.y *= -1.0f;
-				RotationEasing.end.max.x *= -1.0f;
-				RotationEasing.end.min.x *= -1.0f;
-				RotationEasing.end.max.y *= -1.0f;
-				RotationEasing.end.min.y *= -1.0f;
+				RotationParam.RotationEasing.start.max.x *= -1.0f;
+				RotationParam.RotationEasing.start.min.x *= -1.0f;
+				RotationParam.RotationEasing.start.max.y *= -1.0f;
+				RotationParam.RotationEasing.start.min.y *= -1.0f;
+				RotationParam.RotationEasing.end.max.x *= -1.0f;
+				RotationParam.RotationEasing.end.min.x *= -1.0f;
+				RotationParam.RotationEasing.end.max.y *= -1.0f;
+				RotationParam.RotationEasing.end.min.y *= -1.0f;
 			}
-			else if (RotationType == ParameterRotationType_AxisPVA)
+			else if (RotationParam.RotationType == ParameterRotationType::ParameterRotationType_AxisPVA)
 			{
-				RotationAxisPVA.axis.max.z *= -1.0f;
-				RotationAxisPVA.axis.min.z *= -1.0f;
+				RotationParam.RotationAxisPVA.axis.max.z *= -1.0f;
+				RotationParam.RotationAxisPVA.axis.min.z *= -1.0f;
 			}
-			else if (RotationType == ParameterRotationType_AxisEasing)
+			else if (RotationParam.RotationType == ParameterRotationType::ParameterRotationType_AxisEasing)
 			{
-				RotationAxisEasing.axis.max.z *= -1.0f;
-				RotationAxisEasing.axis.min.z *= -1.0f;
+				RotationParam.RotationAxisEasing.axis.max.z *= -1.0f;
+				RotationParam.RotationAxisEasing.axis.min.z *= -1.0f;
 			}
-			else if (RotationType == ParameterRotationType_FCurve)
+			else if (RotationParam.RotationType == ParameterRotationType::ParameterRotationType_FCurve)
 			{
-				RotationFCurve->X.ChangeCoordinate();
-				RotationFCurve->Y.ChangeCoordinate();
+				RotationParam.RotationFCurve->X.ChangeCoordinate();
+				RotationParam.RotationFCurve->Y.ChangeCoordinate();
 			}
 
 			GenerationLocation.MakeCoordinateSystemLH();
@@ -676,9 +674,9 @@ EffectNodeImplemented::~EffectNodeImplemented()
 		ES_SAFE_DELETE(m_Nodes[i]);
 	}
 
-	ES_SAFE_DELETE(RotationFCurve);
-	ES_SAFE_DELETE(ScalingFCurve);
-	ES_SAFE_DELETE(ScalingSingleFCurve);
+	ES_SAFE_DELETE(RotationParam.RotationFCurve);
+	ES_SAFE_DELETE(ScalingParam.ScalingFCurve);
+	ES_SAFE_DELETE(ScalingParam.ScalingSingleFCurve);
 }
 
 void EffectNodeImplemented::CalcCustomData(const Instance* instance, std::array<float, 4>& customData1, std::array<float, 4>& customData2)
@@ -1001,7 +999,8 @@ EffectInstanceTerm EffectNodeImplemented::CalculateInstanceTerm(EffectInstanceTe
 {
 	EffectInstanceTerm ret;
 
-	auto addWithClip = [](int v1, int v2) -> int {
+	auto addWithClip = [](int v1, int v2) -> int
+	{
 		v1 = Max(v1, 0);
 		v2 = Max(v2, 0);
 
