@@ -12,6 +12,8 @@ file(GLOB effekseer_h
     Effekseer/Parameter/*.h
     Effekseer/Parameter/AlphaCutoff.h
     Effekseer/Parameter/CustomData.h
+    Effekseer/Parameter/Rotation.h
+    Effekseer/Parameter/Scaling.h
     Effekseer/Parameter/UV.h
     Effekseer/IO/*.h
     Effekseer/Utils/*.h

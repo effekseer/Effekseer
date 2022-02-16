@@ -2,9 +2,6 @@
 #ifndef __EFFEKSEER_EFFECTNODE_H__
 #define __EFFEKSEER_EFFECTNODE_H__
 
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
 #include "Effekseer.Base.h"
 #include "Effekseer.Color.h"
 #include "Effekseer.FCurves.h"
@@ -21,6 +18,8 @@
 #include "Parameter/DynamicParameter.h"
 #include "Parameter/Easing.h"
 #include "Parameter/Effekseer.Parameters.h"
+#include "Parameter/Rotation.h"
+#include "Parameter/Scaling.h"
 #include "Parameter/SpawnMethod.h"
 #include "Parameter/Translation.h"
 #include "Parameter/UV.h"
@@ -30,9 +29,6 @@
 namespace Effekseer
 {
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 enum class BindType : int32_t
 {
 	NotBind = 0,
@@ -53,9 +49,6 @@ enum class TranslationParentBindType : int32_t
 
 bool operator==(const TranslationParentBindType& lhs, const BindType& rhs);
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 class StandardColorParameter
 {
 public:
@@ -130,9 +123,7 @@ public:
 		}
 	}
 };
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
 enum class TriggerType : uint8_t
 {
 	None = 0,
@@ -145,9 +136,6 @@ struct alignas(2) TriggerValues
 	uint8_t index = 0;
 };
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 struct ParameterCommonValues_8
 {
 	int MaxGeneration;
@@ -254,132 +242,6 @@ struct LocationAbsParameter
 			float maxRange;
 		} attractiveForce;
 	};
-};
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-enum ParameterRotationType
-{
-	ParameterRotationType_Fixed = 0,
-	ParameterRotationType_PVA = 1,
-	ParameterRotationType_Easing = 2,
-	ParameterRotationType_AxisPVA = 3,
-	ParameterRotationType_AxisEasing = 4,
-
-	ParameterRotationType_FCurve = 5,
-
-	ParameterRotationType_None = 0x7fffffff - 1,
-
-	ParameterRotationType_DWORD = 0x7fffffff,
-};
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-struct ParameterRotationFixed
-{
-	int32_t RefEq = -1;
-	Vector3D Position;
-};
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-struct ParameterRotationPVA
-{
-	RefMinMax RefEqP;
-	RefMinMax RefEqV;
-	RefMinMax RefEqA;
-	random_vector3d rotation;
-	random_vector3d velocity;
-	random_vector3d acceleration;
-};
-
-struct ParameterRotationEasing
-{
-	RefMinMax RefEqS;
-	RefMinMax RefEqE;
-	easing_vector3d rotation;
-};
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-struct ParameterRotationAxisPVA
-{
-	random_vector3d axis;
-	random_float rotation;
-	random_float velocity;
-	random_float acceleration;
-};
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-struct ParameterRotationAxisEasing
-{
-	random_vector3d axis;
-	ParameterEasingFloat easing{Version16Alpha9, Version16Alpha9};
-};
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-enum ParameterScalingType
-{
-	ParameterScalingType_Fixed = 0,
-	ParameterScalingType_PVA = 1,
-	ParameterScalingType_Easing = 2,
-	ParameterScalingType_SinglePVA = 3,
-	ParameterScalingType_SingleEasing = 4,
-	ParameterScalingType_FCurve = 5,
-	ParameterScalingType_SingleFCurve = 6,
-
-	ParameterScalingType_None = 0x7fffffff - 1,
-
-	ParameterScalingType_DWORD = 0x7fffffff,
-};
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-struct ParameterScalingFixed
-{
-	int32_t RefEq = -1;
-
-	Vector3D Position;
-};
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-struct ParameterScalingPVA
-{
-	RefMinMax RefEqP;
-	RefMinMax RefEqV;
-	RefMinMax RefEqA;
-
-	random_vector3d Position;
-	random_vector3d Velocity;
-	random_vector3d Acceleration;
-};
-
-struct ParameterScalingEasing
-{
-	RefMinMax RefEqS;
-	RefMinMax RefEqE;
-	easing_vector3d Position;
-};
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-struct ParameterScalingSinglePVA
-{
-	random_float Position;
-	random_float Velocity;
-	random_float Acceleration;
 };
 
 struct ParameterRendererCommon
@@ -872,26 +734,9 @@ public:
 
 	LocalForceFieldParameter LocalForceField;
 
-	ParameterRotationType RotationType;
-	ParameterRotationFixed RotationFixed;
-	ParameterRotationPVA RotationPVA;
+	RotationParameter RotationParam;
 
-	ParameterEasingSIMDVec3 RotationEasing;
-	// ParameterRotationEasing RotationEasing;
-	FCurveVector3D* RotationFCurve;
-
-	ParameterRotationAxisPVA RotationAxisPVA;
-	ParameterRotationAxisEasing RotationAxisEasing;
-
-	ParameterScalingType ScalingType;
-	ParameterScalingFixed ScalingFixed;
-	ParameterScalingPVA ScalingPVA;
-	ParameterEasingSIMDVec3 ScalingEasing;
-	// ParameterScalingEasing ScalingEasing;
-	ParameterScalingSinglePVA ScalingSinglePVA;
-	ParameterEasingFloat ScalingSingleEasing{Version16Alpha9, Version16Alpha9};
-	FCurveVector3D* ScalingFCurve;
-	FCurveScalar* ScalingSingleFCurve = nullptr;
+	ScalingParameter ScalingParam;
 
 	ParameterGenerationLocation GenerationLocation;
 
