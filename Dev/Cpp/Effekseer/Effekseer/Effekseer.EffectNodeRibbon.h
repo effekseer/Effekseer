@@ -13,38 +13,6 @@
 //----------------------------------------------------------------------------------
 namespace Effekseer
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-struct RibbonAllColorParameter
-{
-	enum
-	{
-		Fixed = 0,
-		Random = 1,
-		Easing = 2,
-
-		Parameter_DWORD = 0x7fffffff,
-	} type;
-
-	union
-	{
-		struct
-		{
-			Color all;
-		} fixed;
-
-		struct
-		{
-			random_color all;
-		} random;
-
-		struct
-		{
-			easing_color all;
-		} easing;
-	};
-};
 
 struct RibbonColorParameter
 {
@@ -96,9 +64,6 @@ struct RibbonPositionParameter
 	};
 };
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 class EffectNodeRibbon : public EffectNodeImplemented
 {
 public:
@@ -108,26 +73,7 @@ public:
 		Color _color;
 		Color _original;
 
-		union
-		{
-			struct
-			{
-				Color _color;
-			} fixed;
-
-			struct
-			{
-				Color _color;
-			} random;
-
-			struct
-			{
-				Color start;
-				Color end;
-
-			} easing;
-
-		} allColorValues;
+		InstanceAllTypeColorState allColorValues;
 
 		union
 		{
@@ -148,7 +94,7 @@ public:
 
 	int ViewpointDependent;
 
-	RibbonAllColorParameter RibbonAllColor;
+	AllTypeColorParameter RibbonAllColor;
 
 	RibbonColorParameter RibbonColor;
 	RibbonPositionParameter RibbonPosition;

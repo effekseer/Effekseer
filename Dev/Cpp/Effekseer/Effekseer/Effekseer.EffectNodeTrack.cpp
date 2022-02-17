@@ -263,24 +263,24 @@ void EffectNodeTrack::UpdateRenderedInstance(Instance& instance, InstanceGroup& 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeTrack::InitializeValues(InstanceGroupValues::Color& value, StandardColorParameter& param, IRandObject* rand)
+void EffectNodeTrack::InitializeValues(InstanceAllTypeColorState& value, AllTypeColorParameter& param, IRandObject* rand)
 {
-	if (param.type == StandardColorParameter::Fixed)
+	if (param.type == AllTypeColorParameter::Fixed)
 	{
-		value.color.fixed.color_ = param.fixed.all;
+		value.fixed._color = param.fixed.all;
 	}
-	else if (param.type == StandardColorParameter::Random)
+	else if (param.type == AllTypeColorParameter::Random)
 	{
-		value.color.random.color_ = param.random.all.getValue(*rand);
+		value.random._color = param.random.all.getValue(*rand);
 	}
-	else if (param.type == StandardColorParameter::Easing)
+	else if (param.type == AllTypeColorParameter::Easing)
 	{
-		value.color.easing.start = param.easing.all.getStartValue(*rand);
-		value.color.easing.end = param.easing.all.getEndValue(*rand);
+		value.easing.start = param.easing.all.getStartValue(*rand);
+		value.easing.end = param.easing.all.getEndValue(*rand);
 	}
-	else if (param.type == StandardColorParameter::FCurve_RGBA)
+	else if (param.type == AllTypeColorParameter::FCurve_RGBA)
 	{
-		value.color.fcurve_rgba.offset = param.fcurve_rgba.FCurve->GetOffsets(*rand);
+		value.fcurve_rgba.offset = param.fcurve_rgba.FCurve->GetOffsets(*rand);
 	}
 }
 
@@ -299,28 +299,28 @@ void EffectNodeTrack::InitializeValues(InstanceGroupValues::Size& value, TrackSi
 //
 //----------------------------------------------------------------------------------
 void EffectNodeTrack::SetValues(
-	Color& c, const Instance& instance, InstanceGroupValues::Color& value, StandardColorParameter& param, int32_t time, int32_t livedTime)
+	Color& c, const Instance& instance, InstanceAllTypeColorState& value, AllTypeColorParameter& param, int32_t time, int32_t livedTime)
 {
-	if (param.type == StandardColorParameter::Fixed)
+	if (param.type == AllTypeColorParameter::Fixed)
 	{
-		c = value.color.fixed.color_;
+		c = value.fixed._color;
 	}
-	else if (param.type == StandardColorParameter::Random)
+	else if (param.type == AllTypeColorParameter::Random)
 	{
-		c = value.color.random.color_;
+		c = value.random._color;
 	}
-	else if (param.type == StandardColorParameter::Easing)
+	else if (param.type == AllTypeColorParameter::Easing)
 	{
 		float t = (float)time / (float)livedTime;
-		param.easing.all.setValueToArg(c, value.color.easing.start, value.color.easing.end, t);
+		param.easing.all.setValueToArg(c, value.easing.start, value.easing.end, t);
 	}
-	else if (param.type == StandardColorParameter::FCurve_RGBA)
+	else if (param.type == AllTypeColorParameter::FCurve_RGBA)
 	{
 		auto fcurveColors = param.fcurve_rgba.FCurve->GetValues(static_cast<float>(time), static_cast<float>(livedTime));
-		c.R = (uint8_t)Clamp((value.color.fcurve_rgba.offset[0] + fcurveColors[0]), 255, 0);
-		c.G = (uint8_t)Clamp((value.color.fcurve_rgba.offset[1] + fcurveColors[1]), 255, 0);
-		c.B = (uint8_t)Clamp((value.color.fcurve_rgba.offset[2] + fcurveColors[2]), 255, 0);
-		c.A = (uint8_t)Clamp((value.color.fcurve_rgba.offset[3] + fcurveColors[3]), 255, 0);
+		c.R = (uint8_t)Clamp((value.fcurve_rgba.offset[0] + fcurveColors[0]), 255, 0);
+		c.G = (uint8_t)Clamp((value.fcurve_rgba.offset[1] + fcurveColors[1]), 255, 0);
+		c.B = (uint8_t)Clamp((value.fcurve_rgba.offset[2] + fcurveColors[2]), 255, 0);
+		c.A = (uint8_t)Clamp((value.fcurve_rgba.offset[3] + fcurveColors[3]), 255, 0);
 	}
 
 	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)

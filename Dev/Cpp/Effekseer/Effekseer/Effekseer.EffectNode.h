@@ -13,6 +13,7 @@
 #include "Effekseer.Effect.h"
 #include "ForceField/ForceFields.h"
 #include "Noise/CurlNoise.h"
+#include "Parameter/AllTypeColor.h"
 #include "Parameter/AlphaCutoff.h"
 #include "Parameter/CustomData.h"
 #include "Parameter/DynamicParameter.h"
@@ -48,81 +49,6 @@ enum class TranslationParentBindType : int32_t
 };
 
 bool operator==(const TranslationParentBindType& lhs, const BindType& rhs);
-
-class StandardColorParameter
-{
-public:
-	enum
-	{
-		Fixed = 0,
-		Random = 1,
-		Easing = 2,
-		FCurve_RGBA = 3,
-		Parameter_DWORD = 0x7fffffff,
-	} type;
-
-	union
-	{
-		struct
-		{
-			Color all;
-		} fixed;
-
-		struct
-		{
-			random_color all;
-		} random;
-
-		struct
-		{
-			easing_color all;
-		} easing;
-
-		struct
-		{
-			FCurveVectorColor* FCurve;
-		} fcurve_rgba;
-	};
-
-	StandardColorParameter()
-	{
-		type = Fixed;
-	}
-
-	~StandardColorParameter()
-	{
-		if (type == FCurve_RGBA)
-		{
-			ES_SAFE_DELETE(fcurve_rgba.FCurve);
-		}
-	}
-
-	void load(uint8_t*& pos, int32_t version)
-	{
-		memcpy(&type, pos, sizeof(int));
-		pos += sizeof(int);
-
-		if (type == Fixed)
-		{
-			memcpy(&fixed, pos, sizeof(fixed));
-			pos += sizeof(fixed);
-		}
-		else if (type == Random)
-		{
-			random.all.load(version, pos);
-		}
-		else if (type == Easing)
-		{
-			easing.all.load(version, pos);
-		}
-		else if (type == FCurve_RGBA)
-		{
-			fcurve_rgba.FCurve = new FCurveVectorColor();
-			int32_t size = fcurve_rgba.FCurve->Load(pos, version);
-			pos += size;
-		}
-	}
-};
 
 enum class TriggerType : uint8_t
 {

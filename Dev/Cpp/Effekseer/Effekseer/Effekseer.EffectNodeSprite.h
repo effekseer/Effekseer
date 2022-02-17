@@ -66,9 +66,6 @@ struct SpritePositionParameter
 	};
 };
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 class EffectNodeSprite : public EffectNodeImplemented
 {
 	friend class Manager;
@@ -83,31 +80,7 @@ public:
 
 		Color _originalColor;
 
-		union
-		{
-			struct
-			{
-				Color _color;
-			} fixed;
-
-			struct
-			{
-				Color _color;
-			} random;
-
-			struct
-			{
-				Color start;
-				Color end;
-
-			} easing;
-
-			struct
-			{
-				std::array<float, 4> offset;
-			} fcurve_rgba;
-
-		} allColorValues;
+		InstanceAllTypeColorState allColorValues;
 
 		union
 		{
@@ -124,7 +97,7 @@ public:
 	AlphaBlendType AlphaBlend;
 	BillboardType Billboard;
 
-	StandardColorParameter SpriteAllColor;
+	AllTypeColorParameter SpriteAllColor;
 
 	SpriteColorParameter SpriteColor;
 	SpritePositionParameter SpritePosition;
