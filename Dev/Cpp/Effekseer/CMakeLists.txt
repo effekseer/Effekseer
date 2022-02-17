@@ -10,6 +10,7 @@ file(GLOB effekseer_h
     Effekseer/Renderer/*.h
     Effekseer/Material/*.h
     Effekseer/Parameter/*.h
+    Effekseer/Parameter/AllTypeColor.h
     Effekseer/Parameter/AlphaCutoff.h
     Effekseer/Parameter/CustomData.h
     Effekseer/Parameter/Rotation.h

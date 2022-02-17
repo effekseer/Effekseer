@@ -34,31 +34,7 @@ public:
 		Color _color;
 		Color _original;
 
-		union
-		{
-			struct
-			{
-				Color _color;
-			} fixed;
-
-			struct
-			{
-				Color _color;
-			} random;
-
-			struct
-			{
-				Color start;
-				Color end;
-
-			} easing;
-
-			struct
-			{
-				std::array<float, 4> offset;
-			} fcurve_rgba;
-
-		} allColorValues;
+		InstanceAllTypeColorState allColorValues;
 	};
 
 public:
@@ -74,7 +50,7 @@ public:
 	bool Lighting;
 	CullingType Culling;
 
-	StandardColorParameter AllColor;
+	AllTypeColorParameter AllColor;
 
 	ModelReferenceType Mode = ModelReferenceType::File;
 

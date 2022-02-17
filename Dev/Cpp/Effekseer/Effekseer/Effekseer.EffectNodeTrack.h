@@ -42,34 +42,6 @@ class EffectNodeTrack : public EffectNodeImplemented
 public:
 	struct InstanceGroupValues
 	{
-		struct Color
-		{
-			union
-			{
-				struct
-				{
-					Effekseer::Color color_;
-				} fixed;
-
-				struct
-				{
-					Effekseer::Color color_;
-				} random;
-
-				struct
-				{
-					Effekseer::Color start;
-					Effekseer::Color end;
-				} easing;
-
-				struct
-				{
-					std::array<float, 4> offset;
-				} fcurve_rgba;
-
-			} color;
-		};
-
 		struct Size
 		{
 			union
@@ -81,13 +53,13 @@ public:
 			} size;
 		};
 
-		Color ColorLeft;
-		Color ColorCenter;
-		Color ColorRight;
+		InstanceAllTypeColorState ColorLeft;
+		InstanceAllTypeColorState ColorCenter;
+		InstanceAllTypeColorState ColorRight;
 
-		Color ColorLeftMiddle;
-		Color ColorCenterMiddle;
-		Color ColorRightMiddle;
+		InstanceAllTypeColorState ColorLeftMiddle;
+		InstanceAllTypeColorState ColorCenterMiddle;
+		InstanceAllTypeColorState ColorRightMiddle;
 
 		Size SizeFor;
 		Size SizeMiddle;
@@ -125,13 +97,13 @@ public:
 public:
 	AlphaBlendType AlphaBlend;
 
-	StandardColorParameter TrackColorLeft;
-	StandardColorParameter TrackColorCenter;
-	StandardColorParameter TrackColorRight;
+	AllTypeColorParameter TrackColorLeft;
+	AllTypeColorParameter TrackColorCenter;
+	AllTypeColorParameter TrackColorRight;
 
-	StandardColorParameter TrackColorLeftMiddle;
-	StandardColorParameter TrackColorCenterMiddle;
-	StandardColorParameter TrackColorRightMiddle;
+	AllTypeColorParameter TrackColorLeftMiddle;
+	AllTypeColorParameter TrackColorCenterMiddle;
+	AllTypeColorParameter TrackColorRightMiddle;
 
 	TrackSizeParameter TrackSizeFor;
 	TrackSizeParameter TrackSizeMiddle;
@@ -176,12 +148,12 @@ public:
 		return EFFECT_NODE_TYPE_TRACK;
 	}
 
-	void InitializeValues(InstanceGroupValues::Color& value, StandardColorParameter& param, IRandObject* rand);
+	void InitializeValues(InstanceAllTypeColorState& value, AllTypeColorParameter & param, IRandObject* rand);
 	void InitializeValues(InstanceGroupValues::Size& value, TrackSizeParameter& param, Manager* manager);
 	void SetValues(Color& c,
 				   const Instance& instance,
-				   InstanceGroupValues::Color& value,
-				   StandardColorParameter& param,
+				   InstanceAllTypeColorState& value,
+				   AllTypeColorParameter& param,
 				   int32_t time,
 				   int32_t livedTime);
 	void SetValues(float& s, InstanceGroupValues::Size& value, TrackSizeParameter& param, float time);
