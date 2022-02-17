@@ -66,7 +66,7 @@ class InternalScript;
 /**
 	@brief	A state of instances
 */
-enum eInstanceState
+enum class eInstanceState : int32_t
 {
 	/**
 		@brief	Active
@@ -87,8 +87,6 @@ enum eInstanceState
 		@brief	Destroyed
 	*/
 	INSTANCE_STATE_DISPOSING,
-
-	INSTANCE_STATE_DWORD = 0x7fffffff,
 };
 
 /**

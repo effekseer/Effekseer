@@ -30,12 +30,12 @@ void InstanceChunk::UpdateInstances()
 
 				instance->Update(deltaTime, true);
 			}
-			else if (instance->m_State == INSTANCE_STATE_REMOVED)
+			else if (instance->m_State == eInstanceState::INSTANCE_STATE_REMOVED)
 			{
 				// start to remove
-				instance->m_State = INSTANCE_STATE_DISPOSING;
+				instance->m_State = eInstanceState::INSTANCE_STATE_DISPOSING;
 			}
-			else if (instance->m_State == INSTANCE_STATE_DISPOSING)
+			else if (instance->m_State == eInstanceState::INSTANCE_STATE_DISPOSING)
 			{
 				instance->~Instance();
 				instancesAlive_[i] = false;
@@ -76,12 +76,12 @@ void InstanceChunk::UpdateInstancesByInstanceGlobal(const InstanceGlobal* global
 				auto deltaTime = global->GetNextDeltaFrame();
 				instance->Update(deltaTime, true);
 			}
-			else if (instance->m_State == INSTANCE_STATE_REMOVED)
+			else if (instance->m_State == eInstanceState::INSTANCE_STATE_REMOVED)
 			{
 				// start to remove
-				instance->m_State = INSTANCE_STATE_DISPOSING;
+				instance->m_State = eInstanceState::INSTANCE_STATE_DISPOSING;
 			}
-			else if (instance->m_State == INSTANCE_STATE_DISPOSING)
+			else if (instance->m_State == eInstanceState::INSTANCE_STATE_DISPOSING)
 			{
 				instance->~Instance();
 				instancesAlive_[i] = false;
