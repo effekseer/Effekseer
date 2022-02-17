@@ -19,15 +19,6 @@ Instance::Instance(ManagerImplemented* pManager, EffectNodeImplemented* pEffectN
 	, m_pEffectNode(pEffectNode)
 	, m_pContainer(pContainer)
 	, ownGroup_(pGroup)
-	, childrenGroups_(nullptr)
-	, m_pParent(nullptr)
-	, m_State(INSTANCE_STATE_ACTIVE)
-	, m_LivedTime(0)
-	, m_LivingTime(0)
-	, m_GlobalMatrix43Calculated(false)
-	, m_ParentMatrix43Calculated(false)
-	, is_time_step_allowed(false)
-	, m_sequenceNumber(0)
 {
 	ColorInheritance = Color(255, 255, 255, 255);
 	ColorParent = Color(255, 255, 255, 255);
@@ -66,12 +57,12 @@ Instance::Instance(ManagerImplemented* pManager, EffectNodeImplemented* pEffectN
 
 Instance::~Instance()
 {
-	assert(m_State != INSTANCE_STATE_ACTIVE);
+	assert(m_State != eInstanceState::INSTANCE_STATE_ACTIVE);
 }
 
 void Instance::GenerateChildrenInRequired()
 {
-	if (m_State == INSTANCE_STATE_DISPOSING)
+	if (m_State == eInstanceState::INSTANCE_STATE_DISPOSING)
 	{
 		return;
 	}
@@ -110,7 +101,7 @@ void Instance::Initialize(Instance* parent, int32_t instanceNumber, const SIMD::
 	assert(this->m_pContainer != nullptr);
 
 	// Initialize a state
-	m_State = INSTANCE_STATE_ACTIVE;
+	m_State = eInstanceState::INSTANCE_STATE_ACTIVE;
 
 	// Initialize paramaters about a parent
 	m_pParent = parent;
@@ -159,13 +150,6 @@ void Instance::FirstUpdate()
 
 		// initialize Parent
 		m_ParentMatrix = SIMD::Mat43f::Identity;
-
-		// Generate zero frame effect
-
-		// for new children
-		// UpdateChildrenGroupMatrix();
-		//
-		// GenerateChildrenInRequired(0.0f);
 
 		return;
 	}
@@ -342,12 +326,6 @@ void Instance::Update(float deltaFrame, bool shown)
 		m_pParent = nullptr;
 	}
 
-	// Create child particles
-	// if( !m_pEffectNode->CommonValues.RemoveWhenLifeIsExtinct )
-	//{
-	//	GenerateChildrenInRequired(m_LivingTime);
-	//}
-
 	UpdateChildrenGroupMatrix();
 
 	if (m_pEffectNode->m_effect->GetVersion() >= 1600)
@@ -359,7 +337,7 @@ void Instance::Update(float deltaFrame, bool shown)
 		m_AlphaThreshold = AlphaCutoffFunctions::CalcAlphaThreshold(rand, m_pParent, m_pEffectNode->AlphaCutoff, alpha_cutoff_values, effect, instanceGlobal, m_LivingTime, m_LivedTime);
 	}
 
-	if (m_State == INSTANCE_STATE_ACTIVE)
+	if (m_State == eInstanceState::INSTANCE_STATE_ACTIVE)
 	{
 		// check whether killed?
 		bool removed = false;
@@ -378,7 +356,7 @@ void Instance::Update(float deltaFrame, bool shown)
 			// if remove parent
 			if (!removed && m_pEffectNode->CommonValues.RemoveWhenParentIsRemoved)
 			{
-				if (m_pParent == nullptr || m_pParent->GetState() != INSTANCE_STATE_ACTIVE)
+				if (m_pParent == nullptr || m_pParent->GetState() != eInstanceState::INSTANCE_STATE_ACTIVE)
 				{
 					m_pParent = nullptr;
 					removed = true;
@@ -418,7 +396,7 @@ void Instance::Update(float deltaFrame, bool shown)
 
 			if (m_pEffectNode->RendererCommon.FadeOutType == ParameterRendererCommon::FADEOUT_AFTER_REMOVED)
 			{
-				m_State = INSTANCE_STATE_REMOVING;
+				m_State = eInstanceState::INSTANCE_STATE_REMOVING;
 			}
 			else
 			{
@@ -428,7 +406,7 @@ void Instance::Update(float deltaFrame, bool shown)
 			}
 		}
 	}
-	else if (m_State == INSTANCE_STATE_REMOVING)
+	else if (m_State == eInstanceState::INSTANCE_STATE_REMOVING)
 	{
 		m_RemovingTime += deltaFrame;
 
@@ -675,36 +653,6 @@ void Instance::CalculateParentMatrix(float deltaFrame)
 	m_ParentMatrix43Calculated = true;
 }
 
-void Instance::ApplyDynamicParameterToFixedRotation()
-{
-	if (m_pEffectNode->RotationParam.RotationFixed.RefEq >= 0)
-	{
-		rotation_values.fixed.rotation = ApplyEq(m_pEffectNode->GetEffect(),
-												 m_pContainer->GetRootInstance(),
-												 m_pParent,
-												 &m_randObject,
-												 m_pEffectNode->RotationParam.RotationFixed.RefEq,
-												 m_pEffectNode->RotationParam.RotationFixed.Position,
-												 m_pEffectNode->DynamicFactor.Rot,
-												 m_pEffectNode->DynamicFactor.RotInv);
-	}
-}
-
-void Instance::ApplyDynamicParameterToFixedScaling()
-{
-	if (m_pEffectNode->ScalingParam.ScalingFixed.RefEq >= 0)
-	{
-		scaling_values.fixed.scale = ApplyEq(m_pEffectNode->GetEffect(),
-											 m_pContainer->GetRootInstance(),
-											 m_pParent,
-											 &m_randObject,
-											 m_pEffectNode->ScalingParam.ScalingFixed.RefEq,
-											 m_pEffectNode->ScalingParam.ScalingFixed.Position,
-											 m_pEffectNode->DynamicFactor.Scale,
-											 m_pEffectNode->DynamicFactor.ScaleInv);
-	}
-}
-
 float Instance::GetFlipbookIndexAndNextRate(const UVAnimationType& UVType, const UVParameter& UV, const InstanceUVState& data) const
 {
 	if (UVType == UVAnimationType::Animation)
@@ -786,7 +734,7 @@ void Instance::Kill()
 			group->IsReferencedFromInstance = false;
 		}
 
-		m_State = INSTANCE_STATE_REMOVED;
+		m_State = eInstanceState::INSTANCE_STATE_REMOVED;
 	}
 }
 

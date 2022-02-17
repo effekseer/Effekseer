@@ -32,6 +32,11 @@
 namespace Effekseer
 {
 
+struct InstanceSoundState
+{
+	int32_t delay;
+};
+
 class alignas(16) Instance : public IntrusiveList<Instance>::Node
 {
 	friend class Manager;
@@ -51,25 +56,19 @@ protected:
 public:
 	static const int32_t ChildrenMax = 16;
 
-	// マネージャ
-	ManagerImplemented* m_pManager;
+	ManagerImplemented* m_pManager = nullptr;
 
-	// パラメーター
-	EffectNodeImplemented* m_pEffectNode;
+	EffectNodeImplemented* m_pEffectNode = nullptr;
 
-	// コンテナ
-	InstanceContainer* m_pContainer;
+	InstanceContainer* m_pContainer = nullptr;
 
 	// a group which the instance belongs to
-	// 自分が所属するグループ
-	InstanceGroup* ownGroup_;
+	InstanceGroup* ownGroup_ = nullptr;
 
 	// a head of list in children group
-	// 子グループの連結リストの先頭
-	InstanceGroup* childrenGroups_;
+	InstanceGroup* childrenGroups_ = nullptr;
 
-	// 親
-	Instance* m_pParent;
+	Instance* m_pParent = nullptr;
 
 	// Random generator
 	RandObject m_randObject;
@@ -104,23 +103,18 @@ public:
 		EffectNodeTrack::InstanceValues track;
 	} rendererValues;
 
-	// 音
-	union
-	{
-		int32_t delay;
-	} soundValues;
+	InstanceSoundState soundValues;
 
-	// 状態
-	eInstanceState m_State;
+	eInstanceState m_State = eInstanceState::INSTANCE_STATE_ACTIVE;
 
 	// 生存時間
-	float m_LivedTime;
+	float m_LivedTime = 0;
 
 	// 生成されてからの時間
-	float m_LivingTime;
+	float m_LivingTime = 0;
 
 	// 削除されてからの時間
-	float m_RemovingTime;
+	float m_RemovingTime = 0;
 
 	std::array<InstanceUVState, ParameterRendererCommon::UVParameterNum> uvAnimationData_;
 
@@ -137,27 +131,24 @@ public:
 	bool m_IsFirstTime;
 
 	// 変換用行列が計算済かどうか
-	bool m_GlobalMatrix43Calculated;
+	bool m_GlobalMatrix43Calculated = false;
 
 	// 親の変換用行列が計算済かどうか
-	bool m_ParentMatrix43Calculated;
+	bool m_ParentMatrix43Calculated = false;
 
 	//! whether a time is allowed to pass
-	bool is_time_step_allowed;
+	bool is_time_step_allowed = false;
 
-	int32_t m_InstanceNumber;
+	int32_t m_InstanceNumber = 0;
 
-	/* 更新番号 */
-	uint32_t m_sequenceNumber;
+	uint32_t m_sequenceNumber = 0;
 
 	AlphaCuttoffState alpha_cutoff_values;
 
 	float m_AlphaThreshold = 0.0f;
 
-	// コンストラクタ
 	Instance(ManagerImplemented* pManager, EffectNodeImplemented* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup);
 
-	// デストラクタ
 	virtual ~Instance();
 
 	void GenerateChildrenInRequired();
@@ -172,52 +163,25 @@ public:
 		return m_IsFirstTime;
 	}
 
-	/**
-		@brief	状態の取得
-	*/
 	eInstanceState GetState() const;
 
-	/**
-		@brief	アクティブ状態の判定
-	*/
 	bool IsActive() const
 	{
-		return m_State <= INSTANCE_STATE_REMOVING;
+		return m_State <= eInstanceState::INSTANCE_STATE_REMOVING;
 	}
 
-	/**
-		@brief	行列の取得
-	*/
 	const SIMD::Mat43f& GetGlobalMatrix43() const;
 
-	/**
-		@brief	初期化
-	*/
 	void Initialize(Instance* parent, int32_t instanceNumber, const SIMD::Mat43f& globalMatrix);
 
-	/**
-		@brief	初回の更新
-	*/
 	void FirstUpdate();
 
-	/**
-		@brief	更新
-	*/
 	void Update(float deltaFrame, bool shown);
 
-	/**
-		@brief	Draw instance
-	*/
 	void Draw(Instance* next, void* userData);
 
-	/**
-		@brief	破棄
-	*/
 	void Kill();
 
-	/**
-		@brief	UVの位置取得
-	*/
 	RectF GetUV(const int32_t index) const;
 
 	//! get custom data
@@ -234,19 +198,9 @@ public:
 	float GetFlipbookIndexAndNextRate() const;
 
 private:
-	/**
-		@brief	行列の更新
-	*/
 	void CalculateMatrix(float deltaFrame);
 
-	/**
-		@brief	行列の更新
-	*/
 	void CalculateParentMatrix(float deltaFrame);
-
-	void ApplyDynamicParameterToFixedRotation();
-
-	void ApplyDynamicParameterToFixedScaling();
 
 	float GetFlipbookIndexAndNextRate(const UVAnimationType& UVType, const UVParameter& UV, const InstanceUVState& data) const;
 
