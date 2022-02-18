@@ -13,17 +13,12 @@
 
 #include "Effekseer.Setting.h"
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 namespace Effekseer
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
 void EffectNodeTrack::LoadRendererParameter(unsigned char*& pos, const SettingRef& setting)
 {
-	int32_t type = 0;
+	eEffectNodeType type = eEffectNodeType::EFFECT_NODE_TYPE_NONE;
 	memcpy(&type, pos, sizeof(int));
 	pos += sizeof(int);
 	assert(type == GetType());
@@ -54,7 +49,6 @@ void EffectNodeTrack::LoadRendererParameter(unsigned char*& pos, const SettingRe
 	TrackColorRightMiddle.load(pos, m_effect->GetVersion());
 
 	AlphaBlend = RendererCommon.AlphaBlend;
-	TrackTexture = RendererCommon.ColorTextureIndex;
 
 	EffekseerPrintDebug("TrackColorLeft : %d\n", TrackColorLeft.type);
 	EffekseerPrintDebug("TrackColorLeftMiddle : %d\n", TrackColorLeftMiddle.type);
@@ -77,9 +71,6 @@ void EffectNodeTrack::LoadRendererParameter(unsigned char*& pos, const SettingRe
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void EffectNodeTrack::BeginRendering(int32_t count, Manager* manager, void* userData)
 {
 	TrackRendererRef renderer = manager->GetTrackRenderer();
@@ -105,9 +96,6 @@ void EffectNodeTrack::BeginRendering(int32_t count, Manager* manager, void* user
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void EffectNodeTrack::BeginRenderingGroup(InstanceGroup* group, Manager* manager, void* userData)
 {
 	TrackRendererRef renderer = manager->GetTrackRenderer();
@@ -153,7 +141,7 @@ void EffectNodeTrack::EndRenderingGroup(InstanceGroup* group, Manager* manager, 
 	}
 }
 
-void EffectNodeTrack::Rendering(const Instance& instance, const Instance* next_instance, Manager* manager, void* userData)
+void EffectNodeTrack::Rendering(const Instance& instance, const Instance* next_instance, int index, Manager* manager, void* userData)
 {
 	TrackRendererRef renderer = manager->GetTrackRenderer();
 	if (renderer != nullptr)
@@ -183,14 +171,11 @@ void EffectNodeTrack::Rendering(const Instance& instance, const Instance* next_i
 
 		m_instanceParameter.SRTMatrix43 = instance.GetGlobalMatrix43();
 
+		m_instanceParameter.InstanceIndex = index;
 		renderer->Rendering(m_nodeParameter, m_instanceParameter, userData);
-		m_instanceParameter.InstanceIndex++;
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void EffectNodeTrack::EndRendering(Manager* manager, void* userData)
 {
 	TrackRendererRef renderer = manager->GetTrackRenderer();
@@ -200,9 +185,6 @@ void EffectNodeTrack::EndRendering(Manager* manager, void* userData)
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void EffectNodeTrack::InitializeRenderedInstanceGroup(InstanceGroup& instanceGroup, Manager* manager)
 {
 	InstanceGroupValues& instValues = instanceGroup.rendererValues.track;
@@ -222,9 +204,6 @@ void EffectNodeTrack::InitializeRenderedInstanceGroup(InstanceGroup& instanceGro
 	InitializeValues(instValues.SizeMiddle, TrackSizeMiddle, manager);
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void EffectNodeTrack::InitializeRenderedInstance(Instance& instance, InstanceGroup& instanceGroup, Manager* manager)
 {
 	auto& instValues = instanceGroup.rendererValues.track;
@@ -244,9 +223,6 @@ void EffectNodeTrack::InitializeRenderedInstance(Instance& instance, InstanceGro
 	instance.ColorInheritance = c;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void EffectNodeTrack::UpdateRenderedInstance(Instance& instance, InstanceGroup& instanceGroup, Manager* manager)
 {
 	auto& instValues = instanceGroup.rendererValues.track;
@@ -260,9 +236,6 @@ void EffectNodeTrack::UpdateRenderedInstance(Instance& instance, InstanceGroup& 
 	instance.ColorInheritance = c;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void EffectNodeTrack::InitializeValues(InstanceAllTypeColorState& value, AllTypeColorParameter& param, IRandObject* rand)
 {
 	if (param.type == AllTypeColorParameter::Fixed)
@@ -284,9 +257,6 @@ void EffectNodeTrack::InitializeValues(InstanceAllTypeColorState& value, AllType
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void EffectNodeTrack::InitializeValues(InstanceGroupValues::Size& value, TrackSizeParameter& param, Manager* manager)
 {
 	if (param.type == TrackSizeParameter::Fixed)
@@ -295,9 +265,6 @@ void EffectNodeTrack::InitializeValues(InstanceGroupValues::Size& value, TrackSi
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void EffectNodeTrack::SetValues(
 	Color& c, const Instance& instance, InstanceAllTypeColorState& value, AllTypeColorParameter& param, int32_t time, int32_t livedTime)
 {
@@ -341,9 +308,6 @@ void EffectNodeTrack::SetValues(
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void EffectNodeTrack::SetValues(float& s, InstanceGroupValues::Size& value, TrackSizeParameter& param, float time)
 {
 	if (param.type == TrackSizeParameter::Fixed)
@@ -352,9 +316,6 @@ void EffectNodeTrack::SetValues(float& s, InstanceGroupValues::Size& value, Trac
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void EffectNodeTrack::LoadValues(TrackSizeParameter& param, unsigned char*& pos)
 {
 	memcpy(&param.type, pos, sizeof(int));
@@ -367,11 +328,4 @@ void EffectNodeTrack::LoadValues(TrackSizeParameter& param, unsigned char*& pos)
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 } // namespace Effekseer
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------

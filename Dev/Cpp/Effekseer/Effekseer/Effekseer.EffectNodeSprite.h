@@ -2,14 +2,8 @@
 #ifndef __EFFEKSEER_ParameterNODE_SPRITE_H__
 #define __EFFEKSEER_ParameterNODE_SPRITE_H__
 
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
 #include "Effekseer.EffectNode.h"
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 namespace Effekseer
 {
 struct SpriteColorParameter
@@ -75,11 +69,8 @@ class EffectNodeSprite : public EffectNodeImplemented
 public:
 	struct InstanceValues
 	{
-		// 色
 		Color _color;
-
 		Color _originalColor;
-
 		InstanceAllTypeColorState allColorValues;
 
 		union
@@ -102,8 +93,6 @@ public:
 	SpriteColorParameter SpriteColor;
 	SpritePositionParameter SpritePosition;
 
-	int SpriteTexture;
-
 	EffectNodeSprite(Effect* effect, unsigned char*& pos)
 		: EffectNodeImplemented(effect, pos)
 	{
@@ -113,7 +102,7 @@ public:
 
 	void BeginRendering(int32_t count, Manager* manager, void* userData) override;
 
-	void Rendering(const Instance& instance, const Instance* next_instance, Manager* manager, void* userData) override;
+	void Rendering(const Instance& instance, const Instance* next_instance, int index, Manager* manager, void* userData) override;
 
 	void EndRendering(Manager* manager, void* userData) override;
 
@@ -123,7 +112,7 @@ public:
 
 	eEffectNodeType GetType() const override
 	{
-		return EFFECT_NODE_TYPE_SPRITE;
+		return eEffectNodeType::EFFECT_NODE_TYPE_SPRITE;
 	}
 };
 

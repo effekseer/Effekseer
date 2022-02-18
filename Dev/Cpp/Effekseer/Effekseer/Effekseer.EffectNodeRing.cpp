@@ -27,7 +27,7 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, const SettingRef& setting)
 {
-	int32_t type = 0;
+	eEffectNodeType type = eEffectNodeType::EFFECT_NODE_TYPE_NONE;
 	memcpy(&type, pos, sizeof(int));
 	pos += sizeof(int);
 	assert(type == GetType());
@@ -266,7 +266,7 @@ void EffectNodeRing::BeginRendering(int32_t count, Manager* manager, void* userD
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::Rendering(const Instance& instance, const Instance* next_instance, Manager* manager, void* userData)
+void EffectNodeRing::Rendering(const Instance& instance, const Instance* next_instance, int index, Manager* manager, void* userData)
 {
 	const InstanceValues& instValues = instance.rendererValues.ring;
 	RingRendererRef renderer = manager->GetRingRenderer();

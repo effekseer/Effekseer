@@ -714,10 +714,7 @@ public:
 
 	virtual void EndRenderingGroup(InstanceGroup* group, Manager* manager, void* userData);
 
-	/**
-	@brief	描画
-	*/
-	virtual void Rendering(const Instance& instance, const Instance* next_instance, Manager* manager, void* userData);
+	virtual void Rendering(const Instance& instance, const Instance* next_instance, int index, Manager* manager, void* userData);
 
 	/**
 	@brief	描画終了
@@ -739,10 +736,7 @@ public:
 	*/
 	virtual void UpdateRenderedInstance(Instance& instance, InstanceGroup& instanceGroup, Manager* manager);
 
-	/**
-	@brief	描画部分更新
-	*/
-	virtual float GetFadeAlpha(const Instance& instance);
+	float GetFadeAlpha(const Instance& instance) const;
 
 	EffectInstanceTerm CalculateInstanceTerm(EffectInstanceTerm& parentTerm) const override;
 
@@ -756,7 +750,7 @@ public:
 	*/
 	virtual eEffectNodeType GetType() const
 	{
-		return EFFECT_NODE_TYPE_NONE;
+		return eEffectNodeType::EFFECT_NODE_TYPE_NONE;
 	}
 
 	RefPtr<RenderingUserData> GetRenderingUserData() override

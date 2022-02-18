@@ -92,7 +92,7 @@ enum class eInstanceState : int32_t
 /**
 	@brief	A type of node
 */
-enum eEffectNodeType
+enum class eEffectNodeType : int32_t
 {
 	EFFECT_NODE_TYPE_ROOT = -1,
 	EFFECT_NODE_TYPE_NONE = 0,
@@ -101,8 +101,6 @@ enum eEffectNodeType
 	EFFECT_NODE_TYPE_RING = 4,
 	EFFECT_NODE_TYPE_MODEL = 5,
 	EFFECT_NODE_TYPE_TRACK = 6,
-
-	EFFECT_NODE_TYPE_DWORD = 0x7fffffff,
 };
 
 enum class ModelReferenceType : int32_t

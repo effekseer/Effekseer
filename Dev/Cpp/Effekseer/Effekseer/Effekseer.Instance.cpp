@@ -277,7 +277,7 @@ void Instance::Update(float deltaFrame, bool shown)
 	m_GlobalMatrix43Calculated = false;
 	m_ParentMatrix43Calculated = false;
 
-	if (is_time_step_allowed && m_pEffectNode->GetType() != EFFECT_NODE_TYPE_ROOT)
+	if (is_time_step_allowed && m_pEffectNode->GetType() != eEffectNodeType::EFFECT_NODE_TYPE_ROOT)
 	{
 		/* 音の更新(現状放置) */
 		if (m_pEffectNode->SoundType == ParameterSoundType_Use)
@@ -342,7 +342,7 @@ void Instance::Update(float deltaFrame, bool shown)
 		// check whether killed?
 		bool removed = false;
 
-		if (m_pEffectNode->GetType() != EFFECT_NODE_TYPE_ROOT)
+		if (m_pEffectNode->GetType() != eEffectNodeType::EFFECT_NODE_TYPE_ROOT)
 		{
 			// if pass time
 			if (m_pEffectNode->CommonValues.RemoveWhenLifeIsExtinct)
@@ -459,7 +459,7 @@ void Instance::CalculateMatrix(float deltaFrame)
 	}
 
 	/* 更新処理 */
-	if (m_pEffectNode->GetType() != EFFECT_NODE_TYPE_ROOT)
+	if (m_pEffectNode->GetType() != eEffectNodeType::EFFECT_NODE_TYPE_ROOT)
 	{
 		SIMD::Vec3f localPosition{};
 		SIMD::Vec3f localAngle;
@@ -610,7 +610,7 @@ void Instance::CalculateParentMatrix(float deltaFrame)
 
 	parentPosition_ = m_pParent->GetGlobalMatrix43().GetTranslation();
 
-	if (m_pEffectNode->GetType() != EFFECT_NODE_TYPE_ROOT)
+	if (m_pEffectNode->GetType() != eEffectNodeType::EFFECT_NODE_TYPE_ROOT)
 	{
 		TranslationParentBindType tType = m_pEffectNode->CommonValues.TranslationBindType;
 		BindType rType = m_pEffectNode->CommonValues.RotationBindType;
@@ -710,7 +710,7 @@ float Instance::GetUVTime() const
 	return m_LivingTime + uvAnimationData_[0].uvTimeOffset;
 }
 
-void Instance::Draw(Instance* next, void* userData)
+void Instance::Draw(Instance* next, int32_t index, void* userData)
 {
 	assert(m_pEffectNode != nullptr);
 
@@ -722,7 +722,7 @@ void Instance::Draw(Instance* next, void* userData)
 		CalculateMatrix(0);
 	}
 
-	m_pEffectNode->Rendering(*this, next, m_pManager, userData);
+	m_pEffectNode->Rendering(*this, next, index, m_pManager, userData);
 }
 
 void Instance::Kill()
