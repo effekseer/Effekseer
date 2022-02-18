@@ -710,7 +710,7 @@ float Instance::GetUVTime() const
 	return m_LivingTime + uvAnimationData_[0].uvTimeOffset;
 }
 
-void Instance::Draw(Instance* next, void* userData)
+void Instance::Draw(Instance* next, int32_t index, void* userData)
 {
 	assert(m_pEffectNode != nullptr);
 
@@ -722,7 +722,7 @@ void Instance::Draw(Instance* next, void* userData)
 		CalculateMatrix(0);
 	}
 
-	m_pEffectNode->Rendering(*this, next, m_pManager, userData);
+	m_pEffectNode->Rendering(*this, next, index, m_pManager, userData);
 }
 
 void Instance::Kill()

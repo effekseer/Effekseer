@@ -714,10 +714,7 @@ public:
 
 	virtual void EndRenderingGroup(InstanceGroup* group, Manager* manager, void* userData);
 
-	/**
-	@brief	描画
-	*/
-	virtual void Rendering(const Instance& instance, const Instance* next_instance, Manager* manager, void* userData);
+	virtual void Rendering(const Instance& instance, const Instance* next_instance, int index, Manager* manager, void* userData);
 
 	/**
 	@brief	描画終了

@@ -60,7 +60,7 @@ public:
 
 	void BeginRendering(int32_t count, Manager* manager, void* userData) override;
 
-	void Rendering(const Instance& instance, const Instance* next_instance, Manager* manager, void* userData) override;
+	void Rendering(const Instance& instance, const Instance* next_instance, int index, Manager* manager, void* userData) override;
 
 	void EndRendering(Manager* manager, void* userData) override;
 

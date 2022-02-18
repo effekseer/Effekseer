@@ -178,7 +178,7 @@ public:
 
 	void Update(float deltaFrame, bool shown);
 
-	void Draw(Instance* next, void* userData);
+	void Draw(Instance* next, int32_t index, void* userData);
 
 	void Kill();
 

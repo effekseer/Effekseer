@@ -182,7 +182,7 @@ void EffectNodeRibbon::EndRenderingGroup(InstanceGroup* group, Manager* manager,
 	}
 }
 
-void EffectNodeRibbon::Rendering(const Instance& instance, const Instance* next_instance, Manager* manager, void* userData)
+void EffectNodeRibbon::Rendering(const Instance& instance, const Instance* next_instance, int index, Manager* manager, void* userData)
 {
 	const InstanceValues& instValues = instance.rendererValues.ribbon;
 	RibbonRendererRef renderer = manager->GetRibbonRenderer();
@@ -259,9 +259,8 @@ void EffectNodeRibbon::Rendering(const Instance& instance, const Instance* next_
 			m_instanceParameter.Positions[1] = RibbonPosition.fixed.r;
 		}
 
+		m_instanceParameter.InstanceIndex = index;
 		renderer->Rendering(m_nodeParameter, m_instanceParameter, userData);
-
-		m_instanceParameter.InstanceIndex++;
 	}
 }
 

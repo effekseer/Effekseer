@@ -141,7 +141,7 @@ void EffectNodeTrack::EndRenderingGroup(InstanceGroup* group, Manager* manager, 
 	}
 }
 
-void EffectNodeTrack::Rendering(const Instance& instance, const Instance* next_instance, Manager* manager, void* userData)
+void EffectNodeTrack::Rendering(const Instance& instance, const Instance* next_instance, int index, Manager* manager, void* userData)
 {
 	TrackRendererRef renderer = manager->GetTrackRenderer();
 	if (renderer != nullptr)
@@ -171,8 +171,8 @@ void EffectNodeTrack::Rendering(const Instance& instance, const Instance* next_i
 
 		m_instanceParameter.SRTMatrix43 = instance.GetGlobalMatrix43();
 
+		m_instanceParameter.InstanceIndex = index;
 		renderer->Rendering(m_nodeParameter, m_instanceParameter, userData);
-		m_instanceParameter.InstanceIndex++;
 	}
 }
 

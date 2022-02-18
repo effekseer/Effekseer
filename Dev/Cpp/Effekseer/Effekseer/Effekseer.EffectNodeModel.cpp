@@ -140,7 +140,7 @@ void EffectNodeModel::BeginRendering(int32_t count, Manager* manager, void* user
 	}
 }
 
-void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_instance, Manager* manager, void* userData)
+void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_instance, int index, Manager* manager, void* userData)
 {
 	const InstanceValues& instValues = instance.rendererValues.model;
 	ModelRendererRef renderer = manager->GetModelRenderer();
