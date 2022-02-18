@@ -99,8 +99,6 @@ public:
 	RibbonColorParameter RibbonColor;
 	RibbonPositionParameter RibbonPosition;
 
-	int RibbonTexture;
-
 	int32_t SplineDivision = 1;
 
 	NodeRendererTextureUVTypeParameter TextureUVType;
@@ -132,7 +130,7 @@ public:
 
 	eEffectNodeType GetType() const override
 	{
-		return EFFECT_NODE_TYPE_RIBBON;
+		return eEffectNodeType::EFFECT_NODE_TYPE_RIBBON;
 	}
 };
 

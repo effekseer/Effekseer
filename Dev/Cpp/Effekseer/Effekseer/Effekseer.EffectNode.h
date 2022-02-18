@@ -739,10 +739,7 @@ public:
 	*/
 	virtual void UpdateRenderedInstance(Instance& instance, InstanceGroup& instanceGroup, Manager* manager);
 
-	/**
-	@brief	描画部分更新
-	*/
-	virtual float GetFadeAlpha(const Instance& instance);
+	float GetFadeAlpha(const Instance& instance) const;
 
 	EffectInstanceTerm CalculateInstanceTerm(EffectInstanceTerm& parentTerm) const override;
 
@@ -756,7 +753,7 @@ public:
 	*/
 	virtual eEffectNodeType GetType() const
 	{
-		return EFFECT_NODE_TYPE_NONE;
+		return eEffectNodeType::EFFECT_NODE_TYPE_NONE;
 	}
 
 	RefPtr<RenderingUserData> GetRenderingUserData() override

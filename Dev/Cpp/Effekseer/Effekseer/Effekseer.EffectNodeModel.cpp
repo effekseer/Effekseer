@@ -13,17 +13,12 @@
 
 #include "Effekseer.Setting.h"
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 namespace Effekseer
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
 void EffectNodeModel::LoadRendererParameter(unsigned char*& pos, const SettingRef& setting)
 {
-	int32_t type = 0;
+	eEffectNodeType type = eEffectNodeType::EFFECT_NODE_TYPE_NONE;
 	memcpy(&type, pos, sizeof(int));
 	pos += sizeof(int);
 	assert(type == GetType());
@@ -55,6 +50,7 @@ void EffectNodeModel::LoadRendererParameter(unsigned char*& pos, const SettingRe
 
 		if (m_effect->GetVersion() < 15)
 		{
+			int NormalTextureIndex = 0;
 			memcpy(&NormalTextureIndex, pos, sizeof(int));
 			pos += sizeof(int);
 			EffekseerPrintDebug("NormalTextureIndex : %d\n", NormalTextureIndex);
@@ -85,7 +81,7 @@ void EffectNodeModel::LoadRendererParameter(unsigned char*& pos, const SettingRe
 		int32_t lighting;
 		memcpy(&lighting, pos, sizeof(int));
 		pos += sizeof(int);
-		Lighting = lighting > 0;
+		const auto Lighting = lighting > 0;
 
 		if (Lighting && !RendererCommon.Distortion)
 		{
@@ -114,17 +110,12 @@ void EffectNodeModel::LoadRendererParameter(unsigned char*& pos, const SettingRe
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void EffectNodeModel::BeginRendering(int32_t count, Manager* manager, void* userData)
 {
 	ModelRendererRef renderer = manager->GetModelRenderer();
 	if (renderer != nullptr)
 	{
 		ModelRenderer::NodeParameter nodeParameter;
-		// nodeParameter.TextureFilter = RendererCommon.FilterType;
-		// nodeParameter.TextureWrap = RendererCommon.WrapType;
 		nodeParameter.ZTest = RendererCommon.ZTest;
 		nodeParameter.ZWrite = RendererCommon.ZWrite;
 		nodeParameter.EffectPointer = GetEffect();
@@ -136,10 +127,6 @@ void EffectNodeModel::BeginRendering(int32_t count, Manager* manager, void* user
 		nodeParameter.Maginification = GetEffect()->GetMaginification();
 
 		nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
-		// nodeParameter.DepthOffset = DepthValues.DepthOffset;
-		// nodeParameter.IsDepthOffsetScaledWithCamera = DepthValues.IsDepthOffsetScaledWithCamera;
-		// nodeParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
-
 		nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
 
 		nodeParameter.EnableFalloff = EnableFalloff;
@@ -153,9 +140,6 @@ void EffectNodeModel::BeginRendering(int32_t count, Manager* manager, void* user
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_instance, Manager* manager, void* userData)
 {
 	const InstanceValues& instValues = instance.rendererValues.model;
@@ -163,8 +147,6 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 	if (renderer != nullptr)
 	{
 		ModelRenderer::NodeParameter nodeParameter;
-		// nodeParameter.TextureFilter = RendererCommon.FilterType;
-		// nodeParameter.TextureWrap = RendererCommon.WrapType;
 		nodeParameter.ZTest = RendererCommon.ZTest;
 		nodeParameter.ZWrite = RendererCommon.ZWrite;
 		nodeParameter.EffectPointer = GetEffect();
@@ -176,9 +158,6 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 		nodeParameter.Maginification = GetEffect()->GetMaginification();
 
 		nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
-		// nodeParameter.DepthOffset = DepthValues.DepthOffset;
-		// nodeParameter.IsDepthOffsetScaledWithCamera = DepthValues.IsDepthOffsetScaledWithCamera;
-		// nodeParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
 		nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
 
 		nodeParameter.EnableFalloff = EnableFalloff;
@@ -233,17 +212,12 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void EffectNodeModel::EndRendering(Manager* manager, void* userData)
 {
 	ModelRendererRef renderer = manager->GetModelRenderer();
 	if (renderer != nullptr)
 	{
 		ModelRenderer::NodeParameter nodeParameter;
-		// nodeParameter.TextureFilter = RendererCommon.FilterType;
-		// nodeParameter.TextureWrap = RendererCommon.WrapType;
 		nodeParameter.ZTest = RendererCommon.ZTest;
 		nodeParameter.ZWrite = RendererCommon.ZWrite;
 		nodeParameter.EffectPointer = GetEffect();
@@ -255,10 +229,6 @@ void EffectNodeModel::EndRendering(Manager* manager, void* userData)
 		nodeParameter.Maginification = GetEffect()->GetMaginification();
 
 		nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
-		// nodeParameter.DepthOffset = DepthValues.DepthOffset;
-		// nodeParameter.IsDepthOffsetScaledWithCamera = DepthValues.IsDepthOffsetScaledWithCamera;
-		// nodeParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
-
 		nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
 
 		nodeParameter.EnableFalloff = EnableFalloff;
@@ -318,11 +288,4 @@ void EffectNodeModel::UpdateRenderedInstance(Instance& instance, InstanceGroup& 
 	instance.ColorInheritance = instValues._color;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 } // namespace Effekseer
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------

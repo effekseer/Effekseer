@@ -27,7 +27,7 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, const SettingRef& setting)
 {
-	int32_t type = 0;
+	eEffectNodeType type = eEffectNodeType::EFFECT_NODE_TYPE_NONE;
 	memcpy(&type, pos, sizeof(int));
 	pos += sizeof(int);
 	assert(type == GetType());

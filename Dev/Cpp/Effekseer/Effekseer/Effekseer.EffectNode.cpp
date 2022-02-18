@@ -665,7 +665,7 @@ EffectModelParameter EffectNodeImplemented::GetEffectModelParameter()
 	EffectModelParameter param;
 	param.Lighting = false;
 
-	if (GetType() == EFFECT_NODE_TYPE_MODEL)
+	if (GetType() == eEffectNodeType::EFFECT_NODE_TYPE_MODEL)
 	{
 		param.Lighting = RendererCommon.MaterialType == RendererMaterialType::Lighting;
 	}
@@ -678,7 +678,7 @@ EffectModelParameter EffectNodeImplemented::GetEffectModelParameter()
 //----------------------------------------------------------------------------------
 void EffectNodeImplemented::LoadRendererParameter(unsigned char*& pos, const SettingRef& setting)
 {
-	int32_t type = 0;
+	eEffectNodeType type = eEffectNodeType::EFFECT_NODE_TYPE_NONE;
 	memcpy(&type, pos, sizeof(int));
 	pos += sizeof(int);
 	assert(type == GetType());
@@ -738,10 +738,7 @@ void EffectNodeImplemented::UpdateRenderedInstance(Instance& instance, InstanceG
 {
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-float EffectNodeImplemented::GetFadeAlpha(const Instance& instance)
+float EffectNodeImplemented::GetFadeAlpha(const Instance& instance) const
 {
 	float alpha = 1.0f;
 
@@ -788,7 +785,8 @@ EffectInstanceTerm EffectNodeImplemented::CalculateInstanceTerm(EffectInstanceTe
 {
 	EffectInstanceTerm ret;
 
-	auto addWithClip = [](int v1, int v2) -> int {
+	auto addWithClip = [](int v1, int v2) -> int
+	{
 		v1 = Max(v1, 0);
 		v2 = Max(v2, 0);
 
@@ -913,40 +911,40 @@ EffectNodeImplemented* EffectNodeImplemented::Create(Effect* effect, EffectNode*
 {
 	EffectNodeImplemented* effectnode = nullptr;
 
-	int node_type = 0;
+	eEffectNodeType node_type = eEffectNodeType::EFFECT_NODE_TYPE_NONE;
 	memcpy(&node_type, pos, sizeof(int));
 
-	if (node_type == EFFECT_NODE_TYPE_ROOT)
+	if (node_type == eEffectNodeType::EFFECT_NODE_TYPE_ROOT)
 	{
 		EffekseerPrintDebug("* Create : EffectNodeRoot\n");
 		effectnode = new EffectNodeRoot(effect, pos);
 	}
-	else if (node_type == EFFECT_NODE_TYPE_NONE)
+	else if (node_type == eEffectNodeType::EFFECT_NODE_TYPE_NONE)
 	{
 		EffekseerPrintDebug("* Create : EffectNodeNone\n");
 		effectnode = new EffectNodeImplemented(effect, pos);
 	}
-	else if (node_type == EFFECT_NODE_TYPE_SPRITE)
+	else if (node_type == eEffectNodeType::EFFECT_NODE_TYPE_SPRITE)
 	{
 		EffekseerPrintDebug("* Create : EffectNodeSprite\n");
 		effectnode = new EffectNodeSprite(effect, pos);
 	}
-	else if (node_type == EFFECT_NODE_TYPE_RIBBON)
+	else if (node_type == eEffectNodeType::EFFECT_NODE_TYPE_RIBBON)
 	{
 		EffekseerPrintDebug("* Create : EffectNodeRibbon\n");
 		effectnode = new EffectNodeRibbon(effect, pos);
 	}
-	else if (node_type == EFFECT_NODE_TYPE_RING)
+	else if (node_type == eEffectNodeType::EFFECT_NODE_TYPE_RING)
 	{
 		EffekseerPrintDebug("* Create : EffectNodeRing\n");
 		effectnode = new EffectNodeRing(effect, pos);
 	}
-	else if (node_type == EFFECT_NODE_TYPE_MODEL)
+	else if (node_type == eEffectNodeType::EFFECT_NODE_TYPE_MODEL)
 	{
 		EffekseerPrintDebug("* Create : EffectNodeModel\n");
 		effectnode = new EffectNodeModel(effect, pos);
 	}
-	else if (node_type == EFFECT_NODE_TYPE_TRACK)
+	else if (node_type == eEffectNodeType::EFFECT_NODE_TYPE_TRACK)
 	{
 		EffekseerPrintDebug("* Create : EffectNodeTrack\n");
 		effectnode = new EffectNodeTrack(effect, pos);

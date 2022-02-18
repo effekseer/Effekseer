@@ -14,17 +14,12 @@
 
 #include "Effekseer.Setting.h"
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 namespace Effekseer
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
 void EffectNodeRibbon::LoadRendererParameter(unsigned char*& pos, const SettingRef& setting)
 {
-	int32_t type = 0;
+	eEffectNodeType type = eEffectNodeType::EFFECT_NODE_TYPE_NONE;
 	memcpy(&type, pos, sizeof(int));
 	pos += sizeof(int);
 	assert(type == GetType());
@@ -90,10 +85,11 @@ void EffectNodeRibbon::LoadRendererParameter(unsigned char*& pos, const SettingR
 
 	if (m_effect->GetVersion() >= 3)
 	{
-		RibbonTexture = RendererCommon.ColorTextureIndex;
+		//RibbonTexture = RendererCommon.ColorTextureIndex;
 	}
 	else
 	{
+		int RibbonTexture = 0;
 		memcpy(&RibbonTexture, pos, sizeof(int));
 		pos += sizeof(int);
 	}
@@ -117,9 +113,6 @@ void EffectNodeRibbon::LoadRendererParameter(unsigned char*& pos, const SettingR
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void EffectNodeRibbon::BeginRendering(int32_t count, Manager* manager, void* userData)
 {
 	RibbonRendererRef renderer = manager->GetRibbonRenderer();
@@ -189,9 +182,6 @@ void EffectNodeRibbon::EndRenderingGroup(InstanceGroup* group, Manager* manager,
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void EffectNodeRibbon::Rendering(const Instance& instance, const Instance* next_instance, Manager* manager, void* userData)
 {
 	const InstanceValues& instValues = instance.rendererValues.ribbon;
@@ -275,9 +265,6 @@ void EffectNodeRibbon::Rendering(const Instance& instance, const Instance* next_
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void EffectNodeRibbon::EndRendering(Manager* manager, void* userData)
 {
 	RibbonRendererRef renderer = manager->GetRibbonRenderer();
@@ -331,11 +318,4 @@ void EffectNodeRibbon::UpdateRenderedInstance(Instance& instance, InstanceGroup&
 	instance.ColorInheritance = instValues._color;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 } // namespace Effekseer
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
