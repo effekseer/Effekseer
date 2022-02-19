@@ -132,7 +132,6 @@ public:
 		return eEffectNodeType::EFFECT_NODE_TYPE_TRACK;
 	}
 
-	void InitializeValues(InstanceAllTypeColorState& value, AllTypeColorParameter& param, IRandObject* rand);
 	void InitializeValues(InstanceGroupValues::Size& value, TrackSizeParameter& param, Manager* manager);
 	void SetValues(Color& c,
 				   const Instance& instance,
