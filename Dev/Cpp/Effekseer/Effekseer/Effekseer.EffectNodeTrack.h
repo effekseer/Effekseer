@@ -84,8 +84,6 @@ public:
 	InstanceGroupValues m_currentGroupValues;
 
 public:
-	AlphaBlendType AlphaBlend;
-
 	AllTypeColorParameter TrackColorLeft;
 	AllTypeColorParameter TrackColorCenter;
 	AllTypeColorParameter TrackColorRight;

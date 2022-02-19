@@ -83,8 +83,6 @@ public:
 	RibbonRenderer::InstanceParameter m_instanceParameter;
 
 public:
-	AlphaBlendType AlphaBlend;
-
 	int ViewpointDependent;
 
 	AllTypeColorParameter RibbonAllColor;

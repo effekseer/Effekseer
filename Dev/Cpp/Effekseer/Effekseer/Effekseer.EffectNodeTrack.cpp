@@ -48,8 +48,6 @@ void EffectNodeTrack::LoadRendererParameter(unsigned char*& pos, const SettingRe
 	TrackColorRight.load(pos, m_effect->GetVersion());
 	TrackColorRightMiddle.load(pos, m_effect->GetVersion());
 
-	AlphaBlend = RendererCommon.AlphaBlend;
-
 	EffekseerPrintDebug("TrackColorLeft : %d\n", TrackColorLeft.type);
 	EffekseerPrintDebug("TrackColorLeftMiddle : %d\n", TrackColorLeftMiddle.type);
 	EffekseerPrintDebug("TrackColorCenter : %d\n", TrackColorCenter.type);

@@ -58,25 +58,6 @@ struct RingLocationParameter
 	};
 };
 
-struct RingColorParameter
-{
-	enum
-	{
-		Fixed = 0,
-		Random = 1,
-		Easing = 2,
-
-		Parameter_DWORD = 0x7fffffff,
-	} type;
-
-	union
-	{
-		Color fixed;
-		random_color random;
-		easing_color easing;
-	};
-};
-
 struct RingSingleValues
 {
 	float current;
