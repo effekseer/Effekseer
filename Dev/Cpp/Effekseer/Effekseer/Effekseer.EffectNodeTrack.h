@@ -2,20 +2,12 @@
 #ifndef __EFFEKSEER_ParameterNODE_TRACK_H__
 #define __EFFEKSEER_ParameterNODE_TRACK_H__
 
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
 #include "Effekseer.EffectNode.h"
 #include "Renderer/Effekseer.TrackRenderer.h"
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 namespace Effekseer
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
 struct TrackSizeParameter
 {
 	enum
@@ -34,9 +26,6 @@ struct TrackSizeParameter
 	};
 };
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 class EffectNodeTrack : public EffectNodeImplemented
 {
 public:
@@ -118,9 +107,7 @@ public:
 	{
 	}
 
-	~EffectNodeTrack()
-	{
-	}
+	~EffectNodeTrack() = default;
 
 	void LoadRendererParameter(unsigned char*& pos, const SettingRef& setting) override;
 
@@ -145,7 +132,7 @@ public:
 		return eEffectNodeType::EFFECT_NODE_TYPE_TRACK;
 	}
 
-	void InitializeValues(InstanceAllTypeColorState& value, AllTypeColorParameter & param, IRandObject* rand);
+	void InitializeValues(InstanceAllTypeColorState& value, AllTypeColorParameter& param, IRandObject* rand);
 	void InitializeValues(InstanceGroupValues::Size& value, TrackSizeParameter& param, Manager* manager);
 	void SetValues(Color& c,
 				   const Instance& instance,
@@ -157,11 +144,6 @@ public:
 	void LoadValues(TrackSizeParameter& param, unsigned char*& pos);
 };
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 } // namespace Effekseer
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
 #endif // __EFFEKSEER_ParameterNODE_TRACK_H__

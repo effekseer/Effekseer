@@ -115,26 +115,7 @@ void EffectNodeModel::BeginRendering(int32_t count, Manager* manager, void* user
 	ModelRendererRef renderer = manager->GetModelRenderer();
 	if (renderer != nullptr)
 	{
-		ModelRenderer::NodeParameter nodeParameter;
-		nodeParameter.ZTest = RendererCommon.ZTest;
-		nodeParameter.ZWrite = RendererCommon.ZWrite;
-		nodeParameter.EffectPointer = GetEffect();
-		nodeParameter.ModelIndex = ModelIndex;
-		nodeParameter.Culling = Culling;
-		nodeParameter.Billboard = Billboard;
-		nodeParameter.Magnification = m_effect->GetMaginification();
-		nodeParameter.IsRightHand = manager->GetCoordinateSystem() == CoordinateSystem::RH;
-		nodeParameter.Maginification = GetEffect()->GetMaginification();
-
-		nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
-		nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
-
-		nodeParameter.EnableFalloff = EnableFalloff;
-		nodeParameter.FalloffParam = FalloffParam;
-		nodeParameter.EnableViewOffset = (TranslationParam.TranslationType == ParameterTranslationType_ViewOffset);
-
-		nodeParameter.IsProceduralMode = Mode == ModelReferenceType::Procedural;
-		nodeParameter.UserData = GetRenderingUserData();
+		const auto nodeParameter = GetNodeParameter(manager);
 
 		renderer->BeginRendering(nodeParameter, count, userData);
 	}
@@ -146,26 +127,7 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 	ModelRendererRef renderer = manager->GetModelRenderer();
 	if (renderer != nullptr)
 	{
-		ModelRenderer::NodeParameter nodeParameter;
-		nodeParameter.ZTest = RendererCommon.ZTest;
-		nodeParameter.ZWrite = RendererCommon.ZWrite;
-		nodeParameter.EffectPointer = GetEffect();
-		nodeParameter.ModelIndex = ModelIndex;
-		nodeParameter.Culling = Culling;
-		nodeParameter.Billboard = Billboard;
-		nodeParameter.Magnification = m_effect->GetMaginification();
-		nodeParameter.IsRightHand = manager->GetCoordinateSystem() == CoordinateSystem::RH;
-		nodeParameter.Maginification = GetEffect()->GetMaginification();
-
-		nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
-		nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
-
-		nodeParameter.EnableFalloff = EnableFalloff;
-		nodeParameter.FalloffParam = FalloffParam;
-
-		nodeParameter.EnableViewOffset = (TranslationParam.TranslationType == ParameterTranslationType_ViewOffset);
-
-		nodeParameter.IsProceduralMode = Mode == ModelReferenceType::Procedural;
+		const auto nodeParameter = GetNodeParameter(manager);
 
 		ModelRenderer::InstanceParameter instanceParameter;
 		instanceParameter.SRTMatrix43 = instance.GetGlobalMatrix43();
@@ -205,9 +167,6 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 			instanceParameter.AllColor = Color::Mul(instanceParameter.AllColor, instance.m_pContainer->GetRootInstance()->GlobalColor);
 		}
 
-		nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
-		nodeParameter.UserData = GetRenderingUserData();
-
 		renderer->Rendering(nodeParameter, instanceParameter, userData);
 	}
 }
@@ -217,28 +176,7 @@ void EffectNodeModel::EndRendering(Manager* manager, void* userData)
 	ModelRendererRef renderer = manager->GetModelRenderer();
 	if (renderer != nullptr)
 	{
-		ModelRenderer::NodeParameter nodeParameter;
-		nodeParameter.ZTest = RendererCommon.ZTest;
-		nodeParameter.ZWrite = RendererCommon.ZWrite;
-		nodeParameter.EffectPointer = GetEffect();
-		nodeParameter.ModelIndex = ModelIndex;
-		nodeParameter.Culling = Culling;
-		nodeParameter.Billboard = Billboard;
-		nodeParameter.Magnification = m_effect->GetMaginification();
-		nodeParameter.IsRightHand = manager->GetSetting()->GetCoordinateSystem() == CoordinateSystem::RH;
-		nodeParameter.Maginification = GetEffect()->GetMaginification();
-
-		nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
-		nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
-
-		nodeParameter.EnableFalloff = EnableFalloff;
-		nodeParameter.FalloffParam = FalloffParam;
-
-		nodeParameter.EnableViewOffset = (TranslationParam.TranslationType == ParameterTranslationType_ViewOffset);
-
-		nodeParameter.IsProceduralMode = Mode == ModelReferenceType::Procedural;
-
-		nodeParameter.UserData = GetRenderingUserData();
+		const auto nodeParameter = GetNodeParameter(manager);
 
 		renderer->EndRendering(nodeParameter, userData);
 	}
@@ -252,6 +190,7 @@ void EffectNodeModel::InitializeRenderedInstance(Instance& instance, InstanceGro
 	AllTypeColorFunctions::Init(instValues.allColorValues, rand, AllColor);
 	instValues._original = AllTypeColorFunctions::Calculate(instValues.allColorValues, AllColor, instance.m_LivingTime, instance.m_LivedTime);
 
+	// TODO refactor
 	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
 	{
 		instValues._color = Color::Mul(instValues._original, instance.ColorParent);
@@ -276,6 +215,7 @@ void EffectNodeModel::UpdateRenderedInstance(Instance& instance, InstanceGroup& 
 		instValues._original.A = (uint8_t)(instValues._original.A * fadeAlpha);
 	}
 
+	// TODO refactor
 	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
 	{
 		instValues._color = Color::Mul(instValues._original, instance.ColorParent);
@@ -286,6 +226,34 @@ void EffectNodeModel::UpdateRenderedInstance(Instance& instance, InstanceGroup& 
 	}
 
 	instance.ColorInheritance = instValues._color;
+}
+
+ModelRenderer::NodeParameter EffectNodeModel::GetNodeParameter(const Manager* manager)
+{
+	ModelRenderer::NodeParameter nodeParameter;
+	nodeParameter.ZTest = RendererCommon.ZTest;
+	nodeParameter.ZWrite = RendererCommon.ZWrite;
+	nodeParameter.EffectPointer = GetEffect();
+	nodeParameter.ModelIndex = ModelIndex;
+	nodeParameter.Culling = Culling;
+	nodeParameter.Billboard = Billboard;
+	nodeParameter.Magnification = m_effect->GetMaginification();
+	nodeParameter.IsRightHand = manager->GetSetting()->GetCoordinateSystem() == CoordinateSystem::RH;
+	nodeParameter.Maginification = GetEffect()->GetMaginification();
+
+	nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
+	nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
+
+	nodeParameter.EnableFalloff = EnableFalloff;
+	nodeParameter.FalloffParam = FalloffParam;
+
+	nodeParameter.EnableViewOffset = (TranslationParam.TranslationType == ParameterTranslationType_ViewOffset);
+
+	nodeParameter.IsProceduralMode = Mode == ModelReferenceType::Procedural;
+
+	nodeParameter.UserData = GetRenderingUserData();
+
+	return nodeParameter;
 }
 
 } // namespace Effekseer

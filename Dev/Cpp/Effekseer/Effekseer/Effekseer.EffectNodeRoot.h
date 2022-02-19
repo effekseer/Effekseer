@@ -20,9 +20,7 @@ public:
 	{
 	}
 
-	~EffectNodeRoot()
-	{
-	}
+	~EffectNodeRoot() = default;
 
 	eEffectNodeType GetType() const
 	{

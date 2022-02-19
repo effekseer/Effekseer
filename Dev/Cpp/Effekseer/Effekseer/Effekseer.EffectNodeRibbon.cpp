@@ -85,7 +85,6 @@ void EffectNodeRibbon::LoadRendererParameter(unsigned char*& pos, const SettingR
 
 	if (m_effect->GetVersion() >= 3)
 	{
-		//RibbonTexture = RendererCommon.ColorTextureIndex;
 	}
 	else
 	{

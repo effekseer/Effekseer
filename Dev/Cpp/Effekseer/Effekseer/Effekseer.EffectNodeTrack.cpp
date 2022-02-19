@@ -76,8 +76,6 @@ void EffectNodeTrack::BeginRendering(int32_t count, Manager* manager, void* user
 	TrackRendererRef renderer = manager->GetTrackRenderer();
 	if (renderer != nullptr)
 	{
-		// m_nodeParameter.TextureFilter = RendererCommon.FilterType;
-		// m_nodeParameter.TextureWrap = RendererCommon.WrapType;
 		m_nodeParameter.ZTest = RendererCommon.ZTest;
 		m_nodeParameter.ZWrite = RendererCommon.ZWrite;
 		m_nodeParameter.EffectPointer = GetEffect();
@@ -120,7 +118,7 @@ void EffectNodeTrack::BeginRenderingGroup(InstanceGroup* group, Manager* manager
 
 			m_instanceParameter.AlphaThreshold = groupFirst->m_AlphaThreshold;
 
-			if (m_nodeParameter.EnableViewOffset == true)
+			if (m_nodeParameter.EnableViewOffset)
 			{
 				m_instanceParameter.ViewOffsetDistance = groupFirst->translation_values.view_offset.distance;
 			}

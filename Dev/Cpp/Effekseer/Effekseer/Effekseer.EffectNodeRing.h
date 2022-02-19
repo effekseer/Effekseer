@@ -126,25 +126,7 @@ struct RingColorValues
 {
 	Color current;
 	Color original;
-
-	union
-	{
-		struct
-		{
-			Color _color;
-		} fixed;
-
-		struct
-		{
-			Color _color;
-		} random;
-
-		struct
-		{
-			Color start;
-			Color end;
-		} easing;
-	};
+	InstanceAllTypeColorState allColorValues;
 };
 
 enum class RingShapeType : int32_t
@@ -195,9 +177,9 @@ public:
 
 	RingSingleParameter CenterRatio;
 
-	RingColorParameter OuterColor;
-	RingColorParameter CenterColor;
-	RingColorParameter InnerColor;
+	AllTypeColorParameter OuterColor;
+	AllTypeColorParameter CenterColor;
+	AllTypeColorParameter InnerColor;
 
 	int RingTexture;
 
@@ -208,9 +190,7 @@ public:
 	{
 	}
 
-	~EffectNodeRing()
-	{
-	}
+	~EffectNodeRing() = default;
 
 	void LoadRendererParameter(unsigned char*& pos, const SettingRef& setting) override;
 
@@ -234,19 +214,13 @@ private:
 
 	void LoadLocationParameter(unsigned char*& pos, RingLocationParameter& param);
 
-	void LoadColorParameter(unsigned char*& pos, RingColorParameter& param);
-
 	void InitializeSingleValues(const RingSingleParameter& param, RingSingleValues& values, Manager* manager, IRandObject* rand);
 
 	void InitializeLocationValues(const RingLocationParameter& param, RingLocationValues& values, Manager* manager, IRandObject* rand);
 
-	void InitializeColorValues(const RingColorParameter& param, RingColorValues& values, Manager* manager, IRandObject* rand);
-
 	void UpdateSingleValues(Instance& instance, const RingSingleParameter& param, RingSingleValues& values);
 
 	void UpdateLocationValues(Instance& instance, const RingLocationParameter& param, RingLocationValues& values);
-
-	void UpdateColorValues(Instance& instance, const RingColorParameter& param, RingColorValues& values);
 };
 
 } // namespace Effekseer

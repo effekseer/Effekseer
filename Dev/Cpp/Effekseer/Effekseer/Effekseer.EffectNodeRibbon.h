@@ -2,15 +2,9 @@
 #ifndef __EFFEKSEER_ParameterNODE_RIBBON_H__
 #define __EFFEKSEER_ParameterNODE_RIBBON_H__
 
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
 #include "Effekseer.EffectNode.h"
 #include "Renderer/Effekseer.RibbonRenderer.h"
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 namespace Effekseer
 {
 
@@ -69,7 +63,6 @@ class EffectNodeRibbon : public EffectNodeImplemented
 public:
 	struct InstanceValues
 	{
-		// 色
 		Color _color;
 		Color _original;
 
@@ -108,9 +101,7 @@ public:
 	{
 	}
 
-	~EffectNodeRibbon()
-	{
-	}
+	~EffectNodeRibbon() = default;
 
 	void LoadRendererParameter(unsigned char*& pos, const SettingRef& setting) override;
 
