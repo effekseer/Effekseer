@@ -18,7 +18,7 @@ namespace Effekseer
 
 void EffectNodeModel::LoadRendererParameter(unsigned char*& pos, const SettingRef& setting)
 {
-	eEffectNodeType type = eEffectNodeType::EFFECT_NODE_TYPE_NONE;
+	eEffectNodeType type = eEffectNodeType::None;
 	memcpy(&type, pos, sizeof(int));
 	pos += sizeof(int);
 	assert(type == GetType());
@@ -215,7 +215,6 @@ void EffectNodeModel::UpdateRenderedInstance(Instance& instance, InstanceGroup& 
 		instValues._original.A = (uint8_t)(instValues._original.A * fadeAlpha);
 	}
 
-	// TODO refactor
 	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
 	{
 		instValues._color = Color::Mul(instValues._original, instance.ColorParent);

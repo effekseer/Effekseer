@@ -24,7 +24,7 @@ public:
 
 	eEffectNodeType GetType() const
 	{
-		return eEffectNodeType::EFFECT_NODE_TYPE_ROOT;
+		return eEffectNodeType::Root;
 	}
 };
 

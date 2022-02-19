@@ -119,7 +119,7 @@ public:
 
 	eEffectNodeType GetType() const override
 	{
-		return eEffectNodeType::EFFECT_NODE_TYPE_RIBBON;
+		return eEffectNodeType::Ribbon;
 	}
 };
 

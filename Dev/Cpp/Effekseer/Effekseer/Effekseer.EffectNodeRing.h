@@ -151,8 +151,7 @@ public:
 	int32_t VertexCount;
 
 	RingShapeParameter Shape;
-	// RingSingleParameter	ViewingAngle;
-
+	
 	RingLocationParameter OuterLocation;
 	RingLocationParameter InnerLocation;
 
@@ -183,7 +182,7 @@ public:
 
 	eEffectNodeType GetType() const override
 	{
-		return eEffectNodeType::EFFECT_NODE_TYPE_RING;
+		return eEffectNodeType::Ring;
 	}
 
 private:
