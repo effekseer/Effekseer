@@ -125,10 +125,10 @@ void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, const SettingRef
 
 	if (m_effect->GetVersion() >= 3)
 	{
-		RingTexture = RendererCommon.ColorTextureIndex;
 	}
 	else
 	{
+		int RingTexture = 0;
 		memcpy(&RingTexture, pos, sizeof(int));
 		pos += sizeof(int);
 	}
@@ -258,20 +258,6 @@ void EffectNodeRing::Rendering(const Instance& instance, const Instance* next_in
 	RingRendererRef renderer = manager->GetRingRenderer();
 	if (renderer != nullptr)
 	{
-		nodeParameter.EffectPointer = GetEffect();
-		nodeParameter.ZTest = RendererCommon.ZTest;
-		nodeParameter.ZWrite = RendererCommon.ZWrite;
-		nodeParameter.Billboard = Billboard;
-		nodeParameter.VertexCount = VertexCount;
-		nodeParameter.IsRightHand = manager->GetCoordinateSystem() == CoordinateSystem::RH;
-
-		nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
-		nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
-		nodeParameter.StartingFade = Shape.StartingFade;
-		nodeParameter.EndingFade = Shape.EndingFade;
-
-		nodeParameter.EnableViewOffset = (TranslationParam.TranslationType == ParameterTranslationType_ViewOffset);
-
 		Color _outerColor;
 		Color _centerColor;
 		Color _innerColor;
@@ -289,6 +275,14 @@ void EffectNodeRing::Rendering(const Instance& instance, const Instance* next_in
 			_innerColor = instValues.innerColor.original;
 		}
 
+		// Apply global Color
+		if (instance.m_pContainer->GetRootInstance()->IsGlobalColorSet)
+		{
+			_outerColor = Color::Mul(_outerColor, instance.m_pContainer->GetRootInstance()->GlobalColor);
+			_centerColor = Color::Mul(_centerColor, instance.m_pContainer->GetRootInstance()->GlobalColor);
+			_innerColor = Color::Mul(_innerColor, instance.m_pContainer->GetRootInstance()->GlobalColor);
+		}
+
 		RingRenderer::InstanceParameter instanceParameter;
 		instanceParameter.SRTMatrix43 = instance.GetGlobalMatrix43();
 
@@ -299,14 +293,6 @@ void EffectNodeRing::Rendering(const Instance& instance, const Instance* next_in
 		instanceParameter.InnerLocation = instValues.innerLocation.current;
 
 		instanceParameter.CenterRatio = instValues.centerRatio.current;
-
-		// Apply global Color
-		if (instance.m_pContainer->GetRootInstance()->IsGlobalColorSet)
-		{
-			_outerColor = Color::Mul(_outerColor, instance.m_pContainer->GetRootInstance()->GlobalColor);
-			_centerColor = Color::Mul(_centerColor, instance.m_pContainer->GetRootInstance()->GlobalColor);
-			_innerColor = Color::Mul(_innerColor, instance.m_pContainer->GetRootInstance()->GlobalColor);
-		}
 
 		instanceParameter.OuterColor = _outerColor;
 		instanceParameter.CenterColor = _centerColor;
@@ -329,8 +315,6 @@ void EffectNodeRing::Rendering(const Instance& instance, const Instance* next_in
 		}
 
 		CalcCustomData(&instance, instanceParameter.CustomData1, instanceParameter.CustomData2);
-
-		nodeParameter.UserData = GetRenderingUserData();
 
 		renderer->Rendering(nodeParameter, instanceParameter, userData);
 	}

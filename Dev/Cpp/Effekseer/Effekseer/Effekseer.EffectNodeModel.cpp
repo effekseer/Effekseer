@@ -144,7 +144,7 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 
 		instanceParameter.AlphaThreshold = instance.m_AlphaThreshold;
 
-		if (nodeParameter.EnableViewOffset == true)
+		if (nodeParameter.EnableViewOffset)
 		{
 			instanceParameter.ViewOffsetDistance = instance.translation_values.view_offset.distance;
 		}

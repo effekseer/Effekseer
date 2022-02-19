@@ -181,10 +181,6 @@ public:
 	AllTypeColorParameter CenterColor;
 	AllTypeColorParameter InnerColor;
 
-	int RingTexture;
-
-	RingRenderer::NodeParameter nodeParameter;
-
 	EffectNodeRing(Effect* effect, unsigned char*& pos)
 		: EffectNodeImplemented(effect, pos)
 	{
@@ -210,6 +206,8 @@ public:
 	}
 
 private:
+	RingRenderer::NodeParameter nodeParameter;
+
 	void LoadSingleParameter(unsigned char*& pos, RingSingleParameter& param, int version);
 
 	void LoadLocationParameter(unsigned char*& pos, RingLocationParameter& param);
