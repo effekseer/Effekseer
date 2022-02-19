@@ -678,7 +678,7 @@ EffectModelParameter EffectNodeImplemented::GetEffectModelParameter()
 //----------------------------------------------------------------------------------
 void EffectNodeImplemented::LoadRendererParameter(unsigned char*& pos, const SettingRef& setting)
 {
-	eEffectNodeType type = eEffectNodeType::None;
+	eEffectNodeType type = eEffectNodeType::NoneType;
 	memcpy(&type, pos, sizeof(int));
 	pos += sizeof(int);
 	assert(type == GetType());
@@ -908,7 +908,7 @@ EffectNodeImplemented* EffectNodeImplemented::Create(Effect* effect, EffectNode*
 {
 	EffectNodeImplemented* effectnode = nullptr;
 
-	eEffectNodeType node_type = eEffectNodeType::None;
+	eEffectNodeType node_type = eEffectNodeType::NoneType;
 	memcpy(&node_type, pos, sizeof(int));
 
 	if (node_type == eEffectNodeType::Root)
@@ -916,7 +916,7 @@ EffectNodeImplemented* EffectNodeImplemented::Create(Effect* effect, EffectNode*
 		EffekseerPrintDebug("* Create : EffectNodeRoot\n");
 		effectnode = new EffectNodeRoot(effect, pos);
 	}
-	else if (node_type == eEffectNodeType::None)
+	else if (node_type == eEffectNodeType::NoneType)
 	{
 		EffekseerPrintDebug("* Create : EffectNodeNone\n");
 		effectnode = new EffectNodeImplemented(effect, pos);

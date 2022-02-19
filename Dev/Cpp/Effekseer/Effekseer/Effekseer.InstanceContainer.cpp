@@ -220,7 +220,7 @@ void InstanceContainer::RemoveForcibly(bool recursive)
 //----------------------------------------------------------------------------------
 void InstanceContainer::Draw(bool recursive)
 {
-	if (m_pEffectNode->GetType() != eEffectNodeType::Root && m_pEffectNode->GetType() != eEffectNodeType::None)
+	if (m_pEffectNode->GetType() != eEffectNodeType::Root && m_pEffectNode->GetType() != eEffectNodeType::NoneType)
 	{
 		/* 個数計測 */
 		int32_t count = 0;

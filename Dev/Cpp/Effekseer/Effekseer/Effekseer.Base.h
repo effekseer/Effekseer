@@ -95,7 +95,7 @@ enum class eInstanceState : int32_t
 enum class eEffectNodeType : int32_t
 {
 	Root = -1,
-	None = 0,
+	NoneType = 0,
 	Sprite = 2,
 	Ribbon = 3,
 	Ring = 4,
