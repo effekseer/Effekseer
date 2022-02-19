@@ -19,7 +19,7 @@ namespace Effekseer
 
 void EffectNodeRibbon::LoadRendererParameter(unsigned char*& pos, const SettingRef& setting)
 {
-	eEffectNodeType type = eEffectNodeType::EFFECT_NODE_TYPE_NONE;
+	eEffectNodeType type = eEffectNodeType::NoneType;
 	memcpy(&type, pos, sizeof(int));
 	pos += sizeof(int);
 	assert(type == GetType());
@@ -32,10 +32,10 @@ void EffectNodeRibbon::LoadRendererParameter(unsigned char*& pos, const SettingR
 
 	if (m_effect->GetVersion() >= 3)
 	{
-		AlphaBlend = RendererCommon.AlphaBlend;
 	}
 	else
 	{
+		int32_t AlphaBlend = 0;
 		memcpy(&AlphaBlend, pos, sizeof(int));
 		pos += sizeof(int);
 	}
@@ -85,7 +85,6 @@ void EffectNodeRibbon::LoadRendererParameter(unsigned char*& pos, const SettingR
 
 	if (m_effect->GetVersion() >= 3)
 	{
-		//RibbonTexture = RendererCommon.ColorTextureIndex;
 	}
 	else
 	{
@@ -118,8 +117,6 @@ void EffectNodeRibbon::BeginRendering(int32_t count, Manager* manager, void* use
 	RibbonRendererRef renderer = manager->GetRibbonRenderer();
 	if (renderer != nullptr)
 	{
-		// m_nodeParameter.TextureFilter = RendererCommon.FilterType;
-		// m_nodeParameter.TextureWrap = RendererCommon.WrapType;
 		m_nodeParameter.ZTest = RendererCommon.ZTest;
 		m_nodeParameter.ZWrite = RendererCommon.ZWrite;
 		m_nodeParameter.ViewpointDependent = ViewpointDependent != 0;

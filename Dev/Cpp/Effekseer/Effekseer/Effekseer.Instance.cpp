@@ -277,7 +277,7 @@ void Instance::Update(float deltaFrame, bool shown)
 	m_GlobalMatrix43Calculated = false;
 	m_ParentMatrix43Calculated = false;
 
-	if (is_time_step_allowed && m_pEffectNode->GetType() != eEffectNodeType::EFFECT_NODE_TYPE_ROOT)
+	if (is_time_step_allowed && m_pEffectNode->GetType() != eEffectNodeType::Root)
 	{
 		/* 音の更新(現状放置) */
 		if (m_pEffectNode->SoundType == ParameterSoundType_Use)
@@ -342,7 +342,7 @@ void Instance::Update(float deltaFrame, bool shown)
 		// check whether killed?
 		bool removed = false;
 
-		if (m_pEffectNode->GetType() != eEffectNodeType::EFFECT_NODE_TYPE_ROOT)
+		if (m_pEffectNode->GetType() != eEffectNodeType::Root)
 		{
 			// if pass time
 			if (m_pEffectNode->CommonValues.RemoveWhenLifeIsExtinct)
@@ -459,7 +459,7 @@ void Instance::CalculateMatrix(float deltaFrame)
 	}
 
 	/* 更新処理 */
-	if (m_pEffectNode->GetType() != eEffectNodeType::EFFECT_NODE_TYPE_ROOT)
+	if (m_pEffectNode->GetType() != eEffectNodeType::Root)
 	{
 		SIMD::Vec3f localPosition{};
 		SIMD::Vec3f localAngle;
@@ -610,7 +610,7 @@ void Instance::CalculateParentMatrix(float deltaFrame)
 
 	parentPosition_ = m_pParent->GetGlobalMatrix43().GetTranslation();
 
-	if (m_pEffectNode->GetType() != eEffectNodeType::EFFECT_NODE_TYPE_ROOT)
+	if (m_pEffectNode->GetType() != eEffectNodeType::Root)
 	{
 		TranslationParentBindType tType = m_pEffectNode->CommonValues.TranslationBindType;
 		BindType rType = m_pEffectNode->CommonValues.RotationBindType;
@@ -660,8 +660,8 @@ float Instance::GetFlipbookIndexAndNextRate(const UVAnimationType& UVType, const
 		auto time = GetUVTime();
 
 		// 経過時間を取得
-		if (m_pEffectNode->GetType() == eEffectNodeType::EFFECT_NODE_TYPE_RIBBON ||
-			m_pEffectNode->GetType() == eEffectNodeType::EFFECT_NODE_TYPE_TRACK)
+		if (m_pEffectNode->GetType() == eEffectNodeType::Ribbon ||
+			m_pEffectNode->GetType() == eEffectNodeType::Track)
 		{
 			// is GetFirstGroup bug?
 			auto baseInstance = this->GetContainer()->GetFirstGroup()->GetFirst();

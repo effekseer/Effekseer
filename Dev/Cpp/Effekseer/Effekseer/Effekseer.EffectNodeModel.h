@@ -2,24 +2,11 @@
 #ifndef __EFFEKSEER_ParameterNODE_MODEL_H__
 #define __EFFEKSEER_ParameterNODE_MODEL_H__
 
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
 #include "Effekseer.EffectNode.h"
 #include "Renderer/Effekseer.ModelRenderer.h"
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 namespace Effekseer
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 
 class EffectNodeModel : public EffectNodeImplemented
 {
@@ -52,9 +39,7 @@ public:
 	{
 	}
 
-	~EffectNodeModel()
-	{
-	}
+	~EffectNodeModel() = default;
 
 	void LoadRendererParameter(unsigned char*& pos, const SettingRef& setting) override;
 
@@ -70,15 +55,13 @@ public:
 
 	eEffectNodeType GetType() const override
 	{
-		return eEffectNodeType::EFFECT_NODE_TYPE_MODEL;
+		return eEffectNodeType::Model;
 	}
+
+private:
+	ModelRenderer::NodeParameter GetNodeParameter(const Manager* manager);
 };
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 } // namespace Effekseer
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
 #endif // __EFFEKSEER_ParameterNODE_MODEL_H__

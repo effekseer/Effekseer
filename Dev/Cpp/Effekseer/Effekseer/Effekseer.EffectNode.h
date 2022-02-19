@@ -750,7 +750,7 @@ public:
 	*/
 	virtual eEffectNodeType GetType() const
 	{
-		return eEffectNodeType::EFFECT_NODE_TYPE_NONE;
+		return eEffectNodeType::NoneType;
 	}
 
 	RefPtr<RenderingUserData> GetRenderingUserData() override

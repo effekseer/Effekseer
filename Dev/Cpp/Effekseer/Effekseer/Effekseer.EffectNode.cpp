@@ -580,7 +580,7 @@ EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter()
 
 	param.BlendUVDistortionIntensity = RendererCommon.BlendUVDistortionIntensity;
 
-	if (GetType() == eEffectNodeType::EFFECT_NODE_TYPE_MODEL)
+	if (GetType() == eEffectNodeType::Model)
 	{
 		EffectNodeModel* pNodeModel = static_cast<EffectNodeModel*>(this);
 		param.EnableFalloff = pNodeModel->EnableFalloff;
@@ -665,7 +665,7 @@ EffectModelParameter EffectNodeImplemented::GetEffectModelParameter()
 	EffectModelParameter param;
 	param.Lighting = false;
 
-	if (GetType() == eEffectNodeType::EFFECT_NODE_TYPE_MODEL)
+	if (GetType() == eEffectNodeType::Model)
 	{
 		param.Lighting = RendererCommon.MaterialType == RendererMaterialType::Lighting;
 	}
@@ -678,7 +678,7 @@ EffectModelParameter EffectNodeImplemented::GetEffectModelParameter()
 //----------------------------------------------------------------------------------
 void EffectNodeImplemented::LoadRendererParameter(unsigned char*& pos, const SettingRef& setting)
 {
-	eEffectNodeType type = eEffectNodeType::EFFECT_NODE_TYPE_NONE;
+	eEffectNodeType type = eEffectNodeType::NoneType;
 	memcpy(&type, pos, sizeof(int));
 	pos += sizeof(int);
 	assert(type == GetType());
@@ -908,40 +908,40 @@ EffectNodeImplemented* EffectNodeImplemented::Create(Effect* effect, EffectNode*
 {
 	EffectNodeImplemented* effectnode = nullptr;
 
-	eEffectNodeType node_type = eEffectNodeType::EFFECT_NODE_TYPE_NONE;
+	eEffectNodeType node_type = eEffectNodeType::NoneType;
 	memcpy(&node_type, pos, sizeof(int));
 
-	if (node_type == eEffectNodeType::EFFECT_NODE_TYPE_ROOT)
+	if (node_type == eEffectNodeType::Root)
 	{
 		EffekseerPrintDebug("* Create : EffectNodeRoot\n");
 		effectnode = new EffectNodeRoot(effect, pos);
 	}
-	else if (node_type == eEffectNodeType::EFFECT_NODE_TYPE_NONE)
+	else if (node_type == eEffectNodeType::NoneType)
 	{
 		EffekseerPrintDebug("* Create : EffectNodeNone\n");
 		effectnode = new EffectNodeImplemented(effect, pos);
 	}
-	else if (node_type == eEffectNodeType::EFFECT_NODE_TYPE_SPRITE)
+	else if (node_type == eEffectNodeType::Sprite)
 	{
 		EffekseerPrintDebug("* Create : EffectNodeSprite\n");
 		effectnode = new EffectNodeSprite(effect, pos);
 	}
-	else if (node_type == eEffectNodeType::EFFECT_NODE_TYPE_RIBBON)
+	else if (node_type == eEffectNodeType::Ribbon)
 	{
 		EffekseerPrintDebug("* Create : EffectNodeRibbon\n");
 		effectnode = new EffectNodeRibbon(effect, pos);
 	}
-	else if (node_type == eEffectNodeType::EFFECT_NODE_TYPE_RING)
+	else if (node_type == eEffectNodeType::Ring)
 	{
 		EffekseerPrintDebug("* Create : EffectNodeRing\n");
 		effectnode = new EffectNodeRing(effect, pos);
 	}
-	else if (node_type == eEffectNodeType::EFFECT_NODE_TYPE_MODEL)
+	else if (node_type == eEffectNodeType::Model)
 	{
 		EffekseerPrintDebug("* Create : EffectNodeModel\n");
 		effectnode = new EffectNodeModel(effect, pos);
 	}
-	else if (node_type == eEffectNodeType::EFFECT_NODE_TYPE_TRACK)
+	else if (node_type == eEffectNodeType::Track)
 	{
 		EffekseerPrintDebug("* Create : EffectNodeTrack\n");
 		effectnode = new EffectNodeTrack(effect, pos);

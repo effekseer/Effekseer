@@ -3,6 +3,7 @@
 #define __EFFEKSEER_ParameterNODE_SPRITE_H__
 
 #include "Effekseer.EffectNode.h"
+#include "Renderer/Effekseer.SpriteRenderer.h"
 
 namespace Effekseer
 {
@@ -112,8 +113,11 @@ public:
 
 	eEffectNodeType GetType() const override
 	{
-		return eEffectNodeType::EFFECT_NODE_TYPE_SPRITE;
+		return eEffectNodeType::Sprite;
 	}
+
+private:
+	SpriteRenderer::NodeParameter GetNodeParameter(const Manager* manager);
 };
 
 //----------------------------------------------------------------------------------

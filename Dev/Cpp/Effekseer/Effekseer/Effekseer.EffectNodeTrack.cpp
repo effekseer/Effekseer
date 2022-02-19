@@ -18,7 +18,7 @@ namespace Effekseer
 
 void EffectNodeTrack::LoadRendererParameter(unsigned char*& pos, const SettingRef& setting)
 {
-	eEffectNodeType type = eEffectNodeType::EFFECT_NODE_TYPE_NONE;
+	eEffectNodeType type = eEffectNodeType::NoneType;
 	memcpy(&type, pos, sizeof(int));
 	pos += sizeof(int);
 	assert(type == GetType());
@@ -48,8 +48,6 @@ void EffectNodeTrack::LoadRendererParameter(unsigned char*& pos, const SettingRe
 	TrackColorRight.load(pos, m_effect->GetVersion());
 	TrackColorRightMiddle.load(pos, m_effect->GetVersion());
 
-	AlphaBlend = RendererCommon.AlphaBlend;
-
 	EffekseerPrintDebug("TrackColorLeft : %d\n", TrackColorLeft.type);
 	EffekseerPrintDebug("TrackColorLeftMiddle : %d\n", TrackColorLeftMiddle.type);
 	EffekseerPrintDebug("TrackColorCenter : %d\n", TrackColorCenter.type);
@@ -76,8 +74,6 @@ void EffectNodeTrack::BeginRendering(int32_t count, Manager* manager, void* user
 	TrackRendererRef renderer = manager->GetTrackRenderer();
 	if (renderer != nullptr)
 	{
-		// m_nodeParameter.TextureFilter = RendererCommon.FilterType;
-		// m_nodeParameter.TextureWrap = RendererCommon.WrapType;
 		m_nodeParameter.ZTest = RendererCommon.ZTest;
 		m_nodeParameter.ZWrite = RendererCommon.ZWrite;
 		m_nodeParameter.EffectPointer = GetEffect();
@@ -120,7 +116,7 @@ void EffectNodeTrack::BeginRenderingGroup(InstanceGroup* group, Manager* manager
 
 			m_instanceParameter.AlphaThreshold = groupFirst->m_AlphaThreshold;
 
-			if (m_nodeParameter.EnableViewOffset == true)
+			if (m_nodeParameter.EnableViewOffset)
 			{
 				m_instanceParameter.ViewOffsetDistance = groupFirst->translation_values.view_offset.distance;
 			}
@@ -191,13 +187,13 @@ void EffectNodeTrack::InitializeRenderedInstanceGroup(InstanceGroup& instanceGro
 	auto instanceGlobal = instanceGroup.GetRootInstance();
 	IRandObject* rand = &instanceGlobal->GetRandObject();
 
-	InitializeValues(instValues.ColorLeft, TrackColorLeft, rand);
-	InitializeValues(instValues.ColorCenter, TrackColorCenter, rand);
-	InitializeValues(instValues.ColorRight, TrackColorRight, rand);
+	AllTypeColorFunctions::Init(instValues.ColorLeft, *rand, TrackColorLeft);
+	AllTypeColorFunctions::Init(instValues.ColorCenter, *rand, TrackColorCenter);
+	AllTypeColorFunctions::Init(instValues.ColorRight, *rand, TrackColorRight);
 
-	InitializeValues(instValues.ColorLeftMiddle, TrackColorLeftMiddle, rand);
-	InitializeValues(instValues.ColorCenterMiddle, TrackColorCenterMiddle, rand);
-	InitializeValues(instValues.ColorRightMiddle, TrackColorRightMiddle, rand);
+	AllTypeColorFunctions::Init(instValues.ColorLeftMiddle, *rand, TrackColorLeftMiddle);
+	AllTypeColorFunctions::Init(instValues.ColorCenterMiddle, *rand, TrackColorCenterMiddle);
+	AllTypeColorFunctions::Init(instValues.ColorRightMiddle, *rand, TrackColorRightMiddle);
 
 	InitializeValues(instValues.SizeFor, TrackSizeFor, manager);
 	InitializeValues(instValues.SizeBack, TrackSizeBack, manager);
@@ -236,27 +232,6 @@ void EffectNodeTrack::UpdateRenderedInstance(Instance& instance, InstanceGroup& 
 	instance.ColorInheritance = c;
 }
 
-void EffectNodeTrack::InitializeValues(InstanceAllTypeColorState& value, AllTypeColorParameter& param, IRandObject* rand)
-{
-	if (param.type == AllTypeColorParameter::Fixed)
-	{
-		value.fixed._color = param.fixed.all;
-	}
-	else if (param.type == AllTypeColorParameter::Random)
-	{
-		value.random._color = param.random.all.getValue(*rand);
-	}
-	else if (param.type == AllTypeColorParameter::Easing)
-	{
-		value.easing.start = param.easing.all.getStartValue(*rand);
-		value.easing.end = param.easing.all.getEndValue(*rand);
-	}
-	else if (param.type == AllTypeColorParameter::FCurve_RGBA)
-	{
-		value.fcurve_rgba.offset = param.fcurve_rgba.FCurve->GetOffsets(*rand);
-	}
-}
-
 void EffectNodeTrack::InitializeValues(InstanceGroupValues::Size& value, TrackSizeParameter& param, Manager* manager)
 {
 	if (param.type == TrackSizeParameter::Fixed)
@@ -268,27 +243,7 @@ void EffectNodeTrack::InitializeValues(InstanceGroupValues::Size& value, TrackSi
 void EffectNodeTrack::SetValues(
 	Color& c, const Instance& instance, InstanceAllTypeColorState& value, AllTypeColorParameter& param, int32_t time, int32_t livedTime)
 {
-	if (param.type == AllTypeColorParameter::Fixed)
-	{
-		c = value.fixed._color;
-	}
-	else if (param.type == AllTypeColorParameter::Random)
-	{
-		c = value.random._color;
-	}
-	else if (param.type == AllTypeColorParameter::Easing)
-	{
-		float t = (float)time / (float)livedTime;
-		param.easing.all.setValueToArg(c, value.easing.start, value.easing.end, t);
-	}
-	else if (param.type == AllTypeColorParameter::FCurve_RGBA)
-	{
-		auto fcurveColors = param.fcurve_rgba.FCurve->GetValues(static_cast<float>(time), static_cast<float>(livedTime));
-		c.R = (uint8_t)Clamp((value.fcurve_rgba.offset[0] + fcurveColors[0]), 255, 0);
-		c.G = (uint8_t)Clamp((value.fcurve_rgba.offset[1] + fcurveColors[1]), 255, 0);
-		c.B = (uint8_t)Clamp((value.fcurve_rgba.offset[2] + fcurveColors[2]), 255, 0);
-		c.A = (uint8_t)Clamp((value.fcurve_rgba.offset[3] + fcurveColors[3]), 255, 0);
-	}
+	c = AllTypeColorFunctions::Calculate(value, param, time, livedTime);
 
 	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
 	{
