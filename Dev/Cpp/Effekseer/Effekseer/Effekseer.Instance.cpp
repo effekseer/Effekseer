@@ -96,6 +96,11 @@ const SIMD::Mat43f& Instance::GetGlobalMatrix43() const
 	return m_GlobalMatrix43;
 }
 
+void Instance::SetGlobalMatrix(const SIMD::Mat43f& mat)
+{
+	m_GlobalMatrix43 = mat;
+}
+
 void Instance::Initialize(Instance* parent, int32_t instanceNumber, const SIMD::Mat43f& globalMatrix)
 {
 	assert(this->m_pContainer != nullptr);

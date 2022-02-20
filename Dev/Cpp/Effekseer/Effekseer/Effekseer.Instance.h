@@ -172,6 +172,8 @@ public:
 
 	const SIMD::Mat43f& GetGlobalMatrix43() const;
 
+	void SetGlobalMatrix(const SIMD::Mat43f& mat);
+
 	void Initialize(Instance* parent, int32_t instanceNumber, const SIMD::Mat43f& globalMatrix);
 
 	void FirstUpdate();

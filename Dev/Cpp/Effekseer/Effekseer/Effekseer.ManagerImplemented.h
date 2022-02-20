@@ -44,7 +44,6 @@ private:
 		Vector3D Scaling = {1.f, 1.f, 1.f};
 
 		SIMD::Mat43f BaseMatrix;
-		SIMD::Mat43f GlobalMatrix;
 
 		float Speed;
 
@@ -106,9 +105,12 @@ private:
 			Rotation.Indentity();
 		}
 
-		SIMD::Mat43f* GetEnabledGlobalMatrix();
+		SIMD::Mat43f GetGlobalMatrix() const;
 
-		void CopyMatrixFromInstanceToRoot();
+		void SetGlobalMatrix(const SIMD::Mat43f& mat);
+
+	private:
+		SIMD::Mat43f GlobalMatrix;
 	};
 
 private:
