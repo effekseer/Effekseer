@@ -156,6 +156,7 @@ void BasicRuntimeTestPlatform(EffectPlatformInitializingParameter param, EffectP
 		single16Test(u"ProcedualModel03", "ProcedualModel03");
 		single16Test(u"AlphaCutoffParameter01", "AlphaCutoffParameter01");
 		single16Test(u"RotateScale01", "RotateScale01");
+		single16Test(u"FollowParent01", "FollowParent01");
 	}
 
 	{
