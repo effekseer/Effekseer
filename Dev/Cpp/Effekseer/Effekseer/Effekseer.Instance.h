@@ -174,7 +174,7 @@ public:
 
 	void SetGlobalMatrix(const SIMD::Mat43f& mat);
 
-	void Initialize(Instance* parent, int32_t instanceNumber, const SIMD::Mat43f& globalMatrix);
+	void Initialize(Instance* parent, int32_t instanceNumber);
 
 	void FirstUpdate();
 
@@ -200,9 +200,9 @@ public:
 	float GetFlipbookIndexAndNextRate() const;
 
 private:
-	void CalculateMatrix(float deltaFrame);
+	void UpdateTransform(float deltaFrame);
 
-	void CalculateParentMatrix(float deltaFrame);
+	void UpdateParentMatrix(float deltaFrame);
 
 	float GetFlipbookIndexAndNextRate(const UVAnimationType& UVType, const UVParameter& UV, const InstanceUVState& data) const;
 

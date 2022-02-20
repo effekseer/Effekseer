@@ -69,7 +69,7 @@ void Instance::GenerateChildrenInRequired()
 
 	for (InstanceGroup* group = childrenGroups_; group != nullptr; group = group->NextUsedByInstance)
 	{
-		group->GenerateInstancesInRequirred(m_LivingTime, m_randObject, this);
+		group->GenerateInstancesIfRequired(m_LivingTime, m_randObject, this);
 	}
 }
 
@@ -101,7 +101,7 @@ void Instance::SetGlobalMatrix(const SIMD::Mat43f& mat)
 	m_GlobalMatrix43 = mat;
 }
 
-void Instance::Initialize(Instance* parent, int32_t instanceNumber, const SIMD::Mat43f& globalMatrix)
+void Instance::Initialize(Instance* parent, int32_t instanceNumber)
 {
 	assert(this->m_pContainer != nullptr);
 
@@ -111,8 +111,7 @@ void Instance::Initialize(Instance* parent, int32_t instanceNumber, const SIMD::
 	// Initialize paramaters about a parent
 	m_pParent = parent;
 	m_ParentMatrix = SIMD::Mat43f::Identity;
-
-	m_GlobalMatrix43 = globalMatrix;
+	m_GlobalMatrix43 = SIMD::Mat43f::Identity;
 	assert(m_GlobalMatrix43.IsValid());
 
 	m_LivingTime = 0.0f;
@@ -169,7 +168,7 @@ void Instance::FirstUpdate()
 	// initialize SRT
 
 	// calculate parent matrixt to get matrix
-	m_pParent->CalculateMatrix(0);
+	m_pParent->UpdateTransform(0);
 
 	const SIMD::Mat43f& parentMatrix = m_pParent->GetGlobalMatrix43();
 	forceField_.Reset();
@@ -307,12 +306,12 @@ void Instance::Update(float deltaFrame, bool shown)
 
 	if (shown)
 	{
-		CalculateMatrix(deltaFrame);
+		UpdateTransform(deltaFrame);
 	}
 	else if (m_pEffectNode->LocalForceField.HasValue)
 	{
 		// If attraction forces are not default, updating is needed in each frame.
-		CalculateMatrix(deltaFrame);
+		UpdateTransform(deltaFrame);
 	}
 
 	// Get parent color.
@@ -327,7 +326,7 @@ void Instance::Update(float deltaFrame, bool shown)
 	/* 親の削除処理 */
 	if (m_pParent != nullptr && !m_pParent->IsActive())
 	{
-		CalculateParentMatrix(deltaFrame);
+		UpdateParentMatrix(deltaFrame);
 		m_pParent = nullptr;
 	}
 
@@ -444,7 +443,7 @@ float Instance::GetFlipbookIndexAndNextRate() const
 	return GetFlipbookIndexAndNextRate(CommonValue.UVs[0].Type, CommonValue.UVs[0], uvAnimationData_[0]);
 }
 
-void Instance::CalculateMatrix(float deltaFrame)
+void Instance::UpdateTransform(float deltaFrame)
 {
 	// 計算済なら終了
 	if (m_GlobalMatrix43Calculated)
@@ -460,7 +459,7 @@ void Instance::CalculateMatrix(float deltaFrame)
 	// 親の処理
 	if (m_pParent != nullptr)
 	{
-		CalculateParentMatrix(deltaFrame);
+		UpdateParentMatrix(deltaFrame);
 	}
 
 	/* 更新処理 */
@@ -604,14 +603,14 @@ void Instance::CalculateMatrix(float deltaFrame)
 	m_GlobalMatrix43Calculated = true;
 }
 
-void Instance::CalculateParentMatrix(float deltaFrame)
+void Instance::UpdateParentMatrix(float deltaFrame)
 {
 	// 計算済なら終了
 	if (m_ParentMatrix43Calculated)
 		return;
 
 	// 親の行列を計算
-	m_pParent->CalculateMatrix(deltaFrame);
+	m_pParent->UpdateTransform(deltaFrame);
 
 	parentPosition_ = m_pParent->GetGlobalMatrix43().GetTranslation();
 
@@ -724,7 +723,7 @@ void Instance::Draw(Instance* next, int32_t index, void* userData)
 
 	if (m_sequenceNumber != ((ManagerImplemented*)m_pManager)->GetSequenceNumber())
 	{
-		CalculateMatrix(0);
+		UpdateTransform(0);
 	}
 
 	m_pEffectNode->Rendering(*this, next, index, m_pManager, userData);
