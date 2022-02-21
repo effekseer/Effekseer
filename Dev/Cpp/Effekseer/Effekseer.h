@@ -4334,7 +4334,7 @@ public:
 		@param	autoDraw	[in]	自動描画フラグ
 	*/
 	virtual void SetAutoDrawing(Handle handle, bool autoDraw) = 0;
-	
+
 	/**
 		@brief
 		\~English	Gets the user pointer set on the handle.
@@ -4480,7 +4480,7 @@ public:
 	@brief
 	\~English	Get whether the effect will be culled.
 	\~Japanese	エフェクトがカリングされるか取得する。
-	*/	
+	*/
 	virtual bool GetIsCulled(Handle handle, const Manager::DrawParameter& drawParameter) = 0;
 
 	/**

@@ -18,6 +18,9 @@
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
+
+#define NEW_ROT 1
+
 namespace EffekseerRenderer
 {
 //----------------------------------------------------------------------------------
@@ -39,6 +42,7 @@ protected:
 
 	efkTrackNodeParam innstancesNodeParam;
 	Effekseer::CustomAlignedVector<efkTrackInstanceParam> instances;
+	Effekseer::CustomAlignedVector<Effekseer::SIMD::Quaternionf> rotations_;
 	Effekseer::SplineGenerator spline;
 
 	int32_t vertexCount_ = 0;
@@ -450,6 +454,29 @@ protected:
 
 		auto& parameter = innstancesNodeParam;
 
+		// Calculate rotations
+		for (size_t i = 0; i < instances.size() - 1; i++)
+		{
+			const auto axis = (instances[i + 1].SRTMatrix43.GetTranslation() - instances[i].SRTMatrix43.GetTranslation());
+
+			auto U = SafeNormalize(axis);
+			auto F = ::Effekseer::SIMD::Vec3f(m_renderer->GetCameraFrontDirection());
+			auto R = SafeNormalize(::Effekseer::SIMD::Vec3f::Cross(U, F));
+			U = ::Effekseer::SIMD::Vec3f::Cross(F, R);
+
+			Effekseer::SIMD::Mat44f mat;
+			mat.X = R.s;
+			mat.Y = U.s;
+			mat.Z = F.s;
+			mat = mat.Transpose();
+
+			auto q = Effekseer::SIMD::Quaternionf::FromMatrix(mat);
+
+			rotations_[i] = q;
+		}
+
+		rotations_[rotations_.size() - 1] = rotations_[rotations_.size() - 2];
+
 		// Calculate spline
 		if (parameter.SplineDivision > 1)
 		{
@@ -730,9 +757,26 @@ protected:
 				assert(vm.Pos.Y == 0.0f);
 				assert(vm.Pos.Z == 0.0f);
 
+#ifdef NEW_ROT
+				if (!isLast_)
+				{
+					int instInd = (int)i / parameter.SplineDivision;
+					int splInd = i % parameter.SplineDivision;
+
+					auto q0 = rotations_[instInd];
+					auto q1 = rotations_[instInd + 1];
+					auto q = Effekseer::SIMD::Quaternionf::Slerp(q0, q1, splInd / static_cast<float>(parameter.SplineDivision));
+					auto rv = Effekseer::SIMD::Quaternionf::Transform({1, 0, 0}, q);
+
+					vl.Pos = ToStruct(rv * vl.Pos.X + pos);
+					vm.Pos = ToStruct(pos);
+					vr.Pos = ToStruct(rv * vr.Pos.X + pos);
+				}
+#else
 				vl.Pos = ToStruct(-R * vl.Pos.X + pos);
 				vm.Pos = ToStruct(pos);
 				vr.Pos = ToStruct(-R * vr.Pos.X + pos);
+#endif
 
 				if (VertexNormalRequired<VERTEX>())
 				{
@@ -918,6 +962,9 @@ protected:
 		{
 			instances.reserve(param.InstanceCount);
 			instances.resize(0);
+
+			rotations_.resize(param.InstanceCount);
+
 			innstancesNodeParam = parameter;
 		}
 

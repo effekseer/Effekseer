@@ -70,6 +70,7 @@ effekseerSimdHeader.readLines('Effekseer/Effekseer/SIMD/Vec3f.h')
 effekseerSimdHeader.readLines('Effekseer/Effekseer/SIMD/Vec4f.h')
 effekseerSimdHeader.readLines('Effekseer/Effekseer/SIMD/Mat43f.h')
 effekseerSimdHeader.readLines('Effekseer/Effekseer/SIMD/Mat44f.h')
+effekseerSimdHeader.readLines('Effekseer/Effekseer/SIMD/Quaternionf.h')
 effekseerSimdHeader.readLines('Effekseer/Effekseer/SIMD/Utils.h')
 effekseerSimdHeader.output('Effekseer/Effekseer.SIMD.h')
 
