@@ -3949,12 +3949,7 @@ struct Quaternionf
 
 		if (cosa < 0.0f)
 		{
-			return Slerp(q1, Quaternionf{
-								 -q2.GetX(),
-								 -q2.GetY(),
-								 -q2.GetZ(),
-								 -q2.GetW()},
-						 t);
+			return Slerp(q1, Quaternionf{-q2.GetX(), -q2.GetY(), -q2.GetZ(), -q2.GetW()}, t);
 		}
 
 		const auto alpha = acos(cosa);
