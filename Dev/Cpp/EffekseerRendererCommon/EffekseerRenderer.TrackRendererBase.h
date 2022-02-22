@@ -455,9 +455,21 @@ protected:
 		auto& parameter = innstancesNodeParam;
 
 		// Calculate rotations
-		for (size_t i = 0; i < instances.size() - 1; i++)
+		for (size_t i = 0; i < instances.size(); i++)
 		{
-			const auto axis = (instances[i + 1].SRTMatrix43.GetTranslation() - instances[i].SRTMatrix43.GetTranslation());
+			Effekseer::SIMD::Vec3f axis;
+			if (i == 0)
+			{
+				axis = (instances[i + 1].SRTMatrix43.GetTranslation() - instances[i].SRTMatrix43.GetTranslation());
+			}
+			else if (i == instances.size() - 1)
+			{
+				axis = (instances[i].SRTMatrix43.GetTranslation() - instances[i - 1].SRTMatrix43.GetTranslation());
+			}
+			else
+			{
+				axis = (instances[i + 1].SRTMatrix43.GetTranslation() - instances[i - 1].SRTMatrix43.GetTranslation());
+			}
 
 			auto U = SafeNormalize(axis);
 			auto F = ::Effekseer::SIMD::Vec3f(m_renderer->GetCameraFrontDirection());
@@ -472,10 +484,13 @@ protected:
 
 			auto q = Effekseer::SIMD::Quaternionf::FromMatrix(mat);
 
+			auto qq = (q.s * q.s);
+			auto len = sqrtf(qq.GetX() + qq.GetY() + qq.GetZ() + qq.GetW()) + 0.00001f;
+
+			q.s /= len;
+
 			rotations_[i] = q;
 		}
-
-		rotations_[rotations_.size() - 1] = rotations_[rotations_.size() - 2];
 
 		// Calculate spline
 		if (parameter.SplineDivision > 1)
@@ -758,7 +773,16 @@ protected:
 				assert(vm.Pos.Z == 0.0f);
 
 #ifdef NEW_ROT
-				if (!isLast_)
+				if (isLast_)
+				{
+					auto q = rotations_.back();
+					auto rv = Effekseer::SIMD::Quaternionf::Transform({1, 0, 0}, q);
+
+					vl.Pos = ToStruct(rv * vl.Pos.X + pos);
+					vm.Pos = ToStruct(pos);
+					vr.Pos = ToStruct(rv * vr.Pos.X + pos);
+				}
+				else
 				{
 					int instInd = (int)i / parameter.SplineDivision;
 					int splInd = i % parameter.SplineDivision;
