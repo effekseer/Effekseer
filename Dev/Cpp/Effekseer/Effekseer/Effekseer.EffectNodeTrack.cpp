@@ -13,6 +13,8 @@
 
 #include "Effekseer.Setting.h"
 
+#define SMOOTH_UV 1
+
 namespace Effekseer
 {
 
@@ -105,12 +107,21 @@ void EffectNodeTrack::BeginRenderingGroup(InstanceGroup* group, Manager* manager
 		if (group->GetFirst() != nullptr)
 		{
 			Instance* groupFirst = group->GetFirst();
-			m_instanceParameter.UV = groupFirst->GetUV(0);
-			m_instanceParameter.AlphaUV = groupFirst->GetUV(1);
-			m_instanceParameter.UVDistortionUV = groupFirst->GetUV(2);
-			m_instanceParameter.BlendUV = groupFirst->GetUV(3);
-			m_instanceParameter.BlendAlphaUV = groupFirst->GetUV(4);
-			m_instanceParameter.BlendUVDistortionUV = groupFirst->GetUV(5);
+
+			int livingTime = group->GetTime();
+			int livedTime = 100;
+
+#ifndef SMOOTH_UV
+			livingTime = groupFirst->m_LivingTime;
+			livedTime = groupFirst->m_LivedTime;
+#endif
+
+			m_instanceParameter.UV = groupFirst->GetUV(0, livingTime, livedTime);
+			m_instanceParameter.AlphaUV = groupFirst->GetUV(1, livingTime, livedTime);
+			m_instanceParameter.UVDistortionUV = groupFirst->GetUV(2, livingTime, livedTime);
+			m_instanceParameter.BlendUV = groupFirst->GetUV(3, livingTime, livedTime);
+			m_instanceParameter.BlendAlphaUV = groupFirst->GetUV(4, livingTime, livedTime);
+			m_instanceParameter.BlendUVDistortionUV = groupFirst->GetUV(5, livingTime, livedTime);
 
 			m_instanceParameter.FlipbookIndexAndNextRate = groupFirst->GetFlipbookIndexAndNextRate();
 

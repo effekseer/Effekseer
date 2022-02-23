@@ -42,6 +42,7 @@ protected:
 
 	efkTrackNodeParam innstancesNodeParam;
 	Effekseer::CustomAlignedVector<efkTrackInstanceParam> instances;
+	Effekseer::CustomAlignedVector<Effekseer::SIMD::Quaternionf> rotations_temp_;
 	Effekseer::CustomAlignedVector<Effekseer::SIMD::Quaternionf> rotations_;
 	Effekseer::SplineGenerator spline;
 
@@ -454,6 +455,7 @@ protected:
 
 		auto& parameter = innstancesNodeParam;
 
+#ifdef NEW_ROT
 		// Calculate rotations
 		for (size_t i = 0; i < instances.size(); i++)
 		{
@@ -489,8 +491,19 @@ protected:
 
 			q.s /= len;
 
-			rotations_[i] = q;
+			rotations_temp_[i] = q;
 		}
+
+		// Make smooth
+		rotations_[0] = rotations_temp_[0];
+		rotations_.back() = rotations_temp_.back();
+
+		for (size_t i = 1; i < instances.size() - 1; i++)
+		{
+			const auto q1 = Effekseer::SIMD::Quaternionf::Slerp(rotations_temp_[i - 1], rotations_temp_[i + 1], 0.5f);
+			rotations_[i] = Effekseer::SIMD::Quaternionf::Slerp(q1, rotations_temp_[i], 2.0f / 3.0f);
+		}
+#endif
 
 		// Calculate spline
 		if (parameter.SplineDivision > 1)
@@ -773,14 +786,11 @@ protected:
 				assert(vm.Pos.Z == 0.0f);
 
 #ifdef NEW_ROT
+				Effekseer::SIMD::Quaternionf rotq;
+
 				if (isLast_)
 				{
-					auto q = rotations_.back();
-					auto rv = Effekseer::SIMD::Quaternionf::Transform({1, 0, 0}, q);
-
-					vl.Pos = ToStruct(rv * vl.Pos.X + pos);
-					vm.Pos = ToStruct(pos);
-					vr.Pos = ToStruct(rv * vr.Pos.X + pos);
+					rotq = rotations_.back();
 				}
 				else
 				{
@@ -789,13 +799,14 @@ protected:
 
 					auto q0 = rotations_[instInd];
 					auto q1 = rotations_[instInd + 1];
-					auto q = Effekseer::SIMD::Quaternionf::Slerp(q0, q1, splInd / static_cast<float>(parameter.SplineDivision));
-					auto rv = Effekseer::SIMD::Quaternionf::Transform({1, 0, 0}, q);
-
-					vl.Pos = ToStruct(rv * vl.Pos.X + pos);
-					vm.Pos = ToStruct(pos);
-					vr.Pos = ToStruct(rv * vr.Pos.X + pos);
+					rotq = Effekseer::SIMD::Quaternionf::Slerp(q0, q1, splInd / static_cast<float>(parameter.SplineDivision));
 				}
+
+				const auto rdir = Effekseer::SIMD::Quaternionf::Transform({-1, 0, 0}, rotq);
+
+				vl.Pos = ToStruct(rdir * vl.Pos.X + pos);
+				vm.Pos = ToStruct(pos);
+				vr.Pos = ToStruct(rdir * vr.Pos.X + pos);
 #else
 				vl.Pos = ToStruct(-R * vl.Pos.X + pos);
 				vm.Pos = ToStruct(pos);
@@ -988,6 +999,7 @@ protected:
 			instances.resize(0);
 
 			rotations_.resize(param.InstanceCount);
+			rotations_temp_.resize(param.InstanceCount);
 
 			innstancesNodeParam = parameter;
 		}

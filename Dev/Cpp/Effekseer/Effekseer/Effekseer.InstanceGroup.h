@@ -26,7 +26,7 @@ enum class GenerationState
 	Generating,
 	Ended,
 };
-	
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -46,9 +46,9 @@ private:
 	EffectNodeImplemented* m_effectNode = nullptr;
 	InstanceContainer* m_container = nullptr;
 	InstanceGlobal* m_global = nullptr;
-	
+
 	GenerationState m_generationState = GenerationState::BeforeStart;
-	
+
 	// The number of generated instances.
 	int32_t m_generatedCount = 0;
 
@@ -58,6 +58,7 @@ private:
 	// The time to generate next instance.
 	float m_nextGenerationTime = 0.0f;
 	float m_generationOffsetTime = 0.0f;
+	int32_t time_ = 0;
 
 	SIMD::Mat43f parentMatrix_;
 	SIMD::Mat43f parentRotation_;
@@ -108,10 +109,10 @@ public:
 
 	bool IsActive() const;
 
-	//int32_t GetTime() const
-	//{
-	//	return m_time;
-	//}
+	int32_t GetTime() const
+	{
+		return time_;
+	}
 
 	/**
 		@brief	グループを生成したインスタンスからの参照が残っているか?
