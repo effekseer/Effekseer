@@ -123,7 +123,7 @@ namespace Effekseer.Binary
 						AddModelData(value, model_and_index, pmodel_and_index, version, data);
 						break;
 					case Data.RendererValues.ParamaterType.Track:
-						AddTrackData(value, data);
+						AddTrackData(value, data, version);
 						break;
 				}
 			}
@@ -471,7 +471,7 @@ namespace Effekseer.Binary
 			}
 		}
 
-		private static void AddTrackData(Data.RendererValues value, List<byte[]> data)
+		private static void AddTrackData(Data.RendererValues value, List<byte[]> data, ExporterVersion version)
 		{
 			// texture uv mode from 1.5
 			data.Add(TextureUVTypeParameter.GetBytes(value.TextureUVType));
@@ -487,6 +487,14 @@ namespace Effekseer.Binary
 			data.Add(BitConverter.GetBytes(param.TrackSizeBack_Fixed.Value));
 
 			data.Add(BitConverter.GetBytes(param.SplineDivision.Value));
+
+#if __EFFEKSEER_BUILD_VERSION17__
+			if(version >= ExporterVersion.Ver17Alpha1)
+			{
+				data.Add(BitConverter.GetBytes((int)value.SmoothingType.Value));
+				data.Add(BitConverter.GetBytes((int)value.TimeType.Value));
+			}
+#endif
 
 			OutputStandardColor(data, param.ColorLeft, param.ColorLeft_Fixed, param.ColorLeft_Random, param.ColorLeft_Easing,
 				param.ColorLeft_FCurve);

@@ -14,6 +14,20 @@ namespace Effekseer.Data
 		Tile = 1,
 	}
 
+#if __EFFEKSEER_BUILD_VERSION17__
+	public enum TrackSmoothingType : int
+	{
+		Off = 0,
+		On = 1,
+	}
+
+	public enum TrackTimeType : int
+	{
+		FirstParticle = 0,
+		ParticleGroup = 1,
+	}
+#endif
+
 	public class TextureUVTypeParameter
 	{
 		[Key(key = "TextureUVTypeParameter_Type")]
@@ -150,7 +164,18 @@ namespace Effekseer.Data
 		[Selected(ID = 0, Value = 3)]
 		[Selected(ID = 0, Value = 6)]
 		[IO(Export = true)]
-		public TextureUVTypeParameter TextureUVType { get; private set; } 
+		public TextureUVTypeParameter TextureUVType { get; private set; }
+
+#if __EFFEKSEER_BUILD_VERSION17__
+		[Selected(ID = 0, Value = 6)]
+		[IO(Export = true)]
+		public Value.Enum<TrackSmoothingType> SmoothingType { get; private set; } = new Enum<TrackSmoothingType>(TrackSmoothingType.On);
+
+		[Selected(ID = 0, Value = 6)]
+		[IO(Export = true)]
+		public Value.Enum<TrackTimeType> TimeType { get; private set; } = new Enum<TrackTimeType>(TrackTimeType.ParticleGroup);
+
+#endif
 
 		[Selected(ID = 0, Value = 2)]
 		[IO(Export = true)]

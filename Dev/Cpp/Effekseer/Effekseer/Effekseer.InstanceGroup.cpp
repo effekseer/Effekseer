@@ -164,7 +164,7 @@ void InstanceGroup::Update(bool shown)
 		}
 	}
 
-	time_++;
+	time_ += m_global->GetNextDeltaFrame();
 }
 
 //----------------------------------------------------------------------------------

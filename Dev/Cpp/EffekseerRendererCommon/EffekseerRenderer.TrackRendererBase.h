@@ -19,8 +19,6 @@
 //
 //-----------------------------------------------------------------------------------
 
-#define NEW_ROT 1
-
 namespace EffekseerRenderer
 {
 //----------------------------------------------------------------------------------
@@ -40,7 +38,6 @@ protected:
 	int32_t m_ringBufferOffset;
 	uint8_t* m_ringBufferData;
 
-	efkTrackNodeParam innstancesNodeParam;
 	Effekseer::CustomAlignedVector<efkTrackInstanceParam> instances;
 	Effekseer::CustomAlignedVector<Effekseer::SIMD::Quaternionf> rotations_temp_;
 	Effekseer::CustomAlignedVector<Effekseer::SIMD::Quaternionf> rotations_;
@@ -240,7 +237,7 @@ protected:
 	}
 
 	template <typename VERTEX, int TARGET>
-	void AssignUVs(efkTrackNodeParam& parameter, StrideView<VERTEX> verteies)
+	void AssignUVs(const efkTrackNodeParam& parameter, StrideView<VERTEX> verteies)
 	{
 		float uvx = 0.0f;
 		float uvw = 1.0f;
@@ -446,64 +443,63 @@ protected:
 	}
 
 	template <typename VERTEX, bool FLIP_RGB>
-	void RenderSplines(const ::Effekseer::SIMD::Mat44f& camera)
+	void RenderSplines(const efkTrackNodeParam& parameter, const ::Effekseer::SIMD::Mat44f& camera)
 	{
 		if (instances.size() == 0)
 		{
 			return;
 		}
 
-		auto& parameter = innstancesNodeParam;
-
-#ifdef NEW_ROT
-		// Calculate rotations
-		for (size_t i = 0; i < instances.size(); i++)
+		if (parameter.SmoothingType == Effekseer::TrackSmoothingType::On)
 		{
-			Effekseer::SIMD::Vec3f axis;
-			if (i == 0)
+			// Calculate rotations
+			for (size_t i = 0; i < instances.size(); i++)
 			{
-				axis = (instances[i + 1].SRTMatrix43.GetTranslation() - instances[i].SRTMatrix43.GetTranslation());
+				Effekseer::SIMD::Vec3f axis;
+				if (i == 0)
+				{
+					axis = (instances[i + 1].SRTMatrix43.GetTranslation() - instances[i].SRTMatrix43.GetTranslation());
+				}
+				else if (i == instances.size() - 1)
+				{
+					axis = (instances[i].SRTMatrix43.GetTranslation() - instances[i - 1].SRTMatrix43.GetTranslation());
+				}
+				else
+				{
+					axis = (instances[i + 1].SRTMatrix43.GetTranslation() - instances[i - 1].SRTMatrix43.GetTranslation());
+				}
+
+				auto U = SafeNormalize(axis);
+				auto F = ::Effekseer::SIMD::Vec3f(m_renderer->GetCameraFrontDirection());
+				auto R = SafeNormalize(::Effekseer::SIMD::Vec3f::Cross(U, F));
+				U = ::Effekseer::SIMD::Vec3f::Cross(F, R);
+
+				Effekseer::SIMD::Mat44f mat;
+				mat.X = R.s;
+				mat.Y = U.s;
+				mat.Z = F.s;
+				mat = mat.Transpose();
+
+				auto q = Effekseer::SIMD::Quaternionf::FromMatrix(mat);
+
+				auto qq = (q.s * q.s);
+				auto len = sqrtf(qq.GetX() + qq.GetY() + qq.GetZ() + qq.GetW()) + 0.00001f;
+
+				q.s /= len;
+
+				rotations_temp_[i] = q;
 			}
-			else if (i == instances.size() - 1)
+
+			// Make smooth
+			rotations_[0] = rotations_temp_[0];
+			rotations_.back() = rotations_temp_.back();
+
+			for (size_t i = 1; i < instances.size() - 1; i++)
 			{
-				axis = (instances[i].SRTMatrix43.GetTranslation() - instances[i - 1].SRTMatrix43.GetTranslation());
+				const auto q1 = Effekseer::SIMD::Quaternionf::Slerp(rotations_temp_[i - 1], rotations_temp_[i + 1], 0.5f);
+				rotations_[i] = Effekseer::SIMD::Quaternionf::Slerp(q1, rotations_temp_[i], 2.0f / 3.0f);
 			}
-			else
-			{
-				axis = (instances[i + 1].SRTMatrix43.GetTranslation() - instances[i - 1].SRTMatrix43.GetTranslation());
-			}
-
-			auto U = SafeNormalize(axis);
-			auto F = ::Effekseer::SIMD::Vec3f(m_renderer->GetCameraFrontDirection());
-			auto R = SafeNormalize(::Effekseer::SIMD::Vec3f::Cross(U, F));
-			U = ::Effekseer::SIMD::Vec3f::Cross(F, R);
-
-			Effekseer::SIMD::Mat44f mat;
-			mat.X = R.s;
-			mat.Y = U.s;
-			mat.Z = F.s;
-			mat = mat.Transpose();
-
-			auto q = Effekseer::SIMD::Quaternionf::FromMatrix(mat);
-
-			auto qq = (q.s * q.s);
-			auto len = sqrtf(qq.GetX() + qq.GetY() + qq.GetZ() + qq.GetW()) + 0.00001f;
-
-			q.s /= len;
-
-			rotations_temp_[i] = q;
 		}
-
-		// Make smooth
-		rotations_[0] = rotations_temp_[0];
-		rotations_.back() = rotations_temp_.back();
-
-		for (size_t i = 1; i < instances.size() - 1; i++)
-		{
-			const auto q1 = Effekseer::SIMD::Quaternionf::Slerp(rotations_temp_[i - 1], rotations_temp_[i + 1], 0.5f);
-			rotations_[i] = Effekseer::SIMD::Quaternionf::Slerp(q1, rotations_temp_[i], 2.0f / 3.0f);
-		}
-#endif
 
 		// Calculate spline
 		if (parameter.SplineDivision > 1)
@@ -785,33 +781,36 @@ protected:
 				assert(vm.Pos.Y == 0.0f);
 				assert(vm.Pos.Z == 0.0f);
 
-#ifdef NEW_ROT
-				Effekseer::SIMD::Quaternionf rotq;
-
-				if (isLast_)
+				if (parameter.SmoothingType == Effekseer::TrackSmoothingType::On)
 				{
-					rotq = rotations_.back();
+					Effekseer::SIMD::Quaternionf rotq;
+
+					if (isLast_)
+					{
+						rotq = rotations_.back();
+					}
+					else
+					{
+						int instInd = (int)i / parameter.SplineDivision;
+						int splInd = i % parameter.SplineDivision;
+
+						auto q0 = rotations_[instInd];
+						auto q1 = rotations_[instInd + 1];
+						rotq = Effekseer::SIMD::Quaternionf::Slerp(q0, q1, splInd / static_cast<float>(parameter.SplineDivision));
+					}
+
+					const auto rdir = Effekseer::SIMD::Quaternionf::Transform({-1, 0, 0}, rotq);
+
+					vl.Pos = ToStruct(rdir * vl.Pos.X + pos);
+					vm.Pos = ToStruct(pos);
+					vr.Pos = ToStruct(rdir * vr.Pos.X + pos);
 				}
 				else
 				{
-					int instInd = (int)i / parameter.SplineDivision;
-					int splInd = i % parameter.SplineDivision;
-
-					auto q0 = rotations_[instInd];
-					auto q1 = rotations_[instInd + 1];
-					rotq = Effekseer::SIMD::Quaternionf::Slerp(q0, q1, splInd / static_cast<float>(parameter.SplineDivision));
+					vl.Pos = ToStruct(-R * vl.Pos.X + pos);
+					vm.Pos = ToStruct(pos);
+					vr.Pos = ToStruct(-R * vr.Pos.X + pos);
 				}
-
-				const auto rdir = Effekseer::SIMD::Quaternionf::Transform({-1, 0, 0}, rotq);
-
-				vl.Pos = ToStruct(rdir * vl.Pos.X + pos);
-				vm.Pos = ToStruct(pos);
-				vr.Pos = ToStruct(rdir * vr.Pos.X + pos);
-#else
-				vl.Pos = ToStruct(-R * vl.Pos.X + pos);
-				vm.Pos = ToStruct(pos);
-				vr.Pos = ToStruct(-R * vr.Pos.X + pos);
-#endif
 
 				if (VertexNormalRequired<VERTEX>())
 				{
@@ -995,20 +994,21 @@ protected:
 
 		if (isFirst)
 		{
+			if (parameter.SmoothingType == Effekseer::TrackSmoothingType::On)
+			{
+				rotations_.resize(param.InstanceCount);
+				rotations_temp_.resize(param.InstanceCount);
+			}
+
 			instances.reserve(param.InstanceCount);
 			instances.resize(0);
-
-			rotations_.resize(param.InstanceCount);
-			rotations_temp_.resize(param.InstanceCount);
-
-			innstancesNodeParam = parameter;
 		}
 
 		instances.push_back(param);
 
 		if (isLast)
 		{
-			RenderSplines<VERTEX, FLIP_RGB>(camera);
+			RenderSplines<VERTEX, FLIP_RGB>(parameter, camera);
 		}
 	}
 

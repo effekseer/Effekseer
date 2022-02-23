@@ -13,8 +13,6 @@
 
 #include "Effekseer.Setting.h"
 
-#define SMOOTH_UV 1
-
 namespace Effekseer
 {
 
@@ -38,6 +36,15 @@ void EffectNodeTrack::LoadRendererParameter(unsigned char*& pos, const SettingRe
 	if (m_effect->GetVersion() >= 13)
 	{
 		memcpy(&SplineDivision, pos, sizeof(int32_t));
+		pos += sizeof(int32_t);
+	}
+
+	if (m_effect->GetVersion() >= Version17Alpha1)
+	{
+		memcpy(&SmoothingType, pos, sizeof(int32_t));
+		pos += sizeof(int32_t);
+
+		memcpy(&TimeType, pos, sizeof(int32_t));
 		pos += sizeof(int32_t);
 	}
 
@@ -89,6 +96,7 @@ void EffectNodeTrack::BeginRendering(int32_t count, Manager* manager, void* user
 		m_nodeParameter.Maginification = GetEffect()->GetMaginification();
 
 		m_nodeParameter.EnableViewOffset = (TranslationParam.TranslationType == ParameterTranslationType_ViewOffset);
+		m_nodeParameter.SmoothingType = SmoothingType;
 		m_nodeParameter.UserData = GetRenderingUserData();
 		renderer->BeginRendering(m_nodeParameter, count, userData);
 	}
@@ -108,13 +116,23 @@ void EffectNodeTrack::BeginRenderingGroup(InstanceGroup* group, Manager* manager
 		{
 			Instance* groupFirst = group->GetFirst();
 
-			int livingTime = group->GetTime();
-			int livedTime = 100;
+			int livingTime{};
+			int livedTime{};
 
-#ifndef SMOOTH_UV
-			livingTime = groupFirst->m_LivingTime;
-			livedTime = groupFirst->m_LivedTime;
-#endif
+			if (TimeType == TrackTimeType::FirstParticle)
+			{
+				livingTime = groupFirst->m_LivingTime;
+				livedTime = groupFirst->m_LivedTime;
+			}
+			else if (TimeType == TrackTimeType::ParticleGroup)
+			{
+				livingTime = group->GetTime();
+				livedTime = 100;
+			}
+			else
+			{
+				assert(false);
+			}
 
 			m_instanceParameter.UV = groupFirst->GetUV(0, livingTime, livedTime);
 			m_instanceParameter.AlphaUV = groupFirst->GetUV(1, livingTime, livedTime);

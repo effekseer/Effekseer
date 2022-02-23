@@ -506,9 +506,17 @@ namespace Effekseer
 
 struct NodeRendererTextureUVTypeParameter;
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+enum class TrackSmoothingType : int32_t
+{
+	Off = 1,
+	On = 1,
+};
+
+enum class TrackTimeType : int32_t
+{
+	FirstParticle = 0,
+	ParticleGroup = 1,
+};
 
 class TrackRenderer : public ReferenceObject
 {
@@ -532,6 +540,8 @@ public:
 		MaterialRenderData* MaterialRenderDataPtr = nullptr;
 
 		bool EnableViewOffset = false;
+
+		TrackSmoothingType SmoothingType = TrackSmoothingType::Off;
 
 		RefPtr<RenderingUserData> UserData;
 	};

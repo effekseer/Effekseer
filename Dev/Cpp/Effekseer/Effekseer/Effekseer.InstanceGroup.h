@@ -58,7 +58,7 @@ private:
 	// The time to generate next instance.
 	float m_nextGenerationTime = 0.0f;
 	float m_generationOffsetTime = 0.0f;
-	int32_t time_ = 0;
+	float time_ = 0.0f;
 
 	SIMD::Mat43f parentMatrix_;
 	SIMD::Mat43f parentRotation_;
@@ -109,7 +109,7 @@ public:
 
 	bool IsActive() const;
 
-	int32_t GetTime() const
+	float GetTime() const
 	{
 		return time_;
 	}

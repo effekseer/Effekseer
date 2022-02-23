@@ -100,6 +100,9 @@ public:
 
 	NodeRendererTextureUVTypeParameter TextureUVType;
 
+	TrackSmoothingType SmoothingType = TrackSmoothingType::Off;
+	TrackTimeType TimeType = TrackTimeType::FirstParticle;
+	
 	EffectNodeTrack(Effect* effect, unsigned char*& pos)
 		: EffectNodeImplemented(effect, pos)
 	{
