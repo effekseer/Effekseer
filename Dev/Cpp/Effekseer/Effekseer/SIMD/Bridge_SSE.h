@@ -14,7 +14,7 @@ namespace Effekseer
 namespace SIMD
 {
 
-inline Int4 Float4::Convert4i() const { return _mm_cvtps_epi32(s); }
+inline Int4 Float4::Convert4i() const { return _mm_cvttps_epi32(s); }
 
 inline Int4 Float4::Cast4i() const { return _mm_castps_si128(s); }
 
