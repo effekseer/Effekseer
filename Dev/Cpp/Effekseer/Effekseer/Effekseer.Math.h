@@ -8,19 +8,38 @@
 namespace Effekseer
 {
 
+template <class To, class From>
+inline To BitCast(From from)
+{
+	static_assert(sizeof(From) == sizeof(To));
+
+	union
+	{
+		To to;
+		From from;
+	} v;
+
+	v.from = from;
+	return v.to;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+inline float Frac(float x)
+{
+    x -= (int)x;
+	int32_t ofs = (BitCast<int32_t>(x) >> 31) & 0x3F800000;
+    return x + BitCast<float>(ofs);
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 inline float NormalizeAngle(float angle)
 {
-	union
-	{
-		float f;
-		int32_t i;
-	} ofs, anglebits = {angle};
-
-	ofs.i = (anglebits.i & 0x80000000) | 0x3F000000;
-	return angle - ((int)(angle * 0.159154943f + ofs.f) * 6.283185307f);
+	int32_t ofs = (BitCast<int32_t>(angle) & 0x80000000) | 0x3F000000;
+	return angle - ((int)(angle * 0.159154943f + BitCast<float>(ofs)) * 6.283185307f);
 }
 
 //----------------------------------------------------------------------------------
