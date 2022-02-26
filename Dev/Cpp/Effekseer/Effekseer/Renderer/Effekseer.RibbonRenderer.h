@@ -46,6 +46,8 @@ public:
 
 		bool EnableViewOffset = false;
 
+		TrailSmoothingType SmoothingType = TrailSmoothingType::Off;
+
 		RefPtr<RenderingUserData> UserData;
 	};
 

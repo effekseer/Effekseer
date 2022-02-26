@@ -114,7 +114,7 @@ namespace Effekseer.Binary
 						AddSpriteData(value, data);
 						break;
 					case Data.RendererValues.ParamaterType.Ribbon:
-						AddRibbonData(value, data);
+						AddRibbonData(value, data, version);
 						break;
 					case Data.RendererValues.ParamaterType.Ring:
 						AddRingData(value, data, version);
@@ -221,12 +221,20 @@ namespace Effekseer.Binary
 			}
 		}
 
-		private static void AddRibbonData(Data.RendererValues value, List<byte[]> data)
+		private static void AddRibbonData(Data.RendererValues value, List<byte[]> data, ExporterVersion version)
 		{
 			var ribbonParameter = value.Ribbon;
 
 			// texture uv mode from 1.5
 			data.Add(TextureUVTypeParameter.GetBytes(value.TextureUVType));
+
+#if __EFFEKSEER_BUILD_VERSION17__
+			if (version >= ExporterVersion.Ver17Alpha1)
+			{
+				data.Add(BitConverter.GetBytes((int)value.TrailSmoothing.Value));
+				data.Add(BitConverter.GetBytes((int)value.TrailTimeSource.Value));
+			}
+#endif
 
 			data.Add((ribbonParameter.ViewpointDependent ? 1 : 0).GetBytes());
 
@@ -491,8 +499,8 @@ namespace Effekseer.Binary
 #if __EFFEKSEER_BUILD_VERSION17__
 			if(version >= ExporterVersion.Ver17Alpha1)
 			{
-				data.Add(BitConverter.GetBytes((int)value.SmoothingType.Value));
-				data.Add(BitConverter.GetBytes((int)value.TimeType.Value));
+				data.Add(BitConverter.GetBytes((int)value.TrailSmoothing.Value));
+				data.Add(BitConverter.GetBytes((int)value.TrailTimeSource.Value));
 			}
 #endif
 

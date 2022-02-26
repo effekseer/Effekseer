@@ -450,7 +450,7 @@ protected:
 			return;
 		}
 
-		if (parameter.SmoothingType == Effekseer::TrackSmoothingType::On)
+		if (parameter.SmoothingType == Effekseer::TrailSmoothingType::On)
 		{
 			// Calculate rotations
 			for (size_t i = 0; i < instances.size(); i++)
@@ -781,7 +781,7 @@ protected:
 				assert(vm.Pos.Y == 0.0f);
 				assert(vm.Pos.Z == 0.0f);
 
-				if (parameter.SmoothingType == Effekseer::TrackSmoothingType::On)
+				if (parameter.SmoothingType == Effekseer::TrailSmoothingType::On)
 				{
 					Effekseer::SIMD::Quaternionf rotq;
 
@@ -994,7 +994,7 @@ protected:
 
 		if (isFirst)
 		{
-			if (parameter.SmoothingType == Effekseer::TrackSmoothingType::On)
+			if (parameter.SmoothingType == Effekseer::TrailSmoothingType::On)
 			{
 				rotations_.resize(param.InstanceCount);
 				rotations_temp_.resize(param.InstanceCount);

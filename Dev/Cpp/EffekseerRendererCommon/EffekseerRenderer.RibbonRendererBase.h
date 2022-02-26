@@ -40,6 +40,8 @@ protected:
 
 	efkRibbonNodeParam innstancesNodeParam;
 	Effekseer::CustomAlignedVector<efkRibbonInstanceParam> instances;
+	Effekseer::CustomAlignedVector<Effekseer::SIMD::Quaternionf> rotations_temp_;
+	Effekseer::CustomAlignedVector<Effekseer::SIMD::Quaternionf> rotations_;
 	Effekseer::SplineGenerator spline_left;
 	Effekseer::SplineGenerator spline_right;
 
@@ -816,6 +818,12 @@ protected:
 
 		if (isFirst)
 		{
+			if (parameter.SmoothingType == Effekseer::TrailSmoothingType::On)
+			{
+				rotations_.resize(param.InstanceCount);
+				rotations_temp_.resize(param.InstanceCount);
+			}
+
 			instances.reserve(param.InstanceCount);
 			instances.resize(0);
 			innstancesNodeParam = parameter;

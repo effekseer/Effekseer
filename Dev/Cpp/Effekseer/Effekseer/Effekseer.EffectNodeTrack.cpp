@@ -119,12 +119,12 @@ void EffectNodeTrack::BeginRenderingGroup(InstanceGroup* group, Manager* manager
 			int livingTime{};
 			int livedTime{};
 
-			if (TimeType == TrackTimeType::FirstParticle)
+			if (TimeType == TrailTimeType::FirstParticle)
 			{
 				livingTime = groupFirst->m_LivingTime;
 				livedTime = groupFirst->m_LivedTime;
 			}
-			else if (TimeType == TrackTimeType::ParticleGroup)
+			else if (TimeType == TrailTimeType::ParticleGroup)
 			{
 				livingTime = group->GetTime();
 				livedTime = 100;

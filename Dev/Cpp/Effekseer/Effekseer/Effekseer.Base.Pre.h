@@ -301,6 +301,18 @@ enum class ReloadingThreadType
 	Render,
 };
 
+enum class TrailSmoothingType : int32_t
+{
+	Off = 0,
+	On = 1,
+};
+
+enum class TrailTimeType : int32_t
+{
+	FirstParticle = 0,
+	ParticleGroup = 1,
+};
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

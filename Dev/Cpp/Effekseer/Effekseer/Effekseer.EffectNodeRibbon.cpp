@@ -30,6 +30,15 @@ void EffectNodeRibbon::LoadRendererParameter(unsigned char*& pos, const SettingR
 		TextureUVType.Load(pos, m_effect->GetVersion());
 	}
 
+	if (m_effect->GetVersion() >= Version17Alpha1)
+	{
+		memcpy(&SmoothingType, pos, sizeof(int32_t));
+		pos += sizeof(int32_t);
+
+		memcpy(&TimeType, pos, sizeof(int32_t));
+		pos += sizeof(int32_t);
+	}
+
 	if (m_effect->GetVersion() >= 3)
 	{
 	}
@@ -130,6 +139,7 @@ void EffectNodeRibbon::BeginRendering(int32_t count, Manager* manager, void* use
 		m_nodeParameter.Maginification = GetEffect()->GetMaginification();
 
 		m_nodeParameter.EnableViewOffset = (TranslationParam.TranslationType == ParameterTranslationType_ViewOffset);
+		m_nodeParameter.SmoothingType = SmoothingType;
 		m_nodeParameter.UserData = GetRenderingUserData();
 
 		renderer->BeginRendering(m_nodeParameter, count, userData);
@@ -147,12 +157,31 @@ void EffectNodeRibbon::BeginRenderingGroup(InstanceGroup* group, Manager* manage
 		if (group->GetFirst() != nullptr)
 		{
 			Instance* groupFirst = group->GetFirst();
-			m_instanceParameter.UV = groupFirst->GetUV(0);
-			m_instanceParameter.AlphaUV = groupFirst->GetUV(1);
-			m_instanceParameter.UVDistortionUV = groupFirst->GetUV(2);
-			m_instanceParameter.BlendUV = groupFirst->GetUV(3);
-			m_instanceParameter.BlendAlphaUV = groupFirst->GetUV(4);
-			m_instanceParameter.BlendUVDistortionUV = groupFirst->GetUV(5);
+
+			int livingTime{};
+			int livedTime{};
+
+			if (TimeType == TrailTimeType::FirstParticle)
+			{
+				livingTime = groupFirst->m_LivingTime;
+				livedTime = groupFirst->m_LivedTime;
+			}
+			else if (TimeType == TrailTimeType::ParticleGroup)
+			{
+				livingTime = group->GetTime();
+				livedTime = 100;
+			}
+			else
+			{
+				assert(false);
+			}
+
+			m_instanceParameter.UV = groupFirst->GetUV(0, livingTime, livedTime);
+			m_instanceParameter.AlphaUV = groupFirst->GetUV(1, livingTime, livedTime);
+			m_instanceParameter.UVDistortionUV = groupFirst->GetUV(2, livingTime, livedTime);
+			m_instanceParameter.BlendUV = groupFirst->GetUV(3, livingTime, livedTime);
+			m_instanceParameter.BlendAlphaUV = groupFirst->GetUV(4, livingTime, livedTime);
+			m_instanceParameter.BlendUVDistortionUV = groupFirst->GetUV(5, livingTime, livedTime);
 
 			m_instanceParameter.FlipbookIndexAndNextRate = groupFirst->GetFlipbookIndexAndNextRate();
 
