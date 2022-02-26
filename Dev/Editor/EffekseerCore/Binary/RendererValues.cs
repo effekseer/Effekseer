@@ -231,7 +231,6 @@ namespace Effekseer.Binary
 #if __EFFEKSEER_BUILD_VERSION17__
 			if (version >= ExporterVersion.Ver17Alpha1)
 			{
-				data.Add(BitConverter.GetBytes((int)value.TrailSmoothing.Value));
 				data.Add(BitConverter.GetBytes((int)value.TrailTimeSource.Value));
 			}
 #endif

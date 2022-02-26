@@ -973,7 +973,7 @@ namespace Effekseer
 				updater.Update(doc);
 			}
 
-			var root = doc["EffekseerProject"]["Root"];
+		   var root = doc["EffekseerProject"]["Root"];
 			if (root == null) return null;
 
 			culling = new Data.EffectCullingValues();
@@ -1100,6 +1100,13 @@ namespace Effekseer
 				var updater = new Utils.ProjectVersionUpdator16Alpha2To16x();
 				updater.Update(root_node);
 			}
+
+			if (toolVersion < ParseVersion("1.60"))
+			{
+				var updater = new Utils.ProjectVersionUpdator16xTo17Alpha1();
+				updater.Update(root_node);
+			}
+
 
 			Command.CommandManager.Clear();
 			IsChanged = false;

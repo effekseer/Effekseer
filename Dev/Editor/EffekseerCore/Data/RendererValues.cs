@@ -167,7 +167,6 @@ namespace Effekseer.Data
 		public TextureUVTypeParameter TextureUVType { get; private set; }
 
 #if __EFFEKSEER_BUILD_VERSION17__
-		[Selected(ID = 0, Value = 3)]
 		[Selected(ID = 0, Value = 6)]
 		[IO(Export = true)]
 		public Value.Enum<TrailSmoothingType> TrailSmoothing { get; private set; } = new Enum<TrailSmoothingType>(TrailSmoothingType.On);

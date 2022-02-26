@@ -92,7 +92,6 @@ public:
 
 	int32_t SplineDivision = 1;
 
-	TrailSmoothingType SmoothingType = TrailSmoothingType::Off;
 	TrailTimeType TimeType = TrailTimeType::FirstParticle;
 
 	NodeRendererTextureUVTypeParameter TextureUVType;

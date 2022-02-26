@@ -32,9 +32,6 @@ void EffectNodeRibbon::LoadRendererParameter(unsigned char*& pos, const SettingR
 
 	if (m_effect->GetVersion() >= Version17Alpha1)
 	{
-		memcpy(&SmoothingType, pos, sizeof(int32_t));
-		pos += sizeof(int32_t);
-
 		memcpy(&TimeType, pos, sizeof(int32_t));
 		pos += sizeof(int32_t);
 	}
@@ -139,7 +136,6 @@ void EffectNodeRibbon::BeginRendering(int32_t count, Manager* manager, void* use
 		m_nodeParameter.Maginification = GetEffect()->GetMaginification();
 
 		m_nodeParameter.EnableViewOffset = (TranslationParam.TranslationType == ParameterTranslationType_ViewOffset);
-		m_nodeParameter.SmoothingType = SmoothingType;
 		m_nodeParameter.UserData = GetRenderingUserData();
 
 		renderer->BeginRendering(m_nodeParameter, count, userData);

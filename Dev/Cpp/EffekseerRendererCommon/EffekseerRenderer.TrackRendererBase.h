@@ -746,33 +746,6 @@ protected:
 				vm.Pos.Y = 0.0f;
 				vm.Pos.Z = 0.0f;
 
-				::Effekseer::SIMD::Vec3f F;
-				::Effekseer::SIMD::Vec3f R;
-				::Effekseer::SIMD::Vec3f U;
-
-				// It can be optimized because X is only not zero.
-				/*
-				U = axis;
-
-				F = ::Effekseer::SIMD::Vec3f(m_renderer->GetCameraFrontDirection()).Normalize();
-				R = ::Effekseer::SIMD::Vec3f::Cross(U, F).Normalize();
-				F = ::Effekseer::SIMD::Vec3f::Cross(R, U).Normalize();
-
-				::Effekseer::SIMD::Mat43f mat_rot(
-					-R.GetX(), -R.GetY(), -R.GetZ(),
-					 U.GetX(),  U.GetY(),  U.GetZ(),
-					 F.GetX(),  F.GetY(),  F.GetZ(),
-					pos.GetX(), pos.GetY(), pos.GetZ());
-
-				vl.Pos = ToStruct(::Effekseer::SIMD::Vec3f::Transform(vl.Pos, mat_rot));
-				vm.Pos = ToStruct(::Effekseer::SIMD::Vec3f::Transform(vm.Pos, mat_rot));
-				vr.Pos = ToStruct(::Effekseer::SIMD::Vec3f::Transform(vr.Pos,mat_rot));
-				*/
-
-				U = axis;
-				F = m_renderer->GetCameraFrontDirection();
-				R = SafeNormalize(::Effekseer::SIMD::Vec3f::Cross(U, F));
-
 				assert(vl.Pos.Y == 0.0f);
 				assert(vr.Pos.Y == 0.0f);
 				assert(vl.Pos.Z == 0.0f);
@@ -807,6 +780,34 @@ protected:
 				}
 				else
 				{
+
+					::Effekseer::SIMD::Vec3f F;
+					::Effekseer::SIMD::Vec3f R;
+					::Effekseer::SIMD::Vec3f U;
+
+					// It can be optimized because X is only not zero.
+					/*
+					U = axis;
+
+					F = ::Effekseer::SIMD::Vec3f(m_renderer->GetCameraFrontDirection()).Normalize();
+					R = ::Effekseer::SIMD::Vec3f::Cross(U, F).Normalize();
+					F = ::Effekseer::SIMD::Vec3f::Cross(R, U).Normalize();
+
+					::Effekseer::SIMD::Mat43f mat_rot(
+						-R.GetX(), -R.GetY(), -R.GetZ(),
+						 U.GetX(),  U.GetY(),  U.GetZ(),
+						 F.GetX(),  F.GetY(),  F.GetZ(),
+						pos.GetX(), pos.GetY(), pos.GetZ());
+
+					vl.Pos = ToStruct(::Effekseer::SIMD::Vec3f::Transform(vl.Pos, mat_rot));
+					vm.Pos = ToStruct(::Effekseer::SIMD::Vec3f::Transform(vm.Pos, mat_rot));
+					vr.Pos = ToStruct(::Effekseer::SIMD::Vec3f::Transform(vr.Pos,mat_rot));
+					*/
+
+					U = axis;
+					F = m_renderer->GetCameraFrontDirection();
+					R = SafeNormalize(::Effekseer::SIMD::Vec3f::Cross(U, F));
+
 					vl.Pos = ToStruct(-R * vl.Pos.X + pos);
 					vm.Pos = ToStruct(pos);
 					vr.Pos = ToStruct(-R * vr.Pos.X + pos);
