@@ -104,11 +104,7 @@ class EffectImplemented : public Effect, public ReferenceObject
 	friend class EffectFactory;
 	friend class Instance;
 
-#if __EFFEKSEER_BUILD_VERSION17__
 	static const int32_t SupportBinaryVersion = Version17Alpha1;
-#else
-	static const int32_t SupportBinaryVersion = Version16;
-#endif
 
 protected:
 	SettingRef m_setting;

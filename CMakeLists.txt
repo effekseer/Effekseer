@@ -19,7 +19,6 @@ option(BUILD_VIEWER "Build viewer" OFF)
 option(BUILD_EDITOR "Build editor" OFF)
 option(BUILD_TEST "Build test" OFF)
 option(BUILD_EXAMPLES "Build examples" ON)
-option(BUILD_VERSION17 "is built as version1.7" OFF)
 option(BUILD_UNITYPLUGIN "is built as unity plugin" OFF)
 option(BUILD_UNITYPLUGIN_FOR_IOS "is built as unity plugin for ios" OFF)
 option(FROM_CI "from ci" OFF)
@@ -75,10 +74,6 @@ endif()
 
 if (BUILD_DX12)
     add_definitions(-D__EFFEKSEER_BUILD_DX12__)
-endif()
-
-if (BUILD_VERSION17)
-    add_definitions(-D__EFFEKSEER_BUILD_VERSION17__)
 endif()
 
 option(BUILD_WITH_EASY_PROFILER "Build with easy_profiler to profile" OFF)

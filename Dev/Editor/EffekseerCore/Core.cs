@@ -968,13 +968,11 @@ namespace Effekseer
 				updater.Update(doc);
 			}
 
-#if __EFFEKSEER_BUILD_VERSION17__
 			if (toolVersion < ParseVersion("1.60α9"))
 			{
 				var updater = new Utils.ProjectVersionUpdator16Alpha8To16x();
 				updater.Update(doc);
 			}
-#endif
 
 			var root = doc["EffekseerProject"]["Root"];
 			if (root == null) return null;
@@ -1104,13 +1102,11 @@ namespace Effekseer
 				updater.Update(root_node);
 			}
 
-#if __EFFEKSEER_BUILD_VERSION17__
 			if (toolVersion < ParseVersion("1.60"))
 			{
 				var updater = new Utils.ProjectVersionUpdator16xTo17Alpha1();
 				updater.Update(root_node);
 			}
-#endif
 
 			Command.CommandManager.Clear();
 			IsChanged = false;

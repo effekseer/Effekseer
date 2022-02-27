@@ -14,7 +14,6 @@ namespace Effekseer.Data
 		Tile = 1,
 	}
 
-#if __EFFEKSEER_BUILD_VERSION17__
 	public enum TrailSmoothingType : int
 	{
 		Off = 0,
@@ -26,7 +25,6 @@ namespace Effekseer.Data
 		FirstParticle = 0,
 		ParticleGroup = 1,
 	}
-#endif
 
 	public class TextureUVTypeParameter
 	{
@@ -166,7 +164,6 @@ namespace Effekseer.Data
 		[IO(Export = true)]
 		public TextureUVTypeParameter TextureUVType { get; private set; }
 
-#if __EFFEKSEER_BUILD_VERSION17__
 		[Selected(ID = 0, Value = 6)]
 		[IO(Export = true)]
 		public Value.Enum<TrailSmoothingType> TrailSmoothing { get; private set; } = new Enum<TrailSmoothingType>(TrailSmoothingType.On);
@@ -175,8 +172,6 @@ namespace Effekseer.Data
 		[Selected(ID = 0, Value = 6)]
 		[IO(Export = true)]
 		public Value.Enum<TrailTimeSourceType> TrailTimeSource { get; private set; } = new Enum<TrailTimeSourceType>(TrailTimeSourceType.ParticleGroup);
-
-#endif
 
 		[Selected(ID = 0, Value = 2)]
 		[IO(Export = true)]

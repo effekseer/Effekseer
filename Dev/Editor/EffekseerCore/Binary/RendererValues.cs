@@ -228,12 +228,10 @@ namespace Effekseer.Binary
 			// texture uv mode from 1.5
 			data.Add(TextureUVTypeParameter.GetBytes(value.TextureUVType));
 
-#if __EFFEKSEER_BUILD_VERSION17__
 			if (version >= ExporterVersion.Ver17Alpha1)
 			{
 				data.Add(BitConverter.GetBytes((int)value.TrailTimeSource.Value));
 			}
-#endif
 
 			data.Add((ribbonParameter.ViewpointDependent ? 1 : 0).GetBytes());
 
@@ -495,13 +493,11 @@ namespace Effekseer.Binary
 
 			data.Add(BitConverter.GetBytes(param.SplineDivision.Value));
 
-#if __EFFEKSEER_BUILD_VERSION17__
 			if(version >= ExporterVersion.Ver17Alpha1)
 			{
 				data.Add(BitConverter.GetBytes((int)value.TrailSmoothing.Value));
 				data.Add(BitConverter.GetBytes((int)value.TrailTimeSource.Value));
 			}
-#endif
 
 			OutputStandardColor(data, param.ColorLeft, param.ColorLeft_Fixed, param.ColorLeft_Random, param.ColorLeft_Easing,
 				param.ColorLeft_FCurve);
