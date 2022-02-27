@@ -63,6 +63,9 @@ jobs:
           - name: windows_x86
             os: vs2017-win2016
             label: Win_x86
+          - name: windows_x64_17x
+            os: vs2017-win2016
+            label: Win_17x
           - name: mac
             os: macos-10.15
             label: Mac
@@ -109,6 +112,10 @@ jobs:
           then
               export X86=1 
           fi
+          if [ "${{ matrix.name }}" = "windows_x64_17x" ];
+          then
+              export 17x=1 
+          fi
           python3 build.py || python build.py
                 
       - name: Prepare Runtime
@@ -127,6 +134,12 @@ jobs:
         run: |
           release_tool.bat
         if: matrix.name == 'windows_x86'
+        shell: cmd
+
+      - name: Prepare Windows Tool (17x)
+        run: |
+          release_tool.bat
+        if: matrix.name == 'windows_x64_17x'
         shell: cmd
 
       - name: Prepare Linux Tool

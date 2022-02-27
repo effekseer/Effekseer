@@ -135,6 +135,7 @@ env["IGNORE_BUILD"] = os.getenv('IGNORE_BUILD', '0')
 
 
 is_x86 = env['X86'] == '1'
+is_17x = env['17x'] == '1'
 is_from_ci = 'from_ci' in sys.argv
 
 if env['IGNORE_BUILD'] == '0':
@@ -173,6 +174,10 @@ if env['IGNORE_BUILD'] == '0':
             suffix = ''
             if is_from_ci:
                 suffix += ' -D FROM_CI=ON'
+
+            if is_17x:
+                suffix += ' -D BUILD_VERSION17=ON'
+
             if is_x86:
                 call('cmake .. -A Win32 -DBUILD_VIEWER=ON' + suffix)
             else:
