@@ -108,15 +108,15 @@ namespace Effekseer.GUI.Component
 			{
 				get
 				{
-					foreach(var row in controlRows.Internal)
+					foreach (var row in controlRows.Internal)
 					{
-						if(row.Children?.IsValueChangedFromDefault ?? false)
+						if (row.Children?.IsValueChangedFromDefault ?? false)
 						{
 							return true;
 						}
 
 						var value = row.BindingValue as Data.IValueChangedFromDefault;
-						if(value?.IsValueChangedFromDefault ?? false)
+						if (value?.IsValueChangedFromDefault ?? false)
 						{
 							return true;
 						}
@@ -195,7 +195,7 @@ namespace Effekseer.GUI.Component
 							else
 							{
 								// Simple CollapsingHeader
-								if(item.TreeNodeType == Data.TreeNodeType.Large)
+								if (item.TreeNodeType == Data.TreeNodeType.Large)
 								{
 									Manager.NativeManager.Columns(1);
 									Manager.NativeManager.Spacing();
@@ -901,4 +901,3 @@ namespace Effekseer.GUI.Component
 		}
 	}
 }
-

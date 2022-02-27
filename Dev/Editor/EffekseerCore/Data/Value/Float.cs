@@ -11,7 +11,7 @@ namespace Effekseer.Data.Value
 		float? _value = null;
 		float _max = float.MaxValue;
 		float _min = float.MinValue;
-		
+
 		public float Value
 		{
 			get

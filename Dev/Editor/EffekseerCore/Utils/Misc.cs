@@ -43,7 +43,7 @@ namespace Effekseer.Utils
 		}
 		public static string GetAbsolutePath(string basePath, string path)
 		{
-			if(string.IsNullOrEmpty(path))
+			if (string.IsNullOrEmpty(path))
 			{
 				return string.Empty;
 			}
@@ -135,7 +135,7 @@ namespace Effekseer.Utils
 								}
 
 								var blend_uv_distortion_relative_path = _node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendUVDistortionTextureParam.Texture.RelativePath;
-								if (_node.AdvancedRendererCommonValuesValues.BlendTextureParams.EnableBlendUVDistortionTexture && 
+								if (_node.AdvancedRendererCommonValuesValues.BlendTextureParams.EnableBlendUVDistortionTexture &&
 									blend_uv_distortion_relative_path != string.Empty)
 								{
 									resources.ColorTextures.Add(_node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendUVDistortionTextureParam.Texture);
@@ -227,7 +227,7 @@ namespace Effekseer.Utils
 								}
 
 								var blend_uv_distortion_relative_path = _node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendUVDistortionTextureParam.Texture.RelativePath;
-								if (_node.AdvancedRendererCommonValuesValues.BlendTextureParams.EnableBlendUVDistortionTexture && 
+								if (_node.AdvancedRendererCommonValuesValues.BlendTextureParams.EnableBlendUVDistortionTexture &&
 									blend_uv_distortion_relative_path != string.Empty)
 								{
 									resources.ColorTextures.Add(_node.AdvancedRendererCommonValuesValues.BlendTextureParams.BlendUVDistortionTextureParam.Texture);
@@ -241,7 +241,7 @@ namespace Effekseer.Utils
 						if (material_path != string.Empty)
 						{
 							resources.Materials.Add(_node.RendererCommonValues.MaterialFile.Path);
-							
+
 							var materialInfo = Core.ResourceCache.LoadMaterialInformation(material_path);
 
 							var textures = _node.RendererCommonValues.MaterialFile.GetTextures(materialInfo).Where(_ => _.Item1 != null);

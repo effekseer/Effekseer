@@ -54,7 +54,7 @@ namespace Effekseer.Data
 			get;
 			private set;
 		}
-		
+
 		[Selected(ID = 0, Value = 4)]
 		[IO(Export = true)]
 		public FloatEasingParamater SingleEasing

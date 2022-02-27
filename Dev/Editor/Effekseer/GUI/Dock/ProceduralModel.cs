@@ -92,4 +92,3 @@ namespace Effekseer.GUI.Dock
 
 	}
 }
-

@@ -7,7 +7,7 @@ namespace Effekseer.Data
 {
 	public enum UVTextureReferenceTargetType
 	{
-		[Key(key= "UVTextureReferenceTargetType_None")]
+		[Key(key = "UVTextureReferenceTargetType_None")]
 		None = 0,
 		[Key(key = "UVTextureReferenceTargetType_Texture1")]
 		Texture1 = 1,
@@ -98,7 +98,7 @@ namespace Effekseer.Data
 			EditableValue ev = new EditableValue();
 			ev.Value = CustomData;
 
-			if(Name != string.Empty)
+			if (Name != string.Empty)
 			{
 				ev.Title = Name;
 				ev.Description = Desc;
@@ -128,7 +128,7 @@ namespace Effekseer.Data
 
 		public void Changed()
 		{
-			if(OnChanged != null)
+			if (OnChanged != null)
 			{
 				OnChanged(this, null);
 			}
@@ -160,7 +160,7 @@ namespace Effekseer.Data
 		{
 			var statusKey = StatusKey.From(key);
 
-			foreach(var kv in valueStatuses)
+			foreach (var kv in valueStatuses)
 			{
 				if (blacklist != null && blacklist.Contains(kv)) continue;
 				if (kv.Key.IsSame(statusKey, withName)) return kv;
@@ -184,7 +184,7 @@ namespace Effekseer.Data
 
 			ApplyMaterial(info);
 
-			if(info.CustomData.Count() > 0)
+			if (info.CustomData.Count() > 0)
 			{
 				rcValues.CustomData1.Name = info.CustomData[0].Summaries[Core.Language];
 				rcValues.CustomData1.Desc = info.CustomData[0].Descriptions[Core.Language];
@@ -227,7 +227,7 @@ namespace Effekseer.Data
 
 			var propPath = EditableValue.Create(Path, this.GetType().GetProperty("Path"));
 
-			if(!string.IsNullOrEmpty(selfSummary))
+			if (!string.IsNullOrEmpty(selfSummary))
 			{
 				propPath.Title = selfSummary;
 			}
@@ -285,8 +285,8 @@ namespace Effekseer.Data
 
 			HashSet<ValueStatus> usedValueStatuses = new HashSet<ValueStatus>();
 			HashSet<object> finished = new HashSet<object>();
-			
-			foreach (var withNameFlag in new[] { false, true} )
+
+			foreach (var withNameFlag in new[] { false, true })
 			{
 				foreach (var texture in info.Textures)
 				{
@@ -338,7 +338,7 @@ namespace Effekseer.Data
 							status.IsShown = texture.IsParam;
 							isChanged = true;
 						}
-						
+
 						// update default path
 						if (texture.IsParam)
 						{
@@ -352,7 +352,7 @@ namespace Effekseer.Data
 						}
 						else
 						{
-							if((foundValue.Value as Value.PathForImage).AbsolutePath != defaultPath)
+							if ((foundValue.Value as Value.PathForImage).AbsolutePath != defaultPath)
 							{
 								(foundValue.Value as Value.PathForImage).SetAbsolutePathDirectly(defaultPath);
 								isChanged = true;
@@ -373,7 +373,7 @@ namespace Effekseer.Data
 						status.Priority = texture.Priority;
 						valueStatuses.Add(status);
 
-						if(!string.IsNullOrEmpty(defaultPath))
+						if (!string.IsNullOrEmpty(defaultPath))
 						{
 							value.SetAbsolutePathDirectly(defaultPath);
 						}
@@ -435,7 +435,7 @@ namespace Effekseer.Data
 					if (foundValue != null)
 					{
 						status = foundValue;
-						
+
 						status.IsShown = true;
 						isChanged = true;
 
@@ -455,7 +455,7 @@ namespace Effekseer.Data
 						{
 							(status.Value as Value.Vector4D).ChangeDefaultValue(uniform.DefaultValues[0], uniform.DefaultValues[1], uniform.DefaultValues[2], uniform.DefaultValues[3]);
 						}
-						
+
 					}
 					else
 					{
@@ -473,7 +473,7 @@ namespace Effekseer.Data
 							valueStatuses.Add(status);
 							isChanged = true;
 						}
-						else if(uniform.Type == 1)
+						else if (uniform.Type == 1)
 						{
 							status = new ValueStatus();
 							var value = new Value.Vector2D(uniform.DefaultValues[0], uniform.DefaultValues[1]);
@@ -527,7 +527,7 @@ namespace Effekseer.Data
 
 			foreach (var kts in valueStatuses)
 			{
-				if(!usedValueStatuses.Contains(kts))
+				if (!usedValueStatuses.Contains(kts))
 				{
 					var status = kts;
 					if (status.IsShown)
@@ -538,7 +538,7 @@ namespace Effekseer.Data
 				}
 			}
 
-			if(info.CustomData.Count() > 0)
+			if (info.CustomData.Count() > 0)
 			{
 				rcValues.CustomData1.Fixed4.ChangeDefaultValue(
 					info.CustomData[0].DefaultValues[0],
@@ -647,7 +647,7 @@ namespace Effekseer.Data
 
 				StatusKey status = new StatusKey();
 
-				if(version > 0)
+				if (version > 0)
 				{
 					// TODO : rename to unity flag
 #if SCRIPT_ENABLED
@@ -919,7 +919,7 @@ namespace Effekseer.Data
 			Wrap2 = new Value.Enum<WrapType>(WrapType.Repeat);
 
 			AlphaBlend = new Value.Enum<AlphaBlendType>(AlphaBlendType.Blend);
-			
+
 			FadeInType = new Value.Enum<FadeInMethod>(FadeInMethod.None);
 			FadeInNone = new NoneParamater();
 			FadeIn = new FadeInParamater();

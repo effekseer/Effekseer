@@ -30,7 +30,7 @@ namespace Effekseer.GUI.Component
 			{
 				if (binding == value) return;
 
-				if(binding != null)
+				if (binding != null)
 				{
 					FixValue();
 				}
@@ -51,7 +51,7 @@ namespace Effekseer.GUI.Component
 
 		public void SetBinding(object o)
 		{
-			if(Binding != null)
+			if (Binding != null)
 			{
 				Binding.OnChanged -= Binding_OnChanged;
 			}
@@ -59,7 +59,7 @@ namespace Effekseer.GUI.Component
 			var o_ = o as Data.Value.String;
 			Binding = o_;
 
-			if(Binding != null)
+			if (Binding != null)
 			{
 				Binding.OnChanged += Binding_OnChanged;
 			}
@@ -92,7 +92,7 @@ namespace Effekseer.GUI.Component
 
 			valueChangingProp.Enable(binding);
 
-			if(binding.IsMultiLine)
+			if (binding.IsMultiLine)
 			{
 				if (Manager.NativeManager.InputTextMultiline(id, initialValue))
 				{
@@ -128,7 +128,7 @@ namespace Effekseer.GUI.Component
 
 			var isActive_Current = Manager.NativeManager.IsItemActive();
 
-			if(isActive && !isActive_Current)
+			if (isActive && !isActive_Current)
 			{
 				FixValue();
 			}

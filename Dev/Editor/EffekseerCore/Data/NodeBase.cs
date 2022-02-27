@@ -23,7 +23,7 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		[IO(Export=false)]
+		[IO(Export = false)]
 		public NodeBase Parent
 		{
 			get;
@@ -87,7 +87,7 @@ namespace Effekseer.Data
 		/// <returns></returns>
 		public Node AddChild(Node node = null, int index = int.MaxValue)
 		{
-			if(node == null)
+			if (node == null)
 			{
 				node = new Node(this);
 			}
@@ -97,13 +97,13 @@ namespace Effekseer.Data
 			var old_value = children;
 			var new_value = new List<Node>(children);
 
-			if(index == int.MaxValue)
+			if (index == int.MaxValue)
 			{
 				new_value.Add(node);
 			}
 			else
 			{
-				if(index >= children.Count)
+				if (index >= children.Count)
 				{
 					new_value.Add(node);
 				}
@@ -277,7 +277,7 @@ namespace Effekseer.Data
 			new_value[ind1] = node2;
 			new_value[ind2] = node1;
 
-			
+
 
 			var cmd = new Command.DelegateCommand(
 				() =>
@@ -375,7 +375,7 @@ namespace Effekseer.Data
 
 			internal ChildrenCollection(NodeBase node)
 			{
-				_node = node; 
+				_node = node;
 			}
 
 			internal void SetChildren(List<Node> children)

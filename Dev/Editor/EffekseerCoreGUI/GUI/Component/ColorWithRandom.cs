@@ -54,7 +54,7 @@ namespace Effekseer.GUI.Component
 			{
 				if (binding == value) return;
 
-				if(binding != null)
+				if (binding != null)
 				{
 					binding.OnChangedColorSpace -= Binding_OnChangedColorSpace;
 					binding.R.OnChanged -= Binding_OnChanged;
@@ -134,7 +134,7 @@ namespace Effekseer.GUI.Component
 			isPopupShown = false;
 
 			var colorSpace = binding.ColorSpace == Data.ColorSpace.RGBA ? swig.ColorEditFlags.RGB : swig.ColorEditFlags.HSV;
-			
+
 			Manager.NativeManager.PushItemWidth(Manager.NativeManager.GetColumnWidth() - 48 * Manager.DpiScale);
 
 			if (Manager.NativeManager.ColorEdit4(id1, internalValueMin, swig.ColorEditFlags.NoOptions | colorSpace))

@@ -111,7 +111,7 @@ namespace Effekseer.GUI.Component
 				step = Binding.X.Step / 10.0f;
 			}
 
-			if(Manager.NativeManager.ColorEdit4(id, internalValue, swig.ColorEditFlags.HDR | swig.ColorEditFlags.Float))
+			if (Manager.NativeManager.ColorEdit4(id, internalValue, swig.ColorEditFlags.HDR | swig.ColorEditFlags.Float))
 			{
 				FixValueInternal(isActive);
 			}

@@ -22,7 +22,7 @@ namespace Effekseer.GUI.Component
 		int[] enums = null;
 
 		public List<object> FieldNames = new List<object>();
-		
+
 		public bool EnableUndo { get; set; } = true;
 
 		int selectedValues = -1;
@@ -67,15 +67,15 @@ namespace Effekseer.GUI.Component
 
 				object name = f.ToString();
 
-				
-				 var key = KeyAttribute.GetKey(attributes);
+
+				var key = KeyAttribute.GetKey(attributes);
 				var nameKey = key + "_Name";
-				if(string.IsNullOrEmpty(key))
+				if (string.IsNullOrEmpty(key))
 				{
 					nameKey = f.FieldType.ToString() + "_" + f.ToString() + "_Name";
 				}
 
-				if(MultiLanguageTextProvider.HasKey(nameKey))
+				if (MultiLanguageTextProvider.HasKey(nameKey))
 				{
 					name = new MultiLanguageString(nameKey);
 				}
@@ -133,9 +133,9 @@ namespace Effekseer.GUI.Component
 
 			var v = enums.Select((_, i) => Tuple.Create(_, i)).Where(_ => _.Item1 == selectedValues).FirstOrDefault();
 
-			if(Manager.NativeManager.BeginCombo(InternalLabel + id, FieldNames[v.Item2].ToString(), swig.ComboFlags.None))
+			if (Manager.NativeManager.BeginCombo(InternalLabel + id, FieldNames[v.Item2].ToString(), swig.ComboFlags.None))
 			{
-				for(int i = 0; i < FieldNames.Count; i++)
+				for (int i = 0; i < FieldNames.Count; i++)
 				{
 					bool is_selected = (FieldNames[v.Item2] == FieldNames[i]);
 
@@ -152,7 +152,7 @@ namespace Effekseer.GUI.Component
 							binding.SetValueDirectly(selectedValues);
 						}
 					}
-						
+
 					if (is_selected)
 					{
 						Manager.NativeManager.SetItemDefaultFocus();

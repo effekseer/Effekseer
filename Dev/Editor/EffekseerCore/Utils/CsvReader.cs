@@ -19,7 +19,7 @@ namespace Effekseer.Utils
 				return csv[i] == '"';
 			};
 
-			Func<int, bool> isNextDQ = (int i) => 
+			Func<int, bool> isNextDQ = (int i) =>
 			{
 				if (i >= csv.Length - 1) return false;
 				return csv[i + 1] == '"';
@@ -34,7 +34,7 @@ namespace Effekseer.Utils
 			{
 				if (isCurrentDQ(i))
 				{
-					if(isStarting)
+					if (isStarting)
 					{
 						inDQ = true;
 					}
@@ -107,7 +107,7 @@ namespace Effekseer.Utils
 				}
 			}
 
-			if(sb.Length > 0 || rows.Count > 0)
+			if (sb.Length > 0 || rows.Count > 0)
 			{
 				rows.Add(sb.ToString());
 				columns.Add(rows);

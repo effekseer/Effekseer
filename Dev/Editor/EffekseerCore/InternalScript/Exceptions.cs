@@ -36,7 +36,7 @@ namespace Effekseer.InternalScript
 		}
 	}
 
-	public class InvalidOperationException :CompileException
+	public class InvalidOperationException : CompileException
 	{
 		public InvalidOperationException(int line)
 			: base("", line)

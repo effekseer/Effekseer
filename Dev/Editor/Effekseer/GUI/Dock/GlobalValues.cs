@@ -2,64 +2,64 @@ using System;
 namespace Effekseer.GUI.Dock
 {
 	class GlobalValues : DockPanel
-    {
-        Component.ParameterList paramerterList = null;
+	{
+		Component.ParameterList paramerterList = null;
 
-        bool isFiestUpdate = true;
+		bool isFiestUpdate = true;
 
 		public GlobalValues()
-        {
+		{
 			Label = Icons.PanelGlobal + Resources.GetString("Global") + "###Global";
 
-            paramerterList = new Component.ParameterList();
+			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.GlobalValues));
 
-            Core.OnAfterLoad += OnAfterLoad;
-            Core.OnAfterNew += OnAfterLoad;
-            Core.OnAfterSelectNode += OnAfterSelectNode;
+			Core.OnAfterLoad += OnAfterLoad;
+			Core.OnAfterNew += OnAfterLoad;
+			Core.OnAfterSelectNode += OnAfterSelectNode;
 
-            Read();
+			Read();
 
 			TabToolTip = Resources.GetString("Global");
 		}
 
-        public void FixValues()
-        {
-            paramerterList.FixValues();
-        }
+		public void FixValues()
+		{
+			paramerterList.FixValues();
+		}
 
-        public override void OnDisposed()
-        {
-            FixValues();
+		public override void OnDisposed()
+		{
+			FixValues();
 
-            Core.OnAfterLoad -= OnAfterLoad;
-            Core.OnAfterNew -= OnAfterLoad;
-            Core.OnAfterSelectNode -= OnAfterSelectNode;
-        }
+			Core.OnAfterLoad -= OnAfterLoad;
+			Core.OnAfterNew -= OnAfterLoad;
+			Core.OnAfterSelectNode -= OnAfterSelectNode;
+		}
 
-        protected override void UpdateInternal()
-        {
-            if (isFiestUpdate)
-            {
-            }
+		protected override void UpdateInternal()
+		{
+			if (isFiestUpdate)
+			{
+			}
 
-            paramerterList.Update();
-        }
+			paramerterList.Update();
+		}
 
-        void Read()
-        {
+		void Read()
+		{
 			paramerterList.SetValue(Core.Global);
 		}
 
-        void OnAfterLoad(object sender, EventArgs e)
-        {
-            Read();
-        }
+		void OnAfterLoad(object sender, EventArgs e)
+		{
+			Read();
+		}
 
-        void OnAfterSelectNode(object sender, EventArgs e)
-        {
-            Read();
-        }
-    }
+		void OnAfterSelectNode(object sender, EventArgs e)
+		{
+			Read();
+		}
+	}
 
 }

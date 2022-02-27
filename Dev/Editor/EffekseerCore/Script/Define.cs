@@ -6,7 +6,7 @@ using System.Text;
 namespace Effekseer.Script
 {
 	public enum ScriptPosition
-	{ 
+	{
 		Internal,
 		External,
 	}

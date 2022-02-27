@@ -6,37 +6,37 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Dialog
 {
-    class MessageBox : IRemovableControl
-    {
-        string title = string.Empty;
-        string message = string.Empty;
-        string id = "###messageBox";
+	class MessageBox : IRemovableControl
+	{
+		string title = string.Empty;
+		string message = string.Empty;
+		string id = "###messageBox";
 
 		bool opened = true;
 
 		bool isFirstUpdate = true;
 
-        public bool ShouldBeRemoved { get; private set; } = false;
+		public bool ShouldBeRemoved { get; private set; } = false;
 
-        public void Show(string title, string message)
-        {
-            this.title = title;
-            this.message = message;
+		public void Show(string title, string message)
+		{
+			this.title = title;
+			this.message = message;
 
 			Manager.AddControl(this);
 		}
 
-        public void Update()
-        {
-			if(isFirstUpdate)
+		public void Update()
+		{
+			if (isFirstUpdate)
 			{
 				Manager.NativeManager.OpenPopup(id);
 				isFirstUpdate = false;
 			}
 
-            if(Manager.NativeManager.BeginPopupModal(title + id, ref opened, swig.WindowFlags.AlwaysAutoResize))
-            {
-                Manager.NativeManager.Text(message);
+			if (Manager.NativeManager.BeginPopupModal(title + id, ref opened, swig.WindowFlags.AlwaysAutoResize))
+			{
+				Manager.NativeManager.Text(message);
 
 				Manager.NativeManager.Separator();
 
@@ -47,12 +47,12 @@ namespace Effekseer.GUI.Dialog
 					ShouldBeRemoved = true;
 				}
 
-                Manager.NativeManager.EndPopup();
-            }
-            else
-            {
-                ShouldBeRemoved = true;
-            }
-        }
-    }
+				Manager.NativeManager.EndPopup();
+			}
+			else
+			{
+				ShouldBeRemoved = true;
+			}
+		}
+	}
 }

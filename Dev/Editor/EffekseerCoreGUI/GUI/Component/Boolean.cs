@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Component
 {
-    class Boolean : Control, IParameterControl
-    {
-        string id = "";
+	class Boolean : Control, IParameterControl
+	{
+		string id = "";
 
 		Data.Value.Boolean binding = null;
 
@@ -18,35 +18,35 @@ namespace Effekseer.GUI.Component
 
 		public bool EnableUndo { get; set; } = true;
 
-        public Data.Value.Boolean Binding
-        {
-            get
-            {
-                return binding;
-            }
-            set
-            {
-                if (binding == value) return;
+		public Data.Value.Boolean Binding
+		{
+			get
+			{
+				return binding;
+			}
+			set
+			{
+				if (binding == value) return;
 
 				binding = value;
 
-                if(binding != null)
-                {
-                    internalValue[0] = binding.Value;
-                }
-            }
-        }
+				if (binding != null)
+				{
+					internalValue[0] = binding.Value;
+				}
+			}
+		}
 
-        public Boolean()
-        {
+		public Boolean()
+		{
 			id = "###" + Manager.GetUniqueID().ToString();
 		}
 
-        public void SetBinding(object o)
-        {
-            var o_ = o as Data.Value.Boolean;
-            Binding = o_;
-        }
+		public void SetBinding(object o)
+		{
+			var o_ = o as Data.Value.Boolean;
+			Binding = o_;
+		}
 
 		public void FixValue()
 		{
@@ -75,5 +75,5 @@ namespace Effekseer.GUI.Component
 
 			valueChangingProp.Disable();
 		}
-    }
+	}
 }

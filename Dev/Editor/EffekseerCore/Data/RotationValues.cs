@@ -165,7 +165,7 @@ namespace Effekseer.Data
 				Acceleration = new Value.FloatWithRandom(0);
 			}
 		}
-		
+
 
 		public class AxisEasingParamater
 		{

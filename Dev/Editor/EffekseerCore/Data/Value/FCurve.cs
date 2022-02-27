@@ -48,22 +48,22 @@ namespace Effekseer.Data.Value
 
 	public class FCurve<T> : IFCurve where T : struct, IComparable<T>, IEquatable<T>
 	{
-        float ToFloat(T v)
-        {
-            var o = (object)v;
+		float ToFloat(T v)
+		{
+			var o = (object)v;
 
-            if (o is float) return (float)o;
+			if (o is float) return (float)o;
 
-            if (v is int)
-            {
-                var b = (int)o;
-                return (float)b;
-            }
+			if (v is int)
+			{
+				var b = (int)o;
+				return (float)b;
+			}
 
-            throw new NotImplementedException();
-        }
+			throw new NotImplementedException();
+		}
 
-        public event ChangedValueEventHandler OnChanged;
+		public event ChangedValueEventHandler OnChanged;
 
 		List<FCurveKey<T>> keys = new List<FCurveKey<T>>();
 
@@ -148,9 +148,9 @@ namespace Effekseer.Data.Value
 
 			var old_value = keys;
 			var new_value = new List<FCurveKey<T>>();
-			new_value.AddRange(keys.Concat( new[] {key}));
+			new_value.AddRange(keys.Concat(new[] { key }));
 			SortKeys(new_value);
-			
+
 			var cmd = new Command.DelegateCommand(
 				() =>
 				{
@@ -278,7 +278,7 @@ namespace Effekseer.Data.Value
 						data.Add(BitConverter.GetBytes(v));
 					}
 				}
-				
+
 			}
 			else
 			{
@@ -305,16 +305,16 @@ namespace Effekseer.Data.Value
 			var end = EndType.Value;
 
 			int lInd = 0;
-			int rInd = (int)keys.Count- 1;
+			int rInd = (int)keys.Count - 1;
 
 			if (keys.Count == 0)
-            {
-                return ToFloat(DefaultValue);
-            }
+			{
+				return ToFloat(DefaultValue);
+			}
 
-            int length = keys[rInd].Frame - keys[lInd].Frame;
+			int length = keys[rInd].Frame - keys[lInd].Frame;
 
-			if(length == 0)
+			if (length == 0)
 			{
 				return ToFloat(keys[lInd].Value);
 			}
@@ -568,7 +568,7 @@ namespace Effekseer.Data.Value
 			var c2_ = 3.0f * (k1X - 2.0f * k1rhX + k2lhX);
 			var c1_ = 3.0f * (k1rhX - k1X);
 			var c0_ = k1X - frame;
-			
+
 			if (c3_ != 0.0)
 			{
 				var c2 = c2_ / c3_;
@@ -576,7 +576,7 @@ namespace Effekseer.Data.Value
 				var c0 = c0_ / c3_;
 
 				var p = c1 / 3.0f - c2 * c2 / (3.0f * 3.0f);
-				var q = (2.0f * c2 * c2 * c2 / (3.0f*3.0f*3.0f) - c2 / 3.0f * c1 + c0) / 2.0f;
+				var q = (2.0f * c2 * c2 * c2 / (3.0f * 3.0f * 3.0f) - c2 / 3.0f * c1 + c0) / 2.0f;
 				var p3q2 = q * q + p * p * p;
 
 				if (p3q2 > 0.0)
@@ -735,22 +735,22 @@ namespace Effekseer.Data.Value
 		float _right_x_temp = 0;
 		float _right_y_temp = 0;
 
-        float ToFloat(T v)
-        {
-            var o = (object)v;
+		float ToFloat(T v)
+		{
+			var o = (object)v;
 
-            if (o is float) return (float)o;
+			if (o is float) return (float)o;
 
-            if (v is int)
-            {
-                var b = (int)o;
-                return (float)b;
-            }
+			if (v is int)
+			{
+				var b = (int)o;
+				return (float)b;
+			}
 
-            throw new NotImplementedException();
-        }
+			throw new NotImplementedException();
+		}
 
-        public event Action<FCurveKey<T>> OnChangedKey;
+		public event Action<FCurveKey<T>> OnChangedKey;
 
 		public int Frame
 		{
@@ -772,8 +772,8 @@ namespace Effekseer.Data.Value
 		{
 			get
 			{
-                return ToFloat(_value_temp);
-            }
+				return ToFloat(_value_temp);
+			}
 		}
 
 		public float LeftX
@@ -828,9 +828,9 @@ namespace Effekseer.Data.Value
 		{
 			get
 			{
-                return ToFloat(_value);
+				return ToFloat(_value);
 
-            }
+			}
 		}
 
 		public float LeftXPrevious
@@ -875,13 +875,13 @@ namespace Effekseer.Data.Value
 
 		public void Commit(bool isCombined = false)
 		{
-			if (_frame == _frame_temp && 
+			if (_frame == _frame_temp &&
 				_value.Equals(_value_temp) &&
 				_left_x.Equals(_left_x_temp) &&
 				_left_y.Equals(_left_y_temp) &&
 				_right_x.Equals(_right_x_temp) &&
 				_right_y.Equals(_right_y_temp)) return;
-		
+
 			var old_frame = _frame;
 			var new_frame = _frame_temp;
 
@@ -908,7 +908,7 @@ namespace Effekseer.Data.Value
 					_left_y = new_left_y;
 					_right_x = new_right_x;
 					_right_y = new_right_y;
-					
+
 					_frame_temp = new_frame;
 					_value_temp = new_value;
 
@@ -916,7 +916,7 @@ namespace Effekseer.Data.Value
 					_left_y_temp = new_left_y;
 					_right_x_temp = new_right_x;
 					_right_y_temp = new_right_y;
-					
+
 
 					if (OnChanged != null)
 					{
@@ -1003,7 +1003,7 @@ namespace Effekseer.Data.Value
 
 			var valNow = ToFloat(_value_temp);
 			if (valNow == value) return;
-			
+
 			var dif = value - valNow;
 			_value_temp = (T)((object)value);
 
@@ -1035,7 +1035,7 @@ namespace Effekseer.Data.Value
 			var dyL = _left_y_temp - ToFloat(_value_temp);
 
 			if (dxR != 0)
-			{ 
+			{
 				var h = dyR / dxR;
 				_left_y_temp = _valueF + dxL * h;
 			}
@@ -1043,7 +1043,7 @@ namespace Effekseer.Data.Value
 			{
 				_left_x_temp = _frame_temp;
 			}
-			
+
 			if (OnChangedKey != null)
 			{
 				OnChangedKey(this);

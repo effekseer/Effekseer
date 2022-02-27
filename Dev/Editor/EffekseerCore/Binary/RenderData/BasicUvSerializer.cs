@@ -31,7 +31,7 @@ namespace Effekseer.Binary.RenderData
 		{
 			base.SerializeAnimationUv(aggregator);
 
-			if(_version >= ExporterVersion.Ver1600)
+			if (_version >= ExporterVersion.Ver1600)
 			{
 				aggregator.Add(_animationParameter.FlipbookInterpolationType);
 			}

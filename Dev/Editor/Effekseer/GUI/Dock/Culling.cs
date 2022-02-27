@@ -2,63 +2,63 @@ using System;
 namespace Effekseer.GUI.Dock
 {
 	class Culling : DockPanel
-    {
-        Component.ParameterList paramerterList = null;
+	{
+		Component.ParameterList paramerterList = null;
 
-        bool isFiestUpdate = true;
+		bool isFiestUpdate = true;
 
 		public Culling()
-        {
+		{
 			Label = Icons.PanelCulling + Resources.GetString("Culling") + "###Culling";
 
-            paramerterList = new Component.ParameterList();
+			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.EffectCullingValues));
 
-            Core.OnAfterLoad += OnAfterLoad;
-            Core.OnAfterNew += OnAfterLoad;
-            Core.OnAfterSelectNode += OnAfterSelectNode;
+			Core.OnAfterLoad += OnAfterLoad;
+			Core.OnAfterNew += OnAfterLoad;
+			Core.OnAfterSelectNode += OnAfterSelectNode;
 
-            Read();
+			Read();
 
 			TabToolTip = Resources.GetString("Culling");
 		}
 
-        public void FixValues()
-        {
-            paramerterList.FixValues();
-        }
+		public void FixValues()
+		{
+			paramerterList.FixValues();
+		}
 
-        public override void OnDisposed()
-        {
-            FixValues();
+		public override void OnDisposed()
+		{
+			FixValues();
 
-            Core.OnAfterLoad -= OnAfterLoad;
-            Core.OnAfterNew -= OnAfterLoad;
-            Core.OnAfterSelectNode -= OnAfterSelectNode;
-        }
+			Core.OnAfterLoad -= OnAfterLoad;
+			Core.OnAfterNew -= OnAfterLoad;
+			Core.OnAfterSelectNode -= OnAfterSelectNode;
+		}
 
-        protected override void UpdateInternal()
-        {
-            if (isFiestUpdate)
-            {
-            }
+		protected override void UpdateInternal()
+		{
+			if (isFiestUpdate)
+			{
+			}
 
-            paramerterList.Update();
-        }
+			paramerterList.Update();
+		}
 
-        void Read()
-        {
+		void Read()
+		{
 			paramerterList.SetValue(Core.Culling);
 		}
 
-        void OnAfterLoad(object sender, EventArgs e)
-        {
-            Read();
-        }
+		void OnAfterLoad(object sender, EventArgs e)
+		{
+			Read();
+		}
 
-        void OnAfterSelectNode(object sender, EventArgs e)
-        {
-            Read();
-        }
-    }
+		void OnAfterSelectNode(object sender, EventArgs e)
+		{
+			Read();
+		}
+	}
 }

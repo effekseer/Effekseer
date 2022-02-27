@@ -39,7 +39,7 @@ namespace Effekseer.GUI.Component
 					return;
 				}
 
-				if(value == null)
+				if (value == null)
 				{
 					binding.OnChanged -= Binding_OnChanged;
 					binding = null;
@@ -94,7 +94,7 @@ namespace Effekseer.GUI.Component
 		}
 
 		public void Dropped(string path)
-		{	
+		{
 			if (CheckExtension(path))
 			{
 				binding.SetAbsolutePath(path);
@@ -125,7 +125,7 @@ namespace Effekseer.GUI.Component
 			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 
 			Manager.NativeManager.SameLine();
-			
+
 			Manager.NativeManager.Text(filePath);
 
 			if (Manager.NativeManager.IsItemHovered())
@@ -136,8 +136,8 @@ namespace Effekseer.GUI.Component
 			if (dd == null) dd = DragAndDrops.UpdateFileDst(FileType.Texture);
 
 			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
-			
-			if(thumbnail != null)
+
+			if (thumbnail != null)
 			{
 				if (Manager.NativeManager.Button(Resources.GetString("Delete") + id2, buttonSizeX))
 				{
@@ -145,7 +145,7 @@ namespace Effekseer.GUI.Component
 				}
 
 				Popup();
-				
+
 				if (dd == null) dd = DragAndDrops.UpdateFileDst(FileType.Texture);
 
 				isHovered = isHovered || Manager.NativeManager.IsItemHovered();
@@ -159,8 +159,8 @@ namespace Effekseer.GUI.Component
 				if (dd == null) dd = DragAndDrops.UpdateFileDst(FileType.Texture);
 
 				isHovered = isHovered || Manager.NativeManager.IsItemHovered();
-				
-				if(thumbnail != null)
+
+				if (thumbnail != null)
 				{
 					var image = thumbnail.Image;
 					float imageSizeX = image.GetWidth();
@@ -211,28 +211,28 @@ namespace Effekseer.GUI.Component
 				return;
 			}
 
-				/*
-				OpenFileDialog ofd = new OpenFileDialog();
+			/*
+			OpenFileDialog ofd = new OpenFileDialog();
 
-				ofd.InitialDirectory = System.IO.Directory.GetCurrentDirectory();
-				ofd.Filter = binding.Filter;
-				ofd.FilterIndex = 2;
-				ofd.Multiselect = false;
+			ofd.InitialDirectory = System.IO.Directory.GetCurrentDirectory();
+			ofd.Filter = binding.Filter;
+			ofd.FilterIndex = 2;
+			ofd.Multiselect = false;
 
-				if (ofd.ShowDialog() == DialogResult.OK)
-				{
-					var filepath = ofd.FileName;
-					binding.SetAbsolutePath(filepath);
+			if (ofd.ShowDialog() == DialogResult.OK)
+			{
+				var filepath = ofd.FileName;
+				binding.SetAbsolutePath(filepath);
 
-					System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(filepath));
-				}
-				else
-				{
-					return;
-				}
-				*/
+				System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(filepath));
+			}
+			else
+			{
+				return;
+			}
+			*/
 
-				Read();
+			Read();
 		}
 
 		private void btn_delete_Click()
@@ -259,7 +259,7 @@ namespace Effekseer.GUI.Component
 		{
 			string path = binding.GetAbsolutePath();
 
-			if(System.IO.File.Exists(path))
+			if (System.IO.File.Exists(path))
 			{
 				thumbnail = ThumbnailManager.Load(path);
 				if (thumbnail == null)

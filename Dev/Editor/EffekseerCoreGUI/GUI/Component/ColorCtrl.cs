@@ -9,7 +9,7 @@ namespace Effekseer.GUI.Component
 	class ColorCtrl : Control, IParameterControl
 	{
 		string id = "";
-		
+
 		Data.Value.Color binding = null;
 
 		/// <summary>
@@ -114,7 +114,7 @@ namespace Effekseer.GUI.Component
 		void StoreIfDifferentColor(ref float dst, int src)
 		{
 			var v = Math.Round(dst * 255.0f, MidpointRounding.AwayFromZero);
-			if(v == src)
+			if (v == src)
 			{
 				return;
 			}

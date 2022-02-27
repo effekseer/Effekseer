@@ -125,7 +125,7 @@ namespace Effekseer.GUI.Component
 
 				if (Manager.NativeManager.Button(Resources.GetString("Material_Edit_Name") + id3, buttonSizeX))
 				{
-					if(Process.MaterialEditor.Run())
+					if (Process.MaterialEditor.Run())
 					{
 						Process.MaterialEditor.OpenOrCreateMaterial(absoluteFilePath);
 					}
@@ -276,7 +276,7 @@ namespace Effekseer.GUI.Component
 
 		void UpdateInformation()
 		{
-			if(binding == null || string.IsNullOrEmpty(binding.GetAbsolutePath()))
+			if (binding == null || string.IsNullOrEmpty(binding.GetAbsolutePath()))
 			{
 				matInfo = null;
 				compiledMatInfo = null;
@@ -306,11 +306,11 @@ namespace Effekseer.GUI.Component
 
 			if (compiledMatInfo != null)
 			{
-				if(matInfo.GUID != compiledMatInfo.GUID)
+				if (matInfo.GUID != compiledMatInfo.GUID)
 				{
 					Manager.NativeManager.Text(Resources.GetString("Material_OldCache"));
 				}
-				else if(errorCode == Utl.CompiledMaterialInformationErrorCode.TooOldFormat)
+				else if (errorCode == Utl.CompiledMaterialInformationErrorCode.TooOldFormat)
 				{
 					Manager.NativeManager.Text(Resources.GetString("Material_OldFomatCache"));
 				}
@@ -320,7 +320,7 @@ namespace Effekseer.GUI.Component
 				}
 				else
 				{
-					foreach(var p in compiledMatInfo.Platforms)
+					foreach (var p in compiledMatInfo.Platforms)
 					{
 						Manager.NativeManager.Text(p.ToString());
 					}
@@ -335,4 +335,3 @@ namespace Effekseer.GUI.Component
 		}
 	}
 }
-

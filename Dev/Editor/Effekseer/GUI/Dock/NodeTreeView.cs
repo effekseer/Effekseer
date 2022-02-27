@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Dock
 {
-    class NodeTreeView : DockPanel
-    {
-        internal Utils.DelayedList<NodeTreeViewNode> Children = new Utils.DelayedList<NodeTreeViewNode>();
+	class NodeTreeView : DockPanel
+	{
+		internal Utils.DelayedList<NodeTreeViewNode> Children = new Utils.DelayedList<NodeTreeViewNode>();
 
 		internal List<IControl> menuItems = new List<IControl>();
 
@@ -30,7 +30,7 @@ namespace Effekseer.GUI.Dock
 		internal Dictionary<Effekseer.Data.NodeBase, NodeTreeViewNode> temporalChangingNodeTreeViews = new Dictionary<Data.NodeBase, NodeTreeViewNode>();
 
 		public NodeTreeView()
-        {
+		{
 			Label = Icons.PanelNodeTree + Resources.GetString("NodeTree") + "###NodeTree";
 
 			Core.OnAfterNew += OnRenew;
@@ -93,10 +93,10 @@ namespace Effekseer.GUI.Dock
 					child.TreeNodeIndex = nodeIndex;
 					nodeIndex++;
 
-					if(child.IsExpanding)
+					if (child.IsExpanding)
 					{
 						assignIndex(child.Children);
-					}	
+					}
 				}
 			};
 
@@ -136,7 +136,7 @@ namespace Effekseer.GUI.Dock
 
 				var isNode = n1.Node is Data.Node;
 
-				if(isNode)
+				if (isNode)
 				{
 					var movedNode = n1.Node as Data.Node;
 
@@ -165,7 +165,7 @@ namespace Effekseer.GUI.Dock
 			exchangeEvents.Clear();
 
 			// reset
-			if(!Manager.NativeManager.IsMouseDown(0))
+			if (!Manager.NativeManager.IsMouseDown(0))
 			{
 				isVisibleChanging = false;
 			}
@@ -173,11 +173,11 @@ namespace Effekseer.GUI.Dock
 			temporalChangingNodeTreeViews.Clear();
 		}
 
-        /// <summary>
-        /// Renew all view
-        /// </summary>
-        public void Renew()
-        {
+		/// <summary>
+		/// Renew all view
+		/// </summary>
+		public void Renew()
+		{
 			// Reset all
 			if (Children.Count != 1 || Children[0].Node != Core.Root)
 			{
@@ -192,43 +192,43 @@ namespace Effekseer.GUI.Dock
 				Children.Add(new NodeTreeViewNode(this, Core.Root));
 			}
 
-            Action<NodeTreeViewNode, Data.NodeBase> set_nodes = null;
-            set_nodes = (treenode, node) =>
-            {
-                var tns = treenode.Children;
-                var ns = node.Children;
+			Action<NodeTreeViewNode, Data.NodeBase> set_nodes = null;
+			set_nodes = (treenode, node) =>
+			{
+				var tns = treenode.Children;
+				var ns = node.Children;
 
-                for (int ind = 0; ind < ns.Count;)
-                {
-                    // not need to change
-                    if (ind < tns.Count && ((NodeTreeViewNode)tns[ind]).Node == ns[ind])
-                    {
-                        ind++;
-                        continue;
-                    }
+				for (int ind = 0; ind < ns.Count;)
+				{
+					// not need to change
+					if (ind < tns.Count && ((NodeTreeViewNode)tns[ind]).Node == ns[ind])
+					{
+						ind++;
+						continue;
+					}
 
-                    // need to change
-                    while (tns.Count > ind)
-                    {
-                        ((NodeTreeViewNode)tns[ind]).RemoveEvent(true);
-                        tns.RemoveAt(ind);
-                    }
+					// need to change
+					while (tns.Count > ind)
+					{
+						((NodeTreeViewNode)tns[ind]).RemoveEvent(true);
+						tns.RemoveAt(ind);
+					}
 
-                    while (ns.Count > ind)
-                    {
-                        tns.Add(new NodeTreeViewNode(this, ns[ind]));
-                        ind++;
-                    }
-                }
+					while (ns.Count > ind)
+					{
+						tns.Add(new NodeTreeViewNode(this, ns[ind]));
+						ind++;
+					}
+				}
 
-                for (int i = 0; i < ns.Count; i++)
-                {
-                    set_nodes(tns[i], ns[i]);
-                }
-            };
+				for (int i = 0; i < ns.Count; i++)
+				{
+					set_nodes(tns[i], ns[i]);
+				}
+			};
 
-            set_nodes(Children[0], Core.Root);
-        }
+			set_nodes(Children[0], Core.Root);
+		}
 
 		internal void Popup()
 		{
@@ -236,7 +236,7 @@ namespace Effekseer.GUI.Dock
 
 			if (Manager.NativeManager.BeginPopupContextItem("##Popup"))
 			{
-				foreach(var item in menuItems)
+				foreach (var item in menuItems)
 				{
 					item.Update();
 				}
@@ -252,9 +252,9 @@ namespace Effekseer.GUI.Dock
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		void OnRenew(object sender, EventArgs e)
-        {
-            Renew();
-        }
+		{
+			Renew();
+		}
 
 		void ReadSelect()
 		{
@@ -290,14 +290,14 @@ namespace Effekseer.GUI.Dock
 		AddAsChild,
 	}
 
-    class NodeTreeViewNode : IControl
-    {
-        string id = "";
+	class NodeTreeViewNode : IControl
+	{
+		string id = "";
 		public int UniqueID { get; private set; }
 
-        public Data.NodeBase Node { get; private set; } = null;
+		public Data.NodeBase Node { get; private set; } = null;
 
-        internal Utils.DelayedList<NodeTreeViewNode> Children = new Utils.DelayedList<NodeTreeViewNode>();
+		internal Utils.DelayedList<NodeTreeViewNode> Children = new Utils.DelayedList<NodeTreeViewNode>();
 
 		NodeTreeView treeView = null;
 
@@ -308,21 +308,21 @@ namespace Effekseer.GUI.Dock
 		public int TreeNodeIndex = 0;
 
 		public NodeTreeViewNode(NodeTreeView treeView, Data.NodeBase node, bool createChildren = false)
-        {
+		{
 			UniqueID = Manager.GetUniqueID();
 			id = "###" + UniqueID.ToString();
 
 			this.treeView = treeView;
-            this.Node = node;
+			this.Node = node;
 
-            if (createChildren)
-            {
-                for(int i = 0; i < node.Children.Count; i++)
-                {
-                    var newNode = new NodeTreeViewNode(treeView, node.Children[i], true);
-                    Children.Add(newNode);
-                }
-            }
+			if (createChildren)
+			{
+				for (int i = 0; i < node.Children.Count; i++)
+				{
+					var newNode = new NodeTreeViewNode(treeView, node.Children[i], true);
+					Children.Add(newNode);
+				}
+			}
 
 			AddEvent(false);
 		}
@@ -340,7 +340,7 @@ namespace Effekseer.GUI.Dock
 
 			Node.IsRendered.SetValue(value);
 
-			if(recursion)
+			if (recursion)
 			{
 				recurse = (t) =>
 				{
@@ -381,25 +381,25 @@ namespace Effekseer.GUI.Dock
 				}
 			}
 		}
-		
-		public void RemoveEvent(bool recursion)
-        {
-            if (Node is Data.Node)
-            {
-                var realNode = (Data.Node)Node;
-            }
 
-            Node.OnAfterAddNode -= OnAfterAddNode;
-            Node.OnAfterRemoveNode -= OnAfterRemoveNode;
-            Node.OnAfterExchangeNodes -= OnAfterExchangeNodes;
-            if (recursion)
-            {
-                for (int i = 0; i < Children.Count; i++)
-                {
-                    (Children[i]).RemoveEvent(true);
-                }
-            }
-        }
+		public void RemoveEvent(bool recursion)
+		{
+			if (Node is Data.Node)
+			{
+				var realNode = (Data.Node)Node;
+			}
+
+			Node.OnAfterAddNode -= OnAfterAddNode;
+			Node.OnAfterRemoveNode -= OnAfterRemoveNode;
+			Node.OnAfterExchangeNodes -= OnAfterExchangeNodes;
+			if (recursion)
+			{
+				for (int i = 0; i < Children.Count; i++)
+				{
+					(Children[i]).RemoveEvent(true);
+				}
+			}
+		}
 
 		void UpdateVisibleButton()
 		{
@@ -411,7 +411,7 @@ namespace Effekseer.GUI.Dock
 				int LEFT_SHIFT = 340;
 				int RIGHT_SHIFT = 344;
 
-				if (Manager.NativeManager.IsKeyDown(LEFT_SHIFT) || 
+				if (Manager.NativeManager.IsKeyDown(LEFT_SHIFT) ||
 					Manager.NativeManager.IsKeyDown(RIGHT_SHIFT) ||
 					((Node is Effekseer.Data.Node) && (Node as Effekseer.Data.Node).DrawingValues.Type.Value == Data.RendererValues.ParamaterType.None))
 				{
@@ -433,23 +433,23 @@ namespace Effekseer.GUI.Dock
 			}
 		}
 
-        public void Update()
-        {
+		public void Update()
+		{
 			var flag = swig.TreeNodeFlags.OpenOnArrow | swig.TreeNodeFlags.OpenOnDoubleClick | swig.TreeNodeFlags.DefaultOpen | swig.TreeNodeFlags.SpanFullWidth;
 
-			if(Core.SelectedNode == this.Node)
+			if (Core.SelectedNode == this.Node)
 			{
 				flag = flag | swig.TreeNodeFlags.Selected;
 			}
 
-			if(this.Node.Children.Count == 0)
+			if (this.Node.Children.Count == 0)
 			{
 				flag = flag | swig.TreeNodeFlags.Leaf;
 			}
 
 			UpdateDDTargetSeparator(false);
 
-			if(requiredToExpand)
+			if (requiredToExpand)
 			{
 				Manager.NativeManager.SetNextTreeNodeOpen(true);
 				requiredToExpand = false;
@@ -457,9 +457,9 @@ namespace Effekseer.GUI.Dock
 
 			var icon = Icons.NodeTypeEmpty;
 			var node = Node as Data.Node;
-			if(node != null)
+			if (node != null)
 			{
-				if(node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Sprite) icon = Icons.NodeTypeSprite;
+				if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Sprite) icon = Icons.NodeTypeSprite;
 				if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Ring) icon = Icons.NodeTypeRing;
 				if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Ribbon) icon = Icons.NodeTypeRibbon;
 				if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Model) icon = Icons.NodeTypeModel;
@@ -467,7 +467,7 @@ namespace Effekseer.GUI.Dock
 			}
 
 			// Change background color
-			if(TreeNodeIndex % 2 == 1)
+			if (TreeNodeIndex % 2 == 1)
 			{
 				Manager.NativeManager.DrawLineBackground(Manager.NativeManager.GetTextLineHeight(), 0x0cffffff);
 			}
@@ -578,19 +578,19 @@ namespace Effekseer.GUI.Dock
 		}
 
 		void OnAfterAddNode(object sender, ChangedValueEventArgs e)
-        {
-            var node = e.Value as Data.NodeBase;
+		{
+			var node = e.Value as Data.NodeBase;
 
 			Console.WriteLine(string.Format("OnAfterAddNode({0})", node.Name.Value));
 
 			int ind = 0;
-            for (; ind < Node.Children.Count; ind++)
-            {
-                if (node == Node.Children[ind]) break;
-            }
+			for (; ind < Node.Children.Count; ind++)
+			{
+				if (node == Node.Children[ind]) break;
+			}
 
 			NodeTreeViewNode treeViewNode = null;
-			if(treeView.temporalChangingNodeTreeViews.ContainsKey(node))
+			if (treeView.temporalChangingNodeTreeViews.ContainsKey(node))
 			{
 				treeViewNode = treeView.temporalChangingNodeTreeViews[node];
 				treeViewNode.AddEvent(true);
@@ -601,76 +601,76 @@ namespace Effekseer.GUI.Dock
 			}
 
 			if (ind == Children.Count)
-            {
-                Children.Add(treeViewNode);
-            }
-            else
-            {
-                Children.Insert(ind, treeViewNode);
-            }
-        }
+			{
+				Children.Add(treeViewNode);
+			}
+			else
+			{
+				Children.Insert(ind, treeViewNode);
+			}
+		}
 
-        void OnAfterRemoveNode(object sender, ChangedValueEventArgs e)
-        {
-            var node = e.Value as Data.NodeBase;
+		void OnAfterRemoveNode(object sender, ChangedValueEventArgs e)
+		{
+			var node = e.Value as Data.NodeBase;
 
 			Console.WriteLine(string.Format("OnAfterRemoveNode({0})", node.Name.Value));
 
 			for (int i = 0; i < Children.Count; i++)
-            {
-                var treenode = Children[i];
-                if (treenode.Node == node)
-                {
-                    treenode.RemoveEvent(true);
-                    Children.Remove(treenode);
+			{
+				var treenode = Children[i];
+				if (treenode.Node == node)
+				{
+					treenode.RemoveEvent(true);
+					Children.Remove(treenode);
 
 					if (!treeView.temporalChangingNodeTreeViews.ContainsKey(node))
 					{
 						treeView.temporalChangingNodeTreeViews.Add(treenode.Node, treenode);
 					}
-                    return;
-                }
-            }
+					return;
+				}
+			}
 
-            throw new Exception();
-        }
+			throw new Exception();
+		}
 
-        void OnAfterExchangeNodes(object sender, ChangedValueEventArgs e)
-        {
-            var node1 = (e.Value as Tuple<Data.Node, Data.Node>).Item1;
-            var node2 = (e.Value as Tuple<Data.Node, Data.Node>).Item2;
+		void OnAfterExchangeNodes(object sender, ChangedValueEventArgs e)
+		{
+			var node1 = (e.Value as Tuple<Data.Node, Data.Node>).Item1;
+			var node2 = (e.Value as Tuple<Data.Node, Data.Node>).Item2;
 
-            int ind1 = 0;
-            int ind2 = 0;
+			int ind1 = 0;
+			int ind2 = 0;
 
-            for (int i = 0; i < Children.Count; i++)
-            {
-                var treenode = Children[i];
-                if (treenode.Node == node1)
-                {
-                    ind1 = i;
-                }
-                if (treenode.Node == node2)
-                {
-                    ind2 = i;
-                }
-            }
+			for (int i = 0; i < Children.Count; i++)
+			{
+				var treenode = Children[i];
+				if (treenode.Node == node1)
+				{
+					ind1 = i;
+				}
+				if (treenode.Node == node2)
+				{
+					ind2 = i;
+				}
+			}
 
-            if (ind1 > ind2)
-            {
-                var ind_temp = ind1;
-                var node_temp = node1;
-                ind1 = ind2;
-                node1 = node2;
-                ind2 = ind_temp;
-                node2 = node_temp;
-            }
+			if (ind1 > ind2)
+			{
+				var ind_temp = ind1;
+				var node_temp = node1;
+				ind1 = ind2;
+				node1 = node2;
+				ind2 = ind_temp;
+				node2 = node_temp;
+			}
 
-            Children.Insert(ind2, new NodeTreeViewNode(treeView, node1, true));
-            Children.RemoveAt(ind2 + 1);
+			Children.Insert(ind2, new NodeTreeViewNode(treeView, node1, true));
+			Children.RemoveAt(ind2 + 1);
 
-            Children.Insert(ind1, new NodeTreeViewNode(treeView, node2, true));
-            Children.RemoveAt(ind1 + 1);
-        }
-    }
+			Children.Insert(ind1, new NodeTreeViewNode(treeView, node2, true));
+			Children.RemoveAt(ind1 + 1);
+		}
+	}
 }

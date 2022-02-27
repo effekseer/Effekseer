@@ -16,7 +16,7 @@ namespace Effekseer.GUI.Dock
 
 			paramerterListInput = new Component.ParameterList();
 			paramerterList = new Component.ParameterList();
-			
+
 			Core.OnBeforeLoad += Core_OnBeforeLoad;
 			Core.OnBeforeNew += Core_OnBeforeNew;
 			Core.OnAfterLoad += OnAfterLoad;
@@ -71,9 +71,9 @@ namespace Effekseer.GUI.Dock
 			Manager.NativeManager.Text(Resources.GetString("DynamicEquation"));
 
 			float width = Manager.NativeManager.GetContentRegionAvail().X;
-			
+
 			Manager.NativeManager.PushItemWidth(width - Manager.NativeManager.GetTextLineHeight() * 5.5f);
-			
+
 			var nextParam = Component.ObjectCollection.Select("", "", Core.Dynamic.Equations.Selected, false, Core.Dynamic.Equations);
 
 			if (Core.Dynamic.Equations.Selected != nextParam)
@@ -151,4 +151,3 @@ namespace Effekseer.GUI.Dock
 		}
 	}
 }
-

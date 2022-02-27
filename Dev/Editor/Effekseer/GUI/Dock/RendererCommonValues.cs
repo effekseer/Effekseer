@@ -28,7 +28,7 @@ namespace Effekseer.GUI.Dock
 
 			Controls.Add(candp);
 			Controls.Add(paramerterList);
-			
+
 			Read();
 
 			TabToolTip = Resources.GetString("BasicRenderSettings");

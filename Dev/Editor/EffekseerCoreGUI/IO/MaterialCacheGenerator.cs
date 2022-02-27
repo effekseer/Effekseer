@@ -13,10 +13,10 @@ namespace Effekseer.IO
 			var exporter = new Binary.Exporter();
 			exporter.Export(Core.Root);
 
-			foreach(var path in exporter.Materials)
+			foreach (var path in exporter.Materials)
 			{
 				var materialPath = Utils.Misc.GetAbsolutePath(Core.Root.GetPath().GetAbsolutePath(), path);
-				if(!GenerateMaterialCache(materialPath))
+				if (!GenerateMaterialCache(materialPath))
 				{
 					return false;
 				}
@@ -24,7 +24,7 @@ namespace Effekseer.IO
 
 			return true;
 		}
-		
+
 		public static bool GenerateMaterialCache(string absolutePath)
 		{
 			if (string.IsNullOrEmpty(absolutePath))
@@ -49,4 +49,3 @@ namespace Effekseer.IO
 		}
 	}
 }
-

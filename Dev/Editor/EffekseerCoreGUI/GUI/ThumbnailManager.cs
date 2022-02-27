@@ -17,7 +17,7 @@ namespace Effekseer.GUI
 		{
 			public override void OnFileChanged(StaticFileType fileType, string path)
 			{
-				if(thumbnails.ContainsKey(path))
+				if (thumbnails.ContainsKey(path))
 				{
 					thumbnails[path].Image.Invalidate();
 					thumbnails[path].Image.Validate();
@@ -32,7 +32,7 @@ namespace Effekseer.GUI
 			if (!System.IO.Path.IsPathRooted(path))
 				throw new Exception("Not root");
 
-			if(thumbnails.ContainsKey(path))
+			if (thumbnails.ContainsKey(path))
 			{
 				return thumbnails[path];
 			}
@@ -55,7 +55,7 @@ namespace Effekseer.GUI
 
 		internal static void Terminate()
 		{
-			foreach(var th in thumbnails)
+			foreach (var th in thumbnails)
 			{
 				th.Value.Image.Dispose();
 			}

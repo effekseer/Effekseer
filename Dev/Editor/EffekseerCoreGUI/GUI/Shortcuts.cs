@@ -142,7 +142,7 @@ namespace Effekseer.GUI
 
 		static Shortcuts()
 		{
-			for(int i = 0; i < 512; i++)
+			for (int i = 0; i < 512; i++)
 			{
 				preKeys[i] = false;
 				currentKeys[i] = false;
@@ -296,7 +296,7 @@ namespace Effekseer.GUI
 			{
 				bool pressed = currentKeys[Key];
 				bool pushed = currentKeys[Key] && !preKeys[Key];
-				if(Control)
+				if (Control)
 				{
 					if (swig.GUIManager.IsMacOSX())
 					{
@@ -364,7 +364,7 @@ namespace Effekseer.GUI
 
 				if (Alt)
 				{
-					if(swig.GUIManager.IsMacOSX())
+					if (swig.GUIManager.IsMacOSX())
 					{
 						r += "Option+";
 					}

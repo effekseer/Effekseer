@@ -76,13 +76,13 @@ namespace Effekseer.Data.Value
 			var o = obj as Vector2D;
 			if (o == null)
 				return false;
-		
+
 			if (X.Value != o.X.Value)
 				return false;
-		
+
 			if (Y.Value != o.Y.Value)
 				return false;
-		
+
 			return true;
 		}
 

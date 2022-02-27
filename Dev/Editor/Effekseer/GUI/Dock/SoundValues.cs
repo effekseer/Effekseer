@@ -27,7 +27,7 @@ namespace Effekseer.GUI.Dock
 
 			Controls.Add(candp);
 			Controls.Add(paramerterList);
-			
+
 			Read();
 
 			TabToolTip = Resources.GetString("Sound");
@@ -83,4 +83,3 @@ namespace Effekseer.GUI.Dock
 		}
 	}
 }
-

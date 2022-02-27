@@ -42,8 +42,8 @@ namespace Effekseer.Utl
 			if (br.Read(buf, 0, 8) != 8)
 			{
 				fs.Dispose();
-                br.Close();
-                return false;
+				br.Close();
+				return false;
 			}
 
 			var version = BitConverter.ToInt32(buf, 0);
@@ -52,11 +52,11 @@ namespace Effekseer.Utl
 			{
 				Scale = BitConverter.ToSingle(buf, 4);
 				fs.Dispose();
-                br.Close();
-                return false;
+				br.Close();
+				return false;
 			}
 
-			if(version == 3)
+			if (version == 3)
 			{
 				fs.Seek(-4, System.IO.SeekOrigin.End);
 
@@ -67,8 +67,8 @@ namespace Effekseer.Utl
 				else
 				{
 					fs.Dispose();
-                    br.Close();
-                    return false;
+					br.Close();
+					return false;
 				}
 			}
 
@@ -76,14 +76,14 @@ namespace Effekseer.Utl
 			{
 				Scale = BitConverter.ToSingle(buf, 4);
 				fs.Dispose();
-                br.Close();
-                return true;
+				br.Close();
+				return true;
 			}
 
 			fs.Dispose();
-            br.Close();
+			br.Close();
 
-            return true;
+			return true;
 		}
 	}
 }

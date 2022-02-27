@@ -23,9 +23,9 @@ namespace Effekseer.Binary
 			var type = value.Type.GetValue();
 
 			// Fallback
-			if(version < ExporterVersion.Ver16Alpha1)
+			if (version < ExporterVersion.Ver16Alpha1)
 			{
-				if(type == Data.GenerationLocationValues.ParameterType.Model && value.Model.ModelReference.Value == Data.ModelReferenceType.ProceduralModel)
+				if (type == Data.GenerationLocationValues.ParameterType.Model && value.Model.ModelReference.Value == Data.ModelReferenceType.ProceduralModel)
 				{
 					type = Data.GenerationLocationValues.ParameterType.Point;
 				}
@@ -48,13 +48,13 @@ namespace Effekseer.Binary
 			}
 			if (type == Data.GenerationLocationValues.ParameterType.Model)
 			{
-				if(version >= ExporterVersion.Ver16Alpha3)
+				if (version >= ExporterVersion.Ver16Alpha3)
 				{
 					var refType = (int)value.Model.ModelReference.Value;
 					data.Add((refType).GetBytes());
 				}
 
-				if(value.Model.ModelReference.Value == Data.ModelReferenceType.File)
+				if (value.Model.ModelReference.Value == Data.ModelReferenceType.File)
 				{
 					var relative_path = value.Model.Model.RelativePath;
 
@@ -78,7 +78,7 @@ namespace Effekseer.Binary
 				}
 				else if (value.Model.ModelReference.Value == Data.ModelReferenceType.ProceduralModel)
 				{
-					if(value.Model.Reference.Value != null)
+					if (value.Model.Reference.Value != null)
 					{
 						var ind = pmodel_and_index[value.Model.Reference.Value];
 						data.Add(ind.GetBytes());

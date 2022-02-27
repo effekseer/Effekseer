@@ -57,7 +57,7 @@ namespace Effekseer.Utl
 		{
 			int length = 0;
 
-			if(bufLenSize == 4)
+			if (bufLenSize == 4)
 			{
 				int length4 = 0;
 				Get(ref length4);

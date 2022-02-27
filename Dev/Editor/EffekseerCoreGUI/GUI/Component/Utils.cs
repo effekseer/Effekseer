@@ -103,7 +103,7 @@ namespace Effekseer.GUI.Component
 				value.ResetValue();
 			}
 
-			if(CanShowTip())
+			if (CanShowTip())
 			{
 				Manager.NativeManager.SetTooltip(Resources.GetString("ResetParam_Desc"));
 			}
@@ -136,13 +136,13 @@ namespace Effekseer.GUI.Component
 			if (Manager.NativeManager.ImageButton(Images.Icons["Copy"], size.X, size.Y))
 			{
 				var o = getter();
-				if(o != null)
+				if (o != null)
 				{
 					Manager.NativeManager.SetClipboardText(Core.Copy(elementName, o));
 				}
 			}
 
-			if(Functions.CanShowTip())
+			if (Functions.CanShowTip())
 			{
 				Manager.NativeManager.SetTooltip(Resources.GetString("Panel_Copy_Desc"));
 			}
@@ -211,7 +211,7 @@ namespace Effekseer.GUI.Component
 				Manager.NativeManager.EndTooltip();
 			}
 		}
- 	}
+	}
 
 	class LanguageSelector : Control, IParameterControl
 	{
@@ -247,7 +247,7 @@ namespace Effekseer.GUI.Component
 		{
 			id = "###" + Manager.GetUniqueID().ToString();
 
-			FieldNames.AddRange(LanguageTable.Languages.Select(_=> MultiLanguageTextProvider.GetText("Language_" + _)));
+			FieldNames.AddRange(LanguageTable.Languages.Select(_ => MultiLanguageTextProvider.GetText("Language_" + _)));
 		}
 
 		public void SetBinding(object o)
@@ -255,9 +255,9 @@ namespace Effekseer.GUI.Component
 			var o_ = o as Data.LanguageSelector;
 			Binding = o_;
 
-			if(Binding != null)
+			if (Binding != null)
 			{
-				
+
 			}
 		}
 

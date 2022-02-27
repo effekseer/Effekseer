@@ -11,7 +11,7 @@ namespace Effekseer.Data.Value
 		int _value = 0;
 		int _max = int.MaxValue;
 		int _min = int.MinValue;
-		
+
 		public int Min
 		{
 			get
@@ -40,7 +40,7 @@ namespace Effekseer.Data.Value
 				SetValue(value);
 			}
 		}
-		
+
 		/// <summary>
 		/// 変更単位量
 		/// </summary>
@@ -69,7 +69,7 @@ namespace Effekseer.Data.Value
 			get { return Value != DefaultValue; }
 		}
 
-		internal Int(int value = 0, int max = int.MaxValue, int min = int.MinValue, int step = 1 )
+		internal Int(int value = 0, int max = int.MaxValue, int min = int.MinValue, int step = 1)
 		{
 			_max = max;
 			_min = min;

@@ -50,7 +50,7 @@ namespace mqoToEffekseerModelConverter
 
 			Dictionary<string, string> optionItems = null;
 			List<string> items = ParseArgs(args, "-", out optionItems);
-			
+
 			string src = null;
 			string dst = null;
 			int modelCount = 1;
@@ -59,7 +59,7 @@ namespace mqoToEffekseerModelConverter
 			if (items.Count >= 1)
 			{
 				var ext = Path.GetExtension(items[0]);
-                ext = ext.ToLower();
+				ext = ext.ToLower();
 				if (ext != ".mqo")
 				{
 					Console.WriteLine("InputFile is not mqo");
@@ -71,8 +71,8 @@ namespace mqoToEffekseerModelConverter
 			if (items.Count >= 2)
 			{
 				var ext = Path.GetExtension(items[1]);
-                ext = ext.ToLower();
-                if (ext != ".efkmodel")
+				ext = ext.ToLower();
+				if (ext != ".efkmodel")
 				{
 					Console.WriteLine("OutputFile is not efkmodel");
 					return;
@@ -92,7 +92,7 @@ namespace mqoToEffekseerModelConverter
 					return;
 				}
 			}
-			
+
 			if (optionItems.ContainsKey("-scale"))
 			{
 				if (!float.TryParse(optionItems["-scale"], out modelScale))
@@ -111,71 +111,71 @@ namespace mqoToEffekseerModelConverter
 			}
 
 			var model = mqoIO.Realtime.Model.Create(mqoModel);
-			
+
 			List<byte[]> data = new List<byte[]>();
 
 			data.Add(BitConverter.GetBytes(Version));
 
-            //data.Add(BitConverter.GetBytes(modelScale));
+			//data.Add(BitConverter.GetBytes(modelScale));
 
-            data.Add(BitConverter.GetBytes(modelCount));
+			data.Add(BitConverter.GetBytes(modelCount));
 
-            var vcount = model.Objects.Sum(_ => _.Vertexes.Length);
-            var fcount = model.Objects.Sum(_ => _.Faces.Length);
+			var vcount = model.Objects.Sum(_ => _.Vertexes.Length);
+			var fcount = model.Objects.Sum(_ => _.Faces.Length);
 
-            data.Add(BitConverter.GetBytes((int)vcount));
+			data.Add(BitConverter.GetBytes((int)vcount));
 
-            foreach(var obj in model.Objects)
-            {
-                foreach (var v in obj.Vertexes)
-                {
-                    v.Position *= modelScale;
+			foreach (var obj in model.Objects)
+			{
+				foreach (var v in obj.Vertexes)
+				{
+					v.Position *= modelScale;
 
-                    data.Add(BitConverter.GetBytes(v.Position.X));
-                    data.Add(BitConverter.GetBytes(v.Position.Y));
-                    data.Add(BitConverter.GetBytes(v.Position.Z));
+					data.Add(BitConverter.GetBytes(v.Position.X));
+					data.Add(BitConverter.GetBytes(v.Position.Y));
+					data.Add(BitConverter.GetBytes(v.Position.Z));
 
-                    data.Add(BitConverter.GetBytes(v.Normal.X));
-                    data.Add(BitConverter.GetBytes(v.Normal.Y));
-                    data.Add(BitConverter.GetBytes(v.Normal.Z));
+					data.Add(BitConverter.GetBytes(v.Normal.X));
+					data.Add(BitConverter.GetBytes(v.Normal.Y));
+					data.Add(BitConverter.GetBytes(v.Normal.Z));
 
-                    data.Add(BitConverter.GetBytes(v.Binormal.X));
-                    data.Add(BitConverter.GetBytes(v.Binormal.Y));
-                    data.Add(BitConverter.GetBytes(v.Binormal.Z));
+					data.Add(BitConverter.GetBytes(v.Binormal.X));
+					data.Add(BitConverter.GetBytes(v.Binormal.Y));
+					data.Add(BitConverter.GetBytes(v.Binormal.Z));
 
-                    data.Add(BitConverter.GetBytes(v.Tangent.X));
-                    data.Add(BitConverter.GetBytes(v.Tangent.Y));
-                    data.Add(BitConverter.GetBytes(v.Tangent.Z));
+					data.Add(BitConverter.GetBytes(v.Tangent.X));
+					data.Add(BitConverter.GetBytes(v.Tangent.Y));
+					data.Add(BitConverter.GetBytes(v.Tangent.Z));
 
-                    data.Add(BitConverter.GetBytes(v.UV.X));
-                    data.Add(BitConverter.GetBytes(v.UV.Y));
+					data.Add(BitConverter.GetBytes(v.UV.X));
+					data.Add(BitConverter.GetBytes(v.UV.Y));
 
-                    data.Add(
-                        new byte[]
-                        {
-                    (byte)(v.Color.R * 255.0),
-                    (byte)(v.Color.G * 255.0),
-                    (byte)(v.Color.B * 255.0),
-                    (byte)(v.Color.A * 255.0)});
-                }
-            }
+					data.Add(
+						new byte[]
+						{
+					(byte)(v.Color.R * 255.0),
+					(byte)(v.Color.G * 255.0),
+					(byte)(v.Color.B * 255.0),
+					(byte)(v.Color.A * 255.0)});
+				}
+			}
 
 
-            data.Add(BitConverter.GetBytes((int)fcount));
+			data.Add(BitConverter.GetBytes((int)fcount));
 
-            int foffset = 0;
+			int foffset = 0;
 
-            foreach (var obj in model.Objects)
-            {
-                foreach (var f in obj.Faces)
-                {
-                    data.Add(BitConverter.GetBytes(foffset + f.Indexes[0]));
-                    data.Add(BitConverter.GetBytes(foffset + f.Indexes[1]));
-                    data.Add(BitConverter.GetBytes(foffset + f.Indexes[2]));
-                }
+			foreach (var obj in model.Objects)
+			{
+				foreach (var f in obj.Faces)
+				{
+					data.Add(BitConverter.GetBytes(foffset + f.Indexes[0]));
+					data.Add(BitConverter.GetBytes(foffset + f.Indexes[1]));
+					data.Add(BitConverter.GetBytes(foffset + f.Indexes[2]));
+				}
 
-                foffset += obj.Faces.Length;
-            }
+				foffset += obj.Faces.Length;
+			}
 
 			data.Add(BitConverter.GetBytes(modelScale));
 

@@ -74,7 +74,7 @@ namespace Effekseer.GUI.Component
 
 		public override void OnDropped(string path, ref bool handle)
 		{
-			if(isHovered)
+			if (isHovered)
 			{
 				if (CheckExtension(path))
 				{
@@ -96,7 +96,7 @@ namespace Effekseer.GUI.Component
 
 			float buttonSizeX = Manager.NativeManager.GetTextLineHeightWithSpacing() * 2;
 
-			if(Manager.NativeManager.Button(Resources.GetString("Load") + id1, buttonSizeX))
+			if (Manager.NativeManager.Button(Resources.GetString("Load") + id1, buttonSizeX))
 			{
 				btn_load_Click();
 			}
@@ -104,7 +104,7 @@ namespace Effekseer.GUI.Component
 			if (dd == null) dd = DragAndDrops.UpdateFileDst(FileType.Sound);
 
 			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
-			
+
 			Manager.NativeManager.SameLine();
 
 			Manager.NativeManager.Text(filePath);

@@ -53,7 +53,7 @@ namespace Effekseer.Binary.RenderData
 			var tempTexInfo = new TextureInformation();
 
 			var absolutePath = image.AbsolutePath;
-			if(_convertLoadingFilePath != null)
+			if (_convertLoadingFilePath != null)
 			{
 				absolutePath = _convertLoadingFilePath(absolutePath);
 			}

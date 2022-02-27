@@ -24,7 +24,7 @@ namespace Effekseer.Utils
 					}
 				}
 			}
-			catch(Exception e)
+			catch (Exception e)
 			{
 				Console.WriteLine(e.ToString());
 			}

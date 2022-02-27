@@ -24,9 +24,9 @@ namespace Effekseer.Binary
 
 			data.Add((lffs.Count).GetBytes());
 
-			foreach(var lff in lffs)
+			foreach (var lff in lffs)
 			{
-				if(version >= ExporterVersion.Ver16Alpha1)
+				if (version >= ExporterVersion.Ver16Alpha1)
 				{
 					data.Add(lff.Type.GetValueAsInt().GetBytes());
 
@@ -83,13 +83,13 @@ namespace Effekseer.Binary
 
 					data.Add(lff.Falloff.Type.GetValueAsInt().GetBytes());
 
-					if(lff.Falloff.Type.Value != Data.ForceFieldFalloffType.None)
+					if (lff.Falloff.Type.Value != Data.ForceFieldFalloffType.None)
 					{
 						data.Add(lff.Falloff.Power.GetBytes());
 						data.Add(lff.Falloff.MaxDistance.GetBytes());
 						data.Add(lff.Falloff.MinDistance.GetBytes());
 
-						if(lff.Falloff.Type.Value == Data.ForceFieldFalloffType.Tube)
+						if (lff.Falloff.Type.Value == Data.ForceFieldFalloffType.Tube)
 						{
 							data.Add(lff.Falloff.Tube.RadiusPower.GetBytes());
 							data.Add(lff.Falloff.Tube.MaxRadius.GetBytes());
@@ -107,7 +107,7 @@ namespace Effekseer.Binary
 				else
 				{
 					// 1.5 or later
-					if(lff.Type.Value == Data.LocalForceFieldType.Turbulence)
+					if (lff.Type.Value == Data.LocalForceFieldType.Turbulence)
 					{
 						data.Add(lff.Type.GetValueAsInt().GetBytes());
 					}
@@ -129,7 +129,7 @@ namespace Effekseer.Binary
 			}
 
 			// For compatibility
-			if(version < ExporterVersion.Ver16Alpha2)
+			if (version < ExporterVersion.Ver16Alpha2)
 			{
 				var type = 0;
 				data.Add(((int)type).GetBytes());

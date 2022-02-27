@@ -11,17 +11,17 @@ namespace Effekseer.Utl
 		public int Height { get; private set; }
 
 		public TextureInformation()
-		{ 
-		
+		{
+
 		}
 
 		public bool Load(string path)
-		{ 
+		{
 
 			System.IO.FileStream fs = null;
-            if (!System.IO.File.Exists(path)) return false;
+			if (!System.IO.File.Exists(path)) return false;
 
-            try
+			try
 			{
 				fs = System.IO.File.Open(path, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read);
 			}
@@ -114,8 +114,8 @@ namespace Effekseer.Utl
 			}
 
 			fs.Dispose();
-            br.Close();
-            return true;
+			br.Close();
+			return true;
 		}
 	}
 }

@@ -42,11 +42,14 @@ namespace Effekseer.Data.Value
 
 		public bool IsValueChangedFromDefault
 		{
-			get { return 
-					R.IsValueChangedFromDefault || 
-					G.IsValueChangedFromDefault || 
-					B.IsValueChangedFromDefault || 
-					A.IsValueChangedFromDefault; }
+			get
+			{
+				return
+				  R.IsValueChangedFromDefault ||
+				  G.IsValueChangedFromDefault ||
+				  B.IsValueChangedFromDefault ||
+				  A.IsValueChangedFromDefault;
+			}
 		}
 
 		internal ColorSpace DefaultColorSpace { get; private set; }
@@ -185,7 +188,7 @@ namespace Effekseer.Data.Value
 
 		public static implicit operator byte[](Color value)
 		{
-			if(value.ColorSpace == ColorSpace.RGBA)
+			if (value.ColorSpace == ColorSpace.RGBA)
 			{
 				byte[] values = new byte[sizeof(byte) * 4] { (byte)value.R, (byte)value.G, (byte)value.B, (byte)value.A };
 				return values;

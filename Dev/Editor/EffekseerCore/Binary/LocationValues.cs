@@ -106,7 +106,7 @@ namespace Effekseer.Binary
 			return data.ToArray().ToArray();
 		}
 
-		
+
 	}
 
 	[StructLayout(LayoutKind.Sequential)]

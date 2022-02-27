@@ -12,7 +12,7 @@ namespace Effekseer.Utils
 	internal class ResourceCache
 	{
 		Dictionary<string, Utl.MaterialInformation> materials = new Dictionary<string, Utl.MaterialInformation>();
-	
+
 		public Utl.MaterialInformation LoadMaterialInformation(string path)
 		{
 			path = path.Replace('\\', '/');
@@ -21,7 +21,7 @@ namespace Effekseer.Utils
 
 			var info = new Utl.MaterialInformation();
 
-			if(info.Load(path))
+			if (info.Load(path))
 			{
 				materials.Add(path, info);
 			}

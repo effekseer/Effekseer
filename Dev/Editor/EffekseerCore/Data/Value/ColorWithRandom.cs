@@ -36,7 +36,7 @@ namespace Effekseer.Data.Value
 			get;
 			set;
 		}
-		
+
 		private ColorSpace _colorSpace;
 		public ColorSpace ColorSpace
 		{
@@ -48,13 +48,16 @@ namespace Effekseer.Data.Value
 
 		public bool IsValueChangedFromDefault
 		{
-			get { return 
-					R.IsValueChangedFromDefault ||
-					G.IsValueChangedFromDefault || 
-					B.IsValueChangedFromDefault || 
-					A.IsValueChangedFromDefault || 
-					DrawnAs != DefaultDrawnAs || 
-					ColorSpace != DefaultColorSpace; }
+			get
+			{
+				return
+				  R.IsValueChangedFromDefault ||
+				  G.IsValueChangedFromDefault ||
+				  B.IsValueChangedFromDefault ||
+				  A.IsValueChangedFromDefault ||
+				  DrawnAs != DefaultDrawnAs ||
+				  ColorSpace != DefaultColorSpace;
+			}
 		}
 
 		public ColorWithRandom Link
@@ -73,7 +76,7 @@ namespace Effekseer.Data.Value
 		{
 			ColorSpace oldval = ColorSpace;
 			ColorSpace newval = colorSpace;
-			
+
 			if (oldval == newval) return;
 
 			int old_min_r = R.GetMin();
@@ -291,7 +294,7 @@ namespace Effekseer.Data.Value
 
 			SetColorSpace(colorSpace, true, false);
 			CallChangedColorSpace(true, ChangedValueType.Execute);
-			
+
 			if (link && Link != null)
 			{
 				Link.ChangeColorSpace(colorSpace, false);

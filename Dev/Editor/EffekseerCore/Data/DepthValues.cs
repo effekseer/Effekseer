@@ -17,13 +17,13 @@ namespace Effekseer.Data
 
 
 	public class DepthValues
-    {
+	{
 		[Key(key = "Depth_DepthOffset")]
-        public Value.Float DepthOffset
-        {
-            get;
-            private set;
-        }
+		public Value.Float DepthOffset
+		{
+			get;
+			private set;
+		}
 
 		[Key(key = "Depth_IsScaleChangedDependingOnDepthOffset")]
 		public Value.Boolean IsScaleChangedDependingOnDepthOffset
@@ -67,15 +67,15 @@ namespace Effekseer.Data
 			private set;
 		}
 
-        public DepthValues()
-        {
-            DepthOffset = new Value.Float();
+		public DepthValues()
+		{
+			DepthOffset = new Value.Float();
 			IsScaleChangedDependingOnDepthOffset = new Value.Boolean();
 			IsDepthOffsetChangedDependingOnParticleScale = new Value.Boolean();
 			ZSort = new Value.Enum<ZSortType>(ZSortType.None);
 			DrawingPriority = new Value.Int(0, 255, -255);
 			DepthClipping = new Value.IntWithInifinite(1024, true, int.MaxValue, 16);
 			SuppressionOfScalingByDepth = new Value.Float(1.0f, 1.0f, 0.0f, 0.1f);
-        }
-    }
+		}
+	}
 }

@@ -10,10 +10,10 @@ namespace Effekseer.Data.Value
 		int _value_center = 0;
 		int _value_max = 0;
 		int _value_min = 0;
-		
+
 		int _max = int.MaxValue;
 		int _min = int.MinValue;
-		
+
 		public int Center
 		{
 			get
@@ -165,7 +165,7 @@ namespace Effekseer.Data.Value
 			int old_center = _value_center;
 			int new_center = value;
 			int old_max = _value_max;
-			int new_max = Math.Min(value + a, _max );
+			int new_max = Math.Min(value + a, _max);
 			int old_min = _value_min;
 			int new_min = Math.Max(value - a, _min);
 

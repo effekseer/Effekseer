@@ -93,7 +93,7 @@ namespace Effekseer.InternalScript
 			{
 				var empty = Peek();
 				if (empty == null) break;
-				if(empty.Type == TokenType.NewLine)
+				if (empty.Type == TokenType.NewLine)
 				{
 					Next();
 					continue;
@@ -105,7 +105,7 @@ namespace Effekseer.InternalScript
 
 				if (token != null)
 				{
-					if(token.Type == TokenType.Equal)
+					if (token.Type == TokenType.Equal)
 					{
 						Next();
 						var rhs = Expr();
@@ -133,7 +133,7 @@ namespace Effekseer.InternalScript
 		Expression Expr()
 		{
 			var lhs = Term();
-			
+
 			while (true)
 			{
 				var token = Peek();
@@ -197,7 +197,7 @@ namespace Effekseer.InternalScript
 		Expression Term()
 		{
 			var lhs = Group();
-			
+
 			while (true)
 			{
 				var token = Peek();
@@ -251,7 +251,7 @@ namespace Effekseer.InternalScript
 			var token = Peek();
 			Expression value = null;
 
-			if(token != null)
+			if (token != null)
 			{
 				if (token.Type == TokenType.LeftParentheses)
 				{
@@ -308,18 +308,18 @@ namespace Effekseer.InternalScript
 				throw new InvalidEOFException(tokens.LastOrDefault().Line);
 			}
 
-			while(true)
+			while (true)
 			{
 				var dotToken = Peek();
 
 				if (dotToken != null && dotToken.Type == TokenType.Dot)
 				{
 					var next = Next();
-					if(next == null)
+					if (next == null)
 					{
 						throw new InvalidEOFException(tokens.LastOrDefault().Line);
 					}
-					else if(next.Type != TokenType.Label)
+					else if (next.Type != TokenType.Label)
 					{
 						throw new InvalidTokenException(token.ToString(), token.Line);
 					}
@@ -349,7 +349,7 @@ namespace Effekseer.InternalScript
 			{
 				var next = Next();
 
-				if(next == null || next.Type != TokenType.LeftParentheses)
+				if (next == null || next.Type != TokenType.LeftParentheses)
 				{
 					var ret = new LabelExpression((string)token.Value);
 					ret.Line = token.Line;
@@ -377,10 +377,10 @@ namespace Effekseer.InternalScript
 
 			if (token != null)
 			{
-				while(true)
+				while (true)
 				{
 					var next = Next();
-					if(next.Type == TokenType.RightParentheses)
+					if (next.Type == TokenType.RightParentheses)
 					{
 						// empty arguments
 						Next();
@@ -415,7 +415,7 @@ namespace Effekseer.InternalScript
 
 		Token Peek()
 		{
-			if(tokens.Count() > index)
+			if (tokens.Count() > index)
 			{
 				return tokens[index];
 			}

@@ -14,7 +14,7 @@ namespace Effekseer.Binary
 			List<byte[]> data = new List<byte[]>();
 			data.Add(BitConverter.GetBytes((int)value.Type.Value));
 
-			if(value.Type.Value == Data.RingShapeType.Donut)
+			if (value.Type.Value == Data.RingShapeType.Donut)
 			{
 			}
 			else if (value.Type.Value == Data.RingShapeType.Crescent)
@@ -66,7 +66,7 @@ namespace Effekseer.Binary
 			List<byte[]> data = new List<byte[]>();
 			data.Add(BitConverter.GetBytes((int)value.Type.Value));
 
-			if(value.Type.Value == Data.TextureUVType.Tile)
+			if (value.Type.Value == Data.TextureUVType.Tile)
 			{
 				data.Add(value.TileEdgeHead.Value.GetBytes());
 				data.Add(value.TileEdgeTail.Value.GetBytes());
@@ -148,15 +148,15 @@ namespace Effekseer.Binary
 
 			void AddColorAll()
 			{
-				data.Add(param.ColorAll);	// 全体色
+				data.Add(param.ColorAll);   // 全体色
 				if (param.ColorAll.Value == Data.StandardColorType.Fixed)
 				{
-					var color_all = (byte[]) param.ColorAll_Fixed;
+					var color_all = (byte[])param.ColorAll_Fixed;
 					data.Add(color_all);
 				}
 				else if (param.ColorAll.Value == Data.StandardColorType.Random)
 				{
-					var color_random = (byte[]) param.ColorAll_Random;
+					var color_random = (byte[])param.ColorAll_Random;
 					data.Add(color_random);
 				}
 				else if (param.ColorAll.Value == Data.StandardColorType.Easing)
@@ -179,10 +179,10 @@ namespace Effekseer.Binary
 				}
 				else if (param.Color.Value == Data.RendererValues.SpriteParamater.ColorType.Fixed)
 				{
-					var color_ll = (byte[]) param.Color_Fixed_LL;
-					var color_lr = (byte[]) param.Color_Fixed_LR;
-					var color_ul = (byte[]) param.Color_Fixed_UL;
-					var color_ur = (byte[]) param.Color_Fixed_UR;
+					var color_ll = (byte[])param.Color_Fixed_LL;
+					var color_lr = (byte[])param.Color_Fixed_LR;
+					var color_ul = (byte[])param.Color_Fixed_UL;
+					var color_ur = (byte[])param.Color_Fixed_UR;
 
 					data.Add(color_ll);
 					data.Add(color_lr);
@@ -193,7 +193,7 @@ namespace Effekseer.Binary
 
 			void AddPosition()
 			{
-				data.Add(BitConverter.GetBytes((int) Data.RendererValues.SpriteParamater.PositionType.Fixed));
+				data.Add(BitConverter.GetBytes((int)Data.RendererValues.SpriteParamater.PositionType.Fixed));
 
 				if (param.Position.Value == Data.RendererValues.SpriteParamater.PositionType.Default)
 				{
@@ -208,10 +208,10 @@ namespace Effekseer.Binary
 				}
 				else if (param.Position.Value == Data.RendererValues.SpriteParamater.PositionType.Fixed)
 				{
-					var pos_ll = (byte[]) param.Position_Fixed_LL.GetBytes();
-					var pos_lr = (byte[]) param.Position_Fixed_LR.GetBytes();
-					var pos_ul = (byte[]) param.Position_Fixed_UL.GetBytes();
-					var pos_ur = (byte[]) param.Position_Fixed_UR.GetBytes();
+					var pos_ll = (byte[])param.Position_Fixed_LL.GetBytes();
+					var pos_lr = (byte[])param.Position_Fixed_LR.GetBytes();
+					var pos_ul = (byte[])param.Position_Fixed_UL.GetBytes();
+					var pos_ur = (byte[])param.Position_Fixed_UR.GetBytes();
 
 					data.Add(pos_ll);
 					data.Add(pos_lr);
@@ -249,12 +249,12 @@ namespace Effekseer.Binary
 
 				if (ribbonParameter.ColorAll.Value == Data.RendererValues.RibbonParamater.ColorAllType.Fixed)
 				{
-					var color_all = (byte[]) ribbonParameter.ColorAll_Fixed;
+					var color_all = (byte[])ribbonParameter.ColorAll_Fixed;
 					data.Add(color_all);
 				}
 				else if (ribbonParameter.ColorAll.Value == Data.RendererValues.RibbonParamater.ColorAllType.Random)
 				{
-					var color_random = (byte[]) ribbonParameter.ColorAll_Random;
+					var color_random = (byte[])ribbonParameter.ColorAll_Random;
 					data.Add(color_random);
 				}
 				else if (ribbonParameter.ColorAll.Value == Data.RendererValues.RibbonParamater.ColorAllType.Easing)
@@ -272,8 +272,8 @@ namespace Effekseer.Binary
 				}
 				else if (ribbonParameter.Color.Value == Data.RendererValues.RibbonParamater.ColorType.Fixed)
 				{
-					var color_l = (byte[]) ribbonParameter.Color_Fixed_L;
-					var color_r = (byte[]) ribbonParameter.Color_Fixed_R;
+					var color_l = (byte[])ribbonParameter.Color_Fixed_L;
+					var color_r = (byte[])ribbonParameter.Color_Fixed_R;
 
 					data.Add(color_l);
 					data.Add(color_r);
@@ -282,7 +282,7 @@ namespace Effekseer.Binary
 
 			void AddPosition()
 			{
-				data.Add(BitConverter.GetBytes((int) Data.RendererValues.RibbonParamater.PositionType.Fixed));
+				data.Add(BitConverter.GetBytes((int)Data.RendererValues.RibbonParamater.PositionType.Fixed));
 
 				if (ribbonParameter.Position.Value == Data.RendererValues.RibbonParamater.PositionType.Default)
 				{
@@ -291,8 +291,8 @@ namespace Effekseer.Binary
 				}
 				else if (ribbonParameter.Position.Value == Data.RendererValues.RibbonParamater.PositionType.Fixed)
 				{
-					var pos_l = (byte[]) ribbonParameter.Position_Fixed_L.GetBytes();
-					var pos_r = (byte[]) ribbonParameter.Position_Fixed_R.GetBytes();
+					var pos_l = (byte[])ribbonParameter.Position_Fixed_L.GetBytes();
+					var pos_r = (byte[])ribbonParameter.Position_Fixed_R.GetBytes();
 					data.Add(pos_l);
 					data.Add(pos_r);
 				}
@@ -376,8 +376,8 @@ namespace Effekseer.Binary
 				}
 				else if (locationType.GetValue() == Data.RendererValues.RingParamater.LocationType.Easing)
 				{
-					data.Add((byte[]) easingParam.Start.GetBytes());
-					data.Add((byte[]) easingParam.End.GetBytes());
+					data.Add((byte[])easingParam.Start.GetBytes());
+					data.Add((byte[])easingParam.End.GetBytes());
 
 					AddEasing(data, easingParam.StartSpeed, easingParam.EndSpeed);
 				}
@@ -409,11 +409,11 @@ namespace Effekseer.Binary
 				data.Add(parameter);
 				if (parameter.Value == Data.RendererValues.RingParamater.ColorType.Fixed)
 				{
-					data.Add((byte[]) @fixed);
+					data.Add((byte[])@fixed);
 				}
 				else if (parameter.Value == Data.RendererValues.RingParamater.ColorType.Random)
 				{
-					data.Add((byte[]) random);
+					data.Add((byte[])random);
 				}
 				else if (parameter.Value == Data.RendererValues.RingParamater.ColorType.Easing)
 				{
@@ -433,7 +433,7 @@ namespace Effekseer.Binary
 
 			if (version >= ExporterVersion.Ver16Alpha3)
 			{
-				var refType = (int) value.Model.ModelReference.Value;
+				var refType = (int)value.Model.ModelReference.Value;
 				data.Add((refType).GetBytes());
 			}
 
@@ -441,7 +441,7 @@ namespace Effekseer.Binary
 
 			data.Add(param.Billboard);
 
-			data.Add(((int) param.Culling.Value).GetBytes());
+			data.Add(((int)param.Culling.Value).GetBytes());
 
 			// 全体色
 			OutputStandardColor(data, param.Color, param.Color_Fixed, param.Color_Random, param.Color_Easing,
@@ -520,7 +520,7 @@ namespace Effekseer.Binary
 		}
 
 		private static void OutputStandardColor(
-			List<byte[]> data, 
+			List<byte[]> data,
 			Data.Value.Enum<Data.StandardColorType> color,
 			Data.Value.Color color_fixed,
 			Data.Value.ColorWithRandom color_Random,
@@ -552,19 +552,19 @@ namespace Effekseer.Binary
 
 		private static void AddEasing(List<byte[]> data, Enum<EasingStart> start, Enum<EasingEnd> end)
 		{
-			var easing = Utl.MathUtl.Easing((float) start.Value, (float) end.Value);
+			var easing = Utl.MathUtl.Easing((float)start.Value, (float)end.Value);
 			data.Add(BitConverter.GetBytes(easing[0]));
 			data.Add(BitConverter.GetBytes(easing[1]));
 			data.Add(BitConverter.GetBytes(easing[2]));
 		}
-		
+
 		private static void AddColorEasing(List<byte[]> data, ColorEasingParamater easingParam)
 		{
-			data.Add((byte[]) easingParam.Start);
-			data.Add((byte[]) easingParam.End);
+			data.Add((byte[])easingParam.Start);
+			data.Add((byte[])easingParam.End);
 			AddEasing(data, easingParam.StartSpeed, easingParam.EndSpeed);
 		}
-		
+
 		private static void AddFloatEasing(List<byte[]> data, FloatEasingParamater easingParam)
 		{
 			data.Add(easingParam.Start.Max.GetBytes());

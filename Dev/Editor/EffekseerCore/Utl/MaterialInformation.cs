@@ -130,7 +130,7 @@ namespace Effekseer.Utl
 
 			var platformCount = BitConverter.ToInt32(buf, 16);
 
-			for(int i = 0; i < platformCount; i++)
+			for (int i = 0; i < platformCount; i++)
 			{
 				if (br.Read(buf, 0, 4) != 4)
 				{
@@ -221,7 +221,7 @@ namespace Effekseer.Utl
 				return false;
 			}
 
-			if(buf[0] != 'E' ||
+			if (buf[0] != 'E' ||
 				buf[1] != 'F' ||
 				buf[2] != 'K' ||
 				buf[3] != 'M')
@@ -231,7 +231,7 @@ namespace Effekseer.Utl
 
 			int version = BitConverter.ToInt32(buf, 4);
 
-			if(version > (int)LatestSupportVersion)
+			if (version > (int)LatestSupportVersion)
 			{
 				return false;
 			}
@@ -467,7 +467,7 @@ namespace Effekseer.Utl
 						reader.Get(ref CustomData[j].DefaultValues[3]);
 					}
 				}
-				
+
 				if (buf[0] == 'G' &&
 				buf[1] == 'E' &&
 				buf[2] == 'N' &&
@@ -550,7 +550,7 @@ namespace Effekseer.Utl
 				{
 					bw.Push(info.Name, Encoding.UTF8);
 					bw.Push(info.UniformName, Encoding.UTF8);
-					
+
 					bw.Push(info.Offset);
 					bw.Push(info.Priority);
 					bw.Push(info.Type);

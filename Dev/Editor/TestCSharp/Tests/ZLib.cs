@@ -21,7 +21,7 @@ namespace TestCSharp
 		{
 			var decompressed1 = System.IO.File.ReadAllBytes(decompressedPath);
 			var compressed1 = System.IO.File.ReadAllBytes(compressedPath);
-			
+
 			var compressed2 = Effekseer.Utils.Zlib.Compress(decompressed1);
 			var decompressed2 = Effekseer.Utils.Zlib.Decompress(compressed1);
 

@@ -39,14 +39,14 @@ namespace Effekseer.GUI.Dialog
 					Manager.NativeManager.SetKeyboardFocusHere();
 				}
 
-				if (Manager.NativeManager.InputText("###RenameNodeInput", this.name, 
+				if (Manager.NativeManager.InputText("###RenameNodeInput", this.name,
 					swig.InputTextFlags.AutoSelectAll | swig.InputTextFlags.EnterReturnsTrue))
 				{
 					this.selectedNode.Name.Value = this.name;
 					ShouldBeRemoved = true;
 				}
 				this.name = Manager.NativeManager.GetInputTextResult();
-				
+
 				if (Manager.NativeManager.IsKeyPressed(Manager.NativeManager.GetKeyIndex(swig.Key.Escape)))
 				{
 					ShouldBeRemoved = true;

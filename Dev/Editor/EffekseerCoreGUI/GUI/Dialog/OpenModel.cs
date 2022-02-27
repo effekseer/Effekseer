@@ -50,7 +50,7 @@ namespace Effekseer.GUI.Dialog
 
 				var fs = new float[] { Magnification };
 
-				if(Manager.NativeManager.DragFloat("###mag", fs))
+				if (Manager.NativeManager.DragFloat("###mag", fs))
 				{
 					Magnification = fs[0];
 				}
@@ -62,7 +62,7 @@ namespace Effekseer.GUI.Dialog
 				{
 					OK = true;
 					ShouldBeRemoved = true;
-					if(OnOK != null)
+					if (OnOK != null)
 					{
 						OnOK();
 					}

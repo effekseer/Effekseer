@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI
 {
-    public interface IControl
-    {
-        void Update();
-    }
+	public interface IControl
+	{
+		void Update();
+	}
 
-    public interface IRemovableControl : IControl
-    {
-        bool ShouldBeRemoved { get; }
-    }
+	public interface IRemovableControl : IControl
+	{
+		bool ShouldBeRemoved { get; }
+	}
 
 	public interface IDroppableControl : IControl
 	{

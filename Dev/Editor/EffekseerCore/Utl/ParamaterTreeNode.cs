@@ -12,7 +12,7 @@ namespace Effekseer.Utl
 	{
 		public Data.NodeBase Node { get; private set; }
 
-		public Tuple35<string,object>[] Parameters { get; private set; }
+		public Tuple35<string, object>[] Parameters { get; private set; }
 
 		public ParameterTreeNode[] Children { get; private set; }
 

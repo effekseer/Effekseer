@@ -103,7 +103,7 @@ namespace Effekseer.GUI.Component
 			}
 
 			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
-			
+
 			if (filePath != string.Empty)
 			{
 				if (Manager.NativeManager.Button(Resources.GetString("Delete") + id2, buttonSizeX))
@@ -335,7 +335,7 @@ namespace Effekseer.GUI.Component
 
 						p.WaitForExit();
 						p.Dispose();
-						
+
 
 						if (System.IO.File.Exists(newFilepath))
 						{
@@ -343,7 +343,7 @@ namespace Effekseer.GUI.Component
 						}
 						else
 						{
-							var msg =" Failed to load. \n" + outputs;
+							var msg = " Failed to load. \n" + outputs;
 
 							swig.GUIManager.show(msg, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
 						}
@@ -432,7 +432,7 @@ namespace Effekseer.GUI.Component
 
 				Manager.Viewer.Reload(true);
 
-                Read();
+				Read();
 			};
 		}
 

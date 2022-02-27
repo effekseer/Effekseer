@@ -218,7 +218,7 @@ namespace Effekseer.GUI.Dock
 				Manager.NativeManager.SameLine();
 
 				Manager.NativeManager.Button("?", size.X, size.Y);
-				
+
 				if (Manager.NativeManager.IsItemHovered())
 				{
 					Manager.NativeManager.SetTooltip(Resources.GetString("FCurveCtrl_Desc"));
@@ -296,7 +296,7 @@ namespace Effekseer.GUI.Dock
 					}
 				}
 
-				if(UpdateMenu())
+				if (UpdateMenu())
 				{
 					canControl = false;
 				}
@@ -336,7 +336,7 @@ namespace Effekseer.GUI.Dock
 					{
 						if (Manager.NativeManager.Selectable(MultiLanguageTextProvider.GetText("FCurve_DeletePoint")))
 						{
-							if(menuContext.ClickedFcurve.RemovePoint(menuContext.ClickedPropIndex, menuContext.ClickedPosition))
+							if (menuContext.ClickedFcurve.RemovePoint(menuContext.ClickedPropIndex, menuContext.ClickedPosition))
 							{
 								changed = true;
 							}
@@ -346,7 +346,7 @@ namespace Effekseer.GUI.Dock
 					{
 						if (Manager.NativeManager.Selectable(MultiLanguageTextProvider.GetText("FCurve_AddPoint")))
 						{
-							if(menuContext.ClickedFcurve.AddPoint(menuContext.ClickedPropIndex, menuContext.ClickedPosition))
+							if (menuContext.ClickedFcurve.AddPoint(menuContext.ClickedPropIndex, menuContext.ClickedPosition))
 							{
 								changed = true;
 							}
@@ -426,7 +426,7 @@ namespace Effekseer.GUI.Dock
 
 			string nodeName = treeNode.ParamTreeNode.Node.Name.Value;
 
-			if(treeNode.FCurves.Count > 0)
+			if (treeNode.FCurves.Count > 0)
 			{
 				if (Manager.NativeManager.TreeNodeEx(nodeName + treeNode.ID, flag))
 				{
@@ -501,9 +501,10 @@ namespace Effekseer.GUI.Dock
 		void UpdateDetails()
 		{
 			var fcurves = GetSelectedFCurve();
-			var selectedPoints = fcurves.SelectMany(_=> {
+			var selectedPoints = fcurves.SelectMany(_ =>
+			{
 				var index = _.Item2.GetSelectedIndex();
-				if(index != null)
+				if (index != null)
 				{
 					return index.Select(__ => Tuple.Create(_.Item1, _.Item2, __));
 				}
@@ -534,7 +535,7 @@ namespace Effekseer.GUI.Dock
 
 			{
 				var elements = selectedPoints.Select(_ => _.Item2.Keys[_.Item3]).Distinct();
-				if(elements.Count() == 1)
+				if (elements.Count() == 1)
 				{
 					var target = selectedPoints.First();
 					var original = target.Item2.Keys[target.Item3];
@@ -568,7 +569,7 @@ namespace Effekseer.GUI.Dock
 					Manager.NativeManager.InputText(texts.frame, invalidValue, swig.InputTextFlags.ReadOnly);
 				}
 			}
-			
+
 			{
 				var elements = selectedPoints.Select(_ => _.Item2.Values[_.Item3]).Distinct();
 				if (elements.Count() == 1)
@@ -684,7 +685,7 @@ namespace Effekseer.GUI.Dock
 
 						if (Manager.NativeManager.Selectable(objects[i].ToString(), is_selected, swig.SelectableFlags.None))
 						{
-							foreach(var target in selectedPoints)
+							foreach (var target in selectedPoints)
 							{
 								target.Item2.Interpolations[target.Item3] = i;
 								target.Item2.IsDirtied = true;
@@ -814,7 +815,7 @@ namespace Effekseer.GUI.Dock
 
 			foreach (var f in treeNode.FCurves)
 			{
-				if(f.IsHovered(out fcurveInd, out pointInd))
+				if (f.IsHovered(out fcurveInd, out pointInd))
 				{
 					fcurve = f;
 					return true;
@@ -823,7 +824,7 @@ namespace Effekseer.GUI.Dock
 
 			for (int i = 0; i < treeNode.Children.Count; i++)
 			{
-				if(IsHovered(treeNode.Children[i], out fcurve, out fcurveInd, out pointInd))
+				if (IsHovered(treeNode.Children[i], out fcurve, out fcurveInd, out pointInd))
 				{
 					return true;
 				}
@@ -834,7 +835,7 @@ namespace Effekseer.GUI.Dock
 
 		void UpdateGraph(TreeNode treeNode, ref bool canControl)
 		{
-			
+
 			foreach (var fcurve in treeNode.FCurves)
 			{
 				fcurve.UpdateGraph(ref canControl);
@@ -917,8 +918,8 @@ namespace Effekseer.GUI.Dock
 				refleshNodes = (ptn, tn) =>
 				{
 					// check whether modification doesn't exist
-					bool nochange = tn.Children.Count() == ptn.Children.Count() && 
-					tn.Children.Select(_=>_.ParamTreeNode.Node).SequenceEqual(ptn.Children.Select(_=>_.Node));
+					bool nochange = tn.Children.Count() == ptn.Children.Count() &&
+					tn.Children.Select(_ => _.ParamTreeNode.Node).SequenceEqual(ptn.Children.Select(_ => _.Node));
 
 					for (int i = 0; i < ptn.Children.Count() && nochange; i++)
 					{
@@ -1263,7 +1264,7 @@ namespace Effekseer.GUI.Dock
 				{
 					var prop = curve.Properties[ind];
 
-					if (!prop.KVSelected.Any(_=>_ > 0))
+					if (!prop.KVSelected.Any(_ => _ > 0))
 					{
 						continue;
 					}
@@ -1272,7 +1273,7 @@ namespace Effekseer.GUI.Dock
 
 					copiedCurve.Index = ind;
 					copiedCurve.ID = curve.ID;
-					
+
 					for (int i = 0; i < prop.KVSelected.Length; i++)
 					{
 						if (prop.KVSelected[i] > 0)
@@ -1356,14 +1357,14 @@ namespace Effekseer.GUI.Dock
 						var diffKey = key - prop.Keys[i];
 						var diffValue = value - prop.Values[i];
 
-						if(alignKey)
+						if (alignKey)
 						{
 							prop.Keys[i] = key;
 							prop.LeftKeys[i] += diffKey;
 							prop.RightKeys[i] += diffKey;
 						}
 
-						if(alignValue)
+						if (alignValue)
 						{
 							prop.Values[i] = value;
 							prop.LeftValues[i] += diffValue;
@@ -1374,14 +1375,14 @@ namespace Effekseer.GUI.Dock
 						curveChanged = true;
 					}
 
-					if(propChanged)
+					if (propChanged)
 					{
 						prop.SolveContradiction();
 						prop.IsDirtied = true;
 					}
 				}
 
-				if(curveChanged)
+				if (curveChanged)
 				{
 					curve.Commit();
 				}
@@ -1404,7 +1405,7 @@ namespace Effekseer.GUI.Dock
 
 		public void Paste(FCurveCopiedData data, float offsetTime, bool replace, bool removeSpace)
 		{
-			if(removeSpace)
+			if (removeSpace)
 			{
 				var xmin = data.Curves.SelectMany(_ => _.Points).Min(_ => _.Key);
 
@@ -1440,8 +1441,8 @@ namespace Effekseer.GUI.Dock
 
 					if (copiedCurve != null)
 					{
-					
-						if(replace)
+
+						if (replace)
 						{
 							prop.KVSelected = new byte[copiedCurve.Points.Count + 1];
 
@@ -1810,7 +1811,7 @@ namespace Effekseer.GUI.Dock
 				var i = propInd;
 				int newCount = 0;
 
-				if(Manager.NativeManager.AddFCurvePoint(position, properties[i].Keys,
+				if (Manager.NativeManager.AddFCurvePoint(position, properties[i].Keys,
 						properties[i].Values,
 						properties[i].LeftKeys,
 						properties[i].LeftValues,
@@ -1890,7 +1891,7 @@ namespace Effekseer.GUI.Dock
 					{
 						fcurveInd = i;
 
-						if(Manager.NativeManager.IsHoveredOnFCurvePoint(properties[i].Keys, properties[i].Values, properties[i].Keys.Length - 1, ref pointInd))
+						if (Manager.NativeManager.IsHoveredOnFCurvePoint(properties[i].Keys, properties[i].Values, properties[i].Keys.Length - 1, ref pointInd))
 						{
 
 						}
@@ -1970,7 +1971,7 @@ namespace Effekseer.GUI.Dock
 								properties[i].Selected = true;
 							}
 						}
-						
+
 						if (properties[i].Keys.Length - 1 != newCount && newCount != -1)
 						{
 							if (properties[i].Keys.Length == newCount)
@@ -1985,7 +1986,7 @@ namespace Effekseer.GUI.Dock
 							}
 							else
 							{
-								properties[i].Keys = properties[i].Keys.Take(properties[i].Keys.Length -1).ToArray();
+								properties[i].Keys = properties[i].Keys.Take(properties[i].Keys.Length - 1).ToArray();
 								properties[i].Values = properties[i].Values.Take(properties[i].Values.Length - 1).ToArray();
 								properties[i].LeftKeys = properties[i].LeftKeys.Take(properties[i].LeftKeys.Length - 1).ToArray();
 								properties[i].LeftValues = properties[i].LeftValues.Take(properties[i].LeftValues.Length - 1).ToArray();
@@ -2226,7 +2227,7 @@ namespace Effekseer.GUI.Dock
 			{
 				foreach (var prop in properties)
 				{
-					for(int i = 0; i < prop.KVSelected.Length; i++)
+					for (int i = 0; i < prop.KVSelected.Length; i++)
 					{
 						prop.KVSelected[i] = 0;
 					}
@@ -2256,7 +2257,7 @@ namespace Effekseer.GUI.Dock
 				for (int i = 0; i < properties.Length; i++)
 				{
 					if (!properties[i].IsDirtied) continue;
-					
+
 					var keys = new List<IFCurveKey>();
 
 					// Change value format into int

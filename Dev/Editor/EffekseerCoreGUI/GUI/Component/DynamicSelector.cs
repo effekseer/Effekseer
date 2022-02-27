@@ -66,7 +66,7 @@ namespace Effekseer.GUI.Component
 			Manager.NativeManager.Text(Resources.GetString("DynamicEq"));
 			Manager.NativeManager.SameLine();
 
-			var nextParam = ObjectCollection.Select(Resources.GetString("Max") , id, reference.Value, false, Core.Dynamic.Equations);
+			var nextParam = ObjectCollection.Select(Resources.GetString("Max"), id, reference.Value, false, Core.Dynamic.Equations);
 
 			if (Manager.NativeManager.IsItemHovered())
 			{
@@ -88,7 +88,7 @@ namespace Effekseer.GUI.Component
 			Manager.NativeManager.Text(Resources.GetString("DynamicEq"));
 			Manager.NativeManager.SameLine();
 
-			var nextParam = ObjectCollection.Select(Resources.GetString("Min"), id, reference.Value, false,  Core.Dynamic.Equations);
+			var nextParam = ObjectCollection.Select(Resources.GetString("Min"), id, reference.Value, false, Core.Dynamic.Equations);
 
 			if (Manager.NativeManager.IsItemHovered())
 			{

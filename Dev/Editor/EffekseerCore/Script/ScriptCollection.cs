@@ -11,7 +11,7 @@ namespace Effekseer.Script
 
 		internal ScriptCollection()
 		{
-	
+
 		}
 
 		public void Add(T script)

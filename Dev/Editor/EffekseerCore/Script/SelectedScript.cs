@@ -7,7 +7,7 @@ namespace Effekseer.Script
 {
 	public class SelectedScript : ScriptBase
 	{
-		public Action<Data.NodeBase,Object> Function
+		public Action<Data.NodeBase, Object> Function
 		{
 			get;
 			private set;

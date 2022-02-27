@@ -44,24 +44,24 @@ namespace Effekseer.Binary
 				}
 			}
 
-			Func<Data.Value.PathForImage, int, SortedDictionary<string,int>, int> getTexIDAndStoreSize = (Data.Value.PathForImage image, int number, SortedDictionary<string, int> texAndInd) =>
-			{
-				var tempTexInfo = new TextureInformation();
+			Func<Data.Value.PathForImage, int, SortedDictionary<string, int>, int> getTexIDAndStoreSize = (Data.Value.PathForImage image, int number, SortedDictionary<string, int> texAndInd) =>
+			 {
+				 var tempTexInfo = new TextureInformation();
 
-				if (texAndInd.ContainsKey(image.RelativePath) && tempTexInfo.Load(image.AbsolutePath))
-				{
-					if(value.UVTextureReferenceTarget.Value != Data.UVTextureReferenceTargetType.None && number == (int)value.UVTextureReferenceTarget.Value)
-					{
-						texInfo.Load(image.AbsolutePath);
-					}
+				 if (texAndInd.ContainsKey(image.RelativePath) && tempTexInfo.Load(image.AbsolutePath))
+				 {
+					 if (value.UVTextureReferenceTarget.Value != Data.UVTextureReferenceTargetType.None && number == (int)value.UVTextureReferenceTarget.Value)
+					 {
+						 texInfo.Load(image.AbsolutePath);
+					 }
 
-					return texAndInd[image.RelativePath];
-				}
-				else
-				{
-					return -1;
-				}
-			};
+					 return texAndInd[image.RelativePath];
+				 }
+				 else
+				 {
+					 return -1;
+				 }
+			 };
 
 			GetTexIDAndInfo getTexIDAndInfo = (Data.Value.PathForImage image, SortedDictionary<string, int> texAndInd, ref TextureInformation texInfoRef) =>
 			{
@@ -268,7 +268,7 @@ namespace Effekseer.Binary
 			else
 			{
 				var materialInfo = Core.ResourceCache.LoadMaterialInformation(value.MaterialFile.Path.AbsolutePath);
-				if(materialInfo == null)
+				if (materialInfo == null)
 				{
 					materialInfo = new MaterialInformation();
 				}
@@ -277,12 +277,12 @@ namespace Effekseer.Binary
 				var uniforms = value.MaterialFile.GetUniforms(materialInfo);
 
 				// maximum slot limitation
-				if(textures.Length > Constant.UserTextureSlotCount)
+				if (textures.Length > Constant.UserTextureSlotCount)
 				{
 					textures = textures.Take(Constant.UserTextureSlotCount).ToArray();
 				}
 
-				if(material_and_index.ContainsKey(value.MaterialFile.Path.RelativePath))
+				if (material_and_index.ContainsKey(value.MaterialFile.Path.RelativePath))
 				{
 					data.Add(material_and_index[value.MaterialFile.Path.RelativePath].GetBytes());
 				}
@@ -315,12 +315,12 @@ namespace Effekseer.Binary
 				foreach (var uniform in uniforms)
 				{
 					float[] floats = new float[4];
-					
-					if(uniform.Item1 == null)
+
+					if (uniform.Item1 == null)
 					{
 						floats = uniform.Item2.DefaultValues.ToArray();
 					}
-					else if(uniform.Item1.Value is Data.Value.Float)
+					else if (uniform.Item1.Value is Data.Value.Float)
 					{
 						floats[0] = (uniform.Item1.Value as Data.Value.Float).Value;
 					}
@@ -588,7 +588,7 @@ namespace Effekseer.Binary
 
 			// Custom data1 from 1.5
 			data.Add(value.CustomData1.CustomData);
-			if(value.CustomData1.CustomData.Value == Data.CustomDataType.Fixed2D)
+			if (value.CustomData1.CustomData.Value == Data.CustomDataType.Fixed2D)
 			{
 				data.Add(BitConverter.GetBytes(value.CustomData1.Fixed.X.Value));
 				data.Add(BitConverter.GetBytes(value.CustomData1.Fixed.Y.Value));
@@ -612,7 +612,7 @@ namespace Effekseer.Binary
 				var __data = _data.ToArray().ToArray();
 				data.Add(__data);
 			}
-			else if(value.CustomData1.CustomData.Value == Data.CustomDataType.FCurve2D)
+			else if (value.CustomData1.CustomData.Value == Data.CustomDataType.FCurve2D)
 			{
 				var value_ = value.CustomData1.FCurve;
 				var bytes1 = value_.GetBytes();
@@ -789,7 +789,7 @@ namespace Effekseer.Binary
 				{
 					data.Add(value_.FrameLength.Value.Value.GetBytes());
 				}
-			
+
 				data.Add(value_.FrameCountX.Value.GetBytes());
 				data.Add(value_.FrameCountY.Value.GetBytes());
 				data.Add(value_.LoopType);

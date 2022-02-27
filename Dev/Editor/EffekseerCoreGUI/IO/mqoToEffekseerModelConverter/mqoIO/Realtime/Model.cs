@@ -58,7 +58,7 @@ namespace mqoToEffekseerModelConverter.mqoIO.Realtime
 				model.Materials[item.i].Ambient = new Color(dif[0] * 0.2f, dif[0] * 0.2f, dif[0] * 0.2f, 0.0f);
 			}
 
-            var enabledObjects = mqodata.Objects.Where(_ => _.Visible).ToArray();
+			var enabledObjects = mqodata.Objects.Where(_ => _.Visible).ToArray();
 
 			model.Objects = new Object[enabledObjects.Length];
 
@@ -377,7 +377,7 @@ namespace mqoToEffekseerModelConverter.mqoIO.Realtime
 
 				CalculateTangentAndBinormal(
 					v0.Position,
-					new Vector2D(v0.UV.X, 1.0f-v0.UV.Y),
+					new Vector2D(v0.UV.X, 1.0f - v0.UV.Y),
 					v1.Position,
 					new Vector2D(v1.UV.X, 1.0f - v1.UV.Y),
 					v2.Position,
@@ -409,36 +409,36 @@ namespace mqoToEffekseerModelConverter.mqoIO.Realtime
 			}
 		}
 
-        /// <summary>
-        /// Calculate tangent and binormal
-        /// </summary>
-        /// <param name="p0"></param>
-        /// <param name="uv0"></param>
-        /// <param name="p1"></param>
-        /// <param name="uv1"></param>
-        /// <param name="p2"></param>
-        /// <param name="uv2"></param>
-        /// <param name="tangent"></param>
-        /// <param name="binormal"></param>
-        static void CalculateTangentAndBinormal(
+		/// <summary>
+		/// Calculate tangent and binormal
+		/// </summary>
+		/// <param name="p0"></param>
+		/// <param name="uv0"></param>
+		/// <param name="p1"></param>
+		/// <param name="uv1"></param>
+		/// <param name="p2"></param>
+		/// <param name="uv2"></param>
+		/// <param name="tangent"></param>
+		/// <param name="binormal"></param>
+		static void CalculateTangentAndBinormal(
 			Vector3D p0, Vector2D uv0,
 			Vector3D p1, Vector2D uv1,
 			Vector3D p2, Vector2D uv2,
 			out Vector3D tangent, out Vector3D binormal)
 		{
-			var cp0 = new Vector3D[] { 
+			var cp0 = new Vector3D[] {
 				new Vector3D(p0.X, uv0.X, uv0.Y),
 				new Vector3D(p0.Y, uv0.X, uv0.Y),
 				new Vector3D(p0.Z, uv0.X, uv0.Y),
 				};
 
-			var cp1 = new Vector3D[] { 
+			var cp1 = new Vector3D[] {
 				new Vector3D(p1.X, uv1.X, uv1.Y),
 				new Vector3D(p1.Y, uv1.X, uv1.Y),
 				new Vector3D(p1.Z, uv1.X, uv1.Y),
 				};
 
-			var cp2 = new Vector3D[] { 
+			var cp2 = new Vector3D[] {
 				new Vector3D(p2.X, uv2.X, uv2.Y),
 				new Vector3D(p2.Y, uv2.X, uv2.Y),
 				new Vector3D(p2.Z, uv2.X, uv2.Y),

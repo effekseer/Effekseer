@@ -1,9 +1,9 @@
 
 namespace Effekseer.GUI
 {
-    public class CommonTest
-    {
-        
-    }
+	public class CommonTest
+	{
+
+	}
 
 }

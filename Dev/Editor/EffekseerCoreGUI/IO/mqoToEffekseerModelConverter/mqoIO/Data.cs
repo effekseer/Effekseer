@@ -47,7 +47,7 @@ namespace mqoToEffekseerModelConverter.mqoIO
 	{
 		public string Name { get; set; }
 
-        public bool Visible = true;
+		public bool Visible = true;
 
 		public float Facet = 0.0f;
 

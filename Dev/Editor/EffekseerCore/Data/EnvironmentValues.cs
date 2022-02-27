@@ -230,7 +230,7 @@ namespace Effekseer.Data
 	public class EnvironmentValues
 	{
 		[IO(Export = true, Import = true)]
-		[TreeNode(key ="Environment_Background", id = "Environment_Background")]
+		[TreeNode(key = "Environment_Background", id = "Environment_Background")]
 		public EnvironmentBackgroundValues Background { get; private set; }
 
 		[IO(Export = true, Import = true)]
@@ -238,7 +238,7 @@ namespace Effekseer.Data
 		public EnvironmentGroundValues Ground { get; private set; } = new EnvironmentGroundValues();
 
 		[IO(Export = true, Import = true)]
-		[TreeNode(key= "Environment_Lighting", id = "Environment_Lighting")]
+		[TreeNode(key = "Environment_Lighting", id = "Environment_Lighting")]
 		public EnvironmentLightingValues Lighting { get; private set; }
 
 		[IO(Export = true, Import = true)]

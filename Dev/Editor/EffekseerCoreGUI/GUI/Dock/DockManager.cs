@@ -12,7 +12,7 @@ namespace Effekseer.GUI.Dock
 
 		string id = "";
 
-		bool opened = true ;
+		bool opened = true;
 
 		public DockManager()
 		{
@@ -24,7 +24,7 @@ namespace Effekseer.GUI.Dock
 			if (opened)
 			{
 				//if (Manager.NativeManager.Begin(Label + id, ref opened))
-				if(Manager.NativeManager.BeginFullscreen(Label + id))
+				if (Manager.NativeManager.BeginFullscreen(Label + id))
 				{
 					Controls.Lock();
 
@@ -33,9 +33,9 @@ namespace Effekseer.GUI.Dock
 						c.Update();
 					}
 
-					foreach(var c in Controls.Internal.OfType<DockPanel>())
+					foreach (var c in Controls.Internal.OfType<DockPanel>())
 					{
-						if(c.ShouldBeRemoved)
+						if (c.ShouldBeRemoved)
 						{
 							Controls.Remove(c);
 						}

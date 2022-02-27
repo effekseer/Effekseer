@@ -28,7 +28,7 @@ namespace Effekseer.Utils
 
 		public void Add(T item)
 		{
-			if(lockCount == 0)
+			if (lockCount == 0)
 			{
 				internalList.Add(item);
 			}
@@ -100,9 +100,9 @@ namespace Effekseer.Utils
 		{
 			lockCount--;
 
-			if(lockCount == 0)
+			if (lockCount == 0)
 			{
-				foreach(var c in commands)
+				foreach (var c in commands)
 				{
 					c.Run(internalList);
 				}

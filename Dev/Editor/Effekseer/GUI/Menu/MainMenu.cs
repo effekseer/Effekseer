@@ -14,7 +14,7 @@ namespace Effekseer.GUI.Menu
 		internal List<IControl> Controls = new List<IControl>();
 
 		private bool _isFirstUpdate = true;
-		
+
 		public bool ShouldBeRemoved { get; } = false;
 
 		public MainMenu()
@@ -30,7 +30,7 @@ namespace Effekseer.GUI.Menu
 
 		public void Update()
 		{
-			if(_isFirstUpdate)
+			if (_isFirstUpdate)
 			{
 				ReloadMenu();
 				_windowTitleControl.Reload();

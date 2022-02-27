@@ -142,7 +142,7 @@ namespace Effekseer.Data
 		}
 
 		[IO(Export = true)]
-		[Selected(ID = 0, Value=(int)RingShapeType.Crescent)]
+		[Selected(ID = 0, Value = (int)RingShapeType.Crescent)]
 		public RingShapeCrescentParameter Crescent { get; private set; }
 
 		public RingShapeParameter()
@@ -202,14 +202,14 @@ namespace Effekseer.Data
 			private set;
 		}
 
-        [Selected(ID = 0, Value = 4)]
-        [IO(Export = true)]
-        public RingParamater Ring
-        {
-            get;
-            private set;
-        }
-		
+		[Selected(ID = 0, Value = 4)]
+		[IO(Export = true)]
+		public RingParamater Ring
+		{
+			get;
+			private set;
+		}
+
 		[Selected(ID = 0, Value = 5)]
 		[IO(Export = true)]
 		public ModelParamater Model
@@ -235,9 +235,9 @@ namespace Effekseer.Data
 			TextureUVType = new TextureUVTypeParameter();
 
 			Sprite = new SpriteParamater(basepath);
-            Ribbon = new RibbonParamater(basepath);
+			Ribbon = new RibbonParamater(basepath);
 			Track = new TrackParameter(basepath);
-            Ring = new RingParamater(basepath);
+			Ring = new RingParamater(basepath);
 			Model = new ModelParamater(basepath);
 
 			// EnableFalloff = new Value.Boolean(false);
@@ -340,7 +340,7 @@ namespace Effekseer.Data
 				Color_Fixed_LR = new Value.Color(255, 255, 255, 255);
 				Color_Fixed_UL = new Value.Color(255, 255, 255, 255);
 				Color_Fixed_UR = new Value.Color(255, 255, 255, 255);
-				
+
 
 				Position = new Value.Enum<PositionType>(PositionType.Default);
 				Position_Fixed_LL = new Value.Vector2D(-0.5f, -0.5f);
@@ -450,35 +450,35 @@ namespace Effekseer.Data
 				ColorTexture = new Value.Path(basepath, Resources.GetString("ImageFilter"), true, "");
 			}
 
-            public enum ColorAllType : int
-            {
+			public enum ColorAllType : int
+			{
 				[Key(key = "RS_Ribbon_ColorAllType_Fixed")]
 				Fixed = 0,
 				[Key(key = "RS_Ribbon_ColorAllType_Random")]
 				Random = 1,
 				[Key(key = "RS_Ribbon_ColorAllType_Easing")]
 				Easing = 2,
-            }
+			}
 
-            public enum ColorType : int
-            {
+			public enum ColorType : int
+			{
 				[Key(key = "RS_Ribbon_ColorType_Default")]
 				Default = 0,
 				[Key(key = "RS_Ribbon_ColorType_Fixed")]
 				Fixed = 1,
-            }
+			}
 
-            public enum PositionType : int
-            {
+			public enum PositionType : int
+			{
 				[Key(key = "RS_Ribbon_PositionType_Default")]
 				Default = 0,
 				[Key(key = "RS_Ribbon_PositionType_Fixed")]
 				Fixed = 1,
-            }
+			}
 		}
 
-        public class RingParamater
-        {
+		public class RingParamater
+		{
 			[Key(key = "RS_Ring_RingShape")]
 			[IO(Export = true)]
 			public RingShapeParameter RingShape { get; private set; }
@@ -491,7 +491,7 @@ namespace Effekseer.Data
 
 			[IO(Export = false)]
 			[Shown(Shown = false)]
-            public Value.Enum<AlphaBlendType> AlphaBlend { get; private set; }
+			public Value.Enum<AlphaBlendType> AlphaBlend { get; private set; }
 
 			[Key(key = "RS_Ring_VertexCount")]
 			public Value.Int VertexCount { get; private set; }
@@ -499,10 +499,10 @@ namespace Effekseer.Data
 			/// <summary>
 			/// for compatibility
 			/// </summary>
-            [Selector(ID = 0)]
+			[Selector(ID = 0)]
 			[Shown(Shown = false)]
 			[IO(Export = false)]
-            public Value.Enum<ViewingAngleType> ViewingAngle { get; private set; }
+			public Value.Enum<ViewingAngleType> ViewingAngle { get; private set; }
 
 			/// <summary>
 			/// for compatibility
@@ -528,244 +528,244 @@ namespace Effekseer.Data
 			[Shown(Shown = false)]
 			[IO(Export = false)]
 			public FloatEasingParamater ViewingAngle_Easing { get; private set; }
-			
 
-            [Selector(ID = 1)]
+
+			[Selector(ID = 1)]
 			[Key(key = "RS_Ring_Outer")]
 			public Value.Enum<LocationType> Outer { get; private set; }
 
-            [Selected(ID = 1, Value = 0)]
+			[Selected(ID = 1, Value = 0)]
 			[IO(Export = true)]
-            public FixedLocation Outer_Fixed { get; private set; }
+			public FixedLocation Outer_Fixed { get; private set; }
 
-            [Selected(ID = 1, Value = 1)]
+			[Selected(ID = 1, Value = 1)]
 			[IO(Export = true)]
-            public PVALocation Outer_PVA { get; private set; }
+			public PVALocation Outer_PVA { get; private set; }
 
-            [Selected(ID = 1, Value = 2)]
-            [IO(Export = true)]
-            public Vector2DEasingParamater Outer_Easing { get; private set; }
+			[Selected(ID = 1, Value = 2)]
+			[IO(Export = true)]
+			public Vector2DEasingParamater Outer_Easing { get; private set; }
 
-            [Selector(ID = 2)]
+			[Selector(ID = 2)]
 			[Key(key = "RS_Ring_Inner")]
 			public Value.Enum<LocationType> Inner { get; private set; }
 
-            [Selected(ID = 2, Value = 0)]
+			[Selected(ID = 2, Value = 0)]
 			[IO(Export = true)]
-            public FixedLocation Inner_Fixed { get; private set; }
+			public FixedLocation Inner_Fixed { get; private set; }
 
-            [Selected(ID = 2, Value = 1)]
+			[Selected(ID = 2, Value = 1)]
 			[IO(Export = true)]
-            public PVALocation Inner_PVA { get; private set; }
+			public PVALocation Inner_PVA { get; private set; }
 
-            [Selected(ID = 2, Value = 2)]
-            [IO(Export = true)]
-            public Vector2DEasingParamater Inner_Easing { get; private set; }
+			[Selected(ID = 2, Value = 2)]
+			[IO(Export = true)]
+			public Vector2DEasingParamater Inner_Easing { get; private set; }
 
-            [Selector(ID = 3)]
+			[Selector(ID = 3)]
 			[Key(key = "RS_Ring_CenterRatio")]
 			public Value.Enum<CenterRatioType> CenterRatio { get; private set; }
 
-            [Selected(ID = 3, Value = 0)]
-            public Value.Float CenterRatio_Fixed { get; private set; }
+			[Selected(ID = 3, Value = 0)]
+			public Value.Float CenterRatio_Fixed { get; private set; }
 
-            [Selected(ID = 3, Value = 1)]
-            public Value.FloatWithRandom CenterRatio_Random { get; private set; }
+			[Selected(ID = 3, Value = 1)]
+			public Value.FloatWithRandom CenterRatio_Random { get; private set; }
 
-            [Selected(ID = 3, Value = 2)]
-            [IO(Export = true)]
+			[Selected(ID = 3, Value = 2)]
+			[IO(Export = true)]
 			[TreeNode(id = "CenterRatio_Easing", key = "Easing_Parameter", type = TreeNodeType.Small)]
 			public FloatEasingParamater CenterRatio_Easing { get; private set; }
 
-            [Selector(ID = 4)]
+			[Selector(ID = 4)]
 			[Key(key = "RS_Ring_OuterColor")]
 			public Value.Enum<ColorType> OuterColor { get; private set; }
 
-            [Selected(ID = 4, Value = 0)]
-            public Value.Color OuterColor_Fixed { get; private set; }
+			[Selected(ID = 4, Value = 0)]
+			public Value.Color OuterColor_Fixed { get; private set; }
 
-            [Selected(ID = 4, Value = 1)]
-            public Value.ColorWithRandom OuterColor_Random { get; private set; }
+			[Selected(ID = 4, Value = 1)]
+			public Value.ColorWithRandom OuterColor_Random { get; private set; }
 
-            [Selected(ID = 4, Value = 2)]
-            [IO(Export = true)]
-            public ColorEasingParamater OuterColor_Easing { get; private set; }
+			[Selected(ID = 4, Value = 2)]
+			[IO(Export = true)]
+			public ColorEasingParamater OuterColor_Easing { get; private set; }
 
-            [Selector(ID = 5)]
+			[Selector(ID = 5)]
 			[Key(key = "RS_Ring_CenterColor")]
 			public Value.Enum<ColorType> CenterColor { get; private set; }
 
-            [Selected(ID = 5, Value = 0)]
+			[Selected(ID = 5, Value = 0)]
 			[IO(Export = true)]
-            public Value.Color CenterColor_Fixed { get; private set; }
+			public Value.Color CenterColor_Fixed { get; private set; }
 
-            [Selected(ID = 5, Value = 1)]
+			[Selected(ID = 5, Value = 1)]
 			[IO(Export = true)]
-            public Value.ColorWithRandom CenterColor_Random { get; private set; }
+			public Value.ColorWithRandom CenterColor_Random { get; private set; }
 
-            [Selected(ID = 5, Value = 2)]
-            [IO(Export = true)]
-            public ColorEasingParamater CenterColor_Easing { get; private set; }
+			[Selected(ID = 5, Value = 2)]
+			[IO(Export = true)]
+			public ColorEasingParamater CenterColor_Easing { get; private set; }
 
-            [Selector(ID = 6)]
+			[Selector(ID = 6)]
 			[Key(key = "RS_Ring_InnerColor")]
 			public Value.Enum<ColorType> InnerColor { get; private set; }
 
-            [Selected(ID = 6, Value = 0)]
-            public Value.Color InnerColor_Fixed { get; private set; }
+			[Selected(ID = 6, Value = 0)]
+			public Value.Color InnerColor_Fixed { get; private set; }
 
-            [Selected(ID = 6, Value = 1)]
-            public Value.ColorWithRandom InnerColor_Random { get; private set; }
+			[Selected(ID = 6, Value = 1)]
+			public Value.ColorWithRandom InnerColor_Random { get; private set; }
 
-            [Selected(ID = 6, Value = 2)]
-            [IO(Export = true)]
-            public ColorEasingParamater InnerColor_Easing { get; private set; }
+			[Selected(ID = 6, Value = 2)]
+			[IO(Export = true)]
+			public ColorEasingParamater InnerColor_Easing { get; private set; }
 
 			[IO(Export = false)]
 			[Shown(Shown = false)]
-            public Value.Path ColorTexture
-            {
-                get;
-                private set;
-            }
+			public Value.Path ColorTexture
+			{
+				get;
+				private set;
+			}
 
-            public RingParamater(Path basepath)
-            {
+			public RingParamater(Path basepath)
+			{
 				RingShape = new RingShapeParameter();
-                RenderingOrder = new Value.Enum<Data.RenderingOrder>(Data.RenderingOrder.FirstCreatedInstanceIsFirst);
+				RenderingOrder = new Value.Enum<Data.RenderingOrder>(Data.RenderingOrder.FirstCreatedInstanceIsFirst);
 
-                Billboard = new Value.Enum<BillboardType>(BillboardType.Fixed);
-                AlphaBlend = new Value.Enum<AlphaBlendType>(AlphaBlendType.Blend);
+				Billboard = new Value.Enum<BillboardType>(BillboardType.Fixed);
+				AlphaBlend = new Value.Enum<AlphaBlendType>(AlphaBlendType.Blend);
 
-                VertexCount = new Value.Int(16, 256, 3);
+				VertexCount = new Value.Int(16, 256, 3);
 
 				/// for compatibility
 				ViewingAngle = new Value.Enum<ViewingAngleType>(ViewingAngleType.Fixed);
-                ViewingAngle_Fixed = new Value.Float(360.0f, 360.0f, 0.0f);
-                ViewingAngle_Random = new Value.FloatWithRandom(360.0f, 360.0f, 0.0f);
-                ViewingAngle_Easing = new FloatEasingParamater(360.0f, 360.0f, 0.0f);
-				
+				ViewingAngle_Fixed = new Value.Float(360.0f, 360.0f, 0.0f);
+				ViewingAngle_Random = new Value.FloatWithRandom(360.0f, 360.0f, 0.0f);
+				ViewingAngle_Easing = new FloatEasingParamater(360.0f, 360.0f, 0.0f);
 
-                Outer = new Value.Enum<LocationType>(LocationType.Fixed);
-                Outer_Fixed = new FixedLocation(2.0f, 0.0f);
-                Outer_PVA = new PVALocation(2.0f, 0.0f);
-                Outer_Easing = new Vector2DEasingParamater();
 
-                Inner = new Value.Enum<LocationType>(LocationType.Fixed);
-                Inner_Fixed = new FixedLocation(1.0f, 0.0f);
-                Inner_PVA = new PVALocation(1.0f, 0.0f);
-                Inner_Easing = new Vector2DEasingParamater();
+				Outer = new Value.Enum<LocationType>(LocationType.Fixed);
+				Outer_Fixed = new FixedLocation(2.0f, 0.0f);
+				Outer_PVA = new PVALocation(2.0f, 0.0f);
+				Outer_Easing = new Vector2DEasingParamater();
 
-                CenterRatio = new Value.Enum<CenterRatioType>(CenterRatioType.Fixed);
-                CenterRatio_Fixed = new Value.Float(0.5f, 1.0f, 0.0f);
-                CenterRatio_Random = new Value.FloatWithRandom(0.5f, 1.0f, 0.0f);
-                CenterRatio_Easing = new FloatEasingParamater(0.5f, 1.0f, 0.0f);
+				Inner = new Value.Enum<LocationType>(LocationType.Fixed);
+				Inner_Fixed = new FixedLocation(1.0f, 0.0f);
+				Inner_PVA = new PVALocation(1.0f, 0.0f);
+				Inner_Easing = new Vector2DEasingParamater();
 
-                OuterColor = new Value.Enum<ColorType>(ColorType.Fixed);
-                OuterColor_Fixed = new Value.Color(255, 255, 255, 0);
-                OuterColor_Random = new Value.ColorWithRandom(255, 255, 255, 0);
-                OuterColor_Easing = new ColorEasingParamater();
+				CenterRatio = new Value.Enum<CenterRatioType>(CenterRatioType.Fixed);
+				CenterRatio_Fixed = new Value.Float(0.5f, 1.0f, 0.0f);
+				CenterRatio_Random = new Value.FloatWithRandom(0.5f, 1.0f, 0.0f);
+				CenterRatio_Easing = new FloatEasingParamater(0.5f, 1.0f, 0.0f);
 
-                CenterColor = new Value.Enum<ColorType>(ColorType.Fixed);
-                CenterColor_Fixed = new Value.Color(255, 255, 255, 255);
-                CenterColor_Random = new Value.ColorWithRandom(255, 255, 255, 255);
-                CenterColor_Easing = new ColorEasingParamater();
+				OuterColor = new Value.Enum<ColorType>(ColorType.Fixed);
+				OuterColor_Fixed = new Value.Color(255, 255, 255, 0);
+				OuterColor_Random = new Value.ColorWithRandom(255, 255, 255, 0);
+				OuterColor_Easing = new ColorEasingParamater();
 
-                InnerColor = new Value.Enum<ColorType>(ColorType.Fixed);
-                InnerColor_Fixed = new Value.Color(255, 255, 255, 0);
-                InnerColor_Random = new Value.ColorWithRandom(255, 255, 255, 0);
-                InnerColor_Easing = new ColorEasingParamater();
+				CenterColor = new Value.Enum<ColorType>(ColorType.Fixed);
+				CenterColor_Fixed = new Value.Color(255, 255, 255, 255);
+				CenterColor_Random = new Value.ColorWithRandom(255, 255, 255, 255);
+				CenterColor_Easing = new ColorEasingParamater();
 
-                ColorTexture = new Value.Path(basepath, Resources.GetString("ImageFilter"), true, "");
-            }
+				InnerColor = new Value.Enum<ColorType>(ColorType.Fixed);
+				InnerColor_Fixed = new Value.Color(255, 255, 255, 0);
+				InnerColor_Random = new Value.ColorWithRandom(255, 255, 255, 0);
+				InnerColor_Easing = new ColorEasingParamater();
+
+				ColorTexture = new Value.Path(basepath, Resources.GetString("ImageFilter"), true, "");
+			}
 
 			/// <summary>
 			/// for compatibility
 			/// </summary>
 			public enum ViewingAngleType : int
-            {
-                Fixed = 0,
-                Random = 1,
-                Easing = 2,
-            }
-			
+			{
+				Fixed = 0,
+				Random = 1,
+				Easing = 2,
+			}
 
-            public enum LocationType : int
-            {
+
+			public enum LocationType : int
+			{
 				[Key(key = "RS_Ring_LocationType_Fixed")]
 				Fixed = 0,
 				[Key(key = "RS_Ring_LocationType_PVA")]
 				PVA = 1,
 				[Key(key = "RS_Ring_LocationType_Easing")]
 				Easing = 2,
-            }
+			}
 
-            public class FixedLocation
-            {
+			public class FixedLocation
+			{
 				[Key(key = "FixedLocation_Location")]
 				public Value.Vector2D Location
-                {
-                    get;
-                    private set;
-                }
+				{
+					get;
+					private set;
+				}
 
-                internal FixedLocation(float x = 0.0f, float y = 0.0f)
-                {
-                    Location = new Value.Vector2D(x, y);
-                }
-            }
+				internal FixedLocation(float x = 0.0f, float y = 0.0f)
+				{
+					Location = new Value.Vector2D(x, y);
+				}
+			}
 
-            public enum CenterRatioType : int
-            {
+			public enum CenterRatioType : int
+			{
 				[Key(key = "RS_Ring_CenterRatioType_Fixed")]
 				Fixed = 0,
 				[Key(key = "RS_Ring_CenterRatioType_Random")]
 				Random = 1,
 				[Key(key = "RS_Ring_CenterRatioType_Easing")]
 				Easing = 2,
-            }
+			}
 
-            public class PVALocation
-            {
+			public class PVALocation
+			{
 				[Key(key = "RS_Ring_PVALocation_Location")]
 				public Value.Vector2DWithRandom Location
-                {
-                    get;
-                    private set;
-                }
+				{
+					get;
+					private set;
+				}
 
 				[Key(key = "RS_Ring_PVALocation_Velocity")]
 				public Value.Vector2DWithRandom Velocity
-                {
-                    get;
-                    private set;
-                }
+				{
+					get;
+					private set;
+				}
 
 				[Key(key = "RS_Ring_PVALocation_Acceleration")]
 				public Value.Vector2DWithRandom Acceleration
-                {
-                    get;
-                    private set;
-                }
+				{
+					get;
+					private set;
+				}
 
-                internal PVALocation(float x = 0.0f, float y = 0.0f)
-                {
-                    Location = new Value.Vector2DWithRandom(x, y);
-                    Velocity = new Value.Vector2DWithRandom(0, 0);
-                    Acceleration = new Value.Vector2DWithRandom(0, 0);
-                }
-            }
+				internal PVALocation(float x = 0.0f, float y = 0.0f)
+				{
+					Location = new Value.Vector2DWithRandom(x, y);
+					Velocity = new Value.Vector2DWithRandom(0, 0);
+					Acceleration = new Value.Vector2DWithRandom(0, 0);
+				}
+			}
 
-            public enum ColorType : int
-            {
+			public enum ColorType : int
+			{
 				[Key(key = "RS_Ring_ColorType_Fixed")]
 				Fixed = 0,
 				[Key(key = "RS_Ring_ColorType_Random")]
 				Random = 1,
 				[Key(key = "RS_Ring_ColorType_Easing")]
 				Easing = 2,
-            }
-        }
+			}
+		}
 
 		public class ModelParamater
 		{
@@ -797,7 +797,7 @@ namespace Effekseer.Data
 
 			public ModelParamater(Value.Path basepath)
 			{
-                Model = new Value.PathForModel(basepath, Resources.GetString("ModelFilter"), true, "");
+				Model = new Value.PathForModel(basepath, Resources.GetString("ModelFilter"), true, "");
 
 				Billboard = new Value.Enum<BillboardType>(BillboardType.Fixed);
 
@@ -967,7 +967,7 @@ namespace Effekseer.Data
 			[IO(Export = true)]
 			public ColorFCurveParameter ColorRightMiddle_FCurve { get; private set; }
 
-			
+
 			public TrackParameter(Path basepath)
 			{
 				TrackSizeFor = new Value.Enum<TrackSizeType>(TrackSizeType.Fixed);

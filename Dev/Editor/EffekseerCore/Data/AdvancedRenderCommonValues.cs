@@ -576,12 +576,12 @@ namespace Effekseer.Data
 		public SoftParticleParameters SoftParticleParams { get; private set; }
 
 		public AdvancedRenderCommonValues(Value.Path basepath)
-        {
+		{
 			AlphaTextureParam = new AlphaTextureParameter(basepath);
 			UVDistortionTextureParam = new UVDistortionTextureParameter(basepath);
 			AlphaCutoffParam = new AlphaCutoffParameter();
 			BlendTextureParams = new BlendTextureParameters(basepath);
 			SoftParticleParams = new SoftParticleParameters();
 		}
-    }
+	}
 }

@@ -136,7 +136,7 @@ namespace Effekseer.GUI
 		}
 
 		public static swig.GUIManager NativeManager;
-		
+
 		public static HardwareDevice HardwareDevice { get; private set; }
 
 		public static swig.RenderImage MainViewImage;
@@ -296,7 +296,7 @@ namespace Effekseer.GUI
 			}
 
 			HardwareDevice = new HardwareDevice();
-			if(!HardwareDevice.Initialize(mgr.GetNativeHandle(), state.Width, state.Height, deviceType))
+			if (!HardwareDevice.Initialize(mgr.GetNativeHandle(), state.Width, state.Height, deviceType))
 			{
 				return false;
 			}
@@ -490,7 +490,7 @@ namespace Effekseer.GUI
 
 			Images.Unload();
 
-			if(HardwareDevice != null)
+			if (HardwareDevice != null)
 			{
 				HardwareDevice.Dispose();
 				HardwareDevice = null;
@@ -685,7 +685,7 @@ namespace Effekseer.GUI
 
 			Viewer.UpdateViewer();
 
-			if(HardwareDevice.SoundDevice != null)
+			if (HardwareDevice.SoundDevice != null)
 			{
 				var ray = Viewer.ViewPointController.GetCameraRay();
 				var rayOrigin = ray.Origin;
@@ -754,7 +754,7 @@ namespace Effekseer.GUI
 			NativeManager.RenderGUI(resizedCount == 0);
 
 			HardwareDevice.GraphicsDevice.Present();
-			
+
 			NativeManager.Present();
 
 			isFirstUpdate = false;

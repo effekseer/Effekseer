@@ -40,7 +40,7 @@ namespace Effekseer.Data.Value
 			get;
 			private set;
 		}
-		
+
 		public DynamicEquationReference DynamicEquationMin
 		{
 			get;
@@ -85,7 +85,7 @@ namespace Effekseer.Data.Value
 			DefaultDrawnAs = DrawnAs;
 		}
 
-		public byte[] GetBytes( float mul = 1.0f)
+		public byte[] GetBytes(float mul = 1.0f)
 		{
 			byte[] values = new byte[sizeof(float) * 6];
 			BitConverter.GetBytes(X.Max * mul).CopyTo(values, sizeof(float) * 0);

@@ -41,7 +41,7 @@ namespace Effekseer
 	public delegate void ChangedValueEventHandler(object sender, ChangedValueEventArgs e);
 
 	public enum ChangedValueType
-	{ 
+	{
 		Execute,
 		Unexecute,
 	}
@@ -100,27 +100,27 @@ namespace Effekseer
 		}
 	}
 
-    // アセンブリからリソースファイルをロードする
-    // Resources.GetString(...) に介して取得する場合、
-    // カルチャーによってローカライズ済の文字列が得られます。
-    public static class Resources
-    {
+	// アセンブリからリソースファイルをロードする
+	// Resources.GetString(...) に介して取得する場合、
+	// カルチャーによってローカライズ済の文字列が得られます。
+	public static class Resources
+	{
 		static Dictionary<string, string> keyToStrings = new Dictionary<string, string>();
 
 		static Resources()
-        {
-        }
+		{
+		}
 
 		public static string GetString(string name)
-        {
-			if(MultiLanguageTextProvider.HasKey(name))
+		{
+			if (MultiLanguageTextProvider.HasKey(name))
 			{
 				return MultiLanguageTextProvider.GetText(name);
 			}
-            
-            return string.Empty;
-        }
-    }
+
+			return string.Empty;
+		}
+	}
 
 	/// <summary>
 	/// attribute for parameter's key
@@ -165,9 +165,9 @@ namespace Effekseer
 	Inherited = false)]
 	public class NameAttribute : Attribute
 	{
-        static NameAttribute()
-        {
-        }
+		static NameAttribute()
+		{
+		}
 
 		public NameAttribute()
 		{
@@ -207,9 +207,9 @@ namespace Effekseer
 			{
 				foreach (var attribute in attributes.OfType<NameAttribute>())
 				{
-                    // search from resources at first
-                    var value = Resources.GetString(attribute.value);
-                    if (!String.IsNullOrEmpty(value)) return value;
+					// search from resources at first
+					var value = Resources.GetString(attribute.value);
+					if (!String.IsNullOrEmpty(value)) return value;
 
 					/*
 					if (attribute.language == Core.Language)
@@ -256,7 +256,7 @@ namespace Effekseer
 			get;
 			set;
 		}
-		
+
 		/// <summary>
 		/// アイコン属性を探す。
 		/// </summary>
@@ -293,31 +293,31 @@ namespace Effekseer
 		}
 	}
 
-    public class Tuple35<T1, T2>
-    {
-        public T1 Item1;
-        public T2 Item2;
+	public class Tuple35<T1, T2>
+	{
+		public T1 Item1;
+		public T2 Item2;
 
-        public Tuple35()
-        {
-            Item1 = default(T1);
-            Item2 = default(T2);
-        }
+		public Tuple35()
+		{
+			Item1 = default(T1);
+			Item2 = default(T2);
+		}
 
-        public Tuple35(T1 t1, T2 t2)
-        {
-            Item1 = t1;
-            Item2 = t2;
-        }
-    }
+		public Tuple35(T1 t1, T2 t2)
+		{
+			Item1 = t1;
+			Item2 = t2;
+		}
+	}
 
-    public class Tuple35
-    {
-        public static Tuple35<TV1, TV2> Create<TV1, TV2>(TV1 t1, TV2 t2)
-        {
-            return new Tuple35<TV1, TV2>(t1, t2);
-        }
-    }
+	public class Tuple35
+	{
+		public static Tuple35<TV1, TV2> Create<TV1, TV2>(TV1 t1, TV2 t2)
+		{
+			return new Tuple35<TV1, TV2>(t1, t2);
+		}
+	}
 
 	public class FileLoadPermissionException : Exception
 	{

@@ -1,55 +1,55 @@
 using System;
 namespace Effekseer.GUI.Dock
-{   
+{
 	class BehaviorValues : DockPanel
-    {
+	{
 		Component.CopyAndPaste candp = null;
 		Component.ParameterList paramerterList = null;
 
-        bool isFiestUpdate = true;
+		bool isFiestUpdate = true;
 
 		public BehaviorValues()
-        {
+		{
 			Label = Icons.PanelBehavior + Resources.GetString("Behavior") + "###Behavior";
 
-            paramerterList = new Component.ParameterList();
+			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.EffectBehaviorValues));
 
 			candp = new Component.CopyAndPaste("Behavior", GetTargetObject, Read);
 
-            Core.OnAfterLoad += OnAfterLoad;
-            Core.OnAfterNew += OnAfterLoad;
-            Core.OnAfterSelectNode += OnAfterSelectNode;
+			Core.OnAfterLoad += OnAfterLoad;
+			Core.OnAfterNew += OnAfterLoad;
+			Core.OnAfterSelectNode += OnAfterSelectNode;
 
-            Read();
+			Read();
 
 			TabToolTip = Resources.GetString("Behavior");
 		}
 
-        public void FixValues()
-        {
-            paramerterList.FixValues();
-        }
+		public void FixValues()
+		{
+			paramerterList.FixValues();
+		}
 
-        public override void OnDisposed()
-        {
-            FixValues();
+		public override void OnDisposed()
+		{
+			FixValues();
 
-            Core.OnAfterLoad -= OnAfterLoad;
-            Core.OnAfterNew -= OnAfterLoad;
-            Core.OnAfterSelectNode -= OnAfterSelectNode;
-        }
+			Core.OnAfterLoad -= OnAfterLoad;
+			Core.OnAfterNew -= OnAfterLoad;
+			Core.OnAfterSelectNode -= OnAfterSelectNode;
+		}
 
-        protected override void UpdateInternal()
-        {
-            if (isFiestUpdate)
-            {
-            }
+		protected override void UpdateInternal()
+		{
+			if (isFiestUpdate)
+			{
+			}
 
 			candp.Update();
 
-            paramerterList.Update();
-        }
+			paramerterList.Update();
+		}
 
 		object GetTargetObject()
 		{
@@ -57,19 +57,19 @@ namespace Effekseer.GUI.Dock
 		}
 
 		void Read()
-        {
+		{
 			paramerterList.SetValue(Core.EffectBehavior);
 		}
 
-        void OnAfterLoad(object sender, EventArgs e)
-        {
-            Read();
-        }
+		void OnAfterLoad(object sender, EventArgs e)
+		{
+			Read();
+		}
 
-        void OnAfterSelectNode(object sender, EventArgs e)
-        {
-            Read();
-        }
-    }
+		void OnAfterSelectNode(object sender, EventArgs e)
+		{
+			Read();
+		}
+	}
 
 }

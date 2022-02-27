@@ -52,7 +52,7 @@ namespace Effekseer.GUI
 		[UniqueName(value = "Internal.New")]
 		public static bool New()
 		{
-			if(Core.IsChanged)
+			if (Core.IsChanged)
 			{
 				var dialog = new Dialog.SaveOnDisposing(
 					() =>
@@ -76,10 +76,10 @@ namespace Effekseer.GUI
 			var filter = Resources.GetString("ProjectFilterNew");
 			var result = swig.FileDialog.OpenDialog(filter, System.IO.Directory.GetCurrentDirectory());
 
-            if(!string.IsNullOrEmpty(result))
-            {
-                Open(result);
-            }
+			if (!string.IsNullOrEmpty(result))
+			{
+				Open(result);
+			}
 
 			return true;
 		}
@@ -313,7 +313,7 @@ namespace Effekseer.GUI
 
 				return true;
 			}
-			
+
 			return false;
 		}
 
@@ -325,14 +325,14 @@ namespace Effekseer.GUI
 			{
 				var data = Manager.NativeManager.GetClipboardText();
 
-				if(Core.IsValidXml(data))
+				if (Core.IsValidXml(data))
 				{
 					Core.Paste(Core.SelectedNode, data);
 				}
-				
+
 				return true;
 			}
-			
+
 			return false;
 		}
 

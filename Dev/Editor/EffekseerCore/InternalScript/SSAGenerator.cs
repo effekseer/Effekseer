@@ -28,7 +28,7 @@ namespace Effekseer.InternalScript
 
 			List<Type> args = new List<Type>();
 
-			for(int i = 0; i < valueCount; i++)
+			for (int i = 0; i < valueCount; i++)
 			{
 				args.Add(typeof(SSAGenerator.Value));
 			}
@@ -48,7 +48,7 @@ namespace Effekseer.InternalScript
 			ret.Index = 0;
 			ret.Generator = node;
 
-			for(int i = 0; i < Arguments.Length; i++)
+			for (int i = 0; i < Arguments.Length; i++)
 			{
 				node.Inputs.Add((SSAGenerator.Value)inputs[i]);
 			}
@@ -127,9 +127,9 @@ namespace Effekseer.InternalScript
 					continue;
 
 				bool exit = false;
-				for(int i = 0; i < func.Arguments.Length; i++)
-				{	
-					if(inputs[i].GetType() != func.Arguments[i])
+				for (int i = 0; i < func.Arguments.Length; i++)
+				{
+					if (inputs[i].GetType() != func.Arguments[i])
 					{
 						exit = true;
 						break;
@@ -173,7 +173,7 @@ namespace Effekseer.InternalScript
 			public OperatorType Type;
 		}
 
-		public class NodePredefined :Node
+		public class NodePredefined : Node
 		{
 			public string Value = string.Empty;
 
@@ -690,7 +690,7 @@ namespace Effekseer.InternalScript
 				}
 			};
 
-			foreach(var value in values)
+			foreach (var value in values)
 			{
 				collectValues(value);
 			}
@@ -703,9 +703,9 @@ namespace Effekseer.InternalScript
 				var usedForInput = enabledNodes.SelectMany(_ => _.Inputs).ToArray();
 				var restValues = enabledValues.Where(_ => !usedForInput.Contains(_)).ToArray();
 
-				foreach(var value in restValues)
+				foreach (var value in restValues)
 				{
-					if(value.Generator != null)
+					if (value.Generator != null)
 					{
 						nodes.Add(value.Generator);
 					}

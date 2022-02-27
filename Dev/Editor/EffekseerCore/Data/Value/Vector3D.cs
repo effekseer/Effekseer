@@ -102,16 +102,16 @@ namespace Effekseer.Data.Value
 			var o = obj as Vector3D;
 			if (o == null)
 				return false;
-		
+
 			if (X.Value != o.X.Value)
 				return false;
-		
+
 			if (Y.Value != o.Y.Value)
 				return false;
-		
+
 			if (Z.Value != o.Z.Value)
 				return false;
-		
+
 			return true;
 		}
 

@@ -47,21 +47,21 @@ namespace Effekseer.Data.Value
 			Y = new FloatWithRandom(y, y_max, y_min, drawnas, y_step);
 			DrawnAs = drawnas;
 			DefaultDrawnAs = DrawnAs;
-        }
+		}
 
-        public byte[] GetBytes(float mul = 1.0f)
-        {
-            byte[] values = new byte[sizeof(float) * 4];
-            BitConverter.GetBytes(X.Max * mul).CopyTo(values, sizeof(float) * 0);
-            BitConverter.GetBytes(Y.Max * mul).CopyTo(values, sizeof(float) * 1);
-            BitConverter.GetBytes(X.Min * mul).CopyTo(values, sizeof(float) * 2);
-            BitConverter.GetBytes(Y.Min * mul).CopyTo(values, sizeof(float) * 3);
-            return values;
-        }
+		public byte[] GetBytes(float mul = 1.0f)
+		{
+			byte[] values = new byte[sizeof(float) * 4];
+			BitConverter.GetBytes(X.Max * mul).CopyTo(values, sizeof(float) * 0);
+			BitConverter.GetBytes(Y.Max * mul).CopyTo(values, sizeof(float) * 1);
+			BitConverter.GetBytes(X.Min * mul).CopyTo(values, sizeof(float) * 2);
+			BitConverter.GetBytes(Y.Min * mul).CopyTo(values, sizeof(float) * 3);
+			return values;
+		}
 
-        public static explicit operator byte[](Vector2DWithRandom value)
-        {
-            return value.GetBytes();
-        }
+		public static explicit operator byte[](Vector2DWithRandom value)
+		{
+			return value.GetBytes();
+		}
 	}
 }

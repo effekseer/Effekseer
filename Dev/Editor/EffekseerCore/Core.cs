@@ -31,7 +31,7 @@ namespace Effekseer
 			foreach (var directory in directories)
 			{
 				var name = directory.Split('/').Last();
-				if(name == "en")
+				if (name == "en")
 				{
 					continue;
 				}
@@ -103,7 +103,7 @@ namespace Effekseer
 		public static void LoadCSV(string path)
 		{
 			LoadCSV(path, "en");
-			if(LanguageTable.Languages.Count > 0)
+			if (LanguageTable.Languages.Count > 0)
 			{
 				LoadCSV(path, LanguageTable.Languages[LanguageTable.SelectedIndex]);
 			}
@@ -115,7 +115,7 @@ namespace Effekseer
 			{
 				var records = Utils.CsvReaader.Read(streamReader.ReadToEnd());
 
-				foreach(var record in records)
+				foreach (var record in records)
 				{
 					if (record.Count < 2) continue;
 					if (record[0] == string.Empty) continue;
@@ -133,7 +133,7 @@ namespace Effekseer
 		public static string GetText(string key)
 		{
 			string ret = string.Empty;
-			if(texts.TryGetValue(key, out ret))
+			if (texts.TryGetValue(key, out ret))
 			{
 				return ret;
 			}
@@ -242,7 +242,8 @@ namespace Effekseer
 		/// </summary>
 		public static Language Language
 		{
-			get {
+			get
+			{
 				if (LanguageTable.Languages[LanguageTable.SelectedIndex] == "ja") return Language.Japanese;
 				return Language.English;
 			}
@@ -370,7 +371,7 @@ namespace Effekseer
 		{
 			get { return option; }
 		}
-		
+
 		public static Data.RecordingValues Recording
 		{
 			get { return recording; }
@@ -504,21 +505,21 @@ namespace Effekseer
 #endif
 			// change a separator
 			System.Globalization.CultureInfo customCulture = (System.Globalization.CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
-            customCulture.NumberFormat.NumberDecimalSeparator = ".";
-            System.Threading.Thread.CurrentThread.CurrentCulture = customCulture;
-        }
+			customCulture.NumberFormat.NumberDecimalSeparator = ".";
+			System.Threading.Thread.CurrentThread.CurrentCulture = customCulture;
+		}
 
 		public static void Initialize(string language = null)
 		{
 			var entryDirectory = GetEntryDirectory() + "/";
 
 			Command.CommandManager.Changed += new EventHandler(CommandManager_Changed);
-			
+
 			option = LoadOption(language);
 
 			New();
 
-			if(!DoExecuteWithMLBundle())
+			if (!DoExecuteWithMLBundle())
 			{
 				InitializeScripts(entryDirectory);
 			}
@@ -647,7 +648,7 @@ namespace Effekseer
 #if SCRIPT_ENABLED
             Script.Compiler.Dispose();
 #endif
-            SaveOption();
+			SaveOption();
 		}
 
 		/// <summary>
@@ -779,7 +780,7 @@ namespace Effekseer
 			culling = new Data.EffectCullingValues();
 			globalValues = new Data.GlobalValues();
 
-			if(recording.RecordingStorageTarget.Value == Data.RecordingStorageTargetTyoe.Local)
+			if (recording.RecordingStorageTarget.Value == Data.RecordingStorageTargetTyoe.Local)
 			{
 				recording = new Data.RecordingValues();
 			}
@@ -841,7 +842,7 @@ namespace Effekseer
 
 			var dec = doc.CreateXmlDeclaration("1.0", "utf-8", null);
 			doc.InsertBefore(dec, project_root);
-	
+
 			IsChanged = false;
 
 			if (OnAfterSave != null)
@@ -876,7 +877,7 @@ namespace Effekseer
 
 				if (toolVersion > ParseVersion(currentVersion))
 				{
-					if(MultiLanguageTextProvider.HasKey("Error_TooNewFile"))
+					if (MultiLanguageTextProvider.HasKey("Error_TooNewFile"))
 					{
 						throw new Exception(MultiLanguageTextProvider.GetText("Error_TooNewFile"));
 					}
@@ -1215,7 +1216,7 @@ namespace Effekseer
 		/// <returns></returns>
 		static public Data.OptionValues LoadOption(string defaultLanguage)
 		{
-            Data.OptionValues res = new Data.OptionValues();
+			Data.OptionValues res = new Data.OptionValues();
 			environments = new Data.EnvironmentValues();
 
 			var path = System.IO.Path.Combine(GetEntryDirectory(), OptionFilePath);
@@ -1233,24 +1234,25 @@ namespace Effekseer
 
 			doc.Load(path);
 
-            if (doc.ChildNodes.Count != 2) return res;
-            if (doc.ChildNodes[1].Name != "EffekseerProject") return res;
+			if (doc.ChildNodes.Count != 2) return res;
+			if (doc.ChildNodes[1].Name != "EffekseerProject") return res;
 
 			var optionElement = doc["EffekseerProject"]["Option"];
 			if (optionElement != null)
 			{
-                var o = res as object;
+				var o = res as object;
 				Data.IO.LoadObjectFromElement(optionElement as System.Xml.XmlElement, ref o, false);
 			}
 
 			var environment = doc["EffekseerProject"]["Environment"];
-			if (environment != null) {
+			if (environment != null)
+			{
 				var o = environments as object;
 				Data.IO.LoadObjectFromElement(environment as System.Xml.XmlElement, ref o, false);
 			}
 
 			var recordingElement = doc["EffekseerProject"]["Recording"];
-			if(recordingElement != null)
+			if (recordingElement != null)
 			{
 				var o = recording as object;
 				Data.IO.LoadObjectFromElement(recordingElement as System.Xml.XmlElement, ref o, false);
@@ -1258,7 +1260,7 @@ namespace Effekseer
 
 			IsChanged = false;
 
-            return res;
+			return res;
 		}
 
 		static public void SaveOption()
@@ -1271,8 +1273,8 @@ namespace Effekseer
 			var environmentElement = Data.IO.SaveObjectToElement(doc, "Environment", Environment, false);
 
 			System.Xml.XmlElement project_root = doc.CreateElement("EffekseerProject");
-			if(optionElement != null) project_root.AppendChild(optionElement);
-			if(environmentElement != null) project_root.AppendChild(environmentElement);
+			if (optionElement != null) project_root.AppendChild(optionElement);
+			if (environmentElement != null) project_root.AppendChild(environmentElement);
 
 			// recording option (this option is stored in local or global)
 			if (recording.RecordingStorageTarget.Value == Data.RecordingStorageTargetTyoe.Global)
@@ -1314,7 +1316,7 @@ namespace Effekseer
 			var betaId = calcMinorVersion("β", 10);
 			var rcId = calcMinorVersion("RC", 20);
 
-			if(alphaId.HasValue)
+			if (alphaId.HasValue)
 			{
 				minorVersion = alphaId.Value;
 			}
@@ -1407,7 +1409,7 @@ namespace Effekseer
 		public static bool MoveNode(Data.Node movedNode, Data.NodeBase targetParent, int targetIndex)
 		{
 			// Check
-			if(movedNode.Parent == targetParent && targetIndex != int.MaxValue)
+			if (movedNode.Parent == targetParent && targetIndex != int.MaxValue)
 			{
 				var index = targetParent.Children.Internal.Select((i, n) => Tuple35.Create(i, n)).FirstOrDefault(_ => _.Item1 == movedNode).Item2;
 
@@ -1418,21 +1420,21 @@ namespace Effekseer
 				}
 			}
 
-			if(movedNode == targetParent)
+			if (movedNode == targetParent)
 			{
 				return false;
 			}
 
 			Func<Data.Node, bool> isFound = null;
-			
+
 			isFound = (Data.Node n) =>
 			{
-				if(n.Children.Internal.Any(_=>_ == targetParent))
+				if (n.Children.Internal.Any(_ => _ == targetParent))
 				{
 					return true;
 				}
 
-				foreach(var n_ in n.Children.Internal)
+				foreach (var n_ in n.Children.Internal)
 				{
 					if (isFound(n_)) return true;
 				}
@@ -1440,30 +1442,30 @@ namespace Effekseer
 				return false;
 			};
 
-			if(isFound(movedNode))
+			if (isFound(movedNode))
 			{
 				return false;
 			}
 
 			// 
-			if(targetParent == movedNode.Parent && targetIndex != int.MaxValue)
+			if (targetParent == movedNode.Parent && targetIndex != int.MaxValue)
 			{
 				var index = targetParent.Children.Internal.Select((i, n) => Tuple35.Create(i, n)).FirstOrDefault(_ => _.Item1 == movedNode).Item2;
-				if(index < targetIndex)
+				if (index < targetIndex)
 				{
 					targetIndex -= 1;
 				}
 			}
 
 			Command.CommandManager.StartCollection();
-		
+
 			// because a node is unselected when removed
 			var isNodeSelected = SelectedNode == movedNode;
 
 			movedNode.Parent.RemoveChild(movedNode);
 			targetParent.AddChild(movedNode, targetIndex);
 
-			if(isNodeSelected)
+			if (isNodeSelected)
 			{
 				SelectedNode = movedNode;
 			}
@@ -1488,7 +1490,7 @@ namespace Effekseer
 					if (node.LocationValues.Type.Value == Data.LocationValues.ParamaterType.LocationFCurve)
 					{
 						var name = MultiLanguageTextProvider.GetText("Fcurve_Elm_Location");
-						list.Add(Tuple35.Create(name,(object)node.LocationValues.LocationFCurve.FCurve));
+						list.Add(Tuple35.Create(name, (object)node.LocationValues.LocationFCurve.FCurve));
 					}
 
 					if (node.RotationValues.Type.Value == Data.RotationValues.ParamaterType.RotationFCurve)
@@ -1599,11 +1601,11 @@ namespace Effekseer
 					}
 
 					if (node.AdvancedRendererCommonValuesValues.AlphaTextureParam.Enabled == true &&
-					    node.AdvancedRendererCommonValuesValues.AlphaTextureParam.UV.Value == Data.RendererCommonValues.UVType.FCurve)
+						node.AdvancedRendererCommonValuesValues.AlphaTextureParam.UV.Value == Data.RendererCommonValues.UVType.FCurve)
 					{
-						var typename = MultiLanguageTextProvider.GetText("Fcurve_Elm_Alpha");						
+						var typename = MultiLanguageTextProvider.GetText("Fcurve_Elm_Alpha");
 						var startName = typename + MultiLanguageTextProvider.GetText("Fcurve_Elm_UV_Start");
-						var endName	= typename + MultiLanguageTextProvider.GetText("Fcurve_Elm_UV_Size");
+						var endName = typename + MultiLanguageTextProvider.GetText("Fcurve_Elm_UV_Size");
 						list.Add(Tuple35.Create(startName, (object)node.AdvancedRendererCommonValuesValues.AlphaTextureParam.UVFCurve.Start));
 						list.Add(Tuple35.Create(endName, (object)node.AdvancedRendererCommonValuesValues.AlphaTextureParam.UVFCurve.Size));
 					}
@@ -1704,14 +1706,14 @@ namespace Effekseer
 			{
 				var n = node as Data.Node;
 
-				if(n != null)
+				if (n != null)
 				{
 					if (n.RendererCommonValues.Material.Value == Data.RendererCommonValues.MaterialType.File && n.RendererCommonValues.MaterialFile.Path.GetAbsolutePath().Replace('\\', '/') == path)
 					{
 						Utl.MaterialInformation info = ResourceCache.LoadMaterialInformation(path);
-						
+
 						// is it correct?
-						if(info == null)
+						if (info == null)
 						{
 							info = new MaterialInformation();
 						}

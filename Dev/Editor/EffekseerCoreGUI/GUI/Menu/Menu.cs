@@ -17,7 +17,7 @@ namespace Effekseer.GUI.Menu
 		public bool ShouldBeRemoved { get; private set; } = false;
 
 		public Utils.DelayedList<IControl> Controls = new Utils.DelayedList<IControl>();
-	
+
 		public Menu(MultiLanguageString label = null, string icon = null)
 		{
 			if (label != null)

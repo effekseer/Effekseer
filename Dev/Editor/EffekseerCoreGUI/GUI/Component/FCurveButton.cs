@@ -11,7 +11,7 @@ namespace Effekseer.GUI.Component
 		string id = "";
 
 		object boundObject = null;
-		
+
 		public bool EnableUndo { get; set; } = true;
 
 		public FCurveButton()

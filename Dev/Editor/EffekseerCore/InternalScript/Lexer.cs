@@ -69,21 +69,21 @@ namespace Effekseer.InternalScript
 
 			// check special case
 			// ..
-			if(code.Contains(".."))
+			if (code.Contains(".."))
 			{
 				throw new InvalidTokenException(".", code.IndexOf(".."));
 			}
 
 			int index = 0;
-		
+
 			while (index < code.Length)
 			{
 				var c = code[index];
 				var type = GetElemenetType(c);
 
-				if(type == ElementType.Connect)
+				if (type == ElementType.Connect)
 				{
-					if(index + 1 < code.Length && GetElemenetType(code[index]) == ElementType.NewLine)
+					if (index + 1 < code.Length && GetElemenetType(code[index]) == ElementType.NewLine)
 					{
 						index += 2;
 					}
@@ -92,7 +92,7 @@ namespace Effekseer.InternalScript
 						index += 1;
 					}
 				}
-				else if(type == ElementType.NewLine)
+				else if (type == ElementType.NewLine)
 				{
 					var token = new Token();
 					token.Type = TokenType.NewLine;
@@ -115,7 +115,7 @@ namespace Effekseer.InternalScript
 					var token = ParseDigit(code, ref index);
 					tokens.Add(token);
 				}
-				else if(type == ElementType.LeftParentheses)
+				else if (type == ElementType.LeftParentheses)
 				{
 					var token = new Token();
 					token.Type = TokenType.LeftParentheses;
@@ -157,7 +157,7 @@ namespace Effekseer.InternalScript
 				}
 				else
 				{
-					if(type == ElementType.Space)
+					if (type == ElementType.Space)
 					{
 						index++;
 					}
@@ -206,7 +206,7 @@ namespace Effekseer.InternalScript
 			token.Line = index;
 
 			string str = "";
-			
+
 			while (index < code.Length)
 			{
 				var c = code[index];
@@ -274,7 +274,7 @@ namespace Effekseer.InternalScript
 
 				if (type == ElementType.Dot)
 				{
-					if(hasDot)
+					if (hasDot)
 					{
 						throw new InvalidTokenException(".", index);
 					}
@@ -284,7 +284,7 @@ namespace Effekseer.InternalScript
 				str += c;
 				index++;
 			}
-			
+
 			try
 			{
 				token.Value = float.Parse(str);

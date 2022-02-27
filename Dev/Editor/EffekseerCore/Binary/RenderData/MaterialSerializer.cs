@@ -140,7 +140,7 @@ namespace Effekseer.Binary.RenderData
 					break;
 			}
 		}
-		
+
 		static float[] GetUniformsVertexes(Tuple35<MaterialFileParameter.ValueStatus, MaterialInformation.UniformInformation> tuple35)
 		{
 			float[] floats1 = new float[4];

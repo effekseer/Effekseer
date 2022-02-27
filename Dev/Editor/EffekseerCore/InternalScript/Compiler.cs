@@ -68,8 +68,8 @@ namespace Effekseer.InternalScript
 		{
 			CompileResult compileResult = new CompileResult();
 			runningPhase = RunningPhaseType.Global;
-			
-			if(string.IsNullOrEmpty(code))
+
+			if (string.IsNullOrEmpty(code))
 			{
 				return compileResult;
 			}
@@ -87,9 +87,9 @@ namespace Effekseer.InternalScript
 
 				var ssaGenerator = new SSAGenerator();
 				ssaGenerator.Eval(sentense);
-				var outputAttribute =ssaGenerator.RootTable.Tables["@O"].Value;
+				var outputAttribute = ssaGenerator.RootTable.Tables["@O"].Value;
 				var outputValues = new SSAGenerator.Value[4];
-				if(outputAttribute is SSAGenerator.Value)
+				if (outputAttribute is SSAGenerator.Value)
 				{
 					outputValues[0] = outputAttribute as SSAGenerator.Value;
 					outputValues[1] = outputAttribute as SSAGenerator.Value;
@@ -109,9 +109,9 @@ namespace Effekseer.InternalScript
 				var registerOffset = 0;
 				var validNodeCount = 0;
 
-				foreach(var node in nodes)
+				foreach (var node in nodes)
 				{
-					if(node is SSAGenerator.NodePredefined)
+					if (node is SSAGenerator.NodePredefined)
 					{
 						var node_ = node as SSAGenerator.NodePredefined;
 						foreach (var v in node.Outputs)
@@ -121,7 +121,7 @@ namespace Effekseer.InternalScript
 					}
 					else
 					{
-						foreach(var v in node.Outputs)
+						foreach (var v in node.Outputs)
 						{
 							v.RegisterIndex = registerOffset;
 							registerOffset += 1;
@@ -135,7 +135,7 @@ namespace Effekseer.InternalScript
 
 				foreach (var node in nodes)
 				{
-					if(node is SSAGenerator.NodeConstantNumber)
+					if (node is SSAGenerator.NodeConstantNumber)
 					{
 						var node_ = node as SSAGenerator.NodeConstantNumber;
 
@@ -164,7 +164,7 @@ namespace Effekseer.InternalScript
 					{
 						var node_ = node as SSAGenerator.NodeOperator;
 
-						if(node_.Type == OperatorType.Rand)
+						if (node_.Type == OperatorType.Rand)
 						{
 							runningPhase = RunningPhaseType.Local;
 						}
@@ -210,7 +210,7 @@ namespace Effekseer.InternalScript
 
 		string GetOutputName(Expression expr)
 		{
-			if(expr is LabelExpression)
+			if (expr is LabelExpression)
 			{
 				var e = expr as LabelExpression;
 				return e.Value;

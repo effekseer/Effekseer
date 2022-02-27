@@ -16,9 +16,9 @@ namespace Effekseer.Binary
 
 			var type = value.Type.Value;
 
-			if(version < ExporterVersion.Ver16Alpha1)
+			if (version < ExporterVersion.Ver16Alpha1)
 			{
-				if(type == Data.ScaleValues.ParamaterType.SingleFCurve)
+				if (type == Data.ScaleValues.ParamaterType.SingleFCurve)
 				{
 					type = Data.ScaleValues.ParamaterType.Fixed;
 				}
@@ -30,7 +30,7 @@ namespace Effekseer.Binary
 			if (type == Data.ScaleValues.ParamaterType.Fixed)
 			{
 				var refBuf = value.Fixed.Scale.DynamicEquation.Index.GetBytes();
-				var mainBuf = Scaling_Fixed_Values.Create(value.Fixed,magnification).GetBytes();
+				var mainBuf = Scaling_Fixed_Values.Create(value.Fixed, magnification).GetBytes();
 				data.Add((mainBuf.Count() + refBuf.Count()).GetBytes());
 				data.Add(refBuf);
 				data.Add(mainBuf);

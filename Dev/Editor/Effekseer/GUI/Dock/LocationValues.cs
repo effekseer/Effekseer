@@ -10,7 +10,7 @@ namespace Effekseer.GUI.Dock
 	{
 		Component.CopyAndPaste candp = null;
 		Component.ParameterList paramerterList = null;
-		
+
 		bool isFiestUpdate = true;
 
 		public LocationValues()

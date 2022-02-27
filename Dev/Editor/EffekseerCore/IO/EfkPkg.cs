@@ -491,7 +491,7 @@ namespace Effekseer.IO
 					bool result = ReplaceMaterialPaths(material, (path) =>
 					{
 						var resfile = AllFiles.FirstOrDefault(f => f.HashName == path);
-						if(resfile == null)
+						if (resfile == null)
 						{
 							return path;
 						}

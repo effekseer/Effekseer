@@ -42,7 +42,7 @@ namespace Effekseer.GUI.Dock
 
 		protected override void UpdateInternal()
 		{
-			if(isFiestUpdate)
+			if (isFiestUpdate)
 			{
 				paramerterList.SetValue(Core.Environment);
 				isFiestUpdate = false;

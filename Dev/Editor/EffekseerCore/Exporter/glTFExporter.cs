@@ -20,12 +20,12 @@ namespace Effekseer.Exporter
 		public float Scale = 1.0f;
 		public float ExternalScale = 1.0f;
 
-        /// <summary>
-        /// if bindingNode is int, an effect is binding with node index.
-        /// if bindingNode is str, an effect is binding with node name.
-        /// if bindingNode is null, an effect is binding with default node name.
-        /// </summary>
-        public object bindingNode = null;
+		/// <summary>
+		/// if bindingNode is int, an effect is binding with node index.
+		/// if bindingNode is str, an effect is binding with node name.
+		/// if bindingNode is null, an effect is binding with default node name.
+		/// </summary>
+		public object bindingNode = null;
 	}
 
 	public class glTFExporter
@@ -36,12 +36,12 @@ namespace Effekseer.Exporter
 
 		public bool Export(string path, glTFExporterOption option = null)
 		{
-			if(option == null)
+			if (option == null)
 			{
 				option = new glTFExporterOption();
 			}
 
-			if(option.Format == glTFExporterFormat.glb)
+			if (option.Format == glTFExporterFormat.glb)
 			{
 				option.IsContainedTextureAsBinary = true;
 			}
@@ -65,7 +65,7 @@ namespace Effekseer.Exporter
 			// buffer
 			Buffer buffer = new Buffer();
 			buffer.byteLength = internalBuffer.Count;
-            buffer.uri = System.IO.Path.GetFileName(System.IO.Path.ChangeExtension(path, "bin"));
+			buffer.uri = System.IO.Path.GetFileName(System.IO.Path.ChangeExtension(path, "bin"));
 			buffers.Add(buffer);
 			gltf.Add("buffers", buffers);
 
@@ -79,7 +79,7 @@ namespace Effekseer.Exporter
 
 			string json = JsonConvert.SerializeObject(gltf, Formatting.Indented);
 
-			if(option.Format == glTFExporterFormat.glTF)
+			if (option.Format == glTFExporterFormat.glTF)
 			{
 				System.IO.File.WriteAllText(System.IO.Path.ChangeExtension(path, "gltf"), json);
 				System.IO.File.WriteAllBytes(System.IO.Path.ChangeExtension(path, "bin"), internalBuffer.ToArray());
@@ -97,10 +97,10 @@ namespace Effekseer.Exporter
 				exported.Add(jsonBuffer);
 
 				exported.Add(BitConverter.GetBytes(internalBuffer.Count));
-				exported.Add(Encoding.ASCII.GetBytes("BIN").Concat(new byte [] {0}).ToArray());
+				exported.Add(Encoding.ASCII.GetBytes("BIN").Concat(new byte[] { 0 }).ToArray());
 				exported.Add(internalBuffer.ToArray());
 
-				System.IO.File.WriteAllBytes(System.IO.Path.ChangeExtension(path, "glb"), exported.SelectMany(_=>_).ToArray());
+				System.IO.File.WriteAllBytes(System.IO.Path.ChangeExtension(path, "glb"), exported.SelectMany(_ => _).ToArray());
 			}
 
 			return true;
@@ -122,7 +122,7 @@ namespace Effekseer.Exporter
 			bufferViews.Add(name, bufferView);
 		}
 
-        EffekseerEffect CreateEffect(float scale, float externalScale, object bindingNode, bool isContainedAsBinary)
+		EffekseerEffect CreateEffect(float scale, float externalScale, object bindingNode, bool isContainedAsBinary)
 		{
 			var effect = new EffekseerEffect();
 
@@ -136,20 +136,20 @@ namespace Effekseer.Exporter
 
 			var bodyName = name + "_body";
 
-            if (bindingNode == null)
-            {
-                effect.Add("nodeName", name);
-            }
-            else if (bindingNode is string)
-            {
-                effect.Add("nodeName", (string)bindingNode);
-            }
-            else if (bindingNode is int)
-            {
-                effect.Add("nodeIndex", (int)bindingNode);
-            }
+			if (bindingNode == null)
+			{
+				effect.Add("nodeName", name);
+			}
+			else if (bindingNode is string)
+			{
+				effect.Add("nodeName", (string)bindingNode);
+			}
+			else if (bindingNode is int)
+			{
+				effect.Add("nodeIndex", (int)bindingNode);
+			}
 
-            effect.Add("effectName", name);
+			effect.Add("effectName", name);
 
 			var binaryExporter = new Binary.Exporter();
 			var binary = binaryExporter.Export(Core.Root, scale, Binary.ExporterVersion.Latest);
@@ -159,7 +159,7 @@ namespace Effekseer.Exporter
 			effect.Add("body", CreateeBodyAsBufferView(bodyName));
 
 			HashSet<string> textures = new HashSet<string>();
-			
+
 			foreach (var texture in binaryExporter.UsedTextures.ToList().OrderBy(_ => _))
 			{
 				textures.Add(texture);
@@ -179,13 +179,13 @@ namespace Effekseer.Exporter
 				distortionTextures.Add(texture);
 			}
 
-            List<object> images = new List<object>();
+			List<object> images = new List<object>();
 			List<object> normalImages = new List<object>();
 			List<object> distortionImages = new List<object>();
 
 			if (isContainedAsBinary)
 			{
-				foreach (var texture in textures.ToList().OrderBy(_=>_))
+				foreach (var texture in textures.ToList().OrderBy(_ => _))
 				{
 					Uri u1 = new Uri(System.IO.Path.GetDirectoryName(Core.Root.GetFullPath()) + System.IO.Path.DirectorySeparatorChar.ToString());
 					Uri u2 = new Uri(u1, texture);
@@ -248,7 +248,7 @@ namespace Effekseer.Exporter
 				}
 			}
 
-            effect.Add("images", images);
+			effect.Add("images", images);
 			effect.Add("normalImages", normalImages);
 			effect.Add("distortionImages", distortionImages);
 
@@ -346,8 +346,8 @@ namespace Effekseer.Exporter
 			public List<EffekseerEffect> effects = new List<EffekseerEffect>();
 		}
 
-        class EffekseerEffect : Dictionary<string, object>
-        { }
+		class EffekseerEffect : Dictionary<string, object>
+		{ }
 
 		Dictionary<string, object> CreateeBodyAsBufferView(string bufferview)
 		{

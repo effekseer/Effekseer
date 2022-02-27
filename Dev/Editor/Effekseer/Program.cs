@@ -22,7 +22,7 @@ namespace Effekseer
 			{
 				var dummy = Effekseer.Utils.Zlib.Decompress(new byte[] { 1, 2, 3, 4 });
 			}
-			catch(Exception e)
+			catch (Exception e)
 			{
 				App.ExportError(e);
 				return 1;
@@ -138,7 +138,7 @@ namespace Effekseer
 						magnification = Core.Option.Magnification;
 					}
 
-					if(format == "gltf")
+					if (format == "gltf")
 					{
 						var option = new Effekseer.Exporter.glTFExporterOption();
 						option.Scale = magnification;
@@ -170,7 +170,7 @@ namespace Effekseer
 			{
 				if (materialCache)
 				{
-					if(!IO.MaterialCacheGenerator.GenerateMaterialCaches())
+					if (!IO.MaterialCacheGenerator.GenerateMaterialCaches())
 					{
 						Core.Dispose();
 						return 1;

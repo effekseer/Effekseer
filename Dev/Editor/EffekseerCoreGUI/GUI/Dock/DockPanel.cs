@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Dock
 {
-    public class DockPanel : GroupControl, IRemovableControl, IDroppableControl
-    {
+	public class DockPanel : GroupControl, IRemovableControl, IDroppableControl
+	{
 		public string Label { get; set; } = string.Empty;
 
 		public string TabLabel
@@ -30,7 +30,9 @@ namespace Effekseer.GUI.Dock
 
 		bool opened = true;
 
-		internal swig.Vec2 IconSize { get
+		internal swig.Vec2 IconSize
+		{
+			get
 			{
 				float scale = Manager.DpiScale;
 				return new swig.Vec2(18 * scale, 18 * scale);
@@ -55,7 +57,7 @@ namespace Effekseer.GUI.Dock
 
 		public override void Update()
 		{
-			if(opened)
+			if (opened)
 			{
 				if (Manager.IsDockMode())
 				{
@@ -100,7 +102,7 @@ namespace Effekseer.GUI.Dock
 
 						Controls.Unlock();
 					}
-					
+
 					Manager.NativeManager.EndDock();
 				}
 				else
@@ -152,7 +154,7 @@ namespace Effekseer.GUI.Dock
 		}
 
 		protected virtual void UpdateInternal()
-        {
-        }
-    }
+		{
+		}
+	}
 }

@@ -49,7 +49,7 @@ namespace Effekseer.Binary
 				data.Add(value.SteeringBehaviorParam.SteeringSpeed.Min.GetBytes());
 			}
 
-			if(version >= ExporterVersion.Ver17Alpha1)
+			if (version >= ExporterVersion.Ver17Alpha1)
 			{
 				// Trigger's parameters
 				int triggerFlags =

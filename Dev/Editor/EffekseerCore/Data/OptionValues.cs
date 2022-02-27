@@ -41,7 +41,7 @@ namespace Effekseer.Data
 
 	public enum FontType
 	{
-		[Key(key ="FontType_Normal")]
+		[Key(key = "FontType_Normal")]
 		Normal,
 
 		[Key(key = "FontType_Bold")]
@@ -247,7 +247,7 @@ namespace Effekseer.Data
 			RenderingMode = new Value.Enum<RenderMode>(RenderMode.Normal);
 			ViewerMode = new Value.Enum<ViewMode>(ViewMode._3D);
 			GridColor = new Value.Color(255, 255, 255, 255);
-			
+
 			IsGridShown = new Value.Boolean(true);
 			IsXYGridShown = new Value.Boolean(false);
 			IsXZGridShown = new Value.Boolean(true);

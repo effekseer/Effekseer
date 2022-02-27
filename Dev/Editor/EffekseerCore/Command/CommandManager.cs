@@ -26,7 +26,7 @@ namespace Effekseer.Command
 		/// 次の命令を挿入するインデックス
 		/// </summary>
 		static int cmds_ind = 0;
-		
+
 		/// <summary>
 		/// 命令をグループ化する際のコンテナ
 		/// </summary>
@@ -100,7 +100,7 @@ namespace Effekseer.Command
 				cmd_combined.Clear();
 
 				cmds.Add(cmdCollection);
-				cmds_ind++;	
+				cmds_ind++;
 			}
 			else
 			{
@@ -208,7 +208,7 @@ namespace Effekseer.Command
 					return true;
 				}
 			}
-			
+
 			return false;
 		}
 
@@ -222,12 +222,12 @@ namespace Effekseer.Command
 			{
 				return false;
 			}
-			else if( cmds_ind < cmds.Count)
+			else if (cmds_ind < cmds.Count)
 			{
 				if (isCombinedMode) throw new InvalidOperationException("CombinedMode is true.");
 
 				cmds[cmds_ind].Execute();
-				
+
 				cmds_ind++;
 
 				if (Changed != null)
@@ -305,8 +305,8 @@ namespace Effekseer.Command
 			List<ICommand> cmds = new List<ICommand>();
 
 			public CommandCollection()
-			{ 
-			
+			{
+
 			}
 
 			public void Add(ICommand cmd)
