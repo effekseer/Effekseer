@@ -52,7 +52,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        name: [linux,windows_x64,windows_x86,mac]
+        name: [linux,windows_x64,windows_x86,windows_x64_17x,mac]
         include:
           - name: linux
             os: ubuntu-20.04
