@@ -114,7 +114,7 @@ jobs:
           fi
           if [ "${{ matrix.name }}" = "windows_x64_17x" ];
           then
-              export 17x=1 
+              export Ver17x=1 
           fi
           python3 build.py || python build.py
                 
