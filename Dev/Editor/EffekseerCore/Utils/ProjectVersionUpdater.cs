@@ -705,6 +705,7 @@ namespace Effekseer.Utils
 		}
 	}
 
+#if __EFFEKSEER_BUILD_VERSION17__
 	class ProjectVersionUpdator16xTo17Alpha1 : ProjectVersionUpdator
 	{
 		public override bool Update(NodeRoot rootNode)
@@ -732,4 +733,5 @@ namespace Effekseer.Utils
 			return true;
 		}
 	}
+#endif
 }
