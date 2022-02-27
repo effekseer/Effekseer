@@ -177,7 +177,7 @@ if env['IGNORE_BUILD'] == '0':
                 suffix += ' -D FROM_CI=ON'
 
             if is_17x:
-                suffix += ' -D BUILD_VERSION17=ON'
+                suffix += ' -D BUILD_VERSION17=ON -D BUILD_EDITOR=ON'
 
             if is_x86:
                 call('cmake .. -A Win32 -DBUILD_VIEWER=ON' + suffix)
@@ -202,7 +202,7 @@ if env['IGNORE_BUILD'] == '0':
         call('cp -r Dev/release/osx.10.11-x64/publish/* Dev/release/')
         call('rm -rf -r Dev/release/osx.10.11-x64')
 
-    elif isWin():
+    elif isWin() and not is_17x:
         if is_x86:
             call('"' + msbuild_path + '"' +
                  ' Dev/Editor/EffekseerCore/EffekseerCore.csproj /t:build /p:Configuration=Release /p:Platform=x86')
