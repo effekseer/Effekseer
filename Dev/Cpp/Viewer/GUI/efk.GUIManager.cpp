@@ -30,6 +30,8 @@
 
 #include <Common/StringHelper.h>
 
+#include "GradientHDRState.h"
+
 namespace ImGui
 {
 static ImVec2 operator+(const ImVec2& lhs, const ImVec2& rhs)
@@ -2575,6 +2577,11 @@ void GUIManager::TimelineNode(const char16_t* title, int frameStart, int frameEn
 void GUIManager::EndNodeFrameTimeline(int* frameMin, int* frameMax, int* currentFrame, int* selectedEntry, int* firstFrame)
 {
 	NodeFrameTimeline::EndNodeFrameTimeline(frameMin, frameMax, currentFrame, selectedEntry, firstFrame);
+}
+
+bool GUIManager::GradientHDR(int32_t gradientID, Effekseer::Tool::GradientHDRState& state)
+{
+	return ImGradientHDR(gradientID, state.GetState(), state.GetTemporaryState());
 }
 
 } // namespace efk

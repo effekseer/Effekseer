@@ -1594,6 +1594,12 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_EndNodeFrameTimeline(swigCPtr, ref frameMin, ref frameMax, ref currentFrame, ref selectedEntry, ref firstFrame);
   }
 
+  public bool GradientHDR(int gradientID, GradientHDRState state) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_GradientHDR(swigCPtr, gradientID, GradientHDRState.getCPtr(state));
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+    return ret;
+  }
+
 }
 
 }
