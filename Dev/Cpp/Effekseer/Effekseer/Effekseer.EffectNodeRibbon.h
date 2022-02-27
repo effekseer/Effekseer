@@ -92,6 +92,8 @@ public:
 
 	int32_t SplineDivision = 1;
 
+	TrailTimeType TimeType = TrailTimeType::FirstParticle;
+
 	NodeRendererTextureUVTypeParameter TextureUVType;
 
 	EffectNodeRibbon(Effect* effect, unsigned char*& pos)

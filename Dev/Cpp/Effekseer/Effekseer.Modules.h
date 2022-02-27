@@ -204,6 +204,8 @@ public:
 
 		bool EnableViewOffset = false;
 
+		TrailSmoothingType SmoothingType = TrailSmoothingType::Off;
+
 		RefPtr<RenderingUserData> UserData;
 	};
 
@@ -506,10 +508,6 @@ namespace Effekseer
 
 struct NodeRendererTextureUVTypeParameter;
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-
 class TrackRenderer : public ReferenceObject
 {
 public:
@@ -532,6 +530,8 @@ public:
 		MaterialRenderData* MaterialRenderDataPtr = nullptr;
 
 		bool EnableViewOffset = false;
+
+		TrailSmoothingType SmoothingType = TrailSmoothingType::Off;
 
 		RefPtr<RenderingUserData> UserData;
 	};

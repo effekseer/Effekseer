@@ -114,7 +114,7 @@ namespace Effekseer.Binary
 						AddSpriteData(value, data);
 						break;
 					case Data.RendererValues.ParamaterType.Ribbon:
-						AddRibbonData(value, data);
+						AddRibbonData(value, data, version);
 						break;
 					case Data.RendererValues.ParamaterType.Ring:
 						AddRingData(value, data, version);
@@ -123,7 +123,7 @@ namespace Effekseer.Binary
 						AddModelData(value, model_and_index, pmodel_and_index, version, data);
 						break;
 					case Data.RendererValues.ParamaterType.Track:
-						AddTrackData(value, data);
+						AddTrackData(value, data, version);
 						break;
 				}
 			}
@@ -221,12 +221,19 @@ namespace Effekseer.Binary
 			}
 		}
 
-		private static void AddRibbonData(Data.RendererValues value, List<byte[]> data)
+		private static void AddRibbonData(Data.RendererValues value, List<byte[]> data, ExporterVersion version)
 		{
 			var ribbonParameter = value.Ribbon;
 
 			// texture uv mode from 1.5
 			data.Add(TextureUVTypeParameter.GetBytes(value.TextureUVType));
+
+#if __EFFEKSEER_BUILD_VERSION17__
+			if (version >= ExporterVersion.Ver17Alpha1)
+			{
+				data.Add(BitConverter.GetBytes((int)value.TrailTimeSource.Value));
+			}
+#endif
 
 			data.Add((ribbonParameter.ViewpointDependent ? 1 : 0).GetBytes());
 
@@ -471,7 +478,7 @@ namespace Effekseer.Binary
 			}
 		}
 
-		private static void AddTrackData(Data.RendererValues value, List<byte[]> data)
+		private static void AddTrackData(Data.RendererValues value, List<byte[]> data, ExporterVersion version)
 		{
 			// texture uv mode from 1.5
 			data.Add(TextureUVTypeParameter.GetBytes(value.TextureUVType));
@@ -487,6 +494,14 @@ namespace Effekseer.Binary
 			data.Add(BitConverter.GetBytes(param.TrackSizeBack_Fixed.Value));
 
 			data.Add(BitConverter.GetBytes(param.SplineDivision.Value));
+
+#if __EFFEKSEER_BUILD_VERSION17__
+			if(version >= ExporterVersion.Ver17Alpha1)
+			{
+				data.Add(BitConverter.GetBytes((int)value.TrailSmoothing.Value));
+				data.Add(BitConverter.GetBytes((int)value.TrailTimeSource.Value));
+			}
+#endif
 
 			OutputStandardColor(data, param.ColorLeft, param.ColorLeft_Fixed, param.ColorLeft_Random, param.ColorLeft_Easing,
 				param.ColorLeft_FCurve);

@@ -751,6 +751,15 @@ RectF Instance::GetUV(const int32_t index) const
 		m_LivedTime);
 }
 
+RectF Instance::GetUV(const int32_t index, float livingTime, float livedTime) const
+{
+	return UVFunctions::GetUV(
+		uvAnimationData_[index],
+		m_pEffectNode->RendererCommon.UVs[index],
+		livingTime,
+		livedTime);
+}
+
 std::array<float, 4> Instance::GetCustomData(int32_t index) const
 {
 	assert(0 <= index && index < 2);

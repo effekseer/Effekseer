@@ -602,7 +602,7 @@ namespace Effekseer.Utils
 		public override bool Update(System.Xml.XmlDocument document)
 		{
 			var proceduralElement = document["EffekseerProject"]["ProcedualModel"];
-			if(proceduralElement != null)
+			if (proceduralElement != null)
 			{
 				document["EffekseerProject"].RemoveChild(proceduralElement);
 				var newNode = document.CreateElement("ProceduralModel");
@@ -611,21 +611,21 @@ namespace Effekseer.Utils
 
 				List<XmlNode> children = new List<XmlNode>();
 
-				for(int i = 0; i < proceduralElement.FirstChild.ChildNodes.Count; i++)
+				for (int i = 0; i < proceduralElement.FirstChild.ChildNodes.Count; i++)
 				{
 					children.Add(proceduralElement.FirstChild.ChildNodes[i]);
 				}
 
-				foreach(var child in children)
+				foreach (var child in children)
 				{
-					Action<XmlNode,XmlNode, string> moveElement = (XmlNode dst, XmlNode src, string name) => 
-					{
-						var node = src[name];
-						if(node != null)
-						{
-							dst.AppendChild(node);
-						}
-					};
+					Action<XmlNode, XmlNode, string> moveElement = (XmlNode dst, XmlNode src, string name) =>
+					 {
+						 var node = src[name];
+						 if (node != null)
+						 {
+							 dst.AppendChild(node);
+						 }
+					 };
 
 					Action<XmlNode, XmlNode, string, string> moveAndRenameElement = (XmlNode dst, XmlNode src, string newName, string name) =>
 					{
@@ -635,7 +635,7 @@ namespace Effekseer.Utils
 							src.RemoveChild(node);
 
 							var nn = document.CreateElement(newName);
-							while(node.ChildNodes.Count > 0)
+							while (node.ChildNodes.Count > 0)
 							{
 								nn.AppendChild(node.FirstChild);
 							}
@@ -648,7 +648,7 @@ namespace Effekseer.Utils
 					var shape = document.CreateElement("Shape");
 					var shapeNoise = document.CreateElement("ShapeNoise");
 					var vertexColor = document.CreateElement("VertexColor");
-					
+
 					moveElement(mesh, child, "AngleBeginEnd");
 					moveElement(mesh, child, "Divisions");
 
@@ -704,4 +704,34 @@ namespace Effekseer.Utils
 			return true;
 		}
 	}
+
+#if __EFFEKSEER_BUILD_VERSION17__
+	class ProjectVersionUpdator16xTo17Alpha1 : ProjectVersionUpdator
+	{
+		public override bool Update(NodeRoot rootNode)
+		{
+			Action<Data.NodeBase> convert = null;
+			convert = (n) =>
+			{
+				var n_ = n as Data.Node;
+
+				if (n_ != null && (n_.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Ribbon || n_.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Track))
+				{
+					var rp = n_.DrawingValues;
+					rp.TrailSmoothing.SetValueDirectly(TrailSmoothingType.Off);
+					rp.TrailTimeSource.SetValueDirectly(TrailTimeSourceType.FirstParticle);
+				}
+
+				for (int i = 0; i < n.Children.Count; i++)
+				{
+					convert(n.Children[i]);
+				}
+			};
+
+			convert(rootNode);
+
+			return true;
+		}
+	}
+#endif
 }

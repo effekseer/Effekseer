@@ -38,7 +38,6 @@ protected:
 	int32_t m_ringBufferOffset;
 	uint8_t* m_ringBufferData;
 
-	efkRibbonNodeParam innstancesNodeParam;
 	Effekseer::CustomAlignedVector<efkRibbonInstanceParam> instances;
 	Effekseer::SplineGenerator spline_left;
 	Effekseer::SplineGenerator spline_right;
@@ -153,7 +152,7 @@ protected:
 	}
 
 	template <typename VERTEX, int TARGET>
-	void AssignUVs(efkRibbonNodeParam& parameter, StrideView<VERTEX> verteies)
+	void AssignUVs(const efkRibbonNodeParam& parameter, StrideView<VERTEX> verteies)
 	{
 		float uvx = 0.0f;
 		float uvw = 1.0f;
@@ -357,14 +356,12 @@ protected:
 	}
 
 	template <typename VERTEX, bool FLIP_RGB>
-	void RenderSplines(const ::Effekseer::SIMD::Mat44f& camera)
+	void RenderSplines(const efkRibbonNodeParam& parameter, const ::Effekseer::SIMD::Mat44f& camera)
 	{
 		if (instances.size() == 0)
 		{
 			return;
 		}
-
-		auto& parameter = innstancesNodeParam;
 
 		// Calculate spline
 		if (parameter.SplineDivision > 1)
@@ -383,7 +380,7 @@ protected:
 				{
 					::Effekseer::SIMD::Mat43f mat = param.SRTMatrix43;
 
-					if (parameter.EnableViewOffset == true)
+					if (parameter.EnableViewOffset)
 					{
 						ApplyViewOffset(mat, camera, param.ViewOffsetDistance);
 					}
@@ -498,7 +495,7 @@ protected:
 				{
 					::Effekseer::SIMD::Mat43f mat = param.SRTMatrix43;
 
-					if (parameter.EnableViewOffset == true)
+					if (parameter.EnableViewOffset)
 					{
 						ApplyViewOffset(mat, camera, param.ViewOffsetDistance);
 					}
@@ -818,14 +815,13 @@ protected:
 		{
 			instances.reserve(param.InstanceCount);
 			instances.resize(0);
-			innstancesNodeParam = parameter;
 		}
 
 		instances.push_back(param);
 
 		if (isLast)
 		{
-			RenderSplines<VERTEX, FLIP_RGB>(camera);
+			RenderSplines<VERTEX, FLIP_RGB>(parameter, camera);
 		}
 	}
 
