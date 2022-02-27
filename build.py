@@ -131,6 +131,7 @@ env["MONO_SDK_PATH"] = os.getenv(
 env["PACKAGEING_FOR_MAC"] = os.getenv('PACKAGEING_FOR_MAC', '0')
 env["PACKAGEING_FOR_LINUX"] = os.getenv('PACKAGEING_FOR_LINUX', '0')
 env['X86'] = os.getenv('X86', '0')
+env['17x'] = os.getenv('17x', '0')
 env["IGNORE_BUILD"] = os.getenv('IGNORE_BUILD', '0')
 
 
