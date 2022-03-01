@@ -51,17 +51,31 @@ class GradientHDRState
 public:
 	int GetColorCount() const;
 
+	void SetColorCount(int value);
+
 	int GetAlphaCount() const;
+
+	void SetAlphaCount(int value);
 
 	float GetColorMarkerPosition(int index) const;
 
+	void SetColorMarkerPosition(int index, float value);
+
 	ColorF GetColorMarkerColor(int index) const;
+
+	void SetColorMarkerColor(int index, ColorF value);
 
 	float GetColorMarkerIntensity(int index) const;
 
+	void SetColorMarkerIntensity(int index, float value);
+
 	float GetAlphaMarkerPosition(int index) const;
 
+	void SetAlphaMarkerPosition(int index, float value);
+
 	float GetAlphaMarkerAlpha(int index) const;
+
+	void SetAlphaMarkerAlpha(int index, float value);
 
 #if !defined(SWIG)
 	ImGradientHDRState& GetState()

@@ -2319,23 +2319,44 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GradientHDRState_GetColorCount___")]
   public static extern int GradientHDRState_GetColorCount(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GradientHDRState_SetColorCount___")]
+  public static extern void GradientHDRState_SetColorCount(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GradientHDRState_GetAlphaCount___")]
   public static extern int GradientHDRState_GetAlphaCount(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GradientHDRState_SetAlphaCount___")]
+  public static extern void GradientHDRState_SetAlphaCount(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GradientHDRState_GetColorMarkerPosition___")]
   public static extern float GradientHDRState_GetColorMarkerPosition(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GradientHDRState_SetColorMarkerPosition___")]
+  public static extern void GradientHDRState_SetColorMarkerPosition(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, float jarg3);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GradientHDRState_GetColorMarkerColor___")]
   public static extern global::System.IntPtr GradientHDRState_GetColorMarkerColor(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GradientHDRState_SetColorMarkerColor___")]
+  public static extern void GradientHDRState_SetColorMarkerColor(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, global::System.Runtime.InteropServices.HandleRef jarg3);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GradientHDRState_GetColorMarkerIntensity___")]
   public static extern float GradientHDRState_GetColorMarkerIntensity(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GradientHDRState_SetColorMarkerIntensity___")]
+  public static extern void GradientHDRState_SetColorMarkerIntensity(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, float jarg3);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GradientHDRState_GetAlphaMarkerPosition___")]
   public static extern float GradientHDRState_GetAlphaMarkerPosition(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GradientHDRState_SetAlphaMarkerPosition___")]
+  public static extern void GradientHDRState_SetAlphaMarkerPosition(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, float jarg3);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GradientHDRState_GetAlphaMarkerAlpha___")]
   public static extern float GradientHDRState_GetAlphaMarkerAlpha(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GradientHDRState_SetAlphaMarkerAlpha___")]
+  public static extern void GradientHDRState_SetAlphaMarkerAlpha(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, float jarg3);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_GradientHDRState___")]
   public static extern global::System.IntPtr new_GradientHDRState();

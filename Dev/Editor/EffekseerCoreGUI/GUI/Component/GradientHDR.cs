@@ -38,22 +38,54 @@ namespace Effekseer.GUI.Component
 		public void SetBinding(object o)
 		{
 			Binding = o as Data.Value.GradientHDR;
+			internalState = new swig.GradientHDRState();
+			if (Binding != null)
+			{
+				CopyState(internalState, Binding.GetValue());
+			}
 		}
 
 		public void FixValue()
 		{
+			StoreValue();
 		}
 
 		public override void Update()
 		{
 			if (Manager.NativeManager.GradientHDR(id, internalState))
 			{
-
+				StoreValue();
 			}
 		}
 
-		void CopyState(swig.GradientHDRState dst, Data.Value.GradientHDR.State src)
+		void StoreValue()
 		{
+			var state = new Data.Value.GradientHDR.State();
+			CopyState(state, internalState);
+			Binding.SetValue(state);
+		}
+
+		unsafe void CopyState(swig.GradientHDRState dst, Data.Value.GradientHDR.State src)
+		{
+			dst.SetColorCount(src.ColorMarkers.Length);
+			for (int i = 0; i < src.ColorMarkers.Length; i++)
+			{
+				var color = new swig.ColorF();
+				color.R = src.ColorMarkers[i].Color[0];
+				color.G = src.ColorMarkers[i].Color[1];
+				color.B = src.ColorMarkers[i].Color[2];
+
+				dst.SetColorMarkerPosition(i, src.ColorMarkers[i].Position);
+				dst.SetColorMarkerColor(i, color);
+				dst.SetColorMarkerIntensity(i, src.ColorMarkers[i].Intensity);
+			}
+
+			dst.SetAlphaCount(src.AlphaMarkers.Length);
+			for (int i = 0; i < src.AlphaMarkers.Length; i++)
+			{
+				dst.SetAlphaMarkerPosition(i, src.AlphaMarkers[i].Position);
+				dst.SetAlphaMarkerAlpha(i, src.AlphaMarkers[i].Alpha);
+			}
 		}
 
 		unsafe void CopyState(Data.Value.GradientHDR.State dst, swig.GradientHDRState src)

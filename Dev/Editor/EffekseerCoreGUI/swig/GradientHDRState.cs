@@ -49,9 +49,17 @@ public class GradientHDRState : global::System.IDisposable {
     return ret;
   }
 
+  public void SetColorCount(int value) {
+    EffekseerNativePINVOKE.GradientHDRState_SetColorCount(swigCPtr, value);
+  }
+
   public int GetAlphaCount() {
     int ret = EffekseerNativePINVOKE.GradientHDRState_GetAlphaCount(swigCPtr);
     return ret;
+  }
+
+  public void SetAlphaCount(int value) {
+    EffekseerNativePINVOKE.GradientHDRState_SetAlphaCount(swigCPtr, value);
   }
 
   public float GetColorMarkerPosition(int index) {
@@ -59,9 +67,18 @@ public class GradientHDRState : global::System.IDisposable {
     return ret;
   }
 
+  public void SetColorMarkerPosition(int index, float value) {
+    EffekseerNativePINVOKE.GradientHDRState_SetColorMarkerPosition(swigCPtr, index, value);
+  }
+
   public ColorF GetColorMarkerColor(int index) {
     ColorF ret = new ColorF(EffekseerNativePINVOKE.GradientHDRState_GetColorMarkerColor(swigCPtr, index), true);
     return ret;
+  }
+
+  public void SetColorMarkerColor(int index, ColorF value) {
+    EffekseerNativePINVOKE.GradientHDRState_SetColorMarkerColor(swigCPtr, index, ColorF.getCPtr(value));
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
   }
 
   public float GetColorMarkerIntensity(int index) {
@@ -69,14 +86,26 @@ public class GradientHDRState : global::System.IDisposable {
     return ret;
   }
 
+  public void SetColorMarkerIntensity(int index, float value) {
+    EffekseerNativePINVOKE.GradientHDRState_SetColorMarkerIntensity(swigCPtr, index, value);
+  }
+
   public float GetAlphaMarkerPosition(int index) {
     float ret = EffekseerNativePINVOKE.GradientHDRState_GetAlphaMarkerPosition(swigCPtr, index);
     return ret;
   }
 
+  public void SetAlphaMarkerPosition(int index, float value) {
+    EffekseerNativePINVOKE.GradientHDRState_SetAlphaMarkerPosition(swigCPtr, index, value);
+  }
+
   public float GetAlphaMarkerAlpha(int index) {
     float ret = EffekseerNativePINVOKE.GradientHDRState_GetAlphaMarkerAlpha(swigCPtr, index);
     return ret;
+  }
+
+  public void SetAlphaMarkerAlpha(int index, float value) {
+    EffekseerNativePINVOKE.GradientHDRState_SetAlphaMarkerAlpha(swigCPtr, index, value);
   }
 
   public GradientHDRState() : this(EffekseerNativePINVOKE.new_GradientHDRState(), true) {

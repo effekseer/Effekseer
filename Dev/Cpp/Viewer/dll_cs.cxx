@@ -10521,6 +10521,16 @@ SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_GradientHDRState_GetColorCount_
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GradientHDRState_SetColorCount___(void * jarg1, int jarg2) {
+  Effekseer::Tool::GradientHDRState *arg1 = (Effekseer::Tool::GradientHDRState *) 0 ;
+  int arg2 ;
+  
+  arg1 = (Effekseer::Tool::GradientHDRState *)jarg1; 
+  arg2 = (int)jarg2; 
+  (arg1)->SetColorCount(arg2);
+}
+
+
 SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_GradientHDRState_GetAlphaCount___(void * jarg1) {
   int jresult ;
   Effekseer::Tool::GradientHDRState *arg1 = (Effekseer::Tool::GradientHDRState *) 0 ;
@@ -10530,6 +10540,16 @@ SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_GradientHDRState_GetAlphaCount_
   result = (int)((Effekseer::Tool::GradientHDRState const *)arg1)->GetAlphaCount();
   jresult = result; 
   return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GradientHDRState_SetAlphaCount___(void * jarg1, int jarg2) {
+  Effekseer::Tool::GradientHDRState *arg1 = (Effekseer::Tool::GradientHDRState *) 0 ;
+  int arg2 ;
+  
+  arg1 = (Effekseer::Tool::GradientHDRState *)jarg1; 
+  arg2 = (int)jarg2; 
+  (arg1)->SetAlphaCount(arg2);
 }
 
 
@@ -10547,6 +10567,18 @@ SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_GradientHDRState_GetColorMark
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GradientHDRState_SetColorMarkerPosition___(void * jarg1, int jarg2, float jarg3) {
+  Effekseer::Tool::GradientHDRState *arg1 = (Effekseer::Tool::GradientHDRState *) 0 ;
+  int arg2 ;
+  float arg3 ;
+  
+  arg1 = (Effekseer::Tool::GradientHDRState *)jarg1; 
+  arg2 = (int)jarg2; 
+  arg3 = (float)jarg3; 
+  (arg1)->SetColorMarkerPosition(arg2,arg3);
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_GradientHDRState_GetColorMarkerColor___(void * jarg1, int jarg2) {
   void * jresult ;
   Effekseer::Tool::GradientHDRState *arg1 = (Effekseer::Tool::GradientHDRState *) 0 ;
@@ -10558,6 +10590,24 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_GradientHDRState_GetColorMar
   result = ((Effekseer::Tool::GradientHDRState const *)arg1)->GetColorMarkerColor(arg2);
   jresult = new Effekseer::Tool::ColorF((const Effekseer::Tool::ColorF &)result); 
   return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GradientHDRState_SetColorMarkerColor___(void * jarg1, int jarg2, void * jarg3) {
+  Effekseer::Tool::GradientHDRState *arg1 = (Effekseer::Tool::GradientHDRState *) 0 ;
+  int arg2 ;
+  Effekseer::Tool::ColorF arg3 ;
+  Effekseer::Tool::ColorF *argp3 ;
+  
+  arg1 = (Effekseer::Tool::GradientHDRState *)jarg1; 
+  arg2 = (int)jarg2; 
+  argp3 = (Effekseer::Tool::ColorF *)jarg3; 
+  if (!argp3) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Attempt to dereference null Effekseer::Tool::ColorF", 0);
+    return ;
+  }
+  arg3 = *argp3; 
+  (arg1)->SetColorMarkerColor(arg2,arg3);
 }
 
 
@@ -10575,6 +10625,18 @@ SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_GradientHDRState_GetColorMark
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GradientHDRState_SetColorMarkerIntensity___(void * jarg1, int jarg2, float jarg3) {
+  Effekseer::Tool::GradientHDRState *arg1 = (Effekseer::Tool::GradientHDRState *) 0 ;
+  int arg2 ;
+  float arg3 ;
+  
+  arg1 = (Effekseer::Tool::GradientHDRState *)jarg1; 
+  arg2 = (int)jarg2; 
+  arg3 = (float)jarg3; 
+  (arg1)->SetColorMarkerIntensity(arg2,arg3);
+}
+
+
 SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_GradientHDRState_GetAlphaMarkerPosition___(void * jarg1, int jarg2) {
   float jresult ;
   Effekseer::Tool::GradientHDRState *arg1 = (Effekseer::Tool::GradientHDRState *) 0 ;
@@ -10589,6 +10651,18 @@ SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_GradientHDRState_GetAlphaMark
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GradientHDRState_SetAlphaMarkerPosition___(void * jarg1, int jarg2, float jarg3) {
+  Effekseer::Tool::GradientHDRState *arg1 = (Effekseer::Tool::GradientHDRState *) 0 ;
+  int arg2 ;
+  float arg3 ;
+  
+  arg1 = (Effekseer::Tool::GradientHDRState *)jarg1; 
+  arg2 = (int)jarg2; 
+  arg3 = (float)jarg3; 
+  (arg1)->SetAlphaMarkerPosition(arg2,arg3);
+}
+
+
 SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_GradientHDRState_GetAlphaMarkerAlpha___(void * jarg1, int jarg2) {
   float jresult ;
   Effekseer::Tool::GradientHDRState *arg1 = (Effekseer::Tool::GradientHDRState *) 0 ;
@@ -10600,6 +10674,18 @@ SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_GradientHDRState_GetAlphaMark
   result = (float)((Effekseer::Tool::GradientHDRState const *)arg1)->GetAlphaMarkerAlpha(arg2);
   jresult = result; 
   return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GradientHDRState_SetAlphaMarkerAlpha___(void * jarg1, int jarg2, float jarg3) {
+  Effekseer::Tool::GradientHDRState *arg1 = (Effekseer::Tool::GradientHDRState *) 0 ;
+  int arg2 ;
+  float arg3 ;
+  
+  arg1 = (Effekseer::Tool::GradientHDRState *)jarg1; 
+  arg2 = (int)jarg2; 
+  arg3 = (float)jarg3; 
+  (arg1)->SetAlphaMarkerAlpha(arg2,arg3);
 }
 
 
