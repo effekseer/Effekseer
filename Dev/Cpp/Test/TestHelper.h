@@ -8,6 +8,9 @@
 #include <stdlib.h>
 #include <string>
 #include <vector>
+#include <numeric>
+#include <algorithm>
+#include <chrono>
 
 std::string GetDirectoryPath(const char* path);
 
@@ -49,3 +52,40 @@ struct TestRegister
 		printf("%s(%d): FAILED: " #condition "\n", __FILE__, __LINE__); \
 		abort();                                                        \
 	}
+
+struct Performance
+{
+	uint32_t min, max, average, median;
+
+	void Print(const char* label) {
+		printf("%s: Min=%u, Max=%u, Ave=%u, Med:%u\n", label, min, max, average, median);
+	}
+};
+
+template <class Func>
+inline Performance TestPerformance(size_t iterationCount, Func&& func)
+{
+	using namespace std::chrono;
+
+	std::vector<int64_t> counts;
+
+	for (size_t i = 0; i < iterationCount; i++)
+	{
+		auto t0 = high_resolution_clock::now();
+
+		func();
+
+		auto t1 = high_resolution_clock::now();
+
+		counts.push_back(duration_cast<microseconds>(t1 - t0).count());
+	}
+
+	std::sort(counts.begin(), counts.end());
+
+	Performance result;
+	result.min = static_cast<uint32_t>(counts.front());
+	result.max = static_cast<uint32_t>(counts.back());
+	result.average = static_cast<uint32_t>(std::accumulate(counts.begin(), counts.end(), 0) / counts.size());
+	result.median = counts[counts.size() / 2];
+	return result;
+};

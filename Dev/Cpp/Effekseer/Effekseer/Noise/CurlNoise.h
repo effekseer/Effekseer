@@ -32,10 +32,17 @@ public:
 	SIMD::Vec3f Get(SIMD::Vec3f pos) const;
 };
 
+#define LIGHTCURL_OPTIMIZE
+
 class LightCurlNoise
 {
 private:
 	static const int32_t GridSize = 8;
+#ifdef LIGHTCURL_OPTIMIZE
+	static const int32_t GridBits = 8;
+	static const int32_t GridBitMask = (1 << GridBits) - 1;
+	uint32_t vectorField_[GridSize][GridSize][GridSize];
+#else
 	uint32_t seed_ = 0;
 	std::array<uint8_t, GridSize * GridSize * GridSize> vectorField_x_;
 	std::array<uint8_t, GridSize * GridSize * GridSize> vectorField_y_;
@@ -57,10 +64,17 @@ private:
 	{
 		return GetRand() * (max_ - min_) + min_;
 	}
+#endif
 
+#ifdef LIGHTCURL_OPTIMIZE
+	uint32_t Pack(const SIMD::Vec3f v) const;
+
+	SIMD::Vec3f Unpack(const uint32_t v) const;
+#else
 	uint8_t Pack(const float v) const;
 
 	float Unpack(const uint8_t v) const;
+#endif
 
 public:
 	const float Scale{};
