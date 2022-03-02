@@ -36,12 +36,35 @@ namespace Effekseer.Data.Value
 			}
 		}
 
-		State _value;
+		State _value = null;
 
 		public State Value
 		{
 			get;
 
+		}
+
+		public unsafe GradientHDR()
+		{
+			_value = new State();
+			_value.ColorMarkers = new ColorMarker[2];
+			_value.ColorMarkers[0].Position = 0;
+			_value.ColorMarkers[0].Intensity = 1;
+			_value.ColorMarkers[0].Color[0] = 1.0f;
+			_value.ColorMarkers[0].Color[1] = 1.0f;
+			_value.ColorMarkers[0].Color[2] = 1.0f;
+
+			_value.ColorMarkers[1].Position = 1;
+			_value.ColorMarkers[1].Intensity = 1;
+			_value.ColorMarkers[1].Color[0] = 1.0f;
+			_value.ColorMarkers[1].Color[1] = 1.0f;
+			_value.ColorMarkers[1].Color[2] = 1.0f;
+
+			_value.AlphaMarkers = new AlphaMarker[2];
+			_value.AlphaMarkers[0].Position = 0.0f;
+			_value.AlphaMarkers[0].Alpha = 1.0f;
+			_value.AlphaMarkers[1].Position = 1.0f;
+			_value.AlphaMarkers[1].Alpha = 1.0f;
 		}
 
 		public State GetValue()

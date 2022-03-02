@@ -79,6 +79,8 @@ namespace Effekseer
 				return new GUI.Component.ObjectReference<Data.ProceduralModelParameter>(Core.ProceduralModel.ProceduralModels);
 			});
 
+			GUI.Component.ParameterListComponentFactory.Register(typeof(Data.Value.GradientHDR), () => { return new GUI.Component.GradientHDR(); });
+
 			// Debug
 			bool isDebugMode = false;
 #if DEBUG
