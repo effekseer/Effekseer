@@ -281,6 +281,11 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_Spacing(swigCPtr);
   }
 
+  public void Dummy(Vector2I size) {
+    EffekseerNativePINVOKE.GUIManager_Dummy(swigCPtr, Vector2I.getCPtr(size));
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+  }
+
   public void SameLine(float offset_from_start_x, float spacing) {
     EffekseerNativePINVOKE.GUIManager_SameLine__SWIG_0(swigCPtr, offset_from_start_x, spacing);
   }

@@ -5294,6 +5294,20 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Spacing___(void * j
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Dummy___(void * jarg1, void * jarg2) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  Effekseer::Tool::Vector2I *arg2 = 0 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (Effekseer::Tool::Vector2I *)jarg2;
+  if (!arg2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Effekseer::Tool::Vector2I const & type is null", 0);
+    return ;
+  } 
+  (arg1)->Dummy((Effekseer::Tool::Vector2I const &)*arg2);
+}
+
+
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SameLine__SWIG_0___(void * jarg1, float jarg2, float jarg3) {
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   float arg2 ;
@@ -10686,6 +10700,58 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GradientHDRState_SetAlphaMarke
   arg2 = (int)jarg2; 
   arg3 = (float)jarg3; 
   (arg1)->SetAlphaMarkerAlpha(arg2,arg3);
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GradientHDRState_RemoveColorMarker___(void * jarg1, int jarg2) {
+  unsigned int jresult ;
+  Effekseer::Tool::GradientHDRState *arg1 = (Effekseer::Tool::GradientHDRState *) 0 ;
+  int32_t arg2 ;
+  bool result;
+  
+  arg1 = (Effekseer::Tool::GradientHDRState *)jarg1; 
+  arg2 = (int32_t)jarg2; 
+  result = (bool)(arg1)->RemoveColorMarker(arg2);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GradientHDRState_RemoveAlphaMarker___(void * jarg1, int jarg2) {
+  unsigned int jresult ;
+  Effekseer::Tool::GradientHDRState *arg1 = (Effekseer::Tool::GradientHDRState *) 0 ;
+  int32_t arg2 ;
+  bool result;
+  
+  arg1 = (Effekseer::Tool::GradientHDRState *)jarg1; 
+  arg2 = (int32_t)jarg2; 
+  result = (bool)(arg1)->RemoveAlphaMarker(arg2);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_GradientHDRState_GetSelectedMarkerType___(void * jarg1) {
+  int jresult ;
+  Effekseer::Tool::GradientHDRState *arg1 = (Effekseer::Tool::GradientHDRState *) 0 ;
+  Effekseer::Tool::GradientHDRMarkerType result;
+  
+  arg1 = (Effekseer::Tool::GradientHDRState *)jarg1; 
+  result = (Effekseer::Tool::GradientHDRMarkerType)((Effekseer::Tool::GradientHDRState const *)arg1)->GetSelectedMarkerType();
+  jresult = (int)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_GradientHDRState_GetSelectedIndex___(void * jarg1) {
+  int jresult ;
+  Effekseer::Tool::GradientHDRState *arg1 = (Effekseer::Tool::GradientHDRState *) 0 ;
+  int32_t result;
+  
+  arg1 = (Effekseer::Tool::GradientHDRState *)jarg1; 
+  result = (int32_t)((Effekseer::Tool::GradientHDRState const *)arg1)->GetSelectedIndex();
+  jresult = result; 
+  return jresult;
 }
 
 

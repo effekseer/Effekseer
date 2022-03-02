@@ -43,6 +43,13 @@ struct ColorF
 #endif
 };
 
+enum class GradientHDRMarkerType : int32_t
+{
+	Color,
+	Alpha,
+	Unknown,
+};
+
 class GradientHDRState
 {
 	ImGradientHDRState state_;
@@ -76,6 +83,14 @@ public:
 	float GetAlphaMarkerAlpha(int index) const;
 
 	void SetAlphaMarkerAlpha(int index, float value);
+
+	bool RemoveColorMarker(int32_t index);
+
+	bool RemoveAlphaMarker(int32_t index);
+
+	GradientHDRMarkerType GetSelectedMarkerType() const;
+
+	int32_t GetSelectedIndex() const;
 
 #if !defined(SWIG)
 	ImGradientHDRState& GetState()

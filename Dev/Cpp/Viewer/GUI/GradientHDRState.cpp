@@ -81,4 +81,24 @@ void GradientHDRState::SetAlphaMarkerAlpha(int index, float value)
 	state_.Alphas[index].Alpha = value;
 }
 
+bool GradientHDRState::RemoveColorMarker(int32_t index)
+{
+	return state_.RemoveColorMarker(index);
+}
+
+bool GradientHDRState::RemoveAlphaMarker(int32_t index)
+{
+	return state_.RemoveAlphaMarker(index);
+}
+
+GradientHDRMarkerType GradientHDRState::GetSelectedMarkerType() const
+{
+	return static_cast<GradientHDRMarkerType>(temporaryState_.selectedMarkerType);
+}
+
+int32_t GradientHDRState::GetSelectedIndex() const
+{
+	return temporaryState_.selectedIndex;
+}
+
 } // namespace Effekseer::Tool

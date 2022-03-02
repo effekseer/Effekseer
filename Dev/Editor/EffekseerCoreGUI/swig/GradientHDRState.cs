@@ -108,6 +108,26 @@ public class GradientHDRState : global::System.IDisposable {
     EffekseerNativePINVOKE.GradientHDRState_SetAlphaMarkerAlpha(swigCPtr, index, value);
   }
 
+  public bool RemoveColorMarker(int index) {
+    bool ret = EffekseerNativePINVOKE.GradientHDRState_RemoveColorMarker(swigCPtr, index);
+    return ret;
+  }
+
+  public bool RemoveAlphaMarker(int index) {
+    bool ret = EffekseerNativePINVOKE.GradientHDRState_RemoveAlphaMarker(swigCPtr, index);
+    return ret;
+  }
+
+  public GradientHDRMarkerType GetSelectedMarkerType() {
+    GradientHDRMarkerType ret = (GradientHDRMarkerType)EffekseerNativePINVOKE.GradientHDRState_GetSelectedMarkerType(swigCPtr);
+    return ret;
+  }
+
+  public int GetSelectedIndex() {
+    int ret = EffekseerNativePINVOKE.GradientHDRState_GetSelectedIndex(swigCPtr);
+    return ret;
+  }
+
   public GradientHDRState() : this(EffekseerNativePINVOKE.new_GradientHDRState(), true) {
   }
 

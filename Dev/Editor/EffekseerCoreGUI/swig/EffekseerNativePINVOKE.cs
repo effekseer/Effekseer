@@ -1434,6 +1434,9 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_Spacing___")]
   public static extern void GUIManager_Spacing(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_Dummy___")]
+  public static extern void GUIManager_Dummy(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_SameLine__SWIG_0___")]
   public static extern void GUIManager_SameLine__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2, float jarg3);
 
@@ -2357,6 +2360,18 @@ class EffekseerNativePINVOKE {
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GradientHDRState_SetAlphaMarkerAlpha___")]
   public static extern void GradientHDRState_SetAlphaMarkerAlpha(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, float jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GradientHDRState_RemoveColorMarker___")]
+  public static extern bool GradientHDRState_RemoveColorMarker(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GradientHDRState_RemoveAlphaMarker___")]
+  public static extern bool GradientHDRState_RemoveAlphaMarker(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GradientHDRState_GetSelectedMarkerType___")]
+  public static extern int GradientHDRState_GetSelectedMarkerType(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GradientHDRState_GetSelectedIndex___")]
+  public static extern int GradientHDRState_GetSelectedIndex(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_GradientHDRState___")]
   public static extern global::System.IntPtr new_GradientHDRState();

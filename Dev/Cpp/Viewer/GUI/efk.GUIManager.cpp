@@ -1245,6 +1245,11 @@ void GUIManager::Spacing()
 	ImGui::Spacing();
 }
 
+void GUIManager::Dummy(const Effekseer::Tool::Vector2I& size)
+{
+	ImGui::Dummy({static_cast<float>(size.X), static_cast<float>(size.Y)});
+}
+
 void GUIManager::SameLine(float offset_from_start_x, float spacing)
 {
 	ImGui::SameLine(offset_from_start_x, spacing);
