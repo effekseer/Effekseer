@@ -60,7 +60,7 @@ namespace Effekseer.GUI.Dialog
 			}
 			else
 			{
-				targetDirPath = Directory.GetCurrentDirectory();
+				targetDirPath = Utils.Misc.GetCurrentDirectory();
 			}
 
 			try
@@ -110,7 +110,7 @@ namespace Effekseer.GUI.Dialog
 					Manager.NativeManager.SetCursorPosY(Manager.NativeManager.GetCursorPosY() - Manager.NativeManager.GetFrameHeight() + Manager.NativeManager.GetTextLineHeight());
 					if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("Select")))
 					{
-						var directory = swig.FileDialog.PickFolder(Directory.GetCurrentDirectory());
+						var directory = swig.FileDialog.PickFolder(Utils.Misc.GetCurrentDirectory());
 						if (!string.IsNullOrEmpty(directory))
 						{
 							importer.DestinationPath = directory;

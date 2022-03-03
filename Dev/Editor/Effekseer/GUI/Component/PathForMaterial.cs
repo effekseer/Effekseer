@@ -155,7 +155,7 @@ namespace Effekseer.GUI.Component
 				if (Manager.NativeManager.Button(Resources.GetString("Material_Create_Name"), buttonSizeX))
 				{
 					var filter = Resources.GetString("MaterialFilter");
-					var result = swig.FileDialog.SaveDialog(filter, System.IO.Directory.GetCurrentDirectory());
+					var result = swig.FileDialog.SaveDialog(filter, Utils.Misc.GetCurrentDirectory());
 
 					if (!string.IsNullOrEmpty(result))
 					{
@@ -210,7 +210,7 @@ namespace Effekseer.GUI.Component
 			if (binding == null) return;
 
 			var filter = Resources.GetString("MaterialFilter");
-			var result = swig.FileDialog.OpenDialog(filter, System.IO.Directory.GetCurrentDirectory());
+			var result = swig.FileDialog.OpenDialog(filter, Utils.Misc.GetCurrentDirectory());
 
 			if (!string.IsNullOrEmpty(result))
 			{

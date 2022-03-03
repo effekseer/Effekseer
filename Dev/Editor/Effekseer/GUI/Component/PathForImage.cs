@@ -197,7 +197,7 @@ namespace Effekseer.GUI.Component
 			if (binding == null) return;
 
 			var filter = Resources.GetString("ImageFilter");
-			var result = swig.FileDialog.OpenDialog(filter, System.IO.Directory.GetCurrentDirectory());
+			var result = swig.FileDialog.OpenDialog(filter, Utils.Misc.GetCurrentDirectory());
 
 			if (!string.IsNullOrEmpty(result))
 			{

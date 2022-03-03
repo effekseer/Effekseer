@@ -45,7 +45,7 @@ namespace Effekseer
 
 			try
 			{
-				StartDirectory = System.IO.Directory.GetCurrentDirectory();
+				StartDirectory = Utils.Misc.GetCurrentDirectory();
 				EntryDirectory = GUI.Manager.GetEntryDirectory();
 			}
 			catch(Exception e)

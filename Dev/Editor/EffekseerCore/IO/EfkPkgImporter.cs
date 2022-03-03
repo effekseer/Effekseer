@@ -145,7 +145,7 @@ namespace Effekseer.IO
 
 			if (DestinationPath == null)
 			{
-				DestinationPath = Directory.GetCurrentDirectory();
+				DestinationPath = Utils.Misc.GetCurrentDirectory();
 			}
 
 			DestinationPath = Misc.BackSlashToSlash(DestinationPath);

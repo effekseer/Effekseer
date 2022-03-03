@@ -386,7 +386,7 @@ namespace Effekseer.GUI.Dock
                     }
 
 
-                    var result = swig.FileDialog.SaveDialog(filter, System.IO.Directory.GetCurrentDirectory());
+                    var result = swig.FileDialog.SaveDialog(filter, Utils.Misc.GetCurrentDirectory());
 
 					if (string.IsNullOrEmpty(result)) return;
                                    
@@ -405,7 +405,7 @@ namespace Effekseer.GUI.Dock
 						viewer.LoadEffectFunc();
 					}
 
-					var tempDirectory = System.IO.Directory.GetCurrentDirectory();
+					var tempDirectory = Utils.Misc.GetCurrentDirectory();
 					System.IO.Directory.SetCurrentDirectory(Program.StartDirectory);
 
 					Utils.Logger.Write(string.Format("SetCurrentDirectory : {0}", Program.StartDirectory));

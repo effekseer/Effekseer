@@ -137,7 +137,7 @@ namespace Effekseer.GUI.Menu
 		private void Import(ImportScript script)
 		{
 			var filter = script.Filter.Split('.').Last();
-			var result = swig.FileDialog.OpenDialog(filter, System.IO.Directory.GetCurrentDirectory());
+			var result = swig.FileDialog.OpenDialog(filter, Utils.Misc.GetCurrentDirectory());
 
 			if (string.IsNullOrEmpty(result))
 			{
@@ -170,7 +170,7 @@ namespace Effekseer.GUI.Menu
 		private void Export(ExportScript script)
 		{
 			var filter = script.Filter.Split('.').Last();
-			var result = swig.FileDialog.SaveDialog(filter, System.IO.Directory.GetCurrentDirectory());
+			var result = swig.FileDialog.SaveDialog(filter, Utils.Misc.GetCurrentDirectory());
 
 			if (string.IsNullOrEmpty(result))
 			{

@@ -86,6 +86,19 @@ namespace Effekseer.Utils
 			return correctFullPath == BackSlashToSlash(path);
 		}
 
+		public static string GetCurrentDirectory(string fallback = "")
+		{
+			try
+			{
+				var path = Directory.GetCurrentDirectory();
+				return BackSlashToSlash(path);
+			}
+			catch(Exception e)
+			{
+				return fallback;
+			}
+		}
+
 		public static ResourcePaths FindResourcePaths(Data.NodeBase node, Binary.ExporterVersion exporterVersion, ResourcePaths resources = null)
 		{
 			if (resources == null)

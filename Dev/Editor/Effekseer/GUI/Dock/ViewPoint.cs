@@ -142,7 +142,7 @@ namespace Effekseer.GUI.Dock
             {
                 var filter = "view";
 
-                var result = swig.FileDialog.SaveDialog(filter, System.IO.Directory.GetCurrentDirectory());
+                var result = swig.FileDialog.SaveDialog(filter, Utils.Misc.GetCurrentDirectory());
 
                 if (!string.IsNullOrEmpty(result))
                 {
@@ -172,7 +172,7 @@ namespace Effekseer.GUI.Dock
             {
                 var filter = "view";
 
-                var result = swig.FileDialog.OpenDialog(filter, System.IO.Directory.GetCurrentDirectory());
+                var result = swig.FileDialog.OpenDialog(filter, Utils.Misc.GetCurrentDirectory());
 
                 if (!string.IsNullOrEmpty(result))
                 {
