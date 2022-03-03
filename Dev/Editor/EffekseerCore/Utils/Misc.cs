@@ -91,11 +91,47 @@ namespace Effekseer.Utils
 			try
 			{
 				var path = Directory.GetCurrentDirectory();
-				return BackSlashToSlash(path);
+				return path;
 			}
 			catch(Exception e)
 			{
 				return fallback;
+			}
+		}
+
+		public static byte[] ReadAllBytes(string path)
+		{
+			try
+			{
+				return File.ReadAllBytes(path);
+			}
+			catch(System.UnauthorizedAccessException e)
+			{
+				// For mac
+				System.IO.FileStream fs = null;
+				if (!System.IO.File.Exists(path)) return null;
+
+				try
+				{
+					fs = System.IO.File.Open(path, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read);
+				}
+				catch
+				{
+					return null;
+				}
+
+				var br = new System.IO.BinaryReader(fs);
+
+				var buf = new byte[fs.Length];
+
+				if (br.Read(buf, 0, (int)fs.Length) != fs.Length)
+				{
+					fs.Dispose();
+					br.Close();
+					return null;
+				}
+
+				return buf;
 			}
 		}
 

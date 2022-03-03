@@ -121,7 +121,7 @@ namespace Effekseer.IO
 			}
 
 			DateTime lastWriteTime = File.GetLastWriteTime(absolutePath);
-			byte[] resourceData = File.ReadAllBytes(absolutePath);
+			byte[] resourceData = Utils.Misc.ReadAllBytes(absolutePath);
 			if (resourceData == null)
 			{
 				throw new Exception("failed open file.");

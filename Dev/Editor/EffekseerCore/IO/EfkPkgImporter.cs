@@ -310,7 +310,7 @@ namespace Effekseer.IO
 
 					try
 					{
-						var hash = EfkPkg.ComputeHashName(File.ReadAllBytes(f));
+						var hash = EfkPkg.ComputeHashName(Utils.Misc.ReadAllBytes(f));
 						pathToHashes.Add(f, hash);
 					}
 					catch

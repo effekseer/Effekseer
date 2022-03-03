@@ -370,7 +370,7 @@ namespace Effekseer.IO
 			byte[] allData = null;
 			try
 			{
-				allData = System.IO.File.ReadAllBytes(path);
+				allData = Utils.Misc.ReadAllBytes(path);
 			}
 			catch
 			{

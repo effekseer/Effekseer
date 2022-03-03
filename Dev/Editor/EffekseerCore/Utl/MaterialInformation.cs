@@ -199,7 +199,7 @@ namespace Effekseer.Utl
 
 				try
 				{
-					file = System.IO.File.ReadAllBytes(path);
+					file = Utils.Misc.ReadAllBytes(path);
 				}
 				catch
 				{

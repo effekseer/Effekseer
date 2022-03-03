@@ -22,7 +22,7 @@ namespace TestCSharp
 			string fullpath = Path.Combine(Effekseer.Utils.Misc.GetCurrentDirectory(), path);
 			var material = new Effekseer.Utl.MaterialInformation();
 
-			byte[] bytes = File.ReadAllBytes(fullpath);
+			byte[] bytes = Effekseer.Utils.Misc.ReadAllBytes(fullpath);
 			if (bytes == null)
 			{
 				TestUtils.Assert(false, "Failed to load material file: " + path);
