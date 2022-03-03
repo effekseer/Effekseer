@@ -109,7 +109,11 @@ namespace Effekseer.Utils
 			{
 				// For mac
 				System.IO.FileStream fs = null;
-				if (!System.IO.File.Exists(path)) return null;
+				if (!System.IO.File.Exists(path))
+				{
+					Logger.Write($"Failed : ReadAllBytes {path} doesn't exists.");
+					return null;
+				}
 
 				try
 				{
@@ -117,6 +121,7 @@ namespace Effekseer.Utils
 				}
 				catch
 				{
+					Logger.Write($"Failed : ReadAllBytes {path} failed to open.");
 					return null;
 				}
 
@@ -128,8 +133,12 @@ namespace Effekseer.Utils
 				{
 					fs.Dispose();
 					br.Close();
+					Logger.Write($"Failed : ReadAllBytes {path} lack of buffer.");
 					return null;
 				}
+
+				fs.Dispose();
+				br.Close();
 
 				return buf;
 			}
