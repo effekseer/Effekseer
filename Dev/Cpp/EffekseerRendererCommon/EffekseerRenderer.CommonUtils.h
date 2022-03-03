@@ -83,24 +83,14 @@ struct DynamicVertex
 		}
 	}
 
-	void SetPackedNormal(const VertexColor& normal, bool flipRGB)
+	void SetPackedNormal(const VertexColor& normal)
 	{
 		Normal = normal;
-
-		if (flipRGB)
-		{
-			std::swap(Normal.R, Normal.B);
-		}
 	}
 
-	void SetPackedTangent(const VertexColor& tangent, bool flipRGB)
+	void SetPackedTangent(const VertexColor& tangent)
 	{
 		Tangent = tangent;
-
-		if (flipRGB)
-		{
-			std::swap(Tangent.R, Tangent.B);
-		}
 	}
 
 	void SetUV2(float u, float v)
@@ -152,24 +142,14 @@ struct LightingVertex
 		}
 	}
 
-	void SetPackedNormal(const VertexColor& normal, bool flipRGB)
+	void SetPackedNormal(const VertexColor& normal)
 	{
 		Normal = normal;
-
-		if (flipRGB)
-		{
-			std::swap(Normal.R, Normal.B);
-		}
 	}
 
-	void SetPackedTangent(const VertexColor& tangent, bool flipRGB)
+	void SetPackedTangent(const VertexColor& tangent)
 	{
 		Tangent = tangent;
-
-		if (flipRGB)
-		{
-			std::swap(Tangent.R, Tangent.B);
-		}
 	}
 
 	void SetUV2(float u, float v)
@@ -208,11 +188,11 @@ struct SimpleVertex
 		}
 	}
 
-	void SetPackedNormal(const VertexColor& normal, bool flipRGB)
+	void SetPackedNormal(const VertexColor& normal)
 	{
 	}
 
-	void SetPackedTangent(const VertexColor& tangent, bool flipRGB)
+	void SetPackedTangent(const VertexColor& tangent)
 	{
 	}
 
@@ -266,24 +246,14 @@ struct AdvancedLightingVertex
 		}
 	}
 
-	void SetPackedNormal(const VertexColor& normal, bool flipRGB)
+	void SetPackedNormal(const VertexColor& normal)
 	{
 		Normal = normal;
-
-		if (flipRGB)
-		{
-			std::swap(Normal.R, Normal.B);
-		}
 	}
 
-	void SetPackedTangent(const VertexColor& tangent, bool flipRGB)
+	void SetPackedTangent(const VertexColor& tangent)
 	{
 		Tangent = tangent;
-
-		if (flipRGB)
-		{
-			std::swap(Tangent.R, Tangent.B);
-		}
 	}
 
 	void SetUV2(float u, float v)
@@ -334,11 +304,11 @@ struct AdvancedSimpleVertex
 		}
 	}
 
-	void SetPackedNormal(const VertexColor& normal, bool flipRGB)
+	void SetPackedNormal(const VertexColor& normal)
 	{
 	}
 
-	void SetPackedTangent(const VertexColor& tangent, bool flipRGB)
+	void SetPackedTangent(const VertexColor& tangent)
 	{
 	}
 
@@ -1484,7 +1454,6 @@ struct PixelConstantBuffer
 	EdgeParameter EdgeParam;
 	SoftParticleParameter SoftParticleParam;
 	float UVInversedBack[4];
-	std::array<float,4> MiscFlags;
 
 	void SetModelFlipbookParameter(float enableInterpolation, float interpolationType)
 	{

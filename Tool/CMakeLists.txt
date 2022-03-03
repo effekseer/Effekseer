@@ -1,13 +1,8 @@
 cmake_policy(SET CMP0091 NEW)
 
-cmake_minimum_required(VERSION 3.15)
-
-if(APPLE)
-  set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "Minimum OS X deployment version" FORCE)
-endif()
-
 project(Tools)
 
+cmake_minimum_required(VERSION 3.17)
 set(CMAKE_CXX_STANDARD 11)
 
 if(MSVC)
@@ -24,12 +19,12 @@ if(WIN32)
   target_include_directories(fbxToEffekseerModelConverter
                              PRIVATE fbxsdk/windows/include/)
   target_link_directories(fbxToEffekseerModelConverter PRIVATE
-                          fbxsdk/windows/lib/vs2019/x86/)
+                          fbxsdk/windows/lib/vs2017/x86/)
 
   target_include_directories(fbxToEffekseerCurveConverter
                              PRIVATE fbxsdk/windows/include/)
   target_link_directories(fbxToEffekseerCurveConverter PRIVATE
-                          fbxsdk/windows/lib/vs2019/x86/)
+                          fbxsdk/windows/lib/vs2017/x86/)
 
 elseif(APPLE)
 
@@ -71,11 +66,11 @@ if(WIN32)
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/Release
     COMMAND
       ${CMAKE_COMMAND} -E copy
-      ${CMAKE_CURRENT_SOURCE_DIR}/fbxsdk/windows/lib/vs2019/x86/debug/libfbxsdk.dll
+      ${CMAKE_CURRENT_SOURCE_DIR}/fbxsdk/windows/lib/vs2017/x86/debug/libfbxsdk.dll
       ${CMAKE_SOURCE_DIR}/Debug
     COMMAND
       ${CMAKE_COMMAND} -E copy
-      ${CMAKE_CURRENT_SOURCE_DIR}/fbxsdk/windows/lib/vs2019/x86/release/libfbxsdk.dll
+      ${CMAKE_CURRENT_SOURCE_DIR}/fbxsdk/windows/lib/vs2017/x86/release/libfbxsdk.dll
       ${CMAKE_SOURCE_DIR}/Release)
 
   add_dependencies(fbxToEffekseerCurveConverter fbxdll)

@@ -37,60 +37,6 @@ float atan2(in float y, in float x) {
 
 )";
 
-static const char* material_common_functions =
-	R"(
-
-#define FLT_EPSILON 1.192092896e-07
-
-vec3 PositivePow(vec3 base, vec3 power)
-{
-	return pow(max(abs(base), vec3(FLT_EPSILON, FLT_EPSILON, FLT_EPSILON)), power);
-}
-
-vec3 LinearToSRGB(vec3 c)
-{
-	return max(1.055 * PositivePow(c, vec3(0.416666667,0.416666667,0.416666667)) - 0.055, 0.0);
-}
-
-vec4 LinearToSRGB(vec4 c)
-{
-    vec3 param = c.xyz;
-    return vec4(LinearToSRGB(param), c.w);
-}
-
-vec4 ConvertFromSRGBTexture(vec4 c)
-{
-    if (predefined_uniform.z == 0.0)
-    {
-        return c;
-    }
-    vec4 param = c;
-    return LinearToSRGB(param);
-}
-
-vec3 SRGBToLinear(vec3 c)
-{
-	return min(c, c * (c * (c * 0.305306011 + 0.682171111) + 0.012522878));
-}
-
-vec4 SRGBToLinear(vec4 c)
-{
-    vec3 param = c.xyz;
-    return vec4(SRGBToLinear(param), c.w);
-}
-
-vec4 ConvertToScreen(vec4 c)
-{
-    if (predefined_uniform.z == 0.0)
-    {
-        return c;
-    }
-    vec4 param = c;
-    return SRGBToLinear(param);
-}
-
-)";
-
 static const char* material_common_vs_define = R"()"
 
 											   R"(
@@ -576,7 +522,7 @@ static const char g_material_fs_src_suf2_lit[] =
 	if(opacityMask <= 0.0) discard;
 	if(opacity <= 0.0) discard;
 
-	FRAGCOLOR = ConvertToScreen(Output);
+	FRAGCOLOR = Output;
 }
 
 )";
@@ -587,7 +533,7 @@ static const char g_material_fs_src_suf2_unlit[] =
 	if(opacityMask <= 0.0) discard;
 	if(opacity <= 0.0) discard;
 
-	FRAGCOLOR = ConvertToScreen(vec4(emissive, opacity));
+	FRAGCOLOR = vec4(emissive, opacity);
 }
 
 )";
@@ -883,7 +829,6 @@ class ShaderGenerator
 public:
 	ShaderData GenerateShader(MaterialFile* materialFile,
 							  MaterialShaderType shaderType,
-							  int32_t maximumUniformCount,
 							  int32_t maximumTextureCount,
 							  bool useUniformBlock,
 							  bool isOutputDefined,
@@ -929,7 +874,6 @@ public:
 				maincode << "#define gl_InstanceID gl_InstanceIndex" << std::endl;
 			}
 
-			int32_t actualUniformCount = std::min(maximumUniformCount, materialFile->GetUniformCount());
 			int32_t actualTextureCount = std::min(maximumTextureCount, materialFile->GetTextureCount());
 
 			for (int32_t i = 0; i < actualTextureCount; i++)
@@ -1015,18 +959,11 @@ uniform vec4 customData2s[_INSTANCE_COUNT_];
 				}
 			}
 
-			for (int32_t i = 0; i < actualUniformCount; i++)
+			for (int32_t i = 0; i < materialFile->GetUniformCount(); i++)
 			{
 				auto uniformName = materialFile->GetUniformName(i);
 
 				ExportUniform(maincode, 4, uniformName);
-			}
-
-			for (int32_t i = actualUniformCount; i < materialFile->GetUniformCount(); i++)
-			{
-				auto uniformName = materialFile->GetUniformName(i);
-
-				maincode << "const " << GetType(4) << " " << uniformName << "= vec4(0,0,0,0);" << std::endl;
 			}
 
 			// Uniform block end
@@ -1034,8 +971,6 @@ uniform vec4 customData2s[_INSTANCE_COUNT_];
 			{
 				maincode << "};" << std::endl;
 			}
-
-			maincode << material_common_functions << std::endl;
 
 			auto baseCode = std::string(materialFile->GetGenericCode());
 			baseCode = Replace(baseCode, "$F1$", "float");
@@ -1050,15 +985,6 @@ uniform vec4 customData2s[_INSTANCE_COUNT_];
 			// replace textures
 			for (int32_t i = 0; i < actualTextureCount; i++)
 			{
-				std::string prefix;
-				std::string suffix;
-
-				if (materialFile->GetTextureColorType(i) == Effekseer::TextureColorType::Color)
-				{
-					prefix = "ConvertFromSRGBTexture(";
-					suffix = ")";
-				}
-
 				auto textureIndex = materialFile->GetTextureIndex(i);
 				auto textureName = std::string(materialFile->GetTextureName(i));
 
@@ -1067,13 +993,13 @@ uniform vec4 customData2s[_INSTANCE_COUNT_];
 
 				if (stage == 0)
 				{
-					baseCode = Replace(baseCode, keyP, prefix + "TEX2D(" + textureName + ",GetUV(");
-					baseCode = Replace(baseCode, keyS, "), 0.0)" + suffix);
+					baseCode = Replace(baseCode, keyP, "TEX2D(" + textureName + ",GetUV(");
+					baseCode = Replace(baseCode, keyS, "), 0.0)");
 				}
 				else
 				{
-					baseCode = Replace(baseCode, keyP, prefix + "TEX2D(" + textureName + ",GetUV(");
-					baseCode = Replace(baseCode, keyS, "))" + suffix);
+					baseCode = Replace(baseCode, keyP, "TEX2D(" + textureName + ",GetUV(");
+					baseCode = Replace(baseCode, keyS, "))");
 				}
 			}
 

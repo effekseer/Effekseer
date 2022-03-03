@@ -88,7 +88,6 @@ private:
 	IDirect3DVertexDeclaration9* m_state_vertexDeclaration;
 
 	std::array<IDirect3DVertexBuffer9*, 2> m_state_streamData;
-	std::array<UINT, 2> m_state_streamFreq;
 	std::array<UINT, 2> m_state_OffsetInBytes;
 	std::array<UINT, 2> m_state_pStride;
 

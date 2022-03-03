@@ -236,6 +236,11 @@ void VertexBuffer::Unlock()
 
 	GLExt::glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+	if (m_isLock)
+	{
+		m_vertexRingOffset += m_offset;
+	}
+
 	m_isLock = false;
 	m_ringBufferLock = false;
 	m_resource = nullptr;

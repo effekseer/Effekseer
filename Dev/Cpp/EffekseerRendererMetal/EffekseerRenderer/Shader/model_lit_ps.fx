@@ -35,7 +35,6 @@ struct PS_ConstanBuffer
     float4 reconstructionParam1;
     float4 reconstructionParam2;
     float4 mUVInversedBack;
-    float4 miscFlags;
 };
 
 struct main0_out
@@ -52,38 +51,6 @@ struct main0_in
     float3 Input_WorldT [[user(locn4)]];
     float4 Input_PosP [[user(locn5)]];
 };
-
-static inline __attribute__((always_inline))
-float3 PositivePow(thread const float3& base, thread const float3& power)
-{
-    return pow(fast::max(abs(base), float3(1.1920928955078125e-07)), power);
-}
-
-static inline __attribute__((always_inline))
-float3 LinearToSRGB(thread const float3& c)
-{
-    float3 param = c;
-    float3 param_1 = float3(0.4166666567325592041015625);
-    return fast::max((PositivePow(param, param_1) * 1.05499994754791259765625) - float3(0.054999999701976776123046875), float3(0.0));
-}
-
-static inline __attribute__((always_inline))
-float4 LinearToSRGB(thread const float4& c)
-{
-    float3 param = c.xyz;
-    return float4(LinearToSRGB(param), c.w);
-}
-
-static inline __attribute__((always_inline))
-float4 ConvertFromSRGBTexture(thread const float4& c, thread const bool& isValid)
-{
-    if (!isValid)
-    {
-        return c;
-    }
-    float4 param = c;
-    return LinearToSRGB(param);
-}
 
 static inline __attribute__((always_inline))
 float SoftParticle(thread const float& backgroundZ, thread const float& meshZ, thread const float4& softparticleParam, thread const float4& reconstruct1, thread const float4& reconstruct2)
@@ -103,67 +70,38 @@ float SoftParticle(thread const float& backgroundZ, thread const float& meshZ, t
 }
 
 static inline __attribute__((always_inline))
-float3 SRGBToLinear(thread const float3& c)
+float4 _main(PS_Input Input, thread texture2d<float> _colorTex, thread sampler sampler_colorTex, thread texture2d<float> _normalTex, thread sampler sampler_normalTex, constant PS_ConstanBuffer& v_164, thread texture2d<float> _depthTex, thread sampler sampler_depthTex)
 {
-    return fast::min(c, c * ((c * ((c * 0.305306017398834228515625) + float3(0.6821711063385009765625))) + float3(0.01252287812530994415283203125)));
-}
-
-static inline __attribute__((always_inline))
-float4 SRGBToLinear(thread const float4& c)
-{
-    float3 param = c.xyz;
-    return float4(SRGBToLinear(param), c.w);
-}
-
-static inline __attribute__((always_inline))
-float4 ConvertToScreen(thread const float4& c, thread const bool& isValid)
-{
-    if (!isValid)
-    {
-        return c;
-    }
-    float4 param = c;
-    return SRGBToLinear(param);
-}
-
-static inline __attribute__((always_inline))
-float4 _main(PS_Input Input, constant PS_ConstanBuffer& v_225, thread texture2d<float> _colorTex, thread sampler sampler_colorTex, thread texture2d<float> _normalTex, thread sampler sampler_normalTex, thread texture2d<float> _depthTex, thread sampler sampler_depthTex)
-{
-    bool convertColorSpace = (isunordered(v_225.miscFlags.x, 0.0) || v_225.miscFlags.x != 0.0);
-    float4 param = _colorTex.sample(sampler_colorTex, Input.UV);
-    bool param_1 = convertColorSpace;
-    float4 Output = ConvertFromSRGBTexture(param, param_1) * Input.Color;
+    float4 Output = _colorTex.sample(sampler_colorTex, Input.UV) * Input.Color;
     float3 texNormal = (_normalTex.sample(sampler_normalTex, Input.UV).xyz - float3(0.5)) * 2.0;
     float3 localNormal = normalize(float3x3(float3(Input.WorldT), float3(Input.WorldB), float3(Input.WorldN)) * texNormal);
-    float diffuse = fast::max(dot(v_225.fLightDirection.xyz, localNormal), 0.0);
-    float3 _311 = Output.xyz * ((v_225.fLightColor.xyz * diffuse) + v_225.fLightAmbient.xyz);
-    Output = float4(_311.x, _311.y, _311.z, Output.w);
-    float3 _319 = Output.xyz * v_225.fEmissiveScaling.x;
-    Output = float4(_319.x, _319.y, _319.z, Output.w);
+    float diffuse = fast::max(dot(v_164.fLightDirection.xyz, localNormal), 0.0);
+    float3 _184 = Output.xyz * ((v_164.fLightColor.xyz * diffuse) + v_164.fLightAmbient.xyz);
+    Output = float4(_184.x, _184.y, _184.z, Output.w);
+    float3 _193 = Output.xyz * v_164.fEmissiveScaling.x;
+    Output = float4(_193.x, _193.y, _193.z, Output.w);
     float4 screenPos = Input.PosP / float4(Input.PosP.w);
     float2 screenUV = (screenPos.xy + float2(1.0)) / float2(2.0);
     screenUV.y = 1.0 - screenUV.y;
-    screenUV.y = v_225.mUVInversedBack.x + (v_225.mUVInversedBack.y * screenUV.y);
-    if ((isunordered(v_225.softParticleParam.w, 0.0) || v_225.softParticleParam.w != 0.0))
+    screenUV.y = v_164.mUVInversedBack.x + (v_164.mUVInversedBack.y * screenUV.y);
+    if ((isunordered(v_164.softParticleParam.w, 0.0) || v_164.softParticleParam.w != 0.0))
     {
         float backgroundZ = _depthTex.sample(sampler_depthTex, screenUV).x;
-        float param_2 = backgroundZ;
-        float param_3 = screenPos.z;
-        float4 param_4 = v_225.softParticleParam;
-        float4 param_5 = v_225.reconstructionParam1;
-        float4 param_6 = v_225.reconstructionParam2;
-        Output.w *= SoftParticle(param_2, param_3, param_4, param_5, param_6);
+        float param = backgroundZ;
+        float param_1 = screenPos.z;
+        float4 param_2 = v_164.softParticleParam;
+        float4 param_3 = v_164.reconstructionParam1;
+        float4 param_4 = v_164.reconstructionParam2;
+        Output.w *= SoftParticle(param, param_1, param_2, param_3, param_4);
     }
     if (Output.w == 0.0)
     {
         discard_fragment();
     }
-    float4 param_7 = Output;
-    bool param_8 = convertColorSpace;
-    return ConvertToScreen(param_7, param_8);
+    return Output;
 }
 
-fragment main0_out main0(main0_in in [[stage_in]], constant PS_ConstanBuffer& v_225 [[buffer(0)]], texture2d<float> _colorTex [[texture(0)]], texture2d<float> _normalTex [[texture(1)]], texture2d<float> _depthTex [[texture(2)]], sampler sampler_colorTex [[sampler(0)]], sampler sampler_normalTex [[sampler(1)]], sampler sampler_depthTex [[sampler(2)]], float4 gl_FragCoord [[position]])
+fragment main0_out main0(main0_in in [[stage_in]], constant PS_ConstanBuffer& v_164 [[buffer(0)]], texture2d<float> _colorTex [[texture(0)]], texture2d<float> _normalTex [[texture(1)]], texture2d<float> _depthTex [[texture(2)]], sampler sampler_colorTex [[sampler(0)]], sampler sampler_normalTex [[sampler(1)]], sampler sampler_depthTex [[sampler(2)]], float4 gl_FragCoord [[position]])
 {
     main0_out out = {};
     PS_Input Input;
@@ -174,8 +112,8 @@ fragment main0_out main0(main0_in in [[stage_in]], constant PS_ConstanBuffer& v_
     Input.WorldB = in.Input_WorldB;
     Input.WorldT = in.Input_WorldT;
     Input.PosP = in.Input_PosP;
-    float4 _427 = _main(Input, v_225, _colorTex, sampler_colorTex, _normalTex, sampler_normalTex, _depthTex, sampler_depthTex);
-    out._entryPointOutput = _427;
+    float4 _298 = _main(Input, _colorTex, sampler_colorTex, _normalTex, sampler_normalTex, v_164, _depthTex, sampler_depthTex);
+    out._entryPointOutput = _298;
     return out;
 }
 

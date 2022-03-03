@@ -559,7 +559,7 @@ static ImTextureID ToImTextureID(ImageResource* image)
 	if (image != nullptr)
 	{
 		Effekseer::TextureRef texture = image->GetTexture();
-		if (texture != nullptr && texture->GetBackend() != nullptr)
+		if (texture != nullptr)
 		{
 #ifdef _WIN32
 			if (image->GetDeviceType() == DeviceType::DirectX11)

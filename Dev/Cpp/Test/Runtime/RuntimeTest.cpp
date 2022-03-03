@@ -76,31 +76,6 @@ void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPa
 		platform->StopAllEffects();
 	};
 
-	auto singleResourceData_00_Basic_Test = [&](const char16_t* name, const char* savename, int time) -> void
-	{
-		srand(0);
-		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../ResourceData/samples/00_Basic/" + name + u".efkefc").c_str());
-
-		for (size_t i = 0; i < time; i++)
-		{
-			platform->Update();
-		}
-		platform->TakeScreenshot((std::string(baseResultPath) + savename + suffix + ".png").c_str());
-		platform->StopAllEffects();
-	};
-
-	{
-		auto cameraMat = platform->GetRenderer()->GetCameraMatrix();
-
-		Effekseer::Matrix44 mat;
-		mat.LookAtRH({0, 20, 20}, {0, 20, 0}, {0, 1, 0});
-		platform->GetRenderer()->SetCameraMatrix(mat);
-
-		singleResourceData_00_Basic_Test(u"Simple_Turbulence_Fireworks", "Simple_Turbulence_Fireworks", 180);
-
-		platform->GetRenderer()->SetCameraMatrix(cameraMat);
-	}
-
 	single10Test(u"SimpleLaser", "SimpleLaser");
 	single10Test(u"FCurve_Parameters1", "FCurve_Parameters1");
 	single10Test(u"Ribbon_Parameters1", "Ribbon_Parameters1");
@@ -128,7 +103,6 @@ void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPa
 	single15Test(u"Material_UV2", "Material_UV2");
 
 	{
-		single16Test(u"DrawWithoutInstancing", "DrawWithoutInstancing");
 		single16Test(u"AlphaBlendTexture01", "AlphaBlendTexture01");
 		single16Test(u"AlphaCutoffEdgeColor01", "AlphaCutoffEdgeColor01");
 		single16Test(u"BasicRenderSettings_Emissive", "BasicRenderSettings_Emissive");
@@ -819,7 +793,8 @@ void CullingTest()
 
 void RenderLimitTest()
 {
-	auto test = [](EffectPlatform* platform) {
+	auto test = [](EffectPlatform* platform)
+	{
 		EffectPlatformInitializingParameter param;
 		param.SpriteCount = 10;
 		platform->Initialize(param);
@@ -899,149 +874,6 @@ void RenderLimitTest()
 #endif
 }
 
-void SRGBLinearTestPlatform(EffectPlatform* platform, std::string baseResultPath, std::string suffix)
-{
-	EffectPlatformInitializingParameter param;
-	platform->Initialize(param);
-	platform->GetRenderer()->SetMaintainGammaColorInLinearColorSpace(true);
-
-	auto single10Test = [&](const char16_t* name, const char* savename) -> void {
-		srand(0);
-		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/" + name + u".efk").c_str());
-
-		for (size_t i = 0; i < 30; i++)
-		{
-			platform->Update();
-		}
-		platform->TakeScreenshot((std::string(baseResultPath) + savename + suffix + ".png").c_str());
-		platform->StopAllEffects();
-	};
-
-	auto single14Test = [&](const char16_t* name, const char* savename) -> void {
-		srand(0);
-		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/14/" + name + u".efk").c_str());
-
-		for (size_t i = 0; i < 30; i++)
-		{
-			platform->Update();
-		}
-		platform->TakeScreenshot((std::string(baseResultPath) + savename + suffix + ".png").c_str());
-		platform->StopAllEffects();
-	};
-
-	auto single15Test = [&](const char16_t* name, const char* savename) -> void {
-		srand(0);
-		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/15/" + name + u".efkefc").c_str());
-
-		for (size_t i = 0; i < 30; i++)
-		{
-			platform->Update();
-		}
-		platform->TakeScreenshot((std::string(baseResultPath) + savename + suffix + ".png").c_str());
-		platform->StopAllEffects();
-	};
-
-	auto single16Test = [&](const char16_t* name, const char* savename) -> void {
-		srand(0);
-		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/16/" + name + u".efkefc").c_str());
-
-		for (size_t i = 0; i < 30; i++)
-		{
-			platform->Update();
-		}
-		platform->TakeScreenshot((std::string(baseResultPath) + savename + suffix + ".png").c_str());
-		platform->StopAllEffects();
-	};
-
-	single10Test(u"SimpleLaser", "SL_SimpleLaser");
-	single10Test(u"Sprite_Parameters1", "SL_Sprite_Parameters1");
-	single10Test(u"Distortions1", "SL_Distortions1");
-
-	single14Test(u"Model_Parameters1", "SL_Model_Parameters1");
-	single15Test(u"Lighing_Parameters1", "SL_Lighing_Parameters1");
-	single15Test(u"Material_Sampler1", "SL_Material_Sampler1");
-	single15Test(u"Material_Refraction", "SL_Material_Refraction");
-	single15Test(u"Material_WorldPositionOffset", "SL_Material_WorldPositionOffset");
-
-	single15Test(u"Material_UV1", "SL_Material_UV1");
-
-	{
-		single16Test(u"AlphaBlendTexture01", "SL_AlphaBlendTexture01");
-		single16Test(u"AlphaCutoffEdgeColor01", "SL_AlphaCutoffEdgeColor01");
-	}
-}
-
-void SRGBLinearTest()
-{
-
-#ifdef _WIN32
-	{
-		auto platform = std::make_shared<EffectPlatformDX11>();
-		SRGBLinearTestPlatform(platform.get(), "", "_DX11");
-		platform->Terminate();
-	}
-#endif
-
-#if !defined(__FROM_CI__)
-#ifdef __EFFEKSEER_BUILD_VULKAN__
-	{
-		auto platform = std::make_shared<EffectPlatformVulkan>();
-		SRGBLinearTestPlatform(platform.get(), "", "_Vulkan");
-		platform->Terminate();
-	}
-#endif
-
-#ifdef _WIN32
-	{
-
-#ifdef __EFFEKSEER_BUILD_DX12__
-		{
-			auto platform = std::make_shared<EffectPlatformDX12>();
-			SRGBLinearTestPlatform(platform.get(), "", "_DX12");
-			platform->Terminate();
-		}
-#endif
-
-		{
-			auto platform = std::make_shared<EffectPlatformDX9>();
-			SRGBLinearTestPlatform(platform.get(), "", "_DX9");
-			platform->Terminate();
-		}
-
-		{
-			auto platform = std::make_shared<EffectPlatformGL>();
-			SRGBLinearTestPlatform(platform.get(), "", "_GL");
-			platform->Terminate();
-		}
-	}
-
-#elif defined(__APPLE__)
-
-	{
-		auto platform = std::make_shared<EffectPlatformMetal>();
-		SRGBLinearTestPlatform(platform.get(), "", "_Metal");
-		platform->Terminate();
-	}
-
-	{
-		auto platform = std::make_shared<EffectPlatformGL>();
-		SRGBLinearTestPlatform(platform.get(), "", "_GL");
-		platform->Terminate();
-	}
-
-#else
-#ifndef __EFFEKSEER_BUILD_VERSION16__
-	{
-		auto platform = std::make_shared<EffectPlatformGL>();
-		SRGBLinearTestPlatform(platform.get(), "", "_GL");
-		platform->Terminate();
-	}
-#endif
-#endif
-#endif
-}
-
-
 #if defined(__linux__) || defined(__APPLE__) || defined(WIN32)
 
 TestRegister Runtime_StringAndPathHelperTest("Runtime.StringAndPathHelperTest", []() -> void { StringAndPathHelperTest(); });
@@ -1073,7 +905,5 @@ TestRegister Runtime_ProceduralModelCacheTest("Runtime.ProceduralModelCacheTest"
 TestRegister Runtime_CullingTest("Runtime.CullingTest", []() -> void { CullingTest(); });
 
 TestRegister Runtime_RenderLimitTest("Runtime.RenderLimitTest", []() -> void { RenderLimitTest(); });
-
-TestRegister Runtime_SRGBLinearTest("Runtime.SRGBLinearTest", []() -> void { SRGBLinearTest(); });
 
 #endif

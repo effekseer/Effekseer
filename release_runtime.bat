@@ -64,10 +64,6 @@ robocopy Dev\Cpp\3rdParty\LLGI %RDIR_R%\src\3rdParty\LLGI /S
 mkdir %RDIR_R%\src\3rdParty\glslang
 robocopy Dev\Cpp\3rdParty\glslang %RDIR_R%\src\3rdParty\glslang /S
 
-echo for github actions
-rmdir /s /q %RDIR_R%\src\3rdParty\glslang\Test
-
-
 mkdir %RDIR_R%\src\3rdParty\stb_effekseer
 robocopy Dev\Cpp\3rdParty\stb_effekseer %RDIR_R%\src\3rdParty\stb_effekseer *.h
 

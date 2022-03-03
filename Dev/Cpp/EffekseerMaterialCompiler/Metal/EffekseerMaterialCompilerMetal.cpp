@@ -55,62 +55,6 @@ inline auto MOD(T1 x, T2 y) -> decltype(x - y * floor(x/y)) {
     return x - y * floor(x/y);
 }
 
-#define FLT_EPSILON 1.192092896e-07f
-
-static inline __attribute__((always_inline))
-float3 PositivePow(thread const float3& base, thread const float3& power)
-{
-	return pow(fast::max(abs(base), float3(FLT_EPSILON, FLT_EPSILON, FLT_EPSILON)), power);
-}
-
-static inline __attribute__((always_inline))
-float3 LinearToSRGB(thread const float3& c)
-{
-	return fast::max(1.055 * PositivePow(c, 0.416666667) - 0.055, 0.0);
-}
-
-static inline __attribute__((always_inline))
-float4 LinearToSRGB(thread const float4& c)
-{
-    float3 param = c.xyz;
-    return float4(LinearToSRGB(param), c.w);
-}
-
-static inline __attribute__((always_inline))
-float4 ConvertFromSRGBTexture(thread const float4& c, constant float4& predefined_uniform)
-{
-    if (predefined_uniform.z == 0.0)
-    {
-        return c;
-    }
-    float4 param = c;
-    return LinearToSRGB(param);
-}
-
-static inline __attribute__((always_inline))
-float3 SRGBToLinear(thread const float3& c)
-{
-	return fast::min(c, c * (c * (c * 0.305306011 + 0.682171111) + 0.012522878));
-}
-
-static inline __attribute__((always_inline))
-float4 SRGBToLinear(thread const float4& c)
-{
-    float3 param = c.xyz;
-    return float4(SRGBToLinear(param), c.w);
-}
-
-static inline __attribute__((always_inline))
-float4 ConvertToScreen(thread const float4& c, constant float4& predefined_uniform)
-{
-    if (predefined_uniform.z == 0.0)
-    {
-        return c;
-    }
-    float4 param = c;
-    return SRGBToLinear(param);
-}
-
 )";
 
 static const char* material_common_define_vs = R"(
@@ -508,7 +452,7 @@ static const char g_material_fs_src_suf2_lit[] =
     if(opacityMask <= 0.0) discard_fragment();
     if(opacity <= 0.0) discard_fragment();
 
-    o.gl_FragColor = ConvertToScreen(Output, u.predefined_uniform);
+    o.gl_FragColor = Output;
     return o;
 }
 
@@ -520,7 +464,7 @@ static const char g_material_fs_src_suf2_unlit[] =
     if(opacityMask <= 0.0) discard_fragment();
     if(opacity <= 0.0) discard_fragment();
 
-    o.gl_FragColor = ConvertToScreen(float4(emissive, opacity), u.predefined_uniform);
+    o.gl_FragColor = float4(emissive, opacity);
     return o;
 }
 
@@ -775,7 +719,7 @@ void ExportMain(
     }
 }
 
-ShaderData GenerateShader(MaterialFile* materialFile, MaterialShaderType shaderType, int32_t maximumUniformCount, int32_t maximumTextureCount)
+ShaderData GenerateShader(MaterialFile* materialFile, MaterialShaderType shaderType, int32_t maximumTextureCount)
 {
     bool isSprite = shaderType == MaterialShaderType::Standard || shaderType == MaterialShaderType::Refraction;
     bool isRefrection =
@@ -854,35 +798,17 @@ ShaderData GenerateShader(MaterialFile* materialFile, MaterialShaderType shaderT
         
         
         // replace uniforms
-		int32_t actualUniformCount = std::min(maximumUniformCount, materialFile->GetUniformCount());
-
-        for (size_t i = 0; i < actualUniformCount; i++)
+        for (size_t i = 0; i < materialFile->GetUniformCount(); i++)
         {
             auto name = materialFile->GetUniformName(i);
             baseCode = Replace(baseCode, name, std::string("u.") + name);
         }
-
-        for (size_t i = actualUniformCount; i < materialFile->GetUniformCount(); i++)
-		{
-			auto name = materialFile->GetUniformName(i);
-			baseCode = Replace(baseCode, name, std::string("float4(0,0,0,0)"));
-		}
-
         baseCode = Replace(baseCode, "predefined_uniform", std::string("u.") + "predefined_uniform");
         baseCode = Replace(baseCode, "cameraPosition", std::string("u.") + "cameraPosition");
 
         // replace textures
         for (size_t i = 0; i < actualTextureCount; i++)
         {
-			std::string prefix;
-			std::string suffix;
-
-			if (materialFile->GetTextureColorType(i) == Effekseer::TextureColorType::Color)
-			{
-				prefix = "ConvertFromSRGBTexture(";
-				suffix = ",u.predefined_uniform)";
-			}
-
             auto textureIndex = materialFile->GetTextureIndex(i);
             auto textureName = std::string(materialFile->GetTextureName(i));
 
@@ -900,10 +826,8 @@ ShaderData GenerateShader(MaterialFile* materialFile, MaterialShaderType shaderT
                 std::string varName = baseCode.substr(varPos, posS - varPos);
 
                 std::ostringstream texSample;
-				texSample << prefix;
                 texSample << textureName << ".sample(s_" << textureName << ", ";
                 texSample << GetUVReplacement(varName, stage) << ")";
-				texSample << suffix;
                 
                 baseCode = baseCode.replace(posP, posS + keyS.length() - posP, texSample.str());
                 posP = baseCode.find(keyP, posP + texSample.str().length());
@@ -1014,7 +938,7 @@ public:
     int GetRef() override { return ReferenceObject::GetRef(); }
 };
 
-CompiledMaterialBinary* MaterialCompilerMetal::Compile(MaterialFile* materialFile, int32_t maximumUniformCount, int32_t maximumTextureCount)
+CompiledMaterialBinary* MaterialCompilerMetal::Compile(MaterialFile* materialFile, int32_t maximumTextureCount)
 {
     auto binary = new CompiledMaterialBinaryMetal();
     //auto compiler = LLGI::CreateSharedPtr(new LLGI::CompilerMetal());
@@ -1103,9 +1027,8 @@ CompiledMaterialBinary* MaterialCompilerMetal::Compile(MaterialFile* materialFil
 		return ret;
 	};
 
-    auto saveBinary = [&materialFile, &binary, &convertToVectorVS, &convertToVectorPS, &maximumUniformCount, & maximumTextureCount](MaterialShaderType type)
-	{
-		auto shader = Metal::GenerateShader(materialFile, type, maximumUniformCount, maximumTextureCount);
+    auto saveBinary = [&materialFile, &binary, &convertToVectorVS, &convertToVectorPS, &maximumTextureCount](MaterialShaderType type) {
+        auto shader = Metal::GenerateShader(materialFile, type, maximumTextureCount);
         binary->SetVertexShaderData(type, convertToVectorVS(shader.CodeVS));
         binary->SetPixelShaderData(type, convertToVectorPS(shader.CodePS));
     };
@@ -1122,7 +1045,7 @@ CompiledMaterialBinary* MaterialCompilerMetal::Compile(MaterialFile* materialFil
     return binary;
 }
 
-CompiledMaterialBinary* MaterialCompilerMetal::Compile(MaterialFile* materialFile) { return Compile(materialFile, Effekseer::UserUniformSlotMax, Effekseer::UserTextureSlotMax); }
+CompiledMaterialBinary* MaterialCompilerMetal::Compile(MaterialFile* materialFile) { return Compile(materialFile, Effekseer::UserTextureSlotMax); }
 
 } // namespace Effekseer
 

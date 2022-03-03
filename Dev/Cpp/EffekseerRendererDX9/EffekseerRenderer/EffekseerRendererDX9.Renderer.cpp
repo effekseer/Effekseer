@@ -524,7 +524,6 @@ bool RendererImplemented::BeginRendering()
 		for (size_t i = 0; i < m_state_streamData.size(); i++)
 		{
 			GetDevice()->GetStreamSource((UINT)i, &m_state_streamData[i], &m_state_OffsetInBytes[i], &m_state_pStride[i]);
-			GetDevice()->GetStreamSourceFreq((UINT)i, &m_state_streamFreq[i]);
 		}
 
 		GetDevice()->GetIndices(&m_state_IndexData);
@@ -614,7 +613,6 @@ bool RendererImplemented::EndRendering()
 		{
 			GetDevice()->SetStreamSource((UINT)i, m_state_streamData[i], m_state_OffsetInBytes[i], m_state_pStride[i]);
 			ES_SAFE_RELEASE(m_state_streamData[i]);
-			GetDevice()->SetStreamSourceFreq((UINT)i, m_state_streamFreq[i]);
 		}
 
 		GetDevice()->SetIndices(m_state_IndexData);
@@ -857,11 +855,6 @@ void RendererImplemented::DrawPolygon(int32_t vertexCount, int32_t indexCount)
 {
 	impl->drawcallCount++;
 	impl->drawvertexCount += vertexCount;
-
-	auto vb = static_cast<Backend::VertexBuffer*>(instancedVertexBuffer_.Get());
-	GetDevice()->SetStreamSource(1, vb->GetBuffer(), 0, sizeof(float));
-	GetDevice()->SetStreamSourceFreq(0, D3DSTREAMSOURCE_INDEXEDDATA | 1);
-	GetDevice()->SetStreamSourceFreq(1, D3DSTREAMSOURCE_INSTANCEDATA | 1);
 
 	GetDevice()->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, vertexCount, 0, indexCount / 3);
 }

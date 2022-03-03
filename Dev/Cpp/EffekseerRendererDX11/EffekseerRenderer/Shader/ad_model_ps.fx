@@ -27,7 +27,6 @@ cbuffer PS_ConstanBuffer : register(b0)
 	float4 reconstructionParam1;
 	float4 reconstructionParam2;
 	float4 mUVInversedBack;
-	float4 miscFlags;
 };
 
 #ifdef ENABLE_LIGHTING
@@ -111,19 +110,16 @@ struct PS_Input
 
 #include "ad_common_ps.fx"
 #include "SoftParticle_PS.fx"
-#include "Linear_sRGB.fx"
 
 float4 main(const PS_Input Input)
 	: SV_Target
 {
-	bool convertColorSpace = miscFlags.x != 0.0f;
-
 	AdvancedParameter advancedParam = DisolveAdvancedParameter(Input);
 
-	float2 UVOffset = UVDistortionOffset(_uvDistortionTex, sampler_uvDistortionTex, advancedParam.UVDistortionUV, fUVDistortionParameter.zw, convertColorSpace);
+	float2 UVOffset = UVDistortionOffset(_uvDistortionTex, sampler_uvDistortionTex, advancedParam.UVDistortionUV, fUVDistortionParameter.zw);
 	UVOffset *= fUVDistortionParameter.x;
 
-	float4 Output = ConvertFromSRGBTexture(_colorTex.Sample(sampler_colorTex, Input.UV_Others.xy + UVOffset), convertColorSpace) * Input.Color;
+	float4 Output = _colorTex.Sample(sampler_colorTex, Input.UV_Others.xy + UVOffset) * Input.Color;
 
 #if ENABLE_LIGHTING
 	half3 texNormal = (_normalTex.Sample(sampler_normalTex, Input.UV_Others.xy + UVOffset).xyz - 0.5) * 2.0;
@@ -133,18 +129,18 @@ float4 main(const PS_Input Input)
 			half3x3((half3)Input.WorldT, (half3)Input.WorldB, (half3)Input.WorldN)));
 #endif
 
-	ApplyFlipbook(Output, _colorTex, sampler_colorTex, fFlipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, advancedParam.FlipbookRate, convertColorSpace);
+	ApplyFlipbook(Output, _colorTex, sampler_colorTex, fFlipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, advancedParam.FlipbookRate);
 
 	// apply alpha texture
-	float4 AlphaTexColor = ConvertFromSRGBTexture(_alphaTex.Sample(sampler_alphaTex, advancedParam.AlphaUV + UVOffset), convertColorSpace);
+	float4 AlphaTexColor = _alphaTex.Sample(sampler_alphaTex, advancedParam.AlphaUV + UVOffset);
 	Output.a *= AlphaTexColor.r * AlphaTexColor.a;
 
 	// blend texture uv offset
-	float2 BlendUVOffset = UVDistortionOffset(_blendUVDistortionTex, sampler_blendUVDistortionTex, advancedParam.BlendUVDistortionUV, fUVDistortionParameter.zw, convertColorSpace);
+	float2 BlendUVOffset = UVDistortionOffset(_blendUVDistortionTex, sampler_blendUVDistortionTex, advancedParam.BlendUVDistortionUV, fUVDistortionParameter.zw);
 	BlendUVOffset *= fUVDistortionParameter.y;
 
-	float4 BlendTextureColor = ConvertFromSRGBTexture(_blendTex.Sample(sampler_blendTex, advancedParam.BlendUV + BlendUVOffset), convertColorSpace);
-	float4 BlendAlphaTextureColor = ConvertFromSRGBTexture(_blendAlphaTex.Sample(sampler_blendAlphaTex, advancedParam.BlendAlphaUV + BlendUVOffset), convertColorSpace);
+	float4 BlendTextureColor = _blendTex.Sample(sampler_blendTex, advancedParam.BlendUV + BlendUVOffset);
+	float4 BlendAlphaTextureColor = _blendAlphaTex.Sample(sampler_blendAlphaTex, advancedParam.BlendAlphaUV + BlendUVOffset);
 	BlendTextureColor.a *= BlendAlphaTextureColor.r * BlendAlphaTextureColor.a;
 
 	ApplyTextureBlending(Output, BlendTextureColor, fBlendTextureParameter.x);
@@ -218,5 +214,5 @@ float4 main(const PS_Input Input)
 		Output.rgb,
 		ceil((Output.a - advancedParam.AlphaThreshold) - fEdgeParameter.x));
 
-	return ConvertToScreen(Output, convertColorSpace);
+	return Output;
 }

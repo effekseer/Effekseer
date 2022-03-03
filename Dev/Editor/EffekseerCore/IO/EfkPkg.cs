@@ -79,9 +79,9 @@ namespace Effekseer.IO
 
 				Func<string, string> convertLoadingFilePath = (string convertedPath) =>
 				{
-					foreach (var fileInfo in dependencies)
+					foreach(var fileInfo in dependencies)
 					{
-						if (convertedPath.Contains(fileInfo.HashName))
+						if(convertedPath.Contains(fileInfo.HashName))
 						{
 							return convertedPath.Replace(fileInfo.HashName, fileInfo.RelativePath);
 						}
@@ -431,11 +431,6 @@ namespace Effekseer.IO
 					}
 
 					string filePath = Path.Combine(dirPath, file.RelativePath);
-					string resourceDirPath = Path.GetDirectoryName(filePath);
-					if (!Directory.Exists(resourceDirPath))
-					{
-						Directory.CreateDirectory(resourceDirPath);
-					}
 
 					EfkEfc efkefc = new EfkEfc();
 					var doc = efkefc.Load(file.Data);
@@ -455,7 +450,7 @@ namespace Effekseer.IO
 					var resourcePaths = Utils.Misc.FindResourcePaths(root, Binary.ExporterVersion.Latest);
 					foreach (var list in resourcePaths.All)
 					{
-						ApplyEffectDependencies(list, dirPath, filePath);
+						ApplyEffectDependencies(list);
 					}
 
 					// Write effect file
@@ -475,18 +470,15 @@ namespace Effekseer.IO
 			return true;
 		}
 
-		private void ApplyEffectDependencies(List<Data.Value.Path> resourceList, string exportDirPath, string effectPath)
+		private void ApplyEffectDependencies(List<Data.Value.Path> resourceList)
 		{
 			foreach (var resource in resourceList)
 			{
 				string hashName = resource.GetRelativePath();
-				var resfile = ResourceFiles.Find(r => r.HashName == hashName);
-				if (resfile != null)
+				var entry = ResourceFiles.Find(r => r.HashName == hashName);
+				if (entry != null)
 				{
-					var fullPath = Path.Combine(exportDirPath, resfile.RelativePath);
-					fullPath = Utils.Misc.BackSlashToSlash(fullPath);
-					var path = Utils.Misc.GetRelativePath(effectPath, fullPath);
-					resource.SetRelativePathDirectly(path, true);
+					resource.SetRelativePathDirectly(entry.RelativePath, true);
 				}
 			}
 		}
@@ -500,12 +492,7 @@ namespace Effekseer.IO
 				{
 					bool result = ReplaceMaterialPaths(material, (path) =>
 					{
-						var resfile = AllFiles.FirstOrDefault(f => f.HashName == path);
-						if(resfile == null)
-						{
-							return path;
-						}
-
+						var resfile = AllFiles.First(f => f.HashName == path);
 						var fullPath = Path.Combine(exportDirPath, resfile.RelativePath);
 						fullPath = Utils.Misc.BackSlashToSlash(fullPath);
 						path = Utils.Misc.GetRelativePath(resourcePath, fullPath);
@@ -558,14 +545,6 @@ namespace Effekseer.IO
 				{
 					string type = (string)node["Type"];
 					if (type == "SampleTexture")
-					{
-						string path = (string)node["Props"][0]["Value"];
-						if (!string.IsNullOrEmpty(path))
-						{
-							node["Props"][0]["Value"] = callback(path);
-						}
-					}
-					else if (type == "TextureObject")
 					{
 						string path = (string)node["Props"][0]["Value"];
 						if (!string.IsNullOrEmpty(path))

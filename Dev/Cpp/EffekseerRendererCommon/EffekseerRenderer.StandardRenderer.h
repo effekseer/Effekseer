@@ -105,12 +105,7 @@ struct StandardRendererState
 		HandleUserData = nullptr;
 	}
 
-	bool operator==(const StandardRendererState& state) const
-	{
-		return !(*this != state);
-	}
-
-	bool operator!=(const StandardRendererState& state) const
+	bool operator!=(const StandardRendererState state)
 	{
 		if (Collector != state.Collector)
 			return true;
@@ -356,8 +351,13 @@ public:
 		return static_cast<int32_t>(stride);
 	}
 
-	void BeginRenderingAndRenderingIfRequired(const StandardRendererState& state, int32_t count, int& stride, void*& data)
+	void BeginRenderingAndRenderingIfRequired(StandardRendererState state, int32_t count, int& stride, void*& data)
 	{
+		if (renderInfos_.size() > 0 && renderInfos_[renderInfos_.size() - 1].state != state)
+		{
+			//Rendering();
+		}
+
 		if (renderInfos_.size() > 0 && (renderInfos_[renderInfos_.size() - 1].isLargeSize || renderInfos_[renderInfos_.size() - 1].hasDistortion))
 		{
 			Rendering();
@@ -366,8 +366,6 @@ public:
 		stride = CalculateCurrentStride(state);
 
 		const int32_t requiredSize = count * stride;
-		const auto spriteStride = stride * 4;
-		const auto maxVertexCount = m_renderer->GetSquareMaxCount() * 4;
 
 		if (requiredSize > vertexCacheMaxSize_ || requiredSize == 0)
 		{
@@ -375,7 +373,7 @@ public:
 			return;
 		}
 
-		if (requiredSize + EffekseerRenderer::VertexBufferBase::GetNextAliginedVertexRingOffset(vertexCacheOffset_, spriteStride) > vertexCacheMaxSize_ || count > maxVertexCount)
+		if (requiredSize + EffekseerRenderer::VertexBufferBase::GetNextAliginedVertexRingOffset(vertexCacheOffset_, stride * 4) > vertexCacheMaxSize_)
 		{
 			Rendering();
 		}
@@ -392,13 +390,13 @@ public:
 				vertexCacheOffset_ = 0;
 			}
 
-			if (requiredSize + EffekseerRenderer::VertexBufferBase::GetNextAliginedVertexRingOffset(vertexCacheOffset_, spriteStride) > vertexCacheMaxSize_)
+			if (requiredSize + EffekseerRenderer::VertexBufferBase::GetNextAliginedVertexRingOffset(vertexCacheOffset_, stride * 4) > vertexCacheMaxSize_)
 			{
 				vertexCacheOffset_ = 0;
 			}
 		}
 
-		vertexCacheOffset_ = EffekseerRenderer::VertexBufferBase::GetNextAliginedVertexRingOffset(vertexCacheOffset_, spriteStride);
+		vertexCacheOffset_ = EffekseerRenderer::VertexBufferBase::GetNextAliginedVertexRingOffset(vertexCacheOffset_, stride * 4);
 
 		const auto oldOffset = vertexCacheOffset_;
 		vertexCacheOffset_ += requiredSize;
@@ -409,22 +407,14 @@ public:
 
 		data = (vertexCaches_.data() + oldOffset);
 
-		if (renderInfos_.size() > 0 && renderInfos_.back().state == state && (renderInfos_.back().size + requiredSize) / spriteStride <= m_renderer->GetSquareMaxCount())
-		{
-			RenderInfo& renderInfo = renderInfos_.back();
-			renderInfo.size += requiredSize;
-		}
-		else
-		{
-			RenderInfo renderInfo;
-			renderInfo.state = state;
-			renderInfo.size = requiredSize;
-			renderInfo.offset = oldOffset;
-			renderInfo.stride = stride;
-			renderInfo.isLargeSize = requiredSize > vertexCacheMaxSize_;
-			renderInfo.hasDistortion = state.Collector.IsBackgroundRequiredOnFirstPass && m_renderer->GetDistortingCallback() != nullptr;
-			renderInfos_.emplace_back(renderInfo);
-		}
+		RenderInfo renderInfo;
+		renderInfo.state = state;
+		renderInfo.size = requiredSize;
+		renderInfo.offset = oldOffset;
+		renderInfo.stride = stride;
+		renderInfo.isLargeSize = requiredSize > vertexCacheMaxSize_;
+		renderInfo.hasDistortion = state.Collector.IsBackgroundRequiredOnFirstPass && m_renderer->GetDistortingCallback() != nullptr;
+		renderInfos_.emplace_back(renderInfo);
 	}
 
 	void ResetAndRenderingIfRequired()
@@ -440,10 +430,8 @@ public:
 
 	void Rendering()
 	{
-		if (renderInfos_.size() == 0)
-		{
+		if (vertexCacheOffset_ == 0)
 			return;
-		}
 
 		int cpuBufStart = INT_MAX;
 		int cpuBufEnd = 0;
@@ -512,17 +500,11 @@ public:
 					renderBufferSize = (vertexCacheMaxSize_ / (stride * 4)) * (stride * 4);
 				}
 
-				const auto maxVertexCount = m_renderer->GetSquareMaxCount() * 4;
-				const auto currentVertexCount = renderBufferSize / stride;
-				if (currentVertexCount > maxVertexCount)
-				{
-					renderBufferSize = m_renderer->GetSquareMaxCount() * (stride * 4);
-				}
-
 				Rendering_(m_renderer->GetCameraMatrix(), mProj, info.offset, renderBufferSize, info.stride, passInd, state);
 			}
 		}
 
+		vertexCacheOffset_ = 0;
 		renderInfos_.clear();
 
 		m_renderer->GetImpl()->CurrentRingBufferIndex++;
@@ -683,7 +665,6 @@ public:
 			predefined_uniforms.fill(0.5f);
 			predefined_uniforms[0] = m_renderer->GetTime();
 			predefined_uniforms[1] = renderState.Maginification;
-			predefined_uniforms[2] = m_renderer->GetImpl()->MaintainGammaColorInLinearColorSpace ? 1.0f : 0.0f;
 
 			// vs
 			int32_t vsOffset = 0;
@@ -794,8 +775,6 @@ public:
 
 			// ps
 			PixelConstantBuffer pcb{};
-			pcb.MiscFlags.fill(0.0f);
-			pcb.MiscFlags[0] = m_renderer->GetImpl()->MaintainGammaColorInLinearColorSpace ? 1.0f : 0.0f;
 
 			pcb.FalloffParam.Enable = 0;
 
@@ -889,9 +868,6 @@ public:
 			else
 			{
 				PixelConstantBuffer pcb;
-				pcb.MiscFlags.fill(0.0f);
-				pcb.MiscFlags[0] = m_renderer->GetImpl()->MaintainGammaColorInLinearColorSpace ? 1.0f : 0.0f;
-
 				pcb.FalloffParam.Enable = 0;
 				pcb.FlipbookParam.EnableInterpolation = static_cast<float>(renderState.EnableInterpolation);
 				pcb.FlipbookParam.InterpolationType = static_cast<float>(renderState.InterpolationType);

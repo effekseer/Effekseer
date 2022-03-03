@@ -56,7 +56,7 @@ static std::tuple<Vector2DF, Vector2DF> GetSelectedNodeBounds(float margin)
 	auto selectedCount = ed::GetSelectedNodes(selectedNodes.data(), selectedNodes.size());
 
 	ImVec2 areaMin(std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
-	ImVec2 areaMax(-std::numeric_limits<float>::max(), -std::numeric_limits<float>::max());
+	ImVec2 areaMax(std::numeric_limits<float>::min(), std::numeric_limits<float>::min());
 
 	for (size_t i = 0; i < selectedCount; i++)
 	{
@@ -117,7 +117,7 @@ void Compile(std::shared_ptr<Graphics> graphics,
 	}
 
 	auto compiler = ::Effekseer::CreateUniqueReference(new Effekseer::MaterialCompilerGL());
-	auto binary = ::Effekseer::CreateUniqueReference(compiler->Compile(&efkMaterial, 1024, 1024));
+	auto binary = ::Effekseer::CreateUniqueReference(compiler->Compile(&efkMaterial, 1024));
 
 	vs = reinterpret_cast<const char*>(binary->GetVertexShaderData(Effekseer::MaterialShaderType::Standard));
 	ps = reinterpret_cast<const char*>(binary->GetPixelShaderData(Effekseer::MaterialShaderType::Standard));

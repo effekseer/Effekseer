@@ -983,18 +983,8 @@ void Instance::FirstUpdate()
 		}
 	}
 
-	if (m_pEffectNode->GenerationLocation.EffectsRotation)
-	{
-		auto tempPrevPosition = prevPosition_;
-		tempPrevPosition += m_GenerationLocation.GetTranslation();
-		prevGlobalPosition_ = SIMD::Vec3f::Transform(tempPrevPosition, m_ParentMatrix);
-	}
-	else
-	{
-		prevPosition_ += m_GenerationLocation.GetTranslation();
-		prevGlobalPosition_ = SIMD::Vec3f::Transform(prevPosition_, m_ParentMatrix);
-	}
-	
+	prevPosition_ += m_GenerationLocation.GetTranslation();
+	prevGlobalPosition_ = SIMD::Vec3f::Transform(prevPosition_, m_ParentMatrix);
 	m_pEffectNode->InitializeRenderedInstance(*this, *ownGroup_, m_pManager);
 }
 
@@ -1354,9 +1344,11 @@ void Instance::CalculateMatrix(float deltaFrame)
 			localPosition = {0, 0, 0};
 		}
 
-		if (!m_pEffectNode->GenerationLocation.EffectsRotation)
+		// Velocitty
+		SIMD::Vec3f localVelocity = SIMD::Vec3f(0, 0, 0);
+		if (m_pEffectNode->LocalForceField.HasValue)
 		{
-			localPosition += m_GenerationLocation.GetTranslation();
+			localVelocity = localPosition - prevPosition_;
 		}
 
 		if (m_pEffectNode->CommonValues.TranslationBindType == TranslationParentBindType::NotBind_FollowParent ||
@@ -1388,14 +1380,12 @@ void Instance::CalculateMatrix(float deltaFrame)
 			localPosition += followVelocity;
 		}
 
-		// Velocitty
-		SIMD::Vec3f localVelocity = SIMD::Vec3f(0, 0, 0);
-		if (m_pEffectNode->LocalForceField.HasValue)
-		{
-			localVelocity = localPosition - prevPosition_;
-		}
-
 		prevPosition_ = localPosition;
+
+		if (!m_pEffectNode->GenerationLocation.EffectsRotation)
+		{
+			localPosition += m_GenerationLocation.GetTranslation();
+		}
 
 		/* 回転の更新(時間から直接求めれるよう対応済み) */
 		if (m_pEffectNode->RotationType == ParameterRotationType_None)
@@ -1497,8 +1487,7 @@ void Instance::CalculateMatrix(float deltaFrame)
 			auto location = SIMD::Mat43f::Translation(localPosition);
 			location *= m_GenerationLocation;
 			
-			
-			localVelocity = SIMD::Vec3f::Transform(localVelocity, m_GenerationLocation.GetRotation());
+			localVelocity = SIMD::Vec3f::Transform(localVelocity, m_GenerationLocation) - m_GenerationLocation.GetTranslation();
 			currentLocalPosition = location.GetTranslation();
 		}
 		else

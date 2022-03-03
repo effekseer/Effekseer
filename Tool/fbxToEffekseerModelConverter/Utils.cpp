@@ -36,7 +36,6 @@ void AssignAllDefaultGlobalMateixes(std::vector<NodeState>& nodes)
 	for (auto& node : nodes)
 	{
 		node.MatGlobalDefault = node.MatGlobal;
-		node.EvaluatedMatGlobalDefault = node.TargetNode->EvaluatedGlobalMatrix;
 	}
 }
 

@@ -53,8 +53,6 @@ public:
 	//! for OpenGL
 	int32_t RingBufferCount = 1;
 
-	bool MaintainGammaColorInLinearColorSpace = false;
-
 	Impl() = default;
 	~Impl();
 

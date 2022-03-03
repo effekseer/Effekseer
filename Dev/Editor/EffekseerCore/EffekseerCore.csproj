@@ -189,7 +189,6 @@
     <Compile Include="InternalScript\SSAGenerator.cs" />
     <Compile Include="IO\EfkEfc.cs" />
     <Compile Include="IO\EfkPkg.cs" />
-    <Compile Include="IO\EfkPkgImporter.cs" />
     <Compile Include="Utils\BinaryWriter.cs" />
     <Compile Include="Utils\CsvReader.cs" />
     <Compile Include="Utils\Logger.cs" />

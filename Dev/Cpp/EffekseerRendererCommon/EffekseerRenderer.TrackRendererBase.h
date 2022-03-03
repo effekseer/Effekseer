@@ -747,13 +747,13 @@ protected:
 					Effekseer::Color normal_ = PackVector3DF(normal);
 					Effekseer::Color tangent_ = PackVector3DF(tangent);
 
-					vl.SetPackedNormal(normal_, FLIP_RGB);
-					vm.SetPackedNormal(normal_, FLIP_RGB);
-					vr.SetPackedNormal(normal_, FLIP_RGB);
+					vl.SetPackedNormal(normal_);
+					vm.SetPackedNormal(normal_);
+					vr.SetPackedNormal(normal_);
 
-					vl.SetPackedTangent(tangent_, FLIP_RGB);
-					vm.SetPackedTangent(tangent_, FLIP_RGB);
-					vr.SetPackedTangent(tangent_, FLIP_RGB);
+					vl.SetPackedTangent(tangent_);
+					vm.SetPackedTangent(tangent_);
+					vr.SetPackedTangent(tangent_);
 				}
 
 				if (isFirst_)
