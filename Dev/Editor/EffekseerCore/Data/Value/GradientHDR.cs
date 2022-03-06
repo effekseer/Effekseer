@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml;
+using Effekseer.Utl;
 
 namespace Effekseer.Data.Value
 {
@@ -34,6 +36,44 @@ namespace Effekseer.Data.Value
 
 				return state;
 			}
+
+			public unsafe override bool Equals(object obj)
+			{
+				var o = (State)obj;
+				if (o == null)
+				{
+					return false;
+				}
+
+				if (ColorMarkers.Count() != o.ColorMarkers.Count() || AlphaMarkers.Count() != o.AlphaMarkers.Count())
+				{
+					return false;
+				}
+
+				for (int i = 0; i < ColorMarkers.Count(); i++)
+				{
+					if (ColorMarkers[i].Color[0] != o.ColorMarkers[i].Color[0] ||
+						ColorMarkers[i].Color[1] != o.ColorMarkers[i].Color[1] ||
+						ColorMarkers[i].Color[2] != o.ColorMarkers[i].Color[2] ||
+						ColorMarkers[i].Intensity != o.ColorMarkers[i].Intensity ||
+						ColorMarkers[i].Position != o.ColorMarkers[i].Position)
+					{
+						return false;
+					}
+				}
+
+				for (int i = 0; i < AlphaMarkers.Count(); i++)
+				{
+					if (
+						AlphaMarkers[i].Alpha != o.AlphaMarkers[i].Alpha ||
+						AlphaMarkers[i].Position != o.AlphaMarkers[i].Position)
+					{
+						return false;
+					}
+				}
+
+				return true;
+			}
 		}
 
 		State _value = null;
@@ -44,8 +84,77 @@ namespace Effekseer.Data.Value
 
 		}
 
+		public unsafe static XmlElement SaveToElement(XmlDocument doc, string element_name, object o, bool isClip)
+		{
+			var target = o as GradientHDR;
+
+			var defaultValue = CreateDefault();
+			if(target._value.Equals(defaultValue))
+			{
+				return null;
+			}
+
+			var root = doc.CreateElement(element_name);
+			var colorMarkers = doc.CreateElement("ColorMarkers");
+			var alphaMarkers = doc.CreateElement("AlphaMarkers");
+
+			foreach (var c in target._value.ColorMarkers)
+			{
+				var key = doc.CreateElement("Key");
+				key.AppendChild(doc.CreateTextElement("R", c.Color[0].ToString()));
+				key.AppendChild(doc.CreateTextElement("G", c.Color[1].ToString()));
+				key.AppendChild(doc.CreateTextElement("B", c.Color[2].ToString()));
+				key.AppendChild(doc.CreateTextElement("Position", c.Position.ToString()));
+				key.AppendChild(doc.CreateTextElement("Intensity", c.Intensity.ToString()));
+				colorMarkers.AppendChild(key);
+			}
+
+			foreach (var a in target._value.AlphaMarkers)
+			{
+				var key = doc.CreateElement("Key");
+				key.AppendChild(doc.CreateTextElement("Position", a.Position.ToString()));
+				key.AppendChild(doc.CreateTextElement("Alpha", a.Alpha.ToString()));
+				alphaMarkers.AppendChild(key);
+			}
+
+			root.AppendChild(colorMarkers);
+			root.AppendChild(alphaMarkers);
+
+			return root;
+		}
+
+		public unsafe static void LoadFromElement(XmlElement e, object o, bool isClip)
+		{
+			var target = o as GradientHDR;
+
+			var colorMarkers = e["ColorMarkers"];
+			var alphaMarkers = e["AlphaMarkers"];
+
+			var _value = new State();
+			_value.ColorMarkers = new ColorMarker[colorMarkers.ChildNodes.Count];
+			for (int i = 0; i < colorMarkers.ChildNodes.Count; i++)
+			{
+				_value.ColorMarkers[i].Color[0] = colorMarkers.ChildNodes[i]["R"].GetTextAsFloat();
+				_value.ColorMarkers[i].Color[1] = colorMarkers.ChildNodes[i]["G"].GetTextAsFloat();
+				_value.ColorMarkers[i].Color[2] = colorMarkers.ChildNodes[i]["B"].GetTextAsFloat();
+				_value.ColorMarkers[i].Position = colorMarkers.ChildNodes[i]["Position"].GetTextAsFloat();
+				_value.ColorMarkers[i].Intensity = colorMarkers.ChildNodes[i]["Intensity"].GetTextAsFloat();
+			}
+
+			_value.AlphaMarkers = new AlphaMarker[alphaMarkers.ChildNodes.Count];
+			for (int i = 0; i < alphaMarkers.ChildNodes.Count; i++)
+			{
+				_value.AlphaMarkers[i].Position = alphaMarkers.ChildNodes[i]["Position"].GetTextAsFloat();
+				_value.AlphaMarkers[i].Alpha = alphaMarkers.ChildNodes[i]["Alpha"].GetTextAsFloat();
+			}
+
+			target._value = _value;
+		}
+
 		static GradientHDR()
 		{
+			IO.ExtendSupportedType(typeof(GradientHDR), SaveToElement, LoadFromElement);
+
 			Command.CommandManager.AddConvertFunction((commands) =>
 			{
 				var cmds = commands.OfType<ChangeCommand>().ToArray();
@@ -90,27 +199,32 @@ namespace Effekseer.Data.Value
 			});
 		}
 
+		public unsafe static State CreateDefault()
+		{
+			var value = new State();
+			value.ColorMarkers = new ColorMarker[2];
+			value.ColorMarkers[0].Position = 0;
+			value.ColorMarkers[0].Intensity = 1;
+			value.ColorMarkers[0].Color[0] = 1.0f;
+			value.ColorMarkers[0].Color[1] = 1.0f;
+			value.ColorMarkers[0].Color[2] = 1.0f;
+
+			value.ColorMarkers[1].Position = 1;
+			value.ColorMarkers[1].Intensity = 1;
+			value.ColorMarkers[1].Color[0] = 1.0f;
+			value.ColorMarkers[1].Color[1] = 1.0f;
+			value.ColorMarkers[1].Color[2] = 1.0f;
+
+			value.AlphaMarkers = new AlphaMarker[2];
+			value.AlphaMarkers[0].Position = 0.0f;
+			value.AlphaMarkers[0].Alpha = 1.0f;
+			value.AlphaMarkers[1].Position = 1.0f;
+			value.AlphaMarkers[1].Alpha = 1.0f;
+			return value;
+		}
 		public unsafe GradientHDR()
 		{
-			_value = new State();
-			_value.ColorMarkers = new ColorMarker[2];
-			_value.ColorMarkers[0].Position = 0;
-			_value.ColorMarkers[0].Intensity = 1;
-			_value.ColorMarkers[0].Color[0] = 1.0f;
-			_value.ColorMarkers[0].Color[1] = 1.0f;
-			_value.ColorMarkers[0].Color[2] = 1.0f;
-
-			_value.ColorMarkers[1].Position = 1;
-			_value.ColorMarkers[1].Intensity = 1;
-			_value.ColorMarkers[1].Color[0] = 1.0f;
-			_value.ColorMarkers[1].Color[1] = 1.0f;
-			_value.ColorMarkers[1].Color[2] = 1.0f;
-
-			_value.AlphaMarkers = new AlphaMarker[2];
-			_value.AlphaMarkers[0].Position = 0.0f;
-			_value.AlphaMarkers[0].Alpha = 1.0f;
-			_value.AlphaMarkers[1].Position = 1.0f;
-			_value.AlphaMarkers[1].Alpha = 1.0f;
+			_value = CreateDefault();
 		}
 
 		public State GetValue()
