@@ -44,6 +44,52 @@ namespace Effekseer.Data.Value
 
 		}
 
+		static GradientHDR()
+		{
+			Command.CommandManager.AddConvertFunction((commands) =>
+			{
+				var cmds = commands.OfType<ChangeCommand>().ToArray();
+				if (commands.Count() != cmds.Count())
+				{
+					return null;
+				}
+
+				if (!(cmds.First().Identifier is GradientHDR))
+				{
+					return null;
+				}
+
+				var identifers = cmds.Select(_ => _.Identifier).Distinct().ToArray();
+				if (identifers.Count() != 1)
+				{
+					return null;
+				}
+
+				var owner = identifers.First() as GradientHDR;
+
+				var first = cmds.First();
+				var last = cmds.Last();
+
+				var cmd = new ChangeCommand(
+					first.OldValue,
+					last.NewValue,
+					() =>
+					{
+						owner._value = last.NewValue;
+						owner.CallChanged(owner._value, ChangedValueType.Execute);
+					},
+					() =>
+					{
+						owner._value = first.OldValue;
+						owner.CallChanged(owner._value, ChangedValueType.Unexecute);
+					},
+					owner,
+					false);
+
+				return cmd;
+			});
+		}
+
 		public unsafe GradientHDR()
 		{
 			_value = new State();
@@ -81,7 +127,9 @@ namespace Effekseer.Data.Value
 			var old_value = _value;
 			var new_value = value;
 
-			var cmd = new Command.DelegateCommand(
+			var cmd = new ChangeCommand(
+				old_value,
+				new_value,
 				() =>
 				{
 					_value = new_value;
@@ -107,5 +155,17 @@ namespace Effekseer.Data.Value
 		}
 
 		public event ChangedValueEventHandler OnChanged;
+
+		class ChangeCommand : Command.DelegateCommand
+		{
+			public State OldValue;
+			public State NewValue;
+			public ChangeCommand(State oldValue, State newValue, System.Action execute, System.Action unexecute, object identifier, bool isCombined)
+				: base(execute, unexecute, identifier, isCombined)
+			{
+				OldValue = oldValue;
+				NewValue = newValue;
+			}
+		}
 	}
 }

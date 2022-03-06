@@ -49,12 +49,29 @@ namespace Effekseer.GUI.Component
 
 		public void SetBinding(object o)
 		{
+			if (Binding == o)
+			{
+				return;
+			}
+
+			if (Binding != null)
+			{
+				Binding.OnChanged -= Binding_OnChanged;
+			}
+
 			Binding = o as Data.Value.GradientHDR;
 			internalState = new swig.GradientHDRState();
+
 			if (Binding != null)
 			{
 				CopyState(internalState, Binding.GetValue());
+				Binding.OnChanged += Binding_OnChanged;
 			}
+		}
+
+		private void Binding_OnChanged(object sender, ChangedValueEventArgs e)
+		{
+			CopyState(internalState, Binding.GetValue());
 		}
 
 		public void FixValue()
@@ -77,6 +94,13 @@ namespace Effekseer.GUI.Component
 			}
 
 			Popup();
+
+
+			// TODO : move core
+			if (!Manager.NativeManager.IsAnyItemActive())
+			{
+				Command.CommandManager.FreezeCombinedCommands();
+			}
 		}
 
 		void Popup()
