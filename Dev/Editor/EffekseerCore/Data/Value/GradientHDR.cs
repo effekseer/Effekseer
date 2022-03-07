@@ -89,7 +89,7 @@ namespace Effekseer.Data.Value
 			var target = o as GradientHDR;
 
 			var defaultValue = CreateDefault();
-			if(target._value.Equals(defaultValue))
+			if (target._value.Equals(defaultValue))
 			{
 				return null;
 			}
@@ -149,6 +149,31 @@ namespace Effekseer.Data.Value
 			}
 
 			target._value = _value;
+		}
+
+		public unsafe byte[] ToBinary()
+		{
+			List<byte[]> data = new List<byte[]>();
+			data.Add(BitConverter.GetBytes(_value.ColorMarkers.Length));
+
+			for (int i = 0; i < _value.ColorMarkers.Length; i++)
+			{
+				data.Add(BitConverter.GetBytes(_value.ColorMarkers[i].Position));
+				data.Add(BitConverter.GetBytes(_value.ColorMarkers[i].Color[0]));
+				data.Add(BitConverter.GetBytes(_value.ColorMarkers[i].Color[1]));
+				data.Add(BitConverter.GetBytes(_value.ColorMarkers[i].Color[2]));
+				data.Add(BitConverter.GetBytes(_value.ColorMarkers[i].Intensity));
+			}
+
+			data.Add(BitConverter.GetBytes(_value.AlphaMarkers.Length));
+
+			for (int i = 0; i < _value.AlphaMarkers.Length; i++)
+			{
+				data.Add(BitConverter.GetBytes(_value.AlphaMarkers[i].Position));
+				data.Add(BitConverter.GetBytes(_value.AlphaMarkers[i].Alpha));
+			}
+
+			return data.SelectMany(_ => _).ToArray();
 		}
 
 		static GradientHDR()

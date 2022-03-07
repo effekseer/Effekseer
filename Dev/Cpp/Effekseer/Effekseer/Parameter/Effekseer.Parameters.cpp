@@ -194,4 +194,94 @@ random_int ApplyEq(const Effect* e, const InstanceGlobal* instg, const Instance*
 	return originalParam;
 }
 
+void Gradient::Load(uint8_t*& pos, int32_t version)
+{
+	BinaryReader<true> reader(pos, std::numeric_limits<int>::max());
+	reader.Read(ColorCount);
+	for (int i = 0; i < ColorCount; i++)
+	{
+		reader.Read(Colors[i]);
+	}
+
+	reader.Read(AlphaCount);
+	for (int i = 0; i < AlphaCount; i++)
+	{
+		reader.Read(Alphas[i]);
+	}
+
+	pos += reader.GetOffset();
+}
+
+std::array<float, 4> Gradient::GetColor(float x) const
+{
+	const auto c = GetColorAndIntensity(x);
+	return std::array<float, 4>{c[0] * c[3], c[1] * c[3], c[2] * c[3], GetAlpha(x)};
+}
+
+std::array<float, 4> Gradient::GetColorAndIntensity(float x) const
+{
+	if (ColorCount == 0)
+	{
+		return std::array<float, 4>{1.0f, 1.0f, 1.0f, 1.0f};
+	}
+
+	if (x < Colors[0].Position)
+	{
+		const auto c = Colors[0].Color;
+		return {c[0], c[1], c[2], Colors[0].Intensity};
+	}
+
+	if (Colors[ColorCount - 1].Position <= x)
+	{
+		const auto c = Colors[ColorCount - 1].Color;
+		return {c[0], c[1], c[2], Colors[ColorCount - 1].Intensity};
+	}
+
+	for (int i = 0; i < ColorCount - 1; i++)
+	{
+		if (Colors[i].Position <= x && x < Colors[i + 1].Position)
+		{
+			const auto area = Colors[i + 1].Position - Colors[i].Position;
+			const auto alpha = (x - Colors[i].Position) / area;
+			const auto r = Colors[i + 1].Color[0] * alpha + Colors[i].Color[0] * (1.0f - alpha);
+			const auto g = Colors[i + 1].Color[1] * alpha + Colors[i].Color[1] * (1.0f - alpha);
+			const auto b = Colors[i + 1].Color[2] * alpha + Colors[i].Color[2] * (1.0f - alpha);
+			const auto intensity = Colors[i + 1].Intensity * alpha + Colors[i].Intensity * (1.0f - alpha);
+			return std::array<float, 4>{r, g, b, intensity};
+		}
+	}
+
+	return std::array<float, 4>{1.0f, 1.0f, 1.0f, 1.0f};
+}
+
+float Gradient::GetAlpha(float x) const
+{
+	if (AlphaCount == 0)
+	{
+		return 1.0f;
+	}
+
+	if (x < Alphas[0].Position)
+	{
+		return Alphas[0].Alpha;
+	}
+
+	if (Alphas[AlphaCount - 1].Position <= x)
+	{
+		return Alphas[AlphaCount - 1].Alpha;
+	}
+
+	for (int i = 0; i < AlphaCount - 1; i++)
+	{
+		if (Alphas[i].Position <= x && x < Alphas[i + 1].Position)
+		{
+			const auto area = Alphas[i + 1].Position - Alphas[i].Position;
+			const auto alpha = (x - Alphas[i].Position) / area;
+			return Alphas[i + 1].Alpha * alpha + Alphas[i].Alpha * (1.0f - alpha);
+		}
+	}
+
+	return 1.0f;
+}
+
 } // namespace Effekseer
