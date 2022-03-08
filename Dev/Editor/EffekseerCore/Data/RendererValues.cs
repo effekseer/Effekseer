@@ -269,6 +269,8 @@ namespace Effekseer.Data
 			[IO(Export = true)]
 			public ColorFCurveParameter ColorAll_FCurve { get; private set; }
 
+			public GradientHDR ColorAll_Gradient { get; private set; } = new GradientHDR();
+
 			[Selector(ID = 1)]
 			[Key(key = "RS_Sprite_Color")]
 			public Value.Enum<ColorType> Color { get; private set; }

@@ -900,11 +900,6 @@ namespace Effekseer.Data
 		[Key(key = "BRS_CustomData2")]
 		public CustomDataParameter CustomData2 { get; private set; }
 
-		/// <summary>
-		/// Debug
-		/// </summary>
-		public Data.Value.GradientHDR Gradient { get; private set; } = new Value.GradientHDR();
-
 		internal Value.Path BasePath { get; private set; }
 
 		internal RendererCommonValues(Value.Path basepath)

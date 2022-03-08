@@ -216,6 +216,8 @@ namespace Effekseer.Data
 		Easing = 2,
 		[Key(key = "StandardColorType_FCurve")]
 		FCurve = 3,
+
+		Gradient = 4,
 	}
 
 	public enum TrackSizeType : int
