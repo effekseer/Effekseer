@@ -118,16 +118,6 @@ public class GradientHDRState : global::System.IDisposable {
     return ret;
   }
 
-  public GradientHDRMarkerType GetSelectedMarkerType() {
-    GradientHDRMarkerType ret = (GradientHDRMarkerType)EffekseerNativePINVOKE.GradientHDRState_GetSelectedMarkerType(swigCPtr);
-    return ret;
-  }
-
-  public int GetSelectedIndex() {
-    int ret = EffekseerNativePINVOKE.GradientHDRState_GetSelectedIndex(swigCPtr);
-    return ret;
-  }
-
   public GradientHDRState() : this(EffekseerNativePINVOKE.new_GradientHDRState(), true) {
   }
 

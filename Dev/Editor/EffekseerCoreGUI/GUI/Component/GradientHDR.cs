@@ -20,6 +20,8 @@ namespace Effekseer.GUI.Component
 		Data.Value.GradientHDR binding = null;
 
 		swig.GradientHDRState internalState = null;
+		swig.GradientHDRGUIState guiState = null;
+		swig.GradientHDRGUIState guiPopupState = null;
 
 		public bool EnableUndo { get; set; } = true;
 
@@ -64,6 +66,9 @@ namespace Effekseer.GUI.Component
 
 			if (Binding != null)
 			{
+				guiState = new swig.GradientHDRGUIState();
+				guiPopupState = new swig.GradientHDRGUIState();
+
 				CopyState(internalState, Binding.GetValue());
 				Binding.OnChanged += Binding_OnChanged;
 			}
@@ -83,7 +88,7 @@ namespace Effekseer.GUI.Component
 		{
 			isPopupShown = false;
 
-			if (Manager.NativeManager.GradientHDR(id, internalState))
+			if (Manager.NativeManager.GradientHDR(id, internalState, guiState))
 			{
 				StoreValue();
 			}
@@ -111,16 +116,16 @@ namespace Effekseer.GUI.Component
 			{
 				Manager.NativeManager.Dummy(new swig.Vector2I(200, 1));
 
-				if (Manager.NativeManager.GradientHDR(id_popup, internalState))
+				if (Manager.NativeManager.GradientHDR(id_popup, internalState, guiPopupState))
 				{
 					StoreValue();
 				}
 
-				var selectedIndex = internalState.GetSelectedIndex();
+				var selectedIndex = guiPopupState.GetSelectedIndex();
 
 				if (selectedIndex >= 0)
 				{
-					if (internalState.GetSelectedMarkerType() == swig.GradientHDRMarkerType.Color)
+					if (guiPopupState.GetSelectedMarkerType() == swig.GradientHDRMarkerType.Color)
 					{
 						var color = internalState.GetColorMarkerColor(selectedIndex);
 						var intensity = internalState.GetColorMarkerIntensity(selectedIndex);
@@ -146,7 +151,7 @@ namespace Effekseer.GUI.Component
 							StoreValue();
 						}
 					}
-					else if (internalState.GetSelectedMarkerType() == swig.GradientHDRMarkerType.Alpha)
+					else if (guiPopupState.GetSelectedMarkerType() == swig.GradientHDRMarkerType.Alpha)
 					{
 						var alpha = internalState.GetAlphaMarkerAlpha(selectedIndex);
 						var alphaArray = new float[1];
@@ -162,7 +167,7 @@ namespace Effekseer.GUI.Component
 
 					if (Manager.NativeManager.Button("Delete"))
 					{
-						var selectedType = internalState.GetSelectedMarkerType();
+						var selectedType = guiPopupState.GetSelectedMarkerType();
 
 						if (selectedType == swig.GradientHDRMarkerType.Color)
 						{

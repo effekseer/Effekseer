@@ -53,7 +53,6 @@ enum class GradientHDRMarkerType : int32_t
 class GradientHDRState
 {
 	ImGradientHDRState state_;
-	ImGradientHDRTemporaryState temporaryState_;
 
 public:
 	int GetColorCount() const;
@@ -88,16 +87,24 @@ public:
 
 	bool RemoveAlphaMarker(int32_t index);
 
-	GradientHDRMarkerType GetSelectedMarkerType() const;
-
-	int32_t GetSelectedIndex() const;
-
 #if !defined(SWIG)
 	ImGradientHDRState& GetState()
 	{
 		return state_;
 	}
+#endif
+};
 
+class GradientHDRGUIState
+{
+	ImGradientHDRTemporaryState temporaryState_;
+
+public:
+	GradientHDRMarkerType GetSelectedMarkerType() const;
+
+	int32_t GetSelectedIndex() const;
+
+#if !defined(SWIG)
 	ImGradientHDRTemporaryState& GetTemporaryState()
 	{
 		return temporaryState_;

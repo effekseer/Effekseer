@@ -10268,11 +10268,12 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_EndNodeFrameTimelin
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GradientHDR___(void * jarg1, int jarg2, void * jarg3) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GradientHDR___(void * jarg1, int jarg2, void * jarg3, void * jarg4) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   int32_t arg2 ;
   Effekseer::Tool::GradientHDRState *arg3 = 0 ;
+  Effekseer::Tool::GradientHDRGUIState *arg4 = 0 ;
   bool result;
   
   arg1 = (efk::GUIManager *)jarg1; 
@@ -10282,7 +10283,12 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GradientHDR
     SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Effekseer::Tool::GradientHDRState & type is null", 0);
     return 0;
   } 
-  result = (bool)(arg1)->GradientHDR(arg2,*arg3);
+  arg4 = (Effekseer::Tool::GradientHDRGUIState *)jarg4;
+  if (!arg4) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Effekseer::Tool::GradientHDRGUIState & type is null", 0);
+    return 0;
+  } 
+  result = (bool)(arg1)->GradientHDR(arg2,*arg3,*arg4);
   jresult = result; 
   return jresult;
 }
@@ -10731,30 +10737,6 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GradientHDRState_Remov
 }
 
 
-SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_GradientHDRState_GetSelectedMarkerType___(void * jarg1) {
-  int jresult ;
-  Effekseer::Tool::GradientHDRState *arg1 = (Effekseer::Tool::GradientHDRState *) 0 ;
-  Effekseer::Tool::GradientHDRMarkerType result;
-  
-  arg1 = (Effekseer::Tool::GradientHDRState *)jarg1; 
-  result = (Effekseer::Tool::GradientHDRMarkerType)((Effekseer::Tool::GradientHDRState const *)arg1)->GetSelectedMarkerType();
-  jresult = (int)result; 
-  return jresult;
-}
-
-
-SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_GradientHDRState_GetSelectedIndex___(void * jarg1) {
-  int jresult ;
-  Effekseer::Tool::GradientHDRState *arg1 = (Effekseer::Tool::GradientHDRState *) 0 ;
-  int32_t result;
-  
-  arg1 = (Effekseer::Tool::GradientHDRState *)jarg1; 
-  result = (int32_t)((Effekseer::Tool::GradientHDRState const *)arg1)->GetSelectedIndex();
-  jresult = result; 
-  return jresult;
-}
-
-
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_GradientHDRState___() {
   void * jresult ;
   Effekseer::Tool::GradientHDRState *result = 0 ;
@@ -10769,6 +10751,48 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_GradientHDRState___(voi
   Effekseer::Tool::GradientHDRState *arg1 = (Effekseer::Tool::GradientHDRState *) 0 ;
   
   arg1 = (Effekseer::Tool::GradientHDRState *)jarg1; 
+  delete arg1;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_GradientHDRGUIState_GetSelectedMarkerType___(void * jarg1) {
+  int jresult ;
+  Effekseer::Tool::GradientHDRGUIState *arg1 = (Effekseer::Tool::GradientHDRGUIState *) 0 ;
+  Effekseer::Tool::GradientHDRMarkerType result;
+  
+  arg1 = (Effekseer::Tool::GradientHDRGUIState *)jarg1; 
+  result = (Effekseer::Tool::GradientHDRMarkerType)((Effekseer::Tool::GradientHDRGUIState const *)arg1)->GetSelectedMarkerType();
+  jresult = (int)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_GradientHDRGUIState_GetSelectedIndex___(void * jarg1) {
+  int jresult ;
+  Effekseer::Tool::GradientHDRGUIState *arg1 = (Effekseer::Tool::GradientHDRGUIState *) 0 ;
+  int32_t result;
+  
+  arg1 = (Effekseer::Tool::GradientHDRGUIState *)jarg1; 
+  result = (int32_t)((Effekseer::Tool::GradientHDRGUIState const *)arg1)->GetSelectedIndex();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_GradientHDRGUIState___() {
+  void * jresult ;
+  Effekseer::Tool::GradientHDRGUIState *result = 0 ;
+  
+  result = (Effekseer::Tool::GradientHDRGUIState *)new Effekseer::Tool::GradientHDRGUIState();
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_GradientHDRGUIState___(void * jarg1) {
+  Effekseer::Tool::GradientHDRGUIState *arg1 = (Effekseer::Tool::GradientHDRGUIState *) 0 ;
+  
+  arg1 = (Effekseer::Tool::GradientHDRGUIState *)jarg1; 
   delete arg1;
 }
 

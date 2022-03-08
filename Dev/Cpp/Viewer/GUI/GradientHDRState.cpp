@@ -91,12 +91,12 @@ bool GradientHDRState::RemoveAlphaMarker(int32_t index)
 	return state_.RemoveAlphaMarker(index);
 }
 
-GradientHDRMarkerType GradientHDRState::GetSelectedMarkerType() const
+GradientHDRMarkerType GradientHDRGUIState::GetSelectedMarkerType() const
 {
 	return static_cast<GradientHDRMarkerType>(temporaryState_.selectedMarkerType);
 }
 
-int32_t GradientHDRState::GetSelectedIndex() const
+int32_t GradientHDRGUIState::GetSelectedIndex() const
 {
 	return temporaryState_.selectedIndex;
 }

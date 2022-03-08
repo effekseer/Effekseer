@@ -2584,9 +2584,9 @@ void GUIManager::EndNodeFrameTimeline(int* frameMin, int* frameMax, int* current
 	NodeFrameTimeline::EndNodeFrameTimeline(frameMin, frameMax, currentFrame, selectedEntry, firstFrame);
 }
 
-bool GUIManager::GradientHDR(int32_t gradientID, Effekseer::Tool::GradientHDRState& state)
+bool GUIManager::GradientHDR(int32_t gradientID, Effekseer::Tool::GradientHDRState& state, Effekseer::Tool::GradientHDRGUIState& guiState)
 {
-	return ImGradientHDR(gradientID, state.GetState(), state.GetTemporaryState());
+	return ImGradientHDR(gradientID, state.GetState(), guiState.GetTemporaryState());
 }
 
 } // namespace efk
