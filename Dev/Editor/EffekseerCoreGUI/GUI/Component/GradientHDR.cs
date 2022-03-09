@@ -204,9 +204,9 @@ namespace Effekseer.GUI.Component
 			for (int i = 0; i < src.ColorMarkers.Length; i++)
 			{
 				var color = new swig.ColorF();
-				color.R = src.ColorMarkers[i].Color[0];
-				color.G = src.ColorMarkers[i].Color[1];
-				color.B = src.ColorMarkers[i].Color[2];
+				color.R = src.ColorMarkers[i].ColorR;
+				color.G = src.ColorMarkers[i].ColorG;
+				color.B = src.ColorMarkers[i].ColorB;
 
 				dst.SetColorMarkerPosition(i, src.ColorMarkers[i].Position);
 				dst.SetColorMarkerColor(i, color);
@@ -229,9 +229,9 @@ namespace Effekseer.GUI.Component
 			for (int i = 0; i < src.GetColorCount(); i++)
 			{
 				var color = src.GetColorMarkerColor(i);
-				dst.ColorMarkers[i].Color[0] = color.R;
-				dst.ColorMarkers[i].Color[1] = color.G;
-				dst.ColorMarkers[i].Color[2] = color.B;
+				dst.ColorMarkers[i].ColorR = color.R;
+				dst.ColorMarkers[i].ColorG = color.G;
+				dst.ColorMarkers[i].ColorB = color.B;
 				dst.ColorMarkers[i].Position = src.GetColorMarkerPosition(i);
 				dst.ColorMarkers[i].Intensity = src.GetColorMarkerIntensity(i);
 			}

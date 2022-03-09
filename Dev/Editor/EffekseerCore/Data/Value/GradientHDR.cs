@@ -12,7 +12,9 @@ namespace Effekseer.Data.Value
 		public unsafe struct ColorMarker
 		{
 			public float Position;
-			public fixed float Color[3];
+			public float ColorR;
+			public float ColorG;
+			public float ColorB;
 			public float Intensity;
 		}
 
@@ -52,9 +54,9 @@ namespace Effekseer.Data.Value
 
 				for (int i = 0; i < ColorMarkers.Count(); i++)
 				{
-					if (ColorMarkers[i].Color[0] != o.ColorMarkers[i].Color[0] ||
-						ColorMarkers[i].Color[1] != o.ColorMarkers[i].Color[1] ||
-						ColorMarkers[i].Color[2] != o.ColorMarkers[i].Color[2] ||
+					if (ColorMarkers[i].ColorR != o.ColorMarkers[i].ColorR ||
+						ColorMarkers[i].ColorG != o.ColorMarkers[i].ColorG ||
+						ColorMarkers[i].ColorB != o.ColorMarkers[i].ColorB ||
 						ColorMarkers[i].Intensity != o.ColorMarkers[i].Intensity ||
 						ColorMarkers[i].Position != o.ColorMarkers[i].Position)
 					{
@@ -101,9 +103,9 @@ namespace Effekseer.Data.Value
 			foreach (var c in target._value.ColorMarkers)
 			{
 				var key = doc.CreateElement("Key");
-				key.AppendChild(doc.CreateTextElement("R", c.Color[0].ToString()));
-				key.AppendChild(doc.CreateTextElement("G", c.Color[1].ToString()));
-				key.AppendChild(doc.CreateTextElement("B", c.Color[2].ToString()));
+				key.AppendChild(doc.CreateTextElement("ColorR", c.ColorR.ToString()));
+				key.AppendChild(doc.CreateTextElement("ColorG", c.ColorG.ToString()));
+				key.AppendChild(doc.CreateTextElement("ColorB", c.ColorB.ToString()));
 				key.AppendChild(doc.CreateTextElement("Position", c.Position.ToString()));
 				key.AppendChild(doc.CreateTextElement("Intensity", c.Intensity.ToString()));
 				colorMarkers.AppendChild(key);
@@ -134,9 +136,9 @@ namespace Effekseer.Data.Value
 			_value.ColorMarkers = new ColorMarker[colorMarkers.ChildNodes.Count];
 			for (int i = 0; i < colorMarkers.ChildNodes.Count; i++)
 			{
-				_value.ColorMarkers[i].Color[0] = colorMarkers.ChildNodes[i]["R"].GetTextAsFloat();
-				_value.ColorMarkers[i].Color[1] = colorMarkers.ChildNodes[i]["G"].GetTextAsFloat();
-				_value.ColorMarkers[i].Color[2] = colorMarkers.ChildNodes[i]["B"].GetTextAsFloat();
+				_value.ColorMarkers[i].ColorR = colorMarkers.ChildNodes[i]["ColorR"].GetTextAsFloat();
+				_value.ColorMarkers[i].ColorG = colorMarkers.ChildNodes[i]["ColorG"].GetTextAsFloat();
+				_value.ColorMarkers[i].ColorB = colorMarkers.ChildNodes[i]["ColorB"].GetTextAsFloat();
 				_value.ColorMarkers[i].Position = colorMarkers.ChildNodes[i]["Position"].GetTextAsFloat();
 				_value.ColorMarkers[i].Intensity = colorMarkers.ChildNodes[i]["Intensity"].GetTextAsFloat();
 			}
@@ -159,9 +161,9 @@ namespace Effekseer.Data.Value
 			for (int i = 0; i < _value.ColorMarkers.Length; i++)
 			{
 				data.Add(BitConverter.GetBytes(_value.ColorMarkers[i].Position));
-				data.Add(BitConverter.GetBytes(_value.ColorMarkers[i].Color[0]));
-				data.Add(BitConverter.GetBytes(_value.ColorMarkers[i].Color[1]));
-				data.Add(BitConverter.GetBytes(_value.ColorMarkers[i].Color[2]));
+				data.Add(BitConverter.GetBytes(_value.ColorMarkers[i].ColorR));
+				data.Add(BitConverter.GetBytes(_value.ColorMarkers[i].ColorG));
+				data.Add(BitConverter.GetBytes(_value.ColorMarkers[i].ColorB));
 				data.Add(BitConverter.GetBytes(_value.ColorMarkers[i].Intensity));
 			}
 
@@ -230,15 +232,15 @@ namespace Effekseer.Data.Value
 			value.ColorMarkers = new ColorMarker[2];
 			value.ColorMarkers[0].Position = 0;
 			value.ColorMarkers[0].Intensity = 1;
-			value.ColorMarkers[0].Color[0] = 1.0f;
-			value.ColorMarkers[0].Color[1] = 1.0f;
-			value.ColorMarkers[0].Color[2] = 1.0f;
+			value.ColorMarkers[0].ColorR = 1.0f;
+			value.ColorMarkers[0].ColorG = 1.0f;
+			value.ColorMarkers[0].ColorB = 1.0f;
 
 			value.ColorMarkers[1].Position = 1;
 			value.ColorMarkers[1].Intensity = 1;
-			value.ColorMarkers[1].Color[0] = 1.0f;
-			value.ColorMarkers[1].Color[1] = 1.0f;
-			value.ColorMarkers[1].Color[2] = 1.0f;
+			value.ColorMarkers[1].ColorR = 1.0f;
+			value.ColorMarkers[1].ColorG = 1.0f;
+			value.ColorMarkers[1].ColorB = 1.0f;
 
 			value.AlphaMarkers = new AlphaMarker[2];
 			value.AlphaMarkers[0].Position = 0.0f;
