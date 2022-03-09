@@ -216,6 +216,31 @@ namespace Effekseer.Data
 		Easing = 2,
 		[Key(key = "StandardColorType_FCurve")]
 		FCurve = 3,
+
+		Gradient = 4,
+	}
+
+	public class StandardColor
+	{
+		[Selector(ID = 0)]
+		public Value.Enum<StandardColorType> ColorAll { get; private set; }
+
+		[Selected(ID = 0, Value = 0)]
+		public Value.Color ColorAll_Fixed { get; private set; }
+
+		[Selected(ID = 0, Value = 1)]
+		public Value.ColorWithRandom ColorAll_Random { get; private set; }
+
+		[Selected(ID = 0, Value = 2)]
+		[IO(Export = true)]
+		public ColorEasingParamater ColorAll_Easing { get; private set; }
+
+		[Selected(ID = 0, Value = 3)]
+		[IO(Export = true)]
+		public ColorFCurveParameter ColorAll_FCurve { get; private set; }
+
+		[Selected(ID = 0, Value = 4)]
+		public Value.GradientHDR ColorAll_Gradient { get; private set; } = new Value.GradientHDR();
 	}
 
 	public enum TrackSizeType : int

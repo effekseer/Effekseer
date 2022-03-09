@@ -49,3 +49,6 @@
 [submodule "Downloads/glew"]
 	path = Downloads/glew
 	url = https://github.com/effekseer/glew.git
+[submodule "Dev/Cpp/3rdParty/ImGradientHDR"]
+	path = Dev/Cpp/3rdParty/ImGradientHDR
+	url = https://github.com/effekseer/ImGradientHDR.git

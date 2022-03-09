@@ -4,8 +4,8 @@
 
 #include "../Effekseer.FCurves.h"
 #include "../Effekseer.InternalScript.h"
-
 #include "Easing.h"
+#include "Effekseer.Parameters.h"
 
 #include <stdint.h>
 
@@ -21,6 +21,7 @@ public:
 		Random = 1,
 		Easing = 2,
 		FCurve_RGBA = 3,
+		Gradient_ = 4,
 		Parameter_DWORD = 0x7fffffff,
 	} type;
 
@@ -46,6 +47,9 @@ public:
 			FCurveVectorColor* FCurve;
 		} fcurve_rgba;
 	};
+
+	// TODO : make variant
+	std::unique_ptr<Gradient> gradient;
 
 	AllTypeColorParameter()
 	{
@@ -83,6 +87,11 @@ public:
 			fcurve_rgba.FCurve = new FCurveVectorColor();
 			int32_t size = fcurve_rgba.FCurve->Load(pos, version);
 			pos += size;
+		}
+		else if (type == Gradient_)
+		{
+			gradient = std::make_unique<Gradient>();
+			gradient->Load(pos, version);
 		}
 	}
 };
@@ -164,6 +173,14 @@ struct AllTypeColorFunctions
 			_originalColor.G = (uint8_t)Clamp((allColorValues.fcurve_rgba.offset[1] + fcurveColor[1]), 255, 0);
 			_originalColor.B = (uint8_t)Clamp((allColorValues.fcurve_rgba.offset[2] + fcurveColor[2]), 255, 0);
 			_originalColor.A = (uint8_t)Clamp((allColorValues.fcurve_rgba.offset[3] + fcurveColor[3]), 255, 0);
+		}
+		else if (SpriteAllColor.type == AllTypeColorParameter::Gradient_)
+		{
+			const auto value = SpriteAllColor.gradient->GetColorAndIntensity(m_LivingTime / static_cast<float>(m_LivedTime));
+			_originalColor.R = (uint8_t)Clamp(value[0] * 255.0f, 255, 0);
+			_originalColor.G = (uint8_t)Clamp(value[1] * 255.0f, 255, 0);
+			_originalColor.B = (uint8_t)Clamp(value[2] * 255.0f, 255, 0);
+			_originalColor.A = (uint8_t)Clamp(value[3] * 255.0f, 255, 0);
 		}
 
 		return _originalColor;

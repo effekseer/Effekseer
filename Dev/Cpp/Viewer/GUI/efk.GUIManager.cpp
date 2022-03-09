@@ -30,6 +30,8 @@
 
 #include <Common/StringHelper.h>
 
+#include "GradientHDRState.h"
+
 namespace ImGui
 {
 static ImVec2 operator+(const ImVec2& lhs, const ImVec2& rhs)
@@ -1241,6 +1243,11 @@ void GUIManager::Indent(float indent_w)
 void GUIManager::Spacing()
 {
 	ImGui::Spacing();
+}
+
+void GUIManager::Dummy(const Effekseer::Tool::Vector2I& size)
+{
+	ImGui::Dummy({static_cast<float>(size.X), static_cast<float>(size.Y)});
 }
 
 void GUIManager::SameLine(float offset_from_start_x, float spacing)
@@ -2575,6 +2582,11 @@ void GUIManager::TimelineNode(const char16_t* title, int frameStart, int frameEn
 void GUIManager::EndNodeFrameTimeline(int* frameMin, int* frameMax, int* currentFrame, int* selectedEntry, int* firstFrame)
 {
 	NodeFrameTimeline::EndNodeFrameTimeline(frameMin, frameMax, currentFrame, selectedEntry, firstFrame);
+}
+
+bool GUIManager::GradientHDR(int32_t gradientID, Effekseer::Tool::GradientHDRState& state, Effekseer::Tool::GradientHDRGUIState& guiState)
+{
+	return ImGradientHDR(gradientID, state.GetState(), guiState.GetTemporaryState());
 }
 
 } // namespace efk

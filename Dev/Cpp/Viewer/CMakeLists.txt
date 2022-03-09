@@ -49,6 +49,7 @@ list(APPEND cpps
     GUI/Image.cpp
     GUI/ReloadableImage.cpp
     GUI/RenderImage.cpp
+    GUI/GradientHDRState.cpp
     Network/Network.cpp
     Recorder/EffectRecorder.cpp
     Recorder/AVIExporter.cpp
@@ -77,6 +78,7 @@ list(APPEND hs
     GUI/Image.h
     GUI/ReloadableImage.h
     GUI/RenderImage.h
+    GUI/GradientHDRState.h
     Network/Network.h
     Math/Matrix44F.h
     Math/Vector2I.h
@@ -166,6 +168,7 @@ target_link_libraries(
     EditorCommon
     Boxer
     imgui
+    ImGradientHDR
     debug "${GLFW3_LIB_DEBUG}"
     optimized "${GLFW3_LIB_RELEASE}"
     debug "${GD_LIB_DEBUG}"
@@ -204,7 +207,6 @@ target_link_libraries(
     EffekseerSoundOSMixer
     IPC
     nfd)
-
 
 if (WIN32)
 

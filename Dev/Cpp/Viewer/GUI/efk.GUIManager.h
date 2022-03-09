@@ -25,6 +25,8 @@ namespace Effekseer::Tool
 {
 class Image;
 class GraphicsDevice;
+class GradientHDRState;
+class GradientHDRGUIState;
 } // namespace Effekseer::Tool
 
 namespace efk
@@ -501,6 +503,7 @@ public:
 
 	void Indent(float indent_w);
 	void Spacing();
+	void Dummy(const Effekseer::Tool::Vector2I& size);
 	void SameLine(float offset_from_start_x = 0.0f, float spacing = -1.0f);
 
 	void BeginGroup();
@@ -865,5 +868,8 @@ public:
 	bool BeginNodeFrameTimeline();
 	void TimelineNode(const char16_t* title, int frameStart, int frameEnd);
 	void EndNodeFrameTimeline(int* frameMin, int* frameMax, int* currentFrame, int* selectedEntry, int* firstFrame);
+
+	bool GradientHDR(int32_t gradientID, Effekseer::Tool::GradientHDRState& state, Effekseer::Tool::GradientHDRGUIState& guiState);
 };
+
 } // namespace efk

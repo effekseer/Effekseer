@@ -168,6 +168,11 @@ namespace Effekseer.Binary
 					var bytes = param.ColorAll_FCurve.FCurve.GetBytes();
 					data.Add(bytes);
 				}
+				else if (param.ColorAll.Value == Data.StandardColorType.Gradient)
+				{
+					var bytes = param.ColorAll_Gradient.ToBinary();
+					data.Add(bytes);
+				}
 			}
 
 			void AddPartialColor()

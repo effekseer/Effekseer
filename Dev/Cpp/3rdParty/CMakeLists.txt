@@ -86,5 +86,15 @@ if (BUILD_VIEWER OR BUILD_EDITOR)
     target_include_directories(imgui-node-editor PUBLIC imgui-node-editor/)
     target_link_libraries(imgui-node-editor PRIVATE imgui)
     set_target_properties (imgui-node-editor PROPERTIES FOLDER Thirdparty)
+
+    set(ImGradientHDR_src
+        ImGradientHDR/src/ImGradientHDR.cpp
+        ImGradientHDR/src/ImGradientHDR.h)
+
+    add_library(ImGradientHDR STATIC ${ImGradientHDR_src})
+    target_include_directories(ImGradientHDR PUBLIC ImGradientHDR/src/)
+    target_link_libraries(ImGradientHDR PRIVATE imgui)
+    set_target_properties (ImGradientHDR PROPERTIES FOLDER Thirdparty)
+
 endif()
 

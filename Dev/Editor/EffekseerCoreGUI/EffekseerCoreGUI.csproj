@@ -112,6 +112,7 @@
     <Compile Include="GUI\Component\FCurveButton.cs" />
     <Compile Include="GUI\Component\Float.cs" />
     <Compile Include="GUI\Component\FloatWithRandom.cs" />
+    <Compile Include="GUI\Component\GradientHDR.cs" />
     <Compile Include="GUI\Component\Int.cs" />
     <Compile Include="GUI\Component\Int2.cs" />
     <Compile Include="GUI\Component\IntWithInifinite.cs" />
@@ -177,6 +178,7 @@
     <Compile Include="Process\MaterialEditor.cs" />
     <Compile Include="swig\Color.cs" />
     <Compile Include="swig\ColorEditFlags.cs" />
+    <Compile Include="swig\ColorF.cs" />
     <Compile Include="swig\ComboFlags.cs" />
     <Compile Include="swig\CompiledMaterialGenerator.cs" />
     <Compile Include="swig\Cond.cs" />
@@ -199,6 +201,9 @@
     <Compile Include="swig\FCurveEdgeType.cs" />
     <Compile Include="swig\FCurveInterporationType.cs" />
     <Compile Include="swig\FileDialog.cs" />
+    <Compile Include="swig\GradientHDRGUIState.cs" />
+    <Compile Include="swig\GradientHDRMarkerType.cs" />
+    <Compile Include="swig\GradientHDRState.cs" />
     <Compile Include="swig\GraphicsDevice.cs" />
     <Compile Include="swig\GUIManager.cs" />
     <Compile Include="swig\GUIManagerCallback.cs" />

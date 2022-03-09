@@ -281,6 +281,11 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_Spacing(swigCPtr);
   }
 
+  public void Dummy(Vector2I size) {
+    EffekseerNativePINVOKE.GUIManager_Dummy(swigCPtr, Vector2I.getCPtr(size));
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+  }
+
   public void SameLine(float offset_from_start_x, float spacing) {
     EffekseerNativePINVOKE.GUIManager_SameLine__SWIG_0(swigCPtr, offset_from_start_x, spacing);
   }
@@ -1592,6 +1597,12 @@ public class GUIManager : global::System.IDisposable {
 
   public void EndNodeFrameTimeline(ref int frameMin, ref int frameMax, ref int currentFrame, ref int selectedEntry, ref int firstFrame) {
     EffekseerNativePINVOKE.GUIManager_EndNodeFrameTimeline(swigCPtr, ref frameMin, ref frameMax, ref currentFrame, ref selectedEntry, ref firstFrame);
+  }
+
+  public bool GradientHDR(int gradientID, GradientHDRState state, GradientHDRGUIState guiState) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_GradientHDR(swigCPtr, gradientID, GradientHDRState.getCPtr(state), GradientHDRGUIState.getCPtr(guiState));
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+    return ret;
   }
 
 }

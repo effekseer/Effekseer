@@ -194,4 +194,132 @@ random_int ApplyEq(const Effect* e, const InstanceGlobal* instg, const Instance*
 	return originalParam;
 }
 
+void Gradient::Load(uint8_t*& pos, int32_t version)
+{
+	BinaryReader<true> reader(pos, std::numeric_limits<int>::max());
+	reader.Read(ColorCount);
+	for (int i = 0; i < ColorCount; i++)
+	{
+		reader.Read(Colors[i]);
+	}
+
+	reader.Read(AlphaCount);
+	for (int i = 0; i < AlphaCount; i++)
+	{
+		reader.Read(Alphas[i]);
+	}
+
+	pos += reader.GetOffset();
+}
+
+std::array<float, 4> Gradient::GetColor(float x) const
+{
+	const auto c = GetColorAndIntensity(x);
+	return std::array<float, 4>{c[0] * c[3], c[1] * c[3], c[2] * c[3], GetAlpha(x)};
+}
+
+std::array<float, 4> Gradient::GetColorAndIntensity(float x) const
+{
+	if (ColorCount == 0)
+	{
+		return std::array<float, 4>{1.0f, 1.0f, 1.0f, 1.0f};
+	}
+
+	if (x < Colors[0].Position)
+	{
+		const auto c = Colors[0].Color;
+		return {c[0], c[1], c[2], Colors[0].Intensity};
+	}
+
+	if (Colors[ColorCount - 1].Position <= x)
+	{
+		const auto c = Colors[ColorCount - 1].Color;
+		return {c[0], c[1], c[2], Colors[ColorCount - 1].Intensity};
+	}
+
+	auto key = ColorKey();
+	key.Position = x;
+
+	auto it = std::lower_bound(Colors.begin(), Colors.begin() + ColorCount, key, [](const ColorKey& a, const ColorKey& b) { return a.Position < b.Position; });
+	auto ind = static_cast<int32_t>(std::distance(Colors.begin(), it));
+
+	{
+		if (Colors[ind].Position != x)
+		{
+			ind--;
+		}
+
+		if (Colors[ind].Position <= x && x <= Colors[ind + 1].Position)
+		{
+			const auto area = Colors[ind + 1].Position - Colors[ind].Position;
+			if (area == 0)
+			{
+				return std::array<float, 4>{Colors[ind].Color[0], Colors[ind].Color[1], Colors[ind].Color[2], Colors[ind].Intensity};
+			}
+
+			const auto alpha = (x - Colors[ind].Position) / area;
+			const auto r = Colors[ind + 1].Color[0] * alpha + Colors[ind].Color[0] * (1.0f - alpha);
+			const auto g = Colors[ind + 1].Color[1] * alpha + Colors[ind].Color[1] * (1.0f - alpha);
+			const auto b = Colors[ind + 1].Color[2] * alpha + Colors[ind].Color[2] * (1.0f - alpha);
+			const auto intensity = Colors[ind + 1].Intensity * alpha + Colors[ind].Intensity * (1.0f - alpha);
+			return std::array<float, 4>{r, g, b, intensity};
+		}
+		else
+		{
+			assert(0);
+		}
+	}
+
+	return std::array<float, 4>{1.0f, 1.0f, 1.0f, 1.0f};
+}
+
+float Gradient::GetAlpha(float x) const
+{
+	if (AlphaCount == 0)
+	{
+		return 1.0f;
+	}
+
+	if (x < Alphas[0].Position)
+	{
+		return Alphas[0].Alpha;
+	}
+
+	if (Alphas[AlphaCount - 1].Position <= x)
+	{
+		return Alphas[AlphaCount - 1].Alpha;
+	}
+
+	auto key = AlphaKey();
+	key.Position = x;
+
+	auto it = std::lower_bound(Alphas.begin(), Alphas.begin() + AlphaCount, key, [](const AlphaKey& a, const AlphaKey& b) { return a.Position < b.Position; });
+	auto ind = static_cast<int32_t>(std::distance(Alphas.begin(), it));
+
+	{
+		if (Alphas[ind].Position != x)
+		{
+			ind--;
+		}
+
+		if (Alphas[ind].Position <= x && x <= Alphas[ind + 1].Position)
+		{
+			const auto area = Alphas[ind + 1].Position - Alphas[ind].Position;
+			if (area == 0)
+			{
+				return Alphas[ind].Alpha;
+			}
+
+			const auto alpha = (x - Alphas[ind].Position) / area;
+			return Alphas[ind + 1].Alpha * alpha + Alphas[ind].Alpha * (1.0f - alpha);
+		}
+		else
+		{
+			assert(0);
+		}
+	}
+
+	return 1.0f;
+}
+
 } // namespace Effekseer

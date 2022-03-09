@@ -60,6 +60,37 @@ struct FalloffParameter
 	}
 };
 
+struct Gradient
+{
+	static const int KeyMax = 8;
+
+	struct ColorKey
+	{
+		float Position;
+		std::array<float, 3> Color;
+		float Intensity;
+	};
+
+	struct AlphaKey
+	{
+		float Position;
+		float Alpha;
+	};
+
+	int ColorCount = 0;
+	int AlphaCount = 0;
+	std::array<ColorKey, KeyMax> Colors;
+	std::array<AlphaKey, KeyMax> Alphas;
+
+	void Load(uint8_t*& pos, int32_t version);
+
+	std::array<float, 4> GetColor(float x) const;
+
+	std::array<float, 4> GetColorAndIntensity(float x) const;
+
+	float GetAlpha(float x) const;
+};
+
 } // namespace Effekseer
 
 #endif // __EFFEKSEER_PARAMETERS_H__
@@ -203,8 +234,6 @@ public:
 		NodeRendererTextureUVTypeParameter* TextureUVTypeParameterPtr = nullptr;
 
 		bool EnableViewOffset = false;
-
-		TrailSmoothingType SmoothingType = TrailSmoothingType::Off;
 
 		RefPtr<RenderingUserData> UserData;
 	};
