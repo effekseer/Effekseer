@@ -269,6 +269,10 @@ namespace Effekseer.Data
 			[IO(Export = true)]
 			public ColorFCurveParameter ColorAll_FCurve { get; private set; }
 
+			/// <summary>
+			/// Debug code
+			/// </summary>
+			[Selected(ID = 0, Value = 4)]
 			public GradientHDR ColorAll_Gradient { get; private set; } = new GradientHDR();
 
 			[Selector(ID = 1)]
