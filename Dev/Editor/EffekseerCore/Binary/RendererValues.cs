@@ -148,31 +148,7 @@ namespace Effekseer.Binary
 
 			void AddColorAll()
 			{
-				data.Add(param.ColorAll);   // 全体色
-				if (param.ColorAll.Value == Data.StandardColorType.Fixed)
-				{
-					var color_all = (byte[])param.ColorAll_Fixed;
-					data.Add(color_all);
-				}
-				else if (param.ColorAll.Value == Data.StandardColorType.Random)
-				{
-					var color_random = (byte[])param.ColorAll_Random;
-					data.Add(color_random);
-				}
-				else if (param.ColorAll.Value == Data.StandardColorType.Easing)
-				{
-					AddColorEasing(data, value.Sprite.ColorAll_Easing);
-				}
-				else if (param.ColorAll.Value == Data.StandardColorType.FCurve)
-				{
-					var bytes = param.ColorAll_FCurve.FCurve.GetBytes();
-					data.Add(bytes);
-				}
-				else if (param.ColorAll.Value == Data.StandardColorType.Gradient)
-				{
-					var bytes = param.ColorAll_Gradient.ToBinary();
-					data.Add(bytes);
-				}
+				OutputStandardColor(data, param.ColorAll, param.ColorAll_Fixed, param.ColorAll_Random, value.Sprite.ColorAll_Easing, param.ColorAll_FCurve, param.ColorAll_Gradient);
 			}
 
 			void AddPartialColor()
@@ -498,7 +474,7 @@ namespace Effekseer.Binary
 
 			data.Add(BitConverter.GetBytes(param.SplineDivision.Value));
 
-			if(version >= ExporterVersion.Ver17Alpha1)
+			if (version >= ExporterVersion.Ver17Alpha1)
 			{
 				data.Add(BitConverter.GetBytes((int)value.TrailSmoothing.Value));
 				data.Add(BitConverter.GetBytes((int)value.TrailTimeSource.Value));
@@ -520,13 +496,14 @@ namespace Effekseer.Binary
 				param.ColorRightMiddle_Easing, param.ColorRightMiddle_FCurve);
 		}
 
-		private static void OutputStandardColor(
+		public static void OutputStandardColor(
 			List<byte[]> data,
 			Data.Value.Enum<Data.StandardColorType> color,
 			Data.Value.Color color_fixed,
 			Data.Value.ColorWithRandom color_Random,
 			Data.ColorEasingParamater color_Easing,
-			Data.ColorFCurveParameter color_FCurve)
+			Data.ColorFCurveParameter color_FCurve,
+			Data.Value.GradientHDR gradient = null)
 		{
 			data.Add(color);
 
@@ -547,6 +524,11 @@ namespace Effekseer.Binary
 			else if (color.Value == Data.StandardColorType.FCurve)
 			{
 				var bytes = color_FCurve.FCurve.GetBytes();
+				data.Add(bytes);
+			}
+			else if (color.Value == Data.StandardColorType.Gradient)
+			{
+				var bytes = gradient.ToBinary();
 				data.Add(bytes);
 			}
 		}
