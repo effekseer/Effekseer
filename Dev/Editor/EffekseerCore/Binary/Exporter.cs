@@ -978,20 +978,7 @@ namespace Effekseer.Binary
 				float compatibility = 1.0f;
 				node_data.Add(compatibility.GetBytes());
 
-#if DEBUG
-				{
-					//var old = RendererCommonValues_Old.GetBytes(n.RendererCommonValues, n.AdvancedRendererCommonValuesValues, texture_and_index, normalTexture_and_index, distortionTexture_and_index, material_and_index, exporterVersion);
-					var @new = RendererCommonValues.GetBytes(n.RendererCommonValues, n.AdvancedRendererCommonValuesValues, texture_and_index, normalTexture_and_index, distortionTexture_and_index, material_and_index, exporterVersion, ConvertLoadingFilePath);
-					//if (!old.SequenceEqual(@new))
-					//{
-					//	throw new Exception("RendererCommonValues.GetBytes returned unexpected data.");
-					//}
-
-					node_data.Add(@new);
-				}
-#else
 				node_data.Add(RendererCommonValues.GetBytes(n.RendererCommonValues, n.AdvancedRendererCommonValuesValues, texture_and_index, normalTexture_and_index, distortionTexture_and_index, material_and_index, exporterVersion, ConvertLoadingFilePath));
-#endif
 
 				if (isRenderParamExported)
 				{
