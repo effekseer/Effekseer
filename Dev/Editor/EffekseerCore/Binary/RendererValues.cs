@@ -111,7 +111,7 @@ namespace Effekseer.Binary
 					case Data.RendererValues.ParamaterType.None:
 						break;
 					case Data.RendererValues.ParamaterType.Sprite:
-						AddSpriteData(value, data);
+						AddSpriteData(value, data, version);
 						break;
 					case Data.RendererValues.ParamaterType.Ribbon:
 						AddRibbonData(value, data, version);
@@ -135,45 +135,18 @@ namespace Effekseer.Binary
 			return data.ToArray().ToArray();
 		}
 
-		private static void AddSpriteData(Data.RendererValues value, List<byte[]> data)
+		private static void AddSpriteData(Data.RendererValues value, List<byte[]> data, ExporterVersion version)
 		{
 			var param = value.Sprite;
 
 			data.Add(param.RenderingOrder);
 			data.Add(param.Billboard);
 
-			AddColorAll();
+			OutputStandardColor(data, value.ColorAll, version, ExporterVersion.Ver1500, ExporterVersion.Ver17Alpha1);
+
 			AddPartialColor();
 			AddPosition();
 
-			void AddColorAll()
-			{
-				data.Add(param.ColorAll);   // 全体色
-				if (param.ColorAll.Value == Data.StandardColorType.Fixed)
-				{
-					var color_all = (byte[])param.ColorAll_Fixed;
-					data.Add(color_all);
-				}
-				else if (param.ColorAll.Value == Data.StandardColorType.Random)
-				{
-					var color_random = (byte[])param.ColorAll_Random;
-					data.Add(color_random);
-				}
-				else if (param.ColorAll.Value == Data.StandardColorType.Easing)
-				{
-					AddColorEasing(data, value.Sprite.ColorAll_Easing);
-				}
-				else if (param.ColorAll.Value == Data.StandardColorType.FCurve)
-				{
-					var bytes = param.ColorAll_FCurve.FCurve.GetBytes();
-					data.Add(bytes);
-				}
-				else if (param.ColorAll.Value == Data.StandardColorType.Gradient)
-				{
-					var bytes = param.ColorAll_Gradient.ToBinary();
-					data.Add(bytes);
-				}
-			}
 
 			void AddPartialColor()
 			{
@@ -446,9 +419,7 @@ namespace Effekseer.Binary
 
 			data.Add(((int)param.Culling.Value).GetBytes());
 
-			// 全体色
-			OutputStandardColor(data, param.Color, param.Color_Fixed, param.Color_Random, param.Color_Easing,
-				param.Color_FCurve);
+			OutputStandardColor(data, value.ColorAll, version, ExporterVersion.Ver1500, ExporterVersion.Ver17Alpha1);
 
 			void AddModelReference()
 			{
@@ -498,7 +469,7 @@ namespace Effekseer.Binary
 
 			data.Add(BitConverter.GetBytes(param.SplineDivision.Value));
 
-			if(version >= ExporterVersion.Ver17Alpha1)
+			if (version >= ExporterVersion.Ver17Alpha1)
 			{
 				data.Add(BitConverter.GetBytes((int)value.TrailSmoothing.Value));
 				data.Add(BitConverter.GetBytes((int)value.TrailTimeSource.Value));
@@ -520,17 +491,37 @@ namespace Effekseer.Binary
 				param.ColorRightMiddle_Easing, param.ColorRightMiddle_FCurve);
 		}
 
-		private static void OutputStandardColor(
+		public static void OutputStandardColor(List<byte[]> data, StandardColor color, ExporterVersion version, ExporterVersion fcurveVersion, ExporterVersion gradientVersion)
+		{
+			OutputStandardColor(
+				data,
+				color.Type,
+				color.Fixed,
+				color.Random,
+				color.Easing,
+				version >= fcurveVersion ? color.FCurve : null,
+				version >= gradientVersion ? color.Gradient : null);
+		}
+
+		public static void OutputStandardColor(
 			List<byte[]> data,
 			Data.Value.Enum<Data.StandardColorType> color,
 			Data.Value.Color color_fixed,
 			Data.Value.ColorWithRandom color_Random,
 			Data.ColorEasingParamater color_Easing,
-			Data.ColorFCurveParameter color_FCurve)
+			Data.ColorFCurveParameter color_FCurve,
+			Data.Value.GradientHDR gradient = null)
 		{
-			data.Add(color);
+			var colorType = color.Value;
+			if ((colorType == StandardColorType.FCurve && color_FCurve == null) ||
+				(colorType == StandardColorType.Gradient && gradient == null))
+			{
+				colorType = StandardColorType.Fixed;
+			}
 
-			if (color.Value == Data.StandardColorType.Fixed)
+			data.Add(((int)colorType).GetBytes());
+
+			if (colorType == Data.StandardColorType.Fixed)
 			{
 				var color_all = (byte[])color_fixed;
 				data.Add(color_all);
@@ -547,6 +538,11 @@ namespace Effekseer.Binary
 			else if (color.Value == Data.StandardColorType.FCurve)
 			{
 				var bytes = color_FCurve.FCurve.GetBytes();
+				data.Add(bytes);
+			}
+			else if (color.Value == Data.StandardColorType.Gradient)
+			{
+				var bytes = gradient.ToBinary();
 				data.Add(bytes);
 			}
 		}

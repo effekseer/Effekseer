@@ -4,8 +4,7 @@ Fcurve_Elm_ScalingFactor,Factor de escala
 Fcurve_Elm_ScalingFactor_Single,Factor de escala(Sencillo)
 Fcurve_Elm_UV_Start,UV(Inicio)
 Fcurve_Elm_UV_Size,UV(Tamaño)
-Fcurve_Elm_Sprite_Color,Sprite-Todo el color(RGBA)
-Fcurve_Elm_Model_Color,Modelo-Color(RGBA)
+Fcurve_Elm_Render_Color,Todo el color(RGBA)
 Fcurve_Elm_Track_Color_L,"Pista-Color,Izquierda(RGBA)"
 Fcurve_Elm_Track_Color_LC,"Pista-Color,Izquierda-Centro(RGBA)"
 Fcurve_Elm_Track_Color_C,"Pista-Color,Centro(RGBA)"

@@ -66,9 +66,10 @@ FixedRandomEasingType_Fixed_Name,Fijado
 FixedRandomEasingType_Random_Name,Aleatorio
 FixedRandomEasingType_Easing_Name,Desplazar
 ,
+RS_ColorAll_Name,Configurar color
+,
 RS_Sprite_RenderingOrder_Name,Orden de renderizado
 RS_Sprite_Billboard_Name,Configuración
-RS_Sprite_ColorAll_Name,Configurar color
 RS_Sprite_Color_Name,Color de Vertice
 RS_Sprite_Color_Fixed_LL_Name,Inferior-Color izquierda
 RS_Sprite_Color_Fixed_LR_Name,Inferior-Color derecha

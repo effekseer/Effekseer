@@ -721,6 +721,31 @@ namespace Effekseer.Utils
 					rp.TrailTimeSource.SetValueDirectly(TrailTimeSourceType.FirstParticle);
 				}
 
+				if (n_ != null && n_.DrawingValues.Type.Value == RendererValues.ParamaterType.Sprite)
+				{
+					StandardColor sc = new StandardColor();
+					sc.Type = n_.DrawingValues.Sprite.ColorAll;
+					sc.Fixed = n_.DrawingValues.Sprite.ColorAll_Fixed;
+					sc.Random = n_.DrawingValues.Sprite.ColorAll_Random;
+					sc.Easing = n_.DrawingValues.Sprite.ColorAll_Easing;
+					sc.FCurve = n_.DrawingValues.Sprite.ColorAll_FCurve;
+					var text = Core.Copy("Temp", sc);
+					Core.Paste("Temp", n_.DrawingValues.ColorAll, text);
+				}
+
+				if (n_ != null && n_.DrawingValues.Type.Value == RendererValues.ParamaterType.Model)
+				{
+					StandardColor sc = new StandardColor();
+					sc.Type = n_.DrawingValues.Model.Color;
+					sc.Fixed = n_.DrawingValues.Model.Color_Fixed;
+					sc.Random = n_.DrawingValues.Model.Color_Random;
+					sc.Easing = n_.DrawingValues.Model.Color_Easing;
+					sc.FCurve = n_.DrawingValues.Model.Color_FCurve;
+
+					var text = Core.Copy("Temp", sc);
+					Core.Paste("Temp", n_.DrawingValues.ColorAll, text);
+				}
+
 				for (int i = 0; i < n.Children.Count; i++)
 				{
 					convert(n.Children[i]);

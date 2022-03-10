@@ -176,7 +176,7 @@ struct AllTypeColorFunctions
 		}
 		else if (SpriteAllColor.type == AllTypeColorParameter::Gradient_)
 		{
-			const auto value = SpriteAllColor.gradient->GetColorAndIntensity(m_LivingTime / static_cast<float>(m_LivedTime));
+			const auto value = SpriteAllColor.gradient->GetColor(m_LivingTime / static_cast<float>(m_LivedTime));
 			_originalColor.R = (uint8_t)Clamp(value[0] * 255.0f, 255, 0);
 			_originalColor.G = (uint8_t)Clamp(value[1] * 255.0f, 255, 0);
 			_originalColor.B = (uint8_t)Clamp(value[2] * 255.0f, 255, 0);

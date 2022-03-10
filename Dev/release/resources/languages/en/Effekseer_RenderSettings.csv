@@ -63,9 +63,10 @@ FixedRandomEasingType_Fixed_Name,Fixed
 FixedRandomEasingType_Random_Name,Random
 FixedRandomEasingType_Easing_Name,Easing
 ,
+RS_ColorAll_Name,Color All
+,
 RS_Sprite_RenderingOrder_Name,Rendering Order
 RS_Sprite_Billboard_Name,Configuration
-RS_Sprite_ColorAll_Name,Color All
 RS_Sprite_Color_Name,Vertex Color
 RS_Sprite_Color_Fixed_LL_Name,Lower-Left Color
 RS_Sprite_Color_Fixed_LR_Name,Lower-Right Color

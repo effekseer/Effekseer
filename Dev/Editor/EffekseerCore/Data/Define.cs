@@ -223,24 +223,25 @@ namespace Effekseer.Data
 	public class StandardColor
 	{
 		[Selector(ID = 0)]
-		public Value.Enum<StandardColorType> ColorAll { get; private set; }
+		public Value.Enum<StandardColorType> Type { get; internal set; } = new Value.Enum<StandardColorType>(StandardColorType.Fixed);
 
 		[Selected(ID = 0, Value = 0)]
-		public Value.Color ColorAll_Fixed { get; private set; }
+		public Value.Color Fixed { get; internal set; } = new Value.Color(255, 255, 255, 255);
 
 		[Selected(ID = 0, Value = 1)]
-		public Value.ColorWithRandom ColorAll_Random { get; private set; }
+		public Value.ColorWithRandom Random { get; internal set; } = new Value.ColorWithRandom(255, 255, 255, 255);
 
 		[Selected(ID = 0, Value = 2)]
 		[IO(Export = true)]
-		public ColorEasingParamater ColorAll_Easing { get; private set; }
+		public ColorEasingParamater Easing { get; internal set; } = new ColorEasingParamater();
 
 		[Selected(ID = 0, Value = 3)]
 		[IO(Export = true)]
-		public ColorFCurveParameter ColorAll_FCurve { get; private set; }
+		public ColorFCurveParameter FCurve { get; internal set; } = new ColorFCurveParameter();
 
 		[Selected(ID = 0, Value = 4)]
-		public Value.GradientHDR ColorAll_Gradient { get; private set; } = new Value.GradientHDR();
+		[IO(Export = true)]
+		public Value.GradientHDR Gradient { get; internal set; } = new Value.GradientHDR();
 	}
 
 	public enum TrackSizeType : int

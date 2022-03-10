@@ -173,6 +173,13 @@ namespace Effekseer.Data
 		[IO(Export = true)]
 		public Value.Enum<TrailTimeSourceType> TrailTimeSource { get; private set; } = new Enum<TrailTimeSourceType>(TrailTimeSourceType.ParticleGroup);
 
+
+		[Selected(ID = 0, Value = (int)ParamaterType.Sprite)]
+		[Selected(ID = 0, Value = (int)ParamaterType.Model)]
+		[IO(Export = true)]
+		[TreeNode(key = "RS_ColorAll", id = "RS_ColorAll", type = TreeNodeType.Small)]
+		public StandardColor ColorAll { get; private set; } = new StandardColor();
+
 		[Selected(ID = 0, Value = 2)]
 		[IO(Export = true)]
 		public SpriteParamater Sprite
@@ -251,28 +258,33 @@ namespace Effekseer.Data
 			[Shown(Shown = false)]
 			public Value.Enum<AlphaBlendType> AlphaBlend { get; private set; }
 
-			[Selector(ID = 0)]
-			[Key(key = "RS_Sprite_ColorAll")]
-			public Value.Enum<StandardColorType> ColorAll { get; private set; }
+			//[Key(key = "RS_Sprite_ColorAll")]
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public Value.Enum<StandardColorType> ColorAll { get; private set; } = new Value.Enum<StandardColorType>(StandardColorType.Fixed);
 
-			[Selected(ID = 0, Value = 0)]
-			public Value.Color ColorAll_Fixed { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public Value.Color ColorAll_Fixed { get; private set; } = new Value.Color(255, 255, 255, 255);
 
-			[Selected(ID = 0, Value = 1)]
-			public Value.ColorWithRandom ColorAll_Random { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public Value.ColorWithRandom ColorAll_Random { get; private set; } = new Value.ColorWithRandom(255, 255, 255, 255);
 
-			[Selected(ID = 0, Value = 2)]
-			[IO(Export = true)]
-			public ColorEasingParamater ColorAll_Easing { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public ColorEasingParamater ColorAll_Easing { get; private set; } = new ColorEasingParamater();
 
-			[Selected(ID = 0, Value = 3)]
-			[IO(Export = true)]
-			public ColorFCurveParameter ColorAll_FCurve { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public ColorFCurveParameter ColorAll_FCurve { get; private set; } = new ColorFCurveParameter();
 
 			/// <summary>
 			/// Debug code
 			/// </summary>
-			[Selected(ID = 0, Value = 4)]
+			//[Selected(ID = 0, Value = 4)]
+			[IO(Export = false)]
+			[Shown(Shown = false)]
 			public GradientHDR ColorAll_Gradient { get; private set; } = new GradientHDR();
 
 			[Selector(ID = 1)]
@@ -329,12 +341,6 @@ namespace Effekseer.Data
 
 				Billboard = new Value.Enum<BillboardType>(BillboardType.Billboard);
 				AlphaBlend = new Value.Enum<AlphaBlendType>(AlphaBlendType.Blend);
-
-				ColorAll = new Value.Enum<StandardColorType>(StandardColorType.Fixed);
-				ColorAll_Fixed = new Value.Color(255, 255, 255, 255);
-				ColorAll_Random = new Value.ColorWithRandom(255, 255, 255, 255);
-				ColorAll_Easing = new ColorEasingParamater();
-				ColorAll_FCurve = new ColorFCurveParameter();
 
 				Color = new Value.Enum<ColorType>(ColorType.Default);
 				Color_Fixed_LL = new Value.Color(255, 255, 255, 255);
@@ -803,31 +809,28 @@ namespace Effekseer.Data
 				Billboard = new Value.Enum<BillboardType>(BillboardType.Fixed);
 
 				Culling = new Value.Enum<CullingValues>(Data.CullingValues.Front);
-
-				Color = new Value.Enum<StandardColorType>(StandardColorType.Fixed);
-				Color_Fixed = new Value.Color(255, 255, 255, 255);
-				Color_Random = new Value.ColorWithRandom(255, 255, 255, 255);
-				Color_Easing = new ColorEasingParamater();
-				Color_FCurve = new ColorFCurveParameter();
 			}
 
-			[Selector(ID = 0)]
-			[Key(key = "RS_Model_Color")]
-			public Value.Enum<StandardColorType> Color { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			//[Key(key = "RS_Model_Color")]
+			public Value.Enum<StandardColorType> Color { get; private set; } = new Value.Enum<StandardColorType>(StandardColorType.Fixed);
 
-			[Selected(ID = 0, Value = 0)]
-			public Value.Color Color_Fixed { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public Value.Color Color_Fixed { get; private set; } = new Value.Color(255, 255, 255, 255);
 
-			[Selected(ID = 0, Value = 1)]
-			public Value.ColorWithRandom Color_Random { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public Value.ColorWithRandom Color_Random { get; private set; } = new Value.ColorWithRandom(255, 255, 255, 255);
 
-			[Selected(ID = 0, Value = 2)]
-			[IO(Export = true)]
-			public ColorEasingParamater Color_Easing { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public ColorEasingParamater Color_Easing { get; private set; } = new ColorEasingParamater();
 
-			[Selected(ID = 0, Value = 3)]
-			[IO(Export = true)]
-			public ColorFCurveParameter Color_FCurve { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public ColorFCurveParameter Color_FCurve { get; private set; } = new ColorFCurveParameter();
 		}
 
 		public class TrackParameter

@@ -63,9 +63,10 @@ FixedRandomEasingType_Fixed_Name,位置
 FixedRandomEasingType_Random_Name,ランダム
 FixedRandomEasingType_Easing_Name,イージング
 ,
+RS_ColorAll_Name,全体色
+,
 RS_Sprite_RenderingOrder_Name,描画順
 RS_Sprite_Billboard_Name,配置方法
-RS_Sprite_ColorAll_Name,全体色
 RS_Sprite_Color_Name,頂点色
 RS_Sprite_Color_Fixed_LL_Name,左下色
 RS_Sprite_Color_Fixed_LR_Name,右下色
