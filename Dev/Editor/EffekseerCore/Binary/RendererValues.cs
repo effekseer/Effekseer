@@ -111,7 +111,7 @@ namespace Effekseer.Binary
 					case Data.RendererValues.ParamaterType.None:
 						break;
 					case Data.RendererValues.ParamaterType.Sprite:
-						AddSpriteData(value, data);
+						AddSpriteData(value, data, version);
 						break;
 					case Data.RendererValues.ParamaterType.Ribbon:
 						AddRibbonData(value, data, version);
@@ -135,21 +135,18 @@ namespace Effekseer.Binary
 			return data.ToArray().ToArray();
 		}
 
-		private static void AddSpriteData(Data.RendererValues value, List<byte[]> data)
+		private static void AddSpriteData(Data.RendererValues value, List<byte[]> data, ExporterVersion version)
 		{
 			var param = value.Sprite;
 
 			data.Add(param.RenderingOrder);
 			data.Add(param.Billboard);
 
-			AddColorAll();
+			OutputStandardColor(data, value.ColorAll, version, ExporterVersion.Ver1500, ExporterVersion.Ver17Alpha1);
+
 			AddPartialColor();
 			AddPosition();
 
-			void AddColorAll()
-			{
-				OutputStandardColor(data, param.ColorAll, param.ColorAll_Fixed, param.ColorAll_Random, value.Sprite.ColorAll_Easing, param.ColorAll_FCurve, param.ColorAll_Gradient);
-			}
 
 			void AddPartialColor()
 			{
@@ -422,9 +419,7 @@ namespace Effekseer.Binary
 
 			data.Add(((int)param.Culling.Value).GetBytes());
 
-			// 全体色
-			OutputStandardColor(data, param.Color, param.Color_Fixed, param.Color_Random, param.Color_Easing,
-				param.Color_FCurve);
+			OutputStandardColor(data, value.ColorAll, version, ExporterVersion.Ver1500, ExporterVersion.Ver17Alpha1);
 
 			void AddModelReference()
 			{
@@ -496,6 +491,18 @@ namespace Effekseer.Binary
 				param.ColorRightMiddle_Easing, param.ColorRightMiddle_FCurve);
 		}
 
+		public static void OutputStandardColor(List<byte[]> data, StandardColor color, ExporterVersion version, ExporterVersion fcurveVersion, ExporterVersion gradientVersion)
+		{
+			OutputStandardColor(
+				data,
+				color.Type,
+				color.Fixed,
+				color.Random,
+				color.Easing,
+				version >= fcurveVersion ? color.FCurve : null,
+				version >= gradientVersion ? color.Gradient : null);
+		}
+
 		public static void OutputStandardColor(
 			List<byte[]> data,
 			Data.Value.Enum<Data.StandardColorType> color,
@@ -505,9 +512,16 @@ namespace Effekseer.Binary
 			Data.ColorFCurveParameter color_FCurve,
 			Data.Value.GradientHDR gradient = null)
 		{
-			data.Add(color);
+			var colorType = color.Value;
+			if ((colorType == StandardColorType.FCurve && color_FCurve == null) ||
+				(colorType == StandardColorType.Gradient && gradient == null))
+			{
+				colorType = StandardColorType.Fixed;
+			}
 
-			if (color.Value == Data.StandardColorType.Fixed)
+			data.Add(((int)colorType).GetBytes());
+
+			if (colorType == Data.StandardColorType.Fixed)
 			{
 				var color_all = (byte[])color_fixed;
 				data.Add(color_all);

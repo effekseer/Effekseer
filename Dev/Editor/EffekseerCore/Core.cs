@@ -646,7 +646,7 @@ namespace Effekseer
 		public static void Dispose()
 		{
 #if SCRIPT_ENABLED
-            Script.Compiler.Dispose();
+			Script.Compiler.Dispose();
 #endif
 			SaveOption();
 		}
@@ -1519,18 +1519,12 @@ namespace Effekseer
 						list.Add(Tuple35.Create(name, (object)node.RendererCommonValues.UVFCurve.Size));
 					}
 
-					if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Sprite &&
-						node.DrawingValues.Sprite.ColorAll.Value == Data.StandardColorType.FCurve)
+					if ((node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Sprite ||
+						node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Model) &&
+						node.DrawingValues.ColorAll.Type.Value == Data.StandardColorType.FCurve)
 					{
-						var name = MultiLanguageTextProvider.GetText("Fcurve_Elm_Sprite_Color");
-						list.Add(Tuple35.Create(name, (object)node.DrawingValues.Sprite.ColorAll_FCurve.FCurve));
-					}
-
-					if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Model &&
-						node.DrawingValues.Model.Color.Value == Data.StandardColorType.FCurve)
-					{
-						var name = MultiLanguageTextProvider.GetText("Fcurve_Elm_Model_Color");
-						list.Add(Tuple35.Create(name, (object)node.DrawingValues.Model.Color_FCurve.FCurve));
+						var name = MultiLanguageTextProvider.GetText("Fcurve_Elm_Render_Color");
+						list.Add(Tuple35.Create(name, (object)node.DrawingValues.ColorAll.FCurve.FCurve));
 					}
 
 					if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Track)
