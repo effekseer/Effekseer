@@ -1102,7 +1102,7 @@ namespace Effekseer
 				updater.Update(root_node);
 			}
 
-			if (toolVersion < ParseVersion("1.60"))
+			if (toolVersion < ParseVersion("1.70α1"))
 			{
 				var updater = new Utils.ProjectVersionUpdator16xTo17Alpha1();
 				updater.Update(root_node);
