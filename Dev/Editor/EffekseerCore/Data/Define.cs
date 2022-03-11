@@ -216,7 +216,7 @@ namespace Effekseer.Data
 		Easing = 2,
 		[Key(key = "StandardColorType_FCurve")]
 		FCurve = 3,
-
+		[Key(key = "StandardColorType_Gradient")]
 		Gradient = 4,
 	}
 

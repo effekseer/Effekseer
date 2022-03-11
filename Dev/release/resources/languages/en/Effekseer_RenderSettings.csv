@@ -15,6 +15,7 @@ StandardColorType_Fixed_Name,Fixed
 StandardColorType_Random_Name,Random
 StandardColorType_Easing_Name,Easing
 StandardColorType_FCurve_Name,F-Curve (RGBA)
+StandardColorType_Gradient_Name,Gradient
 TextureUVTypeParameter_Type_Name,UV Type
 TextureUVTypeParameter_TileEdgeHead_Name,The number of tile on Head
 TextureUVTypeParameter_TileEdgeTail_Name,The number of tile on Tail
@@ -139,3 +140,8 @@ RS_Ring_PVALocation_Velocity_Name,Speed
 RS_Ring_PVALocation_Velocity_Desc,Initial velocity of the edge
 RS_Ring_PVALocation_Acceleration_Name,Accel
 RS_Ring_PVALocation_Acceleration_Desc,Acceleration of the edge
+,
+"RS_TrailSmoothing_Name","Smoothing"
+"RS_TrailTimeSource_Name","Time source for color"
+"RS_TrailTimeSource_FirstParticle_Name", "First particle"
+"RS_TrailTimeSource_ParticleGroup_Name", "Group"

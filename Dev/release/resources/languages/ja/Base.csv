@@ -6,6 +6,8 @@ Language_ja,日本語
 "Cancel","キャンセル"
 "Select","選択"
 "MultipleValues","複数の値"
+"Enabled_Name","有効"
+"Disabled_Name","無効"
 "",""
 "Font_Normal","resources/GenShinGothic-Monospace-Normal.ttf"
 "Font_Bold","resources/fonts/GenShinGothic-Monospace-Bold.ttf"

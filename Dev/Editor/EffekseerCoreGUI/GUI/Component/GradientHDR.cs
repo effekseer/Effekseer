@@ -132,7 +132,7 @@ namespace Effekseer.GUI.Component
 
 						var colors = new float[] { color.R, color.G, color.B, 1.0f };
 
-						if (Manager.NativeManager.ColorEdit4(id_color, colors, swig.ColorEditFlags.NoAlpha))
+						if (Manager.NativeManager.ColorEdit4("Color" + id_color, colors, swig.ColorEditFlags.NoAlpha))
 						{
 							color.R = colors[0];
 							color.G = colors[1];
@@ -144,7 +144,7 @@ namespace Effekseer.GUI.Component
 						var intensityArray = new float[1];
 						intensityArray[0] = intensity;
 
-						if (Manager.NativeManager.DragFloat(id_intensity, intensityArray, 0.1f))
+						if (Manager.NativeManager.DragFloat("Intensity" + id_intensity, intensityArray, 0.1f, 0.0f, float.MaxValue))
 						{
 							intensity = intensityArray[0];
 							internalState.SetColorMarkerIntensity(selectedIndex, intensity);
@@ -157,7 +157,7 @@ namespace Effekseer.GUI.Component
 						var alphaArray = new float[1];
 						alphaArray[0] = alpha;
 
-						if (Manager.NativeManager.DragFloat(id_alpha, alphaArray, 0.1f))
+						if (Manager.NativeManager.DragFloat("Alpha" + id_alpha, alphaArray, 0.1f, 0.0f, 1.0f))
 						{
 							alpha = alphaArray[0];
 							internalState.SetAlphaMarkerAlpha(selectedIndex, alpha);

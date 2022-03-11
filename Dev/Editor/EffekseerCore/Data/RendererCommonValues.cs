@@ -785,12 +785,6 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		[Selected(ID = 3, Value = (int)MaterialType.Default)]
-		[Selected(ID = 3, Value = (int)MaterialType.BackDistortion)]
-		[Selected(ID = 3, Value = (int)MaterialType.Lighting)]
-		[IO(Export = true)]
-		public StandardColor AllColor { get; private set; } = new StandardColor();
-
 		[Key(key = "BRS_AlphaBlend")]
 		public Value.Enum<AlphaBlendType> AlphaBlend { get; private set; }
 

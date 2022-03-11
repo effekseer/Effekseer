@@ -717,7 +717,7 @@ namespace Effekseer.Utils
 				if (n_ != null && (n_.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Ribbon || n_.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Track))
 				{
 					var rp = n_.DrawingValues;
-					rp.TrailSmoothing.SetValueDirectly(TrailSmoothingType.Off);
+					rp.TrailSmoothing.SetValueDirectly(TrailSmoothingType.Disabled);
 					rp.TrailTimeSource.SetValueDirectly(TrailTimeSourceType.FirstParticle);
 				}
 

@@ -16,13 +16,17 @@ namespace Effekseer.Data
 
 	public enum TrailSmoothingType : int
 	{
-		Off = 0,
-		On = 1,
+		[Key(key = "Disabled")]
+		Disabled = 0,
+		[Key(key = "Enabled")]
+		Enabled = 1,
 	}
 
 	public enum TrailTimeSourceType : int
 	{
+		[Key(key = "RS_TrailTimeSource_FirstParticle")]
 		FirstParticle = 0,
+		[Key(key = "RS_TrailTimeSource_ParticleGroup")]
 		ParticleGroup = 1,
 	}
 
@@ -164,10 +168,12 @@ namespace Effekseer.Data
 		[IO(Export = true)]
 		public TextureUVTypeParameter TextureUVType { get; private set; }
 
+		[Key(key = "RS_TrailSmoothing")]
 		[Selected(ID = 0, Value = 6)]
 		[IO(Export = true)]
-		public Value.Enum<TrailSmoothingType> TrailSmoothing { get; private set; } = new Enum<TrailSmoothingType>(TrailSmoothingType.On);
+		public Value.Enum<TrailSmoothingType> TrailSmoothing { get; private set; } = new Enum<TrailSmoothingType>(TrailSmoothingType.Enabled);
 
+		[Key(key = "RS_TrailTimeSource")]
 		[Selected(ID = 0, Value = 3)]
 		[Selected(ID = 0, Value = 6)]
 		[IO(Export = true)]
@@ -279,10 +285,6 @@ namespace Effekseer.Data
 			[Shown(Shown = false)]
 			public ColorFCurveParameter ColorAll_FCurve { get; private set; } = new ColorFCurveParameter();
 
-			/// <summary>
-			/// Debug code
-			/// </summary>
-			//[Selected(ID = 0, Value = 4)]
 			[IO(Export = false)]
 			[Shown(Shown = false)]
 			public GradientHDR ColorAll_Gradient { get; private set; } = new GradientHDR();
