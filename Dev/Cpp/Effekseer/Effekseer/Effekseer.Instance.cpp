@@ -465,11 +465,11 @@ void Instance::UpdateTransform(float deltaFrame)
 	/* 更新処理 */
 	if (m_pEffectNode->GetType() != eEffectNodeType::Root)
 	{
-		SIMD::Vec3f localPosition{};
+		SIMD::Vec3f localPosition = {0, 0, 0};
 		SIMD::Vec3f localAngle;
 		SIMD::Vec3f localScaling;
 
-		m_pEffectNode->TranslationParam.CalculateTranslationState(translation_values, localPosition, m_randObject, m_pEffectNode->GetEffect(), m_pContainer->GetRootInstance(), m_LivingTime, m_LivedTime, m_pParent, coordinateSystem, m_pEffectNode->DynamicFactor);
+		localPosition += m_pEffectNode->TranslationParam.CalculateTranslationState(translation_values, m_randObject, m_pEffectNode->GetEffect(), m_pContainer->GetRootInstance(), m_LivingTime, m_LivedTime, m_pParent, coordinateSystem, m_pEffectNode->DynamicFactor);
 
 		if (!m_pEffectNode->GenerationLocation.EffectsRotation)
 		{

@@ -90,8 +90,11 @@ struct InstanceTranslationState
 		struct
 		{
 			float distance;
+
 		} view_offset;
 	};
+
+	SIMD::Vec3f prevLocation;
 };
 
 class TranslationParameter
@@ -226,81 +229,81 @@ public:
 	}
 
 	void InitializeTranslationState(
-		InstanceTranslationState& translation_values,
-		SIMD::Vec3f& prevPosition_,
-		SIMD::Vec3f& steeringVec_,
+		InstanceTranslationState& instanceState,
+		SIMD::Vec3f& position,
+		SIMD::Vec3f& steeringVec,
 		RandObject& rand,
 		const Effect* effect,
 		const InstanceGlobal* instanceGlobal,
-		float m_LivingTime,
-		float m_LivedTime,
-		const Instance* m_pParent,
+		float livingTime,
+		float livedTime,
+		const Instance* parent,
 		const DynamicFactorParameter& dynamicFactor)
 	{
-		steeringVec_ = SIMD::Vec3f(0, 0, 0);
+		steeringVec = SIMD::Vec3f(0, 0, 0);
 
 		// Translation
 		if (TranslationType == ParameterTranslationType_Fixed)
 		{
-			translation_values.fixed.location = TranslationFixed.Position;
-			ApplyDynamicParameterToFixedLocation(translation_values, rand, effect, instanceGlobal, m_pParent, dynamicFactor);
+			instanceState.fixed.location = TranslationFixed.Position;
+			ApplyDynamicParameterToFixedLocation(instanceState, rand, effect, instanceGlobal, parent, dynamicFactor);
 
-			prevPosition_ = translation_values.fixed.location;
+			position = instanceState.fixed.location;
 		}
 		else if (TranslationType == ParameterTranslationType_PVA)
 		{
 			auto rvl = ApplyEq(effect,
 							   instanceGlobal,
-							   m_pParent,
+							   parent,
 							   &rand,
 							   TranslationPVA.RefEqP,
 							   TranslationPVA.location,
 							   dynamicFactor.Tra,
 							   dynamicFactor.TraInv);
-			translation_values.random.location = rvl.getValue(rand);
+			instanceState.random.location = rvl.getValue(rand);
 
 			auto rvv = ApplyEq(effect,
 							   instanceGlobal,
-							   m_pParent,
+							   parent,
 							   &rand,
 							   TranslationPVA.RefEqV,
 							   TranslationPVA.velocity,
 							   dynamicFactor.Tra,
 							   dynamicFactor.TraInv);
-			translation_values.random.velocity = rvv.getValue(rand);
+			instanceState.random.velocity = rvv.getValue(rand);
 
 			auto rva = ApplyEq(effect,
 							   instanceGlobal,
-							   m_pParent,
+							   parent,
 							   &rand,
 							   TranslationPVA.RefEqA,
 							   TranslationPVA.acceleration,
 							   dynamicFactor.Tra,
 							   dynamicFactor.TraInv);
-			translation_values.random.acceleration = rva.getValue(rand);
+			instanceState.random.acceleration = rva.getValue(rand);
 
-			prevPosition_ = translation_values.random.location;
+			position = instanceState.random.location;
 
-			steeringVec_ = translation_values.random.velocity;
+			steeringVec = instanceState.random.velocity;
 		}
 		else if (TranslationType == ParameterTranslationType_Easing)
 		{
-			TranslationEasing.Init(translation_values.easing, effect, instanceGlobal, m_pParent, &rand, dynamicFactor.Tra, dynamicFactor.TraInv);
+			TranslationEasing.Init(instanceState.easing, effect, instanceGlobal, parent, &rand, dynamicFactor.Tra, dynamicFactor.TraInv);
 
-			prevPosition_ = translation_values.easing.start;
+			position = instanceState.easing.start;
 		}
 		else if (TranslationType == ParameterTranslationType_FCurve)
 		{
 			assert(TranslationFCurve != nullptr);
 			const auto coordinateSystem = effect->GetSetting()->GetCoordinateSystem();
 
-			translation_values.fcruve.offset = TranslationFCurve->GetOffsets(rand);
+			instanceState.fcruve.offset = TranslationFCurve->GetOffsets(rand);
 
-			prevPosition_ = translation_values.fcruve.offset + TranslationFCurve->GetValues(m_LivingTime, m_LivedTime);
+			position = instanceState.fcruve.offset + TranslationFCurve->GetValues(livingTime, livedTime);
 
 			if (coordinateSystem == CoordinateSystem::LH)
 			{
-				prevPosition_.SetZ(-prevPosition_.GetZ());
+				position.SetZ(-position.GetZ());
 			}
 		}
 		else if (TranslationType == ParameterTranslationType_NurbsCurve)
@@ -315,7 +318,7 @@ public:
 
 				float speed = 1.0f / (curve->GetLength() * NurbsCurveParam.Scale);
 
-				float t = speed * m_LivingTime * moveSpeed;
+				float t = speed * livingTime * moveSpeed;
 
 				switch (loopType)
 				{
@@ -332,59 +335,59 @@ public:
 					break;
 				}
 
-				prevPosition_ = curve->CalcuratePoint(t, NurbsCurveParam.Scale * effect->GetMaginification());
+				position = curve->CalcuratePoint(t, NurbsCurveParam.Scale * effect->GetMaginification());
 			}
 			else
 			{
-				prevPosition_ = {0, 0, 0};
+				position = {0, 0, 0};
 			}
 		}
 		else if (TranslationType == ParameterTranslationType_ViewOffset)
 		{
-			translation_values.view_offset.distance = TranslationViewOffset.distance.getValue(rand);
-			prevPosition_ = {0, 0, 0};
+			instanceState.view_offset.distance = TranslationViewOffset.distance.getValue(rand);
+			position = {0, 0, 0};
 		}
+
+		instanceState.prevLocation = position;
 	}
 
-	void CalculateTranslationState(
-		InstanceTranslationState& translation_values,
-		SIMD::Vec3f& localPosition,
+	SIMD::Vec3f CalculateTranslationState(
+		InstanceTranslationState& instanceState,
 		RandObject& rand,
 		const Effect* effect,
 		const InstanceGlobal* instanceGlobal,
-		float m_LivingTime,
-		float m_LivedTime,
+		float livingTime,
+		float livedTime,
 		const Instance* m_pParent,
 		CoordinateSystem coordinateSystem,
 		const DynamicFactorParameter& dynamicFactor)
 	{
+		SIMD::Vec3f localPosition;
+
 		if (TranslationType == ParameterTranslationType_None)
 		{
 			localPosition = {0, 0, 0};
 		}
 		else if (TranslationType == ParameterTranslationType_Fixed)
 		{
-			ApplyDynamicParameterToFixedLocation(translation_values, rand, effect, instanceGlobal, m_pParent, dynamicFactor);
+			ApplyDynamicParameterToFixedLocation(instanceState, rand, effect, instanceGlobal, m_pParent, dynamicFactor);
 
-			localPosition = translation_values.fixed.location;
+			localPosition = instanceState.fixed.location;
 		}
 		else if (TranslationType == ParameterTranslationType_PVA)
 		{
-			// 現在位置 = 初期座標 + (初期速度 * t) + (初期加速度 * t * t * 0.5)
-			localPosition = translation_values.random.location + (translation_values.random.velocity * m_LivingTime) +
-							(translation_values.random.acceleration * (m_LivingTime * m_LivingTime * 0.5f));
+			localPosition = instanceState.random.location + (instanceState.random.velocity * livingTime) +
+							(instanceState.random.acceleration * (livingTime * livingTime * 0.5f));
 		}
 		else if (TranslationType == ParameterTranslationType_Easing)
 		{
-			localPosition = TranslationEasing.GetValue(translation_values.easing, m_LivingTime / m_LivedTime);
-			//localPosition = m_pEffectNode->TranslationEasing.location.getValue(
-			//	translation_values.easing.start, translation_values.easing.end, m_LivingTime / m_LivedTime);
+			localPosition = TranslationEasing.GetValue(instanceState.easing, livingTime / livedTime);
 		}
 		else if (TranslationType == ParameterTranslationType_FCurve)
 		{
 			assert(TranslationFCurve != nullptr);
-			auto fcurve = TranslationFCurve->GetValues(m_LivingTime, m_LivedTime);
-			localPosition = fcurve + translation_values.fcruve.offset;
+			auto fcurve = TranslationFCurve->GetValues(livingTime, livedTime);
+			localPosition = fcurve + instanceState.fcruve.offset;
 
 			if (coordinateSystem == CoordinateSystem::LH)
 			{
@@ -402,7 +405,7 @@ public:
 
 				float speed = 1.0f / (curve->GetLength() * NurbsCurveParam.Scale);
 
-				float t = speed * m_LivingTime * moveSpeed;
+				float t = speed * livingTime * moveSpeed;
 
 				switch (loopType)
 				{
@@ -429,7 +432,12 @@ public:
 		else if (TranslationType == ParameterTranslationType_ViewOffset)
 		{
 			localPosition = {0, 0, 0};
+			return {0, 0, 0};
 		}
+
+		const auto vel = localPosition - instanceState.prevLocation;
+		instanceState.prevLocation = localPosition;
+		return vel;
 	}
 };
 
