@@ -514,7 +514,13 @@ void Instance::UpdateTransform(float deltaFrame)
 		if (m_pEffectNode->LocalForceField.HasValue)
 		{
 			currentLocalPosition += forceField_.ModifyLocation;
-			forceField_.ExternalVelocity = localVelocity;
+			auto trans = SIMD::ToStruct(m_GenerationLocation.GetRotation());
+			Effekseer::Matrix44 mat;
+			trans.ToMatrix44(mat);
+			Effekseer::Matrix44::Inverse(mat, mat);
+			const auto mat2 = SIMD::Mat44f{mat};
+
+			forceField_.ExternalVelocity = SIMD::Vec3f::Transform(localVelocity, mat2);
 			forceField_.Update(m_pEffectNode->LocalForceField, currentLocalPosition, m_pEffectNode->GetEffect()->GetMaginification(), deltaFrame, m_pEffectNode->GetEffect()->GetSetting()->GetCoordinateSystem());
 		}
 
