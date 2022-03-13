@@ -255,15 +255,14 @@ void Instance::FirstUpdate()
 
 	if (m_pEffectNode->GenerationLocation.EffectsRotation)
 	{
-		auto tempPrevPosition = prevPosition_;
-		tempPrevPosition += m_GenerationLocation.GetTranslation();
-		prevGlobalPosition_ = SIMD::Vec3f::Transform(tempPrevPosition, m_ParentMatrix);
+		prevPosition_ = SIMD::Vec3f::Transform(prevPosition_, m_GenerationLocation);
 	}
 	else
 	{
 		prevPosition_ += m_GenerationLocation.GetTranslation();
-		prevGlobalPosition_ = SIMD::Vec3f::Transform(prevPosition_, m_ParentMatrix);
 	}
+
+	prevGlobalPosition_ = SIMD::Vec3f::Transform(prevPosition_, m_ParentMatrix);
 
 	m_pEffectNode->InitializeRenderedInstance(*this, *ownGroup_, m_pManager);
 }
@@ -304,15 +303,7 @@ void Instance::Update(float deltaFrame, bool shown)
 		m_LivingTime += deltaFrame;
 	}
 
-	if (shown)
-	{
-		UpdateTransform(deltaFrame);
-	}
-	else if (m_pEffectNode->LocalForceField.HasValue)
-	{
-		// If attraction forces are not default, updating is needed in each frame.
-		UpdateTransform(deltaFrame);
-	}
+	UpdateTransform(deltaFrame);
 
 	// Get parent color.
 	if (m_pParent != nullptr)
@@ -465,22 +456,22 @@ void Instance::UpdateTransform(float deltaFrame)
 	/* 更新処理 */
 	if (m_pEffectNode->GetType() != eEffectNodeType::Root)
 	{
-		SIMD::Vec3f localPosition = {0, 0, 0};
+		SIMD::Vec3f localPosition = prevPosition_;
 		SIMD::Vec3f localAngle;
 		SIMD::Vec3f localScaling;
 
-		localPosition += m_pEffectNode->TranslationParam.CalculateTranslationState(translation_values, m_randObject, m_pEffectNode->GetEffect(), m_pContainer->GetRootInstance(), m_LivingTime, m_LivedTime, m_pParent, coordinateSystem, m_pEffectNode->DynamicFactor);
+		auto localVec = m_pEffectNode->TranslationParam.CalculateTranslationState(translation_values, m_randObject, m_pEffectNode->GetEffect(), m_pContainer->GetRootInstance(), m_LivingTime, m_LivedTime, m_pParent, coordinateSystem, m_pEffectNode->DynamicFactor);
 
-		if (!m_pEffectNode->GenerationLocation.EffectsRotation)
+		if (m_pEffectNode->GenerationLocation.EffectsRotation)
 		{
-			localPosition += m_GenerationLocation.GetTranslation();
+			localVec += SIMD::Vec3f::Transform(localVec, m_GenerationLocation.GetRotation());
 		}
+
+		localPosition += localVec;
 
 		if (m_pEffectNode->CommonValues.TranslationBindType == TranslationParentBindType::NotBind_FollowParent ||
 			m_pEffectNode->CommonValues.TranslationBindType == TranslationParentBindType::WhenCreating_FollowParent)
 		{
-			localPosition = prevPosition_;
-
 			SIMD::Vec3f worldPos = SIMD::Vec3f::Transform(localPosition, m_ParentMatrix);
 			SIMD::Vec3f toTarget = parentPosition_ - worldPos;
 
@@ -518,22 +509,7 @@ void Instance::UpdateTransform(float deltaFrame)
 		ScalingFunctions::UpdateScaling(localScaling, scaling_values, m_pEffectNode->ScalingParam, m_randObject, m_pEffectNode->GetEffect(), m_pContainer->GetRootInstance(), m_LivingTime, m_LivedTime, m_pParent, m_pEffectNode->DynamicFactor);
 
 		// update local fields
-		SIMD::Vec3f currentLocalPosition;
-
-		if (m_pEffectNode->GenerationLocation.EffectsRotation)
-		{
-			// the center of force field depends Spawn method
-			// It should be used a result of past frame
-			auto location = SIMD::Mat43f::Translation(localPosition);
-			location *= m_GenerationLocation;
-
-			localVelocity = SIMD::Vec3f::Transform(localVelocity, m_GenerationLocation.GetRotation());
-			currentLocalPosition = location.GetTranslation();
-		}
-		else
-		{
-			currentLocalPosition = localPosition;
-		}
+		SIMD::Vec3f currentLocalPosition = localPosition;
 
 		if (m_pEffectNode->LocalForceField.HasValue)
 		{
