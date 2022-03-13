@@ -544,10 +544,8 @@ void Instance::UpdateTransform(float deltaFrame)
 		if (m_pEffectNode->GenerationLocation.EffectsRotation)
 		{
 			MatRot *= m_GenerationLocation.GetRotation();
-			m_GlobalMatrix43 = SIMD::Mat43f::SRT(localScaling, MatRot, localPosition);
+			m_GlobalMatrix43 = SIMD::Mat43f::SRT(localScaling, MatRot, forceField_.ModifyLocation + localPosition);
 			assert(m_GlobalMatrix43.IsValid());
-
-			m_GlobalMatrix43 *= SIMD::Mat43f::Translation(forceField_.ModifyLocation);
 		}
 		else
 		{
