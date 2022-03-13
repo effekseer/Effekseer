@@ -186,6 +186,37 @@ namespace Effekseer.Data
 		[TreeNode(key = "RS_ColorAll", id = "RS_ColorAll", type = TreeNodeType.Small)]
 		public StandardColor ColorAll { get; private set; } = new StandardColor();
 
+		[Selected(ID = 0, Value = (int)ParamaterType.Track)]
+		[IO(Export = true)]
+		[TreeNode(key = "RS_Track_ColorLeft", id = "RS_Track_ColorLeft", type = TreeNodeType.Small)]
+		public StandardColor TrailColorLeft { get; private set; } = new StandardColor();
+
+		[Selected(ID = 0, Value = (int)ParamaterType.Track)]
+		[IO(Export = true)]
+		[TreeNode(key = "RS_Track_ColorLeftMiddle", id = "RS_Track_ColorLeftMiddle", type = TreeNodeType.Small)]
+		public StandardColor TrailColorLeftMiddle { get; private set; } = new StandardColor();
+
+		[Selected(ID = 0, Value = (int)ParamaterType.Track)]
+		[IO(Export = true)]
+		[TreeNode(key = "RS_Track_ColorCenter", id = "RS_Track_ColorCenter", type = TreeNodeType.Small)]
+		public StandardColor TrailColorCenter { get; private set; } = new StandardColor();
+
+		[Selected(ID = 0, Value = (int)ParamaterType.Track)]
+		[IO(Export = true)]
+		[TreeNode(key = "RS_Track_ColorCenterMiddle", id = "RS_Track_ColorCenterMiddle", type = TreeNodeType.Small)]
+		public StandardColor TrailColorCenterMiddle { get; private set; } = new StandardColor();
+
+		[Selected(ID = 0, Value = (int)ParamaterType.Track)]
+		[IO(Export = true)]
+		[TreeNode(key = "RS_Track_ColorRight", id = "RS_Track_ColorRight", type = TreeNodeType.Small)]
+		public StandardColor TrailColorRight { get; private set; } = new StandardColor();
+
+
+		[Selected(ID = 0, Value = (int)ParamaterType.Track)]
+		[IO(Export = true)]
+		[TreeNode(key = "RS_Track_ColorRightMiddle", id = "RS_Track_ColorRightMiddlet", type = TreeNodeType.Small)]
+		public StandardColor TrailColorRightMiddle { get; private set; } = new StandardColor();
+
 		[Selected(ID = 0, Value = 2)]
 		[IO(Export = true)]
 		public SpriteParamater Sprite
@@ -865,113 +896,125 @@ namespace Effekseer.Data
 				private set;
 			}
 
-			[Selector(ID = 1)]
-			[Key(key = "RS_Track_ColorLeft")]
-			public Value.Enum<StandardColorType> ColorLeft { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public Value.Enum<StandardColorType> ColorLeft { get; private set; } = new Value.Enum<StandardColorType>(StandardColorType.Fixed);
 
-			[Selected(ID = 1, Value = 0)]
-			public Value.Color ColorLeft_Fixed { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public Value.Color ColorLeft_Fixed { get; private set; } = new Value.Color(255, 255, 255, 255);
 
-			[Selected(ID = 1, Value = 1)]
-			public Value.ColorWithRandom ColorLeft_Random { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public Value.ColorWithRandom ColorLeft_Random { get; private set; } = new Value.ColorWithRandom(255, 255, 255, 255);
 
-			[Selected(ID = 1, Value = 2)]
-			[IO(Export = true)]
-			public ColorEasingParamater ColorLeft_Easing { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public ColorEasingParamater ColorLeft_Easing { get; private set; } = new ColorEasingParamater();
 
-			[Selected(ID = 1, Value = 3)]
-			[IO(Export = true)]
-			public ColorFCurveParameter ColorLeft_FCurve { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public ColorFCurveParameter ColorLeft_FCurve { get; private set; } = new ColorFCurveParameter();
 
-			[Selector(ID = 2)]
-			[Key(key = "RS_Track_ColorLeftMiddle")]
-			public Value.Enum<StandardColorType> ColorLeftMiddle { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public Value.Enum<StandardColorType> ColorLeftMiddle { get; private set; } = new Value.Enum<StandardColorType>(StandardColorType.Fixed);
 
-			[Selected(ID = 2, Value = 0)]
-			public Value.Color ColorLeftMiddle_Fixed { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public Value.Color ColorLeftMiddle_Fixed { get; private set; } = new Value.Color(255, 255, 255, 255);
 
-			[Selected(ID = 2, Value = 1)]
-			public Value.ColorWithRandom ColorLeftMiddle_Random { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public Value.ColorWithRandom ColorLeftMiddle_Random { get; private set; } = new Value.ColorWithRandom(255, 255, 255, 255);
 
-			[Selected(ID = 2, Value = 2)]
-			[IO(Export = true)]
-			public ColorEasingParamater ColorLeftMiddle_Easing { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public ColorEasingParamater ColorLeftMiddle_Easing { get; private set; } = new ColorEasingParamater();
 
-			[Selected(ID = 2, Value = 3)]
-			[IO(Export = true)]
-			public ColorFCurveParameter ColorLeftMiddle_FCurve { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public ColorFCurveParameter ColorLeftMiddle_FCurve { get; private set; } = new ColorFCurveParameter();
 
-			[Selector(ID = 3)]
-			[Key(key = "RS_Track_ColorCenter")]
-			public Value.Enum<StandardColorType> ColorCenter { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public Value.Enum<StandardColorType> ColorCenter { get; private set; } = new Value.Enum<StandardColorType>(StandardColorType.Fixed);
 
-			[Selected(ID = 3, Value = 0)]
-			public Value.Color ColorCenter_Fixed { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public Value.Color ColorCenter_Fixed { get; private set; } = new Value.Color(255, 255, 255, 255);
 
-			[Selected(ID = 3, Value = 1)]
-			public Value.ColorWithRandom ColorCenter_Random { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public Value.ColorWithRandom ColorCenter_Random { get; private set; } = new Value.ColorWithRandom(255, 255, 255, 255);
 
-			[Selected(ID = 3, Value = 2)]
-			[IO(Export = true)]
-			public ColorEasingParamater ColorCenter_Easing { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public ColorEasingParamater ColorCenter_Easing { get; private set; } = new ColorEasingParamater();
 
-			[Selected(ID = 3, Value = 3)]
-			[IO(Export = true)]
-			public ColorFCurveParameter ColorCenter_FCurve { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public ColorFCurveParameter ColorCenter_FCurve { get; private set; } = new ColorFCurveParameter();
 
-			[Selector(ID = 4)]
-			[Key(key = "RS_Track_ColorCenterMiddle")]
-			public Value.Enum<StandardColorType> ColorCenterMiddle { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public Value.Enum<StandardColorType> ColorCenterMiddle { get; private set; } = new Value.Enum<StandardColorType>(StandardColorType.Fixed);
 
-			[Selected(ID = 4, Value = 0)]
-			public Value.Color ColorCenterMiddle_Fixed { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public Value.Color ColorCenterMiddle_Fixed { get; private set; } = new Value.Color(255, 255, 255, 255);
 
-			[Selected(ID = 4, Value = 1)]
-			public Value.ColorWithRandom ColorCenterMiddle_Random { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public Value.ColorWithRandom ColorCenterMiddle_Random { get; private set; } = new Value.ColorWithRandom(255, 255, 255, 255);
 
-			[Selected(ID = 4, Value = 2)]
-			[IO(Export = true)]
-			public ColorEasingParamater ColorCenterMiddle_Easing { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public ColorEasingParamater ColorCenterMiddle_Easing { get; private set; } = new ColorEasingParamater();
 
-			[Selected(ID = 4, Value = 3)]
-			[IO(Export = true)]
-			public ColorFCurveParameter ColorCenterMiddle_FCurve { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public ColorFCurveParameter ColorCenterMiddle_FCurve { get; private set; } = new ColorFCurveParameter();
 
-			[Selector(ID = 5)]
-			[Key(key = "RS_Track_ColorRight")]
-			public Value.Enum<StandardColorType> ColorRight { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public Value.Enum<StandardColorType> ColorRight { get; private set; } = new Value.Enum<StandardColorType>(StandardColorType.Fixed);
 
-			[Selected(ID = 5, Value = 0)]
-			public Value.Color ColorRight_Fixed { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public Value.Color ColorRight_Fixed { get; private set; } = new Value.Color(255, 255, 255, 255);
 
-			[Selected(ID = 5, Value = 1)]
-			public Value.ColorWithRandom ColorRight_Random { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public Value.ColorWithRandom ColorRight_Random { get; private set; } = new Value.ColorWithRandom(255, 255, 255, 255);
 
-			[Selected(ID = 5, Value = 2)]
-			[IO(Export = true)]
-			public ColorEasingParamater ColorRight_Easing { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public ColorEasingParamater ColorRight_Easing { get; private set; } = new ColorEasingParamater();
 
-			[Selected(ID = 5, Value = 3)]
-			[IO(Export = true)]
-			public ColorFCurveParameter ColorRight_FCurve { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public ColorFCurveParameter ColorRight_FCurve { get; private set; } = new ColorFCurveParameter();
 
-			[Selector(ID = 6)]
-			[Key(key = "RS_Track_ColorRightMiddle")]
-			public Value.Enum<StandardColorType> ColorRightMiddle { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public Value.Enum<StandardColorType> ColorRightMiddle { get; private set; } = new Value.Enum<StandardColorType>(StandardColorType.Fixed);
 
-			[Selected(ID = 6, Value = 0)]
-			public Value.Color ColorRightMiddle_Fixed { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public Value.Color ColorRightMiddle_Fixed { get; private set; } = new Value.Color(255, 255, 255, 255);
 
-			[Selected(ID = 6, Value = 1)]
-			public Value.ColorWithRandom ColorRightMiddle_Random { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public Value.ColorWithRandom ColorRightMiddle_Random { get; private set; } = new Value.ColorWithRandom(255, 255, 255, 255);
 
-			[Selected(ID = 6, Value = 2)]
-			[IO(Export = true)]
-			public ColorEasingParamater ColorRightMiddle_Easing { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public ColorEasingParamater ColorRightMiddle_Easing { get; private set; } = new ColorEasingParamater();
 
-			[Selected(ID = 6, Value = 3)]
-			[IO(Export = true)]
-			public ColorFCurveParameter ColorRightMiddle_FCurve { get; private set; }
+			[IO(Export = false)]
+			[Shown(Shown = false)]
+			public ColorFCurveParameter ColorRightMiddle_FCurve { get; private set; } = new ColorFCurveParameter();
 
 
 			public TrackParameter(Path basepath)
@@ -984,42 +1027,6 @@ namespace Effekseer.Data
 
 				TrackSizeBack = new Value.Enum<TrackSizeType>(TrackSizeType.Fixed);
 				TrackSizeBack_Fixed = new Value.Float(1, float.MaxValue, 0);
-
-				ColorLeft = new Value.Enum<StandardColorType>(StandardColorType.Fixed);
-				ColorLeft_Fixed = new Value.Color(255, 255, 255, 255);
-				ColorLeft_Random = new Value.ColorWithRandom(255, 255, 255, 255);
-				ColorLeft_Easing = new ColorEasingParamater();
-				ColorLeft_FCurve = new ColorFCurveParameter();
-
-				ColorLeftMiddle = new Value.Enum<StandardColorType>(StandardColorType.Fixed);
-				ColorLeftMiddle_Fixed = new Value.Color(255, 255, 255, 255);
-				ColorLeftMiddle_Random = new Value.ColorWithRandom(255, 255, 255, 255);
-				ColorLeftMiddle_Easing = new ColorEasingParamater();
-				ColorLeftMiddle_FCurve = new ColorFCurveParameter();
-
-				ColorCenter = new Value.Enum<StandardColorType>(StandardColorType.Fixed);
-				ColorCenter_Fixed = new Value.Color(255, 255, 255, 255);
-				ColorCenter_Random = new Value.ColorWithRandom(255, 255, 255, 255);
-				ColorCenter_Easing = new ColorEasingParamater();
-				ColorCenter_FCurve = new ColorFCurveParameter();
-
-				ColorCenterMiddle = new Value.Enum<StandardColorType>(StandardColorType.Fixed);
-				ColorCenterMiddle_Fixed = new Value.Color(255, 255, 255, 255);
-				ColorCenterMiddle_Random = new Value.ColorWithRandom(255, 255, 255, 255);
-				ColorCenterMiddle_Easing = new ColorEasingParamater();
-				ColorCenterMiddle_FCurve = new ColorFCurveParameter();
-
-				ColorRight = new Value.Enum<StandardColorType>(StandardColorType.Fixed);
-				ColorRight_Fixed = new Value.Color(255, 255, 255, 255);
-				ColorRight_Random = new Value.ColorWithRandom(255, 255, 255, 255);
-				ColorRight_Easing = new ColorEasingParamater();
-				ColorRight_FCurve = new ColorFCurveParameter();
-
-				ColorRightMiddle = new Value.Enum<StandardColorType>(StandardColorType.Fixed);
-				ColorRightMiddle_Fixed = new Value.Color(255, 255, 255, 255);
-				ColorRightMiddle_Random = new Value.ColorWithRandom(255, 255, 255, 255);
-				ColorRightMiddle_Easing = new ColorEasingParamater();
-				ColorRightMiddle_FCurve = new ColorFCurveParameter();
 
 				SplineDivision = new Value.Int(1, int.MaxValue, 1);
 			}

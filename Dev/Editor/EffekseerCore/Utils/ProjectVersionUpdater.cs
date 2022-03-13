@@ -757,4 +757,95 @@ namespace Effekseer.Utils
 			return true;
 		}
 	}
+
+
+	class ProjectVersionUpdator17Alpha1To17Alpha2 : ProjectVersionUpdator
+	{
+		public override bool Update(NodeRoot rootNode)
+		{
+			Action<Data.NodeBase> convert = null;
+			convert = (n) =>
+			{
+				var n_ = n as Data.Node;
+
+				if (n_ != null && n_.DrawingValues.Type.Value == RendererValues.ParamaterType.Track)
+				{
+					{
+						StandardColor sc = new StandardColor();
+						sc.Type = n_.DrawingValues.Track.ColorLeft;
+						sc.Fixed = n_.DrawingValues.Track.ColorLeft_Fixed;
+						sc.Random = n_.DrawingValues.Track.ColorLeft_Random;
+						sc.Easing = n_.DrawingValues.Track.ColorLeft_Easing;
+						sc.FCurve = n_.DrawingValues.Track.ColorLeft_FCurve;
+						var text = Core.Copy("Temp", sc);
+						Core.Paste("Temp", n_.DrawingValues.TrailColorLeft, text);
+					}
+
+					{
+						StandardColor sc = new StandardColor();
+						sc.Type = n_.DrawingValues.Track.ColorLeftMiddle;
+						sc.Fixed = n_.DrawingValues.Track.ColorLeftMiddle_Fixed;
+						sc.Random = n_.DrawingValues.Track.ColorLeftMiddle_Random;
+						sc.Easing = n_.DrawingValues.Track.ColorLeftMiddle_Easing;
+						sc.FCurve = n_.DrawingValues.Track.ColorLeftMiddle_FCurve;
+						var text = Core.Copy("Temp", sc);
+						Core.Paste("Temp", n_.DrawingValues.TrailColorLeftMiddle, text);
+					}
+
+					{
+						StandardColor sc = new StandardColor();
+						sc.Type = n_.DrawingValues.Track.ColorCenter;
+						sc.Fixed = n_.DrawingValues.Track.ColorCenter_Fixed;
+						sc.Random = n_.DrawingValues.Track.ColorCenter_Random;
+						sc.Easing = n_.DrawingValues.Track.ColorCenter_Easing;
+						sc.FCurve = n_.DrawingValues.Track.ColorCenter_FCurve;
+						var text = Core.Copy("Temp", sc);
+						Core.Paste("Temp", n_.DrawingValues.TrailColorCenter, text);
+					}
+
+					{
+						StandardColor sc = new StandardColor();
+						sc.Type = n_.DrawingValues.Track.ColorCenterMiddle;
+						sc.Fixed = n_.DrawingValues.Track.ColorCenterMiddle_Fixed;
+						sc.Random = n_.DrawingValues.Track.ColorCenterMiddle_Random;
+						sc.Easing = n_.DrawingValues.Track.ColorCenterMiddle_Easing;
+						sc.FCurve = n_.DrawingValues.Track.ColorCenterMiddle_FCurve;
+						var text = Core.Copy("Temp", sc);
+						Core.Paste("Temp", n_.DrawingValues.TrailColorCenterMiddle, text);
+					}
+
+					{
+						StandardColor sc = new StandardColor();
+						sc.Type = n_.DrawingValues.Track.ColorRight;
+						sc.Fixed = n_.DrawingValues.Track.ColorRight_Fixed;
+						sc.Random = n_.DrawingValues.Track.ColorRight_Random;
+						sc.Easing = n_.DrawingValues.Track.ColorRight_Easing;
+						sc.FCurve = n_.DrawingValues.Track.ColorRight_FCurve;
+						var text = Core.Copy("Temp", sc);
+						Core.Paste("Temp", n_.DrawingValues.TrailColorRight, text);
+					}
+
+					{
+						StandardColor sc = new StandardColor();
+						sc.Type = n_.DrawingValues.Track.ColorRightMiddle;
+						sc.Fixed = n_.DrawingValues.Track.ColorRightMiddle_Fixed;
+						sc.Random = n_.DrawingValues.Track.ColorRightMiddle_Random;
+						sc.Easing = n_.DrawingValues.Track.ColorRightMiddle_Easing;
+						sc.FCurve = n_.DrawingValues.Track.ColorRightMiddle_FCurve;
+						var text = Core.Copy("Temp", sc);
+						Core.Paste("Temp", n_.DrawingValues.TrailColorRightMiddle, text);
+					}
+				}
+
+				for (int i = 0; i < n.Children.Count; i++)
+				{
+					convert(n.Children[i]);
+				}
+			};
+
+			convert(rootNode);
+
+			return true;
+		}
+	}
 }

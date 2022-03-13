@@ -22,7 +22,8 @@ namespace Effekseer.Binary
 		Ver16Alpha9 = 1608,
 		Ver1600 = 1610,
 		Ver17Alpha1 = 1700,
-		Latest = Ver17Alpha1,
+		Ver17Alpha2 = 1701,
+		Latest = Ver17Alpha2,
 	}
 
 	public class Exporter

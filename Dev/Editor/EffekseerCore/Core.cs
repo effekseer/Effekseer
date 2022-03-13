@@ -1108,6 +1108,12 @@ namespace Effekseer
 				updater.Update(root_node);
 			}
 
+			if (toolVersion < ParseVersion("1.70α2"))
+			{
+				var updater = new Utils.ProjectVersionUpdator17Alpha1To17Alpha2();
+				updater.Update(root_node);
+			}
+
 			Command.CommandManager.Clear();
 			IsChanged = false;
 
@@ -1529,40 +1535,40 @@ namespace Effekseer
 
 					if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Track)
 					{
-						if (node.DrawingValues.Track.ColorLeft.Value == Data.StandardColorType.FCurve)
+						if (node.DrawingValues.TrailColorLeft.Type.Value == Data.StandardColorType.FCurve)
 						{
 							var name = MultiLanguageTextProvider.GetText("Fcurve_Elm_Track_Color_L");
-							list.Add(Tuple35.Create(name, (object)node.DrawingValues.Track.ColorLeft_FCurve.FCurve));
+							list.Add(Tuple35.Create(name, (object)node.DrawingValues.TrailColorLeft.FCurve.FCurve));
 						}
 
-						if (node.DrawingValues.Track.ColorLeftMiddle.Value == Data.StandardColorType.FCurve)
+						if (node.DrawingValues.TrailColorLeftMiddle.Type.Value == Data.StandardColorType.FCurve)
 						{
 							var name = MultiLanguageTextProvider.GetText("Fcurve_Elm_Track_Color_LC");
-							list.Add(Tuple35.Create(name, (object)node.DrawingValues.Track.ColorLeftMiddle_FCurve.FCurve));
+							list.Add(Tuple35.Create(name, (object)node.DrawingValues.TrailColorLeftMiddle.FCurve.FCurve));
 						}
 
-						if (node.DrawingValues.Track.ColorCenter.Value == Data.StandardColorType.FCurve)
+						if (node.DrawingValues.TrailColorCenter.Type.Value == Data.StandardColorType.FCurve)
 						{
 							var name = MultiLanguageTextProvider.GetText("Fcurve_Elm_Track_Color_C");
-							list.Add(Tuple35.Create(name, (object)node.DrawingValues.Track.ColorCenter_FCurve.FCurve));
+							list.Add(Tuple35.Create(name, (object)node.DrawingValues.TrailColorCenter.FCurve.FCurve));
 						}
 
-						if (node.DrawingValues.Track.ColorCenterMiddle.Value == Data.StandardColorType.FCurve)
+						if (node.DrawingValues.TrailColorCenterMiddle.Type.Value == Data.StandardColorType.FCurve)
 						{
 							var name = MultiLanguageTextProvider.GetText("Fcurve_Elm_Track_Color_CM");
-							list.Add(Tuple35.Create(name, (object)node.DrawingValues.Track.ColorCenterMiddle_FCurve.FCurve));
+							list.Add(Tuple35.Create(name, (object)node.DrawingValues.TrailColorCenterMiddle.FCurve.FCurve));
 						}
 
-						if (node.DrawingValues.Track.ColorRight.Value == Data.StandardColorType.FCurve)
+						if (node.DrawingValues.TrailColorRight.Type.Value == Data.StandardColorType.FCurve)
 						{
 							var name = MultiLanguageTextProvider.GetText("Fcurve_Elm_Track_Color_R");
-							list.Add(Tuple35.Create(name, (object)node.DrawingValues.Track.ColorRight_FCurve.FCurve));
+							list.Add(Tuple35.Create(name, (object)node.DrawingValues.TrailColorRight.FCurve.FCurve));
 						}
 
-						if (node.DrawingValues.Track.ColorRightMiddle.Value == Data.StandardColorType.FCurve)
+						if (node.DrawingValues.TrailColorRightMiddle.Type.Value == Data.StandardColorType.FCurve)
 						{
 							var name = MultiLanguageTextProvider.GetText("Fcurve_Elm_Track_Color_RC");
-							list.Add(Tuple35.Create(name, (object)node.DrawingValues.Track.ColorRightMiddle_FCurve.FCurve));
+							list.Add(Tuple35.Create(name, (object)node.DrawingValues.TrailColorRightMiddle.FCurve.FCurve));
 						}
 					}
 

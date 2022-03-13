@@ -475,20 +475,12 @@ namespace Effekseer.Binary
 				data.Add(BitConverter.GetBytes((int)value.TrailTimeSource.Value));
 			}
 
-			OutputStandardColor(data, param.ColorLeft, param.ColorLeft_Fixed, param.ColorLeft_Random, param.ColorLeft_Easing,
-				param.ColorLeft_FCurve);
-			OutputStandardColor(data, param.ColorLeftMiddle, param.ColorLeftMiddle_Fixed, param.ColorLeftMiddle_Random,
-				param.ColorLeftMiddle_Easing, param.ColorLeftMiddle_FCurve);
-
-			OutputStandardColor(data, param.ColorCenter, param.ColorCenter_Fixed, param.ColorCenter_Random,
-				param.ColorCenter_Easing, param.ColorCenter_FCurve);
-			OutputStandardColor(data, param.ColorCenterMiddle, param.ColorCenterMiddle_Fixed, param.ColorCenterMiddle_Random,
-				param.ColorCenterMiddle_Easing, param.ColorCenterMiddle_FCurve);
-
-			OutputStandardColor(data, param.ColorRight, param.ColorRight_Fixed, param.ColorRight_Random,
-				param.ColorRight_Easing, param.ColorRight_FCurve);
-			OutputStandardColor(data, param.ColorRightMiddle, param.ColorRightMiddle_Fixed, param.ColorRightMiddle_Random,
-				param.ColorRightMiddle_Easing, param.ColorRightMiddle_FCurve);
+			OutputStandardColor(data, value.TrailColorLeft, version, ExporterVersion.Ver1500, ExporterVersion.Ver17Alpha2);
+			OutputStandardColor(data, value.TrailColorLeftMiddle, version, ExporterVersion.Ver1500, ExporterVersion.Ver17Alpha2);
+			OutputStandardColor(data, value.TrailColorCenter, version, ExporterVersion.Ver1500, ExporterVersion.Ver17Alpha2);
+			OutputStandardColor(data, value.TrailColorCenterMiddle, version, ExporterVersion.Ver1500, ExporterVersion.Ver17Alpha2);
+			OutputStandardColor(data, value.TrailColorRight, version, ExporterVersion.Ver1500, ExporterVersion.Ver17Alpha2);
+			OutputStandardColor(data, value.TrailColorRightMiddle, version, ExporterVersion.Ver1500, ExporterVersion.Ver17Alpha2);
 		}
 
 		public static void OutputStandardColor(List<byte[]> data, StandardColor color, ExporterVersion version, ExporterVersion fcurveVersion, ExporterVersion gradientVersion)
