@@ -543,6 +543,7 @@ void Instance::UpdateTransform(float deltaFrame)
 		// Update matrix
 		if (m_pEffectNode->GenerationLocation.EffectsRotation)
 		{
+			MatRot *= m_GenerationLocation.GetRotation();
 			m_GlobalMatrix43 = SIMD::Mat43f::SRT(localScaling, MatRot, localPosition);
 			assert(m_GlobalMatrix43.IsValid());
 
