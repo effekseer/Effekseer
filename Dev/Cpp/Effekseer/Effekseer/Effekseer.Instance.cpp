@@ -546,9 +546,6 @@ void Instance::UpdateTransform(float deltaFrame)
 			m_GlobalMatrix43 = SIMD::Mat43f::SRT(localScaling, MatRot, localPosition);
 			assert(m_GlobalMatrix43.IsValid());
 
-			m_GlobalMatrix43 *= m_GenerationLocation;
-			assert(m_GlobalMatrix43.IsValid());
-
 			m_GlobalMatrix43 *= SIMD::Mat43f::Translation(forceField_.ModifyLocation);
 		}
 		else
