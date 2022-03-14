@@ -512,13 +512,11 @@ void Instance::UpdateTransform(float deltaFrame)
 		ScalingFunctions::UpdateScaling(localScaling, scaling_values, m_pEffectNode->ScalingParam, m_randObject, m_pEffectNode->GetEffect(), m_pContainer->GetRootInstance(), m_LivingTime, m_LivedTime, m_pParent, m_pEffectNode->DynamicFactor);
 
 		// update local fields
-		SIMD::Vec3f currentLocalPosition = localPosition;
-
 		if (m_pEffectNode->LocalForceField.HasValue)
 		{
-			currentLocalPosition += forceField_.ModifyLocation;
+			localPosition += forceField_.ModifyLocation;
 			forceField_.ExternalVelocity = localVelocity;
-			forceField_.Update(m_pEffectNode->LocalForceField, currentLocalPosition, m_pEffectNode->GetEffect()->GetMaginification(), deltaFrame, m_pEffectNode->GetEffect()->GetSetting()->GetCoordinateSystem());
+			forceField_.Update(m_pEffectNode->LocalForceField, localPosition, m_pEffectNode->GetEffect()->GetMaginification(), deltaFrame, m_pEffectNode->GetEffect()->GetSetting()->GetCoordinateSystem());
 		}
 
 		/* 描画部分の更新 */
@@ -547,12 +545,11 @@ void Instance::UpdateTransform(float deltaFrame)
 		if (m_pEffectNode->GenerationLocation.EffectsRotation)
 		{
 			MatRot = MatRot * m_GenerationLocation.GetRotation();
-			m_GlobalMatrix43 = SIMD::Mat43f::SRT(localScaling, MatRot, forceField_.ModifyLocation + localPosition);
+			m_GlobalMatrix43 = SIMD::Mat43f::SRT(localScaling, MatRot, localPosition);
 			assert(m_GlobalMatrix43.IsValid());
 		}
 		else
 		{
-			localPosition += forceField_.ModifyLocation;
 
 			m_GlobalMatrix43 = SIMD::Mat43f::SRT(localScaling, MatRot, localPosition);
 			assert(m_GlobalMatrix43.IsValid());
