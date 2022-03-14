@@ -453,8 +453,6 @@ void Instance::UpdateTransform(float deltaFrame)
 		UpdateParentMatrix(deltaFrame);
 	}
 
-	SIMD::Vec3f localVelocity = SIMD::Vec3f(0, 0, 0);
-
 	/* 更新処理 */
 	if (m_pEffectNode->GetType() != eEffectNodeType::Root)
 	{
@@ -485,20 +483,28 @@ void Instance::UpdateTransform(float deltaFrame)
 				steeringVec_ *= followParentParam.maxFollowSpeed;
 			}
 
-			localVelocity = steeringVec_ * deltaFrame * m_pEffectNode->m_effect->GetMaginification();
+			SIMD::Vec3f followVelocity = steeringVec_ * deltaFrame * m_pEffectNode->m_effect->GetMaginification();
+			localPosition += followVelocity;
 		}
 		else
 		{
-			localVelocity = m_pEffectNode->TranslationParam.CalculateTranslationState(translation_values, m_randObject, m_pEffectNode->GetEffect(), m_pContainer->GetRootInstance(), m_LivingTime, m_LivedTime, m_pParent, coordinateSystem, m_pEffectNode->DynamicFactor);
+			auto localVec = m_pEffectNode->TranslationParam.CalculateTranslationState(translation_values, m_randObject, m_pEffectNode->GetEffect(), m_pContainer->GetRootInstance(), m_LivingTime, m_LivedTime, m_pParent, coordinateSystem, m_pEffectNode->DynamicFactor);
 
 			if (m_pEffectNode->GenerationLocation.EffectsRotation)
 			{
-				// TODO : Optimize
-				localVelocity = SIMD::Vec3f::Transform(localVelocity, m_GenerationLocation.GetRotation());
+				// TODO : check rotation(It seems has bugs and it can optimize it)
+				localVec = SIMD::Vec3f::Transform(localVec, m_GenerationLocation.GetRotation());
 			}
+
+			localPosition += localVec;
 		}
 
-		localPosition += localVelocity;
+		// Velocitty
+		SIMD::Vec3f localVelocity = SIMD::Vec3f(0, 0, 0);
+		if (m_pEffectNode->LocalForceField.HasValue)
+		{
+			localVelocity = localPosition - prevPosition_;
+		}
 
 		prevPosition_ = localPosition;
 
@@ -506,11 +512,13 @@ void Instance::UpdateTransform(float deltaFrame)
 		ScalingFunctions::UpdateScaling(localScaling, scaling_values, m_pEffectNode->ScalingParam, m_randObject, m_pEffectNode->GetEffect(), m_pContainer->GetRootInstance(), m_LivingTime, m_LivedTime, m_pParent, m_pEffectNode->DynamicFactor);
 
 		// update local fields
+		SIMD::Vec3f currentLocalPosition = localPosition;
+
 		if (m_pEffectNode->LocalForceField.HasValue)
 		{
-			localPosition += forceField_.ModifyLocation;
+			currentLocalPosition += forceField_.ModifyLocation;
 			forceField_.ExternalVelocity = localVelocity;
-			forceField_.Update(m_pEffectNode->LocalForceField, localPosition, m_pEffectNode->GetEffect()->GetMaginification(), deltaFrame, m_pEffectNode->GetEffect()->GetSetting()->GetCoordinateSystem());
+			forceField_.Update(m_pEffectNode->LocalForceField, currentLocalPosition, m_pEffectNode->GetEffect()->GetMaginification(), deltaFrame, m_pEffectNode->GetEffect()->GetSetting()->GetCoordinateSystem());
 		}
 
 		/* 描画部分の更新 */
@@ -539,11 +547,13 @@ void Instance::UpdateTransform(float deltaFrame)
 		if (m_pEffectNode->GenerationLocation.EffectsRotation)
 		{
 			MatRot = MatRot * m_GenerationLocation.GetRotation();
-			m_GlobalMatrix43 = SIMD::Mat43f::SRT(localScaling, MatRot, localPosition);
+			m_GlobalMatrix43 = SIMD::Mat43f::SRT(localScaling, MatRot, forceField_.ModifyLocation + localPosition);
 			assert(m_GlobalMatrix43.IsValid());
 		}
 		else
 		{
+			localPosition += forceField_.ModifyLocation;
+
 			m_GlobalMatrix43 = SIMD::Mat43f::SRT(localScaling, MatRot, localPosition);
 			assert(m_GlobalMatrix43.IsValid());
 		}
