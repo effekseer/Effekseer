@@ -464,7 +464,8 @@ void Instance::UpdateTransform(float deltaFrame)
 
 		if (m_pEffectNode->GenerationLocation.EffectsRotation)
 		{
-			localVec += SIMD::Vec3f::Transform(localVec, m_GenerationLocation.GetRotation());
+			// TODO : check rotation(It seems has bugs and it can optimize it)
+			localVec = SIMD::Vec3f::Transform(localVec, m_GenerationLocation.GetRotation());
 		}
 
 		localPosition += localVec;
@@ -514,13 +515,7 @@ void Instance::UpdateTransform(float deltaFrame)
 		if (m_pEffectNode->LocalForceField.HasValue)
 		{
 			currentLocalPosition += forceField_.ModifyLocation;
-			auto trans = SIMD::ToStruct(m_GenerationLocation.GetRotation());
-			Effekseer::Matrix44 mat;
-			trans.ToMatrix44(mat);
-			Effekseer::Matrix44::Inverse(mat, mat);
-			const auto mat2 = SIMD::Mat44f{mat};
-
-			forceField_.ExternalVelocity = SIMD::Vec3f::Transform(localVelocity, mat2);
+			forceField_.ExternalVelocity = localVelocity;
 			forceField_.Update(m_pEffectNode->LocalForceField, currentLocalPosition, m_pEffectNode->GetEffect()->GetMaginification(), deltaFrame, m_pEffectNode->GetEffect()->GetSetting()->GetCoordinateSystem());
 		}
 
@@ -549,7 +544,7 @@ void Instance::UpdateTransform(float deltaFrame)
 		// Update matrix
 		if (m_pEffectNode->GenerationLocation.EffectsRotation)
 		{
-			MatRot *= m_GenerationLocation.GetRotation();
+			MatRot = MatRot * m_GenerationLocation.GetRotation();
 			m_GlobalMatrix43 = SIMD::Mat43f::SRT(localScaling, MatRot, forceField_.ModifyLocation + localPosition);
 			assert(m_GlobalMatrix43.IsValid());
 		}
