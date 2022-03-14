@@ -486,16 +486,18 @@ void Instance::UpdateTransform(float deltaFrame)
 			SIMD::Vec3f followVelocity = steeringVec_ * deltaFrame * m_pEffectNode->m_effect->GetMaginification();
 			localPosition += followVelocity;
 		}
-
-		auto localVec = m_pEffectNode->TranslationParam.CalculateTranslationState(translation_values, m_randObject, m_pEffectNode->GetEffect(), m_pContainer->GetRootInstance(), m_LivingTime, m_LivedTime, m_pParent, coordinateSystem, m_pEffectNode->DynamicFactor);
-
-		if (m_pEffectNode->GenerationLocation.EffectsRotation)
+		else
 		{
-			// TODO : check rotation(It seems has bugs and it can optimize it)
-			localVec = SIMD::Vec3f::Transform(localVec, m_GenerationLocation.GetRotation());
-		}
+			auto localVec = m_pEffectNode->TranslationParam.CalculateTranslationState(translation_values, m_randObject, m_pEffectNode->GetEffect(), m_pContainer->GetRootInstance(), m_LivingTime, m_LivedTime, m_pParent, coordinateSystem, m_pEffectNode->DynamicFactor);
 
-		localPosition += localVec;
+			if (m_pEffectNode->GenerationLocation.EffectsRotation)
+			{
+				// TODO : check rotation(It seems has bugs and it can optimize it)
+				localVec = SIMD::Vec3f::Transform(localVec, m_GenerationLocation.GetRotation());
+			}
+
+			localPosition += localVec;
+		}
 
 		// Velocitty
 		SIMD::Vec3f localVelocity = SIMD::Vec3f(0, 0, 0);
