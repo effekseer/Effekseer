@@ -30,6 +30,8 @@ struct Mat43f
 
 	bool IsValid() const;
 
+	Mat43f Get3x3SubMatrix() const;
+
 	Vec3f GetScale() const;
 
 	Mat43f GetRotation() const;
