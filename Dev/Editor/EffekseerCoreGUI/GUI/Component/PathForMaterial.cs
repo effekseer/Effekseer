@@ -138,9 +138,21 @@ namespace Effekseer.GUI.Component
 
 				Manager.NativeManager.SameLine();
 
+				var isValidCashe = IsValidCashe();
+
+				if (isValidCashe.HasValue && !isValidCashe.Value)
+				{
+					Manager.NativeManager.PushStyleColor(swig.ImGuiColFlags.Button, 0xff0000ff);
+				}
+
 				if (Manager.NativeManager.Button(Resources.GetString("Material_GenCache_Name") + id4, buttonSizeX * 2.2f))
 				{
 					GenerateCompiledMaterial();
+				}
+
+				if (isValidCashe.HasValue && !isValidCashe.Value)
+				{
+					Manager.NativeManager.PopStyleColor();
 				}
 
 				if (Functions.CanShowTip())
@@ -332,6 +344,31 @@ namespace Effekseer.GUI.Component
 			}
 
 			Manager.NativeManager.EndTooltip();
+		}
+
+		bool? IsValidCashe()
+		{
+			if (compiledMatInfo != null)
+			{
+				if (matInfo.GUID != compiledMatInfo.GUID)
+				{
+					return false;
+				}
+				else if (errorCode == Utl.CompiledMaterialInformationErrorCode.TooOldFormat)
+				{
+					return false;
+				}
+				else if (errorCode == Utl.CompiledMaterialInformationErrorCode.TooNewFormat)
+				{
+					return false;
+				}
+				else
+				{
+					return true;
+				}
+			}
+
+			return null;
 		}
 	}
 }
