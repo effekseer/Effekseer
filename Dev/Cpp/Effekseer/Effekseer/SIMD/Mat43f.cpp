@@ -37,6 +37,18 @@ bool Mat43f::IsValid() const
 	return Float4::MoveMask(res) == 0;
 }
 
+Mat43f Mat43f::Get3x3SubMatrix() const
+{
+	Mat43f ret;
+	ret.X = X;
+	ret.Y = Y;
+	ret.Z = Z;
+	ret.X.SetW(0.0f);
+	ret.Y.SetW(0.0f);
+	ret.Z.SetW(0.0f);
+	return ret;
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
