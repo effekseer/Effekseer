@@ -11,7 +11,7 @@ namespace Effekseer
 template <class To, class From>
 inline To BitCast(From from)
 {
-	static_assert(sizeof(From) == sizeof(To));
+	static_assert(sizeof(From) == sizeof(To), "number of bits not match");
 
 	union
 	{
