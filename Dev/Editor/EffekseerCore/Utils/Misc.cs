@@ -111,7 +111,7 @@ namespace Effekseer.Utils
 				System.IO.FileStream fs = null;
 				if (!System.IO.File.Exists(path))
 				{
-					Logger.Write($"Failed : ReadAllBytes {path} doesn't exists.");
+					Logger.Write($"Failed : ReadAllBytes {path} it doesn't exists.");
 					return null;
 				}
 
@@ -121,7 +121,7 @@ namespace Effekseer.Utils
 				}
 				catch
 				{
-					Logger.Write($"Failed : ReadAllBytes {path} failed to open.");
+					Logger.Write($"Failed : ReadAllBytes {path} it fails to open.");
 					return null;
 				}
 
@@ -133,7 +133,7 @@ namespace Effekseer.Utils
 				{
 					fs.Dispose();
 					br.Close();
-					Logger.Write($"Failed : ReadAllBytes {path} lack of buffer.");
+					Logger.Write($"Failed : ReadAllBytes {path} it lacks a buffer.");
 					return null;
 				}
 
