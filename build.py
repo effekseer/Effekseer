@@ -137,6 +137,10 @@ env["IGNORE_BUILD"] = os.getenv('IGNORE_BUILD', '0')
 is_x86 = env['X86'] == '1'
 is_from_ci = 'from_ci' in sys.argv
 
+if isMac():
+    with CurrentDir('Tool/EffekseerLauncher'):
+        call('sh build_macosx.sh')
+
 if env['IGNORE_BUILD'] == '0':
     os.makedirs('build', exist_ok=True)
     if isWin():
@@ -223,7 +227,9 @@ if env['PACKAGEING_FOR_MAC'] == '1' and isMac():
     mkdir('Mac/Effekseer.app/Contents/Resources/')
     distutils.dir_util.copy_tree('release/', 'Mac/Effekseer.app/Contents/Resources/')
 
-    call('chmod +x Mac/Effekseer.app/Contents/MacOS/script.sh')
+    mkdir('Mac/Effekseer.app/Contents/MacOS/')
+    shutil.copy('Tool/EffekseerLauncher/build_macosx/EffekseerLauncher', 'Mac/Effekseer.app/Contents/MacOS/')
+
     call('chmod +x Mac/Effekseer.app/Contents/Resources/tools/fbxToEffekseerCurveConverter')
     call('chmod +x Mac/Effekseer.app/Contents/Resources/tools/fbxToEffekseerModelConverter')
 

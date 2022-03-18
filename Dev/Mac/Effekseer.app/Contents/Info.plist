@@ -4,7 +4,7 @@
 <plist version="1.0">
   <dict>
     <key>CFBundleExecutable</key>
-    <string>script.sh</string>
+    <string>EffekseerLauncher</string>
     <key>CFBundleIconFile</key>
     <string>Icon.icns</string>
   </dict>
