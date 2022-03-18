@@ -228,7 +228,7 @@ if env['PACKAGEING_FOR_MAC'] == '1' and isMac():
     distutils.dir_util.copy_tree('release/', 'Mac/Effekseer.app/Contents/Resources/')
 
     mkdir('Mac/Effekseer.app/Contents/MacOS/')
-    shutil.copy('Tool/EffekseerLauncher/build_macosx/EffekseerLauncher', 'Mac/Effekseer.app/Contents/MacOS/')
+    shutil.copy('../Tool/EffekseerLauncher/build_macosx/EffekseerLauncher', 'Mac/Effekseer.app/Contents/MacOS/')
 
     call('chmod +x Mac/Effekseer.app/Contents/Resources/tools/fbxToEffekseerCurveConverter')
     call('chmod +x Mac/Effekseer.app/Contents/Resources/tools/fbxToEffekseerModelConverter')
