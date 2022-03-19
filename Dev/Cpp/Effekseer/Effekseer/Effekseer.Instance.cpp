@@ -457,8 +457,6 @@ void Instance::UpdateTransform(float deltaFrame)
 	if (m_pEffectNode->GetType() != eEffectNodeType::Root)
 	{
 		SIMD::Vec3f localPosition = prevPosition_;
-		SIMD::Vec3f localAngle;
-		SIMD::Vec3f localScaling;
 		SIMD::Vec3f localVelocity;
 
 		if (m_pEffectNode->CommonValues.TranslationBindType == TranslationParentBindType::NotBind_FollowParent ||
@@ -501,8 +499,8 @@ void Instance::UpdateTransform(float deltaFrame)
 
 		prevPosition_ = localPosition;
 
-		RotationFunctions::CalculateRotation(localAngle, rotation_values, m_pEffectNode->RotationParam, m_randObject, m_pEffectNode->GetEffect(), m_pContainer->GetRootInstance(), m_LivingTime, m_LivedTime, m_pParent, m_pEffectNode->DynamicFactor);
-		ScalingFunctions::UpdateScaling(localScaling, scaling_values, m_pEffectNode->ScalingParam, m_randObject, m_pEffectNode->GetEffect(), m_pContainer->GetRootInstance(), m_LivingTime, m_LivedTime, m_pParent, m_pEffectNode->DynamicFactor);
+		auto matRot = RotationFunctions::CalculateRotation(rotation_values, m_pEffectNode->RotationParam, m_randObject, m_pEffectNode->GetEffect(), m_pContainer->GetRootInstance(), m_LivingTime, m_LivedTime, m_pParent, m_pEffectNode->DynamicFactor);
+		auto scaling = ScalingFunctions::UpdateScaling(scaling_values, m_pEffectNode->ScalingParam, m_randObject, m_pEffectNode->GetEffect(), m_pContainer->GetRootInstance(), m_LivingTime, m_LivedTime, m_pParent, m_pEffectNode->DynamicFactor);
 
 		// update local fields
 		if (m_pEffectNode->LocalForceField.HasValue)
@@ -515,36 +513,17 @@ void Instance::UpdateTransform(float deltaFrame)
 		/* 描画部分の更新 */
 		m_pEffectNode->UpdateRenderedInstance(*this, *ownGroup_, m_pManager);
 
-		// 回転行列の作成
-		SIMD::Mat43f MatRot;
-		if (m_pEffectNode->RotationParam.RotationType == ParameterRotationType::ParameterRotationType_Fixed || m_pEffectNode->RotationParam.RotationType == ParameterRotationType::ParameterRotationType_PVA ||
-			m_pEffectNode->RotationParam.RotationType == ParameterRotationType::ParameterRotationType_Easing || m_pEffectNode->RotationParam.RotationType == ParameterRotationType::ParameterRotationType_FCurve)
-		{
-			MatRot = SIMD::Mat43f::RotationZXY(localAngle.GetZ(), localAngle.GetX(), localAngle.GetY());
-		}
-		else if (m_pEffectNode->RotationParam.RotationType == ParameterRotationType::ParameterRotationType_AxisPVA ||
-				 m_pEffectNode->RotationParam.RotationType == ParameterRotationType::ParameterRotationType_AxisEasing)
-		{
-			SIMD::Vec3f axis = rotation_values.axis.axis;
-
-			MatRot = SIMD::Mat43f::RotationAxis(axis, rotation_values.axis.rotation);
-		}
-		else
-		{
-			MatRot = SIMD::Mat43f::Identity;
-		}
-
 		// Update matrix
 		localPosition += forceField_.ModifyLocation;
 		if (m_pEffectNode->GenerationLocation.EffectsRotation)
 		{
-			MatRot = MatRot * m_GenerationLocation.Get3x3SubMatrix();
-			m_GlobalMatrix43 = SIMD::Mat43f::SRT(localScaling, MatRot, localPosition);
+			matRot = matRot * m_GenerationLocation.Get3x3SubMatrix();
+			m_GlobalMatrix43 = SIMD::Mat43f::SRT(scaling, matRot, localPosition);
 			assert(m_GlobalMatrix43.IsValid());
 		}
 		else
 		{
-			m_GlobalMatrix43 = SIMD::Mat43f::SRT(localScaling, MatRot, localPosition);
+			m_GlobalMatrix43 = SIMD::Mat43f::SRT(scaling, matRot, localPosition);
 			assert(m_GlobalMatrix43.IsValid());
 		}
 
