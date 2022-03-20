@@ -144,12 +144,8 @@ if isMac():
 if env['IGNORE_BUILD'] == '0':
     os.makedirs('build', exist_ok=True)
     if isWin():
-        #import winreg
-        #reg = winreg.ConnectRegistry(None, winreg.HKEY_LOCAL_MACHINE)
-        #key = winreg.OpenKey(reg, r"SOFTWARE\Microsoft\MSBuild\ToolsVersions\12.0")
-        #msbuild_path = winreg.QueryValueEx(key, 'MSBuildToolsPath')[0] + 'MSBuild.exe'
-
         candidates = [
+            r"C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe",
             r"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe",
             r"C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\MSBuild.exe",
             r"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\MSBuild.exe",
@@ -161,7 +157,7 @@ if env['IGNORE_BUILD'] == '0':
                 msbuild_path = candidate
                 break
 
-        if candidate is None:
+        if msbuild_path is None:
             raise Exception("MSBuild is not found")
 
     elif isMac():
