@@ -497,8 +497,6 @@ void Instance::UpdateTransform(float deltaFrame)
 
 		localPosition += localVelocity;
 
-		prevPosition_ = localPosition;
-
 		auto matRot = RotationFunctions::CalculateRotation(rotation_values, m_pEffectNode->RotationParam, m_randObject, m_pEffectNode->GetEffect(), m_pContainer->GetRootInstance(), m_LivingTime, m_LivedTime, m_pParent, m_pEffectNode->DynamicFactor);
 		auto scaling = ScalingFunctions::UpdateScaling(scaling_values, m_pEffectNode->ScalingParam, m_randObject, m_pEffectNode->GetEffect(), m_pContainer->GetRootInstance(), m_LivingTime, m_LivedTime, m_pParent, m_pEffectNode->DynamicFactor);
 
@@ -508,6 +506,8 @@ void Instance::UpdateTransform(float deltaFrame)
 			forceField_.ExternalVelocity = localVelocity;
 			localPosition += forceField_.Update(m_pEffectNode->LocalForceField, localPosition, m_pEffectNode->GetEffect()->GetMaginification(), deltaFrame, m_pEffectNode->GetEffect()->GetSetting()->GetCoordinateSystem());
 		}
+
+		prevPosition_ = localPosition;
 
 		/* 描画部分の更新 */
 		m_pEffectNode->UpdateRenderedInstance(*this, *ownGroup_, m_pManager);
