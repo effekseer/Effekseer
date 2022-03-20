@@ -272,11 +272,11 @@ void LocalForceFieldParameter::MaintainAttractiveForceCompatibility(const float 
 	LocalForceFields[3].IsGlobal = true;
 }
 
-void LocalForceFieldInstance::Update(const LocalForceFieldParameter& parameter, const SIMD::Vec3f& location, float magnification, float deltaFrame, CoordinateSystem coordinateSystem)
+SIMD::Vec3f LocalForceFieldInstance::Update(const LocalForceFieldParameter& parameter, const SIMD::Vec3f& location, float magnification, float deltaFrame, CoordinateSystem coordinateSystem)
 {
 	if (deltaFrame == 0.0f)
 	{
-		return;
+		return SIMD::Vec3f{0, 0, 0};
 	}
 
 	for (size_t i = 0; i < parameter.LocalForceFields.size(); i++)
@@ -384,7 +384,7 @@ void LocalForceFieldInstance::Update(const LocalForceFieldParameter& parameter, 
 		VelocitySum += Velocities[i];
 	}
 
-	ModifyLocation += VelocitySum * deltaFrame;
+	return VelocitySum * deltaFrame;
 }
 
 void LocalForceFieldInstance::UpdateGlobal(const LocalForceFieldParameter& parameter, const SIMD::Vec3f& location, float magnification, const SIMD::Vec3f& targetPosition, float deltaFrame, CoordinateSystem coordinateSystem)
@@ -408,7 +408,7 @@ void LocalForceFieldInstance::UpdateGlobal(const LocalForceFieldParameter& param
 		ForceFieldCommonParameter ffcp;
 		ffcp.FieldCenter = parameter.LocalForceFields[i].Position;
 		ffcp.Position = location / magnification;
-		ffcp.PreviousSumVelocity = VelocitySum / magnification;
+		ffcp.PreviousSumVelocity = GlobalVelocitySum / magnification;
 		ffcp.PreviousVelocity = Velocities[i] / magnification;
 		ffcp.TargetPosition = targetPosition / magnification;
 		ffcp.DeltaFrame = deltaFrame;
@@ -477,24 +477,23 @@ void LocalForceFieldInstance::UpdateGlobal(const LocalForceFieldParameter& param
 		Velocities[i] += acc;
 	}
 
-	VelocitySum = SIMD::Vec3f(0, 0, 0);
+	GlobalVelocitySum = SIMD::Vec3f(0, 0, 0);
 
 	for (size_t i = 0; i < parameter.LocalForceFields.size(); i++)
 	{
 		if (!parameter.LocalForceFields[i].IsGlobal)
 			continue;
 
-		VelocitySum += Velocities[i];
+		GlobalVelocitySum += Velocities[i];
 	}
 
-	GlobalModifyLocation += VelocitySum * deltaFrame;
+	GlobalModifyLocation += GlobalVelocitySum * deltaFrame;
 }
 
 void LocalForceFieldInstance::Reset()
 {
 	Velocities.fill(SIMD::Vec3f(0, 0, 0));
 	VelocitySum = SIMD::Vec3f(0, 0, 0);
-	ModifyLocation = SIMD::Vec3f(0, 0, 0);
 	GlobalVelocitySum = SIMD::Vec3f(0, 0, 0);
 	GlobalModifyLocation = SIMD::Vec3f(0, 0, 0);
 	ExternalVelocity = SIMD::Vec3f(0, 0, 0);

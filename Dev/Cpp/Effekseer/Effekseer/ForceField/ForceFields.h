@@ -435,12 +435,11 @@ struct LocalForceFieldInstance
 
 	SIMD::Vec3f ExternalVelocity;
 	SIMD::Vec3f VelocitySum;
-	SIMD::Vec3f ModifyLocation;
 
 	SIMD::Vec3f GlobalVelocitySum;
 	SIMD::Vec3f GlobalModifyLocation;
 
-	void Update(const LocalForceFieldParameter& parameter, const SIMD::Vec3f& location, float magnification, float deltaFrame, CoordinateSystem coordinateSystem);
+	SIMD::Vec3f Update(const LocalForceFieldParameter& parameter, const SIMD::Vec3f& location, float magnification, float deltaFrame, CoordinateSystem coordinateSystem);
 
 	void UpdateGlobal(const LocalForceFieldParameter& parameter, const SIMD::Vec3f& location, float magnification, const SIMD::Vec3f& targetPosition, float deltaTime, CoordinateSystem coordinateSystem);
 
