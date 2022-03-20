@@ -276,7 +276,7 @@ SIMD::Vec3f LocalForceFieldInstance::Update(const LocalForceFieldParameter& para
 {
 	if (deltaFrame == 0.0f)
 	{
-		return;
+		return SIMD::Vec3f{0, 0, 0};
 	}
 
 	for (size_t i = 0; i < parameter.LocalForceFields.size(); i++)
