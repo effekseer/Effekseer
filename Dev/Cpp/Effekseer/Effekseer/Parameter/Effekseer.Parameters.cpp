@@ -7,6 +7,25 @@
 
 namespace Effekseer
 {
+
+void LoadGradient(Gradient& gradient, uint8_t*& pos, int32_t version)
+{
+	BinaryReader<true> reader(pos, std::numeric_limits<int>::max());
+	reader.Read(gradient.ColorCount);
+	for (int i = 0; i < gradient.ColorCount; i++)
+	{
+		reader.Read(gradient.Colors[i]);
+	}
+
+	reader.Read(gradient.AlphaCount);
+	for (int i = 0; i < gradient.AlphaCount; i++)
+	{
+		reader.Read(gradient.Alphas[i]);
+	}
+
+	pos += reader.GetOffset();
+}
+
 void NodeRendererTextureUVTypeParameter::Load(uint8_t*& pos, int32_t version)
 {
 	memcpy(&Type, pos, sizeof(int));
@@ -194,24 +213,6 @@ random_int ApplyEq(const Effect* e, const InstanceGlobal* instg, const Instance*
 	return originalParam;
 }
 
-void Gradient::Load(uint8_t*& pos, int32_t version)
-{
-	BinaryReader<true> reader(pos, std::numeric_limits<int>::max());
-	reader.Read(ColorCount);
-	for (int i = 0; i < ColorCount; i++)
-	{
-		reader.Read(Colors[i]);
-	}
-
-	reader.Read(AlphaCount);
-	for (int i = 0; i < AlphaCount; i++)
-	{
-		reader.Read(Alphas[i]);
-	}
-
-	pos += reader.GetOffset();
-}
-
 std::array<float, 4> Gradient::GetColor(float x) const
 {
 	const auto c = GetColorAndIntensity(x);
@@ -240,7 +241,8 @@ std::array<float, 4> Gradient::GetColorAndIntensity(float x) const
 	auto key = ColorKey();
 	key.Position = x;
 
-	auto it = std::lower_bound(Colors.begin(), Colors.begin() + ColorCount, key, [](const ColorKey& a, const ColorKey& b) { return a.Position < b.Position; });
+	auto it = std::lower_bound(Colors.begin(), Colors.begin() + ColorCount, key, [](const ColorKey& a, const ColorKey& b)
+							   { return a.Position < b.Position; });
 	auto ind = static_cast<int32_t>(std::distance(Colors.begin(), it));
 
 	{
@@ -293,7 +295,8 @@ float Gradient::GetAlpha(float x) const
 	auto key = AlphaKey();
 	key.Position = x;
 
-	auto it = std::lower_bound(Alphas.begin(), Alphas.begin() + AlphaCount, key, [](const AlphaKey& a, const AlphaKey& b) { return a.Position < b.Position; });
+	auto it = std::lower_bound(Alphas.begin(), Alphas.begin() + AlphaCount, key, [](const AlphaKey& a, const AlphaKey& b)
+							   { return a.Position < b.Position; });
 	auto ind = static_cast<int32_t>(std::distance(Alphas.begin(), it));
 
 	{

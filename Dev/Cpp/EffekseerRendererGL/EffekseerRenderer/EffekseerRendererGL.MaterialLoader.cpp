@@ -18,11 +18,13 @@ void StoreVertexUniform(const ::Effekseer::MaterialFile& materialFile, const Eff
 {
 	using namespace Effekseer::Backend;
 
-	auto storeVector = [&](const char* name, int offset, int count = 1) {
+	auto storeVector = [&](const char* name, int offset, int count = 1)
+	{
 		uniformLayout.emplace_back(UniformLayoutElement{ShaderStageType::Vertex, name, UniformBufferLayoutElementType::Vector4, count, offset});
 	};
 
-	auto storeMatrix = [&](const char* name, int offset, int count = 1) {
+	auto storeMatrix = [&](const char* name, int offset, int count = 1)
+	{
 		uniformLayout.emplace_back(UniformLayoutElement{ShaderStageType::Vertex, name, UniformBufferLayoutElementType::Matrix44, count, offset});
 	};
 
@@ -32,9 +34,22 @@ void StoreVertexUniform(const ::Effekseer::MaterialFile& materialFile, const Eff
 	storeVector("predefined_uniform", generator.VertexPredefinedOffset);
 	storeVector("cameraPosition", generator.VertexCameraPositionOffset);
 
+	auto currentOffset = generator.VertexUserUniformOffset;
+
 	for (int32_t ui = 0; ui < materialFile.GetUniformCount(); ui++)
 	{
-		storeVector(materialFile.GetUniformName(ui), generator.VertexUserUniformOffset + sizeof(float) * 4 * ui);
+		storeVector(materialFile.GetUniformName(ui), currentOffset);
+		currentOffset += sizeof(float) * 4;
+	}
+
+	for (size_t ui = 0; ui < materialFile.Gradients.size(); ui++)
+	{
+		for (int j = 0; j < 13; j++)
+		{
+			const auto name = materialFile.Gradients.at(ui).Name + "_" + std::to_string(j);
+			storeVector(name.c_str(), currentOffset);
+			currentOffset += sizeof(float) * 4;
+		}
 	}
 }
 
@@ -42,11 +57,13 @@ void StoreModelVertexUniform(const ::Effekseer::MaterialFile& materialFile, cons
 {
 	using namespace Effekseer::Backend;
 
-	auto storeVector = [&](const char* name, int offset, int count = 1) {
+	auto storeVector = [&](const char* name, int offset, int count = 1)
+	{
 		uniformLayout.emplace_back(UniformLayoutElement{ShaderStageType::Vertex, name, UniformBufferLayoutElementType::Vector4, count, offset});
 	};
 
-	auto storeMatrix = [&](const char* name, int offset, int count = 1) {
+	auto storeMatrix = [&](const char* name, int offset, int count = 1)
+	{
 		uniformLayout.emplace_back(UniformLayoutElement{ShaderStageType::Vertex, name, UniformBufferLayoutElementType::Matrix44, count, offset});
 	};
 
@@ -100,9 +117,22 @@ void StoreModelVertexUniform(const ::Effekseer::MaterialFile& materialFile, cons
 		}
 	}
 
+	auto currentOffset = generator.VertexUserUniformOffset;
+
 	for (int32_t ui = 0; ui < materialFile.GetUniformCount(); ui++)
 	{
-		storeVector(materialFile.GetUniformName(ui), generator.VertexUserUniformOffset + sizeof(float) * 4 * ui);
+		storeVector(materialFile.GetUniformName(ui), currentOffset);
+		currentOffset += sizeof(float) * 4;
+	}
+
+	for (size_t ui = 0; ui < materialFile.Gradients.size(); ui++)
+	{
+		for (int j = 0; j < 13; j++)
+		{
+			const auto name = materialFile.Gradients.at(ui).Name + "_" + std::to_string(j);
+			storeVector(name.c_str(), currentOffset);
+			currentOffset += sizeof(float) * 4;
+		}
 	}
 }
 
@@ -110,11 +140,13 @@ void StorePixelUniform(const ::Effekseer::MaterialFile& materialFile, const Effe
 {
 	using namespace Effekseer::Backend;
 
-	auto storeVector = [&](const char* name, int offset, int count = 1) {
+	auto storeVector = [&](const char* name, int offset, int count = 1)
+	{
 		uniformLayout.emplace_back(UniformLayoutElement{ShaderStageType::Pixel, name, UniformBufferLayoutElementType::Vector4, count, offset});
 	};
 
-	auto storeMatrix = [&](const char* name, int offset, int count = 1) {
+	auto storeMatrix = [&](const char* name, int offset, int count = 1)
+	{
 		uniformLayout.emplace_back(UniformLayoutElement{ShaderStageType::Pixel, name, UniformBufferLayoutElementType::Matrix44, count, offset});
 	};
 
@@ -144,9 +176,22 @@ void StorePixelUniform(const ::Effekseer::MaterialFile& materialFile, const Effe
 		storeMatrix("cameraMat", generator.PixelCameraMatrixOffset);
 	}
 
+	auto currentOffset = generator.PixelUserUniformOffset;
+
 	for (int32_t ui = 0; ui < materialFile.GetUniformCount(); ui++)
 	{
-		storeVector(materialFile.GetUniformName(ui), generator.PixelUserUniformOffset + sizeof(float) * 4 * ui);
+		storeVector(materialFile.GetUniformName(ui), currentOffset);
+		currentOffset += sizeof(float) * 4;
+	}
+
+	for (size_t ui = 0; ui < materialFile.Gradients.size(); ui++)
+	{
+		for (int j = 0; j < 13; j++)
+		{
+			const auto name = materialFile.Gradients.at(ui).Name + "_" + std::to_string(j);
+			storeVector(name.c_str(), currentOffset);
+			currentOffset += sizeof(float) * 4;
+		}
 	}
 }
 
@@ -246,7 +291,8 @@ Effekseer::CustomVector<Effekseer::CustomString<char>> StoreTextureLocations(con
 				{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "", "TEXCOORD", 3},
 			};
 
-			auto getFormat = [](int32_t i) -> Effekseer::Backend::VertexLayoutFormat {
+			auto getFormat = [](int32_t i) -> Effekseer::Backend::VertexLayoutFormat
+			{
 				if (i == 1)
 					return Effekseer::Backend::VertexLayoutFormat::R32_FLOAT;
 				if (i == 2)

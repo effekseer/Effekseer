@@ -70,6 +70,11 @@ Library::Library()
 	Contents.push_back(std::make_shared<LibraryContent<NodeParameter3>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeParameter4>>());
 
+	// Gradient
+	Contents.push_back(std::make_shared<LibraryContent<NodeSampleGradient>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeGradientParameter>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeGradient>>());
+
 	// Comment
 	Contents.push_back(std::make_shared<LibraryContent<NodeComment>>());
 

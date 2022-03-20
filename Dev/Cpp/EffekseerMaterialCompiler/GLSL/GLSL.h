@@ -1,13 +1,108 @@
 
 #pragma once
 
+#include "../../Effekseer/Effekseer/Material/Effekseer.MaterialCompiler.h"
 #include <iostream>
 #undef min
+#undef max
 
 namespace Effekseer
 {
 namespace GLSL
 {
+
+/**
+	Hand unroll
+*/
+static const char* material_gradient = R"(
+
+struct Gradient
+{
+	int colorCount;
+	int alphaCount;
+	int reserved1;
+	int reserved2;
+	vec4 colors[8];
+	vec2 alphas[8];
+};
+
+vec4 SampleGradient(Gradient gradient, float t)
+{
+	vec3 color = gradient.colors[0].xyz;
+	for(int i = 1; i < 8; i++)
+	{
+		float a = clamp((t - gradient.colors[i-1].w) / (gradient.colors[i].w - gradient.colors[i-1].w), 0.0, 1.0) * step(float(i), float(gradient.colorCount-1));
+		color = mix(color, gradient.colors[i].xyz, a);
+	}
+
+	float alpha = gradient.alphas[0].x;
+	for(int i = 1; i < 8; i++)
+	{
+		float a = clamp((t - gradient.alphas[i-1].y) / (gradient.alphas[i].y - gradient.alphas[i-1].y), 0.0, 1.0) * step(float(i), float(gradient.alphaCount-1));
+		alpha = mix(alpha, gradient.alphas[i].x, a);
+	}
+
+	return vec4(color, alpha);
+}
+
+Gradient GradientParameter(vec4 param_v, vec4 param_c1, vec4 param_c2, vec4 param_c3, vec4 param_c4, vec4 param_c5, vec4 param_c6, vec4 param_c7, vec4 param_c8, vec4 param_a1, vec4 param_a2, vec4 param_a3, vec4 param_a4)
+{
+	Gradient g;
+	g.colorCount = int(param_v.x);
+	g.alphaCount = int(param_v.y);
+	g.reserved1 = int(param_v.z);
+	g.reserved2 = int(param_v.w);
+	g.colors[0] = param_c1;
+	g.colors[1] = param_c2;
+	g.colors[2] = param_c3;
+	g.colors[3] = param_c4;
+	g.colors[4] = param_c5;
+	g.colors[5] = param_c6;
+	g.colors[6] = param_c7;
+	g.colors[7] = param_c8;
+	g.alphas[0].xy = param_a1.xy;
+	g.alphas[1].xy = param_a1.zw;
+	g.alphas[2].xy = param_a2.xy;
+	g.alphas[3].xy = param_a2.zw;
+	g.alphas[4].xy = param_a3.xy;
+	g.alphas[5].xy = param_a3.zw;
+	g.alphas[6].xy = param_a4.xy;
+	g.alphas[7].xy = param_a4.zw;
+	return g;
+}
+
+)";
+
+inline std::string GetFixedGradient(const char* name, const Gradient& gradient)
+{
+	std::stringstream ss;
+
+	ss << "Gradient " << name << "() {" << std::endl;
+	ss << "Gradient g;" << std::endl;
+	ss << "g.colorCount = " << gradient.ColorCount << ";" << std::endl;
+	ss << "g.alphaCount = " << gradient.AlphaCount << ";" << std::endl;
+	ss << "g.reserved1 = 0;" << std::endl;
+	ss << "g.reserved2 = 0;" << std::endl;
+
+	// glsl must fill all variables in some environments
+	for (int32_t i = 0; i < gradient.Colors.size(); i++)
+	{
+		ss << "g.colors[" << i << "].x = " << gradient.Colors[i].Color[0] * gradient.Colors[i].Intensity << ";" << std::endl;
+		ss << "g.colors[" << i << "].y = " << gradient.Colors[i].Color[1] * gradient.Colors[i].Intensity << ";" << std::endl;
+		ss << "g.colors[" << i << "].z = " << gradient.Colors[i].Color[2] * gradient.Colors[i].Intensity << ";" << std::endl;
+		ss << "g.colors[" << i << "].w = " << gradient.Colors[i].Position << ";" << std::endl;
+	}
+
+	for (int32_t i = 0; i < gradient.Alphas.size(); i++)
+	{
+		ss << "g.alphas[" << i << "].x = " << gradient.Alphas[i].Alpha << ";" << std::endl;
+		ss << "g.alphas[" << i << "].y = " << gradient.Alphas[i].Position << ";" << std::endl;
+	}
+
+	ss << "return g; }" << std::endl;
+
+	return ss.str();
+}
 
 static const char* material_common_define_450 = R"(
 #version 450
@@ -751,6 +846,26 @@ class ShaderGenerator
 			maincode << "layout(location = 0) out vec4 out_flagColor;" << std::endl;
 			maincode << std::endl;
 		}
+
+		// gradient
+		bool hasGradient = false;
+		for (const auto& type : materialFile->RequiredMethods)
+		{
+			if (type == MaterialFile::RequiredPredefinedMethodType::Gradient)
+			{
+				hasGradient = true;
+			}
+		}
+
+		if (hasGradient)
+		{
+			maincode << material_gradient;
+		}
+
+		for (const auto& gradient : materialFile->FixedGradients)
+		{
+			maincode << GetFixedGradient(gradient.Name.c_str(), gradient.Data);
+		}
 	}
 
 	void ExportDefaultUniform(std::ostringstream& maincode, MaterialFile* materialFile, int stage, bool isSprite)
@@ -1027,6 +1142,15 @@ uniform vec4 customData2s[_INSTANCE_COUNT_];
 				auto uniformName = materialFile->GetUniformName(i);
 
 				maincode << "const " << GetType(4) << " " << uniformName << "= vec4(0,0,0,0);" << std::endl;
+			}
+
+			for (size_t i = 0; i < materialFile->Gradients.size(); i++)
+			{
+				// TODO : remove a magic number
+				for (size_t j = 0; j < 13; j++)
+				{
+					ExportUniform(maincode, 4, (materialFile->Gradients[i].Name + "_" + std::to_string(j)).c_str());
+				}
 			}
 
 			// Uniform block end

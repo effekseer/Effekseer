@@ -118,44 +118,51 @@ namespace Effekseer.Data
 				var io_attribute = property.GetCustomAttributes(typeof(IOAttribute), false).FirstOrDefault() as IOAttribute;
 				if (io_attribute != null && !io_attribute.Export) continue;
 
-				var method = typeof(IO).GetMethod("SaveToElement", new Type[] { typeof(XmlDocument), typeof(string), property.PropertyType, typeof(bool) });
-				if (method != null)
-				{
-					var property_value = property.GetValue(o, null);
-					var element = method.Invoke(null, new object[] { doc, property.Name, property_value, isClip });
+				var propertyName = property.Name;
+				var propertyType = property.PropertyType;
+				var property_value = property.GetValue(o, null);
+				var requiredToExport = io_attribute != null && io_attribute.Export;
 
-					if (element != null)
-					{
-						e_o.AppendChild(element as XmlNode);
-					}
-				}
-				else if (CreateSavingMethod(property.PropertyType) && saveEvents.ContainsKey(property.PropertyType))
-				{
-					var property_value = property.GetValue(o, null);
-					var element = saveEvents[property.PropertyType](doc, property.Name, property_value, isClip);
-
-					if (element != null)
-					{
-						e_o.AppendChild(element as XmlNode);
-					}
-				}
-				else
-				{
-					if (io_attribute != null && io_attribute.Export)
-					{
-						var property_value = property.GetValue(o, null);
-						var element = SaveObjectToElement(doc, property.Name, property_value, isClip);
-
-						if (element != null && element.ChildNodes.Count > 0)
-						{
-							e_o.AppendChild(element as XmlNode);
-						}
-					}
-				}
+				SaveObjectToElement(doc, isClip, e_o, requiredToExport, propertyName, propertyType, property_value);
 			}
 
 			if (e_o.ChildNodes.Count > 0) return e_o;
 			return null;
+		}
+
+		private static void SaveObjectToElement(XmlDocument doc, bool isClip, XmlElement e_o, bool requiredToExport, string propertyName, Type propertyType, object property_value)
+		{
+			var method = typeof(IO).GetMethod("SaveToElement", new Type[] { typeof(XmlDocument), typeof(string), propertyType, typeof(bool) });
+			if (method != null)
+			{
+				var element = method.Invoke(null, new object[] { doc, propertyName, property_value, isClip });
+
+				if (element != null)
+				{
+					e_o.AppendChild(element as XmlNode);
+				}
+			}
+			else if (CreateSavingMethod(propertyType) && saveEvents.ContainsKey(propertyType))
+			{
+				var element = saveEvents[propertyType](doc, propertyName, property_value, isClip);
+
+				if (element != null)
+				{
+					e_o.AppendChild(element as XmlNode);
+				}
+			}
+			else
+			{
+				if (requiredToExport)
+				{
+					var element = SaveObjectToElement(doc, propertyName, property_value, isClip);
+
+					if (element != null && element.ChildNodes.Count > 0)
+					{
+						e_o.AppendChild(element as XmlNode);
+					}
+				}
+			}
 		}
 
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, NodeBase node, bool isClip)
@@ -190,6 +197,7 @@ namespace Effekseer.Data
 			var e_float3 = doc.CreateElement("Float3");
 			var e_float4 = doc.CreateElement("Float4");
 			var e_texture = doc.CreateElement("Texture");
+			var e_gradient = doc.CreateElement("Gradient");
 
 
 			// check file info
@@ -283,6 +291,32 @@ namespace Effekseer.Data
 						}
 					}
 				}
+
+				var gradients = mfp.GetGradients(info);
+				foreach (var kv in gradients)
+				{
+					var status = kv.Item1;
+
+					if (status == null)
+						continue;
+
+					if (!status.IsShown)
+						continue;
+
+					if (status.Value is Data.Value.Gradient)
+					{
+						var v = status.Value as Data.Value.Gradient;
+						var e_root = doc.CreateElement("KeyValue");
+						var v_k = doc.CreateTextElement("Key", status.Key.ToString());
+						SaveObjectToElement(doc, true, e_root, true, "Value", typeof(Data.Value.Gradient), v);
+
+						if (e_root.ChildNodes.Count > 0)
+						{
+							e_root.AppendChild(v_k);
+							e_gradient.AppendChild(e_root);
+						}
+					}
+				}
 			}
 			else
 			{
@@ -358,6 +392,19 @@ namespace Effekseer.Data
 							e_texture.AppendChild(e_root);
 						}
 					}
+					else if(status.Value is Data.Value.Gradient)
+					{
+						var v = status.Value as Data.Value.Gradient;
+						var e_root = doc.CreateElement("KeyValue");
+						var v_k = doc.CreateTextElement("Key", status.Key.ToString());
+						SaveObjectToElement(doc, true, e_root, true, "Value", typeof(Data.Value.Gradient), v);
+
+						if (e_root.ChildNodes.Count > 0)
+						{
+							e_root.AppendChild(v_k);
+							e_gradient.AppendChild(e_root);
+						}
+					}
 				}
 			}
 
@@ -385,6 +432,12 @@ namespace Effekseer.Data
 			{
 				e.AppendChild(e_texture);
 			}
+
+			if (e_gradient.ChildNodes.Count > 0)
+			{
+				e.AppendChild(e_gradient);
+			}
+
 
 			return e.ChildNodes.Count > 0 ? e : null;
 		}
@@ -974,24 +1027,30 @@ namespace Effekseer.Data
 				var io_attribute = property.GetCustomAttributes(typeof(IOAttribute), false).FirstOrDefault() as IOAttribute;
 				if (io_attribute != null && !io_attribute.Import) continue;
 
-				var method = typeof(IO).GetMethod("LoadFromElement", new Type[] { typeof(XmlElement), property.PropertyType, typeof(bool) });
-				if (method != null)
+				bool isImportRequired = io_attribute != null && io_attribute.Import;
+				var property_value = property.GetValue(o, null);
+				var propertyType = property.PropertyType;
+
+				LoadObjectFromElement(isClip, ch_node, isImportRequired, ref property_value, propertyType);
+			}
+		}
+
+		private static void LoadObjectFromElement(bool isClip, XmlElement ch_node, bool isImportRequired, ref object property_value, Type propertyType)
+		{
+			var method = typeof(IO).GetMethod("LoadFromElement", new Type[] { typeof(XmlElement), propertyType, typeof(bool) });
+			if (method != null)
+			{
+				method.Invoke(null, new object[] { ch_node, property_value, isClip });
+			}
+			else if (CreateLoadingMethod(propertyType) && loadEvents.ContainsKey(propertyType))
+			{
+				loadEvents[propertyType](ch_node, property_value, isClip);
+			}
+			else
+			{
+				if (isImportRequired)
 				{
-					var property_value = property.GetValue(o, null);
-					method.Invoke(null, new object[] { ch_node, property_value, isClip });
-				}
-				else if (CreateLoadingMethod(property.PropertyType) && loadEvents.ContainsKey(property.PropertyType))
-				{
-					var property_value = property.GetValue(o, null);
-					loadEvents[property.PropertyType](ch_node, property_value, isClip);
-				}
-				else
-				{
-					if (io_attribute != null && io_attribute.Import)
-					{
-						var property_value = property.GetValue(o, null);
-						LoadObjectFromElement(ch_node, ref property_value, isClip);
-					}
+					LoadObjectFromElement(ch_node, ref property_value, isClip);
 				}
 			}
 		}
@@ -1029,6 +1088,7 @@ namespace Effekseer.Data
 			var e_float3 = e["Float3"] as XmlElement;
 			var e_float4 = e["Float4"] as XmlElement;
 			var e_texture = e["Texture"] as XmlElement;
+			var e_gradient = e["Gradient"] as XmlElement;
 
 			if (e_float1 != null)
 			{
@@ -1196,6 +1256,32 @@ namespace Effekseer.Data
 					{
 						var v = vs.Value as Value.PathForImage;
 						LoadFromElement(valueElement, v, isClip);
+					}
+				}
+			}
+
+			if (e_gradient != null)
+			{
+				for (var i = 0; i < e_gradient.ChildNodes.Count; i++)
+				{
+					var e_child = e_gradient.ChildNodes[i] as XmlElement;
+
+					string key = string.Empty;
+
+					var e_k = e_child["Key"] as XmlElement;
+					var valueElement = e_child["Value"] as XmlElement;
+
+					if (e_k != null)
+					{
+						key = e_k.GetText();
+					}
+
+
+					var vs = mfp.FindValue(key, null, false);
+					if (vs != null)
+					{
+						var v = vs.Value;
+						LoadObjectFromElement(isClip, valueElement, true, ref v, typeof(Data.Value.Gradient));
 					}
 				}
 			}

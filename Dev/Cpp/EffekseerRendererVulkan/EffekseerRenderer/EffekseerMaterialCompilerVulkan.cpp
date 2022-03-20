@@ -6,6 +6,8 @@
 #include "../EffekseerMaterialCompiler/GLSL/GLSL.h"
 
 #undef min
+#undef max
+
 namespace Effekseer
 {
 
