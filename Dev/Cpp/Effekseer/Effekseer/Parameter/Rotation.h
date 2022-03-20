@@ -353,8 +353,9 @@ struct RotationFunctions
 		}
 	}
 
-	static void CalculateRotation(SIMD::Vec3f& localAngle, RotationState& rotation_values, const RotationParameter& rotationParam, RandObject& rand, const Effect* effect, const InstanceGlobal* instanceGlobal, float m_LivingTime, float m_LivedTime, const Instance* m_pParent, const DynamicFactorParameter& dynamicFactor)
+	static SIMD::Mat43f CalculateRotation(RotationState& rotation_values, const RotationParameter& rotationParam, RandObject& rand, const Effect* effect, const InstanceGlobal* instanceGlobal, float m_LivingTime, float m_LivedTime, const Instance* m_pParent, const DynamicFactorParameter& dynamicFactor)
 	{
+		SIMD::Vec3f localAngle;
 
 		/* ‰ñ“]‚ÌXV(ŽžŠÔ‚©‚ç’¼Ú‹‚ß‚ê‚é‚æ‚¤‘Î‰žÏ‚Ý) */
 		if (rotationParam.RotationType == ParameterRotationType::ParameterRotationType_None)
@@ -391,6 +392,26 @@ struct RotationFunctions
 			auto fcurve = rotationParam.RotationFCurve->GetValues(m_LivingTime, m_LivedTime);
 			localAngle = fcurve + rotation_values.fcruve.offset;
 		}
+
+		SIMD::Mat43f matRot;
+		if (rotationParam.RotationType == ParameterRotationType::ParameterRotationType_Fixed || rotationParam.RotationType == ParameterRotationType::ParameterRotationType_PVA ||
+			rotationParam.RotationType == ParameterRotationType::ParameterRotationType_Easing || rotationParam.RotationType == ParameterRotationType::ParameterRotationType_FCurve)
+		{
+			matRot = SIMD::Mat43f::RotationZXY(localAngle.GetZ(), localAngle.GetX(), localAngle.GetY());
+		}
+		else if (rotationParam.RotationType == ParameterRotationType::ParameterRotationType_AxisPVA ||
+				 rotationParam.RotationType == ParameterRotationType::ParameterRotationType_AxisEasing)
+		{
+			SIMD::Vec3f axis = rotation_values.axis.axis;
+
+			matRot = SIMD::Mat43f::RotationAxis(axis, rotation_values.axis.rotation);
+		}
+		else
+		{
+			matRot = SIMD::Mat43f::Identity;
+		}
+
+		return matRot;
 	}
 };
 

@@ -294,8 +294,10 @@ struct ScalingFunctions
 		}
 	}
 
-	static void UpdateScaling(SIMD::Vec3f& localScaling, ScalingState& scaling_values, const ScalingParameter& scalingParam, RandObject& rand, const Effect* effect, const InstanceGlobal* instanceGlobal, float m_LivingTime, float m_LivedTime, const Instance* m_pParent, const DynamicFactorParameter& dynamicFactor)
+	static SIMD::Vec3f UpdateScaling(ScalingState& scaling_values, const ScalingParameter& scalingParam, RandObject& rand, const Effect* effect, const InstanceGlobal* instanceGlobal, float m_LivingTime, float m_LivedTime, const Instance* m_pParent, const DynamicFactorParameter& dynamicFactor)
 	{
+		SIMD::Vec3f localScaling;
+
 		/* Šg‘å‚ÌXV(ŽžŠÔ‚©‚ç’¼Ú‹‚ß‚ê‚é‚æ‚¤‘Î‰žÏ‚Ý) */
 		if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_None)
 		{
@@ -344,6 +346,8 @@ struct ScalingFunctions
 			auto s = scalingParam.ScalingSingleFCurve->GetValues(m_LivingTime, m_LivedTime) + scaling_values.single_fcruve.offset;
 			localScaling = {s, s, s};
 		}
+
+		return localScaling;
 	}
 };
 
