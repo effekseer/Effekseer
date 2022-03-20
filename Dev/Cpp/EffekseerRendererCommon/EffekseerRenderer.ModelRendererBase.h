@@ -354,11 +354,13 @@ protected:
 
 			if (param.DepthParameterPtr->ZSort == Effekseer::ZSortType::NormalOrder)
 			{
-				std::sort(keyValues_.begin(), keyValues_.end(), [](const KeyValue& a, const KeyValue& b) -> bool { return a.Key < b.Key; });
+				std::sort(keyValues_.begin(), keyValues_.end(), [](const KeyValue& a, const KeyValue& b) -> bool
+						  { return a.Key < b.Key; });
 			}
 			else
 			{
-				std::sort(keyValues_.begin(), keyValues_.end(), [](const KeyValue& a, const KeyValue& b) -> bool { return a.Key > b.Key; });
+				std::sort(keyValues_.begin(), keyValues_.end(), [](const KeyValue& a, const KeyValue& b) -> bool
+						  { return a.Key > b.Key; });
 			}
 
 			matrixesSorted_.resize(m_matrixes.size());
@@ -499,6 +501,13 @@ protected:
 			vsOffset += (sizeof(float) * 4);
 		}
 
+		for (size_t i = 0; i < materialRenderData->MaterialGradients.size(); i++)
+		{
+			auto data = ToUniform(*materialRenderData->MaterialGradients[i]);
+			renderer->SetVertexBufferToShader(data.data(), sizeof(float) * 4 * 13, vsOffset);
+			vsOffset += (sizeof(float) * 4) * 13;
+		}
+
 		// ps
 		int32_t psOffset = 0;
 		renderer->SetPixelBufferToShader(uvInversedMaterial.data(), sizeof(float) * 4, psOffset);
@@ -572,6 +581,13 @@ protected:
 		{
 			renderer->SetPixelBufferToShader(materialRenderData->MaterialUniforms[i].data(), sizeof(float) * 4, psOffset);
 			psOffset += (sizeof(float) * 4);
+		}
+
+		for (size_t i = 0; i < materialRenderData->MaterialGradients.size(); i++)
+		{
+			auto data = ToUniform(*materialRenderData->MaterialGradients[i]);
+			renderer->SetVertexBufferToShader(data.data(), sizeof(float) * 4 * 13, psOffset);
+			psOffset += (sizeof(float) * 4) * 13;
 		}
 	}
 

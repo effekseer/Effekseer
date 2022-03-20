@@ -40,6 +40,18 @@ struct TextExporterTexture
 	std::vector<std::shared_ptr<NodeDescription>> Descriptions;
 };
 
+struct TextExporterGradient
+{
+	std::string Name;
+	std::string UniformName;
+	bool IsFixed = false;
+	Gradient Defaults;
+	int32_t Offset;
+	int32_t Priority = 1;
+	uint64_t GUID = 0;
+	std::vector<std::shared_ptr<NodeDescription>> Descriptions;
+};
+
 struct TextExporterPin
 {
 	std::string Name;
@@ -52,6 +64,7 @@ struct TextExporterPin
 	std::array<float, 4> NumberValue;
 	std::shared_ptr<TextExporterUniform> UniformValue;
 	std::shared_ptr<TextExporterTexture> TextureValue;
+	std::shared_ptr<TextExporterGradient> GradientValue;
 };
 
 struct TextExporterNode
@@ -73,6 +86,9 @@ struct TextExporterResult
 	int32_t CustomData2 = 0;
 	std::vector<std::shared_ptr<TextExporterUniform>> Uniforms;
 	std::vector<std::shared_ptr<TextExporterTexture>> Textures;
+	std::vector<std::shared_ptr<TextExporterGradient>> Gradients;
+	std::vector<std::shared_ptr<TextExporterGradient>> FixedGradients;
+	std::vector<RequiredPredefinedMethodType> RequiredPredefinedMethodTypes;
 };
 
 class TextExporterOutputOption

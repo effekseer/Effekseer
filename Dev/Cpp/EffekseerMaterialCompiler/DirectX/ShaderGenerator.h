@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include "../HLSL/HLSL.h"
+
 #ifdef _WIN32
 #undef min
 #endif
@@ -114,6 +116,26 @@ protected:
 		auto cind = 0;
 
 		maincode << common_define_;
+
+		// gradient
+		bool hasGradient = false;
+		for (const auto& type : materialFile->RequiredMethods)
+		{
+			if (type == MaterialFile::RequiredPredefinedMethodType::Gradient)
+			{
+				hasGradient = true;
+			}
+		}
+		
+		if (hasGradient)
+		{
+			maincode << HLSL::material_gradient;		
+		}
+
+		for (const auto& gradient : materialFile->FixedGradients)
+		{
+			maincode << HLSL::GetFixedGradient(gradient.Name.c_str(), gradient.Data);
+		}
 
 		if (stage == 0)
 		{
@@ -356,6 +378,16 @@ public:
 			for (int32_t i = 0; i < actualUniformCount; i++)
 			{
 				ExportUniform(maincode, 4, materialFile->GetUniformName(i), cind);
+				cind++;
+			}
+
+			for (size_t i = 0; i < materialFile->Gradients.size(); i++)
+			{
+				// TODO : remove a magic number
+				for (size_t j = 0; j < 13; j++)
+				{
+					ExportUniform(maincode, 4, (materialFile->Gradients[i].Name + "_" + std::to_string(j)).c_str(), cind);
+				}
 				cind++;
 			}
 

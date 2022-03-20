@@ -523,6 +523,86 @@ namespace Effekseer.Data
 					usedValueStatuses.Add(status);
 					finished.Add(uniform);
 				}
+
+				foreach (var gradient in info.Gradients)
+				{
+					if (finished.Contains(gradient)) continue;
+
+					var key = StatusKey.From(gradient);
+
+					Func<string> getName = () =>
+					{
+						var ret = "";
+						if (gradient.Summaries.ContainsKey(Core.Language))
+						{
+							ret = gradient.Summaries[Core.Language];
+						}
+
+						if (string.IsNullOrEmpty(ret))
+						{
+							ret = gradient.Name;
+						}
+
+						if (string.IsNullOrEmpty(ret))
+						{
+							ret = gradient.UniformName;
+						}
+
+						return ret;
+					};
+
+					Func<string> getDesc = () =>
+					{
+						var ret = "";
+						if (gradient.Descriptions.ContainsKey(Core.Language))
+						{
+							ret = gradient.Descriptions[Core.Language];
+						}
+
+						return ret;
+					};
+
+					ValueStatus status = null;
+
+					var foundValue = FindValue(key.ToString(), usedValueStatuses, withNameFlag);
+					if (foundValue != null)
+					{
+						status = foundValue;
+
+						var target = foundValue.Value as Value.Gradient;
+
+						if (gradient.Data.Equals(target.Value))
+						{
+							target.SetValueDirectly(gradient.Data);
+							isChanged = true;
+						}
+
+						target.DefaultValue = gradient.Data;
+					}
+					else
+					{
+						// create only when value is not found even if withName flag is true
+						if (!withNameFlag) continue;
+
+						status = new ValueStatus();
+						var value = new Value.Gradient();
+						status.Value = value;
+						status.IsShown = true;
+						status.Priority = gradient.Priority;
+						valueStatuses.Add(status);
+
+						isChanged = true;
+					}
+
+					if (status.Name != getName()) isChanged = true;
+					if (status.Description != getDesc()) isChanged = true;
+
+					status.Key = key;
+					status.Name = getName();
+					status.Description = getDesc();
+					usedValueStatuses.Add(status);
+					finished.Add(gradient);
+				}
 			}
 
 			foreach (var kts in valueStatuses)
@@ -603,6 +683,28 @@ namespace Effekseer.Data
 				else
 				{
 					ret.Add(Tuple35.Create((ValueStatus)(null), uniform));
+				}
+			}
+
+			return ret;
+		}
+
+		public List<Tuple35<ValueStatus, Utl.MaterialInformation.GradientInformation>> GetGradients(Utl.MaterialInformation info)
+		{
+			var ret = new List<Tuple35<ValueStatus, Utl.MaterialInformation.GradientInformation>>();
+
+			foreach (var gradient in info.Gradients)
+			{
+				var key = StatusKey.From(gradient);
+				var value = FindValue(key.ToString());
+
+				if (value != null)
+				{
+					ret.Add(Tuple35.Create(value, gradient));
+				}
+				else
+				{
+					ret.Add(Tuple35.Create((ValueStatus)(null), gradient));
 				}
 			}
 
@@ -695,6 +797,15 @@ namespace Effekseer.Data
 				status.Name = info.Name;
 				status.UniformName = info.UniformName;
 				status.Footer = "TYPE_T";
+				return status;
+			}
+
+			public static StatusKey From(Utl.MaterialInformation.GradientInformation info)
+			{
+				StatusKey status = new StatusKey();
+				status.Name = info.Name;
+				status.UniformName = info.UniformName;
+				status.Footer = "TYPE_G";
 				return status;
 			}
 

@@ -26,6 +26,8 @@ const int32_t CompiledMaterialVersion16 = 1610;
 
 const int32_t MaterialVersion15 = 3;
 const int32_t MaterialVersion16 = 1610;
+const int32_t MaterialVersion17Alpha2 = 1700;
+const int32_t MaterialVersion17Alpha4 = 1703;
 
 enum class TextureValueType
 {
@@ -75,6 +77,7 @@ enum class ValueType
 	Function,
 	Enum,
 	Int,
+	Gradient,
 	Unknown,
 };
 
@@ -149,6 +152,10 @@ enum class NodeType
 
 	DepthFade,
 
+	Gradient, //! 1700
+	GradientParameter, //! 1700
+	SampleGradient,	   //! 1700
+
 	Comment,
 	Function, // Unimplemented
 	Output,
@@ -167,6 +174,11 @@ enum class DefaultType
 	Value,
 	UV,
 	Time,
+};
+
+enum class RequiredPredefinedMethodType : int32_t
+{
+	Gradient = 0,
 };
 
 class PinParameter;

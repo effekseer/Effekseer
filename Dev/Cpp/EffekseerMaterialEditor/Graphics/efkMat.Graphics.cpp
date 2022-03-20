@@ -22,6 +22,34 @@
 namespace EffekseerMaterial
 {
 
+// TODO remove copy codes
+std::array<std::array<float, 4>, 13> ToUniform(const Gradient& gradient)
+{
+	std::array<std::array<float, 4>, 13> ret;
+	ret[0][0] = gradient.ColorCount;
+	ret[0][1] = gradient.AlphaCount;
+	ret[0][2] = 0.0F;
+	ret[0][3] = 0.0F;
+
+	for (size_t i = 0; i < 8; i++)
+	{
+		ret[1 + i][0] = gradient.Colors[i].Color[0] * gradient.Colors[i].Intensity;
+		ret[1 + i][1] = gradient.Colors[i].Color[1] * gradient.Colors[i].Intensity;
+		ret[1 + i][2] = gradient.Colors[i].Color[2] * gradient.Colors[i].Intensity;
+		ret[1 + i][3] = gradient.Colors[i].Position;
+	}
+
+	for (size_t i = 0; i < 4; i++)
+	{
+		ret[8 + i][0] = gradient.Alphas[i * 2 + 0].Alpha;
+		ret[8 + i][1] = gradient.Alphas[i * 2 + 1].Position;
+		ret[8 + i][0] = gradient.Alphas[i * 2 + 0].Alpha;
+		ret[8 + i][1] = gradient.Alphas[i * 2 + 1].Position;
+	}
+
+	return ret;
+}
+
 bool Graphics::Initialize(int32_t width, int32_t height)
 {
 	manager = ar::Manager::Create(ar::GraphicsDeviceType::OpenGL);
@@ -451,22 +479,21 @@ static const char g_header_fs_gl3_src[] = ""
 bool Preview::CompileShader(std::string& vs,
 							std::string& ps,
 							std::vector<std::shared_ptr<TextureWithSampler>> textures,
-							std::vector<std::shared_ptr<TextExporterUniform>>& uniforms)
+							std::vector<std::shared_ptr<TextExporterUniform>>& uniforms,
+							std::vector<std::shared_ptr<TextExporterGradient>>& gradients,
+							std::vector<std::shared_ptr<TextExporterGradient>>& fixedGradients)
 {
 	VS = vs;
 	PS = ps;
-
-	// std::cout << "Compile Shader" << std::endl;
-	// std::cout << PS << std::endl;
 
 	ar::SafeDelete(shader);
 	ar::SafeDelete(constantBuffer);
 
 	ar::ShaderCompilerParameter param;
 	param.VertexShaderTexts.push_back(g_header_vs_gl3_src);
-	param.VertexShaderTexts.push_back(vs);
+	param.VertexShaderTexts.push_back(VS);
 	param.PixelShaderTexts.push_back(g_header_fs_gl3_src);
-	param.PixelShaderTexts.push_back(ps);
+	param.PixelShaderTexts.push_back(PS);
 	param.OpenGLVersion = ar::OpenGLVersionType::OpenGL33;
 	ar::ShaderCompilerResult result;
 
@@ -508,6 +535,20 @@ bool Preview::CompileShader(std::string& vs,
 				break;
 			}
 		}
+
+		for (const auto grad : gradients)
+		{
+			auto data = ToUniform(grad->Defaults);
+
+			for (size_t i = 0; i < data.size(); i++)
+			{
+				if (grad->UniformName + "_" + std::to_string(i) == layout.first)
+				{
+					constantBuffer->SetData(data[i].data(), layout.second.GetSize(), layout.second.Offset);
+					break;
+				}
+			}
+		}
 	}
 
 	textures_ = textures;
@@ -516,7 +557,8 @@ bool Preview::CompileShader(std::string& vs,
 }
 
 bool Preview::UpdateUniforms(std::vector<std::shared_ptr<TextureWithSampler>> textures,
-							 std::vector<std::shared_ptr<TextExporterUniform>>& uniforms)
+							 std::vector<std::shared_ptr<TextExporterUniform>>& uniforms,
+							 std::vector<std::shared_ptr<TextExporterGradient>>& gradients)
 {
 	std::cout << "Update Uniforms" << std::endl;
 
@@ -531,6 +573,20 @@ bool Preview::UpdateUniforms(std::vector<std::shared_ptr<TextureWithSampler>> te
 			{
 				constantBuffer->SetData(uni->DefaultConstants.data(), layout.second.GetSize(), layout.second.Offset);
 				break;
+			}
+		}
+
+				for (const auto grad : gradients)
+		{
+			auto data = ToUniform(grad->Defaults);
+
+			for (size_t i = 0; i < data.size(); i++)
+			{
+				if (grad->UniformName + "_" + std::to_string(i) == layout.first)
+				{
+					constantBuffer->SetData(data[i].data(), layout.second.GetSize(), layout.second.Offset);
+					break;
+				}
 			}
 		}
 	}

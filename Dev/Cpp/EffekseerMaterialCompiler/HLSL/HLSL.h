@@ -6,6 +6,9 @@ Refeence https://github.com/unitycoder/UnityBuiltinShaders/blob/master/CGInclude
 
 #pragma once
 
+#undef min
+#undef max
+
 namespace Effekseer
 {
 namespace HLSL
@@ -19,6 +22,95 @@ enum class ShaderType
 	PSSL,
 	XBOXONE,
 };
+
+static const char* material_gradient = R"(
+
+struct Gradient
+{
+	int colorCount;
+	int alphaCount;
+	int reserved1;
+	int reserved2;
+	float4 colors[8];
+	float2 alphas[8];
+};
+
+float4 SampleGradient(Gradient gradient, float t)
+{
+	float3 color = gradient.colors[0].xyz;
+	for(int i = 1; i < 8; i++)
+	{
+		float a = clamp((t - gradient.colors[i-1].w) / (gradient.colors[i].w - gradient.colors[i-1].w), 0.0, 1.0) * step(float(i), float(gradient.colorCount-1));
+		color = lerp(color, gradient.colors[i].xyz, a);
+	}
+
+	float alpha = gradient.alphas[0].x;
+	for(int i = 1; i < 8; i++)
+	{
+		float a = clamp((t - gradient.alphas[i-1].y) / (gradient.alphas[i].y - gradient.alphas[i-1].y), 0.0, 1.0) * step(float(i), float(gradient.alphaCount-1));
+		alpha = lerp(alpha, gradient.alphas[i].x, a);
+	}
+
+	return float4(color, alpha);
+}
+
+Gradient GradientParameter(float4 param_v, float4 param_c1, float4 param_c2, float4 param_c3, float4 param_c4, float4 param_c5, float4 param_c6, float4 param_c7, float4 param_c8, float4 param_a1, float4 param_a2, float4 param_a3, float4 param_a4)
+{
+	Gradient g;
+	g.colorCount = int(param_v.x);
+	g.alphaCount = int(param_v.y);
+	g.reserved1 = int(param_v.z);
+	g.reserved2 = int(param_v.w);
+	g.colors[0] = param_c1;
+	g.colors[1] = param_c2;
+	g.colors[2] = param_c3;
+	g.colors[3] = param_c4;
+	g.colors[4] = param_c5;
+	g.colors[5] = param_c6;
+	g.colors[6] = param_c7;
+	g.colors[7] = param_c8;
+	g.alphas[0].xy = param_a1.xy;
+	g.alphas[1].xy = param_a1.zw;
+	g.alphas[2].xy = param_a2.xy;
+	g.alphas[3].xy = param_a2.zw;
+	g.alphas[4].xy = param_a3.xy;
+	g.alphas[5].xy = param_a3.zw;
+	g.alphas[6].xy = param_a4.xy;
+	g.alphas[7].xy = param_a4.zw;
+	return g;
+}
+
+)";
+
+inline std::string GetFixedGradient(const char* name, const Gradient& gradient)
+{
+	std::stringstream ss;
+
+	ss << "Gradient " << name << "() {" << std::endl;
+	ss << "Gradient g;" << std::endl;
+	ss << "g.colorCount = " << gradient.ColorCount << ";" << std::endl;
+	ss << "g.alphaCount = " << gradient.AlphaCount << ";" << std::endl;
+	ss << "g.reserved1 = 0;" << std::endl;
+	ss << "g.reserved2 = 0;" << std::endl;
+
+	for (int32_t i = 0; i < gradient.Colors.size(); i++)
+	{
+		ss << "g.colors[" << i << "].x = " << gradient.Colors[i].Color[0] * gradient.Colors[i].Intensity << ";" << std::endl;
+		ss << "g.colors[" << i << "].y = " << gradient.Colors[i].Color[1] * gradient.Colors[i].Intensity << ";" << std::endl;
+		ss << "g.colors[" << i << "].z = " << gradient.Colors[i].Color[2] * gradient.Colors[i].Intensity << ";" << std::endl;
+		ss << "g.colors[" << i << "].w = " << gradient.Colors[i].Position << ";" << std::endl;
+	}
+
+	for (int32_t i = 0; i < gradient.Alphas.size(); i++)
+	{
+		ss << "g.alphas[" << i << "].x = " << gradient.Alphas[i].Alpha << ";" << std::endl;
+		ss << "g.alphas[" << i << "].y = " << gradient.Alphas[i].Position << ";" << std::endl;
+	}
+
+	ss << "return g; }" << std::endl;
+
+	return ss.str();
+}
 
 inline std::string GetMaterialCommonDefine(ShaderType type)
 {
