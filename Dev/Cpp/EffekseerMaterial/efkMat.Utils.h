@@ -7,7 +7,7 @@ namespace EffekseerMaterial
 {
 
 std::string Replace(std::string v, std::string pre, std::string past);
-	
+
 #if defined(__APPLE__)
 std::string NFCtoNFD(const std::string& v);
 std::string NFDtoNFC(const std::string& v);
@@ -18,9 +18,17 @@ struct Vector2DF
 	float X;
 	float Y;
 
-	Vector2DF() : X(0), Y(0) {}
+	Vector2DF()
+		: X(0)
+		, Y(0)
+	{
+	}
 
-	Vector2DF(float x, float y) : X(x), Y(y) {}
+	Vector2DF(float x, float y)
+		: X(x)
+		, Y(y)
+	{
+	}
 };
 
 std::string EspcapeUserParamName(const char* name);

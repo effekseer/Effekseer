@@ -5,7 +5,10 @@
 namespace EffekseerMaterial
 {
 
-ValueType InferOutputTypeIn1Out1(const std::vector<ValueType>& inputTypes) { return inputTypes[0]; }
+ValueType InferOutputTypeIn1Out1(const std::vector<ValueType>& inputTypes)
+{
+	return inputTypes[0];
+}
 
 ValueType InferOutputTypeIn2Out1Param2(const std::vector<ValueType>& inputTypes)
 {
@@ -216,7 +219,10 @@ bool ExtractTextureParameter(std::shared_ptr<Material> material, std::shared_ptr
 	return false;
 }
 
-ValueType NodeParameter::GetOutputTypeIn1Out1(const std::vector<ValueType>& inputTypes) const { return inputTypes[0]; }
+ValueType NodeParameter::GetOutputTypeIn1Out1(const std::vector<ValueType>& inputTypes) const
+{
+	return inputTypes[0];
+}
 
 ValueType NodeParameter::GetOutputTypeIn2Out1Param2(const std::vector<ValueType>& inputTypes) const
 {
@@ -584,16 +590,17 @@ WarningType NodeAppendVector::GetWarning(std::shared_ptr<Material> material, std
 	return WarningType::None;
 }
 
-WarningType NodePixelNormalWS::GetWarning(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const {
+WarningType NodePixelNormalWS::GetWarning(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const
+{
 
 	auto pins = material->GetRelatedPins(node->OutputPins[0]);
-	
+
 	for (auto& pin : pins)
 	{
 		auto node = pin->Parent.lock();
 		if (node != nullptr && node->Parameter->Type == NodeType::Output && pin->Parameter->Name == "Normal")
 		{
-			return WarningType::PixelNodeAndNormal;		
+			return WarningType::PixelNodeAndNormal;
 		}
 	}
 

@@ -46,8 +46,7 @@ void InstanceGroup::Initialize(RandObject& rand, Instance* parent)
 {
 	m_generatedCount = 0;
 
-	auto gt = ApplyEq(m_effectNode->GetEffect(), m_global, parent, &rand, 
-		m_effectNode->CommonValues.RefEqGenerationTimeOffset, m_effectNode->CommonValues.GenerationTimeOffset);
+	auto gt = ApplyEq(m_effectNode->GetEffect(), m_global, parent, &rand, m_effectNode->CommonValues.RefEqGenerationTimeOffset, m_effectNode->CommonValues.GenerationTimeOffset);
 
 	m_generationOffsetTime = gt.getValue(rand);
 	m_nextGenerationTime = m_generationOffsetTime;
@@ -92,7 +91,7 @@ void InstanceGroup::GenerateInstancesIfRequired(float localTime, RandObject& ran
 			m_nextGenerationTime = m_generationOffsetTime + localTime;
 		}
 	}
-	if (m_generationState == GenerationState::Generating && 
+	if (m_generationState == GenerationState::Generating &&
 		m_effectNode->TriggerParam.ToStopGeneration.type != TriggerType::None)
 	{
 		if (m_global->GetInputTriggerCount(m_effectNode->TriggerParam.ToStopGeneration.index) > 0)
@@ -104,8 +103,8 @@ void InstanceGroup::GenerateInstancesIfRequired(float localTime, RandObject& ran
 	// GenerationTimeOffset can be minus value.
 	// Minus frame particles is generated simultaniously at frame 0.
 	while (m_generationState == GenerationState::Generating &&
-		m_maxGenerationCount > m_generatedCount &&
-		localTime >= m_nextGenerationTime)
+		   m_maxGenerationCount > m_generatedCount &&
+		   localTime >= m_nextGenerationTime)
 	{
 		// Create a particle
 		auto instance = m_manager->CreateInstance(m_effectNode, m_container, this);
@@ -281,9 +280,9 @@ void InstanceGroup::KillAllInstances()
 
 bool InstanceGroup::IsActive() const
 {
-	return GetInstanceCount() > 0 || 
-		(m_generationState != GenerationState::Ended && 
-		m_generatedCount < m_maxGenerationCount);
+	return GetInstanceCount() > 0 ||
+		   (m_generationState != GenerationState::Ended &&
+			m_generatedCount < m_maxGenerationCount);
 }
 
 //----------------------------------------------------------------------------------

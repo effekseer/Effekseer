@@ -176,10 +176,10 @@ public:
 	virtual ~EffectRenderer();
 
 	bool Initialize(
-		std::shared_ptr<GraphicsDevice> graphicsDevice, 
+		std::shared_ptr<GraphicsDevice> graphicsDevice,
 		std::shared_ptr<SoundDevice> soundDevice,
-		std::shared_ptr<EffectSetting> setting, 
-		int32_t spriteCount, 
+		std::shared_ptr<EffectSetting> setting,
+		int32_t spriteCount,
 		bool isSRGBMode);
 
 	Vector2I GetScreenSize() const;
@@ -246,7 +246,6 @@ public:
 	}
 
 	int32_t RandomSeed = -1;
-
 };
 
 } // namespace Tool

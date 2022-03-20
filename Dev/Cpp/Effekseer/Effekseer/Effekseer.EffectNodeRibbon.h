@@ -18,8 +18,7 @@ struct RibbonColorParameter
 		Parameter_DWORD = 0x7fffffff,
 	} type;
 
-	union
-	{
+	union {
 		struct
 		{
 
@@ -43,8 +42,7 @@ struct RibbonPositionParameter
 		Parameter_DWORD = 0x7fffffff,
 	} type;
 
-	union
-	{
+	union {
 		struct
 		{
 
@@ -68,13 +66,11 @@ public:
 
 		InstanceAllTypeColorState allColorValues;
 
-		union
-		{
+		union {
 
 		} colorValues;
 
-		union
-		{
+		union {
 
 		} positionValues;
 	};

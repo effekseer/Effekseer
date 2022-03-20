@@ -79,8 +79,7 @@ void BasicRuntimeTestPlatform(EffectPlatformInitializingParameter param, EffectP
 		platform->StopAllEffects();
 	};
 
-	auto singleResourceData_00_Basic_Test = [&](const char16_t* name, const char* savename, int time) -> void
-	{
+	auto singleResourceData_00_Basic_Test = [&](const char16_t* name, const char* savename, int time) -> void {
 		srand(0);
 		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../ResourceData/samples/00_Basic/" + name + u".efkefc").c_str());
 

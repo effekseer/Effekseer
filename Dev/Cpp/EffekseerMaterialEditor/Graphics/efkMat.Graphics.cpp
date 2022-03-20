@@ -41,7 +41,9 @@ bool Graphics::Initialize(int32_t width, int32_t height)
 	return true;
 }
 
-Graphics::Graphics() {}
+Graphics::Graphics()
+{
+}
 
 Graphics::~Graphics()
 {
@@ -49,9 +51,14 @@ Graphics::~Graphics()
 	ar::SafeDelete(manager);
 }
 
-Texture::Texture() {}
+Texture::Texture()
+{
+}
 
-Texture::~Texture() { ar::SafeDelete(texture_); }
+Texture::~Texture()
+{
+	ar::SafeDelete(texture_);
+}
 
 bool Texture::Validate()
 {
@@ -83,11 +90,12 @@ bool Texture::Validate()
 	return true;
 }
 
-void Texture::Invalidate() {
+void Texture::Invalidate()
+{
 	if (path_ == "")
 		return;
 
-	ar::SafeDelete(texture_); 
+	ar::SafeDelete(texture_);
 }
 
 uint64_t Texture::GetInternal()
@@ -170,7 +178,9 @@ void TextureCache::NotifyFileChanged(const char* path)
 	}
 }
 
-Mesh::Mesh() {}
+Mesh::Mesh()
+{
+}
 
 Mesh ::~Mesh()
 {
@@ -313,7 +323,9 @@ std::shared_ptr<Mesh> Mesh::Load(std::shared_ptr<Graphics> graphics, const char*
 	return mesh;
 }
 
-Preview::Preview() {}
+Preview::Preview()
+{
+}
 
 Preview::~Preview()
 {
@@ -537,7 +549,7 @@ bool Preview::UpdateConstantValues(float time, std::array<float, 4> customData1,
 
 	if (ModelType == PreviewModelType::Screen)
 	{
-		matProj.OrthographicRH(2.0f, 2.0f, 0.1f, 10.0f);	
+		matProj.OrthographicRH(2.0f, 2.0f, 0.1f, 10.0f);
 	}
 	else
 	{
@@ -592,7 +604,7 @@ bool Preview::UpdateConstantValues(float time, std::array<float, 4> customData1,
 		}
 
 		if (layout.first == "reconstructionParam1")
-		{			
+		{
 			float values[4];
 			values[0] = 0.0f;
 			values[1] = 1.0f;
@@ -648,7 +660,7 @@ bool Preview::UpdateConstantValues(float time, std::array<float, 4> customData1,
 	{
 		if (layout.first == "predefined_uniform")
 		{
-			std::array<float,4> values;
+			std::array<float, 4> values;
 			values[0] = time;
 			values[1] = 1.0f;
 			values[2] = 0.0f;

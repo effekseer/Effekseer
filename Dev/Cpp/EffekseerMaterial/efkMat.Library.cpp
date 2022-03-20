@@ -82,7 +82,9 @@ Library::Library()
 	MakeGroups();
 }
 
-Library::~Library() {}
+Library::~Library()
+{
+}
 
 void Library::MakeGroups()
 {

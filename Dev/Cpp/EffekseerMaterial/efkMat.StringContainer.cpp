@@ -37,6 +37,9 @@ bool StringContainer::AddValue(const char* key, const char* value)
 	return true;
 }
 
-void StringContainer::Clear() { values.clear(); }
+void StringContainer::Clear()
+{
+	values.clear();
+}
 
 } // namespace EffekseerMaterial

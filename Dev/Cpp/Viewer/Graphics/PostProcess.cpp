@@ -49,7 +49,7 @@ PostProcess::PostProcess(Backend::GraphicsDeviceRef graphicsDevice, Backend::Sha
 
 	if (blendType == PostProcessBlendType::None)
 	{
-		pipParam.IsBlendEnabled = false;	
+		pipParam.IsBlendEnabled = false;
 	}
 	else if (blendType == PostProcessBlendType::Blend)
 	{

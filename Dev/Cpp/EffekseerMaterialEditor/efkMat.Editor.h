@@ -30,7 +30,10 @@ public:
 
 	bool IsDirtied = true;
 
-	std::shared_ptr<Preview>& GetPreview() { return preview; }
+	std::shared_ptr<Preview>& GetPreview()
+	{
+		return preview;
+	}
 };
 
 class EditorContent
@@ -44,7 +47,7 @@ private:
 	ed::EditorContext* editorContext_;
 	bool hasStorageRef_ = false;
 	uint64_t previousChangedID_ = 0;
-	
+
 public:
 	//! immediately after loaded
 	bool IsLoading = true;
@@ -73,7 +76,10 @@ public:
 
 	void ClearIsChanged();
 
-	ed::EditorContext* GetEditorContext() { return editorContext_; }
+	ed::EditorContext* GetEditorContext()
+	{
+		return editorContext_;
+	}
 
 	//! this content will be closed and will show a dialog. This flag is true, dialog is shown and make the flag false
 	bool WillShowClosingDialog = false;
@@ -161,10 +167,17 @@ public:
 
 	void UpdateLink(std::shared_ptr<Link> link);
 
-	std::vector<std::shared_ptr<EditorContent>> GetContents() { return contents_; }
+	std::vector<std::shared_ptr<EditorContent>> GetContents()
+	{
+		return contents_;
+	}
 
-	int32_t GetSelectedContentIndex() const { return selectedContentInd_; }
-	void SelectContent(int32_t index) {
+	int32_t GetSelectedContentIndex() const
+	{
+		return selectedContentInd_;
+	}
+	void SelectContent(int32_t index)
+	{
 		if (selectedContentInd_ == index)
 			return;
 

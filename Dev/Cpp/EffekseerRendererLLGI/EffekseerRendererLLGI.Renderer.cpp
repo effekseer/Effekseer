@@ -175,7 +175,7 @@ LLGI::PipelineState* RendererImplemented::GetOrCreatePiplineState()
 
 	if (isReversedDepth_)
 	{
-		if(key.state.CullingType == ::Effekseer::CullingType::Back)
+		if (key.state.CullingType == ::Effekseer::CullingType::Back)
 		{
 			piplineState->Culling = LLGI::CullingMode::Clockwise;
 		}

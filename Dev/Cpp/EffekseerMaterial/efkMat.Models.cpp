@@ -4,8 +4,8 @@
 #include "efkMat.Library.h"
 #include "efkMat.Parameters.h"
 #include "efkMat.TextExporter.h"
-#include <float.h>
 #include <cstring>
+#include <float.h>
 
 std::vector<std::string> Split(const std::string& s, char delim)
 {
@@ -43,14 +43,16 @@ class BinaryWriter
 	std::vector<uint8_t> buffer_;
 
 public:
-	template <typename T> void Push(T value)
+	template <typename T>
+	void Push(T value)
 	{
 		auto offset = buffer_.size();
 		buffer_.resize(offset + sizeof(T));
 		std::memcpy(buffer_.data() + offset, &value, sizeof(T));
 	}
 
-	template <typename U> void Push(const std::vector<U>& value)
+	template <typename U>
+	void Push(const std::vector<U>& value)
 	{
 		Push(static_cast<int32_t>(value.size()));
 		auto offset = buffer_.size();
@@ -58,10 +60,14 @@ public:
 		std::memcpy(buffer_.data() + offset, value.data(), sizeof(U) * value.size());
 	}
 
-	const std::vector<uint8_t>& GetBuffer() const { return buffer_; }
+	const std::vector<uint8_t>& GetBuffer() const
+	{
+		return buffer_;
+	}
 };
 
-template <> void BinaryWriter::Push<bool>(bool value)
+template <>
+void BinaryWriter::Push<bool>(bool value)
 {
 	int32_t temp = value ? 1 : 0;
 	Push(temp);
@@ -95,13 +101,20 @@ private:
 
 public:
 	ChangeNumberCommand(std::shared_ptr<NodeProperty> prop, std::array<float, 4> newValue, std::array<float, 4> oldValue)
-		: prop_(prop), newValue_(newValue), oldValue_(oldValue)
+		: prop_(prop)
+		, newValue_(newValue)
+		, oldValue_(oldValue)
 	{
 	}
 
-	virtual ~ChangeNumberCommand() {}
+	virtual ~ChangeNumberCommand()
+	{
+	}
 
-	void Execute() override { prop_->Floats = newValue_; }
+	void Execute() override
+	{
+		prop_->Floats = newValue_;
+	}
 
 	void Unexecute() override
 	{
@@ -135,7 +148,10 @@ public:
 		return true;
 	}
 
-	virtual const char* GetTag() { return tag_changeNumberCommand; }
+	virtual const char* GetTag()
+	{
+		return tag_changeNumberCommand;
+	}
 };
 
 class ChangeStringCommand : public ICommand
@@ -147,7 +163,9 @@ private:
 
 public:
 	ChangeStringCommand(std::shared_ptr<NodeProperty> prop, std::string newValue, std::string oldValue)
-		: prop_(prop), newValue_(newValue), oldValue_(oldValue)
+		: prop_(prop)
+		, newValue_(newValue)
+		, oldValue_(oldValue)
 	{
 	}
 
@@ -202,23 +220,30 @@ public:
 		return true;
 	}
 
-	virtual const char* GetTag() { return tag_changeStringCommand; }
+	virtual const char* GetTag()
+	{
+		return tag_changeStringCommand;
+	}
 };
 
 class ChangeNodeRegionCommand : public ICommand
 {
 private:
 	std::shared_ptr<Node> node_;
-	std::array<Vector2DF,2> newValue_;
-	std::array<Vector2DF,2> oldValue_;
+	std::array<Vector2DF, 2> newValue_;
+	std::array<Vector2DF, 2> oldValue_;
 
 public:
-	ChangeNodeRegionCommand(std::shared_ptr<Node> node, std::array<Vector2DF,2> newValue, std::array<Vector2DF,2> oldValue)
-		: node_(node), newValue_(newValue), oldValue_(oldValue)
+	ChangeNodeRegionCommand(std::shared_ptr<Node> node, std::array<Vector2DF, 2> newValue, std::array<Vector2DF, 2> oldValue)
+		: node_(node)
+		, newValue_(newValue)
+		, oldValue_(oldValue)
 	{
 	}
 
-	virtual ~ChangeNodeRegionCommand() {}
+	virtual ~ChangeNodeRegionCommand()
+	{
+	}
 
 	void Execute() override
 	{
@@ -249,7 +274,10 @@ public:
 		return true;
 	}
 
-	virtual const char* GetTag() { return tag_changeNodePosCommand; }
+	virtual const char* GetTag()
+	{
+		return tag_changeNodePosCommand;
+	}
 };
 
 class ChangeMultiNodePosCommand : public ICommand
@@ -261,11 +289,15 @@ private:
 
 public:
 	ChangeMultiNodePosCommand(std::vector<std::shared_ptr<Node>> nodes, std::vector<Vector2DF> newValues, std::vector<Vector2DF> oldValues)
-		: targetNodes_(nodes), newValues_(newValues), oldValues_(oldValues)
+		: targetNodes_(nodes)
+		, newValues_(newValues)
+		, oldValues_(oldValues)
 	{
 	}
 
-	virtual ~ChangeMultiNodePosCommand() {}
+	virtual ~ChangeMultiNodePosCommand()
+	{
+	}
 
 	void Execute() override
 	{
@@ -308,7 +340,10 @@ public:
 		return true;
 	}
 
-	virtual const char* GetTag() { return tag_changeMultiNodePosCommand; }
+	virtual const char* GetTag()
+	{
+		return tag_changeMultiNodePosCommand;
+	}
 };
 
 int32_t Node::GetInputPinIndex(const std::string& name)
@@ -939,13 +974,24 @@ void Material::LoadFromStrInternal(
 	}
 }
 
-Material::Material() { commandManager_ = std::make_shared<CommandManager>(); }
+Material::Material()
+{
+	commandManager_ = std::make_shared<CommandManager>();
+}
 
-Material::~Material() {}
+Material::~Material()
+{
+}
 
-const std::string& Material::GetPath() const { return path_; }
+const std::string& Material::GetPath() const
+{
+	return path_;
+}
 
-void Material::SetPath(const std::string& path) { path_ = path; }
+void Material::SetPath(const std::string& path)
+{
+	path_ = path;
+}
 
 void Material::Initialize()
 {
@@ -1013,7 +1059,7 @@ std::unordered_set<std::shared_ptr<Pin>> Material::GetRelatedPins(std::shared_pt
 				{
 					if (ret.find(pp) != ret.end())
 					{
-						auto ppins = GetRelatedPins(pp);					
+						auto ppins = GetRelatedPins(pp);
 						ret.insert(ppins.begin(), ppins.end());
 					}
 				}
@@ -1401,11 +1447,20 @@ bool Material::BreakPin(std::shared_ptr<Link> link)
 	return true;
 }
 
-const std::vector<std::shared_ptr<Node>>& Material::GetNodes() const { return nodes_; }
+const std::vector<std::shared_ptr<Node>>& Material::GetNodes() const
+{
+	return nodes_;
+}
 
-const std::vector<std::shared_ptr<Link>>& Material::GetLinks() const { return links_; }
+const std::vector<std::shared_ptr<Link>>& Material::GetLinks() const
+{
+	return links_;
+}
 
-const std::map<std::string, std::shared_ptr<TextureInfo>> Material::GetTextures() const { return textures; }
+const std::map<std::string, std::shared_ptr<TextureInfo>> Material::GetTextures() const
+{
+	return textures;
+}
 
 std::shared_ptr<Node> Material::FindNode(uint64_t guid)
 {
@@ -1599,7 +1654,10 @@ void Material::MakeDirty(std::shared_ptr<Node> node, bool doesUpdateWarnings)
 	}
 }
 
-void Material::ClearDirty(std::shared_ptr<Node> node) { node->isDirtied = false; }
+void Material::ClearDirty(std::shared_ptr<Node> node)
+{
+	node->isDirtied = false;
+}
 
 void Material::MakeContentDirty(std::shared_ptr<Node> node)
 {
@@ -1618,7 +1676,10 @@ void Material::MakeContentDirty(std::shared_ptr<Node> node)
 	UpdateWarnings();
 }
 
-void Material::ClearContentDirty(std::shared_ptr<Node> node) { node->isContentDirtied = false; }
+void Material::ClearContentDirty(std::shared_ptr<Node> node)
+{
+	node->isContentDirtied = false;
+}
 
 void Material::UpdateWarnings()
 {
@@ -1655,7 +1716,10 @@ void Material::LoadFromStr(const char* json, std::shared_ptr<Library> library, c
 	commandManager_->Reset();
 }
 
-std::string Material::SaveAsStr(const char* basePath) { return SaveAsStrInternal(nodes_, links_, basePath, SaveLoadAimType::IO); }
+std::string Material::SaveAsStr(const char* basePath)
+{
+	return SaveAsStrInternal(nodes_, links_, basePath, SaveLoadAimType::IO);
+}
 
 ErrorCode Material::Load(std::vector<uint8_t>& data, std::shared_ptr<Library> library, const char* basePath)
 {

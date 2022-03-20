@@ -20,9 +20,17 @@ struct Vector2
 	float X;
 	float Y;
 
-	Vector2() : X(0.0f), Y(0.0f) {}
+	Vector2()
+		: X(0.0f)
+		, Y(0.0f)
+	{
+	}
 
-	Vector2(float x, float y) : X(x), Y(y) {}
+	Vector2(float x, float y)
+		: X(x)
+		, Y(y)
+	{
+	}
 };
 
 struct Vector3
@@ -31,21 +39,49 @@ struct Vector3
 	float Y;
 	float Z;
 
-	Vector3() : X(0.0f), Y(0.0f), Z(0.0f) {}
+	Vector3()
+		: X(0.0f)
+		, Y(0.0f)
+		, Z(0.0f)
+	{
+	}
 
-	Vector3(float x, float y, float z) : X(x), Y(y), Z(z) {}
+	Vector3(float x, float y, float z)
+		: X(x)
+		, Y(y)
+		, Z(z)
+	{
+	}
 
-	bool operator==(const Vector3& o) const { return X == o.X && Y == o.Y && Z == o.Z; }
+	bool operator==(const Vector3& o) const
+	{
+		return X == o.X && Y == o.Y && Z == o.Z;
+	}
 
-	Vector3 operator+(const Vector3& o) const { return Vector3(X + o.X, Y + o.Y, Z + o.Z); }
+	Vector3 operator+(const Vector3& o) const
+	{
+		return Vector3(X + o.X, Y + o.Y, Z + o.Z);
+	}
 
-	Vector3 operator-(const Vector3& o) const { return Vector3(X - o.X, Y - o.Y, Z - o.Z); }
+	Vector3 operator-(const Vector3& o) const
+	{
+		return Vector3(X - o.X, Y - o.Y, Z - o.Z);
+	}
 
-	Vector3 operator/(const float& o) const { return Vector3(X / o, Y / o, Z / o); }
+	Vector3 operator/(const float& o) const
+	{
+		return Vector3(X / o, Y / o, Z / o);
+	}
 
-	float GetLength() const { return sqrt(GetSquaredLength()); }
+	float GetLength() const
+	{
+		return sqrt(GetSquaredLength());
+	}
 
-	float GetSquaredLength() const { return X * X + Y * Y + Z * Z; }
+	float GetSquaredLength() const
+	{
+		return X * X + Y * Y + Z * Z;
+	}
 
 	Vector3 GetNormal()
 	{
@@ -61,7 +97,10 @@ struct Vector3
 		Z /= length;
 	}
 
-	static float Dot(const Vector3& v1, const Vector3& v2) { return v1.X * v2.X + v1.Y * v2.Y + v1.Z * v2.Z; }
+	static float Dot(const Vector3& v1, const Vector3& v2)
+	{
+		return v1.X * v2.X + v1.Y * v2.Y + v1.Z * v2.Z;
+	}
 
 	static Vector3 Cross(const Vector3& v1, const Vector3& v2)
 	{
@@ -289,8 +328,14 @@ public:
 	Graphics();
 	virtual ~Graphics();
 
-	ar::Manager* GetManager() { return manager; }
-	ar::Compiler* GetCompiler() { return compiler; }
+	ar::Manager* GetManager()
+	{
+		return manager;
+	}
+	ar::Compiler* GetCompiler()
+	{
+		return compiler;
+	}
 };
 
 class Texture
@@ -309,9 +354,15 @@ public:
 
 	uint64_t GetInternal();
 
-	const std::string GetPath() const { return path_; }
+	const std::string GetPath() const
+	{
+		return path_;
+	}
 
-	ar::Texture2D* GetTexture() { return texture_; }
+	ar::Texture2D* GetTexture()
+	{
+		return texture_;
+	}
 	static std::shared_ptr<Texture> Load(std::shared_ptr<Graphics> graphics, const char* path);
 
 	static std::shared_ptr<Texture> Load(std::shared_ptr<Graphics> graphics, Vector2 size, const void* initialData);
@@ -348,11 +399,20 @@ public:
 	Mesh();
 	virtual ~Mesh();
 
-	ar::VertexBuffer* GetVertexBuffer() { return vb; }
+	ar::VertexBuffer* GetVertexBuffer()
+	{
+		return vb;
+	}
 
-	ar::IndexBuffer* GetIndexBuffer() { return ib; }
+	ar::IndexBuffer* GetIndexBuffer()
+	{
+		return ib;
+	}
 
-	int32_t GetIndexCount() { return indexCount; }
+	int32_t GetIndexCount()
+	{
+		return indexCount;
+	}
 
 	static std::shared_ptr<Mesh> Load(std::shared_ptr<Graphics> graphics, const char* path);
 };
@@ -400,7 +460,8 @@ public:
 
 namespace std
 {
-template <> struct hash<EffekseerMaterial::Vector3>
+template <>
+struct hash<EffekseerMaterial::Vector3>
 {
 	size_t operator()(const EffekseerMaterial::Vector3& _Keyval) const noexcept
 	{
@@ -408,7 +469,8 @@ template <> struct hash<EffekseerMaterial::Vector3>
 	}
 };
 
-template <> struct hash < std::tuple<EffekseerMaterial::Vector3, EffekseerMaterial::Vector3>>
+template <>
+struct hash<std::tuple<EffekseerMaterial::Vector3, EffekseerMaterial::Vector3>>
 {
 	size_t operator()(const std::tuple<EffekseerMaterial::Vector3, EffekseerMaterial::Vector3>& _Keyval) const noexcept
 	{

@@ -29,7 +29,10 @@ private:
 	int32_t pixelNormalDirID_ = 0;
 	int32_t effectScaleID_ = 0;
 
-	ValueType GetType(int32_t id) const { return variables_.at(id).Type; }
+	ValueType GetType(int32_t id) const
+	{
+		return variables_.at(id).Type;
+	}
 
 	std::string GetNameWithCast(int32_t id, ValueType type) const
 	{
@@ -60,7 +63,8 @@ private:
 	}
 
 public:
-	TextCompiler(TextExporter* exporter) : exporter_(exporter)
+	TextCompiler(TextExporter* exporter)
+		: exporter_(exporter)
 	{
 		cameraPositionID_ = AddVariable(ValueType::Float3, "cameraPosition.xyz");
 		worldPositionID_ = AddVariable(ValueType::Float3, "worldPos");
@@ -68,11 +72,20 @@ public:
 		effectScaleID_ = AddVariable(ValueType::Float1, "$EFFECTSCALE$");
 	}
 
-	std::string GetName(int32_t id) const { return variables_.at(id).Name; }
+	std::string GetName(int32_t id) const
+	{
+		return variables_.at(id).Name;
+	}
 
-	void Clear() { str_ = std::ostringstream(); }
+	void Clear()
+	{
+		str_ = std::ostringstream();
+	}
 
-	std::string Str() const { return str_.str(); }
+	std::string Str() const
+	{
+		return str_.str();
+	}
 
 	int32_t AddVariable(ValueType type, const std::string& name = "")
 	{
@@ -372,13 +385,25 @@ public:
 		return selfID;
 	}
 
-	int32_t EffectScale() { return effectScaleID_; }
+	int32_t EffectScale()
+	{
+		return effectScaleID_;
+	}
 
-	int32_t CameraPosition() { return cameraPositionID_; }
+	int32_t CameraPosition()
+	{
+		return cameraPositionID_;
+	}
 
-	int32_t WorldPosition() { return worldPositionID_; }
+	int32_t WorldPosition()
+	{
+		return worldPositionID_;
+	}
 
-	int32_t NormalPixelDir() { return pixelNormalDirID_; }
+	int32_t NormalPixelDir()
+	{
+		return pixelNormalDirID_;
+	}
 
 	int32_t DepthFade(int32_t fadeDistance, const std::string& name = "")
 	{
@@ -1843,7 +1868,10 @@ std::string TextExporter::GetUVName(int32_t ind) const
 	return "$UV$2";
 }
 
-std::string TextExporter::GetTimeName() const { return "$TIME$"; }
+std::string TextExporter::GetTimeName() const
+{
+	return "$TIME$";
+}
 
 std::string TextExporter::ConvertType(ValueType dst, ValueType src, const std::string& name) const
 {

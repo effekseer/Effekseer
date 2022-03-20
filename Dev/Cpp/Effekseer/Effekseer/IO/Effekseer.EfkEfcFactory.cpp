@@ -3,9 +3,10 @@
 
 namespace Effekseer
 {
-	
+
 EfkEfcFile::EfkEfcFile(const void* data, int32_t size)
-	: data_(data), size_(size)
+	: data_(data)
+	, size_(size)
 {
 	BinaryReader<true> binaryReader(const_cast<uint8_t*>(reinterpret_cast<const uint8_t*>(data_)), size_);
 
@@ -22,7 +23,8 @@ EfkEfcFile::EfkEfcFile(const void* data, int32_t size)
 
 EfkEfcFile::Chunk EfkEfcFile::ReadChunk(const char* forcc) const
 {
-	if (!IsValid()) return {};
+	if (!IsValid())
+		return {};
 
 	BinaryReader<true> binaryReader(const_cast<uint8_t*>(reinterpret_cast<const uint8_t*>(data_)), size_);
 
@@ -105,7 +107,7 @@ bool EfkEfcProperty::Load(const void* data, int32_t size)
 	{
 		return false;
 	}
-	
+
 	BinaryReader<true> binaryReader(const_cast<uint8_t*>(static_cast<const uint8_t*>(chunk.data)), chunk.size);
 
 	int32_t infoVersion = 0;

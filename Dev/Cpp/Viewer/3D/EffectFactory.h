@@ -17,7 +17,6 @@ class EffectFactory
 	void ClearInvalidEffects();
 
 public:
-
 	EffectFactory(std::shared_ptr<Effekseer::Tool::EffectSetting> setting);
 
 	std::shared_ptr<Effect> LoadEffect(const void* data, int size, const char16_t* path);

@@ -13,8 +13,7 @@ inline To BitCast(From from)
 {
 	static_assert(sizeof(From) == sizeof(To), "number of bits not match");
 
-	union
-	{
+	union {
 		To to;
 		From from;
 	} v;
@@ -28,9 +27,9 @@ inline To BitCast(From from)
 //----------------------------------------------------------------------------------
 inline float Frac(float x)
 {
-    x -= (int)x;
+	x -= (int)x;
 	int32_t ofs = (BitCast<int32_t>(x) >> 31) & 0x3F800000;
-    return x + BitCast<float>(ofs);
+	return x + BitCast<float>(ofs);
 }
 
 //----------------------------------------------------------------------------------

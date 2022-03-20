@@ -94,8 +94,7 @@ public:
 	ScalingState scaling_values;
 
 	// 描画
-	union
-	{
+	union {
 		EffectNodeSprite::InstanceValues sprite;
 		EffectNodeRibbon::InstanceValues ribbon;
 		EffectNodeRing::InstanceValues ring;

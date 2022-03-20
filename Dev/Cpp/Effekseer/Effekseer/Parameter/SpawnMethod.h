@@ -55,8 +55,7 @@ struct ParameterGenerationLocation
 		Order = 1,
 	};
 
-	union
-	{
+	union {
 		struct
 		{
 			random_vector3d location;
@@ -327,37 +326,37 @@ struct ParameterGenerationLocation
 					if (modelType == ParameterGenerationLocation::MODELTYPE_RANDOM)
 					{
 						emitter = modelRef->GetEmitter(&rand,
-													parentTime,
-													coordinateSystem,
-													magnification);
+													   parentTime,
+													   coordinateSystem,
+													   magnification);
 					}
 					else if (modelType == ParameterGenerationLocation::MODELTYPE_VERTEX)
 					{
 						emitter = modelRef->GetEmitterFromVertex(instanceNumber,
-															  parentTime,
-															  coordinateSystem,
-															  magnification);
+																 parentTime,
+																 coordinateSystem,
+																 magnification);
 					}
 					else if (modelType == ParameterGenerationLocation::MODELTYPE_VERTEX_RANDOM)
 					{
 						emitter = modelRef->GetEmitterFromVertex(&rand,
-															  parentTime,
-															  coordinateSystem,
-															  magnification);
+																 parentTime,
+																 coordinateSystem,
+																 magnification);
 					}
 					else if (modelType == ParameterGenerationLocation::MODELTYPE_FACE)
 					{
 						emitter = modelRef->GetEmitterFromFace(instanceNumber,
-															parentTime,
-															coordinateSystem,
-															magnification);
+															   parentTime,
+															   coordinateSystem,
+															   magnification);
 					}
 					else if (modelType == ParameterGenerationLocation::MODELTYPE_FACE_RANDOM)
 					{
 						emitter = modelRef->GetEmitterFromFace(&rand,
-															parentTime,
-															coordinateSystem,
-															magnification);
+															   parentTime,
+															   coordinateSystem,
+															   magnification);
 					}
 
 					ret = SIMD::Mat43f::Translation(emitter.Position);

@@ -365,7 +365,7 @@ void ServerImplemented::Update(ManagerRef* managers, int32_t managerCount, Reloa
 				else
 				{
 					m_effects[key].EffectPtr->Reload(managers, managerCount, data_.data(), (int32_t)data_.size(), nullptr, reloadingThreadType);
-				}	
+				}
 			}
 		}
 
@@ -389,7 +389,6 @@ void ServerImplemented::SetMaterialPath(const char16_t* materialPath)
 }
 
 } // namespace Effekseer
-
 
 #endif // #if !( defined(_PSVITA) || defined(_XBOXONE) )
 #endif

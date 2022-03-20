@@ -522,8 +522,7 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param, const Effe
 	EffekseerRenderer::CalculateAlignedTextureInformation(param.Format, {param.Size[0], param.Size[1]}, sizePerWidth, height);
 
 	const int32_t blockSize = 4;
-	auto aligned = [](int32_t size, int32_t alignement) -> int32_t
-	{
+	auto aligned = [](int32_t size, int32_t alignement) -> int32_t {
 		return ((size + alignement - 1) / alignement) * alignement;
 	};
 

@@ -116,7 +116,7 @@ enum class NodeType
 	Clamp,
 	DotProduct,
 	CrossProduct,
-	Normalize,	//! 1500
+	Normalize, //! 1500
 	LinearInterpolate,
 
 	OneMinus,
@@ -139,7 +139,6 @@ enum class NodeType
 	WorldPosition, //! 1500
 	VertexColor,
 	ObjectScale, //! 1500
-	
 
 	CustomData1,
 	CustomData2,
@@ -147,7 +146,7 @@ enum class NodeType
 	Fresnel,
 	Rotator,
 	PolarCoords,
-	
+
 	DepthFade,
 
 	Comment,
@@ -202,7 +201,8 @@ inline int GetElementCount(ValueType vt)
 class StringHelper
 {
 public:
-	template <typename T> static std::vector<std::basic_string<T>> Split(const std::basic_string<T>& s, T delim)
+	template <typename T>
+	static std::vector<std::basic_string<T>> Split(const std::basic_string<T>& s, T delim)
 	{
 		std::vector<std::basic_string<T>> elems;
 
@@ -243,7 +243,8 @@ public:
 		return target;
 	}
 
-	template <typename T, typename U> static std::basic_string<T> To(const U* str)
+	template <typename T, typename U>
+	static std::basic_string<T> To(const U* str)
 	{
 		std::basic_string<T> ret;
 		size_t len = 0;
@@ -266,7 +267,8 @@ public:
 class PathHelper
 {
 private:
-	template <typename T> static std::basic_string<T> Normalize(const std::vector<std::basic_string<T>>& paths)
+	template <typename T>
+	static std::basic_string<T> Normalize(const std::vector<std::basic_string<T>>& paths)
 	{
 		std::vector<std::basic_string<T>> elems;
 
@@ -305,7 +307,8 @@ private:
 	}
 
 public:
-	template <typename T> static std::basic_string<T> Normalize(const std::basic_string<T>& path)
+	template <typename T>
+	static std::basic_string<T> Normalize(const std::basic_string<T>& path)
 	{
 		if (path.size() == 0)
 			return path;
@@ -316,7 +319,8 @@ public:
 		return Normalize(paths);
 	}
 
-	template <typename T> static std::basic_string<T> Relative(const std::basic_string<T>& targetPath, const std::basic_string<T>& basePath)
+	template <typename T>
+	static std::basic_string<T> Relative(const std::basic_string<T>& targetPath, const std::basic_string<T>& basePath)
 	{
 		if (basePath.size() == 0 || targetPath.size() == 0)
 		{
@@ -366,7 +370,8 @@ public:
 		return ret;
 	}
 
-	template <typename T> static std::basic_string<T> Absolute(const std::basic_string<T>& targetPath, const std::basic_string<T>& basePath)
+	template <typename T>
+	static std::basic_string<T> Absolute(const std::basic_string<T>& targetPath, const std::basic_string<T>& basePath)
 	{
 		if (targetPath == StringHelper::To<T>(""))
 			return StringHelper::To<T>("");

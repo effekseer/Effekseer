@@ -3,18 +3,31 @@
 namespace EffekseerMaterial
 {
 DelegateCommand::DelegateCommand(const std::function<void()>& execute, const std::function<void()>& unexecute)
-	: execute(execute), unexecute(unexecute)
+	: execute(execute)
+	, unexecute(unexecute)
 {
 }
 
-DelegateCommand::~DelegateCommand() {}
+DelegateCommand::~DelegateCommand()
+{
+}
 
-void DelegateCommand::Execute() { execute(); }
+void DelegateCommand::Execute()
+{
+	execute();
+}
 
-void DelegateCommand::Unexecute() { unexecute(); }
+void DelegateCommand::Unexecute()
+{
+	unexecute();
+}
 
-CommandCollection::CommandCollection() {}
-CommandCollection::~CommandCollection() {}
+CommandCollection::CommandCollection()
+{
+}
+CommandCollection::~CommandCollection()
+{
+}
 
 void CommandCollection::AddCommand(std::shared_ptr<ICommand> command)
 {
@@ -138,8 +151,14 @@ void CommandManager::Reset()
 	historyID = 0;
 }
 
-void CommandManager::MakeMergeDisabled() { isMergeEnabled = false; }
+void CommandManager::MakeMergeDisabled()
+{
+	isMergeEnabled = false;
+}
 
-uint64_t CommandManager::GetHistoryID() { return historyID; }
+uint64_t CommandManager::GetHistoryID()
+{
+	return historyID;
+}
 
 } // namespace EffekseerMaterial

@@ -7,8 +7,8 @@
 //----------------------------------------------------------------------------------
 #include "Effekseer.Base.Pre.h"
 #include "Effekseer.Resource.h"
-#include "Model/ProceduralModelGenerator.h"
 #include "Model//ProceduralModelParameter.h"
+#include "Model/ProceduralModelGenerator.h"
 #include <algorithm>
 
 //----------------------------------------------------------------------------------
@@ -121,7 +121,6 @@ public:
 	}
 
 private:
-
 	template <typename T>
 	struct LoadCounted
 	{

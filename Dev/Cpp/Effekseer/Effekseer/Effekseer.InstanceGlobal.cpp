@@ -82,7 +82,7 @@ void InstanceGlobal::AddInputTriggerCount(uint32_t index)
 	if (index < m_inputTriggerCounts.size())
 	{
 		m_inputTriggerCounts[index] = (uint8_t)Min(
-			(uint32_t)m_inputTriggerCounts[index] + 1, 
+			(uint32_t)m_inputTriggerCounts[index] + 1,
 			(uint32_t)std::numeric_limits<uint8_t>::max());
 	}
 }

@@ -16,7 +16,6 @@ class Grid
 	Grid(Effekseer::Backend::GraphicsDeviceRef graphicsDevice);
 
 public:
-	
 	static Grid* Create(Effekseer::Backend::GraphicsDeviceRef graphicsDevice);
 
 public:

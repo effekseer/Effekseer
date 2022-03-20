@@ -1,16 +1,16 @@
 #pragma once
 
+#include <algorithm>
+#include <chrono>
 #include <cstdio>
 #include <functional>
 #include <map>
 #include <memory>
+#include <numeric>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string>
 #include <vector>
-#include <numeric>
-#include <algorithm>
-#include <chrono>
 
 std::string GetDirectoryPath(const char* path);
 
@@ -57,7 +57,8 @@ struct Performance
 {
 	uint32_t min, max, average, median;
 
-	void Print(const char* label) {
+	void Print(const char* label)
+	{
 		printf("%s: Min=%u, Max=%u, Ave=%u, Med:%u\n", label, min, max, average, median);
 	}
 };

@@ -17,8 +17,7 @@ struct TrackSizeParameter
 		Parameter_DWORD = 0x7fffffff,
 	} type;
 
-	union
-	{
+	union {
 		struct
 		{
 			float size;
@@ -33,8 +32,7 @@ public:
 	{
 		struct Size
 		{
-			union
-			{
+			union {
 				struct
 				{
 					float size_;
@@ -102,7 +100,7 @@ public:
 
 	TrailSmoothingType SmoothingType = TrailSmoothingType::Off;
 	TrailTimeType TimeType = TrailTimeType::FirstParticle;
-	
+
 	EffectNodeTrack(Effect* effect, unsigned char*& pos)
 		: EffectNodeImplemented(effect, pos)
 	{

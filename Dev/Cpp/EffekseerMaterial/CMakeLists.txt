@@ -44,4 +44,8 @@ endif()
 
 set(files ${srcs} ${hs})
 
+if(CLANG_FORMAT_ENABLED)
+    clang_format(EffekseerMaterial)
+endif()
+
 FilterFolder("${files}")

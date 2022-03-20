@@ -43,7 +43,10 @@ public:
 	DefaultType Default;
 	std::array<float, 4> DefaultValues;
 
-	PinParameter() { DefaultValues.fill(0.0f); }
+	PinParameter()
+	{
+		DefaultValues.fill(0.0f);
+	}
 };
 
 class NodePropertyParameter
@@ -55,7 +58,10 @@ public:
 	std::array<float, 4> DefaultValues;
 	std::string DefaultStr;
 
-	NodePropertyParameter() { DefaultValues.fill(0.0f); }
+	NodePropertyParameter()
+	{
+		DefaultValues.fill(0.0f);
+	}
 };
 
 class NodeFunctionParameter
@@ -87,13 +93,19 @@ public:
 		return "";
 	}
 
-	virtual WarningType GetWarning(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const { return WarningType::None; }
+	virtual WarningType GetWarning(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const
+	{
+		return WarningType::None;
+	}
 };
 
 class NodeParameterBehaviorComponentTwoInputMath : public NodeParameterBehaviorComponent
 {
 public:
-	NodeParameterBehaviorComponentTwoInputMath() { IsGetHeaderInherited = true; }
+	NodeParameterBehaviorComponentTwoInputMath()
+	{
+		IsGetHeaderInherited = true;
+	}
 
 	std::string
 	GetHeader(std::shared_ptr<Material> material, std::shared_ptr<NodeParameter> parameter, std::shared_ptr<Node> node) const override;
@@ -102,7 +114,10 @@ public:
 class NodeParameterBehaviorComponentMask : public NodeParameterBehaviorComponent
 {
 public:
-	NodeParameterBehaviorComponentMask() { IsGetHeaderInherited = true; }
+	NodeParameterBehaviorComponentMask()
+	{
+		IsGetHeaderInherited = true;
+	}
 
 	std::string
 	GetHeader(std::shared_ptr<Material> material, std::shared_ptr<NodeParameter> parameter, std::shared_ptr<Node> node) const override;
@@ -111,8 +126,9 @@ public:
 class NodeParameterBehaviorComponentParameter : public NodeParameterBehaviorComponent
 {
 public:
-	NodeParameterBehaviorComponentParameter() {
-		IsGetHeaderInherited = true; 
+	NodeParameterBehaviorComponentParameter()
+	{
+		IsGetHeaderInherited = true;
 		IsGetWarningInherited = true;
 	}
 
@@ -128,7 +144,11 @@ private:
 	int32_t componentCount_ = 0;
 
 public:
-	NodeParameterBehaviorConstantName(int32_t componentCount) : componentCount_(componentCount) { IsGetHeaderInherited = true; }
+	NodeParameterBehaviorConstantName(int32_t componentCount)
+		: componentCount_(componentCount)
+	{
+		IsGetHeaderInherited = true;
+	}
 
 	std::string
 	GetHeader(std::shared_ptr<Material> material, std::shared_ptr<NodeParameter> parameter, std::shared_ptr<Node> node) const override;
@@ -137,7 +157,10 @@ public:
 class NodeParameterBehaviorComponentOutput : public NodeParameterBehaviorComponent
 {
 public:
-	NodeParameterBehaviorComponentOutput() { IsGetIsInputPinEnabledInherited = true; }
+	NodeParameterBehaviorComponentOutput()
+	{
+		IsGetIsInputPinEnabledInherited = true;
+	}
 
 	bool GetIsInputPinEnabled(std::shared_ptr<Material> material,
 							  std::shared_ptr<NodeParameter> parameter,
@@ -262,7 +285,10 @@ public:
 
 	virtual std::string GetHeader(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const;
 
-	virtual WarningType GetWarning(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const { return WarningType::None; }
+	virtual WarningType GetWarning(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const
+	{
+		return WarningType::None;
+	}
 };
 
 class NodeConstant1 : public NodeParameter
@@ -1487,14 +1513,12 @@ public:
 		inputFadeDistanceProp->DefaultValues[0] = 0.0f;
 		Properties.push_back(inputFadeDistanceProp);
 
-
 		auto output = std::make_shared<PinParameter>();
 		output->Name = "Opacity";
 		output->Type = ValueType::Float1;
 		OutputPins.push_back(output);
 	}
 };
-
 
 #ifdef _DEBUG
 class NodeVertexTangentWS : public NodeParameter

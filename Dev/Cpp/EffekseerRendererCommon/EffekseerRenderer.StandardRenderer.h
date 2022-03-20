@@ -217,7 +217,7 @@ struct StandardRendererState
 		// TODO : refactor in 1.7
 		if (renderer->GetExternalShaderSettings() != nullptr)
 		{
-			AlphaBlend = renderer->GetExternalShaderSettings()->Blend;		
+			AlphaBlend = renderer->GetExternalShaderSettings()->Blend;
 		}
 		else if (renderer->GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
 		{
@@ -259,8 +259,7 @@ struct StandardRendererVertexBuffer
 
 	struct
 	{
-		union
-		{
+		union {
 			float Buffer[4];
 
 			struct

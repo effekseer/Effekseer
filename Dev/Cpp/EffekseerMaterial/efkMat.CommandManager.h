@@ -13,10 +13,20 @@ class ICommand
 public:
 	ICommand() = default;
 	virtual ~ICommand() = default;
-	virtual void Execute() {}
-	virtual void Unexecute() {}
-	virtual bool Merge(ICommand* command) { return false; }
-	virtual const char* GetTag() { return nullptr; }
+	virtual void Execute()
+	{
+	}
+	virtual void Unexecute()
+	{
+	}
+	virtual bool Merge(ICommand* command)
+	{
+		return false;
+	}
+	virtual const char* GetTag()
+	{
+		return nullptr;
+	}
 };
 
 class DelegateCommand : public ICommand

@@ -168,31 +168,13 @@ set_target_properties(EffekseerMaterialEditor PROPERTIES LINKER_LANGUAGE CXX)
 
 set(files ${hs} ${srcs} ${srcs_third_imgui_platform})
 
-foreach(FILE ${files}) 
-    # Get the directory of the source file
-    get_filename_component(PARENT_DIR "${FILE}" DIRECTORY)
+set(files ${srcs} ${hs})
 
-    # Remove common directory prefix to make the group
-    string(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}" "" GROUP "${PARENT_DIR}")
+if(CLANG_FORMAT_ENABLED)
+    clang_format(EffekseerMaterialEditor)
+endif()
 
-    # Make sure we are using windows slashes
-    string(REPLACE "/" "\\" GROUP "${GROUP}")
-        
-    # Group into "Source Files" and "Header Files"
-    if ("${FILE}" MATCHES ".*\\.cpp")
-       set(GROUP "${GROUP}")
-    elseif("${FILE}" MATCHES ".*\\.c")
-       set(GROUP "${GROUP}")
-    elseif("${FILE}" MATCHES ".*\\.cxx")
-       set(GROUP "${GROUP}")
-    elseif("${FILE}" MATCHES ".*\\.h")
-       set(GROUP "${GROUP}")
-    elseif("${FILE}" MATCHES ".*\\.mm")
-       set(GROUP "${GROUP}")
-    endif()
-
-    source_group("${GROUP}" FILES "${FILE}")
-endforeach()
+FilterFolder("${files}")
 
 set_target_properties( EffekseerMaterialEditor PROPERTIES RUNTIME_OUTPUT_DIRECTORY  ${CMAKE_SOURCE_DIR}/Dev/release )
 set_target_properties( EffekseerMaterialEditor PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG  ${CMAKE_SOURCE_DIR}/Dev/release )

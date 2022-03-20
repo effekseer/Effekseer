@@ -26,9 +26,15 @@ private:
 public:
 	explicit EfkEfcFile(const void* data, int32_t size);
 
-	bool IsValid() const { return isValid_; }
+	bool IsValid() const
+	{
+		return isValid_;
+	}
 
-	int32_t GetVersion() const { return version_; }
+	int32_t GetVersion() const
+	{
+		return version_;
+	}
 
 	Chunk ReadChunk(const char* forcc) const;
 

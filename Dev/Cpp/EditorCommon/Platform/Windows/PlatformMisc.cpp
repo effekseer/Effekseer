@@ -1,7 +1,7 @@
 #include "../PlatformMisc.h"
 
-#include <windows.h>
 #include <string>
+#include <windows.h>
 
 namespace Effekseer
 {

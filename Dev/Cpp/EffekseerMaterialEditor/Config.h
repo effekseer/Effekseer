@@ -1,8 +1,8 @@
 
 #pragma once
 
-#include <stdint.h>
 #include <GUI/Misc.h>
+#include <stdint.h>
 
 namespace EffekseerMaterial
 {
@@ -11,7 +11,6 @@ class Config
 {
 
 private:
-
 public:
 	Config();
 	~Config();

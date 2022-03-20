@@ -122,25 +122,46 @@ public:
 
 	void UpdateRegion(const Vector2DF& pos, const Vector2DF& size);
 
-	bool GetIsPosDirtied() const { return isPosDirtied_; }
+	bool GetIsPosDirtied() const
+	{
+		return isPosDirtied_;
+	}
 
-	bool GetIsDirtied() const { return isDirtied; }
+	bool GetIsDirtied() const
+	{
+		return isDirtied;
+	}
 
-	bool GetIsContentDirtied() const { return isContentDirtied; }
+	bool GetIsContentDirtied() const
+	{
+		return isContentDirtied;
+	}
 
-	void MakePosDirtied() { isPosDirtied_ = true; }
+	void MakePosDirtied()
+	{
+		isPosDirtied_ = true;
+	}
 
-	void ClearPosDirtied() { isPosDirtied_ = false; }
+	void ClearPosDirtied()
+	{
+		isPosDirtied_ = false;
+	}
 
-	Node() {}
+	Node()
+	{
+	}
 };
 
 class TextureInfo : public std::enable_shared_from_this<TextureInfo>
 {
 public:
-	TextureInfo() {}
+	TextureInfo()
+	{
+	}
 
-	virtual ~TextureInfo() {}
+	virtual ~TextureInfo()
+	{
+	}
 
 	std::string Path;
 	TextureValueType Type = TextureValueType::Color;
@@ -149,9 +170,14 @@ public:
 class CustomDataProperty
 {
 public:
-	CustomDataProperty() { Values.fill(0.0f); }
+	CustomDataProperty()
+	{
+		Values.fill(0.0f);
+	}
 
-	virtual ~CustomDataProperty() {}
+	virtual ~CustomDataProperty()
+	{
+	}
 
 	//! descriptons for other editors
 	std::vector<std::shared_ptr<NodeDescription>> Descriptions;
@@ -277,7 +303,10 @@ public:
 
 	std::array<CustomDataProperty, 2> CustomData;
 
-	std::shared_ptr<CommandManager> GetCommandManager() { return commandManager_; }
+	std::shared_ptr<CommandManager> GetCommandManager()
+	{
+		return commandManager_;
+	}
 };
 
 } // namespace EffekseerMaterial

@@ -9,7 +9,7 @@ class EffekseerFile : public Effekseer::FileInterface
 {
 public:
 	EffekseerFile() = default;
-	
+
 	~EffekseerFile() override = default;
 
 	Effekseer::FileReaderRef OpenRead(const EFK_CHAR* path);
@@ -17,4 +17,4 @@ public:
 	Effekseer::FileWriterRef OpenWrite(const EFK_CHAR* path);
 };
 
-}
+} // namespace Effekseer::Tool

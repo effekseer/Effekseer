@@ -28,7 +28,6 @@ private:
 	Backend::IndexBufferRef ib_;
 	Backend::UniformBufferRef uniformBufferVS_;
 
-
 public:
 	LineRenderer(const Backend::GraphicsDeviceRef graphicsDevice);
 
