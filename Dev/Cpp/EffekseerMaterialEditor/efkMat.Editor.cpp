@@ -18,6 +18,8 @@
 #include <efkMat.StringContainer.h>
 #include <efkMat.TextExporter.h>
 
+#include <ImGradientHDR.h>
+
 #include "../Effekseer/Effekseer/Material/Effekseer.MaterialFile.h"
 #include "../EffekseerMaterialCompiler/OpenGL/EffekseerMaterialCompilerGL.h"
 #include "../EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.MaterialLoader.h"
@@ -85,6 +87,8 @@ void Compile(std::shared_ptr<Graphics> graphics,
 			 std::shared_ptr<Node> node,
 			 std::vector<std::shared_ptr<TextureWithSampler>>& outputTextures,
 			 std::vector<std::shared_ptr<TextExporterUniform>>& outputUniforms,
+			 std::vector<std::shared_ptr<TextExporterGradient>>& gradients,
+			 std::vector<std::shared_ptr<TextExporterGradient>>& fixedGradients,
 			 std::string& vs,
 			 std::string& ps)
 {
@@ -104,6 +108,11 @@ void Compile(std::shared_ptr<Graphics> graphics,
 	efkMaterial.SetTextureCount(result.Textures.size());
 	efkMaterial.SetUniformCount(result.Uniforms.size());
 
+	for (const auto& type : result.RequiredPredefinedMethodTypes)
+	{
+		efkMaterial.RequiredMethods.emplace_back(static_cast<Effekseer::MaterialFile::RequiredPredefinedMethodType>(type));
+	}
+
 	for (size_t i = 0; i < result.Textures.size(); i++)
 	{
 		efkMaterial.SetTextureIndex(i, i);
@@ -116,6 +125,34 @@ void Compile(std::shared_ptr<Graphics> graphics,
 		efkMaterial.SetUniformName(i, result.Uniforms[i]->UniformName.c_str());
 	}
 
+	const auto copyGradient = [&](std::vector<Effekseer::MaterialFile::GradientParameter>& dst, const std::vector<std::shared_ptr<TextExporterGradient>>& src)
+	{
+		dst.resize(src.size());
+
+		for (size_t i = 0; i < dst.size(); i++)
+		{
+			dst[i].Name = src[i]->UniformName;
+			dst[i].Data.ColorCount = src[i]->Defaults.ColorCount;
+			for (size_t j = 0; j < dst[i].Data.Colors.size(); j++)
+			{
+				dst[i].Data.Colors[j].Color = src[i]->Defaults.Colors[j].Color;
+				dst[i].Data.Colors[j].Intensity = src[i]->Defaults.Colors[j].Intensity;
+				dst[i].Data.Colors[j].Position = src[i]->Defaults.Colors[j].Position;
+			}
+
+			dst[i].Data.AlphaCount = src[i]->Defaults.AlphaCount;
+			for (size_t j = 0; j < dst[i].Data.Alphas.size(); j++)
+			{
+				dst[i].Data.Alphas[j].Alpha = src[i]->Defaults.Alphas[j].Alpha;
+				dst[i].Data.Alphas[j].Position = src[i]->Defaults.Alphas[j].Position;
+			}
+		}
+	};
+
+	copyGradient(efkMaterial.Gradients, result.Gradients);
+
+	copyGradient(efkMaterial.FixedGradients, result.FixedGradients);
+
 	auto compiler = ::Effekseer::CreateUniqueReference(new Effekseer::MaterialCompilerGL());
 	auto binary = ::Effekseer::CreateUniqueReference(compiler->Compile(&efkMaterial, 1024, 1024));
 
@@ -125,7 +162,8 @@ void Compile(std::shared_ptr<Graphics> graphics,
 	auto textures = result.Textures;
 	auto removed_it = std::remove_if(textures.begin(),
 									 textures.end(),
-									 [](const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& v) -> bool { return v->Index < 0; });
+									 [](const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& v) -> bool
+									 { return v->Index < 0; });
 
 	if (removed_it != textures.end())
 	{
@@ -135,7 +173,8 @@ void Compile(std::shared_ptr<Graphics> graphics,
 	std::sort(textures.begin(),
 			  textures.end(),
 			  [](const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& a,
-				 const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& b) -> bool { return a->Index < b->Index; });
+				 const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& b) -> bool
+			  { return a->Index < b->Index; });
 
 	for (auto t : textures)
 	{
@@ -148,13 +187,18 @@ void Compile(std::shared_ptr<Graphics> graphics,
 	}
 
 	outputUniforms = result.Uniforms;
+
+	fixedGradients = result.FixedGradients;
+
+	gradients = result.Gradients;
 }
 
 void ExtractUniforms(std::shared_ptr<Graphics> graphics,
 					 std::shared_ptr<Material> material,
 					 std::shared_ptr<Node> node,
 					 std::vector<std::shared_ptr<TextureWithSampler>>& outputTextures,
-					 std::vector<std::shared_ptr<TextExporterUniform>>& outputUniforms)
+					 std::vector<std::shared_ptr<TextExporterUniform>>& outputUniforms,
+					 std::vector<std::shared_ptr<TextExporterGradient>>& outputGradients)
 {
 	outputTextures.clear();
 	outputUniforms.clear();
@@ -167,7 +211,8 @@ void ExtractUniforms(std::shared_ptr<Graphics> graphics,
 	auto textures = result.Textures;
 	auto removed_it = std::remove_if(textures.begin(),
 									 textures.end(),
-									 [](const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& v) -> bool { return v->Index < 0; });
+									 [](const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& v) -> bool
+									 { return v->Index < 0; });
 
 	if (removed_it != textures.end())
 	{
@@ -177,7 +222,8 @@ void ExtractUniforms(std::shared_ptr<Graphics> graphics,
 	std::sort(textures.begin(),
 			  textures.end(),
 			  [](const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& a,
-				 const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& b) -> bool { return a->Index < b->Index; });
+				 const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& b) -> bool
+			  { return a->Index < b->Index; });
 
 	for (auto t : textures)
 	{
@@ -190,6 +236,8 @@ void ExtractUniforms(std::shared_ptr<Graphics> graphics,
 	}
 
 	outputUniforms = result.Uniforms;
+
+	outputGradients = result.Gradients;
 }
 
 NodeUserDataObject::NodeUserDataObject()
@@ -599,7 +647,8 @@ void Editor::CloseContents()
 	auto selectedContent = contents_[selectedContentInd_];
 
 	auto removed_it =
-		std::remove_if(contents_.begin(), contents_.end(), [](std::shared_ptr<EditorContent> d) -> bool { return d->IsClosing; });
+		std::remove_if(contents_.begin(), contents_.end(), [](std::shared_ptr<EditorContent> d) -> bool
+					   { return d->IsClosing; });
 	contents_.erase(removed_it, contents_.end());
 
 	if (selectedContent->IsClosing)
@@ -758,9 +807,12 @@ void Editor::UpdateNodes()
 
 			std::vector<std::shared_ptr<TextExporterUniform>> uniforms;
 			std::vector<std::shared_ptr<TextureWithSampler>> textures;
+			std::vector<std::shared_ptr<TextExporterGradient>> gradients;
+			std::vector<std::shared_ptr<TextExporterGradient>> fixedGradients;
+
 			std::string vs;
 			std::string ps;
-			Compile(graphics_, material, node, textures, uniforms, vs, ps);
+			Compile(graphics_, material, node, textures, uniforms, gradients, fixedGradients, vs, ps);
 
 			// update pin state
 			for (auto behavior : node->Parameter->BehaviorComponents)
@@ -775,7 +827,7 @@ void Editor::UpdateNodes()
 				}
 			}
 
-			preview_->CompileShader(vs, ps, textures, uniforms);
+			preview_->CompileShader(vs, ps, textures, uniforms, gradients, fixedGradients);
 			previewTextureCount_ = textures.size();
 			previewUniformCount_ = uniforms.size();
 		}
@@ -789,10 +841,11 @@ void Editor::UpdateNodes()
 
 			std::vector<std::shared_ptr<TextExporterUniform>> uniforms;
 			std::vector<std::shared_ptr<TextureWithSampler>> textures;
+			std::vector<std::shared_ptr<TextExporterGradient>> gradients;
 
-			ExtractUniforms(graphics_, material, node, textures, uniforms);
+			ExtractUniforms(graphics_, material, node, textures, uniforms, gradients);
 
-			preview_->UpdateUniforms(textures, uniforms);
+			preview_->UpdateUniforms(textures, uniforms, gradients);
 			previewTextureCount_ = textures.size();
 			previewUniformCount_ = uniforms.size();
 		}
@@ -834,9 +887,12 @@ void Editor::UpdateNodes()
 
 			std::vector<std::shared_ptr<TextExporterUniform>> uniforms;
 			std::vector<std::shared_ptr<TextureWithSampler>> textures;
+			std::vector<std::shared_ptr<TextExporterGradient>> gradients;
+			std::vector<std::shared_ptr<TextExporterGradient>> fixedGradients;
+
 			std::string vs;
 			std::string ps;
-			Compile(graphics_, material, node, textures, uniforms, vs, ps);
+			Compile(graphics_, material, node, textures, uniforms, gradients, fixedGradients, vs, ps);
 
 			// update pin state
 			for (auto behavior : node->Parameter->BehaviorComponents)
@@ -851,7 +907,7 @@ void Editor::UpdateNodes()
 				}
 			}
 
-			preview->CompileShader(vs, ps, textures, uniforms);
+			preview->CompileShader(vs, ps, textures, uniforms, gradients, fixedGradients);
 
 			material->ClearDirty(node);
 			material->ClearContentDirty(node);
@@ -866,10 +922,11 @@ void Editor::UpdateNodes()
 
 			std::vector<std::shared_ptr<TextExporterUniform>> uniforms;
 			std::vector<std::shared_ptr<TextureWithSampler>> textures;
+			std::vector<std::shared_ptr<TextExporterGradient>> gradients;
 
-			ExtractUniforms(graphics_, material, node, textures, uniforms);
+			ExtractUniforms(graphics_, material, node, textures, uniforms, gradients);
 
-			preview->UpdateUniforms(textures, uniforms);
+			preview->UpdateUniforms(textures, uniforms, gradients);
 			material->ClearContentDirty(node);
 		}
 
@@ -931,7 +988,8 @@ void Editor::UpdatePopup()
 	// New node
 	if (ImGui::BeginPopup(label_new_node))
 	{
-		auto create_node = [&, this](std::shared_ptr<LibraryContentBase> content) -> void {
+		auto create_node = [&, this](std::shared_ptr<LibraryContentBase> content) -> void
+		{
 			auto nodeParam = content->Create();
 			auto node = material->CreateNode(nodeParam, false);
 			ImVec2 nodePos{floorf(popupPosition.x), floorf(popupPosition.y)};
@@ -972,7 +1030,8 @@ void Editor::UpdatePopup()
 			}
 		};
 
-		auto showContent = [&create_node](std::shared_ptr<LibraryContentBase> c) -> void {
+		auto showContent = [&create_node](std::shared_ptr<LibraryContentBase> c) -> void
+		{
 			auto& nodeTypeName = StringContainer::GetValue((c->Name + "_Node_Name").c_str(), c->Name.c_str());
 
 			if (ImGui::MenuItem(nodeTypeName.c_str()))
@@ -991,7 +1050,8 @@ void Editor::UpdatePopup()
 			}
 		};
 
-		auto isShown = [this](std::shared_ptr<LibraryContentBase> c) -> bool {
+		auto isShown = [this](std::shared_ptr<LibraryContentBase> c) -> bool
+		{
 			if (!c->IsShown)
 			{
 				return false;
@@ -1110,7 +1170,8 @@ void Editor::UpdateCreating()
 	if (ed::BeginCreate(ImColor(255, 255, 255), 2.0f))
 	{
 
-		auto showLabel = [](const char* label, ImColor color) {
+		auto showLabel = [](const char* label, ImColor color)
+		{
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - ImGui::GetTextLineHeight());
 			auto size = ImGui::CalcTextSize(label);
 
@@ -1235,7 +1296,8 @@ void Editor::UpdateDeleting()
 	{
 		bool foundDelete = false;
 
-		auto startCollection = [&foundDelete, &material]() -> void {
+		auto startCollection = [&foundDelete, &material]() -> void
+		{
 			if (!foundDelete)
 			{
 				material->GetCommandManager()->StartCollection();
@@ -1285,7 +1347,8 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 	}
 
 	// Property
-	auto updateProp = [&, node](ValueType type, std::string name, std::shared_ptr<EffekseerMaterial::NodeProperty> p) -> void {
+	auto updateProp = [&, node](ValueType type, std::string name, std::shared_ptr<EffekseerMaterial::NodeProperty> p) -> void
+	{
 		auto floatValues = p->Floats;
 
 		auto nameStr = StringContainer::GetValue((name + "_Name").c_str(), name.c_str());
@@ -1357,7 +1420,8 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 		}
 		else if (type == ValueType::Texture)
 		{
-			auto showPath = [&p]() -> void {
+			auto showPath = [&p]() -> void
+			{
 				if (ImGui::IsItemHovered() && !ImGui::IsItemActive())
 				{
 					ImGui::SetTooltip(p->Str.c_str());
@@ -1491,6 +1555,122 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 					ImGui::EndCombo();
 				}
 			}
+		}
+		else if (type == ValueType::Gradient)
+		{
+			assert(p->GradientData != nullptr);
+
+			ImGradientHDRState state;
+
+			state.ColorCount = p->GradientData->ColorCount;
+
+			for (int i = 0; i < state.ColorCount; i++)
+			{
+				state.Colors[i].Color = p->GradientData->Colors[i].Color;
+				state.Colors[i].Intensity = p->GradientData->Colors[i].Intensity;
+				state.Colors[i].Position = p->GradientData->Colors[i].Position;
+			}
+
+			state.AlphaCount = p->GradientData->AlphaCount;
+
+			for (int i = 0; i < state.AlphaCount; i++)
+			{
+				state.Alphas[i].Alpha = p->GradientData->Alphas[i].Alpha;
+				state.Alphas[i].Position = p->GradientData->Alphas[i].Position;
+			}
+
+			ImGradientHDRTemporaryState tempState;
+
+			ImGui::PushID(node->GUID);
+
+			const int idSelectedMarkerType = 100;
+			const int idSelectedIndex = 101;
+			const int idDraggingMarkerType = 102;
+			const int idDraggingIndex = 103;
+
+			tempState.selectedMarkerType = static_cast<ImGradientHDRMarkerType>(ImGui::GetStateStorage()->GetInt(idSelectedMarkerType, static_cast<int>(ImGradientHDRMarkerType::Unknown)));
+			tempState.selectedIndex = ImGui::GetStateStorage()->GetInt(idSelectedIndex, -1);
+			tempState.draggingMarkerType = static_cast<ImGradientHDRMarkerType>(ImGui::GetStateStorage()->GetInt(idDraggingMarkerType, static_cast<int>(ImGradientHDRMarkerType::Unknown)));
+			tempState.draggingIndex = ImGui::GetStateStorage()->GetInt(idDraggingIndex, -1);
+
+			if (ImGradientHDR(node->GUID, state, tempState))
+			{
+				material->MakeDirty(node);
+			}
+
+			if (tempState.selectedMarkerType == ImGradientHDRMarkerType::Color)
+			{
+				auto selectedColorMarker = state.GetColorMarker(tempState.selectedIndex);
+				if (selectedColorMarker != nullptr)
+				{
+					if(ImGui::ColorEdit3("Color", selectedColorMarker->Color.data(), ImGuiColorEditFlags_Float))
+					{
+						material->MakeDirty(node);
+					}
+
+					if(ImGui::DragFloat("Intensity", &selectedColorMarker->Intensity, 0.1f, 0.0f, 100.0f, "%f", 1.0f))
+					{
+						material->MakeDirty(node);
+					}
+				}
+			}
+
+			if (tempState.selectedMarkerType == ImGradientHDRMarkerType::Alpha)
+			{
+				auto selectedAlphaMarker = state.GetAlphaMarker(tempState.selectedIndex);
+				if (selectedAlphaMarker != nullptr)
+				{
+					if(ImGui::DragFloat("Alpha", &selectedAlphaMarker->Alpha, 0.1f, 0.0f, 1.0f, "%f", 1.0f))
+					{
+						material->MakeDirty(node);
+					}
+				}
+			}
+
+			if (tempState.selectedMarkerType != ImGradientHDRMarkerType::Unknown)
+			{
+				if (ImGui::Button("Delete"))
+				{
+					material->MakeDirty(node);
+
+					if (tempState.selectedMarkerType == ImGradientHDRMarkerType::Color)
+					{
+						state.RemoveColorMarker(tempState.selectedIndex);
+						tempState = ImGradientHDRTemporaryState{};
+					}
+					else if (tempState.selectedMarkerType == ImGradientHDRMarkerType::Alpha)
+					{
+						state.RemoveAlphaMarker(tempState.selectedIndex);
+						tempState = ImGradientHDRTemporaryState{};
+					}
+				}
+			}
+
+			{
+				p->GradientData->ColorCount = state.ColorCount;
+
+				for (int i = 0; i < state.ColorCount; i++)
+				{
+					p->GradientData->Colors[i].Color = state.Colors[i].Color;
+					p->GradientData->Colors[i].Intensity = state.Colors[i].Intensity;
+					p->GradientData->Colors[i].Position = state.Colors[i].Position;
+				}
+
+				p->GradientData->AlphaCount = state.AlphaCount;
+
+				for (int i = 0; i < state.AlphaCount; i++)
+				{
+					p->GradientData->Alphas[i].Alpha = state.Alphas[i].Alpha;
+					p->GradientData->Alphas[i].Position = state.Alphas[i].Position;
+				}
+			}
+
+			ImGui::GetStateStorage()->SetInt(idSelectedMarkerType, static_cast<int>(tempState.selectedMarkerType));
+			ImGui::GetStateStorage()->SetInt(idSelectedIndex, static_cast<int>(tempState.selectedIndex));
+			ImGui::GetStateStorage()->SetInt(idDraggingMarkerType, static_cast<int>(tempState.draggingMarkerType));
+			ImGui::GetStateStorage()->SetInt(idDraggingIndex, static_cast<int>(tempState.draggingIndex));
+
+			ImGui::PopID();
 		}
 		else
 		{
@@ -1666,7 +1846,8 @@ void Editor::UpdateToRecordMovingCommand()
 
 void Editor::UpdateNode(std::shared_ptr<Node> node)
 {
-	auto applyPosition = [&]() -> void {
+	auto applyPosition = [&]() -> void
+	{
 		if (contents_[GetSelectedContentIndex()]->IsLoading || node->GetIsPosDirtied())
 		{
 			ed::SetNodePosition(node->GUID, ImVec2(node->Pos.X, node->Pos.Y));

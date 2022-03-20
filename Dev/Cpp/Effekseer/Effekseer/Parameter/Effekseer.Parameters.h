@@ -8,6 +8,8 @@
 namespace Effekseer
 {
 
+void LoadGradient(Gradient& gradient, uint8_t*& pos, int32_t version);
+
 /**
 	@brief
 	\~English	How to treat an uv of texture type for ribbon and track
@@ -54,37 +56,6 @@ struct FalloffParameter
 		EndColor = Color(255, 255, 255, 255);
 		Pow = 1.0f;
 	}
-};
-
-struct Gradient
-{
-	static const int KeyMax = 8;
-
-	struct ColorKey
-	{
-		float Position;
-		std::array<float, 3> Color;
-		float Intensity;
-	};
-
-	struct AlphaKey
-	{
-		float Position;
-		float Alpha;
-	};
-
-	int ColorCount = 0;
-	int AlphaCount = 0;
-	std::array<ColorKey, KeyMax> Colors;
-	std::array<AlphaKey, KeyMax> Alphas;
-
-	void Load(uint8_t*& pos, int32_t version);
-
-	std::array<float, 4> GetColor(float x) const;
-
-	std::array<float, 4> GetColorAndIntensity(float x) const;
-
-	float GetAlpha(float x) const;
 };
 
 } // namespace Effekseer

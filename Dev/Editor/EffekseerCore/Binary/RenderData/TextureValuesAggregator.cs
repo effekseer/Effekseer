@@ -48,6 +48,11 @@ namespace Effekseer.Binary.RenderData
 			_data.Add(value.GetBytes());
 		}
 
+		public void AddData(byte[] data)
+		{
+			_data.Add(data);
+		}
+
 		public void AddTexIdAndStoreSize(PathForImage image, int number, SortedDictionary<string, int> texAndInd)
 		{
 			var tempTexInfo = new TextureInformation();

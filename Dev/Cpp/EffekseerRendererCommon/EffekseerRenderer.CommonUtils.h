@@ -642,6 +642,8 @@ struct StrideView
 	}
 };
 
+std::array<std::array<float, 4>, 13> ToUniform(const Effekseer::Gradient& gradient);
+
 void CalcBillboard(::Effekseer::BillboardType billboardType,
 				   Effekseer::SIMD::Mat43f& dst,
 				   ::Effekseer::SIMD::Vec3f& s,
@@ -856,6 +858,9 @@ struct MaterialShaderParameterGenerator
 			VertexUserUniformOffset = vsOffset;
 			vsOffset += sizeof(float) * 4 * materialFile.GetUniformCount();
 
+			// TODO : remove magic number
+			vsOffset += sizeof(float) * 4 * 13 * materialFile.Gradients.size();
+
 			VertexShaderUniformBufferSize = vsOffset;
 		}
 
@@ -896,6 +901,9 @@ struct MaterialShaderParameterGenerator
 
 		PixelUserUniformOffset = psOffset;
 		psOffset += sizeof(float) * 4 * materialFile.GetUniformCount();
+
+		// TODO : remove magic number
+		psOffset += sizeof(float) * 4 * 13 * materialFile.Gradients.size();
 
 		PixelShaderUniformBufferSize = psOffset;
 	}

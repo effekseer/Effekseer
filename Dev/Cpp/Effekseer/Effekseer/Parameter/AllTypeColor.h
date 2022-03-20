@@ -91,7 +91,7 @@ public:
 		else if (type == Gradient_)
 		{
 			gradient = std::make_unique<Gradient>();
-			gradient->Load(pos, version);
+			LoadGradient(*gradient, pos, version);
 		}
 	}
 };

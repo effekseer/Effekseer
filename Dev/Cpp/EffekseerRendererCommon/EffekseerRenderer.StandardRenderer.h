@@ -59,6 +59,9 @@ struct StandardRendererState
 	int32_t MaterialUniformCount = 0;
 	std::array<std::array<float, 4>, 16> MaterialUniforms;
 
+	int32_t MaterialGradientCount = 0;
+	std::array<std::array<std::array<float, 4>, 13>, Effekseer::UserGradientSlotMax> MaterialGradients;
+
 	int32_t CustomData1Count = 0;
 	int32_t CustomData2Count = 0;
 
@@ -98,6 +101,7 @@ struct StandardRendererState
 
 		MaterialType = ::Effekseer::RendererMaterialType::Default;
 		MaterialUniformCount = 0;
+		MaterialGradientCount = 0;
 		CustomData1Count = 0;
 		CustomData2Count = 0;
 
@@ -186,6 +190,15 @@ struct StandardRendererState
 				return true;
 		}
 
+		if (MaterialGradientCount != state.MaterialGradientCount)
+			return true;
+
+		for (int32_t i = 0; i < state.MaterialGradientCount; i++)
+		{
+			if (MaterialGradients[i] != state.MaterialGradients[i])
+				return true;
+		}
+
 		if (CustomData1Count != state.CustomData1Count)
 			return true;
 
@@ -241,6 +254,13 @@ struct StandardRendererState
 			for (size_t i = 0; i < MaterialUniformCount; i++)
 			{
 				MaterialUniforms[i] = Collector.MaterialRenderDataPtr->MaterialUniforms[i];
+			}
+
+			MaterialGradientCount =
+				static_cast<int32_t>(Effekseer::Min(Collector.MaterialRenderDataPtr->MaterialGradients.size(), MaterialGradients.size()));
+			for (size_t i = 0; i < MaterialGradientCount; i++)
+			{
+				MaterialGradients[i] = ToUniform(*Collector.MaterialRenderDataPtr->MaterialGradients[i]);
 			}
 		}
 		else
@@ -713,6 +733,12 @@ public:
 				vsOffset += (sizeof(float) * 4);
 			}
 
+			for (size_t i = 0; i < renderState.MaterialGradientCount; i++)
+			{
+				m_renderer->SetVertexBufferToShader(renderState.MaterialGradients[i].data(), sizeof(float) * 4 * 13, vsOffset);
+				vsOffset += (sizeof(float) * 4) * 13;
+			}
+
 			// ps
 			int32_t psOffset = 0;
 			m_renderer->SetPixelBufferToShader(uvInversedMaterial.data(), sizeof(float) * 4, psOffset);
@@ -780,6 +806,12 @@ public:
 			{
 				m_renderer->SetPixelBufferToShader(renderState.MaterialUniforms[i].data(), sizeof(float) * 4, psOffset);
 				psOffset += (sizeof(float) * 4);
+			}
+
+			for (size_t i = 0; i < renderState.MaterialGradientCount; i++)
+			{
+				m_renderer->SetPixelBufferToShader(renderState.MaterialGradients[i].data(), sizeof(float) * 4 * 13, psOffset);
+				psOffset += (sizeof(float) * 4) * 13;
 			}
 		}
 		else if (renderState.MaterialType == ::Effekseer::RendererMaterialType::Lighting)

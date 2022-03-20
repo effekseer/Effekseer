@@ -3,6 +3,7 @@
 #define __EFFEKSEER_MATERIAL_H__
 
 #include "../Effekseer.Base.Pre.h"
+#include "../Parameter/Effekseer.Parameters.h"
 #include "../Utils/BinaryVersion.h"
 #include <array>
 #include <assert.h>
@@ -16,6 +17,18 @@ namespace Effekseer
 
 class MaterialFile
 {
+public:
+	enum class RequiredPredefinedMethodType : int32_t
+	{
+		Gradient = 0,
+	};
+
+	struct GradientParameter
+	{
+		std::string Name;
+		Gradient Data;
+	};
+
 private:
 	const int32_t customDataMinCount_ = 2;
 
@@ -50,10 +63,16 @@ private:
 
 	std::vector<Uniform> uniforms_;
 
-	static const int32_t LatestSupportVersion = MaterialVersion16;
+	static const int32_t LatestSupportVersion = MaterialVersion17Alpha4;
 	static const int32_t OldestSupportVersion = 0;
 
 public:
+	std::vector<GradientParameter> Gradients;
+
+	std::vector<GradientParameter> FixedGradients;
+
+	std::vector<RequiredPredefinedMethodType> RequiredMethods;
+
 	MaterialFile() = default;
 	virtual ~MaterialFile() = default;
 

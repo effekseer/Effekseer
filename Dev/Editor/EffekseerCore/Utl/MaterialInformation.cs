@@ -45,6 +45,8 @@ namespace Effekseer.Utl
 		Version0 = 0,
 		Version15 = 3,
 		Version16 = 1610,
+		Version17Alpha2 = 1700,
+		Version17Alpha4 = 1703,
 	}
 
 	public enum CompiledMaterialVersion : int
@@ -53,6 +55,11 @@ namespace Effekseer.Utl
 		Version15 = 1,
 		Version16 = 1610,
 		Version162 = 1612,
+	}
+
+	public enum MaterialRequiredFunctionType : int
+	{
+		Gradient = 0,
 	}
 
 	/// <summary>
@@ -151,15 +158,21 @@ namespace Effekseer.Utl
 
 	public class MaterialInformation
 	{
-		const MaterialVersion LatestSupportVersion = MaterialVersion.Version16;
+		const MaterialVersion LatestSupportVersion = MaterialVersion.Version17Alpha4;
 
-		public MaterialVersion Version = MaterialVersion.Version16;
+		public MaterialVersion Version = MaterialVersion.Version17Alpha4;
 
 		public TextureInformation[] Textures = new TextureInformation[0];
 
 		public UniformInformation[] Uniforms = new UniformInformation[0];
 
+		public GradientInformation[] Gradients = new GradientInformation[0];
+
+		public GradientInformation[] FixedGradients = new GradientInformation[0];
+
 		public CustomDataInformation[] CustomData = new CustomDataInformation[0];
+
+		public MaterialRequiredFunctionType[] RequiredFunctionTypes = new MaterialRequiredFunctionType[0];
 
 		public UInt64 GUID;
 
@@ -292,6 +305,21 @@ namespace Effekseer.Utl
 
 					reader.Get(ref CustomData2Count);
 
+					if (version >= (int)MaterialVersion.Version17Alpha4)
+					{
+						int requiredCount = 0;
+						reader.Get(ref requiredCount);
+
+						RequiredFunctionTypes = new MaterialRequiredFunctionType[requiredCount];
+
+						for (int i = 0; i < requiredCount; i++)
+						{
+							int temp2 = 0;
+							reader.Get(ref temp2);
+							RequiredFunctionTypes[i] = (MaterialRequiredFunctionType)temp2;
+						}
+					}
+
 					int textureCount = 0;
 					reader.Get(ref textureCount);
 
@@ -365,6 +393,58 @@ namespace Effekseer.Utl
 					}
 
 					Uniforms = uniforms.ToArray();
+
+					if (version >= (int)MaterialVersion.Version17Alpha4)
+					{
+						GradientInformation[] LoadGradient()
+						{
+							int gradientCount = 0;
+							reader.Get(ref gradientCount);
+
+							var gradients = new List<GradientInformation>();
+
+							for (int i = 0; i < gradientCount; i++)
+							{
+								var info = new GradientInformation();
+								info.Data = new Data.Value.Gradient.State();
+
+								reader.Get(ref info.Name, Encoding.UTF8);
+								reader.Get(ref info.UniformName, Encoding.UTF8);
+								reader.Get(ref info.Offset);
+								reader.Get(ref info.Priority);
+
+								int colorCount = 0;
+								reader.Get(ref colorCount);
+
+								info.Data.ColorMarkers = new Data.Value.Gradient.ColorMarker[colorCount];
+								for (int j = 0; j < colorCount; j++)
+								{
+									reader.Get(ref info.Data.ColorMarkers[j].Position);
+									reader.Get(ref info.Data.ColorMarkers[j].ColorR);
+									reader.Get(ref info.Data.ColorMarkers[j].ColorG);
+									reader.Get(ref info.Data.ColorMarkers[j].ColorB);
+									reader.Get(ref info.Data.ColorMarkers[j].Intensity);
+								}
+
+								int alphaCount = 0;
+								reader.Get(ref alphaCount);
+
+								info.Data.AlphaMarkers = new Data.Value.Gradient.AlphaMarker[alphaCount];
+								for (int j = 0; j < alphaCount; j++)
+								{
+									reader.Get(ref info.Data.AlphaMarkers[j].Position);
+									reader.Get(ref info.Data.AlphaMarkers[j].Alpha);
+								}
+
+								gradients.Add(info);
+							}
+
+							return gradients.ToArray();
+						}
+
+						Gradients = LoadGradient();
+						FixedGradients = LoadGradient();
+					}
 				}
 
 				if (buf[0] == 'P' &&
@@ -441,6 +521,30 @@ namespace Effekseer.Utl
 							reader.Get(ref desc, Encoding.UTF8);
 							Uniforms[j].Summaries.Add((Language)lang, name);
 							Uniforms[j].Descriptions.Add((Language)lang, desc);
+						}
+					}
+
+					if (version >= (int)MaterialVersion.Version17Alpha4)
+					{
+						int gradientCount = 0;
+						reader.Get(ref gradientCount);
+
+						for (int j = 0; j < gradientCount; j++)
+						{
+							int count = 0;
+							reader.Get(ref count);
+
+							for (int i = 0; i < count; i++)
+							{
+								int lang = 0;
+								string name = null;
+								string desc = null;
+								reader.Get(ref lang);
+								reader.Get(ref name, Encoding.UTF8);
+								reader.Get(ref desc, Encoding.UTF8);
+								Gradients[j].Summaries.Add((Language)lang, name);
+								Gradients[j].Descriptions.Add((Language)lang, desc);
+							}
 						}
 					}
 				}
@@ -532,6 +636,12 @@ namespace Effekseer.Utl
 				bw.Push(CustomData1Count);
 				bw.Push(CustomData2Count);
 
+				bw.Push(RequiredFunctionTypes.Length);
+				foreach (var type in RequiredFunctionTypes)
+				{
+					bw.Push((int)type);
+				}
+
 				bw.Push(Textures.Length);
 				foreach (var info in Textures)
 				{
@@ -559,6 +669,23 @@ namespace Effekseer.Utl
 					bw.Push(info.DefaultValues[2]);
 					bw.Push(info.DefaultValues[3]);
 				}
+
+				void SaveGradient(GradientInformation[] infos)
+				{
+					bw.Push(infos.Length);
+
+					foreach (var info in infos)
+					{
+						bw.Push(info.Name, Encoding.UTF8);
+						bw.Push(info.UniformName, Encoding.UTF8);
+						bw.Push(info.Offset);
+						bw.Push(info.Priority);
+						bw.PushDirectly(info.Data.ToBinary());
+					}
+				}
+
+				SaveGradient(Gradients);
+				SaveGradient(FixedGradients);
 
 				var binary = bw.GetBinary();
 				writer.Write(Encoding.ASCII.GetBytes("PRM_"));
@@ -605,6 +732,19 @@ namespace Effekseer.Utl
 						bw.Push((int)key);
 						bw.Push(uniform.Summaries[key], Encoding.UTF8);
 						bw.Push(uniform.Descriptions[key], Encoding.UTF8);
+					}
+				}
+
+				bw.Push(Gradients.Length);
+				foreach (var gradient in Gradients)
+				{
+					bw.Push(gradient.Summaries.Count);
+					var keys = gradient.Summaries.Keys.ToArray();
+					foreach (var key in keys)
+					{
+						bw.Push((int)key);
+						bw.Push(gradient.Summaries[key], Encoding.UTF8);
+						bw.Push(gradient.Descriptions[key], Encoding.UTF8);
 					}
 				}
 
@@ -701,6 +841,19 @@ namespace Effekseer.Utl
 			public int Offset;
 			public int Type = 0;
 			public float[] DefaultValues = new float[4];
+			public int Priority = 1;
+
+			public Dictionary<Language, string> Summaries = new Dictionary<Language, string>();
+			public Dictionary<Language, string> Descriptions = new Dictionary<Language, string>();
+		}
+
+		public class GradientInformation
+		{
+			public string Name;
+			public string UniformName;
+			public int Offset;
+
+			public Data.Value.Gradient.State Data;
 			public int Priority = 1;
 
 			public Dictionary<Language, string> Summaries = new Dictionary<Language, string>();

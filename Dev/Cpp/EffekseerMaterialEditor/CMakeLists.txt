@@ -76,6 +76,7 @@ target_link_libraries(
     nfd
     imgui
     imgui-node-editor
+    ImGradientHDR
     debug "${GLFW3_LIB_DEBUG}"
     optimized "${GLFW3_LIB_RELEASE}"
 )

@@ -440,9 +440,12 @@ public:
 	bool CompileShader(std::string& vs,
 					   std::string& ps,
 					   std::vector<std::shared_ptr<TextureWithSampler>> textures,
-					   std::vector<std::shared_ptr<TextExporterUniform>>& uniforms);
+					   std::vector<std::shared_ptr<TextExporterUniform>>& uniforms,
+					   std::vector<std::shared_ptr<TextExporterGradient>>& gradients,
+					   std::vector<std::shared_ptr<TextExporterGradient>>& fixedGradients);
 	bool UpdateUniforms(std::vector<std::shared_ptr<TextureWithSampler>> textures,
-						std::vector<std::shared_ptr<TextExporterUniform>>& uniforms);
+						std::vector<std::shared_ptr<TextExporterUniform>>& uniforms,
+						std::vector<std::shared_ptr<TextExporterGradient>>& gradients);
 	bool UpdateConstantValues(float time, std::array<float, 4> customData1, std::array<float, 4> customData2);
 	void Render();
 
