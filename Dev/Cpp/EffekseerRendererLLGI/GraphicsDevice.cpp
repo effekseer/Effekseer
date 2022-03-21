@@ -30,7 +30,7 @@ VertexBuffer::~VertexBuffer()
 
 bool VertexBuffer::Allocate(int32_t size, bool isDynamic)
 {
-	buffer_ = LLGI::CreateSharedPtr(graphicsDevice_->GetGraphics()->CreateVertexBuffer(size));
+	buffer_ = LLGI::CreateSharedPtr(graphicsDevice_->GetGraphics()->CreateBuffer(LLGI::BufferUsageType::Vertex, size));
 	return true;
 }
 
@@ -81,7 +81,7 @@ IndexBuffer::~IndexBuffer()
 
 bool IndexBuffer::Allocate(int32_t elementCount, int32_t stride)
 {
-	buffer_ = LLGI::CreateSharedPtr(graphicsDevice_->GetGraphics()->CreateIndexBuffer(stride, elementCount));
+	buffer_ = LLGI::CreateSharedPtr(graphicsDevice_->GetGraphics()->CreateBuffer(LLGI::BufferUsageType::Index, stride * elementCount));
 
 	elementCount_ = elementCount;
 	strideType_ = stride == 4 ? Effekseer::Backend::IndexBufferStrideType::Stride4 : Effekseer::Backend::IndexBufferStrideType::Stride2;

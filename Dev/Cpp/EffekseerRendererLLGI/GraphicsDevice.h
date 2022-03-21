@@ -4,10 +4,8 @@
 
 #include <Effekseer.h>
 #include <LLGI.CommandList.h>
-#include <LLGI.ConstantBuffer.h>
+#include <LLGI.Buffer.h>
 #include <LLGI.Graphics.h>
-#include <LLGI.IndexBuffer.h>
-#include <LLGI.VertexBuffer.h>
 #include <assert.h>
 #include <set>
 
@@ -54,7 +52,7 @@ class VertexBuffer
 	  public Effekseer::Backend::VertexBuffer
 {
 private:
-	std::shared_ptr<LLGI::VertexBuffer> buffer_;
+	std::shared_ptr<LLGI::Buffer> buffer_;
 	GraphicsDevice* graphicsDevice_ = nullptr;
 	int32_t size_ = 0;
 	bool isDynamic_ = false;
@@ -76,7 +74,7 @@ public:
 
 	void UpdateData(const void* src, int32_t size, int32_t offset) override;
 
-	LLGI::VertexBuffer* GetBuffer()
+	LLGI::Buffer* GetBuffer()
 	{
 		return buffer_.get();
 	}
@@ -87,7 +85,7 @@ class IndexBuffer
 	  public Effekseer::Backend::IndexBuffer
 {
 private:
-	std::shared_ptr<LLGI::IndexBuffer> buffer_;
+	std::shared_ptr<LLGI::Buffer> buffer_;
 	GraphicsDevice* graphicsDevice_ = nullptr;
 	int32_t stride_ = 0;
 
@@ -108,7 +106,7 @@ public:
 
 	void UpdateData(const void* src, int32_t size, int32_t offset) override;
 
-	LLGI::IndexBuffer* GetBuffer()
+	LLGI::Buffer* GetBuffer()
 	{
 		return buffer_.get();
 	}

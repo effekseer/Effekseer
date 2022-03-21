@@ -1,12 +1,11 @@
 #include "EffectPlatformLLGI.h"
+#include "../3rdParty/LLGI/src/LLGI.Buffer.h"
 #include "../3rdParty/LLGI/src/LLGI.CommandList.h"
 #include "../3rdParty/LLGI/src/LLGI.Graphics.h"
-#include "../3rdParty/LLGI/src/LLGI.IndexBuffer.h"
 #include "../3rdParty/LLGI/src/LLGI.PipelineState.h"
 #include "../3rdParty/LLGI/src/LLGI.Platform.h"
 #include "../3rdParty/LLGI/src/LLGI.Shader.h"
 #include "../3rdParty/LLGI/src/LLGI.Texture.h"
-#include "../3rdParty/LLGI/src/LLGI.VertexBuffer.h"
 
 #include "../../3rdParty/stb/stb_image_write.h"
 
@@ -36,8 +35,8 @@ void EffectPlatformLLGI::CreateResources()
 	depthBuffer_ = graphics_->CreateDepthTexture(depthParam);
 	renderPass_ = graphics_->CreateRenderPass((LLGI::Texture**)&colorBuffer_, 1, depthBuffer_);
 
-	vb_ = graphics_->CreateVertexBuffer(sizeof(SimpleVertex) * 4);
-	ib_ = graphics_->CreateIndexBuffer(2, 6);
+	vb_ = graphics_->CreateBuffer(LLGI::BufferUsageType::Vertex, sizeof(SimpleVertex) * 4);
+	ib_ = graphics_->CreateBuffer(LLGI::BufferUsageType::Index, 2 * 6);
 	auto vb_buf = (SimpleVertex*)vb_->Lock();
 	vb_buf[0].Pos = LLGI::Vec3F(-1.0f, 1.0f, 0.5f);
 	vb_buf[1].Pos = LLGI::Vec3F(1.0f, 1.0f, 0.5f);
@@ -197,7 +196,7 @@ void EffectPlatformLLGI::BeginRendering()
 
 	// check
 	commandList_->SetVertexBuffer(vb_, sizeof(SimpleVertex), 0);
-	commandList_->SetIndexBuffer(ib_);
+	commandList_->SetIndexBuffer(ib_, 2);
 	commandList_->SetPipelineState(pip_);
 	commandList_->SetTexture(
 		checkTexture_, LLGI::TextureWrapMode::Repeat, LLGI::TextureMinMagFilter::Nearest, 0, LLGI::ShaderStageType::Pixel);
@@ -240,7 +239,7 @@ void EffectPlatformLLGI::EndRendering()
 
 	commandList_->BeginRenderPass(currentScreen);
 	commandList_->SetVertexBuffer(vb_, sizeof(SimpleVertex), 0);
-	commandList_->SetIndexBuffer(ib_);
+	commandList_->SetIndexBuffer(ib_, 2);
 	commandList_->SetPipelineState(screenPip_);
 	commandList_->SetTexture(
 		colorBuffer_, LLGI::TextureWrapMode::Repeat, LLGI::TextureMinMagFilter::Nearest, 0, LLGI::ShaderStageType::Pixel);
