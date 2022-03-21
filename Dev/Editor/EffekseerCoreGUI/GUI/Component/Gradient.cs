@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Component
 {
-	class GradientHDR : Control, IParameterControl
+	class Gradient : Control, IParameterControl
 	{
 		int id = -1;
 		int id_popup = -1;
@@ -17,7 +17,7 @@ namespace Effekseer.GUI.Component
 
 		bool isPopupShown = false;
 
-		Data.Value.GradientHDR binding = null;
+		Data.Value.Gradient binding = null;
 
 		swig.GradientHDRState internalState = null;
 		swig.GradientHDRGUIState guiState = null;
@@ -25,7 +25,7 @@ namespace Effekseer.GUI.Component
 
 		public bool EnableUndo { get; set; } = true;
 
-		public Data.Value.GradientHDR Binding
+		public Data.Value.Gradient Binding
 		{
 			get
 			{
@@ -39,7 +39,7 @@ namespace Effekseer.GUI.Component
 			}
 		}
 
-		public GradientHDR()
+		public Gradient()
 		{
 			id = Manager.GetUniqueID();
 			id_popup = Manager.GetUniqueID();
@@ -61,7 +61,7 @@ namespace Effekseer.GUI.Component
 				Binding.OnChanged -= Binding_OnChanged;
 			}
 
-			Binding = o as Data.Value.GradientHDR;
+			Binding = o as Data.Value.Gradient;
 			internalState = new swig.GradientHDRState();
 
 			if (Binding != null)
@@ -193,12 +193,12 @@ namespace Effekseer.GUI.Component
 		}
 		void StoreValue()
 		{
-			var state = new Data.Value.GradientHDR.State();
+			var state = new Data.Value.Gradient.State();
 			CopyState(state, internalState);
 			Binding.SetValue(state, true);
 		}
 
-		unsafe void CopyState(swig.GradientHDRState dst, Data.Value.GradientHDR.State src)
+		unsafe void CopyState(swig.GradientHDRState dst, Data.Value.Gradient.State src)
 		{
 			dst.SetColorCount(src.ColorMarkers.Length);
 			for (int i = 0; i < src.ColorMarkers.Length; i++)
@@ -221,10 +221,10 @@ namespace Effekseer.GUI.Component
 			}
 		}
 
-		unsafe void CopyState(Data.Value.GradientHDR.State dst, swig.GradientHDRState src)
+		unsafe void CopyState(Data.Value.Gradient.State dst, swig.GradientHDRState src)
 		{
-			dst.ColorMarkers = new Data.Value.GradientHDR.ColorMarker[src.GetColorCount()];
-			dst.AlphaMarkers = new Data.Value.GradientHDR.AlphaMarker[src.GetAlphaCount()];
+			dst.ColorMarkers = new Data.Value.Gradient.ColorMarker[src.GetColorCount()];
+			dst.AlphaMarkers = new Data.Value.Gradient.AlphaMarker[src.GetAlphaCount()];
 
 			for (int i = 0; i < src.GetColorCount(); i++)
 			{

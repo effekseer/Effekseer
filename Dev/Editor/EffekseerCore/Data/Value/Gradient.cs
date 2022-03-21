@@ -7,7 +7,7 @@ using Effekseer.Utl;
 
 namespace Effekseer.Data.Value
 {
-	public class GradientHDR
+	public class Gradient
 	{
 		public unsafe struct ColorMarker
 		{
@@ -88,7 +88,7 @@ namespace Effekseer.Data.Value
 
 		public unsafe static XmlElement SaveToElement(XmlDocument doc, string element_name, object o, bool isClip)
 		{
-			var target = o as GradientHDR;
+			var target = o as Gradient;
 
 			var defaultValue = CreateDefault();
 			if (target._value.Equals(defaultValue))
@@ -127,7 +127,7 @@ namespace Effekseer.Data.Value
 
 		public unsafe static void LoadFromElement(XmlElement e, object o, bool isClip)
 		{
-			var target = o as GradientHDR;
+			var target = o as Gradient;
 
 			var colorMarkers = e["ColorMarkers"];
 			var alphaMarkers = e["AlphaMarkers"];
@@ -178,9 +178,9 @@ namespace Effekseer.Data.Value
 			return data.SelectMany(_ => _).ToArray();
 		}
 
-		static GradientHDR()
+		static Gradient()
 		{
-			IO.ExtendSupportedType(typeof(GradientHDR), SaveToElement, LoadFromElement);
+			IO.ExtendSupportedType(typeof(Gradient), SaveToElement, LoadFromElement);
 
 			Command.CommandManager.AddConvertFunction((commands) =>
 			{
@@ -190,7 +190,7 @@ namespace Effekseer.Data.Value
 					return null;
 				}
 
-				if (!(cmds.First().Identifier is GradientHDR))
+				if (!(cmds.First().Identifier is Gradient))
 				{
 					return null;
 				}
@@ -201,7 +201,7 @@ namespace Effekseer.Data.Value
 					return null;
 				}
 
-				var owner = identifers.First() as GradientHDR;
+				var owner = identifers.First() as Gradient;
 
 				var first = cmds.First();
 				var last = cmds.Last();
@@ -249,7 +249,7 @@ namespace Effekseer.Data.Value
 			value.AlphaMarkers[1].Alpha = 1.0f;
 			return value;
 		}
-		public unsafe GradientHDR()
+		public unsafe Gradient()
 		{
 			_value = CreateDefault();
 		}

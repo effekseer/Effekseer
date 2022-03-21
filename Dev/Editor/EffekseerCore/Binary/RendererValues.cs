@@ -502,7 +502,7 @@ namespace Effekseer.Binary
 			Data.Value.ColorWithRandom color_Random,
 			Data.ColorEasingParamater color_Easing,
 			Data.ColorFCurveParameter color_FCurve,
-			Data.Value.GradientHDR gradient = null)
+			Data.Value.Gradient gradient = null)
 		{
 			var colorType = color.Value;
 			if ((colorType == StandardColorType.FCurve && color_FCurve == null) ||

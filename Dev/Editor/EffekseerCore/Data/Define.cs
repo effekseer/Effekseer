@@ -241,7 +241,7 @@ namespace Effekseer.Data
 
 		[Selected(ID = 0, Value = 4)]
 		[IO(Export = true)]
-		public Value.GradientHDR Gradient { get; internal set; } = new Value.GradientHDR();
+		public Value.Gradient Gradient { get; internal set; } = new Value.Gradient();
 	}
 
 	public enum TrackSizeType : int

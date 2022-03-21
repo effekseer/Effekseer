@@ -318,7 +318,7 @@ namespace Effekseer.Data
 
 			[IO(Export = false)]
 			[Shown(Shown = false)]
-			public GradientHDR ColorAll_Gradient { get; private set; } = new GradientHDR();
+			public Gradient ColorAll_Gradient { get; private set; } = new Gradient();
 
 			[Selector(ID = 1)]
 			[Key(key = "RS_Sprite_Color")]

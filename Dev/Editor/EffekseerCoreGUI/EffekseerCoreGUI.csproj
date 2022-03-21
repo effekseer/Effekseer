@@ -112,7 +112,7 @@
     <Compile Include="GUI\Component\FCurveButton.cs" />
     <Compile Include="GUI\Component\Float.cs" />
     <Compile Include="GUI\Component\FloatWithRandom.cs" />
-    <Compile Include="GUI\Component\GradientHDR.cs" />
+    <Compile Include="GUI\Component\Gradient.cs" />
     <Compile Include="GUI\Component\Int.cs" />
     <Compile Include="GUI\Component\Int2.cs" />
     <Compile Include="GUI\Component\IntWithInifinite.cs" />
