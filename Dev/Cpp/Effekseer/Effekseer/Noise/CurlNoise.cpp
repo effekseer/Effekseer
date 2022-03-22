@@ -7,6 +7,10 @@
 namespace Effekseer
 {
 
+const int32_t LightCurlNoise::GridSize;
+const int32_t LightCurlNoise::GridBits;
+const int32_t LightCurlNoise::GridBitMask;
+
 SIMD::Vec3f CurlNoise::Get(SIMD::Vec3f pos) const
 {
 	pos *= Scale;
