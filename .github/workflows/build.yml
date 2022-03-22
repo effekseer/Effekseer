@@ -15,7 +15,7 @@ on:
       - 16x_ex
 
 env:
-  EFFEKSEER_VERSION: 170Alpha1
+  EFFEKSEER_VERSION: 170Alpha2
 
 jobs:
   tests:
