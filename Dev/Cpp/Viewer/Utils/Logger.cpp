@@ -1,7 +1,9 @@
 #include "Logger.h"
 
 #include <Effekseer.h>
+#if defined(_WIN32)
 #include <filesystem>
+#endif
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/spdlog.h>
 
