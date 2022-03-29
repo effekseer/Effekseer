@@ -8,6 +8,8 @@
 
 #pragma comment(lib, "d3dcompiler.lib")
 
+#include "../HLSL/HLSL.h"
+
 namespace Effekseer
 {
 
@@ -46,9 +48,6 @@ static void Serialize(std::vector<uint8_t>& dst, const LLGI::CompilerResult& res
 
 namespace DX12
 {
-
-#define _DIRECTX12 1
-#include "../HLSL/HLSL.h"
 
 } // namespace DX12
 
@@ -127,7 +126,8 @@ CompiledMaterialBinary* MaterialCompilerDX12::Compile(MaterialFile* materialFile
 
 	auto binary = new CompiledMaterialBinaryDX12();
 
-	auto convertToVectorVS = [compiler](const std::string& str) -> std::vector<uint8_t> {
+	auto convertToVectorVS = [compiler](const std::string& str) -> std::vector<uint8_t>
+	{
 		std::vector<uint8_t> ret;
 
 		LLGI::CompilerResult result;
@@ -147,7 +147,8 @@ CompiledMaterialBinary* MaterialCompilerDX12::Compile(MaterialFile* materialFile
 		return ret;
 	};
 
-	auto convertToVectorPS = [compiler](const std::string& str) -> std::vector<uint8_t> {
+	auto convertToVectorPS = [compiler](const std::string& str) -> std::vector<uint8_t>
+	{
 		std::vector<uint8_t> ret;
 
 		LLGI::CompilerResult result;
@@ -167,23 +168,24 @@ CompiledMaterialBinary* MaterialCompilerDX12::Compile(MaterialFile* materialFile
 		return ret;
 	};
 
-	auto saveBinary = [&materialFile, &binary, &convertToVectorVS, &convertToVectorPS, &maximumUniformCount, &maximumTextureCount](MaterialShaderType type) {
-		auto generator = DirectX::ShaderGenerator(DX12::material_common_define,
-												  DX12::material_common_functions,
-												  DX12::material_common_vs_functions,
-												  DX12::material_sprite_vs_pre,
-												  DX12::material_sprite_vs_pre_simple,
-												  DX12::model_vs_pre,
-												  DX12::material_sprite_vs_suf1,
-												  DX12::material_sprite_vs_suf1_simple,
-												  DX12::model_vs_suf1,
-												  DX12::material_sprite_vs_suf2,
-												  DX12::model_vs_suf2,
-												  DX12::g_material_ps_pre,
-												  DX12::g_material_ps_suf1,
-												  DX12::g_material_ps_suf2_lit,
-												  DX12::g_material_ps_suf2_unlit,
-												  DX12::g_material_ps_suf2_refraction,
+	auto saveBinary = [&materialFile, &binary, &convertToVectorVS, &convertToVectorPS, &maximumUniformCount, &maximumTextureCount](MaterialShaderType type)
+	{
+		auto generator = DirectX::ShaderGenerator(HLSL::GetMaterialCommonDefine(HLSL::ShaderType::DirectX12).c_str(),
+												  HLSL::material_common_functions,
+												  HLSL::material_common_vs_functions,
+												  HLSL::material_sprite_vs_pre,
+												  HLSL::material_sprite_vs_pre_simple,
+												  HLSL::GetModelVS_Pre(HLSL::ShaderType::DirectX12).c_str(),
+												  HLSL::material_sprite_vs_suf1,
+												  HLSL::material_sprite_vs_suf1_simple,
+												  HLSL::model_vs_suf1,
+												  HLSL::material_sprite_vs_suf2,
+												  HLSL::model_vs_suf2,
+												  HLSL::GetMaterialPS_Pre(HLSL::ShaderType::DirectX12).c_str(),
+												  HLSL::GetMaterialPS_Suf1(HLSL::ShaderType::DirectX12).c_str(),
+												  HLSL::g_material_ps_suf2_lit,
+												  HLSL::g_material_ps_suf2_unlit,
+												  HLSL::GetMaterialPS_Suf2_Refraction(HLSL::ShaderType::DirectX12).c_str(),
 												  DirectX::ShaderGeneratorTarget::DirectX12);
 
 		auto shader = generator.GenerateShader(materialFile, type, maximumUniformCount, maximumTextureCount, 0, DX12_InstanceCount);
