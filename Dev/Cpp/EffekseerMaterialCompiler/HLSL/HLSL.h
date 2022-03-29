@@ -4,34 +4,68 @@
 Refeence https://github.com/unitycoder/UnityBuiltinShaders/blob/master/CGIncludes/HLSLSupport.cginc
 */
 
-static char* material_common_define = R"(
+#pragma once
+
+namespace Effekseer
+{
+namespace HLSL
+{
+
+enum class ShaderType
+{
+	DirectX9,
+	DirectX11,
+	DirectX12,
+	PSSL,
+	XBOXONE,
+};
+
+inline std::string GetMaterialCommonDefine(ShaderType type)
+{
+	std::stringstream ss;
+
+	ss << R"(
 #define MOD fmod
 #define FRAC frac
 #define LERP lerp
-)"
-
-#if defined(_DIRECTX11) || defined(_DIRECTX12)
-									  R"(
+)";
+	if (type == ShaderType::DirectX11 || type == ShaderType::DirectX12)
+	{
+		ss << R"(
 #define C_LINEAR linear
 #define C_CENTROID centroid
-)"
-#else
-									  R"(
+)";
+	}
+	else
+	{
+		ss << R"(
 #define C_LINEAR
 #define C_CENTROID
-)"
-#endif
+)";
+	}
 
-#if defined(_PSSL)
-R"(
+	if (type == ShaderType::DirectX9)
+	{
+		ss << R"(
+#define POSITION0 POSITION
+#define SV_POSITION POSITION
+#define SV_Target COLOR
+)";
+	}
+
+	if (type == ShaderType::PSSL)
+	{
+		ss << R"(
 #define SV_POSITION S_POSITION
 #define cbuffer ConstantBuffer
 #define SV_Target S_TARGET_OUTPUT
 #define SampleLevel SampleLOD
 #define SV_InstanceID S_INSTANCE_ID
-)"
-#endif
-;
+)";
+	}
+
+	return ss.str();
+}
 
 static char* material_common_functions = R"(
 
@@ -85,16 +119,7 @@ half4 ConvertToScreen(half4 c)
 
 )";
 
-static char* material_common_vs_functions = R"()"
-
-#if defined(_DIRECTX9)
-R"(
-#define POSITION0 POSITION
-#define SV_POSITION POSITION
-)"
-#endif
-
-R"(
+static char* material_common_vs_functions = R"(
 
 float2 GetUV(float2 uv)
 {
@@ -269,7 +294,11 @@ static char* material_sprite_vs_suf2 = R"(
 
 )";
 
-static char* model_vs_pre = R"(
+inline std::string GetModelVS_Pre(ShaderType type)
+{
+	std::stringstream ss;
+
+	ss << R"(
 struct VS_Input
 {
 	float3 Pos		: POSITION0;
@@ -278,22 +307,22 @@ struct VS_Input
 	float3 Tangent		: NORMAL2;
 	float2 UV		: TEXCOORD0;
 	float4 Color		: NORMAL3;
-)"
+)";
 
-#if defined(_DIRECTX9)
-R"(
+	if (type == ShaderType::DirectX9)
+	{
+		ss << R"(
 	float Index : BLENDINDICES0;
-};)"
-
-#elif !defined(DISABLE_INSTANCE)
-
-R"(
+)";
+	}
+	else
+	{
+		ss << R"(
 	uint Index : SV_InstanceID;
-};)"
+)";
+	}
 
-#endif
-
-R"(
+	ss << R"(
 
 struct VS_Output
 {
@@ -312,13 +341,11 @@ struct VS_Output
 };
 
 cbuffer VSConstantBuffer : register(b0) {
+)";
 
-)"
-
-#if defined(_DIRECTX9)
-
-							R"(
-
+	if (type == ShaderType::DirectX9)
+	{
+		ss << R"(
 float4x4 mCameraProj		: register( c0 );
 float4x4 mModel[10]		: register( c4 );
 float4	fUV[10]			: register( c44 );
@@ -327,11 +354,11 @@ float4	fModelColor[10]		: register( c54 );
 float4 mUVInversed		: register(c64);
 float4 predefined_uniform : register(c65);
 float4 cameraPosition : register(c66);
-
-)"
-
-#else
-R"(
+)";
+	}
+	else
+	{
+		ss << R"(
 float4x4 mCameraProj		: register( c0 );
 float4x4 mModel[40]		: register( c4 );
 float4	fUV[40]			: register( c164 );
@@ -340,17 +367,17 @@ float4	fModelColor[40]		: register( c204 );
 float4 mUVInversed		: register(c244);
 float4 predefined_uniform : register(c245);
 float4 cameraPosition : register(c246);
+)";
+	}
 
-)"
-#endif
-
-R"(
+	ss << R"(
 // custom1
 // custom2
 )";
+	return ss.str();
+}
 
 static char* model_vs_suf1 = R"(
-
 
 VS_Output main( const VS_Input Input )
 {
@@ -412,28 +439,25 @@ static char* model_vs_suf2 = R"(
 	return Output;
 }
 
-
 )";
 
-static char* g_material_ps_pre = R"()"
+inline std::string GetMaterialPS_Pre(ShaderType type)
+{
+	std::stringstream ss;
 
-#if defined(_DIRECTX9)
-R"(
-#define SV_Target COLOR
-)"
-#endif
-
-R"(
+	ss << R"(
 struct PS_Input
 {
-)"
+)";
 
-#if defined(_DIRECTX11) || defined(_DIRECTX12) || defined(_XBOXONE) || defined(_PSSL)
-								 R"(
+	if (type != ShaderType::DirectX9)
+	{
+		ss << R"(
 	float4 Position		: SV_POSITION;
-)"
-#endif
-R"(
+)";
+	}
+
+	ss << R"(
 	C_LINEAR C_CENTROID float4 VColor		: COLOR;
 	C_LINEAR C_CENTROID float2 UV1		: TEXCOORD0;
 	C_LINEAR C_CENTROID float2 UV2		: TEXCOORD1;
@@ -446,21 +470,29 @@ R"(
 	//$C_PIN1$
 	//$C_PIN2$
 };
-)"
+)";
 
-#if defined(_DIRECTX9) || defined(_DIRECTX11) || defined(_PSSL)
-								 R"(
+	if (type == ShaderType::DirectX9 || type == ShaderType::DirectX11 || type == ShaderType::PSSL)
+	{
+		ss << R"(
 cbuffer PSConstantBuffer : register(b0) {
 )";
-
-#else
-R"(
+	}
+	else
+	{
+		ss << R"(
 cbuffer PSConstantBuffer : register(b1) {
 )";
+	}
 
-#endif
+	return ss.str();
+}
 
-static char* g_material_ps_suf1 = R"(
+inline std::string GetMaterialPS_Suf1(ShaderType type)
+{
+	std::stringstream ss;
+
+	ss << R"(
 
 float2 GetUV(float2 uv)
 {
@@ -476,17 +508,22 @@ float2 GetUVBack(float2 uv)
 
 float CalcDepthFade(float2 screenUV, float meshZ, float softParticleParam)
 {
-)"
-#if defined(_DIRECTX9)
-R"(
+)";
+
+	if (type == ShaderType::DirectX9)
+	{
+		ss << R"(
 	float backgroundZ = tex2D(efk_depth_sampler, GetUVBack(screenUV)).x;
-)"
-#else
-R"(
+)";
+	}
+	else
+	{
+		ss << R"(
 	float backgroundZ = efk_depth_texture.Sample(efk_depth_sampler, GetUVBack(screenUV)).x;
-)"
-#endif
-R"(
+)";
+	}
+
+	ss << R"(
 	float distance = softParticleParam * predefined_uniform.y;
 	float2 rescale = reconstructionParam1.xy;
 	float4 params = reconstructionParam2;
@@ -577,6 +614,9 @@ float4 main( const PS_Input Input ) : SV_Target
 	screenUV.xy = float2(screenUV.x + 1.0, 1.0 - screenUV.y) * 0.5;
 )";
 
+	return ss.str();
+}
+
 static char* g_material_ps_suf2_unlit = R"(
 
 	float4 Output = float4(emissive, opacity);
@@ -605,7 +645,11 @@ static char* g_material_ps_suf2_lit = R"(
 
 )";
 
-static char* g_material_ps_suf2_refraction = R"(
+inline std::string GetMaterialPS_Suf2_Refraction(ShaderType type)
+{
+	std::stringstream ss;
+
+	ss << R"(
 
 	float airRefraction = 1.0;
 	float3 dir = mul((float3x3)cameraMat, pixelNormalDir);
@@ -616,18 +660,22 @@ static char* g_material_ps_suf2_refraction = R"(
 	distortUV += screenUV;
 	distortUV = GetUVBack(distortUV);	
 
-)"
-#if defined(_DIRECTX9)
-R"(
-	float4 bg = tex2D(efk_background_sampler, distortUV);
-)"
-#else
-R"(
-	float4 bg = efk_background_texture.Sample(efk_background_sampler, distortUV);
-)"
+)";
 
-#endif
-R"( 
+	if (type == ShaderType::DirectX9)
+	{
+		ss << R"(
+	float4 bg = tex2D(efk_background_sampler, distortUV);
+)";
+	}
+	else
+	{
+		ss << R"(
+	float4 bg = efk_background_texture.Sample(efk_background_sampler, distortUV);
+)";
+	}
+
+	ss << R"(
 	float4 Output = bg;
 
 	if(opacityMask <= 0.0) discard;
@@ -637,3 +685,9 @@ R"(
 }
 
 )";
+
+	return ss.str();
+}
+
+} // namespace HLSL
+} // namespace Effekseer
