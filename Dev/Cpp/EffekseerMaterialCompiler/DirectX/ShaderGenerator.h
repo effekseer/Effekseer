@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../Effekseer/Effekseer/Material/Effekseer.MaterialCompiler.h"
+#include <string>
 #include <vector>
 
 #ifdef _WIN32
@@ -28,22 +29,22 @@ enum class ShaderGeneratorTarget
 class ShaderGenerator
 {
 protected:
-	const char* common_define_;
-	const char* common_functions_;
-	const char* common_vs_define_;
-	const char* sprite_vs_pre_;
-	const char* sprite_vs_pre_simple_;
-	const char* model_vs_pre_;
-	const char* sprite_vs_suf1_;
-	const char* sprite_vs_suf1_simple_;
-	const char* model_vs_suf1_;
-	const char* sprite_vs_suf2_;
-	const char* model_vs_suf2_;
-	const char* ps_pre_;
-	const char* ps_suf1_;
-	const char* ps_suf2_lit_;
-	const char* ps_suf2_unlit_;
-	const char* ps_suf2_refraction_;
+	std::string common_define_;
+	std::string common_functions_;
+	std::string common_vs_define_;
+	std::string sprite_vs_pre_;
+	std::string sprite_vs_pre_simple_;
+	std::string model_vs_pre_;
+	std::string sprite_vs_suf1_;
+	std::string sprite_vs_suf1_simple_;
+	std::string model_vs_suf1_;
+	std::string sprite_vs_suf2_;
+	std::string model_vs_suf2_;
+	std::string ps_pre_;
+	std::string ps_suf1_;
+	std::string ps_suf2_lit_;
+	std::string ps_suf2_unlit_;
+	std::string ps_suf2_refraction_;
 	ShaderGeneratorTarget target_;
 
 	std::string Replace(std::string target, std::string from_, std::string to_)
@@ -247,22 +248,22 @@ protected:
 	}
 
 public:
-	ShaderGenerator(const char* common_define,
-					const char* common_functions,
-					const char* common_vs_define,
-					const char* sprite_vs_pre,
-					const char* sprite_vs_pre_simple,
-					const char* model_vs_pre,
-					const char* sprite_vs_suf1,
-					const char* sprite_vs_suf1_simple,
-					const char* model_vs_suf1,
-					const char* sprite_vs_suf2,
-					const char* model_vs_suf2,
-					const char* ps_pre,
-					const char* ps_suf1,
-					const char* ps_suf2_lit,
-					const char* ps_suf2_unlit,
-					const char* ps_suf2_refraction,
+	ShaderGenerator(const std::string& common_define,
+					const std::string& common_functions,
+					const std::string& common_vs_define,
+					const std::string& sprite_vs_pre,
+					const std::string& sprite_vs_pre_simple,
+					const std::string& model_vs_pre,
+					const std::string& sprite_vs_suf1,
+					const std::string& sprite_vs_suf1_simple,
+					const std::string& model_vs_suf1,
+					const std::string& sprite_vs_suf2,
+					const std::string& model_vs_suf2,
+					const std::string& ps_pre,
+					const std::string& ps_suf1,
+					const std::string& ps_suf2_lit,
+					const std::string& ps_suf2_unlit,
+					const std::string& ps_suf2_refraction,
 					ShaderGeneratorTarget target)
 		: common_define_(common_define)
 		, common_functions_(common_functions)

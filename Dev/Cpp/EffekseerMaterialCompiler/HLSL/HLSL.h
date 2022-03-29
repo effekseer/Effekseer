@@ -323,6 +323,7 @@ struct VS_Input
 	}
 
 	ss << R"(
+};
 
 struct VS_Output
 {
