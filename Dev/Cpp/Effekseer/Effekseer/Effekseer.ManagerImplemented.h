@@ -39,6 +39,7 @@ private:
 		bool DoUseBaseMatrix;
 		bool GoingToStop;
 		bool GoingToStopRoot;
+		bool AreChildrenOfRootGenerated = false;
 		EffectInstanceRemovingCallback RemovingCallback;
 
 		Matrix43 Rotation;
