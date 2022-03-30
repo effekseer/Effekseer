@@ -562,8 +562,7 @@ namespace Effekseer.GUI
 				IsChanged = false;
 			}
 
-			random_seed = rand.Next(0, 0xffff);
-			EffectRenderer.RandomSeed = random_seed;
+			RenewRandomSeed();
 			EffectRenderer.PlayEffect();
 			IsPlaying = true;
 
@@ -572,6 +571,12 @@ namespace Effekseer.GUI
 				StepEffectFrame(Core.StartFrame);
 			}
 			current = Core.StartFrame;
+		}
+
+		private unsafe void RenewRandomSeed()
+		{
+			random_seed = rand.Next(0, 0xffff);
+			EffectRenderer.RandomSeed = random_seed;
 		}
 
 		/// <summary>
@@ -635,6 +640,7 @@ namespace Effekseer.GUI
 					else if ((int)current > (int)new_frame)
 					{
 						EffectRenderer.ResetEffect();
+						RenewRandomSeed();
 						EffectRenderer.PlayEffect();
 						StepEffectFrame((int)new_frame);
 					}
