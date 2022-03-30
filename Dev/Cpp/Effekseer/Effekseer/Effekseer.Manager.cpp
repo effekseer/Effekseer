@@ -337,7 +337,7 @@ void ManagerImplemented::ExecuteEvents()
 			}
 		}
 
-		if (ds.second.GoingToStopRoot)
+		if (ds.second.GoingToStopRoot && ds.second.AreChildrenOfRootGenerated)
 		{
 			InstanceContainer* pContainer = ds.second.InstanceContainerPointer;
 
@@ -1421,6 +1421,11 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter)
 				UpdateHandleInternal(drawSet.second);
 			}
 		}
+
+		for (auto& drawSet : m_DrawSets)
+		{
+			drawSet.second.AreChildrenOfRootGenerated = true;
+		}
 	}
 
 	EndUpdate();
@@ -1487,6 +1492,8 @@ void ManagerImplemented::UpdateHandle(Handle handle, float deltaFrame)
 			UpdateInstancesByInstanceGlobal(drawSet);
 
 			UpdateHandleInternal(drawSet);
+
+			drawSet.AreChildrenOfRootGenerated = true;
 		}
 	}
 
@@ -1700,7 +1707,8 @@ void ManagerImplemented::Draw(const Manager::DrawParameter& drawParameter)
 
 	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, GetSetting()->GetCoordinateSystem());
 
-	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void {
+	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void
+	{
 		if (!CanDraw(drawSet, drawParameter, cullingPlanes))
 		{
 			return;
@@ -1755,7 +1763,8 @@ void ManagerImplemented::DrawBack(const Manager::DrawParameter& drawParameter)
 
 	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, GetSetting()->GetCoordinateSystem());
 
-	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void {
+	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void
+	{
 		if (!CanDraw(drawSet, drawParameter, cullingPlanes))
 		{
 			return;
@@ -1804,7 +1813,8 @@ void ManagerImplemented::DrawFront(const Manager::DrawParameter& drawParameter)
 
 	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, GetSetting()->GetCoordinateSystem());
 
-	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void {
+	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void
+	{
 		if (!CanDraw(drawSet, drawParameter, cullingPlanes))
 		{
 			return;
