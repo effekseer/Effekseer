@@ -151,7 +151,8 @@ struct LocationAbsParameter
 {
 	LocationAbsType type = LocationAbsType::None;
 
-	union {
+	union
+	{
 		struct
 		{
 

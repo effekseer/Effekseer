@@ -168,7 +168,8 @@ protected:
 		CullingShape Shape;
 		Vector3D Location;
 
-		union {
+		union
+		{
 			struct
 			{
 			} None;

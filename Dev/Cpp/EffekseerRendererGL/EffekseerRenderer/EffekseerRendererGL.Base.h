@@ -72,13 +72,13 @@ class TextureLoader;
 #endif
 #elif EMSCRIPTEN
 #ifndef NDEBUG
-#define GLCheckError()                                                                                                            \
-	{                                                                                                                             \
-		int __code = glGetError();                                                                                                \
-		if (__code != GL_NO_ERROR)                                                                                                \
-		{                                                                                                                         \
+#define GLCheckError()                                                                                                       \
+	{                                                                                                                        \
+		int __code = glGetError();                                                                                           \
+		if (__code != GL_NO_ERROR)                                                                                           \
+		{                                                                                                                    \
 			EM_ASM_ARGS({ console.log("GLError filename = " + UTF8ToString($0) + " , line = " + $1); }, __FILE__, __LINE__); \
-		}                                                                                                                         \
+		}                                                                                                                    \
 	}
 #else
 #define GLCheckError()

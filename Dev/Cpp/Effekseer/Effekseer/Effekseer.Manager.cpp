@@ -1707,8 +1707,7 @@ void ManagerImplemented::Draw(const Manager::DrawParameter& drawParameter)
 
 	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, GetSetting()->GetCoordinateSystem());
 
-	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void
-	{
+	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void {
 		if (!CanDraw(drawSet, drawParameter, cullingPlanes))
 		{
 			return;
@@ -1763,8 +1762,7 @@ void ManagerImplemented::DrawBack(const Manager::DrawParameter& drawParameter)
 
 	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, GetSetting()->GetCoordinateSystem());
 
-	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void
-	{
+	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void {
 		if (!CanDraw(drawSet, drawParameter, cullingPlanes))
 		{
 			return;
@@ -1813,8 +1811,7 @@ void ManagerImplemented::DrawFront(const Manager::DrawParameter& drawParameter)
 
 	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, GetSetting()->GetCoordinateSystem());
 
-	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void
-	{
+	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void {
 		if (!CanDraw(drawSet, drawParameter, cullingPlanes))
 		{
 			return;

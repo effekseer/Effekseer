@@ -259,7 +259,8 @@ struct StandardRendererVertexBuffer
 
 	struct
 	{
-		union {
+		union
+		{
 			float Buffer[4];
 
 			struct

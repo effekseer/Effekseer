@@ -25,7 +25,8 @@ public:
 		Parameter_DWORD = 0x7fffffff,
 	} type;
 
-	union {
+	union
+	{
 		struct
 		{
 			Color all;
@@ -97,7 +98,8 @@ public:
 
 struct InstanceAllTypeColorState
 {
-	union {
+	union
+	{
 		struct
 		{
 			Color _color;

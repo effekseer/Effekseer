@@ -55,6 +55,8 @@ effekseerHeader.output('Effekseer/Effekseer.h')
 
 effekseerSimdHeader = CreateHeader()
 effekseerSimdHeader.addLine('#pragma once')
+effekseerSimdHeader.addLine('#include "Effekseer.h"')
+effekseerSimdHeader.addLine('')
 effekseerSimdHeader.readLines('Effekseer/Effekseer/SIMD/Base.h')
 effekseerSimdHeader.readLines('Effekseer/Effekseer/SIMD/Float4_Gen.h')
 effekseerSimdHeader.readLines('Effekseer/Effekseer/SIMD/Float4_NEON.h')

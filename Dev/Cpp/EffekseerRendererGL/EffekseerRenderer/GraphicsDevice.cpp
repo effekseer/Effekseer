@@ -1552,7 +1552,7 @@ void GraphicsDevice::BeginRenderPass(Effekseer::Backend::RenderPassRef& renderPa
 	{
 		auto texture = renderPassGL->GetTextures().at(0);
 
-		glViewport(0, 0, texture->GetParameter().Size[0], texture->GetParameter().Size[1]);	
+		glViewport(0, 0, texture->GetParameter().Size[0], texture->GetParameter().Size[1]);
 	}
 
 	GLCheckError();

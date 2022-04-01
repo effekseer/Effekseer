@@ -20,7 +20,7 @@ class MaterialLoader : public ::Effekseer::MaterialLoader
 private:
 	RendererImplementedRef renderer_ = nullptr;
 	::Effekseer::FileInterfaceRef fileInterface_ = nullptr;
-	
+
 	::Effekseer::MaterialRef LoadAcutually(::Effekseer::MaterialFile& materialFile, ::Effekseer::CompiledMaterialBinary* binary);
 
 public:

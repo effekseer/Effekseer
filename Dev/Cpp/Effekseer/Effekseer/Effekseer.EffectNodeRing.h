@@ -19,7 +19,8 @@ struct RingSingleParameter
 		Parameter_DWORD = 0x7fffffff,
 	} type;
 
-	union {
+	union
+	{
 		float fixed;
 		random_float random;
 	};
@@ -39,7 +40,8 @@ struct RingLocationParameter
 		Parameter_DWORD = 0x7fffffff,
 	} type;
 
-	union {
+	union
+	{
 		struct
 		{
 			vector2d location;
@@ -59,7 +61,8 @@ struct RingLocationParameter
 struct RingSingleValues
 {
 	float current;
-	union {
+	union
+	{
 		struct
 		{
 
@@ -78,7 +81,8 @@ struct RingLocationValues
 {
 	SIMD::Vec2f current;
 
-	union {
+	union
+	{
 		struct
 		{
 
