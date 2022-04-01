@@ -87,7 +87,8 @@ struct ModelRendererAdvancedVertexConstantBuffer
 
 	struct
 	{
-		union {
+		union
+		{
 			float Buffer[4];
 
 			struct

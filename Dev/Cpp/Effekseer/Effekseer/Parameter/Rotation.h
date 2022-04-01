@@ -12,7 +12,8 @@ namespace Effekseer
 
 struct RotationState
 {
-	union {
+	union
+	{
 		struct
 		{
 			SIMD::Vec3f rotation;
@@ -39,7 +40,8 @@ struct RotationState
 			float rotation;
 			SIMD::Vec3f axis;
 
-			union {
+			union
+			{
 				struct
 				{
 					float rotation;

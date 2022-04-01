@@ -34,7 +34,8 @@ struct UVParameter
 {
 	UVAnimationType Type = UVAnimationType::Default;
 
-	union {
+	union
+	{
 		struct
 		{
 		} Default;

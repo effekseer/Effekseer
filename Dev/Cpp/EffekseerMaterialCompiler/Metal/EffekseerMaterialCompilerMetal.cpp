@@ -121,7 +121,7 @@ float CalcDepthFade(float2 screenUV, float meshZ, float softParticleParam) { ret
 )";
 
 static const char g_material_model_vs_src_pre[] =
-    R"(
+	R"(
 struct ShaderInput1 {
   float4 a_Position [[attribute(0)]];
   float3 a_Normal [[attribute(1)]];
@@ -157,7 +157,7 @@ struct ShaderUniform1 {
 )";
 
 static const char g_material_model_vs_src_suf1[] =
-    R"(
+	R"(
 vertex ShaderOutput1 main0 (ShaderInput1 i [[stage_in]], constant ShaderUniform1& u [[buffer(0)]], uint instanceIndex [[instance_id]]
 //$IN_TEX$
 )
@@ -194,7 +194,7 @@ vertex ShaderOutput1 main0 (ShaderInput1 i [[stage_in]], constant ShaderUniform1
 )";
 
 static const char g_material_model_vs_src_suf2[] =
-    R"(
+	R"(
     worldPos = worldPos + worldPositionOffset;
 
     o.v_WorldP = worldPos;
@@ -213,7 +213,7 @@ static const char g_material_model_vs_src_suf2[] =
 )";
 
 static const char g_material_sprite_vs_src_pre_simple[] =
-    R"(
+	R"(
 struct ShaderInput1 {
   float4 atPosition [[attribute(0)]];
   float4 atColor [[attribute(1)]];
@@ -242,7 +242,7 @@ struct ShaderUniform1 {
 )";
 
 static const char g_material_sprite_vs_src_pre[] =
-    R"(
+	R"(
 struct ShaderInput1 {
   float4 atPosition [[attribute(0)]];
   float4 atColor [[attribute(1)]];
@@ -278,7 +278,7 @@ struct ShaderUniform1 {
 
 static const char g_material_sprite_vs_src_suf1_simple[] =
 
-    R"(
+	R"(
 vertex ShaderOutput1 main0 (ShaderInput1 i [[stage_in]], constant ShaderUniform1& u [[buffer(0)]]
 //$IN_TEX$
 )
@@ -309,7 +309,7 @@ vertex ShaderOutput1 main0 (ShaderInput1 i [[stage_in]], constant ShaderUniform1
 
 static const char g_material_sprite_vs_src_suf1[] =
 
-    R"(
+	R"(
 vertex ShaderOutput1 main0 (ShaderInput1 i [[stage_in]], constant ShaderUniform1& u [[buffer(0)]]
 //$IN_TEX$
 )
@@ -340,7 +340,7 @@ vertex ShaderOutput1 main0 (ShaderInput1 i [[stage_in]], constant ShaderUniform1
 
 static const char g_material_sprite_vs_src_suf2[] =
 
-    R"(
+	R"(
     worldPos = worldPos + worldPositionOffset;
 
     float4 cameraPos = u.uMatCamera * float4(worldPos, 1.0);
@@ -362,7 +362,7 @@ static const char g_material_sprite_vs_src_suf2[] =
 )";
 
 static const char g_material_fs_src_pre[] =
-    R"(
+	R"(
 struct ShaderInput2 {
   float4 v_VColor [[ centroid_no_perspective ]];
   float2 v_UV1 [[ centroid_no_perspective ]];
@@ -389,7 +389,7 @@ struct ShaderUniform2 {
 )";
 
 static const char g_material_fs_src_suf1[] =
-    R"(
+	R"(
 
 float ReplacedDepthFade(texture2d<float> efk_depth, sampler s_efk_depth, float4 reconstructionParam1, float4 reconstructionParam2, float magnification, float2 screenUV, float meshZ, float softParticleParam)
 {
@@ -496,7 +496,7 @@ fragment ShaderOutput2 main0 (ShaderInput2 i [[stage_in]], constant ShaderUnifor
 )";
 
 static const char g_material_fs_src_suf2_lit[] =
-    R"(
+	R"(
 
     float3 viewDir = normalize(u.cameraPosition.xyz - worldPos);
     float3 diffuse = calcDirectionalLightDiffuseColor(u.lightColor.xyz, baseColor, pixelNormalDir, u.lightDirection.xyz, ambientOcclusion);
@@ -515,7 +515,7 @@ static const char g_material_fs_src_suf2_lit[] =
 )";
 
 static const char g_material_fs_src_suf2_unlit[] =
-    R"(
+	R"(
 
     if(opacityMask <= 0.0) discard_fragment();
     if(opacity <= 0.0) discard_fragment();
@@ -527,7 +527,7 @@ static const char g_material_fs_src_suf2_unlit[] =
 )";
 
 static const char g_material_fs_src_suf2_refraction[] =
-    R"(
+	R"(
     float airRefraction = 1.0;
 
     float3x3 tmpvar_1;
@@ -551,16 +551,16 @@ static const char g_material_fs_src_suf2_refraction[] =
 )";
 
 static const char g_getUV_helper_vs[] =
-"float2(IN.x, u.mUVInversed.x + u.mUVInversed.y * IN.y)";
+	"float2(IN.x, u.mUVInversed.x + u.mUVInversed.y * IN.y)";
 
 static const char g_getUVBack_helper_vs[] =
-"float2(IN.x, u.mUVInversed.z + u.mUVInversed.w * IN.y)";
+	"float2(IN.x, u.mUVInversed.z + u.mUVInversed.w * IN.y)";
 
 static const char g_getUV_helper_fs[] =
-"float2(IN.x, u.mUVInversedBack.x + u.mUVInversedBack.y * IN.y)";
+	"float2(IN.x, u.mUVInversedBack.x + u.mUVInversedBack.y * IN.y)";
 
 static const char g_getUVBack_helper_fs[] =
-"float2(IN.x, u.mUVInversedBack.z + u.mUVInversedBack.w * IN.y)";
+	"float2(IN.x, u.mUVInversedBack.z + u.mUVInversedBack.w * IN.y)";
 
 /*
 static const char g_getUV_helper_vs[] = R"(
@@ -585,295 +585,294 @@ static const char g_getUVBack_helper_fs[] = R"(
 */
 std::string Replace(std::string target, std::string from_, std::string to_)
 {
-    std::string::size_type Pos(target.find(from_));
+	std::string::size_type Pos(target.find(from_));
 
-    while (Pos != std::string::npos)
-    {
-        target.replace(Pos, from_.length(), to_);
-        Pos = target.find(from_, Pos + to_.length());
-    }
+	while (Pos != std::string::npos)
+	{
+		target.replace(Pos, from_.length(), to_);
+		Pos = target.find(from_, Pos + to_.length());
+	}
 
-    return target;
+	return target;
 }
 
 struct ShaderData
 {
-    std::string CodeVS;
-    std::string CodePS;
+	std::string CodeVS;
+	std::string CodePS;
 };
 
 std::string GetType(int32_t i)
 {
-    if (i == 1)
-        return "float";
-    if (i == 2)
-        return "float2";
-    if (i == 3)
-        return "float3";
-    if (i == 4)
-        return "float4";
-    if (i == 16)
-        return "float4x4";
-    assert(0);
-    return "";
+	if (i == 1)
+		return "float";
+	if (i == 2)
+		return "float2";
+	if (i == 3)
+		return "float3";
+	if (i == 4)
+		return "float4";
+	if (i == 16)
+		return "float4x4";
+	assert(0);
+	return "";
 }
 
 std::string GetElement(int32_t i)
 {
-    if (i == 1)
-        return ".x";
-    if (i == 2)
-        return ".xy";
-    if (i == 3)
-        return ".xyz";
-    if (i == 4)
-        return ".xyzw";
-    assert(0);
-    return "";
+	if (i == 1)
+		return ".x";
+	if (i == 2)
+		return ".xy";
+	if (i == 3)
+		return ".xyz";
+	if (i == 4)
+		return ".xyzw";
+	assert(0);
+	return "";
 }
 
 std::string GetUVReplacement(const std::string& varName, int stage)
 {
-    auto helper = (stage == 0)? g_getUV_helper_vs : g_getUV_helper_fs;
-    return Replace(helper, "IN", varName);
+	auto helper = (stage == 0) ? g_getUV_helper_vs : g_getUV_helper_fs;
+	return Replace(helper, "IN", varName);
 }
 
 std::string GetUVBackReplacement(const std::string& varName, int stage)
 {
-    auto helper = (stage == 0)? g_getUVBack_helper_vs : g_getUVBack_helper_fs;
-    return Replace(helper, "IN", varName);
+	auto helper = (stage == 0) ? g_getUVBack_helper_vs : g_getUVBack_helper_fs;
+	return Replace(helper, "IN", varName);
 }
 
 void ExportUniform(std::ostringstream& maincode, int32_t type, const char* name)
 {
-    maincode << "  " << GetType(type) << " " << name << ";" << std::endl;
+	maincode << "  " << GetType(type) << " " << name << ";" << std::endl;
 }
 
 void ExportTexture(std::ostringstream& maincode, const char* name, int& index)
 {
-    maincode << ", texture2d<float> " << name << " [[texture(" << index << ")]],";
-    maincode << "sampler s_" << name << " [[sampler(" << index << ")]]" << std::endl;
-    index++;
+	maincode << ", texture2d<float> " << name << " [[texture(" << index << ")]],";
+	maincode << "sampler s_" << name << " [[sampler(" << index << ")]]" << std::endl;
+	index++;
 }
 
 void ExportHeader(std::ostringstream& maincode, MaterialFile* materialFile, int stage, bool isSprite)
 {
-    maincode << material_common_define;
+	maincode << material_common_define;
 
-    if (stage == 0)
+	if (stage == 0)
 	{
 		maincode << material_common_define_vs;
 	}
 
-    if (stage == 0)
-    {
-        if (isSprite)
-        {
-            if (materialFile->GetIsSimpleVertex())
-            {
-                maincode << g_material_sprite_vs_src_pre_simple;
-            }
-            else
-            {
-                maincode << g_material_sprite_vs_src_pre;
-            }
-        }
-        else
-        {
-            maincode << g_material_model_vs_src_pre;
-        }
-    }
-    else
-    {
-        maincode << g_material_fs_src_pre;
-    }
+	if (stage == 0)
+	{
+		if (isSprite)
+		{
+			if (materialFile->GetIsSimpleVertex())
+			{
+				maincode << g_material_sprite_vs_src_pre_simple;
+			}
+			else
+			{
+				maincode << g_material_sprite_vs_src_pre;
+			}
+		}
+		else
+		{
+			maincode << g_material_model_vs_src_pre;
+		}
+	}
+	else
+	{
+		maincode << g_material_fs_src_pre;
+	}
 }
 
 void ExportMain(
-    std::ostringstream& maincode, MaterialFile* materialFile, int stage, bool isSprite, MaterialShaderType shaderType, const std::string& baseCode, const std::string& textures)
+	std::ostringstream& maincode, MaterialFile* materialFile, int stage, bool isSprite, MaterialShaderType shaderType, const std::string& baseCode, const std::string& textures)
 {
-    std::string suf1;
-    if (stage == 0)
-    {
-        if (isSprite)
-        {
-            if (materialFile->GetIsSimpleVertex())
-            {
-                suf1 = g_material_sprite_vs_src_suf1_simple;
-            }
-            else
-            {
-                suf1 = g_material_sprite_vs_src_suf1;
-            }
-        }
-        else
-        {
-            suf1 = g_material_model_vs_src_suf1;
-        }
-        
-        suf1 = Replace(suf1, "//$IN_TEX$", textures);
-        maincode << suf1;
-        
-        if (materialFile->GetCustomData1Count() > 0)
-        {
-            maincode << GetType(materialFile->GetCustomData1Count()) + " customData1 = ";
-            maincode << (isSprite? "i.atCustomData1" : "u.customData1") + GetElement(materialFile->GetCustomData1Count()) + ";\n";
-            maincode << "o.v_CustomData1 = customData1" + GetElement(materialFile->GetCustomData1Count()) + ";\n";
-        }
+	std::string suf1;
+	if (stage == 0)
+	{
+		if (isSprite)
+		{
+			if (materialFile->GetIsSimpleVertex())
+			{
+				suf1 = g_material_sprite_vs_src_suf1_simple;
+			}
+			else
+			{
+				suf1 = g_material_sprite_vs_src_suf1;
+			}
+		}
+		else
+		{
+			suf1 = g_material_model_vs_src_suf1;
+		}
 
-        if (materialFile->GetCustomData2Count() > 0)
-        {
-            maincode << GetType(materialFile->GetCustomData2Count()) + " customData2 = ";
-            maincode << (isSprite? "i.atCustomData2" : "u.customData2") + GetElement(materialFile->GetCustomData2Count()) + ";\n";
-            maincode << "o.v_CustomData2 = customData2" + GetElement(materialFile->GetCustomData2Count()) + ";\n";
-        }
+		suf1 = Replace(suf1, "//$IN_TEX$", textures);
+		maincode << suf1;
 
-        maincode << baseCode;
+		if (materialFile->GetCustomData1Count() > 0)
+		{
+			maincode << GetType(materialFile->GetCustomData1Count()) + " customData1 = ";
+			maincode << (isSprite ? "i.atCustomData1" : "u.customData1") + GetElement(materialFile->GetCustomData1Count()) + ";\n";
+			maincode << "o.v_CustomData1 = customData1" + GetElement(materialFile->GetCustomData1Count()) + ";\n";
+		}
 
-        if (isSprite)
-        {
-            maincode << g_material_sprite_vs_src_suf2;
-        }
-        else
-        {
-            maincode << g_material_model_vs_src_suf2;
-        }
-    }
-    else
-    {
-        suf1 = g_material_fs_src_suf1;
-        suf1 = Replace(suf1, "//$IN_TEX$", textures);
-        maincode << suf1;
+		if (materialFile->GetCustomData2Count() > 0)
+		{
+			maincode << GetType(materialFile->GetCustomData2Count()) + " customData2 = ";
+			maincode << (isSprite ? "i.atCustomData2" : "u.customData2") + GetElement(materialFile->GetCustomData2Count()) + ";\n";
+			maincode << "o.v_CustomData2 = customData2" + GetElement(materialFile->GetCustomData2Count()) + ";\n";
+		}
 
-        if (materialFile->GetCustomData1Count() > 0)
-        {
-            maincode << GetType(materialFile->GetCustomData1Count()) + " customData1 = i.v_CustomData1;\n";
-        }
+		maincode << baseCode;
 
-        if (materialFile->GetCustomData2Count() > 0)
-        {
-            maincode << GetType(materialFile->GetCustomData2Count()) + " customData2 = i.v_CustomData2;\n";
-        }
+		if (isSprite)
+		{
+			maincode << g_material_sprite_vs_src_suf2;
+		}
+		else
+		{
+			maincode << g_material_model_vs_src_suf2;
+		}
+	}
+	else
+	{
+		suf1 = g_material_fs_src_suf1;
+		suf1 = Replace(suf1, "//$IN_TEX$", textures);
+		maincode << suf1;
 
-        maincode << baseCode;
+		if (materialFile->GetCustomData1Count() > 0)
+		{
+			maincode << GetType(materialFile->GetCustomData1Count()) + " customData1 = i.v_CustomData1;\n";
+		}
 
-        if (shaderType == MaterialShaderType::Refraction || shaderType == MaterialShaderType::RefractionModel)
-        {
-            maincode << g_material_fs_src_suf2_refraction;
-        }
-        else
-        {
-            if (materialFile->GetShadingModel() == Effekseer::ShadingModelType::Lit)
-            {
-                maincode << g_material_fs_src_suf2_lit;
-            }
-            else if (materialFile->GetShadingModel() == Effekseer::ShadingModelType::Unlit)
-            {
-                maincode << g_material_fs_src_suf2_unlit;
-            }
-        }
-    }
+		if (materialFile->GetCustomData2Count() > 0)
+		{
+			maincode << GetType(materialFile->GetCustomData2Count()) + " customData2 = i.v_CustomData2;\n";
+		}
+
+		maincode << baseCode;
+
+		if (shaderType == MaterialShaderType::Refraction || shaderType == MaterialShaderType::RefractionModel)
+		{
+			maincode << g_material_fs_src_suf2_refraction;
+		}
+		else
+		{
+			if (materialFile->GetShadingModel() == Effekseer::ShadingModelType::Lit)
+			{
+				maincode << g_material_fs_src_suf2_lit;
+			}
+			else if (materialFile->GetShadingModel() == Effekseer::ShadingModelType::Unlit)
+			{
+				maincode << g_material_fs_src_suf2_unlit;
+			}
+		}
+	}
 }
 
 ShaderData GenerateShader(MaterialFile* materialFile, MaterialShaderType shaderType, int32_t maximumUniformCount, int32_t maximumTextureCount)
 {
-    bool isSprite = shaderType == MaterialShaderType::Standard || shaderType == MaterialShaderType::Refraction;
-    bool isRefrection =
-        materialFile->GetHasRefraction() && (shaderType == MaterialShaderType::Refraction || shaderType == MaterialShaderType::RefractionModel);
+	bool isSprite = shaderType == MaterialShaderType::Standard || shaderType == MaterialShaderType::Refraction;
+	bool isRefrection =
+		materialFile->GetHasRefraction() && (shaderType == MaterialShaderType::Refraction || shaderType == MaterialShaderType::RefractionModel);
 
-    ShaderData shaderData;
+	ShaderData shaderData;
 
-    for (int stage = 0; stage < 2; stage++)
-    {
-        std::ostringstream maincode;
+	for (int stage = 0; stage < 2; stage++)
+	{
+		std::ostringstream maincode;
 
-        ExportHeader(maincode, materialFile, stage, isSprite);
+		ExportHeader(maincode, materialFile, stage, isSprite);
 
-        std::ostringstream userUniforms;
-        std::ostringstream textures;
-        int t_index = 0;
-        
-        if (!isSprite && stage == 0)
-        {
-            if (materialFile->GetCustomData1Count() > 0)
-            {
-                ExportUniform(userUniforms, 4, "customData1");
-            }
-            if (materialFile->GetCustomData2Count() > 0)
-            {
-                ExportUniform(userUniforms, 4, "customData2");
-            }
-        }
+		std::ostringstream userUniforms;
+		std::ostringstream textures;
+		int t_index = 0;
 
-        int32_t actualTextureCount = std::min(maximumTextureCount, materialFile->GetTextureCount());
+		if (!isSprite && stage == 0)
+		{
+			if (materialFile->GetCustomData1Count() > 0)
+			{
+				ExportUniform(userUniforms, 4, "customData1");
+			}
+			if (materialFile->GetCustomData2Count() > 0)
+			{
+				ExportUniform(userUniforms, 4, "customData2");
+			}
+		}
 
-        for (size_t i = 0; i < actualTextureCount; i++)
-        {
-            //auto textureIndex = materialFile->GetTextureIndex(i);
-            auto textureName = materialFile->GetTextureName(i);
+		int32_t actualTextureCount = std::min(maximumTextureCount, materialFile->GetTextureCount());
 
-            ExportTexture(textures, textureName, t_index);
-        }
+		for (size_t i = 0; i < actualTextureCount; i++)
+		{
+			//auto textureIndex = materialFile->GetTextureIndex(i);
+			auto textureName = materialFile->GetTextureName(i);
 
-        if (materialFile->GetShadingModel() == ::Effekseer::ShadingModelType::Lit && stage == 1)
-        {
-            ExportUniform(userUniforms, 4, "lightDirection");
-            ExportUniform(userUniforms, 4, "lightColor");
-            ExportUniform(userUniforms, 4, "lightAmbientColor");
+			ExportTexture(textures, textureName, t_index);
+		}
 
-            maincode << "#define _MATERIAL_LIT_ 1" << std::endl;
-        }
-        else if (materialFile->GetShadingModel() == ::Effekseer::ShadingModelType::Unlit)
-        {
-        }
+		if (materialFile->GetShadingModel() == ::Effekseer::ShadingModelType::Lit && stage == 1)
+		{
+			ExportUniform(userUniforms, 4, "lightDirection");
+			ExportUniform(userUniforms, 4, "lightColor");
+			ExportUniform(userUniforms, 4, "lightAmbientColor");
 
-        if (isRefrection && stage == 1)
-        {
-            ExportUniform(userUniforms, 16, "cameraMat");
-        }
+			maincode << "#define _MATERIAL_LIT_ 1" << std::endl;
+		}
+		else if (materialFile->GetShadingModel() == ::Effekseer::ShadingModelType::Unlit)
+		{
+		}
 
-        ExportTexture(textures, "efk_background", t_index);
+		if (isRefrection && stage == 1)
+		{
+			ExportUniform(userUniforms, 16, "cameraMat");
+		}
+
+		ExportTexture(textures, "efk_background", t_index);
 		ExportTexture(textures, "efk_depth", t_index);
 
-        for (int32_t i = 0; i < materialFile->GetUniformCount(); i++)
-        {
-            auto uniformName = materialFile->GetUniformName(i);
+		for (int32_t i = 0; i < materialFile->GetUniformCount(); i++)
+		{
+			auto uniformName = materialFile->GetUniformName(i);
 
-            ExportUniform(userUniforms, 4, uniformName);
-        }
+			ExportUniform(userUniforms, 4, uniformName);
+		}
 
-        auto baseCode = std::string(materialFile->GetGenericCode());
-        baseCode = Replace(baseCode, "$F1$", "float");
-        baseCode = Replace(baseCode, "$F2$", "float2");
-        baseCode = Replace(baseCode, "$F3$", "float3");
-        baseCode = Replace(baseCode, "$F4$", "float4");
-        baseCode = Replace(baseCode, "$TIME$", "predefined_uniform.x");
+		auto baseCode = std::string(materialFile->GetGenericCode());
+		baseCode = Replace(baseCode, "$F1$", "float");
+		baseCode = Replace(baseCode, "$F2$", "float2");
+		baseCode = Replace(baseCode, "$F3$", "float3");
+		baseCode = Replace(baseCode, "$F4$", "float4");
+		baseCode = Replace(baseCode, "$TIME$", "predefined_uniform.x");
 		baseCode = Replace(baseCode, "$EFFECTSCALE$", "predefined_uniform.y");
 		baseCode = Replace(baseCode, "$UV$", "uv");
-        baseCode = Replace(baseCode, "$MOD", "mod");
-        
-        
-        // replace uniforms
+		baseCode = Replace(baseCode, "$MOD", "mod");
+
+		// replace uniforms
 		int32_t actualUniformCount = std::min(maximumUniformCount, materialFile->GetUniformCount());
 
-        for (size_t i = 0; i < actualUniformCount; i++)
-        {
-            auto name = materialFile->GetUniformName(i);
-            baseCode = Replace(baseCode, name, std::string("u.") + name);
-        }
+		for (size_t i = 0; i < actualUniformCount; i++)
+		{
+			auto name = materialFile->GetUniformName(i);
+			baseCode = Replace(baseCode, name, std::string("u.") + name);
+		}
 
-        for (size_t i = actualUniformCount; i < materialFile->GetUniformCount(); i++)
+		for (size_t i = actualUniformCount; i < materialFile->GetUniformCount(); i++)
 		{
 			auto name = materialFile->GetUniformName(i);
 			baseCode = Replace(baseCode, name, std::string("float4(0,0,0,0)"));
 		}
 
-        baseCode = Replace(baseCode, "predefined_uniform", std::string("u.") + "predefined_uniform");
-        baseCode = Replace(baseCode, "cameraPosition", std::string("u.") + "cameraPosition");
+		baseCode = Replace(baseCode, "predefined_uniform", std::string("u.") + "predefined_uniform");
+		baseCode = Replace(baseCode, "cameraPosition", std::string("u.") + "cameraPosition");
 
-        // replace textures
-        for (size_t i = 0; i < actualTextureCount; i++)
-        {
+		// replace textures
+		for (size_t i = 0; i < actualTextureCount; i++)
+		{
 			std::string prefix;
 			std::string suffix;
 
@@ -883,97 +882,98 @@ ShaderData GenerateShader(MaterialFile* materialFile, MaterialShaderType shaderT
 				suffix = ",u.predefined_uniform)";
 			}
 
-            auto textureIndex = materialFile->GetTextureIndex(i);
-            auto textureName = std::string(materialFile->GetTextureName(i));
+			auto textureIndex = materialFile->GetTextureIndex(i);
+			auto textureName = std::string(materialFile->GetTextureName(i));
 
-            std::string keyP = "$TEX_P" + std::to_string(textureIndex) + "$";
-            std::string keyS = "$TEX_S" + std::to_string(textureIndex) + "$";
-            
-            std::size_t posP = baseCode.find(keyP);
-            while (posP != std::string::npos)
-            {
-                std::size_t posS = baseCode.find(keyS, posP);
-                if (posS == std::string::npos) break;
-                
-                // get var between prefix and suffix
-                std::size_t varPos = posP + keyP.length();
-                std::string varName = baseCode.substr(varPos, posS - varPos);
+			std::string keyP = "$TEX_P" + std::to_string(textureIndex) + "$";
+			std::string keyS = "$TEX_S" + std::to_string(textureIndex) + "$";
 
-                std::ostringstream texSample;
+			std::size_t posP = baseCode.find(keyP);
+			while (posP != std::string::npos)
+			{
+				std::size_t posS = baseCode.find(keyS, posP);
+				if (posS == std::string::npos)
+					break;
+
+				// get var between prefix and suffix
+				std::size_t varPos = posP + keyP.length();
+				std::string varName = baseCode.substr(varPos, posS - varPos);
+
+				std::ostringstream texSample;
 				texSample << prefix;
-                texSample << textureName << ".sample(s_" << textureName << ", ";
-                texSample << GetUVReplacement(varName, stage) << ")";
+				texSample << textureName << ".sample(s_" << textureName << ", ";
+				texSample << GetUVReplacement(varName, stage) << ")";
 				texSample << suffix;
-                
-                baseCode = baseCode.replace(posP, posS + keyS.length() - posP, texSample.str());
-                posP = baseCode.find(keyP, posP + texSample.str().length());
-            }
-        }
 
-        // invalid texture
-        for (size_t i = actualTextureCount; i < materialFile->GetTextureCount(); i++)
-        {
-            auto textureIndex = materialFile->GetTextureIndex(i);
-            auto textureName = std::string(materialFile->GetTextureName(i));
+				baseCode = baseCode.replace(posP, posS + keyS.length() - posP, texSample.str());
+				posP = baseCode.find(keyP, posP + texSample.str().length());
+			}
+		}
 
-            std::string keyP = "$TEX_P" + std::to_string(textureIndex) + "$";
-            std::string keyS = "$TEX_S" + std::to_string(textureIndex) + "$";
+		// invalid texture
+		for (size_t i = actualTextureCount; i < materialFile->GetTextureCount(); i++)
+		{
+			auto textureIndex = materialFile->GetTextureIndex(i);
+			auto textureName = std::string(materialFile->GetTextureName(i));
 
-            baseCode = Replace(baseCode, keyP, "float4(");
-            baseCode = Replace(baseCode, keyS, ",0.0,1.0)");
-        }
-        
-        // Depth
-        if (stage == 1)
-        {
-            baseCode = Replace(baseCode, "CalcDepthFade(", "ReplacedDepthFade(efk_depth, s_efk_depth, u.reconstructionParam1, u.reconstructionParam2,u.predefined_uniform.y,");
-        }
-        
-        ExportMain(maincode, materialFile, stage, isSprite, shaderType, baseCode, textures.str());
-        
-        maincode.str(Replace(maincode.str(), "//$UNIFORMS$", userUniforms.str()));
-        
-        if (stage == 0)
-        {
-            shaderData.CodeVS = maincode.str();
-        }
-        else
-        {
-            shaderData.CodePS = maincode.str();
-        }
-    }
+			std::string keyP = "$TEX_P" + std::to_string(textureIndex) + "$";
+			std::string keyS = "$TEX_S" + std::to_string(textureIndex) + "$";
 
-    // custom data
-    if (materialFile->GetCustomData1Count() > 0)
-    {
-        if (isSprite)
-        {
-            shaderData.CodeVS =
-                Replace(shaderData.CodeVS, "//$C_IN1$", GetType(materialFile->GetCustomData1Count()) + " atCustomData1 [[attribute(6)]];");
-        }
-        shaderData.CodeVS =
-            Replace(shaderData.CodeVS, "//$C_OUT1$", GetType(materialFile->GetCustomData1Count()) + " v_CustomData1;");
-        shaderData.CodePS =
-            Replace(shaderData.CodePS, "//$C_PIN1$", GetType(materialFile->GetCustomData1Count()) + " v_CustomData1;");
-    }
+			baseCode = Replace(baseCode, keyP, "float4(");
+			baseCode = Replace(baseCode, keyS, ",0.0,1.0)");
+		}
 
-    if (materialFile->GetCustomData2Count() > 0)
-    {
-        if (isSprite)
-        {
-            shaderData.CodeVS =
-                Replace(shaderData.CodeVS, "//$C_IN2$", GetType(materialFile->GetCustomData2Count()) + " atCustomData2 [[attribute(7)]];");
-        }
-        shaderData.CodeVS =
-            Replace(shaderData.CodeVS, "//$C_OUT2$", GetType(materialFile->GetCustomData2Count()) + " v_CustomData2;");
-        shaderData.CodePS =
-            Replace(shaderData.CodePS, "//$C_PIN2$", GetType(materialFile->GetCustomData2Count()) + " v_CustomData2;");
-    }
-    
-    return shaderData;
+		// Depth
+		if (stage == 1)
+		{
+			baseCode = Replace(baseCode, "CalcDepthFade(", "ReplacedDepthFade(efk_depth, s_efk_depth, u.reconstructionParam1, u.reconstructionParam2,u.predefined_uniform.y,");
+		}
+
+		ExportMain(maincode, materialFile, stage, isSprite, shaderType, baseCode, textures.str());
+
+		maincode.str(Replace(maincode.str(), "//$UNIFORMS$", userUniforms.str()));
+
+		if (stage == 0)
+		{
+			shaderData.CodeVS = maincode.str();
+		}
+		else
+		{
+			shaderData.CodePS = maincode.str();
+		}
+	}
+
+	// custom data
+	if (materialFile->GetCustomData1Count() > 0)
+	{
+		if (isSprite)
+		{
+			shaderData.CodeVS =
+				Replace(shaderData.CodeVS, "//$C_IN1$", GetType(materialFile->GetCustomData1Count()) + " atCustomData1 [[attribute(6)]];");
+		}
+		shaderData.CodeVS =
+			Replace(shaderData.CodeVS, "//$C_OUT1$", GetType(materialFile->GetCustomData1Count()) + " v_CustomData1;");
+		shaderData.CodePS =
+			Replace(shaderData.CodePS, "//$C_PIN1$", GetType(materialFile->GetCustomData1Count()) + " v_CustomData1;");
+	}
+
+	if (materialFile->GetCustomData2Count() > 0)
+	{
+		if (isSprite)
+		{
+			shaderData.CodeVS =
+				Replace(shaderData.CodeVS, "//$C_IN2$", GetType(materialFile->GetCustomData2Count()) + " atCustomData2 [[attribute(7)]];");
+		}
+		shaderData.CodeVS =
+			Replace(shaderData.CodeVS, "//$C_OUT2$", GetType(materialFile->GetCustomData2Count()) + " v_CustomData2;");
+		shaderData.CodePS =
+			Replace(shaderData.CodePS, "//$C_PIN2$", GetType(materialFile->GetCustomData2Count()) + " v_CustomData2;");
+	}
+
+	return shaderData;
 }
 
-} // namespace GL
+} // namespace Metal
 
 } // namespace Effekseer
 
@@ -983,68 +983,96 @@ namespace Effekseer
 class CompiledMaterialBinaryMetal : public CompiledMaterialBinary, public ReferenceObject
 {
 private:
-    std::array<std::vector<uint8_t>, static_cast<int32_t>(MaterialShaderType::Max)> vertexShaders_;
+	std::array<std::vector<uint8_t>, static_cast<int32_t>(MaterialShaderType::Max)> vertexShaders_;
 
-    std::array<std::vector<uint8_t>, static_cast<int32_t>(MaterialShaderType::Max)> pixelShaders_;
+	std::array<std::vector<uint8_t>, static_cast<int32_t>(MaterialShaderType::Max)> pixelShaders_;
 
 public:
-    CompiledMaterialBinaryMetal() {}
+	CompiledMaterialBinaryMetal()
+	{
+	}
 
-    virtual ~CompiledMaterialBinaryMetal() {}
+	virtual ~CompiledMaterialBinaryMetal()
+	{
+	}
 
-    void SetVertexShaderData(MaterialShaderType type, const std::vector<uint8_t>& data)
-    {
-        vertexShaders_.at(static_cast<int>(type)) = data;
-    }
+	void SetVertexShaderData(MaterialShaderType type, const std::vector<uint8_t>& data)
+	{
+		vertexShaders_.at(static_cast<int>(type)) = data;
+	}
 
-    void SetPixelShaderData(MaterialShaderType type, const std::vector<uint8_t>& data) { pixelShaders_.at(static_cast<int>(type)) = data; }
+	void SetPixelShaderData(MaterialShaderType type, const std::vector<uint8_t>& data)
+	{
+		pixelShaders_.at(static_cast<int>(type)) = data;
+	}
 
-    const uint8_t* GetVertexShaderData(MaterialShaderType type) const override { return vertexShaders_.at(static_cast<int>(type)).data(); }
+	const uint8_t* GetVertexShaderData(MaterialShaderType type) const override
+	{
+		return vertexShaders_.at(static_cast<int>(type)).data();
+	}
 
-    int32_t GetVertexShaderSize(MaterialShaderType type) const override { return vertexShaders_.at(static_cast<int>(type)).size(); }
+	int32_t GetVertexShaderSize(MaterialShaderType type) const override
+	{
+		return vertexShaders_.at(static_cast<int>(type)).size();
+	}
 
-    const uint8_t* GetPixelShaderData(MaterialShaderType type) const override { return pixelShaders_.at(static_cast<int>(type)).data(); }
+	const uint8_t* GetPixelShaderData(MaterialShaderType type) const override
+	{
+		return pixelShaders_.at(static_cast<int>(type)).data();
+	}
 
-    int32_t GetPixelShaderSize(MaterialShaderType type) const override { return pixelShaders_.at(static_cast<int>(type)).size(); }
+	int32_t GetPixelShaderSize(MaterialShaderType type) const override
+	{
+		return pixelShaders_.at(static_cast<int>(type)).size();
+	}
 
-    int AddRef() override { return ReferenceObject::AddRef(); }
+	int AddRef() override
+	{
+		return ReferenceObject::AddRef();
+	}
 
-    int Release() override { return ReferenceObject::Release(); }
+	int Release() override
+	{
+		return ReferenceObject::Release();
+	}
 
-    int GetRef() override { return ReferenceObject::GetRef(); }
+	int GetRef() override
+	{
+		return ReferenceObject::GetRef();
+	}
 };
 
 CompiledMaterialBinary* MaterialCompilerMetal::Compile(MaterialFile* materialFile, int32_t maximumUniformCount, int32_t maximumTextureCount)
 {
-    auto binary = new CompiledMaterialBinaryMetal();
-    //auto compiler = LLGI::CreateSharedPtr(new LLGI::CompilerMetal());
+	auto binary = new CompiledMaterialBinaryMetal();
+	//auto compiler = LLGI::CreateSharedPtr(new LLGI::CompilerMetal());
 
 	auto convertToVectorVS = [](const std::string& str) -> std::vector<uint8_t> {
 		std::vector<uint8_t> ret;
 
-        std::vector<char> buffer;
+		std::vector<char> buffer;
 
-        // HACK
-        buffer.reserve(7 + str.size() + 1);
-        buffer.push_back('m');
-        buffer.push_back('t');
-        buffer.push_back('l');
-        buffer.push_back('c');
-        buffer.push_back('o');
-        buffer.push_back('d');
-        buffer.push_back('e');
+		// HACK
+		buffer.reserve(7 + str.size() + 1);
+		buffer.push_back('m');
+		buffer.push_back('t');
+		buffer.push_back('l');
+		buffer.push_back('c');
+		buffer.push_back('o');
+		buffer.push_back('d');
+		buffer.push_back('e');
 
-        auto len = str.size() + 1;
-        for (int i = 0; i < len; i++)
-        {
-            buffer.push_back(str[i]);
-        }
-        buffer[buffer.size() - 1] = 0;
-        
-        LLGI::CompilerResult result;
-        result.Binary.resize(1);
-        result.Binary[0].resize(buffer.size());
-        memcpy(result.Binary[0].data(), buffer.data(), buffer.size());
+		auto len = str.size() + 1;
+		for (int i = 0; i < len; i++)
+		{
+			buffer.push_back(str[i]);
+		}
+		buffer[buffer.size() - 1] = 0;
+
+		LLGI::CompilerResult result;
+		result.Binary.resize(1);
+		result.Binary[0].resize(buffer.size());
+		memcpy(result.Binary[0].data(), buffer.data(), buffer.size());
 		//compiler->Compile(result, str.c_str(), LLGI::ShaderStageType::Vertex);
 
 		if (result.Binary.size() > 0)
@@ -1064,30 +1092,30 @@ CompiledMaterialBinary* MaterialCompilerMetal::Compile(MaterialFile* materialFil
 	auto convertToVectorPS = [](const std::string& str) -> std::vector<uint8_t> {
 		std::vector<uint8_t> ret;
 
-        std::vector<char> buffer;
+		std::vector<char> buffer;
 
-        // HACK
-        buffer.reserve(7 + str.size() + 1);
-        buffer.push_back('m');
-        buffer.push_back('t');
-        buffer.push_back('l');
-        buffer.push_back('c');
-        buffer.push_back('o');
-        buffer.push_back('d');
-        buffer.push_back('e');
+		// HACK
+		buffer.reserve(7 + str.size() + 1);
+		buffer.push_back('m');
+		buffer.push_back('t');
+		buffer.push_back('l');
+		buffer.push_back('c');
+		buffer.push_back('o');
+		buffer.push_back('d');
+		buffer.push_back('e');
 
-        auto len = str.size() + 1;
-        for (int i = 0; i < len; i++)
-        {
-            buffer.push_back(str[i]);
-        }
-        buffer[buffer.size() - 1] = 0;
-        
+		auto len = str.size() + 1;
+		for (int i = 0; i < len; i++)
+		{
+			buffer.push_back(str[i]);
+		}
+		buffer[buffer.size() - 1] = 0;
+
 		LLGI::CompilerResult result;
-        result.Binary.resize(1);
-        result.Binary[0].resize(buffer.size());
-        memcpy(result.Binary[0].data(), buffer.data(), buffer.size());
-        //compiler->Compile(result, str.c_str(), LLGI::ShaderStageType::Pixel);
+		result.Binary.resize(1);
+		result.Binary[0].resize(buffer.size());
+		memcpy(result.Binary[0].data(), buffer.data(), buffer.size());
+		//compiler->Compile(result, str.c_str(), LLGI::ShaderStageType::Pixel);
 
 		if (result.Binary.size() > 0)
 		{
@@ -1103,26 +1131,28 @@ CompiledMaterialBinary* MaterialCompilerMetal::Compile(MaterialFile* materialFil
 		return ret;
 	};
 
-    auto saveBinary = [&materialFile, &binary, &convertToVectorVS, &convertToVectorPS, &maximumUniformCount, & maximumTextureCount](MaterialShaderType type)
-	{
+	auto saveBinary = [&materialFile, &binary, &convertToVectorVS, &convertToVectorPS, &maximumUniformCount, &maximumTextureCount](MaterialShaderType type) {
 		auto shader = Metal::GenerateShader(materialFile, type, maximumUniformCount, maximumTextureCount);
-        binary->SetVertexShaderData(type, convertToVectorVS(shader.CodeVS));
-        binary->SetPixelShaderData(type, convertToVectorPS(shader.CodePS));
-    };
+		binary->SetVertexShaderData(type, convertToVectorVS(shader.CodeVS));
+		binary->SetPixelShaderData(type, convertToVectorPS(shader.CodePS));
+	};
 
-    if (materialFile->GetHasRefraction())
-    {
-        saveBinary(MaterialShaderType::Refraction);
-        saveBinary(MaterialShaderType::RefractionModel);
-    }
+	if (materialFile->GetHasRefraction())
+	{
+		saveBinary(MaterialShaderType::Refraction);
+		saveBinary(MaterialShaderType::RefractionModel);
+	}
 
-    saveBinary(MaterialShaderType::Standard);
-    saveBinary(MaterialShaderType::Model);
+	saveBinary(MaterialShaderType::Standard);
+	saveBinary(MaterialShaderType::Model);
 
-    return binary;
+	return binary;
 }
 
-CompiledMaterialBinary* MaterialCompilerMetal::Compile(MaterialFile* materialFile) { return Compile(materialFile, Effekseer::UserUniformSlotMax, Effekseer::UserTextureSlotMax); }
+CompiledMaterialBinary* MaterialCompilerMetal::Compile(MaterialFile* materialFile)
+{
+	return Compile(materialFile, Effekseer::UserUniformSlotMax, Effekseer::UserTextureSlotMax);
+}
 
 } // namespace Effekseer
 
@@ -1136,6 +1166,9 @@ extern "C"
 #define EFK_EXPORT
 #endif
 
-    EFK_EXPORT Effekseer::MaterialCompiler* EFK_STDCALL CreateCompiler() { return new Effekseer::MaterialCompilerMetal(); }
+	EFK_EXPORT Effekseer::MaterialCompiler* EFK_STDCALL CreateCompiler()
+	{
+		return new Effekseer::MaterialCompilerMetal();
+	}
 }
 #endif

@@ -32,6 +32,10 @@ if(MSVC OR APPLE)
         DEBUG_POSTFIX ".Debug")
 endif()
 
+if(CLANG_FORMAT_ENABLED)
+    clang_format(EffekseerMaterialCompilerGL)
+endif()
+
 set_property(TARGET EffekseerMaterialCompilerGL PROPERTY FOLDER Libraries) 
 
 # Metal (Metal is a code as binary)
@@ -67,6 +71,10 @@ if(MSVC OR APPLE)
         DEBUG_POSTFIX ".Debug")
 endif()
 
+if(CLANG_FORMAT_ENABLED)
+    clang_format(EffekseerMaterialCompilerMetal)
+endif()
+
 set_property(TARGET EffekseerMaterialCompilerMetal PROPERTY FOLDER Libraries) 
 
 if(WIN32)
@@ -99,6 +107,10 @@ if(WIN32)
         DEBUG_POSTFIX ".Debug")
     set_property(TARGET EffekseerMaterialCompilerDX11 PROPERTY FOLDER Libraries) 
 
+    if(CLANG_FORMAT_ENABLED)
+        clang_format(EffekseerMaterialCompilerDX11)
+    endif()
+
     add_library(
         EffekseerMaterialCompilerDX9
         SHARED
@@ -126,7 +138,12 @@ if(WIN32)
     set_target_properties(EffekseerMaterialCompilerDX9
         PROPERTIES
         DEBUG_POSTFIX ".Debug")
-    set_property(TARGET EffekseerMaterialCompilerDX9 PROPERTY FOLDER Libraries) 
+    set_property(TARGET EffekseerMaterialCompilerDX9 PROPERTY FOLDER Libraries)
+
+    if(CLANG_FORMAT_ENABLED)
+        clang_format(EffekseerMaterialCompilerDX9)
+    endif()
+
 endif()
 
 if(WIN32 AND BUILD_DX12)
@@ -159,7 +176,11 @@ if(WIN32 AND BUILD_DX12)
         PROPERTIES
         DEBUG_POSTFIX ".Debug")
 
-    set_property(TARGET EffekseerMaterialCompilerDX12 PROPERTY FOLDER Libraries) 
+    set_property(TARGET EffekseerMaterialCompilerDX12 PROPERTY FOLDER Libraries)
+
+    if(CLANG_FORMAT_ENABLED)
+        clang_format(EffekseerMaterialCompilerDX12)
+    endif()
 endif()
 
 if(EXISTS "${CMAKE_SOURCE_DIR}/Dev/Cpp/EffekseerMaterialCompiler/Switch")
@@ -185,7 +206,11 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/Dev/Cpp/EffekseerMaterialCompiler/Switch")
         PROPERTIES
         DEBUG_POSTFIX ".Debug")
 
-    set_property(TARGET EffekseerMaterialCompilerSwitch PROPERTY FOLDER Libraries) 
+    set_property(TARGET EffekseerMaterialCompilerSwitch PROPERTY FOLDER Libraries)
+
+    if(CLANG_FORMAT_ENABLED)
+        clang_format(EffekseerMaterialCompilerSwitch)
+    endif()
 endif()
 
 if(EXISTS "${CMAKE_SOURCE_DIR}/Dev/Cpp/EffekseerMaterialCompiler/PS4/")
@@ -211,7 +236,11 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/Dev/Cpp/EffekseerMaterialCompiler/PS4/")
         PROPERTIES
         DEBUG_POSTFIX ".Debug")
 
-    set_property(TARGET EffekseerMaterialCompilerPS4 PROPERTY FOLDER Libraries) 
+    set_property(TARGET EffekseerMaterialCompilerPS4 PROPERTY FOLDER Libraries)
+
+    if(CLANG_FORMAT_ENABLED)
+        clang_format(EffekseerMaterialCompilerPS4)
+    endif()
 endif()
 
 
@@ -238,7 +267,11 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/Dev/Cpp/EffekseerMaterialCompiler/PS5/")
         PROPERTIES
         DEBUG_POSTFIX ".Debug")
 
-    set_property(TARGET EffekseerMaterialCompilerPS5 PROPERTY FOLDER Libraries) 
+    set_property(TARGET EffekseerMaterialCompilerPS5 PROPERTY FOLDER Libraries)
+
+    if(CLANG_FORMAT_ENABLED)
+        clang_format(EffekseerMaterialCompilerPS5)
+    endif()
 endif()
 
 if(APPLE)

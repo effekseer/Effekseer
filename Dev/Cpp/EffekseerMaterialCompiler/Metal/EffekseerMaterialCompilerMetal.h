@@ -14,16 +14,25 @@ public:
 	MaterialCompilerMetal() = default;
 
 	virtual ~MaterialCompilerMetal() = default;
-    
-    CompiledMaterialBinary* Compile(MaterialFile* materialFile, int32_t maximumUniformCount, int32_t maximumTextureCount);
 
-    CompiledMaterialBinary* Compile(MaterialFile* materialFile) override;
+	CompiledMaterialBinary* Compile(MaterialFile* materialFile, int32_t maximumUniformCount, int32_t maximumTextureCount);
 
-    int AddRef() override { return ReferenceObject::AddRef(); }
+	CompiledMaterialBinary* Compile(MaterialFile* materialFile) override;
 
-    int Release() override { return ReferenceObject::Release(); }
+	int AddRef() override
+	{
+		return ReferenceObject::AddRef();
+	}
 
-    int GetRef() override { return ReferenceObject::GetRef(); }
+	int Release() override
+	{
+		return ReferenceObject::Release();
+	}
+
+	int GetRef() override
+	{
+		return ReferenceObject::GetRef();
+	}
 };
 
 } // namespace Effekseer

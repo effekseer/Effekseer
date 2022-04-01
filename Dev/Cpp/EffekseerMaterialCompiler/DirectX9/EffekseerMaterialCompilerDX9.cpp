@@ -193,8 +193,7 @@ CompiledMaterialBinary* MaterialCompilerDX9::Compile(MaterialFile* materialFile,
 {
 	auto binary = new CompiledMaterialBinaryDX9();
 
-	auto convertToVectorVS = [](const std::string& str) -> std::vector<uint8_t>
-	{
+	auto convertToVectorVS = [](const std::string& str) -> std::vector<uint8_t> {
 		std::vector<uint8_t> ret;
 
 		std::string log;
@@ -218,8 +217,7 @@ CompiledMaterialBinary* MaterialCompilerDX9::Compile(MaterialFile* materialFile,
 		return ret;
 	};
 
-	auto convertToVectorPS = [](const std::string& str) -> std::vector<uint8_t>
-	{
+	auto convertToVectorPS = [](const std::string& str) -> std::vector<uint8_t> {
 		std::vector<uint8_t> ret;
 
 		std::string log;
@@ -243,8 +241,7 @@ CompiledMaterialBinary* MaterialCompilerDX9::Compile(MaterialFile* materialFile,
 		return ret;
 	};
 
-	auto saveBinary = [&materialFile, &binary, &convertToVectorVS, &convertToVectorPS, &maximumUniformCount, &maximumTextureCount](MaterialShaderType type)
-	{
+	auto saveBinary = [&materialFile, &binary, &convertToVectorVS, &convertToVectorPS, &maximumUniformCount, &maximumTextureCount](MaterialShaderType type) {
 		auto generator = DirectX::ShaderGenerator(HLSL::GetMaterialCommonDefine(HLSL::ShaderType::DirectX9).c_str(),
 												  HLSL::material_common_functions,
 												  HLSL::material_common_vs_functions,

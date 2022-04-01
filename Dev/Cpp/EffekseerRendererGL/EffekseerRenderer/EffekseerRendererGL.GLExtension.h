@@ -277,7 +277,6 @@ void glTexImage3D(GLenum target,
 				  GLenum type,
 				  const void* data);
 
-
 void glCopyTexSubImage3D(GLenum target,
 						 GLint level,
 						 GLint xoffset,
