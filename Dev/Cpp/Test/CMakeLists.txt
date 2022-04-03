@@ -30,6 +30,7 @@ set(effekseer_test_src
     Backend/Mesh.cpp
     Backend/RenderPass.cpp
     Backend/GPUParticle.cpp
+    Backend/OpenGL.cpp
 )
 
 if(BUILD_DX12 OR BUILD_METAL OR BUILD_VULKAN)

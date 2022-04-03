@@ -6,13 +6,12 @@
 
 #include "EffectPlatformDX11.h"
 #include "EffectPlatformDX9.h"
-#include "EffectPlatformGL.h"
 #elif defined(__APPLE__)
-#include "EffectPlatformGL.h"
 #include "EffectPlatformMetal.h"
 #else
-#include "EffectPlatformGL.h"
 #endif
+
+#include "EffectPlatformGL.h"
 
 #ifdef __EFFEKSEER_BUILD_VULKAN__
 #include "EffectPlatformVulkan.h"

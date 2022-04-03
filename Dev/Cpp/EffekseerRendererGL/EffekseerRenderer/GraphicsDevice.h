@@ -327,6 +327,10 @@ public:
 enum class DevicePropertyType
 {
 	MaxVaryingVectors,
+	MaxVertexUniformVectors,
+	MaxFragmentUniformVectors,
+	MaxVertexTextureImageUnits,
+	MaxTextureImageUnits,
 };
 
 /**

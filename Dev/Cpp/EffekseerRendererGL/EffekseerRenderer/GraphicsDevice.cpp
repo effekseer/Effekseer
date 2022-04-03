@@ -1002,6 +1002,30 @@ GraphicsDevice::GraphicsDevice(OpenGLDeviceType deviceType, bool isExtensionsEna
 		properties_[DevicePropertyType::MaxVaryingVectors] = v;
 	}
 
+	{
+		GLint v;
+		glGetIntegerv(GL_MAX_VERTEX_UNIFORM_VECTORS, &v);
+		properties_[DevicePropertyType::MaxVertexUniformVectors] = v;
+	}
+
+	{
+		GLint v;
+		glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_VECTORS, &v);
+		properties_[DevicePropertyType::MaxFragmentUniformVectors] = v;
+	}
+
+	{
+		GLint v;
+		glGetIntegerv(GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, &v);
+		properties_[DevicePropertyType::MaxVertexTextureImageUnits] = v;
+	}
+
+	{
+		GLint v;
+		glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &v);
+		properties_[DevicePropertyType::MaxTextureImageUnits] = v;
+	}
+
 	GLExt::glGenFramebuffers(1, &frameBufferTemp_);
 }
 
