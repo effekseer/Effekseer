@@ -1,39 +1,40 @@
 
-# Roadmap.
+# Roadmap
 
-## 1.6 (to be released in 2021)
+## 1.7 or later
 
-### Add standard materials
+### Improve asset diversion + Provide a collection of materials
 
-- Standard inclusion of materials that combine distortion and blending with up to six images
+There is a shortage of human resources for the production of effects, and the number of people who can produce them is limited.
+No matter what tools are used, there is a lot of knowledge required, which makes it tough for beginners.
+In addition, there are only a small number of effects materials available for free use.
 
-### Add force fields.
+In response to these problems, in order to make it easier to create effects easily, we have developed the following tools to make it easier to create effects.
+We will develop a system that allows users to create effects by combining parts in a tool or browser, and then output them for each environment.
 
-- Add various force fields such as tornadoes, gravitational force, vector fields, etc.
+A feature called SubEffect will be added to Effekseer to make it easier to combine parts.
 
-### Procedural Mesh.
+The parts will be controllable with a few parameters, and users will be able to easily create basic effects by preparing a large number of parts needed for major effects.
 
-- Added the ability to generate different types of meshes with different parameters in the tool
+In addition, a library of material data used for standard effects will be created and distributed license-free.
+These data will also be distributed with the source data for editing, improving editability and solving the licensing problem of the unknown source of the material data.
 
-### Optimization.
+### GPU Particles
 
-- multi-threaded support
-- Speed up drawing
+GPU particles are supported to make it easier to display particles in large numbers.
 
-### Packaging.
+### Mobile and Web Browser Optimization
 
-- Added the ability to create packages, including effects dependencies
+Internal design will be reviewed and optimized on mobile and web browsers.
 
-### C++ API.
+### WebGPU Support
 
-- Changing the C++ API to a modern API
-
-### else.
-
-- Various improvements
+Supports WebGPU, the next WebGL standard.
 
 ## 1.7
 
-- GPU particles
-- Improved productivity, such as importing effects by parts
+### Add Gradient feature
 
+### Add trigger feature
+
+### Add various parameters
