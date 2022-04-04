@@ -115,6 +115,8 @@ endif()
 
 if(MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE /we4456 /we4458)
+else()
+    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Werror)
 endif()
 
 if(BUILD_UNITYPLUGIN OR BUILD_UNITYPLUGIN_FOR_IOS)
