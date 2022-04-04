@@ -103,7 +103,7 @@ bool ClientImplemented::GetAddr(const char* host, IN_ADDR* addr)
 
 	// check ip adress or DNS
 	addr->s_addr = ::inet_addr(host);
-	if (addr->s_addr == InaddrNone)
+	if (static_cast<int32_t>(addr->s_addr) == InaddrNone)
 	{
 		// DNS
 		hostEntry = ::gethostbyname(host);
@@ -191,7 +191,7 @@ bool ClientImplemented::Send(void* data, int32_t datasize)
 		return false;
 
 	m_sendBuffer.clear();
-	for (int32_t i = 0; i < sizeof(int32_t); i++)
+	for (int32_t i = 0; i < (int32_t)sizeof(int32_t); i++)
 	{
 		m_sendBuffer.push_back(((uint8_t*)(&datasize))[i]);
 	}
@@ -227,7 +227,7 @@ void ClientImplemented::Reload(const char16_t* key, void* data, int32_t size)
 
 	std::vector<uint8_t> buf;
 
-	for (int32_t i = 0; i < sizeof(int32_t); i++)
+	for (int32_t i = 0; i < (int32_t)sizeof(int32_t); i++)
 	{
 		buf.push_back(((uint8_t*)(&keylen))[i]);
 	}
