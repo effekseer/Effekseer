@@ -37,4 +37,14 @@ Supports WebGPU, the next WebGL standard.
 
 ### Add trigger feature
 
+You will be able to send external event triggers to the effects that during playback.
+Depending on the trigger, the following behaviors can be defined on a node-by-node basis
+
+- Stop particle generation by a node
+- Start particle generation by a node
+- Destroy of existing particles (with fade-out)
+
+Previously, the only trigger actions were Stop or StopRoot.
+It will be possible to influence effects more dynamically.
+
 ### Add various parameters
