@@ -353,7 +353,6 @@ public:
 			if (ffc.DeltaFrame > 0)
 			{
 				float eps = 0.0001f;
-				auto ret = SIMD::Vec3f(0.0f, 0.0f, 0.0f);
 				auto vel = ffc.PreviousVelocity;
 				vel += targetDirection * force * ffc.DeltaFrame;
 				float currentVelocity = vel.GetLength() + eps;
