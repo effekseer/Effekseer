@@ -1196,14 +1196,15 @@ void Instance::Update(float deltaFrame, bool shown)
 			float t = m_LivingTime / m_LivedTime;
 			auto val = alpha_cutoff_values.four_point_interpolation;
 
-			float p[4][2] = {0.0f,
-							 val.begin_threshold,
-							 float(val.transition_frame) / m_LivedTime,
-							 val.no2_threshold,
-							 (m_LivedTime - float(val.transition_frame2)) / m_LivedTime,
-							 val.no3_threshold,
-							 1.0f,
-							 val.end_threshold};
+			float p[4][2];
+			p[0][0] = 0.0f;
+			p[0][1] = val.begin_threshold;
+			p[1][0] = float(val.transition_frame) / m_LivedTime;
+			p[1][1] = val.no2_threshold;
+			p[2][0] = (m_LivedTime - float(val.transition_frame2)) / m_LivedTime;
+			p[2][1] = val.no3_threshold;
+			p[3][0] = 1.0f;
+			p[3][1] = val.end_threshold;
 
 			for (int32_t i = 1; i < 4; i++)
 			{
