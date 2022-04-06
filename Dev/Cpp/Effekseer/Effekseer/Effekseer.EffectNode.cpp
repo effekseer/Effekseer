@@ -916,8 +916,8 @@ EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter()
 	{
 		param.FlipbookParams.Enable = false;
 		param.FlipbookParams.LoopType = 0;
-		param.FlipbookParams.DivideX = 0;
-		param.FlipbookParams.DivideY = 0;
+		param.FlipbookParams.DivideX = 1;
+		param.FlipbookParams.DivideY = 1;
 	}
 
 	param.MaterialType = RendererCommon.MaterialType;
