@@ -100,24 +100,29 @@ void InstanceGroup::GenerateInstancesIfRequired(float localTime, RandObject& ran
 		}
 	}
 
+	
 	// GenerationTimeOffset can be minus value.
 	// Minus frame particles is generated simultaniously at frame 0.
 	while (m_generationState == GenerationState::Generating &&
 		   m_maxGenerationCount > m_generatedCount &&
 		   localTime >= m_nextGenerationTime)
 	{
-		// Create a particle
-		auto instance = m_manager->CreateInstance(m_effectNode, m_container, this);
-		if (instance != nullptr)
+		// Disabled spawn only prevents instance generation but spawn rate should not be affected once spawn is enabled again
+		if(!m_global->IsSpawnDisabled)
 		{
-			m_instances.push_back(instance);
-			m_global->IncInstanceCount();
+			// Create a particle
+			auto instance = m_manager->CreateInstance(m_effectNode, m_container, this);
+			if (instance != nullptr)
+			{
+				m_instances.push_back(instance);
+				m_global->IncInstanceCount();
 
-			instance->Initialize(parent, m_generatedCount);
+				instance->Initialize(parent, m_generatedCount);
+			}
+
+			m_generatedCount++;
 		}
-
-		m_generatedCount++;
-
+		
 		auto gt = ApplyEq(m_effectNode->GetEffect(), m_global, parent, &rand, m_effectNode->CommonValues.RefEqGenerationTime, m_effectNode->CommonValues.GenerationTime);
 		m_nextGenerationTime += Max(0.0f, gt.getValue(rand));
 	}
