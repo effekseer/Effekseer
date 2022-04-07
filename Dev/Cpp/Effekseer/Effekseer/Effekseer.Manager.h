@@ -576,6 +576,17 @@ public:
 	virtual void SetPausedToAllEffects(bool paused) = 0;
 
 	/**
+		@brief Stops new particles spawning but continues simulation of already spawned particles
+		@param spawnDisabled Whether to stop particles generation 
+	 */
+	virtual void SetSpawnDisabled(Handle handle, bool spawnDisabled) = 0;
+
+	/**
+	 *	@brief Whether spawn of new particles is disabled
+	 */
+	virtual bool GetSpawnDisabled(Handle handle) = 0;
+	
+	/**
 		@brief
 		\~English	Get a layer index
 		\~Japanese	レイヤーのインデックスを取得する

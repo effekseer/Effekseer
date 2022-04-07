@@ -362,6 +362,10 @@ public:
 
 	void SetPausedToAllEffects(bool paused) override;
 
+	void SetSpawnDisabled(Handle handle, bool spawnDisabled) override;
+
+	bool GetSpawnDisabled(Handle handle) override;
+	
 	int GetLayer(Handle handle) override;
 
 	void SetLayer(Handle handle, int32_t layer) override;

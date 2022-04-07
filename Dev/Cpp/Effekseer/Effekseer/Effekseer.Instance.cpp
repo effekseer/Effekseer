@@ -359,7 +359,8 @@ void Instance::Update(float deltaFrame, bool shown)
 			}
 
 			// if children are removed and going not to generate a child
-			if (!removed && m_pEffectNode->CommonValues.RemoveWhenChildrenIsExtinct)
+			// but make sure that lack of children is not caused by temporarily disabled spawn
+			if (!removed && m_pEffectNode->CommonValues.RemoveWhenChildrenIsExtinct && !GetInstanceGlobal()->IsSpawnDisabled)
 			{
 				removed = !AreChildrenActive();
 			}
