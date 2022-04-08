@@ -101,7 +101,7 @@ namespace Effekseer.GUI.Component
 			if (Manager.NativeManager.DragInt2EfkEx(id, internalValue, step,
 				int.MinValue, int.MaxValue,
 				int.MinValue, int.MaxValue,
-				"X:" + "%.3f", "Y:" + "%.3f"))
+				"X:" + Core.Option.GetFloatFormat(), "Y:" + Core.Option.GetFloatFormat()))
 			{
 				FixValueInternal(isActive);
 			}
