@@ -198,7 +198,7 @@ struct CustomDataFunctions
 		else if (parameterCustomData->Type == ParameterCustomDataType::Easing2D)
 		{
 			SIMD::Vec2f v = parameterCustomData->Easing.Values.getValue(
-				instanceCustomData->easing.start, instanceCustomData->easing.end, livingTime / livedTime);
+				instanceCustomData->easing.start, instanceCustomData->easing.end, Clamp(livingTime / livedTime, 1.0F, 0.0F));
 			return std::array<float, 4>{v.GetX(), v.GetY(), 0, 0};
 		}
 		else if (parameterCustomData->Type == ParameterCustomDataType::FCurve2D)
