@@ -161,7 +161,7 @@ struct AllTypeColorFunctions
 		}
 		if (SpriteAllColor.type == AllTypeColorParameter::Easing)
 		{
-			float t = m_LivingTime / m_LivedTime;
+			float t = Clamp(m_LivingTime / m_LivedTime, 1.0f, 0.0f);
 
 			SpriteAllColor.easing.all.setValueToArg(
 				_originalColor, allColorValues.easing.start, allColorValues.easing.end, t);
@@ -176,7 +176,7 @@ struct AllTypeColorFunctions
 		}
 		else if (SpriteAllColor.type == AllTypeColorParameter::Gradient_)
 		{
-			const auto value = SpriteAllColor.gradient->GetColor(m_LivingTime / static_cast<float>(m_LivedTime));
+			const auto value = SpriteAllColor.gradient->GetColor(Clamp(m_LivingTime / m_LivedTime, 1.0f, 0.0f));
 			_originalColor.R = (uint8_t)Clamp(value[0] * 255.0f, 255, 0);
 			_originalColor.G = (uint8_t)Clamp(value[1] * 255.0f, 255, 0);
 			_originalColor.B = (uint8_t)Clamp(value[2] * 255.0f, 255, 0);

@@ -357,7 +357,7 @@ struct RotationFunctions
 	{
 		SIMD::Vec3f localAngle;
 
-		/* ‰ñ“]‚ÌXV(ŠÔ‚©‚ç’¼Ú‹‚ß‚ê‚é‚æ‚¤‘Î‰Ï‚İ) */
+		/* ï¿½ï¿½]ï¿½ÌXï¿½V(ï¿½ï¿½ï¿½Ô‚ï¿½ï¿½ç’¼ï¿½Ú‹ï¿½ï¿½ß‚ï¿½ï¿½æ‚¤ï¿½Î‰ï¿½ï¿½Ï‚ï¿½) */
 		if (rotationParam.RotationType == ParameterRotationType::ParameterRotationType_None)
 		{
 			localAngle = {0, 0, 0};
@@ -369,13 +369,13 @@ struct RotationFunctions
 		}
 		else if (rotationParam.RotationType == ParameterRotationType::ParameterRotationType_PVA)
 		{
-			/* Œ»İˆÊ’u = ‰ŠúÀ•W + (‰Šú‘¬“x * t) + (‰Šú‰Á‘¬“x * t * t * 0.5)*/
+			/* ï¿½ï¿½ï¿½İˆÊ’u = ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½W + (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½x * t) + (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½x * t * t * 0.5)*/
 			localAngle = rotation_values.random.rotation + (rotation_values.random.velocity * m_LivingTime) +
 						 (rotation_values.random.acceleration * (m_LivingTime * m_LivingTime * 0.5f));
 		}
 		else if (rotationParam.RotationType == ParameterRotationType::ParameterRotationType_Easing)
 		{
-			localAngle = rotationParam.RotationEasing.GetValue(rotation_values.easing, m_LivingTime / m_LivedTime);
+			localAngle = rotationParam.RotationEasing.GetValue(rotation_values.easing, Clamp(m_LivingTime / m_LivedTime, 1.0F, 0.0));
 		}
 		else if (rotationParam.RotationType == ParameterRotationType::ParameterRotationType_AxisPVA)
 		{
@@ -384,7 +384,7 @@ struct RotationFunctions
 		}
 		else if (rotationParam.RotationType == ParameterRotationType::ParameterRotationType_AxisEasing)
 		{
-			rotation_values.axis.rotation = rotationParam.RotationAxisEasing.easing.GetValue(rotation_values.axis.easing, m_LivingTime / m_LivedTime);
+			rotation_values.axis.rotation = rotationParam.RotationAxisEasing.easing.GetValue(rotation_values.axis.easing, Clamp(m_LivingTime / m_LivedTime, 1.0F, 0.0F));
 		}
 		else if (rotationParam.RotationType == ParameterRotationType::ParameterRotationType_FCurve)
 		{

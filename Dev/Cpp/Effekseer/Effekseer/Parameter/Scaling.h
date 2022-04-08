@@ -298,7 +298,7 @@ struct ScalingFunctions
 	{
 		SIMD::Vec3f localScaling;
 
-		/* Šg‘å‚ÌXV(ŽžŠÔ‚©‚ç’¼Ú‹‚ß‚ê‚é‚æ‚¤‘Î‰žÏ‚Ý) */
+		/* ï¿½gï¿½ï¿½ÌXï¿½V(ï¿½ï¿½ï¿½Ô‚ï¿½ï¿½ç’¼ï¿½Ú‹ï¿½ï¿½ß‚ï¿½ï¿½æ‚¤ï¿½Î‰ï¿½ï¿½Ï‚ï¿½) */
 		if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_None)
 		{
 			localScaling = {1.0f, 1.0f, 1.0f};
@@ -311,13 +311,13 @@ struct ScalingFunctions
 		}
 		else if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_PVA)
 		{
-			/* Œ»ÝˆÊ’u = ‰ŠúÀ•W + (‰Šú‘¬“x * t) + (‰Šú‰Á‘¬“x * t * t * 0.5)*/
+			/* ï¿½ï¿½ï¿½ÝˆÊ’u = ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½W + (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½x * t) + (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½x * t * t * 0.5)*/
 			localScaling = scaling_values.random.scale + (scaling_values.random.velocity * m_LivingTime) +
 						   (scaling_values.random.acceleration * (m_LivingTime * m_LivingTime * 0.5f));
 		}
 		else if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_Easing)
 		{
-			localScaling = scalingParam.ScalingEasing.GetValue(scaling_values.easing, m_LivingTime / m_LivedTime);
+			localScaling = scalingParam.ScalingEasing.GetValue(scaling_values.easing, Clamp(m_LivingTime / m_LivedTime, 1.0F, 0.0F));
 			/*
 			localScaling = m_pEffectNode->ScalingEasing.Position.getValue(
 				scaling_values.easing.start, scaling_values.easing.end, m_LivingTime / m_LivedTime);
@@ -331,7 +331,7 @@ struct ScalingFunctions
 		}
 		else if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_SingleEasing)
 		{
-			float s = scalingParam.ScalingSingleEasing.GetValue(scaling_values.single_easing, m_LivingTime / m_LivedTime);
+			float s = scalingParam.ScalingSingleEasing.GetValue(scaling_values.single_easing, Clamp(m_LivingTime / m_LivedTime, 1.0F, 0.0F));
 			localScaling = {s, s, s};
 		}
 		else if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_FCurve)

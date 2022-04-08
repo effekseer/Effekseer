@@ -155,7 +155,7 @@ struct AlphaCutoffFunctions
 		}
 		else if (alphaCutoff.Type == ParameterAlphaCutoff::EType::FPI)
 		{
-			float t = livingTime / livedTime;
+			float t = Clamp(livingTime / livedTime, 1.0F, 0.0F);
 			auto val = alpha_cutoff_values.four_point_interpolation;
 
 			float p[4][2] = {0.0f,
@@ -183,7 +183,7 @@ struct AlphaCutoffFunctions
 		}
 		else if (alphaCutoff.Type == ParameterAlphaCutoff::EType::EASING)
 		{
-			return alphaCutoff.Easing.GetValue(alpha_cutoff_values.easing, livingTime / livedTime);
+			return alphaCutoff.Easing.GetValue(alpha_cutoff_values.easing, Clamp(livingTime / livedTime, 1.0F, 0.0F));
 		}
 		else if (alphaCutoff.Type == ParameterAlphaCutoff::EType::F_CURVE)
 		{

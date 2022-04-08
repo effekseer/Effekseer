@@ -381,7 +381,7 @@ public:
 		}
 		else if (TranslationType == ParameterTranslationType_Easing)
 		{
-			localPosition = TranslationEasing.GetValue(instanceState.easing, livingTime / livedTime);
+			localPosition = TranslationEasing.GetValue(instanceState.easing, Clamp(livingTime / livedTime, 1.0F, 0.0F));
 		}
 		else if (TranslationType == ParameterTranslationType_FCurve)
 		{
