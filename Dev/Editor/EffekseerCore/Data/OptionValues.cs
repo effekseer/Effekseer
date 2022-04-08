@@ -242,6 +242,15 @@ namespace Effekseer.Data
 			private set;
 		}
 
+		[Key(key = "Options_FloatFormatDigits")]
+		[Undo(Undo = false)]
+		public Value.Int FloatFormatDigits
+		{
+			get;
+			set;
+		}
+
+
 		public OptionValues()
 		{
 			RenderingMode = new Value.Enum<RenderMode>(RenderMode.Normal);
@@ -278,6 +287,13 @@ namespace Effekseer.Data
 
 			FileViewerViewMode = new Value.Enum<FileViewMode>(FileViewMode.IconView);
 			FileViewerIconSize = new Value.Int(96, 512, 48);
+			FloatFormatDigits =  new Value.Int(3, 9, 1);
+		}
+		
+		
+		public string GetFloatFormat()
+		{
+			return $"%.{FloatFormatDigits.GetValue()}f"; 
 		}
 
 		public enum RenderMode : int

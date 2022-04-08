@@ -43,6 +43,8 @@ Options_DistortionType_Desc,Distortion method
 Options_MouseMappingType_Name,Mouse mapping
 Options_FileViewerViewMode_Name,File view mode
 Options_FileViewerIconSize_Name,File icon size
+Options_FloatFormatDigits_Name,Float format digits
+Options_FloatFormatDigits_Desc,Amount of digits after decimal point
 RenderMode_Normal_Name,Normal
 RenderMode_Wireframe_Name,Wireframe
 RenderMode_NormalWithWireframe_Name,Normal+Wireframe

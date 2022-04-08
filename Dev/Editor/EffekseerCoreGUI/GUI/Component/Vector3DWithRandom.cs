@@ -186,7 +186,7 @@ namespace Effekseer.GUI.Component
 				float.MinValue, float.MaxValue,
 				float.MinValue, float.MaxValue,
 				float.MinValue, float.MaxValue,
-				"X:%.3f", "Y:%.3f", "Z:%.3f"))
+				"X:" + Core.Option.GetFloatFormat(), "Y:" + Core.Option.GetFloatFormat(), "Z:" + Core.Option.GetFloatFormat()))
 			{
 				if (EnableUndo)
 				{
@@ -227,7 +227,7 @@ namespace Effekseer.GUI.Component
 				float.MinValue, float.MaxValue,
 				float.MinValue, float.MaxValue,
 				float.MinValue, float.MaxValue,
-				"X:" + "%.3f", "Y:" + "%.3f", "Z:" + "%.3f"))
+				"X:" + Core.Option.GetFloatFormat(), "Y:" + Core.Option.GetFloatFormat(), "Z:" + Core.Option.GetFloatFormat()))
 			{
 				if (EnableUndo)
 				{
