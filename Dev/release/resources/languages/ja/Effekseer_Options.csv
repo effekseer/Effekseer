@@ -44,6 +44,8 @@ Options_MouseMappingType_Name,マウスマッピング
 Options_FileViewerViewMode_Name,ファイル表示方法
 Options_FileViewerIconSize_Name,ファイルアイコンサイズ
 Options_FloatFormatDigits_Name,フロート形式の数字
+Options_AutoSaveIntervalMin_Name,自動保存間隔（分）
+Options_AutoSaveIntervalMin_Desc,バックアップの自動保存間の分。 無効にするには0に設定します。
 RenderMode_Normal_Name,通常モード
 RenderMode_Wireframe_Name,ワイヤーフレーム
 RenderMode_NormalWithWireframe_Name,通常+ワイヤーフレーム

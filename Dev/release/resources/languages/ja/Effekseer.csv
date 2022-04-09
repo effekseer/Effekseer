@@ -61,6 +61,10 @@ InternalStop,停止,
 InternalUndo,元に戻す,
 InternalViewHelp,ヘルプを表示,
 InternalRenameNode,名称の変更,
+Recover,回復
+Recover_LastSession,最後のセッション
+Recover_AutoSave,自動保存...
+Recover_LastSession_Error,最後のセッションのバックアップファイルが見つかりません
 RenameNode,名称の変更,
 Left,左,
 Load,読込,
