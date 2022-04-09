@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Diagnostics;
 using System.Reflection;
 using System.IO;
 
@@ -142,6 +138,48 @@ namespace Effekseer.GUI
 
 				return true;
 			}
+		}
+
+		[Name(value = "InternalSaveBackup")]
+		[UniqueName(value = "Internal.SaveBackup")]
+		public static bool SaveBackup()
+		{
+			string fileNameWithoutExtensions = Path.GetFileNameWithoutExtension(Core.Root.GetFullPath());
+			
+			// we need some kind of identifier which is as unique per project as possible
+			string identifier = !string.IsNullOrEmpty(fileNameWithoutExtensions) ? fileNameWithoutExtensions 
+				: Core.Root.GetHashCode().ToString();
+			
+			Core.SaveBackup(Path.GetTempPath() + "/efk_autosave_" + identifier + ".efkbac");
+			return true;
+		}
+
+		[Name(value = "InternalRestoreLastSession")]
+		[UniqueName(value = "Internal.RestoreLastSession")]
+		public static bool RestoreLastSession()
+		{
+			string lastSessionFile = Path.GetTempPath() + "/efk_quit.efkbac";
+			if (!File.Exists(lastSessionFile))
+			{
+				Core.OnOutputMessage?.Invoke(MultiLanguageTextProvider.GetText("Recover_LastSession_Error"));
+				return false;
+			}
+
+			RunWithUnsavedWarning(() => Core.OpenBackup(lastSessionFile));
+			return true;
+		}
+		
+		[Name(value = "InternalRestoreAutoSave")]
+		[UniqueName(value = "Internal.RestoreAutoSave")]
+		public static bool RestoreLastAutoSave()
+		{
+			string path = swig.FileDialog.OpenDialog("efkbac", Path.GetTempPath());
+			if (!string.IsNullOrEmpty(path))
+			{
+				RunWithUnsavedWarning(() => Core.OpenBackup(path));
+				return true;
+			}
+			return false;
 		}
 
 		[Name(value = "InternalOverwrite")]
@@ -516,6 +554,18 @@ namespace Effekseer.GUI
 				efkpkg.AddEffect(path);
 			}
 			efkpkg.Export(packagePath);
+		}
+
+		private static void RunWithUnsavedWarning(Action command)
+		{
+			if (Core.IsChanged)
+			{
+				new Dialog.SaveOnDisposing(command);
+			}
+			else
+			{
+				command();
+			}
 		}
 
 		static public void HandleExceptionWhileOpenning(Exception e)

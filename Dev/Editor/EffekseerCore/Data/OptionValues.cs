@@ -250,6 +250,14 @@ namespace Effekseer.Data
 			set;
 		}
 
+		[Key(key = "Options_AutoSaveIntervalMin")]
+		[Undo(Undo = false)]
+		public Value.Int AutoSaveIntervalMin
+		{
+			get;
+			set;
+		}
+
 
 		public OptionValues()
 		{
@@ -288,6 +296,7 @@ namespace Effekseer.Data
 			FileViewerViewMode = new Value.Enum<FileViewMode>(FileViewMode.IconView);
 			FileViewerIconSize = new Value.Int(96, 512, 48);
 			FloatFormatDigits =  new Value.Int(3, 9, 1);
+			AutoSaveIntervalMin = new Value.Int(2, 60, 0);
 		}
 		
 		

@@ -60,6 +60,10 @@ InternalStop,Stop,
 InternalUndo,Undo,
 InternalViewHelp,Manual,
 InternalRenameNode,Rename,
+Recover,Recover
+Recover_LastSession,Last Session
+Recover_AutoSave,Auto Save...
+Recover_LastSession_Error,Unable to find backup file for last session
 RenameNode,Rename,
 Left,Left,
 Load,Load,

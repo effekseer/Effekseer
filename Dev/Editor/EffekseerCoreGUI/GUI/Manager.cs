@@ -174,6 +174,8 @@ namespace Effekseer.GUI
 		internal static int resizedCount = 0;
 		internal static int actualWidth = 1;
 
+		private static DateTime lastAutoSaveTime;
+
 		/// <summary>
 		/// if this flag is true, a dialog box on disposing is not shown
 		/// </summary>
@@ -352,6 +354,8 @@ namespace Effekseer.GUI
 
 			TextOffsetY = (NativeManager.GetTextLineHeightWithSpacing() - NativeManager.GetTextLineHeight()) / 2;
 
+			lastAutoSaveTime = DateTime.UtcNow;
+			
 			Network = new Network();
 			Network.Load();
 
@@ -450,6 +454,8 @@ namespace Effekseer.GUI
 
 		public static void Terminate()
 		{
+			Core.SaveBackup(System.IO.Path.GetTempPath() + "/efk_quit.efkbac");
+			
 			var entryDirectory = GetEntryDirectory();
 			System.IO.Directory.SetCurrentDirectory(entryDirectory);
 
@@ -702,6 +708,8 @@ namespace Effekseer.GUI
 			//}
 
 			NativeManager.ResetGUI();
+			
+			UpdateAutoSave();
 
 			if (resetCount < 0)
 			{
@@ -764,6 +772,20 @@ namespace Effekseer.GUI
 			if (actualWidth == 0)
 			{
 				System.Threading.Thread.Sleep(16);
+			}
+		}
+
+		private static void UpdateAutoSave()
+		{
+			int autoSaveIntervalMin = Core.Option.AutoSaveIntervalMin.GetValue();
+			if (autoSaveIntervalMin <= 0) return;
+			
+			
+			DateTime now = DateTime.UtcNow;
+			if (lastAutoSaveTime.AddMinutes(autoSaveIntervalMin) <= now)
+			{
+				Commands.SaveBackup();
+				lastAutoSaveTime = now;
 			}
 		}
 

@@ -79,7 +79,8 @@ namespace Effekseer.GUI.Menu
 				CreateMenuItemFromCommands(Commands.New),
 				CreateMenuItemFromCommands(Commands.Open),
 				CreateMenuItemFromCommands(Commands.Overwrite),
-				CreateMenuItemFromCommands(Commands.SaveAs),
+				CreateMenuItemFromCommands(Commands.SaveAs), 
+				SetupRecoverSubMenu(new MultiLanguageString("Recover")),
 
 				new MenuSeparator(),
 
@@ -116,6 +117,23 @@ namespace Effekseer.GUI.Menu
 			{
 				menu.Controls.Add(control);
 			}
+		}
+
+		private Menu SetupRecoverSubMenu(MultiLanguageString menuTitle)
+		{
+			var recoverMenu = new Menu(menuTitle, Icons.Empty);
+
+			var lastSession = new MenuItem();
+			lastSession.Label = new MultiLanguageString("Recover_LastSession");
+			lastSession.Clicked += () => Commands.RestoreLastSession();
+			recoverMenu.Controls.Add(lastSession);
+			
+			var autoSave = new MenuItem();
+			autoSave.Label = new MultiLanguageString("Recover_AutoSave");
+			autoSave.Clicked += () => Commands.RestoreLastAutoSave();
+			recoverMenu.Controls.Add(autoSave);
+
+			return recoverMenu;
 		}
 
 		private Menu SetupImportSubMenu(MultiLanguageString input)

@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Effekseer.Utl;
-using System.Globalization;
-using System.Threading;
+using System.Xml;
 using Effekseer.Data;
-using Effekseer.Data.Value;
+using Effekseer.IO;
 
 namespace Effekseer
 {
@@ -851,6 +850,43 @@ namespace Effekseer
 			}
 
 			return doc;
+		}
+
+		/**
+		 * Stores .efkbac file of the current project by specified path.
+		 * 
+		 * Extension .efkbac denotes the same thing as efkefc but with additional field
+		 * which points to the original path of saved project.
+		 */
+		public static void SaveBackup(string path)
+		{
+			EfkEfc loader = new EfkEfc();
+			XmlDocument editorData = SaveAsXmlDocument(Core.Root);
+			
+			XmlNode projectRoot = editorData.ChildNodes[1];
+			XmlElement backupElement = editorData.CreateElement("BackupOriginalPath");
+			backupElement.InnerText = Core.Root.GetFullPath();
+			projectRoot.AppendChild(backupElement);
+
+			loader.Save(path, Core.Root, editorData);
+		}
+
+		/**
+		 * Loads .efkbac specified by given path. 
+		 */
+		public static void OpenBackup(string path)
+		{
+			EfkEfc loader = new EfkEfc();
+			
+			XmlDocument document = loader.Load(path);
+			XmlNode backupElement = document.GetElementsByTagName("BackupOriginalPath").Item(0);
+			if(backupElement == null) return;
+			
+			string originalPath = backupElement.InnerText;
+			
+			NodeRoot nodeRoot = LoadFromXml(document, originalPath);
+			Root = nodeRoot;
+			OnAfterLoad?.Invoke(null, null);
 		}
 
 		public static void SaveTo(string path)
