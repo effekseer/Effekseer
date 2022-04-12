@@ -600,7 +600,7 @@ bool RendererImplemented::EndRendering()
 
 		if (GetDeviceType() == OpenGLDeviceType::OpenGL3 || GetDeviceType() == OpenGLDeviceType::OpenGLES3)
 		{
-			for (int32_t i = 0; i < 4; i++)
+			for (int32_t i = 0; i < (int32_t)GetCurrentTextures().size(); i++)
 			{
 				GLExt::glBindSampler(i, 0);
 			}
