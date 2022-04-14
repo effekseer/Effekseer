@@ -258,6 +258,7 @@ namespace Effekseer.Data
 
 			Fixed.Threshold.CanSelectDynamicEquation = true;
 			Easing.Start.CanSelectDynamicEquation = true;
+			Easing.Middle.CanSelectDynamicEquation = true;
 			Easing.End.CanSelectDynamicEquation = true;
 
 			EdgeParam = new EdgeParameter();
