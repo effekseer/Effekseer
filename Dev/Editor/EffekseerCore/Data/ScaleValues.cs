@@ -117,6 +117,7 @@ namespace Effekseer.Data
 			PVA.Velocity.CanSelectDynamicEquation = true;
 			PVA.Acceleration.CanSelectDynamicEquation = true;
 			Easing.Start.CanSelectDynamicEquation = true;
+			Easing.Middle.CanSelectDynamicEquation = true;
 			Easing.End.CanSelectDynamicEquation = true;
 		}
 
