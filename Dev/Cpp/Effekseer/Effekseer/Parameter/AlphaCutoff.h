@@ -158,14 +158,15 @@ struct AlphaCutoffFunctions
 			float t = Clamp(livingTime / livedTime, 1.0F, 0.0F);
 			auto val = alpha_cutoff_values.four_point_interpolation;
 
-			float p[4][2] = {0.0f,
-							 val.begin_threshold,
-							 float(val.transition_frame) / livedTime,
-							 val.no2_threshold,
-							 (livedTime - float(val.transition_frame2)) / livedTime,
-							 val.no3_threshold,
-							 1.0f,
-							 val.end_threshold};
+			float p[4][2];
+			p[0][0] = 0.0f;
+			p[0][1] = val.begin_threshold;
+			p[1][0] = float(val.transition_frame) / livedTime;
+			p[1][1] = val.no2_threshold;
+			p[2][0] = (livedTime - float(val.transition_frame2)) / livedTime;
+			p[2][1] = val.no3_threshold;
+			p[3][0] = 1.0f;
+			p[3][1] = val.end_threshold;
 
 			float alphaThreshold = 1.0f;
 

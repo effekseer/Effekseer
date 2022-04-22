@@ -766,7 +766,7 @@ struct RotatedWireMeshGenerator
 			ret = ProceduralMesh::Combine(std::move(ret), std::move(ribbon));
 		}
 
-		return std::move(ret);
+		return ret;
 	}
 };
 
