@@ -69,8 +69,8 @@ namespace Effekseer.GUI
 			Icons["AutoZoom_On"] = LoadAppResource(graphicsDevice, "resources/icons/AutoZoom_On.png");
 			Icons["AutoZoom_Off"] = LoadAppResource(graphicsDevice, "resources/icons/AutoZoom_Off.png");
 
-			Icons["FileViewer_Directory"] = LoadAppResource(graphicsDevice, "resources/icons/FileViewer_Directory.png");
-			Icons["FileViewer_EffekseerProj"] = LoadAppResource(graphicsDevice, "resources/icons/FileViewer_EffekseerProj.png");
+			Icons["FileBrowser_Directory"] = LoadAppResource(graphicsDevice, "resources/icons/FileBrowser_Directory.png");
+			Icons["FileBrowser_EffekseerProj"] = LoadAppResource(graphicsDevice, "resources/icons/FileBrowser_EffekseerProj.png");
 
 			Icons["ButtonMin"] = LoadAppResource(graphicsDevice, "resources/icons/Button_Min.png");
 			Icons["ButtonMax"] = LoadAppResource(graphicsDevice, "resources/icons/Button_Max.png");

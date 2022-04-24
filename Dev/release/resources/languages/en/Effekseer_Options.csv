@@ -41,8 +41,8 @@ Options_LanguageSelector_Desc,Langueage
 Options_DistortionType_Name,Distortion method
 Options_DistortionType_Desc,Distortion method
 Options_MouseMappingType_Name,Mouse mapping
-Options_FileViewerViewMode_Name,File view mode
-Options_FileViewerIconSize_Name,File icon size
+Options_FileBrowserViewMode_Name,File view mode
+Options_FileBrowserIconSize_Name,File icon size
 Options_FloatFormatDigits_Name,Float format digits
 Options_FloatFormatDigits_Desc,Amount of digits after decimal point
 Options_AutoSaveIntervalMin_Name,Auto Save Interval (Minutes)
@@ -70,5 +70,5 @@ MouseMappingType_Effekseer_Name,Effekseer
 MouseMappingType_Unity_Name,Unity
 MouseMappingType_Blender_Name,Blender
 MouseMappingType_Maya_Name,Maya
-FileViewer_ViewMode_IconView_Name,Icon view
-FileViewer_ViewMode_ListView_Name,List view
+FileBrowser_ViewMode_IconView_Name,Icon view
+FileBrowser_ViewMode_ListView_Name,List view

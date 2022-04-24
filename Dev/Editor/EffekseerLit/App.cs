@@ -18,7 +18,7 @@ namespace Effekseer
 		{
 			var dockTypes = new Type[]
 			{
-				typeof(Dock.FileViewer),
+				typeof(Dock.FileBrowser),
 				typeof(Dock.PrefabListDock),
 				typeof(Dock.TimelineDock),
 				typeof(Dock.NodePropertiesDock),
@@ -70,7 +70,7 @@ namespace Effekseer
 				OnCreateEffectViwer();
 			}
 
-			var fileViewer = Manager.SelectOrShowWindow(typeof(Dock.FileViewer), null);
+			var fileViewer = Manager.SelectOrShowWindow(typeof(Dock.FileBrowser), null);
 			var prefabListDock = Manager.SelectOrShowWindow(typeof(Dock.PrefabListDock), null);
 			var timelineDock = Manager.SelectOrShowWindow(typeof(Dock.TimelineDock), null);
 			var nodePropertiesDock = Manager.SelectOrShowWindow(typeof(Dock.NodePropertiesDock), null);

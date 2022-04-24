@@ -40,7 +40,7 @@ namespace Effekseer
 				typeof(Dock.BehaviorValues),
 				typeof(Dock.Culling),
 				typeof(Dock.Network),
-				typeof(Dock.FileViewer),
+				typeof(Dock.FileBrowser),
 				typeof(Dock.Dynamic),
 				typeof(Dock.ProceduralModel),
 				typeof(Dock.AdvancedRenderCommonValues),
