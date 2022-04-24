@@ -29,7 +29,7 @@ namespace Effekseer.GUI
 		public const string PanelBehavior = "\xec13";
 		public const string PanelCulling = "\xec14";
 		public const string PanelNetwork = "\xec15";
-		public const string PanelFileViewer = "\xec16";
+		public const string PanelFileBrowser = "\xec16";
 		public const string PanelDynamicParams = "\xec17";
 		public const string PanelAdvancedRenderCommon = "\xec18";
 		public const string PanelProceduralModel = "\xec19";

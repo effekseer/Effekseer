@@ -227,16 +227,16 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		[Key(key = "Options_FileViewerViewMode")]
+		[Key(key = "Options_FileBrowserViewMode")]
 		[Undo(Undo = false)]
-		public Value.Enum<FileViewMode> FileViewerViewMode
+		public Value.Enum<FileViewMode> FileBrowserViewMode
 		{
 			get;
 			private set;
 		}
-		[Key(key = "Options_FileViewerIconSize")]
+		[Key(key = "Options_FileBrowserIconSize")]
 		[Undo(Undo = false)]
-		public Value.Int FileViewerIconSize
+		public Value.Int FileBrowserIconSize
 		{
 			get;
 			private set;
@@ -293,8 +293,8 @@ namespace Effekseer.Data
 
 			LanguageSelector = new LanguageSelector();
 
-			FileViewerViewMode = new Value.Enum<FileViewMode>(FileViewMode.IconView);
-			FileViewerIconSize = new Value.Int(96, 512, 48);
+			FileBrowserViewMode = new Value.Enum<FileViewMode>(FileViewMode.IconView);
+			FileBrowserIconSize = new Value.Int(96, 512, 48);
 			FloatFormatDigits =  new Value.Int(3, 9, 1);
 			AutoSaveIntervalMin = new Value.Int(2, 60, 0);
 		}
@@ -367,9 +367,9 @@ namespace Effekseer.Data
 
 		public enum FileViewMode : int
 		{
-			[Key(key = "FileViewer_ViewMode_IconView")]
+			[Key(key = "FileBrowser_ViewMode_IconView")]
 			IconView = 0,
-			[Key(key = "FileViewer_ViewMode_ListView")]
+			[Key(key = "FileBrowser_ViewMode_ListView")]
 			ListView = 1,
 		}
 	}

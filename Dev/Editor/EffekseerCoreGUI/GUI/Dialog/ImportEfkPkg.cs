@@ -47,9 +47,9 @@ namespace Effekseer.GUI.Dialog
 			title = MultiLanguageTextProvider.GetText("ImportEfkPkgTitle");
 			sourceFilePath = Utils.Misc.BackSlashToSlash(path);
 
-			// FileViewer Path or Current Effect Path or Current Directory
+			// FileBrowser Path or Current Effect Path or Current Directory
 			string targetDirPath = null;
-			var fileViewer = (Dock.FileViewer)Manager.GetWindow(typeof(Dock.FileViewer));
+			var fileViewer = (Dock.FileBrowser)Manager.GetWindow(typeof(Dock.FileBrowser));
 			if (fileViewer != null && !string.IsNullOrEmpty(fileViewer.CurrentPath))
 			{
 				targetDirPath = fileViewer.CurrentPath;

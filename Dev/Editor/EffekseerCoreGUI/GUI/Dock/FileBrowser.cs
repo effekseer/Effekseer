@@ -7,7 +7,7 @@ using System.IO;
 
 namespace Effekseer.GUI.Dock
 {
-	public class FileViewer : DockPanel
+	public class FileBrowser : DockPanel
 	{
 		public string CurrentPath { get; private set; }
 		string addressText = string.Empty;
@@ -25,28 +25,28 @@ namespace Effekseer.GUI.Dock
 		FileSystemWatcher directoryWatcher = new FileSystemWatcher();
 		bool shouldUpdateFileList = true;
 
-		const string OptionMenuPopupId = "###FileViewerOptionMenu";
-		const string ContextMenuPopupId = "###FileViewerContextMenu";
+		const string OptionMenuPopupId = "###FileBrowserOptionMenu";
+		const string ContextMenuPopupId = "###FileBrowserContextMenu";
 
-		public FileViewer()
+		public FileBrowser()
 		{
-			Label = Icons.PanelFileViewer + Resources.GetString("FileViewer") + "###FileVeiwer";
+			Label = Icons.PanelFileBrowser + Resources.GetString("FileBrowser") + "###FileVeiwer";
 
-			TabToolTip = Resources.GetString("FileViewer");
+			TabToolTip = Resources.GetString("FileBrowser");
 
-			menuOpenFile = Resources.GetString("FileViewer_OpenFile");
+			menuOpenFile = Resources.GetString("FileBrowser_OpenFile");
 
 			if (swig.GUIManager.IsMacOSX())
 			{
-				menuShowInFileManager = Resources.GetString("FileViewer_ShowInFinder");
+				menuShowInFileManager = Resources.GetString("FileBrowser_ShowInFinder");
 			}
 			else
 			{
-				menuShowInFileManager = Resources.GetString("FileViewer_ShowInExplorer");
+				menuShowInFileManager = Resources.GetString("FileBrowser_ShowInExplorer");
 			}
 
-			menuImportFromPackage = Resources.GetString("FileViewer_ImportFromPackage");
-			menuExportToPackage = Resources.GetString("FileViewer_ExportToPackage");
+			menuImportFromPackage = Resources.GetString("FileBrowser_ImportFromPackage");
+			menuExportToPackage = Resources.GetString("FileBrowser_ExportToPackage");
 
 			directoryWatcher.Changed += (o, e) => { shouldUpdateFileList = true; };
 			directoryWatcher.Renamed += (o, e) => { shouldUpdateFileList = true; };
@@ -159,24 +159,24 @@ namespace Effekseer.GUI.Dock
 
 			if (Manager.NativeManager.BeginPopup(OptionMenuPopupId))
 			{
-				var viewMode = Core.Option.FileViewerViewMode.GetValue();
+				var viewMode = Core.Option.FileBrowserViewMode.GetValue();
 
 				Manager.NativeManager.PushItemWidth(fontSize * 8);
 
 				// View Mode setting
-				string comboLabel = MultiLanguageTextProvider.GetText("Options_FileViewerViewMode_Name");
-				string comboSelectedLabel = MultiLanguageTextProvider.GetText("FileViewer_ViewMode_" + Core.Option.FileViewerViewMode.GetValue().ToString() + "_Name");
+				string comboLabel = MultiLanguageTextProvider.GetText("Options_FileBrowserViewMode_Name");
+				string comboSelectedLabel = MultiLanguageTextProvider.GetText("FileBrowser_ViewMode_" + Core.Option.FileBrowserViewMode.GetValue().ToString() + "_Name");
 				if (Manager.NativeManager.BeginCombo(comboLabel, comboSelectedLabel, swig.ComboFlags.None))
 				{
-					string iconViewLabel = MultiLanguageTextProvider.GetText("FileViewer_ViewMode_" + Data.OptionValues.FileViewMode.IconView.ToString() + "_Name");
+					string iconViewLabel = MultiLanguageTextProvider.GetText("FileBrowser_ViewMode_" + Data.OptionValues.FileViewMode.IconView.ToString() + "_Name");
 					if (Manager.NativeManager.Selectable(iconViewLabel, viewMode == Data.OptionValues.FileViewMode.IconView))
 					{
-						Core.Option.FileViewerViewMode.SetValueDirectly(Data.OptionValues.FileViewMode.IconView);
+						Core.Option.FileBrowserViewMode.SetValueDirectly(Data.OptionValues.FileViewMode.IconView);
 					}
-					string listViewLabel = MultiLanguageTextProvider.GetText("FileViewer_ViewMode_" + Data.OptionValues.FileViewMode.ListView.ToString() + "_Name");
+					string listViewLabel = MultiLanguageTextProvider.GetText("FileBrowser_ViewMode_" + Data.OptionValues.FileViewMode.ListView.ToString() + "_Name");
 					if (Manager.NativeManager.Selectable(listViewLabel, viewMode == Data.OptionValues.FileViewMode.ListView))
 					{
-						Core.Option.FileViewerViewMode.SetValueDirectly(Data.OptionValues.FileViewMode.ListView);
+						Core.Option.FileBrowserViewMode.SetValueDirectly(Data.OptionValues.FileViewMode.ListView);
 					}
 					Manager.NativeManager.EndCombo();
 				}
@@ -184,10 +184,10 @@ namespace Effekseer.GUI.Dock
 				// Icon size setting
 				if (viewMode == Data.OptionValues.FileViewMode.IconView)
 				{
-					int[] val = new int[1] { Core.Option.FileViewerIconSize.GetValue() };
-					if (Manager.NativeManager.DragInt(MultiLanguageTextProvider.GetText("Options_FileViewerIconSize_Name"), val, 1, 32, 512, "%d"))
+					int[] val = new int[1] { Core.Option.FileBrowserIconSize.GetValue() };
+					if (Manager.NativeManager.DragInt(MultiLanguageTextProvider.GetText("Options_FileBrowserIconSize_Name"), val, 1, 32, 512, "%d"))
 					{
-						Core.Option.FileViewerIconSize.SetValueDirectly(val[0]);
+						Core.Option.FileBrowserIconSize.SetValueDirectly(val[0]);
 					}
 				}
 
@@ -199,8 +199,8 @@ namespace Effekseer.GUI.Dock
 
 		void UpdateFileView(float dpiScale, swig.Vec2 regionSize, swig.Vec2 spacing)
 		{
-			var viewMode = Core.Option.FileViewerViewMode.GetValue();
-			float iconSize = Core.Option.FileViewerIconSize.GetValue();
+			var viewMode = Core.Option.FileBrowserViewMode.GetValue();
+			float iconSize = Core.Option.FileBrowserIconSize.GetValue();
 
 			int contentCountX = 1;
 
@@ -416,12 +416,12 @@ namespace Effekseer.GUI.Dock
 						float relX = item.DrawPosX - Manager.NativeManager.GetScrollX();
 						float relY = item.DrawPosY - Manager.NativeManager.GetScrollY();
 
-						switch (Core.Option.FileViewerViewMode.GetValue())
+						switch (Core.Option.FileBrowserViewMode.GetValue())
 						{
 							case Data.OptionValues.FileViewMode.IconView:
 								Manager.NativeManager.ScrollToBringRectIntoView(
 									new swig.Vec2(relX, relY),
-									new swig.Vec2(relX, relY + Core.Option.FileViewerIconSize.GetValue()));
+									new swig.Vec2(relX, relY + Core.Option.FileBrowserIconSize.GetValue()));
 								break;
 							case Data.OptionValues.FileViewMode.ListView:
 								Manager.NativeManager.ScrollToBringRectIntoView(

@@ -28,7 +28,7 @@ namespace Effekseer.GUI.Menu
 			new DockSettings("Behavior", typeof(Dock.BehaviorValues), Icons.PanelBehavior),
 			new DockSettings("Network", typeof(Dock.Network), Icons.PanelNetwork),
 			new DockSettings("Recorder", typeof(Dock.Recorder), Icons.PanelRecorder),
-			new DockSettings("FileViewer", typeof(Dock.FileViewer), Icons.PanelFileViewer),
+			new DockSettings("FileBrowser", typeof(Dock.FileBrowser), Icons.PanelFileBrowser),
 			new DockSettings("Options", typeof(Dock.Option), Icons.PanelOptions),
 		};
 

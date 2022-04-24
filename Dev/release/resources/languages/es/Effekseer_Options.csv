@@ -43,8 +43,8 @@ Options_DistortionType_Name,Metodo distorsión
 Options_DistortionType_Desc,Metodo de distorsión
 Options_MouseMappingType_Name,Movimiento ratón
 Options_MouseMappingType_Desc,Configuración del movimiento del ratón
-Options_FileViewerViewMode_Name,Modo de vista de archivo
-Options_FileViewerIconSize_Name,Tamaño del icono de archivo
+Options_FileBrowserViewMode_Name,Modo de vista de archivo
+Options_FileBrowserIconSize_Name,Tamaño del icono de archivo
 Options_FloatFormatDigits_Name,Dígitos en formato flotante
 Options_AutoSaveIntervalMin_Name,Intervalo de guardado automático (minutos)
 Options_AutoSaveIntervalMin_Desc,Minutos entre copias de seguridad automáticas. Establecer en 0 para deshabilitar.
@@ -69,5 +69,5 @@ MouseMappingType_Effekseer_Name,Effekseer
 MouseMappingType_Unity_Name,Unity
 MouseMappingType_Blender_Name,Blender
 MouseMappingType_Maya_Name,Maya
-FileViewer_ViewMode_IconView_Name,Vista de icono
-FileViewer_ViewMode_ListView_Name,Vista de la lista
+FileBrowser_ViewMode_IconView_Name,Vista de icono
+FileBrowser_ViewMode_ListView_Name,Vista de la lista
