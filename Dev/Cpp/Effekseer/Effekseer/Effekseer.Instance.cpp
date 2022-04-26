@@ -98,7 +98,14 @@ const SIMD::Mat43f& Instance::GetGlobalMatrix43() const
 
 void Instance::SetGlobalMatrix(const SIMD::Mat43f& mat)
 {
+	if (m_GlobalMatrix43 == mat)
+	{
+		return;
+	}
+
+	m_sequenceNumber = m_pManager->GetSequenceNumber();
 	m_GlobalMatrix43 = mat;
+	m_GlobalMatrix43Calculated = true;
 }
 
 void Instance::Initialize(Instance* parent, int32_t instanceNumber)
@@ -276,14 +283,26 @@ void Instance::Update(float deltaFrame, bool shown)
 		FirstUpdate();
 	}
 
+	const auto isParentRemoving = m_pParent != nullptr && !m_pParent->IsActive();
+
+	bool isParentSequenceChanged = false;
+	if (m_pParent != nullptr)
+	{
+		isParentSequenceChanged = m_pParent->m_sequenceNumber >= m_sequenceNumber;
+	}
+
+	if (m_GlobalMatrix43Calculated && (m_ParentMatrix43Calculated || m_pParent == nullptr) && deltaFrame == 0.0F && !isParentRemoving && !isParentSequenceChanged)
+	{
+		return;
+	}
+
 	// Invalidate matrix
 	m_GlobalMatrix43Calculated = false;
 	m_ParentMatrix43Calculated = false;
 
 	if (is_time_step_allowed && m_pEffectNode->GetType() != eEffectNodeType::Root)
 	{
-		/* 音の更新(現状放置) */
-		if (m_pEffectNode->SoundType == ParameterSoundType_Use)
+		if (m_pEffectNode->SoundType == ParameterSoundType_Use && deltaFrame > 0)
 		{
 			float living_time = m_LivingTime;
 			float living_time_p = living_time + deltaFrame;
@@ -314,8 +333,7 @@ void Instance::Update(float deltaFrame, bool shown)
 		}
 	}
 
-	/* 親の削除処理 */
-	if (m_pParent != nullptr && !m_pParent->IsActive())
+	if (isParentRemoving)
 	{
 		UpdateParentMatrix(deltaFrame);
 		m_pParent = nullptr;
@@ -441,22 +459,19 @@ void Instance::UpdateTransform(float deltaFrame)
 	if (m_GlobalMatrix43Calculated)
 		return;
 
-	// if( m_sequenceNumber == ((ManagerImplemented*)m_pManager)->GetSequenceNumber() ) return;
-	m_sequenceNumber = ((ManagerImplemented*)m_pManager)->GetSequenceNumber();
-	const auto coordinateSystem = m_pEffectNode->GetEffect()->GetSetting()->GetCoordinateSystem();
-
 	assert(m_pEffectNode != nullptr);
 	assert(m_pContainer != nullptr);
 
-	// 親の処理
-	if (m_pParent != nullptr)
-	{
-		UpdateParentMatrix(deltaFrame);
-	}
-
-	/* 更新処理 */
 	if (m_pEffectNode->GetType() != eEffectNodeType::Root)
 	{
+		m_sequenceNumber = ((ManagerImplemented*)m_pManager)->GetSequenceNumber();
+		const auto coordinateSystem = m_pEffectNode->GetEffect()->GetSetting()->GetCoordinateSystem();
+
+		if (m_pParent != nullptr)
+		{
+			UpdateParentMatrix(deltaFrame);
+		}
+
 		SIMD::Vec3f localPosition = prevPosition_;
 		SIMD::Vec3f localVelocity;
 
