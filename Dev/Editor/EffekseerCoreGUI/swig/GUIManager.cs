@@ -265,6 +265,14 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_PopItemWidth(swigCPtr);
   }
 
+  public void PushTextWrapPos(float wrap_local_pos_x) {
+    EffekseerNativePINVOKE.GUIManager_PushTextWrapPos(swigCPtr, wrap_local_pos_x);
+  }
+
+  public void PopTextWrapPos() {
+    EffekseerNativePINVOKE.GUIManager_PopTextWrapPos(swigCPtr);
+  }
+
   public void Separator() {
     EffekseerNativePINVOKE.GUIManager_Separator(swigCPtr);
   }

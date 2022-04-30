@@ -238,7 +238,7 @@ namespace Effekseer.GUI.Dock
 
 				if (Manager.NativeManager.IsItemHovered(0.5f))
 				{
-					float tooltipBaseSize = Manager.DpiScale * 96.0f;
+					float tooltipBaseSize = dpiScale * 96.0f;
 					Manager.NativeManager.SetNextWindowSize(tooltipBaseSize * 3.0f, 0.0f, swig.Cond.Always);
 					Manager.NativeManager.BeginTooltip();
 
@@ -308,26 +308,15 @@ namespace Effekseer.GUI.Dock
 				}
 
 				// D&D
-				switch (item.Type)
+				if (item.Type != FileType.Directory)
 				{
-					case FileType.Texture:
-						DragAndDrops.UpdateFileSrc(item.FilePath, FileType.Texture);
-						break;
-					case FileType.Sound:
-						DragAndDrops.UpdateFileSrc(item.FilePath, FileType.Sound);
-						break;
-					case FileType.Model:
-						DragAndDrops.UpdateFileSrc(item.FilePath, FileType.Model);
-						break;
-					case FileType.Material:
-						DragAndDrops.UpdateFileSrc(item.FilePath, FileType.Material);
-						break;
-					case FileType.Curve:
-						DragAndDrops.UpdateFileSrc(item.FilePath, FileType.Curve);
-						break;
-					default:
-						DragAndDrops.UpdateFileSrc(item.FilePath, FileType.Other);
-						break;
+					DragAndDrops.UpdateFileSrc(item.FilePath, item.Type, () => {
+						float imageSize = dpiScale * 96.0f;
+						Manager.NativeManager.ImageData(item.IconImage, imageSize, imageSize);
+						Manager.NativeManager.PushTextWrapPos(imageSize);
+						Manager.NativeManager.Text(item.FileName);
+						Manager.NativeManager.PopTextWrapPos();
+					});
 				}
 
 				if (viewMode == Data.OptionValues.FileViewMode.ListView)
