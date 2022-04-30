@@ -1355,8 +1355,13 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public bool IsItemHovered(float time_threshold) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsItemHovered__SWIG_0(swigCPtr, time_threshold);
+    return ret;
+  }
+
   public bool IsItemHovered() {
-    bool ret = EffekseerNativePINVOKE.GUIManager_IsItemHovered(swigCPtr);
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsItemHovered__SWIG_1(swigCPtr);
     return ret;
   }
 
