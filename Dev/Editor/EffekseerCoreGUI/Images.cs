@@ -76,6 +76,14 @@ namespace Effekseer.GUI
 			Icons["ButtonMax"] = LoadAppResource(graphicsDevice, "resources/icons/Button_Max.png");
 			Icons["ButtonMaxCancel"] = LoadAppResource(graphicsDevice, "resources/icons/Button_MaxCancel.png");
 			Icons["ButtonClose"] = LoadAppResource(graphicsDevice, "resources/icons/Button_Close.png");
+
+			Icons["FileEfkefc128"] = LoadAppResource(graphicsDevice, "resources/icons/FileEfkefc128.png");
+			Icons["FileEfkmat128"] = LoadAppResource(graphicsDevice, "resources/icons/FileEfkmat128.png");
+			Icons["FileModel128"] = LoadAppResource(graphicsDevice, "resources/icons/FileModel128.png");
+			Icons["FileCurve128"] = LoadAppResource(graphicsDevice, "resources/icons/FileCurve128.png");
+			Icons["FileSound128"] = LoadAppResource(graphicsDevice, "resources/icons/FileSound128.png");
+			Icons["FileOther128"] = LoadAppResource(graphicsDevice, "resources/icons/FileOther128.png");
+			Icons["FileFolder128"] = LoadAppResource(graphicsDevice, "resources/icons/FileFolder128.png");
 		}
 
 		public static void Unload()

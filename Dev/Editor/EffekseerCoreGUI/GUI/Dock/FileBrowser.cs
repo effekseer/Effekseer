@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
+using System.Drawing;
 
 namespace Effekseer.GUI.Dock
 {
@@ -214,8 +213,6 @@ namespace Effekseer.GUI.Dock
 			{
 				var item = items[i];
 
-				string icon = item.GetIcon(viewMode == Data.OptionValues.FileViewMode.ListView);
-
 				if (i != 0 && i % contentCountX != 0)
 				{
 					Manager.NativeManager.SameLine();
@@ -224,18 +221,46 @@ namespace Effekseer.GUI.Dock
 				item.DrawPosX = Manager.NativeManager.GetCursorPosX();
 				item.DrawPosY = Manager.NativeManager.GetCursorPosY();
 
-				string label = icon + Path.GetFileName(item.FilePath);
+				string idstr = "###FileContent_" + i;
+				string label = Path.GetFileName(item.FilePath);
 				bool selected = false;
 
-				switch (viewMode)
+				if (viewMode == Data.OptionValues.FileViewMode.IconView)
 				{
-					case Data.OptionValues.FileViewMode.IconView:
-						selected = Manager.NativeManager.SelectableContent("###FileContent_" + i, label,
-							item.Selected, item.Image, iconSize, iconSize, swig.SelectableFlags.AllowDoubleClick);
-						break;
-					case Data.OptionValues.FileViewMode.ListView:
-						selected = Manager.NativeManager.Selectable(label + "###FileContent_" + i, item.Selected, swig.SelectableFlags.AllowDoubleClick);
-						break;
+					selected = Manager.NativeManager.SelectableContent(idstr, label,
+						item.Selected, item.IconImage, iconSize, iconSize, swig.SelectableFlags.AllowDoubleClick);
+				}
+				else if (viewMode == Data.OptionValues.FileViewMode.ListView)
+				{
+					selected = Manager.NativeManager.Selectable(item.IconStr + label + idstr, 
+						item.Selected, swig.SelectableFlags.AllowDoubleClick);
+				}
+
+				if (Manager.NativeManager.IsItemHovered(0.5f))
+				{
+					float tooltipBaseSize = Manager.DpiScale * 96.0f;
+					Manager.NativeManager.SetNextWindowSize(tooltipBaseSize * 3.0f, 0.0f, swig.Cond.Always);
+					Manager.NativeManager.BeginTooltip();
+
+					Manager.NativeManager.Text("Name: " + item.FileName);
+
+					if (item.Type != FileType.Other)
+					{
+						Manager.NativeManager.Text("Type: " + item.Type);
+					}
+					if (item.FileSize > 0)
+					{
+						Manager.NativeManager.Text("Size: " + item.FileSizeStr);
+					}
+					if (item.Type == FileType.Texture)
+					{
+						Manager.NativeManager.Text("Format: " + item.ImageSizeStr);
+					}
+
+					// Fullpath
+					Manager.NativeManager.TextWrapped(item.FilePath);
+
+					Manager.NativeManager.EndTooltip();
 				}
 
 				item.ItemID = Manager.NativeManager.GetItemID();
@@ -307,12 +332,12 @@ namespace Effekseer.GUI.Dock
 
 				if (viewMode == Data.OptionValues.FileViewMode.ListView)
 				{
-					if (item.Image != null)
+					if (item.Type == FileType.Texture && item.IconImage != null)
 					{
 						Manager.NativeManager.SameLine();
 						Manager.NativeManager.SetCursorPosX(item.DrawPosX);
 						float listIconSize = Manager.NativeManager.GetTextLineHeight();
-						Manager.NativeManager.ImageData(item.Image, listIconSize, listIconSize);
+						Manager.NativeManager.ImageData(item.IconImage, listIconSize, listIconSize);
 					}
 				}
 			}
@@ -441,7 +466,10 @@ namespace Effekseer.GUI.Dock
 
 		void OnAfterSave(object sender, EventArgs e)
 		{
-			UpdateFileListWithProjectPath(Core.Root.GetFullPath());
+			if (string.IsNullOrEmpty(CurrentPath))
+			{
+				UpdateFileListWithProjectPath(Core.Root.GetFullPath());
+			}
 		}
 
 		void UpdateFileListWithProjectPath(string path)
@@ -468,14 +496,17 @@ namespace Effekseer.GUI.Dock
 		/// </summary>
 		public class FileItem
 		{
-			/// <summary>
-			/// File path
-			/// </summary>
-			public string FilePath { get; set; }
+			public string FileName { get; private set; }
+
+			public string FilePath { get; private set; }
+
+			public long FileSize { get; private set; }
 
 			public FileType Type { get; private set; }
 
-			public swig.ReloadableImage Image { get; private set; }
+			public string IconStr { get; private set; }
+
+			public swig.ReloadableImage IconImage { get; private set; }
 
 			public bool Selected { get; set; }
 
@@ -485,58 +516,42 @@ namespace Effekseer.GUI.Dock
 
 			public float DrawPosY { get; set; }
 
-			public FileItem(string name, string filePath)
+			public FileItem(string fileName, string filePath, FileType type, long fileSize, 
+				string iconStr, swig.ReloadableImage iconImage)
 			{
+				FileName = fileName;
 				FilePath = filePath;
+				Type = type;
+				FileSize = fileSize;
+				IconStr = iconStr;
+				IconImage = iconImage;
+			}
 
-				if (System.IO.Directory.Exists(filePath))
+			public string FileSizeStr
+			{
+				get
 				{
-					Type = FileType.Directory;
-				}
-				else
-				{
-					switch (System.IO.Path.GetExtension(filePath).ToLower())
+					if (FileSize >= 1024 * 1024)
 					{
-						case ".efkproj":
-						case ".efkefc":
-							Type = FileType.Effect;
-							break;
-						case ".png":
-							Type = FileType.Texture;
-							Image = Images.Load(Manager.HardwareDevice.GraphicsDevice, filePath);
-							break;
-						case ".wav":
-							Type = FileType.Sound;
-							break;
-						case ".efkmodel":
-						case ".fbx":
-						case ".mqo":
-							Type = FileType.Model;
-							break;
-						case ".efkmat":
-							Type = FileType.Material;
-							break;
-						case ".efkcurve":
-							Type = FileType.Curve;
-							break;
-						default:
-							Type = FileType.Other;
-							break;
+						return string.Format("{0:.##} MB", FileSize / 1024.0 / 1024.0);
+					}
+					else if (FileSize >= 1024)
+					{
+						return string.Format("{0:.##} KB", FileSize / 1024.0);
+					}
+					else
+					{
+						return string.Format("{0} B", FileSize);
 					}
 				}
 			}
 
-			public string GetIcon(bool isListView)
+			public string ImageSizeStr
 			{
-				switch (Type)
+				get
 				{
-					case FileType.Directory: return Icons.FileDirectory;
-					case FileType.Effect: return Icons.FileEfkefc;
-					case FileType.Texture: return isListView ? Icons.Empty : "";
-					case FileType.Sound: return Icons.FileSound;
-					case FileType.Model: return Icons.FileModel;
-					case FileType.Material: return Icons.FileEfkmat;
-					default: return Icons.FileOther;
+					if (IconImage == null) return null;
+					return string.Format("{0} x {1}", IconImage.GetWidth(), IconImage.GetHeight());
 				}
 			}
 		}
@@ -568,30 +583,79 @@ namespace Effekseer.GUI.Dock
 			if (!addressEditing) { addressText = path; }
 			items.Clear();
 
-			//string parentDirectory = System.IO.Path.GetDirectoryName(path);
-			//if (parentDirectory != null)
-			//{
-			//	items.Add(new FileItem("Parent directory", Path.GetDirectoryName(path)));
-			//}
-
 			// add directories
 			foreach (string dirPath in Directory.EnumerateDirectories(path))
 			{
-				//int imageIndex = GetImageIndexFileIcon(dirPath);
-				var dirNode = new FileItem(Path.GetFileName(dirPath), dirPath);
-				items.Add(dirNode);
+				items.Add(CreateFileItem(dirPath));
 			}
 
 			// add files
 			foreach (string filePath in Directory.EnumerateFiles(path))
 			{
-				//int imageIndex = GetImageIndexFileIcon(filePath);
-				var fileNode = new FileItem(Path.GetFileName(filePath), filePath);
-				items.Add(fileNode);
+				items.Add(CreateFileItem(filePath));
 			}
 
 			directoryWatcher.Path = path;
 			directoryWatcher.EnableRaisingEvents = true;
+		}
+
+		private FileItem CreateFileItem(string filePath)
+		{
+			FileType type = FileType.Other;
+			string iconStr = Icons.FileOther;
+			swig.ReloadableImage iconImage = Images.Icons["FileOther128"];
+			long fileSize = -1;
+
+			if (Directory.Exists(filePath))
+			{
+				type = FileType.Directory;
+				iconStr = Icons.FileDirectory;
+				iconImage = Images.Icons["FileFolder128"];
+			}
+			else
+			{
+				var fileInfo = new FileInfo(filePath);
+				fileSize = fileInfo.Length;
+
+				switch (Path.GetExtension(filePath).ToLower())
+				{
+					case ".efkproj":
+					case ".efkefc":
+						type = FileType.Effect;
+						iconStr = Icons.FileEfkefc;
+						iconImage = Images.Icons["FileEfkefc128"];
+						break;
+					case ".png":
+						type = FileType.Texture;
+						iconStr = Icons.Empty; // Always show thumbnail
+						iconImage = Images.Load(Manager.HardwareDevice.GraphicsDevice, filePath);
+						break;
+					case ".wav":
+						type = FileType.Sound;
+						iconStr = Icons.FileSound;
+						iconImage = Images.Icons["FileSound128"];
+						break;
+					case ".efkmodel":
+					case ".fbx":
+					case ".mqo":
+						type = FileType.Model;
+						iconStr = Icons.FileModel;
+						iconImage = Images.Icons["FileModel128"];
+						break;
+					case ".efkmat":
+						type = FileType.Material;
+						iconStr = Icons.FileEfkmat;
+						iconImage = Images.Icons["FileEfkmat128"];
+						break;
+					case ".efkcurve":
+						type = FileType.Curve;
+						iconStr = Icons.PanelFCurve;
+						iconImage = Images.Icons["FileCurve128"];
+						break;
+				}
+			}
+
+			return new FileItem(Path.GetFileName(filePath), filePath, type, fileSize, iconStr, iconImage);
 		}
 
 		private void ResetSelected()
