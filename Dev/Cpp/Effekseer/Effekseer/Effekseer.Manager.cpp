@@ -71,6 +71,30 @@ ManagerRef Manager::Create(int instance_max, bool autoFlip)
 	return MakeRefPtr<ManagerImplemented>(instance_max, autoFlip);
 }
 
+void ManagerImplemented::DrawSet::UpdateLevelOfDetails(const Vector3D& viewerPosition, float lodDistaceBias)
+{
+	SIMD::Mat43f drawSetMatrix = this->GetGlobalMatrix();
+	float dx = viewerPosition.X - drawSetMatrix.X.GetW();
+	float dy = viewerPosition.Y - drawSetMatrix.Y.GetW();
+	float dz = viewerPosition.Z - drawSetMatrix.Z.GetW();
+	float distanceToViewer = SIMD::Sqrt(dx * dx + dy * dy + dz * dz) + lodDistaceBias;
+	EffectImplemented* effect = (EffectImplemented*)this->ParameterPointer.Get();
+	if(effect->LODs.distance3 > 0.0F && distanceToViewer > effect->LODs.distance3)
+	{
+		GlobalPointer->CurrentLevelOfDetails = 1 << 3;
+	} else if(effect->LODs.distance2 > 0.0F && distanceToViewer > effect->LODs.distance2)
+	{
+		GlobalPointer->CurrentLevelOfDetails = 1 << 2;
+	} else if(effect->LODs.distance1 > 0.0F && distanceToViewer > effect->LODs.distance1)
+	{
+		GlobalPointer->CurrentLevelOfDetails = 1 << 1;
+	} else 
+	{
+		GlobalPointer->CurrentLevelOfDetails = 1 << 0;
+	}
+}
+
+
 SIMD::Mat43f ManagerImplemented::DrawSet::GetGlobalMatrix() const
 {
 	return GlobalMatrix;
@@ -418,6 +442,7 @@ ManagerImplemented::ManagerImplemented(int instance_max, bool autoFlip)
 	, m_FreeFunc(nullptr)
 	, m_randFunc(nullptr)
 	, m_randMax(0)
+	, m_ViewerPosition(Vector3D(0.0, 0.0, 0.0))
 	, m_LodDistanceBias(0.0F)
 {
 	m_setting = Setting::Create();
@@ -1366,8 +1391,8 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter)
 	{
 		times = 1;
 	}
-
-	BeginUpdate();
+	
+	BeginUpdate(parameter.ViewerPosition);
 
 	for (int32_t t = 0; t < times; t++)
 	{
@@ -1394,26 +1419,7 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter)
 			{
 				drawSet.second.GlobalPointer->BeginDeltaFrame(0);
 			}
-
-			SIMD::Mat43f drawSetMatrix = drawSet.second.GetGlobalMatrix();
-			float dx = parameter.ViewerPosition.X - drawSetMatrix.X.GetW();
-			float dy = parameter.ViewerPosition.Y - drawSetMatrix.Y.GetW();
-			float dz = parameter.ViewerPosition.Z - drawSetMatrix.Z.GetW();
-			float distanceToViewer = SIMD::Sqrt(dx * dx + dy * dy + dz * dz) + m_LodDistanceBias;
-			EffectImplemented* effect = (EffectImplemented*)drawSet.second.ParameterPointer.Get();
-			if(effect->LODs.distance3 > 0.0F && distanceToViewer > effect->LODs.distance3)
-			{
-				drawSet.second.GlobalPointer->CurrentLevelOfDetails = 1 << 3;
-			} else if(effect->LODs.distance2 > 0.0F && distanceToViewer > effect->LODs.distance2)
-			{
-				drawSet.second.GlobalPointer->CurrentLevelOfDetails = 1 << 2;
-			} else if(effect->LODs.distance1 > 0.0F && distanceToViewer > effect->LODs.distance1)
-			{
-				drawSet.second.GlobalPointer->CurrentLevelOfDetails = 1 << 1;
-			} else 
-			{
-				drawSet.second.GlobalPointer->CurrentLevelOfDetails = 1 << 0;
-			}
+			
 		}
 
 		for (auto& chunks : instanceChunks_)
@@ -1493,7 +1499,7 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter)
 	m_updateTime = (int)(Effekseer::GetTime() - beginTime);
 }
 
-void ManagerImplemented::BeginUpdate()
+void ManagerImplemented::BeginUpdate(const Vector3D& viewerPosition)
 {
 	m_renderingMutex.lock();
 	m_isLockedWithRenderingMutex = true;
@@ -1503,6 +1509,7 @@ void ManagerImplemented::BeginUpdate()
 		Flip();
 	}
 
+	m_ViewerPosition = viewerPosition;
 	m_sequenceNumber++;
 }
 
@@ -1602,6 +1609,10 @@ void ManagerImplemented::UpdateInstancesByInstanceGlobal(const DrawSet& drawSet)
 
 void ManagerImplemented::UpdateHandleInternal(DrawSet& drawSet)
 {
+	// evaluate LOD
+
+	drawSet.UpdateLevelOfDetails(m_ViewerPosition, m_LodDistanceBias);
+	
 	// calculate dynamic parameters
 	auto e = static_cast<EffectImplemented*>(drawSet.ParameterPointer.Get());
 	assert(e != nullptr);
