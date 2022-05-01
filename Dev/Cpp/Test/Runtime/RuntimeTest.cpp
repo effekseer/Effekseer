@@ -1120,6 +1120,59 @@ void SRGBLinearTest()
 #endif
 }
 
+void LODsTest()
+{
+	{
+		srand(0);
+#ifdef _WIN32
+		auto platform = std::make_shared<EffectPlatformDX11>();
+#else
+		auto platform = std::make_shared<EffectPlatformGL>();
+#endif
+		EffectPlatformInitializingParameter param;
+
+		platform->Initialize(param);
+
+		auto h = platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/LODs/SimpleLODs.efkefc").c_str());
+
+		auto setDistanceToEffect = [platform, h](double distance)
+		{
+			auto cameraFrontDirection = platform->GetRenderer()->GetCameraFrontDirection();
+			auto cameraPosition = platform->GetRenderer()->GetCameraPosition();
+			platform->GetManager()->SetLocation(h, cameraPosition - cameraFrontDirection * distance);
+		};
+
+		platform->Update();
+
+		setDistanceToEffect(1.0); // Level 0 starts from distance 0
+		platform->Update();
+		platform->Update();
+		platform->TakeScreenshot("LOD_Level_0.png");
+		assert(platform->GetManager()->GetCurrentLOD(h) == 0b0001);
+
+		setDistanceToEffect(6.0); // Level 1 starts from distance 4
+		platform->Update();
+		platform->Update();
+		platform->TakeScreenshot("LOD_Level_1.png");
+		assert(platform->GetManager()->GetCurrentLOD(h) == 0b0010);
+
+		setDistanceToEffect(10.0); // Level 2 starts from distance 8
+		platform->Update();
+		platform->Update();
+		platform->TakeScreenshot("LOD_Level_2.png");
+		assert(platform->GetManager()->GetCurrentLOD(h) == 0b0100);
+		
+		setDistanceToEffect(14.0); // Level 3 starts from distance 12
+		platform->Update();
+		platform->Update();
+		platform->TakeScreenshot("LOD_Level_3.png");
+		assert(platform->GetManager()->GetCurrentLOD(h) == 0b1000);
+		
+
+		platform->Terminate();
+	}
+}
+
 #if defined(__linux__) || defined(__APPLE__) || defined(WIN32)
 
 TestRegister Runtime_StringAndPathHelperTest("Runtime.StringAndPathHelperTest", []() -> void { StringAndPathHelperTest(); });
@@ -1156,4 +1209,5 @@ TestRegister Runtime_RenderLimitTest("Runtime.RenderLimitTest", []() -> void { R
 
 TestRegister Runtime_SRGBLinearTest("Runtime.SRGBLinearTest", []() -> void { SRGBLinearTest(); });
 
+TestRegister Runtime_LODsTest("Runtime.LODsTest", []() -> void { LODsTest(); });
 #endif

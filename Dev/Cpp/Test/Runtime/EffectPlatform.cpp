@@ -202,7 +202,7 @@ bool EffectPlatform::Update()
 
 	if (this->initParam_.IsUpdatedByHandle)
 	{
-		manager_->BeginUpdate();
+		manager_->BeginUpdate(renderer_->GetCameraPosition());
 
 		for (auto h : effectHandles_)
 		{
@@ -213,7 +213,9 @@ bool EffectPlatform::Update()
 	}
 	else
 	{
-		manager_->Update();
+		Effekseer::Manager::UpdateParameter updateParameter;
+		updateParameter.ViewerPosition = renderer_->GetCameraPosition();
+		manager_->Update(updateParameter);
 	}
 
 	BeginRendering();
