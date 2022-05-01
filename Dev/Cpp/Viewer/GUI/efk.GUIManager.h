@@ -506,13 +506,30 @@ public:
 	void Dummy(const Effekseer::Tool::Vector2I& size);
 	void SameLine(float offset_from_start_x = 0.0f, float spacing = -1.0f);
 
+	void PushDisabled();
+	void PopDisabled();
+
+	void AddRectFilled(float minX, float minY, float maxX, float maxY, uint32_t color, float rounding, int flags);
+
 	void BeginGroup();
 	void EndGroup();
 
+	void AlignTextToFramePadding();
+
+	void SetNextItemWidth(float width);
+	
 	void SetCursorPosX(float x);
 	void SetCursorPosY(float y);
 	float GetCursorPosX();
 	float GetCursorPosY();
+	float GetCursorScreenPosX();
+	float GetCursorScreenPosY();
+	float GetItemRectMinX();
+	float GetItemRectMinY();
+	float GetItemRectMaxX();
+	float GetItemRectMaxY();
+	float GetItemRectSizeX();
+	float GetItemRectSizeY();
 	float GetTextLineHeight();
 	float GetTextLineHeightWithSpacing();
 	float GetFrameHeight();

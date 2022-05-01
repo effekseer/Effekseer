@@ -78,6 +78,10 @@ public class EffectRenderer : global::System.IDisposable {
     EffekseerNativePINVOKE.EffectRenderer_Render(swigCPtr, RenderImage.getCPtr(renderImage));
   }
 
+  public void SetLODDistanceBias(float distanceBias) {
+    EffekseerNativePINVOKE.EffectRenderer_SetLODDistanceBias(swigCPtr, distanceBias);
+  }
+
   public Effect GetEffect() {
     global::System.IntPtr cPtr = EffekseerNativePINVOKE.EffectRenderer_GetEffect(swigCPtr);
     Effect ret = (cPtr == global::System.IntPtr.Zero) ? null : new Effect(cPtr, true);
@@ -100,6 +104,11 @@ public class EffectRenderer : global::System.IDisposable {
   public void SetBehavior(ViewerEffectBehavior behavior) {
     EffekseerNativePINVOKE.EffectRenderer_SetBehavior(swigCPtr, ViewerEffectBehavior.getCPtr(behavior));
     if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+  }
+
+  public int GetCurrentLOD() {
+    int ret = EffekseerNativePINVOKE.EffectRenderer_GetCurrentLOD(swigCPtr);
+    return ret;
   }
 
   public int GetInstanceCount() {

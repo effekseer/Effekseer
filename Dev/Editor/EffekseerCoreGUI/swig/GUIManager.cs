@@ -298,12 +298,32 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_SameLine__SWIG_2(swigCPtr);
   }
 
+  public void PushDisabled() {
+    EffekseerNativePINVOKE.GUIManager_PushDisabled(swigCPtr);
+  }
+
+  public void PopDisabled() {
+    EffekseerNativePINVOKE.GUIManager_PopDisabled(swigCPtr);
+  }
+
+  public void AddRectFilled(float minX, float minY, float maxX, float maxY, uint color, float rounding, int flags) {
+    EffekseerNativePINVOKE.GUIManager_AddRectFilled(swigCPtr, minX, minY, maxX, maxY, color, rounding, flags);
+  }
+
   public void BeginGroup() {
     EffekseerNativePINVOKE.GUIManager_BeginGroup(swigCPtr);
   }
 
   public void EndGroup() {
     EffekseerNativePINVOKE.GUIManager_EndGroup(swigCPtr);
+  }
+
+  public void AlignTextToFramePadding() {
+    EffekseerNativePINVOKE.GUIManager_AlignTextToFramePadding(swigCPtr);
+  }
+
+  public void SetNextItemWidth(float width) {
+    EffekseerNativePINVOKE.GUIManager_SetNextItemWidth(swigCPtr, width);
   }
 
   public void SetCursorPosX(float x) {
@@ -321,6 +341,46 @@ public class GUIManager : global::System.IDisposable {
 
   public float GetCursorPosY() {
     float ret = EffekseerNativePINVOKE.GUIManager_GetCursorPosY(swigCPtr);
+    return ret;
+  }
+
+  public float GetCursorScreenPosX() {
+    float ret = EffekseerNativePINVOKE.GUIManager_GetCursorScreenPosX(swigCPtr);
+    return ret;
+  }
+
+  public float GetCursorScreenPosY() {
+    float ret = EffekseerNativePINVOKE.GUIManager_GetCursorScreenPosY(swigCPtr);
+    return ret;
+  }
+
+  public float GetItemRectMinX() {
+    float ret = EffekseerNativePINVOKE.GUIManager_GetItemRectMinX(swigCPtr);
+    return ret;
+  }
+
+  public float GetItemRectMinY() {
+    float ret = EffekseerNativePINVOKE.GUIManager_GetItemRectMinY(swigCPtr);
+    return ret;
+  }
+
+  public float GetItemRectMaxX() {
+    float ret = EffekseerNativePINVOKE.GUIManager_GetItemRectMaxX(swigCPtr);
+    return ret;
+  }
+
+  public float GetItemRectMaxY() {
+    float ret = EffekseerNativePINVOKE.GUIManager_GetItemRectMaxY(swigCPtr);
+    return ret;
+  }
+
+  public float GetItemRectSizeX() {
+    float ret = EffekseerNativePINVOKE.GUIManager_GetItemRectSizeX(swigCPtr);
+    return ret;
+  }
+
+  public float GetItemRectSizeY() {
+    float ret = EffekseerNativePINVOKE.GUIManager_GetItemRectSizeY(swigCPtr);
     return ret;
   }
 

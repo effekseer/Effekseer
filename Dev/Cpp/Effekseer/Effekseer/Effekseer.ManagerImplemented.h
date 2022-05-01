@@ -190,6 +190,8 @@ private:
 
 	int m_randMax;
 
+	float m_LodDistanceBias = 0.0F;
+
 	std::queue<std::pair<SoundTag, SoundPlayer::InstanceParameter>> m_requestedSounds;
 	std::mutex m_soundMutex;
 
@@ -319,6 +321,12 @@ public:
 	int32_t GetInstanceCount(Handle handle) override;
 
 	int32_t GetTotalInstanceCount() const override;
+
+	int GetCurrentLOD(Handle handle) override;
+	
+	float GetLODDistanceBias() const override;
+	
+	void SetLODDistanceBias(float distanceBias) override;
 
 	Matrix43 GetMatrix(Handle handle) override;
 

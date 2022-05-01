@@ -171,6 +171,12 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			}
 		}
 
+		if(ef->GetVersion() >= Version17Alpha3)
+		{
+			memcpy(&LODsParam, pos, sizeof(ParameterLODs));
+			pos += sizeof(ParameterLODs);
+		}
+
 		TranslationParam.Load(pos, ef);
 
 		// Local force field

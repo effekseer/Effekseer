@@ -207,6 +207,8 @@ namespace Effekseer
 
 		static Data.EffectCullingValues culling = new Data.EffectCullingValues();
 
+		private static Data.EffectLODValues lodValues = new Data.EffectLODValues();
+
 		static Data.GlobalValues globalValues = new Data.GlobalValues();
 
 		static Data.RecordingValues recording = new Data.RecordingValues();
@@ -389,6 +391,11 @@ namespace Effekseer
 		public static Data.EffectCullingValues Culling
 		{
 			get { return culling; }
+		}
+
+		public static Data.EffectLODValues LodValues
+		{
+			get { return lodValues; }
 		}
 
 		public static Data.GlobalValues Global
@@ -777,6 +784,7 @@ namespace Effekseer
 			// Adhoc code
 			effectBehavior.Reset();
 			culling = new Data.EffectCullingValues();
+			lodValues = new EffectLODValues();
 			globalValues = new Data.GlobalValues();
 
 			if (recording.RecordingStorageTarget.Value == Data.RecordingStorageTargetTyoe.Local)
@@ -810,6 +818,7 @@ namespace Effekseer
 
 			var behaviorElement = Data.IO.SaveObjectToElement(doc, "Behavior", EffectBehavior, false);
 			var cullingElement = Data.IO.SaveObjectToElement(doc, "Culling", Culling, false);
+			var lodElement = Data.IO.SaveObjectToElement(doc, "LOD", LodValues, false);
 			var globalElement = Data.IO.SaveObjectToElement(doc, "Global", Global, false);
 			var dynamicElement = Data.IO.SaveObjectToElement(doc, "Dynamic", Dynamic, false);
 			var proceduralModelElement = Data.IO.SaveObjectToElement(doc, "ProceduralModel", ProceduralModel, false);
@@ -820,6 +829,7 @@ namespace Effekseer
 
 			if (behaviorElement != null) project_root.AppendChild(behaviorElement);
 			if (cullingElement != null) project_root.AppendChild(cullingElement);
+			if (lodElement != null) project_root.AppendChild(lodElement);
 			if (globalElement != null) project_root.AppendChild(globalElement);
 			if (dynamicElement != null) project_root.AppendChild(dynamicElement);
 			if (proceduralModelElement != null) project_root.AppendChild(proceduralModelElement);
@@ -1014,6 +1024,7 @@ namespace Effekseer
 			if (root == null) return null;
 
 			culling = new Data.EffectCullingValues();
+			lodValues = new EffectLODValues();
 			globalValues = new Data.GlobalValues();
 
 			// Adhoc code
@@ -1031,6 +1042,13 @@ namespace Effekseer
 			{
 				var o = culling as object;
 				Data.IO.LoadObjectFromElement(cullingElement as System.Xml.XmlElement, ref o, false);
+			}
+
+			var lodValuesElement = doc["EffekseerProject"]["LOD"];
+			if (lodValuesElement != null)
+			{
+				var o = Core.lodValues as object;
+				Data.IO.LoadObjectFromElement(lodValuesElement, ref o, false);
 			}
 
 			var globalElement = doc["EffekseerProject"]["Global"];

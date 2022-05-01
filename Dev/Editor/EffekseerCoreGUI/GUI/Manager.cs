@@ -430,6 +430,15 @@ namespace Effekseer.GUI
 			Core.Culling.Sphere.Location.Z.OnChanged += OnChanged;
 			Core.Culling.Sphere.Radius.OnChanged += OnChanged;
 
+			Core.LodValues.Lod0Enabled.OnChanged += OnChanged;
+			Core.LodValues.Distance0.OnChanged += OnChanged;
+			Core.LodValues.Lod1Enabled.OnChanged += OnChanged;
+			Core.LodValues.Distance1.OnChanged += OnChanged;
+			Core.LodValues.Lod2Enabled.OnChanged += OnChanged;
+			Core.LodValues.Distance2.OnChanged += OnChanged;
+			Core.LodValues.Lod3Enabled.OnChanged += OnChanged;
+			Core.LodValues.Distance3.OnChanged += OnChanged;
+
 			Core.OnAfterLoad += new EventHandler(Core_OnAfterLoad);
 			Core.OnAfterNew += new EventHandler(Core_OnAfterNew);
 			Core.OnReload += new EventHandler(Core_OnReload);

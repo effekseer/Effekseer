@@ -1255,6 +1255,21 @@ void GUIManager::SameLine(float offset_from_start_x, float spacing)
 	ImGui::SameLine(offset_from_start_x, spacing);
 }
 
+void GUIManager::PushDisabled()
+{
+	ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+}
+
+void GUIManager::PopDisabled()
+{
+	ImGui::PopItemFlag();
+}
+
+void GUIManager::AddRectFilled(float minX, float minY, float maxX, float maxY, uint32_t color, float rounding, int flags)
+{
+	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(minX, minY), ImVec2(maxX, maxY), color, rounding, flags);
+}
+
 void GUIManager::BeginGroup()
 {
 	ImGui::BeginGroup();
@@ -1263,6 +1278,16 @@ void GUIManager::BeginGroup()
 void GUIManager::EndGroup()
 {
 	ImGui::EndGroup();
+}
+
+void GUIManager::AlignTextToFramePadding()
+{
+	ImGui::AlignTextToFramePadding();
+}
+
+void GUIManager::SetNextItemWidth(float width)
+{
+	ImGui::SetNextItemWidth(width);
 }
 
 void GUIManager::SetCursorPosX(float x)
@@ -1284,6 +1309,45 @@ float GUIManager::GetCursorPosY()
 {
 	return ImGui::GetCursorPosY();
 }
+
+float GUIManager::GetCursorScreenPosX()
+{
+	return ImGui::GetCursorScreenPos().x;
+}
+
+float GUIManager::GetCursorScreenPosY()
+{
+	return ImGui::GetCursorScreenPos().y;
+}
+
+float GUIManager::GetItemRectMinX()
+{
+	return ImGui::GetItemRectMin().x;
+}
+
+float GUIManager::GetItemRectMinY()
+{
+	return ImGui::GetItemRectMin().y;
+}
+
+float GUIManager::GetItemRectMaxX()
+{
+	return ImGui::GetItemRectMax().x;
+}
+
+float GUIManager::GetItemRectMaxY()
+{
+	return ImGui::GetItemRectMax().y;
+}
+float GUIManager::GetItemRectSizeX()
+{
+	return ImGui::GetItemRectSize().x;
+}
+float GUIManager::GetItemRectSizeY()
+{
+	return ImGui::GetItemRectSize().y;
+}
+
 
 float GUIManager::GetTextLineHeight()
 {

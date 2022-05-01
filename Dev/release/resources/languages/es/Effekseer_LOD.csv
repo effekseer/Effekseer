@@ -1,0 +1,14 @@
+﻿LOD_Name,Niveles de detalles
+LOD_Level,Nivel
+LOD_Description,Configure los niveles de detalles para utilizar.\nCuando el nivel está habilitado, puede especificar la distancia mínima del espectador para que se seleccione el LOD
+LOD_Level_Minimum_Distance,Distancia minima
+LODBehaviour_Hide_Name,Ocultar partículas
+LODBehaviour_DontSpawn_Name,Detener el engendro de nuevas partículas
+LODBehaviour_DontSpawnAndHide_Name,Detenga la aparición de nuevas partículas y oculte las existentes
+LOD_NotConfigured,Los niveles de detalle no están configurados
+LOD_Configure,Configurar
+LOD_SelectMatching,Seleccione los LOD en los que el nodo se comporta como de costumbre
+LOD_Behaviour,Cómo debe comportarse la partícula cuando el LOD no coincide con la selección
+LOD_ApplyToChildren,Aplicar configuración de LOD a los niños
+LOD_Bias_Name,Sesgo de distancia LOD (m)
+LOD_Bias_Description,Agrega el valor dado a la distancia calculada desde el espectador. Útil para la vista previa de LOD.

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
+using Effekseer.InternalScript;
 
 namespace Effekseer.Data
 {
@@ -144,8 +146,40 @@ namespace Effekseer.Data
 			}
 		}
 
+		public class LODParameter
+		{
+			[Key(key = "LODParameter_MatchingLODs")]
+			[Shown(Shown = false)]
+			public Value.Int MatchingLODs
+			{
+				get;
+				set;
+			}
+		
+			[Key(key = "LODParameter_LodBehaviour")]
+			[Shown(Shown = false)]
+			public Value.Enum<LODBehaviourType> LodBehaviour
+			{
+				get;
+				set;
+			}
+		
+			public LODParameter()
+			{
+				MatchingLODs = new Value.Int(0b1111);
+				LodBehaviour = new Value.Enum<LODBehaviourType>(LODBehaviourType.Hide);
+			}
+		}
+
 		[IO(Export = true)]
 		public TriggerParameter TriggerParam
+		{
+			get;
+			private set;
+		}
+		
+		[IO(Export = true)]
+		public LODParameter LodParameter
 		{
 			get;
 			private set;
@@ -165,6 +199,8 @@ namespace Effekseer.Data
 			GenerationTimeOffset = new Value.FloatWithRandom(0, float.MaxValue, float.MinValue);
 			SteeringBehaviorParam = new SteeringBehaviorParameter();
 			TriggerParam = new TriggerParameter();
+			LodParameter = new LODParameter();
+			
 
 			// dynamic parameter
 			MaxGeneration.CanSelectDynamicEquation = true;

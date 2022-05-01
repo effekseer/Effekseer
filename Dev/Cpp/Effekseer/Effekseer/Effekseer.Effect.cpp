@@ -686,6 +686,16 @@ bool EffectImplemented::LoadBody(const uint8_t* data, int32_t size, float mag)
 		}
 	}
 
+	if(m_version >= Version17Alpha3)
+	{
+		binaryReader.Read(LODs.distance1);
+		binaryReader.Read(LODs.distance2);
+		binaryReader.Read(LODs.distance3);
+		LODs.distance1 *= m_maginification;
+		LODs.distance2 *= m_maginification;
+		LODs.distance3 *= m_maginification;
+	}
+
 	// Check
 	if (binaryReader.GetStatus() == BinaryReaderStatus::Failed)
 		return false;
