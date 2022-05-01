@@ -104,7 +104,7 @@ class EffectImplemented : public Effect, public ReferenceObject
 	friend class EffectFactory;
 	friend class Instance;
 
-	static const int32_t SupportBinaryVersion = Version17Alpha2;
+	static const int32_t SupportBinaryVersion = Version17Alpha3;
 
 protected:
 	SettingRef m_setting;
@@ -181,6 +181,13 @@ protected:
 		};
 
 	} Culling;
+
+	struct
+	{
+		float distance1;
+		float distance2;
+		float distance3;
+	} LODs;
 
 	//! a flag to reload
 	bool isReloadingOnRenderingThread = false;

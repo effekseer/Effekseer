@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Effekseer.Data;
+using Effekseer.swig;
 
 namespace Effekseer.GUI.Dock
 {
@@ -74,7 +74,8 @@ namespace Effekseer.GUI.Dock
 
 		override protected void UpdateInternal()
 		{
-			float showHideButtonOffset = Manager.NativeManager.GetTextLineHeight();
+			float showHideButtonOffset = Manager.NativeManager.GetTextLineHeight() * 2
+			                             + Manager.NativeManager.GetStyleVar2(ImGuiStyleVarFlags.ItemSpacing).X;
 
 			isPopupShown = false;
 
@@ -299,6 +300,8 @@ namespace Effekseer.GUI.Dock
 
 		internal Utils.DelayedList<NodeTreeViewNode> Children = new Utils.DelayedList<NodeTreeViewNode>();
 
+		private Component.Enum lodBehaviourEnumControl;
+		
 		NodeTreeView treeView = null;
 
 		bool requiredToExpand = false;
@@ -323,6 +326,16 @@ namespace Effekseer.GUI.Dock
 					Children.Add(newNode);
 				}
 			}
+
+			var effectNode = node as Data.Node;
+			if (effectNode != null)
+			{
+				lodBehaviourEnumControl = new Component.Enum();
+				lodBehaviourEnumControl.Initialize(typeof(LODBehaviourType));
+				lodBehaviourEnumControl.SetBinding(effectNode.CommonValues.LodParameter.LodBehaviour);
+				lodBehaviourEnumControl.EnableUndo = true;
+			}
+			
 
 			AddEvent(false);
 		}
@@ -399,6 +412,106 @@ namespace Effekseer.GUI.Dock
 					(Children[i]).RemoveEvent(true);
 				}
 			}
+		}
+
+		void UpdateLODButton()
+		{
+			var node = Node as Data.Node;
+			float lodButtonSize = Manager.NativeManager.GetTextLineHeight();
+			if (node != null)
+			{
+				int enabledLevels = Core.LodValues.GetEnabledLevelsBits();
+				int enabledLevelsCount = 0;
+				for (int i = 0; i < LOD.LevelCount; i++)
+				{
+					enabledLevelsCount += ((enabledLevels & (1 << i)) > 0) ? 1 : 0;
+				}
+				
+				int levels = node.CommonValues.LodParameter.MatchingLODs & enabledLevels;
+				
+				Manager.NativeManager.Button(id, lodButtonSize, lodButtonSize);
+			
+				
+				for (int i = 0; i < LOD.LevelCount; i++)
+				{
+					bool isEnabled = (levels & (1 << i)) > 0;
+					if(!isEnabled) continue;
+
+					float boxW = Manager.NativeManager.GetItemRectSizeX();
+					float boxH = Manager.NativeManager.GetItemRectSizeY();
+					float pad = 2F;
+					float spacing = 2F;
+					float entryW = boxW - 2F * pad;
+					float entryH = (boxH - 2F * pad - enabledLevelsCount * spacing) / enabledLevelsCount;
+					float x = Manager.NativeManager.GetItemRectMinX() + pad;
+					float y = Manager.NativeManager.GetItemRectMinY() + (entryH + spacing) * i + pad + 1F;
+			
+					Manager.NativeManager.AddRectFilled(x, y , x + entryW, y + entryH,
+						LOD.LevelColors[i], 5, 0);
+				}
+
+				if (Manager.NativeManager.IsItemClicked(0))
+				{
+					Manager.NativeManager.OpenPopup("LodEditor " + id);
+				}
+
+				if (Manager.NativeManager.BeginPopup("LodEditor " + id))
+				{
+					if (Core.LodValues.GetEnabledLevelsBits() == 1)
+					{
+						Manager.NativeManager.Text(MultiLanguageTextProvider.GetText("LOD_NotConfigured"));
+						if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("LOD_Configure")))
+						{
+							var state = Manager.MainWindow.GetState();
+							Manager.SelectOrShowWindow(typeof(Dock.LOD),
+								new swig.Vec2(state.Width * 0.25f, state.Height * 0.5f), true, false);
+						}
+					}
+					else
+					{
+						Manager.NativeManager.Text(MultiLanguageTextProvider.GetText("LOD_SelectMatching"));
+						for (int i = 0; i < LOD.LevelCount; i++)
+						{
+							if ((enabledLevels & (1 << i)) == 0) break;
+
+							bool[] level0Match = { (levels & (1 << i)) > 0 };
+
+							Manager.NativeManager.AlignTextToFramePadding();
+							Manager.NativeManager.PushStyleColor(ImGuiColFlags.Text, LOD.LevelColors[i]);
+							Manager.NativeManager.Text(MultiLanguageTextProvider.GetText("LOD_Level") + " " + i);
+							Manager.NativeManager.PopStyleColor();
+							Manager.NativeManager.SameLine();
+							if (Manager.NativeManager.Checkbox("##level" + i, level0Match))
+							{
+								node.CommonValues.LodParameter.MatchingLODs.SetValue(
+									(level0Match[0] ? 1 << i : 0) | (levels & ~(1 << i)));
+								ApplyLODSettingsToChildren();
+							}
+						}
+
+						Manager.NativeManager.Text(MultiLanguageTextProvider.GetText("LOD_Behaviour"));
+						var prevBehaviour = node.CommonValues.LodParameter.LodBehaviour.Value;
+						lodBehaviourEnumControl.Update();
+						// detecting value change without listener
+						if (prevBehaviour != node.CommonValues.LodParameter.LodBehaviour.Value)
+						{
+							ApplyLODSettingsToChildren();
+						}
+						Manager.NativeManager.Separator();
+						if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("LOD_ApplyToChildren")))
+						{
+							ApplyLODSettingsToChildren();
+						}
+					}
+
+					Manager.NativeManager.EndPopup();
+				}
+			}
+			else
+			{
+				Manager.NativeManager.Button("##dummy", lodButtonSize, lodButtonSize);
+			}
+			
 		}
 
 		void UpdateVisibleButton()
@@ -496,6 +609,10 @@ namespace Effekseer.GUI.Dock
 
 			Manager.NativeManager.NextColumn();
 
+			UpdateLODButton();
+			
+			Manager.NativeManager.SameLine();
+
 			UpdateVisibleButton();
 
 			Manager.NativeManager.NextColumn();
@@ -521,6 +638,25 @@ namespace Effekseer.GUI.Dock
 			}
 		}
 
+		private void ApplyLODSettingsToChildren()
+		{
+			var effectNode = Node as Data.Node;
+			if(effectNode == null) return;
+
+			int matchingLods = effectNode.CommonValues.LodParameter.MatchingLODs;
+			LODBehaviourType lodBehaviour = effectNode.CommonValues.LodParameter.LodBehaviour;
+			for (var i = 0; i < Children.Count; i++)
+			{
+				var child = Children[i];
+				var childNode = child.Node as Data.Node;
+				if(childNode == null) continue;
+				
+				childNode.CommonValues.LodParameter.MatchingLODs.SetValueDirectly(matchingLods);
+				childNode.CommonValues.LodParameter.LodBehaviour.SetValueDirectly(lodBehaviour);
+				child.ApplyLODSettingsToChildren();
+			}
+		}
+		
 		private void SelectNodeIfClicked()
 		{
 			int KEY_ENTER = 257;

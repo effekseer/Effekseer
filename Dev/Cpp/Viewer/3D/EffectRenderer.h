@@ -190,6 +190,8 @@ public:
 	void Update(int32_t frame);
 	void Render(std::shared_ptr<RenderImage> renderImage);
 
+	void SetLODDistanceBias(float distanceBias);
+
 	std::shared_ptr<Effekseer::Tool::Effect> GetEffect() const;
 	void SetEffect(std::shared_ptr<Effekseer::Tool::Effect> effect);
 	void ResetEffect();
@@ -197,6 +199,8 @@ public:
 	const ViewerEffectBehavior& GetBehavior() const;
 	void SetBehavior(const ViewerEffectBehavior& behavior);
 
+	int GetCurrentLOD() const;
+	
 	int32_t GetInstanceCount() const;
 
 	void SetStep(int32_t step);

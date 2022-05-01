@@ -67,6 +67,7 @@ public:
 	void EndDeltaFrame();
 
 	bool IsSpawnDisabled = false;
+	int CurrentLevelOfDetails = 0;
 	
 	bool IsGlobalColorSet = false;
 	Color GlobalColor = Color(255, 255, 255, 255);

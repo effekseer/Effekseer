@@ -418,6 +418,7 @@ ManagerImplemented::ManagerImplemented(int instance_max, bool autoFlip)
 	, m_FreeFunc(nullptr)
 	, m_randFunc(nullptr)
 	, m_randMax(0)
+	, m_LodDistanceBias(0.0F)
 {
 	m_setting = Setting::Create();
 
@@ -797,6 +798,27 @@ int32_t ManagerImplemented::GetTotalInstanceCount() const
 		instanceCount += drawSet.GlobalPointer->GetInstanceCount();
 	}
 	return instanceCount;
+}
+
+int ManagerImplemented::GetCurrentLOD(Handle handle) 
+{
+	if (m_DrawSets.count(handle) > 0)
+	{
+		DrawSet& drawSet = m_DrawSets[handle];
+		return drawSet.GlobalPointer->CurrentLevelOfDetails;
+	}
+
+	return 0;
+}
+
+float ManagerImplemented::GetLODDistanceBias() const
+{
+	return m_LodDistanceBias;
+}
+
+void ManagerImplemented::SetLODDistanceBias(float distanceBias)
+{
+	this->m_LodDistanceBias = distanceBias;
 }
 
 Matrix43 ManagerImplemented::GetMatrix(Handle handle)
@@ -1371,6 +1393,26 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter)
 			else
 			{
 				drawSet.second.GlobalPointer->BeginDeltaFrame(0);
+			}
+
+			SIMD::Mat43f drawSetMatrix = drawSet.second.GetGlobalMatrix();
+			float dx = parameter.ViewerPosition.X - drawSetMatrix.X.GetW();
+			float dy = parameter.ViewerPosition.Y - drawSetMatrix.Y.GetW();
+			float dz = parameter.ViewerPosition.Z - drawSetMatrix.Z.GetW();
+			float distanceToViewer = SIMD::Sqrt(dx * dx + dy * dy + dz * dz) + m_LodDistanceBias;
+			EffectImplemented* effect = (EffectImplemented*)drawSet.second.ParameterPointer.Get();
+			if(effect->LODs.distance3 > 0.0F && distanceToViewer > effect->LODs.distance3)
+			{
+				drawSet.second.GlobalPointer->CurrentLevelOfDetails = 1 << 3;
+			} else if(effect->LODs.distance2 > 0.0F && distanceToViewer > effect->LODs.distance2)
+			{
+				drawSet.second.GlobalPointer->CurrentLevelOfDetails = 1 << 2;
+			} else if(effect->LODs.distance1 > 0.0F && distanceToViewer > effect->LODs.distance1)
+			{
+				drawSet.second.GlobalPointer->CurrentLevelOfDetails = 1 << 1;
+			} else 
+			{
+				drawSet.second.GlobalPointer->CurrentLevelOfDetails = 1 << 0;
 			}
 		}
 

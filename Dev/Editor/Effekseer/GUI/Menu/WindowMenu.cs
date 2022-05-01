@@ -20,6 +20,7 @@ namespace Effekseer.GUI.Menu
 			new DockSettings("FCurves", typeof(Dock.FCurves), Icons.PanelFCurve),
 			new DockSettings("Global", typeof(Dock.GlobalValues), Icons.PanelGlobal),
 			new DockSettings("Culling", typeof(Dock.Culling), Icons.PanelCulling),
+			new DockSettings("LOD_Name", typeof(Dock.LOD), Icons.PanelLOD),
 			new DockSettings("DynamicParameter_Name", typeof(Dock.Dynamic), Icons.PanelDynamicParams),
 			new DockSettings("ProceduralModel_Name", typeof(Dock.ProceduralModel), Icons.PanelProceduralModel),
 			new DockSettings("ViewerControls", typeof(Dock.ViewerController), Icons.PanelViewerCtrl),

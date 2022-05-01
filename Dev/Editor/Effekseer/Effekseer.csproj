@@ -90,6 +90,7 @@
     <Compile Include="GUI\Dock\GenerationLocationValues.cs" />
     <Compile Include="GUI\Dock\LocationAbsValues.cs" />
     <Compile Include="GUI\Dock\LocationValues.cs" />
+    <Compile Include="GUI\Dock\LOD.cs" />
     <Compile Include="GUI\Dock\Network.cs" />
     <Compile Include="GUI\Dock\NodeTreeView.cs" />
     <Compile Include="GUI\Dock\Option.cs" />

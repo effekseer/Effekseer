@@ -57,6 +57,14 @@ public:
 			\~Japanese trueなら同期的に更新処理を行う。falseなら非同期的に更新処理を行う（次はDraw以外呼び出してはいけない）
 		*/
 		bool SyncUpdate = true;
+
+		/**
+			@brief
+			\~English
+			Position of effects viewer to calculate distance of Level of Details system.
+			Normally should be set the same position which is passed in translation of camera matrix.
+		 */
+		Vector3D ViewerPosition;
 	};
 
 	/**
@@ -405,6 +413,26 @@ public:
 	*/
 	virtual int32_t GetTotalInstanceCount() const = 0;
 
+	/**
+		@brief
+		\~English Returns LOD which is currently utilized for given effect
+	 */
+	virtual int GetCurrentLOD(Handle handle) = 0;
+
+	/**
+		@brief
+		\~English Returns current LOD distance bias. 0 by default.
+	 */
+	virtual float GetLODDistanceBias() const = 0;
+
+	/**
+		@brief
+		\~English
+		Adds given value to calculated distance from viewer which is used for LOD selection.
+		Useful for LODs debugging.
+	 */
+	virtual void SetLODDistanceBias(float distanceBias) = 0;
+	
 	/**
 		@brief	エフェクトのインスタンスに設定されている行列を取得する。
 		@param	handle	[in]	インスタンスのハンドル

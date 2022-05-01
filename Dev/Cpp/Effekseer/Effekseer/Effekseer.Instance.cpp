@@ -377,8 +377,7 @@ void Instance::Update(float deltaFrame, bool shown)
 			}
 
 			// if children are removed and going not to generate a child
-			// but make sure that lack of children is not caused by temporarily disabled spawn
-			if (!removed && m_pEffectNode->CommonValues.RemoveWhenChildrenIsExtinct && !GetInstanceGlobal()->IsSpawnDisabled)
+			if (!removed && m_pEffectNode->CommonValues.RemoveWhenChildrenIsExtinct)
 			{
 				removed = !AreChildrenActive();
 			}
@@ -679,6 +678,10 @@ void Instance::Draw(Instance* next, int32_t index, void* userData)
 	if (!m_pEffectNode->IsRendered)
 		return;
 
+	if ((GetInstanceGlobal()->CurrentLevelOfDetails & m_pEffectNode->LODsParam.MatchingLODs) == 0
+	    && !m_pEffectNode->CanDrawWithNonMatchingLOD())
+		return;
+
 	if (m_sequenceNumber != ((ManagerImplemented*)m_pManager)->GetSequenceNumber())
 	{
 		UpdateTransform(0);
@@ -742,5 +745,4 @@ std::array<float, 4> Instance::GetCustomData(int32_t index) const
 
 	return CustomDataFunctions::GetCustomData(parameterCustomData, instanceCustomData, this->m_pContainer->GetRootInstance(), m_LivingTime, m_LivedTime);
 }
-
 } // namespace Effekseer
