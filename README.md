@@ -1,5 +1,8 @@
 ﻿Effekseer
 =========
+
+![Effekseer](docs/Images/EpicMegaGrants_Effekseer.png)
+
 This software is a particle effect editing tool. 
 By incorporating runtimes and plug-ins, effects created in Effekseer can be played back in your application. 
 Effekseer is intended to be used primarily for games, allowing the designer, not the programmer, to be in charge of editing particle effects.
