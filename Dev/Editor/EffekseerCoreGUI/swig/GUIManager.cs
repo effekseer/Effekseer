@@ -265,14 +265,6 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_PopItemWidth(swigCPtr);
   }
 
-  public void PushTextWrapPos(float wrap_local_pos_x) {
-    EffekseerNativePINVOKE.GUIManager_PushTextWrapPos(swigCPtr, wrap_local_pos_x);
-  }
-
-  public void PopTextWrapPos() {
-    EffekseerNativePINVOKE.GUIManager_PopTextWrapPos(swigCPtr);
-  }
-
   public void Separator() {
     EffekseerNativePINVOKE.GUIManager_Separator(swigCPtr);
   }
@@ -1363,8 +1355,16 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
-  public bool IsItemHovered(float time_threshold) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_IsItemHovered__SWIG_0(swigCPtr, time_threshold);
+  public void PushTextWrapPos(float pos) {
+    EffekseerNativePINVOKE.GUIManager_PushTextWrapPos(swigCPtr, pos);
+  }
+
+  public void PopTextWrapPos() {
+    EffekseerNativePINVOKE.GUIManager_PopTextWrapPos(swigCPtr);
+  }
+
+  public bool IsItemHovered(float f) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsItemHovered__SWIG_0(swigCPtr, f);
     return ret;
   }
 

@@ -1422,12 +1422,6 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_PopItemWidth___")]
   public static extern void GUIManager_PopItemWidth(global::System.Runtime.InteropServices.HandleRef jarg1);
 
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_PushTextWrapPos___")]
-  public static extern void GUIManager_PushTextWrapPos(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_PopTextWrapPos___")]
-  public static extern void GUIManager_PopTextWrapPos(global::System.Runtime.InteropServices.HandleRef jarg1);
-
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_Separator___")]
   public static extern void GUIManager_Separator(global::System.Runtime.InteropServices.HandleRef jarg1);
 
@@ -2108,6 +2102,12 @@ class EffekseerNativePINVOKE {
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_IsMouseDoubleClicked___")]
   public static extern bool GUIManager_IsMouseDoubleClicked(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_PushTextWrapPos___")]
+  public static extern void GUIManager_PushTextWrapPos(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_PopTextWrapPos___")]
+  public static extern void GUIManager_PopTextWrapPos(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_IsItemHovered__SWIG_0___")]
   public static extern bool GUIManager_IsItemHovered__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
