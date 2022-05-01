@@ -833,6 +833,9 @@ EffectImplemented::EffectImplemented(const ManagerRef& pManager, const void* pDa
 
 {
 	Culling.Shape = CullingShape::NoneShape;
+	LODs.distance1 = 0.0;
+	LODs.distance2 = 0.0;
+	LODs.distance3 = 0.0;
 }
 
 //----------------------------------------------------------------------------------
@@ -844,6 +847,9 @@ EffectImplemented::EffectImplemented(const SettingRef& setting, const void* pDat
 	, m_version(0)
 {
 	Culling.Shape = CullingShape::NoneShape;
+	LODs.distance1 = 0.0;
+	LODs.distance2 = 0.0;
+	LODs.distance3 = 0.0;
 }
 
 //----------------------------------------------------------------------------------
