@@ -739,8 +739,13 @@ public:
 		@note
 		\~English	It is not required if Update is called.
 		\~Japanese	Updateを実行する際は、実行する必要はない。
+
+		@param ViewerPosition
+		\~English
+		Position of effects viewer to calculate distance of Level of Details system.
+		Normally should be set the same position which is passed in translation of camera matrix.
 	*/
-	virtual void BeginUpdate() = 0;
+	virtual void BeginUpdate(const Vector3D& ViewerPosition = Vector3D(0.0, 0.0, 0.0)) = 0;
 
 	/**
 		@brief
