@@ -142,7 +142,7 @@
     <Compile Include="GUI\Dock\DockPanel.cs" />
     <Compile Include="GUI\Dock\EffectViwer.cs" />
     <Compile Include="GUI\Dock\FCurves.cs" />
-    <Compile Include="GUI\Dock\FileViewer.cs" />
+    <Compile Include="GUI\Dock\FileBrowser.cs" />
     <Compile Include="GUI\DragAndDrops.cs" />
     <Compile Include="GUI\Icons.cs" />
     <Compile Include="GUI\Manager.cs" />
