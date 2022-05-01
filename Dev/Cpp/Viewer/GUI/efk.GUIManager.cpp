@@ -2133,6 +2133,21 @@ bool GUIManager::IsMouseDoubleClicked(int button)
 	return ImGui::IsMouseDoubleClicked(button);
 }
 
+void GUIManager::PushTextWrapPos(float pos)
+{
+	ImGui::PushTextWrapPos(pos);
+}
+
+void GUIManager::PopTextWrapPos()
+{
+	ImGui::PopTextWrapPos();
+}
+
+bool GUIManager::IsItemHovered(float f)
+{
+	return ImGui::IsItemHovered(f);
+}
+
 bool GUIManager::IsItemHovered()
 {
 	return ImGui::IsItemHovered();

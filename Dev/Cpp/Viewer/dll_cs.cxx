@@ -9408,7 +9408,39 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsMouseDoub
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsItemHovered___(void * jarg1) {
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_PushTextWrapPos___(void * jarg1, float jarg2) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float arg2 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (float)jarg2; 
+  (arg1)->PushTextWrapPos(arg2);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_PopTextWrapPos___(void * jarg1) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  (arg1)->PopTextWrapPos();
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsItemHovered__SWIG_0___(void * jarg1, float jarg2) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float arg2 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (float)jarg2; 
+  result = (bool)(arg1)->IsItemHovered(arg2);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsItemHovered__SWIG_1___(void * jarg1) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   bool result;

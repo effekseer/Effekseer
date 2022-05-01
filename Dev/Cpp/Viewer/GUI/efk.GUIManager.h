@@ -748,6 +748,10 @@ public:
 	bool IsMouseReleased(int button);
 	bool IsMouseDoubleClicked(int button);
 
+	void PushTextWrapPos(float pos);
+	void PopTextWrapPos();
+	
+	bool IsItemHovered(float f);
 	bool IsItemHovered();
 	bool IsItemActive();
 	bool IsItemFocused();
