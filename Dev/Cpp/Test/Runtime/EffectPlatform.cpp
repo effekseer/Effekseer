@@ -202,7 +202,7 @@ bool EffectPlatform::Update()
 
 	if (this->initParam_.IsUpdatedByHandle)
 	{
-		manager_->BeginUpdate(renderer_->GetCameraPosition());
+		manager_->BeginUpdate(renderer_ != nullptr ? renderer_->GetCameraPosition() : Effekseer::Vector3D(0.0, 0.0, 0.0));
 
 		for (auto h : effectHandles_)
 		{
@@ -214,7 +214,7 @@ bool EffectPlatform::Update()
 	else
 	{
 		Effekseer::Manager::UpdateParameter updateParameter;
-		updateParameter.ViewerPosition = renderer_->GetCameraPosition();
+		updateParameter.ViewerPosition = renderer_ != nullptr ? renderer_->GetCameraPosition() : Effekseer::Vector3D(0.0, 0.0, 0.0);
 		manager_->Update(updateParameter);
 	}
 
