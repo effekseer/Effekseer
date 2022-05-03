@@ -714,6 +714,7 @@ void EffectRenderer::Update()
 		Effekseer::Manager::UpdateParameter updateParameter;
 		updateParameter.DeltaFrame = (float)m_step;
 		updateParameter.ViewerPosition = renderer_->GetCameraPosition();
+		updateParameter.UpdateInterval = 0.0;
 		manager_->Update(updateParameter);
 
 		renderer_->SetTime(m_time / 60.0f);
