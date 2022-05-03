@@ -68,6 +68,14 @@ namespace Effekseer.GUI.Dock
 			}
 		}
 
+		private static int getLodIndexFromLodBit(int lodBits)
+		{
+			if (lodBits == 0)
+			{
+				return 0;
+			}
+			return (int)((Math.Log10(lodBits & -lodBits)) / Math.Log10(2));
+		}
 		protected override void UpdateInternal()
 		{
 			float textHeight = Manager.NativeManager.GetTextLineHeight();
@@ -97,7 +105,9 @@ namespace Effekseer.GUI.Dock
 			viewMode.Update();
 			Manager.NativeManager.PopItemWidth();
 
+			
 			string perfText =
+				"Current LOD: " + getLodIndexFromLodBit(Manager.Viewer.EffectRenderer.GetCurrentLOD()) + "  " + 
 				"D:" + Manager.Viewer.EffectRenderer.GetAndResetDrawCall().ToString("D3") + "  " +
 				"V:" + Manager.Viewer.EffectRenderer.GetAndResetVertexCount().ToString("D5") + "  " +
 				"P:" + Manager.Viewer.EffectRenderer.GetInstanceCount().ToString("D5") + " ";
@@ -109,6 +119,7 @@ namespace Effekseer.GUI.Dock
 			if (Manager.NativeManager.IsItemHovered())
 			{
 				Manager.NativeManager.SetTooltip(
+					"Current LOD: Level of Detail is currently utilized\n" +
 					"D: Draw calls of current rendering.\n" +
 					"V: Vertex count of current rendering.\n" +
 					"P: Particle count of current rendering.");

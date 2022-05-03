@@ -1047,6 +1047,9 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRenderer_Render___")]
   public static extern void EffectRenderer_Render(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRenderer_SetLODDistanceBias___")]
+  public static extern void EffectRenderer_SetLODDistanceBias(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRenderer_GetEffect___")]
   public static extern global::System.IntPtr EffectRenderer_GetEffect(global::System.Runtime.InteropServices.HandleRef jarg1);
 
@@ -1061,6 +1064,9 @@ class EffekseerNativePINVOKE {
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRenderer_SetBehavior___")]
   public static extern void EffectRenderer_SetBehavior(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRenderer_GetCurrentLOD___")]
+  public static extern int EffectRenderer_GetCurrentLOD(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRenderer_GetInstanceCount___")]
   public static extern int EffectRenderer_GetInstanceCount(global::System.Runtime.InteropServices.HandleRef jarg1);
@@ -1446,11 +1452,26 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_SameLine__SWIG_2___")]
   public static extern void GUIManager_SameLine__SWIG_2(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_PushDisabled___")]
+  public static extern void GUIManager_PushDisabled(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_PopDisabled___")]
+  public static extern void GUIManager_PopDisabled(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_AddRectFilled___")]
+  public static extern void GUIManager_AddRectFilled(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2, float jarg3, float jarg4, float jarg5, uint jarg6, float jarg7, int jarg8);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_BeginGroup___")]
   public static extern void GUIManager_BeginGroup(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_EndGroup___")]
   public static extern void GUIManager_EndGroup(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_AlignTextToFramePadding___")]
+  public static extern void GUIManager_AlignTextToFramePadding(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_SetNextItemWidth___")]
+  public static extern void GUIManager_SetNextItemWidth(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_SetCursorPosX___")]
   public static extern void GUIManager_SetCursorPosX(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
@@ -1463,6 +1484,30 @@ class EffekseerNativePINVOKE {
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_GetCursorPosY___")]
   public static extern float GUIManager_GetCursorPosY(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_GetCursorScreenPosX___")]
+  public static extern float GUIManager_GetCursorScreenPosX(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_GetCursorScreenPosY___")]
+  public static extern float GUIManager_GetCursorScreenPosY(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_GetItemRectMinX___")]
+  public static extern float GUIManager_GetItemRectMinX(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_GetItemRectMinY___")]
+  public static extern float GUIManager_GetItemRectMinY(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_GetItemRectMaxX___")]
+  public static extern float GUIManager_GetItemRectMaxX(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_GetItemRectMaxY___")]
+  public static extern float GUIManager_GetItemRectMaxY(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_GetItemRectSizeX___")]
+  public static extern float GUIManager_GetItemRectSizeX(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_GetItemRectSizeY___")]
+  public static extern float GUIManager_GetItemRectSizeY(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_GetTextLineHeight___")]
   public static extern float GUIManager_GetTextLineHeight(global::System.Runtime.InteropServices.HandleRef jarg1);

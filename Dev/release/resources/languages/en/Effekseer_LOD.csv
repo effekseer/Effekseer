@@ -1,0 +1,14 @@
+﻿LOD_Name,Levels of Details
+LOD_Level,Level
+LOD_Description,Configure Levels of Details to utilize.\nWhen level is enabled you can specify minimum distance away from viewer for the LOD to be selected
+LOD_Level_Minimum_Distance,Minimum Distance
+LODBehaviour_Hide_Name,Hide Particles
+LODBehaviour_DontSpawn_Name,Stop New Particles Spawn
+LODBehaviour_DontSpawnAndHide_Name,Stop New Particles Spawn and Hide Existing
+LOD_NotConfigured,Levels of Detail are not configured
+LOD_Configure,Configure
+LOD_SelectMatching,Select LODs on which node behaves as usual
+LOD_Behaviour,How particle should behave when LOD doesn't match selection
+LOD_ApplyToChildren,Apply LOD Settings To Children
+LOD_Bias_Name,LOD Distance Bias (m)
+LOD_Bias_Description,Adds given value to calculated distance from viewer. Useful for LODs preview.

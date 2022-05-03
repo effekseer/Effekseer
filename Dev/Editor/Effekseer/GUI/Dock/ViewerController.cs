@@ -119,6 +119,22 @@ namespace Effekseer.GUI.Dock
 					}
 				}
 			}
+
+			Manager.NativeManager.SameLine();
+			{
+				
+				float[] bias = { Manager.Viewer.LODDistanceBias };
+				Manager.NativeManager.SetNextItemWidth(120F);
+				if (Manager.NativeManager.DragFloat(Resources.GetString("LOD_Bias_Name"), bias))
+				{
+					Manager.Viewer.LODDistanceBias = bias[0];
+				}
+
+				if (Manager.NativeManager.IsItemHovered())
+				{
+					Manager.NativeManager.SetTooltip(Resources.GetString("LOD_Bias_Description"));
+				}
+			}
 		}
 	}
 }

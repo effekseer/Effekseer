@@ -264,6 +264,16 @@ namespace Effekseer.Data
 		Trigger3 = 1 + (3 << 8),
 	}
 
+	public enum LODBehaviourType : int
+	{
+		[Key(key = "LODBehaviour_Hide")]
+		Hide = 0,
+		[Key(key = "LODBehaviour_DontSpawn")]
+		DontSpawn = 1,
+		[Key(key = "LODBehaviour_DontSpawnAndHide")]
+		DontSpawnAndHide = 2,
+	}
+
 	public class ColorEasingParamater
 	{
 		[Key(key = "Easing_Start")]

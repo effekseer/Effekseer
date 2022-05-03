@@ -711,7 +711,11 @@ void EffectRenderer::Update()
 			}
 		}
 
-		manager_->Update((float)m_step);
+		Effekseer::Manager::UpdateParameter updateParameter;
+		updateParameter.DeltaFrame = (float)m_step;
+		updateParameter.ViewerPosition = renderer_->GetCameraPosition();
+		manager_->Update(updateParameter);
+
 		renderer_->SetTime(m_time / 60.0f);
 
 		for (size_t i = 0; i < handles_.size(); i++)
@@ -756,6 +760,11 @@ void EffectRenderer::Update(int32_t frame)
 			Update();
 		}
 	}
+}
+
+void EffectRenderer::SetLODDistanceBias(float distanceBias)
+{
+	manager_->SetLODDistanceBias(distanceBias);
 }
 
 void EffectRenderer::Render(std::shared_ptr<RenderImage> renderImage)
@@ -1020,7 +1029,9 @@ void EffectRenderer::ResetEffect()
 	}
 	handles_.clear();
 
-	manager_->Update();
+	Effekseer::Manager::UpdateParameter updateParameter;
+	updateParameter.ViewerPosition = renderer_->GetCameraPosition();
+	manager_->Update(updateParameter);
 }
 
 const ViewerEffectBehavior& EffectRenderer::GetBehavior() const
@@ -1031,6 +1042,16 @@ const ViewerEffectBehavior& EffectRenderer::GetBehavior() const
 void EffectRenderer::SetBehavior(const ViewerEffectBehavior& behavior)
 {
 	behavior_ = behavior;
+}
+
+int EffectRenderer::GetCurrentLOD() const
+{
+	if(handles_.size() == 0)
+	{
+		return 0;
+	}
+
+	return manager_->GetCurrentLOD(handles_[0].Handle);
 }
 
 int32_t EffectRenderer::GetInstanceCount() const

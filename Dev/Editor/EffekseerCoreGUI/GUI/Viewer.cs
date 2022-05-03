@@ -58,6 +58,12 @@ namespace Effekseer.GUI
 			}
 		}
 
+		public float LODDistanceBias
+		{
+			get;
+			set;
+		}
+
 		public Viewer(HardwareDevice hardwareDevice)
 		{
 			this.hardwareDevice = hardwareDevice;
@@ -411,6 +417,8 @@ namespace Effekseer.GUI
 					Core.Option.MouseRotInvY,
 					Core.Option.MouseSlideInvX,
 					Core.Option.MouseSlideInvY);
+				
+				EffectRenderer.SetLODDistanceBias(LODDistanceBias);
 			}
 			else
 			{

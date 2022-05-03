@@ -110,6 +110,8 @@ private:
 
 		void SetGlobalMatrix(const SIMD::Mat43f& mat);
 
+		void UpdateLevelOfDetails(const Vector3D& viewerPosition, float lodDistanceBias);
+
 	private:
 		SIMD::Mat43f GlobalMatrix;
 	};
@@ -189,6 +191,9 @@ private:
 	RandFunc m_randFunc;
 
 	int m_randMax;
+
+	Vector3D m_ViewerPosition;
+	float m_LodDistanceBias = 0.0F;
 
 	std::queue<std::pair<SoundTag, SoundPlayer::InstanceParameter>> m_requestedSounds;
 	std::mutex m_soundMutex;
@@ -320,6 +325,12 @@ public:
 
 	int32_t GetTotalInstanceCount() const override;
 
+	int GetCurrentLOD(Handle handle) override;
+	
+	float GetLODDistanceBias() const override;
+	
+	void SetLODDistanceBias(float distanceBias) override;
+
 	Matrix43 GetMatrix(Handle handle) override;
 
 	void SetMatrix(Handle handle, const Matrix43& mat) override;
@@ -396,7 +407,7 @@ public:
 
 	void DoUpdate(const UpdateParameter& parameter);
 
-	void BeginUpdate() override;
+	void BeginUpdate(const Vector3D& ViewerPosition = Vector3D(0.0, 0.0, 0.0)) override;
 
 	void EndUpdate() override;
 

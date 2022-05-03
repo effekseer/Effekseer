@@ -23,7 +23,8 @@ namespace Effekseer.Binary
 		Ver1600 = 1610,
 		Ver17Alpha1 = 1700,
 		Ver17Alpha2 = 1701,
-		Latest = Ver17Alpha2,
+		Ver17Alpha3 = 1702,
+		Latest = Ver17Alpha3,
 	}
 
 	public class Exporter
@@ -846,6 +847,12 @@ namespace Effekseer.Binary
 				data.Add(BitConverter.GetBytes(Core.Culling.Sphere.Location.Y));
 				data.Add(BitConverter.GetBytes(Core.Culling.Sphere.Location.Z));
 			}
+
+			int enabledLevels = Core.LodValues.GetEnabledLevelsBits();
+			data.Add(BitConverter.GetBytes((enabledLevels & (1 << 1)) > 0 ? Core.LodValues.Distance1 : 0F));
+			data.Add(BitConverter.GetBytes((enabledLevels & (1 << 2)) > 0 ? Core.LodValues.Distance2 : 0F));
+			data.Add(BitConverter.GetBytes((enabledLevels & (1 << 3)) > 0 ? Core.LodValues.Distance3 : 0F));
+
 
 			// ノード情報出力
 			Action<Data.NodeRoot> outout_rootnode = null;

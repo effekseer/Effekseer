@@ -38,6 +38,14 @@ enum class BindType : int32_t
 	Always = 2,
 };
 
+enum class NonMatchingLODBehaviour : int32_t
+{
+	Hide = 0,
+	DontSpawn = 1,
+	DontSpawnAndHide = 2
+};
+
+
 enum class TranslationParentBindType : int32_t
 {
 	NotBind = 0,
@@ -103,6 +111,12 @@ struct ParameterCommonValues
 		GenerationTimeOffset.max = 0;
 		GenerationTimeOffset.min = 0;
 	}
+};
+
+struct ParameterLODs
+{
+	int MatchingLODs = 0b1111;
+	NonMatchingLODBehaviour LODBehaviour = NonMatchingLODBehaviour::Hide;
 };
 
 struct ParameterDepthValues
@@ -655,6 +669,7 @@ public:
 	ParameterCommonValues CommonValues;
 	SteeringBehaviorParameter SteeringBehaviorParam;
 	TriggerParameter TriggerParam;
+	ParameterLODs LODsParam;
 
 	TranslationParameter TranslationParam;
 
@@ -758,6 +773,18 @@ public:
 		return renderingUserData_;
 	}
 
+	bool CanDrawWithNonMatchingLOD() const
+	{
+		return LODsParam.LODBehaviour != NonMatchingLODBehaviour::Hide
+		       && LODsParam.LODBehaviour != NonMatchingLODBehaviour::DontSpawnAndHide;
+	}
+
+	bool CanSpawnWithNonMatchingLOD() const
+	{
+		return LODsParam.LODBehaviour != NonMatchingLODBehaviour::DontSpawn
+			   && LODsParam.LODBehaviour != NonMatchingLODBehaviour::DontSpawnAndHide;
+	}
+	
 	void SetRenderingUserData(const RefPtr<RenderingUserData>& renderingUserData) override
 	{
 		renderingUserData_ = renderingUserData;

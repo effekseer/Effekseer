@@ -41,7 +41,7 @@ namespace Effekseer.Binary
 			data.Add(bytes);
 
 			if (value.LocationEffectType == Data.TranslationParentEffectType.NotBind_FollowParent ||
-				value.LocationEffectType == Data.TranslationParentEffectType.WhenCreating_FollowParent)
+			    value.LocationEffectType == Data.TranslationParentEffectType.WhenCreating_FollowParent)
 			{
 				data.Add(value.SteeringBehaviorParam.MaxFollowSpeed.Max.GetBytes());
 				data.Add(value.SteeringBehaviorParam.MaxFollowSpeed.Min.GetBytes());
@@ -62,14 +62,22 @@ namespace Effekseer.Binary
 				{
 					data.Add(((ushort)value.TriggerParam.ToStartGeneration.GetValue()).GetBytes());
 				}
+
 				if (value.TriggerParam.ToStopGeneration.Value != Data.TriggerType.None)
 				{
 					data.Add(((ushort)value.TriggerParam.ToStopGeneration.GetValue()).GetBytes());
 				}
+
 				if (value.TriggerParam.ToRemove.Value != Data.TriggerType.None)
 				{
 					data.Add(((ushort)value.TriggerParam.ToRemove.GetValue()).GetBytes());
 				}
+			}
+
+			if (version >= ExporterVersion.Ver17Alpha3)
+			{
+				data.Add(value.LodParameter.MatchingLODs.GetValue().GetBytes());
+				data.Add(value.LodParameter.LodBehaviour.GetValueAsInt().GetBytes());
 			}
 
 			return data.ToArray().ToArray();

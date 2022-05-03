@@ -3849,6 +3849,16 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_Render___(void 
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_SetLODDistanceBias___(void * jarg1, float jarg2) {
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  float arg2 ;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  arg2 = (float)jarg2; 
+  (arg1)->SetLODDistanceBias(arg2);
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_GetEffect___(void * jarg1) {
   void * jresult ;
   Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
@@ -3902,6 +3912,18 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_SetBehavior___(
     return ;
   } 
   (arg1)->SetBehavior((Effekseer::Tool::ViewerEffectBehavior const &)*arg2);
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_GetCurrentLOD___(void * jarg1) {
+  int jresult ;
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  int result;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  result = (int)((Effekseer::Tool::EffectRenderer const *)arg1)->GetCurrentLOD();
+  jresult = result; 
+  return jresult;
 }
 
 
@@ -5338,6 +5360,44 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SameLine__SWIG_2___
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_PushDisabled___(void * jarg1) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  (arg1)->PushDisabled();
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_PopDisabled___(void * jarg1) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  (arg1)->PopDisabled();
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_AddRectFilled___(void * jarg1, float jarg2, float jarg3, float jarg4, float jarg5, unsigned int jarg6, float jarg7, int jarg8) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float arg2 ;
+  float arg3 ;
+  float arg4 ;
+  float arg5 ;
+  uint32_t arg6 ;
+  float arg7 ;
+  int arg8 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (float)jarg2; 
+  arg3 = (float)jarg3; 
+  arg4 = (float)jarg4; 
+  arg5 = (float)jarg5; 
+  arg6 = (uint32_t)jarg6; 
+  arg7 = (float)jarg7; 
+  arg8 = (int)jarg8; 
+  (arg1)->AddRectFilled(arg2,arg3,arg4,arg5,arg6,arg7,arg8);
+}
+
+
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginGroup___(void * jarg1) {
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   
@@ -5351,6 +5411,24 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_EndGroup___(void * 
   
   arg1 = (efk::GUIManager *)jarg1; 
   (arg1)->EndGroup();
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_AlignTextToFramePadding___(void * jarg1) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  (arg1)->AlignTextToFramePadding();
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetNextItemWidth___(void * jarg1, float jarg2) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float arg2 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (float)jarg2; 
+  (arg1)->SetNextItemWidth(arg2);
 }
 
 
@@ -5393,6 +5471,102 @@ SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetCursorPosY___(v
   
   arg1 = (efk::GUIManager *)jarg1; 
   result = (float)(arg1)->GetCursorPosY();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetCursorScreenPosX___(void * jarg1) {
+  float jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (float)(arg1)->GetCursorScreenPosX();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetCursorScreenPosY___(void * jarg1) {
+  float jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (float)(arg1)->GetCursorScreenPosY();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetItemRectMinX___(void * jarg1) {
+  float jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (float)(arg1)->GetItemRectMinX();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetItemRectMinY___(void * jarg1) {
+  float jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (float)(arg1)->GetItemRectMinY();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetItemRectMaxX___(void * jarg1) {
+  float jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (float)(arg1)->GetItemRectMaxX();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetItemRectMaxY___(void * jarg1) {
+  float jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (float)(arg1)->GetItemRectMaxY();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetItemRectSizeX___(void * jarg1) {
+  float jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (float)(arg1)->GetItemRectSizeX();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetItemRectSizeY___(void * jarg1) {
+  float jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (float)(arg1)->GetItemRectSizeY();
   jresult = result; 
   return jresult;
 }
