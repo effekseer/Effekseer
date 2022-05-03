@@ -215,6 +215,7 @@ bool EffectPlatform::Update()
 	{
 		Effekseer::Manager::UpdateParameter updateParameter;
 		updateParameter.ViewerPosition = renderer_ != nullptr ? renderer_->GetCameraPosition() : Effekseer::Vector3D(0.0, 0.0, 0.0);
+		updateParameter.UpdateInterval = 0.0;
 		manager_->Update(updateParameter);
 	}
 
