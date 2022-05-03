@@ -1120,6 +1120,7 @@ void SRGBLinearTest()
 #endif
 }
 
+/*
 void LODsTest()
 {
 	{
@@ -1172,6 +1173,7 @@ void LODsTest()
 		platform->Terminate();
 	}
 }
+*/
 
 #if defined(__linux__) || defined(__APPLE__) || defined(WIN32)
 
