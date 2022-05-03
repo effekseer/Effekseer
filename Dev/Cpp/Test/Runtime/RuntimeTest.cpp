@@ -1211,5 +1211,5 @@ TestRegister Runtime_RenderLimitTest("Runtime.RenderLimitTest", []() -> void { R
 
 TestRegister Runtime_SRGBLinearTest("Runtime.SRGBLinearTest", []() -> void { SRGBLinearTest(); });
 
-TestRegister Runtime_LODsTest("Runtime.LODsTest", []() -> void { LODsTest(); });
+//TestRegister Runtime_LODsTest("Runtime.LODsTest", []() -> void { LODsTest(); });
 #endif
