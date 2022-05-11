@@ -1839,6 +1839,36 @@ public:
 	}
 };
 
+class NodeSimpleNoise : public NodeParameter
+{
+public:
+	NodeSimpleNoise()
+	{
+		Type = NodeType::SimpleNoise;
+		TypeName = "SimpleNoise";
+		Group = std::vector<std::string>{"Noise"};
+
+		{
+			auto input = std::make_shared<PinParameter>();
+			input->Name = "UV";
+			input->Type = ValueType::Float2;
+			InputPins.push_back(input);
+		}
+
+		{
+			auto input = std::make_shared<PinParameter>();
+			input->Name = "Scale";
+			input->Type = ValueType::Float1;
+			InputPins.push_back(input);
+		}
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "Value";
+		output->Type = ValueType::Float1;
+		OutputPins.push_back(output);
+	}
+};
+
 class NodeComment : public NodeParameter
 {
 public:

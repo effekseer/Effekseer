@@ -75,6 +75,8 @@ Library::Library()
 	Contents.push_back(std::make_shared<LibraryContent<NodeGradientParameter>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeGradient>>());
 
+	Contents.push_back(std::make_shared<LibraryContent<NodeSimpleNoise>>());
+
 	// Comment
 	Contents.push_back(std::make_shared<LibraryContent<NodeComment>>());
 

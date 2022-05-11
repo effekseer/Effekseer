@@ -82,6 +82,36 @@ Gradient GradientParameter(float4 param_v, float4 param_c1, float4 param_c2, flo
 
 )";
 
+static const char* material_noise = R"(
+
+float Rand2(float2 n) { 
+	return FRAC(sin(dot(n, float2(12.9898, 78.233))) * 43758.5453123);
+}
+
+float SimpleNoise_Block(float2 p) {
+	float2 i = floor(p);
+	float2 f = FRAC(p);
+	f = f * f * (3.0 - 2.0 * f);
+	
+	float x0 = LERP(Rand2(round(i+float2(0.0,0.0))), Rand2(round(i+float2(1.0,0.0))), f.x);
+	float x1 = LERP(Rand2(round(i+float2(0.0,1.0))), Rand2(round(i+float2(1.0,1.0))), f.x);
+	return LERP(x0, x1, f.y);
+}
+
+float SimpleNoise(float2 uv, float scale) {
+	const int loop = 3;
+    float ret = 0.0;
+	for(int i = 0; i < loop; i++) {
+	    float freq = pow(2.0, float(i));
+		float intensity = pow(0.5, float(loop-i));
+	    ret += SimpleNoise_Block(uv * scale / freq) * intensity;
+	}
+
+	return ret;
+}
+
+)";
+
 inline std::string GetFixedGradient(const char* name, const Gradient& gradient)
 {
 	std::stringstream ss;

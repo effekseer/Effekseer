@@ -119,17 +119,27 @@ protected:
 
 		// gradient
 		bool hasGradient = false;
+		bool hasNoise = false;
 		for (const auto& type : materialFile->RequiredMethods)
 		{
 			if (type == MaterialFile::RequiredPredefinedMethodType::Gradient)
 			{
 				hasGradient = true;
 			}
+			else if (type == MaterialFile::RequiredPredefinedMethodType::Noise)
+			{
+				hasNoise = true;
+			}
 		}
-		
+
 		if (hasGradient)
 		{
-			maincode << HLSL::material_gradient;		
+			maincode << HLSL::material_gradient;
+		}
+
+		if (hasNoise)
+		{
+			maincode << HLSL::material_noise;
 		}
 
 		for (const auto& gradient : materialFile->FixedGradients)

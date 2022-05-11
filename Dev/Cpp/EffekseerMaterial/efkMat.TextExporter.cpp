@@ -466,6 +466,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 	std::vector<RequiredPredefinedMethodType> requiredPredefinedMethodTypes;
 
 	bool hasGradient = false;
+	bool hasNoise = false;
 	for (const auto& node : nodes)
 	{
 		if (node->Parameter->Type == NodeType::Gradient ||
@@ -474,11 +475,20 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 		{
 			hasGradient = true;
 		}
+		else if (node->Parameter->Type == NodeType::SimpleNoise)
+		{
+			hasNoise = true;
+		}
 	}
 
 	if (hasGradient)
 	{
 		requiredPredefinedMethodTypes.emplace_back(RequiredPredefinedMethodType::Gradient);
+	}
+
+	if (hasNoise)
+	{
+		requiredPredefinedMethodTypes.emplace_back(RequiredPredefinedMethodType::Noise);
 	}
 
 	// Generate exporter node
@@ -1619,6 +1629,12 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 
 			ret << ", " << GetInputArg(ValueType::Float1, node->Inputs[1]) << ");" << std::endl;
 		}
+	}
+
+	if (node->Target->Parameter->Type == NodeType::SimpleNoise)
+	{
+		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "=SimpleNoise(" << GetInputArg(node->Inputs[0].Type, node->Inputs[0]) << ","
+			<< GetInputArg(node->Inputs[1].Type, node->Inputs[1]) << ");" << std::endl;
 	}
 
 	if (node->Target->Parameter->Type == NodeType::EffectScale)
