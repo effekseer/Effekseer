@@ -60,6 +60,7 @@ namespace Effekseer.Utl
 	public enum MaterialRequiredFunctionType : int
 	{
 		Gradient = 0,
+		Noise = 1,
 	}
 
 	/// <summary>
