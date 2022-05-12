@@ -152,9 +152,11 @@ enum class NodeType
 
 	DepthFade,
 
-	Gradient, //! 1700
-	GradientParameter, //! 1700
-	SampleGradient,	   //! 1700
+	Gradient,		   //! 1703
+	GradientParameter, //! 1703
+	SampleGradient,	   //! 1703
+
+	SimpleNoise, //! 1703
 
 	Comment,
 	Function, // Unimplemented
@@ -179,6 +181,7 @@ enum class DefaultType
 enum class RequiredPredefinedMethodType : int32_t
 {
 	Gradient = 0,
+	Noise = 1,
 };
 
 class PinParameter;

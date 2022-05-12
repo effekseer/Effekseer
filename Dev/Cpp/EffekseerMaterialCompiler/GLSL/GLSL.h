@@ -11,9 +11,6 @@ namespace Effekseer
 namespace GLSL
 {
 
-/**
-	Hand unroll
-*/
 static const char* material_gradient = R"(
 
 struct Gradient
@@ -69,6 +66,36 @@ Gradient GradientParameter(vec4 param_v, vec4 param_c1, vec4 param_c2, vec4 para
 	g.alphas[6].xy = param_a4.xy;
 	g.alphas[7].xy = param_a4.zw;
 	return g;
+}
+
+)";
+
+static const char* material_noise = R"(
+
+float Rand2(vec2 n) { 
+	return FRAC(sin(dot(n, vec2(12.9898, 78.233))) * 43758.5453123);
+}
+
+float SimpleNoise_Block(vec2 p) {
+	ivec2 i = ivec2(floor(p));
+	vec2 f = FRAC(p);
+	f = f * f * (3.0 - 2.0 * f);
+	
+	float x0 = LERP(Rand2(i+ivec2(0,0)), Rand2(i+ivec2(1,0)), f.x);
+	float x1 = LERP(Rand2(i+ivec2(0,1)), Rand2(i+ivec2(1,1)), f.x);
+	return LERP(x0, x1, f.y);
+}
+
+float SimpleNoise(vec2 uv, float scale) {
+	const int loop = 3;
+    float ret = 0.0;
+	for(int i = 0; i < loop; i++) {
+	    float freq = pow(2.0, float(i));
+		float intensity = pow(0.5, float(loop-i));
+	    ret += SimpleNoise_Block(uv * scale / freq) * intensity;
+	}
+
+	return ret;
 }
 
 )";
@@ -849,17 +876,27 @@ class ShaderGenerator
 
 		// gradient
 		bool hasGradient = false;
+		bool hasNoise = false;
 		for (const auto& type : materialFile->RequiredMethods)
 		{
 			if (type == MaterialFile::RequiredPredefinedMethodType::Gradient)
 			{
 				hasGradient = true;
 			}
+			else if (type == MaterialFile::RequiredPredefinedMethodType::Noise)
+			{
+				hasNoise = true;
+			}
 		}
 
 		if (hasGradient)
 		{
 			maincode << material_gradient;
+		}
+
+		if (hasNoise)
+		{
+			maincode << material_noise;
 		}
 
 		for (const auto& gradient : materialFile->FixedGradients)

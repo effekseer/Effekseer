@@ -21,6 +21,7 @@ public:
 	enum class RequiredPredefinedMethodType : int32_t
 	{
 		Gradient = 0,
+		Noise = 1,
 	};
 
 	struct GradientParameter
