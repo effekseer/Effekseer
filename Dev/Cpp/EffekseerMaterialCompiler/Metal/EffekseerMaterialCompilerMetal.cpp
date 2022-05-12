@@ -131,6 +131,29 @@ float SimpleNoise(float2 uv, float scale) {
 
 )";
 
+static const char* material_light_vs = R"(
+float3 GetLightDirection(constant ShaderUniform1& u) {
+	return float3(0,0,0);
+}
+float3 GetLightColor(constant ShaderUniform1& u) {
+	return float3(0,0,0);
+}
+float3 GetLightAmbientColor(constant ShaderUniform1& u) {
+	return float3(0,0,0);
+}
+)";
+
+static const char* material_light_ps = R"(
+float3 GetLightDirection(constant ShaderUniform2& u) {
+	return u.lightDirection.xyz;
+}
+float3 GetLightColor(constant ShaderUniform2& u) {
+	return u.lightColor.xyz;
+}
+float3 GetLightAmbientColor(constant ShaderUniform2& u) {
+	return u.lightAmbientColor.xyz;
+}
+)";
 
 inline std::string GetFixedGradient(const char* name, const Gradient& gradient)
 {
@@ -810,6 +833,7 @@ void ExportHeader(std::ostringstream& maincode, MaterialFile* materialFile, int 
 
 	bool hasGradient = false;
 	bool hasNoise = false;
+	bool hasLight = false;
 	for (const auto& type : materialFile->RequiredMethods)
 	{
 		if (type == MaterialFile::RequiredPredefinedMethodType::Gradient)
@@ -819,6 +843,10 @@ void ExportHeader(std::ostringstream& maincode, MaterialFile* materialFile, int 
 		else if (type == MaterialFile::RequiredPredefinedMethodType::Noise)
 		{
 			hasNoise = true;
+		}
+		else if (type == MaterialFile::RequiredPredefinedMethodType::Light)
+		{
+			hasLight = true;
 		}
 	}
 
@@ -830,6 +858,18 @@ void ExportHeader(std::ostringstream& maincode, MaterialFile* materialFile, int 
 	if (hasNoise)
 	{
 		maincode << material_noise;
+	}
+
+	if (hasLight)
+	{
+		if (stage == 0)
+		{
+			maincode << material_light_vs;
+		}
+		else
+		{
+			maincode << material_light_ps;
+		}
 	}
 
 	for (const auto& gradient : materialFile->FixedGradients)
@@ -964,12 +1004,12 @@ ShaderData GenerateShader(MaterialFile* materialFile, MaterialShaderType shaderT
 			ExportTexture(textures, textureName, t_index);
 		}
 
+		ExportUniform(userUniforms, 4, "lightDirection");
+		ExportUniform(userUniforms, 4, "lightColor");
+		ExportUniform(userUniforms, 4, "lightAmbientColor");
+
 		if (materialFile->GetShadingModel() == ::Effekseer::ShadingModelType::Lit && stage == 1)
 		{
-			ExportUniform(userUniforms, 4, "lightDirection");
-			ExportUniform(userUniforms, 4, "lightColor");
-			ExportUniform(userUniforms, 4, "lightAmbientColor");
-
 			maincode << "#define _MATERIAL_LIT_ 1" << std::endl;
 		}
 		else if (materialFile->GetShadingModel() == ::Effekseer::ShadingModelType::Unlit)
@@ -1094,6 +1134,13 @@ ShaderData GenerateShader(MaterialFile* materialFile, MaterialShaderType shaderT
 		if (stage == 1)
 		{
 			baseCode = Replace(baseCode, "CalcDepthFade(", "ReplacedDepthFade(efk_depth, s_efk_depth, u.reconstructionParam1, u.reconstructionParam2,u.predefined_uniform.y,");
+		}
+
+		if (std::find(materialFile->RequiredMethods.begin(), materialFile->RequiredMethods.end(), MaterialFile::RequiredPredefinedMethodType::Light) != materialFile->RequiredMethods.end())
+		{
+			baseCode = Replace(baseCode, "GetLightDirection()", "GetLightDirection(u)");
+			baseCode = Replace(baseCode, "GetLightColor()", "GetLightColor(u)");
+			baseCode = Replace(baseCode, "GetLightAmbientColor()", "GetLightAmbientColor(u)");
 		}
 
 		ExportMain(maincode, materialFile, stage, isSprite, shaderType, baseCode, textures.str());

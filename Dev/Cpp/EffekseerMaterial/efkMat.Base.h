@@ -158,6 +158,8 @@ enum class NodeType
 
 	SimpleNoise, //! 1703
 
+	Light, //! 1703
+
 	Comment,
 	Function, // Unimplemented
 	Output,
@@ -182,6 +184,7 @@ enum class RequiredPredefinedMethodType : int32_t
 {
 	Gradient = 0,
 	Noise = 1,
+	Light = 2,
 };
 
 class PinParameter;

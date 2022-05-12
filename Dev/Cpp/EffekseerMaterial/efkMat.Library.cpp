@@ -77,6 +77,8 @@ Library::Library()
 
 	Contents.push_back(std::make_shared<LibraryContent<NodeSimpleNoise>>());
 
+	Contents.push_back(std::make_shared<LibraryContent<NodeLight>>());
+
 	// Comment
 	Contents.push_back(std::make_shared<LibraryContent<NodeComment>>());
 

@@ -771,28 +771,25 @@ public:
 			psOffset += (sizeof(float) * 4);
 
 			// shader model
-			if (renderState.Collector.MaterialDataPtr->ShadingModel == ::Effekseer::ShadingModelType::Lit)
-			{
 
-				float lightDirection[4];
-				float lightColor[4];
-				float lightAmbientColor[4];
+			float lightDirection[4];
+			float lightColor[4];
+			float lightAmbientColor[4];
 
-				::Effekseer::SIMD::Vec3f lightDirection3 = m_renderer->GetLightDirection();
-				lightDirection3 = lightDirection3.Normalize();
-				VectorToFloat4(lightDirection3, lightDirection);
-				ColorToFloat4(m_renderer->GetLightColor(), lightColor);
-				ColorToFloat4(m_renderer->GetLightAmbientColor(), lightAmbientColor);
+			::Effekseer::SIMD::Vec3f lightDirection3 = m_renderer->GetLightDirection();
+			lightDirection3 = lightDirection3.Normalize();
+			VectorToFloat4(lightDirection3, lightDirection);
+			ColorToFloat4(m_renderer->GetLightColor(), lightColor);
+			ColorToFloat4(m_renderer->GetLightAmbientColor(), lightAmbientColor);
 
-				m_renderer->SetPixelBufferToShader(lightDirection, sizeof(float) * 4, psOffset);
-				psOffset += (sizeof(float) * 4);
+			m_renderer->SetPixelBufferToShader(lightDirection, sizeof(float) * 4, psOffset);
+			psOffset += (sizeof(float) * 4);
 
-				m_renderer->SetPixelBufferToShader(lightColor, sizeof(float) * 4, psOffset);
-				psOffset += (sizeof(float) * 4);
+			m_renderer->SetPixelBufferToShader(lightColor, sizeof(float) * 4, psOffset);
+			psOffset += (sizeof(float) * 4);
 
-				m_renderer->SetPixelBufferToShader(lightAmbientColor, sizeof(float) * 4, psOffset);
-				psOffset += (sizeof(float) * 4);
-			}
+			m_renderer->SetPixelBufferToShader(lightAmbientColor, sizeof(float) * 4, psOffset);
+			psOffset += (sizeof(float) * 4);
 
 			// refraction
 			if (renderState.Collector.MaterialDataPtr->RefractionUserPtr != nullptr && renderPass == 0)

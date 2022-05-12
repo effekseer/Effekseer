@@ -467,6 +467,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 
 	bool hasGradient = false;
 	bool hasNoise = false;
+	bool hasLight = false;
 	for (const auto& node : nodes)
 	{
 		if (node->Parameter->Type == NodeType::Gradient ||
@@ -479,6 +480,10 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 		{
 			hasNoise = true;
 		}
+		else if (node->Parameter->Type == NodeType::Light)
+		{
+			hasLight = true;
+		}
 	}
 
 	if (hasGradient)
@@ -489,6 +494,11 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 	if (hasNoise)
 	{
 		requiredPredefinedMethodTypes.emplace_back(RequiredPredefinedMethodType::Noise);
+	}
+
+	if (hasLight)
+	{
+		requiredPredefinedMethodTypes.emplace_back(RequiredPredefinedMethodType::Light);
 	}
 
 	// Generate exporter node
@@ -1635,6 +1645,24 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 	{
 		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "=SimpleNoise(" << GetInputArg(node->Inputs[0].Type, node->Inputs[0]) << ","
 			<< GetInputArg(node->Inputs[1].Type, node->Inputs[1]) << ");" << std::endl;
+	}
+
+	if (node->Target->Parameter->Type == NodeType::Light)
+	{
+		if (node->Outputs[0].IsConnected)
+		{
+			ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "=GetLightDirection();" << std::endl;		
+		}
+
+		if (node->Outputs[1].IsConnected)
+		{
+			ret << GetTypeName(node->Outputs[1].Type) << " " << node->Outputs[1].Name << "=GetLightColor();" << std::endl;
+		}
+
+		if (node->Outputs[2].IsConnected)
+		{
+			ret << GetTypeName(node->Outputs[2].Type) << " " << node->Outputs[2].Name << "=GetLightAmbientColor();" << std::endl;
+		}
 	}
 
 	if (node->Target->Parameter->Type == NodeType::EffectScale)
