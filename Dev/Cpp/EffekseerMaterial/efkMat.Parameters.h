@@ -1869,6 +1869,38 @@ public:
 	}
 };
 
+class NodeLight : public NodeParameter
+{
+public:
+	NodeLight()
+	{
+		Type = NodeType::Light;
+		TypeName = "Light";
+		Group = std::vector<std::string>{"Environment"};
+
+		{
+			auto output = std::make_shared<PinParameter>();
+			output->Name = "Direction";
+			output->Type = ValueType::Float3;
+			OutputPins.push_back(output);		
+		}
+
+		{
+			auto output = std::make_shared<PinParameter>();
+			output->Name = "Color";
+			output->Type = ValueType::Float3;
+			OutputPins.push_back(output);
+		}
+
+		{
+			auto output = std::make_shared<PinParameter>();
+			output->Name = "AmbientColor";
+			output->Type = ValueType::Float3;
+			OutputPins.push_back(output);
+		}
+	}
+};
+
 class NodeComment : public NodeParameter
 {
 public:

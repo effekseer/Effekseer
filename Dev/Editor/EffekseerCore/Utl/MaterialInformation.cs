@@ -61,6 +61,7 @@ namespace Effekseer.Utl
 	{
 		Gradient = 0,
 		Noise = 1,
+		Light = 2,
 	}
 
 	/// <summary>

@@ -100,6 +100,30 @@ float SimpleNoise(vec2 uv, float scale) {
 
 )";
 
+static const char* material_light_vs = R"(
+vec3 GetLightDirection() {
+	return vec3(0,0,0);
+}
+vec3 GetLightColor() {
+	return vec3(0,0,0);
+}
+vec3 GetLightAmbientColor() {
+	return vec3(0,0,0);
+}
+)";
+
+static const char* material_light_ps = R"(
+vec3 GetLightDirection() {
+	return lightDirection.xyz;
+}
+vec3 GetLightColor() {
+	return lightColor.xyz;
+}
+vec3 GetLightAmbientColor() {
+	return lightAmbientColor.xyz;
+}
+)";
+
 inline std::string GetFixedGradient(const char* name, const Gradient& gradient)
 {
 	std::stringstream ss;
@@ -877,6 +901,7 @@ class ShaderGenerator
 		// gradient
 		bool hasGradient = false;
 		bool hasNoise = false;
+
 		for (const auto& type : materialFile->RequiredMethods)
 		{
 			if (type == MaterialFile::RequiredPredefinedMethodType::Gradient)
@@ -1123,12 +1148,12 @@ public:
 
 			ExportDefaultUniform(maincode, materialFile, stage, isSprite);
 
+			ExportUniform(maincode, 4, "lightDirection");
+			ExportUniform(maincode, 4, "lightColor");
+			ExportUniform(maincode, 4, "lightAmbientColor");
+
 			if (materialFile->GetShadingModel() == ::Effekseer::ShadingModelType::Lit && stage == 1)
 			{
-				ExportUniform(maincode, 4, "lightDirection");
-				ExportUniform(maincode, 4, "lightColor");
-				ExportUniform(maincode, 4, "lightAmbientColor");
-
 				maincode << "#define _MATERIAL_LIT_ 1" << std::endl;
 			}
 			else if (materialFile->GetShadingModel() == ::Effekseer::ShadingModelType::Unlit)
@@ -1194,6 +1219,18 @@ uniform vec4 customData2s[_INSTANCE_COUNT_];
 			if (useUniformBlock)
 			{
 				maincode << "};" << std::endl;
+			}
+
+			if (std::find(materialFile->RequiredMethods.begin(), materialFile->RequiredMethods.end(), MaterialFile::RequiredPredefinedMethodType::Light) != materialFile->RequiredMethods.end())
+			{
+				if (stage == 0)
+				{
+					maincode << material_light_vs;
+				}
+				else
+				{
+					maincode << material_light_ps;
+				}
 			}
 
 			maincode << material_common_functions << std::endl;

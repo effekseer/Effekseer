@@ -881,17 +881,14 @@ struct MaterialShaderParameterGenerator
 		PixelReconstructionParam2Offset = psOffset;
 		psOffset += sizeof(float) * 4;
 
-		if (materialFile.GetShadingModel() == ::Effekseer::ShadingModelType::Lit)
-		{
-			PixelLightDirectionOffset = psOffset;
-			psOffset += sizeof(float) * 4;
+		PixelLightDirectionOffset = psOffset;
+		psOffset += sizeof(float) * 4;
 
-			PixelLightColorOffset = psOffset;
-			psOffset += sizeof(float) * 4;
+		PixelLightColorOffset = psOffset;
+		psOffset += sizeof(float) * 4;
 
-			PixelLightAmbientColorOffset = psOffset;
-			psOffset += sizeof(float) * 4;
-		}
+		PixelLightAmbientColorOffset = psOffset;
+		psOffset += sizeof(float) * 4;
 
 		if (materialFile.GetHasRefraction() && stage == 1)
 		{

@@ -120,6 +120,7 @@ protected:
 		// gradient
 		bool hasGradient = false;
 		bool hasNoise = false;
+
 		for (const auto& type : materialFile->RequiredMethods)
 		{
 			if (type == MaterialFile::RequiredPredefinedMethodType::Gradient)
@@ -346,15 +347,15 @@ public:
 				cind += 3;
 			}
 
+			ExportUniform(maincode, 4, "lightDirection", cind);
+			cind++;
+			ExportUniform(maincode, 4, "lightColor", cind);
+			cind++;
+			ExportUniform(maincode, 4, "lightAmbientColor", cind);
+			cind++;
+
 			if (materialFile->GetShadingModel() == ::Effekseer::ShadingModelType::Lit && stage == 1)
 			{
-				ExportUniform(maincode, 4, "lightDirection", cind);
-				cind++;
-				ExportUniform(maincode, 4, "lightColor", cind);
-				cind++;
-				ExportUniform(maincode, 4, "lightAmbientColor", cind);
-				cind++;
-
 				maincode << "#define _MATERIAL_LIT_ 1" << std::endl;
 			}
 			else if (materialFile->GetShadingModel() == ::Effekseer::ShadingModelType::Unlit)
@@ -430,6 +431,18 @@ public:
 
 			// depth
 			ExportTexture(maincode, "efk_depth", 1 + textureSlotOffset);
+
+			if (std::find(materialFile->RequiredMethods.begin(), materialFile->RequiredMethods.end(), MaterialFile::RequiredPredefinedMethodType::Light) != materialFile->RequiredMethods.end())
+			{
+				if (stage == 0)
+				{
+					maincode << HLSL::material_light_vs;
+				}
+				else
+				{
+					maincode << HLSL::material_light_ps;
+				}
+			}
 
 			auto baseCode = std::string(materialFile->GetGenericCode());
 			baseCode = Replace(baseCode, "$F1$", "float");

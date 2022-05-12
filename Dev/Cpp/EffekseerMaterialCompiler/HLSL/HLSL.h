@@ -112,6 +112,30 @@ float SimpleNoise(float2 uv, float scale) {
 
 )";
 
+static const char* material_light_vs = R"(
+float3 GetLightDirection() {
+	return float3(0,0,0);
+}
+float3 GetLightColor() {
+	return float3(0,0,0);
+}
+float3 GetLightAmbientColor() {
+	return float3(0,0,0);
+}
+)";
+
+static const char* material_light_ps = R"(
+float3 GetLightDirection() {
+	return lightDirection.xyz;
+}
+float3 GetLightColor() {
+	return lightColor.xyz;
+}
+float3 GetLightAmbientColor() {
+	return lightAmbientColor.xyz;
+}
+)";
+
 inline std::string GetFixedGradient(const char* name, const Gradient& gradient)
 {
 	std::stringstream ss;

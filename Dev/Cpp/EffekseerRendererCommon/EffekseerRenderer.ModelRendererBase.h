@@ -546,28 +546,25 @@ protected:
 		// shader model
 		material = param.EffectPointer->GetMaterial(materialRenderData->MaterialIndex);
 
-		if (material->ShadingModel == ::Effekseer::ShadingModelType::Lit)
-		{
-			float lightDirection[4];
-			float lightColor[4];
-			float lightAmbientColor[4];
+		float lightDirection[4];
+		float lightColor[4];
+		float lightAmbientColor[4];
 
-			::Effekseer::SIMD::Vec3f lightDirection3 = renderer->GetLightDirection();
-			lightDirection3 = lightDirection3.Normalize();
+		::Effekseer::SIMD::Vec3f lightDirection3 = renderer->GetLightDirection();
+		lightDirection3 = lightDirection3.Normalize();
 
-			VectorToFloat4(lightDirection3, lightDirection);
-			ColorToFloat4(renderer->GetLightColor(), lightColor);
-			ColorToFloat4(renderer->GetLightAmbientColor(), lightAmbientColor);
+		VectorToFloat4(lightDirection3, lightDirection);
+		ColorToFloat4(renderer->GetLightColor(), lightColor);
+		ColorToFloat4(renderer->GetLightAmbientColor(), lightAmbientColor);
 
-			renderer->SetPixelBufferToShader(lightDirection, sizeof(float) * 4, psOffset);
-			psOffset += (sizeof(float) * 4);
+		renderer->SetPixelBufferToShader(lightDirection, sizeof(float) * 4, psOffset);
+		psOffset += (sizeof(float) * 4);
 
-			renderer->SetPixelBufferToShader(lightColor, sizeof(float) * 4, psOffset);
-			psOffset += (sizeof(float) * 4);
+		renderer->SetPixelBufferToShader(lightColor, sizeof(float) * 4, psOffset);
+		psOffset += (sizeof(float) * 4);
 
-			renderer->SetPixelBufferToShader(lightAmbientColor, sizeof(float) * 4, psOffset);
-			psOffset += (sizeof(float) * 4);
-		}
+		renderer->SetPixelBufferToShader(lightAmbientColor, sizeof(float) * 4, psOffset);
+		psOffset += (sizeof(float) * 4);
 
 		// refraction
 		if (material->RefractionModelUserPtr != nullptr && renderPassInd == 0)
