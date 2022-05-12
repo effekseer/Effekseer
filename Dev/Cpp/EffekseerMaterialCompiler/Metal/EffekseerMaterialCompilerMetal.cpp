@@ -108,12 +108,12 @@ float Rand2(float2 n) {
 }
 
 float SimpleNoise_Block(float2 p) {
-	float2 i = floor(p);
+	int2 i = floor(p);
 	float2 f = FRAC(p);
 	f = f * f * (3.0 - 2.0 * f);
 	
-	float x0 = LERP(Rand2(round(i+float2(0.0,0.0))), Rand2(round(i+float2(1.0,0.0))), f.x);
-	float x1 = LERP(Rand2(round(i+float2(0.0,1.0))), Rand2(round(i+float2(1.0,1.0))), f.x);
+	float x0 = LERP(Rand2(i+int2(0,0)), Rand2(i+int2(1,0)), f.x);
+	float x1 = LERP(Rand2(i+int2(0,1)), Rand2(i+int2(1,1)), f.x);
 	return LERP(x0, x1, f.y);
 }
 
