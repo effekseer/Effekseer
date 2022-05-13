@@ -21,8 +21,9 @@ file(GLOB files
 )
 
 add_library(EffekseerCoreGUI
-  SHARED
-  ${files}
+    SHARED
+    ${files}
+    GUI/Inspector/Inspector.cs
 )
 
 set_target_properties(EffekseerCoreGUI PROPERTIES
