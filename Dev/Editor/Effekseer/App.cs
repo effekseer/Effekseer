@@ -47,6 +47,8 @@ namespace Effekseer
 				typeof(Dock.Dynamic),
 				typeof(Dock.ProceduralModel),
 				typeof(Dock.AdvancedRenderCommonValues),
+
+				typeof(GUI.Inspector.InspectorPanel),
 				typeof(Dock.Profiler),
 				typeof(Dock.GpuParticlesValues),
 			};
