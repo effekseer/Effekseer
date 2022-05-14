@@ -52,15 +52,19 @@ Build to develop Editor
 
 ### Windows
 
-Execure following command at the repository root.
+Click ``` Script/GenerateProjects.bat ```
+
+Open ``` build/Effekseer.sln ```
+
+#### Manual
+
+If you'd like to generate a project with CUI, please execute following command at the repository root.
 
 ```
 mkdir build
 cd build
 cmake -DBUILD_VIEWER=ON -DBUILD_EDITOR=ON .. 
 ```
-
-Open ``` build/Effekseer.sln ```
 
 ### macOS
 
