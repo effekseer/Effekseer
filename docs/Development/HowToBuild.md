@@ -56,7 +56,7 @@ Click ``` Script/GenerateProjects.bat ```
 
 Open ``` build/Effekseer.sln ```
 
-#### Manual
+#### CUI
 
 If you'd like to generate a project with CUI, please execute following command at the repository root.
 
