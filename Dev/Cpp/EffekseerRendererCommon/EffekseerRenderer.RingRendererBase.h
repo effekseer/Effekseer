@@ -158,6 +158,8 @@ protected:
 		state.RenderingUserData = param.UserData;
 		state.HandleUserData = userData;
 
+		state.LocalTime = param.LocalTime;
+
 		state.CopyMaterialFromParameterToState(
 			m_renderer,
 			param.EffectPointer,
@@ -692,11 +694,13 @@ protected:
 
 			if (param.DepthParameterPtr->ZSort == Effekseer::ZSortType::NormalOrder)
 			{
-				std::sort(instances_.begin(), instances_.end(), [](const KeyValue& a, const KeyValue& b) -> bool { return a.Key < b.Key; });
+				std::sort(instances_.begin(), instances_.end(), [](const KeyValue& a, const KeyValue& b) -> bool
+						  { return a.Key < b.Key; });
 			}
 			else
 			{
-				std::sort(instances_.begin(), instances_.end(), [](const KeyValue& a, const KeyValue& b) -> bool { return a.Key > b.Key; });
+				std::sort(instances_.begin(), instances_.end(), [](const KeyValue& a, const KeyValue& b) -> bool
+						  { return a.Key > b.Key; });
 			}
 
 			const auto& state = m_renderer->GetStandardRenderer()->GetState();

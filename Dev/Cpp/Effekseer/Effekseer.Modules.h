@@ -87,6 +87,7 @@ class SpriteRenderer : public ReferenceObject
 public:
 	struct NodeParameter
 	{
+		float LocalTime;
 		Effect* EffectPointer;
 		bool ZTest;
 		bool ZWrite;
@@ -191,6 +192,7 @@ class RibbonRenderer : public ReferenceObject
 public:
 	struct NodeParameter
 	{
+		float LocalTime;
 		Effect* EffectPointer;
 		bool ZTest;
 		bool ZWrite;
@@ -303,6 +305,7 @@ class RingRenderer : public ReferenceObject
 public:
 	struct NodeParameter
 	{
+		float LocalTime;
 		Effect* EffectPointer;
 		bool ZTest;
 		bool ZWrite;
@@ -410,6 +413,7 @@ class ModelRenderer : public ReferenceObject
 public:
 	struct NodeParameter
 	{
+		float LocalTime;
 		Effect* EffectPointer;
 		bool ZTest;
 		bool ZWrite;
@@ -513,6 +517,7 @@ class TrackRenderer : public ReferenceObject
 public:
 	struct NodeParameter
 	{
+		float LocalTime;
 		Effect* EffectPointer;
 		bool ZTest;
 		bool ZWrite;

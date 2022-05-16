@@ -45,7 +45,6 @@ enum class NonMatchingLODBehaviour : int32_t
 	DontSpawnAndHide = 2
 };
 
-
 enum class TranslationParentBindType : int32_t
 {
 	NotBind = 0,
@@ -731,10 +730,7 @@ public:
 
 	virtual void LoadRendererParameter(unsigned char*& pos, const SettingRef& setting);
 
-	/**
-	@brief	描画開始
-	*/
-	virtual void BeginRendering(int32_t count, Manager* manager, void* userData);
+	virtual void BeginRendering(int32_t count, Manager* manager, const InstanceGlobal* global, void* userData);
 
 	/**
 	@brief	グループ描画開始
@@ -789,16 +785,14 @@ public:
 
 	bool CanDrawWithNonMatchingLOD() const
 	{
-		return LODsParam.LODBehaviour != NonMatchingLODBehaviour::Hide
-		       && LODsParam.LODBehaviour != NonMatchingLODBehaviour::DontSpawnAndHide;
+		return LODsParam.LODBehaviour != NonMatchingLODBehaviour::Hide && LODsParam.LODBehaviour != NonMatchingLODBehaviour::DontSpawnAndHide;
 	}
 
 	bool CanSpawnWithNonMatchingLOD() const
 	{
-		return LODsParam.LODBehaviour != NonMatchingLODBehaviour::DontSpawn
-			   && LODsParam.LODBehaviour != NonMatchingLODBehaviour::DontSpawnAndHide;
+		return LODsParam.LODBehaviour != NonMatchingLODBehaviour::DontSpawn && LODsParam.LODBehaviour != NonMatchingLODBehaviour::DontSpawnAndHide;
 	}
-	
+
 	void SetRenderingUserData(const RefPtr<RenderingUserData>& renderingUserData) override
 	{
 		renderingUserData_ = renderingUserData;

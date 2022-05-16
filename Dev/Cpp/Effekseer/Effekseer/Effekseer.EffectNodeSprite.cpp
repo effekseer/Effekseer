@@ -136,13 +136,13 @@ void EffectNodeSprite::LoadRendererParameter(unsigned char*& pos, const SettingR
 	}
 }
 
-void EffectNodeSprite::BeginRendering(int32_t count, Manager* manager, void* userData)
+void EffectNodeSprite::BeginRendering(int32_t count, Manager* manager, const InstanceGlobal* global, void* userData)
 {
 	SpriteRendererRef renderer = manager->GetSpriteRenderer();
 	if (renderer != nullptr)
 	{
-		const auto nodeParameter = GetNodeParameter(manager);
-		renderer->BeginRendering(nodeParameter, count, userData);
+		nodeParam_ = GetNodeParameter(manager, global);
+		renderer->BeginRendering(nodeParam_, count, userData);
 	}
 }
 
@@ -152,8 +152,6 @@ void EffectNodeSprite::Rendering(const Instance& instance, const Instance* next_
 	SpriteRendererRef renderer = manager->GetSpriteRenderer();
 	if (renderer != nullptr)
 	{
-		const auto nodeParameter = GetNodeParameter(manager);
-
 		SpriteRenderer::InstanceParameter instanceParameter;
 		instanceParameter.AllColor = instValues._color;
 
@@ -226,14 +224,14 @@ void EffectNodeSprite::Rendering(const Instance& instance, const Instance* next_
 
 		instanceParameter.AlphaThreshold = instance.m_AlphaThreshold;
 
-		if (nodeParameter.EnableViewOffset)
+		if (nodeParam_.EnableViewOffset)
 		{
 			instanceParameter.ViewOffsetDistance = instance.translation_values.view_offset.distance;
 		}
 
 		CalcCustomData(&instance, instanceParameter.CustomData1, instanceParameter.CustomData2);
 
-		renderer->Rendering(nodeParameter, instanceParameter, userData);
+		renderer->Rendering(nodeParam_, instanceParameter, userData);
 	}
 }
 
@@ -242,8 +240,7 @@ void EffectNodeSprite::EndRendering(Manager* manager, void* userData)
 	SpriteRendererRef renderer = manager->GetSpriteRenderer();
 	if (renderer != nullptr)
 	{
-		const auto nodeParameter = GetNodeParameter(manager);
-		renderer->EndRendering(nodeParameter, userData);
+		renderer->EndRendering(nodeParam_, userData);
 	}
 }
 
@@ -292,7 +289,7 @@ void EffectNodeSprite::UpdateRenderedInstance(Instance& instance, InstanceGroup&
 	instance.ColorInheritance = instValues._color;
 }
 
-SpriteRenderer::NodeParameter EffectNodeSprite::GetNodeParameter(const Manager* manager)
+SpriteRenderer::NodeParameter EffectNodeSprite::GetNodeParameter(const Manager* manager, const InstanceGlobal* global)
 {
 	SpriteRenderer::NodeParameter nodeParameter;
 	nodeParameter.ZTest = RendererCommon.ZTest;
@@ -300,6 +297,7 @@ SpriteRenderer::NodeParameter EffectNodeSprite::GetNodeParameter(const Manager* 
 	nodeParameter.Billboard = Billboard;
 	nodeParameter.EffectPointer = GetEffect();
 	nodeParameter.IsRightHand = manager->GetCoordinateSystem() == CoordinateSystem::RH;
+	nodeParameter.LocalTime = global->GetUpdatedFrame() / 60.0f;
 
 	nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
 	nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;

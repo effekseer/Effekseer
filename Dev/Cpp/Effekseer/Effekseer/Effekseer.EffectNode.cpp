@@ -694,7 +694,7 @@ void EffectNodeImplemented::LoadRendererParameter(unsigned char*& pos, const Set
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeImplemented::BeginRendering(int32_t count, Manager* manager, void* userData)
+void EffectNodeImplemented::BeginRendering(int32_t count, Manager* manager, const InstanceGlobal* global, void* userData)
 {
 }
 

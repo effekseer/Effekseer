@@ -54,6 +54,7 @@ struct StandardRendererState
 	float SoftParticleDistanceNear = 0.0f;
 	float SoftParticleDistanceNearOffset = 0.0f;
 	float Maginification = 1.0f;
+	float LocalTime = 0.0f;
 
 	::Effekseer::RendererMaterialType MaterialType;
 	int32_t MaterialUniformCount = 0;
@@ -175,6 +176,9 @@ struct StandardRendererState
 			return true;
 
 		if (Maginification != state.Maginification)
+			return true;
+
+		if (LocalTime != state.LocalTime)
 			return true;
 
 		if (MaterialType != state.MaterialType)
@@ -709,6 +713,7 @@ public:
 			predefined_uniforms[0] = m_renderer->GetTime();
 			predefined_uniforms[1] = renderState.Maginification;
 			predefined_uniforms[2] = m_renderer->GetImpl()->MaintainGammaColorInLinearColorSpace ? 1.0f : 0.0f;
+			predefined_uniforms[3] = renderState.LocalTime;
 
 			// vs
 			int32_t vsOffset = 0;

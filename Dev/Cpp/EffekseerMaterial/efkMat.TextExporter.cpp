@@ -1675,6 +1675,11 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "=" << GetTimeName() << ";" << std::endl;
 	}
 
+	if (node->Target->Parameter->Type == NodeType::LocalTime)
+	{
+		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "=" << "$LOCALTIME$" << ";" << std::endl;
+	}
+
 	if (node->Target->Parameter->Type == NodeType::CameraPositionWS)
 	{
 		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "="

@@ -110,14 +110,14 @@ void EffectNodeModel::LoadRendererParameter(unsigned char*& pos, const SettingRe
 	}
 }
 
-void EffectNodeModel::BeginRendering(int32_t count, Manager* manager, void* userData)
+void EffectNodeModel::BeginRendering(int32_t count, Manager* manager, const InstanceGlobal* global, void* userData)
 {
 	ModelRendererRef renderer = manager->GetModelRenderer();
 	if (renderer != nullptr)
 	{
-		const auto nodeParameter = GetNodeParameter(manager);
 
-		renderer->BeginRendering(nodeParameter, count, userData);
+		nodeParam_ = GetNodeParameter(manager, global);
+		renderer->BeginRendering(nodeParam_, count, userData);
 	}
 }
 
@@ -127,8 +127,6 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 	ModelRendererRef renderer = manager->GetModelRenderer();
 	if (renderer != nullptr)
 	{
-		const auto nodeParameter = GetNodeParameter(manager);
-
 		ModelRenderer::InstanceParameter instanceParameter;
 		instanceParameter.SRTMatrix43 = instance.GetGlobalMatrix43();
 		instanceParameter.Time = (int32_t)instance.m_LivingTime;
@@ -144,7 +142,7 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 
 		instanceParameter.AlphaThreshold = instance.m_AlphaThreshold;
 
-		if (nodeParameter.EnableViewOffset)
+		if (nodeParam_.EnableViewOffset)
 		{
 			instanceParameter.ViewOffsetDistance = instance.translation_values.view_offset.distance;
 		}
@@ -167,7 +165,7 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 			instanceParameter.AllColor = Color::Mul(instanceParameter.AllColor, instance.m_pContainer->GetRootInstance()->GlobalColor);
 		}
 
-		renderer->Rendering(nodeParameter, instanceParameter, userData);
+		renderer->Rendering(nodeParam_, instanceParameter, userData);
 	}
 }
 
@@ -176,9 +174,7 @@ void EffectNodeModel::EndRendering(Manager* manager, void* userData)
 	ModelRendererRef renderer = manager->GetModelRenderer();
 	if (renderer != nullptr)
 	{
-		const auto nodeParameter = GetNodeParameter(manager);
-
-		renderer->EndRendering(nodeParameter, userData);
+		renderer->EndRendering(nodeParam_, userData);
 	}
 }
 
@@ -227,12 +223,13 @@ void EffectNodeModel::UpdateRenderedInstance(Instance& instance, InstanceGroup& 
 	instance.ColorInheritance = instValues._color;
 }
 
-ModelRenderer::NodeParameter EffectNodeModel::GetNodeParameter(const Manager* manager)
+ModelRenderer::NodeParameter EffectNodeModel::GetNodeParameter(const Manager* manager, const InstanceGlobal* global)
 {
 	ModelRenderer::NodeParameter nodeParameter;
 	nodeParameter.ZTest = RendererCommon.ZTest;
 	nodeParameter.ZWrite = RendererCommon.ZWrite;
 	nodeParameter.EffectPointer = GetEffect();
+	nodeParameter.LocalTime = global->GetUpdatedFrame() / 60.0f;
 	nodeParameter.ModelIndex = ModelIndex;
 	nodeParameter.Culling = Culling;
 	nodeParameter.Billboard = Billboard;
