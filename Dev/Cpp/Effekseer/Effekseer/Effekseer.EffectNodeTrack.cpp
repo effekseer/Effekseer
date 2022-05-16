@@ -78,7 +78,7 @@ void EffectNodeTrack::LoadRendererParameter(unsigned char*& pos, const SettingRe
 	}
 }
 
-void EffectNodeTrack::BeginRendering(int32_t count, Manager* manager, void* userData)
+void EffectNodeTrack::BeginRendering(int32_t count, Manager* manager, const InstanceGlobal* global, void* userData)
 {
 	TrackRendererRef renderer = manager->GetTrackRenderer();
 	if (renderer != nullptr)
@@ -86,6 +86,7 @@ void EffectNodeTrack::BeginRendering(int32_t count, Manager* manager, void* user
 		m_nodeParameter.ZTest = RendererCommon.ZTest;
 		m_nodeParameter.ZWrite = RendererCommon.ZWrite;
 		m_nodeParameter.EffectPointer = GetEffect();
+		m_nodeParameter.LocalTime = global->GetUpdatedFrame() / 60.0f;
 
 		m_nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
 

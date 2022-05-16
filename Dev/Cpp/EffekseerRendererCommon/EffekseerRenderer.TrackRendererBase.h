@@ -1062,6 +1062,8 @@ public:
 		state.RenderingUserData = param.UserData;
 		state.HandleUserData = userData;
 
+		state.LocalTime = param.LocalTime;
+
 		state.CopyMaterialFromParameterToState(
 			m_renderer,
 			param.EffectPointer,

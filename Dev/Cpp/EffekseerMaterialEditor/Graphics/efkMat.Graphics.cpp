@@ -576,7 +576,7 @@ bool Preview::UpdateUniforms(std::vector<std::shared_ptr<TextureWithSampler>> te
 			}
 		}
 
-				for (const auto grad : gradients)
+		for (const auto grad : gradients)
 		{
 			auto data = ToUniform(grad->Defaults);
 
@@ -720,6 +720,7 @@ bool Preview::UpdateConstantValues(float time, std::array<float, 4> customData1,
 			values[0] = time;
 			values[1] = 1.0f;
 			values[2] = 0.0f;
+			values[3] = time;
 			constantBuffer->SetData(values.data(), layout.second.GetSize(), layout.second.Offset);
 		}
 

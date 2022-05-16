@@ -226,12 +226,13 @@ void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, const SettingRef
 	}
 }
 
-void EffectNodeRing::BeginRendering(int32_t count, Manager* manager, void* userData)
+void EffectNodeRing::BeginRendering(int32_t count, Manager* manager, const InstanceGlobal* global, void* userData)
 {
 	RingRendererRef renderer = manager->GetRingRenderer();
 	if (renderer != nullptr)
 	{
 		nodeParameter.EffectPointer = GetEffect();
+		nodeParameter.LocalTime = global->GetUpdatedFrame() / 60.0f;
 		nodeParameter.ZTest = RendererCommon.ZTest;
 		nodeParameter.ZWrite = RendererCommon.ZWrite;
 		nodeParameter.Billboard = Billboard;

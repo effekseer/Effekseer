@@ -118,7 +118,7 @@ void EffectNodeRibbon::LoadRendererParameter(unsigned char*& pos, const SettingR
 	}
 }
 
-void EffectNodeRibbon::BeginRendering(int32_t count, Manager* manager, void* userData)
+void EffectNodeRibbon::BeginRendering(int32_t count, Manager* manager, const InstanceGlobal* global, void* userData)
 {
 	RibbonRendererRef renderer = manager->GetRibbonRenderer();
 	if (renderer != nullptr)
@@ -127,6 +127,7 @@ void EffectNodeRibbon::BeginRendering(int32_t count, Manager* manager, void* use
 		m_nodeParameter.ZWrite = RendererCommon.ZWrite;
 		m_nodeParameter.ViewpointDependent = ViewpointDependent != 0;
 		m_nodeParameter.EffectPointer = GetEffect();
+		m_nodeParameter.LocalTime = global->GetUpdatedFrame() / 60.0f;
 
 		m_nodeParameter.SplineDivision = SplineDivision;
 		m_nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;

@@ -160,6 +160,8 @@ enum class NodeType
 
 	Light, //! 1703
 
+	LocalTime, //! 1703
+
 	Comment,
 	Function, // Unimplemented
 	Output,

@@ -1242,6 +1242,7 @@ uniform vec4 customData2s[_INSTANCE_COUNT_];
 			baseCode = Replace(baseCode, "$F4$", "vec4");
 			baseCode = Replace(baseCode, "$TIME$", "predefined_uniform.x");
 			baseCode = Replace(baseCode, "$EFFECTSCALE$", "predefined_uniform.y");
+			baseCode = Replace(baseCode, "$LOCALTIME$", "predefined_uniform.w");
 			baseCode = Replace(baseCode, "$UV$", "uv");
 			baseCode = Replace(baseCode, "$MOD", "mod");
 

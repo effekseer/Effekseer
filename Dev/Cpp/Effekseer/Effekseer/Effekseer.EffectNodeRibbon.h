@@ -105,7 +105,7 @@ public:
 
 	void LoadRendererParameter(unsigned char*& pos, const SettingRef& setting) override;
 
-	void BeginRendering(int32_t count, Manager* manager, void* userData) override;
+	void BeginRendering(int32_t count, Manager* manager, const InstanceGlobal* global, void* userData) override;
 
 	void BeginRenderingGroup(InstanceGroup* group, Manager* manager, void* userData) override;
 

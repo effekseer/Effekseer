@@ -27,6 +27,7 @@ class SpriteRenderer : public ReferenceObject
 public:
 	struct NodeParameter
 	{
+		float LocalTime;
 		Effect* EffectPointer;
 		bool ZTest;
 		bool ZWrite;

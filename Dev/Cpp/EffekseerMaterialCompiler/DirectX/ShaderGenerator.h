@@ -451,6 +451,7 @@ public:
 			baseCode = Replace(baseCode, "$F4$", "float4");
 			baseCode = Replace(baseCode, "$TIME$", "predefined_uniform.x");
 			baseCode = Replace(baseCode, "$EFFECTSCALE$", "predefined_uniform.y");
+			baseCode = Replace(baseCode, "$LOCALTIME$", "predefined_uniform.w");
 			baseCode = Replace(baseCode, "$UV$", "uv");
 			baseCode = Replace(baseCode, "$MOD", "fmod");
 
