@@ -347,12 +347,15 @@ public:
 				cind += 3;
 			}
 
-			ExportUniform(maincode, 4, "lightDirection", cind);
-			cind++;
-			ExportUniform(maincode, 4, "lightColor", cind);
-			cind++;
-			ExportUniform(maincode, 4, "lightAmbientColor", cind);
-			cind++;
+			if (stage == 1)
+			{
+				ExportUniform(maincode, 4, "lightDirection", cind);
+				cind++;
+				ExportUniform(maincode, 4, "lightColor", cind);
+				cind++;
+				ExportUniform(maincode, 4, "lightAmbientColor", cind);
+				cind++;
+			}
 
 			if (materialFile->GetShadingModel() == ::Effekseer::ShadingModelType::Lit && stage == 1)
 			{

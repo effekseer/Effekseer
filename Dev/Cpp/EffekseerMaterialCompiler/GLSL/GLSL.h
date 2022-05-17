@@ -1148,9 +1148,13 @@ public:
 
 			ExportDefaultUniform(maincode, materialFile, stage, isSprite);
 
-			ExportUniform(maincode, 4, "lightDirection");
-			ExportUniform(maincode, 4, "lightColor");
-			ExportUniform(maincode, 4, "lightAmbientColor");
+
+			if (stage == 1)
+			{
+				ExportUniform(maincode, 4, "lightDirection");
+				ExportUniform(maincode, 4, "lightColor");
+				ExportUniform(maincode, 4, "lightAmbientColor");
+			}
 
 			if (materialFile->GetShadingModel() == ::Effekseer::ShadingModelType::Lit && stage == 1)
 			{
