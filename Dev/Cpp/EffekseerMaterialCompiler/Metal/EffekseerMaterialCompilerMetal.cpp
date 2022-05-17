@@ -1004,9 +1004,12 @@ ShaderData GenerateShader(MaterialFile* materialFile, MaterialShaderType shaderT
 			ExportTexture(textures, textureName, t_index);
 		}
 
-		ExportUniform(userUniforms, 4, "lightDirection");
-		ExportUniform(userUniforms, 4, "lightColor");
-		ExportUniform(userUniforms, 4, "lightAmbientColor");
+		if (stage == 1)
+		{
+			ExportUniform(userUniforms, 4, "lightDirection");
+			ExportUniform(userUniforms, 4, "lightColor");
+			ExportUniform(userUniforms, 4, "lightAmbientColor");
+		}
 
 		if (materialFile->GetShadingModel() == ::Effekseer::ShadingModelType::Lit && stage == 1)
 		{
