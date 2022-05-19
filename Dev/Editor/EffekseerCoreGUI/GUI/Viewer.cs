@@ -335,6 +335,10 @@ namespace Effekseer.GUI
 
 					StepViewer(stepFrame, true);
 				}
+				else
+				{
+					UpdateFrame();
+				}
 
 				// update environment
 				var renderParam = EffectRenderer.GetParameter();
@@ -661,6 +665,10 @@ namespace Effekseer.GUI
 			}
 		}
 
+		unsafe void UpdateFrame()
+		{
+			EffectRenderer.Update(0);
+		}
 
 		private void ViewMode_OnChanged(object sender, ChangedValueEventArgs e)
 		{

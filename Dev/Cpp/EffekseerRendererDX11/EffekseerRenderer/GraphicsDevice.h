@@ -28,6 +28,7 @@ using D3D11RasterizerStatePtr = std::unique_ptr<ID3D11RasterizerState, Effekseer
 using D3D11DepthStencilStatePtr = std::unique_ptr<ID3D11DepthStencilState, Effekseer::ReferenceDeleter<ID3D11DepthStencilState>>;
 using D3D11BlendStatePtr = std::unique_ptr<ID3D11BlendState, Effekseer::ReferenceDeleter<ID3D11BlendState>>;
 using D3D11SamplerStatePtr = std::unique_ptr<ID3D11SamplerState, Effekseer::ReferenceDeleter<ID3D11SamplerState>>;
+using D3D11QueryPtr = std::unique_ptr<ID3D11Query, Effekseer::ReferenceDeleter<ID3D11Query>>;
 
 class GraphicsDevice;
 class VertexBuffer;

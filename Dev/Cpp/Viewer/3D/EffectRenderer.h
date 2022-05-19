@@ -249,6 +249,10 @@ public:
 		return call;
 	}
 
+	int32_t GetCPUTime();
+
+	int32_t GetGPUTime();
+
 	int32_t RandomSeed = -1;
 };
 

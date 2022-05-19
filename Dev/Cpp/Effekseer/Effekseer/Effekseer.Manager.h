@@ -254,6 +254,20 @@ public:
 	virtual void SetTrackRenderer(TrackRendererRef renderer) = 0;
 
 	/**
+		@brief
+		\~English get an GPU performance timer
+		\~Japanese GPUパフォーマンスタイマー取得する。
+	*/
+	virtual GPUTimerRef GetGPUTimer() = 0;
+
+	/**
+		@brief
+		\~English get an GPU performance timer
+		\~Japanese GPUパフォーマンスタイマーを設定する。
+	*/
+	virtual void SetGPUTimer(GPUTimerRef gpuTimer) = 0;
+
+	/**
 		@brief	設定クラスを取得する。
 	*/
 	virtual const SettingRef& GetSetting() const = 0;
@@ -873,14 +887,32 @@ public:
 	virtual int GetCameraCullingMaskToShowAllEffects() = 0;
 
 	/**
-		@brief	Update処理時間を取得。
+		@brief
+		\~English	Gets the CPU time required for the Update process.
+		\~Japanese	Update処理にかかるCPU時間を取得する。
 	*/
 	virtual int GetUpdateTime() const = 0;
 
 	/**
-		@brief	Draw処理時間を取得。
+		@brief
+		\~English	Gets the CPU time required for the Draw process.
+		\~Japanese	Draw処理にかかるCPU時間を取得する。
 	*/
 	virtual int GetDrawTime() const = 0;
+
+	/**
+		@brief
+		\~English	Gets the GPU time (microseconds) taken to render the all effects.
+		\~Japanese	エフェクト全ての描画処理にかかるGPU時間(マイクロ秒)を取得する。
+	*/
+	virtual int32_t GetGPUTime() const = 0;
+
+	/**
+		@brief
+		\~English	Gets the GPU time (microseconds) taken to render the effect.
+		\~Japanese	エフェクトの描画処理にかかるGPU時間(マイクロ秒)を取得する。
+	*/
+	virtual int32_t GetGPUTime(Handle handle) const = 0;
 
 	/**
 		@brief

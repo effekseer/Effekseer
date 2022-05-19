@@ -99,6 +99,10 @@ class"
 %apply uint8_t INOUT[] { uint8_t* data }
 %apply uint8_t INOUT[] { uint8_t* data_output }
 
+// Plot
+%apply double INPUT[] { const double* xValues }
+%apply double INPUT[] { const double* yValues }
+
 %feature("director") GUIManagerCallback;
 %feature("director") IOCallback;
 
@@ -134,6 +138,7 @@ class"
 %include "Cpp/Viewer/Parameters.h"
 %include "Cpp/Viewer/ProcessConnector.h"
 %include "Cpp/Viewer/GUI/efk.Vec2.h"
+%include "Cpp/Viewer/GUI/efk.Vec4.h"
 %include "Cpp/Viewer/Recorder/RecordingParameter.h"
 %include "Cpp/Viewer/Recorder/EffectRecorder.h"
 

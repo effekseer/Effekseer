@@ -182,6 +182,8 @@ private:
 
 	TrackRendererRef m_trackRenderer;
 
+	GPUTimerRef m_gpuTimer;
+
 	SoundPlayerRef m_soundPlayer;
 
 	MallocFunc m_MallocFunc;
@@ -278,6 +280,10 @@ public:
 	TrackRendererRef GetTrackRenderer() override;
 
 	void SetTrackRenderer(TrackRendererRef renderer) override;
+
+	GPUTimerRef GetGPUTimer() override;
+
+	void SetGPUTimer(GPUTimerRef gpuTimer) override;
 
 	const SettingRef& GetSetting() const override;
 
@@ -456,6 +462,10 @@ public:
 	int GetUpdateTime() const override;
 
 	int GetDrawTime() const override;
+
+	int32_t GetGPUTime() const override;
+
+	int32_t GetGPUTime(Handle handle) const override;
 
 	int32_t GetRestInstancesCount() const override;
 

@@ -18,6 +18,7 @@
 
 #include "../Parameters.h"
 #include "efk.Vec2.h"
+#include "efk.Vec4.h"
 
 namespace efk
 {

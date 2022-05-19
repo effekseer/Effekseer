@@ -19,6 +19,7 @@
 #include "../EditorCommon/GUI/JapaneseFont.h"
 
 #include "../3rdParty/imgui_addon/fcurve/fcurve.h"
+#include "../3rdParty/imgui_addon/implot/implot.h"
 
 #include "../3rdParty/Boxer/boxer.h"
 
@@ -475,7 +476,10 @@ struct utf8str
 	utf8str(const char16_t* u16str)
 	{
 		data[0] = 0;
-		Effekseer::Tool::StringHelper::ConvertUtf16ToUtf8(data, SIZE, u16str);
+		if (u16str)
+		{
+			Effekseer::Tool::StringHelper::ConvertUtf16ToUtf8(data, SIZE, u16str);
+		}
 	}
 	operator const char*() const
 	{
@@ -733,6 +737,9 @@ void GUIManager::InitializeGUI(std::shared_ptr<Effekseer::Tool::GraphicsDevice> 
 
 	markdownConfig_.userData = this;
 	markdownConfig_.linkCallback = GUIManager::MarkdownLinkCallback;
+
+	ImPlot::CreateContext();
+	ImPlot::GetStyle().AntiAliasedLines = true;
 }
 
 void GUIManager::ResetGUIStyle()
@@ -786,6 +793,8 @@ void GUIManager::SetSize(int32_t width, int32_t height)
 
 void GUIManager::Terminate()
 {
+	ImPlot::DestroyContext();
+
 	if (deviceType == Effekseer::Tool::DeviceType::OpenGL)
 	{
 		ImGui_ImplOpenGL3_Shutdown();
@@ -1972,6 +1981,26 @@ void GUIManager::EndMenuBar()
 	return ImGui::EndMenuBar();
 }
 
+bool GUIManager::BeginTabBar(const char16_t* idstr)
+{
+	return ImGui::BeginTabBar(utf8str<256>(idstr));
+}
+
+void GUIManager::EndTabBar()
+{
+	ImGui::EndTabBar();
+}
+
+bool GUIManager::BeginTabItem(const char16_t* label)
+{
+	return ImGui::BeginTabItem(utf8str<256>(label));
+}
+
+void GUIManager::EndTabItem()
+{
+	ImGui::EndTabItem();
+}
+
 bool GUIManager::BeginMenu(const char16_t* label, bool enabled)
 {
 	return ImGui::BeginMenu(utf8str<256>(label), enabled);
@@ -2666,6 +2695,56 @@ void GUIManager::EndNodeFrameTimeline(int* frameMin, int* frameMax, int* current
 bool GUIManager::GradientHDR(int32_t gradientID, Effekseer::Tool::GradientHDRState& state, Effekseer::Tool::GradientHDRGUIState& guiState)
 {
 	return ImGradientHDR(gradientID, state.GetState(), guiState.GetTemporaryState());
+}
+
+bool GUIManager::BeginPlot(const char16_t* label, const Vec2& size, PlotFlags flags)
+{
+	return ImPlot::BeginPlot(utf8str<256>(label), ImVec2(size.X, size.Y), (ImPlotFlags)flags);;
+}
+
+void GUIManager::EndPlot()
+{
+	ImPlot::EndPlot();
+}
+
+void GUIManager::SetupPlotAxis(PlotAxis axis, const char16_t* label, PlotAxisFlags flags)
+{
+	ImPlot::SetupAxis((ImAxis)axis, utf8str<256>(label), (ImPlotAxisFlags)flags);
+}
+
+void GUIManager::SetupPlotAxisLimits(PlotAxis axis, double vMin, double vMax, Cond cond)
+{
+	ImPlot::SetupAxisLimits((ImAxis)axis, vMin, vMax, (ImPlotCond)cond);
+}
+
+void GUIManager::SetupPlotAxisFormat(PlotAxis axis, const char16_t* fmt)
+{
+	ImPlot::SetupAxisFormat((ImAxis)axis, utf8str<256>(fmt));
+}
+
+void GUIManager::SetupPlotAxisTicks(PlotAxis axis, double vMin, double vMax, int nTicks)
+{
+	ImPlot::SetupAxisTicks((ImAxis)axis, vMin, vMax, nTicks);
+}
+
+void GUIManager::PlotLine(const char16_t* label, const double* xValues, const double* yValues, int32_t count, int32_t offset)
+{
+	ImPlot::PlotLine(utf8str<256>(label), xValues, yValues, count, offset);
+}
+
+void GUIManager::PlotShaded(const char16_t* label, const double* xValues, const double* yValues, int32_t count, double yRef, int32_t offset)
+{
+	ImPlot::PlotShaded(utf8str<256>(label), xValues, yValues, count, yRef, offset);
+}
+
+void GUIManager::SetNextPlotLineStyle(const Vec4& color, float weight)
+{
+	ImPlot::SetNextLineStyle(ImVec4(color.X, color.Y, color.Z, color.W), weight);
+}
+
+void GUIManager::SetNextPlotFillStyle(const Vec4& color, float alphaMod)
+{
+	ImPlot::SetNextFillStyle(ImVec4(color.X, color.Y, color.Z, color.W), alphaMod);
 }
 
 } // namespace efk

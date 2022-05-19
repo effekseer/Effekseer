@@ -73,6 +73,7 @@ class RibbonRenderer;
 class RingRenderer;
 class ModelRenderer;
 class TrackRenderer;
+class GPUTimer;
 
 class EffectLoader;
 class TextureLoader;
@@ -775,6 +776,7 @@ using RibbonRendererRef = RefPtr<RibbonRenderer>;
 using RingRendererRef = RefPtr<RingRenderer>;
 using ModelRendererRef = RefPtr<ModelRenderer>;
 using TrackRendererRef = RefPtr<TrackRenderer>;
+using GPUTimerRef = RefPtr<GPUTimer>;
 using SoundPlayerRef = RefPtr<SoundPlayer>;
 
 using EffectLoaderRef = RefPtr<EffectLoader>;

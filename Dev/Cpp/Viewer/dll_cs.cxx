@@ -2098,6 +2098,130 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_Vec2___(void * jarg1) {
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Vec4_X_set___(void * jarg1, float jarg2) {
+  efk::Vec4 *arg1 = (efk::Vec4 *) 0 ;
+  float arg2 ;
+  
+  arg1 = (efk::Vec4 *)jarg1; 
+  arg2 = (float)jarg2; 
+  if (arg1) (arg1)->X = arg2;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_Vec4_X_get___(void * jarg1) {
+  float jresult ;
+  efk::Vec4 *arg1 = (efk::Vec4 *) 0 ;
+  float result;
+  
+  arg1 = (efk::Vec4 *)jarg1; 
+  result = (float) ((arg1)->X);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Vec4_Y_set___(void * jarg1, float jarg2) {
+  efk::Vec4 *arg1 = (efk::Vec4 *) 0 ;
+  float arg2 ;
+  
+  arg1 = (efk::Vec4 *)jarg1; 
+  arg2 = (float)jarg2; 
+  if (arg1) (arg1)->Y = arg2;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_Vec4_Y_get___(void * jarg1) {
+  float jresult ;
+  efk::Vec4 *arg1 = (efk::Vec4 *) 0 ;
+  float result;
+  
+  arg1 = (efk::Vec4 *)jarg1; 
+  result = (float) ((arg1)->Y);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Vec4_Z_set___(void * jarg1, float jarg2) {
+  efk::Vec4 *arg1 = (efk::Vec4 *) 0 ;
+  float arg2 ;
+  
+  arg1 = (efk::Vec4 *)jarg1; 
+  arg2 = (float)jarg2; 
+  if (arg1) (arg1)->Z = arg2;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_Vec4_Z_get___(void * jarg1) {
+  float jresult ;
+  efk::Vec4 *arg1 = (efk::Vec4 *) 0 ;
+  float result;
+  
+  arg1 = (efk::Vec4 *)jarg1; 
+  result = (float) ((arg1)->Z);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Vec4_W_set___(void * jarg1, float jarg2) {
+  efk::Vec4 *arg1 = (efk::Vec4 *) 0 ;
+  float arg2 ;
+  
+  arg1 = (efk::Vec4 *)jarg1; 
+  arg2 = (float)jarg2; 
+  if (arg1) (arg1)->W = arg2;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_Vec4_W_get___(void * jarg1) {
+  float jresult ;
+  efk::Vec4 *arg1 = (efk::Vec4 *) 0 ;
+  float result;
+  
+  arg1 = (efk::Vec4 *)jarg1; 
+  result = (float) ((arg1)->W);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_Vec4__SWIG_0___() {
+  void * jresult ;
+  efk::Vec4 *result = 0 ;
+  
+  result = (efk::Vec4 *)new efk::Vec4();
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_Vec4__SWIG_1___(float jarg1, float jarg2, float jarg3, float jarg4) {
+  void * jresult ;
+  float arg1 ;
+  float arg2 ;
+  float arg3 ;
+  float arg4 ;
+  efk::Vec4 *result = 0 ;
+  
+  arg1 = (float)jarg1; 
+  arg2 = (float)jarg2; 
+  arg3 = (float)jarg3; 
+  arg4 = (float)jarg4; 
+  result = (efk::Vec4 *)new efk::Vec4(arg1,arg2,arg3,arg4);
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_Vec4___(void * jarg1) {
+  efk::Vec4 *arg1 = (efk::Vec4 *) 0 ;
+  
+  arg1 = (efk::Vec4 *)jarg1; 
+  delete arg1;
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_RecordingParameter_GetPath___(void * jarg1) {
   void * jresult ;
   Effekseer::Tool::RecordingParameter *arg1 = (Effekseer::Tool::RecordingParameter *) 0 ;
@@ -4044,6 +4168,30 @@ SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_GetAndResetVerte
   
   arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
   result = (int32_t)((Effekseer::Tool::EffectRenderer const *)arg1)->GetAndResetVertexCount();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_GetCPUTime___(void * jarg1) {
+  int jresult ;
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  int32_t result;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  result = (int32_t)(arg1)->GetCPUTime();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_GetGPUTime___(void * jarg1) {
+  int jresult ;
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  int32_t result;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  result = (int32_t)(arg1)->GetGPUTime();
   jresult = result; 
   return jresult;
 }
@@ -8942,6 +9090,50 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_EndTooltip___(void 
 }
 
 
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginTabBar___(void * jarg1, void * jarg2) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  result = (bool)(arg1)->BeginTabBar((char16_t const *)arg2);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_EndTabBar___(void * jarg1) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  (arg1)->EndTabBar();
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginTabItem___(void * jarg1, void * jarg2) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  result = (bool)(arg1)->BeginTabItem((char16_t const *)arg2);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_EndTabItem___(void * jarg1) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  (arg1)->EndTabItem();
+}
+
+
 SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginMainMenuBar___(void * jarg1) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
@@ -10497,6 +10689,172 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GradientHDR
   result = (bool)(arg1)->GradientHDR(arg2,*arg3,*arg4);
   jresult = result; 
   return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginPlot___(void * jarg1, void * jarg2, void * jarg3, int jarg4) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  efk::Vec2 *arg3 = 0 ;
+  efk::PlotFlags arg4 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = (efk::Vec2 *)jarg3;
+  if (!arg3) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "efk::Vec2 const & type is null", 0);
+    return 0;
+  } 
+  arg4 = (efk::PlotFlags)jarg4; 
+  result = (bool)(arg1)->BeginPlot((char16_t const *)arg2,(efk::Vec2 const &)*arg3,arg4);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_EndPlot___(void * jarg1) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  (arg1)->EndPlot();
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetupPlotAxis___(void * jarg1, int jarg2, void * jarg3, int jarg4) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  efk::PlotAxis arg2 ;
+  char16_t *arg3 = (char16_t *) 0 ;
+  efk::PlotAxisFlags arg4 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (efk::PlotAxis)jarg2; 
+  arg3 = (char16_t *)jarg3; 
+  arg4 = (efk::PlotAxisFlags)jarg4; 
+  (arg1)->SetupPlotAxis(arg2,(char16_t const *)arg3,arg4);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetupPlotAxisLimits___(void * jarg1, int jarg2, double jarg3, double jarg4, int jarg5) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  efk::PlotAxis arg2 ;
+  double arg3 ;
+  double arg4 ;
+  efk::Cond arg5 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (efk::PlotAxis)jarg2; 
+  arg3 = (double)jarg3; 
+  arg4 = (double)jarg4; 
+  arg5 = (efk::Cond)jarg5; 
+  (arg1)->SetupPlotAxisLimits(arg2,arg3,arg4,arg5);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetupPlotAxisFormat___(void * jarg1, int jarg2, void * jarg3) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  efk::PlotAxis arg2 ;
+  char16_t *arg3 = (char16_t *) 0 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (efk::PlotAxis)jarg2; 
+  arg3 = (char16_t *)jarg3; 
+  (arg1)->SetupPlotAxisFormat(arg2,(char16_t const *)arg3);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetupPlotAxisTicks___(void * jarg1, int jarg2, double jarg3, double jarg4, int jarg5) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  efk::PlotAxis arg2 ;
+  double arg3 ;
+  double arg4 ;
+  int arg5 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (efk::PlotAxis)jarg2; 
+  arg3 = (double)jarg3; 
+  arg4 = (double)jarg4; 
+  arg5 = (int)jarg5; 
+  (arg1)->SetupPlotAxisTicks(arg2,arg3,arg4,arg5);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_PlotLine___(void * jarg1, void * jarg2, double* jarg3, double* jarg4, int jarg5, int jarg6) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  double *arg3 = (double *) 0 ;
+  double *arg4 = (double *) 0 ;
+  int32_t arg5 ;
+  int32_t arg6 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = jarg4;
+  arg5 = (int32_t)jarg5; 
+  arg6 = (int32_t)jarg6; 
+  (arg1)->PlotLine((char16_t const *)arg2,(double const *)arg3,(double const *)arg4,arg5,arg6);
+  
+  
+  
+  
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_PlotShaded___(void * jarg1, void * jarg2, double* jarg3, double* jarg4, int jarg5, double jarg6, int jarg7) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  double *arg3 = (double *) 0 ;
+  double *arg4 = (double *) 0 ;
+  int32_t arg5 ;
+  double arg6 ;
+  int32_t arg7 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = jarg4;
+  arg5 = (int32_t)jarg5; 
+  arg6 = (double)jarg6; 
+  arg7 = (int32_t)jarg7; 
+  (arg1)->PlotShaded((char16_t const *)arg2,(double const *)arg3,(double const *)arg4,arg5,arg6,arg7);
+  
+  
+  
+  
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetNextPlotLineStyle___(void * jarg1, void * jarg2, float jarg3) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  efk::Vec4 *arg2 = 0 ;
+  float arg3 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (efk::Vec4 *)jarg2;
+  if (!arg2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "efk::Vec4 const & type is null", 0);
+    return ;
+  } 
+  arg3 = (float)jarg3; 
+  (arg1)->SetNextPlotLineStyle((efk::Vec4 const &)*arg2,arg3);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetNextPlotFillStyle___(void * jarg1, void * jarg2, float jarg3) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  efk::Vec4 *arg2 = 0 ;
+  float arg3 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (efk::Vec4 *)jarg2;
+  if (!arg2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "efk::Vec4 const & type is null", 0);
+    return ;
+  } 
+  arg3 = (float)jarg3; 
+  (arg1)->SetNextPlotFillStyle((efk::Vec4 const &)*arg2,arg3);
 }
 
 

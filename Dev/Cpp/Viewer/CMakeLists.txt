@@ -25,6 +25,7 @@ FILE(GLOB cpps
 	3rdParty/imgui_addon/imguihelper/*.cpp
 	3rdParty/imgui_addon/fcurve/*.cpp
 	3rdParty/imgui_addon/ImGuizmo/*.cpp
+	3rdParty/imgui_addon/implot/*.cpp
 	EffekseerTool/*.cpp
 	Graphics/*.cpp
 	GUI/*.cpp

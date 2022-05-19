@@ -222,6 +222,9 @@
     <Compile Include="swig\MouseCursor.cs" />
     <Compile Include="swig\NativeStatus.cs" />
     <Compile Include="swig\NetworkClient.cs" />
+    <Compile Include="swig\PlotAxis.cs" />
+    <Compile Include="swig\PlotAxisFlags.cs" />
+    <Compile Include="swig\PlotFlags.cs" />
     <Compile Include="swig\PostEffectParameter.cs" />
     <Compile Include="swig\ProcessConnector.cs" />
     <Compile Include="swig\ProjectionMatrixStyle.cs" />
@@ -240,6 +243,7 @@
     <Compile Include="swig\TransparenceType.cs" />
     <Compile Include="swig\TreeNodeFlags.cs" />
     <Compile Include="swig\Vec2.cs" />
+    <Compile Include="swig\Vec4.cs" />
     <Compile Include="swig\Vector2I.cs" />
     <Compile Include="swig\Vector3F.cs" />
     <Compile Include="swig\ViewerEffectBehavior.cs" />

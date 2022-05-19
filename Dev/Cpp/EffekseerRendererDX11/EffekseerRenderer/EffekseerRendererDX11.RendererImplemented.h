@@ -144,6 +144,8 @@ public:
 
 	::Effekseer::TrackRendererRef CreateTrackRenderer();
 
+	::Effekseer::GPUTimerRef CreateGPUTimer() override;
+
 	::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::FileInterfaceRef fileInterface = nullptr);
 
 	::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::FileInterfaceRef fileInterface = nullptr);
