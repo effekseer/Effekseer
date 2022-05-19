@@ -298,7 +298,6 @@ struct ScalingFunctions
 	{
 		SIMD::Vec3f localScaling;
 
-		/* �g��̍X�V(���Ԃ��璼�ڋ��߂��悤�Ή��ς�) */
 		if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_None)
 		{
 			localScaling = {1.0f, 1.0f, 1.0f};
@@ -311,7 +310,6 @@ struct ScalingFunctions
 		}
 		else if (scalingParam.ScalingType == ParameterScalingType::ParameterScalingType_PVA)
 		{
-			/* ���݈ʒu = �������W + (�������x * t) + (���������x * t * t * 0.5)*/
 			localScaling = scaling_values.random.scale + (scaling_values.random.velocity * m_LivingTime) +
 						   (scaling_values.random.acceleration * (m_LivingTime * m_LivingTime * 0.5f));
 		}

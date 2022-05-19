@@ -357,7 +357,6 @@ struct RotationFunctions
 	{
 		SIMD::Vec3f localAngle;
 
-		/* ��]�̍X�V(���Ԃ��璼�ڋ��߂��悤�Ή��ς�) */
 		if (rotationParam.RotationType == ParameterRotationType::ParameterRotationType_None)
 		{
 			localAngle = {0, 0, 0};
@@ -369,7 +368,6 @@ struct RotationFunctions
 		}
 		else if (rotationParam.RotationType == ParameterRotationType::ParameterRotationType_PVA)
 		{
-			/* ���݈ʒu = �������W + (�������x * t) + (���������x * t * t * 0.5)*/
 			localAngle = rotation_values.random.rotation + (rotation_values.random.velocity * m_LivingTime) +
 						 (rotation_values.random.acceleration * (m_LivingTime * m_LivingTime * 0.5f));
 		}
