@@ -70,6 +70,8 @@ enum class ParameterRotationType : int32_t
 
 	ParameterRotationType_FCurve = 5,
 
+	ParameterRotationType_RotateToViewpoint = 6,
+
 	ParameterRotationType_None = 0x7fffffff - 1,
 };
 
@@ -353,7 +355,7 @@ struct RotationFunctions
 		}
 	}
 
-	static SIMD::Mat43f CalculateRotation(RotationState& rotation_values, const RotationParameter& rotationParam, RandObject& rand, const Effect* effect, const InstanceGlobal* instanceGlobal, float m_LivingTime, float m_LivedTime, const Instance* m_pParent, const DynamicFactorParameter& dynamicFactor)
+	static SIMD::Mat43f CalculateRotation(RotationState& rotation_values, const RotationParameter& rotationParam, RandObject& rand, const Effect* effect, const InstanceGlobal* instanceGlobal, float m_LivingTime, float m_LivedTime, const Instance* m_pParent, const DynamicFactorParameter& dynamicFactor, const Vector3D& viewpoint)
 	{
 		SIMD::Vec3f localAngle;
 
@@ -389,6 +391,22 @@ struct RotationFunctions
 			assert(rotationParam.RotationFCurve != nullptr);
 			auto fcurve = rotationParam.RotationFCurve->GetValues(m_LivingTime, m_LivedTime);
 			localAngle = fcurve + rotation_values.fcruve.offset;
+		}
+		else if (rotationParam.RotationType == ParameterRotationType::ParameterRotationType_RotateToViewpoint)
+		{
+			const auto globalMat = m_pParent->GetGlobalMatrix43();
+			SIMD::Vec3f s;
+			SIMD::Mat43f r;
+			SIMD::Vec3f t;
+
+			globalMat.GetSRT(s, r, t);
+
+			SIMD::Mat44f r4(r);
+			// Because of r4 contains only rotation matrix
+			const auto r4inv = r4.Transpose();
+
+			// TODO look at
+			//SIMD::Mat43f::
 		}
 
 		SIMD::Mat43f matRot;
