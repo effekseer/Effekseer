@@ -390,6 +390,55 @@ void Instance::Update(float deltaFrame, bool shown)
 					removed = true;
 				}
 			}
+
+			// checking kill box/height
+			if(!removed && m_pEffectNode->KillParam.KillType != KillType::None)
+			{
+				SIMD::Mat44f globalMatrix = this->GetInstanceGlobal()->EffectGlobalMatrix;
+				
+				if(m_pEffectNode->KillParam.KillType == KillType::Box)
+				{
+					SIMD::Vec3f localPosition{};
+					if (m_pEffectNode->KillParam.Box.IsScaleAndRotationApplied)
+					{
+						Matrix44 invertedGlobalMatrix;
+						Matrix44::Inverse(invertedGlobalMatrix, ToStruct(globalMatrix));
+						localPosition = SIMD::Vec3f::Transform(this->prevGlobalPosition_, invertedGlobalMatrix);
+					} else
+					{
+						localPosition = this->prevGlobalPosition_ - globalMatrix.GetTranslation();
+					}
+
+					SIMD::Vec3f min = m_pEffectNode->KillParam.Box.MinCorner;
+					SIMD::Vec3f max = m_pEffectNode->KillParam.Box.MaxCorner;
+					bool isWithin = localPosition.GetX() >= min.GetX() && localPosition.GetY() <= max.GetX()
+					           && localPosition.GetY() >= min.GetY() && localPosition.GetY() <= max.GetY()
+					           && localPosition.GetZ() >= min.GetZ() && localPosition.GetZ() <= max.GetZ();
+			
+					if(isWithin == m_pEffectNode->KillParam.Box.IsKillInside)
+					{
+						removed = true;
+					}
+				} else if(m_pEffectNode->KillParam.KillType == KillType::Height)
+				{
+					SIMD::Vec3f localPosition{};
+					if(m_pEffectNode->KillParam.Height.IsScaleAndRotationApplied)
+					{
+						Matrix44 invertedGlobalMatrix;
+						Matrix44::Inverse(invertedGlobalMatrix, ToStruct(globalMatrix));
+						localPosition = SIMD::Vec3f::Transform(this->prevGlobalPosition_, invertedGlobalMatrix);
+					} else
+					{
+						localPosition = this->prevGlobalPosition_ - globalMatrix.GetTranslation();
+					}
+					
+					bool isAbove = localPosition.GetY() > m_pEffectNode->KillParam.Height.Height;
+					if(isAbove != m_pEffectNode->KillParam.Height.IsFloor)
+					{
+						removed = true;
+					}
+				}
+			}
 		}
 
 		if (removed)
