@@ -405,8 +405,19 @@ struct RotationFunctions
 			// Because of r4 contains only rotation matrix
 			const auto r4inv = r4.Transpose();
 
+			Matrix44 lookAt;
+			if (effect->GetSetting()->GetCoordinateSystem() == CoordinateSystem::RH)
+			{
+				lookAt.LookAtRH(SIMD::ToStruct(t), viewpoint, {0, 1, 0});
+			}
+			else
+			{
+				lookAt.LookAtLH(SIMD::ToStruct(t), viewpoint, {0, 1, 0});
+			}
+
 			// TODO look at
-			//SIMD::Mat43f::
+
+			// SIMD::Mat43f::
 		}
 
 		SIMD::Mat43f matRot;
