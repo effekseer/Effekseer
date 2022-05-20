@@ -118,6 +118,34 @@ struct ParameterLODs
 	NonMatchingLODBehaviour LODBehaviour = NonMatchingLODBehaviour::Hide;
 };
 
+enum class KillType : int32_t
+{
+	None = 0,
+	Box = 1,
+	Height = 2,
+};
+
+struct KillParameter
+{
+	KillType KillType = KillType::Height;
+
+	struct
+	{
+		Vector3D MinCorner = {-0.5F, -0.5F, -0.5F}; // In local space
+		Vector3D MaxCorner = {0.5F, 0.5F, 0.5F}; // In local space
+		bool IsKillInside = false;
+		bool IsScaleAndRotationApplied = true;
+	} Box;
+
+	struct
+	{
+		float Height = 1.0F; // In local space
+		bool IsFloor = false;
+		bool IsScaleAndRotationApplied = true;
+	} Height;
+	
+};
+
 struct ParameterDepthValues
 {
 	float DepthOffset;
@@ -683,6 +711,7 @@ public:
 	SteeringBehaviorParameter SteeringBehaviorParam;
 	TriggerParameter TriggerParam;
 	ParameterLODs LODsParam;
+	KillParameter KillParam;
 
 	TranslationParameter TranslationParam;
 

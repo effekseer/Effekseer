@@ -177,6 +177,22 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			pos += sizeof(ParameterLODs);
 		}
 
+		if(ef->GetVersion() >= Version17Alpha5)
+		{
+			memcpy(&KillParam, pos, sizeof(KillParameter));
+			pos += sizeof(KillParameter);
+
+			if (KillParam.KillType == KillType::Box)
+			{
+				KillParam.Box.MinCorner *= ef->GetMaginification();
+				KillParam.Box.MaxCorner *= ef->GetMaginification();
+			}
+			else if (KillParam.KillType == KillType::Height)
+			{
+				KillParam.Height.Height *= ef->GetMaginification();
+			}
+		}
+
 		TranslationParam.Load(pos, ef);
 
 		// Local force field

@@ -1308,6 +1308,7 @@ void ManagerImplemented::Flip()
 					ds.CullingRadius = radius;
 				}
 
+				ds.GlobalPointer->EffectGlobalMatrix = mat;
 				ds.IsParameterChanged = false;
 			}
 
