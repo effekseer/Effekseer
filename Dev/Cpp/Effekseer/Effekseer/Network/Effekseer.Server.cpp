@@ -3,7 +3,7 @@
 #if !(defined(_PSVITA) || defined(_XBOXONE))
 
 #include "Effekseer.Server.h"
-#include "Effekseer.Effect.h"
+#include "../Effekseer.Effect.h"
 #include "Effekseer.ServerImplemented.h"
 #include <thread>
 

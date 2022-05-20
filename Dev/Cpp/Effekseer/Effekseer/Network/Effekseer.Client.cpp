@@ -5,8 +5,8 @@
 #include "Effekseer.Client.h"
 #include "Effekseer.ClientImplemented.h"
 
-#include "Effekseer.EffectLoader.h"
-#include "Effekseer.Manager.h"
+#include "../Effekseer.EffectLoader.h"
+#include "../Effekseer.Manager.h"
 
 namespace Effekseer
 {

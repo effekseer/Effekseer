@@ -5,7 +5,7 @@
 #if !(defined(__EFFEKSEER_NETWORK_DISABLED__))
 #if !(defined(_PSVITA) || defined(_SWITCH) || defined(_XBOXONE))
 
-#include "Effekseer.Base.h"
+#include "../Effekseer.Base.h"
 #include "Effekseer.Server.h"
 
 #include "Effekseer.Socket.h"
