@@ -1301,7 +1301,7 @@ void ManagerImplemented::Flip()
 					{
 						SIMD::Vec3f s = ds.BaseMatrix.GetScale();
 						radius *= s.GetLength();
-						culling_pos = SIMD::Vec3f::Transform(SIMD::Vec3f(effect->Culling.Location), ds.BaseMatrix);
+						culling_pos = SIMD::Vec3f::Transform(culling_pos, ds.BaseMatrix);
 					}
 
 					ds.CullingPosition = SIMD::ToStruct(culling_pos);
