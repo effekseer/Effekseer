@@ -228,6 +228,7 @@ namespace Effekseer.Data
 			AxisEasing = 4,
 			[Key(key = "Rotation_ParamaterType_RotationFCurve")]
 			RotationFCurve = 5,
+			RotateToViewpoint = 6,
 		}
 	}
 }
