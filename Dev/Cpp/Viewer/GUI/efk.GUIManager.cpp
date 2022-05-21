@@ -1921,17 +1921,24 @@ bool GUIManager::SelectableContent(const char16_t* idstr, const char16_t* label,
 	const auto& style = ImGui::GetStyle();
 
 	ImVec2 screenPos = ImGui::GetCursorScreenPos();
-	ImVec4 clipRect = {screenPos.x, screenPos.y, screenPos.x + size_x, screenPos.y + size_y};
+	float labelHeight = ImGui::GetTextLineHeight() * 2.0f;
+	ImVec4 clipRect = {screenPos.x, screenPos.y, screenPos.x + size_x, screenPos.y + size_y + labelHeight};
 
 	if (thumbnail)
 	{
 		drawList->AddImage(ToImTextureID(thumbnail), cursorPos, ImVec2(cursorPos.x + size_x, cursorPos.y + size_y));
 	}
 
-	bool result = ImGui::Selectable(utf8str<256>(idstr), selected, (int)flags, ImVec2(size_x, size_y));
+	bool result = ImGui::Selectable(utf8str<256>(idstr), selected, (int)flags, ImVec2(size_x, size_y + labelHeight));
 
-	drawList->AddText(GImGui->Font, GImGui->FontSize, ImVec2(cursorPos.x + 1, cursorPos.y + 1), ImGui::GetColorU32(ImGuiCol_WindowBg, 0.8f), utf8str<256>(label), nullptr, size_x, &clipRect);
-	drawList->AddText(GImGui->Font, GImGui->FontSize, cursorPos, ImGui::GetColorU32(ImGuiCol_Text), utf8str<256>(label), nullptr, size_x, &clipRect);
+	utf8str<256> labelU8(label);
+	size_t labelLen = strlen(labelU8);
+	ImVec2 labelSize = ImGui::CalcTextSize(labelU8, labelU8 + labelLen, false, size_x);
+
+	cursorPos.x += (size_x - labelSize.x) * 0.5f;
+	cursorPos.y += size_y;
+	drawList->AddText(GImGui->Font, GImGui->FontSize, ImVec2(cursorPos.x + 1, cursorPos.y + 1), ImGui::GetColorU32(ImGuiCol_WindowBg, 0.8f), labelU8, labelU8 + labelLen, size_x, &clipRect);
+	drawList->AddText(GImGui->Font, GImGui->FontSize, cursorPos, ImGui::GetColorU32(ImGuiCol_Text), labelU8, labelU8 + labelLen, size_x, &clipRect);
 
 	return result;
 }
