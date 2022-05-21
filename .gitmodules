@@ -52,3 +52,6 @@
 [submodule "Dev/Cpp/3rdParty/libpng"]
 	path = Dev/Cpp/3rdParty/libpng
 	url = https://github.com/effekseer/libpng
+[submodule "Dev/Editor/3rdParty/PartsTreeSystem"]
+	path = Dev/Editor/3rdParty/PartsTreeSystem
+	url = https://github.com/effekseer/PartsTreeSystem.git

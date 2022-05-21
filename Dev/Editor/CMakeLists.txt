@@ -5,6 +5,8 @@ cmake_minimum_required(VERSION 3.17)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_SOURCE_DIR}/../release")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_SOURCE_DIR}/../release")
 
+add_subdirectory(3rdParty)
+
 # specify C# framework
 set(CMAKE_DOTNET_TARGET_FRAMEWORK_VERSION v4.6.1)
 
@@ -55,8 +57,8 @@ set_target_properties(EffekseerCore PROPERTIES
 set_property(TARGET EffekseerCore PROPERTY VS_PACKAGE_REFERENCES "Newtonsoft.Json_13.0.1;DynamicLanguageRuntime_1.2.2;IronPython_2.7.9") 
 
 target_compile_options(EffekseerCore PRIVATE "/unsafe")
-set_target_properties (EffekseerCore PROPERTIES FOLDER Editor)
-
+set_target_properties(EffekseerCore PROPERTIES FOLDER Editor)
+target_link_libraries(EffekseerCore PUBLIC PartsTreeSystem)
 
 
 add_subdirectory(EffekseerCoreGUI)
