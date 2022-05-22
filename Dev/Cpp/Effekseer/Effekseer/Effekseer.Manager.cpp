@@ -1309,6 +1309,11 @@ void ManagerImplemented::Flip()
 				}
 
 				ds.GlobalPointer->EffectGlobalMatrix = mat;
+				if(ds.DoUseBaseMatrix)
+				{
+					ds.GlobalPointer->EffectGlobalMatrix *= ds.BaseMatrix;
+				}
+				
 				ds.IsParameterChanged = false;
 			}
 

@@ -176,22 +176,8 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			memcpy(&LODsParam, pos, sizeof(ParameterLODs));
 			pos += sizeof(ParameterLODs);
 		}
+		
 
-		if(ef->GetVersion() >= Version17Alpha5)
-		{
-			memcpy(&KillParam, pos, sizeof(KillParameter));
-			pos += sizeof(KillParameter);
-
-			if (KillParam.KillType == KillType::Box)
-			{
-				KillParam.Box.MinCorner *= ef->GetMaginification();
-				KillParam.Box.MaxCorner *= ef->GetMaginification();
-			}
-			else if (KillParam.KillType == KillType::Height)
-			{
-				KillParam.Height.Height *= ef->GetMaginification();
-			}
-		}
 
 		TranslationParam.Load(pos, ef);
 
@@ -338,6 +324,43 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			DepthValues.DepthParameter.ZSort = DepthValues.ZSort;
 		}
 
+		// load kill rules
+		if(ef->GetVersion() >= Version17Alpha5)
+		{
+			memcpy(&KillParam.KillType, pos, sizeof(int32_t));
+			pos += sizeof(int32_t);
+			
+			if(KillParam.KillType == KillType::Box)
+			{
+				memcpy(&KillParam.Box.MinCorner, pos, sizeof(Vector3D));
+				pos += sizeof(Vector3D);
+				
+				memcpy(&KillParam.Box.MaxCorner, pos, sizeof(Vector3D));
+				pos += sizeof(Vector3D);
+
+				memcpy(&KillParam.Box.IsKillInside, pos, sizeof(int));
+				pos += sizeof(int);
+
+				memcpy(&KillParam.Box.IsScaleAndRotationApplied, pos, sizeof(int));
+				pos += sizeof(int);
+
+				KillParam.Box.MinCorner *= ef->GetMaginification();
+				KillParam.Box.MaxCorner *= ef->GetMaginification();
+			} else if(KillParam.KillType == KillType::Height)
+			{
+				memcpy(&KillParam.Height.Height, pos, sizeof(float));
+				pos += sizeof(float);
+
+				memcpy(&KillParam.Height.IsFloor, pos, sizeof(int));
+				pos += sizeof(int);
+
+				memcpy(&KillParam.Height.IsScaleAndRotationApplied, pos, sizeof(int));
+				pos += sizeof(int);
+
+				KillParam.Height.Height *= ef->GetMaginification();
+			}
+		}
+		
 		// Convert right handle coordinate system into left handle coordinate system
 		if (setting->GetCoordinateSystem() == CoordinateSystem::LH)
 		{
@@ -350,8 +373,8 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			DynamicFactor.Rot[1] *= -1.0f;
 
 			RotationParam.MakeCoordinateSystemLH();
-
 			GenerationLocation.MakeCoordinateSystemLH();
+			KillParam.MakeCoordinateSystemLH();
 		}
 
 		// generate inversed parameter

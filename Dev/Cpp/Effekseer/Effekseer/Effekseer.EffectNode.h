@@ -125,25 +125,39 @@ enum class KillType : int32_t
 	Height = 2,
 };
 
-struct KillParameter
+struct KillRulesParameter
 {
-	KillType KillType = KillType::Height;
-
-	struct
-	{
-		Vector3D MinCorner = {-0.5F, -0.5F, -0.5F}; // In local space
-		Vector3D MaxCorner = {0.5F, 0.5F, 0.5F}; // In local space
-		bool IsKillInside = false;
-		bool IsScaleAndRotationApplied = true;
-	} Box;
-
-	struct
-	{
-		float Height = 1.0F; // In local space
-		bool IsFloor = false;
-		bool IsScaleAndRotationApplied = true;
-	} Height;
 	
+	KillType KillType = KillType::None;
+
+	union
+	{
+		struct
+		{
+			Vector3D MinCorner = {-0.5F, -0.5F, -0.5F}; // In local space
+			Vector3D MaxCorner = {0.5F, 0.5F, 0.5F};    // In local space
+			int IsKillInside = 0;
+			int IsScaleAndRotationApplied = 1;
+		} Box;
+
+		struct
+		{
+			float Height = 1.0F; // In local space
+			int IsFloor = 0;
+			int IsScaleAndRotationApplied = 1;
+		} Height;
+	};
+
+	KillRulesParameter(){}
+
+	void MakeCoordinateSystemLH()
+	{
+		if(KillType == KillType::Box)
+		{
+			Box.MinCorner.Z *= -1.0F;
+			Box.MaxCorner.Z *= -1.0F;
+		} 
+	}
 };
 
 struct ParameterDepthValues
@@ -711,7 +725,7 @@ public:
 	SteeringBehaviorParameter SteeringBehaviorParam;
 	TriggerParameter TriggerParam;
 	ParameterLODs LODsParam;
-	KillParameter KillParam;
+	KillRulesParameter KillParam;
 
 	TranslationParameter TranslationParam;
 

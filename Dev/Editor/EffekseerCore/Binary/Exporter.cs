@@ -25,7 +25,8 @@ namespace Effekseer.Binary
 		Ver17Alpha2 = 1701,
 		Ver17Alpha3 = 1702,
 		Ver17Alpha4 = 1703,
-		Latest = Ver17Alpha4,
+		Ver17Alpha5 = 1704,
+		Latest = Ver17Alpha5,
 	}
 
 	public class Exporter
@@ -986,6 +987,28 @@ namespace Effekseer.Binary
 
 				float compatibility = 1.0f;
 				node_data.Add(compatibility.GetBytes());
+				
+				if (exporterVersion >= ExporterVersion.Ver17Alpha5)
+				{
+					node_data.Add(n.KillRulesValues.Type.GetValueAsInt().GetBytes());
+
+					if(n.KillRulesValues.Type.Value == KillRulesValues.KillType.Box)
+					{
+						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.BoxMinCorner.X));
+						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.BoxMinCorner.Y));
+						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.BoxMinCorner.Z));
+						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.BoxMaxCorner.X));
+						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.BoxMaxCorner.Y));
+						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.BoxMaxCorner.Z));
+						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.BoxIsKillInside ? 1 : 0));
+						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.BoxIsScaleAndRotationApplied ? 1 : 0));
+					} else if(n.KillRulesValues.Type.Value == KillRulesValues.KillType.Height)
+					{
+						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.Height.Value));
+						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.HeightIsFloor ? 1 : 0));
+						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.HeightIsScaleAndRotationApplied ? 1 : 0));
+					}
+				}
 
 				node_data.Add(RendererCommonValues.GetBytes(n.RendererCommonValues, n.AdvancedRendererCommonValuesValues, texture_and_index, normalTexture_and_index, distortionTexture_and_index, material_and_index, exporterVersion, ConvertLoadingFilePath));
 
