@@ -332,10 +332,10 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			
 			if(KillParam.KillType == KillType::Box)
 			{
-				memcpy(&KillParam.Box.MinCorner, pos, sizeof(Vector3D));
+				memcpy(&KillParam.Box.Center, pos, sizeof(Vector3D));
 				pos += sizeof(Vector3D);
 				
-				memcpy(&KillParam.Box.MaxCorner, pos, sizeof(Vector3D));
+				memcpy(&KillParam.Box.Size, pos, sizeof(Vector3D));
 				pos += sizeof(Vector3D);
 
 				memcpy(&KillParam.Box.IsKillInside, pos, sizeof(int));
@@ -344,8 +344,8 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 				memcpy(&KillParam.Box.IsScaleAndRotationApplied, pos, sizeof(int));
 				pos += sizeof(int);
 
-				KillParam.Box.MinCorner *= ef->GetMaginification();
-				KillParam.Box.MaxCorner *= ef->GetMaginification();
+				KillParam.Box.Center *= ef->GetMaginification();
+				KillParam.Box.Size *= ef->GetMaginification();
 			} else if(KillParam.KillType == KillType::Height)
 			{
 				memcpy(&KillParam.Height.Height, pos, sizeof(float));

@@ -1313,6 +1313,10 @@ void ManagerImplemented::Flip()
 				{
 					ds.GlobalPointer->EffectGlobalMatrix *= ds.BaseMatrix;
 				}
+				// would be nice to have Invert function for SIMD matrix
+				Matrix44 inverted;
+				Matrix44::Inverse(inverted, ToStruct(SIMD::Mat44f(mat)));
+				ds.GlobalPointer->InvertedEffectGlobalMatrix = inverted;
 				
 				ds.IsParameterChanged = false;
 			}

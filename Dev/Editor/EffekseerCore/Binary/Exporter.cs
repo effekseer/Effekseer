@@ -994,12 +994,12 @@ namespace Effekseer.Binary
 
 					if(n.KillRulesValues.Type.Value == KillRulesValues.KillType.Box)
 					{
-						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.BoxMinCorner.X));
-						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.BoxMinCorner.Y));
-						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.BoxMinCorner.Z));
-						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.BoxMaxCorner.X));
-						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.BoxMaxCorner.Y));
-						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.BoxMaxCorner.Z));
+						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.BoxCenter.X));
+						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.BoxCenter.Y));
+						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.BoxCenter.Z));
+						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.BoxSize.X));
+						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.BoxSize.Y));
+						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.BoxSize.Z));
 						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.BoxIsKillInside ? 1 : 0));
 						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.BoxIsScaleAndRotationApplied ? 1 : 0));
 					} else if(n.KillRulesValues.Type.Value == KillRulesValues.KillType.Height)

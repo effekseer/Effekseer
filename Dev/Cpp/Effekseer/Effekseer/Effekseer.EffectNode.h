@@ -134,8 +134,8 @@ struct KillRulesParameter
 	{
 		struct
 		{
-			Vector3D MinCorner = {-0.5F, -0.5F, -0.5F}; // In local space
-			Vector3D MaxCorner = {0.5F, 0.5F, 0.5F};    // In local space
+			Vector3D Center = {0.0F, 0.0F, 0.0F}; // In local space
+			Vector3D Size = {0.5F, 0.5F, 0.5F};    // In local space
 			int IsKillInside = 0;
 			int IsScaleAndRotationApplied = 1;
 		} Box;
@@ -154,8 +154,7 @@ struct KillRulesParameter
 	{
 		if(KillType == KillType::Box)
 		{
-			Box.MinCorner.Z *= -1.0F;
-			Box.MaxCorner.Z *= -1.0F;
+			Box.Center.Z *= -1.0F;
 		} 
 	}
 };

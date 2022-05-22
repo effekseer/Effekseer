@@ -11,6 +11,21 @@
 #ifndef SWIG_EffekseerNative_WRAP_H_
 #define SWIG_EffekseerNative_WRAP_H_
 
+class SwigDirector_EffectRendererCallback : public Effekseer::Tool::EffectRendererCallback, public Swig::Director {
+
+public:
+    SwigDirector_EffectRendererCallback();
+    virtual void OnAfterClear();
+    virtual ~SwigDirector_EffectRendererCallback();
+
+    typedef void (SWIGSTDCALL* SWIG_Callback0_t)();
+    void swig_connect_director(SWIG_Callback0_t callbackOnAfterClear);
+
+private:
+    SWIG_Callback0_t swig_callbackOnAfterClear;
+    void swig_init_callbacks();
+};
+
 class SwigDirector_GUIManagerCallback : public efk::GUIManagerCallback, public Swig::Director {
 
 public:

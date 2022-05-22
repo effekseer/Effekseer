@@ -3,6 +3,7 @@
 
 #include "../3D/EffectRenderer.h"
 #include "../Math/Vector3F.h"
+#include "../Graphics/LineRenderer.h"
 #include <Effekseer.h>
 #include <functional>
 #include <string>
@@ -25,6 +26,8 @@ private:
 	std::shared_ptr<::EffekseerRenderer::Guide> guide_;
 	std::shared_ptr<::EffekseerRenderer::Culling> culling_;
 
+	std::shared_ptr<Effekseer::Tool::LineRenderer> lineRenderer_;
+
 	Effekseer::TextureLoaderRef textureLoader_;
 	std::u16string backgroundPath;
 
@@ -33,6 +36,8 @@ private:
 	void OnBeforePostprocess() override;
 
 	bool OnAfterInitialize() override;
+
+
 
 public:
 	virtual ~MainScreenEffectRenderer();
@@ -64,6 +69,12 @@ public:
 	Vector3F CullingPosition;
 
 	void LoadBackgroundImage(const char16_t* path);
+
+	void StartRenderingLines();
+
+	void AddLine(float p0x, float p0y, float p0z, float p1x, float p1y, float p1z, Effekseer::Tool::Color color);
+
+	void EndRenderingLines(const Effekseer::Tool::Matrix44F& cameraMatrix, const Effekseer::Tool::Matrix44F& projectionMatrix);
 };
 
 } // namespace Effekseer::Tool

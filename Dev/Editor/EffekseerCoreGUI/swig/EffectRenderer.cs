@@ -170,6 +170,17 @@ public class EffectRenderer : global::System.IDisposable {
     } 
   }
 
+  public EffectRendererCallback Callback {
+    set {
+      EffekseerNativePINVOKE.EffectRenderer_Callback_set(swigCPtr, EffectRendererCallback.getCPtr(value));
+    } 
+    get {
+      global::System.IntPtr cPtr = EffekseerNativePINVOKE.EffectRenderer_Callback_get(swigCPtr);
+      EffectRendererCallback ret = (cPtr == global::System.IntPtr.Zero) ? null : new EffectRendererCallback(cPtr, false);
+      return ret;
+    } 
+  }
+
 }
 
 }

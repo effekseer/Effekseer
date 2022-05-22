@@ -34,6 +34,7 @@ namespace Effekseer.GUI
 		public const string PanelAdvancedRenderCommon = "\xec18";
 		public const string PanelProceduralModel = "\xec19";
 		public const string PanelLOD = "\xec26";
+		public const string PanelKillRules = "\xec27";
 
 		public const string NodeTypeEmpty = "\xec20";
 		public const string NodeTypeSprite = "\xec21";

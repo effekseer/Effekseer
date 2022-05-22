@@ -22,6 +22,17 @@ class Effect;
 class EffectSetting;
 class RenderImage;
 
+class EffectRendererCallback
+{
+
+public:
+	EffectRendererCallback(){}
+
+	virtual void OnAfterClear() {};
+
+	virtual ~EffectRendererCallback() {}
+};
+
 struct EffectRendererParameter
 {
 	DistortionType Distortion = DistortionType::Current;
@@ -165,6 +176,10 @@ protected:
 
 	virtual void OnAfterClear()
 	{
+		if(Callback != nullptr)
+		{
+			Callback->OnAfterClear();
+		}
 	}
 
 	virtual void OnBeforePostprocess()
@@ -250,6 +265,7 @@ public:
 	}
 
 	int32_t RandomSeed = -1;
+	EffectRendererCallback* Callback = nullptr;
 };
 
 } // namespace Tool
