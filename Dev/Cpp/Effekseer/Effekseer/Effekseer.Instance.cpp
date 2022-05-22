@@ -394,26 +394,25 @@ void Instance::Update(float deltaFrame, bool shown)
 			// checking kill box/height
 			if(!removed && m_pEffectNode->KillParam.KillType != KillType::None)
 			{
-				SIMD::Mat44f globalMatrix = this->GetInstanceGlobal()->EffectGlobalMatrix;
-				
 				if(m_pEffectNode->KillParam.KillType == KillType::Box)
 				{
 					SIMD::Vec3f localPosition{};
 					if (m_pEffectNode->KillParam.Box.IsScaleAndRotationApplied)
 					{
-						Matrix44 invertedGlobalMatrix;
-						Matrix44::Inverse(invertedGlobalMatrix, ToStruct(globalMatrix));
+						SIMD::Mat44f invertedGlobalMatrix = this->GetInstanceGlobal()->InvertedEffectGlobalMatrix;
 						localPosition = SIMD::Vec3f::Transform(this->prevGlobalPosition_, invertedGlobalMatrix);
 					} else
 					{
+						SIMD::Mat44f globalMatrix = this->GetInstanceGlobal()->EffectGlobalMatrix;
 						localPosition = this->prevGlobalPosition_ - globalMatrix.GetTranslation();
 					}
 
-					SIMD::Vec3f min = m_pEffectNode->KillParam.Box.MinCorner;
-					SIMD::Vec3f max = m_pEffectNode->KillParam.Box.MaxCorner;
-					bool isWithin = localPosition.GetX() >= min.GetX() && localPosition.GetY() <= max.GetX()
-					           && localPosition.GetY() >= min.GetY() && localPosition.GetY() <= max.GetY()
-					           && localPosition.GetZ() >= min.GetZ() && localPosition.GetZ() <= max.GetZ();
+					localPosition = localPosition - m_pEffectNode->KillParam.Box.Center;
+					localPosition = SIMD::Vec3f::Abs(localPosition);
+					SIMD::Vec3f size = m_pEffectNode->KillParam.Box.Size;
+					bool isWithin = localPosition.GetX() <= size.GetX()
+					                && localPosition.GetY() <= size.GetY()
+					                && localPosition.GetZ() <= size.GetZ();
 			
 					if(isWithin == m_pEffectNode->KillParam.Box.IsKillInside)
 					{
@@ -424,11 +423,11 @@ void Instance::Update(float deltaFrame, bool shown)
 					SIMD::Vec3f localPosition{};
 					if(m_pEffectNode->KillParam.Height.IsScaleAndRotationApplied)
 					{
-						Matrix44 invertedGlobalMatrix;
-						Matrix44::Inverse(invertedGlobalMatrix, ToStruct(globalMatrix));
+						SIMD::Mat44f invertedGlobalMatrix = this->GetInstanceGlobal()->InvertedEffectGlobalMatrix;
 						localPosition = SIMD::Vec3f::Transform(this->prevGlobalPosition_, invertedGlobalMatrix);
 					} else
 					{
+						SIMD::Mat44f globalMatrix = this->GetInstanceGlobal()->EffectGlobalMatrix;
 						localPosition = this->prevGlobalPosition_ - globalMatrix.GetTranslation();
 					}
 					

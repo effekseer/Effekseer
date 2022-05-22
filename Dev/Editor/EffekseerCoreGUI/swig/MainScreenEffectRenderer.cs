@@ -170,6 +170,20 @@ public class MainScreenEffectRenderer : EffectRenderer {
     EffekseerNativePINVOKE.MainScreenEffectRenderer_LoadBackgroundImage(swigCPtr, path);
   }
 
+  public void StartRenderingLines() {
+    EffekseerNativePINVOKE.MainScreenEffectRenderer_StartRenderingLines(swigCPtr);
+  }
+
+  public void AddLine(float p0x, float p0y, float p0z, float p1x, float p1y, float p1z, Color color) {
+    EffekseerNativePINVOKE.MainScreenEffectRenderer_AddLine(swigCPtr, p0x, p0y, p0z, p1x, p1y, p1z, Color.getCPtr(color));
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+  }
+
+  public void EndRenderingLines(Matrix44F cameraMatrix, Matrix44F projectionMatrix) {
+    EffekseerNativePINVOKE.MainScreenEffectRenderer_EndRenderingLines(swigCPtr, Matrix44F.getCPtr(cameraMatrix), Matrix44F.getCPtr(projectionMatrix));
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+  }
+
   public MainScreenEffectRenderer() : this(EffekseerNativePINVOKE.new_MainScreenEffectRenderer(), true) {
   }
 

@@ -1,0 +1,25 @@
+KillRules,Kill Rules
+KillRules_Description,"Kill Rules allows to specify area in which particles should be destroyed.
+ - Box used to kill particle when it moves inside or outside of the specified box.
+ - Height used to kill particle when it moves above or below defined height."
+KillRules_Type_Name,Type
+KillRules_Box_Center_Name,Box Center
+KillRules_Box_Size_Name,Box Size
+KillRules_Box_IsKillInside_Name,Kill Inside
+KillRules_Box_IsKillInside_Desc,"If enabled, particles will be killed if they fall INSIDE the box. 
+If disabled (the default), they will be killed when they fall OUTSIDE the box."
+KillRules_Box_IsScaleAndRotationApplied_Name,"Scale And
+Rotation Applied"
+KillRules_Box_IsScaleAndRotationApplied_Desc,"If enabled (the default) box will be rotated and scaled with effect.
+If disabled the box will be always axis aligned and will ignore effect scale"
+KillRules_Height_Height_Name,Height
+KillRules_Height_IsFloor_Name,Kill Below
+KillRules_Height_IsFloor_Desc,"If enabled, particles will be killed if they fall BELOW the height value. 
+If disabled (the default), they will be killed when they rise ABOVE the height value."
+KillRules_Height_IsScaleAndRotationApplied_Name,"Scale And
+Rotation Applied"
+KillRules_Height_IsScaleAndRotationApplied_Desc,"If enabled (the default) kill plane will be rotated and scaled with effect.
+If disabled kill plane will be always placed along Y axis in world space and will ignore effect scale. "
+KillType_None_Name,None
+KillType_Box_Name,Box
+KillType_Height_Name,Height

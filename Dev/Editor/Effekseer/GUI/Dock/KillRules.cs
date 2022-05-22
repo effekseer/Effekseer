@@ -11,7 +11,8 @@ namespace Effekseer.GUI.Dock
 		
 		public KillRules()
 		{
-			Label = Icons.PanelLOD + "KIll Rules" + "###KillRuls";
+			;
+			Label = Icons.PanelKillRules + MultiLanguageTextProvider.GetText("KillRules") + "###KillRules";
 
 			parameterList = new ParameterList();
 			parameterList.SetType(typeof(Data.KillRulesValues));
@@ -24,7 +25,7 @@ namespace Effekseer.GUI.Dock
 
 			Read();
 
-			TabToolTip = "Kill Rules";
+			TabToolTip = MultiLanguageTextProvider.GetText("KillRules");
 		}
 
 		public override void OnDisposed()
@@ -39,6 +40,7 @@ namespace Effekseer.GUI.Dock
 		protected override void UpdateInternal()
 		{
 			candp.Update();
+			Manager.NativeManager.TextWrapped(MultiLanguageTextProvider.GetText("KillRules_Description"));
 			parameterList.Update();
 		}
 

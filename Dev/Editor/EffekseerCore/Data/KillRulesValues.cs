@@ -13,17 +13,17 @@ namespace Effekseer.Data
 			set;
 		}
 
-		[Key(key = "KillRules_Box_MinCorner")]
+		[Key(key = "KillRules_Box_Center")]
 		[Selected(ID = 1, Value = 1)]
-		public Value.Vector3D BoxMinCorner
+		public Value.Vector3D BoxCenter
 		{
 			get;
 			set;
 		}
 		
-		[Key(key = "KillRules_Box_MaxCorner")]
+		[Key(key = "KillRules_Box_Size")]
 		[Selected(ID = 1, Value = 1)]
-		public Value.Vector3D BoxMaxCorner
+		public Value.Vector3D BoxSize
 		{
 			get;
 			set;
@@ -73,8 +73,8 @@ namespace Effekseer.Data
 		{
 			Type = new Enum<KillType>(KillType.None);
 			
-			BoxMinCorner = new Vector3D(-0.5F, -0.5F, -0.5F);
-			BoxMaxCorner = new Vector3D(0.5F, 0.5F, 0.5F);
+			BoxCenter = new Vector3D(0F, 0F, 0F);
+			BoxSize = new Vector3D(0.5F, 0.5F, 0.5F);
 			BoxIsKillInside = new Boolean(false);
 			BoxIsScaleAndRotationApplied = new Boolean(true);
 

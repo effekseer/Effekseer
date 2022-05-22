@@ -23,6 +23,8 @@ MainScreenEffectRenderer::~MainScreenEffectRenderer()
 
 void MainScreenEffectRenderer::OnAfterClear()
 {
+	EffectRenderer::OnAfterClear();
+	
 	const auto cameraMat = renderer_->GetCameraMatrix();
 	const auto projMat = renderer_->GetProjectionMatrix();
 
@@ -80,11 +82,28 @@ bool MainScreenEffectRenderer::OnAfterInitialize()
 		return false;
 	}
 
+	lineRenderer_ = std::make_shared<Effekseer::Tool::LineRenderer>(graphics_->GetGraphics()->GetGraphicsDevice());
+
 	spdlog::trace("OK Culling");
 
 	textureLoader_ = renderer_->CreateTextureLoader();
 
 	return true;
+}
+
+void MainScreenEffectRenderer::StartRenderingLines()
+{
+	lineRenderer_->ClearCache();
+}
+
+void MainScreenEffectRenderer::AddLine(float p0x, float p0y, float p0z, float p1x, float p1y, float p1z, Effekseer::Tool::Color color)
+{
+	lineRenderer_->DrawLine(Vector3D{p0x, p0y, p0z}, Vector3D{p1x, p1y, p1z}, color);
+}
+
+void MainScreenEffectRenderer::EndRenderingLines(const Effekseer::Tool::Matrix44F& cameraMatrix, const Effekseer::Tool::Matrix44F& projectionMatrix)
+{
+	lineRenderer_->Render(cameraMatrix, projectionMatrix);
 }
 
 void MainScreenEffectRenderer::LoadBackgroundImage(const char16_t* path)
