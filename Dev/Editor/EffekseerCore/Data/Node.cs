@@ -85,6 +85,13 @@ namespace Effekseer.Data
 			get;
 			private set;
 		}
+		
+		[IO(Export = true)]
+		public KillRulesValues KillRulesValues
+		{
+			get;
+			private set;
+		}
 
 		/// <summary>
 		/// コンストラクタ
@@ -106,6 +113,7 @@ namespace Effekseer.Data
 			DrawingValues = new RendererValues(basepath);
 			SoundValues = new SoundValues(basepath);
 			AdvancedRendererCommonValuesValues = new Data.AdvancedRenderCommonValues(basepath);
+			KillRulesValues = new KillRulesValues();
 		}
 	}
 }
