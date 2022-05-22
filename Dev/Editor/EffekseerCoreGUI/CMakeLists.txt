@@ -24,6 +24,7 @@ add_library(EffekseerCoreGUI
     SHARED
     ${files}
     GUI/Inspector/Inspector.cs
+    GUI/Inspector/PartsTreeSystemExample.cs
 )
 
 set_target_properties(EffekseerCoreGUI PROPERTIES VS_DOTNET_REFERENCES "System;System.Xml;System.Xml.Linq;System.IO.Compression;Microsoft.CSharp;System.IO.Compression.FileSystem")
