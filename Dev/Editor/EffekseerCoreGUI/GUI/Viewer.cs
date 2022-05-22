@@ -318,119 +318,102 @@ namespace Effekseer.GUI
 			Matrix44F cameraMatrix = Manager.Viewer.ViewPointController.GetCameraMatrix();
 			Matrix44F projectionMatrix = Manager.Viewer.ViewPointController.GetProjectionMatrix();
 
-			if (Core.SelectedNode != null && Core.SelectedNode is Data.Node)
+			if (Core.Option.RenderingMode != OptionValues.RenderMode.Overdraw)
 			{
-				Data.Node node = (Data.Node)Core.SelectedNode;
+				RenderKillRulesPreview(cameraMatrix, projectionMatrix);
+			}
+		}
 
-				if (node.KillRulesValues.Type == KillRulesValues.KillType.Height)
-				{
-					EffectRenderer.StartRenderingLines();
-
-					Color planeColor = new Color(0xFF, 0x23, 0x23, 0xff);
-					float minX = -5F;
-					float minY = node.KillRulesValues.Height;
-					float minZ = -5F;
-					float maxX = 5F;
-					float maxZ = 5F;
+		private void RenderKillRulesPreview(Matrix44F cameraMatrix, Matrix44F projectionMatrix)
+		{
+			if (Core.SelectedNode == null || !(Core.SelectedNode is Data.Node)) return;
 			
-					EffectRenderer.AddLine(minX, minY, minZ, 
-						maxX, minY, minZ, planeColor);
-					EffectRenderer.AddLine(maxX, minY, minZ, 
-						maxX, minY, maxZ, planeColor);
-					EffectRenderer.AddLine(maxX, minY, maxZ, 
-						minX, minY, maxZ, planeColor);
-					EffectRenderer.AddLine(minX, minY, maxZ, 
-						minX, minY, minZ, planeColor);
+			Data.Node node = (Data.Node)Core.SelectedNode;
 
-					float pointer = node.KillRulesValues.HeightIsFloor ? -1F : 1F;
-					float sideX = (minX + maxX) * 0.5F;
-					float sideZ = (minZ + maxZ) * 0.5F;
+			if (node.KillRulesValues.Type == KillRulesValues.KillType.Height)
+			{
+				EffectRenderer.StartRenderingLines();
+
+				Color planeColor = new Color(0xFF, 0x23, 0x23, 0xff);
+				float minX = -5F;
+				float minY = node.KillRulesValues.Height;
+				float minZ = -5F;
+				float maxX = 5F;
+				float maxZ = 5F;
 			
-					EffectRenderer.AddLine(minX, minY, sideZ,
-						minX, minY + pointer, sideZ, planeColor);
-					EffectRenderer.AddLine(maxX, minY, sideZ,
-						maxX, minY + pointer, sideZ, planeColor);
+				EffectRenderer.AddLine(minX, minY, minZ, 
+					maxX, minY, minZ, planeColor);
+				EffectRenderer.AddLine(maxX, minY, minZ, 
+					maxX, minY, maxZ, planeColor);
+				EffectRenderer.AddLine(maxX, minY, maxZ, 
+					minX, minY, maxZ, planeColor);
+				EffectRenderer.AddLine(minX, minY, maxZ, 
+					minX, minY, minZ, planeColor);
+
+				float pointer = node.KillRulesValues.HeightIsFloor ? -1F : 1F;
+				float sideX = (minX + maxX) * 0.5F;
+				float sideZ = (minZ + maxZ) * 0.5F;
+			
+				EffectRenderer.AddLine(minX, minY, sideZ,
+					minX, minY + pointer, sideZ, planeColor);
+				EffectRenderer.AddLine(maxX, minY, sideZ,
+					maxX, minY + pointer, sideZ, planeColor);
 					
-					EffectRenderer.AddLine(sideX, minY, minZ,
-						sideX, minY + pointer, minZ, planeColor);
-					EffectRenderer.AddLine(sideX, minY, maxZ,
-						sideX, minY + pointer, maxZ, planeColor);
+				EffectRenderer.AddLine(sideX, minY, minZ,
+					sideX, minY + pointer, minZ, planeColor);
+				EffectRenderer.AddLine(sideX, minY, maxZ,
+					sideX, minY + pointer, maxZ, planeColor);
 	
 					
-					EffectRenderer.EndRenderingLines(cameraMatrix, projectionMatrix);
-				}
-				if (node.KillRulesValues.Type == KillRulesValues.KillType.Box)
-				{
-					Vector3D center = node.KillRulesValues.BoxCenter;
-					Vector3D size = node.KillRulesValues.BoxSize;
-					float minX = center.X - size.X;
-					float minY = center.Y - size.Y;
-					float minZ = center.Z - size.Z;
-					float maxX = center.X + size.X;
-					float maxY = center.Y + size.Y;
-					float maxZ = center.Z + size.Z;
-					
-					Color boxColor = node.KillRulesValues.BoxIsKillInside ? 
-						new Color(0xFF, 0x23, 0x23, 0xFF) : new Color(0x23, 0xFF, 0x23, 0xFF);
-					
-					EffectRenderer.StartRenderingLines();
-					
-					// bottom rectangle
-					EffectRenderer.AddLine(minX, minY, minZ, 
-						maxX, minY, minZ, boxColor);
-					EffectRenderer.AddLine(maxX, minY, minZ, 
-						maxX, minY, maxZ, boxColor);
-					EffectRenderer.AddLine(maxX, minY, maxZ, 
-						minX, minY, maxZ, boxColor);
-					EffectRenderer.AddLine(minX, minY, maxZ, 
-						minX, minY, minZ, boxColor);
-					
-					// top rectangle
-					EffectRenderer.AddLine(minX, maxY, minZ, 
-						maxX, maxY, minZ, boxColor);
-					EffectRenderer.AddLine(maxX, maxY, minZ, 
-						maxX, maxY, maxZ, boxColor);
-					EffectRenderer.AddLine(maxX, maxY, maxZ, 
-						minX, maxY, maxZ, boxColor);
-					EffectRenderer.AddLine(minX, maxY, maxZ, 
-						minX, maxY, minZ, boxColor);
-					
-					// sides
-					EffectRenderer.AddLine(minX, minY, minZ, 
-						minX, maxY, minZ, boxColor);
-					EffectRenderer.AddLine(maxX, minY, minZ, 
-						maxX, maxY, minZ, boxColor);
-					EffectRenderer.AddLine(minX, minY, maxZ, 
-						minX, maxY, maxZ, boxColor);
-					EffectRenderer.AddLine(maxX, minY, maxZ, 
-						maxX, maxY, maxZ, boxColor);
-
-					
-					/*
-
-                // sides
-               t.addVertex(minX, minY, minZ);
-               t.addVertex(minX, maxY, minZ);
-
-               t.addVertex(maxX, minY, minZ);
-               t.addVertex(maxX, maxY, minZ);
-
-               t.addVertex(minX, minY, maxZ);
-               t.addVertex(minX, maxY, maxZ);
-
-               t.addVertex(maxX, minY, maxZ);
-               t.addVertex(maxX, maxY, maxZ);
-					 */
-				
-					
-					
-					
-					EffectRenderer.EndRenderingLines(cameraMatrix, projectionMatrix);
-				}
-
+				EffectRenderer.EndRenderingLines(cameraMatrix, projectionMatrix);
 			}
-
-		
+			if (node.KillRulesValues.Type == KillRulesValues.KillType.Box)
+			{
+				Vector3D center = node.KillRulesValues.BoxCenter;
+				Vector3D size = node.KillRulesValues.BoxSize;
+				float minX = center.X - size.X;
+				float minY = center.Y - size.Y;
+				float minZ = center.Z - size.Z;
+				float maxX = center.X + size.X;
+				float maxY = center.Y + size.Y;
+				float maxZ = center.Z + size.Z;
+					
+				Color boxColor = node.KillRulesValues.BoxIsKillInside ? 
+					new Color(0xFF, 0x23, 0x23, 0xFF) : new Color(0x23, 0xFF, 0x23, 0xFF);
+					
+				EffectRenderer.StartRenderingLines();
+					
+				// bottom rectangle
+				EffectRenderer.AddLine(minX, minY, minZ, 
+					maxX, minY, minZ, boxColor);
+				EffectRenderer.AddLine(maxX, minY, minZ, 
+					maxX, minY, maxZ, boxColor);
+				EffectRenderer.AddLine(maxX, minY, maxZ, 
+					minX, minY, maxZ, boxColor);
+				EffectRenderer.AddLine(minX, minY, maxZ, 
+					minX, minY, minZ, boxColor);
+					
+				// top rectangle
+				EffectRenderer.AddLine(minX, maxY, minZ, 
+					maxX, maxY, minZ, boxColor);
+				EffectRenderer.AddLine(maxX, maxY, minZ, 
+					maxX, maxY, maxZ, boxColor);
+				EffectRenderer.AddLine(maxX, maxY, maxZ, 
+					minX, maxY, maxZ, boxColor);
+				EffectRenderer.AddLine(minX, maxY, maxZ, 
+					minX, maxY, minZ, boxColor);
+					
+				// sides
+				EffectRenderer.AddLine(minX, minY, minZ, 
+					minX, maxY, minZ, boxColor);
+				EffectRenderer.AddLine(maxX, minY, minZ, 
+					maxX, maxY, minZ, boxColor);
+				EffectRenderer.AddLine(minX, minY, maxZ, 
+					minX, maxY, maxZ, boxColor);
+				EffectRenderer.AddLine(maxX, minY, maxZ, 
+					maxX, maxY, maxZ, boxColor);
+				EffectRenderer.EndRenderingLines(cameraMatrix, projectionMatrix);
+			}
 		}
 
 		public void UpdateViewer()

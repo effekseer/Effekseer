@@ -22,6 +22,10 @@ class Effect;
 class EffectSetting;
 class RenderImage;
 
+
+/**
+ * \brief Can be used by the editor for additional rendering during effect rendering
+ */
 class EffectRendererCallback
 {
 
