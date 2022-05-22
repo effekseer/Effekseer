@@ -13,6 +13,7 @@ add_library(PartsTreeSystem
   PartsTreeSystem/PartsTreeSystem/Difference.cs
   PartsTreeSystem/PartsTreeSystem/Environment.cs
   PartsTreeSystem/PartsTreeSystem/FieldState.cs
+  PartsTreeSystem/PartsTreeSystem/Instance.cs
   PartsTreeSystem/PartsTreeSystem/JsonSerializer.cs
   PartsTreeSystem/PartsTreeSystem/Node.cs
   PartsTreeSystem/PartsTreeSystem/NodeTreeGroup.cs
