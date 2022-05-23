@@ -320,10 +320,109 @@ namespace Effekseer.GUI
 
 			if (Core.Option.RenderingMode != OptionValues.RenderMode.Overdraw)
 			{
+				RenderGrid(cameraMatrix,projectionMatrix);
 				RenderKillRulesPreview(cameraMatrix, projectionMatrix);
+				RenderCullingPreview(cameraMatrix, projectionMatrix);
 			}
 		}
 
+		private void RenderGrid(Matrix44F cameraMatrix, Matrix44F projectionMatrix)
+		{
+			if(!Core.Option.IsGridShown) return;
+			
+			Color gridColor = new Color
+			{
+				R = (byte)Core.Option.GridColor.R,
+				G = (byte)Core.Option.GridColor.G,
+				B = (byte)Core.Option.GridColor.B,
+				A = (byte)Core.Option.GridColor.A
+			};
+			float gridLength = Core.Option.GridLength;
+
+			EffectRenderer.StartRenderingLines();
+
+			if (Core.Option.IsXZGridShown)
+			{
+				for (int i = -5; i <= 5; i++)
+				{
+					EffectRenderer.AddLine(i * gridLength, 0, gridLength * 5.0F,
+						i * gridLength, 0, -gridLength * 5.0F,
+						gridColor);
+					EffectRenderer.AddLine(gridLength * 5.0F, 0, i * gridLength,
+						-gridLength * 5.0F, 0, i * gridLength,
+						gridColor);
+				}
+			}
+
+			if (Core.Option.IsXYGridShown)
+			{
+				for (int i = -5; i <= 5; i++)
+				{
+					EffectRenderer.AddLine(i * gridLength, gridLength * 5.0F, 0,
+						i * gridLength, -gridLength * 5.0F, 0,
+						gridColor);
+					EffectRenderer.AddLine(gridLength * 5.0F, i * gridLength, 0,
+						-gridLength * 5.0F, i * gridLength, 0,
+						gridColor);
+				}
+			}
+			
+			if (Core.Option.IsYZGridShown)
+			{
+				for (int i = -5; i <= 5; i++)
+				{
+					EffectRenderer.AddLine(0, i * gridLength, gridLength * 5.0F,
+						0, i * gridLength, -gridLength * 5.0F,
+						gridColor);
+					EffectRenderer.AddLine(0, gridLength * 5.0F, i * gridLength,
+						0, -gridLength * 5.0F, i * gridLength,
+						gridColor);
+				}
+			}
+			
+			EffectRenderer.AddLine(0, 0.001F, 0, gridLength, 0.001F, 0,
+				new Color(255, 0, 0, 255));
+			EffectRenderer.AddLine(0, 0, 0, 0, gridLength, 0,
+				new Color(0, 255, 0, 255));
+			EffectRenderer.AddLine(0, 0.001F, 0, 0, 0.001F, gridLength,
+				new Color(0, 0, 255, 255));
+			
+			EffectRenderer.EndRenderingLines(cameraMatrix, projectionMatrix);
+		}
+		
+		private void RenderCullingPreview(Matrix44F cameraMatrix, Matrix44F projectionMatrix)
+		{
+			if (Core.Culling.Type.Value != Data.EffectCullingValues.ParamaterType.Sphere) return;
+
+			Color sphereColor = new Color(255, 255, 255, 255);
+			EffectRenderer.StartRenderingLines();
+
+			float cullingRadius = Core.Culling.Sphere.Radius.Value;
+			float sphereX = Core.Culling.Sphere.Location.X;
+			float sphereY = Core.Culling.Sphere.Location.Y;
+			float sphereZ = Core.Culling.Sphere.Location.Z;
+			
+			for (int y = -3; y <= 3; y++)
+			{
+				float ylen = cullingRadius * (y / 4.0f);
+				float radius = (float)Math.Sqrt(cullingRadius * cullingRadius - ylen * ylen);
+
+				for (int r = 0; r < 9; r++)
+				{
+					float a0 = 3.1415f * 2.0f / 9.0f * r;
+					float a1 = 3.1415f * 2.0f / 9.0f * (r + 1.0f);
+					
+					EffectRenderer.AddLine(
+						(float)(sphereX + Math.Sin(a0) * radius), sphereY + ylen, (float)(sphereZ + Math.Cos(a0) * radius),
+						(float)(sphereX + Math.Sin(a1) * radius), sphereY + ylen, (float)(sphereZ + Math.Cos(a1) * radius),
+						sphereColor
+						);
+				}
+			}
+
+			EffectRenderer.EndRenderingLines(cameraMatrix, projectionMatrix);
+		}
+		
 		private void RenderKillRulesPreview(Matrix44F cameraMatrix, Matrix44F projectionMatrix)
 		{
 			if (Core.SelectedNode == null || !(Core.SelectedNode is Data.Node)) return;
@@ -495,37 +594,6 @@ namespace Effekseer.GUI
 				EffectRenderer.SetParameter(renderParam);
 
 				EffectRenderer.LoadBackgroundImage(Core.Environment.Background.BackgroundImage.AbsolutePath);
-
-				EffectRenderer.GridColor = new swig.Color
-				{
-					R = (byte)Core.Option.GridColor.R,
-					G = (byte)Core.Option.GridColor.G,
-					B = (byte)Core.Option.GridColor.B,
-					A = (byte)Core.Option.GridColor.A
-				};
-
-				EffectRenderer.GridLength = Core.Option.GridLength;
-				EffectRenderer.IsGridShown = Core.Option.IsGridShown;
-				EffectRenderer.IsGridXYShown = Core.Option.IsXYGridShown;
-				EffectRenderer.IsGridXZShown = Core.Option.IsXZGridShown;
-				EffectRenderer.IsGridYZShown = Core.Option.IsYZGridShown;
-
-				if (Core.Culling.Type.Value == Data.EffectCullingValues.ParamaterType.Sphere)
-				{
-					EffectRenderer.IsCullingShown = true;
-					EffectRenderer.CullingRadius = Core.Culling.Sphere.Radius.Value;
-					EffectRenderer.CullingPosition.X = Core.Culling.Sphere.Location.X;
-					EffectRenderer.CullingPosition.Y = Core.Culling.Sphere.Location.Y;
-					EffectRenderer.CullingPosition.Z = Core.Culling.Sphere.Location.Z;
-				}
-				else if (Core.Culling.Type.Value == Data.EffectCullingValues.ParamaterType.None)
-				{
-					EffectRenderer.IsCullingShown = false;
-					EffectRenderer.CullingRadius = 0.0f;
-					EffectRenderer.CullingPosition.X = 0.0f;
-					EffectRenderer.CullingPosition.Y = 0.0f;
-					EffectRenderer.CullingPosition.Z = 0.0f;
-				}
 
 				ViewPointController.SetMouseInverseFlag(
 					Core.Option.MouseRotInvX,
