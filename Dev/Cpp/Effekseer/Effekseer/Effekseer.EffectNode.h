@@ -128,7 +128,7 @@ enum class KillType : int32_t
 struct KillRulesParameter
 {
 	
-	KillType KillType = KillType::None;
+	KillType Type = KillType::None;
 
 	union
 	{
@@ -152,7 +152,7 @@ struct KillRulesParameter
 
 	void MakeCoordinateSystemLH()
 	{
-		if(KillType == KillType::Box)
+		if(Type == KillType::Box)
 		{
 			Box.Center.Z *= -1.0F;
 		} 
