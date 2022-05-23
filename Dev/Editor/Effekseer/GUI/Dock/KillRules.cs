@@ -1,6 +1,5 @@
 ﻿using System;
 using Effekseer.GUI.Component;
-using IronPython.Compiler.Ast;
 
 namespace Effekseer.GUI.Dock
 {

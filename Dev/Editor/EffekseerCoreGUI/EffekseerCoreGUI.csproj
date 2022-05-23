@@ -194,7 +194,7 @@
     <Compile Include="swig\EffectFactory.cs" />
     <Compile Include="swig\EffectRecorder.cs" />
     <Compile Include="swig\EffectRenderer.cs" />
-    <Compile Include="swig\MainScreenEffectRendererCallback.cs" />
+    <Compile Include="swig\EffectRendererCallback.cs" />
     <Compile Include="swig\EffectRendererParameter.cs" />
     <Compile Include="swig\EffectSetting.cs" />
     <Compile Include="swig\EffekseerNative.cs" />
