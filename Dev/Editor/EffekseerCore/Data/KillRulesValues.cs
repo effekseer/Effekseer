@@ -74,7 +74,11 @@ namespace Effekseer.Data
 			Type = new Enum<KillType>(KillType.None);
 			
 			BoxCenter = new Vector3D(0F, 0F, 0F);
-			BoxSize = new Vector3D(0.5F, 0.5F, 0.5F);
+			BoxSize = new Vector3D(0.5F, 0.5F, 0.5F,
+				float.MaxValue, 0, 
+				float.MaxValue, 0, 
+				float.MaxValue, 0);
+			
 			BoxIsKillInside = new Boolean(false);
 			BoxIsScaleAndRotationApplied = new Boolean(true);
 
