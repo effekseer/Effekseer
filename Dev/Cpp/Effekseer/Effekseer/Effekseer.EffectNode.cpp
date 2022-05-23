@@ -327,10 +327,10 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		// load kill rules
 		if(ef->GetVersion() >= Version17Alpha5)
 		{
-			memcpy(&KillParam.KillType, pos, sizeof(int32_t));
+			memcpy(&KillParam.Type, pos, sizeof(int32_t));
 			pos += sizeof(int32_t);
 			
-			if(KillParam.KillType == KillType::Box)
+			if(KillParam.Type == KillType::Box)
 			{
 				memcpy(&KillParam.Box.Center, pos, sizeof(Vector3D));
 				pos += sizeof(Vector3D);
@@ -346,7 +346,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 
 				KillParam.Box.Center *= ef->GetMaginification();
 				KillParam.Box.Size *= ef->GetMaginification();
-			} else if(KillParam.KillType == KillType::Height)
+			} else if(KillParam.Type == KillType::Height)
 			{
 				memcpy(&KillParam.Height.Height, pos, sizeof(float));
 				pos += sizeof(float);
