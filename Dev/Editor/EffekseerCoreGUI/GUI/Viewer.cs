@@ -326,6 +326,32 @@ namespace Effekseer.GUI
 			}
 		}
 
+		private void RenderSphere(Matrix44F cameraMatrix, Matrix44F projectionMatrix,
+			float sphereX, float sphereY, float sphereZ, float sphereRadius, Color color)
+		{
+			EffectRenderer.StartRenderingLines();
+			
+			for (int y = -3; y <= 3; y++)
+			{
+				float ylen = sphereRadius * (y / 4.0f);
+				float radius = (float)Math.Sqrt(sphereRadius * sphereRadius - ylen * ylen);
+
+				for (int r = 0; r < 9; r++)
+				{
+					float a0 = 3.1415f * 2.0f / 9.0f * r;
+					float a1 = 3.1415f * 2.0f / 9.0f * (r + 1.0f);
+					
+					EffectRenderer.AddLine(
+						(float)(sphereX + Math.Sin(a0) * radius), sphereY + ylen, (float)(sphereZ + Math.Cos(a0) * radius),
+						(float)(sphereX + Math.Sin(a1) * radius), sphereY + ylen, (float)(sphereZ + Math.Cos(a1) * radius),
+						color
+					);
+				}
+			}
+			
+			EffectRenderer.EndRenderingLines(cameraMatrix, projectionMatrix);
+		}
+
 		private void RenderGrid(Matrix44F cameraMatrix, Matrix44F projectionMatrix)
 		{
 			if(!Core.Option.IsGridShown) return;
@@ -394,33 +420,9 @@ namespace Effekseer.GUI
 		{
 			if (Core.Culling.Type.Value != Data.EffectCullingValues.ParamaterType.Sphere) return;
 
-			Color sphereColor = new Color(255, 255, 255, 255);
-			EffectRenderer.StartRenderingLines();
-
-			float cullingRadius = Core.Culling.Sphere.Radius.Value;
-			float sphereX = Core.Culling.Sphere.Location.X;
-			float sphereY = Core.Culling.Sphere.Location.Y;
-			float sphereZ = Core.Culling.Sphere.Location.Z;
-			
-			for (int y = -3; y <= 3; y++)
-			{
-				float ylen = cullingRadius * (y / 4.0f);
-				float radius = (float)Math.Sqrt(cullingRadius * cullingRadius - ylen * ylen);
-
-				for (int r = 0; r < 9; r++)
-				{
-					float a0 = 3.1415f * 2.0f / 9.0f * r;
-					float a1 = 3.1415f * 2.0f / 9.0f * (r + 1.0f);
-					
-					EffectRenderer.AddLine(
-						(float)(sphereX + Math.Sin(a0) * radius), sphereY + ylen, (float)(sphereZ + Math.Cos(a0) * radius),
-						(float)(sphereX + Math.Sin(a1) * radius), sphereY + ylen, (float)(sphereZ + Math.Cos(a1) * radius),
-						sphereColor
-						);
-				}
-			}
-
-			EffectRenderer.EndRenderingLines(cameraMatrix, projectionMatrix);
+			RenderSphere(cameraMatrix, projectionMatrix,
+				Core.Culling.Sphere.Location.X, Core.Culling.Sphere.Location.Y, Core.Culling.Sphere.Location.Z,
+				Core.Culling.Sphere.Radius, new Color(255, 255, 255, 255));
 		}
 		
 		private void RenderKillRulesPreview(Matrix44F cameraMatrix, Matrix44F projectionMatrix)
@@ -528,6 +530,18 @@ namespace Effekseer.GUI
 				EffectRenderer.AddLine(maxX, minY, maxZ, 
 					maxX, maxY, maxZ, boxColor);
 				EffectRenderer.EndRenderingLines(cameraMatrix, projectionMatrix);
+			}
+
+			if (node.KillRulesValues.Type == KillRulesValues.KillType.Sphere)
+			{
+				Vector3D sphereCenter = node.KillRulesValues.SphereCenter;
+				float radius = node.KillRulesValues.SphereRadius;
+				Color sphereColor = node.KillRulesValues.SphereIsKillInside ? 
+					new Color(0xFF, 0x23, 0x23, 0xFF) : new Color(0x23, 0xFF, 0x23, 0xFF);
+				
+				RenderSphere(cameraMatrix, projectionMatrix,
+					sphereCenter.X, sphereCenter.Y, sphereCenter.Z,
+					radius, sphereColor);
 			}
 		}
 
