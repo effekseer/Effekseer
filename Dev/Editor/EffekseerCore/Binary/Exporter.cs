@@ -1004,9 +1004,12 @@ namespace Effekseer.Binary
 						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.BoxIsScaleAndRotationApplied ? 1 : 0));
 					} else if(n.KillRulesValues.Type.Value == KillRulesValues.KillType.Height)
 					{
-						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.Height.Value));
-						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.HeightIsFloor ? 1 : 0));
-						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.HeightIsScaleAndRotationApplied ? 1 : 0));
+						Data.Value.Vector3D normal = KillRulesValues.PlaneAxisNormal[n.KillRulesValues.PlaneAxis.Value].Normal;
+						node_data.Add(BitConverter.GetBytes(normal.X));
+						node_data.Add(BitConverter.GetBytes(normal.Y));
+						node_data.Add(BitConverter.GetBytes(normal.Z));
+						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.PlaneOffset));
+						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.PlaneIsScaleAndRotationApplied ? 1 : 0));
 					}
 				}
 

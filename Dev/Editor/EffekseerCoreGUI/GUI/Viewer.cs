@@ -434,36 +434,52 @@ namespace Effekseer.GUI
 				EffectRenderer.StartRenderingLines();
 
 				Color planeColor = new Color(0xFF, 0x23, 0x23, 0xff);
-				float minX = -5F;
-				float minY = node.KillRulesValues.Height;
-				float minZ = -5F;
-				float maxX = 5F;
-				float maxZ = 5F;
-			
-				EffectRenderer.AddLine(minX, minY, minZ, 
-					maxX, minY, minZ, planeColor);
-				EffectRenderer.AddLine(maxX, minY, minZ, 
-					maxX, minY, maxZ, planeColor);
-				EffectRenderer.AddLine(maxX, minY, maxZ, 
-					minX, minY, maxZ, planeColor);
-				EffectRenderer.AddLine(minX, minY, maxZ, 
-					minX, minY, minZ, planeColor);
+				KillRulesValues.PlaneAxisType axisType = node.KillRulesValues.PlaneAxis;
+				KillRulesValues.PlaneAxisSpace space = KillRulesValues.PlaneAxisNormal[axisType];
+				Vector3D normal = space.Normal;
+				Vector3D tangent = space.Tangent;
+				Vector3D bitangent = space.Bitangent;
+				float offset = node.KillRulesValues.PlaneOffset;
 
-				float pointer = node.KillRulesValues.HeightIsFloor ? -1F : 1F;
-				float sideX = (minX + maxX) * 0.5F;
-				float sideZ = (minZ + maxZ) * 0.5F;
-			
-				EffectRenderer.AddLine(minX, minY, sideZ,
-					minX, minY + pointer, sideZ, planeColor);
-				EffectRenderer.AddLine(maxX, minY, sideZ,
-					maxX, minY + pointer, sideZ, planeColor);
-					
-				EffectRenderer.AddLine(sideX, minY, minZ,
-					sideX, minY + pointer, minZ, planeColor);
-				EffectRenderer.AddLine(sideX, minY, maxZ,
-					sideX, minY + pointer, maxZ, planeColor);
-	
-					
+				float offsetX = normal.X * offset;
+				float offsetY = normal.Y * offset;
+				float offsetZ = normal.Z * offset;
+
+				float v1X = offsetX - tangent.X * 5F - bitangent.X * 5F;
+				float v1Y = offsetY - tangent.Y * 5F - bitangent.Y * 5F;
+				float v1Z = offsetZ - tangent.Z * 5F - bitangent.Z * 5F;
+				
+				float v2X = offsetX + tangent.X * 5F - bitangent.X * 5F;
+				float v2Y = offsetY + tangent.Y * 5F - bitangent.Y * 5F;
+				float v2Z = offsetZ + tangent.Z * 5F - bitangent.Z * 5F;
+				
+				float v3X = offsetX + tangent.X * 5F + bitangent.X * 5F;
+				float v3Y = offsetY + tangent.Y * 5F + bitangent.Y * 5F;
+				float v3Z = offsetZ + tangent.Z * 5F + bitangent.Z * 5F;
+				
+				float v4X = offsetX - tangent.X * 5F + bitangent.X * 5F;
+				float v4Y = offsetY - tangent.Y * 5F + bitangent.Y * 5F;
+				float v4Z = offsetZ - tangent.Z * 5F + bitangent.Z * 5F;
+
+				EffectRenderer.AddLine(v1X, v1Y, v1Z, v2X, v2Y, v2Z, planeColor);
+				EffectRenderer.AddLine(v2X, v2Y, v2Z, v3X, v3Y, v3Z, planeColor);
+				EffectRenderer.AddLine(v3X, v3Y, v3Z, v4X, v4Y, v4Z, planeColor);
+				EffectRenderer.AddLine(v4X, v4Y, v4Z, v1X, v1Y, v1Z, planeColor);
+
+				void AddPointer(float x, float y, float z, float nx, float ny, float nz, Color color)
+				{
+					EffectRenderer.AddLine(x, y, z, x + nx, y + ny, z + nz, color);
+				}
+				
+				AddPointer((v1X + v2X) * 0.5F, (v1Y + v2Y) * 0.5F, (v1Z + v2Z) * 0.5F, 
+					normal.X, normal.Y, normal.Z, planeColor);
+				AddPointer((v2X + v3X) * 0.5F, (v2Y + v3Y) * 0.5F, (v2Z + v3Z) * 0.5F, 
+					normal.X, normal.Y, normal.Z, planeColor);
+				AddPointer((v3X + v4X) * 0.5F, (v3Y + v4Y) * 0.5F, (v3Z + v4Z) * 0.5F, 
+					normal.X, normal.Y, normal.Z, planeColor);
+				AddPointer((v4X + v1X) * 0.5F, (v4Y + v1Y) * 0.5F, (v4Z + v1Z) * 0.5F, 
+					normal.X, normal.Y, normal.Z, planeColor);
+				
 				EffectRenderer.EndRenderingLines(cameraMatrix, projectionMatrix);
 			}
 			if (node.KillRulesValues.Type == KillRulesValues.KillType.Box)

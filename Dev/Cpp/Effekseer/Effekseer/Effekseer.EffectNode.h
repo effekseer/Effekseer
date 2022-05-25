@@ -122,8 +122,9 @@ enum class KillType : int32_t
 {
 	None = 0,
 	Box = 1,
-	Height = 2,
+	Plane = 2,
 };
+
 
 struct KillRulesParameter
 {
@@ -142,10 +143,10 @@ struct KillRulesParameter
 
 		struct
 		{
-			float Height = 1.0F; // In local space
-			int IsFloor = 0;
+			Vector3D PlaneAxis = {0.0F, 1.0F, 0.0F}; // in local space
+			float PlaneOffset = 1.0f; // in the direction of plane axis
 			int IsScaleAndRotationApplied = 1;
-		} Height;
+		} Plane;
 	};
 
 	KillRulesParameter(){}
@@ -155,7 +156,10 @@ struct KillRulesParameter
 		if(Type == KillType::Box)
 		{
 			Box.Center.Z *= -1.0F;
-		} 
+		} else if(Type == KillType::Plane)
+		{
+			Plane.PlaneAxis.Z *= -1.0F;
+		}
 	}
 };
 
