@@ -1,7 +1,7 @@
 KillRules,Reglas de matar
 KillRules_Description,"Las reglas de eliminación permiten especificar el área en la que se deben destruir las partículas.
  - Caja utilizada para matar partículas cuando se mueve dentro o fuera de la caja especificada.
- - Altura utilizada para matar partículas cuando se mueve por encima o por debajo de la altura definida."
+ - Plano utilizado para matar partículas cuando se mueve más allá de cierta posición a lo largo del eje especificado."
 KillRules_Type_Name,Tipo
 KillRules_Box_Center_Name,Centro de la caja
 KillRules_Box_Size_Name,Tamaño de caja
@@ -12,14 +12,19 @@ KillRules_Box_IsScaleAndRotationApplied_Name,"Escala y
 Rotación aplicada"
 KillRules_Box_IsScaleAndRotationApplied_Desc,"Si está habilitado (el valor predeterminado), el cuadro se rotará y escalará con efecto.
 Si está deshabilitado, el cuadro siempre estará alineado con el eje e ignorará la escala del efecto"
-KillRules_Height_Height_Name,Altura
-KillRules_Height_IsFloor_Name,Matar a continuación
-KillRules_Height_IsFloor_Desc,"Si está habilitado, las partículas morirán si caen POR DEBAJO del valor de altura.
-Si está deshabilitado (el valor predeterminado), se eliminarán cuando se eleven POR ENCIMA del valor de altura."
-KillRules_Height_IsScaleAndRotationApplied_Name,"Escala y
+KillRules_Plane_Axis_Name,Eje Plano
+KillRules_Plane_PlaneOffset_Name,"Compensación de plano
+a lo largo del eje"
+KillRules_Plane_IsScaleAndRotationApplied_Name,"Escala y
 Rotación aplicada"
-KillRules_Height_IsScaleAndRotationApplied_Desc,"Si está habilitado (el valor predeterminado), el plano de muerte se rotará y se escalará con efecto.
-Si está deshabilitado, el plano de muerte siempre se colocará a lo largo del eje Y en el espacio mundial e ignorará la escala del efecto."
+KillRules_Plane_IsScaleAndRotationApplied_Desc,"Si está habilitado (el valor predeterminado), el plano de muerte se rotará y se escalará con efecto.
+Si está deshabilitado, el plano de muerte siempre se colocará a lo largo del eje especificado en el espacio mundial e ignorará la escala del efecto."
 KillType_None_Name,Ninguno
 KillType_Box_Name,Caja
-KillType_Height_Name,Altura
+KillType_Plane_Name,Plano
+PlaneAxisType_XPositive_Name,Positivo X
+PlaneAxisType_XNegative_Name,Negativo X
+PlaneAxisType_YPositive_Name,Positivo Y
+PlaneAxisType_YNegative_Name,Negativo Y
+PlaneAxisType_ZPositive_Name,Positivo Z
+PlaneAxisType_ZNegative_Name,Negativo Z

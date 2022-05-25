@@ -346,18 +346,19 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 
 				KillParam.Box.Center *= ef->GetMaginification();
 				KillParam.Box.Size *= ef->GetMaginification();
-			} else if(KillParam.Type == KillType::Height)
+			} else if(KillParam.Type == KillType::Plane)
 			{
-				memcpy(&KillParam.Height.Height, pos, sizeof(float));
+				memcpy(&KillParam.Plane.PlaneAxis, pos, sizeof(Vector3D));
+				pos += sizeof(Vector3D);
+				
+				memcpy(&KillParam.Plane.PlaneOffset, pos, sizeof(float));
 				pos += sizeof(float);
 
-				memcpy(&KillParam.Height.IsFloor, pos, sizeof(int));
+				memcpy(&KillParam.Plane.IsScaleAndRotationApplied, pos, sizeof(int));
 				pos += sizeof(int);
-
-				memcpy(&KillParam.Height.IsScaleAndRotationApplied, pos, sizeof(int));
-				pos += sizeof(int);
-
-				KillParam.Height.Height *= ef->GetMaginification();
+				
+				KillParam.Plane.PlaneAxis /= Vector3D::Length(KillParam.Plane.PlaneAxis);
+				KillParam.Plane.PlaneOffset *= ef->GetMaginification();
 			}
 		}
 		

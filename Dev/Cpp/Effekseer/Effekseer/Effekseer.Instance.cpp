@@ -418,10 +418,10 @@ void Instance::Update(float deltaFrame, bool shown)
 					{
 						removed = true;
 					}
-				} else if(m_pEffectNode->KillParam.Type == KillType::Height)
+				} else if(m_pEffectNode->KillParam.Type == KillType::Plane)
 				{
 					SIMD::Vec3f localPosition{};
-					if(m_pEffectNode->KillParam.Height.IsScaleAndRotationApplied)
+					if(m_pEffectNode->KillParam.Plane.IsScaleAndRotationApplied)
 					{
 						SIMD::Mat44f invertedGlobalMatrix = this->GetInstanceGlobal()->InvertedEffectGlobalMatrix;
 						localPosition = SIMD::Vec3f::Transform(this->prevGlobalPosition_, invertedGlobalMatrix);
@@ -430,9 +430,12 @@ void Instance::Update(float deltaFrame, bool shown)
 						SIMD::Mat44f globalMatrix = this->GetInstanceGlobal()->EffectGlobalMatrix;
 						localPosition = this->prevGlobalPosition_ - globalMatrix.GetTranslation();
 					}
-					
-					bool isAbove = localPosition.GetY() > m_pEffectNode->KillParam.Height.Height;
-					if(isAbove != m_pEffectNode->KillParam.Height.IsFloor)
+
+					SIMD::Vec3f planeNormal = m_pEffectNode->KillParam.Plane.PlaneAxis;
+					SIMD::Vec3f planePosition = planeNormal * m_pEffectNode->KillParam.Plane.PlaneOffset;
+					float planeW = -SIMD::Vec3f::Dot(planePosition, planeNormal);
+					float factor = SIMD::Vec3f::Dot(localPosition, planeNormal) + planeW;
+					if(factor > 0.0F)
 					{
 						removed = true;
 					}

@@ -1,10 +1,41 @@
-﻿using Effekseer.Data.Value;
+﻿using System.Collections.Generic;
+using Effekseer.Data.Value;
 
 namespace Effekseer.Data
 {
 	public class KillRulesValues
 	{
-		
+
+		public static Dictionary<PlaneAxisType, PlaneAxisSpace> PlaneAxisNormal = new Dictionary<PlaneAxisType, PlaneAxisSpace>()
+		{
+			{
+				PlaneAxisType.XPositive,
+				new PlaneAxisSpace(new Vector3D(1F, 0F, 0F), new Vector3D(0F, 1F, 0F), new Vector3D(0F, 0F, 1F))
+			},
+			{
+				PlaneAxisType.XNegative,
+				new PlaneAxisSpace(new Vector3D(-1F, 0F, 0F), new Vector3D(0F, 1F, 0F), new Vector3D(0F, 0F, 1F))
+			},
+			{
+				PlaneAxisType.YPositive,
+				new PlaneAxisSpace(new Vector3D(0F, 1F, 0F), new Vector3D(1F, 0F, 0F), new Vector3D(0F, 0F, 1F))
+			},
+			{
+				PlaneAxisType.YNegative,
+				new PlaneAxisSpace(new Vector3D(0F, -1F, 0F), new Vector3D(1F, 0F, 0F), new Vector3D(0F, 0F, 1F))
+			},
+			{
+				PlaneAxisType.ZPositive,
+				new PlaneAxisSpace(new Vector3D(0F, 0F, 1F), new Vector3D(1F, 0F, 0F), new Vector3D(0F, 1F, 0F))
+			},
+			{
+				PlaneAxisType.ZNegative,
+				new PlaneAxisSpace(new Vector3D(0F, 0F, -1F), new Vector3D(1F, 0F, 0F), new Vector3D(0F, 1F, 0F))
+			},
+		};
+
+
+
 		[Key(key = "KillRules_Type")]
 		[Selector(ID = 1)]
 		public Value.Enum<KillType> Type
@@ -45,25 +76,25 @@ namespace Effekseer.Data
 			set;
 		}
 
-		[Key(key = "KillRules_Height_Height")]
+		[Key(key = "KillRules_Plane_Axis")]
 		[Selected(ID = 1, Value = 2)]
-		public Value.Float Height
+		public Value.Enum<PlaneAxisType> PlaneAxis
 		{
 			get;
 			set;
 		}
 		
-		[Key(key = "KillRules_Height_IsFloor")]
+		[Key(key = "KillRules_Plane_PlaneOffset")]
 		[Selected(ID = 1, Value = 2)]
-		public Value.Boolean HeightIsFloor
+		public Value.Float PlaneOffset
 		{
 			get;
 			set;
 		}
 		
-		[Key(key = "KillRules_Height_IsScaleAndRotationApplied")]
+		[Key(key = "KillRules_Plane_IsScaleAndRotationApplied")]
 		[Selected(ID = 1, Value = 2)]
-		public Value.Boolean HeightIsScaleAndRotationApplied
+		public Value.Boolean PlaneIsScaleAndRotationApplied
 		{
 			get;
 			set;
@@ -82,9 +113,9 @@ namespace Effekseer.Data
 			BoxIsKillInside = new Boolean(false);
 			BoxIsScaleAndRotationApplied = new Boolean(true);
 
-			Height = new Float(0F);
-			HeightIsFloor = new Boolean(false);
-			HeightIsScaleAndRotationApplied = new Boolean(true);
+			PlaneAxis = new Enum<PlaneAxisType>(PlaneAxisType.YPositive);
+			PlaneOffset = new Float(1.0F);
+			PlaneIsScaleAndRotationApplied = new Boolean(true);
 		}
 
 		public enum KillType : int
@@ -93,8 +124,38 @@ namespace Effekseer.Data
 			None,
 			[Key(key = "KillType_Box")]
 			Box,
-			[Key(key = "KillType_Height")]
+			[Key(key = "KillType_Plane")]
 			Height
+		}
+		
+		public enum PlaneAxisType : int 
+		{
+			[Key(key = "PlaneAxisType_XPositive")]
+			XPositive,
+			[Key(key = "PlaneAxisType_XNegative")]
+			XNegative,
+			[Key(key = "PlaneAxisType_YPositive")]
+			YPositive,
+			[Key(key = "PlaneAxisType_YNegative")]
+			YNegative,
+			[Key(key = "PlaneAxisType_ZPositive")]
+			ZPositive,
+			[Key(key = "PlaneAxisType_ZNegative")]
+			ZNegative
+		}
+		
+		public class PlaneAxisSpace
+		{
+			public readonly Vector3D Normal;
+			public readonly Vector3D Tangent;
+			public readonly Vector3D Bitangent;
+
+			public PlaneAxisSpace(Vector3D normal, Vector3D tangent, Vector3D bitangent)
+			{
+				Normal = normal;
+				Tangent = tangent;
+				Bitangent = bitangent;
+			}
 		}
 	}
 }

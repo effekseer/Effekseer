@@ -1,7 +1,7 @@
 KillRules,ルールを殺す
 KillRules_Description,"キルルールを使用すると、パーティクルを破棄する領域を指定できます。
  - 指定されたボックスの内側または外側に移動するときにパーティクルを殺すために使用されるボックス。
- - パーティクルが定義された高さより上または下に移動するときにパーティクルを殺すために使用される高さ。"
+ - 平面ィクルが指定された軸に沿って特定の位置を超えて移動したときにパーティクルを殺すために使用される平面。"
 KillRules_Type_Name,タイプ
 KillRules_Box_Center_Name,ボックスセンター
 KillRules_Box_Size_Name,ボックスサイズ
@@ -12,14 +12,17 @@ KillRules_Box_IsScaleAndRotationApplied_Name,"スケールと
 回転が適用されました"
 KillRules_Box_IsScaleAndRotationApplied_Desc,"有効にすると（デフォルト）、ボックスは効果的に回転および拡大縮小されます。
 無効にすると、ボックスは常に軸に揃えられ、エフェクトスケールは無視されます"
-KillRules_Height_Height_Name,身長
-KillRules_Height_IsFloor_Name,下を殺す
-KillRules_Height_IsFloor_Desc,"有効にすると、パーティクルが高さの値を下回ると、パーティクルが強制終了されます。
-無効にすると（デフォルト）、高さの値を超えると強制終了されます。"
-KillRules_Height_IsScaleAndRotationApplied_Name,"スケールと
+KillRules_Plane_Axis_Name,平面軸
+KillRules_Plane_PlaneOffset_Name,"平面オフセット
+軸に沿って"
+KillRules_Plane_IsScaleAndRotationApplied_Name,"スケールと
 回転が適用されました"
-KillRules_Height_IsScaleAndRotationApplied_Desc,"有効にすると（デフォルト）、キルプレーンは効果的に回転およびスケーリングされます。
-無効にした場合、キルプレーンは常にワールドスペースのY軸に沿って配置され、エフェクトスケールを無視します。"
 KillType_None_Name,なし
 KillType_Box_Name,箱
-KillType_Height_Name,身長
+KillType_Plane_Name,平面
+PlaneAxisType_XPositive_Name,+X
+PlaneAxisType_XNegative_Name,-X
+PlaneAxisType_YPositive_Name,+Y
+PlaneAxisType_YNegative_Name,-Y
+PlaneAxisType_ZPositive_Name,+Z
+PlaneAxisType_ZNegative_Name,-Z
