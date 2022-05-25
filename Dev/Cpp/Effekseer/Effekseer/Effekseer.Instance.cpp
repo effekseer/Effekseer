@@ -291,7 +291,9 @@ void Instance::Update(float deltaFrame, bool shown)
 		isParentSequenceChanged = m_pParent->m_sequenceNumber >= m_sequenceNumber;
 	}
 
-	if (m_GlobalMatrix43Calculated && (m_ParentMatrix43Calculated || m_pParent == nullptr) && deltaFrame == 0.0F && !isParentRemoving && !isParentSequenceChanged)
+	const bool isUpdateRequired = deltaFrame != 0.0f || m_pEffectNode->RotationParam.RotationType == ParameterRotationType::ParameterRotationType_RotateToViewpoint;
+
+	if (m_GlobalMatrix43Calculated && (m_ParentMatrix43Calculated || m_pParent == nullptr) && !isUpdateRequired && !isParentRemoving && !isParentSequenceChanged)
 	{
 		return;
 	}
