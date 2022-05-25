@@ -44,6 +44,7 @@ namespace Effekseer.Data
 			set;
 		}
 
+
 		[Key(key = "KillRules_Box_Center")]
 		[Selected(ID = 1, Value = 1)]
 		public Value.Vector3D BoxCenter
@@ -67,14 +68,6 @@ namespace Effekseer.Data
 			get;
 			set;
 		}
-		
-		[Key(key = "KillRules_Box_IsScaleAndRotationApplied")]
-		[Selected(ID = 1, Value = 1)]
-		public Value.Boolean BoxIsScaleAndRotationApplied
-		{
-			get;
-			set;
-		}
 
 		[Key(key = "KillRules_Plane_Axis")]
 		[Selected(ID = 1, Value = 2)]
@@ -92,9 +85,37 @@ namespace Effekseer.Data
 			set;
 		}
 		
-		[Key(key = "KillRules_Plane_IsScaleAndRotationApplied")]
+		[Key(key = "KillRules_Sphere_Center")]
+		[Selected(ID = 1, Value = 3)]
+		public Value.Vector3D SphereCenter
+		{
+			get;
+			set;
+		}
+		
+		[Key(key = "KillRules_Sphere_Radius")]
+		[Selected(ID = 1, Value = 3)]
+		public Value.Float SphereRadius
+		{
+			get;
+			set;
+		}
+		
+		
+		[Key(key = "KillRules_Sphere_IsKillInside")]
+		[Selected(ID = 1, Value = 3)]
+		public Value.Boolean SphereIsKillInside
+		{
+			get;
+			set;
+		}
+		
+				
+		[Key(key = "KillRules_IsScaleAndRotationApplied")]
+		[Selected(ID = 1, Value = 1)]
 		[Selected(ID = 1, Value = 2)]
-		public Value.Boolean PlaneIsScaleAndRotationApplied
+		[Selected(ID = 1, Value = 3)]
+		public Value.Boolean IsScaleAndRotationApplied
 		{
 			get;
 			set;
@@ -103,19 +124,21 @@ namespace Effekseer.Data
 		public KillRulesValues()
 		{
 			Type = new Enum<KillType>(KillType.None);
+			IsScaleAndRotationApplied = new Boolean(true);
 			
 			BoxCenter = new Vector3D(0F, 0F, 0F);
 			BoxSize = new Vector3D(0.5F, 0.5F, 0.5F,
 				float.MaxValue, 0, 
 				float.MaxValue, 0, 
 				float.MaxValue, 0);
-			
 			BoxIsKillInside = new Boolean(false);
-			BoxIsScaleAndRotationApplied = new Boolean(true);
 
 			PlaneAxis = new Enum<PlaneAxisType>(PlaneAxisType.YPositive);
 			PlaneOffset = new Float(1.0F);
-			PlaneIsScaleAndRotationApplied = new Boolean(true);
+
+			SphereCenter = new Vector3D(0.0F, 0.0F, 0.0F);
+			SphereRadius = new Float(1F, float.MaxValue, 0F);
+			SphereIsKillInside = new Boolean(false);
 		}
 
 		public enum KillType : int
@@ -125,7 +148,9 @@ namespace Effekseer.Data
 			[Key(key = "KillType_Box")]
 			Box,
 			[Key(key = "KillType_Plane")]
-			Height
+			Height,
+			[Key(key = "KillType_Sphere")]
+			Sphere
 		}
 		
 		public enum PlaneAxisType : int 

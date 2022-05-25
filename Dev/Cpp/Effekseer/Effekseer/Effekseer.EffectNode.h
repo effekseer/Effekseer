@@ -123,6 +123,7 @@ enum class KillType : int32_t
 	None = 0,
 	Box = 1,
 	Plane = 2,
+	Sphere = 3
 };
 
 
@@ -130,7 +131,8 @@ struct KillRulesParameter
 {
 	
 	KillType Type = KillType::None;
-
+	int IsScaleAndRotationApplied = 1;
+	
 	union
 	{
 		struct
@@ -138,15 +140,20 @@ struct KillRulesParameter
 			Vector3D Center = {0.0F, 0.0F, 0.0F}; // In local space
 			Vector3D Size = {0.5F, 0.5F, 0.5F};    // In local space
 			int IsKillInside = 0;
-			int IsScaleAndRotationApplied = 1;
 		} Box;
 
 		struct
 		{
 			Vector3D PlaneAxis = {0.0F, 1.0F, 0.0F}; // in local space
 			float PlaneOffset = 1.0f; // in the direction of plane axis
-			int IsScaleAndRotationApplied = 1;
 		} Plane;
+
+		struct
+		{
+			Vector3D Center = { 0.0F, 0.0F, 0.0F }; // in local space
+			float Radius = 1.0F;
+			int IsKillInside = 0;
+		} Sphere;
 	};
 
 	KillRulesParameter(){}
@@ -159,6 +166,9 @@ struct KillRulesParameter
 		} else if(Type == KillType::Plane)
 		{
 			Plane.PlaneAxis.Z *= -1.0F;
+		} else if(Type == KillType::Sphere)
+		{
+			Sphere.Center.Z *= -1.0F;
 		}
 	}
 };

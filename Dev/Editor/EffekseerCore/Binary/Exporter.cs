@@ -991,6 +991,7 @@ namespace Effekseer.Binary
 				if (exporterVersion >= ExporterVersion.Ver17Alpha5)
 				{
 					node_data.Add(n.KillRulesValues.Type.GetValueAsInt().GetBytes());
+					node_data.Add(BitConverter.GetBytes(n.KillRulesValues.IsScaleAndRotationApplied ? 1 : 0));
 
 					if(n.KillRulesValues.Type.Value == KillRulesValues.KillType.Box)
 					{
@@ -1001,7 +1002,7 @@ namespace Effekseer.Binary
 						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.BoxSize.Y));
 						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.BoxSize.Z));
 						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.BoxIsKillInside ? 1 : 0));
-						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.BoxIsScaleAndRotationApplied ? 1 : 0));
+						
 					} else if(n.KillRulesValues.Type.Value == KillRulesValues.KillType.Height)
 					{
 						Data.Value.Vector3D normal = KillRulesValues.PlaneAxisNormal[n.KillRulesValues.PlaneAxis.Value].Normal;
@@ -1009,7 +1010,13 @@ namespace Effekseer.Binary
 						node_data.Add(BitConverter.GetBytes(normal.Y));
 						node_data.Add(BitConverter.GetBytes(normal.Z));
 						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.PlaneOffset));
-						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.PlaneIsScaleAndRotationApplied ? 1 : 0));
+					} else if (n.KillRulesValues.Type.Value == KillRulesValues.KillType.Sphere)
+					{
+						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.SphereCenter.X));
+						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.SphereCenter.Y));
+						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.SphereCenter.Z));
+						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.SphereRadius));
+						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.SphereIsKillInside ? 1 : 0));
 					}
 				}
 
