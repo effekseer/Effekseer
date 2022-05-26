@@ -13,7 +13,7 @@ namespace Effekseer.Binary
 		public static byte[] GetBytes(Data.RotationValues value, ExporterVersion version)
 		{
 			var rotationType = value.Type.GetValue();
-			if (version < ExporterVersion.Ver17Alpha4)
+			if (version < ExporterVersion.Ver17Alpha5)
 			{
 				if (rotationType == Data.RotationValues.ParamaterType.RotateToViewpoint)
 				{
