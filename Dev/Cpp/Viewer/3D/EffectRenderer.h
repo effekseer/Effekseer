@@ -205,6 +205,7 @@ public:
 	void ResizeScreen(const Vector2I& screenSize);
 
 	void PlayEffect();
+	void UpdatePaused();
 	void Update();
 	void Update(int32_t frame);
 	void Render(std::shared_ptr<RenderImage> renderImage);

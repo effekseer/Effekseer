@@ -66,6 +66,10 @@ public class EffectRenderer : global::System.IDisposable {
     EffekseerNativePINVOKE.EffectRenderer_PlayEffect(swigCPtr);
   }
 
+  public void UpdatePaused() {
+    EffekseerNativePINVOKE.EffectRenderer_UpdatePaused(swigCPtr);
+  }
+
   public void Update() {
     EffekseerNativePINVOKE.EffectRenderer_Update__SWIG_0(swigCPtr);
   }

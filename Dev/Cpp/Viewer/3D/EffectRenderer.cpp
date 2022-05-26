@@ -604,6 +604,15 @@ void EffectRenderer::PlayEffect()
 	m_rootScale.Z = behavior_.ScaleZ;
 }
 
+void EffectRenderer::UpdatePaused()
+{
+	Effekseer::Manager::UpdateParameter updateParameter;
+	updateParameter.DeltaFrame = 0.0F;
+	updateParameter.UpdateInterval = 0.0f;
+	updateParameter.ViewerPosition = renderer_->GetCameraPosition();
+	manager_->Update(updateParameter);
+}
+
 void EffectRenderer::Update()
 {
 	if (behavior_.TimeSpan > 0 && m_time > 0 && m_time % behavior_.TimeSpan == 0)

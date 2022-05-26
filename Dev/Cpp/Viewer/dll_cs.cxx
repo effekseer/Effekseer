@@ -3888,6 +3888,14 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_PlayEffect___(v
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_UpdatePaused___(void * jarg1) {
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  (arg1)->UpdatePaused();
+}
+
+
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_Update__SWIG_0___(void * jarg1) {
   Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
   

@@ -578,6 +578,11 @@ namespace Effekseer.GUI
 					stepFrame = Math.Min(stepFrame, 4);
 
 					StepViewer(stepFrame, true);
+				} else if (IsPlaying && IsPaused)
+				{
+					// need to update LOD which could have changed because of changed camera position
+					// even if effect is paused
+					EffectRenderer.UpdatePaused();
 				}
 
 				// update environment
@@ -840,6 +845,7 @@ namespace Effekseer.GUI
 				{
 					if ((int)current == (int)new_frame)
 					{
+						StepEffectFrame((int)new_frame);
 					}
 					else if ((int)current > (int)new_frame)
 					{
