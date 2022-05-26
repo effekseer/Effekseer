@@ -14,44 +14,24 @@
 namespace Effekseer
 {
 
-struct ProceduralMeshVertex
+ProceduralMesh ProceduralMesh::Combine(ProceduralMesh mesh1, ProceduralMesh mesh2)
 {
-	SIMD::Vec3f Position;
-	SIMD::Vec3f Normal;
-	SIMD::Vec3f Tangent;
-	SIMD::Vec2f UV;
-	Color VColor;
-};
+	const auto vertexOffset = mesh1.Vertexes.size();
+	const auto faceOffset = mesh1.Faces.size();
 
-struct ProceduralMeshFace
-{
-	std::array<int32_t, 3> Indexes;
-};
+	std::copy(mesh2.Vertexes.begin(), mesh2.Vertexes.end(), std::back_inserter(mesh1.Vertexes));
+	std::copy(mesh2.Faces.begin(), mesh2.Faces.end(), std::back_inserter(mesh1.Faces));
 
-struct ProceduralMesh
-{
-	CustomAlignedVector<ProceduralMeshVertex> Vertexes;
-	CustomVector<ProceduralMeshFace> Faces;
-
-	static ProceduralMesh Combine(ProceduralMesh mesh1, ProceduralMesh mesh2)
+	for (size_t f = faceOffset; f < mesh1.Faces.size(); f++)
 	{
-		const auto vertexOffset = mesh1.Vertexes.size();
-		const auto faceOffset = mesh1.Faces.size();
-
-		std::copy(mesh2.Vertexes.begin(), mesh2.Vertexes.end(), std::back_inserter(mesh1.Vertexes));
-		std::copy(mesh2.Faces.begin(), mesh2.Faces.end(), std::back_inserter(mesh1.Faces));
-
-		for (size_t f = faceOffset; f < mesh1.Faces.size(); f++)
+		for (auto& ind : mesh1.Faces[f].Indexes)
 		{
-			for (auto& ind : mesh1.Faces[f].Indexes)
-			{
-				ind += static_cast<int32_t>(vertexOffset);
-			}
+			ind += static_cast<int32_t>(vertexOffset);
 		}
-
-		return std::move(mesh1);
 	}
-};
+
+	return std::move(mesh1);
+}
 
 static float CalcSineWave(float x, float frequency, float offset, float power)
 {
@@ -324,7 +304,7 @@ static void ChangeAxis(ProceduralMesh& mesh, ProceduralModelAxisType axisType)
 	}
 }
 
-static ModelRef ConvertMeshToModel(const ProceduralMesh& mesh)
+ModelRef ProceduralModelGenerator::ConvertMeshToModel(const ProceduralMesh& mesh)
 {
 	CustomVector<Model::Vertex> vs;
 	CustomVector<Model::Face> faces;
@@ -350,6 +330,11 @@ static ModelRef ConvertMeshToModel(const ProceduralMesh& mesh)
 		faces[i].Indexes[2] = mesh.Faces[i].Indexes[2];
 	}
 
+	return CreateModel(vs, faces);
+}
+
+ModelRef ProceduralModelGenerator::CreateModel(const CustomVector<Model::Vertex>& vs, const CustomVector<Model::Face>& faces)
+{
 	return ::Effekseer::MakeRefPtr<Model>(vs, faces);
 }
 
