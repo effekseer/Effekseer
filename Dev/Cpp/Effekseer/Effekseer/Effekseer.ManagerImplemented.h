@@ -482,6 +482,11 @@ public:
 
 	void RequestToPlaySound(Instance* instance, const EffectNodeImplemented* node);
 
+	const Vector3D& GetViewerPosition() const
+	{
+		return m_ViewerPosition;
+	}
+
 	ManagerImplemented* GetImplemented() override
 	{
 		return this;
