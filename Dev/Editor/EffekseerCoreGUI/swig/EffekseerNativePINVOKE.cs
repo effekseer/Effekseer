@@ -1053,6 +1053,9 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRenderer_PlayEffect___")]
   public static extern void EffectRenderer_PlayEffect(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRenderer_UpdatePaused___")]
+  public static extern void EffectRenderer_UpdatePaused(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRenderer_Update__SWIG_0___")]
   public static extern void EffectRenderer_Update__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1);
 
