@@ -1,4 +1,5 @@
-﻿#include "Effekseer.Parameters.h"
+﻿#include <algorithm>
+#include "Effekseer.Parameters.h"
 #include "../Effekseer.EffectImplemented.h"
 #include "../Effekseer.Instance.h"
 #include "../Effekseer.InstanceGlobal.h"
