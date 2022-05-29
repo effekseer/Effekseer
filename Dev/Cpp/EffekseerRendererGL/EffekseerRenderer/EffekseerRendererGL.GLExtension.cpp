@@ -135,6 +135,15 @@ typedef void(EFK_STDCALL* FP_glCopyTexSubImage3D)(GLenum target,
 												  GLsizei width,
 												  GLsizei height);
 
+typedef void (EFK_STDCALL* FP_glGenQueriesEXT)(GLsizei n, GLuint *ids);
+typedef void (EFK_STDCALL* FP_glDeleteQueriesEXT)(GLsizei n, const GLuint *ids);
+typedef void (EFK_STDCALL* FP_glBeginQueryEXT)(GLenum target, GLuint id);
+typedef void (EFK_STDCALL* FP_glEndQueryEXT)(GLenum target);
+typedef void (EFK_STDCALL* FP_glGetQueryObjectivEXT)(GLuint id, GLenum pname, GLint *params);
+typedef void (EFK_STDCALL* FP_glGetQueryObjectuivEXT)(GLuint id, GLenum pname, GLuint *params);
+typedef void (EFK_STDCALL* FP_glGetQueryObjecti64vEXT)(GLuint id, GLenum pname, int64_t *params);
+typedef void (EFK_STDCALL* FP_glGetQueryObjectui64vEXT)(GLuint id, GLenum pname, uint64_t *params);
+
 static FP_glDeleteBuffers g_glDeleteBuffers = nullptr;
 static FP_glCreateShader g_glCreateShader = nullptr;
 static FP_glBindBuffer g_glBindBuffer = nullptr;
@@ -204,6 +213,15 @@ static FP_glTexImage3D g_glTexImage3D = nullptr;
 
 static FP_glCopyTexSubImage3D g_glCopyTexSubImage3D = nullptr;
 
+static FP_glGenQueriesEXT g_glGenQueriesEXT = nullptr;
+static FP_glDeleteQueriesEXT g_glDeleteQueriesEXT = nullptr;
+static FP_glBeginQueryEXT g_glBeginQueryEXT = nullptr;
+static FP_glEndQueryEXT g_glEndQueryEXT = nullptr;
+static FP_glGetQueryObjectivEXT g_glGetQueryObjectivEXT = nullptr;
+static FP_glGetQueryObjectuivEXT g_glGetQueryObjectuivEXT = nullptr;
+static FP_glGetQueryObjecti64vEXT g_glGetQueryObjecti64vEXT = nullptr;
+static FP_glGetQueryObjectui64vEXT g_glGetQueryObjectui64vEXT = nullptr;
+
 #elif defined(__EFFEKSEER_RENDERER_GLES2__)
 
 typedef void (*FP_glGenVertexArraysOES)(GLsizei n, GLuint* arrays);
@@ -241,6 +259,7 @@ static bool g_isInitialized = false;
 static bool g_isSupportedVertexArray = false;
 static bool g_isSurrpotedBufferRange = false;
 static bool g_isSurrpotedMapBuffer = false;
+static bool g_isSupportedQueries = false;
 static OpenGLDeviceType g_deviceType = OpenGLDeviceType::OpenGL2;
 
 #if _WIN32
@@ -371,6 +390,17 @@ bool Initialize(OpenGLDeviceType deviceType, bool isExtensionsEnabled)
 	g_isSurrpotedMapBuffer = (g_glMapBuffer && g_glUnmapBuffer);
 
 #endif
+
+	GET_PROC_REQ(glGenQueriesEXT);
+	GET_PROC_REQ(glDeleteQueriesEXT);
+	GET_PROC_REQ(glBeginQueryEXT);
+	GET_PROC_REQ(glEndQueryEXT);
+	GET_PROC_REQ(glGetQueryObjectivEXT);
+	GET_PROC_REQ(glGetQueryObjectuivEXT);
+	GET_PROC_REQ(glGetQueryObjecti64vEXT);
+	GET_PROC_REQ(glGetQueryObjectui64vEXT);
+
+	g_isSupportedQueries = (g_glGenQueriesEXT && g_glDeleteQueriesEXT && g_glBeginQueryEXT && g_glEndQueryEXT && g_glGetQueryObjectuivEXT && g_glGetQueryObjectivEXT && g_glGetQueryObjectui64vEXT && g_glGetQueryObjecti64vEXT);
 
 #if defined(__EFFEKSEER_RENDERER_GLES2__)
 
@@ -1026,6 +1056,46 @@ void glCopyTexSubImage3D(GLenum target,
 #else
 	::glCopyTexSubImage3D(target, level, xoffset, yoffset, zoffset, x, y, width, height);
 #endif
+}
+
+void glGenQueries(GLsizei n, GLuint* ids)
+{
+	g_glGenQueriesEXT(n, ids);
+}
+
+void glDeleteQueries(GLsizei n, const GLuint* ids)
+{
+	g_glDeleteQueriesEXT(n, ids);
+}
+
+void glBeginQuery(GLenum target, GLuint id)
+{
+	g_glBeginQueryEXT(target, id);
+}
+
+void glEndQuery(GLenum target)
+{
+	g_glEndQueryEXT(target);
+}
+
+void glGetQueryObjectiv(GLuint id, GLenum pname, GLint* params)
+{
+	g_glGetQueryObjectivEXT(id, pname, params);
+}
+
+void glGetQueryObjectuiv(GLuint id, GLenum pname, GLuint* params)
+{
+	g_glGetQueryObjectuivEXT(id, pname, params);
+}
+
+void glGetQueryObjecti64v(GLuint id, GLenum pname, int64_t* params)
+{
+	g_glGetQueryObjecti64vEXT(id, pname, params);
+}
+
+void glGetQueryObjectui64v(GLuint id, GLenum pname, uint64_t* params)
+{
+	g_glGetQueryObjectui64vEXT(id, pname, params);
 }
 
 //----------------------------------------------------------------------------------
