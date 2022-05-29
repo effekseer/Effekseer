@@ -98,7 +98,7 @@ public:
 
 	void Update(bool shown);
 
-	void SetBaseMatrix(const SIMD::Mat43f& mat);
+	void ApplyBaseMatrix(const SIMD::Mat43f& mat);
 
 	void SetParentMatrix(const SIMD::Mat43f& mat);
 

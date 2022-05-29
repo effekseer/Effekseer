@@ -176,14 +176,13 @@ void InstanceGroup::Update(bool shown)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void InstanceGroup::SetBaseMatrix(const SIMD::Mat43f& mat)
+void InstanceGroup::ApplyBaseMatrix(const SIMD::Mat43f& mat)
 {
 	for (auto instance : m_instances)
 	{
 		if (instance->IsActive())
 		{
-			instance->m_GlobalMatrix43 *= mat;
-			assert(instance->m_GlobalMatrix43.IsValid());
+			instance->ApplyBaseMatrix(mat);
 		}
 	}
 }

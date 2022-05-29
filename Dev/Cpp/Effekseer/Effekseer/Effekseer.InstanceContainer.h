@@ -68,7 +68,7 @@ public:
 
 	void Update(bool recursive, bool shown);
 
-	void SetBaseMatrix(bool recursive, const SIMD::Mat43f& mat);
+	void ApplyBaseMatrix(bool recursive, const SIMD::Mat43f& mat);
 
 	void RemoveForcibly(bool recursive);
 
