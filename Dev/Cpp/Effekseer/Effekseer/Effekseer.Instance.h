@@ -6,6 +6,7 @@
 
 #include "SIMD/Mat43f.h"
 #include "SIMD/Mat44f.h"
+#include "SIMD/Quaternionf.h"
 #include "SIMD/Vec2f.h"
 #include "SIMD/Vec3f.h"
 #include "SIMD/Vec4f.h"
@@ -35,6 +36,70 @@ namespace Effekseer
 struct InstanceSoundState
 {
 	int32_t delay;
+};
+
+class TimeSeriesMatrix
+{
+	SIMD::Mat43f previous_;
+	SIMD::Mat43f current_;
+	float deltaTime_;
+
+public:
+	void Reset(const SIMD::Mat43f& matrix)
+	{
+		previous_ = matrix;
+		current_ = matrix;
+		deltaTime_ = 0.0f;
+	}
+
+	void Step(const SIMD::Mat43f& matrix, float deltaTime)
+	{
+		previous_ = current_;
+		current_ = matrix;
+		deltaTime_ = deltaTime;
+	}
+
+	const SIMD::Mat43f& GetPrevious() const
+	{
+		return previous_;
+	}
+
+	const SIMD::Mat43f& GetCurrent() const
+	{
+		return current_;
+	}
+
+	SIMD::Mat43f Get(float time) const
+	{
+		if (deltaTime_ == 0)
+		{
+			return GetCurrent();
+		}
+
+		SIMD::Vec3f s_previous;
+		SIMD::Mat43f r_previous;
+		SIMD::Vec3f t_previous;
+
+		previous_.GetSRT(s_previous, r_previous, t_previous);
+
+		SIMD::Vec3f s_current;
+		SIMD::Mat43f r_current;
+		SIMD::Vec3f t_current;
+
+		current_.GetSRT(s_current, r_current, t_current);
+
+		const auto q_previous = SIMD::Quaternionf::FromMatrix(r_previous);
+		const auto q_current = SIMD::Quaternionf::FromMatrix(r_current);
+
+		// TODO : Make correct
+		const auto alpha = time / deltaTime_;
+
+		const auto t = t_current * alpha + t_previous * (1.0f - alpha);
+		const auto s = s_current * alpha + s_previous * (1.0f - alpha);
+		const auto q = SIMD::Quaternionf::Slerp(q_previous, q_current, alpha);
+
+		return SIMD::Mat43f::SRT(s, q.ToMatrix(), t);
+	}
 };
 
 class alignas(16) Instance : public IntrusiveList<Instance>::Node
@@ -120,8 +185,11 @@ public:
 	// Spawning Method matrix
 	SIMD::Mat43f m_GenerationLocation;
 
+	// a transform matrix in the world coordinate in previous frame
+	SIMD::Mat43f previousGlobalMatrix_;
+
 	// a transform matrix in the world coordinate
-	SIMD::Mat43f m_GlobalMatrix43;
+	TimeSeriesMatrix globalMatrix_;
 
 	SIMD::Mat43f m_GlobalMatrix43_Rendered;
 
