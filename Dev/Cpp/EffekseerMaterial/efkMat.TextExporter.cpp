@@ -130,8 +130,7 @@ public:
 	int32_t AddConstant(ValueType type, std::array<float, 4> values, const std::string& name = "")
 	{
 		// for opengl es
-		auto getNum = [](float f) -> std::string
-		{
+		auto getNum = [](float f) -> std::string {
 			std::ostringstream ret;
 			if (f == (int)f)
 			{
@@ -303,8 +302,7 @@ public:
 
 		str_ << exporter_->GetTypeName(type) << " " << GetName(selfID) << " = " << exporter_->GetTypeName(type) << "(";
 
-		auto getElmName = [](int n) -> std::string
-		{
+		auto getElmName = [](int n) -> std::string {
 			if (n == 0)
 				return ".x";
 			if (n == 1)
@@ -1177,8 +1175,7 @@ std::string TextExporter::ExportOutputNode(std::shared_ptr<Material> material,
 
 std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 {
-	auto exportInputOrProp = [this](ValueType type_, TextExporterPin& pin_, std::shared_ptr<NodeProperty>& prop_) -> std::string
-	{
+	auto exportInputOrProp = [this](ValueType type_, TextExporterPin& pin_, std::shared_ptr<NodeProperty>& prop_) -> std::string {
 		if (pin_.IsConnected)
 		{
 			return GetInputArg(type_, pin_);
@@ -1188,15 +1185,13 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 
 	std::ostringstream ret;
 
-	auto exportIn2Out2Param2 = [&, this](const char* func, const char* op) -> void
-	{
+	auto exportIn2Out2Param2 = [&, this](const char* func, const char* op) -> void {
 		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "=" << func << "("
 			<< exportInputOrProp(node->Outputs[0].Type, node->Inputs[0], node->Target->Properties[0]) << op
 			<< exportInputOrProp(node->Outputs[0].Type, node->Inputs[1], node->Target->Properties[1]) << ");" << std::endl;
 	};
 
-	auto exportIn1Out1 = [&, this](const char* func) -> void
-	{
+	auto exportIn1Out1 = [&, this](const char* func) -> void {
 		assert(node->Inputs.size() == 1);
 		assert(node->Outputs.size() == 1);
 		assert(node->Inputs[0].Type == node->Outputs[0].Type);
@@ -1205,8 +1200,7 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 	};
 
 	// for opengl es
-	auto getNum = [](float f) -> std::string
-	{
+	auto getNum = [](float f) -> std::string {
 		std::ostringstream ret;
 		if (f == (int)f)
 		{
@@ -1482,8 +1476,7 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 	{
 		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "=" << GetTypeName(node->Outputs[0].Type) << "(";
 
-		auto getElmName = [](int n) -> std::string
-		{
+		auto getElmName = [](int n) -> std::string {
 			if (n == 0)
 				return ".x";
 			if (n == 1)
@@ -1651,7 +1644,7 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 	{
 		if (node->Outputs[0].IsConnected)
 		{
-			ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "=GetLightDirection();" << std::endl;		
+			ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "=GetLightDirection();" << std::endl;
 		}
 
 		if (node->Outputs[1].IsConnected)
@@ -1677,7 +1670,9 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 
 	if (node->Target->Parameter->Type == NodeType::LocalTime)
 	{
-		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "=" << "$LOCALTIME$" << ";" << std::endl;
+		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "="
+			<< "$LOCALTIME$"
+			<< ";" << std::endl;
 	}
 
 	if (node->Target->Parameter->Type == NodeType::CameraPositionWS)
@@ -1956,8 +1951,7 @@ std::string TextExporter::GetInputArg(const ValueType& pinType, TextExporterPin&
 	else
 	{
 		// for opengl es
-		auto getNum = [&pin](int i) -> std::string
-		{
+		auto getNum = [&pin](int i) -> std::string {
 			auto f = pin.NumberValue[i];
 
 			std::ostringstream ret;
@@ -2010,8 +2004,7 @@ std::string TextExporter::GetInputArg(const ValueType& pinType, float value)
 	std::ostringstream ret;
 
 	// for opengl es
-	auto getNum = [](float f) -> std::string
-	{
+	auto getNum = [](float f) -> std::string {
 		std::ostringstream ret;
 		if (f == (int)f)
 		{
@@ -2050,8 +2043,7 @@ std::string TextExporter::GetInputArg(const ValueType& pinType, float value)
 std::string TextExporter::GetInputArg(const ValueType& pinType, std::array<float, 2> value)
 {
 	// for opengl es
-	auto getNum = [](float f) -> std::string
-	{
+	auto getNum = [](float f) -> std::string {
 		std::ostringstream ret;
 		if (f == (int)f)
 		{

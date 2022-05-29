@@ -79,21 +79,23 @@ void ManagerImplemented::DrawSet::UpdateLevelOfDetails(const Vector3D& viewerPos
 	float dz = viewerPosition.Z - drawSetMatrix.Z.GetW();
 	float distanceToViewer = SIMD::Sqrt(dx * dx + dy * dy + dz * dz) + lodDistaceBias;
 	EffectImplemented* effect = (EffectImplemented*)this->ParameterPointer.Get();
-	if(effect->LODs.distance3 > 0.0F && distanceToViewer > effect->LODs.distance3)
+	if (effect->LODs.distance3 > 0.0F && distanceToViewer > effect->LODs.distance3)
 	{
 		GlobalPointer->CurrentLevelOfDetails = 1 << 3;
-	} else if(effect->LODs.distance2 > 0.0F && distanceToViewer > effect->LODs.distance2)
+	}
+	else if (effect->LODs.distance2 > 0.0F && distanceToViewer > effect->LODs.distance2)
 	{
 		GlobalPointer->CurrentLevelOfDetails = 1 << 2;
-	} else if(effect->LODs.distance1 > 0.0F && distanceToViewer > effect->LODs.distance1)
+	}
+	else if (effect->LODs.distance1 > 0.0F && distanceToViewer > effect->LODs.distance1)
 	{
 		GlobalPointer->CurrentLevelOfDetails = 1 << 1;
-	} else 
+	}
+	else
 	{
 		GlobalPointer->CurrentLevelOfDetails = 1 << 0;
 	}
 }
-
 
 SIMD::Mat43f ManagerImplemented::DrawSet::GetGlobalMatrix() const
 {
@@ -825,7 +827,7 @@ int32_t ManagerImplemented::GetTotalInstanceCount() const
 	return instanceCount;
 }
 
-int ManagerImplemented::GetCurrentLOD(Handle handle) 
+int ManagerImplemented::GetCurrentLOD(Handle handle)
 {
 	if (m_DrawSets.count(handle) > 0)
 	{
@@ -1099,7 +1101,7 @@ void ManagerImplemented::SetPaused(Handle handle, bool paused)
 
 void ManagerImplemented::SetSpawnDisabled(Handle handle, bool spawnDisabled)
 {
-	if(m_DrawSets.count(handle) > 0)
+	if (m_DrawSets.count(handle) > 0)
 	{
 		m_DrawSets[handle].GlobalPointer->IsSpawnDisabled = spawnDisabled;
 	}
@@ -1107,7 +1109,7 @@ void ManagerImplemented::SetSpawnDisabled(Handle handle, bool spawnDisabled)
 
 bool ManagerImplemented::GetSpawnDisabled(Handle handle)
 {
-	if(m_DrawSets.count(handle) > 0)
+	if (m_DrawSets.count(handle) > 0)
 	{
 		return m_DrawSets[handle].GlobalPointer->IsSpawnDisabled;
 	}
@@ -1309,7 +1311,7 @@ void ManagerImplemented::Flip()
 				}
 
 				ds.GlobalPointer->EffectGlobalMatrix = mat;
-				if(ds.DoUseBaseMatrix)
+				if (ds.DoUseBaseMatrix)
 				{
 					ds.GlobalPointer->EffectGlobalMatrix *= ds.BaseMatrix;
 				}
@@ -1317,7 +1319,7 @@ void ManagerImplemented::Flip()
 				Matrix44 inverted;
 				Matrix44::Inverse(inverted, ToStruct(SIMD::Mat44f(mat)));
 				ds.GlobalPointer->InvertedEffectGlobalMatrix = inverted;
-				
+
 				ds.IsParameterChanged = false;
 			}
 
@@ -1401,7 +1403,7 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter)
 	{
 		times = 1;
 	}
-	
+
 	BeginUpdate(parameter.ViewerPosition);
 
 	for (int32_t t = 0; t < times; t++)
@@ -1429,7 +1431,6 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter)
 			{
 				drawSet.second.GlobalPointer->BeginDeltaFrame(0);
 			}
-			
 		}
 
 		for (auto& chunks : instanceChunks_)
@@ -1622,7 +1623,7 @@ void ManagerImplemented::UpdateHandleInternal(DrawSet& drawSet)
 	// evaluate LOD
 
 	drawSet.UpdateLevelOfDetails(m_ViewerPosition, m_LodDistanceBias);
-	
+
 	// calculate dynamic parameters
 	auto e = static_cast<EffectImplemented*>(drawSet.ParameterPointer.Get());
 	assert(e != nullptr);

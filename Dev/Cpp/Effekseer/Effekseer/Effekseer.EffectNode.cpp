@@ -171,13 +171,11 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			}
 		}
 
-		if(ef->GetVersion() >= Version17Alpha3)
+		if (ef->GetVersion() >= Version17Alpha3)
 		{
 			memcpy(&LODsParam, pos, sizeof(ParameterLODs));
 			pos += sizeof(ParameterLODs);
 		}
-		
-
 
 		TranslationParam.Load(pos, ef);
 
@@ -325,19 +323,19 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		}
 
 		// load kill rules
-		if(ef->GetVersion() >= Version17Alpha5)
+		if (ef->GetVersion() >= Version17Alpha5)
 		{
 			memcpy(&KillParam.Type, pos, sizeof(int32_t));
 			pos += sizeof(int32_t);
 
 			memcpy(&KillParam.IsScaleAndRotationApplied, pos, sizeof(int));
 			pos += sizeof(int);
-			
-			if(KillParam.Type == KillType::Box)
+
+			if (KillParam.Type == KillType::Box)
 			{
 				memcpy(&KillParam.Box.Center, pos, sizeof(Vector3D));
 				pos += sizeof(Vector3D);
-				
+
 				memcpy(&KillParam.Box.Size, pos, sizeof(Vector3D));
 				pos += sizeof(Vector3D);
 
@@ -346,17 +344,19 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 
 				KillParam.Box.Center *= ef->GetMaginification();
 				KillParam.Box.Size *= ef->GetMaginification();
-			} else if(KillParam.Type == KillType::Plane)
+			}
+			else if (KillParam.Type == KillType::Plane)
 			{
 				memcpy(&KillParam.Plane.PlaneAxis, pos, sizeof(Vector3D));
 				pos += sizeof(Vector3D);
-				
+
 				memcpy(&KillParam.Plane.PlaneOffset, pos, sizeof(float));
 				pos += sizeof(float);
-	
+
 				KillParam.Plane.PlaneAxis /= Vector3D::Length(KillParam.Plane.PlaneAxis);
 				KillParam.Plane.PlaneOffset *= ef->GetMaginification();
-			} else if(KillParam.Type == KillType::Sphere)
+			}
+			else if (KillParam.Type == KillType::Sphere)
 			{
 				memcpy(&KillParam.Sphere.Center, pos, sizeof(Vector3D));
 				pos += sizeof(Vector3D);
@@ -366,12 +366,12 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 
 				memcpy(&KillParam.Sphere.IsKillInside, pos, sizeof(int));
 				pos += sizeof(int);
-				
+
 				KillParam.Sphere.Center *= ef->GetMaginification();
 				KillParam.Sphere.Radius *= ef->GetMaginification();
 			}
 		}
-		
+
 		// Convert right handle coordinate system into left handle coordinate system
 		if (setting->GetCoordinateSystem() == CoordinateSystem::LH)
 		{

@@ -99,8 +99,7 @@ private:
 
 	constexpr float MakeGrad(const Pint hashnum, const float x, const float y, const float z) const noexcept
 	{
-		return this->MakeGrad(hashnum, hashnum < 8 ? x : y, hashnum < 4 ? y : hashnum == 12 || hashnum == 14 ? x
-																											 : z);
+		return this->MakeGrad(hashnum, hashnum < 8 ? x : y, hashnum < 4 ? y : hashnum == 12 || hashnum == 14 ? x : z);
 	}
 
 	constexpr float GetGrad(const Pint hashnum, const float x, const float y, const float z) const noexcept
@@ -110,8 +109,7 @@ private:
 
 	float MakeGradFast(const Pint hashnum, const float u, const float v) const noexcept
 	{
-		union
-		{
+		union {
 			float f;
 			uint32_t i;
 		} u_bits, v_bits;
@@ -127,8 +125,7 @@ private:
 
 	float MakeGradFast(const Pint hashnum, const float x, const float y, const float z) const noexcept
 	{
-		return this->MakeGradFast(hashnum, hashnum < 8 ? x : y, hashnum < 4 ? y : hashnum == 12 || hashnum == 14 ? x
-																												 : z);
+		return this->MakeGradFast(hashnum, hashnum < 8 ? x : y, hashnum < 4 ? y : hashnum == 12 || hashnum == 14 ? x : z);
 	}
 
 	float GetGradFast(const Pint hashnum, const float x, const float y, const float z) const noexcept

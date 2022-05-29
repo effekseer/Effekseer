@@ -10,7 +10,7 @@
 
 namespace Effekseer
 {
-	
+
 struct ProceduralMeshVertex
 {
 	SIMD::Vec3f Position;

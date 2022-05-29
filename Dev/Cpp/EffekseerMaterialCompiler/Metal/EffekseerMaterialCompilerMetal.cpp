@@ -1265,8 +1265,7 @@ CompiledMaterialBinary* MaterialCompilerMetal::Compile(MaterialFile* materialFil
 	auto binary = new CompiledMaterialBinaryMetal();
 	//auto compiler = LLGI::CreateSharedPtr(new LLGI::CompilerMetal());
 
-	auto convertToVectorVS = [](const std::string& str) -> std::vector<uint8_t>
-	{
+	auto convertToVectorVS = [](const std::string& str) -> std::vector<uint8_t> {
 		std::vector<uint8_t> ret;
 
 		std::vector<char> buffer;
@@ -1308,8 +1307,7 @@ CompiledMaterialBinary* MaterialCompilerMetal::Compile(MaterialFile* materialFil
 		return ret;
 	};
 
-	auto convertToVectorPS = [](const std::string& str) -> std::vector<uint8_t>
-	{
+	auto convertToVectorPS = [](const std::string& str) -> std::vector<uint8_t> {
 		std::vector<uint8_t> ret;
 
 		std::vector<char> buffer;
@@ -1351,8 +1349,7 @@ CompiledMaterialBinary* MaterialCompilerMetal::Compile(MaterialFile* materialFil
 		return ret;
 	};
 
-	auto saveBinary = [&materialFile, &binary, &convertToVectorVS, &convertToVectorPS, &maximumUniformCount, &maximumTextureCount](MaterialShaderType type)
-	{
+	auto saveBinary = [&materialFile, &binary, &convertToVectorVS, &convertToVectorPS, &maximumUniformCount, &maximumTextureCount](MaterialShaderType type) {
 		auto shader = Metal::GenerateShader(materialFile, type, maximumUniformCount, maximumTextureCount);
 		binary->SetVertexShaderData(type, convertToVectorVS(shader.CodeVS));
 		binary->SetPixelShaderData(type, convertToVectorPS(shader.CodePS));

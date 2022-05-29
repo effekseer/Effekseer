@@ -9,8 +9,7 @@ namespace Effekseer
 
 struct ScalingState
 {
-	union
-	{
+	union {
 		struct
 		{
 			SIMD::Vec3f scale;

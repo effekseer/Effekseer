@@ -22,7 +22,6 @@ class Effect;
 class EffectSetting;
 class RenderImage;
 
-
 /**
  * \brief Can be used by the editor for additional rendering during effect rendering
  */
@@ -30,11 +29,15 @@ class EffectRendererCallback
 {
 
 public:
-	EffectRendererCallback(){}
+	EffectRendererCallback()
+	{
+	}
 
-	virtual void OnAfterClear() {};
+	virtual void OnAfterClear(){};
 
-	virtual ~EffectRendererCallback() {}
+	virtual ~EffectRendererCallback()
+	{
+	}
 };
 
 struct EffectRendererParameter
@@ -180,7 +183,7 @@ protected:
 
 	virtual void OnAfterClear()
 	{
-		if(Callback != nullptr)
+		if (Callback != nullptr)
 		{
 			Callback->OnAfterClear();
 		}
@@ -220,7 +223,7 @@ public:
 	void SetBehavior(const ViewerEffectBehavior& behavior);
 
 	int GetCurrentLOD() const;
-	
+
 	int32_t GetInstanceCount() const;
 
 	void SetStep(int32_t step);

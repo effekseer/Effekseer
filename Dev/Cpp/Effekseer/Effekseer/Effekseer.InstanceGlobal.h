@@ -72,8 +72,8 @@ public:
 
 	SIMD::Mat44f EffectGlobalMatrix;
 	// Used for collision detection by kill rules
-	SIMD::Mat44f InvertedEffectGlobalMatrix; 
-	
+	SIMD::Mat44f InvertedEffectGlobalMatrix;
+
 	bool IsGlobalColorSet = false;
 	Color GlobalColor = Color(255, 255, 255, 255);
 

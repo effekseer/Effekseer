@@ -100,10 +100,9 @@ void InstanceGroup::GenerateInstancesIfRequired(float localTime, RandObject& ran
 		}
 	}
 
-	const bool isSpawnRestrictedByLOD = (m_global->CurrentLevelOfDetails & m_effectNode->LODsParam.MatchingLODs) == 0
-		&& !m_effectNode->CanSpawnWithNonMatchingLOD();
+	const bool isSpawnRestrictedByLOD = (m_global->CurrentLevelOfDetails & m_effectNode->LODsParam.MatchingLODs) == 0 && !m_effectNode->CanSpawnWithNonMatchingLOD();
 	const bool canSpawn = !m_global->IsSpawnDisabled && !isSpawnRestrictedByLOD;
-	
+
 	// GenerationTimeOffset can be minus value.
 	// Minus frame particles is generated simultaniously at frame 0.
 	while (m_generationState == GenerationState::Generating &&
@@ -111,7 +110,7 @@ void InstanceGroup::GenerateInstancesIfRequired(float localTime, RandObject& ran
 		   localTime >= m_nextGenerationTime)
 	{
 		// Disabled spawn only prevents instance generation but spawn rate should not be affected once spawn is enabled again
-		if(canSpawn)
+		if (canSpawn)
 		{
 			// Create a particle
 			auto instance = m_manager->CreateInstance(m_effectNode, m_container, this);
@@ -125,7 +124,7 @@ void InstanceGroup::GenerateInstancesIfRequired(float localTime, RandObject& ran
 
 			m_generatedCount++;
 		}
-		
+
 		auto gt = ApplyEq(m_effectNode->GetEffect(), m_global, parent, &rand, m_effectNode->CommonValues.RefEqGenerationTime, m_effectNode->CommonValues.GenerationTime);
 		m_nextGenerationTime += Max(0.0f, gt.getValue(rand));
 	}

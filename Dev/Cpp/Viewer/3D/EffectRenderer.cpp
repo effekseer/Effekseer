@@ -1056,7 +1056,7 @@ void EffectRenderer::SetBehavior(const ViewerEffectBehavior& behavior)
 
 int EffectRenderer::GetCurrentLOD() const
 {
-	if(handles_.size() == 0)
+	if (handles_.size() == 0)
 	{
 		return 0;
 	}

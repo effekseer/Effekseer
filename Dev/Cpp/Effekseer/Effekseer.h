@@ -2060,7 +2060,6 @@ public:
 #ifndef __EFFEKSEER_FILE_H__
 #define __EFFEKSEER_FILE_H__
 
-
 namespace Effekseer
 {
 
@@ -2139,7 +2138,6 @@ public:
 
 #ifndef __EFFEKSEER_DEFAULT_FILE_H__
 #define __EFFEKSEER_DEFAULT_FILE_H__
-
 
 namespace Effekseer
 {
@@ -4182,7 +4180,7 @@ public:
 		Useful for LODs debugging.
 	 */
 	virtual void SetLODDistanceBias(float distanceBias) = 0;
-	
+
 	/**
 		@brief	エフェクトのインスタンスに設定されている行列を取得する。
 		@param	handle	[in]	インスタンスのハンドル
@@ -4363,7 +4361,7 @@ public:
 	 *	@brief Whether spawn of new particles is disabled
 	 */
 	virtual bool GetSpawnDisabled(Handle handle) = 0;
-	
+
 	/**
 		@brief
 		\~English	Get a layer index
@@ -4921,7 +4919,6 @@ public:
 #if !(defined(__EFFEKSEER_NETWORK_DISABLED__))
 #if !(defined(_PSVITA) || defined(_XBOXONE))
 
-
 namespace Effekseer
 {
 
@@ -5023,7 +5020,6 @@ public:
 #if !(defined(__EFFEKSEER_NETWORK_DISABLED__))
 #if !(defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE))
 
-
 namespace Effekseer
 {
 
@@ -5054,4 +5050,3 @@ public:
 #endif // __EFFEKSEER_CLIENT_H__
 
 #include "Effekseer.Modules.h"
-

@@ -326,9 +326,9 @@ public:
 	int32_t GetTotalInstanceCount() const override;
 
 	int GetCurrentLOD(Handle handle) override;
-	
+
 	float GetLODDistanceBias() const override;
-	
+
 	void SetLODDistanceBias(float distanceBias) override;
 
 	Matrix43 GetMatrix(Handle handle) override;
@@ -376,7 +376,7 @@ public:
 	void SetSpawnDisabled(Handle handle, bool spawnDisabled) override;
 
 	bool GetSpawnDisabled(Handle handle) override;
-	
+
 	int GetLayer(Handle handle) override;
 
 	void SetLayer(Handle handle, int32_t layer) override;

@@ -394,49 +394,50 @@ void Instance::Update(float deltaFrame, bool shown)
 			}
 
 			// checking kill rules
-			if(!removed && m_pEffectNode->KillParam.Type != KillType::None)
+			if (!removed && m_pEffectNode->KillParam.Type != KillType::None)
 			{
 				SIMD::Vec3f localPosition{};
 				if (m_pEffectNode->KillParam.IsScaleAndRotationApplied)
 				{
 					SIMD::Mat44f invertedGlobalMatrix = this->GetInstanceGlobal()->InvertedEffectGlobalMatrix;
 					localPosition = SIMD::Vec3f::Transform(this->prevGlobalPosition_, invertedGlobalMatrix);
-				} else
+				}
+				else
 				{
 					SIMD::Mat44f globalMatrix = this->GetInstanceGlobal()->EffectGlobalMatrix;
 					localPosition = this->prevGlobalPosition_ - globalMatrix.GetTranslation();
 				}
-				
-				if(m_pEffectNode->KillParam.Type == KillType::Box)
+
+				if (m_pEffectNode->KillParam.Type == KillType::Box)
 				{
 					localPosition = localPosition - m_pEffectNode->KillParam.Box.Center;
 					localPosition = SIMD::Vec3f::Abs(localPosition);
 					SIMD::Vec3f size = m_pEffectNode->KillParam.Box.Size;
-					bool isWithin = localPosition.GetX() <= size.GetX()
-					                && localPosition.GetY() <= size.GetY()
-					                && localPosition.GetZ() <= size.GetZ();
-			
-					if(isWithin == m_pEffectNode->KillParam.Box.IsKillInside)
+					bool isWithin = localPosition.GetX() <= size.GetX() && localPosition.GetY() <= size.GetY() && localPosition.GetZ() <= size.GetZ();
+
+					if (isWithin == m_pEffectNode->KillParam.Box.IsKillInside)
 					{
 						removed = true;
 					}
-				} else if(m_pEffectNode->KillParam.Type == KillType::Plane)
+				}
+				else if (m_pEffectNode->KillParam.Type == KillType::Plane)
 				{
 					SIMD::Vec3f planeNormal = m_pEffectNode->KillParam.Plane.PlaneAxis;
 					SIMD::Vec3f planePosition = planeNormal * m_pEffectNode->KillParam.Plane.PlaneOffset;
 					float planeW = -SIMD::Vec3f::Dot(planePosition, planeNormal);
 					float factor = SIMD::Vec3f::Dot(localPosition, planeNormal) + planeW;
-					if(factor > 0.0F)
+					if (factor > 0.0F)
 					{
 						removed = true;
 					}
-				} else if(m_pEffectNode->KillParam.Type == KillType::Sphere)
+				}
+				else if (m_pEffectNode->KillParam.Type == KillType::Sphere)
 				{
 					SIMD::Vec3f delta = localPosition - m_pEffectNode->KillParam.Sphere.Center;
 					float distance = delta.GetSquaredLength();
 					float radius = m_pEffectNode->KillParam.Sphere.Radius;
 					bool isWithin = distance <= (radius * radius);
-					if(isWithin == m_pEffectNode->KillParam.Sphere.IsKillInside)
+					if (isWithin == m_pEffectNode->KillParam.Sphere.IsKillInside)
 					{
 						removed = true;
 					}

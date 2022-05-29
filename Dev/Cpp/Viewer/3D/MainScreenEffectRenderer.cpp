@@ -37,13 +37,12 @@ bool MainScreenEffectRenderer::OnAfterInitialize()
 
 	spdlog::trace("OK Guide");
 
-
 	lineRenderer_ = std::make_shared<LineRenderer>(graphics_->GetGraphics()->GetGraphicsDevice());
-	if(lineRenderer_ == nullptr)
+	if (lineRenderer_ == nullptr)
 	{
 		return false;
 	}
-	
+
 	spdlog::trace("OK Generic Line Renderer");
 
 	textureLoader_ = renderer_->CreateTextureLoader();

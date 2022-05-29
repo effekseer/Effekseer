@@ -517,7 +517,7 @@ public:
 	void AlignTextToFramePadding();
 
 	void SetNextItemWidth(float width);
-	
+
 	void SetCursorPosX(float x);
 	void SetCursorPosY(float y);
 	float GetCursorPosX();
@@ -767,7 +767,7 @@ public:
 
 	void PushTextWrapPos(float pos);
 	void PopTextWrapPos();
-	
+
 	bool IsItemHovered(float f);
 	bool IsItemHovered();
 	bool IsItemActive();
