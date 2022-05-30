@@ -73,7 +73,7 @@ Execure following command at the repository root.
 ```
 mkdir build
 cd build
-cmake -DBUILD_VIEWER=ON ..
+cmake -G Xcode -DBUILD_VIEWER=ON ..
 ```
 
 Open ``` build/Effekseer.xcodeproj ``` (C++)
