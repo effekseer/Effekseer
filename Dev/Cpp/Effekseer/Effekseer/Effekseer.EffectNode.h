@@ -118,6 +118,63 @@ struct ParameterLODs
 	NonMatchingLODBehaviour LODBehaviour = NonMatchingLODBehaviour::Hide;
 };
 
+enum class KillType : int32_t
+{
+	None = 0,
+	Box = 1,
+	Plane = 2,
+	Sphere = 3
+};
+
+struct KillRulesParameter
+{
+
+	KillType Type = KillType::None;
+	int IsScaleAndRotationApplied = 1;
+
+	union {
+		struct
+		{
+			Vector3D Center = {0.0F, 0.0F, 0.0F}; // In local space
+			Vector3D Size = {0.5F, 0.5F, 0.5F};	  // In local space
+			int IsKillInside = 0;
+		} Box;
+
+		struct
+		{
+			Vector3D PlaneAxis = {0.0F, 1.0F, 0.0F}; // in local space
+			float PlaneOffset = 1.0f;				 // in the direction of plane axis
+		} Plane;
+
+		struct
+		{
+			Vector3D Center = {0.0F, 0.0F, 0.0F}; // in local space
+			float Radius = 1.0F;
+			int IsKillInside = 0;
+		} Sphere;
+	};
+
+	KillRulesParameter()
+	{
+	}
+
+	void MakeCoordinateSystemLH()
+	{
+		if (Type == KillType::Box)
+		{
+			Box.Center.Z *= -1.0F;
+		}
+		else if (Type == KillType::Plane)
+		{
+			Plane.PlaneAxis.Z *= -1.0F;
+		}
+		else if (Type == KillType::Sphere)
+		{
+			Sphere.Center.Z *= -1.0F;
+		}
+	}
+};
+
 struct ParameterDepthValues
 {
 	float DepthOffset;
@@ -164,8 +221,7 @@ struct LocationAbsParameter
 {
 	LocationAbsType type = LocationAbsType::None;
 
-	union
-	{
+	union {
 		struct
 		{
 
@@ -683,6 +739,7 @@ public:
 	SteeringBehaviorParameter SteeringBehaviorParam;
 	TriggerParameter TriggerParam;
 	ParameterLODs LODsParam;
+	KillRulesParameter KillParam;
 
 	TranslationParameter TranslationParam;
 

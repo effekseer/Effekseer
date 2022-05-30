@@ -25,7 +25,9 @@ namespace Effekseer.Binary
 		Ver17Alpha2 = 1701,
 		Ver17Alpha3 = 1702,
 		Ver17Alpha4 = 1703,
-		Latest = Ver17Alpha4,
+		Ver17Alpha5 = 1704,
+		Ver17Alpha6 = 1705,
+		Latest = Ver17Alpha6,
 	}
 
 	public class Exporter
@@ -986,6 +988,38 @@ namespace Effekseer.Binary
 
 				float compatibility = 1.0f;
 				node_data.Add(compatibility.GetBytes());
+				
+				if (exporterVersion >= ExporterVersion.Ver17Alpha5)
+				{
+					node_data.Add(n.KillRulesValues.Type.GetValueAsInt().GetBytes());
+					node_data.Add(BitConverter.GetBytes(n.KillRulesValues.IsScaleAndRotationApplied ? 1 : 0));
+
+					if(n.KillRulesValues.Type.Value == KillRulesValues.KillType.Box)
+					{
+						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.BoxCenter.X));
+						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.BoxCenter.Y));
+						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.BoxCenter.Z));
+						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.BoxSize.X));
+						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.BoxSize.Y));
+						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.BoxSize.Z));
+						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.BoxIsKillInside ? 1 : 0));
+						
+					} else if(n.KillRulesValues.Type.Value == KillRulesValues.KillType.Height)
+					{
+						Data.Value.Vector3D normal = KillRulesValues.PlaneAxisNormal[n.KillRulesValues.PlaneAxis.Value].Normal;
+						node_data.Add(BitConverter.GetBytes(normal.X));
+						node_data.Add(BitConverter.GetBytes(normal.Y));
+						node_data.Add(BitConverter.GetBytes(normal.Z));
+						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.PlaneOffset));
+					} else if (n.KillRulesValues.Type.Value == KillRulesValues.KillType.Sphere)
+					{
+						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.SphereCenter.X));
+						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.SphereCenter.Y));
+						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.SphereCenter.Z));
+						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.SphereRadius));
+						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.SphereIsKillInside ? 1 : 0));
+					}
+				}
 
 				node_data.Add(RendererCommonValues.GetBytes(n.RendererCommonValues, n.AdvancedRendererCommonValuesValues, texture_and_index, normalTexture_and_index, distortionTexture_and_index, material_and_index, exporterVersion, ConvertLoadingFilePath));
 

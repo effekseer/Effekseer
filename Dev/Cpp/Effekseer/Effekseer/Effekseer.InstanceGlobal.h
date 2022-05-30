@@ -9,6 +9,7 @@
 #include "Effekseer.Color.h"
 #include "Effekseer.Random.h"
 #include "SIMD/Mat43f.h"
+#include "SIMD/Mat44f.h"
 #include "SIMD/Vec3f.h"
 
 //----------------------------------------------------------------------------------
@@ -68,7 +69,11 @@ public:
 
 	bool IsSpawnDisabled = false;
 	int CurrentLevelOfDetails = 0;
-	
+
+	SIMD::Mat44f EffectGlobalMatrix;
+	// Used for collision detection by kill rules
+	SIMD::Mat44f InvertedEffectGlobalMatrix;
+
 	bool IsGlobalColorSet = false;
 	Color GlobalColor = Color(255, 255, 255, 255);
 

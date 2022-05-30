@@ -1,0 +1,33 @@
+KillRules,Reglas de matar
+KillRules_Description,"Kill Rules permite especificar el área en la que se deben destruir las partículas.
+ - Caja utilizada para matar partículas cuando se mueve dentro o fuera de la caja especificada.
+ - Plano utilizado para matar partículas cuando se mueve más allá de cierta posición a lo largo del eje especificado.
+ - Esfera utilizada para matar partículas cuando se mueve dentro o fuera de la esfera especificada."
+KillRules_Type_Name,Tipo
+KillRules_Box_Center_Name,Centro de la caja
+KillRules_Box_Size_Name,Tamaño de caja
+KillRules_Box_IsKillInside_Name,Matar por dentro
+KillRules_Box_IsKillInside_Desc,"Si está habilitado, las partículas morirán si caen DENTRO de la caja.
+Si está deshabilitado (el valor predeterminado), se matarán cuando caigan FUERA de la caja."
+KillRules_IsScaleAndRotationApplied_Name,"Escala y
+Rotación aplicada"
+KillRules_IsScaleAndRotationApplied_Desc,"Si está habilitado (el valor predeterminado), la forma de muerte se rotará y se escalará con efecto.
+Si está deshabilitado, la orientación y la escala de la forma de matar permanecerán constantes"
+KillRules_Plane_Axis_Name,Eje Plano
+KillRules_Plane_PlaneOffset_Name,"Compensación de plano
+a lo largo del eje"\
+KillRules_Sphere_Center_Name,Centro Esfera
+KillRules_Sphere_Radius_Name,Radio de la esfera
+KillRules_Sphere_IsKillInside_Name,Matar por dentro
+KillRules_Sphere_IsKillInside_Desc,"Si está habilitado, las partículas morirán si caen DENTRO de la esfera.
+Si está deshabilitado (el valor predeterminado), morirán cuando caigan FUERA de la esfera."
+KillType_None_Name,Ninguno
+KillType_Box_Name,Caja
+KillType_Plane_Name,Plano
+KillType_Sphere_Name,Esfera
+PlaneAxisType_XPositive_Name,Positivo X
+PlaneAxisType_XNegative_Name,Negativo X
+PlaneAxisType_YPositive_Name,Positivo Y
+PlaneAxisType_YNegative_Name,Negativo Y
+PlaneAxisType_ZPositive_Name,Positivo Z
+PlaneAxisType_ZNegative_Name,Negativo Z

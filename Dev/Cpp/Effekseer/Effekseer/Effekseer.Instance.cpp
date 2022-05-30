@@ -291,7 +291,9 @@ void Instance::Update(float deltaFrame, bool shown)
 		isParentSequenceChanged = m_pParent->m_sequenceNumber >= m_sequenceNumber;
 	}
 
-	if (m_GlobalMatrix43Calculated && (m_ParentMatrix43Calculated || m_pParent == nullptr) && deltaFrame == 0.0F && !isParentRemoving && !isParentSequenceChanged)
+	const bool isUpdateRequired = deltaFrame != 0.0f || m_pEffectNode->RotationParam.RotationType == ParameterRotationType::ParameterRotationType_RotateToViewpoint;
+
+	if (m_GlobalMatrix43Calculated && (m_ParentMatrix43Calculated || m_pParent == nullptr) && !isUpdateRequired && !isParentRemoving && !isParentSequenceChanged)
 	{
 		return;
 	}
@@ -388,6 +390,57 @@ void Instance::Update(float deltaFrame, bool shown)
 				if (GetInstanceGlobal()->GetInputTriggerCount(m_pEffectNode->TriggerParam.ToRemove.index) > 0)
 				{
 					removed = true;
+				}
+			}
+
+			// checking kill rules
+			if (!removed && m_pEffectNode->KillParam.Type != KillType::None)
+			{
+				SIMD::Vec3f localPosition{};
+				if (m_pEffectNode->KillParam.IsScaleAndRotationApplied)
+				{
+					SIMD::Mat44f invertedGlobalMatrix = this->GetInstanceGlobal()->InvertedEffectGlobalMatrix;
+					localPosition = SIMD::Vec3f::Transform(this->prevGlobalPosition_, invertedGlobalMatrix);
+				}
+				else
+				{
+					SIMD::Mat44f globalMatrix = this->GetInstanceGlobal()->EffectGlobalMatrix;
+					localPosition = this->prevGlobalPosition_ - globalMatrix.GetTranslation();
+				}
+
+				if (m_pEffectNode->KillParam.Type == KillType::Box)
+				{
+					localPosition = localPosition - m_pEffectNode->KillParam.Box.Center;
+					localPosition = SIMD::Vec3f::Abs(localPosition);
+					SIMD::Vec3f size = m_pEffectNode->KillParam.Box.Size;
+					bool isWithin = localPosition.GetX() <= size.GetX() && localPosition.GetY() <= size.GetY() && localPosition.GetZ() <= size.GetZ();
+
+					if (isWithin == m_pEffectNode->KillParam.Box.IsKillInside)
+					{
+						removed = true;
+					}
+				}
+				else if (m_pEffectNode->KillParam.Type == KillType::Plane)
+				{
+					SIMD::Vec3f planeNormal = m_pEffectNode->KillParam.Plane.PlaneAxis;
+					SIMD::Vec3f planePosition = planeNormal * m_pEffectNode->KillParam.Plane.PlaneOffset;
+					float planeW = -SIMD::Vec3f::Dot(planePosition, planeNormal);
+					float factor = SIMD::Vec3f::Dot(localPosition, planeNormal) + planeW;
+					if (factor > 0.0F)
+					{
+						removed = true;
+					}
+				}
+				else if (m_pEffectNode->KillParam.Type == KillType::Sphere)
+				{
+					SIMD::Vec3f delta = localPosition - m_pEffectNode->KillParam.Sphere.Center;
+					float distance = delta.GetSquaredLength();
+					float radius = m_pEffectNode->KillParam.Sphere.Radius;
+					bool isWithin = distance <= (radius * radius);
+					if (isWithin == m_pEffectNode->KillParam.Sphere.IsKillInside)
+					{
+						removed = true;
+					}
 				}
 			}
 		}
@@ -512,7 +565,7 @@ void Instance::UpdateTransform(float deltaFrame)
 
 		localPosition += localVelocity;
 
-		auto matRot = RotationFunctions::CalculateRotation(rotation_values, m_pEffectNode->RotationParam, m_randObject, m_pEffectNode->GetEffect(), m_pContainer->GetRootInstance(), m_LivingTime, m_LivedTime, m_pParent, m_pEffectNode->DynamicFactor);
+		auto matRot = RotationFunctions::CalculateRotation(rotation_values, m_pEffectNode->RotationParam, m_randObject, m_pEffectNode->GetEffect(), m_pContainer->GetRootInstance(), m_LivingTime, m_LivedTime, m_pParent, m_pEffectNode->DynamicFactor, m_pManager->GetImplemented()->GetViewerPosition());
 		auto scaling = ScalingFunctions::UpdateScaling(scaling_values, m_pEffectNode->ScalingParam, m_randObject, m_pEffectNode->GetEffect(), m_pContainer->GetRootInstance(), m_LivingTime, m_LivedTime, m_pParent, m_pEffectNode->DynamicFactor);
 
 		// update local fields
@@ -678,8 +731,7 @@ void Instance::Draw(Instance* next, int32_t index, void* userData)
 	if (!m_pEffectNode->IsRendered)
 		return;
 
-	if ((GetInstanceGlobal()->CurrentLevelOfDetails & m_pEffectNode->LODsParam.MatchingLODs) == 0
-	    && !m_pEffectNode->CanDrawWithNonMatchingLOD())
+	if ((GetInstanceGlobal()->CurrentLevelOfDetails & m_pEffectNode->LODsParam.MatchingLODs) == 0 && !m_pEffectNode->CanDrawWithNonMatchingLOD())
 		return;
 
 	if (m_sequenceNumber != ((ManagerImplemented*)m_pManager)->GetSequenceNumber())

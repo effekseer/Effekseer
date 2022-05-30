@@ -66,6 +66,10 @@ public class EffectRenderer : global::System.IDisposable {
     EffekseerNativePINVOKE.EffectRenderer_PlayEffect(swigCPtr);
   }
 
+  public void UpdatePaused() {
+    EffekseerNativePINVOKE.EffectRenderer_UpdatePaused(swigCPtr);
+  }
+
   public void Update() {
     EffekseerNativePINVOKE.EffectRenderer_Update__SWIG_0(swigCPtr);
   }
@@ -176,6 +180,17 @@ public class EffectRenderer : global::System.IDisposable {
     } 
     get {
       int ret = EffekseerNativePINVOKE.EffectRenderer_RandomSeed_get(swigCPtr);
+      return ret;
+    } 
+  }
+
+  public EffectRendererCallback Callback {
+    set {
+      EffekseerNativePINVOKE.EffectRenderer_Callback_set(swigCPtr, EffectRendererCallback.getCPtr(value));
+    } 
+    get {
+      global::System.IntPtr cPtr = EffekseerNativePINVOKE.EffectRenderer_Callback_get(swigCPtr);
+      EffectRendererCallback ret = (cPtr == global::System.IntPtr.Zero) ? null : new EffectRendererCallback(cPtr, false);
       return ret;
     } 
   }

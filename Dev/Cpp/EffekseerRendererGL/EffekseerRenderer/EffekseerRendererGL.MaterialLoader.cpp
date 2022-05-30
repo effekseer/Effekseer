@@ -18,13 +18,11 @@ void StoreVertexUniform(const ::Effekseer::MaterialFile& materialFile, const Eff
 {
 	using namespace Effekseer::Backend;
 
-	auto storeVector = [&](const char* name, int offset, int count = 1)
-	{
+	auto storeVector = [&](const char* name, int offset, int count = 1) {
 		uniformLayout.emplace_back(UniformLayoutElement{ShaderStageType::Vertex, name, UniformBufferLayoutElementType::Vector4, count, offset});
 	};
 
-	auto storeMatrix = [&](const char* name, int offset, int count = 1)
-	{
+	auto storeMatrix = [&](const char* name, int offset, int count = 1) {
 		uniformLayout.emplace_back(UniformLayoutElement{ShaderStageType::Vertex, name, UniformBufferLayoutElementType::Matrix44, count, offset});
 	};
 
@@ -57,13 +55,11 @@ void StoreModelVertexUniform(const ::Effekseer::MaterialFile& materialFile, cons
 {
 	using namespace Effekseer::Backend;
 
-	auto storeVector = [&](const char* name, int offset, int count = 1)
-	{
+	auto storeVector = [&](const char* name, int offset, int count = 1) {
 		uniformLayout.emplace_back(UniformLayoutElement{ShaderStageType::Vertex, name, UniformBufferLayoutElementType::Vector4, count, offset});
 	};
 
-	auto storeMatrix = [&](const char* name, int offset, int count = 1)
-	{
+	auto storeMatrix = [&](const char* name, int offset, int count = 1) {
 		uniformLayout.emplace_back(UniformLayoutElement{ShaderStageType::Vertex, name, UniformBufferLayoutElementType::Matrix44, count, offset});
 	};
 
@@ -140,13 +136,11 @@ void StorePixelUniform(const ::Effekseer::MaterialFile& materialFile, const Effe
 {
 	using namespace Effekseer::Backend;
 
-	auto storeVector = [&](const char* name, int offset, int count = 1)
-	{
+	auto storeVector = [&](const char* name, int offset, int count = 1) {
 		uniformLayout.emplace_back(UniformLayoutElement{ShaderStageType::Pixel, name, UniformBufferLayoutElementType::Vector4, count, offset});
 	};
 
-	auto storeMatrix = [&](const char* name, int offset, int count = 1)
-	{
+	auto storeMatrix = [&](const char* name, int offset, int count = 1) {
 		uniformLayout.emplace_back(UniformLayoutElement{ShaderStageType::Pixel, name, UniformBufferLayoutElementType::Matrix44, count, offset});
 	};
 
@@ -291,8 +285,7 @@ Effekseer::CustomVector<Effekseer::CustomString<char>> StoreTextureLocations(con
 				{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "", "TEXCOORD", 3},
 			};
 
-			auto getFormat = [](int32_t i) -> Effekseer::Backend::VertexLayoutFormat
-			{
+			auto getFormat = [](int32_t i) -> Effekseer::Backend::VertexLayoutFormat {
 				if (i == 1)
 					return Effekseer::Backend::VertexLayoutFormat::R32_FLOAT;
 				if (i == 2)

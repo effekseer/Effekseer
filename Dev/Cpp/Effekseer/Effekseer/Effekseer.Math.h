@@ -13,8 +13,7 @@ inline To BitCast(From from)
 {
 	static_assert(sizeof(From) == sizeof(To), "number of bits not match");
 
-	union
-	{
+	union {
 		To to;
 		From from;
 	} v;

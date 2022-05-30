@@ -10,6 +10,7 @@ namespace Effekseer.GUI.Menu
 			new DockSettings("Position", typeof(Dock.LocationValues), Icons.PanelLocation),
 			new DockSettings("AttractionForces", typeof(Dock.LocationAbsValues), Icons.PanelForceField),
 			new DockSettings("SpawningMethod", typeof(Dock.GenerationLocationValues), Icons.PanelGeneration),
+			new DockSettings("KillRules", typeof(Dock.KillRules), Icons.PanelKillRules),
 			new DockSettings("Rotation", typeof(Dock.RotationValues), Icons.PanelRotation),
 			new DockSettings("Scale", typeof(Dock.ScaleValues), Icons.PanelScale),
 			new DockSettings("Depth", typeof(Dock.DepthValues), Icons.PanelDepth),

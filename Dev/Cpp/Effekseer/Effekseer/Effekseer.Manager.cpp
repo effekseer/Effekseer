@@ -80,21 +80,23 @@ void ManagerImplemented::DrawSet::UpdateLevelOfDetails(const Vector3D& viewerPos
 	float dz = viewerPosition.Z - drawSetMatrix.Z.GetW();
 	float distanceToViewer = SIMD::Sqrt(dx * dx + dy * dy + dz * dz) + lodDistaceBias;
 	EffectImplemented* effect = (EffectImplemented*)this->ParameterPointer.Get();
-	if(effect->LODs.distance3 > 0.0F && distanceToViewer > effect->LODs.distance3)
+	if (effect->LODs.distance3 > 0.0F && distanceToViewer > effect->LODs.distance3)
 	{
 		GlobalPointer->CurrentLevelOfDetails = 1 << 3;
-	} else if(effect->LODs.distance2 > 0.0F && distanceToViewer > effect->LODs.distance2)
+	}
+	else if (effect->LODs.distance2 > 0.0F && distanceToViewer > effect->LODs.distance2)
 	{
 		GlobalPointer->CurrentLevelOfDetails = 1 << 2;
-	} else if(effect->LODs.distance1 > 0.0F && distanceToViewer > effect->LODs.distance1)
+	}
+	else if (effect->LODs.distance1 > 0.0F && distanceToViewer > effect->LODs.distance1)
 	{
 		GlobalPointer->CurrentLevelOfDetails = 1 << 1;
-	} else 
+	}
+	else
 	{
 		GlobalPointer->CurrentLevelOfDetails = 1 << 0;
 	}
 }
-
 
 SIMD::Mat43f ManagerImplemented::DrawSet::GetGlobalMatrix() const
 {
@@ -391,11 +393,11 @@ void ManagerImplemented::StoreSortingDrawSets(const Manager::DrawParameter& draw
 
 	if (drawParameter.IsSortingEffectsEnabled)
 	{
-		std::sort(sortedRenderingDrawSets_.begin(), sortedRenderingDrawSets_.end(), [&](const DrawSet& a, const DrawSet& b) -> bool {
+		std::sort(sortedRenderingDrawSets_.begin(), sortedRenderingDrawSets_.end(), [&](const DrawSet& a, const DrawSet& b) -> bool
+				  {
 			const auto da = SIMD::Vec3f::Dot(a.GetGlobalMatrix().GetTranslation() - drawParameter.CameraPosition, drawParameter.CameraFrontDirection);
 			const auto db = SIMD::Vec3f::Dot(b.GetGlobalMatrix().GetTranslation() - drawParameter.CameraPosition, drawParameter.CameraFrontDirection);
-			return da > db;
-		});
+			return da > db; });
 	}
 }
 
@@ -517,7 +519,8 @@ Instance* ManagerImplemented::CreateInstance(EffectNodeImplemented* pEffectNode,
 
 	int32_t offset = creatableChunkOffsets_[generationNumber];
 
-	auto it = std::find_if(chunks.begin() + offset, chunks.end(), [](const InstanceChunk* chunk) { return chunk->IsInstanceCreatable(); });
+	auto it = std::find_if(chunks.begin() + offset, chunks.end(), [](const InstanceChunk* chunk)
+						   { return chunk->IsInstanceCreatable(); });
 
 	creatableChunkOffsets_[generationNumber] = (int32_t)std::distance(chunks.begin(), it);
 
@@ -842,7 +845,7 @@ int32_t ManagerImplemented::GetTotalInstanceCount() const
 	return instanceCount;
 }
 
-int ManagerImplemented::GetCurrentLOD(Handle handle) 
+int ManagerImplemented::GetCurrentLOD(Handle handle)
 {
 	if (m_DrawSets.count(handle) > 0)
 	{
@@ -1116,7 +1119,7 @@ void ManagerImplemented::SetPaused(Handle handle, bool paused)
 
 void ManagerImplemented::SetSpawnDisabled(Handle handle, bool spawnDisabled)
 {
-	if(m_DrawSets.count(handle) > 0)
+	if (m_DrawSets.count(handle) > 0)
 	{
 		m_DrawSets[handle].GlobalPointer->IsSpawnDisabled = spawnDisabled;
 	}
@@ -1124,7 +1127,7 @@ void ManagerImplemented::SetSpawnDisabled(Handle handle, bool spawnDisabled)
 
 bool ManagerImplemented::GetSpawnDisabled(Handle handle)
 {
-	if(m_DrawSets.count(handle) > 0)
+	if (m_DrawSets.count(handle) > 0)
 	{
 		return m_DrawSets[handle].GlobalPointer->IsSpawnDisabled;
 	}
@@ -1318,12 +1321,22 @@ void ManagerImplemented::Flip()
 					{
 						SIMD::Vec3f s = ds.BaseMatrix.GetScale();
 						radius *= s.GetLength();
-						culling_pos = SIMD::Vec3f::Transform(SIMD::Vec3f(effect->Culling.Location), ds.BaseMatrix);
+						culling_pos = SIMD::Vec3f::Transform(culling_pos, ds.BaseMatrix);
 					}
 
 					ds.CullingPosition = SIMD::ToStruct(culling_pos);
 					ds.CullingRadius = radius;
 				}
+
+				ds.GlobalPointer->EffectGlobalMatrix = mat;
+				if (ds.DoUseBaseMatrix)
+				{
+					ds.GlobalPointer->EffectGlobalMatrix *= ds.BaseMatrix;
+				}
+				// would be nice to have Invert function for SIMD matrix
+				Matrix44 inverted;
+				Matrix44::Inverse(inverted, ToStruct(SIMD::Mat44f(mat)));
+				ds.GlobalPointer->InvertedEffectGlobalMatrix = inverted;
 
 				ds.IsParameterChanged = false;
 			}
@@ -1359,7 +1372,8 @@ void ManagerImplemented::Update(const UpdateParameter& parameter)
 	{
 		m_WorkerThreads[0].WaitForComplete();
 		// Process on worker thread
-		m_WorkerThreads[0].RunAsync([this, parameter]() { DoUpdate(parameter); });
+		m_WorkerThreads[0].RunAsync([this, parameter]()
+									{ DoUpdate(parameter); });
 
 		if (parameter.SyncUpdate)
 		{
@@ -1408,7 +1422,7 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter)
 	{
 		times = 1;
 	}
-	
+
 	BeginUpdate(parameter.ViewerPosition);
 
 	for (int32_t t = 0; t < times; t++)
@@ -1436,7 +1450,6 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter)
 			{
 				drawSet.second.GlobalPointer->BeginDeltaFrame(0);
 			}
-			
 		}
 
 		for (auto& chunks : instanceChunks_)
@@ -1453,13 +1466,13 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter)
 					const uint32_t chunkOffset = threadID;
 					// Process on worker thread
 					PROFILER_BLOCK("DoUpdate::RunAsyncGroup", profiler::colors::Red100);
-					m_WorkerThreads[threadID].RunAsync([this, &chunks, chunkOffset, chunkStep]() {
+					m_WorkerThreads[threadID].RunAsync([this, &chunks, chunkOffset, chunkStep]()
+													   {
 						PROFILER_BLOCK("DoUpdate::RunAsync", profiler::colors::Red200);
 						for (size_t i = chunkOffset; i < chunks.size(); i += chunkStep)
 						{
 							chunks[i]->UpdateInstances();
-						}
-					});
+						} });
 				}
 
 				// Process on this thread
@@ -1538,7 +1551,8 @@ void ManagerImplemented::EndUpdate()
 		auto last = chunks.end();
 		while (first != last)
 		{
-			auto it = std::find_if(first, last, [](const InstanceChunk* chunk) { return chunk->GetAliveCount() == 0; });
+			auto it = std::find_if(first, last, [](const InstanceChunk* chunk)
+								   { return chunk->GetAliveCount() == 0; });
 			if (it != last)
 			{
 				pooledChunks_.push(*it);
@@ -1629,7 +1643,7 @@ void ManagerImplemented::UpdateHandleInternal(DrawSet& drawSet)
 	// evaluate LOD
 
 	drawSet.UpdateLevelOfDetails(m_ViewerPosition, m_LodDistanceBias);
-	
+
 	// calculate dynamic parameters
 	auto e = static_cast<EffectImplemented*>(drawSet.ParameterPointer.Get());
 	assert(e != nullptr);
@@ -1749,7 +1763,7 @@ void ManagerImplemented::ResetAndPlayWithDataSet(DrawSet& drawSet, float frame)
 	pGlobal->ResetUpdatedFrame();
 
 	// Create an instance through a container
-	//drawSet.InstanceContainerPointer = CreateInstanceContainer(e->GetRoot(), drawSet.GlobalPointer, true, drawSet.GlobalMatrix, nullptr);
+	// drawSet.InstanceContainerPointer = CreateInstanceContainer(e->GetRoot(), drawSet.GlobalPointer, true, drawSet.GlobalMatrix, nullptr);
 
 	auto isShown = drawSet.IsShown;
 	drawSet.IsShown = false;
@@ -1763,7 +1777,7 @@ void ManagerImplemented::ResetAndPlayWithDataSet(DrawSet& drawSet, float frame)
 
 		UpdateInstancesByInstanceGlobal(drawSet);
 		UpdateHandleInternal(drawSet);
-		//drawSet.InstanceContainerPointer->Update(true, false);
+		// drawSet.InstanceContainerPointer->Update(true, false);
 		drawSet.GlobalPointer->EndDeltaFrame();
 	}
 
@@ -1774,7 +1788,7 @@ void ManagerImplemented::ResetAndPlayWithDataSet(DrawSet& drawSet, float frame)
 	UpdateInstancesByInstanceGlobal(drawSet);
 	UpdateHandleInternal(drawSet);
 
-	//drawSet.InstanceContainerPointer->Update(true, drawSet.IsShown);
+	// drawSet.InstanceContainerPointer->Update(true, drawSet.IsShown);
 	drawSet.GlobalPointer->EndDeltaFrame();
 }
 
@@ -1799,7 +1813,8 @@ void ManagerImplemented::Draw(const Manager::DrawParameter& drawParameter)
 
 	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, GetSetting()->GetCoordinateSystem());
 
-	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void {
+	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void
+	{
 		if (!CanDraw(drawSet, drawParameter, cullingPlanes))
 		{
 			return;
@@ -1863,7 +1878,8 @@ void ManagerImplemented::DrawBack(const Manager::DrawParameter& drawParameter)
 
 	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, GetSetting()->GetCoordinateSystem());
 
-	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void {
+	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void
+	{
 		if (!CanDraw(drawSet, drawParameter, cullingPlanes))
 		{
 			return;
@@ -1921,7 +1937,8 @@ void ManagerImplemented::DrawFront(const Manager::DrawParameter& drawParameter)
 
 	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, GetSetting()->GetCoordinateSystem());
 
-	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void {
+	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void
+	{
 		if (!CanDraw(drawSet, drawParameter, cullingPlanes))
 		{
 			return;

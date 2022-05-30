@@ -426,8 +426,7 @@ bool Material::FindLoop(std::shared_ptr<Pin> pin1, std::shared_ptr<Pin> pin2)
 
 	std::function<bool(std::weak_ptr<Node>)> visit;
 
-	visit = [&](std::weak_ptr<Node> node) -> bool
-	{
+	visit = [&](std::weak_ptr<Node> node) -> bool {
 		auto locked_node = node.lock();
 
 		for (auto p : locked_node->OutputPins)
@@ -1291,13 +1290,11 @@ std::shared_ptr<Node> Material::CreateNode(std::shared_ptr<NodeParameter> parame
 	else
 	{
 		auto command = std::make_shared<DelegateCommand>(
-			[this, val_new]() -> void
-			{
+			[this, val_new]() -> void {
 				this->nodes_ = val_new;
 				this->UpdateWarnings();
 			},
-			[this, val_old]() -> void
-			{
+			[this, val_old]() -> void {
 				this->nodes_ = val_old;
 				this->UpdateWarnings();
 			});
@@ -1336,14 +1333,12 @@ void Material::RemoveNode(std::shared_ptr<Node> node)
 	}
 
 	auto command = std::make_shared<DelegateCommand>(
-		[this, nodes_new, links_new]() -> void
-		{
+		[this, nodes_new, links_new]() -> void {
 			this->nodes_ = nodes_new;
 			this->links_ = links_new;
 			this->UpdateWarnings();
 		},
-		[this, nodes_old, links_old]() -> void
-		{
+		[this, nodes_old, links_old]() -> void {
 			this->nodes_ = nodes_old;
 			this->links_ = links_old;
 			this->UpdateWarnings();
@@ -1465,14 +1460,12 @@ ConnectResultType Material::ConnectPin(std::shared_ptr<Pin> pin1, std::shared_pt
 	links_new.push_back(link);
 
 	auto command = std::make_shared<DelegateCommand>(
-		[this, links_new, p1]() -> void
-		{
+		[this, links_new, p1]() -> void {
 			this->links_ = links_new;
 			this->UpdateWarnings();
 			this->MakeDirty(p1->Parent.lock());
 		},
-		[this, links_old, p1]() -> void
-		{
+		[this, links_old, p1]() -> void {
 			this->links_ = links_old;
 			this->UpdateWarnings();
 			this->MakeDirty(p1->Parent.lock());
@@ -1493,8 +1486,7 @@ bool Material::BreakPin(std::shared_ptr<Link> link)
 	auto inputNode = link->InputPin->Parent.lock();
 
 	auto command = std::make_shared<DelegateCommand>(
-		[this, links_new, inputNode]() -> void
-		{
+		[this, links_new, inputNode]() -> void {
 			this->links_ = links_new;
 			this->UpdateWarnings();
 			if (inputNode != nullptr)
@@ -1502,8 +1494,7 @@ bool Material::BreakPin(std::shared_ptr<Link> link)
 				MakeDirty(inputNode);
 			}
 		},
-		[this, links_old, inputNode]() -> void
-		{
+		[this, links_old, inputNode]() -> void {
 			this->links_ = links_old;
 			this->UpdateWarnings();
 			if (inputNode != nullptr)
@@ -1692,13 +1683,11 @@ void Material::ChangeValueTextureType(std::shared_ptr<TextureInfo> prop, Texture
 	auto value_new = type;
 
 	auto command = std::make_shared<DelegateCommand>(
-		[prop, value_new, this]() -> void
-		{
+		[prop, value_new, this]() -> void {
 			prop->Type = value_new;
 			// TODO make content dirty
 		},
-		[prop, value_old, this]() -> void
-		{
+		[prop, value_old, this]() -> void {
 			prop->Type = value_old;
 			// TODO make content dirty
 		});
@@ -1978,8 +1967,7 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 		bwParam.Push(param->DefaultConstants[3]);
 	}
 
-	const auto pushGradient = [&](const std::vector<std::shared_ptr<TextExporterGradient>>& gradients)
-	{
+	const auto pushGradient = [&](const std::vector<std::shared_ptr<TextExporterGradient>>& gradients) {
 		bwParam.Push(static_cast<int32_t>(gradients.size()));
 
 		for (size_t i = 0; i < gradients.size(); i++)

@@ -686,7 +686,7 @@ bool EffectImplemented::LoadBody(const uint8_t* data, int32_t size, float mag)
 		}
 	}
 
-	if(m_version >= Version17Alpha3)
+	if (m_version >= Version17Alpha3)
 	{
 		binaryReader.Read(LODs.distance1);
 		binaryReader.Read(LODs.distance2);

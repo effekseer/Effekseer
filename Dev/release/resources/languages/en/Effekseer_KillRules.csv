@@ -1,0 +1,33 @@
+KillRules,Kill Rules
+KillRules_Description,"Kill Rules allows to specify area in which particles should be destroyed.
+ - Box used to kill particle when it moves inside or outside of the specified box.
+ - Plane used to kill particle when it moves beyond certain position along specified axis.
+ - Sphere used to kill particle when it moves inside or outside of the specified sphere."
+KillRules_Type_Name,Type
+KillRules_Box_Center_Name,Box Center
+KillRules_Box_Size_Name,Box Size
+KillRules_Box_IsKillInside_Name,Kill Inside
+KillRules_Box_IsKillInside_Desc,"If enabled, particles will be killed if they fall INSIDE the box. 
+If disabled (the default), they will be killed when they fall OUTSIDE the box."
+KillRules_IsScaleAndRotationApplied_Name,"Scale And
+Rotation Applied"
+KillRules_IsScaleAndRotationApplied_Desc,"If enabled (the default) kill shape will be rotated and scaled with effect.
+If disabled the kill shape orientation and scale will remain constant"
+KillRules_Plane_Axis_Name,Plane Axis
+KillRules_Plane_PlaneOffset_Name,"Plane Offset
+Along Axis"
+KillRules_Sphere_Center_Name,Sphere Center
+KillRules_Sphere_Radius_Name,Sphere Radius
+KillRules_Sphere_IsKillInside_Name,Kill Inside
+KillRules_Sphere_IsKillInside_Desc,"If enabled, particles will be killed if they fall INSIDE the sphere. 
+If disabled (the default), they will be killed when they fall OUTSIDE the sphere."
+KillType_None_Name,None
+KillType_Box_Name,Box
+KillType_Plane_Name,Plane
+KillType_Sphere_Name,Sphere
+PlaneAxisType_XPositive_Name,Positive X
+PlaneAxisType_XNegative_Name,Negative X
+PlaneAxisType_YPositive_Name,Positive Y
+PlaneAxisType_YNegative_Name,Negative Y
+PlaneAxisType_ZPositive_Name,Positive Z
+PlaneAxisType_ZNegative_Name,Negative Z

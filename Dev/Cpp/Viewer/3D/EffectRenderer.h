@@ -22,6 +22,24 @@ class Effect;
 class EffectSetting;
 class RenderImage;
 
+/**
+ * \brief Can be used by the editor for additional rendering during effect rendering
+ */
+class EffectRendererCallback
+{
+
+public:
+	EffectRendererCallback()
+	{
+	}
+
+	virtual void OnAfterClear(){};
+
+	virtual ~EffectRendererCallback()
+	{
+	}
+};
+
 struct EffectRendererParameter
 {
 	DistortionType Distortion = DistortionType::Current;
@@ -165,6 +183,10 @@ protected:
 
 	virtual void OnAfterClear()
 	{
+		if (Callback != nullptr)
+		{
+			Callback->OnAfterClear();
+		}
 	}
 
 	virtual void OnBeforePostprocess()
@@ -186,6 +208,7 @@ public:
 	void ResizeScreen(const Vector2I& screenSize);
 
 	void PlayEffect();
+	void UpdatePaused();
 	void Update();
 	void Update(int32_t frame);
 	void Render(std::shared_ptr<RenderImage> renderImage);
@@ -200,7 +223,7 @@ public:
 	void SetBehavior(const ViewerEffectBehavior& behavior);
 
 	int GetCurrentLOD() const;
-	
+
 	int32_t GetInstanceCount() const;
 
 	void SetStep(int32_t step);
@@ -254,6 +277,7 @@ public:
 	int32_t GetGPUTime();
 
 	int32_t RandomSeed = -1;
+	EffectRendererCallback* Callback = nullptr;
 };
 
 } // namespace Tool

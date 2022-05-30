@@ -125,8 +125,7 @@ void Compile(std::shared_ptr<Graphics> graphics,
 		efkMaterial.SetUniformName(i, result.Uniforms[i]->UniformName.c_str());
 	}
 
-	const auto copyGradient = [&](std::vector<Effekseer::MaterialFile::GradientParameter>& dst, const std::vector<std::shared_ptr<TextExporterGradient>>& src)
-	{
+	const auto copyGradient = [&](std::vector<Effekseer::MaterialFile::GradientParameter>& dst, const std::vector<std::shared_ptr<TextExporterGradient>>& src) {
 		dst.resize(src.size());
 
 		for (size_t i = 0; i < dst.size(); i++)
@@ -162,8 +161,7 @@ void Compile(std::shared_ptr<Graphics> graphics,
 	auto textures = result.Textures;
 	auto removed_it = std::remove_if(textures.begin(),
 									 textures.end(),
-									 [](const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& v) -> bool
-									 { return v->Index < 0; });
+									 [](const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& v) -> bool { return v->Index < 0; });
 
 	if (removed_it != textures.end())
 	{
@@ -173,8 +171,7 @@ void Compile(std::shared_ptr<Graphics> graphics,
 	std::sort(textures.begin(),
 			  textures.end(),
 			  [](const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& a,
-				 const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& b) -> bool
-			  { return a->Index < b->Index; });
+				 const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& b) -> bool { return a->Index < b->Index; });
 
 	for (auto t : textures)
 	{
@@ -211,8 +208,7 @@ void ExtractUniforms(std::shared_ptr<Graphics> graphics,
 	auto textures = result.Textures;
 	auto removed_it = std::remove_if(textures.begin(),
 									 textures.end(),
-									 [](const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& v) -> bool
-									 { return v->Index < 0; });
+									 [](const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& v) -> bool { return v->Index < 0; });
 
 	if (removed_it != textures.end())
 	{
@@ -222,8 +218,7 @@ void ExtractUniforms(std::shared_ptr<Graphics> graphics,
 	std::sort(textures.begin(),
 			  textures.end(),
 			  [](const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& a,
-				 const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& b) -> bool
-			  { return a->Index < b->Index; });
+				 const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& b) -> bool { return a->Index < b->Index; });
 
 	for (auto t : textures)
 	{
@@ -647,8 +642,7 @@ void Editor::CloseContents()
 	auto selectedContent = contents_[selectedContentInd_];
 
 	auto removed_it =
-		std::remove_if(contents_.begin(), contents_.end(), [](std::shared_ptr<EditorContent> d) -> bool
-					   { return d->IsClosing; });
+		std::remove_if(contents_.begin(), contents_.end(), [](std::shared_ptr<EditorContent> d) -> bool { return d->IsClosing; });
 	contents_.erase(removed_it, contents_.end());
 
 	if (selectedContent->IsClosing)
@@ -988,8 +982,7 @@ void Editor::UpdatePopup()
 	// New node
 	if (ImGui::BeginPopup(label_new_node))
 	{
-		auto create_node = [&, this](std::shared_ptr<LibraryContentBase> content) -> void
-		{
+		auto create_node = [&, this](std::shared_ptr<LibraryContentBase> content) -> void {
 			auto nodeParam = content->Create();
 			auto node = material->CreateNode(nodeParam, false);
 			ImVec2 nodePos{floorf(popupPosition.x), floorf(popupPosition.y)};
@@ -1030,8 +1023,7 @@ void Editor::UpdatePopup()
 			}
 		};
 
-		auto showContent = [&create_node](std::shared_ptr<LibraryContentBase> c) -> void
-		{
+		auto showContent = [&create_node](std::shared_ptr<LibraryContentBase> c) -> void {
 			auto& nodeTypeName = StringContainer::GetValue((c->Name + "_Node_Name").c_str(), c->Name.c_str());
 
 			if (ImGui::MenuItem(nodeTypeName.c_str()))
@@ -1050,8 +1042,7 @@ void Editor::UpdatePopup()
 			}
 		};
 
-		auto isShown = [this](std::shared_ptr<LibraryContentBase> c) -> bool
-		{
+		auto isShown = [this](std::shared_ptr<LibraryContentBase> c) -> bool {
 			if (!c->IsShown)
 			{
 				return false;
@@ -1170,8 +1161,7 @@ void Editor::UpdateCreating()
 	if (ed::BeginCreate(ImColor(255, 255, 255), 2.0f))
 	{
 
-		auto showLabel = [](const char* label, ImColor color)
-		{
+		auto showLabel = [](const char* label, ImColor color) {
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - ImGui::GetTextLineHeight());
 			auto size = ImGui::CalcTextSize(label);
 
@@ -1296,8 +1286,7 @@ void Editor::UpdateDeleting()
 	{
 		bool foundDelete = false;
 
-		auto startCollection = [&foundDelete, &material]() -> void
-		{
+		auto startCollection = [&foundDelete, &material]() -> void {
 			if (!foundDelete)
 			{
 				material->GetCommandManager()->StartCollection();
@@ -1347,8 +1336,7 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 	}
 
 	// Property
-	auto updateProp = [&, node](ValueType type, std::string name, std::shared_ptr<EffekseerMaterial::NodeProperty> p) -> void
-	{
+	auto updateProp = [&, node](ValueType type, std::string name, std::shared_ptr<EffekseerMaterial::NodeProperty> p) -> void {
 		auto floatValues = p->Floats;
 
 		auto nameStr = StringContainer::GetValue((name + "_Name").c_str(), name.c_str());
@@ -1420,8 +1408,7 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 		}
 		else if (type == ValueType::Texture)
 		{
-			auto showPath = [&p]() -> void
-			{
+			auto showPath = [&p]() -> void {
 				if (ImGui::IsItemHovered() && !ImGui::IsItemActive())
 				{
 					ImGui::SetTooltip(p->Str.c_str());
@@ -1603,12 +1590,12 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 				auto selectedColorMarker = state.GetColorMarker(tempState.selectedIndex);
 				if (selectedColorMarker != nullptr)
 				{
-					if(ImGui::ColorEdit3("Color", selectedColorMarker->Color.data(), ImGuiColorEditFlags_Float))
+					if (ImGui::ColorEdit3("Color", selectedColorMarker->Color.data(), ImGuiColorEditFlags_Float))
 					{
 						material->MakeDirty(node);
 					}
 
-					if(ImGui::DragFloat("Intensity", &selectedColorMarker->Intensity, 0.1f, 0.0f, 100.0f, "%f", 1.0f))
+					if (ImGui::DragFloat("Intensity", &selectedColorMarker->Intensity, 0.1f, 0.0f, 100.0f, "%f", 1.0f))
 					{
 						material->MakeDirty(node);
 					}
@@ -1620,7 +1607,7 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 				auto selectedAlphaMarker = state.GetAlphaMarker(tempState.selectedIndex);
 				if (selectedAlphaMarker != nullptr)
 				{
-					if(ImGui::DragFloat("Alpha", &selectedAlphaMarker->Alpha, 0.1f, 0.0f, 1.0f, "%f", 1.0f))
+					if (ImGui::DragFloat("Alpha", &selectedAlphaMarker->Alpha, 0.1f, 0.0f, 1.0f, "%f", 1.0f))
 					{
 						material->MakeDirty(node);
 					}
@@ -1846,8 +1833,7 @@ void Editor::UpdateToRecordMovingCommand()
 
 void Editor::UpdateNode(std::shared_ptr<Node> node)
 {
-	auto applyPosition = [&]() -> void
-	{
+	auto applyPosition = [&]() -> void {
 		if (contents_[GetSelectedContentIndex()]->IsLoading || node->GetIsPosDirtied())
 		{
 			ed::SetNodePosition(node->GUID, ImVec2(node->Pos.X, node->Pos.Y));

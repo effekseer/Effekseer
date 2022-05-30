@@ -1375,7 +1375,6 @@ public:
 	}
 };
 
-
 class NodeEffectScale : public NodeParameter
 {
 public:
@@ -1899,7 +1898,7 @@ public:
 			auto output = std::make_shared<PinParameter>();
 			output->Name = "Direction";
 			output->Type = ValueType::Float3;
-			OutputPins.push_back(output);		
+			OutputPins.push_back(output);
 		}
 
 		{

@@ -77,8 +77,7 @@ bool ImageButton_(ImTextureID user_texture_id,
 	bool pressed = ButtonBehavior(bb, id, &hovered, &held, ImGuiButtonFlags_PressedOnClick);
 
 	// Render
-	const ImU32 col = GetColorU32((held && hovered) ? ImGuiCol_ButtonActive : hovered ? ImGuiCol_ButtonHovered
-																					  : ImGuiCol_Button);
+	const ImU32 col = GetColorU32((held && hovered) ? ImGuiCol_ButtonActive : hovered ? ImGuiCol_ButtonHovered : ImGuiCol_Button);
 	RenderNavHighlight(bb, id);
 	RenderFrame(bb.Min, bb.Max, col, true, ImClamp((float)ImMin(padding.x, padding.y), 0.0f, style.FrameRounding));
 	if (bg_col.w > 0.0f)
@@ -177,8 +176,7 @@ bool ColorEdit4_(const char* label, float col[4], ImGuiColorEditFlags flags)
 			{"R:%0.3f", "G:%0.3f", "B:%0.3f", "A:%0.3f"}, // Long display for RGBA
 			{"H:%0.3f", "S:%0.3f", "V:%0.3f", "A:%0.3f"}  // Long display for HSVA
 		};
-		const int fmt_idx = hide_prefix ? 0 : (flags & ImGuiColorEditFlags_HSV) ? 2
-																				: 1;
+		const int fmt_idx = hide_prefix ? 0 : (flags & ImGuiColorEditFlags_HSV) ? 2 : 1;
 
 		PushItemWidth(w_item_one);
 		for (int n = 0; n < components; n++)
@@ -427,9 +425,9 @@ void ResizeBicubic(uint32_t* dst,
 	// bicubic weight function
 	auto weight = [](float d) -> float {
 		const float a = -1.0f;
-		return d <= 1.0f   ? ((a + 2.0f) * d * d * d) - ((a + 3.0f) * d * d) + 1
-			   : d <= 2.0f ? (a * d * d * d) - (5.0f * a * d * d) + (8.0f * a * d) - (4.0f * a)
-						   : 0.0f;
+		return d <= 1.0f ? ((a + 2.0f) * d * d * d) - ((a + 3.0f) * d * d) + 1
+						 : d <= 2.0f ? (a * d * d * d) - (5.0f * a * d * d) + (8.0f * a * d) - (4.0f * a)
+									 : 0.0f;
 	};
 
 	for (int32_t iy = 0; iy < dstHeight; iy++)
@@ -1357,7 +1355,6 @@ float GUIManager::GetItemRectSizeY()
 	return ImGui::GetItemRectSize().y;
 }
 
-
 float GUIManager::GetTextLineHeight()
 {
 	return ImGui::GetTextLineHeight();
@@ -1930,17 +1927,24 @@ bool GUIManager::SelectableContent(const char16_t* idstr, const char16_t* label,
 	const auto& style = ImGui::GetStyle();
 
 	ImVec2 screenPos = ImGui::GetCursorScreenPos();
-	ImVec4 clipRect = {screenPos.x, screenPos.y, screenPos.x + size_x, screenPos.y + size_y};
+	float labelHeight = ImGui::GetTextLineHeight() * 2.0f;
+	ImVec4 clipRect = {screenPos.x, screenPos.y, screenPos.x + size_x, screenPos.y + size_y + labelHeight};
 
 	if (thumbnail)
 	{
 		drawList->AddImage(ToImTextureID(thumbnail), cursorPos, ImVec2(cursorPos.x + size_x, cursorPos.y + size_y));
 	}
 
-	bool result = ImGui::Selectable(utf8str<256>(idstr), selected, (int)flags, ImVec2(size_x, size_y));
+	bool result = ImGui::Selectable(utf8str<256>(idstr), selected, (int)flags, ImVec2(size_x, size_y + labelHeight));
 
-	drawList->AddText(GImGui->Font, GImGui->FontSize, ImVec2(cursorPos.x + 1, cursorPos.y + 1), ImGui::GetColorU32(ImGuiCol_WindowBg, 0.8f), utf8str<256>(label), nullptr, size_x, &clipRect);
-	drawList->AddText(GImGui->Font, GImGui->FontSize, cursorPos, ImGui::GetColorU32(ImGuiCol_Text), utf8str<256>(label), nullptr, size_x, &clipRect);
+	utf8str<256> labelU8(label);
+	size_t labelLen = strlen(labelU8);
+	ImVec2 labelSize = ImGui::CalcTextSize(labelU8, labelU8 + labelLen, false, size_x);
+
+	cursorPos.x += (size_x - labelSize.x) * 0.5f;
+	cursorPos.y += size_y;
+	drawList->AddText(GImGui->Font, GImGui->FontSize, ImVec2(cursorPos.x + 1, cursorPos.y + 1), ImGui::GetColorU32(ImGuiCol_WindowBg, 0.8f), labelU8, labelU8 + labelLen, size_x, &clipRect);
+	drawList->AddText(GImGui->Font, GImGui->FontSize, cursorPos, ImGui::GetColorU32(ImGuiCol_Text), labelU8, labelU8 + labelLen, size_x, &clipRect);
 
 	return result;
 }

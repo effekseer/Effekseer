@@ -55,8 +55,7 @@ struct ParameterGenerationLocation
 		Order = 1,
 	};
 
-	union
-	{
+	union {
 		struct
 		{
 			random_vector3d location;

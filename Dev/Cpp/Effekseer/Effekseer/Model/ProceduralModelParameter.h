@@ -72,8 +72,7 @@ struct ProceduralModelParameter
 	ProceduralModelPrimitiveType PrimitiveType = ProceduralModelPrimitiveType::Sphere;
 	ProceduralModelAxisType AxisType = ProceduralModelAxisType::Y;
 
-	union
-	{
+	union {
 		struct
 		{
 			float AngleBegin;
@@ -94,8 +93,7 @@ struct ProceduralModelParameter
 		} Ribbon;
 	};
 
-	union
-	{
+	union {
 		struct
 		{
 			float Radius;

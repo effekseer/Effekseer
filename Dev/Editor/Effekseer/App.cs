@@ -25,6 +25,7 @@ namespace Effekseer
 				typeof(Dock.LocationValues),
 				typeof(Dock.LocationAbsValues),
 				typeof(Dock.GenerationLocationValues),
+				typeof(Dock.KillRules),
 				typeof(Dock.RotationValues),
 				typeof(Dock.ScaleValues),
 				typeof(Dock.DepthValues),

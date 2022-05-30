@@ -105,6 +105,7 @@ class"
 
 %feature("director") GUIManagerCallback;
 %feature("director") IOCallback;
+%feature("director") EffectRendererCallback;
 
 %shared_ptr(Effekseer::MainWindow);
 %shared_ptr(Effekseer::StaticFile);

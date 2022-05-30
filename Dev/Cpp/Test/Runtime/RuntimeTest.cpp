@@ -1135,8 +1135,7 @@ void LODsTest()
 
 		auto h = platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/LODs/SimpleLODs.efkefc").c_str());
 
-		auto setDistanceToEffect = [platform, h](double distance)
-		{
+		auto setDistanceToEffect = [platform, h](double distance) {
 			auto cameraFrontDirection = platform->GetRenderer()->GetCameraFrontDirection();
 			auto cameraPosition = platform->GetRenderer()->GetCameraPosition();
 			platform->GetManager()->SetLocation(h, cameraPosition - cameraFrontDirection * distance);
@@ -1161,13 +1160,12 @@ void LODsTest()
 		platform->Update();
 		platform->TakeScreenshot("LOD_Level_2.png");
 		assert(platform->GetManager()->GetCurrentLOD(h) == 0b0100);
-		
+
 		setDistanceToEffect(14.0); // Level 3 starts from distance 12
 		platform->Update();
 		platform->Update();
 		platform->TakeScreenshot("LOD_Level_3.png");
 		assert(platform->GetManager()->GetCurrentLOD(h) == 0b1000);
-		
 
 		platform->Terminate();
 	}

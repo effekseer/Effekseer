@@ -969,6 +969,21 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_EffectFactory___")]
   public static extern void delete_EffectFactory(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_EffectRendererCallback___")]
+  public static extern global::System.IntPtr new_EffectRendererCallback();
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRendererCallback_OnAfterClear___")]
+  public static extern void EffectRendererCallback_OnAfterClear(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRendererCallback_OnAfterClearSwigExplicitEffectRendererCallback___")]
+  public static extern void EffectRendererCallback_OnAfterClearSwigExplicitEffectRendererCallback(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_EffectRendererCallback___")]
+  public static extern void delete_EffectRendererCallback(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRendererCallback_director_connect___")]
+  public static extern void EffectRendererCallback_director_connect(global::System.Runtime.InteropServices.HandleRef jarg1, EffectRendererCallback.SwigDelegateEffectRendererCallback_0 delegate0);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRendererParameter_Distortion_set___")]
   public static extern void EffectRendererParameter_Distortion_set(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
 
@@ -1071,6 +1086,9 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRenderer_PlayEffect___")]
   public static extern void EffectRenderer_PlayEffect(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRenderer_UpdatePaused___")]
+  public static extern void EffectRenderer_UpdatePaused(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRenderer_Update__SWIG_0___")]
   public static extern void EffectRenderer_Update__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1);
 
@@ -1143,14 +1161,14 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRenderer_RandomSeed_get___")]
   public static extern int EffectRenderer_RandomSeed_get(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRenderer_Callback_set___")]
+  public static extern void EffectRenderer_Callback_set(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRenderer_Callback_get___")]
+  public static extern global::System.IntPtr EffectRenderer_Callback_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_MainScreenEffectRenderer___")]
   public static extern void delete_MainScreenEffectRenderer(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainScreenEffectRenderer_GridColor_set___")]
-  public static extern void MainScreenEffectRenderer_GridColor_set(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainScreenEffectRenderer_GridColor_get___")]
-  public static extern global::System.IntPtr MainScreenEffectRenderer_GridColor_get(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainScreenEffectRenderer_GuideWidth_set___")]
   public static extern void MainScreenEffectRenderer_GuideWidth_set(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
@@ -1170,48 +1188,6 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainScreenEffectRenderer_RendersGuide_get___")]
   public static extern bool MainScreenEffectRenderer_RendersGuide_get(global::System.Runtime.InteropServices.HandleRef jarg1);
 
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainScreenEffectRenderer_IsGridShown_set___")]
-  public static extern void MainScreenEffectRenderer_IsGridShown_set(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainScreenEffectRenderer_IsGridShown_get___")]
-  public static extern bool MainScreenEffectRenderer_IsGridShown_get(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainScreenEffectRenderer_IsGridXYShown_set___")]
-  public static extern void MainScreenEffectRenderer_IsGridXYShown_set(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainScreenEffectRenderer_IsGridXYShown_get___")]
-  public static extern bool MainScreenEffectRenderer_IsGridXYShown_get(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainScreenEffectRenderer_IsGridXZShown_set___")]
-  public static extern void MainScreenEffectRenderer_IsGridXZShown_set(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainScreenEffectRenderer_IsGridXZShown_get___")]
-  public static extern bool MainScreenEffectRenderer_IsGridXZShown_get(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainScreenEffectRenderer_IsGridYZShown_set___")]
-  public static extern void MainScreenEffectRenderer_IsGridYZShown_set(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainScreenEffectRenderer_IsGridYZShown_get___")]
-  public static extern bool MainScreenEffectRenderer_IsGridYZShown_get(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainScreenEffectRenderer_GridLength_set___")]
-  public static extern void MainScreenEffectRenderer_GridLength_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainScreenEffectRenderer_GridLength_get___")]
-  public static extern float MainScreenEffectRenderer_GridLength_get(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainScreenEffectRenderer_IsCullingShown_set___")]
-  public static extern void MainScreenEffectRenderer_IsCullingShown_set(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainScreenEffectRenderer_IsCullingShown_get___")]
-  public static extern bool MainScreenEffectRenderer_IsCullingShown_get(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainScreenEffectRenderer_CullingRadius_set___")]
-  public static extern void MainScreenEffectRenderer_CullingRadius_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainScreenEffectRenderer_CullingRadius_get___")]
-  public static extern float MainScreenEffectRenderer_CullingRadius_get(global::System.Runtime.InteropServices.HandleRef jarg1);
-
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainScreenEffectRenderer_IsRightHand_set___")]
   public static extern void MainScreenEffectRenderer_IsRightHand_set(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2);
 
@@ -1226,6 +1202,15 @@ class EffekseerNativePINVOKE {
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainScreenEffectRenderer_LoadBackgroundImage___")]
   public static extern void MainScreenEffectRenderer_LoadBackgroundImage(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainScreenEffectRenderer_StartRenderingLines___")]
+  public static extern void MainScreenEffectRenderer_StartRenderingLines(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainScreenEffectRenderer_AddLine___")]
+  public static extern void MainScreenEffectRenderer_AddLine(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2, float jarg3, float jarg4, float jarg5, float jarg6, float jarg7, global::System.Runtime.InteropServices.HandleRef jarg8);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainScreenEffectRenderer_EndRenderingLines___")]
+  public static extern void MainScreenEffectRenderer_EndRenderingLines(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2, global::System.Runtime.InteropServices.HandleRef jarg3);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_MainScreenEffectRenderer___")]
   public static extern global::System.IntPtr new_MainScreenEffectRenderer();

@@ -424,6 +424,32 @@ struct SWIG_null_deleter {
 
 #include "dll_cs.h"
 
+SwigDirector_EffectRendererCallback::SwigDirector_EffectRendererCallback() : Effekseer::Tool::EffectRendererCallback(), Swig::Director() {
+  swig_init_callbacks();
+}
+
+void SwigDirector_EffectRendererCallback::OnAfterClear() {
+  if (!swig_callbackOnAfterClear) {
+    Effekseer::Tool::EffectRendererCallback::OnAfterClear();
+    return;
+  } else {
+    swig_callbackOnAfterClear();
+  }
+}
+
+SwigDirector_EffectRendererCallback::~SwigDirector_EffectRendererCallback() {
+  
+}
+
+
+void SwigDirector_EffectRendererCallback::swig_connect_director(SWIG_Callback0_t callbackOnAfterClear) {
+  swig_callbackOnAfterClear = callbackOnAfterClear;
+}
+
+void SwigDirector_EffectRendererCallback::swig_init_callbacks() {
+  swig_callbackOnAfterClear = 0;
+}
+
 SwigDirector_GUIManagerCallback::SwigDirector_GUIManagerCallback() : efk::GUIManagerCallback(), Swig::Director() {
   swig_init_callbacks();
 }
@@ -3567,6 +3593,47 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_EffectFactory___(void *
 }
 
 
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_EffectRendererCallback___() {
+  void * jresult ;
+  Effekseer::Tool::EffectRendererCallback *result = 0 ;
+  
+  result = (Effekseer::Tool::EffectRendererCallback *)new SwigDirector_EffectRendererCallback();
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRendererCallback_OnAfterClear___(void * jarg1) {
+  Effekseer::Tool::EffectRendererCallback *arg1 = (Effekseer::Tool::EffectRendererCallback *) 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRendererCallback *)jarg1; 
+  (arg1)->OnAfterClear();
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRendererCallback_OnAfterClearSwigExplicitEffectRendererCallback___(void * jarg1) {
+  Effekseer::Tool::EffectRendererCallback *arg1 = (Effekseer::Tool::EffectRendererCallback *) 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRendererCallback *)jarg1; 
+  (arg1)->Effekseer::Tool::EffectRendererCallback::OnAfterClear();
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_EffectRendererCallback___(void * jarg1) {
+  Effekseer::Tool::EffectRendererCallback *arg1 = (Effekseer::Tool::EffectRendererCallback *) 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRendererCallback *)jarg1; 
+  delete arg1;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRendererCallback_director_connect___(void *objarg, SwigDirector_EffectRendererCallback::SWIG_Callback0_t callback0) {
+  Effekseer::Tool::EffectRendererCallback *obj = (Effekseer::Tool::EffectRendererCallback *)objarg;
+  SwigDirector_EffectRendererCallback *director = static_cast<SwigDirector_EffectRendererCallback *>(obj);
+  director->swig_connect_director(callback0);
+}
+
+
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRendererParameter_Distortion_set___(void * jarg1, int jarg2) {
   Effekseer::Tool::EffectRendererParameter *arg1 = (Effekseer::Tool::EffectRendererParameter *) 0 ;
   Effekseer::Tool::DistortionType arg2 ;
@@ -3945,6 +4012,14 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_PlayEffect___(v
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_UpdatePaused___(void * jarg1) {
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  (arg1)->UpdatePaused();
+}
+
+
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_Update__SWIG_0___(void * jarg1) {
   Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
   
@@ -4219,33 +4294,33 @@ SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_RandomSeed_get__
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_Callback_set___(void * jarg1, void * jarg2) {
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  Effekseer::Tool::EffectRendererCallback *arg2 = (Effekseer::Tool::EffectRendererCallback *) 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  arg2 = (Effekseer::Tool::EffectRendererCallback *)jarg2; 
+  if (arg1) (arg1)->Callback = arg2;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_Callback_get___(void * jarg1) {
+  void * jresult ;
+  Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
+  Effekseer::Tool::EffectRendererCallback *result = 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  result = (Effekseer::Tool::EffectRendererCallback *) ((arg1)->Callback);
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_MainScreenEffectRenderer___(void * jarg1) {
   Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
   
   arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
   delete arg1;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_GridColor_set___(void * jarg1, void * jarg2) {
-  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
-  Effekseer::Tool::Color *arg2 = (Effekseer::Tool::Color *) 0 ;
-  
-  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
-  arg2 = (Effekseer::Tool::Color *)jarg2; 
-  if (arg1) (arg1)->GridColor = *arg2;
-}
-
-
-SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_GridColor_get___(void * jarg1) {
-  void * jresult ;
-  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
-  Effekseer::Tool::Color *result = 0 ;
-  
-  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
-  result = (Effekseer::Tool::Color *)& ((arg1)->GridColor);
-  jresult = (void *)result; 
-  return jresult;
 }
 
 
@@ -4315,160 +4390,6 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRender
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_IsGridShown_set___(void * jarg1, unsigned int jarg2) {
-  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
-  bool arg2 ;
-  
-  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
-  arg2 = jarg2 ? true : false; 
-  if (arg1) (arg1)->IsGridShown = arg2;
-}
-
-
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_IsGridShown_get___(void * jarg1) {
-  unsigned int jresult ;
-  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
-  bool result;
-  
-  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
-  result = (bool) ((arg1)->IsGridShown);
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_IsGridXYShown_set___(void * jarg1, unsigned int jarg2) {
-  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
-  bool arg2 ;
-  
-  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
-  arg2 = jarg2 ? true : false; 
-  if (arg1) (arg1)->IsGridXYShown = arg2;
-}
-
-
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_IsGridXYShown_get___(void * jarg1) {
-  unsigned int jresult ;
-  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
-  bool result;
-  
-  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
-  result = (bool) ((arg1)->IsGridXYShown);
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_IsGridXZShown_set___(void * jarg1, unsigned int jarg2) {
-  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
-  bool arg2 ;
-  
-  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
-  arg2 = jarg2 ? true : false; 
-  if (arg1) (arg1)->IsGridXZShown = arg2;
-}
-
-
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_IsGridXZShown_get___(void * jarg1) {
-  unsigned int jresult ;
-  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
-  bool result;
-  
-  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
-  result = (bool) ((arg1)->IsGridXZShown);
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_IsGridYZShown_set___(void * jarg1, unsigned int jarg2) {
-  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
-  bool arg2 ;
-  
-  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
-  arg2 = jarg2 ? true : false; 
-  if (arg1) (arg1)->IsGridYZShown = arg2;
-}
-
-
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_IsGridYZShown_get___(void * jarg1) {
-  unsigned int jresult ;
-  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
-  bool result;
-  
-  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
-  result = (bool) ((arg1)->IsGridYZShown);
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_GridLength_set___(void * jarg1, float jarg2) {
-  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
-  float arg2 ;
-  
-  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
-  arg2 = (float)jarg2; 
-  if (arg1) (arg1)->GridLength = arg2;
-}
-
-
-SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_GridLength_get___(void * jarg1) {
-  float jresult ;
-  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
-  float result;
-  
-  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
-  result = (float) ((arg1)->GridLength);
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_IsCullingShown_set___(void * jarg1, unsigned int jarg2) {
-  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
-  bool arg2 ;
-  
-  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
-  arg2 = jarg2 ? true : false; 
-  if (arg1) (arg1)->IsCullingShown = arg2;
-}
-
-
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_IsCullingShown_get___(void * jarg1) {
-  unsigned int jresult ;
-  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
-  bool result;
-  
-  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
-  result = (bool) ((arg1)->IsCullingShown);
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_CullingRadius_set___(void * jarg1, float jarg2) {
-  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
-  float arg2 ;
-  
-  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
-  arg2 = (float)jarg2; 
-  if (arg1) (arg1)->CullingRadius = arg2;
-}
-
-
-SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_CullingRadius_get___(void * jarg1) {
-  float jresult ;
-  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
-  float result;
-  
-  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
-  result = (float) ((arg1)->CullingRadius);
-  jresult = result; 
-  return jresult;
-}
-
-
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_IsRightHand_set___(void * jarg1, unsigned int jarg2) {
   Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
   bool arg2 ;
@@ -4520,6 +4441,62 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_LoadB
   arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
   arg2 = (char16_t *)jarg2; 
   (arg1)->LoadBackgroundImage((char16_t const *)arg2);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_StartRenderingLines___(void * jarg1) {
+  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
+  
+  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
+  (arg1)->StartRenderingLines();
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_AddLine___(void * jarg1, float jarg2, float jarg3, float jarg4, float jarg5, float jarg6, float jarg7, void * jarg8) {
+  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
+  float arg2 ;
+  float arg3 ;
+  float arg4 ;
+  float arg5 ;
+  float arg6 ;
+  float arg7 ;
+  Effekseer::Tool::Color arg8 ;
+  Effekseer::Tool::Color *argp8 ;
+  
+  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
+  arg2 = (float)jarg2; 
+  arg3 = (float)jarg3; 
+  arg4 = (float)jarg4; 
+  arg5 = (float)jarg5; 
+  arg6 = (float)jarg6; 
+  arg7 = (float)jarg7; 
+  argp8 = (Effekseer::Tool::Color *)jarg8; 
+  if (!argp8) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Attempt to dereference null Effekseer::Tool::Color", 0);
+    return ;
+  }
+  arg8 = *argp8; 
+  (arg1)->AddLine(arg2,arg3,arg4,arg5,arg6,arg7,arg8);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_MainScreenEffectRenderer_EndRenderingLines___(void * jarg1, void * jarg2, void * jarg3) {
+  Effekseer::Tool::MainScreenEffectRenderer *arg1 = (Effekseer::Tool::MainScreenEffectRenderer *) 0 ;
+  Effekseer::Tool::Matrix44F *arg2 = 0 ;
+  Effekseer::Tool::Matrix44F *arg3 = 0 ;
+  
+  arg1 = (Effekseer::Tool::MainScreenEffectRenderer *)jarg1; 
+  arg2 = (Effekseer::Tool::Matrix44F *)jarg2;
+  if (!arg2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Effekseer::Tool::Matrix44F const & type is null", 0);
+    return ;
+  } 
+  arg3 = (Effekseer::Tool::Matrix44F *)jarg3;
+  if (!arg3) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Effekseer::Tool::Matrix44F const & type is null", 0);
+    return ;
+  } 
+  (arg1)->EndRenderingLines((Effekseer::Tool::Matrix44F const &)*arg2,(Effekseer::Tool::Matrix44F const &)*arg3);
 }
 
 

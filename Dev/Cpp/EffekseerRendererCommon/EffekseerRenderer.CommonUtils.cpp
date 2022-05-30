@@ -430,8 +430,7 @@ void CalculateAlignedTextureInformation(Effekseer::Backend::TextureFormatType fo
 	height = 0;
 
 	const int32_t blockSize = 4;
-	auto aligned = [](int32_t size, int32_t alignement) -> int32_t
-	{
+	auto aligned = [](int32_t size, int32_t alignement) -> int32_t {
 		return ((size + alignement - 1) / alignement) * alignement;
 	};
 

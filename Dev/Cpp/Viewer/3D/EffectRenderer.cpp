@@ -606,6 +606,15 @@ void EffectRenderer::PlayEffect()
 	m_rootScale.Z = behavior_.ScaleZ;
 }
 
+void EffectRenderer::UpdatePaused()
+{
+	Effekseer::Manager::UpdateParameter updateParameter;
+	updateParameter.DeltaFrame = 0.0F;
+	updateParameter.UpdateInterval = 0.0f;
+	updateParameter.ViewerPosition = renderer_->GetCameraPosition();
+	manager_->Update(updateParameter);
+}
+
 void EffectRenderer::Update()
 {
 	/*{
@@ -1061,7 +1070,7 @@ void EffectRenderer::SetBehavior(const ViewerEffectBehavior& behavior)
 
 int EffectRenderer::GetCurrentLOD() const
 {
-	if(handles_.size() == 0)
+	if (handles_.size() == 0)
 	{
 		return 0;
 	}

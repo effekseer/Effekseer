@@ -129,6 +129,7 @@
     <Compile Include="Data\Dynamic.cs" />
     <Compile Include="Data\EffectCullingValues.cs" />
     <Compile Include="Data\EffectLODValues.cs" />
+    <Compile Include="Data\KillRulesValues.cs" />
     <Compile Include="Data\EffectBehaviorValues.cs" />
     <Compile Include="Data\EnvironmentValues.cs" />
     <Compile Include="Data\OptionValues.cs" />

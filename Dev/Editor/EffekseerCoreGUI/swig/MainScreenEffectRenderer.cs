@@ -34,17 +34,6 @@ public class MainScreenEffectRenderer : EffectRenderer {
     }
   }
 
-  public Color GridColor {
-    set {
-      EffekseerNativePINVOKE.MainScreenEffectRenderer_GridColor_set(swigCPtr, Color.getCPtr(value));
-    } 
-    get {
-      global::System.IntPtr cPtr = EffekseerNativePINVOKE.MainScreenEffectRenderer_GridColor_get(swigCPtr);
-      Color ret = (cPtr == global::System.IntPtr.Zero) ? null : new Color(cPtr, false);
-      return ret;
-    } 
-  }
-
   public int GuideWidth {
     set {
       EffekseerNativePINVOKE.MainScreenEffectRenderer_GuideWidth_set(swigCPtr, value);
@@ -75,76 +64,6 @@ public class MainScreenEffectRenderer : EffectRenderer {
     } 
   }
 
-  public bool IsGridShown {
-    set {
-      EffekseerNativePINVOKE.MainScreenEffectRenderer_IsGridShown_set(swigCPtr, value);
-    } 
-    get {
-      bool ret = EffekseerNativePINVOKE.MainScreenEffectRenderer_IsGridShown_get(swigCPtr);
-      return ret;
-    } 
-  }
-
-  public bool IsGridXYShown {
-    set {
-      EffekseerNativePINVOKE.MainScreenEffectRenderer_IsGridXYShown_set(swigCPtr, value);
-    } 
-    get {
-      bool ret = EffekseerNativePINVOKE.MainScreenEffectRenderer_IsGridXYShown_get(swigCPtr);
-      return ret;
-    } 
-  }
-
-  public bool IsGridXZShown {
-    set {
-      EffekseerNativePINVOKE.MainScreenEffectRenderer_IsGridXZShown_set(swigCPtr, value);
-    } 
-    get {
-      bool ret = EffekseerNativePINVOKE.MainScreenEffectRenderer_IsGridXZShown_get(swigCPtr);
-      return ret;
-    } 
-  }
-
-  public bool IsGridYZShown {
-    set {
-      EffekseerNativePINVOKE.MainScreenEffectRenderer_IsGridYZShown_set(swigCPtr, value);
-    } 
-    get {
-      bool ret = EffekseerNativePINVOKE.MainScreenEffectRenderer_IsGridYZShown_get(swigCPtr);
-      return ret;
-    } 
-  }
-
-  public float GridLength {
-    set {
-      EffekseerNativePINVOKE.MainScreenEffectRenderer_GridLength_set(swigCPtr, value);
-    } 
-    get {
-      float ret = EffekseerNativePINVOKE.MainScreenEffectRenderer_GridLength_get(swigCPtr);
-      return ret;
-    } 
-  }
-
-  public bool IsCullingShown {
-    set {
-      EffekseerNativePINVOKE.MainScreenEffectRenderer_IsCullingShown_set(swigCPtr, value);
-    } 
-    get {
-      bool ret = EffekseerNativePINVOKE.MainScreenEffectRenderer_IsCullingShown_get(swigCPtr);
-      return ret;
-    } 
-  }
-
-  public float CullingRadius {
-    set {
-      EffekseerNativePINVOKE.MainScreenEffectRenderer_CullingRadius_set(swigCPtr, value);
-    } 
-    get {
-      float ret = EffekseerNativePINVOKE.MainScreenEffectRenderer_CullingRadius_get(swigCPtr);
-      return ret;
-    } 
-  }
-
   public bool IsRightHand {
     set {
       EffekseerNativePINVOKE.MainScreenEffectRenderer_IsRightHand_set(swigCPtr, value);
@@ -168,6 +87,20 @@ public class MainScreenEffectRenderer : EffectRenderer {
 
   public void LoadBackgroundImage(string path) {
     EffekseerNativePINVOKE.MainScreenEffectRenderer_LoadBackgroundImage(swigCPtr, path);
+  }
+
+  public void StartRenderingLines() {
+    EffekseerNativePINVOKE.MainScreenEffectRenderer_StartRenderingLines(swigCPtr);
+  }
+
+  public void AddLine(float p0x, float p0y, float p0z, float p1x, float p1y, float p1z, Color color) {
+    EffekseerNativePINVOKE.MainScreenEffectRenderer_AddLine(swigCPtr, p0x, p0y, p0z, p1x, p1y, p1z, Color.getCPtr(color));
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+  }
+
+  public void EndRenderingLines(Matrix44F cameraMatrix, Matrix44F projectionMatrix) {
+    EffekseerNativePINVOKE.MainScreenEffectRenderer_EndRenderingLines(swigCPtr, Matrix44F.getCPtr(cameraMatrix), Matrix44F.getCPtr(projectionMatrix));
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
   }
 
   public MainScreenEffectRenderer() : this(EffekseerNativePINVOKE.new_MainScreenEffectRenderer(), true) {

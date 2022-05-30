@@ -446,7 +446,7 @@ public:
 		Useful for LODs debugging.
 	 */
 	virtual void SetLODDistanceBias(float distanceBias) = 0;
-	
+
 	/**
 		@brief	エフェクトのインスタンスに設定されている行列を取得する。
 		@param	handle	[in]	インスタンスのハンドル
@@ -627,7 +627,7 @@ public:
 	 *	@brief Whether spawn of new particles is disabled
 	 */
 	virtual bool GetSpawnDisabled(Handle handle) = 0;
-	
+
 	/**
 		@brief
 		\~English	Get a layer index
