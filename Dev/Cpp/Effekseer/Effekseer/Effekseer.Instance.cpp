@@ -91,9 +91,20 @@ eInstanceState Instance::GetState() const
 	return m_State;
 }
 
-const SIMD::Mat43f& Instance::GetGlobalMatrix43() const
+const SIMD::Mat43f& Instance::GetGlobalMatrix() const
 {
 	return m_GlobalMatrix43;
+}
+
+const SIMD::Mat43f& Instance::GetRenderedGlobalMatrix() const
+{
+	return m_GlobalMatrix43_Rendered;
+}
+
+void Instance::ApplyBaseMatrix(const SIMD::Mat43f& baseMatrix)
+{
+	m_GlobalMatrix43_Rendered = m_GlobalMatrix43 * baseMatrix;
+	assert(m_GlobalMatrix43_Rendered.IsValid());
 }
 
 void Instance::SetGlobalMatrix(const SIMD::Mat43f& mat)
@@ -177,7 +188,7 @@ void Instance::FirstUpdate()
 	// calculate parent matrixt to get matrix
 	m_pParent->UpdateTransform(0);
 
-	const SIMD::Mat43f& parentMatrix = m_pParent->GetGlobalMatrix43();
+	const SIMD::Mat43f& parentMatrix = m_pParent->GetGlobalMatrix();
 	forceField_.Reset();
 	m_GenerationLocation = SIMD::Mat43f::Identity;
 
@@ -608,6 +619,8 @@ void Instance::UpdateTransform(float deltaFrame)
 		}
 
 		prevGlobalPosition_ = m_GlobalMatrix43.GetTranslation();
+
+		m_GlobalMatrix43_Rendered = m_GlobalMatrix43;
 	}
 
 	m_GlobalMatrix43Calculated = true;
@@ -622,7 +635,7 @@ void Instance::UpdateParentMatrix(float deltaFrame)
 	// 親の行列を計算
 	m_pParent->UpdateTransform(deltaFrame);
 
-	parentPosition_ = m_pParent->GetGlobalMatrix43().GetTranslation();
+	parentPosition_ = m_pParent->GetGlobalMatrix().GetTranslation();
 
 	if (m_pEffectNode->GetType() != eEffectNodeType::Root)
 	{

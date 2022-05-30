@@ -1673,7 +1673,7 @@ void ManagerImplemented::UpdateHandleInternal(DrawSet& drawSet)
 
 		if (drawSet.DoUseBaseMatrix)
 		{
-			drawSet.InstanceContainerPointer->SetBaseMatrix(true, drawSet.BaseMatrix);
+			drawSet.InstanceContainerPointer->ApplyBaseMatrix(true, drawSet.BaseMatrix);
 		}
 	}
 
@@ -2307,7 +2307,7 @@ void ManagerImplemented::RequestToPlaySound(Instance* instance, const EffectNode
 		parameter.Pan = node->Sound.Pan.getValue(rand);
 
 		parameter.Mode3D = (node->Sound.PanType == ParameterSoundPanType_3D);
-		parameter.Position = ToStruct(instance->GetGlobalMatrix43().GetTranslation());
+		parameter.Position = ToStruct(instance->GetGlobalMatrix().GetTranslation());
 		parameter.Distance = node->Sound.Distance;
 		parameter.UserData = instanceGlobal->GetUserData();
 

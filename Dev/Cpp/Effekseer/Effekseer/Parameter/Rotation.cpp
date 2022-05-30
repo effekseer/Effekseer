@@ -278,7 +278,7 @@ SIMD::Mat43f RotationFunctions::CalculateRotation(RotationState& rotation_values
 	}
 	else if (rotationParam.RotationType == ParameterRotationType::ParameterRotationType_RotateToViewpoint)
 	{
-		const auto globalMat = m_pParent->GetGlobalMatrix43();
+		const auto globalMat = m_pParent->GetGlobalMatrix();
 		SIMD::Vec3f s;
 		SIMD::Mat43f r;
 		SIMD::Vec3f t;

@@ -123,6 +123,8 @@ public:
 	// a transform matrix in the world coordinate
 	SIMD::Mat43f m_GlobalMatrix43;
 
+	SIMD::Mat43f m_GlobalMatrix43_Rendered;
+
 	// parent's transform matrix
 	SIMD::Mat43f m_ParentMatrix;
 
@@ -174,7 +176,11 @@ public:
 		return m_State <= eInstanceState::INSTANCE_STATE_REMOVING;
 	}
 
-	const SIMD::Mat43f& GetGlobalMatrix43() const;
+	const SIMD::Mat43f& GetGlobalMatrix() const;
+
+	const SIMD::Mat43f& GetRenderedGlobalMatrix() const;
+
+	void ApplyBaseMatrix(const SIMD::Mat43f& baseMatrix);
 
 	void SetGlobalMatrix(const SIMD::Mat43f& mat);
 
