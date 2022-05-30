@@ -90,7 +90,7 @@ public:
 	*/
 	Instance* CreateRootInstance();
 
-	void GenerateInstancesIfRequired(float localTime, RandObject& rand, Instance* parent);
+	void GenerateInstancesIfRequired(float localTime, float deltaFrame, RandObject& rand, Instance* parent);
 
 	Instance* GetFirst();
 

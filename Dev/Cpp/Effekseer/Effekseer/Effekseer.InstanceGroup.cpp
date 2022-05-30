@@ -80,7 +80,7 @@ Instance* InstanceGroup::CreateRootInstance()
 	return nullptr;
 }
 
-void InstanceGroup::GenerateInstancesIfRequired(float localTime, RandObject& rand, Instance* parent)
+void InstanceGroup::GenerateInstancesIfRequired(float localTime, float deltaFrame, RandObject& rand, Instance* parent)
 {
 	if (m_generationState == GenerationState::BeforeStart &&
 		m_effectNode->TriggerParam.ToStartGeneration.type != TriggerType::None)
@@ -119,7 +119,7 @@ void InstanceGroup::GenerateInstancesIfRequired(float localTime, RandObject& ran
 				m_instances.push_back(instance);
 				m_global->IncInstanceCount();
 
-				instance->Initialize(parent, m_generatedCount);
+				instance->Initialize(parent, m_nextGenerationTime - (localTime - deltaFrame), m_generatedCount);
 			}
 
 			m_generatedCount++;

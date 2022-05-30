@@ -76,6 +76,15 @@ public:
 			return GetCurrent();
 		}
 
+		if (time <= 0)
+		{
+			return GetPrevious();
+		}
+		else if (time >= 1)
+		{
+			return GetCurrent();
+		}
+
 		SIMD::Vec3f s_previous;
 		SIMD::Mat43f r_previous;
 		SIMD::Vec3f t_previous;
@@ -138,6 +147,8 @@ public:
 	// Random generator
 	RandObject m_randObject;
 
+	float spawnDeltaFrame_ = 0.0f;
+
 	LocalForceFieldInstance forceField_;
 
 	// Color for binding
@@ -159,7 +170,8 @@ public:
 	ScalingState scaling_values;
 
 	// 描画
-	union {
+	union
+	{
 		EffectNodeSprite::InstanceValues sprite;
 		EffectNodeRibbon::InstanceValues ribbon;
 		EffectNodeRing::InstanceValues ring;
@@ -185,13 +197,10 @@ public:
 	// Spawning Method matrix
 	SIMD::Mat43f m_GenerationLocation;
 
-	// a transform matrix in the world coordinate in previous frame
-	SIMD::Mat43f previousGlobalMatrix_;
-
 	// a transform matrix in the world coordinate
 	TimeSeriesMatrix globalMatrix_;
 
-	SIMD::Mat43f m_GlobalMatrix43_Rendered;
+	SIMD::Mat43f globalMatrix_rendered;
 
 	// parent's transform matrix
 	SIMD::Mat43f m_ParentMatrix;
@@ -220,7 +229,7 @@ public:
 
 	virtual ~Instance();
 
-	void GenerateChildrenInRequired();
+	void GenerateChildrenInRequired(float deltaFrame);
 
 	void UpdateChildrenGroupMatrix();
 
@@ -244,15 +253,15 @@ public:
 		return m_State <= eInstanceState::INSTANCE_STATE_REMOVING;
 	}
 
-	const SIMD::Mat43f& GetGlobalMatrix() const;
+	SIMD::Mat43f GetGlobalMatrix(float deltaFrame) const;
 
 	const SIMD::Mat43f& GetRenderedGlobalMatrix() const;
 
-	void ApplyBaseMatrix(const SIMD::Mat43f& baseMatrix);
-
 	void SetGlobalMatrix(const SIMD::Mat43f& mat);
 
-	void Initialize(Instance* parent, int32_t instanceNumber);
+	void ApplyBaseMatrix(const SIMD::Mat43f& baseMatrix);
+
+	void Initialize(Instance* parent, float spawnDeltaFrame, int32_t instanceNumber);
 
 	void FirstUpdate();
 

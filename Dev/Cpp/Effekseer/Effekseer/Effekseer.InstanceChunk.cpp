@@ -53,7 +53,7 @@ void InstanceChunk::GenerateChildrenInRequired()
 		{
 			auto instance = reinterpret_cast<Instance*>(instances_[i]);
 
-			instance->GenerateChildrenInRequired();
+			instance->GenerateChildrenInRequired(instance->GetInstanceGlobal()->GetNextDeltaFrame());
 		}
 	}
 }
@@ -104,7 +104,7 @@ void InstanceChunk::GenerateChildrenInRequiredByInstanceGlobal(const InstanceGlo
 				continue;
 			}
 
-			instance->GenerateChildrenInRequired();
+			instance->GenerateChildrenInRequired(global->GetNextDeltaFrame());
 		}
 	}
 }
