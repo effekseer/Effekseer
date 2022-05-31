@@ -653,7 +653,7 @@ void Instance::UpdateParentMatrix(float deltaFrame)
 	// 親の行列を計算
 	m_pParent->UpdateTransform(deltaFrame);
 
-	parentPosition_ = m_pParent->GetGlobalMatrix(1.0f).GetTranslation();
+	parentPosition_ = m_pParent->GetGlobalMatrix(m_pParent->m_LivingTime).GetTranslation();
 
 	if (m_pEffectNode->GetType() != eEffectNodeType::Root)
 	{
