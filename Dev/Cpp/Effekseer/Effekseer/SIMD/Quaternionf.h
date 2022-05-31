@@ -173,14 +173,21 @@ struct Quaternionf
 	static Quaternionf Slerp(const Quaternionf& q1, const Quaternionf& q2, float t)
 	{
 		const auto qq = q1.s * q2.s;
-		const auto cosa = qq.GetX() + qq.GetY() + qq.GetZ() + qq.GetW();
+		auto cosa = qq.GetX() + qq.GetY() + qq.GetZ() + qq.GetW();
 
 		if (cosa < 0.0f)
 		{
 			return Slerp(q1, Quaternionf{-q2.GetX(), -q2.GetY(), -q2.GetZ(), -q2.GetW()}, t);
 		}
 
+		cosa = Min(1.0f, cosa);
+
 		const auto alpha = acos(cosa);
+		const auto smallValue = 0.00001f;
+		if (alpha < smallValue)
+		{
+			return q1;
+		}
 
 		return Quaternionf{q1.s * sin((1.0f - t) * alpha) / sin(alpha) + q2.s * sin(t * alpha) / sin(alpha)};
 	}
