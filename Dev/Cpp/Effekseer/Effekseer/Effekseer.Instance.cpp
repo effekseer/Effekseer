@@ -14,6 +14,67 @@
 namespace Effekseer
 {
 
+void TimeSeriesMatrix::Reset(const SIMD::Mat43f& matrix, float time)
+{
+	previous_ = matrix;
+	current_ = matrix;
+	previousTime_ = 0.0f;
+	currentTime_ = 0.0f;
+}
+
+void TimeSeriesMatrix::Step(const SIMD::Mat43f& matrix, float time)
+{
+	previous_ = current_;
+	current_ = matrix;
+	previousTime_ = currentTime_;
+	currentTime_ = time;
+}
+
+const SIMD::Mat43f& TimeSeriesMatrix::GetPrevious() const
+{
+	return previous_;
+}
+
+const SIMD::Mat43f& TimeSeriesMatrix::GetCurrent() const
+{
+	return current_;
+}
+
+SIMD::Mat43f TimeSeriesMatrix::Get(float time) const
+{
+	if (time >= currentTime_)
+	{
+		return GetCurrent();
+	}
+	else if (time <= previousTime_)
+	{
+		return GetPrevious();
+	}
+
+	SIMD::Vec3f s_previous;
+	SIMD::Mat43f r_previous;
+	SIMD::Vec3f t_previous;
+
+	previous_.GetSRT(s_previous, r_previous, t_previous);
+
+	SIMD::Vec3f s_current;
+	SIMD::Mat43f r_current;
+	SIMD::Vec3f t_current;
+
+	current_.GetSRT(s_current, r_current, t_current);
+
+	const auto q_previous = SIMD::Quaternionf::FromMatrix(r_previous);
+	const auto q_current = SIMD::Quaternionf::FromMatrix(r_current);
+
+	const auto alpha = (time - previousTime_) / (currentTime_ - previousTime_);
+
+	const auto t = t_current * alpha + t_previous * (1.0f - alpha);
+	const auto s = s_current * alpha + s_previous * (1.0f - alpha);
+	const auto q = SIMD::Quaternionf::Slerp(q_previous, q_current, alpha);
+
+	return SIMD::Mat43f::SRT(s, q.ToMatrix(), t);
+}
+
 Instance::Instance(ManagerImplemented* pManager, EffectNodeImplemented* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup)
 	: m_pManager(pManager)
 	, m_pEffectNode(pEffectNode)
@@ -91,9 +152,9 @@ eInstanceState Instance::GetState() const
 	return m_State;
 }
 
-SIMD::Mat43f Instance::GetGlobalMatrix(float deltaFrame) const
+const TimeSeriesMatrix& Instance::GetGlobalMatrix() const
 {
-	return globalMatrix_.Get(deltaFrame);
+	return globalMatrix_;
 }
 
 const SIMD::Mat43f& Instance::GetRenderedGlobalMatrix() const
@@ -203,7 +264,6 @@ void Instance::FirstUpdate()
 	// calculate parent matrixt to get matrix
 	m_pParent->UpdateTransform(0);
 
-	const auto parentMatrix = m_pParent->GetGlobalMatrix(spawnDeltaFrame_);
 	forceField_.Reset();
 	m_GenerationLocation = SIMD::Mat43f::Identity;
 
@@ -215,7 +275,18 @@ void Instance::FirstUpdate()
 		 parameter->CommonValues.RotationBindType == BindType::Always &&
 		 parameter->CommonValues.ScalingBindType == BindType::Always))
 	{
-		m_ParentMatrix = parentMatrix;
+		if ((parameter->CommonValues.TranslationBindType == TranslationParentBindType::Always &&
+			parameter->CommonValues.RotationBindType == BindType::Always &&
+			parameter->CommonValues.ScalingBindType == BindType::Always) ||
+			!parameter->IsParticleSpawnedWithDecimal())
+		{
+			m_ParentMatrix = m_pParent->GetGlobalMatrix().GetCurrent();
+		}
+		else
+		{
+			m_ParentMatrix = m_pParent->GetGlobalMatrix().Get(spawnDeltaFrame_);
+		}
+
 		assert(m_ParentMatrix.IsValid());
 	}
 
@@ -653,7 +724,7 @@ void Instance::UpdateParentMatrix(float deltaFrame)
 	// 親の行列を計算
 	m_pParent->UpdateTransform(deltaFrame);
 
-	parentPosition_ = m_pParent->GetGlobalMatrix(m_pParent->m_LivingTime).GetTranslation();
+	parentPosition_ = m_pParent->GetGlobalMatrix().GetCurrent().GetTranslation();
 
 	if (m_pEffectNode->GetType() != eEffectNodeType::Root)
 	{

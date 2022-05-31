@@ -46,66 +46,15 @@ class TimeSeriesMatrix
 	float currentTime_;
 
 public:
-	void Reset(const SIMD::Mat43f& matrix, float time)
-	{
-		previous_ = matrix;
-		current_ = matrix;
-		previousTime_ = 0.0f;
-		currentTime_ = 0.0f;
-	}
+	void Reset(const SIMD::Mat43f& matrix, float time);
 
-	void Step(const SIMD::Mat43f& matrix, float time)
-	{
-		previous_ = current_;
-		current_ = matrix;
-		previousTime_ = currentTime_;
-		currentTime_ = time;
-	}
+	void Step(const SIMD::Mat43f& matrix, float time);
 
-	const SIMD::Mat43f& GetPrevious() const
-	{
-		return previous_;
-	}
+	const SIMD::Mat43f& GetPrevious() const;
 
-	const SIMD::Mat43f& GetCurrent() const
-	{
-		return current_;
-	}
+	const SIMD::Mat43f& GetCurrent() const;
 
-	SIMD::Mat43f Get(float time) const
-	{
-		if (time >= currentTime_)
-		{
-			return GetCurrent();
-		}
-		else if (time <= previousTime_)
-		{
-			return GetPrevious();
-		}
-
-		SIMD::Vec3f s_previous;
-		SIMD::Mat43f r_previous;
-		SIMD::Vec3f t_previous;
-
-		previous_.GetSRT(s_previous, r_previous, t_previous);
-
-		SIMD::Vec3f s_current;
-		SIMD::Mat43f r_current;
-		SIMD::Vec3f t_current;
-
-		current_.GetSRT(s_current, r_current, t_current);
-
-		const auto q_previous = SIMD::Quaternionf::FromMatrix(r_previous);
-		const auto q_current = SIMD::Quaternionf::FromMatrix(r_current);
-
-		const auto alpha = (time - previousTime_) / (currentTime_ - previousTime_);
-
-		const auto t = t_current * alpha + t_previous * (1.0f - alpha);
-		const auto s = s_current * alpha + s_previous * (1.0f - alpha);
-		const auto q = SIMD::Quaternionf::Slerp(q_previous, q_current, alpha);
-
-		return SIMD::Mat43f::SRT(s, q.ToMatrix(), t);
-	}
+	SIMD::Mat43f Get(float time) const;
 };
 
 class alignas(16) Instance : public IntrusiveList<Instance>::Node
@@ -250,7 +199,7 @@ public:
 		return m_State <= eInstanceState::INSTANCE_STATE_REMOVING;
 	}
 
-	SIMD::Mat43f GetGlobalMatrix(float deltaFrame) const;
+	const TimeSeriesMatrix& GetGlobalMatrix() const;
 
 	const SIMD::Mat43f& GetRenderedGlobalMatrix() const;
 

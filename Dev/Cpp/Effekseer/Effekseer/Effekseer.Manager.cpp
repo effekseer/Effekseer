@@ -2215,7 +2215,7 @@ void ManagerImplemented::RequestToPlaySound(Instance* instance, const EffectNode
 		parameter.Pan = node->Sound.Pan.getValue(rand);
 
 		parameter.Mode3D = (node->Sound.PanType == ParameterSoundPanType_3D);
-		parameter.Position = ToStruct(instance->GetGlobalMatrix(1.0f).GetTranslation());
+		parameter.Position = ToStruct(instance->GetGlobalMatrix().GetCurrent().GetTranslation());
 		parameter.Distance = node->Sound.Distance;
 		parameter.UserData = instanceGlobal->GetUserData();
 
