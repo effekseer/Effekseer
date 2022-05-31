@@ -60,7 +60,7 @@ Instance::~Instance()
 	assert(m_State != eInstanceState::INSTANCE_STATE_ACTIVE);
 }
 
-void Instance::GenerateChildrenInRequired(float deltaFrame)
+void Instance::GenerateChildrenInRequired()
 {
 	if (m_State == eInstanceState::INSTANCE_STATE_DISPOSING)
 	{
@@ -69,7 +69,7 @@ void Instance::GenerateChildrenInRequired(float deltaFrame)
 
 	for (InstanceGroup* group = childrenGroups_; group != nullptr; group = group->NextUsedByInstance)
 	{
-		group->GenerateInstancesIfRequired(m_LivingTime, deltaFrame, m_randObject, this);
+		group->GenerateInstancesIfRequired(m_LivingTime, m_randObject, this);
 	}
 }
 
@@ -101,7 +101,7 @@ const SIMD::Mat43f& Instance::GetRenderedGlobalMatrix() const
 	return globalMatrix_rendered;
 }
 
-void Instance::SetGlobalMatrix(const SIMD::Mat43f& mat)
+void Instance::ResetGlobalMatrix(const SIMD::Mat43f& mat)
 {
 	if (globalMatrix_.GetCurrent() == mat)
 	{
@@ -109,7 +109,19 @@ void Instance::SetGlobalMatrix(const SIMD::Mat43f& mat)
 	}
 
 	m_sequenceNumber = m_pManager->GetSequenceNumber();
-	globalMatrix_.Reset(mat);
+	globalMatrix_.Reset(mat, m_LivingTime);
+	m_GlobalMatrix43Calculated = true;
+}
+
+void Instance::UpdateGlobalMatrix(const SIMD::Mat43f& mat)
+{
+	if (globalMatrix_.GetCurrent() == mat)
+	{
+		return;
+	}
+
+	m_sequenceNumber = m_pManager->GetSequenceNumber();
+	globalMatrix_.Step(mat, m_LivingTime);
 	m_GlobalMatrix43Calculated = true;
 }
 
@@ -129,7 +141,7 @@ void Instance::Initialize(Instance* parent, float spawnDeltaFrame, int32_t insta
 	// Initialize paramaters about a parent
 	m_pParent = parent;
 	m_ParentMatrix = SIMD::Mat43f::Identity;
-	globalMatrix_.Reset(SIMD::Mat43f::Identity);
+	globalMatrix_.Reset(SIMD::Mat43f::Identity, 0.0f);
 
 	m_LivingTime = 0.0f;
 	m_LivedTime = FLT_MAX;
@@ -620,7 +632,7 @@ void Instance::UpdateTransform(float deltaFrame)
 			calcMat *= MatTraGlobal;
 		}
 
-		globalMatrix_.Step(calcMat, deltaFrame);
+		globalMatrix_.Step(calcMat, m_LivingTime);
 
 		prevGlobalPosition_ = globalMatrix_.GetCurrent().GetTranslation();
 

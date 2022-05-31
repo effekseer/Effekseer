@@ -42,21 +42,24 @@ class TimeSeriesMatrix
 {
 	SIMD::Mat43f previous_;
 	SIMD::Mat43f current_;
-	float deltaTime_;
+	float previousTime_;
+	float currentTime_;
 
 public:
-	void Reset(const SIMD::Mat43f& matrix)
+	void Reset(const SIMD::Mat43f& matrix, float time)
 	{
 		previous_ = matrix;
 		current_ = matrix;
-		deltaTime_ = 0.0f;
+		previousTime_ = 0.0f;
+		currentTime_ = 0.0f;
 	}
 
-	void Step(const SIMD::Mat43f& matrix, float deltaTime)
+	void Step(const SIMD::Mat43f& matrix, float time)
 	{
 		previous_ = current_;
 		current_ = matrix;
-		deltaTime_ = deltaTime;
+		previousTime_ = currentTime_;
+		currentTime_ = time;
 	}
 
 	const SIMD::Mat43f& GetPrevious() const
@@ -71,18 +74,13 @@ public:
 
 	SIMD::Mat43f Get(float time) const
 	{
-		if (deltaTime_ == 0)
+		if (time >= currentTime_)
 		{
 			return GetCurrent();
 		}
-
-		if (time <= 0)
+		else if (time <= previousTime_)
 		{
 			return GetPrevious();
-		}
-		else if (time >= 1)
-		{
-			return GetCurrent();
 		}
 
 		SIMD::Vec3f s_previous;
@@ -100,8 +98,7 @@ public:
 		const auto q_previous = SIMD::Quaternionf::FromMatrix(r_previous);
 		const auto q_current = SIMD::Quaternionf::FromMatrix(r_current);
 
-		// TODO : Make correct
-		const auto alpha = time / deltaTime_;
+		const auto alpha = (time - previousTime_) / (currentTime_ - previousTime_);
 
 		const auto t = t_current * alpha + t_previous * (1.0f - alpha);
 		const auto s = s_current * alpha + s_previous * (1.0f - alpha);
@@ -229,7 +226,7 @@ public:
 
 	virtual ~Instance();
 
-	void GenerateChildrenInRequired(float deltaFrame);
+	void GenerateChildrenInRequired();
 
 	void UpdateChildrenGroupMatrix();
 
@@ -257,7 +254,9 @@ public:
 
 	const SIMD::Mat43f& GetRenderedGlobalMatrix() const;
 
-	void SetGlobalMatrix(const SIMD::Mat43f& mat);
+	void ResetGlobalMatrix(const SIMD::Mat43f& mat);
+
+	void UpdateGlobalMatrix(const SIMD::Mat43f& mat);
 
 	void ApplyBaseMatrix(const SIMD::Mat43f& baseMatrix);
 
