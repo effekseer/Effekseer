@@ -17,7 +17,7 @@ GPUTimer::GPUTimer(RendererImplemented* renderer, bool hasRefCount)
 {
 	if (auto renderer = GetRenderer())
 	{
-		renderer->GetStandardRenderer()->AddGpuTimerCount(+1);
+		renderer->GetStandardRenderer()->UpdateGPUTimerCount(+1);
 	}
 
 	InitDevice();
@@ -32,7 +32,7 @@ GPUTimer::~GPUTimer()
 
 	if (auto renderer = GetRenderer())
 	{
-		renderer->GetStandardRenderer()->AddGpuTimerCount(-1);
+		renderer->GetStandardRenderer()->UpdateGPUTimerCount(-1);
 	}
 }
 

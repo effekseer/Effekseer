@@ -16,7 +16,7 @@ GPUTimer::GPUTimer(RendererImplemented* renderer)
 	: DeviceObject(renderer->GetInternalGraphicsDevice().Get())
 	, m_renderer(renderer)
 {
-	m_renderer->GetStandardRenderer()->AddGpuTimerCount(+1);
+	m_renderer->GetStandardRenderer()->UpdateGPUTimerCount(+1);
 	m_renderer->AddRef();
 
 	InitDevice();
@@ -29,7 +29,7 @@ GPUTimer::~GPUTimer()
 {
 	ReleaseDevice();
 
-	m_renderer->GetStandardRenderer()->AddGpuTimerCount(-1);
+	m_renderer->GetStandardRenderer()->UpdateGPUTimerCount(-1);
 	m_renderer->Release();
 }
 

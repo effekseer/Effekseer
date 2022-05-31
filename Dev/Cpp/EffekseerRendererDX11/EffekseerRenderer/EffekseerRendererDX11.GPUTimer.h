@@ -28,7 +28,7 @@ public:
 	void ReleaseDevice();
 	void UpdateResults();
 
-public: // デバイス復旧用
+public: // For device restore
 	virtual void OnLostDevice();
 	virtual void OnResetDevice();
 
