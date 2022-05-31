@@ -110,6 +110,7 @@ void Instance::ResetGlobalMatrix(const SIMD::Mat43f& mat)
 
 	m_sequenceNumber = m_pManager->GetSequenceNumber();
 	globalMatrix_.Reset(mat, m_LivingTime);
+	UpdateChildrenGroupMatrix();
 	m_GlobalMatrix43Calculated = true;
 }
 
@@ -122,6 +123,7 @@ void Instance::UpdateGlobalMatrix(const SIMD::Mat43f& mat)
 
 	m_sequenceNumber = m_pManager->GetSequenceNumber();
 	globalMatrix_.Step(mat, m_LivingTime);
+	UpdateChildrenGroupMatrix();
 	m_GlobalMatrix43Calculated = true;
 }
 
