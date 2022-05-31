@@ -854,6 +854,11 @@ public:
 	{
 		renderingUserData_ = renderingUserData;
 	}
+
+	bool IsParticleSpawnedWithDecimal() const
+	{
+		return m_effect->GetVersion() >= Version17Alpha6;
+	}
 };
 //----------------------------------------------------------------------------------
 //

@@ -6,6 +6,7 @@
 
 #include "SIMD/Mat43f.h"
 #include "SIMD/Mat44f.h"
+#include "SIMD/Quaternionf.h"
 #include "SIMD/Vec2f.h"
 #include "SIMD/Vec3f.h"
 #include "SIMD/Vec4f.h"
@@ -35,6 +36,25 @@ namespace Effekseer
 struct InstanceSoundState
 {
 	int32_t delay;
+};
+
+class TimeSeriesMatrix
+{
+	SIMD::Mat43f previous_;
+	SIMD::Mat43f current_;
+	float previousTime_;
+	float currentTime_;
+
+public:
+	void Reset(const SIMD::Mat43f& matrix, float time);
+
+	void Step(const SIMD::Mat43f& matrix, float time);
+
+	const SIMD::Mat43f& GetPrevious() const;
+
+	const SIMD::Mat43f& GetCurrent() const;
+
+	SIMD::Mat43f Get(float time) const;
 };
 
 class alignas(16) Instance : public IntrusiveList<Instance>::Node
@@ -73,6 +93,8 @@ public:
 	// Random generator
 	RandObject m_randObject;
 
+	float spawnDeltaFrame_ = 0.0f;
+
 	LocalForceFieldInstance forceField_;
 
 	// Color for binding
@@ -94,7 +116,8 @@ public:
 	ScalingState scaling_values;
 
 	// 描画
-	union {
+	union
+	{
 		EffectNodeSprite::InstanceValues sprite;
 		EffectNodeRibbon::InstanceValues ribbon;
 		EffectNodeRing::InstanceValues ring;
@@ -121,9 +144,9 @@ public:
 	SIMD::Mat43f m_GenerationLocation;
 
 	// a transform matrix in the world coordinate
-	SIMD::Mat43f m_GlobalMatrix43;
+	TimeSeriesMatrix globalMatrix_;
 
-	SIMD::Mat43f m_GlobalMatrix43_Rendered;
+	SIMD::Mat43f globalMatrix_rendered;
 
 	// parent's transform matrix
 	SIMD::Mat43f m_ParentMatrix;
@@ -176,15 +199,17 @@ public:
 		return m_State <= eInstanceState::INSTANCE_STATE_REMOVING;
 	}
 
-	const SIMD::Mat43f& GetGlobalMatrix() const;
+	const TimeSeriesMatrix& GetGlobalMatrix() const;
 
 	const SIMD::Mat43f& GetRenderedGlobalMatrix() const;
 
+	void ResetGlobalMatrix(const SIMD::Mat43f& mat);
+
+	void UpdateGlobalMatrix(const SIMD::Mat43f& mat);
+
 	void ApplyBaseMatrix(const SIMD::Mat43f& baseMatrix);
 
-	void SetGlobalMatrix(const SIMD::Mat43f& mat);
-
-	void Initialize(Instance* parent, int32_t instanceNumber);
+	void Initialize(Instance* parent, float spawnDeltaFrame, int32_t instanceNumber);
 
 	void FirstUpdate();
 
