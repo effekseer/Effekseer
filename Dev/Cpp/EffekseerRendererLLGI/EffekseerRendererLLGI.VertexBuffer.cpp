@@ -6,7 +6,7 @@ namespace EffekseerRendererLLGI
 
 std::shared_ptr<LLGI::Buffer> VertexBuffer::CreateBuffer()
 {
-	return LLGI::CreateSharedPtr(GetGraphicsDevice()->GetGraphics()->CreateBuffer(LLGI::BufferUsageType::Vertex, m_size));
+	return LLGI::CreateSharedPtr(GetGraphicsDevice()->GetGraphics()->CreateBuffer(LLGI::BufferUsageType::Vertex | LLGI::BufferUsageType::MapWrite, m_size));
 }
 
 std::shared_ptr<LLGI::Buffer> VertexBuffer::GetNextBuffer()

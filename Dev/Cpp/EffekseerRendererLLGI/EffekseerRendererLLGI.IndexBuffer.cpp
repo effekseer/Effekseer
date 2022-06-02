@@ -18,7 +18,7 @@ IndexBuffer::~IndexBuffer()
 
 IndexBuffer* IndexBuffer::Create(Backend::GraphicsDevice* graphicsDevice, int maxCount, bool isDynamic, bool hasRefCount)
 {
-	auto indexBuffer = graphicsDevice->GetGraphics()->CreateBuffer(LLGI::BufferUsageType::Index, 2 * maxCount);
+	auto indexBuffer = graphicsDevice->GetGraphics()->CreateBuffer(LLGI::BufferUsageType::Index | LLGI::BufferUsageType::MapWrite, 2 * maxCount);
 	if (indexBuffer == nullptr)
 		return nullptr;
 
