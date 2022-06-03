@@ -1,10 +1,9 @@
 #include "EffectPlatformDX12.h"
+#include "../../3rdParty/LLGI/src/DX12/LLGI.BufferDX12.h"
 #include "../../3rdParty/LLGI/src/DX12/LLGI.CommandListDX12.h"
 #include "../../3rdParty/LLGI/src/DX12/LLGI.CompilerDX12.h"
 #include "../../3rdParty/LLGI/src/DX12/LLGI.GraphicsDX12.h"
-#include "../../3rdParty/LLGI/src/DX12/LLGI.IndexBufferDX12.h"
 #include "../../3rdParty/LLGI/src/DX12/LLGI.PlatformDX12.h"
-#include "../../3rdParty/LLGI/src/DX12/LLGI.VertexBufferDX12.h"
 #include "../3rdParty/LLGI/src/LLGI.CommandList.h"
 
 #include "../../3rdParty/LLGI/src/LLGI.Compiler.h"

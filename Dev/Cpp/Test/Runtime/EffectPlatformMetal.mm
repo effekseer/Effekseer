@@ -2,7 +2,6 @@
 #include "../../EffekseerRendererMetal/EffekseerRendererMetal.h"
 #include "../../3rdParty/LLGI/src/Metal/LLGI.CommandListMetal.h"
 #include "../../3rdParty/LLGI/src/Metal/LLGI.GraphicsMetal.h"
-#include "../../3rdParty/LLGI/src/Metal/LLGI.IndexBufferMetal.h"
 #include "../../3rdParty/LLGI/src/Metal/LLGI.PlatformMetal.h"
 #include "../../3rdParty/LLGI/src/Metal/LLGI.TextureMetal.h"
 #include "../../3rdParty/LLGI/src/Metal/LLGI.CompilerMetal.h"

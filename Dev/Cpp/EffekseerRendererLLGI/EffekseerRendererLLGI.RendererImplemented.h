@@ -36,7 +36,7 @@ class RendererImplemented : public Renderer, public ::Effekseer::ReferenceObject
 
 protected:
 	std::map<PiplineStateKey, LLGI::PipelineState*> piplineStates_;
-	LLGI::VertexBuffer* currentVertexBuffer_ = nullptr;
+	LLGI::Buffer* currentVertexBuffer_ = nullptr;
 	int32_t currentVertexBufferStride_ = 0;
 	LLGI::TopologyType currentTopologyType_ = LLGI::TopologyType::Triangle;
 
@@ -203,9 +203,9 @@ public:
 	}
 
 	void SetVertexBuffer(VertexBuffer* vertexBuffer, int32_t stride);
-	void SetVertexBuffer(LLGI::VertexBuffer* vertexBuffer, int32_t stride);
+	void SetVertexBuffer(LLGI::Buffer* vertexBuffer, int32_t stride);
 	void SetIndexBuffer(IndexBuffer* indexBuffer);
-	void SetIndexBuffer(LLGI::IndexBuffer* indexBuffer);
+	void SetIndexBuffer(LLGI::Buffer* indexBuffer);
 
 	void SetVertexBuffer(const Effekseer::Backend::VertexBufferRef& vertexBuffer, int32_t stride);
 	void SetIndexBuffer(const Effekseer::Backend::IndexBufferRef& indexBuffer);
