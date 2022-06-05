@@ -222,6 +222,7 @@ if(BUILD_VIEWER)
                         -DZLIB_INCLUDE_DIRS=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/include
                         -DPNG_BUILD_ZLIB=ON
                         -DPNG_SHARED=OFF
+                        -DPNG_EXECUTABLES=OFF
                         -DPNG_TESTS=OFF
                         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
     )
