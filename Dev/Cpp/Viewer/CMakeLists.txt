@@ -238,7 +238,6 @@ elseif(APPLE)
         Viewer
         PRIVATE
         EffekseerRendererGL
-        OpenSoundMixer
         ${OpenAL_LIBRARY}
         "-framework OpenAL"
         ${CMAKE_THREAD_LIBS_INIT}
