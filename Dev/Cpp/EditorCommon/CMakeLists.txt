@@ -80,6 +80,7 @@ if(UNIX AND NOT APPLE)
     target_link_libraries(
         EditorCommon
         PUBLIC
+        dl
         ${CMAKE_THREAD_LIBS_INIT}
         ${OPENGL_LIBRARY}
         ${X11_LIBRARIES})
