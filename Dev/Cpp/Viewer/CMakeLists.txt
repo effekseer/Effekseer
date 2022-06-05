@@ -177,6 +177,8 @@ target_link_libraries(
 	optimized "${LIBPNG_LIB_RELEASE}"
 	debug "${ZLIB_LIB_DEBUG}"
 	optimized "${ZLIB_LIB_RELEASE}"
+	debug "${OSM_LIB_DEBUG}"
+	optimized "${OSM_LIB_RELEASE}"
 )
 
 add_dependencies(Viewer 
@@ -217,9 +219,7 @@ if (WIN32)
         EffekseerRendererGL
         EffekseerSoundOSMixer
         debug libglew32d
-        debug OpenSoundMixerd
         optimized libglew32
-        optimized OpenSoundMixer
     )
 
 elseif(APPLE)
