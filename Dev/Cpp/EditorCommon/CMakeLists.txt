@@ -64,21 +64,6 @@ if(CLANG_FORMAT_ENABLED)
     clang_format(${PROJECT_NAME})
 endif()
 
-if(UNIX AND NOT APPLE)
-
-    FIND_PACKAGE(OpenGL REQUIRED)
-    find_package(X11 REQUIRED)
-    find_package(Threads REQUIRED)
-
-    target_link_libraries(
-        EditorCommon
-        PUBLIC
-        ${CMAKE_THREAD_LIBS_INIT}
-        ${OPENGL_LIBRARY}
-        ${X11_LIBRARIES})
-
-endif()
-
 target_link_libraries(
     EditorCommon
     PUBLIC
