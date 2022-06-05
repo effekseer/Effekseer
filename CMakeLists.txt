@@ -212,14 +212,14 @@ if(BUILD_VIEWER)
     ExternalProject_Add(
         ExternalProject_libpng
         DEPENDS         ExternalProject_zlib
-        SOURCE_DIR      ${CMAKE_CURRENT_SOURCE_DIR}/Downloads/libpng
+        SOURCE_DIR      ${CMAKE_CURRENT_SOURCE_DIR}/Dev/Cpp/3rdParty/libpng
         PREFIX          ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Build/libpng
         INSTALL_DIR     ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng
         INSTALL_COMMAND ${LIBPNG_INSTALL}
         CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng
                         -DCMAKE_USER_MAKE_RULES_OVERRIDE=${CMAKE_CURRENT_SOURCE_DIR}/Dev/CFlagOverrides.cmake
                         -DEFK_USE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
-                        -DZLIB_INCLUDE_DIR=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/include
+                        -DZLIB_INCLUDE_DIRS=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/include
                         -DPNG_BUILD_ZLIB=ON
                         -DPNG_SHARED=OFF
                         -DPNG_TESTS=OFF

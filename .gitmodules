@@ -52,3 +52,6 @@
 [submodule "Dev/Cpp/3rdParty/ImGradientHDR"]
 	path = Dev/Cpp/3rdParty/ImGradientHDR
 	url = https://github.com/effekseer/ImGradientHDR.git
+[submodule "Dev/Cpp/3rdParty/libpng"]
+	path = Dev/Cpp/3rdParty/libpng
+	url = https://github.com/effekseer/libpng
