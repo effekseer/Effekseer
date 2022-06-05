@@ -71,6 +71,21 @@ target_link_libraries(
     optimized "${GLFW3_LIB_RELEASE}"
 )
 
+if(UNIX AND NOT APPLE)
+
+    FIND_PACKAGE(OpenGL REQUIRED)
+    find_package(X11 REQUIRED)
+    find_package(Threads REQUIRED)
+
+    target_link_libraries(
+        EditorCommon
+        PUBLIC
+        ${CMAKE_THREAD_LIBS_INIT}
+        ${OPENGL_LIBRARY}
+        ${X11_LIBRARIES})
+
+endif()
+
 add_dependencies(EditorCommon ExternalProject_glfw)
 
 target_include_directories(
