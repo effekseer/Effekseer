@@ -77,8 +77,6 @@ target_link_libraries(
     imgui
     imgui-node-editor
     ImGradientHDR
-    debug "${GLFW3_LIB_DEBUG}"
-    optimized "${GLFW3_LIB_RELEASE}"
 )
 
 if(USE_LIBPNG_LOADER)

@@ -64,21 +64,12 @@ if(CLANG_FORMAT_ENABLED)
     clang_format(${PROJECT_NAME})
 endif()
 
-
-if (WIN32)
-    target_link_libraries(
-        EditorCommon
-        PUBLIC
-        debug glfw3d
-        optimized glfw3
-    )
-else()
-    target_link_libraries(
-        EditorCommon
-        PUBLIC
-        glfw3
-    )
-endif()
+target_link_libraries(
+    EditorCommon
+    PUBLIC
+    debug "${GLFW3_LIB_DEBUG}"
+    optimized "${GLFW3_LIB_RELEASE}"
+)
 
 add_dependencies(EditorCommon ExternalProject_glfw)
 

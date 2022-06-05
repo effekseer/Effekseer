@@ -169,16 +169,14 @@ target_link_libraries(
     Boxer
     imgui
     ImGradientHDR
-    debug "${GLFW3_LIB_DEBUG}"
-    optimized "${GLFW3_LIB_RELEASE}"
     debug "${GD_LIB_DEBUG}"
-	optimized "${GD_LIB_RELEASE}"
-	debug "${LIBPNG_LIB_DEBUG}"
-	optimized "${LIBPNG_LIB_RELEASE}"
-	debug "${ZLIB_LIB_DEBUG}"
-	optimized "${ZLIB_LIB_RELEASE}"
-	debug "${OSM_LIB_DEBUG}"
-	optimized "${OSM_LIB_RELEASE}"
+    optimized "${GD_LIB_RELEASE}"
+    debug "${LIBPNG_LIB_DEBUG}"
+    optimized "${LIBPNG_LIB_RELEASE}"
+    debug "${ZLIB_LIB_DEBUG}"
+    optimized "${ZLIB_LIB_RELEASE}"
+    debug "${OSM_LIB_DEBUG}"
+    optimized "${OSM_LIB_RELEASE}"
 )
 
 add_dependencies(Viewer 
