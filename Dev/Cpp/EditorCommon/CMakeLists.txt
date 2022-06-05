@@ -64,20 +64,27 @@ if(CLANG_FORMAT_ENABLED)
     clang_format(${PROJECT_NAME})
 endif()
 
+target_link_libraries(
+    EditorCommon
+    PUBLIC
+    debug "${GLFW3_LIB_DEBUG}"
+    optimized "${GLFW3_LIB_RELEASE}"
+)
 
-if (WIN32)
+if(UNIX AND NOT APPLE)
+
+    FIND_PACKAGE(OpenGL REQUIRED)
+    find_package(X11 REQUIRED)
+    find_package(Threads REQUIRED)
+
     target_link_libraries(
         EditorCommon
         PUBLIC
-        debug glfw3d
-        optimized glfw3
-    )
-else()
-    target_link_libraries(
-        EditorCommon
-        PUBLIC
-        glfw3
-    )
+        dl
+        ${CMAKE_THREAD_LIBS_INIT}
+        ${OPENGL_LIBRARY}
+        ${X11_LIBRARIES})
+
 endif()
 
 add_dependencies(EditorCommon ExternalProject_glfw)

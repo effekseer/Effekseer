@@ -7,9 +7,6 @@
 [submodule "Downloads/glfw"]
 	path = Downloads/glfw
 	url = https://github.com/glfw/glfw
-[submodule "Downloads/libpng"]
-	path = Downloads/libpng
-	url = https://github.com/glennrp/libpng
 [submodule "Downloads/zlib"]
 	path = Downloads/zlib
 	url = https://github.com/madler/zlib
@@ -52,3 +49,6 @@
 [submodule "Dev/Cpp/3rdParty/ImGradientHDR"]
 	path = Dev/Cpp/3rdParty/ImGradientHDR
 	url = https://github.com/effekseer/ImGradientHDR.git
+[submodule "Dev/Cpp/3rdParty/libpng"]
+	path = Dev/Cpp/3rdParty/libpng
+	url = https://github.com/effekseer/libpng
