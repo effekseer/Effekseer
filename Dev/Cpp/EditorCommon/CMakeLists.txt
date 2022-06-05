@@ -71,7 +71,7 @@ if(UNIX AND NOT APPLE)
     find_package(Threads REQUIRED)
 
     target_link_libraries(
-        EffekseerMaterialEditor
+        EditorCommon
         PUBLIC
         ${CMAKE_THREAD_LIBS_INIT}
         ${OPENGL_LIBRARY}
