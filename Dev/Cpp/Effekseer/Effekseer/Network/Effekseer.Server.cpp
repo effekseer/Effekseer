@@ -17,13 +17,11 @@
 namespace Effekseer
 {
 
-void ServerImplemented::InternalClient::RecvAsync(void* data)
+void ServerImplemented::InternalClient::RecvAsync()
 {
-	InternalClient* client = (InternalClient*)data;
-
 	while (true)
 	{
-		client->m_recvBuffer.clear();
+		m_recvBuffer.clear();
 
 		int32_t size = 0;
 		int32_t restSize = 0;
@@ -31,14 +29,14 @@ void ServerImplemented::InternalClient::RecvAsync(void* data)
 		restSize = 4;
 		while (restSize > 0)
 		{
-			auto recvSize = ::recv(client->m_socket, (char*)(&size), restSize, 0);
+			auto recvSize = m_socket.Recv(&size, restSize);
 			restSize -= recvSize;
 
 			if (recvSize == 0 || recvSize == -1)
 			{
 				// Failed
-				client->m_server->RemoveClient(client);
-				client->ShutDown();
+				m_server->RemoveClient(this);
+				Close();
 				return;
 			}
 		}
@@ -48,36 +46,36 @@ void ServerImplemented::InternalClient::RecvAsync(void* data)
 		{
 			uint8_t buf[256];
 
-			auto recvSize = ::recv(client->m_socket, (char*)(buf), Min(restSize, 256), 0);
+			auto recvSize = m_socket.Recv(buf, Min(restSize, 256));
 			restSize -= recvSize;
 
 			if (recvSize == 0 || recvSize == -1)
 			{
 				// Failed
-				client->m_server->RemoveClient(client);
-				client->ShutDown();
+				m_server->RemoveClient(this);
+				Close();
 				return;
 			}
 
 			for (int32_t i = 0; i < recvSize; i++)
 			{
-				client->m_recvBuffer.push_back(buf[i]);
+				m_recvBuffer.push_back(buf[i]);
 			}
 		}
 
 		// recieve buffer
-		client->m_ctrlRecvBuffers.lock();
-		client->m_recvBuffers.push_back(client->m_recvBuffer);
-		client->m_ctrlRecvBuffers.unlock();
+		m_ctrlRecvBuffers.lock();
+		m_recvBuffers.push_back(m_recvBuffer);
+		m_ctrlRecvBuffers.unlock();
 	}
 }
 
-ServerImplemented::InternalClient::InternalClient(EfkSocket socket_, ServerImplemented* server)
-	: m_socket(socket_)
+ServerImplemented::InternalClient::InternalClient(Socket socket, ServerImplemented* server)
+	: m_socket(std::move(socket))
 	, m_server(server)
 	, m_active(true)
 {
-	m_threadRecv = std::thread([this]() { RecvAsync(this); });
+	m_threadRecv = std::thread([this]() { RecvAsync(); });
 }
 
 ServerImplemented::InternalClient::~InternalClient()
@@ -85,15 +83,10 @@ ServerImplemented::InternalClient::~InternalClient()
 	m_threadRecv.join();
 }
 
-void ServerImplemented::InternalClient::ShutDown()
+void ServerImplemented::InternalClient::Close()
 {
-	if (m_socket != InvalidSocket)
-	{
-		Socket::Shutsown(m_socket);
-		Socket::Close(m_socket);
-		m_socket = InvalidSocket;
-		m_active = false;
-	}
+	m_socket.Close();
+	m_active = false;
 }
 
 ServerImplemented::ServerImplemented()
@@ -129,24 +122,19 @@ void ServerImplemented::RemoveClient(InternalClient* client)
 	}
 }
 
-void ServerImplemented::AcceptAsync(void* data)
+void ServerImplemented::AcceptAsync()
 {
-	ServerImplemented* server = (ServerImplemented*)data;
-
 	while (true)
 	{
-		SOCKADDR_IN socketAddrIn;
-		int32_t Size = sizeof(SOCKADDR_IN);
+		Socket socket = m_socket.Accept();
 
-		EfkSocket socket_ = ::accept(server->m_socket, (SOCKADDR*)(&socketAddrIn), (SOCKLEN*)(&Size));
-
-		if (server->m_socket == InvalidSocket || socket_ == InvalidSocket)
+		if (!socket.IsValid())
 		{
 			break;
 		}
 
 		// Accept and add an internal client
-		server->AddClient(new InternalClient(socket_, server));
+		AddClient(new InternalClient(std::move(socket), this));
 
 		EffekseerPrintDebug("Server : AcceptClient\n");
 	}
@@ -160,44 +148,16 @@ bool ServerImplemented::Start(uint16_t port)
 	}
 
 	int32_t returnCode;
-	sockaddr_in sockAddr = {AF_INET};
-
-	// Create a socket
-	EfkSocket socket_ = Socket::GenSocket();
-	if (socket_ == InvalidSocket)
+	
+	// Listen the port
+	if (!m_socket.Listen(port, 30))
 	{
-		return false;
-	}
-
-	memset(&sockAddr, 0, sizeof(SOCKADDR_IN));
-	sockAddr.sin_family = AF_INET;
-	sockAddr.sin_port = htons(port);
-
-	returnCode = ::bind(socket_, (sockaddr*)&sockAddr, sizeof(sockaddr_in));
-	if (returnCode == SocketError)
-	{
-		if (socket_ != InvalidSocket)
-		{
-			Socket::Close(socket_);
-		}
-		return false;
-	}
-
-	// Connect
-	if (!Socket::Listen(socket_, 30))
-	{
-		if (socket_ != InvalidSocket)
-		{
-			Socket::Close(socket_);
-		}
 		return false;
 	}
 
 	m_running = true;
-	m_socket = socket_;
-	m_port = port;
 
-	m_thread = std::thread([this]() { AcceptAsync(this); });
+	m_thread = std::thread([this]() { AcceptAsync(); });
 
 	EffekseerPrintDebug("Server : Start\n");
 
@@ -209,9 +169,7 @@ void ServerImplemented::Stop()
 	if (!m_running)
 		return;
 
-	Socket::Shutsown(m_socket);
-	Socket::Close(m_socket);
-	m_socket = InvalidSocket;
+	m_socket.Close();
 
 	m_running = false;
 
@@ -221,7 +179,7 @@ void ServerImplemented::Stop()
 	m_ctrlClients.lock();
 	for (std::set<InternalClient*>::iterator it = m_clients.begin(); it != m_clients.end(); ++it)
 	{
-		(*it)->ShutDown();
+		(*it)->Close();
 	}
 	m_ctrlClients.unlock();
 

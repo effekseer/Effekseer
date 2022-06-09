@@ -20,7 +20,7 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 void Socket::Initialize()
 {
-#if defined(_WIN32) && !defined(_PS4)
+#if defined(EfkWinSock)
 	// Initialize  Winsock
 	WSADATA m_WsaData;
 	::WSAStartup(MAKEWORD(2, 0), &m_WsaData);
@@ -32,7 +32,7 @@ void Socket::Initialize()
 //----------------------------------------------------------------------------------
 void Socket::Finalize()
 {
-#if defined(_WIN32) && !defined(_PS4)
+#if defined(EfkWinSock)
 	// Dispose winsock or decrease a counter
 	WSACleanup();
 #endif
@@ -41,45 +41,180 @@ void Socket::Finalize()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-EfkSocket Socket::GenSocket()
+Socket::Socket()
 {
-	return ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void Socket::Close(EfkSocket s)
+Socket::Socket(SockHandle handle, const SockAddrIn& sockAddr)
+	: handle_(handle), sockAddr_(sockAddr)
 {
-#if defined(_WIN32) && !defined(_PS4)
-	::closesocket(s);
-#else
-	::close(s);
-#endif
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void Socket::Shutsown(EfkSocket s)
+Socket::~Socket()
 {
-#if defined(_WIN32) && !defined(_PS4)
-	::shutdown(s, SD_BOTH);
-#else
-	::shutdown(s, SHUT_RDWR);
-#endif
+	Close();
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool Socket::Listen(EfkSocket s, int32_t backlog)
+Socket::Socket(Socket&& rhs)
 {
-#if defined(_WIN32) && !defined(_PS4)
-	return ::listen(s, backlog) != SocketError;
-#else
-	return listen(s, backlog) >= 0;
+	handle_ = rhs.handle_;
+	rhs.handle_ = InvalidHandle;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+Socket& Socket::operator=(Socket&& rhs)
+{
+	handle_ = rhs.handle_;
+	rhs.handle_ = InvalidHandle;
+	return *this;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void Socket::Close()
+{
+	if (handle_ == InvalidHandle)
+	{
+		return;
+	}
+
+#if defined(EfkWinSock)
+	::shutdown(handle_, SD_BOTH);
+#elif defined(EfkBSDSock)
+	::shutdown(handle_, SHUT_RDWR);
 #endif
+
+#if defined(EfkWinSock)
+	::closesocket(handle_);
+#elif defined(EfkBSDSock)
+	::close(handle_);
+#endif
+
+	handle_ = InvalidHandle;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+bool Socket::Connect(const char* host, int32_t port)
+{
+	InAddr addr = {};
+
+	// check ip adress or DNS
+	addr.s_addr = ::inet_addr(host);
+	if (addr.s_addr == InaddrNone)
+	{
+		// DNS
+		Hostent* hostEntry = ::gethostbyname(host);
+		if (hostEntry == nullptr)
+		{
+			return false;
+		}
+
+		addr.s_addr = *(unsigned int*)hostEntry->h_addr_list[0];
+	}
+
+	// create a socket
+	handle_ = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+	// connect to the remort host
+	SockAddrIn sockAddr = {};
+	sockAddr.sin_family = AF_INET;
+	sockAddr.sin_port = htons(port);
+	sockAddr.sin_addr = addr;
+
+	int32_t ret = ::connect(handle_, (SockAddr*)(&sockAddr), sizeof(SockAddrIn));
+	if (ret == SocketError)
+	{
+		Close();
+		return false;
+	}
+
+	sockAddr_ = sockAddr;
+
+	return true;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+bool Socket::Listen(int32_t port, int32_t backlog)
+{
+	// create a socket
+	handle_ = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+	// bind the port
+	SockAddrIn sockAddr = {};
+	sockAddr.sin_family = AF_INET;
+	sockAddr.sin_port = htons(port);
+
+	int32_t ret = ::bind(handle_, (SockAddr*)&sockAddr, sizeof(SockAddrIn));
+	if (ret == SocketError)
+	{
+		Close();
+		return false;
+	}
+
+	// listen the socket
+	ret = ::listen(handle_, backlog);
+#if defined(EfkWinSock)
+	if (ret == SocketError)
+#elif defined(EfkBSDSock)
+	if (ret < 0)
+#endif
+	{
+		Close();
+		return false;
+	}
+
+	sockAddr_ = sockAddr;
+
+	return true;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+Socket Socket::Accept()
+{
+	SockAddrIn sockAddr = {};
+	SockLen size = sizeof(SockAddrIn);
+
+	SockHandle retHandle = ::accept(handle_, (SockAddr*)(&sockAddr), (SockLen*)(&size));
+	if (retHandle == InvalidHandle)
+	{
+		return Socket();
+	}
+
+	return Socket(retHandle, sockAddr);
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+int32_t Socket::Send(const void* data, int32_t size)
+{
+	return ::send(handle_, (const char*)data, size, 0);
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+int32_t Socket::Recv(void* buffer, int32_t size)
+{
+	return ::recv(handle_, (char*)buffer, size, 0);
 }
 
 //----------------------------------------------------------------------------------

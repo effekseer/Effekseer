@@ -11,10 +11,8 @@
 namespace Effekseer
 {
 
-void ClientImplemented::RecvAsync(void* data)
+void ClientImplemented::RecvAsync()
 {
-	auto client = (ClientImplemented*)data;
-
 	while (true)
 	{
 		int32_t size = 0;
@@ -23,12 +21,12 @@ void ClientImplemented::RecvAsync(void* data)
 		restSize = 4;
 		while (restSize > 0)
 		{
-			auto recvSize = ::recv(client->m_socket, (char*)(&size), restSize, 0);
+			int32_t recvSize = m_socket.Recv(&size, restSize);
 			restSize -= recvSize;
 
 			if (recvSize == 0 || recvSize == -1)
 			{
-				client->StopInternal();
+				StopInternal();
 				return;
 			}
 		}
@@ -43,8 +41,7 @@ void ClientImplemented::StopInternal()
 		return;
 	m_running = false;
 
-	Socket::Shutsown(m_socket);
-	Socket::Close(m_socket);
+	m_socket.Close();
 
 	EffekseerPrintDebug("Client : Stop(Internal)\n");
 }
@@ -66,28 +63,7 @@ ClientRef Client::Create()
 	return MakeRefPtr<ClientImplemented>();
 }
 
-bool ClientImplemented::GetAddr(const char* host, IN_ADDR* addr)
-{
-	HOSTENT* hostEntry = nullptr;
-
-	// check ip adress or DNS
-	addr->s_addr = ::inet_addr(host);
-	if (addr->s_addr == InaddrNone)
-	{
-		// DNS
-		hostEntry = ::gethostbyname(host);
-		if (hostEntry == nullptr)
-		{
-			return false;
-		}
-
-		addr->s_addr = *(unsigned int*)hostEntry->h_addr_list[0];
-	}
-
-	return true;
-}
-
-bool ClientImplemented::Start(char* host, uint16_t port)
+bool ClientImplemented::Start(const char* host, uint16_t port)
 {
 	if (m_running)
 		return false;
@@ -95,46 +71,17 @@ bool ClientImplemented::Start(char* host, uint16_t port)
 	// to stop thread
 	Stop();
 
-	SOCKADDR_IN sockAddr;
-
-	// create a socket
-	EfkSocket socket_ = Socket::GenSocket();
-	if (socket_ == InvalidSocket)
-	{
-		return false;
-	}
-
-	// get adder
-	IN_ADDR addr;
-	if (!GetAddr(host, &addr))
-	{
-		if (socket_ != InvalidSocket)
-			Socket::Close(socket_);
-		return false;
-	}
-
-	// generate data to connect
-	memset(&sockAddr, 0, sizeof(SOCKADDR_IN));
-	sockAddr.sin_family = AF_INET;
-	sockAddr.sin_port = htons(port);
-	sockAddr.sin_addr = addr;
-
 	// connect
-	int32_t ret = ::connect(socket_, (SOCKADDR*)(&sockAddr), sizeof(SOCKADDR_IN));
-	if (ret == SocketError)
+	bool ret = m_socket.Connect(host, port);
+	if (!ret)
 	{
-		if (socket_ != InvalidSocket)
-			Socket::Close(socket_);
 		return false;
 	}
-
-	m_socket = socket_;
-	m_port = port;
 
 	m_running = true;
 
 	isThreadRunning = true;
-	m_threadRecv = std::thread([this]() { RecvAsync(this); });
+	m_threadRecv = std::thread([this]() { RecvAsync(); });
 
 	EffekseerPrintDebug("Client : Start\n");
 
@@ -173,7 +120,7 @@ bool ClientImplemented::Send(void* data, int32_t datasize)
 	int32_t size = (int32_t)m_sendBuffer.size();
 	while (size > 0)
 	{
-		auto ret = ::send(m_socket, (const char*)(&(m_sendBuffer[m_sendBuffer.size() - size])), size, 0);
+		auto ret = m_socket.Send(&m_sendBuffer[m_sendBuffer.size() - size], size);
 		if (ret == 0 || ret < 0)
 		{
 			Stop();

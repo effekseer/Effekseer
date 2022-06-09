@@ -22,7 +22,7 @@ public:
 
 	static ClientRef Create();
 
-	virtual bool Start(char* host, uint16_t port) = 0;
+	virtual bool Start(const char* host, uint16_t port) = 0;
 	virtual void Stop() = 0;
 
 	virtual void Reload(const char16_t* key, void* data, int32_t size) = 0;

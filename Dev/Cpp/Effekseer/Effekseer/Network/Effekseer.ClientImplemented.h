@@ -21,23 +21,20 @@ private:
 	bool isThreadRunning = false;
 	std::thread m_threadRecv;
 
-	EfkSocket m_socket = InvalidSocket;
-	uint16_t m_port = 0;
+	Socket m_socket;
 	std::vector<uint8_t> m_sendBuffer;
 
 	bool m_running = false;
 	std::mutex mutexStop;
 
-	bool GetAddr(const char* host, IN_ADDR* addr);
-
-	static void RecvAsync(void* data);
+	void RecvAsync();
 	void StopInternal();
 
 public:
 	ClientImplemented();
 	~ClientImplemented() override;
 
-	bool Start(char* host, uint16_t port);
+	bool Start(const char* host, uint16_t port);
 	void Stop();
 
 	bool Send(void* data, int32_t datasize);

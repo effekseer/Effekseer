@@ -26,7 +26,7 @@ private:
 	{
 	public:
 		std::thread m_threadRecv;
-		EfkSocket m_socket;
+		Socket m_socket;
 		ServerImplemented* m_server;
 		bool m_active;
 
@@ -35,12 +35,12 @@ private:
 		std::vector<std::vector<uint8_t>> m_recvBuffers;
 		std::mutex m_ctrlRecvBuffers;
 
-		static void RecvAsync(void* data);
+		void RecvAsync();
 
 	public:
-		InternalClient(EfkSocket socket_, ServerImplemented* server);
+		InternalClient(Socket socket, ServerImplemented* server);
 		~InternalClient();
-		void ShutDown();
+		void Close();
 	};
 
 private:
@@ -50,8 +50,7 @@ private:
 		bool IsRegistered;
 	};
 
-	EfkSocket m_socket = InvalidSocket;
-	uint16_t m_port = 0;
+	Socket m_socket;
 
 	std::thread m_thread;
 	std::mutex m_ctrlClients;
@@ -69,7 +68,7 @@ private:
 
 	void AddClient(InternalClient* client);
 	void RemoveClient(InternalClient* client);
-	static void AcceptAsync(void* data);
+	void AcceptAsync();
 
 public:
 	ServerImplemented();
