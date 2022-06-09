@@ -830,6 +830,9 @@ struct MaterialShaderParameterGenerator
 			VertexUserUniformOffset = vsOffset;
 			vsOffset += sizeof(float) * 4 * materialFile.GetUniformCount();
 
+			// TODO : remove magic number
+			vsOffset += sizeof(float) * 4 * 13 * materialFile.Gradients.size();
+
 			VertexShaderUniformBufferSize = vsOffset;
 		}
 		else
