@@ -23,10 +23,10 @@ std::array<std::array<float, 4>, 13> ToUniform(const Effekseer::Gradient& gradie
 
 	for (size_t i = 0; i < 4; i++)
 	{
-		ret[8 + i][0] = gradient.Alphas[i * 2 + 0].Alpha;
-		ret[8 + i][1] = gradient.Alphas[i * 2 + 1].Position;
-		ret[8 + i][0] = gradient.Alphas[i * 2 + 0].Alpha;
-		ret[8 + i][1] = gradient.Alphas[i * 2 + 1].Position;
+		ret[9 + i][0] = gradient.Alphas[i * 2 + 0].Alpha;
+		ret[9 + i][1] = gradient.Alphas[i * 2 + 0].Position;
+		ret[9 + i][2] = gradient.Alphas[i * 2 + 1].Alpha;
+		ret[9 + i][3] = gradient.Alphas[i * 2 + 1].Position;
 	}
 
 	return ret;
