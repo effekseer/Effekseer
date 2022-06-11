@@ -34,7 +34,8 @@ struct UVParameter
 {
 	UVAnimationType Type = UVAnimationType::Default;
 
-	union {
+	union
+	{
 		struct
 		{
 		} Default;
@@ -130,6 +131,10 @@ struct UVParameter
 			{
 				memcpy(&Animation.InterpolationType, pos, sizeof(Animation.InterpolationType));
 				pos += sizeof(Animation.InterpolationType);
+			}
+			else
+			{
+				Animation.InterpolationType = Animation.NONE;
 			}
 		}
 		else if (Type == UVAnimationType::Scroll)
