@@ -131,6 +131,40 @@ public:
 		}
 	}
 
+	void Magnify(float scale, DynamicFactorParameter& DynamicFactor)
+	{
+		DynamicFactor.Tra[0] *= scale;
+		DynamicFactor.Tra[1] *= scale;
+		DynamicFactor.Tra[2] *= scale;
+
+		if (TranslationType == ParameterTranslationType_Fixed)
+		{
+			TranslationFixed.Position *= scale;
+		}
+		else if (TranslationType == ParameterTranslationType_PVA)
+		{
+			TranslationPVA.location.min *= scale;
+			TranslationPVA.location.max *= scale;
+			TranslationPVA.velocity.min *= scale;
+			TranslationPVA.velocity.max *= scale;
+			TranslationPVA.acceleration.min *= scale;
+			TranslationPVA.acceleration.max *= scale;
+		}
+		else if (TranslationType == ParameterTranslationType_Easing)
+		{
+			TranslationEasing.start.min *= scale;
+			TranslationEasing.start.max *= scale;
+			TranslationEasing.end.min *= scale;
+			TranslationEasing.end.max *= scale;
+		}
+		else if (TranslationType == ParameterTranslationType_FCurve)
+		{
+			TranslationFCurve->X.Maginify(scale);
+			TranslationFCurve->Y.Maginify(scale);
+			TranslationFCurve->Z.Maginify(scale);
+		}
+	}
+
 	void Load(unsigned char*& pos, const EffectImplemented* ef)
 	{
 		int32_t size = 0;

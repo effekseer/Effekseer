@@ -175,6 +175,11 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 
 		TranslationParam.Load(pos, ef);
 
+		if (ef->IsDyanamicMagnificationValid())
+		{
+			TranslationParam.Magnify(m_effect->GetMaginification(), DynamicFactor);
+		}
+
 		// Local force field
 		if (ef->GetVersion() >= 1500)
 		{
