@@ -132,45 +132,42 @@ struct KillRulesParameter
 	KillType Type = KillType::None;
 	int IsScaleAndRotationApplied = 1;
 
-	union {
+	union
+	{
 		struct
 		{
-			Vector3D Center = {0.0F, 0.0F, 0.0F}; // In local space
-			Vector3D Size = {0.5F, 0.5F, 0.5F};	  // In local space
-			int IsKillInside = 0;
+			vector3d Center; // In local space
+			vector3d Size;	 // In local space
+			int IsKillInside;
 		} Box;
 
 		struct
 		{
-			Vector3D PlaneAxis = {0.0F, 1.0F, 0.0F}; // in local space
-			float PlaneOffset = 1.0f;				 // in the direction of plane axis
+			vector3d PlaneAxis; // in local space
+			float PlaneOffset;	// in the direction of plane axis
 		} Plane;
 
 		struct
 		{
-			Vector3D Center = {0.0F, 0.0F, 0.0F}; // in local space
-			float Radius = 1.0F;
-			int IsKillInside = 0;
+			vector3d Center; // in local space
+			float Radius;
+			int IsKillInside;
 		} Sphere;
 	};
-
-	KillRulesParameter()
-	{
-	}
 
 	void MakeCoordinateSystemLH()
 	{
 		if (Type == KillType::Box)
 		{
-			Box.Center.Z *= -1.0F;
+			Box.Center.z *= -1.0F;
 		}
 		else if (Type == KillType::Plane)
 		{
-			Plane.PlaneAxis.Z *= -1.0F;
+			Plane.PlaneAxis.z *= -1.0F;
 		}
 		else if (Type == KillType::Sphere)
 		{
-			Sphere.Center.Z *= -1.0F;
+			Sphere.Center.z *= -1.0F;
 		}
 	}
 };
@@ -221,7 +218,8 @@ struct LocationAbsParameter
 {
 	LocationAbsType type = LocationAbsType::None;
 
-	union {
+	union
+	{
 		struct
 		{
 
@@ -704,17 +702,15 @@ protected:
 	Effect* m_effect;
 
 	//! a generation in the node tree
-	int generation_;
+	int generation_ = 0;
 
 	// 子ノード
 	std::vector<EffectNodeImplemented*> m_Nodes;
 
 	RefPtr<RenderingUserData> renderingUserData_;
 
-	// コンストラクタ
 	EffectNodeImplemented(Effect* effect, unsigned char*& pos);
 
-	// デストラクタ
 	virtual ~EffectNodeImplemented();
 
 	void LoadParameter(unsigned char*& pos, EffectNode* parent, const SettingRef& setting);
@@ -733,7 +729,7 @@ public:
 	\~japanese For nodes that are not normally rendered, the rendering type is changed to become a node that does not render. However, when
 	color inheritance is done, it becomes a node which does not perform drawing only.
 	*/
-	bool IsRendered;
+	bool IsRendered = true;
 
 	ParameterCommonValues CommonValues;
 	SteeringBehaviorParameter SteeringBehaviorParam;
@@ -760,10 +756,10 @@ public:
 	bool EnableFalloff = false;
 	FalloffParameter FalloffParam{};
 
-	ParameterSoundType SoundType;
+	ParameterSoundType SoundType = ParameterSoundType_None;
 	ParameterSound Sound;
 
-	eRenderingOrder RenderingOrder;
+	eRenderingOrder RenderingOrder = RenderingOrder_FirstCreatedInstanceIsFirst;
 
 	int32_t RenderingPriority = -1;
 

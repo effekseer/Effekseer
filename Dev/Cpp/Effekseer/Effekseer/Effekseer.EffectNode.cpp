@@ -42,10 +42,6 @@ bool operator==(const TranslationParentBindType& lhs, const BindType& rhs)
 //----------------------------------------------------------------------------------
 EffectNodeImplemented::EffectNodeImplemented(Effect* effect, unsigned char*& pos)
 	: m_effect(effect)
-	, generation_(0)
-	, IsRendered(true)
-	, SoundType(ParameterSoundType_None)
-	, RenderingOrder(RenderingOrder_FirstCreatedInstanceIsFirst)
 {
 }
 
@@ -353,7 +349,11 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 				memcpy(&KillParam.Plane.PlaneOffset, pos, sizeof(float));
 				pos += sizeof(float);
 
-				KillParam.Plane.PlaneAxis /= Vector3D::Length(KillParam.Plane.PlaneAxis);
+				const auto length = Vector3D::Length(Vector3D{KillParam.Plane.PlaneAxis.x, KillParam.Plane.PlaneAxis.y, KillParam.Plane.PlaneAxis.z});
+				KillParam.Plane.PlaneAxis.x /= length;
+				KillParam.Plane.PlaneAxis.y /= length;
+				KillParam.Plane.PlaneAxis.z /= length;
+
 				KillParam.Plane.PlaneOffset *= ef->GetMaginification();
 			}
 			else if (KillParam.Type == KillType::Sphere)
@@ -370,6 +370,11 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 				KillParam.Sphere.Center *= ef->GetMaginification();
 				KillParam.Sphere.Radius *= ef->GetMaginification();
 			}
+		}
+		else
+		{
+			KillParam.Type = KillType::None;
+			KillParam.IsScaleAndRotationApplied = 1;
 		}
 
 		// Convert right handle coordinate system into left handle coordinate system
@@ -838,7 +843,8 @@ EffectInstanceTerm EffectNodeImplemented::CalculateInstanceTerm(EffectInstanceTe
 {
 	EffectInstanceTerm ret;
 
-	auto addWithClip = [](int v1, int v2) -> int {
+	auto addWithClip = [](int v1, int v2) -> int
+	{
 		v1 = Max(v1, 0);
 		v2 = Max(v2, 0);
 
