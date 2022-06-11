@@ -1092,6 +1092,10 @@ struct ParameterRendererCommon
 					memcpy(&UV.Animation.InterpolationType, pos, sizeof(UV.Animation.InterpolationType));
 					pos += sizeof(UV.Animation.InterpolationType);
 				}
+				else
+				{
+					UV.Animation.InterpolationType = UV.Animation.NONE;
+				}
 			}
 			else if (UVType == UV_SCROLL)
 			{
