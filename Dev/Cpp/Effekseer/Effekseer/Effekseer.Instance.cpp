@@ -512,7 +512,7 @@ void Instance::Update(float deltaFrame, bool shown)
 					SIMD::Vec3f size = m_pEffectNode->KillParam.Box.Size;
 					bool isWithin = localPosition.GetX() <= size.GetX() && localPosition.GetY() <= size.GetY() && localPosition.GetZ() <= size.GetZ();
 
-					if (isWithin == m_pEffectNode->KillParam.Box.IsKillInside)
+					if (isWithin && m_pEffectNode->KillParam.Box.IsKillInside > 0)
 					{
 						removed = true;
 					}
@@ -534,7 +534,7 @@ void Instance::Update(float deltaFrame, bool shown)
 					float distance = delta.GetSquaredLength();
 					float radius = m_pEffectNode->KillParam.Sphere.Radius;
 					bool isWithin = distance <= (radius * radius);
-					if (isWithin == m_pEffectNode->KillParam.Sphere.IsKillInside)
+					if (isWithin && m_pEffectNode->KillParam.Sphere.IsKillInside > 0)
 					{
 						removed = true;
 					}
