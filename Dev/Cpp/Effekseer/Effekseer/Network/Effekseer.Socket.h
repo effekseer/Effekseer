@@ -23,6 +23,7 @@
 #endif
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _WINSOCKAPI_
+#define NOMINMAX
 #include <winsock2.h>
 #pragma comment(lib, "ws2_32.lib")
 
@@ -55,9 +56,6 @@ namespace Effekseer
 
 class Socket
 {
-private:
-	static std::atomic_int32_t initializedCount;
-
 public:
 #if defined(EfkWinSock)
 	using SockHandle = SOCKET;
@@ -83,11 +81,12 @@ public:
 	static const int32_t InaddrNone = -1;
 #endif
 
-public:
+private:
 	static void Initialize();
 
 	static void Finalize();
 
+public:
 	Socket();
 
 	Socket(SockHandle handle, const SockAddrIn& sockAddr);

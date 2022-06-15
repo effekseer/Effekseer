@@ -9,11 +9,11 @@
 #include "Effekseer.Server.h"
 
 #include "Effekseer.Socket.h"
+#include "Effekseer.Session.h"
 
 #include <string>
 
 #include <map>
-#include <set>
 #include <vector>
 
 namespace Effekseer
@@ -22,25 +22,10 @@ namespace Effekseer
 class ServerImplemented : public Server, public ReferenceObject
 {
 private:
-	class InternalClient
+	struct InternalClient
 	{
-	public:
-		std::thread m_threadRecv;
-		Socket m_socket;
-		ServerImplemented* m_server;
-		bool m_active;
-
-		std::vector<uint8_t> m_recvBuffer;
-
-		std::vector<std::vector<uint8_t>> m_recvBuffers;
-		std::mutex m_ctrlRecvBuffers;
-
-		void RecvAsync();
-
-	public:
-		InternalClient(Socket socket, ServerImplemented* server);
-		~InternalClient();
-		void Close();
+		Socket Socket;
+		Session Session;
 	};
 
 private:
@@ -57,18 +42,17 @@ private:
 
 	bool m_running = false;
 
-	std::set<InternalClient*> m_clients;
-	std::set<InternalClient*> m_removedClients;
-
+	std::vector<std::unique_ptr<InternalClient>> m_clients;
 	std::map<std::u16string, EffectParameter> m_effects;
+	std::u16string m_materialPath;
 
-	std::map<std::u16string, std::vector<uint8_t>> m_data;
+	ManagerRef* m_managers = nullptr;
+	int32_t m_managerCount = 0;
+	ReloadingThreadType m_reloadingThreadType{};
 
-	std::vector<char16_t> m_materialPath;
-
-	void AddClient(InternalClient* client);
-	void RemoveClient(InternalClient* client);
 	void AcceptAsync();
+
+	void OnDataReceived(const Session::Request& req, Session::Response& res);
 
 public:
 	ServerImplemented();
@@ -85,6 +69,8 @@ public:
 	void Update(ManagerRef* managers, int32_t managerCount, ReloadingThreadType reloadingThreadType) override;
 
 	void SetMaterialPath(const char16_t* materialPath) override;
+
+	bool IsConnected() const override;
 
 	virtual int GetRef() override
 	{

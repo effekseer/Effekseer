@@ -11,51 +11,13 @@
 namespace Effekseer
 {
 
-void ClientImplemented::RecvAsync()
-{
-	while (true)
-	{
-		int32_t size = 0;
-		int32_t restSize = 0;
-
-		restSize = 4;
-		while (restSize > 0)
-		{
-			int32_t recvSize = m_socket.Recv(&size, restSize);
-			restSize -= recvSize;
-
-			if (recvSize == 0 || recvSize == -1)
-			{
-				StopInternal();
-				return;
-			}
-		}
-	}
-}
-
-void ClientImplemented::StopInternal()
-{
-	std::lock_guard<std::mutex> lock(mutexStop);
-
-	if (!m_running)
-		return;
-	m_running = false;
-
-	m_socket.Close();
-
-	EffekseerPrintDebug("Client : Stop(Internal)\n");
-}
-
 ClientImplemented::ClientImplemented()
 {
-	Socket::Initialize();
 }
 
 ClientImplemented::~ClientImplemented()
 {
 	Stop();
-
-	Socket::Finalize();
 }
 
 ClientRef Client::Create()
@@ -65,9 +27,6 @@ ClientRef Client::Create()
 
 bool ClientImplemented::Start(const char* host, uint16_t port)
 {
-	if (m_running)
-		return false;
-
 	// to stop thread
 	Stop();
 
@@ -78,10 +37,7 @@ bool ClientImplemented::Start(const char* host, uint16_t port)
 		return false;
 	}
 
-	m_running = true;
-
-	isThreadRunning = true;
-	m_threadRecv = std::thread([this]() { RecvAsync(); });
+	m_session.Open(&m_socket);
 
 	EffekseerPrintDebug("Client : Start\n");
 
@@ -90,46 +46,17 @@ bool ClientImplemented::Start(const char* host, uint16_t port)
 
 void ClientImplemented::Stop()
 {
-	StopInternal();
-
-	if (isThreadRunning)
-	{
-		m_threadRecv.join();
-		isThreadRunning = false;
-	}
+	m_session.Close();
 
 	EffekseerPrintDebug("Client : Stop\n");
 }
 
-bool ClientImplemented::Send(void* data, int32_t datasize)
+void ClientImplemented::Update()
 {
-	if (!m_running)
-		return false;
-
-	m_sendBuffer.clear();
-	for (int32_t i = 0; i < sizeof(int32_t); i++)
+	if (m_session.IsActive())
 	{
-		m_sendBuffer.push_back(((uint8_t*)(&datasize))[i]);
+		m_session.Update();
 	}
-
-	for (int32_t i = 0; i < datasize; i++)
-	{
-		m_sendBuffer.push_back(((uint8_t*)(data))[i]);
-	}
-
-	int32_t size = (int32_t)m_sendBuffer.size();
-	while (size > 0)
-	{
-		auto ret = m_socket.Send(&m_sendBuffer[m_sendBuffer.size() - size], size);
-		if (ret == 0 || ret < 0)
-		{
-			Stop();
-			return false;
-		}
-		size -= ret;
-	}
-
-	return true;
 }
 
 void ClientImplemented::Reload(const char16_t* key, void* data, int32_t size)
@@ -140,25 +67,18 @@ void ClientImplemented::Reload(const char16_t* key, void* data, int32_t size)
 		if (key[keylen] == 0)
 			break;
 	}
+	
+	Session::Request request;
 
-	std::vector<uint8_t> buf;
+	request.payload.insert(request.payload.end(), (uint8_t*)(&keylen), (uint8_t*)(&keylen) + sizeof(int32_t));
 
-	for (int32_t i = 0; i < sizeof(int32_t); i++)
-	{
-		buf.push_back(((uint8_t*)(&keylen))[i]);
-	}
+	request.payload.insert(request.payload.end(), (uint8_t*)(key), (uint8_t*)(key) + keylen * 2);
 
-	for (int32_t i = 0; i < keylen * 2; i++)
-	{
-		buf.push_back(((uint8_t*)(key))[i]);
-	}
+	request.payload.insert(request.payload.end(), (uint8_t*)(data), (uint8_t*)(data) + size);
 
-	for (int32_t i = 0; i < size; i++)
-	{
-		buf.push_back(((uint8_t*)(data))[i]);
-	}
-
-	Send(&(buf[0]), (int32_t)buf.size());
+	m_session.SendRequest(1, request, [](const Session::Response& res){
+		EffekseerPrintDebug("Client : Respond\n");
+	});
 }
 
 void ClientImplemented::Reload(ManagerRef manager, const char16_t* path, const char16_t* key)
@@ -176,9 +96,9 @@ void ClientImplemented::Reload(ManagerRef manager, const char16_t* path, const c
 	loader->Unload(data, size);
 }
 
-bool ClientImplemented::IsConnected()
+bool ClientImplemented::IsConnected() const
 {
-	return m_running;
+	return m_session.IsActive();
 }
 
 } // namespace Effekseer

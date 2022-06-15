@@ -93,6 +93,13 @@ public:
 		\~Japanese	素材のルートパスを設定する。
 	*/
 	virtual void SetMaterialPath(const char16_t* materialPath) = 0;
+	
+	/**
+		@brief
+		\~English	Check the connection status
+		\~Japanese	接続状態をチェックする。
+	*/
+	virtual bool IsConnected() const = 0;
 };
 
 } // namespace Effekseer

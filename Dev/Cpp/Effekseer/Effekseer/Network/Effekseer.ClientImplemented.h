@@ -9,6 +9,7 @@
 #include "Effekseer.Client.h"
 
 #include "Effekseer.Socket.h"
+#include "Effekseer.Session.h"
 #include <set>
 #include <vector>
 
@@ -18,31 +19,21 @@ namespace Effekseer
 class ClientImplemented : public Client, public ReferenceObject
 {
 private:
-	bool isThreadRunning = false;
-	std::thread m_threadRecv;
-
 	Socket m_socket;
-	std::vector<uint8_t> m_sendBuffer;
-
-	bool m_running = false;
-	std::mutex mutexStop;
-
-	void RecvAsync();
-	void StopInternal();
+	Session m_session;
 
 public:
 	ClientImplemented();
 	~ClientImplemented() override;
 
-	bool Start(const char* host, uint16_t port);
-	void Stop();
+	bool Start(const char* host, uint16_t port) override;
+	void Stop() override;
+	void Update() override;
 
-	bool Send(void* data, int32_t datasize);
+	void Reload(const char16_t* key, void* data, int32_t size) override;
+	void Reload(ManagerRef manager, const char16_t* path, const char16_t* key) override;
 
-	void Reload(const char16_t* key, void* data, int32_t size);
-	void Reload(ManagerRef manager, const char16_t* path, const char16_t* key);
-
-	bool IsConnected();
+	bool IsConnected() const override;
 
 	virtual int GetRef() override
 	{

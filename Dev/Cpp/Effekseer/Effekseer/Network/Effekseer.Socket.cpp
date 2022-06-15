@@ -43,6 +43,7 @@ void Socket::Finalize()
 //----------------------------------------------------------------------------------
 Socket::Socket()
 {
+	Initialize();
 }
 
 //----------------------------------------------------------------------------------
@@ -51,6 +52,7 @@ Socket::Socket()
 Socket::Socket(SockHandle handle, const SockAddrIn& sockAddr)
 	: handle_(handle), sockAddr_(sockAddr)
 {
+	Initialize();
 }
 
 //----------------------------------------------------------------------------------
@@ -59,6 +61,7 @@ Socket::Socket(SockHandle handle, const SockAddrIn& sockAddr)
 Socket::~Socket()
 {
 	Close();
+	Finalize();
 }
 
 //----------------------------------------------------------------------------------
@@ -144,6 +147,14 @@ bool Socket::Connect(const char* host, int32_t port)
 
 	sockAddr_ = sockAddr;
 
+//#if defined(EfkWinSock)
+//	u_long val = 1;
+//	ioctlsocket(handle_, FIONBIO, &val);
+//#elif defined(EfkBSDSock)
+//	int val = 1;
+//	ioctl(handle_, FIONBIO, &val);
+//#endif
+
 	return true;
 }
 
@@ -197,6 +208,14 @@ Socket Socket::Accept()
 	{
 		return Socket();
 	}
+
+//#if defined(EfkWinSock)
+//	u_long val = 1;
+//	ioctlsocket(retHandle, FIONBIO, &val);
+//#elif defined(EfkBSDSock)
+//	int val = 1;
+//	ioctl(retHandle, FIONBIO, &val);
+//#endif
 
 	return Socket(retHandle, sockAddr);
 }
