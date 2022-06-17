@@ -79,6 +79,7 @@ set(effekseer_src
     Effekseer/Model/SplineGenerator.cpp
     Effekseer/Network/Effekseer.Client.cpp
     Effekseer/Network/Effekseer.Server.cpp
+    Effekseer/Network/Effekseer.Session.cpp
     Effekseer/Network/Effekseer.Socket.cpp
 )
 

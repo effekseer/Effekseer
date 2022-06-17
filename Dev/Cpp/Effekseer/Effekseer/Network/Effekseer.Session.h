@@ -7,6 +7,8 @@
 #include <functional>
 #include <thread>
 #include <mutex>
+#include <vector>
+#include <unordered_map>
 #include "Effekseer.Socket.h"
 
 namespace Effekseer

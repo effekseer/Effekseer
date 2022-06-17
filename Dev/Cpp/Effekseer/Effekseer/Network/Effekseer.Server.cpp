@@ -36,12 +36,14 @@ void ServerImplemented::AcceptAsync()
 		}
 
 		// Accept and add an internal client
-		std::lock_guard<std::mutex> lock(m_ctrlClients);
-		auto& client = m_clients.emplace_back(new InternalClient());
+		std::unique_ptr<InternalClient> client(new InternalClient());
 		client->Socket = std::move(socket);
 		client->Session.Open(&client->Socket);
 		client->Session.OnRequested(1, [this](const Session::Request& req, Session::Response& res){ OnDataReceived(req, res); });
-
+		
+		std::lock_guard<std::mutex> lock(m_ctrlClients);
+		m_clients.emplace_back(std::move(client));
+		
 		EffekseerPrintDebug("Server : AcceptClient\n");
 	}
 }
