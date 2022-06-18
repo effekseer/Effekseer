@@ -145,7 +145,7 @@ void MainLoop()
 		else
 		{
 			// サーバーの更新を行う。
-			g_server->Update();
+			g_server->Update(&g_manager, 1);
 
 			if( g_timer % 120 == 0 )
 			{

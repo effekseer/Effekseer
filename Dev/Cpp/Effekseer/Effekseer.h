@@ -5034,7 +5034,7 @@ public:
 
 	*/
 	virtual void
-	Update(ManagerRef* managers = nullptr, int32_t managerCount = 0, ReloadingThreadType reloadingThreadType = ReloadingThreadType::Main) = 0;
+	Update(ManagerRef* managers, int32_t managerCount, ReloadingThreadType reloadingThreadType = ReloadingThreadType::Main) = 0;
 
 	/**
 		@brief
@@ -5042,6 +5042,13 @@ public:
 		\~Japanese	素材のルートパスを設定する。
 	*/
 	virtual void SetMaterialPath(const char16_t* materialPath) = 0;
+	
+	/**
+		@brief
+		\~English	Check the connection status
+		\~Japanese	接続状態をチェックする。
+	*/
+	virtual bool IsConnected() const = 0;
 };
 
 } // namespace Effekseer
@@ -5073,12 +5080,13 @@ public:
 
 	static ClientRef Create();
 
-	virtual bool Start(char* host, uint16_t port) = 0;
+	virtual bool Start(const char* host, uint16_t port) = 0;
 	virtual void Stop() = 0;
+	virtual void Update() = 0;
 
 	virtual void Reload(const char16_t* key, void* data, int32_t size) = 0;
 	virtual void Reload(ManagerRef manager, const char16_t* path, const char16_t* key) = 0;
-	virtual bool IsConnected() = 0;
+	virtual bool IsConnected() const = 0;
 };
 
 } // namespace Effekseer
