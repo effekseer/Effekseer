@@ -114,8 +114,8 @@ protected:
 	LLGI::Texture* depthBuffer_ = nullptr;
 	LLGI::Shader* shader_vs_ = nullptr;
 	LLGI::Shader* shader_ps_ = nullptr;
-	LLGI::VertexBuffer* vb_ = nullptr;
-	LLGI::IndexBuffer* ib_ = nullptr;
+	LLGI::Buffer* vb_ = nullptr;
+	LLGI::Buffer* ib_ = nullptr;
 	LLGI::PipelineState* pip_ = nullptr;
 	LLGI::PipelineState* screenPip_ = nullptr;
 	LLGI::RenderPassPipelineState* rppip_ = nullptr;

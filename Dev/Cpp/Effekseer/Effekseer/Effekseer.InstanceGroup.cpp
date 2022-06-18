@@ -119,7 +119,7 @@ void InstanceGroup::GenerateInstancesIfRequired(float localTime, RandObject& ran
 				m_instances.push_back(instance);
 				m_global->IncInstanceCount();
 
-				instance->Initialize(parent, m_generatedCount);
+				instance->Initialize(parent, m_nextGenerationTime, m_generatedCount);
 			}
 
 			m_generatedCount++;

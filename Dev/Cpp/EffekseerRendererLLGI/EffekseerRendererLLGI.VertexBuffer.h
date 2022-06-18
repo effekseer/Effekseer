@@ -4,7 +4,7 @@
 #include "../EffekseerRendererCommon/EffekseerRenderer.VertexBufferBase.h"
 #include "EffekseerRendererLLGI.DeviceObject.h"
 #include "EffekseerRendererLLGI.RendererImplemented.h"
-#include <LLGI.VertexBuffer.h>
+#include <LLGI.Buffer.h>
 
 namespace EffekseerRendererLLGI
 {
@@ -24,11 +24,11 @@ protected:
 	int32_t m_ringLockedOffset;
 	int32_t m_ringLockedSize;
 
-	std::vector<std::shared_ptr<LLGI::VertexBuffer>> storedVertexBuffers_;
-	std::shared_ptr<LLGI::VertexBuffer> CreateBuffer();
-	std::shared_ptr<LLGI::VertexBuffer> GetNextBuffer();
+	std::vector<std::shared_ptr<LLGI::Buffer>> storedVertexBuffers_;
+	std::shared_ptr<LLGI::Buffer> CreateBuffer();
+	std::shared_ptr<LLGI::Buffer> GetNextBuffer();
 
-	std::shared_ptr<LLGI::VertexBuffer> currentVertexBuffer_;
+	std::shared_ptr<LLGI::Buffer> currentVertexBuffer_;
 
 	bool Init();
 	VertexBuffer(Backend::GraphicsDevice* graphicsDevice, int size, bool isDynamic, bool hasRefCount);
@@ -38,7 +38,7 @@ public:
 
 	static VertexBuffer* Create(Backend::GraphicsDevice* graphicsDevice, int size, bool isDynamic, bool hasRefCount);
 
-	LLGI::VertexBuffer* GetVertexBuffer()
+	LLGI::Buffer* GetVertexBuffer()
 	{
 		return currentVertexBuffer_.get();
 	}

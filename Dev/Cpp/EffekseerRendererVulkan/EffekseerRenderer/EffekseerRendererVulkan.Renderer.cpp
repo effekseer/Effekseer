@@ -150,12 +150,14 @@ void BeginCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandL
 	context.commandBuffer = nativeCommandList;
 
 	static_cast<LLGI::CommandListVulkan*>(c->GetInternal())->BeginWithPlatform(&context);
+	c->GetInternal()->BeginRenderPassWithPlatformPtr(nullptr);
 }
 
 void EndCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList)
 {
 	assert(commandList != nullptr);
 	auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList.Get());
+	c->GetInternal()->EndRenderPassWithPlatformPtr();
 	c->GetInternal()->EndWithPlatform();
 }
 

@@ -6,8 +6,7 @@
 #include "EffekseerRendererLLGI.RendererImplemented.h"
 
 #include <LLGI.Graphics.h>
-#include <LLGI.IndexBuffer.h>
-#include <LLGI.VertexBuffer.h>
+#include <LLGI.Buffer.h>
 
 namespace EffekseerRendererLLGI
 {

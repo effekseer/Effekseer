@@ -2062,6 +2062,7 @@ public:
 #ifndef __EFFEKSEER_FILE_H__
 #define __EFFEKSEER_FILE_H__
 
+
 namespace Effekseer
 {
 
@@ -2140,6 +2141,7 @@ public:
 
 #ifndef __EFFEKSEER_DEFAULT_FILE_H__
 #define __EFFEKSEER_DEFAULT_FILE_H__
+
 
 namespace Effekseer
 {
@@ -4953,6 +4955,7 @@ public:
 #if !(defined(__EFFEKSEER_NETWORK_DISABLED__))
 #if !(defined(_PSVITA) || defined(_XBOXONE))
 
+
 namespace Effekseer
 {
 
@@ -5054,6 +5057,7 @@ public:
 #if !(defined(__EFFEKSEER_NETWORK_DISABLED__))
 #if !(defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE))
 
+
 namespace Effekseer
 {
 
@@ -5084,3 +5088,4 @@ public:
 #endif // __EFFEKSEER_CLIENT_H__
 
 #include "Effekseer.Modules.h"
+

@@ -4,12 +4,12 @@
 namespace EffekseerRendererLLGI
 {
 
-std::shared_ptr<LLGI::VertexBuffer> VertexBuffer::CreateBuffer()
+std::shared_ptr<LLGI::Buffer> VertexBuffer::CreateBuffer()
 {
-	return LLGI::CreateSharedPtr(GetGraphicsDevice()->GetGraphics()->CreateVertexBuffer(m_size));
+	return LLGI::CreateSharedPtr(GetGraphicsDevice()->GetGraphics()->CreateBuffer(LLGI::BufferUsageType::Vertex | LLGI::BufferUsageType::MapWrite, m_size));
 }
 
-std::shared_ptr<LLGI::VertexBuffer> VertexBuffer::GetNextBuffer()
+std::shared_ptr<LLGI::Buffer> VertexBuffer::GetNextBuffer()
 {
 	auto ret = storedVertexBuffers_[nextIndex_];
 	nextIndex_++;

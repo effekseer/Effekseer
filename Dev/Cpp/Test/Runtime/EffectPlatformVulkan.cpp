@@ -2,10 +2,8 @@
 #include "../../3rdParty/LLGI/src/Vulkan/LLGI.CommandListVulkan.h"
 #include "../../3rdParty/LLGI/src/Vulkan/LLGI.CompilerVulkan.h"
 #include "../../3rdParty/LLGI/src/Vulkan/LLGI.GraphicsVulkan.h"
-#include "../../3rdParty/LLGI/src/Vulkan/LLGI.IndexBufferVulkan.h"
 #include "../../3rdParty/LLGI/src/Vulkan/LLGI.PlatformVulkan.h"
 #include "../../3rdParty/LLGI/src/Vulkan/LLGI.TextureVulkan.h"
-#include "../../3rdParty/LLGI/src/Vulkan/LLGI.VertexBufferVulkan.h"
 #include "../3rdParty/LLGI/src/LLGI.CommandList.h"
 
 #include "../../3rdParty/LLGI/src/LLGI.Compiler.h"
@@ -199,11 +197,19 @@ EffekseerRenderer::RendererRef EffectPlatformVulkan::CreateRenderer()
 	return renderer;
 }
 
-EffectPlatformVulkan::~EffectPlatformVulkan() {}
+EffectPlatformVulkan::~EffectPlatformVulkan()
+{
+}
 
-void EffectPlatformVulkan::InitializeDevice(const EffectPlatformInitializingParameter& param) { CreateCheckedTexture(); }
+void EffectPlatformVulkan::InitializeDevice(const EffectPlatformInitializingParameter& param)
+{
+	CreateCheckedTexture();
+}
 
-void EffectPlatformVulkan::DestroyDevice() { EffectPlatformLLGI::DestroyDevice(); }
+void EffectPlatformVulkan::DestroyDevice()
+{
+	EffectPlatformLLGI::DestroyDevice();
+}
 
 void EffectPlatformVulkan::BeginRendering()
 {
@@ -222,4 +228,7 @@ void EffectPlatformVulkan::EndRendering()
 	EffectPlatformLLGI::EndRendering();
 }
 
-LLGI::Texture* EffectPlatformVulkan::GetCheckedTexture() const { return checkTexture_; }
+LLGI::Texture* EffectPlatformVulkan::GetCheckedTexture() const
+{
+	return checkTexture_;
+}

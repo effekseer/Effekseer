@@ -581,7 +581,7 @@ protected:
 		for (size_t i = 0; i < materialRenderData->MaterialGradients.size(); i++)
 		{
 			auto data = ToUniform(*materialRenderData->MaterialGradients[i]);
-			renderer->SetVertexBufferToShader(data.data(), sizeof(float) * 4 * 13, psOffset);
+			renderer->SetPixelBufferToShader(data.data(), sizeof(float) * 4 * 13, psOffset);
 			psOffset += (sizeof(float) * 4) * 13;
 		}
 	}

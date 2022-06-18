@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 
 if(APPLE)
-    set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "Minimum OS X deployment version" FORCE)
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "10.14" CACHE STRING "Minimum OS X deployment version" FORCE)
 endif()
 
 include(ExternalProject)
@@ -212,16 +212,18 @@ if(BUILD_VIEWER)
     ExternalProject_Add(
         ExternalProject_libpng
         DEPENDS         ExternalProject_zlib
-        SOURCE_DIR      ${CMAKE_CURRENT_SOURCE_DIR}/Downloads/libpng
+        SOURCE_DIR      ${CMAKE_CURRENT_SOURCE_DIR}/Dev/Cpp/3rdParty/libpng
         PREFIX          ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Build/libpng
         INSTALL_DIR     ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng
         INSTALL_COMMAND ${LIBPNG_INSTALL}
         CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng
                         -DCMAKE_USER_MAKE_RULES_OVERRIDE=${CMAKE_CURRENT_SOURCE_DIR}/Dev/CFlagOverrides.cmake
                         -DEFK_USE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
+                        -DZLIB_INCLUDE_DIRS=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/include
                         -DZLIB_INCLUDE_DIR=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/include
                         -DPNG_BUILD_ZLIB=ON
                         -DPNG_SHARED=OFF
+                        -DPNG_EXECUTABLES=OFF
                         -DPNG_TESTS=OFF
                         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
     )
@@ -305,6 +307,14 @@ if(BUILD_VIEWER)
     )
     list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/Downloads/OpenSoundMixer/src)
     list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/OpenSoundMixer/lib)
+
+    if(BUILD_WITH_POSTFIX)
+        set(OSM_LIB_DEBUG "OpenSoundMixerd")
+        set(OSM_LIB_RELEASE "OpenSoundMixer")
+    else()
+        set(OSM_LIB_DEBUG "OpenSoundMixer")
+        set(OSM_LIB_RELEASE "OpenSoundMixer")
+    endif()
 endif()
     
 if(BUILD_VIEWER OR BUILD_EXAMPLES OR BUILD_TEST)
