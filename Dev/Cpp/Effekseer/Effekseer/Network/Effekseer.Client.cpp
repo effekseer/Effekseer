@@ -73,9 +73,7 @@ void ClientImplemented::Reload(const char16_t* key, void* data, int32_t size)
 	payload.insert(payload.end(), (uint8_t*)(key), (uint8_t*)(key) + keylen * 2);
 	payload.insert(payload.end(), (uint8_t*)(data), (uint8_t*)(data) + size);
 
-	m_session.SendRequest(1, payload, [](const Session::Response& res){
-		EffekseerPrintDebug("Client : Respond\n");
-	});
+	m_session.Send(1, payload);
 }
 
 void ClientImplemented::Reload(ManagerRef manager, const char16_t* path, const char16_t* key)

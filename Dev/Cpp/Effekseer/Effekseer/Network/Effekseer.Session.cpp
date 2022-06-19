@@ -66,6 +66,7 @@ void Session::Update()
 			if (it != responseHandlers_.end())
 			{
 				it->second(Response{ header.code, ByteData(payload) });
+				responseHandlers_.erase(it);
 			}
 		}
 	}
@@ -165,7 +166,14 @@ bool Session::Send(uint16_t messageID, const ByteData& payload)
 
 void Session::OnReceived(uint16_t messageID, MessageHandler messageHandler)
 {
-	messageHandlers_.emplace(messageID, std::move(messageHandler));
+	if (messageHandler != nullptr)
+	{
+		messageHandlers_.emplace(messageID, std::move(messageHandler));
+	}
+	else
+	{
+		messageHandlers_.erase(messageID);
+	}
 }
 
 bool Session::SendRequest(uint16_t requestID, const ByteData& payload, ResponseHandler responseHandler)
@@ -223,7 +231,14 @@ bool Session::SendResponse(uint16_t responseID, int32_t code, const ByteData& pa
 
 void Session::OnRequested(uint16_t requestID, RequestHandler requestHandler)
 {
-	requestHandlers_.emplace(requestID, std::move(requestHandler));
+	if (requestHandler != nullptr)
+	{
+		requestHandlers_.emplace(requestID, std::move(requestHandler));
+	}
+	else
+	{
+		requestHandlers_.erase(requestID);
+	}
 }
 
 void Session::PacketHeader::Set(PacketType inType, 
