@@ -33,20 +33,26 @@ void NetworkTest_Session()
 	serverSession.Open(&serverSocket);
 	EXPECT_TRUE(serverSession.IsActive());
 
-	bool requested = false, respond = false;
-	serverSession.OnRequested(10, [&requested](const Session::Request& req, Session::Response& res){
-		requested = true;
-		EXPECT_TRUE(req.code == 700);
-		EXPECT_TRUE(req.payload.size() == 5);
-		EXPECT_TRUE(std::equal(req.payload.begin(), req.payload.end(), std::vector<uint8_t>{1, 2, 3, 4, 5}.begin()));
-		res.code = 300;
-		res.payload = std::vector<uint8_t>{6, 7, 8, 9, 10};
+	bool received = false;
+	serverSession.OnReceived(10, [&](const Session::Message& msg){
+		received = true;
+		EXPECT_TRUE(msg.payload.size == 5);
+		EXPECT_TRUE(std::equal(msg.payload.data, msg.payload.data + msg.payload.size, std::vector<uint8_t>{1, 2, 3, 4, 5}.begin()));
 	});
-	clientSession.SendRequest(10, Session::Request{700, std::vector<uint8_t>{1, 2, 3, 4, 5}}, [&respond](const Session::Response& res){
+	clientSession.Send(10, std::vector<uint8_t>{1, 2, 3, 4, 5});
+
+	bool requested = false, respond = false;
+	serverSession.OnRequested(10, [&](const Session::Request& req){
+		requested = true;
+		EXPECT_TRUE(req.payload.size == 5);
+		EXPECT_TRUE(std::equal(req.payload.data, req.payload.data + req.payload.size, std::vector<uint8_t>{1, 2, 3, 4, 5}.begin()));
+		serverSession.SendResponse(req.responseID, 300, std::vector<uint8_t>{6, 7, 8, 9, 10});
+	});
+	clientSession.SendRequest(10, std::vector<uint8_t>{1, 2, 3, 4, 5}, [&](const Session::Response& res){
 		respond = true;
 		EXPECT_TRUE(res.code == 300);
-		EXPECT_TRUE(res.payload.size() == 5);
-		EXPECT_TRUE(std::equal(res.payload.begin(), res.payload.end(), std::vector<uint8_t>{6, 7, 8, 9, 10}.begin()));
+		EXPECT_TRUE(res.payload.size == 5);
+		EXPECT_TRUE(std::equal(res.payload.data, res.payload.data + res.payload.size, std::vector<uint8_t>{6, 7, 8, 9, 10}.begin()));
 	});
 
 	for (int i = 0; i < 10; i++)
@@ -56,6 +62,7 @@ void NetworkTest_Session()
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
 
+	EXPECT_TRUE(received);
 	EXPECT_TRUE(requested);
 	EXPECT_TRUE(respond);
 }

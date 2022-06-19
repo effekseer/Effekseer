@@ -39,7 +39,7 @@ void ServerImplemented::AcceptAsync()
 		std::unique_ptr<InternalClient> client(new InternalClient());
 		client->Socket = std::move(socket);
 		client->Session.Open(&client->Socket);
-		client->Session.OnRequested(1, [this](const Session::Request& req, Session::Response& res){ OnDataReceived(req, res); });
+		client->Session.OnReceived(1, [this](const Session::Message& msg){ OnDataReceived(msg); });
 		
 		std::lock_guard<std::mutex> lock(m_ctrlClients);
 		m_clients.emplace_back(std::move(client));
@@ -48,9 +48,10 @@ void ServerImplemented::AcceptAsync()
 	}
 }
 
-void ServerImplemented::OnDataReceived(const Session::Request& req, Session::Response& res)
+void ServerImplemented::OnDataReceived(const Session::Message& msg)
 {
-	auto& buf = req.payload;
+	auto buf = msg.payload.data;
+	size_t size = msg.payload.size;
 	size_t offset = 0;
 
 	// Extract a key string length
@@ -70,7 +71,7 @@ void ServerImplemented::OnDataReceived(const Session::Request& req, Session::Res
 
 		// Extract a effect data
 		const uint8_t* effectData = &buf[offset];
-		size_t effectSize = buf.size() - offset;
+		size_t effectSize = size - offset;
 
 		// Reload the effect
 		const char16_t* materialPath = (m_materialPath.size() > 0) ? m_materialPath.c_str() : nullptr;

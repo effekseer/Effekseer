@@ -68,15 +68,12 @@ void ClientImplemented::Reload(const char16_t* key, void* data, int32_t size)
 			break;
 	}
 	
-	Session::Request request;
+	std::vector<uint8_t> payload;
+	payload.insert(payload.end(), (uint8_t*)(&keylen), (uint8_t*)(&keylen) + sizeof(int32_t));
+	payload.insert(payload.end(), (uint8_t*)(key), (uint8_t*)(key) + keylen * 2);
+	payload.insert(payload.end(), (uint8_t*)(data), (uint8_t*)(data) + size);
 
-	request.payload.insert(request.payload.end(), (uint8_t*)(&keylen), (uint8_t*)(&keylen) + sizeof(int32_t));
-
-	request.payload.insert(request.payload.end(), (uint8_t*)(key), (uint8_t*)(key) + keylen * 2);
-
-	request.payload.insert(request.payload.end(), (uint8_t*)(data), (uint8_t*)(data) + size);
-
-	m_session.SendRequest(1, request, [](const Session::Response& res){
+	m_session.SendRequest(1, payload, [](const Session::Response& res){
 		EffekseerPrintDebug("Client : Respond\n");
 	});
 }

@@ -52,7 +52,7 @@ private:
 
 	void AcceptAsync();
 
-	void OnDataReceived(const Session::Request& req, Session::Response& res);
+	void OnDataReceived(const Session::Message& msg);
 
 public:
 	ServerImplemented();
