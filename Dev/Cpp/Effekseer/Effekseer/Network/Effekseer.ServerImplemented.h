@@ -24,31 +24,34 @@ class ServerImplemented : public Server, public ReferenceObject
 private:
 	struct InternalClient
 	{
-		Socket Socket;
-		Session Session;
+		Socket socket;
+		Session session;
 	};
 
 private:
 	struct EffectParameter
 	{
-		EffectRef EffectPtr;
-		bool IsRegistered;
+		EffectRef effect;
+		bool registered;
 	};
 
-	Socket m_socket;
+	Socket socket_;
+	bool listening_ = false;
 
-	std::thread m_thread;
-	std::mutex m_ctrlClients;
+	std::thread thread_;
+	std::mutex clientsMutex_;
 
-	bool m_running = false;
+	std::vector<std::unique_ptr<InternalClient>> clients_;
+	std::map<std::u16string, EffectParameter> effects_;
+	std::u16string materialPath_;
 
-	std::vector<std::unique_ptr<InternalClient>> m_clients;
-	std::map<std::u16string, EffectParameter> m_effects;
-	std::u16string m_materialPath;
-
-	ManagerRef* m_managers = nullptr;
-	int32_t m_managerCount = 0;
-	ReloadingThreadType m_reloadingThreadType{};
+	struct Context
+	{
+		ManagerRef* managers;
+		int32_t managerCount;
+		ReloadingThreadType reloadingThreadType;
+	};
+	Context context_{};
 
 	void AcceptAsync();
 

@@ -27,17 +27,17 @@ ClientRef Client::Create()
 
 bool ClientImplemented::Start(const char* host, uint16_t port)
 {
-	// to stop thread
+	// To stop thread
 	Stop();
 
-	// connect
-	bool ret = m_socket.Connect(host, port);
+	// Connect to server
+	bool ret = socket_.Connect(host, port);
 	if (!ret)
 	{
 		return false;
 	}
 
-	m_session.Open(&m_socket);
+	session_.Open(&socket_);
 
 	EffekseerPrintDebug("Client : Start\n");
 
@@ -46,16 +46,16 @@ bool ClientImplemented::Start(const char* host, uint16_t port)
 
 void ClientImplemented::Stop()
 {
-	m_session.Close();
+	session_.Close();
 
 	EffekseerPrintDebug("Client : Stop\n");
 }
 
 void ClientImplemented::Update()
 {
-	if (m_session.IsActive())
+	if (session_.IsActive())
 	{
-		m_session.Update();
+		session_.Update();
 	}
 }
 
@@ -68,12 +68,13 @@ void ClientImplemented::Reload(const char16_t* key, void* data, int32_t size)
 			break;
 	}
 	
+	// Create a reloading data
 	std::vector<uint8_t> payload;
 	payload.insert(payload.end(), (uint8_t*)(&keylen), (uint8_t*)(&keylen) + sizeof(int32_t));
 	payload.insert(payload.end(), (uint8_t*)(key), (uint8_t*)(key) + keylen * 2);
 	payload.insert(payload.end(), (uint8_t*)(data), (uint8_t*)(data) + size);
 
-	m_session.Send(1, payload);
+	session_.Send(1, payload);
 }
 
 void ClientImplemented::Reload(ManagerRef manager, const char16_t* path, const char16_t* key)
@@ -93,7 +94,7 @@ void ClientImplemented::Reload(ManagerRef manager, const char16_t* path, const c
 
 bool ClientImplemented::IsConnected() const
 {
-	return m_session.IsActive();
+	return session_.IsActive();
 }
 
 } // namespace Effekseer

@@ -28,7 +28,7 @@ void ServerImplemented::AcceptAsync()
 {
 	while (true)
 	{
-		Socket socket = m_socket.Accept();
+		Socket socket = socket_.Accept();
 
 		if (!socket.IsValid())
 		{
@@ -37,12 +37,12 @@ void ServerImplemented::AcceptAsync()
 
 		// Accept and add an internal client
 		std::unique_ptr<InternalClient> client(new InternalClient());
-		client->Socket = std::move(socket);
-		client->Session.Open(&client->Socket);
-		client->Session.OnReceived(1, [this](const Session::Message& msg){ OnDataReceived(msg); });
+		client->socket = std::move(socket);
+		client->session.Open(&client->socket);
+		client->session.OnReceived(1, [this](const Session::Message& msg){ OnDataReceived(msg); });
 		
-		std::lock_guard<std::mutex> lock(m_ctrlClients);
-		m_clients.emplace_back(std::move(client));
+		std::lock_guard<std::mutex> lock(clientsMutex_);
+		clients_.emplace_back(std::move(client));
 		
 		EffekseerPrintDebug("Server : AcceptClient\n");
 	}
@@ -64,37 +64,37 @@ void ServerImplemented::OnDataReceived(const Session::Message& msg)
 	std::u16string key(keyptr, keyptr + keylen);
 	offset += keylen * sizeof(char16_t);
 	
-	auto it = m_effects.find(key);
-	if (it != m_effects.end())
+	auto it = effects_.find(key);
+	if (it != effects_.end())
 	{
-		auto effect = it->second.EffectPtr;
+		auto& effect = it->second.effect;
 
 		// Extract a effect data
 		const uint8_t* effectData = &buf[offset];
 		size_t effectSize = size - offset;
 
 		// Reload the effect
-		const char16_t* materialPath = (m_materialPath.size() > 0) ? m_materialPath.c_str() : nullptr;
-		effect->Reload(m_managers, m_managerCount, effectData, (int32_t)effectSize, materialPath, m_reloadingThreadType);
+		const char16_t* materialPath = (materialPath_.size() > 0) ? materialPath_.c_str() : nullptr;
+		effect->Reload(context_.managers, context_.managerCount, effectData, (int32_t)effectSize, materialPath, context_.reloadingThreadType);
 	}
 }
 
 bool ServerImplemented::Start(uint16_t port)
 {
-	if (m_running)
+	if (listening_)
 	{
 		Stop();
 	}
 
 	// Listen the port
-	if (!m_socket.Listen(port, 30))
+	if (!socket_.Listen(port, 30))
 	{
 		return false;
 	}
 
 	// Startup a socket accepting thread
-	m_running = true;
-	m_thread = std::thread([this]() { AcceptAsync(); });
+	listening_ = true;
+	thread_ = std::thread([this]() { AcceptAsync(); });
 
 	EffekseerPrintDebug("Server : Start\n");
 
@@ -103,24 +103,24 @@ bool ServerImplemented::Start(uint16_t port)
 
 void ServerImplemented::Stop()
 {
-	if (!m_running)
+	if (!listening_)
 	{
 		return;
 	}
 
-	m_running = false;
-	m_socket.Close();
+	listening_ = false;
+	socket_.Close();
 
 	// Stop the accepting thread
-	if (m_thread.joinable())
+	if (thread_.joinable())
 	{
-		m_thread.join();
+		thread_.join();
 	}
 
-	std::lock_guard<std::mutex> lock(m_ctrlClients);
+	std::lock_guard<std::mutex> lock(clientsMutex_);
 
 	// Stop all clients
-	m_clients.clear();
+	clients_.clear();
 }
 
 void ServerImplemented::Register(const char16_t* key, const EffectRef& effect)
@@ -130,7 +130,7 @@ void ServerImplemented::Register(const char16_t* key, const EffectRef& effect)
 		return;
 	}
 
-	m_effects[key] = { effect, false };
+	effects_[key] = { effect, false };
 }
 
 void ServerImplemented::Unregister(const EffectRef& effect)
@@ -140,14 +140,14 @@ void ServerImplemented::Unregister(const EffectRef& effect)
 		return;
 	}
 
-	auto it = m_effects.begin();
-	auto it_end = m_effects.end();
+	auto it = effects_.begin();
+	auto it_end = effects_.end();
 
 	while (it != it_end)
 	{
-		if ((*it).second.EffectPtr == effect)
+		if ((*it).second.effect == effect)
 		{
-			m_effects.erase(it);
+			effects_.erase(it);
 			return;
 		}
 
@@ -157,30 +157,30 @@ void ServerImplemented::Unregister(const EffectRef& effect)
 
 void ServerImplemented::Update(ManagerRef* managers, int32_t managerCount, ReloadingThreadType reloadingThreadType)
 {
-	m_managers = managers;
-	m_managerCount = managerCount;
-	m_reloadingThreadType = reloadingThreadType;
+	context_.managers = managers;
+	context_.managerCount = managerCount;
+	context_.reloadingThreadType = reloadingThreadType;
 
-	std::lock_guard<std::mutex> lock(m_ctrlClients);
+	std::lock_guard<std::mutex> lock(clientsMutex_);
 
-	for (auto& client : m_clients)
+	for (auto& client : clients_)
 	{
-		client->Session.Update();
+		client->session.Update();
 	}
 
-	auto removeIt = std::remove_if(m_clients.begin(), m_clients.end(), 
-		[](const std::unique_ptr<InternalClient>& client){ return !client->Session.IsActive(); });
-	m_clients.erase(removeIt, m_clients.end());
+	auto removeIt = std::remove_if(clients_.begin(), clients_.end(), 
+		[](const std::unique_ptr<InternalClient>& client){ return !client->session.IsActive(); });
+	clients_.erase(removeIt, clients_.end());
 }
 
 void ServerImplemented::SetMaterialPath(const char16_t* materialPath)
 {
-	m_materialPath = materialPath;
+	materialPath_ = materialPath;
 }
 
 bool ServerImplemented::IsConnected() const
 {
-	return m_clients.size() > 0;
+	return clients_.size() > 0;
 }
 
 } // namespace Effekseer
