@@ -23,6 +23,7 @@ public:
 		Gradient = 0,
 		Noise = 1,
 		Light = 2,
+		LocalTime = 3,
 	};
 
 	struct GradientParameter

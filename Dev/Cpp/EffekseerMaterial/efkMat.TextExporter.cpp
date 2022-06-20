@@ -466,6 +466,8 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 	bool hasGradient = false;
 	bool hasNoise = false;
 	bool hasLight = false;
+	bool hasLocalTime = false;
+
 	for (const auto& node : nodes)
 	{
 		if (node->Parameter->Type == NodeType::Gradient ||
@@ -482,6 +484,10 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 		{
 			hasLight = true;
 		}
+		else if (node->Parameter->Type == NodeType::LocalTime)
+		{
+			hasLocalTime = true;
+		}
 	}
 
 	if (hasGradient)
@@ -497,6 +503,11 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 	if (hasLight)
 	{
 		requiredPredefinedMethodTypes.emplace_back(RequiredPredefinedMethodType::Light);
+	}
+
+	if (hasLocalTime)
+	{
+		requiredPredefinedMethodTypes.emplace_back(RequiredPredefinedMethodType::LocalTime);
 	}
 
 	// Generate exporter node
