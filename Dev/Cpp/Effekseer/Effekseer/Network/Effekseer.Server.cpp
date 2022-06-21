@@ -5,7 +5,7 @@
 #include "Effekseer.Server.h"
 #include "../Effekseer.Effect.h"
 #include "Effekseer.ServerImplemented.h"
-#include <string.h>
+#include "data/reload_generated.h"
 
 namespace Effekseer
 {
@@ -50,28 +50,19 @@ void ServerImplemented::AcceptAsync()
 
 void ServerImplemented::OnDataReceived(const Session::Message& msg)
 {
-	auto buf = msg.payload.data;
-	size_t size = msg.payload.size;
-	size_t offset = 0;
+	auto fb = Data::GetNetworkReload(msg.payload.data);
+	auto fbKey = fb->key();
+	auto fbData = fb->data();
 
-	// Extract a key string length
-	int32_t keylen = 0;
-	memcpy(&keylen, &buf[offset], sizeof(int32_t));
-	offset += sizeof(int32_t);
-
-	// Extract a key string
-	const char16_t* keyptr = (const char16_t*)&buf[offset];
-	std::u16string key(keyptr, keyptr + keylen);
-	offset += keylen * sizeof(char16_t);
+	std::u16string key((const char16_t*)fbKey->data(), fbKey->size());
 	
 	auto it = effects_.find(key);
 	if (it != effects_.end())
 	{
 		auto& effect = it->second.effect;
 
-		// Extract a effect data
-		const uint8_t* effectData = &buf[offset];
-		size_t effectSize = size - offset;
+		const uint8_t* effectData = fbData->data();
+		size_t effectSize = fbData->size();
 
 		// Reload the effect
 		const char16_t* materialPath = (materialPath_.size() > 0) ? materialPath_.c_str() : nullptr;

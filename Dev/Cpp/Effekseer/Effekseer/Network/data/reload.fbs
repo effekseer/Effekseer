@@ -1,0 +1,8 @@
+namespace Effekseer.Data;
+
+table NetworkReload {
+  key: [ushort];
+  data: [ubyte];
+}
+
+root_type NetworkReload;

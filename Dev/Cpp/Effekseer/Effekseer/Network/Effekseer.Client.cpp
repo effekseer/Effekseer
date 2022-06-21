@@ -7,6 +7,7 @@
 
 #include "../Effekseer.EffectLoader.h"
 #include "../Effekseer.Manager.h"
+#include "data/reload_generated.h"
 
 namespace Effekseer
 {
@@ -61,20 +62,13 @@ void ClientImplemented::Update()
 
 void ClientImplemented::Reload(const char16_t* key, void* data, int32_t size)
 {
-	int32_t keylen = 0;
-	for (;; keylen++)
-	{
-		if (key[keylen] == 0)
-			break;
-	}
-	
-	// Create a reloading data
-	std::vector<uint8_t> payload;
-	payload.insert(payload.end(), (uint8_t*)(&keylen), (uint8_t*)(&keylen) + sizeof(int32_t));
-	payload.insert(payload.end(), (uint8_t*)(key), (uint8_t*)(key) + keylen * 2);
-	payload.insert(payload.end(), (uint8_t*)(data), (uint8_t*)(data) + size);
+	Data::flatbuffers::FlatBufferBuilder fbb;
+	auto fbKey = fbb.CreateVector((const uint16_t*)key, std::char_traits<char16_t>::length(key));
+	auto fbData = fbb.CreateVector((const uint8_t*)data, size);
+	fbb.Finish(Data::CreateNetworkReload(fbb, fbKey, fbData));
+	auto fbBuffer = fbb.GetBufferSpan();
 
-	session_.Send(1, payload);
+	session_.Send(1, { fbBuffer.data(), fbBuffer.size() });
 }
 
 void ClientImplemented::Reload(ManagerRef manager, const char16_t* path, const char16_t* key)
