@@ -15,7 +15,7 @@
     <Compile Remove="packages.config" />
     <PackageReference Include="IronPython" Version="2.7.9" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="TinyCsvParser" Version="2.5.2" />
   </ItemGroup>
 
