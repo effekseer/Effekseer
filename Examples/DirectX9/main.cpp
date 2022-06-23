@@ -76,7 +76,7 @@ int main(int argc, char** argv)
 
 		// Specify a position of view
 		// 視点位置を確定
-		auto g_position = ::Effekseer::Vector3D(10.0f, 5.0f, 20.0f);
+		auto viewerPosition = ::Effekseer::Vector3D(10.0f, 5.0f, 20.0f);
 
 		// Specify a projection matrix
 		// 投影行列を設定
@@ -86,7 +86,7 @@ int main(int argc, char** argv)
 		// Specify a camera matrix
 		// カメラ行列を設定
 		renderer->SetCameraMatrix(
-			::Effekseer::Matrix44().LookAtRH(g_position, ::Effekseer::Vector3D(0.0f, 0.0f, 0.0f), ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
+			::Effekseer::Matrix44().LookAtRH(viewerPosition, ::Effekseer::Vector3D(0.0f, 0.0f, 0.0f), ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
 
 		// Load an effect
 		// エフェクトの読込
@@ -117,7 +117,12 @@ int main(int argc, char** argv)
 
 			// Update the manager
 			// マネージャーの更新
-			manager->Update();
+			Effekseer::Manager::UpdateParameter updateParameter;
+			updateParameter.DeltaFrame = 0.0F;
+			updateParameter.UpdateInterval = 0.0f;
+			updateParameter.ViewerPosition = viewerPosition;
+
+			manager->Update(updateParameter);
 
 			// Ececute functions about DirectX
 			// DirectXの処理
