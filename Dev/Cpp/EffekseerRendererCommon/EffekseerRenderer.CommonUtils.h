@@ -2,8 +2,8 @@
 #ifndef __EFFEKSEERRENDERER_COMMON_UTILS_H__
 #define __EFFEKSEERRENDERER_COMMON_UTILS_H__
 
-#include "../EffekseerRendererCommon/EffekseerRenderer.Renderer.h"
-#include "../EffekseerRendererCommon/EffekseerRenderer.Renderer_Impl.h"
+#include "EffekseerRenderer.Renderer.h"
+#include "EffekseerRenderer.Renderer_Impl.h"
 #include <Effekseer.h>
 #include <Effekseer/Material/Effekseer.CompiledMaterial.h>
 #include <Effekseer/Model/SplineGenerator.h>
