@@ -109,8 +109,6 @@ int main(int argc, char** argv)
 		// Update the manager
 		// マネージャーの更新
 		Effekseer::Manager::UpdateParameter updateParameter;
-		updateParameter.DeltaFrame = 0.0F;
-		updateParameter.UpdateInterval = 0.0f;
 		updateParameter.ViewerPosition = viewerPosition;
 
 		manager->Update(updateParameter);
