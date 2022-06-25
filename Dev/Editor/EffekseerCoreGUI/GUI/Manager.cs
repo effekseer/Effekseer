@@ -632,6 +632,8 @@ namespace Effekseer.GUI
 
 			// Reset
 
+			NativeManager.ResetGUI();
+
 			IO.Update();
 			Shortcuts.Update();
 			Network.Update();
@@ -716,8 +718,6 @@ namespace Effekseer.GUI
 			//	Native.RenderWindow();
 			//}
 
-			NativeManager.ResetGUI();
-			
 			UpdateAutoSave();
 
 			if (resetCount < 0)
