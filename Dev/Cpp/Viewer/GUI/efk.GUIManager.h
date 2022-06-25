@@ -218,50 +218,67 @@ enum class ImGuiColFlags : int32_t
 	Button,
 	ButtonHovered,
 	ButtonActive,
-	Header,
+	Header, // Header* colors are used for CollapsingHeader, TreeNode, Selectable, MenuItem
 	HeaderHovered,
 	HeaderActive,
 	Separator,
 	SeparatorHovered,
 	SeparatorActive,
-	ResizeGrip,
+	ResizeGrip, // Resize grip in lower-right and lower-left corners of windows.
 	ResizeGripHovered,
 	ResizeGripActive,
+	Tab, // TabItem in a TabBar
+	TabHovered,
+	TabActive,
+	TabUnfocused,
+	TabUnfocusedActive,
+	DockingPreview, // Preview overlay color when about to docking something
+	DockingEmptyBg, // Background color for empty node (e.g. CentralNode with no window docked into it)
 	PlotLines,
 	PlotLinesHovered,
 	PlotHistogram,
 	PlotHistogramHovered,
+	TableHeaderBg,		// Table header background
+	TableBorderStrong, // Table outer and header borders (prefer using Alpha=1.0 here)
+	TableBorderLight,	// Table inner borders (prefer using Alpha=1.0 here)
+	TableRowBg,		// Table row background (even rows)
+	TableRowBgAlt,		// Table row background (odd rows)
 	TextSelectedBg,
-	DragDropTarget,
-	NavHighlight,		   // Gamepad/keyboard: current highlighted item
+	DragDropTarget,		// Rectangle highlighting a drop target
+	NavHighlight,			// Gamepad/keyboard: current highlighted item
 	NavWindowingHighlight, // Highlight window when using CTRL+TAB
-	NavWindowingDimBg,	   // Darken/colorize entire screen behind the CTRL+TAB window list, when active
-	ModalWindowDimBg,	   // Darken/colorize entire screen behind a modal window, when one is active
+	NavWindowingDimBg,		// Darken/colorize entire screen behind the CTRL+TAB window list, when active
+	ModalWindowDimBg,		// Darken/colorize entire screen behind a modal window, when one is active
 };
 
 enum ImGuiStyleVarFlags : int32_t
 {
 	Alpha,			   // float     Alpha
+	DisabledAlpha,	   // float     DisabledAlpha
 	WindowPadding,	   // ImVec2    WindowPadding
 	WindowRounding,	   // float     WindowRounding
-	WindowBorderSize,  // float     WindowBorderSize
+	WindowBorderSize,	   // float     WindowBorderSize
 	WindowMinSize,	   // ImVec2    WindowMinSize
-	WindowTitleAlign,  // ImVec2    WindowTitleAlign
+	WindowTitleAlign,	   // ImVec2    WindowTitleAlign
 	ChildRounding,	   // float     ChildRounding
-	ChildBorderSize,   // float     ChildBorderSize
+	ChildBorderSize,	   // float     ChildBorderSize
 	PopupRounding,	   // float     PopupRounding
-	PopupBorderSize,   // float     PopupBorderSize
-	FramePadding,	   // ImVec2    FramePadding
+	PopupBorderSize,	   // float     PopupBorderSize
+	FramePadding,		   // ImVec2    FramePadding
 	FrameRounding,	   // float     FrameRounding
-	FrameBorderSize,   // float     FrameBorderSize
-	ItemSpacing,	   // ImVec2    ItemSpacing
-	ItemInnerSpacing,  // ImVec2    ItemInnerSpacing
+	FrameBorderSize,	   // float     FrameBorderSize
+	ItemSpacing,		   // ImVec2    ItemSpacing
+	ItemInnerSpacing,	   // ImVec2    ItemInnerSpacing
 	IndentSpacing,	   // float     IndentSpacing
+	CellPadding,		   // ImVec2    CellPadding
 	ScrollbarSize,	   // float     ScrollbarSize
-	ScrollbarRounding, // float     ScrollbarRounding
-	GrabMinSize,	   // float     GrabMinSize
-	GrabRounding,	   // float     GrabRounding
-	ButtonTextAlign,   // ImVec2    ButtonTextAlign
+	ScrollbarRounding,   // float     ScrollbarRounding
+	GrabMinSize,		   // float     GrabMinSize
+	GrabRounding,		   // float     GrabRounding
+	TabRounding,		   // float     TabRounding
+	ButtonTextAlign,	   // ImVec2    ButtonTextAlign
+	SelectableTextAlign, // ImVec2    SelectableTextAlign
+	LayoutAlign,		   // float     LayoutAlign
 };
 
 enum class FCurveInterporationType : int32_t
@@ -546,7 +563,7 @@ public:
 	void SetScrollY(float scroll_y);
 	float GetScrollMaxX();
 	float GetScrollMaxY();
-	Vec2 ScrollToBringRectIntoView(Vec2 rect_min, Vec2 rect_max);
+	void ScrollToRect(Vec2 rect_min, Vec2 rect_max);
 
 	// Column
 	void Columns(int count = 1, const char* id = nullptr, bool border = true);
@@ -706,7 +723,7 @@ public:
 
 	void TreePop();
 
-	void SetNextTreeNodeOpen(bool is_open, Cond cond = Cond::None);
+	void SetNextItemOpen(bool is_open, Cond cond = Cond::None);
 
 	bool TreeNodeEx(const char16_t* label, bool* v, TreeNodeFlags flags = TreeNodeFlags::None);
 

@@ -690,8 +690,8 @@ void Editor::Update()
 #endif
 
 		// copy
-		if (isCtrlPressed && ImGui::GetIO().KeysDown[ImGui::GetIO().KeyMap[ImGuiKey_C]] &&
-			ImGui::GetIO().KeysDownDuration[ImGui::GetIO().KeyMap[ImGuiKey_C]] == 0)
+		const auto keyMapCopy = ImGui::GetIO().KeyMap[ImGuiKey_C];
+		if (isCtrlPressed && ImGui::GetIO().KeysDown[keyMapCopy] && ImGui::GetIO().KeysData[keyMapCopy].DownDuration == 0)
 		{
 			ed::NodeId ids[256];
 			auto count = ed::GetSelectedNodes(ids, 256);
@@ -713,8 +713,8 @@ void Editor::Update()
 		}
 
 		// paste
-		if (isCtrlPressed && ImGui::GetIO().KeysDown[ImGui::GetIO().KeyMap[ImGuiKey_V]] &&
-			ImGui::GetIO().KeysDownDuration[ImGui::GetIO().KeyMap[ImGuiKey_V]] == 0)
+		const auto keyMapPaste = ImGui::GetIO().KeyMap[ImGuiKey_V];
+		if (isCtrlPressed && ImGui::GetIO().KeysDown[keyMapPaste] && ImGui::GetIO().KeysData[keyMapPaste].DownDuration == 0)
 		{
 			auto text = ImGui::GetClipboardText();
 			if (text != nullptr)
@@ -725,8 +725,8 @@ void Editor::Update()
 		}
 
 		// save
-		if (isCtrlPressed && ImGui::GetIO().KeysDown[ImGui::GetIO().KeyMap[ImGuiKey_S]] &&
-			ImGui::GetIO().KeysDownDuration[ImGui::GetIO().KeyMap[ImGuiKey_S]] == 0)
+		const auto keyMapSave = ImGui::GetIO().KeyMap[ImGuiKey_S];
+		if (isCtrlPressed && ImGui::GetIO().KeysDown[keyMapSave] && ImGui::GetIO().KeysData[keyMapSave].DownDuration == 0)
 		{
 			Save();
 		}
