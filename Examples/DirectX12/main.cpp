@@ -137,11 +137,15 @@ int main(int argc, char** argv)
 			// エフェクトの移動
 			manager->AddLocation(handle, ::Effekseer::Vector3D(0.2f, 0.0f, 0.0f));
 
+			// Set layer parameters
+			// レイヤーパラメータの設定
+			Effekseer::Manager::LayerParameter layerParameter;
+			layerParameter.ViewerPosition = viewerPosition;
+			manager->SetLayerParameter(0, layerParameter);
+
 			// Update the manager
 			// マネージャーの更新
 			Effekseer::Manager::UpdateParameter updateParameter;
-			updateParameter.ViewerPosition = viewerPosition;
-
 			manager->Update(updateParameter);
 
 			// Update a time

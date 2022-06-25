@@ -3774,6 +3774,9 @@ namespace Effekseer
 class Manager : public IReference
 {
 public:
+	static constexpr int32_t LayerCount = 32;
+
+public:
 	/**
 		@brief
 		\~English Parameters when a manager is updated
@@ -3807,18 +3810,9 @@ public:
 			\~Japanese trueなら同期的に更新処理を行う。falseなら非同期的に更新処理を行う（次はDraw以外呼び出してはいけない）
 		*/
 		bool SyncUpdate = true;
-
-		/**
-			@brief
-			\~English
-			Position of effects viewer to calculate distance of Level of Details system.
-			Normally should be set the same position which is passed in translation of camera matrix.
-		 */
-		Vector3D ViewerPosition;
 	};
 
 	/**
-	@brief
 		@brief
 		\~English Parameters for Manager::Draw and Manager::DrawHandle
 		\~Japanese Manager::Draw and Manager::DrawHandleに使用するパラメーター
@@ -3859,6 +3853,36 @@ public:
 		bool IsSortingEffectsEnabled = false;
 
 		DrawParameter();
+	};
+	
+	/**
+		@brief
+		\~English Parameters of Manager::SetLayerParameter to be set for each layer index.
+		\~Japanese Manager::SetLayerParameterにレイヤーごとに設定するパラメーター
+	*/
+	struct LayerParameter
+	{
+		/**
+			@brief
+			\~English
+			Position of effects viewer to calculate distance of Level of Details system.
+			Normally should be set the same position which is passed in translation of camera matrix.
+			\~Japanese
+			LODシステムで使用される視点の位置。
+			通常はカメラの位置と同じ値を指定する。
+		*/
+		Vector3D ViewerPosition = {0.0f, 0.0f, 0.0f};
+		
+		/**
+			@brief
+			\~English
+			Adds given value to calculated distance from viewer which is used for LOD selection.
+			Useful for LODs debugging.
+			\~Japanese
+			LODの選択に使用される、視点からの計算された距離に加算される値。
+			LODのデバッグに役に立ちます。
+		*/
+		float DistanceBias = 0.0f;
 	};
 
 protected:
@@ -4167,21 +4191,27 @@ public:
 		@brief
 		\~English Returns LOD which is currently utilized for given effect
 	 */
-	virtual int GetCurrentLOD(Handle handle) = 0;
+	virtual int32_t GetCurrentLOD(Handle handle) = 0;
 
 	/**
 		@brief
-		\~English Returns current LOD distance bias. 0 by default.
+		\~English Returns current specified LOD parameters.
+		\~Japanese 現在指定されているLODパラメータを返します
 	 */
-	virtual float GetLODDistanceBias() const = 0;
+	virtual const LayerParameter& GetLayerParameter(int32_t layer) const = 0;
 
 	/**
 		@brief
-		\~English
-		Adds given value to calculated distance from viewer which is used for LOD selection.
-		Useful for LODs debugging.
+		\~English Set layer parameters.
+		\~Japanese レイヤーパラメータを設定する。
+		@param	layer
+		\~English	Layer index
+		\~Japanese	レイヤーのインデックス
+		@param	layerParameter
+		\~English	Layer parameters
+		\~Japanese	レイヤーパラメータ
 	 */
-	virtual void SetLODDistanceBias(float distanceBias) = 0;
+	virtual void SetLayerParameter(int32_t layer, const LayerParameter& layerParameter) = 0;
 
 	/**
 		@brief	エフェクトのインスタンスに設定されている行列を取得する。
@@ -4372,7 +4402,7 @@ public:
 		\~English For example, if effect's layer is 1 and CameraCullingMask's first bit is 1, this effect is shown.
 		\~Japanese 例えば、エフェクトのレイヤーが0でカリングマスクの最初のビットが1のときエフェクトは表示される。
 	*/
-	virtual int GetLayer(Handle handle) = 0;
+	virtual int32_t GetLayer(Handle handle) = 0;
 
 	/**
 		@brief
@@ -4489,13 +4519,8 @@ public:
 		@note
 		\~English	It is not required if Update is called.
 		\~Japanese	Updateを実行する際は、実行する必要はない。
-
-		@param ViewerPosition
-		\~English
-		Position of effects viewer to calculate distance of Level of Details system.
-		Normally should be set the same position which is passed in translation of camera matrix.
 	*/
-	virtual void BeginUpdate(const Vector3D& ViewerPosition = Vector3D(0.0, 0.0, 0.0)) = 0;
+	virtual void BeginUpdate() = 0;
 
 	/**
 		@brief
