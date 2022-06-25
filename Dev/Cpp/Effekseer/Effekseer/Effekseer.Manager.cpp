@@ -71,13 +71,12 @@ ManagerRef Manager::Create(int instance_max, bool autoFlip)
 	return MakeRefPtr<ManagerImplemented>(instance_max, autoFlip);
 }
 
-void ManagerImplemented::DrawSet::UpdateLevelOfDetails(const Vector3D& viewerPosition, float lodDistaceBias)
+void ManagerImplemented::DrawSet::UpdateLevelOfDetails(const LayerParameter& loadParameter)
 {
 	SIMD::Mat43f drawSetMatrix = this->GetGlobalMatrix();
-	float dx = viewerPosition.X - drawSetMatrix.X.GetW();
-	float dy = viewerPosition.Y - drawSetMatrix.Y.GetW();
-	float dz = viewerPosition.Z - drawSetMatrix.Z.GetW();
-	float distanceToViewer = SIMD::Sqrt(dx * dx + dy * dy + dz * dz) + lodDistaceBias;
+	SIMD::Vec3f diff = SIMD::Vec3f(loadParameter.ViewerPosition) - drawSetMatrix.GetTranslation();
+	float distanceToViewer = diff.GetLength() + loadParameter.DistanceBias;
+
 	EffectImplemented* effect = (EffectImplemented*)this->ParameterPointer.Get();
 	if (effect->LODs.distance3 > 0.0F && distanceToViewer > effect->LODs.distance3)
 	{
@@ -402,7 +401,7 @@ bool ManagerImplemented::CanDraw(const DrawSet& drawSet, const Manager::DrawPara
 		return false;
 	}
 
-	if ((drawParameter.CameraCullingMask & (1 << drawSet.Layer)) == 0)
+	if ((drawParameter.CameraCullingMask & drawSet.GlobalPointer->GetLayerBits()) == 0)
 	{
 		return false;
 	}
@@ -444,8 +443,6 @@ ManagerImplemented::ManagerImplemented(int instance_max, bool autoFlip)
 	, m_FreeFunc(nullptr)
 	, m_randFunc(nullptr)
 	, m_randMax(0)
-	, m_ViewerPosition(Vector3D(0.0, 0.0, 0.0))
-	, m_LodDistanceBias(0.0F)
 {
 	m_setting = Setting::Create();
 
@@ -828,7 +825,7 @@ int32_t ManagerImplemented::GetTotalInstanceCount() const
 	return instanceCount;
 }
 
-int ManagerImplemented::GetCurrentLOD(Handle handle)
+int32_t ManagerImplemented::GetCurrentLOD(Handle handle)
 {
 	if (m_DrawSets.count(handle) > 0)
 	{
@@ -839,14 +836,21 @@ int ManagerImplemented::GetCurrentLOD(Handle handle)
 	return 0;
 }
 
-float ManagerImplemented::GetLODDistanceBias() const
+const Manager::LayerParameter& ManagerImplemented::GetLayerParameter(int32_t layer) const
 {
-	return m_LodDistanceBias;
+	if (layer >= 0 && layer < LayerCount)
+	{
+		return m_layerParameters[layer];
+	}
+	return m_layerParameters[0];
 }
 
-void ManagerImplemented::SetLODDistanceBias(float distanceBias)
+void ManagerImplemented::SetLayerParameter(int32_t layer, const LayerParameter& layerParameter)
 {
-	this->m_LodDistanceBias = distanceBias;
+	if (layer >= 0 && layer < LayerCount)
+	{
+		m_layerParameters[layer] = layerParameter;
+	}
 }
 
 Matrix43 ManagerImplemented::GetMatrix(Handle handle)
@@ -1127,20 +1131,28 @@ void ManagerImplemented::SetPausedToAllEffects(bool paused)
 	}
 }
 
-int ManagerImplemented::GetLayer(Handle handle)
+int32_t ManagerImplemented::GetLayer(Handle handle)
 {
-	if (m_DrawSets.count(handle) > 0)
+	auto it = m_DrawSets.find(handle);
+
+	if (it != m_DrawSets.end())
 	{
-		return m_DrawSets[handle].Layer;
+		return it->second.GlobalPointer->GetLayer();
 	}
+
 	return 0;
 }
 
 void ManagerImplemented::SetLayer(Handle handle, int32_t layer)
 {
-	if (m_DrawSets.count(handle) > 0)
+	if (layer >= 0 && layer < LayerCount)
 	{
-		m_DrawSets[handle].Layer = layer;
+		auto it = m_DrawSets.find(handle);
+
+		if (it != m_DrawSets.end())
+		{
+			return it->second.GlobalPointer->SetLayer(layer);
+		}
 	}
 }
 
@@ -1406,7 +1418,7 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter)
 		times = 1;
 	}
 
-	BeginUpdate(parameter.ViewerPosition);
+	BeginUpdate();
 
 	for (int32_t t = 0; t < times; t++)
 	{
@@ -1512,7 +1524,7 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter)
 	m_updateTime = (int)(Effekseer::GetTime() - beginTime);
 }
 
-void ManagerImplemented::BeginUpdate(const Vector3D& viewerPosition)
+void ManagerImplemented::BeginUpdate()
 {
 	m_renderingMutex.lock();
 	m_isLockedWithRenderingMutex = true;
@@ -1522,7 +1534,6 @@ void ManagerImplemented::BeginUpdate(const Vector3D& viewerPosition)
 		Flip();
 	}
 
-	m_ViewerPosition = viewerPosition;
 	m_sequenceNumber++;
 }
 
@@ -1624,8 +1635,7 @@ void ManagerImplemented::UpdateInstancesByInstanceGlobal(const DrawSet& drawSet)
 void ManagerImplemented::UpdateHandleInternal(DrawSet& drawSet)
 {
 	// evaluate LOD
-
-	drawSet.UpdateLevelOfDetails(m_ViewerPosition, m_LodDistanceBias);
+	drawSet.UpdateLevelOfDetails(m_layerParameters[drawSet.GlobalPointer->GetLayer()]);
 
 	// calculate dynamic parameters
 	auto e = static_cast<EffectImplemented*>(drawSet.ParameterPointer.Get());
@@ -1999,8 +2009,8 @@ int ManagerImplemented::GetCameraCullingMaskToShowAllEffects()
 
 	for (auto& ds : m_DrawSets)
 	{
-		auto layer = 1 << ds.second.Layer;
-		mask |= layer;
+		auto layerBits = ds.second.GlobalPointer->GetLayerBits();
+		mask |= layerBits;
 	}
 
 	return mask;

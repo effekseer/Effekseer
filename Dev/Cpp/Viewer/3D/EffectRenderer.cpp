@@ -606,10 +606,14 @@ void EffectRenderer::PlayEffect()
 
 void EffectRenderer::UpdatePaused()
 {
+	Effekseer::Manager::LayerParameter layerParameter;
+	layerParameter.ViewerPosition = renderer_->GetCameraPosition();
+	layerParameter.DistanceBias = lodDistanceBias_;
+	manager_->SetLayerParameter(0, layerParameter);
+
 	Effekseer::Manager::UpdateParameter updateParameter;
 	updateParameter.DeltaFrame = 0.0F;
 	updateParameter.UpdateInterval = 0.0f;
-	updateParameter.ViewerPosition = renderer_->GetCameraPosition();
 	manager_->Update(updateParameter);
 }
 
@@ -720,9 +724,13 @@ void EffectRenderer::Update()
 			}
 		}
 
+		Effekseer::Manager::LayerParameter layerParameter;
+		layerParameter.ViewerPosition = renderer_->GetCameraPosition();
+		layerParameter.DistanceBias = lodDistanceBias_;
+		manager_->SetLayerParameter(0, layerParameter);
+
 		Effekseer::Manager::UpdateParameter updateParameter;
 		updateParameter.DeltaFrame = (float)m_step;
-		updateParameter.ViewerPosition = renderer_->GetCameraPosition();
 		updateParameter.UpdateInterval = 0.0;
 		manager_->Update(updateParameter);
 
@@ -774,7 +782,7 @@ void EffectRenderer::Update(int32_t frame)
 
 void EffectRenderer::SetLODDistanceBias(float distanceBias)
 {
-	manager_->SetLODDistanceBias(distanceBias);
+	lodDistanceBias_ = distanceBias;
 }
 
 void EffectRenderer::Render(std::shared_ptr<RenderImage> renderImage)
@@ -1039,8 +1047,12 @@ void EffectRenderer::ResetEffect()
 	}
 	handles_.clear();
 
+	Effekseer::Manager::LayerParameter layerParameter;
+	layerParameter.ViewerPosition = renderer_->GetCameraPosition();
+	layerParameter.DistanceBias = lodDistanceBias_;
+	manager_->SetLayerParameter(0, layerParameter);
+
 	Effekseer::Manager::UpdateParameter updateParameter;
-	updateParameter.ViewerPosition = renderer_->GetCameraPosition();
 	manager_->Update(updateParameter);
 }
 

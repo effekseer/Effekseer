@@ -46,7 +46,7 @@ private:
 	std::array<uint8_t, 4> m_inputTriggerCounts;
 
 	float nextDeltaFrame_ = 0.0f;
-
+	int32_t layer_ = 0;
 	void* m_userData = nullptr;
 
 	//! placement new
@@ -112,6 +112,19 @@ public:
 
 	const SIMD::Vec3f& GetTargetLocation() const;
 	void SetTargetLocation(const Vector3D& location);
+
+	void SetLayer(int32_t layer)
+	{
+		layer_ = layer;
+	}
+	int32_t GetLayer() const
+	{
+		return layer_;
+	}
+	int32_t GetLayerBits() const
+	{
+		return 1 << layer_;
+	}
 
 	void SetUserData(void* userData)
 	{
