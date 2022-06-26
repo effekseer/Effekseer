@@ -690,8 +690,7 @@ void Editor::Update()
 #endif
 
 		// copy
-		if (isCtrlPressed && ImGui::GetIO().KeysDown[ImGui::GetIO().KeyMap[ImGuiKey_C]] &&
-			ImGui::GetIO().KeysDownDuration[ImGui::GetIO().KeyMap[ImGuiKey_C]] == 0)
+		if (isCtrlPressed && ImGui::IsKeyPressed(ImGuiKey_C))
 		{
 			ed::NodeId ids[256];
 			auto count = ed::GetSelectedNodes(ids, 256);
@@ -713,8 +712,7 @@ void Editor::Update()
 		}
 
 		// paste
-		if (isCtrlPressed && ImGui::GetIO().KeysDown[ImGui::GetIO().KeyMap[ImGuiKey_V]] &&
-			ImGui::GetIO().KeysDownDuration[ImGui::GetIO().KeyMap[ImGuiKey_V]] == 0)
+		if (isCtrlPressed && ImGui::IsKeyPressed(ImGuiKey_V))
 		{
 			auto text = ImGui::GetClipboardText();
 			if (text != nullptr)
@@ -725,8 +723,7 @@ void Editor::Update()
 		}
 
 		// save
-		if (isCtrlPressed && ImGui::GetIO().KeysDown[ImGui::GetIO().KeyMap[ImGuiKey_S]] &&
-			ImGui::GetIO().KeysDownDuration[ImGui::GetIO().KeyMap[ImGuiKey_S]] == 0)
+		if (isCtrlPressed && ImGui::IsKeyPressed(ImGuiKey_S))
 		{
 			Save();
 		}
@@ -768,6 +765,7 @@ void Editor::Update()
 		ImGui::OpenPopup(label_new_node);
 		searchingKeywords.fill(0);
 		searchingKeywordsActual.fill(0);
+		isJustNewNodePanelOpened_ = true;
 		currentPin = nullptr;
 		popupPosition = posOnEditor;
 	}
@@ -1070,8 +1068,10 @@ void Editor::UpdatePopup()
 		// keyword box
 
 		// focus into a searching textbox
-		if (ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) && !ImGui::IsAnyItemActive() && !ImGui::IsAnyItemFocused())
+		if (isJustNewNodePanelOpened_)
+		{
 			ImGui::SetKeyboardFocusHere(0);
+		}
 
 		ImGui::InputText(StringContainer::GetValue("Search").c_str(), searchingKeywords.data(), searchingKeywords.size());
 
@@ -1141,6 +1141,8 @@ void Editor::UpdatePopup()
 				showContent(content);
 			}
 		}
+
+		isJustNewNodePanelOpened_ = false;
 
 		ImGui::EndPopup();
 	}
@@ -1262,6 +1264,7 @@ void Editor::UpdateCreating()
 				ImGui::OpenPopup(label_new_node);
 				searchingKeywords.fill(0);
 				searchingKeywordsActual.fill(0);
+				isJustNewNodePanelOpened_ = true;
 				ed::Resume();
 			}
 		}
