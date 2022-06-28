@@ -462,12 +462,12 @@ int mainLoop(int argc, char* argv[])
 			{
 				if (!ImGui::IsAnyItemActive())
 				{
-					if (ImGui::GetIO().KeyCtrl && keyStatePre[GLFW_KEY_Z] && !keyState[GLFW_KEY_Z])
+					if (ImGui::GetIO().KeyCtrl && ImGui::IsKeyPressed(ImGuiKey_Z))
 					{
 						material->GetCommandManager()->Undo();
 					}
 
-					if (ImGui::GetIO().KeyCtrl && keyStatePre[GLFW_KEY_Y] && !keyState[GLFW_KEY_Y])
+					if (ImGui::GetIO().KeyCtrl && ImGui::IsKeyPressed(ImGuiKey_Y))
 					{
 						material->GetCommandManager()->Redo();
 					}

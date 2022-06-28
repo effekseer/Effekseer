@@ -1572,8 +1572,8 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_GetScrollMaxY___")]
   public static extern float GUIManager_GetScrollMaxY(global::System.Runtime.InteropServices.HandleRef jarg1);
 
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_ScrollToBringRectIntoView___")]
-  public static extern global::System.IntPtr GUIManager_ScrollToBringRectIntoView(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2, global::System.Runtime.InteropServices.HandleRef jarg3);
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_ScrollToRect___")]
+  public static extern void GUIManager_ScrollToRect(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2, global::System.Runtime.InteropServices.HandleRef jarg3);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_Columns__SWIG_0___")]
   public static extern void GUIManager_Columns__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, string jarg3, bool jarg4);
@@ -1995,11 +1995,11 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_TreePop___")]
   public static extern void GUIManager_TreePop(global::System.Runtime.InteropServices.HandleRef jarg1);
 
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_SetNextTreeNodeOpen__SWIG_0___")]
-  public static extern void GUIManager_SetNextTreeNodeOpen__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2, int jarg3);
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_SetNextItemOpen__SWIG_0___")]
+  public static extern void GUIManager_SetNextItemOpen__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2, int jarg3);
 
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_SetNextTreeNodeOpen__SWIG_1___")]
-  public static extern void GUIManager_SetNextTreeNodeOpen__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2);
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_SetNextItemOpen__SWIG_1___")]
+  public static extern void GUIManager_SetNextItemOpen__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_TreeNodeEx__SWIG_2___")]
   public static extern bool GUIManager_TreeNodeEx__SWIG_2(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2, [global::System.Runtime.InteropServices.In, global::System.Runtime.InteropServices.Out, global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPArray,ArraySubType=System.Runtime.InteropServices.UnmanagedType.I1)]bool[] jarg3, int jarg4);

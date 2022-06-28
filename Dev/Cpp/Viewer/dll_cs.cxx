@@ -5847,31 +5847,27 @@ SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetScrollMaxY___(v
 }
 
 
-SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_ScrollToBringRectIntoView___(void * jarg1, void * jarg2, void * jarg3) {
-  void * jresult ;
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_ScrollToRect___(void * jarg1, void * jarg2, void * jarg3) {
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   efk::Vec2 arg2 ;
   efk::Vec2 arg3 ;
   efk::Vec2 *argp2 ;
   efk::Vec2 *argp3 ;
-  efk::Vec2 result;
   
   arg1 = (efk::GUIManager *)jarg1; 
   argp2 = (efk::Vec2 *)jarg2; 
   if (!argp2) {
     SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Attempt to dereference null efk::Vec2", 0);
-    return 0;
+    return ;
   }
   arg2 = *argp2; 
   argp3 = (efk::Vec2 *)jarg3; 
   if (!argp3) {
     SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Attempt to dereference null efk::Vec2", 0);
-    return 0;
+    return ;
   }
   arg3 = *argp3; 
-  result = (arg1)->ScrollToBringRectIntoView(arg2,arg3);
-  jresult = new efk::Vec2((const efk::Vec2 &)result); 
-  return jresult;
+  (arg1)->ScrollToRect(arg2,arg3);
 }
 
 
@@ -8879,7 +8875,7 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_TreePop___(void * j
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetNextTreeNodeOpen__SWIG_0___(void * jarg1, unsigned int jarg2, int jarg3) {
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetNextItemOpen__SWIG_0___(void * jarg1, unsigned int jarg2, int jarg3) {
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   bool arg2 ;
   efk::Cond arg3 ;
@@ -8887,17 +8883,17 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetNextTreeNodeOpen
   arg1 = (efk::GUIManager *)jarg1; 
   arg2 = jarg2 ? true : false; 
   arg3 = (efk::Cond)jarg3; 
-  (arg1)->SetNextTreeNodeOpen(arg2,arg3);
+  (arg1)->SetNextItemOpen(arg2,arg3);
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetNextTreeNodeOpen__SWIG_1___(void * jarg1, unsigned int jarg2) {
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetNextItemOpen__SWIG_1___(void * jarg1, unsigned int jarg2) {
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   bool arg2 ;
   
   arg1 = (efk::GUIManager *)jarg1; 
   arg2 = jarg2 ? true : false; 
-  (arg1)->SetNextTreeNodeOpen(arg2);
+  (arg1)->SetNextItemOpen(arg2);
 }
 
 

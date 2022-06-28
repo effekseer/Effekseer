@@ -27,7 +27,7 @@ int main(int argc, char** argv)
 {
 	InitializeWindowAndDevice();
 
-		// Effekseer's objects are managed with smart pointers. When the variable runs out, it will be disposed automatically.
+	// Effekseer's objects are managed with smart pointers. When the variable runs out, it will be disposed automatically.
 	// However, if it is disposed before the end of COM, it will go wrong, so we add a scope.
 	// Effekseerのオブジェクトはスマートポインタで管理される。変数がなくなると自動的に削除される。
 	// ただし、COMの終了前に削除されるとおかしくなるので、スコープを追加する。
@@ -76,7 +76,7 @@ int main(int argc, char** argv)
 
 		// Specify a position of view
 		// 視点位置を確定
-		auto g_position = ::Effekseer::Vector3D(10.0f, 5.0f, 20.0f);
+		auto viewerPosition = ::Effekseer::Vector3D(10.0f, 5.0f, 20.0f);
 
 		// Specify a projection matrix
 		// 投影行列を設定
@@ -86,7 +86,7 @@ int main(int argc, char** argv)
 		// Specify a camera matrix
 		// カメラ行列を設定
 		renderer->SetCameraMatrix(
-			::Effekseer::Matrix44().LookAtRH(g_position, ::Effekseer::Vector3D(0.0f, 0.0f, 0.0f), ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
+			::Effekseer::Matrix44().LookAtRH(viewerPosition, ::Effekseer::Vector3D(0.0f, 0.0f, 0.0f), ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
 
 		// Load an effect
 		// エフェクトの読込
@@ -115,9 +115,16 @@ int main(int argc, char** argv)
 			// エフェクトの移動
 			manager->AddLocation(handle, ::Effekseer::Vector3D(0.2f, 0.0f, 0.0f));
 
+			// Set layer parameters
+			// レイヤーパラメータの設定
+			Effekseer::Manager::LayerParameter layerParameter;
+			layerParameter.ViewerPosition = viewerPosition;
+			manager->SetLayerParameter(0, layerParameter);
+
 			// Update the manager
 			// マネージャーの更新
-			manager->Update();
+			Effekseer::Manager::UpdateParameter updateParameter;
+			manager->Update(updateParameter);
 
 			// Ececute functions about DirectX
 			// DirectXの処理
@@ -205,8 +212,10 @@ bool InitializeWindowAndDevice()
 	auto hr = D3D11CreateDevice(
 		nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, debugFlag, nullptr, 0, D3D11_SDK_VERSION, &g_device, nullptr, &g_context);
 
-	if
-		FAILED(hr) { goto End; }
+	if FAILED (hr)
+	{
+		goto End;
+	}
 
 	if (FAILED(g_device->QueryInterface(__uuidof(IDXGIDevice1), (void**)&g_dxgiDevice)))
 	{

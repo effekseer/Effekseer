@@ -433,12 +433,12 @@ namespace Effekseer.GUI.Dock
 						switch (Core.Option.FileBrowserViewMode.GetValue())
 						{
 							case Data.OptionValues.FileViewMode.IconView:
-								Manager.NativeManager.ScrollToBringRectIntoView(
+								Manager.NativeManager.ScrollToRect(
 									new swig.Vec2(relX, relY),
 									new swig.Vec2(relX, relY + Core.Option.FileBrowserIconSize.GetValue()));
 								break;
 							case Data.OptionValues.FileViewMode.ListView:
-								Manager.NativeManager.ScrollToBringRectIntoView(
+								Manager.NativeManager.ScrollToRect(
 									new swig.Vec2(relX, relY),
 									new swig.Vec2(relX, relY + Manager.NativeManager.GetTextLineHeightWithSpacing()));
 								break;

@@ -564,7 +564,7 @@ namespace Effekseer.GUI.Dock
 
 			if (requiredToExpand)
 			{
-				Manager.NativeManager.SetNextTreeNodeOpen(true);
+				Manager.NativeManager.SetNextItemOpen(true);
 				requiredToExpand = false;
 			}
 

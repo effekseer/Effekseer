@@ -187,6 +187,7 @@ enum class RequiredPredefinedMethodType : int32_t
 	Gradient = 0,
 	Noise = 1,
 	Light = 2,
+	LocalTime = 3,
 };
 
 class PinParameter;

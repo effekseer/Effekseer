@@ -17,7 +17,7 @@
     <Compile Remove="Properties/AssemblyInfo.cs" />
     <Compile Remove="packages.config" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
   <ItemGroup>

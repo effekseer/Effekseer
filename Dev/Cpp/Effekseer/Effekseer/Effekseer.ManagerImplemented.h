@@ -53,8 +53,6 @@ private:
 		bool IsPreupdated = false;
 		int32_t StartFrame = 0;
 
-		int32_t Layer = 0;
-
 		//! a time (by 1/60) to progress an effect when Update is called
 		float NextUpdateFrame = 0.0f;
 
@@ -110,7 +108,7 @@ private:
 
 		void SetGlobalMatrix(const SIMD::Mat43f& mat);
 
-		void UpdateLevelOfDetails(const Vector3D& viewerPosition, float lodDistanceBias);
+		void UpdateLevelOfDetails(const LayerParameter& loadParameter);
 
 	private:
 		SIMD::Mat43f GlobalMatrix;
@@ -194,8 +192,7 @@ private:
 
 	int m_randMax;
 
-	Vector3D m_ViewerPosition;
-	float m_LodDistanceBias = 0.0F;
+	std::array<LayerParameter, LayerCount> m_layerParameters;
 
 	std::queue<std::pair<SoundTag, SoundPlayer::InstanceParameter>> m_requestedSounds;
 	std::mutex m_soundMutex;
@@ -333,9 +330,9 @@ public:
 
 	int GetCurrentLOD(Handle handle) override;
 
-	float GetLODDistanceBias() const override;
+	const LayerParameter& GetLayerParameter(int32_t layer) const override;
 
-	void SetLODDistanceBias(float distanceBias) override;
+	void SetLayerParameter(int32_t layer, const LayerParameter& layerParameter) override;
 
 	Matrix43 GetMatrix(Handle handle) override;
 
@@ -383,7 +380,7 @@ public:
 
 	bool GetSpawnDisabled(Handle handle) override;
 
-	int GetLayer(Handle handle) override;
+	int32_t GetLayer(Handle handle) override;
 
 	void SetLayer(Handle handle, int32_t layer) override;
 
@@ -413,7 +410,7 @@ public:
 
 	void DoUpdate(const UpdateParameter& parameter);
 
-	void BeginUpdate(const Vector3D& ViewerPosition = Vector3D(0.0, 0.0, 0.0)) override;
+	void BeginUpdate() override;
 
 	void EndUpdate() override;
 
@@ -491,11 +488,6 @@ public:
 	void UnlockRendering() override;
 
 	void RequestToPlaySound(Instance* instance, const EffectNodeImplemented* node);
-
-	const Vector3D& GetViewerPosition() const
-	{
-		return m_ViewerPosition;
-	}
 
 	ManagerImplemented* GetImplemented() override
 	{

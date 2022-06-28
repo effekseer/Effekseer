@@ -12,6 +12,7 @@ namespace Effekseer.swig {
 
 public enum ImGuiStyleVarFlags {
   Alpha,
+  DisabledAlpha,
   WindowPadding,
   WindowRounding,
   WindowBorderSize,
@@ -27,11 +28,15 @@ public enum ImGuiStyleVarFlags {
   ItemSpacing,
   ItemInnerSpacing,
   IndentSpacing,
+  CellPadding,
   ScrollbarSize,
   ScrollbarRounding,
   GrabMinSize,
   GrabRounding,
-  ButtonTextAlign
+  TabRounding,
+  ButtonTextAlign,
+  SelectableTextAlign,
+  LayoutAlign
 }
 
 }

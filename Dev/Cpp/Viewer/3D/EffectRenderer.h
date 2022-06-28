@@ -170,6 +170,8 @@ protected:
 	EffectRendererParameter parameter_;
 	Effekseer::Tool::PostEffectParameter postEffectParameter_;
 
+	float lodDistanceBias_ = 0.0f;
+
 	bool UpdateBackgroundMesh(const Color& backgroundColor);
 
 	void CopyToBack();

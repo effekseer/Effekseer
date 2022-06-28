@@ -99,6 +99,7 @@ private:
 	bool isSelectedDirty_ = false;
 
 	//! popupsed keywords
+	bool isJustNewNodePanelOpened_ = false;
 	std::array<char, 256> searchingKeywords;
 	std::array<char, 256> searchingKeywordsActual;
 

@@ -446,10 +446,9 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
-  public Vec2 ScrollToBringRectIntoView(Vec2 rect_min, Vec2 rect_max) {
-    Vec2 ret = new Vec2(EffekseerNativePINVOKE.GUIManager_ScrollToBringRectIntoView(swigCPtr, Vec2.getCPtr(rect_min), Vec2.getCPtr(rect_max)), true);
+  public void ScrollToRect(Vec2 rect_min, Vec2 rect_max) {
+    EffekseerNativePINVOKE.GUIManager_ScrollToRect(swigCPtr, Vec2.getCPtr(rect_min), Vec2.getCPtr(rect_max));
     if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
-    return ret;
   }
 
   public void Columns(int count, string id, bool border) {
@@ -1136,12 +1135,12 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_TreePop(swigCPtr);
   }
 
-  public void SetNextTreeNodeOpen(bool is_open, Cond cond) {
-    EffekseerNativePINVOKE.GUIManager_SetNextTreeNodeOpen__SWIG_0(swigCPtr, is_open, (int)cond);
+  public void SetNextItemOpen(bool is_open, Cond cond) {
+    EffekseerNativePINVOKE.GUIManager_SetNextItemOpen__SWIG_0(swigCPtr, is_open, (int)cond);
   }
 
-  public void SetNextTreeNodeOpen(bool is_open) {
-    EffekseerNativePINVOKE.GUIManager_SetNextTreeNodeOpen__SWIG_1(swigCPtr, is_open);
+  public void SetNextItemOpen(bool is_open) {
+    EffekseerNativePINVOKE.GUIManager_SetNextItemOpen__SWIG_1(swigCPtr, is_open);
   }
 
   public bool TreeNodeEx(string label, bool[] v, TreeNodeFlags flags) {
