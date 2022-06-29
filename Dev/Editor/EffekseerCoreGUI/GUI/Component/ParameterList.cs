@@ -126,14 +126,9 @@ namespace Effekseer.GUI.Component
 				}
 			}
 
-			/// <summary>
-			/// 
-			/// </summary>
-			/// <param name="firstIndent"></param>
-			/// <returns>last indent</returns>
-			public IndentInformation Update(IndentInformation firstIndent)
+			public IndentInformation Update(IndentInformation indent, object groupLabel = null)
 			{
-				var indent = firstIndent;
+				var currentIndent = indent;
 				if (isControlsChanged)
 				{
 					SetValue(bindingObject, 0);
@@ -143,7 +138,7 @@ namespace Effekseer.GUI.Component
 
 				for (int i = 0; i < controlRows.Internal.Count; i++)
 				{
-					var c = controlRows.Internal[i].Control as IParameterControl;
+					var ctrl = controlRows.Internal[i].Control;
 
 					if (controlRows.Internal[i].Children != null)
 					{
@@ -152,10 +147,12 @@ namespace Effekseer.GUI.Component
 						if (string.IsNullOrEmpty(item.TreeNodeID))
 						{
 							// Not tree view
-							indent.Indent = controlRows[i].SelectorIndent;
-							indent.IsSelecter = controlRows[i].IsSelector;
+							currentIndent.Indent = controlRows[i].SelectorIndent;
+							currentIndent.IsSelecter = controlRows[i].IsSelector;
 
-							indent = item.Children.Update(indent);
+							// TODO : Make better implemention
+							// To show a group name on a first element
+							currentIndent = item.Children.Update(currentIndent, item.Title.ToString() == string.Empty ? null : item.Title);
 						}
 						else
 						{
@@ -189,115 +186,116 @@ namespace Effekseer.GUI.Component
 
 								if (opened && enabled)
 								{
-									indent = item.Children.Update(indent);
+									currentIndent = item.Children.Update(currentIndent);
+								}
+							}
+							else if (item.TreeNodeType == Data.TreeNodeType.Large)
+							{
+								Manager.NativeManager.Columns(1);
+								Manager.NativeManager.Spacing();
+
+								var valueChanged = item.Children.IsValueChangedFromDefault;
+
+								if (valueChanged)
+								{
+									Manager.NativeManager.PushStyleColor(swig.ImGuiColFlags.Header, 0xff75ba33);
+								}
+
+								bool opened = Manager.NativeManager.CollapsingHeader(label);
+
+								if (valueChanged)
+								{
+									Manager.NativeManager.PopStyleColor();
+								}
+
+								ChangeColumns2WithLabelWidth();
+
+								if (opened)
+								{
+									currentIndent = item.Children.Update(currentIndent);
+								}
+							}
+							else if (item.TreeNodeType == Data.TreeNodeType.Small)
+							{
+								var flag = swig.TreeNodeFlags.SpanFullWidth;
+
+								Manager.NativeManager.Columns(1);
+
+								if (Manager.NativeManager.TreeNodeEx(label, flag))
+								{
+									ChangeColumns2WithLabelWidth();
+
+									currentIndent = item.Children.Update(currentIndent);
+
+									// Avoid Tree node bug
+									Manager.NativeManager.Columns(1);
+									Manager.NativeManager.TreePop();
+									Manager.NativeManager.Spacing();
+									Manager.NativeManager.Columns(2);
+								}
+								else
+								{
+									ChangeColumns2WithLabelWidth();
 								}
 							}
 							else
 							{
-								// Simple CollapsingHeader
-								if (item.TreeNodeType == Data.TreeNodeType.Large)
-								{
-									Manager.NativeManager.Columns(1);
-									Manager.NativeManager.Spacing();
-
-									var valueChanged = item.Children.IsValueChangedFromDefault;
-
-									if (valueChanged)
-									{
-										Manager.NativeManager.PushStyleColor(swig.ImGuiColFlags.Header, 0xff75ba33);
-									}
-
-									bool opened = Manager.NativeManager.CollapsingHeader(label);
-
-									if (valueChanged)
-									{
-										Manager.NativeManager.PopStyleColor();
-									}
-
-									ChangeColumns2WithLabelWidth();
-
-									if (opened)
-									{
-										indent = item.Children.Update(indent);
-									}
-								}
-								else if (item.TreeNodeType == Data.TreeNodeType.Small)
-								{
-									var flag = swig.TreeNodeFlags.SpanFullWidth;
-
-									Manager.NativeManager.Columns(1);
-
-									if (Manager.NativeManager.TreeNodeEx(label, flag))
-									{
-										ChangeColumns2WithLabelWidth();
-
-										indent = item.Children.Update(indent);
-
-										// Avoid Tree node bug
-										Manager.NativeManager.Columns(1);
-										Manager.NativeManager.TreePop();
-										Manager.NativeManager.Spacing();
-										Manager.NativeManager.Columns(2);
-									}
-									else
-									{
-										ChangeColumns2WithLabelWidth();
-									}
-
-									//Manager.NativeManager.Spacing();
-
-								}
-								else
-								{
-									throw new NotImplementedException();
-								}
-
+								throw new NotImplementedException();
 							}
-							//var opened = Manager.NativeManager.TreeNode(label);
 
-							//if (opened)
-							//{
-							//	Manager.NativeManager.TreePop();
-							//}
+
 						}
+					}
+					else if (ctrl is Dummy || ctrl == null)
+					{
 						continue;
 					}
-
-					if (c is Dummy) continue;
-					if (c == null) continue;
-
-					if (
-						(indent.Indent > controlRows[i].SelectorIndent ||
-						controlRows[i].IsSelector ||
-						(indent.Indent == controlRows[i].SelectorIndent && indent.IsSelecter)))
+					else
 					{
-						Manager.NativeManager.Separator();
+						if (
+							(currentIndent.Indent > controlRows[i].SelectorIndent ||
+							controlRows[i].IsSelector ||
+							(currentIndent.Indent == controlRows[i].SelectorIndent && currentIndent.IsSelecter)))
+						{
+							Manager.NativeManager.Separator();
+						}
+
+						// Show a label
+						Manager.NativeManager.SetCursorPosY(Manager.NativeManager.GetCursorPosY() + Manager.TextOffsetY);
+
+						// TODO : Make better imeplementation
+						if (groupLabel != null && i == 0)
+						{
+							Manager.NativeManager.Text(groupLabel.ToString());
+						}
+						else
+						{
+							Manager.NativeManager.Text(controlRows.Internal[i].Label.ToString());
+						}
+
+						if (Manager.NativeManager.IsItemHovered())
+						{
+							Manager.NativeManager.BeginTooltip();
+
+							Manager.NativeManager.Text(controlRows.Internal[i].Label.ToString());
+							Manager.NativeManager.Separator();
+							Manager.NativeManager.Text(controlRows.Internal[i].Description.ToString());
+
+							Manager.NativeManager.EndTooltip();
+						}
+
+						Manager.NativeManager.NextColumn();
+
+						// Show a content
+						Manager.NativeManager.PushItemWidth(-1);
+						ctrl.Update();
+						Manager.NativeManager.PopItemWidth();
+
+						Manager.NativeManager.NextColumn();
+
+						currentIndent.Indent = controlRows[i].SelectorIndent;
+						currentIndent.IsSelecter = controlRows[i].IsSelector;
 					}
-
-					Manager.NativeManager.SetCursorPosY(Manager.NativeManager.GetCursorPosY() + Manager.TextOffsetY);
-					Manager.NativeManager.Text(controlRows.Internal[i].Label.ToString());
-
-					if (Manager.NativeManager.IsItemHovered())
-					{
-						Manager.NativeManager.BeginTooltip();
-
-						Manager.NativeManager.Text(controlRows.Internal[i].Label.ToString());
-						Manager.NativeManager.Separator();
-						Manager.NativeManager.Text(controlRows.Internal[i].Description.ToString());
-
-						Manager.NativeManager.EndTooltip();
-					}
-
-					Manager.NativeManager.NextColumn();
-
-					Manager.NativeManager.PushItemWidth(-1);
-					c.Update();
-					Manager.NativeManager.PopItemWidth();
-
-					Manager.NativeManager.NextColumn();
-
-					indent.Indent = controlRows[i].SelectorIndent;
-					indent.IsSelecter = controlRows[i].IsSelector;
 				}
 
 				controlRows.Unlock();
@@ -307,7 +305,7 @@ namespace Effekseer.GUI.Component
 					SetValue(bindingObject, 0);
 				}
 
-				return indent;
+				return currentIndent;
 			}
 
 			public void FixValues()

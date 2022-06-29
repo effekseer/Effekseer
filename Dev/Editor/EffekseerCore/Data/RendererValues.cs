@@ -183,38 +183,38 @@ namespace Effekseer.Data
 		[Selected(ID = 0, Value = (int)ParamaterType.Sprite)]
 		[Selected(ID = 0, Value = (int)ParamaterType.Model)]
 		[IO(Export = true)]
-		[TreeNode(key = "RS_ColorAll", id = "RS_ColorAll", type = TreeNodeType.Small)]
+		[Key(key = "RS_ColorAll")]
 		public StandardColor ColorAll { get; private set; } = new StandardColor();
 
 		[Selected(ID = 0, Value = (int)ParamaterType.Track)]
 		[IO(Export = true)]
-		[TreeNode(key = "RS_Track_ColorLeft", id = "RS_Track_ColorLeft", type = TreeNodeType.Small)]
+		[Key(key = "RS_Track_ColorLeft")]
 		public StandardColor TrailColorLeft { get; private set; } = new StandardColor();
 
 		[Selected(ID = 0, Value = (int)ParamaterType.Track)]
 		[IO(Export = true)]
-		[TreeNode(key = "RS_Track_ColorLeftMiddle", id = "RS_Track_ColorLeftMiddle", type = TreeNodeType.Small)]
+		[Key(key = "RS_Track_ColorLeftMiddle")]
 		public StandardColor TrailColorLeftMiddle { get; private set; } = new StandardColor();
 
 		[Selected(ID = 0, Value = (int)ParamaterType.Track)]
 		[IO(Export = true)]
-		[TreeNode(key = "RS_Track_ColorCenter", id = "RS_Track_ColorCenter", type = TreeNodeType.Small)]
+		[Key(key = "RS_Track_ColorCenter")]
 		public StandardColor TrailColorCenter { get; private set; } = new StandardColor();
 
 		[Selected(ID = 0, Value = (int)ParamaterType.Track)]
 		[IO(Export = true)]
-		[TreeNode(key = "RS_Track_ColorCenterMiddle", id = "RS_Track_ColorCenterMiddle", type = TreeNodeType.Small)]
+		[Key(key = "RS_Track_ColorCenterMiddle")]
 		public StandardColor TrailColorCenterMiddle { get; private set; } = new StandardColor();
 
 		[Selected(ID = 0, Value = (int)ParamaterType.Track)]
 		[IO(Export = true)]
-		[TreeNode(key = "RS_Track_ColorRight", id = "RS_Track_ColorRight", type = TreeNodeType.Small)]
+		[Key(key = "RS_Track_ColorRight")]
 		public StandardColor TrailColorRight { get; private set; } = new StandardColor();
 
 
 		[Selected(ID = 0, Value = (int)ParamaterType.Track)]
 		[IO(Export = true)]
-		[TreeNode(key = "RS_Track_ColorRightMiddle", id = "RS_Track_ColorRightMiddlet", type = TreeNodeType.Small)]
+		[Key(key = "RS_Track_ColorRightMiddle")]
 		public StandardColor TrailColorRightMiddle { get; private set; } = new StandardColor();
 
 		[Selected(ID = 0, Value = 2)]
