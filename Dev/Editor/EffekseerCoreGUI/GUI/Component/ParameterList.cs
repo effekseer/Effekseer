@@ -32,20 +32,20 @@ namespace Effekseer.GUI.Component
 
 		bool isFirstUpdate = true;
 
+		static void ChangeColumns2WithLabelWidth()
+		{
+			var regionAvail = Manager.NativeManager.GetContentRegionAvail();
+			Manager.NativeManager.Columns(2);
+			Manager.NativeManager.SetColumnWidth(0, (int)(regionAvail.X * 0.3f));
+		}
+
 		public ParameterList()
 		{
 		}
 
 		public override void Update()
 		{
-			Manager.NativeManager.Columns(2);
-
-			var columnWidth = Manager.NativeManager.GetColumnWidth(0);
-
-			if (isFirstUpdate)
-			{
-				Manager.NativeManager.SetColumnWidth(0, 120 * Manager.GetUIScaleBasedOnFontSize());
-			}
+			ChangeColumns2WithLabelWidth();
 
 			var indent = new IndentInformation();
 			indent.Indent = 0;
@@ -185,7 +185,7 @@ namespace Effekseer.GUI.Component
 									Manager.NativeManager.TextWrapped(message);
 								}
 
-								Manager.NativeManager.Columns(2);
+								ChangeColumns2WithLabelWidth();
 
 								if (opened && enabled)
 								{
@@ -214,14 +214,14 @@ namespace Effekseer.GUI.Component
 										Manager.NativeManager.PopStyleColor();
 									}
 
-									Manager.NativeManager.Columns(2);
+									ChangeColumns2WithLabelWidth();
 
 									if (opened)
 									{
 										indent = item.Children.Update(indent);
 									}
 								}
-								else
+								else if (item.TreeNodeType == Data.TreeNodeType.Small)
 								{
 									var flag = swig.TreeNodeFlags.SpanFullWidth;
 
@@ -229,7 +229,8 @@ namespace Effekseer.GUI.Component
 
 									if (Manager.NativeManager.TreeNodeEx(label, flag))
 									{
-										Manager.NativeManager.Columns(2);
+										ChangeColumns2WithLabelWidth();
+
 										indent = item.Children.Update(indent);
 
 										// Avoid Tree node bug
@@ -240,12 +241,17 @@ namespace Effekseer.GUI.Component
 									}
 									else
 									{
-										Manager.NativeManager.Columns(2);
+										ChangeColumns2WithLabelWidth();
 									}
 
 									//Manager.NativeManager.Spacing();
 
 								}
+								else
+								{
+									throw new NotImplementedException();
+								}
+
 							}
 							//var opened = Manager.NativeManager.TreeNode(label);
 
