@@ -152,12 +152,12 @@ namespace Effekseer.GUI.Component
 
 							// TODO : Make better implemention
 							// To show a group name on a first element
-							currentIndent = item.Children.Update(currentIndent, item.Title.ToString() == string.Empty ? null : item.Title);
+							currentIndent = item.Children.Update(currentIndent, item.EditableValue.IsGroup ? item.Title : null);
 						}
 						else
 						{
 							// Tree view
-							var label = item.Label.ToString() + "###" + item.TreeNodeID;
+							var label = item.Title.ToString() + "###" + item.TreeNodeID;
 
 							if (item.BindingValue is Data.Group.IToggleMode)
 							{
@@ -270,14 +270,14 @@ namespace Effekseer.GUI.Component
 						}
 						else
 						{
-							Manager.NativeManager.Text(controlRows.Internal[i].Label.ToString());
+							Manager.NativeManager.Text(controlRows.Internal[i].Title.ToString());
 						}
 
 						if (Manager.NativeManager.IsItemHovered())
 						{
 							Manager.NativeManager.BeginTooltip();
 
-							Manager.NativeManager.Text(controlRows.Internal[i].Label.ToString());
+							Manager.NativeManager.Text(controlRows.Internal[i].Title.ToString());
 							Manager.NativeManager.Separator();
 							Manager.NativeManager.Text(controlRows.Internal[i].Description.ToString());
 
@@ -631,12 +631,6 @@ namespace Effekseer.GUI.Component
 				private set;
 			}
 
-			public object Label
-			{
-				get;
-				private set;
-			}
-
 			public bool IsSelector
 			{
 				get;
@@ -845,8 +839,6 @@ namespace Effekseer.GUI.Component
 
 				Control = gui;
 
-				Label = Title;
-
 				TreeNodeID = propInfo.TreeNodeID;
 				TreeNodeType = propInfo.TreeNodeType;
 
@@ -862,7 +854,6 @@ namespace Effekseer.GUI.Component
 			{
 				Title = propInfo.Title;
 				Description = propInfo.Description;
-				Label = Title;
 			}
 			public void SetSelector(List<TypeRow> sameLayerRows)
 			{

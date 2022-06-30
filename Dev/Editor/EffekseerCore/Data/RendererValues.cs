@@ -184,37 +184,44 @@ namespace Effekseer.Data
 		[Selected(ID = 0, Value = (int)ParamaterType.Model)]
 		[IO(Export = true)]
 		[Key(key = "RS_ColorAll")]
+		[Group]
 		public StandardColor ColorAll { get; private set; } = new StandardColor();
 
 		[Selected(ID = 0, Value = (int)ParamaterType.Track)]
 		[IO(Export = true)]
 		[Key(key = "RS_Track_ColorLeft")]
+		[Group]
 		public StandardColor TrailColorLeft { get; private set; } = new StandardColor();
 
 		[Selected(ID = 0, Value = (int)ParamaterType.Track)]
 		[IO(Export = true)]
 		[Key(key = "RS_Track_ColorLeftMiddle")]
+		[Group]
 		public StandardColor TrailColorLeftMiddle { get; private set; } = new StandardColor();
 
 		[Selected(ID = 0, Value = (int)ParamaterType.Track)]
 		[IO(Export = true)]
 		[Key(key = "RS_Track_ColorCenter")]
+		[Group]
 		public StandardColor TrailColorCenter { get; private set; } = new StandardColor();
 
 		[Selected(ID = 0, Value = (int)ParamaterType.Track)]
 		[IO(Export = true)]
 		[Key(key = "RS_Track_ColorCenterMiddle")]
+		[Group]
 		public StandardColor TrailColorCenterMiddle { get; private set; } = new StandardColor();
 
 		[Selected(ID = 0, Value = (int)ParamaterType.Track)]
 		[IO(Export = true)]
 		[Key(key = "RS_Track_ColorRight")]
+		[Group]
 		public StandardColor TrailColorRight { get; private set; } = new StandardColor();
 
 
 		[Selected(ID = 0, Value = (int)ParamaterType.Track)]
 		[IO(Export = true)]
 		[Key(key = "RS_Track_ColorRightMiddle")]
+		[Group]
 		public StandardColor TrailColorRightMiddle { get; private set; } = new StandardColor();
 
 		[Selected(ID = 0, Value = 2)]
