@@ -21,7 +21,6 @@
 #include <limits>
 #include <string>
 
-#include "flatbuffers/bfbs_generator.h"
 #include "flatbuffers/flatbuffers.h"
 #include "flatbuffers/idl.h"
 #include "flatbuffers/util.h"
@@ -32,13 +31,6 @@ namespace flatbuffers {
 
 extern void LogCompilerWarn(const std::string &warn);
 extern void LogCompilerError(const std::string &err);
-
-struct FlatCOption {
-  std::string short_opt;
-  std::string long_opt;
-  std::string parameter;
-  std::string description;
-};
 
 class FlatCompiler {
  public:
@@ -51,18 +43,16 @@ class FlatCompiler {
     typedef std::string (*MakeRuleFn)(const flatbuffers::Parser &parser,
                                       const std::string &path,
                                       const std::string &file_name);
-    typedef bool (*ParsingCompletedFn)(const flatbuffers::Parser &parser,
-                                       const std::string &output_path);
 
     GenerateFn generate;
+    const char *generator_opt_short;
+    const char *generator_opt_long;
     const char *lang_name;
     bool schema_only;
     GenerateFn generateGRPC;
     flatbuffers::IDLOptions::Language lang;
-    FlatCOption option;
+    const char *generator_help;
     MakeRuleFn make_rule;
-    BfbsGenerator *bfbs_generator;
-    ParsingCompletedFn parsing_completed;
   };
 
   typedef void (*WarnFn)(const FlatCompiler *flatc, const std::string &warn,
@@ -89,7 +79,6 @@ class FlatCompiler {
 
   int Compile(int argc, const char **argv);
 
-  std::string GetShortUsageString(const char *program_name) const;
   std::string GetUsageString(const char *program_name) const;
 
  private:
