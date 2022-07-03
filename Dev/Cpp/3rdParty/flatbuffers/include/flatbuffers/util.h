@@ -17,20 +17,19 @@
 #ifndef FLATBUFFERS_UTIL_H_
 #define FLATBUFFERS_UTIL_H_
 
-#include <ctype.h>
 #include <errno.h>
 
 #include "flatbuffers/base.h"
 #include "flatbuffers/stl_emulation.h"
 
 #ifndef FLATBUFFERS_PREFER_PRINTF
-#  include <iomanip>
 #  include <sstream>
 #else  // FLATBUFFERS_PREFER_PRINTF
 #  include <float.h>
 #  include <stdio.h>
 #endif  // FLATBUFFERS_PREFER_PRINTF
 
+#include <iomanip>
 #include <string>
 
 namespace Effekseer {
@@ -97,7 +96,7 @@ template<typename T> size_t IntToDigitCount(T t) {
   // Count a single 0 left of the dot for fractional numbers
   if (-1 < t && t < 1) digit_count++;
   // Count digits until fractional part
-  T eps = std::numeric_limits<T>::epsilon();
+  T eps = std::numeric_limits<float>::epsilon();
   while (t <= (-1 + eps) || (1 - eps) <= t) {
     t /= 10;
     digit_count++;
@@ -148,6 +147,20 @@ template<> inline std::string NumToString<unsigned char>(unsigned char t) {
 template<> inline std::string NumToString<char>(char t) {
   return NumToString(static_cast<int>(t));
 }
+#if defined(FLATBUFFERS_CPP98_STL)
+template<> inline std::string NumToString<long long>(long long t) {
+  char buf[21];  // (log((1 << 63) - 1) / log(10)) + 2
+  snprintf(buf, sizeof(buf), "%lld", t);
+  return std::string(buf);
+}
+
+template<>
+inline std::string NumToString<unsigned long long>(unsigned long long t) {
+  char buf[22];  // (log((1 << 63) - 1) / log(10)) + 1
+  snprintf(buf, sizeof(buf), "%llu", t);
+  return std::string(buf);
+}
+#endif  // defined(FLATBUFFERS_CPP98_STL)
 
 // Special versions for floats/doubles.
 template<typename T> std::string FloatToString(T t, int precision) {
@@ -457,7 +470,6 @@ std::string ConCatPathFileName(const std::string &path,
 
 // Replaces any '\\' separators with '/'
 std::string PosixPath(const char *path);
-std::string PosixPath(const std::string &path);
 
 // This function ensure a directory exists, by recursively
 // creating dirs for any parts of the path that don't exist yet.
@@ -466,10 +478,6 @@ void EnsureDirExists(const std::string &filepath);
 // Obtains the absolute path from any other path.
 // Returns the input path if the absolute path couldn't be resolved.
 std::string AbsolutePath(const std::string &filepath);
-
-// Returns files relative to the --project_root path, prefixed with `//`.
-std::string RelativeToRootPath(const std::string &project,
-                               const std::string &filepath);
 
 // To and from UTF-8 unicode conversion functions
 
