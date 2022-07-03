@@ -760,7 +760,6 @@ void EffectRenderer::Update(int32_t frame)
 	{
 		Effekseer::Manager::UpdateParameter updateParameter;
 		updateParameter.DeltaFrame = 0.0f;
-		updateParameter.ViewerPosition = renderer_->GetCameraPosition();
 		updateParameter.UpdateInterval = 0.0;
 		manager_->Update(updateParameter);
 	}

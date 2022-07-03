@@ -59,6 +59,11 @@ void ClientImplemented::Update()
 	}
 }
 
+bool ClientImplemented::IsConnected() const
+{
+	return m_session.IsActive();
+}
+
 void ClientImplemented::Reload(const char16_t* key, void* data, int32_t size)
 {
 	int32_t keylen = 0;
@@ -96,9 +101,17 @@ void ClientImplemented::Reload(ManagerRef manager, const char16_t* path, const c
 	loader->Unload(data, size);
 }
 
-bool ClientImplemented::IsConnected() const
+void ClientImplemented::StartProfiling()
 {
-	return m_session.IsActive();
+}
+
+void ClientImplemented::StopProfiling()
+{
+}
+
+Client::ProfileSample ClientImplemented::ReadProfileSample()
+{
+	return ProfileSample();
 }
 
 } // namespace Effekseer

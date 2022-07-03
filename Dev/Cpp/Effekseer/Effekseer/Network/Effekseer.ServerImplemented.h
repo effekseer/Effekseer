@@ -46,13 +46,28 @@ private:
 	std::map<std::u16string, EffectParameter> m_effects;
 	std::u16string m_materialPath;
 
-	ManagerRef* m_managers = nullptr;
-	int32_t m_managerCount = 0;
-	ReloadingThreadType m_reloadingThreadType{};
+	struct Profiler
+	{
+		bool isRunning = false;
+	};
+	Profiler profiler_;
+
+	struct UpdateContext
+	{
+		ManagerRef* managers = nullptr;
+		int32_t managerCount = 0;
+		ReloadingThreadType reloadingThreadType{};
+	};
+	UpdateContext updateContext_;
+
 
 	void AcceptAsync();
 
-	void OnDataReceived(const Session::Request& req, Session::Response& res);
+	void OnReload(InternalClient& client, const Session::Request& req, Session::Response& res);
+
+	void OnStartProfiling(InternalClient& client, const Session::Request& req, Session::Response& res);
+
+	void OnStopProfiling(InternalClient& client, const Session::Request& req, Session::Response& res);
 
 public:
 	ServerImplemented();
@@ -84,6 +99,9 @@ public:
 	{
 		return ReferenceObject::Release();
 	}
+
+private:
+	void UpdateProfiler();
 };
 
 } // namespace Effekseer

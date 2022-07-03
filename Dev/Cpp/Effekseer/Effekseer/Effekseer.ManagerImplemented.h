@@ -22,7 +22,7 @@ class ManagerImplemented : public Manager, public ReferenceObject
 	friend class InstanceContainer;
 	friend class InstanceGroup;
 
-private:
+public:
 	class alignas(32) DrawSet
 	{
 	public:
@@ -469,6 +469,8 @@ public:
 	void BeginReloadEffect(const EffectRef& effect, bool doLockThread);
 
 	void EndReloadEffect(const EffectRef& effect, bool doLockThread);
+
+	const CustomAlignedMap<Handle, DrawSet>& GetPlayingDrawSets() const { return m_DrawSets; }
 
 	virtual int GetRef() override
 	{

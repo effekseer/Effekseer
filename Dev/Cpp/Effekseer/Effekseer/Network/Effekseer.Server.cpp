@@ -4,6 +4,7 @@
 
 #include "Effekseer.Server.h"
 #include "../Effekseer.Effect.h"
+#include "../Effekseer.ManagerImplemented.h"
 #include "Effekseer.ServerImplemented.h"
 #include <string.h>
 
@@ -37,9 +38,19 @@ void ServerImplemented::AcceptAsync()
 
 		// Accept and add an internal client
 		std::unique_ptr<InternalClient> client(new InternalClient());
+		auto clientPtr = client.get();
+
 		client->Socket = std::move(socket);
 		client->Session.Open(&client->Socket);
-		client->Session.OnRequested(1, [this](const Session::Request& req, Session::Response& res){ OnDataReceived(req, res); });
+		client->Session.OnRequested(1, [this, clientPtr](const Session::Request& req, Session::Response& res){
+			OnReload(*clientPtr, req, res);
+		});
+		client->Session.OnRequested(100, [this, clientPtr](const Session::Request& req, Session::Response& res){
+			OnStartProfiling(*clientPtr, req, res);
+		});
+		client->Session.OnRequested(101, [this, clientPtr](const Session::Request& req, Session::Response& res){
+			OnStopProfiling(*clientPtr, req, res);
+		});
 		
 		std::lock_guard<std::mutex> lock(m_ctrlClients);
 		m_clients.emplace_back(std::move(client));
@@ -48,7 +59,7 @@ void ServerImplemented::AcceptAsync()
 	}
 }
 
-void ServerImplemented::OnDataReceived(const Session::Request& req, Session::Response& res)
+void ServerImplemented::OnReload(InternalClient& client, const Session::Request& req, Session::Response& res)
 {
 	auto& buf = req.payload;
 	size_t offset = 0;
@@ -74,8 +85,18 @@ void ServerImplemented::OnDataReceived(const Session::Request& req, Session::Res
 
 		// Reload the effect
 		const char16_t* materialPath = (m_materialPath.size() > 0) ? m_materialPath.c_str() : nullptr;
-		effect->Reload(m_managers, m_managerCount, effectData, (int32_t)effectSize, materialPath, m_reloadingThreadType);
+		effect->Reload(updateContext_.managers, updateContext_.managerCount, effectData, (int32_t)effectSize, materialPath, updateContext_.reloadingThreadType);
 	}
+}
+
+void ServerImplemented::OnStartProfiling(InternalClient& client, const Session::Request& req, Session::Response& res)
+{
+	profiler_.isRunning = true;
+}
+
+void ServerImplemented::OnStopProfiling(InternalClient& client, const Session::Request& req, Session::Response& res)
+{
+	profiler_.isRunning = false;
 }
 
 bool ServerImplemented::Start(uint16_t port)
@@ -156,9 +177,9 @@ void ServerImplemented::Unregister(const EffectRef& effect)
 
 void ServerImplemented::Update(ManagerRef* managers, int32_t managerCount, ReloadingThreadType reloadingThreadType)
 {
-	m_managers = managers;
-	m_managerCount = managerCount;
-	m_reloadingThreadType = reloadingThreadType;
+	updateContext_.managers = managers;
+	updateContext_.managerCount = managerCount;
+	updateContext_.reloadingThreadType = reloadingThreadType;
 
 	std::lock_guard<std::mutex> lock(m_ctrlClients);
 
@@ -170,6 +191,30 @@ void ServerImplemented::Update(ManagerRef* managers, int32_t managerCount, Reloa
 	auto removeIt = std::remove_if(m_clients.begin(), m_clients.end(), 
 		[](const std::unique_ptr<InternalClient>& client){ return !client->Session.IsActive(); });
 	m_clients.erase(removeIt, m_clients.end());
+
+	if (profiler_.isRunning)
+	{
+		UpdateProfiler();
+	}
+}
+
+void ServerImplemented::UpdateProfiler()
+{
+	for (int32_t i = 0; i < updateContext_.managerCount; i++)
+	{
+		auto manager = updateContext_.managers[i]->GetImplemented();
+		auto& drawSets = manager->GetPlayingDrawSets();
+		for (auto& handleAndDrawSet : drawSets)
+		{
+			for (auto& keyAndEffect : m_effects)
+			{
+				if (handleAndDrawSet.second.ParameterPointer == keyAndEffect.second.EffectPtr)
+				{
+					break;
+				}
+			}
+		}
+	}
 }
 
 void ServerImplemented::SetMaterialPath(const char16_t* materialPath)
