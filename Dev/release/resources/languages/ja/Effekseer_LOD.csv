@@ -1,14 +1,14 @@
-﻿LOD_Name,詳細のレベル
+﻿LOD_Name,LOD設定
 LOD_Level,レベル
-LOD_Description,使用する詳細レベルを構成します。\nレベルが有効になっている場合、選択するLODのビューアからの最小距離を指定できます。
+LOD_Description,LODを使用する場合、レベルごとの視点からの最小距離を指定します。
 LOD_Level_Minimum_Distance,最小距離
 LODBehaviour_Hide_Name,パーティクルを非表示にする
-LODBehaviour_DontSpawn_Name,新しいパーティクルのスポーンを停止します
-LODBehaviour_DontSpawnAndHide_Name,新しいパーティクルのスポーンを停止し、既存のパーティクルを非表示にします
-LOD_NotConfigured,詳細レベルは構成されていません
-LOD_Configure,構成、設定
-LOD_SelectMatching,ノードが通常どおりに動作するLODを選択します
-LOD_Behaviour,LODが選択と一致しない場合のパーティクルの動作
-LOD_ApplyToChildren,LOD設定を子供に適用する
-LOD_Bias_Name,LOD距離バイアス（m）
-LOD_Bias_Description,視聴者からの計算された距離に指定された値を追加します。 LODのプレビューに役立ちます。
+LODBehaviour_DontSpawn_Name,新しいパーティクルの生成を停止する
+LODBehaviour_DontSpawnAndHide_Name,新しいパーティクルの生成を停止し、既存パーティクルを非表示する
+LOD_NotConfigured,LODは設定されていません
+LOD_Configure,LOD設定
+LOD_SelectMatching,ノードが通常どおりに動作するレベルを選択
+LOD_Behaviour,レベルが一致しない場合のパーティクルの動作
+LOD_ApplyToChildren,LOD設定を子ノードにも適用する
+LOD_Bias_Name,LOD距離バイアス(m)
+LOD_Bias_Description,視点からの計算された距離に加算される値です。LODのテストに役立ちます。
