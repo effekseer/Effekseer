@@ -341,7 +341,7 @@ enum class DialogSelection
 
 enum class Key
 {
-	Tab,
+	Tab = 512,
 	LeftArrow,
 	RightArrow,
 	UpArrow,
