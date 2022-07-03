@@ -39,41 +39,38 @@ void Session::Update()
 {
 	std::lock_guard<std::mutex> lock(mutex_);
 
-	for (auto& data : queuedRequests_)
+	for (auto& data : queuedPackets_)
 	{
-		PacketHeader& header = std::get<0>(data);
-		Payload& payload = std::get<1>(data);
+		const PacketHeader& header = std::get<0>(data);
+		const Payload& payload = std::get<1>(data);
 
-		auto it = requestHandlers_.find(header.requestID);
-		if (it != requestHandlers_.end())
+		if (header.type == PacketType::Message)
 		{
-			Request req{ header.code, std::move(payload) };
-			Response res{};
-
-			it->second(req, res);
-
-			PacketHeader resHeader{};
-			resHeader.Set(PacketType::Responce, header.requestID, header.transactionID, res.code, (uint32_t)res.payload.size());
-			socket_->Send(&resHeader, (int32_t)sizeof(resHeader));
-			socket_->Send(res.payload.data(), (int32_t)res.payload.size());
+			auto it = messageHandlers_.find(header.targetID);
+			if (it != messageHandlers_.end())
+			{
+				it->second(Message{ ByteData(payload) });
+			}
+		}
+		else if (header.type == PacketType::Request)
+		{
+			auto it = requestHandlers_.find(header.targetID);
+			if (it != requestHandlers_.end())
+			{
+				it->second(Request{ header.sourceID, ByteData(payload) });
+			}
+		}
+		else if (header.type == PacketType::Response)
+		{
+			auto it = responseHandlers_.find(header.targetID);
+			if (it != responseHandlers_.end())
+			{
+				it->second(Response{ header.code, ByteData(payload) });
+				responseHandlers_.erase(it);
+			}
 		}
 	}
-	queuedRequests_.clear();
-
-	for (auto& data : queuedResponses_)
-	{
-		PacketHeader& header = std::get<0>(data);
-		Payload& payload = std::get<1>(data);
-
-		auto it = responseHandlers_.find(header.transactionID);
-		if (it != responseHandlers_.end())
-		{
-			Response res{ header.code, std::move(payload) };
-
-			it->second(res);
-		}
-	}
-	queuedResponses_.clear();
+	queuedPackets_.clear();
 }
 
 void Session::RecvThread()
@@ -107,16 +104,9 @@ void Session::RecvThread()
 				PacketHeader header{};
 				memcpy(&header, dataPtr, sizeof(PacketHeader));
 
-				if (header.IsValid(PacketType::Request))
+				if (header.IsValid())
 				{
-					state_ = State::RecieveRequest;
-					currentHeader_ = header;
-					payloadBuffer_.resize(0);
-					offset += sizeof(PacketHeader);
-				}
-				else if (header.IsValid(PacketType::Responce))
-				{
-					state_ = State::RecieveResponce;
+					state_ = State::ReceivePayload;
 					currentHeader_ = header;
 					payloadBuffer_.resize(0);
 					offset += sizeof(PacketHeader);
@@ -126,7 +116,7 @@ void Session::RecvThread()
 					offset++;
 				}
 			}
-			else if (state_ == State::RecieveRequest)
+			else if (state_ == State::ReceivePayload)
 			{
 				size_t size = std::min(dataSize, currentHeader_.payloadSize - payloadBuffer_.size());
 				payloadBuffer_.insert(payloadBuffer_.end(), dataPtr, dataPtr + size);
@@ -135,21 +125,7 @@ void Session::RecvThread()
 				if (payloadBuffer_.size() >= currentHeader_.payloadSize)
 				{
 					std::lock_guard<std::mutex> lock(mutex_);
-					queuedRequests_.emplace_back(currentHeader_, std::move(payloadBuffer_));
-					payloadBuffer_ = std::vector<uint8_t>();
-					state_ = State::SearchPacket;
-				}
-			}
-			else if (state_ == State::RecieveResponce)
-			{
-				size_t size = std::min(dataSize, currentHeader_.payloadSize - payloadBuffer_.size());
-				payloadBuffer_.insert(payloadBuffer_.end(), dataPtr, dataPtr + size);
-				offset += size;
-
-				if (payloadBuffer_.size() >= currentHeader_.payloadSize)
-				{
-					std::lock_guard<std::mutex> lock(mutex_);
-					queuedResponses_.emplace_back(currentHeader_, std::move(payloadBuffer_));
+					queuedPackets_.emplace_back(currentHeader_, std::move(payloadBuffer_));
 					payloadBuffer_ = std::vector<uint8_t>();
 					state_ = State::SearchPacket;
 				}
@@ -164,26 +140,86 @@ void Session::RecvThread()
 	}
 }
 
-bool Session::SendRequest(uint16_t requestID, const Request& req, ResponseHandler responceHandler)
+bool Session::Send(uint16_t messageID, const ByteData& payload)
 {
 	if (socket_ == nullptr)
 	{
 		return false;
 	}
 
-	uint16_t transactionID = sequenceCount_++;
+	uint16_t packetID = sequenceCount_++;
 
-	if (responceHandler)
+	PacketHeader msgHeader{};
+	msgHeader.Set(PacketType::Message, messageID, packetID, 0, (uint32_t)payload.size);
+
+	int32_t ret = 0;
+	ret = socket_->Send(&msgHeader, sizeof(msgHeader));
+	ret = socket_->Send(payload.data, (int32_t)payload.size);
+	if (ret <= 0)
 	{
-		responseHandlers_.emplace(transactionID, std::move(responceHandler));
+		Close();
+		return false;
+	}
+
+	return true;
+}
+
+void Session::OnReceived(uint16_t messageID, MessageHandler messageHandler)
+{
+	if (messageHandler != nullptr)
+	{
+		messageHandlers_.emplace(messageID, std::move(messageHandler));
+	}
+	else
+	{
+		messageHandlers_.erase(messageID);
+	}
+}
+
+bool Session::SendRequest(uint16_t requestID, const ByteData& payload, ResponseHandler responseHandler)
+{
+	if (socket_ == nullptr)
+	{
+		return false;
+	}
+
+	uint16_t packetID = sequenceCount_++;
+
+	if (responseHandler)
+	{
+		responseHandlers_.emplace(packetID, std::move(responseHandler));
 	}
 
 	PacketHeader reqHeader{};
-	reqHeader.Set(PacketType::Request, requestID, transactionID, req.code, (uint32_t)req.payload.size());
+	reqHeader.Set(PacketType::Request, requestID, packetID, 0, (uint32_t)payload.size);
 
 	int32_t ret = 0;
 	ret = socket_->Send(&reqHeader, sizeof(reqHeader));
-	ret = socket_->Send(req.payload.data(), (int32_t)req.payload.size());
+	ret = socket_->Send(payload.data, (int32_t)payload.size);
+	if (ret <= 0)
+	{
+		Close();
+		return false;
+	}
+
+	return true;
+}
+
+bool Session::SendResponse(uint16_t responseID, int32_t code, const ByteData& payload)
+{
+	if (socket_ == nullptr)
+	{
+		return false;
+	}
+
+	uint16_t packetID = sequenceCount_++;
+
+	PacketHeader resHeader{};
+	resHeader.Set(PacketType::Response, responseID, packetID, code, (uint32_t)payload.size);
+
+	int32_t ret = 0;
+	ret = socket_->Send(&resHeader, sizeof(resHeader));
+	ret = socket_->Send(payload.data, (int32_t)payload.size);
 	if (ret <= 0)
 	{
 		Close();
@@ -195,29 +231,36 @@ bool Session::SendRequest(uint16_t requestID, const Request& req, ResponseHandle
 
 void Session::OnRequested(uint16_t requestID, RequestHandler requestHandler)
 {
-	requestHandlers_.emplace(requestID, std::move(requestHandler));
+	if (requestHandler != nullptr)
+	{
+		requestHandlers_.emplace(requestID, std::move(requestHandler));
+	}
+	else
+	{
+		requestHandlers_.erase(requestID);
+	}
 }
 
 void Session::PacketHeader::Set(PacketType inType, 
-	uint16_t inRequestID, uint16_t inTransactionID, 
-	uint32_t inCode, uint32_t inPayloadSize)
+	uint16_t inTargetID, uint16_t inSourceID, 
+	int32_t inCode, uint32_t inPayloadSize)
 {
 	signature[0] = 0xAA;
 	signature[1] = 0x55;
 	type = inType;
 	reserved = 0;
-	requestID = inRequestID;
-	transactionID = inTransactionID;
+	targetID = inTargetID;
+	sourceID = inSourceID;
 	code = inCode;
 	payloadSize = inPayloadSize;
 }
 
-bool Session::PacketHeader::IsValid(PacketType inType) const
+bool Session::PacketHeader::IsValid() const
 {
 	return signature[0] == 0xAA
 		&& signature[1] == 0x55
-		&& reserved == 0
-		&& type == inType;
+		&& (type == PacketType::Message || type == PacketType::Request || type == PacketType::Response)
+		&& reserved == 0;
 }
 
 }

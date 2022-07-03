@@ -17,21 +17,36 @@ namespace Effekseer
 class Session
 {
 public:
-	struct Request
+	struct ByteData
 	{
-		uint32_t code = 0;
-		std::vector<uint8_t> payload;
+		const uint8_t* data = nullptr;
+		size_t size = 0;
+
+		ByteData(const uint8_t* data, size_t size)
+			: data(data), size(size) {}
+		ByteData(const std::vector<uint8_t>& vec)
+			: data(vec.data()), size(vec.size()) {}
 	};
 
+	struct Message
+	{
+		ByteData payload;
+	};
+	struct Request
+	{
+		uint16_t responseID;
+		ByteData payload;
+	};
 	struct Response
 	{
-		uint32_t code = 0;
-		std::vector<uint8_t> payload;
+		int32_t code;
+		ByteData payload;
 	};
 
 	using Payload = std::vector<uint8_t>;
-	using RequestHandler = std::function<void(const Request& req, Response& res)>;
-	using ResponseHandler = std::function<void(const Response& res)>;
+	using MessageHandler = std::function<void(const Message& message)>;
+	using RequestHandler = std::function<void(const Request& request)>;
+	using ResponseHandler = std::function<void(const Response& response)>;
 
 public:
 	Session();
@@ -43,7 +58,13 @@ public:
 
 	void Update();
 
-	bool SendRequest(uint16_t requestID, const Request& req, ResponseHandler responceHandler);
+	bool Send(uint16_t messageID, const ByteData& payload);
+
+	void OnReceived(uint16_t messageID, MessageHandler messageHandler);
+
+	bool SendRequest(uint16_t requestID, const ByteData& payload, ResponseHandler responseHandler);
+
+	bool SendResponse(uint16_t responseID, int32_t code, const ByteData& payload);
 
 	void OnRequested(uint16_t requestID, RequestHandler requestHandler);
 
@@ -58,32 +79,33 @@ private:
 	std::thread thread_;
 	std::mutex mutex_;
 
+	std::unordered_map<uint16_t, MessageHandler> messageHandlers_;
 	std::unordered_map<uint16_t, ResponseHandler> responseHandlers_;
 	std::unordered_map<uint16_t, RequestHandler> requestHandlers_;
 
 	enum class PacketType : uint8_t
 	{
-		Request, Responce,
+		Message, Request, Response,
 	};
 	struct PacketHeader
 	{
 		uint8_t signature[2];
 		PacketType type;
 		uint8_t reserved;
-		uint16_t requestID;
-		uint16_t transactionID;
-		uint32_t code;
+		uint16_t targetID;
+		uint16_t sourceID;
+		int32_t code;
 		uint32_t payloadSize;
 
 		void Set(PacketType inType, 
-			uint16_t inRequestID, uint16_t inTransactionID, 
-			uint32_t inCode, uint32_t inPayloadSize);
-		bool IsValid(PacketType inType) const;
+			uint16_t inTargetID, uint16_t inSourceID, 
+			int32_t inCode, uint32_t inPayloadSize);
+		bool IsValid() const;
 	};
 
 	enum class State
 	{
-		SearchPacket, RecieveRequest, RecieveResponce,
+		SearchPacket, ReceivePayload,
 	};
 	State state_ = State::SearchPacket;
 	uint8_t packetBuffer_[4096];
@@ -91,8 +113,7 @@ private:
 	Payload payloadBuffer_;
 	PacketHeader currentHeader_;
 
-	std::vector<std::tuple<PacketHeader, Payload>> queuedRequests_;
-	std::vector<std::tuple<PacketHeader, Payload>> queuedResponses_;
+	std::vector<std::tuple<PacketHeader, Payload>> queuedPackets_;
 };
 
 } // namespace Effekseer

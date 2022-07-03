@@ -27,6 +27,7 @@ file(GLOB effekseer_h
     Effekseer/Model/ModelLoader.h
     Effekseer/Model/SplineGenerator.h
     Effekseer/Network/*.h
+    Effekseer/Network/data/*.h
 )
 
 set(effekseer_src
@@ -91,6 +92,7 @@ set(files
     ${effekseer_h}
     ${effekseer_src})
 
+target_include_directories(Effekseer PRIVATE ${EFK_THIRDPARTY_INCLUDES})
 target_link_libraries(Effekseer PUBLIC ${CMAKE_THREAD_LIBS_INIT})
 
 FilterFolder("${files}")

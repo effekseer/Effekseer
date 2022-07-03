@@ -19,8 +19,8 @@ namespace Effekseer
 class ClientImplemented : public Client, public ReferenceObject
 {
 private:
-	Socket m_socket;
-	Session m_session;
+	Socket socket_;
+	Session session_;
 
 public:
 	ClientImplemented();

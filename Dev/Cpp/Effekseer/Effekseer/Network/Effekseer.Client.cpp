@@ -7,6 +7,7 @@
 
 #include "../Effekseer.EffectLoader.h"
 #include "../Effekseer.Manager.h"
+#include "data/reload_generated.h"
 
 namespace Effekseer
 {
@@ -27,17 +28,17 @@ ClientRef Client::Create()
 
 bool ClientImplemented::Start(const char* host, uint16_t port)
 {
-	// to stop thread
+	// To stop thread
 	Stop();
 
-	// connect
-	bool ret = m_socket.Connect(host, port);
+	// Connect to server
+	bool ret = socket_.Connect(host, port);
 	if (!ret)
 	{
 		return false;
 	}
 
-	m_session.Open(&m_socket);
+	session_.Open(&socket_);
 
 	EffekseerPrintDebug("Client : Start\n");
 
@@ -46,16 +47,16 @@ bool ClientImplemented::Start(const char* host, uint16_t port)
 
 void ClientImplemented::Stop()
 {
-	m_session.Close();
+	session_.Close();
 
 	EffekseerPrintDebug("Client : Stop\n");
 }
 
 void ClientImplemented::Update()
 {
-	if (m_session.IsActive())
+	if (session_.IsActive())
 	{
-		m_session.Update();
+		session_.Update();
 	}
 }
 
@@ -66,24 +67,13 @@ bool ClientImplemented::IsConnected() const
 
 void ClientImplemented::Reload(const char16_t* key, void* data, int32_t size)
 {
-	int32_t keylen = 0;
-	for (;; keylen++)
-	{
-		if (key[keylen] == 0)
-			break;
-	}
-	
-	Session::Request request;
+	Data::flatbuffers::FlatBufferBuilder fbb;
+	auto fbKey = fbb.CreateVector((const uint16_t*)key, std::char_traits<char16_t>::length(key));
+	auto fbData = fbb.CreateVector((const uint8_t*)data, size);
+	fbb.Finish(Data::CreateNetworkReload(fbb, fbKey, fbData));
+	auto fbBuffer = fbb.GetBufferSpan();
 
-	request.payload.insert(request.payload.end(), (uint8_t*)(&keylen), (uint8_t*)(&keylen) + sizeof(int32_t));
-
-	request.payload.insert(request.payload.end(), (uint8_t*)(key), (uint8_t*)(key) + keylen * 2);
-
-	request.payload.insert(request.payload.end(), (uint8_t*)(data), (uint8_t*)(data) + size);
-
-	m_session.SendRequest(1, request, [](const Session::Response& res){
-		EffekseerPrintDebug("Client : Respond\n");
-	});
+	session_.Send(1, { fbBuffer.data(), fbBuffer.size() });
 }
 
 void ClientImplemented::Reload(ManagerRef manager, const char16_t* path, const char16_t* key)
