@@ -1902,6 +1902,21 @@ bool GUIManager::InputTextMultiline(const char16_t* label, const char16_t* text)
 	return ret;
 }
 
+bool GUIManager::InputTextWithHint(const char16_t* label, const char16_t* text, const char16_t* hint, InputTextFlags flags)
+{
+	auto text_ = utf8str<1024>(text);
+
+	char buf[260];
+	memcpy(buf, text_.data, std::min((int32_t)text_.size, 250));
+	buf[std::min((int32_t)text_.size, 250)] = 0;
+
+	auto ret = ImGui::InputTextWithHint(utf8str<256>(label), utf8str<256>(hint), buf, 260, (ImGuiWindowFlags)flags);
+
+	inputTextResult = Effekseer::Tool::StringHelper::ConvertUtf8ToUtf16(buf);
+
+	return ret;
+}
+
 const char16_t* GUIManager::GetInputTextResult()
 {
 	return inputTextResult.c_str();

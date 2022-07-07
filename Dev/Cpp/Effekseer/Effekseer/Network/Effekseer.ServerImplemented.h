@@ -26,6 +26,7 @@ private:
 	{
 		Socket socket;
 		Session session;
+		bool isProfiling = false;
 	};
 
 private:
@@ -45,16 +46,6 @@ private:
 	std::map<std::u16string, EffectParameter> effects_;
 	std::u16string materialPath_;
 
-	std::vector<std::unique_ptr<InternalClient>> m_clients;
-	std::map<std::u16string, EffectParameter> m_effects;
-	std::u16string m_materialPath;
-
-	struct Profiler
-	{
-		bool isRunning = false;
-	};
-	Profiler profiler_;
-
 	struct UpdateContext
 	{
 		ManagerRef* managers = nullptr;
@@ -63,14 +54,15 @@ private:
 	};
 	UpdateContext updateContext_;
 
-
 	void AcceptAsync();
 
-	void OnReload(InternalClient& client, const Session::Request& req, Session::Response& res);
+	void OnReload(InternalClient& client, const Session::Message& msg);
 
-	void OnStartProfiling(InternalClient& client, const Session::Request& req, Session::Response& res);
+	void OnStartProfiling(InternalClient& client, const Session::Message& msg);
 
-	void OnStopProfiling(InternalClient& client, const Session::Request& req, Session::Response& res);
+	void OnStopProfiling(InternalClient& client, const Session::Message& msg);
+
+	void UpdateProfiler(InternalClient& client);
 
 public:
 	ServerImplemented();
@@ -102,9 +94,6 @@ public:
 	{
 		return ReferenceObject::Release();
 	}
-
-private:
-	void UpdateProfiler();
 };
 
 } // namespace Effekseer

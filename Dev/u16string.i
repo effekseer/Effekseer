@@ -25,7 +25,10 @@ class u16string;
 
 // u16string
 %typemap(ctype, out="void *") u16string "char16_t *"
-%typemap(imtype, inattributes="[global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]") u16string "string"
+%typemap(imtype, 
+  inattributes="[global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]",
+  outattributes="[return: global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]"
+) u16string "string"
 %typemap(cstype) u16string "string"
 %typemap(csdirectorin) u16string "$iminput"
 %typemap(csdirectorout) u16string "$cscall"
@@ -62,7 +65,10 @@ class u16string;
 
 // const u16string &
 %typemap(ctype, out="void *") const u16string & "char16_t *"
-%typemap(imtype, inattributes="[global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]") const u16string & "string"  
+%typemap(imtype, 
+  inattributes="[global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]",
+  outattributes="[return: global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]"
+) const u16string & "string"  
 %typemap(cstype) const u16string & "string"
 
 %typemap(csdirectorin) const u16string & "$iminput"

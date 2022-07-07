@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Effekseer.h>
+#include "ProfileSample.h"
 
 namespace Effekseer::Tool
 {
@@ -17,9 +18,17 @@ public:
 
 	void StopNetwork();
 
+	void UpdateNetwork();
+
 	bool IsConnectingNetwork();
 
 	void SendDataByNetwork(const char16_t* key, void* data, int size, const char16_t* path);
+
+	void StartProfiling();
+
+	void StopProfiling();
+
+	ProfileSample ReadProfileSample();
 };
 
 } // namespace Effekseer::Tool

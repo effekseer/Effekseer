@@ -7,6 +7,7 @@
 #include "../Effekseer.ManagerImplemented.h"
 #include "Effekseer.ServerImplemented.h"
 #include "data/reload_generated.h"
+#include "data/profiler_generated.h"
 
 namespace Effekseer
 {
@@ -40,16 +41,16 @@ void ServerImplemented::AcceptAsync()
 		std::unique_ptr<InternalClient> client(new InternalClient());
 		auto clientPtr = client.get();
 
-		client->Socket = std::move(socket);
-		client->Session.Open(&client->Socket);
-		client->Session.OnRequested(1, [this, clientPtr](const Session::Request& req, Session::Response& res){
-			OnReload(*clientPtr, req, res);
+		client->socket = std::move(socket);
+		client->session.Open(&client->socket);
+		client->session.OnReceived(1, [this, clientPtr](const Session::Message& msg){
+			OnReload(*clientPtr, msg);
 		});
-		client->Session.OnRequested(100, [this, clientPtr](const Session::Request& req, Session::Response& res){
-			OnStartProfiling(*clientPtr, req, res);
+		client->session.OnReceived(100, [this, clientPtr](const Session::Message& msg){
+			OnStartProfiling(*clientPtr, msg);
 		});
-		client->Session.OnRequested(101, [this, clientPtr](const Session::Request& req, Session::Response& res){
-			OnStopProfiling(*clientPtr, req, res);
+		client->session.OnReceived(101, [this, clientPtr](const Session::Message& msg){
+			OnStopProfiling(*clientPtr, msg);
 		});
 		
 		std::lock_guard<std::mutex> lock(clientsMutex_);
@@ -59,7 +60,7 @@ void ServerImplemented::AcceptAsync()
 	}
 }
 
-void ServerImplemented::OnReload(InternalClient& client, const Session::Request& req, Session::Response& res)
+void ServerImplemented::OnReload(InternalClient& client, const Session::Message& msg)
 {
 	auto fb = Data::GetNetworkReload(msg.payload.data);
 	auto fbKey = fb->key();
@@ -76,19 +77,19 @@ void ServerImplemented::OnReload(InternalClient& client, const Session::Request&
 		size_t effectSize = fbData->size();
 
 		// Reload the effect
-		const char16_t* materialPath = (m_materialPath.size() > 0) ? m_materialPath.c_str() : nullptr;
+		const char16_t* materialPath = (materialPath_.size() > 0) ? materialPath_.c_str() : nullptr;
 		effect->Reload(updateContext_.managers, updateContext_.managerCount, effectData, (int32_t)effectSize, materialPath, updateContext_.reloadingThreadType);
 	}
 }
 
-void ServerImplemented::OnStartProfiling(InternalClient& client, const Session::Request& req, Session::Response& res)
+void ServerImplemented::OnStartProfiling(InternalClient& client, const Session::Message& msg)
 {
-	profiler_.isRunning = true;
+	client.isProfiling = true;
 }
 
-void ServerImplemented::OnStopProfiling(InternalClient& client, const Session::Request& req, Session::Response& res)
+void ServerImplemented::OnStopProfiling(InternalClient& client, const Session::Message& msg)
 {
-	profiler_.isRunning = false;
+	client.isProfiling = false;
 }
 
 bool ServerImplemented::Start(uint16_t port)
@@ -177,36 +178,80 @@ void ServerImplemented::Update(ManagerRef* managers, int32_t managerCount, Reloa
 
 	for (auto& client : clients_)
 	{
+		UpdateProfiler(*client.get());
 		client->session.Update();
 	}
 
-	auto removeIt = std::remove_if(m_clients.begin(), m_clients.end(), 
-		[](const std::unique_ptr<InternalClient>& client){ return !client->Session.IsActive(); });
-	m_clients.erase(removeIt, m_clients.end());
-
-	if (profiler_.isRunning)
-	{
-		UpdateProfiler();
-	}
+	auto removeIt = std::remove_if(clients_.begin(), clients_.end(), 
+		[](const std::unique_ptr<InternalClient>& client){ return !client->session.IsActive(); });
+	clients_.erase(removeIt, clients_.end());
 }
 
-void ServerImplemented::UpdateProfiler()
+void ServerImplemented::UpdateProfiler(InternalClient& client)
 {
+	if (!client.isProfiling)
+	{
+		return;
+	}
+
+	Data::flatbuffers::FlatBufferBuilder fbb;
+	
+	std::vector<Data::flatbuffers::Offset<Data::NetworkManagerProfile>> fbManagers;
+	std::vector<Data::flatbuffers::Offset<Data::NetworkEffectProfile>> fbEffects;
+
+	struct EffectProfile
+	{
+		const char16_t* key = nullptr;
+		EffectRef effect;
+		uint32_t handleCount = 0;
+		float gpuTime = 0.0f;
+	};
+
+	std::vector<EffectProfile> effectProfiles;
+	for (auto& keyAndEffect : effects_)
+	{
+		effectProfiles.emplace_back(EffectProfile{ keyAndEffect.first.c_str(), keyAndEffect.second.effect });
+	}
+
 	for (int32_t i = 0; i < updateContext_.managerCount; i++)
 	{
 		auto manager = updateContext_.managers[i]->GetImplemented();
 		auto& drawSets = manager->GetPlayingDrawSets();
+
 		for (auto& handleAndDrawSet : drawSets)
 		{
-			for (auto& keyAndEffect : m_effects)
+			for (auto& profile : effectProfiles)
 			{
-				if (handleAndDrawSet.second.ParameterPointer == keyAndEffect.second.EffectPtr)
+				if (handleAndDrawSet.second.ParameterPointer == profile.effect)
 				{
+					profile.handleCount += 1;
+					profile.gpuTime += manager->GetGPUTime(handleAndDrawSet.first);
 					break;
 				}
 			}
 		}
+
+		fbManagers.emplace_back(Data::CreateNetworkManagerProfile(fbb, 
+			(uint32_t)drawSets.size(), 
+			manager->GetUpdateTime() + manager->GetDrawTime(),
+			manager->GetGPUTime()));
 	}
+
+	for (auto& profile : effectProfiles)
+	{
+		fbEffects.emplace_back(Data::CreateNetworkEffectProfile(fbb,
+			fbb.CreateVector((const uint16_t*)profile.key, std::char_traits<char16_t>::length(profile.key)),
+			profile.handleCount,
+			profile.gpuTime));
+	}
+
+	auto fbRoot = Data::CreateNetworkProfileSample(fbb, 
+		fbb.CreateVector(fbManagers),
+		fbb.CreateVector(fbEffects));
+
+	fbb.Finish(fbRoot);
+	auto fbBufferSpan = fbb.GetBufferSpan();
+	client.session.Send(102, { fbBufferSpan.data(), fbBufferSpan.size() });
 }
 
 void ServerImplemented::SetMaterialPath(const char16_t* materialPath)

@@ -37,6 +37,7 @@
 %include "typemaps.i"
 %include "arrays_csharp.i"
 %include <std_shared_ptr.i>
+%include <std_vector.i>
 
 %pragma(csharp) imclassclassmodifiers="
 [System.Security.SuppressUnmanagedCodeSecurity]
@@ -52,6 +53,9 @@ class"
 %typemap(csout) void * { return $imcall; }
 %typemap(csvarin) void * { set { $imcall; } }
 %typemap(csvarout) void * { get { return $imcall; } } 
+
+%template(ProfileSampleManagerVector) std::vector<Effekseer::Tool::ProfileSample::Manager>;
+%template(ProfileSampleEffectVector) std::vector<Effekseer::Tool::ProfileSample::Effect>;
 
 //-----------------------------------------------------------------------------------
 //
@@ -154,6 +158,7 @@ class"
 %include "Cpp/Viewer/3D/EffectRenderer.h"
 %include "Cpp/Viewer/3D/MainScreenEffectRenderer.h"
 
+%include "Cpp/Viewer/Network/ProfileSample.h"
 %include "Cpp/Viewer/Network/Network.h"
 
 %include "Cpp/Viewer/Utils/Logger.h"

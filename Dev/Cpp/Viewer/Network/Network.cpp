@@ -18,6 +18,11 @@ void NetworkClient::StopNetwork()
 	client_->Stop();
 }
 
+void NetworkClient::UpdateNetwork()
+{
+	client_->Update();
+}
+
 bool NetworkClient::IsConnectingNetwork()
 {
 	return client_->IsConnected();
@@ -26,6 +31,42 @@ bool NetworkClient::IsConnectingNetwork()
 void NetworkClient::SendDataByNetwork(const char16_t* key, void* data, int size, const char16_t* path)
 {
 	client_->Reload((const char16_t*)key, data, size);
+}
+
+void NetworkClient::StartProfiling()
+{
+	client_->StartProfiling();
+}
+
+void NetworkClient::StopProfiling()
+{
+	client_->StopProfiling();
+}
+
+ProfileSample NetworkClient::ReadProfileSample()
+{
+	auto profileSample = client_->ReadProfileSample();
+
+	ProfileSample result;
+	result.IsValid = profileSample.IsValid;
+
+	for (auto& profileManager : profileSample.Managers)
+	{
+		auto& resultManager = result.Managers.emplace_back();
+		resultManager.CPUTime = profileManager.CPUTime;
+		resultManager.GPUTime = profileManager.GPUTime;
+		resultManager.HandleCount = profileManager.HandleCount;
+	}
+	
+	for (auto& profileEffect : profileSample.Effects)
+	{
+		auto& resultEffect = result.Effects.emplace_back();
+		resultEffect.Key = profileEffect.Key;
+		resultEffect.GPUTime = profileEffect.GPUTime;
+		resultEffect.HandleCount = profileEffect.HandleCount;
+	}
+
+	return result;
 }
 
 } // namespace Effekseer::Tool

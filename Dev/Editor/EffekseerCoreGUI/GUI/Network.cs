@@ -13,6 +13,7 @@ namespace Effekseer.GUI
 		public bool SendOnLoad { get; set; }
 		public bool SendOnEdit { get; set; }
 		public bool SendOnSave { get; set; }
+		public bool IsProfiling { get; set; }
 
 		int time = 0;
 
@@ -79,6 +80,8 @@ namespace Effekseer.GUI
 				networkClient.StartNetwork(Target, (ushort)Port);
 			}
 
+			networkClient.UpdateNetwork();
+
 			time++;
 		}
 
@@ -92,6 +95,29 @@ namespace Effekseer.GUI
 			{
 				networkClient.SendDataByNetwork(System.IO.Path.GetFileNameWithoutExtension(Core.Root.GetFullPath()), new IntPtr(p), data.Length, Core.Root.GetFullPath());
 			}
+		}
+
+		public void StartProfiling()
+		{
+			if (!IsProfiling)
+			{
+				networkClient.StartProfiling();
+				IsProfiling = true;
+			}
+		}
+
+		public void StopProfiling()
+		{
+			if (IsProfiling)
+			{
+				networkClient.StopProfiling();
+				IsProfiling = false;
+			}
+		}
+
+		public swig.ProfileSample ReadProfileSample()
+		{
+			return networkClient.ReadProfileSample();
 		}
 
 		public void Save()

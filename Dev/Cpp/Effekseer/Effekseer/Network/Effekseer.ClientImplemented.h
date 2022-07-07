@@ -10,8 +10,8 @@
 
 #include "Effekseer.Socket.h"
 #include "Effekseer.Session.h"
-#include <set>
 #include <vector>
+#include <deque>
 
 namespace Effekseer
 {
@@ -21,6 +21,7 @@ class ClientImplemented : public Client, public ReferenceObject
 private:
 	Socket socket_;
 	Session session_;
+	std::deque<ProfileSample> receivedProfileSamples_;
 
 public:
 	ClientImplemented();
@@ -37,6 +38,7 @@ public:
 	void StartProfiling() override;
 	void StopProfiling() override;
 	ProfileSample ReadProfileSample() override;
+	void OnProfileSample(const Session::Message& msg);
 
 	virtual int GetRef() override
 	{

@@ -759,6 +759,8 @@ public:
 
 	bool InputTextMultiline(const char16_t* label, const char16_t* text);
 
+	bool InputTextWithHint(const char16_t* label, const char16_t* text, const char16_t* hint, InputTextFlags flags = InputTextFlags::None);
+
 	const char16_t* GetInputTextResult();
 
 	// Color

@@ -1086,6 +1086,16 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public bool InputTextWithHint(string label, string text, string hint, InputTextFlags flags) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_InputTextWithHint__SWIG_0(swigCPtr, label, text, hint, (int)flags);
+    return ret;
+  }
+
+  public bool InputTextWithHint(string label, string text, string hint) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_InputTextWithHint__SWIG_1(swigCPtr, label, text, hint);
+    return ret;
+  }
+
   public string GetInputTextResult() {
     string ret = System.Runtime.InteropServices.Marshal.PtrToStringUni(EffekseerNativePINVOKE.GUIManager_GetInputTextResult(swigCPtr));
     return ret;

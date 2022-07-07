@@ -407,6 +407,197 @@ namespace Swig {
 #include <stdint.h>		// Use the C99 official header
 
 
+#include <typeinfo>
+#include <stdexcept>
+
+
+#include <vector>
+#include <algorithm>
+#include <stdexcept>
+
+SWIGINTERN std::vector< Effekseer::Tool::ProfileSample::Manager > *new_std_vector_Sl_Effekseer_Tool_ProfileSample_Manager_Sg___SWIG_2(int capacity){
+        std::vector< Effekseer::Tool::ProfileSample::Manager >* pv = 0;
+        if (capacity >= 0) {
+          pv = new std::vector< Effekseer::Tool::ProfileSample::Manager >();
+          pv->reserve(capacity);
+       } else {
+          throw std::out_of_range("capacity");
+       }
+       return pv;
+      }
+SWIGINTERN Effekseer::Tool::ProfileSample::Manager std_vector_Sl_Effekseer_Tool_ProfileSample_Manager_Sg__getitemcopy(std::vector< Effekseer::Tool::ProfileSample::Manager > *self,int index){
+        if (index>=0 && index<(int)self->size())
+          return (*self)[index];
+        else
+          throw std::out_of_range("index");
+      }
+SWIGINTERN std::vector< Effekseer::Tool::ProfileSample::Manager >::value_type const &std_vector_Sl_Effekseer_Tool_ProfileSample_Manager_Sg__getitem(std::vector< Effekseer::Tool::ProfileSample::Manager > *self,int index){
+        if (index>=0 && index<(int)self->size())
+          return (*self)[index];
+        else
+          throw std::out_of_range("index");
+      }
+SWIGINTERN void std_vector_Sl_Effekseer_Tool_ProfileSample_Manager_Sg__setitem(std::vector< Effekseer::Tool::ProfileSample::Manager > *self,int index,Effekseer::Tool::ProfileSample::Manager const &val){
+        if (index>=0 && index<(int)self->size())
+          (*self)[index] = val;
+        else
+          throw std::out_of_range("index");
+      }
+SWIGINTERN void std_vector_Sl_Effekseer_Tool_ProfileSample_Manager_Sg__AddRange(std::vector< Effekseer::Tool::ProfileSample::Manager > *self,std::vector< Effekseer::Tool::ProfileSample::Manager > const &values){
+        self->insert(self->end(), values.begin(), values.end());
+      }
+SWIGINTERN std::vector< Effekseer::Tool::ProfileSample::Manager > *std_vector_Sl_Effekseer_Tool_ProfileSample_Manager_Sg__GetRange(std::vector< Effekseer::Tool::ProfileSample::Manager > *self,int index,int count){
+        if (index < 0)
+          throw std::out_of_range("index");
+        if (count < 0)
+          throw std::out_of_range("count");
+        if (index >= (int)self->size()+1 || index+count > (int)self->size())
+          throw std::invalid_argument("invalid range");
+        return new std::vector< Effekseer::Tool::ProfileSample::Manager >(self->begin()+index, self->begin()+index+count);
+      }
+SWIGINTERN void std_vector_Sl_Effekseer_Tool_ProfileSample_Manager_Sg__Insert(std::vector< Effekseer::Tool::ProfileSample::Manager > *self,int index,Effekseer::Tool::ProfileSample::Manager const &x){
+        if (index>=0 && index<(int)self->size()+1)
+          self->insert(self->begin()+index, x);
+        else
+          throw std::out_of_range("index");
+      }
+SWIGINTERN void std_vector_Sl_Effekseer_Tool_ProfileSample_Manager_Sg__InsertRange(std::vector< Effekseer::Tool::ProfileSample::Manager > *self,int index,std::vector< Effekseer::Tool::ProfileSample::Manager > const &values){
+        if (index>=0 && index<(int)self->size()+1)
+          self->insert(self->begin()+index, values.begin(), values.end());
+        else
+          throw std::out_of_range("index");
+      }
+SWIGINTERN void std_vector_Sl_Effekseer_Tool_ProfileSample_Manager_Sg__RemoveAt(std::vector< Effekseer::Tool::ProfileSample::Manager > *self,int index){
+        if (index>=0 && index<(int)self->size())
+          self->erase(self->begin() + index);
+        else
+          throw std::out_of_range("index");
+      }
+SWIGINTERN void std_vector_Sl_Effekseer_Tool_ProfileSample_Manager_Sg__RemoveRange(std::vector< Effekseer::Tool::ProfileSample::Manager > *self,int index,int count){
+        if (index < 0)
+          throw std::out_of_range("index");
+        if (count < 0)
+          throw std::out_of_range("count");
+        if (index >= (int)self->size()+1 || index+count > (int)self->size())
+          throw std::invalid_argument("invalid range");
+        self->erase(self->begin()+index, self->begin()+index+count);
+      }
+SWIGINTERN std::vector< Effekseer::Tool::ProfileSample::Manager > *std_vector_Sl_Effekseer_Tool_ProfileSample_Manager_Sg__Repeat(Effekseer::Tool::ProfileSample::Manager const &value,int count){
+        if (count < 0)
+          throw std::out_of_range("count");
+        return new std::vector< Effekseer::Tool::ProfileSample::Manager >(count, value);
+      }
+SWIGINTERN void std_vector_Sl_Effekseer_Tool_ProfileSample_Manager_Sg__Reverse__SWIG_0(std::vector< Effekseer::Tool::ProfileSample::Manager > *self){
+        std::reverse(self->begin(), self->end());
+      }
+SWIGINTERN void std_vector_Sl_Effekseer_Tool_ProfileSample_Manager_Sg__Reverse__SWIG_1(std::vector< Effekseer::Tool::ProfileSample::Manager > *self,int index,int count){
+        if (index < 0)
+          throw std::out_of_range("index");
+        if (count < 0)
+          throw std::out_of_range("count");
+        if (index >= (int)self->size()+1 || index+count > (int)self->size())
+          throw std::invalid_argument("invalid range");
+        std::reverse(self->begin()+index, self->begin()+index+count);
+      }
+SWIGINTERN void std_vector_Sl_Effekseer_Tool_ProfileSample_Manager_Sg__SetRange(std::vector< Effekseer::Tool::ProfileSample::Manager > *self,int index,std::vector< Effekseer::Tool::ProfileSample::Manager > const &values){
+        if (index < 0)
+          throw std::out_of_range("index");
+        if (index+values.size() > self->size())
+          throw std::out_of_range("index");
+        std::copy(values.begin(), values.end(), self->begin()+index);
+      }
+SWIGINTERN std::vector< Effekseer::Tool::ProfileSample::Effect > *new_std_vector_Sl_Effekseer_Tool_ProfileSample_Effect_Sg___SWIG_2(int capacity){
+        std::vector< Effekseer::Tool::ProfileSample::Effect >* pv = 0;
+        if (capacity >= 0) {
+          pv = new std::vector< Effekseer::Tool::ProfileSample::Effect >();
+          pv->reserve(capacity);
+       } else {
+          throw std::out_of_range("capacity");
+       }
+       return pv;
+      }
+SWIGINTERN Effekseer::Tool::ProfileSample::Effect std_vector_Sl_Effekseer_Tool_ProfileSample_Effect_Sg__getitemcopy(std::vector< Effekseer::Tool::ProfileSample::Effect > *self,int index){
+        if (index>=0 && index<(int)self->size())
+          return (*self)[index];
+        else
+          throw std::out_of_range("index");
+      }
+SWIGINTERN std::vector< Effekseer::Tool::ProfileSample::Effect >::value_type const &std_vector_Sl_Effekseer_Tool_ProfileSample_Effect_Sg__getitem(std::vector< Effekseer::Tool::ProfileSample::Effect > *self,int index){
+        if (index>=0 && index<(int)self->size())
+          return (*self)[index];
+        else
+          throw std::out_of_range("index");
+      }
+SWIGINTERN void std_vector_Sl_Effekseer_Tool_ProfileSample_Effect_Sg__setitem(std::vector< Effekseer::Tool::ProfileSample::Effect > *self,int index,Effekseer::Tool::ProfileSample::Effect const &val){
+        if (index>=0 && index<(int)self->size())
+          (*self)[index] = val;
+        else
+          throw std::out_of_range("index");
+      }
+SWIGINTERN void std_vector_Sl_Effekseer_Tool_ProfileSample_Effect_Sg__AddRange(std::vector< Effekseer::Tool::ProfileSample::Effect > *self,std::vector< Effekseer::Tool::ProfileSample::Effect > const &values){
+        self->insert(self->end(), values.begin(), values.end());
+      }
+SWIGINTERN std::vector< Effekseer::Tool::ProfileSample::Effect > *std_vector_Sl_Effekseer_Tool_ProfileSample_Effect_Sg__GetRange(std::vector< Effekseer::Tool::ProfileSample::Effect > *self,int index,int count){
+        if (index < 0)
+          throw std::out_of_range("index");
+        if (count < 0)
+          throw std::out_of_range("count");
+        if (index >= (int)self->size()+1 || index+count > (int)self->size())
+          throw std::invalid_argument("invalid range");
+        return new std::vector< Effekseer::Tool::ProfileSample::Effect >(self->begin()+index, self->begin()+index+count);
+      }
+SWIGINTERN void std_vector_Sl_Effekseer_Tool_ProfileSample_Effect_Sg__Insert(std::vector< Effekseer::Tool::ProfileSample::Effect > *self,int index,Effekseer::Tool::ProfileSample::Effect const &x){
+        if (index>=0 && index<(int)self->size()+1)
+          self->insert(self->begin()+index, x);
+        else
+          throw std::out_of_range("index");
+      }
+SWIGINTERN void std_vector_Sl_Effekseer_Tool_ProfileSample_Effect_Sg__InsertRange(std::vector< Effekseer::Tool::ProfileSample::Effect > *self,int index,std::vector< Effekseer::Tool::ProfileSample::Effect > const &values){
+        if (index>=0 && index<(int)self->size()+1)
+          self->insert(self->begin()+index, values.begin(), values.end());
+        else
+          throw std::out_of_range("index");
+      }
+SWIGINTERN void std_vector_Sl_Effekseer_Tool_ProfileSample_Effect_Sg__RemoveAt(std::vector< Effekseer::Tool::ProfileSample::Effect > *self,int index){
+        if (index>=0 && index<(int)self->size())
+          self->erase(self->begin() + index);
+        else
+          throw std::out_of_range("index");
+      }
+SWIGINTERN void std_vector_Sl_Effekseer_Tool_ProfileSample_Effect_Sg__RemoveRange(std::vector< Effekseer::Tool::ProfileSample::Effect > *self,int index,int count){
+        if (index < 0)
+          throw std::out_of_range("index");
+        if (count < 0)
+          throw std::out_of_range("count");
+        if (index >= (int)self->size()+1 || index+count > (int)self->size())
+          throw std::invalid_argument("invalid range");
+        self->erase(self->begin()+index, self->begin()+index+count);
+      }
+SWIGINTERN std::vector< Effekseer::Tool::ProfileSample::Effect > *std_vector_Sl_Effekseer_Tool_ProfileSample_Effect_Sg__Repeat(Effekseer::Tool::ProfileSample::Effect const &value,int count){
+        if (count < 0)
+          throw std::out_of_range("count");
+        return new std::vector< Effekseer::Tool::ProfileSample::Effect >(count, value);
+      }
+SWIGINTERN void std_vector_Sl_Effekseer_Tool_ProfileSample_Effect_Sg__Reverse__SWIG_0(std::vector< Effekseer::Tool::ProfileSample::Effect > *self){
+        std::reverse(self->begin(), self->end());
+      }
+SWIGINTERN void std_vector_Sl_Effekseer_Tool_ProfileSample_Effect_Sg__Reverse__SWIG_1(std::vector< Effekseer::Tool::ProfileSample::Effect > *self,int index,int count){
+        if (index < 0)
+          throw std::out_of_range("index");
+        if (count < 0)
+          throw std::out_of_range("count");
+        if (index >= (int)self->size()+1 || index+count > (int)self->size())
+          throw std::invalid_argument("invalid range");
+        std::reverse(self->begin()+index, self->begin()+index+count);
+      }
+SWIGINTERN void std_vector_Sl_Effekseer_Tool_ProfileSample_Effect_Sg__SetRange(std::vector< Effekseer::Tool::ProfileSample::Effect > *self,int index,std::vector< Effekseer::Tool::ProfileSample::Effect > const &values){
+        if (index < 0)
+          throw std::out_of_range("index");
+        if (index+values.size() > self->size())
+          throw std::out_of_range("index");
+        std::copy(values.begin(), values.end(), self->begin()+index);
+      }
+
 struct SWIG_null_deleter {
   void operator() (void const *) const {
   }
@@ -593,6 +784,712 @@ void SwigDirector_IOCallback::swig_init_callbacks() {
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSampleManagerVector_Clear___(void * jarg1) {
+  std::vector< Effekseer::Tool::ProfileSample::Manager > *arg1 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *) 0 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *)jarg1; 
+  (arg1)->clear();
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSampleManagerVector_Add___(void * jarg1, void * jarg2) {
+  std::vector< Effekseer::Tool::ProfileSample::Manager > *arg1 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *) 0 ;
+  Effekseer::Tool::ProfileSample::Manager *arg2 = 0 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *)jarg1; 
+  arg2 = (Effekseer::Tool::ProfileSample::Manager *)jarg2;
+  if (!arg2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Effekseer::Tool::ProfileSample::Manager const & type is null", 0);
+    return ;
+  } 
+  (arg1)->push_back((Effekseer::Tool::ProfileSample::Manager const &)*arg2);
+}
+
+
+SWIGEXPORT unsigned long SWIGSTDCALL CSharp_Effekseerfswig_ProfileSampleManagerVector_size___(void * jarg1) {
+  unsigned long jresult ;
+  std::vector< Effekseer::Tool::ProfileSample::Manager > *arg1 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *) 0 ;
+  std::vector< Effekseer::Tool::ProfileSample::Manager >::size_type result;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *)jarg1; 
+  result = ((std::vector< Effekseer::Tool::ProfileSample::Manager > const *)arg1)->size();
+  jresult = (unsigned long)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned long SWIGSTDCALL CSharp_Effekseerfswig_ProfileSampleManagerVector_capacity___(void * jarg1) {
+  unsigned long jresult ;
+  std::vector< Effekseer::Tool::ProfileSample::Manager > *arg1 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *) 0 ;
+  std::vector< Effekseer::Tool::ProfileSample::Manager >::size_type result;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *)jarg1; 
+  result = ((std::vector< Effekseer::Tool::ProfileSample::Manager > const *)arg1)->capacity();
+  jresult = (unsigned long)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSampleManagerVector_reserve___(void * jarg1, unsigned long jarg2) {
+  std::vector< Effekseer::Tool::ProfileSample::Manager > *arg1 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *) 0 ;
+  std::vector< Effekseer::Tool::ProfileSample::Manager >::size_type arg2 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *)jarg1; 
+  arg2 = (std::vector< Effekseer::Tool::ProfileSample::Manager >::size_type)jarg2; 
+  (arg1)->reserve(arg2);
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_ProfileSampleManagerVector__SWIG_0___() {
+  void * jresult ;
+  std::vector< Effekseer::Tool::ProfileSample::Manager > *result = 0 ;
+  
+  result = (std::vector< Effekseer::Tool::ProfileSample::Manager > *)new std::vector< Effekseer::Tool::ProfileSample::Manager >();
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_ProfileSampleManagerVector__SWIG_1___(void * jarg1) {
+  void * jresult ;
+  std::vector< Effekseer::Tool::ProfileSample::Manager > *arg1 = 0 ;
+  std::vector< Effekseer::Tool::ProfileSample::Manager > *result = 0 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *)jarg1;
+  if (!arg1) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "std::vector< Effekseer::Tool::ProfileSample::Manager > const & type is null", 0);
+    return 0;
+  } 
+  result = (std::vector< Effekseer::Tool::ProfileSample::Manager > *)new std::vector< Effekseer::Tool::ProfileSample::Manager >((std::vector< Effekseer::Tool::ProfileSample::Manager > const &)*arg1);
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_ProfileSampleManagerVector__SWIG_2___(int jarg1) {
+  void * jresult ;
+  int arg1 ;
+  std::vector< Effekseer::Tool::ProfileSample::Manager > *result = 0 ;
+  
+  arg1 = (int)jarg1; 
+  try {
+    result = (std::vector< Effekseer::Tool::ProfileSample::Manager > *)new_std_vector_Sl_Effekseer_Tool_ProfileSample_Manager_Sg___SWIG_2(arg1);
+  } catch(std::out_of_range &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, 0, (&_e)->what());
+    return 0;
+  }
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_ProfileSampleManagerVector_getitemcopy___(void * jarg1, int jarg2) {
+  void * jresult ;
+  std::vector< Effekseer::Tool::ProfileSample::Manager > *arg1 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *) 0 ;
+  int arg2 ;
+  Effekseer::Tool::ProfileSample::Manager result;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *)jarg1; 
+  arg2 = (int)jarg2; 
+  try {
+    result = std_vector_Sl_Effekseer_Tool_ProfileSample_Manager_Sg__getitemcopy(arg1,arg2);
+  } catch(std::out_of_range &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, 0, (&_e)->what());
+    return 0;
+  }
+  jresult = new Effekseer::Tool::ProfileSample::Manager((const Effekseer::Tool::ProfileSample::Manager &)result); 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_ProfileSampleManagerVector_getitem___(void * jarg1, int jarg2) {
+  void * jresult ;
+  std::vector< Effekseer::Tool::ProfileSample::Manager > *arg1 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *) 0 ;
+  int arg2 ;
+  std::vector< Effekseer::Tool::ProfileSample::Manager >::value_type *result = 0 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *)jarg1; 
+  arg2 = (int)jarg2; 
+  try {
+    result = (std::vector< Effekseer::Tool::ProfileSample::Manager >::value_type *) &std_vector_Sl_Effekseer_Tool_ProfileSample_Manager_Sg__getitem(arg1,arg2);
+  } catch(std::out_of_range &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, 0, (&_e)->what());
+    return 0;
+  }
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSampleManagerVector_setitem___(void * jarg1, int jarg2, void * jarg3) {
+  std::vector< Effekseer::Tool::ProfileSample::Manager > *arg1 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *) 0 ;
+  int arg2 ;
+  Effekseer::Tool::ProfileSample::Manager *arg3 = 0 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *)jarg1; 
+  arg2 = (int)jarg2; 
+  arg3 = (Effekseer::Tool::ProfileSample::Manager *)jarg3;
+  if (!arg3) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Effekseer::Tool::ProfileSample::Manager const & type is null", 0);
+    return ;
+  } 
+  try {
+    std_vector_Sl_Effekseer_Tool_ProfileSample_Manager_Sg__setitem(arg1,arg2,(Effekseer::Tool::ProfileSample::Manager const &)*arg3);
+  } catch(std::out_of_range &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, 0, (&_e)->what());
+    return ;
+  }
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSampleManagerVector_AddRange___(void * jarg1, void * jarg2) {
+  std::vector< Effekseer::Tool::ProfileSample::Manager > *arg1 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *) 0 ;
+  std::vector< Effekseer::Tool::ProfileSample::Manager > *arg2 = 0 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *)jarg1; 
+  arg2 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *)jarg2;
+  if (!arg2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "std::vector< Effekseer::Tool::ProfileSample::Manager > const & type is null", 0);
+    return ;
+  } 
+  std_vector_Sl_Effekseer_Tool_ProfileSample_Manager_Sg__AddRange(arg1,(std::vector< Effekseer::Tool::ProfileSample::Manager > const &)*arg2);
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_ProfileSampleManagerVector_GetRange___(void * jarg1, int jarg2, int jarg3) {
+  void * jresult ;
+  std::vector< Effekseer::Tool::ProfileSample::Manager > *arg1 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  std::vector< Effekseer::Tool::ProfileSample::Manager > *result = 0 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *)jarg1; 
+  arg2 = (int)jarg2; 
+  arg3 = (int)jarg3; 
+  try {
+    result = (std::vector< Effekseer::Tool::ProfileSample::Manager > *)std_vector_Sl_Effekseer_Tool_ProfileSample_Manager_Sg__GetRange(arg1,arg2,arg3);
+  } catch(std::out_of_range &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, 0, (&_e)->what());
+    return 0;
+  } catch(std::invalid_argument &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentException, (&_e)->what(), "");
+    return 0;
+  }
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSampleManagerVector_Insert___(void * jarg1, int jarg2, void * jarg3) {
+  std::vector< Effekseer::Tool::ProfileSample::Manager > *arg1 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *) 0 ;
+  int arg2 ;
+  Effekseer::Tool::ProfileSample::Manager *arg3 = 0 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *)jarg1; 
+  arg2 = (int)jarg2; 
+  arg3 = (Effekseer::Tool::ProfileSample::Manager *)jarg3;
+  if (!arg3) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Effekseer::Tool::ProfileSample::Manager const & type is null", 0);
+    return ;
+  } 
+  try {
+    std_vector_Sl_Effekseer_Tool_ProfileSample_Manager_Sg__Insert(arg1,arg2,(Effekseer::Tool::ProfileSample::Manager const &)*arg3);
+  } catch(std::out_of_range &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, 0, (&_e)->what());
+    return ;
+  }
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSampleManagerVector_InsertRange___(void * jarg1, int jarg2, void * jarg3) {
+  std::vector< Effekseer::Tool::ProfileSample::Manager > *arg1 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *) 0 ;
+  int arg2 ;
+  std::vector< Effekseer::Tool::ProfileSample::Manager > *arg3 = 0 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *)jarg1; 
+  arg2 = (int)jarg2; 
+  arg3 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *)jarg3;
+  if (!arg3) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "std::vector< Effekseer::Tool::ProfileSample::Manager > const & type is null", 0);
+    return ;
+  } 
+  try {
+    std_vector_Sl_Effekseer_Tool_ProfileSample_Manager_Sg__InsertRange(arg1,arg2,(std::vector< Effekseer::Tool::ProfileSample::Manager > const &)*arg3);
+  } catch(std::out_of_range &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, 0, (&_e)->what());
+    return ;
+  }
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSampleManagerVector_RemoveAt___(void * jarg1, int jarg2) {
+  std::vector< Effekseer::Tool::ProfileSample::Manager > *arg1 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *) 0 ;
+  int arg2 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *)jarg1; 
+  arg2 = (int)jarg2; 
+  try {
+    std_vector_Sl_Effekseer_Tool_ProfileSample_Manager_Sg__RemoveAt(arg1,arg2);
+  } catch(std::out_of_range &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, 0, (&_e)->what());
+    return ;
+  }
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSampleManagerVector_RemoveRange___(void * jarg1, int jarg2, int jarg3) {
+  std::vector< Effekseer::Tool::ProfileSample::Manager > *arg1 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *)jarg1; 
+  arg2 = (int)jarg2; 
+  arg3 = (int)jarg3; 
+  try {
+    std_vector_Sl_Effekseer_Tool_ProfileSample_Manager_Sg__RemoveRange(arg1,arg2,arg3);
+  } catch(std::out_of_range &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, 0, (&_e)->what());
+    return ;
+  } catch(std::invalid_argument &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentException, (&_e)->what(), "");
+    return ;
+  }
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_ProfileSampleManagerVector_Repeat___(void * jarg1, int jarg2) {
+  void * jresult ;
+  Effekseer::Tool::ProfileSample::Manager *arg1 = 0 ;
+  int arg2 ;
+  std::vector< Effekseer::Tool::ProfileSample::Manager > *result = 0 ;
+  
+  arg1 = (Effekseer::Tool::ProfileSample::Manager *)jarg1;
+  if (!arg1) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Effekseer::Tool::ProfileSample::Manager const & type is null", 0);
+    return 0;
+  } 
+  arg2 = (int)jarg2; 
+  try {
+    result = (std::vector< Effekseer::Tool::ProfileSample::Manager > *)std_vector_Sl_Effekseer_Tool_ProfileSample_Manager_Sg__Repeat((Effekseer::Tool::ProfileSample::Manager const &)*arg1,arg2);
+  } catch(std::out_of_range &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, 0, (&_e)->what());
+    return 0;
+  }
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSampleManagerVector_Reverse__SWIG_0___(void * jarg1) {
+  std::vector< Effekseer::Tool::ProfileSample::Manager > *arg1 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *) 0 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *)jarg1; 
+  std_vector_Sl_Effekseer_Tool_ProfileSample_Manager_Sg__Reverse__SWIG_0(arg1);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSampleManagerVector_Reverse__SWIG_1___(void * jarg1, int jarg2, int jarg3) {
+  std::vector< Effekseer::Tool::ProfileSample::Manager > *arg1 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *)jarg1; 
+  arg2 = (int)jarg2; 
+  arg3 = (int)jarg3; 
+  try {
+    std_vector_Sl_Effekseer_Tool_ProfileSample_Manager_Sg__Reverse__SWIG_1(arg1,arg2,arg3);
+  } catch(std::out_of_range &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, 0, (&_e)->what());
+    return ;
+  } catch(std::invalid_argument &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentException, (&_e)->what(), "");
+    return ;
+  }
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSampleManagerVector_SetRange___(void * jarg1, int jarg2, void * jarg3) {
+  std::vector< Effekseer::Tool::ProfileSample::Manager > *arg1 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *) 0 ;
+  int arg2 ;
+  std::vector< Effekseer::Tool::ProfileSample::Manager > *arg3 = 0 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *)jarg1; 
+  arg2 = (int)jarg2; 
+  arg3 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *)jarg3;
+  if (!arg3) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "std::vector< Effekseer::Tool::ProfileSample::Manager > const & type is null", 0);
+    return ;
+  } 
+  try {
+    std_vector_Sl_Effekseer_Tool_ProfileSample_Manager_Sg__SetRange(arg1,arg2,(std::vector< Effekseer::Tool::ProfileSample::Manager > const &)*arg3);
+  } catch(std::out_of_range &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, 0, (&_e)->what());
+    return ;
+  }
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_ProfileSampleManagerVector___(void * jarg1) {
+  std::vector< Effekseer::Tool::ProfileSample::Manager > *arg1 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *) 0 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *)jarg1; 
+  delete arg1;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSampleEffectVector_Clear___(void * jarg1) {
+  std::vector< Effekseer::Tool::ProfileSample::Effect > *arg1 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *) 0 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *)jarg1; 
+  (arg1)->clear();
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSampleEffectVector_Add___(void * jarg1, void * jarg2) {
+  std::vector< Effekseer::Tool::ProfileSample::Effect > *arg1 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *) 0 ;
+  Effekseer::Tool::ProfileSample::Effect *arg2 = 0 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *)jarg1; 
+  arg2 = (Effekseer::Tool::ProfileSample::Effect *)jarg2;
+  if (!arg2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Effekseer::Tool::ProfileSample::Effect const & type is null", 0);
+    return ;
+  } 
+  (arg1)->push_back((Effekseer::Tool::ProfileSample::Effect const &)*arg2);
+}
+
+
+SWIGEXPORT unsigned long SWIGSTDCALL CSharp_Effekseerfswig_ProfileSampleEffectVector_size___(void * jarg1) {
+  unsigned long jresult ;
+  std::vector< Effekseer::Tool::ProfileSample::Effect > *arg1 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *) 0 ;
+  std::vector< Effekseer::Tool::ProfileSample::Effect >::size_type result;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *)jarg1; 
+  result = ((std::vector< Effekseer::Tool::ProfileSample::Effect > const *)arg1)->size();
+  jresult = (unsigned long)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned long SWIGSTDCALL CSharp_Effekseerfswig_ProfileSampleEffectVector_capacity___(void * jarg1) {
+  unsigned long jresult ;
+  std::vector< Effekseer::Tool::ProfileSample::Effect > *arg1 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *) 0 ;
+  std::vector< Effekseer::Tool::ProfileSample::Effect >::size_type result;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *)jarg1; 
+  result = ((std::vector< Effekseer::Tool::ProfileSample::Effect > const *)arg1)->capacity();
+  jresult = (unsigned long)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSampleEffectVector_reserve___(void * jarg1, unsigned long jarg2) {
+  std::vector< Effekseer::Tool::ProfileSample::Effect > *arg1 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *) 0 ;
+  std::vector< Effekseer::Tool::ProfileSample::Effect >::size_type arg2 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *)jarg1; 
+  arg2 = (std::vector< Effekseer::Tool::ProfileSample::Effect >::size_type)jarg2; 
+  (arg1)->reserve(arg2);
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_ProfileSampleEffectVector__SWIG_0___() {
+  void * jresult ;
+  std::vector< Effekseer::Tool::ProfileSample::Effect > *result = 0 ;
+  
+  result = (std::vector< Effekseer::Tool::ProfileSample::Effect > *)new std::vector< Effekseer::Tool::ProfileSample::Effect >();
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_ProfileSampleEffectVector__SWIG_1___(void * jarg1) {
+  void * jresult ;
+  std::vector< Effekseer::Tool::ProfileSample::Effect > *arg1 = 0 ;
+  std::vector< Effekseer::Tool::ProfileSample::Effect > *result = 0 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *)jarg1;
+  if (!arg1) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "std::vector< Effekseer::Tool::ProfileSample::Effect > const & type is null", 0);
+    return 0;
+  } 
+  result = (std::vector< Effekseer::Tool::ProfileSample::Effect > *)new std::vector< Effekseer::Tool::ProfileSample::Effect >((std::vector< Effekseer::Tool::ProfileSample::Effect > const &)*arg1);
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_ProfileSampleEffectVector__SWIG_2___(int jarg1) {
+  void * jresult ;
+  int arg1 ;
+  std::vector< Effekseer::Tool::ProfileSample::Effect > *result = 0 ;
+  
+  arg1 = (int)jarg1; 
+  try {
+    result = (std::vector< Effekseer::Tool::ProfileSample::Effect > *)new_std_vector_Sl_Effekseer_Tool_ProfileSample_Effect_Sg___SWIG_2(arg1);
+  } catch(std::out_of_range &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, 0, (&_e)->what());
+    return 0;
+  }
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_ProfileSampleEffectVector_getitemcopy___(void * jarg1, int jarg2) {
+  void * jresult ;
+  std::vector< Effekseer::Tool::ProfileSample::Effect > *arg1 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *) 0 ;
+  int arg2 ;
+  Effekseer::Tool::ProfileSample::Effect result;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *)jarg1; 
+  arg2 = (int)jarg2; 
+  try {
+    result = std_vector_Sl_Effekseer_Tool_ProfileSample_Effect_Sg__getitemcopy(arg1,arg2);
+  } catch(std::out_of_range &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, 0, (&_e)->what());
+    return 0;
+  }
+  jresult = new Effekseer::Tool::ProfileSample::Effect((const Effekseer::Tool::ProfileSample::Effect &)result); 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_ProfileSampleEffectVector_getitem___(void * jarg1, int jarg2) {
+  void * jresult ;
+  std::vector< Effekseer::Tool::ProfileSample::Effect > *arg1 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *) 0 ;
+  int arg2 ;
+  std::vector< Effekseer::Tool::ProfileSample::Effect >::value_type *result = 0 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *)jarg1; 
+  arg2 = (int)jarg2; 
+  try {
+    result = (std::vector< Effekseer::Tool::ProfileSample::Effect >::value_type *) &std_vector_Sl_Effekseer_Tool_ProfileSample_Effect_Sg__getitem(arg1,arg2);
+  } catch(std::out_of_range &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, 0, (&_e)->what());
+    return 0;
+  }
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSampleEffectVector_setitem___(void * jarg1, int jarg2, void * jarg3) {
+  std::vector< Effekseer::Tool::ProfileSample::Effect > *arg1 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *) 0 ;
+  int arg2 ;
+  Effekseer::Tool::ProfileSample::Effect *arg3 = 0 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *)jarg1; 
+  arg2 = (int)jarg2; 
+  arg3 = (Effekseer::Tool::ProfileSample::Effect *)jarg3;
+  if (!arg3) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Effekseer::Tool::ProfileSample::Effect const & type is null", 0);
+    return ;
+  } 
+  try {
+    std_vector_Sl_Effekseer_Tool_ProfileSample_Effect_Sg__setitem(arg1,arg2,(Effekseer::Tool::ProfileSample::Effect const &)*arg3);
+  } catch(std::out_of_range &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, 0, (&_e)->what());
+    return ;
+  }
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSampleEffectVector_AddRange___(void * jarg1, void * jarg2) {
+  std::vector< Effekseer::Tool::ProfileSample::Effect > *arg1 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *) 0 ;
+  std::vector< Effekseer::Tool::ProfileSample::Effect > *arg2 = 0 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *)jarg1; 
+  arg2 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *)jarg2;
+  if (!arg2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "std::vector< Effekseer::Tool::ProfileSample::Effect > const & type is null", 0);
+    return ;
+  } 
+  std_vector_Sl_Effekseer_Tool_ProfileSample_Effect_Sg__AddRange(arg1,(std::vector< Effekseer::Tool::ProfileSample::Effect > const &)*arg2);
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_ProfileSampleEffectVector_GetRange___(void * jarg1, int jarg2, int jarg3) {
+  void * jresult ;
+  std::vector< Effekseer::Tool::ProfileSample::Effect > *arg1 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  std::vector< Effekseer::Tool::ProfileSample::Effect > *result = 0 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *)jarg1; 
+  arg2 = (int)jarg2; 
+  arg3 = (int)jarg3; 
+  try {
+    result = (std::vector< Effekseer::Tool::ProfileSample::Effect > *)std_vector_Sl_Effekseer_Tool_ProfileSample_Effect_Sg__GetRange(arg1,arg2,arg3);
+  } catch(std::out_of_range &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, 0, (&_e)->what());
+    return 0;
+  } catch(std::invalid_argument &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentException, (&_e)->what(), "");
+    return 0;
+  }
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSampleEffectVector_Insert___(void * jarg1, int jarg2, void * jarg3) {
+  std::vector< Effekseer::Tool::ProfileSample::Effect > *arg1 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *) 0 ;
+  int arg2 ;
+  Effekseer::Tool::ProfileSample::Effect *arg3 = 0 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *)jarg1; 
+  arg2 = (int)jarg2; 
+  arg3 = (Effekseer::Tool::ProfileSample::Effect *)jarg3;
+  if (!arg3) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Effekseer::Tool::ProfileSample::Effect const & type is null", 0);
+    return ;
+  } 
+  try {
+    std_vector_Sl_Effekseer_Tool_ProfileSample_Effect_Sg__Insert(arg1,arg2,(Effekseer::Tool::ProfileSample::Effect const &)*arg3);
+  } catch(std::out_of_range &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, 0, (&_e)->what());
+    return ;
+  }
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSampleEffectVector_InsertRange___(void * jarg1, int jarg2, void * jarg3) {
+  std::vector< Effekseer::Tool::ProfileSample::Effect > *arg1 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *) 0 ;
+  int arg2 ;
+  std::vector< Effekseer::Tool::ProfileSample::Effect > *arg3 = 0 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *)jarg1; 
+  arg2 = (int)jarg2; 
+  arg3 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *)jarg3;
+  if (!arg3) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "std::vector< Effekseer::Tool::ProfileSample::Effect > const & type is null", 0);
+    return ;
+  } 
+  try {
+    std_vector_Sl_Effekseer_Tool_ProfileSample_Effect_Sg__InsertRange(arg1,arg2,(std::vector< Effekseer::Tool::ProfileSample::Effect > const &)*arg3);
+  } catch(std::out_of_range &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, 0, (&_e)->what());
+    return ;
+  }
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSampleEffectVector_RemoveAt___(void * jarg1, int jarg2) {
+  std::vector< Effekseer::Tool::ProfileSample::Effect > *arg1 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *) 0 ;
+  int arg2 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *)jarg1; 
+  arg2 = (int)jarg2; 
+  try {
+    std_vector_Sl_Effekseer_Tool_ProfileSample_Effect_Sg__RemoveAt(arg1,arg2);
+  } catch(std::out_of_range &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, 0, (&_e)->what());
+    return ;
+  }
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSampleEffectVector_RemoveRange___(void * jarg1, int jarg2, int jarg3) {
+  std::vector< Effekseer::Tool::ProfileSample::Effect > *arg1 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *)jarg1; 
+  arg2 = (int)jarg2; 
+  arg3 = (int)jarg3; 
+  try {
+    std_vector_Sl_Effekseer_Tool_ProfileSample_Effect_Sg__RemoveRange(arg1,arg2,arg3);
+  } catch(std::out_of_range &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, 0, (&_e)->what());
+    return ;
+  } catch(std::invalid_argument &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentException, (&_e)->what(), "");
+    return ;
+  }
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_ProfileSampleEffectVector_Repeat___(void * jarg1, int jarg2) {
+  void * jresult ;
+  Effekseer::Tool::ProfileSample::Effect *arg1 = 0 ;
+  int arg2 ;
+  std::vector< Effekseer::Tool::ProfileSample::Effect > *result = 0 ;
+  
+  arg1 = (Effekseer::Tool::ProfileSample::Effect *)jarg1;
+  if (!arg1) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Effekseer::Tool::ProfileSample::Effect const & type is null", 0);
+    return 0;
+  } 
+  arg2 = (int)jarg2; 
+  try {
+    result = (std::vector< Effekseer::Tool::ProfileSample::Effect > *)std_vector_Sl_Effekseer_Tool_ProfileSample_Effect_Sg__Repeat((Effekseer::Tool::ProfileSample::Effect const &)*arg1,arg2);
+  } catch(std::out_of_range &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, 0, (&_e)->what());
+    return 0;
+  }
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSampleEffectVector_Reverse__SWIG_0___(void * jarg1) {
+  std::vector< Effekseer::Tool::ProfileSample::Effect > *arg1 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *) 0 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *)jarg1; 
+  std_vector_Sl_Effekseer_Tool_ProfileSample_Effect_Sg__Reverse__SWIG_0(arg1);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSampleEffectVector_Reverse__SWIG_1___(void * jarg1, int jarg2, int jarg3) {
+  std::vector< Effekseer::Tool::ProfileSample::Effect > *arg1 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *)jarg1; 
+  arg2 = (int)jarg2; 
+  arg3 = (int)jarg3; 
+  try {
+    std_vector_Sl_Effekseer_Tool_ProfileSample_Effect_Sg__Reverse__SWIG_1(arg1,arg2,arg3);
+  } catch(std::out_of_range &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, 0, (&_e)->what());
+    return ;
+  } catch(std::invalid_argument &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentException, (&_e)->what(), "");
+    return ;
+  }
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSampleEffectVector_SetRange___(void * jarg1, int jarg2, void * jarg3) {
+  std::vector< Effekseer::Tool::ProfileSample::Effect > *arg1 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *) 0 ;
+  int arg2 ;
+  std::vector< Effekseer::Tool::ProfileSample::Effect > *arg3 = 0 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *)jarg1; 
+  arg2 = (int)jarg2; 
+  arg3 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *)jarg3;
+  if (!arg3) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "std::vector< Effekseer::Tool::ProfileSample::Effect > const & type is null", 0);
+    return ;
+  } 
+  try {
+    std_vector_Sl_Effekseer_Tool_ProfileSample_Effect_Sg__SetRange(arg1,arg2,(std::vector< Effekseer::Tool::ProfileSample::Effect > const &)*arg3);
+  } catch(std::out_of_range &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, 0, (&_e)->what());
+    return ;
+  }
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_ProfileSampleEffectVector___(void * jarg1) {
+  std::vector< Effekseer::Tool::ProfileSample::Effect > *arg1 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *) 0 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *)jarg1; 
+  delete arg1;
+}
+
 
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_Matrix44F___() {
   void * jresult ;
@@ -4510,6 +5407,263 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_MainScreenEffectRenderer
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSample_IsValid_set___(void * jarg1, unsigned int jarg2) {
+  Effekseer::Tool::ProfileSample *arg1 = (Effekseer::Tool::ProfileSample *) 0 ;
+  bool arg2 ;
+  
+  arg1 = (Effekseer::Tool::ProfileSample *)jarg1; 
+  arg2 = jarg2 ? true : false; 
+  if (arg1) (arg1)->IsValid = arg2;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_ProfileSample_IsValid_get___(void * jarg1) {
+  unsigned int jresult ;
+  Effekseer::Tool::ProfileSample *arg1 = (Effekseer::Tool::ProfileSample *) 0 ;
+  bool result;
+  
+  arg1 = (Effekseer::Tool::ProfileSample *)jarg1; 
+  result = (bool) ((arg1)->IsValid);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSample_Manager_HandleCount_set___(void * jarg1, unsigned int jarg2) {
+  Effekseer::Tool::ProfileSample::Manager *arg1 = (Effekseer::Tool::ProfileSample::Manager *) 0 ;
+  uint32_t arg2 ;
+  
+  arg1 = (Effekseer::Tool::ProfileSample::Manager *)jarg1; 
+  arg2 = (uint32_t)jarg2; 
+  if (arg1) (arg1)->HandleCount = arg2;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_ProfileSample_Manager_HandleCount_get___(void * jarg1) {
+  unsigned int jresult ;
+  Effekseer::Tool::ProfileSample::Manager *arg1 = (Effekseer::Tool::ProfileSample::Manager *) 0 ;
+  uint32_t result;
+  
+  arg1 = (Effekseer::Tool::ProfileSample::Manager *)jarg1; 
+  result = (uint32_t) ((arg1)->HandleCount);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSample_Manager_CPUTime_set___(void * jarg1, float jarg2) {
+  Effekseer::Tool::ProfileSample::Manager *arg1 = (Effekseer::Tool::ProfileSample::Manager *) 0 ;
+  float arg2 ;
+  
+  arg1 = (Effekseer::Tool::ProfileSample::Manager *)jarg1; 
+  arg2 = (float)jarg2; 
+  if (arg1) (arg1)->CPUTime = arg2;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ProfileSample_Manager_CPUTime_get___(void * jarg1) {
+  float jresult ;
+  Effekseer::Tool::ProfileSample::Manager *arg1 = (Effekseer::Tool::ProfileSample::Manager *) 0 ;
+  float result;
+  
+  arg1 = (Effekseer::Tool::ProfileSample::Manager *)jarg1; 
+  result = (float) ((arg1)->CPUTime);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSample_Manager_GPUTime_set___(void * jarg1, float jarg2) {
+  Effekseer::Tool::ProfileSample::Manager *arg1 = (Effekseer::Tool::ProfileSample::Manager *) 0 ;
+  float arg2 ;
+  
+  arg1 = (Effekseer::Tool::ProfileSample::Manager *)jarg1; 
+  arg2 = (float)jarg2; 
+  if (arg1) (arg1)->GPUTime = arg2;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ProfileSample_Manager_GPUTime_get___(void * jarg1) {
+  float jresult ;
+  Effekseer::Tool::ProfileSample::Manager *arg1 = (Effekseer::Tool::ProfileSample::Manager *) 0 ;
+  float result;
+  
+  arg1 = (Effekseer::Tool::ProfileSample::Manager *)jarg1; 
+  result = (float) ((arg1)->GPUTime);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_ProfileSample_Manager___() {
+  void * jresult ;
+  Effekseer::Tool::ProfileSample::Manager *result = 0 ;
+  
+  result = (Effekseer::Tool::ProfileSample::Manager *)new Effekseer::Tool::ProfileSample::Manager();
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_ProfileSample_Manager___(void * jarg1) {
+  Effekseer::Tool::ProfileSample::Manager *arg1 = (Effekseer::Tool::ProfileSample::Manager *) 0 ;
+  
+  arg1 = (Effekseer::Tool::ProfileSample::Manager *)jarg1; 
+  delete arg1;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSample_Managers_set___(void * jarg1, void * jarg2) {
+  Effekseer::Tool::ProfileSample *arg1 = (Effekseer::Tool::ProfileSample *) 0 ;
+  std::vector< Effekseer::Tool::ProfileSample::Manager > *arg2 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *) 0 ;
+  
+  arg1 = (Effekseer::Tool::ProfileSample *)jarg1; 
+  arg2 = (std::vector< Effekseer::Tool::ProfileSample::Manager > *)jarg2; 
+  if (arg1) (arg1)->Managers = *arg2;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_ProfileSample_Managers_get___(void * jarg1) {
+  void * jresult ;
+  Effekseer::Tool::ProfileSample *arg1 = (Effekseer::Tool::ProfileSample *) 0 ;
+  std::vector< Effekseer::Tool::ProfileSample::Manager > *result = 0 ;
+  
+  arg1 = (Effekseer::Tool::ProfileSample *)jarg1; 
+  result = (std::vector< Effekseer::Tool::ProfileSample::Manager > *)& ((arg1)->Managers);
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSample_Effect_Key_set___(void * jarg1, char16_t * jarg2) {
+  Effekseer::Tool::ProfileSample::Effect *arg1 = (Effekseer::Tool::ProfileSample::Effect *) 0 ;
+  std::u16string *arg2 = 0 ;
+  
+  arg1 = (Effekseer::Tool::ProfileSample::Effect *)jarg1; 
+  if (!jarg2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "null u16string", 0);
+    return ;
+  }
+  ::std::u16string arg2_str(jarg2);
+  arg2 = &arg2_str; 
+  if (arg1) (arg1)->Key = *arg2;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_ProfileSample_Effect_Key_get___(void * jarg1) {
+  void * jresult ;
+  Effekseer::Tool::ProfileSample::Effect *arg1 = (Effekseer::Tool::ProfileSample::Effect *) 0 ;
+  std::u16string *result = 0 ;
+  
+  arg1 = (Effekseer::Tool::ProfileSample::Effect *)jarg1; 
+  result = (std::u16string *) & ((arg1)->Key);
+  jresult = SWIG_csharp_wstring_callback((const wchar_t*)result->c_str()); 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSample_Effect_HandleCount_set___(void * jarg1, unsigned int jarg2) {
+  Effekseer::Tool::ProfileSample::Effect *arg1 = (Effekseer::Tool::ProfileSample::Effect *) 0 ;
+  uint32_t arg2 ;
+  
+  arg1 = (Effekseer::Tool::ProfileSample::Effect *)jarg1; 
+  arg2 = (uint32_t)jarg2; 
+  if (arg1) (arg1)->HandleCount = arg2;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_ProfileSample_Effect_HandleCount_get___(void * jarg1) {
+  unsigned int jresult ;
+  Effekseer::Tool::ProfileSample::Effect *arg1 = (Effekseer::Tool::ProfileSample::Effect *) 0 ;
+  uint32_t result;
+  
+  arg1 = (Effekseer::Tool::ProfileSample::Effect *)jarg1; 
+  result = (uint32_t) ((arg1)->HandleCount);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSample_Effect_GPUTime_set___(void * jarg1, float jarg2) {
+  Effekseer::Tool::ProfileSample::Effect *arg1 = (Effekseer::Tool::ProfileSample::Effect *) 0 ;
+  float arg2 ;
+  
+  arg1 = (Effekseer::Tool::ProfileSample::Effect *)jarg1; 
+  arg2 = (float)jarg2; 
+  if (arg1) (arg1)->GPUTime = arg2;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ProfileSample_Effect_GPUTime_get___(void * jarg1) {
+  float jresult ;
+  Effekseer::Tool::ProfileSample::Effect *arg1 = (Effekseer::Tool::ProfileSample::Effect *) 0 ;
+  float result;
+  
+  arg1 = (Effekseer::Tool::ProfileSample::Effect *)jarg1; 
+  result = (float) ((arg1)->GPUTime);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_ProfileSample_Effect___() {
+  void * jresult ;
+  Effekseer::Tool::ProfileSample::Effect *result = 0 ;
+  
+  result = (Effekseer::Tool::ProfileSample::Effect *)new Effekseer::Tool::ProfileSample::Effect();
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_ProfileSample_Effect___(void * jarg1) {
+  Effekseer::Tool::ProfileSample::Effect *arg1 = (Effekseer::Tool::ProfileSample::Effect *) 0 ;
+  
+  arg1 = (Effekseer::Tool::ProfileSample::Effect *)jarg1; 
+  delete arg1;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSample_Effects_set___(void * jarg1, void * jarg2) {
+  Effekseer::Tool::ProfileSample *arg1 = (Effekseer::Tool::ProfileSample *) 0 ;
+  std::vector< Effekseer::Tool::ProfileSample::Effect > *arg2 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *) 0 ;
+  
+  arg1 = (Effekseer::Tool::ProfileSample *)jarg1; 
+  arg2 = (std::vector< Effekseer::Tool::ProfileSample::Effect > *)jarg2; 
+  if (arg1) (arg1)->Effects = *arg2;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_ProfileSample_Effects_get___(void * jarg1) {
+  void * jresult ;
+  Effekseer::Tool::ProfileSample *arg1 = (Effekseer::Tool::ProfileSample *) 0 ;
+  std::vector< Effekseer::Tool::ProfileSample::Effect > *result = 0 ;
+  
+  arg1 = (Effekseer::Tool::ProfileSample *)jarg1; 
+  result = (std::vector< Effekseer::Tool::ProfileSample::Effect > *)& ((arg1)->Effects);
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_ProfileSample___() {
+  void * jresult ;
+  Effekseer::Tool::ProfileSample *result = 0 ;
+  
+  result = (Effekseer::Tool::ProfileSample *)new Effekseer::Tool::ProfileSample();
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_ProfileSample___(void * jarg1) {
+  Effekseer::Tool::ProfileSample *arg1 = (Effekseer::Tool::ProfileSample *) 0 ;
+  
+  arg1 = (Effekseer::Tool::ProfileSample *)jarg1; 
+  delete arg1;
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_NetworkClient___() {
   void * jresult ;
   Effekseer::Tool::NetworkClient *result = 0 ;
@@ -4544,6 +5698,14 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_NetworkClient_StopNetwork___(v
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_NetworkClient_UpdateNetwork___(void * jarg1) {
+  Effekseer::Tool::NetworkClient *arg1 = (Effekseer::Tool::NetworkClient *) 0 ;
+  
+  arg1 = (Effekseer::Tool::NetworkClient *)jarg1; 
+  (arg1)->UpdateNetwork();
+}
+
+
 SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_NetworkClient_IsConnectingNetwork___(void * jarg1) {
   unsigned int jresult ;
   Effekseer::Tool::NetworkClient *arg1 = (Effekseer::Tool::NetworkClient *) 0 ;
@@ -4571,6 +5733,34 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_NetworkClient_SendDataByNetwor
   arg4 = (int)jarg4; 
   arg5 = (char16_t *)jarg5; 
   (arg1)->SendDataByNetwork((char16_t const *)arg2,arg3,arg4,(char16_t const *)arg5);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_NetworkClient_StartProfiling___(void * jarg1) {
+  Effekseer::Tool::NetworkClient *arg1 = (Effekseer::Tool::NetworkClient *) 0 ;
+  
+  arg1 = (Effekseer::Tool::NetworkClient *)jarg1; 
+  (arg1)->StartProfiling();
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_NetworkClient_StopProfiling___(void * jarg1) {
+  Effekseer::Tool::NetworkClient *arg1 = (Effekseer::Tool::NetworkClient *) 0 ;
+  
+  arg1 = (Effekseer::Tool::NetworkClient *)jarg1; 
+  (arg1)->StopProfiling();
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_NetworkClient_ReadProfileSample___(void * jarg1) {
+  void * jresult ;
+  Effekseer::Tool::NetworkClient *arg1 = (Effekseer::Tool::NetworkClient *) 0 ;
+  Effekseer::Tool::ProfileSample result;
+  
+  arg1 = (Effekseer::Tool::NetworkClient *)jarg1; 
+  result = (arg1)->ReadProfileSample();
+  jresult = new Effekseer::Tool::ProfileSample((const Effekseer::Tool::ProfileSample &)result); 
+  return jresult;
 }
 
 
@@ -8718,6 +9908,44 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_InputTextMu
   arg2 = (char16_t *)jarg2; 
   arg3 = (char16_t *)jarg3; 
   result = (bool)(arg1)->InputTextMultiline((char16_t const *)arg2,(char16_t const *)arg3);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_InputTextWithHint__SWIG_0___(void * jarg1, void * jarg2, void * jarg3, void * jarg4, int jarg5) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  char16_t *arg3 = (char16_t *) 0 ;
+  char16_t *arg4 = (char16_t *) 0 ;
+  efk::InputTextFlags arg5 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = (char16_t *)jarg3; 
+  arg4 = (char16_t *)jarg4; 
+  arg5 = (efk::InputTextFlags)jarg5; 
+  result = (bool)(arg1)->InputTextWithHint((char16_t const *)arg2,(char16_t const *)arg3,(char16_t const *)arg4,arg5);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_InputTextWithHint__SWIG_1___(void * jarg1, void * jarg2, void * jarg3, void * jarg4) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  char16_t *arg3 = (char16_t *) 0 ;
+  char16_t *arg4 = (char16_t *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = (char16_t *)jarg3; 
+  arg4 = (char16_t *)jarg4; 
+  result = (bool)(arg1)->InputTextWithHint((char16_t const *)arg2,(char16_t const *)arg3,(char16_t const *)arg4);
   jresult = result; 
   return jresult;
 }

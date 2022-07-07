@@ -5120,6 +5120,7 @@ public:
 
 		struct Manager
 		{
+			uint32_t HandleCount = 0;
 			float CPUTime = 0.0f;
 			float GPUTime = 0.0f;
 		};
@@ -5127,8 +5128,8 @@ public:
 
 		struct Effect
 		{
-			const char16_t key[64];
-			int32_t HandleCount = 0;
+			std::u16string Key;
+			uint32_t HandleCount = 0;
 			float GPUTime = 0.0f;
 		};
 		std::vector<Effect> Effects;
