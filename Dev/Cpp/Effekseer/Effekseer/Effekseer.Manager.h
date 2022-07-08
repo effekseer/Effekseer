@@ -19,6 +19,11 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 
 /**
+	@brief	Random Function
+*/
+using RandFunc = std::function<int()>;
+
+/**
 	@brief
 	\~English Callback event when an instance of an effect is destroyed
 	\~Japanese エフェクトのインスタンス破棄時のコールバックイベント
@@ -191,16 +196,6 @@ public:
 		@brief	ランダム関数を設定する。
 	*/
 	virtual void SetRandFunc(RandFunc func) = 0;
-
-	/**
-		@brief	ランダム最大値を取得する。
-	*/
-	virtual int GetRandMax() const = 0;
-
-	/**
-		@brief	ランダム関数を設定する。
-	*/
-	virtual void SetRandMax(int max_) = 0;
 
 	/**
 		@brief	座標系を取得する。

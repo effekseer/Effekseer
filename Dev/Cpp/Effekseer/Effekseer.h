@@ -102,11 +102,6 @@ class Texture;
 
 using ThreadNativeHandleType = std::thread::native_handle_type;
 
-/**
-	@brief	Random Function
-*/
-typedef int(EFK_STDCALL* RandFunc)(void);
-
 #define ES_SAFE_ADDREF(val)                                                                     \
 	static_assert(std::is_class<decltype(val)>::value != true, "val must not be class/struct"); \
 	if ((val) != nullptr)                                                                       \
@@ -3776,6 +3771,11 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 
 /**
+	@brief	Random Function
+*/
+using RandFunc = std::function<int()>;
+
+/**
 	@brief
 	\~English Callback event when an instance of an effect is destroyed
 	\~Japanese エフェクトのインスタンス破棄時のコールバックイベント
@@ -3948,16 +3948,6 @@ public:
 		@brief	ランダム関数を設定する。
 	*/
 	virtual void SetRandFunc(RandFunc func) = 0;
-
-	/**
-		@brief	ランダム最大値を取得する。
-	*/
-	virtual int GetRandMax() const = 0;
-
-	/**
-		@brief	ランダム関数を設定する。
-	*/
-	virtual void SetRandMax(int max_) = 0;
 
 	/**
 		@brief	座標系を取得する。

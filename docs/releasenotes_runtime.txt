@@ -29,6 +29,10 @@ Getter and Setter in Manager were removed.
 
 These types were changed.
 
+#### RandFunc were changed
+
+A type was changed.
+
 ## 1.6
 
 ### Broken changes
