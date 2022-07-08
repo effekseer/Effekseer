@@ -184,8 +184,6 @@ private:
 
 	RandFunc m_randFunc;
 
-	int m_randMax;
-
 	std::array<LayerParameter, LayerCount> m_layerParameters;
 
 	std::queue<std::pair<SoundTag, SoundPlayer::InstanceParameter>> m_requestedSounds;
@@ -198,7 +196,7 @@ private:
 	//! GC Draw sets
 	void GCDrawSet(bool isRemovingManager);
 
-	static int EFK_STDCALL Rand();
+	static int Rand();
 
 	void ExecuteEvents();
 
@@ -231,10 +229,6 @@ public:
 	RandFunc GetRandFunc() const override;
 
 	void SetRandFunc(RandFunc func) override;
-
-	int GetRandMax() const override;
-
-	void SetRandMax(int max_) override;
 
 	CoordinateSystem GetCoordinateSystem() const override;
 

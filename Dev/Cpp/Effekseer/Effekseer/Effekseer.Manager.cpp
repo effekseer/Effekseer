@@ -326,7 +326,7 @@ void ManagerImplemented::ReleaseInstanceContainer(InstanceContainer* container)
 	pooledContainers_.push(container);
 }
 
-int EFK_STDCALL ManagerImplemented::Rand()
+int ManagerImplemented::Rand()
 {
 	return rand();
 }
@@ -428,12 +428,10 @@ ManagerImplemented::ManagerImplemented(int instance_max, bool autoFlip)
 
 	, m_soundPlayer(nullptr)
 	, m_randFunc(nullptr)
-	, m_randMax(0)
 {
 	m_setting = Setting::Create();
 
 	SetRandFunc(Rand);
-	SetRandMax(RAND_MAX);
 
 	m_renderingDrawSets.reserve(64);
 
@@ -564,16 +562,6 @@ RandFunc ManagerImplemented::GetRandFunc() const
 void ManagerImplemented::SetRandFunc(RandFunc func)
 {
 	m_randFunc = func;
-}
-
-int ManagerImplemented::GetRandMax() const
-{
-	return m_randMax;
-}
-
-void ManagerImplemented::SetRandMax(int max_)
-{
-	m_randMax = max_;
 }
 
 CoordinateSystem ManagerImplemented::GetCoordinateSystem() const
