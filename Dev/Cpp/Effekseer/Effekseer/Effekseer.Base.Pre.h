@@ -107,14 +107,6 @@ using ThreadNativeHandleType = std::thread::native_handle_type;
 */
 typedef int(EFK_STDCALL* RandFunc)(void);
 
-/**
-	@brief	エフェクトのインスタンス破棄時のコールバックイベント
-	@param	manager	[in]	所属しているマネージャー
-	@param	handle	[in]	エフェクトのインスタンスのハンドル
-	@param	isRemovingManager	[in]	マネージャーを破棄したときにエフェクトのインスタンスを破棄しているか
-*/
-typedef void(EFK_STDCALL* EffectInstanceRemovingCallback)(Manager* manager, Handle handle, bool isRemovingManager);
-
 #define ES_SAFE_ADDREF(val)                                                                     \
 	static_assert(std::is_class<decltype(val)>::value != true, "val must not be class/struct"); \
 	if ((val) != nullptr)                                                                       \

@@ -107,14 +107,6 @@ using ThreadNativeHandleType = std::thread::native_handle_type;
 */
 typedef int(EFK_STDCALL* RandFunc)(void);
 
-/**
-	@brief	エフェクトのインスタンス破棄時のコールバックイベント
-	@param	manager	[in]	所属しているマネージャー
-	@param	handle	[in]	エフェクトのインスタンスのハンドル
-	@param	isRemovingManager	[in]	マネージャーを破棄したときにエフェクトのインスタンスを破棄しているか
-*/
-typedef void(EFK_STDCALL* EffectInstanceRemovingCallback)(Manager* manager, Handle handle, bool isRemovingManager);
-
 #define ES_SAFE_ADDREF(val)                                                                     \
 	static_assert(std::is_class<decltype(val)>::value != true, "val must not be class/struct"); \
 	if ((val) != nullptr)                                                                       \
@@ -3784,6 +3776,22 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 
 /**
+	@brief
+	\~English Callback event when an instance of an effect is destroyed
+	\~Japanese エフェクトのインスタンス破棄時のコールバックイベント
+	@note
+	\~English
+	manager The manager to which the effect belongs
+	handle Handle of the effect instance
+	isRemovingManager Whether the effect instance is removed when the manager is removed.
+	\~Japanese
+	manager 所属しているマネージャー
+	handle エフェクトのインスタンスのハンドル
+	isRemovingManager マネージャーを破棄したときにエフェクトのインスタンスを破棄しているか
+*/
+using EffectInstanceRemovingCallback = std::function<void(Manager*, Handle, bool)>;
+
+/**
 	@brief エフェクト管理クラス
 */
 class Manager : public IReference
@@ -3869,7 +3877,7 @@ public:
 
 		DrawParameter();
 	};
-	
+
 	/**
 		@brief
 		\~English Parameters of Manager::SetLayerParameter to be set for each layer index.
@@ -3887,7 +3895,7 @@ public:
 			通常はカメラの位置と同じ値を指定する。
 		*/
 		Vector3D ViewerPosition = {0.0f, 0.0f, 0.0f};
-		
+
 		/**
 			@brief
 			\~English
@@ -4374,7 +4382,7 @@ public:
 
 	/**
 		@brief Stops new particles spawning but continues simulation of already spawned particles
-		@param spawnDisabled Whether to stop particles generation 
+		@param spawnDisabled Whether to stop particles generation
 	 */
 	virtual void SetSpawnDisabled(Handle handle, bool spawnDisabled) = 0;
 
@@ -4540,7 +4548,7 @@ public:
 	virtual void UpdateHandle(Handle handle, float deltaFrame = 1.0f) = 0;
 
 	/**
-		@brief	
+		@brief
 		\~English	Update an effect to move to the specified frame
 		\~Japanese	指定した時間に移動するために更新する
 		\~English	a handle.

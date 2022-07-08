@@ -25,6 +25,9 @@ It supported Texture3D and Texture2DArray.
 These types were changed.
 Getter and Setter in Manager were removed.
 
+#### Callbacks were changed
+
+These types were changed.
 
 ## 1.6
 
