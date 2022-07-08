@@ -167,32 +167,6 @@ public:
 	virtual ThreadNativeHandleType GetWorkerThreadHandle(uint32_t threadID) = 0;
 
 	/**
-		@brief
-		\~English get an allocator
-		\~Japanese メモリ確保関数を取得する。
-	*/
-	virtual MallocFunc GetMallocFunc() const = 0;
-
-	/**
-		\~English specify an allocator
-		\~Japanese メモリ確保関数を設定する。
-	*/
-	virtual void SetMallocFunc(MallocFunc func) = 0;
-
-	/**
-		@brief
-		\~English get a deallocator
-		\~Japanese メモリ破棄関数を取得する。
-	*/
-	virtual FreeFunc GetFreeFunc() const = 0;
-
-	/**
-		\~English specify a deallocator
-		\~Japanese メモリ破棄関数を設定する。
-	*/
-	virtual void SetFreeFunc(FreeFunc func) = 0;
-
-	/**
 		@brief	ランダム関数を取得する。
 	*/
 	virtual RandFunc GetRandFunc() const = 0;

@@ -182,10 +182,6 @@ private:
 
 	SoundPlayerRef m_soundPlayer;
 
-	MallocFunc m_MallocFunc;
-
-	FreeFunc m_FreeFunc;
-
 	RandFunc m_randFunc;
 
 	int m_randMax;
@@ -201,10 +197,6 @@ private:
 
 	//! GC Draw sets
 	void GCDrawSet(bool isRemovingManager);
-
-	static void* EFK_STDCALL Malloc(unsigned int size);
-
-	static void EFK_STDCALL Free(void* p, unsigned int size);
 
 	static int EFK_STDCALL Rand();
 
@@ -235,14 +227,6 @@ public:
 	ThreadNativeHandleType GetWorkerThreadHandle(uint32_t threadID) override;
 
 	uint32_t GetSequenceNumber() const;
-
-	MallocFunc GetMallocFunc() const override;
-
-	void SetMallocFunc(MallocFunc func) override;
-
-	FreeFunc GetFreeFunc() const override;
-
-	void SetFreeFunc(FreeFunc func) override;
 
 	RandFunc GetRandFunc() const override;
 
