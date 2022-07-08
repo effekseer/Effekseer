@@ -7,18 +7,18 @@
 namespace Effekseer
 {
 
-void* EFK_STDCALL InternalMalloc(unsigned int size)
+void* InternalMalloc(unsigned int size)
 {
 	return (void*)new char*[size];
 }
 
-void EFK_STDCALL InternalFree(void* p, unsigned int size)
+void InternalFree(void* p, unsigned int size)
 {
 	char* pData = (char*)p;
 	delete[] pData;
 }
 
-void* EFK_STDCALL InternalAlignedMalloc(unsigned int size, unsigned int alignement)
+void* InternalAlignedMalloc(unsigned int size, unsigned int alignement)
 {
 #if defined(__EMSCRIPTEN__) && __EMSCRIPTEN_minor__ < 38
 	return malloc(size);
@@ -33,7 +33,7 @@ void* EFK_STDCALL InternalAlignedMalloc(unsigned int size, unsigned int aligneme
 #endif
 }
 
-void EFK_STDCALL InternalAlignedFree(void* p, unsigned int size)
+void InternalAlignedFree(void* p, unsigned int size)
 {
 #if defined(__EMSCRIPTEN__) && __EMSCRIPTEN_minor__ < 38
 	free(p);

@@ -20,6 +20,12 @@ You need to specify Effekseer::Manager::DrawParameter's ViewProjectionMatrix, ZN
 It was combined to RenderTextureParameter and DepthTextureParameter.
 It supported Texture3D and Texture2DArray.
 
+#### Allocators were changed
+
+These types were changed.
+Getter and Setter in Manager were removed.
+
+
 ## 1.6
 
 ### Broken changes

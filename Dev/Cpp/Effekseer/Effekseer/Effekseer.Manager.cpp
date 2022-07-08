@@ -326,17 +326,6 @@ void ManagerImplemented::ReleaseInstanceContainer(InstanceContainer* container)
 	pooledContainers_.push(container);
 }
 
-void* EFK_STDCALL ManagerImplemented::Malloc(unsigned int size)
-{
-	return (void*)new char*[size];
-}
-
-void EFK_STDCALL ManagerImplemented::Free(void* p, unsigned int size)
-{
-	char* pData = (char*)p;
-	delete[] pData;
-}
-
 int EFK_STDCALL ManagerImplemented::Rand()
 {
 	return rand();
@@ -438,16 +427,11 @@ ManagerImplemented::ManagerImplemented(int instance_max, bool autoFlip)
 	, m_trackRenderer(nullptr)
 
 	, m_soundPlayer(nullptr)
-
-	, m_MallocFunc(nullptr)
-	, m_FreeFunc(nullptr)
 	, m_randFunc(nullptr)
 	, m_randMax(0)
 {
 	m_setting = Setting::Create();
 
-	SetMallocFunc(Malloc);
-	SetFreeFunc(Free);
 	SetRandFunc(Rand);
 	SetRandMax(RAND_MAX);
 
@@ -570,26 +554,6 @@ ThreadNativeHandleType ManagerImplemented::GetWorkerThreadHandle(uint32_t thread
 uint32_t ManagerImplemented::GetSequenceNumber() const
 {
 	return m_sequenceNumber;
-}
-
-MallocFunc ManagerImplemented::GetMallocFunc() const
-{
-	return m_MallocFunc;
-}
-
-void ManagerImplemented::SetMallocFunc(MallocFunc func)
-{
-	m_MallocFunc = func;
-}
-
-FreeFunc ManagerImplemented::GetFreeFunc() const
-{
-	return m_FreeFunc;
-}
-
-void ManagerImplemented::SetFreeFunc(FreeFunc func)
-{
-	m_FreeFunc = func;
 }
 
 RandFunc ManagerImplemented::GetRandFunc() const

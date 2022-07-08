@@ -103,26 +103,6 @@ class Texture;
 using ThreadNativeHandleType = std::thread::native_handle_type;
 
 /**
-	@brief	Memory Allocation function
-*/
-typedef void*(EFK_STDCALL* MallocFunc)(unsigned int size);
-
-/**
-	@brief	Memory Free function
-*/
-typedef void(EFK_STDCALL* FreeFunc)(void* p, unsigned int size);
-
-/**
-	@brief	AlignedMemory Allocation function
-*/
-typedef void*(EFK_STDCALL* AlignedMallocFunc)(unsigned int size, unsigned int alignment);
-
-/**
-	@brief	AlignedMemory Free function
-*/
-typedef void(EFK_STDCALL* AlignedFreeFunc)(void* p, unsigned int size);
-
-/**
 	@brief	Random Function
 */
 typedef int(EFK_STDCALL* RandFunc)(void);
@@ -1110,6 +1090,7 @@ public:
 #ifndef __EFFEKSEER_CUSTOM_ALLOCATOR_H__
 #define __EFFEKSEER_CUSTOM_ALLOCATOR_H__
 
+#include <functional>
 #include <list>
 #include <map>
 #include <memory>
@@ -1121,6 +1102,40 @@ public:
 
 namespace Effekseer
 {
+
+/**
+	@brief	Memory Allocation function
+	@note
+	arg1 allocated size
+	return allocated buffer
+*/
+using MallocFunc = std::function<void*(uint32_t)>;
+
+/**
+	@brief	Memory Free function
+	@note
+	arg1 allocated buffer
+	arg2 allocated size
+*/
+using FreeFunc = std::function<void(void*, uint32_t)>;
+
+/**
+	@brief	AlignedMemory Allocation function
+	@note
+	arg1 allocated size
+	arg2 alignment
+	return allocated buffer
+*/
+using AlignedMallocFunc = std::function<void*(uint32_t, uint32_t)>;
+
+/**
+	@brief	AlignedMemory Free function
+	@note
+	arg1 allocated buffer
+	arg2 allocated size
+	*/
+using AlignedFreeFunc = std::function<void(void*, uint32_t)>;
+
 /**
 	@brief
 	\~English get an allocator
@@ -3915,32 +3930,6 @@ public:
 		\~Japanese スレッドハンドルを取得する。(HANDLE(win32) や pthread_t(posix) など)
 	*/
 	virtual ThreadNativeHandleType GetWorkerThreadHandle(uint32_t threadID) = 0;
-
-	/**
-		@brief
-		\~English get an allocator
-		\~Japanese メモリ確保関数を取得する。
-	*/
-	virtual MallocFunc GetMallocFunc() const = 0;
-
-	/**
-		\~English specify an allocator
-		\~Japanese メモリ確保関数を設定する。
-	*/
-	virtual void SetMallocFunc(MallocFunc func) = 0;
-
-	/**
-		@brief
-		\~English get a deallocator
-		\~Japanese メモリ破棄関数を取得する。
-	*/
-	virtual FreeFunc GetFreeFunc() const = 0;
-
-	/**
-		\~English specify a deallocator
-		\~Japanese メモリ破棄関数を設定する。
-	*/
-	virtual void SetFreeFunc(FreeFunc func) = 0;
 
 	/**
 		@brief	ランダム関数を取得する。
