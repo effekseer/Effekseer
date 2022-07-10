@@ -2,10 +2,10 @@
 
 project(Example_DirectX12)
 
-add_executable(Example_DirectX12 main.cpp)
+add_executable(Example_DirectX12 main.cpp DeviceDX12.cpp)
 
 target_include_directories(
-    Example_DirectX12
+    ${PROJECT_NAME}
     PRIVATE
     ${EFK_RUNTIME_ROOT}/Effekseer
     ${EFK_RUNTIME_ROOT}/EffekseerRendererDX12
@@ -15,7 +15,7 @@ target_include_directories(
 )
 
 target_link_libraries(
-    Example_DirectX12
+    ${PROJECT_NAME}
     PRIVATE
     Effekseer
     LLGI
