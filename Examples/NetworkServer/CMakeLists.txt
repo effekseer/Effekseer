@@ -1,23 +1,25 @@
 ﻿cmake_minimum_required (VERSION 3.0.0)
+
 project(Example_NetworkServer)
 
-add_executable(${PROJECT_NAME} main.cpp)
+add_executable(${PROJECT_NAME} main.cpp ../DirectX11/DeviceDX11.cpp)
 
 target_include_directories(
     ${PROJECT_NAME}
     PRIVATE
     ${EFK_RUNTIME_ROOT}/Effekseer
-    ${EFK_RUNTIME_ROOT}/EffekseerRendererDX9
+    ${EFK_RUNTIME_ROOT}/EffekseerRendererDX11
     ${EFK_RUNTIME_ROOT}/EffekseerSoundXAudio2
+    ../Utils
 )
 
 target_link_libraries(
     ${PROJECT_NAME}
     PRIVATE
     Effekseer
-    EffekseerRendererGL
-    EffekseerRendererDX9
+    EffekseerRendererDX11
     EffekseerSoundXAudio2
+    Example_Utils
 )
 
 # for Visual C++
