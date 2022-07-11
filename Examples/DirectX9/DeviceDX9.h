@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <XAudio2.h>
 #include <d3d9.h>
 #include <wrl/client.h>
@@ -20,6 +21,10 @@ private:
 	IXAudio2MasteringVoice* xa2MasterVoice = nullptr;
 
 public:
+	std::function<void()> onLostDevice;
+	std::function<void()> onResetDevice;
+
+public:
 	DeviceDX9() = default;
 	~DeviceDX9() { Terminate(); }
 
@@ -32,5 +37,5 @@ public:
 	void Terminate();
 	void ClearScreen();
 	void PresentDevice();
-	bool OnNewFrame() { return window->OnNewFrame(); }
+	bool NewFrame() { return window->OnNewFrame(); }
 };

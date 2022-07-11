@@ -64,6 +64,6 @@ public:
 	bool Initialize(const char* windowTitle, Utils::Vec2I windowSize);
 	void Terminate();
 	void ClearScreen();
-	bool OnNewFrame();
+	bool NewFrame();
 	void PresentDevice();
 };

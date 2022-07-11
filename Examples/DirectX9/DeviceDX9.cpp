@@ -93,7 +93,10 @@ void DeviceDX9::PresentDevice()
 
 					// Call it before device lost
 					// デバイスロストの処理を行う前に実行する
-					//onLostDevice();
+					if (onLostDevice)
+					{
+						onLostDevice();
+					}
 
 					D3DPRESENT_PARAMETERS d3dpParams{};
 					d3dpParams.BackBufferWidth = window->GetWindowSize().X;
@@ -109,7 +112,10 @@ void DeviceDX9::PresentDevice()
 
 					// Call it after device lost
 					// デバイスロストの処理の後に実行する
-					//onResetDevice();
+					if (onResetDevice)
+					{
+						onResetDevice();
+					}
 
 					break;
 				}

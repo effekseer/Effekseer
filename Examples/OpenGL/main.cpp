@@ -4,18 +4,12 @@
 
 #include <Effekseer.h>
 #include <EffekseerRendererGL.h>
-
-bool InitializeWindowAndDevice(int32_t windowWidth, int32_t windowHeight);
-bool DoEvent();
-void TerminateWindowAndDevice();
-void ClearScreen();
-void PresentDevice();
+#include "DeviceGLFW.h"
 
 int main(int argc, char** argv)
 {
-	int32_t windowWidth = 1280;
-	int32_t windowHeight = 720;
-	InitializeWindowAndDevice(windowWidth, windowHeight);
+	DeviceGLFW device;
+	device.Initialize("NetworkServer", { 1280, 720 });
 
 	// Create a renderer of effects
 	// エフェクトのレンダラーの作成
@@ -48,8 +42,8 @@ int main(int argc, char** argv)
 
 	// Specify a projection matrix
 	// 投影行列を設定
-	renderer->SetProjectionMatrix(
-		::Effekseer::Matrix44().PerspectiveFovRH_OpenGL(90.0f / 180.0f * 3.14f, (float)windowWidth / (float)windowHeight, 1.0f, 500.0f));
+	renderer->SetProjectionMatrix(::Effekseer::Matrix44().PerspectiveFovRH_OpenGL(90.0f / 180.0f * 3.14f, 
+		(float)device.GetWindowSize().X / (float)device.GetWindowSize().Y, 1.0f, 500.0f));
 
 	// Specify a camera matrix
 	// カメラ行列を設定
@@ -63,7 +57,7 @@ int main(int argc, char** argv)
 	int32_t time = 0;
 	Effekseer::Handle handle = 0;
 
-	while (DoEvent())
+	while (device.NewFrame())
 	{
 		if (time % 120 == 0)
 		{
@@ -94,9 +88,9 @@ int main(int argc, char** argv)
 		Effekseer::Manager::UpdateParameter updateParameter;
 		manager->Update(updateParameter);
 
-		// Ececute functions about DirectX
-		// DirectXの処理
-		ClearScreen();
+		// Execute functions about OpenGL
+		// OpenGLの処理
+		device.ClearScreen();
 
 		// Begin to rendering effects
 		// エフェクトの描画開始処理を行う。
@@ -114,9 +108,9 @@ int main(int argc, char** argv)
 		// エフェクトの描画終了処理を行う。
 		renderer->EndRendering();
 
-		// Ececute functions about DirectX
-		// DirectXの処理
-		PresentDevice();
+		// Execute functions about OpenGL
+		// OpenGLの処理
+		device.PresentDevice();
 
 		time++;
 	}
@@ -129,72 +123,7 @@ int main(int argc, char** argv)
 	// レンダラーの破棄
 	renderer.Reset();
 
-	TerminateWindowAndDevice();
+	device.Terminate();
 
 	return 0;
 }
-
-// I use glfw to easy to write
-// 簡単に書くために、glfwを使用します。
-// https://www.glfw.org/
-#include <GLFW/glfw3.h>
-static GLFWwindow* glfwWindow = nullptr;
-
-bool InitializeWindowAndDevice(int32_t windowWidth, int32_t windowHeight)
-{
-	// Initialize Window
-	// ウインドウの初期化
-	if (!glfwInit())
-	{
-		throw "Failed to initialize glfw";
-	}
-
-#if !_WIN32
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-#endif
-
-	glfwWindow = glfwCreateWindow(windowWidth, windowHeight, "OpenGL", nullptr, nullptr);
-
-	if (glfwWindow == nullptr)
-	{
-		glfwTerminate();
-		throw "Failed to create an window.";
-	}
-
-	glfwMakeContextCurrent(glfwWindow);
-	glfwSwapInterval(1);
-	return true;
-}
-
-bool DoEvent()
-{
-	if (glfwWindowShouldClose(glfwWindow) == GL_TRUE)
-	{
-		return false;
-	}
-
-	glfwPollEvents();
-
-	return true;
-}
-
-void TerminateWindowAndDevice()
-{
-	if (glfwWindow != nullptr)
-	{
-		glfwDestroyWindow(glfwWindow);
-		glfwTerminate();
-		glfwWindow = nullptr;
-	}
-}
-
-void ClearScreen()
-{
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}
-
-void PresentDevice() { glfwSwapBuffers(glfwWindow); }

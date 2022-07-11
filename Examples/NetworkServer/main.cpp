@@ -4,14 +4,13 @@
 #include <windows.h>
 
 #include <Effekseer.h>
-#include <EffekseerRendererDX11.h>
-#include <EffekseerSoundXAudio2.h>
+#include <EffekseerRendererGL.h>
 #include "../Utils/Windows/Window.h"
-#include "../DirectX11/DeviceDX11.h"
+#include "../OpenGL/DeviceGLFW.h"
 
 int main(int argc, char** argv)
 {
-	DeviceDX11 device;
+	DeviceGLFW device;
 	device.Initialize("NetworkServer", Utils::Vec2I{1280, 720});
 
 	// Effekseer's objects are managed with smart pointers. When the variable runs out, it will be disposed automatically.
@@ -19,8 +18,8 @@ int main(int argc, char** argv)
 
 	// Create a renderer of effects
 	// エフェクトのレンダラーの作成
-	auto efkRenderer = ::EffekseerRendererDX11::Renderer::Create(
-		device.GetID3D11Device(), device.GetID3D11DeviceContext(), 8000);
+	auto efkRenderer = ::EffekseerRendererGL::Renderer::Create(8000,
+		::EffekseerRendererGL::OpenGLDeviceType::OpenGL3, true);
 
 	// Create a manager of effects
 	// エフェクトのマネージャーの作成
@@ -42,20 +41,6 @@ int main(int argc, char** argv)
 	efkManager->SetModelLoader(efkRenderer->CreateModelLoader());
 	efkManager->SetMaterialLoader(efkRenderer->CreateMaterialLoader());
 	efkManager->SetCurveLoader(Effekseer::MakeRefPtr<Effekseer::CurveLoader>());
-
-	// Specify sound modules
-	// サウンドモジュールの設定
-	auto efkSound = ::EffekseerSound::Sound::Create(device.GetIXAudio2(), 16, 16);
-
-	// Specify a metho to play sound from an instance of efkSound
-	// 音再生用インスタンスから再生機能を指定
-	efkManager->SetSoundPlayer(efkSound->CreateSoundPlayer());
-
-	// Specify a sound data loader
-	// It can be extended by yourself. It is loaded from a file on now.
-	// サウンドデータの読込機能を設定する。
-	// ユーザーが独自で拡張できる。現在はファイルから読み込んでいる。
-	efkManager->SetSoundLoader(efkSound->CreateSoundLoader());
 
 	// Create a server for effect
 	// サーバーの作成
@@ -81,16 +66,20 @@ int main(int argc, char** argv)
 
 	// Load an effect
 	// エフェクトの読込
-	auto effect = Effekseer::Effect::Create(efkManager, EFK_EXAMPLE_ASSETS_DIR_U16 "Laser01.efk");
+	auto effect = Effekseer::Effect::Create(efkManager, EFK_EXAMPLE_ASSETS_DIR_U16 "Laser01.efkefc");
+
+	// Register the effect asset to server for reloading
+	// エフェクトをリロードするためのサーバーへ登録
+	efkServer->Register(u"Laser01", effect);
 
 	int32_t time = 0;
 	Effekseer::Handle efkHandle = 0;
 
-	while (device.OnNewFrame())
+	while (device.NewFrame())
 	{
 		// Update the server
 		// サーバーの更新を行う。
-		efkServer->Update();
+		efkServer->Update(&efkManager, 1);
 
 		if (time % 120 == 0)
 		{
@@ -98,17 +87,6 @@ int main(int argc, char** argv)
 			// エフェクトの再生
 			efkHandle = efkManager->Play(effect, 0, 0, 0);
 		}
-
-		if (time % 120 == 119)
-		{
-			// Stop effects
-			// エフェクトの停止
-			efkManager->StopEffect(efkHandle);
-		}
-
-		// Move the effect
-		// エフェクトの移動
-		efkManager->AddLocation(efkHandle, ::Effekseer::Vector3D(0.2f, 0.0f, 0.0f));
 
 		// Set layer parameters
 		// レイヤーパラメータの設定
@@ -121,8 +99,8 @@ int main(int argc, char** argv)
 		Effekseer::Manager::UpdateParameter updateParameter;
 		efkManager->Update(updateParameter);
 
-		// Ececute functions about DirectX
-		// DirectXの処理
+		// Execute functions about Rendering
+		// 描画の処理
 		device.ClearScreen();
 
 		// Update a time
@@ -145,20 +123,20 @@ int main(int argc, char** argv)
 		// エフェクトの描画終了処理を行う。
 		efkRenderer->EndRendering();
 
-		// Ececute functions about DirectX
+		// Execute functions about DirectX
 		// DirectXの処理
 		device.PresentDevice();
 
 		time++;
 	}
 
+	// Dispose the server
+	// サーバーの破棄
+	efkServer.Reset();
+
 	// Dispose the manager
 	// マネージャーの破棄
 	efkManager.Reset();
-
-	// Dispose the sound
-	// サウンドの破棄
-	efkSound.Reset();
 
 	// Dispose the renderer
 	// レンダラーの破棄

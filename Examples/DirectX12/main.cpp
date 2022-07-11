@@ -85,7 +85,7 @@ int main(int argc, char** argv)
 	int32_t time = 0;
 	Effekseer::Handle efkHandle = 0;
 
-	while (device.OnNewFrame())
+	while (device.NewFrame())
 	{
 		// Call on starting of a frame
 		// フレームの開始時に呼ぶ
@@ -120,7 +120,7 @@ int main(int argc, char** argv)
 		Effekseer::Manager::UpdateParameter updateParameter;
 		efkManager->Update(updateParameter);
 
-		// Ececute functions about DirectX
+		// Execute functions about DirectX
 		// DirectXの処理
 		device.ClearScreen();
 
@@ -154,7 +154,7 @@ int main(int argc, char** argv)
 		efkRenderer->SetCommandList(nullptr);
 		EffekseerRendererDX12::EndCommandList(commandListEfk);
 
-		// Ececute functions about DirectX
+		// Execute functions about DirectX
 		// DirectXの処理
 		device.PresentDevice();
 

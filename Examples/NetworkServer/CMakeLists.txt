@@ -2,24 +2,30 @@
 
 project(Example_NetworkServer)
 
-add_executable(${PROJECT_NAME} main.cpp ../DirectX11/DeviceDX11.cpp)
+add_executable(${PROJECT_NAME} main.cpp ../OpenGL/DeviceGLFW.cpp)
 
 target_include_directories(
     ${PROJECT_NAME}
     PRIVATE
     ${EFK_RUNTIME_ROOT}/Effekseer
-    ${EFK_RUNTIME_ROOT}/EffekseerRendererDX11
-    ${EFK_RUNTIME_ROOT}/EffekseerSoundXAudio2
+    ${EFK_RUNTIME_ROOT}/EffekseerRendererGL
     ../Utils
+	${EFK_THIRDPARTY_INCLUDES}
 )
 
 target_link_libraries(
     ${PROJECT_NAME}
     PRIVATE
     Effekseer
-    EffekseerRendererDX11
-    EffekseerSoundXAudio2
+    EffekseerRendererGL
     Example_Utils
+    ${EFK_EXAMPLES_GLFW}
+)
+
+target_link_directories(
+    ${PROJECT_NAME}
+    PRIVATE
+    ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES}
 )
 
 # for Visual C++
@@ -32,12 +38,6 @@ target_compile_definitions(
 set_property(TARGET ${PROJECT_NAME} PROPERTY FOLDER "Examples") 
 
 if(USE_LIBPNG_LOADER)
-    target_link_directories(
-        ${PROJECT_NAME}
-        PRIVATE
-        ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES}
-    )
-
     target_link_libraries(
         ${PROJECT_NAME}
         PRIVATE

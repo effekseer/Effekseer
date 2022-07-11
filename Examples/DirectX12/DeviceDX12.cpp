@@ -69,7 +69,7 @@ void DeviceDX12::ClearScreen()
 {
 }
 
-bool DeviceDX12::OnNewFrame()
+bool DeviceDX12::NewFrame()
 {
 	if (!platform->NewFrame())
 		return false;

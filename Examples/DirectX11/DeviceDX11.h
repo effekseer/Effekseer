@@ -41,5 +41,5 @@ public:
 	void Terminate();
 	void ClearScreen();
 	void PresentDevice();
-	bool OnNewFrame() { return window->OnNewFrame(); }
+	bool NewFrame() { return window->OnNewFrame(); }
 };

@@ -2,10 +2,10 @@
 
 project(Example_OpenGL)
 
-add_executable(Example_OpenGL main.cpp)
+add_executable(Example_OpenGL main.cpp DeviceGLFW.cpp)
 
 target_include_directories(
-    Example_OpenGL
+    ${PROJECT_NAME}
     PRIVATE
     ${EFK_RUNTIME_ROOT}/Effekseer
     ${EFK_RUNTIME_ROOT}/EffekseerRendererGL
@@ -14,7 +14,7 @@ target_include_directories(
 )
 
 target_link_libraries(
-    Example_OpenGL
+    ${PROJECT_NAME}
     PRIVATE
     Effekseer
     EffekseerRendererGL

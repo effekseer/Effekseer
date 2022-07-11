@@ -77,7 +77,33 @@ int main(int argc, char** argv)
 	int32_t time = 0;
 	Effekseer::Handle efkHandle = 0;
 
-	while (device.OnNewFrame())
+	device.onLostDevice = [efkRenderer, effect]() -> void {
+		// Call it before device lost
+		// デバイスロストの処理を行う前に実行する
+		efkRenderer->OnLostDevice();
+
+		// Dispose all resources in the effect
+		// 読み込んだエフェクトのリソースは全て破棄する。
+		if (effect != nullptr)
+		{
+			effect->UnloadResources();
+		}
+	};
+
+	device.onResetDevice = [efkRenderer, effect]() -> void {
+		// Reload all resources in the effect
+		// エフェクトのリソースを再読み込みする。
+		if (effect != nullptr)
+		{
+			effect->ReloadResources();
+		}
+
+		// Call it after device lost
+		// デバイスロストの処理の後に実行する
+		efkRenderer->OnResetDevice();
+	};
+
+	while (device.NewFrame())
 	{
 		if (time % 120 == 0)
 		{
@@ -108,7 +134,7 @@ int main(int argc, char** argv)
 		Effekseer::Manager::UpdateParameter updateParameter;
 		efkManager->Update(updateParameter);
 
-		// Ececute functions about DirectX
+		// Execute functions about DirectX
 		// DirectXの処理
 		device.ClearScreen();
 
@@ -132,7 +158,7 @@ int main(int argc, char** argv)
 		// エフェクトの描画終了処理を行う。
 		efkRenderer->EndRendering();
 
-		// Ececute functions about DirectX
+		// Execute functions about DirectX
 		// DirectXの処理
 		device.PresentDevice();
 
