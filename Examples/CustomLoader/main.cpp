@@ -211,7 +211,7 @@ int main(int argc, char** argv)
 
 	// Load an effect
 	// エフェクトの読込
-	auto effect = Effekseer::Effect::Create(manager, EFK_EXAMPLE_ASSETS_DIR_U16 "Laser01.efk");
+	auto effect = Effekseer::Effect::Create(manager, EFK_EXAMPLE_ASSETS_DIR_U16 "Laser01.efkefc");
 
 	int32_t time = 0;
 	Effekseer::Handle handle = 0;
@@ -240,7 +240,7 @@ int main(int argc, char** argv)
 		// マネージャーの更新
 		manager->Update();
 
-		// Ececute functions about DirectX
+		// Execute functions about DirectX
 		// DirectXの処理
 		ClearScreen();
 
@@ -256,7 +256,7 @@ int main(int argc, char** argv)
 		// エフェクトの描画終了処理を行う。
 		renderer->EndRendering();
 
-		// Ececute functions about DirectX
+		// Execute functions about DirectX
 		// DirectXの処理
 		PresentDevice();
 

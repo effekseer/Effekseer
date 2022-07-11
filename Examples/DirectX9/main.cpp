@@ -72,7 +72,7 @@ int main(int argc, char** argv)
 
 	// Load an effect
 	// エフェクトの読込
-	auto effect = Effekseer::Effect::Create(efkManager, EFK_EXAMPLE_ASSETS_DIR_U16 "Laser01.efk");
+	auto effect = Effekseer::Effect::Create(efkManager, EFK_EXAMPLE_ASSETS_DIR_U16 "Laser01.efkefc");
 
 	int32_t time = 0;
 	Effekseer::Handle efkHandle = 0;
