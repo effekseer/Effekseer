@@ -44,7 +44,7 @@ public:
 	virtual void Ungenerate(ModelRef model);
 
 protected:
-	virtual ModelRef ConvertMeshToModel(const struct ProceduralMesh& mesh);
+	virtual ModelRef ConvertMeshToModel(const ProceduralMesh& mesh);
 
 	virtual ModelRef CreateModel(const CustomVector<Model::Vertex>& vs, const CustomVector<Model::Face>& faces);
 };
