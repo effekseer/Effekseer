@@ -2,7 +2,7 @@
 
 project(Example_DirectX12)
 
-add_executable(Example_DirectX12 main.cpp DeviceDX12.cpp)
+add_executable(Example_DirectX12 main.cpp DeviceDX12.cpp DeviceDX12.h)
 
 target_include_directories(
     ${PROJECT_NAME}

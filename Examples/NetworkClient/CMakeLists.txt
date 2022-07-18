@@ -2,7 +2,7 @@
 
 project(Example_NetworkClient)
 
-add_executable(${PROJECT_NAME} main.cpp ../OpenGL/DeviceGLFW.cpp)
+add_executable(${PROJECT_NAME} main.cpp ../OpenGL/DeviceGLFW.cpp ../OpenGL/DeviceGLFW.h)
 
 target_include_directories(
     ${PROJECT_NAME}

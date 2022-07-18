@@ -4,57 +4,24 @@
 #include <windows.h>
 
 #include <Effekseer.h>
-#include <EffekseerRendererDX9.h>
-#include <EffekseerSoundXAudio2.h>
 #include "DeviceDX9.h"
 
 int main(int argc, char** argv)
 {
 	DeviceDX9 device;
-	device.Initialize("DirectX9", Utils::Vec2I{1280, 720});
+	device.Initialize("DirectDX9", Utils::Vec2I{1280, 720});
 
 	// Effekseer's objects are managed with smart pointers. When the variable runs out, it will be disposed automatically.
 	// Effekseerのオブジェクトはスマートポインタで管理される。変数がなくなると自動的に削除される。
-
-	// Create a renderer of effects
-	// エフェクトのレンダラーの作成
-	auto efkRenderer = ::EffekseerRendererDX9::Renderer::Create(
-		device.GetIDirect3DDevice9(), 8000);
 
 	// Create a manager of effects
 	// エフェクトのマネージャーの作成
 	auto efkManager = ::Effekseer::Manager::Create(8000);
 
-	// Sprcify rendering modules
-	// 描画モジュールの設定
-	efkManager->SetSpriteRenderer(efkRenderer->CreateSpriteRenderer());
-	efkManager->SetRibbonRenderer(efkRenderer->CreateRibbonRenderer());
-	efkManager->SetRingRenderer(efkRenderer->CreateRingRenderer());
-	efkManager->SetTrackRenderer(efkRenderer->CreateTrackRenderer());
-	efkManager->SetModelRenderer(efkRenderer->CreateModelRenderer());
-
-	// Specify a texture, model, curve and material loader
-	// It can be extended by yourself. It is loaded from a file on now.
-	// テクスチャ、モデル、カーブ、マテリアルローダーの設定する。
-	// ユーザーが独自で拡張できる。現在はファイルから読み込んでいる。
-	efkManager->SetTextureLoader(efkRenderer->CreateTextureLoader());
-	efkManager->SetModelLoader(efkRenderer->CreateModelLoader());
-	efkManager->SetMaterialLoader(efkRenderer->CreateMaterialLoader());
-	efkManager->SetCurveLoader(Effekseer::MakeRefPtr<Effekseer::CurveLoader>());
-
-	// Specify sound modules
-	// サウンドモジュールの設定
-	auto efkSound = ::EffekseerSound::Sound::Create(device.GetIXAudio2(), 16, 16);
-
-	// Specify a metho to play sound from an instance of efkSound
-	// 音再生用インスタンスから再生機能を指定
-	efkManager->SetSoundPlayer(efkSound->CreateSoundPlayer());
-
-	// Specify a sound data loader
-	// It can be extended by yourself. It is loaded from a file on now.
-	// サウンドデータの読込機能を設定する。
-	// ユーザーが独自で拡張できる。現在はファイルから読み込んでいる。
-	efkManager->SetSoundLoader(efkSound->CreateSoundLoader());
+	// Setup effekseer modules
+	// Effekseerのモジュールをセットアップする
+	device.SetupEffekseerModules(efkManager);
+	auto efkRenderer = device.GetEffekseerRenderer();
 
 	// Specify a position of view
 	// 視点位置を確定
@@ -62,13 +29,13 @@ int main(int argc, char** argv)
 
 	// Specify a projection matrix
 	// 投影行列を設定
-	efkRenderer->SetProjectionMatrix(::Effekseer::Matrix44().PerspectiveFovRH(
-		90.0f / 180.0f * 3.14f, (float)device.GetWindowSize().X / (float)device.GetWindowSize().Y, 1.0f, 500.0f));
+	::Effekseer::Matrix44 projectionMatrix;
+	projectionMatrix.PerspectiveFovRH(90.0f / 180.0f * 3.14f, (float)device.GetWindowSize().X / (float)device.GetWindowSize().Y, 1.0f, 500.0f);
 
 	// Specify a camera matrix
 	// カメラ行列を設定
-	efkRenderer->SetCameraMatrix(
-		::Effekseer::Matrix44().LookAtRH(viewerPosition, ::Effekseer::Vector3D(0.0f, 0.0f, 0.0f), ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
+	::Effekseer::Matrix44 cameraMatrix;
+	cameraMatrix.LookAtRH(viewerPosition, ::Effekseer::Vector3D(0.0f, 0.0f, 0.0f), ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f));
 
 	// Load an effect
 	// エフェクトの読込
@@ -77,11 +44,7 @@ int main(int argc, char** argv)
 	int32_t time = 0;
 	Effekseer::Handle efkHandle = 0;
 
-	device.onLostDevice = [efkRenderer, effect]() -> void {
-		// Call it before device lost
-		// デバイスロストの処理を行う前に実行する
-		efkRenderer->OnLostDevice();
-
+	device.onLostDevice = [effect]() -> void {
 		// Dispose all resources in the effect
 		// 読み込んだエフェクトのリソースは全て破棄する。
 		if (effect != nullptr)
@@ -90,17 +53,13 @@ int main(int argc, char** argv)
 		}
 	};
 
-	device.onResetDevice = [efkRenderer, effect]() -> void {
+	device.onResetDevice = [effect]() -> void {
 		// Reload all resources in the effect
 		// エフェクトのリソースを再読み込みする。
 		if (effect != nullptr)
 		{
 			effect->ReloadResources();
 		}
-
-		// Call it after device lost
-		// デバイスロストの処理の後に実行する
-		efkRenderer->OnResetDevice();
 	};
 
 	while (device.NewFrame())
@@ -140,7 +99,15 @@ int main(int argc, char** argv)
 
 		// Update a time
 		// 時間を更新する
-		efkRenderer->SetTime(time / 60.0f);
+		efkRenderer->SetTime(time);
+
+		// Specify a projection matrix
+		// 投影行列を設定
+		efkRenderer->SetProjectionMatrix(projectionMatrix);
+
+		// Specify a camera matrix
+		// カメラ行列を設定
+		efkRenderer->SetCameraMatrix(cameraMatrix);
 
 		// Begin to rendering effects
 		// エフェクトの描画開始処理を行う。
@@ -164,18 +131,6 @@ int main(int argc, char** argv)
 
 		time++;
 	}
-
-	// Dispose the manager
-	// マネージャーの破棄
-	efkManager.Reset();
-
-	// Dispose the sound
-	// サウンドの破棄
-	efkSound.Reset();
-
-	// Dispose the renderer
-	// レンダラーの破棄
-	efkRenderer.Reset();
 
 	return 0;
 }

@@ -1,21 +1,29 @@
-﻿
+﻿// Choose from the following graphics APIs you want to enable
+// グラフィックスAPIを下記から選んで有効にしてください
+#define DEVICE_OPENGL
+//#define DEVICE_DX9
+//#define DEVICE_DX11
+
 #include <stdio.h>
 #include <string>
 
 #include <Effekseer.Modules.h>
 #include <Effekseer.h>
-#include <EffekseerRendererGL.h>
+
+#if defined(DEVICE_OPENGL)
+#include "../OpenGL/DeviceGLFW.h"
+#elif defined(DEVICE_DX9)
+#include "../DirectX9/DeviceDX9.h"
+#elif defined(DEVICE_DX11)
+#include "../DirectX11/DeviceDX11.h"
+#endif
+
+const Utils::Vec2I screenSize = {1280, 720};
 
 // A helper function to load an image
 // イメージを読み込むためのヘルパー関数
 #define STB_IMAGE_EFK_IMPLEMENTATION
 #include <stb_image_utils.h>
-
-bool InitializeWindowAndDevice(int32_t windowWidth, int32_t windowHeight);
-bool DoEvent();
-void TerminateWindowAndDevice();
-void ClearScreen();
-void PresentDevice();
 
 /**
 Effekseer supports basic loading, but it is not designed to be loadable from other game engine packages.
@@ -48,7 +56,7 @@ public:
 	virtual ~CustomTextureLoader() = default;
 
 public:
-	Effekseer::TextureRef Load(const EFK_CHAR* path, ::Effekseer::TextureType textureType) override
+	Effekseer::TextureRef Load(const char16_t* path, ::Effekseer::TextureType textureType) override
 	{
 		auto reader = fileInterface_->OpenRead(path);
 
@@ -78,7 +86,7 @@ public:
 			// 実際にGPUに画像を読み込む。何を返すべきか知りたい場合、、各バックエンドのコードを読んでください。
 			::Effekseer::Backend::TextureParameter param;
 			param.Format = ::Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM;
-			param.MipLevelCount = -1;
+			param.MipLevelCount = 1;
 			param.Size = {width, height, 0};
 			param.Dimension = 2;
 			Effekseer::CustomVector<uint8_t> initialData;
@@ -163,180 +171,126 @@ public:
 
 int main(int argc, char** argv)
 {
-	int32_t windowWidth = 1280;
-	int32_t windowHeight = 720;
-	InitializeWindowAndDevice(windowWidth, windowHeight);
+#if defined(DEVICE_OPENGL)
+	DeviceGLFW device;
+	device.Initialize("CustomLoader (OpenGL)", screenSize);
+#elif defined(DEVICE_DX9)
+	DeviceDX9 device;
+	device.Initialize("CustomLoader (DirectX9)", screenSize);
+#elif defined(DEVICE_DX11)
+	DeviceDX11 device;
+	device.Initialize("CustomLoader (DirectX11)", screenSize);
+#endif
 
-	// Create a renderer of effects
-	// エフェクトのレンダラーの作成
-	auto renderer = ::EffekseerRendererGL::Renderer::Create(8000, EffekseerRendererGL::OpenGLDeviceType::OpenGL3);
+	// Effekseer's objects are managed with smart pointers. When the variable runs out, it will be disposed automatically.
+	// Effekseerのオブジェクトはスマートポインタで管理される。変数がなくなると自動的に削除される。
 
 	// Create a manager of effects
 	// エフェクトのマネージャーの作成
-	auto manager = ::Effekseer::Manager::Create(8000);
+	auto efkManager = ::Effekseer::Manager::Create(8000);
 
-	// Sprcify rendering modules
-	// 描画モジュールの設定
-	manager->SetSpriteRenderer(renderer->CreateSpriteRenderer());
-	manager->SetRibbonRenderer(renderer->CreateRibbonRenderer());
-	manager->SetRingRenderer(renderer->CreateRingRenderer());
-	manager->SetTrackRenderer(renderer->CreateTrackRenderer());
-	manager->SetModelRenderer(renderer->CreateModelRenderer());
+	// Setup effekseer modules
+	// Effekseerのモジュールをセットアップする
+	device.SetupEffekseerModules(efkManager);
+	auto efkRenderer = device.GetEffekseerRenderer();
 
 	// Specify a texture, model and material loader
 	// The texture and model loaders are extended by yourself.
 	// テクスチャ、モデル、マテリアルローダーの設定する。
 	// テクスチャとモデルローダーが拡張されている。
-	manager->SetTextureLoader(::Effekseer::TextureLoaderRef(new CustomTextureLoader(renderer->GetGraphicsDevice())));
-	manager->SetModelLoader(::Effekseer::MakeRefPtr<CustomModelLoader>());
-
-	// You can specify only a file loader
-	// ファイルローダーのみを指定することもできる。
-	::Effekseer::FileInterfaceRef fileInterface = Effekseer::MakeRefPtr<Effekseer::DefaultFileInterface>();
-	manager->SetMaterialLoader(renderer->CreateMaterialLoader(fileInterface));
+	efkManager->SetTextureLoader(::Effekseer::MakeRefPtr<CustomTextureLoader>(efkRenderer->GetGraphicsDevice()));
+	efkManager->SetModelLoader(::Effekseer::MakeRefPtr<CustomModelLoader>());
 
 	// Specify a position of view
 	// 視点位置を確定
-	auto g_position = ::Effekseer::Vector3D(10.0f, 5.0f, 20.0f);
+	auto viewerPosition = ::Effekseer::Vector3D(10.0f, 5.0f, 20.0f);
 
 	// Specify a projection matrix
 	// 投影行列を設定
-	renderer->SetProjectionMatrix(
-		::Effekseer::Matrix44().PerspectiveFovRH(90.0f / 180.0f * 3.14f, (float)windowWidth / (float)windowHeight, 1.0f, 500.0f));
+	::Effekseer::Matrix44 projectionMatrix;
+	projectionMatrix.PerspectiveFovRH(90.0f / 180.0f * 3.14f, (float)device.GetWindowSize().X / (float)device.GetWindowSize().Y, 1.0f, 500.0f);
 
 	// Specify a camera matrix
 	// カメラ行列を設定
-	renderer->SetCameraMatrix(
-		::Effekseer::Matrix44().LookAtRH(g_position, ::Effekseer::Vector3D(0.0f, 0.0f, 0.0f), ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
+	::Effekseer::Matrix44 cameraMatrix;
+	cameraMatrix.LookAtRH(viewerPosition, ::Effekseer::Vector3D(0.0f, 0.0f, 0.0f), ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f));
 
 	// Load an effect
 	// エフェクトの読込
-	auto effect = Effekseer::Effect::Create(manager, EFK_EXAMPLE_ASSETS_DIR_U16 "Laser01.efkefc");
+	auto effect = Effekseer::Effect::Create(efkManager, EFK_EXAMPLE_ASSETS_DIR_U16 "Laser01.efkefc");
 
 	int32_t time = 0;
-	Effekseer::Handle handle = 0;
+	Effekseer::Handle efkHandle = 0;
 
-	while (DoEvent())
+	while (device.NewFrame())
 	{
 		if (time % 120 == 0)
 		{
 			// Play an effect
 			// エフェクトの再生
-			handle = manager->Play(effect, 0, 0, 0);
+			efkHandle = efkManager->Play(effect, 0, 0, 0);
 		}
 
 		if (time % 120 == 119)
 		{
 			// Stop effects
 			// エフェクトの停止
-			manager->StopEffect(handle);
+			efkManager->StopEffect(efkHandle);
 		}
 
 		// Move the effect
 		// エフェクトの移動
-		manager->AddLocation(handle, ::Effekseer::Vector3D(0.2f, 0.0f, 0.0f));
+		efkManager->AddLocation(efkHandle, ::Effekseer::Vector3D(0.2f, 0.0f, 0.0f));
+
+		// Set layer parameters
+		// レイヤーパラメータの設定
+		Effekseer::Manager::LayerParameter layerParameter;
+		layerParameter.ViewerPosition = viewerPosition;
+		efkManager->SetLayerParameter(0, layerParameter);
 
 		// Update the manager
 		// マネージャーの更新
-		manager->Update();
+		Effekseer::Manager::UpdateParameter updateParameter;
+		efkManager->Update(updateParameter);
 
 		// Execute functions about DirectX
 		// DirectXの処理
-		ClearScreen();
+		device.ClearScreen();
+
+		// Update a time
+		// 時間を更新する
+		efkRenderer->SetTime(time);
+
+		// Specify a projection matrix
+		// 投影行列を設定
+		efkRenderer->SetProjectionMatrix(projectionMatrix);
+
+		// Specify a camera matrix
+		// カメラ行列を設定
+		efkRenderer->SetCameraMatrix(cameraMatrix);
 
 		// Begin to rendering effects
 		// エフェクトの描画開始処理を行う。
-		renderer->BeginRendering();
+		efkRenderer->BeginRendering();
 
 		// Render effects
 		// エフェクトの描画を行う。
-		manager->Draw();
+		Effekseer::Manager::DrawParameter drawParameter;
+		drawParameter.ZNear = 0.0f;
+		drawParameter.ZFar = 1.0f;
+		drawParameter.ViewProjectionMatrix = efkRenderer->GetCameraProjectionMatrix();
+		efkManager->Draw(drawParameter);
 
 		// Finish to rendering effects
 		// エフェクトの描画終了処理を行う。
-		renderer->EndRendering();
+		efkRenderer->EndRendering();
 
 		// Execute functions about DirectX
 		// DirectXの処理
-		PresentDevice();
+		device.PresentDevice();
 
 		time++;
 	}
 
-	// Dispose the manager
-	// マネージャーの破棄
-	manager.Reset();
-
-	// Dispose the renderer
-	// レンダラーの破棄
-	renderer.Reset();
-
-	TerminateWindowAndDevice();
-
 	return 0;
 }
-
-// I use glfw to easy to write
-// 簡単に書くために、glfwを使用します。
-// https://www.glfw.org/
-#include <GLFW/glfw3.h>
-static GLFWwindow* glfwWindow = nullptr;
-
-bool InitializeWindowAndDevice(int32_t windowWidth, int32_t windowHeight)
-{
-	// Initialize Window
-	// ウインドウの初期化
-	if (!glfwInit())
-	{
-		throw "Failed to initialize glfw";
-	}
-
-#if !_WIN32
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-#endif
-
-	glfwWindow = glfwCreateWindow(windowWidth, windowHeight, "OpenGL", nullptr, nullptr);
-
-	if (glfwWindow == nullptr)
-	{
-		glfwTerminate();
-		throw "Failed to create an window.";
-	}
-
-	glfwMakeContextCurrent(glfwWindow);
-	glfwSwapInterval(1);
-	return true;
-}
-
-bool DoEvent()
-{
-	if (glfwWindowShouldClose(glfwWindow) == GL_TRUE)
-	{
-		return false;
-	}
-
-	glfwPollEvents();
-
-	return true;
-}
-
-void TerminateWindowAndDevice()
-{
-	if (glfwWindow != nullptr)
-	{
-		glfwDestroyWindow(glfwWindow);
-		glfwTerminate();
-		glfwWindow = nullptr;
-	}
-}
-
-void ClearScreen()
-{
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}
-
-void PresentDevice() { glfwSwapBuffers(glfwWindow); }

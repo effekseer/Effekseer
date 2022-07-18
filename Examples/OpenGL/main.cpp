@@ -1,6 +1,7 @@
 ﻿
 #include <stdio.h>
 #include <string>
+#include <windows.h>
 
 #include <Effekseer.h>
 #include <EffekseerRendererGL.h>
@@ -9,32 +10,19 @@
 int main(int argc, char** argv)
 {
 	DeviceGLFW device;
-	device.Initialize("NetworkServer", { 1280, 720 });
+	device.Initialize("DirectX9", Utils::Vec2I{1280, 720});
 
-	// Create a renderer of effects
-	// エフェクトのレンダラーの作成
-	auto efkRenderer = ::EffekseerRendererGL::Renderer::Create(8000, EffekseerRendererGL::OpenGLDeviceType::OpenGL3);
+	// Effekseer's objects are managed with smart pointers. When the variable runs out, it will be disposed automatically.
+	// Effekseerのオブジェクトはスマートポインタで管理される。変数がなくなると自動的に削除される。
 
 	// Create a manager of effects
 	// エフェクトのマネージャーの作成
 	auto efkManager = ::Effekseer::Manager::Create(8000);
 
-	// Sprcify rendering modules
-	// 描画モジュールの設定
-	efkManager->SetSpriteRenderer(efkRenderer->CreateSpriteRenderer());
-	efkManager->SetRibbonRenderer(efkRenderer->CreateRibbonRenderer());
-	efkManager->SetRingRenderer(efkRenderer->CreateRingRenderer());
-	efkManager->SetTrackRenderer(efkRenderer->CreateTrackRenderer());
-	efkManager->SetModelRenderer(efkRenderer->CreateModelRenderer());
-
-	// Specify a texture, model, curve and material loader
-	// It can be extended by yourself. It is loaded from a file on now.
-	// テクスチャ、モデル、カーブ、マテリアルローダーの設定する。
-	// ユーザーが独自で拡張できる。現在はファイルから読み込んでいる。
-	efkManager->SetTextureLoader(efkRenderer->CreateTextureLoader());
-	efkManager->SetModelLoader(efkRenderer->CreateModelLoader());
-	efkManager->SetMaterialLoader(efkRenderer->CreateMaterialLoader());
-	efkManager->SetCurveLoader(Effekseer::MakeRefPtr<Effekseer::CurveLoader>());
+	// Setup effekseer modules
+	// Effekseerのモジュールをセットアップする
+	device.SetupEffekseerModules(efkManager);
+	auto efkRenderer = device.GetEffekseerRenderer();
 
 	// Specify a position of view
 	// 視点位置を確定
@@ -42,20 +30,20 @@ int main(int argc, char** argv)
 
 	// Specify a projection matrix
 	// 投影行列を設定
-	efkRenderer->SetProjectionMatrix(::Effekseer::Matrix44().PerspectiveFovRH_OpenGL(90.0f / 180.0f * 3.14f, 
-		(float)device.GetWindowSize().X / (float)device.GetWindowSize().Y, 1.0f, 500.0f));
+	::Effekseer::Matrix44 projectionMatrix;
+	projectionMatrix.PerspectiveFovRH(90.0f / 180.0f * 3.14f, (float)device.GetWindowSize().X / (float)device.GetWindowSize().Y, 1.0f, 500.0f);
 
 	// Specify a camera matrix
 	// カメラ行列を設定
-	efkRenderer->SetCameraMatrix(
-		::Effekseer::Matrix44().LookAtRH(viewerPosition, ::Effekseer::Vector3D(0.0f, 0.0f, 0.0f), ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
+	::Effekseer::Matrix44 cameraMatrix;
+	cameraMatrix.LookAtRH(viewerPosition, ::Effekseer::Vector3D(0.0f, 0.0f, 0.0f), ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f));
 
 	// Load an effect
 	// エフェクトの読込
 	auto effect = Effekseer::Effect::Create(efkManager, EFK_EXAMPLE_ASSETS_DIR_U16 "Laser01.efkefc");
 
 	int32_t time = 0;
-	Effekseer::Handle handle = 0;
+	Effekseer::Handle efkHandle = 0;
 
 	while (device.NewFrame())
 	{
@@ -63,19 +51,19 @@ int main(int argc, char** argv)
 		{
 			// Play an effect
 			// エフェクトの再生
-			handle = efkManager->Play(effect, 0, 0, 0);
+			efkHandle = efkManager->Play(effect, 0, 0, 0);
 		}
 
 		if (time % 120 == 119)
 		{
 			// Stop effects
 			// エフェクトの停止
-			efkManager->StopEffect(handle);
+			efkManager->StopEffect(efkHandle);
 		}
 
 		// Move the effect
 		// エフェクトの移動
-		efkManager->AddLocation(handle, ::Effekseer::Vector3D(0.2f, 0.0f, 0.0f));
+		efkManager->AddLocation(efkHandle, ::Effekseer::Vector3D(0.2f, 0.0f, 0.0f));
 
 		// Set layer parameters
 		// レイヤーパラメータの設定
@@ -88,9 +76,21 @@ int main(int argc, char** argv)
 		Effekseer::Manager::UpdateParameter updateParameter;
 		efkManager->Update(updateParameter);
 
-		// Execute functions about OpenGL
-		// OpenGLの処理
+		// Execute functions about DirectX
+		// DirectXの処理
 		device.ClearScreen();
+
+		// Update a time
+		// 時間を更新する
+		efkRenderer->SetTime(time);
+
+		// Specify a projection matrix
+		// 投影行列を設定
+		efkRenderer->SetProjectionMatrix(projectionMatrix);
+
+		// Specify a camera matrix
+		// カメラ行列を設定
+		efkRenderer->SetCameraMatrix(cameraMatrix);
 
 		// Begin to rendering effects
 		// エフェクトの描画開始処理を行う。
@@ -99,7 +99,7 @@ int main(int argc, char** argv)
 		// Render effects
 		// エフェクトの描画を行う。
 		Effekseer::Manager::DrawParameter drawParameter;
-		drawParameter.ZNear = -1.0f;
+		drawParameter.ZNear = 0.0f;
 		drawParameter.ZFar = 1.0f;
 		drawParameter.ViewProjectionMatrix = efkRenderer->GetCameraProjectionMatrix();
 		efkManager->Draw(drawParameter);
@@ -108,22 +108,12 @@ int main(int argc, char** argv)
 		// エフェクトの描画終了処理を行う。
 		efkRenderer->EndRendering();
 
-		// Execute functions about OpenGL
-		// OpenGLの処理
+		// Execute functions about DirectX
+		// DirectXの処理
 		device.PresentDevice();
 
 		time++;
 	}
-
-	// Dispose the manager
-	// マネージャーの破棄
-	efkManager.Reset();
-
-	// Dispose the renderer
-	// レンダラーの破棄
-	efkRenderer.Reset();
-
-	device.Terminate();
 
 	return 0;
 }

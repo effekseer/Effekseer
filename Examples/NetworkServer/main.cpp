@@ -1,46 +1,46 @@
-﻿
+﻿// Choose from the following graphics APIs you want to enable
+// グラフィックスAPIを下記から選んで有効にしてください
+#define DEVICE_OPENGL
+//#define DEVICE_DX9
+//#define DEVICE_DX11
+
 #include <stdio.h>
 #include <string>
 #include <windows.h>
 
 #include <Effekseer.h>
-#include <EffekseerRendererGL.h>
-#include "../Utils/Windows/Window.h"
+
+#if defined(DEVICE_OPENGL)
 #include "../OpenGL/DeviceGLFW.h"
+#elif defined(DEVICE_DX9)
+#include "../DirectX9/DeviceDX9.h"
+#elif defined(DEVICE_DX11)
+#include "../DirectX11/DeviceDX11.h"
+#endif
+
+const Utils::Vec2I screenSize = {1280, 720};
 
 int main(int argc, char** argv)
 {
+#if defined(DEVICE_OPENGL)
 	DeviceGLFW device;
-	device.Initialize("NetworkServer", Utils::Vec2I{1280, 720});
-
-	// Effekseer's objects are managed with smart pointers. When the variable runs out, it will be disposed automatically.
-	// Effekseerのオブジェクトはスマートポインタで管理される。変数がなくなると自動的に削除される。
-
-	// Create a renderer of effects
-	// エフェクトのレンダラーの作成
-	auto efkRenderer = ::EffekseerRendererGL::Renderer::Create(8000,
-		::EffekseerRendererGL::OpenGLDeviceType::OpenGL3, true);
+	device.Initialize("NetworkServer (OpenGL)", screenSize);
+#elif defined(DEVICE_DX9)
+	DeviceDX9 device;
+	device.Initialize("NetworkServer (DirectX9)", screenSize);
+#elif defined(DEVICE_DX11)
+	DeviceDX11 device;
+	device.Initialize("NetworkServer (DirectX11)", screenSize);
+#endif
 
 	// Create a manager of effects
 	// エフェクトのマネージャーの作成
 	auto efkManager = ::Effekseer::Manager::Create(8000);
 
-	// Sprcify rendering modules
-	// 描画モジュールの設定
-	efkManager->SetSpriteRenderer(efkRenderer->CreateSpriteRenderer());
-	efkManager->SetRibbonRenderer(efkRenderer->CreateRibbonRenderer());
-	efkManager->SetRingRenderer(efkRenderer->CreateRingRenderer());
-	efkManager->SetTrackRenderer(efkRenderer->CreateTrackRenderer());
-	efkManager->SetModelRenderer(efkRenderer->CreateModelRenderer());
-
-	// Specify a texture, model, curve and material loader
-	// It can be extended by yourself. It is loaded from a file on now.
-	// テクスチャ、モデル、カーブ、マテリアルローダーの設定する。
-	// ユーザーが独自で拡張できる。現在はファイルから読み込んでいる。
-	efkManager->SetTextureLoader(efkRenderer->CreateTextureLoader());
-	efkManager->SetModelLoader(efkRenderer->CreateModelLoader());
-	efkManager->SetMaterialLoader(efkRenderer->CreateMaterialLoader());
-	efkManager->SetCurveLoader(Effekseer::MakeRefPtr<Effekseer::CurveLoader>());
+	// Setup effekseer modules
+	// Effekseerのモジュールをセットアップする
+	device.SetupEffekseerModules(efkManager);
+	auto efkRenderer = device.GetEffekseerRenderer();
 
 	// Create a server for effect
 	// サーバーの作成
@@ -56,13 +56,13 @@ int main(int argc, char** argv)
 
 	// Specify a projection matrix
 	// 投影行列を設定
-	efkRenderer->SetProjectionMatrix(::Effekseer::Matrix44().PerspectiveFovRH(
-		90.0f / 180.0f * 3.14f, (float)device.GetWindowSize().X / (float)device.GetWindowSize().Y, 1.0f, 500.0f));
+	::Effekseer::Matrix44 projectionMatrix;
+	projectionMatrix.PerspectiveFovRH(90.0f / 180.0f * 3.14f, (float)device.GetWindowSize().X / (float)device.GetWindowSize().Y, 1.0f, 500.0f);
 
 	// Specify a camera matrix
 	// カメラ行列を設定
-	efkRenderer->SetCameraMatrix(
-		::Effekseer::Matrix44().LookAtRH(viewerPosition, ::Effekseer::Vector3D(0.0f, 0.0f, 0.0f), ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
+	::Effekseer::Matrix44 cameraMatrix;
+	cameraMatrix.LookAtRH(viewerPosition, ::Effekseer::Vector3D(0.0f, 0.0f, 0.0f), ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f));
 
 	// Load an effect
 	// エフェクトの読込
@@ -105,7 +105,15 @@ int main(int argc, char** argv)
 
 		// Update a time
 		// 時間を更新する
-		efkRenderer->SetTime(time / 60.0f);
+		efkRenderer->SetTime(time);
+
+		// Specify a projection matrix
+		// 投影行列を設定
+		efkRenderer->SetProjectionMatrix(projectionMatrix);
+
+		// Specify a camera matrix
+		// カメラ行列を設定
+		efkRenderer->SetCameraMatrix(cameraMatrix);
 
 		// Begin to rendering effects
 		// エフェクトの描画開始処理を行う。
@@ -129,18 +137,6 @@ int main(int argc, char** argv)
 
 		time++;
 	}
-
-	// Dispose the server
-	// サーバーの破棄
-	efkServer.Reset();
-
-	// Dispose the manager
-	// マネージャーの破棄
-	efkManager.Reset();
-
-	// Dispose the renderer
-	// レンダラーの破棄
-	efkRenderer.Reset();
 
 	return 0;
 }

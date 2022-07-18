@@ -1,23 +1,45 @@
-﻿
+﻿// Choose from the following graphics APIs you want to enable
+// グラフィックスAPIを下記から選んで有効にしてください
+#define DEVICE_OPENGL
+//#define DEVICE_DX9
+//#define DEVICE_DX11
+
 #include <stdio.h>
 #include <string>
 
 #include <Effekseer.h>
-#include <EffekseerRendererGL.h>
+
+#if defined(DEVICE_OPENGL)
 #include "../OpenGL/DeviceGLFW.h"
+#elif defined(DEVICE_DX9)
+#include "../DirectX9/DeviceDX9.h"
+#elif defined(DEVICE_DX11)
+#include "../DirectX11/DeviceDX11.h"
+#endif
+
+const Utils::Vec2I screenSize = {1280, 720};
 
 int main(int argc, char** argv)
 {
+#if defined(DEVICE_OPENGL)
 	DeviceGLFW device;
-	device.Initialize("SortHandle", { 1280, 720 });
-
-	// Create a renderer of effects
-	// エフェクトのレンダラーの作成
-	auto efkRenderer = ::EffekseerRendererGL::Renderer::Create(8000, EffekseerRendererGL::OpenGLDeviceType::OpenGL3);
+	device.Initialize("SortHandle (OpenGL)", screenSize);
+#elif defined(DEVICE_DX9)
+	DeviceDX9 device;
+	device.Initialize("SortHandle (DirectX9)", screenSize);
+#elif defined(DEVICE_DX11)
+	DeviceDX11 device;
+	device.Initialize("SortHandle (DirectX11)", screenSize);
+#endif
 
 	// Create a manager of effects
 	// エフェクトのマネージャーの作成
 	auto efkManager = ::Effekseer::Manager::Create(8000);
+
+	// Setup effekseer modules
+	// Effekseerのモジュールをセットアップする
+	device.SetupEffekseerModules(efkManager);
+	auto efkRenderer = device.GetEffekseerRenderer();
 
 	// Sprcify rendering modules
 	// 描画モジュールの設定
@@ -129,16 +151,6 @@ int main(int argc, char** argv)
 
 		time++;
 	}
-
-	// Dispose the manager
-	// マネージャーの破棄
-	efkManager.Reset();
-
-	// Dispose the renderer
-	// レンダラーの破棄
-	efkRenderer.Reset();
-
-	device.Terminate();
 
 	return 0;
 }

@@ -3,7 +3,6 @@
 #pragma comment(lib, "d3d9.lib")
 #pragma comment(lib, "xaudio2.lib")
 
-
 bool DeviceDX9::Initialize(const char* windowTitle, Utils::Vec2I windowSize)
 {
 	window = Utils::Window::Create(windowTitle, windowSize);
@@ -14,7 +13,7 @@ bool DeviceDX9::Initialize(const char* windowTitle, Utils::Vec2I windowSize)
 
 	// Initialize Window
 	// ウインドウの初期化
-	window = Utils::Window::Create("DirectX9", Utils::Vec2I{1280, 720});
+	window = Utils::Window::Create(windowTitle, windowSize);
 
 	// Initialize DirectX9
 	// DirectX9の初期化
@@ -45,6 +44,9 @@ bool DeviceDX9::Initialize(const char* windowTitle, Utils::Vec2I windowSize)
 
 void DeviceDX9::Terminate()
 {
+	efkRenderer.Reset();
+	efkSound.Reset();
+
 	// Release XAudio2
 	// XAudio2の解放
 	if (xa2MasterVoice != nullptr)
@@ -98,6 +100,8 @@ void DeviceDX9::PresentDevice()
 						onLostDevice();
 					}
 
+					efkRenderer->OnLostDevice();
+
 					D3DPRESENT_PARAMETERS d3dpParams{};
 					d3dpParams.BackBufferWidth = window->GetWindowSize().X;
 					d3dpParams.BackBufferHeight = window->GetWindowSize().Y;
@@ -112,6 +116,8 @@ void DeviceDX9::PresentDevice()
 
 					// Call it after device lost
 					// デバイスロストの処理の後に実行する
+					efkRenderer->OnResetDevice();
+
 					if (onResetDevice)
 					{
 						onResetDevice();
@@ -123,4 +129,48 @@ void DeviceDX9::PresentDevice()
 			break;
 		}
 	}
+}
+
+bool DeviceDX9::NewFrame()
+{
+	return window->OnNewFrame();
+}
+
+void DeviceDX9::SetupEffekseerModules(::Effekseer::ManagerRef efkManager)
+{
+	// Create a renderer of effects
+	// エフェクトのレンダラーの作成
+	efkRenderer = ::EffekseerRendererDX9::Renderer::Create(
+		GetIDirect3DDevice9(), 8000);
+
+	// Sprcify rendering modules
+	// 描画モジュールの設定
+	efkManager->SetSpriteRenderer(efkRenderer->CreateSpriteRenderer());
+	efkManager->SetRibbonRenderer(efkRenderer->CreateRibbonRenderer());
+	efkManager->SetRingRenderer(efkRenderer->CreateRingRenderer());
+	efkManager->SetTrackRenderer(efkRenderer->CreateTrackRenderer());
+	efkManager->SetModelRenderer(efkRenderer->CreateModelRenderer());
+
+	// Specify a texture, model, curve and material loader
+	// It can be extended by yourself. It is loaded from a file on now.
+	// テクスチャ、モデル、カーブ、マテリアルローダーの設定する。
+	// ユーザーが独自で拡張できる。現在はファイルから読み込んでいる。
+	efkManager->SetTextureLoader(efkRenderer->CreateTextureLoader());
+	efkManager->SetModelLoader(efkRenderer->CreateModelLoader());
+	efkManager->SetMaterialLoader(efkRenderer->CreateMaterialLoader());
+	efkManager->SetCurveLoader(Effekseer::MakeRefPtr<Effekseer::CurveLoader>());
+
+	// Specify sound modules
+	// サウンドモジュールの設定
+	efkSound = ::EffekseerSound::Sound::Create(GetIXAudio2(), 16, 16);
+
+	// Specify a metho to play sound from an instance of efkSound
+	// 音再生用インスタンスから再生機能を指定
+	efkManager->SetSoundPlayer(efkSound->CreateSoundPlayer());
+
+	// Specify a sound data loader
+	// It can be extended by yourself. It is loaded from a file on now.
+	// サウンドデータの読込機能を設定する。
+	// ユーザーが独自で拡張できる。現在はファイルから読み込んでいる。
+	efkManager->SetSoundLoader(efkSound->CreateSoundLoader());
 }

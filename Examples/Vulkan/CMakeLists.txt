@@ -4,7 +4,7 @@ project(Example_Vulkan)
 
 find_package(Vulkan REQUIRED)
 
-add_executable(Example_Vulkan main.cpp)
+add_executable(Example_Vulkan main.cpp DeviceVulkan.cpp DeviceVulkan.h)
 
 target_include_directories(
     Example_Vulkan

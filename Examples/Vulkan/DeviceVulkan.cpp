@@ -1,19 +1,12 @@
-﻿#include "DeviceDX12.h"
+﻿#include "DeviceVulkan.h"
 
-#pragma comment(lib, "d3d12.lib")
-#pragma comment(lib, "xaudio2.lib")
-
-
-bool DeviceDX12::Initialize(const char* windowTitle, Utils::Vec2I windowSize)
+bool DeviceVulkan::Initialize(const char* windowTitle, Utils::Vec2I windowSize)
 {
-	// Initialize COM
-	// COMの初期化
-	CoInitializeEx(nullptr, 0);
-
 	// A code to initialize DirectX12 is too long, so I use LLGI
-	// DirectX12初期化のためのコードは長すぎるのでLLGIを使用する。
+	// Vulkan初期化のためのコードは長すぎるのでLLGIを使用する。
+
 	LLGI::PlatformParameter platformParam{};
-	platformParam.Device = LLGI::DeviceType::DirectX12;
+	platformParam.Device = LLGI::DeviceType::Vulkan;
 	platformParam.WaitVSync = true;
 
 	window = std::shared_ptr<LLGI::Window>(LLGI::CreateWindow(windowTitle, { windowSize.X, windowSize.Y }));
@@ -24,6 +17,7 @@ bool DeviceDX12::Initialize(const char* windowTitle, Utils::Vec2I windowSize)
 	}
 
 	platform = LLGI::CreateSharedPtr(LLGI::CreatePlatform(platformParam, window.get()));
+
 	if (platform == nullptr)
 	{
 		Terminate();
@@ -31,6 +25,7 @@ bool DeviceDX12::Initialize(const char* windowTitle, Utils::Vec2I windowSize)
 	}
 
 	graphics = LLGI::CreateSharedPtr(platform->CreateGraphics());
+
 	if (graphics == nullptr)
 	{
 		Terminate();
@@ -40,25 +35,18 @@ bool DeviceDX12::Initialize(const char* windowTitle, Utils::Vec2I windowSize)
 	memoryPool = LLGI::CreateSharedPtr(graphics->CreateSingleFrameMemoryPool(1024 * 1024, 128));
 	commandListPool = std::make_shared<LLGI::CommandListPool>(graphics.get(), memoryPool.get(), 3);
 
-	// Initialize COM
-	// Initialize XAudio
-	XAudio2Create(&xa2Device);
-
-	xa2Device->CreateMasteringVoice(&xa2MasterVoice);
-
 	return true;
 }
 
-void DeviceDX12::Terminate()
+void DeviceVulkan::Terminate()
 {
-	// Release XAudio2
-	// XAudio2の解放
-	if (xa2MasterVoice != nullptr)
+	// Release Vulkan
+	// Vulkanの解放
+
+	if (graphics)
 	{
-		xa2MasterVoice->DestroyVoice();
-		xa2MasterVoice = nullptr;
+		graphics->WaitFinish();
 	}
-	xa2Device.Detach();
 
 	efkCommandList.Reset();
 	efkMemoryPool.Reset();
@@ -69,17 +57,13 @@ void DeviceDX12::Terminate()
 	graphics.reset();
 	platform.reset();
 	window.reset();
-
-	// Release COM
-	// COMの解放
-	CoUninitialize();
 }
 
-void DeviceDX12::ClearScreen()
+void DeviceVulkan::ClearScreen()
 {
 }
 
-bool DeviceDX12::NewFrame()
+bool DeviceVulkan::NewFrame()
 {
 	if (!platform->NewFrame())
 		return false;
@@ -95,26 +79,26 @@ bool DeviceDX12::NewFrame()
 	color.A = 255;
 
 	commandList->Begin();
-	commandList->BeginRenderPass(platform->GetCurrentScreen(color, true, false)); // TODO: isDepthClear is false, because it fails with dx12.
-	
+	commandList->BeginRenderPass(platform->GetCurrentScreen(color, true, false));
+
 	// Call on starting of a frame
 	// フレームの開始時に呼ぶ
 	efkMemoryPool->NewFrame();
 
 	// Begin a command list
 	// コマンドリストを開始する。
-	EffekseerRendererDX12::BeginCommandList(efkCommandList, GetCommandList());
+	EffekseerRendererVulkan::BeginCommandList(efkCommandList, GetCommandList());
 	efkRenderer->SetCommandList(efkCommandList);
 
 	return true;
 }
 
-void DeviceDX12::PresentDevice()
+void DeviceVulkan::PresentDevice()
 {
 	// Finish a command list
 	// コマンドリストを終了する。
 	efkRenderer->SetCommandList(nullptr);
-	EffekseerRendererDX12::EndCommandList(efkCommandList);
+	EffekseerRendererVulkan::EndCommandList(efkCommandList);
 
 	commandList->EndRenderPass();
 	commandList->End();
@@ -124,12 +108,19 @@ void DeviceDX12::PresentDevice()
 	platform->Present();
 }
 
-void DeviceDX12::SetupEffekseerModules(::Effekseer::ManagerRef efkManager)
+void DeviceVulkan::SetupEffekseerModules(::Effekseer::ManagerRef efkManager)
 {
 	// Create a renderer of effects
 	// エフェクトのレンダラーの作成
-	auto format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	efkRenderer = ::EffekseerRendererDX12::Create(GetID3D12Device(), GetCommandQueue(), 3, &format, 1, DXGI_FORMAT_UNKNOWN, false, 8000);
+	::EffekseerRendererVulkan::RenderPassInformation renderPassInfo;
+	renderPassInfo.DoesPresentToScreen = true;
+	renderPassInfo.RenderTextureCount = 1;
+	renderPassInfo.RenderTextureFormats[0] = VK_FORMAT_B8G8R8A8_UNORM;
+	renderPassInfo.DepthFormat = VK_FORMAT_D24_UNORM_S8_UINT;
+	efkRenderer = ::EffekseerRendererVulkan::Create(
+		GetVkPhysicalDevice(), GetVkDevice(), 
+		GetVkQueue(), GetVkCommandPool(), 
+		GetSwapBufferCount(), renderPassInfo, 8000);
 
 	// Create a memory pool
 	// メモリプールの作成

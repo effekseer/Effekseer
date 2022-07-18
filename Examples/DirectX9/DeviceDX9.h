@@ -4,6 +4,8 @@
 #include <XAudio2.h>
 #include <d3d9.h>
 #include <wrl/client.h>
+#include <EffekseerRendererDX9.h>
+#include <EffekseerSoundXAudio2.h>
 #include "../Utils/Window.h"
 
 class DeviceDX9
@@ -19,6 +21,9 @@ private:
 
 	ComPtr<IXAudio2> xa2Device;
 	IXAudio2MasteringVoice* xa2MasterVoice = nullptr;
+
+	::EffekseerRendererDX9::RendererRef efkRenderer;
+	::EffekseerSound::SoundRef efkSound;
 
 public:
 	std::function<void()> onLostDevice;
@@ -37,5 +42,8 @@ public:
 	void Terminate();
 	void ClearScreen();
 	void PresentDevice();
-	bool NewFrame() { return window->OnNewFrame(); }
+	bool NewFrame();
+
+	void SetupEffekseerModules(::Effekseer::ManagerRef efkManager);
+	::EffekseerRendererDX9::RendererRef GetEffekseerRenderer() { return efkRenderer; }
 };

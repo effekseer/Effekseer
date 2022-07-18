@@ -1,25 +1,17 @@
 #pragma once
 
-#include <XAudio2.h>
-#include <d3d12.h>
-#include <wrl/client.h>
-#include <DX12/LLGI.CommandListDX12.h>
-#include <DX12/LLGI.GraphicsDX12.h>
+#include <Vulkan/LLGI.CommandListVulkan.h>
+#include <Vulkan/LLGI.GraphicsVulkan.h>
 #include <LLGI.Compiler.h>
 #include <LLGI.Graphics.h>
 #include <LLGI.Platform.h>
 #include <Utils/LLGI.CommandListPool.h>
-#include <EffekseerRendererDX12.h>
-#include <EffekseerSoundXAudio2.h>
-
+#include <EffekseerRendererVulkan.h>
 #include "../Utils/Window.h"
 
-class DeviceDX12
+class DeviceVulkan
 {
 private:
-	template <typename T>
-	using ComPtr = Microsoft::WRL::ComPtr<T>;
-
 	std::shared_ptr<LLGI::Window> window;
 	std::shared_ptr<LLGI::Platform> platform;
 	std::shared_ptr<LLGI::Graphics> graphics;
@@ -27,17 +19,13 @@ private:
 	std::shared_ptr<LLGI::CommandListPool> commandListPool;
 	LLGI::CommandList* commandList = nullptr;
 
-	ComPtr<IXAudio2> xa2Device;
-	IXAudio2MasteringVoice* xa2MasterVoice = nullptr;
-
 	::EffekseerRenderer::RendererRef efkRenderer;
-	::EffekseerSound::SoundRef efkSound;
 	::Effekseer::RefPtr<EffekseerRenderer::SingleFrameMemoryPool> efkMemoryPool;
 	::Effekseer::RefPtr<EffekseerRenderer::CommandList> efkCommandList;
 
 public:
-	DeviceDX12() = default;
-	~DeviceDX12() { Terminate(); }
+	DeviceVulkan() = default;
+	~DeviceVulkan() { Terminate(); }
 
 	Utils::Vec2I GetWindowSize() const
 	{
@@ -45,27 +33,34 @@ public:
 		return { size.X, size.Y };
 	}
 
-	ID3D12Device* GetID3D12Device()
+	VkPhysicalDevice GetVkPhysicalDevice()
 	{
-		assert(graphics != nullptr);
-		return static_cast<LLGI::GraphicsDX12*>(graphics.get())->GetDevice();
+		return static_cast<VkPhysicalDevice>(static_cast<LLGI::GraphicsVulkan*>(graphics.get())->GetPysicalDevice());
 	}
 
-	ID3D12CommandQueue* GetCommandQueue()
+	VkDevice GetVkDevice()
 	{
-		assert(graphics != nullptr);
-		return static_cast<LLGI::GraphicsDX12*>(graphics.get())->GetCommandQueue();
+		return static_cast<VkDevice>(static_cast<LLGI::GraphicsVulkan*>(graphics.get())->GetDevice());
 	}
 
-	ID3D12GraphicsCommandList* GetCommandList()
+	VkQueue GetVkQueue()
 	{
-		assert(commandList != nullptr);
-		return static_cast<LLGI::CommandListDX12*>(commandList)->GetCommandList();
+		return static_cast<VkQueue>(static_cast<LLGI::GraphicsVulkan*>(graphics.get())->GetQueue());
 	}
-	
-	IXAudio2* GetIXAudio2()
+
+	VkCommandPool GetVkCommandPool()
 	{
-		return xa2Device.Get();
+		return static_cast<VkCommandPool>(static_cast<LLGI::GraphicsVulkan*>(graphics.get())->GetCommandPool());
+	}
+
+	VkCommandBuffer GetCommandList()
+	{
+		return static_cast<VkCommandBuffer>(static_cast<LLGI::CommandListVulkan*>(commandList)->GetCommandBuffer());
+	}
+
+	int GetSwapBufferCount()
+	{
+		return 3;
 	}
 
 	bool Initialize(const char* windowTitle, Utils::Vec2I windowSize);

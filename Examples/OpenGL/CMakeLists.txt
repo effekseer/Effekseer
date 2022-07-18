@@ -2,7 +2,7 @@
 
 project(Example_OpenGL)
 
-add_executable(Example_OpenGL main.cpp DeviceGLFW.cpp)
+add_executable(Example_OpenGL main.cpp DeviceGLFW.cpp DeviceGLFW.h)
 
 target_include_directories(
     ${PROJECT_NAME}
@@ -32,7 +32,7 @@ if(NOT WIN32)
     find_package(Threads REQUIRED)
     find_package(OpenGL REQUIRED)
     target_link_libraries(
-        Example_OpenGL
+        ${PROJECT_NAME}
         PRIVATE
         ${CMAKE_THREAD_LIBS_INIT}
         ${OPENGL_LIBRARIES}
@@ -46,7 +46,7 @@ if(APPLE)
     find_library(CORE_VIDEO_FRAMEWORK CoreVideo)
 
     target_link_libraries(
-        Example_OpenGL
+        ${PROJECT_NAME}
         PRIVATE
         ${COCOA_FRAMEWORK}
         ${IOKIT_FRAMEWORK}
@@ -61,7 +61,7 @@ if(UNIX AND NOT APPLE)
     include_directories(${X11_INCLUDE_DIR})
 
     target_link_libraries(
-        Example_OpenGL
+        ${PROJECT_NAME}
         PRIVATE
         Effekseer
         EffekseerRendererGL

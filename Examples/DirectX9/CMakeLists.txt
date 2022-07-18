@@ -2,7 +2,7 @@
 
 project(Example_DirectX9)
 
-add_executable(Example_DirectX9 main.cpp DeviceDX9.cpp)
+add_executable(Example_DirectX9 main.cpp DeviceDX9.cpp DeviceDX9.h)
 
 target_include_directories(
     ${PROJECT_NAME}
