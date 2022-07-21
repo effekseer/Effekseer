@@ -2,7 +2,7 @@
 
 #define USE_OPENAL 0
 
-#include <glfw/glfw3.h>
+#include <GLFW/glfw3.h>
 #include <EffekseerRendererGL.h>
 #if USE_OPENAL
 #include <EffekseerRendererAL.h>
@@ -14,6 +14,8 @@ class DeviceGLFW
 private:
 	GLFWwindow* glfwWindow = nullptr;
 
+	::EffekseerRendererGL::OpenGLDeviceType deviceType
+		= ::EffekseerRendererGL::OpenGLDeviceType::OpenGL3;
 	::EffekseerRendererGL::RendererRef efkRenderer;
 
 #if USE_OPENAL

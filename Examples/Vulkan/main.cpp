@@ -1,7 +1,6 @@
-﻿
+
 #include <stdio.h>
 #include <string>
-#include <windows.h>
 
 #include <Effekseer.h>
 #include "DeviceVulkan.h"
@@ -9,7 +8,7 @@
 int main(int argc, char** argv)
 {
 	DeviceVulkan device;
-	device.Initialize("DirectVulkan", Utils::Vec2I{1280, 720});
+	device.Initialize("Vulkan", Utils::Vec2I{1280, 720});
 
 	// Effekseer's objects are managed with smart pointers. When the variable runs out, it will be disposed automatically.
 	// Effekseerのオブジェクトはスマートポインタで管理される。変数がなくなると自動的に削除される。

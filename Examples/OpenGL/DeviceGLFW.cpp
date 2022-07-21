@@ -1,4 +1,4 @@
-﻿#include "DeviceGLFW.h"
+#include "DeviceGLFW.h"
 
 Utils::Vec2I DeviceGLFW::GetWindowSize() const
 {
@@ -17,12 +17,13 @@ bool DeviceGLFW::Initialize(const char* windowTitle, Utils::Vec2I windowSize)
 		return false;
 	}
 
-#if !_WIN32
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-#endif
+	if (deviceType == ::EffekseerRendererGL::OpenGLDeviceType::OpenGL3)
+	{
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	}
 
 	glfwWindow = glfwCreateWindow(windowSize.X, windowSize.Y, windowTitle, nullptr, nullptr);
 
@@ -75,7 +76,7 @@ void DeviceGLFW::SetupEffekseerModules(::Effekseer::ManagerRef efkManager)
 {
 	// Create a renderer of effects
 	// エフェクトのレンダラーの作成
-	efkRenderer = ::EffekseerRendererGL::Renderer::Create(8000);
+	efkRenderer = ::EffekseerRendererGL::Renderer::Create(8000, deviceType);
 
 	// Sprcify rendering modules
 	// 描画モジュールの設定
