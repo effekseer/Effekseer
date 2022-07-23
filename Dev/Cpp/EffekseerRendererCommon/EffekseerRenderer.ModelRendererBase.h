@@ -447,6 +447,8 @@ protected:
 		cutomData1Ptr = nullptr;
 		cutomData2Ptr = nullptr;
 
+		const auto materialGradientCount = static_cast<int32_t>(Effekseer::Min(materialRenderData->MaterialGradients.size(), Effekseer::UserGradientSlotMax));
+
 		GetInversedFlags(renderer, uvInversed, uvInversedBack);
 
 		std::array<float, 4> uvInversedMaterial;
@@ -499,7 +501,7 @@ protected:
 			vsOffset += (sizeof(float) * 4);
 		}
 
-		for (size_t i = 0; i < materialRenderData->MaterialGradients.size(); i++)
+		for (size_t i = 0; i < materialGradientCount; i++)
 		{
 			auto data = ToUniform(*materialRenderData->MaterialGradients[i]);
 			renderer->SetVertexBufferToShader(data.data(), sizeof(float) * 4 * 13, vsOffset);
@@ -578,7 +580,7 @@ protected:
 			psOffset += (sizeof(float) * 4);
 		}
 
-		for (size_t i = 0; i < materialRenderData->MaterialGradients.size(); i++)
+		for (int32_t i = 0; i < materialGradientCount; i++)
 		{
 			auto data = ToUniform(*materialRenderData->MaterialGradients[i]);
 			renderer->SetPixelBufferToShader(data.data(), sizeof(float) * 4 * 13, psOffset);
