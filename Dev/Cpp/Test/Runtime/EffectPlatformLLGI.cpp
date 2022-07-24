@@ -35,8 +35,8 @@ void EffectPlatformLLGI::CreateResources()
 	depthBuffer_ = graphics_->CreateDepthTexture(depthParam);
 	renderPass_ = graphics_->CreateRenderPass((LLGI::Texture**)&colorBuffer_, 1, depthBuffer_);
 
-	vb_ = graphics_->CreateBuffer(LLGI::BufferUsageType::Vertex, sizeof(SimpleVertex) * 4);
-	ib_ = graphics_->CreateBuffer(LLGI::BufferUsageType::Index, 2 * 6);
+	vb_ = graphics_->CreateBuffer(LLGI::BufferUsageType::Vertex | LLGI::BufferUsageType::MapWrite, sizeof(SimpleVertex) * 4);
+	ib_ = graphics_->CreateBuffer(LLGI::BufferUsageType::Index | LLGI::BufferUsageType::MapWrite, 2 * 6);
 	auto vb_buf = (SimpleVertex*)vb_->Lock();
 	vb_buf[0].Pos = LLGI::Vec3F(-1.0f, 1.0f, 0.5f);
 	vb_buf[1].Pos = LLGI::Vec3F(1.0f, 1.0f, 0.5f);
