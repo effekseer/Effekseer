@@ -609,15 +609,19 @@ struct ParameterRendererCommon
 
 		if (UVs[0].Type == UVAnimationType::Animation)
 		{
-			BasicParameter.EnableInterpolation = (UVs[0].Animation.InterpolationType != UVs[0].Animation.NONE);
-			BasicParameter.UVLoopType = UVs[0].Animation.LoopType;
-			BasicParameter.InterpolationType = UVs[0].Animation.InterpolationType;
-			BasicParameter.FlipbookDivideX = UVs[0].Animation.FrameCountX;
-			BasicParameter.FlipbookDivideY = UVs[0].Animation.FrameCountY;
+			BasicParameter.Flipbook.EnableInterpolation = (UVs[0].Animation.InterpolationType != UVs[0].Animation.NONE);
+			BasicParameter.Flipbook.UVLoopType = UVs[0].Animation.LoopType;
+			BasicParameter.Flipbook.InterpolationType = UVs[0].Animation.InterpolationType;
+			BasicParameter.Flipbook.FlipbookDivideX = UVs[0].Animation.FrameCountX;
+			BasicParameter.Flipbook.FlipbookDivideY = UVs[0].Animation.FrameCountY;
+			BasicParameter.Flipbook.OneSize[0] = UVs[0].Animation.Position.w;
+			BasicParameter.Flipbook.OneSize[1] = UVs[0].Animation.Position.h;
+			BasicParameter.Flipbook.Offset[0] = UVs[0].Animation.Position.x;
+			BasicParameter.Flipbook.Offset[1] = UVs[0].Animation.Position.y;
 		}
 		else
 		{
-			BasicParameter.EnableInterpolation = false;
+			BasicParameter.Flipbook.EnableInterpolation = false;
 		}
 
 		BasicParameter.EmissiveScaling = EmissiveScaling;
