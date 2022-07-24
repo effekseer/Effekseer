@@ -21,7 +21,8 @@ cbuffer VS_ConstantBuffer : register(b0)
 	float4 fBlendUVDistortionUV[__INST__];
 #endif
 
-	float4 fFlipbookParameter; // x:enable, y:loopType, z:divideX, w:divideY
+	float4 flipbookParameter1; // x:enable, y:loopType, z:divideX, w:divideY
+	float4 flipbookParameter2; // xy:onesize, zw:offset
 
 #ifdef DISABLE_INSTANCE
 	float4 fFlipbookIndexAndNextRate;

@@ -28,7 +28,7 @@ struct ModelRendererVertexConstantBuffer
 	Effekseer::Matrix44 ModelMatrix[MODEL_COUNT];
 	float ModelUV[MODEL_COUNT][4];
 
-	void SetModelFlipbookParameter(float enableInterpolation, float loopType, float divideX, float divideY)
+	void SetModelFlipbookParameter(const Effekseer::NodeRendererFlipbookParameter& param)
 	{
 	}
 
@@ -85,31 +85,16 @@ struct ModelRendererAdvancedVertexConstantBuffer
 
 	float ModelBlendUVDistortionUV[MODEL_COUNT][4];
 
-	struct
-	{
-		union {
-			float Buffer[4];
-
-			struct
-			{
-				float EnableInterpolation;
-				float LoopType;
-				float DivideX;
-				float DivideY;
-			};
-		};
-	} ModelFlipbookParameter;
+	FlipbookVertexBuffer ModelFlipbookParameter;
 
 	float ModelFlipbookIndexAndNextRate[MODEL_COUNT][4];
 
 	float ModelAlphaThreshold[MODEL_COUNT][4];
 
-	void SetModelFlipbookParameter(float enableInterpolation, float loopType, float divideX, float divideY)
+	void SetModelFlipbookParameter(const Effekseer::NodeRendererFlipbookParameter& param)
 	{
-		ModelFlipbookParameter.EnableInterpolation = enableInterpolation;
-		ModelFlipbookParameter.LoopType = loopType;
-		ModelFlipbookParameter.DivideX = divideX;
-		ModelFlipbookParameter.DivideY = divideY;
+		const auto state = ToState(param);
+		ModelFlipbookParameter = ToVertexBuffer(state);
 	}
 
 	void SetModelAlphaUV(int32_t index, float x, float y, float w, float h)
@@ -183,7 +168,7 @@ struct ModelRendererMaterialVertexConstantBuffer
 	float LightAmbientColor[4];
 	float UVInversed[4];
 
-	void SetModelFlipbookParameter(float enableInterpolation, float loopType, float divideX, float divideY)
+	void SetModelFlipbookParameter(const Effekseer::NodeRendererFlipbookParameter& param)
 	{
 	}
 
@@ -614,8 +599,8 @@ protected:
 			pcb->UVInversedBack[0] = uvInversedBack[0];
 			pcb->UVInversedBack[1] = uvInversedBack[1];
 
-			pcb->FlipbookParam.EnableInterpolation = static_cast<float>(param.BasicParameterPtr->EnableInterpolation);
-			pcb->FlipbookParam.InterpolationType = static_cast<float>(param.BasicParameterPtr->InterpolationType);
+			pcb->FlipbookParam.EnableInterpolation = static_cast<float>(param.BasicParameterPtr->Flipbook.EnableInterpolation);
+			pcb->FlipbookParam.InterpolationType = static_cast<float>(param.BasicParameterPtr->Flipbook.InterpolationType);
 
 			pcb->UVDistortionParam.Intensity = param.BasicParameterPtr->UVDistortionIntensity;
 			pcb->UVDistortionParam.BlendIntensity = param.BasicParameterPtr->BlendUVDistortionIntensity;
@@ -665,7 +650,7 @@ protected:
 
 			if (REQUIRE_ADVANCED_DATA)
 			{
-				pcb->SetModelFlipbookParameter(param.BasicParameterPtr->EnableInterpolation, static_cast<float>(param.BasicParameterPtr->InterpolationType));
+				pcb->SetModelFlipbookParameter(param.BasicParameterPtr->Flipbook.EnableInterpolation, static_cast<float>(param.BasicParameterPtr->Flipbook.InterpolationType));
 				pcb->SetModelUVDistortionParameter(param.BasicParameterPtr->UVDistortionIntensity, param.BasicParameterPtr->BlendUVDistortionIntensity, {uvInversed[0], uvInversed[1]});
 				pcb->SetModelBlendTextureParameter(static_cast<float>(param.BasicParameterPtr->TextureBlendType));
 
@@ -711,10 +696,7 @@ protected:
 
 		vcb->CameraMatrix = renderer->GetCameraProjectionMatrix();
 
-		vcb->SetModelFlipbookParameter(static_cast<float>(param.BasicParameterPtr->EnableInterpolation),
-									   static_cast<float>(param.BasicParameterPtr->UVLoopType),
-									   static_cast<float>(param.BasicParameterPtr->FlipbookDivideX),
-									   static_cast<float>(param.BasicParameterPtr->FlipbookDivideY));
+		vcb->SetModelFlipbookParameter(param.BasicParameterPtr->Flipbook);
 	}
 
 public:

@@ -970,6 +970,21 @@ struct NodeRendererDepthParameter
 };
 
 /**
+	@brief	\~english	Flipbook parameter parameters which is passed into a renderer
+			\~japanese	レンダラーに渡されるフリップブックに関するパラメーター
+*/
+struct NodeRendererFlipbookParameter
+{
+	bool EnableInterpolation = false;
+	int32_t UVLoopType = 0;
+	int32_t InterpolationType = 0;
+	int32_t FlipbookDivideX = 1;
+	int32_t FlipbookDivideY = 1;
+	std::array<float, 2> OneSize = {0, 0};
+	std::array<float, 2> Offset = {0, 0};
+};
+
+/**
 	@brief	\~english	Common parameters which is passed into a renderer
 			\~japanese	レンダラーに渡される共通に関するパラメーター
 */
@@ -986,17 +1001,13 @@ struct NodeRendererBasicParameter
 	std::array<TextureFilterType, TextureSlotMax> TextureFilters;
 	std::array<TextureWrapType, TextureSlotMax> TextureWraps;
 
+	NodeRendererFlipbookParameter Flipbook;
+
 	float UVDistortionIntensity = 1.0f;
 
 	int32_t TextureBlendType = -1;
 
 	float BlendUVDistortionIntensity = 1.0f;
-
-	bool EnableInterpolation = false;
-	int32_t UVLoopType = 0;
-	int32_t InterpolationType = 0;
-	int32_t FlipbookDivideX = 1;
-	int32_t FlipbookDivideY = 1;
 
 	float EmissiveScaling = 1.0f;
 
@@ -1032,7 +1043,7 @@ struct NodeRendererBasicParameter
 			}
 		}
 
-		if (EnableInterpolation)
+		if (Flipbook.EnableInterpolation)
 			return true;
 
 		if (TextureBlendType != -1)
