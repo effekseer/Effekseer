@@ -68,7 +68,8 @@ void AddModelVertexUniformLayout(Effekseer::CustomVector<Effekseer::Backend::Uni
 		storeVector("CBVS0.fBlendUV", N);
 		storeVector("CBVS0.fBlendAlphaUV", N);
 		storeVector("CBVS0.fBlendUVDistortionUV", N);
-		storeVector("CBVS0.fFlipbookParameter");
+		storeVector("CBVS0.flipbookParameter1");
+		storeVector("CBVS0.flipbookParameter2");
 		storeVector("CBVS0.fFlipbookIndexAndNextRate", N);
 		storeVector("CBVS0.fModelAlphaThreshold", N);
 	}

@@ -1252,7 +1252,8 @@ void AddVertexUniformLayout(Effekseer::CustomVector<Effekseer::Backend::UniformL
 	storeMatrix("CBVS0.mCamera");
 	storeMatrix("CBVS0.mCameraProj");
 	storeVector("CBVS0.mUVInversed");
-	storeVector("CBVS0.fFlipbookParameter");
+	storeVector("CBVS0.flipbookParameter1");
+	storeVector("CBVS0.flipbookParameter2");
 }
 
 void AddPixelUniformLayout(Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>& uniformLayout)
