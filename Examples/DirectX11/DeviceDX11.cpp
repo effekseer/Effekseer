@@ -169,7 +169,15 @@ void DeviceDX11::PresentDevice()
 
 bool DeviceDX11::NewFrame()
 {
-	return window->OnNewFrame();
+	bool result = window->OnNewFrame();
+
+	bool windowActive = GetActiveWindow() == window->GetNativePtr(0);
+	for (int key = 0; key < 256; key++)
+	{
+		Utils::Input::UpdateKeyState(key, windowActive && (GetAsyncKeyState(key) & 0x01) != 0);
+	}
+
+	return result;
 }
 
 void DeviceDX11::SetupEffekseerModules(::Effekseer::ManagerRef efkManager)

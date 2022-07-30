@@ -6,6 +6,7 @@
 #include <EffekseerRendererDX11.h>
 #include <EffekseerSoundXAudio2.h>
 #include "../Utils/Window.h"
+#include "../Utils/Input.h"
 
 class DeviceDX11
 {

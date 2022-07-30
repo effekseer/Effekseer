@@ -64,6 +64,11 @@ bool DeviceGLFW::NewFrame()
 
 	glfwPollEvents();
 
+	for (int key = 0; key < 256; key++)
+	{
+		Utils::Input::UpdateKeyState(key, glfwGetKey(glfwWindow, key) != GLFW_RELEASE);
+	}
+
 	return true;
 }
 

@@ -7,7 +7,9 @@
 #if USE_OPENAL
 #include <EffekseerRendererAL.h>
 #endif
+
 #include "../Utils/Window.h"
+#include "../Utils/Input.h"
 
 class DeviceGLFW
 {
