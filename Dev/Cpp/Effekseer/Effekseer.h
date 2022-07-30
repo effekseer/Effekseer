@@ -3610,13 +3610,7 @@ struct EffectBasicRenderParameter
 	int32_t BlendUVDistortionTextureIndex;
 	TextureWrapType BlendUVDistortionTexWrapType;
 
-	struct FlipbookParameters
-	{
-		bool Enable;
-		int32_t LoopType;
-		int32_t DivideX;
-		int32_t DivideY;
-	} FlipbookParams;
+	NodeRendererFlipbookParameter FlipbookParams;
 
 	RendererMaterialType MaterialType;
 
@@ -3711,7 +3705,7 @@ public:
 	/**
 	@brief	共通描画パラメーターを取得する。
 	*/
-	virtual EffectBasicRenderParameter GetBasicRenderParameter() = 0;
+	virtual EffectBasicRenderParameter GetBasicRenderParameter() const = 0;
 
 	/**
 	@brief	共通描画パラメーターを設定する。
