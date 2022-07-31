@@ -14,7 +14,6 @@ if (MSVC)
     option(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC runtime library DLL" OFF)
 endif()
 
-option(BUILD_GL "Build OpenGL" ON)
 option(BUILD_VIEWER "Build viewer" OFF)
 option(BUILD_EDITOR "Build editor" OFF)
 option(BUILD_TEST "Build test" OFF)
@@ -22,9 +21,12 @@ option(BUILD_EXAMPLES "Build examples" ON)
 option(BUILD_UNITYPLUGIN "is built as unity plugin" OFF)
 option(BUILD_UNITYPLUGIN_FOR_IOS "is built as unity plugin for ios" OFF)
 option(FROM_CI "from ci" OFF)
-option(SANITIZE_ENABLED "is sanitizer enabled" OFF)
 option(USE_LIBPNG_LOADER "use libpng in an internal loader (if it builds viewer except windows, it becomes on)" OFF)
 
+option(SANITIZE_ENABLED "is sanitizer enabled" OFF)
+option(NETWORK_ENABLED "Whether a network module is enabled", ON)
+
+option(BUILD_GL "Build OpenGL" ON)
 option(BUILD_VULKAN "Build vulkan modules" OFF)
 
 if (WIN32)
@@ -32,9 +34,10 @@ if (WIN32)
     option(BUILD_DX11 "Build DirectX11 modules" ON)
     option(BUILD_DX12 "Build DirectX12 modules" ON)
 else()
+    option(BUILD_DX9 "Build DirectX9 modules" OFF)
+    option(BUILD_DX11 "Build DirectX11 modules" OFF)
     option(BUILD_DX12 "Build DirectX12 modules" OFF)
 endif()
-
 
 if (APPLE)
     option(BUILD_METAL "Build metal modules" ON)

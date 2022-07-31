@@ -96,6 +96,10 @@ if(CLANG_FORMAT_ENABLED)
     clang_format(Effekseer)
 endif()
 
+if(NETWORK_ENABLED)
+    add_compile_definitions(Effekseer PUBLIC __EFFEKSEER__NETWORK__ENABLED__)
+endif()
+
 if(BUILD_WITH_EASY_PROFILER)
     target_compile_definitions(Effekseer PUBLIC BUILD_WITH_EASY_PROFILER)
     target_include_directories(Effekseer PUBLIC $<BUILD_INTERFACE:${EFK_PROFILER_INCLUDES}>)

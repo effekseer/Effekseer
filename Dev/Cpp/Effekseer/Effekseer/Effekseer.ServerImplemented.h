@@ -2,7 +2,7 @@
 #ifndef __EFFEKSEER_SERVER_IMPLEMENTED_H__
 #define __EFFEKSEER_SERVER_IMPLEMENTED_H__
 
-#if !(defined(__EFFEKSEER_NETWORK_DISABLED__))
+#if (defined(__EFFEKSEER_NETWORK_ENABLED__))
 #if !(defined(_PSVITA) || defined(_SWITCH) || defined(_XBOXONE))
 
 #include "Effekseer.Base.h"
