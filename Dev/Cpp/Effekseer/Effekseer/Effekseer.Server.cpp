@@ -1,8 +1,8 @@
 ﻿
-#if !(defined(__EFFEKSEER_NETWORK_DISABLED__))
-#if !(defined(_PSVITA) || defined(_XBOXONE))
-
 #include "Effekseer.Server.h"
+
+#if (defined(__EFFEKSEER_NETWORK_ENABLED__))
+
 #include "Effekseer.Effect.h"
 #include "Effekseer.ServerImplemented.h"
 #include <thread>
@@ -77,7 +77,8 @@ ServerImplemented::InternalClient::InternalClient(EfkSocket socket_, ServerImple
 	, m_server(server)
 	, m_active(true)
 {
-	m_threadRecv = std::thread([this]() { RecvAsync(this); });
+	m_threadRecv = std::thread([this]()
+							   { RecvAsync(this); });
 }
 
 ServerImplemented::InternalClient::~InternalClient()
@@ -197,7 +198,8 @@ bool ServerImplemented::Start(uint16_t port)
 	m_socket = socket_;
 	m_port = port;
 
-	m_thread = std::thread([this]() { AcceptAsync(this); });
+	m_thread = std::thread([this]()
+						   { AcceptAsync(this); });
 
 	EffekseerPrintDebug("Server : Start\n");
 
@@ -390,5 +392,16 @@ void ServerImplemented::SetMaterialPath(const char16_t* materialPath)
 
 } // namespace Effekseer
 
-#endif // #if !( defined(_PSVITA) || defined(_XBOXONE) )
+#else
+
+namespace Effekseer
+{
+
+ServerRef Server::Create()
+{
+	return nullptr;
+}
+
+} // namespace Effekseer
+
 #endif

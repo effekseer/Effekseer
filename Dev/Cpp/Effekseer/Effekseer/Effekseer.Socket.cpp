@@ -1,5 +1,5 @@
 ﻿
-#if !(defined(__EFFEKSEER_NETWORK_DISABLED__))
+#if (defined(__EFFEKSEER_NETWORK_ENABLED__))
 #if !(defined(_PSVITA) || defined(_XBOXONE))
 
 #include "Effekseer.Socket.h"
