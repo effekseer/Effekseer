@@ -21,17 +21,20 @@ public enum ColorEditFlags {
   NoLabel = 1 << 7,
   NoSidePreview = 1 << 8,
   NoDragDrop = 1 << 9,
+  NoBorder = 1 << 10,
   AlphaBar = 1 << 16,
   AlphaPreview = 1 << 17,
   AlphaPreviewHalf = 1 << 18,
   HDR = 1 << 19,
-  RGB = 1 << 20,
-  HSV = 1 << 21,
-  HEX = 1 << 22,
+  DisplayRGB = 1 << 20,
+  DisplayHSV = 1 << 21,
+  DisplayHex = 1 << 22,
   Uint8 = 1 << 23,
   Float = 1 << 24,
   PickerHueBar = 1 << 25,
-  PickerHueWheel = 1 << 26
+  PickerHueWheel = 1 << 26,
+  InputRGB = 1 << 27,
+  InputHSV = 1 << 28
 }
 
 }

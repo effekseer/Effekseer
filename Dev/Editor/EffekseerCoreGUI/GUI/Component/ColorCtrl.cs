@@ -82,7 +82,9 @@ namespace Effekseer.GUI.Component
 
 			valueChangingProp.Enable(binding);
 
-			var colorSpace = binding.ColorSpace == Data.ColorSpace.RGBA ? swig.ColorEditFlags.RGB : swig.ColorEditFlags.HSV;
+			var colorSpace = (binding.ColorSpace == Data.ColorSpace.RGBA)
+				? (swig.ColorEditFlags.DisplayRGB | swig.ColorEditFlags.InputRGB)
+				: (swig.ColorEditFlags.DisplayHSV | swig.ColorEditFlags.InputHSV);
 
 			if (Manager.NativeManager.ColorEdit4(id, internalValue, colorSpace))
 			{

@@ -133,7 +133,9 @@ namespace Effekseer.GUI.Component
 
 			isPopupShown = false;
 
-			var colorSpace = binding.ColorSpace == Data.ColorSpace.RGBA ? swig.ColorEditFlags.RGB : swig.ColorEditFlags.HSV;
+			var colorSpace = (binding.ColorSpace == Data.ColorSpace.RGBA)
+				? (swig.ColorEditFlags.DisplayRGB | swig.ColorEditFlags.InputRGB)
+				: (swig.ColorEditFlags.DisplayHSV | swig.ColorEditFlags.InputHSV);
 
 			Manager.NativeManager.PushItemWidth(Manager.NativeManager.GetColumnWidth() - 48 * Manager.DpiScale);
 

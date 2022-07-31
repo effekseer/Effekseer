@@ -67,41 +67,32 @@ enum class WindowFlags : int32_t
 // Enumeration for ColorEdit3() / ColorEdit4() / ColorPicker3() / ColorPicker4() / ColorButton()
 enum class ColorEditFlags : int32_t
 {
-	None = 0,
-	NoAlpha =
-		1 << 1,			//              // ColorEdit, ColorPicker, ColorButton: ignore Alpha component (read 3 components from the input pointer).
-	NoPicker = 1 << 2,	//              // ColorEdit: disable picker when clicking on colored square.
-	NoOptions = 1 << 3, //              // ColorEdit: disable toggling options menu when right-clicking on inputs/small preview.
-	NoSmallPreview =
-		1 << 4,				//              // ColorEdit, ColorPicker: disable colored square preview next to the inputs. (e.g. to show only the inputs)
-	NoInputs = 1 << 5,		//              // ColorEdit, ColorPicker: disable inputs sliders/text widgets (e.g. to show only the small preview
-							//              colored square).
-	NoTooltip = 1 << 6,		//              // ColorEdit, ColorPicker, ColorButton: disable tooltip when hovering the preview.
-	NoLabel = 1 << 7,		//              // ColorEdit, ColorPicker: disable display of inline text label (the label is still forwarded to the
-							//              tooltip and picker).
-	NoSidePreview = 1 << 8, //              // ColorPicker: disable bigger color preview on right side of the picker, use small colored
-							//              square preview instead.
-	NoDragDrop = 1 << 9,	//              // ColorEdit: disable drag and drop target. ColorButton: disable drag and drop source.
+    None            = 0,
+    NoAlpha         = 1 << 1,   //              // ColorEdit, ColorPicker, ColorButton: ignore Alpha component (will only read 3 components from the input pointer).
+    NoPicker        = 1 << 2,   //              // ColorEdit: disable picker when clicking on color square.
+    NoOptions       = 1 << 3,   //              // ColorEdit: disable toggling options menu when right-clicking on inputs/small preview.
+    NoSmallPreview  = 1 << 4,   //              // ColorEdit, ColorPicker: disable color square preview next to the inputs. (e.g. to show only the inputs)
+    NoInputs        = 1 << 5,   //              // ColorEdit, ColorPicker: disable inputs sliders/text widgets (e.g. to show only the small preview color square).
+    NoTooltip       = 1 << 6,   //              // ColorEdit, ColorPicker, ColorButton: disable tooltip when hovering the preview.
+    NoLabel         = 1 << 7,   //              // ColorEdit, ColorPicker: disable display of inline text label (the label is still forwarded to the tooltip and picker).
+    NoSidePreview   = 1 << 8,   //              // ColorPicker: disable bigger color preview on right side of the picker, use small color square preview instead.
+    NoDragDrop      = 1 << 9,   //              // ColorEdit: disable drag and drop target. ColorButton: disable drag and drop source.
+    NoBorder        = 1 << 10,  //              // ColorButton: disable border (which is enforced by default)
 
-	// User Options (right-click on widget to change some of them). You can set application defaults using SetColorEditOptions(). The idea
-	// is that you probably don't want to override them in most of your calls, let the user choose and/or call SetColorEditOptions() during
-	// startup.
-	AlphaBar = 1 << 16,		//              // ColorEdit, ColorPicker: show vertical alpha bar/gradient in picker.
-	AlphaPreview = 1 << 17, //              // ColorEdit, ColorPicker, ColorButton: display preview as a transparent color over a
-							//              checkerboard, instead of opaque.
-	AlphaPreviewHalf =
-		1 << 18,			  //              // ColorEdit, ColorPicker, ColorButton: display half opaque / half checkerboard, instead of opaque.
-	HDR = 1 << 19,			  //              // (WIP) ColorEdit: Currently only disable 0.0f..1.0f limits in RGBA edition (note: you probably want to
-							  //              use ImGuiColorEditFlags_Float flag as well).
-	RGB = 1 << 20,			  // [Inputs]     // ColorEdit: choose one among RGB/HSV/HEX. ColorPicker: choose any combination using RGB/HSV/HEX.
-	HSV = 1 << 21,			  // [Inputs]     // "
-	HEX = 1 << 22,			  // [Inputs]     // "
-	Uint8 = 1 << 23,		  // [DataType]   // ColorEdit, ColorPicker, ColorButton: _display_ values formatted as 0..255.
-	Float = 1 << 24,		  // [DataType]   // ColorEdit, ColorPicker, ColorButton: _display_ values formatted as 0.0f..1.0f floats instead of
-							  // 0..255 integers. No round-trip of value via integers.
-	PickerHueBar = 1 << 25,	  // [PickerMode] // ColorPicker: bar for Hue, rectangle for Sat/Value.
-	PickerHueWheel = 1 << 26, // [PickerMode] // ColorPicker: wheel for Hue, triangle for Sat/Value.
-
+    // User Options (right-click on widget to change some of them).
+    AlphaBar        = 1 << 16,  //              // ColorEdit, ColorPicker: show vertical alpha bar/gradient in picker.
+    AlphaPreview    = 1 << 17,  //              // ColorEdit, ColorPicker, ColorButton: display preview as a transparent color over a checkerboard, instead of opaque.
+    AlphaPreviewHalf= 1 << 18,  //              // ColorEdit, ColorPicker, ColorButton: display half opaque / half checkerboard, instead of opaque.
+    HDR             = 1 << 19,  //              // (WIP) ColorEdit: Currently only disable 0.0f..1.0f limits in RGBA edition (note: you probably want to use ImGuiColorEditFlags_Float flag as well).
+    DisplayRGB      = 1 << 20,  // [Display]    // ColorEdit: override _display_ type among RGB/HSV/Hex. ColorPicker: select any combination using one or more of RGB/HSV/Hex.
+    DisplayHSV      = 1 << 21,  // [Display]    // "
+    DisplayHex      = 1 << 22,  // [Display]    // "
+    Uint8           = 1 << 23,  // [DataType]   // ColorEdit, ColorPicker, ColorButton: _display_ values formatted as 0..255.
+    Float           = 1 << 24,  // [DataType]   // ColorEdit, ColorPicker, ColorButton: _display_ values formatted as 0.0f..1.0f floats instead of 0..255 integers. No round-trip of value via integers.
+    PickerHueBar    = 1 << 25,  // [Picker]     // ColorPicker: bar for Hue, rectangle for Sat/Value.
+    PickerHueWheel  = 1 << 26,  // [Picker]     // ColorPicker: wheel for Hue, triangle for Sat/Value.
+    InputRGB        = 1 << 27,  // [Input]      // ColorEdit, ColorPicker: input and output data in RGB format.
+    InputHSV        = 1 << 28,  // [Input]      // ColorEdit, ColorPicker: input and output data in HSV format.
 };
 
 enum class Cond : int32_t
