@@ -24,7 +24,7 @@ option(FROM_CI "from ci" OFF)
 option(USE_LIBPNG_LOADER "use libpng in an internal loader (if it builds viewer except windows, it becomes on)" OFF)
 
 option(SANITIZE_ENABLED "is sanitizer enabled" OFF)
-option(NETWORK_ENABLED "Whether a network module is enabled", ON)
+option(NETWORK_ENABLED "Whether a network module is enabled" ON)
 
 option(BUILD_GL "Build OpenGL" ON)
 option(BUILD_VULKAN "Build vulkan modules" OFF)
