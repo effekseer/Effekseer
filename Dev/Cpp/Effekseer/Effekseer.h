@@ -4935,6 +4935,7 @@ public:
 #ifndef __EFFEKSEER_SERVER_H__
 #define __EFFEKSEER_SERVER_H__
 
+
 namespace Effekseer
 {
 
@@ -5029,6 +5030,7 @@ public:
 
 #ifndef __EFFEKSEER_CLIENT_H__
 #define __EFFEKSEER_CLIENT_H__
+
 
 namespace Effekseer
 {

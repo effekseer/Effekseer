@@ -77,7 +77,8 @@ ServerImplemented::InternalClient::InternalClient(EfkSocket socket_, ServerImple
 	, m_server(server)
 	, m_active(true)
 {
-	m_threadRecv = std::thread([this]() { RecvAsync(this); });
+	m_threadRecv = std::thread([this]()
+							   { RecvAsync(this); });
 }
 
 ServerImplemented::InternalClient::~InternalClient()
@@ -197,7 +198,8 @@ bool ServerImplemented::Start(uint16_t port)
 	m_socket = socket_;
 	m_port = port;
 
-	m_thread = std::thread([this]() { AcceptAsync(this); });
+	m_thread = std::thread([this]()
+						   { AcceptAsync(this); });
 
 	EffekseerPrintDebug("Server : Start\n");
 
@@ -392,9 +394,14 @@ void ServerImplemented::SetMaterialPath(const char16_t* materialPath)
 
 #else
 
+namespace Effekseer
+{
+
 ServerRef Server::Create()
 {
 	return nullptr;
 }
+
+} // namespace Effekseer
 
 #endif

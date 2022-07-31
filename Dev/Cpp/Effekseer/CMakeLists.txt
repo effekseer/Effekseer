@@ -97,7 +97,7 @@ if(CLANG_FORMAT_ENABLED)
 endif()
 
 if(NETWORK_ENABLED)
-    add_compile_definitions(Effekseer PUBLIC __EFFEKSEER__NETWORK__ENABLED__)
+    target_compile_definitions(Effekseer PUBLIC __EFFEKSEER_NETWORK_ENABLED__)
 endif()
 
 if(BUILD_WITH_EASY_PROFILER)
