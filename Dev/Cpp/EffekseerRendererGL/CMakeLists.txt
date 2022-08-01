@@ -28,6 +28,8 @@ file(GLOB_RECURSE LOCAL_HEADERS_GL *.h)
 file(GLOB_RECURSE LOCAL_SOURCES_GL *.cpp)
 list(APPEND LOCAL_HEADERS_GL ../EffekseerMaterialCompiler/OpenGL/EffekseerMaterialCompilerGL.h)
 list(APPEND LOCAL_SOURCES_GL ../EffekseerMaterialCompiler/OpenGL/EffekseerMaterialCompilerGL.cpp)
+list(APPEND LOCAL_SOURCES_GL ../EffekseerMaterialCompiler/GLSLGenerator/ShaderGenerator.h)
+list(APPEND LOCAL_SOURCES_GL ../EffekseerMaterialCompiler/GLSLGenerator/ShaderGenerator.cpp)
 
 FilterFolder("${LOCAL_HEADERS_GL}")
 FilterFolder("${LOCAL_SOURCES_GL}")

@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "../GLSL/GLSL.h"
+#include "../GLSLGenerator/ShaderGenerator.h"
 
 namespace Effekseer
 {
