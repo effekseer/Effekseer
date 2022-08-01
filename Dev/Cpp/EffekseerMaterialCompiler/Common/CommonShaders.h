@@ -19,8 +19,8 @@ struct Gradient
 
 float LinearStep(float v0, float v1, float x)
 {
-    float t = (x - v0) / (v1 - v0);
-    return clamp(t, 0.0, 1.0);
+	float t = (x - v0) / (v1 - v0);
+	return clamp(t, 0.0, 1.0);
 }
 
 float4 SampleGradient(Gradient gradient, float t)
