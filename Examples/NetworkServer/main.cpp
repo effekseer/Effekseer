@@ -6,7 +6,6 @@
 
 #include <stdio.h>
 #include <string>
-#include <windows.h>
 
 #include <Effekseer.h>
 

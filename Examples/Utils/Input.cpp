@@ -1,9 +1,4 @@
-#include "Window.h"
-
-#if defined(_WIN32)
-#include "Windows/Window.h"
 #include "Input.h"
-#endif
 
 namespace Utils
 {

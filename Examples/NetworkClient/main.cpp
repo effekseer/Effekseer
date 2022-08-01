@@ -1,11 +1,8 @@
 ﻿
 #include <stdio.h>
-#include <string>
-#include <windows.h>
 
 #include <Effekseer.h>
 #include <EffekseerRendererGL.h>
-#include "../Utils/Windows/Window.h"
 #include "../OpenGL/DeviceGLFW.h"
 
 int main(int argc, char** argv)
