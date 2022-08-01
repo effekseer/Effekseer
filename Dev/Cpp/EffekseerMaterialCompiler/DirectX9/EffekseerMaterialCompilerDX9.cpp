@@ -1,5 +1,5 @@
 #include "EffekseerMaterialCompilerDX9.h"
-#include "../DirectX/ShaderGenerator.h"
+#include "../HLSLGenerator/ShaderGenerator.h"
 
 #include <d3d11.h>
 #include <d3d9.h>
@@ -7,10 +7,6 @@
 #include <iostream>
 
 #pragma comment(lib, "d3dcompiler.lib")
-
-#undef min
-
-#include "../HLSL/HLSL.h"
 
 namespace Effekseer
 {
@@ -193,7 +189,8 @@ CompiledMaterialBinary* MaterialCompilerDX9::Compile(MaterialFile* materialFile,
 {
 	auto binary = new CompiledMaterialBinaryDX9();
 
-	auto convertToVectorVS = [](const std::string& str) -> std::vector<uint8_t> {
+	auto convertToVectorVS = [](const std::string& str) -> std::vector<uint8_t>
+	{
 		std::vector<uint8_t> ret;
 
 		std::string log;
@@ -217,7 +214,8 @@ CompiledMaterialBinary* MaterialCompilerDX9::Compile(MaterialFile* materialFile,
 		return ret;
 	};
 
-	auto convertToVectorPS = [](const std::string& str) -> std::vector<uint8_t> {
+	auto convertToVectorPS = [](const std::string& str) -> std::vector<uint8_t>
+	{
 		std::vector<uint8_t> ret;
 
 		std::string log;
@@ -241,24 +239,9 @@ CompiledMaterialBinary* MaterialCompilerDX9::Compile(MaterialFile* materialFile,
 		return ret;
 	};
 
-	auto saveBinary = [&materialFile, &binary, &convertToVectorVS, &convertToVectorPS, &maximumUniformCount, &maximumTextureCount](MaterialShaderType type) {
-		auto generator = DirectX::ShaderGenerator(HLSL::GetMaterialCommonDefine(HLSL::ShaderType::DirectX9).c_str(),
-												  HLSL::material_common_functions,
-												  HLSL::material_common_vs_functions,
-												  HLSL::material_sprite_vs_pre,
-												  HLSL::material_sprite_vs_pre_simple,
-												  HLSL::GetModelVS_Pre(HLSL::ShaderType::DirectX9).c_str(),
-												  HLSL::material_sprite_vs_suf1,
-												  HLSL::material_sprite_vs_suf1_simple,
-												  HLSL::model_vs_suf1,
-												  HLSL::material_sprite_vs_suf2,
-												  HLSL::model_vs_suf2,
-												  HLSL::GetMaterialPS_Pre(HLSL::ShaderType::DirectX9).c_str(),
-												  HLSL::GetMaterialPS_Suf1(HLSL::ShaderType::DirectX9).c_str(),
-												  HLSL::g_material_ps_suf2_lit,
-												  HLSL::g_material_ps_suf2_unlit,
-												  HLSL::GetMaterialPS_Suf2_Refraction(HLSL::ShaderType::DirectX9).c_str(),
-												  DirectX::ShaderGeneratorTarget::DirectX9);
+	auto saveBinary = [&materialFile, &binary, &convertToVectorVS, &convertToVectorPS, &maximumUniformCount, &maximumTextureCount](MaterialShaderType type)
+	{
+		auto generator = DirectX::ShaderGenerator(DirectX::ShaderGeneratorTarget::DirectX9);
 
 		auto shader = generator.GenerateShader(materialFile, type, maximumUniformCount, maximumTextureCount, 0, DX9_ModelRendererInstanceCount);
 

@@ -25,6 +25,8 @@ file(GLOB_RECURSE LOCAL_HEADERS_DX11 *.h)
 file(GLOB_RECURSE LOCAL_SOURCES_DX11 *.cpp)
 list(APPEND LOCAL_HEADERS_DX11 ../EffekseerMaterialCompiler/DirectX11/EffekseerMaterialCompilerDX11.h)
 list(APPEND LOCAL_SOURCES_DX11 ../EffekseerMaterialCompiler/DirectX11/EffekseerMaterialCompilerDX11.cpp)
+list(APPEND LOCAL_SOURCES_DX11 ../EffekseerMaterialCompiler/HLSLGenerator/ShaderGenerator.h)
+list(APPEND LOCAL_SOURCES_DX11 ../EffekseerMaterialCompiler/HLSLGenerator/ShaderGenerator.cpp)
 
 FilterFolder("${LOCAL_HEADERS_DX11}")
 FilterFolder("${LOCAL_SOURCES_DX11}")

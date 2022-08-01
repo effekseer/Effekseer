@@ -1,5 +1,12 @@
-
 # OpenGL (OpenGL is a code as binary)
+
+add_library(
+    EffekseerMaterialCompilerGLSLGenerator
+    STATIC
+    GLSLGenerator/ShaderGenerator.h
+    GLSLGenerator/ShaderGenerator.cpp
+)
+set_property(TARGET EffekseerMaterialCompilerGLSLGenerator PROPERTY FOLDER Libraries) 
 
 add_library(
     EffekseerMaterialCompilerGL
@@ -12,6 +19,7 @@ target_link_libraries(
     EffekseerMaterialCompilerGL
     PRIVATE 
     Effekseer
+    EffekseerMaterialCompilerGLSLGenerator
 )
 
 target_compile_definitions(EffekseerMaterialCompilerGL PRIVATE __SHARED_OBJECT__=1)
@@ -79,6 +87,16 @@ set_property(TARGET EffekseerMaterialCompilerMetal PROPERTY FOLDER Libraries)
 
 if(WIN32)
     add_library(
+        EffekseerMaterialCompilerHLSLGenerator
+        STATIC
+        HLSLGenerator/ShaderGenerator.h
+        HLSLGenerator/ShaderGenerator.cpp
+    )
+    set_property(TARGET EffekseerMaterialCompilerHLSLGenerator PROPERTY FOLDER Libraries) 
+endif()
+
+if(WIN32)
+    add_library(
         EffekseerMaterialCompilerDX11
         SHARED
         DirectX11/EffekseerMaterialCompilerDX11.h
@@ -89,6 +107,7 @@ if(WIN32)
         EffekseerMaterialCompilerDX11
         PRIVATE 
         Effekseer
+        EffekseerMaterialCompilerHLSLGenerator
     )
 
     target_compile_definitions(EffekseerMaterialCompilerDX11 PRIVATE __SHARED_OBJECT__=1)
@@ -122,6 +141,7 @@ if(WIN32)
         EffekseerMaterialCompilerDX9
         PRIVATE 
         Effekseer
+        EffekseerMaterialCompilerHLSLGenerator
     )
 
     target_compile_definitions(EffekseerMaterialCompilerDX9 PRIVATE __SHARED_OBJECT__=1)
@@ -158,6 +178,7 @@ if(WIN32 AND BUILD_DX12)
         EffekseerMaterialCompilerDX12
         PRIVATE 
         Effekseer
+        EffekseerMaterialCompilerHLSLGenerator
         LLGI
     )
 

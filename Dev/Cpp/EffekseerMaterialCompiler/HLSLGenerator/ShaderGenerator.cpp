@@ -1,116 +1,19 @@
+#include "ShaderGenerator.h"
+#include "../Common/CommonShaders.h"
 
-/**
-@note
-Refeence https://github.com/unitycoder/UnityBuiltinShaders/blob/master/CGIncludes/HLSLSupport.cginc
-*/
+#include "../../Effekseer/Effekseer/Material/Effekseer.MaterialCompiler.h"
 
-#pragma once
-
-#undef min
+#ifdef _WIN32
 #undef max
+#undef min
+#endif
 
 namespace Effekseer
 {
+namespace DirectX
+{
 namespace HLSL
 {
-
-enum class ShaderType
-{
-	DirectX9,
-	DirectX11,
-	DirectX12,
-	PSSL,
-	XBOXONE,
-};
-
-static const char* material_gradient = R"(
-
-struct Gradient
-{
-	int colorCount;
-	int alphaCount;
-	int reserved1;
-	int reserved2;
-	float4 colors[8];
-	float2 alphas[8];
-};
-
-float4 SampleGradient(Gradient gradient, float t)
-{
-	float3 color = gradient.colors[0].xyz;
-	for(int i = 1; i < 8; i++)
-	{
-		float a = clamp((t - gradient.colors[i-1].w) / (gradient.colors[i].w - gradient.colors[i-1].w), 0.0, 1.0) * step(float(i), float(gradient.colorCount-1));
-		color = lerp(color, gradient.colors[i].xyz, a);
-	}
-
-	float alpha = gradient.alphas[0].x;
-	for(int i = 1; i < 8; i++)
-	{
-		float a = clamp((t - gradient.alphas[i-1].y) / (gradient.alphas[i].y - gradient.alphas[i-1].y), 0.0, 1.0) * step(float(i), float(gradient.alphaCount-1));
-		alpha = lerp(alpha, gradient.alphas[i].x, a);
-	}
-
-	return float4(color, alpha);
-}
-
-Gradient GradientParameter(float4 param_v, float4 param_c1, float4 param_c2, float4 param_c3, float4 param_c4, float4 param_c5, float4 param_c6, float4 param_c7, float4 param_c8, float4 param_a1, float4 param_a2, float4 param_a3, float4 param_a4)
-{
-	Gradient g;
-	g.colorCount = int(param_v.x);
-	g.alphaCount = int(param_v.y);
-	g.reserved1 = int(param_v.z);
-	g.reserved2 = int(param_v.w);
-	g.colors[0] = param_c1;
-	g.colors[1] = param_c2;
-	g.colors[2] = param_c3;
-	g.colors[3] = param_c4;
-	g.colors[4] = param_c5;
-	g.colors[5] = param_c6;
-	g.colors[6] = param_c7;
-	g.colors[7] = param_c8;
-	g.alphas[0].xy = param_a1.xy;
-	g.alphas[1].xy = param_a1.zw;
-	g.alphas[2].xy = param_a2.xy;
-	g.alphas[3].xy = param_a2.zw;
-	g.alphas[4].xy = param_a3.xy;
-	g.alphas[5].xy = param_a3.zw;
-	g.alphas[6].xy = param_a4.xy;
-	g.alphas[7].xy = param_a4.zw;
-	return g;
-}
-
-)";
-
-static const char* material_noise = R"(
-
-float Rand2(float2 n) { 
-	return FRAC(sin(dot(n, float2(12.9898, 78.233))) * 43758.5453123);
-}
-
-float SimpleNoise_Block(float2 p) {
-	int2 i = (int2)floor(p);
-	float2 f = FRAC(p);
-	f = f * f * (3.0 - 2.0 * f);
-	
-	float x0 = LERP(Rand2(i+int2(0,0)), Rand2(i+int2(1,0)), f.x);
-	float x1 = LERP(Rand2(i+int2(0,1)), Rand2(i+int2(1,1)), f.x);
-	return LERP(x0, x1, f.y);
-}
-
-float SimpleNoise(float2 uv, float scale) {
-	const int loop = 3;
-    float ret = 0.0;
-	for(int i = 0; i < loop; i++) {
-	    float freq = pow(2.0, float(i));
-		float intensity = pow(0.5, float(loop-i));
-	    ret += SimpleNoise_Block(uv * scale / freq) * intensity;
-	}
-
-	return ret;
-}
-
-)";
 
 static const char* material_light_vs = R"(
 float3 GetLightDirection() {
@@ -166,7 +69,7 @@ inline std::string GetFixedGradient(const char* name, const Gradient& gradient)
 	return ss.str();
 }
 
-inline std::string GetMaterialCommonDefine(ShaderType type)
+inline std::string GetMaterialCommonDefine(ShaderGeneratorTarget type)
 {
 	std::stringstream ss;
 
@@ -175,7 +78,7 @@ inline std::string GetMaterialCommonDefine(ShaderType type)
 #define FRAC frac
 #define LERP lerp
 )";
-	if (type == ShaderType::DirectX11 || type == ShaderType::DirectX12)
+	if (type == ShaderGeneratorTarget::DirectX11 || type == ShaderGeneratorTarget::DirectX12)
 	{
 		ss << R"(
 #define C_LINEAR linear
@@ -190,7 +93,7 @@ inline std::string GetMaterialCommonDefine(ShaderType type)
 )";
 	}
 
-	if (type == ShaderType::DirectX9)
+	if (type == ShaderGeneratorTarget::DirectX9)
 	{
 		ss << R"(
 #define POSITION0 POSITION
@@ -199,7 +102,7 @@ inline std::string GetMaterialCommonDefine(ShaderType type)
 )";
 	}
 
-	if (type == ShaderType::PSSL)
+	if (type == ShaderGeneratorTarget::PSSL)
 	{
 		ss << R"(
 #define SV_POSITION S_POSITION
@@ -440,7 +343,7 @@ static char* material_sprite_vs_suf2 = R"(
 
 )";
 
-inline std::string GetModelVS_Pre(ShaderType type)
+inline std::string GetModelVS_Pre(ShaderGeneratorTarget type)
 {
 	std::stringstream ss;
 
@@ -455,7 +358,7 @@ struct VS_Input
 	float4 Color		: NORMAL3;
 )";
 
-	if (type == ShaderType::DirectX9)
+	if (type == ShaderGeneratorTarget::DirectX9)
 	{
 		ss << R"(
 	float Index : BLENDINDICES0;
@@ -490,7 +393,7 @@ struct VS_Output
 cbuffer VSConstantBuffer : register(b0) {
 )";
 
-	if (type == ShaderType::DirectX9)
+	if (type == ShaderGeneratorTarget::DirectX9)
 	{
 		ss << R"(
 float4x4 mCameraProj		: register( c0 );
@@ -588,7 +491,7 @@ static char* model_vs_suf2 = R"(
 
 )";
 
-inline std::string GetMaterialPS_Pre(ShaderType type)
+inline std::string GetMaterialPS_Pre(ShaderGeneratorTarget type)
 {
 	std::stringstream ss;
 
@@ -597,7 +500,7 @@ struct PS_Input
 {
 )";
 
-	if (type != ShaderType::DirectX9)
+	if (type != ShaderGeneratorTarget::DirectX9)
 	{
 		ss << R"(
 	float4 Position		: SV_POSITION;
@@ -619,7 +522,7 @@ struct PS_Input
 };
 )";
 
-	if (type == ShaderType::DirectX9 || type == ShaderType::DirectX11 || type == ShaderType::PSSL)
+	if (type == ShaderGeneratorTarget::DirectX9 || type == ShaderGeneratorTarget::DirectX11 || type == ShaderGeneratorTarget::PSSL)
 	{
 		ss << R"(
 cbuffer PSConstantBuffer : register(b0) {
@@ -635,7 +538,7 @@ cbuffer PSConstantBuffer : register(b1) {
 	return ss.str();
 }
 
-inline std::string GetMaterialPS_Suf1(ShaderType type)
+inline std::string GetMaterialPS_Suf1(ShaderGeneratorTarget type)
 {
 	std::stringstream ss;
 
@@ -657,7 +560,7 @@ float CalcDepthFade(float2 screenUV, float meshZ, float softParticleParam)
 {
 )";
 
-	if (type == ShaderType::DirectX9)
+	if (type == ShaderGeneratorTarget::DirectX9)
 	{
 		ss << R"(
 	float backgroundZ = tex2D(efk_depth_sampler, GetUVBack(screenUV)).x;
@@ -792,7 +695,7 @@ static char* g_material_ps_suf2_lit = R"(
 
 )";
 
-inline std::string GetMaterialPS_Suf2_Refraction(ShaderType type)
+inline std::string GetMaterialPS_Suf2_Refraction(ShaderGeneratorTarget type)
 {
 	std::stringstream ss;
 
@@ -809,7 +712,7 @@ inline std::string GetMaterialPS_Suf2_Refraction(ShaderType type)
 
 )";
 
-	if (type == ShaderType::DirectX9)
+	if (type == ShaderGeneratorTarget::DirectX9)
 	{
 		ss << R"(
 	float4 bg = tex2D(efk_background_sampler, distortUV);
@@ -837,4 +740,530 @@ inline std::string GetMaterialPS_Suf2_Refraction(ShaderType type)
 }
 
 } // namespace HLSL
+
+std::string ShaderGenerator::Replace(std::string target, std::string from_, std::string to_)
+{
+	std::string::size_type Pos(target.find(from_));
+
+	while (Pos != std::string::npos)
+	{
+		target.replace(Pos, from_.length(), to_);
+		Pos = target.find(from_, Pos + to_.length());
+	}
+
+	return target;
+}
+
+std::string ShaderGenerator::GetType(int32_t i)
+{
+	if (i == 1)
+		return "float";
+	if (i == 2)
+		return "float2";
+	if (i == 3)
+		return "float3";
+	if (i == 4)
+		return "float4";
+	if (i == 16)
+		return "float4x4";
+	assert(0);
+	return "";
+}
+
+std::string ShaderGenerator::GetElement(int32_t i)
+{
+	if (i == 1)
+		return ".x";
+	if (i == 2)
+		return ".xy";
+	if (i == 3)
+		return ".xyz";
+	if (i == 4)
+		return ".xyzw";
+	assert(0);
+	return "";
+}
+
+void ShaderGenerator::ExportUniform(std::ostringstream& maincode, int32_t type, const char* name, int32_t registerId)
+{
+	maincode << GetType(type) << " " << name << " : register(c" << registerId << ");" << std::endl;
+}
+
+void ShaderGenerator::ExportTexture(std::ostringstream& maincode, const char* name, int32_t registerId)
+{
+	maincode << "Texture2D " << name << "_texture : register(t" << registerId << ");" << std::endl;
+
+	if (target_ == ShaderGeneratorTarget::DirectX9)
+	{
+		maincode << "sampler2D " << name << "_sampler : register(s" << registerId << ");" << std::endl;
+	}
+	else
+	{
+		maincode << "SamplerState " << name << "_sampler : register(s" << registerId << ");" << std::endl;
+	}
+}
+
+int32_t ShaderGenerator::ExportHeader(std::ostringstream& maincode, MaterialFile* materialFile, int stage, bool isSprite, int instanceCount)
+{
+	auto cind = 0;
+
+	maincode << common_define_;
+
+	// gradient
+	bool hasGradient = false;
+	bool hasNoise = false;
+
+	for (const auto& type : materialFile->RequiredMethods)
+	{
+		if (type == MaterialFile::RequiredPredefinedMethodType::Gradient)
+		{
+			hasGradient = true;
+		}
+		else if (type == MaterialFile::RequiredPredefinedMethodType::Noise)
+		{
+			hasNoise = true;
+		}
+	}
+
+	if (hasGradient)
+	{
+		maincode << Effekseer::Shader::material_gradient;
+	}
+
+	if (hasNoise)
+	{
+		maincode << Effekseer::Shader::material_noise;
+	}
+
+	for (const auto& gradient : materialFile->FixedGradients)
+	{
+		maincode << HLSL::GetFixedGradient(gradient.Name.c_str(), gradient.Data);
+	}
+
+	if (stage == 0)
+	{
+		if (isSprite)
+		{
+			if (materialFile->GetIsSimpleVertex())
+			{
+				maincode << sprite_vs_pre_simple_;
+			}
+			else
+			{
+				maincode << sprite_vs_pre_;
+			}
+			cind = 11;
+		}
+		else
+		{
+			maincode << model_vs_pre_;
+			cind = 7 + instanceCount * 6;
+		}
+	}
+	else
+	{
+		maincode << ps_pre_;
+		cind = 2;
+	}
+
+	return cind;
+}
+
+void ShaderGenerator::ExportMain(std::ostringstream& maincode,
+								 MaterialFile* materialFile,
+								 int stage,
+								 bool isSprite,
+								 MaterialShaderType shaderType,
+								 const std::string& baseCode)
+{
+	if (stage == 0)
+	{
+		if (isSprite)
+		{
+			if (materialFile->GetIsSimpleVertex())
+			{
+				maincode << sprite_vs_suf1_simple_;
+			}
+			else
+			{
+				maincode << sprite_vs_suf1_;
+			}
+		}
+		else
+		{
+			maincode << model_vs_suf1_;
+		}
+
+		if (materialFile->GetCustomData1Count() > 0)
+		{
+			if (isSprite)
+			{
+				maincode << GetType(materialFile->GetCustomData1Count()) + " customData1 = Input.CustomData1;\n";
+			}
+			else
+			{
+				maincode << GetType(materialFile->GetCustomData1Count()) + " customData1 = customData1_[Input.Index];\n";
+			}
+			maincode << "Output.CustomData1 = customData1" + GetElement(materialFile->GetCustomData1Count()) + ";\n";
+		}
+
+		if (materialFile->GetCustomData2Count() > 0)
+		{
+			if (isSprite)
+			{
+				maincode << GetType(materialFile->GetCustomData2Count()) + " customData2 = Input.CustomData2;\n";
+			}
+			else
+			{
+				maincode << GetType(materialFile->GetCustomData2Count()) + " customData2 = customData2_[Input.Index];\n";
+			}
+			maincode << "Output.CustomData2 = customData2" + GetElement(materialFile->GetCustomData2Count()) + ";\n";
+		}
+	}
+	else
+	{
+		maincode << ps_suf1_;
+
+		if (materialFile->GetCustomData1Count() > 0)
+		{
+			maincode << GetType(materialFile->GetCustomData1Count()) + " customData1 = Input.CustomData1;\n";
+		}
+
+		if (materialFile->GetCustomData2Count() > 0)
+		{
+			maincode << GetType(materialFile->GetCustomData2Count()) + " customData2 = Input.CustomData2;\n";
+		}
+	}
+
+	maincode << baseCode;
+
+	if (stage == 0)
+	{
+		if (isSprite)
+		{
+			maincode << sprite_vs_suf2_;
+		}
+		else
+		{
+			maincode << model_vs_suf2_;
+		}
+	}
+	else
+	{
+		if (shaderType == MaterialShaderType::Refraction || shaderType == MaterialShaderType::RefractionModel)
+		{
+			maincode << ps_suf2_refraction_;
+		}
+		else
+		{
+			if (materialFile->GetShadingModel() == Effekseer::ShadingModelType::Lit)
+			{
+				maincode << ps_suf2_lit_;
+			}
+			else if (materialFile->GetShadingModel() == Effekseer::ShadingModelType::Unlit)
+			{
+				maincode << ps_suf2_unlit_;
+			}
+			else
+			{
+				assert(0);
+			}
+		}
+	}
+}
+
+ShaderGenerator::ShaderGenerator(
+	ShaderGeneratorTarget target)
+	: common_define_(HLSL::GetMaterialCommonDefine(target).c_str())
+	, common_functions_(HLSL::material_common_functions)
+	, common_vs_define_(HLSL::material_common_vs_functions)
+	, sprite_vs_pre_(HLSL::material_sprite_vs_pre)
+	, sprite_vs_pre_simple_(HLSL::material_sprite_vs_pre_simple)
+	, model_vs_pre_(HLSL::GetModelVS_Pre(target).c_str())
+	, sprite_vs_suf1_(HLSL::material_sprite_vs_suf1)
+	, sprite_vs_suf1_simple_(HLSL::material_sprite_vs_suf1_simple)
+	, model_vs_suf1_(HLSL::model_vs_suf1)
+	, sprite_vs_suf2_(HLSL::material_sprite_vs_suf2)
+	, model_vs_suf2_(HLSL::model_vs_suf2)
+	, ps_pre_(HLSL::GetMaterialPS_Pre(target).c_str())
+	, ps_suf1_(HLSL::GetMaterialPS_Suf1(target).c_str())
+	, ps_suf2_lit_(HLSL::g_material_ps_suf2_lit)
+	, ps_suf2_unlit_(HLSL::g_material_ps_suf2_unlit)
+	, ps_suf2_refraction_(HLSL::GetMaterialPS_Suf2_Refraction(target).c_str())
+	, target_(target)
+{
+}
+
+ShaderData ShaderGenerator::GenerateShader(MaterialFile* materialFile,
+										   MaterialShaderType shaderType,
+										   int32_t maximumUniformCount,
+										   int32_t maximumTextureCount,
+										   int32_t pixelShaderTextureSlotOffset,
+										   int32_t instanceCount)
+{
+	ShaderData shaderData;
+
+	bool isSprite = shaderType == MaterialShaderType::Standard || shaderType == MaterialShaderType::Refraction;
+	bool isRefrection = materialFile->GetHasRefraction() &&
+						(shaderType == MaterialShaderType::Refraction || shaderType == MaterialShaderType::RefractionModel);
+
+	for (int stage = 0; stage < 2; stage++)
+	{
+		std::ostringstream maincode;
+
+		auto cind = ExportHeader(maincode, materialFile, stage, isSprite, instanceCount);
+
+		if (stage == 1)
+		{
+			ExportUniform(maincode, 4, "mUVInversedBack", 0);
+			ExportUniform(maincode, 4, "predefined_uniform", 1);
+			ExportUniform(maincode, 4, "cameraPosition", cind + 0);
+			ExportUniform(maincode, 4, "reconstructionParam1", cind + 1);
+			ExportUniform(maincode, 4, "reconstructionParam2", cind + 2);
+			cind += 3;
+		}
+
+		if (stage == 1)
+		{
+			ExportUniform(maincode, 4, "lightDirection", cind);
+			cind++;
+			ExportUniform(maincode, 4, "lightColor", cind);
+			cind++;
+			ExportUniform(maincode, 4, "lightAmbientColor", cind);
+			cind++;
+		}
+
+		if (materialFile->GetShadingModel() == ::Effekseer::ShadingModelType::Lit && stage == 1)
+		{
+			maincode << "#define _MATERIAL_LIT_ 1" << std::endl;
+		}
+		else if (materialFile->GetShadingModel() == ::Effekseer::ShadingModelType::Unlit)
+		{
+		}
+
+		if (isRefrection && stage == 1)
+		{
+			ExportUniform(maincode, 16, "cameraMat", cind);
+			cind += 4;
+		}
+
+		if (!isSprite && stage == 0)
+		{
+			if (materialFile->GetCustomData1Count() > 0)
+			{
+				maincode << "float4 customData1_[" << instanceCount << "]"
+						 << " : register(c" << cind << ");" << std::endl;
+				cind += instanceCount;
+			}
+			if (materialFile->GetCustomData2Count() > 0)
+			{
+				maincode << "float4 customData2_[" << instanceCount << "]"
+						 << " : register(c" << cind << ");" << std::endl;
+				cind += instanceCount;
+			}
+		}
+
+		int32_t actualUniformCount = std::min(maximumUniformCount, materialFile->GetUniformCount());
+
+		for (int32_t i = 0; i < actualUniformCount; i++)
+		{
+			ExportUniform(maincode, 4, materialFile->GetUniformName(i), cind);
+			cind++;
+		}
+
+		for (size_t i = 0; i < materialFile->Gradients.size(); i++)
+		{
+			// TODO : remove a magic number
+			for (size_t j = 0; j < 13; j++)
+			{
+				ExportUniform(maincode, 4, (materialFile->Gradients[i].Name + "_" + std::to_string(j)).c_str(), cind);
+			}
+			cind++;
+		}
+
+		// finish constant buffer
+		maincode << "};" << std::endl;
+
+		for (int32_t i = actualUniformCount; i < materialFile->GetUniformCount(); i++)
+		{
+			maincode << "const " << GetType(4) << " " << materialFile->GetUniformName(i) << " = float4(0,0,0,0);" << std::endl;
+		}
+
+		int32_t textureSlotOffset = 0;
+
+		if (stage == 1)
+		{
+			textureSlotOffset = pixelShaderTextureSlotOffset;
+		}
+
+		int32_t actualTextureCount = std::min(maximumTextureCount, materialFile->GetTextureCount());
+
+		for (int32_t i = 0; i < actualTextureCount; i++)
+		{
+			ExportTexture(maincode, materialFile->GetTextureName(i), i + textureSlotOffset);
+		}
+
+		textureSlotOffset += actualTextureCount;
+
+		// background
+		ExportTexture(maincode, "efk_background", 0 + textureSlotOffset);
+
+		// depth
+		ExportTexture(maincode, "efk_depth", 1 + textureSlotOffset);
+
+		if (std::find(materialFile->RequiredMethods.begin(), materialFile->RequiredMethods.end(), MaterialFile::RequiredPredefinedMethodType::Light) != materialFile->RequiredMethods.end())
+		{
+			if (stage == 0)
+			{
+				maincode << HLSL::material_light_vs;
+			}
+			else
+			{
+				maincode << HLSL::material_light_ps;
+			}
+		}
+
+		auto baseCode = std::string(materialFile->GetGenericCode());
+		baseCode = Replace(baseCode, "$F1$", "float");
+		baseCode = Replace(baseCode, "$F2$", "float2");
+		baseCode = Replace(baseCode, "$F3$", "float3");
+		baseCode = Replace(baseCode, "$F4$", "float4");
+		baseCode = Replace(baseCode, "$TIME$", "predefined_uniform.x");
+		baseCode = Replace(baseCode, "$EFFECTSCALE$", "predefined_uniform.y");
+		baseCode = Replace(baseCode, "$LOCALTIME$", "predefined_uniform.w");
+		baseCode = Replace(baseCode, "$UV$", "uv");
+		baseCode = Replace(baseCode, "$MOD", "fmod");
+
+		// replace textures
+		for (int32_t i = 0; i < actualTextureCount; i++)
+		{
+
+			std::string prefix;
+			std::string suffix;
+
+			if (materialFile->GetTextureColorType(i) == Effekseer::TextureColorType::Color)
+			{
+				prefix = "ConvertFromSRGBTexture(";
+				suffix = ")";
+			}
+
+			std::string keyP = "$TEX_P" + std::to_string(materialFile->GetTextureIndex(i)) + "$";
+			std::string keyS = "$TEX_S" + std::to_string(materialFile->GetTextureIndex(i)) + "$";
+
+			if (target_ == ShaderGeneratorTarget::DirectX9)
+			{
+				if (stage == 0)
+				{
+					baseCode = Replace(baseCode, keyP, prefix + std::string("tex2Dlod(") + materialFile->GetTextureName(i) + "_sampler,float4(GetUV(");
+					baseCode = Replace(baseCode, keyS, "),0,1))" + suffix);
+				}
+				else
+				{
+					baseCode = Replace(baseCode, keyP, prefix + std::string("tex2D(") + materialFile->GetTextureName(i) + "_sampler,GetUV(");
+					baseCode = Replace(baseCode, keyS, "))" + suffix);
+				}
+			}
+			else
+			{
+				if (stage == 0)
+				{
+					baseCode = Replace(baseCode,
+									   keyP,
+									   prefix + std::string(materialFile->GetTextureName(i)) + "_texture.SampleLevel(" +
+										   materialFile->GetTextureName(i) + "_sampler,GetUV(");
+					baseCode = Replace(baseCode, keyS, "),0)" + suffix);
+				}
+				else
+				{
+					baseCode = Replace(baseCode,
+									   keyP,
+									   prefix + std::string(materialFile->GetTextureName(i)) + "_texture.Sample(" + materialFile->GetTextureName(i) +
+										   "_sampler,GetUV(");
+					baseCode = Replace(baseCode, keyS, "))" + suffix);
+				}
+			}
+		}
+
+		// invalid texture
+		for (int32_t i = actualTextureCount; i < materialFile->GetTextureCount(); i++)
+		{
+			auto textureIndex = materialFile->GetTextureIndex(i);
+			auto textureName = std::string(materialFile->GetTextureName(i));
+
+			std::string keyP = "$TEX_P" + std::to_string(textureIndex) + "$";
+			std::string keyS = "$TEX_S" + std::to_string(textureIndex) + "$";
+
+			baseCode = Replace(baseCode, keyP, "float4(");
+			baseCode = Replace(baseCode, keyS, ",0.0,1.0)");
+		}
+
+		maincode << common_functions_;
+
+		if (stage == 0)
+		{
+			maincode << common_vs_define_;
+		}
+
+		ExportMain(maincode, materialFile, stage, isSprite, shaderType, baseCode);
+
+		if (stage == 0)
+		{
+			shaderData.CodeVS = maincode.str();
+		}
+		else
+		{
+			shaderData.CodePS = maincode.str();
+		}
+	}
+
+	// custom data
+	int32_t inputSlot = 2;
+	int32_t outputSlot = 7;
+	if (materialFile->GetCustomData1Count() > 0)
+	{
+		if (isSprite)
+		{
+			shaderData.CodeVS =
+				Replace(shaderData.CodeVS,
+						"//$C_IN1$",
+						GetType(materialFile->GetCustomData1Count()) + " CustomData1 : TEXCOORD" + std::to_string(inputSlot) + ";");
+		}
+
+		shaderData.CodeVS =
+			Replace(shaderData.CodeVS,
+					"//$C_OUT1$",
+					GetType(materialFile->GetCustomData1Count()) + " CustomData1 : TEXCOORD" + std::to_string(outputSlot) + ";");
+		shaderData.CodePS =
+			Replace(shaderData.CodePS,
+					"//$C_PIN1$",
+					GetType(materialFile->GetCustomData1Count()) + " CustomData1 : TEXCOORD" + std::to_string(outputSlot) + ";");
+
+		inputSlot++;
+		outputSlot++;
+	}
+
+	if (materialFile->GetCustomData2Count() > 0)
+	{
+		if (isSprite)
+		{
+			shaderData.CodeVS =
+				Replace(shaderData.CodeVS,
+						"//$C_IN2$",
+						GetType(materialFile->GetCustomData2Count()) + " CustomData2 : TEXCOORD" + std::to_string(inputSlot) + ";");
+		}
+		shaderData.CodeVS =
+			Replace(shaderData.CodeVS,
+					"//$C_OUT2$",
+					GetType(materialFile->GetCustomData2Count()) + " CustomData2 : TEXCOORD" + std::to_string(outputSlot) + ";");
+		shaderData.CodePS =
+			Replace(shaderData.CodePS,
+					"//$C_PIN2$",
+					GetType(materialFile->GetCustomData2Count()) + " CustomData2 : TEXCOORD" + std::to_string(outputSlot) + ";");
+	}
+
+	return shaderData;
+}
+
+} // namespace DirectX
+
 } // namespace Effekseer
