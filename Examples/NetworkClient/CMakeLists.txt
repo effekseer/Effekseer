@@ -28,12 +28,57 @@ target_link_directories(
     ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES}
 )
 
-# for Visual C++
-target_compile_definitions(
-    ${PROJECT_NAME}
-    PRIVATE
-    UNICODE
-    _UNICODE)
+if(WIN32)
+    # for Visual C++
+    target_compile_definitions(
+        ${PROJECT_NAME}
+        PRIVATE
+        UNICODE
+        _UNICODE
+    )
+endif()
+
+if(NOT WIN32)
+    find_package(Threads REQUIRED)
+    find_package(OpenGL REQUIRED)
+    target_link_libraries(
+        ${PROJECT_NAME}
+        PRIVATE
+        ${CMAKE_THREAD_LIBS_INIT}
+        ${OPENGL_LIBRARIES}
+    )
+endif()
+
+if(APPLE)
+    find_library(COCOA_FRAMEWORK Cocoa)
+    find_library(IOKIT_FRAMEWORK IOKit)
+    find_library(CORE_FOUNDATION_FRAMEWORK CoreFoundation)
+    find_library(CORE_VIDEO_FRAMEWORK CoreVideo)
+
+    target_link_libraries(
+        ${PROJECT_NAME}
+        PRIVATE
+        ${COCOA_FRAMEWORK}
+        ${IOKIT_FRAMEWORK}
+        ${CORE_FOUNDATION_FRAMEWORK}
+        ${CORE_VIDEO_FRAMEWORK}
+    )
+endif()
+
+if(UNIX AND NOT APPLE)
+    find_package(X11 REQUIRED)
+
+    include_directories(${X11_INCLUDE_DIR})
+
+    target_link_libraries(
+        ${PROJECT_NAME}
+        PRIVATE
+        Effekseer
+        EffekseerRendererGL
+        dl
+        ${X11_LIBRARIES}
+    )
+endif()
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY FOLDER "Examples") 
 
