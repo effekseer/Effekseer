@@ -17,28 +17,23 @@ struct Gradient
 	float2 alphas[8];
 };
 
-float LinearStep(float v0, float v1, float x)
-{
-	float t = (x - v0) / (v1 - v0);
-	return clamp(t, 0.0, 1.0);
+float LinearStep(float s, float e, float v) {
+	return clamp((v - s) / (e - s), 0.0, 1.0);
 }
 
-float4 SampleGradient(Gradient gradient, float t)
-{
+float4 SampleGradient(Gradient gradient, float t) {
 	float3 color = gradient.colors[0].xyz;
-	for(int i = 1; i < 8; i++)
-	{
+	for(int i = 1; i < 8; i++) {
 		float inRange = step(float(i), float(gradient.colorCount-1));
-		float a = LinearStep(gradient.colors[i-1].w, gradient.colors[i].w, t);
-		color = LERP(color, gradient.colors[i].xyz, a * inRange);
+		float ls = LinearStep(gradient.colors[i-1].w, gradient.colors[i].w, t);
+		color = LERP(color, gradient.colors[i].xyz, ls * inRange); 
 	}
 
 	float alpha = gradient.alphas[0].x;
-	for(int i = 1; i < 8; i++)
-	{
+	for(int i = 1; i < 8; i++) {
 		float inRange = step(float(i), float(gradient.alphaCount-1));
-		float a = LinearStep(gradient.alphas[i-1].y, gradient.alphas[i].y, t);
-		alpha = LERP(alpha, gradient.alphas[i].x, a * inRange);
+		float ls = LinearStep(gradient.alphas[i-1].y, gradient.alphas[i].y, t);
+		alpha = LERP(alpha, gradient.alphas[i].x, ls * inRange); 
 	}
 
 	return float4(color, alpha);
@@ -78,23 +73,23 @@ float Rand2(float2 n) {
 	return FRAC(sin(dot(n, float2(12.9898, 78.233))) * 43758.5453123);
 }
 
-float SimpleNoise_Block(float2 p) {
-	int2 i = int2(floor(p));
-	float2 f = FRAC(p);
-	f = f * f * (3.0 - 2.0 * f);
-	
-	float x0 = LERP(Rand2(i+int2(0,0)), Rand2(i+int2(1,0)), f.x);
-	float x1 = LERP(Rand2(i+int2(0,1)), Rand2(i+int2(1,1)), f.x);
-	return LERP(x0, x1, f.y);
+float SimpleNoise_Block(float2 uv) {
+	int2 uvi = int2(floor(uv));
+	float2 uvf = FRAC(uv);
+	uvf = uvf * uvf * (3.0 - 2.0 * uvf);
+
+	float x0 = LERP(Rand2(uvi + int2(0,0)), Rand2(uvi + int2(1,0)), uvf.x);
+	float x1 = LERP(Rand2(uvi + int2(0,1)), Rand2(uvi + int2(1,1)), uvf.x);
+	return LERP(x0, x1, uvf.y);
 }
 
 float SimpleNoise(float2 uv, float scale) {
 	const int loop = 3;
-    float ret = 0.0;
+	float ret = 0.0;
 	for(int i = 0; i < loop; i++) {
-	    float freq = pow(2.0, float(i));
-		float intensity = pow(0.5, float(loop-i));
-	    ret += SimpleNoise_Block(uv * scale / freq) * intensity;
+		float freq = pow(2, float(i));
+		float intensity = pow(0.5, float(loop - i));
+		ret += SimpleNoise_Block(uv * scale / freq) * intensity;
 	}
 
 	return ret;
@@ -102,5 +97,5 @@ float SimpleNoise(float2 uv, float scale) {
 
 )";
 
-}
+} // namespace Shader
 } // namespace Effekseer
