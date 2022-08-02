@@ -1,4 +1,4 @@
-SET RDIR_R=EffekseerRuntime
+SET RDIR_R=EffekseerForCpp
 
 rmdir %RDIR_R%
 mkdir %RDIR_R%
