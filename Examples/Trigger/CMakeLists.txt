@@ -1,6 +1,6 @@
 ﻿cmake_minimum_required (VERSION 3.0.0)
 
-project(Example_Distortion)
+project(Example_Trigger)
 
 set (DEVICE_SRC_FILES ../OpenGL/DeviceGLFW.cpp ../OpenGL/DeviceGLFW.h)
 

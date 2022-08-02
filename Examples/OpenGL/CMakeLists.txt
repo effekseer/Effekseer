@@ -2,10 +2,10 @@
 
 project(Example_OpenGL)
 
-add_executable(Example_OpenGL main.cpp)
+add_executable(Example_OpenGL main.cpp DeviceGLFW.cpp DeviceGLFW.h)
 
 target_include_directories(
-    Example_OpenGL
+    ${PROJECT_NAME}
     PRIVATE
     ${EFK_RUNTIME_ROOT}/Effekseer
     ${EFK_RUNTIME_ROOT}/EffekseerRendererGL
@@ -14,7 +14,7 @@ target_include_directories(
 )
 
 target_link_libraries(
-    Example_OpenGL
+    ${PROJECT_NAME}
     PRIVATE
     Effekseer
     EffekseerRendererGL
@@ -32,7 +32,7 @@ if(NOT WIN32)
     find_package(Threads REQUIRED)
     find_package(OpenGL REQUIRED)
     target_link_libraries(
-        Example_OpenGL
+        ${PROJECT_NAME}
         PRIVATE
         ${CMAKE_THREAD_LIBS_INIT}
         ${OPENGL_LIBRARIES}
@@ -46,7 +46,7 @@ if(APPLE)
     find_library(CORE_VIDEO_FRAMEWORK CoreVideo)
 
     target_link_libraries(
-        Example_OpenGL
+        ${PROJECT_NAME}
         PRIVATE
         ${COCOA_FRAMEWORK}
         ${IOKIT_FRAMEWORK}
@@ -61,7 +61,7 @@ if(UNIX AND NOT APPLE)
     include_directories(${X11_INCLUDE_DIR})
 
     target_link_libraries(
-        Example_OpenGL
+        ${PROJECT_NAME}
         PRIVATE
         Effekseer
         EffekseerRendererGL

@@ -23,35 +23,27 @@ int main(int argc, char** argv)
 {
 #if defined(DEVICE_OPENGL)
 	DeviceGLFW device;
-	device.Initialize("NetworkServer (OpenGL)", screenSize);
+	device.Initialize("Trigger - Press the \"Space\" key (OpenGL)", screenSize);
 #elif defined(DEVICE_DX9)
 	DeviceDX9 device;
-	device.Initialize("NetworkServer (DirectX9)", screenSize);
+	device.Initialize("Trigger - Press the \"Space\" key (DirectX9)", screenSize);
 #elif defined(DEVICE_DX11)
 	DeviceDX11 device;
-	device.Initialize("NetworkServer (DirectX11)", screenSize);
+	device.Initialize("Trigger - Press the \"Space\" key (DirectX11)", screenSize);
 #endif
 
 	// Create a manager of effects
 	// エフェクトのマネージャーの作成
-	auto efkManager = ::Effekseer::Manager::Create(8000);
+	auto efkManager = ::Effekseer::Manager::Create(2000);
 
 	// Setup effekseer modules
 	// Effekseerのモジュールをセットアップする
 	device.SetupEffekseerModules(efkManager);
 	auto efkRenderer = device.GetEffekseerRenderer();
 
-	// Create a server for effect
-	// サーバーの作成
-	auto efkServer = Effekseer::Server::Create();
-
-	// Start the server on port 60000 
-	// サーバーをポート60000で開始
-	efkServer->Start(60000);
-
 	// Specify a position of view
 	// 視点位置を確定
-	auto viewerPosition = ::Effekseer::Vector3D(10.0f, 5.0f, 20.0f);
+	auto viewerPosition = ::Effekseer::Vector3D(10.0f, 5.0f, 20.0f) * 0.5f;
 
 	// Specify a projection matrix
 	// 投影行列を設定
@@ -63,28 +55,29 @@ int main(int argc, char** argv)
 	::Effekseer::Matrix44 cameraMatrix;
 	cameraMatrix.LookAtRH(viewerPosition, ::Effekseer::Vector3D(0.0f, 0.0f, 0.0f), ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f));
 
-	// Load an effect
-	// エフェクトの読込
-	auto effect = Effekseer::Effect::Create(efkManager, EFK_EXAMPLE_ASSETS_DIR_U16 "Laser01.efkefc");
+	auto effect = Effekseer::Effect::Create(efkManager, EFK_EXAMPLE_ASSETS_DIR_U16 u"TriggerLaser.efkefc");
 
-	// Register the effect asset to server for reloading
-	// エフェクトをリロードするためのサーバーへ登録
-	efkServer->Register(u"Laser01", effect);
-
+	Effekseer::Handle handle = 0;
 	int32_t time = 0;
-	Effekseer::Handle efkHandle = 0;
 
 	while (device.NewFrame())
 	{
-		// Update the server
-		// サーバーの更新を行う。
-		efkServer->Update(&efkManager, 1);
-
-		if (time % 120 == 0)
+		if (efkManager->Exists(handle))
+		{
+			// Press the "Space" key
+			// スペースキーを押す
+			if (Utils::Input::IsKeyPressed(' '))
+			{
+				// Send a trigger-0 to effect
+				// エフェクトにトリガー0を送信する
+				efkManager->SendTrigger(handle, 0);
+			}
+		}
+		else
 		{
 			// Play an effect
 			// エフェクトの再生
-			efkHandle = efkManager->Play(effect, 0, 0, 0);
+			handle = efkManager->Play(effect, 0, 0, 0);
 		}
 
 		// Set layer parameters
@@ -98,8 +91,8 @@ int main(int argc, char** argv)
 		Effekseer::Manager::UpdateParameter updateParameter;
 		efkManager->Update(updateParameter);
 
-		// Execute functions about Rendering
-		// 描画の処理
+		// Clear render target buffer
+		// レンダリングターゲットをクリア
 		device.ClearScreen();
 
 		// Update a time
@@ -118,7 +111,7 @@ int main(int argc, char** argv)
 		// エフェクトの描画開始処理を行う。
 		efkRenderer->BeginRendering();
 
-		// Render effects
+		// Render rear effects
 		// エフェクトの描画を行う。
 		Effekseer::Manager::DrawParameter drawParameter;
 		drawParameter.ZNear = 0.0f;
@@ -130,12 +123,16 @@ int main(int argc, char** argv)
 		// エフェクトの描画終了処理を行う。
 		efkRenderer->EndRendering();
 
-		// Execute functions about DirectX
-		// DirectXの処理
+		// Update the display
+		// ディスプレイを更新
 		device.PresentDevice();
 
 		time++;
 	}
+
+	// Stop effects
+	// エフェクトの停止
+	efkManager->StopEffect(handle);
 
 	return 0;
 }
