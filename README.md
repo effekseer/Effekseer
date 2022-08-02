@@ -32,19 +32,17 @@ Supported platforms
 - WebGL
 - Unity
 - GodotEngine
-- UnrealEngine4
+- UnrealEngine
 - DX Library
 - Cocos2d-x
 - Console games (Please mail to effekseer(at)gmail.com)
-
-GodotEngine is planned in 1.6.
 
 Repositories
 =========
 
 * [ForUnity](https://github.com/effekseer/EffekseerForUnity)
 
-* [ForUE4](https://github.com/effekseer/EffekseerForUE4)
+* [ForUE](https://github.com/effekseer/EffekseerForUE)
 
 * [ForGodotEngine](https://github.com/effekseer/EffekseerForGodot3)
 
