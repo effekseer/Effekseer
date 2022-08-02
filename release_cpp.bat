@@ -1,4 +1,4 @@
-SET RDIR_R=EffekseerRuntime
+SET RDIR_R=EffekseerForCpp
 
 rmdir %RDIR_R%
 mkdir %RDIR_R%
@@ -89,9 +89,9 @@ cp LICENSE_RUNTIME_DIRECTX %RDIR_R%/LICENSE_RUNTIME_DIRECTX.txt
 cp LICENSE_RUNTIME_VULKAN %RDIR_R%/LICENSE_RUNTIME_VULKAN.txt
 
 echo Readme
-copy docs\readme_runtime_ja.txt %RDIR_R%\readme_runtime_ja.txt
-copy docs\readme_runtime_en.txt %RDIR_R%\readme_runtime_en.txt
-copy docs\releasenotes_runtime.txt %RDIR_R%\releasenotes.txt
+copy docs\readme_cpp_ja.txt %RDIR_R%\readme_cpp_ja.txt
+copy docs\readme_cpp_en.txt %RDIR_R%\readme_cpp_en.txt
+copy docs\releasenotes_cpp.txt %RDIR_R%\releasenotes.txt
 
 copy Release\CMakeLists.txt %RDIR_R%\.
 robocopy Downloads\glfw %RDIR_R%\Examples\Utils\glfw\. /S

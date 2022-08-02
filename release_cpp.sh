@@ -3,7 +3,7 @@ set -e
 set +x
 if [ "$RDIR_R" = "" ];
 then
-    export RDIR_R="$PWD/EffekseerRuntime"
+    export RDIR_R="$PWD/EffekseerForCpp"
 fi
 
 if [ "`which robocopy`" = "" ];
@@ -121,9 +121,9 @@ cp LICENSE_RUNTIME_DIRECTX $RDIR_R/LICENSE_RUNTIME_DIRECTX.txt
 cp LICENSE_RUNTIME_VULKAN $RDIR_R/LICENSE_RUNTIME_VULKAN.txt
 
 echo Readme
-cp docs/readme_runtime_ja.txt $RDIR_R/readme_runtime_ja.txt
-cp docs/readme_runtime_en.txt $RDIR_R/readme_runtime_en.txt
-cp docs/releasenotes_runtime.txt $RDIR_R/releasenotes.txt
+cp docs/readme_cpp_ja.txt $RDIR_R/readme_cpp_ja.txt
+cp docs/readme_cpp_en.txt $RDIR_R/readme_cpp_en.txt
+cp docs/releasenotes_cpp.txt $RDIR_R/releasenotes.txt
 
 cp Release/CMakeLists.txt $RDIR_R/.
 robocopy Downloads/glfw $RDIR_R/Examples/Utils/glfw/. /S

@@ -112,10 +112,10 @@ jobs:
           fi
           python3 build.py || python build.py
                 
-      - name: Prepare Runtime
+      - name: Prepare ForCpp
         if: matrix.name == 'windows_x64'
         run: |
-          release_runtime.bat
+          release_cpp.bat
         shell: cmd
         
       - name: Prepare Windows Tool
@@ -135,12 +135,12 @@ jobs:
           bash ./release_tool.sh
         if: matrix.name == 'linux'
 
-      - name: Upload Runtime
+      - name: Upload ForCpp
         if: matrix.name == 'windows_x64'
         uses: actions/upload-artifact@v2
         with:
-          name: EffekseerRuntime${{ env.EFFEKSEER_VERSION }}
-          path: EffekseerRuntime
+          name: EffekseerForCpp${{ env.EFFEKSEER_VERSION }}
+          path: EffekseerForCpp
 
       - name: Upload ${{matrix.name}} Tool
         uses: actions/upload-artifact@v2
@@ -165,8 +165,8 @@ jobs:
       
       - uses: actions/download-artifact@v2
         with:
-          name: EffekseerRuntime${{ env.EFFEKSEER_VERSION }}
-          path: dist/EffekseerRuntime
+          name: EffekseerForCpp${{ env.EFFEKSEER_VERSION }}
+          path: dist/EffekseerForCpp
       
       - uses: actions/download-artifact@v2
         with:
