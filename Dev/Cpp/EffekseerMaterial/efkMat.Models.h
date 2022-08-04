@@ -240,7 +240,7 @@ enum class ErrorCode
 class Material : public std::enable_shared_from_this<Material>
 {
 private:
-	const int32_t lastestSupportedVersion_ = MaterialVersion17Alpha4;
+	const int32_t lastestSupportedVersion_ = MaterialVersion17;
 
 	enum class SaveLoadAimType
 	{
