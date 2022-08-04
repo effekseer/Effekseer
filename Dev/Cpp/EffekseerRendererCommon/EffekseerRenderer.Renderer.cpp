@@ -13,11 +13,7 @@ namespace EffekseerRenderer
 												  ::Effekseer::FileInterfaceRef fileInterface,
 												  ::Effekseer::ColorSpaceType colorSpaceType)
 {
-#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	return ::Effekseer::MakeRefPtr<TextureLoader>(gprahicsDevice.Get(), fileInterface, colorSpaceType);
-#else
-	return nullptr;
-#endif
 }
 
 ::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice, ::Effekseer::FileInterfaceRef fileInterface)

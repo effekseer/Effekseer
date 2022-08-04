@@ -54,7 +54,6 @@
 #endif
 
 #if _WIN32
-#pragma comment(lib, "gdiplus.lib")
 #pragma comment(lib, "opengl32.lib")
 #endif
 

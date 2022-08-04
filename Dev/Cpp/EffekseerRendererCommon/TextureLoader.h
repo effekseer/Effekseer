@@ -1,6 +1,4 @@
-﻿#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-
-#ifndef __EFFEKSEERRENDERER_TEXTURELOADER_H__
+﻿#ifndef __EFFEKSEERRENDERER_TEXTURELOADER_H__
 #define __EFFEKSEERRENDERER_TEXTURELOADER_H__
 
 #include <Effekseer.h>
@@ -18,11 +16,9 @@ private:
 	::Effekseer::FileInterfaceRef m_fileInterface;
 	::Effekseer::ColorSpaceType colorSpaceType_;
 	::Effekseer::Backend::GraphicsDevice* graphicsDevice_ = nullptr;
-#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	::EffekseerRenderer::PngTextureLoader pngTextureLoader_;
 	::EffekseerRenderer::DDSTextureLoader ddsTextureLoader_;
 	::EffekseerRenderer::TGATextureLoader tgaTextureLoader_;
-#endif
 
 public:
 	TextureLoader(::Effekseer::Backend::GraphicsDevice* graphicsDevice,
@@ -41,5 +37,3 @@ public:
 } // namespace EffekseerRenderer
 
 #endif // __EFFEKSEERRENDERER_TEXTURELOADER_H__
-
-#endif // __EFFEKSEER_RENDERER_INTERNAL_LOADER__
