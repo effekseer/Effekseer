@@ -16,10 +16,7 @@
 #include "../EffekseerRendererCommon/EffekseerRenderer.SpriteRendererBase.h"
 #include "../EffekseerRendererCommon/EffekseerRenderer.TrackRendererBase.h"
 #include "../EffekseerRendererCommon/ModelLoader.h"
-
-#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 #include "../EffekseerRendererCommon/TextureLoader.h"
-#endif
 
 #include <iostream>
 
@@ -648,11 +645,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 
 ::Effekseer::TextureLoaderRef RendererImplemented::CreateTextureLoader(::Effekseer::FileInterfaceRef fileInterface)
 {
-#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	return ::Effekseer::MakeRefPtr<EffekseerRenderer::TextureLoader>(graphicsDevice_.Get(), fileInterface);
-#else
-	return nullptr;
-#endif
 }
 
 ::Effekseer::ModelLoaderRef RendererImplemented::CreateModelLoader(::Effekseer::FileInterfaceRef fileInterface)

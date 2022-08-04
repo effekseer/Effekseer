@@ -1,6 +1,4 @@
-﻿#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-
-#include "TextureLoader.h"
+﻿#include "TextureLoader.h"
 
 namespace EffekseerRenderer
 {
@@ -154,5 +152,3 @@ void TextureLoader::Unload(Effekseer::TextureRef data)
 }
 
 } // namespace EffekseerRenderer
-
-#endif // __EFFEKSEER_RENDERER_INTERNAL_LOADER__

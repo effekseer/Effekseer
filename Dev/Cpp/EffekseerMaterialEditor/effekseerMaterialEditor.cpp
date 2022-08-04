@@ -2,7 +2,6 @@
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "opengl32.lib")
-#pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "gdiplus.lib")
 
 #include "Config.h"

@@ -11,7 +11,6 @@
 #include <windows.h>
 
 #if _WIN32
-#pragma comment(lib, "gdiplus.lib")
 #pragma comment(lib, "d3d11.lib")
 #endif
 
