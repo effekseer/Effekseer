@@ -1,9 +1,9 @@
 ﻿
 #include <stdio.h>
 
+#include "../OpenGL/DeviceGLFW.h"
 #include <Effekseer.h>
 #include <EffekseerRendererGL.h>
-#include "../OpenGL/DeviceGLFW.h"
 
 int main(int argc, char** argv)
 {
@@ -21,7 +21,7 @@ int main(int argc, char** argv)
 	// クライアントの生成
 	auto efkClient = Effekseer::Client::Create();
 
-	// Start the client on port 60000 
+	// Start the client on port 60000
 	// クライアントをポート60000で開始
 	efkClient->Start("127.0.0.1", 60000);
 
@@ -31,9 +31,9 @@ int main(int argc, char** argv)
 	{
 		// Update the client
 		// クライアントの更新を行う。
-		//efkClient->Update();
+		// efkClient->Update();
 
-		if( time % 120 == 0 )
+		if (time % 120 == 0)
 		{
 			efkClient->Reload(efkManager, EFK_EXAMPLE_ASSETS_DIR_U16 u"Laser01_reload.efkefc", u"Laser01");
 		}

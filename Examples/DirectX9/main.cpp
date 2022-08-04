@@ -3,8 +3,8 @@
 #include <string>
 #include <windows.h>
 
-#include <Effekseer.h>
 #include "DeviceDX9.h"
+#include <Effekseer.h>
 
 int main(int argc, char** argv)
 {
@@ -44,7 +44,8 @@ int main(int argc, char** argv)
 	int32_t time = 0;
 	Effekseer::Handle efkHandle = 0;
 
-	device.onLostDevice = [effect]() -> void {
+	device.onLostDevice = [effect]() -> void
+	{
 		// Dispose all resources in the effect
 		// 読み込んだエフェクトのリソースは全て破棄する。
 		if (effect != nullptr)
@@ -53,7 +54,8 @@ int main(int argc, char** argv)
 		}
 	};
 
-	device.onResetDevice = [effect]() -> void {
+	device.onResetDevice = [effect]() -> void
+	{
 		// Reload all resources in the effect
 		// エフェクトのリソースを再読み込みする。
 		if (effect != nullptr)

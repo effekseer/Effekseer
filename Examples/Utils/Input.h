@@ -1,8 +1,8 @@
 #pragma once
 
-#include <stdio.h>
-#include <stdint.h>
 #include <memory>
+#include <stdint.h>
+#include <stdio.h>
 
 namespace Utils
 {
@@ -25,4 +25,4 @@ private:
 	static KeyState keyStateList[256];
 };
 
-}
+} // namespace Utils

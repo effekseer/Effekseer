@@ -356,8 +356,7 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 	ChangeRenderPassPipelineState(key);
 	isReversedDepth_ = isReversedDepth;
 
-	LLGI::SetLogger([](LLGI::LogType type, const std::string& message)
-					{ std::cout << message << std::endl; });
+	LLGI::SetLogger([](LLGI::LogType type, const std::string& message) { std::cout << message << std::endl; });
 
 	// Generate vertex buffer
 	{

@@ -66,7 +66,8 @@ struct ParameterTranslationViewOffset
 
 struct InstanceTranslationState
 {
-	union {
+	union
+	{
 		struct
 		{
 			SIMD::Vec3f location;

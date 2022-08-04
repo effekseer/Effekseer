@@ -74,9 +74,7 @@ public:
 	DistortingCallback(DeviceDX9& device)
 		: device(device)
 	{
-		device.GetIDirect3DDevice9()->CreateTexture(screenSize.X, screenSize.Y, 1, 
-			D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, 
-			backgroundTexture.GetAddressOf(), nullptr);
+		device.GetIDirect3DDevice9()->CreateTexture(screenSize.X, screenSize.Y, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, backgroundTexture.GetAddressOf(), nullptr);
 
 		backgroundTexture->GetSurfaceLevel(0, backgroundSurface.GetAddressOf());
 	}
@@ -129,7 +127,8 @@ private:
 
 		return true;
 	}
-};backBuffer
+};
+backBuffer
 #elif defined(DEVICE_DX11)
 class DistortingCallback : public EffekseerRenderer::DistortingCallback
 {
@@ -146,7 +145,7 @@ public:
 	{
 		auto dx11Device = device.GetID3D11Device();
 		assert(dx11Device != nullptr);
-		
+
 		HRESULT hr = S_OK;
 
 		D3D11_TEXTURE2D_DESC texture2dDesc{};
@@ -192,7 +191,7 @@ private:
 		assert(dx11Context != nullptr);
 
 		dx11Context->CopyResource(backgroundTexture.Get(), device.GetBackBuffer());
-		
+
 		return true;
 	}
 };
@@ -222,7 +221,7 @@ int main(int argc, char** argv)
 
 	// Specify a distortion function
 	// 歪み機能を設定
-	// If you'd like to distort background and particles by rendering, 
+	// If you'd like to distort background and particles by rendering,
 	// it need to specify a DistortingCallback. (It is a bit heavy)
 	// もし、描画するごとに背景とパーティクルを歪ませたい場合、
 	// DistortingCallbackを設定する必要がある (やや重い)

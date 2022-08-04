@@ -4,7 +4,7 @@ Utils::Vec2I DeviceGLFW::GetWindowSize() const
 {
 	int width = 0, height = 0;
 	glfwGetWindowSize(glfwWindow, &width, &height);
-	return { width, height };
+	return {width, height};
 }
 
 bool DeviceGLFW::Initialize(const char* windowTitle, Utils::Vec2I windowSize)

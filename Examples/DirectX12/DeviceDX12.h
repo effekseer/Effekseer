@@ -1,16 +1,16 @@
 #pragma once
 
-#include <XAudio2.h>
-#include <d3d12.h>
-#include <wrl/client.h>
 #include <DX12/LLGI.CommandListDX12.h>
 #include <DX12/LLGI.GraphicsDX12.h>
+#include <EffekseerRendererDX12.h>
+#include <EffekseerSoundXAudio2.h>
 #include <LLGI.Compiler.h>
 #include <LLGI.Graphics.h>
 #include <LLGI.Platform.h>
 #include <Utils/LLGI.CommandListPool.h>
-#include <EffekseerRendererDX12.h>
-#include <EffekseerSoundXAudio2.h>
+#include <XAudio2.h>
+#include <d3d12.h>
+#include <wrl/client.h>
 
 #include "../Utils/Window.h"
 
@@ -37,12 +37,15 @@ private:
 
 public:
 	DeviceDX12() = default;
-	~DeviceDX12() { Terminate(); }
+	~DeviceDX12()
+	{
+		Terminate();
+	}
 
 	Utils::Vec2I GetWindowSize() const
 	{
 		auto size = window->GetWindowSize();
-		return { size.X, size.Y };
+		return {size.X, size.Y};
 	}
 
 	ID3D12Device* GetID3D12Device()
@@ -62,7 +65,7 @@ public:
 		assert(commandList != nullptr);
 		return static_cast<LLGI::CommandListDX12*>(commandList)->GetCommandList();
 	}
-	
+
 	IXAudio2* GetIXAudio2()
 	{
 		return xa2Device.Get();
@@ -75,5 +78,8 @@ public:
 	void PresentDevice();
 
 	void SetupEffekseerModules(::Effekseer::ManagerRef efkManager);
-	::EffekseerRenderer::RendererRef GetEffekseerRenderer() { return efkRenderer; }
+	::EffekseerRenderer::RendererRef GetEffekseerRenderer()
+	{
+		return efkRenderer;
+	}
 };

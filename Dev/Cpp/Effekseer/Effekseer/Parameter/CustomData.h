@@ -52,7 +52,8 @@ struct ParameterCustomData
 {
 	ParameterCustomDataType Type = ParameterCustomDataType::None;
 
-	union {
+	union
+	{
 		ParameterCustomDataFixed Fixed;
 		ParameterCustomDataRandom Random;
 		ParameterCustomDataEasing Easing;
@@ -126,7 +127,8 @@ struct ParameterCustomData
 
 struct InstanceCustomData
 {
-	union {
+	union
+	{
 		struct
 		{
 			SIMD::Vec2f start;

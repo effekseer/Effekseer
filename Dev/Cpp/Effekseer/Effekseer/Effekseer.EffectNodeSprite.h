@@ -17,7 +17,8 @@ struct SpriteColorParameter
 		Parameter_DWORD = 0x7fffffff,
 	} type;
 
-	union {
+	union
+	{
 		struct
 		{
 
@@ -43,7 +44,8 @@ struct SpritePositionParameter
 		Parameter_DWORD = 0x7fffffff,
 	} type;
 
-	union {
+	union
+	{
 		struct
 		{
 
@@ -72,11 +74,13 @@ public:
 		Color _originalColor;
 		InstanceAllTypeColorState allColorValues;
 
-		union {
+		union
+		{
 
 		} colorValues;
 
-		union {
+		union
+		{
 
 		} positionValues;
 	};

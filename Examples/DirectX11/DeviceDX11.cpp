@@ -3,7 +3,6 @@
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "xaudio2.lib")
 
-
 bool DeviceDX11::Initialize(const char* windowTitle, Utils::Vec2I windowSize)
 {
 	window = Utils::Window::Create(windowTitle, windowSize);
@@ -17,8 +16,7 @@ bool DeviceDX11::Initialize(const char* windowTitle, Utils::Vec2I windowSize)
 	UINT debugFlag = 0;
 	// debugFlag = D3D11_CREATE_DEVICE_DEBUG;
 
-	if (FAILED(D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, debugFlag, nullptr, 0, 
-		D3D11_SDK_VERSION, dx11Device.GetAddressOf(), nullptr, dx11Context.GetAddressOf())))
+	if (FAILED(D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, debugFlag, nullptr, 0, D3D11_SDK_VERSION, dx11Device.GetAddressOf(), nullptr, dx11Context.GetAddressOf())))
 	{
 		Terminate();
 		return false;
@@ -105,7 +103,7 @@ bool DeviceDX11::Initialize(const char* windowTitle, Utils::Vec2I windowSize)
 		return false;
 	}
 
-	ID3D11RenderTargetView* renderTargetViews[] = { renderTargetView.Get() };
+	ID3D11RenderTargetView* renderTargetViews[] = {renderTargetView.Get()};
 	dx11Context->OMSetRenderTargets(1, renderTargetViews, depthStencilView.Get());
 
 	D3D11_VIEWPORT viewport{};

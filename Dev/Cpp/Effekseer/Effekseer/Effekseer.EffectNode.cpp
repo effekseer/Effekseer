@@ -842,8 +842,7 @@ EffectInstanceTerm EffectNodeImplemented::CalculateInstanceTerm(EffectInstanceTe
 {
 	EffectInstanceTerm ret;
 
-	auto addWithClip = [](int v1, int v2) -> int
-	{
+	auto addWithClip = [](int v1, int v2) -> int {
 		v1 = Max(v1, 0);
 		v2 = Max(v2, 0);
 

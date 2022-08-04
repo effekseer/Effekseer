@@ -3,7 +3,6 @@
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "xaudio2.lib")
 
-
 bool DeviceDX12::Initialize(const char* windowTitle, Utils::Vec2I windowSize)
 {
 	// Initialize COM
@@ -16,7 +15,7 @@ bool DeviceDX12::Initialize(const char* windowTitle, Utils::Vec2I windowSize)
 	platformParam.Device = LLGI::DeviceType::DirectX12;
 	platformParam.WaitVSync = true;
 
-	window = std::shared_ptr<LLGI::Window>(LLGI::CreateWindow(windowTitle, { windowSize.X, windowSize.Y }));
+	window = std::shared_ptr<LLGI::Window>(LLGI::CreateWindow(windowTitle, {windowSize.X, windowSize.Y}));
 	if (window == nullptr)
 	{
 		Terminate();
@@ -96,7 +95,7 @@ bool DeviceDX12::NewFrame()
 
 	commandList->Begin();
 	commandList->BeginRenderPass(platform->GetCurrentScreen(color, true, false)); // TODO: isDepthClear is false, because it fails with dx12.
-	
+
 	// Call on starting of a frame
 	// フレームの開始時に呼ぶ
 	efkMemoryPool->NewFrame();

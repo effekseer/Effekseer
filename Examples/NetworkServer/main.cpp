@@ -45,7 +45,7 @@ int main(int argc, char** argv)
 	// サーバーの作成
 	auto efkServer = Effekseer::Server::Create();
 
-	// Start the server on port 60000 
+	// Start the server on port 60000
 	// サーバーをポート60000で開始
 	efkServer->Start(60000);
 

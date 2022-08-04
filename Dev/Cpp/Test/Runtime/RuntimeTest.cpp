@@ -78,8 +78,7 @@ void BasicRuntimeTestPlatform(EffectPlatformInitializingParameter param, EffectP
 		platform->StopAllEffects();
 	};
 
-	auto single17Test = [&](const char16_t* name, const char* savename, int32_t time) -> void
-	{
+	auto single17Test = [&](const char16_t* name, const char* savename, int32_t time) -> void {
 		srand(0);
 		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/17/" + name + u".efkefc").c_str());
 
@@ -90,7 +89,6 @@ void BasicRuntimeTestPlatform(EffectPlatformInitializingParameter param, EffectP
 		platform->TakeScreenshot((std::string(baseResultPath) + savename + suffix + ".png").c_str());
 		platform->StopAllEffects();
 	};
-
 
 	auto singleResourceData_00_Basic_Test = [&](const char16_t* name, const char* savename, int time) -> void {
 		srand(0);

@@ -122,8 +122,7 @@ CompiledMaterialBinary* MaterialCompilerDX12::Compile(MaterialFile* materialFile
 
 	auto binary = new CompiledMaterialBinaryDX12();
 
-	auto convertToVectorVS = [compiler](const std::string& str) -> std::vector<uint8_t>
-	{
+	auto convertToVectorVS = [compiler](const std::string& str) -> std::vector<uint8_t> {
 		std::vector<uint8_t> ret;
 
 		LLGI::CompilerResult result;
@@ -143,8 +142,7 @@ CompiledMaterialBinary* MaterialCompilerDX12::Compile(MaterialFile* materialFile
 		return ret;
 	};
 
-	auto convertToVectorPS = [compiler](const std::string& str) -> std::vector<uint8_t>
-	{
+	auto convertToVectorPS = [compiler](const std::string& str) -> std::vector<uint8_t> {
 		std::vector<uint8_t> ret;
 
 		LLGI::CompilerResult result;
@@ -164,8 +162,7 @@ CompiledMaterialBinary* MaterialCompilerDX12::Compile(MaterialFile* materialFile
 		return ret;
 	};
 
-	auto saveBinary = [&materialFile, &binary, &convertToVectorVS, &convertToVectorPS, &maximumUniformCount, &maximumTextureCount](MaterialShaderType type)
-	{
+	auto saveBinary = [&materialFile, &binary, &convertToVectorVS, &convertToVectorPS, &maximumUniformCount, &maximumTextureCount](MaterialShaderType type) {
 		auto generator = DirectX::ShaderGenerator(DirectX::ShaderGeneratorTarget::DirectX12);
 
 		auto shader = generator.GenerateShader(materialFile, type, maximumUniformCount, maximumTextureCount, 0, DX12_InstanceCount);

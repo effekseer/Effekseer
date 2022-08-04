@@ -3,8 +3,8 @@
 #define __EFFEKSEERRENDERER_LLGI_GRAPHICS_DEVICE_H__
 
 #include <Effekseer.h>
-#include <LLGI.CommandList.h>
 #include <LLGI.Buffer.h>
+#include <LLGI.CommandList.h>
 #include <LLGI.Graphics.h>
 #include <assert.h>
 #include <set>

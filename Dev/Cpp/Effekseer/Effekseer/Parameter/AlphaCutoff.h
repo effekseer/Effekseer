@@ -104,7 +104,8 @@ struct ParameterAlphaCutoff
 
 struct AlphaCuttoffState
 {
-	union {
+	union
+	{
 		struct
 		{
 		} fixed;

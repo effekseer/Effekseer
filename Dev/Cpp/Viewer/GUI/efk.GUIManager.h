@@ -67,32 +67,32 @@ enum class WindowFlags : int32_t
 // Enumeration for ColorEdit3() / ColorEdit4() / ColorPicker3() / ColorPicker4() / ColorButton()
 enum class ColorEditFlags : int32_t
 {
-    None            = 0,
-    NoAlpha         = 1 << 1,   //              // ColorEdit, ColorPicker, ColorButton: ignore Alpha component (will only read 3 components from the input pointer).
-    NoPicker        = 1 << 2,   //              // ColorEdit: disable picker when clicking on color square.
-    NoOptions       = 1 << 3,   //              // ColorEdit: disable toggling options menu when right-clicking on inputs/small preview.
-    NoSmallPreview  = 1 << 4,   //              // ColorEdit, ColorPicker: disable color square preview next to the inputs. (e.g. to show only the inputs)
-    NoInputs        = 1 << 5,   //              // ColorEdit, ColorPicker: disable inputs sliders/text widgets (e.g. to show only the small preview color square).
-    NoTooltip       = 1 << 6,   //              // ColorEdit, ColorPicker, ColorButton: disable tooltip when hovering the preview.
-    NoLabel         = 1 << 7,   //              // ColorEdit, ColorPicker: disable display of inline text label (the label is still forwarded to the tooltip and picker).
-    NoSidePreview   = 1 << 8,   //              // ColorPicker: disable bigger color preview on right side of the picker, use small color square preview instead.
-    NoDragDrop      = 1 << 9,   //              // ColorEdit: disable drag and drop target. ColorButton: disable drag and drop source.
-    NoBorder        = 1 << 10,  //              // ColorButton: disable border (which is enforced by default)
+	None = 0,
+	NoAlpha = 1 << 1,		 //              // ColorEdit, ColorPicker, ColorButton: ignore Alpha component (will only read 3 components from the input pointer).
+	NoPicker = 1 << 2,		 //              // ColorEdit: disable picker when clicking on color square.
+	NoOptions = 1 << 3,		 //              // ColorEdit: disable toggling options menu when right-clicking on inputs/small preview.
+	NoSmallPreview = 1 << 4, //              // ColorEdit, ColorPicker: disable color square preview next to the inputs. (e.g. to show only the inputs)
+	NoInputs = 1 << 5,		 //              // ColorEdit, ColorPicker: disable inputs sliders/text widgets (e.g. to show only the small preview color square).
+	NoTooltip = 1 << 6,		 //              // ColorEdit, ColorPicker, ColorButton: disable tooltip when hovering the preview.
+	NoLabel = 1 << 7,		 //              // ColorEdit, ColorPicker: disable display of inline text label (the label is still forwarded to the tooltip and picker).
+	NoSidePreview = 1 << 8,	 //              // ColorPicker: disable bigger color preview on right side of the picker, use small color square preview instead.
+	NoDragDrop = 1 << 9,	 //              // ColorEdit: disable drag and drop target. ColorButton: disable drag and drop source.
+	NoBorder = 1 << 10,		 //              // ColorButton: disable border (which is enforced by default)
 
-    // User Options (right-click on widget to change some of them).
-    AlphaBar        = 1 << 16,  //              // ColorEdit, ColorPicker: show vertical alpha bar/gradient in picker.
-    AlphaPreview    = 1 << 17,  //              // ColorEdit, ColorPicker, ColorButton: display preview as a transparent color over a checkerboard, instead of opaque.
-    AlphaPreviewHalf= 1 << 18,  //              // ColorEdit, ColorPicker, ColorButton: display half opaque / half checkerboard, instead of opaque.
-    HDR             = 1 << 19,  //              // (WIP) ColorEdit: Currently only disable 0.0f..1.0f limits in RGBA edition (note: you probably want to use ImGuiColorEditFlags_Float flag as well).
-    DisplayRGB      = 1 << 20,  // [Display]    // ColorEdit: override _display_ type among RGB/HSV/Hex. ColorPicker: select any combination using one or more of RGB/HSV/Hex.
-    DisplayHSV      = 1 << 21,  // [Display]    // "
-    DisplayHex      = 1 << 22,  // [Display]    // "
-    Uint8           = 1 << 23,  // [DataType]   // ColorEdit, ColorPicker, ColorButton: _display_ values formatted as 0..255.
-    Float           = 1 << 24,  // [DataType]   // ColorEdit, ColorPicker, ColorButton: _display_ values formatted as 0.0f..1.0f floats instead of 0..255 integers. No round-trip of value via integers.
-    PickerHueBar    = 1 << 25,  // [Picker]     // ColorPicker: bar for Hue, rectangle for Sat/Value.
-    PickerHueWheel  = 1 << 26,  // [Picker]     // ColorPicker: wheel for Hue, triangle for Sat/Value.
-    InputRGB        = 1 << 27,  // [Input]      // ColorEdit, ColorPicker: input and output data in RGB format.
-    InputHSV        = 1 << 28,  // [Input]      // ColorEdit, ColorPicker: input and output data in HSV format.
+	// User Options (right-click on widget to change some of them).
+	AlphaBar = 1 << 16,			//              // ColorEdit, ColorPicker: show vertical alpha bar/gradient in picker.
+	AlphaPreview = 1 << 17,		//              // ColorEdit, ColorPicker, ColorButton: display preview as a transparent color over a checkerboard, instead of opaque.
+	AlphaPreviewHalf = 1 << 18, //              // ColorEdit, ColorPicker, ColorButton: display half opaque / half checkerboard, instead of opaque.
+	HDR = 1 << 19,				//              // (WIP) ColorEdit: Currently only disable 0.0f..1.0f limits in RGBA edition (note: you probably want to use ImGuiColorEditFlags_Float flag as well).
+	DisplayRGB = 1 << 20,		// [Display]    // ColorEdit: override _display_ type among RGB/HSV/Hex. ColorPicker: select any combination using one or more of RGB/HSV/Hex.
+	DisplayHSV = 1 << 21,		// [Display]    // "
+	DisplayHex = 1 << 22,		// [Display]    // "
+	Uint8 = 1 << 23,			// [DataType]   // ColorEdit, ColorPicker, ColorButton: _display_ values formatted as 0..255.
+	Float = 1 << 24,			// [DataType]   // ColorEdit, ColorPicker, ColorButton: _display_ values formatted as 0.0f..1.0f floats instead of 0..255 integers. No round-trip of value via integers.
+	PickerHueBar = 1 << 25,		// [Picker]     // ColorPicker: bar for Hue, rectangle for Sat/Value.
+	PickerHueWheel = 1 << 26,	// [Picker]     // ColorPicker: wheel for Hue, triangle for Sat/Value.
+	InputRGB = 1 << 27,			// [Input]      // ColorEdit, ColorPicker: input and output data in RGB format.
+	InputHSV = 1 << 28,			// [Input]      // ColorEdit, ColorPicker: input and output data in HSV format.
 };
 
 enum class Cond : int32_t
@@ -229,47 +229,47 @@ enum class ImGuiColFlags : int32_t
 	PlotLinesHovered,
 	PlotHistogram,
 	PlotHistogramHovered,
-	TableHeaderBg,		// Table header background
+	TableHeaderBg,	   // Table header background
 	TableBorderStrong, // Table outer and header borders (prefer using Alpha=1.0 here)
-	TableBorderLight,	// Table inner borders (prefer using Alpha=1.0 here)
-	TableRowBg,		// Table row background (even rows)
-	TableRowBgAlt,		// Table row background (odd rows)
+	TableBorderLight,  // Table inner borders (prefer using Alpha=1.0 here)
+	TableRowBg,		   // Table row background (even rows)
+	TableRowBgAlt,	   // Table row background (odd rows)
 	TextSelectedBg,
-	DragDropTarget,		// Rectangle highlighting a drop target
-	NavHighlight,			// Gamepad/keyboard: current highlighted item
+	DragDropTarget,		   // Rectangle highlighting a drop target
+	NavHighlight,		   // Gamepad/keyboard: current highlighted item
 	NavWindowingHighlight, // Highlight window when using CTRL+TAB
-	NavWindowingDimBg,		// Darken/colorize entire screen behind the CTRL+TAB window list, when active
-	ModalWindowDimBg,		// Darken/colorize entire screen behind a modal window, when one is active
+	NavWindowingDimBg,	   // Darken/colorize entire screen behind the CTRL+TAB window list, when active
+	ModalWindowDimBg,	   // Darken/colorize entire screen behind a modal window, when one is active
 };
 
 enum ImGuiStyleVarFlags : int32_t
 {
-	Alpha,			   // float     Alpha
-	DisabledAlpha,	   // float     DisabledAlpha
-	WindowPadding,	   // ImVec2    WindowPadding
-	WindowRounding,	   // float     WindowRounding
-	WindowBorderSize,	   // float     WindowBorderSize
-	WindowMinSize,	   // ImVec2    WindowMinSize
-	WindowTitleAlign,	   // ImVec2    WindowTitleAlign
-	ChildRounding,	   // float     ChildRounding
-	ChildBorderSize,	   // float     ChildBorderSize
-	PopupRounding,	   // float     PopupRounding
-	PopupBorderSize,	   // float     PopupBorderSize
-	FramePadding,		   // ImVec2    FramePadding
-	FrameRounding,	   // float     FrameRounding
-	FrameBorderSize,	   // float     FrameBorderSize
-	ItemSpacing,		   // ImVec2    ItemSpacing
-	ItemInnerSpacing,	   // ImVec2    ItemInnerSpacing
-	IndentSpacing,	   // float     IndentSpacing
-	CellPadding,		   // ImVec2    CellPadding
-	ScrollbarSize,	   // float     ScrollbarSize
-	ScrollbarRounding,   // float     ScrollbarRounding
-	GrabMinSize,		   // float     GrabMinSize
-	GrabRounding,		   // float     GrabRounding
-	TabRounding,		   // float     TabRounding
-	ButtonTextAlign,	   // ImVec2    ButtonTextAlign
+	Alpha,				 // float     Alpha
+	DisabledAlpha,		 // float     DisabledAlpha
+	WindowPadding,		 // ImVec2    WindowPadding
+	WindowRounding,		 // float     WindowRounding
+	WindowBorderSize,	 // float     WindowBorderSize
+	WindowMinSize,		 // ImVec2    WindowMinSize
+	WindowTitleAlign,	 // ImVec2    WindowTitleAlign
+	ChildRounding,		 // float     ChildRounding
+	ChildBorderSize,	 // float     ChildBorderSize
+	PopupRounding,		 // float     PopupRounding
+	PopupBorderSize,	 // float     PopupBorderSize
+	FramePadding,		 // ImVec2    FramePadding
+	FrameRounding,		 // float     FrameRounding
+	FrameBorderSize,	 // float     FrameBorderSize
+	ItemSpacing,		 // ImVec2    ItemSpacing
+	ItemInnerSpacing,	 // ImVec2    ItemInnerSpacing
+	IndentSpacing,		 // float     IndentSpacing
+	CellPadding,		 // ImVec2    CellPadding
+	ScrollbarSize,		 // float     ScrollbarSize
+	ScrollbarRounding,	 // float     ScrollbarRounding
+	GrabMinSize,		 // float     GrabMinSize
+	GrabRounding,		 // float     GrabRounding
+	TabRounding,		 // float     TabRounding
+	ButtonTextAlign,	 // ImVec2    ButtonTextAlign
 	SelectableTextAlign, // ImVec2    SelectableTextAlign
-	LayoutAlign,		   // float     LayoutAlign
+	LayoutAlign,		 // float     LayoutAlign
 };
 
 enum class FCurveInterporationType : int32_t

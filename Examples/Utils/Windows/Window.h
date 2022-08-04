@@ -1,11 +1,11 @@
 #pragma once
 
 #include "../Window.h"
-#include <windows.h>
 #include <string>
+#include <windows.h>
 
-	namespace Utils
-	{
+namespace Utils
+{
 
 class WindowWin : public Window
 {
@@ -32,9 +32,15 @@ public:
 
 	Vec2I GetWindowSize() const;
 
-	HWND GetHandle() const { return hwnd_; }
+	HWND GetHandle() const
+	{
+		return hwnd_;
+	}
 
-	HINSTANCE GetInstance() const { return hInstance_; }
+	HINSTANCE GetInstance() const
+	{
+		return hInstance_;
+	}
 };
 
-} // namespace LLGI
+} // namespace Utils

@@ -131,7 +131,8 @@ private:
 	::Effekseer::FileInterface* fileInterface_;
 
 public:
-	CustomModelLoader(::Effekseer::FileInterface* fileInterface = nullptr) : fileInterface_(fileInterface)
+	CustomModelLoader(::Effekseer::FileInterface* fileInterface = nullptr)
+		: fileInterface_(fileInterface)
 	{
 		if (fileInterface == nullptr)
 		{
@@ -166,7 +167,9 @@ public:
 		return model;
 	}
 
-	void Unload(Effekseer::ModelRef data) override {}
+	void Unload(Effekseer::ModelRef data) override
+	{
+	}
 };
 
 int main(int argc, char** argv)

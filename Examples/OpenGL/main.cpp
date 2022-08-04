@@ -2,9 +2,9 @@
 #include <stdio.h>
 #include <string>
 
+#include "DeviceGLFW.h"
 #include <Effekseer.h>
 #include <EffekseerRendererGL.h>
-#include "DeviceGLFW.h"
 
 int main(int argc, char** argv)
 {

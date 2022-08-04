@@ -1,13 +1,13 @@
 #pragma once
 
-#include <functional>
-#include <XAudio2.h>
-#include <d3d9.h>
-#include <wrl/client.h>
+#include "../Utils/Input.h"
+#include "../Utils/Window.h"
 #include <EffekseerRendererDX9.h>
 #include <EffekseerSoundXAudio2.h>
-#include "../Utils/Window.h"
-#include "../Utils/Input.h"
+#include <XAudio2.h>
+#include <d3d9.h>
+#include <functional>
+#include <wrl/client.h>
 
 class DeviceDX9
 {
@@ -32,12 +32,27 @@ public:
 
 public:
 	DeviceDX9() = default;
-	~DeviceDX9() { Terminate(); }
+	~DeviceDX9()
+	{
+		Terminate();
+	}
 
-	Utils::Vec2I GetWindowSize() const { return window->GetWindowSize(); }
-	IDirect3D9* GetIDirect3D9() { return d3d9.Get(); }
-	IDirect3DDevice9* GetIDirect3DDevice9() { return d3d9Device.Get(); }
-	IXAudio2* GetIXAudio2() { return xa2Device.Get(); }
+	Utils::Vec2I GetWindowSize() const
+	{
+		return window->GetWindowSize();
+	}
+	IDirect3D9* GetIDirect3D9()
+	{
+		return d3d9.Get();
+	}
+	IDirect3DDevice9* GetIDirect3DDevice9()
+	{
+		return d3d9Device.Get();
+	}
+	IXAudio2* GetIXAudio2()
+	{
+		return xa2Device.Get();
+	}
 
 	bool Initialize(const char* windowTitle, Utils::Vec2I windowSize);
 	void Terminate();
@@ -46,5 +61,8 @@ public:
 	bool NewFrame();
 
 	void SetupEffekseerModules(::Effekseer::ManagerRef efkManager);
-	::EffekseerRendererDX9::RendererRef GetEffekseerRenderer() { return efkRenderer; }
+	::EffekseerRendererDX9::RendererRef GetEffekseerRenderer()
+	{
+		return efkRenderer;
+	}
 };

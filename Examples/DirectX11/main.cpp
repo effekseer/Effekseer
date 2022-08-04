@@ -3,8 +3,8 @@
 #include <string>
 #include <windows.h>
 
-#include <Effekseer.h>
 #include "DeviceDX11.h"
+#include <Effekseer.h>
 
 int main(int argc, char** argv)
 {

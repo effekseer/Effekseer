@@ -276,8 +276,8 @@ void Instance::FirstUpdate()
 		 parameter->CommonValues.ScalingBindType == BindType::Always))
 	{
 		if ((parameter->CommonValues.TranslationBindType == TranslationParentBindType::Always &&
-			parameter->CommonValues.RotationBindType == BindType::Always &&
-			parameter->CommonValues.ScalingBindType == BindType::Always) ||
+			 parameter->CommonValues.RotationBindType == BindType::Always &&
+			 parameter->CommonValues.ScalingBindType == BindType::Always) ||
 			!parameter->IsParticleSpawnedWithDecimal())
 		{
 			m_ParentMatrix = m_pParent->GetGlobalMatrix().GetCurrent();

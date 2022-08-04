@@ -1,12 +1,12 @@
 #pragma once
 
+#include "../Utils/Input.h"
+#include "../Utils/Window.h"
+#include <EffekseerRendererDX11.h>
+#include <EffekseerSoundXAudio2.h>
 #include <XAudio2.h>
 #include <d3d11.h>
 #include <wrl/client.h>
-#include <EffekseerRendererDX11.h>
-#include <EffekseerSoundXAudio2.h>
-#include "../Utils/Window.h"
-#include "../Utils/Input.h"
 
 class DeviceDX11
 {
@@ -36,14 +36,35 @@ private:
 
 public:
 	DeviceDX11() = default;
-	~DeviceDX11() { Terminate(); }
+	~DeviceDX11()
+	{
+		Terminate();
+	}
 
-	Utils::Vec2I GetWindowSize() const { return window->GetWindowSize(); }
-	ID3D11Device* GetID3D11Device() { return dx11Device.Get(); }
-	ID3D11DeviceContext* GetID3D11DeviceContext() { return dx11Context.Get(); }
-	ID3D11Texture2D* GetBackBuffer() { return backBuffer.Get(); }
-	ID3D11Texture2D* GetDepthBuffer() { return depthBuffer.Get(); }
-	IXAudio2* GetIXAudio2() { return xa2Device.Get(); }
+	Utils::Vec2I GetWindowSize() const
+	{
+		return window->GetWindowSize();
+	}
+	ID3D11Device* GetID3D11Device()
+	{
+		return dx11Device.Get();
+	}
+	ID3D11DeviceContext* GetID3D11DeviceContext()
+	{
+		return dx11Context.Get();
+	}
+	ID3D11Texture2D* GetBackBuffer()
+	{
+		return backBuffer.Get();
+	}
+	ID3D11Texture2D* GetDepthBuffer()
+	{
+		return depthBuffer.Get();
+	}
+	IXAudio2* GetIXAudio2()
+	{
+		return xa2Device.Get();
+	}
 
 	bool Initialize(const char* windowTitle, Utils::Vec2I windowSize);
 	void Terminate();
@@ -52,5 +73,8 @@ public:
 	bool NewFrame();
 
 	void SetupEffekseerModules(::Effekseer::ManagerRef efkManager);
-	::EffekseerRendererDX11::RendererRef GetEffekseerRenderer() { return efkRenderer; }
+	::EffekseerRendererDX11::RendererRef GetEffekseerRenderer()
+	{
+		return efkRenderer;
+	}
 };

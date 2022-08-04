@@ -792,7 +792,7 @@ public:
 			vcb.uvInversed[0] = uvInversed[0];
 			vcb.uvInversed[1] = uvInversed[1];
 			vcb.flipbookParameter = ToVertexBuffer(renderState.Flipbook);
-			
+
 			m_renderer->SetVertexBufferToShader(&vcb, sizeof(StandardRendererVertexBuffer), 0);
 
 			// ps

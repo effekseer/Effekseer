@@ -243,6 +243,6 @@ ClientRef Client::Create()
 {
 	return nullptr;
 }
-}
+} // namespace Effekseer
 
 #endif

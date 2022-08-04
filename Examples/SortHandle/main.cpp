@@ -64,8 +64,10 @@ int main(int argc, char** argv)
 
 	// Specify a projection matrix
 	// 投影行列を設定
-	efkRenderer->SetProjectionMatrix(::Effekseer::Matrix44().PerspectiveFovRH_OpenGL(90.0f / 180.0f * 3.14f, 
-		(float)device.GetWindowSize().X / (float)device.GetWindowSize().Y, 1.0f, 500.0f));
+	efkRenderer->SetProjectionMatrix(::Effekseer::Matrix44().PerspectiveFovRH_OpenGL(90.0f / 180.0f * 3.14f,
+																					 (float)device.GetWindowSize().X / (float)device.GetWindowSize().Y,
+																					 1.0f,
+																					 500.0f));
 
 	// Specify a camera matrix
 	// カメラ行列を設定

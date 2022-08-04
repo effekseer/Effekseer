@@ -56,7 +56,8 @@ struct DynamicVertex
 	//! packed vector
 	VertexColor Tangent;
 
-	union {
+	union
+	{
 		//! UV1 (for template)
 		float UV[2];
 		float UV1[2];
@@ -125,7 +126,8 @@ struct LightingVertex
 	//! packed vector
 	VertexColor Tangent;
 
-	union {
+	union
+	{
 		//! UV1 (for template)
 		float UV[2];
 		float UV1[2];
@@ -182,7 +184,8 @@ struct SimpleVertex
 	VertexFloat3 Pos;
 	VertexColor Col;
 
-	union {
+	union
+	{
 		float UV[2];
 		//! dummy for template
 		float UV2[2];
@@ -227,7 +230,8 @@ struct AdvancedLightingVertex
 	//! packed vector
 	VertexColor Tangent;
 
-	union {
+	union
+	{
 		//! UV1 (for template)
 		float UV[2];
 		float UV1[2];
@@ -294,7 +298,8 @@ struct AdvancedSimpleVertex
 	VertexFloat3 Pos;
 	VertexColor Col;
 
-	union {
+	union
+	{
 		float UV[2];
 		//! dummy for template
 		float UV1[2];
@@ -1382,7 +1387,8 @@ struct SoftParticleParameter
 
 struct FlipbookParameter
 {
-	union {
+	union
+	{
 		float Buffer[4];
 
 		struct
@@ -1395,7 +1401,8 @@ struct FlipbookParameter
 
 struct UVDistortionParameter
 {
-	union {
+	union
+	{
 		float Buffer[4];
 
 		struct
@@ -1409,7 +1416,8 @@ struct UVDistortionParameter
 
 struct BlendTextureParameter
 {
-	union {
+	union
+	{
 		float Buffer[4];
 
 		struct
@@ -1421,7 +1429,8 @@ struct BlendTextureParameter
 
 struct EmmisiveParameter
 {
-	union {
+	union
+	{
 		float Buffer[4];
 
 		struct
@@ -1435,7 +1444,8 @@ struct EdgeParameter
 {
 	std::array<float, 4> EdgeColor;
 
-	union {
+	union
+	{
 		float Buffer[4];
 
 		struct
@@ -1448,7 +1458,8 @@ struct EdgeParameter
 
 struct FalloffParameter
 {
-	union {
+	union
+	{
 		float Buffer[4];
 
 		struct

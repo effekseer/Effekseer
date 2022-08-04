@@ -2,7 +2,6 @@
 #ifndef __EFFEKSEER_SOCKET_H__
 #define __EFFEKSEER_SOCKET_H__
 
-
 #if !(defined(_PSVITA) || defined(_XBOXONE))
 
 //----------------------------------------------------------------------------------

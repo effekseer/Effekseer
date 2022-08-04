@@ -2073,7 +2073,6 @@ public:
 #ifndef __EFFEKSEER_FILE_H__
 #define __EFFEKSEER_FILE_H__
 
-
 namespace Effekseer
 {
 
@@ -2152,7 +2151,6 @@ public:
 
 #ifndef __EFFEKSEER_DEFAULT_FILE_H__
 #define __EFFEKSEER_DEFAULT_FILE_H__
-
 
 namespace Effekseer
 {
@@ -4935,7 +4933,6 @@ public:
 #ifndef __EFFEKSEER_SERVER_H__
 #define __EFFEKSEER_SERVER_H__
 
-
 namespace Effekseer
 {
 
@@ -5031,7 +5028,6 @@ public:
 #ifndef __EFFEKSEER_CLIENT_H__
 #define __EFFEKSEER_CLIENT_H__
 
-
 namespace Effekseer
 {
 
@@ -5060,4 +5056,3 @@ public:
 #endif // __EFFEKSEER_CLIENT_H__
 
 #include "Effekseer.Modules.h"
-
