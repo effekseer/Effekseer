@@ -1,26 +1,24 @@
-KillRules,ルールを殺す
-KillRules_Description,"キルルールを使用すると、パーティクルを破棄する領域を指定できます。
- -指定されたボックスの内側または外側に移動するときにパーティクルを殺すために使用されるボックス。
- -パーティクルが指定された軸に沿って特定の位置を超えて移動したときにパーティクルを殺すために使用される平面。
- -球は、指定された球の内側または外側に移動するときにパーティクルを殺すために使用されます。"
-KillRules_Type_Name,タイプ
-KillRules_Box_Center_Name,ボックスセンター
-KillRules_Box_Size_Name,ボックスサイズ
-KillRules_Box_IsKillInside_Name,内部を殺す
-KillRules_Box_IsKillInside_Desc,"有効にすると、パーティクルがボックス内に落ちた場合にパーティクルが強制終了されます。
-無効にすると（デフォルト）、ボックスの外に落ちたときに殺されます。"
-KillRules_IsScaleAndRotationApplied_Name,"スケールと
-回転が適用されました"
-KillRules_IsScaleAndRotationApplied_Desc,"有効にすると（デフォルト）、キルシェイプは効果的に回転およびスケーリングされます。
-無効にすると、キルシェイプの方向とスケールは一定のままになります"
-KillRules_Plane_Axis_Name,平面軸
-KillRules_Plane_PlaneOffset_Name,"平面オフセット
-軸に沿って"
-KillRules_Sphere_Center_Name,スフィアセンター
-KillRules_Sphere_Radius_Name,球の半径
-KillRules_Sphere_IsKillInside_Name,内部を殺す
-KillRules_Sphere_IsKillInside_Desc,"有効にすると、パーティクルが球の内側に落ちた場合にパーティクルが強制終了されます。
-無効にすると（デフォルト）、球の外に落ちると殺されます。"
+KillRules,破棄ルール
+KillRules_Description,"破棄ルールを使用すると、パーティクルを破棄する領域を指定できます。
+ -箱 指定された箱の内側または外側に移動するときにパーティクルを破棄する。
+ -平面 パーティクルが指定された軸に沿って特定の位置を超えて移動したときにパーティクルを破棄する。
+ -球 指定された球の内側または外側に移動するときにパーティクルを破棄する。"
+KillRules_Type_Name,種類
+KillRules_Box_Center_Name,中央
+KillRules_Box_Size_Name,大きさ
+KillRules_Box_IsKillInside_Name,内部を破棄
+KillRules_Box_IsKillInside_Desc,"これが有効の場合、箱の内部にパーティクルが入った時、パーティクルが破棄されます。
+これが無効の場合(デフォルト)、箱の外側にパーティクルが出た時、パーティクルが破棄されます。"
+KillRules_IsScaleAndRotationApplied_Name,"回転拡大の適用"
+KillRules_IsScaleAndRotationApplied_Desc,"これが有効の場合(デフォルト)、エフェクトの回転拡大が箱に適用されます。
+これが無効の場合、固定された大きさで軸に沿った箱になります。"
+KillRules_Plane_Axis_Name,平面の軸
+KillRules_Plane_PlaneOffset_Name,"平面の位置オフセット"
+KillRules_Sphere_Center_Name,中央
+KillRules_Sphere_Radius_Name,半径
+KillRules_Sphere_IsKillInside_Name,内部を破棄
+KillRules_Sphere_IsKillInside_Desc,"これが有効の場合、球の内部にパーティクルが入った時、パーティクルが破棄されます。
+これが無効の場合(デフォルト)、球の外側にパーティクルが出た時、パーティクルが破棄されます。"
 KillType_None_Name,なし
 KillType_Box_Name,箱
 KillType_Plane_Name,平面
