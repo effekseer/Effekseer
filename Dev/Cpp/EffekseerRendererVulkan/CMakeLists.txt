@@ -44,7 +44,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${Vulkan_INCLUDE_DIRS})
 set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${LOCAL_HEADERS_Vulkan}")
 target_link_libraries(${PROJECT_NAME} PUBLIC Effekseer LLGI)
 
-if(USE_LIBPNG_LOADER AND USE_INTERNAL_LOADER)
+if(USE_LIBPNG_LOADER)
     add_dependencies(${PROJECT_NAME} ExternalProject_zlib ExternalProject_libpng) 
 endif()
 

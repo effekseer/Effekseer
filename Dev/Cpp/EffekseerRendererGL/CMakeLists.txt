@@ -17,12 +17,10 @@ list(REMOVE_ITEM LOCAL_SOURCES_Common
     ${PROJECT_SOURCE_DIR}/../EffekseerRendererCommon/EffekseerRenderer.DXTK.DDSTextureLoader.h
 )
 
-if(NOT USE_INTERNAL_LOADER)
-    list(REMOVE_ITEM LOCAL_SOURCES_Common
-        ${PROJECT_SOURCE_DIR}/../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.cpp
-        ${PROJECT_SOURCE_DIR}/../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h
-    )
-endif()
+list(REMOVE_ITEM LOCAL_SOURCES_Common
+    ${PROJECT_SOURCE_DIR}/../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.cpp
+    ${PROJECT_SOURCE_DIR}/../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h
+)
 
 file(GLOB_RECURSE LOCAL_HEADERS_GL *.h)
 file(GLOB_RECURSE LOCAL_SOURCES_GL *.cpp)
@@ -54,7 +52,7 @@ if(CLANG_FORMAT_ENABLED)
     clang_format(${PROJECT_NAME})
 endif()
 
-if(USE_LIBPNG_LOADER AND USE_INTERNAL_LOADER)
+if(USE_LIBPNG_LOADER)
     add_dependencies(${PROJECT_NAME} ExternalProject_zlib ExternalProject_libpng) 
 endif()
 
