@@ -12,16 +12,6 @@ list(APPEND LOCAL_SOURCES_Common
 
 source_group("EffekseerRendererCommon" FILES ${LOCAL_SOURCES_Common})
 
-list(REMOVE_ITEM LOCAL_SOURCES_Common
-    ${PROJECT_SOURCE_DIR}/../EffekseerRendererCommon/EffekseerRenderer.DXTK.DDSTextureLoader.cpp
-    ${PROJECT_SOURCE_DIR}/../EffekseerRendererCommon/EffekseerRenderer.DXTK.DDSTextureLoader.h
-)
-
-list(REMOVE_ITEM LOCAL_SOURCES_Common
-    ${PROJECT_SOURCE_DIR}/../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.cpp
-    ${PROJECT_SOURCE_DIR}/../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h
-)
-
 file(GLOB_RECURSE LOCAL_HEADERS_GL *.h)
 file(GLOB_RECURSE LOCAL_SOURCES_GL *.cpp)
 list(APPEND LOCAL_HEADERS_GL ../EffekseerMaterialCompiler/OpenGL/EffekseerMaterialCompilerGL.h)
