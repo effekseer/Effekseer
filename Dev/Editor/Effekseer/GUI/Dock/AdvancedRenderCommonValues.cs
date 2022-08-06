@@ -8,7 +8,6 @@ namespace Effekseer.GUI.Dock
 {
 	class AdvancedRenderCommonValues : DockPanel
 	{
-		Component.CopyAndPaste candp = null;
 		Component.ParameterList parameterList = null;
 
 		bool isFirstUpdate = true;
@@ -16,17 +15,17 @@ namespace Effekseer.GUI.Dock
 		public AdvancedRenderCommonValues()
 		{
 			Label = Icons.PanelAdvancedRenderCommon + Resources.GetString("AdvancedRenderSettings") + "###AdvancedRenderSettings";
+			DocPage = "rendererCommonAd.html";
 
 			parameterList = new Component.ParameterList();
 			parameterList.SetType(typeof(Data.AdvancedRenderCommonValues));
 
-			candp = new Component.CopyAndPaste("AdvancedRenderSettings", GetTargetObject, Read);
+			CopyAndPaste = new Component.CopyAndPaste("AdvancedRenderSettings", GetTargetObject, Read);
 
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;
 			Core.OnAfterSelectNode += OnAfterSelectNode;
 
-			Controls.Add(candp);
 			Controls.Add(parameterList);
 
 			Read();
@@ -53,6 +52,8 @@ namespace Effekseer.GUI.Dock
 			if (isFirstUpdate)
 			{
 			}
+
+			Manager.NativeManager.Separator();
 		}
 
 		object GetTargetObject()

@@ -8,7 +8,6 @@ namespace Effekseer.GUI.Dock
 {
 	class LocationAbsValues : DockPanel
 	{
-		Component.CopyAndPaste candp = null;
 		Component.ParameterList paramerterList = null;
 
 		bool isFiestUpdate = true;
@@ -16,10 +15,11 @@ namespace Effekseer.GUI.Dock
 		public LocationAbsValues()
 		{
 			Label = Icons.PanelForceField + Resources.GetString("AttractionForces") + "###AttractionForces";
+			DocPage = "locationAbs.html";
 
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.LocationAbsValues));
-			candp = new Component.CopyAndPaste("AttractionForces", GetTargetObject, Read);
+			CopyAndPaste = new Component.CopyAndPaste("AttractionForces", GetTargetObject, Read);
 
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;
@@ -50,8 +50,7 @@ namespace Effekseer.GUI.Dock
 			{
 			}
 
-			candp.Update();
-
+			Manager.NativeManager.Separator();
 			paramerterList.Update();
 		}
 

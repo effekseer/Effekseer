@@ -15,6 +15,8 @@ namespace Effekseer.GUI.Dock
 		public Option()
 		{
 			Label = Icons.PanelOptions + Resources.GetString("Options") + "###Options";
+			DocPage = "options.html";
+
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.OptionValues));
 
@@ -50,6 +52,7 @@ namespace Effekseer.GUI.Dock
 				LanguageTable.OnLanguageChanged += RestartValue_OnChanged;
 			}
 
+			Manager.NativeManager.Separator();
 			paramerterList.Update();
 		}
 

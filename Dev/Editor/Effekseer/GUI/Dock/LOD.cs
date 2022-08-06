@@ -19,6 +19,7 @@ namespace Effekseer.GUI.Dock
 		public LOD()
 		{
 			Label = Icons.PanelLOD + Resources.GetString("LOD_Name") + "###LOD";
+			DocPage = "levelsOfDetails.html";
 		}
 
 		static uint GetColorU32Abgr(uint argb){
@@ -71,6 +72,8 @@ namespace Effekseer.GUI.Dock
 
 		protected override void UpdateInternal()
 		{
+			Manager.NativeManager.Separator();
+
 			LevelParameter[] levels = new LevelParameter[]
 			{
 				new LevelParameter(0, Core.LodValues.Lod0Enabled, Core.LodValues.Distance0),
@@ -78,7 +81,7 @@ namespace Effekseer.GUI.Dock
 				new LevelParameter(2, Core.LodValues.Lod2Enabled, Core.LodValues.Distance2),
 				new LevelParameter(3, Core.LodValues.Lod3Enabled, Core.LodValues.Distance3),
 			};
-			Manager.NativeManager.TextWrapped(MultiLanguageTextProvider.GetText("LOD_Description").Replace("\\n", "\n"));
+
 			Manager.NativeManager.Columns(2);
 			if (isFirstUpdate)
 			{

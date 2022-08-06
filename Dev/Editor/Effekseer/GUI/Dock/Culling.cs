@@ -10,6 +10,7 @@ namespace Effekseer.GUI.Dock
 		public Culling()
 		{
 			Label = Icons.PanelCulling + Resources.GetString("Culling") + "###Culling";
+			DocPage = "culling.html";
 
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.EffectCullingValues));
@@ -43,6 +44,7 @@ namespace Effekseer.GUI.Dock
 			{
 			}
 
+			Manager.NativeManager.Separator();
 			paramerterList.Update();
 		}
 

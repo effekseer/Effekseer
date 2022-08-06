@@ -8,7 +8,6 @@ namespace Effekseer.GUI.Dock
 {
 	class RendererCommonValues : DockPanel
 	{
-		Component.CopyAndPaste candp = null;
 		Component.ParameterList paramerterList = null;
 
 		bool isFiestUpdate = true;
@@ -16,17 +15,17 @@ namespace Effekseer.GUI.Dock
 		public RendererCommonValues()
 		{
 			Label = Icons.PanelRenderCommon + Resources.GetString("BasicRenderSettings") + "###BasicRenderSettings";
+			DocPage = "rendererCommon.html";
 
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.RendererCommonValues));
 
-			candp = new Component.CopyAndPaste("BasicRenderSettings", GetTargetObject, Read);
+			CopyAndPaste = new Component.CopyAndPaste("BasicRenderSettings", GetTargetObject, Read);
 
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;
 			Core.OnAfterSelectNode += OnAfterSelectNode;
 
-			Controls.Add(candp);
 			Controls.Add(paramerterList);
 
 			Read();

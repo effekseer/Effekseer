@@ -13,6 +13,7 @@ namespace Effekseer.GUI.Dock
 		public Dynamic()
 		{
 			Label = Icons.PanelDynamicParams + Resources.GetString("DynamicParameter_Name") + "###DynamicParameter";
+			DocPage = "dynamicParameter.html";
 
 			paramerterListInput = new Component.ParameterList();
 			paramerterList = new Component.ParameterList();
@@ -62,6 +63,8 @@ namespace Effekseer.GUI.Dock
 
 		protected override void UpdateInternal()
 		{
+			Manager.NativeManager.Separator();
+
 			Manager.NativeManager.Text(Resources.GetString("DynamicInput"));
 
 			paramerterListInput.Update();

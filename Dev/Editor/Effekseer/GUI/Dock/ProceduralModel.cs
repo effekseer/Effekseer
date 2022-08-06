@@ -6,14 +6,14 @@ namespace Effekseer.GUI.Dock
 	class ProceduralModel : DockPanel
 	{
 		readonly Component.ParameterList paramerterList = null;
-		Component.CopyAndPaste candp = null;
 
 		public ProceduralModel()
 		{
 			Label = Icons.PanelProceduralModel + Resources.GetString("ProceduralModel_Name") + "###ProceduralModel";
+			DocPage = "proceduralModel.html";
 
 			paramerterList = new Component.ParameterList();
-			candp = new Component.CopyAndPaste("ProceduralModel", GetTargetObject, Read);
+			CopyAndPaste = new Component.CopyAndPaste("ProceduralModel", GetTargetObject, Read);
 
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;
@@ -44,6 +44,8 @@ namespace Effekseer.GUI.Dock
 
 		protected override void UpdateInternal()
 		{
+			Manager.NativeManager.Separator();
+
 			float width = Manager.NativeManager.GetContentRegionAvail().X;
 
 			Manager.NativeManager.PushItemWidth(width - Manager.NativeManager.GetTextLineHeight() * 5.5f);
@@ -71,7 +73,6 @@ namespace Effekseer.GUI.Dock
 				Core.ProceduralModel.ProceduralModels.Delete(Core.ProceduralModel.ProceduralModels.Selected);
 			}
 
-			candp.Update();
 			paramerterList.Update();
 		}
 

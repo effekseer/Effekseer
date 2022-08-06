@@ -57,6 +57,7 @@ namespace Effekseer.GUI
 
 			Icons["Copy"] = LoadAppResource(graphicsDevice, "resources/icons/Copy.png");
 			Icons["Paste"] = LoadAppResource(graphicsDevice, "resources/icons/Paste.png");
+			Icons["Help"] = LoadAppResource(graphicsDevice, "resources/icons/Help.png");
 
 			Icons["AppIcon"] = LoadAppResource(graphicsDevice, "resources/icon.png");
 

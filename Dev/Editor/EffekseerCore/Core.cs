@@ -1780,5 +1780,23 @@ namespace Effekseer
 
 			convert(Root as Data.NodeBase);
 		}
+
+		/// <summary>
+		/// Get the help top page URL
+		/// </summary>
+		public static string GetToolHelpURL()
+		{
+			const string baseURL = "https://effekseer.github.io/Helps/17x/Tool/";
+			string language = (Core.Language == Language.Japanese) ? "ja" : "en";
+			return baseURL + language + "/";
+		}
+
+		/// <summary>
+		/// Get the tool reference document URL
+		/// </summary>
+		public static string GetToolReferenceURL(string docPage)
+		{
+			return GetToolHelpURL() + "ToolReference/" + docPage;
+		}
 	}
 }

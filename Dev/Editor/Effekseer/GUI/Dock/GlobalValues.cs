@@ -10,6 +10,7 @@ namespace Effekseer.GUI.Dock
 		public GlobalValues()
 		{
 			Label = Icons.PanelGlobal + Resources.GetString("Global") + "###Global";
+			DocPage = "global.html";
 
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.GlobalValues));
@@ -43,6 +44,7 @@ namespace Effekseer.GUI.Dock
 			{
 			}
 
+			Manager.NativeManager.Separator();
 			paramerterList.Update();
 		}
 
