@@ -8,25 +8,25 @@ namespace Effekseer.GUI.Dock
 {
 	class RendererValues : DockPanel
 	{
-		Component.CopyAndPaste candp = null;
 		Component.ParameterList paramerterList = null;
 
 		bool isFiestUpdate = true;
+		Data.RendererValues currentValues = null;
 
 		public RendererValues()
 		{
 			Label = Icons.PanelRender + Resources.GetString("RenderSettings") + "###RenderSettings";
+			DocPage = string.Empty;
 
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.RendererValues));
 
-			candp = new Component.CopyAndPaste("RenderSettings", GetTargetObject, Read);
+			CopyAndPaste = new Component.CopyAndPaste("RenderSettings", GetTargetObject, Read);
 
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;
 			Core.OnAfterSelectNode += OnAfterSelectNode;
 
-			Controls.Add(candp);
 			Controls.Add(paramerterList);
 
 			Read();
@@ -66,9 +66,11 @@ namespace Effekseer.GUI.Dock
 			}
 			return null;
 		}
+
 		void Read()
 		{
 			paramerterList.SetValue(GetTargetObject());
+			UpdateDocPage();
 		}
 
 		void OnAfterLoad(object sender, EventArgs e)
@@ -78,7 +80,54 @@ namespace Effekseer.GUI.Dock
 
 		void OnAfterSelectNode(object sender, EventArgs e)
 		{
+			if (currentValues != null)
+			{
+				currentValues.Type.OnChanged -= OnTypeChanged;
+			}
+			currentValues = (Data.RendererValues)GetTargetObject();
+			if (currentValues != null)
+			{
+				currentValues.Type.OnChanged += OnTypeChanged;
+			}
+
 			Read();
+		}
+
+		void OnTypeChanged(object sender, ChangedValueEventArgs e)
+		{
+			UpdateDocPage();
+		}
+
+		void UpdateDocPage()
+		{
+			if (currentValues != null)
+			{
+				switch (currentValues.Type.Value)
+				{
+					case Data.RendererValues.ParamaterType.Sprite:
+						DocPage = "rendererSprite.html";
+						break;
+					case Data.RendererValues.ParamaterType.Ribbon:
+						DocPage = "rendererRibbon.html";
+						break;
+					case Data.RendererValues.ParamaterType.Ring:
+						DocPage = "rendererRing.html";
+						break;
+					case Data.RendererValues.ParamaterType.Model:
+						DocPage = "rendererModel.html";
+						break;
+					case Data.RendererValues.ParamaterType.Track:
+						DocPage = "rendererTrack.html";
+						break;
+					default:
+						DocPage = string.Empty;
+						break;
+				}
+			}
+			else
+			{
+				DocPage = string.Empty;
+			}
 		}
 	}
 }

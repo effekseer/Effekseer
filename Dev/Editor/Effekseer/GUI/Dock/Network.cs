@@ -11,12 +11,15 @@ namespace Effekseer.GUI.Dock
 		public Network()
 		{
 			Label = Icons.PanelNetwork + Resources.GetString("Network") + "###Network";
+			DocPage = "network.html";
 
 			TabToolTip = Resources.GetString("Network");
 		}
 
 		protected override void UpdateInternal()
 		{
+			Manager.NativeManager.Separator();
+
 			var target = Manager.Network.Target;
 			var port = new int[] { Manager.Network.Port };
 			var autoConnect = new bool[] { Manager.Network.AutoConnect };

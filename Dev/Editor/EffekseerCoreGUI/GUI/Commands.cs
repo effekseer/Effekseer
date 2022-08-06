@@ -456,22 +456,7 @@ namespace Effekseer.GUI
 		[UniqueName(value = "Internal.ViewHelp")]
 		static public bool ViewHelp()
 		{
-			string helpPath = @"https://effekseer.github.io/Helps/17x/Tool/en/index.html";
-
-			if (Core.Language == Language.Japanese)
-			{
-				helpPath = @"https://effekseer.github.io/Helps/17x/Tool/ja/index.html";
-			}
-
-			try
-			{
-				System.Diagnostics.Process.Start(helpPath);
-			}
-			catch
-			{
-				swig.GUIManager.show(MultiLanguageTextProvider.GetText("Error_FailedToOpenHelp"), "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
-			}
-
+			ShowURL(Core.GetToolHelpURL());
 			return true;
 		}
 
@@ -578,6 +563,20 @@ namespace Effekseer.GUI
 
 			swig.GUIManager.show(e.Message, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
 			Core.New();
+		}
+
+		static public bool ShowURL(string url)
+		{
+			try
+			{
+				System.Diagnostics.Process.Start(url);
+			}
+			catch
+			{
+				swig.GUIManager.show(MultiLanguageTextProvider.GetText("Error_FailedToOpenHelp"), "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
+			}
+
+			return true;
 		}
 	}
 }

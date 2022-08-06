@@ -109,6 +109,7 @@ namespace Effekseer.GUI.Dock
 		public FCurves()
 		{
 			Label = Icons.PanelFCurve + Resources.GetString("FCurves") + "###FCurves";
+			DocPage = "fcurve.html";
 
 			Command.CommandManager.Changed += OnChanged;
 			Core.OnAfterNew += OnChanged;
@@ -217,11 +218,14 @@ namespace Effekseer.GUI.Dock
 
 				Manager.NativeManager.SameLine();
 
-				Manager.NativeManager.Button("?", size.X, size.Y);
-
-				if (Manager.NativeManager.IsItemHovered())
+				if (Manager.NativeManager.ImageButton(Images.Icons["Help"], size.X, size.Y))
 				{
-					Manager.NativeManager.SetTooltip(Resources.GetString("FCurveCtrl_Desc"));
+					Commands.ShowURL(DocURL);
+				}
+
+				if (Component.Functions.CanShowTip())
+				{
+					Manager.NativeManager.SetTooltip(Resources.GetString("Panel_Help_Desc"));
 				}
 
 				Manager.NativeManager.PopStyleVar();
@@ -322,6 +326,10 @@ namespace Effekseer.GUI.Dock
 			CheckAndApplyUpdate(treeNodes);
 
 			isFirstUpdate = false;
+		}
+
+		protected override void UpdateToolbar()
+		{
 		}
 
 		bool UpdateMenu()

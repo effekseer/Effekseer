@@ -5,18 +5,17 @@ namespace Effekseer.GUI.Dock
 {
 	public class KillRules: DockPanel
 	{
-		Component.CopyAndPaste candp = null;
 		Component.ParameterList parameterList = null;
 		
 		public KillRules()
 		{
-			;
 			Label = Icons.PanelKillRules + MultiLanguageTextProvider.GetText("KillRules") + "###KillRules";
+			DocPage = "killRules.html";
 
 			parameterList = new ParameterList();
 			parameterList.SetType(typeof(Data.KillRulesValues));
 
-			candp = new CopyAndPaste("KillRules", GetTargetObject, Read);
+			CopyAndPaste = new CopyAndPaste("KillRules", GetTargetObject, Read);
 			
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;
@@ -38,8 +37,6 @@ namespace Effekseer.GUI.Dock
 
 		protected override void UpdateInternal()
 		{
-			candp.Update();
-			Manager.NativeManager.TextWrapped(MultiLanguageTextProvider.GetText("KillRules_Description"));
 			parameterList.Update();
 		}
 

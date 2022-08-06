@@ -30,6 +30,7 @@ namespace Effekseer.GUI.Dock
 		public FileBrowser()
 		{
 			Label = Icons.PanelFileBrowser + Resources.GetString("FileBrowser") + "###FileVeiwer";
+			DocPage = "fileviewer.html";
 
 			TabToolTip = Resources.GetString("FileBrowser");
 
@@ -93,6 +94,10 @@ namespace Effekseer.GUI.Dock
 			}
 		}
 
+		protected override void UpdateToolbar()
+		{
+		}
+
 		void UpdateAddressBar(float dpiScale, swig.Vec2 regionSize, swig.Vec2 spacing)
 		{
 			float buttonWidth = Manager.NativeManager.GetTextLineHeight() + Manager.NativeManager.GetStyleVar2(swig.ImGuiStyleVarFlags.FramePadding).X * 2;
@@ -109,7 +114,7 @@ namespace Effekseer.GUI.Dock
 			// Display current directory
 			if (addressActivated || addressEditing)
 			{
-				Manager.NativeManager.PushItemWidth(regionSize.X - buttonWidth * 2 - spacing.X * 2);
+				Manager.NativeManager.PushItemWidth(regionSize.X - buttonWidth * 3 - spacing.X * 3);
 
 				if (addressActivated)
 				{
@@ -134,7 +139,7 @@ namespace Effekseer.GUI.Dock
 			else
 			{
 				string label = Path.GetFileName(CurrentPath) + "###AddressButton";
-				if (Manager.NativeManager.Button(label, regionSize.X - buttonWidth * 2 - spacing.X * 2))
+				if (Manager.NativeManager.Button(label, regionSize.X - buttonWidth * 3 - spacing.X * 3))
 				{
 					addressActivated = true;
 				}
@@ -148,6 +153,19 @@ namespace Effekseer.GUI.Dock
 			}
 
 			UpdateOptionMenu();
+
+			Manager.NativeManager.SameLine();
+
+			if (Manager.NativeManager.Button("?", buttonWidth))
+			{
+				Commands.ShowURL(DocURL);
+			}
+
+			if (Component.Functions.CanShowTip())
+			{
+				Manager.NativeManager.SetTooltip(Resources.GetString("Panel_Help_Desc"));
+			}
+
 		}
 
 		void UpdateOptionMenu()

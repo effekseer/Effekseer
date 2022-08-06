@@ -3,7 +3,6 @@ namespace Effekseer.GUI.Dock
 {
 	class BehaviorValues : DockPanel
 	{
-		Component.CopyAndPaste candp = null;
 		Component.ParameterList paramerterList = null;
 
 		bool isFiestUpdate = true;
@@ -11,11 +10,12 @@ namespace Effekseer.GUI.Dock
 		public BehaviorValues()
 		{
 			Label = Icons.PanelBehavior + Resources.GetString("Behavior") + "###Behavior";
+			DocPage = "behavior.html";
 
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.EffectBehaviorValues));
 
-			candp = new Component.CopyAndPaste("Behavior", GetTargetObject, Read);
+			CopyAndPaste = new Component.CopyAndPaste("Behavior", GetTargetObject, Read);
 
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;
@@ -46,8 +46,7 @@ namespace Effekseer.GUI.Dock
 			{
 			}
 
-			candp.Update();
-
+			Manager.NativeManager.Separator();
 			paramerterList.Update();
 		}
 

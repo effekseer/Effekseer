@@ -8,7 +8,6 @@ namespace Effekseer.GUI.Dock
 {
 	class LocationValues : DockPanel
 	{
-		Component.CopyAndPaste candp = null;
 		Component.ParameterList paramerterList = null;
 
 		bool isFiestUpdate = true;
@@ -16,17 +15,17 @@ namespace Effekseer.GUI.Dock
 		public LocationValues()
 		{
 			Label = Icons.PanelLocation + Resources.GetString("Position") + "###Position";
+			DocPage = "location.html";
 
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.LocationValues));
 
-			candp = new Component.CopyAndPaste("Location", GetTargetObject, Read);
+			CopyAndPaste = new Component.CopyAndPaste("Location", GetTargetObject, Read);
 
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;
 			Core.OnAfterSelectNode += OnAfterSelectNode;
 
-			Controls.Add(candp);
 			Controls.Add(paramerterList);
 
 			Read();

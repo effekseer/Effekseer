@@ -8,7 +8,6 @@ namespace Effekseer.GUI.Dock
 {
 	class Environement : DockPanel
 	{
-		Component.CopyAndPaste candp = null;
 		Component.ParameterList paramerterList = null;
 
 		bool isFiestUpdate = true;
@@ -16,10 +15,11 @@ namespace Effekseer.GUI.Dock
 		public Environement()
 		{
 			Label = Icons.PanelEnvironment + Resources.GetString("Environment_Name") + "###Environment";
+			DocPage = "environment.html";
 
 			paramerterList = new Component.ParameterList();
 
-			candp = new Component.CopyAndPaste("Environment", GetTargetObject, null);
+			CopyAndPaste = new Component.CopyAndPaste("Environment", GetTargetObject, null);
 
 			Core.OnAfterLoad += OnAfter;
 			Core.OnAfterNew += OnAfter;
@@ -48,8 +48,7 @@ namespace Effekseer.GUI.Dock
 				isFiestUpdate = false;
 			}
 
-			candp.Update();
-
+			Manager.NativeManager.Separator();
 			paramerterList.Update();
 		}
 
