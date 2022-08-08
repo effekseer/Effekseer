@@ -20,14 +20,24 @@ void TimeSeriesMatrix::Reset(const SIMD::Mat43f& matrix, float time)
 	current_ = matrix;
 	previousTime_ = 0.0f;
 	currentTime_ = 0.0f;
+	isCurrentMatrixSpecified_ = true;
 }
 
 void TimeSeriesMatrix::Step(const SIMD::Mat43f& matrix, float time)
 {
-	previous_ = current_;
+	if (isCurrentMatrixSpecified_)
+	{
+		previous_ = current_;
+	}
+	else
+	{
+		previous_ = matrix;
+	}
+
 	current_ = matrix;
 	previousTime_ = currentTime_;
 	currentTime_ = time;
+	isCurrentMatrixSpecified_ = true;
 }
 
 const SIMD::Mat43f& TimeSeriesMatrix::GetPrevious() const
@@ -204,8 +214,6 @@ void Instance::Initialize(Instance* parent, float spawnDeltaFrame, int32_t insta
 	// Initialize paramaters about a parent
 	m_pParent = parent;
 	m_ParentMatrix = SIMD::Mat43f::Identity;
-	globalMatrix_.Reset(SIMD::Mat43f::Identity, 0.0f);
-
 	m_LivingTime = 0.0f;
 	m_LivedTime = FLT_MAX;
 	m_RemovingTime = 0.0f;
