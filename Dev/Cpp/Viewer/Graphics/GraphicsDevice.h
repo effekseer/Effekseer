@@ -5,6 +5,9 @@
 #include "efk.Graphics.h"
 #include <Effekseer.h>
 
+// To get TextureLoader
+#include <EffekseerRendererGL/EffekseerRendererGL.h>
+
 namespace Effekseer::Tool
 {
 

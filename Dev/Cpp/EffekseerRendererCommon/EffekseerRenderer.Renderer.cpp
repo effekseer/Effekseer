@@ -9,13 +9,6 @@
 namespace EffekseerRenderer
 {
 
-::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice,
-												  ::Effekseer::FileInterfaceRef fileInterface,
-												  ::Effekseer::ColorSpaceType colorSpaceType)
-{
-	return ::Effekseer::MakeRefPtr<TextureLoader>(gprahicsDevice.Get(), fileInterface, colorSpaceType);
-}
-
 ::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice, ::Effekseer::FileInterfaceRef fileInterface)
 {
 	return ::Effekseer::MakeRefPtr<ModelLoader>(gprahicsDevice, fileInterface);
