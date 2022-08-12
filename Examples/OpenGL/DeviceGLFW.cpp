@@ -99,8 +99,8 @@ void DeviceGLFW::SetupEffekseerModules(::Effekseer::ManagerRef efkManager)
 	// It can be extended by yourself. It is loaded from a file on now.
 	// テクスチャ、モデル、カーブ、マテリアルローダーの設定する。
 	// ユーザーが独自で拡張できる。現在はファイルから読み込んでいる。
-	efkManager->SetTextureLoader(EffekseerRenderer::CreateTextureLoader(graphicsDevice));
-	efkManager->SetModelLoader(EffekseerRenderer::CreateModelLoader(graphicsDevice));
+	efkManager->SetTextureLoader(efkRenderer->CreateTextureLoader());
+	efkManager->SetModelLoader(efkRenderer->CreateModelLoader());
 	efkManager->SetMaterialLoader(efkRenderer->CreateMaterialLoader());
 	efkManager->SetCurveLoader(Effekseer::MakeRefPtr<Effekseer::CurveLoader>());
 
