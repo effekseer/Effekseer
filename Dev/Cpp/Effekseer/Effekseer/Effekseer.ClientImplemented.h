@@ -41,8 +41,8 @@ public:
 
 	bool Send(void* data, int32_t datasize);
 
-	void Reload(const char16_t* key, void* data, int32_t size);
-	void Reload(ManagerRef manager, const char16_t* path, const char16_t* key);
+	void Reload(const char16_t* key, void* data, int32_t size) override;
+	void Reload(ManagerRef manager, const char16_t* path, const char16_t* key) override;
 
 	bool IsConnected();
 
