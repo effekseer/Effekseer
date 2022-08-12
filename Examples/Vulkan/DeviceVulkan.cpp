@@ -9,7 +9,7 @@ bool DeviceVulkan::Initialize(const char* windowTitle, Utils::Vec2I windowSize)
 	platformParam.Device = LLGI::DeviceType::Vulkan;
 	platformParam.WaitVSync = true;
 
-	window = std::shared_ptr<LLGI::Window>(LLGI::CreateWindow(windowTitle, { windowSize.X, windowSize.Y }));
+	window = std::shared_ptr<LLGI::Window>(LLGI::CreateWindow(windowTitle, {windowSize.X, windowSize.Y}));
 	if (window == nullptr)
 	{
 		Terminate();
@@ -110,6 +110,15 @@ void DeviceVulkan::PresentDevice()
 
 void DeviceVulkan::SetupEffekseerModules(::Effekseer::ManagerRef efkManager)
 {
+	// Create a  graphics device
+	// 描画デバイスの作成
+	auto graphicsDevice = ::EffekseerRendererVulkan::CreateGraphicsDevice(
+		GetVkPhysicalDevice(),
+		GetVkDevice(),
+		GetVkQueue(),
+		GetVkCommandPool(),
+		GetSwapBufferCount());
+
 	// Create a renderer of effects
 	// エフェクトのレンダラーの作成
 	::EffekseerRendererVulkan::RenderPassInformation renderPassInfo;
@@ -117,10 +126,7 @@ void DeviceVulkan::SetupEffekseerModules(::Effekseer::ManagerRef efkManager)
 	renderPassInfo.RenderTextureCount = 1;
 	renderPassInfo.RenderTextureFormats[0] = VK_FORMAT_B8G8R8A8_UNORM;
 	renderPassInfo.DepthFormat = VK_FORMAT_D24_UNORM_S8_UINT;
-	efkRenderer = ::EffekseerRendererVulkan::Create(
-		GetVkPhysicalDevice(), GetVkDevice(), 
-		GetVkQueue(), GetVkCommandPool(), 
-		GetSwapBufferCount(), renderPassInfo, 8000);
+	efkRenderer = ::EffekseerRendererVulkan::Create(graphicsDevice, renderPassInfo, 8000);
 
 	// Create a memory pool
 	// メモリプールの作成

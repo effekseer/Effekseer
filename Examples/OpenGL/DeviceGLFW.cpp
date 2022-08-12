@@ -79,9 +79,13 @@ void DeviceGLFW::PresentDevice()
 
 void DeviceGLFW::SetupEffekseerModules(::Effekseer::ManagerRef efkManager)
 {
+	// Create a  graphics device
+	// 描画デバイスの作成
+	auto graphicsDevice = ::EffekseerRendererGL::CreateGraphicsDevice(deviceType);
+
 	// Create a renderer of effects
 	// エフェクトのレンダラーの作成
-	efkRenderer = ::EffekseerRendererGL::Renderer::Create(8000, deviceType);
+	efkRenderer = ::EffekseerRendererGL::Renderer::Create(graphicsDevice, 8000);
 
 	// Sprcify rendering modules
 	// 描画モジュールの設定

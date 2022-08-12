@@ -608,6 +608,22 @@ public:
 		@brief
 		\~english	Create an instance
 		\~japanese	インスタンスを生成する。
+		@param	graphicsDevice	GraphicsDevice
+		@param	squareMaxCount
+		\~english	the number of maximum sprites
+		\~japanese	最大描画スプライト数
+		@param	depthFunc	a func to compare a dpeth
+		@param	isMSAAEnabled whether is MSAA enabled
+		@return	instance
+	*/
+	static RendererRef Create(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
+							  int32_t squareMaxCount,
+							  D3D11_COMPARISON_FUNC depthFunc = D3D11_COMPARISON_LESS_EQUAL,
+							  bool isMSAAEnabled = false);
+	/**
+		@brief
+		\~english	Create an instance
+		\~japanese	インスタンスを生成する。
 		@param	device		Device of DirectX
 		@param	context		Context of DirectX
 		@param	squareMaxCount

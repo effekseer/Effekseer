@@ -180,10 +180,13 @@ bool DeviceDX11::NewFrame()
 
 void DeviceDX11::SetupEffekseerModules(::Effekseer::ManagerRef efkManager)
 {
+	// Create a  graphics device
+	// 描画デバイスの作成
+	auto graphicsDevice = ::EffekseerRendererDX11::CreateGraphicsDevice(GetID3D11Device(), GetID3D11DeviceContext());
+
 	// Create a renderer of effects
 	// エフェクトのレンダラーの作成
-	efkRenderer = ::EffekseerRendererDX11::Renderer::Create(
-		GetID3D11Device(), GetID3D11DeviceContext(), 8000);
+	efkRenderer = ::EffekseerRendererDX11::Renderer::Create(graphicsDevice, 8000);
 
 	// Sprcify rendering modules
 	// 描画モジュールの設定

@@ -258,18 +258,24 @@ void OriginalState::ReleaseState()
 	ES_SAFE_RELEASE(m_pIB);
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-RendererRef Renderer::Create(
-	ID3D11Device* device, ID3D11DeviceContext* context, int32_t squareMaxCount, D3D11_COMPARISON_FUNC depthFunc, bool isMSAAEnabled)
+RendererRef Renderer::Create(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
+							 int32_t squareMaxCount,
+							 D3D11_COMPARISON_FUNC depthFunc,
+							 bool isMSAAEnabled)
 {
 	auto renderer = ::Effekseer::MakeRefPtr<RendererImplemented>(squareMaxCount);
-	if (renderer->Initialize(device, context, depthFunc, isMSAAEnabled))
+	if (renderer->Initialize(graphicsDevice.DownCast<Backend::GraphicsDevice>(), depthFunc, isMSAAEnabled))
 	{
 		return renderer;
 	}
 	return nullptr;
+}
+
+RendererRef Renderer::Create(
+	ID3D11Device* device, ID3D11DeviceContext* context, int32_t squareMaxCount, D3D11_COMPARISON_FUNC depthFunc, bool isMSAAEnabled)
+{
+	auto graphicsDevice = Effekseer::MakeRefPtr<Backend::GraphicsDevice>(device, context);
+	return Create(graphicsDevice, squareMaxCount, depthFunc, isMSAAEnabled);
 }
 
 //----------------------------------------------------------------------------------
@@ -353,16 +359,13 @@ void RendererImplemented::OnResetDevice()
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-bool RendererImplemented::Initialize(ID3D11Device* device,
-									 ID3D11DeviceContext* context,
+bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 									 D3D11_COMPARISON_FUNC depthFunc,
 									 bool isMSAAEnabled)
 {
-	m_device = device;
-	m_context = context;
+	graphicsDevice_ = graphicsDevice;
+	m_device = graphicsDevice->GetDevice();
+	m_context = graphicsDevice->GetContext();
 	m_depthFunc = depthFunc;
 
 	// generate a vertex buffer
@@ -418,8 +421,6 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 
 		m_indexBufferForWireframe->Unlock();
 	}
-
-	graphicsDevice_ = Effekseer::MakeRefPtr<Backend::GraphicsDevice>(device, context);
 
 	m_renderState = new RenderState(this, m_depthFunc, isMSAAEnabled);
 
