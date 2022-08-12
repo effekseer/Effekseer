@@ -125,10 +125,14 @@ void DeviceDX12::PresentDevice()
 
 void DeviceDX12::SetupEffekseerModules(::Effekseer::ManagerRef efkManager)
 {
+	// Create a  graphics device
+	// 描画デバイスの作成
+	auto graphicsDevice = ::EffekseerRendererDX12::CreateGraphicsDevice(GetID3D12Device(), GetCommandQueue(), 3);
+
 	// Create a renderer of effects
 	// エフェクトのレンダラーの作成
 	auto format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	efkRenderer = ::EffekseerRendererDX12::Create(GetID3D12Device(), GetCommandQueue(), 3, &format, 1, DXGI_FORMAT_UNKNOWN, false, 8000);
+	efkRenderer = ::EffekseerRendererDX12::Create(graphicsDevice, &format, 1, DXGI_FORMAT_UNKNOWN, false, 8000);
 
 	// Create a memory pool
 	// メモリプールの作成
@@ -150,8 +154,8 @@ void DeviceDX12::SetupEffekseerModules(::Effekseer::ManagerRef efkManager)
 	// It can be extended by yourself. It is loaded from a file on now.
 	// テクスチャ、モデル、カーブ、マテリアルローダーの設定する。
 	// ユーザーが独自で拡張できる。現在はファイルから読み込んでいる。
-	efkManager->SetTextureLoader(efkRenderer->CreateTextureLoader());
-	efkManager->SetModelLoader(efkRenderer->CreateModelLoader());
+	efkManager->SetTextureLoader(EffekseerRenderer::CreateTextureLoader(graphicsDevice));
+	efkManager->SetModelLoader(EffekseerRenderer::CreateModelLoader(graphicsDevice));
 	efkManager->SetMaterialLoader(efkRenderer->CreateMaterialLoader());
 	efkManager->SetCurveLoader(Effekseer::MakeRefPtr<Effekseer::CurveLoader>());
 }

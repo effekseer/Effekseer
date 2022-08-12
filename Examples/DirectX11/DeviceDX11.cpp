@@ -180,10 +180,13 @@ bool DeviceDX11::NewFrame()
 
 void DeviceDX11::SetupEffekseerModules(::Effekseer::ManagerRef efkManager)
 {
+	// Create a  graphics device
+	// 描画デバイスの作成
+	auto graphicsDevice = ::EffekseerRendererDX11::CreateGraphicsDevice(GetID3D11Device(), GetID3D11DeviceContext());
+
 	// Create a renderer of effects
 	// エフェクトのレンダラーの作成
-	efkRenderer = ::EffekseerRendererDX11::Renderer::Create(
-		GetID3D11Device(), GetID3D11DeviceContext(), 8000);
+	efkRenderer = ::EffekseerRendererDX11::Renderer::Create(graphicsDevice, 8000);
 
 	// Sprcify rendering modules
 	// 描画モジュールの設定
@@ -197,8 +200,8 @@ void DeviceDX11::SetupEffekseerModules(::Effekseer::ManagerRef efkManager)
 	// It can be extended by yourself. It is loaded from a file on now.
 	// テクスチャ、モデル、カーブ、マテリアルローダーの設定する。
 	// ユーザーが独自で拡張できる。現在はファイルから読み込んでいる。
-	efkManager->SetTextureLoader(efkRenderer->CreateTextureLoader());
-	efkManager->SetModelLoader(efkRenderer->CreateModelLoader());
+	efkManager->SetTextureLoader(EffekseerRenderer::CreateTextureLoader(graphicsDevice));
+	efkManager->SetModelLoader(EffekseerRenderer::CreateModelLoader(graphicsDevice));
 	efkManager->SetMaterialLoader(efkRenderer->CreateMaterialLoader());
 	efkManager->SetCurveLoader(Effekseer::MakeRefPtr<Effekseer::CurveLoader>());
 

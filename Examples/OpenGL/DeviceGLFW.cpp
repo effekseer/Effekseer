@@ -79,9 +79,13 @@ void DeviceGLFW::PresentDevice()
 
 void DeviceGLFW::SetupEffekseerModules(::Effekseer::ManagerRef efkManager)
 {
+	// Create a  graphics device
+	// 描画デバイスの作成
+	auto graphicsDevice = ::EffekseerRendererGL::CreateGraphicsDevice(deviceType);
+
 	// Create a renderer of effects
 	// エフェクトのレンダラーの作成
-	efkRenderer = ::EffekseerRendererGL::Renderer::Create(8000, deviceType);
+	efkRenderer = ::EffekseerRendererGL::Renderer::Create(graphicsDevice, 8000);
 
 	// Sprcify rendering modules
 	// 描画モジュールの設定
@@ -95,8 +99,8 @@ void DeviceGLFW::SetupEffekseerModules(::Effekseer::ManagerRef efkManager)
 	// It can be extended by yourself. It is loaded from a file on now.
 	// テクスチャ、モデル、カーブ、マテリアルローダーの設定する。
 	// ユーザーが独自で拡張できる。現在はファイルから読み込んでいる。
-	efkManager->SetTextureLoader(efkRenderer->CreateTextureLoader());
-	efkManager->SetModelLoader(efkRenderer->CreateModelLoader());
+	efkManager->SetTextureLoader(EffekseerRenderer::CreateTextureLoader(graphicsDevice));
+	efkManager->SetModelLoader(EffekseerRenderer::CreateModelLoader(graphicsDevice));
 	efkManager->SetMaterialLoader(efkRenderer->CreateMaterialLoader());
 	efkManager->SetCurveLoader(Effekseer::MakeRefPtr<Effekseer::CurveLoader>());
 
