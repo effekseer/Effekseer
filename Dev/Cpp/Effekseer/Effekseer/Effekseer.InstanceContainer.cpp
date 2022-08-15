@@ -237,7 +237,7 @@ void InstanceContainer::Draw(bool recursive)
 			}
 		}
 
-		if (count > 0 && m_pEffectNode->IsRendered && (m_pGlobal->CurrentLevelOfDetails & m_pEffectNode->LODsParam.MatchingLODs) > 0 || m_pEffectNode->CanDrawWithNonMatchingLOD())
+		if ((count > 0 && m_pEffectNode->IsRendered && (m_pGlobal->CurrentLevelOfDetails & m_pEffectNode->LODsParam.MatchingLODs) > 0) || m_pEffectNode->CanDrawWithNonMatchingLOD())
 		{
 			void* userData = m_pGlobal->GetUserData();
 
