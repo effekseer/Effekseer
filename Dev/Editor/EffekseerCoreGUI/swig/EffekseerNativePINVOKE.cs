@@ -759,6 +759,9 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GraphicsDevice_Resize___")]
   public static extern void GraphicsDevice_Resize(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, int jarg3);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GraphicsDevice_ResetRenderTargets___")]
+  public static extern void GraphicsDevice_ResetRenderTargets(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GraphicsDevice_ClearColor___")]
   public static extern void GraphicsDevice_ClearColor(global::System.Runtime.InteropServices.HandleRef jarg1, byte jarg2, byte jarg3, byte jarg4, byte jarg5);
 

@@ -711,6 +711,7 @@ namespace Effekseer.GUI
 				HardwareDevice.SoundDevice.SetListener(ray.Origin, rayPos, new Vector3F(0, 1, 0));
 			}
 
+			HardwareDevice.GraphicsDevice.ResetRenderTargets();
 			HardwareDevice.GraphicsDevice.ClearColor(50, 50, 50, 0);
 
 			//if(effectViewer == null)

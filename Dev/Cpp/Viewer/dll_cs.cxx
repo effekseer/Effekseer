@@ -2635,6 +2635,17 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GraphicsDevice_Resize___(void 
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GraphicsDevice_ResetRenderTargets___(void * jarg1) {
+  Effekseer::Tool::GraphicsDevice *arg1 = (Effekseer::Tool::GraphicsDevice *) 0 ;
+  std::shared_ptr< Effekseer::Tool::GraphicsDevice > *smartarg1 = 0 ;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::Tool::GraphicsDevice > *)jarg1;
+  arg1 = (Effekseer::Tool::GraphicsDevice *)(smartarg1 ? smartarg1->get() : 0); 
+  (arg1)->ResetRenderTargets();
+}
+
+
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GraphicsDevice_ClearColor___(void * jarg1, unsigned char jarg2, unsigned char jarg3, unsigned char jarg4, unsigned char jarg5) {
   Effekseer::Tool::GraphicsDevice *arg1 = (Effekseer::Tool::GraphicsDevice *) 0 ;
   uint8_t arg2 ;

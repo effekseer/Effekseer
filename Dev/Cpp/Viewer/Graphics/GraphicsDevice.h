@@ -22,6 +22,8 @@ class GraphicsDevice
 public:
 	void Resize(int32_t width, int32_t height);
 
+	void ResetRenderTargets();
+
 	void ClearColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 
 	void Present();
