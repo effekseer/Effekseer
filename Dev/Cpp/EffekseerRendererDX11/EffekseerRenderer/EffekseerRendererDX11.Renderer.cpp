@@ -109,18 +109,6 @@ static
 	return Effekseer::MakeRefPtr<Backend::GraphicsDevice>(device, context);
 }
 
-::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice,
-												  ::Effekseer::FileInterfaceRef fileInterface,
-												  ::Effekseer::ColorSpaceType colorSpaceType)
-{
-	return ::Effekseer::MakeRefPtr<EffekseerRenderer::TextureLoader>(gprahicsDevice, fileInterface, colorSpaceType);
-}
-
-::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice, ::Effekseer::FileInterfaceRef fileInterface)
-{
-	return ::Effekseer::MakeRefPtr<EffekseerRenderer::ModelLoader>(gprahicsDevice, fileInterface);
-}
-
 ::Effekseer::MaterialLoaderRef CreateMaterialLoader(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterfaceRef fileInterface)
 {
 	return ::Effekseer::MakeRefPtr<MaterialLoader>(graphicsDevice, fileInterface);
@@ -717,7 +705,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 //----------------------------------------------------------------------------------
 ::Effekseer::TextureLoaderRef RendererImplemented::CreateTextureLoader(::Effekseer::FileInterfaceRef fileInterface)
 {
-	return ::Effekseer::MakeRefPtr<EffekseerRenderer::TextureLoader>(graphicsDevice_, fileInterface, ::Effekseer::ColorSpaceType::Gamma);
+	return ::EffekseerRenderer::CreateTextureLoader(graphicsDevice_, fileInterface, ::Effekseer::ColorSpaceType::Gamma);
 }
 
 //----------------------------------------------------------------------------------

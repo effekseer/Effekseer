@@ -1,18 +1,47 @@
 ﻿#include "TextureLoader.h"
+
+#ifndef __DISABLED_DEFAULT_TEXTURE_LOADER__
 #include "EffekseerRenderer.DDSTextureLoader.h"
 #include "EffekseerRenderer.PngTextureLoader.h"
 #include "EffekseerRenderer.TGATextureLoader.h"
+#endif
 
 namespace EffekseerRenderer
 {
+
+#ifndef __DISABLED_DEFAULT_TEXTURE_LOADER__
+class TextureLoader : public ::Effekseer::TextureLoader
+{
+	class Impl;
+
+private:
+	std::unique_ptr<Impl> impl_;
+
+public:
+	TextureLoader(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice,
+				  ::Effekseer::FileInterfaceRef fileInterface = nullptr,
+				  ::Effekseer::ColorSpaceType colorSpaceType = ::Effekseer::ColorSpaceType::Gamma);
+	virtual ~TextureLoader() override = default;
+
+public:
+	Effekseer::TextureRef Load(const char16_t* path, ::Effekseer::TextureType textureType) override;
+
+	Effekseer::TextureRef Load(const void* data, int32_t size, Effekseer::TextureType textureType, bool isMipMapEnabled) override;
+};
+#endif
 
 ::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice,
 												  ::Effekseer::FileInterfaceRef fileInterface,
 												  ::Effekseer::ColorSpaceType colorSpaceType)
 {
+#ifdef __DISABLED_DEFAULT_TEXTURE_LOADER__
+	return nullptr;
+#else
 	return ::Effekseer::MakeRefPtr<TextureLoader>(gprahicsDevice, fileInterface, colorSpaceType);
+#endif
 }
 
+#ifndef __DISABLED_DEFAULT_TEXTURE_LOADER__
 class TextureLoader::Impl
 {
 public:
@@ -179,5 +208,7 @@ Effekseer::TextureRef TextureLoader::Load(const void* data, int32_t size, Effeks
 {
 	return impl_->Load(data, size, textureType, isMipMapEnabled);
 }
+
+#endif
 
 } // namespace EffekseerRenderer

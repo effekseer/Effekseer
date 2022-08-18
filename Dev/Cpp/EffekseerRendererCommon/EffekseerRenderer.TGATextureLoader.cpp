@@ -1,4 +1,6 @@
 ﻿
+#ifndef __DISABLED_DEFAULT_TEXTURE_LOADER__
+
 #include "EffekseerRenderer.TGATextureLoader.h"
 
 namespace EffekseerRenderer
@@ -104,3 +106,5 @@ void TGATextureLoader::Finalize()
 }
 
 } // namespace EffekseerRenderer
+
+#endif

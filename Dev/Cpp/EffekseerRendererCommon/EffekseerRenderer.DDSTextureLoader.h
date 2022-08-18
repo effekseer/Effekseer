@@ -1,6 +1,8 @@
 ﻿#ifndef __EFFEKSEERRENDERER_DDS_TEXTURE_LOADER_H__
 #define __EFFEKSEERRENDERER_DDS_TEXTURE_LOADER_H__
 
+#ifndef __DISABLED_DEFAULT_TEXTURE_LOADER__
+
 #include <Effekseer.h>
 #include <assert.h>
 #include <string.h>
@@ -54,5 +56,7 @@ public:
 	}
 };
 } // namespace EffekseerRenderer
+
+#endif
 
 #endif // __EFFEKSEERRENDERER_DDS_TEXTURE_LOADER_H__
