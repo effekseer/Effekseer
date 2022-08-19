@@ -593,27 +593,41 @@ namespace Effekseer.GUI.Dock
 			// add directories
 			foreach (string dirPath in Directory.EnumerateDirectories(path))
 			{
-				items.Add(CreateFileItem(dirPath));
+				try
+				{
+					items.Add(CreateFileItem(dirPath, true));
+				}
+				catch (Exception e)
+				{
+					// Skip directory
+				}
 			}
 
 			// add files
 			foreach (string filePath in Directory.EnumerateFiles(path))
 			{
-				items.Add(CreateFileItem(filePath));
+				try
+				{
+					items.Add(CreateFileItem(filePath, false));
+				}
+				catch (Exception e)
+				{
+					// Skip file
+				}
 			}
 
 			directoryWatcher.Path = path;
 			directoryWatcher.EnableRaisingEvents = true;
 		}
 
-		private FileItem CreateFileItem(string filePath)
+		private FileItem CreateFileItem(string filePath, bool isDirectory)
 		{
 			FileType type = FileType.Other;
 			string iconStr = Icons.FileOther;
 			swig.ReloadableImage iconImage = Images.Icons["FileOther128"];
 			long fileSize = -1;
 
-			if (Directory.Exists(filePath))
+			if (isDirectory)
 			{
 				type = FileType.Directory;
 				iconStr = Icons.FileDirectory;
