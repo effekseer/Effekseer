@@ -10458,12 +10458,13 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_EndNodeFrameTimelin
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GradientHDR___(void * jarg1, int jarg2, void * jarg3, void * jarg4) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GradientHDR___(void * jarg1, int jarg2, void * jarg3, void * jarg4, unsigned int jarg5) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   int32_t arg2 ;
   Effekseer::Tool::GradientHDRState *arg3 = 0 ;
   Effekseer::Tool::GradientHDRGUIState *arg4 = 0 ;
+  bool arg5 ;
   bool result;
   
   arg1 = (efk::GUIManager *)jarg1; 
@@ -10478,7 +10479,8 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GradientHDR
     SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Effekseer::Tool::GradientHDRGUIState & type is null", 0);
     return 0;
   } 
-  result = (bool)(arg1)->GradientHDR(arg2,*arg3,*arg4);
+  arg5 = jarg5 ? true : false; 
+  result = (bool)(arg1)->GradientHDR(arg2,*arg3,*arg4,arg5);
   jresult = result; 
   return jresult;
 }

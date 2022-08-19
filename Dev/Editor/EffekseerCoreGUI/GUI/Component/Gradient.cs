@@ -88,12 +88,12 @@ namespace Effekseer.GUI.Component
 		{
 			isPopupShown = false;
 
-			if (Manager.NativeManager.GradientHDR(id, internalState, guiState))
+			if (Manager.NativeManager.GradientHDR(id, internalState, guiState, false))
 			{
 				StoreValue();
 			}
 
-			if (Manager.NativeManager.Button("Edit"))
+			if (Manager.NativeManager.IsItemClicked(0))
 			{
 				Manager.NativeManager.OpenPopup(id_c);
 			}
@@ -116,7 +116,7 @@ namespace Effekseer.GUI.Component
 			{
 				Manager.NativeManager.Dummy(new swig.Vector2I(200, 1));
 
-				if (Manager.NativeManager.GradientHDR(id_popup, internalState, guiPopupState))
+				if (Manager.NativeManager.GradientHDR(id_popup, internalState, guiPopupState, true))
 				{
 					StoreValue();
 				}
