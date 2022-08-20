@@ -11,9 +11,13 @@ namespace Effekseer.GUI.Component
 		int id = -1;
 		int id_popup = -1;
 		string id_c = "";
-		string id_color = "";
-		string id_intensity = "";
-		string id_alpha = "";
+		string id_color_position = "";
+		string id_color_value = "";
+		string id_color_intensity = "";
+		string id_color_delete = "";
+		string id_alpha_position = "";
+		string id_alpha_value = "";
+		string id_alpha_delete = "";
 
 		bool isPopupShown = false;
 
@@ -44,9 +48,13 @@ namespace Effekseer.GUI.Component
 			id = Manager.GetUniqueID();
 			id_popup = Manager.GetUniqueID();
 			id_c = "###" + Manager.GetUniqueID().ToString();
-			id_color = "###" + Manager.GetUniqueID().ToString();
-			id_intensity = "###" + Manager.GetUniqueID().ToString();
-			id_alpha = "###" + Manager.GetUniqueID().ToString();
+			id_color_position = "###" + Manager.GetUniqueID().ToString();
+			id_color_value = "###" + Manager.GetUniqueID().ToString();
+			id_color_intensity = "###" + Manager.GetUniqueID().ToString();
+			id_color_delete = "###" + Manager.GetUniqueID().ToString();
+			id_alpha_position = "###" + Manager.GetUniqueID().ToString();
+			id_alpha_value = "###" + Manager.GetUniqueID().ToString();
+			id_alpha_delete = "###" + Manager.GetUniqueID().ToString();
 		}
 
 		public void SetBinding(object o)
@@ -112,78 +120,141 @@ namespace Effekseer.GUI.Component
 		{
 			if (isPopupShown) return;
 
-			if (Manager.NativeManager.BeginPopup(id_c, swig.WindowFlags.AlwaysAutoResize))
+			var windowPos = Manager.NativeManager.GetWindowPos();
+			var windowSize = Manager.NativeManager.GetWindowSize();
+
+			// Popup below the last item
+			Manager.NativeManager.SetNextWindowPos(new swig.Vec2(windowPos.X, Manager.NativeManager.GetCursorScreenPosY()), swig.Cond.Always, new swig.Vec2(0, 0));
+			Manager.NativeManager.SetNextWindowSize(windowSize.X, 0.0f, swig.Cond.Always);
+
+			if (Manager.NativeManager.BeginPopup(id_c, swig.WindowFlags.NoMove | swig.WindowFlags.AlwaysAutoResize))
 			{
-				Manager.NativeManager.Dummy(new swig.Vector2I(200, 1));
+				var contentSize = Manager.NativeManager.GetContentRegionAvail();
+				float buttonWidth = 50.0f * Manager.GetUIScaleBasedOnFontSize();
+				var itemSpacing = Manager.NativeManager.GetItemSpacing();
+
+				int selectedIndex = guiPopupState.GetSelectedIndex();
+				bool alphaMarkerSelected = selectedIndex >= 0 && guiPopupState.GetSelectedMarkerType() == swig.GradientHDRMarkerType.Alpha;
+				bool colorMarkerSelected = selectedIndex >= 0 && guiPopupState.GetSelectedMarkerType() == swig.GradientHDRMarkerType.Color;
+
+				{
+					// Alpha Edit GUI
+					Manager.NativeManager.BeginDisabled(!alphaMarkerSelected);
+					
+					Manager.NativeManager.Columns(2);
+					Manager.NativeManager.SetColumnWidth(0, contentSize.X * 0.3f);
+
+					Manager.NativeManager.Text("Position");
+					Manager.NativeManager.NextColumn();
+
+					float pos = alphaMarkerSelected ? internalState.GetAlphaMarkerPosition(selectedIndex) : 0.0f;
+					var posArray = new float[1] { pos * 100.0f };
+
+					Manager.NativeManager.SetNextItemWidth(contentSize.X * 0.7f - buttonWidth - itemSpacing.X);
+					if (Manager.NativeManager.DragFloat(id_alpha_position, posArray, 1.0f, 0.0f, 100.0f, "%.2f %%"))
+					{
+						pos = posArray[0] / 100.0f;
+						internalState.SetAlphaMarkerPosition(selectedIndex, pos);
+					}
+
+					Manager.NativeManager.SameLine();
+					if (Manager.NativeManager.Button("Delete" + id_alpha_delete, buttonWidth))
+					{
+						if (internalState.RemoveAlphaMarker(selectedIndex))
+						{
+							StoreValue();
+						}
+					}
+					Manager.NativeManager.NextColumn();
+
+					Manager.NativeManager.Text("Alpha");
+					Manager.NativeManager.NextColumn();
+
+					var alpha = alphaMarkerSelected ? internalState.GetAlphaMarkerAlpha(selectedIndex) : 0.0f;
+					var alphaArray = new float[1] { alpha };
+
+					Manager.NativeManager.SetNextItemWidth(-1);
+					if (Manager.NativeManager.DragFloat(id_alpha_value, alphaArray, 0.01f, 0.0f, 1.0f))
+					{
+						alpha = alphaArray[0];
+						internalState.SetAlphaMarkerAlpha(selectedIndex, alpha);
+						StoreValue();
+					}
+					Manager.NativeManager.NextColumn();
+
+					Manager.NativeManager.Columns(1);
+					Manager.NativeManager.EndDisabled();
+				}
 
 				if (Manager.NativeManager.GradientHDR(id_popup, internalState, guiPopupState, true))
 				{
 					StoreValue();
 				}
 
-				var selectedIndex = guiPopupState.GetSelectedIndex();
-
-				if (selectedIndex >= 0)
 				{
-					if (guiPopupState.GetSelectedMarkerType() == swig.GradientHDRMarkerType.Color)
+					// Color Edit GUI
+					Manager.NativeManager.BeginDisabled(!colorMarkerSelected);
+
+					Manager.NativeManager.Columns(2);
+					Manager.NativeManager.SetColumnWidth(0, contentSize.X * 0.3f);
+
+					Manager.NativeManager.Text("Position");
+					Manager.NativeManager.NextColumn();
+
+					float pos = colorMarkerSelected ? internalState.GetColorMarkerPosition(selectedIndex) : 0.0f;
+					var posArray = new float[1] { pos * 100.0f };
+
+					Manager.NativeManager.SetNextItemWidth(contentSize.X * 0.7f - buttonWidth - itemSpacing.X);
+					if (Manager.NativeManager.DragFloat(id_color_position, posArray, 1.0f, 0.0f, 100.0f, "%.2f %%"))
 					{
-						var color = internalState.GetColorMarkerColor(selectedIndex);
-						var intensity = internalState.GetColorMarkerIntensity(selectedIndex);
-
-						var colors = new float[] { color.R, color.G, color.B, 1.0f };
-
-						if (Manager.NativeManager.ColorEdit4("Color" + id_color, colors, swig.ColorEditFlags.NoAlpha))
-						{
-							color.R = colors[0];
-							color.G = colors[1];
-							color.B = colors[2];
-							internalState.SetColorMarkerColor(selectedIndex, color);
-							StoreValue();
-						}
-
-						var intensityArray = new float[1];
-						intensityArray[0] = intensity;
-
-						if (Manager.NativeManager.DragFloat("Intensity" + id_intensity, intensityArray, 0.1f, 0.0f, float.MaxValue))
-						{
-							intensity = intensityArray[0];
-							internalState.SetColorMarkerIntensity(selectedIndex, intensity);
-							StoreValue();
-						}
+						pos = posArray[0] / 100.0f;
+						internalState.SetColorMarkerPosition(selectedIndex, pos);
 					}
-					else if (guiPopupState.GetSelectedMarkerType() == swig.GradientHDRMarkerType.Alpha)
-					{
-						var alpha = internalState.GetAlphaMarkerAlpha(selectedIndex);
-						var alphaArray = new float[1];
-						alphaArray[0] = alpha;
 
-						if (Manager.NativeManager.DragFloat("Alpha" + id_alpha, alphaArray, 0.1f, 0.0f, 1.0f))
+					Manager.NativeManager.SameLine();
+					if (Manager.NativeManager.Button("Delete" + id_color_delete, buttonWidth))
+					{
+						if (internalState.RemoveColorMarker(selectedIndex))
 						{
-							alpha = alphaArray[0];
-							internalState.SetAlphaMarkerAlpha(selectedIndex, alpha);
 							StoreValue();
 						}
 					}
+					Manager.NativeManager.NextColumn();
 
-					if (Manager.NativeManager.Button("Delete"))
+					Manager.NativeManager.Text("Color");
+					Manager.NativeManager.NextColumn();
+
+					var color = colorMarkerSelected ? internalState.GetColorMarkerColor(selectedIndex) : new swig.ColorF(0.0f, 0.0f, 0.0f, 0.0f);
+					var colorArray = new float[] { color.R, color.G, color.B, 1.0f };
+
+					Manager.NativeManager.SetNextItemWidth(-1);
+					if (Manager.NativeManager.ColorEdit4(id_color_value, colorArray, swig.ColorEditFlags.NoAlpha))
 					{
-						var selectedType = guiPopupState.GetSelectedMarkerType();
-
-						if (selectedType == swig.GradientHDRMarkerType.Color)
-						{
-							if (internalState.RemoveColorMarker(selectedIndex))
-							{
-								StoreValue();
-							}
-						}
-						else if (selectedType == swig.GradientHDRMarkerType.Alpha)
-						{
-							if (internalState.RemoveAlphaMarker(selectedIndex))
-							{
-								StoreValue();
-							}
-						}
+						color.R = colorArray[0];
+						color.G = colorArray[1];
+						color.B = colorArray[2];
+						internalState.SetColorMarkerColor(selectedIndex, color);
+						StoreValue();
 					}
+					Manager.NativeManager.NextColumn();
+
+					Manager.NativeManager.Text("Intensity");
+					Manager.NativeManager.NextColumn();
+
+					var intensity = colorMarkerSelected ? internalState.GetColorMarkerIntensity(selectedIndex) : 0.0f;
+					var intensityArray = new float[1] { intensity };
+
+					Manager.NativeManager.SetNextItemWidth(-1);
+					if (Manager.NativeManager.DragFloat(id_color_intensity, intensityArray, 0.01f, 0.0f, float.MaxValue))
+					{
+						intensity = intensityArray[0];
+						internalState.SetColorMarkerIntensity(selectedIndex, intensity);
+						StoreValue();
+					}
+					Manager.NativeManager.NextColumn();
+
+					Manager.NativeManager.Columns(1);
+					Manager.NativeManager.EndDisabled();
 				}
 
 				Manager.NativeManager.EndPopup();
@@ -191,6 +262,7 @@ namespace Effekseer.GUI.Component
 				isPopupShown = true;
 			}
 		}
+
 		void StoreValue()
 		{
 			var state = new Data.Value.Gradient.State();
