@@ -686,6 +686,12 @@ void GUIManager::EndChild()
 	ImGui::EndChild();
 }
 
+Vec2 GUIManager::GetWindowPos()
+{
+	auto v = ImGui::GetWindowPos();
+	return Vec2(v.x, v.y);
+}
+
 Vec2 GUIManager::GetWindowSize()
 {
 	auto v = ImGui::GetWindowSize();
@@ -935,14 +941,14 @@ void GUIManager::SameLine(float offset_from_start_x, float spacing)
 	ImGui::SameLine(offset_from_start_x, spacing);
 }
 
-void GUIManager::PushDisabled()
+void GUIManager::BeginDisabled(bool disabled)
 {
-	ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+	ImGui::BeginDisabled(disabled);
 }
 
-void GUIManager::PopDisabled()
+void GUIManager::EndDisabled()
 {
-	ImGui::PopItemFlag();
+	ImGui::EndDisabled();
 }
 
 void GUIManager::AddRectFilled(float minX, float minY, float maxX, float maxY, uint32_t color, float rounding, int flags)
@@ -1026,6 +1032,12 @@ float GUIManager::GetItemRectSizeX()
 float GUIManager::GetItemRectSizeY()
 {
 	return ImGui::GetItemRectSize().y;
+}
+
+Vec2 GUIManager::GetItemSpacing()
+{
+	auto& style = ImGui::GetStyle();
+	return Vec2(style.ItemSpacing.x, style.ItemSpacing.y);
 }
 
 float GUIManager::GetTextLineHeight()

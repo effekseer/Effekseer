@@ -483,6 +483,7 @@ public:
 	void EndChild();
 
 	// Windows Utilities
+	Vec2 GetWindowPos();
 	Vec2 GetWindowSize();
 	Vec2 GetContentRegionAvail();
 
@@ -514,8 +515,8 @@ public:
 	void Dummy(const Effekseer::Tool::Vector2I& size);
 	void SameLine(float offset_from_start_x = 0.0f, float spacing = -1.0f);
 
-	void PushDisabled();
-	void PopDisabled();
+	void BeginDisabled(bool disabled);
+	void EndDisabled();
 
 	void AddRectFilled(float minX, float minY, float maxX, float maxY, uint32_t color, float rounding, int flags);
 
@@ -538,6 +539,7 @@ public:
 	float GetItemRectMaxY();
 	float GetItemRectSizeX();
 	float GetItemRectSizeY();
+	Vec2 GetItemSpacing();
 	float GetTextLineHeight();
 	float GetTextLineHeightWithSpacing();
 	float GetFrameHeight();

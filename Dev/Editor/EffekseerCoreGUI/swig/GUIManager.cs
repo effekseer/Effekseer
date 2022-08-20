@@ -199,6 +199,11 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_EndChild(swigCPtr);
   }
 
+  public Vec2 GetWindowPos() {
+    Vec2 ret = new Vec2(EffekseerNativePINVOKE.GUIManager_GetWindowPos(swigCPtr), true);
+    return ret;
+  }
+
   public Vec2 GetWindowSize() {
     Vec2 ret = new Vec2(EffekseerNativePINVOKE.GUIManager_GetWindowSize(swigCPtr), true);
     return ret;
@@ -298,12 +303,12 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_SameLine__SWIG_2(swigCPtr);
   }
 
-  public void PushDisabled() {
-    EffekseerNativePINVOKE.GUIManager_PushDisabled(swigCPtr);
+  public void BeginDisabled(bool disabled) {
+    EffekseerNativePINVOKE.GUIManager_BeginDisabled(swigCPtr, disabled);
   }
 
-  public void PopDisabled() {
-    EffekseerNativePINVOKE.GUIManager_PopDisabled(swigCPtr);
+  public void EndDisabled() {
+    EffekseerNativePINVOKE.GUIManager_EndDisabled(swigCPtr);
   }
 
   public void AddRectFilled(float minX, float minY, float maxX, float maxY, uint color, float rounding, int flags) {
@@ -381,6 +386,11 @@ public class GUIManager : global::System.IDisposable {
 
   public float GetItemRectSizeY() {
     float ret = EffekseerNativePINVOKE.GUIManager_GetItemRectSizeY(swigCPtr);
+    return ret;
+  }
+
+  public Vec2 GetItemSpacing() {
+    Vec2 ret = new Vec2(EffekseerNativePINVOKE.GUIManager_GetItemSpacing(swigCPtr), true);
     return ret;
   }
 

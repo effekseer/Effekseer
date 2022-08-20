@@ -37,11 +37,8 @@ namespace Effekseer.GUI.Dock
 			Manager.NativeManager.Text(MultiLanguageTextProvider.GetText("LOD_Level") + " " + level);
 			Manager.NativeManager.PopStyleColor();
 
-			if (level == 0)
-			{
-				Manager.NativeManager.PushDisabled();
-				Manager.NativeManager.PushStyleVar(ImGuiStyleVarFlags.Alpha, 0.5F);
-			}
+			Manager.NativeManager.BeginDisabled(level == 0);
+			
 			Manager.NativeManager.NextColumn();
 			bool[] value = { levelEnabled.Value };
 			if (Manager.NativeManager.Checkbox("##level" + level, value))
@@ -61,12 +58,8 @@ namespace Effekseer.GUI.Dock
 				
 			}
 
-			if (level == 0)
-			{
-				Manager.NativeManager.PopStyleVar();
-				Manager.NativeManager.PopDisabled();
-			}
-
+			Manager.NativeManager.EndDisabled();
+			
 			return levelEnabled.Value;
 		}
 

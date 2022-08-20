@@ -5084,6 +5084,18 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_EndChild___(void * 
 }
 
 
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetWindowPos___(void * jarg1) {
+  void * jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  efk::Vec2 result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (arg1)->GetWindowPos();
+  jresult = new efk::Vec2((const efk::Vec2 &)result); 
+  return jresult;
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetWindowSize___(void * jarg1) {
   void * jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
@@ -5348,19 +5360,21 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SameLine__SWIG_2___
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_PushDisabled___(void * jarg1) {
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginDisabled___(void * jarg1, unsigned int jarg2) {
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  bool arg2 ;
   
   arg1 = (efk::GUIManager *)jarg1; 
-  (arg1)->PushDisabled();
+  arg2 = jarg2 ? true : false; 
+  (arg1)->BeginDisabled(arg2);
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_PopDisabled___(void * jarg1) {
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_EndDisabled___(void * jarg1) {
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   
   arg1 = (efk::GUIManager *)jarg1; 
-  (arg1)->PopDisabled();
+  (arg1)->EndDisabled();
 }
 
 
@@ -5556,6 +5570,18 @@ SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetItemRectSizeY__
   arg1 = (efk::GUIManager *)jarg1; 
   result = (float)(arg1)->GetItemRectSizeY();
   jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetItemSpacing___(void * jarg1) {
+  void * jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  efk::Vec2 result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (arg1)->GetItemSpacing();
+  jresult = new efk::Vec2((const efk::Vec2 &)result); 
   return jresult;
 }
 
