@@ -120,7 +120,7 @@ namespace Effekseer.Data.Value
 		{
 			var target = o as Gradient;
 
-			if (target._value.Equals(target.DefaultValue))
+			if (!isClip && target._value.Equals(target.DefaultValue))
 			{
 				return null;
 			}

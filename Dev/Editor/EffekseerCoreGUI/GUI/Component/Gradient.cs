@@ -8,6 +8,12 @@ namespace Effekseer.GUI.Component
 {
 	class Gradient : Control, IParameterControl
 	{
+		class GradientCopyPasteHolder
+		{
+			[Effekseer.Data.IO(Export = true)]
+			public Data.Value.Gradient Gradient { get; set; }
+		}
+
 		int id = -1;
 		int id_popup = -1;
 		string id_c = "";
@@ -26,6 +32,8 @@ namespace Effekseer.GUI.Component
 		swig.GradientHDRState internalState = null;
 		swig.GradientHDRGUIState guiState = null;
 		swig.GradientHDRGUIState guiPopupState = null;
+
+		CopyAndPaste copyAndPaste;
 
 		public bool EnableUndo { get; set; } = true;
 
@@ -55,6 +63,10 @@ namespace Effekseer.GUI.Component
 			id_alpha_position = "###" + Manager.GetUniqueID().ToString();
 			id_alpha_value = "###" + Manager.GetUniqueID().ToString();
 			id_alpha_delete = "###" + Manager.GetUniqueID().ToString();
+
+			copyAndPaste = new CopyAndPaste("Gradient", 
+				() => new GradientCopyPasteHolder { Gradient = Binding }, 
+				() => { CopyState(internalState, Binding.GetValue()); });
 		}
 
 		public void SetBinding(object o)
@@ -129,6 +141,8 @@ namespace Effekseer.GUI.Component
 
 			if (Manager.NativeManager.BeginPopup(id_c, swig.WindowFlags.NoMove | swig.WindowFlags.AlwaysAutoResize))
 			{
+				copyAndPaste.Update();
+
 				var contentSize = Manager.NativeManager.GetContentRegionAvail();
 				float buttonWidth = 50.0f * Manager.GetUIScaleBasedOnFontSize();
 				var itemSpacing = Manager.NativeManager.GetItemSpacing();
@@ -140,7 +154,7 @@ namespace Effekseer.GUI.Component
 				{
 					// Alpha Edit GUI
 					Manager.NativeManager.BeginDisabled(!alphaMarkerSelected);
-					
+
 					Manager.NativeManager.Columns(2);
 					Manager.NativeManager.SetColumnWidth(0, contentSize.X * 0.3f);
 
