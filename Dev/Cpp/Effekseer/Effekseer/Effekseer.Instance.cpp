@@ -524,6 +524,10 @@ void Instance::Update(float deltaFrame, bool shown)
 					{
 						removed = true;
 					}
+					else if (!isWithin && m_pEffectNode->KillParam.Box.IsKillInside == 0)
+					{
+						removed = true;
+					}
 				}
 				else if (m_pEffectNode->KillParam.Type == KillType::Plane)
 				{
@@ -543,6 +547,10 @@ void Instance::Update(float deltaFrame, bool shown)
 					float radius = m_pEffectNode->KillParam.Sphere.Radius;
 					bool isWithin = distance <= (radius * radius);
 					if (isWithin && m_pEffectNode->KillParam.Sphere.IsKillInside > 0)
+					{
+						removed = true;
+					}
+					else if (!isWithin && m_pEffectNode->KillParam.Sphere.IsKillInside == 0)
 					{
 						removed = true;
 					}
