@@ -17,6 +17,7 @@ set(effekseer_test_src
     Runtime/EffectPlatformGLFW.cpp
     Runtime/EffectPlatformGL.h
     Runtime/EffectPlatformGL.cpp
+    Runtime/BasicRendering.cpp
     Runtime/RuntimeTest.cpp
     Runtime/Performance.cpp
     Runtime/TextureFormats.cpp
