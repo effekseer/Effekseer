@@ -426,7 +426,7 @@ namespace Effekseer.IO
 
 		public byte[] Save(Binary.Exporter binaryExporter, Data.NodeRoot rootNode, XmlDocument editorData)
 		{
-			var binaryDataLatest = binaryExporter.Export(rootNode, 1, Binary.ExporterVersion.Latest);  // TODO change magnification
+			var binaryDataLatest = binaryExporter.Export(rootNode, 1);  // TODO change magnification
 
 			// header
 			byte[] headerData = null;
@@ -442,14 +442,6 @@ namespace Effekseer.IO
 			chunk.AddChunk("INFO", GetInfoData(binaryExporter));
 			chunk.AddChunk("EDIT", Compress(editorData));
 			chunk.AddChunk("BIN_", binaryDataLatest);
-
-			// fallback
-			if (Binary.ExporterVersion.Latest > Binary.ExporterVersion.Ver1500)
-			{
-				var binaryExporterFallback = new Binary.Exporter();
-				var binaryDataFallback = binaryExporterFallback.Export(Core.Root, 1, Binary.ExporterVersion.Ver1500);
-				chunk.AddChunk("BIN_", binaryDataFallback);
-			}
 
 			var chunkData = chunk.Save();
 

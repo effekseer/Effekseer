@@ -58,7 +58,7 @@ namespace Effekseer.Binary
 			return relativePath;
 		}
 
-		public static void ExportEasing(FloatEasingParamater easingValue, float magnification, List<byte[]> destination, ExporterVersion version, bool exportSize)
+		public static void ExportEasing(FloatEasingParamater easingValue, float magnification, List<byte[]> destination, bool exportSize)
 		{
 			var refBuf1_1 = easingValue.Start.DynamicEquationMax.Index.GetBytes();
 			var refBuf1_2 = easingValue.Start.DynamicEquationMin.Index.GetBytes();
@@ -67,7 +67,6 @@ namespace Effekseer.Binary
 
 			List<byte[]> _data = new List<byte[]>();
 
-			if (version >= ExporterVersion.Ver16Alpha1)
 			{
 				_data.Add(refBuf1_1);
 				_data.Add(refBuf1_2);
@@ -76,14 +75,8 @@ namespace Effekseer.Binary
 				_data.Add(easingValue.Start.GetBytes(magnification));
 				_data.Add(easingValue.End.GetBytes(magnification));
 			}
-			else
-			{
-				_data.Add(easingValue.Start.GetBytes(magnification));
-				_data.Add(easingValue.End.GetBytes(magnification));
-			}
 
 			// middle
-			if (version >= ExporterVersion.Ver16Alpha1)
 			{
 				int isMiddleEnabled = easingValue.IsMiddleEnabled ? 1 : 0;
 				_data.Add(isMiddleEnabled.GetBytes());
@@ -99,7 +92,6 @@ namespace Effekseer.Binary
 
 			var type = easingValue.Type.Value;
 
-			if (version >= ExporterVersion.Ver16Alpha1)
 			{
 				_data.Add(BitConverter.GetBytes((int)type));
 
@@ -111,16 +103,8 @@ namespace Effekseer.Binary
 					_data.Add(BitConverter.GetBytes(easing[2]));
 				}
 			}
-			else
-			{
-				var easing = Utl.MathUtl.Easing((float)easingValue.StartSpeed.Value, (float)easingValue.EndSpeed.Value);
-				_data.Add(BitConverter.GetBytes(easing[0]));
-				_data.Add(BitConverter.GetBytes(easing[1]));
-				_data.Add(BitConverter.GetBytes(easing[2]));
-			}
 
 			// Channel
-			if (version >= ExporterVersion.Ver16Alpha1)
 			{
 				{
 					int channel = 0;
@@ -130,7 +114,6 @@ namespace Effekseer.Binary
 			}
 
 			// Individual
-			if (version >= ExporterVersion.Ver16Alpha1)
 			{
 				int individualTypeEnabled = 0;
 				_data.Add(BitConverter.GetBytes(individualTypeEnabled));
@@ -145,7 +128,7 @@ namespace Effekseer.Binary
 			destination.Add(__data);
 		}
 
-		public static void ExportEasing(Vector3DEasingParamater easingValue, float magnification, List<byte[]> destination, ExporterVersion version)
+		public static void ExportEasing(Vector3DEasingParamater easingValue, float magnification, List<byte[]> destination)
 		{
 
 			var refBuf1_1 = easingValue.Start.DynamicEquationMax.Index.GetBytes();
@@ -163,7 +146,6 @@ namespace Effekseer.Binary
 			_data.Add(easingValue.End.GetBytes(magnification));
 
 			// middle
-			if (version >= ExporterVersion.Ver16Alpha1)
 			{
 				int isMiddleEnabled = easingValue.IsMiddleEnabled.Value ? 1 : 0;
 				_data.Add(isMiddleEnabled.GetBytes());
@@ -179,7 +161,6 @@ namespace Effekseer.Binary
 
 			var type = easingValue.Type.Value;
 
-			if (version >= ExporterVersion.Ver16Alpha1)
 			{
 				_data.Add(BitConverter.GetBytes((int)type));
 
@@ -191,16 +172,8 @@ namespace Effekseer.Binary
 					_data.Add(BitConverter.GetBytes(easing[2]));
 				}
 			}
-			else
-			{
-				var easing = Utl.MathUtl.Easing((float)easingValue.StartSpeed.Value, (float)easingValue.EndSpeed.Value);
-				_data.Add(BitConverter.GetBytes(easing[0]));
-				_data.Add(BitConverter.GetBytes(easing[1]));
-				_data.Add(BitConverter.GetBytes(easing[2]));
-			}
 
 			// Channel
-			if (version >= ExporterVersion.Ver16Alpha1)
 			{
 				if (easingValue.IsRandomGroupEnabled.Value)
 				{
@@ -233,7 +206,6 @@ namespace Effekseer.Binary
 			}
 
 			// Individual
-			if (version >= ExporterVersion.Ver16Alpha1)
 			{
 				int individualTypeEnabled = easingValue.IsIndividualTypeEnabled.Value ? 1 : 0;
 				_data.Add(BitConverter.GetBytes(individualTypeEnabled));
