@@ -78,6 +78,8 @@ Repositories
 
 [Profiling](docs/Development/Profiling.md)
 
+[Design](docs/Development/Design.md)
+
 [CodeOverview](docs/Development/CodeOverview.md)
 
 [CodingRule](docs/Development/CodingRule_En.md)
