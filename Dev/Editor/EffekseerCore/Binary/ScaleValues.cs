@@ -10,19 +10,11 @@ namespace Effekseer.Binary
 {
 	class ScaleValues
 	{
-		public static byte[] GetBytes(Data.ScaleValues value, Data.ParentEffectType parentEffectType, ExporterVersion version)
+		public static byte[] GetBytes(Data.ScaleValues value, Data.ParentEffectType parentEffectType)
 		{
 			float magnification = 1.0f;
 
 			var type = value.Type.Value;
-
-			if (version < ExporterVersion.Ver16Alpha1)
-			{
-				if (type == Data.ScaleValues.ParamaterType.SingleFCurve)
-				{
-					type = Data.ScaleValues.ParamaterType.Fixed;
-				}
-			}
 
 			List<byte[]> data = new List<byte[]>();
 			data.Add(((int)type).GetBytes());
@@ -56,7 +48,7 @@ namespace Effekseer.Binary
 			}
 			else if (type == Data.ScaleValues.ParamaterType.Easing)
 			{
-				Utils.ExportEasing(value.Easing, magnification, data, version);
+				Utils.ExportEasing(value.Easing, magnification, data);
 			}
 			else if (type == Data.ScaleValues.ParamaterType.SinglePVA)
 			{
@@ -66,7 +58,7 @@ namespace Effekseer.Binary
 			}
 			else if (type == Data.ScaleValues.ParamaterType.SingleEasing)
 			{
-				Utils.ExportEasing(value.SingleEasing, 1.0f, data, version, true);
+				Utils.ExportEasing(value.SingleEasing, 1.0f, data, true);
 			}
 			else if (type == Data.ScaleValues.ParamaterType.FCurve)
 			{

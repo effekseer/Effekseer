@@ -9,7 +9,7 @@ namespace Effekseer.Binary
 {
 	class AlphaCutoffValues
 	{
-		public static byte[] GetBytes(Data.AlphaCutoffParameter value, ExporterVersion version)
+		public static byte[] GetBytes(Data.AlphaCutoffParameter value)
 		{
 			List<byte[]> data = new List<byte[]>();
 			data.Add(value.Type.GetValueAsInt().GetBytes());
@@ -45,7 +45,7 @@ namespace Effekseer.Binary
 			}
 			else if (value.Type == Data.AlphaCutoffParameter.ParameterType.Easing)
 			{
-				Utils.ExportEasing(value.Easing, 1.0f, data, version, true);
+				Utils.ExportEasing(value.Easing, 1.0f, data, true);
 			}
 			else if (value.Type == Data.AlphaCutoffParameter.ParameterType.FCurve)
 			{

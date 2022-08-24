@@ -10,16 +10,9 @@ namespace Effekseer.Binary
 {
 	class RotationValues
 	{
-		public static byte[] GetBytes(Data.RotationValues value, ExporterVersion version)
+		public static byte[] GetBytes(Data.RotationValues value)
 		{
 			var rotationType = value.Type.GetValue();
-			if (version < ExporterVersion.Ver17Alpha5)
-			{
-				if (rotationType == Data.RotationValues.ParamaterType.RotateToViewpoint)
-				{
-					rotationType = Data.RotationValues.ParamaterType.Fixed;
-				}
-			}
 
 			List<byte[]> data = new List<byte[]>();
 			data.Add(((int)rotationType).GetBytes());
@@ -57,7 +50,7 @@ namespace Effekseer.Binary
 			}
 			else if (rotationType == Data.RotationValues.ParamaterType.Easing)
 			{
-				Utils.ExportEasing(value.Easing, (float)Math.PI / 180.0f, data, version);
+				Utils.ExportEasing(value.Easing, (float)Math.PI / 180.0f, data);
 			}
 			else if (rotationType == Data.RotationValues.ParamaterType.AxisPVA)
 			{
@@ -79,7 +72,7 @@ namespace Effekseer.Binary
 
 				List<byte[]> _data = new List<byte[]>();
 				_data.Add(value.AxisEasing.Axis.GetBytes());
-				Utils.ExportEasing(value.AxisEasing.Easing, (float)Math.PI / 180.0f, _data, version, version >= ExporterVersion.Ver16Alpha9);
+				Utils.ExportEasing(value.AxisEasing.Easing, (float)Math.PI / 180.0f, _data, true);
 				var __data = _data.ToArray().ToArray();
 				data.Add(__data.Count().GetBytes());
 				data.Add(__data);
