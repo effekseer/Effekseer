@@ -813,9 +813,15 @@ void GpuParticle(GraphicsDeviceType deviceType, bool trailMode)
 
 #if !defined(__FROM_CI__)
 TestRegister Test_GpuParticle_GL("Backend.GpuParticle_GL", []() -> void { GpuParticle(GraphicsDeviceType::OpenGL, false); });
+
+#ifdef _WIN32
 TestRegister Test_GpuParticle_DX11("Backend.GpuParticle_DX11", []() -> void { GpuParticle(GraphicsDeviceType::DirectX11, false); });
+#endif
 
 TestRegister Test_GpuParticleTrail_GL("Backend.GpuParticle_Trail_GL", []() -> void { GpuParticle(GraphicsDeviceType::OpenGL, true); });
+
+#ifdef _WIN32
 TestRegister Test_GpuParticleTrail_DX11("Backend.GpuParticle_Trail_DX11", []() -> void { GpuParticle(GraphicsDeviceType::DirectX11, true); });
+#endif
 
 #endif
