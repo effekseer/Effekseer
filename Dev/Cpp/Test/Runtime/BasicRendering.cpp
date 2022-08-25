@@ -28,10 +28,10 @@ void BasicRuntimeTestPlatform(EffectPlatformInitializingParameter param, EffectP
 		suffix += ".LH";
 	}
 
-	auto singleTest = [&](std::u16string root, std::u16string name, std::string savename, int time)
+	auto singleTest = [&](std::u16string root, std::u16string name, std::u16string ext, std::string savename, int time)
 	{
 		srand(0);
-		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/" + root + u"/" + name + u".efk").c_str());
+		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/" + root + u"/" + name + ext).c_str());
 
 		for (size_t i = 0; i < time; i++)
 		{
@@ -76,7 +76,7 @@ void BasicRuntimeTestPlatform(EffectPlatformInitializingParameter param, EffectP
 	{
 		auto single10Test = [&](const char16_t* name, const char* savename) -> void
 		{
-			singleTest(u"10", name, savename, 30);
+			singleTest(u"10", name, u".efk", savename, 30);
 		};
 		single10Test(u"SimpleLaser", "SimpleLaser");
 		single10Test(u"FCurve_Parameters1", "FCurve_Parameters1");
@@ -90,7 +90,7 @@ void BasicRuntimeTestPlatform(EffectPlatformInitializingParameter param, EffectP
 	{
 		auto single14Test = [&](const char16_t* name, const char* savename) -> void
 		{
-			singleTest(u"14", name, savename, 30);
+			singleTest(u"14", name, u".efk", savename, 30);
 		};
 		single14Test(u"Model_Parameters1", "Model_Parameters1");
 	}
@@ -98,7 +98,7 @@ void BasicRuntimeTestPlatform(EffectPlatformInitializingParameter param, EffectP
 	{
 		auto single15Test = [&](const char16_t* name, const char* savename) -> void
 		{
-			singleTest(u"15", name, savename, 30);
+			singleTest(u"15", name, u".efkefc", savename, 30);
 		};
 		single15Test(u"Lighing_Parameters1", "Lighing_Parameters1");
 		single15Test(u"DynamicParameter1", "DynamicParameter1");
@@ -122,7 +122,7 @@ void BasicRuntimeTestPlatform(EffectPlatformInitializingParameter param, EffectP
 	{
 		auto single16Test = [&](const char16_t* name, const char* savename) -> void
 		{
-			singleTest(u"16", name, savename, 30);
+			singleTest(u"16", name, u".efkefc", savename, 30);
 		};
 
 		single16Test(u"DrawWithoutInstancing", "DrawWithoutInstancing");
@@ -190,7 +190,7 @@ void BasicRuntimeTestPlatform(EffectPlatformInitializingParameter param, EffectP
 	{
 		auto single17Test = [&](const char16_t* name, const char* savename, int32_t time) -> void
 		{
-			singleTest(u"17", name, savename, time);
+			singleTest(u"17", name, u".efkefc", savename, time);
 		};
 
 		single17Test(u"Flip_UV_02", "Flip_UV_02", 57);
