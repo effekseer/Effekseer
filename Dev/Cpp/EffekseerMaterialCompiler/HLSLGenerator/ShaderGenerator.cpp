@@ -1077,8 +1077,8 @@ ShaderData ShaderGenerator::GenerateShader(MaterialFile* materialFile,
 			for (size_t j = 0; j < 13; j++)
 			{
 				ExportUniform(maincode, 4, (materialFile->Gradients[i].Name + "_" + std::to_string(j)).c_str(), cind);
+				cind++;
 			}
-			cind++;
 		}
 
 		// finish constant buffer
