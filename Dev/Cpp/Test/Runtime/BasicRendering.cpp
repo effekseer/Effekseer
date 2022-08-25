@@ -28,62 +28,10 @@ void BasicRuntimeTestPlatform(EffectPlatformInitializingParameter param, EffectP
 		suffix += ".LH";
 	}
 
-	auto single10Test = [&](const char16_t* name, const char* savename) -> void
+	auto singleTest = [&](std::u16string root, std::u16string name, std::string savename, int time)
 	{
 		srand(0);
-		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/" + name + u".efk").c_str());
-
-		for (size_t i = 0; i < 30; i++)
-		{
-			platform->Update();
-		}
-		platform->TakeScreenshot((std::string(baseResultPath) + savename + suffix + ".png").c_str());
-		platform->StopAllEffects();
-	};
-
-	auto single14Test = [&](const char16_t* name, const char* savename) -> void
-	{
-		srand(0);
-		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/14/" + name + u".efk").c_str());
-
-		for (size_t i = 0; i < 30; i++)
-		{
-			platform->Update();
-		}
-		platform->TakeScreenshot((std::string(baseResultPath) + savename + suffix + ".png").c_str());
-		platform->StopAllEffects();
-	};
-
-	auto single15Test = [&](const char16_t* name, const char* savename) -> void
-	{
-		srand(0);
-		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/15/" + name + u".efkefc").c_str());
-
-		for (size_t i = 0; i < 30; i++)
-		{
-			platform->Update();
-		}
-		platform->TakeScreenshot((std::string(baseResultPath) + savename + suffix + ".png").c_str());
-		platform->StopAllEffects();
-	};
-
-	auto single16Test = [&](const char16_t* name, const char* savename) -> void
-	{
-		srand(0);
-		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/16/" + name + u".efkefc").c_str());
-
-		for (size_t i = 0; i < 30; i++)
-		{
-			platform->Update();
-		}
-		platform->TakeScreenshot((std::string(baseResultPath) + savename + suffix + ".png").c_str());
-		platform->StopAllEffects();
-	};
-
-	auto single17Test = [&](const char16_t* name, const char* savename, int32_t time) -> void
-	{
-		srand(0);
-		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/17/" + name + u".efkefc").c_str());
+		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/" + root + u"/" + name + u".efk").c_str());
 
 		for (size_t i = 0; i < time; i++)
 		{
@@ -125,34 +73,58 @@ void BasicRuntimeTestPlatform(EffectPlatformInitializingParameter param, EffectP
 		platform->GetRenderer()->SetCameraMatrix(cameraMat);
 	}
 
-	single10Test(u"SimpleLaser", "SimpleLaser");
-	single10Test(u"FCurve_Parameters1", "FCurve_Parameters1");
-	single10Test(u"Ribbon_Parameters1", "Ribbon_Parameters1");
-	single10Test(u"Ring_Parameters1", "Ring_Parameters1");
-	single10Test(u"Track_Parameters1", "Track_Parameters1");
-	single10Test(u"Sprite_Parameters1", "Sprite_Parameters1");
-	single10Test(u"Distortions1", "Distortions1");
-
-	single14Test(u"Model_Parameters1", "Model_Parameters1");
-	single15Test(u"Lighing_Parameters1", "Lighing_Parameters1");
-	single15Test(u"DynamicParameter1", "DynamicParameter1");
-	single15Test(u"Material_Sampler1", "Material_Sampler1");
-	single15Test(u"Material_Refraction", "Material_Refraction");
-	single15Test(u"Material_WorldPositionOffset", "Material_WorldPositionOffset");
-	single15Test(u"BasicRenderSettings_Blend", "BasicRenderSettings_Blend");
-	single15Test(u"BasicRenderSettings_Inherit_Color", "BasicRenderSettings_Inherit_Color");
-	single15Test(u"ForceFieldLocal_Turbulence1", "ForceFieldLocal_Turbulence1");
-	single15Test(u"ForceFieldLocal_Old", "ForceFieldLocal_Old");
-	single15Test(u"Material_FresnelRotatorPolarCoords", "Material_FresnelRotatorPolarCoords");
-
-	single15Test(u"Update_Easing", "Update_Easing");
-	single15Test(u"Update_MultiModel", "Update_MultiModel");
-
-	single15Test(u"Material_UV1", "Material_UV1");
-	single15Test(u"Material_UV2", "Material_UV2");
-	single15Test(u"SpawnMethodParameter1", "SpawnMethodParameter1");
+	{
+		auto single10Test = [&](const char16_t* name, const char* savename) -> void
+		{
+			singleTest(u"10", name, savename, 30);
+		};
+		single10Test(u"SimpleLaser", "SimpleLaser");
+		single10Test(u"FCurve_Parameters1", "FCurve_Parameters1");
+		single10Test(u"Ribbon_Parameters1", "Ribbon_Parameters1");
+		single10Test(u"Ring_Parameters1", "Ring_Parameters1");
+		single10Test(u"Track_Parameters1", "Track_Parameters1");
+		single10Test(u"Sprite_Parameters1", "Sprite_Parameters1");
+		single10Test(u"Distortions1", "Distortions1");
+	}
 
 	{
+		auto single14Test = [&](const char16_t* name, const char* savename) -> void
+		{
+			singleTest(u"14", name, savename, 30);
+		};
+		single14Test(u"Model_Parameters1", "Model_Parameters1");
+	}
+
+	{
+		auto single15Test = [&](const char16_t* name, const char* savename) -> void
+		{
+			singleTest(u"15", name, savename, 30);
+		};
+		single15Test(u"Lighing_Parameters1", "Lighing_Parameters1");
+		single15Test(u"DynamicParameter1", "DynamicParameter1");
+		single15Test(u"Material_Sampler1", "Material_Sampler1");
+		single15Test(u"Material_Refraction", "Material_Refraction");
+		single15Test(u"Material_WorldPositionOffset", "Material_WorldPositionOffset");
+		single15Test(u"BasicRenderSettings_Blend", "BasicRenderSettings_Blend");
+		single15Test(u"BasicRenderSettings_Inherit_Color", "BasicRenderSettings_Inherit_Color");
+		single15Test(u"ForceFieldLocal_Turbulence1", "ForceFieldLocal_Turbulence1");
+		single15Test(u"ForceFieldLocal_Old", "ForceFieldLocal_Old");
+		single15Test(u"Material_FresnelRotatorPolarCoords", "Material_FresnelRotatorPolarCoords");
+
+		single15Test(u"Update_Easing", "Update_Easing");
+		single15Test(u"Update_MultiModel", "Update_MultiModel");
+
+		single15Test(u"Material_UV1", "Material_UV1");
+		single15Test(u"Material_UV2", "Material_UV2");
+		single15Test(u"SpawnMethodParameter1", "SpawnMethodParameter1");
+	}
+
+	{
+		auto single16Test = [&](const char16_t* name, const char* savename) -> void
+		{
+			singleTest(u"16", name, savename, 30);
+		};
+
 		single16Test(u"DrawWithoutInstancing", "DrawWithoutInstancing");
 		single16Test(u"AlphaBlendTexture01", "AlphaBlendTexture01");
 		single16Test(u"AlphaCutoffEdgeColor01", "AlphaCutoffEdgeColor01");
@@ -171,52 +143,62 @@ void BasicRuntimeTestPlatform(EffectPlatformInitializingParameter param, EffectP
 		single16Test(u"AlphaCutoffParameter01", "AlphaCutoffParameter01");
 		single16Test(u"RotateScale01", "RotateScale01");
 		single16Test(u"FollowParent01", "FollowParent01");
+
+		{
+			auto cameraMat = platform->GetRenderer()->GetCameraMatrix();
+
+			Effekseer::Matrix44 mat;
+			if (param.CoordinateSyatem == Effekseer::CoordinateSystem::RH)
+			{
+				mat.LookAtRH({0, 0, 10}, {0, 0, 0}, {0, 1, 0});
+			}
+			else
+			{
+				mat.LookAtLH({0, 0, -10}, {0, 0, 0}, {0, 1, 0});
+			}
+			platform->GetRenderer()->SetCameraMatrix(mat);
+			platform->GenerateDepth();
+
+			single16Test(u"SoftParticle01", "SoftParticle01_NotFlipped");
+
+			platform->GetRenderer()->SetCameraMatrix(cameraMat);
+		}
+
+		{
+			auto cameraMat = platform->GetRenderer()->GetCameraMatrix();
+
+			Effekseer::Matrix44 mat;
+
+			if (param.CoordinateSyatem == Effekseer::CoordinateSystem::RH)
+			{
+				mat.LookAtRH({0, 0, 10}, {0, 0, 0}, {0, 1, 0});
+			}
+			else
+			{
+				mat.LookAtLH({0, 0, -10}, {0, 0, 0}, {0, 1, 0});
+			}
+			platform->GetRenderer()->SetCameraMatrix(mat);
+			platform->GetRenderer()->SetBackgroundTextureUVStyle(EffekseerRenderer::UVStyle::VerticalFlipped);
+			platform->GenerateDepth();
+
+			single16Test(u"SoftParticle01", "SoftParticle01_Flipped");
+
+			platform->GetRenderer()->SetCameraMatrix(cameraMat);
+		}
 	}
 
 	{
+		auto single17Test = [&](const char16_t* name, const char* savename, int32_t time) -> void
+		{
+			singleTest(u"17", name, savename, time);
+		};
+
 		single17Test(u"Flip_UV_02", "Flip_UV_02", 57);
-	}
-
-	{
-		auto cameraMat = platform->GetRenderer()->GetCameraMatrix();
-
-		Effekseer::Matrix44 mat;
-		if (param.CoordinateSyatem == Effekseer::CoordinateSystem::RH)
-		{
-			mat.LookAtRH({0, 0, 10}, {0, 0, 0}, {0, 1, 0});
-		}
-		else
-		{
-			mat.LookAtLH({0, 0, -10}, {0, 0, 0}, {0, 1, 0});
-		}
-		platform->GetRenderer()->SetCameraMatrix(mat);
-		platform->GenerateDepth();
-
-		single16Test(u"SoftParticle01", "SoftParticle01_NotFlipped");
-
-		platform->GetRenderer()->SetCameraMatrix(cameraMat);
-	}
-
-	{
-		auto cameraMat = platform->GetRenderer()->GetCameraMatrix();
-
-		Effekseer::Matrix44 mat;
-
-		if (param.CoordinateSyatem == Effekseer::CoordinateSystem::RH)
-		{
-			mat.LookAtRH({0, 0, 10}, {0, 0, 0}, {0, 1, 0});
-		}
-		else
-		{
-			mat.LookAtLH({0, 0, -10}, {0, 0, 0}, {0, 1, 0});
-		}
-		platform->GetRenderer()->SetCameraMatrix(mat);
-		platform->GetRenderer()->SetBackgroundTextureUVStyle(EffekseerRenderer::UVStyle::VerticalFlipped);
-		platform->GenerateDepth();
-
-		single16Test(u"SoftParticle01", "SoftParticle01_Flipped");
-
-		platform->GetRenderer()->SetCameraMatrix(cameraMat);
+		single17Test(u"Gradient1", "Gradient1", 60);
+		single17Test(u"KillRules01", "KillRules01", 60);
+		single17Test(u"Light1", "Light1", 60);
+		single17Test(u"LocalTime", "LocalTime", 60);
+		single17Test(u"Noise1", "Noise1", 60);
 	}
 }
 
