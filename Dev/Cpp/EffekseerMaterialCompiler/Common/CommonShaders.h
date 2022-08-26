@@ -78,8 +78,8 @@ float SimpleNoise_Block(float2 uv) {
 	float2 uvf = FRAC(uv);
 	uvf = uvf * uvf * (3.0 - 2.0 * uvf);
 
-	float x0 = LERP(Rand2(uvi + int2(0,0)), Rand2(uvi + int2(1,0)), uvf.x);
-	float x1 = LERP(Rand2(uvi + int2(0,1)), Rand2(uvi + int2(1,1)), uvf.x);
+	float x0 = LERP(Rand2(float2(uvi + int2(0,0))), Rand2(float2(uvi + int2(1,0))), uvf.x);
+	float x1 = LERP(Rand2(float2(uvi + int2(0,1))), Rand2(float2(uvi + int2(1,1))), uvf.x);
 	return LERP(x0, x1, uvf.y);
 }
 

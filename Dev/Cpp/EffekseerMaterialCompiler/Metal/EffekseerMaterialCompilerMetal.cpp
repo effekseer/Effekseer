@@ -957,7 +957,7 @@ ShaderData GenerateShader(MaterialFile* materialFile, MaterialShaderType shaderT
 			// TODO : remove a magic number
 			for (size_t j = 0; j < 13; j++)
 			{
-				ExportUniform(maincode, 4, (materialFile->Gradients[i].Name + "_" + std::to_string(j)).c_str());
+				ExportUniform(userUniforms, 4, (materialFile->Gradients[i].Name + "_" + std::to_string(j)).c_str());
 			}
 		}
 		baseCode = Replace(baseCode, "$EFFECTSCALE$", "predefined_uniform.y");
@@ -982,12 +982,8 @@ ShaderData GenerateShader(MaterialFile* materialFile, MaterialShaderType shaderT
 
 		for (size_t i = 0; i < materialFile->Gradients.size(); i++)
 		{
-			// TODO : remove a magic number
-			for (size_t j = 0; j < 13; j++)
-			{
-				const auto name = materialFile->Gradients[i].Name + "_" + std::to_string(j);
-				baseCode = Replace(baseCode, name, std::string("u.") + name);
-			}
+            const auto name = materialFile->Gradients[i].Name + "_";
+            baseCode = Replace(baseCode, name, std::string("u.") + name);
 		}
 
 		baseCode = Replace(baseCode, "predefined_uniform", std::string("u.") + "predefined_uniform");
