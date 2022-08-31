@@ -18,6 +18,8 @@ list(APPEND LOCAL_HEADERS_GL ../EffekseerMaterialCompiler/OpenGL/EffekseerMateri
 list(APPEND LOCAL_SOURCES_GL ../EffekseerMaterialCompiler/OpenGL/EffekseerMaterialCompilerGL.cpp)
 list(APPEND LOCAL_SOURCES_GL ../EffekseerMaterialCompiler/GLSLGenerator/ShaderGenerator.h)
 list(APPEND LOCAL_SOURCES_GL ../EffekseerMaterialCompiler/GLSLGenerator/ShaderGenerator.cpp)
+list(APPEND LOCAL_SOURCES_GL ../EffekseerMaterialCompiler/Common/ShaderGeneratorCommon.h)
+list(APPEND LOCAL_SOURCES_GL ../EffekseerMaterialCompiler/Common/ShaderGeneratorCommon.cpp)
 
 FilterFolder("${LOCAL_HEADERS_GL}")
 FilterFolder("${LOCAL_SOURCES_GL}")

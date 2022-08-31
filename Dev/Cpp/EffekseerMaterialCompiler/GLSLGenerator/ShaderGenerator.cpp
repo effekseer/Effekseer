@@ -1,6 +1,6 @@
 
 #include "ShaderGenerator.h"
-#include "../Common/CommonShaders.h"
+#include "../Common/ShaderGeneratorCommon.h"
 
 #include <iostream>
 #undef min
@@ -35,37 +35,6 @@ vec3 GetLightAmbientColor() {
 }
 )";
 
-inline std::string GetFixedGradient(const char* name, const Gradient& gradient)
-{
-	std::stringstream ss;
-
-	ss << "Gradient " << name << "() {" << std::endl;
-	ss << "Gradient g;" << std::endl;
-	ss << "g.colorCount = " << gradient.ColorCount << ";" << std::endl;
-	ss << "g.alphaCount = " << gradient.AlphaCount << ";" << std::endl;
-	ss << "g.reserved1 = 0;" << std::endl;
-	ss << "g.reserved2 = 0;" << std::endl;
-
-	// glsl must fill all variables in some environments
-	for (int32_t i = 0; i < gradient.Colors.size(); i++)
-	{
-		ss << "g.colors[" << i << "].x = " << gradient.Colors[i].Color[0] * gradient.Colors[i].Intensity << ";" << std::endl;
-		ss << "g.colors[" << i << "].y = " << gradient.Colors[i].Color[1] * gradient.Colors[i].Intensity << ";" << std::endl;
-		ss << "g.colors[" << i << "].z = " << gradient.Colors[i].Color[2] * gradient.Colors[i].Intensity << ";" << std::endl;
-		ss << "g.colors[" << i << "].w = " << gradient.Colors[i].Position << ";" << std::endl;
-	}
-
-	for (int32_t i = 0; i < gradient.Alphas.size(); i++)
-	{
-		ss << "g.alphas[" << i << "].x = " << gradient.Alphas[i].Alpha << ";" << std::endl;
-		ss << "g.alphas[" << i << "].y = " << gradient.Alphas[i].Position << ";" << std::endl;
-	}
-
-	ss << "return g; }" << std::endl;
-
-	return ss.str();
-}
-
 static const char* material_common_define_450 = R"(
 #version 450
 #define LAYOUT(ind) layout(location = ind)
@@ -90,66 +59,15 @@ static const char* material_common_define =
 #define float2 vec2
 #define float3 vec3
 #define float4 vec4
+#define half2 vec2
+#define half3 vec3
+#define half4 vec4
 #define int2 ivec2
 #define int3 ivec3
 #define int4 ivec4
 
 float atan2(in float y, in float x) {
     return x == 0.0 ? sign(y)* 3.141592 / 2.0 : atan(y, x);
-}
-
-)";
-
-static const char* material_common_functions =
-	R"(
-
-#define FLT_EPSILON 1.192092896e-07
-
-vec3 PositivePow(vec3 base, vec3 power)
-{
-	return pow(max(abs(base), vec3(FLT_EPSILON, FLT_EPSILON, FLT_EPSILON)), power);
-}
-
-vec3 LinearToSRGB(vec3 c)
-{
-	return max(1.055 * PositivePow(c, vec3(0.416666667,0.416666667,0.416666667)) - 0.055, 0.0);
-}
-
-vec4 LinearToSRGB(vec4 c)
-{
-    vec3 param = c.xyz;
-    return vec4(LinearToSRGB(param), c.w);
-}
-
-vec4 ConvertFromSRGBTexture(vec4 c)
-{
-    if (predefined_uniform.z == 0.0)
-    {
-        return c;
-    }
-    vec4 param = c;
-    return LinearToSRGB(param);
-}
-
-vec3 SRGBToLinear(vec3 c)
-{
-	return min(c, c * (c * (c * 0.305306011 + 0.682171111) + 0.012522878));
-}
-
-vec4 SRGBToLinear(vec4 c)
-{
-    vec3 param = c.xyz;
-    return vec4(SRGBToLinear(param), c.w);
-}
-
-vec4 ConvertToScreen(vec4 c)
-{
-    if (predefined_uniform.z == 0.0)
-    {
-        return c;
-    }
-    vec4 param = c;
-    return SRGBToLinear(param);
 }
 
 )";
@@ -821,17 +739,17 @@ void ShaderGenerator::ExportHeader(std::ostringstream& maincode, MaterialFile* m
 
 	if (hasGradient)
 	{
-		maincode << Effekseer::Shader::material_gradient;
+		maincode << Effekseer::Shader::GetGradientFunctions();
 	}
 
 	if (hasNoise)
 	{
-		maincode << Effekseer::Shader::material_noise;
+		maincode << Effekseer::Shader::GetNoiseFunctions();
 	}
 
 	for (const auto& gradient : materialFile->FixedGradients)
 	{
-		maincode << GetFixedGradient(gradient.Name.c_str(), gradient.Data);
+		maincode << Effekseer::Shader::GetFixedGradient(gradient.Name.c_str(), gradient.Data);
 	}
 }
 
@@ -1140,7 +1058,7 @@ uniform vec4 customData2s[_INSTANCE_COUNT_];
 			}
 		}
 
-		maincode << material_common_functions << std::endl;
+		maincode << Effekseer::Shader::GetLinearGammaFunctions() << std::endl;
 
 		auto baseCode = std::string(materialFile->GetGenericCode());
 		baseCode = Replace(baseCode, "$F1$", "float");

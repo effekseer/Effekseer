@@ -23,6 +23,9 @@ file(GLOB_RECURSE LOCAL_HEADERS_Metal *.h)
 file(GLOB_RECURSE LOCAL_SOURCES_Metal *.cpp *.mm)
 list(APPEND LOCAL_HEADERS_Metal ../EffekseerMaterialCompiler/Metal/EffekseerMaterialCompilerMetal.h)
 list(APPEND LOCAL_SOURCES_Metal ../EffekseerMaterialCompiler/Metal/EffekseerMaterialCompilerMetal.cpp)
+list(APPEND LOCAL_SOURCES_Metal ../EffekseerMaterialCompiler/Common/ShaderGeneratorCommon.h)
+list(APPEND LOCAL_SOURCES_Metal ../EffekseerMaterialCompiler/Common/ShaderGeneratorCommon.cpp)
+
 FilterFolder("${LOCAL_HEADERS_Metal}")
 FilterFolder("${LOCAL_SOURCES_Metal}")
 

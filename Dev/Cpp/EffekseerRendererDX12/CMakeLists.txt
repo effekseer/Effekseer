@@ -18,6 +18,8 @@ list(APPEND LOCAL_HEADERS_DX12 ../EffekseerMaterialCompiler/DirectX12/EffekseerM
 list(APPEND LOCAL_SOURCES_DX12 ../EffekseerMaterialCompiler/DirectX12/EffekseerMaterialCompilerDX12.cpp)
 list(APPEND LOCAL_SOURCES_DX12 ../EffekseerMaterialCompiler/HLSLGenerator/ShaderGenerator.h)
 list(APPEND LOCAL_SOURCES_DX12 ../EffekseerMaterialCompiler/HLSLGenerator/ShaderGenerator.cpp)
+list(APPEND LOCAL_SOURCES_DX12 ../EffekseerMaterialCompiler/Common/ShaderGeneratorCommon.h)
+list(APPEND LOCAL_SOURCES_DX12 ../EffekseerMaterialCompiler/Common/ShaderGeneratorCommon.cpp)
 
 FilterFolder("${LOCAL_HEADERS_DX12}")
 FilterFolder("${LOCAL_SOURCES_DX12}")
