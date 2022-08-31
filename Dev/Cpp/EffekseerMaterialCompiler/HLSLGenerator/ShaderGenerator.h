@@ -28,7 +28,6 @@ class ShaderGenerator
 {
 protected:
 	std::string common_define_;
-	std::string common_functions_;
 	std::string common_vs_define_;
 	std::string sprite_vs_pre_;
 	std::string sprite_vs_pre_simple_;

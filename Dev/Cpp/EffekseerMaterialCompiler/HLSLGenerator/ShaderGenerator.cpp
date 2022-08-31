@@ -1,5 +1,5 @@
 #include "ShaderGenerator.h"
-#include "../Common/CommonShaders.h"
+#include "../Common/ShaderGeneratorCommon.h"
 
 #include "../../Effekseer/Effekseer/Material/Effekseer.MaterialCompiler.h"
 
@@ -38,36 +38,6 @@ float3 GetLightAmbientColor() {
 	return lightAmbientColor.xyz;
 }
 )";
-
-inline std::string GetFixedGradient(const char* name, const Gradient& gradient)
-{
-	std::stringstream ss;
-
-	ss << "Gradient " << name << "() {" << std::endl;
-	ss << "Gradient g;" << std::endl;
-	ss << "g.colorCount = " << gradient.ColorCount << ";" << std::endl;
-	ss << "g.alphaCount = " << gradient.AlphaCount << ";" << std::endl;
-	ss << "g.reserved1 = 0;" << std::endl;
-	ss << "g.reserved2 = 0;" << std::endl;
-
-	for (int32_t i = 0; i < gradient.Colors.size(); i++)
-	{
-		ss << "g.colors[" << i << "].x = " << gradient.Colors[i].Color[0] * gradient.Colors[i].Intensity << ";" << std::endl;
-		ss << "g.colors[" << i << "].y = " << gradient.Colors[i].Color[1] * gradient.Colors[i].Intensity << ";" << std::endl;
-		ss << "g.colors[" << i << "].z = " << gradient.Colors[i].Color[2] * gradient.Colors[i].Intensity << ";" << std::endl;
-		ss << "g.colors[" << i << "].w = " << gradient.Colors[i].Position << ";" << std::endl;
-	}
-
-	for (int32_t i = 0; i < gradient.Alphas.size(); i++)
-	{
-		ss << "g.alphas[" << i << "].x = " << gradient.Alphas[i].Alpha << ";" << std::endl;
-		ss << "g.alphas[" << i << "].y = " << gradient.Alphas[i].Position << ";" << std::endl;
-	}
-
-	ss << "return g; }" << std::endl;
-
-	return ss.str();
-}
 
 inline std::string GetMaterialCommonDefine(ShaderGeneratorTarget type)
 {
@@ -115,58 +85,6 @@ inline std::string GetMaterialCommonDefine(ShaderGeneratorTarget type)
 
 	return ss.str();
 }
-
-static char* material_common_functions = R"(
-
-#define FLT_EPSILON 1.192092896e-07f
-
-float3 PositivePow(float3 base, float3 power)
-{
-	return pow(max(abs(base), float3(FLT_EPSILON, FLT_EPSILON, FLT_EPSILON)), power);
-}
-
-// based on http://chilliant.blogspot.com/2012/08/srgb-approximations-for-hlsl.html
-half3 SRGBToLinear(half3 c)
-{
-	return min(c, c * (c * (c * 0.305306011 + 0.682171111) + 0.012522878));
-}
-
-half4 SRGBToLinear(half4 c)
-{
-	return half4(SRGBToLinear(c.rgb), c.a);
-}
-
-half3 LinearToSRGB(half3 c)
-{
-	return max(1.055 * PositivePow(c, 0.416666667) - 0.055, 0.0);
-}
-
-half4 LinearToSRGB(half4 c)
-{
-	return half4(LinearToSRGB(c.rgb), c.a);
-}
-
-half4 ConvertFromSRGBTexture(half4 c)
-{
-	if (predefined_uniform.z == 0.0f)
-	{
-		return c;
-	}
-
-	return LinearToSRGB(c);
-}
-
-half4 ConvertToScreen(half4 c)
-{
-	if (predefined_uniform.z == 0.0f)
-	{
-		return c;
-	}
-
-	return SRGBToLinear(c);
-}
-
-)";
 
 static char* material_common_vs_functions = R"(
 
@@ -827,17 +745,17 @@ int32_t ShaderGenerator::ExportHeader(std::ostringstream& maincode, MaterialFile
 
 	if (hasGradient)
 	{
-		maincode << Effekseer::Shader::material_gradient;
+		maincode << Effekseer::Shader::GetGradientFunctions();
 	}
 
 	if (hasNoise)
 	{
-		maincode << Effekseer::Shader::material_noise;
+		maincode << Effekseer::Shader::GetNoiseFunctions();
 	}
 
 	for (const auto& gradient : materialFile->FixedGradients)
 	{
-		maincode << HLSL::GetFixedGradient(gradient.Name.c_str(), gradient.Data);
+		maincode << Effekseer::Shader::GetFixedGradient(gradient.Name.c_str(), gradient.Data);
 	}
 
 	if (stage == 0)
@@ -975,7 +893,6 @@ void ShaderGenerator::ExportMain(std::ostringstream& maincode,
 ShaderGenerator::ShaderGenerator(
 	ShaderGeneratorTarget target)
 	: common_define_(HLSL::GetMaterialCommonDefine(target).c_str())
-	, common_functions_(HLSL::material_common_functions)
 	, common_vs_define_(HLSL::material_common_vs_functions)
 	, sprite_vs_pre_(HLSL::material_sprite_vs_pre)
 	, sprite_vs_pre_simple_(HLSL::material_sprite_vs_pre_simple)
@@ -1197,7 +1114,7 @@ ShaderData ShaderGenerator::GenerateShader(MaterialFile* materialFile,
 			baseCode = Replace(baseCode, keyS, ",0.0,1.0)");
 		}
 
-		maincode << common_functions_;
+		maincode << Effekseer::Shader::GetLinearGammaFunctions();
 
 		if (stage == 0)
 		{

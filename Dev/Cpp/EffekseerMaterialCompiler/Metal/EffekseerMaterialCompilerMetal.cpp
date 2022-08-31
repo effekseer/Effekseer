@@ -1,6 +1,6 @@
 #include "EffekseerMaterialCompilerMetal.h"
 #include "../3rdParty/LLGI/src/Metal/LLGI.CompilerMetal.h"
-#include "../Common/CommonShaders.h"
+#include "../Common/ShaderGeneratorCommon.h"
 
 #include <iostream>
 
@@ -66,36 +66,6 @@ float3 GetLightAmbientColor(constant ShaderUniform2& u) {
 	return u.lightAmbientColor.xyz;
 }
 )";
-
-inline std::string GetFixedGradient(const char* name, const Gradient& gradient)
-{
-	std::stringstream ss;
-
-	ss << "Gradient " << name << "() {" << std::endl;
-	ss << "Gradient g;" << std::endl;
-	ss << "g.colorCount = " << gradient.ColorCount << ";" << std::endl;
-	ss << "g.alphaCount = " << gradient.AlphaCount << ";" << std::endl;
-	ss << "g.reserved1 = 0;" << std::endl;
-	ss << "g.reserved2 = 0;" << std::endl;
-
-	for (int32_t i = 0; i < gradient.Colors.size(); i++)
-	{
-		ss << "g.colors[" << i << "].x = " << gradient.Colors[i].Color[0] * gradient.Colors[i].Intensity << ";" << std::endl;
-		ss << "g.colors[" << i << "].y = " << gradient.Colors[i].Color[1] * gradient.Colors[i].Intensity << ";" << std::endl;
-		ss << "g.colors[" << i << "].z = " << gradient.Colors[i].Color[2] * gradient.Colors[i].Intensity << ";" << std::endl;
-		ss << "g.colors[" << i << "].w = " << gradient.Colors[i].Position << ";" << std::endl;
-	}
-
-	for (int32_t i = 0; i < gradient.Alphas.size(); i++)
-	{
-		ss << "g.alphas[" << i << "].x = " << gradient.Alphas[i].Alpha << ";" << std::endl;
-		ss << "g.alphas[" << i << "].y = " << gradient.Alphas[i].Position << ";" << std::endl;
-	}
-
-	ss << "return g; }" << std::endl;
-
-	return ss.str();
-}
 
 static const char* material_common_define = R"(
 #include <metal_stdlib>
@@ -764,12 +734,12 @@ void ExportHeader(std::ostringstream& maincode, MaterialFile* materialFile, int 
 
 	if (hasGradient)
 	{
-		maincode << Effekseer::Shader::material_gradient;
+		maincode << Effekseer::Shader::GetGradientFunctions();
 	}
 
 	if (hasNoise)
 	{
-		maincode << Effekseer::Shader::material_noise;
+		maincode << Effekseer::Shader::GetNoiseFunctions();
 	}
 
 	if (hasLight)
@@ -786,7 +756,7 @@ void ExportHeader(std::ostringstream& maincode, MaterialFile* materialFile, int 
 
 	for (const auto& gradient : materialFile->FixedGradients)
 	{
-		maincode << GetFixedGradient(gradient.Name.c_str(), gradient.Data);
+		maincode << Effekseer::Shader::GetFixedGradient(gradient.Name.c_str(), gradient.Data);
 	}
 }
 
@@ -982,8 +952,8 @@ ShaderData GenerateShader(MaterialFile* materialFile, MaterialShaderType shaderT
 
 		for (size_t i = 0; i < materialFile->Gradients.size(); i++)
 		{
-            const auto name = materialFile->Gradients[i].Name + "_";
-            baseCode = Replace(baseCode, name, std::string("u.") + name);
+			const auto name = materialFile->Gradients[i].Name + "_";
+			baseCode = Replace(baseCode, name, std::string("u.") + name);
 		}
 
 		baseCode = Replace(baseCode, "predefined_uniform", std::string("u.") + "predefined_uniform");
@@ -1173,7 +1143,8 @@ CompiledMaterialBinary* MaterialCompilerMetal::Compile(MaterialFile* materialFil
 	auto binary = new CompiledMaterialBinaryMetal();
 	// auto compiler = LLGI::CreateSharedPtr(new LLGI::CompilerMetal());
 
-	auto convertToVectorVS = [](const std::string& str) -> std::vector<uint8_t> {
+	auto convertToVectorVS = [](const std::string& str) -> std::vector<uint8_t>
+	{
 		std::vector<uint8_t> ret;
 
 		std::vector<char> buffer;
@@ -1215,7 +1186,8 @@ CompiledMaterialBinary* MaterialCompilerMetal::Compile(MaterialFile* materialFil
 		return ret;
 	};
 
-	auto convertToVectorPS = [](const std::string& str) -> std::vector<uint8_t> {
+	auto convertToVectorPS = [](const std::string& str) -> std::vector<uint8_t>
+	{
 		std::vector<uint8_t> ret;
 
 		std::vector<char> buffer;
@@ -1257,7 +1229,8 @@ CompiledMaterialBinary* MaterialCompilerMetal::Compile(MaterialFile* materialFil
 		return ret;
 	};
 
-	auto saveBinary = [&materialFile, &binary, &convertToVectorVS, &convertToVectorPS, &maximumUniformCount, &maximumTextureCount](MaterialShaderType type) {
+	auto saveBinary = [&materialFile, &binary, &convertToVectorVS, &convertToVectorPS, &maximumUniformCount, &maximumTextureCount](MaterialShaderType type)
+	{
 		auto shader = Metal::GenerateShader(materialFile, type, maximumUniformCount, maximumTextureCount);
 		binary->SetVertexShaderData(type, convertToVectorVS(shader.CodeVS));
 		binary->SetPixelShaderData(type, convertToVectorPS(shader.CodePS));

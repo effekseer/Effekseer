@@ -18,6 +18,8 @@ list(APPEND LOCAL_HEADERS_DX9 ../EffekseerMaterialCompiler/DirectX9/EffekseerMat
 list(APPEND LOCAL_SOURCES_DX9 ../EffekseerMaterialCompiler/DirectX9/EffekseerMaterialCompilerDX9.cpp)
 list(APPEND LOCAL_SOURCES_DX9 ../EffekseerMaterialCompiler/HLSLGenerator/ShaderGenerator.h)
 list(APPEND LOCAL_SOURCES_DX9 ../EffekseerMaterialCompiler/HLSLGenerator/ShaderGenerator.cpp)
+list(APPEND LOCAL_SOURCES_DX9 ../EffekseerMaterialCompiler/Common/ShaderGeneratorCommon.h)
+list(APPEND LOCAL_SOURCES_DX9 ../EffekseerMaterialCompiler/Common/ShaderGeneratorCommon.cpp)
 
 FilterFolder("${LOCAL_HEADERS_DX9}")
 FilterFolder("${LOCAL_SOURCES_DX9}")

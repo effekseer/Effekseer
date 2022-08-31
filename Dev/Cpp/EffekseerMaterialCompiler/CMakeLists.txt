@@ -1,12 +1,33 @@
 # OpenGL (OpenGL is a code as binary)
 
 add_library(
+    EffekseerMaterialCompilerCommon
+    STATIC
+    Common/ShaderGeneratorCommon.h
+    Common/ShaderGeneratorCommon.cpp
+)
+
+target_link_libraries(
+    EffekseerMaterialCompilerCommon
+    PRIVATE 
+    Effekseer
+)
+
+set_property(TARGET EffekseerMaterialCompilerCommon PROPERTY FOLDER Libraries) 
+
+add_library(
     EffekseerMaterialCompilerGLSLGenerator
     STATIC
     GLSLGenerator/ShaderGenerator.h
     GLSLGenerator/ShaderGenerator.cpp
 )
 set_property(TARGET EffekseerMaterialCompilerGLSLGenerator PROPERTY FOLDER Libraries) 
+
+target_link_libraries(
+    EffekseerMaterialCompilerGLSLGenerator
+    PUBLIC
+    EffekseerMaterialCompilerCommon
+)
 
 add_library(
     EffekseerMaterialCompilerGL
@@ -59,6 +80,7 @@ target_link_libraries(
     EffekseerMaterialCompilerMetal
     PRIVATE 
     Effekseer
+    EffekseerMaterialCompilerCommon
 )
 
 target_compile_definitions(EffekseerMaterialCompilerMetal PRIVATE __SHARED_OBJECT__=1)
@@ -93,6 +115,12 @@ if(WIN32)
         HLSLGenerator/ShaderGenerator.cpp
     )
     set_property(TARGET EffekseerMaterialCompilerHLSLGenerator PROPERTY FOLDER Libraries) 
+
+    target_link_libraries(
+        EffekseerMaterialCompilerHLSLGenerator
+        PUBLIC
+        EffekseerMaterialCompilerCommon
+    )
 endif()
 
 if(WIN32)

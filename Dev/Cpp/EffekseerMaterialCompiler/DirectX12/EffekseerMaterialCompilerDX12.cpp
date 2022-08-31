@@ -135,8 +135,8 @@ CompiledMaterialBinary* MaterialCompilerDX12::Compile(MaterialFile* materialFile
 		else
 		{
 			std::cout << "VertexShader Compile Error" << std::endl;
-			std::cout << result.Message << std::endl;
 			std::cout << str << std::endl;
+			std::cout << result.Message << std::endl;
 		}
 
 		return ret;
@@ -155,8 +155,8 @@ CompiledMaterialBinary* MaterialCompilerDX12::Compile(MaterialFile* materialFile
 		else
 		{
 			std::cout << "PixelShader Compile Error" << std::endl;
-			std::cout << result.Message << std::endl;
 			std::cout << str << std::endl;
+			std::cout << result.Message << std::endl;
 		}
 
 		return ret;

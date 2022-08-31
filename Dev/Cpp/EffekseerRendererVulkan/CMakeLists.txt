@@ -18,6 +18,8 @@ file(GLOB_RECURSE LOCAL_HEADERS_Vulkan *.h)
 file(GLOB_RECURSE LOCAL_SOURCES_Vulkan *.cpp)
 list(APPEND LOCAL_SOURCES_Vulkan ../EffekseerMaterialCompiler/GLSLGenerator/ShaderGenerator.h)
 list(APPEND LOCAL_SOURCES_Vulkan ../EffekseerMaterialCompiler/GLSLGenerator/ShaderGenerator.cpp)
+list(APPEND LOCAL_SOURCES_Vulkan ../EffekseerMaterialCompiler/Common/ShaderGeneratorCommon.h)
+list(APPEND LOCAL_SOURCES_Vulkan ../EffekseerMaterialCompiler/Common/ShaderGeneratorCommon.cpp)
 
 FilterFolder("${LOCAL_HEADERS_Vulkan}")
 FilterFolder("${LOCAL_SOURCES_Vulkan}")
