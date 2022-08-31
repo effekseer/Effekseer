@@ -113,7 +113,7 @@ cp cmake/FilterFolder.cmake $RDIR_R/cmake/.
 echo Sample
 
 mkdir -p  $RDIR_R/Sample
-robocopy Release/Sample $RDIR_R/Sample *.efkproj *.efkmodel *.txt *.png *.mqo *.fbx /S
+robocopy Release/Sample $RDIR_R/Sample *.efkproj *.efkefc *.efkmodel *.txt *.png *.mqo *.fbx /S
 
 echo License
 cp LICENSE $RDIR_R/LICENSE.txt
