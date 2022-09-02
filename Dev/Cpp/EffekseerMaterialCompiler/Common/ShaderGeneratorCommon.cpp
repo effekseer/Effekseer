@@ -41,7 +41,7 @@ half4 LinearToSRGB(half4 c)
 
 half4 ConvertFromSRGBTexture(half4 c)
 {
-	if (predefined_uniform.z == 0.0f)
+	if (predefined_uniform.z == 0.0)
 	{
 		return c;
 	}
@@ -51,7 +51,7 @@ half4 ConvertFromSRGBTexture(half4 c)
 
 half4 ConvertToScreen(half4 c)
 {
-	if (predefined_uniform.z == 0.0f)
+	if (predefined_uniform.z == 0.0)
 	{
 		return c;
 	}
