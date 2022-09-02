@@ -11,7 +11,7 @@ namespace
 {
 const char* material_lineargamma_functions = R"(
 
-#define FLT_EPSILON 1.192092896e-07f
+#define FLT_EPSILON 1.192092896e-07
 
 float3 PositivePow(float3 base, float3 power)
 {
