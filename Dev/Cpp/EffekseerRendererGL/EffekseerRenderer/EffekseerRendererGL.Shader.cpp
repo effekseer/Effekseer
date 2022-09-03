@@ -74,7 +74,7 @@ static const char g_header_vs_gl2_src[] =
 )";
 
 static const char g_header_fs_gl2_src[] =
-	R"("#version 120
+	R"(#version 120
 #define lowp
 #define mediump
 #define highp
