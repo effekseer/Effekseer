@@ -47,6 +47,7 @@ layout (location = 0) out vec4 FRAGCOLOR;
 static const char g_header_vs_gles2_src[] =
 	R"(
 #define EFK__INSTANCING_DISABLED__ 1
+#define EFK__OPENGL2__ 1
 #define IN attribute
 #define CENTROID
 #define TEX2D texture2DLod
@@ -55,6 +56,7 @@ static const char g_header_vs_gles2_src[] =
 
 static const char g_header_fs_gles2_src[] =
 	R"(precision highp float;
+#define EFK__OPENGL2__ 1
 #define IN varying
 #define CENTROID
 #define TEX2D texture2D
@@ -64,6 +66,7 @@ static const char g_header_fs_gles2_src[] =
 static const char g_header_vs_gl2_src[] =
 	R"(#version 120
 #define EFK__INSTANCING_DISABLED__ 1
+#define EFK__OPENGL2__ 1
 #define lowp
 #define mediump
 #define highp
@@ -75,6 +78,7 @@ static const char g_header_vs_gl2_src[] =
 
 static const char g_header_fs_gl2_src[] =
 	R"(#version 120
+#define EFK__OPENGL2__ 1
 #define lowp
 #define mediump
 #define highp
