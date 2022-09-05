@@ -131,7 +131,8 @@ void GLFLW_CloseCallback(GLFWwindow* w)
 	{
 		if (editor->GetContents()[i]->GetIsChanged())
 		{
-			auto closeIfCan = [w]() -> void {
+			auto closeIfCan = [w]() -> void
+			{
 				bool isChanged = false;
 
 				for (size_t i = 0; i < editor->GetContents().size(); i++)
@@ -149,7 +150,8 @@ void GLFLW_CloseCallback(GLFWwindow* w)
 			};
 
 			auto closeDialog =
-				std::make_shared<EffekseerMaterial::SaveOrCloseDialog>(editor->GetContents()[i], [closeIfCan]() { closeIfCan(); });
+				std::make_shared<EffekseerMaterial::SaveOrCloseDialog>(editor->GetContents()[i], [closeIfCan]()
+																	   { closeIfCan(); });
 			newDialogs.push_back(closeDialog);
 			isChanged = true;
 		}
@@ -163,7 +165,8 @@ void GLFLW_CloseCallback(GLFWwindow* w)
 
 void ChangeLanguage(const std::string& key)
 {
-	auto loadLanguage = [](const std::string& k, const std::string& filename) {
+	auto loadLanguage = [](const std::string& k, const std::string& filename)
+	{
 		const auto languageFilePath = GetExecutingDirectory() + "resources/languages/" + k + "/" + filename;
 
 		std::ifstream f(languageFilePath);
@@ -307,7 +310,8 @@ int mainLoop(int argc, char* argv[])
 	bool isDpiDirtied = true;
 	bool isFontUpdated = true;
 
-	mainWindow->DpiChanged = [&](float scale) -> void { isDpiDirtied = true; isFontUpdated = true; };
+	mainWindow->DpiChanged = [&](float scale) -> void
+	{ isDpiDirtied = true; isFontUpdated = true; };
 
 	glfwSetWindowCloseCallback(glfwMainWindow, GLFLW_CloseCallback);
 
@@ -717,7 +721,8 @@ int mainLoop(int argc, char* argv[])
 			}
 
 			auto removed_it = std::remove_if(
-				dialogs.begin(), dialogs.end(), [](std::shared_ptr<EffekseerMaterial::Dialog> d) -> bool { return d->IsClosing; });
+				dialogs.begin(), dialogs.end(), [](std::shared_ptr<EffekseerMaterial::Dialog> d) -> bool
+				{ return d->IsClosing; });
 
 			dialogs.erase(removed_it, dialogs.end());
 
