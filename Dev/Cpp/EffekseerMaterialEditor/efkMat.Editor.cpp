@@ -822,6 +822,7 @@ void Editor::UpdateNodes()
 			preview_->CompileShader(vs, ps, textures, uniforms, gradients, fixedGradients);
 			previewTextureCount_ = textures.size();
 			previewUniformCount_ = uniforms.size();
+			previewGradientCount_ = gradients.size();
 		}
 
 		for (auto node : material->GetNodes())
@@ -840,6 +841,7 @@ void Editor::UpdateNodes()
 			preview_->UpdateUniforms(textures, uniforms, gradients);
 			previewTextureCount_ = textures.size();
 			previewUniformCount_ = uniforms.size();
+			previewGradientCount_ = gradients.size();
 		}
 	}
 
@@ -1768,32 +1770,50 @@ void Editor::UpdatePreview()
 		preview_->ModelType = PreviewModelType::Sphere;
 	}
 
-	auto textureNumHeader = StringContainer::GetValue("TextureCount", "Texture");
-
-	if (previewTextureCount_ > Effekseer::UserTextureSlotMax)
 	{
-		ImGui::TextColored(
-			ImColor(255, 0, 0, 255), (textureNumHeader + " %d / %d").c_str(), previewTextureCount_, Effekseer::UserTextureSlotMax);
-	}
-	else
-	{
-		ImGui::Text((textureNumHeader + " %d / %d").c_str(), previewTextureCount_, Effekseer::UserTextureSlotMax);
-	}
+		auto textureNumHeader = StringContainer::GetValue("TextureCount", "Texture");
 
-	// uniform
+		if (previewTextureCount_ > Effekseer::UserTextureSlotMax)
+		{
+			ImGui::TextColored(
+				ImColor(255, 0, 0, 255), (textureNumHeader + " %d / %d").c_str(), previewTextureCount_, Effekseer::UserTextureSlotMax);
+		}
+		else
+		{
+			ImGui::Text((textureNumHeader + " %d / %d").c_str(), previewTextureCount_, Effekseer::UserTextureSlotMax);
+		}	
+	}
 
 	// TODO : refactor
-	auto uniformNumHeader = StringContainer::GetValue("UniformCount", "Uniform");
-	const int uniformMax = 16;
+	{
+		auto uniformNumHeader = StringContainer::GetValue("UniformCount", "Uniform");
+		const int uniformMax = 16;
 
-	if (previewUniformCount_ > uniformMax)
-	{
-		ImGui::TextColored(
-			ImColor(255, 0, 0, 255), (uniformNumHeader + " %d / %d").c_str(), previewUniformCount_, uniformMax);
+		if (previewUniformCount_ > uniformMax)
+		{
+			ImGui::TextColored(
+				ImColor(255, 0, 0, 255), (uniformNumHeader + " %d / %d").c_str(), previewUniformCount_, uniformMax);
+		}
+		else
+		{
+			ImGui::Text((uniformNumHeader + " %d / %d").c_str(), previewUniformCount_, uniformMax);
+		}
+
 	}
-	else
+
 	{
-		ImGui::Text((uniformNumHeader + " %d / %d").c_str(), previewUniformCount_, uniformMax);
+		const auto uniformNumHeader = StringContainer::GetValue("GradientCount", "Gradient");
+		const int uniformMax = 2;
+
+		if (previewGradientCount_ > uniformMax)
+		{
+			ImGui::TextColored(
+				ImColor(255, 0, 0, 255), (uniformNumHeader + " %d / %d").c_str(), previewGradientCount_, uniformMax);
+		}
+		else
+		{
+			ImGui::Text((uniformNumHeader + " %d / %d").c_str(), previewGradientCount_, uniformMax);
+		}
 	}
 }
 

@@ -6,6 +6,36 @@
 namespace EffekseerMaterial
 {
 
+namespace
+{
+
+void exportGradient(std::ostringstream& dst, std::shared_ptr<EffekseerMaterial::TextExporterGradient> gradient, std::string arg)
+{
+	dst << "SampleGradient(" << gradient->UniformName << "(), " << arg << ");" << std::endl;
+}
+
+void exportGradientParameter(std::ostringstream& dst, std::shared_ptr<EffekseerMaterial::TextExporterGradient> gradient, std::string arg)
+{
+	dst << "SampleGradient(GradientParameter(";
+	for (size_t j = 0; j < 13; j++)
+	{
+		dst << gradient->UniformName << "_" << j;
+
+		if (j != 12)
+		{
+			dst << ",";
+		}
+		else
+		{
+			dst << ")";
+		}
+	}
+
+	dst << ", " << arg << ");" << std::endl;
+};
+
+} // namespace
+
 /**
 	@brief	Refactor with it
 */
@@ -1176,11 +1206,10 @@ std::string TextExporter::ExportOutputNode(std::shared_ptr<Material> material,
 		}
 		else if (outputNode->Target->Parameter->Type == NodeType::Gradient)
 		{
-			// TODO : Refactor
+			ret << GetTypeName(ValueType::Float4) << " emissive_temp = ";
 
-			ret << GetTypeName(ValueType::Float4) << " emissive_temp = "
-				<< "SampleGradient(" << outputNode->Outputs[0].GradientValue->UniformName << "()"
-				<< ", GetUV(" << GetUVName(0) << ").x);" << std::endl;
+			exportGradient(ret, outputNode->Outputs[0].GradientValue, "GetUV(" + GetUVName(0) + ").x");
+
 			ret << GetTypeName(ValueType::Float3) << " emissive = emissive_temp.xyz;" << std::endl;
 			ret << "float opacity = emissive_temp.w;" << std::endl;
 
@@ -1188,25 +1217,9 @@ std::string TextExporter::ExportOutputNode(std::shared_ptr<Material> material,
 		}
 		else if (outputNode->Target->Parameter->Type == NodeType::GradientParameter)
 		{
-			// TODO : Refactor
-			ret << GetTypeName(ValueType::Float4) << " emissive_temp = SampleGradient(GradientParameter(";
+			ret << GetTypeName(ValueType::Float4) << " emissive_temp = ";
 
-			// TODO Remove magic number
-			for (size_t j = 0; j < 13; j++)
-			{
-				ret << outputNode->Outputs[0].GradientValue->UniformName << "_" << j;
-
-				if (j != 12)
-				{
-					ret << ",";
-				}
-				else
-				{
-					ret << ")";
-				}
-			}
-
-			ret << ", GetUV(" << GetUVName(0) << ").x);" << std::endl;
+			exportGradientParameter(ret, outputNode->Outputs[0].GradientValue, "GetUV(" + GetUVName(0) + ").x");
 
 			ret << GetTypeName(ValueType::Float3) << " emissive = emissive_temp.xyz;" << std::endl;
 			ret << "float opacity = emissive_temp.w;" << std::endl;
@@ -1678,28 +1691,13 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 		const auto& gradient = node->Inputs[0].GradientValue;
 		if (gradient->IsFixed)
 		{
-			ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << " = SampleGradient(" << gradient->UniformName << "(), " << GetInputArg(ValueType::Float1, node->Inputs[1]) << ");" << std::endl;
+			ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << " = ";
+			exportGradient(ret, gradient, GetInputArg(ValueType::Float1, node->Inputs[1]));
 		}
 		else
 		{
-			ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << " = SampleGradient(GradientParameter(";
-
-			// TODO Remove magic number
-			for (size_t j = 0; j < 13; j++)
-			{
-				ret << gradient->UniformName << "_" << j;
-
-				if (j != 12)
-				{
-					ret << ",";
-				}
-				else
-				{
-					ret << ")";
-				}
-			}
-
-			ret << ", " << GetInputArg(ValueType::Float1, node->Inputs[1]) << ");" << std::endl;
+			ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << " = ";
+			exportGradientParameter(ret, gradient, GetInputArg(ValueType::Float1, node->Inputs[1]));
 		}
 	}
 
