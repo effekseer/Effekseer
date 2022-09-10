@@ -102,6 +102,11 @@ copy Release\build_msvc2017_x64.bat %RDIR_R%\build_msvc2017_x64.bat
 copy Release\build_msvc2019_x64.bat %RDIR_R%\build_msvc2019_x64.bat
 copy Release\build_vulkan_msvc2019_x64.bat %RDIR_R%\build_vulkan_msvc2019_x64.bat
 
+copy Release\build_msvc2022_x86.bat %RDIR_R%\build_msvc2022_x86.bat
+copy Release\build_vulkan_msvc2022_x86.bat %RDIR_R%\build_vulkan_msvc2022_x86.bat
+copy Release\build_msvc2022_x64.bat %RDIR_R%\build_msvc2022_x64.bat
+copy Release\build_vulkan_msvc2022_x64.bat %RDIR_R%\build_vulkan_msvc2022_x64.bat
+
 copy Release\build_macOS.sh %RDIR_R%\build_macOS.sh
 
 pause
