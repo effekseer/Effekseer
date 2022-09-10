@@ -41,6 +41,8 @@ bool DeviceGLFW::Initialize(const char* windowTitle, Utils::Vec2I windowSize)
 
 void DeviceGLFW::Terminate()
 {
+	efkRenderer.Reset();
+
 	if (glfwWindow != nullptr)
 	{
 		glfwDestroyWindow(glfwWindow);

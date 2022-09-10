@@ -114,5 +114,8 @@ int main(int argc, char** argv)
 		time++;
 	}
 
+	efkRenderer.Reset();
+	efkManager.Reset();
+
 	return 0;
 }
