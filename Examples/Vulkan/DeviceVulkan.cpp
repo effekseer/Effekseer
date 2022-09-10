@@ -79,7 +79,7 @@ bool DeviceVulkan::NewFrame()
 	color.A = 255;
 
 	commandList->Begin();
-	commandList->BeginRenderPass(platform->GetCurrentScreen(color, true, false));
+	commandList->BeginRenderPass(platform->GetCurrentScreen(color, true, true));
 
 	// Call on starting of a frame
 	// フレームの開始時に呼ぶ
