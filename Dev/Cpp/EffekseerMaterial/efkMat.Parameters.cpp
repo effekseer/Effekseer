@@ -597,8 +597,8 @@ WarningType NodePixelNormalWS::GetWarning(std::shared_ptr<Material> material, st
 
 	for (auto& pin : pins)
 	{
-		auto node = pin->Parent.lock();
-		if (node != nullptr && node->Parameter->Type == NodeType::Output && pin->Parameter->Name == "Normal")
+		auto parentNode = pin->Parent.lock();
+		if (parentNode != nullptr && parentNode->Parameter->Type == NodeType::Output && pin->Parameter->Name == "Normal")
 		{
 			return WarningType::PixelNodeAndNormal;
 		}

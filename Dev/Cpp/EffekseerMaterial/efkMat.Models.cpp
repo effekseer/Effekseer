@@ -578,9 +578,9 @@ std::string Material::SaveAsStrInternal(std::vector<std::shared_ptr<Node>> nodes
 				picojson::array colors;
 				picojson::array alphas;
 
-				for (int32_t i = 0; i < p->GradientData->ColorCount; i++)
+				for (int32_t j = 0; j < p->GradientData->ColorCount; j++)
 				{
-					const auto& c = p->GradientData->Colors[i];
+					const auto& c = p->GradientData->Colors[j];
 					picojson::object obj;
 					obj.insert(std::make_pair("R", picojson::value((double)c.Color[0])));
 					obj.insert(std::make_pair("G", picojson::value((double)c.Color[1])));
@@ -590,9 +590,9 @@ std::string Material::SaveAsStrInternal(std::vector<std::shared_ptr<Node>> nodes
 					colors.push_back(picojson::value(obj));
 				}
 
-				for (int32_t i = 0; i < p->GradientData->AlphaCount; i++)
+				for (int32_t j = 0; j < p->GradientData->AlphaCount; j++)
 				{
-					const auto& a = p->GradientData->Alphas[i];
+					const auto& a = p->GradientData->Alphas[j];
 					picojson::object obj;
 					obj.insert(std::make_pair("Alpha", picojson::value((double)a.Alpha)));
 					obj.insert(std::make_pair("Position", picojson::value((double)a.Position)));
@@ -889,19 +889,19 @@ void Material::LoadFromStrInternal(
 				g.ColorCount = prop_colors.size();
 				g.AlphaCount = prop_alphas.size();
 
-				for (int32_t i = 0; i < g.ColorCount; i++)
+				for (int32_t j = 0; j < g.ColorCount; j++)
 				{
-					g.Colors[i].Color[0] = static_cast<float>(prop_colors[i].get("R").get<double>());
-					g.Colors[i].Color[1] = static_cast<float>(prop_colors[i].get("G").get<double>());
-					g.Colors[i].Color[2] = static_cast<float>(prop_colors[i].get("B").get<double>());
-					g.Colors[i].Intensity = static_cast<float>(prop_colors[i].get("Intensity").get<double>());
-					g.Colors[i].Position = static_cast<float>(prop_colors[i].get("Position").get<double>());
+					g.Colors[j].Color[0] = static_cast<float>(prop_colors[j].get("R").get<double>());
+					g.Colors[j].Color[1] = static_cast<float>(prop_colors[j].get("G").get<double>());
+					g.Colors[j].Color[2] = static_cast<float>(prop_colors[j].get("B").get<double>());
+					g.Colors[j].Intensity = static_cast<float>(prop_colors[j].get("Intensity").get<double>());
+					g.Colors[j].Position = static_cast<float>(prop_colors[j].get("Position").get<double>());
 				}
 
-				for (int32_t i = 0; i < g.AlphaCount; i++)
+				for (int32_t j = 0; j < g.AlphaCount; j++)
 				{
-					g.Alphas[i].Alpha = static_cast<float>(prop_alphas[i].get("Alpha").get<double>());
-					g.Alphas[i].Position = static_cast<float>(prop_alphas[i].get("Position").get<double>());
+					g.Alphas[j].Alpha = static_cast<float>(prop_alphas[j].get("Alpha").get<double>());
+					g.Alphas[j].Position = static_cast<float>(prop_alphas[j].get("Position").get<double>());
 				}
 
 				node->Properties[i]->GradientData = std::make_unique<Gradient>();
