@@ -891,7 +891,6 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 	// Assign Uniform
 	{
 		int32_t offset = 0;
-		int32_t ind = 0;
 		for (auto& extracted : extractedUniforms)
 		{
 			extracted.second->UniformName = "efk_uniform_" + std::to_string(extracted.first);
@@ -904,7 +903,6 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 
 			extracted.second->Offset = offset;
 			offset += sizeof(float) * 4;
-			ind += 1;
 		}
 	}
 
