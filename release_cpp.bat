@@ -89,9 +89,8 @@ cp LICENSE_RUNTIME_DIRECTX %RDIR_R%/LICENSE_RUNTIME_DIRECTX.txt
 cp LICENSE_RUNTIME_VULKAN %RDIR_R%/LICENSE_RUNTIME_VULKAN.txt
 
 echo Readme
-copy docs\readme_cpp_ja.txt %RDIR_R%\readme_cpp_ja.txt
-copy docs\readme_cpp_en.txt %RDIR_R%\readme_cpp_en.txt
-copy docs\releasenotes_cpp.txt %RDIR_R%\releasenotes.txt
+copy docs\Help_Cpp_Ja.html %RDIR_R%\Help_Cpp_Ja.html
+copy docs\Help_Cpp_En.html %RDIR_R%\Help_Cpp_En.html
 
 copy Release\CMakeLists.txt %RDIR_R%\.
 robocopy Downloads\glfw %RDIR_R%\Examples\Utils\glfw\. /S

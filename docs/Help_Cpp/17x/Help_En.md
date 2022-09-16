@@ -70,3 +70,7 @@ A sample to use Effekseer with OpenAL on your application.
 ### Others
 
 There are various other samples as well.
+
+## ReleaseNotes
+
+[Link](ReleaseNotes.md)
