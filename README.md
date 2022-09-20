@@ -60,7 +60,9 @@ Repositories
 
 ### Branch
 
-* master 1.7(WIP)
+* master 1.8(WIP)
+
+* [1.7x](https://github.com/effekseer/Effekseer/tree/17x)
 
 * [1.6x](https://github.com/effekseer/Effekseer/tree/16x)
 
