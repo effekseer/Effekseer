@@ -197,21 +197,11 @@ if env['IGNORE_BUILD'] == '0':
         call('rm -rf -r Dev/release/osx.10.11-x64')
 
     elif isWin():
-        if is_x86:
-            call('"' + msbuild_path + '"' +
-                 ' Dev/Editor/EffekseerCore/EffekseerCore.csproj /t:build /p:Configuration=Release /p:Platform=x86')
-            call('"' + msbuild_path + '"' +
-                 ' Dev/Editor/EffekseerCoreGUI/EffekseerCoreGUI.csproj /t:build /p:Configuration=Release /p:Platform=x86')
-            call('"' + msbuild_path + '"' +
-                 ' Dev/Editor/Effekseer/Effekseer.csproj /t:build /p:Configuration=Release /p:Platform=x86')
-        else:
-            call('"' + msbuild_path + '"' +
-                 ' Dev/Editor/EffekseerCore/EffekseerCore.csproj /t:build /p:Configuration=Release /p:Platform=x64')
-            call('"' + msbuild_path + '"' +
-                 ' Dev/Editor/Effekseer/Effekseer.csproj /t:build /p:Configuration=Release /p:Platform=x64')
+        call('"' + msbuild_path + '"' + ' Dev/Editor/EffekseerCore/EffekseerCore.csproj /t:build /p:Configuration=Release /p:Platform=x64')
+        call('"' + msbuild_path + '"' + ' Dev/Editor/Effekseer/Effekseer.csproj /t:build /p:Configuration=Release /p:Platform=x64')
     else:
-        call('dotnet build Dev/Editor/Effekseer/Effekseer.Std.csproj')
-        call('dotnet publish Dev/Editor/Effekseer/Effekseer.Std.csproj -c Release --self-contained -r linux-x64')
+        call('dotnet build Dev/Editor/Effekseer/Effekseer.csproj')
+        call('dotnet publish Dev/Editor/Effekseer/Effekseer.csproj -c Release --self-contained -r linux-x64')
         call('chmod +x Dev/release/Effekseer')
         call('chmod +x Dev/release/EffekseerMaterialEditor')
         call('chmod +x Dev/release/tools/fbxToEffekseerCurveConverter')
