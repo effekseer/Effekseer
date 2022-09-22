@@ -173,8 +173,6 @@ if env['IGNORE_BUILD'] == '0':
             suffix = ''
             if is_from_ci:
                 suffix += ' -D FROM_CI=ON'
-            if is_x86:
-                call('cmake .. -A Win32 -DBUILD_VIEWER=ON' + suffix)
             else:
                 # run tests on x64
                 call('cmake .. -A x64 -DBUILD_VIEWER=ON -D BUILD_TEST=ON -D BUILD_EXAMPLES=ON' + suffix)
@@ -186,9 +184,6 @@ if env['IGNORE_BUILD'] == '0':
         else:
             call('cmake .. -G "Unix Makefiles" -DBUILD_VIEWER=ON')
         call('cmake --build . --config Release')
-
-    if isWin():
-        call('build\\nuget.exe restore Dev/Editor/Effekseer.sln')
 
     if isMac():
         call('dotnet build Dev/Editor/Effekseer/Effekseer.csproj')
