@@ -1,55 +1,29 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{BEAAA432-CABF-496D-866C-0AE102CDAEDC}</ProjectGuid>
+    <Platforms>x64</Platforms>
     <OutputType>Exe</OutputType>
-    <RootNamespace>TestCSharp</RootNamespace>
-    <AssemblyName>TestCSharp</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <Deterministic>true</Deterministic>
-    <TargetFrameworkProfile />
+    <TargetFramework>net5.0</TargetFramework>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DefineConstants>TRACE;DOTNET_STARNDARD</DefineConstants>
+    <OutputPath>../../release/</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <StartupObject>TestCSharp.Program</StartupObject>
+    <AssemblyName>Effekseer</AssemblyName>
+    <DefineConstants>SCRIPT_ENABLED;DOTNET_STARNDARD;</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\..\release\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>..\..\release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
+
   <ItemGroup>
-    <None Include="App.config" />
+    <Compile Remove="Properties/AssemblyInfo.cs" />
+    <Compile Remove="packages.config" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="Misc\Utils.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="Tests\MaterialInformation.cs" />
-    <Compile Include="Tests\ZLib.cs" />
+    <ProjectReference Include="..\Effekseer\Effekseer.csproj" />
+    <ProjectReference Include="..\EffekseerCore\EffekseerCore.csproj" />
+    <ProjectReference Include="..\EffekseerCoreGUI\EffekseerCoreGUI.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\EffekseerCore\EffekseerCore.csproj">
-      <Project>{e2495770-1734-4c77-8028-92040a1d36cb}</Project>
-      <Name>EffekseerCore</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Effekseer\Effekseer.csproj">
-      <Project>{30984eba-2329-4baf-9e9d-88a5b62d7014}</Project>
-      <Name>Effekseer</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>
