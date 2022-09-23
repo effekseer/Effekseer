@@ -194,8 +194,8 @@ if env['IGNORE_BUILD'] == '0':
     elif isWin():
         call('dotnet build Dev/Editor/Effekseer/Effekseer.csproj')
         call('dotnet publish Dev/Editor/Effekseer/Effekseer.csproj -c Release --self-contained -r win-x64')
-        call('cp -r Dev/release/win-x64/publish/* Dev/release/')
-        call('rm -rf -r Dev/release/win-x64')
+        shutil.copytree('Dev/release/win-x64/publish', 'Dev/release')
+        shutil.rmtree('Dev/release/win-x64')
     else:
         call('dotnet build Dev/Editor/Effekseer/Effekseer.csproj')
         call('dotnet publish Dev/Editor/Effekseer/Effekseer.csproj -c Release --self-contained -r linux-x64')
