@@ -120,6 +120,11 @@ if (BUILD_TEST)
         DOTNET_TARGET_FRAMEWORK "net5.0")
     
     set_target_properties(TestCSharp PROPERTIES VS_DOTNET_REFERENCES "System;System.Xml;System.Xml.Linq;System.Text.RegularExpressions;Microsoft.CSharp;System.IO.Compression")
+
+    set_property(TARGET TestCSharp PROPERTY VS_GLOBAL_AllowUnsafeBlocks "true")
+    set_property(TARGET TestCSharp PROPERTY VS_GLOBAL_Platforms "x64")
+    set_property(TARGET TestCSharp PROPERTY VS_GLOBAL_AppendTargetFrameworkToOutputPath "false")
+
     add_dependencies(TestCSharp EffekseerCore)
     target_link_libraries(TestCSharp PRIVATE EffekseerCore)
 
