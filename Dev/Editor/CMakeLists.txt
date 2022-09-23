@@ -18,7 +18,6 @@ file(GLOB files_core
     EffekseerCore/Properties/*.cs
     EffekseerCore/Properties/*.cs
     EffekseerCore/Script/*.cs
-    EffekseerCore/Utl/*.cs
     EffekseerCore/IO/*.cs	
     EffekseerCore/Utils/*.cs
     EffekseerCore/Data/ProceduralModelValues.cs

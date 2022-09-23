@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Effekseer.Utl;
+using Effekseer.Utils;
 using System.Xml;
 using Effekseer.Data;
 using Effekseer.IO;
@@ -1350,7 +1350,7 @@ namespace Effekseer
 		/// </summary>
 		/// <param name="targetNode"></param>
 		/// <returns></returns>
-		public static Utl.ParameterTreeNode GetFCurveParameterNode(Data.NodeBase targetNode)
+		public static Utils.ParameterTreeNode GetFCurveParameterNode(Data.NodeBase targetNode)
 		{
 			// not smart
 
@@ -1527,7 +1527,7 @@ namespace Effekseer
 				};
 
 			// Generate tree
-			Func<Data.NodeBase, Utl.ParameterTreeNode> getParameterTreeNodes = null;
+			Func<Data.NodeBase, Utils.ParameterTreeNode> getParameterTreeNodes = null;
 
 			getParameterTreeNodes = (node) =>
 				{
@@ -1545,7 +1545,7 @@ namespace Effekseer
 						parameters = getParameters(normalNode);
 					}
 
-					List<Utl.ParameterTreeNode> children = new List<ParameterTreeNode>();
+					List<Utils.ParameterTreeNode> children = new List<ParameterTreeNode>();
 					for (int i = 0; i < node.Children.Count; i++)
 					{
 						children.Add(getParameterTreeNodes(node.Children[i]));
@@ -1575,7 +1575,7 @@ namespace Effekseer
 				{
 					if (n.RendererCommonValues.Material.Value == Data.RendererCommonValues.MaterialType.File && n.RendererCommonValues.MaterialFile.Path.GetAbsolutePath().Replace('\\', '/') == path)
 					{
-						Utl.MaterialInformation info = ResourceCache.LoadMaterialInformation(path);
+						Utils.MaterialInformation info = ResourceCache.LoadMaterialInformation(path);
 
 						// is it correct?
 						if (info == null)

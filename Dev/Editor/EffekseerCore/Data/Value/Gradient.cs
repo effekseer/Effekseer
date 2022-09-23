@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
-using Effekseer.Utl;
+using Effekseer.Utils;
 
 namespace Effekseer.Data.Value
 {

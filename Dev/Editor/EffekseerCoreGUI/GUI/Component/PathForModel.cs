@@ -214,7 +214,7 @@ namespace Effekseer.GUI.Component
 			var ext = System.IO.Path.GetExtension(filepath).ToLower().Replace(".", "");
 			var newFilepath = System.IO.Path.ChangeExtension(filepath, ".efkmodel");
 
-			Effekseer.Utl.ModelInformation modelInfo = new Utl.ModelInformation();
+			Effekseer.Utils.ModelInformation modelInfo = new Utils.ModelInformation();
 			if (modelInfo.Load(newFilepath))
 			{
 				if (!isReloading)

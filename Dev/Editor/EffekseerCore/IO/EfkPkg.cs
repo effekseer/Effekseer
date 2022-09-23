@@ -10,7 +10,6 @@ using System.Security.Cryptography;
 using Effekseer.Data;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
-using Effekseer.Utl;
 using Microsoft.Scripting.Utils;
 
 namespace Effekseer.IO
@@ -202,7 +201,7 @@ namespace Effekseer.IO
 			}
 			else if (resource is Data.Value.PathForMaterial)
 			{
-				var material = new MaterialInformation();
+				var material = new Utils.MaterialInformation();
 				if (material.Load(file.Data))
 				{
 					HashSet<FileInfo> dependencies = new HashSet<FileInfo>();
@@ -485,7 +484,7 @@ namespace Effekseer.IO
 		{
 			if (file.Type == FileType.Material)
 			{
-				var material = new MaterialInformation();
+				var material = new Utils.MaterialInformation();
 				if (material.Load(file.Data))
 				{
 					bool result = ReplaceMaterialPaths(material, (path) =>
@@ -521,7 +520,7 @@ namespace Effekseer.IO
 			return hashStr;
 		}
 
-		private bool ReplaceMaterialPaths(MaterialInformation material, Func<string, string> callback)
+		private bool ReplaceMaterialPaths(Utils.MaterialInformation material, Func<string, string> callback)
 		{
 			foreach (var texture in material.Textures)
 			{

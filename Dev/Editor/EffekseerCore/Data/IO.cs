@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Reflection;
-using Effekseer.Utl;
+using Effekseer.Utils;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -201,7 +201,7 @@ namespace Effekseer.Data
 
 
 			// check file info
-			var info = new Utl.MaterialInformation();
+			var info = new Utils.MaterialInformation();
 			if (info.Load(mfp.Path.AbsolutePath))
 			{
 				var uniforms = mfp.GetUniforms(info);

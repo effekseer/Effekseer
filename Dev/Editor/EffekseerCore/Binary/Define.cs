@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
-using Effekseer.Utl;
+using Effekseer.Utils;
 using Effekseer.Data;
 
 namespace Effekseer.Binary
@@ -97,7 +97,7 @@ namespace Effekseer.Binary
 
 				if (type == EasingType.LeftRightSpeed)
 				{
-					var easing = Utl.MathUtl.Easing((float)easingValue.StartSpeed.Value, (float)easingValue.EndSpeed.Value);
+					var easing = MathUtl.Easing((float)easingValue.StartSpeed.Value, (float)easingValue.EndSpeed.Value);
 					_data.Add(BitConverter.GetBytes(easing[0]));
 					_data.Add(BitConverter.GetBytes(easing[1]));
 					_data.Add(BitConverter.GetBytes(easing[2]));
@@ -166,7 +166,7 @@ namespace Effekseer.Binary
 
 				if (type == EasingType.LeftRightSpeed)
 				{
-					var easing = Utl.MathUtl.Easing((float)easingValue.StartSpeed.Value, (float)easingValue.EndSpeed.Value);
+					var easing = MathUtl.Easing((float)easingValue.StartSpeed.Value, (float)easingValue.EndSpeed.Value);
 					_data.Add(BitConverter.GetBytes(easing[0]));
 					_data.Add(BitConverter.GetBytes(easing[1]));
 					_data.Add(BitConverter.GetBytes(easing[2]));

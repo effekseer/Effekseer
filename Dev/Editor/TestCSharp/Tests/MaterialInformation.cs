@@ -20,7 +20,7 @@ namespace TestCSharp
 		static void TestMaterialFile(string path)
 		{
 			string fullpath = Path.Combine(Directory.GetCurrentDirectory(), path);
-			var material = new Effekseer.Utl.MaterialInformation();
+			var material = new Effekseer.Utils.MaterialInformation();
 
 			byte[] bytes = File.ReadAllBytes(fullpath);
 			if (bytes == null)

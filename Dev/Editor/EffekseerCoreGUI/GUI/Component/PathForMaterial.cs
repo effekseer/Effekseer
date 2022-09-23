@@ -20,10 +20,10 @@ namespace Effekseer.GUI.Component
 
 		bool isHovered = false;
 
-		Utl.MaterialInformation matInfo = new Utl.MaterialInformation();
+		Utils.MaterialInformation matInfo = new Utils.MaterialInformation();
 
-		Utl.CompiledMaterialInformation compiledMatInfo = new Utl.CompiledMaterialInformation();
-		Utl.CompiledMaterialInformationErrorCode errorCode = Utl.CompiledMaterialInformationErrorCode.OK;
+		Utils.CompiledMaterialInformation compiledMatInfo = new Utils.CompiledMaterialInformation();
+		Utils.CompiledMaterialInformationErrorCode errorCode = Utils.CompiledMaterialInformationErrorCode.OK;
 
 		public bool EnableUndo { get; set; } = true;
 
@@ -295,13 +295,13 @@ namespace Effekseer.GUI.Component
 				return;
 			}
 
-			matInfo = new Utl.MaterialInformation();
+			matInfo = new Utils.MaterialInformation();
 			matInfo.Load(binding.GetAbsolutePath());
 
 			var binaryPath = IO.MaterialCacheGenerator.CreateBinaryFilePath(binding.GetAbsolutePath());
 			if (System.IO.File.Exists(binaryPath))
 			{
-				compiledMatInfo = new Utl.CompiledMaterialInformation();
+				compiledMatInfo = new Utils.CompiledMaterialInformation();
 				errorCode = compiledMatInfo.Load(binaryPath);
 			}
 			else
@@ -322,11 +322,11 @@ namespace Effekseer.GUI.Component
 				{
 					Manager.NativeManager.Text(Resources.GetString("Material_OldCache"));
 				}
-				else if (errorCode == Utl.CompiledMaterialInformationErrorCode.TooOldFormat)
+				else if (errorCode == Utils.CompiledMaterialInformationErrorCode.TooOldFormat)
 				{
 					Manager.NativeManager.Text(Resources.GetString("Material_OldFomatCache"));
 				}
-				else if (errorCode == Utl.CompiledMaterialInformationErrorCode.TooNewFormat)
+				else if (errorCode == Utils.CompiledMaterialInformationErrorCode.TooNewFormat)
 				{
 					Manager.NativeManager.Text(Resources.GetString("Material_NewFomatCache"));
 				}
@@ -354,11 +354,11 @@ namespace Effekseer.GUI.Component
 				{
 					return false;
 				}
-				else if (errorCode == Utl.CompiledMaterialInformationErrorCode.TooOldFormat)
+				else if (errorCode == Utils.CompiledMaterialInformationErrorCode.TooOldFormat)
 				{
 					return false;
 				}
-				else if (errorCode == Utl.CompiledMaterialInformationErrorCode.TooNewFormat)
+				else if (errorCode == Utils.CompiledMaterialInformationErrorCode.TooNewFormat)
 				{
 					return false;
 				}
