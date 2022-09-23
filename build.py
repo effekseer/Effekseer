@@ -117,9 +117,6 @@ class CurrentDir:
         cd(self.prev)
         #print("cd: " + os.getcwd())
 
-
-env = os.environ.copy()
-
 env = os.environ.copy()
 env["PKG_CONFIG_PATH"] = os.getenv(
     'PKG_CONFIG_PATH', '/Library/Frameworks/Mono.framework/Versions/Current/lib/pkgconfig')
@@ -143,25 +140,6 @@ if isMac():
 
 if env['IGNORE_BUILD'] == '0':
     os.makedirs('build', exist_ok=True)
-    if isWin():
-        candidates = [
-            r"C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe",
-            r"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe",
-            r"C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\MSBuild.exe",
-            r"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\MSBuild.exe",
-        ]
-
-        candidate = None
-        for candidate in candidates:
-            if os.path.exists(candidate):
-                msbuild_path = candidate
-                break
-
-        if msbuild_path is None:
-            raise Exception("MSBuild is not found")
-
-    elif isMac():
-        msbuild_path = 'msbuild'
 
     with CurrentDir('build'):
 
@@ -194,7 +172,7 @@ if env['IGNORE_BUILD'] == '0':
     elif isWin():
         call('dotnet build Dev/Editor/Effekseer/Effekseer.csproj')
         call('dotnet publish Dev/Editor/Effekseer/Effekseer.csproj -c Release --self-contained -r win-x64')
-        shutil.copytree('Dev/release/win-x64/publish', 'Dev/release')
+        shutil.copytree('Dev/release/win-x64/publish', 'Dev/release', dirs_exist_ok=True)
         shutil.rmtree('Dev/release/win-x64')
     else:
         call('dotnet build Dev/Editor/Effekseer/Effekseer.csproj')
