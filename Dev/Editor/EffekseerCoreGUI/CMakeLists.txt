@@ -25,7 +25,16 @@ add_library(EffekseerCoreGUI
   ${files}
 )
 
+set_target_properties(EffekseerCoreGUI PROPERTIES
+    DOTNET_SDK "Microsoft.NET.Sdk"
+    DOTNET_TARGET_FRAMEWORK "net5.0")
+
 set_target_properties(EffekseerCoreGUI PROPERTIES VS_DOTNET_REFERENCES "System;System.Xml;System.Xml.Linq;System.IO.Compression;Microsoft.CSharp;System.IO.Compression.FileSystem")
-set_property(TARGET EffekseerCoreGUI PROPERTY VS_PACKAGE_REFERENCES "Newtonsoft.Json_13.0.1;DynamicLanguageRuntime_1.2.2") 
-target_compile_options(EffekseerCoreGUI PRIVATE "/unsafe")
+set_property(TARGET EffekseerCoreGUI PROPERTY VS_PACKAGE_REFERENCES "Newtonsoft.Json_13.0.1;DynamicLanguageRuntime_1.2.2")
+set_property(TARGET EffekseerCoreGUI PROPERTY VS_GLOBAL_AllowUnsafeBlocks "true")
+set_property(TARGET EffekseerCoreGUI PROPERTY VS_GLOBAL_AppendTargetFrameworkToOutputPath "false")
+
+# Avoid Cmake bug
+# set_property(TARGET EffekseerCoreGUI PROPERTY VS_GLOBAL_Platforms "x64")
+
 target_link_libraries(EffekseerCoreGUI PRIVATE EffekseerCore Viewer)

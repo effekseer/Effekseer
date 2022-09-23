@@ -1,12 +1,9 @@
 
 enable_language(CSharp)
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.23)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_SOURCE_DIR}/../release")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_SOURCE_DIR}/../release")
-
-# specify C# framework
-set(CMAKE_DOTNET_TARGET_FRAMEWORK_VERSION v4.6.1)
 
 file(GLOB files_core
     EffekseerCore/*.cs
@@ -43,19 +40,21 @@ add_library(EffekseerCore
 )
 
 set_target_properties(EffekseerCore PROPERTIES
-    VS_DOTNET_REFERENCES "System;System.Xml;System.Xml.Linq;System.IO.Compression;System.IO.Compression.FileSystem")
+    DOTNET_SDK "Microsoft.NET.Sdk"
+    DOTNET_TARGET_FRAMEWORK "net5.0")
 
-#set_target_properties(EffekseerCore PROPERTIES
-#    VS_DOTNET_REFERENCE_IronPython ${CMAKE_CURRENT_SOURCE_DIR}/EffekseerCore/IronPython.dll
-#    VS_DOTNET_REFERENCE_IronPython_Modules ${CMAKE_CURRENT_SOURCE_DIR}/EffekseerCore/IronPython.Modules.dll
-#    VS_DOTNET_REFERENCE_Microsoft_Dynamic ${CMAKE_CURRENT_SOURCE_DIR}/EffekseerCore/Microsoft.Dynamic.dll
-#    VS_DOTNET_REFERENCE_Microsoft_Scripting ${CMAKE_CURRENT_SOURCE_DIR}/EffekseerCore/Microsoft.Scripting.dll
-#    VS_DOTNET_REFERENCE_Microsoft_Scripting_Metadata ${CMAKE_CURRENT_SOURCE_DIR}/EffekseerCore/Microsoft.Scripting.Metadata.dll
-#	)
+set_property(TARGET EffekseerCore PROPERTY VS_GLOBAL_AllowUnsafeBlocks "true")
+set_property(TARGET EffekseerCore PROPERTY VS_GLOBAL_DefineConstants "SCRIPT_ENABLED;")
+set_property(TARGET EffekseerCore PROPERTY VS_GLOBAL_AppendTargetFrameworkToOutputPath "false")
+
+# Avoid Cmake bug
+# set_property(TARGET EffekseerCore PROPERTY VS_GLOBAL_Platforms "x64")
+
+set_target_properties(EffekseerCore PROPERTIES
+    VS_DOTNET_REFERENCES "System;System.Xml;System.Xml.Linq;System.IO.Compression;System.IO.Compression.FileSystem")
 
 set_property(TARGET EffekseerCore PROPERTY VS_PACKAGE_REFERENCES "Newtonsoft.Json_13.0.1;DynamicLanguageRuntime_1.2.2;IronPython_2.7.9") 
 
-target_compile_options(EffekseerCore PRIVATE "/unsafe")
 set_target_properties (EffekseerCore PROPERTIES FOLDER Editor)
 
 
@@ -85,15 +84,22 @@ add_executable(EffekseerEditor
 )
 
 set_target_properties(EffekseerEditor PROPERTIES
+    DOTNET_SDK "Microsoft.NET.Sdk"
+    DOTNET_TARGET_FRAMEWORK "net5.0")
+
+set_target_properties(EffekseerEditor PROPERTIES
     VS_DOTNET_REFERENCES "System;System.Xml;System.Xml.Linq;System.Text.RegularExpressions;Microsoft.CSharp;System.IO.Compression")
 
 add_dependencies(EffekseerEditor EffekseerCore Viewer EffekseerCoreGUI)
 target_link_libraries(EffekseerEditor PRIVATE EffekseerCore Viewer EffekseerCoreGUI)
 
-target_compile_options(EffekseerEditor PRIVATE "/unsafe")
+set_property(TARGET EffekseerEditor PROPERTY VS_GLOBAL_AllowUnsafeBlocks "true")
 set_property(TARGET EffekseerEditor PROPERTY VS_GLOBAL_ApplicationIcon "${CMAKE_CURRENT_SOURCE_DIR}/Effekseer/icon.ico")
+set_property(TARGET EffekseerEditor PROPERTY VS_GLOBAL_OutputType "WinExe")
+set_property(TARGET EffekseerEditor PROPERTY VS_GLOBAL_AppendTargetFrameworkToOutputPath "false")
 
-target_compile_definitions(EffekseerCore PRIVATE SCRIPT_ENABLED)
+# Avoid Cmake bug
+# set_property(TARGET EffekseerEditor PROPERTY VS_GLOBAL_Platforms "x64")
 
 # specify a startup project
 set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT EffekseerEditor)
@@ -112,8 +118,19 @@ if (BUILD_TEST)
         TestCSharp/Tests/*.cs
     )
     add_executable(TestCSharp ${files_test})
+
+    set_target_properties(TestCSharp PROPERTIES
+        DOTNET_SDK "Microsoft.NET.Sdk"
+        DOTNET_TARGET_FRAMEWORK "net5.0")
     
     set_target_properties(TestCSharp PROPERTIES VS_DOTNET_REFERENCES "System;System.Xml;System.Xml.Linq;System.Text.RegularExpressions;Microsoft.CSharp;System.IO.Compression")
+
+    set_property(TARGET TestCSharp PROPERTY VS_GLOBAL_AllowUnsafeBlocks "true")
+    set_property(TARGET TestCSharp PROPERTY VS_GLOBAL_AppendTargetFrameworkToOutputPath "false")
+
+    # Avoid Cmake bug
+    # set_property(TARGET TestCSharp PROPERTY VS_GLOBAL_Platforms "x64")
+
     add_dependencies(TestCSharp EffekseerCore)
     target_link_libraries(TestCSharp PRIVATE EffekseerCore)
 
