@@ -18,6 +18,22 @@ env:
   EFFEKSEER_VERSION: 170
 
 jobs:
+  win_x86_build:
+    name: Build Windows(x86)
+    runs-on: windows-2019
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+         git submodule update --init
+         git lfs install
+         git lfs pull
+        
+      - name: Build
+        run: |
+         cmake -S . -B build -A Win32 -DBUILD_VIEWER=ON -D BUILD_TEST=ON -D BUILD_EXAMPLES=ON
+         cmake --build ./build/ --config Release
+        shell: cmd
+
   tests:
     name: Run Tests
     runs-on: windows-2019
