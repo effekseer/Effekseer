@@ -10,7 +10,7 @@ Requirements
 - git-lfs [Download](https://git-lfs.github.com/)
 - Visual Studio 2017 or later
 - cmake (3.15 or later)
-- python3
+- python3 (3.8 or later)
 
 ### macOS
 
