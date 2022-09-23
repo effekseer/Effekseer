@@ -19,13 +19,20 @@ add_executable(EffekseerEditorLit
 )
 
 set_target_properties(EffekseerEditorLit PROPERTIES
+    DOTNET_SDK "Microsoft.NET.Sdk"
+    DOTNET_TARGET_FRAMEWORK "net5.0")
+
+set_target_properties(EffekseerEditorLit PROPERTIES
     VS_DOTNET_REFERENCES "System;System.Xml;System.Xml.Linq;System.Text.RegularExpressions;Microsoft.CSharp;System.IO.Compression")
+
+set_property(TARGET EffekseerEditorLit PROPERTY VS_GLOBAL_AllowUnsafeBlocks "true")
+set_property(TARGET EffekseerEditorLit PROPERTY VS_GLOBAL_OutputType "WinExe")
+set_property(TARGET EffekseerEditorLit PROPERTY VS_GLOBAL_Platforms "x64")
+set_property(TARGET EffekseerEditorLit PROPERTY VS_GLOBAL_AppendTargetFrameworkToOutputPath "false")
+
 
 add_dependencies(EffekseerEditorLit EffekseerCore Viewer EffekseerCoreGUI)
 target_link_libraries(EffekseerEditorLit PRIVATE EffekseerCore Viewer EffekseerCoreGUI)
-
-target_compile_options(EffekseerEditorLit PRIVATE "/unsafe")
-#set_property(TARGET EffekseerEditorLit PROPERTY VS_GLOBAL_ApplicationIcon "${CMAKE_CURRENT_SOURCE_DIR}/Effekseer/icon.ico")
 
 if (MSVC)
     set_target_properties(EffekseerEditorLit PROPERTIES OUTPUT_NAME_DEBUG "EffekseerLit" )

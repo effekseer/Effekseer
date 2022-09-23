@@ -62,6 +62,7 @@ namespace Effekseer.GUI.Component
 
 		public override void OnDisposed()
 		{
+			/*
 #if !DOTNET_STARNDARD
 			if (player != null)
 			{
@@ -70,6 +71,7 @@ namespace Effekseer.GUI.Component
 				player = null;
 			}
 #endif
+			*/
 		}
 
 		public override void OnDropped(string path, ref bool handle)
@@ -133,12 +135,14 @@ namespace Effekseer.GUI.Component
 
 				isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 
+				/*
 				if (Manager.NativeManager.Button(Resources.GetString("PlayString") + id3, buttonSizeX))
 				{
 					btn_play_Click();
 				}
 
 				isHovered = isHovered || Manager.NativeManager.IsItemHovered();
+				*/
 
 				Manager.NativeManager.SameLine();
 
@@ -199,6 +203,7 @@ namespace Effekseer.GUI.Component
 
 		private void btn_delete_Click()
 		{
+			/*
 #if !DOTNET_STARNDARD
 			if (player != null)
 			{
@@ -207,10 +212,12 @@ namespace Effekseer.GUI.Component
 				player = null;
 			}
 #endif
+			*/
 			binding.SetAbsolutePath("");
 			Read();
 		}
 
+		/*
 #if !DOTNET_STARNDARD
 		SoundPlayer player = null;
 #endif
@@ -230,6 +237,7 @@ namespace Effekseer.GUI.Component
 			}
 #endif
 		}
+		*/
 
 		void Read()
 		{
