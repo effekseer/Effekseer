@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Effekseer.Binary.RenderData;
 using Effekseer.Data;
 using Effekseer.Data.Group;
-using Effekseer.Utl;
+using Effekseer.Utils;
 
 namespace Effekseer.Binary
 {
@@ -75,7 +75,7 @@ namespace Effekseer.Binary
 			{
 				data.Add(value.FadeIn.Frame.GetBytes());
 
-				var easing = Utl.MathUtl.Easing((float)value.FadeIn.StartSpeed.Value, (float)value.FadeIn.EndSpeed.Value);
+				var easing = MathUtl.Easing((float)value.FadeIn.StartSpeed.Value, (float)value.FadeIn.EndSpeed.Value);
 				data.Add(BitConverter.GetBytes(easing[0]));
 				data.Add(BitConverter.GetBytes(easing[1]));
 				data.Add(BitConverter.GetBytes(easing[2]));
@@ -87,7 +87,7 @@ namespace Effekseer.Binary
 			{
 				data.Add(value.FadeOut.Frame.GetBytes());
 
-				var easing = Utl.MathUtl.Easing((float)value.FadeOut.StartSpeed.Value, (float)value.FadeOut.EndSpeed.Value);
+				var easing = MathUtl.Easing((float)value.FadeOut.StartSpeed.Value, (float)value.FadeOut.EndSpeed.Value);
 				data.Add(BitConverter.GetBytes(easing[0]));
 				data.Add(BitConverter.GetBytes(easing[1]));
 				data.Add(BitConverter.GetBytes(easing[2]));
@@ -120,7 +120,7 @@ namespace Effekseer.Binary
 			}
 			else if (value.CustomData1.CustomData.Value == Data.CustomDataType.Easing2D)
 			{
-				var easing = Utl.MathUtl.Easing((float)value.CustomData1.Easing.StartSpeed.Value, (float)value.CustomData1.Easing.EndSpeed.Value);
+				var easing = MathUtl.Easing((float)value.CustomData1.Easing.StartSpeed.Value, (float)value.CustomData1.Easing.EndSpeed.Value);
 
 				List<byte[]> _data = new List<byte[]>();
 				_data.Add(value.CustomData1.Easing.Start.GetBytes(1.0f));
@@ -165,7 +165,7 @@ namespace Effekseer.Binary
 			}
 			else if (value.CustomData2.CustomData.Value == Data.CustomDataType.Easing2D)
 			{
-				var easing = Utl.MathUtl.Easing((float)value.CustomData2.Easing.StartSpeed.Value, (float)value.CustomData2.Easing.EndSpeed.Value);
+				var easing = MathUtl.Easing((float)value.CustomData2.Easing.StartSpeed.Value, (float)value.CustomData2.Easing.EndSpeed.Value);
 
 				List<byte[]> _data = new List<byte[]>();
 				_data.Add(value.CustomData2.Easing.Start.GetBytes(1.0f));

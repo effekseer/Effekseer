@@ -179,7 +179,7 @@ namespace Effekseer.Data
 		private void Path_OnChanged(object sender, ChangedValueEventArgs e)
 		{
 			// Apply values
-			Utl.MaterialInformation info = new Utl.MaterialInformation();
+			Utils.MaterialInformation info = new Utils.MaterialInformation();
 			info.Load(Path.GetAbsolutePath());
 
 			ApplyMaterial(info);
@@ -254,7 +254,7 @@ namespace Effekseer.Data
 			return ret.ToArray();
 		}
 
-		public void ApplyMaterial(Utl.MaterialInformation info)
+		public void ApplyMaterial(Utils.MaterialInformation info)
 		{
 			bool isChanged = false;
 
@@ -642,9 +642,9 @@ namespace Effekseer.Data
 			}
 		}
 
-		public List<Tuple35<ValueStatus, Utl.MaterialInformation.TextureInformation>> GetTextures(Utl.MaterialInformation info)
+		public List<Tuple35<ValueStatus, Utils.MaterialInformation.TextureInformation>> GetTextures(Utils.MaterialInformation info)
 		{
-			var ret = new List<Tuple35<ValueStatus, Utl.MaterialInformation.TextureInformation>>();
+			var ret = new List<Tuple35<ValueStatus, Utils.MaterialInformation.TextureInformation>>();
 
 			HashSet<ValueStatus> usedValueStatuses = new HashSet<ValueStatus>();
 
@@ -667,9 +667,9 @@ namespace Effekseer.Data
 			return ret;
 		}
 
-		public List<Tuple35<ValueStatus, Utl.MaterialInformation.UniformInformation>> GetUniforms(Utl.MaterialInformation info)
+		public List<Tuple35<ValueStatus, Utils.MaterialInformation.UniformInformation>> GetUniforms(Utils.MaterialInformation info)
 		{
-			var ret = new List<Tuple35<ValueStatus, Utl.MaterialInformation.UniformInformation>>();
+			var ret = new List<Tuple35<ValueStatus, Utils.MaterialInformation.UniformInformation>>();
 
 			foreach (var uniform in info.Uniforms)
 			{
@@ -689,9 +689,9 @@ namespace Effekseer.Data
 			return ret;
 		}
 
-		public List<Tuple35<ValueStatus, Utl.MaterialInformation.GradientInformation>> GetGradients(Utl.MaterialInformation info)
+		public List<Tuple35<ValueStatus, Utils.MaterialInformation.GradientInformation>> GetGradients(Utils.MaterialInformation info)
 		{
-			var ret = new List<Tuple35<ValueStatus, Utl.MaterialInformation.GradientInformation>>();
+			var ret = new List<Tuple35<ValueStatus, Utils.MaterialInformation.GradientInformation>>();
 
 			foreach (var gradient in info.Gradients)
 			{
@@ -782,7 +782,7 @@ namespace Effekseer.Data
 				}
 			}
 
-			public static StatusKey From(Utl.MaterialInformation.UniformInformation info)
+			public static StatusKey From(Utils.MaterialInformation.UniformInformation info)
 			{
 				StatusKey status = new StatusKey();
 				status.Name = info.Name;
@@ -791,7 +791,7 @@ namespace Effekseer.Data
 				return status;
 			}
 
-			public static StatusKey From(Utl.MaterialInformation.TextureInformation info)
+			public static StatusKey From(Utils.MaterialInformation.TextureInformation info)
 			{
 				StatusKey status = new StatusKey();
 				status.Name = info.Name;
@@ -800,7 +800,7 @@ namespace Effekseer.Data
 				return status;
 			}
 
-			public static StatusKey From(Utl.MaterialInformation.GradientInformation info)
+			public static StatusKey From(Utils.MaterialInformation.GradientInformation info)
 			{
 				StatusKey status = new StatusKey();
 				status.Name = info.Name;

@@ -190,7 +190,7 @@ namespace Effekseer.IO
 			var decompressBuffer = Utils.Zlib.Decompress(buffer);
 
 			var doc = new System.Xml.XmlDocument();
-			var reader = new Utl.BinaryReader(decompressBuffer);
+			var reader = new Utils.BinaryReader(decompressBuffer);
 
 			var keys = new Dictionary<Int16, string>();
 			Int16 keySize = -1;

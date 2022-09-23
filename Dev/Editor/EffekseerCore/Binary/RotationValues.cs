@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
-using Effekseer.Utl;
+using Effekseer.Utils;
 using Effekseer.Data;
 
 namespace Effekseer.Binary
@@ -68,7 +68,7 @@ namespace Effekseer.Binary
 			}
 			else if (rotationType == Data.RotationValues.ParamaterType.AxisEasing)
 			{
-				var easing = Utl.MathUtl.Easing((float)value.AxisEasing.Easing.StartSpeed.Value, (float)value.AxisEasing.Easing.EndSpeed.Value);
+				var easing = MathUtl.Easing((float)value.AxisEasing.Easing.StartSpeed.Value, (float)value.AxisEasing.Easing.EndSpeed.Value);
 
 				List<byte[]> _data = new List<byte[]>();
 				_data.Add(value.AxisEasing.Axis.GetBytes());

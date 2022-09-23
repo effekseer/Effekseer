@@ -80,7 +80,7 @@ namespace Effekseer.GUI.Dock
 		}
 		Texts texts = new Texts();
 
-		Utl.ParameterTreeNode paramaterTreeNode = null;
+		Utils.ParameterTreeNode paramaterTreeNode = null;
 
 		TreeNode treeNodes = null;
 		List<FCurve> flattenFcurves = new List<FCurve>();
@@ -879,7 +879,7 @@ namespace Effekseer.GUI.Dock
 			SetParameters(paramTreeNodes);
 		}
 
-		void SetParameters(Utl.ParameterTreeNode paramTreeNodes)
+		void SetParameters(Utils.ParameterTreeNode paramTreeNodes)
 		{
 			flattenFcurves.Clear();
 
@@ -922,7 +922,7 @@ namespace Effekseer.GUI.Dock
 			}
 			else
 			{
-				Action<Utl.ParameterTreeNode, TreeNode> refleshNodes = null;
+				Action<Utils.ParameterTreeNode, TreeNode> refleshNodes = null;
 				refleshNodes = (ptn, tn) =>
 				{
 					// check whether modification doesn't exist
@@ -974,7 +974,7 @@ namespace Effekseer.GUI.Dock
 
 			// compare node structures
 			{
-				Action<Utl.ParameterTreeNode, TreeNode> refleshNodes = null;
+				Action<Utils.ParameterTreeNode, TreeNode> refleshNodes = null;
 				refleshNodes = (ptn, tn) =>
 				{
 					// check whether modification doesn't exist
@@ -1522,7 +1522,7 @@ namespace Effekseer.GUI.Dock
 		{
 			public string ID = string.Empty;
 
-			public Utl.ParameterTreeNode ParamTreeNode { get; private set; }
+			public Utils.ParameterTreeNode ParamTreeNode { get; private set; }
 
 			public List<TreeNode> Children { get; private set; }
 
@@ -1536,7 +1536,7 @@ namespace Effekseer.GUI.Dock
 
 			FCurves window = null;
 
-			public TreeNode(FCurves window, Utl.ParameterTreeNode paramTreeNode)
+			public TreeNode(FCurves window, Utils.ParameterTreeNode paramTreeNode)
 			{
 				this.window = window;
 				ID = "###" + Manager.GetUniqueID().ToString();

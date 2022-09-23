@@ -1,6 +1,6 @@
 ﻿using Effekseer.Data.Value;
 using Effekseer.swig;
-using Effekseer.Utl;
+using Effekseer.Utils;
 
 namespace Effekseer.GUI.Dock
 {

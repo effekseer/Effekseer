@@ -2,7 +2,7 @@
 using System.Linq;
 using Effekseer.Data;
 using Effekseer.Data.Value;
-using Effekseer.Utl;
+using Effekseer.Utils;
 
 namespace Effekseer.Binary.RenderData
 {

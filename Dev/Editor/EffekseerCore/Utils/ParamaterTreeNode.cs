@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Effekseer.Utl
+namespace Effekseer.Utils
 {
 	/// <summary>
 	/// 有効なパラメーター一覧を取得するためのツリーノード

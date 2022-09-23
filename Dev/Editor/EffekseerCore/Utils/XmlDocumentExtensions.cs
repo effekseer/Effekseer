@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Effekseer.Utl
+namespace Effekseer.Utils
 {
 	public static class XmlDocumentExtensions
 	{

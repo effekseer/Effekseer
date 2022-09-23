@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Effekseer.Data;
 using Effekseer.Data.Value;
-using Effekseer.Utl;
+using Effekseer.Utils;
 
 namespace Effekseer.Binary
 {
@@ -518,7 +518,7 @@ namespace Effekseer.Binary
 
 		private static void AddEasing(List<byte[]> data, Enum<EasingStart> start, Enum<EasingEnd> end)
 		{
-			var easing = Utl.MathUtl.Easing((float)start.Value, (float)end.Value);
+			var easing = MathUtl.Easing((float)start.Value, (float)end.Value);
 			data.Add(BitConverter.GetBytes(easing[0]));
 			data.Add(BitConverter.GetBytes(easing[1]));
 			data.Add(BitConverter.GetBytes(easing[2]));

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
 
-namespace Effekseer.Utl
+namespace Effekseer.Utils
 {
 	public static class BitConverterExtensions
 	{

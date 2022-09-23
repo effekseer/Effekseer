@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Effekseer.Utl
+namespace Effekseer.Utils
 {
 	public struct RGBHSVColor
 	{
