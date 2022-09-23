@@ -27,9 +27,10 @@ set_target_properties(EffekseerEditorLit PROPERTIES
 
 set_property(TARGET EffekseerEditorLit PROPERTY VS_GLOBAL_AllowUnsafeBlocks "true")
 set_property(TARGET EffekseerEditorLit PROPERTY VS_GLOBAL_OutputType "WinExe")
-set_property(TARGET EffekseerEditorLit PROPERTY VS_GLOBAL_Platforms "x64")
 set_property(TARGET EffekseerEditorLit PROPERTY VS_GLOBAL_AppendTargetFrameworkToOutputPath "false")
 
+# Avoid Cmake bug
+# set_property(TARGET EffekseerEditorLit PROPERTY VS_GLOBAL_Platforms "x64")
 
 add_dependencies(EffekseerEditorLit EffekseerCore Viewer EffekseerCoreGUI)
 target_link_libraries(EffekseerEditorLit PRIVATE EffekseerCore Viewer EffekseerCoreGUI)
