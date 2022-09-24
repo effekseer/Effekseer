@@ -2,6 +2,8 @@
 enable_language(CSharp)
 cmake_minimum_required(VERSION 3.23)
 
+add_subdirectory(3rdParty)
+
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_SOURCE_DIR}/../release")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_SOURCE_DIR}/../release")
 
@@ -24,6 +26,8 @@ file(GLOB files_core
     EffekseerCore/Data/Value/Int2.cs
     EffekseerCore/Data/Value/ObjectCollection.cs
     EffekseerCore/Localization/Localization.cs
+    EffekseerCore/EffectAsset/EffectAsset.cs
+
 )
 
 list(APPEND files_core
@@ -46,6 +50,8 @@ set_property(TARGET EffekseerCore PROPERTY VS_GLOBAL_AllowUnsafeBlocks "true")
 set_property(TARGET EffekseerCore PROPERTY VS_GLOBAL_DefineConstants "SCRIPT_ENABLED;")
 set_property(TARGET EffekseerCore PROPERTY VS_GLOBAL_AppendTargetFrameworkToOutputPath "false")
 set_property(TARGET EffekseerCore PROPERTY VS_GLOBAL_GenerateDependencyFile "false")
+
+target_link_libraries(EffekseerCore PUBLIC PartsTreeSystem)
 
 # Avoid Cmake bug
 # set_property(TARGET EffekseerCore PROPERTY VS_GLOBAL_Platforms "x64")
