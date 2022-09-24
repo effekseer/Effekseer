@@ -62,6 +62,7 @@ namespace Effekseer.GUI.Inspector
 				{ typeof(int), GuiInt },
 				{ typeof(float), GuiFloat },
 				{ typeof(string), GuiString },
+				{ typeof(Vector3D), GuiVector3D },
 			};
 		}
 
@@ -206,6 +207,56 @@ namespace Effekseer.GUI.Inspector
 			}
 			return false;
 		}
+
+		private bool GuiVector3D(object value, string name, FieldInfo field, InspectorEditable target)
+		{
+
+			if (value is Vector3D vec3Value)
+			{
+				FieldInfo fieldInternalValue = vec3Value.GetType().GetField("internalValue", BindingFlags.NonPublic | BindingFlags.Instance);
+				float[] internalValue = (float[])fieldInternalValue.GetValue(vec3Value);
+
+				if (Manager.NativeManager.DragFloat3EfkEx(name + "###" + field.Name, internalValue, 1.0f,
+					float.MinValue, float.MaxValue,
+					float.MinValue, float.MaxValue,
+					float.MinValue, float.MaxValue,
+					"X:" + Core.Option.GetFloatFormat(), "Y:" + Core.Option.GetFloatFormat(), "Z:" + Core.Option.GetFloatFormat()))
+				{
+					field.SetValue(target, vec3Value);
+					return true;
+				}
+			}
+			else if (value is Vector3D[] vec3Array)
+			{
+				bool changed = false;
+				for (int i = 0; i < vec3Array.Length; ++i)
+				{
+					FieldInfo fieldInternalValue = vec3Array[i].GetType().GetField("internalValue", BindingFlags.NonPublic | BindingFlags.Instance);
+					float[] internalValue = (float[])fieldInternalValue.GetValue(vec3Array[i]);
+
+					if (Manager.NativeManager.DragFloat3EfkEx(name + "###" + field.Name + i, internalValue, 1.0f,
+					float.MinValue, float.MaxValue,
+					float.MinValue, float.MaxValue,
+					float.MinValue, float.MaxValue,
+					"X:" + Core.Option.GetFloatFormat(), "Y:" + Core.Option.GetFloatFormat(), "Z:" + Core.Option.GetFloatFormat()))
+					{
+						changed = true;
+					}
+				}
+				
+				if (changed)
+				{
+					field.SetValue(target, vec3Array);
+				}
+				return changed;
+			}
+			else
+			{
+				Manager.NativeManager.Text("Assert GuiVector3D");
+			}
+
+			return false;
+		}
 	}
 
 	class Inspector
@@ -310,6 +361,7 @@ namespace Effekseer.GUI.Inspector
 		// TODO : Vector
 		public Vector2D vector2 = new Vector2D();
 		public Vector3D vector3 = new Vector3D();
+		public Vector3D[] vector3Array = new Vector3D[2] { new Vector3D(), new Vector3D() };
 
 		// TODO : string“™Anull‚ð‚Ç‚¤ˆµ‚¤‚©
 		public string String2;
