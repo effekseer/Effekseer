@@ -1,8 +1,6 @@
 
 enable_language(CSharp)
-cmake_minimum_required(VERSION 3.17)
-
-set(CMAKE_DOTNET_TARGET_FRAMEWORK_VERSION v4.6.1)
+cmake_minimum_required(VERSION 3.23)
 
 add_library(PartsTreeSystem
   SHARED
@@ -22,9 +20,18 @@ add_library(PartsTreeSystem
   PartsTreeSystem/PartsTreeSystem/Utility.cs
 )
 
-set_property(TARGET PartsTreeSystem PROPERTY VS_PACKAGE_REFERENCES "Newtonsoft.Json_12.0.1")
+
+set_target_properties(PartsTreeSystem PROPERTIES
+    DOTNET_SDK "Microsoft.NET.Sdk"
+    DOTNET_TARGET_FRAMEWORK "net5.0")
+
+set_property(TARGET PartsTreeSystem PROPERTY VS_PACKAGE_REFERENCES "Newtonsoft.Json_13.0.1")
 
 set_target_properties(PartsTreeSystem PROPERTIES
   VS_DOTNET_REFERENCES "System;System.Xml;System.Runtime")
+
+set_property(TARGET PartsTreeSystem PROPERTY VS_GLOBAL_AllowUnsafeBlocks "true")
+set_property(TARGET PartsTreeSystem PROPERTY VS_GLOBAL_DefineConstants "SCRIPT_ENABLED;")
+set_property(TARGET PartsTreeSystem PROPERTY VS_GLOBAL_AppendTargetFrameworkToOutputPath "false")
 
 set_target_properties (PartsTreeSystem PROPERTIES FOLDER Thirdparty)
