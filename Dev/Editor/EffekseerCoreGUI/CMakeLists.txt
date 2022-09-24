@@ -7,7 +7,7 @@ file(GLOB files
     swig/*.cs
     Configs/*.cs
     GUI/*.cs
-    GUI/Component/*.cs
+    GUI/BindableComponent/*.cs
     GUI/Dialog/*.cs
     GUI/Dock/*.cs
     GUI/Menu/*.cs

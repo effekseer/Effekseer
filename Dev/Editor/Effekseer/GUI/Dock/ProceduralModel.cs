@@ -5,15 +5,15 @@ namespace Effekseer.GUI.Dock
 {
 	class ProceduralModel : DockPanel
 	{
-		readonly Component.ParameterList paramerterList = null;
+		readonly BindableComponent.ParameterList paramerterList = null;
 
 		public ProceduralModel()
 		{
 			Label = Icons.PanelProceduralModel + Resources.GetString("ProceduralModel_Name") + "###ProceduralModel";
 			DocPage = "proceduralModel.html";
 
-			paramerterList = new Component.ParameterList();
-			CopyAndPaste = new Component.CopyAndPaste("ProceduralModel", GetTargetObject, Read);
+			paramerterList = new BindableComponent.ParameterList();
+			CopyAndPaste = new BindableComponent.CopyAndPaste("ProceduralModel", GetTargetObject, Read);
 
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;
@@ -50,7 +50,7 @@ namespace Effekseer.GUI.Dock
 
 			Manager.NativeManager.PushItemWidth(width - Manager.NativeManager.GetTextLineHeight() * 5.5f);
 
-			var nextParam = Component.ObjectCollection.Select("", "", Core.ProceduralModel.ProceduralModels.Selected, false, Core.ProceduralModel.ProceduralModels);
+			var nextParam = BindableComponent.ObjectCollection.Select("", "", Core.ProceduralModel.ProceduralModels.Selected, false, Core.ProceduralModel.ProceduralModels);
 
 			if (Core.ProceduralModel.ProceduralModels.Selected != nextParam)
 			{

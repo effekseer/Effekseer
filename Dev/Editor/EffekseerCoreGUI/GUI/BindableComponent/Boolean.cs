@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Effekseer.GUI.Component
+namespace Effekseer.GUI.BindableComponent
 {
 	class Boolean : Control, IParameterControl
 	{

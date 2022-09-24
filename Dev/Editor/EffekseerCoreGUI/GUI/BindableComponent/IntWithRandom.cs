@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Effekseer.GUI.Component
+namespace Effekseer.GUI.BindableComponent
 {
-	class FloatWithRandom : Control, IParameterControl
+	class IntWithRandom : Control, IParameterControl
 	{
 		string id = "";
 		string id_r1 = "";
@@ -15,7 +15,7 @@ namespace Effekseer.GUI.Component
 		string id_d1 = "";
 		string id_d2 = "";
 
-		Data.Value.FloatWithRandom binding = null;
+		Data.Value.IntWithRandom binding = null;
 
 		ValueChangingProperty valueChangingProp = new ValueChangingProperty();
 
@@ -23,11 +23,11 @@ namespace Effekseer.GUI.Component
 
 		bool isPopupShown = false;
 
-		float[] internalValue = new float[] { 0.0f, 0.0f };
+		int[] internalValue = new int[] { 0, 0 };
 
 		public bool EnableUndo { get; set; } = true;
 
-		public Data.Value.FloatWithRandom Binding
+		public Data.Value.IntWithRandom Binding
 		{
 			get
 			{
@@ -47,7 +47,7 @@ namespace Effekseer.GUI.Component
 			}
 		}
 
-		public FloatWithRandom()
+		public IntWithRandom()
 		{
 			id = "###" + Manager.GetUniqueID().ToString();
 			id_r1 = "###" + Manager.GetUniqueID().ToString();
@@ -59,13 +59,13 @@ namespace Effekseer.GUI.Component
 
 		public void SetBinding(object o)
 		{
-			var o_ = o as Data.Value.FloatWithRandom;
+			var o_ = o as Data.Value.IntWithRandom;
 			Binding = o_;
 		}
 
 		public void FixValue()
 		{
-			FixValueInternal(false);
+			FixValueInternal(isActive);
 		}
 
 		void FixValueInternal(bool combined)
@@ -90,6 +90,7 @@ namespace Effekseer.GUI.Component
 				throw new Exception("Not Implemented.");
 			}
 		}
+
 		public override void OnDisposed()
 		{
 			FixValueInternal(false);
@@ -100,27 +101,29 @@ namespace Effekseer.GUI.Component
 			isPopupShown = false;
 			if (binding == null) return;
 
+			if (binding != null)
+			{
+				if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
+				{
+					internalValue[0] = binding.GetCenter();
+					internalValue[1] = binding.GetAmplitude();
+				}
+				else
+				{
+					internalValue[0] = binding.GetMin();
+					internalValue[1] = binding.GetMax();
+				}
+			}
+
 			valueChangingProp.Enable(binding);
-
-			if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
-			{
-				internalValue[0] = binding.GetCenter();
-				internalValue[1] = binding.GetAmplitude();
-			}
-			else
-			{
-				internalValue[0] = binding.GetMin();
-				internalValue[1] = binding.GetMax();
-			}
-
 
 			var txt_r1 = string.Empty;
 			var txt_r2 = string.Empty;
 
-			var range_1_min = float.MinValue;
-			var range_1_max = float.MaxValue;
-			var range_2_min = float.MinValue;
-			var range_2_max = float.MaxValue;
+			var range_1_min = int.MinValue;
+			var range_1_max = int.MaxValue;
+			var range_2_min = int.MinValue;
+			var range_2_max = int.MaxValue;
 
 			if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
 			{
@@ -141,10 +144,10 @@ namespace Effekseer.GUI.Component
 				range_2_max = binding.ValueMax;
 			}
 
-			if (Manager.NativeManager.DragFloat2EfkEx(id, internalValue, binding.Step / 10.0f,
+			if (Manager.NativeManager.DragInt2EfkEx(id, internalValue, binding.Step,
 				range_1_min, range_1_max,
 				range_2_min, range_2_max,
-				txt_r1 + ":" + Core.Option.GetFloatFormat(), txt_r2 + ":" + Core.Option.GetFloatFormat()))
+				txt_r1 + ":" + "%.0f", txt_r2 + ":" + "%.0f"))
 			{
 				if (EnableUndo)
 				{
@@ -167,6 +170,7 @@ namespace Effekseer.GUI.Component
 
 			Popup();
 
+
 			if (binding.IsDynamicEquationEnabled)
 			{
 				DynamicSelector.SelectMaxInComponent(id_d1, binding.DynamicEquationMax);
@@ -180,6 +184,7 @@ namespace Effekseer.GUI.Component
 
 				Popup();
 			}
+
 
 			var isActive_Current = Manager.NativeManager.IsItemActive();
 
@@ -212,6 +217,7 @@ namespace Effekseer.GUI.Component
 				}
 				else
 				{
+
 					var txt_r_r1 = Resources.GetString("Gauss");
 					var txt_r_r2 = Resources.GetString("Range");
 

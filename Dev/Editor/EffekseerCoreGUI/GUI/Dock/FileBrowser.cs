@@ -161,7 +161,7 @@ namespace Effekseer.GUI.Dock
 				Commands.ShowURL(DocURL);
 			}
 
-			if (Component.Functions.CanShowTip())
+			if (BindableComponent.Functions.CanShowTip())
 			{
 				Manager.NativeManager.SetTooltip(Resources.GetString("Panel_Help_Desc"));
 			}

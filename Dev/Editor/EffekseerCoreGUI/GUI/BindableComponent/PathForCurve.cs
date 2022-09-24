@@ -6,22 +6,22 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace Effekseer.GUI.Component
+namespace Effekseer.GUI.BindableComponent
 {
-	class PathForModel : Control, IParameterControl
+	class PathForCurve : Control, IParameterControl
 	{
 		string id1 = "";
 		string id2 = "";
 		string id3 = "";
 
-		Data.Value.PathForModel binding = null;
+		Data.Value.PathForCurve binding = null;
 
 		string filePath = string.Empty;
 		bool isHovered = false;
 
 		public bool EnableUndo { get; set; } = true;
 
-		public Data.Value.PathForModel Binding
+		public Data.Value.PathForCurve Binding
 		{
 			get
 			{
@@ -37,7 +37,7 @@ namespace Effekseer.GUI.Component
 			}
 		}
 
-		public PathForModel()
+		public PathForCurve()
 		{
 			id1 = "###" + Manager.GetUniqueID().ToString();
 			id2 = "###" + Manager.GetUniqueID().ToString();
@@ -46,7 +46,7 @@ namespace Effekseer.GUI.Component
 
 		public void SetBinding(object o)
 		{
-			var o_ = o as Data.Value.PathForModel;
+			var o_ = o as Data.Value.PathForCurve;
 			Binding = o_;
 		}
 
@@ -87,7 +87,7 @@ namespace Effekseer.GUI.Component
 				btn_load_Click();
 			}
 
-			if (dd == null) dd = DragAndDrops.UpdateFileDst(FileType.Model);
+			if (dd == null) dd = DragAndDrops.UpdateFileDst(FileType.Curve);
 
 			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 
@@ -95,7 +95,7 @@ namespace Effekseer.GUI.Component
 
 			Manager.NativeManager.Text(filePath);
 
-			if (dd == null) dd = DragAndDrops.UpdateFileDst(FileType.Model);
+			if (dd == null) dd = DragAndDrops.UpdateFileDst(FileType.Curve);
 
 			if (Manager.NativeManager.IsItemHovered())
 			{
@@ -142,7 +142,7 @@ namespace Effekseer.GUI.Component
 		{
 			if (binding == null) return;
 
-			var filter = Resources.GetString("ModelFilter");
+			var filter = Resources.GetString("CurveFilter");
 			var result = swig.FileDialog.OpenDialog(filter, System.IO.Directory.GetCurrentDirectory());
 
 			if (!string.IsNullOrEmpty(result))
@@ -203,7 +203,7 @@ namespace Effekseer.GUI.Component
 
 		private bool CheckExtension(string path)
 		{
-			var filters = Resources.GetString("ModelFilter").Split(',');
+			var filters = Resources.GetString("CurveFilter").Split(',');
 			return filters.Any(_ => "." + _ == System.IO.Path.GetExtension(path).ToLower());
 		}
 
@@ -212,7 +212,7 @@ namespace Effekseer.GUI.Component
 
 			// Convert file
 			var ext = System.IO.Path.GetExtension(filepath).ToLower().Replace(".", "");
-			var newFilepath = System.IO.Path.ChangeExtension(filepath, ".efkmodel");
+			var newFilepath = System.IO.Path.ChangeExtension(filepath, ".efkcurve");
 
 			Effekseer.Utils.ModelInformation modelInfo = new Utils.ModelInformation();
 			if (modelInfo.Load(newFilepath))
@@ -242,7 +242,7 @@ namespace Effekseer.GUI.Component
 
 			Dialog.OpenModel omd = new Dialog.OpenModel(modelInfo.Scale);
 
-			if (ext == "fbx" || ext == "mqo")
+			if (ext == "fbx")
 			{
 				omd.Show("");
 			}
@@ -272,7 +272,7 @@ namespace Effekseer.GUI.Component
 
 					if (doGenerate)
 					{
-						string converterPath = Manager.GetEntryDirectory() + "/tools/fbxToEffekseerModelConverter";
+						string converterPath = Manager.GetEntryDirectory() + "/tools/fbxToEffekseerCurveConverter";
 
 						// japanese file path is not supported.
 						try
@@ -306,7 +306,7 @@ namespace Effekseer.GUI.Component
 
 						info.FileName = converterPath;
 
-						info.Arguments = "\"" + oldFilepath + "\" \"" + newFilepath + "\" -scale " + omd.Magnification.ToString();
+						info.Arguments = filepath;
 
 						if (!System.IO.File.Exists(oldFilepath))
 						{
@@ -346,72 +346,6 @@ namespace Effekseer.GUI.Component
 							var msg = " Failed to load. \n" + outputs;
 
 							swig.GUIManager.show(msg, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
-						}
-
-						try
-						{
-							string tempFilePath = Path.GetTempPath() + System.IO.Path.GetFileName(filepath);
-							System.IO.File.Delete(tempFilePath);
-						}
-						catch
-						{
-
-						}
-					}
-				}
-
-				if (ext == "mqo")
-				{
-					var oldFilepath = filepath;
-
-					bool doGenerate = false;
-
-					if (!System.IO.File.Exists(newFilepath) ||
-						System.IO.File.GetLastWriteTime(oldFilepath) != System.IO.File.GetLastWriteTime(newFilepath) ||
-						modelInfo.Scale != omd.Magnification)
-					{
-						doGenerate = true;
-					}
-
-					if (doGenerate)
-					{
-						string converterPath = Manager.GetEntryDirectory() + "/tools/mqoToEffekseerModelConverter";
-
-						// japanese file path is not supported.
-						try
-						{
-							string tempFilePath = Path.GetTempPath() + System.IO.Path.GetFileName(filepath);
-							System.IO.File.Copy(oldFilepath, tempFilePath);
-							oldFilepath = tempFilePath;
-						}
-						catch
-						{
-
-						}
-
-						System.Diagnostics.ProcessStartInfo info = new System.Diagnostics.ProcessStartInfo();
-
-						var os = System.Environment.OSVersion;
-						if (os.Platform == PlatformID.Win32NT ||
-							os.Platform == PlatformID.Win32S ||
-							os.Platform == PlatformID.Win32Windows ||
-							os.Platform == PlatformID.WinCE)
-						{
-							converterPath += ".exe";
-						}
-
-						try
-						{
-							mqoToEffekseerModelConverter.Program.Call(new[] { oldFilepath, newFilepath, "-scale", omd.Magnification.ToString() });
-						}
-						catch
-						{
-
-						}
-
-						if (System.IO.File.Exists(newFilepath))
-						{
-							System.IO.File.SetLastWriteTime(newFilepath, System.IO.File.GetLastWriteTime(oldFilepath));
 						}
 
 						try

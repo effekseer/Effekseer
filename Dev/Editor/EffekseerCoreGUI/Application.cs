@@ -72,14 +72,14 @@ namespace Effekseer
 
 
 			// Register UI
-			GUI.Component.ParameterListComponentFactory.Register(typeof(Data.LanguageSelector), () => { return new GUI.Component.LanguageSelector(); });
+			GUI.BindableComponent.ParameterListComponentFactory.Register(typeof(Data.LanguageSelector), () => { return new GUI.BindableComponent.LanguageSelector(); });
 
-			GUI.Component.ParameterListComponentFactory.Register(typeof(Data.ProceduralModelReference), () =>
+			GUI.BindableComponent.ParameterListComponentFactory.Register(typeof(Data.ProceduralModelReference), () =>
 			{
-				return new GUI.Component.ObjectReference<Data.ProceduralModelParameter>(Core.ProceduralModel.ProceduralModels);
+				return new GUI.BindableComponent.ObjectReference<Data.ProceduralModelParameter>(Core.ProceduralModel.ProceduralModels);
 			});
 
-			GUI.Component.ParameterListComponentFactory.Register(typeof(Data.Value.Gradient), () => { return new GUI.Component.Gradient(); });
+			GUI.BindableComponent.ParameterListComponentFactory.Register(typeof(Data.Value.Gradient), () => { return new GUI.BindableComponent.Gradient(); });
 
 			// Debug
 			bool isDebugMode = false;

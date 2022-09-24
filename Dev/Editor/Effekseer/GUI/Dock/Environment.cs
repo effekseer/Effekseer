@@ -8,7 +8,7 @@ namespace Effekseer.GUI.Dock
 {
 	class Environement : DockPanel
 	{
-		Component.ParameterList paramerterList = null;
+		BindableComponent.ParameterList paramerterList = null;
 
 		bool isFiestUpdate = true;
 
@@ -17,9 +17,9 @@ namespace Effekseer.GUI.Dock
 			Label = Icons.PanelEnvironment + Resources.GetString("Environment_Name") + "###Environment";
 			DocPage = "environment.html";
 
-			paramerterList = new Component.ParameterList();
+			paramerterList = new BindableComponent.ParameterList();
 
-			CopyAndPaste = new Component.CopyAndPaste("Environment", GetTargetObject, null);
+			CopyAndPaste = new BindableComponent.CopyAndPaste("Environment", GetTargetObject, null);
 
 			Core.OnAfterLoad += OnAfter;
 			Core.OnAfterNew += OnAfter;

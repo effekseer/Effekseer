@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 
-namespace Effekseer.GUI.Component
+namespace Effekseer.GUI.BindableComponent
 {
 	class ParameterListComponentFactory
 	{

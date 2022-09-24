@@ -3,7 +3,7 @@ namespace Effekseer.GUI.Dock
 {
 	class GlobalValues : DockPanel
 	{
-		Component.ParameterList paramerterList = null;
+		BindableComponent.ParameterList paramerterList = null;
 
 		bool isFiestUpdate = true;
 
@@ -12,7 +12,7 @@ namespace Effekseer.GUI.Dock
 			Label = Icons.PanelGlobal + Resources.GetString("Global") + "###Global";
 			DocPage = "global.html";
 
-			paramerterList = new Component.ParameterList();
+			paramerterList = new BindableComponent.ParameterList();
 			paramerterList.SetType(typeof(Data.GlobalValues));
 
 			Core.OnAfterLoad += OnAfterLoad;

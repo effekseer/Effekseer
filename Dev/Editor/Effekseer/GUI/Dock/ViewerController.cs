@@ -113,7 +113,7 @@ namespace Effekseer.GUI.Dock
 						Manager.Viewer.SendTrigger(i);
 					}
 
-					if (Component.Functions.CanShowTip())
+					if (BindableComponent.Functions.CanShowTip())
 					{
 						Manager.NativeManager.SetTooltip(Resources.GetString("SendTrigger_Desc"));
 					}

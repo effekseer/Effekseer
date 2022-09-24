@@ -8,7 +8,7 @@ namespace Effekseer.GUI.Dock
 {
 	class Option : DockPanel
 	{
-		Component.ParameterList paramerterList = null;
+		BindableComponent.ParameterList paramerterList = null;
 
 		bool isFiestUpdate = true;
 
@@ -17,7 +17,7 @@ namespace Effekseer.GUI.Dock
 			Label = Icons.PanelOptions + Resources.GetString("Options") + "###Options";
 			DocPage = "options.html";
 
-			paramerterList = new Component.ParameterList();
+			paramerterList = new BindableComponent.ParameterList();
 			paramerterList.SetType(typeof(Data.OptionValues));
 
 			Core.OnAfterLoad += OnAfter;
