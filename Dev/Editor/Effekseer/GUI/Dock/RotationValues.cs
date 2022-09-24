@@ -4,7 +4,7 @@ namespace Effekseer.GUI.Dock
 {
 	internal class RotationValues : DockPanel
 	{
-		Component.ParameterList paramerterList = null;
+		BindableComponent.ParameterList paramerterList = null;
 
 		bool isFiestUpdate = true;
 
@@ -13,10 +13,10 @@ namespace Effekseer.GUI.Dock
 			Label = Icons.PanelRotation + Resources.GetString("Rotation") + "###Rotation";
 			DocPage = "rotation.html";
 
-			paramerterList = new Component.ParameterList();
+			paramerterList = new BindableComponent.ParameterList();
 			paramerterList.SetType(typeof(Data.RotationValues));
 
-			CopyAndPaste = new Component.CopyAndPaste("Rotation", GetTargetObject, Read);
+			CopyAndPaste = new BindableComponent.CopyAndPaste("Rotation", GetTargetObject, Read);
 
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;

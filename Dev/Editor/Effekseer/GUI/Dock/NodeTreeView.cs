@@ -300,7 +300,7 @@ namespace Effekseer.GUI.Dock
 
 		internal Utils.DelayedList<NodeTreeViewNode> Children = new Utils.DelayedList<NodeTreeViewNode>();
 
-		private Component.Enum lodBehaviourEnumControl;
+		private BindableComponent.Enum lodBehaviourEnumControl;
 		
 		NodeTreeView treeView = null;
 
@@ -330,7 +330,7 @@ namespace Effekseer.GUI.Dock
 			var effectNode = node as Data.Node;
 			if (effectNode != null)
 			{
-				lodBehaviourEnumControl = new Component.Enum();
+				lodBehaviourEnumControl = new BindableComponent.Enum();
 				lodBehaviourEnumControl.Initialize(typeof(LODBehaviourType));
 				lodBehaviourEnumControl.SetBinding(effectNode.CommonValues.LodParameter.LodBehaviour);
 				lodBehaviourEnumControl.EnableUndo = true;

@@ -8,7 +8,7 @@ namespace Effekseer.GUI.Dock
 {
 	class GenerationLocationValues : DockPanel
 	{
-		Component.ParameterList paramerterList = null;
+		BindableComponent.ParameterList paramerterList = null;
 
 		bool isFiestUpdate = true;
 
@@ -17,10 +17,10 @@ namespace Effekseer.GUI.Dock
 			Label = Icons.PanelGeneration + Resources.GetString("SpawningMethod") + "###SpawningMethod";
 			DocPage = "locationGene.html";
 
-			paramerterList = new Component.ParameterList();
+			paramerterList = new BindableComponent.ParameterList();
 			paramerterList.SetType(typeof(Data.GenerationLocationValues));
 
-			CopyAndPaste = new Component.CopyAndPaste("SpawningMethod", GetTargetObject, Read);
+			CopyAndPaste = new BindableComponent.CopyAndPaste("SpawningMethod", GetTargetObject, Read);
 
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;

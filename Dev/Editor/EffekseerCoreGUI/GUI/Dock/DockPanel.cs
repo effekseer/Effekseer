@@ -1,4 +1,4 @@
-using Effekseer.GUI.Component;
+using Effekseer.GUI.BindableComponent;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,7 +56,7 @@ namespace Effekseer.GUI.Dock
 
 		protected internal string TabToolTip = string.Empty;
 
-		protected internal Component.CopyAndPaste CopyAndPaste = null;
+		protected internal BindableComponent.CopyAndPaste CopyAndPaste = null;
 
 		internal int IsInitialized = -1;
 

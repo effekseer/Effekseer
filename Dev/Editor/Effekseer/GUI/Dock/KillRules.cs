@@ -1,11 +1,11 @@
 ﻿using System;
-using Effekseer.GUI.Component;
+using Effekseer.GUI.BindableComponent;
 
 namespace Effekseer.GUI.Dock
 {
 	public class KillRules: DockPanel
 	{
-		Component.ParameterList parameterList = null;
+		BindableComponent.ParameterList parameterList = null;
 		
 		public KillRules()
 		{

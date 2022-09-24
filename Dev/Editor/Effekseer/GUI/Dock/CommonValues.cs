@@ -9,8 +9,8 @@ namespace Effekseer.GUI.Dock
 {
 	class CommonValues : DockPanel
 	{
-		Component.ParameterList paramerterList_Common = null;
-		Component.ParameterList paramerterList_Node = null;
+		BindableComponent.ParameterList paramerterList_Common = null;
+		BindableComponent.ParameterList paramerterList_Node = null;
 
 		bool isFiestUpdate = true;
 
@@ -19,12 +19,12 @@ namespace Effekseer.GUI.Dock
 			Label = Icons.PanelCommon + Resources.GetString("BasicSettings") + "###BasicSettings";
 			DocPage = "common.html";
 
-			paramerterList_Node = new Component.ParameterList();
+			paramerterList_Node = new BindableComponent.ParameterList();
 			paramerterList_Node.SetType(typeof(Data.NodeBase));
-			paramerterList_Common = new Component.ParameterList();
+			paramerterList_Common = new BindableComponent.ParameterList();
 			paramerterList_Common.SetType(typeof(Data.CommonValues));
 
-			CopyAndPaste = new Component.CopyAndPaste("BasicSettings", GetTargetObject, Read);
+			CopyAndPaste = new BindableComponent.CopyAndPaste("BasicSettings", GetTargetObject, Read);
 
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;

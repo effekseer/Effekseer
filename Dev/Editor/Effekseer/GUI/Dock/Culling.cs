@@ -3,7 +3,7 @@ namespace Effekseer.GUI.Dock
 {
 	class Culling : DockPanel
 	{
-		Component.ParameterList paramerterList = null;
+		BindableComponent.ParameterList paramerterList = null;
 
 		bool isFiestUpdate = true;
 
@@ -12,7 +12,7 @@ namespace Effekseer.GUI.Dock
 			Label = Icons.PanelCulling + Resources.GetString("Culling") + "###Culling";
 			DocPage = "culling.html";
 
-			paramerterList = new Component.ParameterList();
+			paramerterList = new BindableComponent.ParameterList();
 			paramerterList.SetType(typeof(Data.EffectCullingValues));
 
 			Core.OnAfterLoad += OnAfterLoad;

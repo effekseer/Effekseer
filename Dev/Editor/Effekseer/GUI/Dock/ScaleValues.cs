@@ -8,7 +8,7 @@ namespace Effekseer.GUI.Dock
 {
 	class ScaleValues : DockPanel
 	{
-		Component.ParameterList paramerterList = null;
+		BindableComponent.ParameterList paramerterList = null;
 
 		bool isFiestUpdate = true;
 
@@ -17,10 +17,10 @@ namespace Effekseer.GUI.Dock
 			Label = Icons.PanelScale + Resources.GetString("Scale") + "###Scale";
 			DocPage = "scale.html";
 
-			paramerterList = new Component.ParameterList();
+			paramerterList = new BindableComponent.ParameterList();
 			paramerterList.SetType(typeof(Data.ScaleValues));
 
-			CopyAndPaste = new Component.CopyAndPaste("Scale", GetTargetObject, Read);
+			CopyAndPaste = new BindableComponent.CopyAndPaste("Scale", GetTargetObject, Read);
 
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;

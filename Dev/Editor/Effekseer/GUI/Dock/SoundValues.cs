@@ -8,7 +8,7 @@ namespace Effekseer.GUI.Dock
 {
 	class SoundValues : DockPanel
 	{
-		Component.ParameterList paramerterList = null;
+		BindableComponent.ParameterList paramerterList = null;
 
 		bool isFiestUpdate = true;
 
@@ -17,9 +17,9 @@ namespace Effekseer.GUI.Dock
 			Label = Icons.PanelSound + Resources.GetString("Sound") + "###Sound";
 			DocPage = "sound.html";
 
-			paramerterList = new Component.ParameterList();
+			paramerterList = new BindableComponent.ParameterList();
 			paramerterList.SetType(typeof(Data.SoundValues));
-			CopyAndPaste = new Component.CopyAndPaste("Sound", GetTargetObject, Read);
+			CopyAndPaste = new BindableComponent.CopyAndPaste("Sound", GetTargetObject, Read);
 
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;

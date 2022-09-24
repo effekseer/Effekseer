@@ -92,10 +92,10 @@ namespace Effekseer.GUI.Dock
 		bool canControl = true;
 		bool isDetailControlling = false;
 
-		Component.Enum startCurve = new Component.Enum();
-		Component.Enum endCurve = new Component.Enum();
-		Component.Enum type = new Component.Enum();
-		Component.Enum timeline = new Component.Enum();
+		BindableComponent.Enum startCurve = new BindableComponent.Enum();
+		BindableComponent.Enum endCurve = new BindableComponent.Enum();
+		BindableComponent.Enum type = new BindableComponent.Enum();
+		BindableComponent.Enum timeline = new BindableComponent.Enum();
 
 		swig.Vec2 autoZoomRangeMin = new swig.Vec2(float.MaxValue, float.MaxValue);
 		swig.Vec2 autoZoomRangeMax = new swig.Vec2(float.MinValue, float.MinValue);
@@ -148,7 +148,7 @@ namespace Effekseer.GUI.Dock
 
 			Manager.NativeManager.PushItemWidth(-1);
 
-			if (Component.Functions.CanShowTip())
+			if (BindableComponent.Functions.CanShowTip())
 			{
 				Manager.NativeManager.SetTooltip(Resources.GetString("FCurve_TimelineMode_Desc"));
 			}
@@ -199,7 +199,7 @@ namespace Effekseer.GUI.Dock
 					Copy();
 				}
 
-				if (Component.Functions.CanShowTip())
+				if (BindableComponent.Functions.CanShowTip())
 				{
 					Manager.NativeManager.SetTooltip(Resources.GetString("FCurve_Copy_Desc"));
 				}
@@ -211,7 +211,7 @@ namespace Effekseer.GUI.Dock
 					Paste((int)Manager.Viewer.Current, false, true);
 				}
 
-				if (Component.Functions.CanShowTip())
+				if (BindableComponent.Functions.CanShowTip())
 				{
 					Manager.NativeManager.SetTooltip(Resources.GetString("FCurve_Paste_Desc"));
 				}
@@ -223,7 +223,7 @@ namespace Effekseer.GUI.Dock
 					Commands.ShowURL(DocURL);
 				}
 
-				if (Component.Functions.CanShowTip())
+				if (BindableComponent.Functions.CanShowTip())
 				{
 					Manager.NativeManager.SetTooltip(Resources.GetString("Panel_Help_Desc"));
 				}

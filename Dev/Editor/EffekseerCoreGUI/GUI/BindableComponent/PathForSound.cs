@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 using System.Media;
 #endif
 
-namespace Effekseer.GUI.Component
+namespace Effekseer.GUI.BindableComponent
 {
 	class PathForSound : Control, IParameterControl
 	{

@@ -4,28 +4,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Effekseer.GUI.Component
+namespace Effekseer.GUI.BindableComponent
 {
-	class Vector3D : Control, IParameterControl
+	class Vector2D : Control, IParameterControl
 	{
 		string id = "";
-		string id_d = "";
 		string id_c = "";
 		string id_reset = "";
 
-		bool isActive = false;
+		Data.Value.Vector2D binding = null;
 
 		bool isPopupShown = false;
 
-		Data.Value.Vector3D binding = null;
-
 		ValueChangingProperty valueChangingProp = new ValueChangingProperty();
 
-		float[] internalValue = new float[] { 0.0f, 0.0f, 0.0f };
+		bool isActive = false;
+
+		float[] internalValue = new float[] { 0.0f, 0.0f };
 
 		public bool EnableUndo { get; set; } = true;
 
-		public Data.Value.Vector3D Binding
+		public Data.Value.Vector2D Binding
 		{
 			get
 			{
@@ -41,23 +40,20 @@ namespace Effekseer.GUI.Component
 				{
 					internalValue[0] = binding.X.Value;
 					internalValue[1] = binding.Y.Value;
-					internalValue[2] = binding.Z.Value;
 				}
 			}
 		}
 
-		public Vector3D()
+		public Vector2D()
 		{
-			var rand = new Random();
 			id = "###" + Manager.GetUniqueID().ToString();
-			id_d = "###" + Manager.GetUniqueID().ToString();
 			id_c = "###" + Manager.GetUniqueID().ToString();
 			id_reset = "###" + Manager.GetUniqueID().ToString();
 		}
 
 		public void SetBinding(object o)
 		{
-			var o_ = o as Data.Value.Vector3D;
+			var o_ = o as Data.Value.Vector2D;
 			Binding = o_;
 		}
 
@@ -74,13 +70,11 @@ namespace Effekseer.GUI.Component
 			{
 				binding.X.SetValue(internalValue[0], combined);
 				binding.Y.SetValue(internalValue[1], combined);
-				binding.Z.SetValue(internalValue[2], combined);
 			}
 			else
 			{
 				binding.X.SetValueDirectly(internalValue[0]);
 				binding.Y.SetValueDirectly(internalValue[1]);
-				binding.Z.SetValueDirectly(internalValue[2]);
 			}
 		}
 
@@ -92,34 +86,29 @@ namespace Effekseer.GUI.Component
 		public override void Update()
 		{
 			isPopupShown = false;
-
 			if (binding == null) return;
 
 			valueChangingProp.Enable(binding);
 
 			float step = 1.0f;
-
 			if (binding != null)
 			{
 				internalValue[0] = binding.X.Value;
 				internalValue[1] = binding.Y.Value;
-				internalValue[2] = binding.Z.Value;
-
-				step = Binding.X.Step / 10.0f;
+				step = binding.X.Step / 10.0f;
 			}
 
-			if (Manager.NativeManager.DragFloat3EfkEx(id, internalValue, step,
+			if (Manager.NativeManager.DragFloat2EfkEx(id, internalValue, step,
 				float.MinValue, float.MaxValue,
 				float.MinValue, float.MaxValue,
-				float.MinValue, float.MaxValue,
-				"X:" + Core.Option.GetFloatFormat(), "Y:" + Core.Option.GetFloatFormat(), "Z:" + Core.Option.GetFloatFormat()))
+				"X:" + Core.Option.GetFloatFormat(), "Y:" + Core.Option.GetFloatFormat()))
 			{
 				FixValueInternal(isActive);
 			}
 
-			var isActive_Current = Manager.NativeManager.IsItemActive();
-
 			Popup();
+
+			var isActive_Current = Manager.NativeManager.IsItemActive();
 
 			if (isActive && !isActive_Current)
 			{
@@ -127,12 +116,6 @@ namespace Effekseer.GUI.Component
 			}
 
 			isActive = isActive_Current;
-
-			if (binding.IsDynamicEquationEnabled)
-			{
-				DynamicSelector.SelectInComponent(id_d, binding.DynamicEquation);
-				Popup();
-			}
 
 			valueChangingProp.Disable();
 		}
@@ -144,11 +127,6 @@ namespace Effekseer.GUI.Component
 			if (Manager.NativeManager.BeginPopupContextItem(id_c))
 			{
 				Functions.ShowReset(binding, id_reset);
-
-				if (binding.CanSelectDynamicEquation)
-				{
-					DynamicSelector.Popup(id_c, binding.DynamicEquation, binding.IsDynamicEquationEnabled);
-				}
 
 				Manager.NativeManager.EndPopup();
 

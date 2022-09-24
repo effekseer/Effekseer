@@ -4,28 +4,28 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Effekseer.GUI.Component
+namespace Effekseer.GUI.BindableComponent
 {
-	class Vector4D : Control, IParameterControl
+	class Float : Control, IParameterControl
 	{
 		string id = "";
-		string id_d = "";
 		string id_c = "";
+		string id_d = "";
 		string id_reset = "";
+
+		Data.Value.Float binding = null;
+
+		ValueChangingProperty valueChangingProp = new ValueChangingProperty();
+
+		float[] internalValue = new float[] { 0.0f };
 
 		bool isActive = false;
 
 		bool isPopupShown = false;
 
-		Data.Value.Vector4D binding = null;
-
-		ValueChangingProperty valueChangingProp = new ValueChangingProperty();
-
-		float[] internalValue = new float[] { 0.0f, 0.0f, 0.0f, 0.0f };
-
 		public bool EnableUndo { get; set; } = true;
 
-		public Data.Value.Vector4D Binding
+		public Data.Value.Float Binding
 		{
 			get
 			{
@@ -39,56 +39,42 @@ namespace Effekseer.GUI.Component
 
 				if (binding != null)
 				{
-					internalValue[0] = binding.X.Value;
-					internalValue[1] = binding.Y.Value;
-					internalValue[2] = binding.Z.Value;
+					internalValue[0] = binding.Value;
 				}
 			}
 		}
 
-		public Vector4D()
+		public Float()
 		{
-			var rand = new Random();
 			id = "###" + Manager.GetUniqueID().ToString();
-			id_d = "###" + Manager.GetUniqueID().ToString();
 			id_c = "###" + Manager.GetUniqueID().ToString();
+			id_d = "###" + Manager.GetUniqueID().ToString();
 			id_reset = "###" + Manager.GetUniqueID().ToString();
 		}
 
 		public void SetBinding(object o)
 		{
-			var o_ = o as Data.Value.Vector4D;
+			var o_ = o as Data.Value.Float;
 			Binding = o_;
 		}
 
 		public void FixValue()
 		{
-			FixValueInternal(false);
-		}
-
-		void FixValueInternal(bool combined)
-		{
 			if (binding == null) return;
 
 			if (EnableUndo)
 			{
-				binding.X.SetValue(internalValue[0], combined);
-				binding.Y.SetValue(internalValue[1], combined);
-				binding.Z.SetValue(internalValue[2], combined);
-				binding.W.SetValue(internalValue[3], combined);
+				binding.SetValue(internalValue[0]);
 			}
 			else
 			{
-				binding.X.SetValueDirectly(internalValue[0]);
-				binding.Y.SetValueDirectly(internalValue[1]);
-				binding.Z.SetValueDirectly(internalValue[2]);
-				binding.W.SetValueDirectly(internalValue[3]);
+				binding.SetValueDirectly(internalValue[0]);
 			}
 		}
 
 		public override void OnDisposed()
 		{
-			FixValueInternal(false);
+			FixValue();
 		}
 
 		public override void Update()
@@ -99,26 +85,23 @@ namespace Effekseer.GUI.Component
 
 			valueChangingProp.Enable(binding);
 
-			float step = 1.0f;
+			internalValue[0] = binding.Value;
 
-			if (binding != null)
+			if (Manager.NativeManager.DragFloat(id, internalValue, binding.Step / 10.0f, binding.RangeMin, binding.RangeMax))
 			{
-				internalValue[0] = binding.X.Value;
-				internalValue[1] = binding.Y.Value;
-				internalValue[2] = binding.Z.Value;
-				internalValue[3] = binding.W.Value;
-
-				step = Binding.X.Step / 10.0f;
+				if (EnableUndo)
+				{
+					binding.SetValue(internalValue[0], isActive);
+				}
+				else
+				{
+					binding.SetValueDirectly(internalValue[0]);
+				}
 			}
-
-			if (Manager.NativeManager.ColorEdit4(id, internalValue, swig.ColorEditFlags.HDR | swig.ColorEditFlags.Float))
-			{
-				FixValueInternal(isActive);
-			}
-
-			var isActive_Current = Manager.NativeManager.IsItemActive();
 
 			Popup();
+
+			var isActive_Current = Manager.NativeManager.IsItemActive();
 
 			if (isActive && !isActive_Current)
 			{
@@ -132,7 +115,6 @@ namespace Effekseer.GUI.Component
 				DynamicSelector.SelectInComponent(id_d, binding.DynamicEquation);
 				Popup();
 			}
-
 
 			valueChangingProp.Disable();
 		}
