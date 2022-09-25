@@ -240,6 +240,13 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/Dev/Cpp/EffekseerMaterialCompiler/Switch")
         Switch/EffekseerMaterialCompilerSwitch.cpp
     )
 
+    target_link_libraries(
+        EffekseerMaterialCompilerSwitch
+        PRIVATE
+        EffekseerMaterialCompilerGLSLGenerator
+    )
+
+
     target_compile_definitions(EffekseerMaterialCompilerSwitch PRIVATE __SHARED_OBJECT__=1)
 
     set_target_properties(
@@ -268,6 +275,12 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/Dev/Cpp/EffekseerMaterialCompiler/PS4/")
         SHARED
         PS4/EffekseerMaterialCompilerPS4.h
         PS4/EffekseerMaterialCompilerPS4.cpp
+    )
+
+    target_link_libraries(
+        EffekseerMaterialCompilerPS4
+        PRIVATE
+        EffekseerMaterialCompilerHLSLGenerator
     )
 
     target_compile_definitions(EffekseerMaterialCompilerPS4 PRIVATE __SHARED_OBJECT__=1)
@@ -299,6 +312,12 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/Dev/Cpp/EffekseerMaterialCompiler/PS5/")
         SHARED
         PS5/EffekseerMaterialCompilerPS5.h
         PS5/EffekseerMaterialCompilerPS5.cpp
+    )
+
+    target_link_libraries(
+        EffekseerMaterialCompilerPS5
+        PRIVATE
+        EffekseerMaterialCompilerHLSLGenerator
     )
 
     target_compile_definitions(EffekseerMaterialCompilerPS5 PRIVATE __SHARED_OBJECT__=1)
