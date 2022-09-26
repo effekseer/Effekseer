@@ -27,7 +27,10 @@ file(GLOB files_core
     EffekseerCore/Data/Value/ObjectCollection.cs
     EffekseerCore/Localization/Localization.cs
     EffekseerCore/EffectAsset/EffectAsset.cs
-
+    EffekseerCore/Math/Vector2I.cs
+    EffekseerCore/Math/Vector3I.cs
+    EffekseerCore/Math/Vector2F.cs
+    EffekseerCore/Math/Vector3F.cs
 )
 
 list(APPEND files_core
