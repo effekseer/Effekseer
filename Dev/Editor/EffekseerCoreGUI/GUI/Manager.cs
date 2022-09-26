@@ -708,7 +708,7 @@ namespace Effekseer.GUI
 				var rayOrigin = ray.Origin;
 				var rayDirection = ray.Direction;
 				var rayPos = new swig.Vector3F(rayOrigin.X + rayDirection.X, rayOrigin.Y + rayDirection.Y, rayOrigin.Z + rayDirection.Z);
-				HardwareDevice.SoundDevice.SetListener(ray.Origin, rayPos, new Vector3F(0, 1, 0));
+				HardwareDevice.SoundDevice.SetListener(ray.Origin, rayPos, new swig.Vector3F(0, 1, 0));
 			}
 
 			HardwareDevice.GraphicsDevice.ResetRenderTargets();
