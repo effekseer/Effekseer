@@ -128,9 +128,31 @@ namespace Effekseer.EffectAsset
 
 	public class PositionParameter
 	{
-		public float X;
-		public float Y;
-		public float Z;
+		public class FixedParamater
+		{
+			[Key(key = "Position_FixedParamater_Location")]
+			public Vector3F Location;
+		}
+
+		public ParamaterType Type = ParamaterType.Fixed;
+
+		public FixedParamater Fixed = new FixedParamater();
+
+		public enum ParamaterType : int
+		{
+			[Key(key = "Position_ParamaterType_Fixed")]
+			Fixed = 0,
+			[Key(key = "Position_ParamaterType_PVA")]
+			PVA = 1,
+			[Key(key = "Position_ParamaterType_Easing")]
+			Easing = 2,
+			[Key(key = "Position_ParamaterType_LocationFCurve")]
+			LocationFCurve = 3,
+			[Key(key = "Position_ParameterType_NurbsCurve")]
+			NurbsCurve = 4,
+			[Key(key = "Position_ParameterType_ViewOffset")]
+			ViewOffset = 5,
+		}
 	}
 
 	public class RotationParameter
