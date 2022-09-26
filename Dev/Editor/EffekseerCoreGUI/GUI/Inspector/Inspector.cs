@@ -263,6 +263,25 @@ namespace Effekseer.GUI.Inspector
 	{
 		// Gui表示を登録する
 		private static readonly InspectorGuiDictionary GuiDictionary = new InspectorGuiDictionary();
+		
+		private static List<string> FieldGuiIdList = new List<string>();
+
+		private static InspectorEditable LastTarget = null;
+
+		private static void GenerateFieldGuiIds(InspectorEditable target)
+		{
+			if (FieldGuiIdList == null)
+			{
+				FieldGuiIdList = new List<string>();
+			}
+			FieldGuiIdList.Clear();
+
+			var fields = target.GetType().GetFields();
+			foreach (var field in fields)
+			{
+				FieldGuiIdList.Add(new string("###" + Manager.GetUniqueID().ToString()));
+			}
+		}
 
 		public static void Update(NodeTreeGroupContext context, EditorState editorState, InspectorEditable target)
 		{
@@ -279,8 +298,18 @@ namespace Effekseer.GUI.Inspector
 			// エディタに表示する変数群
 			var fields = target.GetType().GetFields();
 
-			foreach (var field in fields)
+			// Generate field GUI IDs when target is selected or changed.
+			if ((LastTarget == null && target != null) || (target.InstanceID != LastTarget.InstanceID))
 			{
+				GenerateFieldGuiIds(target);
+			}
+			LastTarget = target;
+
+
+			for (int i = 0; i < fields.Length; ++i)
+			{
+				var field = fields[i];
+
 				getterSetters[0].Reset(target, field);
 				var prop = context.EditorProperty.Properties.FirstOrDefault(_ => _.InstanceID == target.InstanceID);
 				bool isValueChanged = false;
@@ -326,6 +355,8 @@ namespace Effekseer.GUI.Inspector
 				if (GuiDictionary.HasFunction(valueType))
 				{
 					var func = GuiDictionary.GetFunction(valueType);
+
+					name += FieldGuiIdList[i];
 
 					// 配列かどうかは関数内でやる
 					if (func(value, name, field, target))
