@@ -160,5 +160,42 @@ namespace Effekseer.EffectAsset
 		public float X;
 		public float Y;
 		public float Z;
+
+		public FloatWithRange Range = new FloatWithRange();
+	}
+
+	public class FloatWithRange
+	{
+		public float Max = float.MaxValue;
+		public float Min = float.MinValue;
+		public Data.DrawnAs DrawnAs = Data.DrawnAs.CenterAndAmplitude;
+
+		public float Center
+		{
+			get
+			{
+				return (Max + Min) / 2;
+			}
+			set
+			{
+				var amplitude = Amplitude;
+				Max = value + amplitude;
+				Min = value - amplitude;
+			}
+		}
+
+		public float Amplitude
+		{
+			get
+			{
+				return Max - Center;
+			}
+			set
+			{
+				var center = Center;
+				Max = center + value;
+				Min = center - value;
+			}
+		}
 	}
 }
