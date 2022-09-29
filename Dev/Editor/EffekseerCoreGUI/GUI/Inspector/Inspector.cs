@@ -49,15 +49,21 @@ namespace Effekseer.GUI.Inspector
 		}
 	}
 
+	class InspectorGuiResult
+	{
+		public bool isEdited;
+		public object value;
+	}
+
 	// 型情報とGuiを表示する関数を紐づけるクラス
 	class InspectorGuiDictionary
 	{
-		private Dictionary<Type, Func<object, string, FieldInfo, InspectorEditable, bool>> FuncDictionary { get; }
+		private Dictionary<Type, Func<object, string, FieldInfo, InspectorEditable, InspectorGuiResult>> FuncDictionary { get; }
 
 		public InspectorGuiDictionary()
 		{
 			// 型情報とGuiを表示する関数を紐づける
-			FuncDictionary = new Dictionary<Type, Func<object, string, FieldInfo, InspectorEditable, bool>>
+			FuncDictionary = new Dictionary<Type, Func<object, string, FieldInfo, InspectorEditable, InspectorGuiResult>>
 			{
 				{ typeof(int), GuiInt },
 				{ typeof(float), GuiFloat },
@@ -71,192 +77,110 @@ namespace Effekseer.GUI.Inspector
 			return FuncDictionary.ContainsKey(type);
 		}
 
-		public Func<object, string, FieldInfo, InspectorEditable, bool> GetFunction(Type type)
+		public Func<object, string, FieldInfo, InspectorEditable, InspectorGuiResult> GetFunction(Type type)
 		{
 			return FuncDictionary[type];
 		}
 
-		private bool GuiInt(object value, string name, FieldInfo field, InspectorEditable target)
+		private InspectorGuiResult GuiInt(object value, string name, FieldInfo field, InspectorEditable target)
 		{
-			// ver.1
-#if false
-			if (value is int i)
-			{
-				int[] v = new[] { i };
-				if (Manager.NativeManager.DragInt(name + "###" + field.GetHashCode(), v, 1))
-				{
-					field.SetValue(target, v[0]);
-					return true;
-				}
-			}
-			return false;
-#else
-			// ver.2
-			// SetValueを関数側で処理したいなら配列かどうかで分岐しないと無理
-			// 引数のobjectは int or int[]　を前提とする
+			InspectorGuiResult ret = new InspectorGuiResult();
+
 			if (value is int iValue)
 			{
 				int[] v = new[] { iValue };
-				if (Manager.NativeManager.DragInt(name + "###" + field.Name, v, 1))
+				if (Manager.NativeManager.DragInt(name, v, 1))
 				{
-					field.SetValue(target, v[0]);
-					return true;
+					ret.isEdited = true;
+					ret.value = v[0];
+					return ret;
 				}
-			}
-			else if (value is int[] iArray)
-			{
-				bool changed = false;
-				for (int i = 0; i < iArray.Length; ++i)
-				{
-					int[] v = new[] { iArray[i] };
-					if (Manager.NativeManager.DragInt(i + ": " + name + "###" + field.Name + i, v, 1))
-					{
-						iArray[i] = v[0];
-						field.SetValue(target, iArray);
-						changed = true;
-					}
-				}
-				return changed;
 			}
 			else
 			{
 				Manager.NativeManager.Text("Assert GuiInt");
 			}
-			return false;
-#endif
+			return ret;
 		}
-		private bool GuiInt2(object[] value, string name, FieldInfo field, InspectorEditable target)
+
+		private InspectorGuiResult GuiFloat(object value, string name, FieldInfo field, InspectorEditable target)
 		{
-			for (int i = 0; i < value.Length; ++i)
-			{
-				if (value[i] is int iValue)
-				{
-					int[] v = new[] { iValue };
-					if (Manager.NativeManager.DragInt(name + "###" + field.Name + i, v, 1))
-					{
-						field.SetValue(target, v);
-						return true;
-					}
-				}
-			}
-			return false;
-		}
-		private bool GuiFloat(object value, string name, FieldInfo field, InspectorEditable target)
-		{
+			InspectorGuiResult ret = new InspectorGuiResult();
 			if (value is float fValue)
 			{
 				float[] v = new[] { fValue };
-				if (Manager.NativeManager.DragFloat(name + "###" + field.Name, v, .1f))
+				if (Manager.NativeManager.DragFloat(name, v, .1f))
 				{
-					field.SetValue(target, v[0]);
-					return true;
+					ret.isEdited = true;
+					ret.value = v[0];
+					return ret;
 				}
-			}
-			else if (value is float[] fArray)
-			{
-				bool changed = false;
-				for (int i = 0; i < fArray.Length; ++i)
-				{
-					float[] v = new[] { fArray[i] };
-					if (Manager.NativeManager.DragFloat(i + ": " + name + "###" + field.Name + i, v, .1f))
-					{
-						fArray[i] = v[0];
-						field.SetValue(target, fArray);
-						changed = true;
-					}
-				}
-				return changed;
 			}
 			else
 			{
 				Manager.NativeManager.Text("Assert GuiFloat");
 			}
-			return false;
+			return ret;
 		}
-		private bool GuiString(object value, string name, FieldInfo field, InspectorEditable target)
+		private InspectorGuiResult GuiString(object value, string name, FieldInfo field, InspectorEditable target)
 		{
+			InspectorGuiResult ret = new InspectorGuiResult();
 			if (value is string sValue)
 			{
-				if (Manager.NativeManager.InputText(name + "###" + field.Name, sValue))
+				if (Manager.NativeManager.InputText(name, sValue))
 				{
-					field.SetValue(target, Manager.NativeManager.GetInputTextResult());
-					return true;
+					ret.isEdited = true;
+					ret.value = sValue;
+					return ret;
 				}
-			}
-			else if (value is string[] sArray)
-			{
-				bool changed = false;
-				for (int i = 0; i < sArray.Length; ++i)
-				{
-					if(sArray[i] == null)
-					{
-						continue;
-					}
-					if (Manager.NativeManager.InputText(i + ": " + name + "###" + field.Name + i, sArray[i]))
-					{
-						sArray[i] = Manager.NativeManager.GetInputTextResult();
-						field.SetValue(target, sArray);
-						changed = true;
-					}
-				}
-				return changed;
 			}
 			else
 			{
 				Manager.NativeManager.Text("Assert GuiString");
 			}
-			return false;
+			return ret;
 		}
 
-		private bool GuiVector3D(object value, string name, FieldInfo field, InspectorEditable target)
+		private InspectorGuiResult GuiVector3D(object value, string name, FieldInfo field, InspectorEditable target)
 		{
+			InspectorGuiResult ret = new InspectorGuiResult();
 
 			if (value is Vector3D vec3Value)
 			{
 				FieldInfo fieldInternalValue = vec3Value.GetType().GetField("internalValue", BindingFlags.NonPublic | BindingFlags.Instance);
 				float[] internalValue = (float[])fieldInternalValue.GetValue(vec3Value);
 
-				if (Manager.NativeManager.DragFloat3EfkEx(name + "###" + field.Name, internalValue, 1.0f,
+				if (Manager.NativeManager.DragFloat3EfkEx(name, internalValue, 1.0f,
 					float.MinValue, float.MaxValue,
 					float.MinValue, float.MaxValue,
 					float.MinValue, float.MaxValue,
 					"X:" + Core.Option.GetFloatFormat(), "Y:" + Core.Option.GetFloatFormat(), "Z:" + Core.Option.GetFloatFormat()))
 				{
-					field.SetValue(target, vec3Value);
-					return true;
+					ret.isEdited = true;
+					ret.value = vec3Value;
+					return ret;
 				}
-			}
-			else if (value is Vector3D[] vec3Array)
-			{
-				bool changed = false;
-				for (int i = 0; i < vec3Array.Length; ++i)
-				{
-					FieldInfo fieldInternalValue = vec3Array[i].GetType().GetField("internalValue", BindingFlags.NonPublic | BindingFlags.Instance);
-					float[] internalValue = (float[])fieldInternalValue.GetValue(vec3Array[i]);
-
-					if (Manager.NativeManager.DragFloat3EfkEx(name + "###" + field.Name + i, internalValue, 1.0f,
-					float.MinValue, float.MaxValue,
-					float.MinValue, float.MaxValue,
-					float.MinValue, float.MaxValue,
-					"X:" + Core.Option.GetFloatFormat(), "Y:" + Core.Option.GetFloatFormat(), "Z:" + Core.Option.GetFloatFormat()))
-					{
-						changed = true;
-					}
-				}
-				
-				if (changed)
-				{
-					field.SetValue(target, vec3Array);
-				}
-				return changed;
 			}
 			else
 			{
 				Manager.NativeManager.Text("Assert GuiVector3D");
 			}
 
-			return false;
+			return ret;
 		}
+	}
+
+	class InspectorGuiId
+	{
+		public InspectorGuiId()
+		{
+			Id = new string("###" + Manager.GetUniqueID().ToString());
+		}
+
+		public string Id { get; private set; } = "";
+
+		// フィールドが配列などであったとき、その各要素について格納する
+		public List<InspectorGuiId> subElement = new List<InspectorGuiId>();
 	}
 
 	class Inspector
@@ -264,7 +188,7 @@ namespace Effekseer.GUI.Inspector
 		// Gui表示を登録する
 		private static readonly InspectorGuiDictionary GuiDictionary = new InspectorGuiDictionary();
 		
-		private static List<string> FieldGuiIdList = new List<string>();
+		private static List<InspectorGuiId> FieldGuiIdList = new List<InspectorGuiId>();
 
 		private static InspectorEditable LastTarget = null;
 
@@ -272,14 +196,14 @@ namespace Effekseer.GUI.Inspector
 		{
 			if (FieldGuiIdList == null)
 			{
-				FieldGuiIdList = new List<string>();
+				FieldGuiIdList = new List<InspectorGuiId>();
 			}
 			FieldGuiIdList.Clear();
 
 			var fields = target.GetType().GetFields();
 			foreach (var field in fields)
 			{
-				FieldGuiIdList.Add(new string("###" + Manager.GetUniqueID().ToString()));
+				FieldGuiIdList.Add(new InspectorGuiId());
 			}
 		}
 
@@ -299,6 +223,7 @@ namespace Effekseer.GUI.Inspector
 			var fields = target.GetType().GetFields();
 
 			// Generate field GUI IDs when target is selected or changed.
+			// TODO : 複数ターゲットに対応できていない
 			if ((LastTarget == null && target != null) || (target.InstanceID != LastTarget.InstanceID))
 			{
 				GenerateFieldGuiIds(target);
@@ -342,7 +267,8 @@ namespace Effekseer.GUI.Inspector
 
 				// 配列かリストの時、エレメントの型を取得する
 				var valueType = value.GetType();
-				if (valueType.IsArray)
+				bool isArray = valueType.IsArray;
+				if (isArray)
 				{
 					valueType = valueType.GetElementType();
 				}
@@ -356,12 +282,53 @@ namespace Effekseer.GUI.Inspector
 				{
 					var func = GuiDictionary.GetFunction(valueType);
 
-					name += FieldGuiIdList[i];
-
-					// 配列かどうかは関数内でやる
-					if (func(value, name, field, target))
+					if (isArray)
 					{
-						context.CommandManager.NotifyEditFields(target);
+						Array arrayValue = (Array)value;
+
+						// GuiIdが足りなければ、すべて再生成
+						// GenerateFieldGuiIdsの中でやりたいが、型情報からは要素数が分からないのでここで生成。
+						if (arrayValue.GetLength(0) > FieldGuiIdList[i].subElement.Count())
+						{
+							FieldGuiIdList[i].subElement.Clear();
+
+							foreach (var v in arrayValue)
+							{
+								FieldGuiIdList[i].subElement.Add(new InspectorGuiId());
+							}
+						}
+
+						int j = 0;
+						bool isEdited = false;
+						foreach (var v in arrayValue)
+						{
+							name += FieldGuiIdList[i].subElement[j].Id;
+							var result = func(v, name, field, target);
+							if (result.isEdited)
+							{
+								if (valueType.IsValueType)
+								{
+									arrayValue.SetValue(result.value, j);
+								}
+								isEdited = true;
+							}
+							++j;
+						}
+						if (isEdited)
+						{
+							field.SetValue(target, arrayValue);
+							context.CommandManager.NotifyEditFields(target);
+						}
+					}
+					else
+					{
+						name += FieldGuiIdList[i].Id;
+						var result = func(value, name, field, target);
+						if (result.isEdited)
+						{
+							field.SetValue(target, result.value);
+							context.CommandManager.NotifyEditFields(target);
+						}
 					}
 				}
 				else
