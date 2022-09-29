@@ -58,12 +58,12 @@ namespace Effekseer.GUI.Inspector
 	// å^èÓïÒÇ∆GuiÇï\é¶Ç∑ÇÈä÷êîÇïRÇ√ÇØÇÈÉNÉâÉX
 	class InspectorGuiDictionary
 	{
-		private Dictionary<Type, Func<object, string, FieldInfo, InspectorEditable, InspectorGuiResult>> FuncDictionary { get; }
+		private Dictionary<Type, Func<object, string, InspectorGuiResult>> FuncDictionary { get; }
 
 		public InspectorGuiDictionary()
 		{
 			// å^èÓïÒÇ∆GuiÇï\é¶Ç∑ÇÈä÷êîÇïRÇ√ÇØÇÈ
-			FuncDictionary = new Dictionary<Type, Func<object, string, FieldInfo, InspectorEditable, InspectorGuiResult>>
+			FuncDictionary = new Dictionary<Type, Func<object, string, InspectorGuiResult>>
 			{
 				{ typeof(int), GuiInt },
 				{ typeof(float), GuiFloat },
@@ -77,12 +77,12 @@ namespace Effekseer.GUI.Inspector
 			return FuncDictionary.ContainsKey(type);
 		}
 
-		public Func<object, string, FieldInfo, InspectorEditable, InspectorGuiResult> GetFunction(Type type)
+		public Func<object, string, InspectorGuiResult> GetFunction(Type type)
 		{
 			return FuncDictionary[type];
 		}
 
-		private InspectorGuiResult GuiInt(object value, string name, FieldInfo field, InspectorEditable target)
+		private InspectorGuiResult GuiInt(object value, string name)
 		{
 			InspectorGuiResult ret = new InspectorGuiResult();
 
@@ -103,7 +103,7 @@ namespace Effekseer.GUI.Inspector
 			return ret;
 		}
 
-		private InspectorGuiResult GuiFloat(object value, string name, FieldInfo field, InspectorEditable target)
+		private InspectorGuiResult GuiFloat(object value, string name)
 		{
 			InspectorGuiResult ret = new InspectorGuiResult();
 			if (value is float fValue)
@@ -122,7 +122,7 @@ namespace Effekseer.GUI.Inspector
 			}
 			return ret;
 		}
-		private InspectorGuiResult GuiString(object value, string name, FieldInfo field, InspectorEditable target)
+		private InspectorGuiResult GuiString(object value, string name)
 		{
 			InspectorGuiResult ret = new InspectorGuiResult();
 			if (value is string sValue)
@@ -141,7 +141,7 @@ namespace Effekseer.GUI.Inspector
 			return ret;
 		}
 
-		private InspectorGuiResult GuiVector3D(object value, string name, FieldInfo field, InspectorEditable target)
+		private InspectorGuiResult GuiVector3D(object value, string name)
 		{
 			InspectorGuiResult ret = new InspectorGuiResult();
 
@@ -303,7 +303,7 @@ namespace Effekseer.GUI.Inspector
 						foreach (var v in arrayValue)
 						{
 							name += FieldGuiIdList[i].subElement[j].Id;
-							var result = func(v, name, field, target);
+							var result = func(v, name);
 							if (result.isEdited)
 							{
 								if (valueType.IsValueType)
@@ -323,7 +323,7 @@ namespace Effekseer.GUI.Inspector
 					else
 					{
 						name += FieldGuiIdList[i].Id;
-						var result = func(value, name, field, target);
+						var result = func(value, name);
 						if (result.isEdited)
 						{
 							field.SetValue(target, result.value);
