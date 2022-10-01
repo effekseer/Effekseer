@@ -41,14 +41,14 @@ namespace Effekseer.GUI.Inspector
 			return FuncDictionary[type];
 		}
 
-		private InspectorGuiResult GuiInt(object value, string name)
+		private InspectorGuiResult GuiInt(object value, string label)
 		{
 			InspectorGuiResult ret = new InspectorGuiResult();
 
 			if (value is int iValue)
 			{
 				int[] v = new[] { iValue };
-				if (Manager.NativeManager.DragInt(name, v, 1))
+				if (Manager.NativeManager.DragInt(label, v, 1))
 				{
 					ret.isEdited = true;
 					ret.value = v[0];
@@ -62,13 +62,13 @@ namespace Effekseer.GUI.Inspector
 			return ret;
 		}
 
-		private InspectorGuiResult GuiFloat(object value, string name)
+		private InspectorGuiResult GuiFloat(object value, string label)
 		{
 			InspectorGuiResult ret = new InspectorGuiResult();
 			if (value is float fValue)
 			{
 				float[] v = new[] { fValue };
-				if (Manager.NativeManager.DragFloat(name, v, .1f))
+				if (Manager.NativeManager.DragFloat(label, v, .1f))
 				{
 					ret.isEdited = true;
 					ret.value = v[0];
@@ -81,12 +81,12 @@ namespace Effekseer.GUI.Inspector
 			}
 			return ret;
 		}
-		private InspectorGuiResult GuiString(object value, string name)
+		private InspectorGuiResult GuiString(object value, string label)
 		{
 			InspectorGuiResult ret = new InspectorGuiResult();
 			if (value is string sValue)
 			{
-				if (Manager.NativeManager.InputText(name, sValue))
+				if (Manager.NativeManager.InputText(label, sValue))
 				{
 					ret.isEdited = true;
 					ret.value = sValue;
@@ -100,7 +100,7 @@ namespace Effekseer.GUI.Inspector
 			return ret;
 		}
 
-		private InspectorGuiResult GuiVector3D(object value, string name)
+		private InspectorGuiResult GuiVector3D(object value, string label)
 		{
 			InspectorGuiResult ret = new InspectorGuiResult();
 
@@ -109,7 +109,7 @@ namespace Effekseer.GUI.Inspector
 				FieldInfo fieldInternalValue = vec3Value.GetType().GetField("internalValue", BindingFlags.NonPublic | BindingFlags.Instance);
 				float[] internalValue = (float[])fieldInternalValue.GetValue(vec3Value);
 
-				if (Manager.NativeManager.DragFloat3EfkEx(name, internalValue, 1.0f,
+				if (Manager.NativeManager.DragFloat3EfkEx(label, internalValue, 1.0f,
 					float.MinValue, float.MaxValue,
 					float.MinValue, float.MaxValue,
 					float.MinValue, float.MaxValue,
