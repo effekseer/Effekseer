@@ -104,7 +104,8 @@ void ResizeBicubic(uint32_t* dst,
 	float hf = (float)srcHeight / dstHeight;
 
 	// bicubic weight function
-	auto weight = [](float d) -> float {
+	auto weight = [](float d) -> float
+	{
 		const float a = -1.0f;
 		return d <= 1.0f   ? ((a + 2.0f) * d * d * d) - ((a + 3.0f) * d * d) + 1
 			   : d <= 2.0f ? (a * d * d * d) - (5.0f * a * d * d) + (8.0f * a * d) - (4.0f * a)
@@ -308,21 +309,24 @@ bool GUIManager::Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, E
 
 	mainWindow_ = mainWindow;
 
-	window->Resized = [this](int x, int y) -> void {
+	window->Resized = [this](int x, int y) -> void
+	{
 		if (this->callback != nullptr)
 		{
 			this->callback->Resized(x, y);
 		}
 	};
 
-	window->Focused = [this]() -> void {
+	window->Focused = [this]() -> void
+	{
 		if (this->callback != nullptr)
 		{
 			this->callback->Focused();
 		}
 	};
 
-	window->Droped = [this](const char* path) -> void {
+	window->Droped = [this](const char* path) -> void
+	{
 		if (this->callback != nullptr)
 		{
 			this->callback->SetPath(Effekseer::Tool::StringHelper::ConvertUtf8ToUtf16(path).c_str());
@@ -330,7 +334,8 @@ bool GUIManager::Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, E
 		}
 	};
 
-	window->Closing = [this]() -> bool {
+	window->Closing = [this]() -> bool
+	{
 		if (this->callback != nullptr)
 		{
 			return this->callback->Closing();
@@ -339,14 +344,16 @@ bool GUIManager::Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, E
 		return true;
 	};
 
-	window->Iconify = [this](int f) -> void {
+	window->Iconify = [this](int f) -> void
+	{
 		if (this->callback != nullptr)
 		{
 			this->callback->Iconify(f);
 		}
 	};
 
-	window->DpiChanged = [this](float scale) -> void {
+	window->DpiChanged = [this](float scale) -> void
+	{
 		this->ResetGUIStyle();
 
 		if (this->callback != nullptr)
@@ -1073,7 +1080,7 @@ int GUIManager::GetItemID()
 void GUIManager::SetFocusID(int id)
 {
 	ImGui::SetFocusID(id, ImGui::GetCurrentWindow());
-	//GImGui->NavDisableHighlight = false;
+	// GImGui->NavDisableHighlight = false;
 }
 
 float GUIManager::GetScrollX()
@@ -1210,7 +1217,8 @@ void CallWithEscaped(const std::function<void(const char*)>& f, const char16_t* 
 
 void GUIManager::Text(const char16_t* text)
 {
-	auto func = [](const char* c) -> void { ImGui::Text(c); };
+	auto func = [](const char* c) -> void
+	{ ImGui::Text(c); };
 	CallWithEscaped(func, text);
 }
 
@@ -1547,7 +1555,7 @@ const char16_t* GUIManager::GetInputTextResult()
 
 bool GUIManager::ColorEdit4(const char16_t* label, float* col, ColorEditFlags flags)
 {
-	//return ImGui::ColorEdit4_(utf8str<256>(label), col, (int)flags);
+	// return ImGui::ColorEdit4_(utf8str<256>(label), col, (int)flags);
 	return ImGui::ColorEdit4(utf8str<256>(label), col, (int)flags);
 }
 
@@ -1637,7 +1645,8 @@ bool GUIManager::SelectableContent(const char16_t* idstr, const char16_t* label,
 
 void GUIManager::SetTooltip(const char16_t* text)
 {
-	auto func = [](const char* c) -> void { ImGui::SetTooltip(c); };
+	auto func = [](const char* c) -> void
+	{ ImGui::SetTooltip(c); };
 	CallWithEscaped(func, text);
 }
 
@@ -1979,6 +1988,96 @@ bool GUIManager::IsAnyWindowFocused()
 MouseCursor GUIManager::GetMouseCursor()
 {
 	return (MouseCursor)ImGui::GetMouseCursor();
+}
+
+void GUIManager::PushID(int int_id)
+{
+	ImGui::PushID(int_id);
+}
+
+void GUIManager::PopID()
+{
+	ImGui::PopID();
+}
+
+bool GUIManager::BeginTable(const char* str_id, int column, TableFlags flags, const Vec2& outer_size, float inner_width)
+{
+	return ImGui::BeginTable(str_id, column, static_cast<ImGuiTabBarFlags>(flags), ImVec2{outer_size.X, outer_size.Y}, inner_width);
+}
+
+void GUIManager::EndTable()
+{
+	ImGui::EndTable();
+}
+
+void GUIManager::TableNextRow(TableRowFlags row_flags, float min_row_height)
+{
+	ImGui::TableNextRow(static_cast<ImGuiTableRowFlags>(row_flags), min_row_height);
+}
+
+bool GUIManager::TableNextColumn()
+{
+	return ImGui::TableNextColumn();
+}
+
+bool GUIManager::TableSetColumnIndex(int column_n)
+{
+	return ImGui::TableSetColumnIndex(column_n);
+}
+
+void GUIManager::TableSetupColumn(const char* label, TableColumnFlags flags, float init_width_or_weight, uint32_t user_id)
+{
+	ImGui::TableSetupColumn(label, static_cast<ImGuiTableColumnFlags>(flags), init_width_or_weight, user_id);
+}
+
+void GUIManager::TableSetupScrollFreeze(int cols, int rows)
+{
+	ImGui::TableSetupScrollFreeze(cols, rows);
+}
+
+void GUIManager::TableHeadersRow()
+{
+	ImGui::TableHeadersRow();
+}
+
+void GUIManager::TableHeader(const char* label)
+{
+	ImGui::TableHeader(label);
+}
+
+int GUIManager::TableGetColumnCount()
+{
+	return ImGui::TableGetColumnCount();
+}
+
+int GUIManager::TableGetColumnIndex()
+{
+	return ImGui::TableGetColumnIndex();
+}
+
+int GUIManager::TableGetRowIndex()
+{
+	return ImGui::TableGetRowIndex();
+}
+
+const char* GUIManager::TableGetColumnName(int column_n)
+{
+	return ImGui::TableGetColumnName(column_n);
+}
+
+TableColumnFlags GUIManager::TableGetColumnFlags(int column_n)
+{
+	return static_cast<TableColumnFlags>(ImGui::TableGetColumnFlags(column_n));
+}
+
+void GUIManager::TableSetColumnEnabled(int column_n, bool v)
+{
+	ImGui::TableSetColumnEnabled(column_n, v);
+}
+
+void GUIManager::TableSetBgColor(TableBgTarget target, uint32_t color, int column_n)
+{
+	ImGui::TableSetBgColor(static_cast<ImGuiTableBgTarget>(target), color, column_n);
 }
 
 float GUIManager::GetHoveredIDTimer()
@@ -2362,7 +2461,7 @@ void GUIManager::EndNodeFrameTimeline(int* frameMin, int* frameMax, int* current
 	NodeFrameTimeline::EndNodeFrameTimeline(frameMin, frameMax, currentFrame, selectedEntry, firstFrame);
 }
 
-bool GUIManager::GradientHDR(int32_t gradientID, Effekseer::Tool::GradientHDRState& state, Effekseer::Tool::GradientHDRGUIState& guiState,bool isMarkerShown)
+bool GUIManager::GradientHDR(int32_t gradientID, Effekseer::Tool::GradientHDRState& state, Effekseer::Tool::GradientHDRGUIState& guiState, bool isMarkerShown)
 {
 	return ImGradientHDR(gradientID, state.GetState(), guiState.GetTemporaryState(), isMarkerShown);
 }
