@@ -109,113 +109,138 @@ namespace Effekseer.GUI.Inspector
 				GenerateFieldGuiIds(target);
 			}
 			LastTarget = target;
-
-
-			for (int i = 0; i < fields.Length; ++i)
+			if (Manager.NativeManager.BeginTable("Table", 2, 
+				swig.TableFlags.Resizable |
+				swig.TableFlags.BordersInnerV |
+				swig.TableFlags.SizingFixedFit |
+				swig.TableFlags.NoSavedSettings))
 			{
-				var field = fields[i];
+				// アイテムの幅を最大に設定
+				Manager.NativeManager.TableNextRow();
+				Manager.NativeManager.TableSetColumnIndex(0);
+				Manager.NativeManager.PushItemWidth(-1);
+				Manager.NativeManager.TableSetColumnIndex(1);
+				Manager.NativeManager.PushItemWidth(-1);
 
-				getterSetters[0].Reset(target, field);
-				var prop = context.EditorProperty.Properties.FirstOrDefault(_ => _.InstanceID == target.InstanceID);
-				bool isValueChanged = false;
-				if (prop != null)
+				for (int i = 0; i < fields.Length; ++i)
 				{
-					// 配列の変更が取れないのは別インスタンスに上書きされてるから？
-					// 配列のコピーではなく、配列の要素のコピーにすべき
-					isValueChanged = prop.IsValueEdited(getterSetters.Select(_ => _.GetName()).ToArray());
-				}
+					var field = fields[i];
 
-				var getterSetter = getterSetters.Last();
-				var value = getterSetter.GetValue();
-				var name = getterSetter.GetName();
+					getterSetters[0].Reset(target, field);
+					var prop = context.EditorProperty.Properties.FirstOrDefault(_ => _.InstanceID == target.InstanceID);
+					bool isValueChanged = false;
+					if (prop != null)
+					{
+						// 配列の変更が取れないのは別インスタンスに上書きされてるから？
+						// 配列のコピーではなく、配列の要素のコピーにすべき
+						isValueChanged = prop.IsValueEdited(getterSetters.Select(_ => _.GetName()).ToArray());
+					}
 
-				if (value == null)
-				{
-					// TODO : nullどうする？
-					Manager.NativeManager.Text("null : " + field.GetType().ToString());
-					continue;
-				}
+					var getterSetter = getterSetters.Last();
+					var value = getterSetter.GetValue();
+					var name = getterSetter.GetName();
 
-				if (isValueChanged)
-				{
-					name = "*" + name;
-				}
-				else
-				{
-					name = " " + name;
-				}
+					if (value == null)
+					{
+						// TODO : nullどうする？
+						//Manager.NativeManager.Text("null : " + field.GetType().ToString());
+						continue;
+					}
 
-				// 配列かリストの時、エレメントの型を取得する
-				var valueType = value.GetType();
-				bool isArray = valueType.IsArray;
-				if (isArray)
-				{
-					valueType = valueType.GetElementType();
-				}
-				else if (valueType.IsGenericType && valueType.GetGenericTypeDefinition() == typeof(List<>))
-				{
-					valueType = valueType.GetGenericArguments()[0];
-				}
+					if (isValueChanged)
+					{
+						name = "*" + name;
+					}
+					else
+					{
+						name = " " + name;
+					}
 
-				// TODO : 基底クラスNodeのpublic List<Node> Children = new List<Node>();が反応してる
-				if (GuiDictionary.HasFunction(valueType))
-				{
-					var func = GuiDictionary.GetFunction(valueType);
+					// display name(left side of table)
+					Manager.NativeManager.TableNextRow();
+					Manager.NativeManager.TableNextColumn();
+					// TODO : Separatorで区切るのはAssetなどの単位にする
+					Manager.NativeManager.Separator();
+					Manager.NativeManager.Text(name);
 
+					// 配列かリストの時、エレメントの型を取得する
+					var valueType = value.GetType();
+					bool isArray = valueType.IsArray;
 					if (isArray)
 					{
-						Array arrayValue = (Array)value;
+						valueType = valueType.GetElementType();
+					}
+					else if (valueType.IsGenericType && valueType.GetGenericTypeDefinition() == typeof(List<>))
+					{
+						valueType = valueType.GetGenericArguments()[0];
+					}
 
-						// GuiIdが足りなければ、すべて再生成
-						// GenerateFieldGuiIdsの中でやりたいが、型情報からは要素数が分からないのでここで生成。
-						if (arrayValue.GetLength(0) > FieldGuiInfoList[i].subElement.Count())
+					// display field(right side of table)
+					Manager.NativeManager.TableNextColumn();
+					// TODO : Separatorで区切るのはAssetなどの単位にする
+					Manager.NativeManager.Separator();
+					// TODO : 基底クラスNodeのpublic List<Node> Children = new List<Node>();が反応してる
+					if (GuiDictionary.HasFunction(valueType))
+					{
+						var func = GuiDictionary.GetFunction(valueType);
+
+						if (isArray)
 						{
-							FieldGuiInfoList[i].subElement.Clear();
+							Array arrayValue = (Array)value;
 
+							// GuiIdが足りなければ、すべて再生成
+							// GenerateFieldGuiIdsの中でやりたいが、型情報からは要素数が分からないのでここで生成。
+							if (arrayValue.GetLength(0) > FieldGuiInfoList[i].subElement.Count())
+							{
+								FieldGuiInfoList[i].subElement.Clear();
+
+								foreach (var v in arrayValue)
+								{
+									FieldGuiInfoList[i].subElement.Add(new InspectorGuiInfo());
+								}
+							}
+
+							int j = 0;
+							bool isEdited = false;
 							foreach (var v in arrayValue)
 							{
-								FieldGuiInfoList[i].subElement.Add(new InspectorGuiInfo());
+								string id = FieldGuiInfoList[i].subElement[j].Id;
+								var result = func(v, id);
+								if (result.isEdited)
+								{
+									if (valueType.IsValueType)
+									{
+										arrayValue.SetValue(result.value, j);
+									}
+									isEdited = true;
+								}
+								++j;
+							}
+							if (isEdited)
+							{
+								field.SetValue(target, arrayValue);
+								context.CommandManager.NotifyEditFields(target);
 							}
 						}
-
-						int j = 0;
-						bool isEdited = false;
-						foreach (var v in arrayValue)
+						else
 						{
-							name += FieldGuiInfoList[i].subElement[j].Id;
-							var result = func(v, name);
+							string id = FieldGuiInfoList[i].Id;
+							var result = func(value, id);
 							if (result.isEdited)
 							{
-								if (valueType.IsValueType)
-								{
-									arrayValue.SetValue(result.value, j);
-								}
-								isEdited = true;
+								field.SetValue(target, result.value);
+								context.CommandManager.NotifyEditFields(target);
 							}
-							++j;
-						}
-						if (isEdited)
-						{
-							field.SetValue(target, arrayValue);
-							context.CommandManager.NotifyEditFields(target);
 						}
 					}
 					else
 					{
-						name += FieldGuiInfoList[i].Id;
-						var result = func(value, name);
-						if (result.isEdited)
-						{
-							field.SetValue(target, result.value);
-							context.CommandManager.NotifyEditFields(target);
-						}
+						Manager.NativeManager.Text("No Regist : " + value.GetType().ToString() + " " + name);
 					}
 				}
-				else
-				{
-					Manager.NativeManager.Text("No Regist : " + value.GetType().ToString() + " " + name);
-				}
 			}
+			Manager.NativeManager.EndTable();
+			Manager.NativeManager.Separator();
 		}
 	}
 
@@ -229,7 +254,7 @@ namespace Effekseer.GUI.Inspector
 		// 配列を関数側で対応するのか、呼び出し側でどうにかするのか
 		// 試した感じ呼び出し側で制御した方が楽そう
 		public int[] IntArray = new int[2];
-		public float[] FloatArray = new float[2];
+		public float[] FloatArray = new float[5];
 		public string[] StringArray = new string[2] { "hoge", "fuga" };
 
 		// 全てのコレクションに対しプログラムをする方法なかったっけ
