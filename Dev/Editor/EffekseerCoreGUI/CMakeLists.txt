@@ -24,6 +24,7 @@ add_library(EffekseerCoreGUI
     SHARED
     ${files}
     GUI/Inspector/Inspector.cs
+    GUI/Inspector/InspectorGUI.cs
     GUI/Inspector/PartsTreeSystemExample.cs
 )
 
