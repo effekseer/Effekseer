@@ -49,130 +49,10 @@ namespace Effekseer.GUI.Inspector
 		}
 	}
 
-	class InspectorGuiResult
+
+	class InspectorGuiInfo
 	{
-		public bool isEdited;
-		public object value;
-	}
-
-	// å^èÓïÒÇ∆GuiÇï\é¶Ç∑ÇÈä÷êîÇïRÇ√ÇØÇÈÉNÉâÉX
-	class InspectorGuiDictionary
-	{
-		private Dictionary<Type, Func<object, string, InspectorGuiResult>> FuncDictionary { get; }
-
-		public InspectorGuiDictionary()
-		{
-			// å^èÓïÒÇ∆GuiÇï\é¶Ç∑ÇÈä÷êîÇïRÇ√ÇØÇÈ
-			FuncDictionary = new Dictionary<Type, Func<object, string, InspectorGuiResult>>
-			{
-				{ typeof(int), GuiInt },
-				{ typeof(float), GuiFloat },
-				{ typeof(string), GuiString },
-				{ typeof(Vector3D), GuiVector3D },
-			};
-		}
-
-		public bool HasFunction(Type type)
-		{
-			return FuncDictionary.ContainsKey(type);
-		}
-
-		public Func<object, string, InspectorGuiResult> GetFunction(Type type)
-		{
-			return FuncDictionary[type];
-		}
-
-		private InspectorGuiResult GuiInt(object value, string name)
-		{
-			InspectorGuiResult ret = new InspectorGuiResult();
-
-			if (value is int iValue)
-			{
-				int[] v = new[] { iValue };
-				if (Manager.NativeManager.DragInt(name, v, 1))
-				{
-					ret.isEdited = true;
-					ret.value = v[0];
-					return ret;
-				}
-			}
-			else
-			{
-				Manager.NativeManager.Text("Assert GuiInt");
-			}
-			return ret;
-		}
-
-		private InspectorGuiResult GuiFloat(object value, string name)
-		{
-			InspectorGuiResult ret = new InspectorGuiResult();
-			if (value is float fValue)
-			{
-				float[] v = new[] { fValue };
-				if (Manager.NativeManager.DragFloat(name, v, .1f))
-				{
-					ret.isEdited = true;
-					ret.value = v[0];
-					return ret;
-				}
-			}
-			else
-			{
-				Manager.NativeManager.Text("Assert GuiFloat");
-			}
-			return ret;
-		}
-		private InspectorGuiResult GuiString(object value, string name)
-		{
-			InspectorGuiResult ret = new InspectorGuiResult();
-			if (value is string sValue)
-			{
-				if (Manager.NativeManager.InputText(name, sValue))
-				{
-					ret.isEdited = true;
-					ret.value = sValue;
-					return ret;
-				}
-			}
-			else
-			{
-				Manager.NativeManager.Text("Assert GuiString");
-			}
-			return ret;
-		}
-
-		private InspectorGuiResult GuiVector3D(object value, string name)
-		{
-			InspectorGuiResult ret = new InspectorGuiResult();
-
-			if (value is Vector3D vec3Value)
-			{
-				FieldInfo fieldInternalValue = vec3Value.GetType().GetField("internalValue", BindingFlags.NonPublic | BindingFlags.Instance);
-				float[] internalValue = (float[])fieldInternalValue.GetValue(vec3Value);
-
-				if (Manager.NativeManager.DragFloat3EfkEx(name, internalValue, 1.0f,
-					float.MinValue, float.MaxValue,
-					float.MinValue, float.MaxValue,
-					float.MinValue, float.MaxValue,
-					"X:" + Core.Option.GetFloatFormat(), "Y:" + Core.Option.GetFloatFormat(), "Z:" + Core.Option.GetFloatFormat()))
-				{
-					ret.isEdited = true;
-					ret.value = vec3Value;
-					return ret;
-				}
-			}
-			else
-			{
-				Manager.NativeManager.Text("Assert GuiVector3D");
-			}
-
-			return ret;
-		}
-	}
-
-	class InspectorGuiId
-	{
-		public InspectorGuiId()
+		public InspectorGuiInfo()
 		{
 			Id = new string("###" + Manager.GetUniqueID().ToString());
 		}
@@ -180,7 +60,7 @@ namespace Effekseer.GUI.Inspector
 		public string Id { get; private set; } = "";
 
 		// ÉtÉBÅ[ÉãÉhÇ™îzóÒÇ»Ç«Ç≈Ç†Ç¡ÇΩÇ∆Ç´ÅAÇªÇÃäeóvëfÇ…Ç¬Ç¢Çƒäiî[Ç∑ÇÈ
-		public List<InspectorGuiId> subElement = new List<InspectorGuiId>();
+		public List<InspectorGuiInfo> subElement = new List<InspectorGuiInfo>();
 	}
 
 	class Inspector
@@ -188,22 +68,22 @@ namespace Effekseer.GUI.Inspector
 		// Guiï\é¶Çìoò^Ç∑ÇÈ
 		private static readonly InspectorGuiDictionary GuiDictionary = new InspectorGuiDictionary();
 		
-		private static List<InspectorGuiId> FieldGuiIdList = new List<InspectorGuiId>();
+		private static List<InspectorGuiInfo> FieldGuiInfoList = new List<InspectorGuiInfo>();
 
 		private static InspectorEditable LastTarget = null;
 
 		private static void GenerateFieldGuiIds(InspectorEditable target)
 		{
-			if (FieldGuiIdList == null)
+			if (FieldGuiInfoList == null)
 			{
-				FieldGuiIdList = new List<InspectorGuiId>();
+				FieldGuiInfoList = new List<InspectorGuiInfo>();
 			}
-			FieldGuiIdList.Clear();
+			FieldGuiInfoList.Clear();
 
 			var fields = target.GetType().GetFields();
 			foreach (var field in fields)
 			{
-				FieldGuiIdList.Add(new InspectorGuiId());
+				FieldGuiInfoList.Add(new InspectorGuiInfo());
 			}
 		}
 
@@ -288,13 +168,13 @@ namespace Effekseer.GUI.Inspector
 
 						// GuiIdÇ™ë´ÇËÇ»ÇØÇÍÇŒÅAÇ∑Ç◊Çƒçƒê∂ê¨
 						// GenerateFieldGuiIdsÇÃíÜÇ≈Ç‚ÇËÇΩÇ¢Ç™ÅAå^èÓïÒÇ©ÇÁÇÕóvëfêîÇ™ï™Ç©ÇÁÇ»Ç¢ÇÃÇ≈Ç±Ç±Ç≈ê∂ê¨ÅB
-						if (arrayValue.GetLength(0) > FieldGuiIdList[i].subElement.Count())
+						if (arrayValue.GetLength(0) > FieldGuiInfoList[i].subElement.Count())
 						{
-							FieldGuiIdList[i].subElement.Clear();
+							FieldGuiInfoList[i].subElement.Clear();
 
 							foreach (var v in arrayValue)
 							{
-								FieldGuiIdList[i].subElement.Add(new InspectorGuiId());
+								FieldGuiInfoList[i].subElement.Add(new InspectorGuiInfo());
 							}
 						}
 
@@ -302,7 +182,7 @@ namespace Effekseer.GUI.Inspector
 						bool isEdited = false;
 						foreach (var v in arrayValue)
 						{
-							name += FieldGuiIdList[i].subElement[j].Id;
+							name += FieldGuiInfoList[i].subElement[j].Id;
 							var result = func(v, name);
 							if (result.isEdited)
 							{
@@ -322,7 +202,7 @@ namespace Effekseer.GUI.Inspector
 					}
 					else
 					{
-						name += FieldGuiIdList[i].Id;
+						name += FieldGuiInfoList[i].Id;
 						var result = func(value, name);
 						if (result.isEdited)
 						{
