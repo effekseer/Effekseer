@@ -17,7 +17,7 @@ namespace Effekseer.EffectAsset
 				return pathes.Where(_ => _.Value == path).FirstOrDefault().Key;
 			}
 			var text = System.IO.File.ReadAllText(path);
-			var nodeTreeGroup = PartsTreeSystem.NodeTreeGroup.Deserialize(text);
+			var nodeTreeGroup = PartsTreeSystem.NodeTreeAsset.Deserialize(text, this);
 
 			pathes.Add(nodeTreeGroup, path);
 			return nodeTreeGroup;
@@ -39,11 +39,11 @@ namespace Effekseer.EffectAsset
 
 		public PartsTreeSystem.CommandManager CommandManager { get; private set; }
 
-		public PartsTreeSystem.NodeTreeGroupEditorProperty EditorProperty { get; private set; }
+		public PartsTreeSystem.NodeTreeAssetEditorProperty EditorProperty { get; private set; }
 
 		EffectAssetEnvironment env;
 
-		public EffectAssetEditorContext(PartsTreeSystem.NodeTree nodeTree, PartsTreeSystem.NodeTreeGroupEditorProperty editorProperty, EffectAssetEnvironment env)
+		public EffectAssetEditorContext(PartsTreeSystem.NodeTree nodeTree, PartsTreeSystem.NodeTreeAssetEditorProperty editorProperty, EffectAssetEnvironment env)
 		{
 			NodeTree = nodeTree;
 			EditorProperty = editorProperty;
@@ -66,21 +66,21 @@ namespace Effekseer.EffectAsset
 
 	public class EffectAsset
 	{
-		public PartsTreeSystem.NodeTreeGroup NodeTreeGroup { get; private set; }
+		public PartsTreeSystem.NodeTreeAsset NodeTreeAsset { get; private set; }
 
 		public EffectAssetEditorContext CreateEditorContext(EffectAssetEnvironment env)
 		{
-			var nodeTree = PartsTreeSystem.Utility.CreateNodeFromNodeTreeGroup(NodeTreeGroup, env);
-			var editorProperty = new PartsTreeSystem.NodeTreeGroupEditorProperty(NodeTreeGroup, env);
+			var nodeTree = PartsTreeSystem.Utility.CreateNodeFromNodeTreeGroup(NodeTreeAsset, env);
+			var editorProperty = new PartsTreeSystem.NodeTreeAssetEditorProperty(NodeTreeAsset, env);
 			var context = new EffectAssetEditorContext(nodeTree, editorProperty, env);
 			return context;
 		}
 
 		public void New(EffectAssetEnvironment env)
 		{
-			NodeTreeGroup = new PartsTreeSystem.NodeTreeGroup();
-			var rootNodeId = NodeTreeGroup.Init(typeof(RootNode), env);
-			NodeTreeGroup.AddNode(rootNodeId, typeof(Node), env);
+			NodeTreeAsset = new PartsTreeSystem.NodeTreeAsset();
+			var rootNodeId = NodeTreeAsset.Init(typeof(RootNode), env);
+			NodeTreeAsset.AddNode(rootNodeId, typeof(Node), env);
 		}
 	}
 
