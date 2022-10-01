@@ -9,13 +9,15 @@ add_library(PartsTreeSystem
   PartsTreeSystem/PartsTreeSystem/CommandManager.cs
   PartsTreeSystem/PartsTreeSystem/Consts.cs
   PartsTreeSystem/PartsTreeSystem/Difference.cs
+  PartsTreeSystem/PartsTreeSystem/EditorUtility.cs
   PartsTreeSystem/PartsTreeSystem/Environment.cs
   PartsTreeSystem/PartsTreeSystem/FieldState.cs
   PartsTreeSystem/PartsTreeSystem/Instance.cs
   PartsTreeSystem/PartsTreeSystem/JsonSerializer.cs
   PartsTreeSystem/PartsTreeSystem/Node.cs
-  PartsTreeSystem/PartsTreeSystem/NodeTreeGroup.cs
-  PartsTreeSystem/PartsTreeSystem/NodeTreeGroupEditorProperty.cs
+  PartsTreeSystem/PartsTreeSystem/NodeTree.cs
+  PartsTreeSystem/PartsTreeSystem/NodeTreeAsset.cs
+  PartsTreeSystem/PartsTreeSystem/NodeTreeAssetEditorProperty.cs
   PartsTreeSystem/PartsTreeSystem/SerializeField.cs
   PartsTreeSystem/PartsTreeSystem/Utility.cs
 )
