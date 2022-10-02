@@ -7,6 +7,55 @@ using Newtonsoft.Json;
 
 namespace Effekseer.EffectAsset
 {
+	/// <summary>
+	/// A value for a selector
+	/// </summary>
+	[AttributeUsage(
+		AttributeTargets.Property | AttributeTargets.Field,
+	AllowMultiple = false,
+	Inherited = false)]
+	public class VisiblityControllerAttribute : Attribute
+	{
+		public int ID
+		{
+			get;
+			set;
+		}
+
+		public VisiblityControllerAttribute()
+		{
+			ID = -1;
+		}
+	}
+
+	/// <summary>
+	/// A values which is shown or hidden with a selector
+	/// </summary>
+	[AttributeUsage(
+		AttributeTargets.Property | AttributeTargets.Field,
+	AllowMultiple = true,
+	Inherited = false)]
+	public class VisiblityControlledAttribute : Attribute
+	{
+		public int ID
+		{
+			get;
+			set;
+		}
+
+		public int Value
+		{
+			get;
+			set;
+		}
+
+		public VisiblityControlledAttribute()
+		{
+			ID = -1;
+			Value = -1;
+		}
+	}
+
 	public class EffectAssetEnvironment : PartsTreeSystem.Environment
 	{
 		Dictionary<PartsTreeSystem.Asset, string> pathes = new Dictionary<PartsTreeSystem.Asset, string>();
@@ -134,9 +183,20 @@ namespace Effekseer.EffectAsset
 			public Vector3F Location;
 		}
 
+		public class PVAParamater
+		{
+			[Key(key = "Position_FixedParamater_Location")]
+			public FloatWithRange Location;
+		}
+
+		[VisiblityController(ID = 100)]
 		public ParamaterType Type = ParamaterType.Fixed;
 
+		[VisiblityControlled(ID = 100, Value = 0)]
 		public FixedParamater Fixed = new FixedParamater();
+
+		[VisiblityControlled(ID = 100, Value = 1)]
+		public PVAParamater PVA = new PVAParamater();
 
 		public enum ParamaterType : int
 		{
