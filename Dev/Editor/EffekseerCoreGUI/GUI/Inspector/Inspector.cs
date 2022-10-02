@@ -111,8 +111,8 @@ namespace Effekseer.GUI.Inspector
 			LastTarget = target;
 			if (Manager.NativeManager.BeginTable("Table", 2, 
 				swig.TableFlags.Resizable |
-				swig.TableFlags.BordersInnerV |
-				swig.TableFlags.SizingFixedFit |
+				swig.TableFlags.BordersInnerV | swig.TableFlags.BordersOuterH |
+				swig.TableFlags.SizingFixedFit | swig.TableFlags.SizingStretchProp |
 				swig.TableFlags.NoSavedSettings))
 			{
 				// アイテムの幅を最大に設定
@@ -160,7 +160,11 @@ namespace Effekseer.GUI.Inspector
 					Manager.NativeManager.TableNextRow();
 					Manager.NativeManager.TableNextColumn();
 					// TODO : Separatorで区切るのはAssetなどの単位にする
-					Manager.NativeManager.Separator();
+					// Make not separate first row
+					if (Manager.NativeManager.TableGetRowIndex() >= 2)
+					{
+						Manager.NativeManager.Separator();
+					}
 					Manager.NativeManager.Text(name);
 
 					// 配列かリストの時、エレメントの型を取得する
@@ -178,7 +182,12 @@ namespace Effekseer.GUI.Inspector
 					// display field(right side of table)
 					Manager.NativeManager.TableNextColumn();
 					// TODO : Separatorで区切るのはAssetなどの単位にする
-					Manager.NativeManager.Separator();
+					// Make not separate first row
+					if (Manager.NativeManager.TableGetRowIndex() >= 2)
+					{
+						Manager.NativeManager.Separator();
+					}
+
 					// TODO : 基底クラスNodeのpublic List<Node> Children = new List<Node>();が反応してる
 					if (GuiDictionary.HasFunction(valueType))
 					{
