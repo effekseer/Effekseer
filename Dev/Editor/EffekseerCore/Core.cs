@@ -685,7 +685,6 @@ namespace Effekseer
 		 */
 		public static void SaveBackup(string path)
 		{
-			EfkEfc loader = new EfkEfc();
 			XmlDocument editorData = SaveAsXmlDocument(Core.Root);
 
 			XmlNode projectRoot = editorData.ChildNodes[1];
@@ -693,7 +692,10 @@ namespace Effekseer
 			backupElement.InnerText = Core.Root.GetFullPath();
 			projectRoot.AppendChild(backupElement);
 
-			loader.Save(path, Core.Root, editorData);
+			var efkefc = new EfkEfc();
+			efkefc.RootNode = Core.Root;
+			efkefc.EditorData = editorData;
+			efkefc.Save(path);
 		}
 
 		/**
@@ -701,9 +703,10 @@ namespace Effekseer
 		 */
 		public static void OpenBackup(string path)
 		{
-			EfkEfc loader = new EfkEfc();
+			var efkefc = new IO.EfkEfc();
+			efkefc.Load(path);
 
-			XmlDocument document = loader.Load(path);
+			XmlDocument document = efkefc.EditorData;
 			XmlNode backupElement = document.GetElementsByTagName("BackupOriginalPath").Item(0);
 			if (backupElement == null) return;
 
@@ -718,8 +721,10 @@ namespace Effekseer
 		{
 			Root.SetFullPath(System.IO.Path.GetFullPath(path));
 
-			var loader = new IO.EfkEfc();
-			loader.Save(path, Core.Root, SaveAsXmlDocument(Core.Root));
+			var efkefc = new EfkEfc();
+			efkefc.RootNode = Core.Root;
+			efkefc.EditorData = SaveAsXmlDocument(Core.Root);
+			efkefc.Save(path);
 			return;
 		}
 
@@ -1040,8 +1045,10 @@ namespace Effekseer
 			NodeRoot nodeRoot;
 			if (isNewFormat)
 			{
-				var loader = new IO.EfkEfc();
-				var doc = loader.Load(path);
+				var efkefc = new IO.EfkEfc();
+				efkefc.Load(path);
+
+				var doc = efkefc.EditorData;
 				nodeRoot = LoadFromXml(doc, path);
 			}
 			else

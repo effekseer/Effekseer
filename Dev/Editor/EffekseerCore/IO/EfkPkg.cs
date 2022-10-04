@@ -79,7 +79,6 @@ namespace Effekseer.IO
 					return convertedPath;
 				};
 
-				var efkefc = new EfkEfc();
 				FileInfo file = new FileInfo();
 				file.Type = FileType.Effect;
 				file.RelativePath = Path.GetFileName(path);
@@ -87,7 +86,11 @@ namespace Effekseer.IO
 				var binaryExporter = new Binary.Exporter();
 				binaryExporter.ConvertLoadingFilePath = convertLoadingFilePath;
 
-				file.Data = efkefc.Save(binaryExporter, rootNode, Core.SaveAsXmlDocument(rootNode));
+				var efkefc = new EfkEfc();
+				efkefc.RootNode = rootNode;
+				efkefc.EditorData = Core.SaveAsXmlDocument(rootNode);
+
+				file.Data = efkefc.Save(binaryExporter);
 				file.HashName = ComputeHashName(file.Data);
 				file.LastWriteTime = lastWriteTime;
 				file.Dependencies = dependencies;
@@ -426,8 +429,10 @@ namespace Effekseer.IO
 						Directory.CreateDirectory(resourceDirPath);
 					}
 
-					EfkEfc efkefc = new EfkEfc();
-					var doc = efkefc.Load(file.Data);
+					var efkefc = new IO.EfkEfc();
+					efkefc.Load(file.Data);
+
+					var doc = efkefc.EditorData;
 					if (doc == null) return false;
 
 					Core.OnFileLoaded = (path) =>
@@ -450,8 +455,12 @@ namespace Effekseer.IO
 					// Write effect file
 					Core.OnFileLoaded = backedupDelegate;
 
+					var efkefcSave = new EfkEfc();
+					efkefcSave.RootNode = root;
+					efkefcSave.EditorData = Core.SaveAsXmlDocument(root);
+
 					var binaryExporter = new Binary.Exporter();
-					byte[] data = efkefc.Save(binaryExporter, root, Core.SaveAsXmlDocument(root));
+					byte[] data = efkefc.Save(binaryExporter);
 					File.WriteAllBytes(filePath, data);
 					File.SetLastWriteTime(filePath, file.LastWriteTime);
 				}
