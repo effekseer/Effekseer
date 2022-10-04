@@ -234,11 +234,11 @@ float SimpleNoise_Block(float2 uv) {
 }
 
 float SimpleNoise(float2 uv, float scale) {
-	const int loop = 3;
+	const int iter = 3;
 	float ret = 0.0;
-	for(int i = 0; i < loop; i++) {
+	for(int i = 0; i < iter; i++) {
 		float duration = pow(2.0, float(i));
-		float intensity = pow(0.5, float(loop-i));
+		float intensity = pow(0.5, float(iter-i));
 		ret += SimpleNoise_Block(uv * scale / duration) * intensity;
 	}
 
