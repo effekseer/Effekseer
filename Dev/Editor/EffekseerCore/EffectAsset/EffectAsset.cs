@@ -58,26 +58,45 @@ namespace Effekseer.EffectAsset
 
 	public class EffectAssetEnvironment : PartsTreeSystem.Environment
 	{
-		Dictionary<PartsTreeSystem.Asset, string> pathes = new Dictionary<PartsTreeSystem.Asset, string>();
+		Dictionary<EffectAsset, string> pathes = new Dictionary<EffectAsset, string>();
 		public override PartsTreeSystem.Asset GetAsset(string path)
 		{
-			if (pathes.ContainsValue(path))
+			var pathElms = path.Split(":");
+			if (pathElms.Length != 2)
 			{
-				return pathes.Where(_ => _.Value == path).FirstOrDefault().Key;
+				return null;
 			}
-			var text = System.IO.File.ReadAllText(path);
-			var nodeTreeGroup = PartsTreeSystem.NodeTreeAsset.Deserialize(text, this);
 
-			pathes.Add(nodeTreeGroup, path);
-			return nodeTreeGroup;
+			if (pathes.ContainsValue(pathElms[0]))
+			{
+				return pathes.Where(_ => _.Value == pathElms[0]).FirstOrDefault().Key.NodeTreeAsset;
+			}
+
+			var effectAsset = new EffectAsset();
+			effectAsset.Load(pathElms[0], this);
+
+			pathes.Add(effectAsset, pathElms[0]);
+			return effectAsset.NodeTreeAsset;
 		}
 
 		public override string GetAssetPath(PartsTreeSystem.Asset asset)
 		{
-			if (pathes.TryGetValue(asset, out var path))
+			foreach (var path in pathes)
 			{
-				return System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), path);
+				if (path.Key.NodeTreeAsset == asset)
+				{
+					return System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), path.Key + ":Nodes");
+				}
+
+				for (int i = 0; i < path.Key.ProceduralModels.Count; i++)
+				{
+					if (path.Key.ProceduralModels[i] == asset)
+					{
+						return System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), path.Key + ":PM/" + i);
+					}
+				}
 			}
+
 			return System.IO.Directory.GetCurrentDirectory();
 		}
 	}
@@ -117,6 +136,8 @@ namespace Effekseer.EffectAsset
 	{
 		public PartsTreeSystem.NodeTreeAsset NodeTreeAsset { get; private set; }
 
+		public List<ProceduralModelAsset> ProceduralModels { get; private set; } = new List<ProceduralModelAsset>();
+
 		public EffectAssetEditorContext CreateEditorContext(EffectAssetEnvironment env)
 		{
 			var nodeTree = PartsTreeSystem.Utility.CreateNodeFromNodeTreeGroup(NodeTreeAsset, env);
@@ -130,7 +151,30 @@ namespace Effekseer.EffectAsset
 			NodeTreeAsset = new PartsTreeSystem.NodeTreeAsset();
 			var rootNodeId = NodeTreeAsset.Init(typeof(RootNode), env);
 			NodeTreeAsset.AddNode(rootNodeId, typeof(Node), env);
+
+			ProceduralModels.Clear();
 		}
+
+		public void Load(string path, PartsTreeSystem.Environment env)
+		{
+			var text = System.IO.File.ReadAllText(path);
+			var nodeTreeAsset = PartsTreeSystem.NodeTreeAsset.Deserialize(text, env);
+			NodeTreeAsset = nodeTreeAsset;
+
+			ProceduralModels.Clear();
+		}
+
+		public void Save(string path, PartsTreeSystem.Environment env)
+		{
+			// Temp implementation
+			var text = NodeTreeAsset.Serialize(env);
+			System.IO.File.WriteAllText(path, text);
+		}
+	}
+
+	public class ProceduralModelAsset : PartsTreeSystem.Asset
+	{
+
 	}
 
 	public class Node : PartsTreeSystem.INode
