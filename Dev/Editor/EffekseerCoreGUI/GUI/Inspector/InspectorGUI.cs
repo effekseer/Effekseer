@@ -28,6 +28,7 @@ namespace Effekseer.GUI.Inspector
 				{ typeof(float), GuiFloat },
 				{ typeof(string), GuiString },
 				{ typeof(Vector3D), GuiVector3D },
+				{ typeof(Vector3F), GuiVector3F },
 			};
 		}
 
@@ -123,6 +124,36 @@ namespace Effekseer.GUI.Inspector
 			else
 			{
 				Manager.NativeManager.Text("Assert GuiVector3D");
+			}
+
+			return ret;
+		}
+		private InspectorGuiResult GuiVector3F(object value, string label)
+		{
+			InspectorGuiResult ret = new InspectorGuiResult();
+
+			if (value is Vector3F vec3Value)
+			{
+				float[] guiValue = new float[] { vec3Value.X, vec3Value.Y, vec3Value.Z };
+
+				if (Manager.NativeManager.DragFloat3EfkEx(label, guiValue, 1.0f,
+					float.MinValue, float.MaxValue,
+					float.MinValue, float.MaxValue,
+					float.MinValue, float.MaxValue,
+					"X:" + Core.Option.GetFloatFormat(), "Y:" + Core.Option.GetFloatFormat(), "Z:" + Core.Option.GetFloatFormat()))
+				{
+					vec3Value.X = guiValue[0];
+					vec3Value.Y = guiValue[1];
+					vec3Value.Z = guiValue[2];
+
+					ret.isEdited = true;
+					ret.value = vec3Value;
+					return ret;
+				}
+			}
+			else
+			{
+				Manager.NativeManager.Text("Assert GuiVector3F");
 			}
 
 			return ret;
