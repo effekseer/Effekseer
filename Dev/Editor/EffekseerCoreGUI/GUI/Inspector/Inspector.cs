@@ -273,6 +273,7 @@ namespace Effekseer.GUI.Inspector
 		// TODO : Vector
 		public Vector2D vector2 = new Vector2D();
 		public Vector3D vector3 = new Vector3D();
+		public Vector3F vector3f = new Vector3F();
 		public Vector3D[] vector3Array = new Vector3D[2] { new Vector3D(), new Vector3D() };
 
 		// TODO : stringìôÅAnullÇÇ«Ç§àµÇ§Ç©
