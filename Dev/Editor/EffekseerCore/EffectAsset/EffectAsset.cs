@@ -7,6 +7,20 @@ using Newtonsoft.Json;
 
 namespace Effekseer.EffectAsset
 {
+	class VirtualPathUtility
+	{
+		public static string[] SplitPath(string path)
+		{
+			var elms = path.Split(":");
+			return elms;
+		}
+
+		public static string CombinePath(string filePath, string virtualPath)
+		{
+			return filePath + ":" + virtualPath;
+		}
+	}
+
 	/// <summary>
 	/// A value for a selector
 	/// </summary>
@@ -61,7 +75,7 @@ namespace Effekseer.EffectAsset
 		Dictionary<EffectAsset, string> pathes = new Dictionary<EffectAsset, string>();
 		public override PartsTreeSystem.Asset GetAsset(string path)
 		{
-			var pathElms = path.Split(":");
+			var pathElms = VirtualPathUtility.SplitPath(path);
 			if (pathElms.Length != 2)
 			{
 				return null;
@@ -85,14 +99,16 @@ namespace Effekseer.EffectAsset
 			{
 				if (path.Key.NodeTreeAsset == asset)
 				{
-					return System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), path.Key + ":Nodes");
+					var assetPath = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), path.Value);
+					return VirtualPathUtility.CombinePath(assetPath, "Nodes");
 				}
 
 				for (int i = 0; i < path.Key.ProceduralModels.Count; i++)
 				{
 					if (path.Key.ProceduralModels[i] == asset)
 					{
-						return System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), path.Key + ":PM/" + i);
+						var assetPath = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), path.Value);
+						return VirtualPathUtility.CombinePath(assetPath, "PM/" + i);
 					}
 				}
 			}
@@ -155,20 +171,57 @@ namespace Effekseer.EffectAsset
 			ProceduralModels.Clear();
 		}
 
-		public void Load(string path, PartsTreeSystem.Environment env)
+		public void Load(string text, PartsTreeSystem.Environment env)
 		{
-			var text = System.IO.File.ReadAllText(path);
-			var nodeTreeAsset = PartsTreeSystem.NodeTreeAsset.Deserialize(text, env);
-			NodeTreeAsset = nodeTreeAsset;
-
-			ProceduralModels.Clear();
+			var dict = PartsTreeSystem.JsonSerializer.Deserialize<Dictionary<string, string>>(text, env);
+			RestoreFromDict(dict, env);
 		}
 
-		public void Save(string path, PartsTreeSystem.Environment env)
+		public string Save(PartsTreeSystem.Environment env)
 		{
-			// Temp implementation
-			var text = NodeTreeAsset.Serialize(env);
-			System.IO.File.WriteAllText(path, text);
+			var dict = StoreToDict(env);
+			return PartsTreeSystem.JsonSerializer.Serialize(dict, env);
+		}
+
+		Dictionary<string, string> StoreToDict(PartsTreeSystem.Environment env)
+		{
+			Dictionary<string, string> dict = new();
+			dict.Add("Nodes", NodeTreeAsset.Serialize(env));
+
+			for (int i = 0; i < ProceduralModels.Count; i++)
+			{
+				dict.Add("PM/" + i, PartsTreeSystem.JsonSerializer.Serialize(ProceduralModels[i], env));
+			}
+
+			return dict;
+		}
+
+		void RestoreFromDict(Dictionary<string, string> dict, PartsTreeSystem.Environment env)
+		{
+			{
+				ProceduralModels.Clear();
+
+				int pmIndex = 0;
+				while (true)
+				{
+					var key = "PM/" + pmIndex;
+
+					if (dict.TryGetValue(key, out var text))
+					{
+						var ret = PartsTreeSystem.JsonSerializer.Deserialize<ProceduralModelAsset>(text, env);
+						ProceduralModels.Add(ret);
+					}
+					else
+					{
+						break;
+					}
+
+					pmIndex++;
+				}
+			}
+
+			var nodeTreeAsset = PartsTreeSystem.NodeTreeAsset.Deserialize(dict["Nodes"], env);
+			NodeTreeAsset = nodeTreeAsset;
 		}
 	}
 
