@@ -82,7 +82,7 @@ namespace Effekseer.GUI.Dock
 			var windowSize = Manager.NativeManager.GetContentRegionAvail();
 
 			Manager.NativeManager.BeginTable("NodeTreeView", 2);
-			Manager.NativeManager.TableSetupColumn("Nodes", TableColumnFlags.NoResize, Math.Max(0, windowSize.X - showHideButtonOffset));
+			Manager.NativeManager.TableSetupColumn("Nodes", TableColumnFlags.NoResize | TableColumnFlags.WidthFixed, Math.Max(0, windowSize.X - showHideButtonOffset));
 			Manager.NativeManager.TableSetupColumn("Options");
 
 			// Assign tree node index
