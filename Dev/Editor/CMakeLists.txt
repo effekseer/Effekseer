@@ -45,6 +45,7 @@ set_target_properties(EffekseerCore PROPERTIES
 set_property(TARGET EffekseerCore PROPERTY VS_GLOBAL_AllowUnsafeBlocks "true")
 set_property(TARGET EffekseerCore PROPERTY VS_GLOBAL_DefineConstants "SCRIPT_ENABLED;")
 set_property(TARGET EffekseerCore PROPERTY VS_GLOBAL_AppendTargetFrameworkToOutputPath "false")
+set_property(TARGET EffekseerCore PROPERTY VS_GLOBAL_GenerateDependencyFile "false")
 
 # Avoid Cmake bug
 # set_property(TARGET EffekseerCore PROPERTY VS_GLOBAL_Platforms "x64")
@@ -96,6 +97,7 @@ set_property(TARGET EffekseerEditor PROPERTY VS_GLOBAL_AllowUnsafeBlocks "true")
 set_property(TARGET EffekseerEditor PROPERTY VS_GLOBAL_ApplicationIcon "${CMAKE_CURRENT_SOURCE_DIR}/Effekseer/icon.ico")
 set_property(TARGET EffekseerEditor PROPERTY VS_GLOBAL_OutputType "WinExe")
 set_property(TARGET EffekseerEditor PROPERTY VS_GLOBAL_AppendTargetFrameworkToOutputPath "false")
+set_property(TARGET EffekseerEditor PROPERTY VS_GLOBAL_GenerateDependencyFile "false")
 
 # Avoid Cmake bug
 # set_property(TARGET EffekseerEditor PROPERTY VS_GLOBAL_Platforms "x64")
@@ -126,6 +128,7 @@ if (BUILD_TEST)
 
     set_property(TARGET TestCSharp PROPERTY VS_GLOBAL_AllowUnsafeBlocks "true")
     set_property(TARGET TestCSharp PROPERTY VS_GLOBAL_AppendTargetFrameworkToOutputPath "false")
+    set_property(TARGET TestCSharp PROPERTY VS_GLOBAL_GenerateDependencyFile "false")
 
     # Avoid Cmake bug
     # set_property(TARGET TestCSharp PROPERTY VS_GLOBAL_Platforms "x64")

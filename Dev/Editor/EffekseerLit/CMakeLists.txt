@@ -28,6 +28,7 @@ set_target_properties(EffekseerEditorLit PROPERTIES
 set_property(TARGET EffekseerEditorLit PROPERTY VS_GLOBAL_AllowUnsafeBlocks "true")
 set_property(TARGET EffekseerEditorLit PROPERTY VS_GLOBAL_OutputType "WinExe")
 set_property(TARGET EffekseerEditorLit PROPERTY VS_GLOBAL_AppendTargetFrameworkToOutputPath "false")
+set_property(TARGET EffekseerEditorLit PROPERTY VS_GLOBAL_GenerateDependencyFile "false")
 
 # Avoid Cmake bug
 # set_property(TARGET EffekseerEditorLit PROPERTY VS_GLOBAL_Platforms "x64")

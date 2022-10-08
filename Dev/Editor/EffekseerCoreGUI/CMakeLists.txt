@@ -33,6 +33,7 @@ set_target_properties(EffekseerCoreGUI PROPERTIES VS_DOTNET_REFERENCES "System;S
 set_property(TARGET EffekseerCoreGUI PROPERTY VS_PACKAGE_REFERENCES "Newtonsoft.Json_13.0.1;DynamicLanguageRuntime_1.2.2")
 set_property(TARGET EffekseerCoreGUI PROPERTY VS_GLOBAL_AllowUnsafeBlocks "true")
 set_property(TARGET EffekseerCoreGUI PROPERTY VS_GLOBAL_AppendTargetFrameworkToOutputPath "false")
+set_property(TARGET EffekseerCoreGUI PROPERTY VS_GLOBAL_GenerateDependencyFile "false")
 
 # Avoid Cmake bug
 # set_property(TARGET EffekseerCoreGUI PROPERTY VS_GLOBAL_Platforms "x64")
