@@ -293,7 +293,7 @@ namespace Effekseer.GUI.Dock
 		AddAsChild,
 	}
 
-	class NodeTreeViewNode : IControl
+	class NodeTreeViewNode
 	{
 		string id = "";
 		public int UniqueID { get; private set; }
