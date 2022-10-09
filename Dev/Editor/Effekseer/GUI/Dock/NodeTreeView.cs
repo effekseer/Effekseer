@@ -37,7 +37,7 @@ namespace Effekseer.GUI.Dock
 			Core.OnAfterLoad += OnRenew;
 			Core.OnAfterSelectNode += OnAfterSelect;
 
-			Func<Func<bool>, Menu.MenuItem> create_menu_item_from_commands = (a) =>
+			Menu.MenuItem create_menu_item_from_commands(Func<bool> a)
 			{
 				var item = new Menu.MenuItem();
 				var attributes = a.Method.GetCustomAttributes(false);
@@ -680,8 +680,12 @@ namespace Effekseer.GUI.Dock
 		{
 			// Hidden separator is a target to be dropped
 			// adjust a position
+
+			var windowSize = Manager.NativeManager.GetContentRegionAvail();
+
 			Manager.NativeManager.SetCursorPosY(Manager.NativeManager.GetCursorPosY() - 6);
-			Manager.NativeManager.HiddenSeparator(12, 6);
+			Manager.NativeManager.Dummy(new Vector2I((int)windowSize.X, 12));
+			Manager.NativeManager.SetCursorPosY(Manager.NativeManager.GetCursorPosY() - 6);
 
 			if (Manager.NativeManager.BeginDragDropTarget())
 			{

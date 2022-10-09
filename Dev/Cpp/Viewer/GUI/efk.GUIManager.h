@@ -608,8 +608,6 @@ public:
 
 	void Separator();
 
-	void HiddenSeparator(float thicknessDraw, float thicknessItem);
-
 	void Indent(float indent_w);
 	void Spacing();
 	void Dummy(const Effekseer::Tool::Vector2I& size);

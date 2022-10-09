@@ -1422,9 +1422,6 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_Separator___")]
   public static extern void GUIManager_Separator(global::System.Runtime.InteropServices.HandleRef jarg1);
 
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_HiddenSeparator___")]
-  public static extern void GUIManager_HiddenSeparator(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2, float jarg3);
-
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_Indent___")]
   public static extern void GUIManager_Indent(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
 

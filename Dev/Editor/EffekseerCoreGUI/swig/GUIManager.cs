@@ -274,10 +274,6 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_Separator(swigCPtr);
   }
 
-  public void HiddenSeparator(float thicknessDraw, float thicknessItem) {
-    EffekseerNativePINVOKE.GUIManager_HiddenSeparator(swigCPtr, thicknessDraw, thicknessItem);
-  }
-
   public void Indent(float indent_w) {
     EffekseerNativePINVOKE.GUIManager_Indent(swigCPtr, indent_w);
   }
