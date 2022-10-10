@@ -1,6 +1,5 @@
 ﻿
-#if !(defined(__EFFEKSEER_NETWORK_DISABLED__))
-#if !(defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE))
+#if (defined(__EFFEKSEER_NETWORK_ENABLED__))
 
 #include "Effekseer.Client.h"
 #include "Effekseer.ClientImplemented.h"
@@ -93,5 +92,4 @@ bool ClientImplemented::IsConnected() const
 
 } // namespace Effekseer
 
-#endif // #if !( defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE) )
 #endif

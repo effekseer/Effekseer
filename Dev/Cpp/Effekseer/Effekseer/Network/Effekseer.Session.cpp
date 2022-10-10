@@ -1,5 +1,7 @@
-﻿#if !(defined(__EFFEKSEER_NETWORK_DISABLED__))
+﻿
+#if (defined(__EFFEKSEER_NETWORK_ENABLED__))
 
+#include <string.h>
 #include "Effekseer.Session.h"
 
 namespace Effekseer

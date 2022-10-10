@@ -1,6 +1,5 @@
 ﻿
-#if !(defined(__EFFEKSEER_NETWORK_DISABLED__))
-#if !(defined(_PSVITA) || defined(_XBOXONE))
+#if (defined(__EFFEKSEER_NETWORK_ENABLED__))
 
 #include "Effekseer.Socket.h"
 
@@ -244,5 +243,4 @@ int32_t Socket::Recv(void* buffer, int32_t size)
 //
 //----------------------------------------------------------------------------------
 
-#endif // #if !( defined(_PSVITA) || defined(_XBOXONE) )
 #endif

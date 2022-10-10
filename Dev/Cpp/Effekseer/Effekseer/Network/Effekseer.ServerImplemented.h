@@ -3,7 +3,6 @@
 #define __EFFEKSEER_SERVER_IMPLEMENTED_H__
 
 #if (defined(__EFFEKSEER_NETWORK_ENABLED__))
-#if !(defined(_PSVITA) || defined(_SWITCH) || defined(_XBOXONE))
 
 #include "../Effekseer.Base.h"
 #include "Effekseer.Server.h"
@@ -91,7 +90,6 @@ public:
 
 } // namespace Effekseer
 
-#endif // #if !( defined(_PSVITA) || defined(_SWITCH) || defined(_XBOXONE) )
 #endif
 
 #endif // __EFFEKSEER_SERVER_IMPLEMENTED_H__

@@ -1,10 +1,10 @@
 ﻿
-#if !(defined(__EFFEKSEER_NETWORK_DISABLED__))
-#if !(defined(_PSVITA) || defined(_XBOXONE))
+#if (defined(__EFFEKSEER_NETWORK_ENABLED__))
 
 #include "Effekseer.Server.h"
-#include "../Effekseer.Effect.h"
 #include "Effekseer.ServerImplemented.h"
+
+#include "../Effekseer.Effect.h"
 #include "data/reload_generated.h"
 
 namespace Effekseer
@@ -176,5 +176,4 @@ bool ServerImplemented::IsConnected() const
 
 } // namespace Effekseer
 
-#endif // #if !( defined(_PSVITA) || defined(_XBOXONE) )
 #endif
