@@ -6,6 +6,25 @@ include(FilterFolder)
 
 option(BUILD_EXAMPLES "Build examples" ON)
 
+option(BUILD_GL "Build OpenGL" ON)
+option(BUILD_VULKAN "Build vulkan modules" OFF)
+
+if (WIN32)
+    option(BUILD_DX9 "Build DirectX9 modules" ON)
+    option(BUILD_DX11 "Build DirectX11 modules" ON)
+    option(BUILD_DX12 "Build DirectX12 modules" ON)
+else()
+    option(BUILD_DX9 "Build DirectX9 modules" OFF)
+    option(BUILD_DX11 "Build DirectX11 modules" OFF)
+    option(BUILD_DX12 "Build DirectX12 modules" OFF)
+endif()
+
+if (APPLE)
+    option(BUILD_METAL "Build metal modules" ON)
+else()
+    option(BUILD_METAL "Build metal modules" OFF)
+endif()
+
 # For MSVC
 if (MSVC)
     option(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC runtime library DLL" OFF)

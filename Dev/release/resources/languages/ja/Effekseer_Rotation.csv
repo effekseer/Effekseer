@@ -4,6 +4,7 @@ Rotation_ParamaterType_Easing_Name,イージング
 Rotation_ParamaterType_AxisPVA_Name,任意軸 角度・速度・加速度
 Rotation_ParamaterType_AxisEasing_Name,任意軸 イージング
 Rotation_ParamaterType_RotationFCurve_Name,角度(Fカーブ)
+Rotation_ParamaterType_RotateToViewpoint_Name,視点方向に回転
 Rotation_FixedParamater_Rotation_Name,角度(度)
 Rotation_FixedParamater_Rotation_Desc,インスタンスの角度
 Rotation_PVAParamater_Rotation_Name,角度(度)

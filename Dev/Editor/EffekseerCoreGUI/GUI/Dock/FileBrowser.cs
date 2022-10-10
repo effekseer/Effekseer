@@ -30,6 +30,7 @@ namespace Effekseer.GUI.Dock
 		public FileBrowser()
 		{
 			Label = Icons.PanelFileBrowser + Resources.GetString("FileBrowser") + "###FileVeiwer";
+			DocPage = "fileviewer.html";
 
 			TabToolTip = Resources.GetString("FileBrowser");
 
@@ -93,6 +94,10 @@ namespace Effekseer.GUI.Dock
 			}
 		}
 
+		protected override void UpdateToolbar()
+		{
+		}
+
 		void UpdateAddressBar(float dpiScale, swig.Vec2 regionSize, swig.Vec2 spacing)
 		{
 			float buttonWidth = Manager.NativeManager.GetTextLineHeight() + Manager.NativeManager.GetStyleVar2(swig.ImGuiStyleVarFlags.FramePadding).X * 2;
@@ -109,7 +114,7 @@ namespace Effekseer.GUI.Dock
 			// Display current directory
 			if (addressActivated || addressEditing)
 			{
-				Manager.NativeManager.PushItemWidth(regionSize.X - buttonWidth * 2 - spacing.X * 2);
+				Manager.NativeManager.PushItemWidth(regionSize.X - buttonWidth * 3 - spacing.X * 3);
 
 				if (addressActivated)
 				{
@@ -134,7 +139,7 @@ namespace Effekseer.GUI.Dock
 			else
 			{
 				string label = Path.GetFileName(CurrentPath) + "###AddressButton";
-				if (Manager.NativeManager.Button(label, regionSize.X - buttonWidth * 2 - spacing.X * 2))
+				if (Manager.NativeManager.Button(label, regionSize.X - buttonWidth * 3 - spacing.X * 3))
 				{
 					addressActivated = true;
 				}
@@ -148,6 +153,19 @@ namespace Effekseer.GUI.Dock
 			}
 
 			UpdateOptionMenu();
+
+			Manager.NativeManager.SameLine();
+
+			if (Manager.NativeManager.Button("?", buttonWidth))
+			{
+				Commands.ShowURL(DocURL);
+			}
+
+			if (BindableComponent.Functions.CanShowTip())
+			{
+				Manager.NativeManager.SetTooltip(Resources.GetString("Panel_Help_Desc"));
+			}
+
 		}
 
 		void UpdateOptionMenu()
@@ -575,27 +593,41 @@ namespace Effekseer.GUI.Dock
 			// add directories
 			foreach (string dirPath in Directory.EnumerateDirectories(path))
 			{
-				items.Add(CreateFileItem(dirPath));
+				try
+				{
+					items.Add(CreateFileItem(dirPath, true));
+				}
+				catch (Exception e)
+				{
+					// Skip directory
+				}
 			}
 
 			// add files
 			foreach (string filePath in Directory.EnumerateFiles(path))
 			{
-				items.Add(CreateFileItem(filePath));
+				try
+				{
+					items.Add(CreateFileItem(filePath, false));
+				}
+				catch (Exception e)
+				{
+					// Skip file
+				}
 			}
 
 			directoryWatcher.Path = path;
 			directoryWatcher.EnableRaisingEvents = true;
 		}
 
-		private FileItem CreateFileItem(string filePath)
+		private FileItem CreateFileItem(string filePath, bool isDirectory)
 		{
 			FileType type = FileType.Other;
 			string iconStr = Icons.FileOther;
 			swig.ReloadableImage iconImage = Images.Icons["FileOther128"];
 			long fileSize = -1;
 
-			if (Directory.Exists(filePath))
+			if (isDirectory)
 			{
 				type = FileType.Directory;
 				iconStr = Icons.FileDirectory;

@@ -110,6 +110,7 @@ public: // TODO temp
 	std::shared_ptr<Preview> preview_;
 	int32_t previewTextureCount_ = 0;
 	int32_t previewUniformCount_ = 0;
+	int32_t previewGradientCount_ = 0;
 
 	std::shared_ptr<IPC::KeyValueFileStorage> keyValueFileStorage_;
 

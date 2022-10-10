@@ -1,14 +1,16 @@
 ﻿cmake_minimum_required (VERSION 3.0.0)
+
 project(Example_NetworkClient)
 
-add_executable(${PROJECT_NAME} main.cpp)
+add_executable(${PROJECT_NAME} main.cpp ../OpenGL/DeviceGLFW.cpp ../OpenGL/DeviceGLFW.h)
 
 target_include_directories(
     ${PROJECT_NAME}
     PRIVATE
     ${EFK_RUNTIME_ROOT}/Effekseer
-    ${EFK_RUNTIME_ROOT}/EffekseerRendererDX9
-    ${EFK_RUNTIME_ROOT}/EffekseerSoundXAudio2
+    ${EFK_RUNTIME_ROOT}/EffekseerRendererGL
+    ../Utils
+	${EFK_THIRDPARTY_INCLUDES}
 )
 
 target_link_libraries(
@@ -16,26 +18,71 @@ target_link_libraries(
     PRIVATE
     Effekseer
     EffekseerRendererGL
-    EffekseerRendererDX9
-    EffekseerSoundXAudio2
+    Example_Utils
+    ${EFK_EXAMPLES_GLFW}
 )
 
-# for Visual C++
-target_compile_definitions(
+target_link_directories(
     ${PROJECT_NAME}
     PRIVATE
-    UNICODE
-    _UNICODE)
+    ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES}
+)
+
+if(WIN32)
+    # for Visual C++
+    target_compile_definitions(
+        ${PROJECT_NAME}
+        PRIVATE
+        UNICODE
+        _UNICODE
+    )
+endif()
+
+if(NOT WIN32)
+    find_package(Threads REQUIRED)
+    find_package(OpenGL REQUIRED)
+    target_link_libraries(
+        ${PROJECT_NAME}
+        PRIVATE
+        ${CMAKE_THREAD_LIBS_INIT}
+        ${OPENGL_LIBRARIES}
+    )
+endif()
+
+if(APPLE)
+    find_library(COCOA_FRAMEWORK Cocoa)
+    find_library(IOKIT_FRAMEWORK IOKit)
+    find_library(CORE_FOUNDATION_FRAMEWORK CoreFoundation)
+    find_library(CORE_VIDEO_FRAMEWORK CoreVideo)
+
+    target_link_libraries(
+        ${PROJECT_NAME}
+        PRIVATE
+        ${COCOA_FRAMEWORK}
+        ${IOKIT_FRAMEWORK}
+        ${CORE_FOUNDATION_FRAMEWORK}
+        ${CORE_VIDEO_FRAMEWORK}
+    )
+endif()
+
+if(UNIX AND NOT APPLE)
+    find_package(X11 REQUIRED)
+
+    include_directories(${X11_INCLUDE_DIR})
+
+    target_link_libraries(
+        ${PROJECT_NAME}
+        PRIVATE
+        Effekseer
+        EffekseerRendererGL
+        dl
+        ${X11_LIBRARIES}
+    )
+endif()
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY FOLDER "Examples") 
 
 if(USE_LIBPNG_LOADER)
-    target_link_directories(
-        ${PROJECT_NAME}
-        PRIVATE
-        ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES}
-    )
-
     target_link_libraries(
         ${PROJECT_NAME}
         PRIVATE

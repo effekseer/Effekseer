@@ -5,8 +5,8 @@
 #include "../EffekseerRendererCommon/EffekseerRenderer.ModelRendererBase.h"
 #include "EffekseerRendererLLGI.RendererImplemented.h"
 
-#include <LLGI.Graphics.h>
 #include <LLGI.Buffer.h>
+#include <LLGI.Graphics.h>
 
 namespace EffekseerRendererLLGI
 {

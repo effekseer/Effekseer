@@ -68,7 +68,7 @@ namespace Effekseer.Data.Value
 			int old_b = B.Value;
 			int old_a = A.Value;
 
-			Utl.RGBHSVColor color;
+			Utils.RGBHSVColor color;
 
 			color.RH = old_r;
 			color.GS = old_g;
@@ -78,11 +78,11 @@ namespace Effekseer.Data.Value
 			{
 				if (newval == ColorSpace.HSVA)
 				{
-					color = Utl.RGBHSVColor.RGBToHSV(color);
+					color = Utils.RGBHSVColor.RGBToHSV(color);
 				}
 				else
 				{
-					color = Utl.RGBHSVColor.HSVToRGB(color);
+					color = Utils.RGBHSVColor.HSVToRGB(color);
 				}
 			}
 
@@ -195,12 +195,12 @@ namespace Effekseer.Data.Value
 			}
 			else
 			{
-				Utl.RGBHSVColor color;
+				Utils.RGBHSVColor color;
 
 				color.RH = value.R.Value;
 				color.GS = value.G.Value;
 				color.BV = value.B.Value;
-				color = Utl.RGBHSVColor.HSVToRGB(color);
+				color = Utils.RGBHSVColor.HSVToRGB(color);
 
 				byte[] values = new byte[sizeof(byte) * 4] { (byte)value.R, (byte)value.G, (byte)value.B, (byte)value.A };
 				return values;

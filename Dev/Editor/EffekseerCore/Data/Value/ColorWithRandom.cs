@@ -88,8 +88,8 @@ namespace Effekseer.Data.Value
 			int old_max_b = B.GetMax();
 			int old_max_a = A.GetMax();
 
-			Utl.RGBHSVColor color_min;
-			Utl.RGBHSVColor color_max;
+			Utils.RGBHSVColor color_min;
+			Utils.RGBHSVColor color_max;
 
 			color_max.RH = old_max_r;
 			color_max.GS = old_max_g;
@@ -102,13 +102,13 @@ namespace Effekseer.Data.Value
 			{
 				if (newval == ColorSpace.HSVA)
 				{
-					color_min = Utl.RGBHSVColor.RGBToHSV(color_min);
-					color_max = Utl.RGBHSVColor.RGBToHSV(color_max);
+					color_min = Utils.RGBHSVColor.RGBToHSV(color_min);
+					color_max = Utils.RGBHSVColor.RGBToHSV(color_max);
 				}
 				else
 				{
-					color_min = Utl.RGBHSVColor.HSVToRGB(color_min);
-					color_max = Utl.RGBHSVColor.HSVToRGB(color_max);
+					color_min = Utils.RGBHSVColor.HSVToRGB(color_min);
+					color_max = Utils.RGBHSVColor.HSVToRGB(color_max);
 				}
 			}
 

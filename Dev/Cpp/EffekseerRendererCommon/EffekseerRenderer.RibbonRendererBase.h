@@ -854,11 +854,7 @@ public:
 		state.TextureWrap7 = param.BasicParameterPtr->TextureWrap7;
 		*/
 
-		state.EnableInterpolation = param.BasicParameterPtr->EnableInterpolation;
-		state.UVLoopType = param.BasicParameterPtr->UVLoopType;
-		state.InterpolationType = param.BasicParameterPtr->InterpolationType;
-		state.FlipbookDivideX = param.BasicParameterPtr->FlipbookDivideX;
-		state.FlipbookDivideY = param.BasicParameterPtr->FlipbookDivideY;
+		state.Flipbook = ToState(param.BasicParameterPtr->Flipbook);
 
 		state.UVDistortionIntensity = param.BasicParameterPtr->UVDistortionIntensity;
 

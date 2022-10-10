@@ -17,6 +17,7 @@ set(effekseer_test_src
     Runtime/EffectPlatformGLFW.cpp
     Runtime/EffectPlatformGL.h
     Runtime/EffectPlatformGL.cpp
+    Runtime/BasicRendering.cpp
     Runtime/RuntimeTest.cpp
     Runtime/Performance.cpp
     Runtime/TextureFormats.cpp
@@ -221,8 +222,6 @@ endif()
 if(FROM_CI)
     target_compile_definitions(TestCpp PRIVATE __FROM_CI__)
 endif()
-
-add_definitions(-D__EFFEKSEER_RENDERER_INTERNAL_LOADER__)
 
 # FIXME: Mixed measures with sln. for VS2015
 add_definitions(-D__EFFEKSEER_TEST_BUILD_AS_CMAKE__)

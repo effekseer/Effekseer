@@ -3,28 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
-using Effekseer.Utl;
+using Effekseer.Utils;
 using Effekseer.Data;
 
 namespace Effekseer.Binary
 {
 	class LocationValues
 	{
-		public static byte[] GetBytes(Data.LocationValues value, Data.ParentEffectType parentEffectType, SortedDictionary<string, int> curveAndIndex, ExporterVersion version)
+		public static byte[] GetBytes(Data.LocationValues value, Data.ParentEffectType parentEffectType, SortedDictionary<string, int> curveAndIndex)
 		{
-			//if (parentEffectType != Data.ParentEffectType.NotBind) magnification = 1.0f;
-
 			var type = value.Type.Value;
-
-			// Fall back
-			if (version < ExporterVersion.Ver16Alpha1)
-			{
-				if (type == Data.LocationValues.ParamaterType.NurbsCurve ||
-					type == Data.LocationValues.ParamaterType.ViewOffset)
-				{
-					type = Data.LocationValues.ParamaterType.Fixed;
-				}
-			}
 
 			List<byte[]> data = new List<byte[]>();
 			data.Add(((int)type).GetBytes());
@@ -58,7 +46,7 @@ namespace Effekseer.Binary
 			}
 			else if (type == Data.LocationValues.ParamaterType.Easing)
 			{
-				Utils.ExportEasing(value.Easing, 1.0f, data, version);
+				Utils.ExportEasing(value.Easing, 1.0f, data);
 			}
 			else if (type == Data.LocationValues.ParamaterType.LocationFCurve)
 			{

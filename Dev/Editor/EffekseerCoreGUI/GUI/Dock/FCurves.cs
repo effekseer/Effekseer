@@ -80,7 +80,7 @@ namespace Effekseer.GUI.Dock
 		}
 		Texts texts = new Texts();
 
-		Utl.ParameterTreeNode paramaterTreeNode = null;
+		Utils.ParameterTreeNode paramaterTreeNode = null;
 
 		TreeNode treeNodes = null;
 		List<FCurve> flattenFcurves = new List<FCurve>();
@@ -92,10 +92,10 @@ namespace Effekseer.GUI.Dock
 		bool canControl = true;
 		bool isDetailControlling = false;
 
-		Component.Enum startCurve = new Component.Enum();
-		Component.Enum endCurve = new Component.Enum();
-		Component.Enum type = new Component.Enum();
-		Component.Enum timeline = new Component.Enum();
+		BindableComponent.Enum startCurve = new BindableComponent.Enum();
+		BindableComponent.Enum endCurve = new BindableComponent.Enum();
+		BindableComponent.Enum type = new BindableComponent.Enum();
+		BindableComponent.Enum timeline = new BindableComponent.Enum();
 
 		swig.Vec2 autoZoomRangeMin = new swig.Vec2(float.MaxValue, float.MaxValue);
 		swig.Vec2 autoZoomRangeMax = new swig.Vec2(float.MinValue, float.MinValue);
@@ -109,6 +109,7 @@ namespace Effekseer.GUI.Dock
 		public FCurves()
 		{
 			Label = Icons.PanelFCurve + Resources.GetString("FCurves") + "###FCurves";
+			DocPage = "fcurve.html";
 
 			Command.CommandManager.Changed += OnChanged;
 			Core.OnAfterNew += OnChanged;
@@ -147,7 +148,7 @@ namespace Effekseer.GUI.Dock
 
 			Manager.NativeManager.PushItemWidth(-1);
 
-			if (Component.Functions.CanShowTip())
+			if (BindableComponent.Functions.CanShowTip())
 			{
 				Manager.NativeManager.SetTooltip(Resources.GetString("FCurve_TimelineMode_Desc"));
 			}
@@ -198,7 +199,7 @@ namespace Effekseer.GUI.Dock
 					Copy();
 				}
 
-				if (Component.Functions.CanShowTip())
+				if (BindableComponent.Functions.CanShowTip())
 				{
 					Manager.NativeManager.SetTooltip(Resources.GetString("FCurve_Copy_Desc"));
 				}
@@ -210,18 +211,21 @@ namespace Effekseer.GUI.Dock
 					Paste((int)Manager.Viewer.Current, false, true);
 				}
 
-				if (Component.Functions.CanShowTip())
+				if (BindableComponent.Functions.CanShowTip())
 				{
 					Manager.NativeManager.SetTooltip(Resources.GetString("FCurve_Paste_Desc"));
 				}
 
 				Manager.NativeManager.SameLine();
 
-				Manager.NativeManager.Button("?", size.X, size.Y);
-
-				if (Manager.NativeManager.IsItemHovered())
+				if (Manager.NativeManager.ImageButton(Images.Icons["Help"], size.X, size.Y))
 				{
-					Manager.NativeManager.SetTooltip(Resources.GetString("FCurveCtrl_Desc"));
+					Commands.ShowURL(DocURL);
+				}
+
+				if (BindableComponent.Functions.CanShowTip())
+				{
+					Manager.NativeManager.SetTooltip(Resources.GetString("Panel_Help_Desc"));
 				}
 
 				Manager.NativeManager.PopStyleVar();
@@ -322,6 +326,10 @@ namespace Effekseer.GUI.Dock
 			CheckAndApplyUpdate(treeNodes);
 
 			isFirstUpdate = false;
+		}
+
+		protected override void UpdateToolbar()
+		{
 		}
 
 		bool UpdateMenu()
@@ -871,7 +879,7 @@ namespace Effekseer.GUI.Dock
 			SetParameters(paramTreeNodes);
 		}
 
-		void SetParameters(Utl.ParameterTreeNode paramTreeNodes)
+		void SetParameters(Utils.ParameterTreeNode paramTreeNodes)
 		{
 			flattenFcurves.Clear();
 
@@ -914,7 +922,7 @@ namespace Effekseer.GUI.Dock
 			}
 			else
 			{
-				Action<Utl.ParameterTreeNode, TreeNode> refleshNodes = null;
+				Action<Utils.ParameterTreeNode, TreeNode> refleshNodes = null;
 				refleshNodes = (ptn, tn) =>
 				{
 					// check whether modification doesn't exist
@@ -966,7 +974,7 @@ namespace Effekseer.GUI.Dock
 
 			// compare node structures
 			{
-				Action<Utl.ParameterTreeNode, TreeNode> refleshNodes = null;
+				Action<Utils.ParameterTreeNode, TreeNode> refleshNodes = null;
 				refleshNodes = (ptn, tn) =>
 				{
 					// check whether modification doesn't exist
@@ -1514,7 +1522,7 @@ namespace Effekseer.GUI.Dock
 		{
 			public string ID = string.Empty;
 
-			public Utl.ParameterTreeNode ParamTreeNode { get; private set; }
+			public Utils.ParameterTreeNode ParamTreeNode { get; private set; }
 
 			public List<TreeNode> Children { get; private set; }
 
@@ -1528,7 +1536,7 @@ namespace Effekseer.GUI.Dock
 
 			FCurves window = null;
 
-			public TreeNode(FCurves window, Utl.ParameterTreeNode paramTreeNode)
+			public TreeNode(FCurves window, Utils.ParameterTreeNode paramTreeNode)
 			{
 				this.window = window;
 				ID = "###" + Manager.GetUniqueID().ToString();

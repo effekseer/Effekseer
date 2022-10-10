@@ -1,3 +1,5 @@
+#ifndef __DISABLED_DEFAULT_TEXTURE_LOADER__
+
 #include "EffekseerRenderer.DDSTextureLoader.h"
 #include <stdint.h>
 
@@ -257,3 +259,5 @@ void DDSTextureLoader::Unload()
 }
 
 } // namespace EffekseerRenderer
+
+#endif

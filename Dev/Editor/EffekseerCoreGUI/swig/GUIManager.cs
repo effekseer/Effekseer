@@ -199,6 +199,11 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_EndChild(swigCPtr);
   }
 
+  public Vec2 GetWindowPos() {
+    Vec2 ret = new Vec2(EffekseerNativePINVOKE.GUIManager_GetWindowPos(swigCPtr), true);
+    return ret;
+  }
+
   public Vec2 GetWindowSize() {
     Vec2 ret = new Vec2(EffekseerNativePINVOKE.GUIManager_GetWindowSize(swigCPtr), true);
     return ret;
@@ -269,10 +274,6 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_Separator(swigCPtr);
   }
 
-  public void HiddenSeparator(float thicknessDraw, float thicknessItem) {
-    EffekseerNativePINVOKE.GUIManager_HiddenSeparator(swigCPtr, thicknessDraw, thicknessItem);
-  }
-
   public void Indent(float indent_w) {
     EffekseerNativePINVOKE.GUIManager_Indent(swigCPtr, indent_w);
   }
@@ -298,12 +299,12 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_SameLine__SWIG_2(swigCPtr);
   }
 
-  public void PushDisabled() {
-    EffekseerNativePINVOKE.GUIManager_PushDisabled(swigCPtr);
+  public void BeginDisabled(bool disabled) {
+    EffekseerNativePINVOKE.GUIManager_BeginDisabled(swigCPtr, disabled);
   }
 
-  public void PopDisabled() {
-    EffekseerNativePINVOKE.GUIManager_PopDisabled(swigCPtr);
+  public void EndDisabled() {
+    EffekseerNativePINVOKE.GUIManager_EndDisabled(swigCPtr);
   }
 
   public void AddRectFilled(float minX, float minY, float maxX, float maxY, uint color, float rounding, int flags) {
@@ -381,6 +382,11 @@ public class GUIManager : global::System.IDisposable {
 
   public float GetItemRectSizeY() {
     float ret = EffekseerNativePINVOKE.GUIManager_GetItemRectSizeY(swigCPtr);
+    return ret;
+  }
+
+  public Vec2 GetItemSpacing() {
+    Vec2 ret = new Vec2(EffekseerNativePINVOKE.GUIManager_GetItemSpacing(swigCPtr), true);
     return ret;
   }
 
@@ -1525,6 +1531,137 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public void PushID(int int_id) {
+    EffekseerNativePINVOKE.GUIManager_PushID(swigCPtr, int_id);
+  }
+
+  public void PopID() {
+    EffekseerNativePINVOKE.GUIManager_PopID(swigCPtr);
+  }
+
+  public bool BeginTable(string str_id, int column, TableFlags flags, Vec2 outer_size, float inner_width) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginTable__SWIG_0(swigCPtr, str_id, column, (int)flags, Vec2.getCPtr(outer_size), inner_width);
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+    return ret;
+  }
+
+  public bool BeginTable(string str_id, int column, TableFlags flags, Vec2 outer_size) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginTable__SWIG_1(swigCPtr, str_id, column, (int)flags, Vec2.getCPtr(outer_size));
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+    return ret;
+  }
+
+  public bool BeginTable(string str_id, int column, TableFlags flags) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginTable__SWIG_2(swigCPtr, str_id, column, (int)flags);
+    return ret;
+  }
+
+  public bool BeginTable(string str_id, int column) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginTable__SWIG_3(swigCPtr, str_id, column);
+    return ret;
+  }
+
+  public void EndTable() {
+    EffekseerNativePINVOKE.GUIManager_EndTable(swigCPtr);
+  }
+
+  public void TableNextRow(TableRowFlags row_flags, float min_row_height) {
+    EffekseerNativePINVOKE.GUIManager_TableNextRow__SWIG_0(swigCPtr, (int)row_flags, min_row_height);
+  }
+
+  public void TableNextRow(TableRowFlags row_flags) {
+    EffekseerNativePINVOKE.GUIManager_TableNextRow__SWIG_1(swigCPtr, (int)row_flags);
+  }
+
+  public void TableNextRow() {
+    EffekseerNativePINVOKE.GUIManager_TableNextRow__SWIG_2(swigCPtr);
+  }
+
+  public bool TableNextColumn() {
+    bool ret = EffekseerNativePINVOKE.GUIManager_TableNextColumn(swigCPtr);
+    return ret;
+  }
+
+  public bool TableSetColumnIndex(int column_n) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_TableSetColumnIndex(swigCPtr, column_n);
+    return ret;
+  }
+
+  public void TableSetupColumn(string label, TableColumnFlags flags, float init_width_or_weight, uint user_id) {
+    EffekseerNativePINVOKE.GUIManager_TableSetupColumn__SWIG_0(swigCPtr, label, (int)flags, init_width_or_weight, user_id);
+  }
+
+  public void TableSetupColumn(string label, TableColumnFlags flags, float init_width_or_weight) {
+    EffekseerNativePINVOKE.GUIManager_TableSetupColumn__SWIG_1(swigCPtr, label, (int)flags, init_width_or_weight);
+  }
+
+  public void TableSetupColumn(string label, TableColumnFlags flags) {
+    EffekseerNativePINVOKE.GUIManager_TableSetupColumn__SWIG_2(swigCPtr, label, (int)flags);
+  }
+
+  public void TableSetupColumn(string label) {
+    EffekseerNativePINVOKE.GUIManager_TableSetupColumn__SWIG_3(swigCPtr, label);
+  }
+
+  public void TableSetupScrollFreeze(int cols, int rows) {
+    EffekseerNativePINVOKE.GUIManager_TableSetupScrollFreeze(swigCPtr, cols, rows);
+  }
+
+  public void TableHeadersRow() {
+    EffekseerNativePINVOKE.GUIManager_TableHeadersRow(swigCPtr);
+  }
+
+  public void TableHeader(string label) {
+    EffekseerNativePINVOKE.GUIManager_TableHeader(swigCPtr, label);
+  }
+
+  public int TableGetColumnCount() {
+    int ret = EffekseerNativePINVOKE.GUIManager_TableGetColumnCount(swigCPtr);
+    return ret;
+  }
+
+  public int TableGetColumnIndex() {
+    int ret = EffekseerNativePINVOKE.GUIManager_TableGetColumnIndex(swigCPtr);
+    return ret;
+  }
+
+  public int TableGetRowIndex() {
+    int ret = EffekseerNativePINVOKE.GUIManager_TableGetRowIndex(swigCPtr);
+    return ret;
+  }
+
+  public string TableGetColumnName(int column_n) {
+    string ret = EffekseerNativePINVOKE.GUIManager_TableGetColumnName__SWIG_0(swigCPtr, column_n);
+    return ret;
+  }
+
+  public string TableGetColumnName() {
+    string ret = EffekseerNativePINVOKE.GUIManager_TableGetColumnName__SWIG_1(swigCPtr);
+    return ret;
+  }
+
+  public TableColumnFlags TableGetColumnFlags(int column_n) {
+    TableColumnFlags ret = (TableColumnFlags)EffekseerNativePINVOKE.GUIManager_TableGetColumnFlags__SWIG_0(swigCPtr, column_n);
+    return ret;
+  }
+
+  public TableColumnFlags TableGetColumnFlags() {
+    TableColumnFlags ret = (TableColumnFlags)EffekseerNativePINVOKE.GUIManager_TableGetColumnFlags__SWIG_1(swigCPtr);
+    return ret;
+  }
+
+  public void TableSetColumnEnabled(int column_n, bool v) {
+    EffekseerNativePINVOKE.GUIManager_TableSetColumnEnabled(swigCPtr, column_n, v);
+  }
+
+  public void TableSetBgColor(TableBgTarget target, uint color, int column_n) {
+    EffekseerNativePINVOKE.GUIManager_TableSetBgColor__SWIG_0(swigCPtr, (int)target, color, column_n);
+  }
+
+  public void TableSetBgColor(TableBgTarget target, uint color) {
+    EffekseerNativePINVOKE.GUIManager_TableSetBgColor__SWIG_1(swigCPtr, (int)target, color);
+  }
+
   public float GetHoveredIDTimer() {
     float ret = EffekseerNativePINVOKE.GUIManager_GetHoveredIDTimer(swigCPtr);
     return ret;
@@ -1699,8 +1836,8 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_EndNodeFrameTimeline(swigCPtr, ref frameMin, ref frameMax, ref currentFrame, ref selectedEntry, ref firstFrame);
   }
 
-  public bool GradientHDR(int gradientID, GradientHDRState state, GradientHDRGUIState guiState) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_GradientHDR(swigCPtr, gradientID, GradientHDRState.getCPtr(state), GradientHDRGUIState.getCPtr(guiState));
+  public bool GradientHDR(int gradientID, GradientHDRState state, GradientHDRGUIState guiState, bool isMarkerShown) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_GradientHDR(swigCPtr, gradientID, GradientHDRState.getCPtr(state), GradientHDRGUIState.getCPtr(guiState), isMarkerShown);
     if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }

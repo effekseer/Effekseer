@@ -1,6 +1,6 @@
 ﻿using Effekseer.Data.Value;
 using Effekseer.swig;
-using Effekseer.Utl;
+using Effekseer.Utils;
 
 namespace Effekseer.GUI.Dock
 {
@@ -19,6 +19,7 @@ namespace Effekseer.GUI.Dock
 		public LOD()
 		{
 			Label = Icons.PanelLOD + Resources.GetString("LOD_Name") + "###LOD";
+			DocPage = "levelsOfDetails.html";
 		}
 
 		static uint GetColorU32Abgr(uint argb){
@@ -36,11 +37,8 @@ namespace Effekseer.GUI.Dock
 			Manager.NativeManager.Text(MultiLanguageTextProvider.GetText("LOD_Level") + " " + level);
 			Manager.NativeManager.PopStyleColor();
 
-			if (level == 0)
-			{
-				Manager.NativeManager.PushDisabled();
-				Manager.NativeManager.PushStyleVar(ImGuiStyleVarFlags.Alpha, 0.5F);
-			}
+			Manager.NativeManager.BeginDisabled(level == 0);
+			
 			Manager.NativeManager.NextColumn();
 			bool[] value = { levelEnabled.Value };
 			if (Manager.NativeManager.Checkbox("##level" + level, value))
@@ -60,17 +58,15 @@ namespace Effekseer.GUI.Dock
 				
 			}
 
-			if (level == 0)
-			{
-				Manager.NativeManager.PopStyleVar();
-				Manager.NativeManager.PopDisabled();
-			}
-
+			Manager.NativeManager.EndDisabled();
+			
 			return levelEnabled.Value;
 		}
 
 		protected override void UpdateInternal()
 		{
+			Manager.NativeManager.Separator();
+
 			LevelParameter[] levels = new LevelParameter[]
 			{
 				new LevelParameter(0, Core.LodValues.Lod0Enabled, Core.LodValues.Distance0),
@@ -78,7 +74,7 @@ namespace Effekseer.GUI.Dock
 				new LevelParameter(2, Core.LodValues.Lod2Enabled, Core.LodValues.Distance2),
 				new LevelParameter(3, Core.LodValues.Lod3Enabled, Core.LodValues.Distance3),
 			};
-			Manager.NativeManager.TextWrapped(MultiLanguageTextProvider.GetText("LOD_Description").Replace("\\n", "\n"));
+
 			Manager.NativeManager.Columns(2);
 			if (isFirstUpdate)
 			{

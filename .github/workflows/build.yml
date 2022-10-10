@@ -15,13 +15,35 @@ on:
       - 16x_ex
 
 env:
-  EFFEKSEER_VERSION: 170Alpha4
+  EFFEKSEER_VERSION: 170
 
 jobs:
+  win_x86_build:
+    name: Build Windows(x86)
+    runs-on: windows-2019
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+         git submodule update --init
+         git lfs install
+         git lfs pull
+        
+      - name: Build
+        run: |
+         cmake -S . -B build -A Win32 -DBUILD_VIEWER=ON -D BUILD_TEST=ON -D BUILD_EXAMPLES=ON
+         cmake --build ./build/ --config Release
+        shell: cmd
+
   tests:
     name: Run Tests
     runs-on: windows-2019
     steps:
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+          architecture: 'x64'
+
       - uses: actions/checkout@v2
       - run: |
          git submodule update --init
@@ -52,7 +74,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        name: [linux,windows_x64,windows_x86,mac]
+        name: [linux,windows_x64,mac]
         include:
           - name: linux
             os: ubuntu-20.04
@@ -60,16 +82,18 @@ jobs:
           - name: windows_x64
             os: windows-2019
             label: Win
-          - name: windows_x86
-            os: windows-2019
-            label: Win_x86
           - name: mac
-            os: macos-10.15
+            os: macos-11
             label: Mac
 
     name: Build on ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
     steps:
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+          architecture: 'x64'
 
       - uses: actions/checkout@v2
         with:
@@ -104,18 +128,14 @@ jobs:
           if [ "${{ matrix.name }}" = "mac" ];
           then
               export PACKAGEING_FOR_MAC=1
-              sudo xcode-select --switch /Applications/Xcode_10.3.app
-          fi
-          if [ "${{ matrix.name }}" = "windows_x86" ];
-          then
-              export X86=1 
+              sudo xcode-select --switch /Applications/Xcode_11.7.app
           fi
           python3 build.py || python build.py
                 
-      - name: Prepare Runtime
+      - name: Prepare ForCpp
         if: matrix.name == 'windows_x64'
         run: |
-          release_runtime.bat
+          release_cpp.bat
         shell: cmd
         
       - name: Prepare Windows Tool
@@ -124,23 +144,17 @@ jobs:
         if: matrix.name == 'windows_x64'
         shell: cmd
 
-      - name: Prepare Windows Tool (x86)
-        run: |
-          release_tool.bat
-        if: matrix.name == 'windows_x86'
-        shell: cmd
-
       - name: Prepare Linux Tool
         run: |
           bash ./release_tool.sh
         if: matrix.name == 'linux'
 
-      - name: Upload Runtime
+      - name: Upload ForCpp
         if: matrix.name == 'windows_x64'
         uses: actions/upload-artifact@v2
         with:
-          name: EffekseerRuntime${{ env.EFFEKSEER_VERSION }}
-          path: EffekseerRuntime
+          name: EffekseerForCpp${{ env.EFFEKSEER_VERSION }}
+          path: EffekseerForCpp
 
       - name: Upload ${{matrix.name}} Tool
         uses: actions/upload-artifact@v2
@@ -165,8 +179,8 @@ jobs:
       
       - uses: actions/download-artifact@v2
         with:
-          name: EffekseerRuntime${{ env.EFFEKSEER_VERSION }}
-          path: dist/EffekseerRuntime
+          name: EffekseerForCpp${{ env.EFFEKSEER_VERSION }}
+          path: dist/EffekseerForCpp
       
       - uses: actions/download-artifact@v2
         with:

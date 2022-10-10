@@ -8,18 +8,18 @@ namespace Effekseer.GUI.Dock
 {
 	class DepthValues : DockPanel
 	{
-		Component.ParameterList paramerterList = null;
-		Component.CopyAndPaste candp = null;
+		BindableComponent.ParameterList paramerterList = null;
 
 		bool isFiestUpdate = true;
 
 		public DepthValues()
 		{
 			Label = Icons.PanelDepth + Resources.GetString("Depth") + "###Depth";
+			DocPage = "depth.html";
 
-			paramerterList = new Component.ParameterList();
+			paramerterList = new BindableComponent.ParameterList();
 			paramerterList.SetType(typeof(Data.DepthValues));
-			candp = new Component.CopyAndPaste("Depth", GetTargetObject, Read);
+			CopyAndPaste = new BindableComponent.CopyAndPaste("Depth", GetTargetObject, Read);
 
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;
@@ -50,8 +50,7 @@ namespace Effekseer.GUI.Dock
 			{
 			}
 
-			candp.Update();
-
+			Manager.NativeManager.Separator();
 			paramerterList.Update();
 		}
 

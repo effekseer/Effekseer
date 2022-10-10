@@ -1,15 +1,11 @@
 #include "EffekseerMaterialCompilerDX11.h"
-#include "../DirectX/ShaderGenerator.h"
+#include "../HLSLGenerator/ShaderGenerator.h"
 
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #include <iostream>
 
 #pragma comment(lib, "d3dcompiler.lib")
-
-#undef min
-
-#include "../HLSL/HLSL.h"
 
 namespace Effekseer
 {
@@ -240,23 +236,7 @@ CompiledMaterialBinary* MaterialCompilerDX11::Compile(MaterialFile* materialFile
 	};
 
 	auto saveBinary = [&materialFile, &binary, &convertToVectorVS, &convertToVectorPS, &maximumUniformCount, &maximumTextureCount](MaterialShaderType type) -> bool {
-		auto generator = DirectX::ShaderGenerator(HLSL::GetMaterialCommonDefine(HLSL::ShaderType::DirectX11).c_str(),
-												  HLSL::material_common_functions,
-												  HLSL::material_common_vs_functions,
-												  HLSL::material_sprite_vs_pre,
-												  HLSL::material_sprite_vs_pre_simple,
-												  HLSL::GetModelVS_Pre(HLSL::ShaderType::DirectX11).c_str(),
-												  HLSL::material_sprite_vs_suf1,
-												  HLSL::material_sprite_vs_suf1_simple,
-												  HLSL::model_vs_suf1,
-												  HLSL::material_sprite_vs_suf2,
-												  HLSL::model_vs_suf2,
-												  HLSL::GetMaterialPS_Pre(HLSL::ShaderType::DirectX11).c_str(),
-												  HLSL::GetMaterialPS_Suf1(HLSL::ShaderType::DirectX11).c_str(),
-												  HLSL::g_material_ps_suf2_lit,
-												  HLSL::g_material_ps_suf2_unlit,
-												  HLSL::GetMaterialPS_Suf2_Refraction(HLSL::ShaderType::DirectX11).c_str(),
-												  DirectX::ShaderGeneratorTarget::DirectX11);
+		auto generator = DirectX::ShaderGenerator(DirectX::ShaderGeneratorTarget::DirectX11);
 
 		auto shader = generator.GenerateShader(materialFile, type, maximumUniformCount, maximumTextureCount, 0, 40);
 

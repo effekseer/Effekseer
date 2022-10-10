@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Effekseer.Data;
 using Effekseer.Data.Value;
-using Effekseer.Utl;
+using Effekseer.Utils;
 
 namespace Effekseer.Binary.RenderData
 {
@@ -53,15 +53,21 @@ namespace Effekseer.Binary.RenderData
 			_data.Add(data);
 		}
 
-		public void AddTexIdAndStoreSize(PathForImage image, int number, SortedDictionary<string, int> texAndInd)
+		string GetAbsolutePath(PathForImage image)
 		{
-			var tempTexInfo = new TextureInformation();
-
 			var absolutePath = image.AbsolutePath;
 			if (_convertLoadingFilePath != null)
 			{
 				absolutePath = _convertLoadingFilePath(absolutePath);
 			}
+			return absolutePath;
+		}
+
+		public void AddTexIdAndStoreSize(PathForImage image, int number, SortedDictionary<string, int> texAndInd)
+		{
+			var tempTexInfo = new TextureInformation();
+
+			var absolutePath = GetAbsolutePath(image);
 
 			if (!texAndInd.ContainsKey(image.RelativePath) || !tempTexInfo.Load(absolutePath))
 			{
@@ -82,12 +88,14 @@ namespace Effekseer.Binary.RenderData
 		{
 			var tempTexInfo = new TextureInformation();
 
-			if (!texAndInd.ContainsKey(image.RelativePath) || !tempTexInfo.Load(image.AbsolutePath))
+			var absolutePath = GetAbsolutePath(image);
+
+			if (!texAndInd.ContainsKey(image.RelativePath) || !tempTexInfo.Load(absolutePath))
 			{
 				return -1;
 			}
 
-			texInfoRef.Load(image.AbsolutePath);
+			texInfoRef.Load(absolutePath);
 			return texAndInd[image.RelativePath];
 		}
 

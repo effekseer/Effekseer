@@ -602,7 +602,7 @@ EffectNode* EffectNodeImplemented::GetChild(int index) const
 	return m_Nodes[index];
 }
 
-EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter()
+EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter() const
 {
 	EffectBasicRenderParameter param;
 	param.MaterialIndex = RendererCommon.MaterialData.MaterialIndex;
@@ -625,17 +625,7 @@ EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter()
 
 	if (RendererCommon.UVs[0].Type == UVAnimationType::Animation && RendererCommon.UVs[0].Animation.InterpolationType != 0)
 	{
-		param.FlipbookParams.Enable = true;
-		param.FlipbookParams.LoopType = RendererCommon.UVs[0].Animation.LoopType;
-		param.FlipbookParams.DivideX = RendererCommon.UVs[0].Animation.FrameCountX;
-		param.FlipbookParams.DivideY = RendererCommon.UVs[0].Animation.FrameCountY;
-	}
-	else
-	{
-		param.FlipbookParams.Enable = false;
-		param.FlipbookParams.LoopType = 0;
-		param.FlipbookParams.DivideX = 1;
-		param.FlipbookParams.DivideY = 1;
+		param.FlipbookParams = UVFunctions::ToFlipbookParameter(RendererCommon.UVs[0]);
 	}
 
 	param.MaterialType = RendererCommon.MaterialType;
@@ -648,7 +638,7 @@ EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter()
 
 	if (GetType() == eEffectNodeType::Model)
 	{
-		EffectNodeModel* pNodeModel = static_cast<EffectNodeModel*>(this);
+		auto pNodeModel = static_cast<const EffectNodeModel*>(this);
 		param.EnableFalloff = pNodeModel->EnableFalloff;
 		param.FalloffParam.ColorBlendType = static_cast<int32_t>(pNodeModel->FalloffParam.ColorBlendType);
 		param.FalloffParam.BeginColor[0] = static_cast<float>(pNodeModel->FalloffParam.BeginColor.R) / 255.0f;
@@ -704,13 +694,17 @@ void EffectNodeImplemented::SetBasicRenderParameter(EffectBasicRenderParameter p
 	RendererCommon.BlendTextureIndex = param.BlendTextureIndex;
 	RendererCommon.WrapTypes[4] = param.BlendTexWrapType;
 
-	if (param.FlipbookParams.Enable)
+	if (param.FlipbookParams.EnableInterpolation)
 	{
 		RendererCommon.UVs[0].Type = UVAnimationType::Animation;
 		RendererCommon.UVs[0].Animation.LoopType =
-			static_cast<decltype(RendererCommon.UVs[0].Animation.LoopType)>(param.FlipbookParams.LoopType);
-		RendererCommon.UVs[0].Animation.FrameCountX = param.FlipbookParams.DivideX;
-		RendererCommon.UVs[0].Animation.FrameCountY = param.FlipbookParams.DivideY;
+			static_cast<decltype(RendererCommon.UVs[0].Animation.LoopType)>(param.FlipbookParams.InterpolationType);
+		RendererCommon.UVs[0].Animation.FrameCountX = param.FlipbookParams.FlipbookDivideX;
+		RendererCommon.UVs[0].Animation.FrameCountY = param.FlipbookParams.FlipbookDivideY;
+		RendererCommon.UVs[0].Animation.Position.x = param.FlipbookParams.Offset[0];
+		RendererCommon.UVs[0].Animation.Position.y = param.FlipbookParams.Offset[1];
+		RendererCommon.UVs[0].Animation.Position.w = param.FlipbookParams.OneSize[0];
+		RendererCommon.UVs[0].Animation.Position.h = param.FlipbookParams.OneSize[1];
 	}
 
 	RendererCommon.UVDistortionIntensity = param.UVDistortionIntensity;
@@ -848,8 +842,7 @@ EffectInstanceTerm EffectNodeImplemented::CalculateInstanceTerm(EffectInstanceTe
 {
 	EffectInstanceTerm ret;
 
-	auto addWithClip = [](int v1, int v2) -> int
-	{
+	auto addWithClip = [](int v1, int v2) -> int {
 		v1 = Max(v1, 0);
 		v2 = Max(v2, 0);
 

@@ -19,6 +19,27 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 
 /**
+	@brief	Random Function
+*/
+using RandFunc = std::function<int()>;
+
+/**
+	@brief
+	\~English Callback event when an instance of an effect is destroyed
+	\~Japanese エフェクトのインスタンス破棄時のコールバックイベント
+	@note
+	\~English
+	manager The manager to which the effect belongs
+	handle Handle of the effect instance
+	isRemovingManager Whether the effect instance is removed when the manager is removed.
+	\~Japanese
+	manager 所属しているマネージャー
+	handle エフェクトのインスタンスのハンドル
+	isRemovingManager マネージャーを破棄したときにエフェクトのインスタンスを破棄しているか
+*/
+using EffectInstanceRemovingCallback = std::function<void(Manager*, Handle, bool)>;
+
+/**
 	@brief エフェクト管理クラス
 */
 class Manager : public IReference
@@ -104,7 +125,7 @@ public:
 
 		DrawParameter();
 	};
-	
+
 	/**
 		@brief
 		\~English Parameters of Manager::SetLayerParameter to be set for each layer index.
@@ -122,7 +143,7 @@ public:
 			通常はカメラの位置と同じ値を指定する。
 		*/
 		Vector3D ViewerPosition = {0.0f, 0.0f, 0.0f};
-		
+
 		/**
 			@brief
 			\~English
@@ -167,32 +188,6 @@ public:
 	virtual ThreadNativeHandleType GetWorkerThreadHandle(uint32_t threadID) = 0;
 
 	/**
-		@brief
-		\~English get an allocator
-		\~Japanese メモリ確保関数を取得する。
-	*/
-	virtual MallocFunc GetMallocFunc() const = 0;
-
-	/**
-		\~English specify an allocator
-		\~Japanese メモリ確保関数を設定する。
-	*/
-	virtual void SetMallocFunc(MallocFunc func) = 0;
-
-	/**
-		@brief
-		\~English get a deallocator
-		\~Japanese メモリ破棄関数を取得する。
-	*/
-	virtual FreeFunc GetFreeFunc() const = 0;
-
-	/**
-		\~English specify a deallocator
-		\~Japanese メモリ破棄関数を設定する。
-	*/
-	virtual void SetFreeFunc(FreeFunc func) = 0;
-
-	/**
 		@brief	ランダム関数を取得する。
 	*/
 	virtual RandFunc GetRandFunc() const = 0;
@@ -201,16 +196,6 @@ public:
 		@brief	ランダム関数を設定する。
 	*/
 	virtual void SetRandFunc(RandFunc func) = 0;
-
-	/**
-		@brief	ランダム最大値を取得する。
-	*/
-	virtual int GetRandMax() const = 0;
-
-	/**
-		@brief	ランダム関数を設定する。
-	*/
-	virtual void SetRandMax(int max_) = 0;
 
 	/**
 		@brief	座標系を取得する。
@@ -649,7 +634,7 @@ public:
 
 	/**
 		@brief Stops new particles spawning but continues simulation of already spawned particles
-		@param spawnDisabled Whether to stop particles generation 
+		@param spawnDisabled Whether to stop particles generation
 	 */
 	virtual void SetSpawnDisabled(Handle handle, bool spawnDisabled) = 0;
 
@@ -815,7 +800,7 @@ public:
 	virtual void UpdateHandle(Handle handle, float deltaFrame = 1.0f) = 0;
 
 	/**
-		@brief	
+		@brief
 		\~English	Update an effect to move to the specified frame
 		\~Japanese	指定した時間に移動するために更新する
 		\~English	a handle.

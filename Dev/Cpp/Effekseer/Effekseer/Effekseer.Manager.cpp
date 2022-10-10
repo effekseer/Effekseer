@@ -333,18 +333,7 @@ void ManagerImplemented::ReleaseInstanceContainer(InstanceContainer* container)
 	pooledContainers_.push(container);
 }
 
-void* EFK_STDCALL ManagerImplemented::Malloc(unsigned int size)
-{
-	return (void*)new char*[size];
-}
-
-void EFK_STDCALL ManagerImplemented::Free(void* p, unsigned int size)
-{
-	char* pData = (char*)p;
-	delete[] pData;
-}
-
-int EFK_STDCALL ManagerImplemented::Rand()
+int ManagerImplemented::Rand()
 {
 	return rand();
 }
@@ -392,8 +381,7 @@ void ManagerImplemented::StoreSortingDrawSets(const Manager::DrawParameter& draw
 
 	if (drawParameter.IsSortingEffectsEnabled)
 	{
-		std::sort(sortedRenderingDrawSets_.begin(), sortedRenderingDrawSets_.end(), [&](const DrawSet& a, const DrawSet& b) -> bool
-				  {
+		std::sort(sortedRenderingDrawSets_.begin(), sortedRenderingDrawSets_.end(), [&](const DrawSet& a, const DrawSet& b) -> bool {
 			const auto da = SIMD::Vec3f::Dot(a.GetGlobalMatrix().GetTranslation() - drawParameter.CameraPosition, drawParameter.CameraFrontDirection);
 			const auto db = SIMD::Vec3f::Dot(b.GetGlobalMatrix().GetTranslation() - drawParameter.CameraPosition, drawParameter.CameraFrontDirection);
 			return da > db; });
@@ -445,18 +433,11 @@ ManagerImplemented::ManagerImplemented(int instance_max, bool autoFlip)
 	, m_trackRenderer(nullptr)
 
 	, m_soundPlayer(nullptr)
-
-	, m_MallocFunc(nullptr)
-	, m_FreeFunc(nullptr)
 	, m_randFunc(nullptr)
-	, m_randMax(0)
 {
 	m_setting = Setting::Create();
 
-	SetMallocFunc(Malloc);
-	SetFreeFunc(Free);
 	SetRandFunc(Rand);
-	SetRandMax(RAND_MAX);
 
 	m_renderingDrawSets.reserve(64);
 
@@ -516,8 +497,7 @@ Instance* ManagerImplemented::CreateInstance(EffectNodeImplemented* pEffectNode,
 
 	int32_t offset = creatableChunkOffsets_[generationNumber];
 
-	auto it = std::find_if(chunks.begin() + offset, chunks.end(), [](const InstanceChunk* chunk)
-						   { return chunk->IsInstanceCreatable(); });
+	auto it = std::find_if(chunks.begin() + offset, chunks.end(), [](const InstanceChunk* chunk) { return chunk->IsInstanceCreatable(); });
 
 	creatableChunkOffsets_[generationNumber] = (int32_t)std::distance(chunks.begin(), it);
 
@@ -579,26 +559,6 @@ uint32_t ManagerImplemented::GetSequenceNumber() const
 	return m_sequenceNumber;
 }
 
-MallocFunc ManagerImplemented::GetMallocFunc() const
-{
-	return m_MallocFunc;
-}
-
-void ManagerImplemented::SetMallocFunc(MallocFunc func)
-{
-	m_MallocFunc = func;
-}
-
-FreeFunc ManagerImplemented::GetFreeFunc() const
-{
-	return m_FreeFunc;
-}
-
-void ManagerImplemented::SetFreeFunc(FreeFunc func)
-{
-	m_FreeFunc = func;
-}
-
 RandFunc ManagerImplemented::GetRandFunc() const
 {
 	return m_randFunc;
@@ -607,16 +567,6 @@ RandFunc ManagerImplemented::GetRandFunc() const
 void ManagerImplemented::SetRandFunc(RandFunc func)
 {
 	m_randFunc = func;
-}
-
-int ManagerImplemented::GetRandMax() const
-{
-	return m_randMax;
-}
-
-void ManagerImplemented::SetRandMax(int max_)
-{
-	m_randMax = max_;
 }
 
 CoordinateSystem ManagerImplemented::GetCoordinateSystem() const
@@ -1384,8 +1334,7 @@ void ManagerImplemented::Update(const UpdateParameter& parameter)
 	{
 		m_WorkerThreads[0].WaitForComplete();
 		// Process on worker thread
-		m_WorkerThreads[0].RunAsync([this, parameter]()
-									{ DoUpdate(parameter); });
+		m_WorkerThreads[0].RunAsync([this, parameter]() { DoUpdate(parameter); });
 
 		if (parameter.SyncUpdate)
 		{
@@ -1478,8 +1427,7 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter)
 					const uint32_t chunkOffset = threadID;
 					// Process on worker thread
 					PROFILER_BLOCK("DoUpdate::RunAsyncGroup", profiler::colors::Red100);
-					m_WorkerThreads[threadID].RunAsync([this, &chunks, chunkOffset, chunkStep]()
-													   {
+					m_WorkerThreads[threadID].RunAsync([this, &chunks, chunkOffset, chunkStep]() {
 						PROFILER_BLOCK("DoUpdate::RunAsync", profiler::colors::Red200);
 						for (size_t i = chunkOffset; i < chunks.size(); i += chunkStep)
 						{
@@ -1562,8 +1510,7 @@ void ManagerImplemented::EndUpdate()
 		auto last = chunks.end();
 		while (first != last)
 		{
-			auto it = std::find_if(first, last, [](const InstanceChunk* chunk)
-								   { return chunk->GetAliveCount() == 0; });
+			auto it = std::find_if(first, last, [](const InstanceChunk* chunk) { return chunk->GetAliveCount() == 0; });
 			if (it != last)
 			{
 				pooledChunks_.push(*it);
@@ -1823,8 +1770,7 @@ void ManagerImplemented::Draw(const Manager::DrawParameter& drawParameter)
 
 	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, GetSetting()->GetCoordinateSystem());
 
-	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void
-	{
+	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void {
 		if (!CanDraw(drawSet, drawParameter, cullingPlanes))
 		{
 			return;
@@ -1888,8 +1834,7 @@ void ManagerImplemented::DrawBack(const Manager::DrawParameter& drawParameter)
 
 	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, GetSetting()->GetCoordinateSystem());
 
-	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void
-	{
+	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void {
 		if (!CanDraw(drawSet, drawParameter, cullingPlanes))
 		{
 			return;
@@ -1947,8 +1892,7 @@ void ManagerImplemented::DrawFront(const Manager::DrawParameter& drawParameter)
 
 	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, GetSetting()->GetCoordinateSystem());
 
-	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void
-	{
+	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void {
 		if (!CanDraw(drawSet, drawParameter, cullingPlanes))
 		{
 			return;

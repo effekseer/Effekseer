@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
-using Effekseer.Utl;
+using Effekseer.Utils;
 
 namespace Effekseer.Binary
 {
 	class AlphaCutoffValues
 	{
-		public static byte[] GetBytes(Data.AlphaCutoffParameter value, ExporterVersion version)
+		public static byte[] GetBytes(Data.AlphaCutoffParameter value)
 		{
 			List<byte[]> data = new List<byte[]>();
 			data.Add(value.Type.GetValueAsInt().GetBytes());
@@ -45,7 +45,7 @@ namespace Effekseer.Binary
 			}
 			else if (value.Type == Data.AlphaCutoffParameter.ParameterType.Easing)
 			{
-				Utils.ExportEasing(value.Easing, 1.0f, data, version, true);
+				Utils.ExportEasing(value.Easing, 1.0f, data, true);
 			}
 			else if (value.Type == Data.AlphaCutoffParameter.ParameterType.FCurve)
 			{

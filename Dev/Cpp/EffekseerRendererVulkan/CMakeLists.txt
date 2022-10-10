@@ -16,6 +16,11 @@ source_group("EffekseerRendererCommon" FILES ${LOCAL_SOURCES_Common})
 
 file(GLOB_RECURSE LOCAL_HEADERS_Vulkan *.h)
 file(GLOB_RECURSE LOCAL_SOURCES_Vulkan *.cpp)
+list(APPEND LOCAL_SOURCES_Vulkan ../EffekseerMaterialCompiler/GLSLGenerator/ShaderGenerator.h)
+list(APPEND LOCAL_SOURCES_Vulkan ../EffekseerMaterialCompiler/GLSLGenerator/ShaderGenerator.cpp)
+list(APPEND LOCAL_SOURCES_Vulkan ../EffekseerMaterialCompiler/Common/ShaderGeneratorCommon.h)
+list(APPEND LOCAL_SOURCES_Vulkan ../EffekseerMaterialCompiler/Common/ShaderGeneratorCommon.cpp)
+
 FilterFolder("${LOCAL_HEADERS_Vulkan}")
 FilterFolder("${LOCAL_SOURCES_Vulkan}")
 
@@ -41,7 +46,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${Vulkan_INCLUDE_DIRS})
 set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${LOCAL_HEADERS_Vulkan}")
 target_link_libraries(${PROJECT_NAME} PUBLIC Effekseer LLGI)
 
-if(USE_LIBPNG_LOADER AND USE_INTERNAL_LOADER)
+if(USE_LIBPNG_LOADER)
     add_dependencies(${PROJECT_NAME} ExternalProject_zlib ExternalProject_libpng) 
 endif()
 

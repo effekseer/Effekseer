@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Effekseer.swig;
-using Effekseer.Utl;
+using Effekseer.Utils;
 
 namespace Effekseer.GUI
 {
@@ -711,6 +711,7 @@ namespace Effekseer.GUI
 				HardwareDevice.SoundDevice.SetListener(ray.Origin, rayPos, new Vector3F(0, 1, 0));
 			}
 
+			HardwareDevice.GraphicsDevice.ResetRenderTargets();
 			HardwareDevice.GraphicsDevice.ClearColor(50, 50, 50, 0);
 
 			//if(effectViewer == null)

@@ -1,5 +1,33 @@
-
 # OpenGL (OpenGL is a code as binary)
+
+add_library(
+    EffekseerMaterialCompilerCommon
+    STATIC
+    Common/ShaderGeneratorCommon.h
+    Common/ShaderGeneratorCommon.cpp
+)
+
+target_link_libraries(
+    EffekseerMaterialCompilerCommon
+    PRIVATE 
+    Effekseer
+)
+
+set_property(TARGET EffekseerMaterialCompilerCommon PROPERTY FOLDER Libraries) 
+
+add_library(
+    EffekseerMaterialCompilerGLSLGenerator
+    STATIC
+    GLSLGenerator/ShaderGenerator.h
+    GLSLGenerator/ShaderGenerator.cpp
+)
+set_property(TARGET EffekseerMaterialCompilerGLSLGenerator PROPERTY FOLDER Libraries) 
+
+target_link_libraries(
+    EffekseerMaterialCompilerGLSLGenerator
+    PUBLIC
+    EffekseerMaterialCompilerCommon
+)
 
 add_library(
     EffekseerMaterialCompilerGL
@@ -12,6 +40,7 @@ target_link_libraries(
     EffekseerMaterialCompilerGL
     PRIVATE 
     Effekseer
+    EffekseerMaterialCompilerGLSLGenerator
 )
 
 target_compile_definitions(EffekseerMaterialCompilerGL PRIVATE __SHARED_OBJECT__=1)
@@ -51,6 +80,7 @@ target_link_libraries(
     EffekseerMaterialCompilerMetal
     PRIVATE 
     Effekseer
+    EffekseerMaterialCompilerCommon
 )
 
 target_compile_definitions(EffekseerMaterialCompilerMetal PRIVATE __SHARED_OBJECT__=1)
@@ -79,6 +109,22 @@ set_property(TARGET EffekseerMaterialCompilerMetal PROPERTY FOLDER Libraries)
 
 if(WIN32)
     add_library(
+        EffekseerMaterialCompilerHLSLGenerator
+        STATIC
+        HLSLGenerator/ShaderGenerator.h
+        HLSLGenerator/ShaderGenerator.cpp
+    )
+    set_property(TARGET EffekseerMaterialCompilerHLSLGenerator PROPERTY FOLDER Libraries) 
+
+    target_link_libraries(
+        EffekseerMaterialCompilerHLSLGenerator
+        PUBLIC
+        EffekseerMaterialCompilerCommon
+    )
+endif()
+
+if(WIN32)
+    add_library(
         EffekseerMaterialCompilerDX11
         SHARED
         DirectX11/EffekseerMaterialCompilerDX11.h
@@ -89,6 +135,7 @@ if(WIN32)
         EffekseerMaterialCompilerDX11
         PRIVATE 
         Effekseer
+        EffekseerMaterialCompilerHLSLGenerator
     )
 
     target_compile_definitions(EffekseerMaterialCompilerDX11 PRIVATE __SHARED_OBJECT__=1)
@@ -122,6 +169,7 @@ if(WIN32)
         EffekseerMaterialCompilerDX9
         PRIVATE 
         Effekseer
+        EffekseerMaterialCompilerHLSLGenerator
     )
 
     target_compile_definitions(EffekseerMaterialCompilerDX9 PRIVATE __SHARED_OBJECT__=1)
@@ -158,6 +206,7 @@ if(WIN32 AND BUILD_DX12)
         EffekseerMaterialCompilerDX12
         PRIVATE 
         Effekseer
+        EffekseerMaterialCompilerHLSLGenerator
         LLGI
     )
 
@@ -191,6 +240,13 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/Dev/Cpp/EffekseerMaterialCompiler/Switch")
         Switch/EffekseerMaterialCompilerSwitch.cpp
     )
 
+    target_link_libraries(
+        EffekseerMaterialCompilerSwitch
+        PRIVATE
+        EffekseerMaterialCompilerGLSLGenerator
+    )
+
+
     target_compile_definitions(EffekseerMaterialCompilerSwitch PRIVATE __SHARED_OBJECT__=1)
 
     set_target_properties(
@@ -219,6 +275,12 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/Dev/Cpp/EffekseerMaterialCompiler/PS4/")
         SHARED
         PS4/EffekseerMaterialCompilerPS4.h
         PS4/EffekseerMaterialCompilerPS4.cpp
+    )
+
+    target_link_libraries(
+        EffekseerMaterialCompilerPS4
+        PRIVATE
+        EffekseerMaterialCompilerHLSLGenerator
     )
 
     target_compile_definitions(EffekseerMaterialCompilerPS4 PRIVATE __SHARED_OBJECT__=1)
@@ -250,6 +312,12 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/Dev/Cpp/EffekseerMaterialCompiler/PS5/")
         SHARED
         PS5/EffekseerMaterialCompilerPS5.h
         PS5/EffekseerMaterialCompilerPS5.cpp
+    )
+
+    target_link_libraries(
+        EffekseerMaterialCompilerPS5
+        PRIVATE
+        EffekseerMaterialCompilerHLSLGenerator
     )
 
     target_compile_definitions(EffekseerMaterialCompilerPS5 PRIVATE __SHARED_OBJECT__=1)

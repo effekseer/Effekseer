@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 3.0.0)
 
 project(Example_Metal)
 
-add_executable(Example_Metal main.mm)
+add_executable(Example_Metal main.mm DeviceMetal.mm DeviceMetal.h)
 
 target_include_directories(
     Example_Metal

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using Effekseer.Utl;
+using Effekseer.Utils;
 
 namespace Effekseer.Utils
 {
@@ -88,7 +88,7 @@ namespace Effekseer.Utils
 				// Fcurve
 				var fcurves = Core.GetFCurveParameterNode(rootNode);
 
-				Action<Utl.ParameterTreeNode> convert = null;
+				Action<Utils.ParameterTreeNode> convert = null;
 				convert = (n) =>
 				{
 					foreach (var fcurve in n.Parameters)

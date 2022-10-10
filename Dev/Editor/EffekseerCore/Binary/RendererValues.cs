@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Effekseer.Data;
 using Effekseer.Data.Value;
-using Effekseer.Utl;
+using Effekseer.Utils;
 
 namespace Effekseer.Binary
 {
 	class RingShapeParameter
 	{
-		public static byte[] GetBytes(Data.RingShapeParameter value, ExporterVersion version)
+		public static byte[] GetBytes(Data.RingShapeParameter value)
 		{
 			List<byte[]> data = new List<byte[]>();
 			data.Add(BitConverter.GetBytes((int)value.Type.Value));
@@ -35,7 +35,7 @@ namespace Effekseer.Binary
 				}
 				else if (value.Crescent.StartingAngle.Value == Data.FixedRandomEasingType.Easing)
 				{
-					Utils.ExportEasing(value.Crescent.StartingAngle_Easing, 1.0f, data, version, version >= ExporterVersion.Ver16Alpha9);
+					Utils.ExportEasing(value.Crescent.StartingAngle_Easing, 1.0f, data, true);
 				}
 
 				data.Add(((int)value.Crescent.EndingAngle.Value).GetBytes());
@@ -51,7 +51,7 @@ namespace Effekseer.Binary
 				}
 				else if (value.Crescent.EndingAngle.Value == Data.FixedRandomEasingType.Easing)
 				{
-					Utils.ExportEasing(value.Crescent.EndingAngle_Easing, 1.0f, data, version, version >= ExporterVersion.Ver16Alpha9);
+					Utils.ExportEasing(value.Crescent.EndingAngle_Easing, 1.0f, data, true);
 				}
 			}
 
@@ -80,28 +80,9 @@ namespace Effekseer.Binary
 
 	class RendererValues
 	{
-		public static byte[] GetBytes(Data.RendererValues value, SortedDictionary<string, int> texture_and_index, SortedDictionary<string, int> normalTexture_and_index, SortedDictionary<string, int> model_and_index, Dictionary<Data.ProceduralModelParameter, int> pmodel_and_index, ExporterVersion version)
+		public static byte[] GetBytes(Data.RendererValues value, SortedDictionary<string, int> texture_and_index, SortedDictionary<string, int> normalTexture_and_index, SortedDictionary<string, int> model_and_index, Dictionary<Data.ProceduralModelParameter, int> pmodel_and_index)
 		{
 			List<byte[]> data = new List<byte[]>();
-
-			// Fallback
-			if (version < ExporterVersion.Ver16Alpha2)
-			{
-				if (value != null && value.Type.Value == Data.RendererValues.ParamaterType.Model && value.Model.ModelReference.Value == Data.ModelReferenceType.ProceduralModel)
-				{
-					var param = value.Model;
-
-					data.Add(value.Type.GetValueAsInt().GetBytes());
-					data.Add(BitConverter.GetBytes(1.0f));
-					data.Add(BitConverter.GetBytes(-1));
-					data.Add(param.Billboard);
-					data.Add(((int)param.Culling.Value).GetBytes());
-					OutputStandardColor(data, param.Color, param.Color_Fixed, param.Color_Random, param.Color_Easing,
-						param.Color_FCurve);
-
-					return data.ToArray().ToArray();
-				}
-			}
 
 			if (value != null)
 			{
@@ -111,19 +92,19 @@ namespace Effekseer.Binary
 					case Data.RendererValues.ParamaterType.None:
 						break;
 					case Data.RendererValues.ParamaterType.Sprite:
-						AddSpriteData(value, data, version);
+						AddSpriteData(value, data);
 						break;
 					case Data.RendererValues.ParamaterType.Ribbon:
-						AddRibbonData(value, data, version);
+						AddRibbonData(value, data);
 						break;
 					case Data.RendererValues.ParamaterType.Ring:
-						AddRingData(value, data, version);
+						AddRingData(value, data);
 						break;
 					case Data.RendererValues.ParamaterType.Model:
-						AddModelData(value, model_and_index, pmodel_and_index, version, data);
+						AddModelData(value, model_and_index, pmodel_and_index, data);
 						break;
 					case Data.RendererValues.ParamaterType.Track:
-						AddTrackData(value, data, version);
+						AddTrackData(value, data);
 						break;
 				}
 			}
@@ -135,14 +116,14 @@ namespace Effekseer.Binary
 			return data.ToArray().ToArray();
 		}
 
-		private static void AddSpriteData(Data.RendererValues value, List<byte[]> data, ExporterVersion version)
+		private static void AddSpriteData(Data.RendererValues value, List<byte[]> data)
 		{
 			var param = value.Sprite;
 
 			data.Add(param.RenderingOrder);
 			data.Add(param.Billboard);
 
-			OutputStandardColor(data, value.ColorAll, version, ExporterVersion.Ver1500, ExporterVersion.Ver17Alpha1);
+			OutputStandardColor(data, value.ColorAll);
 
 			AddPartialColor();
 			AddPosition();
@@ -199,14 +180,13 @@ namespace Effekseer.Binary
 			}
 		}
 
-		private static void AddRibbonData(Data.RendererValues value, List<byte[]> data, ExporterVersion version)
+		private static void AddRibbonData(Data.RendererValues value, List<byte[]> data)
 		{
 			var ribbonParameter = value.Ribbon;
 
 			// texture uv mode from 1.5
 			data.Add(TextureUVTypeParameter.GetBytes(value.TextureUVType));
 
-			if (version >= ExporterVersion.Ver17Alpha1)
 			{
 				data.Add(BitConverter.GetBytes((int)value.TrailTimeSource.Value));
 			}
@@ -275,7 +255,7 @@ namespace Effekseer.Binary
 			}
 		}
 
-		private static void AddRingData(Data.RendererValues value, List<byte[]> data, ExporterVersion version)
+		private static void AddRingData(Data.RendererValues value, List<byte[]> data)
 		{
 			var ringParameter = value.Ring;
 
@@ -283,7 +263,7 @@ namespace Effekseer.Binary
 			data.Add(ringParameter.Billboard);
 
 			// from 1.5
-			data.Add(RingShapeParameter.GetBytes(ringParameter.RingShape, version));
+			data.Add(RingShapeParameter.GetBytes(ringParameter.RingShape));
 
 			data.Add(ringParameter.VertexCount.Value.GetBytes());
 
@@ -373,7 +353,7 @@ namespace Effekseer.Binary
 				}
 				else if (ringParameter.CenterRatio.GetValue() == Data.RendererValues.RingParamater.CenterRatioType.Easing)
 				{
-					Utils.ExportEasing(ringParameter.CenterRatio_Easing, 1.0f, data, version, version >= ExporterVersion.Ver16Alpha9);
+					Utils.ExportEasing(ringParameter.CenterRatio_Easing, 1.0f, data, true);
 				}
 			}
 
@@ -402,12 +382,10 @@ namespace Effekseer.Binary
 			Data.RendererValues value,
 			SortedDictionary<string, int> model_and_index,
 			Dictionary<ProceduralModelParameter, int> pmodel_and_index,
-			ExporterVersion version,
 			List<byte[]> data)
 		{
 			var param = value.Model;
 
-			if (version >= ExporterVersion.Ver16Alpha3)
 			{
 				var refType = (int)value.Model.ModelReference.Value;
 				data.Add((refType).GetBytes());
@@ -419,7 +397,7 @@ namespace Effekseer.Binary
 
 			data.Add(((int)param.Culling.Value).GetBytes());
 
-			OutputStandardColor(data, value.ColorAll, version, ExporterVersion.Ver1500, ExporterVersion.Ver17Alpha1);
+			OutputStandardColor(data, value.ColorAll);
 
 			void AddModelReference()
 			{
@@ -452,7 +430,7 @@ namespace Effekseer.Binary
 			}
 		}
 
-		private static void AddTrackData(Data.RendererValues value, List<byte[]> data, ExporterVersion version)
+		private static void AddTrackData(Data.RendererValues value, List<byte[]> data)
 		{
 			// texture uv mode from 1.5
 			data.Add(TextureUVTypeParameter.GetBytes(value.TextureUVType));
@@ -469,21 +447,20 @@ namespace Effekseer.Binary
 
 			data.Add(BitConverter.GetBytes(param.SplineDivision.Value));
 
-			if (version >= ExporterVersion.Ver17Alpha1)
 			{
 				data.Add(BitConverter.GetBytes((int)value.TrailSmoothing.Value));
 				data.Add(BitConverter.GetBytes((int)value.TrailTimeSource.Value));
 			}
 
-			OutputStandardColor(data, value.TrailColorLeft, version, ExporterVersion.Ver1500, ExporterVersion.Ver17Alpha2);
-			OutputStandardColor(data, value.TrailColorLeftMiddle, version, ExporterVersion.Ver1500, ExporterVersion.Ver17Alpha2);
-			OutputStandardColor(data, value.TrailColorCenter, version, ExporterVersion.Ver1500, ExporterVersion.Ver17Alpha2);
-			OutputStandardColor(data, value.TrailColorCenterMiddle, version, ExporterVersion.Ver1500, ExporterVersion.Ver17Alpha2);
-			OutputStandardColor(data, value.TrailColorRight, version, ExporterVersion.Ver1500, ExporterVersion.Ver17Alpha2);
-			OutputStandardColor(data, value.TrailColorRightMiddle, version, ExporterVersion.Ver1500, ExporterVersion.Ver17Alpha2);
+			OutputStandardColor(data, value.TrailColorLeft);
+			OutputStandardColor(data, value.TrailColorLeftMiddle);
+			OutputStandardColor(data, value.TrailColorCenter);
+			OutputStandardColor(data, value.TrailColorCenterMiddle);
+			OutputStandardColor(data, value.TrailColorRight);
+			OutputStandardColor(data, value.TrailColorRightMiddle);
 		}
 
-		public static void OutputStandardColor(List<byte[]> data, StandardColor color, ExporterVersion version, ExporterVersion fcurveVersion, ExporterVersion gradientVersion)
+		public static void OutputStandardColor(List<byte[]> data, StandardColor color)
 		{
 			OutputStandardColor(
 				data,
@@ -491,8 +468,8 @@ namespace Effekseer.Binary
 				color.Fixed,
 				color.Random,
 				color.Easing,
-				version >= fcurveVersion ? color.FCurve : null,
-				version >= gradientVersion ? color.Gradient : null);
+				color.FCurve,
+				color.Gradient);
 		}
 
 		public static void OutputStandardColor(
@@ -541,7 +518,7 @@ namespace Effekseer.Binary
 
 		private static void AddEasing(List<byte[]> data, Enum<EasingStart> start, Enum<EasingEnd> end)
 		{
-			var easing = Utl.MathUtl.Easing((float)start.Value, (float)end.Value);
+			var easing = MathUtl.Easing((float)start.Value, (float)end.Value);
 			data.Add(BitConverter.GetBytes(easing[0]));
 			data.Add(BitConverter.GetBytes(easing[1]));
 			data.Add(BitConverter.GetBytes(easing[2]));

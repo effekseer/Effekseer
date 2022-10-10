@@ -1032,11 +1032,7 @@ public:
 		state.DepthTest = param.ZTest;
 		state.DepthWrite = param.ZWrite;
 
-		state.EnableInterpolation = param.BasicParameterPtr->EnableInterpolation;
-		state.UVLoopType = param.BasicParameterPtr->UVLoopType;
-		state.InterpolationType = param.BasicParameterPtr->InterpolationType;
-		state.FlipbookDivideX = param.BasicParameterPtr->FlipbookDivideX;
-		state.FlipbookDivideY = param.BasicParameterPtr->FlipbookDivideY;
+		state.Flipbook = ToState(param.BasicParameterPtr->Flipbook);
 
 		state.UVDistortionIntensity = param.BasicParameterPtr->UVDistortionIntensity;
 

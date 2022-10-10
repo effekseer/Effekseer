@@ -5,84 +5,88 @@
 namespace EffekseerRendererGL
 {
 
-static const char g_header_vs_gl3_src[] = "#version 330\n"
-										  R"(
-)"
-										  "#define lowp\n"
-										  "#define mediump\n"
-										  "#define highp\n"
-										  "#define IN in\n"
-										  "#define CENTROID centroid\n"
-										  "#define TEX2D textureLod\n"
-										  "#define OUT out\n";
+static const char g_header_vs_gl3_src[] =
+	R"(#version 330
+#define lowp
+#define mediump
+#define highp
+#define IN in
+#define CENTROID centroid
+#define TEX2D textureLod
+#define OUT out
+)";
 
-static const char g_header_fs_gl3_src[] = "#version 330\n"
-										  R"(
-)"
-										  "#define lowp\n"
-										  "#define mediump\n"
-										  "#define highp\n"
-										  "#define IN in\n"
-										  "#define CENTROID centroid\n"
-										  "#define TEX2D texture\n"
-										  "layout (location = 0) out vec4 FRAGCOLOR;\n";
+static const char g_header_fs_gl3_src[] =
+	R"(#version 330
+#define lowp
+#define mediump
+#define highp
+#define IN in
+#define CENTROID centroid
+#define TEX2D texture
+layout (location = 0) out vec4 FRAGCOLOR;
+)";
 
-static const char g_header_vs_gles3_src[] = "#version 300 es\n"
-											R"(
-)"
-											"#define IN in\n"
-											"#define CENTROID centroid\n"
-											"#define TEX2D textureLod\n"
-											"#define OUT out\n";
+static const char g_header_vs_gles3_src[] =
+	R"(#version 300 es
+#define IN in
+#define CENTROID centroid
+#define TEX2D textureLod
+#define OUT out
+)";
 
-static const char g_header_fs_gles3_src[] = "#version 300 es\n"
-											R"(
-)"
-											"precision highp float;\n"
-											"#define IN in\n"
-											"#define CENTROID centroid\n"
-											"#define TEX2D texture\n"
-											"layout (location = 0) out vec4 FRAGCOLOR;\n";
+static const char g_header_fs_gles3_src[] =
+	R"(#version 300 es
+precision highp float;
+#define IN in
+#define CENTROID centroid
+#define TEX2D texture
+layout (location = 0) out vec4 FRAGCOLOR;
+)";
 
 static const char g_header_vs_gles2_src[] =
 	R"(
 #define EFK__INSTANCING_DISABLED__ 1
-)"
-	"#define IN attribute\n"
-	"#define CENTROID\n"
-	"#define TEX2D texture2DLod\n"
-	"#define OUT varying\n";
+#define EFK__OPENGL2__ 1
+#define IN attribute
+#define CENTROID
+#define TEX2D texture2DLod
+#define OUT varying
+)";
 
-static const char g_header_fs_gles2_src[] = "precision highp float;\n"
-											R"(
-)"
-											"#define IN varying\n"
-											"#define CENTROID\n"
-											"#define TEX2D texture2D\n"
-											"#define FRAGCOLOR gl_FragColor\n";
+static const char g_header_fs_gles2_src[] =
+	R"(precision highp float;
+#define EFK__OPENGL2__ 1
+#define IN varying
+#define CENTROID
+#define TEX2D texture2D
+#define FRAGCOLOR gl_FragColor
+)";
 
-static const char g_header_vs_gl2_src[] = "#version 120\n"
-										  R"(
+static const char g_header_vs_gl2_src[] =
+	R"(#version 120
 #define EFK__INSTANCING_DISABLED__ 1
-)"
-										  "#define lowp\n"
-										  "#define mediump\n"
-										  "#define highp\n"
-										  "#define IN attribute\n"
-										  "#define CENTROID\n"
-										  "#define TEX2D texture2DLod\n"
-										  "#define OUT varying\n";
+#define EFK__OPENGL2__ 1
+#define lowp
+#define mediump
+#define highp
+#define IN attribute
+#define CENTROID
+#define TEX2D texture2DLod
+#define OUT varying
+)";
 
-static const char g_header_fs_gl2_src[] = "#version 120\n"
-										  R"(
-)"
-										  "#define lowp\n"
-										  "#define mediump\n"
-										  "#define highp\n"
-										  "#define IN varying\n"
-										  "#define CENTROID\n"
-										  "#define TEX2D texture2D\n"
-										  "#define FRAGCOLOR gl_FragColor\n";
+static const char g_header_fs_gl2_src[] =
+	R"(#version 120
+#define EFK__OPENGL2__ 1
+#define lowp
+#define mediump
+#define highp
+#define IN varying
+#define CENTROID
+#define TEX2D texture2D
+#define FRAGCOLOR gl_FragColor
+)";
 
 const char* GetVertexShaderHeader(OpenGLDeviceType deviceType)
 {

@@ -1,3 +1,4 @@
+using Effekseer.GUI.BindableComponent;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,20 @@ namespace Effekseer.GUI.Dock
 			}
 		}
 
+		public string DocPage { get; set; } = string.Empty;
+
+		public string DocURL
+		{
+			get
+			{
+				if (!string.IsNullOrEmpty(DocPage))
+				{
+					return Core.GetToolReferenceURL(DocPage);
+				}
+				return string.Empty;
+			}
+		}
+
 		public string WindowID { get { return Label.Substring(Label.IndexOf("###")); } }
 
 		internal swig.Vec2 InitialDockSize = new swig.Vec2(0, 0);
@@ -40,6 +55,8 @@ namespace Effekseer.GUI.Dock
 		}
 
 		protected internal string TabToolTip = string.Empty;
+
+		protected internal BindableComponent.CopyAndPaste CopyAndPaste = null;
 
 		internal int IsInitialized = -1;
 
@@ -91,6 +108,8 @@ namespace Effekseer.GUI.Dock
 
 					if (dockEnabled)
 					{
+						UpdateToolbar();
+
 						UpdateInternal();
 
 						Controls.Lock();
@@ -155,6 +174,40 @@ namespace Effekseer.GUI.Dock
 
 		protected virtual void UpdateInternal()
 		{
+		}
+
+		protected virtual void UpdateToolbar()
+		{
+			bool hasItem = false;
+
+			if (CopyAndPaste != null)
+			{
+				CopyAndPaste.Update();
+				hasItem = true;
+			}
+
+			if (!string.IsNullOrEmpty(DocPage))
+			{
+				if (hasItem)
+				{
+					Manager.NativeManager.SameLine();
+				}
+
+				float dpiScale = Manager.DpiScale;
+				swig.Vec2 size = new swig.Vec2(18 * dpiScale, 18 * dpiScale);
+
+				if (Manager.NativeManager.ImageButton(Images.Icons["Help"], size.X, size.Y))
+				{
+					Commands.ShowURL(DocURL);
+				}
+
+				if (Functions.CanShowTip())
+				{
+					Manager.NativeManager.SetTooltip(Resources.GetString("Panel_Help_Desc"));
+				}
+
+				hasItem = true;
+			}
 		}
 	}
 }

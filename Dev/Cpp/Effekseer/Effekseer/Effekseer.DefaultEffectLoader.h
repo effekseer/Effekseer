@@ -18,9 +18,9 @@ public:
 
 	virtual ~DefaultEffectLoader() override;
 
-	bool Load(const char16_t* path, void*& data, int32_t& size);
+	bool Load(const char16_t* path, void*& data, int32_t& size) override;
 
-	void Unload(void* data, int32_t size);
+	void Unload(void* data, int32_t size) override;
 };
 
 } // namespace Effekseer

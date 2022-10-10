@@ -609,15 +609,7 @@ struct ParameterRendererCommon
 
 		if (UVs[0].Type == UVAnimationType::Animation)
 		{
-			BasicParameter.EnableInterpolation = (UVs[0].Animation.InterpolationType != UVs[0].Animation.NONE);
-			BasicParameter.UVLoopType = UVs[0].Animation.LoopType;
-			BasicParameter.InterpolationType = UVs[0].Animation.InterpolationType;
-			BasicParameter.FlipbookDivideX = UVs[0].Animation.FrameCountX;
-			BasicParameter.FlipbookDivideY = UVs[0].Animation.FrameCountY;
-		}
-		else
-		{
-			BasicParameter.EnableInterpolation = false;
+			BasicParameter.Flipbook = UVFunctions::ToFlipbookParameter(UVs[0]);
 		}
 
 		BasicParameter.EmissiveScaling = EmissiveScaling;
@@ -775,7 +767,7 @@ public:
 
 	EffectNode* GetChild(int index) const override;
 
-	EffectBasicRenderParameter GetBasicRenderParameter() override;
+	EffectBasicRenderParameter GetBasicRenderParameter() const override;
 
 	void SetBasicRenderParameter(EffectBasicRenderParameter param) override;
 

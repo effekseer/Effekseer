@@ -33,7 +33,8 @@ struct VS_ConstantBuffer
     vec4 fBlendUV;
     vec4 fBlendAlphaUV;
     vec4 fBlendUVDistortionUV;
-    vec4 fFlipbookParameter;
+    vec4 flipbookParameter1;
+    vec4 flipbookParameter2;
     vec4 fFlipbookIndexAndNextRate;
     vec4 fModelAlphaThreshold;
     vec4 fModelColor;
@@ -65,50 +66,43 @@ float IntMod(float x, float y)
     return floor(mod(x, y));
 }
 
-vec2 GetFlipbookOneSizeUV(float DivideX, float DivideY)
-{
-    return vec2(1.0) / vec2(DivideX, DivideY);
-}
-
-vec2 GetFlipbookOriginUV(vec2 FlipbookUV, float FlipbookIndex, float DivideX, float DivideY)
+vec2 GetFlipbookOriginUV(vec2 FlipbookUV, float FlipbookIndex, float DivideX, vec2 flipbookOneSize, vec2 flipbookOffset)
 {
     float param = FlipbookIndex;
     float param_1 = DivideX;
     vec2 DivideIndex;
     DivideIndex.x = IntMod(param, param_1);
     DivideIndex.y = float(int(FlipbookIndex) / int(DivideX));
-    float param_2 = DivideX;
-    float param_3 = DivideY;
-    vec2 FlipbookOneSize = GetFlipbookOneSizeUV(param_2, param_3);
-    vec2 UVOffset = DivideIndex * FlipbookOneSize;
-    vec2 OriginUV = FlipbookUV - UVOffset;
-    OriginUV *= vec2(DivideX, DivideY);
-    return OriginUV;
+    vec2 UVOffset = (DivideIndex * flipbookOneSize) + flipbookOffset;
+    return FlipbookUV - UVOffset;
 }
 
-vec2 GetFlipbookUVForIndex(vec2 OriginUV, float Index, float DivideX, float DivideY)
+vec2 GetFlipbookUVForIndex(vec2 OriginUV, float Index, float DivideX, vec2 flipbookOneSize, vec2 flipbookOffset)
 {
     float param = Index;
     float param_1 = DivideX;
     vec2 DivideIndex;
     DivideIndex.x = IntMod(param, param_1);
     DivideIndex.y = float(int(Index) / int(DivideX));
-    float param_2 = DivideX;
-    float param_3 = DivideY;
-    vec2 FlipbookOneSize = GetFlipbookOneSizeUV(param_2, param_3);
-    return (OriginUV * FlipbookOneSize) + (DivideIndex * FlipbookOneSize);
+    return (OriginUV + (DivideIndex * flipbookOneSize)) + flipbookOffset;
 }
 
-void ApplyFlipbookVS(inout float flipbookRate, inout vec2 flipbookUV, vec4 flipbookParameter, float flipbookIndex, vec2 uv, vec2 uvInversed)
+void ApplyFlipbookVS(inout float flipbookRate, inout vec2 flipbookUV, vec4 flipbookParameter1, vec4 flipbookParameter2, float flipbookIndex, vec2 uv, vec2 uvInversed)
 {
-    if (flipbookParameter.x > 0.0)
+    float flipbookEnabled = flipbookParameter1.x;
+    float flipbookLoopType = flipbookParameter1.y;
+    float divideX = flipbookParameter1.z;
+    float divideY = flipbookParameter1.w;
+    vec2 flipbookOneSize = flipbookParameter2.xy;
+    vec2 flipbookOffset = flipbookParameter2.zw;
+    if (flipbookEnabled > 0.0)
     {
         flipbookRate = fract(flipbookIndex);
         float Index = floor(flipbookIndex);
         float IndexOffset = 1.0;
         float NextIndex = Index + IndexOffset;
-        float FlipbookMaxCount = flipbookParameter.z * flipbookParameter.w;
-        if (flipbookParameter.y == 0.0)
+        float FlipbookMaxCount = divideX * divideY;
+        if (flipbookLoopType == 0.0)
         {
             if (NextIndex >= FlipbookMaxCount)
             {
@@ -118,14 +112,14 @@ void ApplyFlipbookVS(inout float flipbookRate, inout vec2 flipbookUV, vec4 flipb
         }
         else
         {
-            if (flipbookParameter.y == 1.0)
+            if (flipbookLoopType == 1.0)
             {
                 Index = mod(Index, FlipbookMaxCount);
                 NextIndex = mod(NextIndex, FlipbookMaxCount);
             }
             else
             {
-                if (flipbookParameter.y == 2.0)
+                if (flipbookLoopType == 2.0)
                 {
                     bool Reverse = mod(floor(Index / FlipbookMaxCount), 2.0) == 1.0;
                     Index = mod(Index, FlipbookMaxCount);
@@ -146,14 +140,16 @@ void ApplyFlipbookVS(inout float flipbookRate, inout vec2 flipbookUV, vec4 flipb
         notInversedUV.y = uvInversed.x + (uvInversed.y * notInversedUV.y);
         vec2 param = notInversedUV;
         float param_1 = Index;
-        float param_2 = flipbookParameter.z;
-        float param_3 = flipbookParameter.w;
-        vec2 OriginUV = GetFlipbookOriginUV(param, param_1, param_2, param_3);
-        vec2 param_4 = OriginUV;
-        float param_5 = NextIndex;
-        float param_6 = flipbookParameter.z;
-        float param_7 = flipbookParameter.w;
-        flipbookUV = GetFlipbookUVForIndex(param_4, param_5, param_6, param_7);
+        float param_2 = divideX;
+        vec2 param_3 = flipbookOneSize;
+        vec2 param_4 = flipbookOffset;
+        vec2 OriginUV = GetFlipbookOriginUV(param, param_1, param_2, param_3, param_4);
+        vec2 param_5 = OriginUV;
+        float param_6 = NextIndex;
+        float param_7 = divideX;
+        vec2 param_8 = flipbookOneSize;
+        vec2 param_9 = flipbookOffset;
+        flipbookUV = GetFlipbookUVForIndex(param_5, param_6, param_7, param_8, param_9);
         flipbookUV.y = uvInversed.x + (uvInversed.y * flipbookUV.y);
     }
 }
@@ -174,11 +170,12 @@ void CalculateAndStoreAdvancedParameter(vec2 uv, vec2 uv1, vec4 alphaUV, vec4 uv
     vec2 flipbookNextIndexUV = vec2(0.0);
     float param = flipbookRate;
     vec2 param_1 = flipbookNextIndexUV;
-    vec4 param_2 = CBVS0.fFlipbookParameter;
-    float param_3 = flipbookIndexAndNextRate;
-    vec2 param_4 = uv1;
-    vec2 param_5 = vec2(CBVS0.mUVInversed.xy);
-    ApplyFlipbookVS(param, param_1, param_2, param_3, param_4, param_5);
+    vec4 param_2 = CBVS0.flipbookParameter1;
+    vec4 param_3 = CBVS0.flipbookParameter2;
+    float param_4 = flipbookIndexAndNextRate;
+    vec2 param_5 = uv1;
+    vec2 param_6 = vec2(CBVS0.mUVInversed.xy);
+    ApplyFlipbookVS(param, param_1, param_2, param_3, param_4, param_5, param_6);
     flipbookRate = param;
     flipbookNextIndexUV = param_1;
     vsoutput.Blend_FBNextIndex_UV = vec4(vsoutput.Blend_FBNextIndex_UV.x, vsoutput.Blend_FBNextIndex_UV.y, flipbookNextIndexUV.x, flipbookNextIndexUV.y);

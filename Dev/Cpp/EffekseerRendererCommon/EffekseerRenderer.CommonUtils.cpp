@@ -13,20 +13,68 @@ std::array<std::array<float, 4>, 13> ToUniform(const Effekseer::Gradient& gradie
 	ret[0][2] = 0.0F;
 	ret[0][3] = 0.0F;
 
-	for (size_t i = 0; i < 8; i++)
+	const auto getColorKey = [](const Effekseer::Gradient& gradient, size_t index)
 	{
-		ret[1 + i][0] = gradient.Colors[i].Color[0] * gradient.Colors[i].Intensity;
-		ret[1 + i][1] = gradient.Colors[i].Color[1] * gradient.Colors[i].Intensity;
-		ret[1 + i][2] = gradient.Colors[i].Color[2] * gradient.Colors[i].Intensity;
-		ret[1 + i][3] = gradient.Colors[i].Position;
+		if (gradient.ColorCount == 0)
+		{
+			Effekseer::Gradient::ColorKey key;
+			key.Color = {1.0f, 1.0f, 1.0f};
+			key.Intensity = 1.0f;
+			key.Position = 0.0;
+			return key;
+		}
+		else
+		{
+			if (gradient.ColorCount <= index)
+			{
+				auto key = gradient.Colors[gradient.ColorCount - 1];
+				key.Position += index;
+				return key;
+			}
+
+			return gradient.Colors[index];
+		}
+	};
+
+	const auto getAlphaKey = [](const Effekseer::Gradient& gradient, size_t index)
+	{
+		if (gradient.AlphaCount == 0)
+		{
+			Effekseer::Gradient::AlphaKey key;
+			key.Alpha = 1.0f;
+			key.Position = 0.0;
+			return key;
+		}
+		else
+		{
+			if (gradient.AlphaCount <= index)
+			{
+				auto key = gradient.Alphas[gradient.AlphaCount - 1];
+				key.Position += index;
+				return key;
+			}
+
+			return gradient.Alphas[index];
+		}
+	};
+
+	for (size_t i = 0; i < gradient.Colors.size(); i++)
+	{
+		const auto colorKey = getColorKey(gradient, i);
+		ret[1 + i][0] = colorKey.Color[0] * colorKey.Intensity;
+		ret[1 + i][1] = colorKey.Color[1] * colorKey.Intensity;
+		ret[1 + i][2] = colorKey.Color[2] * colorKey.Intensity;
+		ret[1 + i][3] = colorKey.Position;
 	}
 
 	for (size_t i = 0; i < 4; i++)
 	{
-		ret[9 + i][0] = gradient.Alphas[i * 2 + 0].Alpha;
-		ret[9 + i][1] = gradient.Alphas[i * 2 + 0].Position;
-		ret[9 + i][2] = gradient.Alphas[i * 2 + 1].Alpha;
-		ret[9 + i][3] = gradient.Alphas[i * 2 + 1].Position;
+		const auto alphaKey0 = getAlphaKey(gradient, i * 2 + 0);
+		const auto alphaKey1 = getAlphaKey(gradient, i * 2 + 1);
+		ret[9 + i][0] = alphaKey0.Alpha;
+		ret[9 + i][1] = alphaKey0.Position;
+		ret[9 + i][2] = alphaKey1.Alpha;
+		ret[9 + i][3] = alphaKey1.Position;
 	}
 
 	return ret;
@@ -430,7 +478,8 @@ void CalculateAlignedTextureInformation(Effekseer::Backend::TextureFormatType fo
 	height = 0;
 
 	const int32_t blockSize = 4;
-	auto aligned = [](int32_t size, int32_t alignement) -> int32_t {
+	auto aligned = [](int32_t size, int32_t alignement) -> int32_t
+	{
 		return ((size + alignement - 1) / alignement) * alignement;
 	};
 

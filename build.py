@@ -117,9 +117,6 @@ class CurrentDir:
         cd(self.prev)
         #print("cd: " + os.getcwd())
 
-
-env = os.environ.copy()
-
 env = os.environ.copy()
 env["PKG_CONFIG_PATH"] = os.getenv(
     'PKG_CONFIG_PATH', '/Library/Frameworks/Mono.framework/Versions/Current/lib/pkgconfig')
@@ -143,25 +140,6 @@ if isMac():
 
 if env['IGNORE_BUILD'] == '0':
     os.makedirs('build', exist_ok=True)
-    if isWin():
-        candidates = [
-            r"C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe",
-            r"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe",
-            r"C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\MSBuild.exe",
-            r"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\MSBuild.exe",
-        ]
-
-        candidate = None
-        for candidate in candidates:
-            if os.path.exists(candidate):
-                msbuild_path = candidate
-                break
-
-        if msbuild_path is None:
-            raise Exception("MSBuild is not found")
-
-    elif isMac():
-        msbuild_path = 'msbuild'
 
     with CurrentDir('build'):
 
@@ -173,11 +151,9 @@ if env['IGNORE_BUILD'] == '0':
             suffix = ''
             if is_from_ci:
                 suffix += ' -D FROM_CI=ON'
-            if is_x86:
-                call('cmake .. -A Win32 -DBUILD_VIEWER=ON' + suffix)
-            else:
-                # run tests on x64
-                call('cmake .. -A x64 -DBUILD_VIEWER=ON -D BUILD_TEST=ON -D BUILD_EXAMPLES=ON' + suffix)
+            
+            # run tests on x64
+            call('cmake .. -A x64 -DBUILD_VIEWER=ON -D BUILD_TEST=ON -D BUILD_EXAMPLES=ON' + suffix)
 
         elif isMac():
             call('cmake .. -G "Xcode" -DBUILD_VIEWER=ON -D BUILD_TEST=ON -D BUILD_EXAMPLES=ON')
@@ -187,31 +163,20 @@ if env['IGNORE_BUILD'] == '0':
             call('cmake .. -G "Unix Makefiles" -DBUILD_VIEWER=ON')
         call('cmake --build . --config Release')
 
-    if isWin():
-        call('build\\nuget.exe restore Dev/Editor/Effekseer.sln')
-
     if isMac():
-        call('dotnet build Dev/Editor/Effekseer/Effekseer.Std.csproj')
-        call('dotnet publish Dev/Editor/Effekseer/Effekseer.Std.csproj -c Release --self-contained -r osx.10.11-x64')
+        call('dotnet build Dev/Editor/Effekseer/Effekseer.csproj')
+        call('dotnet publish Dev/Editor/Effekseer/Effekseer.csproj -c Release --self-contained -r osx.10.11-x64')
         call('cp -r Dev/release/osx.10.11-x64/publish/* Dev/release/')
         call('rm -rf -r Dev/release/osx.10.11-x64')
 
     elif isWin():
-        if is_x86:
-            call('"' + msbuild_path + '"' +
-                 ' Dev/Editor/EffekseerCore/EffekseerCore.csproj /t:build /p:Configuration=Release /p:Platform=x86')
-            call('"' + msbuild_path + '"' +
-                 ' Dev/Editor/EffekseerCoreGUI/EffekseerCoreGUI.csproj /t:build /p:Configuration=Release /p:Platform=x86')
-            call('"' + msbuild_path + '"' +
-                 ' Dev/Editor/Effekseer/Effekseer.csproj /t:build /p:Configuration=Release /p:Platform=x86')
-        else:
-            call('"' + msbuild_path + '"' +
-                 ' Dev/Editor/EffekseerCore/EffekseerCore.csproj /t:build /p:Configuration=Release /p:Platform=x64')
-            call('"' + msbuild_path + '"' +
-                 ' Dev/Editor/Effekseer/Effekseer.csproj /t:build /p:Configuration=Release /p:Platform=x64')
+        call('dotnet build Dev/Editor/Effekseer/Effekseer.csproj')
+        call('dotnet publish Dev/Editor/Effekseer/Effekseer.csproj -c Release --self-contained -r win-x64')
+        shutil.copytree('Dev/release/win-x64/publish', 'Dev/release', dirs_exist_ok=True)
+        shutil.rmtree('Dev/release/win-x64')
     else:
-        call('dotnet build Dev/Editor/Effekseer/Effekseer.Std.csproj')
-        call('dotnet publish Dev/Editor/Effekseer/Effekseer.Std.csproj -c Release --self-contained -r linux-x64')
+        call('dotnet build Dev/Editor/Effekseer/Effekseer.csproj')
+        call('dotnet publish Dev/Editor/Effekseer/Effekseer.csproj -c Release --self-contained -r linux-x64')
         call('chmod +x Dev/release/Effekseer')
         call('chmod +x Dev/release/EffekseerMaterialEditor')
         call('chmod +x Dev/release/tools/fbxToEffekseerCurveConverter')

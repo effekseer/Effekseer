@@ -12,16 +12,13 @@
 #include "../../EffekseerRendererCommon/EffekseerRenderer.SpriteRendererBase.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.TrackRendererBase.h"
 #include "../../EffekseerRendererCommon/ModelLoader.h"
+#include "../../EffekseerRendererCommon/TextureLoader.h"
 #include "EffekseerRendererDX9.DeviceObject.h"
 #include "EffekseerRendererDX9.IndexBuffer.h"
 #include "EffekseerRendererDX9.MaterialLoader.h"
 #include "EffekseerRendererDX9.ModelRenderer.h"
 #include "EffekseerRendererDX9.Shader.h"
 #include "EffekseerRendererDX9.VertexBuffer.h"
-
-#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-#include "../../EffekseerRendererCommon/TextureLoader.h"
-#endif
 
 //----------------------------------------------------------------------------------
 //
@@ -108,23 +105,6 @@ static
 ::Effekseer::Backend::GraphicsDeviceRef CreateGraphicsDevice(LPDIRECT3DDEVICE9 device)
 {
 	return Effekseer::MakeRefPtr<Backend::GraphicsDevice>(device);
-}
-
-::Effekseer::TextureLoaderRef CreateTextureLoader(
-	Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
-	::Effekseer::FileInterfaceRef fileInterface,
-	::Effekseer::ColorSpaceType colorSpaceType)
-{
-#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return ::Effekseer::MakeRefPtr<EffekseerRenderer::TextureLoader>(graphicsDevice.Get(), fileInterface);
-#else
-	return nullptr;
-#endif
-}
-
-::Effekseer::ModelLoaderRef CreateModelLoader(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterfaceRef fileInterface)
-{
-	return ::Effekseer::MakeRefPtr<EffekseerRenderer::ModelLoader>(graphicsDevice, fileInterface);
 }
 
 RendererRef Renderer::Create(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, int32_t squareMaxCount)
@@ -727,11 +707,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 //----------------------------------------------------------------------------------
 ::Effekseer::TextureLoaderRef RendererImplemented::CreateTextureLoader(::Effekseer::FileInterfaceRef fileInterface)
 {
-#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return ::Effekseer::MakeRefPtr<EffekseerRenderer::TextureLoader>(graphicsDevice_.Get(), fileInterface);
-#else
-	return nullptr;
-#endif
+	return ::EffekseerRenderer::CreateTextureLoader(graphicsDevice_, fileInterface, ::Effekseer::ColorSpaceType::Gamma);
 }
 
 //----------------------------------------------------------------------------------

@@ -103,39 +103,6 @@ class Texture;
 
 using ThreadNativeHandleType = std::thread::native_handle_type;
 
-/**
-	@brief	Memory Allocation function
-*/
-typedef void*(EFK_STDCALL* MallocFunc)(unsigned int size);
-
-/**
-	@brief	Memory Free function
-*/
-typedef void(EFK_STDCALL* FreeFunc)(void* p, unsigned int size);
-
-/**
-	@brief	AlignedMemory Allocation function
-*/
-typedef void*(EFK_STDCALL* AlignedMallocFunc)(unsigned int size, unsigned int alignment);
-
-/**
-	@brief	AlignedMemory Free function
-*/
-typedef void(EFK_STDCALL* AlignedFreeFunc)(void* p, unsigned int size);
-
-/**
-	@brief	Random Function
-*/
-typedef int(EFK_STDCALL* RandFunc)(void);
-
-/**
-	@brief	エフェクトのインスタンス破棄時のコールバックイベント
-	@param	manager	[in]	所属しているマネージャー
-	@param	handle	[in]	エフェクトのインスタンスのハンドル
-	@param	isRemovingManager	[in]	マネージャーを破棄したときにエフェクトのインスタンスを破棄しているか
-*/
-typedef void(EFK_STDCALL* EffectInstanceRemovingCallback)(Manager* manager, Handle handle, bool isRemovingManager);
-
 #define ES_SAFE_ADDREF(val)                                                                     \
 	static_assert(std::is_class<decltype(val)>::value != true, "val must not be class/struct"); \
 	if ((val) != nullptr)                                                                       \
@@ -1005,6 +972,21 @@ struct NodeRendererDepthParameter
 };
 
 /**
+	@brief	\~english	Flipbook parameter parameters which is passed into a renderer
+			\~japanese	レンダラーに渡されるフリップブックに関するパラメーター
+*/
+struct NodeRendererFlipbookParameter
+{
+	bool EnableInterpolation = false;
+	int32_t UVLoopType = 0;
+	int32_t InterpolationType = 0;
+	int32_t FlipbookDivideX = 1;
+	int32_t FlipbookDivideY = 1;
+	std::array<float, 2> OneSize = {0, 0};
+	std::array<float, 2> Offset = {0, 0};
+};
+
+/**
 	@brief	\~english	Common parameters which is passed into a renderer
 			\~japanese	レンダラーに渡される共通に関するパラメーター
 */
@@ -1021,17 +1003,13 @@ struct NodeRendererBasicParameter
 	std::array<TextureFilterType, TextureSlotMax> TextureFilters;
 	std::array<TextureWrapType, TextureSlotMax> TextureWraps;
 
+	NodeRendererFlipbookParameter Flipbook;
+
 	float UVDistortionIntensity = 1.0f;
 
 	int32_t TextureBlendType = -1;
 
 	float BlendUVDistortionIntensity = 1.0f;
-
-	bool EnableInterpolation = false;
-	int32_t UVLoopType = 0;
-	int32_t InterpolationType = 0;
-	int32_t FlipbookDivideX = 1;
-	int32_t FlipbookDivideY = 1;
 
 	float EmissiveScaling = 1.0f;
 
@@ -1067,7 +1045,7 @@ struct NodeRendererBasicParameter
 			}
 		}
 
-		if (EnableInterpolation)
+		if (Flipbook.EnableInterpolation)
 			return true;
 
 		if (TextureBlendType != -1)
@@ -1112,6 +1090,7 @@ public:
 #ifndef __EFFEKSEER_CUSTOM_ALLOCATOR_H__
 #define __EFFEKSEER_CUSTOM_ALLOCATOR_H__
 
+#include <functional>
 #include <list>
 #include <map>
 #include <memory>
@@ -1123,6 +1102,40 @@ public:
 
 namespace Effekseer
 {
+
+/**
+	@brief	Memory Allocation function
+	@note
+	arg1 allocated size
+	return allocated buffer
+*/
+using MallocFunc = std::function<void*(uint32_t)>;
+
+/**
+	@brief	Memory Free function
+	@note
+	arg1 allocated buffer
+	arg2 allocated size
+*/
+using FreeFunc = std::function<void(void*, uint32_t)>;
+
+/**
+	@brief	AlignedMemory Allocation function
+	@note
+	arg1 allocated size
+	arg2 alignment
+	return allocated buffer
+*/
+using AlignedMallocFunc = std::function<void*(uint32_t, uint32_t)>;
+
+/**
+	@brief	AlignedMemory Free function
+	@note
+	arg1 allocated buffer
+	arg2 allocated size
+	*/
+using AlignedFreeFunc = std::function<void(void*, uint32_t)>;
+
 /**
 	@brief
 	\~English get an allocator
@@ -3599,13 +3612,7 @@ struct EffectBasicRenderParameter
 	int32_t BlendUVDistortionTextureIndex;
 	TextureWrapType BlendUVDistortionTexWrapType;
 
-	struct FlipbookParameters
-	{
-		bool Enable;
-		int32_t LoopType;
-		int32_t DivideX;
-		int32_t DivideY;
-	} FlipbookParams;
+	NodeRendererFlipbookParameter FlipbookParams;
 
 	RendererMaterialType MaterialType;
 
@@ -3700,7 +3707,7 @@ public:
 	/**
 	@brief	共通描画パラメーターを取得する。
 	*/
-	virtual EffectBasicRenderParameter GetBasicRenderParameter() = 0;
+	virtual EffectBasicRenderParameter GetBasicRenderParameter() const = 0;
 
 	/**
 	@brief	共通描画パラメーターを設定する。
@@ -3769,6 +3776,27 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+
+/**
+	@brief	Random Function
+*/
+using RandFunc = std::function<int()>;
+
+/**
+	@brief
+	\~English Callback event when an instance of an effect is destroyed
+	\~Japanese エフェクトのインスタンス破棄時のコールバックイベント
+	@note
+	\~English
+	manager The manager to which the effect belongs
+	handle Handle of the effect instance
+	isRemovingManager Whether the effect instance is removed when the manager is removed.
+	\~Japanese
+	manager 所属しているマネージャー
+	handle エフェクトのインスタンスのハンドル
+	isRemovingManager マネージャーを破棄したときにエフェクトのインスタンスを破棄しているか
+*/
+using EffectInstanceRemovingCallback = std::function<void(Manager*, Handle, bool)>;
 
 /**
 	@brief エフェクト管理クラス
@@ -3856,7 +3884,7 @@ public:
 
 		DrawParameter();
 	};
-	
+
 	/**
 		@brief
 		\~English Parameters of Manager::SetLayerParameter to be set for each layer index.
@@ -3874,7 +3902,7 @@ public:
 			通常はカメラの位置と同じ値を指定する。
 		*/
 		Vector3D ViewerPosition = {0.0f, 0.0f, 0.0f};
-		
+
 		/**
 			@brief
 			\~English
@@ -3919,32 +3947,6 @@ public:
 	virtual ThreadNativeHandleType GetWorkerThreadHandle(uint32_t threadID) = 0;
 
 	/**
-		@brief
-		\~English get an allocator
-		\~Japanese メモリ確保関数を取得する。
-	*/
-	virtual MallocFunc GetMallocFunc() const = 0;
-
-	/**
-		\~English specify an allocator
-		\~Japanese メモリ確保関数を設定する。
-	*/
-	virtual void SetMallocFunc(MallocFunc func) = 0;
-
-	/**
-		@brief
-		\~English get a deallocator
-		\~Japanese メモリ破棄関数を取得する。
-	*/
-	virtual FreeFunc GetFreeFunc() const = 0;
-
-	/**
-		\~English specify a deallocator
-		\~Japanese メモリ破棄関数を設定する。
-	*/
-	virtual void SetFreeFunc(FreeFunc func) = 0;
-
-	/**
 		@brief	ランダム関数を取得する。
 	*/
 	virtual RandFunc GetRandFunc() const = 0;
@@ -3953,16 +3955,6 @@ public:
 		@brief	ランダム関数を設定する。
 	*/
 	virtual void SetRandFunc(RandFunc func) = 0;
-
-	/**
-		@brief	ランダム最大値を取得する。
-	*/
-	virtual int GetRandMax() const = 0;
-
-	/**
-		@brief	ランダム関数を設定する。
-	*/
-	virtual void SetRandMax(int max_) = 0;
 
 	/**
 		@brief	座標系を取得する。
@@ -4401,7 +4393,7 @@ public:
 
 	/**
 		@brief Stops new particles spawning but continues simulation of already spawned particles
-		@param spawnDisabled Whether to stop particles generation 
+		@param spawnDisabled Whether to stop particles generation
 	 */
 	virtual void SetSpawnDisabled(Handle handle, bool spawnDisabled) = 0;
 
@@ -4567,7 +4559,7 @@ public:
 	virtual void UpdateHandle(Handle handle, float deltaFrame = 1.0f) = 0;
 
 	/**
-		@brief	
+		@brief
 		\~English	Update an effect to move to the specified frame
 		\~Japanese	指定した時間に移動するために更新する
 		\~English	a handle.
@@ -4977,9 +4969,6 @@ public:
 #ifndef __EFFEKSEER_SERVER_H__
 #define __EFFEKSEER_SERVER_H__
 
-#if !(defined(__EFFEKSEER_NETWORK_DISABLED__))
-#if !(defined(_PSVITA) || defined(_XBOXONE))
-
 
 namespace Effekseer
 {
@@ -5078,16 +5067,10 @@ public:
 
 } // namespace Effekseer
 
-#endif // #if !( defined(_PSVITA) || defined(_XBOXONE) )
-#endif
-
 #endif // __EFFEKSEER_SERVER_H__
 
 #ifndef __EFFEKSEER_CLIENT_H__
 #define __EFFEKSEER_CLIENT_H__
-
-#if !(defined(__EFFEKSEER_NETWORK_DISABLED__))
-#if !(defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE))
 
 
 namespace Effekseer
@@ -5141,8 +5124,6 @@ public:
 
 } // namespace Effekseer
 
-#endif // #if !( defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE) )
-#endif
 #endif // __EFFEKSEER_CLIENT_H__
 
 #include "Effekseer.Modules.h"

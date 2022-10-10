@@ -38,18 +38,10 @@ if(WIN32)
         add_subdirectory(DirectX12)
     endif()
 
-    add_subdirectory(Distortion)
     add_subdirectory(Multithread)
-    add_subdirectory(NetworkServer)
-    add_subdirectory(NetworkClient)
-    add_subdirectory(SortHandle)
 endif()
 
 add_subdirectory(OpenGL)
-
-if(WIN32)
-    add_subdirectory(OpenAL)
-endif()
 
 if (BUILD_VULKAN)
     add_subdirectory(Vulkan)
@@ -60,4 +52,8 @@ if(APPLE)
 endif()
 
 add_subdirectory(CustomLoader)
-
+add_subdirectory(NetworkServer)
+add_subdirectory(NetworkClient)
+add_subdirectory(SortHandle)
+add_subdirectory(Distortion)
+add_subdirectory(Trigger)

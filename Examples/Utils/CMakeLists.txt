@@ -2,7 +2,7 @@
 
 project(Example_Utils)
 
-set(srcs Window.cpp;Window.cpp)
+set(srcs Window.h Window.cpp Input.h Input.cpp)
 
 if(WIN32)
     list(APPEND srcs Windows/Window.h Windows/Window.cpp)

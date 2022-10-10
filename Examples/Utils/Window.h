@@ -1,8 +1,8 @@
 #pragma once
 
-#include <stdio.h>
-#include <stdint.h>
 #include <memory>
+#include <stdint.h>
+#include <stdio.h>
 
 namespace Utils
 {
@@ -32,7 +32,7 @@ public:
 
 	/**
 	 * @brief get window size
-	*/
+	 */
 	virtual Vec2I GetWindowSize() const = 0;
 
 	/**
@@ -41,4 +41,4 @@ public:
 	static std::shared_ptr<Window> Create(const char* title, const Vec2I& windowSize);
 };
 
-}
+} // namespace Utils

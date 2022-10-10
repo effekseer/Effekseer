@@ -16,10 +16,7 @@
 #include "../EffekseerRendererCommon/EffekseerRenderer.SpriteRendererBase.h"
 #include "../EffekseerRendererCommon/EffekseerRenderer.TrackRendererBase.h"
 #include "../EffekseerRendererCommon/ModelLoader.h"
-
-#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 #include "../EffekseerRendererCommon/TextureLoader.h"
-#endif
 
 #include <iostream>
 
@@ -359,8 +356,7 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 	ChangeRenderPassPipelineState(key);
 	isReversedDepth_ = isReversedDepth;
 
-	LLGI::SetLogger([](LLGI::LogType type, const std::string& message)
-					{ std::cout << message << std::endl; });
+	LLGI::SetLogger([](LLGI::LogType type, const std::string& message) { std::cout << message << std::endl; });
 
 	// Generate vertex buffer
 	{
@@ -648,11 +644,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 
 ::Effekseer::TextureLoaderRef RendererImplemented::CreateTextureLoader(::Effekseer::FileInterfaceRef fileInterface)
 {
-#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return ::Effekseer::MakeRefPtr<EffekseerRenderer::TextureLoader>(graphicsDevice_.Get(), fileInterface);
-#else
-	return nullptr;
-#endif
+	return ::EffekseerRenderer::CreateTextureLoader(graphicsDevice_, fileInterface, ::Effekseer::ColorSpaceType::Gamma);
 }
 
 ::Effekseer::ModelLoaderRef RendererImplemented::CreateModelLoader(::Effekseer::FileInterfaceRef fileInterface)

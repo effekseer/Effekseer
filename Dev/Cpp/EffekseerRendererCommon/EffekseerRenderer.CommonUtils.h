@@ -2,8 +2,8 @@
 #ifndef __EFFEKSEERRENDERER_COMMON_UTILS_H__
 #define __EFFEKSEERRENDERER_COMMON_UTILS_H__
 
-#include "../EffekseerRendererCommon/EffekseerRenderer.Renderer.h"
-#include "../EffekseerRendererCommon/EffekseerRenderer.Renderer_Impl.h"
+#include "EffekseerRenderer.Renderer.h"
+#include "EffekseerRenderer.Renderer_Impl.h"
 #include <Effekseer.h>
 #include <Effekseer/Material/Effekseer.CompiledMaterial.h>
 #include <Effekseer/Model/SplineGenerator.h>
@@ -56,7 +56,8 @@ struct DynamicVertex
 	//! packed vector
 	VertexColor Tangent;
 
-	union {
+	union
+	{
 		//! UV1 (for template)
 		float UV[2];
 		float UV1[2];
@@ -125,7 +126,8 @@ struct LightingVertex
 	//! packed vector
 	VertexColor Tangent;
 
-	union {
+	union
+	{
 		//! UV1 (for template)
 		float UV[2];
 		float UV1[2];
@@ -182,7 +184,8 @@ struct SimpleVertex
 	VertexFloat3 Pos;
 	VertexColor Col;
 
-	union {
+	union
+	{
 		float UV[2];
 		//! dummy for template
 		float UV2[2];
@@ -227,7 +230,8 @@ struct AdvancedLightingVertex
 	//! packed vector
 	VertexColor Tangent;
 
-	union {
+	union
+	{
 		//! UV1 (for template)
 		float UV[2];
 		float UV1[2];
@@ -294,7 +298,8 @@ struct AdvancedSimpleVertex
 	VertexFloat3 Pos;
 	VertexColor Col;
 
-	union {
+	union
+	{
 		float UV[2];
 		//! dummy for template
 		float UV1[2];
@@ -1382,7 +1387,8 @@ struct SoftParticleParameter
 
 struct FlipbookParameter
 {
-	union {
+	union
+	{
 		float Buffer[4];
 
 		struct
@@ -1395,7 +1401,8 @@ struct FlipbookParameter
 
 struct UVDistortionParameter
 {
-	union {
+	union
+	{
 		float Buffer[4];
 
 		struct
@@ -1409,7 +1416,8 @@ struct UVDistortionParameter
 
 struct BlendTextureParameter
 {
-	union {
+	union
+	{
 		float Buffer[4];
 
 		struct
@@ -1421,7 +1429,8 @@ struct BlendTextureParameter
 
 struct EmmisiveParameter
 {
-	union {
+	union
+	{
 		float Buffer[4];
 
 		struct
@@ -1435,7 +1444,8 @@ struct EdgeParameter
 {
 	std::array<float, 4> EdgeColor;
 
-	union {
+	union
+	{
 		float Buffer[4];
 
 		struct
@@ -1448,7 +1458,8 @@ struct EdgeParameter
 
 struct FalloffParameter
 {
-	union {
+	union
+	{
 		float Buffer[4];
 
 		struct
@@ -1562,6 +1573,96 @@ void CalculateAlignedTextureInformation(Effekseer::Backend::TextureFormatType fo
 
 //! only support OpenGL
 Effekseer::Backend::VertexLayoutRef GetVertexLayout(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, RendererShaderType type);
+
+struct FlipbookVertexBuffer
+{
+	union
+	{
+		float Buffer[8];
+
+		struct
+		{
+			float enableInterpolation;
+			float loopType;
+			float divideX;
+			float divideY;
+			float onesizeX;
+			float onesizeY;
+			float offsetX;
+			float offsetY;
+		};
+	};
+};
+
+struct RendererStateFlipbook
+{
+	int32_t EnableInterpolation = 0;
+	int32_t UVLoopType = 0;
+	int32_t InterpolationType = 0;
+	int32_t FlipbookDivideX = 0;
+	int32_t FlipbookDivideY = 0;
+	float OneSizeX = 0;
+	float OneSizeY = 0;
+	float OffsetX = 0;
+	float OffsetY = 0;
+
+	bool operator==(const RendererStateFlipbook& state) const
+	{
+		return !(*this != state);
+	}
+
+	bool operator!=(const RendererStateFlipbook& state) const
+	{
+		if (EnableInterpolation != state.EnableInterpolation)
+			return true;
+		if (UVLoopType != state.UVLoopType)
+			return true;
+		if (InterpolationType != state.InterpolationType)
+			return true;
+		if (FlipbookDivideX != state.FlipbookDivideX)
+			return true;
+		if (FlipbookDivideY != state.FlipbookDivideY)
+			return true;
+		if (OneSizeX != state.OneSizeX)
+			return true;
+		if (OneSizeY != state.OneSizeY)
+			return true;
+		if (OffsetX != state.OffsetX)
+			return true;
+		if (OffsetY != state.OffsetY)
+			return true;
+		return false;
+	}
+};
+
+inline FlipbookVertexBuffer ToVertexBuffer(const RendererStateFlipbook& state)
+{
+	FlipbookVertexBuffer ret;
+	ret.enableInterpolation = static_cast<float>(state.EnableInterpolation);
+	ret.loopType = static_cast<float>(state.UVLoopType);
+	ret.divideX = static_cast<float>(state.FlipbookDivideX);
+	ret.divideY = static_cast<float>(state.FlipbookDivideY);
+	ret.onesizeX = state.OneSizeX;
+	ret.onesizeY = state.OneSizeY;
+	ret.offsetX = state.OffsetX;
+	ret.offsetY = state.OffsetY;
+	return ret;
+}
+
+inline RendererStateFlipbook ToState(const Effekseer::NodeRendererFlipbookParameter& param)
+{
+	RendererStateFlipbook ret;
+	ret.EnableInterpolation = param.EnableInterpolation;
+	ret.UVLoopType = param.UVLoopType;
+	ret.InterpolationType = param.InterpolationType;
+	ret.FlipbookDivideX = param.FlipbookDivideX;
+	ret.FlipbookDivideY = param.FlipbookDivideY;
+	ret.OneSizeX = param.OneSize[0];
+	ret.OneSizeY = param.OneSize[1];
+	ret.OffsetX = param.Offset[0];
+	ret.OffsetY = param.Offset[1];
+	return ret;
+}
 
 } // namespace EffekseerRenderer
 #endif // __EFFEKSEERRENDERER_COMMON_UTILS_H__

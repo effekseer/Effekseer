@@ -1,4 +1,4 @@
-#version 420
+#version 430
 
 struct PS_Input
 {
@@ -22,9 +22,9 @@ layout(set = 1, binding = 0, std140) uniform PS_ConstanBuffer
     vec4 reconstructionParam2;
 } _155;
 
-layout(set = 1, binding = 1) uniform sampler2D Sampler_sampler_colorTex;
-layout(set = 1, binding = 2) uniform sampler2D Sampler_sampler_backTex;
-layout(set = 1, binding = 3) uniform sampler2D Sampler_sampler_depthTex;
+layout(location = 0, set = 1, binding = 1) uniform sampler2D Sampler_sampler_colorTex;
+layout(location = 1, set = 1, binding = 2) uniform sampler2D Sampler_sampler_backTex;
+layout(location = 2, set = 1, binding = 3) uniform sampler2D Sampler_sampler_depthTex;
 
 layout(location = 0) centroid in vec2 Input_UV;
 layout(location = 1) in vec4 Input_ProjBinormal;

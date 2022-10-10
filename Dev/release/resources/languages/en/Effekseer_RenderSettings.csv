@@ -142,6 +142,6 @@ RS_Ring_PVALocation_Acceleration_Name,Accel
 RS_Ring_PVALocation_Acceleration_Desc,Acceleration of the edge
 ,
 "RS_TrailSmoothing_Name","Smoothing"
-"RS_TrailTimeSource_Name","Time source for color"
+"RS_TrailTimeSource_Name","Source of color time"
 "RS_TrailTimeSource_FirstParticle_Name", "First particle"
 "RS_TrailTimeSource_ParticleGroup_Name", "Group"

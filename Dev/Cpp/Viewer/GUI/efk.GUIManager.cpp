@@ -77,7 +77,8 @@ bool ImageButton_(ImTextureID user_texture_id,
 	bool pressed = ButtonBehavior(bb, id, &hovered, &held, ImGuiButtonFlags_PressedOnClick);
 
 	// Render
-	const ImU32 col = GetColorU32((held && hovered) ? ImGuiCol_ButtonActive : hovered ? ImGuiCol_ButtonHovered : ImGuiCol_Button);
+	const ImU32 col = GetColorU32((held && hovered) ? ImGuiCol_ButtonActive : hovered ? ImGuiCol_ButtonHovered
+																					  : ImGuiCol_Button);
 	RenderNavHighlight(bb, id);
 	RenderFrame(bb.Min, bb.Max, col, true, ImClamp((float)ImMin(padding.x, padding.y), 0.0f, style.FrameRounding));
 	if (bg_col.w > 0.0f)
@@ -85,372 +86,6 @@ bool ImageButton_(ImTextureID user_texture_id,
 	window->DrawList->AddImage(user_texture_id, image_bb.Min, image_bb.Max, uv0, uv1, GetColorU32(tint_col));
 
 	return pressed;
-}
-
-#define IM_F32_TO_INT8_UNBOUND(_VAL) ((int)((_VAL)*255.0f + ((_VAL) >= 0 ? 0.5f : -0.5f))) // Unsaturated, for display purpose
-
-/**
-	@brief support raw HSV
-*/
-#define RAW_HSV 1
-
-// ColorEdit supports RGB and HSV inputs. In case of RGB input resulting color may have undefined hue and/or saturation.
-// Since widget displays both RGB and HSV values we must preserve hue and saturation to prevent these values resetting.
-static void ColorEditRestoreHS_(const float* col, float* H, float* S, float* V)
-{
-	// This check is optional. Suppose we have two color widgets side by side, both widgets display different colors, but both colors have hue and/or saturation undefined.
-	// With color check: hue/saturation is preserved in one widget. Editing color in one widget would reset hue/saturation in another one.
-	// Without color check: common hue/saturation would be displayed in all widgets that have hue/saturation undefined.
-	// g.ColorEditLastColor is stored as ImU32 RGB value: this essentially gives us color equality check with reduced precision.
-	// Tiny external color changes would not be detected and this check would still pass. This is OK, since we only restore hue/saturation _only_ if they are undefined,
-	// therefore this change flipping hue/saturation from undefined to a very tiny value would still be represented in color picker.
-	ImGuiContext& g = *GImGui;
-	if (g.ColorEditLastColor != ImGui::ColorConvertFloat4ToU32(ImVec4(col[0], col[1], col[2], 0)))
-		return;
-
-	// When S == 0, H is undefined.
-	// When H == 1 it wraps around to 0.
-	if (*S == 0.0f || (*H == 0.0f && g.ColorEditLastHue == 1))
-		*H = g.ColorEditLastHue;
-
-	// When V == 0, S is undefined.
-	if (*V == 0.0f)
-		*S = g.ColorEditLastSat;
-}
-
-// Edit colors components (each component in 0.0f..1.0f range).
-// See enum ImGuiColorEditFlags_ for available options. e.g. Only access 3 floats if ImGuiColorEditFlags_NoAlpha flag is set.
-// With typical options: Left-click on color square to open color picker. Right-click to open option menu. CTRL-Click over input fields to edit them and TAB to go to next item.
-bool ColorEdit4_(const char* label, float col[4], ImGuiColorEditFlags flags)
-{
-	ImGuiWindow* window = GetCurrentWindow();
-	if (window->SkipItems)
-		return false;
-
-	ImGuiContext& g = *GImGui;
-	const ImGuiStyle& style = g.Style;
-	const float square_sz = GetFrameHeight();
-	const float w_full = CalcItemWidth();
-	const float w_button = (flags & ImGuiColorEditFlags_NoSmallPreview) ? 0.0f : (square_sz + style.ItemInnerSpacing.x);
-	const float w_inputs = w_full - w_button;
-	const char* label_display_end = FindRenderedTextEnd(label);
-	g.NextItemData.ClearFlags();
-
-	BeginGroup();
-	PushID(label);
-
-	// If we're not showing any slider there's no point in doing any HSV conversions
-	const ImGuiColorEditFlags flags_untouched = flags;
-	if (flags & ImGuiColorEditFlags_NoInputs)
-		flags = (flags & (~ImGuiColorEditFlags_DisplayMask_)) | ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_NoOptions;
-
-#ifdef RAW_HSV
-	const bool alpha = (flags & ImGuiColorEditFlags_NoAlpha) == 0;
-	float col_rgb_[4] = {col[0], col[1], col[2], alpha ? col[3] : 1.0f};
-	if (flags & ImGuiColorEditFlags_DisplayHSV)
-		ColorConvertHSVtoRGB(col_rgb_[0], col_rgb_[1], col_rgb_[2], col_rgb_[0], col_rgb_[1], col_rgb_[2]);
-
-	// Context menu: display and modify options (before defaults are applied)
-	if (!(flags & ImGuiColorEditFlags_NoOptions))
-		ColorEditOptionsPopup(col_rgb_, flags);
-#else
-	// Context menu: display and modify options (before defaults are applied)
-	if (!(flags & ImGuiColorEditFlags_NoOptions))
-		ColorEditOptionsPopup(col, flags);
-#endif
-
-	// Read stored options
-	if (!(flags & ImGuiColorEditFlags_DisplayMask_))
-		flags |= (g.ColorEditOptions & ImGuiColorEditFlags_DisplayMask_);
-	if (!(flags & ImGuiColorEditFlags_DataTypeMask_))
-		flags |= (g.ColorEditOptions & ImGuiColorEditFlags_DataTypeMask_);
-	if (!(flags & ImGuiColorEditFlags_PickerMask_))
-		flags |= (g.ColorEditOptions & ImGuiColorEditFlags_PickerMask_);
-	if (!(flags & ImGuiColorEditFlags_InputMask_))
-		flags |= (g.ColorEditOptions & ImGuiColorEditFlags_InputMask_);
-	flags |= (g.ColorEditOptions & ~(ImGuiColorEditFlags_DisplayMask_ | ImGuiColorEditFlags_DataTypeMask_ | ImGuiColorEditFlags_PickerMask_ | ImGuiColorEditFlags_InputMask_));
-	IM_ASSERT(ImIsPowerOfTwo(flags & ImGuiColorEditFlags_DisplayMask_)); // Check that only 1 is selected
-	IM_ASSERT(ImIsPowerOfTwo(flags & ImGuiColorEditFlags_InputMask_));	 // Check that only 1 is selected
-
-#ifndef RAW_HSV
-	const bool alpha = (flags & ImGuiColorEditFlags_NoAlpha) == 0;
-#endif
-
-	const bool hdr = (flags & ImGuiColorEditFlags_HDR) != 0;
-	const int components = alpha ? 4 : 3;
-
-	// Convert to the formats we need
-	float f[4] = {col[0], col[1], col[2], alpha ? col[3] : 1.0f};
-
-#ifndef RAW_HSV
-	if ((flags & ImGuiColorEditFlags_InputHSV) && (flags & ImGuiColorEditFlags_DisplayRGB))
-		ColorConvertHSVtoRGB(f[0], f[1], f[2], f[0], f[1], f[2]);
-	else 
-#endif
-	if ((flags & ImGuiColorEditFlags_InputRGB) && (flags & ImGuiColorEditFlags_DisplayHSV))
-	{
-		// Hue is lost when converting from greyscale rgb (saturation=0). Restore it.
-		ColorConvertRGBtoHSV(f[0], f[1], f[2], f[0], f[1], f[2]);
-		ColorEditRestoreHS_(col, &f[0], &f[1], &f[2]);
-	}
-	int i[4] = {IM_F32_TO_INT8_UNBOUND(f[0]), IM_F32_TO_INT8_UNBOUND(f[1]), IM_F32_TO_INT8_UNBOUND(f[2]), IM_F32_TO_INT8_UNBOUND(f[3])};
-
-	bool value_changed = false;
-	bool value_changed_as_float = false;
-
-	const ImVec2 pos = window->DC.CursorPos;
-	const float inputs_offset_x = (style.ColorButtonPosition == ImGuiDir_Left) ? w_button : 0.0f;
-	window->DC.CursorPos.x = pos.x + inputs_offset_x;
-
-	if ((flags & (ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_DisplayHSV)) != 0 && (flags & ImGuiColorEditFlags_NoInputs) == 0)
-	{
-		// RGB/HSV 0..255 Sliders
-		const float w_item_one = ImMax(1.0f, IM_FLOOR((w_inputs - (style.ItemInnerSpacing.x) * (components - 1)) / (float)components));
-		const float w_item_last = ImMax(1.0f, IM_FLOOR(w_inputs - (w_item_one + style.ItemInnerSpacing.x) * (components - 1)));
-
-		const bool hide_prefix = (w_item_one <= CalcTextSize((flags & ImGuiColorEditFlags_Float) ? "M:0.000" : "M:000").x);
-		static const char* ids[4] = {"##X", "##Y", "##Z", "##W"};
-		static const char* fmt_table_int[3][4] =
-			{
-				{"%3d", "%3d", "%3d", "%3d"},		  // Short display
-				{"R:%3d", "G:%3d", "B:%3d", "A:%3d"}, // Long display for RGBA
-				{"H:%3d", "S:%3d", "V:%3d", "A:%3d"}  // Long display for HSVA
-			};
-		static const char* fmt_table_float[3][4] =
-			{
-				{"%0.3f", "%0.3f", "%0.3f", "%0.3f"},		  // Short display
-				{"R:%0.3f", "G:%0.3f", "B:%0.3f", "A:%0.3f"}, // Long display for RGBA
-				{"H:%0.3f", "S:%0.3f", "V:%0.3f", "A:%0.3f"}  // Long display for HSVA
-			};
-		const int fmt_idx = hide_prefix ? 0 : (flags & ImGuiColorEditFlags_DisplayHSV) ? 2
-																					   : 1;
-
-		for (int n = 0; n < components; n++)
-		{
-			if (n > 0)
-				SameLine(0, style.ItemInnerSpacing.x);
-			SetNextItemWidth((n + 1 < components) ? w_item_one : w_item_last);
-
-			// FIXME: When ImGuiColorEditFlags_HDR flag is passed HS values snap in weird ways when SV values go below 0.
-			if (flags & ImGuiColorEditFlags_Float)
-			{
-				value_changed |= DragFloat(ids[n], &f[n], 1.0f / 255.0f, 0.0f, hdr ? 0.0f : 1.0f, fmt_table_float[fmt_idx][n]);
-				value_changed_as_float |= value_changed;
-			}
-			else
-			{
-				value_changed |= DragInt(ids[n], &i[n], 1.0f, 0, hdr ? 0 : 255, fmt_table_int[fmt_idx][n]);
-			}
-			if (!(flags & ImGuiColorEditFlags_NoOptions))
-				OpenPopupOnItemClick("context", ImGuiPopupFlags_MouseButtonRight);
-		}
-	}
-	else if ((flags & ImGuiColorEditFlags_DisplayHex) != 0 && (flags & ImGuiColorEditFlags_NoInputs) == 0)
-	{
-		// RGB Hexadecimal Input
-		char buf[64];
-		if (alpha)
-			ImFormatString(buf, IM_ARRAYSIZE(buf), "#%02X%02X%02X%02X", ImClamp(i[0], 0, 255), ImClamp(i[1], 0, 255), ImClamp(i[2], 0, 255), ImClamp(i[3], 0, 255));
-		else
-			ImFormatString(buf, IM_ARRAYSIZE(buf), "#%02X%02X%02X", ImClamp(i[0], 0, 255), ImClamp(i[1], 0, 255), ImClamp(i[2], 0, 255));
-		SetNextItemWidth(w_inputs);
-		if (InputText("##Text", buf, IM_ARRAYSIZE(buf), ImGuiInputTextFlags_CharsHexadecimal | ImGuiInputTextFlags_CharsUppercase))
-		{
-			value_changed = true;
-			char* p = buf;
-			while (*p == '#' || ImCharIsBlankA(*p))
-				p++;
-			i[0] = i[1] = i[2] = 0;
-			i[3] = 0xFF; // alpha default to 255 is not parsed by scanf (e.g. inputting #FFFFFF omitting alpha)
-			int r;
-			if (alpha)
-				r = sscanf(p, "%02X%02X%02X%02X", (unsigned int*)&i[0], (unsigned int*)&i[1], (unsigned int*)&i[2], (unsigned int*)&i[3]); // Treat at unsigned (%X is unsigned)
-			else
-				r = sscanf(p, "%02X%02X%02X", (unsigned int*)&i[0], (unsigned int*)&i[1], (unsigned int*)&i[2]);
-			IM_UNUSED(r); // Fixes C6031: Return value ignored: 'sscanf'.
-		}
-		if (!(flags & ImGuiColorEditFlags_NoOptions))
-			OpenPopupOnItemClick("context", ImGuiPopupFlags_MouseButtonRight);
-	}
-
-	ImGuiWindow* picker_active_window = NULL;
-	if (!(flags & ImGuiColorEditFlags_NoSmallPreview))
-	{
-		const float button_offset_x = ((flags & ImGuiColorEditFlags_NoInputs) || (style.ColorButtonPosition == ImGuiDir_Left)) ? 0.0f : w_inputs + style.ItemInnerSpacing.x;
-		window->DC.CursorPos = ImVec2(pos.x + button_offset_x, pos.y);
-
-#ifdef RAW_HSV
-		const ImVec4 col_v4(col_rgb_[0], col_rgb_[1], col_rgb_[2], alpha ? col_rgb_[3] : 1.0f);
-#else
-		const ImVec4 col_v4(col[0], col[1], col[2], alpha ? col[3] : 1.0f);
-#endif
-
-		if (ColorButton("##ColorButton", col_v4, flags))
-		{
-			if (!(flags & ImGuiColorEditFlags_NoPicker))
-			{
-				// Store current color and open a picker
-				g.ColorPickerRef = col_v4;
-				OpenPopup("picker");
-				SetNextWindowPos(g.LastItemData.Rect.GetBL() + ImVec2(0.0f, style.ItemSpacing.y));
-			}
-		}
-		if (!(flags & ImGuiColorEditFlags_NoOptions))
-			OpenPopupOnItemClick("context", ImGuiPopupFlags_MouseButtonRight);
-
-		if (BeginPopup("picker"))
-		{
-			picker_active_window = g.CurrentWindow;
-			if (label != label_display_end)
-			{
-				TextEx(label, label_display_end);
-				Spacing();
-			}
-			ImGuiColorEditFlags picker_flags_to_forward = ImGuiColorEditFlags_DataTypeMask_ | ImGuiColorEditFlags_PickerMask_ | ImGuiColorEditFlags_InputMask_ | ImGuiColorEditFlags_HDR | ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_AlphaBar;
-			ImGuiColorEditFlags picker_flags = (flags_untouched & picker_flags_to_forward) | ImGuiColorEditFlags_DisplayMask_ | ImGuiColorEditFlags_NoLabel | ImGuiColorEditFlags_AlphaPreviewHalf;
-			SetNextItemWidth(square_sz * 12.0f); // Use 256 + bar sizes?
-
-#ifdef RAW_HSV
-			auto picker_changed = ColorPicker4("##picker", col_rgb_, picker_flags, &g.ColorPickerRef.x);
-			value_changed |= picker_changed;
-
-			if (picker_changed)
-			{
-				float col_raw[4] = {col_rgb_[0], col_rgb_[1], col_rgb_[2], col_rgb_[3]};
-
-				if (flags & ImGuiColorEditFlags_DisplayHSV)
-					ColorConvertRGBtoHSV(col_raw[0], col_raw[1], col_raw[2], col_raw[0], col_raw[1], col_raw[2]);
-
-				f[0] = col_raw[0];
-				f[1] = col_raw[1];
-				f[2] = col_raw[2];
-				f[3] = col_raw[3];
-
-				col[0] = f[0];
-				col[1] = f[1];
-				col[2] = f[2];
-				if (alpha)
-					col[3] = f[3];
-			}
-#else
-			value_changed |= ColorPicker4("##picker", col, picker_flags, &g.ColorPickerRef.x);
-#endif
-			EndPopup();
-		}
-	}
-
-	if (label != label_display_end && !(flags & ImGuiColorEditFlags_NoLabel))
-	{
-		SameLine(0.0f, style.ItemInnerSpacing.x);
-		TextEx(label, label_display_end);
-	}
-
-	// Convert back
-#ifdef RAW_HSV
-	if (value_changed && picker_active_window == NULL)
-	{
-		col[0] = f[0];
-		col[1] = f[1];
-		col[2] = f[2];
-		if (alpha)
-			col[3] = f[3];
-
-		col_rgb_[0] = col[0];
-		col_rgb_[1] = col[1];
-		col_rgb_[2] = col[2];
-		col_rgb_[3] = col[3];
-
-		if (flags & ImGuiColorEditFlags_DisplayHSV)
-			ColorConvertHSVtoRGB(col_rgb_[0], col_rgb_[1], col_rgb_[2], col_rgb_[0], col_rgb_[1], col_rgb_[2]);
-	}
-#else
-	if (value_changed && picker_active_window == NULL)
-	{
-		if (!value_changed_as_float)
-			for (int n = 0; n < 4; n++)
-				f[n] = i[n] / 255.0f;
-		if ((flags & ImGuiColorEditFlags_DisplayHSV) && (flags & ImGuiColorEditFlags_InputRGB))
-		{
-			g.ColorEditLastHue = f[0];
-			g.ColorEditLastSat = f[1];
-			ColorConvertHSVtoRGB(f[0], f[1], f[2], f[0], f[1], f[2]);
-			g.ColorEditLastColor = ColorConvertFloat4ToU32(ImVec4(f[0], f[1], f[2], 0));
-		}
-		if ((flags & ImGuiColorEditFlags_DisplayRGB) && (flags & ImGuiColorEditFlags_InputHSV))
-			ColorConvertRGBtoHSV(f[0], f[1], f[2], f[0], f[1], f[2]);
-
-		col[0] = f[0];
-		col[1] = f[1];
-		col[2] = f[2];
-		if (alpha)
-			col[3] = f[3];
-	}
-#endif
-
-	PopID();
-	EndGroup();
-
-	// Drag and Drop Target
-	// NB: The flag test is merely an optional micro-optimization, BeginDragDropTarget() does the same test.
-	if ((g.LastItemData.StatusFlags & ImGuiItemStatusFlags_HoveredRect) && !(flags & ImGuiColorEditFlags_NoDragDrop) && BeginDragDropTarget())
-	{
-#ifdef RAW_HSV
-		if (const ImGuiPayload* payload = AcceptDragDropPayload(IMGUI_PAYLOAD_TYPE_COLOR_3F))
-		{
-			memcpy((float*)col_rgb_, payload->Data, sizeof(float) * 3);
-
-			col[0] = col_rgb_[0];
-			col[1] = col_rgb_[1];
-			col[2] = col_rgb_[2];
-
-			if (flags & ImGuiColorEditFlags_DisplayHSV)
-				ColorConvertRGBtoHSV(col[0], col[1], col[2], col[0], col[1], col[2]);
-
-			value_changed = true;
-		}
-		if (const ImGuiPayload* payload = AcceptDragDropPayload(IMGUI_PAYLOAD_TYPE_COLOR_4F))
-		{
-			memcpy((float*)col_rgb_, payload->Data, sizeof(float) * components);
-
-			col[0] = col_rgb_[0];
-			col[1] = col_rgb_[1];
-			col[2] = col_rgb_[2];
-			col[3] = col_rgb_[3];
-
-			if (flags & ImGuiColorEditFlags_DisplayHSV)
-				ColorConvertRGBtoHSV(col[0], col[1], col[2], col[0], col[1], col[2]);
-
-			value_changed = true;
-		}
-#else
-		bool accepted_drag_drop = false;
-		if (const ImGuiPayload* payload = AcceptDragDropPayload(IMGUI_PAYLOAD_TYPE_COLOR_3F))
-		{
-			memcpy((float*)col, payload->Data, sizeof(float) * 3); // Preserve alpha if any //-V512
-			value_changed = accepted_drag_drop = true;
-		}
-		if (const ImGuiPayload* payload = AcceptDragDropPayload(IMGUI_PAYLOAD_TYPE_COLOR_4F))
-		{
-			memcpy((float*)col, payload->Data, sizeof(float) * components);
-			value_changed = accepted_drag_drop = true;
-		}
-
-		// Drag-drop payloads are always RGB
-		if (accepted_drag_drop && (flags & ImGuiColorEditFlags_InputHSV))
-			ColorConvertRGBtoHSV(col[0], col[1], col[2], col[0], col[1], col[2]);
-#endif
-
-		EndDragDropTarget();
-	}
-
-	// When picker is being actively used, use its active id so IsItemActive() will function on ColorEdit4().
-	if (picker_active_window && g.ActiveId != 0 && g.ActiveIdWindow == picker_active_window)
-		g.LastItemData.ID = g.ActiveId;
-
-	if (value_changed)
-		MarkItemEdited(g.LastItemData.ID);
-
-	return value_changed;
 }
 
 } // namespace ImGui
@@ -470,11 +105,12 @@ void ResizeBicubic(uint32_t* dst,
 	float hf = (float)srcHeight / dstHeight;
 
 	// bicubic weight function
-	auto weight = [](float d) -> float {
+	auto weight = [](float d) -> float
+	{
 		const float a = -1.0f;
-		return d <= 1.0f ? ((a + 2.0f) * d * d * d) - ((a + 3.0f) * d * d) + 1
-						 : d <= 2.0f ? (a * d * d * d) - (5.0f * a * d * d) + (8.0f * a * d) - (4.0f * a)
-									 : 0.0f;
+		return d <= 1.0f   ? ((a + 2.0f) * d * d * d) - ((a + 3.0f) * d * d) + 1
+			   : d <= 2.0f ? (a * d * d * d) - (5.0f * a * d * d) + (8.0f * a * d) - (4.0f * a)
+						   : 0.0f;
 	};
 
 	for (int32_t iy = 0; iy < dstHeight; iy++)
@@ -677,21 +313,24 @@ bool GUIManager::Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, E
 
 	mainWindow_ = mainWindow;
 
-	window->Resized = [this](int x, int y) -> void {
+	window->Resized = [this](int x, int y) -> void
+	{
 		if (this->callback != nullptr)
 		{
 			this->callback->Resized(x, y);
 		}
 	};
 
-	window->Focused = [this]() -> void {
+	window->Focused = [this]() -> void
+	{
 		if (this->callback != nullptr)
 		{
 			this->callback->Focused();
 		}
 	};
 
-	window->Droped = [this](const char* path) -> void {
+	window->Droped = [this](const char* path) -> void
+	{
 		if (this->callback != nullptr)
 		{
 			this->callback->SetPath(Effekseer::Tool::StringHelper::ConvertUtf8ToUtf16(path).c_str());
@@ -699,7 +338,8 @@ bool GUIManager::Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, E
 		}
 	};
 
-	window->Closing = [this]() -> bool {
+	window->Closing = [this]() -> bool
+	{
 		if (this->callback != nullptr)
 		{
 			return this->callback->Closing();
@@ -708,14 +348,16 @@ bool GUIManager::Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, E
 		return true;
 	};
 
-	window->Iconify = [this](int f) -> void {
+	window->Iconify = [this](int f) -> void
+	{
 		if (this->callback != nullptr)
 		{
 			this->callback->Iconify(f);
 		}
 	};
 
-	window->DpiChanged = [this](float scale) -> void {
+	window->DpiChanged = [this](float scale) -> void
+	{
 		this->ResetGUIStyle();
 
 		if (this->callback != nullptr)
@@ -1060,6 +702,12 @@ void GUIManager::EndChild()
 	ImGui::EndChild();
 }
 
+Vec2 GUIManager::GetWindowPos()
+{
+	auto v = ImGui::GetWindowPos();
+	return Vec2(v.x, v.y);
+}
+
 Vec2 GUIManager::GetWindowSize()
 {
 	auto v = ImGui::GetWindowSize();
@@ -1191,104 +839,6 @@ void GUIManager::Separator()
 	ImGui::Separator();
 }
 
-void GUIManager::HiddenSeparator(float thicknessDraw, float thicknessItem)
-{
-	ImGuiWindow* window = ImGui::GetCurrentWindow();
-	if (window->SkipItems)
-		return;
-
-	ImGuiSeparatorFlags flags =
-		(window->DC.LayoutType == ImGuiLayoutType_Horizontal) ? ImGuiSeparatorFlags_Vertical : ImGuiSeparatorFlags_Horizontal;
-	flags |= ImGuiSeparatorFlags_SpanAllColumns;
-
-	ImGuiContext& g = *GImGui;
-	IM_ASSERT(
-		ImIsPowerOfTwo(flags & (ImGuiSeparatorFlags_Horizontal | ImGuiSeparatorFlags_Vertical))); // Check that only 1 option is selected
-
-	float thickness_draw = 1.0f;
-	float thickness_layout = 0.0f;
-	if (flags & ImGuiSeparatorFlags_Vertical)
-	{
-		// Vertical separator, for menu bars (use current line height). Not exposed because it is misleading and it doesn't have an
-		// effect on regular layout.
-		float y1 = window->DC.CursorPos.y;
-		float y2 = window->DC.CursorPos.y + window->DC.CurrLineSize.y;
-		const ImRect bb(ImVec2(window->DC.CursorPos.x, y1), ImVec2(window->DC.CursorPos.x + thickness_draw, y2));
-		ImGui::ItemSize(ImVec2(thickness_layout, 0.0f));
-		if (!ImGui::ItemAdd(bb, 0))
-			return;
-
-		// Draw
-		window->DrawList->AddLine(ImVec2(bb.Min.x, bb.Min.y), ImVec2(bb.Min.x, bb.Max.y), ImGui::GetColorU32(ImGuiCol_Separator));
-		if (g.LogEnabled)
-			ImGui::LogText(" |");
-	}
-	else if (flags & ImGuiSeparatorFlags_Horizontal)
-	{
-		// Horizontal Separator
-		float x1 = window->Pos.x;
-		float x2 = window->Pos.x + window->Size.x;
-
-		// FIXME-WORKRECT: old hack (#205) until we decide of consistent behavior with WorkRect/Indent and Separator
-		if (g.GroupStack.Size > 0 && g.GroupStack.back().WindowID == window->ID)
-			x1 += window->DC.Indent.x;
-
-		ImGuiOldColumns* columns = (flags & ImGuiSeparatorFlags_SpanAllColumns) ? window->DC.CurrentColumns : NULL;
-		if (columns)
-			ImGui::PushColumnsBackground();
-
-		// We don't provide our width to the layout so that it doesn't get feed back into AutoFit
-		const ImRect bb(ImVec2(x1, window->DC.CursorPos.y), ImVec2(x2, window->DC.CursorPos.y + thicknessDraw));
-		ImGui::ItemSize(ImVec2(0.0f, thicknessItem));
-		const bool item_visible = ImGui::ItemAdd(bb, 0);
-		if (item_visible)
-		{
-			// Draw
-			window->DrawList->AddLine(bb.Min, ImVec2(bb.Max.x, bb.Min.y), 0);
-			if (g.LogEnabled)
-				ImGui::LogRenderedText(&bb.Min, "--------------------------------\n");
-		}
-		if (columns)
-		{
-			ImGui::PopColumnsBackground();
-			columns->LineMinY = window->DC.CursorPos.y;
-		}
-
-		/*
-		// Horizontal Separator
-		float x1 = window->Pos.x;
-		float x2 = window->Pos.x + window->Size.x;
-		if (!window->DC.GroupStack.empty())
-			x1 += window->DC.Indent.x;
-
-		ImGuiColumns* columns = (flags & ImGuiSeparatorFlags_SpanAllColumns) ? window->DC.CurrentColumns : nullptr;
-		if (columns)
-			ImGui::PushColumnsBackground();
-
-		// We don't provide our width to the layout so that it doesn't get feed back into AutoFit
-		const ImRect bb(ImVec2(x1, window->DC.CursorPos.y), ImVec2(x2, window->DC.CursorPos.y + thicknessDraw));
-		ImGui::ItemSize(ImVec2(0.0f, thicknessItem));
-		if (!ImGui::ItemAdd(bb, 0))
-		{
-			if (columns)
-				ImGui::PopColumnsBackground();
-			return;
-		}
-
-		// Draw
-		window->DrawList->AddLine(bb.Min, ImVec2(bb.Max.x, bb.Min.y), 0);
-		if (g.LogEnabled)
-			ImGui::LogRenderedText(&bb.Min, "--------------------------------");
-
-		if (columns)
-		{
-			ImGui::PopColumnsBackground();
-			columns->LineMinY = window->DC.CursorPos.y;
-		}
-		*/
-	}
-}
-
 void GUIManager::Indent(float indent_w)
 {
 	ImGui::Indent(indent_w);
@@ -1309,14 +859,14 @@ void GUIManager::SameLine(float offset_from_start_x, float spacing)
 	ImGui::SameLine(offset_from_start_x, spacing);
 }
 
-void GUIManager::PushDisabled()
+void GUIManager::BeginDisabled(bool disabled)
 {
-	ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+	ImGui::BeginDisabled(disabled);
 }
 
-void GUIManager::PopDisabled()
+void GUIManager::EndDisabled()
 {
-	ImGui::PopItemFlag();
+	ImGui::EndDisabled();
 }
 
 void GUIManager::AddRectFilled(float minX, float minY, float maxX, float maxY, uint32_t color, float rounding, int flags)
@@ -1402,6 +952,12 @@ float GUIManager::GetItemRectSizeY()
 	return ImGui::GetItemRectSize().y;
 }
 
+Vec2 GUIManager::GetItemSpacing()
+{
+	auto& style = ImGui::GetStyle();
+	return Vec2(style.ItemSpacing.x, style.ItemSpacing.y);
+}
+
 float GUIManager::GetTextLineHeight()
 {
 	return ImGui::GetTextLineHeight();
@@ -1435,7 +991,7 @@ int GUIManager::GetItemID()
 void GUIManager::SetFocusID(int id)
 {
 	ImGui::SetFocusID(id, ImGui::GetCurrentWindow());
-	//GImGui->NavDisableHighlight = false;
+	// GImGui->NavDisableHighlight = false;
 }
 
 float GUIManager::GetScrollX()
@@ -1572,7 +1128,8 @@ void CallWithEscaped(const std::function<void(const char*)>& f, const char16_t* 
 
 void GUIManager::Text(const char16_t* text)
 {
-	auto func = [](const char* c) -> void { ImGui::Text(c); };
+	auto func = [](const char* c) -> void
+	{ ImGui::Text(c); };
 	CallWithEscaped(func, text);
 }
 
@@ -1924,7 +1481,8 @@ const char16_t* GUIManager::GetInputTextResult()
 
 bool GUIManager::ColorEdit4(const char16_t* label, float* col, ColorEditFlags flags)
 {
-	return ImGui::ColorEdit4_(utf8str<256>(label), col, (int)flags);
+	// return ImGui::ColorEdit4_(utf8str<256>(label), col, (int)flags);
+	return ImGui::ColorEdit4(utf8str<256>(label), col, (int)flags);
 }
 
 bool GUIManager::CollapsingHeader(const char16_t* label, TreeNodeFlags flags)
@@ -2013,7 +1571,8 @@ bool GUIManager::SelectableContent(const char16_t* idstr, const char16_t* label,
 
 void GUIManager::SetTooltip(const char16_t* text)
 {
-	auto func = [](const char* c) -> void { ImGui::SetTooltip(c); };
+	auto func = [](const char* c) -> void
+	{ ImGui::SetTooltip(c); };
 	CallWithEscaped(func, text);
 }
 
@@ -2375,6 +1934,96 @@ bool GUIManager::IsAnyWindowFocused()
 MouseCursor GUIManager::GetMouseCursor()
 {
 	return (MouseCursor)ImGui::GetMouseCursor();
+}
+
+void GUIManager::PushID(int int_id)
+{
+	ImGui::PushID(int_id);
+}
+
+void GUIManager::PopID()
+{
+	ImGui::PopID();
+}
+
+bool GUIManager::BeginTable(const char* str_id, int column, TableFlags flags, const Vec2& outer_size, float inner_width)
+{
+	return ImGui::BeginTable(str_id, column, static_cast<ImGuiTabBarFlags>(flags), ImVec2{outer_size.X, outer_size.Y}, inner_width);
+}
+
+void GUIManager::EndTable()
+{
+	ImGui::EndTable();
+}
+
+void GUIManager::TableNextRow(TableRowFlags row_flags, float min_row_height)
+{
+	ImGui::TableNextRow(static_cast<ImGuiTableRowFlags>(row_flags), min_row_height);
+}
+
+bool GUIManager::TableNextColumn()
+{
+	return ImGui::TableNextColumn();
+}
+
+bool GUIManager::TableSetColumnIndex(int column_n)
+{
+	return ImGui::TableSetColumnIndex(column_n);
+}
+
+void GUIManager::TableSetupColumn(const char* label, TableColumnFlags flags, float init_width_or_weight, uint32_t user_id)
+{
+	ImGui::TableSetupColumn(label, static_cast<ImGuiTableColumnFlags>(flags), init_width_or_weight, user_id);
+}
+
+void GUIManager::TableSetupScrollFreeze(int cols, int rows)
+{
+	ImGui::TableSetupScrollFreeze(cols, rows);
+}
+
+void GUIManager::TableHeadersRow()
+{
+	ImGui::TableHeadersRow();
+}
+
+void GUIManager::TableHeader(const char* label)
+{
+	ImGui::TableHeader(label);
+}
+
+int GUIManager::TableGetColumnCount()
+{
+	return ImGui::TableGetColumnCount();
+}
+
+int GUIManager::TableGetColumnIndex()
+{
+	return ImGui::TableGetColumnIndex();
+}
+
+int GUIManager::TableGetRowIndex()
+{
+	return ImGui::TableGetRowIndex();
+}
+
+const char* GUIManager::TableGetColumnName(int column_n)
+{
+	return ImGui::TableGetColumnName(column_n);
+}
+
+TableColumnFlags GUIManager::TableGetColumnFlags(int column_n)
+{
+	return static_cast<TableColumnFlags>(ImGui::TableGetColumnFlags(column_n));
+}
+
+void GUIManager::TableSetColumnEnabled(int column_n, bool v)
+{
+	ImGui::TableSetColumnEnabled(column_n, v);
+}
+
+void GUIManager::TableSetBgColor(TableBgTarget target, uint32_t color, int column_n)
+{
+	ImGui::TableSetBgColor(static_cast<ImGuiTableBgTarget>(target), color, column_n);
 }
 
 float GUIManager::GetHoveredIDTimer()
@@ -2758,9 +2407,9 @@ void GUIManager::EndNodeFrameTimeline(int* frameMin, int* frameMax, int* current
 	NodeFrameTimeline::EndNodeFrameTimeline(frameMin, frameMax, currentFrame, selectedEntry, firstFrame);
 }
 
-bool GUIManager::GradientHDR(int32_t gradientID, Effekseer::Tool::GradientHDRState& state, Effekseer::Tool::GradientHDRGUIState& guiState)
+bool GUIManager::GradientHDR(int32_t gradientID, Effekseer::Tool::GradientHDRState& state, Effekseer::Tool::GradientHDRGUIState& guiState, bool isMarkerShown)
 {
-	return ImGradientHDR(gradientID, state.GetState(), guiState.GetTemporaryState());
+	return ImGradientHDR(gradientID, state.GetState(), guiState.GetTemporaryState(), isMarkerShown);
 }
 
 bool GUIManager::BeginPlot(const char16_t* label, const Vec2& size, PlotFlags flags)

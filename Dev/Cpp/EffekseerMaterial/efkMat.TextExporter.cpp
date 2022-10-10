@@ -6,6 +6,36 @@
 namespace EffekseerMaterial
 {
 
+namespace
+{
+
+void exportGradient(std::ostringstream& dst, std::shared_ptr<EffekseerMaterial::TextExporterGradient> gradient, std::string arg)
+{
+	dst << "SampleGradient(" << gradient->UniformName << "(), " << arg << ");" << std::endl;
+}
+
+void exportGradientParameter(std::ostringstream& dst, std::shared_ptr<EffekseerMaterial::TextExporterGradient> gradient, std::string arg)
+{
+	dst << "SampleGradient(GradientParameter(";
+	for (size_t j = 0; j < 13; j++)
+	{
+		dst << gradient->UniformName << "_" << j;
+
+		if (j != 12)
+		{
+			dst << ",";
+		}
+		else
+		{
+			dst << ")";
+		}
+	}
+
+	dst << ", " << arg << ");" << std::endl;
+};
+
+} // namespace
+
 /**
 	@brief	Refactor with it
 */
@@ -130,7 +160,8 @@ public:
 	int32_t AddConstant(ValueType type, std::array<float, 4> values, const std::string& name = "")
 	{
 		// for opengl es
-		auto getNum = [](float f) -> std::string {
+		auto getNum = [](float f) -> std::string
+		{
 			std::ostringstream ret;
 			if (f == (int)f)
 			{
@@ -302,7 +333,8 @@ public:
 
 		str_ << exporter_->GetTypeName(type) << " " << GetName(selfID) << " = " << exporter_->GetTypeName(type) << "(";
 
-		auto getElmName = [](int n) -> std::string {
+		auto getElmName = [](int n) -> std::string
+		{
 			if (n == 0)
 				return ".x";
 			if (n == 1)
@@ -808,6 +840,16 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 				const auto& tePin = enode->Inputs[0];
 				extractedGradientsTemp[tePin.GradientValue->GUID] = tePin.GradientValue;
 			}
+			else if (node->Parameter->Type == NodeType::GradientParameter)
+			{
+				const auto& tePin = enode->Outputs[0];
+				extractedGradientsTemp[tePin.GradientValue->GUID] = tePin.GradientValue;
+			}
+			else if (node->Parameter->Type == NodeType::Gradient)
+			{
+				const auto& tePin = enode->Outputs[0];
+				extractedGradientsTemp[tePin.GradientValue->GUID] = tePin.GradientValue;
+			}
 		}
 
 		extractedGradients = extractedGradientsTemp;
@@ -849,7 +891,6 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 	// Assign Uniform
 	{
 		int32_t offset = 0;
-		int32_t ind = 0;
 		for (auto& extracted : extractedUniforms)
 		{
 			extracted.second->UniformName = "efk_uniform_" + std::to_string(extracted.first);
@@ -862,7 +903,6 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 
 			extracted.second->Offset = offset;
 			offset += sizeof(float) * 4;
-			ind += 1;
 		}
 	}
 
@@ -1106,10 +1146,10 @@ std::string TextExporter::ExportOutputNode(std::shared_ptr<Material> material,
 		ret << GetTypeName(ValueType::Float3) << " normalDir = " << GetInputArg(ValueType::Float3, outputNode->Inputs[normalIndex]) << ";"
 			<< std::endl;
 
-		//ret << GetTypeName(ValueType::Float3) << " tempNormalDir = ((normalDir -" << GetTypeName(ValueType::Float3)
+		// ret << GetTypeName(ValueType::Float3) << " tempNormalDir = ((normalDir -" << GetTypeName(ValueType::Float3)
 		//	<< " (0.5, 0.5, 0.5)) * 2.0);" << std::endl;
 		//
-		//ret << "pixelNormalDir = tempNormalDir.x * worldTangent + tempNormalDir.y * worldBinormal + tempNormalDir.z * worldNormal;"
+		// ret << "pixelNormalDir = tempNormalDir.x * worldTangent + tempNormalDir.y * worldBinormal + tempNormalDir.z * worldNormal;"
 		//	<< std::endl;
 
 		ret << GetTypeName(ValueType::Float3)
@@ -1164,11 +1204,35 @@ std::string TextExporter::ExportOutputNode(std::shared_ptr<Material> material,
 		}
 		else if (outputNode->Target->Parameter->Type == NodeType::Gradient)
 		{
-			// TODO
+			ret << GetTypeName(ValueType::Float4) << " emissive_temp = ";
+
+			exportGradient(ret, outputNode->Outputs[0].GradientValue, "GetUV(" + GetUVName(0) + ").x");
+
+			ret << GetTypeName(ValueType::Float3) << " emissive = emissive_temp.xyz;" << std::endl;
+			ret << "float opacity = emissive_temp.w;" << std::endl;
+
+			ret << "float opacityMask = 1.0;" << std::endl;
 		}
 		else if (outputNode->Target->Parameter->Type == NodeType::GradientParameter)
 		{
-			// TODO
+			ret << GetTypeName(ValueType::Float4) << " emissive_temp = ";
+
+			exportGradientParameter(ret, outputNode->Outputs[0].GradientValue, "GetUV(" + GetUVName(0) + ").x");
+
+			ret << GetTypeName(ValueType::Float3) << " emissive = emissive_temp.xyz;" << std::endl;
+			ret << "float opacity = emissive_temp.w;" << std::endl;
+
+			ret << "float opacityMask = 1.0;" << std::endl;
+		}
+		else if (outputNode->Target->Parameter->Type == NodeType::SampleGradient)
+		{
+			ret << GetTypeName(ValueType::Float4)
+				<< " emissive_temp = " << ConvertType(ValueType::Float4, outputNode->Outputs[0].Type, outputNode->Outputs[0].Name) << ";"
+				<< std::endl;
+			ret << GetTypeName(ValueType::Float3) << " emissive = emissive_temp.xyz;" << std::endl;
+			ret << "float opacity = emissive_temp.w;" << std::endl;
+
+			ret << "float opacityMask = 1.0;" << std::endl;
 		}
 		else
 		{
@@ -1186,7 +1250,8 @@ std::string TextExporter::ExportOutputNode(std::shared_ptr<Material> material,
 
 std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 {
-	auto exportInputOrProp = [this](ValueType type_, TextExporterPin& pin_, std::shared_ptr<NodeProperty>& prop_) -> std::string {
+	auto exportInputOrProp = [this](ValueType type_, TextExporterPin& pin_, std::shared_ptr<NodeProperty>& prop_) -> std::string
+	{
 		if (pin_.IsConnected)
 		{
 			return GetInputArg(type_, pin_);
@@ -1196,13 +1261,15 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 
 	std::ostringstream ret;
 
-	auto exportIn2Out2Param2 = [&, this](const char* func, const char* op) -> void {
+	auto exportIn2Out2Param2 = [&, this](const char* func, const char* op) -> void
+	{
 		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "=" << func << "("
 			<< exportInputOrProp(node->Outputs[0].Type, node->Inputs[0], node->Target->Properties[0]) << op
 			<< exportInputOrProp(node->Outputs[0].Type, node->Inputs[1], node->Target->Properties[1]) << ");" << std::endl;
 	};
 
-	auto exportIn1Out1 = [&, this](const char* func) -> void {
+	auto exportIn1Out1 = [&, this](const char* func) -> void
+	{
 		assert(node->Inputs.size() == 1);
 		assert(node->Outputs.size() == 1);
 		assert(node->Inputs[0].Type == node->Outputs[0].Type);
@@ -1211,7 +1278,8 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 	};
 
 	// for opengl es
-	auto getNum = [](float f) -> std::string {
+	auto getNum = [](float f) -> std::string
+	{
 		std::ostringstream ret;
 		if (f == (int)f)
 		{
@@ -1487,7 +1555,8 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 	{
 		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "=" << GetTypeName(node->Outputs[0].Type) << "(";
 
-		auto getElmName = [](int n) -> std::string {
+		auto getElmName = [](int n) -> std::string
+		{
 			if (n == 0)
 				return ".x";
 			if (n == 1)
@@ -1620,28 +1689,13 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 		const auto& gradient = node->Inputs[0].GradientValue;
 		if (gradient->IsFixed)
 		{
-			ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << " = SampleGradient(" << gradient->UniformName << "(), " << GetInputArg(ValueType::Float1, node->Inputs[1]) << ");" << std::endl;
+			ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << " = ";
+			exportGradient(ret, gradient, GetInputArg(ValueType::Float1, node->Inputs[1]));
 		}
 		else
 		{
-			ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << " = SampleGradient(GradientParameter(";
-
-			// TODO Remove magic number
-			for (size_t j = 0; j < 13; j++)
-			{
-				ret << gradient->UniformName << "_" << j;
-
-				if (j != 12)
-				{
-					ret << ",";
-				}
-				else
-				{
-					ret << ")";
-				}
-			}
-
-			ret << ", " << GetInputArg(ValueType::Float1, node->Inputs[1]) << ");" << std::endl;
+			ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << " = ";
+			exportGradientParameter(ret, gradient, GetInputArg(ValueType::Float1, node->Inputs[1]));
 		}
 	}
 
@@ -1962,7 +2016,8 @@ std::string TextExporter::GetInputArg(const ValueType& pinType, TextExporterPin&
 	else
 	{
 		// for opengl es
-		auto getNum = [&pin](int i) -> std::string {
+		auto getNum = [&pin](int i) -> std::string
+		{
 			auto f = pin.NumberValue[i];
 
 			std::ostringstream ret;
@@ -2015,7 +2070,8 @@ std::string TextExporter::GetInputArg(const ValueType& pinType, float value)
 	std::ostringstream ret;
 
 	// for opengl es
-	auto getNum = [](float f) -> std::string {
+	auto getNum = [](float f) -> std::string
+	{
 		std::ostringstream ret;
 		if (f == (int)f)
 		{
@@ -2054,7 +2110,8 @@ std::string TextExporter::GetInputArg(const ValueType& pinType, float value)
 std::string TextExporter::GetInputArg(const ValueType& pinType, std::array<float, 2> value)
 {
 	// for opengl es
-	auto getNum = [](float f) -> std::string {
+	auto getNum = [](float f) -> std::string
+	{
 		std::ostringstream ret;
 		if (f == (int)f)
 		{

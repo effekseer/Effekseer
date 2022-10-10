@@ -136,10 +136,6 @@ struct DepthReconstructionParameter
 	float ProjectionMatrix44 = 0.0f;
 };
 
-::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice,
-												  ::Effekseer::FileInterfaceRef fileInterface = nullptr,
-												  ::Effekseer::ColorSpaceType colorSpaceType = ::Effekseer::ColorSpaceType::Gamma);
-
 ::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice, ::Effekseer::FileInterfaceRef fileInterface = nullptr);
 
 class Renderer : public ::Effekseer::IReference
@@ -503,6 +499,21 @@ public:
 //
 //----------------------------------------------------------------------------------
 #endif // __EFFEKSEERRENDERER_RENDERER_H__
+#ifndef __EFFEKSEERRENDERER_TEXTURELOADER_H__
+#define __EFFEKSEERRENDERER_TEXTURELOADER_H__
+
+#include <Effekseer.h>
+
+namespace EffekseerRenderer
+{
+
+::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice,
+												  ::Effekseer::FileInterfaceRef fileInterface = nullptr,
+												  ::Effekseer::ColorSpaceType colorSpaceType = ::Effekseer::ColorSpaceType::Gamma);
+
+} // namespace EffekseerRenderer
+
+#endif // __EFFEKSEERRENDERER_TEXTURELOADER_H__
 
 #ifndef __EFFEKSEERRENDERER_VULKAN_RENDERER_H__
 #define __EFFEKSEERRENDERER_VULKAN_RENDERER_H__
