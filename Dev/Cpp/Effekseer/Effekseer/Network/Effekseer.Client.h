@@ -2,7 +2,7 @@
 #ifndef __EFFEKSEER_CLIENT_H__
 #define __EFFEKSEER_CLIENT_H__
 
-#include "Effekseer.Base.h"
+#include "../Effekseer.Base.h"
 
 namespace Effekseer
 {
