@@ -3,17 +3,16 @@
 #define __EFFEKSEER_SERVER_IMPLEMENTED_H__
 
 #if (defined(__EFFEKSEER_NETWORK_ENABLED__))
-#if !(defined(_PSVITA) || defined(_SWITCH) || defined(_XBOXONE))
 
-#include "Effekseer.Base.h"
+#include "../Effekseer.Base.h"
 #include "Effekseer.Server.h"
 
 #include "Effekseer.Socket.h"
+#include "Effekseer.Session.h"
 
 #include <string>
 
 #include <map>
-#include <set>
 #include <vector>
 
 namespace Effekseer
@@ -22,54 +21,40 @@ namespace Effekseer
 class ServerImplemented : public Server, public ReferenceObject
 {
 private:
-	class InternalClient
+	struct InternalClient
 	{
-	public:
-		std::thread m_threadRecv;
-		EfkSocket m_socket;
-		ServerImplemented* m_server;
-		bool m_active;
-
-		std::vector<uint8_t> m_recvBuffer;
-
-		std::vector<std::vector<uint8_t>> m_recvBuffers;
-		std::mutex m_ctrlRecvBuffers;
-
-		static void RecvAsync(void* data);
-
-	public:
-		InternalClient(EfkSocket socket_, ServerImplemented* server);
-		~InternalClient();
-		void ShutDown();
+		Socket socket;
+		Session session;
 	};
 
 private:
 	struct EffectParameter
 	{
-		EffectRef EffectPtr;
-		bool IsRegistered;
+		EffectRef effect;
+		bool registered;
 	};
 
-	EfkSocket m_socket = InvalidSocket;
-	uint16_t m_port = 0;
+	Socket socket_;
+	bool listening_ = false;
 
-	std::thread m_thread;
-	std::mutex m_ctrlClients;
+	std::thread thread_;
+	std::mutex clientsMutex_;
 
-	bool m_running = false;
+	std::vector<std::unique_ptr<InternalClient>> clients_;
+	std::map<std::u16string, EffectParameter> effects_;
+	std::u16string materialPath_;
 
-	std::set<InternalClient*> m_clients;
-	std::set<InternalClient*> m_removedClients;
+	struct Context
+	{
+		ManagerRef* managers;
+		int32_t managerCount;
+		ReloadingThreadType reloadingThreadType;
+	};
+	Context context_{};
 
-	std::map<std::u16string, EffectParameter> m_effects;
+	void AcceptAsync();
 
-	std::map<std::u16string, std::vector<uint8_t>> m_data;
-
-	std::vector<char16_t> m_materialPath;
-
-	void AddClient(InternalClient* client);
-	void RemoveClient(InternalClient* client);
-	static void AcceptAsync(void* data);
+	void OnDataReceived(const Session::Message& msg);
 
 public:
 	ServerImplemented();
@@ -87,6 +72,8 @@ public:
 
 	void SetMaterialPath(const char16_t* materialPath) override;
 
+	bool IsConnected() const override;
+
 	virtual int GetRef() override
 	{
 		return ReferenceObject::GetRef();
@@ -103,7 +90,6 @@ public:
 
 } // namespace Effekseer
 
-#endif // #if !( defined(_PSVITA) || defined(_SWITCH) || defined(_XBOXONE) )
 #endif
 
 #endif // __EFFEKSEER_SERVER_IMPLEMENTED_H__

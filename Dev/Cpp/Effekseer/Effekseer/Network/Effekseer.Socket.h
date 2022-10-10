@@ -8,15 +8,22 @@
 // Include
 //----------------------------------------------------------------------------------
 #include <stdint.h>
-#include <stdio.h>
+#include <atomic>
 
 #if defined(_WIN32) && !defined(_PS4)
+#define EfkWinSock
+#else
+#define EfkBSDSock
+#endif
+
+#if defined(EfkWinSock)
 
 #ifdef __EFFEKSEER_FOR_UE4__
 #include "Windows/AllowWindowsPlatformTypes.h"
 #endif
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _WINSOCKAPI_
+#define NOMINMAX
 #include <winsock2.h>
 #pragma comment(lib, "ws2_32.lib")
 
@@ -25,6 +32,7 @@
 #endif
 
 #else
+
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
@@ -46,42 +54,70 @@ namespace Effekseer
 //
 //----------------------------------------------------------------------------------
 
-#if defined(_WIN32) && !defined(_PS4)
-
-typedef SOCKET EfkSocket;
-typedef int SOCKLEN;
-const EfkSocket InvalidSocket = INVALID_SOCKET;
-const int32_t SocketError = SOCKET_ERROR;
-const int32_t InaddrNone = INADDR_NONE;
-
-#else
-
-typedef int32_t EfkSocket;
-typedef socklen_t SOCKLEN;
-const EfkSocket InvalidSocket = -1;
-const int32_t SocketError = -1;
-const int32_t InaddrNone = -1;
-
-typedef struct hostent HOSTENT;
-typedef struct in_addr IN_ADDR;
-typedef struct sockaddr_in SOCKADDR_IN;
-typedef struct sockaddr SOCKADDR;
-
-#endif
-
 class Socket
 {
-private:
 public:
+#if defined(EfkWinSock)
+	using SockHandle = SOCKET;
+	using SockLen = int;
+	using InAddr = IN_ADDR;
+	using Hostent = HOSTENT;
+	using SockAddrIn = SOCKADDR_IN;
+	using SockAddr = SOCKADDR;
+	
+	static const SockHandle InvalidHandle = INVALID_SOCKET;
+	static const int32_t SocketError = SOCKET_ERROR;
+	static const int32_t InaddrNone = INADDR_NONE;
+#elif defined(EfkBSDSock)
+	using SockHandle = int32_t;
+	using SockLen = socklen_t;
+	using Hostent = struct hostent;
+	using InAddr = struct in_addr;
+	using SockAddrIn = struct sockaddr_in;
+	using SockAddr = struct sockaddr;
+
+	static const SockHandle InvalidHandle = -1;
+	static const int32_t SocketError = -1;
+	static const int32_t InaddrNone = -1;
+#endif
+
+private:
 	static void Initialize();
+
 	static void Finalize();
 
-	static EfkSocket GenSocket();
+public:
+	Socket();
 
-	static void Close(EfkSocket s);
-	static void Shutsown(EfkSocket s);
+	Socket(SockHandle handle, const SockAddrIn& sockAddr);
 
-	static bool Listen(EfkSocket s, int32_t backlog);
+	~Socket();
+
+	Socket(const Socket&) = delete;
+
+	Socket& operator=(const Socket&) = delete;
+
+	Socket(Socket&& rhs);
+
+	Socket& operator=(Socket&& rhs);
+
+	bool IsValid() const { return handle_ != InvalidHandle; }
+
+	void Close();
+
+	bool Connect(const char* host, int32_t port);
+
+	bool Listen(int32_t port, int32_t backlog);
+	
+	Socket Accept();
+
+	int32_t Send(const void* data, int32_t size);
+
+	int32_t Recv(void* buffer, int32_t size);
+
+private:
+	SockHandle handle_ = InvalidHandle;
+	SockAddrIn sockAddr_ = {};
 };
 
 //----------------------------------------------------------------------------------

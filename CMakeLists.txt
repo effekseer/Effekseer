@@ -353,6 +353,8 @@ if(BUILD_VIEWER OR BUILD_EXAMPLES OR BUILD_TEST)
     list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glfw/lib)
 endif()
 
+list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/Dev/Cpp/3rdParty/flatbuffers/include)
+
 # resource
 if (BUILD_VIEWER)
     find_package(PythonInterp 3)

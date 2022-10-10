@@ -4,10 +4,11 @@
 
 #if (defined(__EFFEKSEER_NETWORK_ENABLED__))
 
-#include "Effekseer.Base.h"
+#include "../Effekseer.Base.h"
 #include "Effekseer.Client.h"
 
 #include "Effekseer.Socket.h"
+#include "Effekseer.Session.h"
 #include <set>
 #include <vector>
 
@@ -17,34 +18,21 @@ namespace Effekseer
 class ClientImplemented : public Client, public ReferenceObject
 {
 private:
-	bool isThreadRunning = false;
-	std::thread m_threadRecv;
-
-	EfkSocket m_socket = InvalidSocket;
-	uint16_t m_port = 0;
-	std::vector<uint8_t> m_sendBuffer;
-
-	bool m_running = false;
-	std::mutex mutexStop;
-
-	bool GetAddr(const char* host, IN_ADDR* addr);
-
-	static void RecvAsync(void* data);
-	void StopInternal();
+	Socket socket_;
+	Session session_;
 
 public:
 	ClientImplemented();
 	~ClientImplemented() override;
 
-	bool Start(char* host, uint16_t port);
-	void Stop();
-
-	bool Send(void* data, int32_t datasize);
+	bool Start(const char* host, uint16_t port) override;
+	void Stop() override;
+	void Update() override;
 
 	void Reload(const char16_t* key, void* data, int32_t size) override;
 	void Reload(ManagerRef manager, const char16_t* path, const char16_t* key) override;
 
-	bool IsConnected();
+	bool IsConnected() const override;
 
 	virtual int GetRef() override
 	{

@@ -2,7 +2,7 @@
 #ifndef __EFFEKSEER_SERVER_H__
 #define __EFFEKSEER_SERVER_H__
 
-#include "Effekseer.Base.h"
+#include "../Effekseer.Base.h"
 
 namespace Effekseer
 {
@@ -82,7 +82,7 @@ public:
 
 	*/
 	virtual void
-	Update(ManagerRef* managers = nullptr, int32_t managerCount = 0, ReloadingThreadType reloadingThreadType = ReloadingThreadType::Main) = 0;
+	Update(ManagerRef* managers, int32_t managerCount, ReloadingThreadType reloadingThreadType = ReloadingThreadType::Main) = 0;
 
 	/**
 		@brief
@@ -90,6 +90,13 @@ public:
 		\~Japanese	素材のルートパスを設定する。
 	*/
 	virtual void SetMaterialPath(const char16_t* materialPath) = 0;
+	
+	/**
+		@brief
+		\~English	Check the connection status
+		\~Japanese	接続状態をチェックする。
+	*/
+	virtual bool IsConnected() const = 0;
 };
 
 } // namespace Effekseer
