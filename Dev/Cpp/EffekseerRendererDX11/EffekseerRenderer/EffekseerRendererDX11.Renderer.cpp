@@ -19,10 +19,7 @@
 #include "../../EffekseerRendererCommon/EffekseerRenderer.SpriteRendererBase.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.TrackRendererBase.h"
 #include "../../EffekseerRendererCommon/ModelLoader.h"
-
-#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 #include "../../EffekseerRendererCommon/TextureLoader.h"
-#endif
 
 //----------------------------------------------------------------------------------
 //
@@ -110,22 +107,6 @@ static
 															 ID3D11DeviceContext* context)
 {
 	return Effekseer::MakeRefPtr<Backend::GraphicsDevice>(device, context);
-}
-
-::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice,
-												  ::Effekseer::FileInterfaceRef fileInterface,
-												  ::Effekseer::ColorSpaceType colorSpaceType)
-{
-#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return ::Effekseer::MakeRefPtr<EffekseerRenderer::TextureLoader>(gprahicsDevice.Get(), fileInterface, colorSpaceType);
-#else
-	return nullptr;
-#endif
-}
-
-::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice, ::Effekseer::FileInterfaceRef fileInterface)
-{
-	return ::Effekseer::MakeRefPtr<EffekseerRenderer::ModelLoader>(gprahicsDevice, fileInterface);
 }
 
 ::Effekseer::MaterialLoaderRef CreateMaterialLoader(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterfaceRef fileInterface)
@@ -265,18 +246,24 @@ void OriginalState::ReleaseState()
 	ES_SAFE_RELEASE(m_pIB);
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-RendererRef Renderer::Create(
-	ID3D11Device* device, ID3D11DeviceContext* context, int32_t squareMaxCount, D3D11_COMPARISON_FUNC depthFunc, bool isMSAAEnabled)
+RendererRef Renderer::Create(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
+							 int32_t squareMaxCount,
+							 D3D11_COMPARISON_FUNC depthFunc,
+							 bool isMSAAEnabled)
 {
 	auto renderer = ::Effekseer::MakeRefPtr<RendererImplemented>(squareMaxCount);
-	if (renderer->Initialize(device, context, depthFunc, isMSAAEnabled))
+	if (renderer->Initialize(graphicsDevice.DownCast<Backend::GraphicsDevice>(), depthFunc, isMSAAEnabled))
 	{
 		return renderer;
 	}
 	return nullptr;
+}
+
+RendererRef Renderer::Create(
+	ID3D11Device* device, ID3D11DeviceContext* context, int32_t squareMaxCount, D3D11_COMPARISON_FUNC depthFunc, bool isMSAAEnabled)
+{
+	auto graphicsDevice = Effekseer::MakeRefPtr<Backend::GraphicsDevice>(device, context);
+	return Create(graphicsDevice, squareMaxCount, depthFunc, isMSAAEnabled);
 }
 
 //----------------------------------------------------------------------------------
@@ -360,16 +347,13 @@ void RendererImplemented::OnResetDevice()
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-bool RendererImplemented::Initialize(ID3D11Device* device,
-									 ID3D11DeviceContext* context,
+bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 									 D3D11_COMPARISON_FUNC depthFunc,
 									 bool isMSAAEnabled)
 {
-	m_device = device;
-	m_context = context;
+	graphicsDevice_ = graphicsDevice;
+	m_device = graphicsDevice->GetDevice();
+	m_context = graphicsDevice->GetContext();
 	m_depthFunc = depthFunc;
 
 	// generate a vertex buffer
@@ -425,8 +409,6 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 
 		m_indexBufferForWireframe->Unlock();
 	}
-
-	graphicsDevice_ = Effekseer::MakeRefPtr<Backend::GraphicsDevice>(device, context);
 
 	m_renderState = new RenderState(this, m_depthFunc, isMSAAEnabled);
 
@@ -723,11 +705,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 //----------------------------------------------------------------------------------
 ::Effekseer::TextureLoaderRef RendererImplemented::CreateTextureLoader(::Effekseer::FileInterfaceRef fileInterface)
 {
-#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return ::Effekseer::MakeRefPtr<EffekseerRenderer::TextureLoader>(graphicsDevice_.Get(), fileInterface, ::Effekseer::ColorSpaceType::Gamma);
-#else
-	return nullptr;
-#endif
+	return ::EffekseerRenderer::CreateTextureLoader(graphicsDevice_, fileInterface, ::Effekseer::ColorSpaceType::Gamma);
 }
 
 //----------------------------------------------------------------------------------

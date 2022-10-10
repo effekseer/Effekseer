@@ -53,8 +53,6 @@ private:
 		bool IsPreupdated = false;
 		int32_t StartFrame = 0;
 
-		int32_t Layer = 0;
-
 		//! a time (by 1/60) to progress an effect when Update is called
 		float NextUpdateFrame = 0.0f;
 
@@ -110,7 +108,7 @@ private:
 
 		void SetGlobalMatrix(const SIMD::Mat43f& mat);
 
-		void UpdateLevelOfDetails(const Vector3D& viewerPosition, float lodDistanceBias);
+		void UpdateLevelOfDetails(const LayerParameter& loadParameter);
 
 	private:
 		SIMD::Mat43f GlobalMatrix;
@@ -184,16 +182,9 @@ private:
 
 	SoundPlayerRef m_soundPlayer;
 
-	MallocFunc m_MallocFunc;
-
-	FreeFunc m_FreeFunc;
-
 	RandFunc m_randFunc;
 
-	int m_randMax;
-
-	Vector3D m_ViewerPosition;
-	float m_LodDistanceBias = 0.0F;
+	std::array<LayerParameter, LayerCount> m_layerParameters;
 
 	std::queue<std::pair<SoundTag, SoundPlayer::InstanceParameter>> m_requestedSounds;
 	std::mutex m_soundMutex;
@@ -205,11 +196,7 @@ private:
 	//! GC Draw sets
 	void GCDrawSet(bool isRemovingManager);
 
-	static void* EFK_STDCALL Malloc(unsigned int size);
-
-	static void EFK_STDCALL Free(void* p, unsigned int size);
-
-	static int EFK_STDCALL Rand();
+	static int Rand();
 
 	void ExecuteEvents();
 
@@ -239,21 +226,9 @@ public:
 
 	uint32_t GetSequenceNumber() const;
 
-	MallocFunc GetMallocFunc() const override;
-
-	void SetMallocFunc(MallocFunc func) override;
-
-	FreeFunc GetFreeFunc() const override;
-
-	void SetFreeFunc(FreeFunc func) override;
-
 	RandFunc GetRandFunc() const override;
 
 	void SetRandFunc(RandFunc func) override;
-
-	int GetRandMax() const override;
-
-	void SetRandMax(int max_) override;
 
 	CoordinateSystem GetCoordinateSystem() const override;
 
@@ -327,9 +302,9 @@ public:
 
 	int GetCurrentLOD(Handle handle) override;
 
-	float GetLODDistanceBias() const override;
+	const LayerParameter& GetLayerParameter(int32_t layer) const override;
 
-	void SetLODDistanceBias(float distanceBias) override;
+	void SetLayerParameter(int32_t layer, const LayerParameter& layerParameter) override;
 
 	Matrix43 GetMatrix(Handle handle) override;
 
@@ -377,7 +352,7 @@ public:
 
 	bool GetSpawnDisabled(Handle handle) override;
 
-	int GetLayer(Handle handle) override;
+	int32_t GetLayer(Handle handle) override;
 
 	void SetLayer(Handle handle, int32_t layer) override;
 
@@ -407,7 +382,7 @@ public:
 
 	void DoUpdate(const UpdateParameter& parameter);
 
-	void BeginUpdate(const Vector3D& ViewerPosition = Vector3D(0.0, 0.0, 0.0)) override;
+	void BeginUpdate() override;
 
 	void EndUpdate() override;
 
@@ -481,11 +456,6 @@ public:
 	void UnlockRendering() override;
 
 	void RequestToPlaySound(Instance* instance, const EffectNodeImplemented* node);
-
-	const Vector3D& GetViewerPosition() const
-	{
-		return m_ViewerPosition;
-	}
 
 	ManagerImplemented* GetImplemented() override
 	{

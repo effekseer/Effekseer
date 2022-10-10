@@ -23,6 +23,7 @@ public:
 		Gradient = 0,
 		Noise = 1,
 		Light = 2,
+		LocalTime = 3,
 	};
 
 	struct GradientParameter
@@ -65,7 +66,7 @@ private:
 
 	std::vector<Uniform> uniforms_;
 
-	static const int32_t LatestSupportVersion = MaterialVersion17Alpha4;
+	static const int32_t LatestSupportVersion = MaterialVersion17;
 	static const int32_t OldestSupportVersion = 0;
 
 public:

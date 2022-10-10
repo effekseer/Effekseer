@@ -2,9 +2,6 @@
 #ifndef __EFFEKSEER_CLIENT_H__
 #define __EFFEKSEER_CLIENT_H__
 
-#if !(defined(__EFFEKSEER_NETWORK_DISABLED__))
-#if !(defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE))
-
 #include "../Effekseer.Base.h"
 
 namespace Effekseer
@@ -33,6 +30,4 @@ public:
 
 } // namespace Effekseer
 
-#endif // #if !( defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE) )
-#endif
 #endif // __EFFEKSEER_CLIENT_H__

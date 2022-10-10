@@ -200,9 +200,13 @@ bool EffectPlatform::Update()
 	if (!DoEvent())
 		return false;
 
+	Effekseer::Manager::LayerParameter layerParameter;
+	layerParameter.ViewerPosition = renderer_ != nullptr ? renderer_->GetCameraPosition() : Effekseer::Vector3D(0.0, 0.0, 0.0);
+	manager_->SetLayerParameter(0, layerParameter);
+
 	if (this->initParam_.IsUpdatedByHandle)
 	{
-		manager_->BeginUpdate(renderer_ != nullptr ? renderer_->GetCameraPosition() : Effekseer::Vector3D(0.0, 0.0, 0.0));
+		manager_->BeginUpdate();
 
 		for (auto h : effectHandles_)
 		{
@@ -214,7 +218,6 @@ bool EffectPlatform::Update()
 	else
 	{
 		Effekseer::Manager::UpdateParameter updateParameter;
-		updateParameter.ViewerPosition = renderer_ != nullptr ? renderer_->GetCameraPosition() : Effekseer::Vector3D(0.0, 0.0, 0.0);
 		updateParameter.UpdateInterval = 0.0;
 		manager_->Update(updateParameter);
 	}

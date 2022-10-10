@@ -1,6 +1,7 @@
 #include "Window.h"
 
-namespace Utils {
+namespace Utils
+{
 
 LRESULT WndProc_Win(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -14,7 +15,10 @@ LRESULT WndProc_Win(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
-WindowWin::~WindowWin() { Terminate(); }
+WindowWin::~WindowWin()
+{
+	Terminate();
+}
 
 bool WindowWin::Initialize(const char* title, const Vec2I& windowSize)
 {
@@ -50,7 +54,10 @@ bool WindowWin::Initialize(const char* title, const Vec2I& windowSize)
 	return true;
 }
 
-bool WindowWin::DoEvent() { return false; }
+bool WindowWin::DoEvent()
+{
+	return false;
+}
 
 void WindowWin::Terminate()
 {
@@ -58,7 +65,7 @@ void WindowWin::Terminate()
 #ifdef _WIN32
 	if (hwnd_ != nullptr)
 	{
-		//DestroyWindow(hwnd_);		
+		// DestroyWindow(hwnd_);
 		UnregisterClassA(title_.c_str(), GetModuleHandle(NULL));
 	}
 	hwnd_ = nullptr;
@@ -101,6 +108,9 @@ void* WindowWin::GetNativePtr(int32_t index)
 	return nullptr;
 }
 
-Vec2I WindowWin::GetWindowSize() const { return windowSize_; }
-
+Vec2I WindowWin::GetWindowSize() const
+{
+	return windowSize_;
 }
+
+} // namespace Utils

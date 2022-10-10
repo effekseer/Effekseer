@@ -11,7 +11,7 @@
 namespace Effekseer.swig {
 
 public enum Key {
-  Tab,
+  Tab = 512,
   LeftArrow,
   RightArrow,
   UpArrow,

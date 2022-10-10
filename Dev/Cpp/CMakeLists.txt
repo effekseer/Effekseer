@@ -29,8 +29,6 @@ if (MSVC)
     endif()
 endif()
 
-option(USE_INTERNAL_LOADER "Use Internal Loader" ON)
-
 option(USE_OPENGLES2 "Use OpenGL ES2" OFF)
 option(USE_OPENGLES3 "Use OpenGL ES3" OFF)
 option(USE_OPENGL3 "Use OpenGL 3" OFF)
@@ -59,10 +57,6 @@ if (MSVC)
     endif()
 endif()
 
-if (USE_INTERNAL_LOADER)
-	add_definitions(-D__EFFEKSEER_RENDERER_INTERNAL_LOADER__)
-endif()
-
 if (USE_OPENGLES2)
 	add_definitions(-D__EFFEKSEER_RENDERER_GLES2__)
 endif()
@@ -77,20 +71,6 @@ endif()
 
 add_subdirectory(Effekseer)
 set_property(TARGET Effekseer PROPERTY FOLDER Libraries)
-
-if (BUILD_DX9)
-    add_subdirectory(EffekseerRendererDX9)
-    set_property(TARGET EffekseerRendererDX9 PROPERTY FOLDER Libraries)
-endif()
-if (BUILD_DX11)
-    add_subdirectory(EffekseerRendererDX11)
-    set_property(TARGET EffekseerRendererDX11 PROPERTY FOLDER Libraries)
-endif()
-
-if (BUILD_GL)
-    add_subdirectory(EffekseerRendererGL)
-    set_property(TARGET EffekseerRendererGL PROPERTY FOLDER Libraries)
-endif()
 
 if(BUILD_UNITYPLUGIN OR BUILD_UNITYPLUGIN_FOR_IOS)
     add_subdirectory(EffekseerRendererCommon)
@@ -126,6 +106,21 @@ if (BUILD_DX12 OR BUILD_METAL OR BUILD_VULKAN)
     add_subdirectory(3rdParty/LLGI)
     set_target_properties (LLGI PROPERTIES FOLDER Thirdparty)
     set(BUILD_TEST ${BUILD_TEST_TEMP})
+endif()
+
+if (BUILD_DX9)
+    add_subdirectory(EffekseerRendererDX9)
+    set_property(TARGET EffekseerRendererDX9 PROPERTY FOLDER Libraries)
+endif()
+
+if (BUILD_DX11)
+    add_subdirectory(EffekseerRendererDX11)
+    set_property(TARGET EffekseerRendererDX11 PROPERTY FOLDER Libraries)
+endif()
+
+if (BUILD_GL)
+    add_subdirectory(EffekseerRendererGL)
+    set_property(TARGET EffekseerRendererGL PROPERTY FOLDER Libraries)
 endif()
 
 if (BUILD_DX12)

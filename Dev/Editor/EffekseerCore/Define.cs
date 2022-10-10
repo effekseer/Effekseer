@@ -76,52 +76,6 @@ namespace Effekseer
 		Warning,
 	}
 
-	public enum Language
-	{
-		Japanese,
-		English,
-	}
-
-	/// <summary>
-	/// a class for get default language
-	/// </summary>
-	public class LanguageGetter
-	{
-		public static Language GetLanguage()
-		{
-			// Switch the language according to the OS settings
-			var culture = System.Globalization.CultureInfo.CurrentCulture;
-			if (culture.Name == "ja-JP")
-			{
-				return Language.Japanese;
-			}
-
-			return Language.English;
-		}
-	}
-
-	// アセンブリからリソースファイルをロードする
-	// Resources.GetString(...) に介して取得する場合、
-	// カルチャーによってローカライズ済の文字列が得られます。
-	public static class Resources
-	{
-		static Dictionary<string, string> keyToStrings = new Dictionary<string, string>();
-
-		static Resources()
-		{
-		}
-
-		public static string GetString(string name)
-		{
-			if (MultiLanguageTextProvider.HasKey(name))
-			{
-				return MultiLanguageTextProvider.GetText(name);
-			}
-
-			return string.Empty;
-		}
-	}
-
 	/// <summary>
 	/// attribute for parameter's key
 	/// </summary>

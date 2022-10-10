@@ -22,10 +22,7 @@
 #include "../../EffekseerRendererCommon/EffekseerRenderer.SpriteRendererBase.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.TrackRendererBase.h"
 #include "../../EffekseerRendererCommon/ModelLoader.h"
-
-#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 #include "../../EffekseerRendererCommon/TextureLoader.h"
-#endif
 
 #include "ShaderHeader/ad_model_distortion_ps.h"
 #include "ShaderHeader/ad_model_lit_ps.h"
@@ -768,11 +765,7 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 //----------------------------------------------------------------------------------
 ::Effekseer::TextureLoaderRef RendererImplemented::CreateTextureLoader(::Effekseer::FileInterfaceRef fileInterface)
 {
-#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return ::Effekseer::MakeRefPtr<EffekseerRenderer::TextureLoader>(graphicsDevice_.Get(), fileInterface);
-#else
-	return nullptr;
-#endif
+	return ::EffekseerRenderer::CreateTextureLoader(graphicsDevice_, fileInterface, ::Effekseer::ColorSpaceType::Gamma);
 }
 
 //----------------------------------------------------------------------------------
@@ -1239,12 +1232,14 @@ void AddVertexUniformLayout(Effekseer::CustomVector<Effekseer::Backend::UniformL
 
 	int vsOffset = 0;
 
-	auto storeVector = [&](const char* name) {
+	auto storeVector = [&](const char* name)
+	{
 		uniformLayout.emplace_back(UniformLayoutElement{ShaderStageType::Vertex, name, UniformBufferLayoutElementType::Vector4, 1, vsOffset});
 		vsOffset += sizeof(float[4]);
 	};
 
-	auto storeMatrix = [&](const char* name) {
+	auto storeMatrix = [&](const char* name)
+	{
 		uniformLayout.emplace_back(UniformLayoutElement{ShaderStageType::Vertex, name, UniformBufferLayoutElementType::Matrix44, 1, vsOffset});
 		vsOffset += sizeof(Effekseer::Matrix44);
 	};
@@ -1252,7 +1247,8 @@ void AddVertexUniformLayout(Effekseer::CustomVector<Effekseer::Backend::UniformL
 	storeMatrix("CBVS0.mCamera");
 	storeMatrix("CBVS0.mCameraProj");
 	storeVector("CBVS0.mUVInversed");
-	storeVector("CBVS0.fFlipbookParameter");
+	storeVector("CBVS0.flipbookParameter1");
+	storeVector("CBVS0.flipbookParameter2");
 }
 
 void AddPixelUniformLayout(Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>& uniformLayout)
@@ -1261,7 +1257,8 @@ void AddPixelUniformLayout(Effekseer::CustomVector<Effekseer::Backend::UniformLa
 
 	int psOffset = 0;
 
-	auto storeVector = [&](const char* name) {
+	auto storeVector = [&](const char* name)
+	{
 		uniformLayout.emplace_back(UniformLayoutElement{ShaderStageType::Pixel, name, UniformBufferLayoutElementType::Vector4, 1, psOffset});
 		psOffset += sizeof(float[4]);
 	};
@@ -1292,7 +1289,8 @@ void AddDistortionPixelUniformLayout(Effekseer::CustomVector<Effekseer::Backend:
 
 	int psOffset = 0;
 
-	auto storeVector = [&](const char* name) {
+	auto storeVector = [&](const char* name)
+	{
 		uniformLayout.emplace_back(UniformLayoutElement{ShaderStageType::Pixel, name, UniformBufferLayoutElementType::Vector4, 1, psOffset});
 		psOffset += sizeof(float[4]);
 	};
@@ -1312,23 +1310,28 @@ Effekseer::CustomVector<Effekseer::CustomString<char>> GetTextureLocations(Effek
 {
 	Effekseer::CustomVector<Effekseer::CustomString<char>> texLoc;
 
-	auto pushColor = [](Effekseer::CustomVector<Effekseer::CustomString<char>>& texLoc) {
+	auto pushColor = [](Effekseer::CustomVector<Effekseer::CustomString<char>>& texLoc)
+	{
 		texLoc.emplace_back("Sampler_sampler_colorTex");
 	};
 
-	auto pushDepth = [](Effekseer::CustomVector<Effekseer::CustomString<char>>& texLoc) {
+	auto pushDepth = [](Effekseer::CustomVector<Effekseer::CustomString<char>>& texLoc)
+	{
 		texLoc.emplace_back("Sampler_sampler_depthTex");
 	};
 
-	auto pushBack = [](Effekseer::CustomVector<Effekseer::CustomString<char>>& texLoc) {
+	auto pushBack = [](Effekseer::CustomVector<Effekseer::CustomString<char>>& texLoc)
+	{
 		texLoc.emplace_back("Sampler_sampler_backTex");
 	};
 
-	auto pushNormal = [](Effekseer::CustomVector<Effekseer::CustomString<char>>& texLoc) {
+	auto pushNormal = [](Effekseer::CustomVector<Effekseer::CustomString<char>>& texLoc)
+	{
 		texLoc.emplace_back("Sampler_sampler_normalTex");
 	};
 
-	auto pushAdvancedRendererParameterLoc = [](Effekseer::CustomVector<Effekseer::CustomString<char>>& texLoc) -> void {
+	auto pushAdvancedRendererParameterLoc = [](Effekseer::CustomVector<Effekseer::CustomString<char>>& texLoc) -> void
+	{
 		texLoc.emplace_back("Sampler_sampler_alphaTex");
 		texLoc.emplace_back("Sampler_sampler_uvDistortionTex");
 		texLoc.emplace_back("Sampler_sampler_blendTex");

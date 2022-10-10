@@ -71,13 +71,12 @@ ManagerRef Manager::Create(int instance_max, bool autoFlip)
 	return MakeRefPtr<ManagerImplemented>(instance_max, autoFlip);
 }
 
-void ManagerImplemented::DrawSet::UpdateLevelOfDetails(const Vector3D& viewerPosition, float lodDistaceBias)
+void ManagerImplemented::DrawSet::UpdateLevelOfDetails(const LayerParameter& loadParameter)
 {
 	SIMD::Mat43f drawSetMatrix = this->GetGlobalMatrix();
-	float dx = viewerPosition.X - drawSetMatrix.X.GetW();
-	float dy = viewerPosition.Y - drawSetMatrix.Y.GetW();
-	float dz = viewerPosition.Z - drawSetMatrix.Z.GetW();
-	float distanceToViewer = SIMD::Sqrt(dx * dx + dy * dy + dz * dz) + lodDistaceBias;
+	SIMD::Vec3f diff = SIMD::Vec3f(loadParameter.ViewerPosition) - drawSetMatrix.GetTranslation();
+	float distanceToViewer = diff.GetLength() + loadParameter.DistanceBias;
+
 	EffectImplemented* effect = (EffectImplemented*)this->ParameterPointer.Get();
 	if (effect->LODs.distance3 > 0.0F && distanceToViewer > effect->LODs.distance3)
 	{
@@ -327,18 +326,7 @@ void ManagerImplemented::ReleaseInstanceContainer(InstanceContainer* container)
 	pooledContainers_.push(container);
 }
 
-void* EFK_STDCALL ManagerImplemented::Malloc(unsigned int size)
-{
-	return (void*)new char*[size];
-}
-
-void EFK_STDCALL ManagerImplemented::Free(void* p, unsigned int size)
-{
-	char* pData = (char*)p;
-	delete[] pData;
-}
-
-int EFK_STDCALL ManagerImplemented::Rand()
+int ManagerImplemented::Rand()
 {
 	return rand();
 }
@@ -386,8 +374,7 @@ void ManagerImplemented::StoreSortingDrawSets(const Manager::DrawParameter& draw
 
 	if (drawParameter.IsSortingEffectsEnabled)
 	{
-		std::sort(sortedRenderingDrawSets_.begin(), sortedRenderingDrawSets_.end(), [&](const DrawSet& a, const DrawSet& b) -> bool
-				  {
+		std::sort(sortedRenderingDrawSets_.begin(), sortedRenderingDrawSets_.end(), [&](const DrawSet& a, const DrawSet& b) -> bool {
 			const auto da = SIMD::Vec3f::Dot(a.GetGlobalMatrix().GetTranslation() - drawParameter.CameraPosition, drawParameter.CameraFrontDirection);
 			const auto db = SIMD::Vec3f::Dot(b.GetGlobalMatrix().GetTranslation() - drawParameter.CameraPosition, drawParameter.CameraFrontDirection);
 			return da > db; });
@@ -402,7 +389,7 @@ bool ManagerImplemented::CanDraw(const DrawSet& drawSet, const Manager::DrawPara
 		return false;
 	}
 
-	if ((drawParameter.CameraCullingMask & (1 << drawSet.Layer)) == 0)
+	if ((drawParameter.CameraCullingMask & drawSet.GlobalPointer->GetLayerBits()) == 0)
 	{
 		return false;
 	}
@@ -439,20 +426,11 @@ ManagerImplemented::ManagerImplemented(int instance_max, bool autoFlip)
 	, m_trackRenderer(nullptr)
 
 	, m_soundPlayer(nullptr)
-
-	, m_MallocFunc(nullptr)
-	, m_FreeFunc(nullptr)
 	, m_randFunc(nullptr)
-	, m_randMax(0)
-	, m_ViewerPosition(Vector3D(0.0, 0.0, 0.0))
-	, m_LodDistanceBias(0.0F)
 {
 	m_setting = Setting::Create();
 
-	SetMallocFunc(Malloc);
-	SetFreeFunc(Free);
 	SetRandFunc(Rand);
-	SetRandMax(RAND_MAX);
 
 	m_renderingDrawSets.reserve(64);
 
@@ -512,8 +490,7 @@ Instance* ManagerImplemented::CreateInstance(EffectNodeImplemented* pEffectNode,
 
 	int32_t offset = creatableChunkOffsets_[generationNumber];
 
-	auto it = std::find_if(chunks.begin() + offset, chunks.end(), [](const InstanceChunk* chunk)
-						   { return chunk->IsInstanceCreatable(); });
+	auto it = std::find_if(chunks.begin() + offset, chunks.end(), [](const InstanceChunk* chunk) { return chunk->IsInstanceCreatable(); });
 
 	creatableChunkOffsets_[generationNumber] = (int32_t)std::distance(chunks.begin(), it);
 
@@ -575,26 +552,6 @@ uint32_t ManagerImplemented::GetSequenceNumber() const
 	return m_sequenceNumber;
 }
 
-MallocFunc ManagerImplemented::GetMallocFunc() const
-{
-	return m_MallocFunc;
-}
-
-void ManagerImplemented::SetMallocFunc(MallocFunc func)
-{
-	m_MallocFunc = func;
-}
-
-FreeFunc ManagerImplemented::GetFreeFunc() const
-{
-	return m_FreeFunc;
-}
-
-void ManagerImplemented::SetFreeFunc(FreeFunc func)
-{
-	m_FreeFunc = func;
-}
-
 RandFunc ManagerImplemented::GetRandFunc() const
 {
 	return m_randFunc;
@@ -603,16 +560,6 @@ RandFunc ManagerImplemented::GetRandFunc() const
 void ManagerImplemented::SetRandFunc(RandFunc func)
 {
 	m_randFunc = func;
-}
-
-int ManagerImplemented::GetRandMax() const
-{
-	return m_randMax;
-}
-
-void ManagerImplemented::SetRandMax(int max_)
-{
-	m_randMax = max_;
 }
 
 CoordinateSystem ManagerImplemented::GetCoordinateSystem() const
@@ -828,7 +775,7 @@ int32_t ManagerImplemented::GetTotalInstanceCount() const
 	return instanceCount;
 }
 
-int ManagerImplemented::GetCurrentLOD(Handle handle)
+int32_t ManagerImplemented::GetCurrentLOD(Handle handle)
 {
 	if (m_DrawSets.count(handle) > 0)
 	{
@@ -839,14 +786,21 @@ int ManagerImplemented::GetCurrentLOD(Handle handle)
 	return 0;
 }
 
-float ManagerImplemented::GetLODDistanceBias() const
+const Manager::LayerParameter& ManagerImplemented::GetLayerParameter(int32_t layer) const
 {
-	return m_LodDistanceBias;
+	if (layer >= 0 && layer < LayerCount)
+	{
+		return m_layerParameters[layer];
+	}
+	return m_layerParameters[0];
 }
 
-void ManagerImplemented::SetLODDistanceBias(float distanceBias)
+void ManagerImplemented::SetLayerParameter(int32_t layer, const LayerParameter& layerParameter)
 {
-	this->m_LodDistanceBias = distanceBias;
+	if (layer >= 0 && layer < LayerCount)
+	{
+		m_layerParameters[layer] = layerParameter;
+	}
 }
 
 Matrix43 ManagerImplemented::GetMatrix(Handle handle)
@@ -1127,20 +1081,28 @@ void ManagerImplemented::SetPausedToAllEffects(bool paused)
 	}
 }
 
-int ManagerImplemented::GetLayer(Handle handle)
+int32_t ManagerImplemented::GetLayer(Handle handle)
 {
-	if (m_DrawSets.count(handle) > 0)
+	auto it = m_DrawSets.find(handle);
+
+	if (it != m_DrawSets.end())
 	{
-		return m_DrawSets[handle].Layer;
+		return it->second.GlobalPointer->GetLayer();
 	}
+
 	return 0;
 }
 
 void ManagerImplemented::SetLayer(Handle handle, int32_t layer)
 {
-	if (m_DrawSets.count(handle) > 0)
+	if (layer >= 0 && layer < LayerCount)
 	{
-		m_DrawSets[handle].Layer = layer;
+		auto it = m_DrawSets.find(handle);
+
+		if (it != m_DrawSets.end())
+		{
+			return it->second.GlobalPointer->SetLayer(layer);
+		}
 	}
 }
 
@@ -1355,8 +1317,7 @@ void ManagerImplemented::Update(const UpdateParameter& parameter)
 	{
 		m_WorkerThreads[0].WaitForComplete();
 		// Process on worker thread
-		m_WorkerThreads[0].RunAsync([this, parameter]()
-									{ DoUpdate(parameter); });
+		m_WorkerThreads[0].RunAsync([this, parameter]() { DoUpdate(parameter); });
 
 		if (parameter.SyncUpdate)
 		{
@@ -1406,7 +1367,7 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter)
 		times = 1;
 	}
 
-	BeginUpdate(parameter.ViewerPosition);
+	BeginUpdate();
 
 	for (int32_t t = 0; t < times; t++)
 	{
@@ -1449,8 +1410,7 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter)
 					const uint32_t chunkOffset = threadID;
 					// Process on worker thread
 					PROFILER_BLOCK("DoUpdate::RunAsyncGroup", profiler::colors::Red100);
-					m_WorkerThreads[threadID].RunAsync([this, &chunks, chunkOffset, chunkStep]()
-													   {
+					m_WorkerThreads[threadID].RunAsync([this, &chunks, chunkOffset, chunkStep]() {
 						PROFILER_BLOCK("DoUpdate::RunAsync", profiler::colors::Red200);
 						for (size_t i = chunkOffset; i < chunks.size(); i += chunkStep)
 						{
@@ -1512,7 +1472,7 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter)
 	m_updateTime = (int)(Effekseer::GetTime() - beginTime);
 }
 
-void ManagerImplemented::BeginUpdate(const Vector3D& viewerPosition)
+void ManagerImplemented::BeginUpdate()
 {
 	m_renderingMutex.lock();
 	m_isLockedWithRenderingMutex = true;
@@ -1522,7 +1482,6 @@ void ManagerImplemented::BeginUpdate(const Vector3D& viewerPosition)
 		Flip();
 	}
 
-	m_ViewerPosition = viewerPosition;
 	m_sequenceNumber++;
 }
 
@@ -1534,8 +1493,7 @@ void ManagerImplemented::EndUpdate()
 		auto last = chunks.end();
 		while (first != last)
 		{
-			auto it = std::find_if(first, last, [](const InstanceChunk* chunk)
-								   { return chunk->GetAliveCount() == 0; });
+			auto it = std::find_if(first, last, [](const InstanceChunk* chunk) { return chunk->GetAliveCount() == 0; });
 			if (it != last)
 			{
 				pooledChunks_.push(*it);
@@ -1624,8 +1582,7 @@ void ManagerImplemented::UpdateInstancesByInstanceGlobal(const DrawSet& drawSet)
 void ManagerImplemented::UpdateHandleInternal(DrawSet& drawSet)
 {
 	// evaluate LOD
-
-	drawSet.UpdateLevelOfDetails(m_ViewerPosition, m_LodDistanceBias);
+	drawSet.UpdateLevelOfDetails(m_layerParameters[drawSet.GlobalPointer->GetLayer()]);
 
 	// calculate dynamic parameters
 	auto e = static_cast<EffectImplemented*>(drawSet.ParameterPointer.Get());
@@ -1791,8 +1748,7 @@ void ManagerImplemented::Draw(const Manager::DrawParameter& drawParameter)
 
 	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, GetSetting()->GetCoordinateSystem());
 
-	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void
-	{
+	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void {
 		if (!CanDraw(drawSet, drawParameter, cullingPlanes))
 		{
 			return;
@@ -1847,8 +1803,7 @@ void ManagerImplemented::DrawBack(const Manager::DrawParameter& drawParameter)
 
 	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, GetSetting()->GetCoordinateSystem());
 
-	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void
-	{
+	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void {
 		if (!CanDraw(drawSet, drawParameter, cullingPlanes))
 		{
 			return;
@@ -1897,8 +1852,7 @@ void ManagerImplemented::DrawFront(const Manager::DrawParameter& drawParameter)
 
 	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, GetSetting()->GetCoordinateSystem());
 
-	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void
-	{
+	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void {
 		if (!CanDraw(drawSet, drawParameter, cullingPlanes))
 		{
 			return;
@@ -1999,8 +1953,8 @@ int ManagerImplemented::GetCameraCullingMaskToShowAllEffects()
 
 	for (auto& ds : m_DrawSets)
 	{
-		auto layer = 1 << ds.second.Layer;
-		mask |= layer;
+		auto layerBits = ds.second.GlobalPointer->GetLayerBits();
+		mask |= layerBits;
 	}
 
 	return mask;

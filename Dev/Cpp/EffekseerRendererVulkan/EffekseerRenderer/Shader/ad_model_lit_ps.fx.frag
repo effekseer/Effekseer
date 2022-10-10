@@ -1,4 +1,4 @@
-#version 420
+#version 430
 
 struct PS_Input
 {
@@ -48,14 +48,14 @@ layout(set = 1, binding = 0, std140) uniform PS_ConstanBuffer
     vec4 miscFlags;
 } _418;
 
-layout(set = 1, binding = 4) uniform sampler2D Sampler_sampler_uvDistortionTex;
-layout(set = 1, binding = 1) uniform sampler2D Sampler_sampler_colorTex;
-layout(set = 1, binding = 2) uniform sampler2D Sampler_sampler_normalTex;
-layout(set = 1, binding = 3) uniform sampler2D Sampler_sampler_alphaTex;
-layout(set = 1, binding = 7) uniform sampler2D Sampler_sampler_blendUVDistortionTex;
-layout(set = 1, binding = 5) uniform sampler2D Sampler_sampler_blendTex;
-layout(set = 1, binding = 6) uniform sampler2D Sampler_sampler_blendAlphaTex;
-layout(set = 1, binding = 8) uniform sampler2D Sampler_sampler_depthTex;
+layout(location = 3, set = 1, binding = 4) uniform sampler2D Sampler_sampler_uvDistortionTex;
+layout(location = 0, set = 1, binding = 1) uniform sampler2D Sampler_sampler_colorTex;
+layout(location = 1, set = 1, binding = 2) uniform sampler2D Sampler_sampler_normalTex;
+layout(location = 2, set = 1, binding = 3) uniform sampler2D Sampler_sampler_alphaTex;
+layout(location = 6, set = 1, binding = 7) uniform sampler2D Sampler_sampler_blendUVDistortionTex;
+layout(location = 4, set = 1, binding = 5) uniform sampler2D Sampler_sampler_blendTex;
+layout(location = 5, set = 1, binding = 6) uniform sampler2D Sampler_sampler_blendAlphaTex;
+layout(location = 7, set = 1, binding = 8) uniform sampler2D Sampler_sampler_depthTex;
 
 layout(location = 0) centroid in vec4 Input_Color;
 layout(location = 1) centroid in vec4 Input_UV_Others;

@@ -49,6 +49,11 @@ public class GraphicsDevice : global::System.IDisposable {
     if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
   }
 
+  public void ResetRenderTargets() {
+    EffekseerNativePINVOKE.GraphicsDevice_ResetRenderTargets(swigCPtr);
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+  }
+
   public void ClearColor(byte r, byte g, byte b, byte a) {
     EffekseerNativePINVOKE.GraphicsDevice_ClearColor(swigCPtr, r, g, b, a);
     if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();

@@ -1,10 +1,10 @@
-﻿#include <algorithm>
-#include "Effekseer.Parameters.h"
+﻿#include "Effekseer.Parameters.h"
 #include "../Effekseer.EffectImplemented.h"
 #include "../Effekseer.Instance.h"
 #include "../Effekseer.InstanceGlobal.h"
 #include "../Effekseer.InternalScript.h"
 #include "DynamicParameter.h"
+#include <algorithm>
 
 namespace Effekseer
 {

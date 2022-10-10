@@ -252,7 +252,7 @@ namespace Effekseer.Utils
 								var relative_path = pathImage.RelativePath;
 								if (relative_path != string.Empty)
 								{
-									if (texture.Item2.Type == Utl.TextureType.Value)
+									if (texture.Item2.Type == Utils.TextureType.Value)
 									{
 										resources.NormalTextures.Add(pathImage);
 									}

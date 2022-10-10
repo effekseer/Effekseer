@@ -154,16 +154,9 @@ void StorePixelUniform(const ::Effekseer::MaterialFile& materialFile, const Effe
 
 	storeVector("reconstructionParam2", generator.PixelReconstructionParam2Offset);
 
-	// shiding model
-	if (materialFile.GetShadingModel() == ::Effekseer::ShadingModelType::Lit)
-	{
-		storeVector("lightDirection", generator.PixelLightDirectionOffset);
-		storeVector("lightColor", generator.PixelLightColorOffset);
-		storeVector("lightAmbientColor", generator.PixelLightAmbientColorOffset);
-	}
-	else if (materialFile.GetShadingModel() == ::Effekseer::ShadingModelType::Unlit)
-	{
-	}
+	storeVector("lightDirection", generator.PixelLightDirectionOffset);
+	storeVector("lightColor", generator.PixelLightColorOffset);
+	storeVector("lightAmbientColor", generator.PixelLightAmbientColorOffset);
 
 	if (materialFile.GetHasRefraction() && shaderType == 1)
 	{

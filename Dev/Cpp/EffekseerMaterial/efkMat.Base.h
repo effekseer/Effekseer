@@ -28,6 +28,7 @@ const int32_t MaterialVersion15 = 3;
 const int32_t MaterialVersion16 = 1610;
 const int32_t MaterialVersion17Alpha2 = 1700;
 const int32_t MaterialVersion17Alpha4 = 1703;
+const int32_t MaterialVersion17 = 1710;
 
 enum class TextureValueType
 {
@@ -187,6 +188,7 @@ enum class RequiredPredefinedMethodType : int32_t
 	Gradient = 0,
 	Noise = 1,
 	Light = 2,
+	LocalTime = 3,
 };
 
 class PinParameter;

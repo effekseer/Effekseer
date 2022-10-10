@@ -16,6 +16,10 @@ file(GLOB_RECURSE LOCAL_HEADERS_DX12 *.h)
 file(GLOB_RECURSE LOCAL_SOURCES_DX12 *.cpp)
 list(APPEND LOCAL_HEADERS_DX12 ../EffekseerMaterialCompiler/DirectX12/EffekseerMaterialCompilerDX12.h)
 list(APPEND LOCAL_SOURCES_DX12 ../EffekseerMaterialCompiler/DirectX12/EffekseerMaterialCompilerDX12.cpp)
+list(APPEND LOCAL_SOURCES_DX12 ../EffekseerMaterialCompiler/HLSLGenerator/ShaderGenerator.h)
+list(APPEND LOCAL_SOURCES_DX12 ../EffekseerMaterialCompiler/HLSLGenerator/ShaderGenerator.cpp)
+list(APPEND LOCAL_SOURCES_DX12 ../EffekseerMaterialCompiler/Common/ShaderGeneratorCommon.h)
+list(APPEND LOCAL_SOURCES_DX12 ../EffekseerMaterialCompiler/Common/ShaderGeneratorCommon.cpp)
 
 FilterFolder("${LOCAL_HEADERS_DX12}")
 FilterFolder("${LOCAL_SOURCES_DX12}")
@@ -46,7 +50,7 @@ endif()
 
 WarnError(${PROJECT_NAME})
 
-if(USE_LIBPNG_LOADER AND USE_INTERNAL_LOADER)
+if(USE_LIBPNG_LOADER)
     add_dependencies(${PROJECT_NAME} ExternalProject_zlib ExternalProject_libpng) 
 endif()
 

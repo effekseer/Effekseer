@@ -42,10 +42,6 @@ bool operator==(const TranslationParentBindType& lhs, const BindType& rhs)
 //----------------------------------------------------------------------------------
 EffectNodeImplemented::EffectNodeImplemented(Effect* effect, unsigned char*& pos)
 	: m_effect(effect)
-	, generation_(0)
-	, IsRendered(true)
-	, SoundType(ParameterSoundType_None)
-	, RenderingOrder(RenderingOrder_FirstCreatedInstanceIsFirst)
 {
 }
 
@@ -178,6 +174,11 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		}
 
 		TranslationParam.Load(pos, ef);
+
+		if (ef->IsDyanamicMagnificationValid())
+		{
+			TranslationParam.Magnify(m_effect->GetMaginification(), DynamicFactor);
+		}
 
 		// Local force field
 		if (ef->GetVersion() >= 1500)
@@ -353,7 +354,11 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 				memcpy(&KillParam.Plane.PlaneOffset, pos, sizeof(float));
 				pos += sizeof(float);
 
-				KillParam.Plane.PlaneAxis /= Vector3D::Length(KillParam.Plane.PlaneAxis);
+				const auto length = Vector3D::Length(Vector3D{KillParam.Plane.PlaneAxis.x, KillParam.Plane.PlaneAxis.y, KillParam.Plane.PlaneAxis.z});
+				KillParam.Plane.PlaneAxis.x /= length;
+				KillParam.Plane.PlaneAxis.y /= length;
+				KillParam.Plane.PlaneAxis.z /= length;
+
 				KillParam.Plane.PlaneOffset *= ef->GetMaginification();
 			}
 			else if (KillParam.Type == KillType::Sphere)
@@ -370,6 +375,11 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 				KillParam.Sphere.Center *= ef->GetMaginification();
 				KillParam.Sphere.Radius *= ef->GetMaginification();
 			}
+		}
+		else
+		{
+			KillParam.Type = KillType::None;
+			KillParam.IsScaleAndRotationApplied = 1;
 		}
 
 		// Convert right handle coordinate system into left handle coordinate system
@@ -592,7 +602,7 @@ EffectNode* EffectNodeImplemented::GetChild(int index) const
 	return m_Nodes[index];
 }
 
-EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter()
+EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter() const
 {
 	EffectBasicRenderParameter param;
 	param.MaterialIndex = RendererCommon.MaterialData.MaterialIndex;
@@ -615,17 +625,7 @@ EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter()
 
 	if (RendererCommon.UVs[0].Type == UVAnimationType::Animation && RendererCommon.UVs[0].Animation.InterpolationType != 0)
 	{
-		param.FlipbookParams.Enable = true;
-		param.FlipbookParams.LoopType = RendererCommon.UVs[0].Animation.LoopType;
-		param.FlipbookParams.DivideX = RendererCommon.UVs[0].Animation.FrameCountX;
-		param.FlipbookParams.DivideY = RendererCommon.UVs[0].Animation.FrameCountY;
-	}
-	else
-	{
-		param.FlipbookParams.Enable = false;
-		param.FlipbookParams.LoopType = 0;
-		param.FlipbookParams.DivideX = 1;
-		param.FlipbookParams.DivideY = 1;
+		param.FlipbookParams = UVFunctions::ToFlipbookParameter(RendererCommon.UVs[0]);
 	}
 
 	param.MaterialType = RendererCommon.MaterialType;
@@ -638,7 +638,7 @@ EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter()
 
 	if (GetType() == eEffectNodeType::Model)
 	{
-		EffectNodeModel* pNodeModel = static_cast<EffectNodeModel*>(this);
+		auto pNodeModel = static_cast<const EffectNodeModel*>(this);
 		param.EnableFalloff = pNodeModel->EnableFalloff;
 		param.FalloffParam.ColorBlendType = static_cast<int32_t>(pNodeModel->FalloffParam.ColorBlendType);
 		param.FalloffParam.BeginColor[0] = static_cast<float>(pNodeModel->FalloffParam.BeginColor.R) / 255.0f;
@@ -694,13 +694,17 @@ void EffectNodeImplemented::SetBasicRenderParameter(EffectBasicRenderParameter p
 	RendererCommon.BlendTextureIndex = param.BlendTextureIndex;
 	RendererCommon.WrapTypes[4] = param.BlendTexWrapType;
 
-	if (param.FlipbookParams.Enable)
+	if (param.FlipbookParams.EnableInterpolation)
 	{
 		RendererCommon.UVs[0].Type = UVAnimationType::Animation;
 		RendererCommon.UVs[0].Animation.LoopType =
-			static_cast<decltype(RendererCommon.UVs[0].Animation.LoopType)>(param.FlipbookParams.LoopType);
-		RendererCommon.UVs[0].Animation.FrameCountX = param.FlipbookParams.DivideX;
-		RendererCommon.UVs[0].Animation.FrameCountY = param.FlipbookParams.DivideY;
+			static_cast<decltype(RendererCommon.UVs[0].Animation.LoopType)>(param.FlipbookParams.InterpolationType);
+		RendererCommon.UVs[0].Animation.FrameCountX = param.FlipbookParams.FlipbookDivideX;
+		RendererCommon.UVs[0].Animation.FrameCountY = param.FlipbookParams.FlipbookDivideY;
+		RendererCommon.UVs[0].Animation.Position.x = param.FlipbookParams.Offset[0];
+		RendererCommon.UVs[0].Animation.Position.y = param.FlipbookParams.Offset[1];
+		RendererCommon.UVs[0].Animation.Position.w = param.FlipbookParams.OneSize[0];
+		RendererCommon.UVs[0].Animation.Position.h = param.FlipbookParams.OneSize[1];
 	}
 
 	RendererCommon.UVDistortionIntensity = param.UVDistortionIntensity;

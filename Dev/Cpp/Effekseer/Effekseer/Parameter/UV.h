@@ -34,7 +34,8 @@ struct UVParameter
 {
 	UVAnimationType Type = UVAnimationType::Default;
 
-	union {
+	union
+	{
 		struct
 		{
 		} Default;
@@ -131,6 +132,10 @@ struct UVParameter
 				memcpy(&Animation.InterpolationType, pos, sizeof(Animation.InterpolationType));
 				pos += sizeof(Animation.InterpolationType);
 			}
+			else
+			{
+				Animation.InterpolationType = Animation.NONE;
+			}
 		}
 		else if (Type == UVAnimationType::Scroll)
 		{
@@ -149,6 +154,23 @@ struct UVParameter
 
 struct UVFunctions
 {
+	static NodeRendererFlipbookParameter ToFlipbookParameter(const UVParameter& uv)
+	{
+		NodeRendererFlipbookParameter flipbook;
+
+		flipbook.EnableInterpolation = (uv.Animation.InterpolationType != uv.Animation.NONE);
+		flipbook.UVLoopType = uv.Animation.LoopType;
+		flipbook.InterpolationType = uv.Animation.InterpolationType;
+		flipbook.FlipbookDivideX = uv.Animation.FrameCountX;
+		flipbook.FlipbookDivideY = uv.Animation.FrameCountY;
+		flipbook.OneSize[0] = uv.Animation.Position.w;
+		flipbook.OneSize[1] = uv.Animation.Position.h;
+		flipbook.Offset[0] = uv.Animation.Position.x;
+		flipbook.Offset[1] = uv.Animation.Position.y;
+
+		return flipbook;
+	}
+
 	static bool IsInfiniteValue(int value)
 	{
 		return std::numeric_limits<int32_t>::max() / 1000 < value;

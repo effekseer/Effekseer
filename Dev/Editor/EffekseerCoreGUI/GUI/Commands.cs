@@ -11,7 +11,7 @@ namespace Effekseer.GUI
 	{
 		public static void Register()
 		{
-			Action<Func<bool>> register = (f) =>
+			void register(Func<bool> f)
 			{
 				var attributes = f.Method.GetCustomAttributes(false);
 				var uniquename = UniqueNameAttribute.GetUniqueName(attributes);
@@ -145,11 +145,11 @@ namespace Effekseer.GUI
 		public static bool SaveBackup()
 		{
 			string fileNameWithoutExtensions = Path.GetFileNameWithoutExtension(Core.Root.GetFullPath());
-			
+
 			// we need some kind of identifier which is as unique per project as possible
-			string identifier = !string.IsNullOrEmpty(fileNameWithoutExtensions) ? fileNameWithoutExtensions 
+			string identifier = !string.IsNullOrEmpty(fileNameWithoutExtensions) ? fileNameWithoutExtensions
 				: Core.Root.GetHashCode().ToString();
-			
+
 			Core.SaveBackup(Path.GetTempPath() + "/efk_autosave_" + identifier + ".efkbac");
 			return true;
 		}
@@ -168,7 +168,7 @@ namespace Effekseer.GUI
 			RunWithUnsavedWarning(() => Core.OpenBackup(lastSessionFile));
 			return true;
 		}
-		
+
 		[Name(value = "InternalRestoreAutoSave")]
 		[UniqueName(value = "Internal.RestoreAutoSave")]
 		public static bool RestoreLastAutoSave()
@@ -456,22 +456,7 @@ namespace Effekseer.GUI
 		[UniqueName(value = "Internal.ViewHelp")]
 		static public bool ViewHelp()
 		{
-			string helpPath = @"https://effekseer.github.io/Helps/16x/Tool/en/index.html";
-
-			if (Core.Language == Language.Japanese)
-			{
-				helpPath = @"https://effekseer.github.io/Helps/16x/Tool/ja/index.html";
-			}
-
-			try
-			{
-				System.Diagnostics.Process.Start(helpPath);
-			}
-			catch
-			{
-				swig.GUIManager.show(MultiLanguageTextProvider.GetText("Error_FailedToOpenHelp"), "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
-			}
-
+			ShowURL(Core.GetToolHelpURL());
 			return true;
 		}
 
@@ -578,6 +563,20 @@ namespace Effekseer.GUI
 
 			swig.GUIManager.show(e.Message, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
 			Core.New();
+		}
+
+		static public bool ShowURL(string url)
+		{
+			try
+			{
+				System.Diagnostics.Process.Start(url);
+			}
+			catch
+			{
+				swig.GUIManager.show(MultiLanguageTextProvider.GetText("Error_FailedToOpenHelp"), "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
+			}
+
+			return true;
 		}
 	}
 }

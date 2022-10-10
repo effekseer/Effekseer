@@ -40,10 +40,11 @@ struct InstanceSoundState
 
 class TimeSeriesMatrix
 {
-	SIMD::Mat43f previous_;
-	SIMD::Mat43f current_;
-	float previousTime_;
-	float currentTime_;
+	SIMD::Mat43f previous_ = SIMD::Mat43f::Identity;
+	SIMD::Mat43f current_ = SIMD::Mat43f::Identity;
+	float previousTime_ = 0;
+	float currentTime_ = 0;
+	bool isCurrentMatrixSpecified_ = false;
 
 public:
 	void Reset(const SIMD::Mat43f& matrix, float time);

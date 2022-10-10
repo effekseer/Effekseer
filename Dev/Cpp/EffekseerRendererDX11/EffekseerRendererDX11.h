@@ -11,7 +11,6 @@
 #include <windows.h>
 
 #if _WIN32
-#pragma comment(lib, "gdiplus.lib")
 #pragma comment(lib, "d3d11.lib")
 #endif
 
@@ -158,10 +157,6 @@ struct DepthReconstructionParameter
 	float ProjectionMatrix43 = 0.0f;
 	float ProjectionMatrix44 = 0.0f;
 };
-
-::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice,
-												  ::Effekseer::FileInterfaceRef fileInterface = nullptr,
-												  ::Effekseer::ColorSpaceType colorSpaceType = ::Effekseer::ColorSpaceType::Gamma);
 
 ::Effekseer::ModelLoaderRef CreateModelLoader(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice, ::Effekseer::FileInterfaceRef fileInterface = nullptr);
 
@@ -521,6 +516,21 @@ public:
 //
 //----------------------------------------------------------------------------------
 #endif // __EFFEKSEERRENDERER_RENDERER_H__
+#ifndef __EFFEKSEERRENDERER_TEXTURELOADER_H__
+#define __EFFEKSEERRENDERER_TEXTURELOADER_H__
+
+#include <Effekseer.h>
+
+namespace EffekseerRenderer
+{
+
+::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::Backend::GraphicsDeviceRef gprahicsDevice,
+												  ::Effekseer::FileInterfaceRef fileInterface = nullptr,
+												  ::Effekseer::ColorSpaceType colorSpaceType = ::Effekseer::ColorSpaceType::Gamma);
+
+} // namespace EffekseerRenderer
+
+#endif // __EFFEKSEERRENDERER_TEXTURELOADER_H__
 
 #ifndef __EFFEKSEERRENDERER_DX11_RENDERER_H__
 #define __EFFEKSEERRENDERER_DX11_RENDERER_H__
@@ -575,6 +585,22 @@ protected:
 	}
 
 public:
+	/**
+		@brief
+		\~english	Create an instance
+		\~japanese	インスタンスを生成する。
+		@param	graphicsDevice	GraphicsDevice
+		@param	squareMaxCount
+		\~english	the number of maximum sprites
+		\~japanese	最大描画スプライト数
+		@param	depthFunc	a func to compare a dpeth
+		@param	isMSAAEnabled whether is MSAA enabled
+		@return	instance
+	*/
+	static RendererRef Create(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
+							  int32_t squareMaxCount,
+							  D3D11_COMPARISON_FUNC depthFunc = D3D11_COMPARISON_LESS_EQUAL,
+							  bool isMSAAEnabled = false);
 	/**
 		@brief
 		\~english	Create an instance

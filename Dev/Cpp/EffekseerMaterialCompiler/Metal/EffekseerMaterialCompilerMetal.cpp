@@ -1,5 +1,6 @@
 #include "EffekseerMaterialCompilerMetal.h"
 #include "../3rdParty/LLGI/src/Metal/LLGI.CompilerMetal.h"
+#include "../Common/ShaderGeneratorCommon.h"
 
 #include <iostream>
 
@@ -42,95 +43,6 @@ static void Serialize(std::vector<uint8_t>& dst, const LLGI::CompilerResult& res
 namespace Metal
 {
 
-static const char* material_gradient = R"(
-
-struct Gradient
-{
-	int colorCount;
-	int alphaCount;
-	int reserved1;
-	int reserved2;
-	float4 colors[8];
-	float2 alphas[8];
-};
-
-float4 SampleGradient(Gradient gradient, float t)
-{
-	float3 color = gradient.colors[0].xyz;
-	for(int i = 1; i < 8; i++)
-	{
-		float a = clamp((t - gradient.colors[i-1].w) / (gradient.colors[i].w - gradient.colors[i-1].w), 0.0, 1.0) * step(float(i), float(gradient.colorCount-1));
-		color = mix(color, gradient.colors[i].xyz, a);
-	}
-
-	float alpha = gradient.alphas[0].x;
-	for(int i = 1; i < 8; i++)
-	{
-		float a = clamp((t - gradient.alphas[i-1].y) / (gradient.alphas[i].y - gradient.alphas[i-1].y), 0.0, 1.0) * step(float(i), float(gradient.alphaCount-1));
-		alpha = mix(alpha, gradient.alphas[i].x, a);
-	}
-
-	return float4(color, alpha);
-}
-
-Gradient GradientParameter(float4 param_v, float4 param_c1, float4 param_c2, float4 param_c3, float4 param_c4, float4 param_c5, float4 param_c6, float4 param_c7, float4 param_c8, float4 param_a1, float4 param_a2, float4 param_a3, float4 param_a4)
-{
-	Gradient g;
-	g.colorCount = int(param_v.x);
-	g.alphaCount = int(param_v.y);
-	g.reserved1 = int(param_v.z);
-	g.reserved2 = int(param_v.w);
-	g.colors[0] = param_c1;
-	g.colors[1] = param_c2;
-	g.colors[2] = param_c3;
-	g.colors[3] = param_c4;
-	g.colors[4] = param_c5;
-	g.colors[5] = param_c6;
-	g.colors[6] = param_c7;
-	g.colors[7] = param_c8;
-	g.alphas[0].xy = param_a1.xy;
-	g.alphas[1].xy = param_a1.zw;
-	g.alphas[2].xy = param_a2.xy;
-	g.alphas[3].xy = param_a2.zw;
-	g.alphas[4].xy = param_a3.xy;
-	g.alphas[5].xy = param_a3.zw;
-	g.alphas[6].xy = param_a4.xy;
-	g.alphas[7].xy = param_a4.zw;
-	return g;
-}
-
-)";
-
-static const char* material_noise = R"(
-
-float Rand2(float2 n) { 
-	return FRAC(sin(dot(n, float2(12.9898, 78.233))) * 43758.5453123);
-}
-
-float SimpleNoise_Block(float2 p) {
-	int2 i = floor(p);
-	float2 f = FRAC(p);
-	f = f * f * (3.0 - 2.0 * f);
-	
-	float x0 = LERP(Rand2(i+int2(0,0)), Rand2(i+int2(1,0)), f.x);
-	float x1 = LERP(Rand2(i+int2(0,1)), Rand2(i+int2(1,1)), f.x);
-	return LERP(x0, x1, f.y);
-}
-
-float SimpleNoise(float2 uv, float scale) {
-	const int loop = 3;
-    float ret = 0.0;
-	for(int i = 0; i < loop; i++) {
-	    float freq = pow(2.0, float(i));
-		float intensity = pow(0.5, float(loop-i));
-	    ret += SimpleNoise_Block(uv * scale / freq) * intensity;
-	}
-
-	return ret;
-}
-
-)";
-
 static const char* material_light_vs = R"(
 float3 GetLightDirection(constant ShaderUniform1& u) {
 	return float3(0,0,0);
@@ -154,36 +66,6 @@ float3 GetLightAmbientColor(constant ShaderUniform2& u) {
 	return u.lightAmbientColor.xyz;
 }
 )";
-
-inline std::string GetFixedGradient(const char* name, const Gradient& gradient)
-{
-	std::stringstream ss;
-
-	ss << "Gradient " << name << "() {" << std::endl;
-	ss << "Gradient g;" << std::endl;
-	ss << "g.colorCount = " << gradient.ColorCount << ";" << std::endl;
-	ss << "g.alphaCount = " << gradient.AlphaCount << ";" << std::endl;
-	ss << "g.reserved1 = 0;" << std::endl;
-	ss << "g.reserved2 = 0;" << std::endl;
-
-	for (int32_t i = 0; i < gradient.Colors.size(); i++)
-	{
-		ss << "g.colors[" << i << "].x = " << gradient.Colors[i].Color[0] * gradient.Colors[i].Intensity << ";" << std::endl;
-		ss << "g.colors[" << i << "].y = " << gradient.Colors[i].Color[1] * gradient.Colors[i].Intensity << ";" << std::endl;
-		ss << "g.colors[" << i << "].z = " << gradient.Colors[i].Color[2] * gradient.Colors[i].Intensity << ";" << std::endl;
-		ss << "g.colors[" << i << "].w = " << gradient.Colors[i].Position << ";" << std::endl;
-	}
-
-	for (int32_t i = 0; i < gradient.Alphas.size(); i++)
-	{
-		ss << "g.alphas[" << i << "].x = " << gradient.Alphas[i].Alpha << ";" << std::endl;
-		ss << "g.alphas[" << i << "].y = " << gradient.Alphas[i].Position << ";" << std::endl;
-	}
-
-	ss << "return g; }" << std::endl;
-
-	return ss.str();
-}
 
 static const char* material_common_define = R"(
 #include <metal_stdlib>
@@ -707,23 +589,23 @@ static const char g_getUVBack_helper_fs[] =
 
 /*
 static const char g_getUV_helper_vs[] = R"(
-    float2 OUT = IN;
-    OUT.y = u.mUVInversed.x + u.mUVInversed.y * OUT.y;
+	float2 OUT = IN;
+	OUT.y = u.mUVInversed.x + u.mUVInversed.y * OUT.y;
 )";
 
 static const char g_getUVBack_helper_vs[] = R"(
-    float2 OUT = IN;
-    OUT.y = u.mUVInversed.z + u.mUVInversed.w * OUT.y;
+	float2 OUT = IN;
+	OUT.y = u.mUVInversed.z + u.mUVInversed.w * OUT.y;
 )";
 
 static const char g_getUV_helper_fs[] = R"(
-    float2 OUT = IN;
-    OUT.y = u.mUVInversedBack.x + u.mUVInversedBack.y * OUT.y;
+	float2 OUT = IN;
+	OUT.y = u.mUVInversedBack.x + u.mUVInversedBack.y * OUT.y;
 )";
 
 static const char g_getUVBack_helper_fs[] = R"(
-    float2 OUT = IN;
-    OUT.y = u.mUVInversedBack.z + u.mUVInversedBack.w * OUT.y;
+	float2 OUT = IN;
+	OUT.y = u.mUVInversedBack.z + u.mUVInversedBack.w * OUT.y;
 )";
 */
 std::string Replace(std::string target, std::string from_, std::string to_)
@@ -852,12 +734,12 @@ void ExportHeader(std::ostringstream& maincode, MaterialFile* materialFile, int 
 
 	if (hasGradient)
 	{
-		maincode << material_gradient;
+		maincode << Effekseer::Shader::GetGradientFunctions();
 	}
 
 	if (hasNoise)
 	{
-		maincode << material_noise;
+		maincode << Effekseer::Shader::GetNoiseFunctions();
 	}
 
 	if (hasLight)
@@ -874,7 +756,7 @@ void ExportHeader(std::ostringstream& maincode, MaterialFile* materialFile, int 
 
 	for (const auto& gradient : materialFile->FixedGradients)
 	{
-		maincode << GetFixedGradient(gradient.Name.c_str(), gradient.Data);
+		maincode << Effekseer::Shader::GetFixedGradient(gradient.Name.c_str(), gradient.Data);
 	}
 }
 
@@ -998,7 +880,7 @@ ShaderData GenerateShader(MaterialFile* materialFile, MaterialShaderType shaderT
 
 		for (size_t i = 0; i < actualTextureCount; i++)
 		{
-			//auto textureIndex = materialFile->GetTextureIndex(i);
+			// auto textureIndex = materialFile->GetTextureIndex(i);
 			auto textureName = materialFile->GetTextureName(i);
 
 			ExportTexture(textures, textureName, t_index);
@@ -1045,7 +927,7 @@ ShaderData GenerateShader(MaterialFile* materialFile, MaterialShaderType shaderT
 			// TODO : remove a magic number
 			for (size_t j = 0; j < 13; j++)
 			{
-				ExportUniform(maincode, 4, (materialFile->Gradients[i].Name + "_" + std::to_string(j)).c_str());
+				ExportUniform(userUniforms, 4, (materialFile->Gradients[i].Name + "_" + std::to_string(j)).c_str());
 			}
 		}
 		baseCode = Replace(baseCode, "$EFFECTSCALE$", "predefined_uniform.y");
@@ -1070,12 +952,8 @@ ShaderData GenerateShader(MaterialFile* materialFile, MaterialShaderType shaderT
 
 		for (size_t i = 0; i < materialFile->Gradients.size(); i++)
 		{
-			// TODO : remove a magic number
-			for (size_t j = 0; j < 13; j++)
-			{
-				const auto name = materialFile->Gradients[i].Name + "_" + std::to_string(j);
-				baseCode = Replace(baseCode, name, std::string("u.") + name);
-			}
+			const auto name = materialFile->Gradients[i].Name + "_";
+			baseCode = Replace(baseCode, name, std::string("u.") + name);
 		}
 
 		baseCode = Replace(baseCode, "predefined_uniform", std::string("u.") + "predefined_uniform");
@@ -1263,9 +1141,10 @@ public:
 CompiledMaterialBinary* MaterialCompilerMetal::Compile(MaterialFile* materialFile, int32_t maximumUniformCount, int32_t maximumTextureCount)
 {
 	auto binary = new CompiledMaterialBinaryMetal();
-	//auto compiler = LLGI::CreateSharedPtr(new LLGI::CompilerMetal());
+	// auto compiler = LLGI::CreateSharedPtr(new LLGI::CompilerMetal());
 
-	auto convertToVectorVS = [](const std::string& str) -> std::vector<uint8_t> {
+	auto convertToVectorVS = [](const std::string& str) -> std::vector<uint8_t>
+	{
 		std::vector<uint8_t> ret;
 
 		std::vector<char> buffer;
@@ -1291,7 +1170,7 @@ CompiledMaterialBinary* MaterialCompilerMetal::Compile(MaterialFile* materialFil
 		result.Binary.resize(1);
 		result.Binary[0].resize(buffer.size());
 		memcpy(result.Binary[0].data(), buffer.data(), buffer.size());
-		//compiler->Compile(result, str.c_str(), LLGI::ShaderStageType::Vertex);
+		// compiler->Compile(result, str.c_str(), LLGI::ShaderStageType::Vertex);
 
 		if (result.Binary.size() > 0)
 		{
@@ -1307,7 +1186,8 @@ CompiledMaterialBinary* MaterialCompilerMetal::Compile(MaterialFile* materialFil
 		return ret;
 	};
 
-	auto convertToVectorPS = [](const std::string& str) -> std::vector<uint8_t> {
+	auto convertToVectorPS = [](const std::string& str) -> std::vector<uint8_t>
+	{
 		std::vector<uint8_t> ret;
 
 		std::vector<char> buffer;
@@ -1333,7 +1213,7 @@ CompiledMaterialBinary* MaterialCompilerMetal::Compile(MaterialFile* materialFil
 		result.Binary.resize(1);
 		result.Binary[0].resize(buffer.size());
 		memcpy(result.Binary[0].data(), buffer.data(), buffer.size());
-		//compiler->Compile(result, str.c_str(), LLGI::ShaderStageType::Pixel);
+		// compiler->Compile(result, str.c_str(), LLGI::ShaderStageType::Pixel);
 
 		if (result.Binary.size() > 0)
 		{
@@ -1349,7 +1229,8 @@ CompiledMaterialBinary* MaterialCompilerMetal::Compile(MaterialFile* materialFil
 		return ret;
 	};
 
-	auto saveBinary = [&materialFile, &binary, &convertToVectorVS, &convertToVectorPS, &maximumUniformCount, &maximumTextureCount](MaterialShaderType type) {
+	auto saveBinary = [&materialFile, &binary, &convertToVectorVS, &convertToVectorPS, &maximumUniformCount, &maximumTextureCount](MaterialShaderType type)
+	{
 		auto shader = Metal::GenerateShader(materialFile, type, maximumUniformCount, maximumTextureCount);
 		binary->SetVertexShaderData(type, convertToVectorVS(shader.CodeVS));
 		binary->SetPixelShaderData(type, convertToVectorPS(shader.CodePS));

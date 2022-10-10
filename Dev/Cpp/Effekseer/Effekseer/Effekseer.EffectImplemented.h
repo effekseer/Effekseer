@@ -104,7 +104,7 @@ class EffectImplemented : public Effect, public ReferenceObject
 	friend class EffectFactory;
 	friend class Instance;
 
-	static const int32_t SupportBinaryVersion = Version17Alpha6;
+	static const int32_t SupportBinaryVersion = Version17;
 
 protected:
 	SettingRef m_setting;
@@ -168,7 +168,8 @@ protected:
 		CullingShape Shape;
 		Vector3D Location;
 
-		union {
+		union
+		{
 			struct
 			{
 			} None;

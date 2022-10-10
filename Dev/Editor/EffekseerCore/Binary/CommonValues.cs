@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
-using Effekseer.Utl;
+using Effekseer.Utils;
 
 namespace Effekseer.Binary
 {
@@ -32,7 +32,7 @@ namespace Effekseer.Binary
 		public float CreationTimeOffset_Max;
 		public float CreationTimeOffset_Min;
 
-		public static byte[] GetBytes(Data.CommonValues value, ExporterVersion version)
+		public static byte[] GetBytes(Data.CommonValues value)
 		{
 			List<byte[]> data = new List<byte[]>();
 
@@ -41,7 +41,7 @@ namespace Effekseer.Binary
 			data.Add(bytes);
 
 			if (value.LocationEffectType == Data.TranslationParentEffectType.NotBind_FollowParent ||
-			    value.LocationEffectType == Data.TranslationParentEffectType.WhenCreating_FollowParent)
+				value.LocationEffectType == Data.TranslationParentEffectType.WhenCreating_FollowParent)
 			{
 				data.Add(value.SteeringBehaviorParam.MaxFollowSpeed.Max.GetBytes());
 				data.Add(value.SteeringBehaviorParam.MaxFollowSpeed.Min.GetBytes());
@@ -49,7 +49,6 @@ namespace Effekseer.Binary
 				data.Add(value.SteeringBehaviorParam.SteeringSpeed.Min.GetBytes());
 			}
 
-			if (version >= ExporterVersion.Ver17Alpha1)
 			{
 				// Trigger's parameters
 				int triggerFlags =
@@ -74,7 +73,6 @@ namespace Effekseer.Binary
 				}
 			}
 
-			if (version >= ExporterVersion.Ver17Alpha3)
 			{
 				data.Add(value.LodParameter.MatchingLODs.GetValue().GetBytes());
 				data.Add(value.LodParameter.LodBehaviour.GetValueAsInt().GetBytes());

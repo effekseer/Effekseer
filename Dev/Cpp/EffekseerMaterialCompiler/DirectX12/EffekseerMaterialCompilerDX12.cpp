@@ -2,13 +2,9 @@
 #include <iostream>
 
 #include "../3rdParty/LLGI/src/DX12/LLGI.CompilerDX12.h"
-#include "../DirectX/ShaderGenerator.h"
-
-#undef min
+#include "../HLSLGenerator/ShaderGenerator.h"
 
 #pragma comment(lib, "d3dcompiler.lib")
-
-#include "../HLSL/HLSL.h"
 
 namespace Effekseer
 {
@@ -139,8 +135,8 @@ CompiledMaterialBinary* MaterialCompilerDX12::Compile(MaterialFile* materialFile
 		else
 		{
 			std::cout << "VertexShader Compile Error" << std::endl;
-			std::cout << result.Message << std::endl;
 			std::cout << str << std::endl;
+			std::cout << result.Message << std::endl;
 		}
 
 		return ret;
@@ -159,31 +155,15 @@ CompiledMaterialBinary* MaterialCompilerDX12::Compile(MaterialFile* materialFile
 		else
 		{
 			std::cout << "PixelShader Compile Error" << std::endl;
-			std::cout << result.Message << std::endl;
 			std::cout << str << std::endl;
+			std::cout << result.Message << std::endl;
 		}
 
 		return ret;
 	};
 
 	auto saveBinary = [&materialFile, &binary, &convertToVectorVS, &convertToVectorPS, &maximumUniformCount, &maximumTextureCount](MaterialShaderType type) {
-		auto generator = DirectX::ShaderGenerator(HLSL::GetMaterialCommonDefine(HLSL::ShaderType::DirectX12).c_str(),
-												  HLSL::material_common_functions,
-												  HLSL::material_common_vs_functions,
-												  HLSL::material_sprite_vs_pre,
-												  HLSL::material_sprite_vs_pre_simple,
-												  HLSL::GetModelVS_Pre(HLSL::ShaderType::DirectX12).c_str(),
-												  HLSL::material_sprite_vs_suf1,
-												  HLSL::material_sprite_vs_suf1_simple,
-												  HLSL::model_vs_suf1,
-												  HLSL::material_sprite_vs_suf2,
-												  HLSL::model_vs_suf2,
-												  HLSL::GetMaterialPS_Pre(HLSL::ShaderType::DirectX12).c_str(),
-												  HLSL::GetMaterialPS_Suf1(HLSL::ShaderType::DirectX12).c_str(),
-												  HLSL::g_material_ps_suf2_lit,
-												  HLSL::g_material_ps_suf2_unlit,
-												  HLSL::GetMaterialPS_Suf2_Refraction(HLSL::ShaderType::DirectX12).c_str(),
-												  DirectX::ShaderGeneratorTarget::DirectX12);
+		auto generator = DirectX::ShaderGenerator(DirectX::ShaderGeneratorTarget::DirectX12);
 
 		auto shader = generator.GenerateShader(materialFile, type, maximumUniformCount, maximumTextureCount, 0, DX12_InstanceCount);
 		binary->SetVertexShaderData(type, convertToVectorVS(shader.CodeVS));

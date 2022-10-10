@@ -152,7 +152,7 @@ namespace Effekseer.Exporter
 			effect.Add("effectName", name);
 
 			var binaryExporter = new Binary.Exporter();
-			var binary = binaryExporter.Export(Core.Root, scale, Binary.ExporterVersion.Latest);
+			var binary = binaryExporter.Export(Core.Root, scale);
 
 			AddBufferView(bodyName, binary);
 

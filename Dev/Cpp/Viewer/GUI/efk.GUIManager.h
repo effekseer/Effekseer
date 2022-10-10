@@ -68,40 +68,31 @@ enum class WindowFlags : int32_t
 enum class ColorEditFlags : int32_t
 {
 	None = 0,
-	NoAlpha =
-		1 << 1,			//              // ColorEdit, ColorPicker, ColorButton: ignore Alpha component (read 3 components from the input pointer).
-	NoPicker = 1 << 2,	//              // ColorEdit: disable picker when clicking on colored square.
-	NoOptions = 1 << 3, //              // ColorEdit: disable toggling options menu when right-clicking on inputs/small preview.
-	NoSmallPreview =
-		1 << 4,				//              // ColorEdit, ColorPicker: disable colored square preview next to the inputs. (e.g. to show only the inputs)
-	NoInputs = 1 << 5,		//              // ColorEdit, ColorPicker: disable inputs sliders/text widgets (e.g. to show only the small preview
-							//              colored square).
-	NoTooltip = 1 << 6,		//              // ColorEdit, ColorPicker, ColorButton: disable tooltip when hovering the preview.
-	NoLabel = 1 << 7,		//              // ColorEdit, ColorPicker: disable display of inline text label (the label is still forwarded to the
-							//              tooltip and picker).
-	NoSidePreview = 1 << 8, //              // ColorPicker: disable bigger color preview on right side of the picker, use small colored
-							//              square preview instead.
-	NoDragDrop = 1 << 9,	//              // ColorEdit: disable drag and drop target. ColorButton: disable drag and drop source.
+	NoAlpha = 1 << 1,		 //              // ColorEdit, ColorPicker, ColorButton: ignore Alpha component (will only read 3 components from the input pointer).
+	NoPicker = 1 << 2,		 //              // ColorEdit: disable picker when clicking on color square.
+	NoOptions = 1 << 3,		 //              // ColorEdit: disable toggling options menu when right-clicking on inputs/small preview.
+	NoSmallPreview = 1 << 4, //              // ColorEdit, ColorPicker: disable color square preview next to the inputs. (e.g. to show only the inputs)
+	NoInputs = 1 << 5,		 //              // ColorEdit, ColorPicker: disable inputs sliders/text widgets (e.g. to show only the small preview color square).
+	NoTooltip = 1 << 6,		 //              // ColorEdit, ColorPicker, ColorButton: disable tooltip when hovering the preview.
+	NoLabel = 1 << 7,		 //              // ColorEdit, ColorPicker: disable display of inline text label (the label is still forwarded to the tooltip and picker).
+	NoSidePreview = 1 << 8,	 //              // ColorPicker: disable bigger color preview on right side of the picker, use small color square preview instead.
+	NoDragDrop = 1 << 9,	 //              // ColorEdit: disable drag and drop target. ColorButton: disable drag and drop source.
+	NoBorder = 1 << 10,		 //              // ColorButton: disable border (which is enforced by default)
 
-	// User Options (right-click on widget to change some of them). You can set application defaults using SetColorEditOptions(). The idea
-	// is that you probably don't want to override them in most of your calls, let the user choose and/or call SetColorEditOptions() during
-	// startup.
-	AlphaBar = 1 << 16,		//              // ColorEdit, ColorPicker: show vertical alpha bar/gradient in picker.
-	AlphaPreview = 1 << 17, //              // ColorEdit, ColorPicker, ColorButton: display preview as a transparent color over a
-							//              checkerboard, instead of opaque.
-	AlphaPreviewHalf =
-		1 << 18,			  //              // ColorEdit, ColorPicker, ColorButton: display half opaque / half checkerboard, instead of opaque.
-	HDR = 1 << 19,			  //              // (WIP) ColorEdit: Currently only disable 0.0f..1.0f limits in RGBA edition (note: you probably want to
-							  //              use ImGuiColorEditFlags_Float flag as well).
-	RGB = 1 << 20,			  // [Inputs]     // ColorEdit: choose one among RGB/HSV/HEX. ColorPicker: choose any combination using RGB/HSV/HEX.
-	HSV = 1 << 21,			  // [Inputs]     // "
-	HEX = 1 << 22,			  // [Inputs]     // "
-	Uint8 = 1 << 23,		  // [DataType]   // ColorEdit, ColorPicker, ColorButton: _display_ values formatted as 0..255.
-	Float = 1 << 24,		  // [DataType]   // ColorEdit, ColorPicker, ColorButton: _display_ values formatted as 0.0f..1.0f floats instead of
-							  // 0..255 integers. No round-trip of value via integers.
-	PickerHueBar = 1 << 25,	  // [PickerMode] // ColorPicker: bar for Hue, rectangle for Sat/Value.
-	PickerHueWheel = 1 << 26, // [PickerMode] // ColorPicker: wheel for Hue, triangle for Sat/Value.
-
+	// User Options (right-click on widget to change some of them).
+	AlphaBar = 1 << 16,			//              // ColorEdit, ColorPicker: show vertical alpha bar/gradient in picker.
+	AlphaPreview = 1 << 17,		//              // ColorEdit, ColorPicker, ColorButton: display preview as a transparent color over a checkerboard, instead of opaque.
+	AlphaPreviewHalf = 1 << 18, //              // ColorEdit, ColorPicker, ColorButton: display half opaque / half checkerboard, instead of opaque.
+	HDR = 1 << 19,				//              // (WIP) ColorEdit: Currently only disable 0.0f..1.0f limits in RGBA edition (note: you probably want to use ImGuiColorEditFlags_Float flag as well).
+	DisplayRGB = 1 << 20,		// [Display]    // ColorEdit: override _display_ type among RGB/HSV/Hex. ColorPicker: select any combination using one or more of RGB/HSV/Hex.
+	DisplayHSV = 1 << 21,		// [Display]    // "
+	DisplayHex = 1 << 22,		// [Display]    // "
+	Uint8 = 1 << 23,			// [DataType]   // ColorEdit, ColorPicker, ColorButton: _display_ values formatted as 0..255.
+	Float = 1 << 24,			// [DataType]   // ColorEdit, ColorPicker, ColorButton: _display_ values formatted as 0.0f..1.0f floats instead of 0..255 integers. No round-trip of value via integers.
+	PickerHueBar = 1 << 25,		// [Picker]     // ColorPicker: bar for Hue, rectangle for Sat/Value.
+	PickerHueWheel = 1 << 26,	// [Picker]     // ColorPicker: wheel for Hue, triangle for Sat/Value.
+	InputRGB = 1 << 27,			// [Input]      // ColorEdit, ColorPicker: input and output data in RGB format.
+	InputHSV = 1 << 28,			// [Input]      // ColorEdit, ColorPicker: input and output data in HSV format.
 };
 
 enum class Cond : int32_t
@@ -218,21 +209,33 @@ enum class ImGuiColFlags : int32_t
 	Button,
 	ButtonHovered,
 	ButtonActive,
-	Header,
+	Header, // Header* colors are used for CollapsingHeader, TreeNode, Selectable, MenuItem
 	HeaderHovered,
 	HeaderActive,
 	Separator,
 	SeparatorHovered,
 	SeparatorActive,
-	ResizeGrip,
+	ResizeGrip, // Resize grip in lower-right and lower-left corners of windows.
 	ResizeGripHovered,
 	ResizeGripActive,
+	Tab, // TabItem in a TabBar
+	TabHovered,
+	TabActive,
+	TabUnfocused,
+	TabUnfocusedActive,
+	DockingPreview, // Preview overlay color when about to docking something
+	DockingEmptyBg, // Background color for empty node (e.g. CentralNode with no window docked into it)
 	PlotLines,
 	PlotLinesHovered,
 	PlotHistogram,
 	PlotHistogramHovered,
+	TableHeaderBg,	   // Table header background
+	TableBorderStrong, // Table outer and header borders (prefer using Alpha=1.0 here)
+	TableBorderLight,  // Table inner borders (prefer using Alpha=1.0 here)
+	TableRowBg,		   // Table row background (even rows)
+	TableRowBgAlt,	   // Table row background (odd rows)
 	TextSelectedBg,
-	DragDropTarget,
+	DragDropTarget,		   // Rectangle highlighting a drop target
 	NavHighlight,		   // Gamepad/keyboard: current highlighted item
 	NavWindowingHighlight, // Highlight window when using CTRL+TAB
 	NavWindowingDimBg,	   // Darken/colorize entire screen behind the CTRL+TAB window list, when active
@@ -241,27 +244,32 @@ enum class ImGuiColFlags : int32_t
 
 enum ImGuiStyleVarFlags : int32_t
 {
-	Alpha,			   // float     Alpha
-	WindowPadding,	   // ImVec2    WindowPadding
-	WindowRounding,	   // float     WindowRounding
-	WindowBorderSize,  // float     WindowBorderSize
-	WindowMinSize,	   // ImVec2    WindowMinSize
-	WindowTitleAlign,  // ImVec2    WindowTitleAlign
-	ChildRounding,	   // float     ChildRounding
-	ChildBorderSize,   // float     ChildBorderSize
-	PopupRounding,	   // float     PopupRounding
-	PopupBorderSize,   // float     PopupBorderSize
-	FramePadding,	   // ImVec2    FramePadding
-	FrameRounding,	   // float     FrameRounding
-	FrameBorderSize,   // float     FrameBorderSize
-	ItemSpacing,	   // ImVec2    ItemSpacing
-	ItemInnerSpacing,  // ImVec2    ItemInnerSpacing
-	IndentSpacing,	   // float     IndentSpacing
-	ScrollbarSize,	   // float     ScrollbarSize
-	ScrollbarRounding, // float     ScrollbarRounding
-	GrabMinSize,	   // float     GrabMinSize
-	GrabRounding,	   // float     GrabRounding
-	ButtonTextAlign,   // ImVec2    ButtonTextAlign
+	Alpha,				 // float     Alpha
+	DisabledAlpha,		 // float     DisabledAlpha
+	WindowPadding,		 // ImVec2    WindowPadding
+	WindowRounding,		 // float     WindowRounding
+	WindowBorderSize,	 // float     WindowBorderSize
+	WindowMinSize,		 // ImVec2    WindowMinSize
+	WindowTitleAlign,	 // ImVec2    WindowTitleAlign
+	ChildRounding,		 // float     ChildRounding
+	ChildBorderSize,	 // float     ChildBorderSize
+	PopupRounding,		 // float     PopupRounding
+	PopupBorderSize,	 // float     PopupBorderSize
+	FramePadding,		 // ImVec2    FramePadding
+	FrameRounding,		 // float     FrameRounding
+	FrameBorderSize,	 // float     FrameBorderSize
+	ItemSpacing,		 // ImVec2    ItemSpacing
+	ItemInnerSpacing,	 // ImVec2    ItemInnerSpacing
+	IndentSpacing,		 // float     IndentSpacing
+	CellPadding,		 // ImVec2    CellPadding
+	ScrollbarSize,		 // float     ScrollbarSize
+	ScrollbarRounding,	 // float     ScrollbarRounding
+	GrabMinSize,		 // float     GrabMinSize
+	GrabRounding,		 // float     GrabRounding
+	TabRounding,		 // float     TabRounding
+	ButtonTextAlign,	 // ImVec2    ButtonTextAlign
+	SelectableTextAlign, // ImVec2    SelectableTextAlign
+	LayoutAlign,		 // float     LayoutAlign
 };
 
 enum class FCurveInterporationType : int32_t
@@ -295,6 +303,106 @@ enum class DockNodeFlags : int32_t
 	NoDocking = (1 << 4),
 };
 
+enum class TableFlags : int32_t
+{
+	None = 0,
+	Resizable = 1 << 0,							  // Enable resizing columns.
+	Reorderable = 1 << 1,						  // Enable reordering columns in header row (need calling TableSetupColumn() + TableHeadersRow() to display headers)
+	Hideable = 1 << 2,							  // Enable hiding/disabling columns in context menu.
+	Sortable = 1 << 3,							  // Enable sorting. Call TableGetSortSpecs() to obtain sort specs. Also see ImGuiTableFlags_SortMulti and ImGuiTableFlags_SortTristate.
+	NoSavedSettings = 1 << 4,					  // Disable persisting columns order, width and sort settings in the .ini file.
+	ContextMenuInBody = 1 << 5,					  // Right-click on columns body/contents will display table context menu. By default it is available in TableHeadersRow().
+												  // Decorations
+	RowBg = 1 << 6,								  // Set each RowBg color with ImGuiCol_TableRowBg or ImGuiCol_TableRowBgAlt (equivalent of calling TableSetBgColor with ImGuiTableBgFlags_RowBg0 on each row manually)
+	BordersInnerH = 1 << 7,						  // Draw horizontal borders between rows.
+	BordersOuterH = 1 << 8,						  // Draw horizontal borders at the top and bottom.
+	BordersInnerV = 1 << 9,						  // Draw vertical borders between columns.
+	BordersOuterV = 1 << 10,					  // Draw vertical borders on the left and right sides.
+	BordersH = BordersInnerH | BordersOuterH,	  // Draw horizontal borders.
+	BordersV = BordersInnerV | BordersOuterV,	  // Draw vertical borders.
+	BordersInner = BordersInnerV | BordersInnerH, // Draw inner borders.
+	BordersOuter = BordersOuterV | BordersOuterH, // Draw outer borders.
+	Borders = BordersInner | BordersOuter,		  // Draw all borders.
+	NoBordersInBody = 1 << 11,					  // [ALPHA] Disable vertical borders in columns Body (borders will always appears in Headers). -> May move to style
+	NoBordersInBodyUntilResize = 1 << 12,		  // [ALPHA] Disable vertical borders in columns Body until hovered for resize (borders will always appears in Headers). -> May move to style
+												  // Sizing Policy (read above for defaults)
+	SizingFixedFit = 1 << 13,					  // Columns default to _WidthFixed or _WidthAuto (if resizable or not resizable), matching contents width.
+	SizingFixedSame = 2 << 13,					  // Columns default to _WidthFixed or _WidthAuto (if resizable or not resizable), matching the maximum contents width of all columns. Implicitly enable ImGuiTableFlags_NoKeepColumnsVisible.
+	SizingStretchProp = 3 << 13,				  // Columns default to _WidthStretch with default weights proportional to each columns contents widths.
+	SizingStretchSame = 4 << 13,				  // Columns default to _WidthStretch with default weights all equal, unless overridden by TableSetupColumn().
+												  // Sizing Extra Options
+	NoHostExtendX = 1 << 16,					  // Make outer width auto-fit to columns, overriding outer_size.x value. Only available when ScrollX/ScrollY are disabled and Stretch columns are not used.
+	NoHostExtendY = 1 << 17,					  // Make outer height stop exactly at outer_size.y (prevent auto-extending table past the limit). Only available when ScrollX/ScrollY are disabled. Data below the limit will be clipped and not visible.
+	NoKeepColumnsVisible = 1 << 18,				  // Disable keeping column always minimally visible when ScrollX is off and table gets too small. Not recommended if columns are resizable.
+	PreciseWidths = 1 << 19,					  // Disable distributing remainder width to stretched columns (width allocation on a 100-wide table with 3 columns: Without this flag: 33,33,34. With this flag: 33,33,33). With larger number of columns, resizing will appear to be less smooth.
+												  // Clipping
+	NoClip = 1 << 20,							  // Disable clipping rectangle for every individual columns (reduce draw command count, items will be able to overflow into other columns). Generally incompatible with TableSetupScrollFreeze().
+												  // Padding
+	PadOuterX = 1 << 21,						  // Default if BordersOuterV is on. Enable outer-most padding. Generally desirable if you have headers.
+	NoPadOuterX = 1 << 22,						  // Default if BordersOuterV is off. Disable outer-most padding.
+	NoPadInnerX = 1 << 23,						  // Disable inner padding between columns (double inner padding if BordersOuterV is on, single inner padding if BordersOuterV is off).
+												  // Scrolling
+	ScrollX = 1 << 24,							  // Enable horizontal scrolling. Require 'outer_size' parameter of BeginTable() to specify the container size. Changes default sizing policy. Because this create a child window, ScrollY is currently generally recommended when using ScrollX.
+	ScrollY = 1 << 25,							  // Enable vertical scrolling. Require 'outer_size' parameter of BeginTable() to specify the container size.
+												  // Sorting
+	SortMulti = 1 << 26,						  // Hold shift when clicking headers to sort on multiple column. TableGetSortSpecs() may return specs where (SpecsCount > 1).
+	SortTristate = 1 << 27,						  // Allow no sorting, disable default sorting. TableGetSortSpecs() may return specs where (SpecsCount == 0).
+};
+
+// Flags for ImGui::TableSetupColumn()
+enum class TableColumnFlags : int32_t
+{
+	// Input configuration flags
+	None = 0,
+	Disabled = 1 << 0,				// Overriding/master disable flag: hide column, won't show in context menu (unlike calling TableSetColumnEnabled() which manipulates the user accessible state)
+	DefaultHide = 1 << 1,			// Default as a hidden/disabled column.
+	DefaultSort = 1 << 2,			// Default as a sorting column.
+	WidthStretch = 1 << 3,			// Column will stretch. Preferable with horizontal scrolling disabled (default if table sizing policy is _SizingStretchSame or _SizingStretchProp).
+	WidthFixed = 1 << 4,			// Column will not stretch. Preferable with horizontal scrolling enabled (default if table sizing policy is _SizingFixedFit and table is resizable).
+	NoResize = 1 << 5,				// Disable manual resizing.
+	NoReorder = 1 << 6,				// Disable manual reordering this column, this will also prevent other columns from crossing over this column.
+	NoHide = 1 << 7,				// Disable ability to hide/disable this column.
+	NoClip = 1 << 8,				// Disable clipping for this column (all NoClip columns will render in a same draw command).
+	NoSort = 1 << 9,				// Disable ability to sort on this field (even if ImGuiTableFlags_Sortable is set on the table).
+	NoSortAscending = 1 << 10,		// Disable ability to sort in the ascending direction.
+	NoSortDescending = 1 << 11,		// Disable ability to sort in the descending direction.
+	NoHeaderLabel = 1 << 12,		// TableHeadersRow() will not submit label for this column. Convenient for some small columns. Name will still appear in context menu.
+	NoHeaderWidth = 1 << 13,		// Disable header text width contribution to automatic column width.
+	PreferSortAscending = 1 << 14,	// Make the initial sort direction Ascending when first sorting on this column (default).
+	PreferSortDescending = 1 << 15, // Make the initial sort direction Descending when first sorting on this column.
+	IndentEnable = 1 << 16,			// Use current Indent value when entering cell (default for column 0).
+	IndentDisable = 1 << 17,		// Ignore current Indent value when entering cell (default for columns > 0). Indentation changes _within_ the cell will still be honored.
+
+	IsEnabled = 1 << 24, // Status: is enabled == not hidden by user/api (referred to as "Hide" in _DefaultHide and _NoHide) flags.
+	IsVisible = 1 << 25, // Status: is visible == is enabled AND not clipped by scrolling.
+	IsSorted = 1 << 26,	 // Status: is currently part of the sort specs
+	IsHovered = 1 << 27, // Status: is hovered by mouse
+};
+
+// Flags for ImGui::TableNextRow()
+enum class TableRowFlags : int32_t
+{
+	None = 0,
+	Headers = 1 << 0 // Identify header row (set default background color + width of its contents accounted differently for auto column width)
+};
+
+// Enum for ImGui::TableSetBgColor()
+// Background colors are rendering in 3 layers:
+//  - Layer 0: draw with RowBg0 color if set, otherwise draw with ColumnBg0 if set.
+//  - Layer 1: draw with RowBg1 color if set, otherwise draw with ColumnBg1 if set.
+//  - Layer 2: draw with CellBg color if set.
+// The purpose of the two row/columns layers is to let you decide if a background color changes should override or blend with the existing color.
+// When using ImGuiTableFlags_RowBg on the table, each row has the RowBg0 color automatically set for odd/even rows.
+// If you set the color of RowBg0 target, your color will override the existing RowBg0 color.
+// If you set the color of RowBg1 or ColumnBg1 target, your color will blend over the RowBg0 color.
+enum class TableBgTarget : int32_t
+{
+	None = 0,
+	RowBg0 = 1, // Set row background color 0 (generally used for background, automatically set when ImGuiTableFlags_RowBg is used)
+	RowBg1 = 2, // Set row background color 1 (generally used for selection marking)
+	CellBg = 3	// Set cell background color (top-most color)
+};
+
 enum class DialogStyle
 {
 	Info,
@@ -324,7 +432,7 @@ enum class DialogSelection
 
 enum class Key
 {
-	Tab,
+	Tab = 512,
 	LeftArrow,
 	RightArrow,
 	UpArrow,
@@ -475,6 +583,7 @@ public:
 	void EndChild();
 
 	// Windows Utilities
+	Vec2 GetWindowPos();
 	Vec2 GetWindowSize();
 	Vec2 GetContentRegionAvail();
 
@@ -499,15 +608,13 @@ public:
 
 	void Separator();
 
-	void HiddenSeparator(float thicknessDraw, float thicknessItem);
-
 	void Indent(float indent_w);
 	void Spacing();
 	void Dummy(const Effekseer::Tool::Vector2I& size);
 	void SameLine(float offset_from_start_x = 0.0f, float spacing = -1.0f);
 
-	void PushDisabled();
-	void PopDisabled();
+	void BeginDisabled(bool disabled);
+	void EndDisabled();
 
 	void AddRectFilled(float minX, float minY, float maxX, float maxY, uint32_t color, float rounding, int flags);
 
@@ -530,6 +637,7 @@ public:
 	float GetItemRectMaxY();
 	float GetItemRectSizeX();
 	float GetItemRectSizeY();
+	Vec2 GetItemSpacing();
 	float GetTextLineHeight();
 	float GetTextLineHeightWithSpacing();
 	float GetFrameHeight();
@@ -546,7 +654,7 @@ public:
 	void SetScrollY(float scroll_y);
 	float GetScrollMaxX();
 	float GetScrollMaxY();
-	Vec2 ScrollToBringRectIntoView(Vec2 rect_min, Vec2 rect_max);
+	void ScrollToRect(Vec2 rect_min, Vec2 rect_max);
 
 	// Column
 	void Columns(int count = 1, const char* id = nullptr, bool border = true);
@@ -706,7 +814,7 @@ public:
 
 	void TreePop();
 
-	void SetNextTreeNodeOpen(bool is_open, Cond cond = Cond::None);
+	void SetNextItemOpen(bool is_open, Cond cond = Cond::None);
 
 	bool TreeNodeEx(const char16_t* label, bool* v, TreeNodeFlags flags = TreeNodeFlags::None);
 
@@ -783,6 +891,31 @@ public:
 	bool IsAnyWindowHovered();
 	bool IsAnyWindowFocused();
 	MouseCursor GetMouseCursor();
+
+	// ID
+	void PushID(int int_id);
+	void PopID();
+
+	// Table
+	bool BeginTable(const char* str_id, int column, TableFlags flags = TableFlags::None, const Vec2& outer_size = Vec2(0.0f, 0.0f), float inner_width = 0.0f);
+	void EndTable();
+	void TableNextRow(TableRowFlags row_flags = TableRowFlags::None, float min_row_height = 0.0f);
+	bool TableNextColumn();
+	bool TableSetColumnIndex(int column_n);
+
+	void TableSetupColumn(const char* label, TableColumnFlags flags = TableColumnFlags::None, float init_width_or_weight = 0.0f, uint32_t user_id = 0);
+	void TableSetupScrollFreeze(int cols, int rows);
+	void TableHeadersRow();
+	void TableHeader(const char* label);
+
+	// ImGuiTableSortSpecs* TableGetSortSpecs();
+	int TableGetColumnCount();
+	int TableGetColumnIndex();
+	int TableGetRowIndex();
+	const char* TableGetColumnName(int column_n = -1);
+	TableColumnFlags TableGetColumnFlags(int column_n = -1);
+	void TableSetColumnEnabled(int column_n, bool v);
+	void TableSetBgColor(TableBgTarget target, uint32_t color, int column_n = -1);
 
 	// Context
 	float GetHoveredIDTimer();
@@ -890,7 +1023,7 @@ public:
 	void TimelineNode(const char16_t* title, int frameStart, int frameEnd);
 	void EndNodeFrameTimeline(int* frameMin, int* frameMax, int* currentFrame, int* selectedEntry, int* firstFrame);
 
-	bool GradientHDR(int32_t gradientID, Effekseer::Tool::GradientHDRState& state, Effekseer::Tool::GradientHDRGUIState& guiState);
+	bool GradientHDR(int32_t gradientID, Effekseer::Tool::GradientHDRState& state, Effekseer::Tool::GradientHDRGUIState& guiState, bool isMarkerShown);
 };
 
 } // namespace efk

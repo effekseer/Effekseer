@@ -10,6 +10,7 @@ ConfirmSaveChanged,[{0}] has been changed. Do you want to save?
 Cancel,Cancel
 TextureCount,Image
 UniformCount,Parameter
+GradientCount,Gradient
 Delete_Name,Delete
 ,
 Description_Name,Description
@@ -157,6 +158,8 @@ Comment_Node_Name,Comment
 Constant_Name,Constant
 Time_Node_Name,Time
 Time_Node_Desc,Outputs the current time in seconds.
+LocalTime_Node_Name,LocalTime
+LocalTime_Node_Desc,Outputs the time in seconds since the effect was generated.
 EffectScale_Node_Name,EffectScale
 EffectScale_Node_Desc,Gets the scale specified when the effect file is loaded.
 CameraPositionWS_Node_Name,CameraPosition
@@ -211,9 +214,26 @@ You can specify how many images are arranged in one round and the rotation angle
 ,
 Depth_Name,Depth
 ,
-DepthFade_Name,DepthFade
-DepthFade_Desc,"Output a smaller value as it gets closer to the background object.
+DepthFade_Node_Name,DepthFade
+DepthFade_Node_Desc,"Output a smaller value as it gets closer to the background object.
 Output 1 if the distance is farther than FadeDistance, 0 if the distance is 0."
+,
+Gradient_Name,Gradient
+SampleGradient_Node_Name,Sample Gradient
+SampleGradient_Node_Desc,"Outputs a color reference from the gradient to the color at the specified location.
+If no input is set for the gradient, the gradient of this node is used."
+Gradient_Node_Name,Gradient
+Gradient_Node_Desc,"This node outputs a gradient."
+GradientParameter_Node_Name,Gradient Parameter
+GradientParameter_Node_Desc,"Outputs a gradient set externally."
+,
+Noise_Name,Noise
+SimpleNoise_Node_Name,Simple Noise
+SimpleNoise_Node_Desc,Outputs noise.
+,
+Environment_Name,Environment
+Light_Node_Name,Light
+Light_Node_Desc,Outputs information about externally set lights.
 ,
 ConvertParam_Name,Convert to parameter
 ,

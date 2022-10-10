@@ -11,19 +11,19 @@ namespace Effekseer.GUI.Dock
 	{
 		public bool IsHovered = false;
 
-		protected Component.Enum renderMode;
-		protected Component.Enum viewMode;
+		protected BindableComponent.Enum renderMode;
+		protected BindableComponent.Enum viewMode;
 
 		swig.DeviceType deviceType;
 
 		public EffectViwerPaneBase(swig.DeviceType deviceType)
 		{
 			Label = Resources.GetString("Viewer") + "###Viewer";
-			renderMode = new Component.Enum();
+			renderMode = new BindableComponent.Enum();
 			renderMode.Initialize(typeof(Data.OptionValues.RenderMode));
 			renderMode.SetBinding(Core.Option.RenderingMode);
 			renderMode.EnableUndo = false;
-			viewMode = new Component.Enum();
+			viewMode = new BindableComponent.Enum();
 			viewMode.Initialize(typeof(Data.OptionValues.ViewMode));
 			viewMode.SetBinding(Core.Option.ViewerMode);
 			viewMode.EnableUndo = false;

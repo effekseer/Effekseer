@@ -2,19 +2,19 @@
 
 project(Example_DirectX9)
 
-add_executable(Example_DirectX9 main.cpp)
+add_executable(Example_DirectX9 main.cpp DeviceDX9.cpp DeviceDX9.h)
 
 target_include_directories(
-    Example_DirectX9
+    ${PROJECT_NAME}
     PRIVATE
     ${EFK_RUNTIME_ROOT}/Effekseer
     ${EFK_RUNTIME_ROOT}/EffekseerRendererDX9
     ${EFK_RUNTIME_ROOT}/EffekseerSoundXAudio2
-     ../Utils
+    ../Utils
 )
 
 target_link_libraries(
-    Example_DirectX9
+    ${PROJECT_NAME}
     PRIVATE
     Effekseer
     EffekseerRendererDX9

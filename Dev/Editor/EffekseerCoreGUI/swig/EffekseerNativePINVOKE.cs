@@ -759,6 +759,9 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GraphicsDevice_Resize___")]
   public static extern void GraphicsDevice_Resize(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, int jarg3);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GraphicsDevice_ResetRenderTargets___")]
+  public static extern void GraphicsDevice_ResetRenderTargets(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GraphicsDevice_ClearColor___")]
   public static extern void GraphicsDevice_ClearColor(global::System.Runtime.InteropServices.HandleRef jarg1, byte jarg2, byte jarg3, byte jarg4, byte jarg5);
 
@@ -1368,6 +1371,9 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_EndChild___")]
   public static extern void GUIManager_EndChild(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_GetWindowPos___")]
+  public static extern global::System.IntPtr GUIManager_GetWindowPos(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_GetWindowSize___")]
   public static extern global::System.IntPtr GUIManager_GetWindowSize(global::System.Runtime.InteropServices.HandleRef jarg1);
 
@@ -1416,9 +1422,6 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_Separator___")]
   public static extern void GUIManager_Separator(global::System.Runtime.InteropServices.HandleRef jarg1);
 
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_HiddenSeparator___")]
-  public static extern void GUIManager_HiddenSeparator(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2, float jarg3);
-
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_Indent___")]
   public static extern void GUIManager_Indent(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
 
@@ -1437,11 +1440,11 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_SameLine__SWIG_2___")]
   public static extern void GUIManager_SameLine__SWIG_2(global::System.Runtime.InteropServices.HandleRef jarg1);
 
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_PushDisabled___")]
-  public static extern void GUIManager_PushDisabled(global::System.Runtime.InteropServices.HandleRef jarg1);
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_BeginDisabled___")]
+  public static extern void GUIManager_BeginDisabled(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2);
 
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_PopDisabled___")]
-  public static extern void GUIManager_PopDisabled(global::System.Runtime.InteropServices.HandleRef jarg1);
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_EndDisabled___")]
+  public static extern void GUIManager_EndDisabled(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_AddRectFilled___")]
   public static extern void GUIManager_AddRectFilled(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2, float jarg3, float jarg4, float jarg5, uint jarg6, float jarg7, int jarg8);
@@ -1494,6 +1497,9 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_GetItemRectSizeY___")]
   public static extern float GUIManager_GetItemRectSizeY(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_GetItemSpacing___")]
+  public static extern global::System.IntPtr GUIManager_GetItemSpacing(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_GetTextLineHeight___")]
   public static extern float GUIManager_GetTextLineHeight(global::System.Runtime.InteropServices.HandleRef jarg1);
 
@@ -1533,8 +1539,8 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_GetScrollMaxY___")]
   public static extern float GUIManager_GetScrollMaxY(global::System.Runtime.InteropServices.HandleRef jarg1);
 
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_ScrollToBringRectIntoView___")]
-  public static extern global::System.IntPtr GUIManager_ScrollToBringRectIntoView(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2, global::System.Runtime.InteropServices.HandleRef jarg3);
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_ScrollToRect___")]
+  public static extern void GUIManager_ScrollToRect(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2, global::System.Runtime.InteropServices.HandleRef jarg3);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_Columns__SWIG_0___")]
   public static extern void GUIManager_Columns__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, string jarg3, bool jarg4);
@@ -1956,11 +1962,11 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_TreePop___")]
   public static extern void GUIManager_TreePop(global::System.Runtime.InteropServices.HandleRef jarg1);
 
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_SetNextTreeNodeOpen__SWIG_0___")]
-  public static extern void GUIManager_SetNextTreeNodeOpen__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2, int jarg3);
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_SetNextItemOpen__SWIG_0___")]
+  public static extern void GUIManager_SetNextItemOpen__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2, int jarg3);
 
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_SetNextTreeNodeOpen__SWIG_1___")]
-  public static extern void GUIManager_SetNextTreeNodeOpen__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2);
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_SetNextItemOpen__SWIG_1___")]
+  public static extern void GUIManager_SetNextItemOpen__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_TreeNodeEx__SWIG_2___")]
   public static extern bool GUIManager_TreeNodeEx__SWIG_2(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2, [global::System.Runtime.InteropServices.In, global::System.Runtime.InteropServices.Out, global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPArray,ArraySubType=System.Runtime.InteropServices.UnmanagedType.I1)]bool[] jarg3, int jarg4);
@@ -2184,6 +2190,93 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_GetMouseCursor___")]
   public static extern int GUIManager_GetMouseCursor(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_PushID___")]
+  public static extern void GUIManager_PushID(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_PopID___")]
+  public static extern void GUIManager_PopID(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_BeginTable__SWIG_0___")]
+  public static extern bool GUIManager_BeginTable__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1, string jarg2, int jarg3, int jarg4, global::System.Runtime.InteropServices.HandleRef jarg5, float jarg6);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_BeginTable__SWIG_1___")]
+  public static extern bool GUIManager_BeginTable__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1, string jarg2, int jarg3, int jarg4, global::System.Runtime.InteropServices.HandleRef jarg5);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_BeginTable__SWIG_2___")]
+  public static extern bool GUIManager_BeginTable__SWIG_2(global::System.Runtime.InteropServices.HandleRef jarg1, string jarg2, int jarg3, int jarg4);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_BeginTable__SWIG_3___")]
+  public static extern bool GUIManager_BeginTable__SWIG_3(global::System.Runtime.InteropServices.HandleRef jarg1, string jarg2, int jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_EndTable___")]
+  public static extern void GUIManager_EndTable(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_TableNextRow__SWIG_0___")]
+  public static extern void GUIManager_TableNextRow__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, float jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_TableNextRow__SWIG_1___")]
+  public static extern void GUIManager_TableNextRow__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_TableNextRow__SWIG_2___")]
+  public static extern void GUIManager_TableNextRow__SWIG_2(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_TableNextColumn___")]
+  public static extern bool GUIManager_TableNextColumn(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_TableSetColumnIndex___")]
+  public static extern bool GUIManager_TableSetColumnIndex(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_TableSetupColumn__SWIG_0___")]
+  public static extern void GUIManager_TableSetupColumn__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1, string jarg2, int jarg3, float jarg4, uint jarg5);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_TableSetupColumn__SWIG_1___")]
+  public static extern void GUIManager_TableSetupColumn__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1, string jarg2, int jarg3, float jarg4);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_TableSetupColumn__SWIG_2___")]
+  public static extern void GUIManager_TableSetupColumn__SWIG_2(global::System.Runtime.InteropServices.HandleRef jarg1, string jarg2, int jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_TableSetupColumn__SWIG_3___")]
+  public static extern void GUIManager_TableSetupColumn__SWIG_3(global::System.Runtime.InteropServices.HandleRef jarg1, string jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_TableSetupScrollFreeze___")]
+  public static extern void GUIManager_TableSetupScrollFreeze(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, int jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_TableHeadersRow___")]
+  public static extern void GUIManager_TableHeadersRow(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_TableHeader___")]
+  public static extern void GUIManager_TableHeader(global::System.Runtime.InteropServices.HandleRef jarg1, string jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_TableGetColumnCount___")]
+  public static extern int GUIManager_TableGetColumnCount(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_TableGetColumnIndex___")]
+  public static extern int GUIManager_TableGetColumnIndex(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_TableGetRowIndex___")]
+  public static extern int GUIManager_TableGetRowIndex(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_TableGetColumnName__SWIG_0___")]
+  public static extern string GUIManager_TableGetColumnName__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_TableGetColumnName__SWIG_1___")]
+  public static extern string GUIManager_TableGetColumnName__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_TableGetColumnFlags__SWIG_0___")]
+  public static extern int GUIManager_TableGetColumnFlags__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_TableGetColumnFlags__SWIG_1___")]
+  public static extern int GUIManager_TableGetColumnFlags__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_TableSetColumnEnabled___")]
+  public static extern void GUIManager_TableSetColumnEnabled(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, bool jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_TableSetBgColor__SWIG_0___")]
+  public static extern void GUIManager_TableSetBgColor__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, uint jarg3, int jarg4);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_TableSetBgColor__SWIG_1___")]
+  public static extern void GUIManager_TableSetBgColor__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, uint jarg3);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_GetHoveredIDTimer___")]
   public static extern float GUIManager_GetHoveredIDTimer(global::System.Runtime.InteropServices.HandleRef jarg1);
 
@@ -2296,7 +2389,7 @@ class EffekseerNativePINVOKE {
   public static extern void GUIManager_EndNodeFrameTimeline(global::System.Runtime.InteropServices.HandleRef jarg1, ref int jarg2, ref int jarg3, ref int jarg4, ref int jarg5, ref int jarg6);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_GradientHDR___")]
-  public static extern bool GUIManager_GradientHDR(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, global::System.Runtime.InteropServices.HandleRef jarg3, global::System.Runtime.InteropServices.HandleRef jarg4);
+  public static extern bool GUIManager_GradientHDR(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, global::System.Runtime.InteropServices.HandleRef jarg3, global::System.Runtime.InteropServices.HandleRef jarg4, bool jarg5);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_FileDialog_OpenDialog___")]
   public static extern System.IntPtr FileDialog_OpenDialog([global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2);

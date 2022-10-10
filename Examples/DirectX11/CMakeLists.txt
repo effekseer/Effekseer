@@ -2,10 +2,10 @@
 
 project(Example_DirectX11)
 
-add_executable(Example_DirectX11 main.cpp)
+add_executable(Example_DirectX11 main.cpp DeviceDX11.cpp DeviceDX11.h)
 
 target_include_directories(
-    Example_DirectX11
+    ${PROJECT_NAME}
     PRIVATE
     ${EFK_RUNTIME_ROOT}/Effekseer
     ${EFK_RUNTIME_ROOT}/EffekseerRendererDX11
@@ -14,7 +14,7 @@ target_include_directories(
 )
 
 target_link_libraries(
-    Example_DirectX11
+    ${PROJECT_NAME}
     PRIVATE
     Effekseer
     EffekseerRendererDX11

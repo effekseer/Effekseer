@@ -17,23 +17,15 @@ endif()
 
 file(GLOB_RECURSE LOCAL_SOURCES_Common ../EffekseerRendererCommon/*.h ../EffekseerRendererCommon/*.cpp)
 
-list(REMOVE_ITEM LOCAL_SOURCES_Common
-  ${CMAKE_CURRENT_SOURCE_DIR}/../EffekseerRendererCommon/EffekseerRenderer.DXTK.DDSTextureLoader.cpp
-)
-
-if(NOT USE_INTERNAL_LOADER)
-    list(REMOVE_ITEM LOCAL_SOURCES_Common
-        ${PROJECT_SOURCE_DIR}/../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.cpp
-        ${PROJECT_SOURCE_DIR}/../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h
-    )
-endif()
-
 source_group("EffekseerRendererCommon" FILES ${LOCAL_SOURCES_Common})
 
 file(GLOB_RECURSE LOCAL_HEADERS_Metal *.h)
 file(GLOB_RECURSE LOCAL_SOURCES_Metal *.cpp *.mm)
 list(APPEND LOCAL_HEADERS_Metal ../EffekseerMaterialCompiler/Metal/EffekseerMaterialCompilerMetal.h)
 list(APPEND LOCAL_SOURCES_Metal ../EffekseerMaterialCompiler/Metal/EffekseerMaterialCompilerMetal.cpp)
+list(APPEND LOCAL_SOURCES_Metal ../EffekseerMaterialCompiler/Common/ShaderGeneratorCommon.h)
+list(APPEND LOCAL_SOURCES_Metal ../EffekseerMaterialCompiler/Common/ShaderGeneratorCommon.cpp)
+
 FilterFolder("${LOCAL_HEADERS_Metal}")
 FilterFolder("${LOCAL_SOURCES_Metal}")
 
@@ -57,7 +49,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/../
 set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${LOCAL_HEADERS_Metal}")
 target_link_libraries(${PROJECT_NAME} PUBLIC Effekseer LLGI)
 
-if(USE_LIBPNG_LOADER AND USE_INTERNAL_LOADER)
+if(USE_LIBPNG_LOADER)
     add_dependencies(${PROJECT_NAME} ExternalProject_zlib ExternalProject_libpng) 
 endif()
 

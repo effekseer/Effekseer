@@ -140,6 +140,6 @@ RS_Ring_PVALocation_Acceleration_Name,加速度
 RS_Ring_PVALocation_Acceleration_Desc,辺の初期加速度
 ,
 "RS_TrailSmoothing_Name","スムージング"
-"RS_TrailTimeSource_Name","色の時間取得元"
+"RS_TrailTimeSource_Name","色の時間の取得元"
 "RS_TrailTimeSource_FirstParticle_Name", "最初のパーティクル"
 "RS_TrailTimeSource_ParticleGroup_Name", "グループ"

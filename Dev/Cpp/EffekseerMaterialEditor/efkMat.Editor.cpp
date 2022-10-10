@@ -125,7 +125,8 @@ void Compile(std::shared_ptr<Graphics> graphics,
 		efkMaterial.SetUniformName(i, result.Uniforms[i]->UniformName.c_str());
 	}
 
-	const auto copyGradient = [&](std::vector<Effekseer::MaterialFile::GradientParameter>& dst, const std::vector<std::shared_ptr<TextExporterGradient>>& src) {
+	const auto copyGradient = [&](std::vector<Effekseer::MaterialFile::GradientParameter>& dst, const std::vector<std::shared_ptr<TextExporterGradient>>& src)
+	{
 		dst.resize(src.size());
 
 		for (size_t i = 0; i < dst.size(); i++)
@@ -161,7 +162,8 @@ void Compile(std::shared_ptr<Graphics> graphics,
 	auto textures = result.Textures;
 	auto removed_it = std::remove_if(textures.begin(),
 									 textures.end(),
-									 [](const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& v) -> bool { return v->Index < 0; });
+									 [](const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& v) -> bool
+									 { return v->Index < 0; });
 
 	if (removed_it != textures.end())
 	{
@@ -171,7 +173,8 @@ void Compile(std::shared_ptr<Graphics> graphics,
 	std::sort(textures.begin(),
 			  textures.end(),
 			  [](const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& a,
-				 const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& b) -> bool { return a->Index < b->Index; });
+				 const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& b) -> bool
+			  { return a->Index < b->Index; });
 
 	for (auto t : textures)
 	{
@@ -208,7 +211,8 @@ void ExtractUniforms(std::shared_ptr<Graphics> graphics,
 	auto textures = result.Textures;
 	auto removed_it = std::remove_if(textures.begin(),
 									 textures.end(),
-									 [](const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& v) -> bool { return v->Index < 0; });
+									 [](const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& v) -> bool
+									 { return v->Index < 0; });
 
 	if (removed_it != textures.end())
 	{
@@ -218,7 +222,8 @@ void ExtractUniforms(std::shared_ptr<Graphics> graphics,
 	std::sort(textures.begin(),
 			  textures.end(),
 			  [](const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& a,
-				 const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& b) -> bool { return a->Index < b->Index; });
+				 const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& b) -> bool
+			  { return a->Index < b->Index; });
 
 	for (auto t : textures)
 	{
@@ -642,7 +647,8 @@ void Editor::CloseContents()
 	auto selectedContent = contents_[selectedContentInd_];
 
 	auto removed_it =
-		std::remove_if(contents_.begin(), contents_.end(), [](std::shared_ptr<EditorContent> d) -> bool { return d->IsClosing; });
+		std::remove_if(contents_.begin(), contents_.end(), [](std::shared_ptr<EditorContent> d) -> bool
+					   { return d->IsClosing; });
 	contents_.erase(removed_it, contents_.end());
 
 	if (selectedContent->IsClosing)
@@ -690,8 +696,7 @@ void Editor::Update()
 #endif
 
 		// copy
-		if (isCtrlPressed && ImGui::GetIO().KeysDown[ImGui::GetIO().KeyMap[ImGuiKey_C]] &&
-			ImGui::GetIO().KeysDownDuration[ImGui::GetIO().KeyMap[ImGuiKey_C]] == 0)
+		if (isCtrlPressed && ImGui::IsKeyPressed(ImGuiKey_C))
 		{
 			ed::NodeId ids[256];
 			auto count = ed::GetSelectedNodes(ids, 256);
@@ -713,8 +718,7 @@ void Editor::Update()
 		}
 
 		// paste
-		if (isCtrlPressed && ImGui::GetIO().KeysDown[ImGui::GetIO().KeyMap[ImGuiKey_V]] &&
-			ImGui::GetIO().KeysDownDuration[ImGui::GetIO().KeyMap[ImGuiKey_V]] == 0)
+		if (isCtrlPressed && ImGui::IsKeyPressed(ImGuiKey_V))
 		{
 			auto text = ImGui::GetClipboardText();
 			if (text != nullptr)
@@ -725,8 +729,7 @@ void Editor::Update()
 		}
 
 		// save
-		if (isCtrlPressed && ImGui::GetIO().KeysDown[ImGui::GetIO().KeyMap[ImGuiKey_S]] &&
-			ImGui::GetIO().KeysDownDuration[ImGui::GetIO().KeyMap[ImGuiKey_S]] == 0)
+		if (isCtrlPressed && ImGui::IsKeyPressed(ImGuiKey_S))
 		{
 			Save();
 		}
@@ -768,6 +771,7 @@ void Editor::Update()
 		ImGui::OpenPopup(label_new_node);
 		searchingKeywords.fill(0);
 		searchingKeywordsActual.fill(0);
+		isJustNewNodePanelOpened_ = true;
 		currentPin = nullptr;
 		popupPosition = posOnEditor;
 	}
@@ -824,6 +828,7 @@ void Editor::UpdateNodes()
 			preview_->CompileShader(vs, ps, textures, uniforms, gradients, fixedGradients);
 			previewTextureCount_ = textures.size();
 			previewUniformCount_ = uniforms.size();
+			previewGradientCount_ = gradients.size();
 		}
 
 		for (auto node : material->GetNodes())
@@ -842,6 +847,7 @@ void Editor::UpdateNodes()
 			preview_->UpdateUniforms(textures, uniforms, gradients);
 			previewTextureCount_ = textures.size();
 			previewUniformCount_ = uniforms.size();
+			previewGradientCount_ = gradients.size();
 		}
 	}
 
@@ -982,7 +988,8 @@ void Editor::UpdatePopup()
 	// New node
 	if (ImGui::BeginPopup(label_new_node))
 	{
-		auto create_node = [&, this](std::shared_ptr<LibraryContentBase> content) -> void {
+		auto create_node = [&, this](std::shared_ptr<LibraryContentBase> content) -> void
+		{
 			auto nodeParam = content->Create();
 			auto node = material->CreateNode(nodeParam, false);
 			ImVec2 nodePos{floorf(popupPosition.x), floorf(popupPosition.y)};
@@ -1023,7 +1030,8 @@ void Editor::UpdatePopup()
 			}
 		};
 
-		auto showContent = [&create_node](std::shared_ptr<LibraryContentBase> c) -> void {
+		auto showContent = [&create_node](std::shared_ptr<LibraryContentBase> c) -> void
+		{
 			auto& nodeTypeName = StringContainer::GetValue((c->Name + "_Node_Name").c_str(), c->Name.c_str());
 
 			if (ImGui::MenuItem(nodeTypeName.c_str()))
@@ -1042,7 +1050,8 @@ void Editor::UpdatePopup()
 			}
 		};
 
-		auto isShown = [this](std::shared_ptr<LibraryContentBase> c) -> bool {
+		auto isShown = [this](std::shared_ptr<LibraryContentBase> c) -> bool
+		{
 			if (!c->IsShown)
 			{
 				return false;
@@ -1070,8 +1079,10 @@ void Editor::UpdatePopup()
 		// keyword box
 
 		// focus into a searching textbox
-		if (ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) && !ImGui::IsAnyItemActive() && !ImGui::IsAnyItemFocused())
+		if (isJustNewNodePanelOpened_)
+		{
 			ImGui::SetKeyboardFocusHere(0);
+		}
 
 		ImGui::InputText(StringContainer::GetValue("Search").c_str(), searchingKeywords.data(), searchingKeywords.size());
 
@@ -1142,6 +1153,8 @@ void Editor::UpdatePopup()
 			}
 		}
 
+		isJustNewNodePanelOpened_ = false;
+
 		ImGui::EndPopup();
 	}
 }
@@ -1161,7 +1174,8 @@ void Editor::UpdateCreating()
 	if (ed::BeginCreate(ImColor(255, 255, 255), 2.0f))
 	{
 
-		auto showLabel = [](const char* label, ImColor color) {
+		auto showLabel = [](const char* label, ImColor color)
+		{
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - ImGui::GetTextLineHeight());
 			auto size = ImGui::CalcTextSize(label);
 
@@ -1262,6 +1276,7 @@ void Editor::UpdateCreating()
 				ImGui::OpenPopup(label_new_node);
 				searchingKeywords.fill(0);
 				searchingKeywordsActual.fill(0);
+				isJustNewNodePanelOpened_ = true;
 				ed::Resume();
 			}
 		}
@@ -1286,7 +1301,8 @@ void Editor::UpdateDeleting()
 	{
 		bool foundDelete = false;
 
-		auto startCollection = [&foundDelete, &material]() -> void {
+		auto startCollection = [&foundDelete, &material]() -> void
+		{
 			if (!foundDelete)
 			{
 				material->GetCommandManager()->StartCollection();
@@ -1336,7 +1352,8 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 	}
 
 	// Property
-	auto updateProp = [&, node](ValueType type, std::string name, std::shared_ptr<EffekseerMaterial::NodeProperty> p) -> void {
+	auto updateProp = [&, node](ValueType type, std::string name, std::shared_ptr<EffekseerMaterial::NodeProperty> p) -> void
+	{
 		auto floatValues = p->Floats;
 
 		auto nameStr = StringContainer::GetValue((name + "_Name").c_str(), name.c_str());
@@ -1408,7 +1425,8 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 		}
 		else if (type == ValueType::Texture)
 		{
-			auto showPath = [&p]() -> void {
+			auto showPath = [&p]() -> void
+			{
 				if (ImGui::IsItemHovered() && !ImGui::IsItemActive())
 				{
 					ImGui::SetTooltip(p->Str.c_str());
@@ -1765,32 +1783,49 @@ void Editor::UpdatePreview()
 		preview_->ModelType = PreviewModelType::Sphere;
 	}
 
-	auto textureNumHeader = StringContainer::GetValue("TextureCount", "Texture");
-
-	if (previewTextureCount_ > Effekseer::UserTextureSlotMax)
 	{
-		ImGui::TextColored(
-			ImColor(255, 0, 0, 255), (textureNumHeader + " %d / %d").c_str(), previewTextureCount_, Effekseer::UserTextureSlotMax);
-	}
-	else
-	{
-		ImGui::Text((textureNumHeader + " %d / %d").c_str(), previewTextureCount_, Effekseer::UserTextureSlotMax);
-	}
+		auto textureNumHeader = StringContainer::GetValue("TextureCount", "Texture");
 
-	// uniform
+		if (previewTextureCount_ > Effekseer::UserTextureSlotMax)
+		{
+			ImGui::TextColored(
+				ImColor(255, 0, 0, 255), (textureNumHeader + " %d / %d").c_str(), previewTextureCount_, Effekseer::UserTextureSlotMax);
+		}
+		else
+		{
+			ImGui::Text((textureNumHeader + " %d / %d").c_str(), previewTextureCount_, Effekseer::UserTextureSlotMax);
+		}
+	}
 
 	// TODO : refactor
-	auto uniformNumHeader = StringContainer::GetValue("UniformCount", "Uniform");
-	const int uniformMax = 16;
+	{
+		auto uniformNumHeader = StringContainer::GetValue("UniformCount", "Uniform");
+		const int uniformMax = 16;
 
-	if (previewUniformCount_ > uniformMax)
-	{
-		ImGui::TextColored(
-			ImColor(255, 0, 0, 255), (uniformNumHeader + " %d / %d").c_str(), previewUniformCount_, uniformMax);
+		if (previewUniformCount_ > uniformMax)
+		{
+			ImGui::TextColored(
+				ImColor(255, 0, 0, 255), (uniformNumHeader + " %d / %d").c_str(), previewUniformCount_, uniformMax);
+		}
+		else
+		{
+			ImGui::Text((uniformNumHeader + " %d / %d").c_str(), previewUniformCount_, uniformMax);
+		}
 	}
-	else
+
 	{
-		ImGui::Text((uniformNumHeader + " %d / %d").c_str(), previewUniformCount_, uniformMax);
+		const auto uniformNumHeader = StringContainer::GetValue("GradientCount", "Gradient");
+		const int uniformMax = 2;
+
+		if (previewGradientCount_ > uniformMax)
+		{
+			ImGui::TextColored(
+				ImColor(255, 0, 0, 255), (uniformNumHeader + " %d / %d").c_str(), previewGradientCount_, uniformMax);
+		}
+		else
+		{
+			ImGui::Text((uniformNumHeader + " %d / %d").c_str(), previewGradientCount_, uniformMax);
+		}
 	}
 }
 
@@ -1833,7 +1868,8 @@ void Editor::UpdateToRecordMovingCommand()
 
 void Editor::UpdateNode(std::shared_ptr<Node> node)
 {
-	auto applyPosition = [&]() -> void {
+	auto applyPosition = [&]() -> void
+	{
 		if (contents_[GetSelectedContentIndex()]->IsLoading || node->GetIsPosDirtied())
 		{
 			ed::SetNodePosition(node->GUID, ImVec2(node->Pos.X, node->Pos.Y));
@@ -1864,7 +1900,7 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 		size.x = size.x < 64 ? 64 : size.x;
 		size.y = size.y < 64 ? 64 : size.y;
 
-		//auto size = ed::GetNodeSize(node->GUID);
+		// auto size = ed::GetNodeSize(node->GUID);
 
 		// initialize
 		if (contents_[GetSelectedContentIndex()]->IsLoading || node->GetIsPosDirtied())

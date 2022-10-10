@@ -5,6 +5,9 @@
 #include "efk.Graphics.h"
 #include <Effekseer.h>
 
+// To get TextureLoader
+#include <EffekseerRendererGL/EffekseerRendererGL.h>
+
 namespace Effekseer::Tool
 {
 
@@ -18,6 +21,8 @@ class GraphicsDevice
 
 public:
 	void Resize(int32_t width, int32_t height);
+
+	void ResetRenderTargets();
 
 	void ClearColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 

@@ -3,6 +3,7 @@
 #define __EFFEKSEER_CUSTOM_ALLOCATOR_H__
 
 #include "../Effekseer.Base.Pre.h"
+#include <functional>
 #include <list>
 #include <map>
 #include <memory>
@@ -14,6 +15,40 @@
 
 namespace Effekseer
 {
+
+/**
+	@brief	Memory Allocation function
+	@note
+	arg1 allocated size
+	return allocated buffer
+*/
+using MallocFunc = std::function<void*(uint32_t)>;
+
+/**
+	@brief	Memory Free function
+	@note
+	arg1 allocated buffer
+	arg2 allocated size
+*/
+using FreeFunc = std::function<void(void*, uint32_t)>;
+
+/**
+	@brief	AlignedMemory Allocation function
+	@note
+	arg1 allocated size
+	arg2 alignment
+	return allocated buffer
+*/
+using AlignedMallocFunc = std::function<void*(uint32_t, uint32_t)>;
+
+/**
+	@brief	AlignedMemory Free function
+	@note
+	arg1 allocated buffer
+	arg2 allocated size
+	*/
+using AlignedFreeFunc = std::function<void(void*, uint32_t)>;
+
 /**
 	@brief
 	\~English get an allocator

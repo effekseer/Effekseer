@@ -772,6 +772,10 @@ namespace Effekseer.Data
 		Small,
 	}
 
+	public class GroupAttribute : Attribute
+	{
+	}
+
 	/// <summary>
 	/// For collection to create a treenode in GUI
 	/// </summary>
@@ -819,6 +823,7 @@ namespace Effekseer.Data
 		public int SelfSelectorID = -1;
 		public string TreeNodeID = null;
 		public TreeNodeType TreeNodeType = TreeNodeType.Large;
+		public bool IsGroup = false;
 
 		/// <summary>
 		/// If this value is larger than 0, target selector id is used to show it.
@@ -916,6 +921,12 @@ namespace Effekseer.Data
 				{
 					ret.Title = new MultiLanguageString(treeNode.key + "_Name");
 				}
+			}
+
+			var group = attributes.OfType<GroupAttribute>().FirstOrDefault();
+			if(group != null)
+			{
+				ret.IsGroup = true;
 			}
 
 			return ret;

@@ -9,19 +9,7 @@ echo Copy application
 
 mkdir %RDIR%\Tool
 
-copy Dev\release\Effekseer.exe %RDIR%\Tool\.
-copy Dev\release\Effekseer.exe.config %RDIR%\Tool\.
-copy Dev\release\EffekseerCore.dll %RDIR%\Tool\.
-copy Dev\release\EffekseerCoreGUI.dll %RDIR%\Tool\.
-copy Dev\release\EffekseerViewer.dll %RDIR%\Tool\.
-copy Dev\release\IronPython.dll %RDIR%\Tool\.
-copy Dev\release\IronPython.Modules.dll %RDIR%\Tool\.
-copy Dev\release\Microsoft.Dynamic.dll %RDIR%\Tool\.
-copy Dev\release\Microsoft.Scripting.dll %RDIR%\Tool\.
-copy Dev\release\EffekseerMaterialEditor.exe %RDIR%\Tool\.
-copy Dev\release\Viewer.dll %RDIR%\Tool\.
-copy Dev\release\Newtonsoft.Json.dll %RDIR%\Tool\.
-
+robocopy Dev\release %RDIR%\Tool
 
 mkdir %RDIR%\Tool\scripts
 mkdir %RDIR%\Tool\scripts\export

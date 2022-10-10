@@ -37,7 +37,7 @@ namespace Effekseer.GUI.Dock
 			Core.OnAfterLoad += OnRenew;
 			Core.OnAfterSelectNode += OnAfterSelect;
 
-			Func<Func<bool>, Menu.MenuItem> create_menu_item_from_commands = (a) =>
+			Menu.MenuItem create_menu_item_from_commands(Func<bool> a)
 			{
 				var item = new Menu.MenuItem();
 				var attributes = a.Method.GetCustomAttributes(false);
@@ -74,14 +74,16 @@ namespace Effekseer.GUI.Dock
 
 		override protected void UpdateInternal()
 		{
-			float showHideButtonOffset = Manager.NativeManager.GetTextLineHeight() * 2
-			                             + Manager.NativeManager.GetStyleVar2(ImGuiStyleVarFlags.ItemSpacing).X;
+			float showHideButtonOffset = Manager.NativeManager.GetTextLineHeight() * 3
+										 + Manager.NativeManager.GetStyleVar2(ImGuiStyleVarFlags.ItemSpacing).X;
 
 			isPopupShown = false;
 
 			var windowSize = Manager.NativeManager.GetContentRegionAvail();
-			Manager.NativeManager.Columns(2);
-			Manager.NativeManager.SetColumnOffset(1, Math.Max(0, windowSize.X - showHideButtonOffset));
+
+			Manager.NativeManager.BeginTable("NodeTreeView", 2);
+			Manager.NativeManager.TableSetupColumn("Nodes", TableColumnFlags.NoResize | TableColumnFlags.WidthFixed, Math.Max(0, windowSize.X - showHideButtonOffset));
+			Manager.NativeManager.TableSetupColumn("Options");
 
 			// Assign tree node index
 			Action<Utils.DelayedList<NodeTreeViewNode>> assignIndex = null;
@@ -110,7 +112,7 @@ namespace Effekseer.GUI.Dock
 			}
 			Children.Unlock();
 
-			Manager.NativeManager.Columns(1);
+			Manager.NativeManager.EndTable();
 
 			// Run exchange events
 			foreach (var pair in exchangeEvents)
@@ -291,7 +293,7 @@ namespace Effekseer.GUI.Dock
 		AddAsChild,
 	}
 
-	class NodeTreeViewNode : IControl
+	class NodeTreeViewNode
 	{
 		string id = "";
 		public int UniqueID { get; private set; }
@@ -300,8 +302,8 @@ namespace Effekseer.GUI.Dock
 
 		internal Utils.DelayedList<NodeTreeViewNode> Children = new Utils.DelayedList<NodeTreeViewNode>();
 
-		private Component.Enum lodBehaviourEnumControl;
-		
+		private BindableComponent.Enum lodBehaviourEnumControl;
+
 		NodeTreeView treeView = null;
 
 		bool requiredToExpand = false;
@@ -330,12 +332,12 @@ namespace Effekseer.GUI.Dock
 			var effectNode = node as Data.Node;
 			if (effectNode != null)
 			{
-				lodBehaviourEnumControl = new Component.Enum();
+				lodBehaviourEnumControl = new BindableComponent.Enum();
 				lodBehaviourEnumControl.Initialize(typeof(LODBehaviourType));
 				lodBehaviourEnumControl.SetBinding(effectNode.CommonValues.LodParameter.LodBehaviour);
 				lodBehaviourEnumControl.EnableUndo = true;
 			}
-			
+
 
 			AddEvent(false);
 		}
@@ -426,16 +428,16 @@ namespace Effekseer.GUI.Dock
 				{
 					enabledLevelsCount += ((enabledLevels & (1 << i)) > 0) ? 1 : 0;
 				}
-				
+
 				int levels = node.CommonValues.LodParameter.MatchingLODs & enabledLevels;
-				
+
 				Manager.NativeManager.Button(id, lodButtonSize, lodButtonSize);
-			
-				
+
+
 				for (int i = 0; i < LOD.LevelCount; i++)
 				{
 					bool isEnabled = (levels & (1 << i)) > 0;
-					if(!isEnabled) continue;
+					if (!isEnabled) continue;
 
 					float boxW = Manager.NativeManager.GetItemRectSizeX();
 					float boxH = Manager.NativeManager.GetItemRectSizeY();
@@ -445,8 +447,8 @@ namespace Effekseer.GUI.Dock
 					float entryH = (boxH - 2F * pad - enabledLevelsCount * spacing) / enabledLevelsCount;
 					float x = Manager.NativeManager.GetItemRectMinX() + pad;
 					float y = Manager.NativeManager.GetItemRectMinY() + (entryH + spacing) * i + pad + 1F;
-			
-					Manager.NativeManager.AddRectFilled(x, y , x + entryW, y + entryH,
+
+					Manager.NativeManager.AddRectFilled(x, y, x + entryW, y + entryH,
 						LOD.LevelColors[i], 5, 0);
 				}
 
@@ -511,7 +513,7 @@ namespace Effekseer.GUI.Dock
 			{
 				Manager.NativeManager.Button("##dummy", lodButtonSize, lodButtonSize);
 			}
-			
+
 		}
 
 		void UpdateVisibleButton()
@@ -548,6 +550,9 @@ namespace Effekseer.GUI.Dock
 
 		public void Update()
 		{
+			Manager.NativeManager.TableNextRow();
+			Manager.NativeManager.TableSetColumnIndex(0);
+
 			var flag = swig.TreeNodeFlags.OpenOnArrow | swig.TreeNodeFlags.OpenOnDoubleClick | swig.TreeNodeFlags.DefaultOpen | swig.TreeNodeFlags.SpanFullWidth;
 
 			if (Core.SelectedNode == this.Node)
@@ -564,7 +569,7 @@ namespace Effekseer.GUI.Dock
 
 			if (requiredToExpand)
 			{
-				Manager.NativeManager.SetNextTreeNodeOpen(true);
+				Manager.NativeManager.SetNextItemOpen(true);
 				requiredToExpand = false;
 			}
 
@@ -607,15 +612,13 @@ namespace Effekseer.GUI.Dock
 
 			UpdateDDTargetNode();
 
-			Manager.NativeManager.NextColumn();
+			Manager.NativeManager.TableSetColumnIndex(1);
 
 			UpdateLODButton();
-			
+
 			Manager.NativeManager.SameLine();
 
 			UpdateVisibleButton();
-
-			Manager.NativeManager.NextColumn();
 
 			if (IsExpanding)
 			{
@@ -641,7 +644,7 @@ namespace Effekseer.GUI.Dock
 		private void ApplyLODSettingsToChildren()
 		{
 			var effectNode = Node as Data.Node;
-			if(effectNode == null) return;
+			if (effectNode == null) return;
 
 			int matchingLods = effectNode.CommonValues.LodParameter.MatchingLODs;
 			LODBehaviourType lodBehaviour = effectNode.CommonValues.LodParameter.LodBehaviour;
@@ -649,14 +652,14 @@ namespace Effekseer.GUI.Dock
 			{
 				var child = Children[i];
 				var childNode = child.Node as Data.Node;
-				if(childNode == null) continue;
-				
+				if (childNode == null) continue;
+
 				childNode.CommonValues.LodParameter.MatchingLODs.SetValueDirectly(matchingLods);
 				childNode.CommonValues.LodParameter.LodBehaviour.SetValueDirectly(lodBehaviour);
 				child.ApplyLODSettingsToChildren();
 			}
 		}
-		
+
 		private void SelectNodeIfClicked()
 		{
 			int KEY_ENTER = 257;
@@ -677,8 +680,12 @@ namespace Effekseer.GUI.Dock
 		{
 			// Hidden separator is a target to be dropped
 			// adjust a position
+
+			var windowSize = Manager.NativeManager.GetContentRegionAvail();
+
 			Manager.NativeManager.SetCursorPosY(Manager.NativeManager.GetCursorPosY() - 6);
-			Manager.NativeManager.HiddenSeparator(12, 6);
+			Manager.NativeManager.Dummy(new Vector2I((int)windowSize.X, 12));
+			Manager.NativeManager.SetCursorPosY(Manager.NativeManager.GetCursorPosY() - 6);
 
 			if (Manager.NativeManager.BeginDragDropTarget())
 			{

@@ -20,14 +20,24 @@ void TimeSeriesMatrix::Reset(const SIMD::Mat43f& matrix, float time)
 	current_ = matrix;
 	previousTime_ = 0.0f;
 	currentTime_ = 0.0f;
+	isCurrentMatrixSpecified_ = true;
 }
 
 void TimeSeriesMatrix::Step(const SIMD::Mat43f& matrix, float time)
 {
-	previous_ = current_;
+	if (isCurrentMatrixSpecified_)
+	{
+		previous_ = current_;
+	}
+	else
+	{
+		previous_ = matrix;
+	}
+
 	current_ = matrix;
 	previousTime_ = currentTime_;
 	currentTime_ = time;
+	isCurrentMatrixSpecified_ = true;
 }
 
 const SIMD::Mat43f& TimeSeriesMatrix::GetPrevious() const
@@ -204,8 +214,6 @@ void Instance::Initialize(Instance* parent, float spawnDeltaFrame, int32_t insta
 	// Initialize paramaters about a parent
 	m_pParent = parent;
 	m_ParentMatrix = SIMD::Mat43f::Identity;
-	globalMatrix_.Reset(SIMD::Mat43f::Identity, 0.0f);
-
 	m_LivingTime = 0.0f;
 	m_LivedTime = FLT_MAX;
 	m_RemovingTime = 0.0f;
@@ -276,8 +284,8 @@ void Instance::FirstUpdate()
 		 parameter->CommonValues.ScalingBindType == BindType::Always))
 	{
 		if ((parameter->CommonValues.TranslationBindType == TranslationParentBindType::Always &&
-			parameter->CommonValues.RotationBindType == BindType::Always &&
-			parameter->CommonValues.ScalingBindType == BindType::Always) ||
+			 parameter->CommonValues.RotationBindType == BindType::Always &&
+			 parameter->CommonValues.ScalingBindType == BindType::Always) ||
 			!parameter->IsParticleSpawnedWithDecimal())
 		{
 			m_ParentMatrix = m_pParent->GetGlobalMatrix().GetCurrent();
@@ -512,7 +520,11 @@ void Instance::Update(float deltaFrame, bool shown)
 					SIMD::Vec3f size = m_pEffectNode->KillParam.Box.Size;
 					bool isWithin = localPosition.GetX() <= size.GetX() && localPosition.GetY() <= size.GetY() && localPosition.GetZ() <= size.GetZ();
 
-					if (isWithin == m_pEffectNode->KillParam.Box.IsKillInside)
+					if (isWithin && m_pEffectNode->KillParam.Box.IsKillInside > 0)
+					{
+						removed = true;
+					}
+					else if (!isWithin && m_pEffectNode->KillParam.Box.IsKillInside == 0)
 					{
 						removed = true;
 					}
@@ -534,7 +546,11 @@ void Instance::Update(float deltaFrame, bool shown)
 					float distance = delta.GetSquaredLength();
 					float radius = m_pEffectNode->KillParam.Sphere.Radius;
 					bool isWithin = distance <= (radius * radius);
-					if (isWithin == m_pEffectNode->KillParam.Sphere.IsKillInside)
+					if (isWithin && m_pEffectNode->KillParam.Sphere.IsKillInside > 0)
+					{
+						removed = true;
+					}
+					else if (!isWithin && m_pEffectNode->KillParam.Sphere.IsKillInside == 0)
 					{
 						removed = true;
 					}
@@ -662,7 +678,7 @@ void Instance::UpdateTransform(float deltaFrame)
 
 		localPosition += localVelocity;
 
-		auto matRot = RotationFunctions::CalculateRotation(rotation_values, m_pEffectNode->RotationParam, m_randObject, m_pEffectNode->GetEffect(), m_pContainer->GetRootInstance(), m_LivingTime, m_LivedTime, m_pParent, m_pEffectNode->DynamicFactor, m_pManager->GetImplemented()->GetViewerPosition());
+		auto matRot = RotationFunctions::CalculateRotation(rotation_values, m_pEffectNode->RotationParam, m_randObject, m_pEffectNode->GetEffect(), m_pContainer->GetRootInstance(), m_LivingTime, m_LivedTime, m_pParent, m_pEffectNode->DynamicFactor, m_pManager->GetLayerParameter(GetInstanceGlobal()->GetLayer()).ViewerPosition);
 		auto scaling = ScalingFunctions::UpdateScaling(scaling_values, m_pEffectNode->ScalingParam, m_randObject, m_pEffectNode->GetEffect(), m_pContainer->GetRootInstance(), m_LivingTime, m_LivedTime, m_pParent, m_pEffectNode->DynamicFactor);
 
 		// update local fields

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
-using Effekseer.Utl;
+using Effekseer.Utils;
 
 namespace Effekseer.Data.Value
 {
@@ -120,7 +120,7 @@ namespace Effekseer.Data.Value
 		{
 			var target = o as Gradient;
 
-			if (target._value.Equals(target.DefaultValue))
+			if (!isClip && target._value.Equals(target.DefaultValue))
 			{
 				return null;
 			}

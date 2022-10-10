@@ -32,11 +32,7 @@ struct StandardRendererState
 	::Effekseer::AlphaBlendType AlphaBlend;
 	::Effekseer::CullingType CullingType;
 
-	int32_t EnableInterpolation;
-	int32_t UVLoopType;
-	int32_t InterpolationType;
-	int32_t FlipbookDivideX;
-	int32_t FlipbookDivideY;
+	RendererStateFlipbook Flipbook;
 
 	float UVDistortionIntensity;
 
@@ -82,11 +78,7 @@ struct StandardRendererState
 		AlphaBlend = ::Effekseer::AlphaBlendType::Blend;
 		CullingType = ::Effekseer::CullingType::Front;
 
-		EnableInterpolation = 0;
-		UVLoopType = 0;
-		InterpolationType = 0;
-		FlipbookDivideX = 0;
-		FlipbookDivideY = 0;
+		Flipbook = RendererStateFlipbook{};
 
 		UVDistortionIntensity = 1.0f;
 
@@ -132,18 +124,8 @@ struct StandardRendererState
 			return true;
 		if (CullingType != state.CullingType)
 			return true;
-
-		if (EnableInterpolation != state.EnableInterpolation)
+		if (Flipbook != state.Flipbook)
 			return true;
-		if (UVLoopType != state.UVLoopType)
-			return true;
-		if (InterpolationType != state.InterpolationType)
-			return true;
-		if (FlipbookDivideX != state.FlipbookDivideX)
-			return true;
-		if (FlipbookDivideY != state.FlipbookDivideY)
-			return true;
-
 		if (UVDistortionIntensity != state.UVDistortionIntensity)
 			return true;
 		if (TextureBlendType != state.TextureBlendType)
@@ -281,20 +263,7 @@ struct StandardRendererVertexBuffer
 	Effekseer::Matrix44 constantVSBuffer[2];
 	float uvInversed[4];
 
-	struct
-	{
-		union {
-			float Buffer[4];
-
-			struct
-			{
-				float enableInterpolation;
-				float loopType;
-				float divideX;
-				float divideY;
-			};
-		};
-	} flipbookParameter;
+	FlipbookVertexBuffer flipbookParameter;
 };
 
 template <typename RENDERER, typename SHADER>
@@ -822,11 +791,7 @@ public:
 			vcb.constantVSBuffer[1] = ToStruct(mCamera * mProj);
 			vcb.uvInversed[0] = uvInversed[0];
 			vcb.uvInversed[1] = uvInversed[1];
-
-			vcb.flipbookParameter.enableInterpolation = static_cast<float>(renderState.EnableInterpolation);
-			vcb.flipbookParameter.loopType = static_cast<float>(renderState.UVLoopType);
-			vcb.flipbookParameter.divideX = static_cast<float>(renderState.FlipbookDivideX);
-			vcb.flipbookParameter.divideY = static_cast<float>(renderState.FlipbookDivideY);
+			vcb.flipbookParameter = ToVertexBuffer(renderState.Flipbook);
 
 			m_renderer->SetVertexBufferToShader(&vcb, sizeof(StandardRendererVertexBuffer), 0);
 
@@ -843,8 +808,8 @@ public:
 			pcb.LightColor = m_renderer->GetLightColor().ToFloat4();
 			pcb.LightAmbientColor = m_renderer->GetLightAmbientColor().ToFloat4();
 
-			pcb.FlipbookParam.EnableInterpolation = static_cast<float>(renderState.EnableInterpolation);
-			pcb.FlipbookParam.InterpolationType = static_cast<float>(renderState.InterpolationType);
+			pcb.FlipbookParam.EnableInterpolation = static_cast<float>(renderState.Flipbook.EnableInterpolation);
+			pcb.FlipbookParam.InterpolationType = static_cast<float>(renderState.Flipbook.InterpolationType);
 
 			pcb.UVDistortionParam.Intensity = renderState.UVDistortionIntensity;
 			pcb.UVDistortionParam.BlendIntensity = renderState.BlendUVDistortionIntensity;
@@ -886,10 +851,7 @@ public:
 			vcb.uvInversed[2] = 0.0f;
 			vcb.uvInversed[3] = 0.0f;
 
-			vcb.flipbookParameter.enableInterpolation = static_cast<float>(renderState.EnableInterpolation);
-			vcb.flipbookParameter.loopType = static_cast<float>(renderState.UVLoopType);
-			vcb.flipbookParameter.divideX = static_cast<float>(renderState.FlipbookDivideX);
-			vcb.flipbookParameter.divideY = static_cast<float>(renderState.FlipbookDivideY);
+			vcb.flipbookParameter = ToVertexBuffer(renderState.Flipbook);
 
 			m_renderer->SetVertexBufferToShader(&vcb, sizeof(StandardRendererVertexBuffer), 0);
 
@@ -900,8 +862,8 @@ public:
 				pcb.UVInversedBack[0] = uvInversedBack[0];
 				pcb.UVInversedBack[1] = uvInversedBack[1];
 
-				pcb.FlipbookParam.EnableInterpolation = static_cast<float>(renderState.EnableInterpolation);
-				pcb.FlipbookParam.InterpolationType = static_cast<float>(renderState.InterpolationType);
+				pcb.FlipbookParam.EnableInterpolation = static_cast<float>(renderState.Flipbook.EnableInterpolation);
+				pcb.FlipbookParam.InterpolationType = static_cast<float>(renderState.Flipbook.InterpolationType);
 
 				pcb.UVDistortionParam.Intensity = renderState.UVDistortionIntensity;
 				pcb.UVDistortionParam.BlendIntensity = renderState.BlendUVDistortionIntensity;
@@ -931,8 +893,8 @@ public:
 				pcb.MiscFlags[0] = m_renderer->GetImpl()->MaintainGammaColorInLinearColorSpace ? 1.0f : 0.0f;
 
 				pcb.FalloffParam.Enable = 0;
-				pcb.FlipbookParam.EnableInterpolation = static_cast<float>(renderState.EnableInterpolation);
-				pcb.FlipbookParam.InterpolationType = static_cast<float>(renderState.InterpolationType);
+				pcb.FlipbookParam.EnableInterpolation = static_cast<float>(renderState.Flipbook.EnableInterpolation);
+				pcb.FlipbookParam.InterpolationType = static_cast<float>(renderState.Flipbook.InterpolationType);
 
 				pcb.UVDistortionParam.Intensity = renderState.UVDistortionIntensity;
 				pcb.UVDistortionParam.BlendIntensity = renderState.BlendUVDistortionIntensity;

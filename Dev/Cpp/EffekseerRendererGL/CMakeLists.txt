@@ -12,22 +12,14 @@ list(APPEND LOCAL_SOURCES_Common
 
 source_group("EffekseerRendererCommon" FILES ${LOCAL_SOURCES_Common})
 
-list(REMOVE_ITEM LOCAL_SOURCES_Common
-    ${PROJECT_SOURCE_DIR}/../EffekseerRendererCommon/EffekseerRenderer.DXTK.DDSTextureLoader.cpp
-    ${PROJECT_SOURCE_DIR}/../EffekseerRendererCommon/EffekseerRenderer.DXTK.DDSTextureLoader.h
-)
-
-if(NOT USE_INTERNAL_LOADER)
-    list(REMOVE_ITEM LOCAL_SOURCES_Common
-        ${PROJECT_SOURCE_DIR}/../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.cpp
-        ${PROJECT_SOURCE_DIR}/../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h
-    )
-endif()
-
 file(GLOB_RECURSE LOCAL_HEADERS_GL *.h)
 file(GLOB_RECURSE LOCAL_SOURCES_GL *.cpp)
 list(APPEND LOCAL_HEADERS_GL ../EffekseerMaterialCompiler/OpenGL/EffekseerMaterialCompilerGL.h)
 list(APPEND LOCAL_SOURCES_GL ../EffekseerMaterialCompiler/OpenGL/EffekseerMaterialCompilerGL.cpp)
+list(APPEND LOCAL_SOURCES_GL ../EffekseerMaterialCompiler/GLSLGenerator/ShaderGenerator.h)
+list(APPEND LOCAL_SOURCES_GL ../EffekseerMaterialCompiler/GLSLGenerator/ShaderGenerator.cpp)
+list(APPEND LOCAL_SOURCES_GL ../EffekseerMaterialCompiler/Common/ShaderGeneratorCommon.h)
+list(APPEND LOCAL_SOURCES_GL ../EffekseerMaterialCompiler/Common/ShaderGeneratorCommon.cpp)
 
 FilterFolder("${LOCAL_HEADERS_GL}")
 FilterFolder("${LOCAL_SOURCES_GL}")
@@ -52,7 +44,7 @@ if(CLANG_FORMAT_ENABLED)
     clang_format(${PROJECT_NAME})
 endif()
 
-if(USE_LIBPNG_LOADER AND USE_INTERNAL_LOADER)
+if(USE_LIBPNG_LOADER)
     add_dependencies(${PROJECT_NAME} ExternalProject_zlib ExternalProject_libpng) 
 endif()
 
