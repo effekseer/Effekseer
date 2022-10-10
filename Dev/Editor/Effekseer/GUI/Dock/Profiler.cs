@@ -242,6 +242,7 @@ namespace Effekseer.GUI.Dock
 
 				if (gui.Button("Network"))
 				{
+					Manager.SelectOrShowWindow(typeof(Dock.Network));
 				}
 
 				gui.SameLine();
