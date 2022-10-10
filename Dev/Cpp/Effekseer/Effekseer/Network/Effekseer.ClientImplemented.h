@@ -29,11 +29,12 @@ public:
 	bool Start(const char* host, uint16_t port) override;
 	void Stop() override;
 	void Update() override;
-	bool IsConnected() const override;
 
 	void Reload(const char16_t* key, void* data, int32_t size) override;
 	void Reload(ManagerRef manager, const char16_t* path, const char16_t* key) override;
 
+	bool IsConnected() const override;
+	
 	void StartProfiling() override;
 	void StopProfiling() override;
 	ProfileSample ReadProfileSample() override;
