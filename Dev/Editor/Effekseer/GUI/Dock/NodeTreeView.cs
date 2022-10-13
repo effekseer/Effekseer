@@ -684,7 +684,7 @@ namespace Effekseer.GUI.Dock
 			var windowSize = Manager.NativeManager.GetContentRegionAvail();
 
 			Manager.NativeManager.SetCursorPosY(Manager.NativeManager.GetCursorPosY() - 6);
-			Manager.NativeManager.Dummy(new Vector2I((int)windowSize.X, 12));
+			Manager.NativeManager.Dummy(new swig.Vector2I((int)windowSize.X, 12));
 			Manager.NativeManager.SetCursorPosY(Manager.NativeManager.GetCursorPosY() - 6);
 
 			if (Manager.NativeManager.BeginDragDropTarget())
