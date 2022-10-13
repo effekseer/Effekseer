@@ -87,7 +87,150 @@ namespace Effekseer.GUI.Inspector
 			}
 		}
 
-		public static void Update(NodeTreeGroupContext context, EditorState editorState, InspectorEditable target)
+		private static void UpdateObject(NodeTreeGroupContext context, EditorState editorState, Node targetNode, object targetObject)
+		{
+			var getterSetters = new FieldGetterSetter[1];
+			getterSetters[0] = new FieldGetterSetter();
+
+			// エディタに表示する変数群
+			var fields = targetObject.GetType().GetFields();
+
+			for (int i = 0; i < fields.Length; ++i)
+			{
+				var field = fields[i];
+				field.GetCustomAttributes();
+				getterSetters[0].Reset(targetObject, field);
+				//var prop = context.EditorProperty.Properties.FirstOrDefault(_ => _.InstanceID == target.InstanceID);
+				bool isValueChanged = false;
+				//if (prop != null)
+				//{
+				//	// 配列の変更が取れないのは別インスタンスに上書きされてるから？
+				//	// 配列のコピーではなく、配列の要素のコピーにすべき
+				//	isValueChanged = prop.IsValueEdited(getterSetters.Select(_ => _.GetName()).ToArray());
+				//}
+
+				var getterSetter = getterSetters.Last();
+				var value = getterSetter.GetValue();
+				var name = getterSetter.GetName();
+
+				if (value == null)
+				{
+					// TODO : nullどうする？
+					//Manager.NativeManager.Text("null : " + field.GetType().ToString());
+					continue;
+				}
+
+				var attr = (KeyAttribute)field.GetCustomAttribute(typeof(KeyAttribute));
+				if (attr != null)
+				{
+					var key = attr.key;
+					key += "_Name";
+					name = MultiLanguageTextProvider.GetText(key);
+				}
+
+				if (isValueChanged)
+				{
+					name = "*" + name;
+				}
+				else
+				{
+					name = " " + name;
+				}
+
+				// display name(left side of table)
+				Manager.NativeManager.TableNextRow();
+				Manager.NativeManager.TableNextColumn();
+				// TODO : Separatorで区切るのはAssetなどの単位にする
+				// Make not separate first row
+				if (Manager.NativeManager.TableGetRowIndex() >= 2)
+				{
+					Manager.NativeManager.Separator();
+				}
+				Manager.NativeManager.Text(name);
+
+				// 配列かリストの時、エレメントの型を取得する
+				var valueType = value.GetType();
+				bool isArray = valueType.IsArray;
+				if (isArray)
+				{
+					valueType = valueType.GetElementType();
+				}
+				else if (valueType.IsGenericType && valueType.GetGenericTypeDefinition() == typeof(List<>))
+				{
+					valueType = valueType.GetGenericArguments()[0];
+				}
+
+				// display field(right side of table)
+				Manager.NativeManager.TableNextColumn();
+				// TODO : Separatorで区切るのはAssetなどの単位にする
+				// Make not separate first row
+				if (Manager.NativeManager.TableGetRowIndex() >= 2)
+				{
+					Manager.NativeManager.Separator();
+				}
+
+				// TODO : 基底クラスNodeのpublic List<Node> Children = new List<Node>();が反応してる
+				if (GuiDictionary.HasFunction(valueType))
+				{
+					var func = GuiDictionary.GetFunction(valueType);
+
+					if (isArray)
+					{
+						Array arrayValue = (Array)value;
+
+						// GuiIdが足りなければ、すべて再生成
+						// GenerateFieldGuiIdsの中でやりたいが、型情報からは要素数が分からないのでここで生成。
+						if (arrayValue.GetLength(0) > FieldGuiInfoList[i].subElement.Count())
+						{
+							FieldGuiInfoList[i].subElement.Clear();
+
+							foreach (var v in arrayValue)
+							{
+								FieldGuiInfoList[i].subElement.Add(new InspectorGuiInfo());
+							}
+						}
+
+						int j = 0;
+						bool isEdited = false;
+						foreach (var v in arrayValue)
+						{
+							string id = FieldGuiInfoList[i].subElement[j].Id;
+							var result = func(v, id);
+							if (result.isEdited)
+							{
+								if (valueType.IsValueType)
+								{
+									arrayValue.SetValue(result.value, j);
+								}
+								isEdited = true;
+							}
+							++j;
+						}
+						if (isEdited)
+						{
+							field.SetValue(targetObject, arrayValue);
+							context.CommandManager.NotifyEditFields(targetNode);
+						}
+					}
+					else
+					{
+						string id = FieldGuiInfoList[i].Id;
+						var result = func(value, id);
+						if (result.isEdited)
+						{
+							field.SetValue(targetObject, result.value);
+							context.CommandManager.NotifyEditFields(targetNode);
+						}
+					}
+				}
+				else
+				{
+					Manager.NativeManager.Text("No Regist : " + value.GetType().ToString() + " " + name);
+				}
+			}
+		}
+
+		public static void Update(NodeTreeGroupContext context, EditorState editorState, InspectorEditable targetNode)
 		{
 			var commandManager = context.CommandManager;
 			var nodeTreeGroup = context.NodeTreeGroup;
@@ -96,19 +239,15 @@ namespace Effekseer.GUI.Inspector
 			var env = editorState.Env;
 			var nodeTreeGroupEditorProperty = context.EditorProperty;
 
-			var getterSetters = new FieldGetterSetter[1];
-			getterSetters[0] = new FieldGetterSetter();
 
-			// エディタに表示する変数群
-			var fields = target.GetType().GetFields();
 
 			// Generate field GUI IDs when target is selected or changed.
 			// TODO : 複数ターゲットに対応できていない
-			if ((LastTarget == null && target != null) || (target.InstanceID != LastTarget.InstanceID))
+			if ((LastTarget == null && targetNode != null) || (targetNode.InstanceID != LastTarget.InstanceID))
 			{
-				GenerateFieldGuiIds(target);
+				GenerateFieldGuiIds(targetNode);
 			}
-			LastTarget = target;
+			LastTarget = targetNode;
 			if (Manager.NativeManager.BeginTable("Table", 2, 
 				swig.TableFlags.Resizable |
 				swig.TableFlags.BordersInnerV | swig.TableFlags.BordersOuterH |
@@ -122,139 +261,31 @@ namespace Effekseer.GUI.Inspector
 				Manager.NativeManager.TableSetColumnIndex(1);
 				Manager.NativeManager.PushItemWidth(-1);
 
-				for (int i = 0; i < fields.Length; ++i)
-				{
-					var field = fields[i];
-
-					getterSetters[0].Reset(target, field);
-					var prop = context.EditorProperty.Properties.FirstOrDefault(_ => _.InstanceID == target.InstanceID);
-					bool isValueChanged = false;
-					if (prop != null)
-					{
-						// 配列の変更が取れないのは別インスタンスに上書きされてるから？
-						// 配列のコピーではなく、配列の要素のコピーにすべき
-						isValueChanged = prop.IsValueEdited(getterSetters.Select(_ => _.GetName()).ToArray());
-					}
-
-					var getterSetter = getterSetters.Last();
-					var value = getterSetter.GetValue();
-					var name = getterSetter.GetName();
-
-					if (value == null)
-					{
-						// TODO : nullどうする？
-						//Manager.NativeManager.Text("null : " + field.GetType().ToString());
-						continue;
-					}
-
-					if (isValueChanged)
-					{
-						name = "*" + name;
-					}
-					else
-					{
-						name = " " + name;
-					}
-
-					// display name(left side of table)
-					Manager.NativeManager.TableNextRow();
-					Manager.NativeManager.TableNextColumn();
-					// TODO : Separatorで区切るのはAssetなどの単位にする
-					// Make not separate first row
-					if (Manager.NativeManager.TableGetRowIndex() >= 2)
-					{
-						Manager.NativeManager.Separator();
-					}
-					Manager.NativeManager.Text(name);
-
-					// 配列かリストの時、エレメントの型を取得する
-					var valueType = value.GetType();
-					bool isArray = valueType.IsArray;
-					if (isArray)
-					{
-						valueType = valueType.GetElementType();
-					}
-					else if (valueType.IsGenericType && valueType.GetGenericTypeDefinition() == typeof(List<>))
-					{
-						valueType = valueType.GetGenericArguments()[0];
-					}
-
-					// display field(right side of table)
-					Manager.NativeManager.TableNextColumn();
-					// TODO : Separatorで区切るのはAssetなどの単位にする
-					// Make not separate first row
-					if (Manager.NativeManager.TableGetRowIndex() >= 2)
-					{
-						Manager.NativeManager.Separator();
-					}
-
-					// TODO : 基底クラスNodeのpublic List<Node> Children = new List<Node>();が反応してる
-					if (GuiDictionary.HasFunction(valueType))
-					{
-						var func = GuiDictionary.GetFunction(valueType);
-
-						if (isArray)
-						{
-							Array arrayValue = (Array)value;
-
-							// GuiIdが足りなければ、すべて再生成
-							// GenerateFieldGuiIdsの中でやりたいが、型情報からは要素数が分からないのでここで生成。
-							if (arrayValue.GetLength(0) > FieldGuiInfoList[i].subElement.Count())
-							{
-								FieldGuiInfoList[i].subElement.Clear();
-
-								foreach (var v in arrayValue)
-								{
-									FieldGuiInfoList[i].subElement.Add(new InspectorGuiInfo());
-								}
-							}
-
-							int j = 0;
-							bool isEdited = false;
-							foreach (var v in arrayValue)
-							{
-								string id = FieldGuiInfoList[i].subElement[j].Id;
-								var result = func(v, id);
-								if (result.isEdited)
-								{
-									if (valueType.IsValueType)
-									{
-										arrayValue.SetValue(result.value, j);
-									}
-									isEdited = true;
-								}
-								++j;
-							}
-							if (isEdited)
-							{
-								field.SetValue(target, arrayValue);
-								context.CommandManager.NotifyEditFields(target);
-							}
-						}
-						else
-						{
-							string id = FieldGuiInfoList[i].Id;
-							var result = func(value, id);
-							if (result.isEdited)
-							{
-								field.SetValue(target, result.value);
-								context.CommandManager.NotifyEditFields(target);
-							}
-						}
-					}
-					else
-					{
-						Manager.NativeManager.Text("No Regist : " + value.GetType().ToString() + " " + name);
-					}
-				}
+				UpdateObject(context, editorState, targetNode, targetNode);
 			}
 			Manager.NativeManager.EndTable();
 			Manager.NativeManager.Separator();
 		}
 	}
 
+
 	class InspectorEditable : Node
 	{
+		public string Name = string.Empty;
+
+		//public EffectAsset.PositionParameter PositionParam = new EffectAsset.PositionParameter();
+		//public EffectAsset.RotationParameter RotationParam = new EffectAsset.RotationParameter();
+
+
+		// Attributes
+		[Key(key = "Position_NurbsCurveParameter_Scale")]
+		public float scale = 1.0f;
+		[Key(key = "Position_FixedParamater_Location")]
+		public Vector3F vector3f = new Vector3F();
+
+
+
+		// primitive types
 		public int Int1 = 0;
 		public float Float1 = 0.0f;
 		public string String1 = "text";
@@ -268,12 +299,14 @@ namespace Effekseer.GUI.Inspector
 
 		// 全てのコレクションに対しプログラムをする方法なかったっけ
 		// TODO : List
-		public List<int> ListInt1 = new List<int>{ 2, 3 };
+		public List<int> ListInt1 = new List<int> { 2, 3 };
 
 		// TODO : Vector
 		public Vector2D vector2 = new Vector2D();
 		public Vector3D vector3 = new Vector3D();
-		public Vector3F vector3f = new Vector3F();
+
+
+
 		public Vector3D[] vector3Array = new Vector3D[2] { new Vector3D(), new Vector3D() };
 
 		// TODO : string等、nullをどう扱うか
