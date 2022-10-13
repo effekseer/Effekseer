@@ -270,6 +270,10 @@ namespace Effekseer.EffectAsset
 		public PositionParameter PositionParam = new PositionParameter();
 
 		public RotationParameter RotationParam = new RotationParameter();
+
+		public Gradient GradientTest = new Gradient();
+
+		public Vector3WithRange Vector3WithRangeTest = new Vector3WithRange();
 	}
 
 	public class PositionParameter
@@ -355,4 +359,101 @@ namespace Effekseer.EffectAsset
 			}
 		}
 	}
+
+	public class Vector3WithRange
+	{
+		public FloatWithRange X = new FloatWithRange();
+		public FloatWithRange Y = new FloatWithRange();
+		public FloatWithRange Z = new FloatWithRange();
+
+		public Data.DrawnAs DrawnAs = Data.DrawnAs.CenterAndAmplitude;
+	}
+
+	public class Gradient
+	{
+		public unsafe struct ColorMarker
+		{
+			public float Position;
+			public float ColorR;
+			public float ColorG;
+			public float ColorB;
+			public float Intensity;
+		}
+
+		public struct AlphaMarker
+		{
+			public float Position;
+			public float Alpha;
+		}
+
+		public ColorMarker[] ColorMarkers;
+
+		public AlphaMarker[] AlphaMarkers;
+
+		public unsafe override bool Equals(object obj)
+		{
+			var o = (Gradient)obj;
+			if (o == null)
+			{
+				return false;
+			}
+
+			if (ColorMarkers.Count() != o.ColorMarkers.Count() || AlphaMarkers.Count() != o.AlphaMarkers.Count())
+			{
+				return false;
+			}
+
+			for (int i = 0; i < ColorMarkers.Count(); i++)
+			{
+				if (ColorMarkers[i].ColorR != o.ColorMarkers[i].ColorR ||
+					ColorMarkers[i].ColorG != o.ColorMarkers[i].ColorG ||
+					ColorMarkers[i].ColorB != o.ColorMarkers[i].ColorB ||
+					ColorMarkers[i].Intensity != o.ColorMarkers[i].Intensity ||
+					ColorMarkers[i].Position != o.ColorMarkers[i].Position)
+				{
+					return false;
+				}
+			}
+
+			for (int i = 0; i < AlphaMarkers.Count(); i++)
+			{
+				if (
+					AlphaMarkers[i].Alpha != o.AlphaMarkers[i].Alpha ||
+					AlphaMarkers[i].Position != o.AlphaMarkers[i].Position)
+				{
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		public unsafe void New()
+		{
+			ColorMarkers = new ColorMarker[2];
+			ColorMarkers[0].Position = 0;
+			ColorMarkers[0].Intensity = 1;
+			ColorMarkers[0].ColorR = 1.0f;
+			ColorMarkers[0].ColorG = 1.0f;
+			ColorMarkers[0].ColorB = 1.0f;
+
+			ColorMarkers[1].Position = 1;
+			ColorMarkers[1].Intensity = 1;
+			ColorMarkers[1].ColorR = 1.0f;
+			ColorMarkers[1].ColorG = 1.0f;
+			ColorMarkers[1].ColorB = 1.0f;
+
+			AlphaMarkers = new AlphaMarker[2];
+			AlphaMarkers[0].Position = 0.0f;
+			AlphaMarkers[0].Alpha = 1.0f;
+			AlphaMarkers[1].Position = 1.0f;
+			AlphaMarkers[1].Alpha = 1.0f;
+		}
+
+		public unsafe Gradient()
+		{
+			New();
+		}
+	}
+
 }
