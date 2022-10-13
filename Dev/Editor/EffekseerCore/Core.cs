@@ -9,6 +9,75 @@ using Effekseer.IO;
 
 namespace Effekseer
 {
+
+
+	public class CoreData
+	{
+		public static EffectAsset.EffectAsset[] EffectAssets = new EffectAsset.EffectAsset[0];
+	}
+
+	public class CoreContext
+	{
+		static EffectAsset.EffectAsset selectedEffect;
+
+		public static EffectAsset.EffectAsset SelectedEffect
+		{
+			get
+			{
+				return selectedEffect;
+			}
+			set
+			{
+				if (selectedEffect == value)
+				{
+					return;
+				}
+
+				selectedEffect = value;
+
+				SelectedEffectChanged?.Invoke(selectedEffect);
+			}
+		}
+
+		static EffectAsset.Node selectedEffectNode;
+
+		public static EffectAsset.Node SelectedEffectNode
+		{
+			get
+			{
+				return selectedEffectNode;
+			}
+			set
+			{
+				if (selectedEffectNode == value)
+				{
+					return;
+				}
+
+				selectedEffectNode = value;
+			}
+		}
+
+		public static Action<EffectAsset.EffectAsset> SelectedEffectChanged;
+
+		public static Action<EffectAsset.Node> SelectedEffectNodeChanged;
+	}
+
+	public class CoreOperator
+	{
+		public static void New()
+		{
+			CoreContext.SelectedEffectNode = null;
+			CoreContext.SelectedEffect = null;
+
+			var newEffect = new EffectAsset.EffectAsset();
+			CoreData.EffectAssets = new EffectAsset.EffectAsset[] { newEffect };
+
+			CoreContext.SelectedEffect = newEffect;
+		}
+	}
+
+
 	public class Core
 	{
 		public const string Version = "1.70";
