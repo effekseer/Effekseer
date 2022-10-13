@@ -121,12 +121,24 @@ namespace Effekseer.GUI.Inspector
 				}
 
 				var attr = (KeyAttribute)field.GetCustomAttribute(typeof(KeyAttribute));
+				string description = string.Empty;
 				if (attr != null)
 				{
-					var key = attr.key;
-					key += "_Name";
-					name = MultiLanguageTextProvider.GetText(key);
+					string key = attr.key + "_Name";
+
+					if (MultiLanguageTextProvider.HasKey(key))
+					{
+						name = MultiLanguageTextProvider.GetText(key);
+					}
+
+					key = attr.key + "_Desc";
+					if (MultiLanguageTextProvider.HasKey(key))
+					{
+						description = MultiLanguageTextProvider.GetText(key);
+					}
 				}
+
+
 
 				if (isValueChanged)
 				{
@@ -147,6 +159,18 @@ namespace Effekseer.GUI.Inspector
 					Manager.NativeManager.Separator();
 				}
 				Manager.NativeManager.Text(name);
+				// Description
+				if (Manager.NativeManager.IsItemHovered())
+				{
+					Manager.NativeManager.BeginTooltip();
+
+					Manager.NativeManager.Text(name);
+					Manager.NativeManager.Separator();
+					Manager.NativeManager.Text(description);
+
+					Manager.NativeManager.EndTooltip();
+				}
+
 
 				// 配列かリストの時、エレメントの型を取得する
 				var valueType = value.GetType();
