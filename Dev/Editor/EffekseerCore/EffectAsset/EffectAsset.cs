@@ -72,30 +72,60 @@ namespace Effekseer.EffectAsset
 
 	public class EffectAssetEnvironment : PartsTreeSystem.Environment
 	{
-		Dictionary<EffectAsset, string> pathes = new Dictionary<EffectAsset, string>();
+		Dictionary<EffectAsset, string> effectAssets = new Dictionary<EffectAsset, string>();
+
+		Dictionary<TextureAsset, string> textureAssets = new Dictionary<TextureAsset, string>();
+
 		public override PartsTreeSystem.Asset GetAsset(string path)
 		{
+			if (textureAssets.ContainsValue(path))
+			{
+				return textureAssets.Where(_ => _.Value == path).FirstOrDefault().Key;
+			}
+
 			var pathElms = VirtualPathUtility.SplitPath(path);
-			if (pathElms.Length != 2)
+			if (pathElms.Length == 2)
 			{
-				return null;
+				if (effectAssets.ContainsValue(pathElms[0]))
+				{
+					return effectAssets.Where(_ => _.Value == pathElms[0]).FirstOrDefault().Key.NodeTreeAsset;
+				}
 			}
 
-			if (pathes.ContainsValue(pathElms[0]))
+			if (pathElms.Length == 2)
 			{
-				return pathes.Where(_ => _.Value == pathElms[0]).FirstOrDefault().Key.NodeTreeAsset;
+				var effectAsset = new EffectAsset();
+				effectAsset.Load(pathElms[0], this);
+
+				effectAssets.Add(effectAsset, pathElms[0]);
+				return effectAsset.NodeTreeAsset;
 			}
 
-			var effectAsset = new EffectAsset();
-			effectAsset.Load(pathElms[0], this);
+			{
+				Utils.TextureInformation texInfo = new Utils.TextureInformation();
+				if (texInfo.Load(path))
+				{
+					var asset = new TextureAsset();
+					textureAssets.Add(asset, path);
+					return asset;
+				}
+			}
 
-			pathes.Add(effectAsset, pathElms[0]);
-			return effectAsset.NodeTreeAsset;
+			return null;
 		}
 
 		public override string GetAssetPath(PartsTreeSystem.Asset asset)
 		{
-			foreach (var path in pathes)
+			foreach (var path in textureAssets)
+			{
+				if (path.Key == asset)
+				{
+					var assetPath = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), path.Value);
+					return assetPath;
+				}
+			}
+
+			foreach (var path in effectAssets)
 			{
 				if (path.Key.NodeTreeAsset == asset)
 				{
@@ -225,6 +255,11 @@ namespace Effekseer.EffectAsset
 		}
 	}
 
+	public class TextureAsset : PartsTreeSystem.Asset
+	{
+
+	}
+
 	public class ProceduralModelAsset : PartsTreeSystem.Asset
 	{
 
@@ -274,6 +309,8 @@ namespace Effekseer.EffectAsset
 		public Gradient GradientTest = new Gradient();
 
 		public Vector3WithRange Vector3WithRangeTest = new Vector3WithRange();
+
+		public TextureAsset TextureTest = null;
 	}
 
 	public class PositionParameter
