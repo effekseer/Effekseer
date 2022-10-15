@@ -77,9 +77,9 @@ void VertexArray::Init()
 
 	GLCheckError();
 
-	GLExt::glGenVertexArrays(1, &m_vertexArray);
+	vao_ = std::make_unique<Backend::VertexArrayObject>();
 
-	GLExt::glBindVertexArray(m_vertexArray);
+	GLExt::glBindVertexArray(vao_->GetVAO());
 
 	if (m_vertexBuffer != nullptr)
 	{
@@ -118,11 +118,7 @@ void VertexArray::Release()
 {
 	GLCheckError();
 
-	if (m_vertexArray != 0)
-	{
-		GLExt::glDeleteVertexArrays(1, &m_vertexArray);
-		m_vertexArray = 0;
-	}
+	vao_.reset();
 
 	GLCheckError();
 }
