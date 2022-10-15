@@ -180,6 +180,40 @@ void DeviceObject::OnResetDevice()
 {
 }
 
+VertexArrayObject::VertexArrayObject()
+{
+	if (GLExt::IsSupportedVertexArray())
+	{
+		GLExt::glGenVertexArrays(1, &vao_);
+		gen_thread_id_ = std::this_thread::get_id();
+	}
+}
+
+VertexArrayObject::~VertexArrayObject()
+{
+	if (vao_ > 0)
+	{
+		const auto thread_id_ = std::this_thread::get_id();
+
+		if (gen_thread_id_ != thread_id_)
+		{
+			Effekseer::Log(Effekseer::LogType::Error, "It have to delete the shader in a thread where the shader is generated.");
+		}
+
+		GLExt::glDeleteVertexArrays(1, &vao_);
+	}
+}
+
+bool VertexArrayObject::IsValid() const
+{
+	return vao_ != 0;
+}
+
+GLuint VertexArrayObject::GetVAO() const
+{
+	return vao_;
+}
+
 VertexBuffer::VertexBuffer(GraphicsDevice* graphicsDevice)
 	: graphicsDevice_(graphicsDevice)
 {
@@ -820,11 +854,6 @@ bool Shader::Compile()
 
 	program_ = program;
 
-	if (GLExt::IsSupportedVertexArray())
-	{
-		GLExt::glGenVertexArrays(1, &vao_);
-	}
-
 	if (layout_ != nullptr)
 	{
 		textureLocations_.reserve(layout_->GetTextures().size());
@@ -848,11 +877,6 @@ void Shader::Reset()
 	if (program_ > 0)
 	{
 		GLExt::glDeleteProgram(program_);
-	}
-
-	if (vao_ > 0)
-	{
-		GLExt::glDeleteVertexArrays(1, &vao_);
 	}
 
 	textureLocations_.clear();
@@ -897,10 +921,36 @@ void Shader::OnResetDevice()
 	Compile();
 }
 
+GLuint Shader::GetProgram() const
+{
+	return program_;
+}
+
+const Effekseer::Backend::UniformLayoutRef& Shader::GetLayout() const
+{
+	return layout_;
+}
+
+const Effekseer::CustomVector<GLint>& Shader::GetTextureLocations() const
+{
+	return textureLocations_;
+}
+
+const Effekseer::CustomVector<GLint>& Shader::GetUniformLocations() const
+{
+	return uniformLocations_;
+}
+
 bool PipelineState::Init(const Effekseer::Backend::PipelineStateParameter& param)
 {
 	param_ = param;
 	attribLocations_ = GetVertexAttribLocations(param_.VertexLayoutPtr.DownCast<Backend::VertexLayout>(), param_.ShaderPtr.DownCast<Backend::Shader>());
+
+	if (GLExt::IsSupportedVertexArray())
+	{
+		vao_ = std::make_unique<VertexArrayObject>();
+	}
+
 	return true;
 }
 
@@ -1286,7 +1336,7 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 	if (GLExt::IsSupportedVertexArray())
 	{
 		glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &currentVAO);
-		GLExt::glBindVertexArray(shader->GetVAO());
+		GLExt::glBindVertexArray(pip->GetVAO()->GetVAO());
 	}
 
 	GLExt::glBindBuffer(GL_ARRAY_BUFFER, static_cast<VertexBuffer*>(drawParam.VertexBufferPtr.Get())->GetBuffer());
