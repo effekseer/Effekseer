@@ -6,13 +6,14 @@ on:
       - master
       - 15x
       - 16x
-      - 16x_ex
+      - 17x
+
   pull_request:
     branches:
       - master
       - 15x
       - 16x
-      - 16x_ex
+      - 17x
 
 env:
   EFFEKSEER_VERSION: 170
