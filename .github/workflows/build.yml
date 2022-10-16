@@ -30,7 +30,11 @@ jobs:
          git submodule update --init
          git lfs install
          git lfs pull
-        
+
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.0.x'
+
       - name: Build
         run: |
          cmake -S . -B build -A Win32 -DBUILD_VIEWER=ON -D BUILD_TEST=ON -D BUILD_EXAMPLES=ON
@@ -124,7 +128,11 @@ jobs:
           sudo apt-get install -y  libpulse-dev libglvnd-dev libx11-dev libopenal-dev libvulkan-dev \
                libgl1-mesa-dev libgles2-mesa-dev libglu1-mesa-dev libgtk-3-dev ninja-build dotnet-sdk-3.1 \
                xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev zenity
-        
+
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.0.x'
+
       - name: Build
         shell: bash
         run: |
