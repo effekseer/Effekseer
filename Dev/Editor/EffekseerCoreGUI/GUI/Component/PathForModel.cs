@@ -106,21 +106,26 @@ namespace Effekseer.GUI.Component
 
 			if (filePath != string.Empty)
 			{
+				var ext = System.IO.Path.GetExtension(filePath).ToLower().Replace(".", "");
+
 				if (Manager.NativeManager.Button(Resources.GetString("Delete") + id2, buttonSizeX))
 				{
 					btn_delete_Click();
 				}
 
-				Manager.NativeManager.SameLine();
-
 				isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 
-				if (Manager.NativeManager.Button(Resources.GetString("ResetMaginification") + id3, buttonSizeX * 2))
+				if(ext != "efkmodel")
 				{
-					btn_reload_Click();
-				}
+					Manager.NativeManager.SameLine();
 
-				isHovered = isHovered || Manager.NativeManager.IsItemHovered();
+					if (Manager.NativeManager.Button(Resources.GetString("ResetMaginification") + id3, buttonSizeX * 2))
+					{
+						btn_reload_Click();
+					}
+
+					isHovered = isHovered || Manager.NativeManager.IsItemHovered();
+				}
 			}
 
 			if (dd != null)
