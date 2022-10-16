@@ -16,11 +16,19 @@ namespace Effekseer
 		public static EffectAsset.EffectAsset[] EffectAssets = new EffectAsset.EffectAsset[0];
 	}
 
+	public class CoreEffectContext
+	{
+		public EffectAsset.EffectAsset Asset;
+		public EffectAsset.EffectAssetEditorContext Context;
+	}
+
 	public class CoreContext
 	{
-		static EffectAsset.EffectAsset selectedEffect;
+		public static EffectAsset.EffectAssetEnvironment Environment = new EffectAsset.EffectAssetEnvironment();
 
-		public static EffectAsset.EffectAsset SelectedEffect
+		static CoreEffectContext selectedEffect;
+
+		public static CoreEffectContext SelectedEffect
 		{
 			get
 			{
@@ -58,7 +66,7 @@ namespace Effekseer
 			}
 		}
 
-		public static Action<EffectAsset.EffectAsset> SelectedEffectChanged;
+		public static Action<CoreEffectContext> SelectedEffectChanged;
 
 		public static Action<EffectAsset.Node> SelectedEffectNodeChanged;
 	}
@@ -71,9 +79,13 @@ namespace Effekseer
 			CoreContext.SelectedEffect = null;
 
 			var newEffect = new EffectAsset.EffectAsset();
+			newEffect.New(CoreContext.Environment);
 			CoreData.EffectAssets = new EffectAsset.EffectAsset[] { newEffect };
 
-			CoreContext.SelectedEffect = newEffect;
+			var context = new CoreEffectContext();
+			context.Asset = newEffect;
+			context.Context = newEffect.CreateEditorContext(CoreContext.Environment);
+			CoreContext.SelectedEffect = context;
 		}
 	}
 
@@ -413,6 +425,8 @@ namespace Effekseer
 			{
 				InitializeScripts(entryDirectory);
 			}
+
+			CoreOperator.New();
 		}
 
 		static void InitializeScripts(string entryDirectory)
