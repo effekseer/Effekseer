@@ -217,7 +217,7 @@ void RotationFunctions::InitRotation(RotationState& rotation_values, const Rotat
 		{
 			rotation_values.axis.axis = SIMD::Vec3f(0, 1, 0);
 		}
-		rotation_values.axis.axis.Normalize();
+		rotation_values.axis.axis = rotation_values.axis.axis.Normalize();
 	}
 	else if (rotationParam.RotationType == ParameterRotationType::ParameterRotationType_AxisEasing)
 	{
@@ -229,7 +229,7 @@ void RotationFunctions::InitRotation(RotationState& rotation_values, const Rotat
 		{
 			rotation_values.axis.axis = SIMD::Vec3f(0, 1, 0);
 		}
-		rotation_values.axis.axis.Normalize();
+		rotation_values.axis.axis = rotation_values.axis.axis.Normalize();
 	}
 	else if (rotationParam.RotationType == ParameterRotationType::ParameterRotationType_FCurve)
 	{
