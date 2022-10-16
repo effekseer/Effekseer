@@ -193,10 +193,18 @@ namespace Effekseer.GUI.Inspector
 					Manager.NativeManager.Separator();
 				}
 
-				// TODO : Šî’êƒNƒ‰ƒXNode‚Ìpublic List<Node> Children = new List<Node>();‚ª”½‰ž‚µ‚Ä‚é
-				if (GuiDictionary.HasFunction(valueType))
+				var guiFunctionKey = valueType;
+
+				// the key about enums gui function is System.Enum
+				if (valueType.IsEnum)
 				{
-					var func = GuiDictionary.GetFunction(valueType);
+					guiFunctionKey = typeof(System.Enum);
+				}
+
+				// TODO : make ignore "public List<Node> Children = new List<Node>();" node member.
+				if (GuiDictionary.HasFunction(guiFunctionKey))
+				{
+					var func = GuiDictionary.GetFunction(guiFunctionKey);
 
 					if (isArray)
 					{
@@ -306,6 +314,25 @@ namespace Effekseer.GUI.Inspector
 		public float scale = 1.0f;
 		[Key(key = "Position_FixedParamater_Location")]
 		public Vector3F vector3f = new Vector3F();
+
+		// Enum
+		[EffectAsset.VisiblityController(ID = 100)]
+		public ParamaterType Type = ParamaterType.Fixed;
+		public enum ParamaterType : int
+		{
+			[Key(key = "Position_ParamaterType_Fixed")]
+			Fixed = 0,
+			[Key(key = "Position_ParamaterType_PVA")]
+			PVA = 1,
+			[Key(key = "Position_ParamaterType_Easing")]
+			Easing = 2,
+			[Key(key = "Position_ParamaterType_LocationFCurve")]
+			LocationFCurve = 3,
+			[Key(key = "Position_ParameterType_NurbsCurve")]
+			NurbsCurve = 4,
+			[Key(key = "Position_ParameterType_ViewOffset")]
+			ViewOffset = 5,
+		}
 
 
 
