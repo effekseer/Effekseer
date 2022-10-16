@@ -29,6 +29,7 @@ namespace Effekseer.GUI.Inspector
 				{ typeof(string), GuiString },
 				{ typeof(Vector3D), GuiVector3D },
 				{ typeof(Vector3F), GuiVector3F },
+				{ typeof(System.Enum), GuiEnum },
 			};
 		}
 
@@ -154,6 +155,90 @@ namespace Effekseer.GUI.Inspector
 			else
 			{
 				Manager.NativeManager.Text("Assert GuiVector3F");
+			}
+
+			return ret;
+		}
+
+		private InspectorGuiResult GuiEnum(object value, string label)
+		{
+			InspectorGuiResult ret = new InspectorGuiResult();
+
+			var enumType = value.GetType();
+			var isEnum = enumType.IsEnum;
+			if (!isEnum)
+			{
+				Manager.NativeManager.Text("Assert Enum");
+				return ret;
+			}
+
+			// to avoid to change placesGetValues, use  GetFields
+			var list = new List<int>();
+			var fields = enumType.GetFields();
+			List<object> fieldNames = new List<object>();
+
+			// generate field names
+			foreach (var f in fields)
+			{
+				if (f.FieldType != enumType) continue;
+
+				var attributes = f.GetCustomAttributes(false);
+
+				object name = f.ToString();
+
+				var key = KeyAttribute.GetKey(attributes);
+				var nameKey = key + "_Name";
+				if (string.IsNullOrEmpty(key))
+				{
+					nameKey = f.FieldType.ToString() + "_" + f.ToString() + "_Name";
+				}
+
+				if (MultiLanguageTextProvider.HasKey(nameKey))
+				{
+					name = new MultiLanguageString(nameKey);
+				}
+				else
+				{
+					name = NameAttribute.GetName(attributes);
+					if (name.ToString() == string.Empty)
+					{
+						name = f.ToString();
+					}
+				}
+
+				var iconAttribute = IconAttribute.GetIcon(attributes);
+				if (iconAttribute != null)
+				{
+					name = iconAttribute.code + name;
+				}
+
+				list.Add((int)f.GetValue(null));
+				fieldNames.Add(name);
+			}
+
+			// show gui
+			int[] enums = list.ToArray();
+			int selectedValues = (int)value;
+			var v = enums.Select((_, i) => Tuple.Create(_, i)).Where(_ => _.Item1 == selectedValues).FirstOrDefault();
+			if (Manager.NativeManager.BeginCombo(label, fieldNames[v.Item2].ToString(), swig.ComboFlags.None))
+			{
+				for (int i = 0; i < fieldNames.Count; i++)
+				{
+					bool isSelected = (fieldNames[v.Item2] == fieldNames[i]);
+
+					if (Manager.NativeManager.Selectable(fieldNames[i].ToString(), isSelected, swig.SelectableFlags.None))
+					{
+						selectedValues = enums[i];
+
+						ret.isEdited = true;
+						ret.value = System.Enum.ToObject(enumType, i);
+					}
+					if (isSelected)
+					{
+						Manager.NativeManager.SetItemDefaultFocus();
+					}
+				}
+				Manager.NativeManager.EndCombo();
 			}
 
 			return ret;
