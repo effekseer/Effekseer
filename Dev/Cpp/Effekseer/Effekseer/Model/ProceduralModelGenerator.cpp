@@ -77,10 +77,10 @@ static void CalcTangentSpace(const ProceduralMeshVertex& v1, const ProceduralMes
 	}
 
 	tangent = SIMD::Vec3f(u[0], u[1], u[2]);
-	tangent.Normalize();
+	tangent = tangent.Normalize();
 
 	binormal = SIMD::Vec3f(v[0], v[1], v[2]);
-	binormal.Normalize();
+	binormal = binormal.Normalize();
 }
 
 static void CalculateNormal(ProceduralMesh& mesh)
