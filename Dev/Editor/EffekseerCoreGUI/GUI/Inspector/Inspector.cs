@@ -72,7 +72,23 @@ namespace Effekseer.GUI.Inspector
 
 		private static InspectorEditable LastTarget = null;
 
-		private static void GenerateFieldGuiIds(InspectorEditable target)
+		private static Dictionary<int, object> VisiblityControllers = new Dictionary<int, object>();
+
+		private static void UpdateVisiblityControllers(InspectorEditable target)
+		{
+			var fields = target.GetType().GetFields();
+			foreach (var field in fields)
+			{
+				// visiblity controller attribute
+				var attr = (EffectAsset.VisiblityControllerAttribute)field.GetCustomAttribute(typeof(EffectAsset.VisiblityControllerAttribute));
+				if (attr != null)
+				{
+					VisiblityControllers[attr.ID] = field.GetValue(target);
+				}
+			}
+		}
+
+		private static void GenerateFieldGuiInfos(InspectorEditable target)
 		{
 			if (FieldGuiInfoList == null)
 			{
@@ -85,6 +101,10 @@ namespace Effekseer.GUI.Inspector
 			{
 				FieldGuiInfoList.Add(new InspectorGuiInfo());
 			}
+
+			// visiblity controller attribute
+			VisiblityControllers.Clear();
+			UpdateVisiblityControllers(target);
 		}
 
 		private static void UpdateObject(NodeTreeGroupContext context, EditorState editorState, Node targetNode, object targetObject)
@@ -120,24 +140,44 @@ namespace Effekseer.GUI.Inspector
 					continue;
 				}
 
-				var attr = (KeyAttribute)field.GetCustomAttribute(typeof(KeyAttribute));
+				// key attrs
 				string description = string.Empty;
-				if (attr != null)
 				{
-					string key = attr.key + "_Name";
-
-					if (MultiLanguageTextProvider.HasKey(key))
+					var attr = (KeyAttribute)field.GetCustomAttribute(typeof(KeyAttribute));
+					if (attr != null)
 					{
-						name = MultiLanguageTextProvider.GetText(key);
-					}
+						string key = attr.key + "_Name";
 
-					key = attr.key + "_Desc";
-					if (MultiLanguageTextProvider.HasKey(key))
-					{
-						description = MultiLanguageTextProvider.GetText(key);
+						if (MultiLanguageTextProvider.HasKey(key))
+						{
+							name = MultiLanguageTextProvider.GetText(key);
+						}
+
+						key = attr.key + "_Desc";
+						if (MultiLanguageTextProvider.HasKey(key))
+						{
+							description = MultiLanguageTextProvider.GetText(key);
+						}
 					}
 				}
 
+				// VisiblityControlledAttributes
+				bool isVisible = false;
+				{
+					var attr = (EffectAsset.VisiblityControlledAttribute)field.GetCustomAttribute(typeof(EffectAsset.VisiblityControlledAttribute));
+					if (attr != null)
+					{
+						if (VisiblityControllers.ContainsKey(attr.ID))
+						{
+							var controllerValue = (int)VisiblityControllers[attr.ID];
+							isVisible = (attr.Value == controllerValue);
+						}
+					}
+				}
+				if (isVisible)
+				{
+					continue;
+				}
 
 
 				if (isValueChanged)
@@ -277,7 +317,7 @@ namespace Effekseer.GUI.Inspector
 			// TODO : 複数ターゲットに対応できていない
 			if ((LastTarget == null && targetNode != null) || (targetNode.InstanceID != LastTarget.InstanceID))
 			{
-				GenerateFieldGuiIds(targetNode);
+				GenerateFieldGuiInfos(targetNode);
 			}
 			LastTarget = targetNode;
 			if (Manager.NativeManager.BeginTable("Table", 2, 
@@ -292,6 +332,8 @@ namespace Effekseer.GUI.Inspector
 				Manager.NativeManager.PushItemWidth(-1);
 				Manager.NativeManager.TableSetColumnIndex(1);
 				Manager.NativeManager.PushItemWidth(-1);
+
+				UpdateVisiblityControllers(targetNode);
 
 				UpdateObject(context, editorState, targetNode, targetNode);
 			}
@@ -310,8 +352,10 @@ namespace Effekseer.GUI.Inspector
 
 
 		// Attributes
+		[EffectAsset.VisiblityControlled(ID = 100, Value = 0)]
 		[Key(key = "Position_NurbsCurveParameter_Scale")]
 		public float scale = 1.0f;
+		[EffectAsset.VisiblityControlled(ID = 100, Value = 1)]
 		[Key(key = "Position_FixedParamater_Location")]
 		public Vector3F vector3f = new Vector3F();
 
