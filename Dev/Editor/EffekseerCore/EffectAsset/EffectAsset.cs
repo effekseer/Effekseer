@@ -275,22 +275,36 @@ namespace Effekseer.EffectAsset
 		public void AddChild(PartsTreeSystem.INode node)
 		{
 			Children.Add(node as Node);
+			AddedNode?.Invoke(this, node as Node);
 		}
 
 		public void RemoveChild(int instanceID)
 		{
-			Children.RemoveAll(_ => _.InstanceID == instanceID);
+			var found = Children.FirstOrDefault(_ => _.InstanceID == instanceID);
+
+			if (found != null)
+			{
+				Children.Remove(found);
+				AddedNode?.Invoke(this, found);
+			}
 		}
 
 		public void InsertChild(int index, PartsTreeSystem.INode node)
 		{
 			Children.Insert(index, node as Node);
+			InsertedNode?.Invoke(this, node as Node);
 		}
 
 		public IReadOnlyCollection<PartsTreeSystem.INode> GetChildren()
 		{
 			return Children;
 		}
+
+		public event Action<Node, Node> AddedNode;
+
+		public event Action<Node, Node> RemovedNode;
+
+		public event Action<Node, Node> InsertedNode;
 	}
 
 	public class RootNode : Node
