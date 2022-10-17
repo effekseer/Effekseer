@@ -162,7 +162,7 @@ namespace Effekseer.GUI.Inspector
 				}
 
 				// VisiblityControlledAttributes
-				bool isVisible = false;
+				bool isVisible = true;
 				{
 					var attr = (EffectAsset.VisiblityControlledAttribute)field.GetCustomAttribute(typeof(EffectAsset.VisiblityControlledAttribute));
 					if (attr != null)
@@ -174,7 +174,7 @@ namespace Effekseer.GUI.Inspector
 						}
 					}
 				}
-				if (isVisible)
+				if (!isVisible)
 				{
 					continue;
 				}
