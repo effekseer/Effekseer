@@ -82,6 +82,7 @@ file(GLOB files
     Effekseer/Properties/*.cs
     Effekseer/Utils/*.cs
     Effekseer/GUI/Dock/ProceduralModel.cs
+    Effekseer/GUI/Dock/NodeTreeEditor.cs
 )
 
 list(APPEND files
