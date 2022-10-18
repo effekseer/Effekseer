@@ -27,11 +27,11 @@ namespace Effekseer.GUI.Dock
 		/// <summary>
 		/// For maintain parameters when removing and adding immediately
 		/// </summary>
-		internal Dictionary<Effekseer.Data.NodeBase, NodeTreeEditorNode> temporalChangingNodeTreeViews = new Dictionary<Data.NodeBase, NodeTreeEditorNode>();
+		internal Dictionary<EffectAsset.Node, NodeTreeEditorNode> temporalChangingNodeTreeViews = new Dictionary<EffectAsset.Node, NodeTreeEditorNode>();
 
 		public NodeTreeEditor()
 		{
-			Label = Icons.PanelNodeTree + Resources.GetString("NodeTree") + "###NodeTree";
+			Label = Icons.PanelNodeTree + Resources.GetString("NodeTreeEditor") + "###NodeTreeEditor";
 
 			Core.OnAfterNew += OnRenew;
 			Core.OnAfterLoad += OnRenew;
@@ -52,7 +52,20 @@ namespace Effekseer.GUI.Dock
 				return item;
 			};
 
-			menuItems.Add(create_menu_item_from_commands(Commands.AddNode));
+			// TODO fix it
+
+			Func<bool> addNode = () =>
+			{
+				CoreContext.SelectedEffect.Context.CommandManager.AddNode(
+				CoreContext.SelectedEffect.Asset.NodeTreeAsset,
+				CoreContext.SelectedEffect.Context.NodeTree,
+				CoreContext.SelectedEffectNode.InstanceID,
+				typeof(EffectAsset.ParticleNode),
+				CoreContext.Environment);
+				return true;
+			};
+
+			menuItems.Add(create_menu_item_from_commands(addNode));
 			menuItems.Add(create_menu_item_from_commands(Commands.InsertNode));
 			menuItems.Add(create_menu_item_from_commands(Commands.RemoveNode));
 			menuItems.Add(create_menu_item_from_commands(Commands.RenameNode));
@@ -117,47 +130,51 @@ namespace Effekseer.GUI.Dock
 			// Run exchange events
 			foreach (var pair in exchangeEvents)
 			{
-				Func<int, List<NodeTreeEditorNode>, NodeTreeEditorNode> findNode = null;
+				var n1 = FindNode(Children[0], pair.Item1);
+				var n2 = FindNode(Children[0], pair.Item2);
 
-				findNode = (int id, List<NodeTreeEditorNode> ns) =>
-				{
-					foreach (var n in ns)
-					{
-						if (n.UniqueID == id) return n;
-						var ret = findNode(id, n.Children.Internal);
-						if (ret != null)
-						{
-							return ret;
-						}
-					}
-
-					return null;
-				};
-
-				var n1 = findNode(pair.Item1, Children.Internal);
-				var n2 = findNode(pair.Item2, Children.Internal);
-
-				var isNode = n1.Node is Data.Node;
+				var isNode = n1.Node is EffectAsset.ParticleNode;
 
 				if (isNode)
 				{
-					var movedNode = n1.Node as Data.Node;
+					var movedNode = n1.Node as EffectAsset.ParticleNode;
 
 					if (pair.Item3 == MovingNodeEditorEventType.AddLast)
 					{
-						Core.MoveNode(movedNode, n2.Node.Parent, int.MaxValue);
+						var parent = FindParentNode(Children[0], n2.UniqueID);
+						CoreContext.SelectedEffect.Context.CommandManager.MoveNode(
+							CoreContext.SelectedEffect.Asset.NodeTreeAsset,
+							CoreContext.SelectedEffect.Context.NodeTree,
+							movedNode.InstanceID,
+							parent.Node.InstanceID,
+							int.MaxValue,
+							CoreContext.Environment);
 					}
 					else if (pair.Item3 == MovingNodeEditorEventType.Insert)
 					{
 						// to avoid root node
-						if (n2.Node is Data.Node)
+						if (n2.Node is EffectAsset.ParticleNode)
 						{
-							Core.MoveNode(movedNode, n2.Node.Parent, n2.Node.Parent.Children.Internal.IndexOf(n2.Node as Data.Node));
+							var parent = FindParentNode(Children[0], n2.UniqueID);
+							CoreContext.SelectedEffect.Context.CommandManager.MoveNode(
+								CoreContext.SelectedEffect.Asset.NodeTreeAsset,
+								CoreContext.SelectedEffect.Context.NodeTree,
+								movedNode.InstanceID,
+								parent.Node.InstanceID,
+								parent.Children.Internal.IndexOf(n2),
+								CoreContext.Environment);
 						}
 					}
 					else if (pair.Item3 == MovingNodeEditorEventType.AddAsChild)
 					{
-						Core.MoveNode(movedNode, n2.Node, int.MaxValue);
+						var parent = FindParentNode(Children[0], n2.UniqueID);
+						CoreContext.SelectedEffect.Context.CommandManager.MoveNode(
+							CoreContext.SelectedEffect.Asset.NodeTreeAsset,
+							CoreContext.SelectedEffect.Context.NodeTree,
+							movedNode.InstanceID,
+							n2.Node.InstanceID,
+							int.MaxValue,
+							CoreContext.Environment);
 					}
 					else
 					{
@@ -182,7 +199,7 @@ namespace Effekseer.GUI.Dock
 		public void Renew()
 		{
 			// Reset all
-			if (Children.Count != 1 || Children[0].Node != Core.Root)
+			if (Children.Count != 1 || Children[0].Node != CoreContext.SelectedEffect.Context.NodeTree.Root)
 			{
 				Children.Lock();
 				foreach (var child in Children.Internal)
@@ -192,10 +209,10 @@ namespace Effekseer.GUI.Dock
 				Children.Unlock();
 				Children.Clear();
 
-				Children.Add(new NodeTreeEditorNode(this, Core.Root));
+				Children.Add(new NodeTreeEditorNode(this, CoreContext.SelectedEffect.Context.NodeTree.Root as EffectAsset.Node));
 			}
 
-			Action<NodeTreeEditorNode, Data.NodeBase> set_nodes = null;
+			Action<NodeTreeEditorNode, EffectAsset.Node> set_nodes = null;
 			set_nodes = (treenode, node) =>
 			{
 				var tns = treenode.Children;
@@ -230,7 +247,7 @@ namespace Effekseer.GUI.Dock
 				}
 			};
 
-			set_nodes(Children[0], Core.Root);
+			set_nodes(Children[0], CoreContext.SelectedEffect.Context.NodeTree.Root as EffectAsset.Node);
 		}
 
 		internal void Popup()
@@ -261,7 +278,7 @@ namespace Effekseer.GUI.Dock
 
 		void ReadSelect()
 		{
-			Func<Data.NodeBase, Utils.DelayedList<NodeTreeEditorNode>, NodeTreeEditorNode> search_node = null;
+			Func<EffectAsset.Node, Utils.DelayedList<NodeTreeEditorNode>, NodeTreeEditorNode> search_node = null;
 			search_node = (searched_node, treenodes) =>
 			{
 				if (search_node == null) return null;
@@ -275,7 +292,7 @@ namespace Effekseer.GUI.Dock
 				return null;
 			};
 
-			var node = search_node(Core.SelectedNode, Children);
+			var node = search_node(CoreContext.SelectedEffectNode, Children);
 
 			SelectedNode = node;
 		}
@@ -284,6 +301,46 @@ namespace Effekseer.GUI.Dock
 		{
 			ReadSelect();
 		}
+
+
+		NodeTreeEditorNode FindNode(NodeTreeEditorNode node, int uniqueID)
+		{
+			if (node.UniqueID == uniqueID)
+			{
+				return node;
+			}
+
+			foreach (var child in node.Children.Internal)
+			{
+				var found = FindNode(child, uniqueID);
+				if (found != null)
+				{
+					return found;
+				}
+			}
+
+			return null;
+		}
+
+		NodeTreeEditorNode FindParentNode(NodeTreeEditorNode node, int childUniqueID)
+		{
+			foreach (var child in node.Children.Internal)
+			{
+				if (child.UniqueID == childUniqueID)
+				{
+					return node;
+				}
+
+				var found = FindParentNode(child, childUniqueID);
+				if (found != null)
+				{
+					return found;
+				}
+			}
+
+			return null;
+		}
+
 	}
 
 	enum MovingNodeEditorEventType
@@ -298,7 +355,7 @@ namespace Effekseer.GUI.Dock
 		string id = "";
 		public int UniqueID { get; private set; }
 
-		public Data.NodeBase Node { get; private set; } = null;
+		public EffectAsset.Node Node { get; private set; } = null;
 
 		internal Utils.DelayedList<NodeTreeEditorNode> Children = new Utils.DelayedList<NodeTreeEditorNode>();
 
@@ -312,7 +369,7 @@ namespace Effekseer.GUI.Dock
 
 		public int TreeNodeIndex = 0;
 
-		public NodeTreeEditorNode(NodeTreeEditor treeView, Data.NodeBase node, bool createChildren = false)
+		public NodeTreeEditorNode(NodeTreeEditor treeView, EffectAsset.Node node, bool createChildren = false)
 		{
 			UniqueID = Manager.GetUniqueID();
 			id = "###" + UniqueID.ToString();
@@ -329,7 +386,7 @@ namespace Effekseer.GUI.Dock
 				}
 			}
 
-			var effectNode = node as Data.Node;
+			var effectNode = node as EffectAsset.ParticleNode;
 			if (effectNode != null)
 			{
 				lodBehaviourEnumControl = new BindableComponent.Enum();
@@ -351,9 +408,9 @@ namespace Effekseer.GUI.Dock
 		{
 			Command.CommandManager.StartCollection();
 
-			Action<Data.NodeBase.ChildrenCollection> recurse = null;
+			Action<List<EffectAsset.Node>> recurse = null;
 
-			Node.IsRendered.SetValue(value);
+			Node.IsRendered = value;
 
 			if (recursion)
 			{
@@ -361,7 +418,7 @@ namespace Effekseer.GUI.Dock
 				{
 					for (int i = 0; i < t.Count; i++)
 					{
-						t[i].IsRendered.SetValue(value);
+						t[i].IsRendered = value;
 					}
 
 					for (int i = 0; i < t.Count; i++)
@@ -380,14 +437,10 @@ namespace Effekseer.GUI.Dock
 
 		public void AddEvent(bool recursion)
 		{
-			if (Node is Data.Node)
-			{
-				var realNode = (Data.Node)Node;
-			}
+			Node.AddedNode += Node_AddedNode;
+			Node.RemovedNode += Node_RemovedNode;
+			Node.InsertedNode += Node_InsertedNode;
 
-			Node.OnAfterAddNode += OnAfterAddNode;
-			Node.OnAfterRemoveNode += OnAfterRemoveNode;
-			Node.OnAfterExchangeNodes += OnAfterExchangeNodes;
 			if (recursion)
 			{
 				for (int i = 0; i < Children.Count; i++)
@@ -399,14 +452,10 @@ namespace Effekseer.GUI.Dock
 
 		public void RemoveEvent(bool recursion)
 		{
-			if (Node is Data.Node)
-			{
-				var realNode = (Data.Node)Node;
-			}
+			Node.AddedNode -= Node_AddedNode;
+			Node.RemovedNode -= Node_RemovedNode;
+			Node.InsertedNode -= Node_InsertedNode;
 
-			Node.OnAfterAddNode -= OnAfterAddNode;
-			Node.OnAfterRemoveNode -= OnAfterRemoveNode;
-			Node.OnAfterExchangeNodes -= OnAfterExchangeNodes;
 			if (recursion)
 			{
 				for (int i = 0; i < Children.Count; i++)
@@ -418,7 +467,7 @@ namespace Effekseer.GUI.Dock
 
 		void UpdateLODButton()
 		{
-			var node = Node as Data.Node;
+			var node = Node as EffectAsset.ParticleNode;
 			float lodButtonSize = Manager.NativeManager.GetTextLineHeight();
 			if (node != null)
 			{
@@ -485,17 +534,17 @@ namespace Effekseer.GUI.Dock
 							Manager.NativeManager.SameLine();
 							if (Manager.NativeManager.Checkbox("##level" + i, level0Match))
 							{
-								node.CommonValues.LodParameter.MatchingLODs.SetValue(
+								node.CommonValues.LodParameter.MatchingLODs = (
 									(level0Match[0] ? 1 << i : 0) | (levels & ~(1 << i)));
 								ApplyLODSettingsToChildren();
 							}
 						}
 
 						Manager.NativeManager.Text(MultiLanguageTextProvider.GetText("LOD_Behaviour"));
-						var prevBehaviour = node.CommonValues.LodParameter.LodBehaviour.Value;
+						var prevBehaviour = node.CommonValues.LodParameter.LodBehaviour;
 						lodBehaviourEnumControl.Update();
 						// detecting value change without listener
-						if (prevBehaviour != node.CommonValues.LodParameter.LodBehaviour.Value)
+						if (prevBehaviour != node.CommonValues.LodParameter.LodBehaviour)
 						{
 							ApplyLODSettingsToChildren();
 						}
@@ -528,7 +577,7 @@ namespace Effekseer.GUI.Dock
 
 				if (Manager.NativeManager.IsKeyDown(LEFT_SHIFT) ||
 					Manager.NativeManager.IsKeyDown(RIGHT_SHIFT) ||
-					((Node is Effekseer.Data.Node) && (Node as Effekseer.Data.Node).DrawingValues.Type.Value == Data.RendererValues.ParamaterType.None))
+					((Node is EffectAsset.ParticleNode) && (Node as EffectAsset.ParticleNode).DrawingValues.Type == Data.RendererValues.ParamaterType.None))
 				{
 					ChangeVisible(true, !visible);
 				}
@@ -555,7 +604,7 @@ namespace Effekseer.GUI.Dock
 
 			var flag = swig.TreeNodeFlags.OpenOnArrow | swig.TreeNodeFlags.OpenOnDoubleClick | swig.TreeNodeFlags.DefaultOpen | swig.TreeNodeFlags.SpanFullWidth;
 
-			if (Core.SelectedNode == this.Node)
+			if (CoreContext.SelectedEffectNode == this.Node)
 			{
 				flag = flag | swig.TreeNodeFlags.Selected;
 			}
@@ -574,14 +623,14 @@ namespace Effekseer.GUI.Dock
 			}
 
 			var icon = Icons.NodeTypeEmpty;
-			var node = Node as Data.Node;
+			var node = Node as EffectAsset.ParticleNode;
 			if (node != null)
 			{
-				if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Sprite) icon = Icons.NodeTypeSprite;
-				if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Ring) icon = Icons.NodeTypeRing;
-				if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Ribbon) icon = Icons.NodeTypeRibbon;
-				if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Model) icon = Icons.NodeTypeModel;
-				if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Track) icon = Icons.NodeTypeTrack;
+				if (node.DrawingValues.Type == Data.RendererValues.ParamaterType.Sprite) icon = Icons.NodeTypeSprite;
+				if (node.DrawingValues.Type == Data.RendererValues.ParamaterType.Ring) icon = Icons.NodeTypeRing;
+				if (node.DrawingValues.Type == Data.RendererValues.ParamaterType.Ribbon) icon = Icons.NodeTypeRibbon;
+				if (node.DrawingValues.Type == Data.RendererValues.ParamaterType.Model) icon = Icons.NodeTypeModel;
+				if (node.DrawingValues.Type == Data.RendererValues.ParamaterType.Track) icon = Icons.NodeTypeTrack;
 			}
 
 			// Change background color
@@ -643,7 +692,7 @@ namespace Effekseer.GUI.Dock
 
 		private void ApplyLODSettingsToChildren()
 		{
-			var effectNode = Node as Data.Node;
+			var effectNode = Node as EffectAsset.ParticleNode;
 			if (effectNode == null) return;
 
 			int matchingLods = effectNode.CommonValues.LodParameter.MatchingLODs;
@@ -651,11 +700,11 @@ namespace Effekseer.GUI.Dock
 			for (var i = 0; i < Children.Count; i++)
 			{
 				var child = Children[i];
-				var childNode = child.Node as Data.Node;
+				var childNode = child.Node as EffectAsset.ParticleNode;
 				if (childNode == null) continue;
 
-				childNode.CommonValues.LodParameter.MatchingLODs.SetValueDirectly(matchingLods);
-				childNode.CommonValues.LodParameter.LodBehaviour.SetValueDirectly(lodBehaviour);
+				childNode.CommonValues.LodParameter.MatchingLODs = matchingLods;
+				childNode.CommonValues.LodParameter.LodBehaviour = lodBehaviour;
 				child.ApplyLODSettingsToChildren();
 			}
 		}
@@ -668,7 +717,7 @@ namespace Effekseer.GUI.Dock
 				Manager.NativeManager.IsItemClicked(0) ||
 				Manager.NativeManager.IsItemClicked(1))
 			{
-				Core.SelectedNode = this.Node;
+				CoreContext.SelectedEffectNode = this.Node;
 			}
 		}
 
@@ -720,11 +769,11 @@ namespace Effekseer.GUI.Dock
 			}
 		}
 
-		void OnAfterAddNode(object sender, ChangedValueEventArgs e)
+		private void Node_AddedNode(EffectAsset.Node self, EffectAsset.Node added)
 		{
-			var node = e.Value as Data.NodeBase;
+			var node = added as EffectAsset.Node;
 
-			Console.WriteLine(string.Format("OnAfterAddNode({0})", node.Name.Value));
+			Console.WriteLine(string.Format("OnAfterAddNode({0})", node.Name));
 
 			int ind = 0;
 			for (; ind < Node.Children.Count; ind++)
@@ -753,11 +802,11 @@ namespace Effekseer.GUI.Dock
 			}
 		}
 
-		void OnAfterRemoveNode(object sender, ChangedValueEventArgs e)
+		private void Node_RemovedNode(EffectAsset.Node self, EffectAsset.Node removed)
 		{
-			var node = e.Value as Data.NodeBase;
+			var node = removed as EffectAsset.Node;
 
-			Console.WriteLine(string.Format("OnAfterRemoveNode({0})", node.Name.Value));
+			Console.WriteLine(string.Format("OnAfterRemoveNode({0})", node.Name));
 
 			for (int i = 0; i < Children.Count; i++)
 			{
@@ -778,42 +827,11 @@ namespace Effekseer.GUI.Dock
 			throw new Exception();
 		}
 
-		void OnAfterExchangeNodes(object sender, ChangedValueEventArgs e)
+		private void Node_InsertedNode(EffectAsset.Node self, int index, EffectAsset.Node inserted)
 		{
-			var node1 = (e.Value as Tuple<Data.Node, Data.Node>).Item1;
-			var node2 = (e.Value as Tuple<Data.Node, Data.Node>).Item2;
+			Children.Insert(index, new NodeTreeEditorNode(treeView, inserted, true));
 
-			int ind1 = 0;
-			int ind2 = 0;
-
-			for (int i = 0; i < Children.Count; i++)
-			{
-				var treenode = Children[i];
-				if (treenode.Node == node1)
-				{
-					ind1 = i;
-				}
-				if (treenode.Node == node2)
-				{
-					ind2 = i;
-				}
-			}
-
-			if (ind1 > ind2)
-			{
-				var ind_temp = ind1;
-				var node_temp = node1;
-				ind1 = ind2;
-				node1 = node2;
-				ind2 = ind_temp;
-				node2 = node_temp;
-			}
-
-			Children.Insert(ind2, new NodeTreeEditorNode(treeView, node1, true));
-			Children.RemoveAt(ind2 + 1);
-
-			Children.Insert(ind1, new NodeTreeEditorNode(treeView, node2, true));
-			Children.RemoveAt(ind1 + 1);
+			throw new NotImplementedException();
 		}
 	}
 }

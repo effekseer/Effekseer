@@ -269,6 +269,10 @@ namespace Effekseer.EffectAsset
 	{
 		public int InstanceID { get; set; }
 
+		public string Name = "Node";
+
+		public bool IsRendered = true;
+
 		[System.NonSerialized]
 		public List<Node> Children = new List<Node>();
 
@@ -292,7 +296,7 @@ namespace Effekseer.EffectAsset
 		public void InsertChild(int index, PartsTreeSystem.INode node)
 		{
 			Children.Insert(index, node as Node);
-			InsertedNode?.Invoke(this, node as Node);
+			InsertedNode?.Invoke(this, index, node as Node);
 		}
 
 		public IReadOnlyCollection<PartsTreeSystem.INode> GetChildren()
@@ -304,7 +308,7 @@ namespace Effekseer.EffectAsset
 
 		public event Action<Node, Node> RemovedNode;
 
-		public event Action<Node, Node> InsertedNode;
+		public event Action<Node, int, Node> InsertedNode;
 	}
 
 	public class RootNode : Node
@@ -314,7 +318,9 @@ namespace Effekseer.EffectAsset
 
 	public class ParticleNode : Node
 	{
-		public string Name = string.Empty;
+		public CommonParameter CommonValues = new CommonParameter();
+
+		public DrawingParameter DrawingValues = new DrawingParameter();
 
 		public PositionParameter PositionParam = new PositionParameter();
 
@@ -325,6 +331,25 @@ namespace Effekseer.EffectAsset
 		public Vector3WithRange Vector3WithRangeTest = new Vector3WithRange();
 
 		public TextureAsset TextureTest = null;
+	}
+
+	public class CommonParameter
+	{
+		public LODParameter LodParameter = new LODParameter();
+	}
+
+	public class LODParameter
+	{
+		public int MatchingLODs = 0b1111;
+		public Data.LODBehaviourType LodBehaviour = Data.LODBehaviourType.Hide;
+	}
+
+	public class DrawingParameter
+	{
+		/// <summary>
+		/// Temp
+		/// </summary>
+		public Data.RendererValues.ParamaterType Type = Data.RendererValues.ParamaterType.Sprite;
 	}
 
 	public class PositionParameter
