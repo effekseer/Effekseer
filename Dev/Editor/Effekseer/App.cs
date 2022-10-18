@@ -48,6 +48,7 @@ namespace Effekseer
 				typeof(Dock.AdvancedRenderCommonValues),
 
 				typeof(GUI.Inspector.InspectorPanel),
+				typeof(Dock.NodeTreeEditor),
 			};
 
 			System.OperatingSystem os = System.Environment.OSVersion;
