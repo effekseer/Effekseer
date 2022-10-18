@@ -34,6 +34,8 @@ namespace Effekseer.GUI.Menu
 			new DockSettings("Options", typeof(Dock.Option), Icons.PanelOptions),
 
 			new DockSettings("Inspector", typeof(Inspector.InspectorPanel), Icons.PanelOptions),
+			new DockSettings("NodeTreeEditor", typeof(Dock.NodeTreeEditor), Icons.PanelOptions),
+
 			new DockSettings("Profiler", typeof(Dock.Profiler), Icons.PanelProfiler),
 		};
 
