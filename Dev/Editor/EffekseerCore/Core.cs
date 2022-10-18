@@ -63,6 +63,8 @@ namespace Effekseer
 				}
 
 				selectedEffectNode = value;
+
+				SelectedEffectNodeChanged?.Invoke(selectedEffectNode);
 			}
 		}
 
