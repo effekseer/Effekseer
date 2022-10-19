@@ -89,6 +89,26 @@ namespace Effekseer
 			context.Context = newEffect.CreateEditorContext(CoreContext.Environment);
 			CoreContext.SelectedEffect = context;
 		}
+
+		public static void AddNode()
+		{
+			CoreContext.SelectedEffect.Context.CommandManager.AddNode(
+			CoreContext.SelectedEffect.Asset.NodeTreeAsset,
+			CoreContext.SelectedEffect.Context.NodeTree,
+			CoreContext.SelectedEffectNode.InstanceID,
+			typeof(EffectAsset.ParticleNode),
+			CoreContext.Environment);
+		}
+
+		public static void RemoveNode()
+		{
+			CoreContext.SelectedEffect.Context.CommandManager.RemoveNode(
+			CoreContext.SelectedEffect.Asset.NodeTreeAsset,
+			CoreContext.SelectedEffect.Context.NodeTree,
+			CoreContext.SelectedEffectNode.InstanceID,
+			CoreContext.Environment);
+			CoreContext.SelectedEffectNode = null;
+		}
 	}
 
 
