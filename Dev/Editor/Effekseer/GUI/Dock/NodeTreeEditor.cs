@@ -56,18 +56,19 @@ namespace Effekseer.GUI.Dock
 
 			Func<bool> addNode = () =>
 			{
-				CoreContext.SelectedEffect.Context.CommandManager.AddNode(
-				CoreContext.SelectedEffect.Asset.NodeTreeAsset,
-				CoreContext.SelectedEffect.Context.NodeTree,
-				CoreContext.SelectedEffectNode.InstanceID,
-				typeof(EffectAsset.ParticleNode),
-				CoreContext.Environment);
+				CoreOperator.AddNode();
+				return true;
+			};
+
+			Func<bool> removeNode = () =>
+			{
+				CoreOperator.RemoveNode();
 				return true;
 			};
 
 			menuItems.Add(create_menu_item_from_commands(addNode));
 			menuItems.Add(create_menu_item_from_commands(Commands.InsertNode));
-			menuItems.Add(create_menu_item_from_commands(Commands.RemoveNode));
+			menuItems.Add(create_menu_item_from_commands(removeNode));
 			menuItems.Add(create_menu_item_from_commands(Commands.RenameNode));
 			menuItems.Add(new Menu.MenuSeparator());
 
@@ -829,9 +830,9 @@ namespace Effekseer.GUI.Dock
 
 		private void Node_InsertedNode(EffectAsset.Node self, int index, EffectAsset.Node inserted)
 		{
-			Children.Insert(index, new NodeTreeEditorNode(treeView, inserted, true));
+			Console.WriteLine(string.Format("OnAfterInsertedNode({0})", inserted.Name));
 
-			throw new NotImplementedException();
+			Children.Insert(index, new NodeTreeEditorNode(treeView, inserted, true));
 		}
 	}
 }

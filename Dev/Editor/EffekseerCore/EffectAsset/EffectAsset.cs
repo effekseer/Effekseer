@@ -196,7 +196,7 @@ namespace Effekseer.EffectAsset
 		{
 			NodeTreeAsset = new PartsTreeSystem.NodeTreeAsset();
 			var rootNodeId = NodeTreeAsset.Init(typeof(RootNode), env);
-			NodeTreeAsset.AddNode(rootNodeId, typeof(Node), env);
+			NodeTreeAsset.AddNode(rootNodeId, typeof(ParticleNode), env);
 
 			ProceduralModels.Clear();
 		}
@@ -289,7 +289,7 @@ namespace Effekseer.EffectAsset
 			if (found != null)
 			{
 				Children.Remove(found);
-				AddedNode?.Invoke(this, found);
+				RemovedNode?.Invoke(this, found);
 			}
 		}
 
