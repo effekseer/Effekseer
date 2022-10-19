@@ -363,7 +363,7 @@ namespace Effekseer.EffectAsset
 		public class PVAParamater
 		{
 			[Key(key = "Position_FixedParamater_Location")]
-			public FloatWithRange Location;
+			public FloatWithRange Location = new FloatWithRange();
 		}
 
 		[VisiblityController(ID = 100)]
