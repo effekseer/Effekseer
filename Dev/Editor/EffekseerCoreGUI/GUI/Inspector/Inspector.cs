@@ -74,7 +74,8 @@ namespace Effekseer.GUI.Inspector
 
 		private static Dictionary<int, object> VisiblityControllers = new Dictionary<int, object>();
 
-		private static void UpdateVisiblityControllers(InspectorEditable target)
+
+		private static void UpdateVisiblityControllers(object target)
 		{
 			var fields = target.GetType().GetFields();
 			foreach (var field in fields)
@@ -88,7 +89,7 @@ namespace Effekseer.GUI.Inspector
 			}
 		}
 
-		private static void GenerateFieldGuiInfos(InspectorEditable target)
+		private static void GenerateFieldGuiInfos(object target)
 		{
 			if (FieldGuiInfoList == null)
 			{
@@ -96,24 +97,48 @@ namespace Effekseer.GUI.Inspector
 			}
 			FieldGuiInfoList.Clear();
 
+			Func<object, InspectorGuiInfo> generate = null;
+			generate = (object tgt) =>
+			{
+				InspectorGuiInfo info = new InspectorGuiInfo();
+				if (tgt == null ||
+					tgt.GetType().IsPrimitive ||
+					tgt.GetType() == typeof(string) ||
+					tgt.GetType().IsEnum)
+				{
+					return info;
+				}
+				var fields = tgt.GetType().GetFields();
+				foreach (var field in fields)
+				{
+					// visiblity controller attribute
+					UpdateVisiblityControllers(tgt);
+
+					if (!GuiDictionary.HasFunction(field.GetType()) && !field.GetType().IsPrimitive)
+					{
+						info.subElement.Add(generate(field.GetValue(tgt)));
+					}
+				}
+				return info;
+			};
 			var fields = target.GetType().GetFields();
 			foreach (var field in fields)
 			{
-				FieldGuiInfoList.Add(new InspectorGuiInfo());
+				FieldGuiInfoList.Add(generate(field.GetValue(target)));
 			}
-
-			// visiblity controller attribute
-			VisiblityControllers.Clear();
-			UpdateVisiblityControllers(target);
 		}
 
-		private static void UpdateObject(NodeTreeGroupContext context, EditorState editorState, Node targetNode, object targetObject)
+		private static void UpdateObjectGuis(NodeTreeGroupContext context, EditorState editorState, Node targetNode, object targetObject, List<InspectorGuiInfo> guiInfos)
 		{
 			var getterSetters = new FieldGetterSetter[1];
 			getterSetters[0] = new FieldGetterSetter();
 
 			// エディタに表示する変数群
 			var fields = targetObject.GetType().GetFields();
+			UpdateVisiblityControllers(targetObject);
+
+			bool isFirstField = true;
+
 
 			for (int i = 0; i < fields.Length; ++i)
 			{
@@ -139,6 +164,28 @@ namespace Effekseer.GUI.Inspector
 					//Manager.NativeManager.Text("null : " + field.GetType().ToString());
 					continue;
 				}
+
+
+				// 配列かリストの時、エレメントの型を取得する
+				var valueType = value.GetType();
+				bool isArray = valueType.IsArray;
+				if (isArray)
+				{
+					valueType = valueType.GetElementType();
+				}
+				else if (valueType.IsGenericType && valueType.GetGenericTypeDefinition() == typeof(List<>))
+				{
+					valueType = valueType.GetGenericArguments()[0];
+				}
+
+				var guiFunctionKey = valueType;
+
+				// the key about enums gui function is System.Enum
+				if (valueType.IsEnum)
+				{
+					guiFunctionKey = typeof(System.Enum);
+				}
+
 
 				// key attrs
 				string description = string.Empty;
@@ -180,6 +227,15 @@ namespace Effekseer.GUI.Inspector
 				}
 
 
+				//if (NodeParameters.Contains(value))
+				if (!GuiDictionary.HasFunction(guiFunctionKey) &&
+					value.GetType().GetFields().Length > 0 &&
+					!value.GetType().IsEnum)
+				{
+					UpdateObjectGuis(context, editorState, targetNode, value, guiInfos[i].subElement);
+					continue;
+				}
+
 				if (isValueChanged)
 				{
 					name = "*" + name;
@@ -194,7 +250,8 @@ namespace Effekseer.GUI.Inspector
 				Manager.NativeManager.TableNextColumn();
 				// TODO : Separatorで区切るのはAssetなどの単位にする
 				// Make not separate first row
-				if (Manager.NativeManager.TableGetRowIndex() >= 2)
+				bool isShowHorizonalSeparator = Manager.NativeManager.TableGetRowIndex() >= 2 && isFirstField;
+				if (isShowHorizonalSeparator)
 				{
 					Manager.NativeManager.Separator();
 				}
@@ -212,34 +269,14 @@ namespace Effekseer.GUI.Inspector
 				}
 
 
-				// 配列かリストの時、エレメントの型を取得する
-				var valueType = value.GetType();
-				bool isArray = valueType.IsArray;
-				if (isArray)
-				{
-					valueType = valueType.GetElementType();
-				}
-				else if (valueType.IsGenericType && valueType.GetGenericTypeDefinition() == typeof(List<>))
-				{
-					valueType = valueType.GetGenericArguments()[0];
-				}
-
 				// display field(right side of table)
 				Manager.NativeManager.TableNextColumn();
 				// TODO : Separatorで区切るのはAssetなどの単位にする
-				// Make not separate first row
-				if (Manager.NativeManager.TableGetRowIndex() >= 2)
+				if (isShowHorizonalSeparator)
 				{
 					Manager.NativeManager.Separator();
 				}
 
-				var guiFunctionKey = valueType;
-
-				// the key about enums gui function is System.Enum
-				if (valueType.IsEnum)
-				{
-					guiFunctionKey = typeof(System.Enum);
-				}
 
 				// TODO : make ignore "public List<Node> Children = new List<Node>();" node member.
 				if (GuiDictionary.HasFunction(guiFunctionKey))
@@ -252,9 +289,9 @@ namespace Effekseer.GUI.Inspector
 
 						// GuiIdが足りなければ、すべて再生成
 						// GenerateFieldGuiIdsの中でやりたいが、型情報からは要素数が分からないのでここで生成。
-						if (arrayValue.GetLength(0) > FieldGuiInfoList[i].subElement.Count())
+						if (arrayValue.GetLength(0) > guiInfos[i].subElement.Count())
 						{
-							FieldGuiInfoList[i].subElement.Clear();
+							guiInfos[i].subElement.Clear();
 
 							foreach (var v in arrayValue)
 							{
@@ -266,7 +303,7 @@ namespace Effekseer.GUI.Inspector
 						bool isEdited = false;
 						foreach (var v in arrayValue)
 						{
-							string id = FieldGuiInfoList[i].subElement[j].Id;
+							string id = guiInfos[i].subElement[j].Id;
 							var result = func(v, id);
 							if (result.isEdited)
 							{
@@ -286,7 +323,7 @@ namespace Effekseer.GUI.Inspector
 					}
 					else
 					{
-						string id = FieldGuiInfoList[i].Id;
+						string id = guiInfos[i].Id;
 						var result = func(value, id);
 						if (result.isEdited)
 						{
@@ -299,6 +336,7 @@ namespace Effekseer.GUI.Inspector
 				{
 					Manager.NativeManager.Text("No Regist : " + value.GetType().ToString() + " " + name);
 				}
+				isFirstField = false;
 			}
 		}
 
@@ -333,23 +371,35 @@ namespace Effekseer.GUI.Inspector
 				Manager.NativeManager.TableSetColumnIndex(1);
 				Manager.NativeManager.PushItemWidth(-1);
 
-				UpdateVisiblityControllers(targetNode);
-
-				UpdateObject(context, editorState, targetNode, targetNode);
+				UpdateObjectGuis(context, editorState, targetNode, targetNode, FieldGuiInfoList);
 			}
 			Manager.NativeManager.EndTable();
 			Manager.NativeManager.Separator();
 		}
 	}
 
-
 	class InspectorEditable : Node
 	{
+		[Key(key = "Node_Name")]
 		public string Name = string.Empty;
 
-		//public EffectAsset.PositionParameter PositionParam = new EffectAsset.PositionParameter();
-		//public EffectAsset.RotationParameter RotationParam = new EffectAsset.RotationParameter();
+		public EffectAsset.CommonParameter CommonValues = new EffectAsset.CommonParameter();
 
+		public EffectAsset.PositionParameter PositionParam = new EffectAsset.PositionParameter();
+
+		public EffectAsset.RotationParameter RotationParam = new EffectAsset.RotationParameter();
+
+		//public EffectAsset.Gradient GradientTest = new EffectAsset.Gradient();
+
+		//public EffectAsset.Vector3WithRange Vector3WithRangeTest = new EffectAsset.Vector3WithRange();
+
+		//public EffectAsset.TextureAsset TextureTest = null;
+
+
+		//-------------------------------
+#if false
+		public EffectAsset.PositionParameter PositionParam = new EffectAsset.PositionParameter();
+		public EffectAsset.RotationParameter RotationParam = new EffectAsset.RotationParameter();
 
 		// Attributes
 		[EffectAsset.VisiblityControlled(ID = 100, Value = 0)]
@@ -410,6 +460,6 @@ namespace Effekseer.GUI.Inspector
 		// TODO : 特殊な型
 		Gradient Gradient1 = new Gradient();
 		Dock.FCurves FCurves = new Dock.FCurves();
-
+#endif
 	}
 }
