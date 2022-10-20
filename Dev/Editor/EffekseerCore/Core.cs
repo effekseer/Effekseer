@@ -73,45 +73,6 @@ namespace Effekseer
 		public static Action<EffectAsset.Node> SelectedEffectNodeChanged;
 	}
 
-	public class CoreOperator
-	{
-		public static void New()
-		{
-			CoreContext.SelectedEffectNode = null;
-			CoreContext.SelectedEffect = null;
-
-			var newEffect = new EffectAsset.EffectAsset();
-			newEffect.New(CoreContext.Environment);
-			CoreData.EffectAssets = new EffectAsset.EffectAsset[] { newEffect };
-
-			var context = new CoreEffectContext();
-			context.Asset = newEffect;
-			context.Context = newEffect.CreateEditorContext(CoreContext.Environment);
-			CoreContext.SelectedEffect = context;
-		}
-
-		public static void AddNode()
-		{
-			CoreContext.SelectedEffect.Context.CommandManager.AddNode(
-			CoreContext.SelectedEffect.Asset.NodeTreeAsset,
-			CoreContext.SelectedEffect.Context.NodeTree,
-			CoreContext.SelectedEffectNode.InstanceID,
-			typeof(EffectAsset.ParticleNode),
-			CoreContext.Environment);
-		}
-
-		public static void RemoveNode()
-		{
-			CoreContext.SelectedEffect.Context.CommandManager.RemoveNode(
-			CoreContext.SelectedEffect.Asset.NodeTreeAsset,
-			CoreContext.SelectedEffect.Context.NodeTree,
-			CoreContext.SelectedEffectNode.InstanceID,
-			CoreContext.Environment);
-			CoreContext.SelectedEffectNode = null;
-		}
-	}
-
-
 	public class Core
 	{
 		public const string Version = "1.70";
