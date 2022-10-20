@@ -9,6 +9,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_SOURCE_DIR}/../relea
 
 file(GLOB files_core
     EffekseerCore/*.cs
+    EffekseerCore/CoreOperator.cs
     EffekseerCore/Binary/*.cs
     EffekseerCore/Binary/RenderData/*.cs
     EffekseerCore/Command/*.cs
