@@ -26,6 +26,7 @@ namespace Effekseer.GUI.Inspector
 			{
 				{ typeof(int), GuiInt },
 				{ typeof(float), GuiFloat },
+				{ typeof(EffectAsset.FloatWithRange), GuiFloatWithRange },
 				{ typeof(string), GuiString },
 				{ typeof(Vector3D), GuiVector3D },
 				{ typeof(Vector3F), GuiVector3F },
@@ -83,6 +84,77 @@ namespace Effekseer.GUI.Inspector
 			}
 			return ret;
 		}
+
+		private InspectorGuiResult GuiFloatWithRange(object value, string label)
+		{
+			InspectorGuiResult ret = new InspectorGuiResult();
+			EffectAsset.FloatWithRange floatWithRange = value as EffectAsset.FloatWithRange;
+
+			float step = 10f;
+
+			if (floatWithRange != null)
+			{
+				float[] internalValue;
+				string txt_r1 = string.Empty;
+				string txt_r2 = string.Empty;
+
+
+				var range_1_min = float.MinValue;
+				var range_1_max = float.MaxValue;
+				var range_2_min = float.MinValue;
+				var range_2_max = float.MaxValue;
+
+				if (floatWithRange.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
+				{
+					internalValue = new float[] { floatWithRange.Center, floatWithRange.Amplitude };
+					txt_r1 = Resources.GetString("Mean"); 
+					txt_r2 = Resources.GetString("Deviation");
+
+					range_1_min = floatWithRange.Min;
+					range_1_max = floatWithRange.Max;
+				}
+				else
+				{
+					internalValue = new float[] { floatWithRange.Min, floatWithRange.Max };
+					txt_r1 = Resources.GetString("Min");
+					txt_r2 = Resources.GetString("Max");
+
+					range_1_min = floatWithRange.Min;
+					range_1_max = floatWithRange.Max;
+					range_2_min = floatWithRange.Min;
+					range_2_max = floatWithRange.Max;
+				}
+
+				if (Manager.NativeManager.DragFloat2EfkEx(label, internalValue, step / 10.0f,
+				range_1_min, range_1_max,
+				range_2_min, range_2_max,
+				txt_r1 + ":" + Core.Option.GetFloatFormat(), txt_r2 + ":" + Core.Option.GetFloatFormat()))
+				{
+					if (floatWithRange.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
+					{
+						floatWithRange.Center = internalValue[0];
+						floatWithRange.Amplitude = internalValue[1];
+					}
+					else
+					{
+						floatWithRange.Min = internalValue[0];
+						floatWithRange.Max = internalValue[1];
+					}
+
+
+					ret.isEdited = true;
+					ret.value = floatWithRange;
+					return ret;
+				}
+			}
+			else
+			{
+				Manager.NativeManager.Text("Assert GuiFloatWithRange");
+			}
+
+			return ret;
+		}
+
 		private InspectorGuiResult GuiString(object value, string label)
 		{
 			InspectorGuiResult ret = new InspectorGuiResult();
