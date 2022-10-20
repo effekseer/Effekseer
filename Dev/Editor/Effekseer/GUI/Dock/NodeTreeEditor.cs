@@ -52,23 +52,23 @@ namespace Effekseer.GUI.Dock
 				return item;
 			};
 
+			Menu.MenuItem CreateMenu(string label, Action a)
+			{
+				var item = new Menu.MenuItem();
+				item.Label = label;
+				item.Clicked += () =>
+				{
+					a();
+				};
+
+				return item;
+			};
+
+
 			// TODO fix it
-
-			Func<bool> addNode = () =>
-			{
-				CoreOperator.AddNode();
-				return true;
-			};
-
-			Func<bool> removeNode = () =>
-			{
-				CoreOperator.RemoveNode();
-				return true;
-			};
-
-			menuItems.Add(create_menu_item_from_commands(addNode));
+			menuItems.Add(CreateMenu("AddNode", CoreOperator.AddNode));
 			menuItems.Add(create_menu_item_from_commands(Commands.InsertNode));
-			menuItems.Add(create_menu_item_from_commands(removeNode));
+			menuItems.Add(CreateMenu("RemoveNode", CoreOperator.RemoveNode));
 			menuItems.Add(create_menu_item_from_commands(Commands.RenameNode));
 			menuItems.Add(new Menu.MenuSeparator());
 
@@ -78,8 +78,8 @@ namespace Effekseer.GUI.Dock
 
 			menuItems.Add(new Menu.MenuSeparator());
 
-			menuItems.Add(create_menu_item_from_commands(Commands.Undo));
-			menuItems.Add(create_menu_item_from_commands(Commands.Redo));
+			menuItems.Add(CreateMenu("Undo", CoreOperator.Undo));
+			menuItems.Add(CreateMenu("Redo", CoreOperator.Redo));
 
 			Renew();
 
