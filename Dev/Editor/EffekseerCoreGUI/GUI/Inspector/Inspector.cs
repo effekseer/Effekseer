@@ -10,41 +10,37 @@ namespace Effekseer.GUI.Inspector
 {
 	public class InspectorPanel : Dock.DockPanel
 	{
-		InspectorEditable target;
-
-		EditorState editorState;
-		NodeTreeGroupContext context;
 
 		public InspectorPanel()
 		{
 			Label = "Inspector###Inspector";
-
-			editorState = new EditorState();
-
-			editorState.Env = new Environment();
-			editorState.PartsList = new PartsList();
-			editorState.PartsList.Renew();
-
-			context = new NodeTreeGroupContext();
-			context.New(typeof(InspectorEditable), editorState);
-
-			// Force select
-			editorState.SelectedNode = context.NodeTree.Root as InspectorEditable;
-			target = editorState.SelectedNode as InspectorEditable;
 		}
 
 		protected override void UpdateInternal()
 		{
-			context.CommandManager.StartEditFields(context.NodeTreeGroup, context.NodeTree, editorState.SelectedNode, editorState.Env);
+			if (CoreContext.SelectedEffect.Context.NodeTree == null ||
+				CoreContext.SelectedEffectNode == null)
+			{
+				return;
+			}
 
-			Inspector.Update(context, editorState, target);
+			CoreContext.SelectedEffect.Context.CommandManager.StartEditFields(
+				CoreContext.SelectedEffect.Asset.NodeTreeAsset,
+				CoreContext.SelectedEffect.Context.NodeTree,
+				CoreContext.SelectedEffectNode,
+				CoreContext.Environment);
 
-			context.CommandManager.EndEditFields(editorState.SelectedNode, editorState.Env);
+			Inspector.Update(CoreContext.SelectedEffect.Context,
+				CoreContext.SelectedEffectNode);
+
+			CoreContext.SelectedEffect.Context.CommandManager.EndEditFields(
+				CoreContext.SelectedEffectNode,
+				CoreContext.Environment);
 
 			// Fix edited results when values are not edited
 			if (!Manager.NativeManager.IsAnyItemActive())
 			{
-				context.CommandManager.SetFlagToBlockMergeCommands();
+				CoreContext.SelectedEffect.Context.CommandManager.SetFlagToBlockMergeCommands();
 			}
 		}
 	}
@@ -70,10 +66,14 @@ namespace Effekseer.GUI.Inspector
 		
 		private static List<InspectorGuiInfo> FieldGuiInfoList = new List<InspectorGuiInfo>();
 
-		private static InspectorEditable LastTarget = null;
+		private static object LastTarget = null;
 
 		private static Dictionary<int, object> VisiblityControllers = new Dictionary<int, object>();
 
+		public Inspector()
+		{
+			//Core.OnAfterSelectNode += OnAfterSelect;
+		}
 
 		private static void UpdateVisiblityControllers(object target)
 		{
@@ -128,7 +128,8 @@ namespace Effekseer.GUI.Inspector
 			}
 		}
 
-		private static void UpdateObjectGuis(NodeTreeGroupContext context, EditorState editorState, Node targetNode, object targetObject, List<InspectorGuiInfo> guiInfos)
+		private static void UpdateObjectGuis(EffectAsset.EffectAssetEditorContext context
+			, object targetNode, object targetObject, List<InspectorGuiInfo> guiInfos)
 		{
 			var getterSetters = new FieldGetterSetter[1];
 			getterSetters[0] = new FieldGetterSetter();
@@ -207,7 +208,7 @@ namespace Effekseer.GUI.Inspector
 						}
 					}
 				}
-
+				
 				// VisiblityControlledAttributes
 				bool isVisible = true;
 				{
@@ -230,19 +231,11 @@ namespace Effekseer.GUI.Inspector
 				//if (NodeParameters.Contains(value))
 				if (!GuiDictionary.HasFunction(guiFunctionKey) &&
 					value.GetType().GetFields().Length > 0 &&
-					!value.GetType().IsEnum)
+					!value.GetType().IsEnum &&
+					guiInfos[i].subElement.Count >= i + 1)
 				{
-					UpdateObjectGuis(context, editorState, targetNode, value, guiInfos[i].subElement);
+					UpdateObjectGuis(context, targetNode, value, guiInfos[i].subElement);
 					continue;
-				}
-
-				if (isValueChanged)
-				{
-					name = "*" + name;
-				}
-				else
-				{
-					name = " " + name;
 				}
 
 				// display name(left side of table)
@@ -276,7 +269,6 @@ namespace Effekseer.GUI.Inspector
 				{
 					Manager.NativeManager.Separator();
 				}
-
 
 				// TODO : make ignore "public List<Node> Children = new List<Node>();" node member.
 				if (GuiDictionary.HasFunction(guiFunctionKey))
@@ -318,7 +310,7 @@ namespace Effekseer.GUI.Inspector
 						if (isEdited)
 						{
 							field.SetValue(targetObject, arrayValue);
-							context.CommandManager.NotifyEditFields(targetNode);
+							context.CommandManager.NotifyEditFields((PartsTreeSystem.IInstance)targetNode);
 						}
 					}
 					else
@@ -328,7 +320,7 @@ namespace Effekseer.GUI.Inspector
 						if (result.isEdited)
 						{
 							field.SetValue(targetObject, result.value);
-							context.CommandManager.NotifyEditFields(targetNode);
+							context.CommandManager.NotifyEditFields((PartsTreeSystem.IInstance)targetNode);
 						}
 					}
 				}
@@ -340,24 +332,39 @@ namespace Effekseer.GUI.Inspector
 			}
 		}
 
-		public static void Update(NodeTreeGroupContext context, EditorState editorState, InspectorEditable targetNode)
+		//public static void OnAfterSelect(object sender, EventArgs e)
+		//{
+
+		//	if (CoreContext.SelectedEffect.Context.NodeTree == null ||
+		//		CoreContext.SelectedEffectNode == null)
+		//	{
+		//		return;
+		//	}
+
+		//	GenerateFieldGuiInfos(CoreContext.SelectedEffectNode);
+		//}
+
+		public static void Update(EffectAsset.EffectAssetEditorContext context, EffectAsset.Node targetNode)
 		{
-			var commandManager = context.CommandManager;
-			var nodeTreeGroup = context.NodeTreeGroup;
-			var nodeTree = context.NodeTree;
-			var partsList = editorState.PartsList;
-			var env = editorState.Env;
-			var nodeTreeGroupEditorProperty = context.EditorProperty;
-
-
-
-			// Generate field GUI IDs when target is selected or changed.
-			// TODO : 複数ターゲットに対応できていない
-			if ((LastTarget == null && targetNode != null) || (targetNode.InstanceID != LastTarget.InstanceID))
+			// Generate field GUI IDs when the target is selected or changed.
+			// TODO: this had better do at OnAfterSelect()
+			if (targetNode?.InstanceID != ((EffectAsset.Node)LastTarget)?.InstanceID)
 			{
 				GenerateFieldGuiInfos(targetNode);
+				LastTarget = targetNode;
+				return;
 			}
 			LastTarget = targetNode;
+
+			var commandManager = CoreContext.SelectedEffect.Context.CommandManager;
+			var nodeTreeGroup = CoreContext.SelectedEffect.Asset.NodeTreeAsset;
+			var nodeTree = CoreContext.SelectedEffect.Context.NodeTree;
+			//var partsList = editorState.PartsList;
+			var env = CoreContext.Environment;
+			//var nodeTreeGroupEditorProperty = context.EditorProperty;
+
+
+
 			if (Manager.NativeManager.BeginTable("Table", 2, 
 				swig.TableFlags.Resizable |
 				swig.TableFlags.BordersInnerV | swig.TableFlags.BordersOuterH |
@@ -371,7 +378,7 @@ namespace Effekseer.GUI.Inspector
 				Manager.NativeManager.TableSetColumnIndex(1);
 				Manager.NativeManager.PushItemWidth(-1);
 
-				UpdateObjectGuis(context, editorState, targetNode, targetNode, FieldGuiInfoList);
+				UpdateObjectGuis(context, targetNode, targetNode, FieldGuiInfoList);
 			}
 			Manager.NativeManager.EndTable();
 			Manager.NativeManager.Separator();
@@ -380,8 +387,8 @@ namespace Effekseer.GUI.Inspector
 
 	class InspectorEditable : Node
 	{
-		[Key(key = "Node_Name")]
-		public string Name = string.Empty;
+		//[Key(key = "Node_Name")]
+		//public string Name = string.Empty;
 
 		public EffectAsset.CommonParameter CommonValues = new EffectAsset.CommonParameter();
 
