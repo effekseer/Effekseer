@@ -24,6 +24,7 @@ namespace Effekseer.GUI.Inspector
 			// Œ^î•ñ‚ÆGui‚ğ•\¦‚·‚éŠÖ”‚ğ•R‚Ã‚¯‚é
 			FuncDictionary = new Dictionary<Type, Func<object, string, InspectorGuiResult>>
 			{
+				{ typeof(bool), GuiBool },
 				{ typeof(int), GuiInt },
 				{ typeof(float), GuiFloat },
 				{ typeof(EffectAsset.FloatWithRange), GuiFloatWithRange },
@@ -44,6 +45,26 @@ namespace Effekseer.GUI.Inspector
 			return FuncDictionary[type];
 		}
 
+		private InspectorGuiResult GuiBool(object value, string label)
+		{
+			InspectorGuiResult ret = new InspectorGuiResult();
+
+			if (value is bool bValue)
+			{
+				bool[] v = new[] { bValue };
+				if (Manager.NativeManager.Checkbox(label, v))
+				{
+					ret.isEdited = true;
+					ret.value = v[0];
+					return ret;
+				}
+			}
+			else
+			{
+				Manager.NativeManager.Text("Assert GuiBool");
+			}
+			return ret;
+		}
 		private InspectorGuiResult GuiInt(object value, string label)
 		{
 			InspectorGuiResult ret = new InspectorGuiResult();
