@@ -64,6 +64,18 @@ namespace Effekseer.GUI.Dock
 				return item;
 			};
 
+			void CopyNode()
+			{
+				var data = CoreOperator.CopyNode();
+				Manager.NativeManager.SetClipboardText(data);
+			}
+
+			void PasteNode()
+			{
+				var data = Manager.NativeManager.GetClipboardText();
+				CoreOperator.PasteNode(data);
+			}
+
 
 			// TODO fix it
 			menuItems.Add(CreateMenu("AddNode", CoreOperator.AddNode));
@@ -72,9 +84,9 @@ namespace Effekseer.GUI.Dock
 			menuItems.Add(create_menu_item_from_commands(Commands.RenameNode));
 			menuItems.Add(new Menu.MenuSeparator());
 
-			menuItems.Add(create_menu_item_from_commands(Commands.Copy));
-			menuItems.Add(create_menu_item_from_commands(Commands.Paste));
-			menuItems.Add(create_menu_item_from_commands(Commands.PasteInfo));
+			menuItems.Add(CreateMenu("CopyNode", CopyNode));
+			//menuItems.Add(create_menu_item_from_commands(Commands.Paste));
+			menuItems.Add(CreateMenu("PasteNode", PasteNode));
 
 			menuItems.Add(new Menu.MenuSeparator());
 

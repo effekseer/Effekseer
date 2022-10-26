@@ -26,6 +26,32 @@ namespace Effekseer
 			CoreContext.SelectedEffect = context;
 		}
 
+		public static string CopyNode()
+		{
+			if (CoreContext.SelectedEffect == null)
+			{
+				return string.Empty;
+			}
+
+			return CoreContext.SelectedEffect.Asset.NodeTreeAsset.Copy(CoreContext.SelectedEffectNode.InstanceID, CoreContext.Environment);
+		}
+
+		public static void PasteNode(string data)
+		{
+			if (CoreContext.SelectedEffect == null)
+			{
+				return;
+			}
+
+			CoreContext.SelectedEffect.Context.CommandManager.Paste(
+			CoreContext.SelectedEffect.Asset.NodeTreeAsset,
+			CoreContext.SelectedEffect.Context.NodeTree,
+			CoreContext.SelectedEffectNode.InstanceID,
+			data,
+			CoreContext.Environment);
+			CoreContext.SelectedEffectNode = null;
+		}
+
 		public static void AddNode()
 		{
 			if (CoreContext.SelectedEffect == null)
