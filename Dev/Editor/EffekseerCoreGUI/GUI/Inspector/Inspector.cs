@@ -146,14 +146,13 @@ namespace Effekseer.GUI.Inspector
 				var field = fields[i];
 				field.GetCustomAttributes();
 				getterSetters[0].Reset(targetObject, field);
-				//var prop = context.EditorProperty.Properties.FirstOrDefault(_ => _.InstanceID == target.InstanceID);
+
 				bool isValueChanged = false;
-				//if (prop != null)
-				//{
-				//	// 配列の変更が取れないのは別インスタンスに上書きされてるから？
-				//	// 配列のコピーではなく、配列の要素のコピーにすべき
-				//	isValueChanged = prop.IsValueEdited(getterSetters.Select(_ => _.GetName()).ToArray());
-				//}
+				var prop = context.EditorProperty.Properties.FirstOrDefault(_ => _.InstanceID == ((EffectAsset.Node)targetNode)?.InstanceID);
+				if (prop != null)
+				{
+					isValueChanged = prop.IsValueEdited(getterSetters.Select(_ => _.GetName()).ToArray());
+				}
 
 				var getterSetter = getterSetters.Last();
 				var value = getterSetter.GetValue();
@@ -270,9 +269,17 @@ namespace Effekseer.GUI.Inspector
 					Manager.NativeManager.Separator();
 				}
 
+				//bool opened = Manager.NativeManager.CollapsingHeader(label);
+
 				// TODO : make ignore "public List<Node> Children = new List<Node>();" node member.
 				if (GuiDictionary.HasFunction(guiFunctionKey))
 				{
+					if (isValueChanged)
+					{
+						Manager.NativeManager.PushStyleColor(swig.ImGuiColFlags.Border, 0x77ffff11);
+						Manager.NativeManager.PushStyleVar(swig.ImGuiStyleVarFlags.FrameBorderSize, 1);
+					}
+
 					var func = GuiDictionary.GetFunction(guiFunctionKey);
 
 					if (isArray)
@@ -322,6 +329,12 @@ namespace Effekseer.GUI.Inspector
 							field.SetValue(targetObject, result.value);
 							context.CommandManager.NotifyEditFields((PartsTreeSystem.IInstance)targetNode);
 						}
+					}
+
+					if (isValueChanged)
+					{
+						Manager.NativeManager.PopStyleColor();
+						Manager.NativeManager.PopStyleVar();
 					}
 				}
 				else
