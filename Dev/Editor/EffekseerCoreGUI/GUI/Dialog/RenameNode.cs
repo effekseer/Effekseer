@@ -7,7 +7,7 @@ using Effekseer.Data;
 
 namespace Effekseer.GUI.Dialog
 {
-	class RenameNode : IRemovableControl
+	public class RenameNode : IRemovableControl
 	{
 
 		bool opened = true;
@@ -16,12 +16,26 @@ namespace Effekseer.GUI.Dialog
 
 		public bool ShouldBeRemoved { get; private set; } = false;
 
-		protected NodeBase selectedNode;
-		private string name;
-		public void Show(NodeBase selectedNode)
+		NodeBase selectedNode;
+
+		/// <summary>
+		/// TODO : Refactor
+		/// </summary>
+		EffectAsset.Node nodeAsset;
+
+		string name;
+
+		public void Show(NodeBase node)
 		{
-			this.selectedNode = selectedNode;
-			this.name = selectedNode.Name;
+			this.selectedNode = node;
+			this.name = node.Name;
+			Manager.AddControl(this);
+		}
+
+		public void Show(EffectAsset.Node nodeAsset)
+		{
+			this.nodeAsset = nodeAsset;
+			this.name = nodeAsset.Name;
 			Manager.AddControl(this);
 		}
 
@@ -34,6 +48,30 @@ namespace Effekseer.GUI.Dialog
 
 			if (Manager.NativeManager.BeginPopupModal(Resources.GetString("RenameNode") + "###RenameNodeDialog", ref opened, swig.WindowFlags.AlwaysAutoResize))
 			{
+				void changeNameToExit(string value)
+				{
+					if (selectedNode != null)
+					{
+						this.selectedNode.Name.Value = value;
+					}
+					else if (nodeAsset != null)
+					{
+						if (this.nodeAsset.Name != value)
+						{
+							CoreContext.SelectedEffect.Context.StartEditFields(CoreContext.SelectedEffectNode);
+
+							this.nodeAsset.Name = value;
+
+							CoreContext.SelectedEffect.Context.NotifyEditFields(CoreContext.SelectedEffectNode);
+
+							CoreContext.SelectedEffect.Context.EndEditFields(CoreContext.SelectedEffectNode);
+						}
+					}
+
+					ShouldBeRemoved = true;
+
+				}
+
 				if (isFirstUpdate)
 				{
 					Manager.NativeManager.SetKeyboardFocusHere();
@@ -42,8 +80,7 @@ namespace Effekseer.GUI.Dialog
 				if (Manager.NativeManager.InputText("###RenameNodeInput", this.name,
 					swig.InputTextFlags.AutoSelectAll | swig.InputTextFlags.EnterReturnsTrue))
 				{
-					this.selectedNode.Name.Value = this.name;
-					ShouldBeRemoved = true;
+					changeNameToExit(this.name);
 				}
 				this.name = Manager.NativeManager.GetInputTextResult();
 
@@ -62,8 +99,7 @@ namespace Effekseer.GUI.Dialog
 
 				if (Manager.NativeManager.Button("OK", buttonWidth))
 				{
-					this.selectedNode.Name.Value = this.name;
-					ShouldBeRemoved = true;
+					changeNameToExit(this.name);
 				}
 
 				Manager.NativeManager.SameLine();

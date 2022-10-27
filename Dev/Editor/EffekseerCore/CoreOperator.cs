@@ -43,6 +43,35 @@ namespace Effekseer
 				return;
 			}
 
+			CoreContext.SelectedEffect.Context.CommandManager.PushMergingBlock();
+
+			var id = CoreContext.SelectedEffect.Context.CommandManager.AddNode(
+			CoreContext.SelectedEffect.Asset.NodeTreeAsset,
+			CoreContext.SelectedEffect.Context.NodeTree,
+			CoreContext.SelectedEffectNode.InstanceID,
+			typeof(EffectAsset.ParticleNode),
+			CoreContext.Environment);
+
+
+			CoreContext.SelectedEffect.Context.CommandManager.Paste(
+			CoreContext.SelectedEffect.Asset.NodeTreeAsset,
+			CoreContext.SelectedEffect.Context.NodeTree,
+			id,
+			data,
+			CoreContext.Environment);
+
+			CoreContext.SelectedEffect.Context.CommandManager.PopMergingBlock();
+
+			CoreContext.SelectedEffectNode = null;
+		}
+
+		public static void OverwriteNode(string data)
+		{
+			if (CoreContext.SelectedEffect == null)
+			{
+				return;
+			}
+
 			CoreContext.SelectedEffect.Context.CommandManager.Paste(
 			CoreContext.SelectedEffect.Asset.NodeTreeAsset,
 			CoreContext.SelectedEffect.Context.NodeTree,
