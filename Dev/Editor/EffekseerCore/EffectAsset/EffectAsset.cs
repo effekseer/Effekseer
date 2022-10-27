@@ -149,6 +149,8 @@ namespace Effekseer.EffectAsset
 
 	public class EffectAssetEditorContext
 	{
+		public PartsTreeSystem.NodeTreeAsset NodeTreeAsset { get; private set; }
+
 		public PartsTreeSystem.NodeTree NodeTree { get; private set; }
 
 		public PartsTreeSystem.CommandManager CommandManager { get; private set; }
@@ -157,8 +159,9 @@ namespace Effekseer.EffectAsset
 
 		EffectAssetEnvironment env;
 
-		public EffectAssetEditorContext(PartsTreeSystem.NodeTree nodeTree, PartsTreeSystem.NodeTreeAssetEditorProperty editorProperty, EffectAssetEnvironment env)
+		public EffectAssetEditorContext(PartsTreeSystem.NodeTreeAsset nodeTreeAsset, PartsTreeSystem.NodeTree nodeTree, PartsTreeSystem.NodeTreeAssetEditorProperty editorProperty, EffectAssetEnvironment env)
 		{
+			NodeTreeAsset = nodeTreeAsset;
 			NodeTree = nodeTree;
 			EditorProperty = editorProperty;
 			this.env = env;
@@ -176,6 +179,25 @@ namespace Effekseer.EffectAsset
 			CommandManager.Redo(env);
 			EditorProperty.Rebuild();
 		}
+
+		public void StartEditFields(PartsTreeSystem.IInstance editted)
+		{
+			CommandManager.StartEditFields(
+				NodeTreeAsset,
+				NodeTree,
+				editted,
+				env);
+		}
+
+		public void NotifyEditFields(PartsTreeSystem.IInstance editted)
+		{
+			CommandManager.NotifyEditFields(editted);
+		}
+
+		public void EndEditFields(PartsTreeSystem.IInstance editted)
+		{
+			CommandManager.EndEditFields(editted, env);
+		}
 	}
 
 	public class EffectAsset
@@ -188,7 +210,7 @@ namespace Effekseer.EffectAsset
 		{
 			var nodeTree = PartsTreeSystem.Utility.CreateNodeFromNodeTreeGroup(NodeTreeAsset, env);
 			var editorProperty = new PartsTreeSystem.NodeTreeAssetEditorProperty(NodeTreeAsset, env);
-			var context = new EffectAssetEditorContext(nodeTree, editorProperty, env);
+			var context = new EffectAssetEditorContext(NodeTreeAsset, nodeTree, editorProperty, env);
 			return context;
 		}
 
