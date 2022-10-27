@@ -37,21 +37,6 @@ namespace Effekseer.GUI.Dock
 			Core.OnAfterLoad += OnRenew;
 			Core.OnAfterSelectNode += OnAfterSelect;
 
-			Menu.MenuItem create_menu_item_from_commands(Func<bool> a)
-			{
-				var item = new Menu.MenuItem();
-				var attributes = a.Method.GetCustomAttributes(false);
-				var uniquename = UniqueNameAttribute.GetUniqueName(attributes);
-				item.Label = NameAttribute.GetName(attributes);
-				item.Shortcut = Shortcuts.GetShortcutText(uniquename);
-				item.Clicked += () =>
-				{
-					a();
-				};
-
-				return item;
-			};
-
 			Menu.MenuItem CreateMenu(string label, Action a)
 			{
 				var item = new Menu.MenuItem();
@@ -76,17 +61,26 @@ namespace Effekseer.GUI.Dock
 				CoreOperator.PasteNode(data);
 			}
 
+			void OverwriteNode()
+			{
+				var data = Manager.NativeManager.GetClipboardText();
+				CoreOperator.OverwriteNode(data);
+			}
 
-			// TODO fix it
+			void RenameNode()
+			{
+				var renameNode = new GUI.Dialog.RenameNode();
+				renameNode.Show(CoreContext.SelectedEffectNode);
+			}
+
 			menuItems.Add(CreateMenu("AddNode", CoreOperator.AddNode));
-			menuItems.Add(create_menu_item_from_commands(Commands.InsertNode));
 			menuItems.Add(CreateMenu("RemoveNode", CoreOperator.RemoveNode));
-			menuItems.Add(create_menu_item_from_commands(Commands.RenameNode));
+			menuItems.Add(CreateMenu("RenameNode", RenameNode));
 			menuItems.Add(new Menu.MenuSeparator());
 
 			menuItems.Add(CreateMenu("CopyNode", CopyNode));
-			//menuItems.Add(create_menu_item_from_commands(Commands.Paste));
 			menuItems.Add(CreateMenu("PasteNode", PasteNode));
+			menuItems.Add(CreateMenu("OverwriteNode", OverwriteNode));
 
 			menuItems.Add(new Menu.MenuSeparator());
 
@@ -419,11 +413,18 @@ namespace Effekseer.GUI.Dock
 
 		public void ChangeVisible(bool recursion, bool value)
 		{
-			Command.CommandManager.StartCollection();
+			CoreContext.SelectedEffect.Context.CommandManager.PushMergingBlock();
 
 			Action<List<EffectAsset.Node>> recurse = null;
 
-			Node.IsRendered = value;
+			if(Node.IsRendered != value)
+			{
+				CoreContext.SelectedEffect.Context.StartEditFields(Node);
+				Node.IsRendered = value;
+				CoreContext.SelectedEffect.Context.NotifyEditFields(Node);
+				CoreContext.SelectedEffect.Context.EndEditFields(Node);
+			}
+
 
 			if (recursion)
 			{
@@ -431,7 +432,15 @@ namespace Effekseer.GUI.Dock
 				{
 					for (int i = 0; i < t.Count; i++)
 					{
-						t[i].IsRendered = value;
+						if (t[i].IsRendered != value)
+						{
+							CoreContext.SelectedEffect.Context.StartEditFields(t[i]);
+
+							t[i].IsRendered = value;
+
+							CoreContext.SelectedEffect.Context.NotifyEditFields(t[i]);
+							CoreContext.SelectedEffect.Context.EndEditFields(t[i]);
+						}
 					}
 
 					for (int i = 0; i < t.Count; i++)
@@ -444,8 +453,7 @@ namespace Effekseer.GUI.Dock
 			}
 
 
-			Command.CommandManager.EndCollection();
-
+			CoreContext.SelectedEffect.Context.CommandManager.PopMergingBlock();
 		}
 
 		public void AddEvent(bool recursion)
@@ -547,8 +555,14 @@ namespace Effekseer.GUI.Dock
 							Manager.NativeManager.SameLine();
 							if (Manager.NativeManager.Checkbox("##level" + i, level0Match))
 							{
+								CoreContext.SelectedEffect.Context.StartEditFields(node);
+
 								node.CommonValues.LodParameter.MatchingLODs = (
 									(level0Match[0] ? 1 << i : 0) | (levels & ~(1 << i)));
+
+								CoreContext.SelectedEffect.Context.NotifyEditFields(node);
+								CoreContext.SelectedEffect.Context.EndEditFields(node);
+
 								ApplyLODSettingsToChildren();
 							}
 						}
