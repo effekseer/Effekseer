@@ -119,49 +119,104 @@ namespace Effekseer.GUI.Inspector
 		}
 	}
 
-	class FieldGetterSetter
+	public class ElementGetterSetterArray
 	{
-		object parent;
-		System.Reflection.FieldInfo fieldInfo;
-		int? index;
-
-		public void Reset(object o, System.Reflection.FieldInfo fieldInfo)
+		class Element
 		{
-			parent = o;
-			this.fieldInfo = fieldInfo;
-			index = null;
+			public System.Reflection.FieldInfo fieldInfo;
+			public int? index;
+			public object parent;
+
+			public void Reset()
+			{
+				fieldInfo = null;
+				index = null;
+				parent = null;
+			}
+
+			public string GetName()
+			{
+				if (fieldInfo != null)
+				{
+					return fieldInfo.Name;
+				}
+				else if (index.HasValue)
+				{
+					return index.Value.ToString();
+				}
+
+				return string.Empty;
+			}
+
+			public void SetValue(object value)
+			{
+				if (fieldInfo != null)
+				{
+					fieldInfo.SetValue(parent, value);
+				}
+				else if (index.HasValue)
+				{
+					Helper.GetValueWithIndex(parent, index.Value);
+				}
+			}
 		}
 
-		public void Reset(object o, int index)
+		int currentIndex = -1;
+		List<Element> elements = new List<Element>(8);
+
+		public string[] Names { get => elements.Take(currentIndex + 1).Select(_ => _.GetName()).ToArray(); }
+
+		public void Push(object o, System.Reflection.FieldInfo fieldInfo)
 		{
-			parent = o;
-			fieldInfo = null;
-			this.index = index;
+			var elm = PushElement();
+			elm.parent = o;
+			elm.fieldInfo = fieldInfo;
+		}
+
+		public void Push(object o, int index)
+		{
+			var elm = PushElement();
+			elm.parent = o;
+			elm.index = index;
+		}
+
+		Element PushElement()
+		{
+			currentIndex += 1;
+			if (elements.Count <= currentIndex)
+			{
+				elements.Add(new Element());
+			}
+			else
+			{
+				elements[currentIndex].Reset();
+			}
+
+			return elements[currentIndex];
+		}
+
+		public void Pop()
+		{
+			currentIndex--;
 		}
 
 		public string GetName()
 		{
-			if (fieldInfo != null)
-			{
-				return fieldInfo.Name;
-			}
-			else if (index.HasValue)
-			{
-				return index.Value.ToString();
-			}
-
-			return string.Empty;
+			var elm = elements[currentIndex];
+			return elm.GetName();
 		}
 
 		public object GetValue()
 		{
-			if (fieldInfo != null)
+			var elm = elements[currentIndex];
+
+			if (elm.fieldInfo != null)
 			{
-				return fieldInfo.GetValue(parent);
+				return elm.fieldInfo.GetValue(elm.parent);
 			}
-			else if (index.HasValue)
+			else if (elm.index.HasValue)
 			{
-				return Helper.GetValueWithIndex(parent, index.Value);
+				return Helper.GetValueWithIndex(elm.parent, elm.index.Value);
 			}
 
 			return null;
@@ -169,14 +224,31 @@ namespace Effekseer.GUI.Inspector
 
 		public void SetValue(object value)
 		{
-			if (fieldInfo != null)
+			var elm = elements[currentIndex];
+			elm.SetValue(value);
+
+			if (elm.fieldInfo != null)
 			{
-				fieldInfo.SetValue(parent, value);
+				elm.fieldInfo.SetValue(elm.parent, value);
 			}
-			else if (index.HasValue)
+			else if (elm.index.HasValue)
 			{
-				Helper.SetValueToIndex(parent, value, index.Value);
+				Helper.SetValueToIndex(elm.parent, value, elm.index.Value);
 			}
+
+			for (int i = currentIndex; i > 0; i--)
+			{
+				if (elements[i].parent.GetType().IsClass)
+				{
+					break;
+				}
+				elements[i - 1].SetValue(elements[i].parent);
+			}
+		}
+
+		public System.Reflection.FieldInfo GetFieldInfo()
+		{
+			return elements[currentIndex].fieldInfo;
 		}
 	}
 
