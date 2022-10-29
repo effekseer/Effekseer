@@ -5,7 +5,7 @@
 #include "../../EffekseerRendererDX11/EffekseerRenderer/GraphicsDevice.h"
 
 RenderingEnvironmentDX11::RenderingEnvironmentDX11(std::array<int32_t, 2> windowSize, const char* title)
-	: RenderingEnvironment(true, windowSize, title)
+	: RenderingEnvironment(false, windowSize, title)
 {
 	UINT debugFlag = 0;
 #if _DEBUG
