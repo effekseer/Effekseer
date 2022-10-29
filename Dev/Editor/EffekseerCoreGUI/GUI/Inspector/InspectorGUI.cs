@@ -184,7 +184,7 @@ namespace Effekseer.GUI.Inspector
 				if (Manager.NativeManager.InputText(label, sValue))
 				{
 					ret.isEdited = true;
-					ret.value = sValue;
+					ret.value = Manager.NativeManager.GetInputTextResult();
 					return ret;
 				}
 			}
