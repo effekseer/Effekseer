@@ -56,7 +56,11 @@ if(USE_LIBPNG_LOADER)
 endif()
 
 if(SANITIZE_ENABLED)
-    set(CMAKE_CXX_FLAGS " -fsanitize=undefined,address" ${CMAKE_CXX_FLAGS})
+    if(MSVC)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /fsanitize=address")
+    else()
+        set(CMAKE_CXX_FLAGS " -fsanitize=undefined,address " ${CMAKE_CXX_FLAGS})
+    endif()
 endif()
 
 # find_package(Vulkan)
@@ -103,12 +107,6 @@ if(MSVC)
     add_definitions(/MP)
 endif()
 
-if(SANITIZER_ENABLED AND MSVC)
-    STRING (REGEX REPLACE "/RTC(su|[1su])" "" CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
-    STRING (REGEX REPLACE "/RTC(su|[1su])" "" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
-    STRING (REGEX REPLACE "/RTC(su|[1su])" "" CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
-    STRING (REGEX REPLACE "/RTC(su|[1su])" "" CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL}")
-endif()
 
 if(BUILD_WITH_EASY_PROFILER)
     ExternalProject_Add(
@@ -120,6 +118,7 @@ if(BUILD_WITH_EASY_PROFILER)
                         -DCMAKE_DEBUG_POSTFIX=d
                         -DCMAKE_USER_MAKE_RULES_OVERRIDE=${CMAKE_CURRENT_SOURCE_DIR}/Dev/CFlagOverrides.cmake
                         -DEFK_USE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
+                        -DSANITIZE_ENABLED=${SANITIZE_ENABLED}
                         -DBUILD_SHARED_LIBS=OFF
                         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
     )
@@ -186,6 +185,7 @@ if(BUILD_VIEWER)
         CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib
                         -DCMAKE_USER_MAKE_RULES_OVERRIDE=${CMAKE_CURRENT_SOURCE_DIR}/Dev/CFlagOverrides.cmake
                         -DEFK_USE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
+                        -DSANITIZE_ENABLED=${SANITIZE_ENABLED}
                         -DASM686=off
                         -DAMD64=off
                         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
@@ -225,6 +225,7 @@ if(BUILD_VIEWER)
         CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng
                         -DCMAKE_USER_MAKE_RULES_OVERRIDE=${CMAKE_CURRENT_SOURCE_DIR}/Dev/CFlagOverrides.cmake
                         -DEFK_USE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
+                        -DSANITIZE_ENABLED=${SANITIZE_ENABLED}
                         -DZLIB_INCLUDE_DIRS=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/include
                         -DZLIB_INCLUDE_DIR=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/include
                         -DPNG_BUILD_ZLIB=ON
@@ -259,6 +260,7 @@ if(BUILD_VIEWER)
                         -DCMAKE_DEBUG_POSTFIX=d
                         -DCMAKE_USER_MAKE_RULES_OVERRIDE=${CMAKE_CURRENT_SOURCE_DIR}/Dev/CFlagOverrides.cmake
                         -DEFK_USE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
+                        -DSANITIZE_ENABLED=${SANITIZE_ENABLED}
                         -DZLIB_ROOT=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib
                         -DBUILD_STATIC_LIBS=ON
                         -DBUILD_SHARED_LIBS=OFF
@@ -290,6 +292,7 @@ if(BUILD_VIEWER)
         CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glew
                         -DCMAKE_USER_MAKE_RULES_OVERRIDE=${CMAKE_CURRENT_SOURCE_DIR}/Dev/CFlagOverrides.cmake
                         -DEFK_USE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
+                        -DSANITIZE_ENABLED=${SANITIZE_ENABLED}
                         -DBUILD_SHARED_LIBS=OFF
                         -DGLEW_BUILD_INFO=OFF
                         -DBUILD_UTILS=OFF
@@ -309,6 +312,7 @@ if(BUILD_VIEWER)
                         -DCMAKE_DEBUG_POSTFIX=d
                         -DCMAKE_USER_MAKE_RULES_OVERRIDE=${CMAKE_CURRENT_SOURCE_DIR}/Dev/CFlagOverrides.cmake
                         -DEFK_USE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
+                        -DSANITIZE_ENABLED=${SANITIZE_ENABLED}
                         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
     )
     list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/Downloads/OpenSoundMixer/src)
@@ -334,6 +338,7 @@ if(BUILD_VIEWER OR BUILD_EXAMPLES OR BUILD_TEST)
                         -DCMAKE_DEBUG_POSTFIX=d
                         -DCMAKE_USER_MAKE_RULES_OVERRIDE=${CMAKE_CURRENT_SOURCE_DIR}/Dev/CFlagOverrides.cmake
                         -DEFK_USE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
+                        -DSANITIZE_ENABLED=${SANITIZE_ENABLED}
                         -DGLFW_BUILD_EXAMPLES=OFF
                         -DGLFW_BUILD_TESTS=OFF
                         -DGLFW_BUILD_DOCS=OFF
