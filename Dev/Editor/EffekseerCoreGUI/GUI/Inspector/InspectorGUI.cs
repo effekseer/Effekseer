@@ -128,7 +128,7 @@ namespace Effekseer.GUI.Inspector
 				if (floatWithRange.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
 				{
 					internalValue = new float[] { floatWithRange.Center, floatWithRange.Amplitude };
-					txt_r1 = Resources.GetString("Mean"); 
+					txt_r1 = Resources.GetString("Mean");
 					txt_r2 = Resources.GetString("Deviation");
 
 					range_1_min = floatWithRange.Min;
@@ -266,7 +266,7 @@ namespace Effekseer.GUI.Inspector
 			}
 
 			// to avoid to change placesGetValues, use  GetFields
-			var list = new List<int>();
+			var fieldValues = new List<int>();
 			var fields = enumType.GetFields();
 			List<object> fieldNames = new List<object>();
 
@@ -305,14 +305,13 @@ namespace Effekseer.GUI.Inspector
 					name = iconAttribute.code + name;
 				}
 
-				list.Add((int)f.GetValue(null));
+				fieldValues.Add((int)f.GetValue(null));
 				fieldNames.Add(name);
 			}
 
 			// show gui
-			int[] enums = list.ToArray();
-			int selectedValues = (int)value;
-			var v = enums.Select((_, i) => Tuple.Create(_, i)).Where(_ => _.Item1 == selectedValues).FirstOrDefault();
+			int selectedValue = (int)value;
+			var v = fieldValues.Select((_, i) => Tuple.Create(_, i)).Where(_ => _.Item1 == selectedValue).FirstOrDefault();
 			if (Manager.NativeManager.BeginCombo(label, fieldNames[v.Item2].ToString(), swig.ComboFlags.None))
 			{
 				for (int i = 0; i < fieldNames.Count; i++)
@@ -321,10 +320,10 @@ namespace Effekseer.GUI.Inspector
 
 					if (Manager.NativeManager.Selectable(fieldNames[i].ToString(), isSelected, swig.SelectableFlags.None))
 					{
-						selectedValues = enums[i];
+						selectedValue = fieldValues[i];
 
 						ret.isEdited = true;
-						ret.value = System.Enum.ToObject(enumType, i);
+						ret.value = System.Enum.ToObject(enumType, selectedValue);
 					}
 					if (isSelected)
 					{
