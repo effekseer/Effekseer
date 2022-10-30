@@ -25,7 +25,6 @@ add_library(EffekseerCoreGUI
     ${files}
     GUI/Inspector/Inspector.cs
     GUI/Inspector/InspectorGUI.cs
-    GUI/Inspector/PartsTreeSystemExample.cs
 )
 
 set_target_properties(EffekseerCoreGUI PROPERTIES
