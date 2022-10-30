@@ -63,7 +63,7 @@ namespace Effekseer.GUI.Inspector
 	{
 		// Gui•\Ž¦‚ð“o˜^‚·‚é
 		private static readonly InspectorGuiDictionary GuiDictionary = new InspectorGuiDictionary();
-		
+
 		private static List<InspectorGuiInfo> FieldGuiInfoList = new List<InspectorGuiInfo>();
 
 		private static object LastTarget = null;
@@ -77,7 +77,7 @@ namespace Effekseer.GUI.Inspector
 
 		private static void UpdateVisiblityControllers(object target)
 		{
-			if (target==null)
+			if (target == null)
 			{
 				return;
 			}
@@ -142,15 +142,15 @@ namespace Effekseer.GUI.Inspector
 				{
 					UpdateVisiblityControllers(tgt);
 				}
-				
+
 				FieldGuiInfoList.Add(generate(tgt));
 			}
 		}
 
 		private static void UpdateObjectGuis(EffectAsset.EffectAssetEditorContext context
-			, object targetNode, ElementGetterSetterArray elementGetterSetterArray, InspectorGuiInfo guiInfo)
+			, object targetNode, PartsTreeSystem.ElementGetterSetterArray elementGetterSetterArray, InspectorGuiInfo guiInfo)
 		{
-			var field = elementGetterSetterArray.GetFieldInfo();
+			var field = elementGetterSetterArray.FieldInfos.Last();
 
 			bool isValueChanged = false;
 
@@ -395,7 +395,7 @@ namespace Effekseer.GUI.Inspector
 			LastTarget = targetNode;
 
 
-			if (Manager.NativeManager.BeginTable("Table", 2, 
+			if (Manager.NativeManager.BeginTable("Table", 2,
 				swig.TableFlags.Resizable |
 				swig.TableFlags.BordersInnerV | swig.TableFlags.BordersOuterH |
 				swig.TableFlags.SizingFixedFit | swig.TableFlags.SizingStretchProp |
@@ -411,7 +411,7 @@ namespace Effekseer.GUI.Inspector
 
 				var fields = targetNode.GetType().GetFields();
 				int i = 0;
-				ElementGetterSetterArray elementGetterSetterArray = new ElementGetterSetterArray();
+				var elementGetterSetterArray = new PartsTreeSystem.ElementGetterSetterArray();
 				foreach (var field in fields)
 				{
 					elementGetterSetterArray.Push(targetNode, field);
