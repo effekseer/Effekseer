@@ -17,12 +17,12 @@ namespace Effekseer.GUI.Inspector
 	// Œ^î•ñ‚ÆGui‚ğ•\¦‚·‚éŠÖ”‚ğ•R‚Ã‚¯‚éƒNƒ‰ƒX
 	class InspectorGuiDictionary
 	{
-		private Dictionary<Type, Func<object, string, InspectorGuiResult>> FuncDictionary { get; }
+		private Dictionary<Type, Func<object, InspectorGuiState, InspectorGuiResult>> FuncDictionary { get; }
 
 		public InspectorGuiDictionary()
 		{
 			// Œ^î•ñ‚ÆGui‚ğ•\¦‚·‚éŠÖ”‚ğ•R‚Ã‚¯‚é
-			FuncDictionary = new Dictionary<Type, Func<object, string, InspectorGuiResult>>
+			FuncDictionary = new Dictionary<Type, Func<object, InspectorGuiState, InspectorGuiResult>>
 			{
 				{ typeof(bool), GuiBool },
 				{ typeof(int), GuiInt },
@@ -40,19 +40,19 @@ namespace Effekseer.GUI.Inspector
 			return FuncDictionary.ContainsKey(type);
 		}
 
-		public Func<object, string, InspectorGuiResult> GetFunction(Type type)
+		public Func<object, InspectorGuiState, InspectorGuiResult> GetFunction(Type type)
 		{
 			return FuncDictionary[type];
 		}
 
-		private InspectorGuiResult GuiBool(object value, string label)
+		private InspectorGuiResult GuiBool(object value, InspectorGuiState state)
 		{
 			InspectorGuiResult ret = new InspectorGuiResult();
 
 			if (value is bool bValue)
 			{
 				bool[] v = new[] { bValue };
-				if (Manager.NativeManager.Checkbox(label, v))
+				if (Manager.NativeManager.Checkbox(state.Id, v))
 				{
 					ret.isEdited = true;
 					ret.value = v[0];
@@ -65,14 +65,14 @@ namespace Effekseer.GUI.Inspector
 			}
 			return ret;
 		}
-		private InspectorGuiResult GuiInt(object value, string label)
+		private InspectorGuiResult GuiInt(object value, InspectorGuiState state)
 		{
 			InspectorGuiResult ret = new InspectorGuiResult();
 
 			if (value is int iValue)
 			{
 				int[] v = new[] { iValue };
-				if (Manager.NativeManager.DragInt(label, v, 1))
+				if (Manager.NativeManager.DragInt(state.Id, v, 1))
 				{
 					ret.isEdited = true;
 					ret.value = v[0];
@@ -86,13 +86,13 @@ namespace Effekseer.GUI.Inspector
 			return ret;
 		}
 
-		private InspectorGuiResult GuiFloat(object value, string label)
+		private InspectorGuiResult GuiFloat(object value, InspectorGuiState state)
 		{
 			InspectorGuiResult ret = new InspectorGuiResult();
 			if (value is float fValue)
 			{
 				float[] v = new[] { fValue };
-				if (Manager.NativeManager.DragFloat(label, v, .1f))
+				if (Manager.NativeManager.DragFloat(state.Id, v, .1f))
 				{
 					ret.isEdited = true;
 					ret.value = v[0];
@@ -106,7 +106,7 @@ namespace Effekseer.GUI.Inspector
 			return ret;
 		}
 
-		private InspectorGuiResult GuiFloatWithRange(object value, string label)
+		private InspectorGuiResult GuiFloatWithRange(object value, InspectorGuiState state)
 		{
 			InspectorGuiResult ret = new InspectorGuiResult();
 			EffectAsset.FloatWithRange floatWithRange = value as EffectAsset.FloatWithRange;
@@ -146,7 +146,7 @@ namespace Effekseer.GUI.Inspector
 					range_2_max = floatWithRange.Max;
 				}
 
-				if (Manager.NativeManager.DragFloat2EfkEx(label, internalValue, step / 10.0f,
+				if (Manager.NativeManager.DragFloat2EfkEx(state.Id, internalValue, step / 10.0f,
 				range_1_min, range_1_max,
 				range_2_min, range_2_max,
 				txt_r1 + ":" + Core.Option.GetFloatFormat(), txt_r2 + ":" + Core.Option.GetFloatFormat()))
@@ -176,12 +176,12 @@ namespace Effekseer.GUI.Inspector
 			return ret;
 		}
 
-		private InspectorGuiResult GuiString(object value, string label)
+		private InspectorGuiResult GuiString(object value, InspectorGuiState state)
 		{
 			InspectorGuiResult ret = new InspectorGuiResult();
 			if (value is string sValue)
 			{
-				if (Manager.NativeManager.InputText(label, sValue))
+				if (Manager.NativeManager.InputText(state.Id, sValue))
 				{
 					ret.isEdited = true;
 					ret.value = Manager.NativeManager.GetInputTextResult();
@@ -195,7 +195,7 @@ namespace Effekseer.GUI.Inspector
 			return ret;
 		}
 
-		private InspectorGuiResult GuiVector3D(object value, string label)
+		private InspectorGuiResult GuiVector3D(object value, InspectorGuiState state)
 		{
 			InspectorGuiResult ret = new InspectorGuiResult();
 
@@ -204,7 +204,7 @@ namespace Effekseer.GUI.Inspector
 				FieldInfo fieldInternalValue = vec3Value.GetType().GetField("internalValue", BindingFlags.NonPublic | BindingFlags.Instance);
 				float[] internalValue = (float[])fieldInternalValue.GetValue(vec3Value);
 
-				if (Manager.NativeManager.DragFloat3EfkEx(label, internalValue, 1.0f,
+				if (Manager.NativeManager.DragFloat3EfkEx(state.Id, internalValue, 1.0f,
 					float.MinValue, float.MaxValue,
 					float.MinValue, float.MaxValue,
 					float.MinValue, float.MaxValue,
@@ -222,7 +222,7 @@ namespace Effekseer.GUI.Inspector
 
 			return ret;
 		}
-		private InspectorGuiResult GuiVector3F(object value, string label)
+		private InspectorGuiResult GuiVector3F(object value, InspectorGuiState state)
 		{
 			InspectorGuiResult ret = new InspectorGuiResult();
 
@@ -230,7 +230,7 @@ namespace Effekseer.GUI.Inspector
 			{
 				float[] guiValue = new float[] { vec3Value.X, vec3Value.Y, vec3Value.Z };
 
-				if (Manager.NativeManager.DragFloat3EfkEx(label, guiValue, 1.0f,
+				if (Manager.NativeManager.DragFloat3EfkEx(state.Id, guiValue, 1.0f,
 					float.MinValue, float.MaxValue,
 					float.MinValue, float.MaxValue,
 					float.MinValue, float.MaxValue,
@@ -253,7 +253,7 @@ namespace Effekseer.GUI.Inspector
 			return ret;
 		}
 
-		private InspectorGuiResult GuiEnum(object value, string label)
+		private InspectorGuiResult GuiEnum(object value, InspectorGuiState state)
 		{
 			InspectorGuiResult ret = new InspectorGuiResult();
 
@@ -312,7 +312,7 @@ namespace Effekseer.GUI.Inspector
 			// show gui
 			int selectedValue = (int)value;
 			var v = fieldValues.Select((_, i) => Tuple.Create(_, i)).Where(_ => _.Item1 == selectedValue).FirstOrDefault();
-			if (Manager.NativeManager.BeginCombo(label, fieldNames[v.Item2].ToString(), swig.ComboFlags.None))
+			if (Manager.NativeManager.BeginCombo(state.Id, fieldNames[v.Item2].ToString(), swig.ComboFlags.None))
 			{
 				for (int i = 0; i < fieldNames.Count; i++)
 				{
