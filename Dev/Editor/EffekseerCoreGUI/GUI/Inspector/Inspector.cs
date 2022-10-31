@@ -45,15 +45,26 @@ namespace Effekseer.GUI.Inspector
 		}
 	}
 
+	class InspectorGuiState
+	{
+		public string Id { get; private set; }
+
+		public object UserData { get; private set; }
+
+		public InspectorGuiState(string id)
+		{
+			Id = id;
+		}
+	}
 
 	class InspectorGuiInfo
 	{
 		public InspectorGuiInfo()
 		{
-			Id = new string("###" + Manager.GetUniqueID().ToString());
+			State = new InspectorGuiState("###" + Manager.GetUniqueID().ToString());
 		}
 
-		public string Id { get; private set; } = "";
+		public InspectorGuiState State { get; private set; }
 
 		// フィールドが配列などであったとき、その各要素について格納する
 		public List<InspectorGuiInfo> subElement = new List<InspectorGuiInfo>();
@@ -325,9 +336,8 @@ namespace Effekseer.GUI.Inspector
 					bool isEdited = false;
 					foreach (var v in arrayValue)
 					{
-						string id = guiInfo.subElement[j].Id;
 						elementGetterSetterArray.Push(arrayValue, j);
-						var result = func(v, id);
+						var result = func(v, guiInfo.subElement[j].State);
 						if (result.isEdited)
 						{
 							if (valueType.IsValueType)
@@ -347,8 +357,7 @@ namespace Effekseer.GUI.Inspector
 				}
 				else
 				{
-					string id = guiInfo.Id;
-					var result = func(value, id);
+					var result = func(value, guiInfo.State);
 					if (result.isEdited)
 					{
 						elementGetterSetterArray.SetValue(result.value);
