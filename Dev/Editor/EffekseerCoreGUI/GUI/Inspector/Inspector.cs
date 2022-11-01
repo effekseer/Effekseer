@@ -49,7 +49,7 @@ namespace Effekseer.GUI.Inspector
 	{
 		public string Id { get; private set; }
 
-		public object UserData { get; private set; }
+		public object UserData { get; set; }
 
 		public InspectorGuiState(string id)
 		{
