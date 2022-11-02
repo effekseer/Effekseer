@@ -418,6 +418,7 @@ namespace Effekseer.GUI.Inspector
 			{
 				gradientState = new GradientState();
 				state.UserData = gradientState;
+				CopyStateToNative(gradientState.state, actualValue);
 
 				gradientState.copyAndPaste = new CopyAndPaste<EffectAsset.Gradient>(
 				() => actualValue,
@@ -428,6 +429,8 @@ namespace Effekseer.GUI.Inspector
 			void StoreValue()
 			{
 				CopyStateFromNative(actualValue, gradientState.state);
+				ret.value = actualValue;
+				ret.isEdited = true;
 			}
 
 			void Popup()
@@ -583,9 +586,6 @@ namespace Effekseer.GUI.Inspector
 			if (Manager.NativeManager.GradientHDR(gradientState.id, gradientState.state, gradientState.guiState, false))
 			{
 				StoreValue();
-
-				ret.value = actualValue;
-				ret.isEdited = true;
 			}
 
 			if (Manager.NativeManager.IsItemClicked(0))
