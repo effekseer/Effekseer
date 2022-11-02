@@ -29,7 +29,6 @@ namespace Effekseer.GUI.Inspector
 				{ typeof(float), GuiFloat },
 				{ typeof(EffectAsset.FloatWithRange), GuiFloatWithRange },
 				{ typeof(string), GuiString },
-				{ typeof(Vector3D), GuiVector3D },
 				{ typeof(Vector3F), GuiVector3F },
 				{ typeof(System.Enum), GuiEnum },
 				{ typeof(EffectAsset.Gradient), GuiGradient },
@@ -196,33 +195,6 @@ namespace Effekseer.GUI.Inspector
 			return ret;
 		}
 
-		private InspectorGuiResult GuiVector3D(object value, InspectorGuiState state)
-		{
-			InspectorGuiResult ret = new InspectorGuiResult();
-
-			if (value is Vector3D vec3Value)
-			{
-				FieldInfo fieldInternalValue = vec3Value.GetType().GetField("internalValue", BindingFlags.NonPublic | BindingFlags.Instance);
-				float[] internalValue = (float[])fieldInternalValue.GetValue(vec3Value);
-
-				if (Manager.NativeManager.DragFloat3EfkEx(state.Id, internalValue, 1.0f,
-					float.MinValue, float.MaxValue,
-					float.MinValue, float.MaxValue,
-					float.MinValue, float.MaxValue,
-					"X:" + Core.Option.GetFloatFormat(), "Y:" + Core.Option.GetFloatFormat(), "Z:" + Core.Option.GetFloatFormat()))
-				{
-					ret.isEdited = true;
-					ret.value = vec3Value;
-					return ret;
-				}
-			}
-			else
-			{
-				Manager.NativeManager.Text("Assert GuiVector3D");
-			}
-
-			return ret;
-		}
 		private InspectorGuiResult GuiVector3F(object value, InspectorGuiState state)
 		{
 			InspectorGuiResult ret = new InspectorGuiResult();
