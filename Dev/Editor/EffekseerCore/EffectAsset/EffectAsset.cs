@@ -353,6 +353,8 @@ namespace Effekseer.EffectAsset
 		public Vector3WithRange Vector3WithRangeTest = new Vector3WithRange();
 
 		public TextureAsset TextureTest = null;
+
+		public Color ColorTest = new Color();
 	}
 
 	public class CommonParameter
@@ -465,6 +467,53 @@ namespace Effekseer.EffectAsset
 		public FloatWithRange Z = new FloatWithRange();
 
 		public Data.DrawnAs DrawnAs = Data.DrawnAs.CenterAndAmplitude;
+	}
+
+	public struct Color
+	{
+		public int V1;
+		public int V2;
+		public int V3;
+		public int A;
+
+		[PartsTreeSystem.SerializeField]
+		Effekseer.Data.ColorSpace colorSpace;
+
+		public Effekseer.Data.ColorSpace ColorSpace
+		{
+			get
+			{
+				return colorSpace;
+			}
+			set
+			{
+				if (colorSpace == value)
+				{
+					return;
+				}
+
+				colorSpace = value;
+
+				Utils.RGBHSVColor color;
+
+				color.RH = V1;
+				color.GS = V2;
+				color.BV = V3;
+
+				if (colorSpace == Data.ColorSpace.HSVA)
+				{
+					color = Utils.RGBHSVColor.RGBToHSV(color);
+				}
+				else
+				{
+					color = Utils.RGBHSVColor.HSVToRGB(color);
+				}
+
+				V1 = color.RH;
+				V2 = color.GS;
+				V3 = color.BV;
+			}
+		}
 	}
 
 	public class Gradient
