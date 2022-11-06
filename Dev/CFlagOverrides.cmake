@@ -1,3 +1,12 @@
+if(SANITIZE_ENABLED)
+    if(MSVC)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /fsanitize=address")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /fsanitize=address")
+    else()
+        add_compile_options(-fsanitize=undefined,address)
+        add_link_options(-fsanitize=undefined,address)
+    endif()
+endif()
 
 if (MSVC AND NOT EFK_USE_MSVC_RUNTIME_LIBRARY_DLL)
 	foreach (flag CMAKE_C_FLAGS_DEBUG_INIT CMAKE_C_FLAGS_MINSIZEREL_INIT CMAKE_C_FLAGS_RELEASE_INIT CMAKE_C_FLAGS_RELWITHDEBINFO_INIT CMAKE_CXX_FLAGS_DEBUG_INIT CMAKE_CXX_FLAGS_MINSIZEREL_INIT CMAKE_CXX_FLAGS_RELEASE_INIT CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT)
