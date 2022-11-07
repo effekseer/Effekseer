@@ -328,13 +328,18 @@ namespace Effekseer.GUI.Inspector
 
 				if (Manager.NativeManager.ColorEdit4(state.Id, internalValue, colorSpace))
 				{
-					color.V1 = (int)Math.Round(internalValue[0] * 255, MidpointRounding.AwayFromZero);
-					color.V2 = (int)Math.Round(internalValue[1] * 255, MidpointRounding.AwayFromZero);
-					color.V3 = (int)Math.Round(internalValue[2] * 255, MidpointRounding.AwayFromZero);
-					color.A = (int)Math.Round(internalValue[3] * 255, MidpointRounding.AwayFromZero);
+					EffectAsset.Color newColor = new EffectAsset.Color();
+					newColor.V1 = (int)Math.Round(internalValue[0] * 255, MidpointRounding.AwayFromZero);
+					newColor.V2 = (int)Math.Round(internalValue[1] * 255, MidpointRounding.AwayFromZero);
+					newColor.V3 = (int)Math.Round(internalValue[2] * 255, MidpointRounding.AwayFromZero);
+					newColor.A = (int)Math.Round(internalValue[3] * 255, MidpointRounding.AwayFromZero);
+					newColor.ColorSpace = color.ColorSpace;
 
-					ret.value = color;
-					ret.isEdited = true;
+					if (color != newColor)
+					{
+						ret.value = newColor;
+						ret.isEdited = true;
+					}
 				}
 			}
 
@@ -586,6 +591,7 @@ namespace Effekseer.GUI.Inspector
 				}
 			}
 
+			CopyStateToNative(gradientState.state, actualValue);
 
 			if (Manager.NativeManager.GradientHDR(gradientState.id, gradientState.state, gradientState.guiState, false))
 			{
