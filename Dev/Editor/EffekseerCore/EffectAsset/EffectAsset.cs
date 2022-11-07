@@ -514,6 +514,17 @@ namespace Effekseer.EffectAsset
 				V3 = color.BV;
 			}
 		}
+
+		public static bool operator ==(in Color lhs, in Color rhs)
+		{
+			return lhs.V1 == rhs.V1 && lhs.V2 == rhs.V2 && lhs.V3 == rhs.V3 && lhs.A == rhs.A && lhs.ColorSpace == rhs.ColorSpace;
+		}
+
+		public static bool operator !=(in Color lhs, in Color rhs)
+		{
+			return !(lhs == rhs);
+		}
+
 	}
 
 	public class Gradient
