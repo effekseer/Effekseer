@@ -19,6 +19,8 @@ namespace Effekseer.GUI.Inspector
 	{
 		private Dictionary<Type, Func<object, InspectorGuiState, InspectorGuiResult>> FuncDictionary { get; }
 
+		private Dictionary<Type, Func<object, string, InspectorGuiState, InspectorGuiResult>> DropFuncDictionary { get; }
+
 		public InspectorGuiDictionary()
 		{
 			// å^èÓïÒÇ∆GuiÇï\é¶Ç∑ÇÈä÷êîÇïRÇ√ÇØÇÈ
@@ -32,7 +34,12 @@ namespace Effekseer.GUI.Inspector
 				{ typeof(Vector3F), GuiVector3F },
 				{ typeof(System.Enum), GuiEnum },
 				{ typeof(EffectAsset.Gradient), GuiGradient },
-				{ typeof(EffectAsset.Color), GuiColor },
+				{ typeof(EffectAsset.Color), Widgets.Color.Update },
+				{ typeof(EffectAsset.TextureAsset), Widgets.Texture.Update},
+			};
+
+			DropFuncDictionary = new Dictionary<Type, Func<object, string, InspectorGuiState, InspectorGuiResult>> {
+				{ typeof(EffectAsset.TextureAsset), Widgets.Texture.Dropped},
 			};
 		}
 
@@ -41,9 +48,19 @@ namespace Effekseer.GUI.Inspector
 			return FuncDictionary.ContainsKey(type);
 		}
 
+		public bool HasDropFunction(Type type)
+		{
+			return DropFuncDictionary.ContainsKey(type);
+		}
+
 		public Func<object, InspectorGuiState, InspectorGuiResult> GetFunction(Type type)
 		{
 			return FuncDictionary[type];
+		}
+
+		public Func<object, string, InspectorGuiState, InspectorGuiResult> GetDropFunction(Type type)
+		{
+			return DropFuncDictionary[type];
 		}
 
 		private InspectorGuiResult GuiBool(object value, InspectorGuiState state)
@@ -305,42 +322,6 @@ namespace Effekseer.GUI.Inspector
 					}
 				}
 				Manager.NativeManager.EndCombo();
-			}
-
-			return ret;
-		}
-
-		private InspectorGuiResult GuiColor(object value, InspectorGuiState state)
-		{
-			InspectorGuiResult ret = new InspectorGuiResult();
-
-			if (value is EffectAsset.Color color)
-			{
-				var colorSpace = (color.ColorSpace == Data.ColorSpace.RGBA)
-				? (swig.ColorEditFlags.DisplayRGB | swig.ColorEditFlags.InputRGB)
-				: (swig.ColorEditFlags.DisplayHSV | swig.ColorEditFlags.InputHSV);
-
-				float[] internalValue = new float[] { 1.0f, 1.0f, 1.0f, 1.0f };
-				internalValue[0] = color.V1 / 255.0f;
-				internalValue[1] = color.V2 / 255.0f;
-				internalValue[2] = color.V3 / 255.0f;
-				internalValue[3] = color.A / 255.0f;
-
-				if (Manager.NativeManager.ColorEdit4(state.Id, internalValue, colorSpace))
-				{
-					EffectAsset.Color newColor = new EffectAsset.Color();
-					newColor.V1 = (int)Math.Round(internalValue[0] * 255, MidpointRounding.AwayFromZero);
-					newColor.V2 = (int)Math.Round(internalValue[1] * 255, MidpointRounding.AwayFromZero);
-					newColor.V3 = (int)Math.Round(internalValue[2] * 255, MidpointRounding.AwayFromZero);
-					newColor.A = (int)Math.Round(internalValue[3] * 255, MidpointRounding.AwayFromZero);
-					newColor.ColorSpace = color.ColorSpace;
-
-					if (color != newColor)
-					{
-						ret.value = newColor;
-						ret.isEdited = true;
-					}
-				}
 			}
 
 			return ret;
