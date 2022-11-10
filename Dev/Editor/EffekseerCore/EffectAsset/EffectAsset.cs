@@ -11,13 +11,13 @@ namespace Effekseer.EffectAsset
 	{
 		public static string[] SplitPath(string path)
 		{
-			var elms = path.Split(":");
+			var elms = path.Split("?");
 			return elms;
 		}
 
 		public static string CombinePath(string filePath, string virtualPath)
 		{
-			return filePath + ":" + virtualPath;
+			return filePath + "?" + virtualPath;
 		}
 	}
 

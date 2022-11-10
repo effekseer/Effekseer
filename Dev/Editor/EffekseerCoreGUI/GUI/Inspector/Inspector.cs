@@ -43,6 +43,33 @@ namespace Effekseer.GUI.Inspector
 				CoreContext.SelectedEffect.Context.CommandManager.SetFlagToBlockMergeCommands();
 			}
 		}
+
+		public override void DispatchDropped(string path, ref bool handle)
+		{
+			if (CoreContext.SelectedEffect.Context.NodeTree == null || CoreContext.SelectedEffectNode == null)
+			{
+				return;
+			}
+
+			CoreContext.SelectedEffect.Context.CommandManager.StartEditFields(
+				CoreContext.SelectedEffect.Asset.NodeTreeAsset,
+				CoreContext.SelectedEffect.Context.NodeTree,
+				CoreContext.SelectedEffectNode,
+				CoreContext.Environment);
+
+			if (Inspector.Drop(path, CoreContext.SelectedEffect.Context,
+				CoreContext.SelectedEffectNode))
+			{
+				handle = true;
+			}
+
+			CoreContext.SelectedEffect.Context.CommandManager.EndEditFields(
+				CoreContext.SelectedEffectNode,
+				CoreContext.Environment);
+
+
+			base.DispatchDropped(path, ref handle);
+		}
 	}
 
 	class InspectorGuiState
@@ -174,16 +201,8 @@ namespace Effekseer.GUI.Inspector
 			var value = elementGetterSetterArray.GetValue();
 			var name = elementGetterSetterArray.GetName();
 
-			if (value == null)
-			{
-				// TODO : nullどうする？
-				//Manager.NativeManager.Text("null : " + field.GetType().ToString());
-				return;
-			}
-
-
 			// 配列かリストの時、エレメントの型を取得する
-			var valueType = value.GetType();
+			var valueType = field != null ? field.FieldType : value.GetType();
 			bool isList = valueType is IList;
 			if (isList)
 			{
@@ -379,6 +398,148 @@ namespace Effekseer.GUI.Inspector
 			}
 		}
 
+		/// <summary>
+		/// TODO : Refactor
+		/// </summary>
+		/// <param name="path"></param>
+		/// <param name="context"></param>
+		/// <param name="targetNode"></param>
+		/// <param name="elementGetterSetterArray"></param>
+		/// <param name="guiInfo"></param>
+		/// <returns></returns>
+		private static bool DropObjectGuis(string path, EffectAsset.EffectAssetEditorContext context
+			, object targetNode, PartsTreeSystem.ElementGetterSetterArray elementGetterSetterArray, InspectorGuiInfo guiInfo)
+		{
+			var field = elementGetterSetterArray.FieldInfos.Last();
+			var value = elementGetterSetterArray.GetValue();
+
+			// 配列かリストの時、エレメントの型を取得する
+			var valueType = field != null ? field.FieldType : value.GetType();
+			bool isList = valueType is IList;
+			if (isList)
+			{
+				valueType = valueType.GetElementType();
+			}
+			else if (valueType.IsGenericType && valueType.GetGenericTypeDefinition() == typeof(List<>))
+			{
+				valueType = valueType.GetGenericArguments()[0];
+			}
+
+			var guiFunctionKey = valueType;
+
+			// when valueType is enum, the key is System.Enum 
+			if (valueType.IsEnum)
+			{
+				guiFunctionKey = typeof(System.Enum);
+			}
+
+			// VisiblityControlledAttributes
+			{
+				bool isVisible = true;
+				var attr = (EffectAsset.VisiblityControlledAttribute)field.GetCustomAttribute(typeof(EffectAsset.VisiblityControlledAttribute));
+				if (attr != null)
+				{
+					if (VisiblityControllers.ContainsKey(attr.ID))
+					{
+						var controllerValue = (int)VisiblityControllers[attr.ID];
+						isVisible = (attr.Value == controllerValue);
+					}
+				}
+				if (!isVisible)
+				{
+					return false;
+				}
+			}
+
+			// update subfields
+			int i = 0;
+			var subFields = valueType.GetFields();
+			bool shownSubFields = false;
+			foreach (var f in subFields)
+			{
+				if (!GuiDictionary.HasDropFunction(guiFunctionKey) &&
+				value.GetType().GetFields().Length > 0 &&
+				!value.GetType().IsEnum &&
+				guiInfo.subElement.Count > i)
+				{
+					UpdateVisiblityControllers(value);
+					elementGetterSetterArray.Push(value, f);
+					bool editted = DropObjectGuis(path, context, targetNode, elementGetterSetterArray, guiInfo.subElement[i]);
+					elementGetterSetterArray.Pop();
+					shownSubFields = true;
+
+					if (editted)
+					{
+						return true;
+					}
+				}
+				++i;
+			}
+			if (shownSubFields)
+			{
+				return false;
+			}
+
+			if (GuiDictionary.HasDropFunction(guiFunctionKey))
+			{
+				var func = GuiDictionary.GetDropFunction(guiFunctionKey);
+
+				if (isList)
+				{
+					IList arrayValue = (IList)value;
+
+					// GuiIdが足りなければ、すべて再生成
+					// GenerateFieldGuiIdsの中でやりたいが、型情報からは要素数が分からないのでここで生成。
+					if (arrayValue.Count > guiInfo.subElement.Count())
+					{
+						guiInfo.subElement.Clear();
+
+						foreach (var v in arrayValue)
+						{
+							FieldGuiInfoList[i].subElement.Add(new InspectorGuiInfo());
+						}
+					}
+
+					int j = 0;
+					bool isEdited = false;
+					foreach (var v in arrayValue)
+					{
+						elementGetterSetterArray.Push(arrayValue, j);
+						var result = func(v, path, guiInfo.subElement[j].State);
+						if (result.isEdited)
+						{
+							if (valueType.IsValueType)
+							{
+								elementGetterSetterArray.SetValue(result.value);
+							}
+							isEdited = true;
+						}
+						elementGetterSetterArray.Pop();
+						++j;
+					}
+					if (isEdited)
+					{
+						field.SetValue(targetNode, arrayValue);
+						context.CommandManager.NotifyEditFields((PartsTreeSystem.IInstance)targetNode);
+						return true;
+					}
+				}
+				else
+				{
+					var result = func(value, path, guiInfo.State);
+					if (result.isEdited)
+					{
+						elementGetterSetterArray.SetValue(result.value);
+						context.CommandManager.NotifyEditFields((PartsTreeSystem.IInstance)targetNode);
+						return true;
+					}
+
+				}
+			}
+
+			return false;
+		}
+
 		//public static void OnAfterSelect(object sender, EventArgs e)
 		//{
 
@@ -432,6 +593,28 @@ namespace Effekseer.GUI.Inspector
 			}
 			Manager.NativeManager.EndTable();
 			Manager.NativeManager.Separator();
+		}
+
+		public static bool Drop(string path, EffectAsset.EffectAssetEditorContext context, EffectAsset.Node targetNode)
+		{
+			var fields = targetNode.GetType().GetFields();
+			int i = 0;
+			var elementGetterSetterArray = new PartsTreeSystem.ElementGetterSetterArray();
+			foreach (var field in fields)
+			{
+				elementGetterSetterArray.Push(targetNode, field);
+				UpdateVisiblityControllers(targetNode);
+				var eddited = DropObjectGuis(path, context, targetNode, elementGetterSetterArray, FieldGuiInfoList[i]);
+				elementGetterSetterArray.Pop();
+				++i;
+
+				if (eddited)
+				{
+					return true;
+				}
+			}
+
+			return false;
 		}
 	}
 
