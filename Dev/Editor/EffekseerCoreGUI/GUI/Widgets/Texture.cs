@@ -7,31 +7,6 @@ using System.Linq;
 
 namespace Effekseer.GUI.Widgets
 {
-	class WidgetsHelper
-	{
-		public static bool CanShowTip()
-		{
-			return Manager.NativeManager.IsItemHovered() && Manager.NativeManager.GetHoveredIDTimer() > 0.25f;
-		}
-
-		public static bool ShowResetButton(string id)
-		{
-			var ret = false;
-
-			if (Manager.NativeManager.Button(Resources.GetString("ResetParam_Name") + id))
-			{
-				ret = true;
-			}
-
-			if (CanShowTip())
-			{
-				Manager.NativeManager.SetTooltip(Resources.GetString("ResetParam_Desc"));
-			}
-
-			return ret;
-		}
-	}
-
 	class Texture
 	{
 		class State
@@ -235,7 +210,7 @@ namespace Effekseer.GUI.Widgets
 
 			if (Manager.NativeManager.BeginPopupContextItem(guiState.ID_Popup))
 			{
-				if (WidgetsHelper.ShowResetButton(guiState.ID_Reset))
+				if (WidgetHelper.ShowResetButton(guiState.ID_Reset))
 				{
 					texture = null;
 				}
