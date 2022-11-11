@@ -140,8 +140,7 @@ namespace Effekseer.GUI.Inspector
 			}
 			FieldGuiInfoList.Clear();
 
-			Func<object, InspectorGuiInfo> generate = null;
-			generate = (object tgt) =>
+			InspectorGuiInfo generate(object tgt)
 			{
 				InspectorGuiInfo info = new InspectorGuiInfo();
 				if (tgt == null)
@@ -262,10 +261,9 @@ namespace Effekseer.GUI.Inspector
 
 
 			// update subfields
-			int i = 0;
 			var subFields = valueType.GetFields();
 			bool shownSubFields = false;
-			foreach (var f in subFields)
+			foreach (var (f, i) in subFields.Select((_, i) => Tuple.Create(_, i)))
 			{
 				if (!GuiDictionary.HasFunction(guiFunctionKey) &&
 				value.GetType().GetFields().Length > 0 &&
@@ -278,7 +276,6 @@ namespace Effekseer.GUI.Inspector
 					elementGetterSetterArray.Pop();
 					shownSubFields = true;
 				}
-				++i;
 			}
 			if (shownSubFields)
 			{
@@ -347,14 +344,14 @@ namespace Effekseer.GUI.Inspector
 
 						foreach (var v in arrayValue)
 						{
-							FieldGuiInfoList[i].subElement.Add(new InspectorGuiInfo());
+							guiInfo.subElement.Add(new InspectorGuiInfo());
 						}
 					}
 
-					int j = 0;
 					bool isEdited = false;
-					foreach (var v in arrayValue)
+					for (int j = 0; j < arrayValue.Count; j++)
 					{
+						var v = arrayValue[j];
 						elementGetterSetterArray.Push(arrayValue, j);
 						var result = func(v, guiInfo.subElement[j].State);
 						if (result.isEdited)
@@ -452,10 +449,9 @@ namespace Effekseer.GUI.Inspector
 			}
 
 			// update subfields
-			int i = 0;
 			var subFields = valueType.GetFields();
 			bool shownSubFields = false;
-			foreach (var f in subFields)
+			foreach (var (f, i) in subFields.Select((_, i) => Tuple.Create(_, i)))
 			{
 				if (!GuiDictionary.HasDropFunction(guiFunctionKey) &&
 				value.GetType().GetFields().Length > 0 &&
@@ -473,7 +469,6 @@ namespace Effekseer.GUI.Inspector
 						return true;
 					}
 				}
-				++i;
 			}
 			if (shownSubFields)
 			{
@@ -496,14 +491,15 @@ namespace Effekseer.GUI.Inspector
 
 						foreach (var v in arrayValue)
 						{
-							FieldGuiInfoList[i].subElement.Add(new InspectorGuiInfo());
+							guiInfo.subElement.Add(new InspectorGuiInfo());
 						}
 					}
 
-					int j = 0;
 					bool isEdited = false;
-					foreach (var v in arrayValue)
+					for (int j = 0; j < arrayValue.Count; j++)
 					{
+						var v = arrayValue[j];
+
 						elementGetterSetterArray.Push(arrayValue, j);
 						var result = func(v, path, guiInfo.subElement[j].State);
 						if (result.isEdited)
