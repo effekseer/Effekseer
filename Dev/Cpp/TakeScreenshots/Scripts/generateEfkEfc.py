@@ -24,14 +24,16 @@ tool_download_url = "https://github.com/effekseer/Effekseer/releases/download/17
 
 processed_dir = "./processed/"
 processed_dir_legacy = "./processed/1.7/"
-processed_dir_newer = "./processed/1.8/"
+
+# chache for test app to open efkefc files
+efkefclist_path = "./processed/1.7/efkefclist.txt"
 
 tool_dir = "./Tool/"
 tool_dir_legacy = "./Tool/1.7/"
-tool_dir_newer = "./Tool/1.8/"
 
 zipped_dir = "./zipData/"
 unzipped_dir = "./unzipped/"
+
 
 def download_tool():
     if os.path.exists(tool_dir_legacy):
@@ -89,6 +91,9 @@ def convert_to_efkefc(tool_dir, target_dir):
     files = glob.glob(target_dir + "**/*.efkproj", recursive=True)
     cnt = 1
 
+    # chache for test app to open efkefc files
+    efkefclist_file = open(efkefclist_path, 'w')
+
     # process 
     for file in files:
         efkproj = file
@@ -104,6 +109,11 @@ def convert_to_efkefc(tool_dir, target_dir):
         print("Converting...({}/{}) : {:s}".format(cnt, len(files), efkproj))
         cmd = [tool_dir + "Effekseer.exe", "-cui", "-in", rel_efkproj ,"-o", rel_efkefc]
         subprocess.run(cmd, cwd=tool_dir)
+
+        # output for efkfeclists.txt
+        rel_efkefc = os.path.relpath(efkefc, processed_dir_legacy)
+        rel_efkefc = rel_efkefc.replace('\\', '/')
+        efkefclist_file.write(rel_efkefc + '\n')
 
         cnt += 1
 
@@ -125,5 +135,3 @@ if __name__ == "__main__":
 
     print("Convert  efkproj to efkefc in legacy version.")
     convert_to_efkefc(tool_dir_legacy, processed_dir_legacy)
-    # print("Convert efkproj to efkefc in newer version.")
-    # convert_to_efkefc(tool_dir_newer, processed_dir_newer)
