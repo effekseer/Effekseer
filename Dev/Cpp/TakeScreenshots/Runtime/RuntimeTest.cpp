@@ -39,7 +39,7 @@ static std::u16string ToU16Str(const char* text)
 	
 #else
 	char16_t dst[512];
-	Effekseer::ConvertUtf8ToUtf16(dst, 512, p.c_str());
+	Effekseer::ConvertUtf8ToUtf16(dst, 512, text);
 	return std::u16string(dst);
 #endif
 
