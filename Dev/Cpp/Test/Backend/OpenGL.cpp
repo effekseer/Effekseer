@@ -2,7 +2,7 @@
 #include "Helper.h"
 
 #include "../../../EffekseerRendererGL/EffekseerRenderer/GraphicsDevice.h"
-#include "../RenderingEnvironment/RenderingEnvironmentGL.h"
+#include <RenderingEnvironment/RenderingEnvironmentGL.h>
 
 #include <iostream>
 

@@ -1,21 +1,21 @@
 #ifdef _WIN32
 
 #ifdef __EFFEKSEER_BUILD_DX12__
-#include "EffectPlatformDX12.h"
+#include <Runtime/EffectPlatformDX12.h>
 #endif
 
-#include "EffectPlatformDX11.h"
-#include "EffectPlatformDX9.h"
-#include "EffectPlatformGL.h"
+#include <Runtime/EffectPlatformDX11.h>
+#include <Runtime/EffectPlatformDX9.h>
+#include <Runtime/EffectPlatformGL.h>
 #elif defined(__APPLE__)
-#include "EffectPlatformGL.h"
-#include "EffectPlatformMetal.h"
+#include <Runtime/EffectPlatformGL.h>
+#include <Runtime/EffectPlatformMetal.h>
 #else
-#include "EffectPlatformGL.h"
+#include <Runtime/EffectPlatformGL.h>
 #endif
 
 #ifdef __EFFEKSEER_BUILD_VULKAN__
-#include "EffectPlatformVulkan.h"
+#include <Runtime/EffectPlatformVulkan.h>
 #endif
 
 #include "../Effekseer/Effekseer/Effekseer.Base.h"
@@ -27,7 +27,8 @@ void TextureFormatsPlatform(EffectPlatform* platform, std::string baseResultPath
 	EffectPlatformInitializingParameter param;
 	platform->Initialize(param);
 
-	auto single15nowebglTest = [&](const char16_t* name, const char* savename) -> void {
+	auto single15nowebglTest = [&](const char16_t* name, const char* savename) -> void
+	{
 		srand(0);
 		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/15_NoWebGL/" + name + u".efkefc").c_str());
 
@@ -39,7 +40,8 @@ void TextureFormatsPlatform(EffectPlatform* platform, std::string baseResultPath
 		platform->StopAllEffects();
 	};
 
-	auto single16Test = [&](const char16_t* name, const char* savename) -> void {
+	auto single16Test = [&](const char16_t* name, const char* savename) -> void
+	{
 		srand(0);
 		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/16/" + name + u".efkefc").c_str());
 
@@ -125,4 +127,5 @@ void TextureFormatsTest()
 #endif
 }
 
-TestRegister Runtime_TextureFormatsTest("Runtime.TextureFormatsTest", []() -> void { TextureFormatsTest(); });
+TestRegister Runtime_TextureFormatsTest("Runtime.TextureFormatsTest", []() -> void
+										{ TextureFormatsTest(); });

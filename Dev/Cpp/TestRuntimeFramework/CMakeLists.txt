@@ -1,29 +1,59 @@
 
 cmake_minimum_required(VERSION 3.10)
 
-project(TestCpp)
+project(TestRuntimeFramework)
 
 set(effekseer_test_src
-    main.cpp
-    TestHelper.h
-    TestHelper.cpp
-    Runtime/BasicRendering.cpp
-    Runtime/RuntimeTest.cpp
-    Runtime/Performance.cpp
-    Runtime/TextureFormats.cpp
-    Runtime/Vertex.cpp
-    Runtime/ResourceManager.cpp
-    Runtime/Network.cpp
-    Runtime/Math.cpp
-    Runtime/Misc.cpp
-    Backend/Helper.h
-    Backend/Helper.cpp
-    Backend/Textures.cpp
-    Backend/Mesh.cpp
-    Backend/RenderPass.cpp
-    Backend/GPUParticle.cpp
-    Backend/OpenGL.cpp
+    RenderingEnvironment/RenderingEnvironment.h
+    RenderingEnvironment/RenderingEnvironment.cpp
+    RenderingEnvironment/RenderingEnvironmentGL.h
+    RenderingEnvironment/RenderingEnvironmentGL.cpp
+    Runtime/EffectPlatform.h
+    Runtime/EffectPlatform.cpp
+    Runtime/EffectPlatformGLFW.h
+    Runtime/EffectPlatformGLFW.cpp
+    Runtime/EffectPlatformGL.h
+    Runtime/EffectPlatformGL.cpp
 )
+
+if(BUILD_DX12 OR BUILD_METAL OR BUILD_VULKAN)
+    list(APPEND effekseer_test_src
+        Runtime/EffectPlatformLLGI.h
+        Runtime/EffectPlatformLLGI.cpp
+    )
+endif()
+
+if(BUILD_DX12)
+    list(APPEND effekseer_test_src
+        Runtime/EffectPlatformDX12.h
+        Runtime/EffectPlatformDX12.cpp
+    )
+endif()
+
+if(BUILD_METAL)
+    list(APPEND effekseer_test_src
+        Runtime/EffectPlatformMetal.h
+        Runtime/EffectPlatformMetal.mm
+    )
+endif()
+
+if(BUILD_VULKAN)
+    list(APPEND effekseer_test_src
+        Runtime/EffectPlatformVulkan.h
+        Runtime/EffectPlatformVulkan.cpp
+    )
+endif()
+
+if(WIN32)
+    list(APPEND effekseer_test_src
+        Runtime/EffectPlatformDX9.h
+        Runtime/EffectPlatformDX9.cpp
+        Runtime/EffectPlatformDX11.h
+        Runtime/EffectPlatformDX11.cpp
+        RenderingEnvironment/RenderingEnvironmentDX11.h
+        RenderingEnvironment/RenderingEnvironmentDX11.cpp
+    )
+endif()
 
 include_directories(
     ${EFK_THIRDPARTY_INCLUDES}
@@ -101,31 +131,32 @@ else()
             ${CORE_FOUNDATION_FRAMEWORK}
             ${CORE_VIDEO_FRAMEWORK})
     endif()
+
 endif()
 
-add_executable(${PROJECT_NAME} ${effekseer_test_src})
-target_link_directories(${PROJECT_NAME} PRIVATE ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES})
-target_link_libraries(${PROJECT_NAME} PRIVATE TestRuntimeFramework)
+add_library(${PROJECT_NAME} ${effekseer_test_src})
+target_link_directories(${PROJECT_NAME} PUBLIC ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES})
+target_include_directories(${PROJECT_NAME} PUBLIC ./)
 
 if(BUILD_VULKAN)
     find_package(Vulkan REQUIRED)
 
     target_include_directories(
-        TestCpp
-        PRIVATE
+        ${PROJECT_NAME}
+        PUBLIC
         ${Vulkan_INCLUDE_DIRS}
     )
     
     target_link_libraries(
-        TestCpp
-        PRIVATE 
+        ${PROJECT_NAME}
+        PUBLIC
         ${Vulkan_LIBRARIES}
     )
 
     # TODO Improve it
     target_link_libraries(
-        TestCpp
-        PRIVATE 
+        ${PROJECT_NAME}
+        PUBLIC
         glslang
         SPIRV
         OGLCompiler
@@ -133,27 +164,45 @@ if(BUILD_VULKAN)
     )
     
     target_link_directories(
-        TestCpp
-        PRIVATE
+        ${PROJECT_NAME}
+        PUBLIC
         ${CMAKE_CURRENT_BINARY_DIR}/../3rdParty/LLGI/EP/Install/glslang/lib
     )
 endif()
 
-add_dependencies(TestCpp ExternalProject_glfw)
+add_dependencies(${PROJECT_NAME} ExternalProject_glfw)
 
 if(BUILD_WITH_EASY_PROFILER)
-    add_dependencies(TestCpp ExternalProject_easy_profiler)
+    add_dependencies(${PROJECT_NAME} ExternalProject_easy_profiler)
+endif()
+
+if (BUILD_WITH_POSTFIX)
+target_link_libraries(
+    ${PROJECT_NAME}
+    PUBLIC
+    ${common_lib}
+    debug glfw3d
+    optimized glfw3
+)
+else()
+target_link_libraries(
+    ${PROJECT_NAME}
+    PUBLIC
+    ${common_lib}
+    glfw3
+    dl
+)
 endif()
 
 if(UNIX AND NOT APPLE)
     find_package(X11 REQUIRED)
-    target_link_libraries(TestCpp PRIVATE ${X11_LIBRARIES})
+    target_link_libraries(${PROJECT_NAME} PUBLIC ${X11_LIBRARIES})
     find_package(Threads REQUIRED)
-    target_link_libraries(TestCpp PRIVATE ${CMAKE_THREAD_LIBS_INIT})
+    target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_THREAD_LIBS_INIT})
 endif()
 
 if(FROM_CI)
-    target_compile_definitions(TestCpp PRIVATE __FROM_CI__)
+    target_compile_definitions(${PROJECT_NAME} PUBLIC __FROM_CI__)
 endif()
 
 # FIXME: Mixed measures with sln. for VS2015
@@ -163,15 +212,29 @@ if (APPLE)
     add_definitions(-D__EFFEKSEER_RENDERER_GL3__)
 endif()
 
-if (MSVC)
-    set_target_properties(TestCpp PROPERTIES OUTPUT_NAME_DEBUG "TestCpp")
-    set_target_properties(TestCpp PROPERTIES OUTPUT_NAME_RELEASE "TestCpp")
-else()
-    set_target_properties(TestCpp PROPERTIES OUTPUT_NAME "TestCpp")
-endif()
-
 FilterFolder("${effekseer_test_src}")
 
 if(CLANG_FORMAT_ENABLED)
-    clang_format(TestCpp)
+    clang_format(${PROJECT_NAME})
 endif()
+
+if(USE_LIBPNG_LOADER)
+    add_dependencies(${PROJECT_NAME} ExternalProject_libpng)
+
+    target_link_directories(
+        ${PROJECT_NAME}
+        PUBLIC
+        ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES}
+    )
+
+    target_link_libraries(
+        ${PROJECT_NAME}
+        PUBLIC
+        debug "${LIBPNG_LIB_DEBUG}"
+        optimized "${LIBPNG_LIB_RELEASE}"
+        debug "${ZLIB_LIB_DEBUG}"
+        optimized "${ZLIB_LIB_RELEASE}"
+
+	)
+endif()
+
