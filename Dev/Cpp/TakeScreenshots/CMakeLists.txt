@@ -153,27 +153,27 @@ else()
 
 endif()
 
-add_executable(TakeScreenShots ${effekseer_take_screenshots_src} )
-target_link_directories(TakeScreenShots PRIVATE ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES})
+add_executable(TakeScreenshots ${effekseer_take_screenshots_src} )
+target_link_directories(TakeScreenshots PRIVATE ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES})
 
 if(BUILD_VULKAN)
     find_package(Vulkan REQUIRED)
 
     target_include_directories(
-        TakeScreenShots
+        TakeScreenshots
         PRIVATE
         ${Vulkan_INCLUDE_DIRS}
     )
     
     target_link_libraries(
-        TakeScreenShots
+        TakeScreenshots
         PRIVATE 
         ${Vulkan_LIBRARIES}
     )
 
     # TODO Improve it
     target_link_libraries(
-        TakeScreenShots
+        TakeScreenshots
         PRIVATE 
         glslang
         SPIRV
@@ -182,21 +182,21 @@ if(BUILD_VULKAN)
     )
     
     target_link_directories(
-        TakeScreenShots
+        TakeScreenshots
         PRIVATE
         ${CMAKE_CURRENT_BINARY_DIR}/../3rdParty/LLGI/EP/Install/glslang/lib
     )
 endif()
 
-add_dependencies(TakeScreenShots ExternalProject_glfw)
+add_dependencies(TakeScreenshots ExternalProject_glfw)
 
 if(BUILD_WITH_EASY_PROFILER)
-    add_dependencies(TakeScreenShots ExternalProject_easy_profiler)
+    add_dependencies(TakeScreenshots ExternalProject_easy_profiler)
 endif()
 
 if (BUILD_WITH_POSTFIX)
 target_link_libraries(
-    TakeScreenShots
+    TakeScreenshots
     PRIVATE 
     ${common_lib}
     debug glfw3d
@@ -204,7 +204,7 @@ target_link_libraries(
 )
 else()
 target_link_libraries(
-    TakeScreenShots
+    TakeScreenshots
     PRIVATE 
     ${common_lib}
     glfw3
@@ -214,13 +214,13 @@ endif()
 
 if(UNIX AND NOT APPLE)
     find_package(X11 REQUIRED)
-    target_link_libraries(TakeScreenShots PRIVATE ${X11_LIBRARIES})
+    target_link_libraries(TakeScreenshots PRIVATE ${X11_LIBRARIES})
     find_package(Threads REQUIRED)
-    target_link_libraries(TakeScreenShots PRIVATE ${CMAKE_THREAD_LIBS_INIT})
+    target_link_libraries(TakeScreenshots PRIVATE ${CMAKE_THREAD_LIBS_INIT})
 endif()
 
 if(FROM_CI)
-    target_compile_definitions(TakeScreenShots PRIVATE __FROM_CI__)
+    target_compile_definitions(TakeScreenshots PRIVATE __FROM_CI__)
 endif()
 
 # FIXME: Mixed measures with sln. for VS2015
@@ -231,30 +231,30 @@ if (APPLE)
 endif()
 
 if (MSVC)
-    set_target_properties(TakeScreenShots PROPERTIES OUTPUT_NAME_DEBUG "TakeScreenShots")
-    set_target_properties(TakeScreenShots PROPERTIES OUTPUT_NAME_RELEASE "TakeScreenShots")
+    set_target_properties(TakeScreenshots PROPERTIES OUTPUT_NAME_DEBUG "TakeScreenshots")
+    set_target_properties(TakeScreenshots PROPERTIES OUTPUT_NAME_RELEASE "TakeScreenshots")
 else()
-    set_target_properties(TakeScreenShots PROPERTIES OUTPUT_NAME "TakeScreenShots")
+    set_target_properties(TakeScreenshots PROPERTIES OUTPUT_NAME "TakeScreenshots")
 endif()
 
 FilterFolder("${effekseer_take_screenshots_src}")
 
 if(CLANG_FORMAT_ENABLED)
-    clang_format(TakeScreenShots)
+    clang_format(TakeScreenshots)
 endif()
 
 if(USE_LIBPNG_LOADER)
-    add_dependencies(TakeScreenShots ExternalProject_libpng)
+    add_dependencies(TakeScreenshots ExternalProject_libpng)
 
 
     target_link_directories(
-        TakeScreenShots
+        TakeScreenshots
         PRIVATE
         ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES}
     )
 
     target_link_libraries(
-        TakeScreenShots
+        TakeScreenshots
         PRIVATE 
         debug "${LIBPNG_LIB_DEBUG}"
         optimized "${LIBPNG_LIB_RELEASE}"
