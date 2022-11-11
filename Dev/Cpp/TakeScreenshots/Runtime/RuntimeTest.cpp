@@ -67,8 +67,11 @@ void TakeScreenshotsTest()
 			{
 				platform->Update();
 			}
-
+#ifdef __APPLE__
+			std::__fs::filesystem::path effectPath = path;
+#else
 			std::filesystem::path effectPath = path;
+#endif
 
 			std::string screenshotPath = effectPath.parent_path().stem().string() + "_" + effectPath.stem().string() + ".png";
 			platform->TakeScreenshot(screenshotPath.c_str());
