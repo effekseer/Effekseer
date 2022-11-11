@@ -1,20 +1,20 @@
 #ifdef _WIN32
 
 #ifdef __EFFEKSEER_BUILD_DX12__
-#include "EffectPlatformDX12.h"
+#include <Runtime/EffectPlatformDX12.h>
 #endif
 
-#include "EffectPlatformDX11.h"
-#include "EffectPlatformDX9.h"
+#include <Runtime/EffectPlatformDX11.h>
+#include <Runtime/EffectPlatformDX9.h>
 #elif defined(__APPLE__)
-#include "EffectPlatformMetal.h"
+#include <Runtime/EffectPlatformMetal.h>
 #else
 #endif
 
-#include "EffectPlatformGL.h"
+#include <Runtime/EffectPlatformGL.h>
 
 #ifdef __EFFEKSEER_BUILD_VULKAN__
-#include "EffectPlatformVulkan.h"
+#include <Runtime/EffectPlatformVulkan.h>
 #endif
 
 #include "../TestHelper.h"

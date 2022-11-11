@@ -1,9 +1,11 @@
 #ifdef _WIN32
-#include "../RenderingEnvironment/RenderingEnvironmentDX11.h"
+#include <RenderingEnvironment/RenderingEnvironmentDX11.h>
 #include <EffekseerRendererDX11.h>
 #endif
-#include "../RenderingEnvironment/RenderingEnvironmentGL.h"
+#include <RenderingEnvironment/RenderingEnvironmentGL.h>
+
 #include "../TestHelper.h"
+
 #include "Effekseer.h"
 #include <Effekseer/Utils/Effekseer.CustomAllocator.h>
 #include <EffekseerRendererGL.h>

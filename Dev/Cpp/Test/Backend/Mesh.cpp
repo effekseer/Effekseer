@@ -1,11 +1,11 @@
 #include "../TestHelper.h"
 #include "Helper.h"
 
-#include "../RenderingEnvironment/RenderingEnvironmentGL.h"
+#include <RenderingEnvironment/RenderingEnvironmentGL.h>
 
 #ifdef _WIN32
 #include "../../EffekseerRendererDX11/EffekseerRenderer/GraphicsDevice.h"
-#include "../RenderingEnvironment/RenderingEnvironmentDX11.h"
+#include <RenderingEnvironment/RenderingEnvironmentDX11.h>
 #include <EffekseerRendererDX11.h>
 
 namespace DX11VS_Mesh
