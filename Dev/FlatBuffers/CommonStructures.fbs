@@ -1,0 +1,11 @@
+namespace Effekseer.FB;
+
+struct IntRange {
+  min:int;
+  max:int;
+}
+
+struct FloatRange {
+  min:float;
+  max:float;
+}
