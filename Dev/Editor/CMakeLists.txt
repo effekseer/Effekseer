@@ -23,6 +23,7 @@ file(GLOB files_core
     EffekseerCore/Script/*.cs
     EffekseerCore/IO/*.cs	
     EffekseerCore/Utils/*.cs
+    EffekseerCore/FB/*.cs
     EffekseerCore/Data/ProceduralModelValues.cs
     EffekseerCore/Data/Value/Int2.cs
     EffekseerCore/Data/Value/ObjectCollection.cs
@@ -66,7 +67,7 @@ set_target_properties(EffekseerCore PROPERTIES
 set_property(TARGET EffekseerCore PROPERTY VS_PACKAGE_REFERENCES "Newtonsoft.Json_13.0.1;DynamicLanguageRuntime_1.2.2;IronPython_2.7.9") 
 
 set_target_properties(EffekseerCore PROPERTIES FOLDER Editor)
-target_link_libraries(EffekseerCore PUBLIC PartsTreeSystem)
+target_link_libraries(EffekseerCore PUBLIC PartsTreeSystem FlatBuffers)
 
 
 add_subdirectory(EffekseerCoreGUI)

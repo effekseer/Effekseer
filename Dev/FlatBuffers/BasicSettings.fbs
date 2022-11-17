@@ -1,0 +1,31 @@
+include "CommonStructures.fbs";
+
+namespace Effekseer.FB;
+
+enum TranslationParentBindType : int
+{
+  TranslationParentBindType_NotBind = 0,
+  TranslationParentBindType_NotBind_Root = 3,
+  TranslationParentBindType_WhenCreating = 1,
+  TranslationParentBindType_Always = 2,
+  TranslationParentBindType_NotBind_FollowParent = 4,
+  TranslationParentBindType_WhenCreating_FollowParent = 5,
+}
+
+enum BindType : int
+{
+  BindType_NotBind = 0,
+  BindType_NotBind_Root = 3,
+  BindType_WhenCreating = 1,
+  BindType_Always = 2,
+}
+
+table BasicSettings {
+  max_generation:int = 1;
+  translation_bind_type:TranslationParentBindType = TranslationParentBindType_Always;
+  rotation_bind_type:BindType = BindType_Always;
+  scaling_bind_type:BindType = BindType_Always;
+  remove_when_life_is_extinct:int = 1;
+  remove_when_parent_is_removed:int = 0;
+  remove_when_children_is_extinct:int = 0;
+}
