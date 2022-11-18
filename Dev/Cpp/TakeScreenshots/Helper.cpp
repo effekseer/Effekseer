@@ -4,6 +4,8 @@
 #include <windows.h>
 #endif
 
+#include <Effekseer.h>
+
 #if defined(_WIN32)
 std::wstring ToWide(const char* text)
 {
