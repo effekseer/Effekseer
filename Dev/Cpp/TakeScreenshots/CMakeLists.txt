@@ -31,24 +31,6 @@ list(APPEND common_lib EffekseerRendererGL)
 
 if(WIN32)
     list(APPEND common_lib EffekseerRendererDX11)
-    list(APPEND common_lib EffekseerRendererDX9)
-endif()
-
-if(BUILD_DX12 OR BUILD_METAL OR BUILD_VULKAN)
-    list(APPEND common_lib LLGI)
-endif()
-
-if(BUILD_DX12)
-    list(APPEND common_lib EffekseerRendererDX12)
-endif()
-
-
-if(BUILD_METAL)
-    list(APPEND common_lib EffekseerRendererMetal)
-endif()
-
-if(BUILD_VULKAN)
-    list(APPEND common_lib EffekseerRendererVulkan)
 endif()
 
 list(APPEND common_lib Effekseer)
@@ -91,38 +73,6 @@ endif()
 add_executable(${PROJECT_NAME} ${effekseer_take_screenshots_src})
 target_link_directories(${PROJECT_NAME} PRIVATE ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES})
 target_link_libraries(${PROJECT_NAME} PRIVATE TestRuntimeFramework)
-
-if(BUILD_VULKAN)
-    find_package(Vulkan REQUIRED)
-
-    target_include_directories(
-        TakeScreenshots
-        PRIVATE
-        ${Vulkan_INCLUDE_DIRS}
-    )
-    
-    target_link_libraries(
-        TakeScreenshots
-        PRIVATE 
-        ${Vulkan_LIBRARIES}
-    )
-
-    # TODO Improve it
-    target_link_libraries(
-        TakeScreenshots
-        PRIVATE 
-        glslang
-        SPIRV
-        OGLCompiler
-        OSDependent
-    )
-    
-    target_link_directories(
-        TakeScreenshots
-        PRIVATE
-        ${CMAKE_CURRENT_BINARY_DIR}/../3rdParty/LLGI/EP/Install/glslang/lib
-    )
-endif()
 
 add_dependencies(TakeScreenshots ExternalProject_glfw)
 

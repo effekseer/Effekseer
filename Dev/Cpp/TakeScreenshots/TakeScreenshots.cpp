@@ -4,22 +4,10 @@
 
 #ifdef _WIN32
 
-#ifdef __EFFEKSEER_BUILD_DX12__
-#include <Runtime/EffectPlatformDX12.h>
-#endif
-
 #include <Runtime/EffectPlatformDX11.h>
-#include <Runtime/EffectPlatformDX9.h>
-#elif defined(__APPLE__)
-#include <Runtime/EffectPlatformMetal.h>
-#else
 #endif
 
 #include <Runtime/EffectPlatformGL.h>
-
-#ifdef __EFFEKSEER_BUILD_VULKAN__
-#include <Runtime/EffectPlatformVulkan.h>
-#endif
 
 #include "../Effekseer/Effekseer/Effekseer.Base.h"
 #include "../Effekseer/Effekseer/Noise/CurlNoise.h"
