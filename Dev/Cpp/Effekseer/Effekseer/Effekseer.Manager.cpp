@@ -1311,24 +1311,24 @@ void ManagerImplemented::Update(const UpdateParameter& parameter)
 
 	if (m_WorkerThreads.size() == 0)
 	{
-		DoUpdate(parameter);
+		DoUpdate(0, 0, parameter);
+	}
+	else if (parameter.SyncUpdate)
+	{
+		DoUpdate(0, static_cast<uint32_t>(m_WorkerThreads.size() - 1), parameter);	
 	}
 	else
 	{
 		m_WorkerThreads[0].WaitForComplete();
 		// Process on worker thread
-		m_WorkerThreads[0].RunAsync([this, parameter]() { DoUpdate(parameter); });
-
-		if (parameter.SyncUpdate)
-		{
-			m_WorkerThreads[0].WaitForComplete();
-		}
+		m_WorkerThreads[0].RunAsync([this, parameter]()
+									{ DoUpdate(1, static_cast<uint32_t>(m_WorkerThreads.size() - 1) , parameter); });
 	}
 
 	ExecuteSounds();
 }
 
-void ManagerImplemented::DoUpdate(const UpdateParameter& parameter)
+void ManagerImplemented::DoUpdate(uint32_t threadOffset, uint32_t threadCount, const UpdateParameter& parameter)
 {
 	PROFILER_BLOCK("Manager::DoUpdate", profiler::colors::Red);
 	// start to measure time
@@ -1401,13 +1401,14 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter)
 			// wakeup threads and wait to complete threads are hevery, so multithread the updates if you have a large number of instances.
 			const size_t multithreadingChunkThreshold = 4;
 
-			if (m_WorkerThreads.size() >= 2 && chunks.size() >= multithreadingChunkThreshold)
+			if (threadCount >= 1 && chunks.size() >= multithreadingChunkThreshold)
 			{
-				const uint32_t chunkStep = (uint32_t)m_WorkerThreads.size();
+				const uint32_t chunkStep = static_cast<uint32_t>(threadCount + 1);
 
-				for (uint32_t threadID = 1; threadID < (uint32_t)m_WorkerThreads.size(); threadID++)
+				for (uint32_t threadID = threadOffset; threadID < threadOffset + threadCount; threadID++)
 				{
-					const uint32_t chunkOffset = threadID;
+					const uint32_t chunkOffset = threadID - threadOffset + 1;
+
 					// Process on worker thread
 					PROFILER_BLOCK("DoUpdate::RunAsyncGroup", profiler::colors::Red100);
 					m_WorkerThreads[threadID].RunAsync([this, &chunks, chunkOffset, chunkStep]() {
@@ -1428,7 +1429,7 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter)
 				}
 
 				// Wait for all worker threads completion
-				for (uint32_t threadID = 1; threadID < (uint32_t)m_WorkerThreads.size(); threadID++)
+				for (size_t threadID = threadOffset; threadID < threadOffset + threadCount; threadID++)
 				{
 					PROFILER_BLOCK("DoUpdate::WaitForComplete", profiler::colors::Red400);
 					m_WorkerThreads[threadID].WaitForComplete();
