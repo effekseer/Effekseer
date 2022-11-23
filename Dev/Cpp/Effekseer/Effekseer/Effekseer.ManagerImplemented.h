@@ -380,7 +380,7 @@ public:
 
 	void Update(const UpdateParameter& parameter) override;
 
-	void DoUpdate(const UpdateParameter& parameter);
+	void DoUpdate(uint32_t threadOffset, uint32_t thredCount, const UpdateParameter& parameter);
 
 	void BeginUpdate() override;
 
