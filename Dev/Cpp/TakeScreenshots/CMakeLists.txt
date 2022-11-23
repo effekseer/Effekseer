@@ -74,6 +74,15 @@ add_executable(${PROJECT_NAME} ${effekseer_take_screenshots_src})
 target_link_directories(${PROJECT_NAME} PRIVATE ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES})
 target_link_libraries(${PROJECT_NAME} PRIVATE TestRuntimeFramework)
 
+if (WIN32)
+    target_link_libraries(
+        ${PROJECT_NAME}
+        PRIVATE
+        debug libglew32d
+        optimized libglew32
+    )
+endif()
+
 add_dependencies(TakeScreenshots ExternalProject_glfw)
 
 if(BUILD_WITH_EASY_PROFILER)
