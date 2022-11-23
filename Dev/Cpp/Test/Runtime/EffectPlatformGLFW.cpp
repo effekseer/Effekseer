@@ -111,7 +111,10 @@ void EffectPlatformGLFW::InitializeWindow()
 	if (isOpenGLMode_)
 	{
 		glfwMakeContextCurrent(glfwWindow_);
+
+#if _WIN32
 		glewInit();
+#endif
 
 		GLint flags;
 		glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
