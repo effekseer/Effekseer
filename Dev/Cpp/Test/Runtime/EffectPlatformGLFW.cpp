@@ -8,6 +8,7 @@ typedef char GLchar;
 
 #include <iostream>
 
+#if defined(_WIN32)
 void GLAPIENTRY glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
 {
 	if (type != GL_DEBUG_TYPE_PORTABILITY && type != GL_DEBUG_TYPE_OTHER)
@@ -15,6 +16,7 @@ void GLAPIENTRY glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum seve
 		std::cout << message << std::endl;
 	}
 }
+#endif
 
 void* EffectPlatformGLFW::GetNativePtr(int32_t index)
 {
@@ -87,7 +89,10 @@ void EffectPlatformGLFW::InitializeWindow()
 
 	if (isOpenGLMode_)
 	{
+#if defined(_WIN32)
 		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+#endif
+
 #if !_WIN32
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
@@ -114,7 +119,6 @@ void EffectPlatformGLFW::InitializeWindow()
 
 #if _WIN32
 		glewInit();
-#endif
 
 		GLint flags;
 		glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
@@ -125,5 +129,6 @@ void EffectPlatformGLFW::InitializeWindow()
 			glDebugMessageCallback(glDebugOutput, NULL);
 			glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, NULL, GL_TRUE);
 		}
+#endif
 	}
 }
