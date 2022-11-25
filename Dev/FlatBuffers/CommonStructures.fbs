@@ -9,3 +9,50 @@ struct FloatRange {
   min:float;
   max:float;
 }
+
+struct Vec3F {
+  x:float;
+  y:float;
+  z:float;
+}
+
+struct Vec3FRange {
+  min:FloatRange;
+  max:FloatRange;
+}
+
+struct Vec3FEasing {
+	start:Vec3FRange;
+	end:Vec3FRange;
+	easing_a:float;
+	easing_b:float;
+	easing_c:float;
+}
+
+table RefMinMax {
+  min:int = -1;
+  max:int = -1;
+}
+
+enum FCurveTimelineType : int {
+	FCurveTimelineType_Time = 0,
+	FCurveTimelineType_Percent = 1,
+}
+
+enum FCurveEdgeType : int {
+  FCurveEdgeType_Constant = 0,
+  FCurveEdgeType_Loop = 1,
+  FCurveEdgeType_LoopInversely = 2,
+}
+
+table FCurve {
+  offset:int;
+  len:int;
+  freq:int;
+  start:FCurveEdgeType;
+  end:FCurveEdgeType;
+  keys:[float];
+	default_value:float;
+	offset_max:float;
+	offset_min:float;
+}
