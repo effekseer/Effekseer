@@ -2,8 +2,7 @@ include "CommonStructures.fbs";
 
 namespace Effekseer.FB;
 
-enum TranslationParentBindType : int
-{
+enum TranslationParentBindType : int {
   TranslationParentBindType_NotBind = 0,
   TranslationParentBindType_NotBind_Root = 3,
   TranslationParentBindType_WhenCreating = 1,
@@ -12,8 +11,7 @@ enum TranslationParentBindType : int
   TranslationParentBindType_WhenCreating_FollowParent = 5,
 }
 
-enum BindType : int
-{
+enum BindType : int {
   BindType_NotBind = 0,
   BindType_NotBind_Root = 3,
   BindType_WhenCreating = 1,
@@ -28,4 +26,65 @@ table BasicSettings {
   remove_when_life_is_extinct:int = 1;
   remove_when_parent_is_removed:int = 0;
   remove_when_children_is_extinct:int = 0;
+}
+
+enum PositionType : int {
+  PositionType_None = -1,
+  PositionType_Fixed = 0,
+  PositionType_PVA = 1,
+  PositionType_Easing = 2,
+  PositionType_FCurve = 3,
+  PositionType_NurbsCurve = 4,
+  PositionType_ViewOffset = 5,
+}
+
+table PositionSettings_Fixed {
+  ref_eq:int = -1;
+  value:Vec3F;
+}
+
+table PositionSettings_PVA {
+  ref_eq_p:RefMinMax;
+  ref_eq_v:RefMinMax;
+  ref_eq_a:RefMinMax;
+  pos:Vec3F;
+  vel:Vec3F;
+  acc:Vec3F;
+}
+
+table PositionSettings_Easing {
+	ref_eq_s:RefMinMax;
+	ref_eq_w:RefMinMax;
+	location:Vec3FEasing;
+}
+
+table PositionSettings_NurbsCurve {
+	index:int;
+	scale:float;
+	move_speed:float;
+	loop_type:int;
+}
+
+table PositionSettings_ViewOffset {
+	distance:FloatRange;
+}
+
+table PositionSettings {
+  type:PositionType;
+  fixed:PositionSettings_Fixed;
+  pva:PositionSettings_PVA;
+}
+
+table TextureProperty {
+  path:string;
+}
+
+table Node {
+  basic_settings:BasicSettings;
+  children:[Node];
+}
+
+table Effect {
+  textures:[TextureProperty];
+  root_node:Node;
 }

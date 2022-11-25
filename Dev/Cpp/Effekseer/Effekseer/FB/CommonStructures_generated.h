@@ -13,6 +13,81 @@ struct IntRange;
 
 struct FloatRange;
 
+struct Vec3F;
+
+struct Vec3FRange;
+
+struct Vec3FEasing;
+
+struct RefMinMax;
+struct RefMinMaxBuilder;
+
+struct FCurve;
+struct FCurveBuilder;
+
+enum FCurveTimelineType : int32_t {
+  FCurveTimelineType_FCurveTimelineType_Time = 0,
+  FCurveTimelineType_FCurveTimelineType_Percent = 1,
+  FCurveTimelineType_MIN = FCurveTimelineType_FCurveTimelineType_Time,
+  FCurveTimelineType_MAX = FCurveTimelineType_FCurveTimelineType_Percent
+};
+
+inline const FCurveTimelineType (&EnumValuesFCurveTimelineType())[2] {
+  static const FCurveTimelineType values[] = {
+    FCurveTimelineType_FCurveTimelineType_Time,
+    FCurveTimelineType_FCurveTimelineType_Percent
+  };
+  return values;
+}
+
+inline const char * const *EnumNamesFCurveTimelineType() {
+  static const char * const names[3] = {
+    "FCurveTimelineType_Time",
+    "FCurveTimelineType_Percent",
+    nullptr
+  };
+  return names;
+}
+
+inline const char *EnumNameFCurveTimelineType(FCurveTimelineType e) {
+  if (flatbuffers::IsOutRange(e, FCurveTimelineType_FCurveTimelineType_Time, FCurveTimelineType_FCurveTimelineType_Percent)) return "";
+  const size_t index = static_cast<size_t>(e);
+  return EnumNamesFCurveTimelineType()[index];
+}
+
+enum FCurveEdgeType : int32_t {
+  FCurveEdgeType_FCurveEdgeType_Constant = 0,
+  FCurveEdgeType_FCurveEdgeType_Loop = 1,
+  FCurveEdgeType_FCurveEdgeType_LoopInversely = 2,
+  FCurveEdgeType_MIN = FCurveEdgeType_FCurveEdgeType_Constant,
+  FCurveEdgeType_MAX = FCurveEdgeType_FCurveEdgeType_LoopInversely
+};
+
+inline const FCurveEdgeType (&EnumValuesFCurveEdgeType())[3] {
+  static const FCurveEdgeType values[] = {
+    FCurveEdgeType_FCurveEdgeType_Constant,
+    FCurveEdgeType_FCurveEdgeType_Loop,
+    FCurveEdgeType_FCurveEdgeType_LoopInversely
+  };
+  return values;
+}
+
+inline const char * const *EnumNamesFCurveEdgeType() {
+  static const char * const names[4] = {
+    "FCurveEdgeType_Constant",
+    "FCurveEdgeType_Loop",
+    "FCurveEdgeType_LoopInversely",
+    nullptr
+  };
+  return names;
+}
+
+inline const char *EnumNameFCurveEdgeType(FCurveEdgeType e) {
+  if (flatbuffers::IsOutRange(e, FCurveEdgeType_FCurveEdgeType_Constant, FCurveEdgeType_FCurveEdgeType_LoopInversely)) return "";
+  const size_t index = static_cast<size_t>(e);
+  return EnumNamesFCurveEdgeType()[index];
+}
+
 FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) IntRange FLATBUFFERS_FINAL_CLASS {
  private:
   int32_t min_;
@@ -58,6 +133,297 @@ FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) FloatRange FLATBUFFERS_FINAL_CLASS {
   }
 };
 FLATBUFFERS_STRUCT_END(FloatRange, 8);
+
+FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) Vec3F FLATBUFFERS_FINAL_CLASS {
+ private:
+  float x_;
+  float y_;
+  float z_;
+
+ public:
+  Vec3F()
+      : x_(0),
+        y_(0),
+        z_(0) {
+  }
+  Vec3F(float _x, float _y, float _z)
+      : x_(flatbuffers::EndianScalar(_x)),
+        y_(flatbuffers::EndianScalar(_y)),
+        z_(flatbuffers::EndianScalar(_z)) {
+  }
+  float x() const {
+    return flatbuffers::EndianScalar(x_);
+  }
+  float y() const {
+    return flatbuffers::EndianScalar(y_);
+  }
+  float z() const {
+    return flatbuffers::EndianScalar(z_);
+  }
+};
+FLATBUFFERS_STRUCT_END(Vec3F, 12);
+
+FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) Vec3FRange FLATBUFFERS_FINAL_CLASS {
+ private:
+  Effekseer::FB::FloatRange min_;
+  Effekseer::FB::FloatRange max_;
+
+ public:
+  Vec3FRange()
+      : min_(),
+        max_() {
+  }
+  Vec3FRange(const Effekseer::FB::FloatRange &_min, const Effekseer::FB::FloatRange &_max)
+      : min_(_min),
+        max_(_max) {
+  }
+  const Effekseer::FB::FloatRange &min() const {
+    return min_;
+  }
+  const Effekseer::FB::FloatRange &max() const {
+    return max_;
+  }
+};
+FLATBUFFERS_STRUCT_END(Vec3FRange, 16);
+
+FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) Vec3FEasing FLATBUFFERS_FINAL_CLASS {
+ private:
+  Effekseer::FB::Vec3FRange start_;
+  Effekseer::FB::Vec3FRange end_;
+  float easing_a_;
+  float easing_b_;
+  float easing_c_;
+
+ public:
+  Vec3FEasing()
+      : start_(),
+        end_(),
+        easing_a_(0),
+        easing_b_(0),
+        easing_c_(0) {
+  }
+  Vec3FEasing(const Effekseer::FB::Vec3FRange &_start, const Effekseer::FB::Vec3FRange &_end, float _easing_a, float _easing_b, float _easing_c)
+      : start_(_start),
+        end_(_end),
+        easing_a_(flatbuffers::EndianScalar(_easing_a)),
+        easing_b_(flatbuffers::EndianScalar(_easing_b)),
+        easing_c_(flatbuffers::EndianScalar(_easing_c)) {
+  }
+  const Effekseer::FB::Vec3FRange &start() const {
+    return start_;
+  }
+  const Effekseer::FB::Vec3FRange &end() const {
+    return end_;
+  }
+  float easing_a() const {
+    return flatbuffers::EndianScalar(easing_a_);
+  }
+  float easing_b() const {
+    return flatbuffers::EndianScalar(easing_b_);
+  }
+  float easing_c() const {
+    return flatbuffers::EndianScalar(easing_c_);
+  }
+};
+FLATBUFFERS_STRUCT_END(Vec3FEasing, 44);
+
+struct RefMinMax FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef RefMinMaxBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_MIN = 4,
+    VT_MAX = 6
+  };
+  int32_t min() const {
+    return GetField<int32_t>(VT_MIN, -1);
+  }
+  int32_t max() const {
+    return GetField<int32_t>(VT_MAX, -1);
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<int32_t>(verifier, VT_MIN) &&
+           VerifyField<int32_t>(verifier, VT_MAX) &&
+           verifier.EndTable();
+  }
+};
+
+struct RefMinMaxBuilder {
+  typedef RefMinMax Table;
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_min(int32_t min) {
+    fbb_.AddElement<int32_t>(RefMinMax::VT_MIN, min, -1);
+  }
+  void add_max(int32_t max) {
+    fbb_.AddElement<int32_t>(RefMinMax::VT_MAX, max, -1);
+  }
+  explicit RefMinMaxBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  flatbuffers::Offset<RefMinMax> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<RefMinMax>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<RefMinMax> CreateRefMinMax(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    int32_t min = -1,
+    int32_t max = -1) {
+  RefMinMaxBuilder builder_(_fbb);
+  builder_.add_max(max);
+  builder_.add_min(min);
+  return builder_.Finish();
+}
+
+struct FCurve FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef FCurveBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_OFFSET = 4,
+    VT_LEN = 6,
+    VT_FREQ = 8,
+    VT_START = 10,
+    VT_END = 12,
+    VT_KEYS = 14,
+    VT_DEFAULT_VALUE = 16,
+    VT_OFFSET_MAX = 18,
+    VT_OFFSET_MIN = 20
+  };
+  int32_t offset() const {
+    return GetField<int32_t>(VT_OFFSET, 0);
+  }
+  int32_t len() const {
+    return GetField<int32_t>(VT_LEN, 0);
+  }
+  int32_t freq() const {
+    return GetField<int32_t>(VT_FREQ, 0);
+  }
+  Effekseer::FB::FCurveEdgeType start() const {
+    return static_cast<Effekseer::FB::FCurveEdgeType>(GetField<int32_t>(VT_START, 0));
+  }
+  Effekseer::FB::FCurveEdgeType end() const {
+    return static_cast<Effekseer::FB::FCurveEdgeType>(GetField<int32_t>(VT_END, 0));
+  }
+  const flatbuffers::Vector<float> *keys() const {
+    return GetPointer<const flatbuffers::Vector<float> *>(VT_KEYS);
+  }
+  float default_value() const {
+    return GetField<float>(VT_DEFAULT_VALUE, 0.0f);
+  }
+  float offset_max() const {
+    return GetField<float>(VT_OFFSET_MAX, 0.0f);
+  }
+  float offset_min() const {
+    return GetField<float>(VT_OFFSET_MIN, 0.0f);
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<int32_t>(verifier, VT_OFFSET) &&
+           VerifyField<int32_t>(verifier, VT_LEN) &&
+           VerifyField<int32_t>(verifier, VT_FREQ) &&
+           VerifyField<int32_t>(verifier, VT_START) &&
+           VerifyField<int32_t>(verifier, VT_END) &&
+           VerifyOffset(verifier, VT_KEYS) &&
+           verifier.VerifyVector(keys()) &&
+           VerifyField<float>(verifier, VT_DEFAULT_VALUE) &&
+           VerifyField<float>(verifier, VT_OFFSET_MAX) &&
+           VerifyField<float>(verifier, VT_OFFSET_MIN) &&
+           verifier.EndTable();
+  }
+};
+
+struct FCurveBuilder {
+  typedef FCurve Table;
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_offset(int32_t offset) {
+    fbb_.AddElement<int32_t>(FCurve::VT_OFFSET, offset, 0);
+  }
+  void add_len(int32_t len) {
+    fbb_.AddElement<int32_t>(FCurve::VT_LEN, len, 0);
+  }
+  void add_freq(int32_t freq) {
+    fbb_.AddElement<int32_t>(FCurve::VT_FREQ, freq, 0);
+  }
+  void add_start(Effekseer::FB::FCurveEdgeType start) {
+    fbb_.AddElement<int32_t>(FCurve::VT_START, static_cast<int32_t>(start), 0);
+  }
+  void add_end(Effekseer::FB::FCurveEdgeType end) {
+    fbb_.AddElement<int32_t>(FCurve::VT_END, static_cast<int32_t>(end), 0);
+  }
+  void add_keys(flatbuffers::Offset<flatbuffers::Vector<float>> keys) {
+    fbb_.AddOffset(FCurve::VT_KEYS, keys);
+  }
+  void add_default_value(float default_value) {
+    fbb_.AddElement<float>(FCurve::VT_DEFAULT_VALUE, default_value, 0.0f);
+  }
+  void add_offset_max(float offset_max) {
+    fbb_.AddElement<float>(FCurve::VT_OFFSET_MAX, offset_max, 0.0f);
+  }
+  void add_offset_min(float offset_min) {
+    fbb_.AddElement<float>(FCurve::VT_OFFSET_MIN, offset_min, 0.0f);
+  }
+  explicit FCurveBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  flatbuffers::Offset<FCurve> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<FCurve>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<FCurve> CreateFCurve(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    int32_t offset = 0,
+    int32_t len = 0,
+    int32_t freq = 0,
+    Effekseer::FB::FCurveEdgeType start = Effekseer::FB::FCurveEdgeType_FCurveEdgeType_Constant,
+    Effekseer::FB::FCurveEdgeType end = Effekseer::FB::FCurveEdgeType_FCurveEdgeType_Constant,
+    flatbuffers::Offset<flatbuffers::Vector<float>> keys = 0,
+    float default_value = 0.0f,
+    float offset_max = 0.0f,
+    float offset_min = 0.0f) {
+  FCurveBuilder builder_(_fbb);
+  builder_.add_offset_min(offset_min);
+  builder_.add_offset_max(offset_max);
+  builder_.add_default_value(default_value);
+  builder_.add_keys(keys);
+  builder_.add_end(end);
+  builder_.add_start(start);
+  builder_.add_freq(freq);
+  builder_.add_len(len);
+  builder_.add_offset(offset);
+  return builder_.Finish();
+}
+
+inline flatbuffers::Offset<FCurve> CreateFCurveDirect(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    int32_t offset = 0,
+    int32_t len = 0,
+    int32_t freq = 0,
+    Effekseer::FB::FCurveEdgeType start = Effekseer::FB::FCurveEdgeType_FCurveEdgeType_Constant,
+    Effekseer::FB::FCurveEdgeType end = Effekseer::FB::FCurveEdgeType_FCurveEdgeType_Constant,
+    const std::vector<float> *keys = nullptr,
+    float default_value = 0.0f,
+    float offset_max = 0.0f,
+    float offset_min = 0.0f) {
+  auto keys__ = keys ? _fbb.CreateVector<float>(*keys) : 0;
+  return Effekseer::FB::CreateFCurve(
+      _fbb,
+      offset,
+      len,
+      freq,
+      start,
+      end,
+      keys__,
+      default_value,
+      offset_max,
+      offset_min);
+}
 
 }  // namespace FB
 }  // namespace Effekseer
