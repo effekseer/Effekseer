@@ -1,4 +1,4 @@
-#if defined(_WIN32)
+#if !defined(__APPLE__)
 #define GLEW_STATIC
 typedef char GLchar;
 #include <GL/glew.h>
@@ -8,7 +8,7 @@ typedef char GLchar;
 
 #include <iostream>
 
-#if defined(_WIN32)
+#if !defined(__APPLE__)
 void GLAPIENTRY glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
 {
 	if (type != GL_DEBUG_TYPE_PORTABILITY && type != GL_DEBUG_TYPE_OTHER)
@@ -89,7 +89,7 @@ void EffectPlatformGLFW::InitializeWindow()
 
 	if (isOpenGLMode_)
 	{
-#if defined(_WIN32)
+#if !defined(__APPLE__)
 		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 #endif
 
@@ -117,7 +117,7 @@ void EffectPlatformGLFW::InitializeWindow()
 	{
 		glfwMakeContextCurrent(glfwWindow_);
 
-#if _WIN32
+#if !defined(__APPLE__)
 		glewInit();
 
 		GLint flags;

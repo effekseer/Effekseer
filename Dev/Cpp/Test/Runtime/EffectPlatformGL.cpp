@@ -56,7 +56,10 @@ void EffectPlatformGL::BeginRendering()
 {
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+#if !defined(__linux__)
 	glDrawPixels(initParam_.WindowSize[0], initParam_.WindowSize[1], GL_RGBA, GL_UNSIGNED_BYTE, checkeredPattern_.data());
+#endif
 	glFlush();
 	glFinish();
 }
