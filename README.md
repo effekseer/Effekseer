@@ -93,3 +93,10 @@ Repositories
 - Epic Games (Epic MegaGrants)
 - @abvadabra
 
+# For contributors
+
+Please read issues. We always welcome pull requests for improvements, bug fixes, and so on.
+
+issuesを読んでください。常時、機能追加、バグ修正といったプルリクエストを募集しております。
+
+[Issues](https://github.com/effekseer/Effekseer/issues)
