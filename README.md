@@ -40,8 +40,8 @@ Supported platforms
 Sponsors
 =========
 
-- Epic Games (Epic MegaGrants)
-- @abvadabra
+- [Epic Games (Epic MegaGrants)](https://www.unrealengine.com/en-US/megagrants)
+- [EXBO](https://exbo.net/)
 
 Development
 =========
