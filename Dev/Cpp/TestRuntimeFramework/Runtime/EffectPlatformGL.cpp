@@ -1,3 +1,9 @@
+#if !defined(__APPLE__)
+#define GLEW_STATIC
+typedef char GLchar;
+#include <GL/glew.h>
+#endif
+
 #include "EffectPlatformGL.h"
 #include "../../3rdParty/stb/stb_image_write.h"
 #include <EffekseerRendererGL.h>
