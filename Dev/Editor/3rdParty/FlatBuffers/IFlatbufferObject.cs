@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-namespace Google.FlatBuffers
+namespace FlatBuffers
 {
     /// <summary>
     /// This is the base for both structs and tables.
