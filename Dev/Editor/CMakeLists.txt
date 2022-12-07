@@ -58,7 +58,7 @@ set_property(TARGET EffekseerCore PROPERTY VS_GLOBAL_GenerateDependencyFile "fal
 set_property(TARGET EffekseerCore PROPERTY VS_GLOBAL_DefineConstants "SCRIPT_ENABLED;")
 target_compile_definitions(EffekseerCore PRIVATE SCRIPT_ENABLED)
 
-target_link_libraries(EffekseerCore PUBLIC PartsTreeSystem)
+target_link_libraries(EffekseerCore PUBLIC PartsTreeSystem FlatBuffers)
 
 # Avoid Cmake bug
 # set_property(TARGET EffekseerCore PROPERTY VS_GLOBAL_Platforms "x64")
@@ -69,13 +69,10 @@ set_target_properties(EffekseerCore PROPERTIES
 set_property(TARGET EffekseerCore PROPERTY VS_PACKAGE_REFERENCES "Newtonsoft.Json_13.0.1;DynamicLanguageRuntime_1.2.2;IronPython_2.7.9") 
 
 set_target_properties(EffekseerCore PROPERTIES FOLDER Editor)
-target_link_libraries(EffekseerCore PUBLIC PartsTreeSystem FlatBuffers)
 
 
 add_subdirectory(EffekseerCoreGUI)
 set_target_properties (EffekseerCoreGUI PROPERTIES FOLDER Editor)
-
-
 
 file(GLOB files 
     Effekseer/*.cs
