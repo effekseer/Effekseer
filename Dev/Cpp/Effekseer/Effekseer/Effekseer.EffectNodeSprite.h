@@ -103,6 +103,8 @@ public:
 
 	void LoadRendererParameter(unsigned char*& pos, const SettingRef& setting) override;
 
+	void LoadRendererParameter(const FB::Node* fbNode, const SettingRef& setting) override;
+
 	void BeginRendering(int32_t count, Manager* manager, const InstanceGlobal* global, void* userData) override;
 
 	void Rendering(const Instance& instance, const Instance* next_instance, int index, Manager* manager, void* userData) override;

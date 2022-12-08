@@ -110,6 +110,11 @@ struct ParameterCommonValues
 			GenerationTimeOffset.min = param_8.GenerationTimeOffset;
 		}
 	}
+
+	static TranslationParentBindType Convert(FB::TranslationParentBindType value)
+	{
+		return static_cast<TranslationParentBindType>(value);
+	}
 };
 
 } // namespace Effekseer

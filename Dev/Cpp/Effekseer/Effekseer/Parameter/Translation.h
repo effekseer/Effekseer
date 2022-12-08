@@ -11,6 +11,10 @@
 
 #include <stdint.h>
 
+#include "../FB/FlatBuffersUtils.h"
+
+#include "../FB/PositionSettings_generated.h"
+
 namespace Effekseer
 {
 enum ParameterTranslationType
@@ -238,6 +242,49 @@ public:
 		{
 			memcpy(&TranslationViewOffset, pos, sizeof(ParameterTranslationViewOffset));
 			pos += sizeof(ParameterTranslationViewOffset);
+		}
+	}
+
+	void Load(const FB::PositionSettings* position_settings)
+	{
+		// TODO
+		if (position_settings->type() == FB::PositionType::PositionType_None)
+		{
+			TranslationType = ParameterTranslationType_None;
+		}
+		else if (position_settings->type() == FB::PositionType::PositionType_Fixed)
+		{
+			TranslationType = ParameterTranslationType_Fixed;
+			TranslationFixed.RefEq = position_settings->fixed()->ref_eq();
+			FBConverter::Convert(TranslationFixed.Position, position_settings->fixed()->value());
+		}
+		else if (position_settings->type() == FB::PositionType::PositionType_PVA)
+		{
+			TranslationType = ParameterTranslationType_PVA;
+			FBConverter::Convert(TranslationPVA.location, position_settings->pva()->pos());
+			FBConverter::Convert(TranslationPVA.velocity, position_settings->pva()->vel());
+			FBConverter::Convert(TranslationPVA.acceleration, position_settings->pva()->acc());
+			FBConverter::Convert(TranslationPVA.RefEqP, position_settings->pva()->ref_eq_p());
+			FBConverter::Convert(TranslationPVA.RefEqV, position_settings->pva()->ref_eq_v());
+			FBConverter::Convert(TranslationPVA.RefEqA, position_settings->pva()->ref_eq_a());
+		}
+		else if (position_settings->type() == FB::PositionType::PositionType_Easing)
+		{
+			TranslationType = ParameterTranslationType_Easing;
+			TranslationEasing.LoadWithFB(*position_settings->easing()->location());
+		}
+		else if (position_settings->type() == FB::PositionType::PositionType_FCurve)
+		{
+			TranslationFCurve = std::make_unique<FCurveVector3D>();
+			TranslationFCurve->LoadWithFB(*position_settings->fcurve()->fcurve());
+		}
+		else if (position_settings->type() == FB::PositionType::PositionType_NurbsCurve)
+		{
+			// TODO
+		}
+		else if (position_settings->type() == FB::PositionType::PositionType_ViewOffset)
+		{
+			// TODO
 		}
 	}
 

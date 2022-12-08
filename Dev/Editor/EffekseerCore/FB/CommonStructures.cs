@@ -9,17 +9,33 @@ using global::System;
 using global::System.Collections.Generic;
 using global::FlatBuffers;
 
-public enum FCurveTimelineType : int
+public enum EffectNodeType : int
 {
-  FCurveTimelineType_Time = 0,
-  FCurveTimelineType_Percent = 1,
+  EffectNodeType_Root = -1,
+  EffectNodeType_NoneType = 0,
+  EffectNodeType_Sprite = 2,
+  EffectNodeType_Ribbon = 3,
+  EffectNodeType_Ring = 4,
+  EffectNodeType_Model = 5,
+  EffectNodeType_Track = 6,
 };
 
-public enum FCurveEdgeType : int
+public enum TranslationParentBindType : int
 {
-  FCurveEdgeType_Constant = 0,
-  FCurveEdgeType_Loop = 1,
-  FCurveEdgeType_LoopInversely = 2,
+  TranslationParentBindType_NotBind = 0,
+  TranslationParentBindType_WhenCreating = 1,
+  TranslationParentBindType_Always = 2,
+  TranslationParentBindType_NotBind_Root = 3,
+  TranslationParentBindType_NotBind_FollowParent = 4,
+  TranslationParentBindType_WhenCreating_FollowParent = 5,
+};
+
+public enum BindType : int
+{
+  BindType_NotBind = 0,
+  BindType_WhenCreating = 1,
+  BindType_Always = 2,
+  BindType_NotBind_Root = 3,
 };
 
 public struct IntRange : IFlatbufferObject
@@ -85,17 +101,19 @@ public struct Vec3FRange : IFlatbufferObject
   public void __init(int _i, ByteBuffer _bb) { __p = new Struct(_i, _bb); }
   public Vec3FRange __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public Effekseer.FB.FloatRange Min { get { return (new Effekseer.FB.FloatRange()).__assign(__p.bb_pos + 0, __p.bb); } }
-  public Effekseer.FB.FloatRange Max { get { return (new Effekseer.FB.FloatRange()).__assign(__p.bb_pos + 8, __p.bb); } }
+  public Effekseer.FB.Vec3F Min { get { return (new Effekseer.FB.Vec3F()).__assign(__p.bb_pos + 0, __p.bb); } }
+  public Effekseer.FB.Vec3F Max { get { return (new Effekseer.FB.Vec3F()).__assign(__p.bb_pos + 12, __p.bb); } }
 
-  public static Offset<Effekseer.FB.Vec3FRange> CreateVec3FRange(FlatBufferBuilder builder, float min_Min, float min_Max, float max_Min, float max_Max) {
-    builder.Prep(4, 16);
-    builder.Prep(4, 8);
-    builder.PutFloat(max_Max);
-    builder.PutFloat(max_Min);
-    builder.Prep(4, 8);
-    builder.PutFloat(min_Max);
-    builder.PutFloat(min_Min);
+  public static Offset<Effekseer.FB.Vec3FRange> CreateVec3FRange(FlatBufferBuilder builder, float min_X, float min_Y, float min_Z, float max_X, float max_Y, float max_Z) {
+    builder.Prep(4, 24);
+    builder.Prep(4, 12);
+    builder.PutFloat(max_Z);
+    builder.PutFloat(max_Y);
+    builder.PutFloat(max_X);
+    builder.Prep(4, 12);
+    builder.PutFloat(min_Z);
+    builder.PutFloat(min_Y);
+    builder.PutFloat(min_X);
     return new Offset<Effekseer.FB.Vec3FRange>(builder.Offset);
   }
 };
@@ -108,30 +126,34 @@ public struct Vec3FEasing : IFlatbufferObject
   public Vec3FEasing __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
   public Effekseer.FB.Vec3FRange Start { get { return (new Effekseer.FB.Vec3FRange()).__assign(__p.bb_pos + 0, __p.bb); } }
-  public Effekseer.FB.Vec3FRange End { get { return (new Effekseer.FB.Vec3FRange()).__assign(__p.bb_pos + 16, __p.bb); } }
-  public float EasingA { get { return __p.bb.GetFloat(__p.bb_pos + 32); } }
-  public float EasingB { get { return __p.bb.GetFloat(__p.bb_pos + 36); } }
-  public float EasingC { get { return __p.bb.GetFloat(__p.bb_pos + 40); } }
+  public Effekseer.FB.Vec3FRange End { get { return (new Effekseer.FB.Vec3FRange()).__assign(__p.bb_pos + 24, __p.bb); } }
+  public float EasingA { get { return __p.bb.GetFloat(__p.bb_pos + 48); } }
+  public float EasingB { get { return __p.bb.GetFloat(__p.bb_pos + 52); } }
+  public float EasingC { get { return __p.bb.GetFloat(__p.bb_pos + 56); } }
 
-  public static Offset<Effekseer.FB.Vec3FEasing> CreateVec3FEasing(FlatBufferBuilder builder, float start_min_Min, float start_min_Max, float start_max_Min, float start_max_Max, float end_min_Min, float end_min_Max, float end_max_Min, float end_max_Max, float EasingA, float EasingB, float EasingC) {
-    builder.Prep(4, 44);
+  public static Offset<Effekseer.FB.Vec3FEasing> CreateVec3FEasing(FlatBufferBuilder builder, float start_min_X, float start_min_Y, float start_min_Z, float start_max_X, float start_max_Y, float start_max_Z, float end_min_X, float end_min_Y, float end_min_Z, float end_max_X, float end_max_Y, float end_max_Z, float EasingA, float EasingB, float EasingC) {
+    builder.Prep(4, 60);
     builder.PutFloat(EasingC);
     builder.PutFloat(EasingB);
     builder.PutFloat(EasingA);
-    builder.Prep(4, 16);
-    builder.Prep(4, 8);
-    builder.PutFloat(end_max_Max);
-    builder.PutFloat(end_max_Min);
-    builder.Prep(4, 8);
-    builder.PutFloat(end_min_Max);
-    builder.PutFloat(end_min_Min);
-    builder.Prep(4, 16);
-    builder.Prep(4, 8);
-    builder.PutFloat(start_max_Max);
-    builder.PutFloat(start_max_Min);
-    builder.Prep(4, 8);
-    builder.PutFloat(start_min_Max);
-    builder.PutFloat(start_min_Min);
+    builder.Prep(4, 24);
+    builder.Prep(4, 12);
+    builder.PutFloat(end_max_Z);
+    builder.PutFloat(end_max_Y);
+    builder.PutFloat(end_max_X);
+    builder.Prep(4, 12);
+    builder.PutFloat(end_min_Z);
+    builder.PutFloat(end_min_Y);
+    builder.PutFloat(end_min_X);
+    builder.Prep(4, 24);
+    builder.Prep(4, 12);
+    builder.PutFloat(start_max_Z);
+    builder.PutFloat(start_max_Y);
+    builder.PutFloat(start_max_X);
+    builder.Prep(4, 12);
+    builder.PutFloat(start_min_Z);
+    builder.PutFloat(start_min_Y);
+    builder.PutFloat(start_min_X);
     return new Offset<Effekseer.FB.Vec3FEasing>(builder.Offset);
   }
 };
@@ -167,72 +189,36 @@ public struct RefMinMax : IFlatbufferObject
   }
 };
 
-public struct FCurve : IFlatbufferObject
+public struct TextureProperty : IFlatbufferObject
 {
   private Table __p;
   public ByteBuffer ByteBuffer { get { return __p.bb; } }
   public static void ValidateVersion() { FlatBufferConstants.FLATBUFFERS_2_0_0(); }
-  public static FCurve GetRootAsFCurve(ByteBuffer _bb) { return GetRootAsFCurve(_bb, new FCurve()); }
-  public static FCurve GetRootAsFCurve(ByteBuffer _bb, FCurve obj) { return (obj.__assign(_bb.GetInt(_bb.Position) + _bb.Position, _bb)); }
+  public static TextureProperty GetRootAsTextureProperty(ByteBuffer _bb) { return GetRootAsTextureProperty(_bb, new TextureProperty()); }
+  public static TextureProperty GetRootAsTextureProperty(ByteBuffer _bb, TextureProperty obj) { return (obj.__assign(_bb.GetInt(_bb.Position) + _bb.Position, _bb)); }
   public void __init(int _i, ByteBuffer _bb) { __p = new Table(_i, _bb); }
-  public FCurve __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
+  public TextureProperty __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public int Offset { get { int o = __p.__offset(4); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
-  public int Len { get { int o = __p.__offset(6); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
-  public int Freq { get { int o = __p.__offset(8); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
-  public Effekseer.FB.FCurveEdgeType Start { get { int o = __p.__offset(10); return o != 0 ? (Effekseer.FB.FCurveEdgeType)__p.bb.GetInt(o + __p.bb_pos) : Effekseer.FB.FCurveEdgeType.FCurveEdgeType_Constant; } }
-  public Effekseer.FB.FCurveEdgeType End { get { int o = __p.__offset(12); return o != 0 ? (Effekseer.FB.FCurveEdgeType)__p.bb.GetInt(o + __p.bb_pos) : Effekseer.FB.FCurveEdgeType.FCurveEdgeType_Constant; } }
-  public float Keys(int j) { int o = __p.__offset(14); return o != 0 ? __p.bb.GetFloat(__p.__vector(o) + j * 4) : (float)0; }
-  public int KeysLength { get { int o = __p.__offset(14); return o != 0 ? __p.__vector_len(o) : 0; } }
+  public string Path { get { int o = __p.__offset(4); return o != 0 ? __p.__string(o + __p.bb_pos) : null; } }
 #if ENABLE_SPAN_T
-  public Span<float> GetKeysBytes() { return __p.__vector_as_span<float>(14, 4); }
+  public Span<byte> GetPathBytes() { return __p.__vector_as_span<byte>(4, 1); }
 #else
-  public ArraySegment<byte>? GetKeysBytes() { return __p.__vector_as_arraysegment(14); }
+  public ArraySegment<byte>? GetPathBytes() { return __p.__vector_as_arraysegment(4); }
 #endif
-  public float[] GetKeysArray() { return __p.__vector_as_array<float>(14); }
-  public float DefaultValue { get { int o = __p.__offset(16); return o != 0 ? __p.bb.GetFloat(o + __p.bb_pos) : (float)0.0f; } }
-  public float OffsetMax { get { int o = __p.__offset(18); return o != 0 ? __p.bb.GetFloat(o + __p.bb_pos) : (float)0.0f; } }
-  public float OffsetMin { get { int o = __p.__offset(20); return o != 0 ? __p.bb.GetFloat(o + __p.bb_pos) : (float)0.0f; } }
+  public byte[] GetPathArray() { return __p.__vector_as_array<byte>(4); }
 
-  public static Offset<Effekseer.FB.FCurve> CreateFCurve(FlatBufferBuilder builder,
-      int offset = 0,
-      int len = 0,
-      int freq = 0,
-      Effekseer.FB.FCurveEdgeType start = Effekseer.FB.FCurveEdgeType.FCurveEdgeType_Constant,
-      Effekseer.FB.FCurveEdgeType end = Effekseer.FB.FCurveEdgeType.FCurveEdgeType_Constant,
-      VectorOffset keysOffset = default(VectorOffset),
-      float default_value = 0.0f,
-      float offset_max = 0.0f,
-      float offset_min = 0.0f) {
-    builder.StartTable(9);
-    FCurve.AddOffsetMin(builder, offset_min);
-    FCurve.AddOffsetMax(builder, offset_max);
-    FCurve.AddDefaultValue(builder, default_value);
-    FCurve.AddKeys(builder, keysOffset);
-    FCurve.AddEnd(builder, end);
-    FCurve.AddStart(builder, start);
-    FCurve.AddFreq(builder, freq);
-    FCurve.AddLen(builder, len);
-    FCurve.AddOffset(builder, offset);
-    return FCurve.EndFCurve(builder);
+  public static Offset<Effekseer.FB.TextureProperty> CreateTextureProperty(FlatBufferBuilder builder,
+      StringOffset pathOffset = default(StringOffset)) {
+    builder.StartTable(1);
+    TextureProperty.AddPath(builder, pathOffset);
+    return TextureProperty.EndTextureProperty(builder);
   }
 
-  public static void StartFCurve(FlatBufferBuilder builder) { builder.StartTable(9); }
-  public static void AddOffset(FlatBufferBuilder builder, int offset) { builder.AddInt(0, offset, 0); }
-  public static void AddLen(FlatBufferBuilder builder, int len) { builder.AddInt(1, len, 0); }
-  public static void AddFreq(FlatBufferBuilder builder, int freq) { builder.AddInt(2, freq, 0); }
-  public static void AddStart(FlatBufferBuilder builder, Effekseer.FB.FCurveEdgeType start) { builder.AddInt(3, (int)start, 0); }
-  public static void AddEnd(FlatBufferBuilder builder, Effekseer.FB.FCurveEdgeType end) { builder.AddInt(4, (int)end, 0); }
-  public static void AddKeys(FlatBufferBuilder builder, VectorOffset keysOffset) { builder.AddOffset(5, keysOffset.Value, 0); }
-  public static VectorOffset CreateKeysVector(FlatBufferBuilder builder, float[] data) { builder.StartVector(4, data.Length, 4); for (int i = data.Length - 1; i >= 0; i--) builder.AddFloat(data[i]); return builder.EndVector(); }
-  public static VectorOffset CreateKeysVectorBlock(FlatBufferBuilder builder, float[] data) { builder.StartVector(4, data.Length, 4); builder.Add(data); return builder.EndVector(); }
-  public static void StartKeysVector(FlatBufferBuilder builder, int numElems) { builder.StartVector(4, numElems, 4); }
-  public static void AddDefaultValue(FlatBufferBuilder builder, float defaultValue) { builder.AddFloat(6, defaultValue, 0.0f); }
-  public static void AddOffsetMax(FlatBufferBuilder builder, float offsetMax) { builder.AddFloat(7, offsetMax, 0.0f); }
-  public static void AddOffsetMin(FlatBufferBuilder builder, float offsetMin) { builder.AddFloat(8, offsetMin, 0.0f); }
-  public static Offset<Effekseer.FB.FCurve> EndFCurve(FlatBufferBuilder builder) {
+  public static void StartTextureProperty(FlatBufferBuilder builder) { builder.StartTable(1); }
+  public static void AddPath(FlatBufferBuilder builder, StringOffset pathOffset) { builder.AddOffset(0, pathOffset.Value, 0); }
+  public static Offset<Effekseer.FB.TextureProperty> EndTextureProperty(FlatBufferBuilder builder) {
     int o = builder.EndTable();
-    return new Offset<Effekseer.FB.FCurve>(o);
+    return new Offset<Effekseer.FB.TextureProperty>(o);
   }
 };
 
