@@ -109,6 +109,14 @@ enum class ModelReferenceType : int32_t
 	Procedural,
 };
 
+enum class BindType : int32_t
+{
+	NotBind = 0,
+	NotBind_Root = 3,
+	WhenCreating = 1,
+	Always = 2,
+};
+
 class StringHelper
 {
 public:

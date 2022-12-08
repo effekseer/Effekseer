@@ -98,41 +98,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			RenderingPriority = -1;
 		}
 
-		memcpy(&size, pos, sizeof(int));
-		pos += sizeof(int);
-
-		if (ef->GetVersion() >= 14)
-		{
-			assert(size == sizeof(ParameterCommonValues));
-			memcpy(&CommonValues, pos, size);
-			pos += size;
-		}
-		else if (m_effect->GetVersion() >= 9)
-		{
-			memcpy(&CommonValues.MaxGeneration, pos, size);
-			pos += size;
-		}
-		else
-		{
-			assert(size == sizeof(ParameterCommonValues_8));
-			ParameterCommonValues_8 param_8;
-			memcpy(&param_8, pos, size);
-			pos += size;
-
-			CommonValues.MaxGeneration = param_8.MaxGeneration;
-			CommonValues.TranslationBindType = static_cast<TranslationParentBindType>(param_8.TranslationBindType);
-
-			CommonValues.RotationBindType = param_8.RotationBindType;
-			CommonValues.ScalingBindType = param_8.ScalingBindType;
-			CommonValues.RemoveWhenLifeIsExtinct = param_8.RemoveWhenLifeIsExtinct;
-			CommonValues.RemoveWhenParentIsRemoved = param_8.RemoveWhenParentIsRemoved;
-			CommonValues.RemoveWhenChildrenIsExtinct = param_8.RemoveWhenChildrenIsExtinct;
-			CommonValues.life = param_8.life;
-			CommonValues.GenerationTime.max = param_8.GenerationTime;
-			CommonValues.GenerationTime.min = param_8.GenerationTime;
-			CommonValues.GenerationTimeOffset.max = param_8.GenerationTimeOffset;
-			CommonValues.GenerationTimeOffset.min = param_8.GenerationTimeOffset;
-		}
+		CommonValues.Load(pos, ef);
 
 		if (ef->GetVersion() >= 1600)
 		{
@@ -181,58 +147,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		}
 
 		// Local force field
-		if (ef->GetVersion() >= 1500)
-		{
-			LocalForceField.Load(pos, ef->GetVersion());
-		}
-
-		// for compatiblity of location abs
-		if (ef->GetVersion() <= Version16Alpha1)
-		{
-			LocationAbsParameter LocationAbs;
-
-			memcpy(&LocationAbs.type, pos, sizeof(int));
-			pos += sizeof(int);
-
-			// Calc attraction forces
-			if (LocationAbs.type == LocationAbsType::None)
-			{
-				memcpy(&size, pos, sizeof(int));
-				pos += sizeof(int);
-				assert(size == 0);
-				memcpy(&LocationAbs.none, pos, size);
-				pos += size;
-			}
-			else if (LocationAbs.type == LocationAbsType::Gravity)
-			{
-				memcpy(&size, pos, sizeof(int));
-				pos += sizeof(int);
-				assert(size == sizeof(vector3d));
-				memcpy(&LocationAbs.gravity, pos, size);
-				pos += size;
-			}
-			else if (LocationAbs.type == LocationAbsType::AttractiveForce)
-			{
-				memcpy(&size, pos, sizeof(int));
-				pos += sizeof(int);
-				assert(size == sizeof(LocationAbs.attractiveForce));
-				memcpy(&LocationAbs.attractiveForce, pos, size);
-				pos += size;
-			}
-
-			if (LocationAbs.type == LocationAbsType::Gravity)
-			{
-				LocalForceField.MaintainGravityCompatibility(LocationAbs.gravity);
-			}
-			else if (LocationAbs.type == LocationAbsType::AttractiveForce)
-			{
-				LocalForceField.MaintainAttractiveForceCompatibility(
-					LocationAbs.attractiveForce.force,
-					LocationAbs.attractiveForce.control,
-					LocationAbs.attractiveForce.minRange,
-					LocationAbs.attractiveForce.maxRange);
-			}
-		}
+		LocalForceField.Load(pos, ef->GetVersion());
 
 		RotationParam.Load(pos, ef->GetVersion());
 
@@ -273,48 +188,17 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		// Load depth values
 		if (m_effect->GetVersion() >= 12)
 		{
-			memcpy(&DepthValues.DepthOffset, pos, sizeof(float));
-			pos += sizeof(float);
+			DepthValues.Load(pos, ef);
 
-			auto IsDepthOffsetScaledWithCamera = 0;
-			memcpy(&IsDepthOffsetScaledWithCamera, pos, sizeof(int32_t));
-			pos += sizeof(int32_t);
-
-			DepthValues.IsDepthOffsetScaledWithCamera = IsDepthOffsetScaledWithCamera > 0;
-
-			auto IsDepthOffsetScaledWithParticleScale = 0;
-			memcpy(&IsDepthOffsetScaledWithParticleScale, pos, sizeof(int32_t));
-			pos += sizeof(int32_t);
-
-			DepthValues.IsDepthOffsetScaledWithParticleScale = IsDepthOffsetScaledWithParticleScale > 0;
-
-			if (m_effect->GetVersion() >= 15)
+			if (ef->IsDyanamicMagnificationValid())
 			{
-				memcpy(&DepthValues.DepthParameter.SuppressionOfScalingByDepth, pos, sizeof(float));
-				pos += sizeof(float);
+				DepthValues.DepthOffset *= m_effect->GetMaginification();
+				DepthValues.SoftParticle *= m_effect->GetMaginification();
 
-				memcpy(&DepthValues.DepthParameter.DepthClipping, pos, sizeof(float));
-				pos += sizeof(float);
-			}
-
-			if (m_effect->GetVersion() >= 13)
-			{
-				memcpy(&DepthValues.ZSort, pos, sizeof(int32_t));
-				pos += sizeof(int32_t);
-
-				memcpy(&DepthValues.DrawingPriority, pos, sizeof(int32_t));
-				pos += sizeof(int32_t);
-			}
-
-			memcpy(&DepthValues.SoftParticle, pos, sizeof(float));
-			pos += sizeof(float);
-
-			DepthValues.DepthOffset *= m_effect->GetMaginification();
-			DepthValues.SoftParticle *= m_effect->GetMaginification();
-
-			if (DepthValues.DepthParameter.DepthClipping < FLT_MAX / 10)
-			{
-				DepthValues.DepthParameter.DepthClipping *= m_effect->GetMaginification();
+				if (DepthValues.DepthParameter.DepthClipping < FLT_MAX / 10)
+				{
+					DepthValues.DepthParameter.DepthClipping *= m_effect->GetMaginification();
+				}
 			}
 
 			DepthValues.DepthParameter.DepthOffset = DepthValues.DepthOffset;
@@ -511,7 +395,6 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		}
 	}
 
-	// ノード
 	int nodeCount = 0;
 	memcpy(&nodeCount, pos, sizeof(int));
 	pos += sizeof(int);
@@ -842,7 +725,8 @@ EffectInstanceTerm EffectNodeImplemented::CalculateInstanceTerm(EffectInstanceTe
 {
 	EffectInstanceTerm ret;
 
-	auto addWithClip = [](int v1, int v2) -> int {
+	auto addWithClip = [](int v1, int v2) -> int
+	{
 		v1 = Max(v1, 0);
 		v2 = Max(v2, 0);
 

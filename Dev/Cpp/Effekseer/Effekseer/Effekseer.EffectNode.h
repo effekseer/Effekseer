@@ -15,7 +15,9 @@
 #include "Noise/CurlNoise.h"
 #include "Parameter/AllTypeColor.h"
 #include "Parameter/AlphaCutoff.h"
+#include "Parameter/BasicSettings.h"
 #include "Parameter/CustomData.h"
+#include "Parameter/DepthParameter.h"
 #include "Parameter/DynamicParameter.h"
 #include "Parameter/Easing.h"
 #include "Parameter/Effekseer.Parameters.h"
@@ -30,32 +32,12 @@
 namespace Effekseer
 {
 
-enum class BindType : int32_t
-{
-	NotBind = 0,
-	NotBind_Root = 3,
-	WhenCreating = 1,
-	Always = 2,
-};
-
 enum class NonMatchingLODBehaviour : int32_t
 {
 	Hide = 0,
 	DontSpawn = 1,
 	DontSpawnAndHide = 2
 };
-
-enum class TranslationParentBindType : int32_t
-{
-	NotBind = 0,
-	NotBind_Root = 3,
-	WhenCreating = 1,
-	Always = 2,
-	NotBind_FollowParent = 4,
-	WhenCreating_FollowParent = 5,
-};
-
-bool operator==(const TranslationParentBindType& lhs, const BindType& rhs);
 
 enum class TriggerType : uint8_t
 {
@@ -67,49 +49,6 @@ struct alignas(2) TriggerValues
 {
 	TriggerType type = TriggerType::None;
 	uint8_t index = 0;
-};
-
-struct ParameterCommonValues_8
-{
-	int MaxGeneration;
-	BindType TranslationBindType;
-	BindType RotationBindType;
-	BindType ScalingBindType;
-	int RemoveWhenLifeIsExtinct;
-	int RemoveWhenParentIsRemoved;
-	int RemoveWhenChildrenIsExtinct;
-	random_int life;
-	float GenerationTime;
-	float GenerationTimeOffset;
-};
-
-struct ParameterCommonValues
-{
-	int32_t RefEqMaxGeneration = -1;
-	RefMinMax RefEqLife;
-	RefMinMax RefEqGenerationTime;
-	RefMinMax RefEqGenerationTimeOffset;
-
-	int MaxGeneration = 1;
-	TranslationParentBindType TranslationBindType = TranslationParentBindType::Always;
-	BindType RotationBindType = BindType::Always;
-	BindType ScalingBindType = BindType::Always;
-	int RemoveWhenLifeIsExtinct = 1;
-	int RemoveWhenParentIsRemoved = 0;
-	int RemoveWhenChildrenIsExtinct = 0;
-	random_int life;
-	random_float GenerationTime;
-	random_float GenerationTimeOffset;
-
-	ParameterCommonValues()
-	{
-		life.max = 1;
-		life.min = 1;
-		GenerationTime.max = 1;
-		GenerationTime.min = 1;
-		GenerationTimeOffset.max = 0;
-		GenerationTimeOffset.min = 0;
-	}
 };
 
 struct ParameterLODs
@@ -172,28 +111,6 @@ struct KillRulesParameter
 	}
 };
 
-struct ParameterDepthValues
-{
-	float DepthOffset;
-	bool IsDepthOffsetScaledWithCamera;
-	bool IsDepthOffsetScaledWithParticleScale;
-	ZSortType ZSort;
-	int32_t DrawingPriority;
-	float SoftParticle;
-
-	NodeRendererDepthParameter DepthParameter;
-
-	ParameterDepthValues()
-	{
-		DepthOffset = 0;
-		IsDepthOffsetScaledWithCamera = false;
-		IsDepthOffsetScaledWithParticleScale = false;
-		ZSort = ZSortType::None;
-		DrawingPriority = 0;
-		SoftParticle = 0.0f;
-	}
-};
-
 struct SteeringBehaviorParameter
 {
 	random_float MaxFollowSpeed;
@@ -205,36 +122,6 @@ struct TriggerParameter
 	TriggerValues ToStartGeneration;
 	TriggerValues ToStopGeneration;
 	TriggerValues ToRemove;
-};
-
-enum class LocationAbsType : int32_t
-{
-	None = 0,
-	Gravity = 1,
-	AttractiveForce = 2,
-};
-
-struct LocationAbsParameter
-{
-	LocationAbsType type = LocationAbsType::None;
-
-	union
-	{
-		struct
-		{
-
-		} none;
-
-		SIMD::Vec3f gravity;
-
-		struct
-		{
-			float force;
-			float control;
-			float minRange;
-			float maxRange;
-		} attractiveForce;
-	};
 };
 
 struct ParameterRendererCommon
