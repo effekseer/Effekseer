@@ -1,10 +1,41 @@
 #include "ForceFields.h"
+#include "../Effekseer.InternalStruct.h"
 #include "../Effekseer.Matrix44.h"
 #include "../SIMD/Utils.h"
 #include "../Utils/Effekseer.BinaryReader.h"
 
 namespace Effekseer
 {
+
+enum class LocationAbsType : int32_t
+{
+	None = 0,
+	Gravity = 1,
+	AttractiveForce = 2,
+};
+
+struct LocationAbsParameter
+{
+	LocationAbsType type = LocationAbsType::None;
+
+	union
+	{
+		struct
+		{
+
+		} none;
+
+		SIMD::Vec3f gravity;
+
+		struct
+		{
+			float force;
+			float control;
+			float minRange;
+			float maxRange;
+		} attractiveForce;
+	};
+};
 
 ForceFieldTurbulenceParameter::ForceFieldTurbulenceParameter(ForceFieldTurbulenceType type, int32_t seed, float scale, float strength, int octave)
 {
@@ -221,28 +252,80 @@ bool LocalForceFieldElementParameter::Load(uint8_t*& pos, int32_t version)
 
 bool LocalForceFieldParameter::Load(uint8_t*& pos, int32_t version)
 {
-	int32_t count = 0;
-	memcpy(&count, pos, sizeof(int));
-	pos += sizeof(int);
-
-	for (int32_t i = 0; i < count; i++)
+	if (version >= 1500)
 	{
-		if (!LocalForceFields[i].Load(pos, version))
+		int32_t count = 0;
+		memcpy(&count, pos, sizeof(int));
+		pos += sizeof(int);
+
+		for (int32_t i = 0; i < count; i++)
 		{
-			return false;
+			if (!LocalForceFields[i].Load(pos, version))
+			{
+				return false;
+			}
+		}
+
+		for (auto& ff : LocalForceFields)
+		{
+			if (ff.HasValue)
+			{
+				HasValue = true;
+
+				if (ff.Gravity != nullptr || ff.AttractiveForce != nullptr)
+				{
+					IsGlobalEnabled = true;
+				}
+			}
 		}
 	}
 
-	for (auto& ff : LocalForceFields)
+	// for compatiblity of location abs
+	if (version <= Version16Alpha1)
 	{
-		if (ff.HasValue)
-		{
-			HasValue = true;
+		LocationAbsParameter LocationAbs;
+		int32_t size = 0;
 
-			if (ff.Gravity != nullptr || ff.AttractiveForce != nullptr)
-			{
-				IsGlobalEnabled = true;
-			}
+		memcpy(&LocationAbs.type, pos, sizeof(int));
+		pos += sizeof(int);
+
+		// Calc attraction forces
+		if (LocationAbs.type == LocationAbsType::None)
+		{
+			memcpy(&size, pos, sizeof(int));
+			pos += sizeof(int);
+			assert(size == 0);
+			memcpy(&LocationAbs.none, pos, size);
+			pos += size;
+		}
+		else if (LocationAbs.type == LocationAbsType::Gravity)
+		{
+			memcpy(&size, pos, sizeof(int));
+			pos += sizeof(int);
+			assert(size == sizeof(vector3d));
+			memcpy(&LocationAbs.gravity, pos, size);
+			pos += size;
+		}
+		else if (LocationAbs.type == LocationAbsType::AttractiveForce)
+		{
+			memcpy(&size, pos, sizeof(int));
+			pos += sizeof(int);
+			assert(size == sizeof(LocationAbs.attractiveForce));
+			memcpy(&LocationAbs.attractiveForce, pos, size);
+			pos += size;
+		}
+
+		if (LocationAbs.type == LocationAbsType::Gravity)
+		{
+			MaintainGravityCompatibility(LocationAbs.gravity);
+		}
+		else if (LocationAbs.type == LocationAbsType::AttractiveForce)
+		{
+			MaintainAttractiveForceCompatibility(
+				LocationAbs.attractiveForce.force,
+				LocationAbs.attractiveForce.control,
+				LocationAbs.attractiveForce.minRange,
+				LocationAbs.attractiveForce.maxRange);
 		}
 	}
 
