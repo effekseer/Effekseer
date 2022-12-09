@@ -21,8 +21,11 @@
 #include "Parameter/DynamicParameter.h"
 #include "Parameter/Easing.h"
 #include "Parameter/Effekseer.Parameters.h"
+#include "Parameter/KillRules.h"
+#include "Parameter/LOD.h"
 #include "Parameter/Rotation.h"
 #include "Parameter/Scaling.h"
+#include "Parameter/Sound.h"
 #include "Parameter/SpawnMethod.h"
 #include "Parameter/Translation.h"
 #include "Parameter/UV.h"
@@ -31,13 +34,6 @@
 
 namespace Effekseer
 {
-
-enum class NonMatchingLODBehaviour : int32_t
-{
-	Hide = 0,
-	DontSpawn = 1,
-	DontSpawnAndHide = 2
-};
 
 enum class TriggerType : uint8_t
 {
@@ -49,66 +45,6 @@ struct alignas(2) TriggerValues
 {
 	TriggerType type = TriggerType::None;
 	uint8_t index = 0;
-};
-
-struct ParameterLODs
-{
-	int MatchingLODs = 0b1111;
-	NonMatchingLODBehaviour LODBehaviour = NonMatchingLODBehaviour::Hide;
-};
-
-enum class KillType : int32_t
-{
-	None = 0,
-	Box = 1,
-	Plane = 2,
-	Sphere = 3
-};
-
-struct KillRulesParameter
-{
-
-	KillType Type = KillType::None;
-	int IsScaleAndRotationApplied = 1;
-
-	union
-	{
-		struct
-		{
-			vector3d Center; // In local space
-			vector3d Size;	 // In local space
-			int IsKillInside;
-		} Box;
-
-		struct
-		{
-			vector3d PlaneAxis; // in local space
-			float PlaneOffset;	// in the direction of plane axis
-		} Plane;
-
-		struct
-		{
-			vector3d Center; // in local space
-			float Radius;
-			int IsKillInside;
-		} Sphere;
-	};
-
-	void MakeCoordinateSystemLH()
-	{
-		if (Type == KillType::Box)
-		{
-			Box.Center.z *= -1.0F;
-		}
-		else if (Type == KillType::Plane)
-		{
-			Plane.PlaneAxis.z *= -1.0F;
-		}
-		else if (Type == KillType::Sphere)
-		{
-			Sphere.Center.z *= -1.0F;
-		}
-	}
 };
 
 struct SteeringBehaviorParameter
@@ -521,42 +457,6 @@ struct ParameterRendererCommon
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-enum ParameterSoundType
-{
-	ParameterSoundType_None = 0,
-	ParameterSoundType_Use = 1,
-
-	ParameterSoundType_DWORD = 0x7fffffff,
-};
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-enum ParameterSoundPanType
-{
-	ParameterSoundPanType_2D = 0,
-	ParameterSoundPanType_3D = 1,
-
-	ParameterSoundPanType_DWORD = 0x7fffffff,
-};
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-struct ParameterSound
-{
-	int32_t WaveId;
-	random_float Volume;
-	random_float Pitch;
-	ParameterSoundPanType PanType;
-	random_float Pan;
-	float Distance;
-	random_int Delay;
-};
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 enum eRenderingOrder
 {
 	RenderingOrder_FirstCreatedInstanceIsFirst = 0,
@@ -635,7 +535,6 @@ public:
 	bool EnableFalloff = false;
 	FalloffParameter FalloffParam{};
 
-	ParameterSoundType SoundType = ParameterSoundType_None;
 	ParameterSound Sound;
 
 	eRenderingOrder RenderingOrder = RenderingOrder_FirstCreatedInstanceIsFirst;

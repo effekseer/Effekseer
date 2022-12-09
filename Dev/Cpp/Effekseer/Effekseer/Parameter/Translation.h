@@ -166,7 +166,7 @@ public:
 		}
 	}
 
-	void Load(unsigned char*& pos, const EffectImplemented* ef)
+	void Load(unsigned char*& pos, int version)
 	{
 		int32_t size = 0;
 		memcpy(&TranslationType, pos, sizeof(int));
@@ -178,7 +178,7 @@ public:
 			memcpy(&translationSize, pos, sizeof(int));
 			pos += sizeof(int);
 
-			if (ef->GetVersion() >= 14)
+			if (version >= 14)
 			{
 				memcpy(&TranslationFixed, pos, sizeof(ParameterTranslationFixed));
 			}
@@ -198,7 +198,7 @@ public:
 		}
 		else if (TranslationType == ParameterTranslationType_PVA)
 		{
-			if (ef->GetVersion() >= 14)
+			if (version >= 14)
 			{
 				memcpy(&size, pos, sizeof(int));
 				pos += sizeof(int);
@@ -218,7 +218,7 @@ public:
 		{
 			memcpy(&size, pos, sizeof(int));
 			pos += sizeof(int);
-			TranslationEasing.Load(pos, size, ef->GetVersion());
+			TranslationEasing.Load(pos, size, version);
 			pos += size;
 		}
 		else if (TranslationType == ParameterTranslationType_FCurve)
@@ -227,7 +227,7 @@ public:
 			pos += sizeof(int);
 
 			TranslationFCurve = std::make_unique<FCurveVector3D>();
-			pos += TranslationFCurve->Load(pos, ef->GetVersion());
+			pos += TranslationFCurve->Load(pos, version);
 		}
 		else if (TranslationType == ParameterTranslationType_NurbsCurve)
 		{
