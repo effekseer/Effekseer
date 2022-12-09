@@ -40,9 +40,101 @@ EffectNodeImplemented::EffectNodeImplemented(Effect* effect, unsigned char*& pos
 {
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+void EffectNodeImplemented::AdjustSettings(const SettingRef& setting)
+{
+	auto ef = static_cast<EffectImplemented*>(m_effect);
+
+	if (ef->IsDyanamicMagnificationValid())
+	{
+		KillParam.Magnify(m_effect->GetMaginification());
+		TranslationParam.Magnify(m_effect->GetMaginification(), DynamicFactor);
+	}
+
+	if (ef->IsDyanamicMagnificationValid())
+	{
+		if (GenerationLocation.type == ParameterGenerationLocation::TYPE_POINT)
+		{
+			GenerationLocation.point.location.min *= m_effect->GetMaginification();
+			GenerationLocation.point.location.max *= m_effect->GetMaginification();
+		}
+		else if (GenerationLocation.type == ParameterGenerationLocation::TYPE_LINE)
+		{
+			GenerationLocation.line.position_end.min *= m_effect->GetMaginification();
+			GenerationLocation.line.position_end.max *= m_effect->GetMaginification();
+			GenerationLocation.line.position_start.min *= m_effect->GetMaginification();
+			GenerationLocation.line.position_start.max *= m_effect->GetMaginification();
+			GenerationLocation.line.position_noize.min *= m_effect->GetMaginification();
+			GenerationLocation.line.position_noize.max *= m_effect->GetMaginification();
+		}
+		else if (GenerationLocation.type == ParameterGenerationLocation::TYPE_SPHERE)
+		{
+			GenerationLocation.sphere.radius.min *= m_effect->GetMaginification();
+			GenerationLocation.sphere.radius.max *= m_effect->GetMaginification();
+		}
+		else if (GenerationLocation.type == ParameterGenerationLocation::TYPE_CIRCLE)
+		{
+			GenerationLocation.circle.radius.min *= m_effect->GetMaginification();
+			GenerationLocation.circle.radius.max *= m_effect->GetMaginification();
+		}
+	}
+
+	{
+		if (ef->IsDyanamicMagnificationValid())
+		{
+			DepthValues.DepthOffset *= m_effect->GetMaginification();
+			DepthValues.SoftParticle *= m_effect->GetMaginification();
+
+			if (DepthValues.DepthParameter.DepthClipping < FLT_MAX / 10)
+			{
+				DepthValues.DepthParameter.DepthClipping *= m_effect->GetMaginification();
+			}
+		}
+
+		DepthValues.DepthParameter.DepthOffset = DepthValues.DepthOffset;
+		DepthValues.DepthParameter.IsDepthOffsetScaledWithCamera = DepthValues.IsDepthOffsetScaledWithCamera;
+		DepthValues.DepthParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
+		DepthValues.DepthParameter.ZSort = DepthValues.ZSort;
+	}
+
+	// Convert right handle coordinate system into left handle coordinate system
+	if (setting->GetCoordinateSystem() == CoordinateSystem::LH)
+	{
+		DynamicFactor.Tra[2] *= -1.0f;
+
+		TranslationParam.MakeLeftCoordinate();
+
+		// Rotation
+		DynamicFactor.Rot[0] *= -1.0f;
+		DynamicFactor.Rot[1] *= -1.0f;
+
+		RotationParam.MakeCoordinateSystemLH();
+		GenerationLocation.MakeCoordinateSystemLH();
+		KillParam.MakeCoordinateSystemLH();
+	}
+
+	// generate inversed parameter
+	for (size_t i = 0; i < DynamicFactor.Tra.size(); i++)
+	{
+		DynamicFactor.TraInv[i] = 1.0f / DynamicFactor.Tra[i];
+	}
+
+	for (size_t i = 0; i < DynamicFactor.Rot.size(); i++)
+	{
+		DynamicFactor.RotInv[i] = 1.0f / DynamicFactor.Rot[i];
+	}
+
+	for (size_t i = 0; i < DynamicFactor.Scale.size(); i++)
+	{
+		DynamicFactor.ScaleInv[i] = 1.0f / DynamicFactor.Scale[i];
+	}
+
+	// rescale intensity after 1.5
+#ifndef __EFFEKSEER_FOR_UE4__ // Hack for EffekseerForUE4
+	RendererCommon.BasicParameter.DistortionIntensity *= m_effect->GetMaginification();
+	RendererCommon.DistortionIntensity *= m_effect->GetMaginification();
+#endif // !__EFFEKSEER_FOR_UE4__
+}
+
 void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* parent, const SettingRef& setting)
 {
 	int size = 0;
@@ -205,96 +297,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 
 		Sound.Load(pos, ef->GetVersion());
 
-		// Post process
-		if (ef->IsDyanamicMagnificationValid())
-		{
-			KillParam.Magnify(m_effect->GetMaginification());
-			TranslationParam.Magnify(m_effect->GetMaginification(), DynamicFactor);
-		}
-
-		if (ef->IsDyanamicMagnificationValid())
-		{
-			if (GenerationLocation.type == ParameterGenerationLocation::TYPE_POINT)
-			{
-				GenerationLocation.point.location.min *= m_effect->GetMaginification();
-				GenerationLocation.point.location.max *= m_effect->GetMaginification();
-			}
-			else if (GenerationLocation.type == ParameterGenerationLocation::TYPE_LINE)
-			{
-				GenerationLocation.line.position_end.min *= m_effect->GetMaginification();
-				GenerationLocation.line.position_end.max *= m_effect->GetMaginification();
-				GenerationLocation.line.position_start.min *= m_effect->GetMaginification();
-				GenerationLocation.line.position_start.max *= m_effect->GetMaginification();
-				GenerationLocation.line.position_noize.min *= m_effect->GetMaginification();
-				GenerationLocation.line.position_noize.max *= m_effect->GetMaginification();
-			}
-			else if (GenerationLocation.type == ParameterGenerationLocation::TYPE_SPHERE)
-			{
-				GenerationLocation.sphere.radius.min *= m_effect->GetMaginification();
-				GenerationLocation.sphere.radius.max *= m_effect->GetMaginification();
-			}
-			else if (GenerationLocation.type == ParameterGenerationLocation::TYPE_CIRCLE)
-			{
-				GenerationLocation.circle.radius.min *= m_effect->GetMaginification();
-				GenerationLocation.circle.radius.max *= m_effect->GetMaginification();
-			}
-		}
-
-		{
-			if (ef->IsDyanamicMagnificationValid())
-			{
-				DepthValues.DepthOffset *= m_effect->GetMaginification();
-				DepthValues.SoftParticle *= m_effect->GetMaginification();
-
-				if (DepthValues.DepthParameter.DepthClipping < FLT_MAX / 10)
-				{
-					DepthValues.DepthParameter.DepthClipping *= m_effect->GetMaginification();
-				}
-			}
-
-			DepthValues.DepthParameter.DepthOffset = DepthValues.DepthOffset;
-			DepthValues.DepthParameter.IsDepthOffsetScaledWithCamera = DepthValues.IsDepthOffsetScaledWithCamera;
-			DepthValues.DepthParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
-			DepthValues.DepthParameter.ZSort = DepthValues.ZSort;
-		}
-
-		// Convert right handle coordinate system into left handle coordinate system
-		if (setting->GetCoordinateSystem() == CoordinateSystem::LH)
-		{
-			DynamicFactor.Tra[2] *= -1.0f;
-
-			TranslationParam.MakeLeftCoordinate();
-
-			// Rotation
-			DynamicFactor.Rot[0] *= -1.0f;
-			DynamicFactor.Rot[1] *= -1.0f;
-
-			RotationParam.MakeCoordinateSystemLH();
-			GenerationLocation.MakeCoordinateSystemLH();
-			KillParam.MakeCoordinateSystemLH();
-		}
-
-		// generate inversed parameter
-		for (size_t i = 0; i < DynamicFactor.Tra.size(); i++)
-		{
-			DynamicFactor.TraInv[i] = 1.0f / DynamicFactor.Tra[i];
-		}
-
-		for (size_t i = 0; i < DynamicFactor.Rot.size(); i++)
-		{
-			DynamicFactor.RotInv[i] = 1.0f / DynamicFactor.Rot[i];
-		}
-
-		for (size_t i = 0; i < DynamicFactor.Scale.size(); i++)
-		{
-			DynamicFactor.ScaleInv[i] = 1.0f / DynamicFactor.Scale[i];
-		}
-
-		// rescale intensity after 1.5
-#ifndef __EFFEKSEER_FOR_UE4__ // Hack for EffekseerForUE4
-		RendererCommon.BasicParameter.DistortionIntensity *= m_effect->GetMaginification();
-		RendererCommon.DistortionIntensity *= m_effect->GetMaginification();
-#endif // !__EFFEKSEER_FOR_UE4__
+		AdjustSettings(setting);
 	}
 
 	int nodeCount = 0;

@@ -492,6 +492,8 @@ protected:
 
 	virtual ~EffectNodeImplemented();
 
+	void AdjustSettings(const SettingRef& setting);
+
 	void LoadParameter(unsigned char*& pos, EffectNode* parent, const SettingRef& setting);
 
 	//! calculate custom data
