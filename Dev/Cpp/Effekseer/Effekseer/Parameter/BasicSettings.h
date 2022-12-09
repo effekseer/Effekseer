@@ -23,7 +23,10 @@ enum class TranslationParentBindType : int32_t
 	WhenCreating_FollowParent = 5,
 };
 
-bool operator==(const TranslationParentBindType& lhs, const BindType& rhs);
+inline bool operator==(const TranslationParentBindType& lhs, const BindType& rhs)
+{
+	return (lhs == static_cast<TranslationParentBindType>(rhs));
+}
 
 struct ParameterCommonValues_8
 {

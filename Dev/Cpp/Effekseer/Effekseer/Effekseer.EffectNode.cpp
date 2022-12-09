@@ -32,11 +32,6 @@
 namespace Effekseer
 {
 
-bool operator==(const TranslationParentBindType& lhs, const BindType& rhs)
-{
-	return (lhs == static_cast<TranslationParentBindType>(rhs));
-}
-
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -133,170 +128,14 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			}
 		}
 
-		if (ef->GetVersion() >= Version17Alpha3)
-		{
-			memcpy(&LODsParam, pos, sizeof(ParameterLODs));
-			pos += sizeof(ParameterLODs);
-		}
-
-		TranslationParam.Load(pos, ef);
-
-		if (ef->IsDyanamicMagnificationValid())
-		{
-			TranslationParam.Magnify(m_effect->GetMaginification(), DynamicFactor);
-		}
-
-		// Local force field
+		LODsParam.Load(pos, ef->GetVersion());
+		TranslationParam.Load(pos, ef->GetVersion());
 		LocalForceField.Load(pos, ef->GetVersion());
-
 		RotationParam.Load(pos, ef->GetVersion());
-
 		ScalingParam.Load(pos, ef->GetVersion());
-
-		GenerationLocation.load(pos, m_effect->GetVersion());
-
-		/* Spawning Method 拡大処理*/
-		if (ef->IsDyanamicMagnificationValid()
-			/* && (this->CommonValues.ScalingBindType == BindType::NotBind || parent->GetType() == EFFECT_NODE_TYPE_ROOT)*/)
-		{
-			if (GenerationLocation.type == ParameterGenerationLocation::TYPE_POINT)
-			{
-				GenerationLocation.point.location.min *= m_effect->GetMaginification();
-				GenerationLocation.point.location.max *= m_effect->GetMaginification();
-			}
-			else if (GenerationLocation.type == ParameterGenerationLocation::TYPE_LINE)
-			{
-				GenerationLocation.line.position_end.min *= m_effect->GetMaginification();
-				GenerationLocation.line.position_end.max *= m_effect->GetMaginification();
-				GenerationLocation.line.position_start.min *= m_effect->GetMaginification();
-				GenerationLocation.line.position_start.max *= m_effect->GetMaginification();
-				GenerationLocation.line.position_noize.min *= m_effect->GetMaginification();
-				GenerationLocation.line.position_noize.max *= m_effect->GetMaginification();
-			}
-			else if (GenerationLocation.type == ParameterGenerationLocation::TYPE_SPHERE)
-			{
-				GenerationLocation.sphere.radius.min *= m_effect->GetMaginification();
-				GenerationLocation.sphere.radius.max *= m_effect->GetMaginification();
-			}
-			else if (GenerationLocation.type == ParameterGenerationLocation::TYPE_CIRCLE)
-			{
-				GenerationLocation.circle.radius.min *= m_effect->GetMaginification();
-				GenerationLocation.circle.radius.max *= m_effect->GetMaginification();
-			}
-		}
-
-		// Load depth values
-		if (m_effect->GetVersion() >= 12)
-		{
-			DepthValues.Load(pos, ef);
-
-			if (ef->IsDyanamicMagnificationValid())
-			{
-				DepthValues.DepthOffset *= m_effect->GetMaginification();
-				DepthValues.SoftParticle *= m_effect->GetMaginification();
-
-				if (DepthValues.DepthParameter.DepthClipping < FLT_MAX / 10)
-				{
-					DepthValues.DepthParameter.DepthClipping *= m_effect->GetMaginification();
-				}
-			}
-
-			DepthValues.DepthParameter.DepthOffset = DepthValues.DepthOffset;
-			DepthValues.DepthParameter.IsDepthOffsetScaledWithCamera = DepthValues.IsDepthOffsetScaledWithCamera;
-			DepthValues.DepthParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
-			DepthValues.DepthParameter.ZSort = DepthValues.ZSort;
-		}
-
-		// load kill rules
-		if (ef->GetVersion() >= Version17Alpha5)
-		{
-			memcpy(&KillParam.Type, pos, sizeof(int32_t));
-			pos += sizeof(int32_t);
-
-			memcpy(&KillParam.IsScaleAndRotationApplied, pos, sizeof(int));
-			pos += sizeof(int);
-
-			if (KillParam.Type == KillType::Box)
-			{
-				memcpy(&KillParam.Box.Center, pos, sizeof(Vector3D));
-				pos += sizeof(Vector3D);
-
-				memcpy(&KillParam.Box.Size, pos, sizeof(Vector3D));
-				pos += sizeof(Vector3D);
-
-				memcpy(&KillParam.Box.IsKillInside, pos, sizeof(int));
-				pos += sizeof(int);
-
-				KillParam.Box.Center *= ef->GetMaginification();
-				KillParam.Box.Size *= ef->GetMaginification();
-			}
-			else if (KillParam.Type == KillType::Plane)
-			{
-				memcpy(&KillParam.Plane.PlaneAxis, pos, sizeof(Vector3D));
-				pos += sizeof(Vector3D);
-
-				memcpy(&KillParam.Plane.PlaneOffset, pos, sizeof(float));
-				pos += sizeof(float);
-
-				const auto length = Vector3D::Length(Vector3D{KillParam.Plane.PlaneAxis.x, KillParam.Plane.PlaneAxis.y, KillParam.Plane.PlaneAxis.z});
-				KillParam.Plane.PlaneAxis.x /= length;
-				KillParam.Plane.PlaneAxis.y /= length;
-				KillParam.Plane.PlaneAxis.z /= length;
-
-				KillParam.Plane.PlaneOffset *= ef->GetMaginification();
-			}
-			else if (KillParam.Type == KillType::Sphere)
-			{
-				memcpy(&KillParam.Sphere.Center, pos, sizeof(Vector3D));
-				pos += sizeof(Vector3D);
-
-				memcpy(&KillParam.Sphere.Radius, pos, sizeof(float));
-				pos += sizeof(float);
-
-				memcpy(&KillParam.Sphere.IsKillInside, pos, sizeof(int));
-				pos += sizeof(int);
-
-				KillParam.Sphere.Center *= ef->GetMaginification();
-				KillParam.Sphere.Radius *= ef->GetMaginification();
-			}
-		}
-		else
-		{
-			KillParam.Type = KillType::None;
-			KillParam.IsScaleAndRotationApplied = 1;
-		}
-
-		// Convert right handle coordinate system into left handle coordinate system
-		if (setting->GetCoordinateSystem() == CoordinateSystem::LH)
-		{
-			DynamicFactor.Tra[2] *= -1.0f;
-
-			TranslationParam.MakeLeftCoordinate();
-
-			// Rotation
-			DynamicFactor.Rot[0] *= -1.0f;
-			DynamicFactor.Rot[1] *= -1.0f;
-
-			RotationParam.MakeCoordinateSystemLH();
-			GenerationLocation.MakeCoordinateSystemLH();
-			KillParam.MakeCoordinateSystemLH();
-		}
-
-		// generate inversed parameter
-		for (size_t i = 0; i < DynamicFactor.Tra.size(); i++)
-		{
-			DynamicFactor.TraInv[i] = 1.0f / DynamicFactor.Tra[i];
-		}
-
-		for (size_t i = 0; i < DynamicFactor.Rot.size(); i++)
-		{
-			DynamicFactor.RotInv[i] = 1.0f / DynamicFactor.Rot[i];
-		}
-
-		for (size_t i = 0; i < DynamicFactor.Scale.size(); i++)
-		{
-			DynamicFactor.ScaleInv[i] = 1.0f / DynamicFactor.Scale[i];
-		}
+		GenerationLocation.load(pos, ef->GetVersion());
+		DepthValues.Load(pos, ef->GetVersion());
+		KillParam.Load(pos, ef->GetVersion());
 
 		if (m_effect->GetVersion() >= 3)
 		{
@@ -364,35 +203,98 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 
 		LoadRendererParameter(pos, m_effect->GetSetting());
 
+		Sound.Load(pos, ef->GetVersion());
+
+		// Post process
+		if (ef->IsDyanamicMagnificationValid())
+		{
+			KillParam.Magnify(m_effect->GetMaginification());
+			TranslationParam.Magnify(m_effect->GetMaginification(), DynamicFactor);
+		}
+
+		if (ef->IsDyanamicMagnificationValid())
+		{
+			if (GenerationLocation.type == ParameterGenerationLocation::TYPE_POINT)
+			{
+				GenerationLocation.point.location.min *= m_effect->GetMaginification();
+				GenerationLocation.point.location.max *= m_effect->GetMaginification();
+			}
+			else if (GenerationLocation.type == ParameterGenerationLocation::TYPE_LINE)
+			{
+				GenerationLocation.line.position_end.min *= m_effect->GetMaginification();
+				GenerationLocation.line.position_end.max *= m_effect->GetMaginification();
+				GenerationLocation.line.position_start.min *= m_effect->GetMaginification();
+				GenerationLocation.line.position_start.max *= m_effect->GetMaginification();
+				GenerationLocation.line.position_noize.min *= m_effect->GetMaginification();
+				GenerationLocation.line.position_noize.max *= m_effect->GetMaginification();
+			}
+			else if (GenerationLocation.type == ParameterGenerationLocation::TYPE_SPHERE)
+			{
+				GenerationLocation.sphere.radius.min *= m_effect->GetMaginification();
+				GenerationLocation.sphere.radius.max *= m_effect->GetMaginification();
+			}
+			else if (GenerationLocation.type == ParameterGenerationLocation::TYPE_CIRCLE)
+			{
+				GenerationLocation.circle.radius.min *= m_effect->GetMaginification();
+				GenerationLocation.circle.radius.max *= m_effect->GetMaginification();
+			}
+		}
+
+		{
+			if (ef->IsDyanamicMagnificationValid())
+			{
+				DepthValues.DepthOffset *= m_effect->GetMaginification();
+				DepthValues.SoftParticle *= m_effect->GetMaginification();
+
+				if (DepthValues.DepthParameter.DepthClipping < FLT_MAX / 10)
+				{
+					DepthValues.DepthParameter.DepthClipping *= m_effect->GetMaginification();
+				}
+			}
+
+			DepthValues.DepthParameter.DepthOffset = DepthValues.DepthOffset;
+			DepthValues.DepthParameter.IsDepthOffsetScaledWithCamera = DepthValues.IsDepthOffsetScaledWithCamera;
+			DepthValues.DepthParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
+			DepthValues.DepthParameter.ZSort = DepthValues.ZSort;
+		}
+
+		// Convert right handle coordinate system into left handle coordinate system
+		if (setting->GetCoordinateSystem() == CoordinateSystem::LH)
+		{
+			DynamicFactor.Tra[2] *= -1.0f;
+
+			TranslationParam.MakeLeftCoordinate();
+
+			// Rotation
+			DynamicFactor.Rot[0] *= -1.0f;
+			DynamicFactor.Rot[1] *= -1.0f;
+
+			RotationParam.MakeCoordinateSystemLH();
+			GenerationLocation.MakeCoordinateSystemLH();
+			KillParam.MakeCoordinateSystemLH();
+		}
+
+		// generate inversed parameter
+		for (size_t i = 0; i < DynamicFactor.Tra.size(); i++)
+		{
+			DynamicFactor.TraInv[i] = 1.0f / DynamicFactor.Tra[i];
+		}
+
+		for (size_t i = 0; i < DynamicFactor.Rot.size(); i++)
+		{
+			DynamicFactor.RotInv[i] = 1.0f / DynamicFactor.Rot[i];
+		}
+
+		for (size_t i = 0; i < DynamicFactor.Scale.size(); i++)
+		{
+			DynamicFactor.ScaleInv[i] = 1.0f / DynamicFactor.Scale[i];
+		}
+
 		// rescale intensity after 1.5
 #ifndef __EFFEKSEER_FOR_UE4__ // Hack for EffekseerForUE4
 		RendererCommon.BasicParameter.DistortionIntensity *= m_effect->GetMaginification();
 		RendererCommon.DistortionIntensity *= m_effect->GetMaginification();
 #endif // !__EFFEKSEER_FOR_UE4__
-
-		if (m_effect->GetVersion() >= 1)
-		{
-			// Sound
-			memcpy(&SoundType, pos, sizeof(int));
-			pos += sizeof(int);
-			if (SoundType == ParameterSoundType_Use)
-			{
-				memcpy(&Sound.WaveId, pos, sizeof(int32_t));
-				pos += sizeof(int32_t);
-				memcpy(&Sound.Volume, pos, sizeof(random_float));
-				pos += sizeof(random_float);
-				memcpy(&Sound.Pitch, pos, sizeof(random_float));
-				pos += sizeof(random_float);
-				memcpy(&Sound.PanType, pos, sizeof(ParameterSoundPanType));
-				pos += sizeof(ParameterSoundPanType);
-				memcpy(&Sound.Pan, pos, sizeof(random_float));
-				pos += sizeof(random_float);
-				memcpy(&Sound.Distance, pos, sizeof(float));
-				pos += sizeof(float);
-				memcpy(&Sound.Delay, pos, sizeof(random_int));
-				pos += sizeof(random_int);
-			}
-		}
 	}
 
 	int nodeCount = 0;

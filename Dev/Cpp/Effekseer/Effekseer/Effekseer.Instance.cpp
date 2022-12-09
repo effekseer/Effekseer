@@ -332,7 +332,7 @@ void Instance::FirstUpdate()
 		m_pManager->GetCoordinateSystem(),
 		rand);
 
-	if (m_pEffectNode->SoundType == ParameterSoundType_Use)
+	if (m_pEffectNode->Sound.SoundType == ParameterSoundType_Use)
 	{
 		soundValues.delay = (int32_t)m_pEffectNode->Sound.Delay.getValue(rand);
 	}
@@ -409,7 +409,7 @@ void Instance::Update(float deltaFrame, bool shown)
 
 	if (is_time_step_allowed && m_pEffectNode->GetType() != eEffectNodeType::Root)
 	{
-		if (m_pEffectNode->SoundType == ParameterSoundType_Use && deltaFrame > 0)
+		if (m_pEffectNode->Sound.SoundType == ParameterSoundType_Use && deltaFrame > 0)
 		{
 			float living_time = m_LivingTime;
 			float living_time_p = living_time + deltaFrame;
