@@ -108,25 +108,33 @@ namespace Effekseer.GUI
 		{
 			if (System.IO.File.Exists(path))
 			{
-				System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
-
-				doc.Load(path);
-
-				Target = doc["Root"]["Target"].ChildNodes[0].Value;
-
-				Port = int.Parse(doc["Root"]["Port"].ChildNodes[0].Value);
-
-				AutoConnect = bool.Parse(doc["Root"]["AutoConnect"].ChildNodes[0].Value);
-				SendOnLoad = bool.Parse(doc["Root"]["SendOnLoad"].ChildNodes[0].Value);
-				SendOnEdit = bool.Parse(doc["Root"]["SendOnEdit"].ChildNodes[0].Value);
-				SendOnSave = bool.Parse(doc["Root"]["SendOnSave"].ChildNodes[0].Value);
-
-				target = Target;
-				port = Port;
-
-				if (Loaded != null)
+				// For broken config file
+				try
 				{
-					Loaded();
+					System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
+
+					doc.Load(path);
+
+					Target = doc["Root"]["Target"].ChildNodes[0].Value;
+
+					Port = int.Parse(doc["Root"]["Port"].ChildNodes[0].Value);
+
+					AutoConnect = bool.Parse(doc["Root"]["AutoConnect"].ChildNodes[0].Value);
+					SendOnLoad = bool.Parse(doc["Root"]["SendOnLoad"].ChildNodes[0].Value);
+					SendOnEdit = bool.Parse(doc["Root"]["SendOnEdit"].ChildNodes[0].Value);
+					SendOnSave = bool.Parse(doc["Root"]["SendOnSave"].ChildNodes[0].Value);
+
+					target = Target;
+					port = Port;
+
+					if (Loaded != null)
+					{
+						Loaded();
+					}
+				}
+				catch (Exception e)
+				{
+					Utils.Logger.Write($"Exception : {e}");
 				}
 			}
 		}
@@ -182,9 +190,9 @@ namespace Effekseer.GUI
 			{
 				doc.Save(path);
 			}
-			catch
+			catch (Exception e)
 			{
-
+				Utils.Logger.Write($"Exception : {e}");
 			}
 		}
 	}
