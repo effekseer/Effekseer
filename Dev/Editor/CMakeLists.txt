@@ -154,3 +154,5 @@ endif()
 
 add_subdirectory(EffekseerLit)
 set_target_properties (EffekseerEditorLit PROPERTIES FOLDER Editor)
+
+add_subdirectory(ConvertingCodeGenerator)
