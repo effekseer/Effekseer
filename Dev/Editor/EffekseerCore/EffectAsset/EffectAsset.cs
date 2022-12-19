@@ -7,6 +7,16 @@ using Newtonsoft.Json;
 
 namespace Effekseer.EffectAsset
 {
+	class Conversion
+	{
+		static public int Convert(Data.Value.Int value)
+		{
+			var ret = 0;
+			ret = value.DefaultValue;
+			return ret;
+		}
+	}
+
 	class VirtualPathUtility
 	{
 		public static string[] SplitPath(string path)
@@ -227,6 +237,8 @@ namespace Effekseer.EffectAsset
 
 		public List<ProceduralModelAsset> ProceduralModels { get; private set; } = new List<ProceduralModelAsset>();
 
+		public List<DynamicEquation> DynamicEquations { get; private set; } = new List<DynamicEquation>();
+
 		public EffectAssetEditorContext CreateEditorContext(EffectAssetEnvironment env)
 		{
 			var nodeTree = PartsTreeSystem.Utility.CreateNodeFromNodeTreeGroup(NodeTreeAsset, env);
@@ -299,6 +311,11 @@ namespace Effekseer.EffectAsset
 	}
 
 	public class TextureAsset : PartsTreeSystem.Asset
+	{
+
+	}
+
+	public class CurveAsset : PartsTreeSystem.Asset
 	{
 
 	}
@@ -454,8 +471,26 @@ namespace Effekseer.EffectAsset
 		public FloatWithRange Range = new FloatWithRange();
 	}
 
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = false)]
+	public class FloatRangeAttribute : Attribute
+	{
+		public float Min { get; set; }
+		public float Max { get; set; }
+	}
+
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = false)]
+	public class FloatStepAttribute : Attribute
+	{
+		public float Step { get; set; }
+	}
+
+
 	public class FloatWithRange
 	{
+		public bool IsDynamicEquationEnabled = false;
+		public DynamicEquation DynamicEquationMin;
+		public DynamicEquation DynamicEquationMax;
+
 		public float Max = float.MaxValue;
 		public float Min = float.MinValue;
 		public Data.DrawnAs DrawnAs = Data.DrawnAs.CenterAndAmplitude;
@@ -491,11 +526,20 @@ namespace Effekseer.EffectAsset
 
 	public class Vector3WithRange
 	{
+		public bool IsDynamicEquationEnabled = false;
+		public DynamicEquation DynamicEquationMin;
+		public DynamicEquation DynamicEquationMax;
 		public FloatWithRange X = new FloatWithRange();
 		public FloatWithRange Y = new FloatWithRange();
 		public FloatWithRange Z = new FloatWithRange();
 
 		public Data.DrawnAs DrawnAs = Data.DrawnAs.CenterAndAmplitude;
+	}
+
+	public class DynamicEquation : PartsTreeSystem.Asset
+	{
+		public string Name = string.Empty;
+		public string Code = string.Empty;
 	}
 
 	public struct Color
@@ -643,4 +687,58 @@ namespace Effekseer.EffectAsset
 		}
 	}
 
+
+	public enum FCurveTimelineMode : int
+	{
+		[Key(key = "FcurveTimelineMode_Time")]
+		Time = 0,
+
+		[Key(key = "FcurveTimelineMode_Percent")]
+		Percent = 1,
+	}
+
+	public enum FCurveEdge
+	{
+		[Key(key = "FcurveEdge_Constant")]
+		Constant = 0,
+		[Key(key = "FcurveEdge_Loop")]
+		Loop = 1,
+		[Key(key = "FcurveEdge_LoopInversely")]
+		LoopInversely = 2,
+	}
+
+	public enum FCurveInterpolation
+	{
+		[Key(key = "FcurveInterpolation_Bezier")]
+		Bezier = 0,
+		[Key(key = "FcurveInterpolation_Linear")]
+		Linear = 1,
+	}
+
+
+	public struct FCurveKey
+	{
+		public Vector2F Key;
+		public Vector2F Left;
+		public Vector2F Right;
+		public FCurveInterpolation InterpolationType;
+	}
+
+	public class FCurve
+	{
+		public FCurveEdge StartType = FCurveEdge.Constant;
+		public FCurveEdge EndType = FCurveEdge.Constant;
+		public float OffsetMax = 0;
+		public float OffsetMin = 0;
+		public int Sampling = 10;
+		public List<FCurveKey> Keys = new List<FCurveKey>();
+	}
+
+	public class FCurveVector3D
+	{
+		public FCurveTimelineMode Timeline = FCurveTimelineMode.Percent;
+		public FCurve X = new FCurve();
+		public FCurve Y = new FCurve();
+		public FCurve Z = new FCurve();
+	}
 }
