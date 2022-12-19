@@ -1309,28 +1309,6 @@ void ManagerImplemented::Update(const UpdateParameter& parameter)
 {
 	PROFILER_BLOCK("Manager::Update", profiler::colors::Red);
 
-	if (m_WorkerThreads.size() == 0)
-	{
-		DoUpdate(parameter);
-	}
-	else
-	{
-		m_WorkerThreads[0].WaitForComplete();
-		// Process on worker thread
-		m_WorkerThreads[0].RunAsync([this, parameter]() { DoUpdate(parameter); });
-
-		if (parameter.SyncUpdate)
-		{
-			m_WorkerThreads[0].WaitForComplete();
-		}
-	}
-
-	ExecuteSounds();
-}
-
-void ManagerImplemented::DoUpdate(const UpdateParameter& parameter)
-{
-	PROFILER_BLOCK("Manager::DoUpdate", profiler::colors::Red);
 	// start to measure time
 	int64_t beginTime = ::Effekseer::GetTime();
 
@@ -1368,6 +1346,35 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter)
 	}
 
 	BeginUpdate();
+
+	if (m_WorkerThreads.size() == 0)
+	{
+		DoUpdate(parameter, times);
+	}
+	else
+	{
+		m_WorkerThreads[0].WaitForComplete();
+		// Process on worker thread
+		m_WorkerThreads[0].RunAsync([this, parameter, times]()
+									{ DoUpdate(parameter, times); });
+
+		if (parameter.SyncUpdate)
+		{
+			m_WorkerThreads[0].WaitForComplete();
+		}
+	}
+
+	// end to measure time
+	m_updateTime = (int)(Effekseer::GetTime() - beginTime);
+
+	EndUpdate();
+
+	ExecuteSounds();
+}
+
+void ManagerImplemented::DoUpdate(const UpdateParameter& parameter, int times)
+{
+	PROFILER_BLOCK("Manager::DoUpdate", profiler::colors::Red);
 
 	for (int32_t t = 0; t < times; t++)
 	{
@@ -1465,11 +1472,6 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter)
 			drawSet.second.AreChildrenOfRootGenerated = true;
 		}
 	}
-
-	EndUpdate();
-
-	// end to measure time
-	m_updateTime = (int)(Effekseer::GetTime() - beginTime);
 }
 
 void ManagerImplemented::BeginUpdate()
