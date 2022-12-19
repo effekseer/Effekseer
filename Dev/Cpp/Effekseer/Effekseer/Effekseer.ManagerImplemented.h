@@ -386,7 +386,7 @@ public:
 
 	void Update(const UpdateParameter& parameter) override;
 
-	void DoUpdate(const UpdateParameter& parameter);
+	void DoUpdate(const UpdateParameter& parameter, int times);
 
 	void BeginUpdate() override;
 
