@@ -62,6 +62,14 @@ namespace Effekseer.Data
 			private set;
 		}
 
+		/// <summary>
+		/// Dummy
+		/// </summary>
+		internal LocationValues()
+			 : this(null)
+		{
+		}
+
 		internal LocationValues(Value.Path basepath)
 		{
 			Type = new Value.Enum<ParamaterType>(ParamaterType.Fixed);
