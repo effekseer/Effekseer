@@ -16,7 +16,7 @@ on:
       - 17x
 
 env:
-  EFFEKSEER_VERSION: 170a
+  EFFEKSEER_VERSION: 170b
 
 jobs:
   tests:
