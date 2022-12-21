@@ -1,5 +1,7 @@
 #include "Easing.h"
 
+#include <algorithm>
+
 namespace Effekseer
 {
 
