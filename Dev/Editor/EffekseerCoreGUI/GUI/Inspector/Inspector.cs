@@ -93,13 +93,13 @@ namespace Effekseer.GUI.Inspector
 
 		public InspectorGuiState State { get; private set; }
 
-		// フィールドが配列などであったとき、その各要素について格納する
+		// Sub elements of gui(ex. list, class, struct)
 		public List<InspectorGuiInfo> subElement = new List<InspectorGuiInfo>();
 	}
 
 	class Inspector
 	{
-		// Gui表示を登録する
+		// functions to show gui
 		private static readonly InspectorGuiDictionary GuiDictionary = new InspectorGuiDictionary();
 
 		private static List<InspectorGuiInfo> FieldGuiInfoList = new List<InspectorGuiInfo>();
@@ -200,7 +200,7 @@ namespace Effekseer.GUI.Inspector
 			var value = elementGetterSetterArray.GetValue();
 			var name = elementGetterSetterArray.GetName();
 
-			// 配列かリストの時、エレメントの型を取得する
+			// value type of element
 			var valueType = field != null ? field.FieldType : value.GetType();
 			bool isList = valueType is IList;
 			if (isList)
@@ -265,6 +265,7 @@ namespace Effekseer.GUI.Inspector
 			bool shownSubFields = false;
 			foreach (var (f, i) in subFields.Select((_, i) => Tuple.Create(_, i)))
 			{
+				// TODO: refactor this
 				if (!GuiDictionary.HasFunction(guiFunctionKey) &&
 				value.GetType().GetFields().Length > 0 &&
 				!value.GetType().IsEnum &&
@@ -283,22 +284,24 @@ namespace Effekseer.GUI.Inspector
 			}
 
 
-			// display name(left side of table)
 			Manager.NativeManager.TableNextRow();
+
+			// name column(left side of table)
 			Manager.NativeManager.TableNextColumn();
-			// TODO : Separatorで区切るのはAssetなどの単位にする
-			// Make not separate first row
+			
+			// TODO: use grouping attributes
 			bool isShowHorizonalSeparator = Manager.NativeManager.TableGetRowIndex() >= 2;
 			if (isShowHorizonalSeparator)
 			{
 				Manager.NativeManager.Separator();
 			}
 
-			//// TODO: for debugging. this should be delete.
+			// TODO: for debugging. this should be delete.
 			//name = (isValueChanged ? "*" : "") + name + " " + guiInfo.Id;
 
 			Manager.NativeManager.Text(name);
-			// Description
+
+			// tooltip for description
 			if (Manager.NativeManager.IsItemHovered())
 			{
 				Manager.NativeManager.BeginTooltip();
@@ -310,10 +313,9 @@ namespace Effekseer.GUI.Inspector
 				Manager.NativeManager.EndTooltip();
 			}
 
-
 			// display field(right side of table)
 			Manager.NativeManager.TableNextColumn();
-			// TODO : Separatorで区切るのはAssetなどの単位にする
+
 			if (isShowHorizonalSeparator)
 			{
 				Manager.NativeManager.Separator();
@@ -321,7 +323,7 @@ namespace Effekseer.GUI.Inspector
 
 			//bool opened = Manager.NativeManager.CollapsingHeader(label);
 
-			// TODO : make ignore "public List<Node> Children = new List<Node>();" node member.
+			// TODO : ignore "public List<Node> Children = new List<Node>();" node member.
 			if (GuiDictionary.HasFunction(guiFunctionKey))
 			{
 				if (isValueChanged)
@@ -336,8 +338,8 @@ namespace Effekseer.GUI.Inspector
 				{
 					IList arrayValue = (IList)value;
 
-					// GuiIdが足りなければ、すべて再生成
-					// GenerateFieldGuiIdsの中でやりたいが、型情報からは要素数が分からないのでここで生成。
+					// generate/regenerate subeElements when there are not enougth GuiIDs.
+					// generate it here because the number of elements can't read in GenerateFieldGuiIds
 					if (arrayValue.Count > guiInfo.subElement.Count())
 					{
 						guiInfo.subElement.Clear();
@@ -391,7 +393,6 @@ namespace Effekseer.GUI.Inspector
 			else
 			{
 				Manager.NativeManager.Text("No Regist : " + value.GetType().ToString() + " " + name);
-
 			}
 		}
 
@@ -410,7 +411,7 @@ namespace Effekseer.GUI.Inspector
 			var field = elementGetterSetterArray.FieldInfos.Last();
 			var value = elementGetterSetterArray.GetValue();
 
-			// 配列かリストの時、エレメントの型を取得する
+			// value type of element
 			var valueType = field != null ? field.FieldType : value.GetType();
 			bool isList = valueType is IList;
 			if (isList)
@@ -483,8 +484,8 @@ namespace Effekseer.GUI.Inspector
 				{
 					IList arrayValue = (IList)value;
 
-					// GuiIdが足りなければ、すべて再生成
-					// GenerateFieldGuiIdsの中でやりたいが、型情報からは要素数が分からないのでここで生成。
+					// generate/regenerate subElements when there are not enougth GuiIDs.
+					// generate it here because the number of elements can't read in GenerateFieldGuiIds
 					if (arrayValue.Count > guiInfo.subElement.Count())
 					{
 						guiInfo.subElement.Clear();
@@ -567,7 +568,7 @@ namespace Effekseer.GUI.Inspector
 				swig.TableFlags.SizingFixedFit | swig.TableFlags.SizingStretchProp |
 				swig.TableFlags.NoSavedSettings))
 			{
-				// アイテムの幅を最大に設定
+				// set width of table max
 				Manager.NativeManager.TableNextRow();
 				Manager.NativeManager.TableSetColumnIndex(0);
 				Manager.NativeManager.PushItemWidth(-1);
@@ -612,90 +613,5 @@ namespace Effekseer.GUI.Inspector
 
 			return false;
 		}
-	}
-
-	public class InspectorEditable : EffectAsset.Node
-	{
-		//[Key(key = "Node_Name")]
-		//public string Name = string.Empty;
-
-		public EffectAsset.CommonParameter CommonValues = new EffectAsset.CommonParameter();
-
-		public EffectAsset.PositionParameter PositionParam = new EffectAsset.PositionParameter();
-
-		public EffectAsset.RotationParameter RotationParam = new EffectAsset.RotationParameter();
-
-		//public EffectAsset.Gradient GradientTest = new EffectAsset.Gradient();
-
-		//public EffectAsset.Vector3WithRange Vector3WithRangeTest = new EffectAsset.Vector3WithRange();
-
-		//public EffectAsset.TextureAsset TextureTest = null;
-
-
-		//-------------------------------
-#if false
-		public EffectAsset.PositionParameter PositionParam = new EffectAsset.PositionParameter();
-		public EffectAsset.RotationParameter RotationParam = new EffectAsset.RotationParameter();
-
-		// Attributes
-		[EffectAsset.VisiblityControlled(ID = 100, Value = 0)]
-		[Key(key = "Position_NurbsCurveParameter_Scale")]
-		public float scale = 1.0f;
-		[EffectAsset.VisiblityControlled(ID = 100, Value = 1)]
-		[Key(key = "Position_FixedParamater_Location")]
-		public Vector3F vector3f = new Vector3F();
-
-		// Enum
-		[EffectAsset.VisiblityController(ID = 100)]
-		public ParamaterType Type = ParamaterType.Fixed;
-		public enum ParamaterType : int
-		{
-			[Key(key = "Position_ParamaterType_Fixed")]
-			Fixed = 0,
-			[Key(key = "Position_ParamaterType_PVA")]
-			PVA = 1,
-			[Key(key = "Position_ParamaterType_Easing")]
-			Easing = 2,
-			[Key(key = "Position_ParamaterType_LocationFCurve")]
-			LocationFCurve = 3,
-			[Key(key = "Position_ParameterType_NurbsCurve")]
-			NurbsCurve = 4,
-			[Key(key = "Position_ParameterType_ViewOffset")]
-			ViewOffset = 5,
-		}
-
-
-
-		// primitive types
-		public int Int1 = 0;
-		public float Float1 = 0.0f;
-		public string String1 = "text";
-
-		// 配列
-		// 配列を関数側で対応するのか、呼び出し側でどうにかするのか
-		// 試した感じ呼び出し側で制御した方が楽そう
-		public int[] IntArray = new int[2];
-		public float[] FloatArray = new float[5];
-		public string[] StringArray = new string[2] { "hoge", "fuga" };
-
-		// 全てのコレクションに対しプログラムをする方法なかったっけ
-		// TODO : List
-		public List<int> ListInt1 = new List<int> { 2, 3 };
-
-		// TODO : Vector
-		public Vector2D vector2 = new Vector2D();
-		public Vector3D vector3 = new Vector3D();
-
-
-
-		public Vector3D[] vector3Array = new Vector3D[2] { new Vector3D(), new Vector3D() };
-
-		// TODO : string等、nullをどう扱うか
-		public string String2;
-
-		// TODO : 特殊な型
-		Gradient Gradient1 = new Gradient();
-		Dock.FCurves FCurves = new Dock.FCurves();
-#endif
 	}
 }
