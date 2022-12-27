@@ -18,7 +18,7 @@ namespace Effekseer
 
 void EffectNodeModel::LoadRendererParameter(unsigned char*& pos, const SettingRef& setting)
 {
-	eEffectNodeType type = eEffectNodeType::NoneType;
+	EffectNodeType type = EffectNodeType::NoneType;
 	memcpy(&type, pos, sizeof(int));
 	pos += sizeof(int);
 	assert(type == GetType());
@@ -221,6 +221,16 @@ void EffectNodeModel::UpdateRenderedInstance(Instance& instance, InstanceGroup& 
 	}
 
 	instance.ColorInheritance = instValues._color;
+}
+
+EffectModelParameter EffectNodeModel::GetEffectModelParameter()
+{
+	EffectModelParameter param = {};
+
+	param.ModelIndex = ModelIndex;
+	param.Culling = Culling;
+
+	return param;
 }
 
 ModelRenderer::NodeParameter EffectNodeModel::GetNodeParameter(const Manager* manager, const InstanceGlobal* global)

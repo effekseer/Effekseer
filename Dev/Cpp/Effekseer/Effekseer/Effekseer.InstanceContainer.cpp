@@ -176,7 +176,7 @@ void InstanceContainer::Update(bool recursive, bool shown)
 //----------------------------------------------------------------------------------
 void InstanceContainer::ApplyBaseMatrix(bool recursive, const SIMD::Mat43f& mat)
 {
-	if (m_pEffectNode->GetType() != eEffectNodeType::Root)
+	if (m_pEffectNode->GetType() != EffectNodeType::Root)
 	{
 		for (InstanceGroup* group = m_headGroups; group != nullptr; group = group->NextUsedByContainer)
 		{
@@ -220,7 +220,7 @@ void InstanceContainer::RemoveForcibly(bool recursive)
 //----------------------------------------------------------------------------------
 void InstanceContainer::Draw(bool recursive)
 {
-	if (m_pEffectNode->GetType() != eEffectNodeType::Root && m_pEffectNode->GetType() != eEffectNodeType::NoneType)
+	if (m_pEffectNode->GetType() != EffectNodeType::Root && m_pEffectNode->GetType() != EffectNodeType::NoneType)
 	{
 		/* 個数計測 */
 		int32_t count = 0;

@@ -606,9 +606,9 @@ public:
 	/**
 	@brief	ノードの種類取得
 	*/
-	virtual eEffectNodeType GetType() const
+	virtual EffectNodeType GetType() const
 	{
-		return eEffectNodeType::NoneType;
+		return EffectNodeType::NoneType;
 	}
 
 	RefPtr<RenderingUserData> GetRenderingUserData() override
