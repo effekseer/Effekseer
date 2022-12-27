@@ -407,7 +407,7 @@ void Instance::Update(float deltaFrame, bool shown)
 	m_GlobalMatrix43Calculated = false;
 	m_ParentMatrix43Calculated = false;
 
-	if (is_time_step_allowed && m_pEffectNode->GetType() != eEffectNodeType::Root)
+	if (is_time_step_allowed && m_pEffectNode->GetType() != EffectNodeType::Root)
 	{
 		if (m_pEffectNode->SoundType == ParameterSoundType_Use && deltaFrame > 0)
 		{
@@ -462,7 +462,7 @@ void Instance::Update(float deltaFrame, bool shown)
 		// check whether killed?
 		bool removed = false;
 
-		if (m_pEffectNode->GetType() != eEffectNodeType::Root)
+		if (m_pEffectNode->GetType() != EffectNodeType::Root)
 		{
 			// if pass time
 			if (m_pEffectNode->CommonValues.RemoveWhenLifeIsExtinct)
@@ -627,7 +627,7 @@ void Instance::UpdateTransform(float deltaFrame)
 	assert(m_pEffectNode != nullptr);
 	assert(m_pContainer != nullptr);
 
-	if (m_pEffectNode->GetType() != eEffectNodeType::Root)
+	if (m_pEffectNode->GetType() != EffectNodeType::Root)
 	{
 		m_sequenceNumber = ((ManagerImplemented*)m_pManager)->GetSequenceNumber();
 		const auto coordinateSystem = m_pEffectNode->GetEffect()->GetSetting()->GetCoordinateSystem();
@@ -742,7 +742,7 @@ void Instance::UpdateParentMatrix(float deltaFrame)
 
 	parentPosition_ = m_pParent->GetGlobalMatrix().GetCurrent().GetTranslation();
 
-	if (m_pEffectNode->GetType() != eEffectNodeType::Root)
+	if (m_pEffectNode->GetType() != EffectNodeType::Root)
 	{
 		TranslationParentBindType tType = m_pEffectNode->CommonValues.TranslationBindType;
 		BindType rType = m_pEffectNode->CommonValues.RotationBindType;
@@ -792,8 +792,8 @@ float Instance::GetFlipbookIndexAndNextRate(const UVAnimationType& UVType, const
 		auto time = GetUVTime();
 
 		// 経過時間を取得
-		if (m_pEffectNode->GetType() == eEffectNodeType::Ribbon ||
-			m_pEffectNode->GetType() == eEffectNodeType::Track)
+		if (m_pEffectNode->GetType() == EffectNodeType::Ribbon ||
+			m_pEffectNode->GetType() == EffectNodeType::Track)
 		{
 			// is GetFirstGroup bug?
 			auto baseInstance = this->GetContainer()->GetFirstGroup()->GetFirst();

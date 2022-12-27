@@ -896,6 +896,20 @@ struct Gradient
 	}
 };
 
+/**
+	@brief	A type of node
+*/
+enum class EffectNodeType : int32_t
+{
+	Root = -1,
+	NoneType = 0,
+	Sprite = 2,
+	Ribbon = 3,
+	Ring = 4,
+	Model = 5,
+	Track = 6,
+};
+
 enum class TextureColorType : int32_t
 {
 	Color,

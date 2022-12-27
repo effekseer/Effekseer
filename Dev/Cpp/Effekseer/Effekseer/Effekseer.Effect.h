@@ -685,7 +685,8 @@ struct EffectBasicRenderParameter
 */
 struct EffectModelParameter
 {
-	bool Lighting;
+	int32_t ModelIndex;
+	CullingType Culling;
 };
 
 /**
@@ -709,9 +710,14 @@ public:
 	virtual Effect* GetEffect() const = 0;
 
 	/**
-	@brief
-	\~English	Get a generation in the node tree. The generation increases by 1 as it moves a child node.
-	\~Japanese	ノードツリーの世代を取得する。世代は子のノードになるにしたがって1増える。
+		@brief	Get the type of this node
+	*/
+	virtual EffectNodeType GetType() const = 0;
+
+	/**
+		@brief
+		\~English	Get a generation in the node tree. The generation increases by 1 as it moves a child node.
+		\~Japanese	ノードツリーの世代を取得する。世代は子のノードになるにしたがって1増える。
 	*/
 	virtual int GetGeneration() const = 0;
 

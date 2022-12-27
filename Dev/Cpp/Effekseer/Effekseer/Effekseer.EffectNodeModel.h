@@ -55,10 +55,12 @@ public:
 
 	void UpdateRenderedInstance(Instance& instance, InstanceGroup& instanceGroup, Manager* manager) override;
 
-	eEffectNodeType GetType() const override
+	EffectNodeType GetType() const override
 	{
-		return eEffectNodeType::Model;
+		return EffectNodeType::Model;
 	}
+
+	EffectModelParameter GetEffectModelParameter() override;
 
 private:
 	ModelRenderer::NodeParameter GetNodeParameter(const Manager* manager, const InstanceGlobal* global);

@@ -896,6 +896,20 @@ struct Gradient
 	}
 };
 
+/**
+	@brief	A type of node
+*/
+enum class EffectNodeType : int32_t
+{
+	Root = -1,
+	NoneType = 0,
+	Sprite = 2,
+	Ribbon = 3,
+	Ring = 4,
+	Model = 5,
+	Track = 6,
+};
+
 enum class TextureColorType : int32_t
 {
 	Color,
@@ -3662,13 +3676,14 @@ struct EffectBasicRenderParameter
 */
 struct EffectModelParameter
 {
-	bool Lighting;
+	int32_t ModelIndex;
+	CullingType Culling;
 };
 
 /**
-@brief	ノードインスタンス生成クラス
-@note
-エフェクトのノードの実体を生成する。
+	@brief	ノードインスタンス生成クラス
+	@note
+	エフェクトのノードの実体を生成する。
 */
 class EffectNode
 {
@@ -3681,48 +3696,53 @@ public:
 	}
 
 	/**
-	@brief	ノードが所属しているエフェクトを取得する。
+		@brief	ノードが所属しているエフェクトを取得する。
 	*/
 	virtual Effect* GetEffect() const = 0;
 
 	/**
-	@brief
-	\~English	Get a generation in the node tree. The generation increases by 1 as it moves a child node.
-	\~Japanese	ノードツリーの世代を取得する。世代は子のノードになるにしたがって1増える。
+		@brief	Get the type of this node
+	*/
+	virtual EffectNodeType GetType() const = 0;
+
+	/**
+		@brief
+		\~English	Get a generation in the node tree. The generation increases by 1 as it moves a child node.
+		\~Japanese	ノードツリーの世代を取得する。世代は子のノードになるにしたがって1増える。
 	*/
 	virtual int GetGeneration() const = 0;
 
 	/**
-	@brief	子のノードの数を取得する。
+		@brief	子のノードの数を取得する。
 	*/
 	virtual int GetChildrenCount() const = 0;
 
 	/**
-	@brief	子のノードを取得する。
+		@brief	子のノードを取得する。
 	*/
 	virtual EffectNode* GetChild(int index) const = 0;
 
 	/**
-	@brief	共通描画パラメーターを取得する。
+		@brief	共通描画パラメーターを取得する。
 	*/
 	virtual EffectBasicRenderParameter GetBasicRenderParameter() const = 0;
 
 	/**
-	@brief	共通描画パラメーターを設定する。
+		@brief	共通描画パラメーターを設定する。
 	*/
 	virtual void SetBasicRenderParameter(EffectBasicRenderParameter param) = 0;
 
 	/**
-	@brief
-	\~English	Get a model parameter
-	\~Japanese	モデルパラメーターを取得する。
+		@brief
+		\~English	Get a model parameter
+		\~Japanese	モデルパラメーターを取得する。
 	*/
 	virtual EffectModelParameter GetEffectModelParameter() = 0;
 
 	/**
-	@brief
-	\~English	Calculate a term of instances where instances exists
-	\~Japanese	インスタンスが存在する期間を計算する。
+		@brief
+		\~English	Calculate a term of instances where instances exists
+		\~Japanese	インスタンスが存在する期間を計算する。
 	*/
 	virtual EffectInstanceTerm CalculateInstanceTerm(EffectInstanceTerm& parentTerm) const = 0;
 
