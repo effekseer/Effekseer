@@ -89,20 +89,6 @@ enum class eInstanceState : int32_t
 	INSTANCE_STATE_DISPOSING,
 };
 
-/**
-	@brief	A type of node
-*/
-enum class eEffectNodeType : int32_t
-{
-	Root = -1,
-	NoneType = 0,
-	Sprite = 2,
-	Ribbon = 3,
-	Ring = 4,
-	Model = 5,
-	Track = 6,
-};
-
 enum class ModelReferenceType : int32_t
 {
 	File,
