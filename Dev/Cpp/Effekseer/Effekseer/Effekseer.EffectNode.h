@@ -606,7 +606,7 @@ public:
 	/**
 	@brief	ノードの種類取得
 	*/
-	virtual EffectNodeType GetType() const
+	virtual EffectNodeType GetType() const override
 	{
 		return EffectNodeType::NoneType;
 	}
