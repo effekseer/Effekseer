@@ -28,11 +28,16 @@ file(GLOB files_core
     EffekseerCore/Data/Value/Int2.cs
     EffekseerCore/Data/Value/ObjectCollection.cs
     EffekseerCore/Localization/Localization.cs
+    EffekseerCore/EffectAsset/Definitions.cs
     EffekseerCore/EffectAsset/EffectAsset.cs
+    EffekseerCore/EffectAsset/Positions.cs
+    EffekseerCore/EffectAsset/Rotations.cs
     EffekseerCore/Math/Vector2I.cs
     EffekseerCore/Math/Vector3I.cs
     EffekseerCore/Math/Vector2F.cs
     EffekseerCore/Math/Vector3F.cs
+    EffekseerCore/Compatibility/Conversion/Conversions.cs
+    EffekseerCore/Compatibility/Conversion/ConversionsGenerated.cs
 )
 
 list(APPEND files_core
