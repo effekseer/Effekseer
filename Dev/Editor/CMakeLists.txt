@@ -30,8 +30,8 @@ file(GLOB files_core
     EffekseerCore/Localization/Localization.cs
     EffekseerCore/EffectAsset/Definitions.cs
     EffekseerCore/EffectAsset/EffectAsset.cs
-    EffekseerCore/EffectAsset/Positions.cs
-    EffekseerCore/EffectAsset/Rotations.cs
+    EffekseerCore/EffectAsset/PositionParameter.cs
+    EffekseerCore/EffectAsset/RotationParameter.cs
     EffekseerCore/Math/Vector2I.cs
     EffekseerCore/Math/Vector3I.cs
     EffekseerCore/Math/Vector2F.cs
