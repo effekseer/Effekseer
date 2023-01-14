@@ -89,8 +89,8 @@ namespace Effekseer.EffectAsset
 	Inherited = false)]
 	public class GroupingAttribute : Attribute
 	{
-		public string ID 
-		{ 
+		public string ID
+		{
 			get;
 			set;
 		}
@@ -420,55 +420,6 @@ namespace Effekseer.EffectAsset
 		/// Temp
 		/// </summary>
 		public Data.RendererValues.ParamaterType Type = Data.RendererValues.ParamaterType.Sprite;
-	}
-
-	public class PositionParameter
-	{
-		public class FixedParamater
-		{
-			[Key(key = "Position_FixedParamater_Location")]
-			public Vector3F Location;
-		}
-
-		public class PVAParamater
-		{
-			[Key(key = "Position_FixedParamater_Location")]
-			public FloatWithRange Location = new FloatWithRange();
-		}
-
-		[VisiblityController(ID = 100)]
-		public ParamaterType Type = ParamaterType.Fixed;
-
-		[VisiblityControlled(ID = 100, Value = 0)]
-		public FixedParamater Fixed = new FixedParamater();
-
-		[VisiblityControlled(ID = 100, Value = 1)]
-		public PVAParamater PVA = new PVAParamater();
-
-		public enum ParamaterType : int
-		{
-			[Key(key = "Position_ParamaterType_Fixed")]
-			Fixed = 0,
-			[Key(key = "Position_ParamaterType_PVA")]
-			PVA = 1,
-			[Key(key = "Position_ParamaterType_Easing")]
-			Easing = 2,
-			[Key(key = "Position_ParamaterType_LocationFCurve")]
-			LocationFCurve = 3,
-			[Key(key = "Position_ParameterType_NurbsCurve")]
-			NurbsCurve = 4,
-			[Key(key = "Position_ParameterType_ViewOffset")]
-			ViewOffset = 5,
-		}
-	}
-
-	public class RotationParameter
-	{
-		public float X;
-		public float Y;
-		public float Z;
-
-		public FloatWithRange Range = new FloatWithRange();
 	}
 
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = false)]
