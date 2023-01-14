@@ -48,13 +48,7 @@ namespace Effekseer.IO
 
 				var childrenOffset = FB.Node.CreateChildrenVector(fbb, childrenOffsets.ToArray());
 
-				FB.BasicSettings.StartBasicSettings(fbb);
-				FB.BasicSettings.AddMaxGeneration(fbb, 1);
-				FB.BasicSettings.AddLife(fbb, FB.IntRange.CreateIntRange(fbb, 100, 100));
-				FB.BasicSettings.AddGenerationTime(fbb, FB.FloatRange.CreateFloatRange(fbb, 0, 100));
-				FB.BasicSettings.AddGenerationTimeOffset(fbb, FB.FloatRange.CreateFloatRange(fbb, 0, 0));
-				var bas = FB.BasicSettings.EndBasicSettings(fbb);
-
+				var bas = ExportBasicSettings(fbb);
 
 				FB.Node.StartNode(fbb);
 
@@ -95,6 +89,42 @@ namespace Effekseer.IO
 
 			return true;
 		}
+
+		FlatBuffers.Offset<Effekseer.FB.BasicSettings> ExportBasicSettings(FlatBuffers.FlatBufferBuilder fbb)
+		{
+			// TODO
+			FB.BasicSettings.StartBasicSettings(fbb);
+			FB.BasicSettings.AddMaxGeneration(fbb, 1);
+			FB.BasicSettings.AddLife(fbb, FB.IntRange.CreateIntRange(fbb, 100, 100));
+			FB.BasicSettings.AddGenerationTime(fbb, FB.FloatRange.CreateFloatRange(fbb, 0, 100));
+			FB.BasicSettings.AddGenerationTimeOffset(fbb, FB.FloatRange.CreateFloatRange(fbb, 0, 0));
+			return FB.BasicSettings.EndBasicSettings(fbb);
+		}
+
+		FlatBuffers.Offset<Effekseer.FB.PositionSettings> ExportPositionSettings(FlatBuffers.FlatBufferBuilder fbb, Effekseer.EffectAsset.PositionParameter positionParam)
+		{
+			// TODO
+			FlatBuffers.Offset<FB.PositionSettings_Fixed> fixedOffset = new FlatBuffers.Offset<FB.PositionSettings_Fixed>();
+
+			if (positionParam.Type == EffectAsset.PositionParameter.ParamaterType.Fixed)
+			{
+				FB.PositionSettings_Fixed.StartPositionSettings_Fixed(fbb);
+				//FB.PositionSettings_Fixed.AddRefEq(fbb, FB.Vec3F.CreateVec3F(fbb, positionParam.re));
+				FB.PositionSettings_Fixed.AddValue(fbb, FB.Vec3F.CreateVec3F(fbb, positionParam.Fixed.Location.X, positionParam.Fixed.Location.Y, positionParam.Fixed.Location.Z));
+				fixedOffset = FB.PositionSettings_Fixed.EndPositionSettings_Fixed(fbb);
+			}
+
+			FB.PositionSettings.StartPositionSettings(fbb);
+			FB.PositionSettings.AddType(fbb, (FB.PositionType)positionParam.Type);
+
+			if (positionParam.Type == EffectAsset.PositionParameter.ParamaterType.Fixed)
+			{
+				FB.PositionSettings.AddFixed(fbb, fixedOffset);
+			}
+
+			return FB.PositionSettings.EndPositionSettings(fbb);
+		}
+
 
 		class DependencyProperty
 		{
