@@ -1,6 +1,6 @@
 namespace Effekseer.EffectAsset
 {
-	public partial class RotationValues
+	public partial class RotationParameter
 	{
 		public enum ParamaterType
 		{
@@ -24,7 +24,7 @@ namespace Effekseer.EffectAsset
 
 namespace Effekseer.EffectAsset
 {
-	public partial class RotationValues
+	public partial class RotationParameter
 	{
 		public partial class FixedParamater
 		{
@@ -36,7 +36,7 @@ namespace Effekseer.EffectAsset
 
 namespace Effekseer.EffectAsset
 {
-	public partial class RotationValues
+	public partial class RotationParameter
 	{
 		public partial class PVAParamater
 		{
@@ -57,7 +57,7 @@ namespace Effekseer.EffectAsset
 
 namespace Effekseer.EffectAsset
 {
-	public partial class RotationValues
+	public partial class RotationParameter
 	{
 		public partial class AxisPVAParamater
 		{
@@ -79,7 +79,7 @@ namespace Effekseer.EffectAsset
 
 namespace Effekseer.EffectAsset
 {
-	public partial class RotationValues
+	public partial class RotationParameter
 	{
 		public partial class AxisEasingParamater
 		{
@@ -95,7 +95,7 @@ namespace Effekseer.EffectAsset
 
 namespace Effekseer.EffectAsset
 {
-	public partial class RotationValues
+	public partial class RotationParameter
 	{
 		public partial class RotationFCurveParamater
 		{
@@ -107,26 +107,33 @@ namespace Effekseer.EffectAsset
 
 namespace Effekseer.EffectAsset
 {
-	public partial class RotationValues
+	public partial class RotationParameter
 	{
-		public Effekseer.EffectAsset.RotationValues.ParamaterType Type = Effekseer.EffectAsset.RotationValues.ParamaterType.Fixed;
+		[VisiblityController(ID = 0)]
+		public Effekseer.EffectAsset.RotationParameter.ParamaterType Type = Effekseer.EffectAsset.RotationParameter.ParamaterType.Fixed;
 
-		public Effekseer.EffectAsset.RotationValues.FixedParamater Fixed = new FixedParamater();
+		[VisiblityControlled(ID = 0, Value = 0)]
+		public Effekseer.EffectAsset.RotationParameter.FixedParamater Fixed = new FixedParamater();
 
 
-		public Effekseer.EffectAsset.RotationValues.PVAParamater PVA = new PVAParamater();
+		[VisiblityControlled(ID = 0, Value = 1)]
+		public Effekseer.EffectAsset.RotationParameter.PVAParamater PVA = new PVAParamater();
 
 
+		[VisiblityControlled(ID = 0, Value = 2)]
 		public Effekseer.EffectAsset.Vector3DEasingParamater Easing = new Vector3DEasingParamater();
 
 
-		public Effekseer.EffectAsset.RotationValues.AxisPVAParamater AxisPVA = new AxisPVAParamater();
+		[VisiblityControlled(ID = 0, Value = 3)]
+		public Effekseer.EffectAsset.RotationParameter.AxisPVAParamater AxisPVA = new AxisPVAParamater();
 
 
-		public Effekseer.EffectAsset.RotationValues.AxisEasingParamater AxisEasing = new AxisEasingParamater();
+		[VisiblityControlled(ID = 0, Value = 4)]
+		public Effekseer.EffectAsset.RotationParameter.AxisEasingParamater AxisEasing = new AxisEasingParamater();
 
 
-		public Effekseer.EffectAsset.RotationValues.RotationFCurveParamater RotationFCurve = new RotationFCurveParamater();
+		[VisiblityControlled(ID = 0, Value = 5)]
+		public Effekseer.EffectAsset.RotationParameter.RotationFCurveParamater RotationFCurve = new RotationFCurveParamater();
 
 	}
 }

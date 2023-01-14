@@ -15,10 +15,11 @@ namespace ConvertingCodeGenerator
 		{
 			CodeGenerator gen = new CodeGenerator();
 			gen.DefaultNamespace = "Effekseer.EffectAsset";
-			gen.AddTypeConverter(gen.CreateDefinedType(typeof(Effekseer.Data.LocationValues)), gen.CreateDefinedType("Effekseer.EffectAsset", "Positions", null));
+			gen.AddTypeConverter(gen.CreateDefinedType(typeof(Effekseer.Data.LocationValues)), gen.CreateDefinedType("Effekseer.EffectAsset", "PositionParameter", null));
+			gen.AddTypeConverter(gen.CreateDefinedType(typeof(Effekseer.Data.RotationValues)), gen.CreateDefinedType("Effekseer.EffectAsset", "RotationParameter", null));
 
-			gen.AddDefinitionText(typeof(Effekseer.Data.LocationValues), "Positions.cs");
-			gen.AddDefinitionText(typeof(Effekseer.Data.RotationValues), "Rotations.cs");
+			gen.AddDefinitionText(typeof(Effekseer.Data.LocationValues), "PositionParameter.cs");
+			gen.AddDefinitionText(typeof(Effekseer.Data.RotationValues), "RotationParameter.cs");
 
 			gen.Generate(new[] {
 				typeof(Effekseer.Data.LocationValues),
@@ -263,7 +264,7 @@ public partial class ConversionFormatFrom1To2 {
 					continue;
 				}
 
-				dcode += Effekseer.Compatibility.Conversion.ConversionUtils.TryAddKeyAttribute(field.GetCustomAttributes<Attribute>().ToArray());
+				dcode += Effekseer.Compatibility.Conversion.ConversionUtils.TryAddAttribute(field.GetCustomAttributes<Attribute>().ToArray());
 				dcode += $"{field.Name} = {Convert.ToInt32(field.GetValue(null))},\n";
 			}
 
@@ -297,6 +298,7 @@ public partial class ConversionFormatFrom1To2 {
 				Func<Effekseer.Compatibility.Conversion.DefinitionGeneratorFrom1To2.Parameter, string> func = (Effekseer.Compatibility.Conversion.DefinitionGeneratorFrom1To2.Parameter param) =>
 				{
 					var str = string.Empty;
+					str += Effekseer.Compatibility.Conversion.ConversionUtils.TryAddAttribute(param.attributes);
 					str += $"public {param.DstType.GlobalName} {param.Name} = new {param.DstType.Name}();\n";
 					return str;
 				};
@@ -480,15 +482,35 @@ namespace Effekseer.Compatibility.Conversion
 {
 	class ConversionUtils
 	{
-		public static string TryAddKeyAttribute(Attribute[] attributes)
+		public static string TryAddAttribute(Attribute[] attributes)
 		{
-			var att = attributes.OfType<Effekseer.KeyAttribute>().FirstOrDefault();
-			if (att != null)
+			string ret = string.Empty;
+
 			{
-				return $"[Key(key = \"{att.key}\")]\n";
+				var att = attributes.OfType<Effekseer.KeyAttribute>().FirstOrDefault();
+				if (att != null)
+				{
+					ret+= $"[Key(key = \"{att.key}\")]\n";
+				}
 			}
 
-			return string.Empty;
+			{
+				var att = attributes.OfType<Effekseer.Data.SelectorAttribute>().FirstOrDefault();
+				if (att != null)
+				{
+					ret += $"[VisiblityController(ID = {att.ID})]\n";
+				}
+			}
+
+			{
+				var att = attributes.OfType<Effekseer.Data.SelectedAttribute>().FirstOrDefault();
+				if (att != null)
+				{
+					ret += $"[VisiblityControlled(ID = {att.ID}, Value = {att.Value})]\n";
+				}
+			}
+
+			return ret;
 		}
 	}
 
@@ -506,7 +528,7 @@ namespace Effekseer.Compatibility.Conversion
 		public static string ConvertDefinitionDynamicEquation(Parameter parameter)
 		{
 			var str = string.Empty;
-			str += Effekseer.Compatibility.Conversion.ConversionUtils.TryAddKeyAttribute(parameter.attributes);
+			str += Effekseer.Compatibility.Conversion.ConversionUtils.TryAddAttribute(parameter.attributes);
 			str += $"public EffectAsset.DynamicEquation {parameter.Name} = null;";
 			return str;
 		}
@@ -515,7 +537,7 @@ namespace Effekseer.Compatibility.Conversion
 		{
 			var value = parameter.Value as Effekseer.Data.Value.Boolean;
 			var str = string.Empty;
-			str += Effekseer.Compatibility.Conversion.ConversionUtils.TryAddKeyAttribute(parameter.attributes);
+			str += Effekseer.Compatibility.Conversion.ConversionUtils.TryAddAttribute(parameter.attributes);
 			if (value.DefaultValue)
 			{
 				str += $"public bool {parameter.Name} = true;";
@@ -532,7 +554,7 @@ namespace Effekseer.Compatibility.Conversion
 		{
 			var value = parameter.Value as Effekseer.Data.Value.Int;
 			var str = string.Empty;
-			str += Effekseer.Compatibility.Conversion.ConversionUtils.TryAddKeyAttribute(parameter.attributes);
+			str += Effekseer.Compatibility.Conversion.ConversionUtils.TryAddAttribute(parameter.attributes);
 			str += $"public int {parameter.Name} = {value.DefaultValue};";
 			return str;
 		}
@@ -541,7 +563,7 @@ namespace Effekseer.Compatibility.Conversion
 		{
 			var value = parameter.Value as Effekseer.Data.Value.Float;
 			var str = string.Empty;
-			str += Effekseer.Compatibility.Conversion.ConversionUtils.TryAddKeyAttribute(parameter.attributes);
+			str += Effekseer.Compatibility.Conversion.ConversionUtils.TryAddAttribute(parameter.attributes);
 			str += $"public float {parameter.Name} = {value.DefaultValue};";
 			return str;
 		}
@@ -552,7 +574,7 @@ namespace Effekseer.Compatibility.Conversion
 			var typename = typeof(Effekseer.Vector3F).FullName;
 
 			var str = string.Empty;
-			str += Effekseer.Compatibility.Conversion.ConversionUtils.TryAddKeyAttribute(parameter.attributes);
+			str += Effekseer.Compatibility.Conversion.ConversionUtils.TryAddAttribute(parameter.attributes);
 			str += $"public {typename} {parameter.Name} = new {typename}();";
 			return str;
 		}
@@ -563,7 +585,7 @@ namespace Effekseer.Compatibility.Conversion
 			var typename = typeof(Effekseer.EffectAsset.FloatWithRange).FullName;
 
 			var str = string.Empty;
-			str += Effekseer.Compatibility.Conversion.ConversionUtils.TryAddKeyAttribute(parameter.attributes);
+			str += Effekseer.Compatibility.Conversion.ConversionUtils.TryAddAttribute(parameter.attributes);
 			str += $"public {typename} {parameter.Name} = new {typename}();";
 			return str;
 		}
@@ -577,7 +599,7 @@ namespace Effekseer.Compatibility.Conversion
 			var max = value.X.ValueMax;
 
 			var str = string.Empty;
-			str += Effekseer.Compatibility.Conversion.ConversionUtils.TryAddKeyAttribute(parameter.attributes);
+			str += Effekseer.Compatibility.Conversion.ConversionUtils.TryAddAttribute(parameter.attributes);
 			str += $"[Effekseer.EffectAsset.FloatRange(Min = {GetStr(min)}, Max = {GetStr(max)})]\n";
 			str += $"public {typename} {parameter.Name} = new {typename}();";
 			return str;
@@ -602,7 +624,7 @@ namespace Effekseer.Compatibility.Conversion
 			}
 
 			var str = string.Empty;
-			str += Effekseer.Compatibility.Conversion.ConversionUtils.TryAddKeyAttribute(parameter.attributes);
+			str += Effekseer.Compatibility.Conversion.ConversionUtils.TryAddAttribute(parameter.attributes);
 			str += $"public {parameter.DstType.GlobalName} {parameter.Name} = {parameter.DstType.GlobalName}.{enumValue};";
 			return str;
 		}
@@ -613,7 +635,7 @@ namespace Effekseer.Compatibility.Conversion
 			var typename = typeof(Effekseer.EffectAsset.CurveAsset).FullName;
 
 			var str = string.Empty;
-			str += Effekseer.Compatibility.Conversion.ConversionUtils.TryAddKeyAttribute(parameter.attributes);
+			str += Effekseer.Compatibility.Conversion.ConversionUtils.TryAddAttribute(parameter.attributes);
 			str += $"public {typename} {parameter.Name} = null;";
 			return str;
 		}
@@ -624,7 +646,7 @@ namespace Effekseer.Compatibility.Conversion
 			var typename = typeof(Effekseer.EffectAsset.FCurveVector3D).FullName;
 
 			var str = string.Empty;
-			str += Effekseer.Compatibility.Conversion.ConversionUtils.TryAddKeyAttribute(parameter.attributes);
+			str += Effekseer.Compatibility.Conversion.ConversionUtils.TryAddAttribute(parameter.attributes);
 			str += $"public {typename} {parameter.Name} = new {typename}();";
 			return str;
 		}

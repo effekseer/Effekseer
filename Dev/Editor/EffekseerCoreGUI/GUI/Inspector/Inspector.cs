@@ -267,6 +267,7 @@ namespace Effekseer.GUI.Inspector
 			{
 				// TODO: refactor this
 				if (!GuiDictionary.HasFunction(guiFunctionKey) &&
+				value != null &&
 				value.GetType().GetFields().Length > 0 &&
 				!value.GetType().IsEnum &&
 				guiInfo.subElement.Count > i)
@@ -392,7 +393,14 @@ namespace Effekseer.GUI.Inspector
 			}
 			else
 			{
-				Manager.NativeManager.Text("No Regist : " + value.GetType().ToString() + " " + name);
+				if(value != null)
+				{
+					Manager.NativeManager.Text("No Regist : " + value.GetType().ToString() + " " + name);
+				}
+				else
+				{
+					Manager.NativeManager.Text("None : " + " " + name);
+				}
 			}
 		}
 

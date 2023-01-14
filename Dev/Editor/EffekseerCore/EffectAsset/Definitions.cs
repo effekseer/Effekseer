@@ -100,43 +100,56 @@ namespace Effekseer.EffectAsset
 		public Effekseer.EffectAsset.Vector3WithRange End = new Effekseer.EffectAsset.Vector3WithRange();
 
 		[Key(key = "Easing_Type")]
+		[VisiblityController(ID = 200)]
 		public Effekseer.EffectAsset.EasingType Type = Effekseer.EffectAsset.EasingType.LeftRightSpeed;
 
 		[Key(key = "Easing_StartSpeed")]
+		[VisiblityControlled(ID = 200, Value = 0)]
 		public Effekseer.EffectAsset.EasingStart StartSpeed = Effekseer.EffectAsset.EasingStart.Start;
 
 		[Key(key = "Easing_EndSpeed")]
+		[VisiblityControlled(ID = 200, Value = 0)]
 		public Effekseer.EffectAsset.EasingEnd EndSpeed = Effekseer.EffectAsset.EasingEnd.End;
 
 		[Key(key = "Easing_IsMiddleEnabled")]
+		[VisiblityController(ID = 300)]
 		public bool IsMiddleEnabled = false;
 
 		[Key(key = "Easing_Middle")]
+		[VisiblityControlled(ID = 300, Value = 0)]
 		[Effekseer.EffectAsset.FloatRange(Min = float.MinValue, Max = float.MaxValue)]
 		public Effekseer.EffectAsset.Vector3WithRange Middle = new Effekseer.EffectAsset.Vector3WithRange();
 
 		[Key(key = "Easing_IsRandomGroupEnabled")]
+		[VisiblityController(ID = 400)]
 		public bool IsRandomGroupEnabled = false;
 
 		[Key(key = "Easing_RandomGroup_X")]
+		[VisiblityControlled(ID = 400, Value = 0)]
 		public int RandomGroupX = 0;
 
 		[Key(key = "Easing_RandomGroup_Y")]
+		[VisiblityControlled(ID = 400, Value = 0)]
 		public int RandomGroupY = 1;
 
 		[Key(key = "Easing_RandomGroup_Z")]
+		[VisiblityControlled(ID = 400, Value = 0)]
 		public int RandomGroupZ = 2;
 
 		[Key(key = "Easing_IsIndividualTypeEnabled")]
+		[VisiblityController(ID = 500)]
 		public bool IsIndividualTypeEnabled = false;
 
 		[Key(key = "Easing_IndividualType_X")]
+		[VisiblityControlled(ID = 500, Value = 0)]
 		public Effekseer.EffectAsset.EasingType TypeX = Effekseer.EffectAsset.EasingType.Linear;
 
 		[Key(key = "Easing_IndividualType_Y")]
+		[VisiblityControlled(ID = 500, Value = 0)]
 		public Effekseer.EffectAsset.EasingType TypeY = Effekseer.EffectAsset.EasingType.Linear;
 
 		[Key(key = "Easing_IndividualType_Z")]
+		[VisiblityControlled(ID = 500, Value = 0)]
 		public Effekseer.EffectAsset.EasingType TypeZ = Effekseer.EffectAsset.EasingType.Linear;
 	}
 }
@@ -161,30 +174,39 @@ namespace Effekseer.EffectAsset
 		public Effekseer.EffectAsset.FloatWithRange End = new Effekseer.EffectAsset.FloatWithRange();
 
 		[Key(key = "Easing_TYpe")]
+		[VisiblityController(ID = 200)]
 		public Effekseer.EffectAsset.EasingType Type = Effekseer.EffectAsset.EasingType.LeftRightSpeed;
 
 		[Key(key = "Easing_StartSpeed")]
+		[VisiblityControlled(ID = 200, Value = 0)]
 		public Effekseer.EffectAsset.EasingStart StartSpeed = Effekseer.EffectAsset.EasingStart.Start;
 
 		[Key(key = "Easing_EndSpeed")]
+		[VisiblityControlled(ID = 200, Value = 0)]
 		public Effekseer.EffectAsset.EasingEnd EndSpeed = Effekseer.EffectAsset.EasingEnd.End;
 
 		[Key(key = "Easing_IsMiddleEnabled")]
+		[VisiblityController(ID = 300)]
 		public bool IsMiddleEnabled = false;
 
 		[Key(key = "Easing_Middle")]
+		[VisiblityControlled(ID = 300, Value = 0)]
 		public Effekseer.EffectAsset.FloatWithRange Middle = new Effekseer.EffectAsset.FloatWithRange();
 
 		[Key(key = "Easing_IsRandomGroupEnabled")]
+		[VisiblityController(ID = 400)]
 		public bool IsRandomGroupEnabled = false;
 
 		[Key(key = "Easing_RandomGroup_A")]
+		[VisiblityControlled(ID = 400, Value = 0)]
 		public int RandomGroupA = 0;
 
 		[Key(key = "Easing_IsIndividualTypeEnabled")]
+		[VisiblityController(ID = 500)]
 		public bool IsIndividualTypeEnabled = false;
 
 		[Key(key = "Easing_IndividualType_A")]
+		[VisiblityControlled(ID = 500, Value = 0)]
 		public Effekseer.EffectAsset.EasingType Type_A = Effekseer.EffectAsset.EasingType.Linear;
 	}
 }

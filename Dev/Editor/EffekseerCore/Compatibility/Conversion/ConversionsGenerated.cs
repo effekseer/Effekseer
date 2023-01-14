@@ -4,20 +4,20 @@ namespace Effekseer.Compatibility.Conversion
 	public partial class ConversionFormatFrom1To2
 	{
 
-		public Effekseer.EffectAsset.Positions.ParamaterType ConvertValue(Effekseer.Data.Value.Enum<Effekseer.Data.LocationValues.ParamaterType> src)
+		public Effekseer.EffectAsset.PositionParameter.ParamaterType ConvertValue(Effekseer.Data.Value.Enum<Effekseer.Data.LocationValues.ParamaterType> src)
 		{
-			var dst = (Effekseer.EffectAsset.Positions.ParamaterType)src.Value;
+			var dst = (Effekseer.EffectAsset.PositionParameter.ParamaterType)src.Value;
 			return dst;
 		}
-		public Effekseer.EffectAsset.Positions.FixedParamater ConvertValue(Effekseer.Data.LocationValues.FixedParamater src)
+		public Effekseer.EffectAsset.PositionParameter.FixedParamater ConvertValue(Effekseer.Data.LocationValues.FixedParamater src)
 		{
-			var dst = new Effekseer.EffectAsset.Positions.FixedParamater();
+			var dst = new Effekseer.EffectAsset.PositionParameter.FixedParamater();
 			dst.Location = ConvertValue(src.Location);
 			return dst;
 		}
-		public Effekseer.EffectAsset.Positions.PVAParamater ConvertValue(Effekseer.Data.LocationValues.PVAParamater src)
+		public Effekseer.EffectAsset.PositionParameter.PVAParamater ConvertValue(Effekseer.Data.LocationValues.PVAParamater src)
 		{
-			var dst = new Effekseer.EffectAsset.Positions.PVAParamater();
+			var dst = new Effekseer.EffectAsset.PositionParameter.PVAParamater();
 			dst.Location = ConvertValue(src.Location);
 			dst.Velocity = ConvertValue(src.Velocity);
 			dst.Acceleration = ConvertValue(src.Acceleration);
@@ -64,29 +64,29 @@ namespace Effekseer.Compatibility.Conversion
 			dst.FCurve = ConvertValue(src.FCurve);
 			return dst;
 		}
-		public Effekseer.EffectAsset.Positions.NurbsCurveParameter.NurbsLoopType ConvertValue(Effekseer.Data.Value.Enum<Effekseer.Data.LocationValues.NurbsCurveParameter.NurbsLoopType> src)
+		public Effekseer.EffectAsset.PositionParameter.NurbsCurveParameter.NurbsLoopType ConvertValue(Effekseer.Data.Value.Enum<Effekseer.Data.LocationValues.NurbsCurveParameter.NurbsLoopType> src)
 		{
-			var dst = (Effekseer.EffectAsset.Positions.NurbsCurveParameter.NurbsLoopType)src.Value;
+			var dst = (Effekseer.EffectAsset.PositionParameter.NurbsCurveParameter.NurbsLoopType)src.Value;
 			return dst;
 		}
-		public Effekseer.EffectAsset.Positions.NurbsCurveParameter ConvertValue(Effekseer.Data.LocationValues.NurbsCurveParameter src)
+		public Effekseer.EffectAsset.PositionParameter.NurbsCurveParameter ConvertValue(Effekseer.Data.LocationValues.NurbsCurveParameter src)
 		{
-			var dst = new Effekseer.EffectAsset.Positions.NurbsCurveParameter();
+			var dst = new Effekseer.EffectAsset.PositionParameter.NurbsCurveParameter();
 			dst.FilePath = ConvertValue(src.FilePath);
 			dst.Scale = ConvertValue(src.Scale);
 			dst.MoveSpeed = ConvertValue(src.MoveSpeed);
 			dst.LoopType = ConvertValue(src.LoopType);
 			return dst;
 		}
-		public Effekseer.EffectAsset.Positions.ViewOffsetParameter ConvertValue(Effekseer.Data.LocationValues.ViewOffsetParameter src)
+		public Effekseer.EffectAsset.PositionParameter.ViewOffsetParameter ConvertValue(Effekseer.Data.LocationValues.ViewOffsetParameter src)
 		{
-			var dst = new Effekseer.EffectAsset.Positions.ViewOffsetParameter();
+			var dst = new Effekseer.EffectAsset.PositionParameter.ViewOffsetParameter();
 			dst.Distance = ConvertValue(src.Distance);
 			return dst;
 		}
-		public Effekseer.EffectAsset.Positions ConvertValue(Effekseer.Data.LocationValues src)
+		public Effekseer.EffectAsset.PositionParameter ConvertValue(Effekseer.Data.LocationValues src)
 		{
-			var dst = new Effekseer.EffectAsset.Positions();
+			var dst = new Effekseer.EffectAsset.PositionParameter();
 			dst.Type = ConvertValue(src.Type);
 			dst.Fixed = ConvertValue(src.Fixed);
 			dst.PVA = ConvertValue(src.PVA);
@@ -96,28 +96,28 @@ namespace Effekseer.Compatibility.Conversion
 			dst.ViewOffset = ConvertValue(src.ViewOffset);
 			return dst;
 		}
-		public Effekseer.EffectAsset.RotationValues.ParamaterType ConvertValue(Effekseer.Data.Value.Enum<Effekseer.Data.RotationValues.ParamaterType> src)
+		public Effekseer.EffectAsset.RotationParameter.ParamaterType ConvertValue(Effekseer.Data.Value.Enum<Effekseer.Data.RotationValues.ParamaterType> src)
 		{
-			var dst = (Effekseer.EffectAsset.RotationValues.ParamaterType)src.Value;
+			var dst = (Effekseer.EffectAsset.RotationParameter.ParamaterType)src.Value;
 			return dst;
 		}
-		public Effekseer.EffectAsset.RotationValues.FixedParamater ConvertValue(Effekseer.Data.RotationValues.FixedParamater src)
+		public Effekseer.EffectAsset.RotationParameter.FixedParamater ConvertValue(Effekseer.Data.RotationValues.FixedParamater src)
 		{
-			var dst = new Effekseer.EffectAsset.RotationValues.FixedParamater();
+			var dst = new Effekseer.EffectAsset.RotationParameter.FixedParamater();
 			dst.Rotation = ConvertValue(src.Rotation);
 			return dst;
 		}
-		public Effekseer.EffectAsset.RotationValues.PVAParamater ConvertValue(Effekseer.Data.RotationValues.PVAParamater src)
+		public Effekseer.EffectAsset.RotationParameter.PVAParamater ConvertValue(Effekseer.Data.RotationValues.PVAParamater src)
 		{
-			var dst = new Effekseer.EffectAsset.RotationValues.PVAParamater();
+			var dst = new Effekseer.EffectAsset.RotationParameter.PVAParamater();
 			dst.Rotation = ConvertValue(src.Rotation);
 			dst.Velocity = ConvertValue(src.Velocity);
 			dst.Acceleration = ConvertValue(src.Acceleration);
 			return dst;
 		}
-		public Effekseer.EffectAsset.RotationValues.AxisPVAParamater ConvertValue(Effekseer.Data.RotationValues.AxisPVAParamater src)
+		public Effekseer.EffectAsset.RotationParameter.AxisPVAParamater ConvertValue(Effekseer.Data.RotationValues.AxisPVAParamater src)
 		{
-			var dst = new Effekseer.EffectAsset.RotationValues.AxisPVAParamater();
+			var dst = new Effekseer.EffectAsset.RotationParameter.AxisPVAParamater();
 			dst.Axis = ConvertValue(src.Axis);
 			dst.Rotation = ConvertValue(src.Rotation);
 			dst.Velocity = ConvertValue(src.Velocity);
@@ -140,22 +140,22 @@ namespace Effekseer.Compatibility.Conversion
 			dst.Type_A = ConvertValue(src.Type_A);
 			return dst;
 		}
-		public Effekseer.EffectAsset.RotationValues.AxisEasingParamater ConvertValue(Effekseer.Data.RotationValues.AxisEasingParamater src)
+		public Effekseer.EffectAsset.RotationParameter.AxisEasingParamater ConvertValue(Effekseer.Data.RotationValues.AxisEasingParamater src)
 		{
-			var dst = new Effekseer.EffectAsset.RotationValues.AxisEasingParamater();
+			var dst = new Effekseer.EffectAsset.RotationParameter.AxisEasingParamater();
 			dst.Axis = ConvertValue(src.Axis);
 			dst.Easing = ConvertValue(src.Easing);
 			return dst;
 		}
-		public Effekseer.EffectAsset.RotationValues.RotationFCurveParamater ConvertValue(Effekseer.Data.RotationValues.RotationFCurveParamater src)
+		public Effekseer.EffectAsset.RotationParameter.RotationFCurveParamater ConvertValue(Effekseer.Data.RotationValues.RotationFCurveParamater src)
 		{
-			var dst = new Effekseer.EffectAsset.RotationValues.RotationFCurveParamater();
+			var dst = new Effekseer.EffectAsset.RotationParameter.RotationFCurveParamater();
 			dst.FCurve = ConvertValue(src.FCurve);
 			return dst;
 		}
-		public Effekseer.EffectAsset.RotationValues ConvertValue(Effekseer.Data.RotationValues src)
+		public Effekseer.EffectAsset.RotationParameter ConvertValue(Effekseer.Data.RotationValues src)
 		{
-			var dst = new Effekseer.EffectAsset.RotationValues();
+			var dst = new Effekseer.EffectAsset.RotationParameter();
 			dst.Type = ConvertValue(src.Type);
 			dst.Fixed = ConvertValue(src.Fixed);
 			dst.PVA = ConvertValue(src.PVA);
