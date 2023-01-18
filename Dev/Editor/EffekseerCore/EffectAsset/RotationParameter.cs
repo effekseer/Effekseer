@@ -29,7 +29,7 @@ namespace Effekseer.EffectAsset
 		public partial class FixedParamater
 		{
 			[Key(key = "Rotation_FixedParamater_Rotation")]
-			public Effekseer.Vector3F Rotation = new Effekseer.Vector3F();
+			public Effekseer.EffectAsset.Vector3 Rotation = new Effekseer.EffectAsset.Vector3();
 		}
 	}
 }
