@@ -490,7 +490,7 @@ namespace Effekseer.Compatibility.Conversion
 				var att = attributes.OfType<Effekseer.KeyAttribute>().FirstOrDefault();
 				if (att != null)
 				{
-					ret+= $"[Key(key = \"{att.key}\")]\n";
+					ret += $"[Key(key = \"{att.key}\")]\n";
 				}
 			}
 
@@ -571,7 +571,7 @@ namespace Effekseer.Compatibility.Conversion
 		public static string ConvertDefinitionVector3D(Parameter parameter)
 		{
 			var value = parameter.Value as Effekseer.Data.Value.Vector3D;
-			var typename = typeof(Effekseer.Vector3F).FullName;
+			var typename = typeof(Effekseer.EffectAsset.Vector3).FullName;
 
 			var str = string.Empty;
 			str += Effekseer.Compatibility.Conversion.ConversionUtils.TryAddAttribute(parameter.attributes);

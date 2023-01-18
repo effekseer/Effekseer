@@ -475,6 +475,13 @@ namespace Effekseer.EffectAsset
 		}
 	}
 
+	public class Vector3
+	{
+		public bool IsDynamicEquationEnabled = false;
+		public DynamicEquation DynamicEquation;
+		public Vector3F Value;
+	}
+
 	public class Vector3WithRange
 	{
 		public bool IsDynamicEquationEnabled = false;

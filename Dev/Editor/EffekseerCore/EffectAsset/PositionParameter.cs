@@ -27,7 +27,7 @@ namespace Effekseer.EffectAsset
 		public partial class FixedParamater
 		{
 			[Key(key = "Position_FixedParamater_Location")]
-			public Effekseer.Vector3F Location = new Effekseer.Vector3F();
+			public Effekseer.EffectAsset.Vector3 Location = new Effekseer.EffectAsset.Vector3();
 		}
 	}
 }
