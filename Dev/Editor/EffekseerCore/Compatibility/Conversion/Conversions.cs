@@ -37,9 +37,16 @@ namespace Effekseer.Compatibility.Conversion
 			return value.Value;
 		}
 
-		public Effekseer.Vector3F ConvertValue(Effekseer.Data.Value.Vector3D value)
+		public Effekseer.EffectAsset.Vector3 ConvertValue(Effekseer.Data.Value.Vector3D value)
 		{
-			return new Vector3F { X = value.X, Y = value.Y, Z = value.Z };
+			var ret = new Effekseer.EffectAsset.Vector3();
+
+			ret.IsDynamicEquationEnabled = value.IsDynamicEquationEnabled;
+			ret.DynamicEquation = ConvertValue(value.DynamicEquation);
+
+			ret.Value = new Vector3F { X = value.X, Y = value.Y, Z = value.Z };
+
+			return ret;
 		}
 
 		public EffectAsset.DynamicEquation ConvertValue(Effekseer.Data.Value.DynamicEquationReference value)
