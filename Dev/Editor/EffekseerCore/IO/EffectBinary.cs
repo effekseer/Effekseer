@@ -101,16 +101,18 @@ namespace Effekseer.IO
 			return FB.BasicSettings.EndBasicSettings(fbb);
 		}
 
-		FlatBuffers.Offset<Effekseer.FB.PositionSettings> ExportPositionSettings(FlatBuffers.FlatBufferBuilder fbb, Effekseer.EffectAsset.PositionParameter positionParam)
+		FlatBuffers.Offset<Effekseer.FB.PositionSettings> ExportPositionSettings(FlatBuffers.FlatBufferBuilder fbb, EffectAsset.EffectAsset effectAsset, Effekseer.EffectAsset.PositionParameter positionParam)
 		{
 			// TODO
 			FlatBuffers.Offset<FB.PositionSettings_Fixed> fixedOffset = new FlatBuffers.Offset<FB.PositionSettings_Fixed>();
 
 			if (positionParam.Type == EffectAsset.PositionParameter.ParamaterType.Fixed)
 			{
+				var param = positionParam.Fixed;
+
 				FB.PositionSettings_Fixed.StartPositionSettings_Fixed(fbb);
-				//FB.PositionSettings_Fixed.AddRefEq(fbb, FB.Vec3F.CreateVec3F(fbb, positionParam.re));
-				FB.PositionSettings_Fixed.AddValue(fbb, FB.Vec3F.CreateVec3F(fbb, positionParam.Fixed.Location.X, positionParam.Fixed.Location.Y, positionParam.Fixed.Location.Z));
+				FB.PositionSettings_Fixed.AddRefEq(fbb, effectAsset.DynamicEquations.IndexOf(param.Location.DynamicEquation));
+				FB.PositionSettings_Fixed.AddValue(fbb, FB.Vec3F.CreateVec3F(fbb, positionParam.Fixed.Location.Value.X, positionParam.Fixed.Location.Value.Y, positionParam.Fixed.Location.Value.Z));
 				fixedOffset = FB.PositionSettings_Fixed.EndPositionSettings_Fixed(fbb);
 			}
 
