@@ -52,20 +52,14 @@ public struct PositionSettings_PVA : IFlatbufferObject
   public void __init(int _i, ByteBuffer _bb) { __p = new Table(_i, _bb); }
   public PositionSettings_PVA __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public Effekseer.FB.RefMinMax? RefEqP { get { int o = __p.__offset(4); return o != 0 ? (Effekseer.FB.RefMinMax?)(new Effekseer.FB.RefMinMax()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
-  public Effekseer.FB.RefMinMax? RefEqV { get { int o = __p.__offset(6); return o != 0 ? (Effekseer.FB.RefMinMax?)(new Effekseer.FB.RefMinMax()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
-  public Effekseer.FB.RefMinMax? RefEqA { get { int o = __p.__offset(8); return o != 0 ? (Effekseer.FB.RefMinMax?)(new Effekseer.FB.RefMinMax()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
-  public Effekseer.FB.Vec3FRange? Pos { get { int o = __p.__offset(10); return o != 0 ? (Effekseer.FB.Vec3FRange?)(new Effekseer.FB.Vec3FRange()).__assign(o + __p.bb_pos, __p.bb) : null; } }
-  public Effekseer.FB.Vec3FRange? Vel { get { int o = __p.__offset(12); return o != 0 ? (Effekseer.FB.Vec3FRange?)(new Effekseer.FB.Vec3FRange()).__assign(o + __p.bb_pos, __p.bb) : null; } }
-  public Effekseer.FB.Vec3FRange? Acc { get { int o = __p.__offset(14); return o != 0 ? (Effekseer.FB.Vec3FRange?)(new Effekseer.FB.Vec3FRange()).__assign(o + __p.bb_pos, __p.bb) : null; } }
+  public Effekseer.FB.Vec3FRange? Pos { get { int o = __p.__offset(4); return o != 0 ? (Effekseer.FB.Vec3FRange?)(new Effekseer.FB.Vec3FRange()).__assign(o + __p.bb_pos, __p.bb) : null; } }
+  public Effekseer.FB.Vec3FRange? Vel { get { int o = __p.__offset(6); return o != 0 ? (Effekseer.FB.Vec3FRange?)(new Effekseer.FB.Vec3FRange()).__assign(o + __p.bb_pos, __p.bb) : null; } }
+  public Effekseer.FB.Vec3FRange? Acc { get { int o = __p.__offset(8); return o != 0 ? (Effekseer.FB.Vec3FRange?)(new Effekseer.FB.Vec3FRange()).__assign(o + __p.bb_pos, __p.bb) : null; } }
 
-  public static void StartPositionSettings_PVA(FlatBufferBuilder builder) { builder.StartTable(6); }
-  public static void AddRefEqP(FlatBufferBuilder builder, Offset<Effekseer.FB.RefMinMax> refEqPOffset) { builder.AddOffset(0, refEqPOffset.Value, 0); }
-  public static void AddRefEqV(FlatBufferBuilder builder, Offset<Effekseer.FB.RefMinMax> refEqVOffset) { builder.AddOffset(1, refEqVOffset.Value, 0); }
-  public static void AddRefEqA(FlatBufferBuilder builder, Offset<Effekseer.FB.RefMinMax> refEqAOffset) { builder.AddOffset(2, refEqAOffset.Value, 0); }
-  public static void AddPos(FlatBufferBuilder builder, Offset<Effekseer.FB.Vec3FRange> posOffset) { builder.AddStruct(3, posOffset.Value, 0); }
-  public static void AddVel(FlatBufferBuilder builder, Offset<Effekseer.FB.Vec3FRange> velOffset) { builder.AddStruct(4, velOffset.Value, 0); }
-  public static void AddAcc(FlatBufferBuilder builder, Offset<Effekseer.FB.Vec3FRange> accOffset) { builder.AddStruct(5, accOffset.Value, 0); }
+  public static void StartPositionSettings_PVA(FlatBufferBuilder builder) { builder.StartTable(3); }
+  public static void AddPos(FlatBufferBuilder builder, Offset<Effekseer.FB.Vec3FRange> posOffset) { builder.AddStruct(0, posOffset.Value, 0); }
+  public static void AddVel(FlatBufferBuilder builder, Offset<Effekseer.FB.Vec3FRange> velOffset) { builder.AddStruct(1, velOffset.Value, 0); }
+  public static void AddAcc(FlatBufferBuilder builder, Offset<Effekseer.FB.Vec3FRange> accOffset) { builder.AddStruct(2, accOffset.Value, 0); }
   public static Offset<Effekseer.FB.PositionSettings_PVA> EndPositionSettings_PVA(FlatBufferBuilder builder) {
     int o = builder.EndTable();
     return new Offset<Effekseer.FB.PositionSettings_PVA>(o);

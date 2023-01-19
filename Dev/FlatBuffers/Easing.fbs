@@ -49,9 +49,6 @@ table EasingFloat
 
 table EasingVec3F
 {
-  ref_eq_s:RefMinMax;
-  ref_eq_e:RefMinMax;
-  ref_eq_m:RefMinMax;
   start:Vec3FRange;
   end:Vec3FRange;
   middle:Vec3FRange;

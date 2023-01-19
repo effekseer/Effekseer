@@ -20,9 +20,9 @@ public struct BasicSettings : IFlatbufferObject
   public BasicSettings __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
   public int RefEqMaxGeneration { get { int o = __p.__offset(4); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)-1; } }
-  public Effekseer.FB.RefMinMax? RefWqLife { get { int o = __p.__offset(6); return o != 0 ? (Effekseer.FB.RefMinMax?)(new Effekseer.FB.RefMinMax()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
-  public Effekseer.FB.RefMinMax? RefWqGenerationTime { get { int o = __p.__offset(8); return o != 0 ? (Effekseer.FB.RefMinMax?)(new Effekseer.FB.RefMinMax()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
-  public Effekseer.FB.RefMinMax? RefWqGenerationTimeOffset { get { int o = __p.__offset(10); return o != 0 ? (Effekseer.FB.RefMinMax?)(new Effekseer.FB.RefMinMax()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
+  public Effekseer.FB.RefMinMax? RefWqLife { get { int o = __p.__offset(6); return o != 0 ? (Effekseer.FB.RefMinMax?)(new Effekseer.FB.RefMinMax()).__assign(o + __p.bb_pos, __p.bb) : null; } }
+  public Effekseer.FB.RefMinMax? RefWqGenerationTime { get { int o = __p.__offset(8); return o != 0 ? (Effekseer.FB.RefMinMax?)(new Effekseer.FB.RefMinMax()).__assign(o + __p.bb_pos, __p.bb) : null; } }
+  public Effekseer.FB.RefMinMax? RefWqGenerationTimeOffset { get { int o = __p.__offset(10); return o != 0 ? (Effekseer.FB.RefMinMax?)(new Effekseer.FB.RefMinMax()).__assign(o + __p.bb_pos, __p.bb) : null; } }
   public int MaxGeneration { get { int o = __p.__offset(12); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)1; } }
   public Effekseer.FB.TranslationParentBindType TranslationBindType { get { int o = __p.__offset(14); return o != 0 ? (Effekseer.FB.TranslationParentBindType)__p.bb.GetInt(o + __p.bb_pos) : Effekseer.FB.TranslationParentBindType.TranslationParentBindType_Always; } }
   public Effekseer.FB.BindType RotationBindType { get { int o = __p.__offset(16); return o != 0 ? (Effekseer.FB.BindType)__p.bb.GetInt(o + __p.bb_pos) : Effekseer.FB.BindType.BindType_Always; } }
@@ -36,9 +36,9 @@ public struct BasicSettings : IFlatbufferObject
 
   public static void StartBasicSettings(FlatBufferBuilder builder) { builder.StartTable(14); }
   public static void AddRefEqMaxGeneration(FlatBufferBuilder builder, int refEqMaxGeneration) { builder.AddInt(0, refEqMaxGeneration, -1); }
-  public static void AddRefWqLife(FlatBufferBuilder builder, Offset<Effekseer.FB.RefMinMax> refWqLifeOffset) { builder.AddOffset(1, refWqLifeOffset.Value, 0); }
-  public static void AddRefWqGenerationTime(FlatBufferBuilder builder, Offset<Effekseer.FB.RefMinMax> refWqGenerationTimeOffset) { builder.AddOffset(2, refWqGenerationTimeOffset.Value, 0); }
-  public static void AddRefWqGenerationTimeOffset(FlatBufferBuilder builder, Offset<Effekseer.FB.RefMinMax> refWqGenerationTimeOffsetOffset) { builder.AddOffset(3, refWqGenerationTimeOffsetOffset.Value, 0); }
+  public static void AddRefWqLife(FlatBufferBuilder builder, Offset<Effekseer.FB.RefMinMax> refWqLifeOffset) { builder.AddStruct(1, refWqLifeOffset.Value, 0); }
+  public static void AddRefWqGenerationTime(FlatBufferBuilder builder, Offset<Effekseer.FB.RefMinMax> refWqGenerationTimeOffset) { builder.AddStruct(2, refWqGenerationTimeOffset.Value, 0); }
+  public static void AddRefWqGenerationTimeOffset(FlatBufferBuilder builder, Offset<Effekseer.FB.RefMinMax> refWqGenerationTimeOffsetOffset) { builder.AddStruct(3, refWqGenerationTimeOffsetOffset.Value, 0); }
   public static void AddMaxGeneration(FlatBufferBuilder builder, int maxGeneration) { builder.AddInt(4, maxGeneration, 1); }
   public static void AddTranslationBindType(FlatBufferBuilder builder, Effekseer.FB.TranslationParentBindType translationBindType) { builder.AddInt(5, (int)translationBindType, 2); }
   public static void AddRotationBindType(FlatBufferBuilder builder, Effekseer.FB.BindType rotationBindType) { builder.AddInt(6, (int)rotationBindType, 2); }

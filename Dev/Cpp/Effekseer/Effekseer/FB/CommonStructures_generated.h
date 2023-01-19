@@ -9,6 +9,8 @@
 namespace Effekseer {
 namespace FB {
 
+struct RefMinMax;
+
 struct IntRange;
 
 struct FloatRange;
@@ -18,9 +20,6 @@ struct Vec3F;
 struct Vec3FRange;
 
 struct Vec3FEasing;
-
-struct RefMinMax;
-struct RefMinMaxBuilder;
 
 struct TextureProperty;
 struct TexturePropertyBuilder;
@@ -149,6 +148,29 @@ inline const char *EnumNameBindType(BindType e) {
   return EnumNamesBindType()[index];
 }
 
+FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) RefMinMax FLATBUFFERS_FINAL_CLASS {
+ private:
+  int32_t min_;
+  int32_t max_;
+
+ public:
+  RefMinMax()
+      : min_(0),
+        max_(0) {
+  }
+  RefMinMax(int32_t _min, int32_t _max)
+      : min_(flatbuffers::EndianScalar(_min)),
+        max_(flatbuffers::EndianScalar(_max)) {
+  }
+  int32_t min() const {
+    return flatbuffers::EndianScalar(min_);
+  }
+  int32_t max() const {
+    return flatbuffers::EndianScalar(max_);
+  }
+};
+FLATBUFFERS_STRUCT_END(RefMinMax, 8);
+
 FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) IntRange FLATBUFFERS_FINAL_CLASS {
  private:
   int32_t min_;
@@ -226,17 +248,23 @@ FLATBUFFERS_STRUCT_END(Vec3F, 12);
 
 FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) Vec3FRange FLATBUFFERS_FINAL_CLASS {
  private:
+  Effekseer::FB::RefMinMax ref_eq_;
   Effekseer::FB::Vec3F min_;
   Effekseer::FB::Vec3F max_;
 
  public:
   Vec3FRange()
-      : min_(),
+      : ref_eq_(),
+        min_(),
         max_() {
   }
-  Vec3FRange(const Effekseer::FB::Vec3F &_min, const Effekseer::FB::Vec3F &_max)
-      : min_(_min),
+  Vec3FRange(const Effekseer::FB::RefMinMax &_ref_eq, const Effekseer::FB::Vec3F &_min, const Effekseer::FB::Vec3F &_max)
+      : ref_eq_(_ref_eq),
+        min_(_min),
         max_(_max) {
+  }
+  const Effekseer::FB::RefMinMax &ref_eq() const {
+    return ref_eq_;
   }
   const Effekseer::FB::Vec3F &min() const {
     return min_;
@@ -245,7 +273,7 @@ FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) Vec3FRange FLATBUFFERS_FINAL_CLASS {
     return max_;
   }
 };
-FLATBUFFERS_STRUCT_END(Vec3FRange, 24);
+FLATBUFFERS_STRUCT_END(Vec3FRange, 32);
 
 FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) Vec3FEasing FLATBUFFERS_FINAL_CLASS {
  private:
@@ -286,58 +314,7 @@ FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) Vec3FEasing FLATBUFFERS_FINAL_CLASS {
     return flatbuffers::EndianScalar(easing_c_);
   }
 };
-FLATBUFFERS_STRUCT_END(Vec3FEasing, 60);
-
-struct RefMinMax FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
-  typedef RefMinMaxBuilder Builder;
-  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_MIN = 4,
-    VT_MAX = 6
-  };
-  int32_t min() const {
-    return GetField<int32_t>(VT_MIN, -1);
-  }
-  int32_t max() const {
-    return GetField<int32_t>(VT_MAX, -1);
-  }
-  bool Verify(flatbuffers::Verifier &verifier) const {
-    return VerifyTableStart(verifier) &&
-           VerifyField<int32_t>(verifier, VT_MIN) &&
-           VerifyField<int32_t>(verifier, VT_MAX) &&
-           verifier.EndTable();
-  }
-};
-
-struct RefMinMaxBuilder {
-  typedef RefMinMax Table;
-  flatbuffers::FlatBufferBuilder &fbb_;
-  flatbuffers::uoffset_t start_;
-  void add_min(int32_t min) {
-    fbb_.AddElement<int32_t>(RefMinMax::VT_MIN, min, -1);
-  }
-  void add_max(int32_t max) {
-    fbb_.AddElement<int32_t>(RefMinMax::VT_MAX, max, -1);
-  }
-  explicit RefMinMaxBuilder(flatbuffers::FlatBufferBuilder &_fbb)
-        : fbb_(_fbb) {
-    start_ = fbb_.StartTable();
-  }
-  flatbuffers::Offset<RefMinMax> Finish() {
-    const auto end = fbb_.EndTable(start_);
-    auto o = flatbuffers::Offset<RefMinMax>(end);
-    return o;
-  }
-};
-
-inline flatbuffers::Offset<RefMinMax> CreateRefMinMax(
-    flatbuffers::FlatBufferBuilder &_fbb,
-    int32_t min = -1,
-    int32_t max = -1) {
-  RefMinMaxBuilder builder_(_fbb);
-  builder_.add_max(max);
-  builder_.add_min(min);
-  return builder_.Finish();
-}
+FLATBUFFERS_STRUCT_END(Vec3FEasing, 76);
 
 struct TextureProperty FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   typedef TexturePropertyBuilder Builder;

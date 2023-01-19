@@ -21,9 +21,6 @@ table PositionSettings_Fixed {
 }
 
 table PositionSettings_PVA {
-  ref_eq_p:RefMinMax;
-  ref_eq_v:RefMinMax;
-  ref_eq_a:RefMinMax;
   pos:Vec3FRange;
   vel:Vec3FRange;
   acc:Vec3FRange;

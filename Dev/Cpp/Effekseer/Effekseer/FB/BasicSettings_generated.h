@@ -36,13 +36,13 @@ struct BasicSettings FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
     return GetField<int32_t>(VT_REF_EQ_MAX_GENERATION, -1);
   }
   const Effekseer::FB::RefMinMax *ref_wq_life() const {
-    return GetPointer<const Effekseer::FB::RefMinMax *>(VT_REF_WQ_LIFE);
+    return GetStruct<const Effekseer::FB::RefMinMax *>(VT_REF_WQ_LIFE);
   }
   const Effekseer::FB::RefMinMax *ref_wq_generation_time() const {
-    return GetPointer<const Effekseer::FB::RefMinMax *>(VT_REF_WQ_GENERATION_TIME);
+    return GetStruct<const Effekseer::FB::RefMinMax *>(VT_REF_WQ_GENERATION_TIME);
   }
   const Effekseer::FB::RefMinMax *ref_wq_generation_time_offset() const {
-    return GetPointer<const Effekseer::FB::RefMinMax *>(VT_REF_WQ_GENERATION_TIME_OFFSET);
+    return GetStruct<const Effekseer::FB::RefMinMax *>(VT_REF_WQ_GENERATION_TIME_OFFSET);
   }
   int32_t max_generation() const {
     return GetField<int32_t>(VT_MAX_GENERATION, 1);
@@ -77,12 +77,9 @@ struct BasicSettings FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<int32_t>(verifier, VT_REF_EQ_MAX_GENERATION) &&
-           VerifyOffset(verifier, VT_REF_WQ_LIFE) &&
-           verifier.VerifyTable(ref_wq_life()) &&
-           VerifyOffset(verifier, VT_REF_WQ_GENERATION_TIME) &&
-           verifier.VerifyTable(ref_wq_generation_time()) &&
-           VerifyOffset(verifier, VT_REF_WQ_GENERATION_TIME_OFFSET) &&
-           verifier.VerifyTable(ref_wq_generation_time_offset()) &&
+           VerifyField<Effekseer::FB::RefMinMax>(verifier, VT_REF_WQ_LIFE) &&
+           VerifyField<Effekseer::FB::RefMinMax>(verifier, VT_REF_WQ_GENERATION_TIME) &&
+           VerifyField<Effekseer::FB::RefMinMax>(verifier, VT_REF_WQ_GENERATION_TIME_OFFSET) &&
            VerifyField<int32_t>(verifier, VT_MAX_GENERATION) &&
            VerifyField<int32_t>(verifier, VT_TRANSLATION_BIND_TYPE) &&
            VerifyField<int32_t>(verifier, VT_ROTATION_BIND_TYPE) &&
@@ -104,14 +101,14 @@ struct BasicSettingsBuilder {
   void add_ref_eq_max_generation(int32_t ref_eq_max_generation) {
     fbb_.AddElement<int32_t>(BasicSettings::VT_REF_EQ_MAX_GENERATION, ref_eq_max_generation, -1);
   }
-  void add_ref_wq_life(flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_wq_life) {
-    fbb_.AddOffset(BasicSettings::VT_REF_WQ_LIFE, ref_wq_life);
+  void add_ref_wq_life(const Effekseer::FB::RefMinMax *ref_wq_life) {
+    fbb_.AddStruct(BasicSettings::VT_REF_WQ_LIFE, ref_wq_life);
   }
-  void add_ref_wq_generation_time(flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_wq_generation_time) {
-    fbb_.AddOffset(BasicSettings::VT_REF_WQ_GENERATION_TIME, ref_wq_generation_time);
+  void add_ref_wq_generation_time(const Effekseer::FB::RefMinMax *ref_wq_generation_time) {
+    fbb_.AddStruct(BasicSettings::VT_REF_WQ_GENERATION_TIME, ref_wq_generation_time);
   }
-  void add_ref_wq_generation_time_offset(flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_wq_generation_time_offset) {
-    fbb_.AddOffset(BasicSettings::VT_REF_WQ_GENERATION_TIME_OFFSET, ref_wq_generation_time_offset);
+  void add_ref_wq_generation_time_offset(const Effekseer::FB::RefMinMax *ref_wq_generation_time_offset) {
+    fbb_.AddStruct(BasicSettings::VT_REF_WQ_GENERATION_TIME_OFFSET, ref_wq_generation_time_offset);
   }
   void add_max_generation(int32_t max_generation) {
     fbb_.AddElement<int32_t>(BasicSettings::VT_MAX_GENERATION, max_generation, 1);
@@ -157,9 +154,9 @@ struct BasicSettingsBuilder {
 inline flatbuffers::Offset<BasicSettings> CreateBasicSettings(
     flatbuffers::FlatBufferBuilder &_fbb,
     int32_t ref_eq_max_generation = -1,
-    flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_wq_life = 0,
-    flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_wq_generation_time = 0,
-    flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_wq_generation_time_offset = 0,
+    const Effekseer::FB::RefMinMax *ref_wq_life = 0,
+    const Effekseer::FB::RefMinMax *ref_wq_generation_time = 0,
+    const Effekseer::FB::RefMinMax *ref_wq_generation_time_offset = 0,
     int32_t max_generation = 1,
     Effekseer::FB::TranslationParentBindType translation_bind_type = Effekseer::FB::TranslationParentBindType::TranslationParentBindType_Always,
     Effekseer::FB::BindType rotation_bind_type = Effekseer::FB::BindType::BindType_Always,

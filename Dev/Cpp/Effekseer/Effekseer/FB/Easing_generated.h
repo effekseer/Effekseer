@@ -161,13 +161,13 @@ struct EasingFloat FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
     VT_TYPES = 26
   };
   const Effekseer::FB::RefMinMax *ref_eq_s() const {
-    return GetPointer<const Effekseer::FB::RefMinMax *>(VT_REF_EQ_S);
+    return GetStruct<const Effekseer::FB::RefMinMax *>(VT_REF_EQ_S);
   }
   const Effekseer::FB::RefMinMax *ref_eq_e() const {
-    return GetPointer<const Effekseer::FB::RefMinMax *>(VT_REF_EQ_E);
+    return GetStruct<const Effekseer::FB::RefMinMax *>(VT_REF_EQ_E);
   }
   const Effekseer::FB::RefMinMax *ref_eq_m() const {
-    return GetPointer<const Effekseer::FB::RefMinMax *>(VT_REF_EQ_M);
+    return GetStruct<const Effekseer::FB::RefMinMax *>(VT_REF_EQ_M);
   }
   const Effekseer::FB::FloatRange *start() const {
     return GetStruct<const Effekseer::FB::FloatRange *>(VT_START);
@@ -198,12 +198,9 @@ struct EasingFloat FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
-           VerifyOffset(verifier, VT_REF_EQ_S) &&
-           verifier.VerifyTable(ref_eq_s()) &&
-           VerifyOffset(verifier, VT_REF_EQ_E) &&
-           verifier.VerifyTable(ref_eq_e()) &&
-           VerifyOffset(verifier, VT_REF_EQ_M) &&
-           verifier.VerifyTable(ref_eq_m()) &&
+           VerifyField<Effekseer::FB::RefMinMax>(verifier, VT_REF_EQ_S) &&
+           VerifyField<Effekseer::FB::RefMinMax>(verifier, VT_REF_EQ_E) &&
+           VerifyField<Effekseer::FB::RefMinMax>(verifier, VT_REF_EQ_M) &&
            VerifyField<Effekseer::FB::FloatRange>(verifier, VT_START) &&
            VerifyField<Effekseer::FB::FloatRange>(verifier, VT_END) &&
            VerifyField<Effekseer::FB::FloatRange>(verifier, VT_MIDDLE) &&
@@ -223,14 +220,14 @@ struct EasingFloatBuilder {
   typedef EasingFloat Table;
   flatbuffers::FlatBufferBuilder &fbb_;
   flatbuffers::uoffset_t start_;
-  void add_ref_eq_s(flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_eq_s) {
-    fbb_.AddOffset(EasingFloat::VT_REF_EQ_S, ref_eq_s);
+  void add_ref_eq_s(const Effekseer::FB::RefMinMax *ref_eq_s) {
+    fbb_.AddStruct(EasingFloat::VT_REF_EQ_S, ref_eq_s);
   }
-  void add_ref_eq_e(flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_eq_e) {
-    fbb_.AddOffset(EasingFloat::VT_REF_EQ_E, ref_eq_e);
+  void add_ref_eq_e(const Effekseer::FB::RefMinMax *ref_eq_e) {
+    fbb_.AddStruct(EasingFloat::VT_REF_EQ_E, ref_eq_e);
   }
-  void add_ref_eq_m(flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_eq_m) {
-    fbb_.AddOffset(EasingFloat::VT_REF_EQ_M, ref_eq_m);
+  void add_ref_eq_m(const Effekseer::FB::RefMinMax *ref_eq_m) {
+    fbb_.AddStruct(EasingFloat::VT_REF_EQ_M, ref_eq_m);
   }
   void add_start(const Effekseer::FB::FloatRange *start) {
     fbb_.AddStruct(EasingFloat::VT_START, start);
@@ -272,9 +269,9 @@ struct EasingFloatBuilder {
 
 inline flatbuffers::Offset<EasingFloat> CreateEasingFloat(
     flatbuffers::FlatBufferBuilder &_fbb,
-    flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_eq_s = 0,
-    flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_eq_e = 0,
-    flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_eq_m = 0,
+    const Effekseer::FB::RefMinMax *ref_eq_s = 0,
+    const Effekseer::FB::RefMinMax *ref_eq_e = 0,
+    const Effekseer::FB::RefMinMax *ref_eq_m = 0,
     const Effekseer::FB::FloatRange *start = 0,
     const Effekseer::FB::FloatRange *end = 0,
     const Effekseer::FB::FloatRange *middle = 0,
@@ -302,9 +299,9 @@ inline flatbuffers::Offset<EasingFloat> CreateEasingFloat(
 
 inline flatbuffers::Offset<EasingFloat> CreateEasingFloatDirect(
     flatbuffers::FlatBufferBuilder &_fbb,
-    flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_eq_s = 0,
-    flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_eq_e = 0,
-    flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_eq_m = 0,
+    const Effekseer::FB::RefMinMax *ref_eq_s = 0,
+    const Effekseer::FB::RefMinMax *ref_eq_e = 0,
+    const Effekseer::FB::RefMinMax *ref_eq_m = 0,
     const Effekseer::FB::FloatRange *start = 0,
     const Effekseer::FB::FloatRange *end = 0,
     const Effekseer::FB::FloatRange *middle = 0,
@@ -335,28 +332,16 @@ inline flatbuffers::Offset<EasingFloat> CreateEasingFloatDirect(
 struct EasingVec3F FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   typedef EasingVec3FBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_REF_EQ_S = 4,
-    VT_REF_EQ_E = 6,
-    VT_REF_EQ_M = 8,
-    VT_START = 10,
-    VT_END = 12,
-    VT_MIDDLE = 14,
-    VT_TYPE = 16,
-    VT_PARAMS = 18,
-    VT_CHANNEL = 20,
-    VT_IS_MIDDLE_ENABLED = 22,
-    VT_IS_INDIVIDUAL_ENABLED = 24,
-    VT_TYPES = 26
+    VT_START = 4,
+    VT_END = 6,
+    VT_MIDDLE = 8,
+    VT_TYPE = 10,
+    VT_PARAMS = 12,
+    VT_CHANNEL = 14,
+    VT_IS_MIDDLE_ENABLED = 16,
+    VT_IS_INDIVIDUAL_ENABLED = 18,
+    VT_TYPES = 20
   };
-  const Effekseer::FB::RefMinMax *ref_eq_s() const {
-    return GetPointer<const Effekseer::FB::RefMinMax *>(VT_REF_EQ_S);
-  }
-  const Effekseer::FB::RefMinMax *ref_eq_e() const {
-    return GetPointer<const Effekseer::FB::RefMinMax *>(VT_REF_EQ_E);
-  }
-  const Effekseer::FB::RefMinMax *ref_eq_m() const {
-    return GetPointer<const Effekseer::FB::RefMinMax *>(VT_REF_EQ_M);
-  }
   const Effekseer::FB::Vec3FRange *start() const {
     return GetStruct<const Effekseer::FB::Vec3FRange *>(VT_START);
   }
@@ -386,12 +371,6 @@ struct EasingVec3F FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
-           VerifyOffset(verifier, VT_REF_EQ_S) &&
-           verifier.VerifyTable(ref_eq_s()) &&
-           VerifyOffset(verifier, VT_REF_EQ_E) &&
-           verifier.VerifyTable(ref_eq_e()) &&
-           VerifyOffset(verifier, VT_REF_EQ_M) &&
-           verifier.VerifyTable(ref_eq_m()) &&
            VerifyField<Effekseer::FB::Vec3FRange>(verifier, VT_START) &&
            VerifyField<Effekseer::FB::Vec3FRange>(verifier, VT_END) &&
            VerifyField<Effekseer::FB::Vec3FRange>(verifier, VT_MIDDLE) &&
@@ -411,15 +390,6 @@ struct EasingVec3FBuilder {
   typedef EasingVec3F Table;
   flatbuffers::FlatBufferBuilder &fbb_;
   flatbuffers::uoffset_t start_;
-  void add_ref_eq_s(flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_eq_s) {
-    fbb_.AddOffset(EasingVec3F::VT_REF_EQ_S, ref_eq_s);
-  }
-  void add_ref_eq_e(flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_eq_e) {
-    fbb_.AddOffset(EasingVec3F::VT_REF_EQ_E, ref_eq_e);
-  }
-  void add_ref_eq_m(flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_eq_m) {
-    fbb_.AddOffset(EasingVec3F::VT_REF_EQ_M, ref_eq_m);
-  }
   void add_start(const Effekseer::FB::Vec3FRange *start) {
     fbb_.AddStruct(EasingVec3F::VT_START, start);
   }
@@ -460,9 +430,6 @@ struct EasingVec3FBuilder {
 
 inline flatbuffers::Offset<EasingVec3F> CreateEasingVec3F(
     flatbuffers::FlatBufferBuilder &_fbb,
-    flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_eq_s = 0,
-    flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_eq_e = 0,
-    flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_eq_m = 0,
     const Effekseer::FB::Vec3FRange *start = 0,
     const Effekseer::FB::Vec3FRange *end = 0,
     const Effekseer::FB::Vec3FRange *middle = 0,
@@ -480,9 +447,6 @@ inline flatbuffers::Offset<EasingVec3F> CreateEasingVec3F(
   builder_.add_middle(middle);
   builder_.add_end(end);
   builder_.add_start(start);
-  builder_.add_ref_eq_m(ref_eq_m);
-  builder_.add_ref_eq_e(ref_eq_e);
-  builder_.add_ref_eq_s(ref_eq_s);
   builder_.add_is_individual_enabled(is_individual_enabled);
   builder_.add_is_middle_enabled(is_middle_enabled);
   return builder_.Finish();
@@ -490,9 +454,6 @@ inline flatbuffers::Offset<EasingVec3F> CreateEasingVec3F(
 
 inline flatbuffers::Offset<EasingVec3F> CreateEasingVec3FDirect(
     flatbuffers::FlatBufferBuilder &_fbb,
-    flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_eq_s = 0,
-    flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_eq_e = 0,
-    flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_eq_m = 0,
     const Effekseer::FB::Vec3FRange *start = 0,
     const Effekseer::FB::Vec3FRange *end = 0,
     const Effekseer::FB::Vec3FRange *middle = 0,
@@ -506,9 +467,6 @@ inline flatbuffers::Offset<EasingVec3F> CreateEasingVec3FDirect(
   auto types__ = types ? _fbb.CreateVector<int32_t>(*types) : 0;
   return Effekseer::FB::CreateEasingVec3F(
       _fbb,
-      ref_eq_s,
-      ref_eq_e,
-      ref_eq_m,
       start,
       end,
       middle,

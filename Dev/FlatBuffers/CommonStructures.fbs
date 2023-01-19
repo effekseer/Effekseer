@@ -1,5 +1,10 @@
 namespace Effekseer.FB;
 
+struct RefMinMax {
+  min:int;
+  max:int;
+}
+
 struct IntRange {
   min:int;
   max:int;
@@ -17,6 +22,7 @@ struct Vec3F {
 }
 
 struct Vec3FRange {
+  ref_eq:RefMinMax;
   min:Vec3F;
   max:Vec3F;
 }
@@ -27,11 +33,6 @@ struct Vec3FEasing {
   easing_a:float;
   easing_b:float;
   easing_c:float;
-}
-
-table RefMinMax {
-  min:int = -1;
-  max:int = -1;
 }
 
 enum EffectNodeType : int {

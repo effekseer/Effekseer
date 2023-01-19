@@ -6,8 +6,8 @@
 
 #include "flatbuffers/flatbuffers.h"
 
-#include "Easing_generated.h"
 #include "FCurve_generated.h"
+#include "Easing_generated.h"
 #include "CommonStructures_generated.h"
 
 namespace Effekseer {
@@ -133,22 +133,10 @@ inline flatbuffers::Offset<PositionSettings_Fixed> CreatePositionSettings_Fixed(
 struct PositionSettings_PVA FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   typedef PositionSettings_PVABuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_REF_EQ_P = 4,
-    VT_REF_EQ_V = 6,
-    VT_REF_EQ_A = 8,
-    VT_POS = 10,
-    VT_VEL = 12,
-    VT_ACC = 14
+    VT_POS = 4,
+    VT_VEL = 6,
+    VT_ACC = 8
   };
-  const Effekseer::FB::RefMinMax *ref_eq_p() const {
-    return GetPointer<const Effekseer::FB::RefMinMax *>(VT_REF_EQ_P);
-  }
-  const Effekseer::FB::RefMinMax *ref_eq_v() const {
-    return GetPointer<const Effekseer::FB::RefMinMax *>(VT_REF_EQ_V);
-  }
-  const Effekseer::FB::RefMinMax *ref_eq_a() const {
-    return GetPointer<const Effekseer::FB::RefMinMax *>(VT_REF_EQ_A);
-  }
   const Effekseer::FB::Vec3FRange *pos() const {
     return GetStruct<const Effekseer::FB::Vec3FRange *>(VT_POS);
   }
@@ -160,12 +148,6 @@ struct PositionSettings_PVA FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table
   }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
-           VerifyOffset(verifier, VT_REF_EQ_P) &&
-           verifier.VerifyTable(ref_eq_p()) &&
-           VerifyOffset(verifier, VT_REF_EQ_V) &&
-           verifier.VerifyTable(ref_eq_v()) &&
-           VerifyOffset(verifier, VT_REF_EQ_A) &&
-           verifier.VerifyTable(ref_eq_a()) &&
            VerifyField<Effekseer::FB::Vec3FRange>(verifier, VT_POS) &&
            VerifyField<Effekseer::FB::Vec3FRange>(verifier, VT_VEL) &&
            VerifyField<Effekseer::FB::Vec3FRange>(verifier, VT_ACC) &&
@@ -177,15 +159,6 @@ struct PositionSettings_PVABuilder {
   typedef PositionSettings_PVA Table;
   flatbuffers::FlatBufferBuilder &fbb_;
   flatbuffers::uoffset_t start_;
-  void add_ref_eq_p(flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_eq_p) {
-    fbb_.AddOffset(PositionSettings_PVA::VT_REF_EQ_P, ref_eq_p);
-  }
-  void add_ref_eq_v(flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_eq_v) {
-    fbb_.AddOffset(PositionSettings_PVA::VT_REF_EQ_V, ref_eq_v);
-  }
-  void add_ref_eq_a(flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_eq_a) {
-    fbb_.AddOffset(PositionSettings_PVA::VT_REF_EQ_A, ref_eq_a);
-  }
   void add_pos(const Effekseer::FB::Vec3FRange *pos) {
     fbb_.AddStruct(PositionSettings_PVA::VT_POS, pos);
   }
@@ -208,9 +181,6 @@ struct PositionSettings_PVABuilder {
 
 inline flatbuffers::Offset<PositionSettings_PVA> CreatePositionSettings_PVA(
     flatbuffers::FlatBufferBuilder &_fbb,
-    flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_eq_p = 0,
-    flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_eq_v = 0,
-    flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_eq_a = 0,
     const Effekseer::FB::Vec3FRange *pos = 0,
     const Effekseer::FB::Vec3FRange *vel = 0,
     const Effekseer::FB::Vec3FRange *acc = 0) {
@@ -218,9 +188,6 @@ inline flatbuffers::Offset<PositionSettings_PVA> CreatePositionSettings_PVA(
   builder_.add_acc(acc);
   builder_.add_vel(vel);
   builder_.add_pos(pos);
-  builder_.add_ref_eq_a(ref_eq_a);
-  builder_.add_ref_eq_v(ref_eq_v);
-  builder_.add_ref_eq_p(ref_eq_p);
   return builder_.Finish();
 }
 
