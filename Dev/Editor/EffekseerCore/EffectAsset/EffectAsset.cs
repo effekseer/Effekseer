@@ -89,7 +89,7 @@ namespace Effekseer.EffectAsset
 	Inherited = false)]
 	public class GroupingAttribute : Attribute
 	{
-		public string ID
+		public string Name
 		{
 			get;
 			set;
@@ -97,7 +97,7 @@ namespace Effekseer.EffectAsset
 
 		public GroupingAttribute()
 		{
-			ID = string.Empty;
+			Name = string.Empty;
 		}
 	}
 
@@ -378,28 +378,28 @@ namespace Effekseer.EffectAsset
 
 	public class ParticleNode : Node
 	{
-		[Grouping(ID = "CommonValues")]
+		[Grouping(Name = "CommonValues")]
 		public CommonParameter CommonValues = new CommonParameter();
 
-		[Grouping(ID = "DrawingValues")]
+		[Grouping(Name = "DrawingValues")]
 		public DrawingParameter DrawingValues = new DrawingParameter();
 
-		[Grouping(ID = "PositionParam")]
+		[Grouping(Name = "PositionParam")]
 		public PositionParameter PositionParam = new PositionParameter();
 
-		[Grouping(ID = "RotationParam")]
+		[Grouping(Name = "RotationParam")]
 		public RotationParameter RotationParam = new RotationParameter();
 
-		[Grouping(ID = "GradientTest")]
+		[Grouping(Name = "GradientTest")]
 		public Gradient GradientTest = new Gradient();
 
-		[Grouping(ID = "Vector3WithRangeTest")]
+		[Grouping(Name = "Vector3WithRangeTest")]
 		public Vector3WithRange Vector3WithRangeTest = new Vector3WithRange();
 
-		[Grouping(ID = "TextureTest")]
+		[Grouping(Name = "TextureTest")]
 		public TextureAsset TextureTest = null;
 
-		[Grouping(ID = "ColorTest")]
+		[Grouping(Name = "ColorTest")]
 		public Color ColorTest = new Color();
 	}
 
