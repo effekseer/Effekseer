@@ -89,12 +89,15 @@ namespace Effekseer.GUI.Inspector
 		public InspectorGuiInfo()
 		{
 			State = new InspectorGuiState("###" + Manager.GetUniqueID().ToString());
+			SubElements = new List<InspectorGuiInfo>();
 		}
+
+		public bool isRoot = false;
 
 		public InspectorGuiState State { get; private set; }
 
 		// Sub elements of gui(ex. list, class, struct)
-		public List<InspectorGuiInfo> subElement = new List<InspectorGuiInfo>();
+		public List<InspectorGuiInfo> SubElements { get; private set; }
 	}
 
 	class Inspector
@@ -102,7 +105,7 @@ namespace Effekseer.GUI.Inspector
 		// functions to show gui
 		private static readonly InspectorGuiDictionary GuiDictionary = new InspectorGuiDictionary();
 
-		private static List<InspectorGuiInfo> FieldGuiInfoList = new List<InspectorGuiInfo>();
+		private static InspectorGuiInfo RootGuiInfo = new InspectorGuiInfo();
 
 		private static object LastTarget = null;
 
@@ -111,6 +114,7 @@ namespace Effekseer.GUI.Inspector
 		public Inspector()
 		{
 			//Core.OnAfterSelectNode += OnAfterSelect;
+			RootGuiInfo.isRoot = true;
 		}
 
 		private static void UpdateVisiblityControllers(object target)
@@ -134,11 +138,7 @@ namespace Effekseer.GUI.Inspector
 
 		private static void GenerateFieldGuiInfos(object target)
 		{
-			if (FieldGuiInfoList == null)
-			{
-				FieldGuiInfoList = new List<InspectorGuiInfo>();
-			}
-			FieldGuiInfoList.Clear();
+			RootGuiInfo.SubElements.Clear();
 
 			InspectorGuiInfo generate(object tgt)
 			{
@@ -165,7 +165,7 @@ namespace Effekseer.GUI.Inspector
 				{
 					// visiblity controller attribute
 					UpdateVisiblityControllers(tgt);
-					info.subElement.Add(generate(fieldInTgt.GetValue(tgt)));
+					info.SubElements.Add(generate(fieldInTgt.GetValue(tgt)));
 
 				}
 				return info;
@@ -180,7 +180,7 @@ namespace Effekseer.GUI.Inspector
 					UpdateVisiblityControllers(tgt);
 				}
 
-				FieldGuiInfoList.Add(generate(tgt));
+				RootGuiInfo.SubElements.Add(generate(tgt));
 			}
 		}
 
@@ -249,6 +249,7 @@ namespace Effekseer.GUI.Inspector
 				{
 					if (VisiblityControllers.ContainsKey(attr.ID))
 					{
+						// TODO: also bool implementation
 						var controllerValue = (int)VisiblityControllers[attr.ID];
 						isVisible = (attr.Value == controllerValue);
 					}
@@ -270,11 +271,11 @@ namespace Effekseer.GUI.Inspector
 				value != null &&
 				value.GetType().GetFields().Length > 0 &&
 				!value.GetType().IsEnum &&
-				guiInfo.subElement.Count > i)
+				guiInfo.SubElements.Count > i)
 				{
 					UpdateVisiblityControllers(value);
 					elementGetterSetterArray.Push(value, f);
-					UpdateObjectGuis(context, targetNode, elementGetterSetterArray, guiInfo.subElement[i]);
+					UpdateObjectGuis(context, targetNode, elementGetterSetterArray, guiInfo.SubElements[i]);
 					elementGetterSetterArray.Pop();
 					shownSubFields = true;
 				}
@@ -289,7 +290,7 @@ namespace Effekseer.GUI.Inspector
 
 			// name column(left side of table)
 			Manager.NativeManager.TableNextColumn();
-			
+
 			// TODO: use grouping attributes
 			bool isShowHorizonalSeparator = Manager.NativeManager.TableGetRowIndex() >= 2;
 			if (isShowHorizonalSeparator)
@@ -341,13 +342,13 @@ namespace Effekseer.GUI.Inspector
 
 					// generate/regenerate subeElements when there are not enougth GuiIDs.
 					// generate it here because the number of elements can't read in GenerateFieldGuiIds
-					if (arrayValue.Count > guiInfo.subElement.Count())
+					if (arrayValue.Count > guiInfo.SubElements.Count())
 					{
-						guiInfo.subElement.Clear();
+						guiInfo.SubElements.Clear();
 
 						foreach (var v in arrayValue)
 						{
-							guiInfo.subElement.Add(new InspectorGuiInfo());
+							guiInfo.SubElements.Add(new InspectorGuiInfo());
 						}
 					}
 
@@ -356,7 +357,7 @@ namespace Effekseer.GUI.Inspector
 					{
 						var v = arrayValue[j];
 						elementGetterSetterArray.Push(arrayValue, j);
-						var result = func(v, guiInfo.subElement[j].State);
+						var result = func(v, guiInfo.SubElements[j].State);
 						if (result.isEdited)
 						{
 							if (valueType.IsValueType)
@@ -393,7 +394,7 @@ namespace Effekseer.GUI.Inspector
 			}
 			else
 			{
-				if(value != null)
+				if (value != null)
 				{
 					Manager.NativeManager.Text("No Regist : " + value.GetType().ToString() + " " + name);
 				}
@@ -465,11 +466,11 @@ namespace Effekseer.GUI.Inspector
 				if (!GuiDictionary.HasDropFunction(guiFunctionKey) &&
 				value.GetType().GetFields().Length > 0 &&
 				!value.GetType().IsEnum &&
-				guiInfo.subElement.Count > i)
+				guiInfo.SubElements.Count > i)
 				{
 					UpdateVisiblityControllers(value);
 					elementGetterSetterArray.Push(value, f);
-					bool editted = DropObjectGuis(path, context, targetNode, elementGetterSetterArray, guiInfo.subElement[i]);
+					bool editted = DropObjectGuis(path, context, targetNode, elementGetterSetterArray, guiInfo.SubElements[i]);
 					elementGetterSetterArray.Pop();
 					shownSubFields = true;
 
@@ -494,13 +495,13 @@ namespace Effekseer.GUI.Inspector
 
 					// generate/regenerate subElements when there are not enougth GuiIDs.
 					// generate it here because the number of elements can't read in GenerateFieldGuiIds
-					if (arrayValue.Count > guiInfo.subElement.Count())
+					if (arrayValue.Count > guiInfo.SubElements.Count())
 					{
-						guiInfo.subElement.Clear();
+						guiInfo.SubElements.Clear();
 
 						foreach (var v in arrayValue)
 						{
-							guiInfo.subElement.Add(new InspectorGuiInfo());
+							guiInfo.SubElements.Add(new InspectorGuiInfo());
 						}
 					}
 
@@ -510,7 +511,7 @@ namespace Effekseer.GUI.Inspector
 						var v = arrayValue[j];
 
 						elementGetterSetterArray.Push(arrayValue, j);
-						var result = func(v, path, guiInfo.subElement[j].State);
+						var result = func(v, path, guiInfo.SubElements[j].State);
 						if (result.isEdited)
 						{
 							if (valueType.IsValueType)
@@ -591,7 +592,7 @@ namespace Effekseer.GUI.Inspector
 				{
 					elementGetterSetterArray.Push(targetNode, field);
 					UpdateVisiblityControllers(targetNode);
-					UpdateObjectGuis(context, targetNode, elementGetterSetterArray, FieldGuiInfoList[i]);
+					UpdateObjectGuis(context, targetNode, elementGetterSetterArray, RootGuiInfo.SubElements[i]);
 					elementGetterSetterArray.Pop();
 					++i;
 				}
@@ -609,7 +610,7 @@ namespace Effekseer.GUI.Inspector
 			{
 				elementGetterSetterArray.Push(targetNode, field);
 				UpdateVisiblityControllers(targetNode);
-				var eddited = DropObjectGuis(path, context, targetNode, elementGetterSetterArray, FieldGuiInfoList[i]);
+				var eddited = DropObjectGuis(path, context, targetNode, elementGetterSetterArray, RootGuiInfo.SubElements[i]);
 				elementGetterSetterArray.Pop();
 				++i;
 
