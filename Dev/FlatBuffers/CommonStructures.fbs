@@ -11,6 +11,7 @@ struct IntRange {
 }
 
 struct FloatRange {
+  ref_eq:RefMinMax;
   min:float;
   max:float;
 }

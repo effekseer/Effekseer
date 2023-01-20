@@ -81,13 +81,17 @@ public struct FloatRange : IFlatbufferObject
   public void __init(int _i, ByteBuffer _bb) { __p = new Struct(_i, _bb); }
   public FloatRange __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public float Min { get { return __p.bb.GetFloat(__p.bb_pos + 0); } }
-  public float Max { get { return __p.bb.GetFloat(__p.bb_pos + 4); } }
+  public Effekseer.FB.RefMinMax RefEq { get { return (new Effekseer.FB.RefMinMax()).__assign(__p.bb_pos + 0, __p.bb); } }
+  public float Min { get { return __p.bb.GetFloat(__p.bb_pos + 8); } }
+  public float Max { get { return __p.bb.GetFloat(__p.bb_pos + 12); } }
 
-  public static Offset<Effekseer.FB.FloatRange> CreateFloatRange(FlatBufferBuilder builder, float Min, float Max) {
-    builder.Prep(4, 8);
+  public static Offset<Effekseer.FB.FloatRange> CreateFloatRange(FlatBufferBuilder builder, int ref_eq_Min, int ref_eq_Max, float Min, float Max) {
+    builder.Prep(4, 16);
     builder.PutFloat(Max);
     builder.PutFloat(Min);
+    builder.Prep(4, 8);
+    builder.PutInt(ref_eq_Max);
+    builder.PutInt(ref_eq_Min);
     return new Offset<Effekseer.FB.FloatRange>(builder.Offset);
   }
 };

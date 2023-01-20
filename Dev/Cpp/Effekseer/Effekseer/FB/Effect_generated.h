@@ -6,12 +6,12 @@
 
 #include "flatbuffers/flatbuffers.h"
 
+#include "CommonStructures_generated.h"
 #include "PositionSettings_generated.h"
 #include "Node_generated.h"
 #include "FCurve_generated.h"
 #include "Easing_generated.h"
 #include "BasicSettings_generated.h"
-#include "CommonStructures_generated.h"
 
 namespace Effekseer {
 namespace FB {

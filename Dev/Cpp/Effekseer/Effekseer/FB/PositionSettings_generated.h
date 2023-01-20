@@ -6,9 +6,9 @@
 
 #include "flatbuffers/flatbuffers.h"
 
+#include "CommonStructures_generated.h"
 #include "FCurve_generated.h"
 #include "Easing_generated.h"
-#include "CommonStructures_generated.h"
 
 namespace Effekseer {
 namespace FB {

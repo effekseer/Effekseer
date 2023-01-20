@@ -196,17 +196,23 @@ FLATBUFFERS_STRUCT_END(IntRange, 8);
 
 FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) FloatRange FLATBUFFERS_FINAL_CLASS {
  private:
+  Effekseer::FB::RefMinMax ref_eq_;
   float min_;
   float max_;
 
  public:
   FloatRange()
-      : min_(0),
+      : ref_eq_(),
+        min_(0),
         max_(0) {
   }
-  FloatRange(float _min, float _max)
-      : min_(flatbuffers::EndianScalar(_min)),
+  FloatRange(const Effekseer::FB::RefMinMax &_ref_eq, float _min, float _max)
+      : ref_eq_(_ref_eq),
+        min_(flatbuffers::EndianScalar(_min)),
         max_(flatbuffers::EndianScalar(_max)) {
+  }
+  const Effekseer::FB::RefMinMax &ref_eq() const {
+    return ref_eq_;
   }
   float min() const {
     return flatbuffers::EndianScalar(min_);
@@ -215,7 +221,7 @@ FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) FloatRange FLATBUFFERS_FINAL_CLASS {
     return flatbuffers::EndianScalar(max_);
   }
 };
-FLATBUFFERS_STRUCT_END(FloatRange, 8);
+FLATBUFFERS_STRUCT_END(FloatRange, 16);
 
 FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) Vec3F FLATBUFFERS_FINAL_CLASS {
  private:

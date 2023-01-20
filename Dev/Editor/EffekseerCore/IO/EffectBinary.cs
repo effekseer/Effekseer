@@ -101,8 +101,8 @@ namespace Effekseer.IO
 			FB.BasicSettings.StartBasicSettings(fbb);
 			FB.BasicSettings.AddMaxGeneration(fbb, 1);
 			FB.BasicSettings.AddLife(fbb, FB.IntRange.CreateIntRange(fbb, 100, 100));
-			FB.BasicSettings.AddGenerationTime(fbb, FB.FloatRange.CreateFloatRange(fbb, 0, 100));
-			FB.BasicSettings.AddGenerationTimeOffset(fbb, FB.FloatRange.CreateFloatRange(fbb, 0, 0));
+			FB.BasicSettings.AddGenerationTime(fbb, FB.FloatRange.CreateFloatRange(fbb, -1, -1, 0, 100));
+			FB.BasicSettings.AddGenerationTimeOffset(fbb, FB.FloatRange.CreateFloatRange(fbb, -1, -1, 0, 0));
 			return FB.BasicSettings.EndBasicSettings(fbb);
 		}
 
@@ -203,16 +203,33 @@ namespace Effekseer.IO
 			{
 				// TODO
 				var param = positionParam.LocationFCurve;
+
+				//param.FCurve.X.
 			}
 			else if (positionParam.Type == EffectAsset.PositionParameter.ParamaterType.ViewOffset)
 			{
 				// TODO
 				var param = positionParam.ViewOffset;
+				var distance = ExportFloatRange(fbb, effectAsset, param.Distance);
+
+				FB.PositionSettings_ViewOffset.StartPositionSettings_ViewOffset(fbb);
+				FB.PositionSettings_ViewOffset.AddDistance(fbb, distance);
+				FB.PositionSettings_ViewOffset.EndPositionSettings_ViewOffset(fbb);
 			}
 			else if (positionParam.Type == EffectAsset.PositionParameter.ParamaterType.NurbsCurve)
 			{
 				// TODO
 				var param = positionParam.NurbsCurve;
+
+				FB.PositionSettings_NurbsCurve.StartPositionSettings_NurbsCurve(fbb);
+
+				// TODO
+				FB.PositionSettings_NurbsCurve.AddIndex(fbb, -1);
+				FB.PositionSettings_NurbsCurve.AddLoopType(fbb, (int)param.LoopType);
+				FB.PositionSettings_NurbsCurve.AddScale(fbb, param.Scale);
+				FB.PositionSettings_NurbsCurve.AddMoveSpeed(fbb, param.MoveSpeed);
+
+				FB.PositionSettings_NurbsCurve.EndPositionSettings_NurbsCurve(fbb);
 			}
 
 			FB.PositionSettings.StartPositionSettings(fbb);
@@ -228,6 +245,19 @@ namespace Effekseer.IO
 			}
 
 			return FB.PositionSettings.EndPositionSettings(fbb);
+		}
+
+		FlatBuffers.Offset<Effekseer.FB.FloatRange> ExportFloatRange(FlatBuffers.FlatBufferBuilder fbb, EffectAsset.EffectAsset effectAsset, EffectAsset.FloatWithRange param)
+		{
+			int refMin = -1;
+			int refMax = -1;
+			if (param.IsDynamicEquationEnabled)
+			{
+				refMin = effectAsset.DynamicEquations.IndexOf(param.DynamicEquationMin);
+				refMax = effectAsset.DynamicEquations.IndexOf(param.DynamicEquationMax);
+			}
+
+			return Effekseer.FB.FloatRange.CreateFloatRange(fbb, refMin, refMax, param.Min, param.Max);
 		}
 
 		FlatBuffers.Offset<Effekseer.FB.Vec3FRange> ExportVec3FRange(FlatBuffers.FlatBufferBuilder fbb, EffectAsset.EffectAsset effectAsset, EffectAsset.Vector3WithRange param)
@@ -255,11 +285,13 @@ namespace Effekseer.IO
 		class DependencyProperty
 		{
 			public List<string> Textures = new List<string>();
+			public List<string> Curves = new List<string>();
 		}
 
 		DependencyProperty CollectDependencies(PartsTreeSystem.NodeTree nodeTree, EffectAsset.EffectAssetEnvironment env)
 		{
 			var textures = new SortedSet<string>();
+			var curves = new SortedSet<string>();
 
 			void collect(EffectAsset.Node node)
 			{
@@ -269,6 +301,12 @@ namespace Effekseer.IO
 					{
 						var path = env.GetAssetPath(pn.TextureTest);
 						textures.Add(path);
+					}
+
+					if (pn.PositionParam.Type == EffectAsset.PositionParameter.ParamaterType.NurbsCurve)
+					{
+						var path = env.GetAssetPath(pn.PositionParam.NurbsCurve.FilePath);
+						curves.Add(path);
 					}
 				}
 
