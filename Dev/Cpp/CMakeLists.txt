@@ -177,8 +177,12 @@ endif()
 
 
 if (BUILD_TEST)
+	add_subdirectory("TestRuntimeFramework")
 	add_subdirectory("Test")
+	add_subdirectory("TakeScreenshots")
+    set_target_properties (TestRuntimeFramework PROPERTIES FOLDER Tests)
     set_target_properties (TestCpp PROPERTIES FOLDER Tests)
+    set_target_properties (TakeScreenshots PROPERTIES FOLDER Tests)
 endif()
 
 if(BUILD_VIEWER)

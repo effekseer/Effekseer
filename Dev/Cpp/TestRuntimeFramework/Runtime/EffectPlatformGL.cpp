@@ -1,5 +1,12 @@
+#if !defined(__APPLE__)
+#define GLEW_STATIC
+typedef char GLchar;
+#include <GL/glew.h>
+#endif
+
 #include "EffectPlatformGL.h"
 #include "../../3rdParty/stb/stb_image_write.h"
+#include <EffekseerRendererGL.h>
 
 class DistortingCallbackGL : public EffekseerRenderer::DistortingCallback
 {
@@ -46,17 +53,40 @@ EffekseerRenderer::RendererRef EffectPlatformGL::CreateRenderer()
 
 EffectPlatformGL::~EffectPlatformGL()
 {
+	glDeleteFramebuffers(1, &frameBuffer_);
 }
 
 void EffectPlatformGL::InitializeDevice(const EffectPlatformInitializingParameter& param)
 {
+	graphicsDevice_ = EffekseerRendererGL::CreateGraphicsDevice(EffekseerRendererGL::OpenGLDeviceType::OpenGL3);
+	Effekseer::Backend::TextureParameter textureParam;
+	textureParam.Dimension = 2;
+	textureParam.Format = Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM;
+	textureParam.Size[0] = initParam_.WindowSize[0];
+	textureParam.Size[1] = initParam_.WindowSize[1];
+
+	Effekseer::CustomVector<uint8_t> data;
+	data.resize(checkeredPattern_.size() * 4);
+
+	data.assign(reinterpret_cast<uint8_t*>(checkeredPattern_.data()), reinterpret_cast<uint8_t*>(checkeredPattern_.data() + checkeredPattern_.size()));
+
+	checkedTexture_ = graphicsDevice_->CreateTexture(textureParam, data);
+
+	glGenFramebuffers(1, &frameBuffer_);
 }
 
 void EffectPlatformGL::BeginRendering()
 {
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glDrawPixels(initParam_.WindowSize[0], initParam_.WindowSize[1], GL_RGBA, GL_UNSIGNED_BYTE, checkeredPattern_.data());
+
+	const auto prop = EffekseerRendererGL::GetTextureProperty(checkedTexture_);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, frameBuffer_);
+	glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, prop.Buffer, 0);
+	glBlitFramebuffer(0, 0, initParam_.WindowSize[0], initParam_.WindowSize[1], 0, 0, initParam_.WindowSize[0], initParam_.WindowSize[1], GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 	glFlush();
 	glFinish();
 }

@@ -1,7 +1,7 @@
 #include "../TestHelper.h"
 #include "Helper.h"
 
-#include "../RenderingEnvironment/RenderingEnvironmentGL.h"
+#include <RenderingEnvironment/RenderingEnvironmentGL.h>
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -15,7 +15,7 @@ namespace DX11PS
 #include "../Shaders/HLSL_DX11_Header/textures_ps.h"
 }
 
-#include "../RenderingEnvironment/RenderingEnvironmentDX11.h"
+#include <RenderingEnvironment/RenderingEnvironmentDX11.h>
 
 #endif
 

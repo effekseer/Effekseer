@@ -45,6 +45,21 @@ void DisableLayouts(const Effekseer::CustomVector<GLint>& locations);
 
 void StoreUniforms(const ShaderRef& shader, const UniformBufferRef& vertexUniform, const UniformBufferRef& fragmentUniform, bool transpose);
 
+class VertexArrayObject
+{
+private:
+	GLuint vao_ = 0;
+	std::thread::id gen_thread_id_ = std::thread::id{};
+
+public:
+	VertexArrayObject();
+	~VertexArrayObject();
+
+	bool IsValid() const;
+
+	GLuint GetVAO() const;
+};
+
 class DeviceObject
 {
 private:
@@ -224,7 +239,6 @@ private:
 
 	GraphicsDevice* graphicsDevice_ = nullptr;
 	GLuint program_ = 0;
-	GLuint vao_ = 0;
 
 	Effekseer::CustomVector<Effekseer::CustomString<char>> vsCodes_;
 	Effekseer::CustomVector<Effekseer::CustomString<char>> psCodes_;
@@ -246,30 +260,13 @@ public:
 
 	void OnResetDevice() override;
 
-	GLuint GetProgram() const
-	{
-		return program_;
-	}
+	GLuint GetProgram() const;
 
-	GLuint GetVAO() const
-	{
-		return vao_;
-	}
+	const Effekseer::Backend::UniformLayoutRef& GetLayout() const;
 
-	const Effekseer::Backend::UniformLayoutRef& GetLayout() const
-	{
-		return layout_;
-	}
+	const Effekseer::CustomVector<GLint>& GetTextureLocations() const;
 
-	const Effekseer::CustomVector<GLint>& GetTextureLocations() const
-	{
-		return textureLocations_;
-	}
-
-	const Effekseer::CustomVector<GLint>& GetUniformLocations() const
-	{
-		return uniformLocations_;
-	}
+	const Effekseer::CustomVector<GLint>& GetUniformLocations() const;
 };
 
 class PipelineState
@@ -279,6 +276,7 @@ class PipelineState
 private:
 	Effekseer::Backend::PipelineStateParameter param_;
 	Effekseer::CustomVector<GLint> attribLocations_;
+	std::unique_ptr<VertexArrayObject> vao_;
 
 public:
 	PipelineState() = default;
@@ -294,6 +292,11 @@ public:
 	const Effekseer::CustomVector<GLint>& GetAttribLocations() const
 	{
 		return attribLocations_;
+	}
+
+	const std::unique_ptr<VertexArrayObject>& GetVAO() const
+	{
+		return vao_;
 	}
 };
 

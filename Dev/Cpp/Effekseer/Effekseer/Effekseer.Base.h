@@ -89,24 +89,18 @@ enum class eInstanceState : int32_t
 	INSTANCE_STATE_DISPOSING,
 };
 
-/**
-	@brief	A type of node
-*/
-enum class eEffectNodeType : int32_t
-{
-	Root = -1,
-	NoneType = 0,
-	Sprite = 2,
-	Ribbon = 3,
-	Ring = 4,
-	Model = 5,
-	Track = 6,
-};
-
 enum class ModelReferenceType : int32_t
 {
 	File,
 	Procedural,
+};
+
+enum class BindType : int32_t
+{
+	NotBind = 0,
+	NotBind_Root = 3,
+	WhenCreating = 1,
+	Always = 2,
 };
 
 class StringHelper

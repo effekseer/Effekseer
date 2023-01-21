@@ -112,7 +112,7 @@ private:
 	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>* m_standardRenderer;
 
 	//! default vao (alsmot for material)
-	GLuint defaultVertexArray_ = 0;
+	std::unique_ptr<Backend::VertexArrayObject> defaultVAO_;
 
 	::EffekseerRenderer::RenderStateBase* m_renderState;
 

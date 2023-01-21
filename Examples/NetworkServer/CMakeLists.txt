@@ -26,6 +26,12 @@ target_include_directories(
 	${EFK_THIRDPARTY_INCLUDES}
 )
 
+target_link_directories(
+    ${PROJECT_NAME}
+    PRIVATE
+    ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES}
+)
+
 set (MODULE_LIBRARIES Effekseer EffekseerRendererGL ${EFK_EXAMPLES_GLFW} Example_Utils)
 
 if (WIN32)

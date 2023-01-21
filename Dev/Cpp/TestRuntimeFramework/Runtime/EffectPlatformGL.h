@@ -6,6 +6,10 @@
 class EffectPlatformGL final : public EffectPlatformGLFW
 {
 private:
+	Effekseer::Backend::GraphicsDeviceRef graphicsDevice_ = nullptr;
+	Effekseer::Backend::TextureRef checkedTexture_ = nullptr;
+	GLuint frameBuffer_ = 0;
+
 protected:
 	EffekseerRenderer::RendererRef CreateRenderer() override;
 

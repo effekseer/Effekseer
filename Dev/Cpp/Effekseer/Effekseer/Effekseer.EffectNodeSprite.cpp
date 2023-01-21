@@ -20,7 +20,7 @@ namespace Effekseer
 
 void EffectNodeSprite::LoadRendererParameter(unsigned char*& pos, const SettingRef& setting)
 {
-	eEffectNodeType type = eEffectNodeType::NoneType;
+	EffectNodeType type = EffectNodeType::NoneType;
 	memcpy(&type, pos, sizeof(int));
 	pos += sizeof(int);
 	assert(type == GetType());

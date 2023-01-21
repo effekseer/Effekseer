@@ -40,7 +40,7 @@ add_library(EffekseerCore
 
 set_target_properties(EffekseerCore PROPERTIES
     DOTNET_SDK "Microsoft.NET.Sdk"
-    DOTNET_TARGET_FRAMEWORK "net5.0")
+    DOTNET_TARGET_FRAMEWORK "net6.0")
 
 set_property(TARGET EffekseerCore PROPERTY VS_GLOBAL_AllowUnsafeBlocks "true")
 set_property(TARGET EffekseerCore PROPERTY VS_GLOBAL_DefineConstants "SCRIPT_ENABLED;")
@@ -85,7 +85,7 @@ add_executable(EffekseerEditor
 
 set_target_properties(EffekseerEditor PROPERTIES
     DOTNET_SDK "Microsoft.NET.Sdk"
-    DOTNET_TARGET_FRAMEWORK "net5.0")
+    DOTNET_TARGET_FRAMEWORK "net6.0")
 
 set_target_properties(EffekseerEditor PROPERTIES
     VS_DOTNET_REFERENCES "System;System.Xml;System.Xml.Linq;System.Text.RegularExpressions;Microsoft.CSharp;System.IO.Compression")
@@ -122,7 +122,7 @@ if (BUILD_TEST)
 
     set_target_properties(TestCSharp PROPERTIES
         DOTNET_SDK "Microsoft.NET.Sdk"
-        DOTNET_TARGET_FRAMEWORK "net5.0")
+        DOTNET_TARGET_FRAMEWORK "net6.0")
     
     set_target_properties(TestCSharp PROPERTIES VS_DOTNET_REFERENCES "System;System.Xml;System.Xml.Linq;System.Text.RegularExpressions;Microsoft.CSharp;System.IO.Compression")
 

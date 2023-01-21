@@ -1,5 +1,7 @@
-﻿#if !(defined(__EFFEKSEER_NETWORK_DISABLED__))
+﻿
+#if (defined(__EFFEKSEER_NETWORK_ENABLED__))
 
+#include <string.h>
 #include "Effekseer.Session.h"
 
 namespace Effekseer
@@ -89,8 +91,7 @@ void Session::RecvThread()
 		}
 
 		size_t offset = 0;
-		while (offset < packetBufferFilled_ ||
-			(state_ == State::ReceivePayload && currentHeader_.payloadSize == 0))
+		while (offset < packetBufferFilled_)
 		{
 			const uint8_t* dataPtr = &packetBuffer_[offset];
 			const size_t dataSize = packetBufferFilled_ - offset;
@@ -155,20 +156,11 @@ bool Session::Send(uint16_t messageID, const ByteData& payload)
 
 	int32_t ret = 0;
 	ret = socket_->Send(&msgHeader, sizeof(msgHeader));
+	ret = socket_->Send(payload.data, (int32_t)payload.size);
 	if (ret <= 0)
 	{
 		Close();
 		return false;
-	}
-
-	if (payload.size > 0)
-	{
-		ret = socket_->Send(payload.data, (int32_t)payload.size);
-		if (ret <= 0)
-		{
-			Close();
-			return false;
-		}
 	}
 
 	return true;
@@ -205,20 +197,11 @@ bool Session::SendRequest(uint16_t requestID, const ByteData& payload, ResponseH
 
 	int32_t ret = 0;
 	ret = socket_->Send(&reqHeader, sizeof(reqHeader));
+	ret = socket_->Send(payload.data, (int32_t)payload.size);
 	if (ret <= 0)
 	{
 		Close();
 		return false;
-	}
-
-	if (payload.size > 0)
-	{
-		ret = socket_->Send(payload.data, (int32_t)payload.size);
-		if (ret <= 0)
-		{
-			Close();
-			return false;
-		}
 	}
 
 	return true;
@@ -238,20 +221,11 @@ bool Session::SendResponse(uint16_t responseID, int32_t code, const ByteData& pa
 
 	int32_t ret = 0;
 	ret = socket_->Send(&resHeader, sizeof(resHeader));
+	ret = socket_->Send(payload.data, (int32_t)payload.size);
 	if (ret <= 0)
 	{
 		Close();
 		return false;
-	}
-
-	if (payload.size > 0)
-	{
-		ret = socket_->Send(payload.data, (int32_t)payload.size);
-		if (ret <= 0)
-		{
-			Close();
-			return false;
-		}
 	}
 
 	return true;

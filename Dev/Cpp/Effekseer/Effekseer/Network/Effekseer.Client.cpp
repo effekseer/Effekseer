@@ -1,6 +1,5 @@
 ﻿
-#if !(defined(__EFFEKSEER_NETWORK_DISABLED__))
-#if !(defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE))
+#if (defined(__EFFEKSEER_NETWORK_ENABLED__))
 
 #include "Effekseer.Client.h"
 #include "Effekseer.ClientImplemented.h"
@@ -59,11 +58,6 @@ void ClientImplemented::Update()
 	{
 		session_.Update();
 	}
-}
-
-bool ClientImplemented::IsConnected() const
-{
-	return session_.IsActive();
 }
 
 void ClientImplemented::Reload(const char16_t* key, void* data, int32_t size)
@@ -142,5 +136,4 @@ void ClientImplemented::OnProfileSample(const Session::Message& msg)
 
 } // namespace Effekseer
 
-#endif // #if !( defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE) )
 #endif

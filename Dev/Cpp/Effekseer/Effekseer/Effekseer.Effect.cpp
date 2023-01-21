@@ -550,7 +550,8 @@ bool EffectImplemented::LoadBody(const uint8_t* data, int32_t size, float mag)
 		}
 	}
 
-	const auto loadCurves = [&]() -> void {
+	const auto loadCurves = [&]() -> void
+	{
 		// curve
 		int32_t curveCount = 0;
 		binaryReader.Read(curveCount, 0, elementCountMax);
@@ -571,7 +572,8 @@ bool EffectImplemented::LoadBody(const uint8_t* data, int32_t size, float mag)
 		}
 	};
 
-	const auto loadProceduralModels = [&]() -> void {
+	const auto loadProceduralModels = [&]() -> void
+	{
 		// curve
 		int32_t pmCount = 0;
 
@@ -1616,7 +1618,8 @@ EffectTerm EffectImplemented::CalculateTerm() const
 	EffectInstanceTerm rootTerm;
 
 	std::function<void(EffectNode*, EffectInstanceTerm&)> recurse;
-	recurse = [&effectTerm, &recurse](EffectNode* node, EffectInstanceTerm& term) -> void {
+	recurse = [&effectTerm, &recurse](EffectNode* node, EffectInstanceTerm& term) -> void
+	{
 		for (int i = 0; i < node->GetChildrenCount(); i++)
 		{
 			auto cterm = node->GetChild(i)->CalculateInstanceTerm(term);

@@ -1,7 +1,7 @@
-#include "../RenderingEnvironment/RenderingEnvironmentGL.h"
 #include "../TestHelper.h"
 #include "Effekseer.h"
 #include <EffekseerRendererGL.h>
+#include <RenderingEnvironment/RenderingEnvironmentGL.h>
 
 struct SimpleVertex
 {
@@ -312,5 +312,6 @@ void Backend_RenderPass(std::shared_ptr<RenderingEnvironment> window)
 }
 
 #if !defined(__FROM_CI__)
-TestRegister Test_Backend_RenderPass("Backend.RenderPass_GL", []() -> void { Backend_RenderPass(std::make_shared<RenderingEnvironmentGL>(std::array<int, 2>({1280, 720}), "Backend.Mesh")); });
+TestRegister Test_Backend_RenderPass("Backend.RenderPass_GL", []() -> void
+									 { Backend_RenderPass(std::make_shared<RenderingEnvironmentGL>(std::array<int, 2>({1280, 720}), "Backend.Mesh")); });
 #endif

@@ -37,8 +37,16 @@ Supported platforms
 - Cocos2d-x
 - Console games (Please mail to effekseer(at)gmail.com)
 
-Repositories
+Sponsors
 =========
+
+- [Epic Games (Epic MegaGrants)](https://www.unrealengine.com/en-US/megagrants)
+- [EXBO](https://exbo.net/)
+
+Development
+=========
+
+### Repositories
 
 * [ForUnity](https://github.com/effekseer/EffekseerForUnity)
 
@@ -88,18 +96,10 @@ Repositories
 
 [コーディングルール](docs/Development/CodingRule_Ja.md)
 
-# For contributors
+### For contributors
 
 Please read issues. We always welcome pull requests for improvements, bug fixes, and so on.
 
 issuesを読んでください。常時、機能追加、バグ修正といったプルリクエストを募集しております。
 
 [Issues](https://github.com/effekseer/Effekseer/issues)
-
-These are not on issue. But it is welcome.
-
-- Add samples (サンプルの追加)
-- Add tutorial documents (チュートリアルのドキュメントの追加)
-- Add tests for a runtime (ランタイムのテストの追加)
-- Translate documents from Japanese into English (ドキュメントの日本語から英語への翻訳)
-

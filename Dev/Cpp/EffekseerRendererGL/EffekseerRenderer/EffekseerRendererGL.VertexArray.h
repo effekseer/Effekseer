@@ -18,7 +18,7 @@ namespace EffekseerRendererGL
 class VertexArray : public DeviceObject
 {
 private:
-	GLuint m_vertexArray;
+	std::unique_ptr<Backend::VertexArrayObject> vao_;
 
 	Shader* m_shader;
 	VertexBuffer* m_vertexBuffer;
@@ -34,7 +34,12 @@ public:
 
 	GLuint GetInterface() const
 	{
-		return m_vertexArray;
+		if (vao_ == nullptr)
+		{
+			return 0;
+		}
+
+		return vao_->GetVAO();
 	}
 
 	VertexBuffer* GetVertexBuffer()

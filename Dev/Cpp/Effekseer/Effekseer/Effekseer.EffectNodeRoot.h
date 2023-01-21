@@ -22,9 +22,9 @@ public:
 
 	~EffectNodeRoot() = default;
 
-	eEffectNodeType GetType() const
+	EffectNodeType GetType() const override
 	{
-		return eEffectNodeType::Root;
+		return EffectNodeType::Root;
 	}
 };
 

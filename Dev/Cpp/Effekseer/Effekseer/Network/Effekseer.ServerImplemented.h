@@ -3,7 +3,6 @@
 #define __EFFEKSEER_SERVER_IMPLEMENTED_H__
 
 #if (defined(__EFFEKSEER_NETWORK_ENABLED__))
-#if !(defined(_PSVITA) || defined(_SWITCH) || defined(_XBOXONE))
 
 #include "../Effekseer.Base.h"
 #include "Effekseer.Server.h"
@@ -46,23 +45,17 @@ private:
 	std::map<std::u16string, EffectParameter> effects_;
 	std::u16string materialPath_;
 
-	struct UpdateContext
+	struct Context
 	{
-		ManagerRef* managers = nullptr;
-		int32_t managerCount = 0;
-		ReloadingThreadType reloadingThreadType{};
+		ManagerRef* managers;
+		int32_t managerCount;
+		ReloadingThreadType reloadingThreadType;
 	};
-	UpdateContext updateContext_;
+	Context context_{};
 
 	void AcceptAsync();
 
-	void OnReload(InternalClient& client, const Session::Message& msg);
-
-	void OnStartProfiling(InternalClient& client, const Session::Message& msg);
-
-	void OnStopProfiling(InternalClient& client, const Session::Message& msg);
-
-	void UpdateProfiler(InternalClient& client);
+	void OnDataReceived(const Session::Message& msg);
 
 public:
 	ServerImplemented();
@@ -98,7 +91,6 @@ public:
 
 } // namespace Effekseer
 
-#endif // #if !( defined(_PSVITA) || defined(_SWITCH) || defined(_XBOXONE) )
 #endif
 
 #endif // __EFFEKSEER_SERVER_IMPLEMENTED_H__

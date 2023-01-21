@@ -1,11 +1,10 @@
 ﻿
-#if !(defined(__EFFEKSEER_NETWORK_DISABLED__))
-#if !(defined(_PSVITA) || defined(_XBOXONE))
+#if (defined(__EFFEKSEER_NETWORK_ENABLED__))
 
 #include "Effekseer.Server.h"
-#include "../Effekseer.Effect.h"
-#include "../Effekseer.ManagerImplemented.h"
 #include "Effekseer.ServerImplemented.h"
+
+#include "../Effekseer.Effect.h"
 #include "data/reload_generated.h"
 #include "data/profiler_generated.h"
 
@@ -39,13 +38,9 @@ void ServerImplemented::AcceptAsync()
 
 		// Accept and add an internal client
 		std::unique_ptr<InternalClient> client(new InternalClient());
-		auto clientPtr = client.get();
-
 		client->socket = std::move(socket);
 		client->session.Open(&client->socket);
-		client->session.OnReceived(1, [this, clientPtr](const Session::Message& msg){
-			OnReload(*clientPtr, msg);
-		});
+		client->session.OnReceived(1, [this](const Session::Message& msg){ OnDataReceived(msg); });
 		client->session.OnReceived(100, [this, clientPtr](const Session::Message& msg){
 			OnStartProfiling(*clientPtr, msg);
 		});
@@ -60,7 +55,7 @@ void ServerImplemented::AcceptAsync()
 	}
 }
 
-void ServerImplemented::OnReload(InternalClient& client, const Session::Message& msg)
+void ServerImplemented::OnDataReceived(const Session::Message& msg)
 {
 	auto fb = Data::GetNetworkReload(msg.payload.data);
 	auto fbKey = fb->key();
@@ -78,18 +73,8 @@ void ServerImplemented::OnReload(InternalClient& client, const Session::Message&
 
 		// Reload the effect
 		const char16_t* materialPath = (materialPath_.size() > 0) ? materialPath_.c_str() : nullptr;
-		effect->Reload(updateContext_.managers, updateContext_.managerCount, effectData, (int32_t)effectSize, materialPath, updateContext_.reloadingThreadType);
+		effect->Reload(context_.managers, context_.managerCount, effectData, (int32_t)effectSize, materialPath, context_.reloadingThreadType);
 	}
-}
-
-void ServerImplemented::OnStartProfiling(InternalClient& client, const Session::Message& msg)
-{
-	client.isProfiling = true;
-}
-
-void ServerImplemented::OnStopProfiling(InternalClient& client, const Session::Message& msg)
-{
-	client.isProfiling = false;
 }
 
 bool ServerImplemented::Start(uint16_t port)
@@ -170,9 +155,9 @@ void ServerImplemented::Unregister(const EffectRef& effect)
 
 void ServerImplemented::Update(ManagerRef* managers, int32_t managerCount, ReloadingThreadType reloadingThreadType)
 {
-	updateContext_.managers = managers;
-	updateContext_.managerCount = managerCount;
-	updateContext_.reloadingThreadType = reloadingThreadType;
+	context_.managers = managers;
+	context_.managerCount = managerCount;
+	context_.reloadingThreadType = reloadingThreadType;
 
 	std::lock_guard<std::mutex> lock(clientsMutex_);
 
@@ -186,6 +171,7 @@ void ServerImplemented::Update(ManagerRef* managers, int32_t managerCount, Reloa
 		[](const std::unique_ptr<InternalClient>& client){ return !client->session.IsActive(); });
 	clients_.erase(removeIt, clients_.end());
 }
+
 
 void ServerImplemented::UpdateProfiler(InternalClient& client)
 {
@@ -266,5 +252,4 @@ bool ServerImplemented::IsConnected() const
 
 } // namespace Effekseer
 
-#endif // #if !( defined(_PSVITA) || defined(_XBOXONE) )
 #endif

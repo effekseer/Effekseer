@@ -201,12 +201,6 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_DELETE(m_renderState);
 	ES_SAFE_DELETE(m_indexBuffer);
 	ES_SAFE_DELETE(m_indexBufferForWireframe);
-
-	if (GLExt::IsSupportedVertexArray() && defaultVertexArray_ > 0)
-	{
-		GLExt::glDeleteVertexArrays(1, &defaultVertexArray_);
-		defaultVertexArray_ = 0;
-	}
 }
 
 void RendererImplemented::OnLostDevice()
@@ -451,7 +445,11 @@ bool RendererImplemented::Initialize()
 
 	if (GLExt::IsSupportedVertexArray())
 	{
-		GLExt::glGenVertexArrays(1, &defaultVertexArray_);
+		defaultVAO_ = std::make_unique<Backend::VertexArrayObject>();
+		if (!defaultVAO_->IsValid())
+		{
+			defaultVAO_.reset();
+		}
 	}
 
 	// Transpiled shader for OpenGL 3.x is transposed
@@ -1095,9 +1093,9 @@ void RendererImplemented::BeginShader(Shader* shader)
 	{
 		m_currentVertexArray = nullptr;
 
-		if (defaultVertexArray_ > 0)
+		if (defaultVAO_ != nullptr)
 		{
-			GLExt::glBindVertexArray(defaultVertexArray_);
+			GLExt::glBindVertexArray(defaultVAO_->GetVAO());
 		}
 	}
 
@@ -1153,7 +1151,7 @@ void RendererImplemented::EndShader(Shader* shader)
 		GLExt::glBindBuffer(GL_ARRAY_BUFFER, 0);
 		GLCheckError();
 
-		if (defaultVertexArray_ > 0)
+		if (defaultVAO_ != nullptr)
 		{
 			GLExt::glBindVertexArray(0);
 		}

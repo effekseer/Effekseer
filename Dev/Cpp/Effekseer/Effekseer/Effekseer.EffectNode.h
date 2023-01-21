@@ -15,12 +15,17 @@
 #include "Noise/CurlNoise.h"
 #include "Parameter/AllTypeColor.h"
 #include "Parameter/AlphaCutoff.h"
+#include "Parameter/BasicSettings.h"
 #include "Parameter/CustomData.h"
+#include "Parameter/DepthParameter.h"
 #include "Parameter/DynamicParameter.h"
 #include "Parameter/Easing.h"
 #include "Parameter/Effekseer.Parameters.h"
+#include "Parameter/KillRules.h"
+#include "Parameter/LOD.h"
 #include "Parameter/Rotation.h"
 #include "Parameter/Scaling.h"
+#include "Parameter/Sound.h"
 #include "Parameter/SpawnMethod.h"
 #include "Parameter/Translation.h"
 #include "Parameter/UV.h"
@@ -29,33 +34,6 @@
 
 namespace Effekseer
 {
-
-enum class BindType : int32_t
-{
-	NotBind = 0,
-	NotBind_Root = 3,
-	WhenCreating = 1,
-	Always = 2,
-};
-
-enum class NonMatchingLODBehaviour : int32_t
-{
-	Hide = 0,
-	DontSpawn = 1,
-	DontSpawnAndHide = 2
-};
-
-enum class TranslationParentBindType : int32_t
-{
-	NotBind = 0,
-	NotBind_Root = 3,
-	WhenCreating = 1,
-	Always = 2,
-	NotBind_FollowParent = 4,
-	WhenCreating_FollowParent = 5,
-};
-
-bool operator==(const TranslationParentBindType& lhs, const BindType& rhs);
 
 enum class TriggerType : uint8_t
 {
@@ -69,131 +47,6 @@ struct alignas(2) TriggerValues
 	uint8_t index = 0;
 };
 
-struct ParameterCommonValues_8
-{
-	int MaxGeneration;
-	BindType TranslationBindType;
-	BindType RotationBindType;
-	BindType ScalingBindType;
-	int RemoveWhenLifeIsExtinct;
-	int RemoveWhenParentIsRemoved;
-	int RemoveWhenChildrenIsExtinct;
-	random_int life;
-	float GenerationTime;
-	float GenerationTimeOffset;
-};
-
-struct ParameterCommonValues
-{
-	int32_t RefEqMaxGeneration = -1;
-	RefMinMax RefEqLife;
-	RefMinMax RefEqGenerationTime;
-	RefMinMax RefEqGenerationTimeOffset;
-
-	int MaxGeneration = 1;
-	TranslationParentBindType TranslationBindType = TranslationParentBindType::Always;
-	BindType RotationBindType = BindType::Always;
-	BindType ScalingBindType = BindType::Always;
-	int RemoveWhenLifeIsExtinct = 1;
-	int RemoveWhenParentIsRemoved = 0;
-	int RemoveWhenChildrenIsExtinct = 0;
-	random_int life;
-	random_float GenerationTime;
-	random_float GenerationTimeOffset;
-
-	ParameterCommonValues()
-	{
-		life.max = 1;
-		life.min = 1;
-		GenerationTime.max = 1;
-		GenerationTime.min = 1;
-		GenerationTimeOffset.max = 0;
-		GenerationTimeOffset.min = 0;
-	}
-};
-
-struct ParameterLODs
-{
-	int MatchingLODs = 0b1111;
-	NonMatchingLODBehaviour LODBehaviour = NonMatchingLODBehaviour::Hide;
-};
-
-enum class KillType : int32_t
-{
-	None = 0,
-	Box = 1,
-	Plane = 2,
-	Sphere = 3
-};
-
-struct KillRulesParameter
-{
-
-	KillType Type = KillType::None;
-	int IsScaleAndRotationApplied = 1;
-
-	union
-	{
-		struct
-		{
-			vector3d Center; // In local space
-			vector3d Size;	 // In local space
-			int IsKillInside;
-		} Box;
-
-		struct
-		{
-			vector3d PlaneAxis; // in local space
-			float PlaneOffset;	// in the direction of plane axis
-		} Plane;
-
-		struct
-		{
-			vector3d Center; // in local space
-			float Radius;
-			int IsKillInside;
-		} Sphere;
-	};
-
-	void MakeCoordinateSystemLH()
-	{
-		if (Type == KillType::Box)
-		{
-			Box.Center.z *= -1.0F;
-		}
-		else if (Type == KillType::Plane)
-		{
-			Plane.PlaneAxis.z *= -1.0F;
-		}
-		else if (Type == KillType::Sphere)
-		{
-			Sphere.Center.z *= -1.0F;
-		}
-	}
-};
-
-struct ParameterDepthValues
-{
-	float DepthOffset;
-	bool IsDepthOffsetScaledWithCamera;
-	bool IsDepthOffsetScaledWithParticleScale;
-	ZSortType ZSort;
-	int32_t DrawingPriority;
-	float SoftParticle;
-
-	NodeRendererDepthParameter DepthParameter;
-
-	ParameterDepthValues()
-	{
-		DepthOffset = 0;
-		IsDepthOffsetScaledWithCamera = false;
-		IsDepthOffsetScaledWithParticleScale = false;
-		ZSort = ZSortType::None;
-		DrawingPriority = 0;
-		SoftParticle = 0.0f;
-	}
-};
-
 struct SteeringBehaviorParameter
 {
 	random_float MaxFollowSpeed;
@@ -205,36 +58,6 @@ struct TriggerParameter
 	TriggerValues ToStartGeneration;
 	TriggerValues ToStopGeneration;
 	TriggerValues ToRemove;
-};
-
-enum class LocationAbsType : int32_t
-{
-	None = 0,
-	Gravity = 1,
-	AttractiveForce = 2,
-};
-
-struct LocationAbsParameter
-{
-	LocationAbsType type = LocationAbsType::None;
-
-	union
-	{
-		struct
-		{
-
-		} none;
-
-		SIMD::Vec3f gravity;
-
-		struct
-		{
-			float force;
-			float control;
-			float minRange;
-			float maxRange;
-		} attractiveForce;
-	};
 };
 
 struct ParameterRendererCommon
@@ -634,42 +457,6 @@ struct ParameterRendererCommon
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-enum ParameterSoundType
-{
-	ParameterSoundType_None = 0,
-	ParameterSoundType_Use = 1,
-
-	ParameterSoundType_DWORD = 0x7fffffff,
-};
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-enum ParameterSoundPanType
-{
-	ParameterSoundPanType_2D = 0,
-	ParameterSoundPanType_3D = 1,
-
-	ParameterSoundPanType_DWORD = 0x7fffffff,
-};
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-struct ParameterSound
-{
-	int32_t WaveId;
-	random_float Volume;
-	random_float Pitch;
-	ParameterSoundPanType PanType;
-	random_float Pan;
-	float Distance;
-	random_int Delay;
-};
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 enum eRenderingOrder
 {
 	RenderingOrder_FirstCreatedInstanceIsFirst = 0,
@@ -704,6 +491,8 @@ protected:
 	EffectNodeImplemented(Effect* effect, unsigned char*& pos);
 
 	virtual ~EffectNodeImplemented();
+
+	void AdjustSettings(const SettingRef& setting);
 
 	void LoadParameter(unsigned char*& pos, EffectNode* parent, const SettingRef& setting);
 
@@ -748,7 +537,6 @@ public:
 	bool EnableFalloff = false;
 	FalloffParameter FalloffParam{};
 
-	ParameterSoundType SoundType = ParameterSoundType_None;
 	ParameterSound Sound;
 
 	eRenderingOrder RenderingOrder = RenderingOrder_FirstCreatedInstanceIsFirst;
@@ -818,9 +606,9 @@ public:
 	/**
 	@brief	ノードの種類取得
 	*/
-	virtual eEffectNodeType GetType() const
+	virtual EffectNodeType GetType() const override
 	{
-		return eEffectNodeType::NoneType;
+		return EffectNodeType::NoneType;
 	}
 
 	RefPtr<RenderingUserData> GetRenderingUserData() override
