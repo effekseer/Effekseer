@@ -249,8 +249,19 @@ namespace Effekseer.GUI.Inspector
 				{
 					if (VisiblityControllers.ContainsKey(attr.ID))
 					{
-						// TODO: also bool implementation
-						var controllerValue = (int)VisiblityControllers[attr.ID];
+						var controllerField = VisiblityControllers[attr.ID];
+						int controllerValue = 0;
+						
+						if (controllerField.GetType().IsEnum)
+						{
+
+							controllerValue = (int)controllerField;
+						}
+						else if (controllerField.GetType() == typeof(bool))
+						{
+							controllerValue = (bool)controllerField ? 1 : 0;
+						}
+
 						isVisible = (attr.Value == controllerValue);
 					}
 				}
