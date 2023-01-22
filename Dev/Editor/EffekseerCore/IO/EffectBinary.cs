@@ -282,6 +282,159 @@ namespace Effekseer.IO
 				param.Z.Max);
 		}
 
+		Effekseer.FB.PositionSettingsT ToFB(EffectAsset.EffectAsset effectAsset, Effekseer.EffectAsset.PositionParameter positionParam)
+		{
+			var ret = new Effekseer.FB.PositionSettingsT();
+			ret.Type = (FB.PositionType)positionParam.Type;
+			if (positionParam.Type == EffectAsset.PositionParameter.ParamaterType.Fixed)
+			{
+				var param = positionParam.Fixed;
+				var dst = new FB.PositionSettings_FixedT();
+				dst.RefEq = effectAsset.DynamicEquations.IndexOf(param.Location.DynamicEquation);
+				dst.Value = new FB.Vec3FT { X = param.Location.Value.X, Y = param.Location.Value.Y, Z = param.Location.Value.Z };
+				ret.Fixed = dst;
+			}
+			else if (positionParam.Type == EffectAsset.PositionParameter.ParamaterType.PVA)
+			{
+				var param = positionParam.PVA;
+				var dst = new FB.PositionSettings_PVAT();
+				dst.Pos = ToFB(effectAsset, param.Location);
+				dst.Vel = ToFB(effectAsset, param.Velocity);
+				dst.Acc = ToFB(effectAsset, param.Acceleration);
+				ret.Pva = dst;
+			}
+			else if (positionParam.Type == EffectAsset.PositionParameter.ParamaterType.Easing)
+			{
+				var param = positionParam.Easing;
+				var dst = new FB.PositionSettings_EasingT();
+
+				var easing = new FB.EasingVec3FT();
+
+				easing.Start = ToFB(effectAsset, param.Start);
+				easing.End = ToFB(effectAsset, param.End);
+				easing.Middle = ToFB(effectAsset, param.Middle);
+
+				float[] easingParams = null;
+				if (param.Type == EffectAsset.EasingType.LeftRightSpeed)
+				{
+					easingParams = Utils.MathUtl.Easing((float)param.StartSpeed, (float)param.EndSpeed);
+				}
+
+				int channel = 0;
+				if (param.IsRandomGroupEnabled)
+				{
+					Dictionary<int, int> id2ind = new Dictionary<int, int>();
+
+					var ids = new[] { param.RandomGroupX, param.RandomGroupY, param.RandomGroupZ };
+
+					foreach (var id in ids)
+					{
+						if (!id2ind.ContainsKey(id))
+						{
+							id2ind.Add(id, id2ind.Count);
+						}
+					}
+
+					channel += (byte)id2ind[param.RandomGroupX] << 0;
+					channel += (byte)id2ind[param.RandomGroupY] << 8;
+					channel += (byte)id2ind[param.RandomGroupZ] << 16;
+
+				}
+				else
+				{
+					channel += (byte)0 << 0;
+					channel += (byte)1 << 8;
+					channel += (byte)2 << 16;
+				}
+
+				List<FB.Easing3Type> types = new List<FB.Easing3Type>();
+				if (param.IsIndividualTypeEnabled)
+				{
+					types.Add((FB.Easing3Type)param.TypeX);
+					types.Add((FB.Easing3Type)param.TypeY);
+					types.Add((FB.Easing3Type)param.TypeZ);
+				}
+
+				easing.Params = easingParams.ToList();
+				easing.Type = (FB.Easing3Type)param.Type;
+				easing.Channel = channel;
+				easing.IsMiddleEnabled = param.IsMiddleEnabled;
+				easing.IsIndividualEnabled = param.IsIndividualTypeEnabled;
+				easing.Types = types;
+				dst.Location = easing;
+			}
+			if (positionParam.Type == EffectAsset.PositionParameter.ParamaterType.LocationFCurve)
+			{
+				// TODO
+				var param = positionParam.LocationFCurve;
+
+				//param.FCurve.X.
+			}
+			else if (positionParam.Type == EffectAsset.PositionParameter.ParamaterType.ViewOffset)
+			{
+				var param = positionParam.ViewOffset;
+				var dst = new FB.PositionSettings_ViewOffsetT();
+
+				dst.Distance = ToFB(effectAsset, param.Distance);
+				ret.ViewOffset = dst;
+			}
+			else if (positionParam.Type == EffectAsset.PositionParameter.ParamaterType.NurbsCurve)
+			{
+				var param = positionParam.NurbsCurve;
+				var dst = new FB.PositionSettings_NurbsCurveT();
+
+				dst.Index = -1;
+				dst.LoopType = (int)param.LoopType;
+				dst.Scale = param.Scale;
+				dst.MoveSpeed = param.MoveSpeed;
+				ret.NurbsCurve = dst;
+			}
+
+			return ret;
+		}
+
+		Effekseer.FB.Vec3FRangeT ToFB(EffectAsset.EffectAsset effectAsset, EffectAsset.Vector3WithRange param)
+		{
+			int refMin = -1;
+			int refMax = -1;
+			if (param.IsDynamicEquationEnabled)
+			{
+				refMin = effectAsset.DynamicEquations.IndexOf(param.DynamicEquationMin);
+				refMax = effectAsset.DynamicEquations.IndexOf(param.DynamicEquationMax);
+			}
+
+			var ret = new FB.Vec3FRangeT();
+			ret.RefEq.Min = refMin;
+			ret.RefEq.Max = refMax;
+
+			ret.Min.X = param.X.Min;
+			ret.Max.X = param.X.Max;
+			ret.Min.Y = param.Y.Min;
+			ret.Max.Y = param.Y.Max;
+			ret.Min.Z = param.Z.Min;
+			ret.Max.Z = param.Z.Max;
+
+			return ret;
+		}
+
+		Effekseer.FB.FloatRangeT ToFB(EffectAsset.EffectAsset effectAsset, EffectAsset.FloatWithRange param)
+		{
+			int refMin = -1;
+			int refMax = -1;
+			if (param.IsDynamicEquationEnabled)
+			{
+				refMin = effectAsset.DynamicEquations.IndexOf(param.DynamicEquationMin);
+				refMax = effectAsset.DynamicEquations.IndexOf(param.DynamicEquationMax);
+			}
+
+			var ret = new Effekseer.FB.FloatRangeT();
+			ret.RefEq.Min = refMin;
+			ret.RefEq.Max = refMax;
+			ret.Min = param.Min;
+			ret.Max = param.Max;
+			return ret;
+		}
+
 		class DependencyProperty
 		{
 			public List<string> Textures = new List<string>();

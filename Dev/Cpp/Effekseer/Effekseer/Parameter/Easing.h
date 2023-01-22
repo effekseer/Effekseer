@@ -620,9 +620,9 @@ class ParameterEasingSIMDVec3 : public ParameterEasing<SIMD::Vec3f>
 public:
 	void LoadWithFB(const FB::EasingVec3F& src)
 	{
-		RefEqS = FBConverter::Convert(src.ref_eq_s());
-		RefEqM = FBConverter::Convert(src.ref_eq_m());
-		RefEqE = FBConverter::Convert(src.ref_eq_e());
+		RefEqS = FBConverter::Convert(&src.start()->ref_eq());
+		RefEqM = FBConverter::Convert(&src.middle()->ref_eq());
+		RefEqE = FBConverter::Convert(&src.end()->ref_eq());
 		FBConverter::Convert(start, src.start());
 		FBConverter::Convert(middle, src.middle());
 		FBConverter::Convert(end, src.end());

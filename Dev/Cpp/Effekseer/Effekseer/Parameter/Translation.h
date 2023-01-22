@@ -264,9 +264,9 @@ public:
 			FBConverter::Convert(TranslationPVA.location, position_settings->pva()->pos());
 			FBConverter::Convert(TranslationPVA.velocity, position_settings->pva()->vel());
 			FBConverter::Convert(TranslationPVA.acceleration, position_settings->pva()->acc());
-			FBConverter::Convert(TranslationPVA.RefEqP, position_settings->pva()->ref_eq_p());
-			FBConverter::Convert(TranslationPVA.RefEqV, position_settings->pva()->ref_eq_v());
-			FBConverter::Convert(TranslationPVA.RefEqA, position_settings->pva()->ref_eq_a());
+			FBConverter::Convert(TranslationPVA.RefEqP, &position_settings->pva()->pos()->ref_eq());
+			FBConverter::Convert(TranslationPVA.RefEqV, &position_settings->pva()->vel()->ref_eq());
+			FBConverter::Convert(TranslationPVA.RefEqA, &position_settings->pva()->acc()->ref_eq());
 		}
 		else if (position_settings->type() == FB::PositionType::PositionType_Easing)
 		{
