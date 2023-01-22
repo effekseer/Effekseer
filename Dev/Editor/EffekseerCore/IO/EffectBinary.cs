@@ -367,7 +367,83 @@ namespace Effekseer.IO
 			{
 				// TODO
 				var param = positionParam.LocationFCurve;
+				var dst = new FB.PositionSettings_FCurveT();
+				FB.FCurveGroupT fcurve = new FB.FCurveGroupT();
 
+				FB.FCurveT curve = new FB.FCurveT();
+				curve.Start = (Effekseer.FB.FCurveEdgeType)param.FCurve.X.StartType;
+				curve.End = (Effekseer.FB.FCurveEdgeType)param.FCurve.X.EndType;
+				curve.Freq = param.FCurve.X.Sampling;
+
+				/*
+				 public byte[] GetBytes(float mul = 1.0f)
+		{
+			var freq = Sampling.Value;
+			List<byte[]> data = new List<byte[]>();
+
+			data.Add(BitConverter.GetBytes((int)StartType.Value));
+			data.Add(BitConverter.GetBytes((int)EndType.Value));
+			data.Add(BitConverter.GetBytes(OffsetMax.Value));
+			data.Add(BitConverter.GetBytes(OffsetMin.Value));
+
+			if (keys.Count > 0)
+			{
+				var len = keys.Last().Frame - keys.First().Frame;
+				data.Add(BitConverter.GetBytes(keys.First().Frame));
+				data.Add(BitConverter.GetBytes(len));
+				data.Add(BitConverter.GetBytes(freq));
+
+				int count = 0;
+				if (len % freq > 0)
+				{
+					count = len / freq + 2;
+				}
+				else
+				{
+					count = len / freq + 1;
+				}
+
+				data.Add(BitConverter.GetBytes(count));
+
+				if (typeof(T) == typeof(float))
+				{
+					for (int f = keys.First().Frame; f < keys.Last().Frame; f += freq)
+					{
+						var v = GetValue(f) * mul;
+						data.Add(BitConverter.GetBytes(v));
+					}
+
+					{
+						var v = GetValue(keys.Last().Frame) * mul;
+						data.Add(BitConverter.GetBytes(v));
+					}
+				}
+				else if (typeof(T) == typeof(int))
+				{
+					for (int f = keys.First().Frame; f < keys.Last().Frame; f += freq)
+					{
+						var v = GetValue(f) * mul;
+						data.Add(BitConverter.GetBytes(v));
+					}
+
+					{
+						var v = GetValue(keys.Last().Frame) * mul;
+						data.Add(BitConverter.GetBytes(v));
+					}
+				}
+
+			}
+			else
+			{
+				data.Add(BitConverter.GetBytes(0));
+				data.Add(BitConverter.GetBytes(0));
+				data.Add(BitConverter.GetBytes(0));
+				data.Add(BitConverter.GetBytes(0));
+			}
+
+			return data.SelectMany(_ => _).ToArray();
+		}
+				 */
 				//param.FCurve.X.
 			}
 			else if (positionParam.Type == EffectAsset.PositionParameter.ParamaterType.ViewOffset)
