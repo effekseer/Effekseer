@@ -34,6 +34,39 @@ public struct BasicSettings : IFlatbufferObject
   public Effekseer.FB.FloatRange? GenerationTime { get { int o = __p.__offset(28); return o != 0 ? (Effekseer.FB.FloatRange?)(new Effekseer.FB.FloatRange()).__assign(o + __p.bb_pos, __p.bb) : null; } }
   public Effekseer.FB.FloatRange? GenerationTimeOffset { get { int o = __p.__offset(30); return o != 0 ? (Effekseer.FB.FloatRange?)(new Effekseer.FB.FloatRange()).__assign(o + __p.bb_pos, __p.bb) : null; } }
 
+  public static Offset<Effekseer.FB.BasicSettings> CreateBasicSettings(FlatBufferBuilder builder,
+      int ref_eq_max_generation = -1,
+      Effekseer.FB.RefMinMaxT ref_wq_life = null,
+      Effekseer.FB.RefMinMaxT ref_wq_generation_time = null,
+      Effekseer.FB.RefMinMaxT ref_wq_generation_time_offset = null,
+      int max_generation = 1,
+      Effekseer.FB.TranslationParentBindType translation_bind_type = Effekseer.FB.TranslationParentBindType.TranslationParentBindType_Always,
+      Effekseer.FB.BindType rotation_bind_type = Effekseer.FB.BindType.BindType_Always,
+      Effekseer.FB.BindType scaling_bind_type = Effekseer.FB.BindType.BindType_Always,
+      int remove_when_life_is_extinct = 1,
+      int remove_when_parent_is_removed = 0,
+      int remove_when_children_is_extinct = 0,
+      Effekseer.FB.IntRangeT life = null,
+      Effekseer.FB.FloatRangeT generation_time = null,
+      Effekseer.FB.FloatRangeT generation_time_offset = null) {
+    builder.StartTable(14);
+    BasicSettings.AddGenerationTimeOffset(builder, Effekseer.FB.FloatRange.Pack(builder, generation_time_offset));
+    BasicSettings.AddGenerationTime(builder, Effekseer.FB.FloatRange.Pack(builder, generation_time));
+    BasicSettings.AddLife(builder, Effekseer.FB.IntRange.Pack(builder, life));
+    BasicSettings.AddRemoveWhenChildrenIsExtinct(builder, remove_when_children_is_extinct);
+    BasicSettings.AddRemoveWhenParentIsRemoved(builder, remove_when_parent_is_removed);
+    BasicSettings.AddRemoveWhenLifeIsExtinct(builder, remove_when_life_is_extinct);
+    BasicSettings.AddScalingBindType(builder, scaling_bind_type);
+    BasicSettings.AddRotationBindType(builder, rotation_bind_type);
+    BasicSettings.AddTranslationBindType(builder, translation_bind_type);
+    BasicSettings.AddMaxGeneration(builder, max_generation);
+    BasicSettings.AddRefWqGenerationTimeOffset(builder, Effekseer.FB.RefMinMax.Pack(builder, ref_wq_generation_time_offset));
+    BasicSettings.AddRefWqGenerationTime(builder, Effekseer.FB.RefMinMax.Pack(builder, ref_wq_generation_time));
+    BasicSettings.AddRefWqLife(builder, Effekseer.FB.RefMinMax.Pack(builder, ref_wq_life));
+    BasicSettings.AddRefEqMaxGeneration(builder, ref_eq_max_generation);
+    return BasicSettings.EndBasicSettings(builder);
+  }
+
   public static void StartBasicSettings(FlatBufferBuilder builder) { builder.StartTable(14); }
   public static void AddRefEqMaxGeneration(FlatBufferBuilder builder, int refEqMaxGeneration) { builder.AddInt(0, refEqMaxGeneration, -1); }
   public static void AddRefWqLife(FlatBufferBuilder builder, Offset<Effekseer.FB.RefMinMax> refWqLifeOffset) { builder.AddStruct(1, refWqLifeOffset.Value, 0); }
@@ -53,7 +86,82 @@ public struct BasicSettings : IFlatbufferObject
     int o = builder.EndTable();
     return new Offset<Effekseer.FB.BasicSettings>(o);
   }
+  public BasicSettingsT UnPack() {
+    var _o = new BasicSettingsT();
+    this.UnPackTo(_o);
+    return _o;
+  }
+  public void UnPackTo(BasicSettingsT _o) {
+    _o.RefEqMaxGeneration = this.RefEqMaxGeneration;
+    _o.RefWqLife = this.RefWqLife.HasValue ? this.RefWqLife.Value.UnPack() : null;
+    _o.RefWqGenerationTime = this.RefWqGenerationTime.HasValue ? this.RefWqGenerationTime.Value.UnPack() : null;
+    _o.RefWqGenerationTimeOffset = this.RefWqGenerationTimeOffset.HasValue ? this.RefWqGenerationTimeOffset.Value.UnPack() : null;
+    _o.MaxGeneration = this.MaxGeneration;
+    _o.TranslationBindType = this.TranslationBindType;
+    _o.RotationBindType = this.RotationBindType;
+    _o.ScalingBindType = this.ScalingBindType;
+    _o.RemoveWhenLifeIsExtinct = this.RemoveWhenLifeIsExtinct;
+    _o.RemoveWhenParentIsRemoved = this.RemoveWhenParentIsRemoved;
+    _o.RemoveWhenChildrenIsExtinct = this.RemoveWhenChildrenIsExtinct;
+    _o.Life = this.Life.HasValue ? this.Life.Value.UnPack() : null;
+    _o.GenerationTime = this.GenerationTime.HasValue ? this.GenerationTime.Value.UnPack() : null;
+    _o.GenerationTimeOffset = this.GenerationTimeOffset.HasValue ? this.GenerationTimeOffset.Value.UnPack() : null;
+  }
+  public static Offset<Effekseer.FB.BasicSettings> Pack(FlatBufferBuilder builder, BasicSettingsT _o) {
+    if (_o == null) return default(Offset<Effekseer.FB.BasicSettings>);
+    return CreateBasicSettings(
+      builder,
+      _o.RefEqMaxGeneration,
+      _o.RefWqLife,
+      _o.RefWqGenerationTime,
+      _o.RefWqGenerationTimeOffset,
+      _o.MaxGeneration,
+      _o.TranslationBindType,
+      _o.RotationBindType,
+      _o.ScalingBindType,
+      _o.RemoveWhenLifeIsExtinct,
+      _o.RemoveWhenParentIsRemoved,
+      _o.RemoveWhenChildrenIsExtinct,
+      _o.Life,
+      _o.GenerationTime,
+      _o.GenerationTimeOffset);
+  }
 };
+
+public class BasicSettingsT
+{
+  public int RefEqMaxGeneration { get; set; }
+  public Effekseer.FB.RefMinMaxT RefWqLife { get; set; }
+  public Effekseer.FB.RefMinMaxT RefWqGenerationTime { get; set; }
+  public Effekseer.FB.RefMinMaxT RefWqGenerationTimeOffset { get; set; }
+  public int MaxGeneration { get; set; }
+  public Effekseer.FB.TranslationParentBindType TranslationBindType { get; set; }
+  public Effekseer.FB.BindType RotationBindType { get; set; }
+  public Effekseer.FB.BindType ScalingBindType { get; set; }
+  public int RemoveWhenLifeIsExtinct { get; set; }
+  public int RemoveWhenParentIsRemoved { get; set; }
+  public int RemoveWhenChildrenIsExtinct { get; set; }
+  public Effekseer.FB.IntRangeT Life { get; set; }
+  public Effekseer.FB.FloatRangeT GenerationTime { get; set; }
+  public Effekseer.FB.FloatRangeT GenerationTimeOffset { get; set; }
+
+  public BasicSettingsT() {
+    this.RefEqMaxGeneration = -1;
+    this.RefWqLife = new Effekseer.FB.RefMinMaxT();
+    this.RefWqGenerationTime = new Effekseer.FB.RefMinMaxT();
+    this.RefWqGenerationTimeOffset = new Effekseer.FB.RefMinMaxT();
+    this.MaxGeneration = 1;
+    this.TranslationBindType = Effekseer.FB.TranslationParentBindType.TranslationParentBindType_Always;
+    this.RotationBindType = Effekseer.FB.BindType.BindType_Always;
+    this.ScalingBindType = Effekseer.FB.BindType.BindType_Always;
+    this.RemoveWhenLifeIsExtinct = 1;
+    this.RemoveWhenParentIsRemoved = 0;
+    this.RemoveWhenChildrenIsExtinct = 0;
+    this.Life = new Effekseer.FB.IntRangeT();
+    this.GenerationTime = new Effekseer.FB.FloatRangeT();
+    this.GenerationTimeOffset = new Effekseer.FB.FloatRangeT();
+  }
+}
 
 
 }

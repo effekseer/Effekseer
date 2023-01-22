@@ -44,7 +44,50 @@ public struct Effect : IFlatbufferObject
   }
   public static void FinishEffectBuffer(FlatBufferBuilder builder, Offset<Effekseer.FB.Effect> offset) { builder.Finish(offset.Value); }
   public static void FinishSizePrefixedEffectBuffer(FlatBufferBuilder builder, Offset<Effekseer.FB.Effect> offset) { builder.FinishSizePrefixed(offset.Value); }
+  public EffectT UnPack() {
+    var _o = new EffectT();
+    this.UnPackTo(_o);
+    return _o;
+  }
+  public void UnPackTo(EffectT _o) {
+    _o.Textures = new List<Effekseer.FB.TexturePropertyT>();
+    for (var _j = 0; _j < this.TexturesLength; ++_j) {_o.Textures.Add(this.Textures(_j).HasValue ? this.Textures(_j).Value.UnPack() : null);}
+    _o.RootNode = this.RootNode.HasValue ? this.RootNode.Value.UnPack() : null;
+  }
+  public static Offset<Effekseer.FB.Effect> Pack(FlatBufferBuilder builder, EffectT _o) {
+    if (_o == null) return default(Offset<Effekseer.FB.Effect>);
+    var _textures = default(VectorOffset);
+    if (_o.Textures != null) {
+      var __textures = new Offset<Effekseer.FB.TextureProperty>[_o.Textures.Count];
+      for (var _j = 0; _j < __textures.Length; ++_j) { __textures[_j] = Effekseer.FB.TextureProperty.Pack(builder, _o.Textures[_j]); }
+      _textures = CreateTexturesVector(builder, __textures);
+    }
+    var _root_node = _o.RootNode == null ? default(Offset<Effekseer.FB.Node>) : Effekseer.FB.Node.Pack(builder, _o.RootNode);
+    return CreateEffect(
+      builder,
+      _textures,
+      _root_node);
+  }
 };
+
+public class EffectT
+{
+  public List<Effekseer.FB.TexturePropertyT> Textures { get; set; }
+  public Effekseer.FB.NodeT RootNode { get; set; }
+
+  public EffectT() {
+    this.Textures = null;
+    this.RootNode = null;
+  }
+  public static EffectT DeserializeFromBinary(byte[] fbBuffer) {
+    return Effect.GetRootAsEffect(new ByteBuffer(fbBuffer)).UnPack();
+  }
+  public byte[] SerializeToBinary() {
+    var fbb = new FlatBufferBuilder(0x10000);
+    Effect.FinishEffectBuffer(fbb, Effect.Pack(fbb, this));
+    return fbb.DataBuffer.ToSizedArray();
+  }
+}
 
 
 }

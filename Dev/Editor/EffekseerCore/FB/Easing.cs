@@ -70,6 +70,35 @@ public struct EasingFloat : IFlatbufferObject
 #endif
   public Effekseer.FB.Easing3Type[] GetTypesArray() { int o = __p.__offset(26); if (o == 0) return null; int p = __p.__vector(o); int l = __p.__vector_len(o); Effekseer.FB.Easing3Type[] a = new Effekseer.FB.Easing3Type[l]; for (int i = 0; i < l; i++) { a[i] = (Effekseer.FB.Easing3Type)__p.bb.GetInt(p + i * 4); } return a; }
 
+  public static Offset<Effekseer.FB.EasingFloat> CreateEasingFloat(FlatBufferBuilder builder,
+      Effekseer.FB.RefMinMaxT ref_eq_s = null,
+      Effekseer.FB.RefMinMaxT ref_eq_e = null,
+      Effekseer.FB.RefMinMaxT ref_eq_m = null,
+      Effekseer.FB.FloatRangeT start = null,
+      Effekseer.FB.FloatRangeT end = null,
+      Effekseer.FB.FloatRangeT middle = null,
+      Effekseer.FB.Easing3Type type = Effekseer.FB.Easing3Type.StartEndSpeed,
+      VectorOffset paramsOffset = default(VectorOffset),
+      int channel = 0,
+      bool is_middle_enabled = false,
+      bool is_individual_enabled = false,
+      VectorOffset typesOffset = default(VectorOffset)) {
+    builder.StartTable(12);
+    EasingFloat.AddTypes(builder, typesOffset);
+    EasingFloat.AddChannel(builder, channel);
+    EasingFloat.AddParams(builder, paramsOffset);
+    EasingFloat.AddType(builder, type);
+    EasingFloat.AddMiddle(builder, Effekseer.FB.FloatRange.Pack(builder, middle));
+    EasingFloat.AddEnd(builder, Effekseer.FB.FloatRange.Pack(builder, end));
+    EasingFloat.AddStart(builder, Effekseer.FB.FloatRange.Pack(builder, start));
+    EasingFloat.AddRefEqM(builder, Effekseer.FB.RefMinMax.Pack(builder, ref_eq_m));
+    EasingFloat.AddRefEqE(builder, Effekseer.FB.RefMinMax.Pack(builder, ref_eq_e));
+    EasingFloat.AddRefEqS(builder, Effekseer.FB.RefMinMax.Pack(builder, ref_eq_s));
+    EasingFloat.AddIsIndividualEnabled(builder, is_individual_enabled);
+    EasingFloat.AddIsMiddleEnabled(builder, is_middle_enabled);
+    return EasingFloat.EndEasingFloat(builder);
+  }
+
   public static void StartEasingFloat(FlatBufferBuilder builder) { builder.StartTable(12); }
   public static void AddRefEqS(FlatBufferBuilder builder, Offset<Effekseer.FB.RefMinMax> refEqSOffset) { builder.AddStruct(0, refEqSOffset.Value, 0); }
   public static void AddRefEqE(FlatBufferBuilder builder, Offset<Effekseer.FB.RefMinMax> refEqEOffset) { builder.AddStruct(1, refEqEOffset.Value, 0); }
@@ -93,7 +122,86 @@ public struct EasingFloat : IFlatbufferObject
     int o = builder.EndTable();
     return new Offset<Effekseer.FB.EasingFloat>(o);
   }
+  public EasingFloatT UnPack() {
+    var _o = new EasingFloatT();
+    this.UnPackTo(_o);
+    return _o;
+  }
+  public void UnPackTo(EasingFloatT _o) {
+    _o.RefEqS = this.RefEqS.HasValue ? this.RefEqS.Value.UnPack() : null;
+    _o.RefEqE = this.RefEqE.HasValue ? this.RefEqE.Value.UnPack() : null;
+    _o.RefEqM = this.RefEqM.HasValue ? this.RefEqM.Value.UnPack() : null;
+    _o.Start = this.Start.HasValue ? this.Start.Value.UnPack() : null;
+    _o.End = this.End.HasValue ? this.End.Value.UnPack() : null;
+    _o.Middle = this.Middle.HasValue ? this.Middle.Value.UnPack() : null;
+    _o.Type = this.Type;
+    _o.Params = new List<float>();
+    for (var _j = 0; _j < this.ParamsLength; ++_j) {_o.Params.Add(this.Params(_j));}
+    _o.Channel = this.Channel;
+    _o.IsMiddleEnabled = this.IsMiddleEnabled;
+    _o.IsIndividualEnabled = this.IsIndividualEnabled;
+    _o.Types = new List<Effekseer.FB.Easing3Type>();
+    for (var _j = 0; _j < this.TypesLength; ++_j) {_o.Types.Add(this.Types(_j));}
+  }
+  public static Offset<Effekseer.FB.EasingFloat> Pack(FlatBufferBuilder builder, EasingFloatT _o) {
+    if (_o == null) return default(Offset<Effekseer.FB.EasingFloat>);
+    var _params = default(VectorOffset);
+    if (_o.Params != null) {
+      var __params = _o.Params.ToArray();
+      _params = CreateParamsVector(builder, __params);
+    }
+    var _types = default(VectorOffset);
+    if (_o.Types != null) {
+      var __types = _o.Types.ToArray();
+      _types = CreateTypesVector(builder, __types);
+    }
+    return CreateEasingFloat(
+      builder,
+      _o.RefEqS,
+      _o.RefEqE,
+      _o.RefEqM,
+      _o.Start,
+      _o.End,
+      _o.Middle,
+      _o.Type,
+      _params,
+      _o.Channel,
+      _o.IsMiddleEnabled,
+      _o.IsIndividualEnabled,
+      _types);
+  }
 };
+
+public class EasingFloatT
+{
+  public Effekseer.FB.RefMinMaxT RefEqS { get; set; }
+  public Effekseer.FB.RefMinMaxT RefEqE { get; set; }
+  public Effekseer.FB.RefMinMaxT RefEqM { get; set; }
+  public Effekseer.FB.FloatRangeT Start { get; set; }
+  public Effekseer.FB.FloatRangeT End { get; set; }
+  public Effekseer.FB.FloatRangeT Middle { get; set; }
+  public Effekseer.FB.Easing3Type Type { get; set; }
+  public List<float> Params { get; set; }
+  public int Channel { get; set; }
+  public bool IsMiddleEnabled { get; set; }
+  public bool IsIndividualEnabled { get; set; }
+  public List<Effekseer.FB.Easing3Type> Types { get; set; }
+
+  public EasingFloatT() {
+    this.RefEqS = new Effekseer.FB.RefMinMaxT();
+    this.RefEqE = new Effekseer.FB.RefMinMaxT();
+    this.RefEqM = new Effekseer.FB.RefMinMaxT();
+    this.Start = new Effekseer.FB.FloatRangeT();
+    this.End = new Effekseer.FB.FloatRangeT();
+    this.Middle = new Effekseer.FB.FloatRangeT();
+    this.Type = Effekseer.FB.Easing3Type.StartEndSpeed;
+    this.Params = null;
+    this.Channel = 0;
+    this.IsMiddleEnabled = false;
+    this.IsIndividualEnabled = false;
+    this.Types = null;
+  }
+}
 
 public struct EasingVec3F : IFlatbufferObject
 {
@@ -129,6 +237,29 @@ public struct EasingVec3F : IFlatbufferObject
 #endif
   public Effekseer.FB.Easing3Type[] GetTypesArray() { int o = __p.__offset(20); if (o == 0) return null; int p = __p.__vector(o); int l = __p.__vector_len(o); Effekseer.FB.Easing3Type[] a = new Effekseer.FB.Easing3Type[l]; for (int i = 0; i < l; i++) { a[i] = (Effekseer.FB.Easing3Type)__p.bb.GetInt(p + i * 4); } return a; }
 
+  public static Offset<Effekseer.FB.EasingVec3F> CreateEasingVec3F(FlatBufferBuilder builder,
+      Effekseer.FB.Vec3FRangeT start = null,
+      Effekseer.FB.Vec3FRangeT end = null,
+      Effekseer.FB.Vec3FRangeT middle = null,
+      Effekseer.FB.Easing3Type type = Effekseer.FB.Easing3Type.StartEndSpeed,
+      VectorOffset paramsOffset = default(VectorOffset),
+      int channel = 0,
+      bool is_middle_enabled = false,
+      bool is_individual_enabled = false,
+      VectorOffset typesOffset = default(VectorOffset)) {
+    builder.StartTable(9);
+    EasingVec3F.AddTypes(builder, typesOffset);
+    EasingVec3F.AddChannel(builder, channel);
+    EasingVec3F.AddParams(builder, paramsOffset);
+    EasingVec3F.AddType(builder, type);
+    EasingVec3F.AddMiddle(builder, Effekseer.FB.Vec3FRange.Pack(builder, middle));
+    EasingVec3F.AddEnd(builder, Effekseer.FB.Vec3FRange.Pack(builder, end));
+    EasingVec3F.AddStart(builder, Effekseer.FB.Vec3FRange.Pack(builder, start));
+    EasingVec3F.AddIsIndividualEnabled(builder, is_individual_enabled);
+    EasingVec3F.AddIsMiddleEnabled(builder, is_middle_enabled);
+    return EasingVec3F.EndEasingVec3F(builder);
+  }
+
   public static void StartEasingVec3F(FlatBufferBuilder builder) { builder.StartTable(9); }
   public static void AddStart(FlatBufferBuilder builder, Offset<Effekseer.FB.Vec3FRange> startOffset) { builder.AddStruct(0, startOffset.Value, 0); }
   public static void AddEnd(FlatBufferBuilder builder, Offset<Effekseer.FB.Vec3FRange> endOffset) { builder.AddStruct(1, endOffset.Value, 0); }
@@ -149,7 +280,74 @@ public struct EasingVec3F : IFlatbufferObject
     int o = builder.EndTable();
     return new Offset<Effekseer.FB.EasingVec3F>(o);
   }
+  public EasingVec3FT UnPack() {
+    var _o = new EasingVec3FT();
+    this.UnPackTo(_o);
+    return _o;
+  }
+  public void UnPackTo(EasingVec3FT _o) {
+    _o.Start = this.Start.HasValue ? this.Start.Value.UnPack() : null;
+    _o.End = this.End.HasValue ? this.End.Value.UnPack() : null;
+    _o.Middle = this.Middle.HasValue ? this.Middle.Value.UnPack() : null;
+    _o.Type = this.Type;
+    _o.Params = new List<float>();
+    for (var _j = 0; _j < this.ParamsLength; ++_j) {_o.Params.Add(this.Params(_j));}
+    _o.Channel = this.Channel;
+    _o.IsMiddleEnabled = this.IsMiddleEnabled;
+    _o.IsIndividualEnabled = this.IsIndividualEnabled;
+    _o.Types = new List<Effekseer.FB.Easing3Type>();
+    for (var _j = 0; _j < this.TypesLength; ++_j) {_o.Types.Add(this.Types(_j));}
+  }
+  public static Offset<Effekseer.FB.EasingVec3F> Pack(FlatBufferBuilder builder, EasingVec3FT _o) {
+    if (_o == null) return default(Offset<Effekseer.FB.EasingVec3F>);
+    var _params = default(VectorOffset);
+    if (_o.Params != null) {
+      var __params = _o.Params.ToArray();
+      _params = CreateParamsVector(builder, __params);
+    }
+    var _types = default(VectorOffset);
+    if (_o.Types != null) {
+      var __types = _o.Types.ToArray();
+      _types = CreateTypesVector(builder, __types);
+    }
+    return CreateEasingVec3F(
+      builder,
+      _o.Start,
+      _o.End,
+      _o.Middle,
+      _o.Type,
+      _params,
+      _o.Channel,
+      _o.IsMiddleEnabled,
+      _o.IsIndividualEnabled,
+      _types);
+  }
 };
+
+public class EasingVec3FT
+{
+  public Effekseer.FB.Vec3FRangeT Start { get; set; }
+  public Effekseer.FB.Vec3FRangeT End { get; set; }
+  public Effekseer.FB.Vec3FRangeT Middle { get; set; }
+  public Effekseer.FB.Easing3Type Type { get; set; }
+  public List<float> Params { get; set; }
+  public int Channel { get; set; }
+  public bool IsMiddleEnabled { get; set; }
+  public bool IsIndividualEnabled { get; set; }
+  public List<Effekseer.FB.Easing3Type> Types { get; set; }
+
+  public EasingVec3FT() {
+    this.Start = new Effekseer.FB.Vec3FRangeT();
+    this.End = new Effekseer.FB.Vec3FRangeT();
+    this.Middle = new Effekseer.FB.Vec3FRangeT();
+    this.Type = Effekseer.FB.Easing3Type.StartEndSpeed;
+    this.Params = null;
+    this.Channel = 0;
+    this.IsMiddleEnabled = false;
+    this.IsIndividualEnabled = false;
+    this.Types = null;
+  }
+}
 
 
 }

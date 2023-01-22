@@ -89,7 +89,68 @@ public struct FCurve : IFlatbufferObject
     int o = builder.EndTable();
     return new Offset<Effekseer.FB.FCurve>(o);
   }
+  public FCurveT UnPack() {
+    var _o = new FCurveT();
+    this.UnPackTo(_o);
+    return _o;
+  }
+  public void UnPackTo(FCurveT _o) {
+    _o.Offset = this.Offset;
+    _o.Len = this.Len;
+    _o.Freq = this.Freq;
+    _o.Start = this.Start;
+    _o.End = this.End;
+    _o.Keys = new List<float>();
+    for (var _j = 0; _j < this.KeysLength; ++_j) {_o.Keys.Add(this.Keys(_j));}
+    _o.DefaultValue = this.DefaultValue;
+    _o.OffsetMax = this.OffsetMax;
+    _o.OffsetMin = this.OffsetMin;
+  }
+  public static Offset<Effekseer.FB.FCurve> Pack(FlatBufferBuilder builder, FCurveT _o) {
+    if (_o == null) return default(Offset<Effekseer.FB.FCurve>);
+    var _keys = default(VectorOffset);
+    if (_o.Keys != null) {
+      var __keys = _o.Keys.ToArray();
+      _keys = CreateKeysVector(builder, __keys);
+    }
+    return CreateFCurve(
+      builder,
+      _o.Offset,
+      _o.Len,
+      _o.Freq,
+      _o.Start,
+      _o.End,
+      _keys,
+      _o.DefaultValue,
+      _o.OffsetMax,
+      _o.OffsetMin);
+  }
 };
+
+public class FCurveT
+{
+  public int Offset { get; set; }
+  public int Len { get; set; }
+  public int Freq { get; set; }
+  public Effekseer.FB.FCurveEdgeType Start { get; set; }
+  public Effekseer.FB.FCurveEdgeType End { get; set; }
+  public List<float> Keys { get; set; }
+  public float DefaultValue { get; set; }
+  public float OffsetMax { get; set; }
+  public float OffsetMin { get; set; }
+
+  public FCurveT() {
+    this.Offset = 0;
+    this.Len = 0;
+    this.Freq = 0;
+    this.Start = Effekseer.FB.FCurveEdgeType.FCurveEdgeType_Constant;
+    this.End = Effekseer.FB.FCurveEdgeType.FCurveEdgeType_Constant;
+    this.Keys = null;
+    this.DefaultValue = 0.0f;
+    this.OffsetMax = 0.0f;
+    this.OffsetMin = 0.0f;
+  }
+}
 
 public struct FCurveGroup : IFlatbufferObject
 {
@@ -124,7 +185,41 @@ public struct FCurveGroup : IFlatbufferObject
     int o = builder.EndTable();
     return new Offset<Effekseer.FB.FCurveGroup>(o);
   }
+  public FCurveGroupT UnPack() {
+    var _o = new FCurveGroupT();
+    this.UnPackTo(_o);
+    return _o;
+  }
+  public void UnPackTo(FCurveGroupT _o) {
+    _o.Timeline = this.Timeline;
+    _o.Curves = new List<Effekseer.FB.FCurveT>();
+    for (var _j = 0; _j < this.CurvesLength; ++_j) {_o.Curves.Add(this.Curves(_j).HasValue ? this.Curves(_j).Value.UnPack() : null);}
+  }
+  public static Offset<Effekseer.FB.FCurveGroup> Pack(FlatBufferBuilder builder, FCurveGroupT _o) {
+    if (_o == null) return default(Offset<Effekseer.FB.FCurveGroup>);
+    var _curves = default(VectorOffset);
+    if (_o.Curves != null) {
+      var __curves = new Offset<Effekseer.FB.FCurve>[_o.Curves.Count];
+      for (var _j = 0; _j < __curves.Length; ++_j) { __curves[_j] = Effekseer.FB.FCurve.Pack(builder, _o.Curves[_j]); }
+      _curves = CreateCurvesVector(builder, __curves);
+    }
+    return CreateFCurveGroup(
+      builder,
+      _o.Timeline,
+      _curves);
+  }
 };
+
+public class FCurveGroupT
+{
+  public Effekseer.FB.FCurveTimelineType Timeline { get; set; }
+  public List<Effekseer.FB.FCurveT> Curves { get; set; }
+
+  public FCurveGroupT() {
+    this.Timeline = Effekseer.FB.FCurveTimelineType.FCurveTimelineType_Time;
+    this.Curves = null;
+  }
+}
 
 
 }

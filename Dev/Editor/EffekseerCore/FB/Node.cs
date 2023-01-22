@@ -54,7 +54,55 @@ public struct Node : IFlatbufferObject
     int o = builder.EndTable();
     return new Offset<Effekseer.FB.Node>(o);
   }
+  public NodeT UnPack() {
+    var _o = new NodeT();
+    this.UnPackTo(_o);
+    return _o;
+  }
+  public void UnPackTo(NodeT _o) {
+    _o.Type = this.Type;
+    _o.IsRendered = this.IsRendered;
+    _o.BasicSettings = this.BasicSettings.HasValue ? this.BasicSettings.Value.UnPack() : null;
+    _o.PositionSettings = this.PositionSettings.HasValue ? this.PositionSettings.Value.UnPack() : null;
+    _o.Children = new List<Effekseer.FB.NodeT>();
+    for (var _j = 0; _j < this.ChildrenLength; ++_j) {_o.Children.Add(this.Children(_j).HasValue ? this.Children(_j).Value.UnPack() : null);}
+  }
+  public static Offset<Effekseer.FB.Node> Pack(FlatBufferBuilder builder, NodeT _o) {
+    if (_o == null) return default(Offset<Effekseer.FB.Node>);
+    var _basic_settings = _o.BasicSettings == null ? default(Offset<Effekseer.FB.BasicSettings>) : Effekseer.FB.BasicSettings.Pack(builder, _o.BasicSettings);
+    var _position_settings = _o.PositionSettings == null ? default(Offset<Effekseer.FB.PositionSettings>) : Effekseer.FB.PositionSettings.Pack(builder, _o.PositionSettings);
+    var _children = default(VectorOffset);
+    if (_o.Children != null) {
+      var __children = new Offset<Effekseer.FB.Node>[_o.Children.Count];
+      for (var _j = 0; _j < __children.Length; ++_j) { __children[_j] = Effekseer.FB.Node.Pack(builder, _o.Children[_j]); }
+      _children = CreateChildrenVector(builder, __children);
+    }
+    return CreateNode(
+      builder,
+      _o.Type,
+      _o.IsRendered,
+      _basic_settings,
+      _position_settings,
+      _children);
+  }
 };
+
+public class NodeT
+{
+  public Effekseer.FB.EffectNodeType Type { get; set; }
+  public bool IsRendered { get; set; }
+  public Effekseer.FB.BasicSettingsT BasicSettings { get; set; }
+  public Effekseer.FB.PositionSettingsT PositionSettings { get; set; }
+  public List<Effekseer.FB.NodeT> Children { get; set; }
+
+  public NodeT() {
+    this.Type = Effekseer.FB.EffectNodeType.EffectNodeType_NoneType;
+    this.IsRendered = false;
+    this.BasicSettings = null;
+    this.PositionSettings = null;
+    this.Children = null;
+  }
+}
 
 
 }

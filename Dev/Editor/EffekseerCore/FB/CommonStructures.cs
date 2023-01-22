@@ -54,7 +54,34 @@ public struct RefMinMax : IFlatbufferObject
     builder.PutInt(Min);
     return new Offset<Effekseer.FB.RefMinMax>(builder.Offset);
   }
+  public RefMinMaxT UnPack() {
+    var _o = new RefMinMaxT();
+    this.UnPackTo(_o);
+    return _o;
+  }
+  public void UnPackTo(RefMinMaxT _o) {
+    _o.Min = this.Min;
+    _o.Max = this.Max;
+  }
+  public static Offset<Effekseer.FB.RefMinMax> Pack(FlatBufferBuilder builder, RefMinMaxT _o) {
+    if (_o == null) return default(Offset<Effekseer.FB.RefMinMax>);
+    return CreateRefMinMax(
+      builder,
+      _o.Min,
+      _o.Max);
+  }
 };
+
+public class RefMinMaxT
+{
+  public int Min { get; set; }
+  public int Max { get; set; }
+
+  public RefMinMaxT() {
+    this.Min = 0;
+    this.Max = 0;
+  }
+}
 
 public struct IntRange : IFlatbufferObject
 {
@@ -72,7 +99,34 @@ public struct IntRange : IFlatbufferObject
     builder.PutInt(Min);
     return new Offset<Effekseer.FB.IntRange>(builder.Offset);
   }
+  public IntRangeT UnPack() {
+    var _o = new IntRangeT();
+    this.UnPackTo(_o);
+    return _o;
+  }
+  public void UnPackTo(IntRangeT _o) {
+    _o.Min = this.Min;
+    _o.Max = this.Max;
+  }
+  public static Offset<Effekseer.FB.IntRange> Pack(FlatBufferBuilder builder, IntRangeT _o) {
+    if (_o == null) return default(Offset<Effekseer.FB.IntRange>);
+    return CreateIntRange(
+      builder,
+      _o.Min,
+      _o.Max);
+  }
 };
+
+public class IntRangeT
+{
+  public int Min { get; set; }
+  public int Max { get; set; }
+
+  public IntRangeT() {
+    this.Min = 0;
+    this.Max = 0;
+  }
+}
 
 public struct FloatRange : IFlatbufferObject
 {
@@ -94,7 +148,41 @@ public struct FloatRange : IFlatbufferObject
     builder.PutInt(ref_eq_Min);
     return new Offset<Effekseer.FB.FloatRange>(builder.Offset);
   }
+  public FloatRangeT UnPack() {
+    var _o = new FloatRangeT();
+    this.UnPackTo(_o);
+    return _o;
+  }
+  public void UnPackTo(FloatRangeT _o) {
+    _o.RefEq = this.RefEq.UnPack();
+    _o.Min = this.Min;
+    _o.Max = this.Max;
+  }
+  public static Offset<Effekseer.FB.FloatRange> Pack(FlatBufferBuilder builder, FloatRangeT _o) {
+    if (_o == null) return default(Offset<Effekseer.FB.FloatRange>);
+    var _ref_eq_min = _o.RefEq.Min;
+    var _ref_eq_max = _o.RefEq.Max;
+    return CreateFloatRange(
+      builder,
+      _ref_eq_min,
+      _ref_eq_max,
+      _o.Min,
+      _o.Max);
+  }
 };
+
+public class FloatRangeT
+{
+  public Effekseer.FB.RefMinMaxT RefEq { get; set; }
+  public float Min { get; set; }
+  public float Max { get; set; }
+
+  public FloatRangeT() {
+    this.RefEq = new Effekseer.FB.RefMinMaxT();
+    this.Min = 0.0f;
+    this.Max = 0.0f;
+  }
+}
 
 public struct Vec3F : IFlatbufferObject
 {
@@ -114,7 +202,38 @@ public struct Vec3F : IFlatbufferObject
     builder.PutFloat(X);
     return new Offset<Effekseer.FB.Vec3F>(builder.Offset);
   }
+  public Vec3FT UnPack() {
+    var _o = new Vec3FT();
+    this.UnPackTo(_o);
+    return _o;
+  }
+  public void UnPackTo(Vec3FT _o) {
+    _o.X = this.X;
+    _o.Y = this.Y;
+    _o.Z = this.Z;
+  }
+  public static Offset<Effekseer.FB.Vec3F> Pack(FlatBufferBuilder builder, Vec3FT _o) {
+    if (_o == null) return default(Offset<Effekseer.FB.Vec3F>);
+    return CreateVec3F(
+      builder,
+      _o.X,
+      _o.Y,
+      _o.Z);
+  }
 };
+
+public class Vec3FT
+{
+  public float X { get; set; }
+  public float Y { get; set; }
+  public float Z { get; set; }
+
+  public Vec3FT() {
+    this.X = 0.0f;
+    this.Y = 0.0f;
+    this.Z = 0.0f;
+  }
+}
 
 public struct Vec3FRange : IFlatbufferObject
 {
@@ -142,7 +261,51 @@ public struct Vec3FRange : IFlatbufferObject
     builder.PutInt(ref_eq_Min);
     return new Offset<Effekseer.FB.Vec3FRange>(builder.Offset);
   }
+  public Vec3FRangeT UnPack() {
+    var _o = new Vec3FRangeT();
+    this.UnPackTo(_o);
+    return _o;
+  }
+  public void UnPackTo(Vec3FRangeT _o) {
+    _o.RefEq = this.RefEq.UnPack();
+    _o.Min = this.Min.UnPack();
+    _o.Max = this.Max.UnPack();
+  }
+  public static Offset<Effekseer.FB.Vec3FRange> Pack(FlatBufferBuilder builder, Vec3FRangeT _o) {
+    if (_o == null) return default(Offset<Effekseer.FB.Vec3FRange>);
+    var _ref_eq_min = _o.RefEq.Min;
+    var _ref_eq_max = _o.RefEq.Max;
+    var _min_x = _o.Min.X;
+    var _min_y = _o.Min.Y;
+    var _min_z = _o.Min.Z;
+    var _max_x = _o.Max.X;
+    var _max_y = _o.Max.Y;
+    var _max_z = _o.Max.Z;
+    return CreateVec3FRange(
+      builder,
+      _ref_eq_min,
+      _ref_eq_max,
+      _min_x,
+      _min_y,
+      _min_z,
+      _max_x,
+      _max_y,
+      _max_z);
+  }
 };
+
+public class Vec3FRangeT
+{
+  public Effekseer.FB.RefMinMaxT RefEq { get; set; }
+  public Effekseer.FB.Vec3FT Min { get; set; }
+  public Effekseer.FB.Vec3FT Max { get; set; }
+
+  public Vec3FRangeT() {
+    this.RefEq = new Effekseer.FB.RefMinMaxT();
+    this.Min = new Effekseer.FB.Vec3FT();
+    this.Max = new Effekseer.FB.Vec3FT();
+  }
+}
 
 public struct Vec3FEasing : IFlatbufferObject
 {
@@ -188,7 +351,76 @@ public struct Vec3FEasing : IFlatbufferObject
     builder.PutInt(start_ref_eq_Min);
     return new Offset<Effekseer.FB.Vec3FEasing>(builder.Offset);
   }
+  public Vec3FEasingT UnPack() {
+    var _o = new Vec3FEasingT();
+    this.UnPackTo(_o);
+    return _o;
+  }
+  public void UnPackTo(Vec3FEasingT _o) {
+    _o.Start = this.Start.UnPack();
+    _o.End = this.End.UnPack();
+    _o.EasingA = this.EasingA;
+    _o.EasingB = this.EasingB;
+    _o.EasingC = this.EasingC;
+  }
+  public static Offset<Effekseer.FB.Vec3FEasing> Pack(FlatBufferBuilder builder, Vec3FEasingT _o) {
+    if (_o == null) return default(Offset<Effekseer.FB.Vec3FEasing>);
+    var _start_ref_eq_min = _o.Start.RefEq.Min;
+    var _start_ref_eq_max = _o.Start.RefEq.Max;
+    var _start_min_x = _o.Start.Min.X;
+    var _start_min_y = _o.Start.Min.Y;
+    var _start_min_z = _o.Start.Min.Z;
+    var _start_max_x = _o.Start.Max.X;
+    var _start_max_y = _o.Start.Max.Y;
+    var _start_max_z = _o.Start.Max.Z;
+    var _end_ref_eq_min = _o.End.RefEq.Min;
+    var _end_ref_eq_max = _o.End.RefEq.Max;
+    var _end_min_x = _o.End.Min.X;
+    var _end_min_y = _o.End.Min.Y;
+    var _end_min_z = _o.End.Min.Z;
+    var _end_max_x = _o.End.Max.X;
+    var _end_max_y = _o.End.Max.Y;
+    var _end_max_z = _o.End.Max.Z;
+    return CreateVec3FEasing(
+      builder,
+      _start_ref_eq_min,
+      _start_ref_eq_max,
+      _start_min_x,
+      _start_min_y,
+      _start_min_z,
+      _start_max_x,
+      _start_max_y,
+      _start_max_z,
+      _end_ref_eq_min,
+      _end_ref_eq_max,
+      _end_min_x,
+      _end_min_y,
+      _end_min_z,
+      _end_max_x,
+      _end_max_y,
+      _end_max_z,
+      _o.EasingA,
+      _o.EasingB,
+      _o.EasingC);
+  }
 };
+
+public class Vec3FEasingT
+{
+  public Effekseer.FB.Vec3FRangeT Start { get; set; }
+  public Effekseer.FB.Vec3FRangeT End { get; set; }
+  public float EasingA { get; set; }
+  public float EasingB { get; set; }
+  public float EasingC { get; set; }
+
+  public Vec3FEasingT() {
+    this.Start = new Effekseer.FB.Vec3FRangeT();
+    this.End = new Effekseer.FB.Vec3FRangeT();
+    this.EasingA = 0.0f;
+    this.EasingB = 0.0f;
+    this.EasingC = 0.0f;
+  }
+}
 
 public struct TextureProperty : IFlatbufferObject
 {
@@ -221,7 +453,31 @@ public struct TextureProperty : IFlatbufferObject
     int o = builder.EndTable();
     return new Offset<Effekseer.FB.TextureProperty>(o);
   }
+  public TexturePropertyT UnPack() {
+    var _o = new TexturePropertyT();
+    this.UnPackTo(_o);
+    return _o;
+  }
+  public void UnPackTo(TexturePropertyT _o) {
+    _o.Path = this.Path;
+  }
+  public static Offset<Effekseer.FB.TextureProperty> Pack(FlatBufferBuilder builder, TexturePropertyT _o) {
+    if (_o == null) return default(Offset<Effekseer.FB.TextureProperty>);
+    var _path = _o.Path == null ? default(StringOffset) : builder.CreateString(_o.Path);
+    return CreateTextureProperty(
+      builder,
+      _path);
+  }
 };
+
+public class TexturePropertyT
+{
+  public string Path { get; set; }
+
+  public TexturePropertyT() {
+    this.Path = null;
+  }
+}
 
 
 }

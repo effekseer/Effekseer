@@ -33,6 +33,15 @@ public struct PositionSettings_Fixed : IFlatbufferObject
   public int RefEq { get { int o = __p.__offset(4); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)-1; } }
   public Effekseer.FB.Vec3F? Value { get { int o = __p.__offset(6); return o != 0 ? (Effekseer.FB.Vec3F?)(new Effekseer.FB.Vec3F()).__assign(o + __p.bb_pos, __p.bb) : null; } }
 
+  public static Offset<Effekseer.FB.PositionSettings_Fixed> CreatePositionSettings_Fixed(FlatBufferBuilder builder,
+      int ref_eq = -1,
+      Effekseer.FB.Vec3FT value = null) {
+    builder.StartTable(2);
+    PositionSettings_Fixed.AddValue(builder, Effekseer.FB.Vec3F.Pack(builder, value));
+    PositionSettings_Fixed.AddRefEq(builder, ref_eq);
+    return PositionSettings_Fixed.EndPositionSettings_Fixed(builder);
+  }
+
   public static void StartPositionSettings_Fixed(FlatBufferBuilder builder) { builder.StartTable(2); }
   public static void AddRefEq(FlatBufferBuilder builder, int refEq) { builder.AddInt(0, refEq, -1); }
   public static void AddValue(FlatBufferBuilder builder, Offset<Effekseer.FB.Vec3F> valueOffset) { builder.AddStruct(1, valueOffset.Value, 0); }
@@ -40,7 +49,34 @@ public struct PositionSettings_Fixed : IFlatbufferObject
     int o = builder.EndTable();
     return new Offset<Effekseer.FB.PositionSettings_Fixed>(o);
   }
+  public PositionSettings_FixedT UnPack() {
+    var _o = new PositionSettings_FixedT();
+    this.UnPackTo(_o);
+    return _o;
+  }
+  public void UnPackTo(PositionSettings_FixedT _o) {
+    _o.RefEq = this.RefEq;
+    _o.Value = this.Value.HasValue ? this.Value.Value.UnPack() : null;
+  }
+  public static Offset<Effekseer.FB.PositionSettings_Fixed> Pack(FlatBufferBuilder builder, PositionSettings_FixedT _o) {
+    if (_o == null) return default(Offset<Effekseer.FB.PositionSettings_Fixed>);
+    return CreatePositionSettings_Fixed(
+      builder,
+      _o.RefEq,
+      _o.Value);
+  }
 };
+
+public class PositionSettings_FixedT
+{
+  public int RefEq { get; set; }
+  public Effekseer.FB.Vec3FT Value { get; set; }
+
+  public PositionSettings_FixedT() {
+    this.RefEq = -1;
+    this.Value = new Effekseer.FB.Vec3FT();
+  }
+}
 
 public struct PositionSettings_PVA : IFlatbufferObject
 {
@@ -64,7 +100,38 @@ public struct PositionSettings_PVA : IFlatbufferObject
     int o = builder.EndTable();
     return new Offset<Effekseer.FB.PositionSettings_PVA>(o);
   }
+  public PositionSettings_PVAT UnPack() {
+    var _o = new PositionSettings_PVAT();
+    this.UnPackTo(_o);
+    return _o;
+  }
+  public void UnPackTo(PositionSettings_PVAT _o) {
+    _o.Pos = this.Pos.HasValue ? this.Pos.Value.UnPack() : null;
+    _o.Vel = this.Vel.HasValue ? this.Vel.Value.UnPack() : null;
+    _o.Acc = this.Acc.HasValue ? this.Acc.Value.UnPack() : null;
+  }
+  public static Offset<Effekseer.FB.PositionSettings_PVA> Pack(FlatBufferBuilder builder, PositionSettings_PVAT _o) {
+    if (_o == null) return default(Offset<Effekseer.FB.PositionSettings_PVA>);
+    StartPositionSettings_PVA(builder);
+    AddPos(builder, Effekseer.FB.Vec3FRange.Pack(builder, _o.Pos));
+    AddVel(builder, Effekseer.FB.Vec3FRange.Pack(builder, _o.Vel));
+    AddAcc(builder, Effekseer.FB.Vec3FRange.Pack(builder, _o.Acc));
+    return EndPositionSettings_PVA(builder);
+  }
 };
+
+public class PositionSettings_PVAT
+{
+  public Effekseer.FB.Vec3FRangeT Pos { get; set; }
+  public Effekseer.FB.Vec3FRangeT Vel { get; set; }
+  public Effekseer.FB.Vec3FRangeT Acc { get; set; }
+
+  public PositionSettings_PVAT() {
+    this.Pos = new Effekseer.FB.Vec3FRangeT();
+    this.Vel = new Effekseer.FB.Vec3FRangeT();
+    this.Acc = new Effekseer.FB.Vec3FRangeT();
+  }
+}
 
 public struct PositionSettings_Easing : IFlatbufferObject
 {
@@ -91,7 +158,31 @@ public struct PositionSettings_Easing : IFlatbufferObject
     int o = builder.EndTable();
     return new Offset<Effekseer.FB.PositionSettings_Easing>(o);
   }
+  public PositionSettings_EasingT UnPack() {
+    var _o = new PositionSettings_EasingT();
+    this.UnPackTo(_o);
+    return _o;
+  }
+  public void UnPackTo(PositionSettings_EasingT _o) {
+    _o.Location = this.Location.HasValue ? this.Location.Value.UnPack() : null;
+  }
+  public static Offset<Effekseer.FB.PositionSettings_Easing> Pack(FlatBufferBuilder builder, PositionSettings_EasingT _o) {
+    if (_o == null) return default(Offset<Effekseer.FB.PositionSettings_Easing>);
+    var _location = _o.Location == null ? default(Offset<Effekseer.FB.EasingVec3F>) : Effekseer.FB.EasingVec3F.Pack(builder, _o.Location);
+    return CreatePositionSettings_Easing(
+      builder,
+      _location);
+  }
 };
+
+public class PositionSettings_EasingT
+{
+  public Effekseer.FB.EasingVec3FT Location { get; set; }
+
+  public PositionSettings_EasingT() {
+    this.Location = null;
+  }
+}
 
 public struct PositionSettings_FCurve : IFlatbufferObject
 {
@@ -118,7 +209,31 @@ public struct PositionSettings_FCurve : IFlatbufferObject
     int o = builder.EndTable();
     return new Offset<Effekseer.FB.PositionSettings_FCurve>(o);
   }
+  public PositionSettings_FCurveT UnPack() {
+    var _o = new PositionSettings_FCurveT();
+    this.UnPackTo(_o);
+    return _o;
+  }
+  public void UnPackTo(PositionSettings_FCurveT _o) {
+    _o.Fcurve = this.Fcurve.HasValue ? this.Fcurve.Value.UnPack() : null;
+  }
+  public static Offset<Effekseer.FB.PositionSettings_FCurve> Pack(FlatBufferBuilder builder, PositionSettings_FCurveT _o) {
+    if (_o == null) return default(Offset<Effekseer.FB.PositionSettings_FCurve>);
+    var _fcurve = _o.Fcurve == null ? default(Offset<Effekseer.FB.FCurveGroup>) : Effekseer.FB.FCurveGroup.Pack(builder, _o.Fcurve);
+    return CreatePositionSettings_FCurve(
+      builder,
+      _fcurve);
+  }
 };
+
+public class PositionSettings_FCurveT
+{
+  public Effekseer.FB.FCurveGroupT Fcurve { get; set; }
+
+  public PositionSettings_FCurveT() {
+    this.Fcurve = null;
+  }
+}
 
 public struct PositionSettings_NurbsCurve : IFlatbufferObject
 {
@@ -157,7 +272,42 @@ public struct PositionSettings_NurbsCurve : IFlatbufferObject
     int o = builder.EndTable();
     return new Offset<Effekseer.FB.PositionSettings_NurbsCurve>(o);
   }
+  public PositionSettings_NurbsCurveT UnPack() {
+    var _o = new PositionSettings_NurbsCurveT();
+    this.UnPackTo(_o);
+    return _o;
+  }
+  public void UnPackTo(PositionSettings_NurbsCurveT _o) {
+    _o.Index = this.Index;
+    _o.Scale = this.Scale;
+    _o.MoveSpeed = this.MoveSpeed;
+    _o.LoopType = this.LoopType;
+  }
+  public static Offset<Effekseer.FB.PositionSettings_NurbsCurve> Pack(FlatBufferBuilder builder, PositionSettings_NurbsCurveT _o) {
+    if (_o == null) return default(Offset<Effekseer.FB.PositionSettings_NurbsCurve>);
+    return CreatePositionSettings_NurbsCurve(
+      builder,
+      _o.Index,
+      _o.Scale,
+      _o.MoveSpeed,
+      _o.LoopType);
+  }
 };
+
+public class PositionSettings_NurbsCurveT
+{
+  public int Index { get; set; }
+  public float Scale { get; set; }
+  public float MoveSpeed { get; set; }
+  public int LoopType { get; set; }
+
+  public PositionSettings_NurbsCurveT() {
+    this.Index = 0;
+    this.Scale = 0.0f;
+    this.MoveSpeed = 0.0f;
+    this.LoopType = 0;
+  }
+}
 
 public struct PositionSettings_ViewOffset : IFlatbufferObject
 {
@@ -177,7 +327,30 @@ public struct PositionSettings_ViewOffset : IFlatbufferObject
     int o = builder.EndTable();
     return new Offset<Effekseer.FB.PositionSettings_ViewOffset>(o);
   }
+  public PositionSettings_ViewOffsetT UnPack() {
+    var _o = new PositionSettings_ViewOffsetT();
+    this.UnPackTo(_o);
+    return _o;
+  }
+  public void UnPackTo(PositionSettings_ViewOffsetT _o) {
+    _o.Distance = this.Distance.HasValue ? this.Distance.Value.UnPack() : null;
+  }
+  public static Offset<Effekseer.FB.PositionSettings_ViewOffset> Pack(FlatBufferBuilder builder, PositionSettings_ViewOffsetT _o) {
+    if (_o == null) return default(Offset<Effekseer.FB.PositionSettings_ViewOffset>);
+    StartPositionSettings_ViewOffset(builder);
+    AddDistance(builder, Effekseer.FB.FloatRange.Pack(builder, _o.Distance));
+    return EndPositionSettings_ViewOffset(builder);
+  }
 };
+
+public class PositionSettings_ViewOffsetT
+{
+  public Effekseer.FB.FloatRangeT Distance { get; set; }
+
+  public PositionSettings_ViewOffsetT() {
+    this.Distance = new Effekseer.FB.FloatRangeT();
+  }
+}
 
 public struct PositionSettings : IFlatbufferObject
 {
@@ -228,7 +401,60 @@ public struct PositionSettings : IFlatbufferObject
     int o = builder.EndTable();
     return new Offset<Effekseer.FB.PositionSettings>(o);
   }
+  public PositionSettingsT UnPack() {
+    var _o = new PositionSettingsT();
+    this.UnPackTo(_o);
+    return _o;
+  }
+  public void UnPackTo(PositionSettingsT _o) {
+    _o.Type = this.Type;
+    _o.Fixed = this.Fixed.HasValue ? this.Fixed.Value.UnPack() : null;
+    _o.Pva = this.Pva.HasValue ? this.Pva.Value.UnPack() : null;
+    _o.Easing = this.Easing.HasValue ? this.Easing.Value.UnPack() : null;
+    _o.Fcurve = this.Fcurve.HasValue ? this.Fcurve.Value.UnPack() : null;
+    _o.NurbsCurve = this.NurbsCurve.HasValue ? this.NurbsCurve.Value.UnPack() : null;
+    _o.ViewOffset = this.ViewOffset.HasValue ? this.ViewOffset.Value.UnPack() : null;
+  }
+  public static Offset<Effekseer.FB.PositionSettings> Pack(FlatBufferBuilder builder, PositionSettingsT _o) {
+    if (_o == null) return default(Offset<Effekseer.FB.PositionSettings>);
+    var _fixed = _o.Fixed == null ? default(Offset<Effekseer.FB.PositionSettings_Fixed>) : Effekseer.FB.PositionSettings_Fixed.Pack(builder, _o.Fixed);
+    var _pva = _o.Pva == null ? default(Offset<Effekseer.FB.PositionSettings_PVA>) : Effekseer.FB.PositionSettings_PVA.Pack(builder, _o.Pva);
+    var _easing = _o.Easing == null ? default(Offset<Effekseer.FB.PositionSettings_Easing>) : Effekseer.FB.PositionSettings_Easing.Pack(builder, _o.Easing);
+    var _fcurve = _o.Fcurve == null ? default(Offset<Effekseer.FB.PositionSettings_FCurve>) : Effekseer.FB.PositionSettings_FCurve.Pack(builder, _o.Fcurve);
+    var _nurbs_curve = _o.NurbsCurve == null ? default(Offset<Effekseer.FB.PositionSettings_NurbsCurve>) : Effekseer.FB.PositionSettings_NurbsCurve.Pack(builder, _o.NurbsCurve);
+    var _view_offset = _o.ViewOffset == null ? default(Offset<Effekseer.FB.PositionSettings_ViewOffset>) : Effekseer.FB.PositionSettings_ViewOffset.Pack(builder, _o.ViewOffset);
+    return CreatePositionSettings(
+      builder,
+      _o.Type,
+      _fixed,
+      _pva,
+      _easing,
+      _fcurve,
+      _nurbs_curve,
+      _view_offset);
+  }
 };
+
+public class PositionSettingsT
+{
+  public Effekseer.FB.PositionType Type { get; set; }
+  public Effekseer.FB.PositionSettings_FixedT Fixed { get; set; }
+  public Effekseer.FB.PositionSettings_PVAT Pva { get; set; }
+  public Effekseer.FB.PositionSettings_EasingT Easing { get; set; }
+  public Effekseer.FB.PositionSettings_FCurveT Fcurve { get; set; }
+  public Effekseer.FB.PositionSettings_NurbsCurveT NurbsCurve { get; set; }
+  public Effekseer.FB.PositionSettings_ViewOffsetT ViewOffset { get; set; }
+
+  public PositionSettingsT() {
+    this.Type = Effekseer.FB.PositionType.PositionType_Fixed;
+    this.Fixed = null;
+    this.Pva = null;
+    this.Easing = null;
+    this.Fcurve = null;
+    this.NurbsCurve = null;
+    this.ViewOffset = null;
+  }
+}
 
 
 }
