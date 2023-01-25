@@ -1,0 +1,31 @@
+include "CommonStructures.fbs";
+
+namespace Effekseer.FB;
+
+enum FCurveTimelineType : int {
+  FCurveTimelineType_Time = 0,
+  FCurveTimelineType_Percent = 1,
+}
+
+enum FCurveEdgeType : int {
+  FCurveEdgeType_Constant = 0,
+  FCurveEdgeType_Loop = 1,
+  FCurveEdgeType_LoopInversely = 2,
+}
+
+table FCurve {
+  offset:int;
+  len:int;
+  freq:int;
+  start:FCurveEdgeType;
+  end:FCurveEdgeType;
+  keys:[float];
+  default_value:float;
+  offset_max:float;
+  offset_min:float;
+}
+
+table FCurveGroup {
+  timeline:FCurveTimelineType;
+  curves:[FCurve];
+}

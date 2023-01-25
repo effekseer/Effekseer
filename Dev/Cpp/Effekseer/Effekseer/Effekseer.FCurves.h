@@ -8,6 +8,10 @@
 #include "SIMD/Vec2f.h"
 #include "SIMD/Vec3f.h"
 
+#include "FB/FlatBuffersUtils.h"
+
+#include "FB/FCurve_generated.h"
+
 namespace Effekseer
 {
 
@@ -55,6 +59,35 @@ public:
 	void ChangeCoordinate();
 
 	void Maginify(float value);
+
+	void LoadWithFB(const FB::FCurve& src)
+	{
+		offset_ = src.offset();
+		len_ = src.len();
+		freq_ = src.freq();
+		start_ = Convert(src.start());
+		end_ = Convert(src.end());
+
+		keys_.reserve(src.keys()->size());
+		for (flatbuffers::uoffset_t i = 0; i < src.keys()->size(); i++)
+		{
+			keys_.emplace_back(src.keys()->Get(i));
+		}
+
+		defaultValue_ = src.default_value();
+		offsetMax_ = src.offset_max();
+		offsetMin_ = src.offset_min();
+	}
+
+	static FCurveEdge Convert(FB::FCurveEdgeType value)
+	{
+		return static_cast<FCurveEdge>(value);
+	}
+
+	static FCurveTimelineType Convert(FB::FCurveTimelineType value)
+	{
+		return static_cast<FCurveTimelineType>(value);
+	}
 };
 
 class FCurveScalar
@@ -67,6 +100,14 @@ public:
 
 	float GetValues(float living, float life) const;
 	float GetOffsets(IRandObject& g) const;
+
+	void LoadWithFB(const FB::FCurveGroup& src)
+	{
+		Timeline = FCurve::Convert(src.timeline());
+
+		assert(src.curves()->size() == 1);
+		S.LoadWithFB(*src.curves()->Get(0));
+	}
 };
 
 class FCurveVector2D
@@ -80,6 +121,15 @@ public:
 
 	SIMD::Vec2f GetValues(float living, float life) const;
 	SIMD::Vec2f GetOffsets(IRandObject& g) const;
+
+	void LoadWithFB(const FB::FCurveGroup& src)
+	{
+		Timeline = FCurve::Convert(src.timeline());
+
+		assert(src.curves()->size() == 2);
+		X.LoadWithFB(*src.curves()->Get(0));
+		Y.LoadWithFB(*src.curves()->Get(1));
+	}
 };
 
 class FCurveVector3D
@@ -94,6 +144,16 @@ public:
 
 	SIMD::Vec3f GetValues(float living, float life) const;
 	SIMD::Vec3f GetOffsets(IRandObject& g) const;
+
+	void LoadWithFB(const FB::FCurveGroup& src)
+	{
+		Timeline = FCurve::Convert(src.timeline());
+
+		assert(src.curves()->size() == 3);
+		X.LoadWithFB(*src.curves()->Get(0));
+		Y.LoadWithFB(*src.curves()->Get(1));
+		Z.LoadWithFB(*src.curves()->Get(2));
+	}
 };
 
 class FCurveVectorColor
@@ -109,6 +169,17 @@ public:
 
 	std::array<float, 4> GetValues(float living, float life) const;
 	std::array<float, 4> GetOffsets(IRandObject& g) const;
+
+	void LoadWithFB(const FB::FCurveGroup& src)
+	{
+		Timeline = FCurve::Convert(src.timeline());
+
+		assert(src.curves()->size() == 4);
+		R.LoadWithFB(*src.curves()->Get(0));
+		G.LoadWithFB(*src.curves()->Get(1));
+		B.LoadWithFB(*src.curves()->Get(2));
+		A.LoadWithFB(*src.curves()->Get(3));
+	}
 };
 
 } // namespace Effekseer

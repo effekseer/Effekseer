@@ -21,7 +21,8 @@ file(GLOB files_core
     EffekseerCore/Properties/*.cs
     EffekseerCore/Properties/*.cs
     EffekseerCore/Script/*.cs
-    EffekseerCore/IO/*.cs	
+    EffekseerCore/IO/*.cs
+    EffekseerCore/IO/EffectBinary.cs
     EffekseerCore/Utils/*.cs
     EffekseerCore/Data/CollisionsValues.cs
     EffekseerCore/FB/*.cs
