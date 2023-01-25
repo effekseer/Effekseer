@@ -152,6 +152,8 @@ void EffectNodeSprite::LoadRendererParameter(const FB::Node* fbNode, const Setti
 	SpritePosition.type = SpritePosition.Fixed;
 
 	SpriteColor.type = SpriteColor.Default;
+
+	Billboard = BillboardType::Fixed;
 }
 
 void EffectNodeSprite::BeginRendering(int32_t count, Manager* manager, const InstanceGlobal* global, void* userData)

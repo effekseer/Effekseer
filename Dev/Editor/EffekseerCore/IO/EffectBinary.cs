@@ -35,6 +35,8 @@ namespace Effekseer.IO
 			FB.NodeT exportNode(EffectAsset.Node node)
 			{
 				var ret = new FB.NodeT();
+				ret.Children = new List<FB.NodeT>();
+
 				foreach (var child in node.Children)
 				{
 					ret.Children.Add(exportNode(child));
@@ -85,6 +87,10 @@ namespace Effekseer.IO
 
 			ret.GenerationTimeOffset = new FB.FloatRangeT { RefEq = new FB.RefMinMaxT { Min = -1, Max = -1 }, Min = 10, Max = 100 };
 			ret.RefWqGenerationTimeOffset = new FB.RefMinMaxT { Min = -1, Max = -1 };
+
+			ret.TranslationBindType = FB.TranslationParentBindType.TranslationParentBindType_Always;
+			ret.RotationBindType = FB.BindType.BindType_Always;
+			ret.ScalingBindType = FB.BindType.BindType_Always;
 
 			return ret;
 		}

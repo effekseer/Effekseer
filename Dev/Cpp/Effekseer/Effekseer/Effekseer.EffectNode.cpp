@@ -354,6 +354,8 @@ void EffectNodeImplemented::LoadParameter(const FB::Node* fbNode, EffectNode* pa
 		CommonValues.GenerationTime = FBConverter::Convert(basic_settings->generation_time());
 		CommonValues.GenerationTimeOffset = FBConverter::Convert(basic_settings->generation_time_offset());
 
+		TranslationParam.Load(fbNode->position_settings());
+
 		LoadRendererParameter(fbNode, m_effect->GetSetting());
 	}
 

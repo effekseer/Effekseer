@@ -56,6 +56,16 @@ public:
 		return ret;
 	}
 
+	static void Convert(random_float& dst, const FB::FloatRange* value)
+	{
+		dst.reset();
+		if (value != nullptr)
+		{
+			dst.min = value->min();
+			dst.max = value->max();
+		}
+	}
+
 	static void Convert(RefMinMax& dst, const FB::RefMinMax* value)
 	{
 		if (value != nullptr)

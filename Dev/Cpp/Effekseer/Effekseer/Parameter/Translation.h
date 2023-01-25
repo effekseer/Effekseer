@@ -247,7 +247,6 @@ public:
 
 	void Load(const FB::PositionSettings* position_settings)
 	{
-		// TODO
 		if (position_settings->type() == FB::PositionType::PositionType_None)
 		{
 			TranslationType = ParameterTranslationType_None;
@@ -275,16 +274,22 @@ public:
 		}
 		else if (position_settings->type() == FB::PositionType::PositionType_FCurve)
 		{
+			TranslationType = ParameterTranslationType_FCurve;
 			TranslationFCurve = std::make_unique<FCurveVector3D>();
 			TranslationFCurve->LoadWithFB(*position_settings->fcurve()->fcurve());
 		}
 		else if (position_settings->type() == FB::PositionType::PositionType_NurbsCurve)
 		{
-			// TODO
+			TranslationType = ParameterTranslationType_NurbsCurve;
+			TranslationNurbsCurve.Index = position_settings->nurbs_curve()->index();
+			TranslationNurbsCurve.LoopType = position_settings->nurbs_curve()->loop_type();
+			TranslationNurbsCurve.MoveSpeed = position_settings->nurbs_curve()->move_speed();
+			TranslationNurbsCurve.Scale = position_settings->nurbs_curve()->scale();
 		}
 		else if (position_settings->type() == FB::PositionType::PositionType_ViewOffset)
 		{
-			// TODO
+			TranslationType = ParameterTranslationType_ViewOffset;
+			FBConverter::Convert(TranslationViewOffset.distance, position_settings->view_offset()->distance());
 		}
 	}
 
