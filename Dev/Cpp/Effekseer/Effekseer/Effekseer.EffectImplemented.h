@@ -199,6 +199,8 @@ protected:
 
 	bool LoadBody(const uint8_t* data, int32_t size, float mag);
 
+	bool LoadBodyWithFlatBuffers(const uint8_t* data, int32_t size, float mag);
+
 	void ResetReloadingBackup();
 
 public:

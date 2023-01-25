@@ -1,0 +1,12 @@
+include "BasicSettings.fbs";
+include "PositionSettings.fbs";
+
+namespace Effekseer.FB;
+
+table Node {
+  type:EffectNodeType;
+  is_rendered:bool;
+  basic_settings:BasicSettings;
+  position_settings:PositionSettings;
+  children:[Node];
+}

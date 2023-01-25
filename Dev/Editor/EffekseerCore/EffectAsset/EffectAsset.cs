@@ -690,6 +690,354 @@ namespace Effekseer.EffectAsset
 		public float OffsetMin = 0;
 		public int Sampling = 10;
 		public List<FCurveKey> Keys = new List<FCurveKey>();
+		public float DefaultValue;
+
+		public float GetValue(float frame)
+		{
+			var begin = StartType;
+			var end = EndType;
+
+			int lInd = 0;
+			int rInd = (int)Keys.Count - 1;
+
+			if (Keys.Count == 0)
+			{
+				return DefaultValue;
+			}
+
+			var length = (Keys[rInd].Key.X - Keys[lInd].Key.X);
+
+			if (length == 0)
+			{
+				return Keys[lInd].Key.Y;
+			}
+
+			if (Keys[rInd].Key.X <= frame)
+			{
+				if (end == FCurveEdge.Constant)
+				{
+					return Keys[rInd].Key.Y;
+				}
+				else if (end == FCurveEdge.Loop)
+				{
+					frame = (frame - Keys[rInd].Key.X) % length + Keys[lInd].Key.X;
+				}
+				else if (end == FCurveEdge.LoopInversely)
+				{
+					frame = (length - (frame - Keys[rInd].Key.X) % length) + Keys[lInd].Key.X;
+				}
+			}
+
+			if (frame <= Keys[lInd].Key.X)
+			{
+				if (begin == FCurveEdge.Constant)
+				{
+					return Keys[lInd].Key.Y;
+				}
+				else if (begin == FCurveEdge.Loop)
+				{
+					frame = (Keys[lInd].Key.X - frame) % length + Keys[lInd].Key.X;
+				}
+				else if (begin == FCurveEdge.LoopInversely)
+				{
+					frame = (length - (Keys[lInd].Key.X - frame) % length) + Keys[lInd].Key.X;
+				}
+			}
+
+			while (true)
+			{
+				int mInd = (lInd + rInd) / 2;
+
+				/* lIndとrIndの間 */
+				if (mInd == lInd)
+				{
+					if (Keys[lInd].InterpolationType == FCurveInterpolation.Linear)
+					{
+						float subF = (float)(Keys[rInd].Key.X - Keys[lInd].Key.X);
+						var subV = Keys[rInd].Key.Y - Keys[lInd].Key.Y;
+
+						if (subF == 0) return Keys[lInd].Key.Y;
+
+						return subV / (float)(subF) * (float)(frame - Keys[lInd].Key.X) + Keys[lInd].Key.Y;
+					}
+					else if (Keys[lInd].InterpolationType == FCurveInterpolation.Bezier)
+					{
+						if (Keys[lInd].Key.X == frame) return Keys[lInd].Key.Y;
+
+						float[] k1 = new float[2];
+						float[] k1rh = new float[2];
+						float[] k2lh = new float[2];
+						float[] k2 = new float[2];
+
+						k1[0] = Keys[lInd].Key.X;
+						k1[1] = Keys[lInd].Key.Y;
+
+						k1rh[0] = Keys[lInd].Right.X;
+						k1rh[1] = Keys[lInd].Right.Y;
+
+						k2lh[0] = Keys[rInd].Left.X;
+						k2lh[1] = Keys[rInd].Left.Y;
+
+						k2[0] = Keys[rInd].Key.X;
+						k2[1] = Keys[rInd].Key.Y;
+
+						NormalizeValues(k1, k1rh, k2lh, k2);
+						float t = 0;
+						var getT = CalcT(frame, k1[0], k1rh[0], k2lh[0], k2[0], out t);
+						if (getT)
+						{
+							return CalcBezierValue(k1[1], k1rh[1], k2lh[1], k2[1], t);
+						}
+						else
+						{
+							return 0;
+						}
+					}
+				}
+
+				if (Keys[mInd].Key.X <= frame)
+				{
+					lInd = mInd;
+				}
+				else if (frame <= Keys[mInd].Key.X)
+				{
+					rInd = mInd;
+				}
+			}
+		}
+
+
+		/// <summary>
+		/// 三乗根を求める。
+		/// </summary>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		static float Sqrt3(float value)
+		{
+			if (value == 0)
+			{
+				return 0;
+			}
+			else if (value > 0)
+			{
+				return (float)Math.Pow(value, 1.0 / 3.0);
+			}
+			else
+			{
+				return -(float)Math.Pow(-value, 1.0 / 3.0);
+			}
+		}
+
+		/// <summary>
+		/// 平方根を求める。
+		/// </summary>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		static float Sqrt(float value)
+		{
+			return (float)Math.Sqrt(value);
+		}
+
+		/// <summary>
+		/// 正しく値を求めれるように補正を行う。
+		/// </summary>
+		/// <param name="k1"></param>
+		/// <param name="k1rh"></param>
+		/// <param name="k2lh"></param>
+		/// <param name="k2"></param>
+		static void NormalizeValues(float[] k1, float[] k1rh, float[] k2lh, float[] k2)
+		{
+			var h1 = new float[2];
+			var h2 = new float[2];
+
+			// 傾きを求める
+			h1[0] = k1[0] - k1rh[0];
+			h1[1] = k1[1] - k1rh[1];
+
+			h2[0] = k2[0] - k2lh[0];
+			h2[1] = k2[1] - k2lh[1];
+
+			// キーフレーム間の長さ
+			var len = k2[0] - k1[0];
+
+			// キー1の右手の長さ
+			var lenR = Math.Abs(h1[0]);
+
+			// キー2の左手の長さ
+			var lenL = Math.Abs(h2[0]);
+
+			// 長さがない
+			if (lenR == 0 && lenL == 0) return;
+
+			// 手が重なっている場合、補正
+			if ((lenR + lenL) > len)
+			{
+				var f = len / (lenR + lenL);
+
+				k1rh[0] = (k1[0] - f * h1[0]);
+				k1rh[1] = (k1[1] - f * h1[1]);
+
+				k2lh[0] = (k2[0] - f * h2[0]);
+				k2lh[1] = (k2[1] - f * h2[1]);
+			}
+		}
+
+		/// <summary>
+		/// 二次方程式の解を求める。
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <param name="c"></param>
+		/// <param name="r1"></param>
+		/// <param name="r2"></param>
+		static void QuadraticFormula(float a, float b, float c, out float r1, out float r2)
+		{
+			r1 = float.NaN;
+			r2 = float.NaN;
+
+			if (a != 0.0)
+			{
+				float p = b * b - 4 * a * c;
+
+				if (p > 0)
+				{
+					p = Sqrt(p);
+					r1 = (-b - p) / (2 * a);
+					r2 = (-b + p) / (2 * a);
+				}
+				else if (p == 0)
+				{
+					r1 = -b / (2 * a);
+				}
+			}
+			else if (b != 0.0)
+			{
+				r1 = -c / b;
+			}
+			else if (c == 0.0f)
+			{
+				r1 = 0.0f;
+			}
+		}
+
+		/// <summary>
+		/// 三次方程式の解を求める。
+		/// </summary>
+		/// <param name="frame"></param>
+		/// <param name="k1X"></param>
+		/// <param name="k1rhX"></param>
+		/// <param name="k2lhX"></param>
+		/// <param name="k2X"></param>
+		/// <param name="r"></param>
+		/// <returns></returns>
+		static bool CalcT(float frame, float k1X, float k1rhX, float k2lhX, float k2X, out float r)
+		{
+			Func<float, bool> isValid = (v) =>
+			{
+				if (float.IsNaN(v)) return false;
+
+				const float small = -0.00000001f;
+				const float big = 1.000001f;
+				return (v >= small) && (v <= big);
+			};
+
+			var c3_ = k2X - k1X + 3.0f * (k1rhX - k2lhX);
+			var c2_ = 3.0f * (k1X - 2.0f * k1rhX + k2lhX);
+			var c1_ = 3.0f * (k1rhX - k1X);
+			var c0_ = k1X - frame;
+
+			if (c3_ != 0.0)
+			{
+				var c2 = c2_ / c3_;
+				var c1 = c1_ / c3_;
+				var c0 = c0_ / c3_;
+
+				var p = c1 / 3.0f - c2 * c2 / (3.0f * 3.0f);
+				var q = (2.0f * c2 * c2 * c2 / (3.0f * 3.0f * 3.0f) - c2 / 3.0f * c1 + c0) / 2.0f;
+				var p3q2 = q * q + p * p * p;
+
+				if (p3q2 > 0.0)
+				{
+					var t = Sqrt(p3q2);
+					var u = Sqrt3(-q + t);
+					var v = Sqrt3(-q - t);
+					r = u + v - c2 / 3.0f;
+
+					if (isValid(r)) return true;
+					return false;
+				}
+				else if (p3q2 == 0.0)
+				{
+					var u = Sqrt3(-q);
+					var v = Sqrt3(-q);
+					r = u + v - c2 / 3.0f;
+					if (isValid(r)) return true;
+
+					u = -Sqrt3(-q);
+					v = -Sqrt3(-q);
+					r = u + v - c2 / 3.0f;
+					if (isValid(r)) return true;
+
+					return false;
+				}
+				else
+				{
+					// ビエタの解
+					var phi = (float)Math.Acos(-q / Sqrt(-(p * p * p)));
+					var pd3 = (float)Math.Cos(phi / 3);
+					var rmp = Sqrt(-p);
+
+					r = 2.0f * rmp * (float)Math.Cos(phi / 3) - c2 / 3.0f;
+					if (isValid(r)) return true;
+
+					var q2 = Sqrt(3 - 3 * pd3 * pd3);
+
+					//r = -rmp * (pd3 + q2) - a;
+					r = 2.0f * rmp * (float)Math.Cos(phi / 3 + 2.0 * Math.PI / 3.0) - c2 / 3.0f;
+					if (isValid(r)) return true;
+
+					//r = -rmp * (pd3 - q2) - a;
+					r = 2.0f * rmp * (float)Math.Cos(phi / 3 + 4.0 * Math.PI / 3.0) - c2 / 3.0f;
+					if (isValid(r)) return true;
+					return false;
+				}
+			}
+			else
+			{
+				// 2次方程式のケース
+				float r1;
+				float r2;
+				QuadraticFormula(c2_, c1_, c0_, out r1, out r2);
+
+				r = r1;
+				if (isValid(r)) return true;
+
+				r = r2;
+				if (isValid(r)) return true;
+
+				r = 0.0f;
+				return false;
+			}
+		}
+
+		/// <summary>
+		/// 三次方程式の解から値を求める。
+		/// </summary>
+		/// <param name="k1Y"></param>
+		/// <param name="k1rhY"></param>
+		/// <param name="k2lhY"></param>
+		/// <param name="k2Y"></param>
+		/// <param name="t"></param>
+		/// <returns></returns>
+		static float CalcBezierValue(float k1Y, float k1rhY, float k2lhY, float k2Y, float t)
+		{
+			var c0 = k1Y;
+			var c1 = 3.0f * (k1rhY - k1Y);
+			var c2 = 3.0f * (k1Y - 2.0f * k1rhY + k2lhY);
+			var c3 = k2Y - k1Y + 3.0f * (k1rhY - k2lhY);
+
+			return c0 + t * c1 + t * t * c2 + t * t * t * c3;
+		}
 	}
 
 	public class FCurveVector3D

@@ -35,6 +35,11 @@
 namespace Effekseer
 {
 
+namespace FB
+{
+class Node;
+}
+
 enum class TriggerType : uint8_t
 {
 	None = 0,
@@ -496,6 +501,8 @@ protected:
 
 	void LoadParameter(unsigned char*& pos, EffectNode* parent, const SettingRef& setting);
 
+	void LoadParameter(const FB::Node* fbNode, EffectNode* parent, const SettingRef& setting);
+
 	//! calculate custom data
 	void CalcCustomData(const Instance* instance, std::array<float, 4>& customData1, std::array<float, 4>& customData2);
 
@@ -563,6 +570,8 @@ public:
 
 	virtual void LoadRendererParameter(unsigned char*& pos, const SettingRef& setting);
 
+	virtual void LoadRendererParameter(const FB::Node* fbNode, const SettingRef& setting);
+
 	virtual void BeginRendering(int32_t count, Manager* manager, const InstanceGlobal* global, void* userData);
 
 	/**
@@ -602,6 +611,8 @@ public:
 	@brief	エフェクトノード生成
 	*/
 	static EffectNodeImplemented* Create(Effect* effect, EffectNode* parent, unsigned char*& pos);
+
+	static EffectNodeImplemented* Create(Effect* effect, EffectNode* parent, const FB::Node* fbNode);
 
 	/**
 	@brief	ノードの種類取得

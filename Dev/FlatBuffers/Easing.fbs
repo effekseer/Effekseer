@@ -1,0 +1,61 @@
+include "CommonStructures.fbs";
+
+namespace Effekseer.FB;
+
+enum Easing3Type : int {
+  StartEndSpeed = 0,
+  Linear = 1,
+
+  EaseInQuadratic = 10,
+  EaseOutQuadratic = 11,
+  EaseInOutQuadratic = 12,
+
+  EaseInCubic = 20,
+  EaseOutCubic = 21,
+  EaseInOutCubic = 22,
+
+  EaseInQuartic = 30,
+  EaseOutQuartic = 31,
+  EaseInOutQuartic = 32,
+
+  EaseInQuintic = 40,
+  EaseOutQuintic = 41,
+  EaseInOutQuintic = 42,
+
+  EaseInBack = 50,
+  EaseOutBack = 51,
+  EaseInOutBack = 52,
+
+  EaseInBounce = 60,
+  EaseOutBounce = 61,
+  EaseInOutBounce = 62,
+}
+
+table EasingFloat
+{
+  ref_eq_s:RefMinMax;
+  ref_eq_e:RefMinMax;
+  ref_eq_m:RefMinMax;
+  start:FloatRange;
+  end:FloatRange;
+  middle:FloatRange;
+  type:Easing3Type;
+  params:[float];
+  channel:int = 0;
+  is_middle_enabled:bool;
+  is_individual_enabled:bool;
+  types:[Easing3Type];
+}
+
+table EasingVec3F
+{
+  start:Vec3FRange;
+  end:Vec3FRange;
+  middle:Vec3FRange;
+  type:Easing3Type;
+  params:[float];
+  channel:int = 0;
+  is_middle_enabled:bool;
+  is_individual_enabled:bool;
+  types:[Easing3Type];
+}
