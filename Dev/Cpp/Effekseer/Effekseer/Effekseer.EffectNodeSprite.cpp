@@ -136,6 +136,26 @@ void EffectNodeSprite::LoadRendererParameter(unsigned char*& pos, const SettingR
 	}
 }
 
+void EffectNodeSprite::LoadRendererParameter(const FB::Node* fbNode, const SettingRef& setting)
+{
+	// TODO
+	IsRendered = true;
+	AlphaBlend = AlphaBlendType::Blend;
+	RenderingOrder = eRenderingOrder::RenderingOrder_FirstCreatedInstanceIsFirst;
+	SpriteAllColor.type = AllTypeColorParameter::Fixed;
+	SpriteAllColor.fixed.all = Effekseer::Color(255, 255, 255, 255);
+
+	SpritePosition.fixed.ll = {-0.5f, -0.5f};
+	SpritePosition.fixed.lr = {0.5f, -0.5f};
+	SpritePosition.fixed.ul = {-0.5f, 0.5f};
+	SpritePosition.fixed.ur = {0.5f, 0.5f};
+	SpritePosition.type = SpritePosition.Fixed;
+
+	SpriteColor.type = SpriteColor.Default;
+
+	Billboard = BillboardType::Fixed;
+}
+
 void EffectNodeSprite::BeginRendering(int32_t count, Manager* manager, const InstanceGlobal* global, void* userData)
 {
 	SpriteRendererRef renderer = manager->GetSpriteRenderer();

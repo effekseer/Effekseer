@@ -26,6 +26,10 @@
 
 #include "Utils/Compatiblity.h"
 
+#include "FB/FlatBuffersUtils.h"
+
+#include "FB/Effect_generated.h"
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -311,6 +315,58 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 	}
 }
 
+void EffectNodeImplemented::LoadParameter(const FB::Node* fbNode, EffectNode* parent, const SettingRef& setting)
+{
+	if (parent)
+	{
+		generation_ = parent->GetGeneration() + 1;
+	}
+	else
+	{
+		generation_ = 0;
+	}
+
+	if (fbNode->type() == FB::EffectNodeType::EffectNodeType_Root)
+	{
+		CommonValues.MaxGeneration = 1;
+
+		GenerationLocation.EffectsRotation = 0;
+		GenerationLocation.type = ParameterGenerationLocation::TYPE_POINT;
+		GenerationLocation.point.location.reset();
+
+		RenderingPriority = -1;
+	}
+	else
+	{
+		IsRendered = fbNode->is_rendered();
+		const auto basic_settings = fbNode->basic_settings();
+		CommonValues.RefEqMaxGeneration = basic_settings->ref_eq_max_generation();
+		CommonValues.RefEqGenerationTime = FBConverter::Convert(basic_settings->ref_wq_generation_time());
+		CommonValues.RefEqGenerationTimeOffset = FBConverter::Convert(basic_settings->ref_wq_generation_time_offset());
+		CommonValues.MaxGeneration = basic_settings->max_generation();
+		CommonValues.TranslationBindType = ParameterCommonValues::Convert(basic_settings->translation_bind_type());
+		CommonValues.RotationBindType = FBConverter::Convert(basic_settings->rotation_bind_type());
+		CommonValues.ScalingBindType = FBConverter::Convert(basic_settings->scaling_bind_type());
+		CommonValues.RemoveWhenLifeIsExtinct = basic_settings->remove_when_life_is_extinct();
+		CommonValues.RemoveWhenParentIsRemoved = basic_settings->remove_when_parent_is_removed();
+		CommonValues.RemoveWhenChildrenIsExtinct = basic_settings->remove_when_children_is_extinct();
+		CommonValues.life = FBConverter::Convert(basic_settings->life());
+		CommonValues.GenerationTime = FBConverter::Convert(basic_settings->generation_time());
+		CommonValues.GenerationTimeOffset = FBConverter::Convert(basic_settings->generation_time_offset());
+
+		TranslationParam.Load(fbNode->position_settings());
+
+		LoadRendererParameter(fbNode, m_effect->GetSetting());
+	}
+
+	m_Nodes.resize(fbNode->children()->size());
+
+	for (flatbuffers::uoffset_t i = 0; i < fbNode->children()->size(); i++)
+	{
+		m_Nodes[i] = EffectNodeImplemented::Create(m_effect, this, fbNode->children()->Get(i));
+	}
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -501,6 +557,10 @@ void EffectNodeImplemented::LoadRendererParameter(unsigned char*& pos, const Set
 	pos += sizeof(int);
 	assert(type == GetType());
 	EffekseerPrintDebug("Renderer : None\n");
+}
+
+void EffectNodeImplemented::LoadRendererParameter(const FB::Node* fbNode, const SettingRef& setting)
+{
 }
 
 //----------------------------------------------------------------------------------
@@ -770,6 +830,33 @@ EffectNodeImplemented* EffectNodeImplemented::Create(Effect* effect, EffectNode*
 	}
 
 	effectnode->LoadParameter(pos, parent, effect->GetSetting());
+
+	return effectnode;
+}
+
+EffectNodeImplemented* EffectNodeImplemented::Create(Effect* effect, EffectNode* parent, const FB::Node* fbNode)
+{
+	EffectNodeImplemented* effectnode = nullptr;
+	unsigned char* dummy = nullptr;
+
+	if (fbNode->type() == FB::EffectNodeType::EffectNodeType_Root)
+	{
+		effectnode = new EffectNodeRoot(effect, dummy);
+	}
+	else if (fbNode->type() == FB::EffectNodeType::EffectNodeType_NoneType)
+	{
+		effectnode = new EffectNodeImplemented(effect, dummy);
+	}
+	else if (fbNode->type() == FB::EffectNodeType::EffectNodeType_Sprite)
+	{
+		effectnode = new EffectNodeSprite(effect, dummy);
+	}
+	else
+	{
+		return nullptr;
+	}
+
+	effectnode->LoadParameter(fbNode, parent, effect->GetSetting());
 
 	return effectnode;
 }

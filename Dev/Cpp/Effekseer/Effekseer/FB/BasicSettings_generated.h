@@ -14,167 +14,36 @@ namespace FB {
 struct BasicSettings;
 struct BasicSettingsBuilder;
 
-struct PositionSettings_Fixed;
-struct PositionSettings_FixedBuilder;
-
-struct PositionSettings_PVA;
-struct PositionSettings_PVABuilder;
-
-struct PositionSettings_Easing;
-struct PositionSettings_EasingBuilder;
-
-struct PositionSettings_NurbsCurve;
-struct PositionSettings_NurbsCurveBuilder;
-
-struct PositionSettings_ViewOffset;
-struct PositionSettings_ViewOffsetBuilder;
-
-struct PositionSettings;
-struct PositionSettingsBuilder;
-
-struct TextureProperty;
-struct TexturePropertyBuilder;
-
-struct Node;
-struct NodeBuilder;
-
-struct Effect;
-struct EffectBuilder;
-
-enum TranslationParentBindType : int32_t {
-  TranslationParentBindType_TranslationParentBindType_NotBind = 0,
-  TranslationParentBindType_TranslationParentBindType_WhenCreating = 1,
-  TranslationParentBindType_TranslationParentBindType_Always = 2,
-  TranslationParentBindType_TranslationParentBindType_NotBind_Root = 3,
-  TranslationParentBindType_TranslationParentBindType_NotBind_FollowParent = 4,
-  TranslationParentBindType_TranslationParentBindType_WhenCreating_FollowParent = 5,
-  TranslationParentBindType_MIN = TranslationParentBindType_TranslationParentBindType_NotBind,
-  TranslationParentBindType_MAX = TranslationParentBindType_TranslationParentBindType_WhenCreating_FollowParent
-};
-
-inline const TranslationParentBindType (&EnumValuesTranslationParentBindType())[6] {
-  static const TranslationParentBindType values[] = {
-    TranslationParentBindType_TranslationParentBindType_NotBind,
-    TranslationParentBindType_TranslationParentBindType_WhenCreating,
-    TranslationParentBindType_TranslationParentBindType_Always,
-    TranslationParentBindType_TranslationParentBindType_NotBind_Root,
-    TranslationParentBindType_TranslationParentBindType_NotBind_FollowParent,
-    TranslationParentBindType_TranslationParentBindType_WhenCreating_FollowParent
-  };
-  return values;
-}
-
-inline const char * const *EnumNamesTranslationParentBindType() {
-  static const char * const names[7] = {
-    "TranslationParentBindType_NotBind",
-    "TranslationParentBindType_WhenCreating",
-    "TranslationParentBindType_Always",
-    "TranslationParentBindType_NotBind_Root",
-    "TranslationParentBindType_NotBind_FollowParent",
-    "TranslationParentBindType_WhenCreating_FollowParent",
-    nullptr
-  };
-  return names;
-}
-
-inline const char *EnumNameTranslationParentBindType(TranslationParentBindType e) {
-  if (flatbuffers::IsOutRange(e, TranslationParentBindType_TranslationParentBindType_NotBind, TranslationParentBindType_TranslationParentBindType_WhenCreating_FollowParent)) return "";
-  const size_t index = static_cast<size_t>(e);
-  return EnumNamesTranslationParentBindType()[index];
-}
-
-enum BindType : int32_t {
-  BindType_BindType_NotBind = 0,
-  BindType_BindType_WhenCreating = 1,
-  BindType_BindType_Always = 2,
-  BindType_BindType_NotBind_Root = 3,
-  BindType_MIN = BindType_BindType_NotBind,
-  BindType_MAX = BindType_BindType_NotBind_Root
-};
-
-inline const BindType (&EnumValuesBindType())[4] {
-  static const BindType values[] = {
-    BindType_BindType_NotBind,
-    BindType_BindType_WhenCreating,
-    BindType_BindType_Always,
-    BindType_BindType_NotBind_Root
-  };
-  return values;
-}
-
-inline const char * const *EnumNamesBindType() {
-  static const char * const names[5] = {
-    "BindType_NotBind",
-    "BindType_WhenCreating",
-    "BindType_Always",
-    "BindType_NotBind_Root",
-    nullptr
-  };
-  return names;
-}
-
-inline const char *EnumNameBindType(BindType e) {
-  if (flatbuffers::IsOutRange(e, BindType_BindType_NotBind, BindType_BindType_NotBind_Root)) return "";
-  const size_t index = static_cast<size_t>(e);
-  return EnumNamesBindType()[index];
-}
-
-enum PositionType : int32_t {
-  PositionType_PositionType_None = -1,
-  PositionType_PositionType_Fixed = 0,
-  PositionType_PositionType_PVA = 1,
-  PositionType_PositionType_Easing = 2,
-  PositionType_PositionType_FCurve = 3,
-  PositionType_PositionType_NurbsCurve = 4,
-  PositionType_PositionType_ViewOffset = 5,
-  PositionType_MIN = PositionType_PositionType_None,
-  PositionType_MAX = PositionType_PositionType_ViewOffset
-};
-
-inline const PositionType (&EnumValuesPositionType())[7] {
-  static const PositionType values[] = {
-    PositionType_PositionType_None,
-    PositionType_PositionType_Fixed,
-    PositionType_PositionType_PVA,
-    PositionType_PositionType_Easing,
-    PositionType_PositionType_FCurve,
-    PositionType_PositionType_NurbsCurve,
-    PositionType_PositionType_ViewOffset
-  };
-  return values;
-}
-
-inline const char * const *EnumNamesPositionType() {
-  static const char * const names[8] = {
-    "PositionType_None",
-    "PositionType_Fixed",
-    "PositionType_PVA",
-    "PositionType_Easing",
-    "PositionType_FCurve",
-    "PositionType_NurbsCurve",
-    "PositionType_ViewOffset",
-    nullptr
-  };
-  return names;
-}
-
-inline const char *EnumNamePositionType(PositionType e) {
-  if (flatbuffers::IsOutRange(e, PositionType_PositionType_None, PositionType_PositionType_ViewOffset)) return "";
-  const size_t index = static_cast<size_t>(e) - static_cast<size_t>(PositionType_PositionType_None);
-  return EnumNamesPositionType()[index];
-}
-
 struct BasicSettings FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   typedef BasicSettingsBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_MAX_GENERATION = 4,
-    VT_TRANSLATION_BIND_TYPE = 6,
-    VT_ROTATION_BIND_TYPE = 8,
-    VT_SCALING_BIND_TYPE = 10,
-    VT_REMOVE_WHEN_LIFE_IS_EXTINCT = 12,
-    VT_REMOVE_WHEN_PARENT_IS_REMOVED = 14,
-    VT_REMOVE_WHEN_CHILDREN_IS_EXTINCT = 16
+    VT_REF_EQ_MAX_GENERATION = 4,
+    VT_REF_WQ_LIFE = 6,
+    VT_REF_WQ_GENERATION_TIME = 8,
+    VT_REF_WQ_GENERATION_TIME_OFFSET = 10,
+    VT_MAX_GENERATION = 12,
+    VT_TRANSLATION_BIND_TYPE = 14,
+    VT_ROTATION_BIND_TYPE = 16,
+    VT_SCALING_BIND_TYPE = 18,
+    VT_REMOVE_WHEN_LIFE_IS_EXTINCT = 20,
+    VT_REMOVE_WHEN_PARENT_IS_REMOVED = 22,
+    VT_REMOVE_WHEN_CHILDREN_IS_EXTINCT = 24,
+    VT_LIFE = 26,
+    VT_GENERATION_TIME = 28,
+    VT_GENERATION_TIME_OFFSET = 30
   };
+  int32_t ref_eq_max_generation() const {
+    return GetField<int32_t>(VT_REF_EQ_MAX_GENERATION, -1);
+  }
+  const Effekseer::FB::RefMinMax *ref_wq_life() const {
+    return GetStruct<const Effekseer::FB::RefMinMax *>(VT_REF_WQ_LIFE);
+  }
+  const Effekseer::FB::RefMinMax *ref_wq_generation_time() const {
+    return GetStruct<const Effekseer::FB::RefMinMax *>(VT_REF_WQ_GENERATION_TIME);
+  }
+  const Effekseer::FB::RefMinMax *ref_wq_generation_time_offset() const {
+    return GetStruct<const Effekseer::FB::RefMinMax *>(VT_REF_WQ_GENERATION_TIME_OFFSET);
+  }
   int32_t max_generation() const {
     return GetField<int32_t>(VT_MAX_GENERATION, 1);
   }
@@ -196,8 +65,21 @@ struct BasicSettings FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   int32_t remove_when_children_is_extinct() const {
     return GetField<int32_t>(VT_REMOVE_WHEN_CHILDREN_IS_EXTINCT, 0);
   }
+  const Effekseer::FB::IntRange *life() const {
+    return GetStruct<const Effekseer::FB::IntRange *>(VT_LIFE);
+  }
+  const Effekseer::FB::FloatRange *generation_time() const {
+    return GetStruct<const Effekseer::FB::FloatRange *>(VT_GENERATION_TIME);
+  }
+  const Effekseer::FB::FloatRange *generation_time_offset() const {
+    return GetStruct<const Effekseer::FB::FloatRange *>(VT_GENERATION_TIME_OFFSET);
+  }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
+           VerifyField<int32_t>(verifier, VT_REF_EQ_MAX_GENERATION) &&
+           VerifyField<Effekseer::FB::RefMinMax>(verifier, VT_REF_WQ_LIFE) &&
+           VerifyField<Effekseer::FB::RefMinMax>(verifier, VT_REF_WQ_GENERATION_TIME) &&
+           VerifyField<Effekseer::FB::RefMinMax>(verifier, VT_REF_WQ_GENERATION_TIME_OFFSET) &&
            VerifyField<int32_t>(verifier, VT_MAX_GENERATION) &&
            VerifyField<int32_t>(verifier, VT_TRANSLATION_BIND_TYPE) &&
            VerifyField<int32_t>(verifier, VT_ROTATION_BIND_TYPE) &&
@@ -205,6 +87,9 @@ struct BasicSettings FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
            VerifyField<int32_t>(verifier, VT_REMOVE_WHEN_LIFE_IS_EXTINCT) &&
            VerifyField<int32_t>(verifier, VT_REMOVE_WHEN_PARENT_IS_REMOVED) &&
            VerifyField<int32_t>(verifier, VT_REMOVE_WHEN_CHILDREN_IS_EXTINCT) &&
+           VerifyField<Effekseer::FB::IntRange>(verifier, VT_LIFE) &&
+           VerifyField<Effekseer::FB::FloatRange>(verifier, VT_GENERATION_TIME) &&
+           VerifyField<Effekseer::FB::FloatRange>(verifier, VT_GENERATION_TIME_OFFSET) &&
            verifier.EndTable();
   }
 };
@@ -213,6 +98,18 @@ struct BasicSettingsBuilder {
   typedef BasicSettings Table;
   flatbuffers::FlatBufferBuilder &fbb_;
   flatbuffers::uoffset_t start_;
+  void add_ref_eq_max_generation(int32_t ref_eq_max_generation) {
+    fbb_.AddElement<int32_t>(BasicSettings::VT_REF_EQ_MAX_GENERATION, ref_eq_max_generation, -1);
+  }
+  void add_ref_wq_life(const Effekseer::FB::RefMinMax *ref_wq_life) {
+    fbb_.AddStruct(BasicSettings::VT_REF_WQ_LIFE, ref_wq_life);
+  }
+  void add_ref_wq_generation_time(const Effekseer::FB::RefMinMax *ref_wq_generation_time) {
+    fbb_.AddStruct(BasicSettings::VT_REF_WQ_GENERATION_TIME, ref_wq_generation_time);
+  }
+  void add_ref_wq_generation_time_offset(const Effekseer::FB::RefMinMax *ref_wq_generation_time_offset) {
+    fbb_.AddStruct(BasicSettings::VT_REF_WQ_GENERATION_TIME_OFFSET, ref_wq_generation_time_offset);
+  }
   void add_max_generation(int32_t max_generation) {
     fbb_.AddElement<int32_t>(BasicSettings::VT_MAX_GENERATION, max_generation, 1);
   }
@@ -234,6 +131,15 @@ struct BasicSettingsBuilder {
   void add_remove_when_children_is_extinct(int32_t remove_when_children_is_extinct) {
     fbb_.AddElement<int32_t>(BasicSettings::VT_REMOVE_WHEN_CHILDREN_IS_EXTINCT, remove_when_children_is_extinct, 0);
   }
+  void add_life(const Effekseer::FB::IntRange *life) {
+    fbb_.AddStruct(BasicSettings::VT_LIFE, life);
+  }
+  void add_generation_time(const Effekseer::FB::FloatRange *generation_time) {
+    fbb_.AddStruct(BasicSettings::VT_GENERATION_TIME, generation_time);
+  }
+  void add_generation_time_offset(const Effekseer::FB::FloatRange *generation_time_offset) {
+    fbb_.AddStruct(BasicSettings::VT_GENERATION_TIME_OFFSET, generation_time_offset);
+  }
   explicit BasicSettingsBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
@@ -247,14 +153,24 @@ struct BasicSettingsBuilder {
 
 inline flatbuffers::Offset<BasicSettings> CreateBasicSettings(
     flatbuffers::FlatBufferBuilder &_fbb,
+    int32_t ref_eq_max_generation = -1,
+    const Effekseer::FB::RefMinMax *ref_wq_life = 0,
+    const Effekseer::FB::RefMinMax *ref_wq_generation_time = 0,
+    const Effekseer::FB::RefMinMax *ref_wq_generation_time_offset = 0,
     int32_t max_generation = 1,
-    Effekseer::FB::TranslationParentBindType translation_bind_type = Effekseer::FB::TranslationParentBindType_TranslationParentBindType_Always,
-    Effekseer::FB::BindType rotation_bind_type = Effekseer::FB::BindType_BindType_Always,
-    Effekseer::FB::BindType scaling_bind_type = Effekseer::FB::BindType_BindType_Always,
+    Effekseer::FB::TranslationParentBindType translation_bind_type = Effekseer::FB::TranslationParentBindType::TranslationParentBindType_Always,
+    Effekseer::FB::BindType rotation_bind_type = Effekseer::FB::BindType::BindType_Always,
+    Effekseer::FB::BindType scaling_bind_type = Effekseer::FB::BindType::BindType_Always,
     int32_t remove_when_life_is_extinct = 1,
     int32_t remove_when_parent_is_removed = 0,
-    int32_t remove_when_children_is_extinct = 0) {
+    int32_t remove_when_children_is_extinct = 0,
+    const Effekseer::FB::IntRange *life = 0,
+    const Effekseer::FB::FloatRange *generation_time = 0,
+    const Effekseer::FB::FloatRange *generation_time_offset = 0) {
   BasicSettingsBuilder builder_(_fbb);
+  builder_.add_generation_time_offset(generation_time_offset);
+  builder_.add_generation_time(generation_time);
+  builder_.add_life(life);
   builder_.add_remove_when_children_is_extinct(remove_when_children_is_extinct);
   builder_.add_remove_when_parent_is_removed(remove_when_parent_is_removed);
   builder_.add_remove_when_life_is_extinct(remove_when_life_is_extinct);
@@ -262,571 +178,11 @@ inline flatbuffers::Offset<BasicSettings> CreateBasicSettings(
   builder_.add_rotation_bind_type(rotation_bind_type);
   builder_.add_translation_bind_type(translation_bind_type);
   builder_.add_max_generation(max_generation);
+  builder_.add_ref_wq_generation_time_offset(ref_wq_generation_time_offset);
+  builder_.add_ref_wq_generation_time(ref_wq_generation_time);
+  builder_.add_ref_wq_life(ref_wq_life);
+  builder_.add_ref_eq_max_generation(ref_eq_max_generation);
   return builder_.Finish();
-}
-
-struct PositionSettings_Fixed FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
-  typedef PositionSettings_FixedBuilder Builder;
-  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_REF_EQ = 4,
-    VT_VALUE = 6
-  };
-  int32_t ref_eq() const {
-    return GetField<int32_t>(VT_REF_EQ, -1);
-  }
-  const Effekseer::FB::Vec3F *value() const {
-    return GetStruct<const Effekseer::FB::Vec3F *>(VT_VALUE);
-  }
-  bool Verify(flatbuffers::Verifier &verifier) const {
-    return VerifyTableStart(verifier) &&
-           VerifyField<int32_t>(verifier, VT_REF_EQ) &&
-           VerifyField<Effekseer::FB::Vec3F>(verifier, VT_VALUE) &&
-           verifier.EndTable();
-  }
-};
-
-struct PositionSettings_FixedBuilder {
-  typedef PositionSettings_Fixed Table;
-  flatbuffers::FlatBufferBuilder &fbb_;
-  flatbuffers::uoffset_t start_;
-  void add_ref_eq(int32_t ref_eq) {
-    fbb_.AddElement<int32_t>(PositionSettings_Fixed::VT_REF_EQ, ref_eq, -1);
-  }
-  void add_value(const Effekseer::FB::Vec3F *value) {
-    fbb_.AddStruct(PositionSettings_Fixed::VT_VALUE, value);
-  }
-  explicit PositionSettings_FixedBuilder(flatbuffers::FlatBufferBuilder &_fbb)
-        : fbb_(_fbb) {
-    start_ = fbb_.StartTable();
-  }
-  flatbuffers::Offset<PositionSettings_Fixed> Finish() {
-    const auto end = fbb_.EndTable(start_);
-    auto o = flatbuffers::Offset<PositionSettings_Fixed>(end);
-    return o;
-  }
-};
-
-inline flatbuffers::Offset<PositionSettings_Fixed> CreatePositionSettings_Fixed(
-    flatbuffers::FlatBufferBuilder &_fbb,
-    int32_t ref_eq = -1,
-    const Effekseer::FB::Vec3F *value = 0) {
-  PositionSettings_FixedBuilder builder_(_fbb);
-  builder_.add_value(value);
-  builder_.add_ref_eq(ref_eq);
-  return builder_.Finish();
-}
-
-struct PositionSettings_PVA FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
-  typedef PositionSettings_PVABuilder Builder;
-  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_REF_EQ_P = 4,
-    VT_REF_EQ_V = 6,
-    VT_REF_EQ_A = 8,
-    VT_POS = 10,
-    VT_VEL = 12,
-    VT_ACC = 14
-  };
-  const Effekseer::FB::RefMinMax *ref_eq_p() const {
-    return GetPointer<const Effekseer::FB::RefMinMax *>(VT_REF_EQ_P);
-  }
-  const Effekseer::FB::RefMinMax *ref_eq_v() const {
-    return GetPointer<const Effekseer::FB::RefMinMax *>(VT_REF_EQ_V);
-  }
-  const Effekseer::FB::RefMinMax *ref_eq_a() const {
-    return GetPointer<const Effekseer::FB::RefMinMax *>(VT_REF_EQ_A);
-  }
-  const Effekseer::FB::Vec3F *pos() const {
-    return GetStruct<const Effekseer::FB::Vec3F *>(VT_POS);
-  }
-  const Effekseer::FB::Vec3F *vel() const {
-    return GetStruct<const Effekseer::FB::Vec3F *>(VT_VEL);
-  }
-  const Effekseer::FB::Vec3F *acc() const {
-    return GetStruct<const Effekseer::FB::Vec3F *>(VT_ACC);
-  }
-  bool Verify(flatbuffers::Verifier &verifier) const {
-    return VerifyTableStart(verifier) &&
-           VerifyOffset(verifier, VT_REF_EQ_P) &&
-           verifier.VerifyTable(ref_eq_p()) &&
-           VerifyOffset(verifier, VT_REF_EQ_V) &&
-           verifier.VerifyTable(ref_eq_v()) &&
-           VerifyOffset(verifier, VT_REF_EQ_A) &&
-           verifier.VerifyTable(ref_eq_a()) &&
-           VerifyField<Effekseer::FB::Vec3F>(verifier, VT_POS) &&
-           VerifyField<Effekseer::FB::Vec3F>(verifier, VT_VEL) &&
-           VerifyField<Effekseer::FB::Vec3F>(verifier, VT_ACC) &&
-           verifier.EndTable();
-  }
-};
-
-struct PositionSettings_PVABuilder {
-  typedef PositionSettings_PVA Table;
-  flatbuffers::FlatBufferBuilder &fbb_;
-  flatbuffers::uoffset_t start_;
-  void add_ref_eq_p(flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_eq_p) {
-    fbb_.AddOffset(PositionSettings_PVA::VT_REF_EQ_P, ref_eq_p);
-  }
-  void add_ref_eq_v(flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_eq_v) {
-    fbb_.AddOffset(PositionSettings_PVA::VT_REF_EQ_V, ref_eq_v);
-  }
-  void add_ref_eq_a(flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_eq_a) {
-    fbb_.AddOffset(PositionSettings_PVA::VT_REF_EQ_A, ref_eq_a);
-  }
-  void add_pos(const Effekseer::FB::Vec3F *pos) {
-    fbb_.AddStruct(PositionSettings_PVA::VT_POS, pos);
-  }
-  void add_vel(const Effekseer::FB::Vec3F *vel) {
-    fbb_.AddStruct(PositionSettings_PVA::VT_VEL, vel);
-  }
-  void add_acc(const Effekseer::FB::Vec3F *acc) {
-    fbb_.AddStruct(PositionSettings_PVA::VT_ACC, acc);
-  }
-  explicit PositionSettings_PVABuilder(flatbuffers::FlatBufferBuilder &_fbb)
-        : fbb_(_fbb) {
-    start_ = fbb_.StartTable();
-  }
-  flatbuffers::Offset<PositionSettings_PVA> Finish() {
-    const auto end = fbb_.EndTable(start_);
-    auto o = flatbuffers::Offset<PositionSettings_PVA>(end);
-    return o;
-  }
-};
-
-inline flatbuffers::Offset<PositionSettings_PVA> CreatePositionSettings_PVA(
-    flatbuffers::FlatBufferBuilder &_fbb,
-    flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_eq_p = 0,
-    flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_eq_v = 0,
-    flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_eq_a = 0,
-    const Effekseer::FB::Vec3F *pos = 0,
-    const Effekseer::FB::Vec3F *vel = 0,
-    const Effekseer::FB::Vec3F *acc = 0) {
-  PositionSettings_PVABuilder builder_(_fbb);
-  builder_.add_acc(acc);
-  builder_.add_vel(vel);
-  builder_.add_pos(pos);
-  builder_.add_ref_eq_a(ref_eq_a);
-  builder_.add_ref_eq_v(ref_eq_v);
-  builder_.add_ref_eq_p(ref_eq_p);
-  return builder_.Finish();
-}
-
-struct PositionSettings_Easing FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
-  typedef PositionSettings_EasingBuilder Builder;
-  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_REF_EQ_S = 4,
-    VT_REF_EQ_W = 6,
-    VT_LOCATION = 8
-  };
-  const Effekseer::FB::RefMinMax *ref_eq_s() const {
-    return GetPointer<const Effekseer::FB::RefMinMax *>(VT_REF_EQ_S);
-  }
-  const Effekseer::FB::RefMinMax *ref_eq_w() const {
-    return GetPointer<const Effekseer::FB::RefMinMax *>(VT_REF_EQ_W);
-  }
-  const Effekseer::FB::Vec3FEasing *location() const {
-    return GetStruct<const Effekseer::FB::Vec3FEasing *>(VT_LOCATION);
-  }
-  bool Verify(flatbuffers::Verifier &verifier) const {
-    return VerifyTableStart(verifier) &&
-           VerifyOffset(verifier, VT_REF_EQ_S) &&
-           verifier.VerifyTable(ref_eq_s()) &&
-           VerifyOffset(verifier, VT_REF_EQ_W) &&
-           verifier.VerifyTable(ref_eq_w()) &&
-           VerifyField<Effekseer::FB::Vec3FEasing>(verifier, VT_LOCATION) &&
-           verifier.EndTable();
-  }
-};
-
-struct PositionSettings_EasingBuilder {
-  typedef PositionSettings_Easing Table;
-  flatbuffers::FlatBufferBuilder &fbb_;
-  flatbuffers::uoffset_t start_;
-  void add_ref_eq_s(flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_eq_s) {
-    fbb_.AddOffset(PositionSettings_Easing::VT_REF_EQ_S, ref_eq_s);
-  }
-  void add_ref_eq_w(flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_eq_w) {
-    fbb_.AddOffset(PositionSettings_Easing::VT_REF_EQ_W, ref_eq_w);
-  }
-  void add_location(const Effekseer::FB::Vec3FEasing *location) {
-    fbb_.AddStruct(PositionSettings_Easing::VT_LOCATION, location);
-  }
-  explicit PositionSettings_EasingBuilder(flatbuffers::FlatBufferBuilder &_fbb)
-        : fbb_(_fbb) {
-    start_ = fbb_.StartTable();
-  }
-  flatbuffers::Offset<PositionSettings_Easing> Finish() {
-    const auto end = fbb_.EndTable(start_);
-    auto o = flatbuffers::Offset<PositionSettings_Easing>(end);
-    return o;
-  }
-};
-
-inline flatbuffers::Offset<PositionSettings_Easing> CreatePositionSettings_Easing(
-    flatbuffers::FlatBufferBuilder &_fbb,
-    flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_eq_s = 0,
-    flatbuffers::Offset<Effekseer::FB::RefMinMax> ref_eq_w = 0,
-    const Effekseer::FB::Vec3FEasing *location = 0) {
-  PositionSettings_EasingBuilder builder_(_fbb);
-  builder_.add_location(location);
-  builder_.add_ref_eq_w(ref_eq_w);
-  builder_.add_ref_eq_s(ref_eq_s);
-  return builder_.Finish();
-}
-
-struct PositionSettings_NurbsCurve FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
-  typedef PositionSettings_NurbsCurveBuilder Builder;
-  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_INDEX = 4,
-    VT_SCALE = 6,
-    VT_MOVE_SPEED = 8,
-    VT_LOOP_TYPE = 10
-  };
-  int32_t index() const {
-    return GetField<int32_t>(VT_INDEX, 0);
-  }
-  float scale() const {
-    return GetField<float>(VT_SCALE, 0.0f);
-  }
-  float move_speed() const {
-    return GetField<float>(VT_MOVE_SPEED, 0.0f);
-  }
-  int32_t loop_type() const {
-    return GetField<int32_t>(VT_LOOP_TYPE, 0);
-  }
-  bool Verify(flatbuffers::Verifier &verifier) const {
-    return VerifyTableStart(verifier) &&
-           VerifyField<int32_t>(verifier, VT_INDEX) &&
-           VerifyField<float>(verifier, VT_SCALE) &&
-           VerifyField<float>(verifier, VT_MOVE_SPEED) &&
-           VerifyField<int32_t>(verifier, VT_LOOP_TYPE) &&
-           verifier.EndTable();
-  }
-};
-
-struct PositionSettings_NurbsCurveBuilder {
-  typedef PositionSettings_NurbsCurve Table;
-  flatbuffers::FlatBufferBuilder &fbb_;
-  flatbuffers::uoffset_t start_;
-  void add_index(int32_t index) {
-    fbb_.AddElement<int32_t>(PositionSettings_NurbsCurve::VT_INDEX, index, 0);
-  }
-  void add_scale(float scale) {
-    fbb_.AddElement<float>(PositionSettings_NurbsCurve::VT_SCALE, scale, 0.0f);
-  }
-  void add_move_speed(float move_speed) {
-    fbb_.AddElement<float>(PositionSettings_NurbsCurve::VT_MOVE_SPEED, move_speed, 0.0f);
-  }
-  void add_loop_type(int32_t loop_type) {
-    fbb_.AddElement<int32_t>(PositionSettings_NurbsCurve::VT_LOOP_TYPE, loop_type, 0);
-  }
-  explicit PositionSettings_NurbsCurveBuilder(flatbuffers::FlatBufferBuilder &_fbb)
-        : fbb_(_fbb) {
-    start_ = fbb_.StartTable();
-  }
-  flatbuffers::Offset<PositionSettings_NurbsCurve> Finish() {
-    const auto end = fbb_.EndTable(start_);
-    auto o = flatbuffers::Offset<PositionSettings_NurbsCurve>(end);
-    return o;
-  }
-};
-
-inline flatbuffers::Offset<PositionSettings_NurbsCurve> CreatePositionSettings_NurbsCurve(
-    flatbuffers::FlatBufferBuilder &_fbb,
-    int32_t index = 0,
-    float scale = 0.0f,
-    float move_speed = 0.0f,
-    int32_t loop_type = 0) {
-  PositionSettings_NurbsCurveBuilder builder_(_fbb);
-  builder_.add_loop_type(loop_type);
-  builder_.add_move_speed(move_speed);
-  builder_.add_scale(scale);
-  builder_.add_index(index);
-  return builder_.Finish();
-}
-
-struct PositionSettings_ViewOffset FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
-  typedef PositionSettings_ViewOffsetBuilder Builder;
-  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_DISTANCE = 4
-  };
-  const Effekseer::FB::FloatRange *distance() const {
-    return GetStruct<const Effekseer::FB::FloatRange *>(VT_DISTANCE);
-  }
-  bool Verify(flatbuffers::Verifier &verifier) const {
-    return VerifyTableStart(verifier) &&
-           VerifyField<Effekseer::FB::FloatRange>(verifier, VT_DISTANCE) &&
-           verifier.EndTable();
-  }
-};
-
-struct PositionSettings_ViewOffsetBuilder {
-  typedef PositionSettings_ViewOffset Table;
-  flatbuffers::FlatBufferBuilder &fbb_;
-  flatbuffers::uoffset_t start_;
-  void add_distance(const Effekseer::FB::FloatRange *distance) {
-    fbb_.AddStruct(PositionSettings_ViewOffset::VT_DISTANCE, distance);
-  }
-  explicit PositionSettings_ViewOffsetBuilder(flatbuffers::FlatBufferBuilder &_fbb)
-        : fbb_(_fbb) {
-    start_ = fbb_.StartTable();
-  }
-  flatbuffers::Offset<PositionSettings_ViewOffset> Finish() {
-    const auto end = fbb_.EndTable(start_);
-    auto o = flatbuffers::Offset<PositionSettings_ViewOffset>(end);
-    return o;
-  }
-};
-
-inline flatbuffers::Offset<PositionSettings_ViewOffset> CreatePositionSettings_ViewOffset(
-    flatbuffers::FlatBufferBuilder &_fbb,
-    const Effekseer::FB::FloatRange *distance = 0) {
-  PositionSettings_ViewOffsetBuilder builder_(_fbb);
-  builder_.add_distance(distance);
-  return builder_.Finish();
-}
-
-struct PositionSettings FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
-  typedef PositionSettingsBuilder Builder;
-  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_TYPE = 4,
-    VT_FIXED = 6,
-    VT_PVA = 8
-  };
-  Effekseer::FB::PositionType type() const {
-    return static_cast<Effekseer::FB::PositionType>(GetField<int32_t>(VT_TYPE, 0));
-  }
-  const Effekseer::FB::PositionSettings_Fixed *fixed() const {
-    return GetPointer<const Effekseer::FB::PositionSettings_Fixed *>(VT_FIXED);
-  }
-  const Effekseer::FB::PositionSettings_PVA *pva() const {
-    return GetPointer<const Effekseer::FB::PositionSettings_PVA *>(VT_PVA);
-  }
-  bool Verify(flatbuffers::Verifier &verifier) const {
-    return VerifyTableStart(verifier) &&
-           VerifyField<int32_t>(verifier, VT_TYPE) &&
-           VerifyOffset(verifier, VT_FIXED) &&
-           verifier.VerifyTable(fixed()) &&
-           VerifyOffset(verifier, VT_PVA) &&
-           verifier.VerifyTable(pva()) &&
-           verifier.EndTable();
-  }
-};
-
-struct PositionSettingsBuilder {
-  typedef PositionSettings Table;
-  flatbuffers::FlatBufferBuilder &fbb_;
-  flatbuffers::uoffset_t start_;
-  void add_type(Effekseer::FB::PositionType type) {
-    fbb_.AddElement<int32_t>(PositionSettings::VT_TYPE, static_cast<int32_t>(type), 0);
-  }
-  void add_fixed(flatbuffers::Offset<Effekseer::FB::PositionSettings_Fixed> fixed) {
-    fbb_.AddOffset(PositionSettings::VT_FIXED, fixed);
-  }
-  void add_pva(flatbuffers::Offset<Effekseer::FB::PositionSettings_PVA> pva) {
-    fbb_.AddOffset(PositionSettings::VT_PVA, pva);
-  }
-  explicit PositionSettingsBuilder(flatbuffers::FlatBufferBuilder &_fbb)
-        : fbb_(_fbb) {
-    start_ = fbb_.StartTable();
-  }
-  flatbuffers::Offset<PositionSettings> Finish() {
-    const auto end = fbb_.EndTable(start_);
-    auto o = flatbuffers::Offset<PositionSettings>(end);
-    return o;
-  }
-};
-
-inline flatbuffers::Offset<PositionSettings> CreatePositionSettings(
-    flatbuffers::FlatBufferBuilder &_fbb,
-    Effekseer::FB::PositionType type = Effekseer::FB::PositionType_PositionType_Fixed,
-    flatbuffers::Offset<Effekseer::FB::PositionSettings_Fixed> fixed = 0,
-    flatbuffers::Offset<Effekseer::FB::PositionSettings_PVA> pva = 0) {
-  PositionSettingsBuilder builder_(_fbb);
-  builder_.add_pva(pva);
-  builder_.add_fixed(fixed);
-  builder_.add_type(type);
-  return builder_.Finish();
-}
-
-struct TextureProperty FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
-  typedef TexturePropertyBuilder Builder;
-  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_PATH = 4
-  };
-  const flatbuffers::String *path() const {
-    return GetPointer<const flatbuffers::String *>(VT_PATH);
-  }
-  bool Verify(flatbuffers::Verifier &verifier) const {
-    return VerifyTableStart(verifier) &&
-           VerifyOffset(verifier, VT_PATH) &&
-           verifier.VerifyString(path()) &&
-           verifier.EndTable();
-  }
-};
-
-struct TexturePropertyBuilder {
-  typedef TextureProperty Table;
-  flatbuffers::FlatBufferBuilder &fbb_;
-  flatbuffers::uoffset_t start_;
-  void add_path(flatbuffers::Offset<flatbuffers::String> path) {
-    fbb_.AddOffset(TextureProperty::VT_PATH, path);
-  }
-  explicit TexturePropertyBuilder(flatbuffers::FlatBufferBuilder &_fbb)
-        : fbb_(_fbb) {
-    start_ = fbb_.StartTable();
-  }
-  flatbuffers::Offset<TextureProperty> Finish() {
-    const auto end = fbb_.EndTable(start_);
-    auto o = flatbuffers::Offset<TextureProperty>(end);
-    return o;
-  }
-};
-
-inline flatbuffers::Offset<TextureProperty> CreateTextureProperty(
-    flatbuffers::FlatBufferBuilder &_fbb,
-    flatbuffers::Offset<flatbuffers::String> path = 0) {
-  TexturePropertyBuilder builder_(_fbb);
-  builder_.add_path(path);
-  return builder_.Finish();
-}
-
-inline flatbuffers::Offset<TextureProperty> CreateTexturePropertyDirect(
-    flatbuffers::FlatBufferBuilder &_fbb,
-    const char *path = nullptr) {
-  auto path__ = path ? _fbb.CreateString(path) : 0;
-  return Effekseer::FB::CreateTextureProperty(
-      _fbb,
-      path__);
-}
-
-struct Node FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
-  typedef NodeBuilder Builder;
-  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_BASIC_SETTINGS = 4,
-    VT_CHILDREN = 6
-  };
-  const Effekseer::FB::BasicSettings *basic_settings() const {
-    return GetPointer<const Effekseer::FB::BasicSettings *>(VT_BASIC_SETTINGS);
-  }
-  const flatbuffers::Vector<flatbuffers::Offset<Effekseer::FB::Node>> *children() const {
-    return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<Effekseer::FB::Node>> *>(VT_CHILDREN);
-  }
-  bool Verify(flatbuffers::Verifier &verifier) const {
-    return VerifyTableStart(verifier) &&
-           VerifyOffset(verifier, VT_BASIC_SETTINGS) &&
-           verifier.VerifyTable(basic_settings()) &&
-           VerifyOffset(verifier, VT_CHILDREN) &&
-           verifier.VerifyVector(children()) &&
-           verifier.VerifyVectorOfTables(children()) &&
-           verifier.EndTable();
-  }
-};
-
-struct NodeBuilder {
-  typedef Node Table;
-  flatbuffers::FlatBufferBuilder &fbb_;
-  flatbuffers::uoffset_t start_;
-  void add_basic_settings(flatbuffers::Offset<Effekseer::FB::BasicSettings> basic_settings) {
-    fbb_.AddOffset(Node::VT_BASIC_SETTINGS, basic_settings);
-  }
-  void add_children(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Effekseer::FB::Node>>> children) {
-    fbb_.AddOffset(Node::VT_CHILDREN, children);
-  }
-  explicit NodeBuilder(flatbuffers::FlatBufferBuilder &_fbb)
-        : fbb_(_fbb) {
-    start_ = fbb_.StartTable();
-  }
-  flatbuffers::Offset<Node> Finish() {
-    const auto end = fbb_.EndTable(start_);
-    auto o = flatbuffers::Offset<Node>(end);
-    return o;
-  }
-};
-
-inline flatbuffers::Offset<Node> CreateNode(
-    flatbuffers::FlatBufferBuilder &_fbb,
-    flatbuffers::Offset<Effekseer::FB::BasicSettings> basic_settings = 0,
-    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Effekseer::FB::Node>>> children = 0) {
-  NodeBuilder builder_(_fbb);
-  builder_.add_children(children);
-  builder_.add_basic_settings(basic_settings);
-  return builder_.Finish();
-}
-
-inline flatbuffers::Offset<Node> CreateNodeDirect(
-    flatbuffers::FlatBufferBuilder &_fbb,
-    flatbuffers::Offset<Effekseer::FB::BasicSettings> basic_settings = 0,
-    const std::vector<flatbuffers::Offset<Effekseer::FB::Node>> *children = nullptr) {
-  auto children__ = children ? _fbb.CreateVector<flatbuffers::Offset<Effekseer::FB::Node>>(*children) : 0;
-  return Effekseer::FB::CreateNode(
-      _fbb,
-      basic_settings,
-      children__);
-}
-
-struct Effect FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
-  typedef EffectBuilder Builder;
-  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_TEXTURES = 4,
-    VT_ROOT_NODE = 6
-  };
-  const flatbuffers::Vector<flatbuffers::Offset<Effekseer::FB::TextureProperty>> *textures() const {
-    return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<Effekseer::FB::TextureProperty>> *>(VT_TEXTURES);
-  }
-  const Effekseer::FB::Node *root_node() const {
-    return GetPointer<const Effekseer::FB::Node *>(VT_ROOT_NODE);
-  }
-  bool Verify(flatbuffers::Verifier &verifier) const {
-    return VerifyTableStart(verifier) &&
-           VerifyOffset(verifier, VT_TEXTURES) &&
-           verifier.VerifyVector(textures()) &&
-           verifier.VerifyVectorOfTables(textures()) &&
-           VerifyOffset(verifier, VT_ROOT_NODE) &&
-           verifier.VerifyTable(root_node()) &&
-           verifier.EndTable();
-  }
-};
-
-struct EffectBuilder {
-  typedef Effect Table;
-  flatbuffers::FlatBufferBuilder &fbb_;
-  flatbuffers::uoffset_t start_;
-  void add_textures(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Effekseer::FB::TextureProperty>>> textures) {
-    fbb_.AddOffset(Effect::VT_TEXTURES, textures);
-  }
-  void add_root_node(flatbuffers::Offset<Effekseer::FB::Node> root_node) {
-    fbb_.AddOffset(Effect::VT_ROOT_NODE, root_node);
-  }
-  explicit EffectBuilder(flatbuffers::FlatBufferBuilder &_fbb)
-        : fbb_(_fbb) {
-    start_ = fbb_.StartTable();
-  }
-  flatbuffers::Offset<Effect> Finish() {
-    const auto end = fbb_.EndTable(start_);
-    auto o = flatbuffers::Offset<Effect>(end);
-    return o;
-  }
-};
-
-inline flatbuffers::Offset<Effect> CreateEffect(
-    flatbuffers::FlatBufferBuilder &_fbb,
-    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Effekseer::FB::TextureProperty>>> textures = 0,
-    flatbuffers::Offset<Effekseer::FB::Node> root_node = 0) {
-  EffectBuilder builder_(_fbb);
-  builder_.add_root_node(root_node);
-  builder_.add_textures(textures);
-  return builder_.Finish();
-}
-
-inline flatbuffers::Offset<Effect> CreateEffectDirect(
-    flatbuffers::FlatBufferBuilder &_fbb,
-    const std::vector<flatbuffers::Offset<Effekseer::FB::TextureProperty>> *textures = nullptr,
-    flatbuffers::Offset<Effekseer::FB::Node> root_node = 0) {
-  auto textures__ = textures ? _fbb.CreateVector<flatbuffers::Offset<Effekseer::FB::TextureProperty>>(*textures) : 0;
-  return Effekseer::FB::CreateEffect(
-      _fbb,
-      textures__,
-      root_node);
 }
 
 }  // namespace FB

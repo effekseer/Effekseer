@@ -9,6 +9,8 @@
 namespace Effekseer {
 namespace FB {
 
+struct RefMinMax;
+
 struct IntRange;
 
 struct FloatRange;
@@ -19,74 +21,155 @@ struct Vec3FRange;
 
 struct Vec3FEasing;
 
-struct RefMinMax;
-struct RefMinMaxBuilder;
+struct TextureProperty;
+struct TexturePropertyBuilder;
 
-struct FCurve;
-struct FCurveBuilder;
-
-enum FCurveTimelineType : int32_t {
-  FCurveTimelineType_FCurveTimelineType_Time = 0,
-  FCurveTimelineType_FCurveTimelineType_Percent = 1,
-  FCurveTimelineType_MIN = FCurveTimelineType_FCurveTimelineType_Time,
-  FCurveTimelineType_MAX = FCurveTimelineType_FCurveTimelineType_Percent
+enum class EffectNodeType : int32_t {
+  EffectNodeType_Root = -1,
+  EffectNodeType_NoneType = 0,
+  EffectNodeType_Sprite = 2,
+  EffectNodeType_Ribbon = 3,
+  EffectNodeType_Ring = 4,
+  EffectNodeType_Model = 5,
+  EffectNodeType_Track = 6,
+  MIN = EffectNodeType_Root,
+  MAX = EffectNodeType_Track
 };
 
-inline const FCurveTimelineType (&EnumValuesFCurveTimelineType())[2] {
-  static const FCurveTimelineType values[] = {
-    FCurveTimelineType_FCurveTimelineType_Time,
-    FCurveTimelineType_FCurveTimelineType_Percent
+inline const EffectNodeType (&EnumValuesEffectNodeType())[7] {
+  static const EffectNodeType values[] = {
+    EffectNodeType::EffectNodeType_Root,
+    EffectNodeType::EffectNodeType_NoneType,
+    EffectNodeType::EffectNodeType_Sprite,
+    EffectNodeType::EffectNodeType_Ribbon,
+    EffectNodeType::EffectNodeType_Ring,
+    EffectNodeType::EffectNodeType_Model,
+    EffectNodeType::EffectNodeType_Track
   };
   return values;
 }
 
-inline const char * const *EnumNamesFCurveTimelineType() {
-  static const char * const names[3] = {
-    "FCurveTimelineType_Time",
-    "FCurveTimelineType_Percent",
+inline const char * const *EnumNamesEffectNodeType() {
+  static const char * const names[9] = {
+    "EffectNodeType_Root",
+    "EffectNodeType_NoneType",
+    "",
+    "EffectNodeType_Sprite",
+    "EffectNodeType_Ribbon",
+    "EffectNodeType_Ring",
+    "EffectNodeType_Model",
+    "EffectNodeType_Track",
     nullptr
   };
   return names;
 }
 
-inline const char *EnumNameFCurveTimelineType(FCurveTimelineType e) {
-  if (flatbuffers::IsOutRange(e, FCurveTimelineType_FCurveTimelineType_Time, FCurveTimelineType_FCurveTimelineType_Percent)) return "";
-  const size_t index = static_cast<size_t>(e);
-  return EnumNamesFCurveTimelineType()[index];
+inline const char *EnumNameEffectNodeType(EffectNodeType e) {
+  if (flatbuffers::IsOutRange(e, EffectNodeType::EffectNodeType_Root, EffectNodeType::EffectNodeType_Track)) return "";
+  const size_t index = static_cast<size_t>(e) - static_cast<size_t>(EffectNodeType::EffectNodeType_Root);
+  return EnumNamesEffectNodeType()[index];
 }
 
-enum FCurveEdgeType : int32_t {
-  FCurveEdgeType_FCurveEdgeType_Constant = 0,
-  FCurveEdgeType_FCurveEdgeType_Loop = 1,
-  FCurveEdgeType_FCurveEdgeType_LoopInversely = 2,
-  FCurveEdgeType_MIN = FCurveEdgeType_FCurveEdgeType_Constant,
-  FCurveEdgeType_MAX = FCurveEdgeType_FCurveEdgeType_LoopInversely
+enum class TranslationParentBindType : int32_t {
+  TranslationParentBindType_NotBind = 0,
+  TranslationParentBindType_WhenCreating = 1,
+  TranslationParentBindType_Always = 2,
+  TranslationParentBindType_NotBind_Root = 3,
+  TranslationParentBindType_NotBind_FollowParent = 4,
+  TranslationParentBindType_WhenCreating_FollowParent = 5,
+  MIN = TranslationParentBindType_NotBind,
+  MAX = TranslationParentBindType_WhenCreating_FollowParent
 };
 
-inline const FCurveEdgeType (&EnumValuesFCurveEdgeType())[3] {
-  static const FCurveEdgeType values[] = {
-    FCurveEdgeType_FCurveEdgeType_Constant,
-    FCurveEdgeType_FCurveEdgeType_Loop,
-    FCurveEdgeType_FCurveEdgeType_LoopInversely
+inline const TranslationParentBindType (&EnumValuesTranslationParentBindType())[6] {
+  static const TranslationParentBindType values[] = {
+    TranslationParentBindType::TranslationParentBindType_NotBind,
+    TranslationParentBindType::TranslationParentBindType_WhenCreating,
+    TranslationParentBindType::TranslationParentBindType_Always,
+    TranslationParentBindType::TranslationParentBindType_NotBind_Root,
+    TranslationParentBindType::TranslationParentBindType_NotBind_FollowParent,
+    TranslationParentBindType::TranslationParentBindType_WhenCreating_FollowParent
   };
   return values;
 }
 
-inline const char * const *EnumNamesFCurveEdgeType() {
-  static const char * const names[4] = {
-    "FCurveEdgeType_Constant",
-    "FCurveEdgeType_Loop",
-    "FCurveEdgeType_LoopInversely",
+inline const char * const *EnumNamesTranslationParentBindType() {
+  static const char * const names[7] = {
+    "TranslationParentBindType_NotBind",
+    "TranslationParentBindType_WhenCreating",
+    "TranslationParentBindType_Always",
+    "TranslationParentBindType_NotBind_Root",
+    "TranslationParentBindType_NotBind_FollowParent",
+    "TranslationParentBindType_WhenCreating_FollowParent",
     nullptr
   };
   return names;
 }
 
-inline const char *EnumNameFCurveEdgeType(FCurveEdgeType e) {
-  if (flatbuffers::IsOutRange(e, FCurveEdgeType_FCurveEdgeType_Constant, FCurveEdgeType_FCurveEdgeType_LoopInversely)) return "";
+inline const char *EnumNameTranslationParentBindType(TranslationParentBindType e) {
+  if (flatbuffers::IsOutRange(e, TranslationParentBindType::TranslationParentBindType_NotBind, TranslationParentBindType::TranslationParentBindType_WhenCreating_FollowParent)) return "";
   const size_t index = static_cast<size_t>(e);
-  return EnumNamesFCurveEdgeType()[index];
+  return EnumNamesTranslationParentBindType()[index];
 }
+
+enum class BindType : int32_t {
+  BindType_NotBind = 0,
+  BindType_WhenCreating = 1,
+  BindType_Always = 2,
+  BindType_NotBind_Root = 3,
+  MIN = BindType_NotBind,
+  MAX = BindType_NotBind_Root
+};
+
+inline const BindType (&EnumValuesBindType())[4] {
+  static const BindType values[] = {
+    BindType::BindType_NotBind,
+    BindType::BindType_WhenCreating,
+    BindType::BindType_Always,
+    BindType::BindType_NotBind_Root
+  };
+  return values;
+}
+
+inline const char * const *EnumNamesBindType() {
+  static const char * const names[5] = {
+    "BindType_NotBind",
+    "BindType_WhenCreating",
+    "BindType_Always",
+    "BindType_NotBind_Root",
+    nullptr
+  };
+  return names;
+}
+
+inline const char *EnumNameBindType(BindType e) {
+  if (flatbuffers::IsOutRange(e, BindType::BindType_NotBind, BindType::BindType_NotBind_Root)) return "";
+  const size_t index = static_cast<size_t>(e);
+  return EnumNamesBindType()[index];
+}
+
+FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) RefMinMax FLATBUFFERS_FINAL_CLASS {
+ private:
+  int32_t min_;
+  int32_t max_;
+
+ public:
+  RefMinMax()
+      : min_(0),
+        max_(0) {
+  }
+  RefMinMax(int32_t _min, int32_t _max)
+      : min_(flatbuffers::EndianScalar(_min)),
+        max_(flatbuffers::EndianScalar(_max)) {
+  }
+  int32_t min() const {
+    return flatbuffers::EndianScalar(min_);
+  }
+  int32_t max() const {
+    return flatbuffers::EndianScalar(max_);
+  }
+};
+FLATBUFFERS_STRUCT_END(RefMinMax, 8);
 
 FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) IntRange FLATBUFFERS_FINAL_CLASS {
  private:
@@ -113,17 +196,23 @@ FLATBUFFERS_STRUCT_END(IntRange, 8);
 
 FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) FloatRange FLATBUFFERS_FINAL_CLASS {
  private:
+  Effekseer::FB::RefMinMax ref_eq_;
   float min_;
   float max_;
 
  public:
   FloatRange()
-      : min_(0),
+      : ref_eq_(),
+        min_(0),
         max_(0) {
   }
-  FloatRange(float _min, float _max)
-      : min_(flatbuffers::EndianScalar(_min)),
+  FloatRange(const Effekseer::FB::RefMinMax &_ref_eq, float _min, float _max)
+      : ref_eq_(_ref_eq),
+        min_(flatbuffers::EndianScalar(_min)),
         max_(flatbuffers::EndianScalar(_max)) {
+  }
+  const Effekseer::FB::RefMinMax &ref_eq() const {
+    return ref_eq_;
   }
   float min() const {
     return flatbuffers::EndianScalar(min_);
@@ -132,7 +221,7 @@ FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) FloatRange FLATBUFFERS_FINAL_CLASS {
     return flatbuffers::EndianScalar(max_);
   }
 };
-FLATBUFFERS_STRUCT_END(FloatRange, 8);
+FLATBUFFERS_STRUCT_END(FloatRange, 16);
 
 FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) Vec3F FLATBUFFERS_FINAL_CLASS {
  private:
@@ -165,26 +254,32 @@ FLATBUFFERS_STRUCT_END(Vec3F, 12);
 
 FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) Vec3FRange FLATBUFFERS_FINAL_CLASS {
  private:
-  Effekseer::FB::FloatRange min_;
-  Effekseer::FB::FloatRange max_;
+  Effekseer::FB::RefMinMax ref_eq_;
+  Effekseer::FB::Vec3F min_;
+  Effekseer::FB::Vec3F max_;
 
  public:
   Vec3FRange()
-      : min_(),
+      : ref_eq_(),
+        min_(),
         max_() {
   }
-  Vec3FRange(const Effekseer::FB::FloatRange &_min, const Effekseer::FB::FloatRange &_max)
-      : min_(_min),
+  Vec3FRange(const Effekseer::FB::RefMinMax &_ref_eq, const Effekseer::FB::Vec3F &_min, const Effekseer::FB::Vec3F &_max)
+      : ref_eq_(_ref_eq),
+        min_(_min),
         max_(_max) {
   }
-  const Effekseer::FB::FloatRange &min() const {
+  const Effekseer::FB::RefMinMax &ref_eq() const {
+    return ref_eq_;
+  }
+  const Effekseer::FB::Vec3F &min() const {
     return min_;
   }
-  const Effekseer::FB::FloatRange &max() const {
+  const Effekseer::FB::Vec3F &max() const {
     return max_;
   }
 };
-FLATBUFFERS_STRUCT_END(Vec3FRange, 16);
+FLATBUFFERS_STRUCT_END(Vec3FRange, 32);
 
 FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) Vec3FEasing FLATBUFFERS_FINAL_CLASS {
  private:
@@ -225,204 +320,57 @@ FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) Vec3FEasing FLATBUFFERS_FINAL_CLASS {
     return flatbuffers::EndianScalar(easing_c_);
   }
 };
-FLATBUFFERS_STRUCT_END(Vec3FEasing, 44);
+FLATBUFFERS_STRUCT_END(Vec3FEasing, 76);
 
-struct RefMinMax FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
-  typedef RefMinMaxBuilder Builder;
+struct TextureProperty FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef TexturePropertyBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_MIN = 4,
-    VT_MAX = 6
+    VT_PATH = 4
   };
-  int32_t min() const {
-    return GetField<int32_t>(VT_MIN, -1);
-  }
-  int32_t max() const {
-    return GetField<int32_t>(VT_MAX, -1);
+  const flatbuffers::String *path() const {
+    return GetPointer<const flatbuffers::String *>(VT_PATH);
   }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
-           VerifyField<int32_t>(verifier, VT_MIN) &&
-           VerifyField<int32_t>(verifier, VT_MAX) &&
+           VerifyOffset(verifier, VT_PATH) &&
+           verifier.VerifyString(path()) &&
            verifier.EndTable();
   }
 };
 
-struct RefMinMaxBuilder {
-  typedef RefMinMax Table;
+struct TexturePropertyBuilder {
+  typedef TextureProperty Table;
   flatbuffers::FlatBufferBuilder &fbb_;
   flatbuffers::uoffset_t start_;
-  void add_min(int32_t min) {
-    fbb_.AddElement<int32_t>(RefMinMax::VT_MIN, min, -1);
+  void add_path(flatbuffers::Offset<flatbuffers::String> path) {
+    fbb_.AddOffset(TextureProperty::VT_PATH, path);
   }
-  void add_max(int32_t max) {
-    fbb_.AddElement<int32_t>(RefMinMax::VT_MAX, max, -1);
-  }
-  explicit RefMinMaxBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+  explicit TexturePropertyBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
-  flatbuffers::Offset<RefMinMax> Finish() {
+  flatbuffers::Offset<TextureProperty> Finish() {
     const auto end = fbb_.EndTable(start_);
-    auto o = flatbuffers::Offset<RefMinMax>(end);
+    auto o = flatbuffers::Offset<TextureProperty>(end);
     return o;
   }
 };
 
-inline flatbuffers::Offset<RefMinMax> CreateRefMinMax(
+inline flatbuffers::Offset<TextureProperty> CreateTextureProperty(
     flatbuffers::FlatBufferBuilder &_fbb,
-    int32_t min = -1,
-    int32_t max = -1) {
-  RefMinMaxBuilder builder_(_fbb);
-  builder_.add_max(max);
-  builder_.add_min(min);
+    flatbuffers::Offset<flatbuffers::String> path = 0) {
+  TexturePropertyBuilder builder_(_fbb);
+  builder_.add_path(path);
   return builder_.Finish();
 }
 
-struct FCurve FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
-  typedef FCurveBuilder Builder;
-  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_OFFSET = 4,
-    VT_LEN = 6,
-    VT_FREQ = 8,
-    VT_START = 10,
-    VT_END = 12,
-    VT_KEYS = 14,
-    VT_DEFAULT_VALUE = 16,
-    VT_OFFSET_MAX = 18,
-    VT_OFFSET_MIN = 20
-  };
-  int32_t offset() const {
-    return GetField<int32_t>(VT_OFFSET, 0);
-  }
-  int32_t len() const {
-    return GetField<int32_t>(VT_LEN, 0);
-  }
-  int32_t freq() const {
-    return GetField<int32_t>(VT_FREQ, 0);
-  }
-  Effekseer::FB::FCurveEdgeType start() const {
-    return static_cast<Effekseer::FB::FCurveEdgeType>(GetField<int32_t>(VT_START, 0));
-  }
-  Effekseer::FB::FCurveEdgeType end() const {
-    return static_cast<Effekseer::FB::FCurveEdgeType>(GetField<int32_t>(VT_END, 0));
-  }
-  const flatbuffers::Vector<float> *keys() const {
-    return GetPointer<const flatbuffers::Vector<float> *>(VT_KEYS);
-  }
-  float default_value() const {
-    return GetField<float>(VT_DEFAULT_VALUE, 0.0f);
-  }
-  float offset_max() const {
-    return GetField<float>(VT_OFFSET_MAX, 0.0f);
-  }
-  float offset_min() const {
-    return GetField<float>(VT_OFFSET_MIN, 0.0f);
-  }
-  bool Verify(flatbuffers::Verifier &verifier) const {
-    return VerifyTableStart(verifier) &&
-           VerifyField<int32_t>(verifier, VT_OFFSET) &&
-           VerifyField<int32_t>(verifier, VT_LEN) &&
-           VerifyField<int32_t>(verifier, VT_FREQ) &&
-           VerifyField<int32_t>(verifier, VT_START) &&
-           VerifyField<int32_t>(verifier, VT_END) &&
-           VerifyOffset(verifier, VT_KEYS) &&
-           verifier.VerifyVector(keys()) &&
-           VerifyField<float>(verifier, VT_DEFAULT_VALUE) &&
-           VerifyField<float>(verifier, VT_OFFSET_MAX) &&
-           VerifyField<float>(verifier, VT_OFFSET_MIN) &&
-           verifier.EndTable();
-  }
-};
-
-struct FCurveBuilder {
-  typedef FCurve Table;
-  flatbuffers::FlatBufferBuilder &fbb_;
-  flatbuffers::uoffset_t start_;
-  void add_offset(int32_t offset) {
-    fbb_.AddElement<int32_t>(FCurve::VT_OFFSET, offset, 0);
-  }
-  void add_len(int32_t len) {
-    fbb_.AddElement<int32_t>(FCurve::VT_LEN, len, 0);
-  }
-  void add_freq(int32_t freq) {
-    fbb_.AddElement<int32_t>(FCurve::VT_FREQ, freq, 0);
-  }
-  void add_start(Effekseer::FB::FCurveEdgeType start) {
-    fbb_.AddElement<int32_t>(FCurve::VT_START, static_cast<int32_t>(start), 0);
-  }
-  void add_end(Effekseer::FB::FCurveEdgeType end) {
-    fbb_.AddElement<int32_t>(FCurve::VT_END, static_cast<int32_t>(end), 0);
-  }
-  void add_keys(flatbuffers::Offset<flatbuffers::Vector<float>> keys) {
-    fbb_.AddOffset(FCurve::VT_KEYS, keys);
-  }
-  void add_default_value(float default_value) {
-    fbb_.AddElement<float>(FCurve::VT_DEFAULT_VALUE, default_value, 0.0f);
-  }
-  void add_offset_max(float offset_max) {
-    fbb_.AddElement<float>(FCurve::VT_OFFSET_MAX, offset_max, 0.0f);
-  }
-  void add_offset_min(float offset_min) {
-    fbb_.AddElement<float>(FCurve::VT_OFFSET_MIN, offset_min, 0.0f);
-  }
-  explicit FCurveBuilder(flatbuffers::FlatBufferBuilder &_fbb)
-        : fbb_(_fbb) {
-    start_ = fbb_.StartTable();
-  }
-  flatbuffers::Offset<FCurve> Finish() {
-    const auto end = fbb_.EndTable(start_);
-    auto o = flatbuffers::Offset<FCurve>(end);
-    return o;
-  }
-};
-
-inline flatbuffers::Offset<FCurve> CreateFCurve(
+inline flatbuffers::Offset<TextureProperty> CreateTexturePropertyDirect(
     flatbuffers::FlatBufferBuilder &_fbb,
-    int32_t offset = 0,
-    int32_t len = 0,
-    int32_t freq = 0,
-    Effekseer::FB::FCurveEdgeType start = Effekseer::FB::FCurveEdgeType_FCurveEdgeType_Constant,
-    Effekseer::FB::FCurveEdgeType end = Effekseer::FB::FCurveEdgeType_FCurveEdgeType_Constant,
-    flatbuffers::Offset<flatbuffers::Vector<float>> keys = 0,
-    float default_value = 0.0f,
-    float offset_max = 0.0f,
-    float offset_min = 0.0f) {
-  FCurveBuilder builder_(_fbb);
-  builder_.add_offset_min(offset_min);
-  builder_.add_offset_max(offset_max);
-  builder_.add_default_value(default_value);
-  builder_.add_keys(keys);
-  builder_.add_end(end);
-  builder_.add_start(start);
-  builder_.add_freq(freq);
-  builder_.add_len(len);
-  builder_.add_offset(offset);
-  return builder_.Finish();
-}
-
-inline flatbuffers::Offset<FCurve> CreateFCurveDirect(
-    flatbuffers::FlatBufferBuilder &_fbb,
-    int32_t offset = 0,
-    int32_t len = 0,
-    int32_t freq = 0,
-    Effekseer::FB::FCurveEdgeType start = Effekseer::FB::FCurveEdgeType_FCurveEdgeType_Constant,
-    Effekseer::FB::FCurveEdgeType end = Effekseer::FB::FCurveEdgeType_FCurveEdgeType_Constant,
-    const std::vector<float> *keys = nullptr,
-    float default_value = 0.0f,
-    float offset_max = 0.0f,
-    float offset_min = 0.0f) {
-  auto keys__ = keys ? _fbb.CreateVector<float>(*keys) : 0;
-  return Effekseer::FB::CreateFCurve(
+    const char *path = nullptr) {
+  auto path__ = path ? _fbb.CreateString(path) : 0;
+  return Effekseer::FB::CreateTextureProperty(
       _fbb,
-      offset,
-      len,
-      freq,
-      start,
-      end,
-      keys__,
-      default_value,
-      offset_max,
-      offset_min);
+      path__);
 }
 
 }  // namespace FB

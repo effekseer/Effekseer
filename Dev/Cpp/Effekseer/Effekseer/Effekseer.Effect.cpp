@@ -26,6 +26,10 @@
 #include <array>
 #include <functional>
 
+#include "FB/FlatBuffersUtils.h"
+
+#include "FB/Effect_generated.h"
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -416,6 +420,12 @@ bool EffectImplemented::LoadBody(const uint8_t* data, int32_t size, float mag)
 
 	binaryReader.Read(m_version);
 
+	if (m_version >= 1800)
+	{
+		const int headerOffset = 8;
+		return LoadBodyWithFlatBuffers(data + headerOffset, size - headerOffset, mag);
+	}
+
 	// too new version
 	if (m_version > SupportBinaryVersion)
 	{
@@ -705,6 +715,38 @@ bool EffectImplemented::LoadBody(const uint8_t* data, int32_t size, float mag)
 	// Nodes
 	auto nodeData = pos + binaryReader.GetOffset();
 	m_pRoot = EffectNodeImplemented::Create(this, nullptr, nodeData);
+
+	return true;
+}
+
+bool EffectImplemented::LoadBodyWithFlatBuffers(const uint8_t* data, int32_t size, float mag)
+{
+	auto effect = Effekseer::FB::GetEffect(data);
+
+	if (effect == nullptr)
+	{
+		return false;
+	}
+
+	if (effect->textures() != nullptr)
+	{
+		m_ImagePaths.resize(effect->textures()->size());
+		m_pImages.resize(effect->textures()->size());
+
+		for (Effekseer::Data::flatbuffers::uoffset_t i = 0; i < effect->textures()->size(); i++)
+		{
+			auto texProp = effect->textures()->Get(i);
+			auto path = texProp->path()->str();
+
+			char16_t path16[260];
+			const auto length = ConvertUtf8ToUtf16(path16, 260, path.c_str());
+
+			m_ImagePaths[i].reset(new char16_t[length]);
+			memcpy(m_ImagePaths[i].get(), path16, length);
+		}
+	}
+
+	m_pRoot = EffectNodeImplemented::Create(this, nullptr, effect->root_node());
 
 	return true;
 }

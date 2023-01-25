@@ -1,11 +1,17 @@
 namespace Effekseer.FB;
 
+struct RefMinMax {
+  min:int;
+  max:int;
+}
+
 struct IntRange {
   min:int;
   max:int;
 }
 
 struct FloatRange {
+  ref_eq:RefMinMax;
   min:float;
   max:float;
 }
@@ -17,42 +23,45 @@ struct Vec3F {
 }
 
 struct Vec3FRange {
-  min:FloatRange;
-  max:FloatRange;
+  ref_eq:RefMinMax;
+  min:Vec3F;
+  max:Vec3F;
 }
 
 struct Vec3FEasing {
-	start:Vec3FRange;
-	end:Vec3FRange;
-	easing_a:float;
-	easing_b:float;
-	easing_c:float;
+  start:Vec3FRange;
+  end:Vec3FRange;
+  easing_a:float;
+  easing_b:float;
+  easing_c:float;
 }
 
-table RefMinMax {
-  min:int = -1;
-  max:int = -1;
+enum EffectNodeType : int {
+  EffectNodeType_Root = -1,
+  EffectNodeType_NoneType = 0,
+  EffectNodeType_Sprite = 2,
+  EffectNodeType_Ribbon = 3,
+  EffectNodeType_Ring = 4,
+  EffectNodeType_Model = 5,
+  EffectNodeType_Track = 6,
 }
 
-enum FCurveTimelineType : int {
-	FCurveTimelineType_Time = 0,
-	FCurveTimelineType_Percent = 1,
+enum TranslationParentBindType : int {
+  TranslationParentBindType_NotBind = 0,
+  TranslationParentBindType_NotBind_Root = 3,
+  TranslationParentBindType_WhenCreating = 1,
+  TranslationParentBindType_Always = 2,
+  TranslationParentBindType_NotBind_FollowParent = 4,
+  TranslationParentBindType_WhenCreating_FollowParent = 5,
 }
 
-enum FCurveEdgeType : int {
-  FCurveEdgeType_Constant = 0,
-  FCurveEdgeType_Loop = 1,
-  FCurveEdgeType_LoopInversely = 2,
+enum BindType : int {
+  BindType_NotBind = 0,
+  BindType_NotBind_Root = 3,
+  BindType_WhenCreating = 1,
+  BindType_Always = 2,
 }
 
-table FCurve {
-  offset:int;
-  len:int;
-  freq:int;
-  start:FCurveEdgeType;
-  end:FCurveEdgeType;
-  keys:[float];
-	default_value:float;
-	offset_max:float;
-	offset_min:float;
+table TextureProperty {
+  path:string;
 }

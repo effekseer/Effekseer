@@ -760,8 +760,20 @@ namespace Effekseer.GUI
 			effectSetting.SetCoordinateSyatem(
 				Core.Option.Coordinate.Value == Data.OptionValues.CoordinateType.Right ? swig.CoordinateSystemType.RH : swig.CoordinateSystemType.LH);
 
-			var binaryExporter = new Binary.Exporter();
-			var data = binaryExporter.Export(Core.Root, Core.Option.Magnification);
+			byte[] data = null;
+
+			if(true)
+			{
+				var binary = new IO.EffectBinary();
+				binary.Init(CoreContext.SelectedEffect.Asset, CoreContext.Environment, Core.Option.Magnification);
+				data = binary.Buffer;
+			}
+			else
+			{
+				var binaryExporter = new Binary.Exporter();
+				data = binaryExporter.Export(Core.Root, Core.Option.Magnification);
+			}
+
 			var path = Utils.Misc.BackSlashToSlash(Core.Root.GetFullPath());
 			fixed (byte* p = &data[0])
 			{

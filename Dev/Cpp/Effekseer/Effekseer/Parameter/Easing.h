@@ -9,6 +9,10 @@
 #include "DynamicParameter.h"
 #include "Effekseer.Parameters.h"
 
+#include "../FB/FlatBuffersUtils.h"
+
+#include "../FB/Easing_generated.h"
+
 namespace Effekseer
 {
 
@@ -510,26 +514,11 @@ public:
 			int channel = 0;
 			reader.Read<int>(channel);
 
-			for (int32_t i = 0; i < ElemNum; i++)
-			{
-				channelIDs[i] = channel & 0xff;
-				;
-				channel = (channel >> 8);
-			}
-
-			for (int i = 0; i < ElemNum; i++)
-			{
-				channelCount = Effekseer::Max(channelCount, channelIDs[i]);
-			}
-			channelCount++;
+			AssignChannel(channel);
 		}
 		else
 		{
-			channelCount = ElemNum;
-			for (int32_t i = 0; i < ElemNum; i++)
-			{
-				channelIDs[i] = i;
-			}
+			MakeChannelDefault();
 		}
 
 		if (version >= minAppendParameterVersion_)
@@ -548,6 +537,35 @@ public:
 		}
 	}
 
+	void AssignChannel(int channel)
+	{
+		for (int32_t i = 0; i < ElemNum; i++)
+		{
+			channelIDs[i] = channel & 0xff;
+			channel = (channel >> 8);
+		}
+
+		for (int i = 0; i < ElemNum; i++)
+		{
+			channelCount = Effekseer::Max(channelCount, channelIDs[i]);
+		}
+		channelCount++;
+	}
+
+	void MakeChannelDefault()
+	{
+		channelCount = ElemNum;
+		for (int32_t i = 0; i < ElemNum; i++)
+		{
+			channelIDs[i] = i;
+		}
+	}
+
+	static Easing3Type Convert(const FB::Easing3Type value)
+	{
+		return static_cast<Easing3Type>(value);
+	}
+
 	virtual T GetValue(const InstanceEasingType& instance, float time) const = 0;
 };
 
@@ -560,6 +578,39 @@ public:
 		minAppendParameterVersion_ = minAppendParameterVersion;
 	}
 
+	void LoadWithFB(const FB::EasingFloat& src)
+	{
+		RefEqS = FBConverter::Convert(src.ref_eq_s());
+		RefEqM = FBConverter::Convert(src.ref_eq_m());
+		RefEqE = FBConverter::Convert(src.ref_eq_e());
+		start = FBConverter::Convert(src.start());
+		middle = FBConverter::Convert(src.middle());
+		end = FBConverter::Convert(src.end());
+		type_ = Convert(src.type());
+
+		params.fill(0.0f);
+		if (src.params() != nullptr)
+		{
+			for (uint32_t i = 0; i < std::min(src.params()->Length(), static_cast<uint32_t>(params.size())); i++)
+			{
+				params[i] = src.params()->Get(i);
+			}
+		}
+
+		AssignChannel(src.channel());
+
+		isMiddleEnabled = src.is_middle_enabled();
+		isIndividualEnabled = src.is_individual_enabled();
+		types.fill(Easing3Type::Linear);
+
+		if (src.types() != nullptr)
+		{
+			assert(src.types()->Length() == 1);
+			const auto t = static_cast<FB::Easing3Type>(src.types()->Get(0));
+			types[0] = Convert(t);
+		}
+	}
+
 	virtual float GetValue(const InstanceEasingType& instance, float time) const override;
 	void Init(InstanceEasingType& instance, const Effect* e, const InstanceGlobal* instg, const Instance* parent, IRandObject* rand) const;
 };
@@ -567,6 +618,42 @@ public:
 class ParameterEasingSIMDVec3 : public ParameterEasing<SIMD::Vec3f>
 {
 public:
+	void LoadWithFB(const FB::EasingVec3F& src)
+	{
+		RefEqS = FBConverter::Convert(&src.start()->ref_eq());
+		RefEqM = FBConverter::Convert(&src.middle()->ref_eq());
+		RefEqE = FBConverter::Convert(&src.end()->ref_eq());
+		FBConverter::Convert(start, src.start());
+		FBConverter::Convert(middle, src.middle());
+		FBConverter::Convert(end, src.end());
+		type_ = Convert(src.type());
+
+		params.fill(0.0f);
+		if (src.params() != nullptr)
+		{
+			for (uint32_t i = 0; i < std::min(src.params()->Length(), static_cast<uint32_t>(params.size())); i++)
+			{
+				params[i] = src.params()->Get(i);
+			}
+		}
+
+		AssignChannel(src.channel());
+
+		isMiddleEnabled = src.is_middle_enabled();
+		isIndividualEnabled = src.is_individual_enabled();
+		types.fill(Easing3Type::Linear);
+
+		if (src.types() != nullptr)
+		{
+			assert(src.types()->Length() == 3);
+			for (uint32_t i = 0; i < ElemNum; i++)
+			{
+				const auto t = static_cast<FB::Easing3Type>(src.types()->Get(i));
+				types[i] = Convert(t);
+			}
+		}
+	}
+
 	virtual SIMD::Vec3f GetValue(const InstanceEasingType& instance, float time) const override;
 	void Init(InstanceEasingType& instance, const Effect* e, const InstanceGlobal* instg, const Instance* parent, IRandObject* rand, const std::array<float, 3>& scale, const std::array<float, 3>& scaleInv) const;
 };
