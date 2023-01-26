@@ -1,0 +1,33 @@
+include "CommonStructures.fbs";
+
+namespace Effekseer.FB.Effect;
+
+enum EffectNodeType : int {
+  EffectNodeType_Root = -1,
+  EffectNodeType_NoneType = 0,
+  EffectNodeType_Sprite = 2,
+  EffectNodeType_Ribbon = 3,
+  EffectNodeType_Ring = 4,
+  EffectNodeType_Model = 5,
+  EffectNodeType_Track = 6,
+}
+
+enum TranslationParentBindType : int {
+  TranslationParentBindType_NotBind = 0,
+  TranslationParentBindType_NotBind_Root = 3,
+  TranslationParentBindType_WhenCreating = 1,
+  TranslationParentBindType_Always = 2,
+  TranslationParentBindType_NotBind_FollowParent = 4,
+  TranslationParentBindType_WhenCreating_FollowParent = 5,
+}
+
+enum BindType : int {
+  BindType_NotBind = 0,
+  BindType_NotBind_Root = 3,
+  BindType_WhenCreating = 1,
+  BindType_Always = 2,
+}
+
+table TextureProperty {
+  path:string;
+}

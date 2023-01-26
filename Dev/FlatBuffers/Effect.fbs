@@ -1,10 +1,10 @@
 include "Node.fbs";
 
-namespace Effekseer.FB;
+namespace Effekseer.FB.Effect;
 
-table Effect {
+table EffectAsset {
   textures:[TextureProperty];
   root_node:Node;
 }
 
-root_type Effect;
+root_type EffectAsset;

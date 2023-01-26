@@ -136,7 +136,7 @@ void EffectNodeSprite::LoadRendererParameter(unsigned char*& pos, const SettingR
 	}
 }
 
-void EffectNodeSprite::LoadRendererParameter(const FB::Node* fbNode, const SettingRef& setting)
+void EffectNodeSprite::LoadRendererParameter(const FB::Effect::Node* fbNode, const SettingRef& setting)
 {
 	// TODO
 	IsRendered = true;

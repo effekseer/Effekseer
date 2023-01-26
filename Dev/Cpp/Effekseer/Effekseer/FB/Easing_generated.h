@@ -11,11 +11,11 @@
 namespace Effekseer {
 namespace FB {
 
-struct EasingFloat;
-struct EasingFloatBuilder;
+struct FloatEasing;
+struct FloatEasingBuilder;
 
-struct EasingVec3F;
-struct EasingVec3FBuilder;
+struct Vec3FEasing;
+struct Vec3FEasingBuilder;
 
 enum class Easing3Type : int32_t {
   StartEndSpeed = 0,
@@ -144,31 +144,19 @@ inline const char *EnumNameEasing3Type(Easing3Type e) {
   return EnumNamesEasing3Type()[index];
 }
 
-struct EasingFloat FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
-  typedef EasingFloatBuilder Builder;
+struct FloatEasing FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef FloatEasingBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_REF_EQ_S = 4,
-    VT_REF_EQ_E = 6,
-    VT_REF_EQ_M = 8,
-    VT_START = 10,
-    VT_END = 12,
-    VT_MIDDLE = 14,
-    VT_TYPE = 16,
-    VT_PARAMS = 18,
-    VT_CHANNEL = 20,
-    VT_IS_MIDDLE_ENABLED = 22,
-    VT_IS_INDIVIDUAL_ENABLED = 24,
-    VT_TYPES = 26
+    VT_START = 4,
+    VT_END = 6,
+    VT_MIDDLE = 8,
+    VT_TYPE = 10,
+    VT_PARAMS = 12,
+    VT_CHANNEL = 14,
+    VT_IS_MIDDLE_ENABLED = 16,
+    VT_IS_INDIVIDUAL_ENABLED = 18,
+    VT_TYPES = 20
   };
-  const Effekseer::FB::RefMinMax *ref_eq_s() const {
-    return GetStruct<const Effekseer::FB::RefMinMax *>(VT_REF_EQ_S);
-  }
-  const Effekseer::FB::RefMinMax *ref_eq_e() const {
-    return GetStruct<const Effekseer::FB::RefMinMax *>(VT_REF_EQ_E);
-  }
-  const Effekseer::FB::RefMinMax *ref_eq_m() const {
-    return GetStruct<const Effekseer::FB::RefMinMax *>(VT_REF_EQ_M);
-  }
   const Effekseer::FB::FloatRange *start() const {
     return GetStruct<const Effekseer::FB::FloatRange *>(VT_START);
   }
@@ -198,9 +186,6 @@ struct EasingFloat FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
-           VerifyField<Effekseer::FB::RefMinMax>(verifier, VT_REF_EQ_S) &&
-           VerifyField<Effekseer::FB::RefMinMax>(verifier, VT_REF_EQ_E) &&
-           VerifyField<Effekseer::FB::RefMinMax>(verifier, VT_REF_EQ_M) &&
            VerifyField<Effekseer::FB::FloatRange>(verifier, VT_START) &&
            VerifyField<Effekseer::FB::FloatRange>(verifier, VT_END) &&
            VerifyField<Effekseer::FB::FloatRange>(verifier, VT_MIDDLE) &&
@@ -216,62 +201,50 @@ struct EasingFloat FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   }
 };
 
-struct EasingFloatBuilder {
-  typedef EasingFloat Table;
+struct FloatEasingBuilder {
+  typedef FloatEasing Table;
   flatbuffers::FlatBufferBuilder &fbb_;
   flatbuffers::uoffset_t start_;
-  void add_ref_eq_s(const Effekseer::FB::RefMinMax *ref_eq_s) {
-    fbb_.AddStruct(EasingFloat::VT_REF_EQ_S, ref_eq_s);
-  }
-  void add_ref_eq_e(const Effekseer::FB::RefMinMax *ref_eq_e) {
-    fbb_.AddStruct(EasingFloat::VT_REF_EQ_E, ref_eq_e);
-  }
-  void add_ref_eq_m(const Effekseer::FB::RefMinMax *ref_eq_m) {
-    fbb_.AddStruct(EasingFloat::VT_REF_EQ_M, ref_eq_m);
-  }
   void add_start(const Effekseer::FB::FloatRange *start) {
-    fbb_.AddStruct(EasingFloat::VT_START, start);
+    fbb_.AddStruct(FloatEasing::VT_START, start);
   }
   void add_end(const Effekseer::FB::FloatRange *end) {
-    fbb_.AddStruct(EasingFloat::VT_END, end);
+    fbb_.AddStruct(FloatEasing::VT_END, end);
   }
   void add_middle(const Effekseer::FB::FloatRange *middle) {
-    fbb_.AddStruct(EasingFloat::VT_MIDDLE, middle);
+    fbb_.AddStruct(FloatEasing::VT_MIDDLE, middle);
   }
   void add_type(Effekseer::FB::Easing3Type type) {
-    fbb_.AddElement<int32_t>(EasingFloat::VT_TYPE, static_cast<int32_t>(type), 0);
+    fbb_.AddElement<int32_t>(FloatEasing::VT_TYPE, static_cast<int32_t>(type), 0);
   }
   void add_params(flatbuffers::Offset<flatbuffers::Vector<float>> params) {
-    fbb_.AddOffset(EasingFloat::VT_PARAMS, params);
+    fbb_.AddOffset(FloatEasing::VT_PARAMS, params);
   }
   void add_channel(int32_t channel) {
-    fbb_.AddElement<int32_t>(EasingFloat::VT_CHANNEL, channel, 0);
+    fbb_.AddElement<int32_t>(FloatEasing::VT_CHANNEL, channel, 0);
   }
   void add_is_middle_enabled(bool is_middle_enabled) {
-    fbb_.AddElement<uint8_t>(EasingFloat::VT_IS_MIDDLE_ENABLED, static_cast<uint8_t>(is_middle_enabled), 0);
+    fbb_.AddElement<uint8_t>(FloatEasing::VT_IS_MIDDLE_ENABLED, static_cast<uint8_t>(is_middle_enabled), 0);
   }
   void add_is_individual_enabled(bool is_individual_enabled) {
-    fbb_.AddElement<uint8_t>(EasingFloat::VT_IS_INDIVIDUAL_ENABLED, static_cast<uint8_t>(is_individual_enabled), 0);
+    fbb_.AddElement<uint8_t>(FloatEasing::VT_IS_INDIVIDUAL_ENABLED, static_cast<uint8_t>(is_individual_enabled), 0);
   }
   void add_types(flatbuffers::Offset<flatbuffers::Vector<int32_t>> types) {
-    fbb_.AddOffset(EasingFloat::VT_TYPES, types);
+    fbb_.AddOffset(FloatEasing::VT_TYPES, types);
   }
-  explicit EasingFloatBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+  explicit FloatEasingBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
-  flatbuffers::Offset<EasingFloat> Finish() {
+  flatbuffers::Offset<FloatEasing> Finish() {
     const auto end = fbb_.EndTable(start_);
-    auto o = flatbuffers::Offset<EasingFloat>(end);
+    auto o = flatbuffers::Offset<FloatEasing>(end);
     return o;
   }
 };
 
-inline flatbuffers::Offset<EasingFloat> CreateEasingFloat(
+inline flatbuffers::Offset<FloatEasing> CreateFloatEasing(
     flatbuffers::FlatBufferBuilder &_fbb,
-    const Effekseer::FB::RefMinMax *ref_eq_s = 0,
-    const Effekseer::FB::RefMinMax *ref_eq_e = 0,
-    const Effekseer::FB::RefMinMax *ref_eq_m = 0,
     const Effekseer::FB::FloatRange *start = 0,
     const Effekseer::FB::FloatRange *end = 0,
     const Effekseer::FB::FloatRange *middle = 0,
@@ -281,7 +254,7 @@ inline flatbuffers::Offset<EasingFloat> CreateEasingFloat(
     bool is_middle_enabled = false,
     bool is_individual_enabled = false,
     flatbuffers::Offset<flatbuffers::Vector<int32_t>> types = 0) {
-  EasingFloatBuilder builder_(_fbb);
+  FloatEasingBuilder builder_(_fbb);
   builder_.add_types(types);
   builder_.add_channel(channel);
   builder_.add_params(params);
@@ -289,19 +262,13 @@ inline flatbuffers::Offset<EasingFloat> CreateEasingFloat(
   builder_.add_middle(middle);
   builder_.add_end(end);
   builder_.add_start(start);
-  builder_.add_ref_eq_m(ref_eq_m);
-  builder_.add_ref_eq_e(ref_eq_e);
-  builder_.add_ref_eq_s(ref_eq_s);
   builder_.add_is_individual_enabled(is_individual_enabled);
   builder_.add_is_middle_enabled(is_middle_enabled);
   return builder_.Finish();
 }
 
-inline flatbuffers::Offset<EasingFloat> CreateEasingFloatDirect(
+inline flatbuffers::Offset<FloatEasing> CreateFloatEasingDirect(
     flatbuffers::FlatBufferBuilder &_fbb,
-    const Effekseer::FB::RefMinMax *ref_eq_s = 0,
-    const Effekseer::FB::RefMinMax *ref_eq_e = 0,
-    const Effekseer::FB::RefMinMax *ref_eq_m = 0,
     const Effekseer::FB::FloatRange *start = 0,
     const Effekseer::FB::FloatRange *end = 0,
     const Effekseer::FB::FloatRange *middle = 0,
@@ -313,11 +280,8 @@ inline flatbuffers::Offset<EasingFloat> CreateEasingFloatDirect(
     const std::vector<int32_t> *types = nullptr) {
   auto params__ = params ? _fbb.CreateVector<float>(*params) : 0;
   auto types__ = types ? _fbb.CreateVector<int32_t>(*types) : 0;
-  return Effekseer::FB::CreateEasingFloat(
+  return Effekseer::FB::CreateFloatEasing(
       _fbb,
-      ref_eq_s,
-      ref_eq_e,
-      ref_eq_m,
       start,
       end,
       middle,
@@ -329,8 +293,8 @@ inline flatbuffers::Offset<EasingFloat> CreateEasingFloatDirect(
       types__);
 }
 
-struct EasingVec3F FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
-  typedef EasingVec3FBuilder Builder;
+struct Vec3FEasing FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef Vec3FEasingBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_START = 4,
     VT_END = 6,
@@ -386,49 +350,49 @@ struct EasingVec3F FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   }
 };
 
-struct EasingVec3FBuilder {
-  typedef EasingVec3F Table;
+struct Vec3FEasingBuilder {
+  typedef Vec3FEasing Table;
   flatbuffers::FlatBufferBuilder &fbb_;
   flatbuffers::uoffset_t start_;
   void add_start(const Effekseer::FB::Vec3FRange *start) {
-    fbb_.AddStruct(EasingVec3F::VT_START, start);
+    fbb_.AddStruct(Vec3FEasing::VT_START, start);
   }
   void add_end(const Effekseer::FB::Vec3FRange *end) {
-    fbb_.AddStruct(EasingVec3F::VT_END, end);
+    fbb_.AddStruct(Vec3FEasing::VT_END, end);
   }
   void add_middle(const Effekseer::FB::Vec3FRange *middle) {
-    fbb_.AddStruct(EasingVec3F::VT_MIDDLE, middle);
+    fbb_.AddStruct(Vec3FEasing::VT_MIDDLE, middle);
   }
   void add_type(Effekseer::FB::Easing3Type type) {
-    fbb_.AddElement<int32_t>(EasingVec3F::VT_TYPE, static_cast<int32_t>(type), 0);
+    fbb_.AddElement<int32_t>(Vec3FEasing::VT_TYPE, static_cast<int32_t>(type), 0);
   }
   void add_params(flatbuffers::Offset<flatbuffers::Vector<float>> params) {
-    fbb_.AddOffset(EasingVec3F::VT_PARAMS, params);
+    fbb_.AddOffset(Vec3FEasing::VT_PARAMS, params);
   }
   void add_channel(int32_t channel) {
-    fbb_.AddElement<int32_t>(EasingVec3F::VT_CHANNEL, channel, 0);
+    fbb_.AddElement<int32_t>(Vec3FEasing::VT_CHANNEL, channel, 0);
   }
   void add_is_middle_enabled(bool is_middle_enabled) {
-    fbb_.AddElement<uint8_t>(EasingVec3F::VT_IS_MIDDLE_ENABLED, static_cast<uint8_t>(is_middle_enabled), 0);
+    fbb_.AddElement<uint8_t>(Vec3FEasing::VT_IS_MIDDLE_ENABLED, static_cast<uint8_t>(is_middle_enabled), 0);
   }
   void add_is_individual_enabled(bool is_individual_enabled) {
-    fbb_.AddElement<uint8_t>(EasingVec3F::VT_IS_INDIVIDUAL_ENABLED, static_cast<uint8_t>(is_individual_enabled), 0);
+    fbb_.AddElement<uint8_t>(Vec3FEasing::VT_IS_INDIVIDUAL_ENABLED, static_cast<uint8_t>(is_individual_enabled), 0);
   }
   void add_types(flatbuffers::Offset<flatbuffers::Vector<int32_t>> types) {
-    fbb_.AddOffset(EasingVec3F::VT_TYPES, types);
+    fbb_.AddOffset(Vec3FEasing::VT_TYPES, types);
   }
-  explicit EasingVec3FBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+  explicit Vec3FEasingBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
-  flatbuffers::Offset<EasingVec3F> Finish() {
+  flatbuffers::Offset<Vec3FEasing> Finish() {
     const auto end = fbb_.EndTable(start_);
-    auto o = flatbuffers::Offset<EasingVec3F>(end);
+    auto o = flatbuffers::Offset<Vec3FEasing>(end);
     return o;
   }
 };
 
-inline flatbuffers::Offset<EasingVec3F> CreateEasingVec3F(
+inline flatbuffers::Offset<Vec3FEasing> CreateVec3FEasing(
     flatbuffers::FlatBufferBuilder &_fbb,
     const Effekseer::FB::Vec3FRange *start = 0,
     const Effekseer::FB::Vec3FRange *end = 0,
@@ -439,7 +403,7 @@ inline flatbuffers::Offset<EasingVec3F> CreateEasingVec3F(
     bool is_middle_enabled = false,
     bool is_individual_enabled = false,
     flatbuffers::Offset<flatbuffers::Vector<int32_t>> types = 0) {
-  EasingVec3FBuilder builder_(_fbb);
+  Vec3FEasingBuilder builder_(_fbb);
   builder_.add_types(types);
   builder_.add_channel(channel);
   builder_.add_params(params);
@@ -452,7 +416,7 @@ inline flatbuffers::Offset<EasingVec3F> CreateEasingVec3F(
   return builder_.Finish();
 }
 
-inline flatbuffers::Offset<EasingVec3F> CreateEasingVec3FDirect(
+inline flatbuffers::Offset<Vec3FEasing> CreateVec3FEasingDirect(
     flatbuffers::FlatBufferBuilder &_fbb,
     const Effekseer::FB::Vec3FRange *start = 0,
     const Effekseer::FB::Vec3FRange *end = 0,
@@ -465,7 +429,7 @@ inline flatbuffers::Offset<EasingVec3F> CreateEasingVec3FDirect(
     const std::vector<int32_t> *types = nullptr) {
   auto params__ = params ? _fbb.CreateVector<float>(*params) : 0;
   auto types__ = types ? _fbb.CreateVector<int32_t>(*types) : 0;
-  return Effekseer::FB::CreateEasingVec3F(
+  return Effekseer::FB::CreateVec3FEasing(
       _fbb,
       start,
       end,
