@@ -1,9 +1,10 @@
 
 include "CommonStructures.fbs";
+include "EffectStructures.fbs";
 include "Easing.fbs";
 include "FCurve.fbs";
 
-namespace Effekseer.FB;
+namespace Effekseer.FB.Effect;
 
 enum PositionType : int {
   PositionType_None = -1,
@@ -15,42 +16,42 @@ enum PositionType : int {
   PositionType_ViewOffset = 5,
 }
 
-table PositionSettings_Fixed {
+table PositionParameter_Fixed {
   ref_eq:int = -1;
   value:Vec3F;
 }
 
-table PositionSettings_PVA {
+table PositionParameter_PVA {
   pos:Vec3FRange;
   vel:Vec3FRange;
   acc:Vec3FRange;
 }
 
-table PositionSettings_Easing {
-  location:EasingVec3F;
+table PositionParameter_Easing {
+  location:Vec3FEasing;
 }
 
-table PositionSettings_FCurve {
+table PositionParameter_FCurve {
   fcurve:FCurveGroup;
 }
 
-table PositionSettings_NurbsCurve {
+table PositionParameter_NurbsCurve {
   index:int;
   scale:float;
   move_speed:float;
   loop_type:int;
 }
 
-table PositionSettings_ViewOffset {
+table PositionParameter_ViewOffset {
   distance:FloatRange;
 }
 
-table PositionSettings {
+table PositionParameter {
   type:PositionType;
-  fixed:PositionSettings_Fixed;
-  pva:PositionSettings_PVA;
-  easing:PositionSettings_Easing;
-  fcurve:PositionSettings_FCurve;
-  nurbs_curve:PositionSettings_NurbsCurve;
-  view_offset:PositionSettings_ViewOffset;
+  fixed:PositionParameter_Fixed;
+  pva:PositionParameter_PVA;
+  easing:PositionParameter_Easing;
+  fcurve:PositionParameter_FCurve;
+  nurbs_curve:PositionParameter_NurbsCurve;
+  view_offset:PositionParameter_ViewOffset;
 }

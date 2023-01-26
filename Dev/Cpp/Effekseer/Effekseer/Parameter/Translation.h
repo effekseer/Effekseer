@@ -13,7 +13,7 @@
 
 #include "../FB/FlatBuffersUtils.h"
 
-#include "../FB/PositionSettings_generated.h"
+#include "../FB/EffectPositionParameter_generated.h"
 
 namespace Effekseer
 {
@@ -245,19 +245,19 @@ public:
 		}
 	}
 
-	void Load(const FB::PositionSettings* position_settings)
+	void Load(const FB::Effect::PositionParameter* position_settings)
 	{
-		if (position_settings->type() == FB::PositionType::PositionType_None)
+		if (position_settings->type() == FB::Effect::PositionType::PositionType_None)
 		{
 			TranslationType = ParameterTranslationType_None;
 		}
-		else if (position_settings->type() == FB::PositionType::PositionType_Fixed)
+		else if (position_settings->type() == FB::Effect::PositionType::PositionType_Fixed)
 		{
 			TranslationType = ParameterTranslationType_Fixed;
 			TranslationFixed.RefEq = position_settings->fixed()->ref_eq();
 			FBConverter::Convert(TranslationFixed.Position, position_settings->fixed()->value());
 		}
-		else if (position_settings->type() == FB::PositionType::PositionType_PVA)
+		else if (position_settings->type() == FB::Effect::PositionType::PositionType_PVA)
 		{
 			TranslationType = ParameterTranslationType_PVA;
 			FBConverter::Convert(TranslationPVA.location, position_settings->pva()->pos());
@@ -267,18 +267,18 @@ public:
 			FBConverter::Convert(TranslationPVA.RefEqV, &position_settings->pva()->vel()->ref_eq());
 			FBConverter::Convert(TranslationPVA.RefEqA, &position_settings->pva()->acc()->ref_eq());
 		}
-		else if (position_settings->type() == FB::PositionType::PositionType_Easing)
+		else if (position_settings->type() == FB::Effect::PositionType::PositionType_Easing)
 		{
 			TranslationType = ParameterTranslationType_Easing;
 			TranslationEasing.LoadWithFB(*position_settings->easing()->location());
 		}
-		else if (position_settings->type() == FB::PositionType::PositionType_FCurve)
+		else if (position_settings->type() == FB::Effect::PositionType::PositionType_FCurve)
 		{
 			TranslationType = ParameterTranslationType_FCurve;
 			TranslationFCurve = std::make_unique<FCurveVector3D>();
 			TranslationFCurve->LoadWithFB(*position_settings->fcurve()->fcurve());
 		}
-		else if (position_settings->type() == FB::PositionType::PositionType_NurbsCurve)
+		else if (position_settings->type() == FB::Effect::PositionType::PositionType_NurbsCurve)
 		{
 			TranslationType = ParameterTranslationType_NurbsCurve;
 			TranslationNurbsCurve.Index = position_settings->nurbs_curve()->index();
@@ -286,7 +286,7 @@ public:
 			TranslationNurbsCurve.MoveSpeed = position_settings->nurbs_curve()->move_speed();
 			TranslationNurbsCurve.Scale = position_settings->nurbs_curve()->scale();
 		}
-		else if (position_settings->type() == FB::PositionType::PositionType_ViewOffset)
+		else if (position_settings->type() == FB::Effect::PositionType::PositionType_ViewOffset)
 		{
 			TranslationType = ParameterTranslationType_ViewOffset;
 			FBConverter::Convert(TranslationViewOffset.distance, position_settings->view_offset()->distance());

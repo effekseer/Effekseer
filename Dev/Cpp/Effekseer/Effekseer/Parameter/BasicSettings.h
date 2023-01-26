@@ -111,7 +111,7 @@ struct ParameterCommonValues
 		}
 	}
 
-	static TranslationParentBindType Convert(FB::TranslationParentBindType value)
+	static TranslationParentBindType Convert(FB::Effect::TranslationParentBindType value)
 	{
 		return static_cast<TranslationParentBindType>(value);
 	}

@@ -721,7 +721,7 @@ bool EffectImplemented::LoadBody(const uint8_t* data, int32_t size, float mag)
 
 bool EffectImplemented::LoadBodyWithFlatBuffers(const uint8_t* data, int32_t size, float mag)
 {
-	auto effect = Effekseer::FB::GetEffect(data);
+	auto effect = Effekseer::FB::Effect::GetEffectAsset(data);
 
 	if (effect == nullptr)
 	{

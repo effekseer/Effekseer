@@ -9,34 +9,56 @@ using global::System;
 using global::System.Collections.Generic;
 using global::FlatBuffers;
 
-public enum EffectNodeType : int
+public struct Vec3F : IFlatbufferObject
 {
-  EffectNodeType_Root = -1,
-  EffectNodeType_NoneType = 0,
-  EffectNodeType_Sprite = 2,
-  EffectNodeType_Ribbon = 3,
-  EffectNodeType_Ring = 4,
-  EffectNodeType_Model = 5,
-  EffectNodeType_Track = 6,
+  private Struct __p;
+  public ByteBuffer ByteBuffer { get { return __p.bb; } }
+  public void __init(int _i, ByteBuffer _bb) { __p = new Struct(_i, _bb); }
+  public Vec3F __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
+
+  public float X { get { return __p.bb.GetFloat(__p.bb_pos + 0); } }
+  public float Y { get { return __p.bb.GetFloat(__p.bb_pos + 4); } }
+  public float Z { get { return __p.bb.GetFloat(__p.bb_pos + 8); } }
+
+  public static Offset<Effekseer.FB.Vec3F> CreateVec3F(FlatBufferBuilder builder, float X, float Y, float Z) {
+    builder.Prep(4, 12);
+    builder.PutFloat(Z);
+    builder.PutFloat(Y);
+    builder.PutFloat(X);
+    return new Offset<Effekseer.FB.Vec3F>(builder.Offset);
+  }
+  public Vec3FT UnPack() {
+    var _o = new Vec3FT();
+    this.UnPackTo(_o);
+    return _o;
+  }
+  public void UnPackTo(Vec3FT _o) {
+    _o.X = this.X;
+    _o.Y = this.Y;
+    _o.Z = this.Z;
+  }
+  public static Offset<Effekseer.FB.Vec3F> Pack(FlatBufferBuilder builder, Vec3FT _o) {
+    if (_o == null) return default(Offset<Effekseer.FB.Vec3F>);
+    return CreateVec3F(
+      builder,
+      _o.X,
+      _o.Y,
+      _o.Z);
+  }
 };
 
-public enum TranslationParentBindType : int
+public class Vec3FT
 {
-  TranslationParentBindType_NotBind = 0,
-  TranslationParentBindType_WhenCreating = 1,
-  TranslationParentBindType_Always = 2,
-  TranslationParentBindType_NotBind_Root = 3,
-  TranslationParentBindType_NotBind_FollowParent = 4,
-  TranslationParentBindType_WhenCreating_FollowParent = 5,
-};
+  public float X { get; set; }
+  public float Y { get; set; }
+  public float Z { get; set; }
 
-public enum BindType : int
-{
-  BindType_NotBind = 0,
-  BindType_WhenCreating = 1,
-  BindType_Always = 2,
-  BindType_NotBind_Root = 3,
-};
+  public Vec3FT() {
+    this.X = 0.0f;
+    this.Y = 0.0f;
+    this.Z = 0.0f;
+  }
+}
 
 public struct RefMinMax : IFlatbufferObject
 {
@@ -83,6 +105,96 @@ public class RefMinMaxT
   }
 }
 
+public struct IntRef : IFlatbufferObject
+{
+  private Struct __p;
+  public ByteBuffer ByteBuffer { get { return __p.bb; } }
+  public void __init(int _i, ByteBuffer _bb) { __p = new Struct(_i, _bb); }
+  public IntRef __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
+
+  public int RefEq { get { return __p.bb.GetInt(__p.bb_pos + 0); } }
+  public int Value { get { return __p.bb.GetInt(__p.bb_pos + 4); } }
+
+  public static Offset<Effekseer.FB.IntRef> CreateIntRef(FlatBufferBuilder builder, int RefEq, int Value) {
+    builder.Prep(4, 8);
+    builder.PutInt(Value);
+    builder.PutInt(RefEq);
+    return new Offset<Effekseer.FB.IntRef>(builder.Offset);
+  }
+  public IntRefT UnPack() {
+    var _o = new IntRefT();
+    this.UnPackTo(_o);
+    return _o;
+  }
+  public void UnPackTo(IntRefT _o) {
+    _o.RefEq = this.RefEq;
+    _o.Value = this.Value;
+  }
+  public static Offset<Effekseer.FB.IntRef> Pack(FlatBufferBuilder builder, IntRefT _o) {
+    if (_o == null) return default(Offset<Effekseer.FB.IntRef>);
+    return CreateIntRef(
+      builder,
+      _o.RefEq,
+      _o.Value);
+  }
+};
+
+public class IntRefT
+{
+  public int RefEq { get; set; }
+  public int Value { get; set; }
+
+  public IntRefT() {
+    this.RefEq = 0;
+    this.Value = 0;
+  }
+}
+
+public struct FloatRef : IFlatbufferObject
+{
+  private Struct __p;
+  public ByteBuffer ByteBuffer { get { return __p.bb; } }
+  public void __init(int _i, ByteBuffer _bb) { __p = new Struct(_i, _bb); }
+  public FloatRef __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
+
+  public int RefEq { get { return __p.bb.GetInt(__p.bb_pos + 0); } }
+  public float Value { get { return __p.bb.GetFloat(__p.bb_pos + 4); } }
+
+  public static Offset<Effekseer.FB.FloatRef> CreateFloatRef(FlatBufferBuilder builder, int RefEq, float Value) {
+    builder.Prep(4, 8);
+    builder.PutFloat(Value);
+    builder.PutInt(RefEq);
+    return new Offset<Effekseer.FB.FloatRef>(builder.Offset);
+  }
+  public FloatRefT UnPack() {
+    var _o = new FloatRefT();
+    this.UnPackTo(_o);
+    return _o;
+  }
+  public void UnPackTo(FloatRefT _o) {
+    _o.RefEq = this.RefEq;
+    _o.Value = this.Value;
+  }
+  public static Offset<Effekseer.FB.FloatRef> Pack(FlatBufferBuilder builder, FloatRefT _o) {
+    if (_o == null) return default(Offset<Effekseer.FB.FloatRef>);
+    return CreateFloatRef(
+      builder,
+      _o.RefEq,
+      _o.Value);
+  }
+};
+
+public class FloatRefT
+{
+  public int RefEq { get; set; }
+  public float Value { get; set; }
+
+  public FloatRefT() {
+    this.RefEq = 0;
+    this.Value = 0.0f;
+  }
+}
+
 public struct IntRange : IFlatbufferObject
 {
   private Struct __p;
@@ -90,13 +202,17 @@ public struct IntRange : IFlatbufferObject
   public void __init(int _i, ByteBuffer _bb) { __p = new Struct(_i, _bb); }
   public IntRange __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public int Min { get { return __p.bb.GetInt(__p.bb_pos + 0); } }
-  public int Max { get { return __p.bb.GetInt(__p.bb_pos + 4); } }
+  public Effekseer.FB.RefMinMax RefEq { get { return (new Effekseer.FB.RefMinMax()).__assign(__p.bb_pos + 0, __p.bb); } }
+  public int Min { get { return __p.bb.GetInt(__p.bb_pos + 8); } }
+  public int Max { get { return __p.bb.GetInt(__p.bb_pos + 12); } }
 
-  public static Offset<Effekseer.FB.IntRange> CreateIntRange(FlatBufferBuilder builder, int Min, int Max) {
-    builder.Prep(4, 8);
+  public static Offset<Effekseer.FB.IntRange> CreateIntRange(FlatBufferBuilder builder, int ref_eq_Min, int ref_eq_Max, int Min, int Max) {
+    builder.Prep(4, 16);
     builder.PutInt(Max);
     builder.PutInt(Min);
+    builder.Prep(4, 8);
+    builder.PutInt(ref_eq_Max);
+    builder.PutInt(ref_eq_Min);
     return new Offset<Effekseer.FB.IntRange>(builder.Offset);
   }
   public IntRangeT UnPack() {
@@ -105,13 +221,18 @@ public struct IntRange : IFlatbufferObject
     return _o;
   }
   public void UnPackTo(IntRangeT _o) {
+    _o.RefEq = this.RefEq.UnPack();
     _o.Min = this.Min;
     _o.Max = this.Max;
   }
   public static Offset<Effekseer.FB.IntRange> Pack(FlatBufferBuilder builder, IntRangeT _o) {
     if (_o == null) return default(Offset<Effekseer.FB.IntRange>);
+    var _ref_eq_min = _o.RefEq.Min;
+    var _ref_eq_max = _o.RefEq.Max;
     return CreateIntRange(
       builder,
+      _ref_eq_min,
+      _ref_eq_max,
       _o.Min,
       _o.Max);
   }
@@ -119,10 +240,12 @@ public struct IntRange : IFlatbufferObject
 
 public class IntRangeT
 {
+  public Effekseer.FB.RefMinMaxT RefEq { get; set; }
   public int Min { get; set; }
   public int Max { get; set; }
 
   public IntRangeT() {
+    this.RefEq = new Effekseer.FB.RefMinMaxT();
     this.Min = 0;
     this.Max = 0;
   }
@@ -181,57 +304,6 @@ public class FloatRangeT
     this.RefEq = new Effekseer.FB.RefMinMaxT();
     this.Min = 0.0f;
     this.Max = 0.0f;
-  }
-}
-
-public struct Vec3F : IFlatbufferObject
-{
-  private Struct __p;
-  public ByteBuffer ByteBuffer { get { return __p.bb; } }
-  public void __init(int _i, ByteBuffer _bb) { __p = new Struct(_i, _bb); }
-  public Vec3F __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
-
-  public float X { get { return __p.bb.GetFloat(__p.bb_pos + 0); } }
-  public float Y { get { return __p.bb.GetFloat(__p.bb_pos + 4); } }
-  public float Z { get { return __p.bb.GetFloat(__p.bb_pos + 8); } }
-
-  public static Offset<Effekseer.FB.Vec3F> CreateVec3F(FlatBufferBuilder builder, float X, float Y, float Z) {
-    builder.Prep(4, 12);
-    builder.PutFloat(Z);
-    builder.PutFloat(Y);
-    builder.PutFloat(X);
-    return new Offset<Effekseer.FB.Vec3F>(builder.Offset);
-  }
-  public Vec3FT UnPack() {
-    var _o = new Vec3FT();
-    this.UnPackTo(_o);
-    return _o;
-  }
-  public void UnPackTo(Vec3FT _o) {
-    _o.X = this.X;
-    _o.Y = this.Y;
-    _o.Z = this.Z;
-  }
-  public static Offset<Effekseer.FB.Vec3F> Pack(FlatBufferBuilder builder, Vec3FT _o) {
-    if (_o == null) return default(Offset<Effekseer.FB.Vec3F>);
-    return CreateVec3F(
-      builder,
-      _o.X,
-      _o.Y,
-      _o.Z);
-  }
-};
-
-public class Vec3FT
-{
-  public float X { get; set; }
-  public float Y { get; set; }
-  public float Z { get; set; }
-
-  public Vec3FT() {
-    this.X = 0.0f;
-    this.Y = 0.0f;
-    this.Z = 0.0f;
   }
 }
 
@@ -304,178 +376,6 @@ public class Vec3FRangeT
     this.RefEq = new Effekseer.FB.RefMinMaxT();
     this.Min = new Effekseer.FB.Vec3FT();
     this.Max = new Effekseer.FB.Vec3FT();
-  }
-}
-
-public struct Vec3FEasing : IFlatbufferObject
-{
-  private Struct __p;
-  public ByteBuffer ByteBuffer { get { return __p.bb; } }
-  public void __init(int _i, ByteBuffer _bb) { __p = new Struct(_i, _bb); }
-  public Vec3FEasing __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
-
-  public Effekseer.FB.Vec3FRange Start { get { return (new Effekseer.FB.Vec3FRange()).__assign(__p.bb_pos + 0, __p.bb); } }
-  public Effekseer.FB.Vec3FRange End { get { return (new Effekseer.FB.Vec3FRange()).__assign(__p.bb_pos + 32, __p.bb); } }
-  public float EasingA { get { return __p.bb.GetFloat(__p.bb_pos + 64); } }
-  public float EasingB { get { return __p.bb.GetFloat(__p.bb_pos + 68); } }
-  public float EasingC { get { return __p.bb.GetFloat(__p.bb_pos + 72); } }
-
-  public static Offset<Effekseer.FB.Vec3FEasing> CreateVec3FEasing(FlatBufferBuilder builder, int start_ref_eq_Min, int start_ref_eq_Max, float start_min_X, float start_min_Y, float start_min_Z, float start_max_X, float start_max_Y, float start_max_Z, int end_ref_eq_Min, int end_ref_eq_Max, float end_min_X, float end_min_Y, float end_min_Z, float end_max_X, float end_max_Y, float end_max_Z, float EasingA, float EasingB, float EasingC) {
-    builder.Prep(4, 76);
-    builder.PutFloat(EasingC);
-    builder.PutFloat(EasingB);
-    builder.PutFloat(EasingA);
-    builder.Prep(4, 32);
-    builder.Prep(4, 12);
-    builder.PutFloat(end_max_Z);
-    builder.PutFloat(end_max_Y);
-    builder.PutFloat(end_max_X);
-    builder.Prep(4, 12);
-    builder.PutFloat(end_min_Z);
-    builder.PutFloat(end_min_Y);
-    builder.PutFloat(end_min_X);
-    builder.Prep(4, 8);
-    builder.PutInt(end_ref_eq_Max);
-    builder.PutInt(end_ref_eq_Min);
-    builder.Prep(4, 32);
-    builder.Prep(4, 12);
-    builder.PutFloat(start_max_Z);
-    builder.PutFloat(start_max_Y);
-    builder.PutFloat(start_max_X);
-    builder.Prep(4, 12);
-    builder.PutFloat(start_min_Z);
-    builder.PutFloat(start_min_Y);
-    builder.PutFloat(start_min_X);
-    builder.Prep(4, 8);
-    builder.PutInt(start_ref_eq_Max);
-    builder.PutInt(start_ref_eq_Min);
-    return new Offset<Effekseer.FB.Vec3FEasing>(builder.Offset);
-  }
-  public Vec3FEasingT UnPack() {
-    var _o = new Vec3FEasingT();
-    this.UnPackTo(_o);
-    return _o;
-  }
-  public void UnPackTo(Vec3FEasingT _o) {
-    _o.Start = this.Start.UnPack();
-    _o.End = this.End.UnPack();
-    _o.EasingA = this.EasingA;
-    _o.EasingB = this.EasingB;
-    _o.EasingC = this.EasingC;
-  }
-  public static Offset<Effekseer.FB.Vec3FEasing> Pack(FlatBufferBuilder builder, Vec3FEasingT _o) {
-    if (_o == null) return default(Offset<Effekseer.FB.Vec3FEasing>);
-    var _start_ref_eq_min = _o.Start.RefEq.Min;
-    var _start_ref_eq_max = _o.Start.RefEq.Max;
-    var _start_min_x = _o.Start.Min.X;
-    var _start_min_y = _o.Start.Min.Y;
-    var _start_min_z = _o.Start.Min.Z;
-    var _start_max_x = _o.Start.Max.X;
-    var _start_max_y = _o.Start.Max.Y;
-    var _start_max_z = _o.Start.Max.Z;
-    var _end_ref_eq_min = _o.End.RefEq.Min;
-    var _end_ref_eq_max = _o.End.RefEq.Max;
-    var _end_min_x = _o.End.Min.X;
-    var _end_min_y = _o.End.Min.Y;
-    var _end_min_z = _o.End.Min.Z;
-    var _end_max_x = _o.End.Max.X;
-    var _end_max_y = _o.End.Max.Y;
-    var _end_max_z = _o.End.Max.Z;
-    return CreateVec3FEasing(
-      builder,
-      _start_ref_eq_min,
-      _start_ref_eq_max,
-      _start_min_x,
-      _start_min_y,
-      _start_min_z,
-      _start_max_x,
-      _start_max_y,
-      _start_max_z,
-      _end_ref_eq_min,
-      _end_ref_eq_max,
-      _end_min_x,
-      _end_min_y,
-      _end_min_z,
-      _end_max_x,
-      _end_max_y,
-      _end_max_z,
-      _o.EasingA,
-      _o.EasingB,
-      _o.EasingC);
-  }
-};
-
-public class Vec3FEasingT
-{
-  public Effekseer.FB.Vec3FRangeT Start { get; set; }
-  public Effekseer.FB.Vec3FRangeT End { get; set; }
-  public float EasingA { get; set; }
-  public float EasingB { get; set; }
-  public float EasingC { get; set; }
-
-  public Vec3FEasingT() {
-    this.Start = new Effekseer.FB.Vec3FRangeT();
-    this.End = new Effekseer.FB.Vec3FRangeT();
-    this.EasingA = 0.0f;
-    this.EasingB = 0.0f;
-    this.EasingC = 0.0f;
-  }
-}
-
-public struct TextureProperty : IFlatbufferObject
-{
-  private Table __p;
-  public ByteBuffer ByteBuffer { get { return __p.bb; } }
-  public static void ValidateVersion() { FlatBufferConstants.FLATBUFFERS_2_0_0(); }
-  public static TextureProperty GetRootAsTextureProperty(ByteBuffer _bb) { return GetRootAsTextureProperty(_bb, new TextureProperty()); }
-  public static TextureProperty GetRootAsTextureProperty(ByteBuffer _bb, TextureProperty obj) { return (obj.__assign(_bb.GetInt(_bb.Position) + _bb.Position, _bb)); }
-  public void __init(int _i, ByteBuffer _bb) { __p = new Table(_i, _bb); }
-  public TextureProperty __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
-
-  public string Path { get { int o = __p.__offset(4); return o != 0 ? __p.__string(o + __p.bb_pos) : null; } }
-#if ENABLE_SPAN_T
-  public Span<byte> GetPathBytes() { return __p.__vector_as_span<byte>(4, 1); }
-#else
-  public ArraySegment<byte>? GetPathBytes() { return __p.__vector_as_arraysegment(4); }
-#endif
-  public byte[] GetPathArray() { return __p.__vector_as_array<byte>(4); }
-
-  public static Offset<Effekseer.FB.TextureProperty> CreateTextureProperty(FlatBufferBuilder builder,
-      StringOffset pathOffset = default(StringOffset)) {
-    builder.StartTable(1);
-    TextureProperty.AddPath(builder, pathOffset);
-    return TextureProperty.EndTextureProperty(builder);
-  }
-
-  public static void StartTextureProperty(FlatBufferBuilder builder) { builder.StartTable(1); }
-  public static void AddPath(FlatBufferBuilder builder, StringOffset pathOffset) { builder.AddOffset(0, pathOffset.Value, 0); }
-  public static Offset<Effekseer.FB.TextureProperty> EndTextureProperty(FlatBufferBuilder builder) {
-    int o = builder.EndTable();
-    return new Offset<Effekseer.FB.TextureProperty>(o);
-  }
-  public TexturePropertyT UnPack() {
-    var _o = new TexturePropertyT();
-    this.UnPackTo(_o);
-    return _o;
-  }
-  public void UnPackTo(TexturePropertyT _o) {
-    _o.Path = this.Path;
-  }
-  public static Offset<Effekseer.FB.TextureProperty> Pack(FlatBufferBuilder builder, TexturePropertyT _o) {
-    if (_o == null) return default(Offset<Effekseer.FB.TextureProperty>);
-    var _path = _o.Path == null ? default(StringOffset) : builder.CreateString(_o.Path);
-    return CreateTextureProperty(
-      builder,
-      _path);
-  }
-};
-
-public class TexturePropertyT
-{
-  public string Path { get; set; }
-
-  public TexturePropertyT() {
-    this.Path = null;
   }
 }
 
