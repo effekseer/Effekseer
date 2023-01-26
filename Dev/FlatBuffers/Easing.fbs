@@ -31,11 +31,7 @@ enum Easing3Type : int {
   EaseInOutBounce = 62,
 }
 
-table EasingFloat
-{
-  ref_eq_s:RefMinMax;
-  ref_eq_e:RefMinMax;
-  ref_eq_m:RefMinMax;
+table FloatEasing {
   start:FloatRange;
   end:FloatRange;
   middle:FloatRange;
@@ -47,8 +43,7 @@ table EasingFloat
   types:[Easing3Type];
 }
 
-table EasingVec3F
-{
+table Vec3FEasing {
   start:Vec3FRange;
   end:Vec3FRange;
   middle:Vec3FRange;

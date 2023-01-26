@@ -23,19 +23,19 @@ namespace Effekseer.IO
 
 			var dependencies = CollectDependencies(nodeTree, env);
 
-			List<FB.TexturePropertyT> textureProps = new();
+			List<FB.Effect.TexturePropertyT> textureProps = new();
 			foreach (var texture in dependencies.Textures)
 			{
-				var textureProp = new FB.TexturePropertyT();
+				var textureProp = new FB.Effect.TexturePropertyT();
 				textureProp.Path = texture;
 				textureProps.Add(textureProp);
 			}
 
 
-			FB.NodeT exportNode(EffectAsset.Node node)
+			FB.Effect.NodeT exportNode(EffectAsset.Node node)
 			{
-				var ret = new FB.NodeT();
-				ret.Children = new List<FB.NodeT>();
+				var ret = new FB.Effect.NodeT();
+				ret.Children = new List<FB.Effect.NodeT>();
 
 				foreach (var child in node.Children)
 				{
@@ -44,22 +44,22 @@ namespace Effekseer.IO
 
 				if (node is EffectAsset.ParticleNode pn)
 				{
-					ret.BasicSettings = GenerateDummyBasicSettings();
-					ret.PositionSettings = ToFB(effectAsset, pn.PositionParam);
+					ret.BasicParameter = GenerateDummyBasicSettings();
+					ret.PositionParameter = ToFB(effectAsset, pn.PositionParam);
 					if (pn.DrawingValues.Type == Data.RendererValues.ParamaterType.Sprite)
 					{
-						ret.Type = FB.EffectNodeType.EffectNodeType_Sprite;
+						ret.Type = FB.Effect.EffectNodeType.EffectNodeType_Sprite;
 					}
 				}
 				else if (node is EffectAsset.RootNode rn)
 				{
-					ret.Type = FB.EffectNodeType.EffectNodeType_Root;
+					ret.Type = FB.Effect.EffectNodeType.EffectNodeType_Root;
 				}
 
 				return ret;
 			}
 
-			var effectT = new FB.EffectT();
+			var effectT = new FB.Effect.EffectAssetT();
 			effectT.Textures = textureProps;
 			effectT.RootNode = exportNode(nodeTree.Root as EffectAsset.Node);
 
@@ -74,35 +74,29 @@ namespace Effekseer.IO
 		}
 
 
-		Effekseer.FB.BasicSettingsT GenerateDummyBasicSettings()
+		Effekseer.FB.Effect.BasicParameterT GenerateDummyBasicSettings()
 		{
-			var ret = new FB.BasicSettingsT();
-			ret.MaxGeneration = 1;
-			ret.RefEqMaxGeneration = -1;
-			ret.Life = new FB.IntRangeT { Max = 100, Min = 100 };
-			ret.RefWqLife = new FB.RefMinMaxT { Min = -1, Max = -1 };
-
+			var ret = new FB.Effect.BasicParameterT();
+			ret.MaxGeneration.RefEq = -1;
+			ret.MaxGeneration.Value = 1;
+			ret.Life = new FB.IntRangeT { RefEq = new FB.RefMinMaxT { Min = -1, Max = -1 }, Max = 100, Min = 100 };
 			ret.GenerationTime = new FB.FloatRangeT { RefEq = new FB.RefMinMaxT { Min = -1, Max = -1 }, Min = 10, Max = 100 };
-			ret.RefWqGenerationTime = new FB.RefMinMaxT { Min = -1, Max = -1 };
-
 			ret.GenerationTimeOffset = new FB.FloatRangeT { RefEq = new FB.RefMinMaxT { Min = -1, Max = -1 }, Min = 10, Max = 100 };
-			ret.RefWqGenerationTimeOffset = new FB.RefMinMaxT { Min = -1, Max = -1 };
-
-			ret.TranslationBindType = FB.TranslationParentBindType.TranslationParentBindType_Always;
-			ret.RotationBindType = FB.BindType.BindType_Always;
-			ret.ScalingBindType = FB.BindType.BindType_Always;
+			ret.TranslationBindType = FB.Effect.TranslationParentBindType.TranslationParentBindType_Always;
+			ret.RotationBindType = FB.Effect.BindType.BindType_Always;
+			ret.ScalingBindType = FB.Effect.BindType.BindType_Always;
 
 			return ret;
 		}
 
-		Effekseer.FB.PositionSettingsT ToFB(EffectAsset.EffectAsset effectAsset, Effekseer.EffectAsset.PositionParameter positionParam)
+		Effekseer.FB.Effect.PositionParameterT ToFB(EffectAsset.EffectAsset effectAsset, Effekseer.EffectAsset.PositionParameter positionParam)
 		{
-			var ret = new Effekseer.FB.PositionSettingsT();
-			ret.Type = (FB.PositionType)positionParam.Type;
+			var ret = new Effekseer.FB.Effect.PositionParameterT();
+			ret.Type = (FB.Effect.PositionType)positionParam.Type;
 			if (positionParam.Type == EffectAsset.PositionParameter.ParamaterType.Fixed)
 			{
 				var param = positionParam.Fixed;
-				var dst = new FB.PositionSettings_FixedT();
+				var dst = new FB.Effect.PositionParameter_FixedT();
 				dst.RefEq = effectAsset.DynamicEquations.IndexOf(param.Location.DynamicEquation);
 				dst.Value = new FB.Vec3FT { X = param.Location.Value.X, Y = param.Location.Value.Y, Z = param.Location.Value.Z };
 				ret.Fixed = dst;
@@ -110,7 +104,7 @@ namespace Effekseer.IO
 			else if (positionParam.Type == EffectAsset.PositionParameter.ParamaterType.PVA)
 			{
 				var param = positionParam.PVA;
-				var dst = new FB.PositionSettings_PVAT();
+				var dst = new FB.Effect.PositionParameter_PVAT();
 				dst.Pos = ToFB(effectAsset, param.Location);
 				dst.Vel = ToFB(effectAsset, param.Velocity);
 				dst.Acc = ToFB(effectAsset, param.Acceleration);
@@ -119,9 +113,9 @@ namespace Effekseer.IO
 			else if (positionParam.Type == EffectAsset.PositionParameter.ParamaterType.Easing)
 			{
 				var param = positionParam.Easing;
-				var dst = new FB.PositionSettings_EasingT();
+				var dst = new FB.Effect.PositionParameter_EasingT();
 
-				var easing = new FB.EasingVec3FT();
+				var easing = new FB.Vec3FEasingT();
 
 				easing.Start = ToFB(effectAsset, param.Start);
 				easing.End = ToFB(effectAsset, param.End);
@@ -179,7 +173,7 @@ namespace Effekseer.IO
 			if (positionParam.Type == EffectAsset.PositionParameter.ParamaterType.LocationFCurve)
 			{
 				var param = positionParam.LocationFCurve;
-				var dst = new FB.PositionSettings_FCurveT();
+				var dst = new FB.Effect.PositionParameter_FCurveT();
 				FB.FCurveGroupT fcurve = new FB.FCurveGroupT();
 
 				fcurve.Timeline = (FB.FCurveTimelineType)param.FCurve.Timeline;
@@ -193,7 +187,7 @@ namespace Effekseer.IO
 			else if (positionParam.Type == EffectAsset.PositionParameter.ParamaterType.ViewOffset)
 			{
 				var param = positionParam.ViewOffset;
-				var dst = new FB.PositionSettings_ViewOffsetT();
+				var dst = new FB.Effect.PositionParameter_ViewOffsetT();
 
 				dst.Distance = ToFB(effectAsset, param.Distance);
 				ret.ViewOffset = dst;
@@ -201,7 +195,7 @@ namespace Effekseer.IO
 			else if (positionParam.Type == EffectAsset.PositionParameter.ParamaterType.NurbsCurve)
 			{
 				var param = positionParam.NurbsCurve;
-				var dst = new FB.PositionSettings_NurbsCurveT();
+				var dst = new FB.Effect.PositionParameter_NurbsCurveT();
 
 				dst.Index = -1;
 				dst.LoopType = (int)param.LoopType;

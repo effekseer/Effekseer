@@ -1,12 +1,12 @@
-include "BasicSettings.fbs";
-include "PositionSettings.fbs";
+include "EffectBasicParameter.fbs";
+include "EffectPositionParameter.fbs";
 
-namespace Effekseer.FB;
+namespace Effekseer.FB.Effect;
 
 table Node {
   type:EffectNodeType;
   is_rendered:bool;
-  basic_settings:BasicSettings;
-  position_settings:PositionSettings;
+  basic_parameter:BasicParameter;
+  position_parameter:PositionParameter;
   children:[Node];
 }

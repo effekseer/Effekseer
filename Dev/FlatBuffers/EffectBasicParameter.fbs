@@ -1,14 +1,10 @@
 include "CommonStructures.fbs";
+include "EffectStructures.fbs";
 
-namespace Effekseer.FB;
+namespace Effekseer.FB.Effect;
 
-table BasicSettings {
-  ref_eq_max_generation:int = -1;
-  ref_wq_life:RefMinMax;
-  ref_wq_generation_time:RefMinMax;
-  ref_wq_generation_time_offset:RefMinMax;
-
-  max_generation:int = 1;
+table BasicParameter {
+  max_generation:IntRef;
   translation_bind_type:TranslationParentBindType = TranslationParentBindType_Always;
   rotation_bind_type:BindType = BindType_Always;
   scaling_bind_type:BindType = BindType_Always;

@@ -9,219 +9,19 @@
 namespace Effekseer {
 namespace FB {
 
+struct Vec3F;
+
 struct RefMinMax;
+
+struct IntRef;
+
+struct FloatRef;
 
 struct IntRange;
 
 struct FloatRange;
 
-struct Vec3F;
-
 struct Vec3FRange;
-
-struct Vec3FEasing;
-
-struct TextureProperty;
-struct TexturePropertyBuilder;
-
-enum class EffectNodeType : int32_t {
-  EffectNodeType_Root = -1,
-  EffectNodeType_NoneType = 0,
-  EffectNodeType_Sprite = 2,
-  EffectNodeType_Ribbon = 3,
-  EffectNodeType_Ring = 4,
-  EffectNodeType_Model = 5,
-  EffectNodeType_Track = 6,
-  MIN = EffectNodeType_Root,
-  MAX = EffectNodeType_Track
-};
-
-inline const EffectNodeType (&EnumValuesEffectNodeType())[7] {
-  static const EffectNodeType values[] = {
-    EffectNodeType::EffectNodeType_Root,
-    EffectNodeType::EffectNodeType_NoneType,
-    EffectNodeType::EffectNodeType_Sprite,
-    EffectNodeType::EffectNodeType_Ribbon,
-    EffectNodeType::EffectNodeType_Ring,
-    EffectNodeType::EffectNodeType_Model,
-    EffectNodeType::EffectNodeType_Track
-  };
-  return values;
-}
-
-inline const char * const *EnumNamesEffectNodeType() {
-  static const char * const names[9] = {
-    "EffectNodeType_Root",
-    "EffectNodeType_NoneType",
-    "",
-    "EffectNodeType_Sprite",
-    "EffectNodeType_Ribbon",
-    "EffectNodeType_Ring",
-    "EffectNodeType_Model",
-    "EffectNodeType_Track",
-    nullptr
-  };
-  return names;
-}
-
-inline const char *EnumNameEffectNodeType(EffectNodeType e) {
-  if (flatbuffers::IsOutRange(e, EffectNodeType::EffectNodeType_Root, EffectNodeType::EffectNodeType_Track)) return "";
-  const size_t index = static_cast<size_t>(e) - static_cast<size_t>(EffectNodeType::EffectNodeType_Root);
-  return EnumNamesEffectNodeType()[index];
-}
-
-enum class TranslationParentBindType : int32_t {
-  TranslationParentBindType_NotBind = 0,
-  TranslationParentBindType_WhenCreating = 1,
-  TranslationParentBindType_Always = 2,
-  TranslationParentBindType_NotBind_Root = 3,
-  TranslationParentBindType_NotBind_FollowParent = 4,
-  TranslationParentBindType_WhenCreating_FollowParent = 5,
-  MIN = TranslationParentBindType_NotBind,
-  MAX = TranslationParentBindType_WhenCreating_FollowParent
-};
-
-inline const TranslationParentBindType (&EnumValuesTranslationParentBindType())[6] {
-  static const TranslationParentBindType values[] = {
-    TranslationParentBindType::TranslationParentBindType_NotBind,
-    TranslationParentBindType::TranslationParentBindType_WhenCreating,
-    TranslationParentBindType::TranslationParentBindType_Always,
-    TranslationParentBindType::TranslationParentBindType_NotBind_Root,
-    TranslationParentBindType::TranslationParentBindType_NotBind_FollowParent,
-    TranslationParentBindType::TranslationParentBindType_WhenCreating_FollowParent
-  };
-  return values;
-}
-
-inline const char * const *EnumNamesTranslationParentBindType() {
-  static const char * const names[7] = {
-    "TranslationParentBindType_NotBind",
-    "TranslationParentBindType_WhenCreating",
-    "TranslationParentBindType_Always",
-    "TranslationParentBindType_NotBind_Root",
-    "TranslationParentBindType_NotBind_FollowParent",
-    "TranslationParentBindType_WhenCreating_FollowParent",
-    nullptr
-  };
-  return names;
-}
-
-inline const char *EnumNameTranslationParentBindType(TranslationParentBindType e) {
-  if (flatbuffers::IsOutRange(e, TranslationParentBindType::TranslationParentBindType_NotBind, TranslationParentBindType::TranslationParentBindType_WhenCreating_FollowParent)) return "";
-  const size_t index = static_cast<size_t>(e);
-  return EnumNamesTranslationParentBindType()[index];
-}
-
-enum class BindType : int32_t {
-  BindType_NotBind = 0,
-  BindType_WhenCreating = 1,
-  BindType_Always = 2,
-  BindType_NotBind_Root = 3,
-  MIN = BindType_NotBind,
-  MAX = BindType_NotBind_Root
-};
-
-inline const BindType (&EnumValuesBindType())[4] {
-  static const BindType values[] = {
-    BindType::BindType_NotBind,
-    BindType::BindType_WhenCreating,
-    BindType::BindType_Always,
-    BindType::BindType_NotBind_Root
-  };
-  return values;
-}
-
-inline const char * const *EnumNamesBindType() {
-  static const char * const names[5] = {
-    "BindType_NotBind",
-    "BindType_WhenCreating",
-    "BindType_Always",
-    "BindType_NotBind_Root",
-    nullptr
-  };
-  return names;
-}
-
-inline const char *EnumNameBindType(BindType e) {
-  if (flatbuffers::IsOutRange(e, BindType::BindType_NotBind, BindType::BindType_NotBind_Root)) return "";
-  const size_t index = static_cast<size_t>(e);
-  return EnumNamesBindType()[index];
-}
-
-FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) RefMinMax FLATBUFFERS_FINAL_CLASS {
- private:
-  int32_t min_;
-  int32_t max_;
-
- public:
-  RefMinMax()
-      : min_(0),
-        max_(0) {
-  }
-  RefMinMax(int32_t _min, int32_t _max)
-      : min_(flatbuffers::EndianScalar(_min)),
-        max_(flatbuffers::EndianScalar(_max)) {
-  }
-  int32_t min() const {
-    return flatbuffers::EndianScalar(min_);
-  }
-  int32_t max() const {
-    return flatbuffers::EndianScalar(max_);
-  }
-};
-FLATBUFFERS_STRUCT_END(RefMinMax, 8);
-
-FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) IntRange FLATBUFFERS_FINAL_CLASS {
- private:
-  int32_t min_;
-  int32_t max_;
-
- public:
-  IntRange()
-      : min_(0),
-        max_(0) {
-  }
-  IntRange(int32_t _min, int32_t _max)
-      : min_(flatbuffers::EndianScalar(_min)),
-        max_(flatbuffers::EndianScalar(_max)) {
-  }
-  int32_t min() const {
-    return flatbuffers::EndianScalar(min_);
-  }
-  int32_t max() const {
-    return flatbuffers::EndianScalar(max_);
-  }
-};
-FLATBUFFERS_STRUCT_END(IntRange, 8);
-
-FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) FloatRange FLATBUFFERS_FINAL_CLASS {
- private:
-  Effekseer::FB::RefMinMax ref_eq_;
-  float min_;
-  float max_;
-
- public:
-  FloatRange()
-      : ref_eq_(),
-        min_(0),
-        max_(0) {
-  }
-  FloatRange(const Effekseer::FB::RefMinMax &_ref_eq, float _min, float _max)
-      : ref_eq_(_ref_eq),
-        min_(flatbuffers::EndianScalar(_min)),
-        max_(flatbuffers::EndianScalar(_max)) {
-  }
-  const Effekseer::FB::RefMinMax &ref_eq() const {
-    return ref_eq_;
-  }
-  float min() const {
-    return flatbuffers::EndianScalar(min_);
-  }
-  float max() const {
-    return flatbuffers::EndianScalar(max_);
-  }
-};
-FLATBUFFERS_STRUCT_END(FloatRange, 16);
 
 FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) Vec3F FLATBUFFERS_FINAL_CLASS {
  private:
@@ -252,6 +52,133 @@ FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) Vec3F FLATBUFFERS_FINAL_CLASS {
 };
 FLATBUFFERS_STRUCT_END(Vec3F, 12);
 
+FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) RefMinMax FLATBUFFERS_FINAL_CLASS {
+ private:
+  int32_t min_;
+  int32_t max_;
+
+ public:
+  RefMinMax()
+      : min_(0),
+        max_(0) {
+  }
+  RefMinMax(int32_t _min, int32_t _max)
+      : min_(flatbuffers::EndianScalar(_min)),
+        max_(flatbuffers::EndianScalar(_max)) {
+  }
+  int32_t min() const {
+    return flatbuffers::EndianScalar(min_);
+  }
+  int32_t max() const {
+    return flatbuffers::EndianScalar(max_);
+  }
+};
+FLATBUFFERS_STRUCT_END(RefMinMax, 8);
+
+FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) IntRef FLATBUFFERS_FINAL_CLASS {
+ private:
+  int32_t ref_eq_;
+  int32_t value_;
+
+ public:
+  IntRef()
+      : ref_eq_(0),
+        value_(0) {
+  }
+  IntRef(int32_t _ref_eq, int32_t _value)
+      : ref_eq_(flatbuffers::EndianScalar(_ref_eq)),
+        value_(flatbuffers::EndianScalar(_value)) {
+  }
+  int32_t ref_eq() const {
+    return flatbuffers::EndianScalar(ref_eq_);
+  }
+  int32_t value() const {
+    return flatbuffers::EndianScalar(value_);
+  }
+};
+FLATBUFFERS_STRUCT_END(IntRef, 8);
+
+FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) FloatRef FLATBUFFERS_FINAL_CLASS {
+ private:
+  int32_t ref_eq_;
+  float value_;
+
+ public:
+  FloatRef()
+      : ref_eq_(0),
+        value_(0) {
+  }
+  FloatRef(int32_t _ref_eq, float _value)
+      : ref_eq_(flatbuffers::EndianScalar(_ref_eq)),
+        value_(flatbuffers::EndianScalar(_value)) {
+  }
+  int32_t ref_eq() const {
+    return flatbuffers::EndianScalar(ref_eq_);
+  }
+  float value() const {
+    return flatbuffers::EndianScalar(value_);
+  }
+};
+FLATBUFFERS_STRUCT_END(FloatRef, 8);
+
+FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) IntRange FLATBUFFERS_FINAL_CLASS {
+ private:
+  Effekseer::FB::RefMinMax ref_eq_;
+  int32_t min_;
+  int32_t max_;
+
+ public:
+  IntRange()
+      : ref_eq_(),
+        min_(0),
+        max_(0) {
+  }
+  IntRange(const Effekseer::FB::RefMinMax &_ref_eq, int32_t _min, int32_t _max)
+      : ref_eq_(_ref_eq),
+        min_(flatbuffers::EndianScalar(_min)),
+        max_(flatbuffers::EndianScalar(_max)) {
+  }
+  const Effekseer::FB::RefMinMax &ref_eq() const {
+    return ref_eq_;
+  }
+  int32_t min() const {
+    return flatbuffers::EndianScalar(min_);
+  }
+  int32_t max() const {
+    return flatbuffers::EndianScalar(max_);
+  }
+};
+FLATBUFFERS_STRUCT_END(IntRange, 16);
+
+FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) FloatRange FLATBUFFERS_FINAL_CLASS {
+ private:
+  Effekseer::FB::RefMinMax ref_eq_;
+  float min_;
+  float max_;
+
+ public:
+  FloatRange()
+      : ref_eq_(),
+        min_(0),
+        max_(0) {
+  }
+  FloatRange(const Effekseer::FB::RefMinMax &_ref_eq, float _min, float _max)
+      : ref_eq_(_ref_eq),
+        min_(flatbuffers::EndianScalar(_min)),
+        max_(flatbuffers::EndianScalar(_max)) {
+  }
+  const Effekseer::FB::RefMinMax &ref_eq() const {
+    return ref_eq_;
+  }
+  float min() const {
+    return flatbuffers::EndianScalar(min_);
+  }
+  float max() const {
+    return flatbuffers::EndianScalar(max_);
+  }
+};
+FLATBUFFERS_STRUCT_END(FloatRange, 16);
+
 FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) Vec3FRange FLATBUFFERS_FINAL_CLASS {
  private:
   Effekseer::FB::RefMinMax ref_eq_;
@@ -280,98 +207,6 @@ FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) Vec3FRange FLATBUFFERS_FINAL_CLASS {
   }
 };
 FLATBUFFERS_STRUCT_END(Vec3FRange, 32);
-
-FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) Vec3FEasing FLATBUFFERS_FINAL_CLASS {
- private:
-  Effekseer::FB::Vec3FRange start_;
-  Effekseer::FB::Vec3FRange end_;
-  float easing_a_;
-  float easing_b_;
-  float easing_c_;
-
- public:
-  Vec3FEasing()
-      : start_(),
-        end_(),
-        easing_a_(0),
-        easing_b_(0),
-        easing_c_(0) {
-  }
-  Vec3FEasing(const Effekseer::FB::Vec3FRange &_start, const Effekseer::FB::Vec3FRange &_end, float _easing_a, float _easing_b, float _easing_c)
-      : start_(_start),
-        end_(_end),
-        easing_a_(flatbuffers::EndianScalar(_easing_a)),
-        easing_b_(flatbuffers::EndianScalar(_easing_b)),
-        easing_c_(flatbuffers::EndianScalar(_easing_c)) {
-  }
-  const Effekseer::FB::Vec3FRange &start() const {
-    return start_;
-  }
-  const Effekseer::FB::Vec3FRange &end() const {
-    return end_;
-  }
-  float easing_a() const {
-    return flatbuffers::EndianScalar(easing_a_);
-  }
-  float easing_b() const {
-    return flatbuffers::EndianScalar(easing_b_);
-  }
-  float easing_c() const {
-    return flatbuffers::EndianScalar(easing_c_);
-  }
-};
-FLATBUFFERS_STRUCT_END(Vec3FEasing, 76);
-
-struct TextureProperty FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
-  typedef TexturePropertyBuilder Builder;
-  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_PATH = 4
-  };
-  const flatbuffers::String *path() const {
-    return GetPointer<const flatbuffers::String *>(VT_PATH);
-  }
-  bool Verify(flatbuffers::Verifier &verifier) const {
-    return VerifyTableStart(verifier) &&
-           VerifyOffset(verifier, VT_PATH) &&
-           verifier.VerifyString(path()) &&
-           verifier.EndTable();
-  }
-};
-
-struct TexturePropertyBuilder {
-  typedef TextureProperty Table;
-  flatbuffers::FlatBufferBuilder &fbb_;
-  flatbuffers::uoffset_t start_;
-  void add_path(flatbuffers::Offset<flatbuffers::String> path) {
-    fbb_.AddOffset(TextureProperty::VT_PATH, path);
-  }
-  explicit TexturePropertyBuilder(flatbuffers::FlatBufferBuilder &_fbb)
-        : fbb_(_fbb) {
-    start_ = fbb_.StartTable();
-  }
-  flatbuffers::Offset<TextureProperty> Finish() {
-    const auto end = fbb_.EndTable(start_);
-    auto o = flatbuffers::Offset<TextureProperty>(end);
-    return o;
-  }
-};
-
-inline flatbuffers::Offset<TextureProperty> CreateTextureProperty(
-    flatbuffers::FlatBufferBuilder &_fbb,
-    flatbuffers::Offset<flatbuffers::String> path = 0) {
-  TexturePropertyBuilder builder_(_fbb);
-  builder_.add_path(path);
-  return builder_.Finish();
-}
-
-inline flatbuffers::Offset<TextureProperty> CreateTexturePropertyDirect(
-    flatbuffers::FlatBufferBuilder &_fbb,
-    const char *path = nullptr) {
-  auto path__ = path ? _fbb.CreateString(path) : 0;
-  return Effekseer::FB::CreateTextureProperty(
-      _fbb,
-      path__);
-}
 
 }  // namespace FB
 }  // namespace Effekseer

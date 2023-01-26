@@ -9,6 +9,7 @@
 
 using namespace Effekseer::Data;
 #include "CommonStructures_generated.h"
+#include "EffectStructures_generated.h"
 
 namespace Effekseer
 {
@@ -16,7 +17,7 @@ namespace Effekseer
 class FBConverter
 {
 public:
-	static BindType Convert(FB::BindType value)
+	static BindType Convert(FB::Effect::BindType value)
 	{
 		return static_cast<BindType>(value);
 	}
