@@ -92,11 +92,11 @@ namespace Effekseer.Asset
 	public partial class Vector3DEasingParamater
 	{
 		[Key(key = "Easing_Start")]
-		[Effekseer.Asset.FloatRange(Min = float.MinValue, Max = float.MaxValue)]
+		[Asset.FloatRange(Min = float.MinValue, Max = float.MaxValue)]
 		public Effekseer.Asset.Vector3WithRange Start = new Effekseer.Asset.Vector3WithRange();
 
 		[Key(key = "Easing_End")]
-		[Effekseer.Asset.FloatRange(Min = float.MinValue, Max = float.MaxValue)]
+		[Asset.FloatRange(Min = float.MinValue, Max = float.MaxValue)]
 		public Effekseer.Asset.Vector3WithRange End = new Effekseer.Asset.Vector3WithRange();
 
 		[Key(key = "Easing_Type")]
@@ -117,7 +117,7 @@ namespace Effekseer.Asset
 
 		[Key(key = "Easing_Middle")]
 		[VisiblityControlled(ID = 300, Value = 0)]
-		[Effekseer.Asset.FloatRange(Min = float.MinValue, Max = float.MaxValue)]
+		[Asset.FloatRange(Min = float.MinValue, Max = float.MaxValue)]
 		public Effekseer.Asset.Vector3WithRange Middle = new Effekseer.Asset.Vector3WithRange();
 
 		[Key(key = "Easing_IsRandomGroupEnabled")]
@@ -154,7 +154,7 @@ namespace Effekseer.Asset
 	}
 }
 
-namespace Effekseer.EffectAsset
+namespace Effekseer.Asset
 {
 	public partial class Vector3DFCurveParameter
 	{

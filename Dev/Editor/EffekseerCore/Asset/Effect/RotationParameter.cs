@@ -41,15 +41,15 @@ namespace Effekseer.Asset.Effect
 		public partial class PVAParamater
 		{
 			[Key(key = "Rotation_PVAParamater_Rotation")]
-			[Effekseer.Asset.FloatRange(Min = float.MinValue, Max = float.MaxValue)]
+			[Asset.FloatRange(Min = float.MinValue, Max = float.MaxValue)]
 			public Effekseer.Asset.Vector3WithRange Rotation = new Effekseer.Asset.Vector3WithRange();
 
 			[Key(key = "Rotation_PVAParamater_Velocity")]
-			[Effekseer.Asset.FloatRange(Min = float.MinValue, Max = float.MaxValue)]
+			[Asset.FloatRange(Min = float.MinValue, Max = float.MaxValue)]
 			public Effekseer.Asset.Vector3WithRange Velocity = new Effekseer.Asset.Vector3WithRange();
 
 			[Key(key = "Rotation_PVAParamater_Acceleration")]
-			[Effekseer.Asset.FloatRange(Min = float.MinValue, Max = float.MaxValue)]
+			[Asset.FloatRange(Min = float.MinValue, Max = float.MaxValue)]
 			public Effekseer.Asset.Vector3WithRange Acceleration = new Effekseer.Asset.Vector3WithRange();
 		}
 	}
@@ -62,7 +62,7 @@ namespace Effekseer.Asset.Effect
 		public partial class AxisPVAParamater
 		{
 			[Key(key = "Rotation_AxisPVAParamater_Axis")]
-			[Effekseer.Asset.FloatRange(Min = float.MinValue, Max = float.MaxValue)]
+			[Asset.FloatRange(Min = float.MinValue, Max = float.MaxValue)]
 			public Effekseer.Asset.Vector3WithRange Axis = new Effekseer.Asset.Vector3WithRange();
 
 			[Key(key = "Rotation_AxisPVAParamater_Rotation")]
@@ -84,7 +84,7 @@ namespace Effekseer.Asset.Effect
 		public partial class AxisEasingParamater
 		{
 			[Key(key = "Rotation_AxisEasingParamater_Axis")]
-			[Effekseer.Asset.FloatRange(Min = float.MinValue, Max = float.MaxValue)]
+			[Asset.FloatRange(Min = float.MinValue, Max = float.MaxValue)]
 			public Effekseer.Asset.Vector3WithRange Axis = new Effekseer.Asset.Vector3WithRange();
 
 			public Effekseer.Asset.FloatEasingParamater Easing = new FloatEasingParamater();
