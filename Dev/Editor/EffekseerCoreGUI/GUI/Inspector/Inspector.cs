@@ -128,7 +128,7 @@ namespace Effekseer.GUI.Inspector
 			foreach (var field in fields)
 			{
 				// visiblity controller attribute
-				var attr = (EffectAsset.VisiblityControllerAttribute)field.GetCustomAttribute(typeof(EffectAsset.VisiblityControllerAttribute));
+				var attr = (Asset.VisiblityControllerAttribute)field.GetCustomAttribute(typeof(Asset.VisiblityControllerAttribute));
 				if (attr != null)
 				{
 					VisiblityControllers[attr.ID] = field.GetValue(target);
@@ -184,14 +184,14 @@ namespace Effekseer.GUI.Inspector
 			}
 		}
 
-		private static void UpdateObjectGuis(EffectAsset.EffectAssetEditorContext context
+		private static void UpdateObjectGuis(Asset.EffectAssetEditorContext context
 			, object targetNode, PartsTreeSystem.ElementGetterSetterArray elementGetterSetterArray, InspectorGuiInfo guiInfo)
 		{
 			var field = elementGetterSetterArray.FieldInfos.Last();
 
 			bool isValueChanged = false;
 
-			var prop = context.EditorProperty.Properties.FirstOrDefault(_ => _.InstanceID == ((EffectAsset.Node)targetNode)?.InstanceID);
+			var prop = context.EditorProperty.Properties.FirstOrDefault(_ => _.InstanceID == ((Asset.Node)targetNode)?.InstanceID);
 			if (prop != null)
 			{
 				isValueChanged = prop.IsValueEdited(elementGetterSetterArray.Names);
@@ -244,14 +244,14 @@ namespace Effekseer.GUI.Inspector
 			// VisiblityControlledAttributes
 			{
 				bool isVisible = true;
-				var attr = (EffectAsset.VisiblityControlledAttribute)field.GetCustomAttribute(typeof(EffectAsset.VisiblityControlledAttribute));
+				var attr = (Asset.VisiblityControlledAttribute)field.GetCustomAttribute(typeof(Asset.VisiblityControlledAttribute));
 				if (attr != null)
 				{
 					if (VisiblityControllers.ContainsKey(attr.ID))
 					{
 						var controllerField = VisiblityControllers[attr.ID];
 						int controllerValue = 0;
-						
+
 						if (controllerField.GetType().IsEnum)
 						{
 
@@ -425,7 +425,7 @@ namespace Effekseer.GUI.Inspector
 		/// <param name="elementGetterSetterArray"></param>
 		/// <param name="guiInfo"></param>
 		/// <returns></returns>
-		private static bool DropObjectGuis(string path, EffectAsset.EffectAssetEditorContext context
+		private static bool DropObjectGuis(string path, Asset.EffectAssetEditorContext context
 			, object targetNode, PartsTreeSystem.ElementGetterSetterArray elementGetterSetterArray, InspectorGuiInfo guiInfo)
 		{
 			var field = elementGetterSetterArray.FieldInfos.Last();
@@ -454,7 +454,7 @@ namespace Effekseer.GUI.Inspector
 			// VisiblityControlledAttributes
 			{
 				bool isVisible = true;
-				var attr = (EffectAsset.VisiblityControlledAttribute)field.GetCustomAttribute(typeof(EffectAsset.VisiblityControlledAttribute));
+				var attr = (Asset.VisiblityControlledAttribute)field.GetCustomAttribute(typeof(Asset.VisiblityControlledAttribute));
 				if (attr != null)
 				{
 					if (VisiblityControllers.ContainsKey(attr.ID))
@@ -569,11 +569,11 @@ namespace Effekseer.GUI.Inspector
 		//	GenerateFieldGuiInfos(CoreContext.SelectedEffectNode);
 		//}
 
-		public static void Update(EffectAsset.EffectAssetEditorContext context, EffectAsset.Node targetNode)
+		public static void Update(Asset.EffectAssetEditorContext context, Asset.Node targetNode)
 		{
 			// Generate field GUI IDs when the target is selected or changed.
 			// TODO: this had better do at OnAfterSelect()
-			if (targetNode?.InstanceID != ((EffectAsset.Node)LastTarget)?.InstanceID)
+			if (targetNode?.InstanceID != ((Asset.Node)LastTarget)?.InstanceID)
 			{
 				GenerateFieldGuiInfos(targetNode);
 				LastTarget = targetNode;
@@ -612,7 +612,7 @@ namespace Effekseer.GUI.Inspector
 			Manager.NativeManager.Separator();
 		}
 
-		public static bool Drop(string path, EffectAsset.EffectAssetEditorContext context, EffectAsset.Node targetNode)
+		public static bool Drop(string path, Asset.EffectAssetEditorContext context, Asset.Node targetNode)
 		{
 			var fields = targetNode.GetType().GetFields();
 			int i = 0;

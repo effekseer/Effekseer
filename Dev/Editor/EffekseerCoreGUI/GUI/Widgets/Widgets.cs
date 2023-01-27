@@ -74,7 +74,7 @@ namespace Effekseer.GUI.Widgets
 		public static Inspector.InspectorGuiResult GuiFloatWithRange(object value, Inspector.InspectorGuiState state)
 		{
 			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
-			EffectAsset.FloatWithRange floatWithRange = value as EffectAsset.FloatWithRange;
+			Asset.FloatWithRange floatWithRange = value as Asset.FloatWithRange;
 
 			float step = 10f;
 

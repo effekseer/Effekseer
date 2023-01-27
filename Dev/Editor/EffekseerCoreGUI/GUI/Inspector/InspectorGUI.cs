@@ -29,17 +29,17 @@ namespace Effekseer.GUI.Inspector
 				{ typeof(bool), Widgets.Widgets.GuiBool },
 				{ typeof(int), Widgets.Widgets.GuiInt },
 				{ typeof(float), Widgets.Widgets.GuiFloat },
-				{ typeof(EffectAsset.FloatWithRange), Widgets.Widgets.GuiFloatWithRange },
+				{ typeof(Asset.FloatWithRange), Widgets.Widgets.GuiFloatWithRange },
 				{ typeof(string), Widgets.Widgets.GuiString },
 				{ typeof(Vector3F), Widgets.Widgets.GuiVector3F },
 				{ typeof(System.Enum), Widgets.Widgets.GuiEnum },
-				{ typeof(EffectAsset.Gradient), Widgets.Gradient.GuiGradient },
-				{ typeof(EffectAsset.Color), Widgets.Color.Update },
-				{ typeof(EffectAsset.TextureAsset), Widgets.Texture.Update},
+				{ typeof(Asset.Gradient), Widgets.Gradient.GuiGradient },
+				{ typeof(Asset.Color), Widgets.Color.Update },
+				{ typeof(Asset.TextureAsset), Widgets.Texture.Update},
 			};
 
 			DropFuncDictionary = new Dictionary<Type, Func<object, string, InspectorGuiState, InspectorGuiResult>> {
-				{ typeof(EffectAsset.TextureAsset), Widgets.Texture.Dropped},
+				{ typeof(Asset.TextureAsset), Widgets.Texture.Dropped},
 			};
 		}
 

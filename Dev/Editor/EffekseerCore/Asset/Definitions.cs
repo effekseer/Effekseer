@@ -1,4 +1,4 @@
-namespace Effekseer.EffectAsset
+namespace Effekseer.Asset
 {
 	public enum EasingType
 	{
@@ -45,7 +45,7 @@ namespace Effekseer.EffectAsset
 	}
 }
 
-namespace Effekseer.EffectAsset
+namespace Effekseer.Asset
 {
 	public enum EasingStart
 	{
@@ -66,7 +66,7 @@ namespace Effekseer.EffectAsset
 	}
 }
 
-namespace Effekseer.EffectAsset
+namespace Effekseer.Asset
 {
 	public enum EasingEnd
 	{
@@ -87,29 +87,29 @@ namespace Effekseer.EffectAsset
 	}
 }
 
-namespace Effekseer.EffectAsset
+namespace Effekseer.Asset
 {
 	public partial class Vector3DEasingParamater
 	{
 		[Key(key = "Easing_Start")]
-		[Effekseer.EffectAsset.FloatRange(Min = float.MinValue, Max = float.MaxValue)]
-		public Effekseer.EffectAsset.Vector3WithRange Start = new Effekseer.EffectAsset.Vector3WithRange();
+		[Effekseer.Asset.FloatRange(Min = float.MinValue, Max = float.MaxValue)]
+		public Effekseer.Asset.Vector3WithRange Start = new Effekseer.Asset.Vector3WithRange();
 
 		[Key(key = "Easing_End")]
-		[Effekseer.EffectAsset.FloatRange(Min = float.MinValue, Max = float.MaxValue)]
-		public Effekseer.EffectAsset.Vector3WithRange End = new Effekseer.EffectAsset.Vector3WithRange();
+		[Effekseer.Asset.FloatRange(Min = float.MinValue, Max = float.MaxValue)]
+		public Effekseer.Asset.Vector3WithRange End = new Effekseer.Asset.Vector3WithRange();
 
 		[Key(key = "Easing_Type")]
 		[VisiblityController(ID = 200)]
-		public Effekseer.EffectAsset.EasingType Type = Effekseer.EffectAsset.EasingType.LeftRightSpeed;
+		public Effekseer.Asset.EasingType Type = Effekseer.Asset.EasingType.LeftRightSpeed;
 
 		[Key(key = "Easing_StartSpeed")]
 		[VisiblityControlled(ID = 200, Value = 0)]
-		public Effekseer.EffectAsset.EasingStart StartSpeed = Effekseer.EffectAsset.EasingStart.Start;
+		public Effekseer.Asset.EasingStart StartSpeed = Effekseer.Asset.EasingStart.Start;
 
 		[Key(key = "Easing_EndSpeed")]
 		[VisiblityControlled(ID = 200, Value = 0)]
-		public Effekseer.EffectAsset.EasingEnd EndSpeed = Effekseer.EffectAsset.EasingEnd.End;
+		public Effekseer.Asset.EasingEnd EndSpeed = Effekseer.Asset.EasingEnd.End;
 
 		[Key(key = "Easing_IsMiddleEnabled")]
 		[VisiblityController(ID = 300)]
@@ -117,8 +117,8 @@ namespace Effekseer.EffectAsset
 
 		[Key(key = "Easing_Middle")]
 		[VisiblityControlled(ID = 300, Value = 0)]
-		[Effekseer.EffectAsset.FloatRange(Min = float.MinValue, Max = float.MaxValue)]
-		public Effekseer.EffectAsset.Vector3WithRange Middle = new Effekseer.EffectAsset.Vector3WithRange();
+		[Effekseer.Asset.FloatRange(Min = float.MinValue, Max = float.MaxValue)]
+		public Effekseer.Asset.Vector3WithRange Middle = new Effekseer.Asset.Vector3WithRange();
 
 		[Key(key = "Easing_IsRandomGroupEnabled")]
 		[VisiblityController(ID = 400)]
@@ -142,15 +142,15 @@ namespace Effekseer.EffectAsset
 
 		[Key(key = "Easing_IndividualType_X")]
 		[VisiblityControlled(ID = 500, Value = 0)]
-		public Effekseer.EffectAsset.EasingType TypeX = Effekseer.EffectAsset.EasingType.Linear;
+		public Effekseer.Asset.EasingType TypeX = Effekseer.Asset.EasingType.Linear;
 
 		[Key(key = "Easing_IndividualType_Y")]
 		[VisiblityControlled(ID = 500, Value = 0)]
-		public Effekseer.EffectAsset.EasingType TypeY = Effekseer.EffectAsset.EasingType.Linear;
+		public Effekseer.Asset.EasingType TypeY = Effekseer.Asset.EasingType.Linear;
 
 		[Key(key = "Easing_IndividualType_Z")]
 		[VisiblityControlled(ID = 500, Value = 0)]
-		public Effekseer.EffectAsset.EasingType TypeZ = Effekseer.EffectAsset.EasingType.Linear;
+		public Effekseer.Asset.EasingType TypeZ = Effekseer.Asset.EasingType.Linear;
 	}
 }
 
@@ -159,31 +159,31 @@ namespace Effekseer.EffectAsset
 	public partial class Vector3DFCurveParameter
 	{
 		[Key(key = "FCurve")]
-		public Effekseer.EffectAsset.FCurveVector3D FCurve = new Effekseer.EffectAsset.FCurveVector3D();
+		public Effekseer.Asset.FCurveVector3D FCurve = new Effekseer.Asset.FCurveVector3D();
 	}
 }
 
-namespace Effekseer.EffectAsset
+namespace Effekseer.Asset
 {
 	public partial class FloatEasingParamater
 	{
 		[Key(key = "Easing_Start")]
-		public Effekseer.EffectAsset.FloatWithRange Start = new Effekseer.EffectAsset.FloatWithRange();
+		public Effekseer.Asset.FloatWithRange Start = new Effekseer.Asset.FloatWithRange();
 
 		[Key(key = "Easing_End")]
-		public Effekseer.EffectAsset.FloatWithRange End = new Effekseer.EffectAsset.FloatWithRange();
+		public Effekseer.Asset.FloatWithRange End = new Effekseer.Asset.FloatWithRange();
 
 		[Key(key = "Easing_TYpe")]
 		[VisiblityController(ID = 200)]
-		public Effekseer.EffectAsset.EasingType Type = Effekseer.EffectAsset.EasingType.LeftRightSpeed;
+		public Effekseer.Asset.EasingType Type = Effekseer.Asset.EasingType.LeftRightSpeed;
 
 		[Key(key = "Easing_StartSpeed")]
 		[VisiblityControlled(ID = 200, Value = 0)]
-		public Effekseer.EffectAsset.EasingStart StartSpeed = Effekseer.EffectAsset.EasingStart.Start;
+		public Effekseer.Asset.EasingStart StartSpeed = Effekseer.Asset.EasingStart.Start;
 
 		[Key(key = "Easing_EndSpeed")]
 		[VisiblityControlled(ID = 200, Value = 0)]
-		public Effekseer.EffectAsset.EasingEnd EndSpeed = Effekseer.EffectAsset.EasingEnd.End;
+		public Effekseer.Asset.EasingEnd EndSpeed = Effekseer.Asset.EasingEnd.End;
 
 		[Key(key = "Easing_IsMiddleEnabled")]
 		[VisiblityController(ID = 300)]
@@ -191,7 +191,7 @@ namespace Effekseer.EffectAsset
 
 		[Key(key = "Easing_Middle")]
 		[VisiblityControlled(ID = 300, Value = 0)]
-		public Effekseer.EffectAsset.FloatWithRange Middle = new Effekseer.EffectAsset.FloatWithRange();
+		public Effekseer.Asset.FloatWithRange Middle = new Effekseer.Asset.FloatWithRange();
 
 		[Key(key = "Easing_IsRandomGroupEnabled")]
 		[VisiblityController(ID = 400)]
@@ -207,7 +207,7 @@ namespace Effekseer.EffectAsset
 
 		[Key(key = "Easing_IndividualType_A")]
 		[VisiblityControlled(ID = 500, Value = 0)]
-		public Effekseer.EffectAsset.EasingType Type_A = Effekseer.EffectAsset.EasingType.Linear;
+		public Effekseer.Asset.EasingType Type_A = Effekseer.Asset.EasingType.Linear;
 	}
 }
 

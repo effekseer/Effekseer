@@ -26,7 +26,7 @@ namespace Effekseer.GUI.Widgets
 			public string id_alpha_value = "###" + Manager.GetUniqueID().ToString();
 			public string id_alpha_delete = "###" + Manager.GetUniqueID().ToString();
 
-			public CopyAndPaste<EffectAsset.Gradient> copyAndPaste;
+			public CopyAndPaste<Asset.Gradient> copyAndPaste;
 		}
 
 		public static Inspector.InspectorGuiResult GuiGradient(object value, Inspector.InspectorGuiState state)
@@ -34,9 +34,9 @@ namespace Effekseer.GUI.Widgets
 			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
 			var isPopupShown = false;
 
-			var actualValue = (EffectAsset.Gradient)value;
+			var actualValue = (Asset.Gradient)value;
 
-			unsafe void CopyStateToNative(swig.GradientHDRState dst, EffectAsset.Gradient src)
+			unsafe void CopyStateToNative(swig.GradientHDRState dst, Asset.Gradient src)
 			{
 				dst.SetColorCount(src.ColorMarkers.Length);
 				for (int i = 0; i < src.ColorMarkers.Length; i++)
@@ -59,10 +59,10 @@ namespace Effekseer.GUI.Widgets
 				}
 			}
 
-			unsafe void CopyStateFromNative(EffectAsset.Gradient dst, swig.GradientHDRState src)
+			unsafe void CopyStateFromNative(Asset.Gradient dst, swig.GradientHDRState src)
 			{
-				dst.ColorMarkers = new EffectAsset.Gradient.ColorMarker[src.GetColorCount()];
-				dst.AlphaMarkers = new EffectAsset.Gradient.AlphaMarker[src.GetAlphaCount()];
+				dst.ColorMarkers = new Asset.Gradient.ColorMarker[src.GetColorCount()];
+				dst.AlphaMarkers = new Asset.Gradient.AlphaMarker[src.GetAlphaCount()];
 
 				for (int i = 0; i < src.GetColorCount(); i++)
 				{
@@ -92,7 +92,7 @@ namespace Effekseer.GUI.Widgets
 				state.UserData = gradientState;
 				CopyStateToNative(gradientState.state, actualValue);
 
-				gradientState.copyAndPaste = new CopyAndPaste<EffectAsset.Gradient>(
+				gradientState.copyAndPaste = new CopyAndPaste<Asset.Gradient>(
 				() => actualValue,
 				(value) => { actualValue = value; });
 

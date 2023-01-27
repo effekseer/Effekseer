@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace Effekseer.EffectAsset
+namespace Effekseer.Asset
 {
 	class Conversion
 	{
@@ -385,10 +385,10 @@ namespace Effekseer.EffectAsset
 		public DrawingParameter DrawingValues = new DrawingParameter();
 
 		[Grouping(Name = "PositionParam")]
-		public PositionParameter PositionParam = new PositionParameter();
+		public Effect.PositionParameter PositionParam = new Effect.PositionParameter();
 
 		[Grouping(Name = "RotationParam")]
-		public RotationParameter RotationParam = new RotationParameter();
+		public Effect.RotationParameter RotationParam = new Effect.RotationParameter();
 
 		[Grouping(Name = "GradientTest")]
 		public Gradient GradientTest = new Gradient();

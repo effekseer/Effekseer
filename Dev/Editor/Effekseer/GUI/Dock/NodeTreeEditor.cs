@@ -27,7 +27,7 @@ namespace Effekseer.GUI.Dock
 		/// <summary>
 		/// For maintain parameters when removing and adding immediately
 		/// </summary>
-		internal Dictionary<EffectAsset.Node, NodeTreeEditorNode> temporalChangingNodeTreeViews = new Dictionary<EffectAsset.Node, NodeTreeEditorNode>();
+		internal Dictionary<Asset.Node, NodeTreeEditorNode> temporalChangingNodeTreeViews = new Dictionary<Asset.Node, NodeTreeEditorNode>();
 
 		public NodeTreeEditor()
 		{
@@ -140,11 +140,11 @@ namespace Effekseer.GUI.Dock
 				var n1 = FindNode(Children[0], pair.Item1);
 				var n2 = FindNode(Children[0], pair.Item2);
 
-				var isNode = n1.Node is EffectAsset.ParticleNode;
+				var isNode = n1.Node is Asset.ParticleNode;
 
 				if (isNode)
 				{
-					var movedNode = n1.Node as EffectAsset.ParticleNode;
+					var movedNode = n1.Node as Asset.ParticleNode;
 
 					if (pair.Item3 == MovingNodeEditorEventType.AddLast)
 					{
@@ -160,7 +160,7 @@ namespace Effekseer.GUI.Dock
 					else if (pair.Item3 == MovingNodeEditorEventType.Insert)
 					{
 						// to avoid root node
-						if (n2.Node is EffectAsset.ParticleNode)
+						if (n2.Node is Asset.ParticleNode)
 						{
 							var parent = FindParentNode(Children[0], n2.UniqueID);
 							CoreContext.SelectedEffect.Context.CommandManager.MoveNode(
@@ -216,10 +216,10 @@ namespace Effekseer.GUI.Dock
 				Children.Unlock();
 				Children.Clear();
 
-				Children.Add(new NodeTreeEditorNode(this, CoreContext.SelectedEffect.Context.NodeTree.Root as EffectAsset.Node));
+				Children.Add(new NodeTreeEditorNode(this, CoreContext.SelectedEffect.Context.NodeTree.Root as Asset.Node));
 			}
 
-			Action<NodeTreeEditorNode, EffectAsset.Node> set_nodes = null;
+			Action<NodeTreeEditorNode, Asset.Node> set_nodes = null;
 			set_nodes = (treenode, node) =>
 			{
 				var tns = treenode.Children;
@@ -254,7 +254,7 @@ namespace Effekseer.GUI.Dock
 				}
 			};
 
-			set_nodes(Children[0], CoreContext.SelectedEffect.Context.NodeTree.Root as EffectAsset.Node);
+			set_nodes(Children[0], CoreContext.SelectedEffect.Context.NodeTree.Root as Asset.Node);
 		}
 
 		internal void Popup()
@@ -285,7 +285,7 @@ namespace Effekseer.GUI.Dock
 
 		void ReadSelect()
 		{
-			Func<EffectAsset.Node, Utils.DelayedList<NodeTreeEditorNode>, NodeTreeEditorNode> search_node = null;
+			Func<Asset.Node, Utils.DelayedList<NodeTreeEditorNode>, NodeTreeEditorNode> search_node = null;
 			search_node = (searched_node, treenodes) =>
 			{
 				if (search_node == null) return null;
@@ -362,7 +362,7 @@ namespace Effekseer.GUI.Dock
 		string id = "";
 		public int UniqueID { get; private set; }
 
-		public EffectAsset.Node Node { get; private set; } = null;
+		public Asset.Node Node { get; private set; } = null;
 
 		internal Utils.DelayedList<NodeTreeEditorNode> Children = new Utils.DelayedList<NodeTreeEditorNode>();
 
@@ -376,7 +376,7 @@ namespace Effekseer.GUI.Dock
 
 		public int TreeNodeIndex = 0;
 
-		public NodeTreeEditorNode(NodeTreeEditor treeView, EffectAsset.Node node, bool createChildren = false)
+		public NodeTreeEditorNode(NodeTreeEditor treeView, Asset.Node node, bool createChildren = false)
 		{
 			UniqueID = Manager.GetUniqueID();
 			id = "###" + UniqueID.ToString();
@@ -393,7 +393,7 @@ namespace Effekseer.GUI.Dock
 				}
 			}
 
-			var effectNode = node as EffectAsset.ParticleNode;
+			var effectNode = node as Asset.ParticleNode;
 			if (effectNode != null)
 			{
 				lodBehaviourEnumControl = new BindableComponent.Enum();
@@ -415,7 +415,7 @@ namespace Effekseer.GUI.Dock
 		{
 			CoreContext.SelectedEffect.Context.CommandManager.PushMergingBlock();
 
-			Action<List<EffectAsset.Node>> recurse = null;
+			Action<List<Asset.Node>> recurse = null;
 
 			if(Node.IsRendered != value)
 			{
@@ -488,7 +488,7 @@ namespace Effekseer.GUI.Dock
 
 		void UpdateLODButton()
 		{
-			var node = Node as EffectAsset.ParticleNode;
+			var node = Node as Asset.ParticleNode;
 			float lodButtonSize = Manager.NativeManager.GetTextLineHeight();
 			if (node != null)
 			{
@@ -604,7 +604,7 @@ namespace Effekseer.GUI.Dock
 
 				if (Manager.NativeManager.IsKeyDown(LEFT_SHIFT) ||
 					Manager.NativeManager.IsKeyDown(RIGHT_SHIFT) ||
-					((Node is EffectAsset.ParticleNode) && (Node as EffectAsset.ParticleNode).DrawingValues.Type == Data.RendererValues.ParamaterType.None))
+					((Node is Asset.ParticleNode) && (Node as Asset.ParticleNode).DrawingValues.Type == Data.RendererValues.ParamaterType.None))
 				{
 					ChangeVisible(true, !visible);
 				}
@@ -650,7 +650,7 @@ namespace Effekseer.GUI.Dock
 			}
 
 			var icon = Icons.NodeTypeEmpty;
-			var node = Node as EffectAsset.ParticleNode;
+			var node = Node as Asset.ParticleNode;
 			if (node != null)
 			{
 				if (node.DrawingValues.Type == Data.RendererValues.ParamaterType.Sprite) icon = Icons.NodeTypeSprite;
@@ -719,7 +719,7 @@ namespace Effekseer.GUI.Dock
 
 		private void ApplyLODSettingsToChildren()
 		{
-			var effectNode = Node as EffectAsset.ParticleNode;
+			var effectNode = Node as Asset.ParticleNode;
 			if (effectNode == null) return;
 
 			int matchingLods = effectNode.CommonValues.LodParameter.MatchingLODs;
@@ -727,7 +727,7 @@ namespace Effekseer.GUI.Dock
 			for (var i = 0; i < Children.Count; i++)
 			{
 				var child = Children[i];
-				var childNode = child.Node as EffectAsset.ParticleNode;
+				var childNode = child.Node as Asset.ParticleNode;
 				if (childNode == null) continue;
 
 				childNode.CommonValues.LodParameter.MatchingLODs = matchingLods;
@@ -796,9 +796,9 @@ namespace Effekseer.GUI.Dock
 			}
 		}
 
-		private void Node_AddedNode(EffectAsset.Node self, EffectAsset.Node added)
+		private void Node_AddedNode(Asset.Node self, Asset.Node added)
 		{
-			var node = added as EffectAsset.Node;
+			var node = added as Asset.Node;
 
 			Console.WriteLine(string.Format("OnAfterAddNode({0})", node.Name));
 
@@ -829,9 +829,9 @@ namespace Effekseer.GUI.Dock
 			}
 		}
 
-		private void Node_RemovedNode(EffectAsset.Node self, EffectAsset.Node removed)
+		private void Node_RemovedNode(Asset.Node self, Asset.Node removed)
 		{
-			var node = removed as EffectAsset.Node;
+			var node = removed as Asset.Node;
 
 			Console.WriteLine(string.Format("OnAfterRemoveNode({0})", node.Name));
 
@@ -854,7 +854,7 @@ namespace Effekseer.GUI.Dock
 			throw new Exception();
 		}
 
-		private void Node_InsertedNode(EffectAsset.Node self, int index, EffectAsset.Node inserted)
+		private void Node_InsertedNode(Asset.Node self, int index, Asset.Node inserted)
 		{
 			Console.WriteLine(string.Format("OnAfterInsertedNode({0})", inserted.Name));
 

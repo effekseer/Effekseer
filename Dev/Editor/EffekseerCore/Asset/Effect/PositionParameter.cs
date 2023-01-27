@@ -1,4 +1,4 @@
-namespace Effekseer.EffectAsset
+namespace Effekseer.Asset.Effect
 {
 	public partial class PositionParameter
 	{
@@ -20,40 +20,40 @@ namespace Effekseer.EffectAsset
 	}
 }
 
-namespace Effekseer.EffectAsset
+namespace Effekseer.Asset.Effect
 {
 	public partial class PositionParameter
 	{
 		public partial class FixedParamater
 		{
 			[Key(key = "Position_FixedParamater_Location")]
-			public Effekseer.EffectAsset.Vector3 Location = new Effekseer.EffectAsset.Vector3();
+			public Vector3 Location = new Vector3();
 		}
 	}
 }
 
-namespace Effekseer.EffectAsset
+namespace Effekseer.Asset.Effect
 {
 	public partial class PositionParameter
 	{
 		public partial class PVAParamater
 		{
 			[Key(key = "Position_PVAParamater_Location")]
-			[Effekseer.EffectAsset.FloatRange(Min = float.MinValue, Max = float.MaxValue)]
-			public Effekseer.EffectAsset.Vector3WithRange Location = new Effekseer.EffectAsset.Vector3WithRange();
+			[FloatRange(Min = float.MinValue, Max = float.MaxValue)]
+			public Vector3WithRange Location = new Vector3WithRange();
 
 			[Key(key = "Position_PVAParamater_Velocity")]
-			[Effekseer.EffectAsset.FloatRange(Min = float.MinValue, Max = float.MaxValue)]
-			public Effekseer.EffectAsset.Vector3WithRange Velocity = new Effekseer.EffectAsset.Vector3WithRange();
+			[Effekseer.Asset.FloatRange(Min = float.MinValue, Max = float.MaxValue)]
+			public Effekseer.Asset.Vector3WithRange Velocity = new Effekseer.Asset.Vector3WithRange();
 
 			[Key(key = "Position_PVAParamater_Acceleration")]
-			[Effekseer.EffectAsset.FloatRange(Min = float.MinValue, Max = float.MaxValue)]
-			public Effekseer.EffectAsset.Vector3WithRange Acceleration = new Effekseer.EffectAsset.Vector3WithRange();
+			[Effekseer.Asset.FloatRange(Min = float.MinValue, Max = float.MaxValue)]
+			public Effekseer.Asset.Vector3WithRange Acceleration = new Effekseer.Asset.Vector3WithRange();
 		}
 	}
 }
 
-namespace Effekseer.EffectAsset
+namespace Effekseer.Asset.Effect
 {
 	public partial class PositionParameter
 	{
@@ -70,14 +70,14 @@ namespace Effekseer.EffectAsset
 	}
 }
 
-namespace Effekseer.EffectAsset
+namespace Effekseer.Asset.Effect
 {
 	public partial class PositionParameter
 	{
 		public partial class NurbsCurveParameter
 		{
 			[Key(key = "Position_NurbsCurveParameter_FileParh")]
-			public Effekseer.EffectAsset.CurveAsset FilePath = null;
+			public Effekseer.Asset.CurveAsset FilePath = null;
 
 			[Key(key = "Position_NurbsCurveParameter_Scale")]
 			public float Scale = 1;
@@ -86,52 +86,52 @@ namespace Effekseer.EffectAsset
 			public float MoveSpeed = 1;
 
 			[Key(key = "Position_NurbsCurveParameter_LoopType")]
-			public Effekseer.EffectAsset.PositionParameter.NurbsCurveParameter.NurbsLoopType LoopType = Effekseer.EffectAsset.PositionParameter.NurbsCurveParameter.NurbsLoopType.Repeat;
+			public Effekseer.Asset.Effect.PositionParameter.NurbsCurveParameter.NurbsLoopType LoopType = Effekseer.Asset.Effect.PositionParameter.NurbsCurveParameter.NurbsLoopType.Repeat;
 		}
 	}
 }
 
-namespace Effekseer.EffectAsset
+namespace Effekseer.Asset.Effect
 {
 	public partial class PositionParameter
 	{
 		public partial class ViewOffsetParameter
 		{
 			[Key(key = "Position_ViewOffsetParameter_Distance")]
-			public Effekseer.EffectAsset.FloatWithRange Distance = new Effekseer.EffectAsset.FloatWithRange();
+			public Effekseer.Asset.FloatWithRange Distance = new Effekseer.Asset.FloatWithRange();
 		}
 	}
 }
 
-namespace Effekseer.EffectAsset
+namespace Effekseer.Asset.Effect
 {
 	public partial class PositionParameter
 	{
 		[VisiblityController(ID = 0)]
-		public Effekseer.EffectAsset.PositionParameter.ParamaterType Type = Effekseer.EffectAsset.PositionParameter.ParamaterType.Fixed;
+		public Effekseer.Asset.Effect.PositionParameter.ParamaterType Type = Effekseer.Asset.Effect.PositionParameter.ParamaterType.Fixed;
 
 		[VisiblityControlled(ID = 0, Value = 0)]
-		public Effekseer.EffectAsset.PositionParameter.FixedParamater Fixed = new FixedParamater();
+		public Effekseer.Asset.Effect.PositionParameter.FixedParamater Fixed = new FixedParamater();
 
 
 		[VisiblityControlled(ID = 0, Value = 1)]
-		public Effekseer.EffectAsset.PositionParameter.PVAParamater PVA = new PVAParamater();
+		public Effekseer.Asset.Effect.PositionParameter.PVAParamater PVA = new PVAParamater();
 
 
 		[VisiblityControlled(ID = 0, Value = 2)]
-		public Effekseer.EffectAsset.Vector3DEasingParamater Easing = new Vector3DEasingParamater();
+		public Vector3DEasingParamater Easing = new Vector3DEasingParamater();
 
 
 		[VisiblityControlled(ID = 0, Value = 3)]
-		public Effekseer.EffectAsset.Vector3DFCurveParameter LocationFCurve = new Vector3DFCurveParameter();
+		public Effekseer.Asset.FCurveVector3D LocationFCurve = new FCurveVector3D();
 
 
 		[VisiblityControlled(ID = 0, Value = 4)]
-		public Effekseer.EffectAsset.PositionParameter.NurbsCurveParameter NurbsCurve = new NurbsCurveParameter();
+		public Effekseer.Asset.Effect.PositionParameter.NurbsCurveParameter NurbsCurve = new NurbsCurveParameter();
 
 
 		[VisiblityControlled(ID = 0, Value = 5)]
-		public Effekseer.EffectAsset.PositionParameter.ViewOffsetParameter ViewOffset = new ViewOffsetParameter();
+		public Effekseer.Asset.Effect.PositionParameter.ViewOffsetParameter ViewOffset = new ViewOffsetParameter();
 
 	}
 }
