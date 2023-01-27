@@ -31,7 +31,7 @@ namespace Effekseer.GUI.Widgets
 				state.UserData = guiState;
 			}
 
-			var texture = (EffectAsset.TextureAsset)value;
+			var texture = (Asset.TextureAsset)value;
 
 			{
 				var previousTexture = texture;
@@ -131,14 +131,14 @@ namespace Effekseer.GUI.Widgets
 		}
 
 
-		static void btn_load_Click(ref EffectAsset.TextureAsset texture, State guiState)
+		static void btn_load_Click(ref Asset.TextureAsset texture, State guiState)
 		{
 			var filter = Resources.GetString("ImageFilter");
 			var result = swig.FileDialog.OpenDialog(filter, System.IO.Directory.GetCurrentDirectory());
 
 			if (!string.IsNullOrEmpty(result))
 			{
-				var loaded = CoreContext.Environment.GetAsset(result) as EffectAsset.TextureAsset;
+				var loaded = CoreContext.Environment.GetAsset(result) as Asset.TextureAsset;
 
 				if (loaded != null)
 				{
@@ -155,13 +155,13 @@ namespace Effekseer.GUI.Widgets
 			Read(texture, guiState);
 		}
 
-		static void btn_delete_Click(ref EffectAsset.TextureAsset texture, State guiState)
+		static void btn_delete_Click(ref Asset.TextureAsset texture, State guiState)
 		{
 			texture = null;
 			Read(texture, guiState);
 		}
 
-		static void Read(EffectAsset.TextureAsset texture, State guiState)
+		static void Read(Asset.TextureAsset texture, State guiState)
 		{
 			if (texture != null)
 			{
@@ -175,7 +175,7 @@ namespace Effekseer.GUI.Widgets
 			}
 		}
 
-		static void UpdateInfo(EffectAsset.TextureAsset texture, State guiState)
+		static void UpdateInfo(Asset.TextureAsset texture, State guiState)
 		{
 			string path = CoreContext.Environment.GetAssetPath(texture);
 
@@ -204,7 +204,7 @@ namespace Effekseer.GUI.Widgets
 			return filters.Any(_ => "." + _ == System.IO.Path.GetExtension(path).ToLower());
 		}
 
-		static void Popup(ref EffectAsset.TextureAsset texture, State guiState)
+		static void Popup(ref Asset.TextureAsset texture, State guiState)
 		{
 			if (guiState.isPopupShown) return;
 
@@ -232,7 +232,7 @@ namespace Effekseer.GUI.Widgets
 				state.UserData = guiState;
 			}
 
-			if (value is EffectAsset.TextureAsset texture)
+			if (value is Asset.TextureAsset texture)
 			{
 				var previousTexture = texture;
 
@@ -252,11 +252,11 @@ namespace Effekseer.GUI.Widgets
 		}
 
 
-		static void Dropped(ref EffectAsset.TextureAsset texture, State guiState, string path)
+		static void Dropped(ref Asset.TextureAsset texture, State guiState, string path)
 		{
 			if (CheckExtension(path))
 			{
-				var loaded = CoreContext.Environment.GetAsset(path) as EffectAsset.TextureAsset;
+				var loaded = CoreContext.Environment.GetAsset(path) as Asset.TextureAsset;
 
 				if (loaded != null)
 				{

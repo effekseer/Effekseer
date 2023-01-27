@@ -21,7 +21,7 @@ namespace Effekseer.GUI.Dialog
 		/// <summary>
 		/// TODO : Refactor
 		/// </summary>
-		EffectAsset.Node nodeAsset;
+		Asset.Node nodeAsset;
 
 		string name;
 
@@ -32,7 +32,7 @@ namespace Effekseer.GUI.Dialog
 			Manager.AddControl(this);
 		}
 
-		public void Show(EffectAsset.Node nodeAsset)
+		public void Show(Asset.Node nodeAsset)
 		{
 			this.nodeAsset = nodeAsset;
 			this.name = nodeAsset.Name;

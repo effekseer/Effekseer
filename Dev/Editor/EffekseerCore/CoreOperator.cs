@@ -16,9 +16,9 @@ namespace Effekseer
 			CoreContext.SelectedEffectNode = null;
 			CoreContext.SelectedEffect = null;
 
-			var newEffect = new EffectAsset.EffectAsset();
+			var newEffect = new Asset.EffectAsset();
 			newEffect.New(CoreContext.Environment);
-			CoreData.EffectAssets = new EffectAsset.EffectAsset[] { newEffect };
+			CoreData.EffectAssets = new Asset.EffectAsset[] { newEffect };
 
 			var context = new CoreEffectContext();
 			context.Asset = newEffect;
@@ -49,7 +49,7 @@ namespace Effekseer
 			CoreContext.SelectedEffect.Asset.NodeTreeAsset,
 			CoreContext.SelectedEffect.Context.NodeTree,
 			CoreContext.SelectedEffectNode.InstanceID,
-			typeof(EffectAsset.ParticleNode),
+			typeof(Asset.ParticleNode),
 			CoreContext.Environment);
 
 
@@ -92,7 +92,7 @@ namespace Effekseer
 			CoreContext.SelectedEffect.Asset.NodeTreeAsset,
 			CoreContext.SelectedEffect.Context.NodeTree,
 			CoreContext.SelectedEffectNode.InstanceID,
-			typeof(EffectAsset.ParticleNode),
+			typeof(Asset.ParticleNode),
 			CoreContext.Environment);
 		}
 

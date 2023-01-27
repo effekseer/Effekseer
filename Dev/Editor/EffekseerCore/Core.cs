@@ -13,18 +13,18 @@ namespace Effekseer
 
 	public class CoreData
 	{
-		public static EffectAsset.EffectAsset[] EffectAssets = new EffectAsset.EffectAsset[0];
+		public static Asset.EffectAsset[] EffectAssets = new Asset.EffectAsset[0];
 	}
 
 	public class CoreEffectContext
 	{
-		public EffectAsset.EffectAsset Asset;
-		public EffectAsset.EffectAssetEditorContext Context;
+		public Asset.EffectAsset Asset;
+		public Asset.EffectAssetEditorContext Context;
 	}
 
 	public class CoreContext
 	{
-		public static EffectAsset.EffectAssetEnvironment Environment = new EffectAsset.EffectAssetEnvironment();
+		public static Asset.EffectAssetEnvironment Environment = new Asset.EffectAssetEnvironment();
 
 		static CoreEffectContext selectedEffect;
 
@@ -47,9 +47,9 @@ namespace Effekseer
 			}
 		}
 
-		static EffectAsset.Node selectedEffectNode;
+		static Asset.Node selectedEffectNode;
 
-		public static EffectAsset.Node SelectedEffectNode
+		public static Asset.Node SelectedEffectNode
 		{
 			get
 			{
@@ -70,7 +70,7 @@ namespace Effekseer
 
 		public static Action<CoreEffectContext> SelectedEffectChanged;
 
-		public static Action<EffectAsset.Node> SelectedEffectNodeChanged;
+		public static Action<Asset.Node> SelectedEffectNodeChanged;
 	}
 
 	public class Core
