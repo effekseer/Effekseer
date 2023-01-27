@@ -176,10 +176,10 @@ namespace Effekseer.IO
 				var dst = new FB.Effect.PositionParameter_FCurveT();
 				FB.FCurveGroupT fcurve = new FB.FCurveGroupT();
 
-				fcurve.Timeline = (FB.FCurveTimelineType)param.Timeline;
-				fcurve.Curves.Add(ToFB(param.X));
-				fcurve.Curves.Add(ToFB(param.Y));
-				fcurve.Curves.Add(ToFB(param.Z));
+				fcurve.Timeline = (FB.FCurveTimelineType)param.FCurve.Timeline;
+				fcurve.Curves.Add(ToFB(param.FCurve.X));
+				fcurve.Curves.Add(ToFB(param.FCurve.Y));
+				fcurve.Curves.Add(ToFB(param.FCurve.Z));
 
 				dst.Fcurve = fcurve;
 				ret.Fcurve = dst;

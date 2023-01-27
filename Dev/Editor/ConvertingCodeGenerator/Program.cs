@@ -14,9 +14,9 @@ namespace ConvertingCodeGenerator
 		static void Main(string[] args)
 		{
 			CodeGenerator gen = new CodeGenerator();
-			gen.DefaultNamespace = "Effekseer.EffectAsset";
-			gen.AddTypeConverter(gen.CreateDefinedType(typeof(Effekseer.Data.LocationValues)), gen.CreateDefinedType("Effekseer.EffectAsset", "PositionParameter", null));
-			gen.AddTypeConverter(gen.CreateDefinedType(typeof(Effekseer.Data.RotationValues)), gen.CreateDefinedType("Effekseer.EffectAsset", "RotationParameter", null));
+			gen.DefaultNamespace = "Effekseer.Asset";
+			gen.AddTypeConverter(gen.CreateDefinedType(typeof(Effekseer.Data.LocationValues)), gen.CreateDefinedType("Effekseer.Asset.Effect", "PositionParameter", null));
+			gen.AddTypeConverter(gen.CreateDefinedType(typeof(Effekseer.Data.RotationValues)), gen.CreateDefinedType("Effekseer.Asset.Effect", "RotationParameter", null));
 
 			gen.AddDefinitionText(typeof(Effekseer.Data.LocationValues), "PositionParameter.cs");
 			gen.AddDefinitionText(typeof(Effekseer.Data.RotationValues), "RotationParameter.cs");
@@ -110,8 +110,17 @@ namespace ConvertingCodeGenerator
 
 			var ret = new DefinedType();
 			ret.Name = targetType.Name;
-			ret.Namespace = targetType.Namespace;
 			ret.Reflected = CreateDefinedType(targetType.ReflectedType);
+
+			if (ret.Reflected != null)
+			{
+				ret.Namespace = ret.Reflected.Namespace;
+			}
+			else
+			{
+				ret.Namespace = targetType.Namespace;
+			}
+
 			typeToDefinedTypes.Add(targetType, ret);
 			return ret;
 		}
@@ -401,12 +410,18 @@ public partial class ConversionFormatFrom1To2 {
 			}
 			else
 			{
-				dstDefinedType = CreateDefinedType(DefaultNamespace, type.Name, null);
+				DefinedType reflectedType = null;
+				if (type.ReflectedType != null)
+				{
+					reflectedType = GetSrcDstDefinedType(type.ReflectedType).Item2;
+				}
+
+				dstDefinedType = CreateDefinedType(reflectedType != null ? reflectedType.Namespace : DefaultNamespace, type.Name, null);
 				AddTypeConverter(srcDefinedType, dstDefinedType);
 
 				if (type.ReflectedType != null)
 				{
-					dstDefinedType.Reflected = GetSrcDstDefinedType(type.ReflectedType).Item2;
+					dstDefinedType.Reflected = reflectedType;
 				}
 			}
 
@@ -529,7 +544,7 @@ namespace Effekseer.Compatibility.Conversion
 		{
 			var str = string.Empty;
 			str += Effekseer.Compatibility.Conversion.ConversionUtils.TryAddAttribute(parameter.attributes);
-			str += $"public EffectAsset.DynamicEquation {parameter.Name} = null;";
+			str += $"public Asset.DynamicEquation {parameter.Name} = null;";
 			return str;
 		}
 
@@ -600,7 +615,7 @@ namespace Effekseer.Compatibility.Conversion
 
 			var str = string.Empty;
 			str += Effekseer.Compatibility.Conversion.ConversionUtils.TryAddAttribute(parameter.attributes);
-			str += $"[Effekseer.EffectAsset.FloatRange(Min = {GetStr(min)}, Max = {GetStr(max)})]\n";
+			str += $"[Asset.FloatRange(Min = {GetStr(min)}, Max = {GetStr(max)})]\n";
 			str += $"public {typename} {parameter.Name} = new {typename}();";
 			return str;
 		}

@@ -58,13 +58,10 @@ namespace Effekseer.Compatibility.Conversion
 			dst.TypeZ = ConvertValue(src.TypeZ);
 			return dst;
 		}
-		public Effekseer.Asset.FCurveVector3D ConvertValue(Effekseer.Data.Vector3DFCurveParameter src)
+		public Effekseer.Asset.Vector3DFCurveParameter ConvertValue(Effekseer.Data.Vector3DFCurveParameter src)
 		{
-			var dst = new Effekseer.Asset.FCurveVector3D();
-			dst.Timeline = (Asset.FCurveTimelineMode)src.FCurve.Timeline.Value;
-			dst.X = ConvertValue(src.FCurve.X);
-			dst.Y = ConvertValue(src.FCurve.Y);
-			dst.Z = ConvertValue(src.FCurve.Z);
+			var dst = new Effekseer.Asset.Vector3DFCurveParameter();
+			dst.FCurve = ConvertValue(src.FCurve);
 			return dst;
 		}
 		public Effekseer.Asset.Effect.PositionParameter.NurbsCurveParameter.NurbsLoopType ConvertValue(Effekseer.Data.Value.Enum<Effekseer.Data.LocationValues.NurbsCurveParameter.NurbsLoopType> src)
