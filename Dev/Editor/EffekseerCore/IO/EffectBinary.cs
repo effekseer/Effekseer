@@ -17,7 +17,7 @@ namespace Effekseer.IO
 
 		public byte[] Buffer;
 
-		public bool Init(EffectAsset.EffectAsset effectAsset, EffectAsset.EffectAssetEnvironment env, float magnification)
+		public bool Init(Asset.EffectAsset effectAsset, Asset.EffectAssetEnvironment env, float magnification)
 		{
 			var nodeTree = PartsTreeSystem.Utility.CreateNodeFromNodeTreeGroup(effectAsset.NodeTreeAsset, env);
 
@@ -32,7 +32,7 @@ namespace Effekseer.IO
 			}
 
 
-			FB.Effect.NodeT exportNode(EffectAsset.Node node)
+			FB.Effect.NodeT exportNode(Asset.Node node)
 			{
 				var ret = new FB.Effect.NodeT();
 				ret.Children = new List<FB.Effect.NodeT>();
@@ -42,7 +42,7 @@ namespace Effekseer.IO
 					ret.Children.Add(exportNode(child));
 				}
 
-				if (node is EffectAsset.ParticleNode pn)
+				if (node is Asset.ParticleNode pn)
 				{
 					ret.BasicParameter = GenerateDummyBasicSettings();
 					ret.PositionParameter = ToFB(effectAsset, pn.PositionParam);
@@ -51,7 +51,7 @@ namespace Effekseer.IO
 						ret.Type = FB.Effect.EffectNodeType.EffectNodeType_Sprite;
 					}
 				}
-				else if (node is EffectAsset.RootNode rn)
+				else if (node is Asset.RootNode rn)
 				{
 					ret.Type = FB.Effect.EffectNodeType.EffectNodeType_Root;
 				}
@@ -61,7 +61,7 @@ namespace Effekseer.IO
 
 			var effectT = new FB.Effect.EffectAssetT();
 			effectT.Textures = textureProps;
-			effectT.RootNode = exportNode(nodeTree.Root as EffectAsset.Node);
+			effectT.RootNode = exportNode(nodeTree.Root as Asset.Node);
 
 			List<byte[]> data = new List<byte[]>();
 			data.Add(Encoding.UTF8.GetBytes("SKFE"));
@@ -89,11 +89,11 @@ namespace Effekseer.IO
 			return ret;
 		}
 
-		Effekseer.FB.Effect.PositionParameterT ToFB(EffectAsset.EffectAsset effectAsset, Effekseer.EffectAsset.PositionParameter positionParam)
+		Effekseer.FB.Effect.PositionParameterT ToFB(Asset.EffectAsset effectAsset, Asset.Effect.PositionParameter positionParam)
 		{
 			var ret = new Effekseer.FB.Effect.PositionParameterT();
 			ret.Type = (FB.Effect.PositionType)positionParam.Type;
-			if (positionParam.Type == EffectAsset.PositionParameter.ParamaterType.Fixed)
+			if (positionParam.Type == Asset.Effect.PositionParameter.ParamaterType.Fixed)
 			{
 				var param = positionParam.Fixed;
 				var dst = new FB.Effect.PositionParameter_FixedT();
@@ -101,7 +101,7 @@ namespace Effekseer.IO
 				dst.Value = new FB.Vec3FT { X = param.Location.Value.X, Y = param.Location.Value.Y, Z = param.Location.Value.Z };
 				ret.Fixed = dst;
 			}
-			else if (positionParam.Type == EffectAsset.PositionParameter.ParamaterType.PVA)
+			else if (positionParam.Type == Asset.Effect.PositionParameter.ParamaterType.PVA)
 			{
 				var param = positionParam.PVA;
 				var dst = new FB.Effect.PositionParameter_PVAT();
@@ -110,7 +110,7 @@ namespace Effekseer.IO
 				dst.Acc = ToFB(effectAsset, param.Acceleration);
 				ret.Pva = dst;
 			}
-			else if (positionParam.Type == EffectAsset.PositionParameter.ParamaterType.Easing)
+			else if (positionParam.Type == Asset.Effect.PositionParameter.ParamaterType.Easing)
 			{
 				var param = positionParam.Easing;
 				var dst = new FB.Effect.PositionParameter_EasingT();
@@ -122,7 +122,7 @@ namespace Effekseer.IO
 				easing.Middle = ToFB(effectAsset, param.Middle);
 
 				float[] easingParams = null;
-				if (param.Type == EffectAsset.EasingType.LeftRightSpeed)
+				if (param.Type == Asset.EasingType.LeftRightSpeed)
 				{
 					easingParams = Utils.MathUtl.Easing((float)param.StartSpeed, (float)param.EndSpeed);
 				}
@@ -170,21 +170,21 @@ namespace Effekseer.IO
 				easing.Types = types;
 				dst.Location = easing;
 			}
-			if (positionParam.Type == EffectAsset.PositionParameter.ParamaterType.LocationFCurve)
+			if (positionParam.Type == Asset.Effect.PositionParameter.ParamaterType.LocationFCurve)
 			{
 				var param = positionParam.LocationFCurve;
 				var dst = new FB.Effect.PositionParameter_FCurveT();
 				FB.FCurveGroupT fcurve = new FB.FCurveGroupT();
 
-				fcurve.Timeline = (FB.FCurveTimelineType)param.FCurve.Timeline;
-				fcurve.Curves.Add(ToFB(param.FCurve.X));
-				fcurve.Curves.Add(ToFB(param.FCurve.Y));
-				fcurve.Curves.Add(ToFB(param.FCurve.Z));
+				fcurve.Timeline = (FB.FCurveTimelineType)param.Timeline;
+				fcurve.Curves.Add(ToFB(param.X));
+				fcurve.Curves.Add(ToFB(param.Y));
+				fcurve.Curves.Add(ToFB(param.Z));
 
 				dst.Fcurve = fcurve;
 				ret.Fcurve = dst;
 			}
-			else if (positionParam.Type == EffectAsset.PositionParameter.ParamaterType.ViewOffset)
+			else if (positionParam.Type == Asset.Effect.PositionParameter.ParamaterType.ViewOffset)
 			{
 				var param = positionParam.ViewOffset;
 				var dst = new FB.Effect.PositionParameter_ViewOffsetT();
@@ -192,7 +192,7 @@ namespace Effekseer.IO
 				dst.Distance = ToFB(effectAsset, param.Distance);
 				ret.ViewOffset = dst;
 			}
-			else if (positionParam.Type == EffectAsset.PositionParameter.ParamaterType.NurbsCurve)
+			else if (positionParam.Type == Asset.Effect.PositionParameter.ParamaterType.NurbsCurve)
 			{
 				var param = positionParam.NurbsCurve;
 				var dst = new FB.Effect.PositionParameter_NurbsCurveT();
@@ -207,7 +207,7 @@ namespace Effekseer.IO
 			return ret;
 		}
 
-		Effekseer.FB.FCurveT ToFB(EffectAsset.FCurve fcurve)
+		Effekseer.FB.FCurveT ToFB(Asset.FCurve fcurve)
 		{
 			FB.FCurveT curve = new FB.FCurveT();
 
@@ -238,7 +238,7 @@ namespace Effekseer.IO
 			return curve;
 		}
 
-		Effekseer.FB.Vec3FRangeT ToFB(EffectAsset.EffectAsset effectAsset, EffectAsset.Vector3WithRange param)
+		Effekseer.FB.Vec3FRangeT ToFB(Asset.EffectAsset effectAsset, Asset.Vector3WithRange param)
 		{
 			int refMin = -1;
 			int refMax = -1;
@@ -262,7 +262,7 @@ namespace Effekseer.IO
 			return ret;
 		}
 
-		Effekseer.FB.FloatRangeT ToFB(EffectAsset.EffectAsset effectAsset, EffectAsset.FloatWithRange param)
+		Effekseer.FB.FloatRangeT ToFB(Asset.EffectAsset effectAsset, Asset.FloatWithRange param)
 		{
 			int refMin = -1;
 			int refMax = -1;
@@ -286,14 +286,14 @@ namespace Effekseer.IO
 			public List<string> Curves = new List<string>();
 		}
 
-		DependencyProperty CollectDependencies(PartsTreeSystem.NodeTree nodeTree, EffectAsset.EffectAssetEnvironment env)
+		DependencyProperty CollectDependencies(PartsTreeSystem.NodeTree nodeTree, Asset.EffectAssetEnvironment env)
 		{
 			var textures = new SortedSet<string>();
 			var curves = new SortedSet<string>();
 
-			void collect(EffectAsset.Node node)
+			void collect(Asset.Node node)
 			{
-				if (node is EffectAsset.ParticleNode pn)
+				if (node is Asset.ParticleNode pn)
 				{
 					if (pn.TextureTest != null)
 					{
@@ -301,7 +301,7 @@ namespace Effekseer.IO
 						textures.Add(path);
 					}
 
-					if (pn.PositionParam.Type == EffectAsset.PositionParameter.ParamaterType.NurbsCurve)
+					if (pn.PositionParam.Type == Asset.Effect.PositionParameter.ParamaterType.NurbsCurve)
 					{
 						var path = env.GetAssetPath(pn.PositionParam.NurbsCurve.FilePath);
 						curves.Add(path);
@@ -314,7 +314,7 @@ namespace Effekseer.IO
 				}
 			}
 
-			collect(nodeTree.Root as EffectAsset.Node);
+			collect(nodeTree.Root as Asset.Node);
 
 			var ret = new DependencyProperty();
 			ret.Textures = textures.OrderBy(_ => _).ToList();

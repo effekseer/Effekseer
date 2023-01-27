@@ -13,7 +13,7 @@ namespace Effekseer.GUI.Widgets
 		{
 			var ret = new Inspector.InspectorGuiResult();
 
-			if (value is EffectAsset.Color color)
+			if (value is Asset.Color color)
 			{
 				var colorSpace = (color.ColorSpace == Data.ColorSpace.RGBA)
 				? (swig.ColorEditFlags.DisplayRGB | swig.ColorEditFlags.InputRGB)
@@ -27,7 +27,7 @@ namespace Effekseer.GUI.Widgets
 
 				if (Manager.NativeManager.ColorEdit4(state.Id, internalValue, colorSpace))
 				{
-					EffectAsset.Color newColor = new EffectAsset.Color();
+					Asset.Color newColor = new Asset.Color();
 					newColor.V1 = (int)Math.Round(internalValue[0] * 255, MidpointRounding.AwayFromZero);
 					newColor.V2 = (int)Math.Round(internalValue[1] * 255, MidpointRounding.AwayFromZero);
 					newColor.V3 = (int)Math.Round(internalValue[2] * 255, MidpointRounding.AwayFromZero);

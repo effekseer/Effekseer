@@ -29,10 +29,10 @@ file(GLOB files_core
     EffekseerCore/Data/Value/Int2.cs
     EffekseerCore/Data/Value/ObjectCollection.cs
     EffekseerCore/Localization/Localization.cs
-    EffekseerCore/EffectAsset/Definitions.cs
-    EffekseerCore/EffectAsset/EffectAsset.cs
-    EffekseerCore/EffectAsset/PositionParameter.cs
-    EffekseerCore/EffectAsset/RotationParameter.cs
+    EffekseerCore/Asset/Definitions.cs
+    EffekseerCore/Asset/EffectAsset.cs
+    EffekseerCore/Asset/Effect/PositionParameter.cs
+    EffekseerCore/Asset/Effect/RotationParameter.cs
     EffekseerCore/Math/Vector2I.cs
     EffekseerCore/Math/Vector3I.cs
     EffekseerCore/Math/Vector2F.cs

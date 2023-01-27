@@ -145,10 +145,10 @@ namespace ConvertingCodeGenerator
 			targetTypes.Add(typeof(Effekseer.Data.Value.Int), new TargetType { Name = typeof(int).FullName, ConvertDefinition = Effekseer.Compatibility.Conversion.DefinitionGeneratorFrom1To2.ConvertDefinitionInt });
 			targetTypes.Add(typeof(Effekseer.Data.Value.Float), new TargetType { Name = typeof(float).FullName, ConvertDefinition = Effekseer.Compatibility.Conversion.DefinitionGeneratorFrom1To2.ConvertDefinitionFloat });
 			targetTypes.Add(typeof(Effekseer.Data.Value.Vector3D), new TargetType { Name = typeof(Effekseer.Vector3F).FullName, ConvertDefinition = Effekseer.Compatibility.Conversion.DefinitionGeneratorFrom1To2.ConvertDefinitionVector3D });
-			targetTypes.Add(typeof(Effekseer.Data.Value.FloatWithRandom), new TargetType { Name = typeof(Effekseer.EffectAsset.FloatWithRange).FullName, ConvertDefinition = Effekseer.Compatibility.Conversion.DefinitionGeneratorFrom1To2.ConvertDefinitionFloatWithRandom });
-			targetTypes.Add(typeof(Effekseer.Data.Value.Vector3DWithRandom), new TargetType { Name = typeof(Effekseer.EffectAsset.Vector3WithRange).FullName, ConvertDefinition = Effekseer.Compatibility.Conversion.DefinitionGeneratorFrom1To2.ConvertDefinitionVector3DWithRandom });
-			targetTypes.Add(typeof(Effekseer.Data.Value.PathForCurve), new TargetType { Name = typeof(Effekseer.EffectAsset.CurveAsset).FullName, ConvertDefinition = Effekseer.Compatibility.Conversion.DefinitionGeneratorFrom1To2.ConvertDefinitionPathForCurve });
-			targetTypes.Add(typeof(Effekseer.Data.Value.FCurveVector3D), new TargetType { Name = typeof(Effekseer.EffectAsset.FCurveVector3D).FullName, ConvertDefinition = Effekseer.Compatibility.Conversion.DefinitionGeneratorFrom1To2.ConvertDefinitionFCurveVector3D });
+			targetTypes.Add(typeof(Effekseer.Data.Value.FloatWithRandom), new TargetType { Name = typeof(Effekseer.Asset.FloatWithRange).FullName, ConvertDefinition = Effekseer.Compatibility.Conversion.DefinitionGeneratorFrom1To2.ConvertDefinitionFloatWithRandom });
+			targetTypes.Add(typeof(Effekseer.Data.Value.Vector3DWithRandom), new TargetType { Name = typeof(Effekseer.Asset.Vector3WithRange).FullName, ConvertDefinition = Effekseer.Compatibility.Conversion.DefinitionGeneratorFrom1To2.ConvertDefinitionVector3DWithRandom });
+			targetTypes.Add(typeof(Effekseer.Data.Value.PathForCurve), new TargetType { Name = typeof(Effekseer.Asset.CurveAsset).FullName, ConvertDefinition = Effekseer.Compatibility.Conversion.DefinitionGeneratorFrom1To2.ConvertDefinitionPathForCurve });
+			targetTypes.Add(typeof(Effekseer.Data.Value.FCurveVector3D), new TargetType { Name = typeof(Effekseer.Asset.FCurveVector3D).FullName, ConvertDefinition = Effekseer.Compatibility.Conversion.DefinitionGeneratorFrom1To2.ConvertDefinitionFCurveVector3D });
 
 			{
 				var textData = new TextData();
@@ -571,7 +571,7 @@ namespace Effekseer.Compatibility.Conversion
 		public static string ConvertDefinitionVector3D(Parameter parameter)
 		{
 			var value = parameter.Value as Effekseer.Data.Value.Vector3D;
-			var typename = typeof(Effekseer.EffectAsset.Vector3).FullName;
+			var typename = typeof(Effekseer.Asset.Vector3).FullName;
 
 			var str = string.Empty;
 			str += Effekseer.Compatibility.Conversion.ConversionUtils.TryAddAttribute(parameter.attributes);
@@ -582,7 +582,7 @@ namespace Effekseer.Compatibility.Conversion
 		public static string ConvertDefinitionFloatWithRandom(Parameter parameter)
 		{
 			var value = parameter.Value as Effekseer.Data.Value.FloatWithRandom;
-			var typename = typeof(Effekseer.EffectAsset.FloatWithRange).FullName;
+			var typename = typeof(Effekseer.Asset.FloatWithRange).FullName;
 
 			var str = string.Empty;
 			str += Effekseer.Compatibility.Conversion.ConversionUtils.TryAddAttribute(parameter.attributes);
@@ -593,7 +593,7 @@ namespace Effekseer.Compatibility.Conversion
 		public static string ConvertDefinitionVector3DWithRandom(Parameter parameter)
 		{
 			var value = parameter.Value as Effekseer.Data.Value.Vector3DWithRandom;
-			var typename = typeof(Effekseer.EffectAsset.Vector3WithRange).FullName;
+			var typename = typeof(Effekseer.Asset.Vector3WithRange).FullName;
 
 			var min = value.X.ValueMin;
 			var max = value.X.ValueMax;
@@ -632,7 +632,7 @@ namespace Effekseer.Compatibility.Conversion
 		public static string ConvertDefinitionPathForCurve(Parameter parameter)
 		{
 			var value = parameter.Value as Effekseer.Data.Value.PathForCurve;
-			var typename = typeof(Effekseer.EffectAsset.CurveAsset).FullName;
+			var typename = typeof(Effekseer.Asset.CurveAsset).FullName;
 
 			var str = string.Empty;
 			str += Effekseer.Compatibility.Conversion.ConversionUtils.TryAddAttribute(parameter.attributes);
@@ -643,7 +643,7 @@ namespace Effekseer.Compatibility.Conversion
 		public static string ConvertDefinitionFCurveVector3D(Parameter parameter)
 		{
 			var value = parameter.Value as Effekseer.Data.Value.FCurveVector3D;
-			var typename = typeof(Effekseer.EffectAsset.FCurveVector3D).FullName;
+			var typename = typeof(Effekseer.Asset.FCurveVector3D).FullName;
 
 			var str = string.Empty;
 			str += Effekseer.Compatibility.Conversion.ConversionUtils.TryAddAttribute(parameter.attributes);
