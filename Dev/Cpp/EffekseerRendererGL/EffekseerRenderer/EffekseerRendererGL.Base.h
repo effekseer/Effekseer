@@ -26,7 +26,7 @@
 
 #if _WIN32
 #include <GL/glu.h>
-#elif EMSCRIPTEN
+#elif __EMSCRIPTEN__
 #include <emscripten.h>
 #endif
 
@@ -70,7 +70,7 @@ class TextureLoader;
 #else
 #define GLCheckError()
 #endif
-#elif EMSCRIPTEN
+#elif __EMSCRIPTEN__
 #ifndef NDEBUG
 #define GLCheckError()                                                                                                       \
 	{                                                                                                                        \

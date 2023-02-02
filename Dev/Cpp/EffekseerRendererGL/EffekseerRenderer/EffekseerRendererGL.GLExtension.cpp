@@ -214,7 +214,7 @@ typedef void* (*FP_glMapBufferOES)(GLenum target, GLenum access);
 typedef void* (*FP_glMapBufferRangeEXT)(GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access);
 typedef GLboolean (*FP_glUnmapBufferOES)(GLenum target);
 
-#ifdef EMSCRIPTEN
+#ifdef __EMSCRIPTEN__
 typedef void(EFK_STDCALL* FP_glDrawElementsInstancedANGLE)(GLenum mode,
 														   GLsizei count,
 														   GLenum type,
@@ -231,7 +231,7 @@ static FP_glMapBufferOES g_glMapBufferOES = nullptr;
 static FP_glMapBufferRangeEXT g_glMapBufferRangeEXT = nullptr;
 static FP_glUnmapBufferOES g_glUnmapBufferOES = nullptr;
 
-#ifdef EMSCRIPTEN
+#ifdef __EMSCRIPTEN__
 static FP_glDrawElementsInstancedANGLE g_glDrawElementsInstancedANGLE = nullptr;
 #endif
 
@@ -411,7 +411,7 @@ bool Initialize(OpenGLDeviceType deviceType, bool isExtensionsEnabled)
 	// Some smartphone causes segmentation fault.
 	// GET_PROC(glMapBufferRangeEXT);
 
-#ifdef EMSCRIPTEN
+#ifdef __EMSCRIPTEN__
 	g_isSurrpotedBufferRange = false;
 	g_isSurrpotedMapBuffer = false;
 #else
@@ -873,7 +873,7 @@ void glDrawElementsInstanced(GLenum mode,
 	return g_glDrawElementsInstanced(mode, count, type, indices, primcount);
 #elif defined(__EFFEKSEER_RENDERER_GLES2__)
 
-#ifdef EMSCRIPTEN
+#ifdef __EMSCRIPTEN__
 	return g_glDrawElementsInstancedANGLE(mode, count, type, indices, primcount);
 #endif
 	return;
