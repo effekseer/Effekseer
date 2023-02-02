@@ -156,7 +156,7 @@ void VertexArrayGroup::Create(
 
 RendererImplemented::PlatformSetting RendererImplemented::GetPlatformSetting()
 {
-#if defined(EMSCRIPTEN) || defined(__ANDROID__) || (defined(__APPLE__) && (TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR))
+#if defined(__EMSCRIPTEN__) || defined(__ANDROID__) || (defined(__APPLE__) && (TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR))
 	return PlatformSetting{false, 1};
 #endif
 	return PlatformSetting{true, 3};

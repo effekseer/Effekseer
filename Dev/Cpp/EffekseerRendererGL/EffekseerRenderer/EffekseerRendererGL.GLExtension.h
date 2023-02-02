@@ -41,10 +41,10 @@
 
 #else
 
-#ifdef EMSCRIPTEN
+#ifdef __EMSCRIPTEN__
 #define GL_GLEXT_PROTOTYPES
 #define EGL_EGLEXT_PROTOTYPES
-#endif // EMSCRIPTEN
+#endif // __EMSCRIPTEN__
 
 #if defined(_WIN32)
 #include <GL/gl.h>
@@ -61,17 +61,17 @@
 #include "EffekseerRendererGL.Base.Pre.h"
 #include <stddef.h>
 
-#if defined(_WIN32) || defined(EMSCRIPTEN)
+#if defined(_WIN32) || defined(__EMSCRIPTEN__)
 typedef ptrdiff_t GLsizeiptr;
 typedef ptrdiff_t GLintptr;
 #endif
 
-#if defined(_WIN32) || defined(EMSCRIPTEN) || defined(__ANDROID__) || (defined(__APPLE__) && (defined(__EFFEKSEER_RENDERER_GLES2__) || defined(__EFFEKSEER_RENDERER_GLES3__)))
+#if defined(_WIN32) || defined(__EMSCRIPTEN__) || defined(__ANDROID__) || (defined(__APPLE__) && (defined(__EFFEKSEER_RENDERER_GLES2__) || defined(__EFFEKSEER_RENDERER_GLES3__)))
 #define GL_BGRA 0x80E1
 #define GL_DEPTH_COMPONENT32 0x81A7
 #endif
 
-#if defined(_WIN32) || defined(EMSCRIPTEN) || defined(__ANDROID__) || (defined(__APPLE__) && defined(__EFFEKSEER_RENDERER_GLES2__))
+#if defined(_WIN32) || defined(__EMSCRIPTEN__) || defined(__ANDROID__) || (defined(__APPLE__) && defined(__EFFEKSEER_RENDERER_GLES2__))
 typedef char GLchar;
 
 #define GL_ELEMENT_ARRAY_BUFFER 0x8893
