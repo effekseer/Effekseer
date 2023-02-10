@@ -150,8 +150,7 @@ namespace Effekseer.GUI.Inspector
 				var type = tgt.GetType();
 
 				// TODO: when guiFuncs work are completed, this should be only "GuiDictionary.HasFunction(type)"
-				bool hasGuiFunction = type.IsPrimitive ||
-							type == typeof(string) ||
+				bool hasGuiFunction = 
 							type.IsEnum ||
 							GuiDictionary.HasFunction(type);
 				if (hasGuiFunction)
@@ -273,27 +272,24 @@ namespace Effekseer.GUI.Inspector
 
 
 			// update subfields
-			var subFields = valueType.GetFields();
-			bool shownSubFields = false;
-			foreach (var (f, i) in subFields.Select((_, i) => Tuple.Create(_, i)))
+			if (!GuiDictionary.HasFunction(guiFunctionKey))
 			{
-				// TODO: refactor this
-				if (!GuiDictionary.HasFunction(guiFunctionKey) &&
-				value != null &&
-				value.GetType().GetFields().Length > 0 &&
-				!value.GetType().IsEnum &&
-				guiInfo.SubElements.Count > i)
+				var subFields = valueType.GetFields();
+				int i = 0;
+				foreach (var f in subFields)
 				{
-					UpdateVisiblityControllers(value);
-					elementGetterSetterArray.Push(value, f);
-					UpdateObjectGuis(context, targetNode, elementGetterSetterArray, guiInfo.SubElements[i]);
-					elementGetterSetterArray.Pop();
-					shownSubFields = true;
+					if (
+						value.GetType().GetFields().Length > 0 &&
+						guiInfo.SubElements.Count > i
+					)
+					{
+						UpdateVisiblityControllers(value);
+						elementGetterSetterArray.Push(value, f);
+						UpdateObjectGuis(context, targetNode, elementGetterSetterArray, guiInfo.SubElements[i]);
+						elementGetterSetterArray.Pop();
+					}
+					++i;
 				}
-			}
-			if (shownSubFields)
-			{
-				return;
 			}
 
 
@@ -573,11 +569,11 @@ namespace Effekseer.GUI.Inspector
 		{
 			// Generate field GUI IDs when the target is selected or changed.
 			// TODO: this had better do at OnAfterSelect()
-			if (targetNode?.InstanceID != ((Asset.Node)LastTarget)?.InstanceID)
+			//if (targetNode?.InstanceID != ((Asset.Node)LastTarget)?.InstanceID)
 			{
 				GenerateFieldGuiInfos(targetNode);
 				LastTarget = targetNode;
-				return;
+				//return;
 			}
 			LastTarget = targetNode;
 
