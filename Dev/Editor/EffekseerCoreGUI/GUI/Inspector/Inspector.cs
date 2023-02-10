@@ -136,7 +136,7 @@ namespace Effekseer.GUI.Inspector
 			}
 		}
 
-		private static void GenerateFieldGuiInfos(object target)
+		private static void GenerateFieldGuiInfos(object target, Type targetType = null)
 		{
 			RootGuiInfo.SubElements.Clear();
 
@@ -174,6 +174,10 @@ namespace Effekseer.GUI.Inspector
 			var fields = target.GetType().GetFields();
 			foreach (var field in fields)
 			{
+				if (targetType != null && targetType != field.FieldType)
+				{
+					continue;
+				}
 				var tgt = field.GetValue(target);
 				{
 					UpdateVisiblityControllers(tgt);
@@ -565,13 +569,13 @@ namespace Effekseer.GUI.Inspector
 		//	GenerateFieldGuiInfos(CoreContext.SelectedEffectNode);
 		//}
 
-		public static void Update(Asset.EffectAssetEditorContext context, Asset.Node targetNode)
+		public static void Update(Asset.EffectAssetEditorContext context, Asset.Node targetNode, Type targetType = null)
 		{
 			// Generate field GUI IDs when the target is selected or changed.
 			// TODO: this had better do at OnAfterSelect()
 			//if (targetNode?.InstanceID != ((Asset.Node)LastTarget)?.InstanceID)
 			{
-				GenerateFieldGuiInfos(targetNode);
+				GenerateFieldGuiInfos(targetNode, targetType);
 				LastTarget = targetNode;
 				//return;
 			}
@@ -597,6 +601,11 @@ namespace Effekseer.GUI.Inspector
 				var elementGetterSetterArray = new PartsTreeSystem.ElementGetterSetterArray();
 				foreach (var field in fields)
 				{
+					if (targetType != null && targetType != field.FieldType)
+					{
+						continue;
+					}
+
 					elementGetterSetterArray.Push(targetNode, field);
 					UpdateVisiblityControllers(targetNode);
 					UpdateObjectGuis(context, targetNode, elementGetterSetterArray, RootGuiInfo.SubElements[i]);
@@ -608,13 +617,18 @@ namespace Effekseer.GUI.Inspector
 			Manager.NativeManager.Separator();
 		}
 
-		public static bool Drop(string path, Asset.EffectAssetEditorContext context, Asset.Node targetNode)
+		public static bool Drop(string path, Asset.EffectAssetEditorContext context, Asset.Node targetNode, Type targetType = null)
 		{
 			var fields = targetNode.GetType().GetFields();
 			int i = 0;
 			var elementGetterSetterArray = new PartsTreeSystem.ElementGetterSetterArray();
 			foreach (var field in fields)
 			{
+				if (targetType != null && targetType != field.FieldType)
+				{
+					continue;
+				}
+
 				elementGetterSetterArray.Push(targetNode, field);
 				UpdateVisiblityControllers(targetNode);
 				var eddited = DropObjectGuis(path, context, targetNode, elementGetterSetterArray, RootGuiInfo.SubElements[i]);
