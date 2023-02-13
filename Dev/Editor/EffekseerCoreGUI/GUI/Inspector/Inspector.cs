@@ -573,11 +573,12 @@ namespace Effekseer.GUI.Inspector
 		{
 			// Generate field GUI IDs when the target is selected or changed.
 			// TODO: this had better do at OnAfterSelect()
-			//if (targetNode?.InstanceID != ((Asset.Node)LastTarget)?.InstanceID)
+			// TODO: regenerate for each docks(user of this function)
+			if (targetNode?.InstanceID != ((Asset.Node)LastTarget)?.InstanceID)
 			{
 				GenerateFieldGuiInfos(targetNode, targetType);
 				LastTarget = targetNode;
-				//return;
+				return;
 			}
 			LastTarget = targetNode;
 
