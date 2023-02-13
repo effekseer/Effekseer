@@ -49,6 +49,8 @@ namespace Effekseer
 				typeof(Dock.AdvancedRenderCommonValues),
 
 				typeof(GUI.Inspector.InspectorPanel),
+				typeof(GUI.Inspector.LocationValuesPanel),
+				typeof(GUI.Inspector.RotationValuesPanel),
 				typeof(Dock.NodeTreeEditor),
 				typeof(Dock.Profiler),
 				typeof(Dock.GpuParticlesValues),

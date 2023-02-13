@@ -72,6 +72,139 @@ namespace Effekseer.GUI.Inspector
 		}
 	}
 
+	// TODO: Move this to EffekseerEditor/GUI/Dock/
+	public class LocationValuesPanel : Dock.DockPanel
+	{
+
+		public LocationValuesPanel()
+		{
+			Label = "Inspector_LocationValues###Inspector_LocationValues";
+		}
+
+		protected override void UpdateInternal()
+		{
+			if (CoreContext.SelectedEffect.Context.NodeTree == null ||
+				CoreContext.SelectedEffectNode == null)
+			{
+				return;
+			}
+
+			CoreContext.SelectedEffect.Context.CommandManager.StartEditFields(
+				CoreContext.SelectedEffect.Asset.NodeTreeAsset,
+				CoreContext.SelectedEffect.Context.NodeTree,
+				CoreContext.SelectedEffectNode,
+				CoreContext.Environment);
+
+			Inspector.Update(CoreContext.SelectedEffect.Context,
+				CoreContext.SelectedEffectNode,
+				typeof(Asset.Effect.PositionParameter));
+
+			CoreContext.SelectedEffect.Context.CommandManager.EndEditFields(
+				CoreContext.SelectedEffectNode,
+				CoreContext.Environment);
+
+			// Fix edited results when values are not edited
+			if (!Manager.NativeManager.IsAnyItemActive())
+			{
+				CoreContext.SelectedEffect.Context.CommandManager.SetFlagToBlockMergeCommands();
+			}
+		}
+
+		public override void DispatchDropped(string path, ref bool handle)
+		{
+			if (CoreContext.SelectedEffect.Context.NodeTree == null || CoreContext.SelectedEffectNode == null)
+			{
+				return;
+			}
+
+			CoreContext.SelectedEffect.Context.CommandManager.StartEditFields(
+				CoreContext.SelectedEffect.Asset.NodeTreeAsset,
+				CoreContext.SelectedEffect.Context.NodeTree,
+				CoreContext.SelectedEffectNode,
+				CoreContext.Environment);
+
+			if (Inspector.Drop(path, CoreContext.SelectedEffect.Context,
+				CoreContext.SelectedEffectNode,
+				typeof(Asset.Effect.PositionParameter)))
+			{
+				handle = true;
+			}
+
+			CoreContext.SelectedEffect.Context.CommandManager.EndEditFields(
+				CoreContext.SelectedEffectNode,
+				CoreContext.Environment);
+
+
+			base.DispatchDropped(path, ref handle);
+		}
+	}
+
+	// TODO: Move this to EffekseerEditor/GUI/Dock/
+	public class RotationValuesPanel : Dock.DockPanel
+	{
+
+		public RotationValuesPanel()
+		{
+			Label = "Inspector_RotationValues###Inspector_RotationValues";
+		}
+
+		protected override void UpdateInternal()
+		{
+			if (CoreContext.SelectedEffect.Context.NodeTree == null ||
+				CoreContext.SelectedEffectNode == null)
+			{
+				return;
+			}
+
+			CoreContext.SelectedEffect.Context.CommandManager.StartEditFields(
+				CoreContext.SelectedEffect.Asset.NodeTreeAsset,
+				CoreContext.SelectedEffect.Context.NodeTree,
+				CoreContext.SelectedEffectNode,
+				CoreContext.Environment);
+
+			Inspector.Update(CoreContext.SelectedEffect.Context,
+				CoreContext.SelectedEffectNode,
+				typeof(Asset.Effect.PositionParameter));
+
+			CoreContext.SelectedEffect.Context.CommandManager.EndEditFields(
+				CoreContext.SelectedEffectNode,
+				CoreContext.Environment);
+
+			// Fix edited results when values are not edited
+			if (!Manager.NativeManager.IsAnyItemActive())
+			{
+				CoreContext.SelectedEffect.Context.CommandManager.SetFlagToBlockMergeCommands();
+			}
+		}
+
+		public override void DispatchDropped(string path, ref bool handle)
+		{
+			if (CoreContext.SelectedEffect.Context.NodeTree == null || CoreContext.SelectedEffectNode == null)
+			{
+				return;
+			}
+
+			CoreContext.SelectedEffect.Context.CommandManager.StartEditFields(
+				CoreContext.SelectedEffect.Asset.NodeTreeAsset,
+				CoreContext.SelectedEffect.Context.NodeTree,
+				CoreContext.SelectedEffectNode,
+				CoreContext.Environment);
+
+			if (Inspector.Drop(path, CoreContext.SelectedEffect.Context,
+				CoreContext.SelectedEffectNode,
+				typeof(Asset.Effect.PositionParameter)))
+			{
+				handle = true;
+			}
+
+			CoreContext.SelectedEffect.Context.CommandManager.EndEditFields(
+				CoreContext.SelectedEffectNode,
+				CoreContext.Environment);
+
+
+			base.DispatchDropped(path, ref handle);
+		}
+	}
 	class InspectorGuiState
 	{
 		public string Id { get; private set; }
