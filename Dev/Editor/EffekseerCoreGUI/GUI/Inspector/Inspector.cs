@@ -229,6 +229,8 @@ namespace Effekseer.GUI.Inspector
 
 		public InspectorGuiState State { get; private set; }
 
+		public string Name { get; set; }
+
 		// Sub elements of gui(ex. list, class, struct)
 		public List<InspectorGuiInfo> SubElements { get; private set; }
 	}
@@ -281,6 +283,8 @@ namespace Effekseer.GUI.Inspector
 					return info;
 				}
 				var type = tgt.GetType();
+				info.Name = type.Name;
+				
 
 				// TODO: when guiFuncs work are completed, this should be only "GuiDictionary.HasFunction(type)"
 				bool hasGuiFunction = 
@@ -315,7 +319,7 @@ namespace Effekseer.GUI.Inspector
 				{
 					UpdateVisiblityControllers(tgt);
 				}
-
+				RootGuiInfo.Name = field.Name;
 				RootGuiInfo.SubElements.Add(generate(tgt));
 			}
 		}
