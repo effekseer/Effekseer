@@ -10,9 +10,11 @@ namespace Effekseer.GUI.Inspector
 {
 	public class InspectorPanel : Dock.DockPanel
 	{
+		Inspector inspector;
 
 		public InspectorPanel()
 		{
+			inspector = new Inspector();
 			Label = "Inspector###Inspector";
 		}
 
@@ -30,7 +32,7 @@ namespace Effekseer.GUI.Inspector
 				CoreContext.SelectedEffectNode,
 				CoreContext.Environment);
 
-			Inspector.Update(CoreContext.SelectedEffect.Context,
+			inspector.Update(CoreContext.SelectedEffect.Context,
 				CoreContext.SelectedEffectNode);
 
 			CoreContext.SelectedEffect.Context.CommandManager.EndEditFields(
@@ -57,7 +59,7 @@ namespace Effekseer.GUI.Inspector
 				CoreContext.SelectedEffectNode,
 				CoreContext.Environment);
 
-			if (Inspector.Drop(path, CoreContext.SelectedEffect.Context,
+			if (inspector.Drop(path, CoreContext.SelectedEffect.Context,
 				CoreContext.SelectedEffectNode))
 			{
 				handle = true;
@@ -75,9 +77,11 @@ namespace Effekseer.GUI.Inspector
 	// TODO: Move this to EffekseerEditor/GUI/Dock/
 	public class LocationValuesPanel : Dock.DockPanel
 	{
+		Inspector inspector;
 
 		public LocationValuesPanel()
 		{
+			inspector = new Inspector();
 			Label = "Inspector_LocationValues###Inspector_LocationValues";
 		}
 
@@ -95,7 +99,7 @@ namespace Effekseer.GUI.Inspector
 				CoreContext.SelectedEffectNode,
 				CoreContext.Environment);
 
-			Inspector.Update(CoreContext.SelectedEffect.Context,
+			inspector.Update(CoreContext.SelectedEffect.Context,
 				CoreContext.SelectedEffectNode,
 				typeof(Asset.Effect.PositionParameter));
 
@@ -123,7 +127,7 @@ namespace Effekseer.GUI.Inspector
 				CoreContext.SelectedEffectNode,
 				CoreContext.Environment);
 
-			if (Inspector.Drop(path, CoreContext.SelectedEffect.Context,
+			if (inspector.Drop(path, CoreContext.SelectedEffect.Context,
 				CoreContext.SelectedEffectNode,
 				typeof(Asset.Effect.PositionParameter)))
 			{
@@ -142,9 +146,11 @@ namespace Effekseer.GUI.Inspector
 	// TODO: Move this to EffekseerEditor/GUI/Dock/
 	public class RotationValuesPanel : Dock.DockPanel
 	{
+		Inspector inspector;
 
 		public RotationValuesPanel()
 		{
+			inspector = new Inspector();
 			Label = "Inspector_RotationValues###Inspector_RotationValues";
 		}
 
@@ -162,7 +168,7 @@ namespace Effekseer.GUI.Inspector
 				CoreContext.SelectedEffectNode,
 				CoreContext.Environment);
 
-			Inspector.Update(CoreContext.SelectedEffect.Context,
+			inspector.Update(CoreContext.SelectedEffect.Context,
 				CoreContext.SelectedEffectNode,
 				typeof(Asset.Effect.PositionParameter));
 
@@ -190,7 +196,7 @@ namespace Effekseer.GUI.Inspector
 				CoreContext.SelectedEffectNode,
 				CoreContext.Environment);
 
-			if (Inspector.Drop(path, CoreContext.SelectedEffect.Context,
+			if (inspector.Drop(path, CoreContext.SelectedEffect.Context,
 				CoreContext.SelectedEffectNode,
 				typeof(Asset.Effect.PositionParameter)))
 			{
@@ -238,13 +244,13 @@ namespace Effekseer.GUI.Inspector
 	class Inspector
 	{
 		// functions to show gui
-		private static readonly InspectorGuiDictionary GuiDictionary = new InspectorGuiDictionary();
+		private readonly InspectorGuiDictionary GuiDictionary = new InspectorGuiDictionary();
 
-		private static InspectorGuiInfo RootGuiInfo = new InspectorGuiInfo();
+		private InspectorGuiInfo RootGuiInfo = new InspectorGuiInfo();
 
-		private static object LastTarget = null;
+		private object LastTarget = null;
 
-		private static Dictionary<int, object> VisiblityControllers = new Dictionary<int, object>();
+		private Dictionary<int, object> VisiblityControllers = new Dictionary<int, object>();
 
 		public Inspector()
 		{
@@ -252,7 +258,7 @@ namespace Effekseer.GUI.Inspector
 			RootGuiInfo.isRoot = true;
 		}
 
-		private static void UpdateVisiblityControllers(object target)
+		private void UpdateVisiblityControllers(object target)
 		{
 			if (target == null)
 			{
@@ -271,7 +277,7 @@ namespace Effekseer.GUI.Inspector
 			}
 		}
 
-		private static void GenerateFieldGuiInfos(object target, Type targetType = null)
+		private void GenerateFieldGuiInfos(object target, Type targetType = null)
 		{
 			RootGuiInfo.SubElements.Clear();
 
@@ -324,7 +330,7 @@ namespace Effekseer.GUI.Inspector
 			}
 		}
 
-		private static void UpdateObjectGuis(Asset.EffectAssetEditorContext context
+		private void UpdateObjectGuis(Asset.EffectAssetEditorContext context
 			, object targetNode, PartsTreeSystem.ElementGetterSetterArray elementGetterSetterArray, InspectorGuiInfo guiInfo)
 		{
 			var field = elementGetterSetterArray.FieldInfos.Last();
@@ -559,7 +565,7 @@ namespace Effekseer.GUI.Inspector
 		/// <param name="elementGetterSetterArray"></param>
 		/// <param name="guiInfo"></param>
 		/// <returns></returns>
-		private static bool DropObjectGuis(string path, Asset.EffectAssetEditorContext context
+		private bool DropObjectGuis(string path, Asset.EffectAssetEditorContext context
 			, object targetNode, PartsTreeSystem.ElementGetterSetterArray elementGetterSetterArray, InspectorGuiInfo guiInfo)
 		{
 			var field = elementGetterSetterArray.FieldInfos.Last();
@@ -703,7 +709,7 @@ namespace Effekseer.GUI.Inspector
 		//	GenerateFieldGuiInfos(CoreContext.SelectedEffectNode);
 		//}
 
-		public static void Update(Asset.EffectAssetEditorContext context, Asset.Node targetNode, Type targetType = null)
+		public void Update(Asset.EffectAssetEditorContext context, Asset.Node targetNode, Type targetType = null)
 		{
 			// Generate field GUI IDs when the target is selected or changed.
 			// TODO: this had better do at OnAfterSelect()
@@ -752,7 +758,7 @@ namespace Effekseer.GUI.Inspector
 			Manager.NativeManager.Separator();
 		}
 
-		public static bool Drop(string path, Asset.EffectAssetEditorContext context, Asset.Node targetNode, Type targetType = null)
+		public bool Drop(string path, Asset.EffectAssetEditorContext context, Asset.Node targetNode, Type targetType = null)
 		{
 			var fields = targetNode.GetType().GetFields();
 			int i = 0;
