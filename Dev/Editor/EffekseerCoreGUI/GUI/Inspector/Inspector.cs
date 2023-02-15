@@ -419,10 +419,7 @@ namespace Effekseer.GUI.Inspector
 				int i = 0;
 				foreach (var f in subFields)
 				{
-					if (
-						value.GetType().GetFields().Length > 0 &&
-						guiInfo.SubElements.Count > i
-					)
+					if (!isList && guiInfo.SubElements.Count > i)
 					{
 						UpdateVisiblityControllers(value);
 						elementGetterSetterArray.Push(value, f);
