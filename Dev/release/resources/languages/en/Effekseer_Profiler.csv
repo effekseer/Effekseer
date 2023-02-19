@@ -1,0 +1,7 @@
+Profiler,Profiler
+Profiler_Start,Start Profiling
+Profiler_Stop,Stop Profiling
+Profiler_Reset,Clear Data
+Profiler_CpuUsage,CPU Usage
+Profiler_GpuUsage,GPU Usage
+Profiler_Handles,Effects

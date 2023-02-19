@@ -13,6 +13,24 @@ namespace Effekseer.GUI.Dock
 		private static readonly swig.Vec4 CpuGraphColor = new swig.Vec4(0.4f, 0.65f, 0.8f, 1.0f);
 		private static readonly swig.Vec4 GpuGraphColor = new swig.Vec4(0.8f, 0.4f, 0.65f, 1.0f);
 
+		private struct Texts
+		{
+			public string Profiler = Resources.GetString("Profiler");
+			public string ProfilerStart = Resources.GetString("Profiler_Start");
+			public string ProfilerStop = Resources.GetString("Profiler_Stop");
+			public string ProfilerReset = Resources.GetString("Profiler_Reset");
+			public string ProfilerCpuUsage = Resources.GetString("Profiler_CpuUsage");
+			public string ProfilerGpuUsage = Resources.GetString("Profiler_GpuUsage");
+			public string ProfilerHandles = Resources.GetString("Profiler_Handles");
+
+			public string Network = Resources.GetString("Network");
+			public string NetworkConnected = Resources.GetString("NetworkConnected");
+			public string NetworkDisconnected = Resources.GetString("NetworkDisconnected");
+
+			public Texts() { }
+		};
+		private Texts texts = new Texts();
+
 		class TimeValueChart
 		{
 			public string ID { get; private set; }
@@ -94,20 +112,20 @@ namespace Effekseer.GUI.Dock
 				GpuChart.Reset();
 			}
 
-			public void Update(swig.GUIManager gui)
+			public void Update(swig.GUIManager gui, ref Texts texts)
 			{
 				CpuChart.Push(Manager.Viewer.EffectRenderer.GetCPUTime());
 				GpuChart.Push(Manager.Viewer.EffectRenderer.GetGPUTime());
 
-				if (gui.Button("Reset"))
+				if (gui.Button(texts.ProfilerReset))
 				{
 					Reset();
 				}
 
-				gui.Text("CPU Usage: " + CpuChart.LatestValue + "us");
+				gui.Text(texts.ProfilerCpuUsage + ": " + CpuChart.LatestValue + "us");
 				CpuChart.Update(gui);
 
-				gui.Text("GPU Usage: " + GpuChart.LatestValue + "us");
+				gui.Text(texts.ProfilerGpuUsage + ": " + GpuChart.LatestValue + "us");
 				GpuChart.Update(gui);
 			}
 		};
@@ -138,16 +156,16 @@ namespace Effekseer.GUI.Dock
 					GpuTimeChart.Reset();
 				}
 
-				public void Update(swig.GUIManager gui)
+				public void Update(swig.GUIManager gui, ref Texts texts)
 				{
-					string titleLabel = string.Format("Manager{0} (Handles:{1})###Manager{0}", Number, HandleCountChart.LatestValue);
+					string titleLabel = string.Format("Manager{0} ({2}:{1})###Manager{0}", Number, HandleCountChart.LatestValue, texts.ProfilerHandles);
 					if (gui.CollapsingHeader(titleLabel))
 					{
-						gui.Text("Handles: " + HandleCountChart.LatestValue);
+						gui.Text(texts.ProfilerHandles + ": " + HandleCountChart.LatestValue);
 						HandleCountChart.Update(gui);
-						gui.Text("CPU Usage: " + CpuTimeChart.LatestValue + "us");
+						gui.Text(texts.ProfilerCpuUsage + ": " + CpuTimeChart.LatestValue + "us");
 						CpuTimeChart.Update(gui);
-						gui.Text("GPU Usage: " + GpuTimeChart.LatestValue + "us");
+						gui.Text(texts.ProfilerCpuUsage + ": " + GpuTimeChart.LatestValue + "us");
 						GpuTimeChart.Update(gui);
 					}
 				}
@@ -181,14 +199,14 @@ namespace Effekseer.GUI.Dock
 					GpuTimeChart.Reset();
 				}
 
-				public void Update(swig.GUIManager gui)
+				public void Update(swig.GUIManager gui, ref Texts texts)
 				{
-					string titleLabel = string.Format("{0} (Handles:{1})###Efc_{0}", Key, HandleCountChart.LatestValue);
+					string titleLabel = string.Format("{0} ({2}:{1})###Efc_{0}", Key, HandleCountChart.LatestValue, texts.ProfilerHandles);
 					if (gui.CollapsingHeader(titleLabel))
 					{
-						gui.Text("Handles: " + HandleCountChart.LatestValue);
+						gui.Text(texts.ProfilerHandles + ": " + HandleCountChart.LatestValue);
 						HandleCountChart.Update(gui);
-						gui.Text("GPU Usage: " + GpuTimeChart.LatestValue + "us");
+						gui.Text(texts.ProfilerGpuUsage + ": " + GpuTimeChart.LatestValue + "us");
 						GpuTimeChart.Update(gui);
 					}
 				}
@@ -216,11 +234,13 @@ namespace Effekseer.GUI.Dock
 				}
 			}
 
-			public void Update(swig.GUIManager gui)
+			public void Update(swig.GUIManager gui, ref Texts texts)
 			{
-				if (!Manager.Network.IsProfiling)
+				if (!Manager.Network.IsProfiling())
 				{
-					if (gui.Button("Start Profiling"))
+					gui.BeginDisabled(!Manager.Network.IsConnected());
+
+					if (gui.Button(texts.ProfilerStart))
 					{
 						if (!Manager.Network.IsConnected())
 						{
@@ -229,10 +249,12 @@ namespace Effekseer.GUI.Dock
 
 						Manager.Network.StartProfiling();
 					}
+
+					gui.EndDisabled();
 				}
 				else
 				{
-					if (gui.Button("Stop Profiling"))
+					if (gui.Button(texts.ProfilerStop))
 					{
 						Manager.Network.StopProfiling();
 					}
@@ -240,7 +262,7 @@ namespace Effekseer.GUI.Dock
 
 				gui.SameLine();
 
-				if (gui.Button("Network"))
+				if (gui.Button(texts.Network))
 				{
 					Manager.SelectOrShowWindow(typeof(Dock.Network));
 				}
@@ -249,14 +271,14 @@ namespace Effekseer.GUI.Dock
 
 				if (Manager.Network.IsConnected())
 				{
-					gui.Text(Resources.GetString("NetworkConnected"));
+					gui.Text(texts.NetworkConnected);
 				}
 				else
 				{
-					gui.Text(Resources.GetString("NetworkDisconnected"));
+					gui.Text(texts.NetworkDisconnected);
 				}
 
-				if (gui.Button("Reset"))
+				if (gui.Button(texts.ProfilerReset))
 				{
 					Reset();
 				}
@@ -270,7 +292,7 @@ namespace Effekseer.GUI.Dock
 				}
 				gui.PopItemWidth();
 
-				while (Manager.Network.IsProfiling)
+				while (Manager.Network.IsProfiling())
 				{
 					var profileSample = Manager.Network.ReadProfileSample();
 					if (!profileSample.IsValid)
@@ -306,11 +328,11 @@ namespace Effekseer.GUI.Dock
 
 				foreach (var managerProfiler in ManagerProfilers)
 				{
-					managerProfiler.Update(gui);
+					managerProfiler.Update(gui, ref texts);
 				}
 				foreach (var kv in EffectProfilers)
 				{
-					kv.Value.Update(gui);
+					kv.Value.Update(gui, ref texts);
 				}
 			}
 		};
@@ -318,7 +340,8 @@ namespace Effekseer.GUI.Dock
 
 		public Profiler()
 		{
-			Label = Icons.PanelProfiler + Resources.GetString("Profiler") + "###Profiler";
+			Label = Icons.PanelProfiler + texts.Profiler + "###Profiler";
+			DocPage = "profiler.html";
 		}
 
 		public override void OnDisposed()
@@ -329,17 +352,19 @@ namespace Effekseer.GUI.Dock
 		{
 			var gui = Manager.NativeManager;
 
+			gui.Separator();
+
 			if (gui.BeginTabBar("Mode"))
 			{
 				if (gui.BeginTabItem("Editor"))
 				{
-					editorProfiler.Update(gui);
+					editorProfiler.Update(gui, ref texts);
 					gui.EndTabItem();
 				}
 				
 				if (gui.BeginTabItem("Target"))
 				{
-					targetProfiler.Update(gui);
+					targetProfiler.Update(gui, ref texts);
 					gui.EndTabItem();
 				}
 

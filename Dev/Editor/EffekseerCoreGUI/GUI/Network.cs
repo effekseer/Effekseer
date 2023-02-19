@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Effekseer.swig;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,7 +14,6 @@ namespace Effekseer.GUI
 		public bool SendOnLoad { get; set; }
 		public bool SendOnEdit { get; set; }
 		public bool SendOnSave { get; set; }
-		public bool IsProfiling { get; set; }
 
 		int time = 0;
 
@@ -22,7 +22,7 @@ namespace Effekseer.GUI
 		swig.NetworkClient networkClient = null;
 		const string ConfigNetworkFileName = "config.network.xml";
 		string configNetworkPath = string.Empty;
-
+		bool isProfiling = false;
 
 		public Action Loaded;
 
@@ -99,20 +99,25 @@ namespace Effekseer.GUI
 
 		public void StartProfiling()
 		{
-			if (!IsProfiling)
+			if (!isProfiling)
 			{
 				networkClient.StartProfiling();
-				IsProfiling = true;
+				isProfiling = true;
 			}
 		}
 
 		public void StopProfiling()
 		{
-			if (IsProfiling)
+			if (isProfiling)
 			{
 				networkClient.StopProfiling();
-				IsProfiling = false;
+				isProfiling = false;
 			}
+		}
+
+		public bool IsProfiling()
+		{
+			return isProfiling;
 		}
 
 		public swig.ProfileSample ReadProfileSample()
