@@ -60,6 +60,11 @@ void ClientImplemented::Update()
 	}
 }
 
+bool ClientImplemented::IsConnected() const
+{
+	return session_.IsActive();
+}
+
 void ClientImplemented::Reload(const char16_t* key, void* data, int32_t size)
 {
 	Data::flatbuffers::FlatBufferBuilder fbb;
