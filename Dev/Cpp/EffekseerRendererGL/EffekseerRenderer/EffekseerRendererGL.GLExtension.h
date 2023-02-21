@@ -194,6 +194,7 @@ bool Initialize(OpenGLDeviceType deviceType, bool isExtensionsEnabled);
 bool IsSupportedVertexArray();
 bool IsSupportedBufferRange();
 bool IsSupportedMapBuffer();
+bool IsSupportedQueries();
 
 //! for some devices to avoid a bug
 void MakeMapBufferInvalid();

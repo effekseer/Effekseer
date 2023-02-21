@@ -135,15 +135,6 @@ typedef void(EFK_STDCALL* FP_glCopyTexSubImage3D)(GLenum target,
 												  GLsizei width,
 												  GLsizei height);
 
-typedef void (EFK_STDCALL* FP_glGenQueriesEXT)(GLsizei n, GLuint *ids);
-typedef void (EFK_STDCALL* FP_glDeleteQueriesEXT)(GLsizei n, const GLuint *ids);
-typedef void (EFK_STDCALL* FP_glBeginQueryEXT)(GLenum target, GLuint id);
-typedef void (EFK_STDCALL* FP_glEndQueryEXT)(GLenum target);
-typedef void (EFK_STDCALL* FP_glGetQueryObjectivEXT)(GLuint id, GLenum pname, GLint *params);
-typedef void (EFK_STDCALL* FP_glGetQueryObjectuivEXT)(GLuint id, GLenum pname, GLuint *params);
-typedef void (EFK_STDCALL* FP_glGetQueryObjecti64vEXT)(GLuint id, GLenum pname, int64_t *params);
-typedef void (EFK_STDCALL* FP_glGetQueryObjectui64vEXT)(GLuint id, GLenum pname, uint64_t *params);
-
 static FP_glDeleteBuffers g_glDeleteBuffers = nullptr;
 static FP_glCreateShader g_glCreateShader = nullptr;
 static FP_glBindBuffer g_glBindBuffer = nullptr;
@@ -213,15 +204,6 @@ static FP_glTexImage3D g_glTexImage3D = nullptr;
 
 static FP_glCopyTexSubImage3D g_glCopyTexSubImage3D = nullptr;
 
-static FP_glGenQueriesEXT g_glGenQueriesEXT = nullptr;
-static FP_glDeleteQueriesEXT g_glDeleteQueriesEXT = nullptr;
-static FP_glBeginQueryEXT g_glBeginQueryEXT = nullptr;
-static FP_glEndQueryEXT g_glEndQueryEXT = nullptr;
-static FP_glGetQueryObjectivEXT g_glGetQueryObjectivEXT = nullptr;
-static FP_glGetQueryObjectuivEXT g_glGetQueryObjectuivEXT = nullptr;
-static FP_glGetQueryObjecti64vEXT g_glGetQueryObjecti64vEXT = nullptr;
-static FP_glGetQueryObjectui64vEXT g_glGetQueryObjectui64vEXT = nullptr;
-
 #elif defined(__EFFEKSEER_RENDERER_GLES2__)
 
 typedef void (*FP_glGenVertexArraysOES)(GLsizei n, GLuint* arrays);
@@ -252,6 +234,28 @@ static FP_glUnmapBufferOES g_glUnmapBufferOES = nullptr;
 #ifdef __EMSCRIPTEN__
 static FP_glDrawElementsInstancedANGLE g_glDrawElementsInstancedANGLE = nullptr;
 #endif
+
+#endif
+
+#if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__)
+
+typedef void(EFK_STDCALL* FP_glGenQueriesEXT)(GLsizei n, GLuint* ids);
+typedef void(EFK_STDCALL* FP_glDeleteQueriesEXT)(GLsizei n, const GLuint* ids);
+typedef void(EFK_STDCALL* FP_glBeginQueryEXT)(GLenum target, GLuint id);
+typedef void(EFK_STDCALL* FP_glEndQueryEXT)(GLenum target);
+typedef void(EFK_STDCALL* FP_glGetQueryObjectivEXT)(GLuint id, GLenum pname, GLint* params);
+typedef void(EFK_STDCALL* FP_glGetQueryObjectuivEXT)(GLuint id, GLenum pname, GLuint* params);
+typedef void(EFK_STDCALL* FP_glGetQueryObjecti64vEXT)(GLuint id, GLenum pname, int64_t* params);
+typedef void(EFK_STDCALL* FP_glGetQueryObjectui64vEXT)(GLuint id, GLenum pname, uint64_t* params);
+
+static FP_glGenQueriesEXT g_glGenQueriesEXT = nullptr;
+static FP_glDeleteQueriesEXT g_glDeleteQueriesEXT = nullptr;
+static FP_glBeginQueryEXT g_glBeginQueryEXT = nullptr;
+static FP_glEndQueryEXT g_glEndQueryEXT = nullptr;
+static FP_glGetQueryObjectivEXT g_glGetQueryObjectivEXT = nullptr;
+static FP_glGetQueryObjectuivEXT g_glGetQueryObjectuivEXT = nullptr;
+static FP_glGetQueryObjecti64vEXT g_glGetQueryObjecti64vEXT = nullptr;
+static FP_glGetQueryObjectui64vEXT g_glGetQueryObjectui64vEXT = nullptr;
 
 #endif
 
@@ -391,6 +395,7 @@ bool Initialize(OpenGLDeviceType deviceType, bool isExtensionsEnabled)
 
 #endif
 
+#if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__)
 	GET_PROC_REQ(glGenQueriesEXT);
 	GET_PROC_REQ(glDeleteQueriesEXT);
 	GET_PROC_REQ(glBeginQueryEXT);
@@ -401,6 +406,7 @@ bool Initialize(OpenGLDeviceType deviceType, bool isExtensionsEnabled)
 	GET_PROC_REQ(glGetQueryObjectui64vEXT);
 
 	g_isSupportedQueries = (g_glGenQueriesEXT && g_glDeleteQueriesEXT && g_glBeginQueryEXT && g_glEndQueryEXT && g_glGetQueryObjectuivEXT && g_glGetQueryObjectivEXT && g_glGetQueryObjectui64vEXT && g_glGetQueryObjecti64vEXT);
+#endif
 
 #if defined(__EFFEKSEER_RENDERER_GLES2__)
 
@@ -462,6 +468,7 @@ bool Initialize(OpenGLDeviceType deviceType, bool isExtensionsEnabled)
 	{
 		g_isSupportedVertexArray = true;
 		g_isSurrpotedBufferRange = true;
+		g_isSupportedQueries = true;
 	}
 	if (deviceType == OpenGLDeviceType::OpenGL3)
 	{
@@ -487,6 +494,11 @@ bool IsSupportedBufferRange()
 bool IsSupportedMapBuffer()
 {
 	return g_isSurrpotedMapBuffer;
+}
+
+bool IsSupportedQueries()
+{
+	return g_isSupportedQueries;
 }
 
 void MakeMapBufferInvalid()
@@ -1060,42 +1072,74 @@ void glCopyTexSubImage3D(GLenum target,
 
 void glGenQueries(GLsizei n, GLuint* ids)
 {
+#if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__)
 	g_glGenQueriesEXT(n, ids);
+#else
+	glGenQueries(n, ids);
+#endif
 }
 
 void glDeleteQueries(GLsizei n, const GLuint* ids)
 {
+#if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__)
 	g_glDeleteQueriesEXT(n, ids);
+#else
+	glDeleteQueries(n, ids);
+#endif
 }
 
 void glBeginQuery(GLenum target, GLuint id)
 {
+#if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__)
 	g_glBeginQueryEXT(target, id);
+#else
+	glBeginQuery(target, id);
+#endif
 }
 
 void glEndQuery(GLenum target)
 {
+#if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__)
 	g_glEndQueryEXT(target);
+#else
+	glEndQuery(target);
+#endif
 }
 
 void glGetQueryObjectiv(GLuint id, GLenum pname, GLint* params)
 {
+#if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__)
 	g_glGetQueryObjectivEXT(id, pname, params);
+#else
+	glGetQueryObjectiv(id, pname, params);
+#endif
 }
 
 void glGetQueryObjectuiv(GLuint id, GLenum pname, GLuint* params)
 {
+#if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__)
 	g_glGetQueryObjectuivEXT(id, pname, params);
+#else
+	glGetQueryObjectuiv(id, pname, params);
+#endif
 }
 
 void glGetQueryObjecti64v(GLuint id, GLenum pname, int64_t* params)
 {
+#if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__)
 	g_glGetQueryObjecti64vEXT(id, pname, params);
+#else
+	glGetQueryObjecti64v(id, pname, params);
+#endif
 }
 
 void glGetQueryObjectui64v(GLuint id, GLenum pname, uint64_t* params)
 {
+#if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__)
 	g_glGetQueryObjectui64vEXT(id, pname, params);
+#else
+	glGetQueryObjectui64v(id, pname, params);
+#endif
 }
 
 //----------------------------------------------------------------------------------
