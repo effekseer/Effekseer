@@ -52,18 +52,20 @@ ProfileSample NetworkClient::ReadProfileSample()
 
 	for (auto& profileManager : profileSample.Managers)
 	{
-		auto& resultManager = result.Managers.emplace_back();
+		ProfileSample::Manager resultManager;
 		resultManager.CPUTime = profileManager.CPUTime;
 		resultManager.GPUTime = profileManager.GPUTime;
 		resultManager.HandleCount = profileManager.HandleCount;
+		result.Managers.emplace_back(resultManager);
 	}
 	
 	for (auto& profileEffect : profileSample.Effects)
 	{
-		auto& resultEffect = result.Effects.emplace_back();
+		ProfileSample::Effect resultEffect;
 		resultEffect.Key = profileEffect.Key;
 		resultEffect.GPUTime = profileEffect.GPUTime;
 		resultEffect.HandleCount = profileEffect.HandleCount;
+		result.Effects.emplace_back(resultEffect);
 	}
 
 	return result;
