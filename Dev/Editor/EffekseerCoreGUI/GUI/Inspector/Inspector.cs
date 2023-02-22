@@ -223,6 +223,12 @@ namespace Effekseer.GUI.Inspector
 		}
 	}
 
+	class InspectorGroupingState
+	{
+		public string Id { get; private set; } = string.Empty;
+		public string Name { get; private set; } = string.Empty;
+	}
+
 	class InspectorGuiInfo
 	{
 		public InspectorGuiInfo()
@@ -387,6 +393,15 @@ namespace Effekseer.GUI.Inspector
 					}
 				}
 			}
+			// VisiblityControllerAttributes
+			bool isVisibilityController = false;
+			{
+				var attr = (Asset.VisiblityControlledAttribute)field.GetCustomAttribute(typeof(Asset.VisiblityControlledAttribute));
+				if (attr != null)
+				{
+					isVisibilityController = true;
+				}
+			}
 			// VisiblityControlledAttributes
 			{
 				bool isVisible = true;
@@ -442,8 +457,7 @@ namespace Effekseer.GUI.Inspector
 			// name column(left side of table)
 			Manager.NativeManager.TableNextColumn();
 
-			// TODO: use grouping attributes
-			bool isShowHorizonalSeparator = Manager.NativeManager.TableGetRowIndex() >= 2;
+			bool isShowHorizonalSeparator = isVisibilityController;
 			if (isShowHorizonalSeparator)
 			{
 				Manager.NativeManager.Separator();
