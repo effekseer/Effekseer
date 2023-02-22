@@ -375,6 +375,7 @@ namespace Effekseer.GUI.Inspector
 
 			// key attrs
 			string description = string.Empty;
+			string labelStr = string.Empty;
 			{
 				var attr = (KeyAttribute)field.GetCustomAttribute(typeof(KeyAttribute));
 				if (attr != null)
@@ -383,7 +384,7 @@ namespace Effekseer.GUI.Inspector
 
 					if (MultiLanguageTextProvider.HasKey(key))
 					{
-						name = MultiLanguageTextProvider.GetText(key);
+						labelStr = MultiLanguageTextProvider.GetText(key);
 					}
 
 					key = attr.key + "_Desc";
@@ -466,14 +467,14 @@ namespace Effekseer.GUI.Inspector
 			// TODO: for debugging. this should be delete.
 			//name = (isValueChanged ? "*" : "") + name + " " + guiInfo.Id;
 
-			Manager.NativeManager.Text(name);
+			Manager.NativeManager.Text(labelStr);
 
 			// tooltip for description
 			if (Manager.NativeManager.IsItemHovered())
 			{
 				Manager.NativeManager.BeginTooltip();
 
-				Manager.NativeManager.Text(name);
+				Manager.NativeManager.Text(labelStr);
 				Manager.NativeManager.Separator();
 				Manager.NativeManager.Text(description);
 
