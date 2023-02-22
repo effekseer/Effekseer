@@ -80,27 +80,6 @@ namespace Effekseer.Asset
 		}
 	}
 
-	/// <summary>
-	/// A values for grouping parameters in inspector
-	/// </summary>
-	[AttributeUsage(
-		AttributeTargets.Property | AttributeTargets.Field,
-	AllowMultiple = false,
-	Inherited = false)]
-	public class GroupingAttribute : Attribute
-	{
-		public string Name
-		{
-			get;
-			set;
-		}
-
-		public GroupingAttribute()
-		{
-			Name = string.Empty;
-		}
-	}
-
 	public class EffectAssetEnvironment : PartsTreeSystem.Environment
 	{
 		Dictionary<EffectAsset, string> effectAssets = new Dictionary<EffectAsset, string>();
@@ -378,28 +357,20 @@ namespace Effekseer.Asset
 
 	public class ParticleNode : Node
 	{
-		[Grouping(Name = "CommonValues")]
 		public CommonParameter CommonValues = new CommonParameter();
 
-		[Grouping(Name = "DrawingValues")]
 		public DrawingParameter DrawingValues = new DrawingParameter();
 
-		[Grouping(Name = "PositionParam")]
 		public Effect.PositionParameter PositionParam = new Effect.PositionParameter();
 
-		[Grouping(Name = "RotationParam")]
 		public Effect.RotationParameter RotationParam = new Effect.RotationParameter();
 
-		[Grouping(Name = "GradientTest")]
 		public Gradient GradientTest = new Gradient();
 
-		[Grouping(Name = "Vector3WithRangeTest")]
 		public Vector3WithRange Vector3WithRangeTest = new Vector3WithRange();
 
-		[Grouping(Name = "TextureTest")]
 		public TextureAsset TextureTest = null;
 
-		[Grouping(Name = "ColorTest")]
 		public Color ColorTest = new Color();
 	}
 
