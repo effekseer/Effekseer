@@ -22,7 +22,7 @@ class ManagerImplemented : public Manager, public ReferenceObject
 	friend class InstanceContainer;
 	friend class InstanceGroup;
 
-private:
+public:
 	class alignas(32) DrawSet
 	{
 	public:
@@ -180,6 +180,8 @@ private:
 
 	TrackRendererRef m_trackRenderer;
 
+	GPUTimerRef m_gpuTimer;
+
 	SoundPlayerRef m_soundPlayer;
 
 	RandFunc m_randFunc;
@@ -253,6 +255,10 @@ public:
 	TrackRendererRef GetTrackRenderer() override;
 
 	void SetTrackRenderer(TrackRendererRef renderer) override;
+
+	GPUTimerRef GetGPUTimer() override;
+
+	void SetGPUTimer(GPUTimerRef gpuTimer) override;
 
 	const SettingRef& GetSetting() const override;
 
@@ -432,11 +438,17 @@ public:
 
 	int GetDrawTime() const override;
 
+	int32_t GetGPUTime() const override;
+
+	int32_t GetGPUTime(Handle handle) const override;
+
 	int32_t GetRestInstancesCount() const override;
 
 	void BeginReloadEffect(const EffectRef& effect, bool doLockThread);
 
 	void EndReloadEffect(const EffectRef& effect, bool doLockThread);
+
+	const CustomAlignedMap<Handle, DrawSet>& GetPlayingDrawSets() const { return m_DrawSets; }
 
 	virtual int GetRef() override
 	{

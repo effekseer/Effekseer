@@ -1,0 +1,20 @@
+namespace Effekseer.Data;
+
+table NetworkManagerProfile {
+  handle_count: uint;
+  cpu_time: float;
+  gpu_time: float;
+}
+
+table NetworkEffectProfile {
+  key: [ushort];
+  handle_count: uint;
+  gpu_time: float;
+}
+
+table NetworkProfileSample {
+  managers: [NetworkManagerProfile];
+  effects: [NetworkEffectProfile];
+}
+
+root_type NetworkProfileSample;

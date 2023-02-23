@@ -164,6 +164,16 @@ public class EffectRenderer : global::System.IDisposable {
     return ret;
   }
 
+  public int GetCPUTime() {
+    int ret = EffekseerNativePINVOKE.EffectRenderer_GetCPUTime(swigCPtr);
+    return ret;
+  }
+
+  public int GetGPUTime() {
+    int ret = EffekseerNativePINVOKE.EffectRenderer_GetGPUTime(swigCPtr);
+    return ret;
+  }
+
   public int RandomSeed {
     set {
       EffekseerNativePINVOKE.EffectRenderer_RandomSeed_set(swigCPtr, value);

@@ -73,6 +73,7 @@ class RibbonRenderer;
 class RingRenderer;
 class ModelRenderer;
 class TrackRenderer;
+class GPUTimer;
 
 class EffectLoader;
 class TextureLoader;
@@ -742,6 +743,7 @@ using RibbonRendererRef = RefPtr<RibbonRenderer>;
 using RingRendererRef = RefPtr<RingRenderer>;
 using ModelRendererRef = RefPtr<ModelRenderer>;
 using TrackRendererRef = RefPtr<TrackRenderer>;
+using GPUTimerRef = RefPtr<GPUTimer>;
 using SoundPlayerRef = RefPtr<SoundPlayer>;
 
 using EffectLoaderRef = RefPtr<EffectLoader>;
@@ -4040,6 +4042,20 @@ public:
 	virtual void SetTrackRenderer(TrackRendererRef renderer) = 0;
 
 	/**
+		@brief
+		\~English get an GPU performance timer
+		\~Japanese GPUパフォーマンスタイマー取得する。
+	*/
+	virtual GPUTimerRef GetGPUTimer() = 0;
+
+	/**
+		@brief
+		\~English get an GPU performance timer
+		\~Japanese GPUパフォーマンスタイマーを設定する。
+	*/
+	virtual void SetGPUTimer(GPUTimerRef gpuTimer) = 0;
+
+	/**
 		@brief	設定クラスを取得する。
 	*/
 	virtual const SettingRef& GetSetting() const = 0;
@@ -4660,14 +4676,32 @@ public:
 	virtual int GetCameraCullingMaskToShowAllEffects() = 0;
 
 	/**
-		@brief	Update処理時間を取得。
+		@brief
+		\~English	Gets the CPU time required for the Update process.
+		\~Japanese	Update処理にかかるCPU時間を取得する。
 	*/
 	virtual int GetUpdateTime() const = 0;
 
 	/**
-		@brief	Draw処理時間を取得。
+		@brief
+		\~English	Gets the CPU time required for the Draw process.
+		\~Japanese	Draw処理にかかるCPU時間を取得する。
 	*/
 	virtual int GetDrawTime() const = 0;
+
+	/**
+		@brief
+		\~English	Gets the GPU time (microseconds) taken to render the all effects.
+		\~Japanese	エフェクト全ての描画処理にかかるGPU時間(マイクロ秒)を取得する。
+	*/
+	virtual int32_t GetGPUTime() const = 0;
+
+	/**
+		@brief
+		\~English	Gets the GPU time (microseconds) taken to render the effect.
+		\~Japanese	エフェクトの描画処理にかかるGPU時間(マイクロ秒)を取得する。
+	*/
+	virtual int32_t GetGPUTime(Handle handle) const = 0;
 
 	/**
 		@brief
@@ -5081,6 +5115,31 @@ public:
 	virtual void Reload(const char16_t* key, void* data, int32_t size) = 0;
 	virtual void Reload(ManagerRef manager, const char16_t* path, const char16_t* key) = 0;
 	virtual bool IsConnected() const = 0;
+
+	struct ProfileSample
+	{
+		bool IsValid = false;
+		explicit operator bool() const { return IsValid; }
+
+		struct Manager
+		{
+			uint32_t HandleCount = 0;
+			float CPUTime = 0.0f;
+			float GPUTime = 0.0f;
+		};
+		std::vector<Manager> Managers;
+
+		struct Effect
+		{
+			std::u16string Key;
+			uint32_t HandleCount = 0;
+			float GPUTime = 0.0f;
+		};
+		std::vector<Effect> Effects;
+	};
+	virtual void StartProfiling() = 0;
+	virtual void StopProfiling() = 0;
+	virtual ProfileSample ReadProfileSample() = 0;
 };
 
 } // namespace Effekseer

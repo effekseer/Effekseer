@@ -46,6 +46,7 @@ namespace Effekseer
 				typeof(Dock.Dynamic),
 				typeof(Dock.ProceduralModel),
 				typeof(Dock.AdvancedRenderCommonValues),
+				typeof(Dock.Profiler),
 			};
 
 			System.OperatingSystem os = System.Environment.OSVersion;

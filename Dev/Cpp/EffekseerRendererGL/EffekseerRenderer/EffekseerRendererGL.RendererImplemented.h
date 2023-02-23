@@ -208,6 +208,11 @@ public:
 	::Effekseer::TrackRendererRef CreateTrackRenderer() override;
 
 	/**
+	@brief	GPUタイマーを生成する。
+	*/
+	::Effekseer::GPUTimerRef CreateGPUTimer() override;
+
+	/**
 		@brief	テクスチャ読込クラスを生成する。
 	*/
 	::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::FileInterfaceRef fileInterface = nullptr) override;

@@ -180,6 +180,10 @@ typedef char GLchar;
 #define GL_WRITE_ONLY 0x000088b9
 //#endif
 
+#define GL_TIME_ELAPSED           0x88BF
+#define GL_QUERY_RESULT           0x8866
+#define GL_QUERY_RESULT_AVAILABLE 0x8867
+
 namespace EffekseerRendererGL
 {
 namespace GLExt
@@ -190,6 +194,7 @@ bool Initialize(OpenGLDeviceType deviceType, bool isExtensionsEnabled);
 bool IsSupportedVertexArray();
 bool IsSupportedBufferRange();
 bool IsSupportedMapBuffer();
+bool IsSupportedQueries();
 
 //! for some devices to avoid a bug
 void MakeMapBufferInvalid();
@@ -290,6 +295,15 @@ void glCopyTexSubImage3D(GLenum target,
 						 GLint y,
 						 GLsizei width,
 						 GLsizei height);
+
+void glGenQueries(GLsizei n, GLuint *ids);
+void glDeleteQueries(GLsizei n, const GLuint *ids);
+void glBeginQuery(GLenum target, GLuint id);
+void glEndQuery(GLenum target);
+void glGetQueryObjectiv(GLuint id, GLenum pname, GLint *params);
+void glGetQueryObjectuiv(GLuint id, GLenum pname, GLuint *params);
+void glGetQueryObjecti64v(GLuint id, GLenum pname, int64_t *params);
+void glGetQueryObjectui64v(GLuint id, GLenum pname, uint64_t *params);
 
 //----------------------------------------------------------------------------------
 //

@@ -1071,6 +1071,11 @@ public:
 		m_renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(state, vertexCount, stride_, (void*&)m_ringBufferData);
 		vertexCount_ = vertexCount;
 	}
+
+	void EndRendering(const efkTrackNodeParam& parameter, void* userData) override
+	{
+		m_renderer->GetStandardRenderer()->EndRenderingAndRenderingIfRequired();
+	}
 };
 
 //----------------------------------------------------------------------------------

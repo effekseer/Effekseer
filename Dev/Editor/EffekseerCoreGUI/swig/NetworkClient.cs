@@ -56,6 +56,10 @@ public class NetworkClient : global::System.IDisposable {
     EffekseerNativePINVOKE.NetworkClient_StopNetwork(swigCPtr);
   }
 
+  public void UpdateNetwork() {
+    EffekseerNativePINVOKE.NetworkClient_UpdateNetwork(swigCPtr);
+  }
+
   public bool IsConnectingNetwork() {
     bool ret = EffekseerNativePINVOKE.NetworkClient_IsConnectingNetwork(swigCPtr);
     return ret;
@@ -63,6 +67,19 @@ public class NetworkClient : global::System.IDisposable {
 
   public void SendDataByNetwork(string key, System.IntPtr data, int size, string path) {
     EffekseerNativePINVOKE.NetworkClient_SendDataByNetwork(swigCPtr, key, data, size, path);
+  }
+
+  public void StartProfiling() {
+    EffekseerNativePINVOKE.NetworkClient_StartProfiling(swigCPtr);
+  }
+
+  public void StopProfiling() {
+    EffekseerNativePINVOKE.NetworkClient_StopProfiling(swigCPtr);
+  }
+
+  public ProfileSample ReadProfileSample() {
+    ProfileSample ret = new ProfileSample(EffekseerNativePINVOKE.NetworkClient_ReadProfileSample(swigCPtr), true);
+    return ret;
   }
 
 }

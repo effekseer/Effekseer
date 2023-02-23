@@ -216,6 +216,138 @@ class EffekseerNativePINVOKE {
   static protected SWIGWStringHelper swigWStringHelper = new SWIGWStringHelper();
 
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSampleManagerVector_Clear___")]
+  public static extern void ProfileSampleManagerVector_Clear(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSampleManagerVector_Add___")]
+  public static extern void ProfileSampleManagerVector_Add(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSampleManagerVector_size___")]
+  public static extern uint ProfileSampleManagerVector_size(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSampleManagerVector_capacity___")]
+  public static extern uint ProfileSampleManagerVector_capacity(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSampleManagerVector_reserve___")]
+  public static extern void ProfileSampleManagerVector_reserve(global::System.Runtime.InteropServices.HandleRef jarg1, uint jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_ProfileSampleManagerVector__SWIG_0___")]
+  public static extern global::System.IntPtr new_ProfileSampleManagerVector__SWIG_0();
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_ProfileSampleManagerVector__SWIG_1___")]
+  public static extern global::System.IntPtr new_ProfileSampleManagerVector__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_ProfileSampleManagerVector__SWIG_2___")]
+  public static extern global::System.IntPtr new_ProfileSampleManagerVector__SWIG_2(int jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSampleManagerVector_getitemcopy___")]
+  public static extern global::System.IntPtr ProfileSampleManagerVector_getitemcopy(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSampleManagerVector_getitem___")]
+  public static extern global::System.IntPtr ProfileSampleManagerVector_getitem(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSampleManagerVector_setitem___")]
+  public static extern void ProfileSampleManagerVector_setitem(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, global::System.Runtime.InteropServices.HandleRef jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSampleManagerVector_AddRange___")]
+  public static extern void ProfileSampleManagerVector_AddRange(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSampleManagerVector_GetRange___")]
+  public static extern global::System.IntPtr ProfileSampleManagerVector_GetRange(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, int jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSampleManagerVector_Insert___")]
+  public static extern void ProfileSampleManagerVector_Insert(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, global::System.Runtime.InteropServices.HandleRef jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSampleManagerVector_InsertRange___")]
+  public static extern void ProfileSampleManagerVector_InsertRange(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, global::System.Runtime.InteropServices.HandleRef jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSampleManagerVector_RemoveAt___")]
+  public static extern void ProfileSampleManagerVector_RemoveAt(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSampleManagerVector_RemoveRange___")]
+  public static extern void ProfileSampleManagerVector_RemoveRange(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, int jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSampleManagerVector_Repeat___")]
+  public static extern global::System.IntPtr ProfileSampleManagerVector_Repeat(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSampleManagerVector_Reverse__SWIG_0___")]
+  public static extern void ProfileSampleManagerVector_Reverse__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSampleManagerVector_Reverse__SWIG_1___")]
+  public static extern void ProfileSampleManagerVector_Reverse__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, int jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSampleManagerVector_SetRange___")]
+  public static extern void ProfileSampleManagerVector_SetRange(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, global::System.Runtime.InteropServices.HandleRef jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_ProfileSampleManagerVector___")]
+  public static extern void delete_ProfileSampleManagerVector(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSampleEffectVector_Clear___")]
+  public static extern void ProfileSampleEffectVector_Clear(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSampleEffectVector_Add___")]
+  public static extern void ProfileSampleEffectVector_Add(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSampleEffectVector_size___")]
+  public static extern uint ProfileSampleEffectVector_size(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSampleEffectVector_capacity___")]
+  public static extern uint ProfileSampleEffectVector_capacity(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSampleEffectVector_reserve___")]
+  public static extern void ProfileSampleEffectVector_reserve(global::System.Runtime.InteropServices.HandleRef jarg1, uint jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_ProfileSampleEffectVector__SWIG_0___")]
+  public static extern global::System.IntPtr new_ProfileSampleEffectVector__SWIG_0();
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_ProfileSampleEffectVector__SWIG_1___")]
+  public static extern global::System.IntPtr new_ProfileSampleEffectVector__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_ProfileSampleEffectVector__SWIG_2___")]
+  public static extern global::System.IntPtr new_ProfileSampleEffectVector__SWIG_2(int jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSampleEffectVector_getitemcopy___")]
+  public static extern global::System.IntPtr ProfileSampleEffectVector_getitemcopy(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSampleEffectVector_getitem___")]
+  public static extern global::System.IntPtr ProfileSampleEffectVector_getitem(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSampleEffectVector_setitem___")]
+  public static extern void ProfileSampleEffectVector_setitem(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, global::System.Runtime.InteropServices.HandleRef jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSampleEffectVector_AddRange___")]
+  public static extern void ProfileSampleEffectVector_AddRange(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSampleEffectVector_GetRange___")]
+  public static extern global::System.IntPtr ProfileSampleEffectVector_GetRange(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, int jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSampleEffectVector_Insert___")]
+  public static extern void ProfileSampleEffectVector_Insert(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, global::System.Runtime.InteropServices.HandleRef jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSampleEffectVector_InsertRange___")]
+  public static extern void ProfileSampleEffectVector_InsertRange(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, global::System.Runtime.InteropServices.HandleRef jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSampleEffectVector_RemoveAt___")]
+  public static extern void ProfileSampleEffectVector_RemoveAt(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSampleEffectVector_RemoveRange___")]
+  public static extern void ProfileSampleEffectVector_RemoveRange(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, int jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSampleEffectVector_Repeat___")]
+  public static extern global::System.IntPtr ProfileSampleEffectVector_Repeat(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSampleEffectVector_Reverse__SWIG_0___")]
+  public static extern void ProfileSampleEffectVector_Reverse__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSampleEffectVector_Reverse__SWIG_1___")]
+  public static extern void ProfileSampleEffectVector_Reverse__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, int jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSampleEffectVector_SetRange___")]
+  public static extern void ProfileSampleEffectVector_SetRange(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, global::System.Runtime.InteropServices.HandleRef jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_ProfileSampleEffectVector___")]
+  public static extern void delete_ProfileSampleEffectVector(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_Matrix44F___")]
   public static extern global::System.IntPtr new_Matrix44F();
 
@@ -641,6 +773,39 @@ class EffekseerNativePINVOKE {
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_Vec2___")]
   public static extern void delete_Vec2(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Vec4_X_set___")]
+  public static extern void Vec4_X_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Vec4_X_get___")]
+  public static extern float Vec4_X_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Vec4_Y_set___")]
+  public static extern void Vec4_Y_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Vec4_Y_get___")]
+  public static extern float Vec4_Y_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Vec4_Z_set___")]
+  public static extern void Vec4_Z_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Vec4_Z_get___")]
+  public static extern float Vec4_Z_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Vec4_W_set___")]
+  public static extern void Vec4_W_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Vec4_W_get___")]
+  public static extern float Vec4_W_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_Vec4__SWIG_0___")]
+  public static extern global::System.IntPtr new_Vec4__SWIG_0();
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_Vec4__SWIG_1___")]
+  public static extern global::System.IntPtr new_Vec4__SWIG_1(float jarg1, float jarg2, float jarg3, float jarg4);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_Vec4___")]
+  public static extern void delete_Vec4(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_RecordingParameter_GetPath___")]
   public static extern System.IntPtr RecordingParameter_GetPath(global::System.Runtime.InteropServices.HandleRef jarg1);
@@ -1119,6 +1284,12 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRenderer_GetAndResetVertexCount___")]
   public static extern int EffectRenderer_GetAndResetVertexCount(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRenderer_GetCPUTime___")]
+  public static extern int EffectRenderer_GetCPUTime(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRenderer_GetGPUTime___")]
+  public static extern int EffectRenderer_GetGPUTime(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRenderer_RandomSeed_set___")]
   public static extern void EffectRenderer_RandomSeed_set(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
 
@@ -1179,6 +1350,79 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_MainScreenEffectRenderer___")]
   public static extern global::System.IntPtr new_MainScreenEffectRenderer();
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSample_IsValid_set___")]
+  public static extern void ProfileSample_IsValid_set(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSample_IsValid_get___")]
+  public static extern bool ProfileSample_IsValid_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSample_Manager_HandleCount_set___")]
+  public static extern void ProfileSample_Manager_HandleCount_set(global::System.Runtime.InteropServices.HandleRef jarg1, uint jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSample_Manager_HandleCount_get___")]
+  public static extern uint ProfileSample_Manager_HandleCount_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSample_Manager_CPUTime_set___")]
+  public static extern void ProfileSample_Manager_CPUTime_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSample_Manager_CPUTime_get___")]
+  public static extern float ProfileSample_Manager_CPUTime_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSample_Manager_GPUTime_set___")]
+  public static extern void ProfileSample_Manager_GPUTime_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSample_Manager_GPUTime_get___")]
+  public static extern float ProfileSample_Manager_GPUTime_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_ProfileSample_Manager___")]
+  public static extern global::System.IntPtr new_ProfileSample_Manager();
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_ProfileSample_Manager___")]
+  public static extern void delete_ProfileSample_Manager(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSample_Managers_set___")]
+  public static extern void ProfileSample_Managers_set(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSample_Managers_get___")]
+  public static extern global::System.IntPtr ProfileSample_Managers_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSample_Effect_Key_set___")]
+  public static extern void ProfileSample_Effect_Key_set(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSample_Effect_Key_get___")]
+  [return: global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]
+  public static extern string ProfileSample_Effect_Key_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSample_Effect_HandleCount_set___")]
+  public static extern void ProfileSample_Effect_HandleCount_set(global::System.Runtime.InteropServices.HandleRef jarg1, uint jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSample_Effect_HandleCount_get___")]
+  public static extern uint ProfileSample_Effect_HandleCount_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSample_Effect_GPUTime_set___")]
+  public static extern void ProfileSample_Effect_GPUTime_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSample_Effect_GPUTime_get___")]
+  public static extern float ProfileSample_Effect_GPUTime_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_ProfileSample_Effect___")]
+  public static extern global::System.IntPtr new_ProfileSample_Effect();
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_ProfileSample_Effect___")]
+  public static extern void delete_ProfileSample_Effect(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSample_Effects_set___")]
+  public static extern void ProfileSample_Effects_set(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSample_Effects_get___")]
+  public static extern global::System.IntPtr ProfileSample_Effects_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_ProfileSample___")]
+  public static extern global::System.IntPtr new_ProfileSample();
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_ProfileSample___")]
+  public static extern void delete_ProfileSample(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_NetworkClient___")]
   public static extern global::System.IntPtr new_NetworkClient();
 
@@ -1188,11 +1432,23 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_NetworkClient_StopNetwork___")]
   public static extern void NetworkClient_StopNetwork(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_NetworkClient_UpdateNetwork___")]
+  public static extern void NetworkClient_UpdateNetwork(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_NetworkClient_IsConnectingNetwork___")]
   public static extern bool NetworkClient_IsConnectingNetwork(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_NetworkClient_SendDataByNetwork___")]
   public static extern void NetworkClient_SendDataByNetwork(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2, System.IntPtr jarg3, int jarg4, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg5);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_NetworkClient_StartProfiling___")]
+  public static extern void NetworkClient_StartProfiling(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_NetworkClient_StopProfiling___")]
+  public static extern void NetworkClient_StopProfiling(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_NetworkClient_ReadProfileSample___")]
+  public static extern global::System.IntPtr NetworkClient_ReadProfileSample(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_NetworkClient___")]
   public static extern void delete_NetworkClient(global::System.Runtime.InteropServices.HandleRef jarg1);
@@ -1932,6 +2188,12 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_InputTextMultiline___")]
   public static extern bool GUIManager_InputTextMultiline(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg3);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_InputTextWithHint__SWIG_0___")]
+  public static extern bool GUIManager_InputTextWithHint__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg3, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg4, int jarg5);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_InputTextWithHint__SWIG_1___")]
+  public static extern bool GUIManager_InputTextWithHint__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg3, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg4);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_GetInputTextResult___")]
   public static extern System.IntPtr GUIManager_GetInputTextResult(global::System.Runtime.InteropServices.HandleRef jarg1);
 
@@ -1997,6 +2259,18 @@ class EffekseerNativePINVOKE {
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_EndTooltip___")]
   public static extern void GUIManager_EndTooltip(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_BeginTabBar___")]
+  public static extern bool GUIManager_BeginTabBar(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_EndTabBar___")]
+  public static extern void GUIManager_EndTabBar(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_BeginTabItem___")]
+  public static extern bool GUIManager_BeginTabItem(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_EndTabItem___")]
+  public static extern void GUIManager_EndTabItem(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_BeginMainMenuBar___")]
   public static extern bool GUIManager_BeginMainMenuBar(global::System.Runtime.InteropServices.HandleRef jarg1);
@@ -2391,6 +2665,36 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_GradientHDR___")]
   public static extern bool GUIManager_GradientHDR(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, global::System.Runtime.InteropServices.HandleRef jarg3, global::System.Runtime.InteropServices.HandleRef jarg4, bool jarg5);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_BeginPlot___")]
+  public static extern bool GUIManager_BeginPlot(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2, global::System.Runtime.InteropServices.HandleRef jarg3, int jarg4);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_EndPlot___")]
+  public static extern void GUIManager_EndPlot(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_SetupPlotAxis___")]
+  public static extern void GUIManager_SetupPlotAxis(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg3, int jarg4);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_SetupPlotAxisLimits___")]
+  public static extern void GUIManager_SetupPlotAxisLimits(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, double jarg3, double jarg4, int jarg5);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_SetupPlotAxisFormat___")]
+  public static extern void GUIManager_SetupPlotAxisFormat(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_SetupPlotAxisTicks___")]
+  public static extern void GUIManager_SetupPlotAxisTicks(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, double jarg3, double jarg4, int jarg5);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_PlotLine___")]
+  public static extern void GUIManager_PlotLine(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2, [global::System.Runtime.InteropServices.In, global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPArray)]double[] jarg3, [global::System.Runtime.InteropServices.In, global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPArray)]double[] jarg4, int jarg5, int jarg6);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_PlotShaded___")]
+  public static extern void GUIManager_PlotShaded(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2, [global::System.Runtime.InteropServices.In, global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPArray)]double[] jarg3, [global::System.Runtime.InteropServices.In, global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPArray)]double[] jarg4, int jarg5, double jarg6, int jarg7);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_SetNextPlotLineStyle___")]
+  public static extern void GUIManager_SetNextPlotLineStyle(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2, float jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_SetNextPlotFillStyle___")]
+  public static extern void GUIManager_SetNextPlotFillStyle(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2, float jarg3);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_FileDialog_OpenDialog___")]
   public static extern System.IntPtr FileDialog_OpenDialog([global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2);
 
@@ -2638,6 +2942,7 @@ class EffekseerNativePINVOKE {
   public static extern int StaticFile_GetSize(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_StaticFile_GetPath___")]
+  [return: global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]
   public static extern string StaticFile_GetPath(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_StaticFile_GetFileType___")]

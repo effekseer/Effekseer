@@ -234,6 +234,7 @@ namespace Effekseer
 			MultiLanguageTextProvider.LoadCSV("Effekseer_FCurve.csv");
 			MultiLanguageTextProvider.LoadCSV("Effekseer_FCurve_Element.csv");
 			MultiLanguageTextProvider.LoadCSV("Effekseer_KillRules.csv");
+			MultiLanguageTextProvider.LoadCSV("Effekseer_Profiler.csv");
 			LanguageTable.CreateTableFromDirectory(EntryDirectory);
 			GUI.Manager.UpdateFont();
 		}

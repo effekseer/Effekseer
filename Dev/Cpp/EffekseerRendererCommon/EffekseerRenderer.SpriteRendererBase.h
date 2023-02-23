@@ -436,6 +436,8 @@ protected:
 				RenderingInstance(kv.Value, param, state, camera);
 			}
 		}
+
+		renderer->GetStandardRenderer()->EndRenderingAndRenderingIfRequired();
 	}
 
 public:

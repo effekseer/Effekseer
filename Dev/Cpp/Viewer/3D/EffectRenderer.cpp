@@ -354,6 +354,7 @@ bool EffectRenderer::Initialize(std::shared_ptr<GraphicsDevice> graphicsDevice,
 	::Effekseer::RingRendererRef ring_renderer = renderer_->CreateRingRenderer();
 	::Effekseer::ModelRendererRef model_renderer = renderer_->CreateModelRenderer();
 	::Effekseer::TrackRendererRef track_renderer = renderer_->CreateTrackRenderer();
+	::Effekseer::GPUTimerRef gpu_timer = renderer_->CreateGPUTimer();
 
 	if (sprite_renderer == nullptr)
 	{
@@ -368,6 +369,7 @@ bool EffectRenderer::Initialize(std::shared_ptr<GraphicsDevice> graphicsDevice,
 	manager_->SetRingRenderer(ring_renderer);
 	manager_->SetModelRenderer(model_renderer);
 	manager_->SetTrackRenderer(track_renderer);
+	manager_->SetGPUTimer(gpu_timer);
 
 	if (graphics_->GetGraphics()->GetGraphicsDevice() != nullptr)
 	{
@@ -619,6 +621,13 @@ void EffectRenderer::UpdatePaused()
 
 void EffectRenderer::Update()
 {
+	/*{
+		int32_t gpuTime = manager_->GetGPUTime();
+		char log[256];
+		snprintf(log, sizeof(log), "GPUTime: %d\n", gpuTime);
+		OutputDebugStringA(log);
+	}*/
+
 	if (behavior_.TimeSpan > 0 && m_time > 0 && m_time % behavior_.TimeSpan == 0)
 	{
 		PlayEffect();
@@ -749,6 +758,10 @@ void EffectRenderer::Update(int32_t frame)
 {
 	if (frame <= 0)
 	{
+		Effekseer::Manager::UpdateParameter updateParameter;
+		updateParameter.DeltaFrame = 0.0f;
+		updateParameter.UpdateInterval = 0.0;
+		manager_->Update(updateParameter);
 	}
 	else if (frame == 1)
 	{
@@ -1124,6 +1137,16 @@ void EffectRenderer::SetPostEffectParameter(const Effekseer::Tool::PostEffectPar
 	}
 
 	postEffectParameter_ = param;
+}
+
+int32_t EffectRenderer::GetCPUTime()
+{
+	return manager_->GetUpdateTime() + manager_->GetDrawTime();
+}
+
+int32_t EffectRenderer::GetGPUTime()
+{
+	return manager_->GetGPUTime();
 }
 
 } // namespace Tool

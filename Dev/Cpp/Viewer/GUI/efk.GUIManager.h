@@ -456,6 +456,58 @@ enum class Key
 	Z, // for text edit CTRL+Z: undo
 };
 
+enum PlotAxis : int32_t
+{
+    // horizontal axes
+    X1 = 0, // enabled by default
+    X2,     // disabled by default
+    X3,     // disabled by default
+    // vertical axes
+    Y1,     // enabled by default
+    Y2,     // disabled by default
+    Y3,     // disabled by default
+};
+
+enum class PlotFlags : int32_t
+{
+	None          = 0,       // default
+	NoTitle       = 1 << 0,  // the plot title will not be displayed (titles are also hidden if preceeded by double hashes, e.g. "##MyPlot")
+	NoLegend      = 1 << 1,  // the legend will not be displayed
+	NoMouseText   = 1 << 2,  // the mouse position, in plot coordinates, will not be displayed inside of the plot
+	NoInputs      = 1 << 3,  // the user will not be able to interact with the plot
+	NoMenus       = 1 << 4,  // the user will not be able to open context menus
+	NoBoxSelect   = 1 << 5,  // the user will not be able to box-select
+	NoChild       = 1 << 6,  // a child window region will not be used to capture mouse scroll (can boost performance for single ImGui window applications)
+	NoFrame       = 1 << 7,  // the ImGui frame will not be rendered
+	Equal         = 1 << 8,  // x and y axes pairs will be constrained to have the same units/pixel
+	Crosshairs    = 1 << 9,  // the default mouse cursor will be replaced with a crosshair when hovered
+	AntiAliased   = 1 << 10, // plot items will be software anti-aliased (not recommended for high density plots, prefer MSAA)
+	CanvasOnly    = NoTitle | NoLegend | NoMenus | NoBoxSelect | NoMouseText
+};
+
+enum class PlotAxisFlags : int32_t
+{
+	None          = 0,       // default
+	NoLabel       = 1 << 0,  // the axis label will not be displayed (axis labels also hidden if the supplied string name is NULL)
+	NoGridLines   = 1 << 1,  // no grid lines will be displayed
+	NoTickMarks   = 1 << 2,  // no tick marks will be displayed
+	NoTickLabels  = 1 << 3,  // no text labels will be displayed
+	NoInitialFit  = 1 << 4,  // axis will not be initially fit to data extents on the first rendered frame
+	NoMenus       = 1 << 5,  // the user will not be able to open context menus with right-click
+	Opposite      = 1 << 6,  // axis ticks and labels will be rendered on conventionally opposite side (i.e, right or top)
+	Foreground    = 1 << 7,  // grid lines will be displayed in the foreground (i.e. on top of data) in stead of the background
+	LogScale      = 1 << 8,  // a logartithmic (base 10) axis scale will be used (mutually exclusive with Time)
+	Time          = 1 << 9,  // axis will display date/time formatted labels (mutually exclusive with LogScale)
+	Invert        = 1 << 10, // the axis will be inverted
+	AutoFit       = 1 << 11, // axis will be auto-fitting to data extents
+	RangeFit      = 1 << 12, // axis will only fit points if the point is in the visible range of the **orthogonal** axis
+	LockMin       = 1 << 13, // the axis minimum value will be locked when panning/zooming
+	LockMax       = 1 << 14, // the axis maximum value will be locked when panning/zooming
+	Lock          = LockMin | LockMax,
+	NoDecorations = NoLabel | NoGridLines | NoTickMarks | NoTickLabels,
+	AuxDefault    = NoGridLines | Opposite
+};
+
 class GUIManagerCallback
 {
 	std::u16string path;
@@ -798,6 +850,8 @@ public:
 
 	bool InputTextMultiline(const char16_t* label, const char16_t* text);
 
+	bool InputTextWithHint(const char16_t* label, const char16_t* text, const char16_t* hint, InputTextFlags flags = InputTextFlags::None);
+
 	const char16_t* GetInputTextResult();
 
 	// Color
@@ -827,6 +881,12 @@ public:
 	void SetTooltip(const char16_t* text);
 	void BeginTooltip();
 	void EndTooltip();
+
+	// Tabs
+	bool BeginTabBar(const char16_t* idstr);
+	void EndTabBar();
+	bool BeginTabItem(const char16_t* label);
+	void EndTabItem();
 
 	// Menus
 	bool BeginMainMenuBar();
@@ -1024,6 +1084,18 @@ public:
 	void EndNodeFrameTimeline(int* frameMin, int* frameMax, int* currentFrame, int* selectedEntry, int* firstFrame);
 
 	bool GradientHDR(int32_t gradientID, Effekseer::Tool::GradientHDRState& state, Effekseer::Tool::GradientHDRGUIState& guiState, bool isMarkerShown);
+
+	// Plot
+	bool BeginPlot(const char16_t* label, const Vec2& size, PlotFlags flags);
+	void EndPlot();
+	void SetupPlotAxis(PlotAxis axis, const char16_t* label, PlotAxisFlags flags);
+	void SetupPlotAxisLimits(PlotAxis axis, double vMin, double vMax, Cond cond);
+	void SetupPlotAxisFormat(PlotAxis axis, const char16_t* fmt);
+	void SetupPlotAxisTicks(PlotAxis axis, double vMin, double vMax, int nTicks);
+	void PlotLine(const char16_t* label, const double* xValues, const double* yValues, int32_t count, int32_t offset);
+	void PlotShaded(const char16_t* label, const double* xValues, const double* yValues, int32_t count, double yRef, int32_t offset);
+	void SetNextPlotLineStyle(const Vec4& color, float weight);
+	void SetNextPlotFillStyle(const Vec4& color, float alphaMod);
 };
 
 } // namespace efk

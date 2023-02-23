@@ -25,6 +25,7 @@ private:
 	{
 		Socket socket;
 		Session session;
+		bool isProfiling = false;
 	};
 
 private:
@@ -44,17 +45,23 @@ private:
 	std::map<std::u16string, EffectParameter> effects_;
 	std::u16string materialPath_;
 
-	struct Context
+	struct UpdateContext
 	{
-		ManagerRef* managers;
-		int32_t managerCount;
-		ReloadingThreadType reloadingThreadType;
+		ManagerRef* managers = nullptr;
+		int32_t managerCount = 0;
+		ReloadingThreadType reloadingThreadType{};
 	};
-	Context context_{};
+	UpdateContext updateContext_;
 
 	void AcceptAsync();
 
-	void OnDataReceived(const Session::Message& msg);
+	void OnReload(InternalClient& client, const Session::Message& msg);
+
+	void OnStartProfiling(InternalClient& client, const Session::Message& msg);
+
+	void OnStopProfiling(InternalClient& client, const Session::Message& msg);
+
+	void UpdateProfiler(InternalClient& client);
 
 public:
 	ServerImplemented();

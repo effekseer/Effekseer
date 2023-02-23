@@ -12,6 +12,7 @@
 #include "EffekseerRendererDX11.ModelRenderer.h"
 #include "EffekseerRendererDX11.Shader.h"
 #include "EffekseerRendererDX11.VertexBuffer.h"
+#include "EffekseerRendererDX11.GPUTimer.h"
 
 #include "../../EffekseerRendererCommon/EffekseerRenderer.Renderer_Impl.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.RibbonRendererBase.h"
@@ -698,6 +699,11 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 ::Effekseer::TrackRendererRef RendererImplemented::CreateTrackRenderer()
 {
 	return ::Effekseer::TrackRendererRef(new ::EffekseerRenderer::TrackRendererBase<RendererImplemented, false>(this));
+}
+
+::Effekseer::GPUTimerRef RendererImplemented::CreateGPUTimer()
+{
+	return ::Effekseer::GPUTimerRef(new ::EffekseerRendererDX11::GPUTimer(this, true));
 }
 
 //----------------------------------------------------------------------------------

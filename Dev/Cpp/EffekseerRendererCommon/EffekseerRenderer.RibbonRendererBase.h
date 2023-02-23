@@ -898,6 +898,11 @@ public:
 	{
 		Rendering_(parameter, instanceParameter, m_renderer->GetCameraMatrix());
 	}
+
+	void EndRendering(const efkRibbonNodeParam& parameter, void* userData) override
+	{
+		m_renderer->GetStandardRenderer()->EndRenderingAndRenderingIfRequired();
+	}
 };
 //----------------------------------------------------------------------------------
 //

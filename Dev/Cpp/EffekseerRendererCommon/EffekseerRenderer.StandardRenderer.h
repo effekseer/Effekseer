@@ -289,6 +289,7 @@ private:
 	EffekseerRenderer::VertexBufferBase* lastVb_ = nullptr;
 
 	Effekseer::CustomAlignedVector<RenderInfo> renderInfos_;
+	int32_t gpuTimerCount_ = 0;
 
 	void ColorToFloat4(::Effekseer::Color color, float fc[4])
 	{
@@ -421,6 +422,14 @@ public:
 			renderInfo.isLargeSize = requiredSize > vertexCacheMaxSize_;
 			renderInfo.hasDistortion = state.Collector.IsBackgroundRequiredOnFirstPass && m_renderer->GetDistortingCallback() != nullptr;
 			renderInfos_.emplace_back(renderInfo);
+		}
+	}
+
+	void EndRenderingAndRenderingIfRequired()
+	{
+		if (gpuTimerCount_ > 0)
+		{
+			Rendering();
 		}
 	}
 
@@ -944,6 +953,11 @@ public:
 		m_renderer->EndShader(shader_);
 
 		m_renderer->GetRenderState()->Pop();
+	}
+
+	void UpdateGPUTimerCount(int32_t count)
+	{
+		gpuTimerCount_ += count;
 	}
 };
 

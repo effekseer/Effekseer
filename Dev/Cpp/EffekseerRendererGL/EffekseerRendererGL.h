@@ -350,6 +350,11 @@ public:
 	virtual ::Effekseer::TrackRendererRef CreateTrackRenderer() = 0;
 
 	/**
+		@brief	GPUタイマーを生成する。
+	*/
+	virtual ::Effekseer::GPUTimerRef CreateGPUTimer() { return nullptr; }
+
+	/**
 		@brief	標準のテクスチャ読込クラスを生成する。
 	*/
 	virtual ::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::FileInterfaceRef fileInterface = nullptr) = 0;

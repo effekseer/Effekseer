@@ -13,6 +13,7 @@
 #include "EffekseerRendererGL.Shader.h"
 #include "EffekseerRendererGL.VertexArray.h"
 #include "EffekseerRendererGL.VertexBuffer.h"
+#include "EffekseerRendererGL.GPUTimer.h"
 
 #include "EffekseerRendererGL.GLExtension.h"
 
@@ -756,6 +757,14 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 ::Effekseer::TrackRendererRef RendererImplemented::CreateTrackRenderer()
 {
 	return ::Effekseer::TrackRendererRef(new ::EffekseerRenderer::TrackRendererBase<RendererImplemented, false>(this));
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+::Effekseer::GPUTimerRef RendererImplemented::CreateGPUTimer()
+{
+	return ::Effekseer::MakeRefPtr<GPUTimer>(this);
 }
 
 //----------------------------------------------------------------------------------

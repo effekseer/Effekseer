@@ -1092,6 +1092,16 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public bool InputTextWithHint(string label, string text, string hint, InputTextFlags flags) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_InputTextWithHint__SWIG_0(swigCPtr, label, text, hint, (int)flags);
+    return ret;
+  }
+
+  public bool InputTextWithHint(string label, string text, string hint) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_InputTextWithHint__SWIG_1(swigCPtr, label, text, hint);
+    return ret;
+  }
+
   public string GetInputTextResult() {
     string ret = System.Runtime.InteropServices.Marshal.PtrToStringUni(EffekseerNativePINVOKE.GUIManager_GetInputTextResult(swigCPtr));
     return ret;
@@ -1194,6 +1204,24 @@ public class GUIManager : global::System.IDisposable {
 
   public void EndTooltip() {
     EffekseerNativePINVOKE.GUIManager_EndTooltip(swigCPtr);
+  }
+
+  public bool BeginTabBar(string idstr) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginTabBar(swigCPtr, idstr);
+    return ret;
+  }
+
+  public void EndTabBar() {
+    EffekseerNativePINVOKE.GUIManager_EndTabBar(swigCPtr);
+  }
+
+  public bool BeginTabItem(string label) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginTabItem(swigCPtr, label);
+    return ret;
+  }
+
+  public void EndTabItem() {
+    EffekseerNativePINVOKE.GUIManager_EndTabItem(swigCPtr);
   }
 
   public bool BeginMainMenuBar() {
@@ -1812,6 +1840,50 @@ public class GUIManager : global::System.IDisposable {
     bool ret = EffekseerNativePINVOKE.GUIManager_GradientHDR(swigCPtr, gradientID, GradientHDRState.getCPtr(state), GradientHDRGUIState.getCPtr(guiState), isMarkerShown);
     if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
     return ret;
+  }
+
+  public bool BeginPlot(string label, Vec2 size, PlotFlags flags) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginPlot(swigCPtr, label, Vec2.getCPtr(size), (int)flags);
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+    return ret;
+  }
+
+  public void EndPlot() {
+    EffekseerNativePINVOKE.GUIManager_EndPlot(swigCPtr);
+  }
+
+  public void SetupPlotAxis(PlotAxis axis, string label, PlotAxisFlags flags) {
+    EffekseerNativePINVOKE.GUIManager_SetupPlotAxis(swigCPtr, (int)axis, label, (int)flags);
+  }
+
+  public void SetupPlotAxisLimits(PlotAxis axis, double vMin, double vMax, Cond cond) {
+    EffekseerNativePINVOKE.GUIManager_SetupPlotAxisLimits(swigCPtr, (int)axis, vMin, vMax, (int)cond);
+  }
+
+  public void SetupPlotAxisFormat(PlotAxis axis, string fmt) {
+    EffekseerNativePINVOKE.GUIManager_SetupPlotAxisFormat(swigCPtr, (int)axis, fmt);
+  }
+
+  public void SetupPlotAxisTicks(PlotAxis axis, double vMin, double vMax, int nTicks) {
+    EffekseerNativePINVOKE.GUIManager_SetupPlotAxisTicks(swigCPtr, (int)axis, vMin, vMax, nTicks);
+  }
+
+  public void PlotLine(string label, double[] xValues, double[] yValues, int count, int offset) {
+    EffekseerNativePINVOKE.GUIManager_PlotLine(swigCPtr, label, xValues, yValues, count, offset);
+  }
+
+  public void PlotShaded(string label, double[] xValues, double[] yValues, int count, double yRef, int offset) {
+    EffekseerNativePINVOKE.GUIManager_PlotShaded(swigCPtr, label, xValues, yValues, count, yRef, offset);
+  }
+
+  public void SetNextPlotLineStyle(Vec4 color, float weight) {
+    EffekseerNativePINVOKE.GUIManager_SetNextPlotLineStyle(swigCPtr, Vec4.getCPtr(color), weight);
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+  }
+
+  public void SetNextPlotFillStyle(Vec4 color, float alphaMod) {
+    EffekseerNativePINVOKE.GUIManager_SetNextPlotFillStyle(swigCPtr, Vec4.getCPtr(color), alphaMod);
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
   }
 
 }

@@ -7,6 +7,7 @@
 #include "../Effekseer.EffectLoader.h"
 #include "../Effekseer.Manager.h"
 #include "data/reload_generated.h"
+#include "data/profiler_generated.h"
 
 namespace Effekseer
 {
@@ -59,6 +60,11 @@ void ClientImplemented::Update()
 	}
 }
 
+bool ClientImplemented::IsConnected() const
+{
+	return session_.IsActive();
+}
+
 void ClientImplemented::Reload(const char16_t* key, void* data, int32_t size)
 {
 	Data::flatbuffers::FlatBufferBuilder fbb;
@@ -85,9 +91,54 @@ void ClientImplemented::Reload(ManagerRef manager, const char16_t* path, const c
 	loader->Unload(data, size);
 }
 
-bool ClientImplemented::IsConnected() const
+void ClientImplemented::StartProfiling()
 {
-	return session_.IsActive();
+	session_.Send(100, Session::ByteData{nullptr, 0});
+	session_.OnReceived(102, [this](const Session::Message& msg){ OnProfileSample(msg); });
+}
+
+void ClientImplemented::StopProfiling()
+{
+	session_.Send(101, Session::ByteData{nullptr, 0});
+}
+
+Client::ProfileSample ClientImplemented::ReadProfileSample()
+{
+	if (receivedProfileSamples_.size() > 0)
+	{
+		ProfileSample profileSample(std::move(receivedProfileSamples_.front()));
+		receivedProfileSamples_.pop_front();
+		return std::move(profileSample);
+	}
+	return ProfileSample();
+}
+
+void ClientImplemented::OnProfileSample(const Session::Message& msg)
+{
+	auto fb = Data::GetNetworkProfileSample(msg.payload.data);
+
+	ProfileSample profileSample;
+	profileSample.IsValid = true;
+
+	for (auto fbManager : *fb->managers())
+	{
+		ProfileSample::Manager profileManager;
+		profileManager.CPUTime = fbManager->cpu_time();
+		profileManager.GPUTime = fbManager->gpu_time();
+		profileManager.HandleCount = fbManager->handle_count();
+		profileSample.Managers.emplace_back(profileManager);
+	}
+
+	for (auto fbEffect : *fb->effects())
+	{
+		ProfileSample::Effect profileEffect;
+		profileEffect.Key.assign((const char16_t*)fbEffect->key()->data(), (size_t)fbEffect->key()->size());
+		profileEffect.GPUTime = fbEffect->gpu_time();
+		profileEffect.HandleCount = fbEffect->handle_count();
+		profileSample.Effects.emplace_back(profileEffect);
+	}
+
+	receivedProfileSamples_.emplace_back(std::move(profileSample));
 }
 
 } // namespace Effekseer
