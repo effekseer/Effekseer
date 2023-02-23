@@ -1075,7 +1075,7 @@ void glGenQueries(GLsizei n, GLuint* ids)
 #if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__)
 	g_glGenQueriesEXT(n, ids);
 #else
-	glGenQueries(n, ids);
+	::glGenQueries(n, ids);
 #endif
 }
 
@@ -1084,7 +1084,7 @@ void glDeleteQueries(GLsizei n, const GLuint* ids)
 #if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__)
 	g_glDeleteQueriesEXT(n, ids);
 #else
-	glDeleteQueries(n, ids);
+	::glDeleteQueries(n, ids);
 #endif
 }
 
@@ -1093,7 +1093,7 @@ void glBeginQuery(GLenum target, GLuint id)
 #if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__)
 	g_glBeginQueryEXT(target, id);
 #else
-	glBeginQuery(target, id);
+	::glBeginQuery(target, id);
 #endif
 }
 
@@ -1102,7 +1102,7 @@ void glEndQuery(GLenum target)
 #if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__)
 	g_glEndQueryEXT(target);
 #else
-	glEndQuery(target);
+	::glEndQuery(target);
 #endif
 }
 
@@ -1111,7 +1111,7 @@ void glGetQueryObjectiv(GLuint id, GLenum pname, GLint* params)
 #if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__)
 	g_glGetQueryObjectivEXT(id, pname, params);
 #else
-	glGetQueryObjectiv(id, pname, params);
+	::glGetQueryObjectiv(id, pname, params);
 #endif
 }
 
@@ -1120,7 +1120,7 @@ void glGetQueryObjectuiv(GLuint id, GLenum pname, GLuint* params)
 #if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__)
 	g_glGetQueryObjectuivEXT(id, pname, params);
 #else
-	glGetQueryObjectuiv(id, pname, params);
+	::glGetQueryObjectuiv(id, pname, params);
 #endif
 }
 
@@ -1129,7 +1129,7 @@ void glGetQueryObjecti64v(GLuint id, GLenum pname, int64_t* params)
 #if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__)
 	g_glGetQueryObjecti64vEXT(id, pname, params);
 #else
-	glGetQueryObjecti64v(id, pname, params);
+	::glGetQueryObjecti64v(id, pname, params);
 #endif
 }
 
@@ -1138,7 +1138,7 @@ void glGetQueryObjectui64v(GLuint id, GLenum pname, uint64_t* params)
 #if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__)
 	g_glGetQueryObjectui64vEXT(id, pname, params);
 #else
-	glGetQueryObjectui64v(id, pname, params);
+	::glGetQueryObjectui64v(id, pname, params);
 #endif
 }
 
