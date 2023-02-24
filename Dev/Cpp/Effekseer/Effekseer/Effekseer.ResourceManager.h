@@ -2,123 +2,17 @@
 #ifndef __EFFEKSEER_RESOURCE_MANAGER_H__
 #define __EFFEKSEER_RESOURCE_MANAGER_H__
 
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
 #include "Effekseer.Base.Pre.h"
 #include "Effekseer.Resource.h"
 #include "Model//ProceduralModelParameter.h"
 #include "Model/ProceduralModelGenerator.h"
 #include <algorithm>
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 namespace Effekseer
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 
 class ResourceManager : public ReferenceObject
 {
-public:
-	ResourceManager() = default;
-
-	~ResourceManager() = default;
-
-	TextureLoaderRef GetTextureLoader() const
-	{
-		return cachedTextures_.loader;
-	}
-
-	void SetTextureLoader(TextureLoaderRef loader)
-	{
-		cachedTextures_.loader = loader;
-	}
-
-	ModelLoaderRef GetModelLoader() const
-	{
-		return cachedModels_.loader;
-	}
-
-	void SetModelLoader(ModelLoaderRef loader)
-	{
-		cachedModels_.loader = loader;
-	}
-
-	SoundLoaderRef GetSoundLoader() const
-	{
-		return cachedSounds_.loader;
-	}
-
-	void SetSoundLoader(SoundLoaderRef loader)
-	{
-		cachedSounds_.loader = loader;
-	}
-
-	MaterialLoaderRef GetMaterialLoader() const
-	{
-		return cachedMaterials_.loader;
-	}
-
-	void SetMaterialLoader(MaterialLoaderRef loader)
-	{
-		cachedMaterials_.loader = loader;
-	}
-
-	CurveLoaderRef GetCurveLoader() const
-	{
-		return cachedCurves_.loader;
-	}
-
-	void SetCurveLoader(CurveLoaderRef loader)
-	{
-		cachedCurves_.loader = loader;
-	}
-
-	ProceduralModelGeneratorRef GetProceduralMeshGenerator() const
-	{
-		return proceduralMeshGenerator_.loader;
-	}
-
-	void SetProceduralMeshGenerator(ProceduralModelGeneratorRef generator)
-	{
-		proceduralMeshGenerator_.loader = generator;
-	}
-
-	TextureRef LoadTexture(const char16_t* path, TextureType textureType);
-
-	void UnloadTexture(TextureRef resource);
-
-	ModelRef LoadModel(const char16_t* path);
-
-	void UnloadModel(ModelRef resource);
-
-	SoundDataRef LoadSoundData(const char16_t* path);
-
-	void UnloadSoundData(SoundDataRef resource);
-
-	MaterialRef LoadMaterial(const char16_t* path);
-
-	void UnloadMaterial(MaterialRef resource);
-
-	CurveRef LoadCurve(const char16_t* path);
-
-	void UnloadCurve(CurveRef resource);
-
-	ModelRef GenerateProceduralModel(const ProceduralModelParameter& param);
-
-	void UngenerateProceduralModel(ModelRef resource);
-
-	void SetIsCacheEnabled(bool value)
-	{
-		cachedTextures_.isCacheEnabled = value;
-		cachedModels_.isCacheEnabled = value;
-		cachedMaterials_.isCacheEnabled = value;
-		cachedSounds_.isCacheEnabled = value;
-		cachedCurves_.isCacheEnabled = value;
-	}
 
 private:
 	template <typename T>
@@ -128,39 +22,69 @@ private:
 		int32_t loadCount;
 	};
 
-	template <typename LOADER, typename RESOURCE>
-	struct CachedResources
+	template <typename PARAMETER, typename T>
+	struct GenerateCounted
 	{
-		bool isCacheEnabled = true;
-		LOADER loader;
-		CustomUnorderedMap<StringView<char16_t>, LoadCounted<RESOURCE>, StringView<char16_t>::Hash> cached;
+		PARAMETER param;
+		T resource;
+		int32_t loadCount;
+	};
+
+public:
+	template <typename LOADER, typename RESOURCE>
+	class CachedResources
+	{
+		bool isCacheEnabled_ = true;
+		LOADER loader_;
+		CustomUnorderedMap<StringView<char16_t>, LoadCounted<RESOURCE>, StringView<char16_t>::Hash> cached_;
+
+	public:
+		bool GetIsCacheEnabled() const
+		{
+			return isCacheEnabled_;
+		}
+
+		void SetIsCacheEnabled(bool value)
+		{
+			isCacheEnabled_ = value;
+		}
+
+		LOADER GetLoader() const
+		{
+			return loader_;
+		}
+
+		void SetLoader(LOADER value)
+		{
+			loader_ = value;
+		}
 
 		template <typename... Arg>
 		RESOURCE Load(const char16_t* path, Arg&&... args)
 		{
-			if (loader != nullptr)
+			if (loader_ != nullptr)
 			{
-				if (isCacheEnabled)
+				if (isCacheEnabled_)
 				{
-					auto it = cached.find(path);
-					if (it != cached.end())
+					auto it = cached_.find(path);
+					if (it != cached_.end())
 					{
 						it->second.loadCount++;
 						return it->second.resource;
 					}
 
-					auto resource = loader->Load(path, args...);
+					auto resource = loader_->Load(path, args...);
 					if (resource != nullptr)
 					{
 						resource->SetPath(path);
 						const StringView<char16_t> view = resource->GetPath();
-						cached.emplace(view, LoadCounted<RESOURCE>{resource, 1});
+						cached_.emplace(view, LoadCounted<RESOURCE>{resource, 1});
 						return resource;
 					}
 				}
 				else
 				{
-					return loader->Load(path, args...);
+					return loader_->Load(path, args...);
 				}
 			}
 			return nullptr;
@@ -168,34 +92,50 @@ private:
 
 		void Unload(const RESOURCE& resource)
 		{
-			if (loader != nullptr && resource != nullptr)
+			if (loader_ != nullptr && resource != nullptr)
 			{
 				if (resource->GetPath() != u"")
 				{
-					auto it = cached.find(resource->GetPath());
-					if (it != cached.end())
+					auto it = cached_.find(resource->GetPath());
+					if (it != cached_.end())
 					{
 						if (--it->second.loadCount <= 0)
 						{
-							cached.erase(it);
-							loader->Unload(resource);
+							cached_.erase(it);
+							loader_->Unload(resource);
 						}
 					}
 				}
 				else
 				{
-					loader->Unload(resource);
+					loader_->Unload(resource);
 				}
 			}
 		}
-	};
 
-	template <typename PARAMETER, typename T>
-	struct GenerateCounted
-	{
-		PARAMETER param;
-		T resource;
-		int32_t loadCount;
+		bool IsCached(const char16_t* path) const
+		{
+			const auto it = cached_.find(path);
+			return it != cached_.end();
+		}
+
+		void Register(const char16_t* path, RESOURCE resource)
+		{
+			if (isCacheEnabled_)
+			{
+				auto it = cached_.find(path);
+				if (it != cached_.end())
+				{
+					it->second.loadCount++;
+				}
+				else
+				{
+					resource->SetPath(path);
+					const StringView<char16_t> view = resource->GetPath();
+					cached_.emplace(view, LoadCounted<RESOURCE>{resource, 1});
+				}
+			}
+		}
 	};
 
 	template <typename LOADER, typename PARAMETER, typename RESOURCE>
@@ -230,7 +170,8 @@ private:
 		{
 			if (loader != nullptr && resource != nullptr)
 			{
-				auto it = std::find_if(cached.begin(), cached.end(), [&](const std::pair<PARAMETER, GenerateCounted<PARAMETER, RESOURCE>>& v) { return v.second.resource == resource; });
+				auto it = std::find_if(cached.begin(), cached.end(), [&](const std::pair<PARAMETER, GenerateCounted<PARAMETER, RESOURCE>>& v)
+									   { return v.second.resource == resource; });
 				if (it != cached.end())
 				{
 					if (--it->second.loadCount <= 0)
@@ -243,19 +184,111 @@ private:
 		}
 	};
 
-	CachedResources<TextureLoaderRef, TextureRef> cachedTextures_;
-	CachedResources<ModelLoaderRef, ModelRef> cachedModels_;
-	CachedResources<SoundLoaderRef, SoundDataRef> cachedSounds_;
-	CachedResources<MaterialLoaderRef, MaterialRef> cachedMaterials_;
-	CachedResources<CurveLoaderRef, CurveRef> cachedCurves_;
-	CachedParameterResources<ProceduralModelGeneratorRef, ProceduralModelParameter, ModelRef> proceduralMeshGenerator_;
+	ResourceManager() = default;
+
+	~ResourceManager() = default;
+
+	TextureLoaderRef GetTextureLoader() const
+	{
+		return CachedTextures.GetLoader();
+	}
+
+	void SetTextureLoader(TextureLoaderRef loader)
+	{
+		CachedTextures.SetLoader(loader);
+	}
+
+	ModelLoaderRef GetModelLoader() const
+	{
+		return CachedModels.GetLoader();
+	}
+
+	void SetModelLoader(ModelLoaderRef loader)
+	{
+		CachedModels.SetLoader(loader);
+	}
+
+	SoundLoaderRef GetSoundLoader() const
+	{
+		return CachedSounds.GetLoader();
+	}
+
+	void SetSoundLoader(SoundLoaderRef loader)
+	{
+		CachedSounds.SetLoader(loader);
+	}
+
+	MaterialLoaderRef GetMaterialLoader() const
+	{
+		return CachedMaterials.GetLoader();
+	}
+
+	void SetMaterialLoader(MaterialLoaderRef loader)
+	{
+		CachedMaterials.SetLoader(loader);
+	}
+
+	CurveLoaderRef GetCurveLoader() const
+	{
+		return CachedCurves.GetLoader();
+	}
+
+	void SetCurveLoader(CurveLoaderRef loader)
+	{
+		CachedCurves.SetLoader(loader);
+	}
+
+	ProceduralModelGeneratorRef GetProceduralMeshGenerator() const
+	{
+		return CachedProceduralModels.loader;
+	}
+
+	void SetProceduralMeshGenerator(ProceduralModelGeneratorRef generator)
+	{
+		CachedProceduralModels.loader = generator;
+	}
+
+	TextureRef LoadTexture(const char16_t* path, TextureType textureType);
+
+	void UnloadTexture(TextureRef resource);
+
+	ModelRef LoadModel(const char16_t* path);
+
+	void UnloadModel(ModelRef resource);
+
+	SoundDataRef LoadSoundData(const char16_t* path);
+
+	void UnloadSoundData(SoundDataRef resource);
+
+	MaterialRef LoadMaterial(const char16_t* path);
+
+	void UnloadMaterial(MaterialRef resource);
+
+	CurveRef LoadCurve(const char16_t* path);
+
+	void UnloadCurve(CurveRef resource);
+
+	ModelRef GenerateProceduralModel(const ProceduralModelParameter& param);
+
+	void UngenerateProceduralModel(ModelRef resource);
+
+	void SetIsCacheEnabled(bool value)
+	{
+		CachedTextures.SetIsCacheEnabled(value);
+		CachedModels.SetIsCacheEnabled(value);
+		CachedMaterials.SetIsCacheEnabled(value);
+		CachedSounds.SetIsCacheEnabled(value);
+		CachedCurves.SetIsCacheEnabled(value);
+	}
+
+	CachedResources<TextureLoaderRef, TextureRef> CachedTextures;
+	CachedResources<ModelLoaderRef, ModelRef> CachedModels;
+	CachedResources<SoundLoaderRef, SoundDataRef> CachedSounds;
+	CachedResources<MaterialLoaderRef, MaterialRef> CachedMaterials;
+	CachedResources<CurveLoaderRef, CurveRef> CachedCurves;
+	CachedParameterResources<ProceduralModelGeneratorRef, ProceduralModelParameter, ModelRef> CachedProceduralModels;
 };
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 } // namespace Effekseer
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
 #endif // __EFFEKSEER_RESOURCE_MANAGER_H__
