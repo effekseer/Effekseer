@@ -814,6 +814,15 @@ public:
 	}
 };
 
+class TextureLoaderHelper
+{
+public:
+	static bool GetIsMipmapEnabled(const std::u16string& path)
+	{
+		return path.find(u"_NoMip") == std::u16string::npos;
+	}
+};
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
