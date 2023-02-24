@@ -65,7 +65,7 @@ public:
 		if (reader != nullptr)
 		{
 			auto path16 = std::u16string(path);
-			auto isMipEnabled = path16.find(u"_NoMip") == std::u16string::npos;
+			auto isMipEnabled = Effekseer::TextureLoaderHelper::GetIsMipmapEnabled(path16);
 
 			size_t fileSize = reader->GetLength();
 			std::vector<uint8_t> fileData(fileSize);
