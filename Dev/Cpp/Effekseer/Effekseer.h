@@ -3681,9 +3681,9 @@ struct EffectModelParameter
 };
 
 /**
-	@brief	ノードインスタンス生成クラス
-	@note
-	エフェクトのノードの実体を生成する。
+@brief	ノードインスタンス生成クラス
+@note
+エフェクトのノードの実体を生成する。
 */
 class EffectNode
 {
@@ -3696,7 +3696,7 @@ public:
 	}
 
 	/**
-		@brief	ノードが所属しているエフェクトを取得する。
+	@brief	ノードが所属しているエフェクトを取得する。
 	*/
 	virtual Effect* GetEffect() const = 0;
 
@@ -3713,36 +3713,36 @@ public:
 	virtual int GetGeneration() const = 0;
 
 	/**
-		@brief	子のノードの数を取得する。
+	@brief	子のノードの数を取得する。
 	*/
 	virtual int GetChildrenCount() const = 0;
 
 	/**
-		@brief	子のノードを取得する。
+	@brief	子のノードを取得する。
 	*/
 	virtual EffectNode* GetChild(int index) const = 0;
 
 	/**
-		@brief	共通描画パラメーターを取得する。
+	@brief	共通描画パラメーターを取得する。
 	*/
 	virtual EffectBasicRenderParameter GetBasicRenderParameter() const = 0;
 
 	/**
-		@brief	共通描画パラメーターを設定する。
+	@brief	共通描画パラメーターを設定する。
 	*/
 	virtual void SetBasicRenderParameter(EffectBasicRenderParameter param) = 0;
 
 	/**
-		@brief
-		\~English	Get a model parameter
-		\~Japanese	モデルパラメーターを取得する。
+	@brief
+	\~English	Get a model parameter
+	\~Japanese	モデルパラメーターを取得する。
 	*/
 	virtual EffectModelParameter GetEffectModelParameter() = 0;
 
 	/**
-		@brief
-		\~English	Calculate a term of instances where instances exists
-		\~Japanese	インスタンスが存在する期間を計算する。
+	@brief
+	\~English	Calculate a term of instances where instances exists
+	\~Japanese	インスタンスが存在する期間を計算する。
 	*/
 	virtual EffectInstanceTerm CalculateInstanceTerm(EffectInstanceTerm& parentTerm) const = 0;
 
