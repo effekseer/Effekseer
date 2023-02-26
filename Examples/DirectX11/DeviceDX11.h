@@ -73,7 +73,7 @@ public:
 	void BeginRenderPass();
 	void EndRenderPass();
 
-	void SetupEffekseerModules(::Effekseer::ManagerRef efkManager);
+	void SetupEffekseerModules(::Effekseer::ManagerRef efkManager, bool usingProfiler = false);
 	::EffekseerRendererDX11::RendererRef GetEffekseerRenderer()
 	{
 		return efkRenderer;

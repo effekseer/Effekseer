@@ -165,7 +165,7 @@ namespace Effekseer.GUI.Dock
 						HandleCountChart.Update(gui);
 						gui.Text(texts.ProfilerCpuUsage + ": " + CpuTimeChart.LatestValue + "us");
 						CpuTimeChart.Update(gui);
-						gui.Text(texts.ProfilerCpuUsage + ": " + GpuTimeChart.LatestValue + "us");
+						gui.Text(texts.ProfilerGpuUsage + ": " + GpuTimeChart.LatestValue + "us");
 						GpuTimeChart.Update(gui);
 					}
 				}

@@ -126,8 +126,8 @@ int main(int argc, char** argv)
 		// 描画パスの終了
 		device.EndRenderPass();
 
-		// Execute functions about DirectX
-		// DirectXの処理
+		// Update the display
+		// ディスプレイを更新
 		device.PresentDevice();
 
 		time++;

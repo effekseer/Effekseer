@@ -65,12 +65,6 @@ void DeviceDX9::Terminate()
 	CoUninitialize();
 }
 
-void DeviceDX9::ClearScreen()
-{
-	d3d9Device->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
-	d3d9Device->BeginScene();
-}
-
 void DeviceDX9::PresentDevice()
 {
 	d3d9Device->EndScene();
@@ -143,7 +137,17 @@ bool DeviceDX9::NewFrame()
 	return result;
 }
 
-void DeviceDX9::SetupEffekseerModules(::Effekseer::ManagerRef efkManager)
+void DeviceDX9::BeginRenderPass()
+{
+	d3d9Device->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
+	d3d9Device->BeginScene();
+}
+
+void DeviceDX9::EndRenderPass()
+{
+}
+
+void DeviceDX9::SetupEffekseerModules(::Effekseer::ManagerRef efkManager, bool usingProfiler)
 {
 	// Create a  graphics device
 	// 描画デバイスの作成
@@ -183,4 +187,9 @@ void DeviceDX9::SetupEffekseerModules(::Effekseer::ManagerRef efkManager)
 	// サウンドデータの読込機能を設定する。
 	// ユーザーが独自で拡張できる。現在はファイルから読み込んでいる。
 	efkManager->SetSoundLoader(efkSound->CreateSoundLoader());
+
+	if (usingProfiler)
+	{
+		efkManager->SetGpuTimer(efkRenderer->CreateGpuTimer());
+	}
 }

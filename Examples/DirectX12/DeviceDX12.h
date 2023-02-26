@@ -80,7 +80,7 @@ public:
 	void EndRenderPass();
 	void PresentDevice();
 
-	void SetupEffekseerModules(::Effekseer::ManagerRef efkManager);
+	void SetupEffekseerModules(::Effekseer::ManagerRef efkManager, bool usingProfiler = false);
 	::EffekseerRenderer::RendererRef GetEffekseerRenderer()
 	{
 		return efkRenderer;

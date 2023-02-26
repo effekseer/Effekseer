@@ -190,7 +190,7 @@ void DeviceDX11::EndRenderPass()
 {
 }
 
-void DeviceDX11::SetupEffekseerModules(::Effekseer::ManagerRef efkManager)
+void DeviceDX11::SetupEffekseerModules(::Effekseer::ManagerRef efkManager, bool usingProfiler)
 {
 	// Create a  graphics device
 	// 描画デバイスの作成
@@ -217,4 +217,9 @@ void DeviceDX11::SetupEffekseerModules(::Effekseer::ManagerRef efkManager)
 	efkManager->SetModelLoader(efkRenderer->CreateModelLoader());
 	efkManager->SetMaterialLoader(efkRenderer->CreateMaterialLoader());
 	efkManager->SetCurveLoader(Effekseer::MakeRefPtr<Effekseer::CurveLoader>());
+
+	if (usingProfiler)
+	{
+		efkManager->SetGpuTimer(efkRenderer->CreateGpuTimer());
+	}
 }

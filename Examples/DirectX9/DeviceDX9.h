@@ -56,11 +56,12 @@ public:
 
 	bool Initialize(const char* windowTitle, Utils::Vec2I windowSize);
 	void Terminate();
-	void ClearScreen();
 	void PresentDevice();
 	bool NewFrame();
+	void BeginRenderPass();
+	void EndRenderPass();
 
-	void SetupEffekseerModules(::Effekseer::ManagerRef efkManager);
+	void SetupEffekseerModules(::Effekseer::ManagerRef efkManager, bool usingProfiler = false);
 	::EffekseerRendererDX9::RendererRef GetEffekseerRenderer()
 	{
 		return efkRenderer;
