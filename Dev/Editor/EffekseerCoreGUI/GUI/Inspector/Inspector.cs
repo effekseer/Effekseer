@@ -82,7 +82,10 @@ namespace Effekseer.GUI.Inspector
 		public LocationValuesPanel()
 		{
 			inspector = new Inspector();
-			Label = "Inspector_LocationValues###Inspector_LocationValues";
+			Label = Icons.PanelLocation + "Inspector_LocationValues###Inspector_LocationValues";
+
+			TabToolTip = Resources.GetString("Position");
+			DocPage = "location.html";
 		}
 
 		protected override void UpdateInternal()
@@ -151,7 +154,10 @@ namespace Effekseer.GUI.Inspector
 		public RotationValuesPanel()
 		{
 			inspector = new Inspector();
-			Label = "Inspector_RotationValues###Inspector_RotationValues";
+			Label = Icons.PanelRotation + "Inspector_RotationValues###Inspector_RotationValues";
+
+			TabToolTip = Resources.GetString("Rotation");
+			DocPage = "rotation.html";
 		}
 
 		protected override void UpdateInternal()
