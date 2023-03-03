@@ -229,12 +229,6 @@ namespace Effekseer.GUI.Inspector
 		}
 	}
 
-	class InspectorGroupingState
-	{
-		public string Id { get; private set; } = string.Empty;
-		public string Name { get; private set; } = string.Empty;
-	}
-
 	class InspectorGuiInfo
 	{
 		public InspectorGuiInfo()
@@ -266,7 +260,6 @@ namespace Effekseer.GUI.Inspector
 
 		public Inspector()
 		{
-			//Core.OnAfterSelectNode += OnAfterSelect;
 			RootGuiInfo.isRoot = true;
 		}
 
@@ -303,8 +296,6 @@ namespace Effekseer.GUI.Inspector
 				var type = tgt.GetType();
 				info.Name = type.Name;
 				
-
-				// TODO: when guiFuncs work are completed, this should be only "GuiDictionary.HasFunction(type)"
 				bool hasGuiFunction = 
 							type.IsEnum ||
 							GuiDictionary.HasFunction(type);
@@ -470,7 +461,7 @@ namespace Effekseer.GUI.Inspector
 				Manager.NativeManager.Separator();
 			}
 
-			// TODO: for debugging. this should be delete.
+			// for debugging. this should be delete.
 			//name = (isValueChanged ? "*" : "") + name + " " + guiInfo.Id;
 
 			Manager.NativeManager.Text(labelStr);
@@ -487,15 +478,13 @@ namespace Effekseer.GUI.Inspector
 				Manager.NativeManager.EndTooltip();
 			}
 
-			// display field(right side of table)
+			// show field widget(right side of table)
 			Manager.NativeManager.TableNextColumn();
 
 			if (isShowHorizonalSeparator)
 			{
 				Manager.NativeManager.Separator();
 			}
-
-			//bool opened = Manager.NativeManager.CollapsingHeader(label);
 
 			// TODO : ignore "public List<Node> Children = new List<Node>();" node member.
 			if (GuiDictionary.HasFunction(guiFunctionKey))
@@ -734,7 +723,6 @@ namespace Effekseer.GUI.Inspector
 		{
 			// Generate field GUI IDs when the target is selected or changed.
 			// TODO: this had better do at OnAfterSelect()
-			// TODO: regenerate for each docks(user of this function)
 			if (targetNode?.InstanceID != ((Asset.Node)LastTarget)?.InstanceID)
 			{
 				GenerateFieldGuiInfos(targetNode, targetType);
@@ -750,7 +738,7 @@ namespace Effekseer.GUI.Inspector
 				swig.TableFlags.SizingFixedFit | swig.TableFlags.SizingStretchProp |
 				swig.TableFlags.NoSavedSettings))
 			{
-				// set width of table max
+				// set the table width to maximum
 				Manager.NativeManager.TableNextRow();
 				Manager.NativeManager.TableSetColumnIndex(0);
 				Manager.NativeManager.PushItemWidth(-1);
