@@ -176,7 +176,7 @@ namespace Effekseer.GUI.Inspector
 
 			inspector.Update(CoreContext.SelectedEffect.Context,
 				CoreContext.SelectedEffectNode,
-				typeof(Asset.Effect.PositionParameter));
+				typeof(Asset.Effect.RotationParameter));
 
 			CoreContext.SelectedEffect.Context.CommandManager.EndEditFields(
 				CoreContext.SelectedEffectNode,
@@ -204,7 +204,7 @@ namespace Effekseer.GUI.Inspector
 
 			if (inspector.Drop(path, CoreContext.SelectedEffect.Context,
 				CoreContext.SelectedEffectNode,
-				typeof(Asset.Effect.PositionParameter)))
+				typeof(Asset.Effect.RotationParameter)))
 			{
 				handle = true;
 			}
