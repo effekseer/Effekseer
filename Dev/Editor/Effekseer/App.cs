@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Effekseer.GUI;
+using Effekseer.GUI.Dock;
 using Effekseer.swig;
 
 namespace Effekseer
@@ -49,8 +50,8 @@ namespace Effekseer
 				typeof(Dock.AdvancedRenderCommonValues),
 
 				typeof(GUI.Inspector.InspectorPanel),
-				typeof(GUI.Inspector.LocationValuesPanel),
-				typeof(GUI.Inspector.RotationValuesPanel),
+				typeof(DockPanels.LocationValues),
+				typeof(DockPanels.RotationValues),
 				typeof(Dock.NodeTreeEditor),
 				typeof(Dock.Profiler),
 				typeof(Dock.GpuParticlesValues),

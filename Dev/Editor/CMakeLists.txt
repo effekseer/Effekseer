@@ -86,6 +86,7 @@ file(GLOB files
     Effekseer/Data/*.cs
     Effekseer/GUI/*.cs
     Effekseer/GUI/Dock/*.cs
+    Effekseer/GUI/DockPanels/*.cs
     Effekseer/GUI/Menu/*.cs
     Effekseer/Properties/*.cs
     Effekseer/Utils/*.cs
