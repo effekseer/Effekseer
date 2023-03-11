@@ -528,7 +528,6 @@ public:
 		@brief
 		\~English	Specify whether maintain gamma color in a linear color space
 		\~Japanese	リニア空間でもガンマカラーを維持するようにするか、を設定する。
-
 	*/
 	virtual void SetMaintainGammaColorInLinearColorSpace(bool value);
 
@@ -640,13 +639,16 @@ public:
 	@param	isExtensionsEnabled
 	\~english	whether does make extensions enabled.
 	\~japanese	拡張を有効にするかどうか
+	@param	isPremultipliedAlphaEnabled
+	\~English	Specify whether PremultipliedAlpha is enabled and rendered.
+	\~Japanese	PremultipliedAlphaを有効にして描画するかどうか、設定する。
 	@return
 	\~english	instance
 	\~japanese	インスタンス
 	*/
-	static RendererRef Create(int32_t squareMaxCount, OpenGLDeviceType deviceType = OpenGLDeviceType::OpenGL2, bool isExtensionsEnabled = true);
+	static RendererRef Create(int32_t squareMaxCount, OpenGLDeviceType deviceType = OpenGLDeviceType::OpenGL2, bool isExtensionsEnabled = true, bool isPremultipliedAlphaEnabled = false);
 
-	static RendererRef Create(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, int32_t squareMaxCount);
+	static RendererRef Create(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, int32_t squareMaxCount, bool isPremultipliedAlphaEnabled = false);
 
 	/**
 		@brief	最大描画スプライト数を取得する。

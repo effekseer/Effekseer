@@ -88,19 +88,46 @@ void RenderState::Update(bool forced)
 		else if (m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Blend)
 		{
 			m_renderer->GetDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-			m_renderer->GetDevice()->SetRenderState(D3DRS_SEPARATEALPHABLENDENABLE, FALSE);
+			m_renderer->GetDevice()->SetRenderState(D3DRS_SEPARATEALPHABLENDENABLE, TRUE);
 			m_renderer->GetDevice()->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
-			m_renderer->GetDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
-			m_renderer->GetDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+			m_renderer->GetDevice()->SetRenderState(D3DRS_BLENDOPALPHA, D3DBLENDOP_ADD);
+			if (m_renderer->GetImpl()->IsPremultipliedAlphaEnabled)
+			{
+				m_renderer->GetDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+				m_renderer->GetDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+				m_renderer->GetDevice()->SetRenderState(D3DRS_SRCBLENDALPHA, D3DBLEND_ONE);
+				m_renderer->GetDevice()->SetRenderState(D3DRS_DESTBLENDALPHA, D3DBLEND_INVSRCALPHA);
+			}
+			else
+			{
+				m_renderer->GetDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+				m_renderer->GetDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+				m_renderer->GetDevice()->SetRenderState(D3DRS_DESTBLENDALPHA, D3DBLEND_ONE);
+				m_renderer->GetDevice()->SetRenderState(D3DRS_SRCBLENDALPHA, D3DBLEND_ONE);
+			}
 			m_renderer->GetDevice()->SetRenderState(D3DRS_ALPHAREF, 0);
 		}
 		else if (m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Add)
 		{
 			m_renderer->GetDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-			m_renderer->GetDevice()->SetRenderState(D3DRS_SEPARATEALPHABLENDENABLE, FALSE);
+			m_renderer->GetDevice()->SetRenderState(D3DRS_SEPARATEALPHABLENDENABLE, TRUE);
 			m_renderer->GetDevice()->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
-			m_renderer->GetDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
-			m_renderer->GetDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+			m_renderer->GetDevice()->SetRenderState(D3DRS_BLENDOPALPHA, D3DBLENDOP_ADD);
+
+			if (m_renderer->GetImpl()->IsPremultipliedAlphaEnabled)
+			{
+				m_renderer->GetDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+				m_renderer->GetDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+				m_renderer->GetDevice()->SetRenderState(D3DRS_SRCBLENDALPHA, D3DBLEND_ZERO);
+				m_renderer->GetDevice()->SetRenderState(D3DRS_DESTBLENDALPHA, D3DBLEND_ONE);
+			}
+			else
+			{
+				m_renderer->GetDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+				m_renderer->GetDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+				m_renderer->GetDevice()->SetRenderState(D3DRS_SRCBLENDALPHA, D3DBLEND_ONE);
+				m_renderer->GetDevice()->SetRenderState(D3DRS_DESTBLENDALPHA, D3DBLEND_ONE);
+			}
 			m_renderer->GetDevice()->SetRenderState(D3DRS_ALPHAREF, 0);
 		}
 		else if (m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Sub)

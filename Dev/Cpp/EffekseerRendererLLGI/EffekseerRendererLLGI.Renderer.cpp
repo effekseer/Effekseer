@@ -206,16 +206,40 @@ LLGI::PipelineState* RendererImplemented::GetOrCreatePiplineState()
 
 	if (key.state.AlphaBlend == Effekseer::AlphaBlendType::Blend)
 	{
-		piplineState->BlendDstFunc = LLGI::BlendFuncType::OneMinusSrcAlpha;
-		piplineState->BlendSrcFunc = LLGI::BlendFuncType::SrcAlpha;
-		piplineState->BlendEquationRGB = LLGI::BlendEquationType::Add;
+		if (GetImpl()->IsPremultipliedAlphaEnabled)
+		{
+			piplineState->BlendEquationRGB = LLGI::BlendEquationType::Add;
+			piplineState->BlendEquationAlpha = LLGI::BlendEquationType::Add;
+			piplineState->BlendSrcFunc = LLGI::BlendFuncType::SrcAlpha;
+			piplineState->BlendDstFunc = LLGI::BlendFuncType::OneMinusSrcAlpha;
+			piplineState->BlendSrcFuncAlpha = LLGI::BlendFuncType::One;
+			piplineState->BlendDstFuncAlpha = LLGI::BlendFuncType::OneMinusSrcAlpha;
+		}
+		else
+		{
+			piplineState->BlendEquationRGB = LLGI::BlendEquationType::Add;
+			piplineState->BlendSrcFunc = LLGI::BlendFuncType::SrcAlpha;
+			piplineState->BlendDstFunc = LLGI::BlendFuncType::OneMinusSrcAlpha;
+		}
 	}
 
 	if (key.state.AlphaBlend == Effekseer::AlphaBlendType::Add)
 	{
-		piplineState->BlendDstFunc = LLGI::BlendFuncType::One;
-		piplineState->BlendSrcFunc = LLGI::BlendFuncType::SrcAlpha;
-		piplineState->BlendEquationRGB = LLGI::BlendEquationType::Add;
+		if (GetImpl()->IsPremultipliedAlphaEnabled)
+		{
+			piplineState->BlendEquationRGB = LLGI::BlendEquationType::Add;
+			piplineState->BlendEquationAlpha = LLGI::BlendEquationType::Add;
+			piplineState->BlendSrcFunc = LLGI::BlendFuncType::SrcAlpha;
+			piplineState->BlendDstFunc = LLGI::BlendFuncType::One;
+			piplineState->BlendSrcFuncAlpha = LLGI::BlendFuncType::Zero;
+			piplineState->BlendDstFuncAlpha = LLGI::BlendFuncType::One;
+		}
+		else
+		{
+			piplineState->BlendEquationRGB = LLGI::BlendEquationType::Add;
+			piplineState->BlendSrcFunc = LLGI::BlendFuncType::SrcAlpha;
+			piplineState->BlendDstFunc = LLGI::BlendFuncType::One;
+		}
 	}
 
 	if (key.state.AlphaBlend == Effekseer::AlphaBlendType::Sub)
@@ -356,7 +380,8 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 	ChangeRenderPassPipelineState(key);
 	isReversedDepth_ = isReversedDepth;
 
-	LLGI::SetLogger([](LLGI::LogType type, const std::string& message) { std::cout << message << std::endl; });
+	LLGI::SetLogger([](LLGI::LogType type, const std::string& message)
+					{ std::cout << message << std::endl; });
 
 	// Generate vertex buffer
 	{

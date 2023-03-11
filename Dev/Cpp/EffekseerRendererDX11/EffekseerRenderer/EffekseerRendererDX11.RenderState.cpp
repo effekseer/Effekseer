@@ -77,14 +77,38 @@ RenderState::RenderState(RendererImplemented* renderer, D3D11_COMPARISON_FUNC de
 				Desc.RenderTarget[k].BlendOp = D3D11_BLEND_OP_ADD;
 				break;
 			case ::Effekseer::AlphaBlendType::Blend:
-				Desc.RenderTarget[k].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-				Desc.RenderTarget[k].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-				Desc.RenderTarget[k].BlendOp = D3D11_BLEND_OP_ADD;
+				if (m_renderer->GetImpl()->IsPremultipliedAlphaEnabled)
+				{
+					Desc.RenderTarget[k].BlendOp = D3D11_BLEND_OP_ADD;
+					Desc.RenderTarget[k].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+					Desc.RenderTarget[k].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+					Desc.RenderTarget[k].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+					Desc.RenderTarget[k].SrcBlendAlpha = D3D11_BLEND_ONE;
+					Desc.RenderTarget[k].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
+				}
+				else
+				{
+					Desc.RenderTarget[k].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+					Desc.RenderTarget[k].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+					Desc.RenderTarget[k].BlendOp = D3D11_BLEND_OP_ADD;
+				}
 				break;
 			case ::Effekseer::AlphaBlendType::Add:
-				Desc.RenderTarget[k].DestBlend = D3D11_BLEND_ONE;
-				Desc.RenderTarget[k].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-				Desc.RenderTarget[k].BlendOp = D3D11_BLEND_OP_ADD;
+				if (m_renderer->GetImpl()->IsPremultipliedAlphaEnabled)
+				{
+					Desc.RenderTarget[k].BlendOp = D3D11_BLEND_OP_ADD;
+					Desc.RenderTarget[k].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+					Desc.RenderTarget[k].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+					Desc.RenderTarget[k].DestBlend = D3D11_BLEND_ONE;
+					Desc.RenderTarget[k].SrcBlendAlpha = D3D11_BLEND_ZERO;
+					Desc.RenderTarget[k].DestBlendAlpha = D3D11_BLEND_ONE;
+				}
+				else
+				{
+					Desc.RenderTarget[k].BlendOp = D3D11_BLEND_OP_ADD;
+					Desc.RenderTarget[k].DestBlend = D3D11_BLEND_ONE;
+					Desc.RenderTarget[k].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+				}
 				break;
 			case ::Effekseer::AlphaBlendType::Sub:
 				Desc.RenderTarget[k].DestBlend = D3D11_BLEND_ONE;

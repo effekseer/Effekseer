@@ -466,7 +466,6 @@ public:
 		@brief
 		\~English	Specify whether maintain gamma color in a linear color space
 		\~Japanese	リニア空間でもガンマカラーを維持するようにするか、を設定する。
-
 	*/
 	virtual void SetMaintainGammaColorInLinearColorSpace(bool value);
 

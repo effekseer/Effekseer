@@ -135,11 +135,25 @@ void RenderState::Update(bool forced)
 				GLExt::glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
 				if (m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Blend)
 				{
-					GLExt::glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
+					if (m_renderer->GetImpl()->IsPremultipliedAlphaEnabled)
+					{
+						GLExt::glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+					}
+					else
+					{
+						GLExt::glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
+					}
 				}
 				else if (m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Add)
 				{
-					GLExt::glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE, GL_ONE, GL_ONE);
+					if (m_renderer->GetImpl()->IsPremultipliedAlphaEnabled)
+					{
+						GLExt::glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE, GL_ZERO, GL_ONE);
+					}
+					else
+					{
+						GLExt::glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE, GL_ONE, GL_ONE);
+					}
 				}
 				else if (m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Mul)
 				{

@@ -57,6 +57,8 @@ public:
 
 	bool MaintainGammaColorInLinearColorSpace = false;
 
+	bool IsPremultipliedAlphaEnabled = false;
+
 	Impl() = default;
 	~Impl();
 
