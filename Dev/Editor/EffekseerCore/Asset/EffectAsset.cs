@@ -369,7 +369,7 @@ namespace Effekseer.Asset
 
 		public Vector3WithRange Vector3WithRangeTest = new Vector3WithRange();
 
-		public TextureAsset TextureTest = null;
+		public TextureAsset TextureTest = new TextureAsset();
 
 		public Color ColorTest = new Color();
 	}
