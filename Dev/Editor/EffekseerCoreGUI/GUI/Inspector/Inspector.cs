@@ -1,10 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
-using System.IO;
 using System.Linq;
-using Effekseer.GUI.BindableComponent;
+using System.Reflection;
 
 namespace Effekseer.GUI.Inspector
 {
@@ -477,30 +475,21 @@ namespace Effekseer.GUI.Inspector
 			}
 
 			// update subfields
-			var subFields = valueType.GetFields();
-			bool shownSubFields = false;
-			foreach (var (f, i) in subFields.Select((_, i) => Tuple.Create(_, i)))
+			if (!(GuiDictionary.HasFunction(guiFunctionKey)))
 			{
-				if (!GuiDictionary.HasDropFunction(guiFunctionKey) &&
-				value.GetType().GetFields().Length > 0 &&
-				!value.GetType().IsEnum &&
-				guiInfo.SubElements.Count > i)
+				var subFields = valueType.GetFields();
+				int i = 0;
+				foreach (var f in subFields)
 				{
-					UpdateVisiblityControllers(value);
-					elementGetterSetterArray.Push(value, f);
-					bool editted = DropObjectGuis(path, context, targetNode, elementGetterSetterArray, guiInfo.SubElements[i]);
-					elementGetterSetterArray.Pop();
-					shownSubFields = true;
-
-					if (editted)
+					if (!isList && guiInfo.SubElements.Count > i)
 					{
-						return true;
+						UpdateVisiblityControllers(value);
+						elementGetterSetterArray.Push(value, f);
+						bool editted = DropObjectGuis(path, context, targetNode, elementGetterSetterArray, guiInfo.SubElements[i]);
+						elementGetterSetterArray.Pop();
 					}
+					++i;
 				}
-			}
-			if (shownSubFields)
-			{
-				return false;
 			}
 
 			if (GuiDictionary.HasDropFunction(guiFunctionKey))
