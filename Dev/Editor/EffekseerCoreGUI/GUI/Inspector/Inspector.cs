@@ -580,14 +580,13 @@ namespace Effekseer.GUI.Inspector
 			var regionAvail = Manager.NativeManager.GetContentRegionAvail();
 
 			if (Manager.NativeManager.BeginTable("Table", 2,
-				swig.TableFlags.Resizable |
 				swig.TableFlags.BordersInnerV | swig.TableFlags.BordersOuterH |
 				swig.TableFlags.SizingFixedFit | swig.TableFlags.SizingStretchProp |
 				swig.TableFlags.NoSavedSettings))
 			{
 				// set columns width
 				Manager.NativeManager.TableSetupColumn("", swig.TableColumnFlags.WidthFixed, (int)(regionAvail.X * 0.3f));
-				Manager.NativeManager.TableSetupColumn("", swig.TableColumnFlags.WidthFixed);
+				Manager.NativeManager.TableSetupColumn("", swig.TableColumnFlags.WidthStretch);
 				// set controls width to maximum
 				Manager.NativeManager.TableNextRow();
 				Manager.NativeManager.TableSetColumnIndex(0);
