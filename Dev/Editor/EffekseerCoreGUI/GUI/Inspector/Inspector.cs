@@ -617,6 +617,12 @@ namespace Effekseer.GUI.Inspector
 
 		public bool Drop(string path, Asset.EffectAssetEditorContext context, Asset.Node targetNode, Type targetType = null)
 		{
+			// skip if GuiInfo is not yet generated
+			if (RootGuiInfo.SubElements.Count <= 0)
+			{
+				return false;
+			}
+
 			var fields = targetNode.GetType().GetFields();
 			int i = 0;
 			var elementGetterSetterArray = new PartsTreeSystem.ElementGetterSetterArray();
