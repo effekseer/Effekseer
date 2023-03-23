@@ -577,6 +577,7 @@ namespace Effekseer.GUI.Inspector
 			}
 			LastTarget = targetNode;
 
+			var regionAvail = Manager.NativeManager.GetContentRegionAvail();
 
 			if (Manager.NativeManager.BeginTable("Table", 2,
 				swig.TableFlags.Resizable |
@@ -584,13 +585,15 @@ namespace Effekseer.GUI.Inspector
 				swig.TableFlags.SizingFixedFit | swig.TableFlags.SizingStretchProp |
 				swig.TableFlags.NoSavedSettings))
 			{
-				// set the table width to maximum
+				// set columns width
+				Manager.NativeManager.TableSetupColumn("", swig.TableColumnFlags.WidthFixed, (int)(regionAvail.X * 0.3f));
+				Manager.NativeManager.TableSetupColumn("", swig.TableColumnFlags.WidthFixed);
+				// set controls width to maximum
 				Manager.NativeManager.TableNextRow();
 				Manager.NativeManager.TableSetColumnIndex(0);
 				Manager.NativeManager.PushItemWidth(-1);
 				Manager.NativeManager.TableSetColumnIndex(1);
 				Manager.NativeManager.PushItemWidth(-1);
-
 
 				var fields = targetNode.GetType().GetFields();
 				int i = 0;
