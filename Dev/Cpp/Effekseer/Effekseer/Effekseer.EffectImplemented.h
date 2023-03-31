@@ -353,6 +353,11 @@ public:
 	{
 		return this;
 	}
+
+	std::array<float, 4> GetDefaultDynamicInputs() const override
+	{
+		return defaultDynamicInputs;
+	}
 };
 //----------------------------------------------------------------------------------
 //

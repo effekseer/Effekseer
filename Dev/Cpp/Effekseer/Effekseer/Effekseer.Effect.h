@@ -603,6 +603,13 @@ public:
 	*/
 	virtual EffectTerm CalculateTerm() const = 0;
 
+	/**
+	@brief
+	\~English	Get values of default dynamic inputs.
+	\~Japanese	動的パラメーターのデフォルトの値を取得する。
+	*/
+	virtual std::array<float, 4> GetDefaultDynamicInputs() const = 0;
+
 	virtual EffectImplemented* GetImplemented() = 0;
 	virtual const EffectImplemented* GetImplemented() const = 0;
 };
