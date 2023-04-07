@@ -395,6 +395,8 @@ bool Initialize(OpenGLDeviceType deviceType, bool isExtensionsEnabled)
 #endif
 
 #if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__) || defined(__EFFEKSEER_RENDERER_GLES3__)
+
+#if !defined(__APPLE__)
 	GET_PROC_REQ(glGenQueriesEXT);
 	GET_PROC_REQ(glDeleteQueriesEXT);
 	GET_PROC_REQ(glBeginQueryEXT);
@@ -403,6 +405,7 @@ bool Initialize(OpenGLDeviceType deviceType, bool isExtensionsEnabled)
 	GET_PROC_REQ(glGetQueryObjectuivEXT);
 	GET_PROC_REQ(glGetQueryObjecti64vEXT);
 	GET_PROC_REQ(glGetQueryObjectui64vEXT);
+#endif
 
 	g_isSupportedQueries = (g_glGenQueriesEXT && g_glDeleteQueriesEXT && g_glBeginQueryEXT && g_glEndQueryEXT && g_glGetQueryObjectuivEXT && g_glGetQueryObjectivEXT && g_glGetQueryObjectui64vEXT && g_glGetQueryObjecti64vEXT);
 #endif
