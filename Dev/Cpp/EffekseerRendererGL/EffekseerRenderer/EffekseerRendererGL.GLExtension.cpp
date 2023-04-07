@@ -237,7 +237,7 @@ static FP_glDrawElementsInstancedANGLE g_glDrawElementsInstancedANGLE = nullptr;
 
 #endif
 
-#if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__)
+#if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__) || defined(__EFFEKSEER_RENDERER_GLES3__)
 
 typedef void(EFK_STDCALL* FP_glGenQueriesEXT)(GLsizei n, GLuint* ids);
 typedef void(EFK_STDCALL* FP_glDeleteQueriesEXT)(GLsizei n, const GLuint* ids);
@@ -392,10 +392,9 @@ bool Initialize(OpenGLDeviceType deviceType, bool isExtensionsEnabled)
 	g_isSupportedVertexArray = (g_glGenVertexArrays && g_glDeleteVertexArrays && g_glBindVertexArray);
 	g_isSurrpotedBufferRange = (g_glMapBufferRange && g_glUnmapBuffer);
 	g_isSurrpotedMapBuffer = (g_glMapBuffer && g_glUnmapBuffer);
-
 #endif
 
-#if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__)
+#if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__) || defined(__EFFEKSEER_RENDERER_GLES3__)
 	GET_PROC_REQ(glGenQueriesEXT);
 	GET_PROC_REQ(glDeleteQueriesEXT);
 	GET_PROC_REQ(glBeginQueryEXT);
@@ -1072,7 +1071,7 @@ void glCopyTexSubImage3D(GLenum target,
 
 void glGenQueries(GLsizei n, GLuint* ids)
 {
-#if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__)
+#if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__) || defined(__EFFEKSEER_RENDERER_GLES3__)
 	g_glGenQueriesEXT(n, ids);
 #else
 	::glGenQueries(n, ids);
@@ -1081,7 +1080,7 @@ void glGenQueries(GLsizei n, GLuint* ids)
 
 void glDeleteQueries(GLsizei n, const GLuint* ids)
 {
-#if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__)
+#if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__) || defined(__EFFEKSEER_RENDERER_GLES3__)
 	g_glDeleteQueriesEXT(n, ids);
 #else
 	::glDeleteQueries(n, ids);
@@ -1090,7 +1089,7 @@ void glDeleteQueries(GLsizei n, const GLuint* ids)
 
 void glBeginQuery(GLenum target, GLuint id)
 {
-#if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__)
+#if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__) || defined(__EFFEKSEER_RENDERER_GLES3__)
 	g_glBeginQueryEXT(target, id);
 #else
 	::glBeginQuery(target, id);
@@ -1099,7 +1098,7 @@ void glBeginQuery(GLenum target, GLuint id)
 
 void glEndQuery(GLenum target)
 {
-#if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__)
+#if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__) || defined(__EFFEKSEER_RENDERER_GLES3__)
 	g_glEndQueryEXT(target);
 #else
 	::glEndQuery(target);
@@ -1108,7 +1107,7 @@ void glEndQuery(GLenum target)
 
 void glGetQueryObjectiv(GLuint id, GLenum pname, GLint* params)
 {
-#if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__)
+#if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__) || defined(__EFFEKSEER_RENDERER_GLES3__)
 	g_glGetQueryObjectivEXT(id, pname, params);
 #else
 	::glGetQueryObjectiv(id, pname, params);
@@ -1117,7 +1116,7 @@ void glGetQueryObjectiv(GLuint id, GLenum pname, GLint* params)
 
 void glGetQueryObjectuiv(GLuint id, GLenum pname, GLuint* params)
 {
-#if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__)
+#if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__) || defined(__EFFEKSEER_RENDERER_GLES3__)
 	g_glGetQueryObjectuivEXT(id, pname, params);
 #else
 	::glGetQueryObjectuiv(id, pname, params);
@@ -1126,7 +1125,7 @@ void glGetQueryObjectuiv(GLuint id, GLenum pname, GLuint* params)
 
 void glGetQueryObjecti64v(GLuint id, GLenum pname, int64_t* params)
 {
-#if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__)
+#if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__) || defined(__EFFEKSEER_RENDERER_GLES3__)
 	g_glGetQueryObjecti64vEXT(id, pname, params);
 #else
 	::glGetQueryObjecti64v(id, pname, params);
@@ -1135,7 +1134,7 @@ void glGetQueryObjecti64v(GLuint id, GLenum pname, int64_t* params)
 
 void glGetQueryObjectui64v(GLuint id, GLenum pname, uint64_t* params)
 {
-#if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__)
+#if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__) || defined(__EFFEKSEER_RENDERER_GLES3__)
 	g_glGetQueryObjectui64vEXT(id, pname, params);
 #else
 	::glGetQueryObjectui64v(id, pname, params);
