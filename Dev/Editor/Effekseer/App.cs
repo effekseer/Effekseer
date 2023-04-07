@@ -51,6 +51,9 @@ namespace Effekseer
 				typeof(GUI.Inspector.InspectorPanel),
 				typeof(DockPanels.LocationValues),
 				typeof(DockPanels.RotationValues),
+				typeof(DockPanels.RendererValues),
+				typeof(DockPanels.CommonValues),
+				typeof(DockPanels.Dymamic),
 				typeof(Dock.NodeTreeEditor),
 				typeof(Dock.Profiler),
 			};
