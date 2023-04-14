@@ -189,16 +189,21 @@ namespace Effekseer.GUI.Inspector
 		}
 
 		private void UpdateObjectGuis(Asset.EffectAssetEditorContext context
-			, object targetNode, PartsTreeSystem.ElementGetterSetterArray elementGetterSetterArray, InspectorGuiInfo guiInfo)
+			, Asset.Node targetNode, object targetObject
+			, PartsTreeSystem.ElementGetterSetterArray elementGetterSetterArray, InspectorGuiInfo guiInfo)
 		{
 			var field = elementGetterSetterArray.FieldInfos.Last();
 
 			bool isValueChanged = false;
 
-			var prop = context.EditorProperty.Properties.FirstOrDefault(_ => _.InstanceID == ((Asset.Node)targetNode)?.InstanceID);
-			if (prop != null)
+			
+			if (targetNode != null)
 			{
-				isValueChanged = prop.IsValueEdited(elementGetterSetterArray.Names);
+				var prop = context.EditorProperty.Properties.FirstOrDefault(_ => _.InstanceID == targetNode?.InstanceID);
+				if (prop != null)
+				{
+					isValueChanged = prop.IsValueEdited(elementGetterSetterArray.Names);
+				}
 			}
 
 			var value = elementGetterSetterArray.GetValue();
@@ -297,7 +302,7 @@ namespace Effekseer.GUI.Inspector
 					{
 						UpdateVisiblityControllers(value);
 						elementGetterSetterArray.Push(value, f);
-						UpdateObjectGuis(context, targetNode, elementGetterSetterArray, guiInfo.SubElements[i]);
+						UpdateObjectGuis(context, targetNode, targetObject, elementGetterSetterArray, guiInfo.SubElements[i]);
 						elementGetterSetterArray.Pop();
 					}
 					++i;
@@ -387,8 +392,17 @@ namespace Effekseer.GUI.Inspector
 					}
 					if (isEdited)
 					{
-						field.SetValue(targetNode, arrayValue);
-						context.CommandManager.NotifyEditFields((PartsTreeSystem.IInstance)targetNode);
+						field.SetValue(targetObject, arrayValue);
+
+						var t = targetObject.GetType();
+						if (targetNode != null)
+						{
+							context.CommandManager.NotifyEditFields((PartsTreeSystem.IInstance)targetObject);
+						}
+						else
+						{
+							context.CommandManager.NotifyEditFields((PartsTreeSystem.Asset)targetObject);
+						}
 					}
 				}
 				else
@@ -397,9 +411,15 @@ namespace Effekseer.GUI.Inspector
 					if (result.isEdited)
 					{
 						elementGetterSetterArray.SetValue(result.value);
-						context.CommandManager.NotifyEditFields((PartsTreeSystem.IInstance)targetNode);
+						if (targetNode != null)
+						{
+							context.CommandManager.NotifyEditFields(targetNode);
+						}
+						else
+						{
+							context.CommandManager.NotifyEditFields((PartsTreeSystem.Asset)targetObject);
+						}
 					}
-
 				}
 
 				if (isValueChanged)
@@ -426,12 +446,12 @@ namespace Effekseer.GUI.Inspector
 		/// </summary>
 		/// <param name="path"></param>
 		/// <param name="context"></param>
-		/// <param name="targetNode"></param>
+		/// <param name="targetObject"></param>
 		/// <param name="elementGetterSetterArray"></param>
 		/// <param name="guiInfo"></param>
 		/// <returns></returns>
 		private bool DropObjectGuis(string path, Asset.EffectAssetEditorContext context
-			, object targetNode, PartsTreeSystem.ElementGetterSetterArray elementGetterSetterArray, InspectorGuiInfo guiInfo)
+			, object targetObject, PartsTreeSystem.ElementGetterSetterArray elementGetterSetterArray, InspectorGuiInfo guiInfo)
 		{
 			var field = elementGetterSetterArray.FieldInfos.Last();
 			var value = elementGetterSetterArray.GetValue();
@@ -485,7 +505,7 @@ namespace Effekseer.GUI.Inspector
 					{
 						UpdateVisiblityControllers(value);
 						elementGetterSetterArray.Push(value, f);
-						bool editted = DropObjectGuis(path, context, targetNode, elementGetterSetterArray, guiInfo.SubElements[i]);
+						bool editted = DropObjectGuis(path, context, targetObject, elementGetterSetterArray, guiInfo.SubElements[i]);
 						elementGetterSetterArray.Pop();
 					}
 					++i;
@@ -532,8 +552,8 @@ namespace Effekseer.GUI.Inspector
 					}
 					if (isEdited)
 					{
-						field.SetValue(targetNode, arrayValue);
-						context.CommandManager.NotifyEditFields((PartsTreeSystem.IInstance)targetNode);
+						field.SetValue(targetObject, arrayValue);
+						context.CommandManager.NotifyEditFields((PartsTreeSystem.IInstance)targetObject);
 						return true;
 					}
 				}
@@ -543,7 +563,7 @@ namespace Effekseer.GUI.Inspector
 					if (result.isEdited)
 					{
 						elementGetterSetterArray.SetValue(result.value);
-						context.CommandManager.NotifyEditFields((PartsTreeSystem.IInstance)targetNode);
+						context.CommandManager.NotifyEditFields((PartsTreeSystem.IInstance)targetObject);
 						return true;
 					}
 
@@ -564,6 +584,51 @@ namespace Effekseer.GUI.Inspector
 
 		//	GenerateFieldGuiInfos(CoreContext.SelectedEffectNode);
 		//}
+
+		public void Update(Asset.EffectAssetEditorContext context, Asset.Node targetNode, object target)
+		{
+			// Generate field GUI IDs when the target is selected or changed.
+			// TODO: this had better do at OnAfterSelect()
+			if (targetNode?.InstanceID != ((Asset.Node)LastTarget)?.InstanceID)
+			{
+				GenerateFieldGuiInfos(target);
+				LastTarget = targetNode;
+				return;
+			}
+			LastTarget = targetNode;
+
+			var regionAvail = Manager.NativeManager.GetContentRegionAvail();
+
+			if (Manager.NativeManager.BeginTable("Table", 2,
+				swig.TableFlags.BordersInnerV | swig.TableFlags.BordersOuterH |
+				swig.TableFlags.SizingFixedFit | swig.TableFlags.SizingStretchProp |
+				swig.TableFlags.NoSavedSettings))
+			{
+				// set columns width
+				Manager.NativeManager.TableSetupColumn("", swig.TableColumnFlags.WidthFixed, (int)(regionAvail.X * 0.3f));
+				Manager.NativeManager.TableSetupColumn("", swig.TableColumnFlags.WidthStretch);
+				// set controls width to maximum
+				Manager.NativeManager.TableNextRow();
+				Manager.NativeManager.TableSetColumnIndex(0);
+				Manager.NativeManager.PushItemWidth(-1);
+				Manager.NativeManager.TableSetColumnIndex(1);
+				Manager.NativeManager.PushItemWidth(-1);
+
+				var fields = target.GetType().GetFields();
+				int i = 0;
+				var elementGetterSetterArray = new PartsTreeSystem.ElementGetterSetterArray();
+				foreach (var field in fields)
+				{
+					elementGetterSetterArray.Push(target, field);
+					UpdateVisiblityControllers(target);
+					UpdateObjectGuis(context, targetNode, target, elementGetterSetterArray, RootGuiInfo.SubElements[i]);
+					elementGetterSetterArray.Pop();
+					++i;
+				}
+			}
+			Manager.NativeManager.EndTable();
+			Manager.NativeManager.Separator();
+		}
 
 		public void Update(Asset.EffectAssetEditorContext context, Asset.Node targetNode, Type targetType = null)
 		{
@@ -606,7 +671,53 @@ namespace Effekseer.GUI.Inspector
 
 					elementGetterSetterArray.Push(targetNode, field);
 					UpdateVisiblityControllers(targetNode);
-					UpdateObjectGuis(context, targetNode, elementGetterSetterArray, RootGuiInfo.SubElements[i]);
+					UpdateObjectGuis(context, targetNode, targetNode, elementGetterSetterArray, RootGuiInfo.SubElements[i]);
+					elementGetterSetterArray.Pop();
+					++i;
+				}
+			}
+			Manager.NativeManager.EndTable();
+			Manager.NativeManager.Separator();
+		}
+
+
+		public void Update(Asset.EffectAssetEditorContext context, PartsTreeSystem.Asset targetAsset)
+		{
+			// Generate field GUI IDs when the target is selected or changed.
+			// TODO: this had better do at OnAfterSelect()
+			if (targetAsset != null && !ReferenceEquals(targetAsset, LastTarget))
+			{
+				GenerateFieldGuiInfos(targetAsset);
+				LastTarget = targetAsset;
+				return;
+			}
+			LastTarget = targetAsset;
+
+			var regionAvail = Manager.NativeManager.GetContentRegionAvail();
+
+			if (Manager.NativeManager.BeginTable("Table", 2,
+				swig.TableFlags.BordersInnerV | swig.TableFlags.BordersOuterH |
+				swig.TableFlags.SizingFixedFit | swig.TableFlags.SizingStretchProp |
+				swig.TableFlags.NoSavedSettings))
+			{
+				// set columns width
+				Manager.NativeManager.TableSetupColumn("", swig.TableColumnFlags.WidthFixed, (int)(regionAvail.X * 0.3f));
+				Manager.NativeManager.TableSetupColumn("", swig.TableColumnFlags.WidthStretch);
+				// set controls width to maximum
+				Manager.NativeManager.TableNextRow();
+				Manager.NativeManager.TableSetColumnIndex(0);
+				Manager.NativeManager.PushItemWidth(-1);
+				Manager.NativeManager.TableSetColumnIndex(1);
+				Manager.NativeManager.PushItemWidth(-1);
+
+				var fields = targetAsset.GetType().GetFields();
+				int i = 0;
+				var elementGetterSetterArray = new PartsTreeSystem.ElementGetterSetterArray();
+				foreach (var field in fields)
+				{
+					elementGetterSetterArray.Push(targetAsset, field);
+					UpdateVisiblityControllers(targetAsset);
+					UpdateObjectGuis(context, null, targetAsset, elementGetterSetterArray, RootGuiInfo.SubElements[i]);
 					elementGetterSetterArray.Pop();
 					++i;
 				}
