@@ -1,5 +1,3 @@
-
-
 using Effekseer.GUI;
 using Effekseer;
 using Effekseer.GUI.Inspector;
@@ -10,13 +8,15 @@ namespace Effekseer.DockPanels
 {
 	public class Dymamic : GUI.Dock.DockPanel
 	{
-		Inspector inspector;
+		Inspector equationInspector;
+
+		int selectedEquaitionIndex = 0;
 
 		string compileResult = string.Empty;
 
 		public Dymamic()
 		{
-			inspector = new Inspector();
+			equationInspector = new Inspector();
 			Label = Icons.PanelDynamicParams + "Inspector_DynamicParameter###Inspector_DynamicParameter";
 
 			TabToolTip = Resources.GetString("DynamicParameter_Name");
@@ -47,10 +47,40 @@ namespace Effekseer.DockPanels
 
 			Manager.NativeManager.PushItemWidth(width - Manager.NativeManager.GetTextLineHeight() * 5.5f);
 
-			// TODO insert combo of DynamicEquations here
-			// this is a dummy
-			if (Manager.NativeManager.BeginCombo("", "AAAAAA", swig.ComboFlags.None))
+			// combo of DynamicEquations
+			if (CoreContext.SelectedEffect.Asset.DynamicEquations.Count <= selectedEquaitionIndex)
 			{
+				selectedEquaitionIndex = 0;
+			}
+			var selectedEquation = CoreContext.SelectedEffect.Asset.DynamicEquations.Count > selectedEquaitionIndex ? CoreContext.SelectedEffect.Asset.DynamicEquations[selectedEquaitionIndex] : null;
+			string comboLabel = selectedEquation != null ? selectedEquation.Name : string.Empty;
+			if (Manager.NativeManager.BeginCombo("###Selected", comboLabel, swig.ComboFlags.None))
+			{
+				int i = 0;
+				foreach (var equation in CoreContext.SelectedEffect.Asset.DynamicEquations)
+				{
+					bool isSelected = ReferenceEquals(equation, selectedEquation);
+
+					string name = string.Empty;
+					if (equation.Name != string.Empty)
+					{
+						name = equation.Name + "###ObjName" + i.ToString();
+					}
+					else
+					{
+						name = "(Noname)" + "###ObjName" + i.ToString();
+					}
+
+					if (Manager.NativeManager.Selectable(name, isSelected))
+					{
+						selectedEquaitionIndex = i;
+					}
+					if (isSelected)
+					{
+						Manager.NativeManager.SetItemDefaultFocus();
+					}
+					++i;
+				}
 
 				Manager.NativeManager.EndCombo();
 			}
@@ -62,22 +92,41 @@ namespace Effekseer.DockPanels
 
 			if (Manager.NativeManager.Button(Resources.GetString("DynamicAdd") + "###DynamicAdd"))
 			{
-				Core.Dynamic.Equations.New();
+				var newEquation = new Asset.DynamicEquation();
+				newEquation.Name = "New Expression";
+				newEquation.Code = "@O.x = @In0\n@O.y = @In1";
+				CoreContext.SelectedEffect.Asset.DynamicEquations.Add(newEquation);
 			}
 
 			Manager.NativeManager.SameLine();
 
 			if (Manager.NativeManager.Button(Resources.GetString("DynamicDelete") + "###DynamicDelete"))
 			{
-				Core.Dynamic.Equations.Delete(Core.Dynamic.Equations.Selected);
+				CoreContext.SelectedEffect.Asset.DynamicEquations.Remove(selectedEquation);
 			}
 
-			// TODO insert inspector of DynamicEquations here
+			// inspector of DynamicEquations
+			if (selectedEquation != null)
+			{
+				CoreContext.SelectedEffect.Context.CommandManager.StartEditFields(
+				selectedEquation, CoreContext.Environment);
+
+				equationInspector.Update(CoreContext.SelectedEffect.Context, selectedEquation);
+
+				CoreContext.SelectedEffect.Context.CommandManager.EndEditFields(
+					selectedEquation, CoreContext.Environment);
 
 
-			Manager.NativeManager.Button(Resources.GetString("Compile") + "###DynamicCompile");
-			// show errors
-			Manager.NativeManager.Text(compileResult);
+				if (Manager.NativeManager.Button(Resources.GetString("Compile") + "###DynamicCompile"))
+				{
+					var compiler = new InternalScript.Compiler();
+					var result = compiler.Compile(selectedEquation.Code);
+
+					compileResult = result.Error != null ? Utils.CompileErrorGenerator.Generate(selectedEquation.Code, result.Error) : "OK";
+				}
+				// show errors
+				Manager.NativeManager.Text(compileResult);
+			}
 
 			// TODO: Remove this when remove the previous version
 			Manager.NativeManager.PopID();
@@ -96,7 +145,7 @@ namespace Effekseer.DockPanels
 				CoreContext.SelectedEffectNode,
 				CoreContext.Environment);
 
-			if (inspector.Drop(path, CoreContext.SelectedEffect.Context,
+			if (equationInspector.Drop(path, CoreContext.SelectedEffect.Context,
 				CoreContext.SelectedEffectNode,
 				typeof(Asset.Effect.RotationParameter)))
 			{
