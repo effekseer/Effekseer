@@ -80,6 +80,18 @@ namespace Effekseer.Asset
 		}
 	}
 
+	[AttributeUsage(
+		AttributeTargets.Property | AttributeTargets.Field,
+	AllowMultiple = false,
+	Inherited = false)]
+	public class TextAreaAttribute : Attribute
+	{
+		public TextAreaAttribute()
+		{
+		}
+	}
+
+
 	public class EffectAssetEnvironment : PartsTreeSystem.Environment
 	{
 		Dictionary<EffectAsset, string> effectAssets = new Dictionary<EffectAsset, string>();
@@ -468,6 +480,7 @@ namespace Effekseer.Asset
 	public class DynamicEquation : PartsTreeSystem.Asset
 	{
 		public string Name = string.Empty;
+		[TextArea]
 		public string Code = string.Empty;
 	}
 

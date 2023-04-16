@@ -78,9 +78,13 @@ namespace Effekseer.GUI.Inspector
 
 		public object UserData { get; set; }
 
+
+		public List<Attribute> Attriubutes { get; private set; }
+
 		public InspectorGuiState(string id)
 		{
 			Id = id;
+			Attriubutes = new List<Attribute>();
 		}
 	}
 
@@ -140,17 +144,21 @@ namespace Effekseer.GUI.Inspector
 		private void GenerateFieldGuiInfos(object target, Type targetType = null)
 		{
 			RootGuiInfo.SubElements.Clear();
+			RootGuiInfo.State.Attriubutes.Clear();
 
-			InspectorGuiInfo generate(object tgt)
+			InspectorGuiInfo generate(object tgtValue, FieldInfo tgtFieldInfo)
 			{
 				InspectorGuiInfo info = new InspectorGuiInfo();
-				if (tgt == null)
-				{
-					return info;
-				}
-				var type = tgt.GetType();
-				info.Name = type.Name;
 				
+				var type = tgtFieldInfo.FieldType;
+				info.Name = type.Name;
+				var attributes = tgtFieldInfo.GetCustomAttributes();
+				foreach (var attr in attributes)
+				{
+					info.State.Attriubutes.Add(attr);
+				}
+
+
 				bool hasGuiFunction = 
 							type.IsEnum ||
 							GuiDictionary.HasFunction(type);
@@ -160,13 +168,19 @@ namespace Effekseer.GUI.Inspector
 				}
 
 				// fields in tgt
-				var fieldsInTgt = tgt.GetType().GetFields();
+				var fieldsInTgt = type.GetFields();
 				foreach (var fieldInTgt in fieldsInTgt)
 				{
-					// visiblity controller attribute
-					UpdateVisiblityControllers(tgt);
-					info.SubElements.Add(generate(fieldInTgt.GetValue(tgt)));
-
+					if (tgtValue != null)
+					{
+						// visiblity controller attribute
+						UpdateVisiblityControllers(tgtValue);
+						info.SubElements.Add(generate(fieldInTgt.GetValue(tgtValue), fieldInTgt));
+					}
+					else
+					{
+						info.SubElements.Add(generate(null, fieldInTgt));
+					}
 				}
 				return info;
 			};
@@ -184,7 +198,7 @@ namespace Effekseer.GUI.Inspector
 					UpdateVisiblityControllers(tgt);
 				}
 				RootGuiInfo.Name = field.Name;
-				RootGuiInfo.SubElements.Add(generate(tgt));
+				RootGuiInfo.SubElements.Add(generate(tgt, field));
 			}
 		}
 
@@ -298,7 +312,7 @@ namespace Effekseer.GUI.Inspector
 				int i = 0;
 				foreach (var f in subFields)
 				{
-					if (!isList && guiInfo.SubElements.Count > i)
+					if (value != null && !isList && guiInfo.SubElements.Count > i)
 					{
 						UpdateVisiblityControllers(value);
 						elementGetterSetterArray.Push(value, f);
