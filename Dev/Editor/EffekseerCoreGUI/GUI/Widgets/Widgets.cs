@@ -146,7 +146,24 @@ namespace Effekseer.GUI.Widgets
 			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
 			if (value is string sValue)
 			{
-				if (Manager.NativeManager.InputText(state.Id, sValue))
+				bool isMultiline = false;
+				var textAreaAttributeWhere = state.Attriubutes.Where(_ => _.GetType() == typeof(Asset.TextAreaAttribute));
+				if (textAreaAttributeWhere.Count() > 0 && textAreaAttributeWhere.First() != null)
+				{
+					isMultiline = true;
+				}
+
+				bool isEdited = false;
+				if (isMultiline)
+				{
+					isEdited = Manager.NativeManager.InputTextMultiline(state.Id, sValue);
+				}
+				else
+				{
+					isEdited = Manager.NativeManager.InputText(state.Id, sValue);
+				}
+
+				if (isEdited)
 				{
 					ret.isEdited = true;
 					ret.value = Manager.NativeManager.GetInputTextResult();
