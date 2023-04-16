@@ -397,11 +397,11 @@ namespace Effekseer.GUI.Inspector
 						var t = targetObject.GetType();
 						if (targetNode != null)
 						{
-							context.CommandManager.NotifyEditFields((PartsTreeSystem.IInstance)targetObject);
+							context?.CommandManager.NotifyEditFields(targetNode);
 						}
 						else
 						{
-							context.CommandManager.NotifyEditFields((PartsTreeSystem.Asset)targetObject);
+							context?.CommandManager.NotifyEditFields((PartsTreeSystem.Asset)targetObject);
 						}
 					}
 				}
@@ -413,11 +413,11 @@ namespace Effekseer.GUI.Inspector
 						elementGetterSetterArray.SetValue(result.value);
 						if (targetNode != null)
 						{
-							context.CommandManager.NotifyEditFields(targetNode);
+							context?.CommandManager.NotifyEditFields(targetNode);
 						}
 						else
 						{
-							context.CommandManager.NotifyEditFields((PartsTreeSystem.Asset)targetObject);
+							context?.CommandManager.NotifyEditFields((PartsTreeSystem.Asset)targetObject);
 						}
 					}
 				}
