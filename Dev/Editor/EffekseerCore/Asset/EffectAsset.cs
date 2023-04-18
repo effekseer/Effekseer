@@ -479,7 +479,9 @@ namespace Effekseer.Asset
 
 	public class DynamicEquation : PartsTreeSystem.Asset
 	{
+		[Key(key = "DynamicName")]
 		public string Name = string.Empty;
+		[Key(key = "DynamicEq")]
 		[TextArea]
 		public string Code = string.Empty;
 	}
