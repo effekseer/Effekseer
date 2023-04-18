@@ -246,6 +246,7 @@ namespace Effekseer.GUI.Inspector
 
 			// key attrs
 			string description = string.Empty;
+			bool enableDescription = true;
 			string labelStr = string.Empty;
 			{
 				var attr = (KeyAttribute)field.GetCustomAttribute(typeof(KeyAttribute));
@@ -257,11 +258,20 @@ namespace Effekseer.GUI.Inspector
 					{
 						labelStr = MultiLanguageTextProvider.GetText(key);
 					}
+					else if (MultiLanguageTextProvider.HasKey(attr.key))
+					{
+						enableDescription = false;
+						labelStr = MultiLanguageTextProvider.GetText(attr.key);
+					}
 
 					key = attr.key + "_Desc";
 					if (MultiLanguageTextProvider.HasKey(key))
 					{
 						description = MultiLanguageTextProvider.GetText(key);
+					}
+					else if (MultiLanguageTextProvider.HasKey(attr.key))
+					{
+						//description = MultiLanguageTextProvider.HasKey(attr.key);
 					}
 				}
 			}
@@ -341,7 +351,7 @@ namespace Effekseer.GUI.Inspector
 			Manager.NativeManager.Text(labelStr);
 
 			// tooltip for description
-			if (Manager.NativeManager.IsItemHovered())
+			if (enableDescription && Manager.NativeManager.IsItemHovered())
 			{
 				Manager.NativeManager.BeginTooltip();
 
