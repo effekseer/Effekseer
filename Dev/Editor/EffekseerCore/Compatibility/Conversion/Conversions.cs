@@ -22,6 +22,11 @@ namespace Effekseer.Compatibility.Conversion
 			return new Asset.DynamicEquation { Name = value.Name, Code = value.Code };
 		}
 
+		public Asset.Color ConvertValue(Effekseer.Data.Value.Color value)
+		{
+			return new Asset.Color(value.R, value.G, value.B, value.A, value.ColorSpace);
+		}
+
 		public bool ConvertValue(Effekseer.Data.Value.Boolean value)
 		{
 			return value.Value;

@@ -33,6 +33,7 @@ file(GLOB files_core
     EffekseerCore/Asset/EffectAsset.cs
     EffekseerCore/Asset/Effect/PositionParameter.cs
     EffekseerCore/Asset/Effect/RotationParameter.cs
+    EffekseerCore/Asset/Effect/OptionParameter.cs
     EffekseerCore/Math/Vector2I.cs
     EffekseerCore/Math/Vector3I.cs
     EffekseerCore/Math/Vector2F.cs
