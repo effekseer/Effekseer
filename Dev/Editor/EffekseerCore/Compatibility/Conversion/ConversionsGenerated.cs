@@ -165,6 +165,87 @@ namespace Effekseer.Compatibility.Conversion
 			dst.RotationFCurve = ConvertValue(src.RotationFCurve);
 			return dst;
 		}
+		public Effekseer.Asset.Effect.OptionParameter.RenderMode ConvertValue(Effekseer.Data.Value.Enum<Effekseer.Data.OptionValues.RenderMode> src)
+		{
+			var dst = (Effekseer.Asset.Effect.OptionParameter.RenderMode)src.Value;
+			return dst;
+		}
+		public Effekseer.Asset.Effect.OptionParameter.ViewMode ConvertValue(Effekseer.Data.Value.Enum<Effekseer.Data.OptionValues.ViewMode> src)
+		{
+			var dst = (Effekseer.Asset.Effect.OptionParameter.ViewMode)src.Value;
+			return dst;
+		}
+		public Effekseer.Asset.Effect.OptionParameter.FPSType ConvertValue(Effekseer.Data.Value.Enum<Effekseer.Data.OptionValues.FPSType> src)
+		{
+			var dst = (Effekseer.Asset.Effect.OptionParameter.FPSType)src.Value;
+			return dst;
+		}
+		public Effekseer.Asset.Effect.OptionParameter.CoordinateType ConvertValue(Effekseer.Data.Value.Enum<Effekseer.Data.OptionValues.CoordinateType> src)
+		{
+			var dst = (Effekseer.Asset.Effect.OptionParameter.CoordinateType)src.Value;
+			return dst;
+		}
+		public Effekseer.Asset.Effect.OptionParameter.ColorSpaceType ConvertValue(Effekseer.Data.Value.Enum<Effekseer.Data.OptionValues.ColorSpaceType> src)
+		{
+			var dst = (Effekseer.Asset.Effect.OptionParameter.ColorSpaceType)src.Value;
+			return dst;
+		}
+		public Effekseer.Asset.FontType ConvertValue(Effekseer.Data.Value.Enum<Effekseer.Data.FontType> src)
+		{
+			var dst = (Effekseer.Asset.FontType)src.Value;
+			return dst;
+		}
+		public Effekseer.Asset.MouseMappingType ConvertValue(Effekseer.Data.Value.Enum<Effekseer.Data.MouseMappingType> src)
+		{
+			var dst = (Effekseer.Asset.MouseMappingType)src.Value;
+			return dst;
+		}
+		public Effekseer.Asset.LanguageSelector ConvertValue(Effekseer.Data.LanguageSelector src)
+		{
+			var dst = new Effekseer.Asset.LanguageSelector();
+			return dst;
+		}
+		public Effekseer.Asset.Effect.OptionParameter.DistortionMethodType ConvertValue(Effekseer.Data.Value.Enum<Effekseer.Data.OptionValues.DistortionMethodType> src)
+		{
+			var dst = (Effekseer.Asset.Effect.OptionParameter.DistortionMethodType)src.Value;
+			return dst;
+		}
+		public Effekseer.Asset.Effect.OptionParameter.FileViewMode ConvertValue(Effekseer.Data.Value.Enum<Effekseer.Data.OptionValues.FileViewMode> src)
+		{
+			var dst = (Effekseer.Asset.Effect.OptionParameter.FileViewMode)src.Value;
+			return dst;
+		}
+		public Effekseer.Asset.Effect.OptionParameter ConvertValue(Effekseer.Data.OptionValues src)
+		{
+			var dst = new Effekseer.Asset.Effect.OptionParameter();
+			dst.RenderingMode = ConvertValue(src.RenderingMode);
+			dst.ViewerMode = ConvertValue(src.ViewerMode);
+			dst.GridColor = ConvertValue(src.GridColor);
+			dst.IsGridShown = ConvertValue(src.IsGridShown);
+			dst.IsXYGridShown = ConvertValue(src.IsXYGridShown);
+			dst.IsXZGridShown = ConvertValue(src.IsXZGridShown);
+			dst.IsYZGridShown = ConvertValue(src.IsYZGridShown);
+			dst.GridLength = ConvertValue(src.GridLength);
+			dst.Magnification = ConvertValue(src.Magnification);
+			dst.ExternalMagnification = ConvertValue(src.ExternalMagnification);
+			dst.FPS = ConvertValue(src.FPS);
+			dst.Coordinate = ConvertValue(src.Coordinate);
+			dst.ColorSpace = ConvertValue(src.ColorSpace);
+			dst.Font = ConvertValue(src.Font);
+			dst.FontSize = ConvertValue(src.FontSize);
+			dst.MouseMappingType = ConvertValue(src.MouseMappingType);
+			dst.MouseRotInvX = ConvertValue(src.MouseRotInvX);
+			dst.MouseRotInvY = ConvertValue(src.MouseRotInvY);
+			dst.MouseSlideInvX = ConvertValue(src.MouseSlideInvX);
+			dst.MouseSlideInvY = ConvertValue(src.MouseSlideInvY);
+			dst.LanguageSelector = ConvertValue(src.LanguageSelector);
+			dst.DistortionType = ConvertValue(src.DistortionType);
+			dst.FileBrowserViewMode = ConvertValue(src.FileBrowserViewMode);
+			dst.FileBrowserIconSize = ConvertValue(src.FileBrowserIconSize);
+			dst.FloatFormatDigits = ConvertValue(src.FloatFormatDigits);
+			dst.AutoSaveIntervalMin = ConvertValue(src.AutoSaveIntervalMin);
+			return dst;
+		}
 
 	}
 }

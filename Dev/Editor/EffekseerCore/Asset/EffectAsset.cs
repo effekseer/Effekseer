@@ -493,6 +493,11 @@ namespace Effekseer.Asset
 		public int V3;
 		public int A;
 
+		public Color(int v1, int v2, int v3, int a, Effekseer.Data.ColorSpace colorSpace)
+		{
+			V1 = v1; V2 = v2; V3 = v3; A = a; this.colorSpace = colorSpace;
+		}
+
 		[PartsTreeSystem.SerializeField]
 		Effekseer.Data.ColorSpace colorSpace;
 

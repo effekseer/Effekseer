@@ -211,3 +211,37 @@ namespace Effekseer.Asset
 	}
 }
 
+namespace Effekseer.Asset
+{
+	public enum FontType
+	{
+		[Key(key = "FontType_Normal")]
+		Normal = 0,
+		[Key(key = "FontType_Bold")]
+		Bold = 1,
+	}
+}
+
+namespace Effekseer.Asset
+{
+	public enum MouseMappingType
+	{
+		[Key(key = "MouseMappingType_Effekseer")]
+		Effekseer = 0,
+		[Key(key = "MouseMappingType_Unity")]
+		Unity = 1,
+		[Key(key = "MouseMappingType_Blender")]
+		Blender = 2,
+		[Key(key = "MouseMappingType_Maya")]
+		Maya = 3,
+	}
+}
+
+namespace Effekseer.Asset
+{
+	public partial class LanguageSelector
+	{
+
+	}
+}
+

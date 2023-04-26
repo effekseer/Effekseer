@@ -17,13 +17,16 @@ namespace ConvertingCodeGenerator
 			gen.DefaultNamespace = "Effekseer.Asset";
 			gen.AddTypeConverter(gen.CreateDefinedType(typeof(Effekseer.Data.LocationValues)), gen.CreateDefinedType("Effekseer.Asset.Effect", "PositionParameter", null));
 			gen.AddTypeConverter(gen.CreateDefinedType(typeof(Effekseer.Data.RotationValues)), gen.CreateDefinedType("Effekseer.Asset.Effect", "RotationParameter", null));
+			gen.AddTypeConverter(gen.CreateDefinedType(typeof(Effekseer.Data.OptionValues)), gen.CreateDefinedType("Effekseer.Asset.Effect", "OptionParameter", null));
 
 			gen.AddDefinitionText(typeof(Effekseer.Data.LocationValues), "PositionParameter.cs");
 			gen.AddDefinitionText(typeof(Effekseer.Data.RotationValues), "RotationParameter.cs");
+			gen.AddDefinitionText(typeof(Effekseer.Data.OptionValues), "OptionParameter.cs");
 
 			gen.Generate(new[] {
 				typeof(Effekseer.Data.LocationValues),
 				typeof(Effekseer.Data.RotationValues),
+				typeof(Effekseer.Data.OptionValues),
 			},
 			"ConversionsGenerated.cs",
 			"Definitions.cs");
@@ -150,6 +153,7 @@ namespace ConvertingCodeGenerator
 
 		public CodeGenerator()
 		{
+			targetTypes.Add(typeof(Effekseer.Data.Value.Color), new TargetType { Name = typeof(Effekseer.Asset.Color).FullName, ConvertDefinition = Effekseer.Compatibility.Conversion.DefinitionGeneratorFrom1To2.ConvertDefinitionColor });
 			targetTypes.Add(typeof(Effekseer.Data.Value.Boolean), new TargetType { Name = typeof(bool).FullName, ConvertDefinition = Effekseer.Compatibility.Conversion.DefinitionGeneratorFrom1To2.ConvertDefinitionBoolean });
 			targetTypes.Add(typeof(Effekseer.Data.Value.Int), new TargetType { Name = typeof(int).FullName, ConvertDefinition = Effekseer.Compatibility.Conversion.DefinitionGeneratorFrom1To2.ConvertDefinitionInt });
 			targetTypes.Add(typeof(Effekseer.Data.Value.Float), new TargetType { Name = typeof(float).FullName, ConvertDefinition = Effekseer.Compatibility.Conversion.DefinitionGeneratorFrom1To2.ConvertDefinitionFloat });
@@ -545,6 +549,17 @@ namespace Effekseer.Compatibility.Conversion
 			var str = string.Empty;
 			str += Effekseer.Compatibility.Conversion.ConversionUtils.TryAddAttribute(parameter.attributes);
 			str += $"public Asset.DynamicEquation {parameter.Name} = null;";
+			return str;
+		}
+
+		public static string ConvertDefinitionColor(Parameter parameter)
+		{
+			var value = parameter.Value as Effekseer.Data.Value.Color;
+			var typename = typeof(Effekseer.Asset.Color).FullName;
+
+			var str = string.Empty;
+			str += Effekseer.Compatibility.Conversion.ConversionUtils.TryAddAttribute(parameter.attributes);
+			str += $"public {typename} {parameter.Name} = new {typename}();";
 			return str;
 		}
 
