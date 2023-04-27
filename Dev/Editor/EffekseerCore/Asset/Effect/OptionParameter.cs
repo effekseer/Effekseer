@@ -108,7 +108,7 @@ namespace Effekseer.Asset.Effect
 
 namespace Effekseer.Asset.Effect
 {
-	public partial class OptionParameter
+	public partial class OptionParameter : PartsTreeSystem.Asset
 	{
 		[Key(key = "Options_RenderingMode")]
 		public Effekseer.Asset.Effect.OptionParameter.RenderMode RenderingMode = Effekseer.Asset.Effect.OptionParameter.RenderMode.Normal;

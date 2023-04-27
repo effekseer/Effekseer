@@ -55,6 +55,7 @@ namespace Effekseer
 				typeof(DockPanels.RendererValues),
 				typeof(DockPanels.CommonValues),
 				typeof(DockPanels.Dymamic),
+				typeof(DockPanels.Option),
 				typeof(Dock.NodeTreeEditor),
 				typeof(Dock.Profiler),
 				typeof(Dock.GpuParticlesValues),
