@@ -126,15 +126,15 @@ namespace Effekseer.Asset
 
 		[Key(key = "Easing_RandomGroup_X")]
 		[VisiblityControlled(ID = 400, Value = 0)]
-		public int RandomGroupX = 0;
+		public Effekseer.Asset.Int RandomGroupX = new Effekseer.Asset.Int { Value = 0 };
 
 		[Key(key = "Easing_RandomGroup_Y")]
 		[VisiblityControlled(ID = 400, Value = 0)]
-		public int RandomGroupY = 1;
+		public Effekseer.Asset.Int RandomGroupY = new Effekseer.Asset.Int { Value = 1 };
 
 		[Key(key = "Easing_RandomGroup_Z")]
 		[VisiblityControlled(ID = 400, Value = 0)]
-		public int RandomGroupZ = 2;
+		public Effekseer.Asset.Int RandomGroupZ = new Effekseer.Asset.Int { Value = 2 };
 
 		[Key(key = "Easing_IsIndividualTypeEnabled")]
 		[VisiblityController(ID = 500)]
@@ -199,7 +199,7 @@ namespace Effekseer.Asset
 
 		[Key(key = "Easing_RandomGroup_A")]
 		[VisiblityControlled(ID = 400, Value = 0)]
-		public int RandomGroupA = 0;
+		public Effekseer.Asset.Int RandomGroupA = new Effekseer.Asset.Int { Value = 0 };
 
 		[Key(key = "Easing_IsIndividualTypeEnabled")]
 		[VisiblityController(ID = 500)]

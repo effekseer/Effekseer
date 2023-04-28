@@ -80,10 +80,10 @@ namespace Effekseer.Asset.Effect
 			public Effekseer.Asset.CurveAsset FilePath = null;
 
 			[Key(key = "Position_NurbsCurveParameter_Scale")]
-			public float Scale = 1;
+			public Effekseer.Asset.Float Scale = new Effekseer.Asset.Float { Value = 1 };
 
 			[Key(key = "Position_NurbsCurveParameter_MoveSpeed")]
-			public float MoveSpeed = 1;
+			public Effekseer.Asset.Float MoveSpeed = new Effekseer.Asset.Float { Value = 1 };
 
 			[Key(key = "Position_NurbsCurveParameter_LoopType")]
 			public Effekseer.Asset.Effect.PositionParameter.NurbsCurveParameter.NurbsLoopType LoopType = Effekseer.Asset.Effect.PositionParameter.NurbsCurveParameter.NurbsLoopType.Repeat;
