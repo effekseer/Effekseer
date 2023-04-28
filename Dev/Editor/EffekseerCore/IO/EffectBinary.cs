@@ -132,7 +132,7 @@ namespace Effekseer.IO
 				{
 					Dictionary<int, int> id2ind = new Dictionary<int, int>();
 
-					var ids = new[] { param.RandomGroupX, param.RandomGroupY, param.RandomGroupZ };
+					var ids = new[] { param.RandomGroupX.Value, param.RandomGroupY.Value, param.RandomGroupZ.Value };
 
 					foreach (var id in ids)
 					{
@@ -142,9 +142,9 @@ namespace Effekseer.IO
 						}
 					}
 
-					channel += (byte)id2ind[param.RandomGroupX] << 0;
-					channel += (byte)id2ind[param.RandomGroupY] << 8;
-					channel += (byte)id2ind[param.RandomGroupZ] << 16;
+					channel += (byte)id2ind[param.RandomGroupX.Value] << 0;
+					channel += (byte)id2ind[param.RandomGroupY.Value] << 8;
+					channel += (byte)id2ind[param.RandomGroupZ.Value] << 16;
 
 				}
 				else
@@ -199,8 +199,8 @@ namespace Effekseer.IO
 
 				dst.Index = -1;
 				dst.LoopType = (int)param.LoopType;
-				dst.Scale = param.Scale;
-				dst.MoveSpeed = param.MoveSpeed;
+				dst.Scale = param.Scale.Value;
+				dst.MoveSpeed = param.MoveSpeed.Value;
 				ret.NurbsCurve = dst;
 			}
 

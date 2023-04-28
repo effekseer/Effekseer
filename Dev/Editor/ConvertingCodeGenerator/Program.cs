@@ -155,8 +155,8 @@ namespace ConvertingCodeGenerator
 		{
 			targetTypes.Add(typeof(Effekseer.Data.Value.Color), new TargetType { Name = typeof(Effekseer.Asset.Color).FullName, ConvertDefinition = Effekseer.Compatibility.Conversion.DefinitionGeneratorFrom1To2.ConvertDefinitionColor });
 			targetTypes.Add(typeof(Effekseer.Data.Value.Boolean), new TargetType { Name = typeof(bool).FullName, ConvertDefinition = Effekseer.Compatibility.Conversion.DefinitionGeneratorFrom1To2.ConvertDefinitionBoolean });
-			targetTypes.Add(typeof(Effekseer.Data.Value.Int), new TargetType { Name = typeof(int).FullName, ConvertDefinition = Effekseer.Compatibility.Conversion.DefinitionGeneratorFrom1To2.ConvertDefinitionInt });
-			targetTypes.Add(typeof(Effekseer.Data.Value.Float), new TargetType { Name = typeof(float).FullName, ConvertDefinition = Effekseer.Compatibility.Conversion.DefinitionGeneratorFrom1To2.ConvertDefinitionFloat });
+			targetTypes.Add(typeof(Effekseer.Data.Value.Int), new TargetType { Name = typeof(Effekseer.Asset.Int).FullName, ConvertDefinition = Effekseer.Compatibility.Conversion.DefinitionGeneratorFrom1To2.ConvertDefinitionInt });
+			targetTypes.Add(typeof(Effekseer.Data.Value.Float), new TargetType { Name = typeof(Effekseer.Asset.Float).FullName, ConvertDefinition = Effekseer.Compatibility.Conversion.DefinitionGeneratorFrom1To2.ConvertDefinitionFloat });
 			targetTypes.Add(typeof(Effekseer.Data.Value.Vector3D), new TargetType { Name = typeof(Effekseer.Vector3F).FullName, ConvertDefinition = Effekseer.Compatibility.Conversion.DefinitionGeneratorFrom1To2.ConvertDefinitionVector3D });
 			targetTypes.Add(typeof(Effekseer.Data.Value.FloatWithRandom), new TargetType { Name = typeof(Effekseer.Asset.FloatWithRange).FullName, ConvertDefinition = Effekseer.Compatibility.Conversion.DefinitionGeneratorFrom1To2.ConvertDefinitionFloatWithRandom });
 			targetTypes.Add(typeof(Effekseer.Data.Value.Vector3DWithRandom), new TargetType { Name = typeof(Effekseer.Asset.Vector3WithRange).FullName, ConvertDefinition = Effekseer.Compatibility.Conversion.DefinitionGeneratorFrom1To2.ConvertDefinitionVector3DWithRandom });
@@ -583,18 +583,22 @@ namespace Effekseer.Compatibility.Conversion
 		public static string ConvertDefinitionInt(Parameter parameter)
 		{
 			var value = parameter.Value as Effekseer.Data.Value.Int;
+			var typename = typeof(Effekseer.Asset.Int).FullName;
+
 			var str = string.Empty;
 			str += Effekseer.Compatibility.Conversion.ConversionUtils.TryAddAttribute(parameter.attributes);
-			str += $"public int {parameter.Name} = {value.DefaultValue};";
+			str += $"public {typename} {parameter.Name} = new {typename}{{Value = {value.DefaultValue}}};";
 			return str;
 		}
 
 		public static string ConvertDefinitionFloat(Parameter parameter)
 		{
 			var value = parameter.Value as Effekseer.Data.Value.Float;
+			var typename = typeof(Effekseer.Asset.Float).FullName;
+
 			var str = string.Empty;
 			str += Effekseer.Compatibility.Conversion.ConversionUtils.TryAddAttribute(parameter.attributes);
-			str += $"public float {parameter.Name} = {value.DefaultValue};";
+			str += $"public {typename} {parameter.Name} = new {typename}{{Value = {value.DefaultValue}}};";
 			return str;
 		}
 

@@ -418,6 +418,19 @@ namespace Effekseer.Asset
 		public float Step { get; set; }
 	}
 
+	public class Int
+	{
+		public bool IsDynamicEquationEnabled = false;
+		public DynamicEquation DynamicEquation;
+		public int Value;
+	}
+
+	public class Float
+	{
+		public bool IsDynamicEquationEnabled = false;
+		public DynamicEquation DynamicEquation;
+		public float Value;
+	}
 
 	public class FloatWithRange
 	{

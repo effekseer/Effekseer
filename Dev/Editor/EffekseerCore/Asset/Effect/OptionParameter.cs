@@ -132,12 +132,12 @@ namespace Effekseer.Asset.Effect
 		public bool IsYZGridShown = false;
 
 		[Key(key = "Options_GridLength")]
-		public float GridLength = 2;
+		public Effekseer.Asset.Float GridLength = new Effekseer.Asset.Float { Value = 2 };
 
 		[Key(key = "Options_Magnification")]
-		public float Magnification = 1;
+		public Effekseer.Asset.Float Magnification = new Effekseer.Asset.Float { Value = 1 };
 
-		public float ExternalMagnification = 1;
+		public Effekseer.Asset.Float ExternalMagnification = new Effekseer.Asset.Float { Value = 1 };
 
 		[Key(key = "Options_FPS")]
 		public Effekseer.Asset.Effect.OptionParameter.FPSType FPS = Effekseer.Asset.Effect.OptionParameter.FPSType._60FPS;
@@ -152,7 +152,7 @@ namespace Effekseer.Asset.Effect
 		public Effekseer.Asset.FontType Font = Effekseer.Asset.FontType.Normal;
 
 		[Key(key = "Options_FontSize")]
-		public int FontSize = 16;
+		public Effekseer.Asset.Int FontSize = new Effekseer.Asset.Int { Value = 16 };
 
 		[Key(key = "Options_MouseMappingType")]
 		public Effekseer.Asset.MouseMappingType MouseMappingType = Effekseer.Asset.MouseMappingType.Effekseer;
@@ -180,13 +180,13 @@ namespace Effekseer.Asset.Effect
 		public Effekseer.Asset.Effect.OptionParameter.FileViewMode FileBrowserViewMode = Effekseer.Asset.Effect.OptionParameter.FileViewMode.IconView;
 
 		[Key(key = "Options_FileBrowserIconSize")]
-		public int FileBrowserIconSize = 96;
+		public Effekseer.Asset.Int FileBrowserIconSize = new Effekseer.Asset.Int { Value = 96 };
 
 		[Key(key = "Options_FloatFormatDigits")]
-		public int FloatFormatDigits = 3;
+		public Effekseer.Asset.Int FloatFormatDigits = new Effekseer.Asset.Int { Value = 3 };
 
 		[Key(key = "Options_AutoSaveIntervalMin")]
-		public int AutoSaveIntervalMin = 2;
+		public Effekseer.Asset.Int AutoSaveIntervalMin = new Effekseer.Asset.Int { Value = 2 };
 	}
 }
 

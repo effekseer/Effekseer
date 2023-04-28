@@ -32,14 +32,18 @@ namespace Effekseer.Compatibility.Conversion
 			return value.Value;
 		}
 
-		public int ConvertValue(Effekseer.Data.Value.Int value)
+		public Effekseer.Asset.Int ConvertValue(Effekseer.Data.Value.Int value)
 		{
-			return value.Value;
+			var ret = new Effekseer.Asset.Int();
+			ret.Value = value.Value;
+			return ret;
 		}
 
-		public float ConvertValue(Effekseer.Data.Value.Float value)
+		public Effekseer.Asset.Float ConvertValue(Effekseer.Data.Value.Float value)
 		{
-			return value.Value;
+			var ret = new Effekseer.Asset.Float();
+			ret.Value = value.Value;
+			return ret;
 		}
 
 		public Asset.Vector3 ConvertValue(Effekseer.Data.Value.Vector3D value)
