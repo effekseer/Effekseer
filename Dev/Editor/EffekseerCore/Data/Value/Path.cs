@@ -19,7 +19,7 @@ namespace Effekseer.Data.Value
 			private set;
 		}
 
-		public string Filter
+		public MultiLanguageString Filter
 		{
 			get;
 			private set;
@@ -54,7 +54,7 @@ namespace Effekseer.Data.Value
 
 		public string DefaultValue { get; private set; }
 
-		internal Path(Path basepath, string filter, bool isRelativeSaved = true, string abspath = "")
+		internal Path(Path basepath, MultiLanguageString filter, bool isRelativeSaved = true, string abspath = "")
 		{
 			//if (basepath == null && isRelativeSaved)
 			//{

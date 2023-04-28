@@ -251,7 +251,7 @@ namespace Effekseer
 
 			if (e is UnauthorizedAccessException)
 			{
-				if (Core.Language == Language.Japanese)
+				if (LanguageTable.Languages[LanguageTable.SelectedIndex] == "ja")
 				{
 					messageBase = "アクセスが拒否されエラーが発生しました。\n他のディレクトリにインストールしてください。\nもしくはアクセスできないファイルを選択しています。\n";
 				}
@@ -262,7 +262,7 @@ namespace Effekseer
 			}
 			else
 			{
-				if (Core.Language == Language.Japanese)
+				if (LanguageTable.Languages[LanguageTable.SelectedIndex] == "ja")
 				{
 					messageBase = "エラーが発生しました。";
 				}
@@ -278,7 +278,7 @@ namespace Effekseer
 
 				string message = messageBase + "Error log is written in " + filepath + "\nWe are glad if you send this error to Effekseer with a mail or twitter.\n";
 
-				if (Core.Language == Language.Japanese)
+				if (LanguageTable.Languages[LanguageTable.SelectedIndex] == "ja")
 				{
 					message = messageBase + "エラーログが" + filepath + "に出力されました。\nもしエラーをメールやTwitterでEffekseerに送っていただけると助かります。\n";
 				}

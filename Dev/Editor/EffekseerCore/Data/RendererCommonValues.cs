@@ -172,7 +172,7 @@ namespace Effekseer.Data
 		public MaterialFileParameter(RendererCommonValues rcValues)
 		{
 			this.rcValues = rcValues;
-			Path = new Value.PathForMaterial(rcValues.BasePath, Resources.GetString("MaterialFilter"), true);
+			Path = new Value.PathForMaterial(rcValues.BasePath, new MultiLanguageString("MaterialFilter"), true);
 			Path.OnChanged += Path_OnChanged;
 		}
 
@@ -182,12 +182,15 @@ namespace Effekseer.Data
 			Utils.MaterialInformation info = new Utils.MaterialInformation();
 			info.Load(Path.GetAbsolutePath());
 
+			var language = Language.English;
+			if (LanguageTable.Languages[LanguageTable.SelectedIndex] == "ja") language = Language.Japanese;
+
 			ApplyMaterial(info);
 
 			if (info.CustomData.Count() > 0)
 			{
-				rcValues.CustomData1.Name = info.CustomData[0].Summaries[Core.Language];
-				rcValues.CustomData1.Desc = info.CustomData[0].Descriptions[Core.Language];
+				rcValues.CustomData1.Name = info.CustomData[0].Summaries[language];
+				rcValues.CustomData1.Desc = info.CustomData[0].Descriptions[language];
 			}
 			else
 			{
@@ -197,8 +200,8 @@ namespace Effekseer.Data
 
 			if (info.CustomData.Count() > 1)
 			{
-				rcValues.CustomData2.Name = info.CustomData[1].Summaries[Core.Language];
-				rcValues.CustomData2.Desc = info.CustomData[1].Descriptions[Core.Language];
+				rcValues.CustomData2.Name = info.CustomData[1].Summaries[language];
+				rcValues.CustomData2.Desc = info.CustomData[1].Descriptions[language];
 			}
 			else
 			{
@@ -261,9 +264,12 @@ namespace Effekseer.Data
 			var previous_selfSummary = selfSummary;
 			var previous_selfDetail = selfDetail;
 
-			if (info.Names.ContainsKey(Core.Language))
+			var language = Language.English;
+			if (LanguageTable.Languages[LanguageTable.SelectedIndex] == "ja") language = Language.Japanese;
+
+			if (info.Names.ContainsKey(language))
 			{
-				selfSummary = info.Names[Core.Language];
+				selfSummary = info.Names[language];
 			}
 			else
 			{
@@ -271,9 +277,9 @@ namespace Effekseer.Data
 			}
 
 
-			if (info.Descriptions.ContainsKey(Core.Language))
+			if (info.Descriptions.ContainsKey(language))
 			{
-				selfDetail = info.Descriptions[Core.Language];
+				selfDetail = info.Descriptions[language];
 			}
 			else
 			{
@@ -297,9 +303,9 @@ namespace Effekseer.Data
 					Func<string> getName = () =>
 					{
 						var ret = "";
-						if (texture.Summaries.ContainsKey(Core.Language))
+						if (texture.Summaries.ContainsKey(language))
 						{
-							ret = texture.Summaries[Core.Language];
+							ret = texture.Summaries[language];
 						}
 
 						if (string.IsNullOrEmpty(ret))
@@ -318,9 +324,9 @@ namespace Effekseer.Data
 					Func<string> getDesc = () =>
 					{
 						var ret = "";
-						if (texture.Descriptions.ContainsKey(Core.Language))
+						if (texture.Descriptions.ContainsKey(language))
 						{
-							ret = texture.Descriptions[Core.Language];
+							ret = texture.Descriptions[language];
 						}
 
 						return ret;
@@ -367,7 +373,7 @@ namespace Effekseer.Data
 						if (!withNameFlag) continue;
 
 						status = new ValueStatus();
-						var value = new Value.PathForImage(rcValues.BasePath, Resources.GetString("ImageFilter"), true, defaultPath);
+						var value = new Value.PathForImage(rcValues.BasePath, new MultiLanguageString("ImageFilter"), true, defaultPath);
 						status.Value = value;
 						status.IsShown = texture.IsParam;
 						status.Priority = texture.Priority;
@@ -400,9 +406,9 @@ namespace Effekseer.Data
 					Func<string> getName = () =>
 					{
 						var ret = "";
-						if (uniform.Summaries.ContainsKey(Core.Language))
+						if (uniform.Summaries.ContainsKey(language))
 						{
-							ret = uniform.Summaries[Core.Language];
+							ret = uniform.Summaries[language];
 						}
 
 						if (string.IsNullOrEmpty(ret))
@@ -421,9 +427,9 @@ namespace Effekseer.Data
 					Func<string> getDesc = () =>
 					{
 						var ret = "";
-						if (uniform.Descriptions.ContainsKey(Core.Language))
+						if (uniform.Descriptions.ContainsKey(language))
 						{
-							ret = uniform.Descriptions[Core.Language];
+							ret = uniform.Descriptions[language];
 						}
 
 						return ret;
@@ -533,9 +539,9 @@ namespace Effekseer.Data
 					Func<string> getName = () =>
 					{
 						var ret = "";
-						if (gradient.Summaries.ContainsKey(Core.Language))
+						if (gradient.Summaries.ContainsKey(language))
 						{
-							ret = gradient.Summaries[Core.Language];
+							ret = gradient.Summaries[language];
 						}
 
 						if (string.IsNullOrEmpty(ret))
@@ -554,9 +560,9 @@ namespace Effekseer.Data
 					Func<string> getDesc = () =>
 					{
 						var ret = "";
-						if (gradient.Descriptions.ContainsKey(Core.Language))
+						if (gradient.Descriptions.ContainsKey(language))
 						{
-							ret = gradient.Descriptions[Core.Language];
+							ret = gradient.Descriptions[language];
 						}
 
 						return ret;
@@ -1021,11 +1027,11 @@ namespace Effekseer.Data
 
 			EmissiveScaling = new Value.Float(1.0f, float.MaxValue, 0.0f);
 
-			ColorTexture = new Value.PathForImage(basepath, Resources.GetString("ImageFilter"), true, "");
+			ColorTexture = new Value.PathForImage(basepath, new MultiLanguageString("ImageFilter"), true, "");
 			Filter = new Value.Enum<FilterType>(FilterType.Linear);
 			Wrap = new Value.Enum<WrapType>(WrapType.Repeat);
 
-			NormalTexture = new Value.PathForImage(basepath, Resources.GetString("ImageFilter"), true, "");
+			NormalTexture = new Value.PathForImage(basepath, new MultiLanguageString("ImageFilter"), true, "");
 			Filter2 = new Value.Enum<FilterType>(FilterType.Linear);
 			Wrap2 = new Value.Enum<WrapType>(WrapType.Repeat);
 

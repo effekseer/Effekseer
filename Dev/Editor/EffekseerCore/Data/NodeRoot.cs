@@ -12,7 +12,7 @@ namespace Effekseer.Data
 		internal NodeRoot()
 			: base(null)
 		{
-			path = new Value.Path(null, Resources.GetString("EffekseerParticleFilter"), false);
+			path = new Value.Path(null, new MultiLanguageString("EffekseerParticleFilter"), false);
 			Name.SetValueDirectly("Root");
 		}
 

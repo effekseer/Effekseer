@@ -394,7 +394,7 @@ namespace Effekseer.Data
 				Position_Fixed_LR = new Value.Vector2D(0.5f, -0.5f);
 				Position_Fixed_UL = new Value.Vector2D(-0.5f, 0.5f);
 				Position_Fixed_UR = new Value.Vector2D(0.5f, 0.5f);
-				ColorTexture = new Value.Path(basepath, "", true, "");
+				ColorTexture = new Value.Path(basepath, new MultiLanguageString(""), true, "");
 			}
 			public enum ColorType : int
 			{
@@ -494,7 +494,7 @@ namespace Effekseer.Data
 
 				SplineDivision = new Value.Int(1, int.MaxValue, 1);
 
-				ColorTexture = new Value.Path(basepath, Resources.GetString("ImageFilter"), true, "");
+				ColorTexture = new Value.Path(basepath, new MultiLanguageString("ImageFilter"), true, "");
 			}
 
 			public enum ColorAllType : int
@@ -723,7 +723,7 @@ namespace Effekseer.Data
 				InnerColor_Random = new Value.ColorWithRandom(255, 255, 255, 0);
 				InnerColor_Easing = new ColorEasingParamater();
 
-				ColorTexture = new Value.Path(basepath, Resources.GetString("ImageFilter"), true, "");
+				ColorTexture = new Value.Path(basepath, new MultiLanguageString("ImageFilter"), true, "");
 			}
 
 			/// <summary>
@@ -844,7 +844,7 @@ namespace Effekseer.Data
 
 			public ModelParamater(Value.Path basepath)
 			{
-				Model = new Value.PathForModel(basepath, Resources.GetString("ModelFilter"), true, "");
+				Model = new Value.PathForModel(basepath, new MultiLanguageString("ModelFilter"), true, "");
 
 				Billboard = new Value.Enum<BillboardType>(BillboardType.Fixed);
 

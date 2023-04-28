@@ -53,18 +53,6 @@ namespace Effekseer
 			set;
 		}
 
-		/// <summary>
-		/// For compatibility
-		/// </summary>
-		public static Language Language
-		{
-			get
-			{
-				if (LanguageTable.Languages[LanguageTable.SelectedIndex] == "ja") return Language.Japanese;
-				return Language.English;
-			}
-		}
-
 		public static Data.NodeRoot Root
 		{
 			get;
@@ -1609,7 +1597,7 @@ namespace Effekseer
 		public static string GetToolHelpURL()
 		{
 			const string baseURL = "https://effekseer.github.io/Helps/17x/Tool/";
-			string language = (Core.Language == Language.Japanese) ? "ja" : "en";
+			string language = (LanguageTable.Languages[LanguageTable.SelectedIndex] == "ja") ? "ja" : "en";
 			return baseURL + language + "/";
 		}
 

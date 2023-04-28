@@ -311,7 +311,7 @@ namespace Effekseer.GUI.BindableComponent
 
 		private bool CheckExtension(string path)
 		{
-			var filters = binding.Filter.Split(',');
+			var filters = binding.Filter.ToString().Split(',');
 			return filters.Any(_ => "." + _ == System.IO.Path.GetExtension(path).ToLower());
 		}
 	}

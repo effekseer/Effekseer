@@ -7,7 +7,7 @@ namespace Effekseer.Data.Value
 {
 	public class PathForMaterial : Path
 	{
-		internal PathForMaterial(Path basepath, string filter, bool isRelativeSaved, string abspath = "")
+		internal PathForMaterial(Path basepath, MultiLanguageString filter, bool isRelativeSaved, string abspath = "")
 			: base(basepath, filter, isRelativeSaved, abspath)
 		{
 		}

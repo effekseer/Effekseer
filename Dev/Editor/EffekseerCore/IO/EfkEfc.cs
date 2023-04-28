@@ -417,13 +417,13 @@ namespace Effekseer.IO
 			catch (Exception e)
 			{
 				string messeage = "";
-				if (Core.Language == Language.English)
+				if (LanguageTable.Languages[LanguageTable.SelectedIndex] == "ja")
 				{
-					messeage = "Failed to save a file " + path + "\nThis error is \n";
+					messeage = "保存に失敗しました。 " + path + "\nエラーは \n";
 				}
 				else
 				{
-					messeage = "保存に失敗しました。 " + path + "\nエラーは \n";
+					messeage = "Failed to save a file " + path + "\nThis error is \n";
 				}
 
 				messeage += e.ToString();

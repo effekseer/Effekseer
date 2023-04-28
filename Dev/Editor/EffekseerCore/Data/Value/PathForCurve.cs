@@ -7,7 +7,7 @@ namespace Effekseer.Data.Value
 {
 	public class PathForCurve : Path
 	{
-		internal PathForCurve(Path basepath, string filter, bool isRelativeSaved, string abspath = "")
+		internal PathForCurve(Path basepath, MultiLanguageString filter, bool isRelativeSaved, string abspath = "")
 			: base(basepath, filter, isRelativeSaved, abspath)
 		{
 		}

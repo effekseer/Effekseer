@@ -285,7 +285,7 @@ namespace Effekseer.Data
 
 				EditableValue value = new EditableValue();
 				value.Value = v;
-				value.Title = Resources.GetString("ProceduralModel");
+				value.Title = new MultiLanguageString("ProceduralModel");
 				value.IsUndoEnabled = true;
 				ret.Add(value);
 

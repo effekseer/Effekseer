@@ -214,7 +214,7 @@ namespace Effekseer.Data
 
 			public ModelParameter(Path basepath)
 			{
-				Model = new Value.PathForModel(basepath, Resources.GetString("ModelFilter"), true, "");
+				Model = new Value.PathForModel(basepath, new MultiLanguageString("ModelFilter"), true, "");
 				Type = new Value.Enum<ModelType>(ModelType.Random);
 			}
 		}

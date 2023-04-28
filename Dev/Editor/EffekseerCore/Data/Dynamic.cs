@@ -117,13 +117,13 @@ namespace Effekseer.Data
 
 				EditableValue vn = new EditableValue();
 				vn.Value = v.Name;
-				vn.Title = Resources.GetString("DynamicName");
+				vn.Title = new MultiLanguageString("DynamicName");
 				vn.IsUndoEnabled = true;
 				ret.Add(vn);
 
 				EditableValue vx = new EditableValue();
 				vx.Value = v.Code;
-				vx.Title = Resources.GetString("DynamicEq");
+				vx.Title = new MultiLanguageString("DynamicEq");
 				vx.IsUndoEnabled = true;
 				ret.Add(vx);
 
