@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+using Effekseer.Data;
+using Effekseer.Utils;
 
 namespace Effekseer.Asset
 {
@@ -442,6 +443,14 @@ namespace Effekseer.Asset
 		public float Min = float.MinValue;
 		public Data.DrawnAs DrawnAs = Data.DrawnAs.CenterAndAmplitude;
 
+		public FloatWithRange(float value = 0.0f, float max = float.MaxValue, float min = float.MinValue, DrawnAs drawnas = Data.DrawnAs.CenterAndAmplitude)
+		{
+			Center = value.Clipping(max, min);
+			Max = value.Clipping(max, min);
+			Min = value.Clipping(max, min);
+			DrawnAs = drawnas;
+		}
+
 		public float Center
 		{
 			get
@@ -460,7 +469,7 @@ namespace Effekseer.Asset
 		{
 			get
 			{
-				return Max - Center;
+				return Math.Max(Max - Center, Center - Min);
 			}
 			set
 			{
