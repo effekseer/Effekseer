@@ -439,15 +439,15 @@ namespace Effekseer.Asset
 		public DynamicEquation DynamicEquationMin;
 		public DynamicEquation DynamicEquationMax;
 
-		public float Max = float.MaxValue;
-		public float Min = float.MinValue;
+		public float Max = 0f;
+		public float Min = 0f;
 		public Data.DrawnAs DrawnAs = Data.DrawnAs.CenterAndAmplitude;
 
-		public FloatWithRange(float value = 0.0f, float max = float.MaxValue, float min = float.MinValue, DrawnAs drawnas = Data.DrawnAs.CenterAndAmplitude)
+		public FloatWithRange(float value = 0.0f, float valuesMax = float.MaxValue, float valuesMin = float.MinValue, DrawnAs drawnas = Data.DrawnAs.CenterAndAmplitude)
 		{
-			Center = value.Clipping(max, min);
-			Max = value.Clipping(max, min);
-			Min = value.Clipping(max, min);
+			Center = value.Clipping(valuesMax, valuesMin);
+			Max = value.Clipping(valuesMax, valuesMin);
+			Min = value.Clipping(valuesMax, valuesMin);
 			DrawnAs = drawnas;
 		}
 
