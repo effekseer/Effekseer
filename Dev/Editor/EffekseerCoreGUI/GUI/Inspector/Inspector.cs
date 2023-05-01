@@ -302,7 +302,7 @@ namespace Effekseer.GUI.Inspector
 						}
 						else if (controllerField.GetType() == typeof(bool))
 						{
-							controllerValue = (bool)controllerField ? 1 : 0;
+							controllerValue = (bool)controllerField ? 0 : 1;
 						}
 
 						isVisible = (attr.Value == controllerValue);
