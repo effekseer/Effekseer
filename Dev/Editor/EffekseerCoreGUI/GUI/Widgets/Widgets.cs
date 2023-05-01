@@ -44,6 +44,17 @@ namespace Effekseer.GUI.Widgets
 					return ret;
 				}
 			}
+			else if (value is Asset.Int iStructValue)
+			{
+				int[] v = new[] { iStructValue.Value };
+				if (Manager.NativeManager.DragInt(state.Id, v, 1))
+				{
+					ret.isEdited = true;
+					iStructValue.Value = v[0];
+					ret.value = iStructValue;
+					return ret;
+				}
+			}
 			else
 			{
 				Manager.NativeManager.Text("Assert GuiInt");
@@ -61,6 +72,17 @@ namespace Effekseer.GUI.Widgets
 				{
 					ret.isEdited = true;
 					ret.value = v[0];
+					return ret;
+				}
+			}
+			else if (value is Asset.Float fStructValue)
+			{
+				float[] v = new[] { fStructValue.Value };
+				if (Manager.NativeManager.DragFloat(state.Id, v, .1f))
+				{
+					ret.isEdited = true;
+					fStructValue.Value = v[0];
+					ret.value = fStructValue;
 					return ret;
 				}
 			}

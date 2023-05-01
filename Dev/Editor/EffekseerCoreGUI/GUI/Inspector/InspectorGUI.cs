@@ -5,6 +5,7 @@ using System.Reflection;
 using System.IO;
 using System.Linq;
 using Effekseer.GUI.BindableComponent;
+using Effekseer.Asset;
 
 namespace Effekseer.GUI.Inspector
 {
@@ -28,7 +29,9 @@ namespace Effekseer.GUI.Inspector
 			{
 				{ typeof(bool), Widgets.Widgets.GuiBool },
 				{ typeof(int), Widgets.Widgets.GuiInt },
+				{ typeof(Asset.Int), Widgets.Widgets.GuiInt },
 				{ typeof(float), Widgets.Widgets.GuiFloat },
+				{ typeof(Asset.Float), Widgets.Widgets.GuiFloat },
 				{ typeof(Asset.FloatWithRange), Widgets.Widgets.GuiFloatWithRange },
 				{ typeof(string), Widgets.Widgets.GuiString },
 				{ typeof(Vector3F), Widgets.Widgets.GuiVector3F },
