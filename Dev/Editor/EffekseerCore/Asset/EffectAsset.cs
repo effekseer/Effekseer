@@ -81,6 +81,24 @@ namespace Effekseer.Asset
 		}
 	}
 
+
+	[AttributeUsage(
+		AttributeTargets.Field,
+		AllowMultiple = false,
+		Inherited = false)]
+	public class RangeAttribute : Attribute
+	{
+		public float Min { get; set; }
+		public float Max { get; set; }
+
+		public RangeAttribute(float min, float max)
+		{
+			Min = min;
+			Max = max;
+		}
+	}
+
+
 	[AttributeUsage(
 		AttributeTargets.Property | AttributeTargets.Field,
 	AllowMultiple = false,
