@@ -285,6 +285,26 @@ static OpenGLDeviceType g_deviceType = OpenGLDeviceType::OpenGL2;
 #endif
 
 #if _WIN32
+#define GET_PROC_REQ_EXT(name)                                                                       \
+	g_##name##EXT = (FP_##name##EXT)wglGetProcAddress(#name"EXT");                                   \
+	if (g_##name##EXT == nullptr) g_##name##EXT = (FP_##name##EXT) wglGetProcAddress(#name);         \
+	if (g_##name##EXT == nullptr)                                                                    \
+	{                                                                                                \
+		Effekseer::Log(Effekseer::LogType::Error, "Failed to get proc : " + std::string(#name));     \
+		return false;                                                                                \
+	}
+#elif defined(__EFFEKSEER_RENDERER_GLES2__) || defined(__EFFEKSEER_RENDERER_GLES3__)
+#define GET_PROC_REQ_EXT(name)                                                                       \
+	g_##name##EXT = (FP_##name##EXT)eglGetProcAddress(#name"EXT");                                   \
+	if (g_##name##EXT == nullptr) (FP_##name##EXT) eglGetProcAddress(#name);                         \
+	if (g_##name##EXT == nullptr)                                                                    \
+	{                                                                                                \
+		Effekseer::Log(Effekseer::LogType::Error, "Failed to get proc : " + std::string(#name));     \
+		return false;                                                                                \
+	}
+#endif
+
+#if _WIN32
 #define GET_PROC(name)                                                                             \
 	g_##name = (FP_##name)wglGetProcAddress(#name);                                                \
 	if (g_##name == nullptr)                                                                       \
@@ -397,14 +417,14 @@ bool Initialize(OpenGLDeviceType deviceType, bool isExtensionsEnabled)
 #if defined(_WIN32) || defined(__EFFEKSEER_RENDERER_GL__) || defined(__EFFEKSEER_RENDERER_GLES2__) || defined(__EFFEKSEER_RENDERER_GLES3__)
 
 #if !defined(__APPLE__)
-	GET_PROC_REQ(glGenQueriesEXT);
-	GET_PROC_REQ(glDeleteQueriesEXT);
-	GET_PROC_REQ(glBeginQueryEXT);
-	GET_PROC_REQ(glEndQueryEXT);
-	GET_PROC_REQ(glGetQueryObjectivEXT);
-	GET_PROC_REQ(glGetQueryObjectuivEXT);
-	GET_PROC_REQ(glGetQueryObjecti64vEXT);
-	GET_PROC_REQ(glGetQueryObjectui64vEXT);
+	GET_PROC_REQ_EXT(glGenQueries);
+	GET_PROC_REQ_EXT(glDeleteQueries);
+	GET_PROC_REQ_EXT(glBeginQuery);
+	GET_PROC_REQ_EXT(glEndQuery);
+	GET_PROC_REQ_EXT(glGetQueryObjectiv);
+	GET_PROC_REQ_EXT(glGetQueryObjectuiv);
+	GET_PROC_REQ_EXT(glGetQueryObjecti64v);
+	GET_PROC_REQ_EXT(glGetQueryObjectui64v);
 #endif
 
 	g_isSupportedQueries = (g_glGenQueriesEXT && g_glDeleteQueriesEXT && g_glBeginQueryEXT && g_glEndQueryEXT && g_glGetQueryObjectuivEXT && g_glGetQueryObjectivEXT && g_glGetQueryObjectui64vEXT && g_glGetQueryObjecti64vEXT);
