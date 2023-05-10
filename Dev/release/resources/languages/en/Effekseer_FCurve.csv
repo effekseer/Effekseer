@@ -10,6 +10,7 @@ Fcurve_Key_Frame_Name,Frame
 Fcurve_Key_Percent_Name,Percent
 FCurve_AddPoint,"Add a point"
 FCurve_DeletePoint,"Delete selected point"
+FCurve_Copy,"Copy"
 FCurve_PaseteOnZero,"Paste copied F-Curve on 0 frame"
 FCurve_PasteOnCurrentTime,"Paste copied F-Curve on the current time"
 FCurve_PasteOnCursor,"Paste copied F-Curve on the cursor"
