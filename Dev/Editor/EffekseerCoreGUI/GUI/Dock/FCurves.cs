@@ -50,6 +50,8 @@ namespace Effekseer.GUI.Dock
 
 		class FCurveMenuContextData
 		{
+			public swig.Vec2 ClickedPositionOnCurve;
+
 			public swig.Vec2 ClickedPosition;
 
 			public FCurve ClickedFcurve;
@@ -290,11 +292,13 @@ namespace Effekseer.GUI.Dock
 
 						if (IsHovered(treeNodes, out var selectedFcurve, out var selectedInd, out var pointInd))
 						{
-							menuContext.ClickedPosition = currentPoint;
+							menuContext.ClickedPositionOnCurve = currentPoint;
 							menuContext.ClickedFcurve = selectedFcurve;
 							menuContext.ClickedPropIndex = selectedInd;
 							menuContext.ClickedPointIndex = pointInd;
 						}
+
+						menuContext.ClickedPosition = currentPoint;
 
 						Manager.NativeManager.OpenPopup(fCurveMenu);
 					}
@@ -344,7 +348,7 @@ namespace Effekseer.GUI.Dock
 					{
 						if (Manager.NativeManager.Selectable(MultiLanguageTextProvider.GetText("FCurve_DeletePoint")))
 						{
-							if (menuContext.ClickedFcurve.RemovePoint(menuContext.ClickedPropIndex, menuContext.ClickedPosition))
+							if (menuContext.ClickedFcurve.RemovePoint(menuContext.ClickedPropIndex, menuContext.ClickedPositionOnCurve))
 							{
 								changed = true;
 							}
@@ -354,12 +358,18 @@ namespace Effekseer.GUI.Dock
 					{
 						if (Manager.NativeManager.Selectable(MultiLanguageTextProvider.GetText("FCurve_AddPoint")))
 						{
-							if (menuContext.ClickedFcurve.AddPoint(menuContext.ClickedPropIndex, menuContext.ClickedPosition))
+							if (menuContext.ClickedFcurve.AddPoint(menuContext.ClickedPropIndex, menuContext.ClickedPositionOnCurve))
 							{
 								changed = true;
 							}
 						}
 					}
+				}
+
+
+				if (Manager.NativeManager.Selectable(MultiLanguageTextProvider.GetText("FCurve_Copy")))
+				{
+					Copy();
 				}
 
 				if (Manager.NativeManager.Selectable(MultiLanguageTextProvider.GetText("FCurve_PaseteOnZero")))
