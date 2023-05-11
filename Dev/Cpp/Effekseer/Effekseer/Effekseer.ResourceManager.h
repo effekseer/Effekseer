@@ -141,26 +141,56 @@ public:
 	template <typename LOADER, typename PARAMETER, typename RESOURCE>
 	struct CachedParameterResources
 	{
-		LOADER loader;
-		CustomMap<PARAMETER, GenerateCounted<PARAMETER, RESOURCE>> cached;
+	private:
+		bool isCacheEnabled_ = true;
+		LOADER loader_;
+		CustomMap<PARAMETER, GenerateCounted<PARAMETER, RESOURCE>> cached_;
+
+	public:
+		bool GetIsCacheEnabled() const
+		{
+			return isCacheEnabled_;
+		}
+
+		void SetIsCacheEnabled(bool value)
+		{
+			isCacheEnabled_ = value;
+		}
+
+		LOADER GetLoader() const
+		{
+			return loader_;
+		}
+
+		void SetLoader(LOADER value)
+		{
+			loader_ = value;
+		}
 
 		template <typename... Arg>
 		RESOURCE Load(const PARAMETER& parameter)
 		{
-			if (loader != nullptr)
+			if (loader_ != nullptr)
 			{
-				auto it = cached.find(parameter);
-				if (it != cached.end())
+				if (isCacheEnabled_)
 				{
-					it->second.loadCount++;
-					return it->second.resource;
-				}
+					auto it = cached_.find(parameter);
+					if (it != cached_.end())
+					{
+						it->second.loadCount++;
+						return it->second.resource;
+					}
 
-				auto resource = loader->Generate(parameter);
-				if (resource != nullptr)
+					auto resource = loader_->Generate(parameter);
+					if (resource != nullptr)
+					{
+						cached_.emplace(parameter, GenerateCounted<PARAMETER, RESOURCE>{parameter, resource, 1});
+						return resource;
+					}
+				}
+				else
 				{
-					cached.emplace(parameter, GenerateCounted<PARAMETER, RESOURCE>{parameter, resource, 1});
-					return resource;
+					return loader_->Generate(parameter);
 				}
 			}
 			return nullptr;
@@ -168,17 +198,39 @@ public:
 
 		void Unload(const RESOURCE& resource)
 		{
-			if (loader != nullptr && resource != nullptr)
+			if (loader_ != nullptr && resource != nullptr)
 			{
-				auto it = std::find_if(cached.begin(), cached.end(), [&](const std::pair<PARAMETER, GenerateCounted<PARAMETER, RESOURCE>>& v)
+				auto it = std::find_if(cached_.begin(), cached_.end(), [&](const std::pair<PARAMETER, GenerateCounted<PARAMETER, RESOURCE>>& v)
 									   { return v.second.resource == resource; });
-				if (it != cached.end())
+				if (it != cached_.end())
 				{
 					if (--it->second.loadCount <= 0)
 					{
-						cached.erase(it);
-						loader->Ungenerate(resource);
+						cached_.erase(it);
+						loader_->Ungenerate(resource);
 					}
+				}
+			}
+		}
+
+		bool IsCached(const PARAMETER& parameter) const
+		{
+			const auto it = cached_.find(parameter);
+			return it != cached_.end();
+		}
+
+		void Register(const PARAMETER& parameter, RESOURCE resource)
+		{
+			if (isCacheEnabled_)
+			{
+				auto it = cached_.find(parameter);
+				if (it != cached_.end())
+				{
+					it->second.loadCount++;
+				}
+				else
+				{
+					cached_.emplace(parameter, GenerateCounted<PARAMETER, RESOURCE>{parameter, resource, 1});
 				}
 			}
 		}
@@ -240,12 +292,12 @@ public:
 
 	ProceduralModelGeneratorRef GetProceduralMeshGenerator() const
 	{
-		return CachedProceduralModels.loader;
+		return CachedProceduralModels.GetLoader();
 	}
 
 	void SetProceduralMeshGenerator(ProceduralModelGeneratorRef generator)
 	{
-		CachedProceduralModels.loader = generator;
+		CachedProceduralModels.SetLoader(generator);
 	}
 
 	TextureRef LoadTexture(const char16_t* path, TextureType textureType);
@@ -279,6 +331,7 @@ public:
 		CachedMaterials.SetIsCacheEnabled(value);
 		CachedSounds.SetIsCacheEnabled(value);
 		CachedCurves.SetIsCacheEnabled(value);
+		CachedProceduralModels.SetIsCacheEnabled(value);
 	}
 
 	CachedResources<TextureLoaderRef, TextureRef> CachedTextures;
