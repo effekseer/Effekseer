@@ -139,6 +139,22 @@ public:
 	bool EndLoading() override;
 };
 
+class CustomAsyncLoadingProceduralModel : public CustomAsyncLoadingValue<Effekseer::Model>
+{
+	Effekseer::ProceduralModelParameter param_;
+	Effekseer::SettingRef setting_;
+
+public:
+	CustomAsyncLoadingProceduralModel(Effekseer::ProceduralModelParameter param, Effekseer::SettingRef setting);
+
+	bool StartLoading() override;
+
+	void LoadAsync() override;
+
+	bool EndLoading() override;
+};
+
+
 class CustomAsyncLoadingEffect : public CustomAsyncLoadingValue<Effekseer::Effect>
 {
 	std::u16string path_;
@@ -148,6 +164,7 @@ class CustomAsyncLoadingEffect : public CustomAsyncLoadingValue<Effekseer::Effec
 	std::vector<CustomAsyncValueHandle<Effekseer::Model>> loadingModels_;
 	std::vector<CustomAsyncValueHandle<Effekseer::Material>> loadingMaterials_;
 	std::vector<CustomAsyncValueHandle<Effekseer::Curve>> loadingCurves_;
+	std::vector<CustomAsyncValueHandle<Effekseer::Model>> loadingProceduralModels_;
 	std::weak_ptr<CustomAsyncLoader> async_loader_;
 
 	bool isLoadingDependencies_ = false;
@@ -168,6 +185,7 @@ class CustomAsyncLoader : public std::enable_shared_from_this<CustomAsyncLoader>
 	std::map<std::u16string, std::shared_ptr<CustomAsyncLoadingValue<Effekseer::Model>>> loadingModels_;
 	std::map<std::u16string, std::shared_ptr<CustomAsyncLoadingValue<Effekseer::Material>>> loadingMaterials_;
 	std::map<std::u16string, std::shared_ptr<CustomAsyncLoadingValue<Effekseer::Curve>>> loadingCurves_;
+	std::map<Effekseer::ProceduralModelParameter, std::shared_ptr<CustomAsyncLoadingValue<Effekseer::Model>>> loadingProceduralModels_;
 	std::map<std::u16string, std::shared_ptr<CustomAsyncLoadingValue<Effekseer::Effect>>> loadingEffects_;
 
 	std::vector<std::shared_ptr<CustomAsyncLoading>> loadings_;
@@ -189,6 +207,8 @@ public:
 	CustomAsyncValueHandle<Effekseer::Material> LoadMaterialAsync(const char16_t* path);
 
 	CustomAsyncValueHandle<Effekseer::Curve> LoadCurveAsync(const char16_t* path);
+
+	CustomAsyncValueHandle<Effekseer::Model> LoadProceduralModelAsync(Effekseer::ProceduralModelParameter param);
 
 	CustomAsyncValueHandle<Effekseer::Effect> LoadEffectAsync(const char16_t* path);
 

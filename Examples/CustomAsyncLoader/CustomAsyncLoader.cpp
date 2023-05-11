@@ -52,8 +52,8 @@ static void GetParentDir(char16_t* dst, const char16_t* src)
 	}
 }
 
-template <typename T>
-void RemoveFinished(std::map<std::u16string, std::shared_ptr<CustomAsyncLoadingValue<T>>>& kv)
+template <typename T, typename K>
+void RemoveFinished(std::map<K, std::shared_ptr<CustomAsyncLoadingValue<T>>>& kv)
 {
 	for (auto it = kv.begin(); it != kv.end();)
 	{
@@ -258,6 +258,38 @@ bool CustomAsyncLoadingCurve::EndLoading()
 	return true;
 }
 
+CustomAsyncLoadingProceduralModel::CustomAsyncLoadingProceduralModel(Effekseer::ProceduralModelParameter param, Effekseer::SettingRef setting)
+	: param_(param)
+	, setting_(setting)
+{
+}
+
+bool CustomAsyncLoadingProceduralModel::StartLoading()
+{
+	State = AsyncLoadingState::Loading;
+	return true;
+}
+
+void CustomAsyncLoadingProceduralModel::LoadAsync()
+{
+	State = AsyncLoadingState::WaitFinished;
+}
+
+bool CustomAsyncLoadingProceduralModel::EndLoading()
+{
+	Value = setting_->GetProceduralMeshGenerator()->Generate(param_);
+	if (Value != nullptr)
+	{
+		State = AsyncLoadingState::Finished;
+	}
+	else
+	{
+		State = AsyncLoadingState::Failed;
+	}
+
+	return true;
+}
+
 CustomAsyncLoadingEffect::CustomAsyncLoadingEffect(const char16_t* path, Effekseer::FileInterfaceRef fi, Effekseer::SettingRef setting, std::weak_ptr<CustomAsyncLoader> async_loader)
 	: path_(path)
 	, fi_(fi)
@@ -429,6 +461,22 @@ bool CustomAsyncLoadingEffect::EndLoading()
 				rm->CachedCurves.Register(fullPath, loadingCurves_[i].GetValue());
 			}
 		}
+
+		for (size_t i = 0; i < loadingProceduralModels_.size(); i++)
+		{
+			if (!loadingProceduralModels_[i].GetIsValid())
+			{
+				continue;
+			}
+
+			const auto& param = *Value->GetProceduralModelParameter(i);
+
+			if (loadingProceduralModels_[i].GetState() == AsyncLoadingState::Finished)
+			{
+				Value->SetProceduralModel(i, loadingProceduralModels_[i].GetValue());
+				rm->CachedProceduralModels.Register(param, loadingProceduralModels_[i].GetValue());
+			}
+		}
 	}
 	else
 	{
@@ -462,7 +510,7 @@ bool CustomAsyncLoadingEffect::EndLoading()
 				}
 			}
 
-			for (size_t i = 0; i < loadingModels_.size(); i++)
+			for (size_t i = 0; i < Value->GetModelCount(); i++)
 			{
 				char16_t directoryPath[512];
 				GetParentDir(directoryPath, path_.c_str());
@@ -482,7 +530,7 @@ bool CustomAsyncLoadingEffect::EndLoading()
 				}
 			}
 
-			for (size_t i = 0; i < loadingMaterials_.size(); i++)
+			for (size_t i = 0; i < Value->GetModelCount(); i++)
 			{
 				char16_t directoryPath[512];
 				GetParentDir(directoryPath, path_.c_str());
@@ -502,7 +550,7 @@ bool CustomAsyncLoadingEffect::EndLoading()
 				}
 			}
 
-			for (size_t i = 0; i < loadingCurves_.size(); i++)
+			for (size_t i = 0; i < Value->GetCurveCount(); i++)
 			{
 				char16_t directoryPath[512];
 				GetParentDir(directoryPath, path_.c_str());
@@ -519,6 +567,22 @@ bool CustomAsyncLoadingEffect::EndLoading()
 				else
 				{
 					loadingCurves_.emplace_back(loader->LoadCurveAsync(fullPath));
+				}
+			}
+
+			for (size_t i = 0; i < Value->GetProceduralModelCount(); i++)
+			{
+				const auto& param = *Value->GetProceduralModelParameter(i);
+				if (rm->CachedProceduralModels.IsCached(param))
+				{
+					auto value = rm->CachedProceduralModels.Load(param);
+					Value->SetProceduralModel(i, value);
+
+					loadingProceduralModels_.emplace_back(CustomAsyncValueHandle<Effekseer::Model>(nullptr));
+				}
+				else
+				{
+					loadingProceduralModels_.emplace_back(loader->LoadProceduralModelAsync(param));
 				}
 			}
 		}
@@ -605,6 +669,21 @@ CustomAsyncValueHandle<Effekseer::Curve> CustomAsyncLoader::LoadCurveAsync(const
 	return CustomAsyncValueHandle<Effekseer::Curve>(loading);
 }
 
+CustomAsyncValueHandle<Effekseer::Model> CustomAsyncLoader::LoadProceduralModelAsync(Effekseer::ProceduralModelParameter param)
+{
+	const auto key = param;
+	if (loadingProceduralModels_.find(key) != loadingProceduralModels_.end())
+	{
+		return CustomAsyncValueHandle<Effekseer::Model>(loadingProceduralModels_[key]);
+	}
+
+	auto loading = std::make_shared<CustomAsyncLoadingProceduralModel>(param, setting_);
+
+	loadings_.emplace_back(loading);
+	loadingProceduralModels_[key] = loading;
+	return CustomAsyncValueHandle<Effekseer::Model>(loading);
+}
+
 CustomAsyncValueHandle<Effekseer::Effect> CustomAsyncLoader::LoadEffectAsync(const char16_t* path)
 {
 	const auto key = std::u16string(path);
@@ -673,4 +752,5 @@ void CustomAsyncLoader::Update()
 	RemoveFinished(loadingModels_);
 	RemoveFinished(loadingMaterials_);
 	RemoveFinished(loadingCurves_);
+	RemoveFinished(loadingProceduralModels_);
 }
