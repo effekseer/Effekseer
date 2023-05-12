@@ -98,6 +98,19 @@ namespace Effekseer.Asset
 		}
 	}
 
+	[AttributeUsage(
+		AttributeTargets.Property | AttributeTargets.Field,
+	AllowMultiple = false,
+	Inherited = false)]
+	public class CanSelectDynamicEquationAttribute : Attribute
+	{
+		public bool CanSelect = true;
+
+		public CanSelectDynamicEquationAttribute(bool canSelect)
+		{
+			CanSelect = canSelect;
+		}
+	}
 
 	[AttributeUsage(
 		AttributeTargets.Property | AttributeTargets.Field,
