@@ -139,6 +139,23 @@ public:
 	bool EndLoading() override;
 };
 
+class CustomAsyncLoadingSound : public CustomAsyncLoadingValue<Effekseer::SoundData>
+{
+	std::u16string path_;
+	Effekseer::FileInterfaceRef fi_;
+	Effekseer::SettingRef setting_;
+	Effekseer::CustomAlignedVector<uint8_t> buffer_;
+
+public:
+	CustomAsyncLoadingSound(const char16_t* path, Effekseer::FileInterfaceRef fi, Effekseer::SettingRef setting);
+
+	bool StartLoading() override;
+
+	void LoadAsync() override;
+
+	bool EndLoading() override;
+};
+
 class CustomAsyncLoadingProceduralModel : public CustomAsyncLoadingValue<Effekseer::Model>
 {
 	Effekseer::ProceduralModelParameter param_;
@@ -164,6 +181,7 @@ class CustomAsyncLoadingEffect : public CustomAsyncLoadingValue<Effekseer::Effec
 	std::vector<CustomAsyncValueHandle<Effekseer::Model>> loadingModels_;
 	std::vector<CustomAsyncValueHandle<Effekseer::Material>> loadingMaterials_;
 	std::vector<CustomAsyncValueHandle<Effekseer::Curve>> loadingCurves_;
+	std::vector<CustomAsyncValueHandle<Effekseer::SoundData>> loadingSounds_;
 	std::vector<CustomAsyncValueHandle<Effekseer::Model>> loadingProceduralModels_;
 	std::weak_ptr<CustomAsyncLoader> async_loader_;
 
@@ -185,6 +203,7 @@ class CustomAsyncLoader : public std::enable_shared_from_this<CustomAsyncLoader>
 	std::map<std::u16string, std::shared_ptr<CustomAsyncLoadingValue<Effekseer::Model>>> loadingModels_;
 	std::map<std::u16string, std::shared_ptr<CustomAsyncLoadingValue<Effekseer::Material>>> loadingMaterials_;
 	std::map<std::u16string, std::shared_ptr<CustomAsyncLoadingValue<Effekseer::Curve>>> loadingCurves_;
+	std::map<std::u16string, std::shared_ptr<CustomAsyncLoadingValue<Effekseer::SoundData>>> loadingSounds_;
 	std::map<Effekseer::ProceduralModelParameter, std::shared_ptr<CustomAsyncLoadingValue<Effekseer::Model>>> loadingProceduralModels_;
 	std::map<std::u16string, std::shared_ptr<CustomAsyncLoadingValue<Effekseer::Effect>>> loadingEffects_;
 
@@ -207,6 +226,8 @@ public:
 	CustomAsyncValueHandle<Effekseer::Material> LoadMaterialAsync(const char16_t* path);
 
 	CustomAsyncValueHandle<Effekseer::Curve> LoadCurveAsync(const char16_t* path);
+
+	CustomAsyncValueHandle<Effekseer::SoundData> LoadSoundDataAsync(const char16_t* path);
 
 	CustomAsyncValueHandle<Effekseer::Model> LoadProceduralModelAsync(Effekseer::ProceduralModelParameter param);
 

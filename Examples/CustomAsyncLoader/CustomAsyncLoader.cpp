@@ -258,6 +258,48 @@ bool CustomAsyncLoadingCurve::EndLoading()
 	return true;
 }
 
+CustomAsyncLoadingSound::CustomAsyncLoadingSound(const char16_t* path, Effekseer::FileInterfaceRef fi, Effekseer::SettingRef setting)
+	: path_(path)
+	, fi_(fi)
+	, setting_(setting)
+{
+}
+
+bool CustomAsyncLoadingSound::StartLoading()
+{
+	State = AsyncLoadingState::Loading;
+	return true;
+}
+
+void CustomAsyncLoadingSound::LoadAsync()
+{
+	auto reader = fi_->OpenRead(path_.c_str());
+	if (reader == nullptr)
+	{
+		State = AsyncLoadingState::Failed;
+		return;
+	}
+
+	buffer_.resize(reader->GetLength());
+	reader->Read(buffer_.data(), buffer_.size());
+	State = AsyncLoadingState::WaitFinished;
+}
+
+bool CustomAsyncLoadingSound::EndLoading()
+{
+	Value = setting_->GetSoundLoader()->Load(buffer_.data(), buffer_.size());
+	if (Value != nullptr)
+	{
+		State = AsyncLoadingState::Finished;
+	}
+	else
+	{
+		State = AsyncLoadingState::Failed;
+	}
+
+	return true;
+}
+
 CustomAsyncLoadingProceduralModel::CustomAsyncLoadingProceduralModel(Effekseer::ProceduralModelParameter param, Effekseer::SettingRef setting)
 	: param_(param)
 	, setting_(setting)
@@ -377,6 +419,16 @@ bool CustomAsyncLoadingEffect::EndLoading()
 			return false;
 		}
 
+		if (!GetIsAllFinishedOrFailed(loadingSounds_))
+		{
+			return false;
+		}
+
+		if (!GetIsAllFinishedOrFailed(loadingProceduralModels_))
+		{
+			return false;
+		}
+
 		// register to a resource manager
 		auto rm = setting_->GetResourceManager();
 
@@ -459,6 +511,25 @@ bool CustomAsyncLoadingEffect::EndLoading()
 			{
 				Value->SetCurve(i, loadingCurves_[i].GetValue());
 				rm->CachedCurves.Register(fullPath, loadingCurves_[i].GetValue());
+			}
+		}
+
+		for (size_t i = 0; i < loadingSounds_.size(); i++)
+		{
+			char16_t directoryPath[512];
+			GetParentDir(directoryPath, path_.c_str());
+			char16_t fullPath[512];
+			PathCombine(fullPath, directoryPath, Value->GetWavePath(i));
+
+			if (!loadingSounds_[i].GetIsValid())
+			{
+				continue;
+			}
+
+			if (loadingSounds_[i].GetState() == AsyncLoadingState::Finished)
+			{
+				Value->SetSound(i, loadingSounds_[i].GetValue());
+				rm->CachedSounds.Register(fullPath, loadingSounds_[i].GetValue());
 			}
 		}
 
@@ -570,6 +641,26 @@ bool CustomAsyncLoadingEffect::EndLoading()
 				}
 			}
 
+			for (size_t i = 0; i < Value->GetWaveCount(); i++)
+			{
+				char16_t directoryPath[512];
+				GetParentDir(directoryPath, path_.c_str());
+				char16_t fullPath[512];
+				PathCombine(fullPath, directoryPath, Value->GetWavePath(i));
+
+				if (rm->CachedSounds.IsCached(Value->GetWavePath(i)))
+				{
+					auto value = rm->CachedSounds.Load(fullPath);
+					Value->SetSound(i, value);
+
+					loadingSounds_.emplace_back(CustomAsyncValueHandle<Effekseer::SoundData>(nullptr));
+				}
+				else
+				{
+					loadingSounds_.emplace_back(loader->LoadSoundDataAsync(fullPath));
+				}
+			}
+
 			for (size_t i = 0; i < Value->GetProceduralModelCount(); i++)
 			{
 				const auto& param = *Value->GetProceduralModelParameter(i);
@@ -669,6 +760,21 @@ CustomAsyncValueHandle<Effekseer::Curve> CustomAsyncLoader::LoadCurveAsync(const
 	return CustomAsyncValueHandle<Effekseer::Curve>(loading);
 }
 
+CustomAsyncValueHandle<Effekseer::SoundData> CustomAsyncLoader::LoadSoundDataAsync(const char16_t* path)
+{
+	const auto key = std::u16string(path);
+	if (loadingSounds_.find(key) != loadingSounds_.end())
+	{
+		return CustomAsyncValueHandle<Effekseer::SoundData>(loadingSounds_[key]);
+	}
+
+	auto loading = std::make_shared<CustomAsyncLoadingSound>(path, fi_, setting_);
+
+	loadings_.emplace_back(loading);
+	loadingSounds_[key] = loading;
+	return CustomAsyncValueHandle<Effekseer::SoundData>(loading);
+}
+
 CustomAsyncValueHandle<Effekseer::Model> CustomAsyncLoader::LoadProceduralModelAsync(Effekseer::ProceduralModelParameter param)
 {
 	const auto key = param;
@@ -752,5 +858,6 @@ void CustomAsyncLoader::Update()
 	RemoveFinished(loadingModels_);
 	RemoveFinished(loadingMaterials_);
 	RemoveFinished(loadingCurves_);
+	RemoveFinished(loadingSounds_);
 	RemoveFinished(loadingProceduralModels_);
 }
