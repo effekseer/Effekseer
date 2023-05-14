@@ -97,7 +97,7 @@ int main(int argc, char** argv)
 
 		// Update a time
 		// 時間を更新する
-		efkRenderer->SetTime(time);
+		efkRenderer->SetTime(time / 60.0f);
 
 		// Specify a projection matrix
 		// 投影行列を設定
