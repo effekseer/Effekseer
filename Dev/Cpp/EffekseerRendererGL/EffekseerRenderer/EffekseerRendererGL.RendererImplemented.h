@@ -130,7 +130,7 @@ private:
 	// textures which are specified currently
 	std::vector<::Effekseer::Backend::TextureRef> currentTextures_;
 
-	VertexArray* m_currentVertexArray;
+	VertexArray* m_currentVertexArray = nullptr;
 
 	int32_t indexBufferStride_ = 2;
 
