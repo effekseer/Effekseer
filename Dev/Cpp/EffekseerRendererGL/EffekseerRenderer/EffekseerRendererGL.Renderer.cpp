@@ -171,7 +171,6 @@ RendererImplemented::RendererImplemented(int32_t squareMaxCount, Backend::Graphi
 	, m_squareMaxCount(squareMaxCount)
 	, m_renderState(nullptr)
 	, m_restorationOfStates(true)
-	, m_currentVertexArray(nullptr)
 	, m_standardRenderer(nullptr)
 	, m_distortingCallback(nullptr)
 	, m_deviceType(graphicsDevice->GetDeviceType())
@@ -280,11 +279,11 @@ void RendererImplemented::GenerateIndexDataStride()
 bool RendererImplemented::Initialize()
 {
 	GLCheckError();
-	GLint currentVAO = 0;
+	GLint vaoBinding = 0;
 
 	if (GLExt::IsSupportedVertexArray())
 	{
-		glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &currentVAO);
+		glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &vaoBinding);
 	}
 
 	int arrayBufferBinding = 0;
@@ -431,14 +430,7 @@ bool RendererImplemented::Initialize()
 	m_standardRenderer =
 		new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>(this);
 
-	GLExt::glBindBuffer(GL_ARRAY_BUFFER, arrayBufferBinding);
-	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBufferBinding);
 	GetImpl()->isSoftParticleEnabled = GetDeviceType() == OpenGLDeviceType::OpenGL3 || GetDeviceType() == OpenGLDeviceType::OpenGLES3;
-
-	if (GLExt::IsSupportedVertexArray())
-	{
-		GLExt::glBindVertexArray(currentVAO);
-	}
 
 	GetImpl()->CreateProxyTextures(this);
 
@@ -461,6 +453,14 @@ bool RendererImplemented::Initialize()
 		shader_ad_unlit_->SetIsTransposeEnabled(true);
 		shader_ad_lit_->SetIsTransposeEnabled(true);
 		shader_ad_distortion_->SetIsTransposeEnabled(true);
+	}
+
+	GLExt::glBindBuffer(GL_ARRAY_BUFFER, arrayBufferBinding);
+	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBufferBinding);
+
+	if (GLExt::IsSupportedVertexArray())
+	{
+		GLExt::glBindVertexArray(vaoBinding);
 	}
 
 	GLCheckError();
@@ -1012,7 +1012,7 @@ void RendererImplemented::BeginShader(Shader* shader)
 	// change VAO with shader
 	if (m_currentVertexArray != nullptr)
 	{
-		SetVertexArray(m_currentVertexArray);
+		// None
 	}
 	else if (shader == shader_unlit_)
 	{
@@ -1082,7 +1082,7 @@ void RendererImplemented::BeginShader(Shader* shader)
 	}
 	else
 	{
-		m_currentVertexArray = nullptr;
+		SetVertexArray(nullptr);
 
 		if (defaultVAO_ != nullptr)
 		{
@@ -1129,7 +1129,7 @@ void RendererImplemented::EndShader(Shader* shader)
 
 		GLExt::glBindVertexArray(0);
 		GLCheckError();
-		m_currentVertexArray = nullptr;
+		SetVertexArray(nullptr);
 	}
 	else
 	{
