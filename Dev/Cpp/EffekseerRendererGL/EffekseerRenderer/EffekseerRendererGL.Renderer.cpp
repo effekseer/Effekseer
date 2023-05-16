@@ -129,33 +129,6 @@ int32_t RendererImplemented::GetIndexSpriteCount() const
 	return (int32_t)(vsSize / size / 4 + 1);
 }
 
-void VertexArrayGroup::Create(
-	Backend::GraphicsDeviceRef graphicsDevice,
-	VertexBuffer* vertexBuffer,
-	IndexBuffer* indexBuffer,
-	IndexBuffer* indexBufferForWireframe,
-	Shader* shader_unlit,
-	Shader* shader_distortion,
-	Shader* shader_lit,
-	Shader* shader_ad_unlit,
-	Shader* shader_ad_lit,
-	Shader* shader_ad_distortion)
-{
-	vao_ad_distortion = std::unique_ptr<VertexArray>(VertexArray::Create(graphicsDevice, shader_ad_distortion, vertexBuffer, indexBuffer));
-	vao_distortion = std::unique_ptr<VertexArray>(VertexArray::Create(graphicsDevice, shader_distortion, vertexBuffer, indexBuffer));
-	vao_ad_lit = std::unique_ptr<VertexArray>(VertexArray::Create(graphicsDevice, shader_ad_lit, vertexBuffer, indexBuffer));
-	vao_lit = std::unique_ptr<VertexArray>(VertexArray::Create(graphicsDevice, shader_lit, vertexBuffer, indexBuffer));
-	vao_unlit = std::unique_ptr<VertexArray>(VertexArray::Create(graphicsDevice, shader_unlit, vertexBuffer, indexBuffer));
-	vao_ad_unlit = std::unique_ptr<VertexArray>(VertexArray::Create(graphicsDevice, shader_ad_unlit, vertexBuffer, indexBuffer));
-
-	vao_unlit_wire = std::unique_ptr<VertexArray>(VertexArray::Create(graphicsDevice, shader_unlit, vertexBuffer, indexBufferForWireframe));
-	vao_lit_wire = std::unique_ptr<VertexArray>(VertexArray::Create(graphicsDevice, shader_lit, vertexBuffer, indexBufferForWireframe));
-	vao_distortion_wire = std::unique_ptr<VertexArray>(VertexArray::Create(graphicsDevice, shader_distortion, vertexBuffer, indexBufferForWireframe));
-	vao_ad_unlit_wire = std::unique_ptr<VertexArray>(VertexArray::Create(graphicsDevice, shader_ad_unlit, vertexBuffer, indexBufferForWireframe));
-	vao_ad_lit_wire = std::unique_ptr<VertexArray>(VertexArray::Create(graphicsDevice, shader_ad_lit, vertexBuffer, indexBufferForWireframe));
-	vao_ad_distortion_wire = std::unique_ptr<VertexArray>(VertexArray::Create(graphicsDevice, shader_ad_distortion, vertexBuffer, indexBufferForWireframe));
-}
-
 RendererImplemented::PlatformSetting RendererImplemented::GetPlatformSetting()
 {
 #if defined(__EMSCRIPTEN__) || defined(__ANDROID__) || (defined(__APPLE__) && (TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR))
@@ -201,6 +174,9 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_DELETE(m_renderState);
 	ES_SAFE_DELETE(m_indexBuffer);
 	ES_SAFE_DELETE(m_indexBufferForWireframe);
+
+	// NOTE : It is better to reset on a same context where Rendering method runs
+	renderingVAO_.reset();
 }
 
 void RendererImplemented::OnLostDevice()
@@ -281,6 +257,12 @@ void RendererImplemented::GenerateIndexDataStride()
 bool RendererImplemented::Initialize()
 {
 	GLCheckError();
+
+	int arrayBufferBinding = 0;
+	int elementArrayBufferBinding = 0;
+	glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &arrayBufferBinding);
+	glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &elementArrayBufferBinding);
+
 	GLint vaoBinding = 0;
 
 	if (GLExt::IsSupportedVertexArray())
@@ -288,10 +270,20 @@ bool RendererImplemented::Initialize()
 		glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &vaoBinding);
 	}
 
-	int arrayBufferBinding = 0;
-	int elementArrayBufferBinding = 0;
-	glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &arrayBufferBinding);
-	glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &elementArrayBufferBinding);
+	std::unique_ptr<Backend::VertexArrayObject> initVAO;
+	if (GLExt::IsSupportedVertexArray())
+	{
+		initVAO = std::make_unique<Backend::VertexArrayObject>();
+		if (!initVAO->IsValid())
+		{
+			initVAO.reset();
+		}
+
+		if (initVAO != nullptr)
+		{
+			GLExt::glBindVertexArray(initVAO->GetVAO());
+		}
+	}
 
 	if (GetIndexSpriteCount() * 4 > 65536)
 	{
@@ -436,15 +428,6 @@ bool RendererImplemented::Initialize()
 
 	GetImpl()->CreateProxyTextures(this);
 
-	if (GLExt::IsSupportedVertexArray())
-	{
-		defaultVAO_ = std::make_unique<Backend::VertexArrayObject>();
-		if (!defaultVAO_->IsValid())
-		{
-			defaultVAO_.reset();
-		}
-	}
-
 	// Transpiled shader for OpenGL 3.x is transposed
 	if (GetDeviceType() == OpenGLDeviceType::OpenGL3 || GetDeviceType() == OpenGLDeviceType::OpenGLES3)
 	{
@@ -457,13 +440,19 @@ bool RendererImplemented::Initialize()
 		shader_ad_distortion_->SetIsTransposeEnabled(true);
 	}
 
-	GLExt::glBindBuffer(GL_ARRAY_BUFFER, arrayBufferBinding);
-	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBufferBinding);
+	if (initVAO != nullptr)
+	{
+		initVAO.reset();
+		GLExt::glBindVertexArray(0);
+	}
 
 	if (GLExt::IsSupportedVertexArray())
 	{
 		GLExt::glBindVertexArray(vaoBinding);
 	}
+
+	GLExt::glBindBuffer(GL_ARRAY_BUFFER, arrayBufferBinding);
+	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBufferBinding);
 
 	GLCheckError();
 	return true;
@@ -521,6 +510,15 @@ bool RendererImplemented::BeginRendering()
 		}
 	}
 
+	if (GLExt::IsSupportedVertexArray())
+	{
+		if (renderingVAO_ == nullptr)
+		{
+			renderingVAO_ = std::make_unique<EffekseerRendererGL::Backend::VertexArrayObject>();
+		}
+		GLExt::glBindVertexArray(renderingVAO_->GetVAO());
+	}
+
 	glDepthFunc(GL_LEQUAL);
 	glEnable(GL_BLEND);
 	glDisable(GL_CULL_FACE);
@@ -548,6 +546,11 @@ bool RendererImplemented::EndRendering()
 
 	// reset renderer
 	m_standardRenderer->ResetAndRenderingIfRequired();
+
+	if (GLExt::IsSupportedVertexArray())
+	{
+		GLExt::glBindVertexArray(0);
+	}
 
 	// restore states
 	if (m_restorationOfStates)
@@ -692,19 +695,6 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 			return;
 		}
 
-		rv->vao = std::unique_ptr<VertexArrayGroup>(new VertexArrayGroup());
-		rv->vao->Create(
-			graphicsDevice_,
-			rv->vertexBuffer.get(),
-			m_indexBuffer,
-			m_indexBufferForWireframe,
-			shader_unlit_,
-			shader_distortion_,
-			shader_lit_,
-			shader_ad_unlit_,
-			shader_ad_lit_,
-			shader_ad_distortion_);
-
 		ringVs_.emplace_back(rv);
 	}
 
@@ -820,10 +810,7 @@ void RendererImplemented::SetDistortingCallback(EffekseerRenderer::DistortingCal
 //----------------------------------------------------------------------------------
 void RendererImplemented::SetVertexBuffer(VertexBuffer* vertexBuffer, int32_t size)
 {
-	if (m_currentVertexArray == nullptr || m_currentVertexArray->GetVertexBuffer() == nullptr)
-	{
-		GLExt::glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer->GetInterface());
-	}
+	GLExt::glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer->GetInterface());
 }
 
 //----------------------------------------------------------------------------------
@@ -831,10 +818,7 @@ void RendererImplemented::SetVertexBuffer(VertexBuffer* vertexBuffer, int32_t si
 //----------------------------------------------------------------------------------
 void RendererImplemented::SetVertexBuffer(GLuint vertexBuffer, int32_t size)
 {
-	if (m_currentVertexArray == nullptr || m_currentVertexArray->GetVertexBuffer() == nullptr)
-	{
-		GLExt::glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-	}
+	GLExt::glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 }
 
 //----------------------------------------------------------------------------------
@@ -842,15 +826,8 @@ void RendererImplemented::SetVertexBuffer(GLuint vertexBuffer, int32_t size)
 //----------------------------------------------------------------------------------
 void RendererImplemented::SetIndexBuffer(IndexBuffer* indexBuffer)
 {
-	if (m_currentVertexArray == nullptr || m_currentVertexArray->GetIndexBuffer() == nullptr)
-	{
-		GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer->GetInterface());
-		indexBufferCurrentStride_ = indexBuffer->GetStride();
-	}
-	else
-	{
-		indexBufferCurrentStride_ = m_currentVertexArray->GetIndexBuffer()->GetStride();
-	}
+	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer->GetInterface());
+	indexBufferCurrentStride_ = indexBuffer->GetStride();
 }
 
 //----------------------------------------------------------------------------------
@@ -858,15 +835,8 @@ void RendererImplemented::SetIndexBuffer(IndexBuffer* indexBuffer)
 //----------------------------------------------------------------------------------
 void RendererImplemented::SetIndexBuffer(GLuint indexBuffer)
 {
-	if (m_currentVertexArray == nullptr || m_currentVertexArray->GetIndexBuffer() == nullptr)
-	{
-		GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-		indexBufferCurrentStride_ = 4;
-	}
-	else
-	{
-		indexBufferCurrentStride_ = m_currentVertexArray->GetIndexBuffer()->GetStride();
-	}
+	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+	indexBufferCurrentStride_ = 4;
 }
 
 void RendererImplemented::SetVertexBuffer(const Effekseer::Backend::VertexBufferRef& vertexBuffer, int32_t size)
@@ -884,23 +854,12 @@ void RendererImplemented::SetIndexBuffer(const Effekseer::Backend::IndexBufferRe
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void RendererImplemented::SetVertexArray(VertexArray* vertexArray)
-{
-	m_currentVertexArray = vertexArray;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void RendererImplemented::SetLayout(Shader* shader)
 {
 	GLCheckError();
 
-	if (m_currentVertexArray == nullptr || m_currentVertexArray->GetVertexBuffer() == nullptr)
-	{
-		shader->EnableAttribs();
-		GLCheckError();
-	}
+	shader->EnableAttribs();
+	GLCheckError();
 }
 
 //----------------------------------------------------------------------------------
@@ -1017,95 +976,7 @@ void RendererImplemented::BeginShader(Shader* shader)
 {
 	GLCheckError();
 
-	auto& ringv = ringVs_[GetImpl()->CurrentRingBufferIndex];
-
-	// change VAO with shader
-	if (m_currentVertexArray != nullptr)
-	{
-		// None
-	}
-	else if (shader == shader_unlit_)
-	{
-		if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
-		{
-			SetVertexArray(ringv->vao->vao_unlit_wire.get());
-		}
-		else
-		{
-			SetVertexArray(ringv->vao->vao_unlit.get());
-		}
-	}
-	else if (shader == shader_distortion_)
-	{
-		if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
-		{
-			SetVertexArray(ringv->vao->vao_distortion_wire.get());
-		}
-		else
-		{
-			SetVertexArray(ringv->vao->vao_distortion.get());
-		}
-	}
-	else if (shader == shader_lit_)
-	{
-		if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
-		{
-			SetVertexArray(ringv->vao->vao_lit_wire.get());
-		}
-		else
-		{
-			SetVertexArray(ringv->vao->vao_lit.get());
-		}
-	}
-	else if (shader == shader_ad_unlit_)
-	{
-		if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
-		{
-			SetVertexArray(ringv->vao->vao_ad_unlit_wire.get());
-		}
-		else
-		{
-			SetVertexArray(ringv->vao->vao_ad_unlit.get());
-		}
-	}
-	else if (shader == shader_ad_distortion_)
-	{
-		if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
-		{
-			SetVertexArray(ringv->vao->vao_ad_distortion_wire.get());
-		}
-		else
-		{
-			SetVertexArray(ringv->vao->vao_ad_distortion.get());
-		}
-	}
-	else if (shader == shader_ad_lit_)
-	{
-		if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
-		{
-			SetVertexArray(ringv->vao->vao_ad_lit_wire.get());
-		}
-		else
-		{
-			SetVertexArray(ringv->vao->vao_ad_lit.get());
-		}
-	}
-	else
-	{
-		SetVertexArray(nullptr);
-
-		if (defaultVAO_ != nullptr)
-		{
-			GLExt::glBindVertexArray(defaultVAO_->GetVAO());
-		}
-	}
-
 	shader->BeginScene();
-
-	if (m_currentVertexArray)
-	{
-		GLExt::glBindVertexArray(m_currentVertexArray->GetInterface());
-	}
 
 	assert(currentShader == nullptr);
 	currentShader = shader;
@@ -1123,40 +994,14 @@ void RendererImplemented::EndShader(Shader* shader)
 
 	GLCheckError();
 
-	if (m_currentVertexArray)
-	{
-		if (m_currentVertexArray->GetVertexBuffer() == nullptr)
-		{
-			shader->DisableAttribs();
-			GLCheckError();
+	shader->DisableAttribs();
+	GLCheckError();
 
-			GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-			GLCheckError();
+	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	GLCheckError();
 
-			GLExt::glBindBuffer(GL_ARRAY_BUFFER, 0);
-			GLCheckError();
-		}
-
-		GLExt::glBindVertexArray(0);
-		GLCheckError();
-		SetVertexArray(nullptr);
-	}
-	else
-	{
-		shader->DisableAttribs();
-		GLCheckError();
-
-		GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		GLCheckError();
-
-		GLExt::glBindBuffer(GL_ARRAY_BUFFER, 0);
-		GLCheckError();
-
-		if (defaultVAO_ != nullptr)
-		{
-			GLExt::glBindVertexArray(0);
-		}
-	}
+	GLExt::glBindBuffer(GL_ARRAY_BUFFER, 0);
+	GLCheckError();
 
 	shader->EndScene();
 	GLCheckError();

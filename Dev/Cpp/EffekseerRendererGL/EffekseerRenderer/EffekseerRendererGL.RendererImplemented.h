@@ -15,7 +15,7 @@ namespace EffekseerRendererGL
 {
 
 using Vertex = EffekseerRenderer::SimpleVertex;
-//using VertexDistortion = EffekseerRenderer::VertexDistortion;
+// using VertexDistortion = EffekseerRenderer::VertexDistortion;
 
 struct RenderStateSet
 {
@@ -46,35 +46,6 @@ struct RenderStateSet
 class RendererImplemented;
 using RendererImplementedRef = ::Effekseer::RefPtr<RendererImplemented>;
 
-struct VertexArrayGroup
-{
-	std::unique_ptr<VertexArray> vao_unlit;
-	std::unique_ptr<VertexArray> vao_distortion;
-	std::unique_ptr<VertexArray> vao_lit;
-	std::unique_ptr<VertexArray> vao_ad_unlit;
-	std::unique_ptr<VertexArray> vao_ad_lit;
-	std::unique_ptr<VertexArray> vao_ad_distortion;
-
-	std::unique_ptr<VertexArray> vao_unlit_wire;
-	std::unique_ptr<VertexArray> vao_distortion_wire;
-	std::unique_ptr<VertexArray> vao_lit_wire;
-	std::unique_ptr<VertexArray> vao_ad_unlit_wire;
-	std::unique_ptr<VertexArray> vao_ad_distortion_wire;
-	std::unique_ptr<VertexArray> vao_ad_lit_wire;
-
-	void Create(
-		Backend::GraphicsDeviceRef graphicsDevice,
-		VertexBuffer* vertexBuffer,
-		IndexBuffer* indexBuffer,
-		IndexBuffer* indexBufferForWireframe,
-		Shader* shader_unlit,
-		Shader* shader_distortion,
-		Shader* shader_lit,
-		Shader* shader_ad_unlit,
-		Shader* shader_ad_lit,
-		Shader* shader_ad_distortion);
-};
-
 class RendererImplemented : public Renderer, public ::Effekseer::ReferenceObject
 {
 	friend class DeviceObject;
@@ -91,7 +62,6 @@ private:
 	struct RingVertex
 	{
 		std::unique_ptr<VertexBuffer> vertexBuffer;
-		std::unique_ptr<VertexArrayGroup> vao;
 	};
 
 	std::vector<std::shared_ptr<RingVertex>> ringVs_;
@@ -111,9 +81,6 @@ private:
 
 	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>* m_standardRenderer;
 
-	//! default vao (alsmot for material)
-	std::unique_ptr<Backend::VertexArrayObject> defaultVAO_;
-
 	::EffekseerRenderer::RenderStateBase* m_renderState;
 
 	OpenGLDeviceType m_deviceType;
@@ -130,11 +97,11 @@ private:
 	// textures which are specified currently
 	std::vector<::Effekseer::Backend::TextureRef> currentTextures_;
 
-	VertexArray* m_currentVertexArray = nullptr;
-
 	int32_t indexBufferStride_ = 2;
 
 	int32_t indexBufferCurrentStride_ = 0;
+
+	std::unique_ptr<::EffekseerRendererGL::Backend::VertexArrayObject> renderingVAO_;
 
 	static PlatformSetting GetPlatformSetting();
 
@@ -242,8 +209,6 @@ public:
 
 	void SetVertexBuffer(const Effekseer::Backend::VertexBufferRef& vertexBuffer, int32_t size);
 	void SetIndexBuffer(const Effekseer::Backend::IndexBufferRef& indexBuffer);
-
-	void SetVertexArray(VertexArray* vertexArray);
 
 	void SetLayout(Shader* shader);
 	void DrawSprites(int32_t spriteCount, int32_t vertexOffset);

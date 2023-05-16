@@ -945,12 +945,6 @@ bool PipelineState::Init(const Effekseer::Backend::PipelineStateParameter& param
 {
 	param_ = param;
 	attribLocations_ = GetVertexAttribLocations(param_.VertexLayoutPtr.DownCast<Backend::VertexLayout>(), param_.ShaderPtr.DownCast<Backend::Shader>());
-
-	if (GLExt::IsSupportedVertexArray())
-	{
-		vao_ = std::make_unique<VertexArrayObject>();
-	}
-
 	return true;
 }
 
@@ -1077,6 +1071,11 @@ GraphicsDevice::GraphicsDevice(OpenGLDeviceType deviceType, bool isExtensionsEna
 	}
 
 	GLExt::glGenFramebuffers(1, &frameBufferTemp_);
+
+	if (GLExt::IsSupportedVertexArray())
+	{
+		vao_ = std::make_unique<VertexArrayObject>();
+	}
 }
 
 GraphicsDevice::~GraphicsDevice()
@@ -1336,7 +1335,7 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 	if (GLExt::IsSupportedVertexArray())
 	{
 		glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &currentVAO);
-		GLExt::glBindVertexArray(pip->GetVAO()->GetVAO());
+		GLExt::glBindVertexArray(vao_->GetVAO());
 	}
 
 	GLExt::glBindBuffer(GL_ARRAY_BUFFER, static_cast<VertexBuffer*>(drawParam.VertexBufferPtr.Get())->GetBuffer());
