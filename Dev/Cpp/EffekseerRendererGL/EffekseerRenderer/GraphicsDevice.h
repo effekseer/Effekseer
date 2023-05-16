@@ -276,7 +276,6 @@ class PipelineState
 private:
 	Effekseer::Backend::PipelineStateParameter param_;
 	Effekseer::CustomVector<GLint> attribLocations_;
-	std::unique_ptr<VertexArrayObject> vao_;
 
 public:
 	PipelineState() = default;
@@ -292,11 +291,6 @@ public:
 	const Effekseer::CustomVector<GLint>& GetAttribLocations() const
 	{
 		return attribLocations_;
-	}
-
-	const std::unique_ptr<VertexArrayObject>& GetVAO() const
-	{
-		return vao_;
 	}
 };
 
@@ -346,6 +340,7 @@ private:
 	std::set<DeviceObject*> objects_;
 	OpenGLDeviceType deviceType_;
 	std::array<GLuint, Effekseer::TextureSlotMax> samplers_;
+	std::unique_ptr<VertexArrayObject> vao_;
 	GLuint frameBufferTemp_ = 0;
 	std::map<DevicePropertyType, int> properties_;
 	bool isValid_ = true;

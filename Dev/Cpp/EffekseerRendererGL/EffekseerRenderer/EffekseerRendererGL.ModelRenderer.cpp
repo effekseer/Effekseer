@@ -38,12 +38,14 @@ void AddModelVertexUniformLayout(Effekseer::CustomVector<Effekseer::Backend::Uni
 
 	int vsOffset = 0;
 
-	auto storeVector = [&](const char* name, int count = 1) {
+	auto storeVector = [&](const char* name, int count = 1)
+	{
 		uniformLayout.emplace_back(UniformLayoutElement{ShaderStageType::Vertex, name, UniformBufferLayoutElementType::Vector4, count, vsOffset});
 		vsOffset += sizeof(float[4]) * count;
 	};
 
-	auto storeMatrix = [&](const char* name, int count = 1) {
+	auto storeMatrix = [&](const char* name, int count = 1)
+	{
 		uniformLayout.emplace_back(UniformLayoutElement{ShaderStageType::Vertex, name, UniformBufferLayoutElementType::Matrix44, count, vsOffset});
 		vsOffset += sizeof(Effekseer::Matrix44) * count;
 	};
@@ -84,11 +86,6 @@ void AddModelVertexUniformLayout(Effekseer::CustomVector<Effekseer::Backend::Uni
 template <int N>
 void ModelRenderer::InitRenderer()
 {
-	for (size_t i = 0; i < 6; i++)
-	{
-		m_va[i] = nullptr;
-	}
-
 	const Effekseer::Backend::VertexLayoutElement vlElem[6] = {
 		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "Input_Pos", "POSITION", 0},
 		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "Input_Normal", "NORMAL", 1},
@@ -155,25 +152,6 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 	{
 		InitRenderer<1>();
 	}
-
-	GLint currentVAO = 0;
-
-	if (GLExt::IsSupportedVertexArray())
-	{
-		glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &currentVAO);
-	}
-
-	m_va[0] = VertexArray::Create(graphicsDevice_, shader_ad_lit_, nullptr, nullptr);
-	m_va[1] = VertexArray::Create(graphicsDevice_, shader_ad_unlit_, nullptr, nullptr);
-	m_va[2] = VertexArray::Create(graphicsDevice_, shader_ad_distortion_, nullptr, nullptr);
-	m_va[3] = VertexArray::Create(graphicsDevice_, shader_lit_, nullptr, nullptr);
-	m_va[4] = VertexArray::Create(graphicsDevice_, shader_unlit_, nullptr, nullptr);
-	m_va[5] = VertexArray::Create(graphicsDevice_, shader_distortion_, nullptr, nullptr);
-
-	if (GLExt::IsSupportedVertexArray())
-	{
-		GLExt::glBindVertexArray(currentVAO);
-	}
 }
 
 //----------------------------------------------------------------------------------
@@ -181,11 +159,6 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 //----------------------------------------------------------------------------------
 ModelRenderer::~ModelRenderer()
 {
-	for (size_t i = 0; i < 6; i++)
-	{
-		ES_SAFE_DELETE(m_va[i]);
-	}
-
 	ES_SAFE_DELETE(shader_unlit_);
 	ES_SAFE_DELETE(shader_lit_);
 	ES_SAFE_DELETE(shader_distortion_);
@@ -336,37 +309,6 @@ void ModelRenderer::Rendering(const efkModelNodeParam& parameter, const Instance
 
 void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userData)
 {
-	if (collector_.DoRequireAdvancedRenderer())
-	{
-		if (parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion)
-		{
-			m_renderer->SetVertexArray(m_va[2]);
-		}
-		else if (parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)
-		{
-			m_renderer->SetVertexArray(m_va[0]);
-		}
-		else
-		{
-			m_renderer->SetVertexArray(m_va[1]);
-		}
-	}
-	else
-	{
-		if (parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion)
-		{
-			m_renderer->SetVertexArray(m_va[5]);
-		}
-		else if (parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)
-		{
-			m_renderer->SetVertexArray(m_va[3]);
-		}
-		else
-		{
-			m_renderer->SetVertexArray(m_va[4]);
-		}
-	}
-
 	if (parameter.ModelIndex < 0)
 	{
 		return;
