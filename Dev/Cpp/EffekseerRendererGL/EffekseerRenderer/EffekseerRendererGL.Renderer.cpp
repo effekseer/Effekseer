@@ -764,11 +764,6 @@ void RendererImplemented::SetVertexBuffer(const Effekseer::Backend::VertexBuffer
 
 void RendererImplemented::SetIndexBuffer(const Effekseer::Backend::IndexBufferRef& indexBuffer)
 {
-	if (currentndexBuffer_ == indexBuffer)
-	{
-		return;
-	}
-
 	auto ib = static_cast<Backend::IndexBuffer*>(indexBuffer.Get());
 	currentndexBuffer_ = indexBuffer;
 	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib->GetBuffer());
