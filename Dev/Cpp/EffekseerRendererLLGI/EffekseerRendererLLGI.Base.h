@@ -31,7 +31,7 @@ class Texture;
 class TargetTexture;
 class DepthTexture;
 class VertexBuffer;
-class IndexBuffer;
+// class IndexBuffer;
 class Shader;
 
 class SpriteRenderer;

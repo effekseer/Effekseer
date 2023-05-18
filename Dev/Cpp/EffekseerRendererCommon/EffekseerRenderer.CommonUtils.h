@@ -1664,5 +1664,51 @@ inline RendererStateFlipbook ToState(const Effekseer::NodeRendererFlipbookParame
 	return ret;
 }
 
+template <typename T>
+bool GenerateIndexDataStride(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, int32_t squareMaxCount, Effekseer::Backend::IndexBufferRef& indexBuffer, Effekseer::Backend::IndexBufferRef& indexBufferForWireframe)
+{
+	{
+		std::vector<T> buffer;
+		buffer.resize(squareMaxCount * 6);
+
+		for (int i = 0; i < squareMaxCount; i++)
+		{
+			buffer[0 + i * 6] = (T)(3 + 4 * i);
+			buffer[1 + i * 6] = (T)(1 + 4 * i);
+			buffer[2 + i * 6] = (T)(0 + 4 * i);
+			buffer[3 + i * 6] = (T)(3 + 4 * i);
+			buffer[4 + i * 6] = (T)(0 + 4 * i);
+			buffer[5 + i * 6] = (T)(2 + 4 * i);
+		}
+
+		indexBuffer = graphicsDevice->CreateIndexBuffer(squareMaxCount * 6, buffer.data(), Effekseer::Backend::IndexBufferStrideType::Stride2);
+		if (indexBuffer == nullptr)
+			return false;
+	}
+
+	{
+		std::vector<T> buffer;
+		buffer.resize(squareMaxCount * 8);
+
+		for (int i = 0; i < squareMaxCount; i++)
+		{
+			buffer[0 + i * 8] = (T)(0 + 4 * i);
+			buffer[1 + i * 8] = (T)(1 + 4 * i);
+			buffer[2 + i * 8] = (T)(2 + 4 * i);
+			buffer[3 + i * 8] = (T)(3 + 4 * i);
+			buffer[4 + i * 8] = (T)(0 + 4 * i);
+			buffer[5 + i * 8] = (T)(2 + 4 * i);
+			buffer[6 + i * 8] = (T)(1 + 4 * i);
+			buffer[7 + i * 8] = (T)(3 + 4 * i);
+		}
+
+		indexBufferForWireframe = graphicsDevice->CreateIndexBuffer(squareMaxCount * 8, buffer.data(), Effekseer::Backend::IndexBufferStrideType::Stride2);
+		if (indexBufferForWireframe == nullptr)
+			return false;
+	}
+
+	return true;
+}
+
 } // namespace EffekseerRenderer
 #endif // __EFFEKSEERRENDERER_COMMON_UTILS_H__

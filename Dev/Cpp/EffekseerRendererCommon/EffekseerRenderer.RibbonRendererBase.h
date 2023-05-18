@@ -10,7 +10,6 @@
 #include <string.h>
 
 #include "EffekseerRenderer.CommonUtils.h"
-#include "EffekseerRenderer.IndexBufferBase.h"
 #include "EffekseerRenderer.RenderStateBase.h"
 #include "EffekseerRenderer.StandardRenderer.h"
 #include "EffekseerRenderer.VertexBufferBase.h"

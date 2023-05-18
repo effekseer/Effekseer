@@ -6,7 +6,6 @@
 #include "EffekseerRendererGL.RendererImplemented.h"
 
 #include "EffekseerRendererGL.GLExtension.h"
-#include "EffekseerRendererGL.IndexBuffer.h"
 #include "EffekseerRendererGL.ModelRenderer.h"
 #include "EffekseerRendererGL.Shader.h"
 #include "EffekseerRendererGL.VertexBuffer.h"

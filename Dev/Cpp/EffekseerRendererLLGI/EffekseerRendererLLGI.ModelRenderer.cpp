@@ -2,7 +2,6 @@
 #include "EffekseerRendererLLGI.RenderState.h"
 #include "EffekseerRendererLLGI.RendererImplemented.h"
 
-#include "EffekseerRendererLLGI.IndexBuffer.h"
 #include "EffekseerRendererLLGI.ModelRenderer.h"
 #include "EffekseerRendererLLGI.Shader.h"
 #include "EffekseerRendererLLGI.VertexBuffer.h"

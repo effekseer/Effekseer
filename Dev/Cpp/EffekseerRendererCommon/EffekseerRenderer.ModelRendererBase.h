@@ -9,7 +9,6 @@
 #include <vector>
 
 #include "EffekseerRenderer.CommonUtils.h"
-#include "EffekseerRenderer.IndexBufferBase.h"
 #include "EffekseerRenderer.RenderStateBase.h"
 #include "EffekseerRenderer.Renderer.h"
 #include "EffekseerRenderer.VertexBufferBase.h"
@@ -338,11 +337,13 @@ protected:
 
 			if (param.DepthParameterPtr->ZSort == Effekseer::ZSortType::NormalOrder)
 			{
-				std::sort(keyValues_.begin(), keyValues_.end(), [](const KeyValue& a, const KeyValue& b) -> bool { return a.Key < b.Key; });
+				std::sort(keyValues_.begin(), keyValues_.end(), [](const KeyValue& a, const KeyValue& b) -> bool
+						  { return a.Key < b.Key; });
 			}
 			else
 			{
-				std::sort(keyValues_.begin(), keyValues_.end(), [](const KeyValue& a, const KeyValue& b) -> bool { return a.Key > b.Key; });
+				std::sort(keyValues_.begin(), keyValues_.end(), [](const KeyValue& a, const KeyValue& b) -> bool
+						  { return a.Key > b.Key; });
 			}
 
 			matrixesSorted_.resize(m_matrixes.size());
@@ -817,7 +818,7 @@ public:
 			customData2_.push_back(instanceParameter.CustomData2);
 		}
 
-		//parameter.BasicParameterPtr
+		// parameter.BasicParameterPtr
 	}
 
 	template <typename RENDERER, typename SHADER, typename MODEL, bool Instancing, int InstanceCount>
@@ -1104,7 +1105,7 @@ public:
 
 		if (Instancing && isTimeSame)
 		{
-			//auto& imodel = model->InternalModels[stTime0];
+			// auto& imodel = model->InternalModels[stTime0];
 
 			// Invalid unless layout is set after buffer
 			renderer->SetVertexBuffer(model->GetVertexBuffer(stTime0), sizeof(Effekseer::Model::Vertex));

@@ -5,7 +5,6 @@
 #include "EffekseerRendererDX9.RenderState.h"
 #include "EffekseerRendererDX9.RendererImplemented.h"
 
-#include "EffekseerRendererDX9.IndexBuffer.h"
 #include "EffekseerRendererDX9.ModelRenderer.h"
 #include "EffekseerRendererDX9.Shader.h"
 #include "EffekseerRendererDX9.VertexBuffer.h"

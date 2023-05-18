@@ -16,7 +16,7 @@ namespace EffekseerRendererLLGI
 {
 
 using Vertex = EffekseerRenderer::SimpleVertex;
-//using VertexDistortion = EffekseerRenderer::VertexDistortion;
+// using VertexDistortion = EffekseerRenderer::VertexDistortion;
 
 class PiplineStateKey
 {
@@ -52,8 +52,9 @@ protected:
 	std::shared_ptr<LLGI::RenderPassPipelineState> currentRenderPassPipelineState_ = nullptr;
 
 	VertexBuffer* m_vertexBuffer;
-	IndexBuffer* m_indexBuffer;
-	IndexBuffer* m_indexBufferForWireframe = nullptr;
+	Effekseer::Backend::IndexBufferRef currentndexBuffer_;
+	Effekseer::Backend::IndexBufferRef indexBuffer_;
+	Effekseer::Backend::IndexBufferRef indexBufferForWireframe_;
 	int32_t m_squareMaxCount;
 
 	Shader* shader_unlit_ = nullptr;
@@ -89,8 +90,6 @@ protected:
 	LLGI::PipelineState* GetOrCreatePiplineState();
 
 	virtual void GenerateVertexBuffer();
-
-	virtual void GenerateIndexBuffer();
 
 public:
 	//! shaders (todo implemented)
@@ -142,10 +141,7 @@ public:
 	*/
 	VertexBuffer* GetVertexBuffer();
 
-	/**
-		@brief	インデックスバッファ取得
-	*/
-	IndexBuffer* GetIndexBuffer();
+	Effekseer::Backend::IndexBufferRef GetIndexBuffer();
 
 	/**
 		@brief	最大描画スプライト数
@@ -204,8 +200,6 @@ public:
 
 	void SetVertexBuffer(VertexBuffer* vertexBuffer, int32_t stride);
 	void SetVertexBuffer(LLGI::Buffer* vertexBuffer, int32_t stride);
-	void SetIndexBuffer(IndexBuffer* indexBuffer);
-	void SetIndexBuffer(LLGI::Buffer* indexBuffer);
 
 	void SetVertexBuffer(const Effekseer::Backend::VertexBufferRef& vertexBuffer, int32_t stride);
 	void SetIndexBuffer(const Effekseer::Backend::IndexBufferRef& indexBuffer);

@@ -12,7 +12,6 @@
 #include <string.h>
 
 #include "EffekseerRenderer.CommonUtils.h"
-#include "EffekseerRenderer.IndexBufferBase.h"
 #include "EffekseerRenderer.RenderStateBase.h"
 #include "EffekseerRenderer.StandardRenderer.h"
 #include "EffekseerRenderer.VertexBufferBase.h"
@@ -421,11 +420,13 @@ protected:
 
 			if (param.ZSort == Effekseer::ZSortType::NormalOrder)
 			{
-				std::sort(instances.begin(), instances.end(), [](const KeyValue& a, const KeyValue& b) -> bool { return a.Key < b.Key; });
+				std::sort(instances.begin(), instances.end(), [](const KeyValue& a, const KeyValue& b) -> bool
+						  { return a.Key < b.Key; });
 			}
 			else
 			{
-				std::sort(instances.begin(), instances.end(), [](const KeyValue& a, const KeyValue& b) -> bool { return a.Key > b.Key; });
+				std::sort(instances.begin(), instances.end(), [](const KeyValue& a, const KeyValue& b) -> bool
+						  { return a.Key > b.Key; });
 			}
 
 			for (auto& kv : instances)
