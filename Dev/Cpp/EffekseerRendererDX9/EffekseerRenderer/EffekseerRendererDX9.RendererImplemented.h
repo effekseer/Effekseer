@@ -26,8 +26,10 @@ class RendererImplemented : public Renderer, public ::Effekseer::ReferenceObject
 
 private:
 	VertexBuffer* m_vertexBuffer;
-	IndexBuffer* m_indexBuffer = nullptr;
-	IndexBuffer* m_indexBufferForWireframe = nullptr;
+	Effekseer::Backend::IndexBufferRef currentndexBuffer_;
+	Effekseer::Backend::IndexBufferRef indexBuffer_;
+	Effekseer::Backend::IndexBufferRef indexBufferForWireframe_;
+
 	int32_t m_squareMaxCount;
 
 	Shader* shader_unlit_ = nullptr;
@@ -109,7 +111,6 @@ private:
 	EffekseerRenderer::DistortingCallback* m_distortingCallback;
 
 	::Effekseer::Backend::TextureRef m_backgroundDX9;
-
 public:
 	/**
 		@brief	コンストラクタ
@@ -143,15 +144,7 @@ public:
 	*/
 	VertexBuffer* GetVertexBuffer();
 
-	/**
-		@brief	インデックスバッファ取得
-	*/
-	IndexBuffer* GetIndexBuffer();
-
-	/**
-		@brief	インデックスバッファ取得
-	*/
-	IndexBuffer* GetIndexBufferForWireframe();
+	Effekseer::Backend::IndexBufferRef GetIndexBuffer();
 
 	/**
 		@brief	最大描画スプライト数
@@ -213,8 +206,6 @@ public:
 
 	void SetVertexBuffer(VertexBuffer* vertexBuffer, int32_t size);
 	void SetVertexBuffer(IDirect3DVertexBuffer9* vertexBuffer, int32_t size);
-	void SetIndexBuffer(IndexBuffer* indexBuffer);
-	void SetIndexBuffer(IDirect3DIndexBuffer9* indexBuffer);
 
 	void SetVertexBuffer(const Effekseer::Backend::VertexBufferRef& vertexBuffer, int32_t size);
 	void SetIndexBuffer(const Effekseer::Backend::IndexBufferRef& indexBuffer);
@@ -256,7 +247,7 @@ public:
 	}
 
 private:
-	void GenerateIndexData();
+	// void GenerateIndexData();
 };
 
 //----------------------------------------------------------------------------------

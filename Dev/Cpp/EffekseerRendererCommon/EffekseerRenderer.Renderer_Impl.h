@@ -131,6 +131,7 @@ public:
 	void SetDepth(::Effekseer::Backend::TextureRef texture, const DepthReconstructionParameter& reconstructionParam);
 };
 
+
 } // namespace EffekseerRenderer
 
 #endif

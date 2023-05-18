@@ -14,7 +14,6 @@
 #include "../../EffekseerRendererCommon/ModelLoader.h"
 #include "../../EffekseerRendererCommon/TextureLoader.h"
 #include "EffekseerRendererDX9.DeviceObject.h"
-#include "EffekseerRendererDX9.IndexBuffer.h"
 #include "EffekseerRendererDX9.MaterialLoader.h"
 #include "EffekseerRendererDX9.ModelRenderer.h"
 #include "EffekseerRendererDX9.Shader.h"
@@ -128,7 +127,7 @@ RendererRef Renderer::Create(LPDIRECT3DDEVICE9 device, int32_t squareMaxCount)
 //----------------------------------------------------------------------------------
 RendererImplemented::RendererImplemented(int32_t squareMaxCount)
 	: m_vertexBuffer(nullptr)
-	, m_indexBuffer(nullptr)
+	//, m_indexBuffer(nullptr)
 	, m_squareMaxCount(squareMaxCount)
 	, m_coordinateSystem(::Effekseer::CoordinateSystem::RH)
 	, m_state_vertexShader(nullptr)
@@ -174,8 +173,6 @@ RendererImplemented::~RendererImplemented()
 
 	ES_SAFE_DELETE(m_renderState);
 	ES_SAFE_DELETE(m_vertexBuffer);
-	ES_SAFE_DELETE(m_indexBuffer);
-	ES_SAFE_DELETE(m_indexBufferForWireframe);
 }
 
 //----------------------------------------------------------------------------------
@@ -208,8 +205,7 @@ void RendererImplemented::OnResetDevice()
 
 	if (m_isChangedDevice)
 	{
-		// インデックスデータの生成
-		GenerateIndexData();
+		EffekseerRenderer::GenerateIndexDataStride<int16_t>(graphicsDevice_, m_squareMaxCount, indexBuffer_, indexBufferForWireframe_);
 
 		m_isChangedDevice = false;
 	}
@@ -217,56 +213,6 @@ void RendererImplemented::OnResetDevice()
 	GetImpl()->CreateProxyTextures(this);
 }
 
-//----------------------------------------------------------------------------------
-// インデックスデータの生成
-//----------------------------------------------------------------------------------
-void RendererImplemented::GenerateIndexData()
-{
-	// generate an index buffer
-	if (m_indexBuffer != nullptr)
-	{
-		m_indexBuffer->Lock();
-
-		// ( 標準設定で　DirectX 時計周りが表, OpenGLは反時計回りが表 )
-		for (int i = 0; i < m_squareMaxCount; i++)
-		{
-			uint16_t* buf = (uint16_t*)m_indexBuffer->GetBufferDirect(6);
-			buf[0] = 3 + 4 * i;
-			buf[1] = 1 + 4 * i;
-			buf[2] = 0 + 4 * i;
-			buf[3] = 3 + 4 * i;
-			buf[4] = 0 + 4 * i;
-			buf[5] = 2 + 4 * i;
-		}
-
-		m_indexBuffer->Unlock();
-	}
-
-	// Generate index buffer for rendering wireframes
-	if (m_indexBufferForWireframe != nullptr)
-	{
-		m_indexBufferForWireframe->Lock();
-
-		for (int i = 0; i < m_squareMaxCount; i++)
-		{
-			uint16_t* buf = (uint16_t*)m_indexBufferForWireframe->GetBufferDirect(8);
-			buf[0] = 0 + 4 * i;
-			buf[1] = 1 + 4 * i;
-			buf[2] = 2 + 4 * i;
-			buf[3] = 3 + 4 * i;
-			buf[4] = 0 + 4 * i;
-			buf[5] = 2 + 4 * i;
-			buf[6] = 1 + 4 * i;
-			buf[7] = 3 + 4 * i;
-		}
-
-		m_indexBufferForWireframe->Unlock();
-	}
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice)
 {
 	graphicsDevice_ = graphicsDevice;
@@ -278,22 +224,10 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice)
 			return false;
 	}
 
-	// generate an index buffer
+	if (!EffekseerRenderer::GenerateIndexDataStride<int16_t>(graphicsDevice_, m_squareMaxCount, indexBuffer_, indexBufferForWireframe_))
 	{
-		m_indexBuffer = IndexBuffer::Create(this, m_squareMaxCount * 6, false, false);
-		if (m_indexBuffer == nullptr)
-			return false;
+		return false;
 	}
-
-	// generate an index buffer for a wireframe
-	{
-		m_indexBufferForWireframe = IndexBuffer::Create(this, m_squareMaxCount * 8, false, false);
-		if (m_indexBufferForWireframe == nullptr)
-			return false;
-	}
-
-	// インデックスデータの生成
-	GenerateIndexData();
 
 	m_renderState = new RenderState(this);
 
@@ -612,6 +546,8 @@ bool RendererImplemented::EndRendering()
 		GetDevice()->SetFVF(m_state_FVF);
 	}
 
+	currentndexBuffer_ = nullptr;
+
 	return true;
 }
 
@@ -623,32 +559,15 @@ VertexBuffer* RendererImplemented::GetVertexBuffer()
 	return m_vertexBuffer;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-IndexBuffer* RendererImplemented::GetIndexBuffer()
+Effekseer::Backend::IndexBufferRef RendererImplemented::GetIndexBuffer()
 {
 	if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
 	{
-		return m_indexBufferForWireframe;
+		return indexBufferForWireframe_;
 	}
-	else
-	{
-		return m_indexBuffer;
-	}
+	return indexBuffer_;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-IndexBuffer* RendererImplemented::GetIndexBufferForWireframe()
-{
-	return m_indexBufferForWireframe;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 int32_t RendererImplemented::GetSquareMaxCount() const
 {
 	return m_squareMaxCount;
@@ -772,22 +691,6 @@ void RendererImplemented::SetVertexBuffer(VertexBuffer* vertexBuffer, int32_t si
 	GetDevice()->SetStreamSource(0, vertexBuffer->GetInterface(), 0, size);
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void RendererImplemented::SetIndexBuffer(IndexBuffer* indexBuffer)
-{
-	GetDevice()->SetIndices(indexBuffer->GetInterface());
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void RendererImplemented::SetIndexBuffer(IDirect3DIndexBuffer9* indexBuffer)
-{
-	GetDevice()->SetIndices(indexBuffer);
-}
-
 void RendererImplemented::SetVertexBuffer(const Effekseer::Backend::VertexBufferRef& vertexBuffer, int32_t size)
 {
 	auto vb = static_cast<Backend::VertexBuffer*>(vertexBuffer.Get());
@@ -797,7 +700,8 @@ void RendererImplemented::SetVertexBuffer(const Effekseer::Backend::VertexBuffer
 void RendererImplemented::SetIndexBuffer(const Effekseer::Backend::IndexBufferRef& indexBuffer)
 {
 	auto ib = static_cast<Backend::IndexBuffer*>(indexBuffer.Get());
-	SetIndexBuffer(ib->GetBuffer());
+	currentndexBuffer_ = indexBuffer;
+	GetDevice()->SetIndices(ib->GetBuffer());
 }
 
 //----------------------------------------------------------------------------------

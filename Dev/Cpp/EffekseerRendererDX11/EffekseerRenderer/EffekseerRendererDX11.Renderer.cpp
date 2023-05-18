@@ -7,12 +7,11 @@
 #include "EffekseerRendererDX11.RendererImplemented.h"
 
 #include "EffekseerRendererDX11.DeviceObject.h"
-#include "EffekseerRendererDX11.IndexBuffer.h"
+#include "EffekseerRendererDX11.GPUTimer.h"
 #include "EffekseerRendererDX11.MaterialLoader.h"
 #include "EffekseerRendererDX11.ModelRenderer.h"
 #include "EffekseerRendererDX11.Shader.h"
 #include "EffekseerRendererDX11.VertexBuffer.h"
-#include "EffekseerRendererDX11.GPUTimer.h"
 
 #include "../../EffekseerRendererCommon/EffekseerRenderer.Renderer_Impl.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.RibbonRendererBase.h"
@@ -274,7 +273,6 @@ RendererImplemented::RendererImplemented(int32_t squareMaxCount)
 	: m_device(nullptr)
 	, m_context(nullptr)
 	, m_vertexBuffer(nullptr)
-	, m_indexBuffer(nullptr)
 	, m_squareMaxCount(squareMaxCount)
 	, m_coordinateSystem(::Effekseer::CoordinateSystem::RH)
 	, m_renderState(nullptr)
@@ -312,8 +310,6 @@ RendererImplemented::~RendererImplemented()
 
 	ES_SAFE_DELETE(m_renderState);
 	ES_SAFE_DELETE(m_vertexBuffer);
-	ES_SAFE_DELETE(m_indexBuffer);
-	ES_SAFE_DELETE(m_indexBufferForWireframe);
 }
 
 //----------------------------------------------------------------------------------
@@ -364,51 +360,9 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 			return false;
 	}
 
-	// generate an index buffer
+	if (!EffekseerRenderer::GenerateIndexDataStride<int16_t>(graphicsDevice_, m_squareMaxCount, indexBuffer_, indexBufferForWireframe_))
 	{
-		m_indexBuffer = IndexBuffer::Create(this, m_squareMaxCount * 6, false, false);
-		if (m_indexBuffer == nullptr)
-			return false;
-
-		m_indexBuffer->Lock();
-
-		// ( 標準設定で　DirectX 時計周りが表, OpenGLは反時計回りが表 )
-		for (int i = 0; i < m_squareMaxCount; i++)
-		{
-			uint16_t* buf = (uint16_t*)m_indexBuffer->GetBufferDirect(6);
-			buf[0] = 3 + 4 * i;
-			buf[1] = 1 + 4 * i;
-			buf[2] = 0 + 4 * i;
-			buf[3] = 3 + 4 * i;
-			buf[4] = 0 + 4 * i;
-			buf[5] = 2 + 4 * i;
-		}
-
-		m_indexBuffer->Unlock();
-	}
-
-	// Generate index buffer for rendering wireframes
-	{
-		m_indexBufferForWireframe = IndexBuffer::Create(this, m_squareMaxCount * 8, false, false);
-		if (m_indexBufferForWireframe == nullptr)
-			return false;
-
-		m_indexBufferForWireframe->Lock();
-
-		for (int i = 0; i < m_squareMaxCount; i++)
-		{
-			uint16_t* buf = (uint16_t*)m_indexBufferForWireframe->GetBufferDirect(8);
-			buf[0] = 0 + 4 * i;
-			buf[1] = 1 + 4 * i;
-			buf[2] = 2 + 4 * i;
-			buf[3] = 3 + 4 * i;
-			buf[4] = 0 + 4 * i;
-			buf[5] = 2 + 4 * i;
-			buf[6] = 1 + 4 * i;
-			buf[7] = 3 + 4 * i;
-		}
-
-		m_indexBufferForWireframe->Unlock();
+		return false;
 	}
 
 	m_renderState = new RenderState(this, m_depthFunc, isMSAAEnabled);
@@ -603,6 +557,8 @@ bool RendererImplemented::EndRendering()
 		m_state->ReleaseState();
 	}
 
+	currentndexBuffer_ = nullptr;
+
 	return true;
 }
 
@@ -630,19 +586,13 @@ VertexBuffer* RendererImplemented::GetVertexBuffer()
 	return m_vertexBuffer;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-IndexBuffer* RendererImplemented::GetIndexBuffer()
+Effekseer::Backend::IndexBufferRef RendererImplemented::GetIndexBuffer()
 {
 	if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
 	{
-		return m_indexBufferForWireframe;
+		return indexBufferForWireframe_;
 	}
-	else
-	{
-		return m_indexBuffer;
-	}
+	return indexBuffer_;
 }
 
 //----------------------------------------------------------------------------------
@@ -775,22 +725,6 @@ void RendererImplemented::SetVertexBuffer(VertexBuffer* vertexBuffer, int32_t si
 	GetContext()->IASetVertexBuffers(0, 1, &vBuf, &vertexSize, &offset);
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void RendererImplemented::SetIndexBuffer(IndexBuffer* indexBuffer)
-{
-	GetContext()->IASetIndexBuffer(indexBuffer->GetInterface(), DXGI_FORMAT_R16_UINT, 0);
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void RendererImplemented::SetIndexBuffer(ID3D11Buffer* indexBuffer)
-{
-	GetContext()->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
-}
-
 void RendererImplemented::SetVertexBuffer(const Effekseer::Backend::VertexBufferRef& vertexBuffer, int32_t size)
 {
 	auto ptr = static_cast<Backend::VertexBuffer*>(vertexBuffer.Get());
@@ -800,7 +734,8 @@ void RendererImplemented::SetVertexBuffer(const Effekseer::Backend::VertexBuffer
 void RendererImplemented::SetIndexBuffer(const Effekseer::Backend::IndexBufferRef& indexBuffer)
 {
 	auto ptr = static_cast<Backend::IndexBuffer*>(indexBuffer.Get());
-	SetIndexBuffer(ptr->GetBuffer());
+	currentndexBuffer_ = indexBuffer;
+	GetContext()->IASetIndexBuffer(ptr->GetBuffer(), ptr->GetStrideType() == Effekseer::Backend::IndexBufferStrideType::Stride2 ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT, 0);
 }
 
 //----------------------------------------------------------------------------------

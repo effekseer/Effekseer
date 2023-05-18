@@ -66,8 +66,11 @@ private:
 
 	std::vector<std::shared_ptr<RingVertex>> ringVs_;
 
-	IndexBuffer* m_indexBuffer = nullptr;
-	IndexBuffer* m_indexBufferForWireframe = nullptr;
+	Effekseer::Backend::IndexBufferStrideType indexBufferStride_ = Effekseer::Backend::IndexBufferStrideType::Stride2;
+	Effekseer::Backend::IndexBufferRef currentndexBuffer_;
+	Effekseer::Backend::IndexBufferRef indexBuffer_;
+	Effekseer::Backend::IndexBufferRef indexBufferForWireframe_;
+
 	int32_t m_squareMaxCount;
 
 	Shader* shader_unlit_ = nullptr;
@@ -96,10 +99,6 @@ private:
 
 	// textures which are specified currently
 	std::vector<::Effekseer::Backend::TextureRef> currentTextures_;
-
-	int32_t indexBufferStride_ = 2;
-
-	int32_t indexBufferCurrentStride_ = 0;
 
 	std::unique_ptr<::EffekseerRendererGL::Backend::VertexArrayObject> renderingVAO_;
 
@@ -138,7 +137,9 @@ public:
 	/**
 		@brief	インデックスバッファ取得
 	*/
-	IndexBuffer* GetIndexBuffer();
+	// IndexBuffer* GetIndexBuffer();
+
+	Effekseer::Backend::IndexBufferRef GetIndexBuffer();
 
 	/**
 		@brief	最大描画スプライト数
@@ -204,8 +205,6 @@ public:
 
 	void SetVertexBuffer(VertexBuffer* vertexBuffer, int32_t size);
 	void SetVertexBuffer(GLuint vertexBuffer, int32_t size);
-	void SetIndexBuffer(IndexBuffer* indexBuffer);
-	void SetIndexBuffer(GLuint indexBuffer);
 
 	void SetVertexBuffer(const Effekseer::Backend::VertexBufferRef& vertexBuffer, int32_t size);
 	void SetIndexBuffer(const Effekseer::Backend::IndexBufferRef& indexBuffer);
@@ -263,10 +262,7 @@ public:
 	}
 
 private:
-	void GenerateIndexData();
-
-	template <typename T>
-	void GenerateIndexDataStride();
+	bool GenerateIndexData();
 };
 
 void AddVertexUniformLayout(Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>& uniformLayout);

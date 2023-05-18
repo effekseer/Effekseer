@@ -8,7 +8,6 @@
 
 #include "EffekseerRendererGL.DeviceObject.h"
 #include "EffekseerRendererGL.GPUTimer.h"
-#include "EffekseerRendererGL.IndexBuffer.h"
 #include "EffekseerRendererGL.MaterialLoader.h"
 #include "EffekseerRendererGL.ModelRenderer.h"
 #include "EffekseerRendererGL.Shader.h"
@@ -140,9 +139,7 @@ RendererImplemented::PlatformSetting RendererImplemented::GetPlatformSetting()
 //
 //----------------------------------------------------------------------------------
 RendererImplemented::RendererImplemented(int32_t squareMaxCount, Backend::GraphicsDeviceRef graphicsDevice)
-	: m_indexBuffer(nullptr)
-	, m_indexBufferForWireframe(nullptr)
-	, m_squareMaxCount(squareMaxCount)
+	: m_squareMaxCount(squareMaxCount)
 	, m_renderState(nullptr)
 	, m_restorationOfStates(true)
 	, m_standardRenderer(nullptr)
@@ -171,8 +168,6 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_DELETE(shader_ad_distortion_);
 
 	ES_SAFE_DELETE(m_renderState);
-	ES_SAFE_DELETE(m_indexBuffer);
-	ES_SAFE_DELETE(m_indexBufferForWireframe);
 
 	// NOTE : It is better to reset on a same context where Rendering method runs
 	renderingVAO_.reset();
@@ -192,67 +187,20 @@ void RendererImplemented::OnResetDevice()
 	GenerateIndexData();
 }
 
-void RendererImplemented::GenerateIndexData()
+bool RendererImplemented::GenerateIndexData()
 {
-	if (indexBufferStride_ == 2)
+	if (indexBufferStride_ == Effekseer::Backend::IndexBufferStrideType::Stride2)
 	{
-		GenerateIndexDataStride<uint16_t>();
+		return EffekseerRenderer::GenerateIndexDataStride<int16_t>(graphicsDevice_, GetIndexSpriteCount(), indexBuffer_, indexBufferForWireframe_);
 	}
-	else if (indexBufferStride_ == 4)
+	else if (indexBufferStride_ == Effekseer::Backend::IndexBufferStrideType::Stride4)
 	{
-		GenerateIndexDataStride<uint32_t>();
+		return EffekseerRenderer::GenerateIndexDataStride<int32_t>(graphicsDevice_, GetIndexSpriteCount(), indexBuffer_, indexBufferForWireframe_);
 	}
+
+	return false;
 }
 
-template <typename T>
-void RendererImplemented::GenerateIndexDataStride()
-{
-	// generate an index buffer
-	if (m_indexBuffer != nullptr)
-	{
-		m_indexBuffer->Lock();
-
-		for (int i = 0; i < GetIndexSpriteCount(); i++)
-		{
-			std::array<T, 6> buf;
-			buf[0] = (T)(3 + 4 * i);
-			buf[1] = (T)(1 + 4 * i);
-			buf[2] = (T)(0 + 4 * i);
-			buf[3] = (T)(3 + 4 * i);
-			buf[4] = (T)(0 + 4 * i);
-			buf[5] = (T)(2 + 4 * i);
-			memcpy(m_indexBuffer->GetBufferDirect(6), buf.data(), sizeof(T) * 6);
-		}
-
-		m_indexBuffer->Unlock();
-	}
-
-	// generate an index buffer for a wireframe
-	if (m_indexBufferForWireframe != nullptr)
-	{
-		m_indexBufferForWireframe->Lock();
-
-		for (int i = 0; i < GetIndexSpriteCount(); i++)
-		{
-			std::array<T, 8> buf;
-			buf[0] = (T)(0 + 4 * i);
-			buf[1] = (T)(1 + 4 * i);
-			buf[2] = (T)(2 + 4 * i);
-			buf[3] = (T)(3 + 4 * i);
-			buf[4] = (T)(0 + 4 * i);
-			buf[5] = (T)(2 + 4 * i);
-			buf[6] = (T)(1 + 4 * i);
-			buf[7] = (T)(3 + 4 * i);
-			memcpy(m_indexBufferForWireframe->GetBufferDirect(8), buf.data(), sizeof(T) * 8);
-		}
-
-		m_indexBufferForWireframe->Unlock();
-	}
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 bool RendererImplemented::Initialize()
 {
 	GLCheckError();
@@ -286,7 +234,7 @@ bool RendererImplemented::Initialize()
 
 	if (GetIndexSpriteCount() * 4 > 65536)
 	{
-		indexBufferStride_ = 4;
+		indexBufferStride_ = Effekseer::Backend::IndexBufferStrideType::Stride4;
 	}
 
 	GLCheckError();
@@ -606,6 +554,8 @@ bool RendererImplemented::EndRendering()
 		}
 	}
 
+	currentndexBuffer_ = nullptr;
+
 	GLCheckError();
 
 	return true;
@@ -619,16 +569,13 @@ VertexBuffer* RendererImplemented::GetVertexBuffer()
 	return ringVs_[GetImpl()->CurrentRingBufferIndex]->vertexBuffer.get();
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-IndexBuffer* RendererImplemented::GetIndexBuffer()
+Effekseer::Backend::IndexBufferRef RendererImplemented::GetIndexBuffer()
 {
 	if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
 	{
-		return m_indexBufferForWireframe;
+		return indexBufferForWireframe_;
 	}
-	return m_indexBuffer;
+	return indexBuffer_;
 }
 
 //----------------------------------------------------------------------------------
@@ -653,7 +600,7 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 
 	const auto setting = GetPlatformSetting();
 
-	ES_SAFE_DELETE(m_indexBuffer);
+	// ES_SAFE_DELETE(m_indexBuffer);
 	ringVs_.clear();
 	GetImpl()->CurrentRingBufferIndex = 0;
 	GetImpl()->RingBufferCount = setting.ringBufferCount;
@@ -663,22 +610,11 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 	auto storage = std::make_shared<SharedVertexTempStorage>();
 	storage->buffer.resize(vertexBufferSize);
 
-	// generate an index buffer
-	{
-		m_indexBuffer = IndexBuffer::Create(graphicsDevice_, GetIndexSpriteCount() * 6, false, indexBufferStride_);
-		if (m_indexBuffer == nullptr)
-			return;
-	}
-
-	// generate an index buffer for a wireframe
-	{
-		m_indexBufferForWireframe = IndexBuffer::Create(graphicsDevice_, GetIndexSpriteCount() * 8, false, indexBufferStride_);
-		if (m_indexBufferForWireframe == nullptr)
-			return;
-	}
-
 	// generate index data
-	GenerateIndexData();
+	if (!GenerateIndexData())
+	{
+		return;
+	}
 
 	for (int i = 0; i < GetImpl()->RingBufferCount; i++)
 	{
@@ -820,24 +756,6 @@ void RendererImplemented::SetVertexBuffer(GLuint vertexBuffer, int32_t size)
 	GLExt::glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void RendererImplemented::SetIndexBuffer(IndexBuffer* indexBuffer)
-{
-	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer->GetInterface());
-	indexBufferCurrentStride_ = indexBuffer->GetStride();
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void RendererImplemented::SetIndexBuffer(GLuint indexBuffer)
-{
-	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-	indexBufferCurrentStride_ = 4;
-}
-
 void RendererImplemented::SetVertexBuffer(const Effekseer::Backend::VertexBufferRef& vertexBuffer, int32_t size)
 {
 	auto vb = static_cast<Backend::VertexBuffer*>(vertexBuffer.Get());
@@ -847,7 +765,8 @@ void RendererImplemented::SetVertexBuffer(const Effekseer::Backend::VertexBuffer
 void RendererImplemented::SetIndexBuffer(const Effekseer::Backend::IndexBufferRef& indexBuffer)
 {
 	auto ib = static_cast<Backend::IndexBuffer*>(indexBuffer.Get());
-	SetIndexBuffer(ib->GetBuffer());
+	currentndexBuffer_ = indexBuffer;
+	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib->GetBuffer());
 }
 
 //----------------------------------------------------------------------------------
@@ -872,18 +791,21 @@ void RendererImplemented::DrawSprites(int32_t spriteCount, int32_t vertexOffset)
 	impl->drawvertexCount += spriteCount * 4;
 
 	GLsizei stride = GL_UNSIGNED_SHORT;
-	if (indexBufferCurrentStride_ == 4)
+	int32_t strideSize = 2;
+
+	if (currentndexBuffer_->GetStrideType() == Effekseer::Backend::IndexBufferStrideType::Stride4)
 	{
 		stride = GL_UNSIGNED_INT;
+		strideSize = 4;
 	}
 
 	if (GetRenderMode() == ::Effekseer::RenderMode::Normal)
 	{
-		glDrawElements(GL_TRIANGLES, spriteCount * 6, stride, (void*)((size_t)vertexOffset / 4 * 6 * indexBufferCurrentStride_));
+		glDrawElements(GL_TRIANGLES, spriteCount * 6, stride, (void*)((size_t)vertexOffset / 4 * 6 * strideSize));
 	}
 	else if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
 	{
-		glDrawElements(GL_LINES, spriteCount * 8, stride, (void*)((size_t)vertexOffset / 4 * 8 * indexBufferCurrentStride_));
+		glDrawElements(GL_LINES, spriteCount * 8, stride, (void*)((size_t)vertexOffset / 4 * 8 * strideSize));
 	}
 
 	GLCheckError();
