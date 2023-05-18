@@ -66,8 +66,6 @@ private:
 
 	std::vector<std::shared_ptr<RingVertex>> ringVs_;
 
-	// IndexBuffer* m_indexBuffer = nullptr;
-	// IndexBuffer* m_indexBufferForWireframe = nullptr;
 	Effekseer::Backend::IndexBufferStrideType indexBufferStride_ = Effekseer::Backend::IndexBufferStrideType::Stride2;
 	Effekseer::Backend::IndexBufferRef currentndexBuffer_;
 	Effekseer::Backend::IndexBufferRef indexBuffer_;
@@ -207,8 +205,6 @@ public:
 
 	void SetVertexBuffer(VertexBuffer* vertexBuffer, int32_t size);
 	void SetVertexBuffer(GLuint vertexBuffer, int32_t size);
-	// void SetIndexBuffer(IndexBuffer* indexBuffer);
-	// void SetIndexBuffer(GLuint indexBuffer);
 
 	void SetVertexBuffer(const Effekseer::Backend::VertexBufferRef& vertexBuffer, int32_t size);
 	void SetIndexBuffer(const Effekseer::Backend::IndexBufferRef& indexBuffer);
