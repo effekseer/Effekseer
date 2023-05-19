@@ -157,14 +157,7 @@ ModelRendererRef ModelRenderer::Create(const RendererImplementedRef& renderer)
 	assert(renderer != nullptr);
 	assert(renderer->GetDevice() != nullptr);
 
-	D3D11_INPUT_ELEMENT_DESC decl[] = {
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(float) * 3, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL", 1, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(float) * 6, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL", 2, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(float) * 9, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL", 3, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 14, D3D11_INPUT_PER_VERTEX_DATA, 0},
-	};
+	auto vl = EffekseerRenderer::GetModelRendererVertexLayout(renderer->GetGraphicsDevice()).DownCast<Backend::VertexLayout>();
 
 	Shader* shader_advanced_lit = Shader::Create(renderer->GetGraphicsDevice(),
 												 renderer->GetGraphicsDevice()->CreateShaderFromBinary(
@@ -172,9 +165,8 @@ ModelRendererRef ModelRenderer::Create(const RendererImplementedRef& renderer)
 													 sizeof(ShaderLightingVS_::g_main),
 													 ShaderLightingPS_::g_main,
 													 sizeof(ShaderLightingPS_::g_main)),
-												 "ModelRendererLightingTextureNormal",
-												 decl,
-												 ARRAYSIZE(decl));
+												 vl,
+												 "ModelRendererLightingTextureNormal");
 
 	Shader* shader_advanced_unlit = Shader::Create(renderer->GetGraphicsDevice(),
 												   renderer->GetGraphicsDevice()->CreateShaderFromBinary(
@@ -182,9 +174,8 @@ ModelRendererRef ModelRenderer::Create(const RendererImplementedRef& renderer)
 													   sizeof(ShaderVS_::g_main),
 													   ShaderPS_::g_main,
 													   sizeof(ShaderPS_::g_main)),
-												   "ModelRendererTexture",
-												   decl,
-												   ARRAYSIZE(decl));
+												   vl,
+												   "ModelRendererTexture");
 
 	auto shader_advanced_distortion = Shader::Create(renderer->GetGraphicsDevice(),
 													 renderer->GetGraphicsDevice()->CreateShaderFromBinary(
@@ -192,9 +183,8 @@ ModelRendererRef ModelRenderer::Create(const RendererImplementedRef& renderer)
 														 sizeof(ShaderDistortionVS_::g_main),
 														 ShaderDistortionPS_::g_main,
 														 sizeof(ShaderDistortionPS_::g_main)),
-													 "ModelRendererDistortionTexture",
-													 decl,
-													 ARRAYSIZE(decl));
+													 vl,
+													 "ModelRendererDistortionTexture");
 
 	Shader* shader_lit = Shader::Create(renderer->GetGraphicsDevice(),
 										renderer->GetGraphicsDevice()->CreateShaderFromBinary(
@@ -202,9 +192,8 @@ ModelRendererRef ModelRenderer::Create(const RendererImplementedRef& renderer)
 											sizeof(ShaderLightingVS_15_::g_main),
 											ShaderLightingPS_15_::g_main,
 											sizeof(ShaderLightingPS_15_::g_main)),
-										"ModelRendererLightingTextureNormal",
-										decl,
-										ARRAYSIZE(decl));
+										vl,
+										"ModelRendererLightingTextureNormal");
 
 	Shader* shader_unlit = Shader::Create(renderer->GetGraphicsDevice(),
 										  renderer->GetGraphicsDevice()->CreateShaderFromBinary(
@@ -212,9 +201,8 @@ ModelRendererRef ModelRenderer::Create(const RendererImplementedRef& renderer)
 											  sizeof(ShaderVS_15_::g_main),
 											  ShaderPS_15_::g_main,
 											  sizeof(ShaderPS_15_::g_main)),
-										  "ModelRendererTexture",
-										  decl,
-										  ARRAYSIZE(decl));
+										  vl,
+										  "ModelRendererTexture");
 
 	auto shader_distortion = Shader::Create(renderer->GetGraphicsDevice(),
 											renderer->GetGraphicsDevice()->CreateShaderFromBinary(
@@ -222,9 +210,8 @@ ModelRendererRef ModelRenderer::Create(const RendererImplementedRef& renderer)
 												sizeof(ShaderDistortionVS_15_::g_main),
 												ShaderDistortionPS_15_::g_main,
 												sizeof(ShaderDistortionPS_15_::g_main)),
-											"ModelRendererDistortionTexture",
-											decl,
-											ARRAYSIZE(decl));
+											vl,
+											"ModelRendererDistortionTexture");
 
 	if (shader_advanced_lit == nullptr || shader_advanced_unlit == nullptr || shader_advanced_distortion == nullptr || shader_lit == nullptr || shader_unlit == nullptr || shader_distortion == nullptr)
 	{

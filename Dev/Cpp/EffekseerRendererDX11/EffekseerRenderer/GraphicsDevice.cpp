@@ -222,6 +222,49 @@ DXGI_FORMAT GetTextureFormatType(Effekseer::Backend::TextureFormatType format)
 	return DXGI_FORMAT_UNKNOWN;
 }
 
+D3D11InputLayoutPtr CreateInputLayout(GraphicsDevice& graphicsDevice, VertexLayoutRef vertexLayout, const void* vertexBufferData, int32_t vertexBufferSize)
+{
+	Effekseer::CustomAlignedVector<D3D11_INPUT_ELEMENT_DESC> elements;
+
+	std::array<DXGI_FORMAT, 6> formats;
+	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R32_FLOAT)] = DXGI_FORMAT_R32_FLOAT;
+	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT)] = DXGI_FORMAT_R32G32_FLOAT;
+	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT)] = DXGI_FORMAT_R32G32B32_FLOAT;
+	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R32G32B32A32_FLOAT)] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM)] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UINT)] = DXGI_FORMAT_R8G8B8A8_UINT;
+
+	int32_t layoutOffset = 0;
+	for (size_t i = 0; i < vertexLayout->GetElements().size(); i++)
+	{
+		D3D11_INPUT_ELEMENT_DESC elm = {};
+		elm.SemanticName = vertexLayout->GetElements()[i].SemanticName.c_str();
+		elm.SemanticIndex = vertexLayout->GetElements()[i].SemanticIndex;
+		elm.Format = formats[static_cast<int32_t>(vertexLayout->GetElements()[i].Format)];
+		elm.InputSlot = 0;
+		elm.AlignedByteOffset = layoutOffset;
+		elm.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+		elm.InstanceDataStepRate = 0;
+		layoutOffset += Effekseer::Backend::GetVertexLayoutFormatSize(vertexLayout->GetElements()[i].Format);
+
+		elements.emplace_back(elm);
+	}
+
+	ID3D11InputLayout* inputLayout = nullptr;
+
+	if (FAILED(graphicsDevice.GetDevice()->CreateInputLayout(
+			elements.data(),
+			static_cast<UINT>(elements.size()),
+			vertexBufferData,
+			vertexBufferSize,
+			&inputLayout)))
+	{
+		return nullptr;
+	}
+
+	return Effekseer::CreateUniqueReference(inputLayout);
+}
+
 void DeviceObject::OnLostDevice()
 {
 }
@@ -522,7 +565,8 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param, const Effe
 	EffekseerRenderer::CalculateAlignedTextureInformation(param.Format, {param.Size[0], param.Size[1]}, sizePerWidth, height);
 
 	const int32_t blockSize = 4;
-	auto aligned = [](int32_t size, int32_t alignement) -> int32_t {
+	auto aligned = [](int32_t size, int32_t alignement) -> int32_t
+	{
 		return ((size + alignement - 1) / alignement) * alignement;
 	};
 
@@ -968,7 +1012,7 @@ bool PipelineState::Init(const Effekseer::Backend::PipelineStateParameter& param
 	}
 
 	auto shader = static_cast<Shader*>(param.ShaderPtr.Get());
-	auto vertexLayout = static_cast<VertexLayout*>(param.VertexLayoutPtr.Get());
+	auto vertexLayout = param.VertexLayoutPtr.DownCast<VertexLayout>();
 
 	D3D11_RASTERIZER_DESC rsDesc;
 
@@ -1055,47 +1099,16 @@ bool PipelineState::Init(const Effekseer::Backend::PipelineStateParameter& param
 
 	blendState_ = Effekseer::CreateUniqueReference(blendState);
 
-	if (vertexLayout->GetElements().size() > LayoutElementMax)
+	if (vertexLayout->GetElements().size() >= LayoutElementMax)
 	{
 		return false;
 	}
 
-	std::array<DXGI_FORMAT, 6> formats;
-	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R32_FLOAT)] = DXGI_FORMAT_R32_FLOAT;
-	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT)] = DXGI_FORMAT_R32G32_FLOAT;
-	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT)] = DXGI_FORMAT_R32G32B32_FLOAT;
-	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R32G32B32A32_FLOAT)] = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM)] = DXGI_FORMAT_R8G8B8A8_UNORM;
-	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UINT)] = DXGI_FORMAT_R8G8B8A8_UINT;
-
-	std::array<D3D11_INPUT_ELEMENT_DESC, LayoutElementMax> elements;
-
-	int32_t layoutOffset = 0;
-	for (size_t i = 0; i < vertexLayout->GetElements().size(); i++)
-	{
-		elements[i].SemanticName = vertexLayout->GetElements()[i].SemanticName.c_str();
-		elements[i].SemanticIndex = vertexLayout->GetElements()[i].SemanticIndex;
-		elements[i].Format = formats[static_cast<int32_t>(vertexLayout->GetElements()[i].Format)];
-		elements[i].InputSlot = 0;
-		elements[i].AlignedByteOffset = layoutOffset;
-		elements[i].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-		elements[i].InstanceDataStepRate = 0;
-		layoutOffset += Effekseer::Backend::GetVertexLayoutFormatSize(vertexLayout->GetElements()[i].Format);
-	}
-
-	ID3D11InputLayout* inputLayout = nullptr;
-
-	if (FAILED(graphicsDevice_->GetDevice()->CreateInputLayout(
-			elements.data(),
-			static_cast<UINT>(vertexLayout->GetElements().size()),
-			shader->GetVertexShaderData().data(),
-			shader->GetVertexShaderData().size(),
-			&inputLayout)))
+	inputLayout_ = CreateInputLayout(*graphicsDevice_, vertexLayout, shader->GetVertexShaderData().data(), shader->GetVertexShaderData().size());
+	if (inputLayout_ == nullptr)
 	{
 		return false;
 	}
-
-	inputLayout_ = Effekseer::CreateUniqueReference(inputLayout);
 
 	param_ = param;
 
@@ -1388,14 +1401,14 @@ Effekseer::Backend::PipelineStateRef GraphicsDevice::CreatePipelineState(const E
 
 void GraphicsDevice::SetViewport(int32_t x, int32_t y, int32_t width, int32_t height)
 {
-	//D3D11_VIEWPORT vp;
-	//vp.TopLeftX = x;
-	//vp.TopLeftY = y;
-	//vp.Width = (float)width;
-	//vp.Height = (float)height;
-	//vp.MinDepth = 0.0f;
-	//vp.MaxDepth = 1.0f;
-	//context->RSSetViewports(1, &vp);
+	// D3D11_VIEWPORT vp;
+	// vp.TopLeftX = x;
+	// vp.TopLeftY = y;
+	// vp.Width = (float)width;
+	// vp.Height = (float)height;
+	// vp.MinDepth = 0.0f;
+	// vp.MaxDepth = 1.0f;
+	// context->RSSetViewports(1, &vp);
 }
 
 void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)

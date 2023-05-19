@@ -367,45 +367,12 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 
 	m_renderState = new RenderState(this, m_depthFunc, isMSAAEnabled);
 
-	D3D11_INPUT_ELEMENT_DESC decl[] = {
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 3, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 4, D3D11_INPUT_PER_VERTEX_DATA, 0},
-	};
-
-	D3D11_INPUT_ELEMENT_DESC decl_advanced[] = {
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 3, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 4, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, sizeof(float) * 6, D3D11_INPUT_PER_VERTEX_DATA, 0},	// AlphaTextureUV + UVDistortionTextureUV
-		{"TEXCOORD", 2, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 10, D3D11_INPUT_PER_VERTEX_DATA, 0},		// BlendUV
-		{"TEXCOORD", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, sizeof(float) * 12, D3D11_INPUT_PER_VERTEX_DATA, 0}, // BlendAlphaUV + BlendUVDistortionUV
-		{"TEXCOORD", 4, DXGI_FORMAT_R32_FLOAT, 0, sizeof(float) * 16, D3D11_INPUT_PER_VERTEX_DATA, 0},			// FlipbookIndexAndNextRate
-		{"TEXCOORD", 5, DXGI_FORMAT_R32_FLOAT, 0, sizeof(float) * 17, D3D11_INPUT_PER_VERTEX_DATA, 0},			// AlphaThreshold
-	};
-
-	D3D11_INPUT_ELEMENT_DESC decl_normal_advanced[] = {
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 3, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL", 1, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 4, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL", 2, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 5, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 6, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD", 1, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 8, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, sizeof(float) * 10, D3D11_INPUT_PER_VERTEX_DATA, 0}, // AlphaTextureUV + UVDistortionTextureUV
-		{"TEXCOORD", 3, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 14, D3D11_INPUT_PER_VERTEX_DATA, 0},		// BlendUV
-		{"TEXCOORD", 4, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, sizeof(float) * 16, D3D11_INPUT_PER_VERTEX_DATA, 0}, // BlendAlphaUV + BlendUVDistortionUV
-		{"TEXCOORD", 5, DXGI_FORMAT_R32_FLOAT, 0, sizeof(float) * 20, D3D11_INPUT_PER_VERTEX_DATA, 0},			// FlipbookIndexAndNextRate
-		{"TEXCOORD", 6, DXGI_FORMAT_R32_FLOAT, 0, sizeof(float) * 21, D3D11_INPUT_PER_VERTEX_DATA, 0},			// AlphaThreshold
-	};
-
-	D3D11_INPUT_ELEMENT_DESC decl_normal[] = {
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 3, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL", 1, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 4, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL", 2, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 5, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 6, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD", 1, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 8, D3D11_INPUT_PER_VERTEX_DATA, 0},
-	};
+	auto vlUnlit = EffekseerRenderer::GetVertexLayout(graphicsDevice_, EffekseerRenderer::RendererShaderType::Unlit).DownCast<Backend::VertexLayout>();
+	auto vlLit = EffekseerRenderer::GetVertexLayout(graphicsDevice_, EffekseerRenderer::RendererShaderType::Lit).DownCast<Backend::VertexLayout>();
+	auto vlDist = EffekseerRenderer::GetVertexLayout(graphicsDevice_, EffekseerRenderer::RendererShaderType::BackDistortion).DownCast<Backend::VertexLayout>();
+	auto vlUnlitAd = EffekseerRenderer::GetVertexLayout(graphicsDevice_, EffekseerRenderer::RendererShaderType::AdvancedUnlit).DownCast<Backend::VertexLayout>();
+	auto vlLitAd = EffekseerRenderer::GetVertexLayout(graphicsDevice_, EffekseerRenderer::RendererShaderType::AdvancedLit).DownCast<Backend::VertexLayout>();
+	auto vlDistAd = EffekseerRenderer::GetVertexLayout(graphicsDevice_, EffekseerRenderer::RendererShaderType::AdvancedBackDistortion).DownCast<Backend::VertexLayout>();
 
 	shader_unlit_ = Shader::Create(graphicsDevice_,
 								   graphicsDevice_->CreateShaderFromBinary(
@@ -413,9 +380,8 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 									   sizeof(Standard_VS::g_main),
 									   Standard_PS::g_main,
 									   sizeof(Standard_PS::g_main)),
-								   "StandardRenderer",
-								   decl,
-								   ARRAYSIZE(decl));
+								   vlUnlit,
+								   "Unlit");
 	if (shader_unlit_ == nullptr)
 		return false;
 
@@ -425,9 +391,8 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 										  sizeof(Standard_VS_Ad::g_main),
 										  Standard_PS_Ad::g_main,
 										  sizeof(Standard_PS_Ad::g_main)),
-									  "StandardRenderer",
-									  decl_advanced,
-									  ARRAYSIZE(decl_advanced));
+									  vlUnlitAd,
+									  "Unlit Ad");
 	if (shader_ad_unlit_ == nullptr)
 		return false;
 
@@ -437,9 +402,8 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 											sizeof(Standard_Distortion_VS::g_main),
 											Standard_Distortion_PS::g_main,
 											sizeof(Standard_Distortion_PS::g_main)),
-										"StandardRenderer Distortion",
-										decl_normal,
-										ARRAYSIZE(decl_normal));
+										vlDist,
+										"Distortion");
 	if (shader_distortion_ == nullptr)
 		return false;
 
@@ -449,9 +413,8 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 											   sizeof(Standard_Distortion_VS_Ad::g_main),
 											   Standard_Distortion_PS_Ad::g_main,
 											   sizeof(Standard_Distortion_PS_Ad::g_main)),
-										   "StandardRenderer Distortion",
-										   decl_normal_advanced,
-										   ARRAYSIZE(decl_normal_advanced));
+										   vlDistAd,
+										   "Distortion Ad");
 	if (shader_ad_distortion_ == nullptr)
 		return false;
 
@@ -461,9 +424,8 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 									 sizeof(Standard_Lighting_VS::g_main),
 									 Standard_Lighting_PS::g_main,
 									 sizeof(Standard_Lighting_PS::g_main)),
-								 "StandardRenderer Lighting",
-								 decl_normal,
-								 ARRAYSIZE(decl_normal));
+								 vlLit,
+								 "Lit");
 	if (shader_lit_ == nullptr)
 		return false;
 
@@ -473,9 +435,8 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 										sizeof(Standard_Lighting_VS_Ad::g_main),
 										Standard_Lighting_PS_Ad::g_main,
 										sizeof(Standard_Lighting_PS_Ad::g_main)),
-									"StandardRenderer Lighting",
-									decl_normal_advanced,
-									ARRAYSIZE(decl_normal_advanced));
+									vlLitAd,
+									"Lit Ad");
 	if (shader_ad_lit_ == nullptr)
 		return false;
 

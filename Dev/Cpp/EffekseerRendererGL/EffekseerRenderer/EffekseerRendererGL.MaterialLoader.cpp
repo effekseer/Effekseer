@@ -18,11 +18,13 @@ void StoreVertexUniform(const ::Effekseer::MaterialFile& materialFile, const Eff
 {
 	using namespace Effekseer::Backend;
 
-	auto storeVector = [&](const char* name, int offset, int count = 1) {
+	auto storeVector = [&](const char* name, int offset, int count = 1)
+	{
 		uniformLayout.emplace_back(UniformLayoutElement{ShaderStageType::Vertex, name, UniformBufferLayoutElementType::Vector4, count, offset});
 	};
 
-	auto storeMatrix = [&](const char* name, int offset, int count = 1) {
+	auto storeMatrix = [&](const char* name, int offset, int count = 1)
+	{
 		uniformLayout.emplace_back(UniformLayoutElement{ShaderStageType::Vertex, name, UniformBufferLayoutElementType::Matrix44, count, offset});
 	};
 
@@ -55,11 +57,13 @@ void StoreModelVertexUniform(const ::Effekseer::MaterialFile& materialFile, cons
 {
 	using namespace Effekseer::Backend;
 
-	auto storeVector = [&](const char* name, int offset, int count = 1) {
+	auto storeVector = [&](const char* name, int offset, int count = 1)
+	{
 		uniformLayout.emplace_back(UniformLayoutElement{ShaderStageType::Vertex, name, UniformBufferLayoutElementType::Vector4, count, offset});
 	};
 
-	auto storeMatrix = [&](const char* name, int offset, int count = 1) {
+	auto storeMatrix = [&](const char* name, int offset, int count = 1)
+	{
 		uniformLayout.emplace_back(UniformLayoutElement{ShaderStageType::Vertex, name, UniformBufferLayoutElementType::Matrix44, count, offset});
 	};
 
@@ -136,11 +140,13 @@ void StorePixelUniform(const ::Effekseer::MaterialFile& materialFile, const Effe
 {
 	using namespace Effekseer::Backend;
 
-	auto storeVector = [&](const char* name, int offset, int count = 1) {
+	auto storeVector = [&](const char* name, int offset, int count = 1)
+	{
 		uniformLayout.emplace_back(UniformLayoutElement{ShaderStageType::Pixel, name, UniformBufferLayoutElementType::Vector4, count, offset});
 	};
 
-	auto storeMatrix = [&](const char* name, int offset, int count = 1) {
+	auto storeMatrix = [&](const char* name, int offset, int count = 1)
+	{
 		uniformLayout.emplace_back(UniformLayoutElement{ShaderStageType::Pixel, name, UniformBufferLayoutElementType::Matrix44, count, offset});
 	};
 
@@ -256,17 +262,12 @@ Effekseer::CustomVector<Effekseer::CustomString<char>> StoreTextureLocations(con
 
 		if (material->IsSimpleVertex)
 		{
-			const Effekseer::Backend::VertexLayoutElement vlElem[3] = {
-				{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "atPosition", "POSITION", 0},
-				{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "atColor", "NORMAL", 0},
-				{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "atTexCoord", "TEXCOORD", 0},
-			};
-
-			auto vl = graphicsDevice_->CreateVertexLayout(vlElem, 3).DownCast<Backend::VertexLayout>();
+			auto vl = EffekseerRenderer::GetMaterialSimpleVertexLayout(graphicsDevice_).DownCast<Backend::VertexLayout>();
 			shader->SetVertexLayout(vl);
 		}
 		else
 		{
+			/*
 			Effekseer::Backend::VertexLayoutElement vlElem[8] = {
 				{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "atPosition", "POSITION", 0},
 				{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "atColor", "NORMAL", 0},
@@ -321,6 +322,8 @@ Effekseer::CustomVector<Effekseer::CustomString<char>> StoreTextureLocations(con
 			}
 
 			auto vl = graphicsDevice_->CreateVertexLayout(vlElem, count).DownCast<Backend::VertexLayout>();
+			*/
+			auto vl = EffekseerRenderer::GetMaterialSpriteVertexLayout(graphicsDevice_, static_cast<int32_t>(materialFile.GetCustomData1Count()), static_cast<int32_t>(materialFile.GetCustomData2Count())).DownCast<Backend::VertexLayout>();
 			shader->SetVertexLayout(vl);
 		}
 
@@ -361,9 +364,10 @@ Effekseer::CustomVector<Effekseer::CustomString<char>> StoreTextureLocations(con
 			return nullptr;
 		}
 
+		/*
 		const Effekseer::Backend::VertexLayoutElement vlElem[6] = {
 			{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "a_Position", "POSITION", 0},
-			{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "a_Normal", "NORMAL", 1},
+			{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "a_Normal", "NORMAL", 0},
 			{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "a_Binormal", "NORMAL", 1},
 			{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "a_Tangent", "NORMAL", 2},
 			{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "a_TexCoord", "TEXCOORD", 0},
@@ -371,6 +375,8 @@ Effekseer::CustomVector<Effekseer::CustomString<char>> StoreTextureLocations(con
 		};
 
 		auto vl = graphicsDevice_->CreateVertexLayout(vlElem, 6).DownCast<Backend::VertexLayout>();
+		*/
+		auto vl = EffekseerRenderer::GetMaterialModelVertexLayout(graphicsDevice_).DownCast<Backend::VertexLayout>();
 		shader->SetVertexLayout(vl);
 
 		shader->SetVertexConstantBufferSize(parameterGenerator.VertexShaderUniformBufferSize);

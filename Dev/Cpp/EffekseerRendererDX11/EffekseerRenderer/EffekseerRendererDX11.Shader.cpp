@@ -6,10 +6,10 @@ namespace EffekseerRendererDX11
 
 Shader::Shader(Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
 			   Backend::ShaderRef shader,
-			   ID3D11InputLayout* vertexDeclaration)
+			   Backend::D3D11InputLayoutPtr vertexDeclaration)
 	: graphicsDevice_(graphicsDevice)
 	, shader_(shader)
-	, m_vertexDeclaration(vertexDeclaration)
+	, vertexDeclaration_(std::move(vertexDeclaration))
 	, m_constantBufferToVS(nullptr)
 	, m_constantBufferToPS(nullptr)
 	, m_vertexConstantBuffer(nullptr)
@@ -19,7 +19,6 @@ Shader::Shader(Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
 
 Shader::~Shader()
 {
-	ES_SAFE_RELEASE(m_vertexDeclaration);
 	ES_SAFE_RELEASE(m_constantBufferToVS);
 	ES_SAFE_RELEASE(m_constantBufferToPS);
 
@@ -29,31 +28,20 @@ Shader::~Shader()
 
 Shader* Shader::Create(Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
 					   Effekseer::Backend::ShaderRef shader,
-					   const char* name,
-					   const D3D11_INPUT_ELEMENT_DESC decl[],
-					   int32_t layoutCount)
+					   Effekseer::Backend::VertexLayoutRef layout,
+					   const char* name)
 {
-	HRESULT hr;
-
-	ID3D11InputLayout* vertexDeclaration = nullptr;
-
 	auto shaderdx11 = shader.DownCast<Backend::Shader>();
-
 	auto gd = graphicsDevice.DownCast<Backend::GraphicsDevice>();
+	auto inputLayout = Backend::CreateInputLayout(*gd.Get(), layout.DownCast<Backend::VertexLayout>(), shaderdx11->GetVertexShaderData().data(), shaderdx11->GetVertexShaderData().size());
 
-	hr = gd->GetDevice()->CreateInputLayout(decl, layoutCount, shaderdx11->GetVertexShaderData().data(), shaderdx11->GetVertexShaderData().size(), &vertexDeclaration);
-
-	if (FAILED(hr))
+	if (inputLayout == nullptr)
 	{
 		printf("* %s Layout Error\n", name);
-		goto EXIT;
+		return nullptr;
 	}
 
-	return new Shader(graphicsDevice, shaderdx11, vertexDeclaration);
-
-EXIT:;
-	ES_SAFE_RELEASE(vertexDeclaration);
-	return nullptr;
+	return new Shader(graphicsDevice, shaderdx11, std::move(inputLayout));
 }
 
 void Shader::SetVertexConstantBufferSize(int32_t size)
