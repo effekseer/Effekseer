@@ -96,16 +96,6 @@ MaterialLoader ::~MaterialLoader()
 		{
 			auto vl = EffekseerRenderer::GetMaterialSimpleVertexLayout(graphicsDevice_).DownCast<Backend::VertexLayout>();
 
-			/*
-			const Effekseer::Backend::VertexLayoutElement vlElem[3] = {
-				{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "atPosition", "POSITION", 0},
-				{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "atColor", "NORMAL", 0},
-				{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "atTexCoord", "TEXCOORD", 0},
-			};
-
-			auto vl = graphicsDevice_->CreateVertexLayout(vlElem, 3).DownCast<Backend::VertexLayout>();
-			*/
-
 			shader = Shader::Create(graphicsDevice_,
 									graphicsDevice_->CreateShaderFromBinary(
 										(uint8_t*)binary->GetVertexShaderData(shaderTypes[st]),
@@ -117,63 +107,6 @@ MaterialLoader ::~MaterialLoader()
 		}
 		else
 		{
-			/*
-			Effekseer::Backend::VertexLayoutElement vlElem[8] = {
-				{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "atPosition", "POSITION", 0},
-				{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "atColor", "NORMAL", 0},
-				{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "atNormal", "NORMAL", 1},
-				{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "atTangent", "NORMAL", 2},
-				{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "atTexCoord", "TEXCOORD", 0},
-				{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "atTexCoord2", "TEXCOORD", 1},
-				{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "", "TEXCOORD", 2},
-				{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "", "TEXCOORD", 3},
-			};
-
-			auto getFormat = [](int32_t i) -> Effekseer::Backend::VertexLayoutFormat
-			{
-				if (i == 1)
-					return Effekseer::Backend::VertexLayoutFormat::R32_FLOAT;
-				if (i == 2)
-					return Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT;
-				if (i == 3)
-					return Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT;
-				if (i == 4)
-					return Effekseer::Backend::VertexLayoutFormat::R32G32B32A32_FLOAT;
-
-				assert(0);
-				return Effekseer::Backend::VertexLayoutFormat::R32_FLOAT;
-			};
-
-			int32_t offset = 40;
-			int count = 6;
-			int semanticIndex = 2;
-			const char* customData1Name = "atCustomData1";
-			const char* customData2Name = "atCustomData2";
-
-			if (materialFile.GetCustomData1Count() > 0)
-			{
-				vlElem[count].Name = customData1Name;
-				vlElem[count].Format = getFormat(materialFile.GetCustomData1Count());
-				vlElem[count].SemanticIndex = semanticIndex;
-				semanticIndex++;
-
-				count++;
-				offset += sizeof(float) * materialFile.GetCustomData1Count();
-			}
-
-			if (materialFile.GetCustomData2Count() > 0)
-			{
-				vlElem[count].Name = customData2Name;
-				vlElem[count].Format = getFormat(materialFile.GetCustomData2Count());
-				vlElem[count].SemanticIndex = semanticIndex;
-				semanticIndex++;
-
-				count++;
-				offset += sizeof(float) * materialFile.GetCustomData2Count();
-			}
-
-			auto vl = graphicsDevice_->CreateVertexLayout(vlElem, count).DownCast<Backend::VertexLayout>();
-			*/
 			auto vl = EffekseerRenderer::GetMaterialSpriteVertexLayout(graphicsDevice_, static_cast<int32_t>(materialFile.GetCustomData1Count()), static_cast<int32_t>(materialFile.GetCustomData2Count())).DownCast<Backend::VertexLayout>();
 
 			shader = Shader::Create(graphicsDevice_,
@@ -213,19 +146,6 @@ MaterialLoader ::~MaterialLoader()
 		auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(materialFile, true, st, 40);
 
 		auto vl = EffekseerRenderer::GetMaterialModelVertexLayout(graphicsDevice_).DownCast<Backend::VertexLayout>();
-
-		/*
-		const Effekseer::Backend::VertexLayoutElement vlElem[6] = {
-			{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "a_Position", "POSITION", 0},
-			{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "a_Normal", "NORMAL", 0},
-			{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "a_Binormal", "NORMAL", 1},
-			{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "a_Tangent", "NORMAL", 2},
-			{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "a_TexCoord", "TEXCOORD", 0},
-			{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "a_Color", "NORMAL", 3},
-		};
-
-		auto vl = graphicsDevice_->CreateVertexLayout(vlElem, 6).DownCast<Backend::VertexLayout>();
-		*/
 
 		// compile
 		std::string log;
