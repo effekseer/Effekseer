@@ -53,7 +53,7 @@ namespace Effekseer
 				typeof(DockPanels.RotationValues),
 				typeof(DockPanels.RendererValues),
 				typeof(DockPanels.CommonValues),
-				typeof(DockPanels.Dymamic),
+				typeof(DockPanels.Dynamic),
 				typeof(DockPanels.Option),
 				typeof(Dock.NodeTreeEditor),
 				typeof(Dock.Profiler),

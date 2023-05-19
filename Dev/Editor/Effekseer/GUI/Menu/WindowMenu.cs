@@ -38,7 +38,7 @@ namespace Effekseer.GUI.Menu
 			new DockSettings("Inspector_RendererParameter", typeof(DockPanels.RendererValues), Icons.PanelOptions),
 			new DockSettings("Inspector_LocationValues", typeof(DockPanels.LocationValues), Icons.PanelOptions),
 			new DockSettings("Inspector_RotationValues", typeof(DockPanels.RotationValues), Icons.PanelOptions),
-			new DockSettings("Inspector_DynamicParameter", typeof(DockPanels.Dymamic), Icons.PanelOptions),
+			new DockSettings("Inspector_DynamicParameter", typeof(DockPanels.Dynamic), Icons.PanelOptions),
 			new DockSettings("Inspector_Option", typeof(DockPanels.Option), Icons.PanelOptions),
 			new DockSettings("NodeTreeEditor", typeof(Dock.NodeTreeEditor), Icons.PanelOptions),
 

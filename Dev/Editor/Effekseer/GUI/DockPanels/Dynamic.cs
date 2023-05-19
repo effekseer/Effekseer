@@ -6,7 +6,7 @@ using System.Reflection.Emit;
 
 namespace Effekseer.DockPanels
 {
-	public class Dymamic : GUI.Dock.DockPanel
+	public class Dynamic : GUI.Dock.DockPanel
 	{
 		Inspector equationInspector;
 
@@ -14,7 +14,7 @@ namespace Effekseer.DockPanels
 
 		string compileResult = string.Empty;
 
-		public Dymamic()
+		public Dynamic()
 		{
 			equationInspector = new Inspector();
 			Label = Icons.PanelDynamicParams + "Inspector_DynamicParameter###Inspector_DynamicParameter";
