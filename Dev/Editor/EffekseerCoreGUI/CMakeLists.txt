@@ -30,6 +30,7 @@ add_library(EffekseerCoreGUI
     GUI/Widgets/Texture.cs
     GUI/Widgets/WidgetHelper.cs
     GUI/Widgets/Widgets.cs
+    GUI/Widgets/DynamicSelector.cs
 )
 
 set_target_properties(EffekseerCoreGUI PROPERTIES

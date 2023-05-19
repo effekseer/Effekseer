@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
 using System.Linq;
+using Effekseer.Asset;
+using Effekseer.GUI.BindableComponent;
+using Effekseer.Data;
 
 namespace Effekseer.GUI.Widgets
 {
@@ -229,6 +232,187 @@ namespace Effekseer.GUI.Widgets
 
 			return ret;
 		}
+
+
+		public static Inspector.InspectorGuiResult GuiVector3WithRange(object value, Inspector.InspectorGuiState state)
+		{
+			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
+
+			bool isEdited = false;
+			bool isPopupShown = false;
+
+			if (value is Vector3WithRange vec3Value)
+			{
+				float[] guiValue1;
+				float[] guiValue2;
+				// TODO: Use the attribute
+				bool canSelectDynamicEquation = true;
+
+				// Action that show popup
+				Action popup = () => {
+					if (isPopupShown) return;
+
+					if (Manager.NativeManager.BeginPopupContextItem(state.Id))
+					{
+
+						if (canSelectDynamicEquation)
+						{
+							if (DynamicSelector.Popup(
+								state.Id, 
+								vec3Value.DynamicEquationMin, vec3Value.DynamicEquationMax, 
+								ref vec3Value.IsDynamicEquationEnabled))
+							{
+								isEdited = true;
+							}
+						}
+
+						if (vec3Value.IsDynamicEquationEnabled)
+						{
+							// None
+						}
+						else
+						{
+							var txt_r_r1 = Resources.GetString("Gauss");
+							var txt_r_r2 = Resources.GetString("Range");
+
+							if (Manager.NativeManager.RadioButton(txt_r_r1 + state.Id + "_Gauss", vec3Value.DrawnAs == Data.DrawnAs.CenterAndAmplitude))
+							{
+								vec3Value.DrawnAs = Data.DrawnAs.CenterAndAmplitude;
+								isEdited = true;
+							}
+
+							Manager.NativeManager.SameLine();
+
+							if (Manager.NativeManager.RadioButton(txt_r_r2 + state.Id + "_Range", vec3Value.DrawnAs == Data.DrawnAs.MaxAndMin))
+							{
+								vec3Value.DrawnAs = Data.DrawnAs.MaxAndMin;
+								isEdited = true;
+							}
+						}
+
+						Manager.NativeManager.EndPopup();
+
+						isPopupShown = true;
+					}
+				};
+
+				string txt_r1 = string.Empty;
+				string txt_r2 = string.Empty;
+
+				if (vec3Value.DrawnAs == DrawnAs.CenterAndAmplitude && !vec3Value.IsDynamicEquationEnabled)
+				{
+					guiValue1 = new float[] { vec3Value.X.Center, vec3Value.Y.Center, vec3Value.Z.Center };
+					guiValue2 = new float[] { vec3Value.X.Amplitude, vec3Value.Y.Amplitude, vec3Value.Z.Amplitude };
+
+					txt_r1 = Resources.GetString("Mean");
+					txt_r2 = Resources.GetString("Deviation");
+				}
+				else
+				{
+					guiValue1 = new float[] { vec3Value.X.Min, vec3Value.Y.Min, vec3Value.Z.Min };
+					guiValue2 = new float[] { vec3Value.X.Max, vec3Value.Y.Max, vec3Value.Z.Max };
+
+					txt_r1 = Resources.GetString("Min");
+					txt_r2 = Resources.GetString("Max");
+				}
+
+				Manager.NativeManager.PushItemWidth(Manager.NativeManager.GetColumnWidth() - 48 * Manager.DpiScale);
+
+				if (Manager.NativeManager.DragFloat3EfkEx(state.Id + "_1", guiValue1, 1.0f,
+					float.MinValue, float.MaxValue,
+					float.MinValue, float.MaxValue,
+					float.MinValue, float.MaxValue,
+					"X:" + Core.Option.GetFloatFormat(), "Y:" + Core.Option.GetFloatFormat(), "Z:" + Core.Option.GetFloatFormat()))
+				{
+					if (vec3Value.DrawnAs == DrawnAs.CenterAndAmplitude && !vec3Value.IsDynamicEquationEnabled)
+					{
+						vec3Value.X.Center = guiValue1[0];
+						vec3Value.Y.Center = guiValue1[1];
+						vec3Value.Z.Center = guiValue1[2];
+					}
+					else
+					{
+						vec3Value.X.Min = guiValue1[0];
+						vec3Value.Y.Min = guiValue1[1];
+						vec3Value.Z.Min = guiValue1[2];
+					}
+
+					isEdited = true;
+				}
+
+				popup();
+
+				Manager.NativeManager.SameLine();
+				Manager.NativeManager.Text(txt_r1);
+
+				if (canSelectDynamicEquation && vec3Value.IsDynamicEquationEnabled)
+				{
+					var newEquation = DynamicSelector.SelectMaxInComponent(state.Id + "_EquationMin", vec3Value.DynamicEquationMin);
+					if (newEquation != null)
+					{
+						vec3Value.DynamicEquationMin = newEquation;
+						isEdited = true;
+					}
+
+					popup();
+				}
+
+				if (Manager.NativeManager.DragFloat3EfkEx(state.Id + "_2", guiValue2, 1.0f,
+					float.MinValue, float.MaxValue,
+					float.MinValue, float.MaxValue,
+					float.MinValue, float.MaxValue,
+					"X:" + Core.Option.GetFloatFormat(), "Y:" + Core.Option.GetFloatFormat(), "Z:" + Core.Option.GetFloatFormat()))
+				{
+					if (vec3Value.DrawnAs == DrawnAs.CenterAndAmplitude && !vec3Value.IsDynamicEquationEnabled)
+					{
+						vec3Value.X.Amplitude = guiValue2[0];
+						vec3Value.Y.Amplitude = guiValue2[1];
+						vec3Value.Z.Amplitude = guiValue2[2];
+					}
+					else
+					{
+						vec3Value.X.Max = guiValue2[0];
+						vec3Value.Y.Max = guiValue2[1];
+						vec3Value.Z.Max = guiValue2[2];
+					}
+
+					isEdited = true;
+				}
+
+				popup();
+
+				Manager.NativeManager.SameLine();
+				Manager.NativeManager.Text(txt_r2);
+
+
+				if (canSelectDynamicEquation && vec3Value.IsDynamicEquationEnabled)
+				{
+					var newEquation = DynamicSelector.SelectMaxInComponent(state.Id + "_EquationMax", vec3Value.DynamicEquationMax);
+					if (newEquation != null)
+					{
+						vec3Value.DynamicEquationMax = newEquation;
+						isEdited = true;
+					}
+					popup();
+				}
+
+				Manager.NativeManager.PopItemWidth();
+
+				if (isEdited)
+				{
+					ret.isEdited = true;
+					ret.value = vec3Value;
+					return ret;
+				}
+			}
+			else
+			{
+				Manager.NativeManager.Text("Assert GuiVector3WithRange");
+			}
+
+			return ret;
+		}
+
 
 		public static Inspector.InspectorGuiResult GuiEnum(object value, Inspector.InspectorGuiState state)
 		{
