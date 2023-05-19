@@ -47,44 +47,10 @@ namespace Effekseer.DockPanels
 
 			Manager.NativeManager.PushItemWidth(width - Manager.NativeManager.GetTextLineHeight() * 5.5f);
 
-			// combo of DynamicEquations
-			if (CoreContext.SelectedEffect.Asset.DynamicEquations.Count <= selectedEquaitionIndex)
-			{
-				selectedEquaitionIndex = 0;
-			}
 			var selectedEquation = CoreContext.SelectedEffect.Asset.DynamicEquations.Count > selectedEquaitionIndex ? CoreContext.SelectedEffect.Asset.DynamicEquations[selectedEquaitionIndex] : null;
-			string comboLabel = selectedEquation != null ? selectedEquation.Name : string.Empty;
-			if (Manager.NativeManager.BeginCombo("###Selected", comboLabel, swig.ComboFlags.None))
-			{
-				int i = 0;
-				foreach (var equation in CoreContext.SelectedEffect.Asset.DynamicEquations)
-				{
-					bool isSelected = ReferenceEquals(equation, selectedEquation);
-
-					string name = string.Empty;
-					if (equation.Name != string.Empty)
-					{
-						name = equation.Name + "###ObjName" + i.ToString();
-					}
-					else
-					{
-						name = "(Noname)" + "###ObjName" + i.ToString();
-					}
-
-					if (Manager.NativeManager.Selectable(name, isSelected))
-					{
-						selectedEquaitionIndex = i;
-					}
-					if (isSelected)
-					{
-						Manager.NativeManager.SetItemDefaultFocus();
-					}
-					++i;
-				}
-
-				Manager.NativeManager.EndCombo();
-			}
-
+			
+			// combo of DynamicEquations
+			GUI.Widgets.DynamicSelector.EquationsCombo("", "DockPanelDynamic", ref selectedEquaitionIndex, CoreContext.SelectedEffect.Asset.DynamicEquations);
 
 			Manager.NativeManager.PopItemWidth();
 
@@ -96,6 +62,7 @@ namespace Effekseer.DockPanels
 				newEquation.Name = "New Expression";
 				newEquation.Code = "@O.x = @In0\n@O.y = @In1";
 				CoreContext.SelectedEffect.Asset.DynamicEquations.Add(newEquation);
+				selectedEquaitionIndex = CoreContext.SelectedEffect.Asset.DynamicEquations.Count - 1;
 			}
 
 			Manager.NativeManager.SameLine();
