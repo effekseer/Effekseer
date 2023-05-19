@@ -83,21 +83,16 @@ ModelRendererRef ModelRenderer::Create(RendererImplemented* renderer, FixedShade
 	assert(renderer != nullptr);
 	assert(renderer->GetGraphics() != nullptr);
 
-	std::vector<VertexLayout> layouts;
-	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "TEXCOORD", 0});
-	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "TEXCOORD", 1});
-	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "TEXCOORD", 2});
-	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "TEXCOORD", 3});
-	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 4});
-	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "TEXCOORD", 5});
+	auto vl = EffekseerRenderer::GetModelRendererVertexLayout(renderer->GetGraphicsDevice()).DownCast<Backend::VertexLayout>();
+	vl->MakeGenerated();
 
 	Shader* shader_lighting_texture_normal = Shader::Create(renderer->GetGraphicsDeviceInternal().Get(),
 															fixedShader->ModelLit_VS.data(),
 															(int32_t)fixedShader->ModelLit_VS.size(),
 															fixedShader->ModelLit_PS.data(),
 															(int32_t)fixedShader->ModelLit_PS.size(),
+															vl,
 															"ModelRendererLightingTextureNormal",
-															layouts,
 															true);
 
 	Shader* shader_texture = Shader::Create(renderer->GetGraphicsDeviceInternal().Get(),
@@ -105,8 +100,8 @@ ModelRendererRef ModelRenderer::Create(RendererImplemented* renderer, FixedShade
 											(int32_t)fixedShader->ModelUnlit_VS.size(),
 											fixedShader->ModelUnlit_PS.data(),
 											(int32_t)fixedShader->ModelUnlit_PS.size(),
+											vl,
 											"ModelRendererTexture",
-											layouts,
 											true);
 
 	auto shader_distortion_texture = Shader::Create(renderer->GetGraphicsDeviceInternal().Get(),
@@ -114,8 +109,8 @@ ModelRendererRef ModelRenderer::Create(RendererImplemented* renderer, FixedShade
 													(int32_t)fixedShader->ModelDistortion_VS.size(),
 													fixedShader->ModelDistortion_PS.data(),
 													(int32_t)fixedShader->ModelDistortion_PS.size(),
+													vl,
 													"ModelRendererDistortionTexture",
-													layouts,
 													true);
 
 	Shader* shader_ad_lit = Shader::Create(renderer->GetGraphicsDeviceInternal().Get(),
@@ -123,8 +118,8 @@ ModelRendererRef ModelRenderer::Create(RendererImplemented* renderer, FixedShade
 										   (int32_t)fixedShader->AdvancedModelLit_VS.size(),
 										   fixedShader->AdvancedModelLit_PS.data(),
 										   (int32_t)fixedShader->AdvancedModelLit_PS.size(),
+										   vl,
 										   "ModelRendererLightingTextureNormal",
-										   layouts,
 										   true);
 
 	Shader* shader_ad_unlit = Shader::Create(renderer->GetGraphicsDeviceInternal().Get(),
@@ -132,8 +127,8 @@ ModelRendererRef ModelRenderer::Create(RendererImplemented* renderer, FixedShade
 											 (int32_t)fixedShader->AdvancedModelUnlit_VS.size(),
 											 fixedShader->AdvancedModelUnlit_PS.data(),
 											 (int32_t)fixedShader->AdvancedModelUnlit_PS.size(),
+											 vl,
 											 "ModelRendererTexture",
-											 layouts,
 											 true);
 
 	auto shader_ad_distortion = Shader::Create(renderer->GetGraphicsDeviceInternal().Get(),
@@ -141,8 +136,8 @@ ModelRendererRef ModelRenderer::Create(RendererImplemented* renderer, FixedShade
 											   (int32_t)fixedShader->AdvancedModelDistortion_VS.size(),
 											   fixedShader->AdvancedModelDistortion_PS.data(),
 											   (int32_t)fixedShader->AdvancedModelDistortion_PS.size(),
+											   vl,
 											   "ModelRendererDistortionTexture",
-											   layouts,
 											   true);
 
 	if (shader_lighting_texture_normal == nullptr || shader_texture == nullptr || shader_distortion_texture == nullptr ||

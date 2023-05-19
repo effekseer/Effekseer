@@ -535,6 +535,18 @@ void Texture::OnResetDevice()
 	}
 }
 
+bool VertexLayout::Init(const Effekseer::Backend::VertexLayoutElement* elements, int32_t elementCount)
+{
+	elements_.resize(elementCount);
+
+	for (int32_t i = 0; i < elementCount; i++)
+	{
+		elements_[i] = elements[i];
+	}
+
+	return true;
+}
+
 bool Shader::GenerateShaders()
 {
 	auto device = graphicsDevice_->GetDevice();
@@ -707,6 +719,18 @@ Effekseer::Backend::TextureRef GraphicsDevice::CreateTexture(IDirect3DTexture9* 
 	auto ret = Effekseer::MakeRefPtr<Texture>(this);
 
 	if (!ret->Init(texture, onLostDevice, onResetDevice))
+	{
+		return nullptr;
+	}
+
+	return ret;
+}
+
+Effekseer::Backend::VertexLayoutRef GraphicsDevice::CreateVertexLayout(const Effekseer::Backend::VertexLayoutElement* elements, int32_t elementCount)
+{
+	auto ret = Effekseer::MakeRefPtr<VertexLayout>();
+
+	if (!ret->Init(elements, elementCount))
 	{
 		return nullptr;
 	}

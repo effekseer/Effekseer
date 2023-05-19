@@ -39,7 +39,7 @@ void MaterialLoader::Deserialize(uint8_t* data, uint32_t datasize, LLGI::Compile
 	}
 }
 
-MaterialLoader::MaterialLoader(Backend::GraphicsDevice* graphicsDevice,
+MaterialLoader::MaterialLoader(Backend::GraphicsDeviceRef graphicsDevice,
 							   ::Effekseer::FileInterfaceRef fileInterface,
 							   ::Effekseer::CompiledMaterialPlatformType platformType,
 							   ::Effekseer::MaterialCompiler* materialCompiler)
@@ -53,14 +53,12 @@ MaterialLoader::MaterialLoader(Backend::GraphicsDevice* graphicsDevice,
 	}
 
 	graphicsDevice_ = graphicsDevice;
-	ES_SAFE_ADDREF(graphicsDevice_);
 	ES_SAFE_ADDREF(materialCompiler_);
 }
 
 MaterialLoader ::~MaterialLoader()
 {
 	ES_SAFE_RELEASE(materialCompiler_);
-	ES_SAFE_RELEASE(graphicsDevice_);
 }
 
 ::Effekseer::MaterialRef MaterialLoader::Load(const char16_t* path)
@@ -160,19 +158,15 @@ MaterialLoader ::~MaterialLoader()
 				dataPS[i].Size = static_cast<int32_t>(resultPS.Binary[i].size());
 			}
 
-			// Pos(3) Color(1) UV(2)
-			std::vector<VertexLayout> layouts;
-			layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "POSITION", 0});
-			layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "NORMAL", 0});
-			layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 0});
+			auto vl = EffekseerRenderer::GetMaterialSimpleVertexLayout(graphicsDevice_).DownCast<Backend::VertexLayout>();
 
-			shader = Shader::Create(graphicsDevice_,
+			shader = Shader::Create(graphicsDevice_.Get(),
 									dataVS.data(),
 									(int32_t)resultVS.Binary.size(),
 									dataPS.data(),
 									(int32_t)resultPS.Binary.size(),
+									vl,
 									"MaterialStandardRenderer",
-									layouts,
 									true);
 		}
 		else
@@ -198,56 +192,15 @@ MaterialLoader ::~MaterialLoader()
 				dataPS[i].Size = static_cast<int32_t>(resultPS.Binary[i].size());
 			}
 
-			// Pos(3) Color(1) Normal(1) Tangent(1) UV(2) UV(2)
-			std::vector<VertexLayout> layouts;
-			layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "POSITION", 0});
-			layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "NORMAL", 0});
-			layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "NORMAL", 1});
-			layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "NORMAL", 2});
-			layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 0});
-			layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 1});
+			auto vl = EffekseerRenderer::GetMaterialSpriteVertexLayout(graphicsDevice_, static_cast<int32_t>(materialFile.GetCustomData1Count()), static_cast<int32_t>(materialFile.GetCustomData2Count())).DownCast<Backend::VertexLayout>();
 
-			int32_t offset = 40;
-			int count = 6;
-			int index = 2;
-
-			auto getFormat = [](int32_t i) -> LLGI::VertexLayoutFormat {
-				if (i == 2)
-					return LLGI::VertexLayoutFormat::R32G32_FLOAT;
-				if (i == 3)
-					return LLGI::VertexLayoutFormat::R32G32B32_FLOAT;
-				if (i == 4)
-					return LLGI::VertexLayoutFormat::R32G32B32A32_FLOAT;
-
-				assert(false);
-				return LLGI::VertexLayoutFormat::R32_FLOAT;
-			};
-			if (materialFile.GetCustomData1Count() > 0)
-			{
-				layouts.push_back(VertexLayout{getFormat(materialFile.GetCustomData1Count()), "TEXCOORD", index});
-
-				index++;
-				count++;
-				offset += sizeof(float) * materialFile.GetCustomData1Count();
-			}
-
-			if (materialFile.GetCustomData2Count() > 0)
-			{
-				layouts.push_back(VertexLayout{getFormat(materialFile.GetCustomData2Count()), "TEXCOORD", index});
-
-				index++;
-				count++;
-
-				offset += sizeof(float) * materialFile.GetCustomData2Count();
-			}
-
-			shader = Shader::Create(graphicsDevice_,
+			shader = Shader::Create(graphicsDevice_.Get(),
 									dataVS.data(),
 									(int32_t)resultVS.Binary.size(),
 									dataPS.data(),
 									(int32_t)resultPS.Binary.size(),
+									vl,
 									"MaterialStandardRenderer",
-									layouts,
 									true);
 		}
 
@@ -299,25 +252,19 @@ MaterialLoader ::~MaterialLoader()
 
 		auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(materialFile, true, st, LLGI_InstanceCount);
 
-		std::vector<VertexLayout> layouts;
-		layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "POSITION", 0});
-		layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "NORMAL", 0});
-		layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "NORMAL", 1});
-		layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "NORMAL", 2});
-		layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 0});
-		layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "NORMAL", 3});
-
 		// compile
 		std::string log;
+		auto vl = EffekseerRenderer::GetMaterialModelVertexLayout(graphicsDevice_).DownCast<Backend::VertexLayout>();
 
-		auto shader = Shader::Create(graphicsDevice_,
+		auto shader = Shader::Create(graphicsDevice_.Get(),
 									 dataVS.data(),
 									 (int32_t)resultVS.Binary.size(),
 									 dataPS.data(),
 									 (int32_t)resultPS.Binary.size(),
+									 vl,
 									 "MaterialStandardModelRenderer",
-									 layouts,
 									 true);
+
 		if (shader == nullptr)
 			return nullptr;
 

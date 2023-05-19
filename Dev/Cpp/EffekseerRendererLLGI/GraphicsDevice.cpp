@@ -277,6 +277,37 @@ bool Texture::Init(LLGI::Texture* texture)
 	return true;
 }
 
+bool VertexLayout::Init(const Effekseer::Backend::VertexLayoutElement* elements, int32_t elementCount)
+{
+	std::array<LLGI::VertexLayoutFormat, 6> formats;
+	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R32_FLOAT)] = LLGI::VertexLayoutFormat::R32_FLOAT;
+	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT)] = LLGI::VertexLayoutFormat::R32G32_FLOAT;
+	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT)] = LLGI::VertexLayoutFormat::R32G32B32_FLOAT;
+	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R32G32B32A32_FLOAT)] = LLGI::VertexLayoutFormat::R32G32B32A32_FLOAT;
+	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM)] = LLGI::VertexLayoutFormat::R8G8B8A8_UNORM;
+	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UINT)] = LLGI::VertexLayoutFormat::R8G8B8A8_UINT;
+
+	elements_.resize(elementCount);
+
+	for (int32_t i = 0; i < elementCount; i++)
+	{
+		elements_[i].Format = formats[static_cast<int32_t>(elements[i].Format)];
+		elements_[i].Name = elements[i].SemanticName;
+		elements_[i].Semantic = elements[i].SemanticIndex;
+	}
+
+	return true;
+}
+
+void VertexLayout::MakeGenerated()
+{
+	for (size_t i = 0; i < elements_.size(); i++)
+	{
+		elements_[i].Name = "TEXCOORD";
+		elements_[i].Semantic = static_cast<int32_t>(i);
+	}
+}
+
 Shader::Shader(GraphicsDevice* graphicsDevice)
 	: graphicsDevice_(graphicsDevice)
 {
@@ -397,6 +428,18 @@ Effekseer::Backend::TextureRef GraphicsDevice::CreateTexture(LLGI::Texture* text
 	auto ret = Effekseer::MakeRefPtr<Texture>(this);
 
 	if (!ret->Init(texture))
+	{
+		return nullptr;
+	}
+
+	return ret;
+}
+
+Effekseer::Backend::VertexLayoutRef GraphicsDevice::CreateVertexLayout(const Effekseer::Backend::VertexLayoutElement* elements, int32_t elementCount)
+{
+	auto ret = Effekseer::MakeRefPtr<VertexLayout>();
+
+	if (!ret->Init(elements, elementCount))
 	{
 		return nullptr;
 	}
