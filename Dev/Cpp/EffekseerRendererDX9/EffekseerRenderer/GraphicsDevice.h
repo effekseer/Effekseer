@@ -20,6 +20,7 @@ using Direct3DPixelShader9Ptr = std::unique_ptr<IDirect3DPixelShader9, Effekseer
 using Direct3DVertexDeclaration9Ptr = std::unique_ptr<IDirect3DVertexDeclaration9, Effekseer::ReferenceDeleter<IDirect3DVertexDeclaration9>>;
 using Direct3DTexture9Ptr = std::unique_ptr<IDirect3DTexture9, Effekseer::ReferenceDeleter<IDirect3DTexture9>>;
 using Direct3DSurface9Ptr = std::unique_ptr<IDirect3DSurface9, Effekseer::ReferenceDeleter<IDirect3DSurface9>>;
+using Direct3DVertexDeclaration9Ptr = std::unique_ptr<IDirect3DVertexDeclaration9, Effekseer::ReferenceDeleter<IDirect3DVertexDeclaration9>>;
 
 class GraphicsDevice;
 class VertexBuffer;
@@ -191,17 +192,27 @@ class VertexLayout
 	  public Effekseer::Backend::VertexLayout
 {
 private:
+	GraphicsDevice* graphicsDevice_ = nullptr;
 	Effekseer::CustomVector<Effekseer::Backend::VertexLayoutElement> elements_;
+	Direct3DVertexDeclaration9Ptr vertexDeclaration_;
+
+	void Generate();
 
 public:
-	VertexLayout() = default;
-	~VertexLayout() = default;
+	VertexLayout(GraphicsDevice* graphicsDevice);
+	~VertexLayout() override;
 
 	bool Init(const Effekseer::Backend::VertexLayoutElement* elements, int32_t elementCount);
 
-	const Effekseer::CustomVector<Effekseer::Backend::VertexLayoutElement>& GetElements() const
+	void OnLostDevice() override;
+
+	void OnChangeDevice() override;
+
+	void OnResetDevice() override;
+
+	IDirect3DVertexDeclaration9* GetVertexDeclaration() const
 	{
-		return elements_;
+		return vertexDeclaration_.get();
 	}
 };
 

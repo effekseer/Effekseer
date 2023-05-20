@@ -370,8 +370,6 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice)
 
 	GetImpl()->CreateProxyTextures(this);
 
-	// ES_SAFE_ADDREF( m_d3d_device );
-
 	std::array<float, 64> instancedVertex;
 	for (size_t i = 0; i < instancedVertex.size(); i++)
 	{

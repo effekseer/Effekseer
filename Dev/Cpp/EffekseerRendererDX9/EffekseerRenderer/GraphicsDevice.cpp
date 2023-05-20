@@ -302,7 +302,8 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param, const Effe
 	EffekseerRenderer::CalculateAlignedTextureInformation(param.Format, {param.Size[0], param.Size[1]}, sizePerWidth, height);
 
 	const int32_t blockSize = 4;
-	auto aligned = [](int32_t size, int32_t alignement) -> int32_t {
+	auto aligned = [](int32_t size, int32_t alignement) -> int32_t
+	{
 		return ((size + alignement - 1) / alignement) * alignement;
 	};
 
@@ -535,6 +536,25 @@ void Texture::OnResetDevice()
 	}
 }
 
+VertexLayout::VertexLayout(GraphicsDevice* graphicsDevice)
+	: graphicsDevice_(graphicsDevice)
+{
+	ES_SAFE_ADDREF(graphicsDevice_);
+	graphicsDevice_->Register(this);
+}
+
+VertexLayout::~VertexLayout()
+{
+	graphicsDevice_->Unregister(this);
+	ES_SAFE_RELEASE(graphicsDevice_);
+}
+
+void VertexLayout::Generate()
+{
+	// TODO
+	std::vector<D3DVERTEXELEMENT9> elements;
+}
+
 bool VertexLayout::Init(const Effekseer::Backend::VertexLayoutElement* elements, int32_t elementCount)
 {
 	elements_.resize(elementCount);
@@ -544,7 +564,24 @@ bool VertexLayout::Init(const Effekseer::Backend::VertexLayoutElement* elements,
 		elements_[i] = elements[i];
 	}
 
+	Generate();
+
 	return true;
+}
+
+void VertexLayout::OnLostDevice()
+{
+	vertexDeclaration_.reset();
+}
+
+void VertexLayout::OnChangeDevice()
+{
+	vertexDeclaration_.reset();
+}
+
+void VertexLayout::OnResetDevice()
+{
+	Generate();
 }
 
 bool Shader::GenerateShaders()
