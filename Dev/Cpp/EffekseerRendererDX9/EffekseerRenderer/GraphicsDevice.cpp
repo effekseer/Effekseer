@@ -765,7 +765,7 @@ Effekseer::Backend::TextureRef GraphicsDevice::CreateTexture(IDirect3DTexture9* 
 
 Effekseer::Backend::VertexLayoutRef GraphicsDevice::CreateVertexLayout(const Effekseer::Backend::VertexLayoutElement* elements, int32_t elementCount)
 {
-	auto ret = Effekseer::MakeRefPtr<VertexLayout>();
+	auto ret = Effekseer::MakeRefPtr<VertexLayout>(this);
 
 	if (!ret->Init(elements, elementCount))
 	{
