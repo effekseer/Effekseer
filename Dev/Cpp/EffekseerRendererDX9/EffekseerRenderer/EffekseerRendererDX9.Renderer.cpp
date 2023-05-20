@@ -272,10 +272,11 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice)
 		D3DDECL_END()};
 
 	shader_ad_unlit_ = Shader::Create(this,
-									  Standard_VS_Ad::g_vs30_main,
-									  sizeof(Standard_VS_Ad::g_vs30_main),
-									  Standard_PS_Ad::g_ps30_main,
-									  sizeof(Standard_PS_Ad::g_ps30_main),
+									  graphicsDevice_->CreateShaderFromBinary(
+										  Standard_VS_Ad::g_vs30_main,
+										  sizeof(Standard_VS_Ad::g_vs30_main),
+										  Standard_PS_Ad::g_ps30_main,
+										  sizeof(Standard_PS_Ad::g_ps30_main)),
 									  "StandardRenderer",
 									  decl_ad,
 									  false);
@@ -283,10 +284,11 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice)
 		return false;
 
 	shader_unlit_ = Shader::Create(this,
-								   Standard_VS::g_vs30_main,
-								   sizeof(Standard_VS::g_vs30_main),
-								   Standard_PS::g_ps30_main,
-								   sizeof(Standard_PS::g_ps30_main),
+								   graphicsDevice_->CreateShaderFromBinary(
+									   Standard_VS::g_vs30_main,
+									   sizeof(Standard_VS::g_vs30_main),
+									   Standard_PS::g_ps30_main,
+									   sizeof(Standard_PS::g_ps30_main)),
 								   "StandardRenderer",
 								   decl,
 								   false);
@@ -294,10 +296,12 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice)
 		return false;
 
 	shader_ad_distortion_ = Shader::Create(this,
-										   Standard_Distortion_VS_Ad::g_vs30_main,
-										   sizeof(Standard_Distortion_VS_Ad::g_vs30_main),
-										   Standard_Distortion_PS_Ad::g_ps30_main,
-										   sizeof(Standard_Distortion_PS_Ad::g_ps30_main),
+										   graphicsDevice_->CreateShaderFromBinary(
+
+											   Standard_Distortion_VS_Ad::g_vs30_main,
+											   sizeof(Standard_Distortion_VS_Ad::g_vs30_main),
+											   Standard_Distortion_PS_Ad::g_ps30_main,
+											   sizeof(Standard_Distortion_PS_Ad::g_ps30_main)),
 										   "StandardRenderer Distortion",
 										   decl_normal_ad,
 										   false);
@@ -305,10 +309,12 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice)
 		return false;
 
 	shader_distortion_ = Shader::Create(this,
-										Standard_Distortion_VS::g_vs30_main,
-										sizeof(Standard_Distortion_VS::g_vs30_main),
-										Standard_Distortion_PS::g_ps30_main,
-										sizeof(Standard_Distortion_PS::g_ps30_main),
+										graphicsDevice_->CreateShaderFromBinary(
+
+											Standard_Distortion_VS::g_vs30_main,
+											sizeof(Standard_Distortion_VS::g_vs30_main),
+											Standard_Distortion_PS::g_ps30_main,
+											sizeof(Standard_Distortion_PS::g_ps30_main)),
 										"StandardRenderer Distortion",
 										decl_normal,
 										false);
@@ -316,10 +322,12 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice)
 		return false;
 
 	shader_ad_lit_ = Shader::Create(this,
-									Standard_Lighting_VS_Ad::g_vs30_main,
-									sizeof(Standard_Lighting_VS_Ad::g_vs30_main),
-									Standard_Lighting_PS_Ad::g_ps30_main,
-									sizeof(Standard_Lighting_PS_Ad::g_ps30_main),
+									graphicsDevice_->CreateShaderFromBinary(
+
+										Standard_Lighting_VS_Ad::g_vs30_main,
+										sizeof(Standard_Lighting_VS_Ad::g_vs30_main),
+										Standard_Lighting_PS_Ad::g_ps30_main,
+										sizeof(Standard_Lighting_PS_Ad::g_ps30_main)),
 									"StandardRenderer Lighting",
 									decl_normal_ad,
 									false);
@@ -327,10 +335,12 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice)
 		return false;
 
 	shader_lit_ = Shader::Create(this,
-								 Standard_Lighting_VS::g_vs30_main,
-								 sizeof(Standard_Lighting_VS::g_vs30_main),
-								 Standard_Lighting_PS::g_ps30_main,
-								 sizeof(Standard_Lighting_PS::g_ps30_main),
+								 graphicsDevice_->CreateShaderFromBinary(
+
+									 Standard_Lighting_VS::g_vs30_main,
+									 sizeof(Standard_Lighting_VS::g_vs30_main),
+									 Standard_Lighting_PS::g_ps30_main,
+									 sizeof(Standard_Lighting_PS::g_ps30_main)),
 								 "StandardRenderer Lighting",
 								 decl_normal,
 								 false);

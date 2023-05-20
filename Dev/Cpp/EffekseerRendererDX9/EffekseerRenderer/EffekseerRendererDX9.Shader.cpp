@@ -14,30 +14,18 @@ namespace EffekseerRendererDX9
 //
 //-----------------------------------------------------------------------------------
 Shader::Shader(RendererImplemented* renderer,
-			   const uint8_t vertexShader_[],
-			   int32_t vertexShaderSize,
-			   const uint8_t pixelShader_[],
-			   int32_t pixelShaderSize,
+			   Backend::ShaderRef shader,
 			   D3DVERTEXELEMENT9 decl[],
-			   IDirect3DVertexShader9* vertexShader,
-			   IDirect3DPixelShader9* pixelShader,
 			   IDirect3DVertexDeclaration9* vertexDeclaration,
 			   bool hasRefCount)
 	: DeviceObject(renderer, hasRefCount)
-	, m_vertexShader(vertexShader)
-	, m_pixelShader(pixelShader)
+	, shader_(shader)
 	, m_vertexDeclaration(vertexDeclaration)
 	, m_vertexConstantBuffer(nullptr)
 	, m_pixelConstantBuffer(nullptr)
 	, m_vertexRegisterCount(0)
 	, m_pixelRegisterCount(0)
 {
-	m_vertexShaderData.resize(vertexShaderSize);
-	memcpy(&m_vertexShaderData[0], vertexShader_, vertexShaderSize);
-
-	m_pixelShaderData.resize(pixelShaderSize);
-	memcpy(&m_pixelShaderData[0], pixelShader_, pixelShaderSize);
-
 	int32_t index = 0;
 	D3DVERTEXELEMENT9 end = D3DDECL_END();
 	while (decl[index].Stream != 0xFF)
@@ -53,8 +41,6 @@ Shader::Shader(RendererImplemented* renderer,
 //-----------------------------------------------------------------------------------
 Shader::~Shader()
 {
-	ES_SAFE_RELEASE(m_vertexShader);
-	ES_SAFE_RELEASE(m_pixelShader);
 	ES_SAFE_RELEASE(m_vertexDeclaration);
 	ES_SAFE_DELETE_ARRAY(m_vertexConstantBuffer);
 	ES_SAFE_DELETE_ARRAY(m_pixelConstantBuffer);
@@ -64,10 +50,7 @@ Shader::~Shader()
 //
 //-----------------------------------------------------------------------------------
 Shader* Shader::Create(RendererImplemented* renderer,
-					   const uint8_t vertexShader[],
-					   int32_t vertexShaderSize,
-					   const uint8_t pixelShader[],
-					   int32_t pixelShaderSize,
+					   Effekseer::Backend::ShaderRef shader,
 					   const char* name,
 					   D3DVERTEXELEMENT9 decl[],
 					   bool hasRefCount)
@@ -76,30 +59,6 @@ Shader* Shader::Create(RendererImplemented* renderer,
 	assert(renderer->GetDevice() != nullptr);
 
 	HRESULT hr;
-
-	IDirect3DVertexShader9* vs = nullptr;
-	IDirect3DPixelShader9* ps = nullptr;
-
-	hr = renderer->GetDevice()->CreateVertexShader((const DWORD*)vertexShader, &vs);
-
-	if (FAILED(hr))
-	{
-		printf("* %s Error\n", name);
-		printf("Unknown Error\n");
-
-		return nullptr;
-	}
-
-	hr = renderer->GetDevice()->CreatePixelShader((const DWORD*)pixelShader, &ps);
-
-	if (FAILED(hr))
-	{
-		printf("* %s Error\n", name);
-		printf("Unknown Error\n");
-
-		return nullptr;
-	}
-
 	IDirect3DVertexDeclaration9* vertexDeclaration = nullptr;
 	hr = renderer->GetDevice()->CreateVertexDeclaration(decl, &vertexDeclaration);
 
@@ -112,13 +71,8 @@ Shader* Shader::Create(RendererImplemented* renderer,
 	}
 
 	return new Shader(renderer,
-					  vertexShader,
-					  vertexShaderSize,
-					  pixelShader,
-					  pixelShaderSize,
+					  shader.DownCast<Backend::Shader>(),
 					  decl,
-					  vs,
-					  ps,
 					  vertexDeclaration,
 					  hasRefCount);
 }
@@ -128,8 +82,6 @@ Shader* Shader::Create(RendererImplemented* renderer,
 //----------------------------------------------------------------------------------
 void Shader::OnLostDevice()
 {
-	ES_SAFE_RELEASE(m_vertexShader);
-	ES_SAFE_RELEASE(m_pixelShader);
 	ES_SAFE_RELEASE(m_vertexDeclaration);
 }
 
@@ -138,13 +90,8 @@ void Shader::OnLostDevice()
 //----------------------------------------------------------------------------------
 void Shader::OnResetDevice()
 {
-	if (m_vertexShader == nullptr)
+	if (m_vertexDeclaration == nullptr)
 	{
-
-		GetRenderer()->GetDevice()->CreateVertexShader((const DWORD*)&m_vertexShaderData[0], &m_vertexShader);
-
-		GetRenderer()->GetDevice()->CreatePixelShader((const DWORD*)&m_pixelShaderData[0], &m_pixelShader);
-
 		GetRenderer()->GetDevice()->CreateVertexDeclaration(&m_elements[0], &m_vertexDeclaration);
 	}
 }
@@ -154,8 +101,6 @@ void Shader::OnResetDevice()
 //----------------------------------------------------------------------------------
 void Shader::OnChangeDevice()
 {
-	ES_SAFE_RELEASE(m_vertexShader);
-	ES_SAFE_RELEASE(m_pixelShader);
 	ES_SAFE_RELEASE(m_vertexDeclaration);
 }
 

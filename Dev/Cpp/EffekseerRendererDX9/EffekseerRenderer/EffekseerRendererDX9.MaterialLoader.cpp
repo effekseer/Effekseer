@@ -78,6 +78,8 @@ MaterialLoader ::~MaterialLoader()
 		return nullptr;
 	}
 
+	auto graphicsDevice = renderer_->GetGraphicsDevice();
+
 	auto material = ::Effekseer::MakeRefPtr<::Effekseer::Material>();
 	material->IsSimpleVertex = materialFile.GetIsSimpleVertex();
 	material->IsRefractionRequired = materialFile.GetHasRefraction();
@@ -110,10 +112,12 @@ MaterialLoader ::~MaterialLoader()
 										D3DDECL_END()};
 
 			shader = Shader::Create(renderer_.Get(),
-									(uint8_t*)binary->GetVertexShaderData(shaderTypes[st]),
-									binary->GetVertexShaderSize(shaderTypes[st]),
-									(uint8_t*)binary->GetPixelShaderData(shaderTypes[st]),
-									binary->GetPixelShaderSize(shaderTypes[st]),
+									graphicsDevice->CreateShaderFromBinary(
+
+										(uint8_t*)binary->GetVertexShaderData(shaderTypes[st]),
+										binary->GetVertexShaderSize(shaderTypes[st]),
+										(uint8_t*)binary->GetPixelShaderData(shaderTypes[st]),
+										binary->GetPixelShaderSize(shaderTypes[st])),
 									"MaterialStandardRenderer",
 									decl,
 									true);
@@ -135,7 +139,8 @@ MaterialLoader ::~MaterialLoader()
 			int count = 6;
 			int index = 2;
 
-			auto getFormat = [](int32_t i) -> D3DDECLTYPE {
+			auto getFormat = [](int32_t i) -> D3DDECLTYPE
+			{
 				if (i == 2)
 					return D3DDECLTYPE_FLOAT2;
 				if (i == 3)
@@ -171,10 +176,12 @@ MaterialLoader ::~MaterialLoader()
 			decl[count] = D3DDECL_END();
 
 			shader = Shader::Create(renderer_.Get(),
-									(uint8_t*)binary->GetVertexShaderData(shaderTypes[st]),
-									binary->GetVertexShaderSize(shaderTypes[st]),
-									(uint8_t*)binary->GetPixelShaderData(shaderTypes[st]),
-									binary->GetPixelShaderSize(shaderTypes[st]),
+									graphicsDevice->CreateShaderFromBinary(
+
+										(uint8_t*)binary->GetVertexShaderData(shaderTypes[st]),
+										binary->GetVertexShaderSize(shaderTypes[st]),
+										(uint8_t*)binary->GetPixelShaderData(shaderTypes[st]),
+										binary->GetPixelShaderSize(shaderTypes[st])),
 									"MaterialStandardRenderer",
 									decl,
 									true);
@@ -220,10 +227,12 @@ MaterialLoader ::~MaterialLoader()
 		std::string log;
 
 		auto shader = Shader::Create(renderer_.Get(),
-									 (uint8_t*)binary->GetVertexShaderData(shaderTypesModel[st]),
-									 binary->GetVertexShaderSize(shaderTypesModel[st]),
-									 (uint8_t*)binary->GetPixelShaderData(shaderTypesModel[st]),
-									 binary->GetPixelShaderSize(shaderTypesModel[st]),
+									 graphicsDevice->CreateShaderFromBinary(
+
+										 (uint8_t*)binary->GetVertexShaderData(shaderTypesModel[st]),
+										 binary->GetVertexShaderSize(shaderTypesModel[st]),
+										 (uint8_t*)binary->GetPixelShaderData(shaderTypesModel[st]),
+										 binary->GetPixelShaderSize(shaderTypesModel[st])),
 									 "MaterialStandardModelRenderer",
 									 decl,
 									 false);
