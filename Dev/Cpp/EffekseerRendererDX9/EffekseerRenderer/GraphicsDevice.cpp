@@ -553,7 +553,7 @@ void VertexLayout::MakeGenerated()
 {
 	for (size_t i = 0; i < elements_.size(); i++)
 	{
-		elements_[i].Name = "TEXCOORD";
+		elements_[i].SemanticName = "TEXCOORD";
 		elements_[i].SemanticIndex = static_cast<int32_t>(i);
 	}
 

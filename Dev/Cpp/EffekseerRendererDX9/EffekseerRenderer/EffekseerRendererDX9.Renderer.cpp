@@ -231,122 +231,81 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice)
 
 	m_renderState = new RenderState(this);
 
-	auto vl = EffekseerRenderer::GetModelRendererVertexLayout(graphicsDevice_).DownCast<Backend::VertexLayout>();
-	vl->MakeGenerated();
+	auto vlUnlit = EffekseerRenderer::GetVertexLayout(graphicsDevice_, EffekseerRenderer::RendererShaderType::Unlit).DownCast<Backend::VertexLayout>();
+	auto vlLit = EffekseerRenderer::GetVertexLayout(graphicsDevice_, EffekseerRenderer::RendererShaderType::Lit).DownCast<Backend::VertexLayout>();
+	auto vlDist = EffekseerRenderer::GetVertexLayout(graphicsDevice_, EffekseerRenderer::RendererShaderType::BackDistortion).DownCast<Backend::VertexLayout>();
+	auto vlUnlitAd = EffekseerRenderer::GetVertexLayout(graphicsDevice_, EffekseerRenderer::RendererShaderType::AdvancedUnlit).DownCast<Backend::VertexLayout>();
+	auto vlLitAd = EffekseerRenderer::GetVertexLayout(graphicsDevice_, EffekseerRenderer::RendererShaderType::AdvancedLit).DownCast<Backend::VertexLayout>();
+	auto vlDistAd = EffekseerRenderer::GetVertexLayout(graphicsDevice_, EffekseerRenderer::RendererShaderType::AdvancedBackDistortion).DownCast<Backend::VertexLayout>();
 
-	D3DVERTEXELEMENT9 decl_ad[] = {
-		{0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
-		{0, 12, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1},
-		{0, 16, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 2},
-		{0, sizeof(float) * 6, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 3},  // AlphaTextureUV + UVDistortionTextureUV
-		{0, sizeof(float) * 10, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 4}, // BlendUV
-		{0, sizeof(float) * 12, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 5}, // BlendAlphaUV + BlendUVDistortionUV
-		{0, sizeof(float) * 16, D3DDECLTYPE_FLOAT1, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 6}, // FlipbookIndexAndNextRate
-		{0, sizeof(float) * 17, D3DDECLTYPE_FLOAT1, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 7}, // AlphaThreshold
-		D3DDECL_END()};
+	vlUnlit->MakeGenerated();
+	vlLit->MakeGenerated();
+	vlDist->MakeGenerated();
+	vlUnlitAd->MakeGenerated();
+	vlLitAd->MakeGenerated();
+	vlDistAd->MakeGenerated();
 
-	D3DVERTEXELEMENT9 decl[] = {
-		{0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
-		{0, 12, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1},
-		{0, 16, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 2},
-		D3DDECL_END()};
-
-	D3DVERTEXELEMENT9 decl_normal[] = {
-		{0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
-		{0, 12, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1},
-		{0, 16, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 2},
-		{0, 20, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 3},
-		{0, 24, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 4},
-		{0, 32, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 5},
-		D3DDECL_END()};
-
-	D3DVERTEXELEMENT9 decl_normal_ad[] = {
-		{0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
-		{0, 12, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1},
-		{0, 16, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 2},
-		{0, 20, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 3},
-		{0, 24, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 4},
-		{0, 32, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 5},
-		{0, sizeof(float) * 10, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 6},  // AlphaTextureUV + UVDistortionTextureUV
-		{0, sizeof(float) * 14, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 7},  // BlendUV
-		{0, sizeof(float) * 16, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 8},  // BlendAlphaUV + BlendUVDistortionUV
-		{0, sizeof(float) * 20, D3DDECLTYPE_FLOAT1, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 9},  // FlipbookIndexAndNextRate
-		{0, sizeof(float) * 21, D3DDECLTYPE_FLOAT1, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 10}, // AlphaThreshold
-		D3DDECL_END()};
-
-	shader_ad_unlit_ = Shader::Create(this,
+	shader_ad_unlit_ = Shader::Create(graphicsDevice_,
 									  graphicsDevice_->CreateShaderFromBinary(
 										  Standard_VS_Ad::g_vs30_main,
 										  sizeof(Standard_VS_Ad::g_vs30_main),
 										  Standard_PS_Ad::g_ps30_main,
 										  sizeof(Standard_PS_Ad::g_ps30_main)),
-									  "StandardRenderer",
-									  decl_ad,
-									  false);
+									  vlUnlitAd);
 	if (shader_ad_unlit_ == nullptr)
 		return false;
 
-	shader_unlit_ = Shader::Create(this,
+	shader_unlit_ = Shader::Create(graphicsDevice_,
 								   graphicsDevice_->CreateShaderFromBinary(
 									   Standard_VS::g_vs30_main,
 									   sizeof(Standard_VS::g_vs30_main),
 									   Standard_PS::g_ps30_main,
 									   sizeof(Standard_PS::g_ps30_main)),
-								   "StandardRenderer",
-								   decl,
-								   false);
+								   vlUnlit);
 	if (shader_unlit_ == nullptr)
 		return false;
 
-	shader_ad_distortion_ = Shader::Create(this,
+	shader_ad_distortion_ = Shader::Create(graphicsDevice_,
 										   graphicsDevice_->CreateShaderFromBinary(
 
 											   Standard_Distortion_VS_Ad::g_vs30_main,
 											   sizeof(Standard_Distortion_VS_Ad::g_vs30_main),
 											   Standard_Distortion_PS_Ad::g_ps30_main,
 											   sizeof(Standard_Distortion_PS_Ad::g_ps30_main)),
-										   "StandardRenderer Distortion",
-										   decl_normal_ad,
-										   false);
+										   vlDistAd);
 	if (shader_ad_distortion_ == nullptr)
 		return false;
 
-	shader_distortion_ = Shader::Create(this,
+	shader_distortion_ = Shader::Create(graphicsDevice_,
 										graphicsDevice_->CreateShaderFromBinary(
 
 											Standard_Distortion_VS::g_vs30_main,
 											sizeof(Standard_Distortion_VS::g_vs30_main),
 											Standard_Distortion_PS::g_ps30_main,
 											sizeof(Standard_Distortion_PS::g_ps30_main)),
-										"StandardRenderer Distortion",
-										decl_normal,
-										false);
+										vlDist);
 	if (shader_distortion_ == nullptr)
 		return false;
 
-	shader_ad_lit_ = Shader::Create(this,
+	shader_ad_lit_ = Shader::Create(graphicsDevice_,
 									graphicsDevice_->CreateShaderFromBinary(
 
 										Standard_Lighting_VS_Ad::g_vs30_main,
 										sizeof(Standard_Lighting_VS_Ad::g_vs30_main),
 										Standard_Lighting_PS_Ad::g_ps30_main,
 										sizeof(Standard_Lighting_PS_Ad::g_ps30_main)),
-									"StandardRenderer Lighting",
-									decl_normal_ad,
-									false);
+									vlLitAd);
 	if (shader_ad_lit_ == nullptr)
 		return false;
 
-	shader_lit_ = Shader::Create(this,
+	shader_lit_ = Shader::Create(graphicsDevice_,
 								 graphicsDevice_->CreateShaderFromBinary(
 
 									 Standard_Lighting_VS::g_vs30_main,
 									 sizeof(Standard_Lighting_VS::g_vs30_main),
 									 Standard_Lighting_PS::g_ps30_main,
 									 sizeof(Standard_Lighting_PS::g_ps30_main)),
-								 "StandardRenderer Lighting",
-								 decl_normal,
-								 false);
+								 vlLit);
 	if (shader_lit_ == nullptr)
 		return false;
 
@@ -650,7 +609,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 
 ::Effekseer::MaterialLoaderRef RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterfaceRef fileInterface)
 {
-	return ::Effekseer::MakeRefPtr<MaterialLoader>(RendererImplementedRef::FromPinned(this), fileInterface);
+	return ::Effekseer::MakeRefPtr<MaterialLoader>(graphicsDevice_, fileInterface);
 }
 
 void RendererImplemented::SetBackground(IDirect3DTexture9* background)
