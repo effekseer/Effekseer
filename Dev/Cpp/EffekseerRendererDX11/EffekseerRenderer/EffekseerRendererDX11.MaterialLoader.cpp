@@ -94,12 +94,7 @@ MaterialLoader ::~MaterialLoader()
 
 		if (material->IsSimpleVertex)
 		{
-			// Pos(3) Color(1) UV(2)
-			D3D11_INPUT_ELEMENT_DESC decl[] = {
-				{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-				{"NORMAL", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 3, D3D11_INPUT_PER_VERTEX_DATA, 0},
-				{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 4, D3D11_INPUT_PER_VERTEX_DATA, 0},
-			};
+			auto vl = EffekseerRenderer::GetMaterialSimpleVertexLayout(graphicsDevice_).DownCast<Backend::VertexLayout>();
 
 			shader = Shader::Create(graphicsDevice_,
 									graphicsDevice_->CreateShaderFromBinary(
@@ -107,59 +102,12 @@ MaterialLoader ::~MaterialLoader()
 										binary->GetVertexShaderSize(shaderTypes[st]),
 										(uint8_t*)binary->GetPixelShaderData(shaderTypes[st]),
 										binary->GetPixelShaderSize(shaderTypes[st])),
-									"MaterialStandardRenderer",
-									decl,
-									ARRAYSIZE(decl));
+									vl,
+									"MaterialStandardRenderer");
 		}
 		else
 		{
-			// Pos(3) Color(1) Normal(1) Tangent(1) UV(2) UV(2)
-			D3D11_INPUT_ELEMENT_DESC decl[] = {
-				{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-				{"NORMAL", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 3, D3D11_INPUT_PER_VERTEX_DATA, 0},
-				{"NORMAL", 1, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 4, D3D11_INPUT_PER_VERTEX_DATA, 0},
-				{"NORMAL", 2, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 5, D3D11_INPUT_PER_VERTEX_DATA, 0},
-				{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 6, D3D11_INPUT_PER_VERTEX_DATA, 0},
-				{"TEXCOORD", 1, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 8, D3D11_INPUT_PER_VERTEX_DATA, 0},
-				{"TEXCOORD", 2, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-				{"TEXCOORD", 3, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-			};
-
-			int32_t offset = 40;
-			int count = 6;
-			int index = 2;
-
-			auto getFormat = [](int32_t i) -> DXGI_FORMAT {
-				if (i == 2)
-					return DXGI_FORMAT_R32G32_FLOAT;
-				if (i == 3)
-					return DXGI_FORMAT_R32G32B32_FLOAT;
-				if (i == 4)
-					return DXGI_FORMAT_R32G32B32A32_FLOAT;
-
-				assert(0);
-				return DXGI_FORMAT_R32_FLOAT;
-			};
-			if (materialFile.GetCustomData1Count() > 0)
-			{
-				decl[count].Format = getFormat(materialFile.GetCustomData1Count());
-				decl[count].AlignedByteOffset = offset;
-				decl[count].SemanticIndex = index;
-				index++;
-				count++;
-				offset += sizeof(float) * materialFile.GetCustomData1Count();
-			}
-
-			if (materialFile.GetCustomData2Count() > 0)
-			{
-				decl[count].Format = getFormat(materialFile.GetCustomData2Count());
-				decl[count].AlignedByteOffset = offset;
-				decl[count].SemanticIndex = index;
-				index++;
-				count++;
-
-				offset += sizeof(float) * materialFile.GetCustomData2Count();
-			}
+			auto vl = EffekseerRenderer::GetMaterialSpriteVertexLayout(graphicsDevice_, static_cast<int32_t>(materialFile.GetCustomData1Count()), static_cast<int32_t>(materialFile.GetCustomData2Count())).DownCast<Backend::VertexLayout>();
 
 			shader = Shader::Create(graphicsDevice_,
 									graphicsDevice_->CreateShaderFromBinary(
@@ -167,13 +115,12 @@ MaterialLoader ::~MaterialLoader()
 										binary->GetVertexShaderSize(shaderTypes[st]),
 										(uint8_t*)binary->GetPixelShaderData(shaderTypes[st]),
 										binary->GetPixelShaderSize(shaderTypes[st])),
-									"MaterialStandardRenderer",
-									decl,
-									count);
-		}
+									vl,
+									"MaterialStandardRenderer");
 
-		if (shader == nullptr)
-			return false;
+			if (shader == nullptr)
+				return false;
+		}
 
 		auto vertexUniformSize = parameterGenerator.VertexShaderUniformBufferSize;
 		auto pixelUniformSize = parameterGenerator.PixelShaderUniformBufferSize;
@@ -198,14 +145,7 @@ MaterialLoader ::~MaterialLoader()
 	{
 		auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(materialFile, true, st, 40);
 
-		D3D11_INPUT_ELEMENT_DESC decl[] = {
-			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-			{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(float) * 3, D3D11_INPUT_PER_VERTEX_DATA, 0},
-			{"NORMAL", 1, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(float) * 6, D3D11_INPUT_PER_VERTEX_DATA, 0},
-			{"NORMAL", 2, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(float) * 9, D3D11_INPUT_PER_VERTEX_DATA, 0},
-			{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
-			{"NORMAL", 3, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 14, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		};
+		auto vl = EffekseerRenderer::GetMaterialModelVertexLayout(graphicsDevice_).DownCast<Backend::VertexLayout>();
 
 		// compile
 		std::string log;
@@ -216,9 +156,9 @@ MaterialLoader ::~MaterialLoader()
 										 binary->GetVertexShaderSize(shaderTypesModel[st]),
 										 (uint8_t*)binary->GetPixelShaderData(shaderTypesModel[st]),
 										 binary->GetPixelShaderSize(shaderTypesModel[st])),
-									 "MaterialStandardModelRenderer",
-									 decl,
-									 ARRAYSIZE(decl));
+									 vl,
+									 "MaterialStandardModelRenderer");
+
 		if (shader == nullptr)
 			return false;
 

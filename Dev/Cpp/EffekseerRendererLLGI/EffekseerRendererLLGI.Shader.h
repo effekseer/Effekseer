@@ -12,20 +12,12 @@
 namespace EffekseerRendererLLGI
 {
 
-class VertexLayout
-{
-public:
-	LLGI::VertexLayoutFormat Format;
-	std::string Name;
-	int32_t Semantic;
-};
-
 class Shader : public DeviceObject, public ::EffekseerRenderer::ShaderBase
 {
 private:
 	LLGI::Shader* vertexShader_ = nullptr;
 	LLGI::Shader* pixelShader_ = nullptr;
-	std::vector<VertexLayout> layouts_;
+	Backend::VertexLayoutRef vertexLayout_;
 
 	void* m_vertexConstantBuffer;
 	void* m_pixelConstantBuffer;
@@ -35,7 +27,7 @@ private:
 	Shader(Backend::GraphicsDevice* graphicsDevice,
 		   LLGI::Shader* vertexShader,
 		   LLGI::Shader* pixelShader,
-		   const std::vector<VertexLayout>& layouts,
+		   Backend::VertexLayoutRef vertexLayout,
 		   bool hasRefCount);
 
 public:
@@ -46,8 +38,8 @@ public:
 						  int32_t vertexDataCount,
 						  LLGI::DataStructure* pixelData,
 						  int32_t pixelDataCount,
+						  Backend::VertexLayoutRef vertexLayout,
 						  const char* name,
-						  const std::vector<VertexLayout>& layoutFormats,
 						  bool hasRefCount);
 
 public:
@@ -59,10 +51,12 @@ public:
 	{
 		return pixelShader_;
 	}
-	std::vector<VertexLayout>& GetVertexLayouts()
+
+	const Backend::VertexLayoutRef& GetVertexLayouts()
 	{
-		return layouts_;
+		return vertexLayout_;
 	}
+
 	void SetVertexConstantBufferSize(int32_t size);
 	void SetPixelConstantBufferSize(int32_t size);
 	int32_t GetVertexConstantBufferSize()

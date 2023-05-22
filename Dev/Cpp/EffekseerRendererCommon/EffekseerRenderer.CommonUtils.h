@@ -1571,8 +1571,16 @@ struct PixelConstantBufferDistortion
 
 void CalculateAlignedTextureInformation(Effekseer::Backend::TextureFormatType format, const std::array<int, 2>& size, int32_t& sizePerWidth, int32_t& height);
 
-//! only support OpenGL
+//! only support OpenGL, DirectX11
 Effekseer::Backend::VertexLayoutRef GetVertexLayout(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, RendererShaderType type);
+
+Effekseer::Backend::VertexLayoutRef GetModelRendererVertexLayout(Effekseer::Backend::GraphicsDeviceRef graphicsDevice);
+
+Effekseer::Backend::VertexLayoutRef GetMaterialSimpleVertexLayout(Effekseer::Backend::GraphicsDeviceRef graphicsDevice);
+
+Effekseer::Backend::VertexLayoutRef GetMaterialSpriteVertexLayout(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, int32_t customData1, int32_t customData2);
+
+Effekseer::Backend::VertexLayoutRef GetMaterialModelVertexLayout(Effekseer::Backend::GraphicsDeviceRef graphicsDevice);
 
 struct FlipbookVertexBuffer
 {

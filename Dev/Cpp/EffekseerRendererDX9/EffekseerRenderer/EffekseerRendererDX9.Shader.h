@@ -17,65 +17,42 @@ namespace EffekseerRendererDX9
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-class Shader : public DeviceObject, public ::EffekseerRenderer::ShaderBase
+class Shader : public ::EffekseerRenderer::ShaderBase
 {
 private:
-	/* 再構成時の元データ保存用 */
-	std::vector<uint8_t> m_vertexShaderData;
-	std::vector<uint8_t> m_pixelShaderData;
-	std::vector<D3DVERTEXELEMENT9> m_elements;
-
-	/* DX9 */
-	IDirect3DVertexShader9* m_vertexShader;
-	IDirect3DPixelShader9* m_pixelShader;
-	IDirect3DVertexDeclaration9* m_vertexDeclaration;
-
 	void* m_vertexConstantBuffer;
 	void* m_pixelConstantBuffer;
 
 	int32_t m_vertexRegisterCount;
 	int32_t m_pixelRegisterCount;
 
-	Shader(RendererImplemented* renderer,
-		   const uint8_t vertexShader_[],
-		   int32_t vertexShaderSize,
-		   const uint8_t pixelShader_[],
-		   int32_t pixelShaderSize,
-		   D3DVERTEXELEMENT9 decl[],
-		   IDirect3DVertexShader9* vertexShader,
-		   IDirect3DPixelShader9* pixelShader,
-		   IDirect3DVertexDeclaration9* vertexDeclaration,
-		   bool hasRefCount);
+	Backend::GraphicsDeviceRef graphicsDevice_;
+	Backend::ShaderRef shader_;
+	Backend::VertexLayoutRef vertexLayout_;
+
+	Shader(Backend::GraphicsDeviceRef graphicsDevice,
+		   Backend::ShaderRef shader,
+		   Backend::VertexLayoutRef vertexLayout);
 
 public:
-	virtual ~Shader();
+	~Shader() override;
 
-	static Shader* Create(RendererImplemented* renderer,
-						  const uint8_t vertexShader[],
-						  int32_t vertexShaderSize,
-						  const uint8_t pixelShader[],
-						  int32_t pixelShaderSize,
-						  const char* name,
-						  D3DVERTEXELEMENT9 decl[],
-						  bool hasRefCount);
-
-public: // デバイス復旧用
-	virtual void OnLostDevice();
-	virtual void OnResetDevice();
-	virtual void OnChangeDevice();
+	static Shader* Create(Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
+						  Effekseer::Backend::ShaderRef shader,
+						  Effekseer::Backend::VertexLayoutRef vertexLayout);
 
 public:
 	IDirect3DVertexShader9* GetVertexShader() const
 	{
-		return m_vertexShader;
+		return shader_->GetVertexShader();
 	}
 	IDirect3DPixelShader9* GetPixelShader() const
 	{
-		return m_pixelShader;
+		return shader_->GetPixelShader();
 	}
 	IDirect3DVertexDeclaration9* GetLayoutInterface() const
 	{
-		return m_vertexDeclaration;
+		return vertexLayout_->GetVertexDeclaration();
 	}
 
 	void SetVertexConstantBufferSize(int32_t size);

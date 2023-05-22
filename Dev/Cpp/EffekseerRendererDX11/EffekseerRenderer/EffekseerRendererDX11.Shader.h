@@ -16,7 +16,7 @@ private:
 	Backend::ShaderRef shader_;
 	Backend::ShaderRef shaderOverride_;
 
-	ID3D11InputLayout* m_vertexDeclaration;
+	Backend::D3D11InputLayoutPtr vertexDeclaration_;
 	ID3D11Buffer* m_constantBufferToVS;
 	ID3D11Buffer* m_constantBufferToPS;
 
@@ -27,16 +27,15 @@ private:
 
 	Shader(Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
 		   Backend::ShaderRef shader,
-		   ID3D11InputLayout* vertexDeclaration);
+		   Backend::D3D11InputLayoutPtr vertexDeclaration);
 
 public:
 	virtual ~Shader();
 
 	static Shader* Create(Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
 						  Effekseer::Backend::ShaderRef shader,
-						  const char* name,
-						  const D3D11_INPUT_ELEMENT_DESC decl[],
-						  int32_t layoutCount);
+						  Effekseer::Backend::VertexLayoutRef layout,
+						  const char* name);
 
 public:
 	void OverrideShader(::Effekseer::Backend::ShaderRef shader) override
@@ -65,7 +64,7 @@ public:
 	}
 	ID3D11InputLayout* GetLayoutInterface() const
 	{
-		return m_vertexDeclaration;
+		return vertexDeclaration_.get();
 	}
 
 	void SetVertexConstantBufferSize(int32_t size);

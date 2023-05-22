@@ -56,6 +56,8 @@ using UniformLayoutRef = Effekseer::RefPtr<UniformLayout>;
 
 DXGI_FORMAT GetTextureFormatType(Effekseer::Backend::TextureFormatType format);
 
+D3D11InputLayoutPtr CreateInputLayout(GraphicsDevice& graphicsDevice, VertexLayoutRef vertexLayout, const void* vertexBufferData, int32_t vertexBufferSize);
+
 class DirtiedBlock
 {
 	struct Block

@@ -14,8 +14,8 @@ namespace EffekseerRendererDX9
 
 const int32_t ModelRendererInstanceCount = 10;
 
-MaterialLoader::MaterialLoader(const RendererImplementedRef& renderer, ::Effekseer::FileInterfaceRef fileInterface)
-	: renderer_(renderer)
+MaterialLoader::MaterialLoader(const Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterfaceRef fileInterface)
+	: graphicsDevice_(graphicsDevice)
 	, fileInterface_(fileInterface)
 {
 	if (fileInterface == nullptr)
@@ -78,6 +78,8 @@ MaterialLoader ::~MaterialLoader()
 		return nullptr;
 	}
 
+	auto graphicsDevice = graphicsDevice_;
+
 	auto material = ::Effekseer::MakeRefPtr<::Effekseer::Material>();
 	material->IsSimpleVertex = materialFile.GetIsSimpleVertex();
 	material->IsRefractionRequired = materialFile.GetHasRefraction();
@@ -103,81 +105,29 @@ MaterialLoader ::~MaterialLoader()
 
 		if (material->IsSimpleVertex)
 		{
-			// Pos(3) Color(1) UV(2)
-			D3DVERTEXELEMENT9 decl[] = {{0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
-										{0, 12, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0},
-										{0, 16, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
-										D3DDECL_END()};
+			auto vl = EffekseerRenderer::GetMaterialSimpleVertexLayout(graphicsDevice_).DownCast<Backend::VertexLayout>();
 
-			shader = Shader::Create(renderer_.Get(),
-									(uint8_t*)binary->GetVertexShaderData(shaderTypes[st]),
-									binary->GetVertexShaderSize(shaderTypes[st]),
-									(uint8_t*)binary->GetPixelShaderData(shaderTypes[st]),
-									binary->GetPixelShaderSize(shaderTypes[st]),
-									"MaterialStandardRenderer",
-									decl,
-									true);
+			shader = Shader::Create(graphicsDevice_,
+									graphicsDevice->CreateShaderFromBinary(
+
+										(uint8_t*)binary->GetVertexShaderData(shaderTypes[st]),
+										binary->GetVertexShaderSize(shaderTypes[st]),
+										(uint8_t*)binary->GetPixelShaderData(shaderTypes[st]),
+										binary->GetPixelShaderSize(shaderTypes[st])),
+									vl);
 		}
 		else
 		{
-			// Pos(3) Color(1) Normal(1) Tangent(1) UV(2) UV(2)
-			D3DVERTEXELEMENT9 decl[] = {{0, sizeof(float) * 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
-										{0, sizeof(float) * 3, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0},
-										{0, sizeof(float) * 4, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 1},
-										{0, sizeof(float) * 5, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 2},
-										{0, sizeof(float) * 6, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
-										{0, sizeof(float) * 8, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1},
-										{0, 0, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 2},
-										{0, 0, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 3},
-										D3DDECL_END()};
+			auto vl = EffekseerRenderer::GetMaterialSpriteVertexLayout(graphicsDevice_, static_cast<int32_t>(materialFile.GetCustomData1Count()), static_cast<int32_t>(materialFile.GetCustomData2Count())).DownCast<Backend::VertexLayout>();
 
-			int32_t offset = 40;
-			int count = 6;
-			int index = 2;
+			shader = Shader::Create(graphicsDevice_,
+									graphicsDevice->CreateShaderFromBinary(
 
-			auto getFormat = [](int32_t i) -> D3DDECLTYPE {
-				if (i == 2)
-					return D3DDECLTYPE_FLOAT2;
-				if (i == 3)
-					return D3DDECLTYPE_FLOAT3;
-				if (i == 4)
-					return D3DDECLTYPE_FLOAT4;
-
-				assert(0);
-				return D3DDECLTYPE_FLOAT1;
-			};
-
-			if (materialFile.GetCustomData1Count() > 0)
-			{
-				decl[count].Type = getFormat(materialFile.GetCustomData1Count());
-				decl[count].Offset = offset;
-				decl[count].UsageIndex = index;
-				index++;
-				count++;
-				offset += sizeof(float) * materialFile.GetCustomData1Count();
-			}
-
-			if (materialFile.GetCustomData2Count() > 0)
-			{
-				decl[count].Type = getFormat(materialFile.GetCustomData2Count());
-				decl[count].Offset = offset;
-				decl[count].UsageIndex = index;
-				index++;
-				count++;
-
-				offset += sizeof(float) * materialFile.GetCustomData2Count();
-			}
-
-			decl[count] = D3DDECL_END();
-
-			shader = Shader::Create(renderer_.Get(),
-									(uint8_t*)binary->GetVertexShaderData(shaderTypes[st]),
-									binary->GetVertexShaderSize(shaderTypes[st]),
-									(uint8_t*)binary->GetPixelShaderData(shaderTypes[st]),
-									binary->GetPixelShaderSize(shaderTypes[st]),
-									"MaterialStandardRenderer",
-									decl,
-									true);
+										(uint8_t*)binary->GetVertexShaderData(shaderTypes[st]),
+										binary->GetVertexShaderSize(shaderTypes[st]),
+										(uint8_t*)binary->GetPixelShaderData(shaderTypes[st]),
+										binary->GetPixelShaderSize(shaderTypes[st])),
+									vl);
 		}
 
 		if (shader == nullptr)
@@ -207,26 +157,18 @@ MaterialLoader ::~MaterialLoader()
 	{
 		auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(materialFile, true, st, ModelRendererInstanceCount);
 
-		D3DVERTEXELEMENT9 decl[] = {{0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
-									{0, 12, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0},
-									{0, 24, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 1},
-									{0, 36, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 2},
-									{0, 48, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
-									{0, 56, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 3},
-									{1, 0, D3DDECLTYPE_FLOAT1, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_BLENDINDICES, 0},
-									D3DDECL_END()};
-
 		// compile
 		std::string log;
+		auto vl = EffekseerRenderer::GetMaterialModelVertexLayout(graphicsDevice_).DownCast<Backend::VertexLayout>();
 
-		auto shader = Shader::Create(renderer_.Get(),
-									 (uint8_t*)binary->GetVertexShaderData(shaderTypesModel[st]),
-									 binary->GetVertexShaderSize(shaderTypesModel[st]),
-									 (uint8_t*)binary->GetPixelShaderData(shaderTypesModel[st]),
-									 binary->GetPixelShaderSize(shaderTypesModel[st]),
-									 "MaterialStandardModelRenderer",
-									 decl,
-									 false);
+		auto shader = Shader::Create(graphicsDevice_,
+									 graphicsDevice->CreateShaderFromBinary(
+
+										 (uint8_t*)binary->GetVertexShaderData(shaderTypesModel[st]),
+										 binary->GetVertexShaderSize(shaderTypesModel[st]),
+										 (uint8_t*)binary->GetPixelShaderData(shaderTypesModel[st]),
+										 binary->GetPixelShaderSize(shaderTypesModel[st])),
+									 vl);
 		if (shader == nullptr)
 			return false;
 

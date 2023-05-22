@@ -136,6 +136,36 @@ public:
 	}
 };
 
+class VertexLayout
+	: public DeviceObject,
+	  public Effekseer::Backend::VertexLayout
+{
+public:
+	class Element
+	{
+	public:
+		LLGI::VertexLayoutFormat Format;
+		std::string Name;
+		int32_t Semantic;
+	};
+
+private:
+	Effekseer::CustomVector<Element> elements_;
+
+public:
+	VertexLayout() = default;
+	~VertexLayout() = default;
+
+	bool Init(const Effekseer::Backend::VertexLayoutElement* elements, int32_t elementCount);
+
+	void MakeGenerated();
+
+	const Effekseer::CustomVector<Element>& GetElements() const
+	{
+		return elements_;
+	}
+};
+
 class Shader
 	: public DeviceObject,
 	  public Effekseer::Backend::Shader
@@ -191,6 +221,8 @@ public:
 	Effekseer::Backend::TextureRef CreateTexture(uint64_t id, const std::function<void()>& onDisposed);
 
 	Effekseer::Backend::TextureRef CreateTexture(LLGI::Texture* texture);
+
+	Effekseer::Backend::VertexLayoutRef CreateVertexLayout(const Effekseer::Backend::VertexLayoutElement* elements, int32_t elementCount) override;
 
 	Effekseer::Backend::ShaderRef CreateShaderFromBinary(const void* vsData, int32_t vsDataSize, const void* psData, int32_t psDataSize) override;
 };

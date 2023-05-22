@@ -8,12 +8,12 @@ namespace EffekseerRendererLLGI
 Shader::Shader(Backend::GraphicsDevice* graphicsDevice,
 			   LLGI::Shader* vertexShader,
 			   LLGI::Shader* pixelShader,
-			   const std::vector<VertexLayout>& layouts,
+			   Backend::VertexLayoutRef vertexLayout,
 			   bool hasRefCount)
 	: DeviceObject(graphicsDevice, hasRefCount)
 	, vertexShader_(vertexShader)
 	, pixelShader_(pixelShader)
-	, layouts_(layouts)
+	, vertexLayout_(vertexLayout)
 	, m_vertexConstantBuffer(nullptr)
 	, m_pixelConstantBuffer(nullptr)
 {
@@ -32,8 +32,8 @@ Shader* Shader::Create(Backend::GraphicsDevice* graphicsDevice,
 					   int32_t vertexDataCount,
 					   LLGI::DataStructure* pixelData,
 					   int32_t pixelDataCount,
+					   Backend::VertexLayoutRef vertexLayout,
 					   const char* name,
-					   const std::vector<VertexLayout>& layouts,
 					   bool hasRefCount)
 {
 	assert(graphicsDevice != nullptr);
@@ -42,7 +42,7 @@ Shader* Shader::Create(Backend::GraphicsDevice* graphicsDevice,
 	auto vertexShader = graphicsDevice->GetGraphics()->CreateShader(vertexData, vertexDataCount);
 	auto pixelShader = graphicsDevice->GetGraphics()->CreateShader(pixelData, pixelDataCount);
 
-	return new Shader(graphicsDevice, vertexShader, pixelShader, layouts, hasRefCount);
+	return new Shader(graphicsDevice, vertexShader, pixelShader, vertexLayout, hasRefCount);
 }
 
 void Shader::SetVertexConstantBufferSize(int32_t size)

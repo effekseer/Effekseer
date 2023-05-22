@@ -609,4 +609,102 @@ Effekseer::Backend::VertexLayoutRef GetVertexLayout(Effekseer::Backend::Graphics
 	return {};
 }
 
+Effekseer::Backend::VertexLayoutRef GetModelRendererVertexLayout(Effekseer::Backend::GraphicsDeviceRef graphicsDevice)
+{
+	const Effekseer::Backend::VertexLayoutElement vlElem[6] = {
+		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "Input_Pos", "POSITION", 0},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "Input_Normal", "NORMAL", 0},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "Input_Binormal", "NORMAL", 1},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "Input_Tangent", "NORMAL", 2},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "Input_UV", "TEXCOORD", 0},
+		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "Input_Color", "NORMAL", 3},
+	};
+
+	return graphicsDevice->CreateVertexLayout(vlElem, 6);
+}
+
+Effekseer::Backend::VertexLayoutRef GetMaterialSimpleVertexLayout(Effekseer::Backend::GraphicsDeviceRef graphicsDevice)
+{
+	const Effekseer::Backend::VertexLayoutElement vlElem[3] = {
+		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "atPosition", "POSITION", 0},
+		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "atColor", "NORMAL", 0},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "atTexCoord", "TEXCOORD", 0},
+	};
+
+	return graphicsDevice->CreateVertexLayout(vlElem, 3);
+}
+
+Effekseer::Backend::VertexLayoutRef GetMaterialSpriteVertexLayout(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, int32_t customData1, int32_t customData2)
+{
+	Effekseer::Backend::VertexLayoutElement vlElem[8] = {
+		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "atPosition", "POSITION", 0},
+		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "atColor", "NORMAL", 0},
+		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "atNormal", "NORMAL", 1},
+		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "atTangent", "NORMAL", 2},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "atTexCoord", "TEXCOORD", 0},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "atTexCoord2", "TEXCOORD", 1},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "", "TEXCOORD", 2},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "", "TEXCOORD", 3},
+	};
+
+	auto getFormat = [](int32_t i) -> Effekseer::Backend::VertexLayoutFormat
+	{
+		if (i == 1)
+			return Effekseer::Backend::VertexLayoutFormat::R32_FLOAT;
+		if (i == 2)
+			return Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT;
+		if (i == 3)
+			return Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT;
+		if (i == 4)
+			return Effekseer::Backend::VertexLayoutFormat::R32G32B32A32_FLOAT;
+
+		assert(0);
+		return Effekseer::Backend::VertexLayoutFormat::R32_FLOAT;
+	};
+
+	int32_t offset = 40;
+	int count = 6;
+	int semanticIndex = 2;
+	const char* customData1Name = "atCustomData1";
+	const char* customData2Name = "atCustomData2";
+
+	if (customData1 > 0)
+	{
+		vlElem[count].Name = customData1Name;
+		vlElem[count].Format = getFormat(customData1);
+		vlElem[count].SemanticIndex = semanticIndex;
+		semanticIndex++;
+
+		count++;
+		offset += sizeof(float) * customData1;
+	}
+
+	if (customData2 > 0)
+	{
+		vlElem[count].Name = customData2Name;
+		vlElem[count].Format = getFormat(customData2);
+		vlElem[count].SemanticIndex = semanticIndex;
+		semanticIndex++;
+
+		count++;
+		offset += sizeof(float) * customData2;
+	}
+
+	return graphicsDevice->CreateVertexLayout(vlElem, count);
+}
+
+Effekseer::Backend::VertexLayoutRef GetMaterialModelVertexLayout(Effekseer::Backend::GraphicsDeviceRef graphicsDevice)
+{
+	const Effekseer::Backend::VertexLayoutElement vlElem[6] = {
+		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "a_Position", "POSITION", 0},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "a_Normal", "NORMAL", 0},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "a_Binormal", "NORMAL", 1},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "a_Tangent", "NORMAL", 2},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "a_TexCoord", "TEXCOORD", 0},
+		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "a_Color", "NORMAL", 3},
+	};
+
+	return graphicsDevice->CreateVertexLayout(vlElem, 6);
+}
+
 } // namespace EffekseerRenderer
