@@ -196,11 +196,13 @@ private:
 	Effekseer::CustomVector<Effekseer::Backend::VertexLayoutElement> elements_;
 	Direct3DVertexDeclaration9Ptr vertexDeclaration_;
 
-	void Generate();
+	bool Generate();
 
 public:
 	VertexLayout(GraphicsDevice* graphicsDevice);
 	~VertexLayout() override;
+
+	void MakeGenerated();
 
 	bool Init(const Effekseer::Backend::VertexLayoutElement* elements, int32_t elementCount);
 

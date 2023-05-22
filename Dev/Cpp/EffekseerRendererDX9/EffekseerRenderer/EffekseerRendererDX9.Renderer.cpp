@@ -231,6 +231,9 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice)
 
 	m_renderState = new RenderState(this);
 
+	auto vl = EffekseerRenderer::GetModelRendererVertexLayout(graphicsDevice_).DownCast<Backend::VertexLayout>();
+	vl->MakeGenerated();
+
 	D3DVERTEXELEMENT9 decl_ad[] = {
 		{0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
 		{0, 12, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1},

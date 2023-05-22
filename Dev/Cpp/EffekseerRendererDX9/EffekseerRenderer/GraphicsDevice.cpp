@@ -549,10 +549,81 @@ VertexLayout::~VertexLayout()
 	ES_SAFE_RELEASE(graphicsDevice_);
 }
 
-void VertexLayout::Generate()
+void VertexLayout::MakeGenerated()
 {
-	// TODO
+	for (size_t i = 0; i < elements_.size(); i++)
+	{
+		elements_[i].Name = "TEXCOORD";
+		elements_[i].SemanticIndex = static_cast<int32_t>(i);
+	}
+
+	Generate();
+}
+
+bool VertexLayout::Generate()
+{
 	std::vector<D3DVERTEXELEMENT9> elements;
+
+	std::array<D3DDECLTYPE, 6> formats;
+	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R32_FLOAT)] = D3DDECLTYPE_FLOAT1;
+	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT)] = D3DDECLTYPE_FLOAT2;
+	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT)] = D3DDECLTYPE_FLOAT3;
+	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R32G32B32A32_FLOAT)] = D3DDECLTYPE_FLOAT4;
+	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM)] = D3DDECLTYPE_D3DCOLOR;
+	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UINT)] = D3DDECLTYPE_UBYTE4;
+
+	int32_t layoutOffset = 0;
+	for (const auto& e : elements_)
+	{
+		D3DVERTEXELEMENT9 e9;
+
+		e9.Stream = 0;
+		e9.Offset = layoutOffset;
+		e9.Type = formats[static_cast<int32_t>(e.Format)];
+		e9.Method = D3DDECLMETHOD_DEFAULT;
+
+		if (e.SemanticName == "TEXCOORD")
+		{
+			e9.Usage = D3DDECLUSAGE_TEXCOORD;
+		}
+		else if (e.SemanticName == "NORMAL")
+		{
+			e9.Usage = D3DDECLUSAGE_NORMAL;
+		}
+		else if (e.SemanticName == "POSITION")
+		{
+			e9.Usage = D3DDECLUSAGE_POSITION;
+		}
+		else if (e.SemanticName == "COLOR")
+		{
+			e9.Usage = D3DDECLUSAGE_COLOR;
+		}
+		else
+		{
+			assert(0);
+		}
+
+		e9.UsageIndex = e.SemanticIndex;
+
+		layoutOffset += Effekseer::Backend::GetVertexLayoutFormatSize(e.Format);
+
+		elements.emplace_back(e9);
+	}
+
+	elements.emplace_back(D3DVERTEXELEMENT9 D3DDECL_END());
+
+	HRESULT hr;
+	IDirect3DVertexDeclaration9* vertexDeclaration = nullptr;
+	hr = graphicsDevice_->GetDevice()->CreateVertexDeclaration(elements.data(), &vertexDeclaration);
+
+	if (FAILED(hr))
+	{
+		return false;
+	}
+
+	vertexDeclaration_ = Effekseer::CreateUniqueReference(vertexDeclaration);
+
+	true;
 }
 
 bool VertexLayout::Init(const Effekseer::Backend::VertexLayoutElement* elements, int32_t elementCount)
@@ -564,9 +635,7 @@ bool VertexLayout::Init(const Effekseer::Backend::VertexLayoutElement* elements,
 		elements_[i] = elements[i];
 	}
 
-	Generate();
-
-	return true;
+	return Generate();
 }
 
 void VertexLayout::OnLostDevice()
