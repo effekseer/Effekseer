@@ -17,42 +17,29 @@ namespace EffekseerRendererDX9
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-class Shader : public DeviceObject, public ::EffekseerRenderer::ShaderBase
+class Shader : public ::EffekseerRenderer::ShaderBase
 {
 private:
-	/* 再構成時の元データ保存用 */
-	std::vector<D3DVERTEXELEMENT9> m_elements;
-
-	/* DX9 */
-	IDirect3DVertexDeclaration9* m_vertexDeclaration;
-
 	void* m_vertexConstantBuffer;
 	void* m_pixelConstantBuffer;
 
 	int32_t m_vertexRegisterCount;
 	int32_t m_pixelRegisterCount;
 
+	Backend::GraphicsDeviceRef graphicsDevice_;
 	Backend::ShaderRef shader_;
+	Backend::VertexLayoutRef vertexLayout_;
 
-	Shader(RendererImplemented* renderer,
+	Shader(Backend::GraphicsDeviceRef graphicsDevice,
 		   Backend::ShaderRef shader,
-		   D3DVERTEXELEMENT9 decl[],
-		   IDirect3DVertexDeclaration9* vertexDeclaration,
-		   bool hasRefCount);
+		   Backend::VertexLayoutRef vertexLayout);
 
 public:
-	virtual ~Shader();
+	~Shader() override;
 
-	static Shader* Create(RendererImplemented* renderer,
+	static Shader* Create(Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
 						  Effekseer::Backend::ShaderRef shader,
-						  const char* name,
-						  D3DVERTEXELEMENT9 decl[],
-						  bool hasRefCount);
-
-public: // デバイス復旧用
-	virtual void OnLostDevice();
-	virtual void OnResetDevice();
-	virtual void OnChangeDevice();
+						  Effekseer::Backend::VertexLayoutRef vertexLayout);
 
 public:
 	IDirect3DVertexShader9* GetVertexShader() const
@@ -65,7 +52,7 @@ public:
 	}
 	IDirect3DVertexDeclaration9* GetLayoutInterface() const
 	{
-		return m_vertexDeclaration;
+		return vertexLayout_->GetVertexDeclaration();
 	}
 
 	void SetVertexConstantBufferSize(int32_t size);

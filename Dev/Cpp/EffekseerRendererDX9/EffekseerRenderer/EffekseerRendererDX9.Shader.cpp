@@ -13,27 +13,17 @@ namespace EffekseerRendererDX9
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-Shader::Shader(RendererImplemented* renderer,
+Shader::Shader(Backend::GraphicsDeviceRef graphicsDevice,
 			   Backend::ShaderRef shader,
-			   D3DVERTEXELEMENT9 decl[],
-			   IDirect3DVertexDeclaration9* vertexDeclaration,
-			   bool hasRefCount)
-	: DeviceObject(renderer, hasRefCount)
+			   Backend::VertexLayoutRef vertexLayout)
+	: graphicsDevice_(graphicsDevice)
 	, shader_(shader)
-	, m_vertexDeclaration(vertexDeclaration)
+	, vertexLayout_(vertexLayout)
 	, m_vertexConstantBuffer(nullptr)
 	, m_pixelConstantBuffer(nullptr)
 	, m_vertexRegisterCount(0)
 	, m_pixelRegisterCount(0)
 {
-	int32_t index = 0;
-	D3DVERTEXELEMENT9 end = D3DDECL_END();
-	while (decl[index].Stream != 0xFF)
-	{
-		m_elements.push_back(decl[index]);
-		index++;
-	}
-	m_elements.push_back(end);
 }
 
 //-----------------------------------------------------------------------------------
@@ -41,7 +31,6 @@ Shader::Shader(RendererImplemented* renderer,
 //-----------------------------------------------------------------------------------
 Shader::~Shader()
 {
-	ES_SAFE_RELEASE(m_vertexDeclaration);
 	ES_SAFE_DELETE_ARRAY(m_vertexConstantBuffer);
 	ES_SAFE_DELETE_ARRAY(m_pixelConstantBuffer);
 }
@@ -49,64 +38,15 @@ Shader::~Shader()
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-Shader* Shader::Create(RendererImplemented* renderer,
+Shader* Shader::Create(Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
 					   Effekseer::Backend::ShaderRef shader,
-					   const char* name,
-					   D3DVERTEXELEMENT9 decl[],
-					   bool hasRefCount)
+					   Effekseer::Backend::VertexLayoutRef vertexLayout)
 {
-	assert(renderer != nullptr);
-	assert(renderer->GetDevice() != nullptr);
-
-	HRESULT hr;
-	IDirect3DVertexDeclaration9* vertexDeclaration = nullptr;
-	hr = renderer->GetDevice()->CreateVertexDeclaration(decl, &vertexDeclaration);
-
-	if (FAILED(hr))
-	{
-		printf("* %s Error\n", name);
-		printf("Unknown Error\n");
-
-		return nullptr;
-	}
-
-	return new Shader(renderer,
+	return new Shader(graphicsDevice.DownCast<Backend::GraphicsDevice>(),
 					  shader.DownCast<Backend::Shader>(),
-					  decl,
-					  vertexDeclaration,
-					  hasRefCount);
+					  vertexLayout.DownCast<Backend::VertexLayout>());
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void Shader::OnLostDevice()
-{
-	ES_SAFE_RELEASE(m_vertexDeclaration);
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void Shader::OnResetDevice()
-{
-	if (m_vertexDeclaration == nullptr)
-	{
-		GetRenderer()->GetDevice()->CreateVertexDeclaration(&m_elements[0], &m_vertexDeclaration);
-	}
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void Shader::OnChangeDevice()
-{
-	ES_SAFE_RELEASE(m_vertexDeclaration);
-}
-
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
 void Shader::SetVertexConstantBufferSize(int32_t size)
 {
 	// TOTO replace align method
@@ -140,12 +80,12 @@ void Shader::SetConstantBuffer()
 {
 	if (m_vertexRegisterCount > 0)
 	{
-		GetRenderer()->GetDevice()->SetVertexShaderConstantF(0, (float*)m_vertexConstantBuffer, m_vertexRegisterCount);
+		graphicsDevice_->GetDevice()->SetVertexShaderConstantF(0, (float*)m_vertexConstantBuffer, m_vertexRegisterCount);
 	}
 
 	if (m_pixelRegisterCount > 0)
 	{
-		GetRenderer()->GetDevice()->SetPixelShaderConstantF(0, (float*)m_pixelConstantBuffer, m_pixelRegisterCount);
+		graphicsDevice_->GetDevice()->SetPixelShaderConstantF(0, (float*)m_pixelConstantBuffer, m_pixelRegisterCount);
 	}
 }
 
