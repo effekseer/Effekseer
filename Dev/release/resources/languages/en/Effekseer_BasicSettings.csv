@@ -1,6 +1,6 @@
 Node_IsRendered_Name,Visibility
-Node_IsRendered_Desc,"Whether to draw the instance to the viewport.
-Has nothing to do with the final output."
+Node_IsRendered_Desc,"From here, you can set some global parameters for the particle node, such as its name, 
+the number of particles to be generated, and other particle settings."
 ,
 Node_Name_Name,Name
 Node_Name_Desc,The name of the node.

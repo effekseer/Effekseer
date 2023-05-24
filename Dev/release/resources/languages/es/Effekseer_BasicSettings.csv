@@ -1,6 +1,6 @@
 Node_IsRendered_Name,Visible
-Node_IsRendered_Desc,"Hace que sea visible o invisible este nodo.
-(Las funciones del Nodo seguirán operativas) ."
+Node_IsRendered_Desc,"From here, you can set some global parameters for the particle node, such as its name, 
+the number of particles to be generated, and other particle settings."
 ,
 Node_Name_Name,Nombre
 Node_Name_Desc,El nombre del Nodo
