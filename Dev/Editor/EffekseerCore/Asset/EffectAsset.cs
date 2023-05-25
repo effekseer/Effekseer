@@ -425,6 +425,9 @@ namespace Effekseer.Asset
 		public Asset.IntWithInfinite intWithInfiniteTest = new IntWithInfinite();
 
 		[CanSelectDynamicEquation(true)]
+		public Asset.IntWithRange intWithRangeTest = new IntWithRange();
+
+		[CanSelectDynamicEquation(true)]
 		public Float floatTest = new Float();
 
 		[CanSelectDynamicEquation(true)]
@@ -481,6 +484,46 @@ namespace Effekseer.Asset
 		public bool IsDynamicEquationEnabled = false;
 		public DynamicEquation DynamicEquation;
 		public int Value;
+	}
+
+	public class IntWithRange
+	{
+		public bool IsDynamicEquationEnabled = false;
+		public DynamicEquation DynamicEquationMin;
+		public DynamicEquation DynamicEquationMax;
+
+		public int Max;
+		public int Min;
+		public Data.DrawnAs DrawnAs = Data.DrawnAs.CenterAndAmplitude;
+
+
+		public int Center
+		{
+			get
+			{
+				return (Max + Min) / 2;
+			}
+			set
+			{
+				var amplitude = Amplitude;
+				Max = value + amplitude;
+				Min = value - amplitude;
+			}
+		}
+
+		public int Amplitude
+		{
+			get
+			{
+				return Math.Max(Max - Center, Center - Min);
+			}
+			set
+			{
+				var center = Center;
+				Max = center + value;
+				Min = center - value;
+			}
+		}
 	}
 
 	public class Float
