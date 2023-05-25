@@ -30,6 +30,7 @@ namespace Effekseer.GUI.Inspector
 				{ typeof(bool), Widgets.Widgets.GuiBool },
 				{ typeof(int), Widgets.Widgets.GuiInt },
 				{ typeof(Asset.Int), Widgets.Widgets.GuiInt },
+				{ typeof(Asset.IntWithInfinite), Widgets.Widgets.GuiIntWithInfinite },
 				{ typeof(float), Widgets.Widgets.GuiFloat },
 				{ typeof(Asset.Float), Widgets.Widgets.GuiFloat },
 				{ typeof(Asset.FloatWithRange), Widgets.Widgets.GuiFloatWithRange },

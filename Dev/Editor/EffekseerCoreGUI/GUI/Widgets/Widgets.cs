@@ -116,6 +116,49 @@ namespace Effekseer.GUI.Widgets
 			return ret;
 		}
 
+
+		public static Inspector.InspectorGuiResult GuiIntWithInfinite(object value, Inspector.InspectorGuiState state)
+		{
+			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
+
+			if (value is Asset.IntWithInfinite iValue)
+			{
+				bool isEdited = false;
+
+				int[] v = new[] { iValue.Value };
+				Manager.NativeManager.PushItemWidth(60);
+				if (Manager.NativeManager.DragInt(state.Id + "_Value", v, 1))
+				{
+					iValue.Value = v[0];
+					isEdited = true;
+				}
+
+				Manager.NativeManager.SameLine();
+
+				bool[] v_isInfinite = new[] { iValue.Infinite };
+				var infLabel = Resources.GetString("Infinite");
+				if (Manager.NativeManager.Checkbox(infLabel + state.Id + "_IsInfinite", v_isInfinite))
+				{
+					iValue.Infinite = v_isInfinite[0];
+					isEdited = true;
+				}
+
+				Manager.NativeManager.PopItemWidth();
+
+				if (isEdited) 
+				{
+					ret.isEdited = true;
+					ret.value = iValue;
+					return ret;
+				}
+			}
+			else
+			{
+				Manager.NativeManager.Text("Assert GuiIntWithInfinite");
+			}
+			return ret;
+		}
+
 		public static Inspector.InspectorGuiResult GuiFloat(object value, Inspector.InspectorGuiState state)
 		{
 			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
