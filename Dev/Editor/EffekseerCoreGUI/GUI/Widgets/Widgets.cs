@@ -613,6 +613,40 @@ namespace Effekseer.GUI.Widgets
 			return ret;
 		}
 
+
+
+		public static Inspector.InspectorGuiResult GuiVector2F(object value, Inspector.InspectorGuiState state)
+		{
+
+			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
+
+			if (value is Vector2F vec2FValue)
+			{
+				bool isEdited = false;
+
+				float[] v = new[] { vec2FValue.X, vec2FValue.Y };
+				if (Manager.NativeManager.DragFloat2EfkEx(state.Id, v, 0.1f))
+				{
+					vec2FValue.X = v[0];
+					vec2FValue.Y = v[1];
+					isEdited = true;
+				}
+
+				if (isEdited)
+				{
+					ret.isEdited = true;
+					ret.value = vec2FValue;
+					return ret;
+				}
+			}
+			else
+			{
+				Manager.NativeManager.Text("Assert Vector2F");
+			}
+			return ret;
+		}
+
+
 		public static Inspector.InspectorGuiResult GuiVector3F(object value, Inspector.InspectorGuiState state)
 		{
 			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();

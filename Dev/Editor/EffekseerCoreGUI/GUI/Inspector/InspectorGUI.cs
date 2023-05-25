@@ -37,6 +37,7 @@ namespace Effekseer.GUI.Inspector
 				{ typeof(Asset.FloatWithRange), Widgets.Widgets.GuiFloatWithRange },
 				{ typeof(string), Widgets.Widgets.GuiString },
 				{ typeof(Vector2I), Widgets.Widgets.GuiVector2I },
+				{ typeof(Vector2F), Widgets.Widgets.GuiVector2F },
 				{ typeof(Vector3F), Widgets.Widgets.GuiVector3F },
 				{ typeof(Asset.Vector3), Widgets.Widgets.GuiVector3F },
 				{ typeof(Vector3WithRange), Widgets.Widgets.GuiVector3WithRange },
