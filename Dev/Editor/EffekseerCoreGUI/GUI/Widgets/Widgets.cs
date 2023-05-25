@@ -328,8 +328,6 @@ namespace Effekseer.GUI.Widgets
 					isEdited = true;
 				}
 
-				Manager.NativeManager.PopItemWidth();
-
 				if (isEdited)
 				{
 					ret.isEdited = true;
@@ -339,7 +337,7 @@ namespace Effekseer.GUI.Widgets
 			}
 			else
 			{
-				Manager.NativeManager.Text("Assert GuiIntWithInfinite");
+				Manager.NativeManager.Text("Assert GuiVector2I");
 			}
 			return ret;
 		}
