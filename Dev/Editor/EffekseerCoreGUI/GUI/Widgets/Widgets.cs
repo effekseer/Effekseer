@@ -311,6 +311,39 @@ namespace Effekseer.GUI.Widgets
 			return ret;
 		}
 
+		public static Inspector.InspectorGuiResult GuiVector2I(object value, Inspector.InspectorGuiState state)
+		{
+
+			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
+
+			if (value is Vector2I vec2IValue)
+			{
+				bool isEdited = false;
+
+				int[] v = new[] { vec2IValue.X, vec2IValue.Y };
+				if (Manager.NativeManager.DragInt2EfkEx(state.Id, v, 1))
+				{
+					vec2IValue.X = v[0];
+					vec2IValue.Y = v[1];
+					isEdited = true;
+				}
+
+				Manager.NativeManager.PopItemWidth();
+
+				if (isEdited)
+				{
+					ret.isEdited = true;
+					ret.value = vec2IValue;
+					return ret;
+				}
+			}
+			else
+			{
+				Manager.NativeManager.Text("Assert GuiIntWithInfinite");
+			}
+			return ret;
+		}
+
 		public static Inspector.InspectorGuiResult GuiFloat(object value, Inspector.InspectorGuiState state)
 		{
 			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
