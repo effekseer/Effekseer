@@ -103,9 +103,62 @@ namespace Effekseer.GUI.Widgets
 
 			float step = 10f;
 
+
 			if (floatWithRange != null)
 			{
+				Asset.DynamicEquation dynamicEquationMin = floatWithRange.DynamicEquationMin;
+				Asset.DynamicEquation dynamicEquationMax = floatWithRange.DynamicEquationMax;
+
 				float[] internalValue;
+				bool isEdited = false;
+				bool isPopupShown = false;
+
+				// TODO: Use the attribute
+				bool canSelectDynamicEquation = true;
+
+
+				Action popup = () =>
+				{
+					if (isPopupShown) { return; }
+
+					if (Manager.NativeManager.BeginPopupContextItem(state.Id))
+					{
+						//Functions.ShowReset(binding, state.Id);
+
+						if (canSelectDynamicEquation)
+						{
+							DynamicSelector.Popup(state.Id, dynamicEquationMin, dynamicEquationMax, ref floatWithRange.IsDynamicEquationEnabled);
+						}
+
+
+						if (floatWithRange.IsDynamicEquationEnabled)
+						{
+							// None
+						}
+						else
+						{
+							var txt_r_r1 = Resources.GetString("Gauss");
+							var txt_r_r2 = Resources.GetString("Range");
+
+							if (Manager.NativeManager.RadioButton(txt_r_r1 + state.Id + "_Gauss", floatWithRange.DrawnAs == Data.DrawnAs.CenterAndAmplitude))
+							{
+								floatWithRange.DrawnAs = Data.DrawnAs.CenterAndAmplitude;
+							}
+
+							Manager.NativeManager.SameLine();
+
+							if (Manager.NativeManager.RadioButton(txt_r_r2 + state.Id + "_Range", floatWithRange.DrawnAs == Data.DrawnAs.MaxAndMin))
+							{
+								floatWithRange.DrawnAs = Data.DrawnAs.MaxAndMin;
+							}
+						}
+						
+						Manager.NativeManager.EndPopup();
+						
+						isPopupShown = true;
+					}
+				};
+
 				string txt_r1 = string.Empty;
 				string txt_r2 = string.Empty;
 
@@ -115,7 +168,7 @@ namespace Effekseer.GUI.Widgets
 				var range_2_min = float.MinValue;
 				var range_2_max = float.MaxValue;
 
-				if (floatWithRange.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
+				if (floatWithRange.DrawnAs == Data.DrawnAs.CenterAndAmplitude && !floatWithRange.IsDynamicEquationEnabled)
 				{
 					internalValue = new float[] { floatWithRange.Center, floatWithRange.Amplitude };
 					txt_r1 = Resources.GetString("Mean");
@@ -152,7 +205,35 @@ namespace Effekseer.GUI.Widgets
 						floatWithRange.Max = internalValue[1];
 					}
 
+					isEdited = true;
+				}
+				popup();
 
+
+				// 
+				if (canSelectDynamicEquation && floatWithRange.IsDynamicEquationEnabled)
+				{
+					// min
+					var equationMin = DynamicSelector.SelectMinInComponent(state.Id + "_EquationMin", floatWithRange.DynamicEquationMin);
+					if (equationMin != null)
+					{
+						floatWithRange.DynamicEquationMax = equationMin;
+						isEdited = true;
+					}
+					popup();
+
+					// max
+					var equationMax = DynamicSelector.SelectMaxInComponent(state.Id + "_EquationMax", floatWithRange.DynamicEquationMax);
+					if (equationMax != null)
+					{
+						floatWithRange.DynamicEquationMax = equationMax;
+						isEdited = true;
+					}
+					popup();
+				}
+
+				if (isEdited)
+				{
 					ret.isEdited = true;
 					ret.value = floatWithRange;
 					return ret;
