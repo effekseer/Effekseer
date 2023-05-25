@@ -434,6 +434,9 @@ namespace Effekseer.Asset
 		public Vector3 vec3Test = new Vector3();
 
 
+		public Vector2I vec2ITest = new Vector2I();
+
+
 		public TextureAsset TextureTest = new TextureAsset();
 
 		public Color ColorTest = new Color();
