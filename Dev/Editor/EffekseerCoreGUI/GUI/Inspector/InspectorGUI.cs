@@ -31,6 +31,7 @@ namespace Effekseer.GUI.Inspector
 				{ typeof(int), Widgets.Widgets.GuiInt },
 				{ typeof(Asset.Int), Widgets.Widgets.GuiInt },
 				{ typeof(Asset.IntWithInfinite), Widgets.Widgets.GuiIntWithInfinite },
+				{ typeof(Asset.IntWithRange), Widgets.Widgets.GuiIntWithRange },
 				{ typeof(float), Widgets.Widgets.GuiFloat },
 				{ typeof(Asset.Float), Widgets.Widgets.GuiFloat },
 				{ typeof(Asset.FloatWithRange), Widgets.Widgets.GuiFloatWithRange },
@@ -42,7 +43,6 @@ namespace Effekseer.GUI.Inspector
 				{ typeof(Asset.Gradient), Widgets.Gradient.GuiGradient },
 				{ typeof(Asset.Color), Widgets.Color.Update },
 				{ typeof(Asset.TextureAsset), Widgets.Texture.Update},
-				{ typeof(Asset.FCurve), Widgets.Widgets.GuiFCurveButton},
             };
 
 			DropFuncDictionary = new Dictionary<Type, Func<object, string, InspectorGuiState, InspectorGuiResult>> {
