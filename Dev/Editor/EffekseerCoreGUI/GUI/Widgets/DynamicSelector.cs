@@ -117,6 +117,33 @@ namespace Effekseer.GUI.Widgets
 			}
 		}
 
+		public static DynamicEquation SelectInComponent(string id, DynamicEquation equation)
+		{
+			Manager.NativeManager.PushItemWidth(Manager.NativeManager.GetColumnWidth() - 48 * Manager.DpiScale);
+
+			Manager.NativeManager.Text(Resources.GetString("DynamicEq"));
+			Manager.NativeManager.SameLine();
+
+
+			var equations = CoreContext.SelectedEffect.Asset.DynamicEquations;
+			int currentIndex = equations.FindIndex(item => ReferenceEquals(item, equation));
+
+			bool isChanged = false;
+
+			isChanged = EquationsCombo("", id, ref currentIndex, equations);
+
+			var selectedEquation = equations.Count > currentIndex ? equations[currentIndex] : null;
+
+			if (Manager.NativeManager.IsItemHovered())
+			{
+				EquationCodeTooltip(selectedEquation);
+			}
+
+			Manager.NativeManager.PopItemWidth();
+
+			return isChanged ? selectedEquation : null;
+		}
+
 		public static DynamicEquation SelectMinInComponent(string id, DynamicEquation equation)
 		{
 			Manager.NativeManager.PushItemWidth(Manager.NativeManager.GetColumnWidth() - 48 * Manager.DpiScale);

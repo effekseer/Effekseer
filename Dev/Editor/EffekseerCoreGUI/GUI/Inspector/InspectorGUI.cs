@@ -35,12 +35,14 @@ namespace Effekseer.GUI.Inspector
 				{ typeof(Asset.FloatWithRange), Widgets.Widgets.GuiFloatWithRange },
 				{ typeof(string), Widgets.Widgets.GuiString },
 				{ typeof(Vector3F), Widgets.Widgets.GuiVector3F },
+				{ typeof(Asset.Vector3), Widgets.Widgets.GuiVector3F },
 				{ typeof(Vector3WithRange), Widgets.Widgets.GuiVector3WithRange },
 				{ typeof(System.Enum), Widgets.Widgets.GuiEnum },
 				{ typeof(Asset.Gradient), Widgets.Gradient.GuiGradient },
 				{ typeof(Asset.Color), Widgets.Color.Update },
 				{ typeof(Asset.TextureAsset), Widgets.Texture.Update},
-			};
+				{ typeof(Asset.FCurve), Widgets.Widgets.GuiFCurveButton},
+            };
 
 			DropFuncDictionary = new Dictionary<Type, Func<object, string, InspectorGuiState, InspectorGuiResult>> {
 				{ typeof(Asset.TextureAsset), Widgets.Texture.Dropped},
