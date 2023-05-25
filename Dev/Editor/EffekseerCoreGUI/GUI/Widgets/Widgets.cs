@@ -47,14 +47,65 @@ namespace Effekseer.GUI.Widgets
 					return ret;
 				}
 			}
-			else if (value is Asset.Int iStructValue)
+			else if (value is Asset.Int intWithDynamicValue)
 			{
-				int[] v = new[] { iStructValue.Value };
+				bool isEdited = false;
+				int[] v = new[] { intWithDynamicValue.Value };
+
+				bool isPopupShown = false;
+
+				var canSelectDynamicEquationAttribute = state.Attriubutes.Where(
+					_ => _.GetType() == typeof(Asset.CanSelectDynamicEquationAttribute)
+					).FirstOrDefault() as Asset.CanSelectDynamicEquationAttribute;
+				bool canSelectDynamicEquation = canSelectDynamicEquationAttribute != null ? canSelectDynamicEquationAttribute.CanSelect : false;
+
+
+				// Action that show popup
+				Action popup = () => {
+					if (isPopupShown) return;
+
+					if (Manager.NativeManager.BeginPopupContextItem(state.Id))
+					{
+						if (canSelectDynamicEquation)
+						{
+							if (DynamicSelector.Popup(
+								state.Id,
+								intWithDynamicValue.DynamicEquation,
+								ref intWithDynamicValue.IsDynamicEquationEnabled))
+							{
+								isEdited = true;
+							}
+						}
+
+						Manager.NativeManager.EndPopup();
+
+						isPopupShown = true;
+					}
+				};
+
+
 				if (Manager.NativeManager.DragInt(state.Id, v, 1))
 				{
+					intWithDynamicValue.Value = v[0];
+					isEdited = true;
+				}
+				popup();
+
+				if (canSelectDynamicEquation && intWithDynamicValue.IsDynamicEquationEnabled)
+				{
+					var equation = DynamicSelector.SelectInComponent(state.Id + "_Equation", intWithDynamicValue.DynamicEquation);
+					if (equation != null)
+					{
+						intWithDynamicValue.DynamicEquation = equation;
+						isEdited = true;
+					}
+					popup();
+				}
+
+				if (isEdited)
+				{
 					ret.isEdited = true;
-					iStructValue.Value = v[0];
-					ret.value = iStructValue;
+					ret.value = intWithDynamicValue;
 					return ret;
 				}
 			}
@@ -78,14 +129,65 @@ namespace Effekseer.GUI.Widgets
 					return ret;
 				}
 			}
-			else if (value is Asset.Float fStructValue)
+			else if (value is Asset.Float floatWithDynamicValue)
 			{
-				float[] v = new[] { fStructValue.Value };
+				bool isEdited = false;
+				float[] v = new[] { floatWithDynamicValue.Value };
+
+				bool isPopupShown = false;
+
+				var canSelectDynamicEquationAttribute = state.Attriubutes.Where(
+					_ => _.GetType() == typeof(Asset.CanSelectDynamicEquationAttribute)
+					).FirstOrDefault() as Asset.CanSelectDynamicEquationAttribute;
+				bool canSelectDynamicEquation = canSelectDynamicEquationAttribute != null ? canSelectDynamicEquationAttribute.CanSelect : false;
+
+
+				// Action that show popup
+				Action popup = () => {
+					if (isPopupShown) return;
+
+					if (Manager.NativeManager.BeginPopupContextItem(state.Id))
+					{
+						if (canSelectDynamicEquation)
+						{
+							if (DynamicSelector.Popup(
+								state.Id,
+								floatWithDynamicValue.DynamicEquation,
+								ref floatWithDynamicValue.IsDynamicEquationEnabled))
+							{
+								isEdited = true;
+							}
+						}
+
+						Manager.NativeManager.EndPopup();
+
+						isPopupShown = true;
+					}
+				};
+
+
 				if (Manager.NativeManager.DragFloat(state.Id, v, .1f))
 				{
+					floatWithDynamicValue.Value = v[0];
+					isEdited = true;
+				}
+				popup();
+
+				if (canSelectDynamicEquation && floatWithDynamicValue.IsDynamicEquationEnabled)
+				{
+					var equation = DynamicSelector.SelectInComponent(state.Id + "_Equation", floatWithDynamicValue.DynamicEquation);
+					if (equation != null)
+					{
+						floatWithDynamicValue.DynamicEquation = equation;
+						isEdited = true;
+					}
+					popup();
+				}
+
+				if (isEdited)
+				{
 					ret.isEdited = true;
-					fStructValue.Value = v[0];
-					ret.value = fStructValue;
+					ret.value = floatWithDynamicValue;
 					return ret;
 				}
 			}
@@ -291,6 +393,7 @@ namespace Effekseer.GUI.Widgets
 
 			if (value is Vector3F vec3Value)
 			{
+				bool isEdited = false;
 				float[] guiValue = new float[] { vec3Value.X, vec3Value.Y, vec3Value.Z };
 
 				if (Manager.NativeManager.DragFloat3EfkEx(state.Id, guiValue, 1.0f,
@@ -303,8 +406,81 @@ namespace Effekseer.GUI.Widgets
 					vec3Value.Y = guiValue[1];
 					vec3Value.Z = guiValue[2];
 
+					isEdited = true;
+				}
+				if (isEdited)
+				{
 					ret.isEdited = true;
 					ret.value = vec3Value;
+					return ret;
+				}
+			}
+			else if(value is Asset.Vector3 vec3WithDynamicValue)
+			{
+				bool isEdited = false;
+				float[] guiValue = new float[] { vec3WithDynamicValue.Value.X, vec3WithDynamicValue.Value.Y, vec3WithDynamicValue.Value.Z };
+
+				bool isPopupShown = false;
+
+				var canSelectDynamicEquationAttribute = state.Attriubutes.Where(
+					_ => _.GetType() == typeof(Asset.CanSelectDynamicEquationAttribute)
+					).FirstOrDefault() as Asset.CanSelectDynamicEquationAttribute;
+				bool canSelectDynamicEquation = canSelectDynamicEquationAttribute != null ? canSelectDynamicEquationAttribute.CanSelect : false;
+
+
+				// Action that show popup
+				Action popup = () => {
+					if (isPopupShown) return;
+
+					if (Manager.NativeManager.BeginPopupContextItem(state.Id))
+					{
+						if (canSelectDynamicEquation)
+						{
+							if (DynamicSelector.Popup(
+								state.Id,
+								vec3WithDynamicValue.DynamicEquation,
+								ref vec3WithDynamicValue.IsDynamicEquationEnabled))
+							{
+								isEdited = true;
+							}
+						}
+
+						Manager.NativeManager.EndPopup();
+
+						isPopupShown = true;
+					}
+				};
+
+				if (Manager.NativeManager.DragFloat3EfkEx(state.Id, guiValue, 1.0f,
+					float.MinValue, float.MaxValue,
+					float.MinValue, float.MaxValue,
+					float.MinValue, float.MaxValue,
+					"X:" + Core.Option.GetFloatFormat(), "Y:" + Core.Option.GetFloatFormat(), "Z:" + Core.Option.GetFloatFormat()))
+				{
+					vec3Value.X = guiValue[0];
+					vec3Value.Y = guiValue[1];
+					vec3Value.Z = guiValue[2];
+
+					isEdited = true;
+				}
+				popup();
+
+
+				if (canSelectDynamicEquation && vec3WithDynamicValue.IsDynamicEquationEnabled)
+				{
+					var equation = DynamicSelector.SelectMinInComponent(state.Id + "_Equation", vec3WithDynamicValue.DynamicEquation);
+					if (equation != null)
+					{
+						vec3WithDynamicValue.DynamicEquation = equation;
+						isEdited = true;
+					}
+					popup();
+				}
+
+				if (isEdited)
+				{
+					ret.isEdited = true;
+					ret.value = vec3WithDynamicValue;
 					return ret;
 				}
 			}
@@ -312,7 +488,6 @@ namespace Effekseer.GUI.Widgets
 			{
 				Manager.NativeManager.Text("Assert GuiVector3F");
 			}
-
 			return ret;
 		}
 

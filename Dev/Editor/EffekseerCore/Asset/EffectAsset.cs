@@ -411,9 +411,22 @@ namespace Effekseer.Asset
 
 		public Gradient GradientTest = new Gradient();
 
+		[CanSelectDynamicEquation(true)]
 		public Vector3WithRange Vector3WithRangeTest = new Vector3WithRange();
 
+		[CanSelectDynamicEquation(true)]
 		public FloatWithRange floatWithRangeTest = new FloatWithRange();
+
+
+		[CanSelectDynamicEquation(true)]
+		public Int intTest= new Int();
+
+		[CanSelectDynamicEquation(true)]
+		public Float floatTest = new Float();
+
+		[CanSelectDynamicEquation(true)]
+		public Vector3 vec3Test = new Vector3();
+
 
 		public TextureAsset TextureTest = new TextureAsset();
 
