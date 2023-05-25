@@ -422,6 +422,9 @@ namespace Effekseer.Asset
 		public Int intTest= new Int();
 
 		[CanSelectDynamicEquation(true)]
+		public Asset.IntWithInfinite intWithInfiniteTest = new IntWithInfinite();
+
+		[CanSelectDynamicEquation(true)]
 		public Float floatTest = new Float();
 
 		[CanSelectDynamicEquation(true)]
@@ -467,6 +470,14 @@ namespace Effekseer.Asset
 
 	public class Int
 	{
+		public bool IsDynamicEquationEnabled = false;
+		public DynamicEquation DynamicEquation;
+		public int Value;
+	}
+
+	public class IntWithInfinite
+	{
+		public bool Infinite;
 		public bool IsDynamicEquationEnabled = false;
 		public DynamicEquation DynamicEquation;
 		public int Value;
