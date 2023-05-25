@@ -159,6 +159,158 @@ namespace Effekseer.GUI.Widgets
 			return ret;
 		}
 
+
+		public static Inspector.InspectorGuiResult GuiIntWithRange(object value, Inspector.InspectorGuiState state)
+		{
+			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
+			Asset.IntWithRange intWithRange = value as Asset.IntWithRange;
+
+			int step = 1;
+
+			if (intWithRange != null)
+			{
+				Asset.DynamicEquation dynamicEquationMin = intWithRange.DynamicEquationMin;
+				Asset.DynamicEquation dynamicEquationMax = intWithRange.DynamicEquationMax;
+
+				int[] internalValue;
+				bool isEdited = false;
+				bool isPopupShown = false;
+
+				var canSelectDynamicEquationAttribute = state.Attriubutes.Where(
+					_ => _.GetType() == typeof(Asset.CanSelectDynamicEquationAttribute)
+					).FirstOrDefault()
+					as Asset.CanSelectDynamicEquationAttribute;
+				bool canSelectDynamicEquation = canSelectDynamicEquationAttribute != null ? canSelectDynamicEquationAttribute.CanSelect : false;
+
+				Action popup = () =>
+				{
+					if (isPopupShown) { return; }
+
+					if (Manager.NativeManager.BeginPopupContextItem(state.Id))
+					{
+						//Functions.ShowReset(binding, state.Id);
+
+						if (canSelectDynamicEquation)
+						{
+							DynamicSelector.Popup(state.Id, dynamicEquationMin, dynamicEquationMax, ref intWithRange.IsDynamicEquationEnabled);
+						}
+
+
+						if (intWithRange.IsDynamicEquationEnabled)
+						{
+							// None
+						}
+						else
+						{
+							var txt_r_r1 = Resources.GetString("Gauss");
+							var txt_r_r2 = Resources.GetString("Range");
+
+							if (Manager.NativeManager.RadioButton(txt_r_r1 + state.Id + "_Gauss", intWithRange.DrawnAs == Data.DrawnAs.CenterAndAmplitude))
+							{
+								intWithRange.DrawnAs = Data.DrawnAs.CenterAndAmplitude;
+							}
+
+							Manager.NativeManager.SameLine();
+
+							if (Manager.NativeManager.RadioButton(txt_r_r2 + state.Id + "_Range", intWithRange.DrawnAs == Data.DrawnAs.MaxAndMin))
+							{
+								intWithRange.DrawnAs = Data.DrawnAs.MaxAndMin;
+							}
+						}
+
+						Manager.NativeManager.EndPopup();
+
+						isPopupShown = true;
+					}
+				};
+
+				string txt_r1 = string.Empty;
+				string txt_r2 = string.Empty;
+
+
+				var range_1_min = int.MinValue;
+				var range_1_max = int.MaxValue;
+				var range_2_min = int.MinValue;
+				var range_2_max = int.MaxValue;
+
+				if (intWithRange.DrawnAs == Data.DrawnAs.CenterAndAmplitude && !intWithRange.IsDynamicEquationEnabled)
+				{
+					internalValue = new int[] { intWithRange.Center, intWithRange.Amplitude };
+					txt_r1 = Resources.GetString("Mean");
+					txt_r2 = Resources.GetString("Deviation");
+
+					range_1_min = intWithRange.Min;
+					range_1_max = intWithRange.Max;
+				}
+				else
+				{
+					internalValue = new int[] { intWithRange.Min, intWithRange.Max };
+					txt_r1 = Resources.GetString("Min");
+					txt_r2 = Resources.GetString("Max");
+
+					range_1_min = intWithRange.Min;
+					range_1_max = intWithRange.Max;
+					range_2_min = intWithRange.Min;
+					range_2_max = intWithRange.Max;
+				}
+
+				if (Manager.NativeManager.DragInt2EfkEx(state.Id, internalValue, step,
+					range_1_min, range_1_max,
+					range_2_min, range_2_max,
+					txt_r1 + ":" + "%.0f", txt_r2 + ":" + "%.0f"))
+				{
+					if (intWithRange.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
+					{
+						intWithRange.Center = internalValue[0];
+						intWithRange.Amplitude = internalValue[1];
+					}
+					else
+					{
+						intWithRange.Min = internalValue[0];
+						intWithRange.Max = internalValue[1];
+					}
+
+					isEdited = true;
+				}
+				popup();
+
+
+				// 
+				if (canSelectDynamicEquation && intWithRange.IsDynamicEquationEnabled)
+				{
+					// min
+					var equationMin = DynamicSelector.SelectMinInComponent(state.Id + "_EquationMin", intWithRange.DynamicEquationMin);
+					if (equationMin != null)
+					{
+						intWithRange.DynamicEquationMax = equationMin;
+						isEdited = true;
+					}
+					popup();
+
+					// max
+					var equationMax = DynamicSelector.SelectMaxInComponent(state.Id + "_EquationMax", intWithRange.DynamicEquationMax);
+					if (equationMax != null)
+					{
+						intWithRange.DynamicEquationMax = equationMax;
+						isEdited = true;
+					}
+					popup();
+				}
+
+				if (isEdited)
+				{
+					ret.isEdited = true;
+					ret.value = intWithRange;
+					return ret;
+				}
+			}
+			else
+			{
+				Manager.NativeManager.Text("Assert IntWithRange");
+			}
+			return ret;
+		}
+
 		public static Inspector.InspectorGuiResult GuiFloat(object value, Inspector.InspectorGuiState state)
 		{
 			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
