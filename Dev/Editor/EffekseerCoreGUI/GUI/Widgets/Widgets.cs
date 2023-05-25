@@ -113,9 +113,11 @@ namespace Effekseer.GUI.Widgets
 				bool isEdited = false;
 				bool isPopupShown = false;
 
-				// TODO: Use the attribute
-				bool canSelectDynamicEquation = true;
-
+				var canSelectDynamicEquationAttribute = state.Attriubutes.Where(
+					_ => _.GetType() == typeof(Asset.CanSelectDynamicEquationAttribute)
+					).FirstOrDefault()
+					as Asset.CanSelectDynamicEquationAttribute;
+				bool canSelectDynamicEquation = canSelectDynamicEquationAttribute != null ? canSelectDynamicEquationAttribute.CanSelect : false;
 
 				Action popup = () =>
 				{
@@ -326,8 +328,12 @@ namespace Effekseer.GUI.Widgets
 			{
 				float[] guiValue1;
 				float[] guiValue2;
-				// TODO: Use the attribute
-				bool canSelectDynamicEquation = true;
+
+				var canSelectDynamicEquationAttribute = state.Attriubutes.Where(
+					_ => _.GetType() == typeof(Asset.CanSelectDynamicEquationAttribute)
+					).FirstOrDefault()
+					as Asset.CanSelectDynamicEquationAttribute;
+				bool canSelectDynamicEquation = canSelectDynamicEquationAttribute != null ? canSelectDynamicEquationAttribute.CanSelect : false;
 
 				// Action that show popup
 				Action popup = () => {
