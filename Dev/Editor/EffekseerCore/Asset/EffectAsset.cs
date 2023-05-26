@@ -436,6 +436,14 @@ namespace Effekseer.Asset
 
 		public Vector2I vec2ITest = new Vector2I();
 
+		public Vector2F vec2FTest = new Vector2F();
+
+
+		public Vector2WithRange vec2WithRangeTest = new Vector2WithRange();
+
+		[CanSelectDynamicEquation(true)]
+		public Vector4 vec4Test = new Vector4();
+
 
 		public TextureAsset TextureTest = new TextureAsset();
 
@@ -583,6 +591,14 @@ namespace Effekseer.Asset
 		}
 	}
 
+	public class Vector2WithRange
+	{
+		public FloatWithRange X = new FloatWithRange();
+		public FloatWithRange Y = new FloatWithRange();
+
+		public Data.DrawnAs DrawnAs = Data.DrawnAs.CenterAndAmplitude;
+	}
+
 	public class Vector3
 	{
 		public bool IsDynamicEquationEnabled = false;
@@ -601,6 +617,14 @@ namespace Effekseer.Asset
 
 		public Data.DrawnAs DrawnAs = Data.DrawnAs.CenterAndAmplitude;
 	}
+
+	public class Vector4
+	{
+		public bool IsDynamicEquationEnabled = false;
+		public DynamicEquation DynamicEquation;
+		public Vector4F Value;
+	}
+
 
 	public class DynamicEquation : PartsTreeSystem.Asset
 	{
