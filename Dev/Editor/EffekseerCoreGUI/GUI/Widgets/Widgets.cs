@@ -647,6 +647,136 @@ namespace Effekseer.GUI.Widgets
 		}
 
 
+		public static Inspector.InspectorGuiResult GuiVector2WithRange(object value, Inspector.InspectorGuiState state)
+		{
+			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
+
+			bool isEdited = false;
+			bool isPopupShown = false;
+
+			if (value is Vector2WithRange vec2Value)
+			{
+				float[] guiValue1;
+				float[] guiValue2;
+
+				// Action that show popup
+				Action popup = () => {
+					if (isPopupShown) return;
+
+					if (Manager.NativeManager.BeginPopupContextItem(state.Id))
+					{
+						var txt_r_r1 = Resources.GetString("Gauss");
+						var txt_r_r2 = Resources.GetString("Range");
+
+						if (Manager.NativeManager.RadioButton(txt_r_r1 + state.Id + "_Gauss", vec2Value.DrawnAs == Data.DrawnAs.CenterAndAmplitude))
+						{
+							vec2Value.DrawnAs = Data.DrawnAs.CenterAndAmplitude;
+							isEdited = true;
+						}
+
+						Manager.NativeManager.SameLine();
+
+						if (Manager.NativeManager.RadioButton(txt_r_r2 + state.Id + "_Range", vec2Value.DrawnAs == Data.DrawnAs.MaxAndMin))
+						{
+							vec2Value.DrawnAs = Data.DrawnAs.MaxAndMin;
+							isEdited = true;
+						}
+
+						Manager.NativeManager.EndPopup();
+
+						isPopupShown = true;
+					}
+				};
+
+				string txt_r1 = string.Empty;
+				string txt_r2 = string.Empty;
+
+				if (vec2Value.DrawnAs == DrawnAs.CenterAndAmplitude/* && !vec2Value.IsDynamicEquationEnabled*/)
+				{
+					guiValue1 = new float[] { vec2Value.X.Center, vec2Value.Y.Center };
+					guiValue2 = new float[] { vec2Value.X.Amplitude, vec2Value.Y.Amplitude };
+
+					txt_r1 = Resources.GetString("Mean");
+					txt_r2 = Resources.GetString("Deviation");
+				}
+				else
+				{
+					guiValue1 = new float[] { vec2Value.X.Min, vec2Value.Y.Min };
+					guiValue2 = new float[] { vec2Value.X.Max, vec2Value.Y.Max };
+
+					txt_r1 = Resources.GetString("Min");
+					txt_r2 = Resources.GetString("Max");
+				}
+
+				Manager.NativeManager.PushItemWidth(Manager.NativeManager.GetColumnWidth() - 48 * Manager.DpiScale);
+
+				if (Manager.NativeManager.DragFloat2EfkEx(state.Id + "_1", guiValue1, 1.0f,
+					float.MinValue, float.MaxValue,
+					float.MinValue, float.MaxValue,
+					"X:" + Core.Option.GetFloatFormat(), "Y:" + Core.Option.GetFloatFormat()))
+				{
+					if (vec2Value.DrawnAs == DrawnAs.CenterAndAmplitude/* && !vec2Value.IsDynamicEquationEnabled*/)
+					{
+						vec2Value.X.Center = guiValue1[0];
+						vec2Value.Y.Center = guiValue1[1];
+					}
+					else
+					{
+						vec2Value.X.Min = guiValue1[0];
+						vec2Value.Y.Min = guiValue1[1];
+					}
+
+					isEdited = true;
+				}
+
+				popup();
+
+				Manager.NativeManager.SameLine();
+				Manager.NativeManager.Text(txt_r1);
+
+
+				if (Manager.NativeManager.DragFloat2EfkEx(state.Id + "_2", guiValue2, 1.0f,
+					float.MinValue, float.MaxValue,
+					float.MinValue, float.MaxValue,
+					"X:" + Core.Option.GetFloatFormat(), "Y:" + Core.Option.GetFloatFormat()))
+				{
+					if (vec2Value.DrawnAs == DrawnAs.CenterAndAmplitude/* && !vec2Value.IsDynamicEquationEnabled*/)
+					{
+						vec2Value.X.Amplitude = guiValue2[0];
+						vec2Value.Y.Amplitude = guiValue2[1];
+					}
+					else
+					{
+						vec2Value.X.Max = guiValue2[0];
+						vec2Value.Y.Max = guiValue2[1];
+					}
+
+					isEdited = true;
+				}
+
+				popup();
+
+				Manager.NativeManager.SameLine();
+				Manager.NativeManager.Text(txt_r2);
+
+				Manager.NativeManager.PopItemWidth();
+
+				if (isEdited)
+				{
+					ret.isEdited = true;
+					ret.value = vec2Value;
+					return ret;
+				}
+			}
+			else
+			{
+				Manager.NativeManager.Text("Assert GuiVector2WithRange");
+			}
+
+			return ret;
+		}
+
+
 		public static Inspector.InspectorGuiResult GuiVector3F(object value, Inspector.InspectorGuiState state)
 		{
 			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
@@ -932,6 +1062,107 @@ namespace Effekseer.GUI.Widgets
 				Manager.NativeManager.Text("Assert GuiVector3WithRange");
 			}
 
+			return ret;
+		}
+
+
+		public static Inspector.InspectorGuiResult GuiVector4F(object value, Inspector.InspectorGuiState state)
+		{
+			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
+
+			if (value is Vector4F vec4Value)
+			{
+				bool isEdited = false;
+				float[] guiValue = new float[] { vec4Value.X, vec4Value.Y, vec4Value.Z, vec4Value.W };
+
+				if (Manager.NativeManager.ColorEdit4(
+					state.Id, guiValue, swig.ColorEditFlags.HDR | swig.ColorEditFlags.Float))
+				{
+					vec4Value.X = guiValue[0];
+					vec4Value.Y = guiValue[1];
+					vec4Value.Z = guiValue[2];
+					vec4Value.W = guiValue[3];
+
+					isEdited = true;
+				}
+				if (isEdited)
+				{
+					ret.isEdited = true;
+					ret.value = vec4Value;
+					return ret;
+				}
+			}
+			else if (value is Asset.Vector4 vec4WithDynamicValue)
+			{
+				bool isEdited = false;
+				float[] guiValue = new float[] { vec4WithDynamicValue.Value.X, vec4WithDynamicValue.Value.Y, vec4WithDynamicValue.Value.Z, vec4WithDynamicValue.Value.W };
+
+				bool isPopupShown = false;
+
+				var canSelectDynamicEquationAttribute = state.Attriubutes.Where(
+					_ => _.GetType() == typeof(Asset.CanSelectDynamicEquationAttribute)
+					).FirstOrDefault() as Asset.CanSelectDynamicEquationAttribute;
+				bool canSelectDynamicEquation = canSelectDynamicEquationAttribute != null ? canSelectDynamicEquationAttribute.CanSelect : false;
+
+
+				// Action that show popup
+				Action popup = () => {
+					if (isPopupShown) return;
+
+					if (Manager.NativeManager.BeginPopupContextItem(state.Id))
+					{
+						if (canSelectDynamicEquation)
+						{
+							if (DynamicSelector.Popup(
+								state.Id,
+								vec4WithDynamicValue.DynamicEquation,
+								ref vec4WithDynamicValue.IsDynamicEquationEnabled))
+							{
+								isEdited = true;
+							}
+						}
+
+						Manager.NativeManager.EndPopup();
+
+						isPopupShown = true;
+					}
+				};
+
+				if (Manager.NativeManager.ColorEdit4(
+					state.Id, guiValue, swig.ColorEditFlags.HDR | swig.ColorEditFlags.Float))
+				{
+					vec4WithDynamicValue.Value.X = guiValue[0];
+					vec4WithDynamicValue.Value.Y = guiValue[1];
+					vec4WithDynamicValue.Value.Z = guiValue[2];
+					vec4WithDynamicValue.Value.W = guiValue[3];
+
+					isEdited = true;
+				}
+				popup();
+
+
+				if (canSelectDynamicEquation && vec4WithDynamicValue.IsDynamicEquationEnabled)
+				{
+					var equation = DynamicSelector.SelectMinInComponent(state.Id + "_Equation", vec4WithDynamicValue.DynamicEquation);
+					if (equation != null)
+					{
+						vec4WithDynamicValue.DynamicEquation = equation;
+						isEdited = true;
+					}
+					popup();
+				}
+
+				if (isEdited)
+				{
+					ret.isEdited = true;
+					ret.value = vec4WithDynamicValue;
+					return ret;
+				}
+			}
+			else
+			{
+				Manager.NativeManager.Text("Assert GuiVector4F");
+			}
 			return ret;
 		}
 

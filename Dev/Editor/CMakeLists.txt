@@ -39,6 +39,7 @@ file(GLOB files_core
     EffekseerCore/Math/Vector3I.cs
     EffekseerCore/Math/Vector2F.cs
     EffekseerCore/Math/Vector3F.cs
+    EffekseerCore/Math/Vector4F.cs
     EffekseerCore/Compatibility/Conversion/Conversions.cs
     EffekseerCore/Compatibility/Conversion/ConversionsGenerated.cs
 )
