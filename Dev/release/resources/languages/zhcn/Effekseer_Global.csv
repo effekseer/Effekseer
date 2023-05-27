@@ -1,0 +1,2 @@
+Global_RandomSeed_Name,随机种子
+Global_RandomSeed_Desc,"随机种子。值为-1时，每次将随机产生种子。"

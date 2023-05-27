@@ -1,0 +1,31 @@
+KillRules,销毁规则
+KillRules_Description,"销毁规则允许你设置用于销毁粒子的区域。
+ -盒子 当粒子移入或移出指定的盒子时，将其销毁。
+ -平面 当粒子在指定轴线的方向上移动到特定的位置之外时，将其销毁。
+ -球 当粒子移入或移出指定的球体时，丢弃粒子。"
+KillRules_Type_Name,类型
+KillRules_Box_Center_Name,中心
+KillRules_Box_Size_Name,尺寸
+KillRules_Box_IsKillInside_Name,销毁内部
+KillRules_Box_IsKillInside_Desc,"若启用，粒子将在落到盒子内部时被销毁。 
+若禁用（默认），粒子将在落到盒子外部时被销毁。"
+KillRules_IsScaleAndRotationApplied_Name,应用缩放和旋转
+KillRules_IsScaleAndRotationApplied_Desc,"若启用（默认），销毁形状将随特效旋转和缩放。
+若禁用，销毁形状的旋转和缩放将保持恒定。"
+KillRules_Plane_Axis_Name,轴
+KillRules_Plane_PlaneOffset_Name,平面沿轴的偏移
+KillRules_Sphere_Center_Name,中心
+KillRules_Sphere_Radius_Name,半径
+KillRules_Sphere_IsKillInside_Name,销毁内部
+KillRules_Sphere_IsKillInside_Desc,"若启用，粒子将在落到球体内部时被销毁。 
+若禁用（默认），粒子将在落到球体外部时被销毁。"
+KillType_None_Name,无
+KillType_Box_Name,盒子
+KillType_Plane_Name,平面
+KillType_Sphere_Name,球
+PlaneAxisType_XPositive_Name,+X
+PlaneAxisType_XNegative_Name,-X
+PlaneAxisType_YPositive_Name,+Y
+PlaneAxisType_YNegative_Name,-Y
+PlaneAxisType_ZPositive_Name,+Z
+PlaneAxisType_ZNegative_Name,-Z

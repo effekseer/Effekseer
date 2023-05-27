@@ -1,0 +1,26 @@
+Sound_ParamaterType_None_Name,禁用
+Sound_ParamaterType_Use_Name,启用
+,
+Sound_PanType_Sound2D_Name,2D
+Sound_PanType_Sound3D_Name,3D
+,
+Sound_Wave_Name,声音数据
+Sound_Wave_Desc,使用WAV文件
+Sound_Volume_Name,响度
+Sound_Volume_Desc,"响度
+范围：0.0 ～ 1.0
+0表示静音，1表示原始响度"
+Sound_Pitch_Name,音高
+Sound_Pitch_Desc,"音高（单位：八度音程）
+范围：-4.0 ～ +4.0
+0.0表示原始音高，+1.0表示双倍音高，-1.0表示一半音高。"
+Sound_PanType_Name,平移类型
+Sound_PanType_Desc,平移类型
+Sound_Pan_Name,平移
+Sound_Pan_Desc,"声音的位置
+范围: -1.0 ～ +1.0
+0.0是中间，-1.0是左侧，1.0是右侧。"
+Sound_Distance_Name,衰减距离
+Sound_Distance_Desc,声音开始衰减的距离
+Sound_Delay_Name,延迟
+Sound_Delay_Desc,从实例生成到播放音频之间经过的帧数
