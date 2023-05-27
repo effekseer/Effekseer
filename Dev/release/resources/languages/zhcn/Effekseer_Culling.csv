@@ -1,0 +1,11 @@
+Culling_IsShown_Name,显示剔除
+Culling_IsShown_Desc,是否在屏幕上显示剔除的形状。
+Culling_Type_Name,剔除类型
+,
+Culling_Sphere_Radius_Name,半径
+Culling_Sphere_Radius_Desc,球形剔除的半径
+Culling_Sphere_Location_Name,位置
+Culling_Sphere_Location_Desc,中心位置
+,
+Culling_ParamaterType_None_Name,无
+Culling_ParamaterType_Sphere_Name,球
