@@ -8,7 +8,8 @@ Requirements
 
 - git
 - git-lfs [Download](https://git-lfs.github.com/)
-- Visual Studio 2017 or later
+- Visual Studio 2019 or later
+- .Net6.0 SDK
 - cmake (3.15 or later)
 - python3 (3.8 or later)
 
@@ -17,7 +18,7 @@ Requirements
 - git
 - git-lfs
 - Xcode
-- dotnet-core
+- .Net6.0 SDK
 - Visual Studio for Mac (msbuild)
 - cmake
 
@@ -28,7 +29,7 @@ Requirements
 - git
 - git-lfs
 - g++
-- [.Net SDK](https://docs.microsoft.com/en-us/dotnet/core/install/linux-ubuntu)
+- [.Net6.0 SDK](https://docs.microsoft.com/en-us/dotnet/core/install/linux-ubuntu)
 
 - libx11-dev libgl1-mesa-dev libxrandr-dev libxi-dev x11proto-xf86vidmode-dev libx11-xcb-dev xorg-dev libglu1-mesa-dev libpulse-dev libgtk-3-dev libopenal-dev python3-distutils zenity
 
