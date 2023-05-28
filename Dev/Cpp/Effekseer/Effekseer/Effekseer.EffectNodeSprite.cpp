@@ -113,7 +113,7 @@ void EffectNodeSprite::LoadRendererParameter(unsigned char*& pos, const SettingR
 		int SpriteTexture = -1;
 		memcpy(&SpriteTexture, pos, sizeof(int));
 		pos += sizeof(int);
-		RendererCommon.ColorTextureIndex = SpriteTexture;
+		RendererCommon.TextureIndexes[0] = SpriteTexture;
 		RendererCommon.BasicParameter.TextureIndexes[0] = SpriteTexture;
 	}
 
