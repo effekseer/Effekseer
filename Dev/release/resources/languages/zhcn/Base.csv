@@ -10,5 +10,5 @@ Language_zhcn,简体中文
 "Enabled_Name","启用"
 "Disabled_Name","禁用"
 "",""
-"Font_Normal","resources/GenShinGothic-Monospace-Normal.ttf"
-"Font_Bold","resources/fonts/GenShinGothic-Monospace-Bold.ttf"
+"Font_Normal","resources/SourceHanSans-Normal.ttc"
+"Font_Bold","resources/SourceHanSans-Normal.ttc"
