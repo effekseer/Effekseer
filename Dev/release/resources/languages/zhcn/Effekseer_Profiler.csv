@@ -1,0 +1,7 @@
+Profiler,性能分析
+Profiler_Start,开始分析
+Profiler_Stop,停止分析
+Profiler_Reset,清除数据
+Profiler_CpuUsage,CPU使用率
+Profiler_GpuUsage,GPU使用率
+Profiler_Handles,特效数

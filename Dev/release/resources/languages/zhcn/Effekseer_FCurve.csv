@@ -10,6 +10,7 @@ Fcurve_Key_Frame_Name,帧
 Fcurve_Key_Percent_Name,百分比
 FCurve_AddPoint,添加一个关键帧
 FCurve_DeletePoint,删除选中的关键帧
+FCurve_Copy,复制
 FCurve_PaseteOnZero,将复制的F曲线粘贴在第0帧
 FCurve_PasteOnCurrentTime,将复制的F曲线粘贴在当前时间
 FCurve_PasteOnCursor,将复制的F曲线粘贴在光标位置（似乎有BUG）
