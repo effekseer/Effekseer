@@ -1,10 +1,10 @@
 Node_IsRendered_Name,可见性
-Node_IsRendered_Desc,"是否向视口中绘制实例，
-对最终输出没有影响，
-也可以用节点右侧的眼睛标志切换可见性。"
+Node_IsRendered_Desc,"设置由该节点生成的粒子是否应该被渲染到屏幕上。
+如果勾选，粒子将被渲染到屏幕上。如果不勾选，粒子将不会被渲染。
+该设置会影响到最终的输出。"
 ,
 Node_Name_Name,名称
-Node_Name_Desc,节点的名称.
+Node_Name_Desc,节点的名称
 BasicSettings_MaxGeneration_Name,生成数量
 BasicSettings_MaxGeneration_Desc,生成实例的数量
 BasicSettings_LocationEffectType_Name,继承位置
