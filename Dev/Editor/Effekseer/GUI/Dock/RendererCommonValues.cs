@@ -14,7 +14,7 @@ namespace Effekseer.GUI.Dock
 
 		public RendererCommonValues()
 		{
-			Label = Icons.PanelRenderCommon + Resources.GetString("BasicRenderSettings") + "###BasicRenderSettings";
+			Label = Icons.PanelRenderCommon + MultiLanguageTextProvider.GetText("BasicRenderSettings") + "###BasicRenderSettings";
 			DocPage = "rendererCommon.html";
 
 			paramerterList = new BindableComponent.ParameterList();
@@ -30,7 +30,7 @@ namespace Effekseer.GUI.Dock
 
 			Read();
 
-			TabToolTip = Resources.GetString("BasicRenderSettings");
+			TabToolTip = MultiLanguageTextProvider.GetText("BasicRenderSettings");
 		}
 
 		public void FixValues()

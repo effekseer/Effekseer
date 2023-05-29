@@ -10,7 +10,7 @@ namespace Effekseer.GUI.Dock
 
 		public RotationValues()
 		{
-			Label = Icons.PanelRotation + Resources.GetString("Rotation") + "###Rotation";
+			Label = Icons.PanelRotation + MultiLanguageTextProvider.GetText("Rotation") + "###Rotation";
 			DocPage = "rotation.html";
 
 			paramerterList = new BindableComponent.ParameterList();
@@ -24,7 +24,7 @@ namespace Effekseer.GUI.Dock
 
 			Read();
 
-			TabToolTip = Resources.GetString("Rotation");
+			TabToolTip = MultiLanguageTextProvider.GetText("Rotation");
 		}
 
 		public void FixValues()

@@ -29,10 +29,10 @@ namespace Effekseer.GUI.Dialog
 		{
 			if (isFirstUpdate)
 			{
-				Manager.NativeManager.OpenPopup(Resources.GetString("RenameNode") + "###RenameNodeDialog");
+				Manager.NativeManager.OpenPopup(MultiLanguageTextProvider.GetText("RenameNode") + "###RenameNodeDialog");
 			}
 
-			if (Manager.NativeManager.BeginPopupModal(Resources.GetString("RenameNode") + "###RenameNodeDialog", ref opened, swig.WindowFlags.AlwaysAutoResize))
+			if (Manager.NativeManager.BeginPopupModal(MultiLanguageTextProvider.GetText("RenameNode") + "###RenameNodeDialog", ref opened, swig.WindowFlags.AlwaysAutoResize))
 			{
 				if (isFirstUpdate)
 				{
@@ -68,7 +68,7 @@ namespace Effekseer.GUI.Dialog
 
 				Manager.NativeManager.SameLine();
 
-				if (Manager.NativeManager.Button(Resources.GetString("Cancel"), buttonWidth))
+				if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("Cancel"), buttonWidth))
 				{
 					ShouldBeRemoved = true;
 				}

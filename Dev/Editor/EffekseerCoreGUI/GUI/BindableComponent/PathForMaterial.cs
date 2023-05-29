@@ -89,7 +89,7 @@ namespace Effekseer.GUI.BindableComponent
 
 			float buttonSizeX = Manager.NativeManager.GetTextLineHeightWithSpacing() * 2;
 
-			if (Manager.NativeManager.Button(Resources.GetString("Load") + id1, buttonSizeX))
+			if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("Load") + id1, buttonSizeX))
 			{
 				btn_load_Click();
 			}
@@ -116,14 +116,14 @@ namespace Effekseer.GUI.BindableComponent
 			if (absoluteFilePath != string.Empty)
 			{
 
-				if (Manager.NativeManager.Button(Resources.GetString("Delete") + id2, buttonSizeX))
+				if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("Delete") + id2, buttonSizeX))
 				{
 					btn_delete_Click();
 				}
 
 				Manager.NativeManager.SameLine();
 
-				if (Manager.NativeManager.Button(Resources.GetString("Material_Edit_Name") + id3, buttonSizeX))
+				if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("Material_Edit_Name") + id3, buttonSizeX))
 				{
 					if (Process.MaterialEditor.Run())
 					{
@@ -133,7 +133,7 @@ namespace Effekseer.GUI.BindableComponent
 
 				if (Functions.CanShowTip())
 				{
-					Manager.NativeManager.SetTooltip(Resources.GetString("Material_Edit_Desc"));
+					Manager.NativeManager.SetTooltip(MultiLanguageTextProvider.GetText("Material_Edit_Desc"));
 				}
 
 				Manager.NativeManager.SameLine();
@@ -145,7 +145,7 @@ namespace Effekseer.GUI.BindableComponent
 					Manager.NativeManager.PushStyleColor(swig.ImGuiColFlags.Button, 0xff0000ff);
 				}
 
-				if (Manager.NativeManager.Button(Resources.GetString("Material_GenCache_Name") + id4, buttonSizeX * 2.2f))
+				if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("Material_GenCache_Name") + id4, buttonSizeX * 2.2f))
 				{
 					GenerateCompiledMaterial();
 				}
@@ -164,9 +164,9 @@ namespace Effekseer.GUI.BindableComponent
 			}
 			else
 			{
-				if (Manager.NativeManager.Button(Resources.GetString("Material_Create_Name"), buttonSizeX))
+				if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("Material_Create_Name"), buttonSizeX))
 				{
-					var filter = Resources.GetString("MaterialFilter");
+					var filter = MultiLanguageTextProvider.GetText("MaterialFilter");
 					var result = swig.FileDialog.SaveDialog(filter, System.IO.Directory.GetCurrentDirectory());
 
 					if (!string.IsNullOrEmpty(result))
@@ -198,7 +198,7 @@ namespace Effekseer.GUI.BindableComponent
 
 				if (Manager.NativeManager.IsItemHovered())
 				{
-					Manager.NativeManager.SetTooltip(Resources.GetString("Material_Create_Desc"));
+					Manager.NativeManager.SetTooltip(MultiLanguageTextProvider.GetText("Material_Create_Desc"));
 				}
 			}
 
@@ -221,7 +221,7 @@ namespace Effekseer.GUI.BindableComponent
 		{
 			if (binding == null) return;
 
-			var filter = Resources.GetString("MaterialFilter");
+			var filter = MultiLanguageTextProvider.GetText("MaterialFilter");
 			var result = swig.FileDialog.OpenDialog(filter, System.IO.Directory.GetCurrentDirectory());
 
 			if (!string.IsNullOrEmpty(result))
@@ -271,7 +271,7 @@ namespace Effekseer.GUI.BindableComponent
 
 		private bool CheckExtension(string path)
 		{
-			var filters = Resources.GetString("MaterialFilter").Split(',');
+			var filters = MultiLanguageTextProvider.GetText("MaterialFilter").Split(',');
 			return filters.Any(_ => "." + _ == System.IO.Path.GetExtension(path).ToLower());
 		}
 
@@ -314,21 +314,21 @@ namespace Effekseer.GUI.BindableComponent
 		{
 			Manager.NativeManager.BeginTooltip();
 
-			Manager.NativeManager.Text(Resources.GetString("Material_GenCache_Desc"));
+			Manager.NativeManager.Text(MultiLanguageTextProvider.GetText("Material_GenCache_Desc"));
 
 			if (compiledMatInfo != null)
 			{
 				if (matInfo.GUID != compiledMatInfo.GUID)
 				{
-					Manager.NativeManager.Text(Resources.GetString("Material_OldCache"));
+					Manager.NativeManager.Text(MultiLanguageTextProvider.GetText("Material_OldCache"));
 				}
 				else if (errorCode == Utils.CompiledMaterialInformationErrorCode.TooOldFormat)
 				{
-					Manager.NativeManager.Text(Resources.GetString("Material_OldFomatCache"));
+					Manager.NativeManager.Text(MultiLanguageTextProvider.GetText("Material_OldFomatCache"));
 				}
 				else if (errorCode == Utils.CompiledMaterialInformationErrorCode.TooNewFormat)
 				{
-					Manager.NativeManager.Text(Resources.GetString("Material_NewFomatCache"));
+					Manager.NativeManager.Text(MultiLanguageTextProvider.GetText("Material_NewFomatCache"));
 				}
 				else
 				{
@@ -340,7 +340,7 @@ namespace Effekseer.GUI.BindableComponent
 			}
 			else
 			{
-				Manager.NativeManager.Text(Resources.GetString("Material_NoneCache"));
+				Manager.NativeManager.Text(MultiLanguageTextProvider.GetText("Material_NoneCache"));
 			}
 
 			Manager.NativeManager.EndTooltip();

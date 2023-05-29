@@ -15,7 +15,7 @@ namespace Effekseer.GUI.Dock
 
 		public PostEffect()
 		{
-			Label = Resources.GetString("PostEffect") + "###PostEffect";
+			Label = MultiLanguageTextProvider.GetText("PostEffect") + "###PostEffect";
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.EnvironmentValues));
 
@@ -23,7 +23,7 @@ namespace Effekseer.GUI.Dock
 			Core.OnAfterNew += OnAfter;
 
 			Icon = Images.GetIcon("PanelPostEffect");
-			TabToolTip = Resources.GetString("Options");
+			TabToolTip = MultiLanguageTextProvider.GetText("Options");
 		}
 
 		public void FixValues()

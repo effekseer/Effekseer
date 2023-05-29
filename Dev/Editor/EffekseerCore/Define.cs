@@ -162,7 +162,7 @@ namespace Effekseer
 				foreach (var attribute in attributes.OfType<NameAttribute>())
 				{
 					// search from resources at first
-					var value = Resources.GetString(attribute.value);
+					var value = MultiLanguageTextProvider.GetText(attribute.value);
 					if (!String.IsNullOrEmpty(value)) return value;
 
 					/*

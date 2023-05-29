@@ -98,7 +98,7 @@ namespace Effekseer.GUI.BindableComponent
 
 			float buttonSizeX = Manager.NativeManager.GetTextLineHeightWithSpacing() * 2;
 
-			if (Manager.NativeManager.Button(Resources.GetString("Load") + id1, buttonSizeX))
+			if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("Load") + id1, buttonSizeX))
 			{
 				btn_load_Click();
 			}
@@ -122,7 +122,7 @@ namespace Effekseer.GUI.BindableComponent
 
 			if (filePath != string.Empty)
 			{
-				if (Manager.NativeManager.Button(Resources.GetString("Delete") + id2, buttonSizeX))
+				if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("Delete") + id2, buttonSizeX))
 				{
 					btn_delete_Click();
 				}
@@ -136,7 +136,7 @@ namespace Effekseer.GUI.BindableComponent
 				isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 
 				/*
-				if (Manager.NativeManager.Button(Resources.GetString("PlayString") + id3, buttonSizeX))
+				if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("PlayString") + id3, buttonSizeX))
 				{
 					btn_play_Click();
 				}
@@ -170,7 +170,7 @@ namespace Effekseer.GUI.BindableComponent
 		{
 			if (binding == null) return;
 
-			var filter = Resources.GetString("SoundFilter");
+			var filter = MultiLanguageTextProvider.GetText("SoundFilter");
 			var result = swig.FileDialog.OpenDialog(filter, System.IO.Directory.GetCurrentDirectory());
 
 			if (!string.IsNullOrEmpty(result))

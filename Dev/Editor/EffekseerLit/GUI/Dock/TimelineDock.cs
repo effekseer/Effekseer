@@ -12,12 +12,12 @@ namespace Effekseer.GUI.Dock
 
 		public TimelineDock()
 		{
-			Label = Icons.PanelOptions + Resources.GetString("Options") + "###TimelineDock";
+			Label = Icons.PanelOptions + MultiLanguageTextProvider.GetText("Options") + "###TimelineDock";
 
 			Core.OnAfterLoad += OnAfter;
 			Core.OnAfterNew += OnAfter;
 
-			TabToolTip = Resources.GetString("Options");
+			TabToolTip = MultiLanguageTextProvider.GetText("Options");
 
 			NoPadding = true;
 			NoScrollBar = false;

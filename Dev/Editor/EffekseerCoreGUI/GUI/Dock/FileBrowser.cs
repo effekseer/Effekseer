@@ -29,24 +29,24 @@ namespace Effekseer.GUI.Dock
 
 		public FileBrowser()
 		{
-			Label = Icons.PanelFileBrowser + Resources.GetString("FileBrowser") + "###FileVeiwer";
+			Label = Icons.PanelFileBrowser + MultiLanguageTextProvider.GetText("FileBrowser") + "###FileVeiwer";
 			DocPage = "fileviewer.html";
 
-			TabToolTip = Resources.GetString("FileBrowser");
+			TabToolTip = MultiLanguageTextProvider.GetText("FileBrowser");
 
-			menuOpenFile = Resources.GetString("FileBrowser_OpenFile");
+			menuOpenFile = MultiLanguageTextProvider.GetText("FileBrowser_OpenFile");
 
 			if (swig.GUIManager.IsMacOSX())
 			{
-				menuShowInFileManager = Resources.GetString("FileBrowser_ShowInFinder");
+				menuShowInFileManager = MultiLanguageTextProvider.GetText("FileBrowser_ShowInFinder");
 			}
 			else
 			{
-				menuShowInFileManager = Resources.GetString("FileBrowser_ShowInExplorer");
+				menuShowInFileManager = MultiLanguageTextProvider.GetText("FileBrowser_ShowInExplorer");
 			}
 
-			menuImportFromPackage = Resources.GetString("FileBrowser_ImportFromPackage");
-			menuExportToPackage = Resources.GetString("FileBrowser_ExportToPackage");
+			menuImportFromPackage = MultiLanguageTextProvider.GetText("FileBrowser_ImportFromPackage");
+			menuExportToPackage = MultiLanguageTextProvider.GetText("FileBrowser_ExportToPackage");
 
 			directoryWatcher.Changed += (o, e) => { shouldUpdateFileList = true; };
 			directoryWatcher.Renamed += (o, e) => { shouldUpdateFileList = true; };
@@ -163,7 +163,7 @@ namespace Effekseer.GUI.Dock
 
 			if (BindableComponent.Functions.CanShowTip())
 			{
-				Manager.NativeManager.SetTooltip(Resources.GetString("Panel_Help_Desc"));
+				Manager.NativeManager.SetTooltip(MultiLanguageTextProvider.GetText("Panel_Help_Desc"));
 			}
 
 		}

@@ -14,7 +14,7 @@ namespace Effekseer.GUI.Dock
 
 		public LocationValues()
 		{
-			Label = Icons.PanelLocation + Resources.GetString("Position") + "###Position";
+			Label = Icons.PanelLocation + MultiLanguageTextProvider.GetText("Position") + "###Position";
 			DocPage = "location.html";
 
 			paramerterList = new BindableComponent.ParameterList();
@@ -30,7 +30,7 @@ namespace Effekseer.GUI.Dock
 
 			Read();
 
-			TabToolTip = Resources.GetString("Position");
+			TabToolTip = MultiLanguageTextProvider.GetText("Position");
 		}
 
 		public void FixValues()

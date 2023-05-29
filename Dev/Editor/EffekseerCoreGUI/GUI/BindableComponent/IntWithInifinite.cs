@@ -122,7 +122,7 @@ namespace Effekseer.GUI.BindableComponent
 
 			Manager.NativeManager.SameLine();
 
-			var inf = Resources.GetString("Infinite");
+			var inf = MultiLanguageTextProvider.GetText("Infinite");
 			if (Manager.NativeManager.Checkbox(inf + id2, isInfinite))
 			{
 				if (EnableUndo)

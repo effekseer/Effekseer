@@ -11,22 +11,6 @@ namespace Effekseer
 		English,
 	}
 
-	/// <summary>
-	/// For compatiblity
-	/// </summary>
-	public static class Resources
-	{
-		public static string GetString(string name)
-		{
-			if (MultiLanguageTextProvider.HasKey(name))
-			{
-				return MultiLanguageTextProvider.GetText(name);
-			}
-
-			return string.Empty;
-		}
-	}
-
 	public class LanguageTable
 	{
 		static int selectedIndex = 0;

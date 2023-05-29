@@ -27,12 +27,12 @@ namespace Effekseer.GUI.Dock
 
 		public PrefabListDock()
 		{
-			Label = Icons.PanelOptions + Resources.GetString("Options") + "###PrefabListDock";
+			Label = Icons.PanelOptions + MultiLanguageTextProvider.GetText("Options") + "###PrefabListDock";
 
 			Core.OnAfterLoad += OnAfter;
 			Core.OnAfterNew += OnAfter;
 
-			TabToolTip = Resources.GetString("Options");
+			TabToolTip = MultiLanguageTextProvider.GetText("Options");
 
 			NoPadding = true;
 			NoScrollBar = true;

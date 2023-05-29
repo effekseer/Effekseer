@@ -9,7 +9,7 @@ namespace Effekseer.GUI.Dock
 
 		public ProceduralModel()
 		{
-			Label = Icons.PanelProceduralModel + Resources.GetString("ProceduralModel_Name") + "###ProceduralModel";
+			Label = Icons.PanelProceduralModel + MultiLanguageTextProvider.GetText("ProceduralModel_Name") + "###ProceduralModel";
 			DocPage = "proceduralModel.html";
 
 			paramerterList = new BindableComponent.ParameterList();
@@ -20,7 +20,7 @@ namespace Effekseer.GUI.Dock
 			Core.OnBeforeLoad += Core_OnBeforeLoad;
 			Read();
 
-			TabToolTip = Resources.GetString("ProceduralModel_Name");
+			TabToolTip = MultiLanguageTextProvider.GetText("ProceduralModel_Name");
 		}
 
 		public void FixValues()
@@ -61,14 +61,14 @@ namespace Effekseer.GUI.Dock
 
 			Manager.NativeManager.SameLine();
 
-			if (Manager.NativeManager.Button(Resources.GetString("DynamicAdd") + "###DynamicAdd"))
+			if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("DynamicAdd") + "###DynamicAdd"))
 			{
 				Core.ProceduralModel.ProceduralModels.New();
 			}
 
 			Manager.NativeManager.SameLine();
 
-			if (Manager.NativeManager.Button(Resources.GetString("DynamicDelete") + "###DynamicDelete"))
+			if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("DynamicDelete") + "###DynamicDelete"))
 			{
 				Core.ProceduralModel.ProceduralModels.Delete(Core.ProceduralModel.ProceduralModels.Selected);
 			}

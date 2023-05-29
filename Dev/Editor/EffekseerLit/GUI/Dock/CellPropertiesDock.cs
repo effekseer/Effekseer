@@ -10,12 +10,12 @@ namespace Effekseer.GUI.Dock
 	{
 		public CellPropertiesDock()
 		{
-			Label = Icons.PanelOptions + Resources.GetString("Options") + "###CellPropertiesDock";
+			Label = Icons.PanelOptions + MultiLanguageTextProvider.GetText("Options") + "###CellPropertiesDock";
 
 			Core.OnAfterLoad += OnAfter;
 			Core.OnAfterNew += OnAfter;
 
-			TabToolTip = Resources.GetString("Options");
+			TabToolTip = MultiLanguageTextProvider.GetText("Options");
 
 			NoPadding = true;
 			NoScrollBar = true;

@@ -14,7 +14,7 @@ namespace Effekseer.GUI.Dock
 
 		public AdvancedRenderCommonValues()
 		{
-			Label = Icons.PanelAdvancedRenderCommon + Resources.GetString("AdvancedRenderSettings") + "###AdvancedRenderSettings";
+			Label = Icons.PanelAdvancedRenderCommon + MultiLanguageTextProvider.GetText("AdvancedRenderSettings") + "###AdvancedRenderSettings";
 			DocPage = "rendererCommonAd.html";
 
 			parameterList = new BindableComponent.ParameterList();
@@ -30,7 +30,7 @@ namespace Effekseer.GUI.Dock
 
 			Read();
 
-			TabToolTip = Resources.GetString("AdvancedRenderSettings");
+			TabToolTip = MultiLanguageTextProvider.GetText("AdvancedRenderSettings");
 		}
 
 		public void FixValues()

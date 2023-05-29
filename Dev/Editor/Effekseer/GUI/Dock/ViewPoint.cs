@@ -27,7 +27,7 @@ namespace Effekseer.GUI.Dock
 
 		public ViewPoint()
 		{
-			Label = Icons.PanelViewPoint + Resources.GetString("CameraSettings") + "###CameraSettings";
+			Label = Icons.PanelViewPoint + MultiLanguageTextProvider.GetText("CameraSettings") + "###CameraSettings";
 
 			id_f = "###" + Manager.GetUniqueID().ToString();
 			id_rx = "###" + Manager.GetUniqueID().ToString();
@@ -38,7 +38,7 @@ namespace Effekseer.GUI.Dock
 			id_cs = "###" + Manager.GetUniqueID().ToString();
 			id_ce = "###" + Manager.GetUniqueID().ToString();
 
-			TabToolTip = Resources.GetString("CameraSettings");
+			TabToolTip = MultiLanguageTextProvider.GetText("CameraSettings");
 		}
 
 
@@ -69,42 +69,42 @@ namespace Effekseer.GUI.Dock
 			var cs = new float[] { ctrl.ClippingStart };
 			var ce = new float[] { ctrl.ClippingEnd };
 
-			if (Manager.NativeManager.DragFloat3(Resources.GetString("Viewpoint") + id_f, f))
+			if (Manager.NativeManager.DragFloat3(MultiLanguageTextProvider.GetText("Viewpoint") + id_f, f))
 			{
 				ctrl.SetFocusPosition(new swig.Vector3F(f[0], f[1], f[2]));
 			}
 
-			if (Manager.NativeManager.DragFloat(Resources.GetString("XRotation") + id_rx, rx_))
+			if (Manager.NativeManager.DragFloat(MultiLanguageTextProvider.GetText("XRotation") + id_rx, rx_))
 			{
 				ctrl.SetAngleX(rx_[0]);
 			}
 
-			if (Manager.NativeManager.DragFloat(Resources.GetString("YRotation") + id_ry, ry_))
+			if (Manager.NativeManager.DragFloat(MultiLanguageTextProvider.GetText("YRotation") + id_ry, ry_))
 			{
 				ctrl.SetAngleY(ry_[0]);
 			}
 
-			if (Manager.NativeManager.DragFloat(Resources.GetString("PoVDistance") + id_d, d))
+			if (Manager.NativeManager.DragFloat(MultiLanguageTextProvider.GetText("PoVDistance") + id_d, d))
 			{
 				ctrl.SetDistance(d[0]);
 			}
 
-			if (Manager.NativeManager.DragFloat(Resources.GetString("Zoom") + id_s, s))
+			if (Manager.NativeManager.DragFloat(MultiLanguageTextProvider.GetText("Zoom") + id_s, s))
 			{
 				ctrl.RateOfMagnification = s[0];
 			}
 
-			if (Manager.NativeManager.DragFloat(Resources.GetString("Clipping") + "\n" + Resources.GetString("Start") + id_cs, cs))
+			if (Manager.NativeManager.DragFloat(MultiLanguageTextProvider.GetText("Clipping") + "\n" + MultiLanguageTextProvider.GetText("Start") + id_cs, cs))
 			{
 				ctrl.ClippingStart = cs[0];
 			}
 
-			if (Manager.NativeManager.DragFloat(Resources.GetString("Clipping") + "\n" + Resources.GetString("End") + id_ce, ce))
+			if (Manager.NativeManager.DragFloat(MultiLanguageTextProvider.GetText("Clipping") + "\n" + MultiLanguageTextProvider.GetText("End") + id_ce, ce))
 			{
 				ctrl.ClippingEnd = ce[0];
 			}
 
-			if (Manager.NativeManager.BeginCombo(Resources.GetString("CameraMode") + id_t, viewTypes[ctrl.GetProjectionType() == swig.ProjectionType.Perspective ? 0 : 1], swig.ComboFlags.None))
+			if (Manager.NativeManager.BeginCombo(MultiLanguageTextProvider.GetText("CameraMode") + id_t, viewTypes[ctrl.GetProjectionType() == swig.ProjectionType.Perspective ? 0 : 1], swig.ComboFlags.None))
 			{
 				if (Manager.NativeManager.Selectable(viewTypes[0]))
 				{
@@ -121,7 +121,7 @@ namespace Effekseer.GUI.Dock
 				Manager.NativeManager.EndCombo();
 			}
 
-			if (Manager.NativeManager.Button(Resources.GetString("Save") + "###btn1"))
+			if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("Save") + "###btn1"))
 			{
 				var filter = "view";
 
@@ -153,7 +153,7 @@ namespace Effekseer.GUI.Dock
 				}
 			}
 
-			if (Manager.NativeManager.Button(Resources.GetString("Load") + "###btn2"))
+			if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("Load") + "###btn2"))
 			{
 				var filter = "view";
 

@@ -16,7 +16,7 @@ namespace Effekseer.GUI.Dock
 
 		public CommonValues()
 		{
-			Label = Icons.PanelCommon + Resources.GetString("BasicSettings") + "###BasicSettings";
+			Label = Icons.PanelCommon + MultiLanguageTextProvider.GetText("BasicSettings") + "###BasicSettings";
 			DocPage = "common.html";
 
 			paramerterList_Node = new BindableComponent.ParameterList();
@@ -32,7 +32,7 @@ namespace Effekseer.GUI.Dock
 
 			Read();
 
-			TabToolTip = Resources.GetString("BasicSettings");
+			TabToolTip = MultiLanguageTextProvider.GetText("BasicSettings");
 		}
 
 		public void FixValues()

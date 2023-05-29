@@ -50,7 +50,7 @@ THE SOFTWARE.
 		public void Show()
 		{
 			versionInfo = "Effekseer Version " + Core.Version;
-			title = Resources.GetString("InternalAbout");
+			title = MultiLanguageTextProvider.GetText("InternalAbout");
 
 			Manager.AddControl(this);
 		}

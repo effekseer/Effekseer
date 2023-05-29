@@ -14,7 +14,7 @@ namespace Effekseer.GUI.Dock
 
 		public SoundValues()
 		{
-			Label = Icons.PanelSound + Resources.GetString("Sound") + "###Sound";
+			Label = Icons.PanelSound + MultiLanguageTextProvider.GetText("Sound") + "###Sound";
 			DocPage = "sound.html";
 
 			paramerterList = new BindableComponent.ParameterList();
@@ -29,7 +29,7 @@ namespace Effekseer.GUI.Dock
 
 			Read();
 
-			TabToolTip = Resources.GetString("Sound");
+			TabToolTip = MultiLanguageTextProvider.GetText("Sound");
 		}
 
 		public void FixValues()

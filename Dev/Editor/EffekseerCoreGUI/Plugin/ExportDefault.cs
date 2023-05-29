@@ -28,7 +28,7 @@ namespace Effekseer.Plugin
 		{
 			get
 			{
-				return Resources.GetString("DefaultFormat");
+				return MultiLanguageTextProvider.GetText("DefaultFormat");
 			}
 		}
 
@@ -36,7 +36,7 @@ namespace Effekseer.Plugin
 		{
 			get
 			{
-				return Resources.GetString("ExportDefaultFormat");
+				return MultiLanguageTextProvider.GetText("ExportDefaultFormat");
 			}
 		}
 
@@ -44,7 +44,7 @@ namespace Effekseer.Plugin
 		{
 			get
 			{
-				return Resources.GetString("DefaultFormatExample");
+				return MultiLanguageTextProvider.GetText("DefaultFormatExample");
 			}
 		}
 
@@ -76,7 +76,7 @@ namespace Effekseer.Plugin
 
 			public void Show(string path)
 			{
-				this.title = Resources.GetString("Maginification");
+				this.title = MultiLanguageTextProvider.GetText("Maginification");
 
 				this.path = path;
 				mag[0] = Effekseer.Core.Option.ExternalMagnification.GetValue();

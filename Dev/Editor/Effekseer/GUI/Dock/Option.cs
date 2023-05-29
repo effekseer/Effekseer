@@ -14,7 +14,7 @@ namespace Effekseer.GUI.Dock
 
 		public Option()
 		{
-			Label = Icons.PanelOptions + Resources.GetString("Options") + "###Options";
+			Label = Icons.PanelOptions + MultiLanguageTextProvider.GetText("Options") + "###Options";
 			DocPage = "options.html";
 
 			paramerterList = new BindableComponent.ParameterList();
@@ -23,7 +23,7 @@ namespace Effekseer.GUI.Dock
 			Core.OnAfterLoad += OnAfter;
 			Core.OnAfterNew += OnAfter;
 
-			TabToolTip = Resources.GetString("Options");
+			TabToolTip = MultiLanguageTextProvider.GetText("Options");
 		}
 
 		public void FixValues()

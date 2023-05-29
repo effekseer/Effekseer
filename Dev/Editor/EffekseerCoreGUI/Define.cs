@@ -10,13 +10,13 @@ namespace Effekseer
 	{
 		public static void ThrowFileNotfound()
 		{
-			throw new Exception(Resources.GetString("MismatchResourceError"));
+			throw new Exception(MultiLanguageTextProvider.GetText("MismatchResourceError"));
 		}
 
 		public static void ShowErrorByNodeLayerLimit()
 		{
 			var mb = new GUI.Dialog.MessageBox();
-			mb.Show("Error", String.Format(Resources.GetString("LayerLimitError"), Constant.NodeLayerLimit));
+			mb.Show("Error", String.Format(MultiLanguageTextProvider.GetText("LayerLimitError"), Constant.NodeLayerLimit));
 		}
 	}
 

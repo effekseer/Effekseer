@@ -9,7 +9,7 @@ namespace Effekseer.GUI.Dock
 
 		public GlobalValues()
 		{
-			Label = Icons.PanelGlobal + Resources.GetString("Global") + "###Global";
+			Label = Icons.PanelGlobal + MultiLanguageTextProvider.GetText("Global") + "###Global";
 			DocPage = "global.html";
 
 			paramerterList = new BindableComponent.ParameterList();
@@ -21,7 +21,7 @@ namespace Effekseer.GUI.Dock
 
 			Read();
 
-			TabToolTip = Resources.GetString("Global");
+			TabToolTip = MultiLanguageTextProvider.GetText("Global");
 		}
 
 		public void FixValues()

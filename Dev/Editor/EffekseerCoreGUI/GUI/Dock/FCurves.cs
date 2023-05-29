@@ -63,22 +63,22 @@ namespace Effekseer.GUI.Dock
 
 		class Texts
 		{
-			public string key = Resources.GetString("Fcurve_Key_Name");
-			public string key_frame = Resources.GetString("Fcurve_Key_Frame_Name");
-			public string key_percent = Resources.GetString("Fcurve_Key_Percent_Name");
-			public string frame = Resources.GetString("Frame");
-			public string value = Resources.GetString("Value");
-			public string start = Resources.GetString("Start");
-			public string end = Resources.GetString("End");
-			public string type = Resources.GetString("Complement");
-			public string sampling = Resources.GetString("Sampling");
-			public string left = Resources.GetString("Left");
-			public string right = Resources.GetString("Right");
-			public string offset = Resources.GetString("Offset");
-			public string timelineMode_Name = Resources.GetString("FCurve_TimelineMode_Name");
-			public string timelineMode_Desc = Resources.GetString("FCurve_TimelineMode_Desc");
-			public string offsetMin = Resources.GetString("Min");
-			public string offsetMax = Resources.GetString("Max");
+			public string key = MultiLanguageTextProvider.GetText("Fcurve_Key_Name");
+			public string key_frame = MultiLanguageTextProvider.GetText("Fcurve_Key_Frame_Name");
+			public string key_percent = MultiLanguageTextProvider.GetText("Fcurve_Key_Percent_Name");
+			public string frame = MultiLanguageTextProvider.GetText("Frame");
+			public string value = MultiLanguageTextProvider.GetText("Value");
+			public string start = MultiLanguageTextProvider.GetText("Start");
+			public string end = MultiLanguageTextProvider.GetText("End");
+			public string type = MultiLanguageTextProvider.GetText("Complement");
+			public string sampling = MultiLanguageTextProvider.GetText("Sampling");
+			public string left = MultiLanguageTextProvider.GetText("Left");
+			public string right = MultiLanguageTextProvider.GetText("Right");
+			public string offset = MultiLanguageTextProvider.GetText("Offset");
+			public string timelineMode_Name = MultiLanguageTextProvider.GetText("FCurve_TimelineMode_Name");
+			public string timelineMode_Desc = MultiLanguageTextProvider.GetText("FCurve_TimelineMode_Desc");
+			public string offsetMin = MultiLanguageTextProvider.GetText("Min");
+			public string offsetMax = MultiLanguageTextProvider.GetText("Max");
 		}
 		Texts texts = new Texts();
 
@@ -110,7 +110,7 @@ namespace Effekseer.GUI.Dock
 
 		public FCurves()
 		{
-			Label = Icons.PanelFCurve + Resources.GetString("FCurves") + "###FCurves";
+			Label = Icons.PanelFCurve + MultiLanguageTextProvider.GetText("FCurves") + "###FCurves";
 			DocPage = "fcurve.html";
 
 			Command.CommandManager.Changed += OnChanged;
@@ -134,7 +134,7 @@ namespace Effekseer.GUI.Dock
 
 			OnChanged();
 
-			TabToolTip = Resources.GetString("FCurves");
+			TabToolTip = MultiLanguageTextProvider.GetText("FCurves");
 
 			NoPadding = true;
 			NoScrollBar = true;
@@ -152,7 +152,7 @@ namespace Effekseer.GUI.Dock
 
 			if (BindableComponent.Functions.CanShowTip())
 			{
-				Manager.NativeManager.SetTooltip(Resources.GetString("FCurve_TimelineMode_Desc"));
+				Manager.NativeManager.SetTooltip(MultiLanguageTextProvider.GetText("FCurve_TimelineMode_Desc"));
 			}
 
 			Manager.NativeManager.Columns(3);
@@ -179,7 +179,7 @@ namespace Effekseer.GUI.Dock
 
 				if (Manager.NativeManager.IsItemHovered())
 				{
-					Manager.NativeManager.SetTooltip(Resources.GetString("EnlargeAnchor") + "\n" + Resources.GetString("EnlargeAnchor_Desc"));
+					Manager.NativeManager.SetTooltip(MultiLanguageTextProvider.GetText("EnlargeAnchor") + "\n" + MultiLanguageTextProvider.GetText("EnlargeAnchor_Desc"));
 				}
 
 				Manager.NativeManager.SameLine();
@@ -191,7 +191,7 @@ namespace Effekseer.GUI.Dock
 
 				if (Manager.NativeManager.IsItemHovered())
 				{
-					Manager.NativeManager.SetTooltip(Resources.GetString("ShrinkAnchor") + "\n" + Resources.GetString("ShrinkAnchor_Desc"));
+					Manager.NativeManager.SetTooltip(MultiLanguageTextProvider.GetText("ShrinkAnchor") + "\n" + MultiLanguageTextProvider.GetText("ShrinkAnchor_Desc"));
 				}
 
 				Manager.NativeManager.SameLine();
@@ -203,7 +203,7 @@ namespace Effekseer.GUI.Dock
 
 				if (BindableComponent.Functions.CanShowTip())
 				{
-					Manager.NativeManager.SetTooltip(Resources.GetString("FCurve_Copy_Desc"));
+					Manager.NativeManager.SetTooltip(MultiLanguageTextProvider.GetText("FCurve_Copy_Desc"));
 				}
 
 				Manager.NativeManager.SameLine();
@@ -215,7 +215,7 @@ namespace Effekseer.GUI.Dock
 
 				if (BindableComponent.Functions.CanShowTip())
 				{
-					Manager.NativeManager.SetTooltip(Resources.GetString("FCurve_Paste_Desc"));
+					Manager.NativeManager.SetTooltip(MultiLanguageTextProvider.GetText("FCurve_Paste_Desc"));
 				}
 
 				Manager.NativeManager.SameLine();
@@ -227,7 +227,7 @@ namespace Effekseer.GUI.Dock
 
 				if (BindableComponent.Functions.CanShowTip())
 				{
-					Manager.NativeManager.SetTooltip(Resources.GetString("Panel_Help_Desc"));
+					Manager.NativeManager.SetTooltip(MultiLanguageTextProvider.GetText("Panel_Help_Desc"));
 				}
 
 				Manager.NativeManager.PopStyleVar();

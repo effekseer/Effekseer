@@ -10,10 +10,10 @@ namespace Effekseer.GUI.Dock
 	{
 		public Network()
 		{
-			Label = Icons.PanelNetwork + Resources.GetString("Network") + "###Network";
+			Label = Icons.PanelNetwork + MultiLanguageTextProvider.GetText("Network") + "###Network";
 			DocPage = "network.html";
 
-			TabToolTip = Resources.GetString("Network");
+			TabToolTip = MultiLanguageTextProvider.GetText("Network");
 		}
 
 		protected override void UpdateInternal()
@@ -27,32 +27,32 @@ namespace Effekseer.GUI.Dock
 			var sendOnEdit = new bool[] { Manager.Network.SendOnEdit };
 			var sendOnSave = new bool[] { Manager.Network.SendOnSave };
 
-			if (Manager.NativeManager.InputText(Resources.GetString("NetworkAddress") + "###target", target))
+			if (Manager.NativeManager.InputText(MultiLanguageTextProvider.GetText("NetworkAddress") + "###target", target))
 			{
 				Manager.Network.Target = Manager.NativeManager.GetInputTextResult();
 			}
 
-			if (Manager.NativeManager.InputInt(Resources.GetString("Port") + "###port", port))
+			if (Manager.NativeManager.InputInt(MultiLanguageTextProvider.GetText("Port") + "###port", port))
 			{
 				Manager.Network.Port = port[0];
 			}
 
-			if (Manager.NativeManager.Checkbox(Resources.GetString("AutoConnect") + "###autoConnect", autoConnect))
+			if (Manager.NativeManager.Checkbox(MultiLanguageTextProvider.GetText("AutoConnect") + "###autoConnect", autoConnect))
 			{
 				Manager.Network.AutoConnect = autoConnect[0];
 			}
 
-			if (Manager.NativeManager.Checkbox(Resources.GetString("TransmitDataOnLoad") + "###sendOnLoad", sendOnLoad))
+			if (Manager.NativeManager.Checkbox(MultiLanguageTextProvider.GetText("TransmitDataOnLoad") + "###sendOnLoad", sendOnLoad))
 			{
 				Manager.Network.SendOnLoad = sendOnLoad[0];
 			}
 
-			if (Manager.NativeManager.Checkbox(Resources.GetString("TransmitDataOnEdit") + "###sendOnEdit", sendOnEdit))
+			if (Manager.NativeManager.Checkbox(MultiLanguageTextProvider.GetText("TransmitDataOnEdit") + "###sendOnEdit", sendOnEdit))
 			{
 				Manager.Network.SendOnEdit = sendOnEdit[0];
 			}
 
-			if (Manager.NativeManager.Checkbox(Resources.GetString("TransmitDataOnSave") + "###sendOnSave", sendOnSave))
+			if (Manager.NativeManager.Checkbox(MultiLanguageTextProvider.GetText("TransmitDataOnSave") + "###sendOnSave", sendOnSave))
 			{
 				Manager.Network.SendOnSave = sendOnSave[0];
 			}
@@ -63,14 +63,14 @@ namespace Effekseer.GUI.Dock
 
 			if (Manager.Network.IsConnected())
 			{
-				state = Resources.GetString("NetworkConnected");
-				connect = Resources.GetString("Disconnect");
+				state = MultiLanguageTextProvider.GetText("NetworkConnected");
+				connect = MultiLanguageTextProvider.GetText("Disconnect");
 				enabled = true;
 			}
 			else
 			{
-				state = Resources.GetString("NetworkDisconnected");
-				connect = Resources.GetString("Connect");
+				state = MultiLanguageTextProvider.GetText("NetworkDisconnected");
+				connect = MultiLanguageTextProvider.GetText("Connect");
 				enabled = false;
 			}
 
@@ -94,7 +94,7 @@ namespace Effekseer.GUI.Dock
 				}
 			}
 
-			if (Manager.NativeManager.Button(Resources.GetString("SendData") + "###send"))
+			if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("SendData") + "###send"))
 			{
 				if (enabled)
 				{

@@ -9,7 +9,7 @@ namespace Effekseer.GUI.Dock
 
 		public BehaviorValues()
 		{
-			Label = Icons.PanelBehavior + Resources.GetString("Behavior") + "###Behavior";
+			Label = Icons.PanelBehavior + MultiLanguageTextProvider.GetText("Behavior") + "###Behavior";
 			DocPage = "behavior.html";
 
 			paramerterList = new BindableComponent.ParameterList();
@@ -23,7 +23,7 @@ namespace Effekseer.GUI.Dock
 
 			Read();
 
-			TabToolTip = Resources.GetString("Behavior");
+			TabToolTip = MultiLanguageTextProvider.GetText("Behavior");
 		}
 
 		public void FixValues()

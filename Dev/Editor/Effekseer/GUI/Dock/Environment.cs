@@ -14,7 +14,7 @@ namespace Effekseer.GUI.Dock
 
 		public Environement()
 		{
-			Label = Icons.PanelEnvironment + Resources.GetString("Environment_Name") + "###Environment";
+			Label = Icons.PanelEnvironment + MultiLanguageTextProvider.GetText("Environment_Name") + "###Environment";
 			DocPage = "environment.html";
 
 			paramerterList = new BindableComponent.ParameterList();
@@ -24,7 +24,7 @@ namespace Effekseer.GUI.Dock
 			Core.OnAfterLoad += OnAfter;
 			Core.OnAfterNew += OnAfter;
 
-			TabToolTip = Resources.GetString("Environment_Name");
+			TabToolTip = MultiLanguageTextProvider.GetText("Environment_Name");
 		}
 
 		public void FixValues()

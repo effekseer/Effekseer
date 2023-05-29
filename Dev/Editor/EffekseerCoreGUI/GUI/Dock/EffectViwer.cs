@@ -18,7 +18,7 @@ namespace Effekseer.GUI.Dock
 
 		public EffectViwerPaneBase(swig.DeviceType deviceType)
 		{
-			Label = Resources.GetString("Viewer") + "###Viewer";
+			Label = MultiLanguageTextProvider.GetText("Viewer") + "###Viewer";
 			renderMode = new BindableComponent.Enum();
 			renderMode.Initialize(typeof(Data.OptionValues.RenderMode));
 			renderMode.SetBinding(Core.Option.RenderingMode);

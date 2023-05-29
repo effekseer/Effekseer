@@ -15,17 +15,17 @@ namespace Effekseer.GUI.Dock
 
 		private struct Texts
 		{
-			public string Profiler = Resources.GetString("Profiler");
-			public string ProfilerStart = Resources.GetString("Profiler_Start");
-			public string ProfilerStop = Resources.GetString("Profiler_Stop");
-			public string ProfilerReset = Resources.GetString("Profiler_Reset");
-			public string ProfilerCpuUsage = Resources.GetString("Profiler_CpuUsage");
-			public string ProfilerGpuUsage = Resources.GetString("Profiler_GpuUsage");
-			public string ProfilerHandles = Resources.GetString("Profiler_Handles");
+			public string Profiler = MultiLanguageTextProvider.GetText("Profiler");
+			public string ProfilerStart = MultiLanguageTextProvider.GetText("Profiler_Start");
+			public string ProfilerStop = MultiLanguageTextProvider.GetText("Profiler_Stop");
+			public string ProfilerReset = MultiLanguageTextProvider.GetText("Profiler_Reset");
+			public string ProfilerCpuUsage = MultiLanguageTextProvider.GetText("Profiler_CpuUsage");
+			public string ProfilerGpuUsage = MultiLanguageTextProvider.GetText("Profiler_GpuUsage");
+			public string ProfilerHandles = MultiLanguageTextProvider.GetText("Profiler_Handles");
 
-			public string Network = Resources.GetString("Network");
-			public string NetworkConnected = Resources.GetString("NetworkConnected");
-			public string NetworkDisconnected = Resources.GetString("NetworkDisconnected");
+			public string Network = MultiLanguageTextProvider.GetText("Network");
+			public string NetworkConnected = MultiLanguageTextProvider.GetText("NetworkConnected");
+			public string NetworkDisconnected = MultiLanguageTextProvider.GetText("NetworkDisconnected");
 
 			public Texts() { }
 		};

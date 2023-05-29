@@ -154,7 +154,7 @@ namespace Effekseer.GUI.BindableComponent
 			Popup();
 
 			Manager.NativeManager.SameLine();
-			Manager.NativeManager.Text(Resources.GetString("Min"));
+			Manager.NativeManager.Text(MultiLanguageTextProvider.GetText("Min"));
 
 			if (Manager.NativeManager.ColorEdit4(id2, internalValueMax, swig.ColorEditFlags.NoOptions | colorSpace))
 			{
@@ -178,7 +178,7 @@ namespace Effekseer.GUI.BindableComponent
 			Popup();
 
 			Manager.NativeManager.SameLine();
-			Manager.NativeManager.Text(Resources.GetString("Max"));
+			Manager.NativeManager.Text(MultiLanguageTextProvider.GetText("Max"));
 
 			Manager.NativeManager.PopItemWidth();
 

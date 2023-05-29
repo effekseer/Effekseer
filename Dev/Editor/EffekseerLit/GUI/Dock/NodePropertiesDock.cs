@@ -14,7 +14,7 @@ namespace Effekseer.GUI.Dock
 
 		public NodePropertiesDock()
 		{
-			Label = Icons.PanelOptions + Resources.GetString("Options") + "###NodePropertiesDock";
+			Label = Icons.PanelOptions + MultiLanguageTextProvider.GetText("Options") + "###NodePropertiesDock";
 
 			paramerterList_Node = new BindableComponent.ParameterList();
 			paramerterList_Node.SetType(typeof(Data.NodeBase));
@@ -27,7 +27,7 @@ namespace Effekseer.GUI.Dock
 
 			Read();
 
-			TabToolTip = Resources.GetString("Options");
+			TabToolTip = MultiLanguageTextProvider.GetText("Options");
 
 			NoPadding = true;
 			NoScrollBar = true;

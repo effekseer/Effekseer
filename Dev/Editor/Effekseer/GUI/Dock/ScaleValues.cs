@@ -14,7 +14,7 @@ namespace Effekseer.GUI.Dock
 
 		public ScaleValues()
 		{
-			Label = Icons.PanelScale + Resources.GetString("Scale") + "###Scale";
+			Label = Icons.PanelScale + MultiLanguageTextProvider.GetText("Scale") + "###Scale";
 			DocPage = "scale.html";
 
 			paramerterList = new BindableComponent.ParameterList();
@@ -28,7 +28,7 @@ namespace Effekseer.GUI.Dock
 
 			Read();
 
-			TabToolTip = Resources.GetString("Scale");
+			TabToolTip = MultiLanguageTextProvider.GetText("Scale");
 		}
 
 		public void FixValues()

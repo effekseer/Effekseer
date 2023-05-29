@@ -69,7 +69,7 @@ namespace Effekseer.GUI
 		[UniqueName(value = "Internal.Open")]
 		public static bool Open()
 		{
-			var filter = Resources.GetString("ProjectFilterNew");
+			var filter = MultiLanguageTextProvider.GetText("ProjectFilterNew");
 			var result = swig.FileDialog.OpenDialog(filter, System.IO.Directory.GetCurrentDirectory());
 
 			if (!string.IsNullOrEmpty(result))
@@ -88,7 +88,7 @@ namespace Effekseer.GUI
 		{
 			if (!Utils.Misc.IsFullPath(fullPath))
 			{
-				throw new Exception(Resources.GetString("NotAbsolutePathError"));
+				throw new Exception(MultiLanguageTextProvider.GetText("NotAbsolutePathError"));
 			}
 			fullPath = Utils.Misc.BackSlashToSlash(fullPath);
 
@@ -106,7 +106,7 @@ namespace Effekseer.GUI
 						}
 						else
 						{
-							swig.GUIManager.show(string.Format(Resources.GetString("Error_NotFound"), fullPath), "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
+							swig.GUIManager.show(string.Format(MultiLanguageTextProvider.GetText("Error_NotFound"), fullPath), "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
 						}
 					}
 					catch (Exception e)
@@ -128,7 +128,7 @@ namespace Effekseer.GUI
 					}
 					else
 					{
-						swig.GUIManager.show(string.Format(Resources.GetString("Error_NotFound"), fullPath), "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
+						swig.GUIManager.show(string.Format(MultiLanguageTextProvider.GetText("Error_NotFound"), fullPath), "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
 					}
 				}
 				catch (Exception e)
@@ -207,7 +207,7 @@ namespace Effekseer.GUI
 		[UniqueName(value = "Internal.SaveAs")]
 		public static bool SaveAs()
 		{
-			var filter = Resources.GetString("EffekseerParticleFilter");
+			var filter = MultiLanguageTextProvider.GetText("EffekseerParticleFilter");
 
 			var result = swig.FileDialog.SaveDialog(filter, System.IO.Directory.GetCurrentDirectory());
 
@@ -471,7 +471,7 @@ namespace Effekseer.GUI
 		{
 			string rootDir = Path.GetDirectoryName(Manager.GetEntryDirectory());
 
-			var filter = Resources.GetString("ProjectFilterNew");
+			var filter = MultiLanguageTextProvider.GetText("ProjectFilterNew");
 
 			var result = swig.FileDialog.OpenDialog(filter, Path.Combine(rootDir, @"Sample"));
 

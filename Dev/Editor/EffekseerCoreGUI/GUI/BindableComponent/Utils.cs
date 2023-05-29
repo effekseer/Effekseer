@@ -98,14 +98,14 @@ namespace Effekseer.GUI.BindableComponent
 
 		public static void ShowReset(Data.IResettableValue value, string id)
 		{
-			if (Manager.NativeManager.Button(Resources.GetString("ResetParam_Name") + id))
+			if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("ResetParam_Name") + id))
 			{
 				value.ResetValue();
 			}
 
 			if (CanShowTip())
 			{
-				Manager.NativeManager.SetTooltip(Resources.GetString("ResetParam_Desc"));
+				Manager.NativeManager.SetTooltip(MultiLanguageTextProvider.GetText("ResetParam_Desc"));
 			}
 		}
 
@@ -144,7 +144,7 @@ namespace Effekseer.GUI.BindableComponent
 
 			if (Functions.CanShowTip())
 			{
-				Manager.NativeManager.SetTooltip(Resources.GetString("Panel_Copy_Desc"));
+				Manager.NativeManager.SetTooltip(MultiLanguageTextProvider.GetText("Panel_Copy_Desc"));
 			}
 
 			Manager.NativeManager.SameLine();
@@ -166,7 +166,7 @@ namespace Effekseer.GUI.BindableComponent
 
 			if (Functions.CanShowTip())
 			{
-				Manager.NativeManager.SetTooltip(Resources.GetString("Panel_Paste_Desc"));
+				Manager.NativeManager.SetTooltip(MultiLanguageTextProvider.GetText("Panel_Paste_Desc"));
 			}
 		}
 	}

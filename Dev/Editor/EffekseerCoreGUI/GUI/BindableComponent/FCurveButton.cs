@@ -30,7 +30,7 @@ namespace Effekseer.GUI.BindableComponent
 
 		public override void Update()
 		{
-			if (Manager.NativeManager.Button(Resources.GetString("FCurves") + id))
+			if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("FCurves") + id))
 			{
 				var state = Manager.MainWindow.GetState();
 

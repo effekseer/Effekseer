@@ -10,7 +10,7 @@ namespace Effekseer.GUI.Dock
 	{
 		public ViewerController()
 		{
-			Label = Icons.PanelViewerCtrl + Resources.GetString("ViewerControls") + "###ViewerControls";
+			Label = Icons.PanelViewerCtrl + MultiLanguageTextProvider.GetText("ViewerControls") + "###ViewerControls";
 		}
 
 		protected override void UpdateInternal()
@@ -115,7 +115,7 @@ namespace Effekseer.GUI.Dock
 
 					if (BindableComponent.Functions.CanShowTip())
 					{
-						Manager.NativeManager.SetTooltip(Resources.GetString("SendTrigger_Desc"));
+						Manager.NativeManager.SetTooltip(MultiLanguageTextProvider.GetText("SendTrigger_Desc"));
 					}
 				}
 			}
@@ -125,14 +125,14 @@ namespace Effekseer.GUI.Dock
 				
 				float[] bias = { Manager.Viewer.LODDistanceBias };
 				Manager.NativeManager.SetNextItemWidth(120F);
-				if (Manager.NativeManager.DragFloat(Resources.GetString("LOD_Bias_Name"), bias))
+				if (Manager.NativeManager.DragFloat(MultiLanguageTextProvider.GetText("LOD_Bias_Name"), bias))
 				{
 					Manager.Viewer.LODDistanceBias = bias[0];
 				}
 
 				if (Manager.NativeManager.IsItemHovered())
 				{
-					Manager.NativeManager.SetTooltip(Resources.GetString("LOD_Bias_Description"));
+					Manager.NativeManager.SetTooltip(MultiLanguageTextProvider.GetText("LOD_Bias_Description"));
 				}
 			}
 		}

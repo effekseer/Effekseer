@@ -203,7 +203,7 @@ namespace Effekseer.GUI.Dock
 
 				if (Functions.CanShowTip())
 				{
-					Manager.NativeManager.SetTooltip(Resources.GetString("Panel_Help_Desc"));
+					Manager.NativeManager.SetTooltip(MultiLanguageTextProvider.GetText("Panel_Help_Desc"));
 				}
 
 				hasItem = true;

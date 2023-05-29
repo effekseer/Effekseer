@@ -12,7 +12,7 @@ namespace Effekseer.GUI.Dock
 
 		public Dynamic()
 		{
-			Label = Icons.PanelDynamicParams + Resources.GetString("DynamicParameter_Name") + "###DynamicParameter";
+			Label = Icons.PanelDynamicParams + MultiLanguageTextProvider.GetText("DynamicParameter_Name") + "###DynamicParameter";
 			DocPage = "dynamicParameter.html";
 
 			paramerterListInput = new BindableComponent.ParameterList();
@@ -30,7 +30,7 @@ namespace Effekseer.GUI.Dock
 
 			Read();
 
-			TabToolTip = Resources.GetString("DynamicParameter_Name");
+			TabToolTip = MultiLanguageTextProvider.GetText("DynamicParameter_Name");
 		}
 
 		private static void Input_OnChanged(object sender, ChangedValueEventArgs e)
@@ -65,13 +65,13 @@ namespace Effekseer.GUI.Dock
 		{
 			Manager.NativeManager.Separator();
 
-			Manager.NativeManager.Text(Resources.GetString("DynamicInput"));
+			Manager.NativeManager.Text(MultiLanguageTextProvider.GetText("DynamicInput"));
 
 			paramerterListInput.Update();
 
 			Manager.NativeManager.Separator();
 
-			Manager.NativeManager.Text(Resources.GetString("DynamicEquation"));
+			Manager.NativeManager.Text(MultiLanguageTextProvider.GetText("DynamicEquation"));
 
 			float width = Manager.NativeManager.GetContentRegionAvail().X;
 
@@ -88,14 +88,14 @@ namespace Effekseer.GUI.Dock
 
 			Manager.NativeManager.SameLine();
 
-			if (Manager.NativeManager.Button(Resources.GetString("DynamicAdd") + "###DynamicAdd"))
+			if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("DynamicAdd") + "###DynamicAdd"))
 			{
 				Core.Dynamic.Equations.New();
 			}
 
 			Manager.NativeManager.SameLine();
 
-			if (Manager.NativeManager.Button(Resources.GetString("DynamicDelete") + "###DynamicDelete"))
+			if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("DynamicDelete") + "###DynamicDelete"))
 			{
 				Core.Dynamic.Equations.Delete(Core.Dynamic.Equations.Selected);
 			}
@@ -103,7 +103,7 @@ namespace Effekseer.GUI.Dock
 			paramerterList.Update();
 
 			if (Core.Dynamic.Equations.Selected != null
-				&& Manager.NativeManager.Button(Resources.GetString("Compile") + "###DynamicCompile")
+				&& Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("Compile") + "###DynamicCompile")
 				&& Core.Dynamic.Equations.Selected is DynamicEquation selected)
 			{
 				var compiler = new InternalScript.Compiler();

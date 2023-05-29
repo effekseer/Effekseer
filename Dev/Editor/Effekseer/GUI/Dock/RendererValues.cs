@@ -15,7 +15,7 @@ namespace Effekseer.GUI.Dock
 
 		public RendererValues()
 		{
-			Label = Icons.PanelRender + Resources.GetString("RenderSettings") + "###RenderSettings";
+			Label = Icons.PanelRender + MultiLanguageTextProvider.GetText("RenderSettings") + "###RenderSettings";
 			DocPage = string.Empty;
 
 			paramerterList = new BindableComponent.ParameterList();
@@ -31,7 +31,7 @@ namespace Effekseer.GUI.Dock
 
 			Read();
 
-			TabToolTip = Resources.GetString("RenderSettings");
+			TabToolTip = MultiLanguageTextProvider.GetText("RenderSettings");
 		}
 
 		public void FixValues()

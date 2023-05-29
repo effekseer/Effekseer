@@ -9,7 +9,7 @@ namespace Effekseer.GUI.Dock
 
 		public Culling()
 		{
-			Label = Icons.PanelCulling + Resources.GetString("Culling") + "###Culling";
+			Label = Icons.PanelCulling + MultiLanguageTextProvider.GetText("Culling") + "###Culling";
 			DocPage = "culling.html";
 
 			paramerterList = new BindableComponent.ParameterList();
@@ -21,7 +21,7 @@ namespace Effekseer.GUI.Dock
 
 			Read();
 
-			TabToolTip = Resources.GetString("Culling");
+			TabToolTip = MultiLanguageTextProvider.GetText("Culling");
 		}
 
 		public void FixValues()

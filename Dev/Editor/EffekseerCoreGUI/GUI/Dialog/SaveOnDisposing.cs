@@ -23,7 +23,7 @@ namespace Effekseer.GUI.Dialog
 		public SaveOnDisposing(Action disposed)
 		{
 			title = "Warning";
-			var format = Resources.GetString("ConfirmSaveChanged");
+			var format = MultiLanguageTextProvider.GetText("ConfirmSaveChanged");
 			message = string.Format(format, System.IO.Path.GetFileName(Core.Root.GetFullPath()));
 
 			this.disposed = disposed;

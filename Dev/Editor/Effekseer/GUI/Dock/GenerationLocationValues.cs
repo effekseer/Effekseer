@@ -14,7 +14,7 @@ namespace Effekseer.GUI.Dock
 
 		public GenerationLocationValues()
 		{
-			Label = Icons.PanelGeneration + Resources.GetString("SpawningMethod") + "###SpawningMethod";
+			Label = Icons.PanelGeneration + MultiLanguageTextProvider.GetText("SpawningMethod") + "###SpawningMethod";
 			DocPage = "locationGene.html";
 
 			paramerterList = new BindableComponent.ParameterList();
@@ -28,7 +28,7 @@ namespace Effekseer.GUI.Dock
 
 			Read();
 
-			TabToolTip = Resources.GetString("SpawningMethod");
+			TabToolTip = MultiLanguageTextProvider.GetText("SpawningMethod");
 		}
 
 		public void FixValues()

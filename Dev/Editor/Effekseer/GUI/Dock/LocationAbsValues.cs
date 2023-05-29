@@ -14,7 +14,7 @@ namespace Effekseer.GUI.Dock
 
 		public LocationAbsValues()
 		{
-			Label = Icons.PanelForceField + Resources.GetString("AttractionForces") + "###AttractionForces";
+			Label = Icons.PanelForceField + MultiLanguageTextProvider.GetText("AttractionForces") + "###AttractionForces";
 			DocPage = "locationAbs.html";
 
 			paramerterList = new BindableComponent.ParameterList();
@@ -27,7 +27,7 @@ namespace Effekseer.GUI.Dock
 
 			Read();
 
-			TabToolTip = Resources.GetString("AttractionForces");
+			TabToolTip = MultiLanguageTextProvider.GetText("AttractionForces");
 		}
 
 		public void FixValues()

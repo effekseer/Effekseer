@@ -113,7 +113,7 @@ namespace Effekseer.GUI.BindableComponent
 
 			float buttonSizeX = Manager.NativeManager.GetTextLineHeightWithSpacing() * 2;
 
-			if (Manager.NativeManager.Button(Resources.GetString("Load") + id1, buttonSizeX))
+			if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("Load") + id1, buttonSizeX))
 			{
 				btn_load_Click();
 			}
@@ -139,7 +139,7 @@ namespace Effekseer.GUI.BindableComponent
 
 			if (thumbnail != null)
 			{
-				if (Manager.NativeManager.Button(Resources.GetString("Delete") + id2, buttonSizeX))
+				if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("Delete") + id2, buttonSizeX))
 				{
 					btn_delete_Click();
 				}
@@ -196,7 +196,7 @@ namespace Effekseer.GUI.BindableComponent
 		{
 			if (binding == null) return;
 
-			var filter = Resources.GetString("ImageFilter");
+			var filter = MultiLanguageTextProvider.GetText("ImageFilter");
 			var result = swig.FileDialog.OpenDialog(filter, System.IO.Directory.GetCurrentDirectory());
 
 			if (!string.IsNullOrEmpty(result))
@@ -280,7 +280,7 @@ namespace Effekseer.GUI.BindableComponent
 
 		private bool CheckExtension(string path)
 		{
-			var filters = Resources.GetString("ImageFilter").Split(',');
+			var filters = MultiLanguageTextProvider.GetText("ImageFilter").Split(',');
 			return filters.Any(_ => "." + _ == System.IO.Path.GetExtension(path).ToLower());
 		}
 

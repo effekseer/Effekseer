@@ -69,7 +69,7 @@ namespace Effekseer.GUI
 		{
 			if (!Utils.Misc.IsFullPath(fullPath))
 			{
-				throw new Exception(Resources.GetString("NotAbsolutePathError"));
+				throw new Exception(MultiLanguageTextProvider.GetText("NotAbsolutePathError"));
 			}
 			fullPath = Utils.Misc.BackSlashToSlash(fullPath);
 

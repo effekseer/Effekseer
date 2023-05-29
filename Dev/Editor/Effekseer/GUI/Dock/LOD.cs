@@ -18,7 +18,7 @@ namespace Effekseer.GUI.Dock
 		
 		public LOD()
 		{
-			Label = Icons.PanelLOD + Resources.GetString("LOD_Name") + "###LOD";
+			Label = Icons.PanelLOD + MultiLanguageTextProvider.GetText("LOD_Name") + "###LOD";
 			DocPage = "levelsOfDetails.html";
 		}
 

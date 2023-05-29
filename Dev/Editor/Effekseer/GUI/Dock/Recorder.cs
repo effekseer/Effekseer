@@ -41,10 +41,10 @@ namespace Effekseer.GUI.Dock
 
 		public Recorder()
 		{
-			selectedExportTypes[0] = Resources.GetString("ExportAsSingleImage");
-			selectedExportTypes[1] = Resources.GetString("ExportAsImages");
-			selectedExportTypes[2] = Resources.GetString("ExportAsGifAnimation");
-			selectedExportTypes[3] = Resources.GetString("ExportAsAvi");
+			selectedExportTypes[0] = MultiLanguageTextProvider.GetText("ExportAsSingleImage");
+			selectedExportTypes[1] = MultiLanguageTextProvider.GetText("ExportAsImages");
+			selectedExportTypes[2] = MultiLanguageTextProvider.GetText("ExportAsGifAnimation");
+			selectedExportTypes[3] = MultiLanguageTextProvider.GetText("ExportAsAvi");
 
 			System.OperatingSystem os = System.Environment.OSVersion;
 			if ((os.Platform == PlatformID.Win32NT ||
@@ -52,21 +52,21 @@ namespace Effekseer.GUI.Dock
 			os.Platform == PlatformID.Win32Windows ||
 			os.Platform == PlatformID.WinCE))
 			{
-				selectedExportTypes = selectedExportTypes.Concat(new[] { Resources.GetString("ExportAsH264") }).ToArray();
+				selectedExportTypes = selectedExportTypes.Concat(new[] { MultiLanguageTextProvider.GetText("ExportAsH264") }).ToArray();
 			}
 
-			selectedAlphaTypes[0] = Resources.GetString("None");
-			selectedAlphaTypes[1] = Resources.GetString("UseOriginalImage");
-			selectedAlphaTypes[2] = Resources.GetString("GenerateAlpha");
-			selectedAlphaTypes[3] = Resources.GetString("GenerateAlpha2");
+			selectedAlphaTypes[0] = MultiLanguageTextProvider.GetText("None");
+			selectedAlphaTypes[1] = MultiLanguageTextProvider.GetText("UseOriginalImage");
+			selectedAlphaTypes[2] = MultiLanguageTextProvider.GetText("GenerateAlpha");
+			selectedAlphaTypes[3] = MultiLanguageTextProvider.GetText("GenerateAlpha2");
 
-			selectedStorageTargets[0] = Resources.GetString("StorageGlobal");
-			selectedStorageTargets[1] = Resources.GetString("StorageLocal");
+			selectedStorageTargets[0] = MultiLanguageTextProvider.GetText("StorageGlobal");
+			selectedStorageTargets[1] = MultiLanguageTextProvider.GetText("StorageLocal");
 
-			Label = Icons.PanelRecorder + Resources.GetString("Recorder") + "###Recorder";
+			Label = Icons.PanelRecorder + MultiLanguageTextProvider.GetText("Recorder") + "###Recorder";
 			DocPage = "record.html";
 
-			TabToolTip = Resources.GetString("Recorder");
+			TabToolTip = MultiLanguageTextProvider.GetText("Recorder");
 		}
 
 		public override void OnDisposed()
@@ -100,10 +100,10 @@ namespace Effekseer.GUI.Dock
 			var freq_ = new int[] { Core.Recording.RecordingFrequency.Value };
 			var theNumberOfImageH_ = new int[] { Core.Recording.RecordingHorizontalCount.Value };
 
-			var areaTitle = Resources.GetString("Resolution");
-			var exportedFrameTitle = Resources.GetString("ExportedFrame");
-			var typeTitle = Resources.GetString("Format");
-			var optionsTitle = Resources.GetString("Options");
+			var areaTitle = MultiLanguageTextProvider.GetText("Resolution");
+			var exportedFrameTitle = MultiLanguageTextProvider.GetText("ExportedFrame");
+			var typeTitle = MultiLanguageTextProvider.GetText("Format");
+			var optionsTitle = MultiLanguageTextProvider.GetText("Options");
 
 			selectedTypeIndex = Core.Recording.RecordingExporter.GetValueAsInt();
 			selectedAlphaIndex = Core.Recording.RecordingTransparentMethod.GetValueAsInt();
@@ -126,7 +126,7 @@ namespace Effekseer.GUI.Dock
 				Manager.NativeManager.Columns(2);
 				Manager.NativeManager.SetColumnWidth(0, 120 * dpiScale);
 
-				Manager.NativeManager.Text(Resources.GetString("Width"));
+				Manager.NativeManager.Text(MultiLanguageTextProvider.GetText("Width"));
 
 				Manager.NativeManager.NextColumn();
 
@@ -140,7 +140,7 @@ namespace Effekseer.GUI.Dock
 
 				Manager.NativeManager.NextColumn();
 
-				Manager.NativeManager.Text(Resources.GetString("Height"));
+				Manager.NativeManager.Text(MultiLanguageTextProvider.GetText("Height"));
 
 				Manager.NativeManager.NextColumn();
 
@@ -154,7 +154,7 @@ namespace Effekseer.GUI.Dock
 
 				Manager.NativeManager.NextColumn();
 
-				Manager.NativeManager.Text(Resources.GetString("ShowGuide"));
+				Manager.NativeManager.Text(MultiLanguageTextProvider.GetText("ShowGuide"));
 
 				Manager.NativeManager.NextColumn();
 
@@ -203,7 +203,7 @@ namespace Effekseer.GUI.Dock
 			Manager.NativeManager.Columns(2);
 			Manager.NativeManager.SetColumnWidth(0, 120 * dpiScale);
 
-			Manager.NativeManager.Text(Resources.GetString("StartFrame"));
+			Manager.NativeManager.Text(MultiLanguageTextProvider.GetText("StartFrame"));
 
 			Manager.NativeManager.NextColumn();
 
@@ -216,7 +216,7 @@ namespace Effekseer.GUI.Dock
 
 			Manager.NativeManager.NextColumn();
 
-			Manager.NativeManager.Text(Resources.GetString("EndFrame"));
+			Manager.NativeManager.Text(MultiLanguageTextProvider.GetText("EndFrame"));
 
 			Manager.NativeManager.NextColumn();
 
@@ -229,7 +229,7 @@ namespace Effekseer.GUI.Dock
 
 			Manager.NativeManager.NextColumn();
 
-			Manager.NativeManager.Text(Resources.GetString("Frequency_Frame"));
+			Manager.NativeManager.Text(MultiLanguageTextProvider.GetText("Frequency_Frame"));
 
 			Manager.NativeManager.NextColumn();
 
@@ -260,7 +260,7 @@ namespace Effekseer.GUI.Dock
 			Manager.NativeManager.Columns(2);
 			Manager.NativeManager.SetColumnWidth(0, 120 * dpiScale);
 
-			Manager.NativeManager.Text(Resources.GetString("ExportedFrame"));
+			Manager.NativeManager.Text(MultiLanguageTextProvider.GetText("ExportedFrame"));
 
 			Manager.NativeManager.NextColumn();
 
@@ -285,7 +285,7 @@ namespace Effekseer.GUI.Dock
 			{
 				Manager.NativeManager.NextColumn();
 
-				Manager.NativeManager.Text(Resources.GetString("XCount"));
+				Manager.NativeManager.Text(MultiLanguageTextProvider.GetText("XCount"));
 
 				Manager.NativeManager.NextColumn();
 
@@ -314,7 +314,7 @@ namespace Effekseer.GUI.Dock
 			Manager.NativeManager.Columns(2);
 			Manager.NativeManager.SetColumnWidth(0, 120 * dpiScale);
 
-			Manager.NativeManager.Text(Resources.GetString("MakeTransparent"));
+			Manager.NativeManager.Text(MultiLanguageTextProvider.GetText("MakeTransparent"));
 
 			Manager.NativeManager.NextColumn();
 
@@ -344,7 +344,7 @@ namespace Effekseer.GUI.Dock
 			Manager.NativeManager.Columns(2);
 			Manager.NativeManager.SetColumnWidth(0, 120 * dpiScale);
 
-			Manager.NativeManager.Text(Resources.GetString("StorageTarget"));
+			Manager.NativeManager.Text(MultiLanguageTextProvider.GetText("StorageTarget"));
 
 			Manager.NativeManager.NextColumn();
 
@@ -376,7 +376,7 @@ namespace Effekseer.GUI.Dock
 			float buttonWidth = 100 * dpiScale;
 			Manager.NativeManager.SetCursorPosX(Manager.NativeManager.GetContentRegionAvail().X / 2 - buttonWidth / 2);
 
-			if (Manager.NativeManager.Button(Resources.GetString("Record") + "###btn", buttonWidth))
+			if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("Record") + "###btn", buttonWidth))
 			{
 				var during = Core.Recording.RecordingEndingFrame.Value - Core.Recording.RecordingStartingFrame.Value;
 				if (during < 0)
@@ -508,7 +508,7 @@ namespace Effekseer.GUI.Dock
 
 		private void UpdateProgressDialog()
 		{
-			if (Manager.NativeManager.BeginPopupModal(Resources.GetString("RecorderProgress") + "###RecorderProgress"))
+			if (Manager.NativeManager.BeginPopupModal(MultiLanguageTextProvider.GetText("RecorderProgress") + "###RecorderProgress"))
 			{
 				float dpiScale = Manager.DpiScale;
 
@@ -541,7 +541,7 @@ namespace Effekseer.GUI.Dock
 
 				float buttonWidth = 100 * dpiScale;
 				Manager.NativeManager.SetCursorPosX(Manager.NativeManager.GetContentRegionAvail().X / 2 - buttonWidth / 2 + 8 * dpiScale);
-				if (Manager.NativeManager.Button(Resources.GetString("RecorderAbort"), buttonWidth))
+				if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("RecorderAbort"), buttonWidth))
 				{
 					effectRecorder.End();
 					effectRecorder.Dispose();

@@ -14,7 +14,7 @@ namespace Effekseer.GUI.Dock
 
 		public DepthValues()
 		{
-			Label = Icons.PanelDepth + Resources.GetString("Depth") + "###Depth";
+			Label = Icons.PanelDepth + MultiLanguageTextProvider.GetText("Depth") + "###Depth";
 			DocPage = "depth.html";
 
 			paramerterList = new BindableComponent.ParameterList();
@@ -27,7 +27,7 @@ namespace Effekseer.GUI.Dock
 
 			Read();
 
-			TabToolTip = Resources.GetString("Depth");
+			TabToolTip = MultiLanguageTextProvider.GetText("Depth");
 		}
 
 		public void FixValues()

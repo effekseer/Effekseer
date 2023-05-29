@@ -24,7 +24,7 @@ namespace Effekseer.Plugin
 		{
 			get
 			{
-				return Resources.GetString("EfkPkgFormat");
+				return MultiLanguageTextProvider.GetText("EfkPkgFormat");
 			}
 		}
 
@@ -32,7 +32,7 @@ namespace Effekseer.Plugin
 		{
 			get
 			{
-				return Resources.GetString("ImportEfkPkgFormatDescription");
+				return MultiLanguageTextProvider.GetText("ImportEfkPkgFormatDescription");
 			}
 		}
 
@@ -40,7 +40,7 @@ namespace Effekseer.Plugin
 		{
 			get
 			{
-				return Resources.GetString("EfkPkgFormatFilter");
+				return MultiLanguageTextProvider.GetText("EfkPkgFormatFilter");
 			}
 		}
 

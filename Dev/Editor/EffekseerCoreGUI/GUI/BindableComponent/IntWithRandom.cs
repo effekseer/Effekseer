@@ -127,16 +127,16 @@ namespace Effekseer.GUI.BindableComponent
 
 			if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
 			{
-				txt_r1 = Resources.GetString("Mean");
-				txt_r2 = Resources.GetString("Deviation");
+				txt_r1 = MultiLanguageTextProvider.GetText("Mean");
+				txt_r2 = MultiLanguageTextProvider.GetText("Deviation");
 
 				range_1_min = binding.ValueMin;
 				range_1_max = binding.ValueMax;
 			}
 			else
 			{
-				txt_r1 = Resources.GetString("Min");
-				txt_r2 = Resources.GetString("Max");
+				txt_r1 = MultiLanguageTextProvider.GetText("Min");
+				txt_r2 = MultiLanguageTextProvider.GetText("Max");
 
 				range_1_min = binding.ValueMin;
 				range_1_max = binding.ValueMax;
@@ -218,8 +218,8 @@ namespace Effekseer.GUI.BindableComponent
 				else
 				{
 
-					var txt_r_r1 = Resources.GetString("Gauss");
-					var txt_r_r2 = Resources.GetString("Range");
+					var txt_r_r1 = MultiLanguageTextProvider.GetText("Gauss");
+					var txt_r_r2 = MultiLanguageTextProvider.GetText("Range");
 
 					if (Manager.NativeManager.RadioButton(txt_r_r1 + id_r1, binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude))
 					{
