@@ -63,22 +63,22 @@ namespace Effekseer.GUI.Dock
 
 		class Texts
 		{
-			public string key = MultiLanguageTextProvider.GetText("Fcurve_Key_Name");
-			public string key_frame = MultiLanguageTextProvider.GetText("Fcurve_Key_Frame_Name");
-			public string key_percent = MultiLanguageTextProvider.GetText("Fcurve_Key_Percent_Name");
-			public string frame = MultiLanguageTextProvider.GetText("Frame");
-			public string value = MultiLanguageTextProvider.GetText("Value");
-			public string start = MultiLanguageTextProvider.GetText("Start");
-			public string end = MultiLanguageTextProvider.GetText("End");
-			public string type = MultiLanguageTextProvider.GetText("Complement");
-			public string sampling = MultiLanguageTextProvider.GetText("Sampling");
-			public string left = MultiLanguageTextProvider.GetText("Left");
-			public string right = MultiLanguageTextProvider.GetText("Right");
-			public string offset = MultiLanguageTextProvider.GetText("Offset");
-			public string timelineMode_Name = MultiLanguageTextProvider.GetText("FCurve_TimelineMode_Name");
-			public string timelineMode_Desc = MultiLanguageTextProvider.GetText("FCurve_TimelineMode_Desc");
-			public string offsetMin = MultiLanguageTextProvider.GetText("Min");
-			public string offsetMax = MultiLanguageTextProvider.GetText("Max");
+			public MultiLanguageString key = new MultiLanguageString("Fcurve_Key_Name");
+			public MultiLanguageString key_frame = new MultiLanguageString("Fcurve_Key_Frame_Name");
+			public MultiLanguageString key_percent = new MultiLanguageString("Fcurve_Key_Percent_Name");
+			public MultiLanguageString frame = new MultiLanguageString("Frame");
+			public MultiLanguageString value = new MultiLanguageString("Value");
+			public MultiLanguageString start = new MultiLanguageString("Start");
+			public MultiLanguageString end = new MultiLanguageString("End");
+			public MultiLanguageString type = new MultiLanguageString("Complement");
+			public MultiLanguageString sampling = new MultiLanguageString("Sampling");
+			public MultiLanguageString left = new MultiLanguageString("Left");
+			public MultiLanguageString right = new MultiLanguageString("Right");
+			public MultiLanguageString offset = new MultiLanguageString("Offset");
+			public MultiLanguageString timelineMode_Name = new MultiLanguageString("FCurve_TimelineMode_Name");
+			public MultiLanguageString timelineMode_Desc = new MultiLanguageString("FCurve_TimelineMode_Desc");
+			public MultiLanguageString offsetMin = new MultiLanguageString("Min");
+			public MultiLanguageString offsetMax = new MultiLanguageString("Max");
 		}
 		Texts texts = new Texts();
 
@@ -106,7 +106,7 @@ namespace Effekseer.GUI.Dock
 
 		FCurveMenuContextData menuContext;
 
-		string textMulti;
+		MultiLanguageString textMulti;
 
 		public FCurves()
 		{
@@ -130,7 +130,7 @@ namespace Effekseer.GUI.Dock
 			timeline.Initialize(typeof(Data.Value.FCurveTimelineMode));
 			timeline.InternalLabel = texts.timelineMode_Name + "##Timeline";
 
-			textMulti = MultiLanguageTextProvider.GetText("MultipleValues");
+			textMulti = new MultiLanguageString("MultipleValues");
 
 			OnChanged();
 
@@ -537,7 +537,7 @@ namespace Effekseer.GUI.Dock
 			var fcurveGroups = flattenFcurves.Where(_ => _.Properties.Any(__ => __.IsShown)).ToArray();
 			var currentTimeLineTypes = fcurveGroups.Select(_ => _.GetTimeLineType().Value).Distinct().ToArray();
 
-			var keyText = texts.key;
+			var keyText = texts.key.ToString();
 
 			if (currentTimeLineTypes.Count() == 1)
 			{
@@ -584,7 +584,7 @@ namespace Effekseer.GUI.Dock
 				}
 				else
 				{
-					Manager.NativeManager.InputText(texts.frame, invalidValue, swig.InputTextFlags.ReadOnly);
+					Manager.NativeManager.InputText(texts.frame.ToString(), invalidValue, swig.InputTextFlags.ReadOnly);
 				}
 			}
 
@@ -596,7 +596,7 @@ namespace Effekseer.GUI.Dock
 					var original = target.Item2.Values[target.Item3];
 
 					var frameValue = new float[] { original };
-					if (Manager.NativeManager.DragFloat(texts.value, frameValue))
+					if (Manager.NativeManager.DragFloat(texts.value.ToString(), frameValue))
 					{
 						var diff = frameValue[0] - original;
 
@@ -622,7 +622,7 @@ namespace Effekseer.GUI.Dock
 				}
 				else
 				{
-					Manager.NativeManager.InputText(texts.value, invalidValue, swig.InputTextFlags.ReadOnly);
+					Manager.NativeManager.InputText(texts.value.ToString(), invalidValue, swig.InputTextFlags.ReadOnly);
 				}
 			}
 
@@ -633,7 +633,7 @@ namespace Effekseer.GUI.Dock
 				var ind = target.Item3;
 
 				var leftValues = new float[] { target.Item2.LeftKeys[ind], target.Item2.LeftValues[ind] };
-				if (Manager.NativeManager.DragFloat2(texts.left, leftValues))
+				if (Manager.NativeManager.DragFloat2(texts.left.ToString(), leftValues))
 				{
 					target.Item2.LeftKeys[ind] = leftValues[0];
 					target.Item2.LeftValues[ind] = leftValues[1];
@@ -653,7 +653,7 @@ namespace Effekseer.GUI.Dock
 			}
 			else
 			{
-				Manager.NativeManager.InputText(texts.left, invalidValue, swig.InputTextFlags.ReadOnly);
+				Manager.NativeManager.InputText(texts.left.ToString(), invalidValue, swig.InputTextFlags.ReadOnly);
 			}
 
 			// Right key
@@ -663,7 +663,7 @@ namespace Effekseer.GUI.Dock
 				var ind = target.Item3;
 
 				var rightValues = new float[] { target.Item2.RightKeys[ind], target.Item2.RightValues[ind] };
-				if (Manager.NativeManager.DragFloat2(texts.right, rightValues))
+				if (Manager.NativeManager.DragFloat2(texts.right.ToString(), rightValues))
 				{
 					target.Item2.RightKeys[ind] = rightValues[0];
 					target.Item2.RightValues[ind] = rightValues[1];
@@ -683,7 +683,7 @@ namespace Effekseer.GUI.Dock
 			}
 			else
 			{
-				Manager.NativeManager.InputText(texts.right, invalidValue, swig.InputTextFlags.ReadOnly);
+				Manager.NativeManager.InputText(texts.right.ToString(), invalidValue, swig.InputTextFlags.ReadOnly);
 			}
 
 			// Bézier curve
@@ -692,10 +692,10 @@ namespace Effekseer.GUI.Dock
 				var elements = selectedPoints.Select(_ => _.Item2.Interpolations[_.Item3]).Distinct();
 
 				var targetIndex = elements.Count() == 1 ? elements.First() : type.FieldNames.Count;
-				var targetName = targetIndex < type.FieldNames.Count ? type.FieldNames[targetIndex].ToString() : textMulti;
+				var targetName = targetIndex < type.FieldNames.Count ? type.FieldNames[targetIndex].ToString() : textMulti.ToString();
 				var objects = type.FieldNames;
 
-				if (Manager.NativeManager.BeginCombo(texts.type, targetName, swig.ComboFlags.None))
+				if (Manager.NativeManager.BeginCombo(texts.type.ToString(), targetName, swig.ComboFlags.None))
 				{
 					for (int i = 0; i < objects.Count; i++)
 					{
@@ -724,7 +724,7 @@ namespace Effekseer.GUI.Dock
 			}
 			else
 			{
-				Manager.NativeManager.InputText(texts.type, invalidValue, swig.InputTextFlags.ReadOnly);
+				Manager.NativeManager.InputText(texts.type.ToString(), invalidValue, swig.InputTextFlags.ReadOnly);
 			}
 
 			Manager.NativeManager.Separator();
@@ -742,7 +742,7 @@ namespace Effekseer.GUI.Dock
 			}
 			else
 			{
-				Manager.NativeManager.InputText(texts.start, invalidValue, swig.InputTextFlags.ReadOnly);
+				Manager.NativeManager.InputText(texts.start.ToString(), invalidValue, swig.InputTextFlags.ReadOnly);
 			}
 
 			// End curve
@@ -758,7 +758,7 @@ namespace Effekseer.GUI.Dock
 			}
 			else
 			{
-				Manager.NativeManager.InputText(texts.end, invalidValue, swig.InputTextFlags.ReadOnly);
+				Manager.NativeManager.InputText(texts.end.ToString(), invalidValue, swig.InputTextFlags.ReadOnly);
 			}
 
 			// Sampling
