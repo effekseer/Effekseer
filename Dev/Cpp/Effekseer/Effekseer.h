@@ -940,6 +940,21 @@ enum class RendererMaterialType : int32_t
 };
 
 /**
+	@brief	texture type (except a File material type)
+*/
+enum class RendererTextureType : int32_t
+{
+	Color = 0,
+	Distortion = 0,
+	Normal = 1,
+	Alpha = 2,
+	UVDistortion = 3,
+	Blend = 4,
+	BlendAlpha = 5,
+	BlendUVDistortion = 6,
+};
+
+/**
 	@brief	\~english	Textures used by material
 			\~japanese	マテリアルに使用されるテクスチャ
 */
@@ -3599,30 +3614,22 @@ public:
 };
 
 /**
-@brief	共通描画パラメーター
-@note
-大きく変更される可能性があります。
+	@brief	
+	\~English	Node rendering parameters
+	\~Japanese	ノードの描画パラメーター
+	@note
+	\~English
+	The members of this struct are subject to significant change.
+	\~Japanese
+	この構造体は内容が大きく変更される可能性があります。
 */
 struct EffectBasicRenderParameter
 {
 	int32_t MaterialIndex = -1;
 
-	int32_t ColorTextureIndex;
-
-	int32_t AlphaTextureIndex;
-	TextureWrapType AlphaTexWrapType;
-
-	int32_t UVDistortionIndex;
-	TextureWrapType UVDistortionTexWrapType;
-
-	int32_t BlendTextureIndex;
-	TextureWrapType BlendTexWrapType;
-
-	int32_t BlendAlphaTextureIndex;
-	TextureWrapType BlendAlphaTexWrapType;
-
-	int32_t BlendUVDistortionTextureIndex;
-	TextureWrapType BlendUVDistortionTexWrapType;
+	std::array<int32_t, TextureSlotMax> TextureIndexes;
+	std::array<TextureFilterType, TextureSlotMax> TextureFilters;
+	std::array<TextureWrapType, TextureSlotMax> TextureWraps;
 
 	NodeRendererFlipbookParameter FlipbookParams;
 
@@ -3653,8 +3660,6 @@ struct EffectBasicRenderParameter
 	} EdgeParam;
 
 	AlphaBlendType AlphaBlend;
-	TextureFilterType FilterType;
-	TextureWrapType WrapType;
 	bool ZWrite;
 	bool ZTest;
 	bool Distortion;

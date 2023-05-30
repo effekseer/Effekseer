@@ -243,34 +243,15 @@ struct ParameterRendererCommon
 
 	RendererMaterialType MaterialType = RendererMaterialType::Default;
 
-	//! texture index except a file
-	int32_t ColorTextureIndex = -1;
-
-	//! texture index except a file
-	int32_t Texture2Index = -1;
-
-	//! texture index except a file
-	int32_t AlphaTextureIndex = -1;
-
-	//! texture index except a file
-	int32_t UVDistortionTextureIndex = -1;
-
-	//! texture index except a file
-	int32_t BlendTextureIndex = -1;
-
-	//! texture index except a file
-	int32_t BlendAlphaTextureIndex = -1;
-
-	//! texture index except a file
-	int32_t BlendUVDistortionTextureIndex = -1;
+	//! texture index except a MaterialType::File
+	std::array<int32_t, TextureSlotMax> TextureIndexes{-1, -1, -1, -1, -1, -1, -1, -1};
+	std::array<TextureFilterType, TextureSlotMax> TextureFilters{};
+	std::array<TextureWrapType, TextureSlotMax> TextureWraps{};
 
 	//! material index in MaterialType::File
 	MaterialRenderData MaterialData;
 
 	AlphaBlendType AlphaBlend = AlphaBlendType::Opacity;
-
-	std::array<TextureFilterType, TextureSlotMax> FilterTypes;
-	std::array<TextureWrapType, TextureSlotMax> WrapTypes;
 
 	float UVDistortionIntensity = 1.0f;
 
@@ -332,8 +313,6 @@ struct ParameterRendererCommon
 	{
 		FadeInType = FADEIN_OFF;
 		FadeOutType = FADEOUT_NONE;
-		FilterTypes.fill(TextureFilterType::Nearest);
-		WrapTypes.fill(TextureWrapType::Repeat);
 	}
 
 	void reset()
@@ -369,27 +348,27 @@ struct ParameterRendererCommon
 			if (MaterialType == RendererMaterialType::Default || MaterialType == RendererMaterialType::BackDistortion ||
 				MaterialType == RendererMaterialType::Lighting)
 			{
-				memcpy(&ColorTextureIndex, pos, sizeof(int));
+				memcpy(&TextureIndexes[static_cast<size_t>(RendererTextureType::Color)], pos, sizeof(int));
 				pos += sizeof(int);
 
-				memcpy(&Texture2Index, pos, sizeof(int));
+				memcpy(&TextureIndexes[static_cast<size_t>(RendererTextureType::Normal)], pos, sizeof(int));
 				pos += sizeof(int);
 
 				if (version >= 1600)
 				{
-					memcpy(&AlphaTextureIndex, pos, sizeof(int));
+					memcpy(&TextureIndexes[static_cast<size_t>(RendererTextureType::Alpha)], pos, sizeof(int));
 					pos += sizeof(int);
 
-					memcpy(&UVDistortionTextureIndex, pos, sizeof(int));
+					memcpy(&TextureIndexes[static_cast<size_t>(RendererTextureType::UVDistortion)], pos, sizeof(int));
 					pos += sizeof(int);
 
-					memcpy(&BlendTextureIndex, pos, sizeof(int));
+					memcpy(&TextureIndexes[static_cast<size_t>(RendererTextureType::Blend)], pos, sizeof(int));
 					pos += sizeof(int);
 
-					memcpy(&BlendAlphaTextureIndex, pos, sizeof(int));
+					memcpy(&TextureIndexes[static_cast<size_t>(RendererTextureType::BlendAlpha)], pos, sizeof(int));
 					pos += sizeof(int);
 
-					memcpy(&BlendUVDistortionTextureIndex, pos, sizeof(int));
+					memcpy(&TextureIndexes[static_cast<size_t>(RendererTextureType::BlendUVDistortion)], pos, sizeof(int));
 					pos += sizeof(int);
 				}
 			}
@@ -438,41 +417,41 @@ struct ParameterRendererCommon
 		}
 		else
 		{
-			memcpy(&ColorTextureIndex, pos, sizeof(int));
+			memcpy(&TextureIndexes[static_cast<size_t>(RendererTextureType::Color)], pos, sizeof(int));
 			pos += sizeof(int);
 		}
 
 		memcpy(&AlphaBlend, pos, sizeof(int));
 		pos += sizeof(int);
 
-		memcpy(&FilterTypes[0], pos, sizeof(int));
+		memcpy(&TextureFilters[0], pos, sizeof(int));
 		pos += sizeof(int);
 
-		memcpy(&WrapTypes[0], pos, sizeof(int));
+		memcpy(&TextureWraps[0], pos, sizeof(int));
 		pos += sizeof(int);
 
 		if (version >= 15)
 		{
-			memcpy(&FilterTypes[1], pos, sizeof(int));
+			memcpy(&TextureFilters[1], pos, sizeof(int));
 			pos += sizeof(int);
 
-			memcpy(&WrapTypes[1], pos, sizeof(int));
+			memcpy(&TextureWraps[1], pos, sizeof(int));
 			pos += sizeof(int);
 		}
 		else
 		{
-			FilterTypes[1] = FilterTypes[0];
-			WrapTypes[1] = WrapTypes[0];
+			TextureFilters[1] = TextureFilters[0];
+			TextureWraps[1] = TextureWraps[0];
 		}
 
 		if (version >= 1600)
 		{
 			for (size_t i = 2; i < 7; i++)
 			{
-				memcpy(&FilterTypes[i], pos, sizeof(int));
+				memcpy(&TextureFilters[i], pos, sizeof(int));
 				pos += sizeof(int);
 
-				memcpy(&WrapTypes[i], pos, sizeof(int));
+				memcpy(&TextureWraps[i], pos, sizeof(int));
 				pos += sizeof(int);
 			}
 		}
@@ -480,8 +459,8 @@ struct ParameterRendererCommon
 		{
 			for (size_t i = 2; i < 7; i++)
 			{
-				FilterTypes[i] = FilterTypes[0];
-				WrapTypes[i] = WrapTypes[0];
+				TextureFilters[i] = TextureFilters[0];
+				TextureWraps[i] = TextureWraps[0];
 			}
 		}
 
@@ -588,18 +567,12 @@ struct ParameterRendererCommon
 
 		// copy to basic parameter
 		BasicParameter.AlphaBlend = AlphaBlend;
-		BasicParameter.TextureFilters = FilterTypes;
-		BasicParameter.TextureWraps = WrapTypes;
+		BasicParameter.TextureFilters = TextureFilters;
+		BasicParameter.TextureWraps = TextureWraps;
 
 		BasicParameter.DistortionIntensity = DistortionIntensity;
 		BasicParameter.MaterialType = MaterialType;
-		BasicParameter.TextureIndexes[0] = ColorTextureIndex;
-		BasicParameter.TextureIndexes[1] = Texture2Index;
-		BasicParameter.TextureIndexes[2] = AlphaTextureIndex;
-		BasicParameter.TextureIndexes[3] = UVDistortionTextureIndex;
-		BasicParameter.TextureIndexes[4] = BlendTextureIndex;
-		BasicParameter.TextureIndexes[5] = BlendAlphaTextureIndex;
-		BasicParameter.TextureIndexes[6] = BlendUVDistortionTextureIndex;
+		BasicParameter.TextureIndexes = TextureIndexes;
 
 		BasicParameter.UVDistortionIntensity = UVDistortionIntensity;
 

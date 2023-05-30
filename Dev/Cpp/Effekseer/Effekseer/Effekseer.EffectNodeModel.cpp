@@ -54,7 +54,7 @@ void EffectNodeModel::LoadRendererParameter(unsigned char*& pos, const SettingRe
 			memcpy(&NormalTextureIndex, pos, sizeof(int));
 			pos += sizeof(int);
 			EffekseerPrintDebug("NormalTextureIndex : %d\n", NormalTextureIndex);
-			RendererCommon.Texture2Index = NormalTextureIndex;
+			RendererCommon.TextureIndexes[1] = NormalTextureIndex;
 			RendererCommon.BasicParameter.TextureIndexes[1] = NormalTextureIndex;
 			RendererCommon.BasicParameter.TextureFilters[1] = RendererCommon.BasicParameter.TextureFilters[0];
 			RendererCommon.BasicParameter.TextureWraps[1] = RendererCommon.BasicParameter.TextureWraps[0];

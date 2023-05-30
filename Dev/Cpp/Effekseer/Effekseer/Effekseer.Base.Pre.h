@@ -940,6 +940,21 @@ enum class RendererMaterialType : int32_t
 };
 
 /**
+	@brief	texture type (except a File material type)
+*/
+enum class RendererTextureType : int32_t
+{
+	Color = 0,
+	Distortion = 0,
+	Normal = 1,
+	Alpha = 2,
+	UVDistortion = 3,
+	Blend = 4,
+	BlendAlpha = 5,
+	BlendUVDistortion = 6,
+};
+
+/**
 	@brief	\~english	Textures used by material
 			\~japanese	マテリアルに使用されるテクスチャ
 */
