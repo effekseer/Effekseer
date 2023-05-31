@@ -19,5 +19,5 @@ codesign --force --verify --verbose --sign "$1" "Effekseer/Effekseer.app" --deep
 
 hdiutil create Effekseer.dmg -volname "Effekseer" -srcfolder "Effekseer"
 
-codesign --force --verify --verbose --sign "$1" "Effekseer.dmg" --deep --options runtime --entitlements entitlements_dmg.plist --timestamp
+codesign --force --verify --verbose --sign "$1" "Effekseer.dmg" --deep --options runtime --timestamp
 xcrun altool --notarize-app -t osx -f "Effekseer.dmg" --primary-bundle-id "jp.co.Effekseer.Effekseer" -u "$2" -p "$3"
