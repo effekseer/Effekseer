@@ -123,6 +123,20 @@ namespace Effekseer.Asset
 		}
 	}
 
+	[AttributeUsage(
+		AttributeTargets.Property | AttributeTargets.Field,
+		AllowMultiple = false,
+		Inherited = false)]
+	public class DefaultValueAttribute : Attribute
+	{
+		public object Value;
+	
+		public DefaultValueAttribute(Type type, params object[] args)
+		{
+			Value = Activator.CreateInstance(type, args);
+		}
+	}
+
 
 	public class EffectAssetEnvironment : PartsTreeSystem.Environment
 	{
@@ -430,6 +444,7 @@ namespace Effekseer.Asset
 		[CanSelectDynamicEquation(true)]
 		public Float floatTest = new Float();
 
+		[DefaultValue(typeof(Vector3), 10f,10f,10f)]
 		[CanSelectDynamicEquation(true)]
 		public Vector3 vec3Test = new Vector3();
 
@@ -604,6 +619,16 @@ namespace Effekseer.Asset
 		public bool IsDynamicEquationEnabled = false;
 		public DynamicEquation DynamicEquation;
 		public Vector3F Value;
+
+		public Vector3(
+			float x = 0,
+			float y = 0,
+			float z = 0)
+		{
+			Value.X = x; 
+			Value.Y = y; 
+			Value.Z = z;
+		}
 	}
 
 	public class Vector3WithRange
