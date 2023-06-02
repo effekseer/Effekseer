@@ -826,6 +826,25 @@ namespace Effekseer.GUI.Widgets
 					{
 						if (canSelectDynamicEquation)
 						{
+
+							if (Manager.NativeManager.Button(Resources.GetString("ResetParam_Name") + state.Id + "_Reset"))
+							{
+								//reset
+								var defaultValueAttribute = Functions.GetAttributeFromList<DefaultValueAttribute>(state.Attriubutes);
+								object defaultValue = defaultValueAttribute?.Value;
+
+								if (defaultValue is Vector3)
+								{
+									vec3WithDynamicValue = defaultValue as Vector3;
+									isEdited = true;
+								}
+							}
+
+							if (Functions.CanShowTip())
+							{
+								Manager.NativeManager.SetTooltip(Resources.GetString("ResetParam_Desc"));
+							}
+
 							if (DynamicSelector.Popup(
 								state.Id,
 								vec3WithDynamicValue.DynamicEquation,

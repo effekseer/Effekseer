@@ -91,6 +91,12 @@ namespace Effekseer.GUI.BindableComponent
 			return filepath;
 		}
 
+		public static T GetAttributeFromList<T>(List<Attribute> attributes) where T : Attribute
+		{
+			return attributes.Where(_ => _.GetType() == typeof(T)
+									).FirstOrDefault() as T;
+		}
+
 		public static bool CanShowTip()
 		{
 			return Manager.NativeManager.IsItemHovered() && Manager.NativeManager.GetHoveredIDTimer() > 0.25f;
