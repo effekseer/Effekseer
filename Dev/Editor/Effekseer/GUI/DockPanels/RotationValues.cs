@@ -15,7 +15,7 @@ namespace Effekseer.DockPanels
 			inspector = new Inspector();
 			Label = Icons.PanelRotation + "Inspector_RotationValues###Inspector_RotationValues";
 
-			TabToolTip = Resources.GetString("Rotation");
+			TabToolTip = MultiLanguageTextProvider.GetText("Rotation");
 			DocPage = "rotation.html";
 		}
 

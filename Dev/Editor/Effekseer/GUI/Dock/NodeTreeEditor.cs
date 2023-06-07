@@ -31,7 +31,7 @@ namespace Effekseer.GUI.Dock
 
 		public NodeTreeEditor()
 		{
-			Label = Icons.PanelNodeTree + Resources.GetString("NodeTreeEditor") + "###NodeTreeEditor";
+			Label = Icons.PanelNodeTree + MultiLanguageTextProvider.GetText("NodeTreeEditor") + "###NodeTreeEditor";
 
 			Core.OnAfterNew += OnRenew;
 			Core.OnAfterLoad += OnRenew;
@@ -89,7 +89,7 @@ namespace Effekseer.GUI.Dock
 
 			Renew();
 
-			TabToolTip = Resources.GetString("NodeTree");
+			TabToolTip = MultiLanguageTextProvider.GetText("NodeTree");
 		}
 
 		override protected void UpdateInternal()

@@ -16,8 +16,8 @@ namespace Effekseer.DockPanels
 		public Option()
 		{
 			inspector = new Inspector();
-			Label = Icons.PanelOptions + Resources.GetString("Inspector_Options") + "###Inspector_Options";
-			TabToolTip = Resources.GetString("Options");
+			Label = Icons.PanelOptions + MultiLanguageTextProvider.GetText("Inspector_Options") + "###Inspector_Options";
+			TabToolTip = MultiLanguageTextProvider.GetText("Options");
 			DocPage = "options.html";
 		}
 

@@ -15,7 +15,7 @@ namespace Effekseer.DockPanels
 			inspector = new Inspector();
 			Label = Icons.PanelRender + "Inspector_RenderSettings###Inspector_RenderSettings";
 
-			TabToolTip = Resources.GetString("RenderSettings");
+			TabToolTip = MultiLanguageTextProvider.GetText("RenderSettings");
 			DocPage = "Renderer.html";
 		}
 

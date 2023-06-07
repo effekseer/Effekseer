@@ -17,7 +17,7 @@ namespace Effekseer.GUI.Widgets
 	{
 		public static bool Popup(string id, DynamicEquation equation, ref bool enabled)
 		{
-			if (Manager.NativeManager.RadioButton(Resources.GetString("DynamicFixed") + id + "_1", !enabled))
+			if (Manager.NativeManager.RadioButton(MultiLanguageTextProvider.GetText("DynamicFixed") + id + "_1", !enabled))
 			{
 				enabled = false;
 				equation = null;
@@ -25,7 +25,7 @@ namespace Effekseer.GUI.Widgets
 
 			Manager.NativeManager.SameLine();
 
-			if (Manager.NativeManager.RadioButton(Resources.GetString("DynamicDynamic") + id + "_2", enabled))
+			if (Manager.NativeManager.RadioButton(MultiLanguageTextProvider.GetText("DynamicDynamic") + id + "_2", enabled))
 			{
 				enabled = true;
 
@@ -39,7 +39,7 @@ namespace Effekseer.GUI.Widgets
 
 		public static bool Popup(string id, DynamicEquation equation1, DynamicEquation equation2, ref bool enabled)
 		{
-			if (Manager.NativeManager.RadioButton(Resources.GetString("DynamicFixed") + id + "_1", !enabled))
+			if (Manager.NativeManager.RadioButton(MultiLanguageTextProvider.GetText("DynamicFixed") + id + "_1", !enabled))
 			{
 				enabled = false;
 				equation1 = null;
@@ -48,7 +48,7 @@ namespace Effekseer.GUI.Widgets
 
 			Manager.NativeManager.SameLine();
 
-			if (Manager.NativeManager.RadioButton(Resources.GetString("DynamicDynamic") + id + "_2", enabled))
+			if (Manager.NativeManager.RadioButton(MultiLanguageTextProvider.GetText("DynamicDynamic") + id + "_2", enabled))
 			{
 				enabled = true;
 
@@ -121,7 +121,7 @@ namespace Effekseer.GUI.Widgets
 		{
 			Manager.NativeManager.PushItemWidth(Manager.NativeManager.GetColumnWidth() - 48 * Manager.DpiScale);
 
-			Manager.NativeManager.Text(Resources.GetString("DynamicEq"));
+			Manager.NativeManager.Text(MultiLanguageTextProvider.GetText("DynamicEq"));
 			Manager.NativeManager.SameLine();
 
 
@@ -148,7 +148,7 @@ namespace Effekseer.GUI.Widgets
 		{
 			Manager.NativeManager.PushItemWidth(Manager.NativeManager.GetColumnWidth() - 48 * Manager.DpiScale);
 
-			Manager.NativeManager.Text(Resources.GetString("DynamicEq"));
+			Manager.NativeManager.Text(MultiLanguageTextProvider.GetText("DynamicEq"));
 			Manager.NativeManager.SameLine();
 
 
@@ -157,7 +157,7 @@ namespace Effekseer.GUI.Widgets
 
 			bool isChanged = false;
 
-			isChanged = EquationsCombo(Resources.GetString("Min"), id, ref currentIndex, equations);
+			isChanged = EquationsCombo(MultiLanguageTextProvider.GetText("Min"), id, ref currentIndex, equations);
 
 			var selectedEquation = equations.Count > currentIndex ? equations[currentIndex] : null;
 
@@ -175,7 +175,7 @@ namespace Effekseer.GUI.Widgets
 		{
 			Manager.NativeManager.PushItemWidth(Manager.NativeManager.GetColumnWidth() - 48 * Manager.DpiScale);
 
-			Manager.NativeManager.Text(Resources.GetString("DynamicEq"));
+			Manager.NativeManager.Text(MultiLanguageTextProvider.GetText("DynamicEq"));
 			Manager.NativeManager.SameLine();
 
 			var equations = CoreContext.SelectedEffect.Asset.DynamicEquations;
@@ -183,7 +183,7 @@ namespace Effekseer.GUI.Widgets
 
 			bool isChanged = false;
 
-			isChanged = EquationsCombo(Resources.GetString("Max"), id, ref currentIndex, equations);
+			isChanged = EquationsCombo(MultiLanguageTextProvider.GetText("Max"), id, ref currentIndex, equations);
 
 			var selectedEquation = equations.Count > currentIndex ? equations[currentIndex] : null;
 

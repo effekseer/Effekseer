@@ -136,7 +136,7 @@ namespace Effekseer.GUI.Widgets
 				Manager.NativeManager.SameLine();
 
 				bool[] v_isInfinite = new[] { iValue.Infinite };
-				var infLabel = Resources.GetString("Infinite");
+				var infLabel = MultiLanguageTextProvider.GetText("Infinite");
 				if (Manager.NativeManager.Checkbox(infLabel + state.Id + "_IsInfinite", v_isInfinite))
 				{
 					iValue.Infinite = v_isInfinite[0];
@@ -202,8 +202,8 @@ namespace Effekseer.GUI.Widgets
 						}
 						else
 						{
-							var txt_r_r1 = Resources.GetString("Gauss");
-							var txt_r_r2 = Resources.GetString("Range");
+							var txt_r_r1 = MultiLanguageTextProvider.GetText("Gauss");
+							var txt_r_r2 = MultiLanguageTextProvider.GetText("Range");
 
 							if (Manager.NativeManager.RadioButton(txt_r_r1 + state.Id + "_Gauss", intWithRange.DrawnAs == Data.DrawnAs.CenterAndAmplitude))
 							{
@@ -236,8 +236,8 @@ namespace Effekseer.GUI.Widgets
 				if (intWithRange.DrawnAs == Data.DrawnAs.CenterAndAmplitude && !intWithRange.IsDynamicEquationEnabled)
 				{
 					internalValue = new int[] { intWithRange.Center, intWithRange.Amplitude };
-					txt_r1 = Resources.GetString("Mean");
-					txt_r2 = Resources.GetString("Deviation");
+					txt_r1 = MultiLanguageTextProvider.GetText("Mean");
+					txt_r2 = MultiLanguageTextProvider.GetText("Deviation");
 
 					range_1_min = intWithRange.Min;
 					range_1_max = intWithRange.Max;
@@ -245,8 +245,8 @@ namespace Effekseer.GUI.Widgets
 				else
 				{
 					internalValue = new int[] { intWithRange.Min, intWithRange.Max };
-					txt_r1 = Resources.GetString("Min");
-					txt_r2 = Resources.GetString("Max");
+					txt_r1 = MultiLanguageTextProvider.GetText("Min");
+					txt_r2 = MultiLanguageTextProvider.GetText("Max");
 
 					range_1_min = intWithRange.Min;
 					range_1_max = intWithRange.Max;
@@ -467,8 +467,8 @@ namespace Effekseer.GUI.Widgets
 						}
 						else
 						{
-							var txt_r_r1 = Resources.GetString("Gauss");
-							var txt_r_r2 = Resources.GetString("Range");
+							var txt_r_r1 = MultiLanguageTextProvider.GetText("Gauss");
+							var txt_r_r2 = MultiLanguageTextProvider.GetText("Range");
 
 							if (Manager.NativeManager.RadioButton(txt_r_r1 + state.Id + "_Gauss", floatWithRange.DrawnAs == Data.DrawnAs.CenterAndAmplitude))
 							{
@@ -501,8 +501,8 @@ namespace Effekseer.GUI.Widgets
 				if (floatWithRange.DrawnAs == Data.DrawnAs.CenterAndAmplitude && !floatWithRange.IsDynamicEquationEnabled)
 				{
 					internalValue = new float[] { floatWithRange.Center, floatWithRange.Amplitude };
-					txt_r1 = Resources.GetString("Mean");
-					txt_r2 = Resources.GetString("Deviation");
+					txt_r1 = MultiLanguageTextProvider.GetText("Mean");
+					txt_r2 = MultiLanguageTextProvider.GetText("Deviation");
 
 					range_1_min = floatWithRange.Min;
 					range_1_max = floatWithRange.Max;
@@ -510,8 +510,8 @@ namespace Effekseer.GUI.Widgets
 				else
 				{
 					internalValue = new float[] { floatWithRange.Min, floatWithRange.Max };
-					txt_r1 = Resources.GetString("Min");
-					txt_r2 = Resources.GetString("Max");
+					txt_r1 = MultiLanguageTextProvider.GetText("Min");
+					txt_r2 = MultiLanguageTextProvider.GetText("Max");
 
 					range_1_min = floatWithRange.Min;
 					range_1_max = floatWithRange.Max;
@@ -665,8 +665,8 @@ namespace Effekseer.GUI.Widgets
 
 					if (Manager.NativeManager.BeginPopupContextItem(state.Id))
 					{
-						var txt_r_r1 = Resources.GetString("Gauss");
-						var txt_r_r2 = Resources.GetString("Range");
+						var txt_r_r1 = MultiLanguageTextProvider.GetText("Gauss");
+						var txt_r_r2 = MultiLanguageTextProvider.GetText("Range");
 
 						if (Manager.NativeManager.RadioButton(txt_r_r1 + state.Id + "_Gauss", vec2Value.DrawnAs == Data.DrawnAs.CenterAndAmplitude))
 						{
@@ -696,16 +696,16 @@ namespace Effekseer.GUI.Widgets
 					guiValue1 = new float[] { vec2Value.X.Center, vec2Value.Y.Center };
 					guiValue2 = new float[] { vec2Value.X.Amplitude, vec2Value.Y.Amplitude };
 
-					txt_r1 = Resources.GetString("Mean");
-					txt_r2 = Resources.GetString("Deviation");
+					txt_r1 = MultiLanguageTextProvider.GetText("Mean");
+					txt_r2 = MultiLanguageTextProvider.GetText("Deviation");
 				}
 				else
 				{
 					guiValue1 = new float[] { vec2Value.X.Min, vec2Value.Y.Min };
 					guiValue2 = new float[] { vec2Value.X.Max, vec2Value.Y.Max };
 
-					txt_r1 = Resources.GetString("Min");
-					txt_r2 = Resources.GetString("Max");
+					txt_r1 = MultiLanguageTextProvider.GetText("Min");
+					txt_r2 = MultiLanguageTextProvider.GetText("Max");
 				}
 
 				Manager.NativeManager.PushItemWidth(Manager.NativeManager.GetColumnWidth() - 48 * Manager.DpiScale);
@@ -827,7 +827,7 @@ namespace Effekseer.GUI.Widgets
 						if (canSelectDynamicEquation)
 						{
 
-							if (Manager.NativeManager.Button(Resources.GetString("ResetParam_Name") + state.Id + "_Reset"))
+							if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("ResetParam_Name") + state.Id + "_Reset"))
 							{
 								//reset
 								var defaultValueAttribute = Functions.GetAttributeFromList<DefaultValueAttribute>(state.Attriubutes);
@@ -842,7 +842,7 @@ namespace Effekseer.GUI.Widgets
 
 							if (Functions.CanShowTip())
 							{
-								Manager.NativeManager.SetTooltip(Resources.GetString("ResetParam_Desc"));
+								Manager.NativeManager.SetTooltip(MultiLanguageTextProvider.GetText("ResetParam_Desc"));
 							}
 
 							if (DynamicSelector.Popup(
@@ -943,8 +943,8 @@ namespace Effekseer.GUI.Widgets
 						}
 						else
 						{
-							var txt_r_r1 = Resources.GetString("Gauss");
-							var txt_r_r2 = Resources.GetString("Range");
+							var txt_r_r1 = MultiLanguageTextProvider.GetText("Gauss");
+							var txt_r_r2 = MultiLanguageTextProvider.GetText("Range");
 
 							if (Manager.NativeManager.RadioButton(txt_r_r1 + state.Id + "_Gauss", vec3Value.DrawnAs == Data.DrawnAs.CenterAndAmplitude))
 							{
@@ -975,16 +975,16 @@ namespace Effekseer.GUI.Widgets
 					guiValue1 = new float[] { vec3Value.X.Center, vec3Value.Y.Center, vec3Value.Z.Center };
 					guiValue2 = new float[] { vec3Value.X.Amplitude, vec3Value.Y.Amplitude, vec3Value.Z.Amplitude };
 
-					txt_r1 = Resources.GetString("Mean");
-					txt_r2 = Resources.GetString("Deviation");
+					txt_r1 = MultiLanguageTextProvider.GetText("Mean");
+					txt_r2 = MultiLanguageTextProvider.GetText("Deviation");
 				}
 				else
 				{
 					guiValue1 = new float[] { vec3Value.X.Min, vec3Value.Y.Min, vec3Value.Z.Min };
 					guiValue2 = new float[] { vec3Value.X.Max, vec3Value.Y.Max, vec3Value.Z.Max };
 
-					txt_r1 = Resources.GetString("Min");
-					txt_r2 = Resources.GetString("Max");
+					txt_r1 = MultiLanguageTextProvider.GetText("Min");
+					txt_r2 = MultiLanguageTextProvider.GetText("Max");
 				}
 
 				Manager.NativeManager.PushItemWidth(Manager.NativeManager.GetColumnWidth() - 48 * Manager.DpiScale);

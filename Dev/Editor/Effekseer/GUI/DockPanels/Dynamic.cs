@@ -19,7 +19,7 @@ namespace Effekseer.DockPanels
 			equationInspector = new Inspector();
 			Label = Icons.PanelDynamicParams + "Inspector_DynamicParameter###Inspector_DynamicParameter";
 
-			TabToolTip = Resources.GetString("DynamicParameter_Name");
+			TabToolTip = MultiLanguageTextProvider.GetText("DynamicParameter_Name");
 			DocPage = "dynamicParameter.html";
 		}
 
@@ -34,14 +34,14 @@ namespace Effekseer.DockPanels
 			// TODO: Remove this when remove the previous version
 			Manager.NativeManager.PushID(999);
 
-			Manager.NativeManager.Text(Resources.GetString("DynamicInput"));
+			Manager.NativeManager.Text(MultiLanguageTextProvider.GetText("DynamicInput"));
 
 			// TODO insert inspector of DynamicInput here
 
 
 			Manager.NativeManager.Separator();
 
-			Manager.NativeManager.Text(Resources.GetString("DynamicEquation"));
+			Manager.NativeManager.Text(MultiLanguageTextProvider.GetText("DynamicEquation"));
 
 			float width = Manager.NativeManager.GetContentRegionAvail().X;
 
@@ -56,7 +56,7 @@ namespace Effekseer.DockPanels
 
 			Manager.NativeManager.SameLine();
 
-			if (Manager.NativeManager.Button(Resources.GetString("DynamicAdd") + "###DynamicAdd"))
+			if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("DynamicAdd") + "###DynamicAdd"))
 			{
 				var newEquation = new Asset.DynamicEquation();
 				newEquation.Name = "New Expression";
@@ -67,7 +67,7 @@ namespace Effekseer.DockPanels
 
 			Manager.NativeManager.SameLine();
 
-			if (Manager.NativeManager.Button(Resources.GetString("DynamicDelete") + "###DynamicDelete"))
+			if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("DynamicDelete") + "###DynamicDelete"))
 			{
 				CoreContext.SelectedEffect.Asset.DynamicEquations.Remove(selectedEquation);
 			}
@@ -84,7 +84,7 @@ namespace Effekseer.DockPanels
 					selectedEquation, CoreContext.Environment);
 
 
-				if (Manager.NativeManager.Button(Resources.GetString("Compile") + "###DynamicCompile"))
+				if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("Compile") + "###DynamicCompile"))
 				{
 					var compiler = new InternalScript.Compiler();
 					var result = compiler.Compile(selectedEquation.Code);
