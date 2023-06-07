@@ -15,7 +15,7 @@ namespace Effekseer.DockPanels
 			inspector = new Inspector();
 			Label = Icons.PanelLocation + "Inspector_LocationValues###Inspector_LocationValues";
 
-			TabToolTip = Resources.GetString("Position");
+			TabToolTip = MultiLanguageTextProvider.GetText("Position");
 			DocPage = "location.html";
 		}
 

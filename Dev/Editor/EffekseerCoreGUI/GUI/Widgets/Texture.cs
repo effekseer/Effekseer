@@ -42,7 +42,7 @@ namespace Effekseer.GUI.Widgets
 
 				float buttonSizeX = Manager.NativeManager.GetTextLineHeightWithSpacing() * 2;
 
-				if (Manager.NativeManager.Button(Resources.GetString("Load") + state.Id + "_Load", buttonSizeX))
+				if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("Load") + state.Id + "_Load", buttonSizeX))
 				{
 					btn_load_Click(ref texture, guiState);
 				}
@@ -68,7 +68,7 @@ namespace Effekseer.GUI.Widgets
 
 				if (guiState.thumbnail != null)
 				{
-					if (Manager.NativeManager.Button(Resources.GetString("Delete") + state.Id + "_Delete", buttonSizeX))
+					if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("Delete") + state.Id + "_Delete", buttonSizeX))
 					{
 						btn_delete_Click(ref texture, guiState);
 					}
@@ -133,7 +133,7 @@ namespace Effekseer.GUI.Widgets
 
 		static void btn_load_Click(ref Asset.TextureAsset texture, State guiState)
 		{
-			var filter = Resources.GetString("ImageFilter");
+			var filter = MultiLanguageTextProvider.GetText("ImageFilter");
 			var result = swig.FileDialog.OpenDialog(filter, System.IO.Directory.GetCurrentDirectory());
 
 			if (!string.IsNullOrEmpty(result))
@@ -200,7 +200,7 @@ namespace Effekseer.GUI.Widgets
 
 		static bool CheckExtension(string path)
 		{
-			var filters = Resources.GetString("ImageFilter").Split(',');
+			var filters = MultiLanguageTextProvider.GetText("ImageFilter").Split(',');
 			return filters.Any(_ => "." + _ == System.IO.Path.GetExtension(path).ToLower());
 		}
 

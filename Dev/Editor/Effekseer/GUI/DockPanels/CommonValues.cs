@@ -15,7 +15,7 @@ namespace Effekseer.DockPanels
 			inspector = new Inspector();
 			Label = Icons.PanelCommon + "Inspector_CommonValues###Inspector_BasicSettings";
 
-			TabToolTip = Resources.GetString("BasicSettings");
+			TabToolTip = MultiLanguageTextProvider.GetText("BasicSettings");
 			DocPage = "common.html";
 		}
 

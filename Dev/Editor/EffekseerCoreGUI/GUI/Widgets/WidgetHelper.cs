@@ -18,14 +18,14 @@ namespace Effekseer.GUI.Widgets
 		{
 			var ret = false;
 
-			if (Manager.NativeManager.Button(Resources.GetString("ResetParam_Name") + id))
+			if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("ResetParam_Name") + id))
 			{
 				ret = true;
 			}
 
 			if (CanShowTip())
 			{
-				Manager.NativeManager.SetTooltip(Resources.GetString("ResetParam_Desc"));
+				Manager.NativeManager.SetTooltip(MultiLanguageTextProvider.GetText("ResetParam_Desc"));
 			}
 
 			return ret;
@@ -65,7 +65,7 @@ namespace Effekseer.GUI.Widgets
 
 			if (WidgetHelper.CanShowTip())
 			{
-				Manager.NativeManager.SetTooltip(Resources.GetString("Panel_Copy_Desc"));
+				Manager.NativeManager.SetTooltip(MultiLanguageTextProvider.GetText("Panel_Copy_Desc"));
 			}
 
 			Manager.NativeManager.SameLine();
@@ -87,7 +87,7 @@ namespace Effekseer.GUI.Widgets
 
 			if (WidgetHelper.CanShowTip())
 			{
-				Manager.NativeManager.SetTooltip(Resources.GetString("Panel_Paste_Desc"));
+				Manager.NativeManager.SetTooltip(MultiLanguageTextProvider.GetText("Panel_Paste_Desc"));
 			}
 		}
 	}
