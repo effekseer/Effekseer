@@ -7,7 +7,6 @@
 
 #include "EffekseerRendererDX9.ModelRenderer.h"
 #include "EffekseerRendererDX9.Shader.h"
-#include "EffekseerRendererDX9.VertexBuffer.h"
 #include "GraphicsDevice.h"
 
 //-----------------------------------------------------------------------------------

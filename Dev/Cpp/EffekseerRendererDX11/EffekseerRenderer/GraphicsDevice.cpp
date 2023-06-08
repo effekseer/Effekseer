@@ -312,6 +312,11 @@ bool VertexBuffer::Allocate(const void* src, int32_t size, bool isDynamic)
 
 	buffer_ = Effekseer::CreateUniqueReference(vb);
 
+	if (isDynamic_)
+	{
+		blocks_.Allocate(size, 0);
+	}
+
 	return true;
 }
 
@@ -363,6 +368,11 @@ void VertexBuffer::UpdateData(const void* src, int32_t size, int32_t offset)
 	memcpy(dst, src, size);
 
 	graphicsDevice_->GetContext()->Unmap(buffer_.get(), 0);
+}
+
+void VertexBuffer::MakeAllDirtied()
+{
+	blocks_.Allocate(size_, 0);
 }
 
 IndexBuffer::IndexBuffer(GraphicsDevice* graphicsDevice)

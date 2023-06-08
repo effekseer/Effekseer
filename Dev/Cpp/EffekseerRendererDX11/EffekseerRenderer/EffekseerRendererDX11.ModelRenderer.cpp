@@ -7,7 +7,6 @@
 
 #include "EffekseerRendererDX11.ModelRenderer.h"
 #include "EffekseerRendererDX11.Shader.h"
-#include "EffekseerRendererDX11.VertexBuffer.h"
 
 namespace EffekseerRendererDX11
 {

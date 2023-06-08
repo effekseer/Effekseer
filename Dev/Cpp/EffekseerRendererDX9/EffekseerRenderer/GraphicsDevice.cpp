@@ -789,7 +789,10 @@ Effekseer::Backend::VertexBufferRef GraphicsDevice::CreateVertexBuffer(int32_t s
 		return nullptr;
 	}
 
-	ret->UpdateData(initialData, size, 0);
+	if (initialData != nullptr)
+	{
+		ret->UpdateData(initialData, size, 0);
+	}
 
 	return ret;
 }
@@ -803,7 +806,10 @@ Effekseer::Backend::IndexBufferRef GraphicsDevice::CreateIndexBuffer(int32_t ele
 		return nullptr;
 	}
 
-	ret->UpdateData(initialData, elementCount * (stride == Effekseer::Backend::IndexBufferStrideType::Stride4 ? 4 : 2), 0);
+	if (initialData != nullptr)
+	{
+		ret->UpdateData(initialData, elementCount * (stride == Effekseer::Backend::IndexBufferStrideType::Stride4 ? 4 : 2), 0);
+	}
 
 	return ret;
 }

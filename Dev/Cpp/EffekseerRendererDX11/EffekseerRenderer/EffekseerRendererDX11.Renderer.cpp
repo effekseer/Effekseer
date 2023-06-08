@@ -11,7 +11,6 @@
 #include "EffekseerRendererDX11.MaterialLoader.h"
 #include "EffekseerRendererDX11.ModelRenderer.h"
 #include "EffekseerRendererDX11.Shader.h"
-#include "EffekseerRendererDX11.VertexBuffer.h"
 
 #include "../../EffekseerRendererCommon/EffekseerRenderer.Renderer_Impl.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.RibbonRendererBase.h"
@@ -272,7 +271,6 @@ RendererRef Renderer::Create(
 RendererImplemented::RendererImplemented(int32_t squareMaxCount)
 	: m_device(nullptr)
 	, m_context(nullptr)
-	, m_vertexBuffer(nullptr)
 	, m_squareMaxCount(squareMaxCount)
 	, m_coordinateSystem(::Effekseer::CoordinateSystem::RH)
 	, m_renderState(nullptr)
@@ -309,7 +307,6 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_DELETE(m_state);
 
 	ES_SAFE_DELETE(m_renderState);
-	ES_SAFE_DELETE(m_vertexBuffer);
 }
 
 //----------------------------------------------------------------------------------
@@ -355,9 +352,7 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 
 	// generate a vertex buffer
 	{
-		m_vertexBuffer = VertexBuffer::Create(this, EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * m_squareMaxCount * 4, true, false);
-		if (m_vertexBuffer == nullptr)
-			return false;
+		GetImpl()->InternalVertexBuffer = std::make_shared<EffekseerRenderer::VertexBufferRing>(graphicsDevice_, EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * m_squareMaxCount * 4, 1);
 	}
 
 	if (!EffekseerRenderer::GenerateIndexDataStride<int16_t>(graphicsDevice_, m_squareMaxCount, indexBuffer_, indexBufferForWireframe_))
@@ -539,14 +534,6 @@ ID3D11DeviceContext* RendererImplemented::GetContext()
 	return m_context;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-VertexBuffer* RendererImplemented::GetVertexBuffer()
-{
-	return m_vertexBuffer;
-}
-
 Effekseer::Backend::IndexBufferRef RendererImplemented::GetIndexBuffer()
 {
 	if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
@@ -670,17 +657,6 @@ void RendererImplemented::SetDistortingCallback(EffekseerRenderer::DistortingCal
 void RendererImplemented::SetVertexBuffer(ID3D11Buffer* vertexBuffer, int32_t size)
 {
 	ID3D11Buffer* vBuf = vertexBuffer;
-	uint32_t vertexSize = size;
-	uint32_t offset = 0;
-	GetContext()->IASetVertexBuffers(0, 1, &vBuf, &vertexSize, &offset);
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void RendererImplemented::SetVertexBuffer(VertexBuffer* vertexBuffer, int32_t size)
-{
-	ID3D11Buffer* vBuf = vertexBuffer->GetInterface();
 	uint32_t vertexSize = size;
 	uint32_t offset = 0;
 	GetContext()->IASetVertexBuffers(0, 1, &vBuf, &vertexSize, &offset);
@@ -861,7 +837,7 @@ Effekseer::Backend::GraphicsDeviceRef RendererImplemented::GetGraphicsDevice() c
 
 void RendererImplemented::ResetStateForDefferedContext()
 {
-	m_vertexBuffer->DiscardForcely();
+	GetImpl()->InternalVertexBuffer->GetCurrentBuffer().DownCast<Backend::VertexBuffer>()->MakeAllDirtied();
 }
 
 } // namespace EffekseerRendererDX11

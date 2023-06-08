@@ -8,7 +8,6 @@
 #include "EffekseerRendererLLGI.MaterialLoader.h"
 #include "EffekseerRendererLLGI.ModelRenderer.h"
 #include "EffekseerRendererLLGI.Shader.h"
-#include "EffekseerRendererLLGI.VertexBuffer.h"
 
 #include "../EffekseerRendererCommon/EffekseerRenderer.RibbonRendererBase.h"
 #include "../EffekseerRendererCommon/EffekseerRenderer.RingRendererBase.h"
@@ -273,16 +272,8 @@ LLGI::PipelineState* RendererImplemented::GetOrCreatePiplineState()
 	return piplineState;
 }
 
-void RendererImplemented::GenerateVertexBuffer()
-{
-	m_vertexBuffer =
-		VertexBuffer::Create(graphicsDevice_.Get(), EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * m_squareMaxCount * 4, true, false);
-}
-
 RendererImplemented::RendererImplemented(int32_t squareMaxCount)
 	: graphicsDevice_(nullptr)
-	, m_vertexBuffer(nullptr)
-	//, m_indexBuffer(nullptr)
 	, m_squareMaxCount(squareMaxCount)
 	, m_coordinateSystem(::Effekseer::CoordinateSystem::RH)
 	, m_renderState(nullptr)
@@ -320,7 +311,6 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_DELETE(shader_ad_distortion_);
 
 	ES_SAFE_DELETE(m_renderState);
-	ES_SAFE_DELETE(m_vertexBuffer);
 
 	if (materialCompiler_ != nullptr)
 	{
@@ -360,9 +350,7 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 
 	// Generate vertex buffer
 	{
-		GenerateVertexBuffer();
-		if (m_vertexBuffer == nullptr)
-			return false;
+		GetImpl()->InternalVertexBuffer = std::make_shared<EffekseerRenderer::VertexBufferRing>(graphicsDevice_, EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * m_squareMaxCount * 4, 3);
 	}
 
 	if (!EffekseerRenderer::GenerateIndexDataStride<int16_t>(graphicsDevice_, m_squareMaxCount, indexBuffer_, indexBufferForWireframe_))
@@ -542,11 +530,6 @@ void RendererImplemented::SetCommandList(Effekseer::RefPtr<EffekseerRenderer::Co
 	commandList_ = commandList;
 }
 
-VertexBuffer* RendererImplemented::GetVertexBuffer()
-{
-	return m_vertexBuffer;
-}
-
 Effekseer::Backend::IndexBufferRef RendererImplemented::GetIndexBuffer()
 {
 	if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
@@ -635,12 +618,6 @@ void RendererImplemented::SetDistortingCallback(EffekseerRenderer::DistortingCal
 void RendererImplemented::SetVertexBuffer(LLGI::Buffer* vertexBuffer, int32_t stride)
 {
 	currentVertexBuffer_ = vertexBuffer;
-	currentVertexBufferStride_ = stride;
-}
-
-void RendererImplemented::SetVertexBuffer(VertexBuffer* vertexBuffer, int32_t stride)
-{
-	currentVertexBuffer_ = vertexBuffer->GetVertexBuffer();
 	currentVertexBufferStride_ = stride;
 }
 

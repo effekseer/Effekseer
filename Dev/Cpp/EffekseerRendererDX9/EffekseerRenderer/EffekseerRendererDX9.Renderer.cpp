@@ -17,7 +17,6 @@
 #include "EffekseerRendererDX9.MaterialLoader.h"
 #include "EffekseerRendererDX9.ModelRenderer.h"
 #include "EffekseerRendererDX9.Shader.h"
-#include "EffekseerRendererDX9.VertexBuffer.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -126,9 +125,7 @@ RendererRef Renderer::Create(LPDIRECT3DDEVICE9 device, int32_t squareMaxCount)
 //
 //----------------------------------------------------------------------------------
 RendererImplemented::RendererImplemented(int32_t squareMaxCount)
-	: m_vertexBuffer(nullptr)
-	//, m_indexBuffer(nullptr)
-	, m_squareMaxCount(squareMaxCount)
+	: m_squareMaxCount(squareMaxCount)
 	, m_coordinateSystem(::Effekseer::CoordinateSystem::RH)
 	, m_state_vertexShader(nullptr)
 	, m_state_pixelShader(nullptr)
@@ -172,7 +169,6 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_DELETE(shader_lit_);
 
 	ES_SAFE_DELETE(m_renderState);
-	ES_SAFE_DELETE(m_vertexBuffer);
 }
 
 //----------------------------------------------------------------------------------
@@ -219,9 +215,7 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice)
 
 	// generate a vertex buffer
 	{
-		m_vertexBuffer = VertexBuffer::Create(this, EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * m_squareMaxCount * 4, true, false);
-		if (m_vertexBuffer == nullptr)
-			return false;
+		GetImpl()->InternalVertexBuffer = std::make_shared<EffekseerRenderer::VertexBufferRing>(graphicsDevice_, EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * m_squareMaxCount * 4, 1);
 	}
 
 	if (!EffekseerRenderer::GenerateIndexDataStride<int16_t>(graphicsDevice_, m_squareMaxCount, indexBuffer_, indexBufferForWireframe_))
@@ -521,14 +515,6 @@ bool RendererImplemented::EndRendering()
 	return true;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-VertexBuffer* RendererImplemented::GetVertexBuffer()
-{
-	return m_vertexBuffer;
-}
-
 Effekseer::Backend::IndexBufferRef RendererImplemented::GetIndexBuffer()
 {
 	if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
@@ -651,14 +637,6 @@ void RendererImplemented::SetDistortingCallback(EffekseerRenderer::DistortingCal
 void RendererImplemented::SetVertexBuffer(IDirect3DVertexBuffer9* vertexBuffer, int32_t size)
 {
 	GetDevice()->SetStreamSource(0, vertexBuffer, 0, size);
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void RendererImplemented::SetVertexBuffer(VertexBuffer* vertexBuffer, int32_t size)
-{
-	GetDevice()->SetStreamSource(0, vertexBuffer->GetInterface(), 0, size);
 }
 
 void RendererImplemented::SetVertexBuffer(const Effekseer::Backend::VertexBufferRef& vertexBuffer, int32_t size)

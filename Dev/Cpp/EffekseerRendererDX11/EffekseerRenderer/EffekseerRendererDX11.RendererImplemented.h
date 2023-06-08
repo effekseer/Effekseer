@@ -72,7 +72,6 @@ private:
 	ID3D11Device* m_device;
 	ID3D11DeviceContext* m_context;
 
-	VertexBuffer* m_vertexBuffer;
 	Effekseer::Backend::IndexBufferRef currentndexBuffer_;
 	Effekseer::Backend::IndexBufferRef indexBuffer_;
 	Effekseer::Backend::IndexBufferRef indexBufferForWireframe_;
@@ -127,8 +126,6 @@ public:
 
 	ID3D11DeviceContext* GetContext() override;
 
-	VertexBuffer* GetVertexBuffer();
-
 	Effekseer::Backend::IndexBufferRef GetIndexBuffer();
 
 	// IndexBuffer* GetIndexBuffer();
@@ -166,10 +163,7 @@ public:
 		return m_standardRenderer;
 	}
 
-	void SetVertexBuffer(VertexBuffer* vertexBuffer, int32_t size);
 	void SetVertexBuffer(ID3D11Buffer* vertexBuffer, int32_t size);
-	// void SetIndexBuffer(IndexBuffer* indexBuffer);
-	// void SetIndexBuffer(ID3D11Buffer* indexBuffer);
 
 	void SetVertexBuffer(const Effekseer::Backend::VertexBufferRef& vertexBuffer, int32_t size);
 	void SetIndexBuffer(const Effekseer::Backend::IndexBufferRef& indexBuffer);

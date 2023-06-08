@@ -8,7 +8,6 @@
 #include "EffekseerRendererGL.GLExtension.h"
 #include "EffekseerRendererGL.ModelRenderer.h"
 #include "EffekseerRendererGL.Shader.h"
-#include "EffekseerRendererGL.VertexBuffer.h"
 #include <string>
 
 #include "ShaderHeader/ad_model_distortion_ps.h"

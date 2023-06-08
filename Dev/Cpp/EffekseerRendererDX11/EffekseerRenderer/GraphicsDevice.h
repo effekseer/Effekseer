@@ -117,6 +117,8 @@ public:
 
 	void UpdateData(const void* src, int32_t size, int32_t offset);
 
+	void MakeAllDirtied();
+
 	ID3D11Buffer* GetBuffer() const
 	{
 		return buffer_.get();

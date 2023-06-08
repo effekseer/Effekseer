@@ -11,7 +11,6 @@
 #include "EffekseerRenderer.CommonUtils.h"
 #include "EffekseerRenderer.RenderStateBase.h"
 #include "EffekseerRenderer.Renderer.h"
-#include "EffekseerRenderer.VertexBufferBase.h"
 
 namespace EffekseerRenderer
 {

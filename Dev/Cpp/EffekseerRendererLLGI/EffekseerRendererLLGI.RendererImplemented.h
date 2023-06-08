@@ -51,7 +51,6 @@ protected:
 	Backend::GraphicsDeviceRef graphicsDevice_ = nullptr;
 	std::shared_ptr<LLGI::RenderPassPipelineState> currentRenderPassPipelineState_ = nullptr;
 
-	VertexBuffer* m_vertexBuffer;
 	Effekseer::Backend::IndexBufferRef currentndexBuffer_;
 	Effekseer::Backend::IndexBufferRef indexBuffer_;
 	Effekseer::Backend::IndexBufferRef indexBufferForWireframe_;
@@ -88,8 +87,6 @@ protected:
 	LLGI::CommandList* GetCurrentCommandList();
 
 	LLGI::PipelineState* GetOrCreatePiplineState();
-
-	virtual void GenerateVertexBuffer();
 
 public:
 	//! shaders (todo implemented)
@@ -135,11 +132,6 @@ public:
 	{
 		return graphicsDevice_->GetGraphics();
 	}
-
-	/**
-		@brief	頂点バッファ取得
-	*/
-	VertexBuffer* GetVertexBuffer();
 
 	Effekseer::Backend::IndexBufferRef GetIndexBuffer();
 
@@ -198,7 +190,6 @@ public:
 		return m_standardRenderer;
 	}
 
-	void SetVertexBuffer(VertexBuffer* vertexBuffer, int32_t stride);
 	void SetVertexBuffer(LLGI::Buffer* vertexBuffer, int32_t stride);
 
 	void SetVertexBuffer(const Effekseer::Backend::VertexBufferRef& vertexBuffer, int32_t stride);
