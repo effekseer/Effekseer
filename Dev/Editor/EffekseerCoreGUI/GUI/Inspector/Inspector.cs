@@ -331,6 +331,8 @@ namespace Effekseer.GUI.Inspector
 					}
 					++i;
 				}
+
+				return;
 			}
 
 
@@ -523,17 +525,21 @@ namespace Effekseer.GUI.Inspector
 			{
 				var subFields = valueType.GetFields();
 				int i = 0;
+				bool edited = false;
 				foreach (var f in subFields)
 				{
-					if (!isList && guiInfo.SubElements.Count > i)
+					if (value != null && !isList && guiInfo.SubElements.Count > i)
+					//if (!isList && guiInfo.SubElements.Count > i)
 					{
 						UpdateVisiblityControllers(value);
 						elementGetterSetterArray.Push(value, f);
-						bool editted = DropObjectGuis(path, context, targetObject, elementGetterSetterArray, guiInfo.SubElements[i]);
+						edited = DropObjectGuis(path, context, targetObject, elementGetterSetterArray, guiInfo.SubElements[i]);
 						elementGetterSetterArray.Pop();
 					}
 					++i;
 				}
+
+				return edited;
 			}
 
 			if (GuiDictionary.HasDropFunction(guiFunctionKey))
