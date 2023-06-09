@@ -138,6 +138,7 @@ RendererImplemented::RendererImplemented(int32_t squareMaxCount, Backend::Graphi
 	, m_deviceType(graphicsDevice->GetDeviceType())
 {
 	graphicsDevice_ = graphicsDevice;
+	graphicsDevice_->SetIsRestorationOfStatesRequired(false);
 }
 
 //----------------------------------------------------------------------------------

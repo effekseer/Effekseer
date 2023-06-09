@@ -344,11 +344,17 @@ private:
 	GLuint frameBufferTemp_ = 0;
 	std::map<DevicePropertyType, int> properties_;
 	bool isValid_ = true;
+	bool is_restoration_of_states_required_ = true;
+	GLint frontFace_ = 0;
 
 public:
 	GraphicsDevice(OpenGLDeviceType deviceType, bool isExtensionsEnabled = true);
 
 	~GraphicsDevice() override;
+
+	bool GetIsRestorationOfStatesRequired() const;
+
+	void SetIsRestorationOfStatesRequired(bool value);
 
 	bool GetIsValid() const;
 
