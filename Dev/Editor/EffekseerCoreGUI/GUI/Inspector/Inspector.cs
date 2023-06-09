@@ -657,7 +657,6 @@ namespace Effekseer.GUI.Inspector
 				}
 			}
 			Manager.NativeManager.EndTable();
-			Manager.NativeManager.Separator();
 		}
 
 		public void Update(Asset.EffectAssetEditorContext context, Asset.Node targetNode, Type targetType = null)
@@ -707,7 +706,6 @@ namespace Effekseer.GUI.Inspector
 				}
 			}
 			Manager.NativeManager.EndTable();
-			Manager.NativeManager.Separator();
 		}
 
 
@@ -753,7 +751,6 @@ namespace Effekseer.GUI.Inspector
 				}
 			}
 			Manager.NativeManager.EndTable();
-			Manager.NativeManager.Separator();
 		}
 
 		public bool Drop(string path, Asset.EffectAssetEditorContext context, Asset.Node targetNode, Type targetType = null)
