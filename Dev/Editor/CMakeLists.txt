@@ -43,9 +43,11 @@ set_target_properties(EffekseerCore PROPERTIES
     DOTNET_TARGET_FRAMEWORK "net6.0")
 
 set_property(TARGET EffekseerCore PROPERTY VS_GLOBAL_AllowUnsafeBlocks "true")
-set_property(TARGET EffekseerCore PROPERTY VS_GLOBAL_DefineConstants "SCRIPT_ENABLED;")
 set_property(TARGET EffekseerCore PROPERTY VS_GLOBAL_AppendTargetFrameworkToOutputPath "false")
 set_property(TARGET EffekseerCore PROPERTY VS_GLOBAL_GenerateDependencyFile "false")
+
+set_property(TARGET EffekseerCore PROPERTY VS_GLOBAL_DefineConstants "SCRIPT_ENABLED;")
+target_compile_definitions(EffekseerCore PRIVATE SCRIPT_ENABLED)
 
 # Avoid Cmake bug
 # set_property(TARGET EffekseerCore PROPERTY VS_GLOBAL_Platforms "x64")
