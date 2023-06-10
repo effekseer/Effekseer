@@ -353,6 +353,11 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 	// generate a vertex buffer
 	{
 		GetImpl()->InternalVertexBuffer = std::make_shared<EffekseerRenderer::VertexBufferRing>(graphicsDevice_, EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * m_squareMaxCount * 4, 1);
+		if (!GetImpl()->InternalVertexBuffer->GetIsValid())
+		{
+			GetImpl()->InternalVertexBuffer = nullptr;
+			return false;
+		}
 	}
 
 	if (!EffekseerRenderer::GenerateIndexDataStride<int16_t>(graphicsDevice_, m_squareMaxCount, indexBuffer_, indexBufferForWireframe_))

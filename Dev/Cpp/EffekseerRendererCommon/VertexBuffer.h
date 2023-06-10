@@ -16,7 +16,7 @@ protected:
 
 public:
 	virtual ~VertexBuffer() = default;
-
+	virtual bool GetIsValid() const = 0;
 	virtual bool CanAllocate(int32_t size, int32_t alignment) = 0;
 	virtual bool Allocate(int32_t size, int32_t alignment, std::tuple<void*, int32_t>& result) = 0;
 	virtual Effekseer::Backend::VertexBufferRef Upload() = 0;
@@ -44,6 +44,8 @@ class VertexBufferMultiSize : public VertexBuffer
 public:
 	VertexBufferMultiSize(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, int32_t size);
 
+	bool GetIsValid() const override;
+
 	bool CanAllocate(int32_t size, int32_t alignment) override;
 
 	bool Allocate(int32_t size, int32_t alignment, std::tuple<void*, int32_t>& result) override;
@@ -65,6 +67,8 @@ class VertexBufferRing : public VertexBuffer
 
 public:
 	VertexBufferRing(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, int32_t size, int32_t ringCount);
+
+	bool GetIsValid() const override;
 
 	bool CanAllocate(int32_t size, int32_t alignment) override;
 

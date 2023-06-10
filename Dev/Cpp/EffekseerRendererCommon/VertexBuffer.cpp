@@ -16,6 +16,19 @@ VertexBufferMultiSize::VertexBufferMultiSize(Effekseer::Backend::GraphicsDeviceR
 	}
 }
 
+bool VertexBufferMultiSize::GetIsValid() const
+{
+	for (auto v : vertexBuffers_)
+	{
+		if (v == nullptr)
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
 bool VertexBufferMultiSize::CanAllocate(int32_t size, int32_t alignment)
 {
 	return size + GetNextAliginedOffset(offset_, alignment) <= size_;
@@ -71,6 +84,19 @@ VertexBufferRing::VertexBufferRing(Effekseer::Backend::GraphicsDeviceRef graphic
 	{
 		vertexBuffers_.emplace_back(graphicsDevice->CreateVertexBuffer(size_, nullptr, true));
 	}
+}
+
+bool VertexBufferRing::GetIsValid() const
+{
+	for (auto v : vertexBuffers_)
+	{
+		if (v == nullptr)
+		{
+			return false;
+		}
+	}
+
+	return true;
 }
 
 bool VertexBufferRing::CanAllocate(int32_t size, int32_t alignment)

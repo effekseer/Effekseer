@@ -598,6 +598,12 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 		GetImpl()->InternalVertexBuffer = std::make_shared<EffekseerRenderer::VertexBufferMultiSize>(graphicsDevice_, vertexBufferSize);
 	}
 
+	if (!GetImpl()->InternalVertexBuffer->GetIsValid())
+	{
+		GetImpl()->InternalVertexBuffer = nullptr;
+		return;
+	}
+
 	// generate index data
 	if (!GenerateIndexData())
 	{
