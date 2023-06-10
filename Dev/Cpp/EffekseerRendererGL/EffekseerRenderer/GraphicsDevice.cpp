@@ -298,16 +298,40 @@ void VertexBuffer::UpdateData(const void* src, int32_t size, int32_t offset)
 
 	GLExt::glBindBuffer(GL_ARRAY_BUFFER, buffer_);
 
-	if (isSupportedBufferRange)
+	if (isDynamic_)
 	{
-		auto target = GLExt::glMapBufferRange(GL_ARRAY_BUFFER, offset, size, GL_MAP_WRITE_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
-		memcpy(target, src, size);
-		GLExt::glUnmapBuffer(GL_ARRAY_BUFFER);
+		if (isSupportedBufferRange)
+		{
+			auto dirtied = blocks_.Allocate(size, offset);
+
+			if (dirtied)
+			{
+				GLExt::glBufferData(GL_ARRAY_BUFFER, static_cast<uint32_t>(resources_.size()), nullptr, isDynamic_ ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
+			}
+
+			{
+				auto target = GLExt::glMapBufferRange(GL_ARRAY_BUFFER, offset, size, GL_MAP_WRITE_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
+				memcpy(target, src, size);
+				GLExt::glUnmapBuffer(GL_ARRAY_BUFFER);
+			}
+		}
+		else
+		{
+			memcpy(resources_.data() + offset, src, size);
+			GLExt::glBufferData(GL_ARRAY_BUFFER, static_cast<uint32_t>(resources_.size()), resources_.data(), isDynamic_ ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
+		}
 	}
 	else
 	{
-		memcpy(resources_.data() + offset, src, size);
-		GLExt::glBufferData(GL_ARRAY_BUFFER, static_cast<uint32_t>(resources_.size()), resources_.data(), isDynamic_ ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
+		if (isSupportedBufferRange)
+		{
+			GLExt::glBufferSubData(GL_ARRAY_BUFFER, offset, size, src);
+		}
+		else
+		{
+			memcpy(resources_.data() + offset, src, size);
+			GLExt::glBufferData(GL_ARRAY_BUFFER, static_cast<uint32_t>(resources_.size()), resources_.data(), isDynamic_ ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
+		}
 	}
 
 	if (graphicsDevice_->GetIsRestorationOfStatesRequired())

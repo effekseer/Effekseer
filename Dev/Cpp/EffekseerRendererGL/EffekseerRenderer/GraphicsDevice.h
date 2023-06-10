@@ -2,6 +2,7 @@
 #ifndef __EFFEKSEERRENDERER_GL_GRAPHICS_DEVICE_H__
 #define __EFFEKSEERRENDERER_GL_GRAPHICS_DEVICE_H__
 
+#include "../../EffekseerRendererCommon/EffekseerRenderer.CommonUtils.h"
 #include "EffekseerRendererGL.GLExtension.h"
 #include <Effekseer.h>
 #include <assert.h>
@@ -79,6 +80,8 @@ class VertexBuffer
 	  public Effekseer::Backend::VertexBuffer
 {
 private:
+	EffekseerRenderer::DirtiedBlock blocks_;
+
 	GLuint buffer_ = 0;
 	std::vector<uint8_t> resources_;
 	GraphicsDevice* graphicsDevice_ = nullptr;

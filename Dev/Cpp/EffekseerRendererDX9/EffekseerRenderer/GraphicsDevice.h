@@ -2,6 +2,7 @@
 #ifndef __EFFEKSEERRENDERER_DX9_GRAPHICS_DEVICE_H__
 #define __EFFEKSEERRENDERER_DX9_GRAPHICS_DEVICE_H__
 
+#include "../../EffekseerRendererCommon/EffekseerRenderer.CommonUtils.h"
 #include <Effekseer.h>
 #include <assert.h>
 #include <d3d9.h>
@@ -46,24 +47,6 @@ using RenderPassRef = Effekseer::RefPtr<RenderPass>;
 using PipelineStateRef = Effekseer::RefPtr<PipelineState>;
 using UniformLayoutRef = Effekseer::RefPtr<UniformLayout>;
 
-class DirtiedBlock
-{
-	struct Block
-	{
-		int32_t offset;
-		int32_t size;
-	};
-
-	std::vector<Block> blocks_;
-
-public:
-	/**
-		@brief	Allocate block
-		@return	whether is required to discard.
-	*/
-	bool Allocate(int32_t size, int32_t offset);
-};
-
 class DeviceObject
 {
 private:
@@ -83,7 +66,7 @@ class VertexBuffer
 	  public Effekseer::Backend::VertexBuffer
 {
 private:
-	DirtiedBlock blocks_;
+	EffekseerRenderer::DirtiedBlock blocks_;
 
 	GraphicsDevice* graphicsDevice_ = nullptr;
 	Direct3DVertexBuffer9Ptr buffer_ = nullptr;
@@ -123,7 +106,7 @@ class IndexBuffer
 	  public Effekseer::Backend::IndexBuffer
 {
 private:
-	DirtiedBlock blocks_;
+	EffekseerRenderer::DirtiedBlock blocks_;
 
 	GraphicsDevice* graphicsDevice_ = nullptr;
 	Direct3DIndexBuffer9Ptr buffer_;
