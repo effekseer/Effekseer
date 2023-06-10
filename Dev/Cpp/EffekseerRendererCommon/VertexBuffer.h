@@ -82,6 +82,7 @@ public:
 			if (offset_ <= current_size)
 			{
 				vertexBuffers_[i]->UpdateData(buffer_.data(), offset_, 0);
+				offset_ = 0;
 				return vertexBuffers_[i];
 			}
 			i++;
