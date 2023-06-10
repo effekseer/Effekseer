@@ -6,56 +6,6 @@ namespace EffekseerRendererDX9
 namespace Backend
 {
 
-bool DirtiedBlock::Allocate(int32_t size, int32_t offset)
-{
-	bool dirtied = false;
-	int32_t connected = -1;
-
-	for (size_t i = 0; i < blocks_.size(); i++)
-	{
-		const auto& block = blocks_[i];
-		if ((block.offset <= offset && offset < block.offset + block.size) ||
-			(block.offset < offset + size && offset + size <= block.offset + block.size) ||
-			(offset <= block.offset && block.offset < offset + size) ||
-			(offset < block.offset + block.size && block.offset + block.size <= offset + size))
-		{
-			dirtied = true;
-			break;
-		}
-
-		if (offset == block.size + block.offset)
-		{
-			connected = static_cast<int32_t>(i);
-		}
-	}
-
-	if (dirtied)
-	{
-		blocks_.clear();
-
-		Block block;
-		block.offset = offset;
-		block.size = size;
-		blocks_.emplace_back(block);
-	}
-	else
-	{
-		if (connected != -1)
-		{
-			blocks_[connected].size += size;
-		}
-		else
-		{
-			Block block;
-			block.offset = offset;
-			block.size = size;
-			blocks_.emplace_back(block);
-		}
-	}
-
-	return dirtied;
-}
-
 void DeviceObject::OnLostDevice()
 {
 }
@@ -789,7 +739,10 @@ Effekseer::Backend::VertexBufferRef GraphicsDevice::CreateVertexBuffer(int32_t s
 		return nullptr;
 	}
 
-	ret->UpdateData(initialData, size, 0);
+	if (initialData != nullptr)
+	{
+		ret->UpdateData(initialData, size, 0);
+	}
 
 	return ret;
 }
@@ -803,7 +756,10 @@ Effekseer::Backend::IndexBufferRef GraphicsDevice::CreateIndexBuffer(int32_t ele
 		return nullptr;
 	}
 
-	ret->UpdateData(initialData, elementCount * (stride == Effekseer::Backend::IndexBufferStrideType::Stride4 ? 4 : 2), 0);
+	if (initialData != nullptr)
+	{
+		ret->UpdateData(initialData, elementCount * (stride == Effekseer::Backend::IndexBufferStrideType::Stride4 ? 4 : 2), 0);
+	}
 
 	return ret;
 }

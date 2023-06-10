@@ -707,4 +707,54 @@ Effekseer::Backend::VertexLayoutRef GetMaterialModelVertexLayout(Effekseer::Back
 	return graphicsDevice->CreateVertexLayout(vlElem, 6);
 }
 
+bool DirtiedBlock::Allocate(int32_t size, int32_t offset)
+{
+	bool dirtied = false;
+	int32_t connected = -1;
+
+	for (size_t i = 0; i < blocks_.size(); i++)
+	{
+		const auto& block = blocks_[i];
+		if ((block.offset <= offset && offset < block.offset + block.size) ||
+			(block.offset < offset + size && offset + size <= block.offset + block.size) ||
+			(offset <= block.offset && block.offset < offset + size) ||
+			(offset < block.offset + block.size && block.offset + block.size <= offset + size))
+		{
+			dirtied = true;
+			break;
+		}
+
+		if (offset == block.size + block.offset)
+		{
+			connected = static_cast<int32_t>(i);
+		}
+	}
+
+	if (dirtied)
+	{
+		blocks_.clear();
+
+		Block block;
+		block.offset = offset;
+		block.size = size;
+		blocks_.emplace_back(block);
+	}
+	else
+	{
+		if (connected != -1)
+		{
+			blocks_[connected].size += size;
+		}
+		else
+		{
+			Block block;
+			block.offset = offset;
+			block.size = size;
+			blocks_.emplace_back(block);
+		}
+	}
+
+	return dirtied;
+}
+
 } // namespace EffekseerRenderer

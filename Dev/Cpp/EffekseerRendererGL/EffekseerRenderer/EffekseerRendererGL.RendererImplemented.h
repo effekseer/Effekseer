@@ -52,20 +52,6 @@ class RendererImplemented : public Renderer, public ::Effekseer::ReferenceObject
 
 private:
 	Backend::GraphicsDeviceRef graphicsDevice_ = nullptr;
-
-	struct PlatformSetting
-	{
-		bool isRingBufferEnabled;
-		int ringBufferCount;
-	};
-
-	struct RingVertex
-	{
-		std::unique_ptr<VertexBuffer> vertexBuffer;
-	};
-
-	std::vector<std::shared_ptr<RingVertex>> ringVs_;
-
 	Effekseer::Backend::IndexBufferStrideType indexBufferStride_ = Effekseer::Backend::IndexBufferStrideType::Stride2;
 	Effekseer::Backend::IndexBufferRef currentndexBuffer_;
 	Effekseer::Backend::IndexBufferRef indexBuffer_;
@@ -102,8 +88,6 @@ private:
 
 	std::unique_ptr<::EffekseerRendererGL::Backend::VertexArrayObject> renderingVAO_;
 
-	static PlatformSetting GetPlatformSetting();
-
 	//! because gleDrawElements has only index offset
 	int32_t GetIndexSpriteCount() const;
 
@@ -128,11 +112,6 @@ public:
 		@brief	描画終了
 	*/
 	bool EndRendering() override;
-
-	/**
-		@brief	頂点バッファ取得
-	*/
-	VertexBuffer* GetVertexBuffer();
 
 	/**
 		@brief	インデックスバッファ取得
@@ -203,7 +182,6 @@ public:
 		return m_standardRenderer;
 	}
 
-	void SetVertexBuffer(VertexBuffer* vertexBuffer, int32_t size);
 	void SetVertexBuffer(GLuint vertexBuffer, int32_t size);
 
 	void SetVertexBuffer(const Effekseer::Backend::VertexBufferRef& vertexBuffer, int32_t size);

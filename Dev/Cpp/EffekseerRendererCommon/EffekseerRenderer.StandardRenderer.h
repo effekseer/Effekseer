@@ -10,7 +10,6 @@
 #include "EffekseerRenderer.CommonUtils.h"
 #include "EffekseerRenderer.Renderer.h"
 #include "EffekseerRenderer.Renderer_Impl.h"
-#include "EffekseerRenderer.VertexBufferBase.h"
 
 //-----------------------------------------------------------------------------------
 //
@@ -278,15 +277,8 @@ private:
 		int offset;
 		int size;
 		int stride;
-		bool isLargeSize;
 		bool hasDistortion;
 	};
-
-	//! WebAssembly requires a much time to resize std::vector (in a profiler at least) so reduce to call resize
-	std::vector<uint8_t> vertexCaches_;
-	int32_t vertexCacheMaxSize_ = 0;
-	int32_t vertexCacheOffset_ = 0;
-	EffekseerRenderer::VertexBufferBase* lastVb_ = nullptr;
 
 	Effekseer::CustomAlignedVector<RenderInfo> renderInfos_;
 	int32_t gpuTimerCount_ = 0;
@@ -309,8 +301,6 @@ public:
 	StandardRenderer(RENDERER* renderer)
 	{
 		m_renderer = renderer;
-		vertexCacheMaxSize_ = m_renderer->GetVertexBuffer()->GetMaxSize();
-		vertexCaches_.reserve(m_renderer->GetVertexBuffer()->GetMaxSize());
 	}
 
 	virtual ~StandardRenderer()
@@ -356,7 +346,7 @@ public:
 
 	void BeginRenderingAndRenderingIfRequired(const StandardRendererState& state, int32_t count, int& stride, void*& data)
 	{
-		if (renderInfos_.size() > 0 && (renderInfos_[renderInfos_.size() - 1].isLargeSize || renderInfos_[renderInfos_.size() - 1].hasDistortion))
+		if (renderInfos_.size() > 0 && renderInfos_[renderInfos_.size() - 1].hasDistortion)
 		{
 			Rendering();
 		}
@@ -367,45 +357,23 @@ public:
 		const auto spriteStride = stride * 4;
 		const auto maxVertexCount = m_renderer->GetSquareMaxCount() * 4;
 
-		if (requiredSize > vertexCacheMaxSize_ || requiredSize == 0)
+		std::shared_ptr<EffekseerRenderer::VertexBuffer>& internal_vertex_buffer = m_renderer->GetImpl()->InternalVertexBuffer;
+
+		if (requiredSize > internal_vertex_buffer->GetSize() || requiredSize == 0)
 		{
 			data = nullptr;
 			return;
 		}
 
-		if (requiredSize + EffekseerRenderer::VertexBufferBase::GetNextAliginedVertexRingOffset(vertexCacheOffset_, spriteStride) > vertexCacheMaxSize_ || count > maxVertexCount)
+		if (!internal_vertex_buffer->CanAllocate(requiredSize, spriteStride) || count > maxVertexCount)
 		{
 			Rendering();
+			internal_vertex_buffer->RenewBuffer();
 		}
 
-		if (renderInfos_.size() == 0)
-		{
-			EffekseerRenderer::VertexBufferBase* vb = m_renderer->GetVertexBuffer();
-			vertexCacheOffset_ = vb->GetVertexRingOffset();
-			lastVb_ = vb;
-
-			// reset
-			if (!vb->GetIsRingEnabled())
-			{
-				vertexCacheOffset_ = 0;
-			}
-
-			if (requiredSize + EffekseerRenderer::VertexBufferBase::GetNextAliginedVertexRingOffset(vertexCacheOffset_, spriteStride) > vertexCacheMaxSize_)
-			{
-				vertexCacheOffset_ = 0;
-			}
-		}
-
-		vertexCacheOffset_ = EffekseerRenderer::VertexBufferBase::GetNextAliginedVertexRingOffset(vertexCacheOffset_, spriteStride);
-
-		const auto oldOffset = vertexCacheOffset_;
-		vertexCacheOffset_ += requiredSize;
-		if (vertexCaches_.size() < vertexCacheOffset_)
-		{
-			vertexCaches_.resize(vertexCacheOffset_);
-		}
-
-		data = (vertexCaches_.data() + oldOffset);
+		std::tuple<void*, int32_t> result;
+		internal_vertex_buffer->Allocate(requiredSize, spriteStride, result);
+		data = std::get<0>(result);
 
 		if (renderInfos_.size() > 0 && renderInfos_.back().state == state && (renderInfos_.back().size + requiredSize) / spriteStride <= m_renderer->GetSquareMaxCount())
 		{
@@ -417,9 +385,8 @@ public:
 			RenderInfo renderInfo;
 			renderInfo.state = state;
 			renderInfo.size = requiredSize;
-			renderInfo.offset = oldOffset;
+			renderInfo.offset = std::get<1>(result);
 			renderInfo.stride = stride;
-			renderInfo.isLargeSize = requiredSize > vertexCacheMaxSize_;
 			renderInfo.hasDistortion = state.Collector.IsBackgroundRequiredOnFirstPass && m_renderer->GetDistortingCallback() != nullptr;
 			renderInfos_.emplace_back(renderInfo);
 		}
@@ -451,40 +418,8 @@ public:
 			return;
 		}
 
-		int cpuBufStart = INT_MAX;
-		int cpuBufEnd = 0;
-
-		for (auto& info : renderInfos_)
-		{
-			cpuBufStart = Effekseer::Min(cpuBufStart, info.offset);
-			cpuBufEnd = Effekseer::Max(cpuBufEnd, info.offset + info.size);
-		}
-
-		const int cpuBufSize = cpuBufEnd - cpuBufStart;
-
-		{
-			VertexBufferBase* vb = m_renderer->GetVertexBuffer();
-			assert(vb == lastVb_);
-
-			void* vbData = nullptr;
-			int32_t vbOffset = 0;
-
-			if (vb->RingBufferLock(cpuBufSize, vbOffset, vbData, renderInfos_.begin()->stride * 4))
-			{
-				assert(vbData != nullptr);
-				assert(vbOffset == cpuBufStart);
-
-				const auto dst = (reinterpret_cast<uint8_t*>(vbData));
-				memcpy(dst, vertexCaches_.data() + cpuBufStart, cpuBufSize);
-				vb->Unlock();
-			}
-			else
-			{
-				m_renderer->GetImpl()->CurrentRingBufferIndex++;
-				m_renderer->GetImpl()->CurrentRingBufferIndex %= m_renderer->GetImpl()->RingBufferCount;
-				return;
-			}
-		}
+		std::shared_ptr<EffekseerRenderer::VertexBuffer>& internal_vertex_buffer = m_renderer->GetImpl()->InternalVertexBuffer;
+		auto vertex_buffer = internal_vertex_buffer->Upload();
 
 		for (auto& info : renderInfos_)
 		{
@@ -512,12 +447,6 @@ public:
 				// only sprite
 				int32_t renderBufferSize = info.size;
 
-				if (renderBufferSize > vertexCacheMaxSize_)
-				{
-					assert(renderInfos_.size() == 1 && renderInfos_[0].offset == 0);
-					renderBufferSize = (vertexCacheMaxSize_ / (stride * 4)) * (stride * 4);
-				}
-
 				const auto maxVertexCount = m_renderer->GetSquareMaxCount() * 4;
 				const auto currentVertexCount = renderBufferSize / stride;
 				if (currentVertexCount > maxVertexCount)
@@ -525,23 +454,27 @@ public:
 					renderBufferSize = m_renderer->GetSquareMaxCount() * (stride * 4);
 				}
 
-				Rendering_(m_renderer->GetCameraMatrix(), mProj, info.offset, renderBufferSize, info.stride, passInd, state);
+				RenderingInternal(
+					m_renderer->GetCameraMatrix(),
+					mProj,
+					std::tuple<Effekseer::Backend::VertexBufferRef, int>(vertex_buffer, info.offset),
+					renderBufferSize,
+					info.stride,
+					passInd,
+					state);
 			}
 		}
 
 		renderInfos_.clear();
-
-		m_renderer->GetImpl()->CurrentRingBufferIndex++;
-		m_renderer->GetImpl()->CurrentRingBufferIndex %= m_renderer->GetImpl()->RingBufferCount;
 	}
 
-	void Rendering_(const Effekseer::SIMD::Mat44f& mCamera,
-					const Effekseer::SIMD::Mat44f& mProj,
-					int32_t vbOffset,
-					int32_t bufferSize,
-					int32_t stride,
-					int32_t renderPass,
-					const StandardRendererState& renderState)
+	void RenderingInternal(const Effekseer::SIMD::Mat44f& mCamera,
+						   const Effekseer::SIMD::Mat44f& mProj,
+						   std::tuple<Effekseer::Backend::VertexBufferRef, int> vertexBuffer,
+						   int32_t bufferSize,
+						   int32_t stride,
+						   int32_t renderPass,
+						   const StandardRendererState& renderState)
 	{
 		bool isBackgroundRequired = renderState.Collector.IsBackgroundRequiredOnFirstPass && renderPass == 0;
 
@@ -941,14 +874,14 @@ public:
 
 		m_renderer->GetRenderState()->Update(distortion);
 
-		assert(vbOffset % stride == 0);
+		assert(std::get<1>(vertexBuffer) % stride == 0);
 
-		m_renderer->SetVertexBuffer(m_renderer->GetVertexBuffer(), stride);
+		m_renderer->SetVertexBuffer(std::get<0>(vertexBuffer), stride);
 		m_renderer->SetIndexBuffer(m_renderer->GetIndexBuffer());
 		m_renderer->SetLayout(shader_);
 		m_renderer->GetImpl()->CurrentRenderingUserData = renderState.RenderingUserData;
 		m_renderer->GetImpl()->CurrentHandleUserData = renderState.HandleUserData;
-		m_renderer->DrawSprites(bufferSize / stride / 4, vbOffset / stride);
+		m_renderer->DrawSprites(bufferSize / stride / 4, std::get<1>(vertexBuffer) / stride);
 
 		m_renderer->EndShader(shader_);
 

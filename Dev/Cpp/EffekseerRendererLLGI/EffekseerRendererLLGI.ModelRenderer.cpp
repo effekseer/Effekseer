@@ -4,7 +4,6 @@
 
 #include "EffekseerRendererLLGI.ModelRenderer.h"
 #include "EffekseerRendererLLGI.Shader.h"
-#include "EffekseerRendererLLGI.VertexBuffer.h"
 
 #include "GraphicsDevice.h"
 

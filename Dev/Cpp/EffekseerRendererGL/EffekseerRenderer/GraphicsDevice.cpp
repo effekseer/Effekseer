@@ -236,11 +236,17 @@ bool VertexBuffer::Allocate(int32_t size, bool isDynamic)
 	GLExt::glGenBuffers(1, &buffer_);
 
 	int arrayBufferBinding = 0;
-	glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &arrayBufferBinding);
+	if (graphicsDevice_->GetIsRestorationOfStatesRequired())
+	{
+		glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &arrayBufferBinding);
+	}
 
 	GLExt::glBindBuffer(GL_ARRAY_BUFFER, buffer_);
 	GLExt::glBufferData(GL_ARRAY_BUFFER, static_cast<uint32_t>(resources_.size()), nullptr, isDynamic_ ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
-	GLExt::glBindBuffer(GL_ARRAY_BUFFER, arrayBufferBinding);
+	if (graphicsDevice_->GetIsRestorationOfStatesRequired())
+	{
+		GLExt::glBindBuffer(GL_ARRAY_BUFFER, arrayBufferBinding);
+	}
 
 	return true;
 }
@@ -285,23 +291,53 @@ void VertexBuffer::UpdateData(const void* src, int32_t size, int32_t offset)
 #endif
 
 	int arrayBufferBinding = 0;
-	glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &arrayBufferBinding);
+	if (graphicsDevice_->GetIsRestorationOfStatesRequired())
+	{
+		glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &arrayBufferBinding);
+	}
 
 	GLExt::glBindBuffer(GL_ARRAY_BUFFER, buffer_);
 
-	if (isSupportedBufferRange)
+	if (isDynamic_)
 	{
-		auto target = GLExt::glMapBufferRange(GL_ARRAY_BUFFER, offset, size, GL_MAP_WRITE_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
-		memcpy(target, src, size);
-		GLExt::glUnmapBuffer(GL_ARRAY_BUFFER);
+		if (isSupportedBufferRange)
+		{
+			auto dirtied = blocks_.Allocate(size, offset);
+
+			if (dirtied)
+			{
+				GLExt::glBufferData(GL_ARRAY_BUFFER, static_cast<uint32_t>(resources_.size()), nullptr, isDynamic_ ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
+			}
+
+			{
+				auto target = GLExt::glMapBufferRange(GL_ARRAY_BUFFER, offset, size, GL_MAP_WRITE_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
+				memcpy(target, src, size);
+				GLExt::glUnmapBuffer(GL_ARRAY_BUFFER);
+			}
+		}
+		else
+		{
+			memcpy(resources_.data() + offset, src, size);
+			GLExt::glBufferData(GL_ARRAY_BUFFER, static_cast<uint32_t>(resources_.size()), resources_.data(), isDynamic_ ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
+		}
 	}
 	else
 	{
-		memcpy(resources_.data() + offset, src, size);
-		GLExt::glBufferData(GL_ARRAY_BUFFER, static_cast<uint32_t>(resources_.size()), resources_.data(), isDynamic_ ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
+		if (isSupportedBufferRange)
+		{
+			GLExt::glBufferSubData(GL_ARRAY_BUFFER, offset, size, src);
+		}
+		else
+		{
+			memcpy(resources_.data() + offset, src, size);
+			GLExt::glBufferData(GL_ARRAY_BUFFER, static_cast<uint32_t>(resources_.size()), resources_.data(), isDynamic_ ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
+		}
 	}
 
-	GLExt::glBindBuffer(GL_ARRAY_BUFFER, arrayBufferBinding);
+	if (graphicsDevice_->GetIsRestorationOfStatesRequired())
+	{
+		GLExt::glBindBuffer(GL_ARRAY_BUFFER, arrayBufferBinding);
+	}
 }
 
 IndexBuffer::IndexBuffer(GraphicsDevice* graphicsDevice)
@@ -326,11 +362,18 @@ bool IndexBuffer::Allocate(int32_t elementCount, int32_t stride)
 	GLExt::glGenBuffers(1, &buffer_);
 
 	int elementArrayBufferBinding = 0;
-	glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &elementArrayBufferBinding);
+	if (graphicsDevice_->GetIsRestorationOfStatesRequired())
+	{
+		glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &elementArrayBufferBinding);
+	}
 
 	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer_);
 	GLExt::glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<uint32_t>(resources_.size()), nullptr, GL_STATIC_DRAW);
-	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBufferBinding);
+
+	if (graphicsDevice_->GetIsRestorationOfStatesRequired())
+	{
+		GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBufferBinding);
+	}
 
 	elementCount_ = elementCount;
 	strideType_ = stride == 4 ? Effekseer::Backend::IndexBufferStrideType::Stride4 : Effekseer::Backend::IndexBufferStrideType::Stride2;
@@ -374,11 +417,18 @@ void IndexBuffer::UpdateData(const void* src, int32_t size, int32_t offset)
 	memcpy(resources_.data() + offset, src, size);
 
 	int elementArrayBufferBinding = 0;
-	glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &elementArrayBufferBinding);
+	if (graphicsDevice_->GetIsRestorationOfStatesRequired())
+	{
+		glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &elementArrayBufferBinding);
+	}
 
 	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer_);
 	GLExt::glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<uint32_t>(resources_.size()), resources_.data(), GL_STATIC_DRAW);
-	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBufferBinding);
+
+	if (graphicsDevice_->GetIsRestorationOfStatesRequired())
+	{
+		GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBufferBinding);
+	}
 }
 
 bool UniformBuffer::Init(int32_t size, const void* initialData)
@@ -476,7 +526,11 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param, const Effe
 			target = GL_TEXTURE_3D;
 		}
 
-		glGetIntegerv(boundTarget, &bound);
+		if (graphicsDevice_->GetIsRestorationOfStatesRequired())
+		{
+			glGetIntegerv(boundTarget, &bound);
+		}
+
 		glGenTextures(1, &buffer_);
 		glBindTexture(target, buffer_);
 	}
@@ -487,7 +541,10 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param, const Effe
 			return false;
 		}
 
-		glGetIntegerv(GL_RENDERBUFFER_BINDING, &bound);
+		if (graphicsDevice_->GetIsRestorationOfStatesRequired())
+		{
+			glGetIntegerv(GL_RENDERBUFFER_BINDING, &bound);
+		}
 
 		GLExt::glGenRenderbuffers(1, &renderbuffer_);
 		GLExt::glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer_);
@@ -638,13 +695,16 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param, const Effe
 		GLExt::glGenerateMipmap(target);
 	}
 
-	if (woSampling)
+	if (graphicsDevice_->GetIsRestorationOfStatesRequired())
 	{
-		glBindTexture(target, bound);
-	}
-	else
-	{
-		GLExt::glBindRenderbuffer(GL_RENDERBUFFER, bound);
+		if (woSampling)
+		{
+			glBindTexture(target, bound);
+		}
+		else
+		{
+			GLExt::glBindRenderbuffer(GL_RENDERBUFFER, bound);
+		}
 	}
 
 	target_ = target;
@@ -997,8 +1057,11 @@ bool RenderPass::Init(Effekseer::FixedSizeVector<Effekseer::Backend::TextureRef,
 		return false;
 	}
 
-	GLint backupFramebuffer;
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &backupFramebuffer);
+	GLint backupFramebuffer = 0;
+	if (graphicsDevice_->GetIsRestorationOfStatesRequired())
+	{
+		glGetIntegerv(GL_FRAMEBUFFER_BINDING, &backupFramebuffer);
+	}
 
 	GLExt::glBindFramebuffer(GL_FRAMEBUFFER, buffer_);
 
@@ -1023,7 +1086,10 @@ bool RenderPass::Init(Effekseer::FixedSizeVector<Effekseer::Backend::TextureRef,
 	};
 	GLExt::glDrawBuffers(static_cast<GLsizei>(textures.size()), bufs);
 
-	GLExt::glBindFramebuffer(GL_FRAMEBUFFER, backupFramebuffer);
+	if (graphicsDevice_->GetIsRestorationOfStatesRequired())
+	{
+		GLExt::glBindFramebuffer(GL_FRAMEBUFFER, backupFramebuffer);
+	}
 	return true;
 }
 
@@ -1076,6 +1142,8 @@ GraphicsDevice::GraphicsDevice(OpenGLDeviceType deviceType, bool isExtensionsEna
 	{
 		vao_ = std::make_unique<VertexArrayObject>();
 	}
+
+	glGetIntegerv(GL_FRONT_FACE, &frontFace_);
 }
 
 GraphicsDevice::~GraphicsDevice()
@@ -1089,6 +1157,16 @@ GraphicsDevice::~GraphicsDevice()
 			GLExt::glDeleteSamplers(Effekseer::TextureSlotMax, samplers_.data());
 		}
 	}
+}
+
+bool GraphicsDevice::GetIsRestorationOfStatesRequired() const
+{
+	return is_restoration_of_states_required_;
+}
+
+void GraphicsDevice::SetIsRestorationOfStatesRequired(bool value)
+{
+	is_restoration_of_states_required_ = value;
 }
 
 bool GraphicsDevice::GetIsValid() const
@@ -1215,7 +1293,10 @@ bool GraphicsDevice::CopyTexture(Effekseer::Backend::TextureRef& dst, Effekseer:
 	}
 
 	GLint backupFramebuffer;
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &backupFramebuffer);
+	if (GetIsRestorationOfStatesRequired())
+	{
+		glGetIntegerv(GL_FRAMEBUFFER_BINDING, &backupFramebuffer);
+	}
 
 	GLExt::glBindFramebuffer(GL_FRAMEBUFFER, frameBufferTemp_);
 	GLExt::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, srcgl->GetBuffer(), 0);
@@ -1234,7 +1315,10 @@ bool GraphicsDevice::CopyTexture(Effekseer::Backend::TextureRef& dst, Effekseer:
 		GLCheckError();
 	}
 
-	GLExt::glBindFramebuffer(GL_FRAMEBUFFER, backupFramebuffer);
+	if (GetIsRestorationOfStatesRequired())
+	{
+		GLExt::glBindFramebuffer(GL_FRAMEBUFFER, backupFramebuffer);
+	}
 
 	GLCheckError();
 
@@ -1334,7 +1418,11 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 
 	if (GLExt::IsSupportedVertexArray())
 	{
-		glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &currentVAO);
+		if (GetIsRestorationOfStatesRequired())
+		{
+			glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &currentVAO);
+		}
+
 		GLExt::glBindVertexArray(vao_->GetVAO());
 	}
 
@@ -1444,10 +1532,8 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 	GLCheckError();
 
 	// States
-	GLint frontFace = 0;
-	glGetIntegerv(GL_FRONT_FACE, &frontFace);
 
-	if (GL_CW == frontFace)
+	if (GL_CW == frontFace_)
 	{
 		if (pip->GetParam().Culling == Effekseer::Backend::CullingType::Clockwise)
 		{
@@ -1599,7 +1685,10 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 
 	if (GLExt::IsSupportedVertexArray())
 	{
-		GLExt::glBindVertexArray(currentVAO);
+		if (GetIsRestorationOfStatesRequired())
+		{
+			GLExt::glBindVertexArray(currentVAO);
+		}
 	}
 
 	GLCheckError();

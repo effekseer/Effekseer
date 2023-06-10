@@ -2,6 +2,7 @@
 #ifndef __EFFEKSEERRENDERER_GL_GRAPHICS_DEVICE_H__
 #define __EFFEKSEERRENDERER_GL_GRAPHICS_DEVICE_H__
 
+#include "../../EffekseerRendererCommon/EffekseerRenderer.CommonUtils.h"
 #include "EffekseerRendererGL.GLExtension.h"
 #include <Effekseer.h>
 #include <assert.h>
@@ -79,6 +80,8 @@ class VertexBuffer
 	  public Effekseer::Backend::VertexBuffer
 {
 private:
+	EffekseerRenderer::DirtiedBlock blocks_;
+
 	GLuint buffer_ = 0;
 	std::vector<uint8_t> resources_;
 	GraphicsDevice* graphicsDevice_ = nullptr;
@@ -344,11 +347,17 @@ private:
 	GLuint frameBufferTemp_ = 0;
 	std::map<DevicePropertyType, int> properties_;
 	bool isValid_ = true;
+	bool is_restoration_of_states_required_ = true;
+	GLint frontFace_ = 0;
 
 public:
 	GraphicsDevice(OpenGLDeviceType deviceType, bool isExtensionsEnabled = true);
 
 	~GraphicsDevice() override;
+
+	bool GetIsRestorationOfStatesRequired() const;
+
+	void SetIsRestorationOfStatesRequired(bool value);
 
 	bool GetIsValid() const;
 

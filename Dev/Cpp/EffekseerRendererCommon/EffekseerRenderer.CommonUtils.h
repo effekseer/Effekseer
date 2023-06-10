@@ -1718,5 +1718,23 @@ bool GenerateIndexDataStride(Effekseer::Backend::GraphicsDeviceRef graphicsDevic
 	return true;
 }
 
+class DirtiedBlock
+{
+	struct Block
+	{
+		int32_t offset;
+		int32_t size;
+	};
+
+	std::vector<Block> blocks_;
+
+public:
+	/**
+		@brief	Allocate block
+		@return	whether is required to discard.
+	*/
+	bool Allocate(int32_t size, int32_t offset);
+};
+
 } // namespace EffekseerRenderer
 #endif // __EFFEKSEERRENDERER_COMMON_UTILS_H__

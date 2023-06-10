@@ -11,7 +11,6 @@
 #include "EffekseerRendererGL.MaterialLoader.h"
 #include "EffekseerRendererGL.ModelRenderer.h"
 #include "EffekseerRendererGL.Shader.h"
-#include "EffekseerRendererGL.VertexBuffer.h"
 
 #include "EffekseerRendererGL.GLExtension.h"
 
@@ -127,14 +126,6 @@ int32_t RendererImplemented::GetIndexSpriteCount() const
 	return (int32_t)(vsSize / size / 4 + 1);
 }
 
-RendererImplemented::PlatformSetting RendererImplemented::GetPlatformSetting()
-{
-#if defined(__EMSCRIPTEN__) || defined(__ANDROID__) || (defined(__APPLE__) && (TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR))
-	return PlatformSetting{false, 1};
-#endif
-	return PlatformSetting{true, 3};
-}
-
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -147,6 +138,7 @@ RendererImplemented::RendererImplemented(int32_t squareMaxCount, Backend::Graphi
 	, m_deviceType(graphicsDevice->GetDeviceType())
 {
 	graphicsDevice_ = graphicsDevice;
+	graphicsDevice_->SetIsRestorationOfStatesRequired(false);
 }
 
 //----------------------------------------------------------------------------------
@@ -561,14 +553,6 @@ bool RendererImplemented::EndRendering()
 	return true;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-VertexBuffer* RendererImplemented::GetVertexBuffer()
-{
-	return ringVs_[GetImpl()->CurrentRingBufferIndex]->vertexBuffer.get();
-}
-
 Effekseer::Backend::IndexBufferRef RendererImplemented::GetIndexBuffer()
 {
 	if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
@@ -598,39 +582,32 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 
 	m_squareMaxCount = count;
 
-	const auto setting = GetPlatformSetting();
-
-	// ES_SAFE_DELETE(m_indexBuffer);
-	ringVs_.clear();
-	GetImpl()->CurrentRingBufferIndex = 0;
-	GetImpl()->RingBufferCount = setting.ringBufferCount;
-
 	int vertexBufferSize = EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * m_squareMaxCount * 4;
 
-	auto storage = std::make_shared<SharedVertexTempStorage>();
-	storage->buffer.resize(vertexBufferSize);
+	bool isSupportedBufferRange = GLExt::IsSupportedBufferRange();
+#ifdef __ANDROID__
+	isSupportedBufferRange = false;
+#endif
+
+	if (isSupportedBufferRange)
+	{
+		GetImpl()->InternalVertexBuffer = std::make_shared<EffekseerRenderer::VertexBufferRing>(graphicsDevice_, vertexBufferSize, 3);
+	}
+	else
+	{
+		GetImpl()->InternalVertexBuffer = std::make_shared<EffekseerRenderer::VertexBufferMultiSize>(graphicsDevice_, vertexBufferSize);
+	}
+
+	if (!GetImpl()->InternalVertexBuffer->GetIsValid())
+	{
+		GetImpl()->InternalVertexBuffer = nullptr;
+		return;
+	}
 
 	// generate index data
 	if (!GenerateIndexData())
 	{
 		return;
-	}
-
-	for (int i = 0; i < GetImpl()->RingBufferCount; i++)
-	{
-		auto rv = std::make_shared<RingVertex>();
-		rv->vertexBuffer = std::unique_ptr<VertexBuffer>(VertexBuffer::Create(
-			graphicsDevice_,
-			setting.isRingBufferEnabled,
-			vertexBufferSize,
-			true,
-			storage));
-		if (rv->vertexBuffer == nullptr)
-		{
-			return;
-		}
-
-		ringVs_.emplace_back(rv);
 	}
 
 	GLExt::glBindBuffer(GL_ARRAY_BUFFER, arrayBufferBinding);
@@ -738,14 +715,6 @@ void RendererImplemented::SetDistortingCallback(EffekseerRenderer::DistortingCal
 {
 	ES_SAFE_DELETE(m_distortingCallback);
 	m_distortingCallback = callback;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void RendererImplemented::SetVertexBuffer(VertexBuffer* vertexBuffer, int32_t size)
-{
-	GLExt::glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer->GetInterface());
 }
 
 //----------------------------------------------------------------------------------
