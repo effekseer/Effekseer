@@ -2,9 +2,6 @@
 #ifndef __EFFEKSEERRENDERER_GL_BASE_H__
 #define __EFFEKSEERRENDERER_GL_BASE_H__
 
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
 #include "EffekseerRendererGL.Base.Pre.h"
 
 #include <Effekseer.h>
@@ -30,29 +27,18 @@
 #include <emscripten.h>
 #endif
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 namespace EffekseerRendererGL
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
 class RendererImplemented;
 
 class RenderStateBase;
 
 class DeviceObject;
-class Texture;
-class TargetTexture;
-class DepthTexture;
-class VertexBuffer;
 class Shader;
 
 class SpriteRenderer;
 class RibbonRenderer;
-
-class TextureLoader;
 
 #if _WIN32
 #pragma comment(lib, "glu32.lib")
@@ -85,11 +71,6 @@ class TextureLoader;
 #define GLCheckError()
 #endif
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 } // namespace EffekseerRendererGL
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
 #endif // __EFFEKSEERRENDERER_GL_BASE_H__

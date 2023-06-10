@@ -2,9 +2,6 @@
 #ifndef __EFFEKSEERRENDERER_DX11_BASE_H__
 #define __EFFEKSEERRENDERER_DX11_BASE_H__
 
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
 #include "EffekseerRendererDX11.Base.Pre.h"
 
 #include <Effekseer.h>
@@ -22,23 +19,14 @@
 #include <string>
 #include <vector>
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 namespace EffekseerRendererDX11
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
 class RendererImplemented;
 
 class RenderStateBase;
 
 class DeviceObject;
-class Texture;
-class TargetTexture;
-class DepthTexture;
-class VertexBuffer;
 class Shader;
 
 class SpriteRenderer;
@@ -47,13 +35,6 @@ class RingRenderer;
 class ModelRenderer;
 class TrackRenderer;
 
-class TextureLoader;
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 } // namespace EffekseerRendererDX11
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
 #endif // __EFFEKSEERRENDERER_DX11_BASE_H__

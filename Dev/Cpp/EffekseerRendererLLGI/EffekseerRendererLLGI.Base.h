@@ -27,10 +27,6 @@ class RendererImplemented;
 class RenderStateBase;
 
 class DeviceObject;
-class Texture;
-class TargetTexture;
-class DepthTexture;
-class VertexBuffer;
 class Shader;
 
 class SpriteRenderer;
@@ -38,8 +34,6 @@ class RibbonRenderer;
 class RingRenderer;
 class ModelRenderer;
 class TrackRenderer;
-
-class TextureLoader;
 
 } // namespace EffekseerRendererLLGI
 
