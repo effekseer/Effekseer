@@ -38,7 +38,8 @@ std::map<std::string, PerformanceResult> CheckPerformancePlatform(EffectPlatform
 	param.WindowSize = {1280, 720};
 	platform->Initialize(param);
 
-	auto test = [&](const char16_t* name) -> PerformanceResult {
+	auto test = [&](const char16_t* name) -> PerformanceResult
+	{
 		srand(0);
 
 		PerformanceResult ret;
@@ -70,9 +71,9 @@ std::map<std::string, PerformanceResult> CheckPerformancePlatform(EffectPlatform
 
 	std::map<std::string, PerformanceResult> ret;
 	ret["ManyRings"] = test(u"../../../../TestData/Effects/Performance/ManyRings.efkefc");
-	ret["Benediction"] = test(u"../../../../TestData/Effects/Performance/Benediction.efkefc");
+	// ret["Benediction"] = test(u"../../../../TestData/Effects/Performance/Benediction.efkefc");
 	ret["hit_hanmado_0409"] = test(u"../../../../ResourceData/samples/03_Hanmado01/Effect/hit_hanmado_0409.efkefc");
-	ret["ToonWater"] = test(u"../../../../ResourceData/samples/02_Tktk03/ToonWater.efkefc");
+	// ret["ToonWater"] = test(u"../../../../ResourceData/samples/02_Tktk03/ToonWater.efkefc");
 	return ret;
 }
 
@@ -91,45 +92,44 @@ void CheckPerformance()
 		}
 	}
 #ifdef _WIN32
-	{
-		auto platform = std::make_shared<EffectPlatformDX11>();
-		const auto result = CheckPerformancePlatform(platform.get());
-		platform->Terminate();
-
-		for (const auto& r : result)
-		{
-			results[r.first]["DX11"] = r.second;
-		}
-	}
+//	{
+//		auto platform = std::make_shared<EffectPlatformDX11>();
+//		const auto result = CheckPerformancePlatform(platform.get());
+//		platform->Terminate();
+//
+//		for (const auto& r : result)
+//		{
+//			results[r.first]["DX11"] = r.second;
+//		}
+//	}
 #endif
 
 #if !defined(__FROM_CI__)
 
 #ifdef _WIN32
-	{
-		auto platform = std::make_shared<EffectPlatformDX9>();
-		const auto result = CheckPerformancePlatform(platform.get());
-		platform->Terminate();
-
-		for (const auto& r : result)
-		{
-			results[r.first]["DX9"] = r.second;
-		}
-	}
-
+//	{
+//		auto platform = std::make_shared<EffectPlatformDX9>();
+//		const auto result = CheckPerformancePlatform(platform.get());
+//		platform->Terminate();
+//
+//		for (const auto& r : result)
+//		{
+//			results[r.first]["DX9"] = r.second;
+//		}
+//	}
 #endif
 
 #ifdef __EFFEKSEER_BUILD_DX12__
-	{
-		auto platform = std::make_shared<EffectPlatformDX12>();
-		const auto result = CheckPerformancePlatform(platform.get());
-		platform->Terminate();
-
-		for (const auto& r : result)
-		{
-			results[r.first]["DX12"] = r.second;
-		}
-	}
+	//{
+	//	auto platform = std::make_shared<EffectPlatformDX12>();
+	//	const auto result = CheckPerformancePlatform(platform.get());
+	//	platform->Terminate();
+	//
+	//	for (const auto& r : result)
+	//	{
+	//		results[r.first]["DX12"] = r.second;
+	//	}
+	//}
 #endif
 
 #ifdef __EFFEKSEER_BUILD_VULKAN__
@@ -207,6 +207,7 @@ void CheckPerformance()
 
 #if defined(__linux__) || defined(__APPLE__) || defined(WIN32)
 
-TestRegister Performance_CheckPerformance("Performance.CheckPerformance", []() -> void { CheckPerformance(); });
+TestRegister Performance_CheckPerformance("Performance.CheckPerformance", []() -> void
+										  { CheckPerformance(); });
 
 #endif

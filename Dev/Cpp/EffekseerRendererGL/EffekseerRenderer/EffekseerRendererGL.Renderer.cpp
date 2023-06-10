@@ -584,7 +584,19 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 
 	int vertexBufferSize = EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * m_squareMaxCount * 4;
 
-	GetImpl()->InternalVertexBuffer = std::make_shared<EffekseerRenderer::VertexBufferMultiSize>(graphicsDevice_, vertexBufferSize);
+	bool isSupportedBufferRange = GLExt::IsSupportedBufferRange();
+#ifdef __ANDROID__
+	isSupportedBufferRange = false;
+#endif
+
+	if (isSupportedBufferRange)
+	{
+		GetImpl()->InternalVertexBuffer = std::make_shared<EffekseerRenderer::VertexBufferRing>(graphicsDevice_, vertexBufferSize, 3);
+	}
+	else
+	{
+		GetImpl()->InternalVertexBuffer = std::make_shared<EffekseerRenderer::VertexBufferMultiSize>(graphicsDevice_, vertexBufferSize);
+	}
 
 	// generate index data
 	if (!GenerateIndexData())
