@@ -277,12 +277,8 @@ void ManagerImplemented::GCDrawSet(bool isRemovingManager)
 InstanceContainer* ManagerImplemented::CreateInstanceContainer(
 	EffectNode* pEffectNode, InstanceGlobal* pGlobal, bool isRoot, const SIMD::Mat43f& rootMatrix, Instance* pParent)
 {
-	if (pooledContainers_.empty())
-	{
-		return nullptr;
-	}
-	InstanceContainer* memory = pooledContainers_.front();
-	pooledContainers_.pop();
+	auto memory = pooledInstanceContainers_.Pop();
+
 	InstanceContainer* pContainer = new (memory) InstanceContainer(this, pEffectNode, pGlobal);
 
 	for (int i = 0; i < pEffectNode->GetChildrenCount(); i++)
@@ -330,7 +326,7 @@ InstanceContainer* ManagerImplemented::CreateInstanceContainer(
 void ManagerImplemented::ReleaseInstanceContainer(InstanceContainer* container)
 {
 	container->~InstanceContainer();
-	pooledContainers_.push(container);
+	pooledInstanceContainers_.Push(container);
 }
 
 int ManagerImplemented::Rand()
@@ -443,6 +439,7 @@ ManagerImplemented::ManagerImplemented(int instance_max, bool autoFlip)
 	m_renderingDrawSets.reserve(64);
 
 	int chunk_max = (m_instance_max + InstanceChunk::InstancesOfChunk - 1) / InstanceChunk::InstancesOfChunk;
+
 	reservedChunksBuffer_.resize(chunk_max);
 	for (auto& chunk : reservedChunksBuffer_)
 	{
@@ -454,19 +451,8 @@ ManagerImplemented::ManagerImplemented(int instance_max, bool autoFlip)
 	}
 	std::fill(creatableChunkOffsets_.begin(), creatableChunkOffsets_.end(), 0);
 
-	// Pooling InstanceGroup
-	reservedGroupBuffer_.resize(instance_max * sizeof(InstanceGroup));
-	for (int i = 0; i < instance_max; i++)
-	{
-		pooledGroups_.push((InstanceGroup*)&reservedGroupBuffer_[i * sizeof(InstanceGroup)]);
-	}
-
-	// Pooling InstanceGroup
-	reservedContainerBuffer_.resize(instance_max * sizeof(InstanceContainer));
-	for (int i = 0; i < instance_max; i++)
-	{
-		pooledContainers_.push((InstanceContainer*)&reservedContainerBuffer_[i * sizeof(InstanceContainer)]);
-	}
+	pooledInstanceGroup_.Init(instance_max);
+	pooledInstanceContainers_.Init(instance_max);
 
 	m_setting->SetEffectLoader(Effect::CreateEffectLoader());
 	EffekseerPrintDebug("*** Create : Manager\n");
@@ -522,19 +508,14 @@ Instance* ManagerImplemented::CreateInstance(EffectNodeImplemented* pEffectNode,
 
 InstanceGroup* ManagerImplemented::CreateInstanceGroup(EffectNodeImplemented* pEffectNode, InstanceContainer* pContainer, InstanceGlobal* pGlobal)
 {
-	if (pooledGroups_.empty())
-	{
-		return nullptr;
-	}
-	InstanceGroup* memory = pooledGroups_.front();
-	pooledGroups_.pop();
+	auto memory = pooledInstanceGroup_.Pop();
 	return new (memory) InstanceGroup(this, pEffectNode, pContainer, pGlobal);
 }
 
 void ManagerImplemented::ReleaseGroup(InstanceGroup* group)
 {
 	group->~InstanceGroup();
-	pooledGroups_.push(group);
+	pooledInstanceGroup_.Push(group);
 }
 
 void ManagerImplemented::LaunchWorkerThreads(uint32_t threadCount)

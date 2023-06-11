@@ -115,6 +115,65 @@ public:
 	};
 
 private:
+	/**
+		@note
+		An user can specify only the maximum number of instance.
+		But the number of instance container is larger than one of instance.
+	*/
+	template <class T>
+	class InstanceBufferContainer
+	{
+		template <class T>
+		struct ReservedBlock
+		{
+			CustomAlignedVector<uint8_t> buffer;
+		};
+
+		std::vector<std::shared_ptr<ReservedBlock<T>>> blocks_;
+
+		std::queue<T*> containers_;
+
+		void AllocateNewBlock(int count)
+		{
+			auto block = std::make_shared<ReservedBlock<T>>();
+			assert(sizeof(T) % 32 == 0);
+			block->buffer.resize(count * sizeof(T));
+			blocks_.emplace_back(block);
+
+			for (size_t i = 0; i < count; i++)
+			{
+				containers_.push(reinterpret_cast<T*>(block->buffer.data() + count * sizeof(T)));
+			}
+		}
+
+		int32_t alignment_ = 0;
+		int count_ = 0;
+
+	public:
+		void Init(int count)
+		{
+			count_ = count;
+			AllocateNewBlock(count_);
+		}
+
+		T* Pop()
+		{
+			if (containers_.empty())
+			{
+				AllocateNewBlock(count_);
+			}
+
+			auto front = containers_.front();
+			containers_.pop();
+			return front;
+		}
+
+		void Push(T* value)
+		{
+			containers_.push(value);
+		}
+	};
+
 	CustomVector<WorkerThread> m_WorkerThreads;
 
 	//! whether does rendering and update handle flipped automatically
@@ -129,14 +188,13 @@ private:
 	// buffers which is allocated while initializing
 	// 初期化中に確保されたバッファ
 	CustomAlignedVector<InstanceChunk> reservedChunksBuffer_;
-	CustomAlignedVector<uint8_t> reservedGroupBuffer_;
-	CustomAlignedVector<uint8_t> reservedContainerBuffer_;
 
 	// pooled instances. Thease are not used and waiting to be used.
 	// プールされたインスタンス。使用されておらず、使用されてるのを待っている。
 	std::queue<InstanceChunk*> pooledChunks_;
-	std::queue<InstanceGroup*> pooledGroups_;
-	std::queue<InstanceContainer*> pooledContainers_;
+
+	InstanceBufferContainer<InstanceGroup> pooledInstanceGroup_;
+	InstanceBufferContainer<InstanceContainer> pooledInstanceContainers_;
 
 	// instance chunks by generations
 	// 世代ごとのインスタンスチャンク
