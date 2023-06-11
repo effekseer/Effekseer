@@ -19,12 +19,12 @@
 
 #include "Effekseer.Setting.h"
 
+#include "Renderer/Effekseer.GPUTimer.h"
 #include "Renderer/Effekseer.ModelRenderer.h"
 #include "Renderer/Effekseer.RibbonRenderer.h"
 #include "Renderer/Effekseer.RingRenderer.h"
 #include "Renderer/Effekseer.SpriteRenderer.h"
 #include "Renderer/Effekseer.TrackRenderer.h"
-#include "Renderer/Effekseer.GPUTimer.h"
 
 #include "Effekseer.SoundLoader.h"
 #include "Sound/Effekseer.SoundPlayer.h"
@@ -381,7 +381,8 @@ void ManagerImplemented::StoreSortingDrawSets(const Manager::DrawParameter& draw
 
 	if (drawParameter.IsSortingEffectsEnabled)
 	{
-		std::sort(sortedRenderingDrawSets_.begin(), sortedRenderingDrawSets_.end(), [&](const DrawSet& a, const DrawSet& b) -> bool {
+		std::sort(sortedRenderingDrawSets_.begin(), sortedRenderingDrawSets_.end(), [&](const DrawSet& a, const DrawSet& b) -> bool
+				  {
 			const auto da = SIMD::Vec3f::Dot(a.GetGlobalMatrix().GetTranslation() - drawParameter.CameraPosition, drawParameter.CameraFrontDirection);
 			const auto db = SIMD::Vec3f::Dot(b.GetGlobalMatrix().GetTranslation() - drawParameter.CameraPosition, drawParameter.CameraFrontDirection);
 			return da > db; });
@@ -497,7 +498,8 @@ Instance* ManagerImplemented::CreateInstance(EffectNodeImplemented* pEffectNode,
 
 	int32_t offset = creatableChunkOffsets_[generationNumber];
 
-	auto it = std::find_if(chunks.begin() + offset, chunks.end(), [](const InstanceChunk* chunk) { return chunk->IsInstanceCreatable(); });
+	auto it = std::find_if(chunks.begin() + offset, chunks.end(), [](const InstanceChunk* chunk)
+						   { return chunk->IsInstanceCreatable(); });
 
 	creatableChunkOffsets_[generationNumber] = (int32_t)std::distance(chunks.begin(), it);
 
@@ -1434,7 +1436,8 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter, int times)
 					const uint32_t chunkOffset = threadID;
 					// Process on worker thread
 					PROFILER_BLOCK("DoUpdate::RunAsyncGroup", profiler::colors::Red100);
-					m_WorkerThreads[threadID].RunAsync([this, &chunks, chunkOffset, chunkStep]() {
+					m_WorkerThreads[threadID].RunAsync([this, &chunks, chunkOffset, chunkStep]()
+													   {
 						PROFILER_BLOCK("DoUpdate::RunAsync", profiler::colors::Red200);
 						for (size_t i = chunkOffset; i < chunks.size(); i += chunkStep)
 						{
@@ -1512,7 +1515,8 @@ void ManagerImplemented::EndUpdate()
 		auto last = chunks.end();
 		while (first != last)
 		{
-			auto it = std::find_if(first, last, [](const InstanceChunk* chunk) { return chunk->GetAliveCount() == 0; });
+			auto it = std::find_if(first, last, [](const InstanceChunk* chunk)
+								   { return chunk->GetAliveCount() == 0; });
 			if (it != last)
 			{
 				pooledChunks_.push(*it);
@@ -1772,7 +1776,8 @@ void ManagerImplemented::Draw(const Manager::DrawParameter& drawParameter)
 
 	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, GetSetting()->GetCoordinateSystem());
 
-	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void {
+	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void
+	{
 		if (!CanDraw(drawSet, drawParameter, cullingPlanes))
 		{
 			return;
@@ -1780,7 +1785,8 @@ void ManagerImplemented::Draw(const Manager::DrawParameter& drawParameter)
 
 		if (drawSet.IsAutoDrawing)
 		{
-			if (m_gpuTimer != nullptr) m_gpuTimer->Start(drawSet.GlobalPointer, 0);
+			if (m_gpuTimer != nullptr)
+				m_gpuTimer->Start(drawSet.GlobalPointer, 0);
 
 			if (drawSet.GlobalPointer->RenderedInstanceContainers.size() > 0)
 			{
@@ -1797,7 +1803,8 @@ void ManagerImplemented::Draw(const Manager::DrawParameter& drawParameter)
 				drawSet.InstanceContainerPointer->Draw(true);
 			}
 
-			if (m_gpuTimer != nullptr) m_gpuTimer->Stop(drawSet.GlobalPointer, 0);
+			if (m_gpuTimer != nullptr)
+				m_gpuTimer->Stop(drawSet.GlobalPointer, 0);
 		}
 	};
 
@@ -1836,7 +1843,8 @@ void ManagerImplemented::DrawBack(const Manager::DrawParameter& drawParameter)
 
 	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, GetSetting()->GetCoordinateSystem());
 
-	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void {
+	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void
+	{
 		if (!CanDraw(drawSet, drawParameter, cullingPlanes))
 		{
 			return;
@@ -1844,7 +1852,8 @@ void ManagerImplemented::DrawBack(const Manager::DrawParameter& drawParameter)
 
 		if (drawSet.IsAutoDrawing)
 		{
-			if (m_gpuTimer != nullptr) m_gpuTimer->Start(drawSet.GlobalPointer, 0);
+			if (m_gpuTimer != nullptr)
+				m_gpuTimer->Start(drawSet.GlobalPointer, 0);
 
 			auto e = (EffectImplemented*)drawSet.ParameterPointer.Get();
 			for (int32_t j = 0; j < e->renderingNodesThreshold; j++)
@@ -1855,7 +1864,8 @@ void ManagerImplemented::DrawBack(const Manager::DrawParameter& drawParameter)
 				drawSet.GlobalPointer->RenderedInstanceContainers[j]->Draw(false);
 			}
 
-			if (m_gpuTimer != nullptr) m_gpuTimer->Stop(drawSet.GlobalPointer, 0);
+			if (m_gpuTimer != nullptr)
+				m_gpuTimer->Stop(drawSet.GlobalPointer, 0);
 		}
 	};
 
@@ -1894,7 +1904,8 @@ void ManagerImplemented::DrawFront(const Manager::DrawParameter& drawParameter)
 
 	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, GetSetting()->GetCoordinateSystem());
 
-	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void {
+	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void
+	{
 		if (!CanDraw(drawSet, drawParameter, cullingPlanes))
 		{
 			return;
@@ -1902,7 +1913,8 @@ void ManagerImplemented::DrawFront(const Manager::DrawParameter& drawParameter)
 
 		if (drawSet.IsAutoDrawing)
 		{
-			if (m_gpuTimer != nullptr) m_gpuTimer->Start(drawSet.GlobalPointer, 1);
+			if (m_gpuTimer != nullptr)
+				m_gpuTimer->Start(drawSet.GlobalPointer, 1);
 
 			if (drawSet.GlobalPointer->RenderedInstanceContainers.size() > 0)
 			{
@@ -1920,7 +1932,8 @@ void ManagerImplemented::DrawFront(const Manager::DrawParameter& drawParameter)
 				drawSet.InstanceContainerPointer->Draw(true);
 			}
 
-			if (m_gpuTimer != nullptr) m_gpuTimer->Stop(drawSet.GlobalPointer, 1);
+			if (m_gpuTimer != nullptr)
+				m_gpuTimer->Stop(drawSet.GlobalPointer, 1);
 		}
 	};
 
@@ -2036,7 +2049,8 @@ void ManagerImplemented::DrawHandle(Handle handle, const Manager::DrawParameter&
 			return;
 		}
 
-		if (m_gpuTimer != nullptr) m_gpuTimer->Start(drawSet.GlobalPointer, 0);
+		if (m_gpuTimer != nullptr)
+			m_gpuTimer->Start(drawSet.GlobalPointer, 0);
 
 		if (drawSet.GlobalPointer->RenderedInstanceContainers.size() > 0)
 		{
@@ -2053,7 +2067,8 @@ void ManagerImplemented::DrawHandle(Handle handle, const Manager::DrawParameter&
 			drawSet.InstanceContainerPointer->Draw(true);
 		}
 
-		if (m_gpuTimer != nullptr) m_gpuTimer->Stop(drawSet.GlobalPointer, 0);
+		if (m_gpuTimer != nullptr)
+			m_gpuTimer->Stop(drawSet.GlobalPointer, 0);
 	}
 }
 
@@ -2079,7 +2094,8 @@ void ManagerImplemented::DrawHandleBack(Handle handle, const Manager::DrawParame
 			return;
 		}
 
-		if (m_gpuTimer != nullptr) m_gpuTimer->Start(drawSet.GlobalPointer, 0);
+		if (m_gpuTimer != nullptr)
+			m_gpuTimer->Start(drawSet.GlobalPointer, 0);
 
 		for (int32_t i = 0; i < e->renderingNodesThreshold; i++)
 		{
@@ -2089,7 +2105,8 @@ void ManagerImplemented::DrawHandleBack(Handle handle, const Manager::DrawParame
 			drawSet.GlobalPointer->RenderedInstanceContainers[i]->Draw(false);
 		}
 
-		if (m_gpuTimer != nullptr) m_gpuTimer->Stop(drawSet.GlobalPointer, 0);
+		if (m_gpuTimer != nullptr)
+			m_gpuTimer->Stop(drawSet.GlobalPointer, 0);
 	}
 }
 
@@ -2115,7 +2132,8 @@ void ManagerImplemented::DrawHandleFront(Handle handle, const Manager::DrawParam
 			return;
 		}
 
-		if (m_gpuTimer != nullptr) m_gpuTimer->Start(drawSet.GlobalPointer, 1);
+		if (m_gpuTimer != nullptr)
+			m_gpuTimer->Start(drawSet.GlobalPointer, 1);
 
 		if (drawSet.GlobalPointer->RenderedInstanceContainers.size() > 0)
 		{
@@ -2132,7 +2150,8 @@ void ManagerImplemented::DrawHandleFront(Handle handle, const Manager::DrawParam
 			drawSet.InstanceContainerPointer->Draw(true);
 		}
 
-		if (m_gpuTimer != nullptr) m_gpuTimer->Stop(drawSet.GlobalPointer, 1);
+		if (m_gpuTimer != nullptr)
+			m_gpuTimer->Stop(drawSet.GlobalPointer, 1);
 	}
 }
 

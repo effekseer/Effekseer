@@ -615,7 +615,7 @@ public:
 };
 
 /**
-	@brief	
+	@brief
 	\~English	Node rendering parameters
 	\~Japanese	ノードの描画パラメーター
 	@note

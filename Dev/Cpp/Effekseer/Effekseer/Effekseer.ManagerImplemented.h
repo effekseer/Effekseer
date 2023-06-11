@@ -448,7 +448,10 @@ public:
 
 	void EndReloadEffect(const EffectRef& effect, bool doLockThread);
 
-	const CustomAlignedMap<Handle, DrawSet>& GetPlayingDrawSets() const { return m_DrawSets; }
+	const CustomAlignedMap<Handle, DrawSet>& GetPlayingDrawSets() const
+	{
+		return m_DrawSets;
+	}
 
 	virtual int GetRef() override
 	{
