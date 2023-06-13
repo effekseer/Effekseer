@@ -124,6 +124,11 @@ public:
 		return graphicsDevice_->GetGraphics();
 	}
 
+	std::shared_ptr<LLGI::RenderPassPipelineState> GetCurrentRenderPassPipelineState() const
+	{
+		return currentRenderPassPipelineState_;
+	}
+
 	Effekseer::Backend::IndexBufferRef GetIndexBuffer();
 
 	/**
@@ -157,6 +162,11 @@ public:
 		@brief	軌跡レンダラーを生成する。
 	*/
 	::Effekseer::TrackRendererRef CreateTrackRenderer() override;
+
+	/**
+		@brief	GPUパーティクルを生成する。
+	*/
+	::Effekseer::GpuParticlesRef CreateGpuParticles(const Effekseer::GpuParticles::Settings& settings = {}) override;
 
 	/**
 		@brief	テクスチャ読込クラスを生成する。

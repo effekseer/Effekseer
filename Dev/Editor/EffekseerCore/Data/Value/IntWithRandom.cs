@@ -335,5 +335,13 @@ namespace Effekseer.Data.Value
 
 			Command.CommandManager.Execute(cmd);
 		}
+
+		public byte[] GetBytes()
+		{
+			byte[] values = new byte[sizeof(float) * 2];
+			BitConverter.GetBytes(Max).CopyTo(values, sizeof(float) * 0);
+			BitConverter.GetBytes(Min).CopyTo(values, sizeof(float) * 1);
+			return values;
+		}
 	}
 }

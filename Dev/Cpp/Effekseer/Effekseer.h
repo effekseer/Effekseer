@@ -27,6 +27,7 @@
 #include "Effekseer/Network/Effekseer.Server.h"
 #include "Effekseer/Parameter/Effekseer.Parameters.h"
 #include "Effekseer/Renderer/Effekseer.GPUTimer.h"
+#include "Effekseer/Renderer/Effekseer.GpuParticles.h"
 #include "Effekseer/Renderer/Effekseer.ModelRenderer.h"
 #include "Effekseer/Renderer/Effekseer.RibbonRenderer.h"
 #include "Effekseer/Renderer/Effekseer.RingRenderer.h"

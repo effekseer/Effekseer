@@ -9,6 +9,7 @@
 #include <array>
 #include <stdint.h>
 #include <string>
+#include <variant>
 
 namespace Effekseer
 {
@@ -26,6 +27,7 @@ class Texture;
 class RenderPass;
 class PipelineState;
 class UniformLayout;
+class ComputeBuffer;
 
 using GraphicsDeviceRef = RefPtr<GraphicsDevice>;
 using VertexBufferRef = RefPtr<VertexBuffer>;
@@ -38,6 +40,7 @@ using TextureRef = RefPtr<Texture>;
 using RenderPassRef = RefPtr<RenderPass>;
 using PipelineStateRef = RefPtr<PipelineState>;
 using UniformLayoutRef = RefPtr<UniformLayout>;
+using ComputeBufferRef = RefPtr<ComputeBuffer>;
 
 static const int32_t RenderTargetMax = 4;
 
@@ -94,6 +97,7 @@ enum class ShaderStageType
 {
 	Vertex,
 	Pixel,
+	Compute,
 };
 
 struct UniformLayoutElement
@@ -187,6 +191,14 @@ public:
 	virtual ~UniformBuffer() = default;
 };
 
+class ComputeBuffer
+	: public ReferenceObject
+{
+public:
+	ComputeBuffer() = default;
+	virtual ~ComputeBuffer() = default;
+};
+
 class PipelineState
 	: public ReferenceObject
 {
@@ -250,14 +262,6 @@ public:
 	virtual ~Shader() = default;
 };
 
-class ComputeBuffer
-	: public ReferenceObject
-{
-public:
-	ComputeBuffer() = default;
-	virtual ~ComputeBuffer() = default;
-};
-
 class FrameBuffer
 	: public ReferenceObject
 {
@@ -286,26 +290,71 @@ enum class TextureSamplingType
 	Nearest,
 };
 
+struct TextureBinder
+{
+	TextureRef Texture;
+	TextureWrapType WrapType = TextureWrapType::Repeat;
+	TextureSamplingType SamplingType = TextureSamplingType::Linear;
+};
+struct ComputeBufferBinder
+{
+	ComputeBufferRef ComputeBuffer;
+	bool ReadOnly;
+};
+using ResourceBinder = std::variant<std::nullptr_t, TextureBinder, ComputeBufferBinder>;
+
 struct DrawParameter
 {
 public:
-	static const int TextureSlotCount = 8;
+	static const int BufferSlotCount = 4;
+	static const int ResourceSlotCount = 16;
 
 	VertexBufferRef VertexBufferPtr;
 	IndexBufferRef IndexBufferPtr;
 	PipelineStateRef PipelineStatePtr;
 
-	UniformBufferRef VertexUniformBufferPtr;
-	UniformBufferRef PixelUniformBufferPtr;
+	std::array<UniformBufferRef, BufferSlotCount> VertexUniformBufferPtrs;
+	std::array<UniformBufferRef, BufferSlotCount> PixelUniformBufferPtrs;
+	std::array<ResourceBinder, ResourceSlotCount> ResourceBinders;
 
-	int32_t TextureCount = 0;
-	std::array<TextureRef, TextureSlotCount> TexturePtrs;
-	std::array<TextureWrapType, TextureSlotCount> TextureWrapTypes;
-	std::array<TextureSamplingType, TextureSlotCount> TextureSamplingTypes;
-
+	int32_t VertexStride = 0;
+	int32_t IndexOffset = 0;
 	int32_t PrimitiveCount = 0;
 	int32_t InstanceCount = 0;
-	int32_t IndexOffset = 0;
+
+	void SetTexture(int32_t slot, TextureRef texture, TextureWrapType wrapType, TextureSamplingType samplingType)
+	{
+		ResourceBinders[slot] = TextureBinder{texture, wrapType, samplingType};
+	}
+	void SetComputeBuffer(int32_t slot, ComputeBufferRef computeBuffer)
+	{
+		ResourceBinders[slot] = ComputeBufferBinder{computeBuffer, true};
+	}
+};
+
+struct DispatchParameter
+{
+public:
+	static const int BufferSlotCount = 4;
+	static const int TextureSlotCount = 4;
+	static const int ResourceSlotCount = 16;
+
+	PipelineStateRef PipelineStatePtr;
+
+	std::array<UniformBufferRef, BufferSlotCount> UniformBufferPtrs;
+	std::array<ResourceBinder, ResourceSlotCount> ResourceBinders;
+
+	std::array<int32_t, 3> GroupCount = {1, 1, 1};
+	std::array<int32_t, 3> ThreadCount = {1, 1, 1};
+
+	void SetTexture(int32_t slot, TextureRef texture, TextureWrapType wrapType, TextureSamplingType samplingType)
+	{
+		ResourceBinders[slot] = TextureBinder{texture, wrapType, samplingType};
+	}
+	void SetComputeBuffer(int32_t slot, ComputeBufferRef computeBuffer, bool readonly)
+	{
+		ResourceBinders[slot] = ComputeBufferBinder{computeBuffer, readonly};
+	}
 };
 
 enum class VertexLayoutFormat
@@ -512,6 +561,19 @@ public:
 	{
 		return false;
 	}
+	
+	/**
+		@brief	Update content of an uniform buffer
+		@param	buffer	buffer
+		@param	size	the size of updated buffer
+		@param	offset	the offset of updated buffer
+		@param	data	updating data
+		@return	Succeeded in updating?
+	*/
+	virtual bool UpdateComputeBuffer(ComputeBufferRef& buffer, int32_t size, int32_t offset, const void* data)
+	{
+		return false;
+	}
 
 	/**
 		@brief	Create VertexLayout
@@ -589,16 +651,21 @@ public:
 		return ShaderRef{};
 	}
 
+	virtual ShaderRef CreateComputeShader(const void* csData, int32_t csDataSize)
+	{
+		return ShaderRef{};
+	}
+
 	/**
 		@brief	Create ComputeBuffer
 		@param	size	the size of buffer
 		@param	initialData	the initial data of buffer. If it is null, not initialized.
 		@return	ComputeBuffer
 	*/
-	// virtual ComputeBuffer* CreateComputeBuffer(int32_t size, const void* initialData)
-	// {
-	// 	return nullptr;
-	// }
+	virtual ComputeBufferRef CreateComputeBuffer(int32_t elementCount, int32_t elementSize, const void* initialData, bool readOnly)
+	{
+		return nullptr;
+	}
 
 	virtual void Draw(const DrawParameter& drawParam)
 	{
@@ -613,6 +680,18 @@ public:
 	}
 
 	virtual void EndRenderPass()
+	{
+	}
+
+	virtual void Dispatch(const DispatchParameter& dispatchParam)
+	{
+	}
+
+	virtual void BeginComputePass()
+	{
+	}
+
+	virtual void EndComputePass()
 	{
 	}
 

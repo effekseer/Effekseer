@@ -310,6 +310,55 @@ namespace Effekseer.Data.Value
 			}
 		}
 
+		public float[] Sample(float position)
+		{
+			float[] color = new float[4];
+
+			var colorMarkers = GetValue().ColorMarkers;
+			for (int i = 0; i < colorMarkers.Length; i++)
+			{
+				if (position < colorMarkers[i].Position)
+				{
+					if (i == 0)
+					{
+						float intensity = colorMarkers[i].Intensity;
+						color[0] = colorMarkers[i].ColorR * intensity;
+						color[1] = colorMarkers[i].ColorG * intensity;
+						color[2] = colorMarkers[i].ColorB * intensity;
+					}
+					else
+					{
+						float ratio = (position - colorMarkers[i - 1].Position) / (colorMarkers[i].Position - colorMarkers[i - 1].Position);
+						float intensity = colorMarkers[i - 1].Intensity + (colorMarkers[i].Intensity - colorMarkers[i - 1].Intensity) * ratio;
+						color[0] = (colorMarkers[i - 1].ColorR + (colorMarkers[i].ColorR - colorMarkers[i - 1].ColorR) * ratio) * intensity;
+						color[1] = (colorMarkers[i - 1].ColorG + (colorMarkers[i].ColorG - colorMarkers[i - 1].ColorG) * ratio) * intensity;
+						color[2] = (colorMarkers[i - 1].ColorB + (colorMarkers[i].ColorB - colorMarkers[i - 1].ColorB) * ratio) * intensity;
+					}
+					break;
+				}
+			}
+
+			var alphaMarkers = GetValue().AlphaMarkers;
+			for (int i = 0; i < alphaMarkers.Length; i++)
+			{
+				if (position < alphaMarkers[i].Position)
+				{
+					if (i == 0)
+					{
+						color[3] = alphaMarkers[i].Alpha;
+					}
+					else
+					{
+						float ratio = (position - colorMarkers[i - 1].Position) / (colorMarkers[i].Position - colorMarkers[i - 1].Position);
+						color[3] = alphaMarkers[i - 1].Alpha + (alphaMarkers[i].Alpha - alphaMarkers[i - 1].Alpha) * ratio;
+					}
+					break;
+				}
+			}
+
+			return color;
+		}
+
 		public event ChangedValueEventHandler OnChanged;
 
 		class ChangeCommand : Command.DelegateCommand

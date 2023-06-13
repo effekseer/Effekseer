@@ -372,13 +372,12 @@ class GpuParticleContext
 		graphicsDevice->BeginRenderPass(buffers[targetIndex].renderPass, false, false, Effekseer::Color(0, 0, 0, 255));
 		Effekseer::Backend::DrawParameter drawParam;
 
-		drawParam.TextureCount = 0;
 		drawParam.VertexBufferPtr = emitVB;
 		drawParam.IndexBufferPtr = emitIB;
 		drawParam.PipelineStatePtr = pip;
 		drawParam.PrimitiveCount = newParticleCount;
 		drawParam.InstanceCount = 1;
-		drawParam.VertexUniformBufferPtr = emitUniformBufferVS;
+		drawParam.VertexUniformBufferPtrs[0] = emitUniformBufferVS;
 
 		graphicsDevice->Draw(drawParam);
 		graphicsDevice->EndRenderPass();
@@ -678,13 +677,9 @@ public:
 
 		Effekseer::Backend::DrawParameter drawParam;
 
-		drawParam.TextureCount = buffers[sourceIndex].textures.size();
-
-		for (int i = 0; i < drawParam.TextureCount; i++)
+		for (int i = 0; i < (int)buffers[sourceIndex].textures.size(); i++)
 		{
-			drawParam.TexturePtrs[i] = buffers[sourceIndex].textures.at(i);
-			drawParam.TextureSamplingTypes[i] = Effekseer::Backend::TextureSamplingType::Nearest;
-			drawParam.TextureWrapTypes[i] = Effekseer::Backend::TextureWrapType::Clamp;
+			drawParam.SetTexture(i, buffers[sourceIndex].textures.at(i), Effekseer::Backend::TextureWrapType::Clamp, Effekseer::Backend::TextureSamplingType::Nearest);
 		}
 		drawParam.PipelineStatePtr = pip;
 
@@ -693,7 +688,7 @@ public:
 		drawParam.PipelineStatePtr = pip;
 		drawParam.PrimitiveCount = 2;
 		drawParam.InstanceCount = 1;
-		drawParam.PixelUniformBufferPtr = updateUniformBufferPS;
+		drawParam.PixelUniformBufferPtrs[0] = updateUniformBufferPS;
 
 		graphicsDevice->Draw(drawParam);
 		graphicsDevice->EndRenderPass();
@@ -742,32 +737,27 @@ public:
 		graphicsDevice->SetViewport(0, 0, windowWidth, windowHeight);
 		graphicsDevice->BeginRenderPass(windowRenderPass, true, true, Effekseer::Color(0, 0, 0, 255));
 		Effekseer::Backend::DrawParameter drawParam;
-		drawParam.TextureCount = buffers[pingpong].textures.size() + 1;
 		for (int i = 0; i < buffers[pingpong].textures.size(); i++)
 		{
-			drawParam.TexturePtrs[i] = buffers[pingpong].textures.at(i);
-			drawParam.TextureSamplingTypes[i] = Effekseer::Backend::TextureSamplingType::Nearest;
-			drawParam.TextureWrapTypes[i] = Effekseer::Backend::TextureWrapType::Clamp;
+			drawParam.SetTexture(i, buffers[pingpong].textures.at(i),
+				Effekseer::Backend::TextureWrapType::Clamp, Effekseer::Backend::TextureSamplingType::Nearest);
 		}
 		int colorTableTextureIndex = buffers[pingpong].textures.size();
-		drawParam.TexturePtrs[colorTableTextureIndex] = colorTableTexture;
-		drawParam.TextureSamplingTypes[colorTableTextureIndex] = Effekseer::Backend::TextureSamplingType::Linear;
-		drawParam.TextureWrapTypes[colorTableTextureIndex] = Effekseer::Backend::TextureWrapType::Clamp;
+		drawParam.SetTexture(colorTableTextureIndex, colorTableTexture,
+			Effekseer::Backend::TextureWrapType::Clamp, Effekseer::Backend::TextureSamplingType::Linear);
 
 		if (trailMode)
 		{
-			drawParam.TextureCount++;
 			int historiesTextureIndex = colorTableTextureIndex + 1;
-			drawParam.TexturePtrs[historiesTextureIndex] = trailHistoriesTexture;
-			drawParam.TextureSamplingTypes[historiesTextureIndex] = Effekseer::Backend::TextureSamplingType::Linear;
-			drawParam.TextureWrapTypes[historiesTextureIndex] = Effekseer::Backend::TextureWrapType::Clamp;
+			drawParam.SetTexture(historiesTextureIndex, trailHistoriesTexture,
+				Effekseer::Backend::TextureWrapType::Clamp, Effekseer::Backend::TextureSamplingType::Linear);
 
 			drawParam.VertexBufferPtr = trailVertexBuffer;
 			drawParam.IndexBufferPtr = trailRenderIndexBuffer;
 			drawParam.PipelineStatePtr = pip;
 			drawParam.PrimitiveCount = TrailBufferSize * 2;
 			drawParam.InstanceCount = maxParticleCount;
-			drawParam.VertexUniformBufferPtr = trailRenderUniformBufferVS;
+			drawParam.VertexUniformBufferPtrs[0] = trailRenderUniformBufferVS;
 
 			graphicsDevice->Draw(drawParam);
 		}
@@ -778,7 +768,7 @@ public:
 			drawParam.PipelineStatePtr = pip;
 			drawParam.PrimitiveCount = 2;
 			drawParam.InstanceCount = maxParticleCount;
-			drawParam.VertexUniformBufferPtr = renderUniformBufferVS;
+			drawParam.VertexUniformBufferPtrs[0] = renderUniformBufferVS;
 
 			graphicsDevice->Draw(drawParam);
 		}

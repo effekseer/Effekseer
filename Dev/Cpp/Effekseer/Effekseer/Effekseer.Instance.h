@@ -182,6 +182,8 @@ public:
 	float m_AlphaThreshold = 0.0f;
 
 	CollisionsState collisionState_;
+	
+	int32_t m_gpuEmitterID = -1;
 
 	Instance(ManagerImplemented* pManager, EffectNodeImplemented* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup);
 

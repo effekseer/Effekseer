@@ -698,8 +698,8 @@ void Preview::Render()
 			drawParam.InstanceCount = 1;
 			drawParam.PrimitiveCount = mesh_->GetIndexCount() / 3;
 			drawParam.PipelineStatePtr = pipelineState_;
-			drawParam.VertexUniformBufferPtr = vertexUniformBuffer_;
-			drawParam.PixelUniformBufferPtr = pixelUniformBuffer_;
+			drawParam.VertexUniformBufferPtrs[0] = vertexUniformBuffer_;
+			drawParam.PixelUniformBufferPtrs[0] = pixelUniformBuffer_;
 		}
 		else
 		{
@@ -709,8 +709,8 @@ void Preview::Render()
 			drawParam.InstanceCount = 1;
 			drawParam.PrimitiveCount = 2;
 			drawParam.PipelineStatePtr = pipelineState_;
-			drawParam.VertexUniformBufferPtr = vertexUniformBuffer_;
-			drawParam.PixelUniformBufferPtr = pixelUniformBuffer_;
+			drawParam.VertexUniformBufferPtrs[0] = vertexUniformBuffer_;
+			drawParam.PixelUniformBufferPtrs[0] = pixelUniformBuffer_;
 		}
 
 		for (int i = 0; i < textures_.size(); i++)
@@ -719,8 +719,9 @@ void Preview::Render()
 			{
 				if (textures_[i]->Name == uniformLayout_->GetTextures()[j].c_str())
 				{
-					drawParam.TexturePtrs[j] = textures_[i]->TexturePtr->GetTexture();
-					drawParam.TextureWrapTypes[j] = textures_[i]->SamplerType == TextureSamplerType::Repeat ? Effekseer::Backend::TextureWrapType::Repeat : Effekseer::Backend::TextureWrapType::Clamp;
+					drawParam.SetTexture(j, textures_[i]->TexturePtr->GetTexture(), 
+						textures_[i]->SamplerType == TextureSamplerType::Repeat ? Effekseer::Backend::TextureWrapType::Repeat : Effekseer::Backend::TextureWrapType::Clamp,
+						Effekseer::Backend::TextureSamplingType::Linear);
 				}
 			}
 		}
@@ -729,8 +730,7 @@ void Preview::Render()
 		{
 			if (uniformLayout_->GetTextures()[j] == "efk_depth")
 			{
-				drawParam.TexturePtrs[j] = white_->GetTexture();
-				drawParam.TextureWrapTypes[j] = Effekseer::Backend::TextureWrapType::Clamp;
+				drawParam.SetTexture(j, white_->GetTexture(), Effekseer::Backend::TextureWrapType::Clamp, Effekseer::Backend::TextureSamplingType::Linear);
 			}
 		}
 

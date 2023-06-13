@@ -9,7 +9,7 @@
 #import <MetalKit/MetalKit.h>
 
 @class MTLRenderPassDescriptor;
-@protocol MTLDevice, MTLCommandBuffer, MTLRenderCommandEncoder, MTLTexture;
+@protocol MTLDevice, MTLCommandBuffer, MTLRenderCommandEncoder, MTLComputeCommandEncoder, MTLTexture;
 
 namespace EffekseerRendererMetal
 {
@@ -39,9 +39,17 @@ namespace EffekseerRendererMetal
 
 Effekseer::Backend::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, id<MTLTexture> texture);
 
-void BeginCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList, id<MTLRenderCommandEncoder> encoder);
+void BeginCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList);
 
 void EndCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList);
+
+void BeginRenderPass(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList, id<MTLRenderCommandEncoder> renderEncoder);
+
+void EndRenderPass(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList);
+
+void BeginComputePass(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList, id<MTLComputeCommandEncoder> computeEncoder);
+
+void EndComputePass(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList);
 
 } // namespace EffekseerRendererMetal
 

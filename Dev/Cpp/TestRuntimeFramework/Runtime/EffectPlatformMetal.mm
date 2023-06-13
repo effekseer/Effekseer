@@ -219,15 +219,16 @@ void EffectPlatformMetal::BeginRendering()
 	EffectPlatformLLGI::BeginRendering();
 
 	auto cl = static_cast<LLGI::CommandListMetal*>(commandList_.get());
-	EffekseerRendererMetal::BeginCommandList(commandListEfk_, cl->GetRenderCommandEncorder());
 	GetRenderer()->SetCommandList(commandListEfk_);
+
+	EffekseerRendererMetal::BeginRenderPass(commandListEfk_, cl->GetRenderCommandEncorder());
 }
 
 void EffectPlatformMetal::EndRendering()
 {
-	GetRenderer()->SetCommandList(nullptr);
-	EffekseerRendererMetal::EndCommandList(commandListEfk_);
+	EffekseerRendererMetal::EndRenderPass(commandListEfk_);
 
+	GetRenderer()->SetCommandList(nullptr);
 	EffectPlatformLLGI::EndRendering();
 }
 

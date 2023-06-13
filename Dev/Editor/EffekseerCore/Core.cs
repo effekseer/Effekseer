@@ -1518,6 +1518,15 @@ namespace Effekseer
 						list.Add(Tuple35.Create(name, (object)node.AdvancedRendererCommonValuesValues.AlphaCutoffParam.FCurve));
 					}
 
+					if (node.GpuParticles.Enabled.Value)
+					{
+						if (node.GpuParticles.RenderColor.ColorAll.Type.Value == StandardColorType.FCurve)
+						{
+							var name = MultiLanguageTextProvider.GetText("Fcurve_Elm_GpuParticles_ColorAll");
+							list.Add(Tuple35.Create(name, (object)node.GpuParticles.RenderColor.ColorAll.FCurve.FCurve));
+						}
+					}
+
 					return list.ToArray();
 				};
 

@@ -1,0 +1,130 @@
+#version 430
+layout(local_size_x = 256, local_size_y = 1, local_size_z = 1) in;
+
+struct EmitterData
+{
+    uint FlagBits;
+    uint Seed;
+    uint ParticleHead;
+    uint ParticleSize;
+    uint TrailHead;
+    uint TrailSize;
+    uint TrailPhase;
+    uint NextEmitCount;
+    uint TotalEmitCount;
+    uint EmitPointCount;
+    float TimeCount;
+    float TimeStopped;
+    uint Reserved0;
+    uint Reserved1;
+    float DeltaTime;
+    uint Color;
+    mat4x3 Transform;
+};
+
+struct ParticleData
+{
+    uint FlagBits;
+    uint Seed;
+    float LifeAge;
+    uint InheritColor;
+    uvec2 DirectionSpeed;
+    uint Color;
+    uint Padding;
+    mat4x3 Transform;
+};
+
+struct ParameterData
+{
+    int EmitCount;
+    int EmitPerFrame;
+    float EmitOffset;
+    uint Padding0;
+    vec2 LifeTime;
+    uint EmitShapeType;
+    uint Padding1;
+    vec4 EmitShapeData[2];
+    vec3 Direction;
+    float Spread;
+    vec2 InitialSpeed;
+    vec2 Damping;
+    vec4 AngularOffset[2];
+    vec4 AngularVelocity[2];
+    vec4 ScaleData1[2];
+    vec4 ScaleData2[2];
+    vec3 ScaleEasing;
+    uint ScaleFlags;
+    vec3 Gravity;
+    uint Padding2;
+    vec3 VortexCenter;
+    float VortexRotation;
+    vec3 VortexAxis;
+    float VortexAttraction;
+    float TurbulencePower;
+    uint TurbulenceSeed;
+    float TurbulenceScale;
+    float TurbulenceOctave;
+    uint RenderState;
+    uint ShapeType;
+    uint ShapeData;
+    float ShapeSize;
+    float Emissive;
+    float FadeIn;
+    float FadeOut;
+    uint MaterialType;
+    uvec4 ColorData;
+    vec3 ColorEasing;
+    uint ColorFlags;
+};
+
+layout(set = 0, binding = 1, std140) uniform cb1
+{
+    layout(row_major) EmitterData emitter;
+} _72;
+
+layout(set = 2, binding = 0, std430) buffer Particles
+{
+    layout(row_major) ParticleData _data[];
+} Particles_1;
+
+layout(set = 0, binding = 0, std140) uniform cb0
+{
+    ParameterData paramData;
+} _148;
+
+uvec2 PackFloat4(vec4 v)
+{
+    uvec4 v16 = uvec4(packHalf2x16(vec2(v.x, 0.0)), packHalf2x16(vec2(v.y, 0.0)), packHalf2x16(vec2(v.z, 0.0)), packHalf2x16(vec2(v.w, 0.0)));
+    return uvec2(v16.x | (v16.y << uint(16)), v16.z | (v16.w << uint(16)));
+}
+
+void _main(uvec3 dtid)
+{
+    uint particleID = _72.emitter.ParticleHead + dtid.x;
+    ParticleData particle;
+    particle.FlagBits = 0u;
+    particle.Seed = 0u;
+    particle.LifeAge = 0.0;
+    particle.InheritColor = 0u;
+    particle.Color = 0u;
+    particle.Padding = 0u;
+    vec4 param = vec4(0.0);
+    particle.DirectionSpeed = PackFloat4(param);
+    particle.Transform = mat4x3(vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0));
+    Particles_1._data[particleID].FlagBits = particle.FlagBits;
+    Particles_1._data[particleID].Seed = particle.Seed;
+    Particles_1._data[particleID].LifeAge = particle.LifeAge;
+    Particles_1._data[particleID].InheritColor = particle.InheritColor;
+    Particles_1._data[particleID].DirectionSpeed = particle.DirectionSpeed;
+    Particles_1._data[particleID].Color = particle.Color;
+    Particles_1._data[particleID].Padding = particle.Padding;
+    Particles_1._data[particleID].Transform = particle.Transform;
+}
+
+void main()
+{
+    uvec3 dtid = gl_GlobalInvocationID;
+    uvec3 param = dtid;
+    _main(param);
+}
+

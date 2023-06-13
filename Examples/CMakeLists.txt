@@ -1,11 +1,7 @@
 cmake_minimum_required (VERSION 3.15)
 
 # C++ version
-if(WIN32)
-    set(CMAKE_CXX_STANDARD 17)
-else()
-    set(CMAKE_CXX_STANDARD 14)
-endif()
+set(CMAKE_CXX_STANDARD 17)
 
 # MSVC Flag
 if (MSVC)
@@ -58,3 +54,7 @@ add_subdirectory(SortHandle)
 add_subdirectory(Distortion)
 add_subdirectory(Trigger)
 add_subdirectory(CustomAsyncLoader)
+
+if (WIN32 OR APPLE OR (UNIX AND BUILD_VULKAN))
+add_subdirectory(GpuParticles)
+endif()

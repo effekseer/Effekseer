@@ -127,6 +127,8 @@ private:
 	// 確保済みインスタンス数
 	int m_instance_max;
 
+	int m_nextComputeCount;
+
 	/**
 		@note
 		An user can specify only the maximum number of instance.
@@ -164,6 +166,7 @@ private:
 	SettingRef m_setting;
 
 	int m_updateTime;
+	int m_computeTime;
 	int m_drawTime;
 
 	uint32_t m_sequenceNumber;
@@ -257,6 +260,10 @@ public:
 	GPUTimerRef GetGPUTimer() override;
 
 	void SetGPUTimer(GPUTimerRef gpuTimer) override;
+
+	GpuParticlesRef GetGpuParticles() override;
+
+	void SetGpuParticles(GpuParticlesRef gpuParticles) override;
 
 	const SettingRef& GetSetting() const override;
 
@@ -414,6 +421,8 @@ private:
 	void ResetAndPlayWithDataSet(DrawSet& drawSet, float frame);
 
 public:
+	void Compute() override;
+
 	void Draw(const Manager::DrawParameter& drawParameter) override;
 
 	void DrawBack(const Manager::DrawParameter& drawParameter) override;

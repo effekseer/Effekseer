@@ -140,11 +140,10 @@ void LineRenderer::Render(const Effekseer::Matrix44& cameraMatrix, const Effekse
 
 	Effekseer::Backend::DrawParameter drawParam;
 
-	drawParam.TextureCount = 0;
 	drawParam.VertexBufferPtr = vb_;
 	drawParam.IndexBufferPtr = ib_;
 	drawParam.PipelineStatePtr = pip_;
-	drawParam.VertexUniformBufferPtr = uniformBufferVS_;
+	drawParam.VertexUniformBufferPtrs[0] = uniformBufferVS_;
 	drawParam.PrimitiveCount = vertexies_.size() / 2;
 	drawParam.InstanceCount = 1;
 	drawParam.IndexOffset = 0;

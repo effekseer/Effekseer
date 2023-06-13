@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using static Effekseer.InternalScript.SSAGenerator;
 
 namespace Effekseer.Data.Value
 {
@@ -99,6 +100,12 @@ namespace Effekseer.Data.Value
 			return typeof(T);
 		}
 
+		public byte[] GetBytes()
+		{
+			var n = GetValueAsInt();
+			return BitConverter.GetBytes(n);
+		}
+
 		public static implicit operator T(Enum<T> value)
 		{
 			return value._value;
@@ -106,8 +113,7 @@ namespace Effekseer.Data.Value
 
 		public static implicit operator byte[](Enum<T> value)
 		{
-			var n = value.GetValueAsInt();
-			return BitConverter.GetBytes(n);
+			return value.GetBytes();
 		}
 	}
 }

@@ -238,13 +238,9 @@ public:
 		graphicsDevice->BeginRenderPass(buffers[targetIndex].renderPass, true, true, Effekseer::Color(80, 80, 80, 255));
 		Effekseer::Backend::DrawParameter drawParam;
 
-		drawParam.TextureCount = buffers[sourceIndex].textures.size();
-
-		for (int i = 0; i < drawParam.TextureCount; i++)
+		for (int i = 0; i < (int)buffers[sourceIndex].textures.size(); i++)
 		{
-			drawParam.TexturePtrs[i] = buffers[sourceIndex].textures.at(i);
-			drawParam.TextureSamplingTypes[i] = Effekseer::Backend::TextureSamplingType::Nearest;
-			drawParam.TextureWrapTypes[i] = Effekseer::Backend::TextureWrapType::Clamp;
+			drawParam.SetTexture(i, buffers[sourceIndex].textures.at(i), Effekseer::Backend::TextureWrapType::Clamp, Effekseer::Backend::TextureSamplingType::Nearest);
 		}
 		drawParam.PipelineStatePtr = pip;
 
@@ -277,12 +273,9 @@ public:
 		graphicsDevice->BeginRenderPass(windowRenderPass, true, true, Effekseer::Color(80, 80, 80, 255));
 		Effekseer::Backend::DrawParameter drawParam;
 
-		drawParam.TextureCount = buffers[pingpong].textures.size();
-		for (int i = 0; i < drawParam.TextureCount; i++)
+		for (int i = 0; i < (int)buffers[pingpong].textures.size(); i++)
 		{
-			drawParam.TexturePtrs[i] = buffers[pingpong].textures.at(i);
-			drawParam.TextureSamplingTypes[i] = Effekseer::Backend::TextureSamplingType::Nearest;
-			drawParam.TextureWrapTypes[i] = Effekseer::Backend::TextureWrapType::Clamp;
+			drawParam.SetTexture(i, buffers[pingpong].textures.at(i), Effekseer::Backend::TextureWrapType::Clamp, Effekseer::Backend::TextureSamplingType::Nearest);
 		}
 		drawParam.PipelineStatePtr = pip;
 

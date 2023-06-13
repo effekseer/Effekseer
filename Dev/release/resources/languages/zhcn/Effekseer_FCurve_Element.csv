@@ -18,3 +18,4 @@ Fcurve_Elm_Blend,混合
 Fcurve_Elm_BlendAlpha,混合Alpha
 Fcurve_Elm_BlendUVDistortion,混合UV扭曲
 Fcurve_Elm_AlphaThreshold,Alpha阈值
+Fcurve_Elm_GpuParticles_ColorAll,GpuPtcl-整体颜色(RGBA)

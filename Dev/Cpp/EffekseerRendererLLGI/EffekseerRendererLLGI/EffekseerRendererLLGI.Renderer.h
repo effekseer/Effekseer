@@ -36,6 +36,12 @@ struct FixedShader
 	std::vector<LLGI::DataStructure> AdvancedModelUnlit_PS;
 	std::vector<LLGI::DataStructure> AdvancedModelLit_PS;
 	std::vector<LLGI::DataStructure> AdvancedModelDistortion_PS;
+
+	std::vector<LLGI::DataStructure> GpuParticles_Clear_CS;
+	std::vector<LLGI::DataStructure> GpuParticles_Spawn_CS;
+	std::vector<LLGI::DataStructure> GpuParticles_Update_CS;
+	std::vector<LLGI::DataStructure> GpuParticles_Render_VS;
+	std::vector<LLGI::DataStructure> GpuParticles_Render_PS;
 };
 
 /**

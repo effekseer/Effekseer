@@ -80,8 +80,8 @@ public:
 			\~English Perform synchronous update
 			\~Japanese 同期更新を行う
 			@note
-			\~English If true, update processing is performed synchronously. If false, update processing is performed asynchronously (after this, do not call anything other than Draw)
-			\~Japanese trueなら同期的に更新処理を行う。falseなら非同期的に更新処理を行う（次はDraw以外呼び出してはいけない）
+			\~English If true, update processing is performed synchronously. If false, update processing is performed asynchronously (after this, do not call anything other than Draw or Compute)
+			\~Japanese trueなら同期的に更新処理を行う。falseなら非同期的に更新処理を行う（次はDraw/Compute以外呼び出してはいけない）
 		*/
 		bool SyncUpdate = true;
 	};
@@ -278,6 +278,20 @@ public:
 		\~Japanese GPUパフォーマンスタイマーを設定する。
 	*/
 	virtual void SetGPUTimer(GPUTimerRef gpuTimer) = 0;
+	
+	/**
+		@brief
+		\~English get an GPU performance timer
+		\~Japanese GPUパフォーマンスタイマー取得する。
+	*/
+	virtual GpuParticlesRef GetGpuParticles() = 0;
+
+	/**
+		@brief
+		\~English get an GPU performance timer
+		\~Japanese GPUパフォーマンスタイマーを設定する。
+	*/
+	virtual void SetGpuParticles(GpuParticlesRef gpuParticles) = 0;
 
 	/**
 		@brief	設定クラスを取得する。
@@ -823,6 +837,13 @@ public:
 		\~Japanese	この関数は遅い。
 	*/
 	virtual void UpdateHandleToMoveToFrame(Handle handle, float frame) = 0;
+
+	/**
+	@brief
+	\~English	Compute GPU particles.
+	\~Japanese	GPUパーティクルの計算処理を行う。
+	*/
+	virtual void Compute() = 0;
 
 	/**
 	@brief

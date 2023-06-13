@@ -280,6 +280,11 @@ public:
 	virtual ::Effekseer::GPUTimerRef CreateGPUTimer() { return nullptr; }
 
 	/**
+		@brief	GPUパーティクルを生成する。
+	*/
+	virtual ::Effekseer::GpuParticlesRef CreateGpuParticles(const Effekseer::GpuParticles::Settings& settings = {}) { return nullptr; }
+
+	/**
 		@brief	標準のテクスチャ読込クラスを生成する。
 	*/
 	virtual ::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::FileInterfaceRef fileInterface = nullptr) = 0;

@@ -20,11 +20,13 @@ using D3D11ResourcePtr = std::unique_ptr<ID3D11Resource, Effekseer::ReferenceDel
 using D3D11Texture2DPtr = std::unique_ptr<ID3D11Texture2D, Effekseer::ReferenceDeleter<ID3D11Texture2D>>;
 using D3D11Texture3DPtr = std::unique_ptr<ID3D11Texture3D, Effekseer::ReferenceDeleter<ID3D11Texture3D>>;
 using D3D11ShaderResourceViewPtr = std::unique_ptr<ID3D11ShaderResourceView, Effekseer::ReferenceDeleter<ID3D11ShaderResourceView>>;
+using D3D11UnorderedAccessViewPtr = std::unique_ptr<ID3D11UnorderedAccessView, Effekseer::ReferenceDeleter<ID3D11UnorderedAccessView>>;
 using D3D11RenderTargetViewPtr = std::unique_ptr<ID3D11RenderTargetView, Effekseer::ReferenceDeleter<ID3D11RenderTargetView>>;
 using D3D11DepthStencilViewPtr = std::unique_ptr<ID3D11DepthStencilView, Effekseer::ReferenceDeleter<ID3D11DepthStencilView>>;
 using D3D11InputLayoutPtr = std::unique_ptr<ID3D11InputLayout, Effekseer::ReferenceDeleter<ID3D11InputLayout>>;
 using D3D11VertexShaderPtr = std::unique_ptr<ID3D11VertexShader, Effekseer::ReferenceDeleter<ID3D11VertexShader>>;
 using D3D11PixelShaderPtr = std::unique_ptr<ID3D11PixelShader, Effekseer::ReferenceDeleter<ID3D11PixelShader>>;
+using D3D11ComputeShaderPtr = std::unique_ptr<ID3D11ComputeShader, Effekseer::ReferenceDeleter<ID3D11ComputeShader>>;
 using D3D11RasterizerStatePtr = std::unique_ptr<ID3D11RasterizerState, Effekseer::ReferenceDeleter<ID3D11RasterizerState>>;
 using D3D11DepthStencilStatePtr = std::unique_ptr<ID3D11DepthStencilState, Effekseer::ReferenceDeleter<ID3D11DepthStencilState>>;
 using D3D11BlendStatePtr = std::unique_ptr<ID3D11BlendState, Effekseer::ReferenceDeleter<ID3D11BlendState>>;
@@ -36,24 +38,28 @@ class VertexBuffer;
 class IndexBuffer;
 class UniformBuffer;
 class Shader;
+class ComputeShader;
 class VertexLayout;
 class FrameBuffer;
 class Texture;
 class RenderPass;
 class PipelineState;
 class UniformLayout;
+class ComputeBuffer;
 
 using GraphicsDeviceRef = Effekseer::RefPtr<GraphicsDevice>;
 using VertexBufferRef = Effekseer::RefPtr<VertexBuffer>;
 using IndexBufferRef = Effekseer::RefPtr<IndexBuffer>;
 using UniformBufferRef = Effekseer::RefPtr<UniformBuffer>;
 using ShaderRef = Effekseer::RefPtr<Shader>;
+using ComputeShaderRef = Effekseer::RefPtr<ComputeShader>;
 using VertexLayoutRef = Effekseer::RefPtr<VertexLayout>;
 using FrameBufferRef = Effekseer::RefPtr<FrameBuffer>;
 using TextureRef = Effekseer::RefPtr<Texture>;
 using RenderPassRef = Effekseer::RefPtr<RenderPass>;
 using PipelineStateRef = Effekseer::RefPtr<PipelineState>;
 using UniformLayoutRef = Effekseer::RefPtr<UniformLayout>;
+using ComputeBufferRef = Effekseer::RefPtr<ComputeBuffer>;
 
 DXGI_FORMAT GetTextureFormatType(Effekseer::Backend::TextureFormatType format);
 
@@ -173,6 +179,40 @@ public:
 	bool GetIsDirtied() const;
 };
 
+class ComputeBuffer
+	: public DeviceObject,
+	  public Effekseer::Backend::ComputeBuffer
+{
+private:
+	GraphicsDevice* graphicsDevice_ = nullptr;
+	D3D11BufferPtr buffer_;
+	D3D11ShaderResourceViewPtr srv_;
+	D3D11UnorderedAccessViewPtr uav_;
+
+public:
+	ComputeBuffer(GraphicsDevice* graphicsDevice);
+	~ComputeBuffer() override;
+
+	bool Init(int32_t elementCount, int32_t elementSize, const void* initialData);
+
+	void UpdateData(const void* src, int32_t size, int32_t offset);
+
+	ID3D11Buffer* GetBuffer() const
+	{
+		return buffer_.get();
+	}
+
+	ID3D11ShaderResourceView* GetSRV() const
+	{
+		return srv_.get();
+	}
+
+	ID3D11UnorderedAccessView* GetUAV() const
+	{
+		return uav_.get();
+	}
+};
+
 class Texture
 	: public DeviceObject,
 	  public Effekseer::Backend::Texture
@@ -282,11 +322,13 @@ private:
 	Effekseer::CustomVector<uint8_t> vsData_;
 	D3D11VertexShaderPtr vs_;
 	D3D11PixelShaderPtr ps_;
+	D3D11ComputeShaderPtr cs_;
 
 public:
 	Shader(GraphicsDevice* graphicsDevice);
 	~Shader() override;
 	bool Init(const void* vertexShaderData, int32_t vertexShaderDataSize, const void* pixelShaderData, int32_t pixelShaderDataSize);
+	bool InitAsCompute(const void* computeShaderData, int32_t computeShaderDataSize);
 
 	const Effekseer::CustomVector<uint8_t>& GetVertexShaderData() const
 	{
@@ -301,6 +343,11 @@ public:
 	ID3D11PixelShader* GetPixelShader() const
 	{
 		return ps_.get();
+	}
+
+	ID3D11ComputeShader* GetComputeShader() const
+	{
+		return cs_.get();
 	}
 };
 
@@ -394,6 +441,8 @@ public:
 
 	Effekseer::Backend::UniformBufferRef CreateUniformBuffer(int32_t size, const void* initialData) override;
 
+	Effekseer::Backend::ComputeBufferRef CreateComputeBuffer(int32_t elementCount, int32_t elementSize, const void* initialData, bool readOnly) override;
+
 	Effekseer::Backend::VertexLayoutRef CreateVertexLayout(const Effekseer::Backend::VertexLayoutElement* elements, int32_t elementCount) override;
 
 	Effekseer::Backend::RenderPassRef CreateRenderPass(Effekseer::FixedSizeVector<Effekseer::Backend::TextureRef, Effekseer::Backend::RenderTargetMax>& textures, Effekseer::Backend::TextureRef& depthTexture) override;
@@ -401,6 +450,8 @@ public:
 	Effekseer::Backend::ShaderRef CreateShaderFromBinary(const void* vsData, int32_t vsDataSize, const void* psData, int32_t psDataSize) override;
 
 	Effekseer::Backend::ShaderRef CreateShaderFromCodes(const Effekseer::CustomVector<Effekseer::StringView<char>>& vsCodes, const Effekseer::CustomVector<Effekseer::StringView<char>>& psCodes, Effekseer::Backend::UniformLayoutRef layout = nullptr) override;
+
+	Effekseer::Backend::ShaderRef CreateComputeShader(const void* csData, int32_t csDataSize) override;
 
 	Effekseer::Backend::PipelineStateRef CreatePipelineState(const Effekseer::Backend::PipelineStateParameter& param) override;
 
@@ -412,12 +463,16 @@ public:
 
 	void EndRenderPass() override;
 
+	void Dispatch(const Effekseer::Backend::DispatchParameter& dispatchParam) override;
+
 	std::string GetDeviceName() const override
 	{
 		return "DirectX11";
 	}
 
 	bool UpdateUniformBuffer(Effekseer::Backend::UniformBufferRef& buffer, int32_t size, int32_t offset, const void* data) override;
+
+	bool UpdateComputeBuffer(Effekseer::Backend::ComputeBufferRef& buffer, int32_t size, int32_t offset, const void* data) override;
 
 	//! for DirectX11
 	Effekseer::Backend::TextureRef CreateTexture(ID3D11ShaderResourceView* srv, ID3D11RenderTargetView* rtv, ID3D11DepthStencilView* dsv);

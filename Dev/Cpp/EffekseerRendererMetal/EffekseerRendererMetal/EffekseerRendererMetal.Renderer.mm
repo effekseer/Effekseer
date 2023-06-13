@@ -33,6 +33,12 @@
 #include "ShaderHeader/model_distortion_vs.h"
 #include "ShaderHeader/model_distortion_ps.h"
 
+#include "ShaderHeader/gpu_particles_clear_cs.h"
+#include "ShaderHeader/gpu_particles_spawn_cs.h"
+#include "ShaderHeader/gpu_particles_update_cs.h"
+#include "ShaderHeader/gpu_particles_render_vs.h"
+#include "ShaderHeader/gpu_particles_render_ps.h"
+
 #define GENERATE_VIEW(x) {{x, static_cast<int32_t>(sizeof(x))}};
 
 namespace EffekseerRendererMetal
@@ -84,6 +90,12 @@ static void CreateFixedShaderForMetal(EffekseerRendererLLGI::FixedShader* shader
 	shader->ModelLit_PS = GENERATE_VIEW(metal_model_lit_ps);
 	shader->ModelDistortion_VS = GENERATE_VIEW(metal_model_distortion_vs);
 	shader->ModelDistortion_PS = GENERATE_VIEW(metal_model_distortion_ps);
+	
+	shader->GpuParticles_Clear_CS = GENERATE_VIEW(metal_gpu_particles_clear_cs);
+	shader->GpuParticles_Spawn_CS = GENERATE_VIEW(metal_gpu_particles_spawn_cs);
+	shader->GpuParticles_Update_CS = GENERATE_VIEW(metal_gpu_particles_update_cs);
+	shader->GpuParticles_Render_VS = GENERATE_VIEW(metal_gpu_particles_render_vs);
+	shader->GpuParticles_Render_PS = GENERATE_VIEW(metal_gpu_particles_render_ps);
 }
 
 ::EffekseerRenderer::RendererRef Create(
@@ -138,24 +150,55 @@ Effekseer::Backend::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDevic
     return g->CreateTexture((uint64_t)texture, []()-> void{});
 }
 
-void BeginCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList, id<MTLRenderCommandEncoder> encoder)
+void BeginCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList)
 {
 	assert(commandList != nullptr);
 
-    LLGI::CommandListMetalPlatformRenderPassContext context;
-    context.RenderEncoder = encoder;
-
 	auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList.Get());
 	c->GetInternal()->BeginWithPlatform(nullptr);
-	c->GetInternal()->BeginRenderPassWithPlatformPtr(&context);
 }
 
 void EndCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList)
 {
 	assert(commandList != nullptr);
 	auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList.Get());
-	c->GetInternal()->EndRenderPassWithPlatformPtr();
 	c->GetInternal()->EndWithPlatform();
+}
+
+void BeginRenderPass(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList, id<MTLRenderCommandEncoder> renderEncoder)
+{
+	assert(commandList != nullptr);
+
+	LLGI::CommandListMetalPlatformRenderPassContext context;
+	context.RenderEncoder = renderEncoder;
+
+	auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList.Get());
+	c->GetInternal()->BeginRenderPassWithPlatformPtr(&context);
+}
+
+void EndRenderPass(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList)
+{
+	assert(commandList != nullptr);
+	auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList.Get());
+	c->GetInternal()->EndRenderPassWithPlatformPtr();
+}
+
+void BeginComputePass(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList, id<MTLComputeCommandEncoder> computeEncoder)
+{
+	assert(commandList != nullptr);
+
+	LLGI::CommandListMetalPlatformComputePassContext context;
+	context.ComputeEncoder = computeEncoder;
+
+	auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList.Get());
+	c->GetInternal()->BeginComputePassWithPlatformPtr(&context);
+}
+
+void EndComputePass(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList)
+{
+	assert(commandList != nullptr);
+	auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList.Get());
+	c->GetInternal()->EndComputePassWithPlatformPtr();
 }
 
 } // namespace EffekseerRendererMetal
