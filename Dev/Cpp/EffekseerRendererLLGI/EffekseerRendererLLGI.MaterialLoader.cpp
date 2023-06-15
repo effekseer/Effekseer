@@ -143,31 +143,39 @@ MaterialLoader ::~MaterialLoader()
 			Deserialize((uint8_t*)binary->GetVertexShaderData(shaderTypes[st]), binary->GetVertexShaderSize(shaderTypes[st]), resultVS);
 			Deserialize((uint8_t*)binary->GetPixelShaderData(shaderTypes[st]), binary->GetPixelShaderSize(shaderTypes[st]), resultPS);
 
-			std::array<LLGI::DataStructure, 4> dataVS;
-			std::array<LLGI::DataStructure, 4> dataPS;
+			std::vector<LLGI::DataStructure> dataVS;
+			std::vector<LLGI::DataStructure> dataPS;
 
 			for (size_t i = 0; i < resultVS.Binary.size(); i++)
 			{
-				dataVS[i].Data = resultVS.Binary[i].data();
-				dataVS[i].Size = static_cast<int32_t>(resultVS.Binary[i].size());
+				LLGI::DataStructure ds;
+				ds.Data = resultVS.Binary[i].data();
+				ds.Size = static_cast<int32_t>(resultVS.Binary[i].size());
+				dataVS.emplace_back(ds);
 			}
 
 			for (size_t i = 0; i < resultPS.Binary.size(); i++)
 			{
-				dataPS[i].Data = resultPS.Binary[i].data();
-				dataPS[i].Size = static_cast<int32_t>(resultPS.Binary[i].size());
+				LLGI::DataStructure ds;
+				ds.Data = resultPS.Binary[i].data();
+				ds.Size = static_cast<int32_t>(resultPS.Binary[i].size());
+				dataPS.emplace_back(ds);
 			}
 
 			auto vl = EffekseerRenderer::GetMaterialSimpleVertexLayout(graphicsDevice_).DownCast<Backend::VertexLayout>();
 
-			shader = Shader::Create(graphicsDevice_.Get(),
-									dataVS.data(),
-									(int32_t)resultVS.Binary.size(),
-									dataPS.data(),
-									(int32_t)resultPS.Binary.size(),
-									vl,
-									"MaterialStandardRenderer",
-									true);
+			auto vs_shader_data = Backend::Serialize(dataVS);
+			auto ps_shader_data = Backend::Serialize(dataPS);
+
+			shader = Shader::Create(
+				graphicsDevice_,
+				graphicsDevice_->CreateShaderFromBinary(
+					vs_shader_data.data(),
+					(int32_t)vs_shader_data.size(),
+					ps_shader_data.data(),
+					(int32_t)ps_shader_data.size()),
+				vl,
+				"MaterialStandardRenderer");
 		}
 		else
 		{
@@ -177,31 +185,38 @@ MaterialLoader ::~MaterialLoader()
 			Deserialize((uint8_t*)binary->GetVertexShaderData(shaderTypes[st]), binary->GetVertexShaderSize(shaderTypes[st]), resultVS);
 			Deserialize((uint8_t*)binary->GetPixelShaderData(shaderTypes[st]), binary->GetPixelShaderSize(shaderTypes[st]), resultPS);
 
-			std::array<LLGI::DataStructure, 4> dataVS;
-			std::array<LLGI::DataStructure, 4> dataPS;
+			std::vector<LLGI::DataStructure> dataVS;
+			std::vector<LLGI::DataStructure> dataPS;
 
 			for (size_t i = 0; i < resultVS.Binary.size(); i++)
 			{
-				dataVS[i].Data = resultVS.Binary[i].data();
-				dataVS[i].Size = static_cast<int32_t>(resultVS.Binary[i].size());
+				LLGI::DataStructure ds;
+				ds.Data = resultVS.Binary[i].data();
+				ds.Size = static_cast<int32_t>(resultVS.Binary[i].size());
+				dataVS.emplace_back(ds);
 			}
 
 			for (size_t i = 0; i < resultPS.Binary.size(); i++)
 			{
-				dataPS[i].Data = resultPS.Binary[i].data();
-				dataPS[i].Size = static_cast<int32_t>(resultPS.Binary[i].size());
+				LLGI::DataStructure ds;
+				ds.Data = resultPS.Binary[i].data();
+				ds.Size = static_cast<int32_t>(resultPS.Binary[i].size());
+				dataPS.emplace_back(ds);
 			}
 
 			auto vl = EffekseerRenderer::GetMaterialSpriteVertexLayout(graphicsDevice_, static_cast<int32_t>(materialFile.GetCustomData1Count()), static_cast<int32_t>(materialFile.GetCustomData2Count())).DownCast<Backend::VertexLayout>();
 
-			shader = Shader::Create(graphicsDevice_.Get(),
-									dataVS.data(),
-									(int32_t)resultVS.Binary.size(),
-									dataPS.data(),
-									(int32_t)resultPS.Binary.size(),
+			auto vs_shader_data = Backend::Serialize(dataVS);
+			auto ps_shader_data = Backend::Serialize(dataPS);
+
+			shader = Shader::Create(graphicsDevice_,
+									graphicsDevice_->CreateShaderFromBinary(
+										vs_shader_data.data(),
+										(int32_t)vs_shader_data.size(),
+										ps_shader_data.data(),
+										(int32_t)ps_shader_data.size()),
 									vl,
-									"MaterialStandardRenderer",
-									true);
+									"MaterialStandardRenderer");
 		}
 
 		if (shader == nullptr)
@@ -235,19 +250,23 @@ MaterialLoader ::~MaterialLoader()
 			(uint8_t*)binary->GetVertexShaderData(shaderTypesModel[st]), binary->GetVertexShaderSize(shaderTypesModel[st]), resultVS);
 		Deserialize((uint8_t*)binary->GetPixelShaderData(shaderTypesModel[st]), binary->GetPixelShaderSize(shaderTypesModel[st]), resultPS);
 
-		std::array<LLGI::DataStructure, 4> dataVS;
-		std::array<LLGI::DataStructure, 4> dataPS;
+		std::vector<LLGI::DataStructure> dataVS;
+		std::vector<LLGI::DataStructure> dataPS;
 
 		for (size_t i = 0; i < resultVS.Binary.size(); i++)
 		{
-			dataVS[i].Data = resultVS.Binary[i].data();
-			dataVS[i].Size = static_cast<int32_t>(resultVS.Binary[i].size());
+			LLGI::DataStructure ds;
+			ds.Data = resultVS.Binary[i].data();
+			ds.Size = static_cast<int32_t>(resultVS.Binary[i].size());
+			dataVS.emplace_back(ds);
 		}
 
 		for (size_t i = 0; i < resultPS.Binary.size(); i++)
 		{
-			dataPS[i].Data = resultPS.Binary[i].data();
-			dataPS[i].Size = static_cast<int32_t>(resultPS.Binary[i].size());
+			LLGI::DataStructure ds;
+			ds.Data = resultPS.Binary[i].data();
+			ds.Size = static_cast<int32_t>(resultPS.Binary[i].size());
+			dataPS.emplace_back(ds);
 		}
 
 		auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(materialFile, true, st, LLGI_InstanceCount);
@@ -256,14 +275,17 @@ MaterialLoader ::~MaterialLoader()
 		std::string log;
 		auto vl = EffekseerRenderer::GetMaterialModelVertexLayout(graphicsDevice_).DownCast<Backend::VertexLayout>();
 
-		auto shader = Shader::Create(graphicsDevice_.Get(),
-									 dataVS.data(),
-									 (int32_t)resultVS.Binary.size(),
-									 dataPS.data(),
-									 (int32_t)resultPS.Binary.size(),
+		auto vs_shader_data = Backend::Serialize(dataVS);
+		auto ps_shader_data = Backend::Serialize(dataPS);
+
+		auto shader = Shader::Create(graphicsDevice_,
+									 graphicsDevice_->CreateShaderFromBinary(
+										 vs_shader_data.data(),
+										 (int32_t)vs_shader_data.size(),
+										 ps_shader_data.data(),
+										 (int32_t)ps_shader_data.size()),
 									 vl,
-									 "MaterialStandardModelRenderer",
-									 true);
+									 "MaterialStandardModelRenderer");
 
 		if (shader == nullptr)
 			return nullptr;

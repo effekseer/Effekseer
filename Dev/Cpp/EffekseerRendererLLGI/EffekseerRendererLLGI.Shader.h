@@ -3,20 +3,16 @@
 #define __EFFEKSEERRENDERER_LLGI_SHADER_H__
 
 #include "../EffekseerRendererCommon/EffekseerRenderer.ShaderBase.h"
-#include "EffekseerRendererLLGI.DeviceObject.h"
-#include "EffekseerRendererLLGI.RendererImplemented.h"
-
-#include <LLGI.Graphics.h>
-#include <LLGI.Shader.h>
+#include "GraphicsDevice.h"
 
 namespace EffekseerRendererLLGI
 {
 
-class Shader : public DeviceObject, public ::EffekseerRenderer::ShaderBase
+class Shader : public ::EffekseerRenderer::ShaderBase
 {
 private:
-	LLGI::Shader* vertexShader_ = nullptr;
-	LLGI::Shader* pixelShader_ = nullptr;
+	Backend::GraphicsDeviceRef graphicsDevice_;
+	Backend::ShaderRef shader_;
 	Backend::VertexLayoutRef vertexLayout_;
 
 	void* m_vertexConstantBuffer;
@@ -24,32 +20,26 @@ private:
 	int32_t vertexConstantBufferSize = 0;
 	int32_t pixelConstantBufferSize = 0;
 
-	Shader(Backend::GraphicsDevice* graphicsDevice,
-		   LLGI::Shader* vertexShader,
-		   LLGI::Shader* pixelShader,
-		   Backend::VertexLayoutRef vertexLayout,
-		   bool hasRefCount);
+	Shader(Backend::GraphicsDeviceRef graphicsDevice,
+		   Backend::ShaderRef shader,
+		   Backend::VertexLayoutRef vertexLayout);
 
 public:
-	virtual ~Shader();
+	~Shader() override;
 
-	static Shader* Create(Backend::GraphicsDevice* graphicsDevice,
-						  LLGI::DataStructure* vertexData,
-						  int32_t vertexDataCount,
-						  LLGI::DataStructure* pixelData,
-						  int32_t pixelDataCount,
-						  Backend::VertexLayoutRef vertexLayout,
-						  const char* name,
-						  bool hasRefCount);
+	static Shader* Create(Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
+						  Effekseer::Backend::ShaderRef shader,
+						  Effekseer::Backend::VertexLayoutRef vertexLayout,
+						  const char* name);
 
 public:
 	LLGI::Shader* GetVertexShader() const
 	{
-		return vertexShader_;
+		return shader_->GetVertexShader();
 	}
 	LLGI::Shader* GetPixelShader() const
 	{
-		return pixelShader_;
+		return shader_->GetPixelShader();
 	}
 
 	const Backend::VertexLayoutRef& GetVertexLayouts()

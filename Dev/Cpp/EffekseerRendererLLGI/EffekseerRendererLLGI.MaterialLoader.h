@@ -4,7 +4,6 @@
 
 #include "../3rdParty/LLGI/src/LLGI.Compiler.h"
 #include "../Effekseer/Effekseer/Material/Effekseer.MaterialCompiler.h"
-#include "EffekseerRendererLLGI.DeviceObject.h"
 #include "EffekseerRendererLLGI.RendererImplemented.h"
 
 #include <Effekseer.h>

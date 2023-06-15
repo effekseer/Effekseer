@@ -82,62 +82,81 @@ ModelRendererRef ModelRenderer::Create(RendererImplemented* renderer, FixedShade
 	assert(renderer != nullptr);
 	assert(renderer->GetGraphics() != nullptr);
 
+	auto graphicsDevice = renderer->GetGraphicsDevice();
 	auto vl = EffekseerRenderer::GetModelRendererVertexLayout(renderer->GetGraphicsDevice()).DownCast<Backend::VertexLayout>();
 	vl->MakeGenerated();
 
-	Shader* shader_lighting_texture_normal = Shader::Create(renderer->GetGraphicsDeviceInternal().Get(),
-															fixedShader->ModelLit_VS.data(),
-															(int32_t)fixedShader->ModelLit_VS.size(),
-															fixedShader->ModelLit_PS.data(),
-															(int32_t)fixedShader->ModelLit_PS.size(),
+	auto lit_vs_shader_data = Backend::Serialize(fixedShader->ModelLit_VS);
+	auto lit_ps_shader_data = Backend::Serialize(fixedShader->ModelLit_PS);
+
+	Shader* shader_lighting_texture_normal = Shader::Create(graphicsDevice,
+															graphicsDevice->CreateShaderFromBinary(
+																lit_vs_shader_data.data(),
+																(int32_t)lit_vs_shader_data.size(),
+																lit_ps_shader_data.data(),
+																(int32_t)lit_ps_shader_data.size()),
 															vl,
-															"ModelRendererLightingTextureNormal",
-															true);
+															"ModelRendererLightingTextureNormal");
 
-	Shader* shader_texture = Shader::Create(renderer->GetGraphicsDeviceInternal().Get(),
-											fixedShader->ModelUnlit_VS.data(),
-											(int32_t)fixedShader->ModelUnlit_VS.size(),
-											fixedShader->ModelUnlit_PS.data(),
-											(int32_t)fixedShader->ModelUnlit_PS.size(),
+	auto unlit_vs_shader_data = Backend::Serialize(fixedShader->ModelUnlit_VS);
+	auto unlit_ps_shader_data = Backend::Serialize(fixedShader->ModelUnlit_PS);
+
+	Shader* shader_texture = Shader::Create(graphicsDevice,
+											graphicsDevice->CreateShaderFromBinary(
+												unlit_vs_shader_data.data(),
+												(int32_t)unlit_vs_shader_data.size(),
+												unlit_ps_shader_data.data(),
+												(int32_t)unlit_ps_shader_data.size()),
 											vl,
-											"ModelRendererTexture",
-											true);
+											"ModelRendererTexture");
 
-	auto shader_distortion_texture = Shader::Create(renderer->GetGraphicsDeviceInternal().Get(),
-													fixedShader->ModelDistortion_VS.data(),
-													(int32_t)fixedShader->ModelDistortion_VS.size(),
-													fixedShader->ModelDistortion_PS.data(),
-													(int32_t)fixedShader->ModelDistortion_PS.size(),
+	auto dist_vs_shader_data = Backend::Serialize(fixedShader->ModelDistortion_VS);
+	auto dist_ps_shader_data = Backend::Serialize(fixedShader->ModelDistortion_PS);
+
+	auto shader_distortion_texture = Shader::Create(graphicsDevice,
+													graphicsDevice->CreateShaderFromBinary(
+														dist_vs_shader_data.data(),
+														(int32_t)dist_vs_shader_data.size(),
+														dist_ps_shader_data.data(),
+														(int32_t)dist_ps_shader_data.size()),
 													vl,
-													"ModelRendererDistortionTexture",
-													true);
+													"ModelRendererDistortionTexture");
 
-	Shader* shader_ad_lit = Shader::Create(renderer->GetGraphicsDeviceInternal().Get(),
-										   fixedShader->AdvancedModelLit_VS.data(),
-										   (int32_t)fixedShader->AdvancedModelLit_VS.size(),
-										   fixedShader->AdvancedModelLit_PS.data(),
-										   (int32_t)fixedShader->AdvancedModelLit_PS.size(),
+	auto ad_lit_vs_shader_data = Backend::Serialize(fixedShader->AdvancedModelLit_VS);
+	auto ad_lit_ps_shader_data = Backend::Serialize(fixedShader->AdvancedModelLit_PS);
+
+	Shader* shader_ad_lit = Shader::Create(graphicsDevice,
+										   graphicsDevice->CreateShaderFromBinary(
+											   ad_lit_vs_shader_data.data(),
+											   (int32_t)ad_lit_vs_shader_data.size(),
+											   ad_lit_ps_shader_data.data(),
+											   (int32_t)ad_lit_ps_shader_data.size()),
 										   vl,
-										   "ModelRendererLightingTextureNormal",
-										   true);
+										   "ModelRendererLightingTextureNormal");
 
-	Shader* shader_ad_unlit = Shader::Create(renderer->GetGraphicsDeviceInternal().Get(),
-											 fixedShader->AdvancedModelUnlit_VS.data(),
-											 (int32_t)fixedShader->AdvancedModelUnlit_VS.size(),
-											 fixedShader->AdvancedModelUnlit_PS.data(),
-											 (int32_t)fixedShader->AdvancedModelUnlit_PS.size(),
+	auto ad_unlit_vs_shader_data = Backend::Serialize(fixedShader->AdvancedModelUnlit_VS);
+	auto ad_unlit_ps_shader_data = Backend::Serialize(fixedShader->AdvancedModelUnlit_PS);
+
+	Shader* shader_ad_unlit = Shader::Create(graphicsDevice,
+											 graphicsDevice->CreateShaderFromBinary(
+												 ad_unlit_vs_shader_data.data(),
+												 (int32_t)ad_unlit_vs_shader_data.size(),
+												 ad_unlit_ps_shader_data.data(),
+												 (int32_t)ad_unlit_ps_shader_data.size()),
 											 vl,
-											 "ModelRendererTexture",
-											 true);
+											 "ModelRendererTexture");
 
-	auto shader_ad_distortion = Shader::Create(renderer->GetGraphicsDeviceInternal().Get(),
-											   fixedShader->AdvancedModelDistortion_VS.data(),
-											   (int32_t)fixedShader->AdvancedModelDistortion_VS.size(),
-											   fixedShader->AdvancedModelDistortion_PS.data(),
-											   (int32_t)fixedShader->AdvancedModelDistortion_PS.size(),
+	auto ad_dist_vs_shader_data = Backend::Serialize(fixedShader->AdvancedModelDistortion_VS);
+	auto ad_dist_ps_shader_data = Backend::Serialize(fixedShader->AdvancedModelDistortion_PS);
+
+	auto shader_ad_distortion = Shader::Create(graphicsDevice,
+											   graphicsDevice->CreateShaderFromBinary(
+												   ad_dist_vs_shader_data.data(),
+												   (int32_t)ad_dist_vs_shader_data.size(),
+												   ad_dist_ps_shader_data.data(),
+												   (int32_t)ad_dist_ps_shader_data.size()),
 											   vl,
-											   "ModelRendererDistortionTexture",
-											   true);
+											   "ModelRendererDistortionTexture");
 
 	if (shader_lighting_texture_normal == nullptr || shader_texture == nullptr || shader_distortion_texture == nullptr ||
 		shader_ad_lit == nullptr || shader_ad_unlit == nullptr || shader_ad_distortion == nullptr)

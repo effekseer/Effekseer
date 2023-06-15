@@ -7,6 +7,59 @@ namespace EffekseerRendererLLGI
 namespace Backend
 {
 
+std::vector<uint8_t> Serialize(const std::vector<LLGI::DataStructure>& data)
+{
+	int32_t size = sizeof(int);
+	for (const auto& d : data)
+	{
+		size += (sizeof(int) + d.Size);
+	}
+
+	std::vector<uint8_t> ret(size);
+
+	int offset = 0;
+	int32_t data_count = static_cast<int32_t>(data.size());
+	memcpy(ret.data() + offset, &data_count, sizeof(int));
+	offset += sizeof(int);
+
+	for (const auto& d : data)
+	{
+		memcpy(ret.data() + offset, &d.Size, sizeof(int));
+		offset += sizeof(int);
+
+		memcpy(ret.data() + offset, d.Data, d.Size);
+		size += d.Size;
+	}
+
+	return ret;
+}
+
+std::vector<LLGI::DataStructure> Deserialize(const void* data, int32_t size)
+{
+	std::vector<LLGI::DataStructure> ret;
+
+	int offset = 0;
+	uint8_t* p = const_cast<uint8_t*>(reinterpret_cast<const uint8_t*>(data));
+	int data_count = 0;
+	memcpy(&data_count, p + offset, sizeof(int));
+	offset += sizeof(int);
+
+	for (int i = 0; i < data_count; i++)
+	{
+		int32_t data_size = 0;
+		memcpy(&data_size, p + offset, sizeof(int));
+		offset += sizeof(int);
+
+		LLGI::DataStructure dataStructure;
+		dataStructure.Data = p + offset;
+		dataStructure.Size = data_size;
+		offset += data_size;
+		ret.emplace_back(dataStructure);
+	}
+
+	return ret;
+}
+
 void DeviceObject::OnLostDevice()
 {
 }
@@ -317,16 +370,18 @@ Shader::Shader(GraphicsDevice* graphicsDevice)
 
 Shader ::~Shader()
 {
-	Effekseer::SafeRelease(vertexShader_);
-	Effekseer::SafeRelease(pixelShader_);
 	graphicsDevice_->Unregister(this);
 	Effekseer::SafeRelease(graphicsDevice_);
 }
 
 bool Shader::Init(const void* vertexShaderData, int32_t vertexShaderDataSize, const void* pixelShaderData, int32_t pixelShaderDataSize)
 {
-	// TODO
-	return false;
+	auto vsd = Deserialize(vertexShaderData, vertexShaderDataSize);
+	auto psd = Deserialize(pixelShaderData, pixelShaderDataSize);
+
+	vertexShader_ = LLGI::CreateSharedPtr(graphicsDevice_->GetGraphics()->CreateShader(vsd.data(), static_cast<int32_t>(vsd.size())));
+	pixelShader_ = LLGI::CreateSharedPtr(graphicsDevice_->GetGraphics()->CreateShader(psd.data(), static_cast<int32_t>(psd.size())));
+	return vertexShader_ != nullptr && pixelShader_ != nullptr;
 }
 
 GraphicsDevice::GraphicsDevice(LLGI::Graphics* graphics)

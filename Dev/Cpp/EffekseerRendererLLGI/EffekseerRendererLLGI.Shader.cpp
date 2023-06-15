@@ -5,14 +5,11 @@
 namespace EffekseerRendererLLGI
 {
 
-Shader::Shader(Backend::GraphicsDevice* graphicsDevice,
-			   LLGI::Shader* vertexShader,
-			   LLGI::Shader* pixelShader,
-			   Backend::VertexLayoutRef vertexLayout,
-			   bool hasRefCount)
-	: DeviceObject(graphicsDevice, hasRefCount)
-	, vertexShader_(vertexShader)
-	, pixelShader_(pixelShader)
+Shader::Shader(Backend::GraphicsDeviceRef graphicsDevice,
+			   Backend::ShaderRef shader,
+			   Backend::VertexLayoutRef vertexLayout)
+	: graphicsDevice_(graphicsDevice)
+	, shader_(shader)
 	, vertexLayout_(vertexLayout)
 	, m_vertexConstantBuffer(nullptr)
 	, m_pixelConstantBuffer(nullptr)
@@ -21,28 +18,19 @@ Shader::Shader(Backend::GraphicsDevice* graphicsDevice,
 
 Shader::~Shader()
 {
-	ES_SAFE_RELEASE(vertexShader_);
-	ES_SAFE_RELEASE(pixelShader_);
 	ES_SAFE_DELETE_ARRAY(m_vertexConstantBuffer);
 	ES_SAFE_DELETE_ARRAY(m_pixelConstantBuffer);
 }
 
-Shader* Shader::Create(Backend::GraphicsDevice* graphicsDevice,
-					   LLGI::DataStructure* vertexData,
-					   int32_t vertexDataCount,
-					   LLGI::DataStructure* pixelData,
-					   int32_t pixelDataCount,
-					   Backend::VertexLayoutRef vertexLayout,
-					   const char* name,
-					   bool hasRefCount)
+Shader* Shader::Create(Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
+					   Effekseer::Backend::ShaderRef shader,
+					   Effekseer::Backend::VertexLayoutRef vertexLayout,
+					   const char* name)
 {
 	assert(graphicsDevice != nullptr);
-	assert(graphicsDevice->GetGraphics() != nullptr);
+	assert(shader != nullptr);
 
-	auto vertexShader = graphicsDevice->GetGraphics()->CreateShader(vertexData, vertexDataCount);
-	auto pixelShader = graphicsDevice->GetGraphics()->CreateShader(pixelData, pixelDataCount);
-
-	return new Shader(graphicsDevice, vertexShader, pixelShader, vertexLayout, hasRefCount);
+	return new Shader(graphicsDevice.DownCast<Backend::GraphicsDevice>(), shader.DownCast<Backend::Shader>(), vertexLayout.DownCast<Backend::VertexLayout>());
 }
 
 void Shader::SetVertexConstantBufferSize(int32_t size)

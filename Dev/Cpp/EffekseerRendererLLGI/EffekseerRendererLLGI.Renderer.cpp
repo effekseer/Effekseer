@@ -4,7 +4,6 @@
 #include "EffekseerRendererLLGI.RenderState.h"
 #include "EffekseerRendererLLGI.RendererImplemented.h"
 
-#include "EffekseerRendererLLGI.DeviceObject.h"
 #include "EffekseerRendererLLGI.MaterialLoader.h"
 #include "EffekseerRendererLLGI.ModelRenderer.h"
 #include "EffekseerRendererLLGI.Shader.h"
@@ -379,67 +378,85 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 	vlLitAd->MakeGenerated();
 	vlDistAd->MakeGenerated();
 
-	shader_unlit_ = Shader::Create(graphicsDevice_.Get(),
-								   fixedShader_.SpriteUnlit_VS.data(),
-								   (int32_t)fixedShader_.SpriteUnlit_VS.size(),
-								   fixedShader_.ModelUnlit_PS.data(),
-								   (int32_t)fixedShader_.ModelUnlit_PS.size(),
+	auto unlit_vs_shader_data = Backend::Serialize(fixedShader_.SpriteUnlit_VS);
+	auto unlit_ps_shader_data = Backend::Serialize(fixedShader_.ModelUnlit_PS);
+
+	shader_unlit_ = Shader::Create(graphicsDevice_,
+								   graphicsDevice_->CreateShaderFromBinary(
+									   unlit_vs_shader_data.data(),
+									   static_cast<int32_t>(unlit_vs_shader_data.size()),
+									   unlit_ps_shader_data.data(),
+									   static_cast<int32_t>(unlit_ps_shader_data.size())),
 								   vlUnlit,
-								   "StandardRenderer",
-								   false);
+								   "StandardRenderer");
 	if (shader_unlit_ == nullptr)
 		return false;
 
-	shader_distortion_ = Shader::Create(graphicsDevice_.Get(),
-										fixedShader_.SpriteDistortion_VS.data(),
-										(int32_t)fixedShader_.SpriteDistortion_VS.size(),
-										fixedShader_.ModelDistortion_PS.data(),
-										(int32_t)fixedShader_.ModelDistortion_PS.size(),
+	auto distortion_vs_shader_data = Backend::Serialize(fixedShader_.SpriteDistortion_VS);
+	auto distortion_ps_shader_data = Backend::Serialize(fixedShader_.ModelDistortion_PS);
+
+	shader_distortion_ = Shader::Create(graphicsDevice_,
+										graphicsDevice_->CreateShaderFromBinary(
+											distortion_vs_shader_data.data(),
+											static_cast<int32_t>(distortion_vs_shader_data.size()),
+											distortion_ps_shader_data.data(),
+											static_cast<int32_t>(distortion_ps_shader_data.size())),
 										vlDist,
-										"StandardRenderer Distortion",
-										false);
+										"StandardRenderer Distortion");
 	if (shader_distortion_ == nullptr)
 		return false;
 
-	shader_ad_unlit_ = Shader::Create(graphicsDevice_.Get(),
-									  fixedShader_.AdvancedSpriteUnlit_VS.data(),
-									  (int32_t)fixedShader_.AdvancedSpriteUnlit_VS.size(),
-									  fixedShader_.AdvancedModelUnlit_PS.data(),
-									  (int32_t)fixedShader_.AdvancedModelUnlit_PS.size(),
+	auto ad_unlit_vs_shader_data = Backend::Serialize(fixedShader_.AdvancedSpriteUnlit_VS);
+	auto ad_unlit_ps_shader_data = Backend::Serialize(fixedShader_.AdvancedModelUnlit_PS);
+
+	shader_ad_unlit_ = Shader::Create(graphicsDevice_,
+									  graphicsDevice_->CreateShaderFromBinary(
+										  ad_unlit_vs_shader_data.data(),
+										  static_cast<int32_t>(ad_unlit_vs_shader_data.size()),
+										  ad_unlit_ps_shader_data.data(),
+										  static_cast<int32_t>(ad_unlit_ps_shader_data.size())),
 									  vlUnlitAd,
-									  "StandardRenderer",
-									  false);
+									  "StandardRenderer");
 	if (shader_ad_unlit_ == nullptr)
 		return false;
 
-	shader_ad_distortion_ = Shader::Create(graphicsDevice_.Get(),
-										   fixedShader_.AdvancedSpriteDistortion_VS.data(),
-										   (int32_t)fixedShader_.AdvancedSpriteDistortion_VS.size(),
-										   fixedShader_.AdvancedModelDistortion_PS.data(),
-										   (int32_t)fixedShader_.AdvancedModelDistortion_PS.size(),
+	auto ad_dist_vs_shader_data = Backend::Serialize(fixedShader_.AdvancedSpriteDistortion_VS);
+	auto ad_dist_ps_shader_data = Backend::Serialize(fixedShader_.AdvancedModelDistortion_PS);
+
+	shader_ad_distortion_ = Shader::Create(graphicsDevice_,
+										   graphicsDevice_->CreateShaderFromBinary(
+											   ad_dist_vs_shader_data.data(),
+											   static_cast<int32_t>(ad_dist_vs_shader_data.size()),
+											   ad_dist_ps_shader_data.data(),
+											   static_cast<int32_t>(ad_dist_ps_shader_data.size())),
 										   vlDistAd,
-										   "StandardRenderer Distortion",
-										   false);
+										   "StandardRenderer Distortion");
 	if (shader_ad_distortion_ == nullptr)
 		return false;
 
-	shader_lit_ = Shader::Create(graphicsDevice_.Get(),
-								 fixedShader_.SpriteLit_VS.data(),
-								 (int32_t)fixedShader_.SpriteLit_VS.size(),
-								 fixedShader_.ModelLit_PS.data(),
-								 (int32_t)fixedShader_.ModelLit_PS.size(),
-								 vlLit,
-								 "StandardRenderer Lighting",
-								 false);
+	auto lit_vs_shader_data = Backend::Serialize(fixedShader_.SpriteLit_VS);
+	auto lit_ps_shader_data = Backend::Serialize(fixedShader_.ModelLit_PS);
 
-	shader_ad_lit_ = Shader::Create(graphicsDevice_.Get(),
-									fixedShader_.AdvancedSpriteLit_VS.data(),
-									(int32_t)fixedShader_.AdvancedSpriteLit_VS.size(),
-									fixedShader_.AdvancedModelLit_PS.data(),
-									(int32_t)fixedShader_.AdvancedModelLit_PS.size(),
+	shader_lit_ = Shader::Create(graphicsDevice_,
+								 graphicsDevice_->CreateShaderFromBinary(
+									 lit_vs_shader_data.data(),
+									 static_cast<int32_t>(lit_vs_shader_data.size()),
+									 lit_ps_shader_data.data(),
+									 static_cast<int32_t>(lit_ps_shader_data.size())),
+								 vlLit,
+								 "StandardRenderer Lighting");
+
+	auto ad_lit_vs_shader_data = Backend::Serialize(fixedShader_.AdvancedSpriteLit_VS);
+	auto ad_lit_ps_shader_data = Backend::Serialize(fixedShader_.AdvancedModelLit_PS);
+
+	shader_ad_lit_ = Shader::Create(graphicsDevice_,
+									graphicsDevice_->CreateShaderFromBinary(
+										ad_lit_vs_shader_data.data(),
+										static_cast<int32_t>(ad_lit_vs_shader_data.size()),
+										ad_lit_ps_shader_data.data(),
+										static_cast<int32_t>(ad_lit_ps_shader_data.size())),
 									vlLitAd,
-									"StandardRenderer Lighting",
-									false);
+									"StandardRenderer Lighting");
 
 	shader_unlit_->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
 	shader_unlit_->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::PixelConstantBuffer));

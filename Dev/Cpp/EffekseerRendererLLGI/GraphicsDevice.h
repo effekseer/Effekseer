@@ -38,6 +38,10 @@ using RenderPassRef = Effekseer::RefPtr<RenderPass>;
 using PipelineStateRef = Effekseer::RefPtr<PipelineState>;
 using UniformLayoutRef = Effekseer::RefPtr<UniformLayout>;
 
+std::vector<uint8_t> Serialize(const std::vector<LLGI::DataStructure>& data);
+
+std::vector<LLGI::DataStructure> Deserialize(const void* data, int32_t size);
+
 class DeviceObject
 {
 private:
@@ -172,8 +176,8 @@ class Shader
 {
 private:
 	GraphicsDevice* graphicsDevice_ = nullptr;
-	LLGI::Shader* vertexShader_ = nullptr;
-	LLGI::Shader* pixelShader_ = nullptr;
+	std::shared_ptr<LLGI::Shader> vertexShader_ = nullptr;
+	std::shared_ptr<LLGI::Shader> pixelShader_ = nullptr;
 
 public:
 	Shader(GraphicsDevice* graphicsDevice);
@@ -182,11 +186,11 @@ public:
 
 	LLGI::Shader* GetVertexShader() const
 	{
-		return vertexShader_;
+		return vertexShader_.get();
 	}
 	LLGI::Shader* GetPixelShader() const
 	{
-		return pixelShader_;
+		return pixelShader_.get();
 	}
 };
 
