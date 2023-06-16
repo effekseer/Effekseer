@@ -440,19 +440,15 @@ ManagerImplemented::ManagerImplemented(int instance_max, bool autoFlip)
 
 	int chunk_max = (m_instance_max + InstanceChunk::InstancesOfChunk - 1) / InstanceChunk::InstancesOfChunk;
 
-	reservedChunksBuffer_.resize(chunk_max);
-	for (auto& chunk : reservedChunksBuffer_)
-	{
-		pooledChunks_.push(&chunk);
-	}
 	for (auto& chunks : instanceChunks_)
 	{
 		chunks.reserve(chunk_max);
 	}
 	std::fill(creatableChunkOffsets_.begin(), creatableChunkOffsets_.end(), 0);
 
-	pooledInstanceGroup_.Init(instance_max);
-	pooledInstanceContainers_.Init(instance_max);
+	pooledInstanceChunks_.Init(chunk_max, 16, false);
+	pooledInstanceGroup_.Init(instance_max, 32, true);
+	pooledInstanceContainers_.Init(instance_max, 32, true);
 
 	m_setting->SetEffectLoader(Effect::CreateEffectLoader());
 	EffekseerPrintDebug("*** Create : Manager\n");
@@ -495,12 +491,14 @@ Instance* ManagerImplemented::CreateInstance(EffectNodeImplemented* pEffectNode,
 		return chunk->CreateInstance(this, pEffectNode, pContainer, pGroup);
 	}
 
-	if (!pooledChunks_.empty())
 	{
-		auto chunk = pooledChunks_.front();
-		pooledChunks_.pop();
-		chunks.push_back(chunk);
-		return chunk->CreateInstance(this, pEffectNode, pContainer, pGroup);
+		auto memory = pooledInstanceChunks_.Pop();
+		if (memory != nullptr)
+		{
+			auto chunk = new (memory) InstanceChunk();
+			chunks.push_back(chunk);
+			return chunk->CreateInstance(this, pEffectNode, pContainer, pGroup);
+		}
 	}
 
 	return nullptr;
@@ -1500,7 +1498,8 @@ void ManagerImplemented::EndUpdate()
 								   { return chunk->GetAliveCount() == 0; });
 			if (it != last)
 			{
-				pooledChunks_.push(*it);
+				(*it)->~InstanceChunk();
+				pooledInstanceChunks_.Push(*it);
 				if (it != last - 1)
 					*it = *(last - 1);
 				last--;
@@ -2187,7 +2186,7 @@ int32_t ManagerImplemented::GetGPUTime(Handle handle) const
 
 int32_t ManagerImplemented::GetRestInstancesCount() const
 {
-	return static_cast<int32_t>(pooledChunks_.size()) * InstanceChunk::InstancesOfChunk;
+	return pooledInstanceChunks_.GetRestInstance() * InstanceChunk::InstancesOfChunk;
 }
 
 void ManagerImplemented::BeginReloadEffect(const EffectRef& effect, bool doLockThread)

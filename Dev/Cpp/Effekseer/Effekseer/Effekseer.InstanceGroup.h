@@ -36,6 +36,7 @@ enum class GenerationState
 	@note
 	インスタンスコンテナ内でさらにインスタンスをグループ化するクラス
 */
+// (@ueshita) : 32 bit alignment is  for a cache alignment
 class alignas(32) InstanceGroup
 {
 	friend class InstanceContainer;
