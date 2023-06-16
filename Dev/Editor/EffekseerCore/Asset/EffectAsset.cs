@@ -137,6 +137,11 @@ namespace Effekseer.Asset
 		}
 	}
 
+	public interface IToggleMode
+	{
+		bool Enabled { get; set; }
+	}
+
 
 	public class EffectAssetEnvironment : PartsTreeSystem.Environment
 	{
@@ -463,6 +468,9 @@ namespace Effekseer.Asset
 		public TextureAsset TextureTest = new TextureAsset();
 
 		public Color ColorTest = new Color();
+
+		[Key(key = "SoftParticleParameters")]
+		public ToggleTest toggle = new ToggleTest();
 	}
 
 	public class CommonParameter
@@ -482,6 +490,13 @@ namespace Effekseer.Asset
 		/// Temp
 		/// </summary>
 		public Data.RendererValues.ParamaterType Type = Data.RendererValues.ParamaterType.Sprite;
+	}
+
+	public class ToggleTest : IToggleMode
+	{
+		public bool Enabled { get; set; } = false;
+
+		public Int num = new Int();
 	}
 
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = false)]
