@@ -202,6 +202,42 @@ namespace Effekseer.GUI.Inspector
 			}
 		}
 
+
+		/// <summary>
+		/// End current table with settings for inspector
+		/// </summary>
+		private void EndTable()
+		{
+			Manager.NativeManager.EndTable();
+		}
+
+		/// <summary>
+		/// Begin table with settings for inspector
+		/// </summary>
+		private bool BeginTable()
+		{
+			var regionAvail = Manager.NativeManager.GetContentRegionAvail();
+			if (Manager.NativeManager.BeginTable("Table", 2,
+				swig.TableFlags.BordersInnerV |
+				swig.TableFlags.SizingFixedFit | swig.TableFlags.SizingStretchProp |
+				swig.TableFlags.NoSavedSettings))
+			{
+				// Set columns width
+				Manager.NativeManager.TableSetupColumn("", swig.TableColumnFlags.WidthFixed, (int)(regionAvail.X * 0.3f));
+				Manager.NativeManager.TableSetupColumn("", swig.TableColumnFlags.WidthStretch);
+				// Set controls width to maximum
+				Manager.NativeManager.TableNextRow();
+				Manager.NativeManager.TableSetColumnIndex(0);
+				Manager.NativeManager.PushItemWidth(-1);
+				Manager.NativeManager.TableSetColumnIndex(1);
+				Manager.NativeManager.PushItemWidth(-1);
+
+				return true;
+			}
+
+			return false;
+		}
+
 		private void UpdateObjectGuis(Asset.EffectAssetEditorContext context
 			, Asset.Node targetNode, object targetObject
 			, PartsTreeSystem.ElementGetterSetterArray elementGetterSetterArray, InspectorGuiInfo guiInfo)
@@ -318,6 +354,39 @@ namespace Effekseer.GUI.Inspector
 			// update subfields
 			if (!GuiDictionary.HasFunction(guiFunctionKey))
 			{
+				// Toggle mode
+				if (value is Asset.IToggleMode toggleMode)
+				{
+					// End the current table for display a toggle
+					EndTable();
+
+					var toggleId = "###" + guiInfo.State.Id + "_toggle";
+					var collapsingHeaderLabel = labelStr + "###" + guiInfo.State.Id + "_label";
+					bool enabled = toggleMode.Enabled;
+					bool opened = Manager.NativeManager.CollapsingHeaderWithToggle(collapsingHeaderLabel, swig.TreeNodeFlags.None, toggleId, ref enabled);
+
+					// If toggle state is changed
+					if (enabled != toggleMode.Enabled)
+					{
+						toggleMode.Enabled = enabled;
+					}
+
+					if (opened && !enabled)
+					{
+						string message = MultiLanguageTextProvider.GetText("TreeDisabled_Message");
+						Manager.NativeManager.TextWrapped(message);
+					}
+
+					// Begin the table again
+					BeginTable();
+
+					if (!opened || !enabled)
+					{
+						return;
+					}
+				}
+
+
 				var subFields = valueType.GetFields();
 				int i = 0;
 				foreach (var f in subFields)
@@ -627,23 +696,8 @@ namespace Effekseer.GUI.Inspector
 			}
 			LastTarget = targetNode;
 
-			var regionAvail = Manager.NativeManager.GetContentRegionAvail();
-
-			if (Manager.NativeManager.BeginTable("Table", 2,
-				swig.TableFlags.BordersInnerV | swig.TableFlags.BordersOuterH |
-				swig.TableFlags.SizingFixedFit | swig.TableFlags.SizingStretchProp |
-				swig.TableFlags.NoSavedSettings))
+			if (BeginTable())
 			{
-				// set columns width
-				Manager.NativeManager.TableSetupColumn("", swig.TableColumnFlags.WidthFixed, (int)(regionAvail.X * 0.3f));
-				Manager.NativeManager.TableSetupColumn("", swig.TableColumnFlags.WidthStretch);
-				// set controls width to maximum
-				Manager.NativeManager.TableNextRow();
-				Manager.NativeManager.TableSetColumnIndex(0);
-				Manager.NativeManager.PushItemWidth(-1);
-				Manager.NativeManager.TableSetColumnIndex(1);
-				Manager.NativeManager.PushItemWidth(-1);
-
 				var fields = target.GetType().GetFields();
 				int i = 0;
 				var elementGetterSetterArray = new PartsTreeSystem.ElementGetterSetterArray();
@@ -656,7 +710,7 @@ namespace Effekseer.GUI.Inspector
 					++i;
 				}
 			}
-			Manager.NativeManager.EndTable();
+			EndTable();
 		}
 
 		public void Update(Asset.EffectAssetEditorContext context, Asset.Node targetNode, Type targetType = null)
@@ -671,23 +725,8 @@ namespace Effekseer.GUI.Inspector
 			}
 			LastTarget = targetNode;
 
-			var regionAvail = Manager.NativeManager.GetContentRegionAvail();
-
-			if (Manager.NativeManager.BeginTable("Table", 2,
-				swig.TableFlags.BordersInnerV | swig.TableFlags.BordersOuterH |
-				swig.TableFlags.SizingFixedFit | swig.TableFlags.SizingStretchProp |
-				swig.TableFlags.NoSavedSettings))
+			if (BeginTable())
 			{
-				// set columns width
-				Manager.NativeManager.TableSetupColumn("", swig.TableColumnFlags.WidthFixed, (int)(regionAvail.X * 0.3f));
-				Manager.NativeManager.TableSetupColumn("", swig.TableColumnFlags.WidthStretch);
-				// set controls width to maximum
-				Manager.NativeManager.TableNextRow();
-				Manager.NativeManager.TableSetColumnIndex(0);
-				Manager.NativeManager.PushItemWidth(-1);
-				Manager.NativeManager.TableSetColumnIndex(1);
-				Manager.NativeManager.PushItemWidth(-1);
-
 				var fields = targetNode.GetType().GetFields();
 				int i = 0;
 				var elementGetterSetterArray = new PartsTreeSystem.ElementGetterSetterArray();
@@ -705,7 +744,7 @@ namespace Effekseer.GUI.Inspector
 					++i;
 				}
 			}
-			Manager.NativeManager.EndTable();
+			EndTable();
 		}
 
 
@@ -721,22 +760,8 @@ namespace Effekseer.GUI.Inspector
 			}
 			LastTarget = targetAsset;
 
-			var regionAvail = Manager.NativeManager.GetContentRegionAvail();
-
-			if (Manager.NativeManager.BeginTable("Table", 2,
-				swig.TableFlags.BordersInnerV | swig.TableFlags.BordersOuterH |
-				swig.TableFlags.SizingFixedFit | swig.TableFlags.SizingStretchProp |
-				swig.TableFlags.NoSavedSettings))
+			if (BeginTable())
 			{
-				// set columns width
-				Manager.NativeManager.TableSetupColumn("", swig.TableColumnFlags.WidthFixed, (int)(regionAvail.X * 0.3f));
-				Manager.NativeManager.TableSetupColumn("", swig.TableColumnFlags.WidthStretch);
-				// set controls width to maximum
-				Manager.NativeManager.TableNextRow();
-				Manager.NativeManager.TableSetColumnIndex(0);
-				Manager.NativeManager.PushItemWidth(-1);
-				Manager.NativeManager.TableSetColumnIndex(1);
-				Manager.NativeManager.PushItemWidth(-1);
 
 				var fields = targetAsset.GetType().GetFields();
 				int i = 0;
@@ -750,7 +775,7 @@ namespace Effekseer.GUI.Inspector
 					++i;
 				}
 			}
-			Manager.NativeManager.EndTable();
+			EndTable();
 		}
 
 		public bool Drop(string path, Asset.EffectAssetEditorContext context, Asset.Node targetNode, Type targetType = null)
