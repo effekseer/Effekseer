@@ -11,6 +11,7 @@
 #include "Effekseer.WorkerThread.h"
 #include "Geometry/GeometryUtility.h"
 #include "Utils/Effekseer.CustomAllocator.h"
+#include "Utils/InstancePool.h"
 
 namespace Effekseer
 {
@@ -126,17 +127,14 @@ private:
 	// 確保済みインスタンス数
 	int m_instance_max;
 
-	// buffers which is allocated while initializing
-	// 初期化中に確保されたバッファ
-	CustomAlignedVector<InstanceChunk> reservedChunksBuffer_;
-	CustomAlignedVector<uint8_t> reservedGroupBuffer_;
-	CustomAlignedVector<uint8_t> reservedContainerBuffer_;
-
-	// pooled instances. Thease are not used and waiting to be used.
-	// プールされたインスタンス。使用されておらず、使用されてるのを待っている。
-	std::queue<InstanceChunk*> pooledChunks_;
-	std::queue<InstanceGroup*> pooledGroups_;
-	std::queue<InstanceContainer*> pooledContainers_;
+	/**
+		@note
+		An user can specify only the maximum number of instance.
+		But the number of instance container is larger than one of instance.
+	*/
+	InstancePool<InstanceChunk> pooledInstanceChunks_;
+	InstancePool<InstanceGroup> pooledInstanceGroup_;
+	InstancePool<InstanceContainer> pooledInstanceContainers_;
 
 	// instance chunks by generations
 	// 世代ごとのインスタンスチャンク

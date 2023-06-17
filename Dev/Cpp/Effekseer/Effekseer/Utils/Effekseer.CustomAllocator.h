@@ -167,7 +167,7 @@ struct CustomAlignedAllocator
 
 	T* allocate(std::size_t n)
 	{
-		return reinterpret_cast<T*>(GetAlignedMallocFunc()(sizeof(T) * static_cast<uint32_t>(n), 16));
+		return reinterpret_cast<T*>(GetAlignedMallocFunc()(sizeof(T) * static_cast<uint32_t>(n), 32));
 	}
 	void deallocate(T* p, std::size_t n)
 	{

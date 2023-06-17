@@ -23,7 +23,7 @@ namespace Effekseer
 	@note
 
 */
-class InstanceContainer : public IntrusiveList<InstanceContainer>::Node
+class alignas(32) InstanceContainer : public IntrusiveList<InstanceContainer>::Node
 {
 	friend class ManagerImplemented;
 

@@ -277,12 +277,8 @@ void ManagerImplemented::GCDrawSet(bool isRemovingManager)
 InstanceContainer* ManagerImplemented::CreateInstanceContainer(
 	EffectNode* pEffectNode, InstanceGlobal* pGlobal, bool isRoot, const SIMD::Mat43f& rootMatrix, Instance* pParent)
 {
-	if (pooledContainers_.empty())
-	{
-		return nullptr;
-	}
-	InstanceContainer* memory = pooledContainers_.front();
-	pooledContainers_.pop();
+	auto memory = pooledInstanceContainers_.Pop();
+
 	InstanceContainer* pContainer = new (memory) InstanceContainer(this, pEffectNode, pGlobal);
 
 	for (int i = 0; i < pEffectNode->GetChildrenCount(); i++)
@@ -330,7 +326,7 @@ InstanceContainer* ManagerImplemented::CreateInstanceContainer(
 void ManagerImplemented::ReleaseInstanceContainer(InstanceContainer* container)
 {
 	container->~InstanceContainer();
-	pooledContainers_.push(container);
+	pooledInstanceContainers_.Push(container);
 }
 
 int ManagerImplemented::Rand()
@@ -443,30 +439,16 @@ ManagerImplemented::ManagerImplemented(int instance_max, bool autoFlip)
 	m_renderingDrawSets.reserve(64);
 
 	int chunk_max = (m_instance_max + InstanceChunk::InstancesOfChunk - 1) / InstanceChunk::InstancesOfChunk;
-	reservedChunksBuffer_.resize(chunk_max);
-	for (auto& chunk : reservedChunksBuffer_)
-	{
-		pooledChunks_.push(&chunk);
-	}
+
 	for (auto& chunks : instanceChunks_)
 	{
 		chunks.reserve(chunk_max);
 	}
 	std::fill(creatableChunkOffsets_.begin(), creatableChunkOffsets_.end(), 0);
 
-	// Pooling InstanceGroup
-	reservedGroupBuffer_.resize(instance_max * sizeof(InstanceGroup));
-	for (int i = 0; i < instance_max; i++)
-	{
-		pooledGroups_.push((InstanceGroup*)&reservedGroupBuffer_[i * sizeof(InstanceGroup)]);
-	}
-
-	// Pooling InstanceGroup
-	reservedContainerBuffer_.resize(instance_max * sizeof(InstanceContainer));
-	for (int i = 0; i < instance_max; i++)
-	{
-		pooledContainers_.push((InstanceContainer*)&reservedContainerBuffer_[i * sizeof(InstanceContainer)]);
-	}
+	pooledInstanceChunks_.Init(chunk_max, 16, false);
+	pooledInstanceGroup_.Init(instance_max, 32, true);
+	pooledInstanceContainers_.Init(instance_max, 32, true);
 
 	m_setting->SetEffectLoader(Effect::CreateEffectLoader());
 	EffekseerPrintDebug("*** Create : Manager\n");
@@ -509,12 +491,14 @@ Instance* ManagerImplemented::CreateInstance(EffectNodeImplemented* pEffectNode,
 		return chunk->CreateInstance(this, pEffectNode, pContainer, pGroup);
 	}
 
-	if (!pooledChunks_.empty())
 	{
-		auto chunk = pooledChunks_.front();
-		pooledChunks_.pop();
-		chunks.push_back(chunk);
-		return chunk->CreateInstance(this, pEffectNode, pContainer, pGroup);
+		auto memory = pooledInstanceChunks_.Pop();
+		if (memory != nullptr)
+		{
+			auto chunk = new (memory) InstanceChunk();
+			chunks.push_back(chunk);
+			return chunk->CreateInstance(this, pEffectNode, pContainer, pGroup);
+		}
 	}
 
 	return nullptr;
@@ -522,19 +506,14 @@ Instance* ManagerImplemented::CreateInstance(EffectNodeImplemented* pEffectNode,
 
 InstanceGroup* ManagerImplemented::CreateInstanceGroup(EffectNodeImplemented* pEffectNode, InstanceContainer* pContainer, InstanceGlobal* pGlobal)
 {
-	if (pooledGroups_.empty())
-	{
-		return nullptr;
-	}
-	InstanceGroup* memory = pooledGroups_.front();
-	pooledGroups_.pop();
+	auto memory = pooledInstanceGroup_.Pop();
 	return new (memory) InstanceGroup(this, pEffectNode, pContainer, pGlobal);
 }
 
 void ManagerImplemented::ReleaseGroup(InstanceGroup* group)
 {
 	group->~InstanceGroup();
-	pooledGroups_.push(group);
+	pooledInstanceGroup_.Push(group);
 }
 
 void ManagerImplemented::LaunchWorkerThreads(uint32_t threadCount)
@@ -1519,7 +1498,8 @@ void ManagerImplemented::EndUpdate()
 								   { return chunk->GetAliveCount() == 0; });
 			if (it != last)
 			{
-				pooledChunks_.push(*it);
+				(*it)->~InstanceChunk();
+				pooledInstanceChunks_.Push(*it);
 				if (it != last - 1)
 					*it = *(last - 1);
 				last--;
@@ -2206,7 +2186,7 @@ int32_t ManagerImplemented::GetGPUTime(Handle handle) const
 
 int32_t ManagerImplemented::GetRestInstancesCount() const
 {
-	return static_cast<int32_t>(pooledChunks_.size()) * InstanceChunk::InstancesOfChunk;
+	return pooledInstanceChunks_.GetRestInstance() * InstanceChunk::InstancesOfChunk;
 }
 
 void ManagerImplemented::BeginReloadEffect(const EffectRef& effect, bool doLockThread)
