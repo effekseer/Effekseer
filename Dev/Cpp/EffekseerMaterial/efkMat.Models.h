@@ -148,7 +148,7 @@ public:
 	bool IsPreviewOpened = false;
 
 	//! descriptons for other editors
-	std::vector<std::shared_ptr<NodeDescription>> Descriptions;
+	std::shared_ptr<NodeDescription> Description;
 
 	//! warning
 	WarningType CurrentWarning = WarningType::None;
@@ -224,7 +224,7 @@ public:
 	}
 
 	//! descriptons for other editors
-	std::vector<std::shared_ptr<NodeDescription>> Descriptions;
+	std::shared_ptr<NodeDescription> Description;
 
 	std::array<float, 4> Values;
 };

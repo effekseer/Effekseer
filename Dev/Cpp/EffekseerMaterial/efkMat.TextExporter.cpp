@@ -613,7 +613,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 						extractedTexture->IsParam = true;
 						extractedTexture->Type = material->FindTexture(path.c_str())->Type;
 						extractedTexture->Priority = static_cast<int32_t>(node->GetProperty("Priority")->Floats[0]);
-						extractedTexture->Descriptions = node->Descriptions;
+						extractedTexture->Description = node->Description;
 						extractedTexture->GUID = node->GUID;
 						extractedTextures[node->GUID] = extractedTexture;
 					}
@@ -646,7 +646,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 						extractedGradient->Name = paramName;
 						extractedGradient->IsFixed = false;
 						extractedGradient->Priority = static_cast<int32_t>(node->GetProperty("Priority")->Floats[0]);
-						extractedGradient->Descriptions = node->Descriptions;
+						extractedGradient->Description = node->Description;
 						extractedGradient->GUID = node->GUID;
 						extractedGradient->Defaults = *node->GetProperty("Gradient")->GradientData;
 						extractedGradients[node->GUID] = extractedGradient;
@@ -681,7 +681,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 						extractedUniform->Name = paramName;
 						extractedUniform->DefaultConstants = values;
 						extractedUniform->Priority = static_cast<int32_t>(node->GetProperty("Priority")->Floats[0]);
-						extractedUniform->Descriptions = node->Descriptions;
+						extractedUniform->Description = node->Description;
 						extractedUniform->GUID = node->GUID;
 
 						if (node->Parameter->Type == NodeType::Parameter1)

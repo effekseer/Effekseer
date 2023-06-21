@@ -189,8 +189,8 @@ namespace Effekseer.Data
 
 			if (info.CustomData.Count() > 0)
 			{
-				rcValues.CustomData1.Name = info.CustomData[0].Summaries[language];
-				rcValues.CustomData1.Desc = info.CustomData[0].Descriptions[language];
+				rcValues.CustomData1.Name = info.CustomData[0].Summary;
+				rcValues.CustomData1.Desc = info.CustomData[0].Description;
 			}
 			else
 			{
@@ -200,8 +200,8 @@ namespace Effekseer.Data
 
 			if (info.CustomData.Count() > 1)
 			{
-				rcValues.CustomData2.Name = info.CustomData[1].Summaries[language];
-				rcValues.CustomData2.Desc = info.CustomData[1].Descriptions[language];
+				rcValues.CustomData2.Name = info.CustomData[1].Summary;
+				rcValues.CustomData2.Desc = info.CustomData[1].Description;
 			}
 			else
 			{
@@ -302,11 +302,7 @@ namespace Effekseer.Data
 
 					Func<string> getName = () =>
 					{
-						var ret = "";
-						if (texture.Summaries.ContainsKey(language))
-						{
-							ret = texture.Summaries[language];
-						}
+						var ret = texture.Summary;
 
 						if (string.IsNullOrEmpty(ret))
 						{
@@ -323,11 +319,7 @@ namespace Effekseer.Data
 
 					Func<string> getDesc = () =>
 					{
-						var ret = "";
-						if (texture.Descriptions.ContainsKey(language))
-						{
-							ret = texture.Descriptions[language];
-						}
+						var ret = texture.Description;
 
 						return ret;
 					};
@@ -405,11 +397,7 @@ namespace Effekseer.Data
 
 					Func<string> getName = () =>
 					{
-						var ret = "";
-						if (uniform.Summaries.ContainsKey(language))
-						{
-							ret = uniform.Summaries[language];
-						}
+						var ret = uniform.Summary;
 
 						if (string.IsNullOrEmpty(ret))
 						{
@@ -426,11 +414,7 @@ namespace Effekseer.Data
 
 					Func<string> getDesc = () =>
 					{
-						var ret = "";
-						if (uniform.Descriptions.ContainsKey(language))
-						{
-							ret = uniform.Descriptions[language];
-						}
+						var ret = uniform.Description;
 
 						return ret;
 					};
@@ -538,11 +522,7 @@ namespace Effekseer.Data
 
 					Func<string> getName = () =>
 					{
-						var ret = "";
-						if (gradient.Summaries.ContainsKey(language))
-						{
-							ret = gradient.Summaries[language];
-						}
+						var ret = gradient.Summary;
 
 						if (string.IsNullOrEmpty(ret))
 						{
@@ -559,13 +539,7 @@ namespace Effekseer.Data
 
 					Func<string> getDesc = () =>
 					{
-						var ret = "";
-						if (gradient.Descriptions.ContainsKey(language))
-						{
-							ret = gradient.Descriptions[language];
-						}
-
-						return ret;
+						return gradient.Description;
 					};
 
 					ValueStatus status = null;

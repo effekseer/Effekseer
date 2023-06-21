@@ -19,7 +19,7 @@ struct TextExporterUniform
 	int32_t Offset;
 	int32_t Priority = 1;
 	uint64_t GUID = 0;
-	std::vector<std::shared_ptr<NodeDescription>> Descriptions;
+	std::shared_ptr<NodeDescription> Description;
 };
 
 /**
@@ -37,7 +37,7 @@ struct TextExporterTexture
 	TextureSamplerType Sampler = TextureSamplerType::Unknown;
 	int32_t Priority = 1;
 	uint64_t GUID = 0;
-	std::vector<std::shared_ptr<NodeDescription>> Descriptions;
+	std::shared_ptr<NodeDescription> Description;
 };
 
 struct TextExporterGradient
@@ -49,7 +49,7 @@ struct TextExporterGradient
 	int32_t Offset;
 	int32_t Priority = 1;
 	uint64_t GUID = 0;
-	std::vector<std::shared_ptr<NodeDescription>> Descriptions;
+	std::shared_ptr<NodeDescription> Description;
 };
 
 struct TextExporterPin
