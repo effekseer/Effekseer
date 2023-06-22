@@ -511,7 +511,7 @@ namespace Effekseer.Utils
 
 						for (int j = 0; j < customDataCount; j++)
 						{
-							LoadSummaryDescription(Version, reader, out CustomData[j].Summary, out CustomData[j].Description);
+							LoadSummaryDescription((MaterialVersion)version, reader, out CustomData[j].Summary, out CustomData[j].Description);
 						}
 					}
 
@@ -520,7 +520,7 @@ namespace Effekseer.Utils
 
 					for (int j = 0; j < textureCount; j++)
 					{
-						LoadSummaryDescription(Version, reader, out Textures[j].Summary, out Textures[j].Description);
+						LoadSummaryDescription((MaterialVersion)version, reader, out Textures[j].Summary, out Textures[j].Description);
 					}
 
 					int uniformCount = 0;
@@ -528,7 +528,7 @@ namespace Effekseer.Utils
 
 					for (int j = 0; j < uniformCount; j++)
 					{
-						LoadSummaryDescription(Version, reader, out Uniforms[j].Summary, out Uniforms[j].Description);
+						LoadSummaryDescription((MaterialVersion)version, reader, out Uniforms[j].Summary, out Uniforms[j].Description);
 					}
 
 					if (version >= (int)MaterialVersion.Version17Alpha4)
@@ -538,7 +538,7 @@ namespace Effekseer.Utils
 
 						for (int j = 0; j < gradientCount; j++)
 						{
-							LoadSummaryDescription(Version, reader, out Gradients[j].Summary, out Gradients[j].Description);
+							LoadSummaryDescription((MaterialVersion)version, reader, out Gradients[j].Summary, out Gradients[j].Description);
 						}
 					}
 				}
