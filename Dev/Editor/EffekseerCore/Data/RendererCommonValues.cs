@@ -182,9 +182,6 @@ namespace Effekseer.Data
 			Utils.MaterialInformation info = new Utils.MaterialInformation();
 			info.Load(Path.GetAbsolutePath());
 
-			var language = Language.English;
-			if (LanguageTable.Languages[LanguageTable.SelectedIndex] == "ja") language = Language.Japanese;
-
 			ApplyMaterial(info);
 
 			if (info.CustomData.Count() > 0)
@@ -263,9 +260,6 @@ namespace Effekseer.Data
 
 			var previous_selfSummary = selfSummary;
 			var previous_selfDetail = selfDetail;
-
-			var language = Language.English;
-			if (LanguageTable.Languages[LanguageTable.SelectedIndex] == "ja") language = Language.Japanese;
 
 			selfSummary = info.Name;
 			selfDetail = info.Description;
