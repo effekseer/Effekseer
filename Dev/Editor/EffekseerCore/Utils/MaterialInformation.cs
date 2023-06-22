@@ -188,9 +188,9 @@ namespace Effekseer.Utils
 
 		public bool HasRefraction = false;
 
-		public Dictionary<Language, string> Names = new Dictionary<Language, string>();
+		public string Name = string.Empty;
 
-		public Dictionary<Language, string> Descriptions = new Dictionary<Language, string>();
+		public string Description = string.Empty;
 
 		public string Code = string.Empty;
 
@@ -315,20 +315,7 @@ namespace Effekseer.Utils
 
 					var reader = new BinaryReader(temp);
 
-					int count = 0;
-					reader.Get(ref count);
-
-					for (int i = 0; i < count; i++)
-					{
-						int lang = 0;
-						string name = null;
-						string desc = null;
-						reader.Get(ref lang);
-						reader.Get(ref name, Encoding.UTF8);
-						reader.Get(ref desc, Encoding.UTF8);
-						Names.Add((Language)lang, name);
-						Descriptions.Add((Language)lang, desc);
-					}
+					LoadSummaryDescription((MaterialVersion)version, reader, out Name, out Description);
 				}
 
 				if (buf[0] == 'P' &&
@@ -606,14 +593,8 @@ namespace Effekseer.Utils
 
 			{
 				var bw = new Utils.BinaryWriter();
-				bw.Push(Names.Count);
-				var keys = Names.Keys.ToArray();
-				for (int i = 0; i < keys.Length; i++)
-				{
-					bw.Push((int)keys[i]);
-					bw.Push(Names[keys[i]], Encoding.UTF8);
-					bw.Push(Descriptions[keys[i]], Encoding.UTF8);
-				}
+				bw.Push(Name, Encoding.UTF8);
+				bw.Push(Description, Encoding.UTF8);
 
 				var binary = bw.GetBinary();
 				writer.Write(Encoding.ASCII.GetBytes("DESC"));

@@ -1724,27 +1724,6 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 			ImGui::SetTooltip(StringContainer::GetValue("Description_Desc").c_str());
 		}
 
-		const char* languages[] = {"Ja", "En"};
-
-		if (ImGui::BeginCombo(StringContainer::GetValue("Language_Name").c_str(),
-							  (StringContainer::GetValue(languages[static_cast<int>(material->Language)]) + "###" +
-							   languages[static_cast<int>(material->Language)])
-								  .c_str()))
-		{
-			for (size_t i = 0; i < 2; i++)
-			{
-				auto isSelected = static_cast<int>(material->Language) == i;
-				if (ImGui::Selectable((StringContainer::GetValue(languages[i]) + "###" + languages[i]).c_str(), isSelected))
-				{
-					material->Language = static_cast<LanguageType>(i);
-				}
-				if (isSelected)
-					ImGui::SetItemDefaultFocus();
-			}
-
-			ImGui::EndCombo();
-		}
-
 		// is memory safe?
 		auto name = node->Description->Summary;
 		name.resize(name.size() + 256, 0);

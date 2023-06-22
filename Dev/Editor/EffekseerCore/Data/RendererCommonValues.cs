@@ -267,24 +267,8 @@ namespace Effekseer.Data
 			var language = Language.English;
 			if (LanguageTable.Languages[LanguageTable.SelectedIndex] == "ja") language = Language.Japanese;
 
-			if (info.Names.ContainsKey(language))
-			{
-				selfSummary = info.Names[language];
-			}
-			else
-			{
-				selfSummary = "";
-			}
-
-
-			if (info.Descriptions.ContainsKey(language))
-			{
-				selfDetail = info.Descriptions[language];
-			}
-			else
-			{
-				selfDetail = "";
-			}
+			selfSummary = info.Name;
+			selfDetail = info.Description;
 
 			if (previous_selfSummary != selfSummary) isChanged = true;
 			if (previous_selfDetail != selfDetail) isChanged = true;
