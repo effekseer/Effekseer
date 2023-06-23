@@ -162,6 +162,12 @@ namespace Effekseer.Utils
 
 	public class MaterialInformation
 	{
+		enum Language
+		{
+			Japanese,
+			English,
+		}
+
 		const MaterialVersion LatestSupportVersion = MaterialVersion.Version18;
 
 		public MaterialVersion Version = MaterialVersion.Version18;

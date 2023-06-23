@@ -5,12 +5,6 @@ using System.Text;
 
 namespace Effekseer
 {
-	public enum Language
-	{
-		Japanese,
-		English,
-	}
-
 	public class LanguageTable
 	{
 		static int selectedIndex = 0;
