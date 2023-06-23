@@ -1724,42 +1724,21 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 			ImGui::SetTooltip(StringContainer::GetValue("Description_Desc").c_str());
 		}
 
-		const char* languages[] = {"Ja", "En"};
-
-		if (ImGui::BeginCombo(StringContainer::GetValue("Language_Name").c_str(),
-							  (StringContainer::GetValue(languages[static_cast<int>(material->Language)]) + "###" +
-							   languages[static_cast<int>(material->Language)])
-								  .c_str()))
-		{
-			for (size_t i = 0; i < 2; i++)
-			{
-				auto isSelected = static_cast<int>(material->Language) == i;
-				if (ImGui::Selectable((StringContainer::GetValue(languages[i]) + "###" + languages[i]).c_str(), isSelected))
-				{
-					material->Language = static_cast<LanguageType>(i);
-				}
-				if (isSelected)
-					ImGui::SetItemDefaultFocus();
-			}
-
-			ImGui::EndCombo();
-		}
-
 		// is memory safe?
-		auto name = node->Descriptions[static_cast<int>(material->Language)]->Summary;
+		auto name = node->Description->Summary;
 		name.resize(name.size() + 256, 0);
 
-		auto desc = node->Descriptions[static_cast<int>(material->Language)]->Detail;
+		auto desc = node->Description->Detail;
 		desc.resize(desc.size() + 256, 0);
 
 		if (ImGui::InputText(StringContainer::GetValue("Summary_Name").c_str(), const_cast<char*>(name.data()), name.size()))
 		{
-			node->Descriptions[static_cast<int>(material->Language)]->Summary = name.c_str();
+			node->Description->Summary = name.c_str();
 		}
 
 		if (ImGui::InputTextMultiline(StringContainer::GetValue("Detail_Name").c_str(), const_cast<char*>(desc.data()), desc.size()))
 		{
-			node->Descriptions[static_cast<int>(material->Language)]->Detail = desc.c_str();
+			node->Description->Detail = desc.c_str();
 		}
 	}
 }

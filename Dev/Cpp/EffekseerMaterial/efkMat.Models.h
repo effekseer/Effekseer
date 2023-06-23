@@ -148,7 +148,7 @@ public:
 	bool IsPreviewOpened = false;
 
 	//! descriptons for other editors
-	std::vector<std::shared_ptr<NodeDescription>> Descriptions;
+	std::shared_ptr<NodeDescription> Description;
 
 	//! warning
 	WarningType CurrentWarning = WarningType::None;
@@ -224,7 +224,7 @@ public:
 	}
 
 	//! descriptons for other editors
-	std::vector<std::shared_ptr<NodeDescription>> Descriptions;
+	std::shared_ptr<NodeDescription> Description;
 
 	std::array<float, 4> Values;
 };
@@ -240,7 +240,7 @@ enum class ErrorCode
 class Material : public std::enable_shared_from_this<Material>
 {
 private:
-	const int32_t lastestSupportedVersion_ = MaterialVersion17;
+	const int32_t lastestSupportedVersion_ = MaterialVersion18;
 
 	enum class SaveLoadAimType
 	{

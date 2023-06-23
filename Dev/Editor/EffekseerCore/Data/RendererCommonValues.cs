@@ -182,15 +182,12 @@ namespace Effekseer.Data
 			Utils.MaterialInformation info = new Utils.MaterialInformation();
 			info.Load(Path.GetAbsolutePath());
 
-			var language = Language.English;
-			if (LanguageTable.Languages[LanguageTable.SelectedIndex] == "ja") language = Language.Japanese;
-
 			ApplyMaterial(info);
 
 			if (info.CustomData.Count() > 0)
 			{
-				rcValues.CustomData1.Name = info.CustomData[0].Summaries[language];
-				rcValues.CustomData1.Desc = info.CustomData[0].Descriptions[language];
+				rcValues.CustomData1.Name = info.CustomData[0].Summary;
+				rcValues.CustomData1.Desc = info.CustomData[0].Description;
 			}
 			else
 			{
@@ -200,8 +197,8 @@ namespace Effekseer.Data
 
 			if (info.CustomData.Count() > 1)
 			{
-				rcValues.CustomData2.Name = info.CustomData[1].Summaries[language];
-				rcValues.CustomData2.Desc = info.CustomData[1].Descriptions[language];
+				rcValues.CustomData2.Name = info.CustomData[1].Summary;
+				rcValues.CustomData2.Desc = info.CustomData[1].Description;
 			}
 			else
 			{
@@ -264,27 +261,8 @@ namespace Effekseer.Data
 			var previous_selfSummary = selfSummary;
 			var previous_selfDetail = selfDetail;
 
-			var language = Language.English;
-			if (LanguageTable.Languages[LanguageTable.SelectedIndex] == "ja") language = Language.Japanese;
-
-			if (info.Names.ContainsKey(language))
-			{
-				selfSummary = info.Names[language];
-			}
-			else
-			{
-				selfSummary = "";
-			}
-
-
-			if (info.Descriptions.ContainsKey(language))
-			{
-				selfDetail = info.Descriptions[language];
-			}
-			else
-			{
-				selfDetail = "";
-			}
+			selfSummary = info.Name;
+			selfDetail = info.Description;
 
 			if (previous_selfSummary != selfSummary) isChanged = true;
 			if (previous_selfDetail != selfDetail) isChanged = true;
@@ -302,11 +280,7 @@ namespace Effekseer.Data
 
 					Func<string> getName = () =>
 					{
-						var ret = "";
-						if (texture.Summaries.ContainsKey(language))
-						{
-							ret = texture.Summaries[language];
-						}
+						var ret = texture.Summary;
 
 						if (string.IsNullOrEmpty(ret))
 						{
@@ -323,11 +297,7 @@ namespace Effekseer.Data
 
 					Func<string> getDesc = () =>
 					{
-						var ret = "";
-						if (texture.Descriptions.ContainsKey(language))
-						{
-							ret = texture.Descriptions[language];
-						}
+						var ret = texture.Description;
 
 						return ret;
 					};
@@ -405,11 +375,7 @@ namespace Effekseer.Data
 
 					Func<string> getName = () =>
 					{
-						var ret = "";
-						if (uniform.Summaries.ContainsKey(language))
-						{
-							ret = uniform.Summaries[language];
-						}
+						var ret = uniform.Summary;
 
 						if (string.IsNullOrEmpty(ret))
 						{
@@ -426,11 +392,7 @@ namespace Effekseer.Data
 
 					Func<string> getDesc = () =>
 					{
-						var ret = "";
-						if (uniform.Descriptions.ContainsKey(language))
-						{
-							ret = uniform.Descriptions[language];
-						}
+						var ret = uniform.Description;
 
 						return ret;
 					};
@@ -538,11 +500,7 @@ namespace Effekseer.Data
 
 					Func<string> getName = () =>
 					{
-						var ret = "";
-						if (gradient.Summaries.ContainsKey(language))
-						{
-							ret = gradient.Summaries[language];
-						}
+						var ret = gradient.Summary;
 
 						if (string.IsNullOrEmpty(ret))
 						{
@@ -559,13 +517,7 @@ namespace Effekseer.Data
 
 					Func<string> getDesc = () =>
 					{
-						var ret = "";
-						if (gradient.Descriptions.ContainsKey(language))
-						{
-							ret = gradient.Descriptions[language];
-						}
-
-						return ret;
+						return gradient.Description;
 					};
 
 					ValueStatus status = null;

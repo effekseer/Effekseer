@@ -48,6 +48,7 @@ namespace Effekseer.Utils
 		Version17Alpha2 = 1700,
 		Version17Alpha4 = 1703,
 		Version17 = 1710,
+		Version18 = 1800,
 	}
 
 	public enum CompiledMaterialVersion : int
@@ -161,9 +162,9 @@ namespace Effekseer.Utils
 
 	public class MaterialInformation
 	{
-		const MaterialVersion LatestSupportVersion = MaterialVersion.Version17;
+		const MaterialVersion LatestSupportVersion = MaterialVersion.Version18;
 
-		public MaterialVersion Version = MaterialVersion.Version17;
+		public MaterialVersion Version = MaterialVersion.Version18;
 
 		public TextureInformation[] Textures = new TextureInformation[0];
 
@@ -187,15 +188,57 @@ namespace Effekseer.Utils
 
 		public bool HasRefraction = false;
 
-		public Dictionary<Language, string> Names = new Dictionary<Language, string>();
+		public string Name = string.Empty;
 
-		public Dictionary<Language, string> Descriptions = new Dictionary<Language, string>();
+		public string Description = string.Empty;
 
 		public string Code = string.Empty;
 
 		public JObject EditorData = null;
 
 		public int ShadingModel = 0;
+
+		void LoadSummaryDescription(MaterialVersion version, BinaryReader reader, out string summary, out string description)
+		{
+			if (version >= MaterialVersion.Version18)
+			{
+				summary = string.Empty;
+				description = string.Empty;
+				reader.Get(ref summary, Encoding.UTF8);
+				reader.Get(ref description, Encoding.UTF8);
+			}
+			else
+			{
+				var summaries = new Dictionary<Language, string>();
+				var descriptions = new Dictionary<Language, string>();
+
+				int count = 0;
+				reader.Get(ref count);
+
+				for (int i = 0; i < count; i++)
+				{
+					int lang = 0;
+					string name = null;
+					string desc = null;
+					reader.Get(ref lang);
+					reader.Get(ref name, Encoding.UTF8);
+					reader.Get(ref desc, Encoding.UTF8);
+					summaries.Add((Language)lang, name);
+					descriptions.Add((Language)lang, desc);
+				}
+
+				if (!string.IsNullOrEmpty(summaries[Language.English]))
+				{
+					summary = summaries[Language.English];
+					description = descriptions[Language.English];
+				}
+				else
+				{
+					summary = summaries[Language.Japanese];
+					description = descriptions[Language.Japanese];
+				}
+			}
+		}
 
 		public bool Load(string path)
 		{
@@ -272,20 +315,7 @@ namespace Effekseer.Utils
 
 					var reader = new BinaryReader(temp);
 
-					int count = 0;
-					reader.Get(ref count);
-
-					for (int i = 0; i < count; i++)
-					{
-						int lang = 0;
-						string name = null;
-						string desc = null;
-						reader.Get(ref lang);
-						reader.Get(ref name, Encoding.UTF8);
-						reader.Get(ref desc, Encoding.UTF8);
-						Names.Add((Language)lang, name);
-						Descriptions.Add((Language)lang, desc);
-					}
+					LoadSummaryDescription((MaterialVersion)version, reader, out Name, out Description);
 				}
 
 				if (buf[0] == 'P' &&
@@ -468,20 +498,7 @@ namespace Effekseer.Utils
 
 						for (int j = 0; j < customDataCount; j++)
 						{
-							int count = 0;
-							reader.Get(ref count);
-
-							for (int i = 0; i < count; i++)
-							{
-								int lang = 0;
-								string name = null;
-								string desc = null;
-								reader.Get(ref lang);
-								reader.Get(ref name, Encoding.UTF8);
-								reader.Get(ref desc, Encoding.UTF8);
-								CustomData[j].Summaries.Add((Language)lang, name);
-								CustomData[j].Descriptions.Add((Language)lang, desc);
-							}
+							LoadSummaryDescription((MaterialVersion)version, reader, out CustomData[j].Summary, out CustomData[j].Description);
 						}
 					}
 
@@ -490,20 +507,7 @@ namespace Effekseer.Utils
 
 					for (int j = 0; j < textureCount; j++)
 					{
-						int count = 0;
-						reader.Get(ref count);
-
-						for (int i = 0; i < count; i++)
-						{
-							int lang = 0;
-							string name = null;
-							string desc = null;
-							reader.Get(ref lang);
-							reader.Get(ref name, Encoding.UTF8);
-							reader.Get(ref desc, Encoding.UTF8);
-							Textures[j].Summaries.Add((Language)lang, name);
-							Textures[j].Descriptions.Add((Language)lang, desc);
-						}
+						LoadSummaryDescription((MaterialVersion)version, reader, out Textures[j].Summary, out Textures[j].Description);
 					}
 
 					int uniformCount = 0;
@@ -511,20 +515,7 @@ namespace Effekseer.Utils
 
 					for (int j = 0; j < uniformCount; j++)
 					{
-						int count = 0;
-						reader.Get(ref count);
-
-						for (int i = 0; i < count; i++)
-						{
-							int lang = 0;
-							string name = null;
-							string desc = null;
-							reader.Get(ref lang);
-							reader.Get(ref name, Encoding.UTF8);
-							reader.Get(ref desc, Encoding.UTF8);
-							Uniforms[j].Summaries.Add((Language)lang, name);
-							Uniforms[j].Descriptions.Add((Language)lang, desc);
-						}
+						LoadSummaryDescription((MaterialVersion)version, reader, out Uniforms[j].Summary, out Uniforms[j].Description);
 					}
 
 					if (version >= (int)MaterialVersion.Version17Alpha4)
@@ -534,20 +525,7 @@ namespace Effekseer.Utils
 
 						for (int j = 0; j < gradientCount; j++)
 						{
-							int count = 0;
-							reader.Get(ref count);
-
-							for (int i = 0; i < count; i++)
-							{
-								int lang = 0;
-								string name = null;
-								string desc = null;
-								reader.Get(ref lang);
-								reader.Get(ref name, Encoding.UTF8);
-								reader.Get(ref desc, Encoding.UTF8);
-								Gradients[j].Summaries.Add((Language)lang, name);
-								Gradients[j].Descriptions.Add((Language)lang, desc);
-							}
+							LoadSummaryDescription((MaterialVersion)version, reader, out Gradients[j].Summary, out Gradients[j].Description);
 						}
 					}
 				}
@@ -615,14 +593,8 @@ namespace Effekseer.Utils
 
 			{
 				var bw = new Utils.BinaryWriter();
-				bw.Push(Names.Count);
-				var keys = Names.Keys.ToArray();
-				for (int i = 0; i < keys.Length; i++)
-				{
-					bw.Push((int)keys[i]);
-					bw.Push(Names[keys[i]], Encoding.UTF8);
-					bw.Push(Descriptions[keys[i]], Encoding.UTF8);
-				}
+				bw.Push(Name, Encoding.UTF8);
+				bw.Push(Description, Encoding.UTF8);
 
 				var binary = bw.GetBinary();
 				writer.Write(Encoding.ASCII.GetBytes("DESC"));
@@ -702,53 +674,29 @@ namespace Effekseer.Utils
 				bw.Push(CustomData.Length);
 				foreach (var data in CustomData)
 				{
-					bw.Push(data.Summaries.Count);
-					var keys = data.Summaries.Keys.ToArray();
-					foreach (var key in keys)
-					{
-						bw.Push((int)key);
-						bw.Push(data.Summaries[key], Encoding.UTF8);
-						bw.Push(data.Descriptions[key], Encoding.UTF8);
-					}
+					bw.Push(data.Summary, Encoding.UTF8);
+					bw.Push(data.Description, Encoding.UTF8);
 				}
 
 				bw.Push(Textures.Length);
 				foreach (var texture in Textures)
 				{
-					bw.Push(texture.Summaries.Count);
-					var keys = texture.Summaries.Keys.ToArray();
-					foreach (var key in keys)
-					{
-						bw.Push((int)key);
-						bw.Push(texture.Summaries[key], Encoding.UTF8);
-						bw.Push(texture.Descriptions[key], Encoding.UTF8);
-					}
+					bw.Push(texture.Summary, Encoding.UTF8);
+					bw.Push(texture.Description, Encoding.UTF8);
 				}
 
 				bw.Push(Uniforms.Length);
 				foreach (var uniform in Uniforms)
 				{
-					bw.Push(uniform.Summaries.Count);
-					var keys = uniform.Summaries.Keys.ToArray();
-					foreach (var key in keys)
-					{
-						bw.Push((int)key);
-						bw.Push(uniform.Summaries[key], Encoding.UTF8);
-						bw.Push(uniform.Descriptions[key], Encoding.UTF8);
-					}
+					bw.Push(uniform.Summary, Encoding.UTF8);
+					bw.Push(uniform.Description, Encoding.UTF8);
 				}
 
 				bw.Push(Gradients.Length);
 				foreach (var gradient in Gradients)
 				{
-					bw.Push(gradient.Summaries.Count);
-					var keys = gradient.Summaries.Keys.ToArray();
-					foreach (var key in keys)
-					{
-						bw.Push((int)key);
-						bw.Push(gradient.Summaries[key], Encoding.UTF8);
-						bw.Push(gradient.Descriptions[key], Encoding.UTF8);
-					}
+					bw.Push(gradient.Summary, Encoding.UTF8);
+					bw.Push(gradient.Description, Encoding.UTF8);
 				}
 
 				var binary = bw.GetBinary();
@@ -816,8 +764,8 @@ namespace Effekseer.Utils
 
 		public class CustomDataInformation
 		{
-			public Dictionary<Language, string> Summaries = new Dictionary<Language, string>();
-			public Dictionary<Language, string> Descriptions = new Dictionary<Language, string>();
+			public string Summary = string.Empty;
+			public string Description = string.Empty;
 			public float[] DefaultValues = new float[4];
 		}
 
@@ -833,8 +781,8 @@ namespace Effekseer.Utils
 			public TextureType Type = TextureType.Color;
 			public int Priority = 1;
 
-			public Dictionary<Language, string> Summaries = new Dictionary<Language, string>();
-			public Dictionary<Language, string> Descriptions = new Dictionary<Language, string>();
+			public string Summary = string.Empty;
+			public string Description = string.Empty;
 		}
 
 		public class UniformInformation
@@ -846,8 +794,8 @@ namespace Effekseer.Utils
 			public float[] DefaultValues = new float[4];
 			public int Priority = 1;
 
-			public Dictionary<Language, string> Summaries = new Dictionary<Language, string>();
-			public Dictionary<Language, string> Descriptions = new Dictionary<Language, string>();
+			public string Summary = string.Empty;
+			public string Description = string.Empty;
 		}
 
 		public class GradientInformation
@@ -859,8 +807,8 @@ namespace Effekseer.Utils
 			public Data.Value.Gradient.State Data;
 			public int Priority = 1;
 
-			public Dictionary<Language, string> Summaries = new Dictionary<Language, string>();
-			public Dictionary<Language, string> Descriptions = new Dictionary<Language, string>();
+			public string Summary = string.Empty;
+			public string Description = string.Empty;
 		}
 	}
 }

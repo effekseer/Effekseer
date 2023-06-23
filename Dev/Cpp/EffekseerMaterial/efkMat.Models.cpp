@@ -426,7 +426,8 @@ bool Material::FindLoop(std::shared_ptr<Pin> pin1, std::shared_ptr<Pin> pin2)
 
 	std::function<bool(std::weak_ptr<Node>)> visit;
 
-	visit = [&](std::weak_ptr<Node> node) -> bool {
+	visit = [&](std::weak_ptr<Node> node) -> bool
+	{
 		auto locked_node = node.lock();
 
 		for (auto p : locked_node->OutputPins)
@@ -501,13 +502,10 @@ std::string Material::SaveAsStrInternal(std::vector<std::shared_ptr<Node>> nodes
 
 		if (node->Parameter->IsDescriptionExported)
 		{
-			for (size_t i = 0; i < node->Descriptions.size(); i++)
-			{
-				picojson::object descJson;
-				descJson.insert(std::make_pair("Summary", picojson::value(node->Descriptions[i]->Summary)));
-				descJson.insert(std::make_pair("Detail", picojson::value(node->Descriptions[i]->Detail)));
-				descsJson.push_back(picojson::value(descJson));
-			}
+			picojson::object descJson;
+			descJson.insert(std::make_pair("Summary", picojson::value(node->Description->Summary)));
+			descJson.insert(std::make_pair("Detail", picojson::value(node->Description->Detail)));
+			descsJson.push_back(picojson::value(descJson));
 		}
 
 		picojson::array propsJson;
@@ -612,7 +610,7 @@ std::string Material::SaveAsStrInternal(std::vector<std::shared_ptr<Node>> nodes
 
 		nodeJson.insert(std::make_pair("Props", picojson::value(propsJson)));
 
-		if (node->Descriptions.size() > 0 && node->Parameter->IsDescriptionExported)
+		if (node->Parameter->IsDescriptionExported)
 		{
 			nodeJson.insert(std::make_pair("Descs", picojson::value(descsJson)));
 		}
@@ -666,15 +664,10 @@ std::string Material::SaveAsStrInternal(std::vector<std::shared_ptr<Node>> nodes
 		for (size_t i = 0; i < CustomData.size(); i++)
 		{
 			picojson::array customdata_lang;
-
-			for (size_t j = 0; j < CustomData[i].Descriptions.size(); j++)
-			{
-				picojson::object cd;
-				cd.insert(std::make_pair("Summary", picojson::value(CustomData[i].Descriptions[j]->Summary)));
-				cd.insert(std::make_pair("Detail", picojson::value(CustomData[i].Descriptions[j]->Detail)));
-				customdata_lang.push_back(picojson::value(cd));
-			}
-
+			picojson::object cd;
+			cd.insert(std::make_pair("Summary", picojson::value(CustomData[i].Description->Summary)));
+			cd.insert(std::make_pair("Detail", picojson::value(CustomData[i].Description->Detail)));
+			customdata_lang.push_back(picojson::value(cd));
 			customdata_desc.push_back(picojson::value(customdata_lang));
 		}
 
@@ -714,6 +707,37 @@ std::string Material::SaveAsStrInternal(std::vector<std::shared_ptr<Node>> nodes
 void Material::LoadFromStrInternal(
 	const char* json, Vector2DF offset, std::shared_ptr<Library> library, const char* basePath, SaveLoadAimType aim)
 {
+	const auto load_summary = [](const picojson::array& arr)
+	{
+		std::vector<std::shared_ptr<NodeDescription>> descriptions;
+
+		for (int32_t i = 0; i < arr.size(); i++)
+		{
+			auto description = std::make_shared<NodeDescription>();
+			description->Summary = arr[i].get("Summary").get<std::string>();
+			description->Detail = arr[i].get("Detail").get<std::string>();
+			descriptions.emplace_back(description);
+		}
+
+		if (descriptions.size() > 1)
+		{
+			if (descriptions[1]->Summary != "" || descriptions[1]->Detail != "")
+			{
+				return descriptions[1];
+			}
+			else
+			{
+				return descriptions[0];
+			}
+		}
+		else if (descriptions.size() == 1)
+		{
+			return descriptions[0];
+		}
+
+		return std::make_shared<NodeDescription>();
+	};
+
 	// offset must be int
 	offset.X = std::floor(offset.X);
 	offset.Y = std::floor(offset.Y);
@@ -814,13 +838,7 @@ void Material::LoadFromStrInternal(
 		{
 			auto descs_obj = node_.get("Descs");
 			auto descs_ = descs_obj.get<picojson::array>();
-
-			for (int32_t i = 0; i < descs_.size(); i++)
-			{
-				node->Descriptions[i] = std::make_shared<NodeDescription>();
-				node->Descriptions[i]->Summary = descs_[i].get("Summary").get<std::string>();
-				node->Descriptions[i]->Detail = descs_[i].get("Detail").get<std::string>();
-			}
+			node->Description = load_summary(descs_obj.get<picojson::array>());
 		}
 
 		auto props_obj = node_.get("Props");
@@ -977,14 +995,7 @@ void Material::LoadFromStrInternal(
 			{
 				if (customdata[n].is<picojson::array>())
 				{
-					picojson::array descs_ = customdata[n].get<picojson::array>();
-					for (int32_t i = 0; i < descs_.size(); i++)
-					{
-
-						CustomData[n].Descriptions[i] = std::make_shared<NodeDescription>();
-						CustomData[n].Descriptions[i]->Summary = descs_[i].get("Summary").get<std::string>();
-						CustomData[n].Descriptions[i]->Detail = descs_[i].get("Detail").get<std::string>();
-					}
+					CustomData[n].Description = load_summary(customdata[n].get<picojson::array>());
 				}
 			}
 		}
@@ -993,12 +1004,12 @@ void Material::LoadFromStrInternal(
 		{
 			if (node->Parameter->Type == NodeType::CustomData1)
 			{
-				node->Descriptions = this->CustomData[0].Descriptions;
+				node->Description = this->CustomData[0].Description;
 			}
 
 			if (node->Parameter->Type == NodeType::CustomData2)
 			{
-				node->Descriptions = this->CustomData[1].Descriptions;
+				node->Description = this->CustomData[1].Description;
 			}
 		}
 	}
@@ -1056,12 +1067,7 @@ void Material::Initialize()
 
 	for (size_t ci = 0; ci < CustomData.size(); ci++)
 	{
-		CustomData[ci].Descriptions.resize(static_cast<int32_t>(LanguageType::Max));
-
-		for (size_t i = 0; i < CustomData[ci].Descriptions.size(); i++)
-		{
-			CustomData[ci].Descriptions[i] = std::make_shared<NodeDescription>();
-		}
+		CustomData[ci].Description = std::make_shared<NodeDescription>();
 	}
 
 	commandManager_->Reset();
@@ -1216,20 +1222,15 @@ std::shared_ptr<Node> Material::CreateNode(std::shared_ptr<NodeParameter> parame
 	{
 		if (parameter->Type == NodeType::CustomData1)
 		{
-			node->Descriptions = this->CustomData[0].Descriptions;
+			node->Description = this->CustomData[0].Description;
 		}
 		else if (parameter->Type == NodeType::CustomData2)
 		{
-			node->Descriptions = this->CustomData[1].Descriptions;
+			node->Description = this->CustomData[1].Description;
 		}
 		else
 		{
-			node->Descriptions.resize(static_cast<int32_t>(LanguageType::Max));
-
-			for (size_t i = 0; i < node->Descriptions.size(); i++)
-			{
-				node->Descriptions[i] = std::make_shared<NodeDescription>();
-			}
+			node->Description = std::make_shared<NodeDescription>();
 		}
 	}
 
@@ -1290,11 +1291,13 @@ std::shared_ptr<Node> Material::CreateNode(std::shared_ptr<NodeParameter> parame
 	else
 	{
 		auto command = std::make_shared<DelegateCommand>(
-			[this, val_new]() -> void {
+			[this, val_new]() -> void
+			{
 				this->nodes_ = val_new;
 				this->UpdateWarnings();
 			},
-			[this, val_old]() -> void {
+			[this, val_old]() -> void
+			{
 				this->nodes_ = val_old;
 				this->UpdateWarnings();
 			});
@@ -1333,12 +1336,14 @@ void Material::RemoveNode(std::shared_ptr<Node> node)
 	}
 
 	auto command = std::make_shared<DelegateCommand>(
-		[this, nodes_new, links_new]() -> void {
+		[this, nodes_new, links_new]() -> void
+		{
 			this->nodes_ = nodes_new;
 			this->links_ = links_new;
 			this->UpdateWarnings();
 		},
-		[this, nodes_old, links_old]() -> void {
+		[this, nodes_old, links_old]() -> void
+		{
 			this->nodes_ = nodes_old;
 			this->links_ = links_old;
 			this->UpdateWarnings();
@@ -1460,12 +1465,14 @@ ConnectResultType Material::ConnectPin(std::shared_ptr<Pin> pin1, std::shared_pt
 	links_new.push_back(link);
 
 	auto command = std::make_shared<DelegateCommand>(
-		[this, links_new, p1]() -> void {
+		[this, links_new, p1]() -> void
+		{
 			this->links_ = links_new;
 			this->UpdateWarnings();
 			this->MakeDirty(p1->Parent.lock());
 		},
-		[this, links_old, p1]() -> void {
+		[this, links_old, p1]() -> void
+		{
 			this->links_ = links_old;
 			this->UpdateWarnings();
 			this->MakeDirty(p1->Parent.lock());
@@ -1486,7 +1493,8 @@ bool Material::BreakPin(std::shared_ptr<Link> link)
 	auto inputNode = link->InputPin->Parent.lock();
 
 	auto command = std::make_shared<DelegateCommand>(
-		[this, links_new, inputNode]() -> void {
+		[this, links_new, inputNode]() -> void
+		{
 			this->links_ = links_new;
 			this->UpdateWarnings();
 			if (inputNode != nullptr)
@@ -1494,7 +1502,8 @@ bool Material::BreakPin(std::shared_ptr<Link> link)
 				MakeDirty(inputNode);
 			}
 		},
-		[this, links_old, inputNode]() -> void {
+		[this, links_old, inputNode]() -> void
+		{
 			this->links_ = links_old;
 			this->UpdateWarnings();
 			if (inputNode != nullptr)
@@ -1683,11 +1692,13 @@ void Material::ChangeValueTextureType(std::shared_ptr<TextureInfo> prop, Texture
 	auto value_new = type;
 
 	auto command = std::make_shared<DelegateCommand>(
-		[prop, value_new, this]() -> void {
+		[prop, value_new, this]() -> void
+		{
 			prop->Type = value_new;
 			// TODO make content dirty
 		},
-		[prop, value_old, this]() -> void {
+		[prop, value_old, this]() -> void
+		{
 			prop->Type = value_old;
 			// TODO make content dirty
 		});
@@ -1839,7 +1850,7 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 	// header
 
 	const char* prefix = "EFKM";
-	int version = MaterialVersion17;
+	int version = MaterialVersion18;
 
 	size_t offset = 0;
 
@@ -1877,12 +1888,9 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 
 	// description
 	BinaryWriter bwDescs;
-	bwDescs.Push(static_cast<uint32_t>(outputNode->Descriptions.size()));
-	for (size_t descInd = 0; descInd < outputNode->Descriptions.size(); descInd++)
 	{
-		bwDescs.Push(static_cast<uint32_t>(descInd));
-		bwDescs.Push(GetVectorFromStr(outputNode->Descriptions[descInd]->Summary));
-		bwDescs.Push(GetVectorFromStr(outputNode->Descriptions[descInd]->Detail));
+		bwDescs.Push(GetVectorFromStr(outputNode->Description->Summary));
+		bwDescs.Push(GetVectorFromStr(outputNode->Description->Detail));
 	}
 
 	const char* chunk_desc = "DESC";
@@ -1967,7 +1975,8 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 		bwParam.Push(param->DefaultConstants[3]);
 	}
 
-	const auto pushGradient = [&](const std::vector<std::shared_ptr<TextExporterGradient>>& gradients) {
+	const auto pushGradient = [&](const std::vector<std::shared_ptr<TextExporterGradient>>& gradients)
+	{
 		bwParam.Push(static_cast<int32_t>(gradients.size()));
 
 		for (size_t i = 0; i < gradients.size(); i++)
@@ -2024,20 +2033,13 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 	// param 2
 	BinaryWriter bwParam2;
 
-	if (version >= 2)
 	{
 		bwParam2.Push(static_cast<int32_t>(CustomData.size()));
 
 		for (size_t ci = 0; ci < CustomData.size(); ci++)
 		{
-			bwParam2.Push(static_cast<int32_t>(CustomData[ci].Descriptions.size()));
-
-			for (size_t descInd = 0; descInd < CustomData[ci].Descriptions.size(); descInd++)
-			{
-				bwParam2.Push(static_cast<uint32_t>(descInd));
-				bwParam2.Push(GetVectorFromStr(CustomData[ci].Descriptions[descInd]->Summary));
-				bwParam2.Push(GetVectorFromStr(CustomData[ci].Descriptions[descInd]->Detail));
-			}
+			bwParam2.Push(GetVectorFromStr(CustomData[ci].Description->Summary));
+			bwParam2.Push(GetVectorFromStr(CustomData[ci].Description->Detail));
 		}
 	}
 
@@ -2045,28 +2047,16 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 
 	for (size_t i = 0; i < result.Textures.size(); i++)
 	{
-		bwParam2.Push(static_cast<int32_t>(result.Textures[i]->Descriptions.size()));
-
-		for (size_t descInd = 0; descInd < result.Textures[i]->Descriptions.size(); descInd++)
-		{
-			bwParam2.Push(static_cast<uint32_t>(descInd));
-			bwParam2.Push(GetVectorFromStr(result.Textures[i]->Descriptions[descInd]->Summary));
-			bwParam2.Push(GetVectorFromStr(result.Textures[i]->Descriptions[descInd]->Detail));
-		}
+		bwParam2.Push(GetVectorFromStr(result.Textures[i]->Description->Summary));
+		bwParam2.Push(GetVectorFromStr(result.Textures[i]->Description->Detail));
 	}
 
 	bwParam2.Push(static_cast<int32_t>(result.Uniforms.size()));
 
 	for (size_t i = 0; i < result.Uniforms.size(); i++)
 	{
-		bwParam2.Push(static_cast<int32_t>(result.Uniforms[i]->Descriptions.size()));
-
-		for (size_t descInd = 0; descInd < result.Uniforms[i]->Descriptions.size(); descInd++)
-		{
-			bwParam2.Push(static_cast<uint32_t>(descInd));
-			bwParam2.Push(GetVectorFromStr(result.Uniforms[i]->Descriptions[descInd]->Summary));
-			bwParam2.Push(GetVectorFromStr(result.Uniforms[i]->Descriptions[descInd]->Detail));
-		}
+		bwParam2.Push(GetVectorFromStr(result.Uniforms[i]->Description->Summary));
+		bwParam2.Push(GetVectorFromStr(result.Uniforms[i]->Description->Detail));
 	}
 
 	{
@@ -2074,14 +2064,8 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 
 		for (size_t i = 0; i < result.Gradients.size(); i++)
 		{
-			bwParam2.Push(static_cast<int32_t>(result.Gradients[i]->Descriptions.size()));
-
-			for (size_t descInd = 0; descInd < result.Gradients[i]->Descriptions.size(); descInd++)
-			{
-				bwParam2.Push(static_cast<uint32_t>(descInd));
-				bwParam2.Push(GetVectorFromStr(result.Gradients[i]->Descriptions[descInd]->Summary));
-				bwParam2.Push(GetVectorFromStr(result.Gradients[i]->Descriptions[descInd]->Detail));
-			}
+			bwParam2.Push(GetVectorFromStr(result.Gradients[i]->Description->Summary));
+			bwParam2.Push(GetVectorFromStr(result.Gradients[i]->Description->Detail));
 		}
 	}
 
