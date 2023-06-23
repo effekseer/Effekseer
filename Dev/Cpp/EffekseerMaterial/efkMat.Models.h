@@ -9,13 +9,6 @@
 namespace EffekseerMaterial
 {
 
-enum class LanguageType
-{
-	Japanese,
-	English,
-	Max,
-};
-
 class CommandManager;
 
 class UserObject
@@ -342,8 +335,6 @@ public:
 	ErrorCode Load(std::vector<uint8_t>& data, std::shared_ptr<Library> library, const char* basePath);
 
 	bool Save(std::vector<uint8_t>& data, const char* basePath);
-
-	LanguageType Language = LanguageType::Japanese;
 
 	std::array<CustomDataProperty, 2> CustomData;
 

@@ -201,18 +201,6 @@ void ChangeLanguage(const std::string& key)
 	}
 }
 
-void ChangeLanguage(Effekseer::SystemLanguage language)
-{
-	if (language == Effekseer::SystemLanguage::Japanese)
-	{
-		ChangeLanguage("ja");
-	}
-	else
-	{
-		ChangeLanguage("en");
-	}
-}
-
 int mainLoop(int argc, char* argv[])
 {
 	bool ipcMode = false;
@@ -536,12 +524,12 @@ int mainLoop(int argc, char* argv[])
 				{
 					if (ImGui::MenuItem("Japanese"))
 					{
-						ChangeLanguage(Effekseer::SystemLanguage::Japanese);
+						ChangeLanguage(Effekseer::Editor::GetLanguageKey(Effekseer::SystemLanguage::Japanese));
 						isFontUpdated = true;
 					}
 					else if (ImGui::MenuItem("English"))
 					{
-						ChangeLanguage(Effekseer::SystemLanguage::English);
+						ChangeLanguage(Effekseer::Editor::GetLanguageKey(Effekseer::SystemLanguage::English));
 						isFontUpdated = true;
 					}
 
