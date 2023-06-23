@@ -453,9 +453,10 @@ namespace Effekseer.Asset
 		[CanSelectDynamicEquation(true)]
 		public Vector3 vec3Test = new Vector3();
 
-
+		[IntStep(Step = 5)]
 		public Vector2I vec2ITest = new Vector2I();
 
+		[FloatStep(Step = 0.25f)]
 		public Vector2F vec2FTest = new Vector2F();
 
 
@@ -510,6 +511,12 @@ namespace Effekseer.Asset
 	public class FloatStepAttribute : Attribute
 	{
 		public float Step { get; set; }
+	}
+
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = false)]
+	public class IntStepAttribute : Attribute
+	{
+		public int Step { get; set; }
 	}
 
 	public class Int
