@@ -37,10 +37,14 @@ namespace Effekseer.GUI.Widgets
 		{
 			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
 
+			// step
+			var stepAttribute = Functions.GetAttributeFromList<Asset.IntStepAttribute>(state.Attriubutes);
+			int step = stepAttribute != null ? stepAttribute.Step : 1;
+
 			if (value is int iValue)
 			{
 				int[] v = new[] { iValue };
-				if (Manager.NativeManager.DragInt(state.Id, v, 1))
+				if (Manager.NativeManager.DragInt(state.Id, v, step))
 				{
 					ret.isEdited = true;
 					ret.value = v[0];
@@ -84,7 +88,7 @@ namespace Effekseer.GUI.Widgets
 				};
 
 
-				if (Manager.NativeManager.DragInt(state.Id, v, 1))
+				if (Manager.NativeManager.DragInt(state.Id, v, step))
 				{
 					intWithDynamicValue.Value = v[0];
 					isEdited = true;
@@ -121,13 +125,17 @@ namespace Effekseer.GUI.Widgets
 		{
 			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
 
+			// step
+			var stepAttribute = Functions.GetAttributeFromList<Asset.IntStepAttribute>(state.Attriubutes);
+			int step = stepAttribute != null ? stepAttribute.Step : 1;
+
 			if (value is Asset.IntWithInfinite iValue)
 			{
 				bool isEdited = false;
 
 				int[] v = new[] { iValue.Value };
 				Manager.NativeManager.PushItemWidth(60);
-				if (Manager.NativeManager.DragInt(state.Id + "_Value", v, 1))
+				if (Manager.NativeManager.DragInt(state.Id + "_Value", v, step))
 				{
 					iValue.Value = v[0];
 					isEdited = true;
@@ -165,7 +173,9 @@ namespace Effekseer.GUI.Widgets
 			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
 			Asset.IntWithRange intWithRange = value as Asset.IntWithRange;
 
-			int step = 1;
+			// step
+			var stepAttribute = Functions.GetAttributeFromList<Asset.IntStepAttribute>(state.Attriubutes);
+			int step = stepAttribute != null ? stepAttribute.Step : 1;
 
 			if (intWithRange != null)
 			{
@@ -316,12 +326,16 @@ namespace Effekseer.GUI.Widgets
 
 			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
 
+			// step
+			var stepAttribute = Functions.GetAttributeFromList<Asset.IntStepAttribute>(state.Attriubutes);
+			int step = stepAttribute != null ? stepAttribute.Step : 1;
+
 			if (value is Vector2I vec2IValue)
 			{
 				bool isEdited = false;
 
 				int[] v = new[] { vec2IValue.X, vec2IValue.Y };
-				if (Manager.NativeManager.DragInt2EfkEx(state.Id, v, 1))
+				if (Manager.NativeManager.DragInt2EfkEx(state.Id, v, step))
 				{
 					vec2IValue.X = v[0];
 					vec2IValue.Y = v[1];
@@ -345,10 +359,15 @@ namespace Effekseer.GUI.Widgets
 		public static Inspector.InspectorGuiResult GuiFloat(object value, Inspector.InspectorGuiState state)
 		{
 			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
+
+			// step
+			var stepAttribute = Functions.GetAttributeFromList<Asset.FloatStepAttribute>(state.Attriubutes);
+			float step = stepAttribute != null ? stepAttribute.Step : 0.1f;
+
 			if (value is float fValue)
 			{
 				float[] v = new[] { fValue };
-				if (Manager.NativeManager.DragFloat(state.Id, v, .1f))
+				if (Manager.NativeManager.DragFloat(state.Id, v, step))
 				{
 					ret.isEdited = true;
 					ret.value = v[0];
@@ -392,7 +411,7 @@ namespace Effekseer.GUI.Widgets
 				};
 
 
-				if (Manager.NativeManager.DragFloat(state.Id, v, .1f))
+				if (Manager.NativeManager.DragFloat(state.Id, v, step))
 				{
 					floatWithDynamicValue.Value = v[0];
 					isEdited = true;
@@ -429,8 +448,9 @@ namespace Effekseer.GUI.Widgets
 			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
 			Asset.FloatWithRange floatWithRange = value as Asset.FloatWithRange;
 
-			float step = 10f;
-
+			// step
+			var stepAttribute = Functions.GetAttributeFromList<Asset.FloatStepAttribute>(state.Attriubutes);
+			float step = stepAttribute != null ? stepAttribute.Step : 0.1f;
 
 			if (floatWithRange != null)
 			{
@@ -620,12 +640,16 @@ namespace Effekseer.GUI.Widgets
 
 			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
 
+			// step
+			var stepAttribute = Functions.GetAttributeFromList<Asset.FloatStepAttribute>(state.Attriubutes);
+			float step = stepAttribute != null ? stepAttribute.Step : 0.1f;
+
 			if (value is Vector2F vec2FValue)
 			{
 				bool isEdited = false;
 
 				float[] v = new[] { vec2FValue.X, vec2FValue.Y };
-				if (Manager.NativeManager.DragFloat2EfkEx(state.Id, v, 0.1f))
+				if (Manager.NativeManager.DragFloat2EfkEx(state.Id, v, step))
 				{
 					vec2FValue.X = v[0];
 					vec2FValue.Y = v[1];
@@ -650,6 +674,10 @@ namespace Effekseer.GUI.Widgets
 		public static Inspector.InspectorGuiResult GuiVector2WithRange(object value, Inspector.InspectorGuiState state)
 		{
 			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
+
+			// step
+			var stepAttribute = Functions.GetAttributeFromList<Asset.FloatStepAttribute>(state.Attriubutes);
+			float step = stepAttribute != null ? stepAttribute.Step : 1.0f;
 
 			bool isEdited = false;
 			bool isPopupShown = false;
@@ -710,7 +738,7 @@ namespace Effekseer.GUI.Widgets
 
 				Manager.NativeManager.PushItemWidth(Manager.NativeManager.GetColumnWidth() - 48 * Manager.DpiScale);
 
-				if (Manager.NativeManager.DragFloat2EfkEx(state.Id + "_1", guiValue1, 1.0f,
+				if (Manager.NativeManager.DragFloat2EfkEx(state.Id + "_1", guiValue1, step,
 					float.MinValue, float.MaxValue,
 					float.MinValue, float.MaxValue,
 					"X:" + Core.Option.GetFloatFormat(), "Y:" + Core.Option.GetFloatFormat()))
@@ -735,7 +763,7 @@ namespace Effekseer.GUI.Widgets
 				Manager.NativeManager.Text(txt_r1);
 
 
-				if (Manager.NativeManager.DragFloat2EfkEx(state.Id + "_2", guiValue2, 1.0f,
+				if (Manager.NativeManager.DragFloat2EfkEx(state.Id + "_2", guiValue2, step,
 					float.MinValue, float.MaxValue,
 					float.MinValue, float.MaxValue,
 					"X:" + Core.Option.GetFloatFormat(), "Y:" + Core.Option.GetFloatFormat()))
@@ -781,12 +809,16 @@ namespace Effekseer.GUI.Widgets
 		{
 			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
 
+			// step
+			var stepAttribute = Functions.GetAttributeFromList<Asset.FloatStepAttribute>(state.Attriubutes);
+			float step = stepAttribute != null ? stepAttribute.Step : 1.0f;
+
 			if (value is Vector3F vec3Value)
 			{
 				bool isEdited = false;
 				float[] guiValue = new float[] { vec3Value.X, vec3Value.Y, vec3Value.Z };
 
-				if (Manager.NativeManager.DragFloat3EfkEx(state.Id, guiValue, 1.0f,
+				if (Manager.NativeManager.DragFloat3EfkEx(state.Id, guiValue, step,
 					float.MinValue, float.MaxValue,
 					float.MinValue, float.MaxValue,
 					float.MinValue, float.MaxValue,
@@ -860,7 +892,7 @@ namespace Effekseer.GUI.Widgets
 					}
 				};
 
-				if (Manager.NativeManager.DragFloat3EfkEx(state.Id, guiValue, 1.0f,
+				if (Manager.NativeManager.DragFloat3EfkEx(state.Id, guiValue, step,
 					float.MinValue, float.MaxValue,
 					float.MinValue, float.MaxValue,
 					float.MinValue, float.MaxValue,
@@ -904,6 +936,10 @@ namespace Effekseer.GUI.Widgets
 		public static Inspector.InspectorGuiResult GuiVector3WithRange(object value, Inspector.InspectorGuiState state)
 		{
 			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
+
+			// step
+			var stepAttribute = Functions.GetAttributeFromList<Asset.FloatStepAttribute>(state.Attriubutes);
+			float step = stepAttribute != null ? stepAttribute.Step : 1.0f;
 
 			bool isEdited = false;
 			bool isPopupShown = false;
@@ -989,7 +1025,7 @@ namespace Effekseer.GUI.Widgets
 
 				Manager.NativeManager.PushItemWidth(Manager.NativeManager.GetColumnWidth() - 48 * Manager.DpiScale);
 
-				if (Manager.NativeManager.DragFloat3EfkEx(state.Id + "_1", guiValue1, 1.0f,
+				if (Manager.NativeManager.DragFloat3EfkEx(state.Id + "_1", guiValue1, step,
 					float.MinValue, float.MaxValue,
 					float.MinValue, float.MaxValue,
 					float.MinValue, float.MaxValue,
@@ -1028,7 +1064,7 @@ namespace Effekseer.GUI.Widgets
 					popup();
 				}
 
-				if (Manager.NativeManager.DragFloat3EfkEx(state.Id + "_2", guiValue2, 1.0f,
+				if (Manager.NativeManager.DragFloat3EfkEx(state.Id + "_2", guiValue2, step,
 					float.MinValue, float.MaxValue,
 					float.MinValue, float.MaxValue,
 					float.MinValue, float.MaxValue,
