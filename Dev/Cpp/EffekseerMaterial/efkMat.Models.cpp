@@ -725,6 +725,10 @@ void Material::LoadFromStrInternal(
 			{
 				return descriptions[1];
 			}
+			else
+			{
+				return descriptions[0];
+			}
 		}
 		else if (descriptions.size() == 1)
 		{
