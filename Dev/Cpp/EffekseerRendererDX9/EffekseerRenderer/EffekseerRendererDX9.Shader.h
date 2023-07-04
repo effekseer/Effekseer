@@ -6,7 +6,6 @@
 // Include
 //----------------------------------------------------------------------------------
 #include "../../EffekseerRendererCommon/EffekseerRenderer.ShaderBase.h"
-#include "EffekseerRendererDX9.DeviceObject.h"
 #include "EffekseerRendererDX9.RendererImplemented.h"
 
 //-----------------------------------------------------------------------------------

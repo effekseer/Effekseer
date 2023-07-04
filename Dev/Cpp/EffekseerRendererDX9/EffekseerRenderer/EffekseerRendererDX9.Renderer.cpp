@@ -13,7 +13,6 @@
 #include "../../EffekseerRendererCommon/EffekseerRenderer.TrackRendererBase.h"
 #include "../../EffekseerRendererCommon/ModelLoader.h"
 #include "../../EffekseerRendererCommon/TextureLoader.h"
-#include "EffekseerRendererDX9.DeviceObject.h"
 #include "EffekseerRendererDX9.MaterialLoader.h"
 #include "EffekseerRendererDX9.ModelRenderer.h"
 #include "EffekseerRendererDX9.Shader.h"
@@ -176,11 +175,6 @@ RendererImplemented::~RendererImplemented()
 //----------------------------------------------------------------------------------
 void RendererImplemented::OnLostDevice()
 {
-	for (auto& device : m_deviceObjects)
-	{
-		device->OnLostDevice();
-	}
-
 	GetImpl()->DeleteProxyTextures(this);
 	SetBackground(nullptr);
 
@@ -193,11 +187,6 @@ void RendererImplemented::OnLostDevice()
 void RendererImplemented::OnResetDevice()
 {
 	graphicsDevice_->ResetDevice();
-
-	for (auto& device : m_deviceObjects)
-	{
-		device->OnResetDevice();
-	}
 
 	if (m_isChangedDevice)
 	{
@@ -614,12 +603,12 @@ void RendererImplemented::SetBackground(IDirect3DTexture9* background)
 
 	if (m_backgroundDX9 == nullptr)
 	{
-		m_backgroundDX9 = graphicsDevice_->CreateTexture(background, [](auto texture) -> auto {}, [](auto texture) -> auto {});
+		m_backgroundDX9 = graphicsDevice_->CreateTexture(background, [](auto texture) -> auto{}, [](auto texture) -> auto{});
 	}
 	else
 	{
 		auto texture = static_cast<Backend::Texture*>(m_backgroundDX9.Get());
-		texture->Init(background, [](auto texture) -> auto {}, [](auto texture) -> auto {});
+		texture->Init(background, [](auto texture) -> auto{}, [](auto texture) -> auto{});
 	}
 
 	EffekseerRenderer::Renderer::SetBackground(m_backgroundDX9);
@@ -811,11 +800,6 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::Backend::Textur
 //----------------------------------------------------------------------------------
 void RendererImplemented::ChangeDevice(LPDIRECT3DDEVICE9 device)
 {
-	for (auto& device : m_deviceObjects)
-	{
-		device->OnChangeDevice();
-	}
-
 	graphicsDevice_->ChangeDevice(device);
 
 	m_isChangedDevice = true;

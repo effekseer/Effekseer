@@ -149,8 +149,7 @@ void Shader::AssignAttribs()
 Shader::Shader(const Backend::GraphicsDeviceRef& graphicsDevice,
 			   Backend::ShaderRef shader,
 			   const char* name)
-	: DeviceObject(graphicsDevice.Get())
-	, m_deviceType(graphicsDevice->GetDeviceType())
+	: m_deviceType(graphicsDevice->GetDeviceType())
 	, shader_(shader)
 	, m_vertexSize(0)
 {
@@ -158,6 +157,11 @@ Shader::Shader(const Backend::GraphicsDeviceRef& graphicsDevice,
 
 	graphicsDevice_ = graphicsDevice;
 	AssignAttribs();
+
+	shader->OnReset = [&]()
+	{
+		AssignAttribs();
+	};
 }
 
 Shader* Shader::Create(const Backend::GraphicsDeviceRef& graphicsDevice,
@@ -170,11 +174,6 @@ Shader* Shader::Create(const Backend::GraphicsDeviceRef& graphicsDevice,
 	return new Shader(graphicsDevice, shader, name);
 }
 
-void Shader::OnResetDevice()
-{
-	AssignAttribs();
-}
-
 GLuint Shader::GetInterface() const
 {
 	return GetCurrentShader()->GetProgram();
@@ -183,7 +182,6 @@ GLuint Shader::GetInterface() const
 void Shader::OverrideShader(::Effekseer::Backend::ShaderRef shader)
 {
 	shaderOverride_ = shader.DownCast<Backend::Shader>();
-
 	AssignAttribs();
 }
 

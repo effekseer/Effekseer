@@ -270,6 +270,9 @@ public:
 	const Effekseer::CustomVector<GLint>& GetTextureLocations() const;
 
 	const Effekseer::CustomVector<GLint>& GetUniformLocations() const;
+
+	//! temporal implementation
+	std::function<void()> OnReset;
 };
 
 class PipelineState

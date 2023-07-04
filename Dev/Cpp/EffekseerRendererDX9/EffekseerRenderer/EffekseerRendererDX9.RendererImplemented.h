@@ -53,8 +53,6 @@ private:
 
 	::EffekseerRenderer::RenderStateBase* m_renderState;
 
-	std::set<DeviceObject*> m_deviceObjects;
-
 	// ステート
 	DWORD m_state_FVF;
 

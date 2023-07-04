@@ -979,6 +979,11 @@ void Shader::OnLostDevice()
 void Shader::OnResetDevice()
 {
 	Compile();
+
+	if (OnReset != nullptr)
+	{
+		OnReset();
+	}
 }
 
 GLuint Shader::GetProgram() const

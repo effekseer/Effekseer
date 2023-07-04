@@ -2,7 +2,6 @@
 #ifndef __EFFEKSEERRENDERER_DX9_MATERIALLOADER_H__
 #define __EFFEKSEERRENDERER_DX9_MATERIALLOADER_H__
 
-#include "EffekseerRendererDX9.DeviceObject.h"
 #include "EffekseerRendererDX9.RendererImplemented.h"
 #include <memory>
 

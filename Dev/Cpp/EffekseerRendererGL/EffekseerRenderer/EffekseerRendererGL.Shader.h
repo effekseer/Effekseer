@@ -25,7 +25,7 @@ const char* GetVertexShaderHeader(OpenGLDeviceType deviceType);
 
 const char* GetFragmentShaderHeader(OpenGLDeviceType deviceType);
 
-class Shader : public DeviceObject, public ::EffekseerRenderer::ShaderBase
+class Shader : public ::EffekseerRenderer::ShaderBase
 {
 private:
 	OpenGLDeviceType m_deviceType;
@@ -80,12 +80,6 @@ public:
 						  .DownCast<Backend::Shader>();
 		return Create(graphicsDevice, shader, name);
 	}
-
-public:
-	virtual void OnLostDevice() override
-	{
-	}
-	virtual void OnResetDevice() override;
 
 public:
 	void OverrideShader(::Effekseer::Backend::ShaderRef shader) override;
