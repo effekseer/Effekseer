@@ -3,17 +3,6 @@ project(EffekseerRendererVulkan)
 
 find_package(Vulkan REQUIRED)
 
-#--------------------
-# Files
-
-file(GLOB_RECURSE LOCAL_SOURCES_Common ../EffekseerRendererCommon/*.h ../EffekseerRendererCommon/*.cpp)
-
-list(APPEND LOCAL_SOURCES_Common 
-    ../EffekseerRendererCommon/TextureLoader.h
-    ../EffekseerRendererCommon/TextureLoader.cpp)
-
-source_group("EffekseerRendererCommon" FILES ${LOCAL_SOURCES_Common})
-
 file(GLOB_RECURSE LOCAL_HEADERS_Vulkan *.h)
 file(GLOB_RECURSE LOCAL_SOURCES_Vulkan *.cpp)
 list(APPEND LOCAL_SOURCES_Vulkan ../EffekseerMaterialCompiler/GLSLGenerator/ShaderGenerator.h)
@@ -31,7 +20,6 @@ file(GLOB_RECURSE LOCAL_SOURCES_LLGI
 source_group("EffekseerRendererLLGI" FILES ${LOCAL_SOURCES_LLGI})
 
 set(LOCAL_SOURCES
-    ${LOCAL_SOURCES_Common}
     ${LOCAL_HEADERS_Vulkan}
     ${LOCAL_SOURCES_Vulkan}
     ${LOCAL_SOURCES_LLGI})
@@ -44,7 +32,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/../
 target_include_directories(${PROJECT_NAME} PRIVATE ${Vulkan_INCLUDE_DIRS})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${LOCAL_HEADERS_Vulkan}")
-target_link_libraries(${PROJECT_NAME} PUBLIC Effekseer LLGI)
+target_link_libraries(${PROJECT_NAME} PUBLIC Effekseer EffekseerRendererCommon LLGI)
 
 if(USE_LIBPNG_LOADER)
     add_dependencies(${PROJECT_NAME} ExternalProject_zlib ExternalProject_libpng) 
