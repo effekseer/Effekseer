@@ -55,6 +55,21 @@ add_library(${PROJECT_NAME} STATIC ${PublicHeaders} ${LocalHeaders} ${LocalSourc
 target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/../Effekseer ${EFK_THIRDPARTY_INCLUDES})
 target_link_libraries(${PROJECT_NAME} PUBLIC Effekseer)
 
+if(USE_LIBPNG_LOADER)
+    add_dependencies(${PROJECT_NAME} ExternalProject_zlib ExternalProject_libpng) 
+
+    target_link_libraries(
+        ${PROJECT_NAME}
+        PRIVATE
+        debug "${LIBPNG_LIB_DEBUG}"
+        optimized "${LIBPNG_LIB_RELEASE}"
+        debug "${ZLIB_LIB_DEBUG}"
+        optimized "${ZLIB_LIB_RELEASE}"
+    )
+endif()
+
+WarnError(${PROJECT_NAME})
+
 set_target_properties(
     ${PROJECT_NAME} PROPERTIES PUBLIC_HEADER 
      "${PublicHeaders}")
