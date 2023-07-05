@@ -1,17 +1,6 @@
 cmake_minimum_required (VERSION 3.0.0)
 project(EffekseerRendererDX11)
 
-#--------------------
-# Files
-
-file(GLOB_RECURSE LOCAL_SOURCES_Common ../EffekseerRendererCommon/*.h ../EffekseerRendererCommon/*.cpp)
-
-list(APPEND LOCAL_SOURCES_Common 
-    ../EffekseerRendererCommon/TextureLoader.h
-    ../EffekseerRendererCommon/TextureLoader.cpp)
-
-source_group("EffekseerRendererCommon" FILES ${LOCAL_SOURCES_Common})
-
 file(GLOB_RECURSE LOCAL_HEADERS_DX11 *.h)
 file(GLOB_RECURSE LOCAL_SOURCES_DX11 *.cpp)
 list(APPEND LOCAL_HEADERS_DX11 ../EffekseerMaterialCompiler/DirectX11/EffekseerMaterialCompilerDX11.h)
@@ -25,7 +14,6 @@ FilterFolder("${LOCAL_HEADERS_DX11}")
 FilterFolder("${LOCAL_SOURCES_DX11}")
 
 set(LOCAL_SOURCES
-    ${LOCAL_SOURCES_Common}
     ${LOCAL_HEADERS_DX11}
     ${LOCAL_SOURCES_DX11})
 
@@ -38,14 +26,10 @@ set(PublicHeader
 add_library(${PROJECT_NAME} STATIC ${LOCAL_SOURCES})
 target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/../Effekseer ${EFK_THIRDPARTY_INCLUDES})
 set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${PublicHeader}")
-target_link_libraries(${PROJECT_NAME} PUBLIC Effekseer)
+target_link_libraries(${PROJECT_NAME} PUBLIC Effekseer EffekseerRendererCommon)
 
 if(CLANG_FORMAT_ENABLED)
     clang_format(${PROJECT_NAME})
-endif()
-
-if(USE_LIBPNG_LOADER)
-    add_dependencies(${PROJECT_NAME} ExternalProject_zlib ExternalProject_libpng) 
 endif()
 
 WarnError(${PROJECT_NAME})

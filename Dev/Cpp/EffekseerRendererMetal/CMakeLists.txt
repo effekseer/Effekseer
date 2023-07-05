@@ -12,13 +12,6 @@ if (USE_INTERNAL_RENDER_PASS)
 	add_definitions(-D__EFFEKSEER_RENDERERMETAL_INTERNAL_RENDER_PASS__)
 endif()
 
-#--------------------
-# Files
-
-file(GLOB_RECURSE LOCAL_SOURCES_Common ../EffekseerRendererCommon/*.h ../EffekseerRendererCommon/*.cpp)
-
-source_group("EffekseerRendererCommon" FILES ${LOCAL_SOURCES_Common})
-
 file(GLOB_RECURSE LOCAL_HEADERS_Metal *.h)
 file(GLOB_RECURSE LOCAL_SOURCES_Metal *.cpp *.mm)
 list(APPEND LOCAL_HEADERS_Metal ../EffekseerMaterialCompiler/Metal/EffekseerMaterialCompilerMetal.h)
@@ -36,7 +29,6 @@ file(GLOB_RECURSE LOCAL_SOURCES_LLGI
 source_group("EffekseerRendererLLGI" FILES ${LOCAL_SOURCES_LLGI})
 
 set(LOCAL_SOURCES
-    ${LOCAL_SOURCES_Common}
     ${LOCAL_HEADERS_Metal}
     ${LOCAL_SOURCES_Metal}
     ${LOCAL_SOURCES_LLGI})
@@ -47,7 +39,7 @@ set(LOCAL_SOURCES
 add_library(${PROJECT_NAME} STATIC ${LOCAL_SOURCES})
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/../Effekseer ${CMAKE_CURRENT_LIST_DIR}/../3rdparty/LLGI/src ${EFK_THIRDPARTY_INCLUDES})
 set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${LOCAL_HEADERS_Metal}")
-target_link_libraries(${PROJECT_NAME} PUBLIC Effekseer LLGI)
+target_link_libraries(${PROJECT_NAME} PUBLIC Effekseer  EffekseerRendererCommon LLGI)
 
 if(USE_LIBPNG_LOADER)
     add_dependencies(${PROJECT_NAME} ExternalProject_zlib ExternalProject_libpng) 

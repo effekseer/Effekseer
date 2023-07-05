@@ -1,20 +1,11 @@
 project(EffekseerRendererCommon)
 cmake_minimum_required(VERSION 3.1)
 
-if(BUILD_UNITYPLUGIN OR BUILD_UNITYPLUGIN_FOR_IOS)
-
-if(BUILD_UNITYPLUGIN)
-    add_library(${PROJECT_NAME} INTERFACE)
-endif()
-
 # Setup source codes
 
-set(PublicHeader
+set(PublicHeaders
     EffekseerRenderer.Renderer.h
-    EffekseerRenderer.VertexBufferBase.h
-    EffekseerRenderer.IndexBufferBase.h
     EffekseerRenderer.RenderStateBase.h
-
     EffekseerRenderer.ModelRendererBase.h
     EffekseerRenderer.RibbonRendererBase.h
     EffekseerRenderer.RingRendererBase.h
@@ -24,18 +15,64 @@ set(PublicHeader
     EffekseerRenderer.CommonUtils.h
     EffekseerRenderer.ShaderBase.h
     EffekseerRenderer.Renderer_Impl.h
+    GraphicsDeviceCPU.h
+    ModelLoader.h
+    TextureLoader.h
+    VertexBuffer.h
 )
 
-if(BUILD_UNITYPLUGIN_FOR_IOS)
-    file(GLOB_RECURSE LOCAL_SOURCES *.cpp)
-    add_library(${PROJECT_NAME} STATIC ${LOCAL_SOURCES})
-    target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/../Effekseer ${EFK_THIRDPARTY_INCLUDES})
-    target_link_libraries(${PROJECT_NAME} PUBLIC Effekseer)
+set(LocalHeaders
+    EffekseerRenderer.CommonUtils.h
+    EffekseerRenderer.DDSTextureLoader.h
+    EffekseerRenderer.PngTextureLoader.h
+    EffekseerRenderer.TGATextureLoader.h
+)
+
+set(LocalSources
+    EffekseerRenderer.CommonUtils.cpp
+    EffekseerRenderer.DDSTextureLoader.cpp
+    EffekseerRenderer.ModelRendererBase.cpp
+    EffekseerRenderer.PngTextureLoader.cpp
+    EffekseerRenderer.Renderer.cpp
+    EffekseerRenderer.Renderer_Impl.cpp
+    EffekseerRenderer.RenderStateBase.cpp
+    EffekseerRenderer.RibbonRendererBase.cpp
+    EffekseerRenderer.RingRendererBase.cpp
+    EffekseerRenderer.SpriteRendererBase.cpp
+    EffekseerRenderer.TGATextureLoader.cpp
+    EffekseerRenderer.TrackRendererBase.cpp
+    GraphicsDeviceCPU.cpp
+    ModelLoader.cpp
+    TextureLoader.cpp
+    VertexBuffer.cpp
+)
+
+FilterFolder("${PublicHeaders}")
+FilterFolder("${LocalHeaders}")
+FilterFolder("${LocalSources}")
+
+add_library(${PROJECT_NAME} STATIC ${PublicHeaders} ${LocalHeaders} ${LocalSources})
+target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/../Effekseer ${EFK_THIRDPARTY_INCLUDES})
+target_link_libraries(${PROJECT_NAME} PUBLIC Effekseer)
+
+if(USE_LIBPNG_LOADER)
+    add_dependencies(${PROJECT_NAME} ExternalProject_zlib ExternalProject_libpng) 
+
+    target_link_libraries(
+        ${PROJECT_NAME}
+        PRIVATE
+        debug "${LIBPNG_LIB_DEBUG}"
+        optimized "${LIBPNG_LIB_RELEASE}"
+        debug "${ZLIB_LIB_DEBUG}"
+        optimized "${ZLIB_LIB_RELEASE}"
+    )
 endif()
+
+WarnError(${PROJECT_NAME})
 
 set_target_properties(
     ${PROJECT_NAME} PROPERTIES PUBLIC_HEADER 
-     "${PublicHeader}")
+     "${PublicHeaders}")
 
 install(
     TARGETS ${PROJECT_NAME}
@@ -50,5 +87,3 @@ install(
     FILE ${PROJECT_NAME}-config.cmake
     DESTINATION lib/cmake
     EXPORT_LINK_INTERFACE_LIBRARIES)
-
-endif()

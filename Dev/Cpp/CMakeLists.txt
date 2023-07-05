@@ -72,10 +72,8 @@ endif()
 add_subdirectory(Effekseer)
 set_property(TARGET Effekseer PROPERTY FOLDER Libraries)
 
-if(BUILD_UNITYPLUGIN OR BUILD_UNITYPLUGIN_FOR_IOS)
-    add_subdirectory(EffekseerRendererCommon)
-    set_property(TARGET EffekseerRendererCommon PROPERTY FOLDER Libraries)
-endif()
+add_subdirectory(EffekseerRendererCommon)
+set_property(TARGET EffekseerRendererCommon PROPERTY FOLDER Libraries)
 
 if (BUILD_VIEWER OR BUILD_EDITOR)
     add_subdirectory(3rdParty)
