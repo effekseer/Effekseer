@@ -898,9 +898,9 @@ namespace Effekseer.GUI.Widgets
 					float.MinValue, float.MaxValue,
 					"X:" + Core.Option.GetFloatFormat(), "Y:" + Core.Option.GetFloatFormat(), "Z:" + Core.Option.GetFloatFormat()))
 				{
-					vec3Value.X = guiValue[0];
-					vec3Value.Y = guiValue[1];
-					vec3Value.Z = guiValue[2];
+					vec3WithDynamicValue.Value.X = guiValue[0];
+					vec3WithDynamicValue.Value.Y = guiValue[1];
+					vec3WithDynamicValue.Value.Z = guiValue[2];
 
 					isEdited = true;
 				}
