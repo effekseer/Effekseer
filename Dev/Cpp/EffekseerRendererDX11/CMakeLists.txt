@@ -17,13 +17,6 @@ set(LOCAL_SOURCES
     ${LOCAL_HEADERS_DX11}
     ${LOCAL_SOURCES_DX11})
 
-#effekseerRendererDX11Header = CreateHeader()
-#effekseerRendererDX11Header.readLines('EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.Base.Pre.h')
-#effekseerRendererDX11Header.readLines('EffekseerRendererCommon/EffekseerRenderer.Renderer.h')
-#effekseerRendererDX11Header.readLines('EffekseerRendererCommon/TextureLoader.h')
-#effekseerRendererDX11Header.readLines('EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.Renderer.h')
-#effekseerRendererDX11Header.output('EffekseerRendererDX11/EffekseerRendererDX11.h')
-
 set(PublicHeaders
     EffekseerRendererDX11.h
     EffekseerRenderer/EffekseerRendererDX11.Base.Pre.h

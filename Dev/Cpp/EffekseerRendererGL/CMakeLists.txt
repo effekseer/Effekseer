@@ -17,8 +17,10 @@ set(LOCAL_SOURCES
     ${LOCAL_HEADERS_GL}
     ${LOCAL_SOURCES_GL})
 
-set(PublicHeader
-    EffekseerRendererGL.h)
+set(PublicHeaders
+    EffekseerRendererGL.h
+    EffekseerRenderer/EffekseerRendererGL.Base.Pre.h
+    EffekseerRenderer/EffekseerRendererGL.Renderer.h)
 
 #--------------------
 # Projects
@@ -35,11 +37,15 @@ endif()
 #--------------------
 # Install
 
+foreach (file ${PublicHeaders})
+    get_filename_component(dir ${file} DIRECTORY)
+    install(FILES ${file} DESTINATION include/EffekseerRendererGL/${dir})
+endforeach()
+
 install(
     TARGETS ${PROJECT_NAME}
     EXPORT ${PROJECT_NAME}-export
     INCLUDES DESTINATION include/EffekseerRendererGL
-    PUBLIC_HEADER DESTINATION include/EffekseerRendererGL
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib)
 

@@ -1,4 +1,5 @@
 #include "ReloadableImage.h"
+#include <EffekseerRendererCommon/TextureLoader.h>
 #include <IO/IO.h>
 
 namespace Effekseer::Tool

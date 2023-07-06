@@ -17,8 +17,10 @@ set(LOCAL_SOURCES
     ${LOCAL_HEADERS_DX9}
     ${LOCAL_SOURCES_DX9})
 
-set(PublicHeader
-    EffekseerRendererDX9.h)
+set(PublicHeaders
+    EffekseerRendererDX9.h
+    EffekseerRenderer/EffekseerRendererDX9.Base.Pre.h
+    EffekseerRenderer/EffekseerRendererDX9.Renderer.h)
 
 #--------------------
 # Projects
@@ -38,6 +40,11 @@ endif()
 
 #--------------------
 # Install
+
+foreach (file ${PublicHeaders})
+    get_filename_component(dir ${file} DIRECTORY)
+    install(FILES ${file} DESTINATION include/EffekseerRendererDX9/${dir})
+endforeach()
 
 install(
     TARGETS ${PROJECT_NAME}
