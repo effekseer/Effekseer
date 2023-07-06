@@ -191,20 +191,15 @@ endif()
 
 WarnError(${PROJECT_NAME})
 
-#set_target_properties(
-#    ${PROJECT_NAME} PROPERTIES PUBLIC_HEADER
-#    "${effekseer_public_h}")
-
-foreach ( file ${effekseer_public_h} )
-    get_filename_component( dir ${file} DIRECTORY )
-    install( FILES ${file} DESTINATION include/Effekseer/${dir} )
+foreach (file ${effekseer_public_h})
+    get_filename_component(dir ${file} DIRECTORY)
+    install(FILES ${file} DESTINATION include/Effekseer/${dir})
 endforeach()
 
 install(
     TARGETS ${PROJECT_NAME}
     EXPORT ${PROJECT_NAME}-export
     INCLUDES DESTINATION include
-#    PUBLIC_HEADER DESTINATION include/Effekseer
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib)
 

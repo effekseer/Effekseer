@@ -17,15 +17,24 @@ set(LOCAL_SOURCES
     ${LOCAL_HEADERS_DX11}
     ${LOCAL_SOURCES_DX11})
 
-set(PublicHeader
-    EffekseerRendererDX11.h)
+#effekseerRendererDX11Header = CreateHeader()
+#effekseerRendererDX11Header.readLines('EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.Base.Pre.h')
+#effekseerRendererDX11Header.readLines('EffekseerRendererCommon/EffekseerRenderer.Renderer.h')
+#effekseerRendererDX11Header.readLines('EffekseerRendererCommon/TextureLoader.h')
+#effekseerRendererDX11Header.readLines('EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.Renderer.h')
+#effekseerRendererDX11Header.output('EffekseerRendererDX11/EffekseerRendererDX11.h')
+
+set(PublicHeaders
+    EffekseerRendererDX11.h
+    EffekseerRenderer/EffekseerRendererDX11.Base.Pre.h
+    EffekseerRenderer/EffekseerRendererDX11.Renderer.h)
 
 #--------------------
 # Projects
 
 add_library(${PROJECT_NAME} STATIC ${LOCAL_SOURCES})
 target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/../Effekseer ${EFK_THIRDPARTY_INCLUDES})
-set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${PublicHeader}")
+set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${PublicHeaders}")
 target_link_libraries(${PROJECT_NAME} PUBLIC Effekseer EffekseerRendererCommon)
 
 if(CLANG_FORMAT_ENABLED)
@@ -37,11 +46,15 @@ WarnError(${PROJECT_NAME})
 #--------------------
 # Install
 
+foreach (file ${PublicHeaders})
+    get_filename_component(dir ${file} DIRECTORY)
+    install(FILES ${file} DESTINATION include/EffekseerRendererDX11/${dir})
+endforeach()
+
 install(
     TARGETS ${PROJECT_NAME}
     EXPORT ${PROJECT_NAME}-export
     INCLUDES DESTINATION include/EffekseerRendererDX11
-    PUBLIC_HEADER DESTINATION include/EffekseerRendererDX11
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib)
 
