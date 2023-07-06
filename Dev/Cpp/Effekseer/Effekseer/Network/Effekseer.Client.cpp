@@ -1,13 +1,13 @@
 ﻿
-#if (defined(__EFFEKSEER_NETWORK_ENABLED__))
 
 #include "Effekseer.Client.h"
 #include "Effekseer.ClientImplemented.h"
 
+#if (defined(__EFFEKSEER_NETWORK_ENABLED__))
 #include "../Effekseer.EffectLoader.h"
 #include "../Effekseer.Manager.h"
-#include "data/reload_generated.h"
 #include "data/profiler_generated.h"
+#include "data/reload_generated.h"
 
 namespace Effekseer
 {
@@ -19,11 +19,6 @@ ClientImplemented::ClientImplemented()
 ClientImplemented::~ClientImplemented()
 {
 	Stop();
-}
-
-ClientRef Client::Create()
-{
-	return MakeRefPtr<ClientImplemented>();
 }
 
 bool ClientImplemented::Start(const char* host, uint16_t port)
@@ -73,7 +68,7 @@ void ClientImplemented::Reload(const char16_t* key, void* data, int32_t size)
 	fbb.Finish(Data::CreateNetworkReload(fbb, fbKey, fbData));
 	auto fbBuffer = fbb.GetBufferSpan();
 
-	session_.Send(1, { fbBuffer.data(), fbBuffer.size() });
+	session_.Send(1, {fbBuffer.data(), fbBuffer.size()});
 }
 
 void ClientImplemented::Reload(ManagerRef manager, const char16_t* path, const char16_t* key)
@@ -94,7 +89,8 @@ void ClientImplemented::Reload(ManagerRef manager, const char16_t* path, const c
 void ClientImplemented::StartProfiling()
 {
 	session_.Send(100, Session::ByteData{nullptr, 0});
-	session_.OnReceived(102, [this](const Session::Message& msg){ OnProfileSample(msg); });
+	session_.OnReceived(102, [this](const Session::Message& msg)
+						{ OnProfileSample(msg); });
 }
 
 void ClientImplemented::StopProfiling()
@@ -141,6 +137,21 @@ void ClientImplemented::OnProfileSample(const Session::Message& msg)
 	receivedProfileSamples_.emplace_back(std::move(profileSample));
 }
 
+ClientRef Client::Create()
+{
+	return MakeRefPtr<ClientImplemented>();
+}
+
 } // namespace Effekseer
+
+#else
+
+namespace Effekseer
+{
+ClientRef Client::Create()
+{
+	return nullptr;
+}
+}
 
 #endif
