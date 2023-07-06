@@ -3,9 +3,9 @@
 #include <Effekseer.Modules.h>
 #include <Effekseer.h>
 
-#include "../../Dev/Cpp/Effekseer/Effekseer/Effekseer.ResourceManager.h"
-#include "../../Dev/Cpp/Effekseer/Effekseer/Effekseer.WorkerThread.h"
-#include "../../Dev/Cpp/Effekseer/Effekseer/IO/Effekseer.EfkEfcFactory.h"
+#include <Effekseer/Effekseer.ResourceManager.h>
+#include <Effekseer/Effekseer.WorkerThread.h>
+#include <Effekseer/IO/Effekseer.EfkEfcFactory.h>
 
 class CustomEfkEfcFactory : public Effekseer::EfkEfcFactory
 {
@@ -170,7 +170,6 @@ public:
 
 	bool EndLoading() override;
 };
-
 
 class CustomAsyncLoadingEffect : public CustomAsyncLoadingValue<Effekseer::Effect>
 {

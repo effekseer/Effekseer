@@ -8,6 +8,7 @@
 #include "../Effekseer.Base.h"
 #include "../Effekseer.Color.h"
 #include "../Effekseer.Matrix43.h"
+#include "../Effekseer.RectF.h"
 #include "../Effekseer.Vector3D.h"
 #include "../SIMD/Mat43f.h"
 #include "../SIMD/Vec3f.h"

@@ -1,9 +1,71 @@
 project(Effekseer)
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.15)
 
 FIND_PACKAGE(Threads REQUIRED)
 
 # Setup source codes
+set(effekseer_public_h
+    Effekseer.h
+    Effekseer.Modules.h
+    Effekseer.SIMD.h
+    Effekseer/Effekseer.Base.Pre.h
+    Effekseer/Effekseer.Effect.h
+    Effekseer/Effekseer.Color.h
+    Effekseer/Effekseer.DefaultFile.h
+    Effekseer/Effekseer.File.h
+    Effekseer/Effekseer.Manager.h
+    Effekseer/Effekseer.Matrix43.h
+    Effekseer/Effekseer.Matrix44.h
+    Effekseer/Effekseer.Resource.h
+    Effekseer/Effekseer.RectF.h
+    Effekseer/Effekseer.Setting.h
+    Effekseer/Effekseer.Vector2D.h
+    Effekseer/Effekseer.Vector3D.h
+    Effekseer/Backend/GraphicsDevice.h
+    Effekseer/Network/Effekseer.Server.h
+    Effekseer/Network/Effekseer.Client.h
+    Effekseer/Utils/Effekseer.CustomAllocator.h
+    Effekseer/IO/Effekseer.EfkEfcFactory.h
+
+    Effekseer/SIMD/Base.h
+    Effekseer/SIMD/Float4_Gen.h
+    Effekseer/SIMD/Float4_NEON.h
+    Effekseer/SIMD/Float4_SSE.h
+    Effekseer/SIMD/Int4_Gen.h
+    Effekseer/SIMD/Int4_NEON.h
+    Effekseer/SIMD/Int4_SSE.h
+    Effekseer/SIMD/Bridge_Gen.h
+    Effekseer/SIMD/Bridge_NEON.h
+    Effekseer/SIMD/Bridge_SSE.h
+    Effekseer/SIMD/Vec2f.h
+    Effekseer/SIMD/Vec3f.h
+    Effekseer/SIMD/Vec4f.h
+    Effekseer/SIMD/Mat43f.h
+    Effekseer/SIMD/Mat44f.h
+    Effekseer/SIMD/Quaternionf.h
+    Effekseer/SIMD/Utils.h
+
+    Effekseer/Parameter/Effekseer.Parameters.h
+    Effekseer/Renderer/Effekseer.SpriteRenderer.h
+    Effekseer/Renderer/Effekseer.RibbonRenderer.h
+    Effekseer/Renderer/Effekseer.RingRenderer.h
+    Effekseer/Renderer/Effekseer.ModelRenderer.h
+    Effekseer/Renderer/Effekseer.TrackRenderer.h
+    Effekseer/Renderer/Effekseer.GPUTimer.h
+    Effekseer/Effekseer.EffectLoader.h
+    Effekseer/Effekseer.TextureLoader.h
+    Effekseer/Model/Model.h
+    Effekseer/Model/ModelLoader.h
+    Effekseer/Effekseer.MaterialLoader.h
+    Effekseer/Model/Model.h
+    Effekseer/Effekseer.Curve.h
+    Effekseer/Effekseer.CurveLoader.h
+    Effekseer/Sound/Effekseer.SoundPlayer.h
+    Effekseer/Effekseer.SoundLoader.h
+    Effekseer/Effekseer.WorkerThread.h
+    Effekseer/Effekseer.ResourceManager.h
+)
+
 file(GLOB effekseer_h
     *.h
     Effekseer/*.h
@@ -90,10 +152,12 @@ set(effekseer_src
 )
 
 add_library(${PROJECT_NAME} STATIC
+    ${effekseer_public_h}
     ${effekseer_h}
     ${effekseer_src})
 
 set(files
+    ${effekseer_public_h}
     ${effekseer_h}
     ${effekseer_src})
 
@@ -127,28 +191,15 @@ endif()
 
 WarnError(${PROJECT_NAME})
 
-if(BUILD_UNITYPLUGIN OR BUILD_UNITYPLUGIN_FOR_IOS)
-    install(DIRECTORY "${PROJECT_SOURCE_DIR}"
-        DESTINATION "include"
-        FILES_MATCHING
-        PATTERN "*.h"
-    )
-else()
-    set(PublicHeader
-        Effekseer.h
-        Effekseer.Modules.h
-        Effekseer.SIMD.h)
-
-    set_target_properties(
-        ${PROJECT_NAME} PROPERTIES PUBLIC_HEADER
-        "${PublicHeader}")
-endif()
+foreach (file ${effekseer_public_h})
+    get_filename_component(dir ${file} DIRECTORY)
+    install(FILES ${file} DESTINATION include/Effekseer/${dir})
+endforeach()
 
 install(
     TARGETS ${PROJECT_NAME}
     EXPORT ${PROJECT_NAME}-export
     INCLUDES DESTINATION include
-    PUBLIC_HEADER DESTINATION include/Effekseer
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib)
 

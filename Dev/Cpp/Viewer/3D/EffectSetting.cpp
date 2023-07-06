@@ -10,6 +10,8 @@
 
 #include <EffekseerSoundOSMixer.h>
 
+#include <EffekseerRendererCommon/TextureLoader.h>
+
 namespace Effekseer::Tool
 {
 std::shared_ptr<EffectSetting> EffectSetting::Create(std::shared_ptr<Effekseer::Tool::GraphicsDevice> graphicsDevice, std::shared_ptr<Effekseer::Tool::SoundDevice> soundDevice)
