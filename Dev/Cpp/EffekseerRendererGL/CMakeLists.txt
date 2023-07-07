@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.0.0)
+cmake_minimum_required (VERSION 3.1.5)
 project(EffekseerRendererGL)
 
 file(GLOB_RECURSE LOCAL_HEADERS_GL *.h)

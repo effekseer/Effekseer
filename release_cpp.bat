@@ -35,7 +35,7 @@ mkdir %RDIR_R%\src\EffekseerRendererGL
 robocopy Dev\Cpp\EffekseerRendererGL %RDIR_R%\src\EffekseerRendererGL *.h *.cpp *.fx CMakeLists.txt /S
 
 mkdir %RDIR_R%\src\EffekseerRendererLLGI
-robocopy Dev\Cpp\EffekseerRendererLLGI %RDIR_R%\src\EffekseerRendererLLGI *.h *.cpp /S
+robocopy Dev\Cpp\EffekseerRendererLLGI %RDIR_R%\src\EffekseerRendererLLGI *.h *.cpp CMakeLists.txt /S
 
 mkdir %RDIR_R%\src\EffekseerRendererCommon
 robocopy Dev\Cpp\EffekseerRendererCommon %RDIR_R%\src\EffekseerRendererCommon *.h *.cpp *.fx CMakeLists.txt /S
