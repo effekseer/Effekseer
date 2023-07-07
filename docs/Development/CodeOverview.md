@@ -3,17 +3,6 @@
 
 > NOTE: See also ARCHITECTURE.md
 
-## CreateHeader.py
-
-To easy to include Effekseer, Effekseer makes a single header with a python script.
-This script combines header files.
-
-If you change a header, you need to run it.
-
-```
-Dev/Cpp/CreateHeader.py
-```
-
 ## Effekseer
 
 Core module without a graphics device.
