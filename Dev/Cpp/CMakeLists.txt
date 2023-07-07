@@ -104,6 +104,9 @@ if (BUILD_DX12 OR BUILD_METAL OR BUILD_VULKAN)
     add_subdirectory(3rdParty/LLGI)
     set_target_properties (LLGI PROPERTIES FOLDER Thirdparty)
     set(BUILD_TEST ${BUILD_TEST_TEMP})
+
+    add_subdirectory(EffekseerRendererLLGI)
+    set_property(TARGET EffekseerRendererLLGI PROPERTY FOLDER Libraries)
 endif()
 
 if (BUILD_DX9)

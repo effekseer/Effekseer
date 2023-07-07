@@ -13,16 +13,14 @@ list(APPEND LOCAL_SOURCES_Vulkan ../EffekseerMaterialCompiler/Common/ShaderGener
 FilterFolder("${LOCAL_HEADERS_Vulkan}")
 FilterFolder("${LOCAL_SOURCES_Vulkan}")
 
-file(GLOB_RECURSE LOCAL_SOURCES_LLGI
-    ../EffekseerRendererLLGI/*.h
-    ../EffekseerRendererLLGI/*.cpp)
-
-source_group("EffekseerRendererLLGI" FILES ${LOCAL_SOURCES_LLGI})
-
 set(LOCAL_SOURCES
     ${LOCAL_HEADERS_Vulkan}
-    ${LOCAL_SOURCES_Vulkan}
-    ${LOCAL_SOURCES_LLGI})
+    ${LOCAL_SOURCES_Vulkan})
+
+set(PublicHeaders
+    EffekseerRendererVulkan.h
+    EffekseerRenderer/EffekseerRendererVulkan.Base.Pre.h
+    EffekseerRenderer/EffekseerRendererVulkan.Renderer.h)
 
 #--------------------
 # Projects
@@ -30,22 +28,27 @@ set(LOCAL_SOURCES
 add_library(${PROJECT_NAME} STATIC ${LOCAL_SOURCES})
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/../Effekseer ${CMAKE_CURRENT_LIST_DIR}/../3rdparty/LLGI/src ${EFK_THIRDPARTY_INCLUDES})
 target_include_directories(${PROJECT_NAME} PRIVATE ${Vulkan_INCLUDE_DIRS})
+set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${PublicHeaders}")
+target_link_libraries(${PROJECT_NAME} PUBLIC Effekseer EffekseerRendererCommon EffekseerRendererLLGI LLGI)
 
-set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${LOCAL_HEADERS_Vulkan}")
-target_link_libraries(${PROJECT_NAME} PUBLIC Effekseer EffekseerRendererCommon LLGI)
-
-if(USE_LIBPNG_LOADER)
-    add_dependencies(${PROJECT_NAME} ExternalProject_zlib ExternalProject_libpng) 
+if(CLANG_FORMAT_ENABLED)
+    clang_format(${PROJECT_NAME})
 endif()
+
+# WarnError(${PROJECT_NAME})
 
 #--------------------
 # Install
+
+foreach (file ${PublicHeaders})
+    get_filename_component(dir ${file} DIRECTORY)
+    install(FILES ${file} DESTINATION include/EffekseerRendererVulkan/${dir})
+endforeach()
 
 install(
     TARGETS ${PROJECT_NAME}
     EXPORT ${PROJECT_NAME}-export
     INCLUDES DESTINATION include/EffekseerRendererVulkan
-    PUBLIC_HEADER DESTINATION include/EffekseerRendererVulkan
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib)
 

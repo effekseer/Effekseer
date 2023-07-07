@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.15)
 project(EffekseerRendererDX9)
 
 file(GLOB_RECURSE LOCAL_HEADERS_DX9 *.h)

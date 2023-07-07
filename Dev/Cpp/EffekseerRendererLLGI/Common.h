@@ -2,8 +2,8 @@
 #ifndef __EFFEKSEERRENDERER_LLGI_COMMON_H__
 #define __EFFEKSEERRENDERER_LLGI_COMMON_H__
 
-#include "../EffekseerRendererCommon/EffekseerRenderer.Renderer.h"
 #include <Effekseer.h>
+#include <EffekseerRenderer.Renderer.h>
 
 namespace EffekseerRenderer
 {
