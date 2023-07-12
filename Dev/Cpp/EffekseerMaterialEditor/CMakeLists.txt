@@ -52,8 +52,7 @@ target_include_directories(
     ../include/
     ${PROJECT_SOURCE_DIR}/../3rdParty/AltseedRHI/include/
     ../EffekseerMaterial/
-    ThirdParty/picojson/
-    ThirdParty/stb_image/)
+    ThirdParty/picojson/)
 
 target_link_directories(
     EffekseerMaterialEditor
