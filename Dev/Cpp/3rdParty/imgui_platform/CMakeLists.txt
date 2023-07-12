@@ -19,7 +19,7 @@ list(APPEND srcs
 endif()
 
 add_library(${PROJECT_NAME} STATIC ${srcs})
-target_include_directories(${PROJECT_NAME} PUBLIC /)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(${PROJECT_NAME} PRIVATE imgui)
 target_include_directories(
     ${PROJECT_NAME}
