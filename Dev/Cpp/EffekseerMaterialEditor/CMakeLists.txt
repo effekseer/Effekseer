@@ -2,7 +2,7 @@
 project(EffekseerMaterialEditor)
 
 # Check cmake version
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.15)
 
 # For MSVC
 if (MSVC)
@@ -20,10 +20,6 @@ file(GLOB hs
     Dialog/*.h
     Graphics/*.h)
 
-file(GLOB srcs_third_imgui_platform
-    ThirdParty/imgui_platform/imgui_impl_opengl3.cpp
-    ThirdParty/imgui_platform/imgui_impl_glfw.cpp)
-
 link_directories(
     ${PROJECT_SOURCE_DIR}/../lib/
     )
@@ -31,7 +27,7 @@ link_directories(
 # Add compile targets
 add_executable(
     EffekseerMaterialEditor
-    ${hs} ${srcs} ${srcs_third_imgui_platform})
+    ${hs} ${srcs})
 
 # Flags
 if (MSVC)
@@ -56,7 +52,6 @@ target_include_directories(
     ../include/
     ${PROJECT_SOURCE_DIR}/../3rdParty/AltseedRHI/include/
     ../EffekseerMaterial/
-    ThirdParty/imgui_platform/
     ThirdParty/picojson/
     ThirdParty/stb_image/)
 
@@ -75,6 +70,7 @@ target_link_libraries(
     Boxer
     nfd
     imgui
+    imgui_platform
     imgui-node-editor
     ImGradientHDR
 )

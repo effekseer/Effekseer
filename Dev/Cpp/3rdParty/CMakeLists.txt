@@ -96,5 +96,6 @@ if (BUILD_VIEWER OR BUILD_EDITOR)
     target_link_libraries(ImGradientHDR PRIVATE imgui)
     set_target_properties (ImGradientHDR PROPERTIES FOLDER Thirdparty)
 
+    add_subdirectory(imgui_platform)
 endif()
 
