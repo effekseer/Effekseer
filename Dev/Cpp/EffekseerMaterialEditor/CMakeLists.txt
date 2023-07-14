@@ -45,12 +45,13 @@ if(WIN32)
     add_dependencies(EffekseerMaterialEditor ExternalProject_glew ExternalProject_glfw)
 endif()
 
+target_compile_definitions(EffekseerMaterialEditor PRIVATE NOMINMAX)
+
 target_include_directories(
     EffekseerMaterialEditor
     PRIVATE
     ${EFK_THIRDPARTY_INCLUDES}
     ../include/
-    ${PROJECT_SOURCE_DIR}/../3rdParty/AltseedRHI/include/
     ../EffekseerMaterial/
     ThirdParty/picojson/)
 
@@ -63,15 +64,17 @@ target_link_directories(
 target_link_libraries(
     EffekseerMaterialEditor
     PRIVATE
+    Effekseer
+    EffekseerRendererGL
     EffekseerMaterial
     EditorCommon
-    AltseedRHI
     Boxer
     nfd
     imgui
     imgui_platform
     imgui-node-editor
     ImGradientHDR
+    IPC
 )
 
 if(USE_LIBPNG_LOADER)
@@ -97,9 +100,6 @@ if (WIN32)
 target_link_libraries(
     EffekseerMaterialEditor
     PRIVATE
-    Effekseer # to use shader loader
-    EffekseerRendererGL # to use shader loader
-    IPC
     debug libglew32d
     optimized libglew32)
 
@@ -118,9 +118,6 @@ find_library(CORE_VIDEO_FRAMEWORK CoreVideo)
 target_link_libraries(
     EffekseerMaterialEditor
     PRIVATE
-    Effekseer # to use shader loader
-    EffekseerRendererGL # to use shader loader
-    IPC
     ${CMAKE_THREAD_LIBS_INIT}
     ${COCOA_FRAMEWORK}
     ${OPENGL_LIBRARIES}
@@ -147,9 +144,6 @@ include_directories(
 target_link_libraries(
     EffekseerMaterialEditor
     PRIVATE
-    Effekseer # to use shader loader
-    EffekseerRendererGL # to use shader loader
-    IPC
     dl
     stdc++fs
     ${CMAKE_THREAD_LIBS_INIT}
@@ -160,7 +154,7 @@ endif()
 
 set_target_properties(EffekseerMaterialEditor PROPERTIES LINKER_LANGUAGE CXX)
 
-set(files ${hs} ${srcs} ${srcs_third_imgui_platform})
+set(files ${hs} ${srcs})
 
 set(files ${srcs} ${hs})
 

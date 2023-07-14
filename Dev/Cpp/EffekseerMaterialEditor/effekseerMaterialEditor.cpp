@@ -10,7 +10,6 @@
 
 #include "../IPC/IPC.h"
 
-#include <AltseedRHI.h>
 #include <GLFW/glfw3.h>
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
@@ -56,11 +55,7 @@
 namespace ed = ax::NodeEditor;
 
 GLFWwindow* glfwMainWindow = nullptr;
-ar::Manager* arManager = nullptr;
-ar::Context* context = nullptr;
-
-std::shared_ptr<EffekseerMaterial::Graphics> graphics;
-std::shared_ptr<EffekseerMaterial::Editor> editor;
+std::shared_ptr<EffekseerMaterial::Editor> g_editor;
 std::shared_ptr<EffekseerMaterial::Node> g_selectedNode;
 
 bool g_showDebugWindow = false;
@@ -127,17 +122,17 @@ void GLFLW_CloseCallback(GLFWwindow* w)
 {
 	bool isChanged = false;
 
-	for (size_t i = 0; i < editor->GetContents().size(); i++)
+	for (size_t i = 0; i < g_editor->GetContents().size(); i++)
 	{
-		if (editor->GetContents()[i]->GetIsChanged())
+		if (g_editor->GetContents()[i]->GetIsChanged())
 		{
 			auto closeIfCan = [w]() -> void
 			{
 				bool isChanged = false;
 
-				for (size_t i = 0; i < editor->GetContents().size(); i++)
+				for (size_t i = 0; i < g_editor->GetContents().size(); i++)
 				{
-					if (editor->GetContents()[i]->GetIsChanged())
+					if (g_editor->GetContents()[i]->GetIsChanged())
 					{
 						isChanged = true;
 					}
@@ -150,7 +145,7 @@ void GLFLW_CloseCallback(GLFWwindow* w)
 			};
 
 			auto closeDialog =
-				std::make_shared<EffekseerMaterial::SaveOrCloseDialog>(editor->GetContents()[i], [closeIfCan]()
+				std::make_shared<EffekseerMaterial::SaveOrCloseDialog>(g_editor->GetContents()[i], [closeIfCan]()
 																	   { closeIfCan(); });
 			newDialogs.push_back(closeDialog);
 			isChanged = true;
@@ -306,10 +301,8 @@ int mainLoop(int argc, char* argv[])
 	glfwMakeContextCurrent(glfwMainWindow);
 	glfwSwapInterval(1);
 
-	graphics = std::make_shared<EffekseerMaterial::Graphics>();
+	auto graphics = std::make_shared<EffekseerMaterial::Graphics>();
 	graphics->Initialize(config->WindowWidth, config->WindowHeight);
-	context = ar::Context::Create(graphics->GetManager());
-	auto arManager = graphics->GetManager();
 
 #if __APPLE__
 	// GL 3.2 + GLSL 150
@@ -338,7 +331,7 @@ int mainLoop(int argc, char* argv[])
 	}
 	ChangeLanguage(config->Language);
 
-	editor = std::make_shared<EffekseerMaterial::Editor>(graphics);
+	g_editor = std::make_shared<EffekseerMaterial::Editor>(graphics);
 
 	keyStatePre.fill(false);
 	keyState.fill(false);
@@ -410,24 +403,24 @@ int mainLoop(int argc, char* argv[])
 				else if (commandDataTOMaterialEditor.Type == IPC::CommandType::OpenMaterial)
 				{
 					spdlog::trace("ICP - Receive - OpenMaterial : {}", (const char*)(commandDataTOMaterialEditor.str.data()));
-					editor->LoadOrSelect(commandDataTOMaterialEditor.str.data());
+					g_editor->LoadOrSelect(commandDataTOMaterialEditor.str.data());
 				}
 				else if (commandDataTOMaterialEditor.Type == IPC::CommandType::OpenOrCreateMaterial)
 				{
 					spdlog::trace("ICP - Receive - OpenOrCreateMaterial : {}", (const char*)(commandDataTOMaterialEditor.str.data()));
-					if (editor->LoadOrSelect(commandDataTOMaterialEditor.str.data()) == EffekseerMaterial::ErrorCode::NotFound)
+					if (g_editor->LoadOrSelect(commandDataTOMaterialEditor.str.data()) == EffekseerMaterial::ErrorCode::NotFound)
 					{
-						editor->New();
-						editor->SaveAs(commandDataTOMaterialEditor.str.data());
+						g_editor->New();
+						g_editor->SaveAs(commandDataTOMaterialEditor.str.data());
 					}
 				}
 			}
 		}
 
-		auto material = editor->GetSelectedMaterial();
+		auto material = g_editor->GetSelectedMaterial();
 		if (material != nullptr && material->GetCommandManager()->GetHistoryID() != previousHistoryID)
 		{
-			auto content = editor->GetContents()[editor->GetSelectedContentIndex()];
+			auto content = g_editor->GetContents()[g_editor->GetSelectedContentIndex()];
 			spdlog::trace("ICP - Send - NotifyUpdate : {}", material->GetPath());
 			content->UpdateBinary();
 
@@ -474,34 +467,34 @@ int mainLoop(int argc, char* argv[])
 					{
 						if (ImGui::MenuItem(EffekseerMaterial::StringContainer::GetValue("New").c_str()))
 						{
-							editor->New();
+							g_editor->New();
 						}
 
 						if (ImGui::MenuItem(EffekseerMaterial::StringContainer::GetValue("Load").c_str()))
 						{
-							editor->Load();
+							g_editor->Load();
 						}
 					}
 
 #ifdef __APPLE__
 					if (ImGui::MenuItem(EffekseerMaterial::StringContainer::GetValue("Save").c_str(), "Command+S"))
 					{
-						editor->Save();
+						g_editor->Save();
 					}
 
 					if (ImGui::MenuItem(EffekseerMaterial::StringContainer::GetValue("SaveAs").c_str(), "Command+S"))
 					{
-						editor->SaveAs();
+						g_editor->SaveAs();
 					}
 #else
 					if (ImGui::MenuItem(EffekseerMaterial::StringContainer::GetValue("Save").c_str(), "Ctrl+S"))
 					{
-						editor->Save();
+						g_editor->Save();
 					}
 
 					if (ImGui::MenuItem(EffekseerMaterial::StringContainer::GetValue("SaveAs").c_str(), "Ctrl+S"))
 					{
-						editor->SaveAs();
+						g_editor->SaveAs();
 					}
 
 #endif
@@ -562,16 +555,16 @@ int mainLoop(int argc, char* argv[])
 			{
 				if (ImGui::BeginTabBar("###MainTab"))
 				{
-					bool isSelectedNow = editor->GetIsSelectedDirty();
+					bool isSelectedNow = g_editor->GetIsSelectedDirty();
 
-					editor->ClearDirtiedSelectedFlags();
+					g_editor->ClearDirtiedSelectedFlags();
 
-					for (size_t i = 0; i < editor->GetContents().size(); i++)
+					for (size_t i = 0; i < g_editor->GetContents().size(); i++)
 					{
-						std::string tabName = editor->GetContents()[i]->GetName();
+						std::string tabName = g_editor->GetContents()[i]->GetName();
 						tabName += "###tab" + std::to_string(i);
 
-						bool isSelected = editor->GetSelectedContentIndex() == i;
+						bool isSelected = g_editor->GetSelectedContentIndex() == i;
 
 						ImGuiTabItemFlags tabItemFlags = 0;
 						if (isSelected && isSelectedNow)
@@ -585,15 +578,15 @@ int mainLoop(int argc, char* argv[])
 							// avoid to select when selected contents is changed
 							if (!isSelectedNow)
 							{
-								editor->SelectContent(i);
+								g_editor->SelectContent(i);
 							}
 
-							if (i == editor->GetSelectedContentIndex())
+							if (i == g_editor->GetSelectedContentIndex())
 							{
 
 								ImGui::Columns(2);
 
-								if (editor->GetContents()[i]->IsLoading)
+								if (g_editor->GetContents()[i]->IsLoading)
 								{
 									ImGui::SetColumnWidth(0, leftWidth);
 								}
@@ -604,13 +597,13 @@ int mainLoop(int argc, char* argv[])
 
 								ImGui::BeginChild("###Left");
 
-								editor->UpdatePreview();
+								g_editor->UpdatePreview();
 
 								ImGui::Separator();
 
 								if (g_selectedNode != nullptr)
 								{
-									editor->UpdateParameterEditor(g_selectedNode);
+									g_editor->UpdateParameterEditor(g_selectedNode);
 								}
 
 								ImGui::EndChild();
@@ -623,14 +616,14 @@ int mainLoop(int argc, char* argv[])
 
 								if (!ImGui::IsAnyItemActive())
 								{
-									editor->GetContents()[i]->GetMaterial()->GetCommandManager()->MakeMergeDisabled();
+									g_editor->GetContents()[i]->GetMaterial()->GetCommandManager()->MakeMergeDisabled();
 								}
 
-								ed::SetCurrentEditor(editor->GetContents()[i]->GetEditorContext());
+								ed::SetCurrentEditor(g_editor->GetContents()[i]->GetEditorContext());
 								ed::Begin("###MainEditor", ImVec2(0.0, 0.0f));
 								// ed::Suspend();
 
-								editor->Update();
+								g_editor->Update();
 
 								ed::End();
 
@@ -639,7 +632,7 @@ int mainLoop(int argc, char* argv[])
 								g_selectedNode = nullptr;
 								if (ed::GetSelectedNodes(nodeIDs, 2) > 0)
 								{
-									for (auto node : editor->GetContents()[i]->GetMaterial()->GetNodes())
+									for (auto node : g_editor->GetContents()[i]->GetMaterial()->GetNodes())
 									{
 										if (node->GUID == nodeIDs[0].Get())
 										{
@@ -661,16 +654,16 @@ int mainLoop(int argc, char* argv[])
 						if (!isOpen)
 						{
 							// close item
-							if (editor->GetContents()[i]->GetIsChanged())
+							if (g_editor->GetContents()[i]->GetIsChanged())
 							{
 								auto closeDialog =
-									std::make_shared<EffekseerMaterial::SaveOrCloseDialog>(editor->GetContents()[i], []() {});
+									std::make_shared<EffekseerMaterial::SaveOrCloseDialog>(g_editor->GetContents()[i], []() {});
 								// ImGui::OpenPopup(closeDialog->GetID());
 								newDialogs.push_back(closeDialog);
 							}
 							else
 							{
-								editor->GetContents()[i]->IsClosing = true;
+								g_editor->GetContents()[i]->IsClosing = true;
 							}
 						}
 					}
@@ -686,7 +679,7 @@ int mainLoop(int argc, char* argv[])
 			{
 				if (!ipcMode)
 				{
-					auto creatDialog = std::make_shared<EffekseerMaterial::NewOrOpenDialog>(editor);
+					auto creatDialog = std::make_shared<EffekseerMaterial::NewOrOpenDialog>(g_editor);
 					// ImGui::OpenPopup(creatDialog->GetID());
 					newDialogs.push_back(creatDialog);
 				}
@@ -755,28 +748,10 @@ int mainLoop(int argc, char* argv[])
 				}
 			}
 
-			editor->preview_->Render();
+			g_editor->preview_->Render();
 		}
 
-		editor->CloseContents();
-
-		arManager->BeginRendering();
-
-		ar::SceneParameter sparam;
-
-		arManager->BeginScene(sparam);
-
-		ar::Color clearColor;
-		clearColor.R = 100;
-		clearColor.G = 50;
-		clearColor.B = 50;
-		clearColor.A = 0;
-
-		arManager->Clear(true, true, clearColor);
-
-		arManager->EndScene();
-
-		arManager->EndRendering();
+		g_editor->CloseContents();
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -787,13 +762,12 @@ int mainLoop(int argc, char* argv[])
 		}
 	}
 
-	editor.reset();
+	g_editor.reset();
+	g_selectedNode.reset();
 
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
-
-	ar::SafeDelete(context);
 
 	if (glfwMainWindow != nullptr)
 	{

@@ -13,6 +13,14 @@ class CompiledMaterialBinary;
 namespace EffekseerRendererGL
 {
 
+void StoreVertexUniform(const ::Effekseer::MaterialFile& materialFile, const EffekseerRenderer::MaterialShaderParameterGenerator& generator, Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>& uniformLayout);
+
+void StoreModelVertexUniform(const ::Effekseer::MaterialFile& materialFile, const EffekseerRenderer::MaterialShaderParameterGenerator& generator, Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>& uniformLayout, bool instancing);
+
+void StorePixelUniform(const ::Effekseer::MaterialFile& materialFile, const EffekseerRenderer::MaterialShaderParameterGenerator& generator, Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement>& uniformLayout, int shaderType);
+
+Effekseer::CustomVector<Effekseer::CustomString<char>> StoreTextureLocations(const ::Effekseer::MaterialFile& materialFile);
+
 class MaterialLoader : public ::Effekseer::MaterialLoader
 {
 private:

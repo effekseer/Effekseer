@@ -82,47 +82,43 @@ static std::tuple<Vector2DF, Vector2DF> GetSelectedNodeBounds(float margin)
 	return std::tuple<Vector2DF, Vector2DF>{};
 }
 
-void Compile(std::shared_ptr<Graphics> graphics,
-			 std::shared_ptr<Material> material,
-			 std::shared_ptr<Node> node,
-			 std::vector<std::shared_ptr<TextureWithSampler>>& outputTextures,
-			 std::vector<std::shared_ptr<TextExporterUniform>>& outputUniforms,
-			 std::vector<std::shared_ptr<TextExporterGradient>>& gradients,
-			 std::vector<std::shared_ptr<TextExporterGradient>>& fixedGradients,
-			 std::string& vs,
-			 std::string& ps)
+CompileResult Compile(std::shared_ptr<Graphics> graphics,
+					  std::shared_ptr<Material> material,
+					  std::shared_ptr<Node> node)
 {
+	CompileResult compileResult;
+	compileResult.materialFile = std::make_shared<Effekseer::MaterialFile>();
+
+	std::vector<std::shared_ptr<TextureWithSampler>> outputTextures;
+
 	EffekseerMaterial::TextExporter exporter;
 	auto result = (&exporter)->Export(material, node);
 
-	auto efkMaterial = Effekseer::MaterialFile();
-	efkMaterial.SetGenericCode(result.Code.c_str());
-	efkMaterial.SetIsSimpleVertex(false);
-	efkMaterial.SetHasRefraction(result.HasRefraction);
-	efkMaterial.SetShadingModel(static_cast<Effekseer::ShadingModelType>(result.ShadingModel));
+	compileResult.materialFile->SetGenericCode(result.Code.c_str());
+	compileResult.materialFile->SetIsSimpleVertex(false);
+	compileResult.materialFile->SetHasRefraction(result.HasRefraction);
+	compileResult.materialFile->SetShadingModel(static_cast<Effekseer::ShadingModelType>(result.ShadingModel));
+	compileResult.materialFile->SetCustomData1Count(result.CustomData1);
+	compileResult.materialFile->SetCustomData2Count(result.CustomData2);
 
-	// HACK (adhoc support in the editor)
-	// efkMaterial.SetCustomData1Count(result.CustomData1);
-	// efkMaterial.SetCustomData2Count(result.CustomData2);
-
-	efkMaterial.SetTextureCount(result.Textures.size());
-	efkMaterial.SetUniformCount(result.Uniforms.size());
+	compileResult.materialFile->SetTextureCount(result.Textures.size());
+	compileResult.materialFile->SetUniformCount(result.Uniforms.size());
 
 	for (const auto& type : result.RequiredPredefinedMethodTypes)
 	{
-		efkMaterial.RequiredMethods.emplace_back(static_cast<Effekseer::MaterialFile::RequiredPredefinedMethodType>(type));
+		compileResult.materialFile->RequiredMethods.emplace_back(static_cast<Effekseer::MaterialFile::RequiredPredefinedMethodType>(type));
 	}
 
 	for (size_t i = 0; i < result.Textures.size(); i++)
 	{
-		efkMaterial.SetTextureIndex(i, i);
-		efkMaterial.SetTextureName(i, result.Textures[i]->UniformName.c_str());
+		compileResult.materialFile->SetTextureIndex(i, i);
+		compileResult.materialFile->SetTextureName(i, result.Textures[i]->UniformName.c_str());
 	}
 
 	for (size_t i = 0; i < result.Uniforms.size(); i++)
 	{
-		efkMaterial.SetUniformIndex(i, (int)result.Uniforms[i]->Type);
-		efkMaterial.SetUniformName(i, result.Uniforms[i]->UniformName.c_str());
+		compileResult.materialFile->SetUniformIndex(i, (int)result.Uniforms[i]->Type);
+		compileResult.materialFile->SetUniformName(i, result.Uniforms[i]->UniformName.c_str());
 	}
 
 	const auto copyGradient = [&](std::vector<Effekseer::MaterialFile::GradientParameter>& dst, const std::vector<std::shared_ptr<TextExporterGradient>>& src)
@@ -149,15 +145,9 @@ void Compile(std::shared_ptr<Graphics> graphics,
 		}
 	};
 
-	copyGradient(efkMaterial.Gradients, result.Gradients);
+	copyGradient(compileResult.materialFile->Gradients, result.Gradients);
 
-	copyGradient(efkMaterial.FixedGradients, result.FixedGradients);
-
-	auto compiler = ::Effekseer::CreateUniqueReference(new Effekseer::MaterialCompilerGL());
-	auto binary = ::Effekseer::CreateUniqueReference(compiler->Compile(&efkMaterial, 1024, 1024));
-
-	vs = reinterpret_cast<const char*>(binary->GetVertexShaderData(Effekseer::MaterialShaderType::Standard));
-	ps = reinterpret_cast<const char*>(binary->GetPixelShaderData(Effekseer::MaterialShaderType::Standard));
+	copyGradient(compileResult.materialFile->FixedGradients, result.FixedGradients);
 
 	auto textures = result.Textures;
 	auto removed_it = std::remove_if(textures.begin(),
@@ -186,11 +176,14 @@ void Compile(std::shared_ptr<Graphics> graphics,
 		outputTextures.push_back(ts);
 	}
 
-	outputUniforms = result.Uniforms;
+	compileResult.textures = outputTextures;
+	compileResult.uniforms = result.Uniforms;
+	compileResult.fixedGradients = result.FixedGradients;
+	compileResult.gradients = result.Gradients;
+	compileResult.customData1Count = result.CustomData1;
+	compileResult.customData2Count = result.CustomData2;
 
-	fixedGradients = result.FixedGradients;
-
-	gradients = result.Gradients;
+	return compileResult;
 }
 
 void ExtractUniforms(std::shared_ptr<Graphics> graphics,
@@ -803,14 +796,7 @@ void Editor::UpdateNodes()
 			if (!node->GetIsDirtied() && !isSelectedDirty_)
 				continue;
 
-			std::vector<std::shared_ptr<TextExporterUniform>> uniforms;
-			std::vector<std::shared_ptr<TextureWithSampler>> textures;
-			std::vector<std::shared_ptr<TextExporterGradient>> gradients;
-			std::vector<std::shared_ptr<TextExporterGradient>> fixedGradients;
-
-			std::string vs;
-			std::string ps;
-			Compile(graphics_, material, node, textures, uniforms, gradients, fixedGradients, vs, ps);
+			auto compileResult = Compile(graphics_, material, node);
 
 			// update pin state
 			for (auto behavior : node->Parameter->BehaviorComponents)
@@ -825,10 +811,10 @@ void Editor::UpdateNodes()
 				}
 			}
 
-			preview_->CompileShader(vs, ps, textures, uniforms, gradients, fixedGradients);
-			previewTextureCount_ = textures.size();
-			previewUniformCount_ = uniforms.size();
-			previewGradientCount_ = gradients.size();
+			preview_->UpdateShader(compileResult);
+			previewTextureCount_ = compileResult.textures.size();
+			previewUniformCount_ = compileResult.uniforms.size();
+			previewGradientCount_ = compileResult.gradients.size();
 		}
 
 		for (auto node : material->GetNodes())
@@ -885,14 +871,7 @@ void Editor::UpdateNodes()
 				preview->ModelType = PreviewModelType::Sphere;
 			}
 
-			std::vector<std::shared_ptr<TextExporterUniform>> uniforms;
-			std::vector<std::shared_ptr<TextureWithSampler>> textures;
-			std::vector<std::shared_ptr<TextExporterGradient>> gradients;
-			std::vector<std::shared_ptr<TextExporterGradient>> fixedGradients;
-
-			std::string vs;
-			std::string ps;
-			Compile(graphics_, material, node, textures, uniforms, gradients, fixedGradients, vs, ps);
+			auto compileResult = Compile(graphics_, material, node);
 
 			// update pin state
 			for (auto behavior : node->Parameter->BehaviorComponents)
@@ -907,7 +886,7 @@ void Editor::UpdateNodes()
 				}
 			}
 
-			preview->CompileShader(vs, ps, textures, uniforms, gradients, fixedGradients);
+			preview->UpdateShader(compileResult);
 
 			material->ClearDirty(node);
 			material->ClearContentDirty(node);
@@ -1461,12 +1440,12 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 
 				if (texture != nullptr && texture->GetTexture() != nullptr)
 				{
-					ImGui::Image((void*)texture->GetTexture()->GetInternalObjects()[0], size, ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
+					ImGui::Image((void*)texture->GetInternal(), size, ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 
 					showPath();
 
 					// adhoc
-					glBindTexture(GL_TEXTURE_2D, (GLuint)texture->GetTexture()->GetInternalObjects()[0]);
+					glBindTexture(GL_TEXTURE_2D, (GLuint)texture->GetInternal());
 					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 				}

@@ -30,12 +30,18 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/../Effe
 set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${PublicHeader}")
 target_link_libraries(${PROJECT_NAME} PUBLIC Effekseer EffekseerRendererCommon)
 
+target_include_directories(${PROJECT_NAME} PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/>
+    $<INSTALL_INTERFACE:include/EffekseerRendererGL>
+)
+
 if(CLANG_FORMAT_ENABLED)
     clang_format(${PROJECT_NAME})
 endif()
 
 #--------------------
 # Install
+
 
 foreach (file ${PublicHeaders})
     get_filename_component(dir ${file} DIRECTORY)
