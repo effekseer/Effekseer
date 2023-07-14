@@ -72,6 +72,11 @@ namespace Effekseer.GUI.Inspector
 		}
 	}
 
+	/// <summary>
+	/// State about widget.<br/>
+	/// This can be accessed from inspector widgets.<br/>
+	/// Basically, this has data only for the current widget.
+	/// </summary>
 	class InspectorGuiState
 	{
 		public string Id { get; private set; }
@@ -88,6 +93,11 @@ namespace Effekseer.GUI.Inspector
 		}
 	}
 
+
+	/// <summary>
+	/// Information about field and subelements.
+	/// Subelements are held as a tree structure by the inspector.
+	/// </summary>
 	class InspectorGuiInfo
 	{
 		public InspectorGuiInfo()
@@ -108,7 +118,7 @@ namespace Effekseer.GUI.Inspector
 
 	public class Inspector
 	{
-		// functions to show gui
+		// Function to process the widgets
 		private readonly InspectorGuiDictionary GuiDictionary = new InspectorGuiDictionary();
 
 		private InspectorGuiInfo RootGuiInfo = new InspectorGuiInfo();
@@ -122,6 +132,10 @@ namespace Effekseer.GUI.Inspector
 			RootGuiInfo.isRoot = true;
 		}
 
+		/// <summary>
+		/// Collect visiblity controllers state of fields in target.
+		/// </summary>
+		/// <param name="target"></param>
 		private void UpdateVisiblityControllers(object target)
 		{
 			if (target == null)
@@ -141,50 +155,61 @@ namespace Effekseer.GUI.Inspector
 			}
 		}
 
-		private void GenerateFieldGuiInfos(object target, Type targetType = null)
+
+		/// <summary>
+		/// Generate InspectorGuiInfo(recursively)
+		/// </summary>
+		/// <param name="targetValue">Instance that generate info</param>
+		/// <param name="targetFieldInfo">FieldInfo that generate info</param>
+		/// <returns></returns>
+		InspectorGuiInfo GenerateInspectorGuiInfo(object targetValue, FieldInfo targetFieldInfo)
+		{
+			InspectorGuiInfo info = new InspectorGuiInfo();
+
+			var targetType = targetFieldInfo.FieldType;
+			info.Name = targetFieldInfo.Name + "(type: " + targetType.Name + ")";
+
+			var attributes = targetFieldInfo.GetCustomAttributes();
+			foreach (var attr in attributes)
+			{
+				info.State.Attriubutes.Add(attr);
+			}
+
+			bool hasGuiFunction =
+						targetType.IsEnum ||	// Enum is not supported by HasFunction
+						GuiDictionary.HasFunction(targetType);
+			if (hasGuiFunction)
+			{
+				return info;
+			}
+
+			// Subelements(fields in target)
+			var fieldsInTgt = targetType.GetFields();
+			foreach (var fieldInTgt in fieldsInTgt)
+			{
+				// VisiblityController attribute
+				if (targetValue != null)
+				{
+					UpdateVisiblityControllers(targetValue);
+				}
+
+				info.SubElements.Add(GenerateInspectorGuiInfo(
+					fieldInTgt != null ? fieldInTgt.GetValue(targetValue) : null, 
+					fieldInTgt));
+			}
+			return info;
+		}
+
+		/// <summary>
+		/// Generate fieldGuiInfo recursively for each field.<br/>
+		/// Existing fieldGuiInfo will be cleared.
+		/// </summary>
+		/// <param name="target">Target node or target object</param>
+		/// <param name="targetType">Type of field in target. If this is null, all fields in target will be generated.</param>
+		private void InitializeFieldGuiInfo(object target, Type targetType = null)
 		{
 			RootGuiInfo.SubElements.Clear();
 			RootGuiInfo.State.Attriubutes.Clear();
-
-			InspectorGuiInfo generate(object tgtValue, FieldInfo tgtFieldInfo)
-			{
-				InspectorGuiInfo info = new InspectorGuiInfo();
-				
-				var type = tgtFieldInfo.FieldType;
-				info.Name = type.Name;
-				var attributes = tgtFieldInfo.GetCustomAttributes();
-				foreach (var attr in attributes)
-				{
-					info.State.Attriubutes.Add(attr);
-				}
-
-
-				bool hasGuiFunction = 
-							type.IsEnum ||
-							GuiDictionary.HasFunction(type);
-				if (hasGuiFunction)
-				{
-					return info;
-				}
-
-				// fields in tgt
-				var fieldsInTgt = type.GetFields();
-				foreach (var fieldInTgt in fieldsInTgt)
-				{
-					if (tgtValue != null)
-					{
-						// visiblity controller attribute
-						UpdateVisiblityControllers(tgtValue);
-						info.SubElements.Add(generate(fieldInTgt.GetValue(tgtValue), fieldInTgt));
-					}
-					else
-					{
-						info.SubElements.Add(generate(null, fieldInTgt));
-					}
-				}
-				return info;
-			};
-
 
 			var fields = target.GetType().GetFields();
 			foreach (var field in fields)
@@ -193,12 +218,11 @@ namespace Effekseer.GUI.Inspector
 				{
 					continue;
 				}
-				var tgt = field.GetValue(target);
+				var targetValue = field.GetValue(target);
 				{
-					UpdateVisiblityControllers(tgt);
+					UpdateVisiblityControllers(targetValue);
 				}
-				RootGuiInfo.Name = field.Name;
-				RootGuiInfo.SubElements.Add(generate(tgt, field));
+				RootGuiInfo.SubElements.Add(GenerateInspectorGuiInfo(targetValue, field));
 			}
 		}
 
@@ -238,11 +262,22 @@ namespace Effekseer.GUI.Inspector
 			return false;
 		}
 
-		private void UpdateObjectGuis(Asset.EffectAssetEditorContext context
-			, Asset.Node targetNode, object targetObject
-			, PartsTreeSystem.ElementGetterSetterArray elementGetterSetterArray, InspectorGuiInfo guiInfo)
+
+		/// <summary>
+		/// Update the inspector gui recursively for each field.
+		/// </summary>
+		/// <param name="context">EditorContext</param>
+		/// <param name="targetNode">Node that is being inspected.<br/>
+		/// If it's null, also possible to inspect objects that do not belong to Node.</param>
+		/// <param name="targetObject">Object to be inspected. Processed in this function.</param>
+		/// <param name="elementGetterSetterArray"></param>
+		/// <param name="guiInfo">GuiInfo about targetObject</param>
+		private void UpdateObjectGuis(
+			Asset.EffectAssetEditorContext context, 
+			Asset.Node targetNode, object targetObject, 
+			PartsTreeSystem.ElementGetterSetterArray elementGetterSetterArray, InspectorGuiInfo guiInfo)
 		{
-			var field = elementGetterSetterArray.FieldInfos.Last();
+			var field = elementGetterSetterArray.FieldInfo.Last();
 
 			bool isValueChanged = false;
 
@@ -548,7 +583,7 @@ namespace Effekseer.GUI.Inspector
 		private bool DropObjectGuis(string path, Asset.EffectAssetEditorContext context
 			, object targetObject, PartsTreeSystem.ElementGetterSetterArray elementGetterSetterArray, InspectorGuiInfo guiInfo)
 		{
-			var field = elementGetterSetterArray.FieldInfos.Last();
+			var field = elementGetterSetterArray.FieldInfo.Last();
 			var value = elementGetterSetterArray.GetValue();
 
 			// value type of element
@@ -681,7 +716,7 @@ namespace Effekseer.GUI.Inspector
 		//		return;
 		//	}
 
-		//	GenerateFieldGuiInfos(CoreContext.SelectedEffectNode);
+		//	GenerateFieldGuiInfo(CoreContext.SelectedEffectNode);
 		//}
 
 		public void Update(Asset.EffectAssetEditorContext context, Asset.Node targetNode, object target)
@@ -690,7 +725,7 @@ namespace Effekseer.GUI.Inspector
 			// TODO: this had better do at OnAfterSelect()
 			if (targetNode?.InstanceID != ((Asset.Node)LastTarget)?.InstanceID)
 			{
-				GenerateFieldGuiInfos(target);
+				InitializeFieldGuiInfo(target);
 				LastTarget = targetNode;
 				return;
 			}
@@ -719,7 +754,7 @@ namespace Effekseer.GUI.Inspector
 			// TODO: this had better do at OnAfterSelect()
 			if (targetNode?.InstanceID != ((Asset.Node)LastTarget)?.InstanceID)
 			{
-				GenerateFieldGuiInfos(targetNode, targetType);
+				InitializeFieldGuiInfo(targetNode, targetType);
 				LastTarget = targetNode;
 				return;
 			}
@@ -754,7 +789,7 @@ namespace Effekseer.GUI.Inspector
 			// TODO: this had better do at OnAfterSelect()
 			if (targetAsset != null && !ReferenceEquals(targetAsset, LastTarget))
 			{
-				GenerateFieldGuiInfos(targetAsset);
+				InitializeFieldGuiInfo(targetAsset);
 				LastTarget = targetAsset;
 				return;
 			}
