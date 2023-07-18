@@ -277,7 +277,7 @@ namespace Effekseer.GUI.Inspector
 			Asset.Node targetNode, object targetObject, 
 			PartsTreeSystem.ElementGetterSetterArray elementGetterSetterArray, InspectorGuiInfo guiInfo)
 		{
-			var field = elementGetterSetterArray.FieldInfo.Last();
+			var field = elementGetterSetterArray.FieldInfos.Last();
 
 			bool isValueChanged = false;
 
@@ -583,7 +583,7 @@ namespace Effekseer.GUI.Inspector
 		private bool DropObjectGuis(string path, Asset.EffectAssetEditorContext context
 			, object targetObject, PartsTreeSystem.ElementGetterSetterArray elementGetterSetterArray, InspectorGuiInfo guiInfo)
 		{
-			var field = elementGetterSetterArray.FieldInfo.Last();
+			var field = elementGetterSetterArray.FieldInfos.Last();
 			var value = elementGetterSetterArray.GetValue();
 
 			// value type of element
