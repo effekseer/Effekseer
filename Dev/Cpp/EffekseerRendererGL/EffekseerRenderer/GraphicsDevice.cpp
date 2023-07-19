@@ -447,8 +447,6 @@ void UniformBuffer::UpdateData(const void* src, int32_t size, int32_t offset)
 {
 	assert(buffer_.size() >= size + offset && offset >= 0);
 
-	buffer_.resize(size);
-
 	if (auto data = static_cast<const uint8_t*>(src))
 	{
 		memcpy(buffer_.data() + offset, src, size);
