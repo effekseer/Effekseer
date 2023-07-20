@@ -422,8 +422,8 @@ bool Preview::UpdateShader(const CompileResult& compileResult)
 	auto gd = graphics_->GetGraphicsDevice().DownCast<EffekseerRendererGL::Backend::GraphicsDevice>();
 	auto vl = EffekseerRenderer::GetMaterialModelVertexLayout(graphics_->GetGraphicsDevice()).DownCast<Effekseer::Backend::VertexLayout>();
 
-	auto compiler = Effekseer::MaterialCompilerGL();
-	auto binary = compiler.Compile(compileResult.materialFile.get());
+	auto compiler = Effekseer::MakeRefPtr<Effekseer::MaterialCompilerGL>();
+	auto binary = compiler->Compile(compileResult.materialFile.get());
 
 	auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(*compileResult.materialFile, true, 0, 10);
 	Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> uniformLayoutElements;
