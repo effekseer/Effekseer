@@ -190,22 +190,6 @@ if(BUILD_VIEWER)
 
     set(BUILD_TEST_TEMP ${BUILD_TEST})
     set(BUILD_TEST OFF)
-	add_subdirectory("3rdParty/AltseedRHI")
-    set_target_properties (AltseedRHI PROPERTIES FOLDER Thirdparty)
-    set(BUILD_TEST ${BUILD_TEST_TEMP})
-
-    if(APPLE)
-        add_dependencies(AltseedRHI ExternalProject_zlib ExternalProject_libpng)
-    else()
-        add_dependencies(AltseedRHI ExternalProject_glew)
-    endif()
-    
-    target_include_directories(
-        AltseedRHI
-        PRIVATE
-        ${EFK_THIRDPARTY_INCLUDES}
-    )
-
     add_subdirectory("EffekseerMaterial")
     set_property(TARGET EffekseerMaterial PROPERTY FOLDER Libraries)
     add_subdirectory("EffekseerMaterialEditor")

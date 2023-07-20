@@ -1,6 +1,4 @@
 
-#include "efkMat.Graphics.h"
-
 #ifdef __APPLE__
 #include <OpenGL/gl.h>
 #elif defined(_WIN32)
@@ -10,19 +8,64 @@
 #include <GL/gl.h>
 #endif
 
+#include "efkMat.Graphics.h"
+
 #include <Common/StringHelper.h>
 #include <IO/IO.h>
+#include <TextureLoader.h>
 #include <algorithm>
 #include <fstream>
 #include <iostream>
 
+#include "../EffekseerMaterialCompiler/OpenGL/EffekseerMaterialCompilerGL.h"
 #include "../EffekseerRendererCommon/EffekseerRenderer.CommonUtils.h"
+#include "../EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.MaterialLoader.h"
+#include "../EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.Shader.h"
+#include "../EffekseerRendererGL/EffekseerRendererGL.h"
 
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "../ThirdParty/tiny_obj_loader.h"
 
 namespace EffekseerMaterial
 {
+
+void StoreData(Effekseer::Backend::GraphicsDeviceRef gd, Effekseer::Backend::UniformBufferRef vertexUniformBuffer, Effekseer::Backend::UniformBufferRef pixelUniformBuffer, const Effekseer::Backend::UniformLayoutElement& elm, std::array<float, 4> data)
+{
+	if (elm.Stage == Effekseer::Backend::ShaderStageType::Vertex)
+	{
+		if (elm.Type == Effekseer::Backend::UniformBufferLayoutElementType::Vector4)
+		{
+			gd->UpdateUniformBuffer(vertexUniformBuffer, sizeof(float) * 4, elm.Offset, data.data());
+		}
+	}
+
+	if (elm.Stage == Effekseer::Backend::ShaderStageType::Pixel)
+	{
+		if (elm.Type == Effekseer::Backend::UniformBufferLayoutElementType::Vector4)
+		{
+			gd->UpdateUniformBuffer(pixelUniformBuffer, sizeof(float) * 4, elm.Offset, data.data());
+		}
+	}
+};
+
+void StoreData(Effekseer::Backend::GraphicsDeviceRef gd, Effekseer::Backend::UniformBufferRef vertexUniformBuffer, Effekseer::Backend::UniformBufferRef pixelUniformBuffer, const Effekseer::Backend::UniformLayoutElement& elm, Effekseer::Matrix44 data)
+{
+	if (elm.Stage == Effekseer::Backend::ShaderStageType::Vertex)
+	{
+		if (elm.Type == Effekseer::Backend::UniformBufferLayoutElementType::Matrix44)
+		{
+			gd->UpdateUniformBuffer(vertexUniformBuffer, sizeof(float) * 16, elm.Offset, &data.Values);
+		}
+	}
+
+	if (elm.Stage == Effekseer::Backend::ShaderStageType::Pixel)
+	{
+		if (elm.Type == Effekseer::Backend::UniformBufferLayoutElementType::Matrix44)
+		{
+			gd->UpdateUniformBuffer(pixelUniformBuffer, sizeof(float) * 16, elm.Offset, &data.Values);
+		}
+	}
+};
 
 Effekseer::Gradient ToEffekseerGradient(const Gradient& gradient)
 {
@@ -47,40 +90,13 @@ Effekseer::Gradient ToEffekseerGradient(const Gradient& gradient)
 
 bool Graphics::Initialize(int32_t width, int32_t height)
 {
-	manager = ar::Manager::Create(ar::GraphicsDeviceType::OpenGL);
-
-	ar::ManagerInitializationParameter param;
-	param.WindowWidth = width;
-	param.WindowHeight = height;
-
-	if (manager->Initialize(param) != ar::ErrorCode::OK)
+	graphicsDevice_ = EffekseerRendererGL::CreateGraphicsDevice(EffekseerRendererGL::OpenGLDeviceType::OpenGL3, true);
+	if (graphicsDevice_ == nullptr)
 	{
-		ar::SafeDelete(manager);
 		return false;
 	}
 
-	compiler = ar::Compiler::Create(manager);
-
 	return true;
-}
-
-Graphics::Graphics()
-{
-}
-
-Graphics::~Graphics()
-{
-	ar::SafeDelete(compiler);
-	ar::SafeDelete(manager);
-}
-
-Texture::Texture()
-{
-}
-
-Texture::~Texture()
-{
-	ar::SafeDelete(texture_);
 }
 
 bool Texture::Validate()
@@ -98,34 +114,29 @@ bool Texture::Validate()
 		return false;
 	}
 
-	texture_ = ar::Texture2D::Create(graphics_->GetManager());
-	if (texture_ == nullptr)
+	auto textureLoader = EffekseerRenderer::CreateTextureLoader(graphics_->GetGraphicsDevice());
+	auto texture = textureLoader->Load(file->GetData(), file->GetSize(), Effekseer::TextureType::Color, false);
+	if (texture != nullptr)
 	{
-		return false;
+		texture_ = texture->GetBackend();
 	}
-
-	if (!texture_->Initialize(graphics_->GetManager(), file->GetData(), file->GetSize(), false, false))
-	{
-		Invalidate();
-		return false;
-	}
-
-	return true;
+	return texture_ != nullptr;
 }
 
 void Texture::Invalidate()
 {
 	if (path_ == "")
 		return;
-
-	ar::SafeDelete(texture_);
+	texture_.Reset();
 }
 
 uint64_t Texture::GetInternal()
 {
 	if (texture_ == nullptr)
 		return 0;
-	auto ret = texture_->GetInternalObjects()[0];
+
+	auto prop = EffekseerRendererGL::GetTextureProperty(texture_);
+	auto ret = prop.Buffer;
 
 	// Temp
 	glBindTexture(GL_TEXTURE_2D, ret);
@@ -157,13 +168,21 @@ std::shared_ptr<Texture> Texture::Load(std::shared_ptr<Graphics> graphics, Vecto
 {
 	auto obj = std::make_shared<Texture>();
 
-	obj->texture_ = ar::Texture2D::Create(graphics->GetManager());
-	if (obj->texture_ == nullptr)
+	Effekseer::Backend::TextureParameter texParam;
+	texParam.Size[0] = size.X;
+	texParam.Size[1] = size.Y;
+
+	Effekseer::CustomVector<uint8_t> data;
+	data.resize(size.X * size.Y * 4);
+
+	if (initialData != nullptr)
 	{
-		return nullptr;
+		memcpy(data.data(), initialData, data.size());
 	}
 
-	if (!obj->texture_->Initialize(graphics->GetManager(), size.X, size.Y, ar::TextureFormat::R8G8B8A8_UNORM, (void*)initialData, false))
+	obj->texture_ = graphics->GetGraphicsDevice()->CreateTexture(texParam, data);
+
+	if (obj->texture_ == nullptr)
 	{
 		return nullptr;
 	}
@@ -199,16 +218,6 @@ void TextureCache::NotifyFileChanged(const char* path)
 		it->second->Invalidate();
 		it->second->Validate();
 	}
-}
-
-Mesh::Mesh()
-{
-}
-
-Mesh ::~Mesh()
-{
-	ar::SafeDelete(vb);
-	ar::SafeDelete(ib);
 }
 
 std::shared_ptr<Mesh> Mesh::Load(std::shared_ptr<Graphics> graphics, const char* path)
@@ -267,12 +276,10 @@ std::shared_ptr<Mesh> Mesh::Load(std::shared_ptr<Graphics> graphics, const char*
 				normal.X = attrib.normals[3 * idx.normal_index + 0];
 				normal.Y = attrib.normals[3 * idx.normal_index + 1];
 				normal.Z = attrib.normals[3 * idx.normal_index + 2];
-				vertexes[index_offset + v].Normal = Vertex::CreatePacked(normal);
+				vertexes[index_offset + v].Normal = normal;
 
 				vertexes[index_offset + v].UV1.X = attrib.texcoords[2 * idx.texcoord_index + 0];
 				vertexes[index_offset + v].UV1.Y = 1.0f - attrib.texcoords[2 * idx.texcoord_index + 1];
-				vertexes[index_offset + v].UV2.X = attrib.texcoords[2 * idx.texcoord_index + 0];
-				vertexes[index_offset + v].UV2.Y = 1.0f - attrib.texcoords[2 * idx.texcoord_index + 1];
 				vertexes[index_offset + v].Color[0] = attrib.colors[3 * idx.vertex_index + 0] * 255;
 				vertexes[index_offset + v].Color[1] = attrib.colors[3 * idx.vertex_index + 1] * 255;
 				vertexes[index_offset + v].Color[2] = attrib.colors[3 * idx.vertex_index + 2] * 255;
@@ -314,31 +321,20 @@ std::shared_ptr<Mesh> Mesh::Load(std::shared_ptr<Graphics> graphics, const char*
 		}
 
 		tangentsum = tangentsum / static_cast<float>(kv.second.size());
+		tangentsum.Normalize();
 
 		for (auto i : kv.second)
 		{
-			vertexes[i].Tangent = Vertex::CreatePacked(tangentsum);
+			vertexes[i].Tangent = tangentsum;
+			vertexes[i].Binormal = Vector3::Cross(vertexes[i].Normal, vertexes[i].Tangent);
+			vertexes[i].Binormal.Normalize();
 		}
 	}
 
-	auto vb = ar::VertexBuffer::Create(graphics->GetManager());
-	vb->Initialize(graphics->GetManager(), sizeof(Vertex), vertexes.size(), false);
-
-	auto ib = ar::IndexBuffer::Create(graphics->GetManager());
-	ib->Initialize(graphics->GetManager(), indexes.size(), false);
-
-	if (!vb->Write(vertexes.data(), vertexes.size() * sizeof(Vertex)))
-	{
-		assert(0);
-	}
-
-	if (!ib->Write(indexes.data(), indexes.size() * sizeof(int16_t)))
-	{
-		assert(0);
-	}
+	auto vb = graphics->GetGraphicsDevice()->CreateVertexBuffer(sizeof(Vertex) * vertexes.size(), vertexes.data(), false);
+	auto ib = graphics->GetGraphicsDevice()->CreateIndexBuffer(indexes.size(), indexes.data(), Effekseer::Backend::IndexBufferStrideType::Stride2);
 
 	auto mesh = std::make_shared<Mesh>();
-
 	mesh->vb = vb;
 	mesh->ib = ib;
 	mesh->indexCount = indexes.size();
@@ -346,94 +342,62 @@ std::shared_ptr<Mesh> Mesh::Load(std::shared_ptr<Graphics> graphics, const char*
 	return mesh;
 }
 
-Preview::Preview()
-{
-}
-
-Preview::~Preview()
-{
-	ar::SafeDelete(vb);
-	ar::SafeDelete(ib);
-	ar::SafeDelete(shader);
-	ar::SafeDelete(renderTarget_);
-	ar::SafeDelete(depthTarget_);
-	ar::SafeDelete(context);
-	ar::SafeDelete(constantBuffer);
-}
-
 bool Preview::Initialize(std::shared_ptr<Graphics> graphics)
 {
+	std::array<Vertex, 4> vb;
+	std::array<uint16_t, 6> ib;
+
+	vb[0].Pos.X = -1.0;
+	vb[0].Pos.Y = +1.0;
+	vb[0].Pos.Z = 0.0;
+	vb[1].Pos.X = +1.0;
+	vb[1].Pos.Y = +1.0;
+	vb[1].Pos.Z = 0.0;
+	vb[2].Pos.X = +1.0;
+	vb[2].Pos.Y = -1.0;
+	vb[2].Pos.Z = 0.0;
+	vb[3].Pos.X = -1.0;
+	vb[3].Pos.Y = -1.0;
+	vb[3].Pos.Z = 0.0;
+
+	vb[0].UV1.X = 0.0;
+	vb[0].UV1.Y = 0.0;
+	vb[1].UV1.X = 1.0;
+	vb[1].UV1.Y = 0.0;
+	vb[2].UV1.X = 1.0;
+	vb[2].UV1.Y = 1.0;
+	vb[3].UV1.X = 0.0;
+	vb[3].UV1.Y = 1.0;
+
+	for (auto& v : vb)
+	{
+		v.Color.fill(255);
+		v.Normal = Vector3(0, 0, 1);
+		v.Tangent = Vector3(0, 1, 0);
+		v.Binormal = Vector3(1, 0, 0);
+	}
+
+	ib[0] = 0;
+	ib[1] = 1;
+	ib[2] = 2;
+	ib[3] = 0;
+	ib[4] = 2;
+	ib[5] = 3;
+
 	graphics_ = graphics;
-	vb = ar::VertexBuffer::Create(graphics->GetManager());
-	vb->Initialize(graphics->GetManager(), sizeof(Vertex), 4, false);
 
-	ib = ar::IndexBuffer::Create(graphics->GetManager());
-	ib->Initialize(graphics->GetManager(), 6, false);
+	screenVB_ = graphics->GetGraphicsDevice()->CreateVertexBuffer(sizeof(Vertex) * vb.size(), vb.data(), false);
+	screenIB_ = graphics->GetGraphicsDevice()->CreateIndexBuffer(ib.size(), ib.data(), Effekseer::Backend::IndexBufferStrideType::Stride2);
 
-	Vertex vb_[4];
-	uint16_t ib_[6];
+	Effekseer::Backend::RenderTextureParameter renderTexParam;
+	renderTexParam.Size[0] = TextureSize;
+	renderTexParam.Size[1] = TextureSize;
+	renderTarget_ = graphics_->GetGraphicsDevice()->CreateRenderTexture(renderTexParam);
 
-	vb_[0].Pos.X = -1.0;
-	vb_[0].Pos.Y = +1.0;
-	vb_[0].Pos.Z = 0.5;
-	vb_[1].Pos.X = +1.0;
-	vb_[1].Pos.Y = +1.0;
-	vb_[1].Pos.Z = 0.5;
-	vb_[2].Pos.X = +1.0;
-	vb_[2].Pos.Y = -1.0;
-	vb_[2].Pos.Z = 0.5;
-	vb_[3].Pos.X = -1.0;
-	vb_[3].Pos.Y = -1.0;
-	vb_[3].Pos.Z = 0.5;
-
-	vb_[0].UV1.X = 0.0;
-	vb_[0].UV1.Y = 0.0;
-	vb_[1].UV1.X = 1.0;
-	vb_[1].UV1.Y = 0.0;
-	vb_[2].UV1.X = 1.0;
-	vb_[2].UV1.Y = 1.0;
-	vb_[3].UV1.X = 0.0;
-	vb_[3].UV1.Y = 1.0;
-
-	vb_[0].Color[0] = 255;
-	vb_[0].Color[1] = 255;
-	vb_[0].Color[2] = 255;
-	vb_[0].Color[3] = 255;
-
-	vb_[1].Color[0] = 255;
-	vb_[1].Color[1] = 255;
-	vb_[1].Color[2] = 255;
-	vb_[1].Color[3] = 255;
-
-	vb_[2].Color[0] = 255;
-	vb_[2].Color[1] = 255;
-	vb_[2].Color[2] = 255;
-	vb_[2].Color[3] = 255;
-
-	vb_[3].Color[0] = 255;
-	vb_[3].Color[1] = 255;
-	vb_[3].Color[2] = 255;
-	vb_[3].Color[3] = 255;
-
-	vb->Write(vb_, sizeof(Vertex) * 4);
-
-	ib_[0] = 0;
-	ib_[1] = 1;
-	ib_[2] = 2;
-	ib_[3] = 0;
-	ib_[4] = 2;
-	ib_[5] = 3;
-
-	ib->Write(ib_, sizeof(uint16_t) * 6);
-
-	renderTarget_ = ar::RenderTexture2D::Create(graphics->GetManager());
-	renderTarget_->Initialize(graphics->GetManager(), TextureSize, TextureSize, ar::TextureFormat::R8G8B8A8_UNORM);
-
-	depthTarget_ = ar::DepthTexture::Create(graphics->GetManager());
-	depthTarget_->Initialize(graphics->GetManager(), TextureSize, TextureSize);
-
-	context = ar::Context::Create(graphics_->GetManager());
-	context->Initialize(graphics_->GetManager());
+	Effekseer::Backend::DepthTextureParameter depthTexParam;
+	depthTexParam.Size[0] = TextureSize;
+	depthTexParam.Size[1] = TextureSize;
+	depthTarget_ = graphics_->GetGraphicsDevice()->CreateDepthTexture(depthTexParam);
 
 	mesh_ = Mesh::Load(graphics_, "resources/meshes/sphere.obj");
 
@@ -446,107 +410,89 @@ bool Preview::Initialize(std::shared_ptr<Graphics> graphics)
 	black_ = Texture::Load(graphics_, {1, 1}, blackPixels.data());
 	white_ = Texture::Load(graphics_, {1, 1}, whitePixels.data());
 
+	Effekseer::FixedSizeVector<Effekseer::Backend::TextureRef, Effekseer::Backend::RenderTargetMax> renderTargets;
+	renderTargets.resize(1);
+	renderTargets.at(0) = renderTarget_;
+	renderPass_ = graphics->GetGraphicsDevice()->CreateRenderPass(renderTargets, depthTarget_);
 	return true;
 }
 
-static const char g_header_vs_gl3_src[] = ""
-										  "#define lowp\n"
-										  "#define mediump\n"
-										  "#define highp\n"
-										  "#define IN in\n"
-										  "#define CENTROID centroid\n"
-										  "#define TEX2D textureLod\n"
-										  "#define OUT out\n"
-										  "uniform vec4 customData1;\n"	 // HACK
-										  "uniform vec4 customData2;\n"; // HACK
-
-static const char g_header_fs_gl3_src[] = ""
-										  "#define lowp\n"
-										  "#define mediump\n"
-										  "#define highp\n"
-										  "#define IN in\n"
-										  "#define CENTROID centroid\n"
-										  "#define TEX2D texture\n"
-										  "layout (location = 0) out vec4 FRAGCOLOR;\n"
-										  "uniform vec4 customData1;\n"	 // HACK
-										  "uniform vec4 customData2;\n"; // HACK
-
-bool Preview::CompileShader(std::string& vs,
-							std::string& ps,
-							std::vector<std::shared_ptr<TextureWithSampler>> textures,
-							std::vector<std::shared_ptr<TextExporterUniform>>& uniforms,
-							std::vector<std::shared_ptr<TextExporterGradient>>& gradients,
-							std::vector<std::shared_ptr<TextExporterGradient>>& fixedGradients)
+bool Preview::UpdateShader(const CompileResult& compileResult)
 {
-	VS = vs;
-	PS = ps;
+	auto gd = graphics_->GetGraphicsDevice().DownCast<EffekseerRendererGL::Backend::GraphicsDevice>();
+	auto vl = EffekseerRenderer::GetMaterialModelVertexLayout(graphics_->GetGraphicsDevice()).DownCast<Effekseer::Backend::VertexLayout>();
 
-	ar::SafeDelete(shader);
-	ar::SafeDelete(constantBuffer);
+	auto compiler = Effekseer::MakeRefPtr<Effekseer::MaterialCompilerGL>();
+	auto binary = compiler->Compile(compileResult.materialFile.get());
 
-	ar::ShaderCompilerParameter param;
-	param.VertexShaderTexts.push_back(g_header_vs_gl3_src);
-	param.VertexShaderTexts.push_back(VS);
-	param.PixelShaderTexts.push_back(g_header_fs_gl3_src);
-	param.PixelShaderTexts.push_back(PS);
-	param.OpenGLVersion = ar::OpenGLVersionType::OpenGL33;
-	ar::ShaderCompilerResult result;
+	auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(*compileResult.materialFile, true, 0, 10);
+	Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> uniformLayoutElements;
+	EffekseerRendererGL::StoreModelVertexUniform(*compileResult.materialFile, parameterGenerator, uniformLayoutElements, true);
+	EffekseerRendererGL::StorePixelUniform(*compileResult.materialFile, parameterGenerator, uniformLayoutElements, 0);
+	uniformLayout_ = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(EffekseerRendererGL::StoreTextureLocations(*compileResult.materialFile), uniformLayoutElements);
 
-	if (!graphics_->GetCompiler()->Compile(result, param))
+	VS = reinterpret_cast<const char*>(binary->GetVertexShaderData(Effekseer::MaterialShaderType::Model));
+	PS = reinterpret_cast<const char*>(binary->GetPixelShaderData(Effekseer::MaterialShaderType::Model));
+
+	shader_ = gd->CreateShaderFromCodes(
+					{{EffekseerRendererGL::GetVertexShaderHeader(gd->GetDeviceType())}, VS.c_str()},
+					{{EffekseerRendererGL::GetFragmentShaderHeader(gd->GetDeviceType())}, PS.c_str()},
+					uniformLayout_)
+				  .DownCast<EffekseerRendererGL::Backend::Shader>();
+
+	Effekseer::SafeRelease(binary);
+
+	if (shader_ == nullptr)
 	{
-		std::cout << "Compile Error : " << std::endl;
-		std::cout << result.ErrorMessage << std::endl;
 		return false;
 	}
 
-	shader = ar::Shader::Create(graphics_->GetManager());
-	std::vector<ar::VertexLayout> layout;
-	layout.resize(6);
-	layout[0].Name = "atPosition";
-	layout[0].LayoutFormat = ar::VertexLayoutFormat::R32G32B32_FLOAT;
-	layout[1].Name = "atTexCoord";
-	layout[1].LayoutFormat = ar::VertexLayoutFormat::R32G32_FLOAT;
-	layout[2].Name = "atTexCoord2";
-	layout[2].LayoutFormat = ar::VertexLayoutFormat::R32G32_FLOAT;
-	layout[3].Name = "atNormal";
-	layout[3].LayoutFormat = ar::VertexLayoutFormat::R8G8B8A8_UNORM;
-	layout[4].Name = "atTangent";
-	layout[4].LayoutFormat = ar::VertexLayoutFormat::R8G8B8A8_UNORM;
-	layout[5].Name = "atColor";
-	layout[5].LayoutFormat = ar::VertexLayoutFormat::R8G8B8A8_UNORM;
+	vertexUniformBuffer_ = gd->CreateUniformBuffer(parameterGenerator.VertexShaderUniformBufferSize, nullptr);
+	pixelUniformBuffer_ = gd->CreateUniformBuffer(parameterGenerator.PixelShaderUniformBufferSize, nullptr);
 
-	shader->Initialize(graphics_->GetManager(), result, layout, false);
+	Effekseer::Backend::PipelineStateParameter pipParam;
 
-	constantBuffer = ar::ConstantBuffer::Create(graphics_->GetManager());
-	constantBuffer->Initialize(graphics_->GetManager(), shader->GetPixelConstantBufferSize());
+	// OpenGL doesn't require it
+	pipParam.FrameBufferPtr = nullptr;
+	pipParam.VertexLayoutPtr = vl;
+	pipParam.ShaderPtr = shader_;
+	pipParam.IsDepthTestEnabled = false;
+	pipParam.IsDepthWriteEnabled = false;
 
-	for (auto layout : shader->GetPixelConstantLayouts())
+	pipParam.IsBlendEnabled = true;
+	pipParam.BlendSrcFunc = Effekseer::Backend::BlendFuncType::SrcAlpha;
+	pipParam.BlendDstFunc = Effekseer::Backend::BlendFuncType::OneMinusSrcAlpha;
+	pipParam.BlendSrcFuncAlpha = Effekseer::Backend::BlendFuncType::SrcAlpha;
+	pipParam.BlendDstFuncAlpha = Effekseer::Backend::BlendFuncType::OneMinusSrcAlpha;
+	pipParam.BlendEquationRGB = Effekseer::Backend::BlendEquationType::Add;
+	pipParam.BlendEquationAlpha = Effekseer::Backend::BlendEquationType::Add;
+	pipelineState_ = graphics_->GetGraphicsDevice()->CreatePipelineState(pipParam);
+
+	for (const auto& elm : uniformLayout_->GetElements())
 	{
-		for (auto uni : uniforms)
+		for (const auto& uni : compileResult.uniforms)
 		{
-			if (uni->UniformName == layout.first)
+			if (uni->UniformName == elm.Name.c_str())
 			{
-				constantBuffer->SetData(uni->DefaultConstants.data(), layout.second.GetSize(), layout.second.Offset);
-				break;
+				StoreData(gd, vertexUniformBuffer_, pixelUniformBuffer_, elm, uni->DefaultConstants);
 			}
 		}
 
-		for (const auto grad : gradients)
+		for (const auto grad : compileResult.gradients)
 		{
 			auto data = EffekseerRenderer::ToUniform(ToEffekseerGradient(grad->Defaults));
 
 			for (size_t i = 0; i < data.size(); i++)
 			{
-				if (grad->UniformName + "_" + std::to_string(i) == layout.first)
+				if (grad->UniformName + "_" + std::to_string(i) == elm.Name.c_str())
 				{
-					constantBuffer->SetData(data[i].data(), layout.second.GetSize(), layout.second.Offset);
-					break;
+					StoreData(gd, vertexUniformBuffer_, pixelUniformBuffer_, elm, data[i]);
 				}
 			}
 		}
 	}
 
-	textures_ = textures;
+	textures_ = compileResult.textures;
 
 	return true;
 }
@@ -557,17 +503,20 @@ bool Preview::UpdateUniforms(std::vector<std::shared_ptr<TextureWithSampler>> te
 {
 	std::cout << "Update Uniforms" << std::endl;
 
-	if (shader == nullptr)
-		return false;
-
-	for (auto layout : shader->GetPixelConstantLayouts())
+	if (shader_ == nullptr)
 	{
-		for (auto uni : uniforms)
+		return false;
+	}
+
+	// TODO remove copy and paste
+	auto gd = graphics_->GetGraphicsDevice().DownCast<EffekseerRendererGL::Backend::GraphicsDevice>();
+	for (const auto& elm : uniformLayout_->GetElements())
+	{
+		for (const auto& uni : uniforms)
 		{
-			if (uni->UniformName == layout.first)
+			if (uni->UniformName == elm.Name.c_str())
 			{
-				constantBuffer->SetData(uni->DefaultConstants.data(), layout.second.GetSize(), layout.second.Offset);
-				break;
+				StoreData(gd, vertexUniformBuffer_, pixelUniformBuffer_, elm, uni->DefaultConstants);
 			}
 		}
 
@@ -577,10 +526,9 @@ bool Preview::UpdateUniforms(std::vector<std::shared_ptr<TextureWithSampler>> te
 
 			for (size_t i = 0; i < data.size(); i++)
 			{
-				if (grad->UniformName + "_" + std::to_string(i) == layout.first)
+				if (grad->UniformName + "_" + std::to_string(i) == elm.Name.c_str())
 				{
-					constantBuffer->SetData(data[i].data(), layout.second.GetSize(), layout.second.Offset);
-					break;
+					StoreData(gd, vertexUniformBuffer_, pixelUniformBuffer_, elm, data[i]);
 				}
 			}
 		}
@@ -593,10 +541,12 @@ bool Preview::UpdateUniforms(std::vector<std::shared_ptr<TextureWithSampler>> te
 
 bool Preview::UpdateConstantValues(float time, std::array<float, 4> customData1, std::array<float, 4> customData2)
 {
-	if (shader == nullptr)
+	if (shader_ == nullptr)
+	{
 		return false;
+	}
 
-	Matrix44 matProj;
+	Effekseer::Matrix44 matProj;
 
 	if (ModelType == PreviewModelType::Screen)
 	{
@@ -604,131 +554,126 @@ bool Preview::UpdateConstantValues(float time, std::array<float, 4> customData1,
 	}
 	else
 	{
-		matProj.SetPerspectiveFovRH_OpenGL(30.0f / 180.0f * 3.14f, 1.0, 0.1f, 10.0f);
+		matProj.PerspectiveFovRH_OpenGL(30.0f / 180.0f * 3.14f, 1.0, 0.1f, 10.0f);
 	}
 
-	for (auto layout : shader->GetPixelConstantLayouts())
+	Effekseer::Matrix44 matCamera;
+	matCamera.LookAtRH(Effekseer::Vector3D(0, 0, 2), Effekseer::Vector3D(0, 0, 0), Effekseer::Vector3D(0, 1, 0));
+
+	Effekseer::Matrix44 matCameraProj;
+
+	Effekseer::Matrix44::Mul(matCameraProj, matCamera, matProj);
+
+	auto gd = graphics_->GetGraphicsDevice().DownCast<EffekseerRendererGL::Backend::GraphicsDevice>();
+
+	for (const auto& elm : uniformLayout_->GetElements())
 	{
-		if (layout.first == "uMatProjection")
+		if (elm.Name == "ProjectionMatrix")
 		{
-			constantBuffer->SetData(matProj.Values, layout.second.GetSize(), layout.second.Offset);
+			StoreData(gd, vertexUniformBuffer_, pixelUniformBuffer_, elm, matCameraProj);
 		}
-
-		if (layout.first == "uMatCamera")
+		else if (elm.Name == "ModelMatrix")
 		{
-			Matrix44 mat;
-			mat.SetLookAtRH(Vector3(0, 0, 2), Vector3(0, 0, 0), Vector3(0, 1, 0));
-
-			constantBuffer->SetData(mat.Values, layout.second.GetSize(), layout.second.Offset);
+			Effekseer::Matrix44 matModel;
+			matModel.Indentity();
+			StoreData(gd, vertexUniformBuffer_, pixelUniformBuffer_, elm, matModel);
 		}
-
-		if (layout.first == "mUVInversed")
+		else if (elm.Name == "ModelColor")
 		{
-			float values[4];
+			std::array<float, 4> values;
+			values.fill(1.0f);
+			StoreData(gd, vertexUniformBuffer_, pixelUniformBuffer_, elm, values);
+		}
+		else if (elm.Name == "UVOffset")
+		{
+			std::array<float, 4> values;
+			values[0] = 0.0f;
+			values[1] = 0.0f;
+			values[2] = 1.0f;
+			values[3] = 1.0f;
+			StoreData(gd, vertexUniformBuffer_, pixelUniformBuffer_, elm, values);
+		}
+		else if (elm.Name == "mUVInversed")
+		{
+			std::array<float, 4> values;
 			values[0] = 1.0f;
 			values[1] = -1.0f;
 			values[2] = 1.0f;
 			values[3] = -1.0f;
-
-			constantBuffer->SetData(values, layout.second.GetSize(), layout.second.Offset);
+			StoreData(gd, vertexUniformBuffer_, pixelUniformBuffer_, elm, values);
 		}
-
-		if (layout.first == "mUVInversedBack")
+		else if (elm.Name == "mUVInversedBack")
 		{
-			float values[4];
+			std::array<float, 4> values;
 			values[0] = 1.0f;
 			values[1] = -1.0f;
 			values[2] = 1.0f;
 			values[3] = -1.0f;
-
-			constantBuffer->SetData(values, layout.second.GetSize(), layout.second.Offset);
+			StoreData(gd, vertexUniformBuffer_, pixelUniformBuffer_, elm, values);
 		}
-
-		if (layout.first == "cameraPosition")
+		else if (elm.Name == "cameraPosition")
 		{
-			float values[4];
+			std::array<float, 4> values;
 			values[0] = 0.0f;
 			values[1] = 0.0f;
 			values[2] = 2.0f;
-
-			constantBuffer->SetData(values, layout.second.GetSize(), layout.second.Offset);
+			StoreData(gd, vertexUniformBuffer_, pixelUniformBuffer_, elm, values);
 		}
-
-		if (layout.first == "reconstructionParam1")
+		else if (elm.Name == "reconstructionParam1")
 		{
-			float values[4];
+			std::array<float, 4> values;
 			values[0] = 0.0f;
 			values[1] = 1.0f;
 			values[2] = 0.0f;
 			values[3] = 1.0f;
-
-			constantBuffer->SetData(values, layout.second.GetSize(), layout.second.Offset);
+			StoreData(gd, vertexUniformBuffer_, pixelUniformBuffer_, elm, values);
 		}
-
-		if (layout.first == "reconstructionParam2")
+		else if (elm.Name == "reconstructionParam2")
 		{
-			float values[4];
+			std::array<float, 4> values;
 			values[0] = matProj.Values[2][2];
 			values[1] = matProj.Values[3][2];
 			values[2] = matProj.Values[2][3];
 			values[3] = matProj.Values[3][3];
-
-			constantBuffer->SetData(values, layout.second.GetSize(), layout.second.Offset);
+			StoreData(gd, vertexUniformBuffer_, pixelUniformBuffer_, elm, values);
 		}
-
-		if (layout.first == "lightDirection")
+		else if (elm.Name == "lightDirection")
 		{
-			float values[4];
+			std::array<float, 4> values;
 			values[0] = 1.0f / sqrt(3.0f);
 			values[1] = 1.0f / sqrt(3.0f);
 			values[2] = 1.0f / sqrt(3.0f);
-
-			constantBuffer->SetData(values, layout.second.GetSize(), layout.second.Offset);
+			values[3] = 1.0f;
+			StoreData(gd, vertexUniformBuffer_, pixelUniformBuffer_, elm, values);
 		}
-
-		if (layout.first == "lightColor")
+		else if (elm.Name == "lightColor")
 		{
-			float values[4];
-			values[0] = 1.0f;
-			values[1] = 1.0f;
-			values[2] = 1.0f;
-
-			constantBuffer->SetData(values, layout.second.GetSize(), layout.second.Offset);
+			std::array<float, 4> values;
+			values.fill(1);
+			StoreData(gd, vertexUniformBuffer_, pixelUniformBuffer_, elm, values);
 		}
-
-		if (layout.first == "lightAmbientColor")
+		else if (elm.Name == "lightAmbientColor")
 		{
-			float values[4];
-			values[0] = 0.0f;
-			values[1] = 0.0f;
-			values[2] = 0.0f;
-
-			constantBuffer->SetData(values, layout.second.GetSize(), layout.second.Offset);
+			std::array<float, 4> values;
+			values.fill(0);
+			StoreData(gd, vertexUniformBuffer_, pixelUniformBuffer_, elm, values);
 		}
-	}
-
-	for (auto layout : shader->GetPixelConstantLayouts())
-	{
-		if (layout.first == "predefined_uniform")
+		else if (elm.Name == "predefined_uniform")
 		{
 			std::array<float, 4> values;
 			values[0] = time;
 			values[1] = 1.0f;
 			values[2] = 0.0f;
 			values[3] = time;
-			constantBuffer->SetData(values.data(), layout.second.GetSize(), layout.second.Offset);
+			StoreData(gd, vertexUniformBuffer_, pixelUniformBuffer_, elm, values);
 		}
-
-		if (layout.first == "customData1")
+		else if (elm.Name == "customData1s")
 		{
-			float values[4];
-			constantBuffer->SetData(customData1.data(), layout.second.GetSize(), layout.second.Offset);
+			StoreData(gd, vertexUniformBuffer_, pixelUniformBuffer_, elm, customData1);
 		}
-
-		if (layout.first == "customData2")
+		else if (elm.Name == "customData2s")
 		{
-			float values[4];
-			constantBuffer->SetData(customData2.data(), layout.second.GetSize(), layout.second.Offset);
+			StoreData(gd, vertexUniformBuffer_, pixelUniformBuffer_, elm, customData2);
 		}
 	}
 
@@ -737,111 +682,71 @@ bool Preview::UpdateConstantValues(float time, std::array<float, 4> customData1,
 
 void Preview::Render()
 {
-	ar::SceneParameter sceneParam;
-	sceneParam.RenderTargets[0] = renderTarget_;
-	sceneParam.DepthTarget = depthTarget_;
+	auto gd = graphics_->GetGraphicsDevice();
 
-	graphics_->GetManager()->BeginScene(sceneParam);
-	graphics_->GetManager()->BeginRendering();
+	gd->BeginRenderPass(renderPass_, true, true, Effekseer::Color(0, 0, 0, 0));
 
-	ar::Color color;
-	color.R = 0;
-	color.G = 0;
-	color.B = 0;
-	color.A = 0;
-	graphics_->GetManager()->Clear(true, true, color);
-
-	context->Begin();
-
-	if (shader != nullptr)
+	if (shader_ != nullptr)
 	{
+		Effekseer::Backend::DrawParameter drawParam;
+
 		if (mesh_ != nullptr && ModelType != PreviewModelType::Screen)
 		{
-			ar::DrawParameter drawParam;
-			drawParam.AlphaBlend = ar::AlphaBlendMode::Blend;
-			drawParam.Culling = ar::CullingType::Double;
 			drawParam.VertexBufferPtr = mesh_->GetVertexBuffer();
 			drawParam.IndexBufferPtr = mesh_->GetIndexBuffer();
-			drawParam.IndexCount = mesh_->GetIndexCount();
 			drawParam.IndexOffset = 0;
-			drawParam.ShaderPtr = shader;
-			drawParam.IsDepthTest = false;
-			drawParam.IsDepthWrite = false;
-			drawParam.VertexConstantBufferPtr = this->constantBuffer;
-			drawParam.PixelConstantBufferPtr = this->constantBuffer;
-
-			auto pixelLayouts = shader->GetPixelTextureLayouts();
-
-			for (int i = 0; i < textures_.size(); i++)
-			{
-				if (pixelLayouts.count(textures_[i]->Name) > 0)
-				{
-					auto ind = pixelLayouts[textures_[i]->Name].Index;
-
-					drawParam.PixelShaderTextures[ind] =
-						(textures_[i]->TexturePtr != nullptr) ? textures_[i]->TexturePtr->GetTexture() : nullptr;
-					drawParam.PixelShaderTextureWraps[ind] =
-						textures_[i]->SamplerType == TextureSamplerType::Repeat ? ar::TextureWrapType::Repeat : ar::TextureWrapType::Clamp;
-				}
-			}
-
-			if (pixelLayouts.count("efk_depth") > 0)
-			{
-				drawParam.PixelShaderTextures[pixelLayouts["efk_depth"].Index] = white_->GetTexture();
-			}
-
-			context->Draw(drawParam);
+			drawParam.InstanceCount = 1;
+			drawParam.PrimitiveCount = mesh_->GetIndexCount() / 3;
+			drawParam.PipelineStatePtr = pipelineState_;
+			drawParam.VertexUniformBufferPtr = vertexUniformBuffer_;
+			drawParam.PixelUniformBufferPtr = pixelUniformBuffer_;
 		}
 		else
 		{
-			ar::DrawParameter drawParam;
-			drawParam.AlphaBlend = ar::AlphaBlendMode::Blend;
-			drawParam.Culling = ar::CullingType::Double;
-			drawParam.VertexBufferPtr = vb;
-			drawParam.IndexBufferPtr = ib;
-			drawParam.IndexCount = 6;
+			drawParam.VertexBufferPtr = screenVB_;
+			drawParam.IndexBufferPtr = screenIB_;
 			drawParam.IndexOffset = 0;
-			drawParam.ShaderPtr = shader;
-			drawParam.IsDepthTest = false;
-			drawParam.IsDepthWrite = false;
-			drawParam.VertexConstantBufferPtr = this->constantBuffer;
-			drawParam.PixelConstantBufferPtr = this->constantBuffer;
+			drawParam.InstanceCount = 1;
+			drawParam.PrimitiveCount = 2;
+			drawParam.PipelineStatePtr = pipelineState_;
+			drawParam.VertexUniformBufferPtr = vertexUniformBuffer_;
+			drawParam.PixelUniformBufferPtr = pixelUniformBuffer_;
+		}
 
-			auto pixelLayouts = shader->GetPixelTextureLayouts();
-
-			for (int i = 0; i < textures_.size(); i++)
+		for (int i = 0; i < textures_.size(); i++)
+		{
+			for (size_t j = 0; j < uniformLayout_->GetTextures().size(); j++)
 			{
-				if (pixelLayouts.count(textures_[i]->Name) > 0)
+				if (textures_[i]->Name == uniformLayout_->GetTextures()[j].c_str())
 				{
-					auto ind = pixelLayouts[textures_[i]->Name].Index;
-
-					drawParam.PixelShaderTextures[ind] =
-						(textures_[i]->TexturePtr != nullptr) ? textures_[i]->TexturePtr->GetTexture() : nullptr;
-					drawParam.PixelShaderTextureWraps[ind] =
-						textures_[i]->SamplerType == TextureSamplerType::Repeat ? ar::TextureWrapType::Repeat : ar::TextureWrapType::Clamp;
+					drawParam.TexturePtrs[j] = textures_[i]->TexturePtr->GetTexture();
+					drawParam.TextureWrapTypes[j] = textures_[i]->SamplerType == TextureSamplerType::Repeat ? Effekseer::Backend::TextureWrapType::Repeat : Effekseer::Backend::TextureWrapType::Clamp;
 				}
 			}
-
-			if (pixelLayouts.count("efk_depth") > 0)
-			{
-				drawParam.PixelShaderTextures[pixelLayouts["efk_depth"].Index] = white_->GetTexture();
-			}
-
-			context->Draw(drawParam);
 		}
+
+		for (size_t j = 0; j < uniformLayout_->GetTextures().size(); j++)
+		{
+			if (uniformLayout_->GetTextures()[j] == "efk_depth")
+			{
+				drawParam.TexturePtrs[j] = white_->GetTexture();
+				drawParam.TextureWrapTypes[j] = Effekseer::Backend::TextureWrapType::Clamp;
+			}
+		}
+
+		gd->Draw(drawParam);
 	}
 
-	context->End();
-
-	graphics_->GetManager()->EndRendering();
-	graphics_->GetManager()->EndScene();
+	gd->EndRenderPass();
 }
 
 uint64_t Preview::GetInternal()
 {
 	if (renderTarget_ == nullptr)
 		return 0;
-	auto ret = renderTarget_->GetInternalObjects()[0];
+
+	auto prop = EffekseerRendererGL::GetTextureProperty(renderTarget_);
+	auto ret = prop.Buffer;
 
 	// Temp
 	glBindTexture(GL_TEXTURE_2D, ret);
