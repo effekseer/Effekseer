@@ -425,9 +425,9 @@ bool Preview::UpdateShader(const CompileResult& compileResult)
 	auto compiler = Effekseer::MaterialCompilerGL();
 	auto binary = compiler.Compile(compileResult.materialFile.get());
 
-	auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(*compileResult.materialFile, true, 0, 1);
+	auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(*compileResult.materialFile, true, 0, 10);
 	Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> uniformLayoutElements;
-	EffekseerRendererGL::StoreModelVertexUniform(*compileResult.materialFile, parameterGenerator, uniformLayoutElements, false);
+	EffekseerRendererGL::StoreModelVertexUniform(*compileResult.materialFile, parameterGenerator, uniformLayoutElements, true);
 	EffekseerRendererGL::StorePixelUniform(*compileResult.materialFile, parameterGenerator, uniformLayoutElements, 0);
 	uniformLayout_ = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(EffekseerRendererGL::StoreTextureLocations(*compileResult.materialFile), uniformLayoutElements);
 
@@ -584,6 +584,15 @@ bool Preview::UpdateConstantValues(float time, std::array<float, 4> customData1,
 			values.fill(1.0f);
 			StoreData(gd, vertexUniformBuffer_, pixelUniformBuffer_, elm, values);
 		}
+		else if (elm.Name == "UVOffset")
+		{
+			std::array<float, 4> values;
+			values[0] = 0.0f;
+			values[1] = 0.0f;
+			values[2] = 1.0f;
+			values[3] = 1.0f;
+			StoreData(gd, vertexUniformBuffer_, pixelUniformBuffer_, elm, values);
+		}
 		else if (elm.Name == "mUVInversed")
 		{
 			std::array<float, 4> values;
@@ -658,17 +667,13 @@ bool Preview::UpdateConstantValues(float time, std::array<float, 4> customData1,
 			values[3] = time;
 			StoreData(gd, vertexUniformBuffer_, pixelUniformBuffer_, elm, values);
 		}
-		else if (elm.Name == "customData1")
+		else if (elm.Name == "customData1s")
 		{
-			std::array<float, 4> values;
-			values.fill(0);
-			StoreData(gd, vertexUniformBuffer_, pixelUniformBuffer_, elm, values);
+			StoreData(gd, vertexUniformBuffer_, pixelUniformBuffer_, elm, customData1);
 		}
-		else if (elm.Name == "customData2")
+		else if (elm.Name == "customData2s")
 		{
-			std::array<float, 4> values;
-			values.fill(0);
-			StoreData(gd, vertexUniformBuffer_, pixelUniformBuffer_, elm, values);
+			StoreData(gd, vertexUniformBuffer_, pixelUniformBuffer_, elm, customData2);
 		}
 	}
 
