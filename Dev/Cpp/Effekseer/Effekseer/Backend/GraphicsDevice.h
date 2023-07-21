@@ -5,6 +5,7 @@
 #include "../Effekseer.Base.Pre.h"
 #include "../Effekseer.Color.h"
 #include "../Utils/Effekseer.CustomAllocator.h"
+#include "../Utils/String.h"
 #include <array>
 #include <stdint.h>
 #include <string>

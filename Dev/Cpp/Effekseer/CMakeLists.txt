@@ -25,6 +25,7 @@ set(effekseer_public_h
     Effekseer/Network/Effekseer.Server.h
     Effekseer/Network/Effekseer.Client.h
     Effekseer/Utils/Effekseer.CustomAllocator.h
+    Effekseer/Utils/String.h
     Effekseer/IO/Effekseer.EfkEfcFactory.h
 
     Effekseer/SIMD/Base.h
