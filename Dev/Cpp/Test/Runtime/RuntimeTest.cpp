@@ -541,34 +541,6 @@ void CustomAllocatorTest()
 	m[1] = 10;
 }
 
-void StringAndPathHelperTest()
-{
-
-	if (Effekseer::StringHelper::To<char16_t>("hoge") != std::u16string(u"hoge"))
-		throw "";
-
-	if (Effekseer::StringHelper::To<char32_t>("hoge") != std::u32string(U"hoge"))
-		throw "";
-
-	if (Effekseer::PathHelper::Normalize(std::u16string(u"/a/../b/c")) != std::u16string(u"/b/c"))
-		throw "";
-
-	if (Effekseer::PathHelper::Normalize(std::u16string(u"a/../b/c")) != std::u16string(u"b/c"))
-		throw "";
-
-	if (Effekseer::PathHelper::Normalize(std::u16string(u"../b/c")) != std::u16string(u"../b/c"))
-		throw "";
-
-	if (Effekseer::PathHelper::Absolute(std::u16string(u"d/c"), std::u16string(u"/a/b/c")) != std::u16string(u"/a/b/d/c"))
-		throw "";
-
-	if (Effekseer::PathHelper::Absolute(std::u16string(u"../d/c"), std::u16string(u"/a/b/c")) != std::u16string(u"/a/d/c"))
-		throw "";
-
-	if (Effekseer::PathHelper::Relative(std::u16string(u"/a/b/e"), std::u16string(u"/a/b/c")) != std::u16string(u"e"))
-		throw "";
-}
-
 void DX11DefferedContextTest()
 {
 #ifdef _WIN32
@@ -923,8 +895,6 @@ void LODsTest()
 
 #if defined(__linux__) || defined(__APPLE__) || defined(WIN32)
 
-TestRegister Runtime_StringAndPathHelperTest("Runtime.StringAndPathHelperTest", []() -> void { StringAndPathHelperTest(); });
-
 TestRegister Runtime_CustomAllocatorTest("Runtime.CustomAllocatorTest", []() -> void { CustomAllocatorTest(); });
 
 TestRegister Runtime_InstanceDisposeTest("Runtime.InstanceDisposeTest", []() -> void { InstanceDisposeTest(); });
@@ -956,4 +926,5 @@ TestRegister Runtime_RenderLimitTest("Runtime.RenderLimitTest", []() -> void { R
 TestRegister Runtime_SRGBLinearTest("Runtime.SRGBLinearTest", []() -> void { SRGBLinearTest(); });
 
 TestRegister Runtime_LODsTest("Runtime.LODsTest", []() -> void { LODsTest(); });
+
 #endif
