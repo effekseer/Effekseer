@@ -1,57 +1,5 @@
 #include "CustomAsyncLoader.h"
 
-static void PathCombine(char16_t* dst, const char16_t* src1, const char16_t* src2)
-{
-	int len1 = 0, len2 = 0;
-	if (src1 != nullptr)
-	{
-		for (len1 = 0; src1[len1] != L'\0'; len1++)
-		{
-		}
-		memcpy(dst, src1, len1 * sizeof(char16_t));
-		if (len1 > 0 && src1[len1 - 1] != L'/' && src1[len1 - 1] != L'\\')
-		{
-			dst[len1++] = L'/';
-		}
-	}
-	if (src2 != nullptr)
-	{
-		for (len2 = 0; src2[len2] != L'\0'; len2++)
-		{
-		}
-		memcpy(&dst[len1], src2, len2 * sizeof(char16_t));
-	}
-
-	for (int i = 0; i < len1 + len2; i++)
-	{
-		if (dst[i] == u'\\')
-		{
-			dst[i] = u'/';
-		}
-	}
-
-	dst[len1 + len2] = L'\0';
-}
-
-static void GetParentDir(char16_t* dst, const char16_t* src)
-{
-	int i, last = -1;
-	for (i = 0; src[i] != L'\0'; i++)
-	{
-		if (src[i] == L'/' || src[i] == L'\\')
-			last = i;
-	}
-	if (last >= 0)
-	{
-		memcpy(dst, src, last * sizeof(char16_t));
-		dst[last] = L'\0';
-	}
-	else
-	{
-		dst[0] = L'\0';
-	}
-}
-
 template <typename T, typename K>
 void RemoveFinished(std::map<K, std::shared_ptr<CustomAsyncLoadingValue<T>>>& kv)
 {
@@ -431,16 +379,13 @@ bool CustomAsyncLoadingEffect::EndLoading()
 
 		// register to a resource manager
 		auto rm = setting_->GetResourceManager();
+		auto directoryPath = Effekseer::PathHelper::GetDirectoryName(Effekseer::FixedSizeString<char16_t, 512>(path_.c_str()));
 
 		for (int texType = 0; texType < 3; texType++)
 		{
 			for (size_t i = 0; i < textureCounts[texType]; i++)
 			{
-				char16_t directoryPath[512];
-				GetParentDir(directoryPath, path_.c_str());
-				char16_t fullPath[512];
-				PathCombine(fullPath, directoryPath, getTexturePath(texType, i));
-
+				auto fullPath = Effekseer::PathHelper::Combine(directoryPath, Effekseer::FixedSizeString<char16_t, 512>(getTexturePath(texType, i)));
 				const auto type = static_cast<Effekseer::TextureType>(texType);
 				auto& loadingTextures = loadingTextures_[texType];
 
@@ -452,18 +397,14 @@ bool CustomAsyncLoadingEffect::EndLoading()
 				if (loadingTextures[i].GetState() == AsyncLoadingState::Finished)
 				{
 					Value->SetTexture(i, type, loadingTextures[i].GetValue());
-					rm->CachedTextures.Register(fullPath, loadingTextures[i].GetValue());
+					rm->CachedTextures.Register(fullPath.data(), loadingTextures[i].GetValue());
 				}
 			}
 		}
 
 		for (size_t i = 0; i < loadingModels_.size(); i++)
 		{
-			char16_t directoryPath[512];
-			GetParentDir(directoryPath, path_.c_str());
-			char16_t fullPath[512];
-			PathCombine(fullPath, directoryPath, Value->GetModelPath(i));
-
+			auto fullPath = Effekseer::PathHelper::Combine(directoryPath, Effekseer::FixedSizeString<char16_t, 512>(Value->GetModelPath(i)));
 			if (!loadingModels_[i].GetIsValid())
 			{
 				continue;
@@ -472,17 +413,13 @@ bool CustomAsyncLoadingEffect::EndLoading()
 			if (loadingModels_[i].GetState() == AsyncLoadingState::Finished)
 			{
 				Value->SetModel(i, loadingModels_[i].GetValue());
-				rm->CachedModels.Register(fullPath, loadingModels_[i].GetValue());
+				rm->CachedModels.Register(fullPath.data(), loadingModels_[i].GetValue());
 			}
 		}
 
 		for (size_t i = 0; i < loadingMaterials_.size(); i++)
 		{
-			char16_t directoryPath[512];
-			GetParentDir(directoryPath, path_.c_str());
-			char16_t fullPath[512];
-			PathCombine(fullPath, directoryPath, Value->GetMaterialPath(i));
-
+			auto fullPath = Effekseer::PathHelper::Combine(directoryPath, Effekseer::FixedSizeString<char16_t, 512>(Value->GetMaterialPath(i)));
 			if (!loadingMaterials_[i].GetIsValid())
 			{
 				continue;
@@ -491,17 +428,13 @@ bool CustomAsyncLoadingEffect::EndLoading()
 			if (loadingMaterials_[i].GetState() == AsyncLoadingState::Finished)
 			{
 				Value->SetMaterial(i, loadingMaterials_[i].GetValue());
-				rm->CachedMaterials.Register(fullPath, loadingMaterials_[i].GetValue());
+				rm->CachedMaterials.Register(fullPath.data(), loadingMaterials_[i].GetValue());
 			}
 		}
 
 		for (size_t i = 0; i < loadingCurves_.size(); i++)
 		{
-			char16_t directoryPath[512];
-			GetParentDir(directoryPath, path_.c_str());
-			char16_t fullPath[512];
-			PathCombine(fullPath, directoryPath, Value->GetCurvePath(i));
-
+			auto fullPath = Effekseer::PathHelper::Combine(directoryPath, Effekseer::FixedSizeString<char16_t, 512>(Value->GetCurvePath(i)));
 			if (!loadingCurves_[i].GetIsValid())
 			{
 				continue;
@@ -510,17 +443,13 @@ bool CustomAsyncLoadingEffect::EndLoading()
 			if (loadingCurves_[i].GetState() == AsyncLoadingState::Finished)
 			{
 				Value->SetCurve(i, loadingCurves_[i].GetValue());
-				rm->CachedCurves.Register(fullPath, loadingCurves_[i].GetValue());
+				rm->CachedCurves.Register(fullPath.data(), loadingCurves_[i].GetValue());
 			}
 		}
 
 		for (size_t i = 0; i < loadingSounds_.size(); i++)
 		{
-			char16_t directoryPath[512];
-			GetParentDir(directoryPath, path_.c_str());
-			char16_t fullPath[512];
-			PathCombine(fullPath, directoryPath, Value->GetWavePath(i));
-
+			auto fullPath = Effekseer::PathHelper::Combine(directoryPath, Effekseer::FixedSizeString<char16_t, 512>(Value->GetWavePath(i)));
 			if (!loadingSounds_[i].GetIsValid())
 			{
 				continue;
@@ -529,7 +458,7 @@ bool CustomAsyncLoadingEffect::EndLoading()
 			if (loadingSounds_[i].GetState() == AsyncLoadingState::Finished)
 			{
 				Value->SetSound(i, loadingSounds_[i].GetValue());
-				rm->CachedSounds.Register(fullPath, loadingSounds_[i].GetValue());
+				rm->CachedSounds.Register(fullPath.data(), loadingSounds_[i].GetValue());
 			}
 		}
 
@@ -554,110 +483,91 @@ bool CustomAsyncLoadingEffect::EndLoading()
 		if (loader != nullptr)
 		{
 			auto rm = setting_->GetResourceManager();
+			auto directoryPath = Effekseer::PathHelper::GetDirectoryName(Effekseer::FixedSizeString<char16_t, 512>(path_.c_str()));
 
 			for (int texType = 0; texType < 3; texType++)
 			{
 				for (size_t i = 0; i < textureCounts[texType]; i++)
 				{
-					char16_t directoryPath[512];
-					GetParentDir(directoryPath, path_.c_str());
-					char16_t fullPath[512];
-					PathCombine(fullPath, directoryPath, getTexturePath(texType, i));
-
+					auto fullPath = Effekseer::PathHelper::Combine(directoryPath, Effekseer::FixedSizeString<char16_t, 512>(getTexturePath(texType, i)));
 					const auto type = static_cast<Effekseer::TextureType>(texType);
 					auto& loadingTextures = loadingTextures_[texType];
 
 					if (rm->CachedTextures.IsCached(getTexturePath(texType, i)))
 					{
-						auto value = rm->CachedTextures.Load(fullPath, type);
+						auto value = rm->CachedTextures.Load(fullPath.data(), type);
 						Value->SetTexture(i, type, value);
 
 						loadingTextures.emplace_back(CustomAsyncValueHandle<Effekseer::Texture>(nullptr));
 					}
 					else
 					{
-						loadingTextures.emplace_back(loader->LoadTextureAsync(fullPath, type));
+						loadingTextures.emplace_back(loader->LoadTextureAsync(fullPath.data(), type));
 					}
 				}
 			}
 
 			for (size_t i = 0; i < Value->GetModelCount(); i++)
 			{
-				char16_t directoryPath[512];
-				GetParentDir(directoryPath, path_.c_str());
-				char16_t fullPath[512];
-				PathCombine(fullPath, directoryPath, Value->GetModelPath(i));
-
+				auto fullPath = Effekseer::PathHelper::Combine(directoryPath, Effekseer::FixedSizeString<char16_t, 512>(Value->GetModelPath(i)));
 				if (rm->CachedModels.IsCached(Value->GetModelPath(i)))
 				{
-					auto value = rm->CachedModels.Load(fullPath);
+					auto value = rm->CachedModels.Load(fullPath.data());
 					Value->SetModel(i, value);
 
 					loadingModels_.emplace_back(CustomAsyncValueHandle<Effekseer::Model>(nullptr));
 				}
 				else
 				{
-					loadingModels_.emplace_back(loader->LoadModelAsync(fullPath));
+					loadingModels_.emplace_back(loader->LoadModelAsync(fullPath.data()));
 				}
 			}
 
 			for (size_t i = 0; i < Value->GetModelCount(); i++)
 			{
-				char16_t directoryPath[512];
-				GetParentDir(directoryPath, path_.c_str());
-				char16_t fullPath[512];
-				PathCombine(fullPath, directoryPath, Value->GetMaterialPath(i));
-
+				auto fullPath = Effekseer::PathHelper::Combine(directoryPath, Effekseer::FixedSizeString<char16_t, 512>(Value->GetMaterialPath(i)));
 				if (rm->CachedMaterials.IsCached(Value->GetMaterialPath(i)))
 				{
-					auto value = rm->CachedMaterials.Load(fullPath);
+					auto value = rm->CachedMaterials.Load(fullPath.data());
 					Value->SetMaterial(i, value);
 
 					loadingMaterials_.emplace_back(CustomAsyncValueHandle<Effekseer::Material>(nullptr));
 				}
 				else
 				{
-					loadingMaterials_.emplace_back(loader->LoadMaterialAsync(fullPath));
+					loadingMaterials_.emplace_back(loader->LoadMaterialAsync(fullPath.data()));
 				}
 			}
 
 			for (size_t i = 0; i < Value->GetCurveCount(); i++)
 			{
-				char16_t directoryPath[512];
-				GetParentDir(directoryPath, path_.c_str());
-				char16_t fullPath[512];
-				PathCombine(fullPath, directoryPath, Value->GetCurvePath(i));
-
+				auto fullPath = Effekseer::PathHelper::Combine(directoryPath, Effekseer::FixedSizeString<char16_t, 512>(Value->GetCurvePath(i)));
 				if (rm->CachedCurves.IsCached(Value->GetCurvePath(i)))
 				{
-					auto value = rm->CachedCurves.Load(fullPath);
+					auto value = rm->CachedCurves.Load(fullPath.data());
 					Value->SetCurve(i, value);
 
 					loadingCurves_.emplace_back(CustomAsyncValueHandle<Effekseer::Curve>(nullptr));
 				}
 				else
 				{
-					loadingCurves_.emplace_back(loader->LoadCurveAsync(fullPath));
+					loadingCurves_.emplace_back(loader->LoadCurveAsync(fullPath.data()));
 				}
 			}
 
 			for (size_t i = 0; i < Value->GetWaveCount(); i++)
 			{
-				char16_t directoryPath[512];
-				GetParentDir(directoryPath, path_.c_str());
-				char16_t fullPath[512];
-				PathCombine(fullPath, directoryPath, Value->GetWavePath(i));
-
+				auto fullPath = Effekseer::PathHelper::Combine(directoryPath, Effekseer::FixedSizeString<char16_t, 512>(Value->GetWavePath(i)));
 				if (rm->CachedSounds.IsCached(Value->GetWavePath(i)))
 				{
-					auto value = rm->CachedSounds.Load(fullPath);
+					auto value = rm->CachedSounds.Load(fullPath.data());
 					Value->SetSound(i, value);
 
 					loadingSounds_.emplace_back(CustomAsyncValueHandle<Effekseer::SoundData>(nullptr));
 				}
 				else
 				{
-					loadingSounds_.emplace_back(loader->LoadSoundDataAsync(fullPath));
+					loadingSounds_.emplace_back(loader->LoadSoundDataAsync(fullPath.data()));
 				}
 			}
 
