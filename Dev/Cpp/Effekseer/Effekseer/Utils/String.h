@@ -321,7 +321,7 @@ private:
 		{
 			if (IsSeparator(path[i]))
 			{
-				last_separator = i;
+				last_separator = static_cast<int>(i);
 			}
 		}
 
@@ -345,7 +345,7 @@ private:
 		{
 			if (IsSeparator(path[i]))
 			{
-				last_separator = i;
+				last_separator = static_cast<int>(i);
 			}
 		}
 		last_separator++;
@@ -355,7 +355,7 @@ private:
 		{
 			if (path[i] == static_cast<T>('.'))
 			{
-				last_dot = i;
+				last_dot = static_cast<int>(i);
 			}
 		}
 
