@@ -30,8 +30,23 @@ void FixedSizeStringTest()
 
 	{
 		auto v1 = std::u16string(u"1234");
+		auto v2 = Effekseer::FixedSizeString<char16_t, 4>(u"1234");
+		v2 += '5';
+		TEST_EQUAL_STR(v1, v2.data());
+	}
+
+	{
+		auto v1 = std::u16string(u"1234");
 		auto v2 = Effekseer::FixedSizeString<char16_t, 8>(u"1234");
 		v1 += u"5678";
+		v2 += u"5678";
+		TEST_EQUAL_STR(v1, v2.data());
+	}
+
+	{
+		auto v1 = std::u16string(u"1234");
+		auto v2 = Effekseer::FixedSizeString<char16_t, 6>(u"1234");
+		v1 += u"56";
 		v2 += u"5678";
 		TEST_EQUAL_STR(v1, v2.data());
 	}
