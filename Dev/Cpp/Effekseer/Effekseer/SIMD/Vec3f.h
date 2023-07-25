@@ -96,9 +96,9 @@ struct Vec3f
 	float GetSquaredLength() const;
 	float GetLength() const;
 	bool IsZero(float epsiron = DefaultEpsilon) const;
-	Vec3f Normalize() const;
-	Vec3f NormalizePrecisely() const;
-	Vec3f NormalizeFast() const;
+	Vec3f GetNormal() const;
+	Vec3f GetNormalPrecisely() const;
+	Vec3f GetNormalFast() const;
 
 	static Vec3f Load(const void* mem);
 	static void Store(void* mem, const Vec3f& i);
@@ -226,17 +226,17 @@ inline bool Vec3f::IsZero(float epsiron) const
 	return (Float4::MoveMask(Float4::IsZero(s, epsiron)) & 0x7) == 0x7;
 }
 
-inline Vec3f Vec3f::Normalize() const
+inline Vec3f Vec3f::GetNormal() const
 {
 	return *this * Effekseer::SIMD::Rsqrt(GetSquaredLength());
 }
 
-inline Vec3f Vec3f::NormalizePrecisely() const
+inline Vec3f Vec3f::GetNormalPrecisely() const
 {
 	return *this / Effekseer::SIMD::Sqrt(GetSquaredLength());
 }
 
-inline Vec3f Vec3f::NormalizeFast() const
+inline Vec3f Vec3f::GetNormalFast() const
 {
 	return *this * Effekseer::SIMD::Rsqrt(GetSquaredLength());
 }

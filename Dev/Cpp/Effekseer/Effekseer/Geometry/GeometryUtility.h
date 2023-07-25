@@ -103,7 +103,7 @@ public:
 		for (size_t i = 0; i < ret.size(); i++)
 		{
 			const auto component = planeComponents[i];
-			const auto normal = SIMD::Vec3f::Cross(points3[component[1]] - points3[component[0]], points3[component[2]] - points3[component[0]]).Normalize();
+			const auto normal = SIMD::Vec3f::Cross(points3[component[1]] - points3[component[0]], points3[component[2]] - points3[component[0]]).GetNormal();
 			const auto distance = SIMD::Vec3f::Dot(points3[component[0]], normal);
 
 			ret[i].Normal = SIMD::ToStruct(normal);

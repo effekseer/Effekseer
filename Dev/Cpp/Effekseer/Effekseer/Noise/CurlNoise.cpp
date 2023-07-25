@@ -74,7 +74,7 @@ LightCurlNoise::LightCurlNoise(int32_t seed, float scale, int32_t octave)
 				}
 
 				// It is better to normalize.
-				// v.Normalize();
+				// v = v.GetNormal();
 
 				vectorField_[z][y][x] = Pack(v);
 			}

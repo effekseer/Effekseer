@@ -405,9 +405,9 @@ protected:
 					::Effekseer::SIMD::Vec3f U;
 
 					U = ::Effekseer::SIMD::Vec3f(r.X.GetY(), r.Y.GetY(), r.X.GetY());
-					F = ::Effekseer::SIMD::Vec3f(-m_renderer->GetCameraFrontDirection()).Normalize();
-					R = ::Effekseer::SIMD::Vec3f::Cross(U, F).Normalize();
-					F = ::Effekseer::SIMD::Vec3f::Cross(R, U).Normalize();
+					F = ::Effekseer::SIMD::Vec3f(-m_renderer->GetCameraFrontDirection()).GetNormal();
+					R = ::Effekseer::SIMD::Vec3f::Cross(U, F).GetNormal();
+					F = ::Effekseer::SIMD::Vec3f::Cross(R, U).GetNormal();
 
 					::Effekseer::SIMD::Mat43f mat_rot(-R.GetX(),
 													  -R.GetY(),
@@ -527,9 +527,9 @@ protected:
 
 						U = ::Effekseer::SIMD::Vec3f(r.X.GetY(), r.Y.GetY(), r.Z.GetY());
 
-						F = ::Effekseer::SIMD::Vec3f(-m_renderer->GetCameraFrontDirection()).Normalize();
-						R = ::Effekseer::SIMD::Vec3f::Cross(U, F).Normalize();
-						F = ::Effekseer::SIMD::Vec3f::Cross(R, U).Normalize();
+						F = ::Effekseer::SIMD::Vec3f(-m_renderer->GetCameraFrontDirection()).GetNormal();
+						R = ::Effekseer::SIMD::Vec3f::Cross(U, F).GetNormal();
+						F = ::Effekseer::SIMD::Vec3f::Cross(R, U).GetNormal();
 
 						::Effekseer::SIMD::Mat43f mat_rot(-R.GetX(),
 														  -R.GetY(),
