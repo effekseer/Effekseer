@@ -104,16 +104,16 @@ void CalcBillboard(::Effekseer::BillboardType billboardType,
 			::Effekseer::SIMD::Vec3f Up(0.0f, 1.0f, 0.0f);
 
 			F = frontDir;
-			R = ::Effekseer::SIMD::Vec3f::Cross(Up, F).Normalize();
-			U = ::Effekseer::SIMD::Vec3f::Cross(F, R).Normalize();
+			R = ::Effekseer::SIMD::Vec3f::Cross(Up, F).GetNormal();
+			U = ::Effekseer::SIMD::Vec3f::Cross(F, R).GetNormal();
 		}
 		else if (billboardType == ::Effekseer::BillboardType::RotatedBillboard)
 		{
 			::Effekseer::SIMD::Vec3f Up(0.0f, 1.0f, 0.0f);
 
 			F = frontDir;
-			R = ::Effekseer::SIMD::Vec3f::Cross(Up, F).Normalize();
-			U = ::Effekseer::SIMD::Vec3f::Cross(F, R).Normalize();
+			R = ::Effekseer::SIMD::Vec3f::Cross(Up, F).GetNormal();
+			U = ::Effekseer::SIMD::Vec3f::Cross(F, R).GetNormal();
 
 			float c_zx2 = Effekseer::SIMD::Vec3f::Dot(r.Y, r.Y) - r.Y.GetZ() * r.Y.GetZ();
 			float c_zx = sqrt(std::max(0.0f, c_zx2));
@@ -141,8 +141,8 @@ void CalcBillboard(::Effekseer::BillboardType billboardType,
 		{
 			U = ::Effekseer::SIMD::Vec3f(r.X.GetY(), r.Y.GetY(), r.Z.GetY());
 			F = frontDir;
-			R = ::Effekseer::SIMD::Vec3f::Cross(U, F).Normalize();
-			F = ::Effekseer::SIMD::Vec3f::Cross(R, U).Normalize();
+			R = ::Effekseer::SIMD::Vec3f::Cross(U, F).GetNormal();
+			F = ::Effekseer::SIMD::Vec3f::Cross(R, U).GetNormal();
 		}
 
 		dst.X = {R.GetX(), U.GetX(), F.GetX(), t.GetX()};
@@ -218,7 +218,7 @@ void ApplyDepthParameters(::Effekseer::SIMD::Mat43f& mat,
 
 		auto objPos = mat.GetTranslation();
 		auto dir = cameraPos - objPos;
-		dir = dir.Normalize();
+		dir = dir.GetNormal();
 
 		if (isRightHand)
 		{
@@ -282,7 +282,7 @@ void ApplyDepthParameters(::Effekseer::SIMD::Mat43f& mat,
 
 		auto objPos = translationValues;
 		auto dir = cameraPos - objPos;
-		dir = dir.Normalize();
+		dir = dir.GetNormal();
 
 		if (isRightHand)
 		{
@@ -349,7 +349,7 @@ void ApplyDepthParameters(::Effekseer::SIMD::Mat43f& mat,
 
 		auto objPos = mat.GetTranslation();
 		auto dir = cameraPos - objPos;
-		dir = dir.Normalize();
+		dir = dir.GetNormal();
 
 		if (isRightHand)
 		{
@@ -412,7 +412,7 @@ void ApplyDepthParameters(::Effekseer::SIMD::Mat44f& mat,
 
 		auto objPos = mat.GetTranslation();
 		auto dir = cameraPos - objPos;
-		dir = dir.Normalize();
+		dir = dir.GetNormal();
 
 		if (isRightHand)
 		{

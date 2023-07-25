@@ -692,7 +692,7 @@ public:
 			float lightAmbientColor[4];
 
 			::Effekseer::SIMD::Vec3f lightDirection3 = m_renderer->GetLightDirection();
-			lightDirection3 = lightDirection3.Normalize();
+			lightDirection3 = lightDirection3.GetNormal();
 			VectorToFloat4(lightDirection3, lightDirection);
 			ColorToFloat4(m_renderer->GetLightColor(), lightColor);
 			ColorToFloat4(m_renderer->GetLightAmbientColor(), lightAmbientColor);

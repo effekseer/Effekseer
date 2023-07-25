@@ -536,7 +536,7 @@ protected:
 		float lightAmbientColor[4];
 
 		::Effekseer::SIMD::Vec3f lightDirection3 = renderer->GetLightDirection();
-		lightDirection3 = lightDirection3.Normalize();
+		lightDirection3 = lightDirection3.GetNormal();
 
 		VectorToFloat4(lightDirection3, lightDirection);
 		ColorToFloat4(renderer->GetLightColor(), lightColor);
@@ -631,7 +631,7 @@ protected:
 			if (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)
 			{
 				::Effekseer::SIMD::Vec3f lightDirection = renderer->GetLightDirection();
-				lightDirection = lightDirection.Normalize();
+				lightDirection = lightDirection.GetNormal();
 				VectorToFloat4(lightDirection, vcb->LightDirection);
 				VectorToFloat4(lightDirection, pcb->LightDirection);
 			}

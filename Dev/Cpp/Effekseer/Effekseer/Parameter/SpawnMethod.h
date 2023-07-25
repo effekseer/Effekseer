@@ -263,14 +263,14 @@ struct ParameterGenerationLocation
 				if (fabs(dir.GetY()) > 0.999f)
 				{
 					xdir = dir;
-					zdir = SIMD::Vec3f::Cross(xdir, SIMD::Vec3f(-1, 0, 0)).Normalize();
-					ydir = SIMD::Vec3f::Cross(zdir, xdir).Normalize();
+					zdir = SIMD::Vec3f::Cross(xdir, SIMD::Vec3f(-1, 0, 0)).GetNormal();
+					ydir = SIMD::Vec3f::Cross(zdir, xdir).GetNormal();
 				}
 				else
 				{
 					xdir = dir;
-					ydir = SIMD::Vec3f::Cross(SIMD::Vec3f(0, 0, 1), xdir).Normalize();
-					zdir = SIMD::Vec3f::Cross(xdir, ydir).Normalize();
+					ydir = SIMD::Vec3f::Cross(SIMD::Vec3f(0, 0, 1), xdir).GetNormal();
+					zdir = SIMD::Vec3f::Cross(xdir, ydir).GetNormal();
 				}
 
 				if (param.EffectsRotation)

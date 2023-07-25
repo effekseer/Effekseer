@@ -359,8 +359,8 @@ protected:
 					StrideView<VERTEX> vs(verteies.pointerOrigin_, stride_, 4);
 					auto tangentX = efkVector3D(mat.X.GetX(), mat.Y.GetX(), mat.Z.GetX());
 					auto tangentZ = efkVector3D(mat.X.GetZ(), mat.Y.GetZ(), mat.Z.GetZ());
-					tangentX = tangentX.Normalize();
-					tangentZ = tangentZ.Normalize();
+					tangentX = tangentX.GetNormal();
+					tangentZ = tangentZ.GetNormal();
 
 					if (!parameter.IsRightHand)
 					{

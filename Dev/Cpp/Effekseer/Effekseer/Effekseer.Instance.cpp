@@ -648,7 +648,7 @@ void Instance::UpdateTransform(float deltaFrame)
 
 			if (toTarget.GetLength() > followParentParam.maxFollowSpeed)
 			{
-				toTarget = toTarget.Normalize();
+				toTarget = toTarget.GetNormal();
 				toTarget *= followParentParam.maxFollowSpeed;
 			}
 
@@ -659,7 +659,7 @@ void Instance::UpdateTransform(float deltaFrame)
 
 			if (steeringVec_.GetLength() > followParentParam.maxFollowSpeed)
 			{
-				steeringVec_ = steeringVec_.Normalize();
+				steeringVec_ = steeringVec_.GetNormal();
 				steeringVec_ *= followParentParam.maxFollowSpeed;
 			}
 

@@ -77,10 +77,10 @@ static void CalcTangentSpace(const ProceduralMeshVertex& v1, const ProceduralMes
 	}
 
 	tangent = SIMD::Vec3f(u[0], u[1], u[2]);
-	tangent = tangent.Normalize();
+	tangent = tangent.GetNormal();
 
 	binormal = SIMD::Vec3f(v[0], v[1], v[2]);
-	binormal = binormal.Normalize();
+	binormal = binormal.GetNormal();
 }
 
 static void CalculateNormal(ProceduralMesh& mesh)
@@ -109,7 +109,7 @@ static void CalculateNormal(ProceduralMesh& mesh)
 			continue;
 		}
 
-		const auto normal = SIMD::Vec3f::Cross(v3.Position - v1.Position, v2.Position - v1.Position).Normalize();
+		const auto normal = SIMD::Vec3f::Cross(v3.Position - v1.Position, v2.Position - v1.Position).GetNormal();
 
 		faceNormals[i] = normal;
 		SIMD::Vec3f binotmal;
@@ -162,8 +162,8 @@ static void CalculateNormal(ProceduralMesh& mesh)
 		mesh.Vertexes[i].Normal = normals[key] / static_cast<float>(vertexCounts[key]);
 		mesh.Vertexes[i].Tangent = tangents[key] / static_cast<float>(vertexCounts[key]);
 
-		mesh.Vertexes[i].Normal = mesh.Vertexes[i].Normal.Normalize();
-		mesh.Vertexes[i].Tangent = mesh.Vertexes[i].Tangent.Normalize();
+		mesh.Vertexes[i].Normal = mesh.Vertexes[i].Normal.GetNormal();
+		mesh.Vertexes[i].Tangent = mesh.Vertexes[i].Tangent.GetNormal();
 	}
 }
 
@@ -680,8 +680,8 @@ struct RotatedWireMeshGenerator
 				auto normal = SIMD::Vec3f::Cross(pos_diff_angle - pos, pos_diff_axis - pos);
 
 				vs.emplace_back(pos);
-				normals.emplace_back(normal.Normalize());
-				binormals.emplace_back((pos_diff - pos).Normalize());
+				normals.emplace_back(normal.GetNormal());
+				binormals.emplace_back((pos_diff - pos).GetNormal());
 				currentDepth += depthSpeed;
 				currentAngle += rotateSpeed;
 			}
@@ -697,7 +697,7 @@ struct RotatedWireMeshGenerator
 
 			for (int32_t v = 0; v < vs.size(); v++)
 			{
-				const auto tangent = SIMD::Vec3f::Cross(normals[v], binormals[v]).Normalize();
+				const auto tangent = SIMD::Vec3f::Cross(normals[v], binormals[v]).GetNormal();
 				const auto normal = normals[v];
 
 				const auto percent = v / static_cast<float>(vs.size() - 1);
@@ -829,8 +829,8 @@ ModelRef ProceduralModelGenerator::Generate(const ProceduralModelParameter& para
 
 			SIMD::Vec3f dirX(cos(angleX), sin(angleX), 0.0f);
 			SIMD::Vec3f dirZ(0.0f, sin(angleY), cos(angleY));
-			SIMD::Vec3f dirY = SIMD::Vec3f::Cross(dirZ, dirX).Normalize();
-			dirZ = SIMD::Vec3f::Cross(dirX, dirY).Normalize();
+			SIMD::Vec3f dirY = SIMD::Vec3f::Cross(dirZ, dirX).GetNormal();
+			dirZ = SIMD::Vec3f::Cross(dirX, dirY).GetNormal();
 
 			v = SIMD::Vec3f(0.0f, v.GetY(), 0.0f) + dirX * v.GetX() + dirZ * v.GetZ();
 		}
