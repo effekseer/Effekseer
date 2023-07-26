@@ -1,6 +1,6 @@
 #ifdef _WIN32
-#include <RenderingEnvironment/RenderingEnvironmentDX11.h>
 #include <EffekseerRendererDX11.h>
+#include <RenderingEnvironment/RenderingEnvironmentDX11.h>
 #endif
 #include <RenderingEnvironment/RenderingEnvironmentGL.h>
 
@@ -354,7 +354,7 @@ class GpuParticleContext
 			return;
 		}
 
-		initEmitVertex(); //Update Buffer‚Å‚â‚é‚×‚«
+		initEmitVertex(); // Update Buffer‚Å‚â‚é‚×‚«
 
 		Effekseer::Backend::PipelineStateParameter pipParam;
 
@@ -411,7 +411,7 @@ class GpuParticleContext
 
 	void initUniformLayouts()
 	{
-		std::string DirectoryPath = GetDirectoryPath(__FILE__);
+		std::string DirectoryPath = Effekseer::PathHelper::GetDirectoryName(std::string(__FILE__));
 		Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> updateUniformLayoutElements;
 		updateUniformLayoutElements.resize(1);
 		updateUniformLayoutElements[0].Name = "DeltaTime";
@@ -505,7 +505,7 @@ class GpuParticleContext
 
 	void initTraitUniformLayoutAndShaders()
 	{
-		std::string DirectoryPath = GetDirectoryPath(__FILE__);
+		std::string DirectoryPath = Effekseer::PathHelper::GetDirectoryName(std::string(__FILE__));
 		Effekseer::CustomVector<Effekseer::Backend::UniformLayoutElement> renderUniformLayoutElements;
 		renderUniformLayoutElements.resize(4);
 		renderUniformLayoutElements[0].Name = "ID2TPos";
@@ -625,28 +625,28 @@ public:
 				trailOffset = TrailBufferSize - 1;
 			}
 
-			//gl.viewport(0, 0, this.texWidth, this.texHeight);
-			//gl.useProgram(this.trailUpdateShader);
-			//gl.bindFramebuffer(gl.FRAMEBUFFER, this.trailFrameBuffer);
-			//this.buffers[sourceIndex].setUpdateSource();
-			//gl.uniform1i(gl.getUniformLocation(this.trailUpdateShader, "i_ParticleData0"), 0);
-			//gl.uniform1i(gl.getUniformLocation(this.trailUpdateShader, "i_ParticleData1"), 1);
-			//gl.framebufferTextureLayer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, this.trailBufferTexture, 0, this.trailOffset);
-			//gl.bindBuffer(gl.ARRAY_BUFFER, this.quadBuffer);
-			//gl.enableVertexAttribArray(0);
-			//gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
-			//gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-			//gl.disableVertexAttribArray(0);
-			//gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+			// gl.viewport(0, 0, this.texWidth, this.texHeight);
+			// gl.useProgram(this.trailUpdateShader);
+			// gl.bindFramebuffer(gl.FRAMEBUFFER, this.trailFrameBuffer);
+			// this.buffers[sourceIndex].setUpdateSource();
+			// gl.uniform1i(gl.getUniformLocation(this.trailUpdateShader, "i_ParticleData0"), 0);
+			// gl.uniform1i(gl.getUniformLocation(this.trailUpdateShader, "i_ParticleData1"), 1);
+			// gl.framebufferTextureLayer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, this.trailBufferTexture, 0, this.trailOffset);
+			// gl.bindBuffer(gl.ARRAY_BUFFER, this.quadBuffer);
+			// gl.enableVertexAttribArray(0);
+			// gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+			// gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+			// gl.disableVertexAttribArray(0);
+			// gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
 			// Position texture to
 			graphicsDevice->CopyTexture(trailHistoriesTexture, buffers[sourceIndex].textures.at(0), {0, 0, 0}, {0, 0, 0}, {texWidth, texHeight, 1}, trailOffset, 0);
 
-			//gl.bindFramebuffer(gl.FRAMEBUFFER, );
-			//gl.bindTexture(gl.TEXTURE_2D_ARRAY, this.trailBufferTexture, );
-			//gl.copyTexSubImage3D(gl.TEXTURE_2D_ARRAY, 0, 0, 0, this.trailOffset, 0, 0, this.texWidth, this.texHeight);
-			//gl.bindTexture(gl.TEXTURE_2D_ARRAY, null);
-			//gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+			// gl.bindFramebuffer(gl.FRAMEBUFFER, );
+			// gl.bindTexture(gl.TEXTURE_2D_ARRAY, this.trailBufferTexture, );
+			// gl.copyTexSubImage3D(gl.TEXTURE_2D_ARRAY, 0, 0, 0, this.trailOffset, 0, 0, this.texWidth, this.texHeight);
+			// gl.bindTexture(gl.TEXTURE_2D_ARRAY, null);
+			// gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 		}
 
 		Effekseer::Backend::PipelineStateParameter pipParam;
@@ -815,13 +815,17 @@ void GpuParticle(GraphicsDeviceType deviceType, bool trailMode)
 
 #if !defined(__FROM_CI__)
 
-TestRegister Test_GpuParticle_GL("Backend.GpuParticle_GL", []() -> void { GpuParticle(GraphicsDeviceType::OpenGL, false); });
-TestRegister Test_GpuParticleTrail_GL("Backend.GpuParticle_Trail_GL", []() -> void { GpuParticle(GraphicsDeviceType::OpenGL, true); });
+TestRegister Test_GpuParticle_GL("Backend.GpuParticle_GL", []() -> void
+								 { GpuParticle(GraphicsDeviceType::OpenGL, false); });
+TestRegister Test_GpuParticleTrail_GL("Backend.GpuParticle_Trail_GL", []() -> void
+									  { GpuParticle(GraphicsDeviceType::OpenGL, true); });
 
 #ifdef _WIN32
 
-TestRegister Test_GpuParticle_DX11("Backend.GpuParticle_DX11", []() -> void { GpuParticle(GraphicsDeviceType::DirectX11, false); });
-TestRegister Test_GpuParticleTrail_DX11("Backend.GpuParticle_Trail_DX11", []() -> void { GpuParticle(GraphicsDeviceType::DirectX11, true); });
+TestRegister Test_GpuParticle_DX11("Backend.GpuParticle_DX11", []() -> void
+								   { GpuParticle(GraphicsDeviceType::DirectX11, false); });
+TestRegister Test_GpuParticleTrail_DX11("Backend.GpuParticle_Trail_DX11", []() -> void
+										{ GpuParticle(GraphicsDeviceType::DirectX11, true); });
 
 #endif
 #endif

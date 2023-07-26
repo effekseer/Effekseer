@@ -12,8 +12,6 @@
 #include <string>
 #include <vector>
 
-std::string GetDirectoryPath(const char* path);
-
 std::u16string GetDirectoryPathAsU16(const char* path);
 
 std::vector<uint8_t> LoadFile(const char16_t* path);

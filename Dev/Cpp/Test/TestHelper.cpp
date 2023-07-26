@@ -27,31 +27,9 @@ static std::wstring ToWide(const char* text)
 }
 #endif
 
-std::string GetDirectoryPath(const char* path)
-{
-	auto p = std::string(path);
-	size_t last = -1;
-	for (size_t i = 0; i < p.size(); i++)
-	{
-		if (p[i] == '/' || p[i] == '\\')
-		{
-			last = i;
-		}
-	}
-
-	if (last >= 0)
-	{
-		p.resize(last);
-		p += "/";
-		return p;
-	}
-
-	return "";
-}
-
 std::u16string GetDirectoryPathAsU16(const char* path)
 {
-	auto p = GetDirectoryPath(path);
+	auto p = Effekseer::PathHelper::GetDirectoryName(std::string(path));
 
 #ifdef _WIN32
 	auto w = ToWide(p.c_str());
