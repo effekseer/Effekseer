@@ -753,6 +753,17 @@ bool ManagerImplemented::Exists(Handle handle)
 	return false;
 }
 
+EffectRef ManagerImplemented::GetEffect(Handle handle)
+{
+	auto it = m_DrawSets.find(handle);
+	if (it != m_DrawSets.end())
+	{
+		return it->second.ParameterPointer;
+	}
+
+	return nullptr;
+}
+
 int32_t ManagerImplemented::GetInstanceCount(Handle handle)
 {
 	if (m_DrawSets.count(handle) > 0)

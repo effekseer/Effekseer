@@ -300,6 +300,8 @@ public:
 
 	bool Exists(Handle handle) override;
 
+	EffectRef GetEffect(Handle handle) override;
+
 	int32_t GetInstanceCount(Handle handle) override;
 
 	int32_t GetTotalInstanceCount() const override;

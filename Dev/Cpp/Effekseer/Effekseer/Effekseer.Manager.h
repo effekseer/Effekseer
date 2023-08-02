@@ -408,6 +408,13 @@ public:
 	virtual bool Exists(Handle handle) = 0;
 
 	/**
+		@brief
+		\~English Get the effect that is being played.
+		\~Japanese 再生されているエフェクトを取得する。
+	*/
+	virtual EffectRef GetEffect(Handle handle) = 0;
+
+	/**
 		@brief	エフェクトに使用されているインスタンス数を取得する。
 		@param	handle	[in]	インスタンスのハンドル
 		@return	インスタンス数
