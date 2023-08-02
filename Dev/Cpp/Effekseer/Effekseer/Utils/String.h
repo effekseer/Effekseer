@@ -370,7 +370,7 @@ private:
 	static STRING Combine(const STRING& path1, const STRING& path2)
 	{
 		STRING ret = path1;
-		if (!IsSeparator(ret.back()))
+		if (ret.size() > 0 && !IsSeparator(ret.back()))
 		{
 			ret += static_cast<T>('/');
 		}
