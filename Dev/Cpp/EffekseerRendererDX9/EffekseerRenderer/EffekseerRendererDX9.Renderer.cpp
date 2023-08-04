@@ -277,7 +277,7 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice)
 										vlLitAd);
 	if (shader_ad_lit == nullptr)
 		return false;
-	GetImpl()->ShaderAdUnlit = std::unique_ptr<EffekseerRenderer::ShaderBase>(shader_ad_lit);
+	GetImpl()->ShaderAdLit = std::unique_ptr<EffekseerRenderer::ShaderBase>(shader_ad_lit);
 
 	auto shader_lit = Shader::Create(graphicsDevice_,
 									 graphicsDevice_->CreateShaderFromBinary(
