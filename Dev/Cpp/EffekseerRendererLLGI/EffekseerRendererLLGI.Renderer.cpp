@@ -276,9 +276,6 @@ RendererImplemented::RendererImplemented(int32_t squareMaxCount)
 	, m_squareMaxCount(squareMaxCount)
 	, m_coordinateSystem(::Effekseer::CoordinateSystem::RH)
 	, m_renderState(nullptr)
-
-	, shader_unlit_(nullptr)
-	, shader_distortion_(nullptr)
 	, m_standardRenderer(nullptr)
 	, m_distortingCallback(nullptr)
 {
@@ -300,15 +297,6 @@ RendererImplemented::~RendererImplemented()
 
 	ES_SAFE_DELETE(m_distortingCallback);
 	ES_SAFE_DELETE(m_standardRenderer);
-
-	ES_SAFE_DELETE(shader_unlit_);
-	ES_SAFE_DELETE(shader_lit_);
-	ES_SAFE_DELETE(shader_distortion_);
-
-	ES_SAFE_DELETE(shader_ad_unlit_);
-	ES_SAFE_DELETE(shader_ad_lit_);
-	ES_SAFE_DELETE(shader_ad_distortion_);
-
 	ES_SAFE_DELETE(m_renderState);
 
 	if (materialCompiler_ != nullptr)
@@ -381,100 +369,106 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 	auto unlit_vs_shader_data = Backend::Serialize(fixedShader_.SpriteUnlit_VS);
 	auto unlit_ps_shader_data = Backend::Serialize(fixedShader_.ModelUnlit_PS);
 
-	shader_unlit_ = Shader::Create(graphicsDevice_,
-								   graphicsDevice_->CreateShaderFromBinary(
-									   unlit_vs_shader_data.data(),
-									   static_cast<int32_t>(unlit_vs_shader_data.size()),
-									   unlit_ps_shader_data.data(),
-									   static_cast<int32_t>(unlit_ps_shader_data.size())),
-								   vlUnlit,
-								   "StandardRenderer");
-	if (shader_unlit_ == nullptr)
+	auto shader_unlit = Shader::Create(graphicsDevice_,
+									   graphicsDevice_->CreateShaderFromBinary(
+										   unlit_vs_shader_data.data(),
+										   static_cast<int32_t>(unlit_vs_shader_data.size()),
+										   unlit_ps_shader_data.data(),
+										   static_cast<int32_t>(unlit_ps_shader_data.size())),
+									   vlUnlit,
+									   "StandardRenderer");
+	if (shader_unlit == nullptr)
 		return false;
+	GetImpl()->ShaderUnlit = std::unique_ptr<EffekseerRenderer::ShaderBase>(shader_unlit);
 
 	auto distortion_vs_shader_data = Backend::Serialize(fixedShader_.SpriteDistortion_VS);
 	auto distortion_ps_shader_data = Backend::Serialize(fixedShader_.ModelDistortion_PS);
 
-	shader_distortion_ = Shader::Create(graphicsDevice_,
-										graphicsDevice_->CreateShaderFromBinary(
-											distortion_vs_shader_data.data(),
-											static_cast<int32_t>(distortion_vs_shader_data.size()),
-											distortion_ps_shader_data.data(),
-											static_cast<int32_t>(distortion_ps_shader_data.size())),
-										vlDist,
-										"StandardRenderer Distortion");
-	if (shader_distortion_ == nullptr)
+	auto shader_distortion = Shader::Create(graphicsDevice_,
+											graphicsDevice_->CreateShaderFromBinary(
+												distortion_vs_shader_data.data(),
+												static_cast<int32_t>(distortion_vs_shader_data.size()),
+												distortion_ps_shader_data.data(),
+												static_cast<int32_t>(distortion_ps_shader_data.size())),
+											vlDist,
+											"StandardRenderer Distortion");
+	if (shader_distortion == nullptr)
 		return false;
+	GetImpl()->ShaderDistortion = std::unique_ptr<EffekseerRenderer::ShaderBase>(shader_distortion);
 
 	auto ad_unlit_vs_shader_data = Backend::Serialize(fixedShader_.AdvancedSpriteUnlit_VS);
 	auto ad_unlit_ps_shader_data = Backend::Serialize(fixedShader_.AdvancedModelUnlit_PS);
 
-	shader_ad_unlit_ = Shader::Create(graphicsDevice_,
-									  graphicsDevice_->CreateShaderFromBinary(
-										  ad_unlit_vs_shader_data.data(),
-										  static_cast<int32_t>(ad_unlit_vs_shader_data.size()),
-										  ad_unlit_ps_shader_data.data(),
-										  static_cast<int32_t>(ad_unlit_ps_shader_data.size())),
-									  vlUnlitAd,
-									  "StandardRenderer");
-	if (shader_ad_unlit_ == nullptr)
+	auto shader_ad_unlit = Shader::Create(graphicsDevice_,
+										  graphicsDevice_->CreateShaderFromBinary(
+											  ad_unlit_vs_shader_data.data(),
+											  static_cast<int32_t>(ad_unlit_vs_shader_data.size()),
+											  ad_unlit_ps_shader_data.data(),
+											  static_cast<int32_t>(ad_unlit_ps_shader_data.size())),
+										  vlUnlitAd,
+										  "StandardRenderer");
+	if (shader_ad_unlit == nullptr)
 		return false;
+	GetImpl()->ShaderAdUnlit = std::unique_ptr<EffekseerRenderer::ShaderBase>(shader_ad_unlit);
 
 	auto ad_dist_vs_shader_data = Backend::Serialize(fixedShader_.AdvancedSpriteDistortion_VS);
 	auto ad_dist_ps_shader_data = Backend::Serialize(fixedShader_.AdvancedModelDistortion_PS);
 
-	shader_ad_distortion_ = Shader::Create(graphicsDevice_,
-										   graphicsDevice_->CreateShaderFromBinary(
-											   ad_dist_vs_shader_data.data(),
-											   static_cast<int32_t>(ad_dist_vs_shader_data.size()),
-											   ad_dist_ps_shader_data.data(),
-											   static_cast<int32_t>(ad_dist_ps_shader_data.size())),
-										   vlDistAd,
-										   "StandardRenderer Distortion");
-	if (shader_ad_distortion_ == nullptr)
+	auto shader_ad_distortion = Shader::Create(graphicsDevice_,
+											   graphicsDevice_->CreateShaderFromBinary(
+												   ad_dist_vs_shader_data.data(),
+												   static_cast<int32_t>(ad_dist_vs_shader_data.size()),
+												   ad_dist_ps_shader_data.data(),
+												   static_cast<int32_t>(ad_dist_ps_shader_data.size())),
+											   vlDistAd,
+											   "StandardRenderer Distortion");
+	if (shader_ad_distortion == nullptr)
 		return false;
+	GetImpl()->ShaderAdDistortion = std::unique_ptr<EffekseerRenderer::ShaderBase>(shader_ad_distortion);
 
 	auto lit_vs_shader_data = Backend::Serialize(fixedShader_.SpriteLit_VS);
 	auto lit_ps_shader_data = Backend::Serialize(fixedShader_.ModelLit_PS);
 
-	shader_lit_ = Shader::Create(graphicsDevice_,
-								 graphicsDevice_->CreateShaderFromBinary(
-									 lit_vs_shader_data.data(),
-									 static_cast<int32_t>(lit_vs_shader_data.size()),
-									 lit_ps_shader_data.data(),
-									 static_cast<int32_t>(lit_ps_shader_data.size())),
-								 vlLit,
-								 "StandardRenderer Lighting");
+	auto shader_lit = Shader::Create(graphicsDevice_,
+									 graphicsDevice_->CreateShaderFromBinary(
+										 lit_vs_shader_data.data(),
+										 static_cast<int32_t>(lit_vs_shader_data.size()),
+										 lit_ps_shader_data.data(),
+										 static_cast<int32_t>(lit_ps_shader_data.size())),
+									 vlLit,
+									 "StandardRenderer Lighting");
+	GetImpl()->ShaderLit = std::unique_ptr<EffekseerRenderer::ShaderBase>(shader_lit);
 
 	auto ad_lit_vs_shader_data = Backend::Serialize(fixedShader_.AdvancedSpriteLit_VS);
 	auto ad_lit_ps_shader_data = Backend::Serialize(fixedShader_.AdvancedModelLit_PS);
 
-	shader_ad_lit_ = Shader::Create(graphicsDevice_,
-									graphicsDevice_->CreateShaderFromBinary(
-										ad_lit_vs_shader_data.data(),
-										static_cast<int32_t>(ad_lit_vs_shader_data.size()),
-										ad_lit_ps_shader_data.data(),
-										static_cast<int32_t>(ad_lit_ps_shader_data.size())),
-									vlLitAd,
-									"StandardRenderer Lighting");
+	auto shader_ad_lit = Shader::Create(graphicsDevice_,
+										graphicsDevice_->CreateShaderFromBinary(
+											ad_lit_vs_shader_data.data(),
+											static_cast<int32_t>(ad_lit_vs_shader_data.size()),
+											ad_lit_ps_shader_data.data(),
+											static_cast<int32_t>(ad_lit_ps_shader_data.size())),
+										vlLitAd,
+										"StandardRenderer Lighting");
+	GetImpl()->ShaderAdUnlit = std::unique_ptr<EffekseerRenderer::ShaderBase>(shader_ad_lit);
 
-	shader_unlit_->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
-	shader_unlit_->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::PixelConstantBuffer));
+	shader_unlit->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+	shader_unlit->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::PixelConstantBuffer));
 
-	shader_distortion_->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
-	shader_distortion_->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::PixelConstantBufferDistortion));
+	shader_distortion->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+	shader_distortion->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::PixelConstantBufferDistortion));
 
-	shader_ad_unlit_->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
-	shader_ad_unlit_->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::PixelConstantBuffer));
+	shader_ad_unlit->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+	shader_ad_unlit->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::PixelConstantBuffer));
 
-	shader_ad_distortion_->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
-	shader_ad_distortion_->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::PixelConstantBufferDistortion));
+	shader_ad_distortion->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+	shader_ad_distortion->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::PixelConstantBufferDistortion));
 
-	shader_lit_->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
-	shader_lit_->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::PixelConstantBuffer));
+	shader_lit->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+	shader_lit->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::PixelConstantBuffer));
 
-	shader_ad_lit_->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
-	shader_ad_lit_->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::PixelConstantBuffer));
+	shader_ad_lit->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
+	shader_ad_lit->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::PixelConstantBuffer));
 
 	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>(this);
 
@@ -760,36 +754,6 @@ void RendererImplemented::DrawPolygonInstanced(int32_t vertexCount, int32_t inde
 
 	LLGI::SafeRelease(constantBufferVS);
 	LLGI::SafeRelease(constantBufferPS);
-}
-
-Shader* RendererImplemented::GetShader(::EffekseerRenderer::RendererShaderType type) const
-{
-	if (type == ::EffekseerRenderer::RendererShaderType::AdvancedBackDistortion)
-	{
-		return shader_ad_distortion_;
-	}
-	else if (type == ::EffekseerRenderer::RendererShaderType::AdvancedLit)
-	{
-		return shader_ad_lit_;
-	}
-	else if (type == ::EffekseerRenderer::RendererShaderType::AdvancedUnlit)
-	{
-		return shader_ad_unlit_;
-	}
-	else if (type == ::EffekseerRenderer::RendererShaderType::BackDistortion)
-	{
-		return shader_distortion_;
-	}
-	else if (type == ::EffekseerRenderer::RendererShaderType::Lit)
-	{
-		return shader_lit_;
-	}
-	else if (type == ::EffekseerRenderer::RendererShaderType::Unlit)
-	{
-		return shader_unlit_;
-	}
-
-	return nullptr;
 }
 
 void RendererImplemented::BeginShader(Shader* shader)

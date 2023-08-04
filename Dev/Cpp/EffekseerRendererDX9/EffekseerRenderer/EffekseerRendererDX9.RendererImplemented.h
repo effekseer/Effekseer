@@ -30,13 +30,6 @@ private:
 	Effekseer::Backend::IndexBufferRef indexBufferForWireframe_;
 
 	int32_t m_squareMaxCount;
-
-	Shader* shader_unlit_ = nullptr;
-	Shader* shader_distortion_ = nullptr;
-	Shader* shader_lit_ = nullptr;
-	Shader* shader_ad_unlit_ = nullptr;
-	Shader* shader_ad_distortion_ = nullptr;
-	Shader* shader_ad_lit_ = nullptr;
 	Shader* currentShader = nullptr;
 
 	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>* m_standardRenderer;
@@ -108,6 +101,7 @@ private:
 	EffekseerRenderer::DistortingCallback* m_distortingCallback;
 
 	::Effekseer::Backend::TextureRef m_backgroundDX9;
+
 public:
 	/**
 		@brief	コンストラクタ
@@ -206,7 +200,6 @@ public:
 	void DrawPolygon(int32_t vertexCount, int32_t indexCount);
 	void DrawPolygonInstanced(int32_t vertexCount, int32_t indexCount, int32_t instanceCount);
 
-	Shader* GetShader(::EffekseerRenderer::RendererShaderType type) const;
 	void BeginShader(Shader* shader);
 	void EndShader(Shader* shader);
 

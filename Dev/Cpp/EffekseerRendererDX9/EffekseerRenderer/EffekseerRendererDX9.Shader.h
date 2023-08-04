@@ -27,6 +27,8 @@ private:
 
 	Backend::GraphicsDeviceRef graphicsDevice_;
 	Backend::ShaderRef shader_;
+	Backend::ShaderRef shaderOverride_;
+
 	Backend::VertexLayoutRef vertexLayout_;
 
 	Shader(Backend::GraphicsDeviceRef graphicsDevice,
@@ -41,12 +43,26 @@ public:
 						  Effekseer::Backend::VertexLayoutRef vertexLayout);
 
 public:
+	void OverrideShader(::Effekseer::Backend::ShaderRef shader) override
+	{
+		shaderOverride_ = shader.DownCast<Backend::Shader>();
+	}
+
+public:
 	IDirect3DVertexShader9* GetVertexShader() const
 	{
+		if (shaderOverride_ != nullptr)
+		{
+			shaderOverride_->GetVertexShader();
+		}
 		return shader_->GetVertexShader();
 	}
 	IDirect3DPixelShader9* GetPixelShader() const
 	{
+		if (shaderOverride_ != nullptr)
+		{
+			shaderOverride_->GetPixelShader();
+		}
 		return shader_->GetPixelShader();
 	}
 	IDirect3DVertexDeclaration9* GetLayoutInterface() const

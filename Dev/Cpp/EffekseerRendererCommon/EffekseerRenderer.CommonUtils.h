@@ -4,6 +4,7 @@
 
 #include "EffekseerRenderer.Renderer.h"
 #include "EffekseerRenderer.Renderer_Impl.h"
+#include "EffekseerRendererFlags.h"
 #include <Effekseer.h>
 #include <Effekseer/Material/Effekseer.CompiledMaterial.h>
 #include <Effekseer/Model/SplineGenerator.h>
@@ -907,17 +908,6 @@ struct MaterialShaderParameterGenerator
 
 		PixelShaderUniformBufferSize = psOffset;
 	}
-};
-
-enum class RendererShaderType
-{
-	Unlit,
-	Lit,
-	BackDistortion,
-	AdvancedUnlit,
-	AdvancedLit,
-	AdvancedBackDistortion,
-	Material,
 };
 
 struct ShaderParameterCollector

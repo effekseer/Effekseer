@@ -13,6 +13,8 @@ class Shader : public ::EffekseerRenderer::ShaderBase
 private:
 	Backend::GraphicsDeviceRef graphicsDevice_;
 	Backend::ShaderRef shader_;
+	Backend::ShaderRef shaderOverride_;
+
 	Backend::VertexLayoutRef vertexLayout_;
 
 	void* m_vertexConstantBuffer;
@@ -33,12 +35,26 @@ public:
 						  const char* name);
 
 public:
+	void OverrideShader(::Effekseer::Backend::ShaderRef shader) override
+	{
+		shaderOverride_ = shader.DownCast<Backend::Shader>();
+	}
+
+public:
 	LLGI::Shader* GetVertexShader() const
 	{
+		if (shaderOverride_ != nullptr)
+		{
+			shaderOverride_->GetVertexShader();
+		}
 		return shader_->GetVertexShader();
 	}
 	LLGI::Shader* GetPixelShader() const
 	{
+		if (shaderOverride_ != nullptr)
+		{
+			shaderOverride_->GetPixelShader();
+		}
 		return shader_->GetPixelShader();
 	}
 
