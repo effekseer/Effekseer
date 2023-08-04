@@ -246,4 +246,44 @@ void Renderer::Impl::SetDepth(::Effekseer::Backend::TextureRef texture, const De
 	reconstructionParam_ = reconstructionParam;
 }
 
+ShaderBase* Renderer::Impl::GetShader(::EffekseerRenderer::RendererShaderType type) const
+{
+	if (type == ::EffekseerRenderer::RendererShaderType::AdvancedBackDistortion)
+	{
+		return ShaderAdDistortion.get();
+	}
+	else if (type == ::EffekseerRenderer::RendererShaderType::AdvancedLit)
+	{
+		return ShaderAdLit.get();
+	}
+	else if (type == ::EffekseerRenderer::RendererShaderType::AdvancedUnlit)
+	{
+		return ShaderAdUnlit.get();
+	}
+	else if (type == ::EffekseerRenderer::RendererShaderType::BackDistortion)
+	{
+		return ShaderDistortion.get();
+	}
+	else if (type == ::EffekseerRenderer::RendererShaderType::Lit)
+	{
+		return ShaderLit.get();
+	}
+	else if (type == ::EffekseerRenderer::RendererShaderType::Unlit)
+	{
+		if (externalShaderSettings == nullptr)
+		{
+			ShaderUnlit->OverrideShader(nullptr);
+		}
+		else
+		{
+			ShaderUnlit->OverrideShader(externalShaderSettings->StandardShader);
+		}
+
+		return ShaderUnlit.get();
+	}
+
+	assert(0);
+	return nullptr;
+}
+
 } // namespace EffekseerRenderer

@@ -549,7 +549,7 @@ public:
 		}
 		else
 		{
-			shader_ = m_renderer->GetShader(renderState.Collector.ShaderType);
+			shader_ = (SHADER*)m_renderer->GetImpl()->GetShader(renderState.Collector.ShaderType);
 		}
 
 		// validate

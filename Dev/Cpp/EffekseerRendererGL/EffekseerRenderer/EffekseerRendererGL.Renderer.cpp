@@ -149,16 +149,7 @@ RendererImplemented::~RendererImplemented()
 	GetImpl()->DeleteProxyTextures(this);
 
 	ES_SAFE_DELETE(m_distortingCallback);
-
 	ES_SAFE_DELETE(m_standardRenderer);
-	ES_SAFE_DELETE(shader_unlit_);
-	ES_SAFE_DELETE(shader_distortion_);
-	ES_SAFE_DELETE(shader_lit_);
-
-	ES_SAFE_DELETE(shader_ad_unlit_);
-	ES_SAFE_DELETE(shader_ad_lit_);
-	ES_SAFE_DELETE(shader_ad_distortion_);
-
 	ES_SAFE_DELETE(m_renderState);
 
 	// NOTE : It is better to reset on a same context where Rendering method runs
@@ -265,62 +256,68 @@ bool RendererImplemented::Initialize()
 	auto uniformLayoutUnlitAd = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(texLocAdUnlit, uniformLayoutElementsLitUnlit);
 	auto shader_unlit_ad = graphicsDevice_->CreateShaderFromCodes({unlit_ad_vs}, {unlit_ad_ps}, uniformLayoutUnlitAd).DownCast<Backend::Shader>();
 
-	shader_ad_unlit_ = Shader::Create(GetInternalGraphicsDevice(), shader_unlit_ad, "UnlitAd");
+	auto shader_ad_unlit_ = Shader::Create(GetInternalGraphicsDevice(), shader_unlit_ad, "UnlitAd");
 	if (shader_ad_unlit_ == nullptr)
 	{
 		Effekseer::Log(Effekseer::LogType::Error, "Failed to compile UnlitAd");
 		return false;
 	}
+	GetImpl()->ShaderAdUnlit = std::unique_ptr<EffekseerRenderer::ShaderBase>(shader_ad_unlit_);
 
 	auto uniformLayoutDistAd = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(texLocAdDist, uniformLayoutElementsDist);
 	auto shader_distortion_ad = graphicsDevice_->CreateShaderFromCodes({distortion_ad_vs}, {distortion_ad_ps}, uniformLayoutDistAd).DownCast<Backend::Shader>();
 
-	shader_ad_distortion_ = Shader::Create(GetInternalGraphicsDevice(), shader_distortion_ad, "DistAd");
+	auto shader_ad_distortion_ = Shader::Create(GetInternalGraphicsDevice(), shader_distortion_ad, "DistAd");
 	if (shader_ad_distortion_ == nullptr)
 	{
 		Effekseer::Log(Effekseer::LogType::Error, "Failed to compile DistAd");
 		return false;
 	}
+	GetImpl()->ShaderAdDistortion = std::unique_ptr<EffekseerRenderer::ShaderBase>(shader_ad_distortion_);
 
 	auto uniformLayoutLitAd = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(texLocAdLit, uniformLayoutElementsLitUnlit);
 	auto shader_lit_ad = graphicsDevice_->CreateShaderFromCodes({lit_ad_vs}, {lit_ad_ps}, uniformLayoutLitAd).DownCast<Backend::Shader>();
 
-	shader_ad_lit_ = Shader::Create(GetInternalGraphicsDevice(), shader_lit_ad, "LitAd");
+	auto shader_ad_lit_ = Shader::Create(GetInternalGraphicsDevice(), shader_lit_ad, "LitAd");
 	if (shader_ad_lit_ == nullptr)
 	{
 		Effekseer::Log(Effekseer::LogType::Error, "Failed to compile LitAd");
 		return false;
 	}
+	GetImpl()->ShaderAdLit = std::unique_ptr<EffekseerRenderer::ShaderBase>(shader_ad_lit_);
 
 	auto uniformLayoutUnlit = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(texLocUnlit, uniformLayoutElementsLitUnlit);
 	auto shader_unlit = graphicsDevice_->CreateShaderFromCodes({unlit_vs}, {unlit_ps}, uniformLayoutUnlit).DownCast<Backend::Shader>();
 
-	shader_unlit_ = Shader::Create(GetInternalGraphicsDevice(), shader_unlit, "Unlit");
+	auto shader_unlit_ = Shader::Create(GetInternalGraphicsDevice(), shader_unlit, "Unlit");
 	if (shader_unlit_ == nullptr)
 	{
 		Effekseer::Log(Effekseer::LogType::Error, "Failed to compile Unlit");
 		return false;
 	}
+	GetImpl()->ShaderUnlit = std::unique_ptr<EffekseerRenderer::ShaderBase>(shader_unlit_);
 
 	auto uniformLayoutDist = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(texLocDist, uniformLayoutElementsDist);
 	auto shader_distortion = graphicsDevice_->CreateShaderFromCodes({distortion_vs}, {distortion_ps}, uniformLayoutDist).DownCast<Backend::Shader>();
 
-	shader_distortion_ = Shader::Create(GetInternalGraphicsDevice(), shader_distortion, "Dist");
+	auto shader_distortion_ = Shader::Create(GetInternalGraphicsDevice(), shader_distortion, "Dist");
 	if (shader_distortion_ == nullptr)
 	{
 		Effekseer::Log(Effekseer::LogType::Error, "Failed to compile Dist");
 		return false;
 	}
+	GetImpl()->ShaderDistortion = std::unique_ptr<EffekseerRenderer::ShaderBase>(shader_distortion_);
 
 	auto uniformLayoutLit = Effekseer::MakeRefPtr<Effekseer::Backend::UniformLayout>(texLocLit, uniformLayoutElementsLitUnlit);
 	auto shader_lit = graphicsDevice_->CreateShaderFromCodes({lit_vs}, {lit_ps}, uniformLayoutLit).DownCast<Backend::Shader>();
 
-	shader_lit_ = Shader::Create(GetInternalGraphicsDevice(), shader_lit, "Lit");
+	auto shader_lit_ = Shader::Create(GetInternalGraphicsDevice(), shader_lit, "Lit");
 	if (shader_lit_ == nullptr)
 	{
 		Effekseer::Log(Effekseer::LogType::Error, "Failed to compile Lit");
 		return false;
 	}
+	GetImpl()->ShaderLit = std::unique_ptr<EffekseerRenderer::ShaderBase>(shader_lit_);
 
 	// Unlit
 	auto vlUnlitAd = EffekseerRenderer::GetVertexLayout(graphicsDevice_, EffekseerRenderer::RendererShaderType::AdvancedUnlit).DownCast<Backend::VertexLayout>();
@@ -820,48 +817,6 @@ void RendererImplemented::DrawPolygonInstanced(int32_t vertexCount, int32_t inde
 	GLCheckError();
 }
 
-Shader* RendererImplemented::GetShader(::EffekseerRenderer::RendererShaderType type) const
-{
-	if (type == ::EffekseerRenderer::RendererShaderType::AdvancedBackDistortion)
-	{
-		return shader_ad_distortion_;
-	}
-	else if (type == ::EffekseerRenderer::RendererShaderType::AdvancedLit)
-	{
-		return shader_ad_lit_;
-	}
-	else if (type == ::EffekseerRenderer::RendererShaderType::AdvancedUnlit)
-	{
-		return shader_ad_unlit_;
-	}
-	else if (type == ::EffekseerRenderer::RendererShaderType::BackDistortion)
-	{
-		return shader_distortion_;
-	}
-	else if (type == ::EffekseerRenderer::RendererShaderType::Lit)
-	{
-		return shader_lit_;
-	}
-	else if (type == ::EffekseerRenderer::RendererShaderType::Unlit)
-	{
-		if (GetExternalShaderSettings() == nullptr)
-		{
-			shader_unlit_->OverrideShader(nullptr);
-		}
-		else
-		{
-			shader_unlit_->OverrideShader(GetExternalShaderSettings()->StandardShader);
-		}
-
-		return shader_unlit_;
-	}
-
-	return shader_unlit_;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void RendererImplemented::BeginShader(Shader* shader)
 {
 	GLCheckError();
