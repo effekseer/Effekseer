@@ -619,18 +619,10 @@ void RendererImplemented::SetDistortingCallback(EffekseerRenderer::DistortingCal
 	m_distortingCallback = callback;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void RendererImplemented::SetVertexBuffer(IDirect3DVertexBuffer9* vertexBuffer, int32_t size)
-{
-	GetDevice()->SetStreamSource(0, vertexBuffer, 0, size);
-}
-
 void RendererImplemented::SetVertexBuffer(const Effekseer::Backend::VertexBufferRef& vertexBuffer, int32_t size)
 {
 	auto vb = static_cast<Backend::VertexBuffer*>(vertexBuffer.Get());
-	SetVertexBuffer(vb->GetBuffer(), size);
+	GetDevice()->SetStreamSource(0, vb->GetBuffer(), 0, size);
 }
 
 void RendererImplemented::SetIndexBuffer(const Effekseer::Backend::IndexBufferRef& indexBuffer)

@@ -190,8 +190,6 @@ public:
 		return m_standardRenderer;
 	}
 
-	void SetVertexBuffer(IDirect3DVertexBuffer9* vertexBuffer, int32_t size);
-
 	void SetVertexBuffer(const Effekseer::Backend::VertexBufferRef& vertexBuffer, int32_t size);
 	void SetIndexBuffer(const Effekseer::Backend::IndexBufferRef& indexBuffer);
 
