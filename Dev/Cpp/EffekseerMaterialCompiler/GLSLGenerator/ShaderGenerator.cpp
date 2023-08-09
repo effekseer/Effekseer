@@ -952,7 +952,7 @@ ShaderData ShaderGenerator::GenerateShader(MaterialFile* materialFile,
 				}
 				else if (stage == 1)
 				{
-					maincode << "layout(set = 0, binding = 0) uniform Block {" << std::endl;
+					maincode << "layout(set = 0, binding = 1) uniform Block {" << std::endl;
 				}
 			}
 			else
@@ -963,7 +963,7 @@ ShaderData ShaderGenerator::GenerateShader(MaterialFile* materialFile,
 				}
 				else if (stage == 1)
 				{
-					maincode << "layout(binding = 0) uniform Block {" << std::endl;
+					maincode << "layout(binding = 1) uniform Block {" << std::endl;
 				}
 			}
 		}
