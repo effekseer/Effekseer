@@ -15,7 +15,7 @@ struct PS_Input
     vec4 PosP;
 };
 
-struct PS_ConstanBuffer
+struct PS_ConstantBuffer
 {
     vec4 fLightDirection;
     vec4 fLightColor;
@@ -37,7 +37,7 @@ struct PS_ConstanBuffer
     vec4 miscFlags;
 };
 
-uniform PS_ConstanBuffer CBPS0;
+uniform PS_ConstantBuffer CBPS0;
 
 uniform sampler2D Sampler_sampler_colorTex;
 uniform sampler2D Sampler_sampler_normalTex;
@@ -100,7 +100,7 @@ vec4 ConvertToScreen(vec4 c, bool isValid)
 
 vec4 _main(PS_Input Input)
 {
-    bool convertColorSpace = !(CBPS0.miscFlags.x == 0.0);
+    bool convertColorSpace = CBPS0.miscFlags.x != 0.0;
     vec4 param = texture2D(Sampler_sampler_colorTex, Input.UV);
     bool param_1 = convertColorSpace;
     vec4 Output = ConvertFromSRGBTexture(param, param_1) * Input.Color;
@@ -152,7 +152,7 @@ struct PS_Input
     vec4 PosP;
 };
 
-struct PS_ConstanBuffer
+struct PS_ConstantBuffer
 {
     vec4 fLightDirection;
     vec4 fLightColor;
@@ -174,7 +174,7 @@ struct PS_ConstanBuffer
     vec4 miscFlags;
 };
 
-uniform PS_ConstanBuffer CBPS0;
+uniform PS_ConstantBuffer CBPS0;
 
 uniform sampler2D Sampler_sampler_colorTex;
 uniform sampler2D Sampler_sampler_normalTex;
@@ -255,7 +255,7 @@ vec4 ConvertToScreen(vec4 c, bool isValid)
 
 vec4 _main(PS_Input Input)
 {
-    bool convertColorSpace = !(CBPS0.miscFlags.x == 0.0);
+    bool convertColorSpace = CBPS0.miscFlags.x != 0.0;
     vec4 param = texture(Sampler_sampler_colorTex, Input.UV);
     bool param_1 = convertColorSpace;
     vec4 Output = ConvertFromSRGBTexture(param, param_1) * Input.Color;
@@ -271,7 +271,7 @@ vec4 _main(PS_Input Input)
     screenUV.y = 1.0 - screenUV.y;
     screenUV.y = 1.0 - screenUV.y;
     screenUV.y = CBPS0.mUVInversedBack.x + (CBPS0.mUVInversedBack.y * screenUV.y);
-    if (!(CBPS0.softParticleParam.w == 0.0))
+    if (CBPS0.softParticleParam.w != 0.0)
     {
         float backgroundZ = texture(Sampler_sampler_depthTex, screenUV).x;
         float param_2 = backgroundZ;
@@ -323,7 +323,7 @@ struct PS_Input
     highp vec4 PosP;
 };
 
-struct PS_ConstanBuffer
+struct PS_ConstantBuffer
 {
     highp vec4 fLightDirection;
     highp vec4 fLightColor;
@@ -345,7 +345,7 @@ struct PS_ConstanBuffer
     highp vec4 miscFlags;
 };
 
-uniform PS_ConstanBuffer CBPS0;
+uniform PS_ConstantBuffer CBPS0;
 
 uniform  sampler2D Sampler_sampler_colorTex;
 uniform  sampler2D Sampler_sampler_normalTex;
@@ -408,7 +408,7 @@ highp vec4 ConvertToScreen(highp vec4 c, bool isValid)
 
 highp vec4 _main(PS_Input Input)
 {
-    bool convertColorSpace = !(CBPS0.miscFlags.x == 0.0);
+    bool convertColorSpace = CBPS0.miscFlags.x != 0.0;
     highp vec4 param = texture2D(Sampler_sampler_colorTex, Input.UV);
     bool param_1 = convertColorSpace;
     highp vec4 Output = ConvertFromSRGBTexture(param, param_1) * Input.Color;
@@ -459,7 +459,7 @@ struct PS_Input
     highp vec4 PosP;
 };
 
-struct PS_ConstanBuffer
+struct PS_ConstantBuffer
 {
     highp vec4 fLightDirection;
     highp vec4 fLightColor;
@@ -481,7 +481,7 @@ struct PS_ConstanBuffer
     highp vec4 miscFlags;
 };
 
-uniform PS_ConstanBuffer CBPS0;
+uniform PS_ConstantBuffer CBPS0;
 
 uniform highp sampler2D Sampler_sampler_colorTex;
 uniform highp sampler2D Sampler_sampler_normalTex;
@@ -562,7 +562,7 @@ highp vec4 ConvertToScreen(highp vec4 c, bool isValid)
 
 highp vec4 _main(PS_Input Input)
 {
-    bool convertColorSpace = !(CBPS0.miscFlags.x == 0.0);
+    bool convertColorSpace = CBPS0.miscFlags.x != 0.0;
     highp vec4 param = texture(Sampler_sampler_colorTex, Input.UV);
     bool param_1 = convertColorSpace;
     highp vec4 Output = ConvertFromSRGBTexture(param, param_1) * Input.Color;
@@ -578,7 +578,7 @@ highp vec4 _main(PS_Input Input)
     screenUV.y = 1.0 - screenUV.y;
     screenUV.y = 1.0 - screenUV.y;
     screenUV.y = CBPS0.mUVInversedBack.x + (CBPS0.mUVInversedBack.y * screenUV.y);
-    if (!(CBPS0.softParticleParam.w == 0.0))
+    if (CBPS0.softParticleParam.w != 0.0)
     {
         highp float backgroundZ = texture(Sampler_sampler_depthTex, screenUV).x;
         highp float param_2 = backgroundZ;

@@ -62,6 +62,8 @@ out vec4 _VSPS_Alpha_Dist_UV;
 out vec4 _VSPS_Blend_Alpha_Dist_UV;
 out vec4 _VSPS_Blend_FBNextIndex_UV;
 
+mat4 spvWorkaroundRowMajor(mat4 wrap) { return wrap; }
+
 vec2 GetFlipbookOriginUV(vec2 FlipbookUV, float FlipbookIndex, float DivideX, vec2 flipbookOneSize, vec2 flipbookOffset)
 {
     vec2 DivideIndex;
@@ -183,9 +185,9 @@ VS_Output _main(VS_Input Input)
     uv1.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * uv1.y);
     Output.UV_Others = vec4(uv1.x, uv1.y, Output.UV_Others.z, Output.UV_Others.w);
     vec4 worldPos = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    Output.PosVS = worldPos * CBVS0.mCameraProj;
-    Output.ProjTangent = (worldPos + worldTangent) * CBVS0.mCameraProj;
-    Output.ProjBinormal = (worldPos + worldBinormal) * CBVS0.mCameraProj;
+    Output.PosVS = worldPos * spvWorkaroundRowMajor(CBVS0.mCameraProj);
+    Output.ProjTangent = (worldPos + worldTangent) * spvWorkaroundRowMajor(CBVS0.mCameraProj);
+    Output.ProjBinormal = (worldPos + worldBinormal) * spvWorkaroundRowMajor(CBVS0.mCameraProj);
     Output.Color = Input.Color;
     VS_Input param = Input;
     VS_Output param_1 = Output;

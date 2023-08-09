@@ -6,7 +6,7 @@ struct PS_Input
     float4 PosP;
 };
 
-cbuffer PS_ConstanBuffer : register(b0)
+cbuffer PS_ConstantBuffer : register(b1)
 {
     float4 _141_fLightDirection : register(c0);
     float4 _141_fLightColor : register(c1);

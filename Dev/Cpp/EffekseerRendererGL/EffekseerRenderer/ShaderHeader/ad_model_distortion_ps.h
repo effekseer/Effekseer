@@ -29,7 +29,7 @@ struct AdvancedParameter
     float AlphaThreshold;
 };
 
-struct PS_ConstanBuffer
+struct PS_ConstantBuffer
 {
     vec4 g_scale;
     vec4 mUVInversedBack;
@@ -41,7 +41,7 @@ struct PS_ConstanBuffer
     vec4 reconstructionParam2;
 };
 
-uniform PS_ConstanBuffer CBPS0;
+uniform PS_ConstantBuffer CBPS0;
 
 uniform sampler2D Sampler_sampler_uvDistortionTex;
 uniform sampler2D Sampler_sampler_colorTex;
@@ -265,7 +265,7 @@ struct AdvancedParameter
     float AlphaThreshold;
 };
 
-struct PS_ConstanBuffer
+struct PS_ConstantBuffer
 {
     vec4 g_scale;
     vec4 mUVInversedBack;
@@ -277,7 +277,7 @@ struct PS_ConstanBuffer
     vec4 reconstructionParam2;
 };
 
-uniform PS_ConstanBuffer CBPS0;
+uniform PS_ConstantBuffer CBPS0;
 
 uniform sampler2D Sampler_sampler_uvDistortionTex;
 uniform sampler2D Sampler_sampler_colorTex;
@@ -472,7 +472,7 @@ vec4 _main(PS_Input Input)
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
     screenUV.y = 1.0 - screenUV.y;
-    if (!(CBPS0.softParticleParam.w == 0.0))
+    if (CBPS0.softParticleParam.w != 0.0)
     {
         float backgroundZ = texture(Sampler_sampler_depthTex, screenUV).x;
         float param_11 = backgroundZ;
@@ -534,7 +534,7 @@ struct AdvancedParameter
     highp float AlphaThreshold;
 };
 
-struct PS_ConstanBuffer
+struct PS_ConstantBuffer
 {
     highp vec4 g_scale;
     highp vec4 mUVInversedBack;
@@ -546,7 +546,7 @@ struct PS_ConstanBuffer
     highp vec4 reconstructionParam2;
 };
 
-uniform PS_ConstanBuffer CBPS0;
+uniform PS_ConstantBuffer CBPS0;
 
 uniform  sampler2D Sampler_sampler_uvDistortionTex;
 uniform  sampler2D Sampler_sampler_colorTex;
@@ -769,7 +769,7 @@ struct AdvancedParameter
     highp float AlphaThreshold;
 };
 
-struct PS_ConstanBuffer
+struct PS_ConstantBuffer
 {
     highp vec4 g_scale;
     highp vec4 mUVInversedBack;
@@ -781,7 +781,7 @@ struct PS_ConstanBuffer
     highp vec4 reconstructionParam2;
 };
 
-uniform PS_ConstanBuffer CBPS0;
+uniform PS_ConstantBuffer CBPS0;
 
 uniform highp sampler2D Sampler_sampler_uvDistortionTex;
 uniform highp sampler2D Sampler_sampler_colorTex;
@@ -976,7 +976,7 @@ highp vec4 _main(PS_Input Input)
     highp vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
     screenUV.y = 1.0 - screenUV.y;
-    if (!(CBPS0.softParticleParam.w == 0.0))
+    if (CBPS0.softParticleParam.w != 0.0)
     {
         highp float backgroundZ = texture(Sampler_sampler_depthTex, screenUV).x;
         highp float param_11 = backgroundZ;

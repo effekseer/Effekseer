@@ -677,7 +677,7 @@ void RendererImplemented::DrawSprites(int32_t spriteCount, int32_t vertexOffset)
 		assert(constantBufferVS != nullptr);
 		memcpy(constantBufferVS->Lock(), currentShader->GetVertexConstantBuffer(), currentShader->GetVertexConstantBufferSize());
 		constantBufferVS->Unlock();
-		GetCurrentCommandList()->SetConstantBuffer(constantBufferVS, LLGI::ShaderStageType::Vertex);
+		GetCurrentCommandList()->SetConstantBuffer(constantBufferVS, 0);
 	}
 
 	if (currentShader->GetPixelConstantBufferSize() > 0)
@@ -686,7 +686,7 @@ void RendererImplemented::DrawSprites(int32_t spriteCount, int32_t vertexOffset)
 		assert(constantBufferPS != nullptr);
 		memcpy(constantBufferPS->Lock(), currentShader->GetPixelConstantBuffer(), currentShader->GetPixelConstantBufferSize());
 		constantBufferPS->Unlock();
-		GetCurrentCommandList()->SetConstantBuffer(constantBufferPS, LLGI::ShaderStageType::Pixel);
+		GetCurrentCommandList()->SetConstantBuffer(constantBufferPS, 1);
 	}
 
 	auto piplineState = GetOrCreatePiplineState();
@@ -731,7 +731,7 @@ void RendererImplemented::DrawPolygonInstanced(int32_t vertexCount, int32_t inde
 		assert(constantBufferVS != nullptr);
 		memcpy(constantBufferVS->Lock(), currentShader->GetVertexConstantBuffer(), currentShader->GetVertexConstantBufferSize());
 		constantBufferVS->Unlock();
-		GetCurrentCommandList()->SetConstantBuffer(constantBufferVS, LLGI::ShaderStageType::Vertex);
+		GetCurrentCommandList()->SetConstantBuffer(constantBufferVS, 0);
 	}
 
 	if (currentShader->GetPixelConstantBufferSize() > 0)
@@ -740,7 +740,7 @@ void RendererImplemented::DrawPolygonInstanced(int32_t vertexCount, int32_t inde
 		assert(constantBufferPS != nullptr);
 		memcpy(constantBufferPS->Lock(), currentShader->GetPixelConstantBuffer(), currentShader->GetPixelConstantBufferSize());
 		constantBufferPS->Unlock();
-		GetCurrentCommandList()->SetConstantBuffer(constantBufferPS, LLGI::ShaderStageType::Pixel);
+		GetCurrentCommandList()->SetConstantBuffer(constantBufferPS, 1);
 	}
 
 	auto piplineState = GetOrCreatePiplineState();
@@ -795,19 +795,15 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::Backend::Textur
 	{
 		if (textures[i] == nullptr)
 		{
-			GetCurrentCommandList()->SetTexture(
-				nullptr, ws[(int)state.TextureWrapTypes[i]], fs[(int)state.TextureFilterTypes[i]], i, LLGI::ShaderStageType::Vertex);
-			GetCurrentCommandList()->SetTexture(
-				nullptr, ws[(int)state.TextureWrapTypes[i]], fs[(int)state.TextureFilterTypes[i]], i, LLGI::ShaderStageType::Pixel);
+			GetCurrentCommandList()->SetTexture(nullptr, ws[(int)state.TextureWrapTypes[i]], fs[(int)state.TextureFilterTypes[i]], i);
+			GetCurrentCommandList()->SetTexture(nullptr, ws[(int)state.TextureWrapTypes[i]], fs[(int)state.TextureFilterTypes[i]], i);
 		}
 		else
 		{
 			auto texture = static_cast<Backend::Texture*>(textures[i].Get());
 			auto t = texture->GetTexture().get();
-			GetCurrentCommandList()->SetTexture(
-				t, ws[(int)state.TextureWrapTypes[i]], fs[(int)state.TextureFilterTypes[i]], i, LLGI::ShaderStageType::Vertex);
-			GetCurrentCommandList()->SetTexture(
-				t, ws[(int)state.TextureWrapTypes[i]], fs[(int)state.TextureFilterTypes[i]], i, LLGI::ShaderStageType::Pixel);
+			GetCurrentCommandList()->SetTexture(t, ws[(int)state.TextureWrapTypes[i]], fs[(int)state.TextureFilterTypes[i]], i);
+			GetCurrentCommandList()->SetTexture(t, ws[(int)state.TextureWrapTypes[i]], fs[(int)state.TextureFilterTypes[i]], i);
 		}
 	}
 }

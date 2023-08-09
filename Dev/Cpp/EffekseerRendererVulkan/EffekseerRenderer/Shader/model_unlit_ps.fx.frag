@@ -8,7 +8,7 @@ struct PS_Input
     vec4 PosP;
 };
 
-layout(set = 1, binding = 0, std140) uniform PS_ConstanBuffer
+layout(set = 0, binding = 1, std140) uniform PS_ConstantBuffer
 {
     vec4 fLightDirection;
     vec4 fLightColor;
@@ -30,8 +30,8 @@ layout(set = 1, binding = 0, std140) uniform PS_ConstanBuffer
     vec4 miscFlags;
 } _225;
 
-layout(location = 0, set = 1, binding = 1) uniform sampler2D Sampler_sampler_colorTex;
-layout(location = 1, set = 1, binding = 2) uniform sampler2D Sampler_sampler_depthTex;
+layout(location = 0, set = 1, binding = 0) uniform sampler2D Sampler_sampler_colorTex;
+layout(location = 1, set = 1, binding = 1) uniform sampler2D Sampler_sampler_depthTex;
 
 layout(location = 0) centroid in vec4 Input_Color;
 layout(location = 1) centroid in vec2 Input_UV;
@@ -105,7 +105,7 @@ vec4 ConvertToScreen(vec4 c, bool isValid)
 
 vec4 _main(PS_Input Input)
 {
-    bool convertColorSpace = !(_225.miscFlags.x == 0.0);
+    bool convertColorSpace = _225.miscFlags.x != 0.0;
     vec4 param = texture(Sampler_sampler_colorTex, Input.UV);
     bool param_1 = convertColorSpace;
     vec4 Output = ConvertFromSRGBTexture(param, param_1) * Input.Color;
@@ -115,7 +115,7 @@ vec4 _main(PS_Input Input)
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
     screenUV.y = _225.mUVInversedBack.x + (_225.mUVInversedBack.y * screenUV.y);
-    if (!(_225.softParticleParam.w == 0.0))
+    if (_225.softParticleParam.w != 0.0)
     {
         float backgroundZ = texture(Sampler_sampler_depthTex, screenUV).x;
         float param_2 = backgroundZ;

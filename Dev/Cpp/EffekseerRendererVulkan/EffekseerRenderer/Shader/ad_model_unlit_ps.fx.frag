@@ -24,7 +24,7 @@ struct AdvancedParameter
     float AlphaThreshold;
 };
 
-layout(set = 1, binding = 0, std140) uniform PS_ConstanBuffer
+layout(set = 0, binding = 1, std140) uniform PS_ConstantBuffer
 {
     vec4 fLightDirection;
     vec4 fLightColor;
@@ -46,13 +46,13 @@ layout(set = 1, binding = 0, std140) uniform PS_ConstanBuffer
     vec4 miscFlags;
 } _417;
 
-layout(location = 2, set = 1, binding = 3) uniform sampler2D Sampler_sampler_uvDistortionTex;
-layout(location = 0, set = 1, binding = 1) uniform sampler2D Sampler_sampler_colorTex;
-layout(location = 1, set = 1, binding = 2) uniform sampler2D Sampler_sampler_alphaTex;
-layout(location = 5, set = 1, binding = 6) uniform sampler2D Sampler_sampler_blendUVDistortionTex;
-layout(location = 3, set = 1, binding = 4) uniform sampler2D Sampler_sampler_blendTex;
-layout(location = 4, set = 1, binding = 5) uniform sampler2D Sampler_sampler_blendAlphaTex;
-layout(location = 6, set = 1, binding = 7) uniform sampler2D Sampler_sampler_depthTex;
+layout(location = 2, set = 1, binding = 2) uniform sampler2D Sampler_sampler_uvDistortionTex;
+layout(location = 0, set = 1, binding = 0) uniform sampler2D Sampler_sampler_colorTex;
+layout(location = 1, set = 1, binding = 1) uniform sampler2D Sampler_sampler_alphaTex;
+layout(location = 5, set = 1, binding = 5) uniform sampler2D Sampler_sampler_blendUVDistortionTex;
+layout(location = 3, set = 1, binding = 3) uniform sampler2D Sampler_sampler_blendTex;
+layout(location = 4, set = 1, binding = 4) uniform sampler2D Sampler_sampler_blendAlphaTex;
+layout(location = 6, set = 1, binding = 6) uniform sampler2D Sampler_sampler_depthTex;
 
 layout(location = 0) centroid in vec4 Input_Color;
 layout(location = 1) centroid in vec4 Input_UV_Others;
@@ -211,7 +211,7 @@ vec4 ConvertToScreen(vec4 c, bool isValid)
 
 vec4 _main(PS_Input Input)
 {
-    bool convertColorSpace = !(_417.miscFlags.x == 0.0);
+    bool convertColorSpace = _417.miscFlags.x != 0.0;
     PS_Input param = Input;
     AdvancedParameter advancedParam = DisolveAdvancedParameter(param);
     vec2 param_1 = advancedParam.UVDistortionUV;
@@ -280,7 +280,7 @@ vec4 _main(PS_Input Input)
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
     screenUV.y = _417.mUVInversedBack.x + (_417.mUVInversedBack.y * screenUV.y);
-    if (!(_417.softParticleParam.w == 0.0))
+    if (_417.softParticleParam.w != 0.0)
     {
         float backgroundZ = texture(Sampler_sampler_depthTex, screenUV).x;
         float param_19 = backgroundZ;

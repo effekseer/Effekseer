@@ -8,7 +8,7 @@ struct PS_Input
     float4 Color;
 };
 
-cbuffer PS_ConstanBuffer : register(b0)
+cbuffer PS_ConstantBuffer : register(b1)
 {
     float4 _73_g_scale : register(c0);
     float4 _73_mUVInversedBack : register(c1);

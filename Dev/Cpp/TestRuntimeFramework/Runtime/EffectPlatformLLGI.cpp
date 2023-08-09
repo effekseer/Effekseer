@@ -198,8 +198,7 @@ void EffectPlatformLLGI::BeginRendering()
 	commandList_->SetVertexBuffer(vb_, sizeof(SimpleVertex), 0);
 	commandList_->SetIndexBuffer(ib_, 2);
 	commandList_->SetPipelineState(pip_);
-	commandList_->SetTexture(
-		checkTexture_, LLGI::TextureWrapMode::Repeat, LLGI::TextureMinMagFilter::Nearest, 0, LLGI::ShaderStageType::Pixel);
+	commandList_->SetTexture(checkTexture_, LLGI::TextureWrapMode::Repeat, LLGI::TextureMinMagFilter::Nearest, 0);
 	commandList_->Draw(2);
 
 	sfMemoryPoolEfk_->NewFrame();
@@ -241,8 +240,7 @@ void EffectPlatformLLGI::EndRendering()
 	commandList_->SetVertexBuffer(vb_, sizeof(SimpleVertex), 0);
 	commandList_->SetIndexBuffer(ib_, 2);
 	commandList_->SetPipelineState(screenPip_);
-	commandList_->SetTexture(
-		colorBuffer_, LLGI::TextureWrapMode::Repeat, LLGI::TextureMinMagFilter::Nearest, 0, LLGI::ShaderStageType::Pixel);
+	commandList_->SetTexture(colorBuffer_, LLGI::TextureWrapMode::Repeat, LLGI::TextureMinMagFilter::Nearest, 0);
 	commandList_->Draw(2);
 	commandList_->EndRenderPass();
 

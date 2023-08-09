@@ -2,7 +2,10 @@
 Texture2D g_texture : register(t0);
 SamplerState g_sampler : register(s0);
 
-float4 g_toneparams : register(c0);
+cbuffer PS_ConstantBuffer : register(b1)
+{
+	float4 g_toneparams;
+};
 
 struct PS_Input
 {

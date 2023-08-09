@@ -85,7 +85,7 @@ void Shader::SetConstantBuffer()
 
 	if (m_pixelRegisterCount > 0)
 	{
-		graphicsDevice_->GetDevice()->SetPixelShaderConstantF(0, (float*)m_pixelConstantBuffer, m_pixelRegisterCount);
+		graphicsDevice_->GetDevice()->SetPixelShaderConstantF(1, (float*)m_pixelConstantBuffer, m_pixelRegisterCount);
 	}
 }
 

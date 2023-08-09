@@ -95,7 +95,7 @@ void Shader::SetConstantBuffer()
 	if (m_pixelConstantBuffer != nullptr)
 	{
 		gd->GetContext()->UpdateSubresource(m_constantBufferToPS, 0, nullptr, m_pixelConstantBuffer, 0, 0);
-		gd->GetContext()->PSSetConstantBuffers(0, 1, &m_constantBufferToPS);
+		gd->GetContext()->PSSetConstantBuffers(1, 1, &m_constantBufferToPS);
 	}
 }
 

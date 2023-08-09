@@ -23,7 +23,7 @@ struct AdvancedParameter
     float AlphaThreshold;
 };
 
-cbuffer PS_ConstanBuffer : register(b1)
+cbuffer PS_ConstantBuffer : register(b1)
 {
     float4 _377_g_scale : packoffset(c0);
     float4 _377_mUVInversedBack : packoffset(c1);
@@ -285,6 +285,7 @@ void frag_main()
 SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
 {
     gl_FragCoord = stage_input.gl_FragCoord;
+    gl_FragCoord.w = 1.0 / gl_FragCoord.w;
     Input_UV_Others = stage_input.Input_UV_Others;
     Input_ProjBinormal = stage_input.Input_ProjBinormal;
     Input_ProjTangent = stage_input.Input_ProjTangent;

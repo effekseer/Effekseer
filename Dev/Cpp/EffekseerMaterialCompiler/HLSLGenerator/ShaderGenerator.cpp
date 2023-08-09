@@ -443,7 +443,7 @@ struct PS_Input
 	if (type == ShaderGeneratorTarget::DirectX9 || type == ShaderGeneratorTarget::DirectX11 || type == ShaderGeneratorTarget::PSSL)
 	{
 		ss << R"(
-cbuffer PSConstantBuffer : register(b0) {
+cbuffer PSConstantBuffer : register(b1) {
 )";
 	}
 	else

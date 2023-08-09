@@ -646,7 +646,7 @@ void ShaderGenerator::ExportTexture(std::ostringstream& maincode, const char* na
 	{
 		if (useSet_)
 		{
-			maincode << "layout(set = " << stage << ", binding = " << (bind + textureBindingOffset_) << ") uniform sampler2D " << name
+			maincode << "layout(set = 1, binding = " << (bind + textureBindingOffset_) << ") uniform sampler2D " << name
 					 << ";" << std::endl;
 		}
 		else
@@ -952,7 +952,7 @@ ShaderData ShaderGenerator::GenerateShader(MaterialFile* materialFile,
 				}
 				else if (stage == 1)
 				{
-					maincode << "layout(set = 1, binding = 0) uniform Block {" << std::endl;
+					maincode << "layout(set = 0, binding = 0) uniform Block {" << std::endl;
 				}
 			}
 			else

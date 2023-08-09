@@ -27,7 +27,7 @@ struct AdvancedParameter
     highp float AlphaThreshold;
 };
 
-struct PS_ConstanBuffer
+struct PS_ConstantBuffer
 {
     highp vec4 g_scale;
     highp vec4 mUVInversedBack;
@@ -39,7 +39,7 @@ struct PS_ConstanBuffer
     highp vec4 reconstructionParam2;
 };
 
-uniform PS_ConstanBuffer CBPS0;
+uniform PS_ConstantBuffer CBPS0;
 
 uniform highp sampler2D Sampler_sampler_uvDistortionTex;
 uniform highp sampler2D Sampler_sampler_colorTex;

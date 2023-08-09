@@ -2,8 +2,12 @@
 Texture2D g_texture : register(t0);
 SamplerState g_sampler : register(s0);
 
-float4 g_filterParams : register(c0);
-float4 g_intensity : register(c1);
+
+cbuffer PS_ConstantBuffer : register(b1)
+{
+	float4 g_filterParams;
+	float4 g_intensity;
+};
 
 struct PS_Input
 {
