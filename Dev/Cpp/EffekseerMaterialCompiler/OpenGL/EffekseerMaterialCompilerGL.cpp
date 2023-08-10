@@ -75,7 +75,8 @@ CompiledMaterialBinary* MaterialCompilerGL::Compile(MaterialFile* materialFile, 
 {
 	auto binary = new CompiledMaterialBinaryGL();
 
-	auto convertToVector = [](const std::string& str) -> std::vector<uint8_t> {
+	auto convertToVector = [](const std::string& str) -> std::vector<uint8_t>
+	{
 		std::vector<uint8_t> ret;
 		ret.resize(str.size() + 1);
 		memcpy(ret.data(), str.data(), str.size());
@@ -83,9 +84,10 @@ CompiledMaterialBinary* MaterialCompilerGL::Compile(MaterialFile* materialFile, 
 		return ret;
 	};
 
-	auto saveBinary = [&materialFile, &binary, &convertToVector, &maximumUniformCount, &maximumTextureCount](MaterialShaderType type) {
+	auto saveBinary = [&materialFile, &binary, &convertToVector, &maximumUniformCount, &maximumTextureCount](MaterialShaderType type)
+	{
 		GLSL::ShaderGenerator generator;
-		auto shader = generator.GenerateShader(materialFile, type, maximumUniformCount, maximumTextureCount, false, false, false, false, 0, false, false, InstanceCount);
+		auto shader = generator.GenerateShader(materialFile, type, maximumUniformCount, maximumTextureCount, false, false, false, false, 0, false, false, false, InstanceCount);
 		binary->SetVertexShaderData(type, convertToVector(shader.CodeVS));
 		binary->SetPixelShaderData(type, convertToVector(shader.CodePS));
 	};
