@@ -38,13 +38,15 @@ out vec4 _VSPS_Color;
 out vec3 _VSPS_Normal;
 out vec4 _VSPS_Position;
 
+mat4 spvWorkaroundRowMajor(mat4 wrap) { return wrap; }
+
 VS_Output _main(VS_Input _input)
 {
     vec4 localPos = vec4(_input.Pos, 1.0);
-    vec4 worldPos = localPos * CBVS0.worldMatrix;
-    vec4 cameraPos = worldPos * CBVS0.cameraMatrix;
+    vec4 worldPos = localPos * spvWorkaroundRowMajor(CBVS0.worldMatrix);
+    vec4 cameraPos = worldPos * spvWorkaroundRowMajor(CBVS0.cameraMatrix);
     VS_Output _output;
-    _output.Pos = cameraPos * CBVS0.projectionMatrix;
+    _output.Pos = cameraPos * spvWorkaroundRowMajor(CBVS0.projectionMatrix);
     _output.UV = _input.UV;
     _output.Color = _input.Color;
     _output.Normal = _input.Normal;

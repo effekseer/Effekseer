@@ -6,6 +6,13 @@ static const char metal_ad_sprite_lit_vs[] = R"(mtlcode
 
 using namespace metal;
 
+// Implementation of the GLSL mod() function, which is slightly different than Metal fmod()
+template<typename Tx, typename Ty>
+inline Tx mod(Tx x, Ty y)
+{
+    return x - y * floor(x / y);
+}
+
 struct VS_Input
 {
     float3 Pos;
@@ -72,13 +79,6 @@ struct main0_in
     float Input_FlipbookIndex [[attribute(9)]];
     float Input_AlphaThreshold [[attribute(10)]];
 };
-
-// Implementation of the GLSL mod() function, which is slightly different than Metal fmod()
-template<typename Tx, typename Ty>
-inline Tx mod(Tx x, Ty y)
-{
-    return x - y * floor(x / y);
-}
 
 static inline __attribute__((always_inline))
 float2 GetFlipbookOriginUV(thread const float2& FlipbookUV, thread const float& FlipbookIndex, thread const float& DivideX, thread const float2& flipbookOneSize, thread const float2& flipbookOffset)
@@ -168,25 +168,25 @@ void ApplyFlipbookVS(thread float& flipbookRate, thread float2& flipbookUV, thre
 }
 
 static inline __attribute__((always_inline))
-void CalculateAndStoreAdvancedParameter(thread const VS_Input& vsinput, thread VS_Output& vsoutput, constant VS_ConstantBuffer& v_262)
+void CalculateAndStoreAdvancedParameter(thread const VS_Input& vsinput, thread VS_Output& vsoutput, constant VS_ConstantBuffer& _262)
 {
     vsoutput.Alpha_Dist_UV = vsinput.Alpha_Dist_UV;
-    vsoutput.Alpha_Dist_UV.y = v_262.mUVInversed.x + (v_262.mUVInversed.y * vsinput.Alpha_Dist_UV.y);
-    vsoutput.Alpha_Dist_UV.w = v_262.mUVInversed.x + (v_262.mUVInversed.y * vsinput.Alpha_Dist_UV.w);
+    vsoutput.Alpha_Dist_UV.y = _262.mUVInversed.x + (_262.mUVInversed.y * vsinput.Alpha_Dist_UV.y);
+    vsoutput.Alpha_Dist_UV.w = _262.mUVInversed.x + (_262.mUVInversed.y * vsinput.Alpha_Dist_UV.w);
     vsoutput.Blend_FBNextIndex_UV = float4(vsinput.BlendUV.x, vsinput.BlendUV.y, vsoutput.Blend_FBNextIndex_UV.z, vsoutput.Blend_FBNextIndex_UV.w);
-    vsoutput.Blend_FBNextIndex_UV.y = v_262.mUVInversed.x + (v_262.mUVInversed.y * vsinput.BlendUV.y);
+    vsoutput.Blend_FBNextIndex_UV.y = _262.mUVInversed.x + (_262.mUVInversed.y * vsinput.BlendUV.y);
     vsoutput.Blend_Alpha_Dist_UV = vsinput.Blend_Alpha_Dist_UV;
-    vsoutput.Blend_Alpha_Dist_UV.y = v_262.mUVInversed.x + (v_262.mUVInversed.y * vsinput.Blend_Alpha_Dist_UV.y);
-    vsoutput.Blend_Alpha_Dist_UV.w = v_262.mUVInversed.x + (v_262.mUVInversed.y * vsinput.Blend_Alpha_Dist_UV.w);
+    vsoutput.Blend_Alpha_Dist_UV.y = _262.mUVInversed.x + (_262.mUVInversed.y * vsinput.Blend_Alpha_Dist_UV.y);
+    vsoutput.Blend_Alpha_Dist_UV.w = _262.mUVInversed.x + (_262.mUVInversed.y * vsinput.Blend_Alpha_Dist_UV.w);
     float flipbookRate = 0.0;
     float2 flipbookNextIndexUV = float2(0.0);
     float param = flipbookRate;
     float2 param_1 = flipbookNextIndexUV;
-    float4 param_2 = v_262.flipbookParameter1;
-    float4 param_3 = v_262.flipbookParameter2;
+    float4 param_2 = _262.flipbookParameter1;
+    float4 param_3 = _262.flipbookParameter2;
     float param_4 = vsinput.FlipbookIndex;
     float2 param_5 = vsoutput.UV_Others.xy;
-    float2 param_6 = float2(v_262.mUVInversed.xy);
+    float2 param_6 = float2(_262.mUVInversed.xy);
     ApplyFlipbookVS(param, param_1, param_2, param_3, param_4, param_5, param_6);
     flipbookRate = param;
     flipbookNextIndexUV = param_1;
@@ -196,30 +196,30 @@ void CalculateAndStoreAdvancedParameter(thread const VS_Input& vsinput, thread V
 }
 
 static inline __attribute__((always_inline))
-VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& v_262)
+VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& _262)
 {
     VS_Output Output = VS_Output{ float4(0.0), float4(0.0), float4(0.0), float3(0.0), float3(0.0), float3(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0) };
     float4 worldNormal = float4((Input.Normal.xyz - float3(0.5)) * 2.0, 0.0);
     float4 worldTangent = float4((Input.Tangent.xyz - float3(0.5)) * 2.0, 0.0);
     float4 worldBinormal = float4(cross(worldNormal.xyz, worldTangent.xyz), 0.0);
     float2 uv1 = Input.UV1;
-    uv1.y = v_262.mUVInversed.x + (v_262.mUVInversed.y * uv1.y);
+    uv1.y = _262.mUVInversed.x + (_262.mUVInversed.y * uv1.y);
     Output.UV_Others = float4(uv1.x, uv1.y, Output.UV_Others.z, Output.UV_Others.w);
     float4 worldPos = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    Output.PosVS = v_262.mCameraProj * worldPos;
+    Output.PosVS = _262.mCameraProj * worldPos;
     Output.WorldN = worldNormal.xyz;
     Output.WorldB = worldBinormal.xyz;
     Output.WorldT = worldTangent.xyz;
     Output.Color = Input.Color;
     VS_Input param = Input;
     VS_Output param_1 = Output;
-    CalculateAndStoreAdvancedParameter(param, param_1, v_262);
+    CalculateAndStoreAdvancedParameter(param, param_1, _262);
     Output = param_1;
     Output.PosP = Output.PosVS;
     return Output;
 }
 
-vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_262 [[buffer(0)]])
+vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& _262 [[buffer(0)]])
 {
     main0_out out = {};
     VS_Input Input;
@@ -234,7 +234,7 @@ vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& v_2
     Input.Blend_Alpha_Dist_UV = in.Input_Blend_Alpha_Dist_UV;
     Input.FlipbookIndex = in.Input_FlipbookIndex;
     Input.AlphaThreshold = in.Input_AlphaThreshold;
-    VS_Output flattenTemp = _main(Input, v_262);
+    VS_Output flattenTemp = _main(Input, _262);
     out.gl_Position = flattenTemp.PosVS;
     out._entryPointOutput_Color = flattenTemp.Color;
     out._entryPointOutput_UV_Others = flattenTemp.UV_Others;

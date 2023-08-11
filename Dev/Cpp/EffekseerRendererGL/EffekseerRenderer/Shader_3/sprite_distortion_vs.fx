@@ -45,6 +45,8 @@ out vec4 _VSPS_ProjTangent;
 out vec4 _VSPS_PosP;
 centroid out vec4 _VSPS_Color;
 
+mat4 spvWorkaroundRowMajor(mat4 wrap) { return wrap; }
+
 VS_Output _main(VS_Input Input)
 {
     VS_Output Output = VS_Output(vec4(0.0), vec2(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0));
@@ -52,13 +54,13 @@ VS_Output _main(VS_Input Input)
     vec4 worldTangent = vec4((Input.Tangent.xyz - vec3(0.5)) * 2.0, 0.0);
     vec4 worldBinormal = vec4(cross(worldNormal.xyz, worldTangent.xyz), 0.0);
     vec4 worldPos = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    Output.PosVS = worldPos * CBVS0.mCameraProj;
+    Output.PosVS = worldPos * spvWorkaroundRowMajor(CBVS0.mCameraProj);
     Output.Color = Input.Color;
     vec2 uv1 = Input.UV1;
     uv1.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * uv1.y);
     Output.UV = uv1;
-    Output.ProjTangent = (worldPos + worldTangent) * CBVS0.mCameraProj;
-    Output.ProjBinormal = (worldPos + worldBinormal) * CBVS0.mCameraProj;
+    Output.ProjTangent = (worldPos + worldTangent) * spvWorkaroundRowMajor(CBVS0.mCameraProj);
+    Output.ProjBinormal = (worldPos + worldBinormal) * spvWorkaroundRowMajor(CBVS0.mCameraProj);
     Output.PosP = Output.PosVS;
     return Output;
 }

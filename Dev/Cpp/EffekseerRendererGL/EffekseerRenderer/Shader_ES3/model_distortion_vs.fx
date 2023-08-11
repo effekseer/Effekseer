@@ -55,16 +55,19 @@ out vec4 _VSPS_ProjTangent;
 out vec4 _VSPS_PosP;
 centroid out vec4 _VSPS_Color;
 
+highp mat4 spvWorkaroundRowMajor(highp mat4 wrap) { return wrap; }
+mediump mat4 spvWorkaroundRowMajorMP(mediump mat4 wrap) { return wrap; }
+
 VS_Output _main(VS_Input Input)
 {
     uint index = Input.Index;
-    mat4 mModel = CBVS0.mModel_Inst[index];
+    mat4 mModel = spvWorkaroundRowMajor(CBVS0.mModel_Inst[index]);
     vec4 uv = CBVS0.fUV[index];
     vec4 modelColor = CBVS0.fModelColor[index] * Input.Color;
     VS_Output Output = VS_Output(vec4(0.0), vec2(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0));
     vec4 localPos = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     vec4 worldPos = localPos * mModel;
-    Output.PosVS = worldPos * CBVS0.mCameraProj;
+    Output.PosVS = worldPos * spvWorkaroundRowMajor(CBVS0.mCameraProj);
     Output.Color = modelColor;
     vec2 outputUV = Input.UV;
     outputUV.x = (outputUV.x * uv.z) + uv.x;
@@ -80,8 +83,8 @@ VS_Output _main(VS_Input Input)
     worldNormal = normalize(worldNormal);
     worldBinormal = normalize(worldBinormal);
     worldTangent = normalize(worldTangent);
-    Output.ProjBinormal = (worldPos + worldBinormal) * CBVS0.mCameraProj;
-    Output.ProjTangent = (worldPos + worldTangent) * CBVS0.mCameraProj;
+    Output.ProjBinormal = (worldPos + worldBinormal) * spvWorkaroundRowMajor(CBVS0.mCameraProj);
+    Output.ProjTangent = (worldPos + worldTangent) * spvWorkaroundRowMajor(CBVS0.mCameraProj);
     Output.PosP = Output.PosVS;
     return Output;
 }

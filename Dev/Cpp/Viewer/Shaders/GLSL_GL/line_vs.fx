@@ -33,13 +33,15 @@ out vec4 _VSPS_Color;
 out vec2 _VSPS_UV;
 out vec4 _VSPS_Position;
 
+mat4 spvWorkaroundRowMajor(mat4 wrap) { return wrap; }
+
 VS_Output _main(VS_Input Input)
 {
     VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec4(0.0));
     vec4 pos4 = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    vec4 cameraPos = pos4 * CBVS0.mCamera;
+    vec4 cameraPos = pos4 * spvWorkaroundRowMajor(CBVS0.mCamera);
     cameraPos /= vec4(cameraPos.w);
-    Output.Position = cameraPos * CBVS0.mProj;
+    Output.Position = cameraPos * spvWorkaroundRowMajor(CBVS0.mProj);
     Output.Pos = Output.Position;
     Output.UV = Input.UV;
     Output.Color = Input.Color;

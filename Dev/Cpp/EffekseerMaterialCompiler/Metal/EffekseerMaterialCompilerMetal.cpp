@@ -499,7 +499,7 @@ float3 calcDirectionalLightDiffuseColor(float3 lightColor, float3 diffuseColor, 
 
 #endif
 
-fragment ShaderOutput2 main0 (ShaderInput2 i [[stage_in]], constant ShaderUniform2& u [[buffer(0)]]
+fragment ShaderOutput2 main0 (ShaderInput2 i [[stage_in]], constant ShaderUniform2& u [[buffer(1)]]
 //$IN_TEX$
 )
 {

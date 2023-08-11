@@ -14,7 +14,7 @@ struct PS_Input
     vec4 PosP;
 };
 
-struct PS_ConstanBuffer
+struct PS_ConstantBuffer
 {
     vec4 fLightDirection;
     vec4 fLightColor;
@@ -36,7 +36,7 @@ struct PS_ConstanBuffer
     vec4 miscFlags;
 };
 
-uniform PS_ConstanBuffer CBPS0;
+uniform PS_ConstantBuffer CBPS0;
 
 uniform sampler2D Sampler_sampler_colorTex;
 uniform sampler2D Sampler_sampler_normalTex;
@@ -99,7 +99,7 @@ vec4 ConvertToScreen(vec4 c, bool isValid)
 
 vec4 _main(PS_Input Input)
 {
-    bool convertColorSpace = !(CBPS0.miscFlags.x == 0.0);
+    bool convertColorSpace = CBPS0.miscFlags.x != 0.0;
     vec4 param = texture2D(Sampler_sampler_colorTex, Input.UV);
     bool param_1 = convertColorSpace;
     vec4 Output = ConvertFromSRGBTexture(param, param_1) * Input.Color;

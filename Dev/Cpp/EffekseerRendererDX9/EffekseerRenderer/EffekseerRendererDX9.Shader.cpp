@@ -78,6 +78,7 @@ void Shader::SetPixelConstantBufferSize(int32_t size)
 //-----------------------------------------------------------------------------------
 void Shader::SetConstantBuffer()
 {
+	// DirectX9 ignores a slot
 	if (m_vertexRegisterCount > 0)
 	{
 		graphicsDevice_->GetDevice()->SetVertexShaderConstantF(0, (float*)m_vertexConstantBuffer, m_vertexRegisterCount);

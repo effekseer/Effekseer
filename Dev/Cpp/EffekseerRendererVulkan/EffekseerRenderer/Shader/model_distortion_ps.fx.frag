@@ -10,7 +10,7 @@ struct PS_Input
     vec4 Color;
 };
 
-layout(set = 1, binding = 0, std140) uniform PS_ConstanBuffer
+layout(set = 0, binding = 1, std140) uniform PS_ConstantBuffer
 {
     vec4 g_scale;
     vec4 mUVInversedBack;
@@ -22,9 +22,9 @@ layout(set = 1, binding = 0, std140) uniform PS_ConstanBuffer
     vec4 reconstructionParam2;
 } _155;
 
-layout(location = 0, set = 1, binding = 1) uniform sampler2D Sampler_sampler_colorTex;
-layout(location = 1, set = 1, binding = 2) uniform sampler2D Sampler_sampler_backTex;
-layout(location = 2, set = 1, binding = 3) uniform sampler2D Sampler_sampler_depthTex;
+layout(location = 0, set = 1, binding = 0) uniform sampler2D Sampler_sampler_colorTex;
+layout(location = 1, set = 1, binding = 1) uniform sampler2D Sampler_sampler_backTex;
+layout(location = 2, set = 1, binding = 2) uniform sampler2D Sampler_sampler_depthTex;
 
 layout(location = 0) centroid in vec2 Input_UV;
 layout(location = 1) in vec4 Input_ProjBinormal;
@@ -67,7 +67,7 @@ vec4 _main(PS_Input Input)
     vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
-    if (!(_155.softParticleParam.w == 0.0))
+    if (_155.softParticleParam.w != 0.0)
     {
         float backgroundZ = texture(Sampler_sampler_depthTex, screenUV).x;
         float param = backgroundZ;

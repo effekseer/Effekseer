@@ -646,7 +646,7 @@ void ShaderGenerator::ExportTexture(std::ostringstream& maincode, const char* na
 	{
 		if (useSet_)
 		{
-			maincode << "layout(set = " << stage << ", binding = " << (bind + textureBindingOffset_) << ") uniform sampler2D " << name
+			maincode << "layout(set = 1, binding = " << (bind + textureBindingOffset_) << ") uniform sampler2D " << name
 					 << ";" << std::endl;
 		}
 		else
@@ -891,6 +891,7 @@ ShaderData ShaderGenerator::GenerateShader(MaterialFile* materialFile,
 										   int textureBindingOffset,
 										   bool isYInverted,
 										   bool isScreenFlipped,
+										   bool isVullan,
 										   int instanceCount)
 {
 	useUniformBlock_ = useUniformBlock;
@@ -921,8 +922,7 @@ ShaderData ShaderGenerator::GenerateShader(MaterialFile* materialFile,
 
 		maincode << "#define _INSTANCE_COUNT_ " << instanceCount << std::endl;
 
-		// TODO : Replace DIRTY CODE
-		if (textureBindingOffset > 0)
+		if (isVullan)
 		{
 			// Vulkan
 			maincode << "#define gl_InstanceID gl_InstanceIndex" << std::endl;
@@ -952,7 +952,7 @@ ShaderData ShaderGenerator::GenerateShader(MaterialFile* materialFile,
 				}
 				else if (stage == 1)
 				{
-					maincode << "layout(set = 1, binding = 0) uniform Block {" << std::endl;
+					maincode << "layout(set = 0, binding = 1) uniform Block {" << std::endl;
 				}
 			}
 			else
@@ -963,7 +963,7 @@ ShaderData ShaderGenerator::GenerateShader(MaterialFile* materialFile,
 				}
 				else if (stage == 1)
 				{
-					maincode << "layout(binding = 0) uniform Block {" << std::endl;
+					maincode << "layout(binding = 1) uniform Block {" << std::endl;
 				}
 			}
 		}

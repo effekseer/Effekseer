@@ -16,7 +16,7 @@ struct PS_Input
     float4 PosP;
 };
 
-struct PS_ConstanBuffer
+struct PS_ConstantBuffer
 {
     float4 fLightDirection;
     float4 fLightColor;
@@ -127,31 +127,31 @@ float4 ConvertToScreen(thread const float4& c, thread const bool& isValid)
 }
 
 static inline __attribute__((always_inline))
-float4 _main(PS_Input Input, constant PS_ConstanBuffer& v_225, thread texture2d<float> _colorTex, thread sampler sampler_colorTex, thread texture2d<float> _normalTex, thread sampler sampler_normalTex, thread texture2d<float> _depthTex, thread sampler sampler_depthTex)
+float4 _main(PS_Input Input, constant PS_ConstantBuffer& _225, texture2d<float> _colorTex, sampler sampler_colorTex, texture2d<float> _normalTex, sampler sampler_normalTex, texture2d<float> _depthTex, sampler sampler_depthTex)
 {
-    bool convertColorSpace = (isunordered(v_225.miscFlags.x, 0.0) || v_225.miscFlags.x != 0.0);
+    bool convertColorSpace = _225.miscFlags.x != 0.0;
     float4 param = _colorTex.sample(sampler_colorTex, Input.UV);
     bool param_1 = convertColorSpace;
     float4 Output = ConvertFromSRGBTexture(param, param_1) * Input.Color;
     float3 texNormal = (_normalTex.sample(sampler_normalTex, Input.UV).xyz - float3(0.5)) * 2.0;
-    float3 localNormal = normalize(float3x3(float3(Input.WorldT), float3(Input.WorldB), float3(Input.WorldN)) * texNormal);
-    float diffuse = fast::max(dot(v_225.fLightDirection.xyz, localNormal), 0.0);
-    float3 _311 = Output.xyz * ((v_225.fLightColor.xyz * diffuse) + v_225.fLightAmbient.xyz);
+    float3 localNormal = fast::normalize(float3x3(float3(Input.WorldT), float3(Input.WorldB), float3(Input.WorldN)) * texNormal);
+    float diffuse = fast::max(dot(_225.fLightDirection.xyz, localNormal), 0.0);
+    float3 _311 = Output.xyz * ((_225.fLightColor.xyz * diffuse) + _225.fLightAmbient.xyz);
     Output = float4(_311.x, _311.y, _311.z, Output.w);
-    float3 _319 = Output.xyz * v_225.fEmissiveScaling.x;
+    float3 _319 = Output.xyz * _225.fEmissiveScaling.x;
     Output = float4(_319.x, _319.y, _319.z, Output.w);
     float4 screenPos = Input.PosP / float4(Input.PosP.w);
     float2 screenUV = (screenPos.xy + float2(1.0)) / float2(2.0);
     screenUV.y = 1.0 - screenUV.y;
-    screenUV.y = v_225.mUVInversedBack.x + (v_225.mUVInversedBack.y * screenUV.y);
-    if ((isunordered(v_225.softParticleParam.w, 0.0) || v_225.softParticleParam.w != 0.0))
+    screenUV.y = _225.mUVInversedBack.x + (_225.mUVInversedBack.y * screenUV.y);
+    if (_225.softParticleParam.w != 0.0)
     {
         float backgroundZ = _depthTex.sample(sampler_depthTex, screenUV).x;
         float param_2 = backgroundZ;
         float param_3 = screenPos.z;
-        float4 param_4 = v_225.softParticleParam;
-        float4 param_5 = v_225.reconstructionParam1;
-        float4 param_6 = v_225.reconstructionParam2;
+        float4 param_4 = _225.softParticleParam;
+        float4 param_5 = _225.reconstructionParam1;
+        float4 param_6 = _225.reconstructionParam2;
         Output.w *= SoftParticle(param_2, param_3, param_4, param_5, param_6);
     }
     if (Output.w == 0.0)
@@ -163,7 +163,7 @@ float4 _main(PS_Input Input, constant PS_ConstanBuffer& v_225, thread texture2d<
     return ConvertToScreen(param_7, param_8);
 }
 
-fragment main0_out main0(main0_in in [[stage_in]], constant PS_ConstanBuffer& v_225 [[buffer(0)]], texture2d<float> _colorTex [[texture(0)]], texture2d<float> _normalTex [[texture(1)]], texture2d<float> _depthTex [[texture(2)]], sampler sampler_colorTex [[sampler(0)]], sampler sampler_normalTex [[sampler(1)]], sampler sampler_depthTex [[sampler(2)]], float4 gl_FragCoord [[position]])
+fragment main0_out main0(main0_in in [[stage_in]], constant PS_ConstantBuffer& _225 [[buffer(1)]], texture2d<float> _colorTex [[texture(0)]], texture2d<float> _normalTex [[texture(1)]], texture2d<float> _depthTex [[texture(2)]], sampler sampler_colorTex [[sampler(0)]], sampler sampler_normalTex [[sampler(1)]], sampler sampler_depthTex [[sampler(2)]], float4 gl_FragCoord [[position]])
 {
     main0_out out = {};
     PS_Input Input;
@@ -174,7 +174,7 @@ fragment main0_out main0(main0_in in [[stage_in]], constant PS_ConstanBuffer& v_
     Input.WorldB = in.Input_WorldB;
     Input.WorldT = in.Input_WorldT;
     Input.PosP = in.Input_PosP;
-    float4 _427 = _main(Input, v_225, _colorTex, sampler_colorTex, _normalTex, sampler_normalTex, _depthTex, sampler_depthTex);
+    float4 _427 = _main(Input, _225, _colorTex, sampler_colorTex, _normalTex, sampler_normalTex, _depthTex, sampler_depthTex);
     out._entryPointOutput = _427;
     return out;
 }

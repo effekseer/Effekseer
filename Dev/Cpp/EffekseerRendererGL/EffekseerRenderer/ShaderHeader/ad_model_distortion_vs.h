@@ -338,6 +338,8 @@ out vec4 _VSPS_Alpha_Dist_UV;
 out vec4 _VSPS_Blend_Alpha_Dist_UV;
 out vec4 _VSPS_Blend_FBNextIndex_UV;
 
+mat4 spvWorkaroundRowMajor(mat4 wrap) { return wrap; }
+
 vec2 GetFlipbookOriginUV(vec2 FlipbookUV, float FlipbookIndex, float DivideX, vec2 flipbookOneSize, vec2 flipbookOffset)
 {
     vec2 DivideIndex;
@@ -459,7 +461,7 @@ void CalculateAndStoreAdvancedParameter(vec2 uv, vec2 uv1, vec4 alphaUV, vec4 uv
 VS_Output _main(VS_Input Input)
 {
     uint index = Input.Index;
-    mat4 mModel = CBVS0.mModel_Inst[index];
+    mat4 mModel = spvWorkaroundRowMajor(CBVS0.mModel_Inst[index]);
     vec4 uv = CBVS0.fUV[index];
     vec4 alphaUV = CBVS0.fAlphaUV[index];
     vec4 uvDistortionUV = CBVS0.fUVDistortionUV[index];
@@ -472,7 +474,7 @@ VS_Output _main(VS_Input Input)
     VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0));
     vec4 localPosition = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     vec4 worldPos = localPosition * mModel;
-    Output.PosVS = worldPos * CBVS0.mCameraProj;
+    Output.PosVS = worldPos * spvWorkaroundRowMajor(CBVS0.mCameraProj);
     vec2 outputUV = Input.UV;
     outputUV.x = (outputUV.x * uv.z) + uv.x;
     outputUV.y = (outputUV.y * uv.w) + uv.y;
@@ -487,8 +489,8 @@ VS_Output _main(VS_Input Input)
     worldNormal = normalize(worldNormal);
     worldBinormal = normalize(worldBinormal);
     worldTangent = normalize(worldTangent);
-    Output.ProjTangent = (worldPos + worldTangent) * CBVS0.mCameraProj;
-    Output.ProjBinormal = (worldPos + worldBinormal) * CBVS0.mCameraProj;
+    Output.ProjTangent = (worldPos + worldTangent) * spvWorkaroundRowMajor(CBVS0.mCameraProj);
+    Output.ProjBinormal = (worldPos + worldBinormal) * spvWorkaroundRowMajor(CBVS0.mCameraProj);
     Output.Color = modelColor;
     vec2 param = Input.UV;
     vec2 param_1 = Output.UV_Others.xy;
@@ -865,6 +867,9 @@ out vec4 _VSPS_Alpha_Dist_UV;
 out vec4 _VSPS_Blend_Alpha_Dist_UV;
 out vec4 _VSPS_Blend_FBNextIndex_UV;
 
+highp mat4 spvWorkaroundRowMajor(highp mat4 wrap) { return wrap; }
+mediump mat4 spvWorkaroundRowMajorMP(mediump mat4 wrap) { return wrap; }
+
 vec2 GetFlipbookOriginUV(vec2 FlipbookUV, float FlipbookIndex, float DivideX, vec2 flipbookOneSize, vec2 flipbookOffset)
 {
     vec2 DivideIndex;
@@ -986,7 +991,7 @@ void CalculateAndStoreAdvancedParameter(vec2 uv, vec2 uv1, vec4 alphaUV, vec4 uv
 VS_Output _main(VS_Input Input)
 {
     uint index = Input.Index;
-    mat4 mModel = CBVS0.mModel_Inst[index];
+    mat4 mModel = spvWorkaroundRowMajor(CBVS0.mModel_Inst[index]);
     vec4 uv = CBVS0.fUV[index];
     vec4 alphaUV = CBVS0.fAlphaUV[index];
     vec4 uvDistortionUV = CBVS0.fUVDistortionUV[index];
@@ -999,7 +1004,7 @@ VS_Output _main(VS_Input Input)
     VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0));
     vec4 localPosition = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     vec4 worldPos = localPosition * mModel;
-    Output.PosVS = worldPos * CBVS0.mCameraProj;
+    Output.PosVS = worldPos * spvWorkaroundRowMajor(CBVS0.mCameraProj);
     vec2 outputUV = Input.UV;
     outputUV.x = (outputUV.x * uv.z) + uv.x;
     outputUV.y = (outputUV.y * uv.w) + uv.y;
@@ -1014,8 +1019,8 @@ VS_Output _main(VS_Input Input)
     worldNormal = normalize(worldNormal);
     worldBinormal = normalize(worldBinormal);
     worldTangent = normalize(worldTangent);
-    Output.ProjTangent = (worldPos + worldTangent) * CBVS0.mCameraProj;
-    Output.ProjBinormal = (worldPos + worldBinormal) * CBVS0.mCameraProj;
+    Output.ProjTangent = (worldPos + worldTangent) * spvWorkaroundRowMajor(CBVS0.mCameraProj);
+    Output.ProjBinormal = (worldPos + worldBinormal) * spvWorkaroundRowMajor(CBVS0.mCameraProj);
     Output.Color = modelColor;
     vec2 param = Input.UV;
     vec2 param_1 = Output.UV_Others.xy;

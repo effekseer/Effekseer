@@ -9,7 +9,7 @@
 //
 // Buffer Definitions: 
 //
-// cbuffer PS_ConstanBuffer
+// cbuffer PS_ConstantBuffer
 // {
 //
 //   float4 _418_fLightDirection;       // Offset:    0 Size:    16
@@ -54,7 +54,7 @@
 // _blendAlphaTex                    texture  float4          2d    5        1
 // _blendUVDistortionTex             texture  float4          2d    6        1
 // _depthTex                         texture  float4          2d    7        1
-// PS_ConstanBuffer                  cbuffer      NA          NA    1        1
+// PS_ConstantBuffer                 cbuffer      NA          NA    1        1
 //
 //
 //
@@ -273,10 +273,10 @@ ret
 
 const BYTE g_main[] =
 {
-     68,  88,  66,  67,  13, 219, 
-    190, 109,   6,  12, 141,  80, 
-     61, 109,  57, 218, 163, 201, 
-    223, 145,   1,   0,   0,   0, 
+     68,  88,  66,  67, 244,  60, 
+     88, 230, 103, 253, 225,  94, 
+     45, 244,  14, 145, 225, 131, 
+    126, 115,   1,   0,   0,   0, 
     124,  31,   0,   0,   5,   0, 
       0,   0,  52,   0,   0,   0, 
      52,   7,   0,   0,  76,   8, 
@@ -424,8 +424,8 @@ const BYTE g_main[] =
      95, 100, 101, 112, 116, 104, 
      84, 101, 120,   0,  80,  83, 
      95,  67, 111, 110, 115, 116, 
-     97, 110,  66, 117, 102, 102, 
-    101, 114,   0, 171,  70,   3, 
+     97, 110, 116,  66, 117, 102, 
+    102, 101, 114,   0,  70,   3, 
       0,   0,  18,   0,   0,   0, 
     112,   3,   0,   0,  32,   1, 
       0,   0,   0,   0,   0,   0, 

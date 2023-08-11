@@ -55,6 +55,7 @@ public:
 							  int textureBindingOffset,
 							  bool isYInverted,
 							  bool isScreenFlipped,
+							  bool isVullan,
 							  int instanceCount);
 };
 

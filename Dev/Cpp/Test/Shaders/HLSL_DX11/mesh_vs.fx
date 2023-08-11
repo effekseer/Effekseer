@@ -12,7 +12,10 @@ struct VS_Output
 	float4 Color : COLOR0;
 };
 
-float4 shift_vertex : register(c0);
+cbuffer PS_ConstantBuffer : register(b1)
+{
+	float4 shift_vertex;
+};
 
 VS_Output main(const VS_Input input)
 {

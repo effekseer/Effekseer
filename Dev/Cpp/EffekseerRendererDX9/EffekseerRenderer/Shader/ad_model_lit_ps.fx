@@ -23,7 +23,7 @@ struct AdvancedParameter
     float AlphaThreshold;
 };
 
-cbuffer PS_ConstanBuffer : register(b0)
+cbuffer PS_ConstantBuffer : register(b1)
 {
     float4 _339_fLightDirection : register(c0);
     float4 _339_fLightColor : register(c1);

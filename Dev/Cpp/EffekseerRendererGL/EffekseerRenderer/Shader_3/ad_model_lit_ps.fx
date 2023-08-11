@@ -29,7 +29,7 @@ struct AdvancedParameter
     float AlphaThreshold;
 };
 
-struct PS_ConstanBuffer
+struct PS_ConstantBuffer
 {
     vec4 fLightDirection;
     vec4 fLightColor;
@@ -51,7 +51,7 @@ struct PS_ConstanBuffer
     vec4 miscFlags;
 };
 
-uniform PS_ConstanBuffer CBPS0;
+uniform PS_ConstantBuffer CBPS0;
 
 layout(binding = 3) uniform sampler2D Sampler_sampler_uvDistortionTex;
 layout(binding = 0) uniform sampler2D Sampler_sampler_colorTex;
@@ -221,7 +221,7 @@ vec4 ConvertToScreen(vec4 c, bool isValid)
 
 vec4 _main(PS_Input Input)
 {
-    bool convertColorSpace = !(CBPS0.miscFlags.x == 0.0);
+    bool convertColorSpace = CBPS0.miscFlags.x != 0.0;
     PS_Input param = Input;
     AdvancedParameter advancedParam = DisolveAdvancedParameter(param);
     vec2 param_1 = advancedParam.UVDistortionUV;
@@ -296,7 +296,7 @@ vec4 _main(PS_Input Input)
     screenUV.y = 1.0 - screenUV.y;
     screenUV.y = 1.0 - screenUV.y;
     screenUV.y = CBPS0.mUVInversedBack.x + (CBPS0.mUVInversedBack.y * screenUV.y);
-    if (!(CBPS0.softParticleParam.w == 0.0))
+    if (CBPS0.softParticleParam.w != 0.0)
     {
         float backgroundZ = texture(Sampler_sampler_depthTex, screenUV).x;
         float param_19 = backgroundZ;
