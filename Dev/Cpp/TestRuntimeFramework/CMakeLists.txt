@@ -158,6 +158,7 @@ if(BUILD_VULKAN)
         ${PROJECT_NAME}
         PUBLIC
         glslang
+        glslang-default-resource-limits
         SPIRV
         OGLCompiler
         OSDependent
@@ -171,6 +172,10 @@ if(BUILD_VULKAN)
 endif()
 
 add_dependencies(${PROJECT_NAME} ExternalProject_glfw)
+
+if (NOT APPLE)
+    add_dependencies(${PROJECT_NAME} ExternalProject_glew)
+endif()
 
 if(BUILD_WITH_EASY_PROFILER)
     add_dependencies(${PROJECT_NAME} ExternalProject_easy_profiler)

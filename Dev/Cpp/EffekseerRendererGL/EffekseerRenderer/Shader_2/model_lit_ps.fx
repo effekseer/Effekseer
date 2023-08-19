@@ -106,10 +106,16 @@ vec4 _main(PS_Input Input)
     vec3 texNormal = (texture2D(Sampler_sampler_normalTex, Input.UV).xyz - vec3(0.5)) * 2.0;
     vec3 localNormal = normalize(mat3(vec3(Input.WorldT), vec3(Input.WorldB), vec3(Input.WorldN)) * texNormal);
     float diffuse = max(dot(CBPS0.fLightDirection.xyz, localNormal), 0.0);
-    vec3 _229 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
-    Output = vec4(_229.x, _229.y, _229.z, Output.w);
-    vec3 _237 = Output.xyz * CBPS0.fEmissiveScaling.x;
-    Output = vec4(_237.x, _237.y, _237.z, Output.w);
+    vec4 _218 = Output;
+    vec3 _229 = _218.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
+    Output.x = _229.x;
+    Output.y = _229.y;
+    Output.z = _229.z;
+    vec4 _241 = Output;
+    vec3 _243 = _241.xyz * CBPS0.fEmissiveScaling.x;
+    Output.x = _243.x;
+    Output.y = _243.y;
+    Output.z = _243.z;
     if (Output.w == 0.0)
     {
         discard;
@@ -129,7 +135,7 @@ void main()
     Input.WorldB = _VSPS_WorldB;
     Input.WorldT = _VSPS_WorldT;
     Input.PosP = _VSPS_PosP;
-    vec4 _284 = _main(Input);
-    gl_FragData[0] = _284;
+    vec4 _294 = _main(Input);
+    gl_FragData[0] = _294;
 }
 

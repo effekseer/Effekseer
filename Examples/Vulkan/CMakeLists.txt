@@ -31,6 +31,7 @@ target_link_libraries(
     ${PROJECT_NAME}
     PRIVATE
     glslang
+    glslang-default-resource-limits
     SPIRV
     OGLCompiler
     OSDependent

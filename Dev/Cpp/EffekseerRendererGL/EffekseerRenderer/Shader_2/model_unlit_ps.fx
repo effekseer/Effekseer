@@ -96,8 +96,11 @@ vec4 _main(PS_Input Input)
     vec4 param = texture2D(Sampler_sampler_colorTex, Input.UV);
     bool param_1 = convertColorSpace;
     vec4 Output = ConvertFromSRGBTexture(param, param_1) * Input.Color;
-    vec3 _175 = Output.xyz * CBPS0.fEmissiveScaling.x;
-    Output = vec4(_175.x, _175.y, _175.z, Output.w);
+    vec4 _173 = Output;
+    vec3 _175 = _173.xyz * CBPS0.fEmissiveScaling.x;
+    Output.x = _175.x;
+    Output.y = _175.y;
+    Output.z = _175.z;
     if (Output.w == 0.0)
     {
         discard;
@@ -114,7 +117,7 @@ void main()
     Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
     Input.PosP = _VSPS_PosP;
-    vec4 _213 = _main(Input);
-    gl_FragData[0] = _213;
+    vec4 _219 = _main(Input);
+    gl_FragData[0] = _219;
 }
 

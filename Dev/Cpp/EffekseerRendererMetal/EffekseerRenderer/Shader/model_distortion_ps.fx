@@ -73,7 +73,9 @@ float4 _main(PS_Input Input, texture2d<float> _colorTex, sampler sampler_colorTe
     uv.y = 1.0 - ((uv.y + 1.0) * 0.5);
     uv.y = _155.mUVInversedBack.x + (_155.mUVInversedBack.y * uv.y);
     float3 color = float3(_backTex.sample(sampler_backTex, uv).xyz);
-    Output = float4(color.x, color.y, color.z, Output.w);
+    Output.x = color.x;
+    Output.y = color.y;
+    Output.z = color.z;
     float4 screenPos = Input.PosP / float4(Input.PosP.w);
     float2 screenUV = (screenPos.xy + float2(1.0)) / float2(2.0);
     screenUV.y = 1.0 - screenUV.y;
@@ -104,8 +106,8 @@ fragment main0_out main0(main0_in in [[stage_in]], constant PS_ConstantBuffer& _
     Input.ProjTangent = in.Input_ProjTangent;
     Input.PosP = in.Input_PosP;
     Input.Color = in.Input_Color;
-    float4 _310 = _main(Input, _colorTex, sampler_colorTex, _155, _backTex, sampler_backTex, _depthTex, sampler_depthTex);
-    out._entryPointOutput = _310;
+    float4 _314 = _main(Input, _colorTex, sampler_colorTex, _155, _backTex, sampler_backTex, _depthTex, sampler_depthTex);
+    out._entryPointOutput = _314;
     return out;
 }
 

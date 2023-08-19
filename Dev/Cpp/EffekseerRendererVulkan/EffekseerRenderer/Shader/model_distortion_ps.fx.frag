@@ -22,9 +22,9 @@ layout(set = 0, binding = 1, std140) uniform PS_ConstantBuffer
     vec4 reconstructionParam2;
 } _155;
 
-layout(location = 0, set = 1, binding = 0) uniform sampler2D Sampler_sampler_colorTex;
-layout(location = 1, set = 1, binding = 1) uniform sampler2D Sampler_sampler_backTex;
-layout(location = 2, set = 1, binding = 2) uniform sampler2D Sampler_sampler_depthTex;
+layout(set = 1, binding = 0) uniform sampler2D Sampler_sampler_colorTex;
+layout(set = 1, binding = 0) uniform sampler2D Sampler_sampler_backTex;
+layout(set = 1, binding = 0) uniform sampler2D Sampler_sampler_depthTex;
 
 layout(location = 0) centroid in vec2 Input_UV;
 layout(location = 1) in vec4 Input_ProjBinormal;
@@ -63,7 +63,9 @@ vec4 _main(PS_Input Input)
     uv.y = 1.0 - ((uv.y + 1.0) * 0.5);
     uv.y = _155.mUVInversedBack.x + (_155.mUVInversedBack.y * uv.y);
     vec3 color = vec3(texture(Sampler_sampler_backTex, uv).xyz);
-    Output = vec4(color.x, color.y, color.z, Output.w);
+    Output.x = color.x;
+    Output.y = color.y;
+    Output.z = color.z;
     vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
@@ -93,7 +95,7 @@ void main()
     Input.ProjTangent = Input_ProjTangent;
     Input.PosP = Input_PosP;
     Input.Color = Input_Color;
-    vec4 _310 = _main(Input);
-    _entryPointOutput = _310;
+    vec4 _314 = _main(Input);
+    _entryPointOutput = _314;
 }
 

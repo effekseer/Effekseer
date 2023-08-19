@@ -33,9 +33,9 @@ layout(set = 0, binding = 1, std140) uniform PS_ConstantBuffer
     vec4 miscFlags;
 } _225;
 
-layout(location = 0, set = 1, binding = 0) uniform sampler2D Sampler_sampler_colorTex;
-layout(location = 1, set = 1, binding = 1) uniform sampler2D Sampler_sampler_normalTex;
-layout(location = 2, set = 1, binding = 2) uniform sampler2D Sampler_sampler_depthTex;
+layout(set = 1, binding = 0) uniform sampler2D Sampler_sampler_colorTex;
+layout(set = 1, binding = 0) uniform sampler2D Sampler_sampler_normalTex;
+layout(set = 1, binding = 0) uniform sampler2D Sampler_sampler_depthTex;
 
 layout(location = 0) centroid in vec4 Input_Color;
 layout(location = 1) centroid in vec2 Input_UV;
@@ -119,10 +119,16 @@ vec4 _main(PS_Input Input)
     vec3 texNormal = (texture(Sampler_sampler_normalTex, Input.UV).xyz - vec3(0.5)) * 2.0;
     vec3 localNormal = normalize(mat3(vec3(Input.WorldT), vec3(Input.WorldB), vec3(Input.WorldN)) * texNormal);
     float diffuse = max(dot(_225.fLightDirection.xyz, localNormal), 0.0);
-    vec3 _311 = Output.xyz * ((_225.fLightColor.xyz * diffuse) + _225.fLightAmbient.xyz);
-    Output = vec4(_311.x, _311.y, _311.z, Output.w);
-    vec3 _319 = Output.xyz * _225.fEmissiveScaling.x;
-    Output = vec4(_319.x, _319.y, _319.z, Output.w);
+    vec4 _300 = Output;
+    vec3 _311 = _300.xyz * ((_225.fLightColor.xyz * diffuse) + _225.fLightAmbient.xyz);
+    Output.x = _311.x;
+    Output.y = _311.y;
+    Output.z = _311.z;
+    vec4 _321 = Output;
+    vec3 _323 = _321.xyz * _225.fEmissiveScaling.x;
+    Output.x = _323.x;
+    Output.y = _323.y;
+    Output.z = _323.z;
     vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
@@ -156,7 +162,7 @@ void main()
     Input.WorldB = Input_WorldB;
     Input.WorldT = Input_WorldT;
     Input.PosP = Input_PosP;
-    vec4 _427 = _main(Input);
-    _entryPointOutput = _427;
+    vec4 _435 = _main(Input);
+    _entryPointOutput = _435;
 }
 

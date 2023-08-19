@@ -123,8 +123,11 @@ float4 _main(PS_Input Input)
     float4 param = _colorTex.Sample(sampler_colorTex, Input.UV);
     bool param_1 = convertColorSpace;
     float4 Output = ConvertFromSRGBTexture(param, param_1) * Input.Color;
-    float3 _258 = Output.xyz * _225_fEmissiveScaling.x;
-    Output = float4(_258.x, _258.y, _258.z, Output.w);
+    float4 _256 = Output;
+    float3 _258 = _256.xyz * _225_fEmissiveScaling.x;
+    Output.x = _258.x;
+    Output.y = _258.y;
+    Output.z = _258.z;
     float4 screenPos = Input.PosP / Input.PosP.w.xxxx;
     float2 screenUV = (screenPos.xy + 1.0f.xx) / 2.0f.xx;
     screenUV.y = 1.0f - screenUV.y;
@@ -155,8 +158,8 @@ void frag_main()
     Input.Color = Input_Color;
     Input.UV = Input_UV;
     Input.PosP = Input_PosP;
-    float4 _359 = _main(Input);
-    _entryPointOutput = _359;
+    float4 _363 = _main(Input);
+    _entryPointOutput = _363;
 }
 
 SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)

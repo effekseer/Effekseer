@@ -22,7 +22,7 @@ struct VS_Output
     float4 PosP;
 };
 
-static const VS_Output _364 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx };
+static const VS_Output _366 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx };
 
 cbuffer VS_ConstantBuffer : register(b0)
 {
@@ -184,7 +184,8 @@ void CalculateAndStoreAdvancedParameter(VS_Input vsinput, inout VS_Output vsoutp
     vsoutput.Alpha_Dist_UV = vsinput.Alpha_Dist_UV;
     vsoutput.Alpha_Dist_UV.y = _263_mUVInversed.x + (_263_mUVInversed.y * vsinput.Alpha_Dist_UV.y);
     vsoutput.Alpha_Dist_UV.w = _263_mUVInversed.x + (_263_mUVInversed.y * vsinput.Alpha_Dist_UV.w);
-    vsoutput.Blend_FBNextIndex_UV = float4(vsinput.BlendUV.x, vsinput.BlendUV.y, vsoutput.Blend_FBNextIndex_UV.z, vsoutput.Blend_FBNextIndex_UV.w);
+    vsoutput.Blend_FBNextIndex_UV.x = vsinput.BlendUV.x;
+    vsoutput.Blend_FBNextIndex_UV.y = vsinput.BlendUV.y;
     vsoutput.Blend_FBNextIndex_UV.y = _263_mUVInversed.x + (_263_mUVInversed.y * vsinput.BlendUV.y);
     vsoutput.Blend_Alpha_Dist_UV = vsinput.Blend_Alpha_Dist_UV;
     vsoutput.Blend_Alpha_Dist_UV.y = _263_mUVInversed.x + (_263_mUVInversed.y * vsinput.Blend_Alpha_Dist_UV.y);
@@ -201,17 +202,19 @@ void CalculateAndStoreAdvancedParameter(VS_Input vsinput, inout VS_Output vsoutp
     ApplyFlipbookVS(param, param_1, param_2, param_3, param_4, param_5, param_6);
     flipbookRate = param;
     flipbookNextIndexUV = param_1;
-    vsoutput.Blend_FBNextIndex_UV = float4(vsoutput.Blend_FBNextIndex_UV.x, vsoutput.Blend_FBNextIndex_UV.y, flipbookNextIndexUV.x, flipbookNextIndexUV.y);
+    vsoutput.Blend_FBNextIndex_UV.z = flipbookNextIndexUV.x;
+    vsoutput.Blend_FBNextIndex_UV.w = flipbookNextIndexUV.y;
     vsoutput.UV_Others.z = flipbookRate;
     vsoutput.UV_Others.w = vsinput.AlphaThreshold;
 }
 
 VS_Output _main(VS_Input Input)
 {
-    VS_Output Output = _364;
+    VS_Output Output = _366;
     float2 uv1 = Input.UV;
     uv1.y = _263_mUVInversed.x + (_263_mUVInversed.y * uv1.y);
-    Output.UV_Others = float4(uv1.x, uv1.y, Output.UV_Others.z, Output.UV_Others.w);
+    Output.UV_Others.x = uv1.x;
+    Output.UV_Others.y = uv1.y;
     float4 worldPos = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
     Output.PosVS = mul(_263_mCameraProj, worldPos);
     Output.Color = Input.Color;

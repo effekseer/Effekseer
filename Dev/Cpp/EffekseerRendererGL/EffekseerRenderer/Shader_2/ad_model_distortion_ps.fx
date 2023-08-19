@@ -139,29 +139,41 @@ void ApplyTextureBlending(inout vec4 dstColor, vec4 blendColor, float blendType)
 {
     if (blendType == 0.0)
     {
-        vec3 _164 = (blendColor.xyz * blendColor.w) + (dstColor.xyz * (1.0 - blendColor.w));
-        dstColor = vec4(_164.x, _164.y, _164.z, dstColor.w);
+        vec4 _161 = dstColor;
+        vec3 _164 = (blendColor.xyz * blendColor.w) + (_161.xyz * (1.0 - blendColor.w));
+        dstColor.x = _164.x;
+        dstColor.y = _164.y;
+        dstColor.z = _164.z;
     }
     else
     {
         if (blendType == 1.0)
         {
-            vec3 _176 = dstColor.xyz + (blendColor.xyz * blendColor.w);
-            dstColor = vec4(_176.x, _176.y, _176.z, dstColor.w);
+            vec4 _179 = dstColor;
+            vec3 _181 = _179.xyz + (blendColor.xyz * blendColor.w);
+            dstColor.x = _181.x;
+            dstColor.y = _181.y;
+            dstColor.z = _181.z;
         }
         else
         {
             if (blendType == 2.0)
             {
-                vec3 _189 = dstColor.xyz - (blendColor.xyz * blendColor.w);
-                dstColor = vec4(_189.x, _189.y, _189.z, dstColor.w);
+                vec4 _196 = dstColor;
+                vec3 _198 = _196.xyz - (blendColor.xyz * blendColor.w);
+                dstColor.x = _198.x;
+                dstColor.y = _198.y;
+                dstColor.z = _198.z;
             }
             else
             {
                 if (blendType == 3.0)
                 {
-                    vec3 _202 = dstColor.xyz * (blendColor.xyz * blendColor.w);
-                    dstColor = vec4(_202.x, _202.y, _202.z, dstColor.w);
+                    vec4 _213 = dstColor;
+                    vec3 _215 = _213.xyz * (blendColor.xyz * blendColor.w);
+                    dstColor.x = _215.x;
+                    dstColor.y = _215.y;
+                    dstColor.z = _215.z;
                 }
             }
         }
@@ -212,7 +224,9 @@ vec4 _main(PS_Input Input)
     uv.y = CBPS0.mUVInversedBack.x + (CBPS0.mUVInversedBack.y * uv.y);
     uv.y = 1.0 - uv.y;
     vec3 color = vec3(texture2D(Sampler_sampler_backTex, uv).xyz);
-    Output = vec4(color.x, color.y, color.z, Output.w);
+    Output.x = color.x;
+    Output.y = color.y;
+    Output.z = color.z;
     return Output;
 }
 
@@ -228,7 +242,7 @@ void main()
     Input.Alpha_Dist_UV = _VSPS_Alpha_Dist_UV;
     Input.Blend_Alpha_Dist_UV = _VSPS_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = _VSPS_Blend_FBNextIndex_UV;
-    vec4 _562 = _main(Input);
-    gl_FragData[0] = _562;
+    vec4 _582 = _main(Input);
+    gl_FragData[0] = _582;
 }
 

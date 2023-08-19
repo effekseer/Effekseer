@@ -80,7 +80,9 @@ float4 _main(PS_Input Input)
     uv.y = 1.0f - ((uv.y + 1.0f) * 0.5f);
     uv.y = _155_mUVInversedBack.x + (_155_mUVInversedBack.y * uv.y);
     float3 color = float3(_backTex.Sample(sampler_backTex, uv).xyz);
-    Output = float4(color.x, color.y, color.z, Output.w);
+    Output.x = color.x;
+    Output.y = color.y;
+    Output.z = color.z;
     float4 screenPos = Input.PosP / Input.PosP.w.xxxx;
     float2 screenUV = (screenPos.xy + 1.0f.xx) / 2.0f.xx;
     screenUV.y = 1.0f - screenUV.y;
@@ -110,8 +112,8 @@ void frag_main()
     Input.ProjTangent = Input_ProjTangent;
     Input.PosP = Input_PosP;
     Input.Color = Input_Color;
-    float4 _310 = _main(Input);
-    _entryPointOutput = _310;
+    float4 _314 = _main(Input);
+    _entryPointOutput = _314;
 }
 
 SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)

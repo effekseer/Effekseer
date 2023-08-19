@@ -113,8 +113,11 @@ highp vec4 _main(PS_Input Input)
     highp vec4 param = texture(Sampler_sampler_colorTex, Input.UV);
     bool param_1 = convertColorSpace;
     highp vec4 Output = ConvertFromSRGBTexture(param, param_1) * Input.Color;
-    highp vec3 _258 = Output.xyz * CBPS0.fEmissiveScaling.x;
-    Output = vec4(_258.x, _258.y, _258.z, Output.w);
+    highp vec4 _256 = Output;
+    highp vec3 _258 = _256.xyz * CBPS0.fEmissiveScaling.x;
+    Output.x = _258.x;
+    Output.y = _258.y;
+    Output.z = _258.z;
     highp vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     highp vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
@@ -146,7 +149,7 @@ void main()
     Input.Color = _VSPS_Color;
     Input.UV = _VSPS_UV;
     Input.PosP = _VSPS_PosP;
-    highp vec4 _363 = _main(Input);
-    _entryPointOutput = _363;
+    highp vec4 _367 = _main(Input);
+    _entryPointOutput = _367;
 }
 

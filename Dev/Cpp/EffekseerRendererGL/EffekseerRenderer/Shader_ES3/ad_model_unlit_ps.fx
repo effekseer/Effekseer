@@ -147,29 +147,41 @@ void ApplyTextureBlending(inout highp vec4 dstColor, highp vec4 blendColor, high
 {
     if (blendType == 0.0)
     {
-        highp vec3 _222 = (blendColor.xyz * blendColor.w) + (dstColor.xyz * (1.0 - blendColor.w));
-        dstColor = vec4(_222.x, _222.y, _222.z, dstColor.w);
+        highp vec4 _219 = dstColor;
+        highp vec3 _222 = (blendColor.xyz * blendColor.w) + (_219.xyz * (1.0 - blendColor.w));
+        dstColor.x = _222.x;
+        dstColor.y = _222.y;
+        dstColor.z = _222.z;
     }
     else
     {
         if (blendType == 1.0)
         {
-            highp vec3 _234 = dstColor.xyz + (blendColor.xyz * blendColor.w);
-            dstColor = vec4(_234.x, _234.y, _234.z, dstColor.w);
+            highp vec4 _237 = dstColor;
+            highp vec3 _239 = _237.xyz + (blendColor.xyz * blendColor.w);
+            dstColor.x = _239.x;
+            dstColor.y = _239.y;
+            dstColor.z = _239.z;
         }
         else
         {
             if (blendType == 2.0)
             {
-                highp vec3 _247 = dstColor.xyz - (blendColor.xyz * blendColor.w);
-                dstColor = vec4(_247.x, _247.y, _247.z, dstColor.w);
+                highp vec4 _254 = dstColor;
+                highp vec3 _256 = _254.xyz - (blendColor.xyz * blendColor.w);
+                dstColor.x = _256.x;
+                dstColor.y = _256.y;
+                dstColor.z = _256.z;
             }
             else
             {
                 if (blendType == 3.0)
                 {
-                    highp vec3 _260 = dstColor.xyz * (blendColor.xyz * blendColor.w);
-                    dstColor = vec4(_260.x, _260.y, _260.z, dstColor.w);
+                    highp vec4 _271 = dstColor;
+                    highp vec3 _273 = _271.xyz * (blendColor.xyz * blendColor.w);
+                    dstColor.x = _273.x;
+                    dstColor.y = _273.y;
+                    dstColor.z = _273.z;
                 }
             }
         }
@@ -257,29 +269,41 @@ highp vec4 _main(PS_Input Input)
         highp vec4 FalloffBlendColor = mix(CBPS0.fFalloffEndColor, CBPS0.fFalloffBeginColor, vec4(pow(CdotN, CBPS0.fFalloffParameter.z)));
         if (CBPS0.fFalloffParameter.y == 0.0)
         {
-            highp vec3 _611 = Output.xyz + FalloffBlendColor.xyz;
-            Output = vec4(_611.x, _611.y, _611.z, Output.w);
+            highp vec4 _625 = Output;
+            highp vec3 _627 = _625.xyz + FalloffBlendColor.xyz;
+            Output.x = _627.x;
+            Output.y = _627.y;
+            Output.z = _627.z;
         }
         else
         {
             if (CBPS0.fFalloffParameter.y == 1.0)
             {
-                highp vec3 _624 = Output.xyz - FalloffBlendColor.xyz;
-                Output = vec4(_624.x, _624.y, _624.z, Output.w);
+                highp vec4 _642 = Output;
+                highp vec3 _644 = _642.xyz - FalloffBlendColor.xyz;
+                Output.x = _644.x;
+                Output.y = _644.y;
+                Output.z = _644.z;
             }
             else
             {
                 if (CBPS0.fFalloffParameter.y == 2.0)
                 {
-                    highp vec3 _637 = Output.xyz * FalloffBlendColor.xyz;
-                    Output = vec4(_637.x, _637.y, _637.z, Output.w);
+                    highp vec4 _659 = Output;
+                    highp vec3 _661 = _659.xyz * FalloffBlendColor.xyz;
+                    Output.x = _661.x;
+                    Output.y = _661.y;
+                    Output.z = _661.z;
                 }
             }
         }
         Output.w *= FalloffBlendColor.w;
     }
-    highp vec3 _651 = Output.xyz * CBPS0.fEmissiveScaling.x;
-    Output = vec4(_651.x, _651.y, _651.z, Output.w);
+    highp vec4 _677 = Output;
+    highp vec3 _679 = _677.xyz * CBPS0.fEmissiveScaling.x;
+    Output.x = _679.x;
+    Output.y = _679.y;
+    Output.z = _679.z;
     highp vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     highp vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
@@ -299,8 +323,12 @@ highp vec4 _main(PS_Input Input)
     {
         discard;
     }
-    highp vec3 _749 = mix(CBPS0.fEdgeColor.xyz * CBPS0.fEdgeParameter.y, Output.xyz, vec3(ceil((Output.w - advancedParam.AlphaThreshold) - CBPS0.fEdgeParameter.x)));
-    Output = vec4(_749.x, _749.y, _749.z, Output.w);
+    highp vec4 _769 = Output;
+    highp float _772 = Output.w;
+    highp vec3 _781 = mix(CBPS0.fEdgeColor.xyz * CBPS0.fEdgeParameter.y, _769.xyz, vec3(ceil((_772 - advancedParam.AlphaThreshold) - CBPS0.fEdgeParameter.x)));
+    Output.x = _781.x;
+    Output.y = _781.y;
+    Output.z = _781.z;
     highp vec4 param_24 = Output;
     bool param_25 = convertColorSpace;
     return ConvertToScreen(param_24, param_25);
@@ -317,7 +345,7 @@ void main()
     Input.Blend_Alpha_Dist_UV = _VSPS_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = _VSPS_Blend_FBNextIndex_UV;
     Input.PosP = _VSPS_PosP;
-    highp vec4 _789 = _main(Input);
-    _entryPointOutput = _789;
+    highp vec4 _825 = _main(Input);
+    _entryPointOutput = _825;
 }
 

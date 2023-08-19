@@ -190,7 +190,8 @@ void CalculateAndStoreAdvancedParameter(thread const float2& uv, thread const fl
     ApplyFlipbookVS(param, param_1, param_2, param_3, param_4, param_5, param_6);
     flipbookRate = param;
     flipbookNextIndexUV = param_1;
-    vsoutput.Blend_FBNextIndex_UV = float4(vsoutput.Blend_FBNextIndex_UV.x, vsoutput.Blend_FBNextIndex_UV.y, flipbookNextIndexUV.x, flipbookNextIndexUV.y);
+    vsoutput.Blend_FBNextIndex_UV.z = flipbookNextIndexUV.x;
+    vsoutput.Blend_FBNextIndex_UV.w = flipbookNextIndexUV.y;
     vsoutput.UV_Others.z = flipbookRate;
     vsoutput.UV_Others.w = modelAlphaThreshold;
     vsoutput.Alpha_Dist_UV.y = _372.mUVInversed.x + (_372.mUVInversed.y * vsoutput.Alpha_Dist_UV.y);
@@ -222,7 +223,8 @@ VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& _372)
     outputUV.x = (outputUV.x * uv.z) + uv.x;
     outputUV.y = (outputUV.y * uv.w) + uv.y;
     outputUV.y = _372.mUVInversed.x + (_372.mUVInversed.y * outputUV.y);
-    Output.UV_Others = float4(outputUV.x, outputUV.y, Output.UV_Others.z, Output.UV_Others.w);
+    Output.UV_Others.x = outputUV.x;
+    Output.UV_Others.y = outputUV.y;
     float4 localNormal = float4(Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0);
     localNormal = fast::normalize(localNormal * mModel);
     Output.WorldN = localNormal.xyz;

@@ -124,10 +124,16 @@ vec4 _main(PS_Input Input)
     vec3 texNormal = (texture(Sampler_sampler_normalTex, Input.UV).xyz - vec3(0.5)) * 2.0;
     vec3 localNormal = normalize(mat3(vec3(Input.WorldT), vec3(Input.WorldB), vec3(Input.WorldN)) * texNormal);
     float diffuse = max(dot(CBPS0.fLightDirection.xyz, localNormal), 0.0);
-    vec3 _311 = Output.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
-    Output = vec4(_311.x, _311.y, _311.z, Output.w);
-    vec3 _319 = Output.xyz * CBPS0.fEmissiveScaling.x;
-    Output = vec4(_319.x, _319.y, _319.z, Output.w);
+    vec4 _300 = Output;
+    vec3 _311 = _300.xyz * ((CBPS0.fLightColor.xyz * diffuse) + CBPS0.fLightAmbient.xyz);
+    Output.x = _311.x;
+    Output.y = _311.y;
+    Output.z = _311.z;
+    vec4 _321 = Output;
+    vec3 _323 = _321.xyz * CBPS0.fEmissiveScaling.x;
+    Output.x = _323.x;
+    Output.y = _323.y;
+    Output.z = _323.z;
     vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
@@ -162,7 +168,7 @@ void main()
     Input.WorldB = _VSPS_WorldB;
     Input.WorldT = _VSPS_WorldT;
     Input.PosP = _VSPS_PosP;
-    vec4 _431 = _main(Input);
-    _entryPointOutput = _431;
+    vec4 _439 = _main(Input);
+    _entryPointOutput = _439;
 }
 
