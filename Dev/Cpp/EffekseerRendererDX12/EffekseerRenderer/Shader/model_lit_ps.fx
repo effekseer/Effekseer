@@ -137,10 +137,16 @@ float4 _main(PS_Input Input)
     float3 texNormal = (_normalTex.Sample(sampler_normalTex, Input.UV).xyz - 0.5f.xxx) * 2.0f;
     float3 localNormal = normalize(mul(texNormal, float3x3(float3(Input.WorldT), float3(Input.WorldB), float3(Input.WorldN))));
     float diffuse = max(dot(_225_fLightDirection.xyz, localNormal), 0.0f);
-    float3 _311 = Output.xyz * ((_225_fLightColor.xyz * diffuse) + _225_fLightAmbient.xyz);
-    Output = float4(_311.x, _311.y, _311.z, Output.w);
-    float3 _319 = Output.xyz * _225_fEmissiveScaling.x;
-    Output = float4(_319.x, _319.y, _319.z, Output.w);
+    float4 _300 = Output;
+    float3 _311 = _300.xyz * ((_225_fLightColor.xyz * diffuse) + _225_fLightAmbient.xyz);
+    Output.x = _311.x;
+    Output.y = _311.y;
+    Output.z = _311.z;
+    float4 _321 = Output;
+    float3 _323 = _321.xyz * _225_fEmissiveScaling.x;
+    Output.x = _323.x;
+    Output.y = _323.y;
+    Output.z = _323.z;
     float4 screenPos = Input.PosP / Input.PosP.w.xxxx;
     float2 screenUV = (screenPos.xy + 1.0f.xx) / 2.0f.xx;
     screenUV.y = 1.0f - screenUV.y;
@@ -174,8 +180,8 @@ void frag_main()
     Input.WorldB = Input_WorldB;
     Input.WorldT = Input_WorldT;
     Input.PosP = Input_PosP;
-    float4 _427 = _main(Input);
-    _entryPointOutput = _427;
+    float4 _435 = _main(Input);
+    _entryPointOutput = _435;
 }
 
 SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)

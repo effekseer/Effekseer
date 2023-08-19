@@ -140,29 +140,41 @@ void ApplyTextureBlending(inout highp vec4 dstColor, highp vec4 blendColor, high
 {
     if (blendType == 0.0)
     {
-        highp vec3 _172 = (blendColor.xyz * blendColor.w) + (dstColor.xyz * (1.0 - blendColor.w));
-        dstColor = vec4(_172.x, _172.y, _172.z, dstColor.w);
+        highp vec4 _169 = dstColor;
+        highp vec3 _172 = (blendColor.xyz * blendColor.w) + (_169.xyz * (1.0 - blendColor.w));
+        dstColor.x = _172.x;
+        dstColor.y = _172.y;
+        dstColor.z = _172.z;
     }
     else
     {
         if (blendType == 1.0)
         {
-            highp vec3 _184 = dstColor.xyz + (blendColor.xyz * blendColor.w);
-            dstColor = vec4(_184.x, _184.y, _184.z, dstColor.w);
+            highp vec4 _187 = dstColor;
+            highp vec3 _189 = _187.xyz + (blendColor.xyz * blendColor.w);
+            dstColor.x = _189.x;
+            dstColor.y = _189.y;
+            dstColor.z = _189.z;
         }
         else
         {
             if (blendType == 2.0)
             {
-                highp vec3 _197 = dstColor.xyz - (blendColor.xyz * blendColor.w);
-                dstColor = vec4(_197.x, _197.y, _197.z, dstColor.w);
+                highp vec4 _204 = dstColor;
+                highp vec3 _206 = _204.xyz - (blendColor.xyz * blendColor.w);
+                dstColor.x = _206.x;
+                dstColor.y = _206.y;
+                dstColor.z = _206.z;
             }
             else
             {
                 if (blendType == 3.0)
                 {
-                    highp vec3 _210 = dstColor.xyz * (blendColor.xyz * blendColor.w);
-                    dstColor = vec4(_210.x, _210.y, _210.z, dstColor.w);
+                    highp vec4 _221 = dstColor;
+                    highp vec3 _223 = _221.xyz * (blendColor.xyz * blendColor.w);
+                    dstColor.x = _223.x;
+                    dstColor.y = _223.y;
+                    dstColor.z = _223.z;
                 }
             }
         }
@@ -229,7 +241,9 @@ highp vec4 _main(PS_Input Input)
     uv.y = CBPS0.mUVInversedBack.x + (CBPS0.mUVInversedBack.y * uv.y);
     uv.y = 1.0 - uv.y;
     highp vec3 color = vec3(texture(Sampler_sampler_backTex, uv).xyz);
-    Output = vec4(color.x, color.y, color.z, Output.w);
+    Output.x = color.x;
+    Output.y = color.y;
+    Output.z = color.z;
     highp vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     highp vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
@@ -259,7 +273,7 @@ void main()
     Input.Alpha_Dist_UV = _VSPS_Alpha_Dist_UV;
     Input.Blend_Alpha_Dist_UV = _VSPS_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = _VSPS_Blend_FBNextIndex_UV;
-    highp vec4 _694 = _main(Input);
-    _entryPointOutput = _694;
+    highp vec4 _714 = _main(Input);
+    _entryPointOutput = _714;
 }
 

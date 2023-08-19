@@ -50,7 +50,9 @@ highp vec4 _main(PS_Input Input)
     uv.y = CBPS0.mUVInversedBack.x + (CBPS0.mUVInversedBack.y * uv.y);
     uv.y = 1.0 - uv.y;
     highp vec3 color = vec3(texture2D(Sampler_sampler_backTex, uv).xyz);
-    Output = vec4(color.x, color.y, color.z, Output.w);
+    Output.x = color.x;
+    Output.y = color.y;
+    Output.z = color.z;
     if (Output.w == 0.0)
     {
         discard;
@@ -67,7 +69,7 @@ void main()
     Input.ProjTangent = _VSPS_ProjTangent;
     Input.PosP = _VSPS_PosP;
     Input.Color = _VSPS_Color;
-    highp vec4 _182 = _main(Input);
-    gl_FragData[0] = _182;
+    highp vec4 _187 = _main(Input);
+    gl_FragData[0] = _187;
 }
 

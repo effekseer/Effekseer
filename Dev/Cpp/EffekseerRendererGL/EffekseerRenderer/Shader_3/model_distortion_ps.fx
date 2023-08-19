@@ -69,7 +69,9 @@ vec4 _main(PS_Input Input)
     uv.y = CBPS0.mUVInversedBack.x + (CBPS0.mUVInversedBack.y * uv.y);
     uv.y = 1.0 - uv.y;
     vec3 color = vec3(texture(Sampler_sampler_backTex, uv).xyz);
-    Output = vec4(color.x, color.y, color.z, Output.w);
+    Output.x = color.x;
+    Output.y = color.y;
+    Output.z = color.z;
     vec4 screenPos = Input.PosP / vec4(Input.PosP.w);
     vec2 screenUV = (screenPos.xy + vec2(1.0)) / vec2(2.0);
     screenUV.y = 1.0 - screenUV.y;
@@ -100,7 +102,7 @@ void main()
     Input.ProjTangent = _VSPS_ProjTangent;
     Input.PosP = _VSPS_PosP;
     Input.Color = _VSPS_Color;
-    vec4 _318 = _main(Input);
-    _entryPointOutput = _318;
+    vec4 _322 = _main(Input);
+    _entryPointOutput = _322;
 }
 

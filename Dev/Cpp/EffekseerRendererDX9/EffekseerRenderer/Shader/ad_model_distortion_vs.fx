@@ -22,7 +22,7 @@ struct VS_Input
     float Index;
 };
 
-static const VS_Output _511 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx };
+static const VS_Output _512 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx, 0.0f.xxxx };
 
 cbuffer VS_ConstantBuffer : register(b0)
 {
@@ -216,7 +216,8 @@ void CalculateAndStoreAdvancedParameter(float2 uv, float2 uv1, float4 alphaUV, f
     ApplyFlipbookVS(param, param_1, param_2, param_3, param_4, param_5, param_6);
     flipbookRate = param;
     flipbookNextIndexUV = param_1;
-    vsoutput.Blend_FBNextIndex_UV = float4(vsoutput.Blend_FBNextIndex_UV.x, vsoutput.Blend_FBNextIndex_UV.y, flipbookNextIndexUV.x, flipbookNextIndexUV.y);
+    vsoutput.Blend_FBNextIndex_UV.z = flipbookNextIndexUV.x;
+    vsoutput.Blend_FBNextIndex_UV.w = flipbookNextIndexUV.y;
     vsoutput.UV_Others.z = flipbookRate;
     vsoutput.UV_Others.w = modelAlphaThreshold;
     vsoutput.Alpha_Dist_UV.y = _372_mUVInversed.x + (_372_mUVInversed.y * vsoutput.Alpha_Dist_UV.y);
@@ -239,7 +240,7 @@ VS_Output _main(VS_Input Input)
     float4 modelColor = _372_fModelColor[index] * Input.Color;
     float flipbookIndexAndNextRate = _372_fFlipbookIndexAndNextRate[index].x;
     float modelAlphaThreshold = _372_fModelAlphaThreshold[index].x;
-    VS_Output Output = _511;
+    VS_Output Output = _512;
     float4 localPosition = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
     float4 worldPos = mul(mModel, localPosition);
     Output.PosVS = mul(_372_mCameraProj, worldPos);
@@ -247,7 +248,8 @@ VS_Output _main(VS_Input Input)
     outputUV.x = (outputUV.x * uv.z) + uv.x;
     outputUV.y = (outputUV.y * uv.w) + uv.y;
     outputUV.y = _372_mUVInversed.x + (_372_mUVInversed.y * outputUV.y);
-    Output.UV_Others = float4(outputUV.x, outputUV.y, Output.UV_Others.z, Output.UV_Others.w);
+    Output.UV_Others.x = outputUV.x;
+    Output.UV_Others.y = outputUV.y;
     float4 localNormal = float4(Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0f);
     float4 localBinormal = float4(Input.Binormal.x, Input.Binormal.y, Input.Binormal.z, 0.0f);
     float4 localTangent = float4(Input.Tangent.x, Input.Tangent.y, Input.Tangent.z, 0.0f);

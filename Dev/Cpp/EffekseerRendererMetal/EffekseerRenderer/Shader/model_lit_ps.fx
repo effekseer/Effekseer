@@ -136,10 +136,16 @@ float4 _main(PS_Input Input, constant PS_ConstantBuffer& _225, texture2d<float> 
     float3 texNormal = (_normalTex.sample(sampler_normalTex, Input.UV).xyz - float3(0.5)) * 2.0;
     float3 localNormal = fast::normalize(float3x3(float3(Input.WorldT), float3(Input.WorldB), float3(Input.WorldN)) * texNormal);
     float diffuse = fast::max(dot(_225.fLightDirection.xyz, localNormal), 0.0);
-    float3 _311 = Output.xyz * ((_225.fLightColor.xyz * diffuse) + _225.fLightAmbient.xyz);
-    Output = float4(_311.x, _311.y, _311.z, Output.w);
-    float3 _319 = Output.xyz * _225.fEmissiveScaling.x;
-    Output = float4(_319.x, _319.y, _319.z, Output.w);
+    float4 _300 = Output;
+    float3 _311 = _300.xyz * ((_225.fLightColor.xyz * diffuse) + _225.fLightAmbient.xyz);
+    Output.x = _311.x;
+    Output.y = _311.y;
+    Output.z = _311.z;
+    float4 _321 = Output;
+    float3 _323 = _321.xyz * _225.fEmissiveScaling.x;
+    Output.x = _323.x;
+    Output.y = _323.y;
+    Output.z = _323.z;
     float4 screenPos = Input.PosP / float4(Input.PosP.w);
     float2 screenUV = (screenPos.xy + float2(1.0)) / float2(2.0);
     screenUV.y = 1.0 - screenUV.y;
@@ -174,8 +180,8 @@ fragment main0_out main0(main0_in in [[stage_in]], constant PS_ConstantBuffer& _
     Input.WorldB = in.Input_WorldB;
     Input.WorldT = in.Input_WorldT;
     Input.PosP = in.Input_PosP;
-    float4 _427 = _main(Input, _225, _colorTex, sampler_colorTex, _normalTex, sampler_normalTex, _depthTex, sampler_depthTex);
-    out._entryPointOutput = _427;
+    float4 _435 = _main(Input, _225, _colorTex, sampler_colorTex, _normalTex, sampler_normalTex, _depthTex, sampler_depthTex);
+    out._entryPointOutput = _435;
     return out;
 }
 

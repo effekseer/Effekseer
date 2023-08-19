@@ -127,8 +127,11 @@ float4 _main(PS_Input Input, constant PS_ConstantBuffer& _225, texture2d<float> 
     float4 param = _colorTex.sample(sampler_colorTex, Input.UV);
     bool param_1 = convertColorSpace;
     float4 Output = ConvertFromSRGBTexture(param, param_1) * Input.Color;
-    float3 _258 = Output.xyz * _225.fEmissiveScaling.x;
-    Output = float4(_258.x, _258.y, _258.z, Output.w);
+    float4 _256 = Output;
+    float3 _258 = _256.xyz * _225.fEmissiveScaling.x;
+    Output.x = _258.x;
+    Output.y = _258.y;
+    Output.z = _258.z;
     float4 screenPos = Input.PosP / float4(Input.PosP.w);
     float2 screenUV = (screenPos.xy + float2(1.0)) / float2(2.0);
     screenUV.y = 1.0 - screenUV.y;
@@ -160,8 +163,8 @@ fragment main0_out main0(main0_in in [[stage_in]], constant PS_ConstantBuffer& _
     Input.Color = in.Input_Color;
     Input.UV = in.Input_UV;
     Input.PosP = in.Input_PosP;
-    float4 _359 = _main(Input, _225, _colorTex, sampler_colorTex, _depthTex, sampler_depthTex);
-    out._entryPointOutput = _359;
+    float4 _363 = _main(Input, _225, _colorTex, sampler_colorTex, _depthTex, sampler_depthTex);
+    out._entryPointOutput = _363;
     return out;
 }
 

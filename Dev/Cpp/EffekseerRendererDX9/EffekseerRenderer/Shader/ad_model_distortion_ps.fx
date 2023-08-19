@@ -25,14 +25,14 @@ struct AdvancedParameter
 
 cbuffer PS_ConstantBuffer : register(b1)
 {
-    float4 _298_g_scale : register(c0);
-    float4 _298_mUVInversedBack : register(c1);
-    float4 _298_fFlipbookParameter : register(c2);
-    float4 _298_fUVDistortionParameter : register(c3);
-    float4 _298_fBlendTextureParameter : register(c4);
-    float4 _298_softParticleParam : register(c5);
-    float4 _298_reconstructionParam1 : register(c6);
-    float4 _298_reconstructionParam2 : register(c7);
+    float4 _314_g_scale : register(c0);
+    float4 _314_mUVInversedBack : register(c1);
+    float4 _314_fFlipbookParameter : register(c2);
+    float4 _314_fUVDistortionParameter : register(c3);
+    float4 _314_fBlendTextureParameter : register(c4);
+    float4 _314_softParticleParam : register(c5);
+    float4 _314_reconstructionParam1 : register(c6);
+    float4 _314_reconstructionParam2 : register(c7);
 };
 
 uniform sampler2D Sampler_sampler_uvDistortionTex : register(s3);
@@ -152,29 +152,41 @@ void ApplyTextureBlending(inout float4 dstColor, float4 blendColor, float blendT
 {
     if (blendType == 0.0f)
     {
-        float3 _164 = (blendColor.xyz * blendColor.w) + (dstColor.xyz * (1.0f - blendColor.w));
-        dstColor = float4(_164.x, _164.y, _164.z, dstColor.w);
+        float4 _161 = dstColor;
+        float3 _164 = (blendColor.xyz * blendColor.w) + (_161.xyz * (1.0f - blendColor.w));
+        dstColor.x = _164.x;
+        dstColor.y = _164.y;
+        dstColor.z = _164.z;
     }
     else
     {
         if (blendType == 1.0f)
         {
-            float3 _176 = dstColor.xyz + (blendColor.xyz * blendColor.w);
-            dstColor = float4(_176.x, _176.y, _176.z, dstColor.w);
+            float4 _179 = dstColor;
+            float3 _181 = _179.xyz + (blendColor.xyz * blendColor.w);
+            dstColor.x = _181.x;
+            dstColor.y = _181.y;
+            dstColor.z = _181.z;
         }
         else
         {
             if (blendType == 2.0f)
             {
-                float3 _189 = dstColor.xyz - (blendColor.xyz * blendColor.w);
-                dstColor = float4(_189.x, _189.y, _189.z, dstColor.w);
+                float4 _196 = dstColor;
+                float3 _198 = _196.xyz - (blendColor.xyz * blendColor.w);
+                dstColor.x = _198.x;
+                dstColor.y = _198.y;
+                dstColor.z = _198.z;
             }
             else
             {
                 if (blendType == 3.0f)
                 {
-                    float3 _202 = dstColor.xyz * (blendColor.xyz * blendColor.w);
-                    dstColor = float4(_202.x, _202.y, _202.z, dstColor.w);
+                    float4 _213 = dstColor;
+                    float3 _215 = _213.xyz * (blendColor.xyz * blendColor.w);
+                    dstColor.x = _215.x;
+                    dstColor.y = _215.y;
+                    dstColor.z = _215.z;
                 }
             }
         }
@@ -186,29 +198,29 @@ float4 _main(PS_Input Input)
     PS_Input param = Input;
     AdvancedParameter advancedParam = DisolveAdvancedParameter(param);
     float2 param_1 = advancedParam.UVDistortionUV;
-    float2 param_2 = _298_fUVDistortionParameter.zw;
+    float2 param_2 = _314_fUVDistortionParameter.zw;
     bool param_3 = false;
     float2 UVOffset = UVDistortionOffset(param_1, param_2, param_3, Sampler_sampler_uvDistortionTex);
-    UVOffset *= _298_fUVDistortionParameter.x;
+    UVOffset *= _314_fUVDistortionParameter.x;
     float4 Output = tex2D(Sampler_sampler_colorTex, float2(Input.UV_Others.xy) + UVOffset);
     Output.w *= Input.Color.w;
     float4 param_4 = Output;
     float param_5 = advancedParam.FlipbookRate;
     bool param_6 = false;
-    ApplyFlipbook(param_4, _298_fFlipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_5, param_6, Sampler_sampler_colorTex);
+    ApplyFlipbook(param_4, _314_fFlipbookParameter, Input.Color, advancedParam.FlipbookNextIndexUV + UVOffset, param_5, param_6, Sampler_sampler_colorTex);
     Output = param_4;
     float4 AlphaTexColor = tex2D(Sampler_sampler_alphaTex, advancedParam.AlphaUV + UVOffset);
     Output.w *= (AlphaTexColor.x * AlphaTexColor.w);
     float2 param_7 = advancedParam.BlendUVDistortionUV;
-    float2 param_8 = _298_fUVDistortionParameter.zw;
+    float2 param_8 = _314_fUVDistortionParameter.zw;
     bool param_9 = false;
     float2 BlendUVOffset = UVDistortionOffset(param_7, param_8, param_9, Sampler_sampler_blendUVDistortionTex);
-    BlendUVOffset *= _298_fUVDistortionParameter.y;
+    BlendUVOffset *= _314_fUVDistortionParameter.y;
     float4 BlendTextureColor = tex2D(Sampler_sampler_blendTex, advancedParam.BlendUV + BlendUVOffset);
     float4 BlendAlphaTextureColor = tex2D(Sampler_sampler_blendAlphaTex, advancedParam.BlendAlphaUV + BlendUVOffset);
     BlendTextureColor.w *= (BlendAlphaTextureColor.x * BlendAlphaTextureColor.w);
     float4 param_10 = Output;
-    ApplyTextureBlending(param_10, BlendTextureColor, _298_fBlendTextureParameter.x);
+    ApplyTextureBlending(param_10, BlendTextureColor, _314_fBlendTextureParameter.x);
     Output = param_10;
     if (Output.w <= max(0.0f, advancedParam.AlphaThreshold))
     {
@@ -217,14 +229,16 @@ float4 _main(PS_Input Input)
     float2 pos = Input.PosP.xy / Input.PosP.w.xx;
     float2 posR = Input.ProjTangent.xy / Input.ProjTangent.w.xx;
     float2 posU = Input.ProjBinormal.xy / Input.ProjBinormal.w.xx;
-    float xscale = (((Output.x * 2.0f) - 1.0f) * Input.Color.x) * _298_g_scale.x;
-    float yscale = (((Output.y * 2.0f) - 1.0f) * Input.Color.y) * _298_g_scale.x;
+    float xscale = (((Output.x * 2.0f) - 1.0f) * Input.Color.x) * _314_g_scale.x;
+    float yscale = (((Output.y * 2.0f) - 1.0f) * Input.Color.y) * _314_g_scale.x;
     float2 uv = (pos + ((posR - pos) * xscale)) + ((posU - pos) * yscale);
     uv.x = (uv.x + 1.0f) * 0.5f;
     uv.y = 1.0f - ((uv.y + 1.0f) * 0.5f);
-    uv.y = _298_mUVInversedBack.x + (_298_mUVInversedBack.y * uv.y);
+    uv.y = _314_mUVInversedBack.x + (_314_mUVInversedBack.y * uv.y);
     float3 color = float3(tex2D(Sampler_sampler_backTex, uv).xyz);
-    Output = float4(color.x, color.y, color.z, Output.w);
+    Output.x = color.x;
+    Output.y = color.y;
+    Output.z = color.z;
     return Output;
 }
 
@@ -240,8 +254,8 @@ void frag_main()
     Input.Alpha_Dist_UV = Input_Alpha_Dist_UV;
     Input.Blend_Alpha_Dist_UV = Input_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = Input_Blend_FBNextIndex_UV;
-    float4 _558 = _main(Input);
-    _entryPointOutput = _558;
+    float4 _578 = _main(Input);
+    _entryPointOutput = _578;
 }
 
 SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)

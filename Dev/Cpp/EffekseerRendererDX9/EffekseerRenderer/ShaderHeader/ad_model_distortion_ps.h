@@ -15,22 +15,22 @@
 //   sampler2D Sampler_sampler_blendUVDistortionTex;
 //   sampler2D Sampler_sampler_colorTex;
 //   sampler2D Sampler_sampler_uvDistortionTex;
-//   float4 _298_fBlendTextureParameter;
-//   float4 _298_fFlipbookParameter;
-//   float4 _298_fUVDistortionParameter;
-//   float4 _298_g_scale;
-//   float4 _298_mUVInversedBack;
+//   float4 _314_fBlendTextureParameter;
+//   float4 _314_fFlipbookParameter;
+//   float4 _314_fUVDistortionParameter;
+//   float4 _314_g_scale;
+//   float4 _314_mUVInversedBack;
 //
 //
 // Registers:
 //
 //   Name                                 Reg   Size
 //   ------------------------------------ ----- ----
-//   _298_g_scale                         c0       1
-//   _298_mUVInversedBack                 c1       1
-//   _298_fFlipbookParameter              c2       1
-//   _298_fUVDistortionParameter          c3       1
-//   _298_fBlendTextureParameter          c4       1
+//   _314_g_scale                         c0       1
+//   _314_mUVInversedBack                 c1       1
+//   _314_fFlipbookParameter              c2       1
+//   _314_fUVDistortionParameter          c3       1
+//   _314_fBlendTextureParameter          c4       1
 //   Sampler_sampler_colorTex             s0       1
 //   Sampler_sampler_backTex              s1       1
 //   Sampler_sampler_alphaTex             s2       1
@@ -225,26 +225,26 @@ const BYTE g_ps30_main[] =
     111, 110,  84, 101, 120,   0, 
       4,   0,  12,   0,   1,   0, 
       1,   0,   1,   0,   0,   0, 
-      0,   0,   0,   0,  95,  50, 
-     57,  56,  95, 102,  66, 108, 
+      0,   0,   0,   0,  95,  51, 
+     49,  52,  95, 102,  66, 108, 
     101, 110, 100,  84, 101, 120, 
     116, 117, 114, 101,  80,  97, 
     114,  97, 109, 101, 116, 101, 
     114,   0,   1,   0,   3,   0, 
       1,   0,   4,   0,   1,   0, 
       0,   0,   0,   0,   0,   0, 
-     95,  50,  57,  56,  95, 102, 
+     95,  51,  49,  52,  95, 102, 
      70, 108, 105, 112,  98, 111, 
     111, 107,  80,  97, 114,  97, 
     109, 101, 116, 101, 114,   0, 
-     95,  50,  57,  56,  95, 102, 
+     95,  51,  49,  52,  95, 102, 
      85,  86,  68, 105, 115, 116, 
     111, 114, 116, 105, 111, 110, 
      80,  97, 114,  97, 109, 101, 
-    116, 101, 114,   0,  95,  50, 
-     57,  56,  95, 103,  95, 115, 
+    116, 101, 114,   0,  95,  51, 
+     49,  52,  95, 103,  95, 115, 
      99,  97, 108, 101,   0,  95, 
-     50,  57,  56,  95, 109,  85, 
+     51,  49,  52,  95, 109,  85, 
      86,  73, 110, 118, 101, 114, 
     115, 101, 100,  66,  97,  99, 
     107,   0, 112, 115,  95,  51, 
