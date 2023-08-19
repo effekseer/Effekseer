@@ -175,7 +175,7 @@ EffekseerRenderer::RendererRef EffectPlatformVulkan::CreateRenderer()
 	auto p = static_cast<LLGI::PlatformVulkan*>(platform_);
 
 	::EffekseerRendererVulkan::RenderPassInformation renderPassInfo;
-	renderPassInfo.DoesPresentToScreen = true;
+	renderPassInfo.DoesPresentToScreen = false;
 	renderPassInfo.RenderTextureCount = 1;
 	renderPassInfo.RenderTextureFormats[0] = VK_FORMAT_R8G8B8A8_UNORM;
 	renderPassInfo.DepthFormat = VK_FORMAT_D32_SFLOAT;

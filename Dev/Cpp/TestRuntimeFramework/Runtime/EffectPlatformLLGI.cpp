@@ -29,11 +29,14 @@ void EffectPlatformLLGI::CreateResources()
 
 	LLGI::RenderTextureInitializationParameter renderParam;
 	renderParam.Size = LLGI::Vec2I(initParam_.WindowSize[0], initParam_.WindowSize[1]);
-	LLGI::DepthTextureInitializationParameter depthParam;
-	depthParam.Size = LLGI::Vec2I(initParam_.WindowSize[0], initParam_.WindowSize[1]);
+	LLGI::TextureParameter depthParam;
+	depthParam.Size = LLGI::Vec3I(initParam_.WindowSize[0], initParam_.WindowSize[1], 1);
+	depthParam.Format = LLGI::TextureFormatType::D32;
 	colorBuffer_ = graphics_->CreateRenderTexture(renderParam);
-	depthBuffer_ = graphics_->CreateDepthTexture(depthParam);
+	depthBuffer_ = graphics_->CreateTexture(depthParam);
 	renderPass_ = graphics_->CreateRenderPass((LLGI::Texture**)&colorBuffer_, 1, depthBuffer_);
+	renderPass_->SetIsColorCleared(true);
+	renderPass_->SetIsDepthCleared(true);
 
 	vb_ = graphics_->CreateBuffer(LLGI::BufferUsageType::Vertex | LLGI::BufferUsageType::MapWrite, sizeof(SimpleVertex) * 4);
 	ib_ = graphics_->CreateBuffer(LLGI::BufferUsageType::Index | LLGI::BufferUsageType::MapWrite, 2 * 6);
