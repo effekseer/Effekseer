@@ -349,7 +349,7 @@ namespace Effekseer.GUI.Inspector
 			// VisiblityControllerAttributes
 			bool isVisibilityController = false;
 			{
-				var attr = (Asset.VisiblityControlledAttribute)field.GetCustomAttribute(typeof(Asset.VisiblityControlledAttribute));
+				var attr = (Asset.VisiblityControllerAttribute)field.GetCustomAttribute(typeof(Asset.VisiblityControllerAttribute));
 				if (attr != null)
 				{
 					isVisibilityController = true;
