@@ -9,7 +9,7 @@ using Color = Effekseer.swig.Color;
 
 namespace Effekseer.GUI
 {
-	public class Viewer: EffectRendererCallback
+	public class Viewer : EffectRendererCallback
 	{
 		HardwareDevice hardwareDevice;
 		swig.EffectSetting effectSetting;
@@ -76,7 +76,7 @@ namespace Effekseer.GUI
 		protected override void Dispose(bool disposing)
 		{
 			base.Dispose(disposing);
-			
+
 			if (CurrentEffect != null)
 			{
 				CurrentEffect.Dispose();
@@ -98,7 +98,7 @@ namespace Effekseer.GUI
 			if (EffectRenderer != null)
 			{
 				EffectRenderer.Callback = null;
-				
+
 				EffectRenderer.Dispose();
 				EffectRenderer = null;
 			}
@@ -260,7 +260,7 @@ namespace Effekseer.GUI
 			EffectRenderer = new swig.MainScreenEffectRenderer();
 			EffectRenderer.Initialize(hardwareDevice.GraphicsDevice, hardwareDevice.SoundDevice, effectSetting, spriteCount, hardwareDevice.GraphicsDevice.GetIsSRGBMode());
 			EffectRenderer.Callback = this;
-			
+
 			ViewPointController = new swig.ViewPointController();
 
 			ViewPointController.ProjectionStyle = deviceType == swig.DeviceType.OpenGL ? swig.ProjectionMatrixStyle.OpenGLStyle : swig.ProjectionMatrixStyle.DirectXStyle;
@@ -333,7 +333,7 @@ namespace Effekseer.GUI
 
 			if (Core.Option.RenderingMode != OptionValues.RenderMode.Overdraw)
 			{
-				RenderGrid(cameraMatrix,projectionMatrix);
+				RenderGrid(cameraMatrix, projectionMatrix);
 				RenderKillRulesPreview(cameraMatrix, projectionMatrix);
 				RenderCullingPreview(cameraMatrix, projectionMatrix);
 			}
@@ -343,7 +343,7 @@ namespace Effekseer.GUI
 			float sphereX, float sphereY, float sphereZ, float sphereRadius, Color color)
 		{
 			EffectRenderer.StartRenderingLines();
-			
+
 			for (int y = -3; y <= 3; y++)
 			{
 				float ylen = sphereRadius * (y / 4.0f);
@@ -353,7 +353,7 @@ namespace Effekseer.GUI
 				{
 					float a0 = 3.1415f * 2.0f / 9.0f * r;
 					float a1 = 3.1415f * 2.0f / 9.0f * (r + 1.0f);
-					
+
 					EffectRenderer.AddLine(
 						(float)(sphereX + Math.Sin(a0) * radius), sphereY + ylen, (float)(sphereZ + Math.Cos(a0) * radius),
 						(float)(sphereX + Math.Sin(a1) * radius), sphereY + ylen, (float)(sphereZ + Math.Cos(a1) * radius),
@@ -361,14 +361,14 @@ namespace Effekseer.GUI
 					);
 				}
 			}
-			
+
 			EffectRenderer.EndRenderingLines(cameraMatrix, projectionMatrix);
 		}
 
 		private void RenderGrid(Matrix44F cameraMatrix, Matrix44F projectionMatrix)
 		{
-			if(!Core.Option.IsGridShown) return;
-			
+			if (!Core.Option.IsGridShown) return;
+
 			Color gridColor = new Color
 			{
 				R = (byte)Core.Option.GridColor.R,
@@ -405,7 +405,7 @@ namespace Effekseer.GUI
 						gridColor);
 				}
 			}
-			
+
 			if (Core.Option.IsYZGridShown)
 			{
 				for (int i = -5; i <= 5; i++)
@@ -418,17 +418,17 @@ namespace Effekseer.GUI
 						gridColor);
 				}
 			}
-			
+
 			EffectRenderer.AddLine(0, 0.001F, 0, gridLength, 0.001F, 0,
 				new Color(255, 0, 0, 255));
 			EffectRenderer.AddLine(0, 0, 0, 0, gridLength, 0,
 				new Color(0, 255, 0, 255));
 			EffectRenderer.AddLine(0, 0.001F, 0, 0, 0.001F, gridLength,
 				new Color(0, 0, 255, 255));
-			
+
 			EffectRenderer.EndRenderingLines(cameraMatrix, projectionMatrix);
 		}
-		
+
 		private void RenderCullingPreview(Matrix44F cameraMatrix, Matrix44F projectionMatrix)
 		{
 			if (Core.Culling.Type.Value != Data.EffectCullingValues.ParamaterType.Sphere) return;
@@ -437,11 +437,11 @@ namespace Effekseer.GUI
 				Core.Culling.Sphere.Location.X, Core.Culling.Sphere.Location.Y, Core.Culling.Sphere.Location.Z,
 				Core.Culling.Sphere.Radius, new Color(255, 255, 255, 255));
 		}
-		
+
 		private void RenderKillRulesPreview(Matrix44F cameraMatrix, Matrix44F projectionMatrix)
 		{
 			if (Core.SelectedNode == null || !(Core.SelectedNode is Data.Node)) return;
-			
+
 			Data.Node node = (Data.Node)Core.SelectedNode;
 
 			if (node.KillRulesValues.Type == KillRulesValues.KillType.Height)
@@ -449,7 +449,7 @@ namespace Effekseer.GUI
 				EffectRenderer.StartRenderingLines();
 
 				Color planeColor = new Color(0xFF, 0x23, 0x23, 0xff);
-				KillRulesValues.PlaneAxisType axisType = node.KillRulesValues.PlaneAxis;
+				PlaneAxisType axisType = node.KillRulesValues.PlaneAxis;
 				KillRulesValues.PlaneAxisSpace space = KillRulesValues.PlaneAxisNormal[axisType];
 				Vector3D normal = space.Normal;
 				Vector3D tangent = space.Tangent;
@@ -463,15 +463,15 @@ namespace Effekseer.GUI
 				float v1X = offsetX - tangent.X * 5F - bitangent.X * 5F;
 				float v1Y = offsetY - tangent.Y * 5F - bitangent.Y * 5F;
 				float v1Z = offsetZ - tangent.Z * 5F - bitangent.Z * 5F;
-				
+
 				float v2X = offsetX + tangent.X * 5F - bitangent.X * 5F;
 				float v2Y = offsetY + tangent.Y * 5F - bitangent.Y * 5F;
 				float v2Z = offsetZ + tangent.Z * 5F - bitangent.Z * 5F;
-				
+
 				float v3X = offsetX + tangent.X * 5F + bitangent.X * 5F;
 				float v3Y = offsetY + tangent.Y * 5F + bitangent.Y * 5F;
 				float v3Z = offsetZ + tangent.Z * 5F + bitangent.Z * 5F;
-				
+
 				float v4X = offsetX - tangent.X * 5F + bitangent.X * 5F;
 				float v4Y = offsetY - tangent.Y * 5F + bitangent.Y * 5F;
 				float v4Z = offsetZ - tangent.Z * 5F + bitangent.Z * 5F;
@@ -485,16 +485,16 @@ namespace Effekseer.GUI
 				{
 					EffectRenderer.AddLine(x, y, z, x + nx, y + ny, z + nz, color);
 				}
-				
-				AddPointer((v1X + v2X) * 0.5F, (v1Y + v2Y) * 0.5F, (v1Z + v2Z) * 0.5F, 
+
+				AddPointer((v1X + v2X) * 0.5F, (v1Y + v2Y) * 0.5F, (v1Z + v2Z) * 0.5F,
 					normal.X, normal.Y, normal.Z, planeColor);
-				AddPointer((v2X + v3X) * 0.5F, (v2Y + v3Y) * 0.5F, (v2Z + v3Z) * 0.5F, 
+				AddPointer((v2X + v3X) * 0.5F, (v2Y + v3Y) * 0.5F, (v2Z + v3Z) * 0.5F,
 					normal.X, normal.Y, normal.Z, planeColor);
-				AddPointer((v3X + v4X) * 0.5F, (v3Y + v4Y) * 0.5F, (v3Z + v4Z) * 0.5F, 
+				AddPointer((v3X + v4X) * 0.5F, (v3Y + v4Y) * 0.5F, (v3Z + v4Z) * 0.5F,
 					normal.X, normal.Y, normal.Z, planeColor);
-				AddPointer((v4X + v1X) * 0.5F, (v4Y + v1Y) * 0.5F, (v4Z + v1Z) * 0.5F, 
+				AddPointer((v4X + v1X) * 0.5F, (v4Y + v1Y) * 0.5F, (v4Z + v1Z) * 0.5F,
 					normal.X, normal.Y, normal.Z, planeColor);
-				
+
 				EffectRenderer.EndRenderingLines(cameraMatrix, projectionMatrix);
 			}
 			if (node.KillRulesValues.Type == KillRulesValues.KillType.Box)
@@ -507,40 +507,40 @@ namespace Effekseer.GUI
 				float maxX = center.X + size.X;
 				float maxY = center.Y + size.Y;
 				float maxZ = center.Z + size.Z;
-					
-				Color boxColor = node.KillRulesValues.BoxIsKillInside ? 
+
+				Color boxColor = node.KillRulesValues.BoxIsKillInside ?
 					new Color(0xFF, 0x23, 0x23, 0xFF) : new Color(0x23, 0xFF, 0x23, 0xFF);
-					
+
 				EffectRenderer.StartRenderingLines();
-					
+
 				// bottom rectangle
-				EffectRenderer.AddLine(minX, minY, minZ, 
+				EffectRenderer.AddLine(minX, minY, minZ,
 					maxX, minY, minZ, boxColor);
-				EffectRenderer.AddLine(maxX, minY, minZ, 
+				EffectRenderer.AddLine(maxX, minY, minZ,
 					maxX, minY, maxZ, boxColor);
-				EffectRenderer.AddLine(maxX, minY, maxZ, 
+				EffectRenderer.AddLine(maxX, minY, maxZ,
 					minX, minY, maxZ, boxColor);
-				EffectRenderer.AddLine(minX, minY, maxZ, 
+				EffectRenderer.AddLine(minX, minY, maxZ,
 					minX, minY, minZ, boxColor);
-					
+
 				// top rectangle
-				EffectRenderer.AddLine(minX, maxY, minZ, 
+				EffectRenderer.AddLine(minX, maxY, minZ,
 					maxX, maxY, minZ, boxColor);
-				EffectRenderer.AddLine(maxX, maxY, minZ, 
+				EffectRenderer.AddLine(maxX, maxY, minZ,
 					maxX, maxY, maxZ, boxColor);
-				EffectRenderer.AddLine(maxX, maxY, maxZ, 
+				EffectRenderer.AddLine(maxX, maxY, maxZ,
 					minX, maxY, maxZ, boxColor);
-				EffectRenderer.AddLine(minX, maxY, maxZ, 
+				EffectRenderer.AddLine(minX, maxY, maxZ,
 					minX, maxY, minZ, boxColor);
-					
+
 				// sides
-				EffectRenderer.AddLine(minX, minY, minZ, 
+				EffectRenderer.AddLine(minX, minY, minZ,
 					minX, maxY, minZ, boxColor);
-				EffectRenderer.AddLine(maxX, minY, minZ, 
+				EffectRenderer.AddLine(maxX, minY, minZ,
 					maxX, maxY, minZ, boxColor);
-				EffectRenderer.AddLine(minX, minY, maxZ, 
+				EffectRenderer.AddLine(minX, minY, maxZ,
 					minX, maxY, maxZ, boxColor);
-				EffectRenderer.AddLine(maxX, minY, maxZ, 
+				EffectRenderer.AddLine(maxX, minY, maxZ,
 					maxX, maxY, maxZ, boxColor);
 				EffectRenderer.EndRenderingLines(cameraMatrix, projectionMatrix);
 			}
@@ -549,9 +549,9 @@ namespace Effekseer.GUI
 			{
 				Vector3D sphereCenter = node.KillRulesValues.SphereCenter;
 				float radius = node.KillRulesValues.SphereRadius;
-				Color sphereColor = node.KillRulesValues.SphereIsKillInside ? 
+				Color sphereColor = node.KillRulesValues.SphereIsKillInside ?
 					new Color(0xFF, 0x23, 0x23, 0xFF) : new Color(0x23, 0xFF, 0x23, 0xFF);
-				
+
 				RenderSphere(cameraMatrix, projectionMatrix,
 					sphereCenter.X, sphereCenter.Y, sphereCenter.Z,
 					radius, sphereColor);
@@ -591,7 +591,8 @@ namespace Effekseer.GUI
 					stepFrame = Math.Min(stepFrame, 4);
 
 					StepViewer(stepFrame, true);
-				} else if (IsPlaying && IsPaused)
+				}
+				else if (IsPlaying && IsPaused)
 				{
 					// need to update LOD which could have changed because of changed camera position
 					// even if effect is paused
@@ -652,7 +653,7 @@ namespace Effekseer.GUI
 					Core.Option.MouseRotInvY,
 					Core.Option.MouseSlideInvX,
 					Core.Option.MouseSlideInvY);
-				
+
 				EffectRenderer.SetLODDistanceBias(LODDistanceBias);
 			}
 			else

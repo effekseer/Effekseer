@@ -16,6 +16,7 @@
 #include "Parameter/AllTypeColor.h"
 #include "Parameter/AlphaCutoff.h"
 #include "Parameter/BasicSettings.h"
+#include "Parameter/Collisions.h"
 #include "Parameter/CustomData.h"
 #include "Parameter/DepthParameter.h"
 #include "Parameter/DynamicParameter.h"
@@ -517,6 +518,8 @@ public:
 	int32_t RenderingPriority = -1;
 
 	DynamicFactorParameter DynamicFactor;
+
+	CollisionsParameter Collisions;
 
 	bool Traverse(const std::function<bool(EffectNodeImplemented*)>& visitor);
 

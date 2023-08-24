@@ -20,6 +20,7 @@ file(GLOB files_core
     EffekseerCore/Script/*.cs
     EffekseerCore/IO/*.cs	
     EffekseerCore/Utils/*.cs
+    EffekseerCore/Data/CollisionsValues.cs
     EffekseerCore/Data/ProceduralModelValues.cs
     EffekseerCore/Data/Value/Int2.cs
     EffekseerCore/Data/Value/ObjectCollection.cs
@@ -74,6 +75,7 @@ file(GLOB files
     Effekseer/GUI/Menu/*.cs
     Effekseer/Properties/*.cs
     Effekseer/Utils/*.cs
+    Effekseer/GUI/Dock/Collisions.cs
     Effekseer/GUI/Dock/ProceduralModel.cs
 )
 

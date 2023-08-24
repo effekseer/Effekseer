@@ -136,6 +136,7 @@ set(effekseer_src
     Effekseer/Material/Effekseer.CompiledMaterial.cpp
     Effekseer/Material/Effekseer.MaterialCompiler.cpp
     Effekseer/IO/Effekseer.EfkEfcFactory.cpp
+    Effekseer/Parameter/Collisions.cpp
     Effekseer/Parameter/Easing.cpp
     Effekseer/Parameter/Effekseer.Parameters.cpp
     Effekseer/Parameter/Rotation.cpp

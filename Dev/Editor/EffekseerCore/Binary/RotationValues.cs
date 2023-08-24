@@ -94,6 +94,15 @@ namespace Effekseer.Binary
 				data.Add(bytes.Count().GetBytes());
 				data.Add(bytes);
 			}
+			else if (rotationType == Data.RotationValues.ParamaterType.RotateToVelocity)
+			{
+				List<byte[]> _data = new List<byte[]>();
+				_data.Add(((int)value.Velocity.Axis.Value).GetBytes());
+				var bytes = _data.ToArray().ToArray();
+
+				data.Add(bytes.Count().GetBytes());
+				data.Add(bytes);
+			}
 
 			return data.ToArray().ToArray();
 		}

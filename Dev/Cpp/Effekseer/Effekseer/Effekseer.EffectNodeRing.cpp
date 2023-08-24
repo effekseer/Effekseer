@@ -312,7 +312,7 @@ void EffectNodeRing::Rendering(const Instance& instance, const Instance* next_in
 
 		if (instance.m_pEffectNode->TranslationParam.TranslationType == ParameterTranslationType_ViewOffset)
 		{
-			instanceParameter.ViewOffsetDistance = instance.translation_values.view_offset.distance;
+			instanceParameter.ViewOffsetDistance = instance.translation_state_.view_offset.distance;
 		}
 
 		CalcCustomData(&instance, instanceParameter.CustomData1, instanceParameter.CustomData2);

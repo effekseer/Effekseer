@@ -1,13 +1,16 @@
 CharacterTable,default
 Language_en,English
 Language_ja,日本語
-"",""
-"Save","Save"
-"Cancel","Cancel"
-"Select","Select"
-"MultipleValues","Multiple values"
-"Enabled_Name","Enabled"
-"Disabled_Name","Disabled"
-"",""
-"Font_Normal","resources/GenShinGothic-Monospace-Normal.ttf"
-"Font_Bold","resources/fonts/GenShinGothic-Monospace-Bold.ttf"
+,
+Save,Save
+Cancel,Cancel
+Select,Select
+MultipleValues,Multiple values
+Enabled_Name,Enabled
+Disabled_Name,Disabled
+,
+WorldCoordinateSyatemType_Local_Name,Local
+WorldCoordinateSyatemType_World_Name,World
+,
+Font_Normal,resources/GenShinGothic-Monospace-Normal.ttf
+Font_Bold,resources/fonts/GenShinGothic-Monospace-Bold.ttf

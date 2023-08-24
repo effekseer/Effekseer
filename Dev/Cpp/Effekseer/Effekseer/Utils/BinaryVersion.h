@@ -25,6 +25,7 @@ const int32_t Version17Alpha4 = 1703;
 const int32_t Version17Alpha5 = 1704;
 const int32_t Version17Alpha6 = 1705;
 const int32_t Version17 = 1710;
+const int32_t Version18Alpha1 = 1800;
 
 const int32_t CompiledMaterialVersion15 = 1;
 const int32_t CompiledMaterialVersion16 = 1610;

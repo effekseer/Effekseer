@@ -85,13 +85,20 @@ namespace Effekseer.Data
 			get;
 			private set;
 		}
-		
+
 		[IO(Export = true)]
 		public KillRulesValues KillRulesValues
 		{
 			get;
 			private set;
 		}
+
+		[IO(Export = true)]
+		public CollisionsValues CollisionsValues
+		{
+			get;
+			private set;
+		} = new CollisionsValues();
 
 		/// <summary>
 		/// コンストラクタ

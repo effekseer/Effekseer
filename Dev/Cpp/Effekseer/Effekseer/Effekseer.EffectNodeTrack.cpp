@@ -148,7 +148,7 @@ void EffectNodeTrack::BeginRenderingGroup(InstanceGroup* group, Manager* manager
 
 			if (m_nodeParameter.EnableViewOffset)
 			{
-				m_instanceParameter.ViewOffsetDistance = groupFirst->translation_values.view_offset.distance;
+				m_instanceParameter.ViewOffsetDistance = groupFirst->translation_state_.view_offset.distance;
 			}
 
 			CalcCustomData(group->GetFirst(), m_instanceParameter.CustomData1, m_instanceParameter.CustomData2);
