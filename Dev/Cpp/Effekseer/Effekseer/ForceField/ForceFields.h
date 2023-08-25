@@ -433,15 +433,9 @@ struct LocalForceFieldInstance
 {
 	std::array<SIMD::Vec3f, LocalFieldSlotMax> Velocities;
 
-	SIMD::Vec3f ExternalVelocity;
-	SIMD::Vec3f VelocitySum;
+	SIMD::Vec3f Update(const LocalForceFieldParameter& parameter, const SIMD::Vec3f& location, const SIMD::Vec3f& local_velocity_per_update, float magnification, float deltaFrame, CoordinateSystem coordinateSystem);
 
-	SIMD::Vec3f GlobalVelocitySum;
-	SIMD::Vec3f GlobalModifyLocation;
-
-	SIMD::Vec3f Update(const LocalForceFieldParameter& parameter, const SIMD::Vec3f& location, float magnification, float deltaFrame, CoordinateSystem coordinateSystem);
-
-	void UpdateGlobal(const LocalForceFieldParameter& parameter, const SIMD::Vec3f& location, float magnification, const SIMD::Vec3f& targetPosition, float deltaTime, CoordinateSystem coordinateSystem);
+	SIMD::Vec3f UpdateGlobal(const LocalForceFieldParameter& parameter, const SIMD::Vec3f& location, float magnification, const SIMD::Vec3f& targetPosition, float deltaTime, CoordinateSystem coordinateSystem);
 
 	void Reset();
 };

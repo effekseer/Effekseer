@@ -95,6 +95,7 @@ struct InstanceTranslationState
 	};
 
 	SIMD::Vec3f prevLocation;
+	SIMD::Vec3f prevVelocity;
 };
 
 class TranslationParameter
@@ -383,6 +384,7 @@ public:
 		}
 
 		instanceState.prevLocation = position;
+		instanceState.prevVelocity = SIMD::Vec3f(0,0,0);
 	}
 
 	SIMD::Vec3f CalculateTranslationState(
@@ -470,8 +472,10 @@ public:
 		}
 
 		const auto vel = localPosition - instanceState.prevLocation;
+		const auto acc = vel - instanceState.prevVelocity;
 		instanceState.prevLocation = localPosition;
-		return vel;
+		instanceState.prevVelocity = vel;
+		return acc;
 	}
 };
 
