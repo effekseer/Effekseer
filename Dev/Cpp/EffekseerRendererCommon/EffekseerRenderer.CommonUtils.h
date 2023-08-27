@@ -1665,6 +1665,9 @@ inline RendererStateFlipbook ToState(const Effekseer::NodeRendererFlipbookParame
 template <typename T>
 bool GenerateIndexDataStride(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, int32_t squareMaxCount, Effekseer::Backend::IndexBufferRef& indexBuffer, Effekseer::Backend::IndexBufferRef& indexBufferForWireframe)
 {
+	auto stride = sizeof(T) == 2 ? 
+		Effekseer::Backend::IndexBufferStrideType::Stride2 : Effekseer::Backend::IndexBufferStrideType::Stride4;
+
 	{
 		std::vector<T> buffer;
 		buffer.resize(squareMaxCount * 6);
@@ -1679,7 +1682,7 @@ bool GenerateIndexDataStride(Effekseer::Backend::GraphicsDeviceRef graphicsDevic
 			buffer[5 + i * 6] = (T)(2 + 4 * i);
 		}
 
-		indexBuffer = graphicsDevice->CreateIndexBuffer(squareMaxCount * 6, buffer.data(), Effekseer::Backend::IndexBufferStrideType::Stride2);
+		indexBuffer = graphicsDevice->CreateIndexBuffer(squareMaxCount * 6, buffer.data(), stride);
 		if (indexBuffer == nullptr)
 			return false;
 	}
@@ -1700,7 +1703,7 @@ bool GenerateIndexDataStride(Effekseer::Backend::GraphicsDeviceRef graphicsDevic
 			buffer[7 + i * 8] = (T)(3 + 4 * i);
 		}
 
-		indexBufferForWireframe = graphicsDevice->CreateIndexBuffer(squareMaxCount * 8, buffer.data(), Effekseer::Backend::IndexBufferStrideType::Stride2);
+		indexBufferForWireframe = graphicsDevice->CreateIndexBuffer(squareMaxCount * 8, buffer.data(), stride);
 		if (indexBufferForWireframe == nullptr)
 			return false;
 	}
