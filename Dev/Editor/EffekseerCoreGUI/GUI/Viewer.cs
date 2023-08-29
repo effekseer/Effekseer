@@ -268,6 +268,9 @@ namespace Effekseer.GUI
 			ViewMode_OnChanged(null, null);
 			Core.Option.ViewerMode.OnChanged += ViewMode_OnChanged;
 
+			CoordinateSystem_OnChanged(null, null);
+			Core.Option.Coordinate.OnChanged += CoordinateSystem_OnChanged;
+
 			Core.Option.RenderingMode.OnChanged += RenderingMode_OnChanged;
 			RenderingMode_OnChanged(null, null);
 
@@ -286,6 +289,14 @@ namespace Effekseer.GUI
 			isViewerShown = true;
 
 			return true;
+		}
+
+		private void CoordinateSystem_OnChanged(object sender, ChangedValueEventArgs e)
+		{
+			ViewPointController.SetCoordinateSystem(
+				Core.Option.Coordinate.Value == Data.OptionValues.CoordinateType.Right ? swig.CoordinateSystemType.RH : swig.CoordinateSystemType.LH);
+			effectSetting.SetCoordinateSyatem(
+				Core.Option.Coordinate.Value == Data.OptionValues.CoordinateType.Right ? swig.CoordinateSystemType.RH : swig.CoordinateSystemType.LH);
 		}
 
 		private void RenderingMode_OnChanged(object sender, ChangedValueEventArgs e)
@@ -757,6 +768,8 @@ namespace Effekseer.GUI
 
 			EffectRenderer.SetStep((int)Core.Option.FPS.Value);
 
+			ViewPointController.SetCoordinateSystem(
+				Core.Option.Coordinate.Value == Data.OptionValues.CoordinateType.Right ? swig.CoordinateSystemType.RH : swig.CoordinateSystemType.LH);
 			effectSetting.SetCoordinateSyatem(
 				Core.Option.Coordinate.Value == Data.OptionValues.CoordinateType.Right ? swig.CoordinateSystemType.RH : swig.CoordinateSystemType.LH);
 
