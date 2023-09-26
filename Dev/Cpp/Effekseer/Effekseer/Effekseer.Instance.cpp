@@ -627,6 +627,10 @@ void Instance::UpdateTransform(float deltaFrame)
 	// 計算済なら終了
 	if (m_GlobalMatrix43Calculated)
 		return;
+	if (deltaFrame == 0)
+	{
+		return;
+	}
 
 	assert(m_pEffectNode != nullptr);
 	assert(m_pContainer != nullptr);
@@ -670,7 +674,7 @@ void Instance::UpdateTransform(float deltaFrame)
 				steeringVec_ *= followParentParam.maxFollowSpeed;
 			}
 
-			localAcc = (steeringVec_ - prevSteering) * deltaFrame * m_pEffectNode->m_effect->GetMaginification();
+			localAcc = (steeringVec_ - prevSteering) * m_pEffectNode->m_effect->GetMaginification();
 		}
 		else
 		{
@@ -683,8 +687,6 @@ void Instance::UpdateTransform(float deltaFrame)
 			}
 		}
 
-		localVelocity += localAcc;
-
 		auto matRot = RotationFunctions::CalculateRotation(rotation_values, m_pEffectNode->RotationParam, m_randObject, m_pEffectNode->GetEffect(), m_pContainer->GetRootInstance(), m_LivingTime, m_LivedTime, m_pParent, m_pEffectNode->DynamicFactor, m_pManager->GetLayerParameter(GetInstanceGlobal()->GetLayer()).ViewerPosition);
 		auto scaling = ScalingFunctions::UpdateScaling(scaling_values, m_pEffectNode->ScalingParam, m_randObject, m_pEffectNode->GetEffect(), m_pContainer->GetRootInstance(), m_LivingTime, m_LivedTime, m_pParent, m_pEffectNode->DynamicFactor);
 
@@ -692,9 +694,9 @@ void Instance::UpdateTransform(float deltaFrame)
 		if (m_pEffectNode->LocalForceField.HasValue)
 		{
 			// for compatibiliy
-			auto new_local_position = localPosition + localVelocity;
+			auto new_local_position = localPosition + (localVelocity * deltaFrame + localAcc);
 
-			localVelocity += forceField_.Update(
+			localAcc += forceField_.Update(
 				m_pEffectNode->LocalForceField,
 				new_local_position,
 				localVelocity,
@@ -703,7 +705,8 @@ void Instance::UpdateTransform(float deltaFrame)
 				m_pEffectNode->GetEffect()->GetSetting()->GetCoordinateSystem());
 		}
 
-		localPosition += localVelocity;
+		localPosition += localVelocity * deltaFrame + localAcc;
+		localVelocity += localAcc;
 		prevPosition_ = localPosition;
 		prevLocalVelocity_ = localVelocity;
 
@@ -733,8 +736,8 @@ void Instance::UpdateTransform(float deltaFrame)
 		{
 			InstanceGlobal* instanceGlobal = m_pContainer->GetRootInstance();
 			const auto acc_global = forceField_.UpdateGlobal(m_pEffectNode->LocalForceField, prevGlobalPosition_, m_pEffectNode->GetEffect()->GetMaginification(), instanceGlobal->GetTargetLocation(), deltaFrame, m_pEffectNode->GetEffect()->GetSetting()->GetCoordinateSystem());
+			location_modify_global_ += velocity_modify_global_ * deltaFrame + acc_global;
 			velocity_modify_global_ += acc_global;
-			location_modify_global_ += velocity_modify_global_;
 			SIMD::Mat43f mat_location_global = SIMD::Mat43f::Translation(location_modify_global_);
 			calcMat *= mat_location_global;
 		}

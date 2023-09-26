@@ -379,7 +379,7 @@ SIMD::Vec3f LocalForceFieldInstance::Update(const LocalForceFieldParameter& para
 		ForceFieldCommonParameter ffcp;
 		ffcp.FieldCenter = parameter.LocalForceFields[i].Position;
 		ffcp.Position = location / magnification;
-		ffcp.PreviousSumVelocity = (local_velocity_per_update / deltaFrame) / magnification;
+		ffcp.PreviousSumVelocity = (local_velocity_per_update) / magnification;
 		ffcp.PreviousVelocity = Velocities[i] / magnification;
 		ffcp.DeltaFrame = deltaFrame;
 		ffcp.IsFieldRotated = field.IsRotated;
@@ -470,7 +470,7 @@ SIMD::Vec3f LocalForceFieldInstance::Update(const LocalForceFieldParameter& para
 		acc_sum += accs[i];
 	}
 
-	return acc_sum * deltaFrame;
+	return acc_sum;
 }
 
 SIMD::Vec3f LocalForceFieldInstance::UpdateGlobal(const LocalForceFieldParameter& parameter, const SIMD::Vec3f& location, float magnification, const SIMD::Vec3f& targetPosition, float deltaFrame, CoordinateSystem coordinateSystem)
@@ -586,7 +586,7 @@ SIMD::Vec3f LocalForceFieldInstance::UpdateGlobal(const LocalForceFieldParameter
 		acc_sum += accs[i];
 	}
 
-	return acc_sum * deltaFrame;
+	return acc_sum;
 }
 
 void LocalForceFieldInstance::Reset()

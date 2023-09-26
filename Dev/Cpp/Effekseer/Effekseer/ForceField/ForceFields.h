@@ -241,7 +241,7 @@ public:
 
 		if (ffp.Gravitation)
 		{
-			return dir * ffp.Power / distance;
+			return dir * ffp.Power / distance * ffc.DeltaFrame;
 		}
 
 		return dir * ffp.Power * ffc.DeltaFrame;
