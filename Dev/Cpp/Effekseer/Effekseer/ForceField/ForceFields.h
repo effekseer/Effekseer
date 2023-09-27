@@ -289,7 +289,7 @@ public:
 
 		auto xlen = power / distance * (power / 2.0f);
 		auto flen = sqrt(power * power - xlen * xlen);
-		return ((front * flen - localPos * xlen) * direction - ffc.PreviousVelocity) * ffc.DeltaFrame;
+		return ((front * flen - localPos * xlen) * direction * ffc.DeltaFrame - ffc.PreviousVelocity);
 	}
 
 	/**
@@ -353,13 +353,21 @@ public:
 			if (ffc.DeltaFrame > 0)
 			{
 				float eps = 0.0001f;
-				auto ret = SIMD::Vec3f(0.0f, 0.0f, 0.0f);
 				auto vel = ffc.PreviousVelocity;
-				vel += targetDirection * force * ffc.DeltaFrame;
-				float currentVelocity = vel.GetLength() + eps;
-				SIMD::Vec3f currentDirection = vel / currentVelocity;
+				auto deltaFrame = ffc.DeltaFrame;
 
-				vel = (targetDirection * ffp.Control + currentDirection * (1.0f - ffp.Control)) * currentVelocity;
+				while (deltaFrame > eps)
+				{
+					auto tempDeltaFrame = std::min(1.0f, deltaFrame);
+					vel += targetDirection * force * tempDeltaFrame;
+					float currentVelocity = vel.GetLength() + eps;
+					SIMD::Vec3f currentDirection = vel / currentVelocity;
+
+					vel = (targetDirection * ffp.Control + currentDirection * (1.0f - ffp.Control)) * currentVelocity;
+
+					deltaFrame -= tempDeltaFrame;
+				}
+
 				return vel - ffc.PreviousVelocity;
 			}
 		}

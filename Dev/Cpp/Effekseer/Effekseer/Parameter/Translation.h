@@ -384,7 +384,7 @@ public:
 		}
 
 		instanceState.prevLocation = position;
-		instanceState.prevVelocity = SIMD::Vec3f(0,0,0);
+		instanceState.prevVelocity = SIMD::Vec3f(0, 0, 0);
 	}
 
 	SIMD::Vec3f CalculateTranslationState(
@@ -394,10 +394,16 @@ public:
 		const InstanceGlobal* instanceGlobal,
 		float livingTime,
 		float livedTime,
+		float deltaFrame,
 		const Instance* m_pParent,
 		CoordinateSystem coordinateSystem,
 		const DynamicFactorParameter& dynamicFactor)
 	{
+		if (deltaFrame == 0.0f)
+		{
+			return SIMD::Vec3f(0, 0, 0);
+		}
+
 		SIMD::Vec3f localPosition;
 
 		if (TranslationType == ParameterTranslationType_None)
@@ -471,7 +477,7 @@ public:
 			return {0, 0, 0};
 		}
 
-		const auto vel = localPosition - instanceState.prevLocation;
+		const auto vel = (localPosition - instanceState.prevLocation) / deltaFrame;
 		const auto acc = vel - instanceState.prevVelocity;
 		instanceState.prevLocation = localPosition;
 		instanceState.prevVelocity = vel;
