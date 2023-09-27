@@ -320,6 +320,8 @@ namespace Effekseer.GUI
 			Core.Environment.PostEffect.TonemapReinhard.Exposure.OnChanged -= Tonemap_OnChanged;
 
 			Core.Option.ViewerMode.OnChanged -= ViewMode_OnChanged;
+
+			Core.Option.Coordinate.OnChanged -= CoordinateSystem_OnChanged;
 		}
 
 		public override void OnAfterClear()
