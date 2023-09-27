@@ -230,6 +230,9 @@ void Instance::Initialize(Instance* parent, float spawnDeltaFrame, int32_t insta
 	m_randObject.SetSeed(instanceGlobal->GetRandObject().GetRandInt());
 
 	prevPosition_ = SIMD::Vec3f(0, 0, 0);
+	prevLocalVelocity_ = SIMD::Vec3f(0, 0, 0);
+	location_modify_global_ = SIMD::Vec3f(0, 0, 0);
+	velocity_modify_global_ = SIMD::Vec3f(0, 0, 0);
 }
 
 void Instance::FirstUpdate()
@@ -375,6 +378,7 @@ void Instance::FirstUpdate()
 	}
 
 	prevGlobalPosition_ = SIMD::Vec3f::Transform(prevPosition_, m_ParentMatrix);
+	prevLocalVelocity_ = SIMD::Vec3f(0, 0, 0);
 
 	m_pEffectNode->InitializeRenderedInstance(*this, *ownGroup_, m_pManager);
 }
@@ -637,8 +641,17 @@ void Instance::UpdateTransform(float deltaFrame)
 			UpdateParentMatrix(deltaFrame);
 		}
 
+		float accerarationDelta = deltaFrame;
+		if (deltaFrame > 1)
+		{
+			// trapezoid interporation
+			accerarationDelta = ((1.0f + 1.0f / deltaFrame) / 2.0f) * deltaFrame;
+		}
+
 		SIMD::Vec3f localPosition = prevPosition_;
-		SIMD::Vec3f localVelocity;
+		SIMD::Vec3f localVelocity = prevLocalVelocity_;
+
+		SIMD::Vec3f localAcc = SIMD::Vec3f(0, 0, 0);
 
 		if (m_pEffectNode->CommonValues.TranslationBindType == TranslationParentBindType::NotBind_FollowParent ||
 			m_pEffectNode->CommonValues.TranslationBindType == TranslationParentBindType::WhenCreating_FollowParent)
@@ -652,6 +665,7 @@ void Instance::UpdateTransform(float deltaFrame)
 				toTarget *= followParentParam.maxFollowSpeed;
 			}
 
+			auto prevSteering = steeringVec_;
 			SIMD::Vec3f vSteering = toTarget - steeringVec_;
 			vSteering *= followParentParam.steeringSpeed;
 
@@ -663,20 +677,18 @@ void Instance::UpdateTransform(float deltaFrame)
 				steeringVec_ *= followParentParam.maxFollowSpeed;
 			}
 
-			localVelocity = steeringVec_ * deltaFrame * m_pEffectNode->m_effect->GetMaginification();
+			localAcc = (steeringVec_ - prevSteering) * m_pEffectNode->m_effect->GetMaginification();
 		}
 		else
 		{
-			localVelocity = m_pEffectNode->TranslationParam.CalculateTranslationState(translation_values, m_randObject, m_pEffectNode->GetEffect(), m_pContainer->GetRootInstance(), m_LivingTime, m_LivedTime, m_pParent, coordinateSystem, m_pEffectNode->DynamicFactor);
+			localAcc = m_pEffectNode->TranslationParam.CalculateTranslationState(translation_values, m_randObject, m_pEffectNode->GetEffect(), m_pContainer->GetRootInstance(), m_LivingTime, m_LivedTime, deltaFrame, m_pParent, coordinateSystem, m_pEffectNode->DynamicFactor);
 
 			if (m_pEffectNode->GenerationLocation.EffectsRotation)
 			{
 				// TODO : check rotation(It seems has bugs and it can optimize it)
-				localVelocity = SIMD::Vec3f::Transform(localVelocity, m_GenerationLocation.Get3x3SubMatrix());
+				localAcc = SIMD::Vec3f::Transform(localAcc, m_GenerationLocation.Get3x3SubMatrix());
 			}
 		}
-
-		localPosition += localVelocity;
 
 		auto matRot = RotationFunctions::CalculateRotation(rotation_values, m_pEffectNode->RotationParam, m_randObject, m_pEffectNode->GetEffect(), m_pContainer->GetRootInstance(), m_LivingTime, m_LivedTime, m_pParent, m_pEffectNode->DynamicFactor, m_pManager->GetLayerParameter(GetInstanceGlobal()->GetLayer()).ViewerPosition);
 		auto scaling = ScalingFunctions::UpdateScaling(scaling_values, m_pEffectNode->ScalingParam, m_randObject, m_pEffectNode->GetEffect(), m_pContainer->GetRootInstance(), m_LivingTime, m_LivedTime, m_pParent, m_pEffectNode->DynamicFactor);
@@ -684,13 +696,23 @@ void Instance::UpdateTransform(float deltaFrame)
 		// update local fields
 		if (m_pEffectNode->LocalForceField.HasValue)
 		{
-			forceField_.ExternalVelocity = localVelocity;
-			localPosition += forceField_.Update(m_pEffectNode->LocalForceField, localPosition, m_pEffectNode->GetEffect()->GetMaginification(), deltaFrame, m_pEffectNode->GetEffect()->GetSetting()->GetCoordinateSystem());
+			// for compatibiliy
+			auto new_local_position = localPosition + (localVelocity * deltaFrame + localAcc * accerarationDelta);
+
+			localAcc += forceField_.Update(
+				m_pEffectNode->LocalForceField,
+				new_local_position,
+				localVelocity,
+				m_pEffectNode->GetEffect()->GetMaginification(),
+				deltaFrame,
+				m_pEffectNode->GetEffect()->GetSetting()->GetCoordinateSystem());
 		}
 
+		localPosition += localVelocity * deltaFrame + localAcc * accerarationDelta;
+		localVelocity += localAcc;
 		prevPosition_ = localPosition;
+		prevLocalVelocity_ = localVelocity;
 
-		/* 描画部分の更新 */
 		m_pEffectNode->UpdateRenderedInstance(*this, *ownGroup_, m_pManager);
 
 		// Update matrix
@@ -716,9 +738,11 @@ void Instance::UpdateTransform(float deltaFrame)
 		if (m_pEffectNode->LocalForceField.IsGlobalEnabled)
 		{
 			InstanceGlobal* instanceGlobal = m_pContainer->GetRootInstance();
-			forceField_.UpdateGlobal(m_pEffectNode->LocalForceField, prevGlobalPosition_, m_pEffectNode->GetEffect()->GetMaginification(), instanceGlobal->GetTargetLocation(), deltaFrame, m_pEffectNode->GetEffect()->GetSetting()->GetCoordinateSystem());
-			SIMD::Mat43f MatTraGlobal = SIMD::Mat43f::Translation(forceField_.GlobalModifyLocation);
-			calcMat *= MatTraGlobal;
+			const auto acc_global = forceField_.UpdateGlobal(m_pEffectNode->LocalForceField, prevGlobalPosition_, m_pEffectNode->GetEffect()->GetMaginification(), instanceGlobal->GetTargetLocation(), deltaFrame, m_pEffectNode->GetEffect()->GetSetting()->GetCoordinateSystem());
+			location_modify_global_ += velocity_modify_global_ * deltaFrame + acc_global * accerarationDelta;
+			velocity_modify_global_ += acc_global;
+			SIMD::Mat43f mat_location_global = SIMD::Mat43f::Translation(location_modify_global_);
+			calcMat *= mat_location_global;
 		}
 
 		globalMatrix_.Step(calcMat, m_LivingTime);

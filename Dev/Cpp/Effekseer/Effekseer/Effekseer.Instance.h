@@ -71,8 +71,14 @@ protected:
 	SIMD::Vec3f prevPosition_;
 	SIMD::Vec3f prevGlobalPosition_;
 
+	SIMD::Vec3f prevLocalVelocity_;
+
 	SIMD::Vec3f parentPosition_;
+
 	SIMD::Vec3f steeringVec_;
+
+	SIMD::Vec3f location_modify_global_;
+	SIMD::Vec3f velocity_modify_global_;
 
 public:
 	static const int32_t ChildrenMax = 16;

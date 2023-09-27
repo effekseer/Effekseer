@@ -355,12 +355,15 @@ void LocalForceFieldParameter::MaintainAttractiveForceCompatibility(const float 
 	LocalForceFields[3].IsGlobal = true;
 }
 
-SIMD::Vec3f LocalForceFieldInstance::Update(const LocalForceFieldParameter& parameter, const SIMD::Vec3f& location, float magnification, float deltaFrame, CoordinateSystem coordinateSystem)
+SIMD::Vec3f LocalForceFieldInstance::Update(const LocalForceFieldParameter& parameter, const SIMD::Vec3f& location, const SIMD::Vec3f& local_velocity_per_update, float magnification, float deltaFrame, CoordinateSystem coordinateSystem)
 {
 	if (deltaFrame == 0.0f)
 	{
 		return SIMD::Vec3f{0, 0, 0};
 	}
+
+	std::array<SIMD::Vec3f, LocalFieldSlotMax> accs;
+	accs.fill(SIMD::Vec3f(0, 0, 0));
 
 	for (size_t i = 0; i < parameter.LocalForceFields.size(); i++)
 	{
@@ -376,7 +379,7 @@ SIMD::Vec3f LocalForceFieldInstance::Update(const LocalForceFieldParameter& para
 		ForceFieldCommonParameter ffcp;
 		ffcp.FieldCenter = parameter.LocalForceFields[i].Position;
 		ffcp.Position = location / magnification;
-		ffcp.PreviousSumVelocity = (VelocitySum + ExternalVelocity / deltaFrame) / magnification;
+		ffcp.PreviousSumVelocity = local_velocity_per_update / magnification;
 		ffcp.PreviousVelocity = Velocities[i] / magnification;
 		ffcp.DeltaFrame = deltaFrame;
 		ffcp.IsFieldRotated = field.IsRotated;
@@ -455,26 +458,37 @@ SIMD::Vec3f LocalForceFieldInstance::Update(const LocalForceFieldParameter& para
 		}
 
 		Velocities[i] += acc;
+		accs[i] = acc;
 	}
 
-	VelocitySum = SIMD::Vec3f(0, 0, 0);
+	SIMD::Vec3f acc_sum = SIMD::Vec3f(0, 0, 0);
 
 	for (size_t i = 0; i < parameter.LocalForceFields.size(); i++)
 	{
 		if (parameter.LocalForceFields[i].IsGlobal)
 			continue;
-
-		VelocitySum += Velocities[i];
+		acc_sum += accs[i];
 	}
 
-	return VelocitySum * deltaFrame;
+	return acc_sum;
 }
 
-void LocalForceFieldInstance::UpdateGlobal(const LocalForceFieldParameter& parameter, const SIMD::Vec3f& location, float magnification, const SIMD::Vec3f& targetPosition, float deltaFrame, CoordinateSystem coordinateSystem)
+SIMD::Vec3f LocalForceFieldInstance::UpdateGlobal(const LocalForceFieldParameter& parameter, const SIMD::Vec3f& location, float magnification, const SIMD::Vec3f& targetPosition, float deltaFrame, CoordinateSystem coordinateSystem)
 {
 	if (deltaFrame == 0.0f)
 	{
-		return;
+		return SIMD::Vec3f(0, 0, 0);
+	}
+
+	std::array<SIMD::Vec3f, LocalFieldSlotMax> accs;
+	accs.fill(SIMD::Vec3f(0, 0, 0));
+
+	SIMD::Vec3f velocity_sum_prev = SIMD::Vec3f(0, 0, 0);
+	for (size_t i = 0; i < parameter.LocalForceFields.size(); i++)
+	{
+		if (!parameter.LocalForceFields[i].IsGlobal)
+			continue;
+		velocity_sum_prev += Velocities[i];
 	}
 
 	for (size_t i = 0; i < parameter.LocalForceFields.size(); i++)
@@ -491,7 +505,7 @@ void LocalForceFieldInstance::UpdateGlobal(const LocalForceFieldParameter& param
 		ForceFieldCommonParameter ffcp;
 		ffcp.FieldCenter = parameter.LocalForceFields[i].Position;
 		ffcp.Position = location / magnification;
-		ffcp.PreviousSumVelocity = GlobalVelocitySum / magnification;
+		ffcp.PreviousSumVelocity = velocity_sum_prev / magnification;
 		ffcp.PreviousVelocity = Velocities[i] / magnification;
 		ffcp.TargetPosition = targetPosition / magnification;
 		ffcp.DeltaFrame = deltaFrame;
@@ -558,28 +572,23 @@ void LocalForceFieldInstance::UpdateGlobal(const LocalForceFieldParameter& param
 		}
 
 		Velocities[i] += acc;
+		accs[i] = acc;
 	}
 
-	GlobalVelocitySum = SIMD::Vec3f(0, 0, 0);
-
+	SIMD::Vec3f acc_sum = SIMD::Vec3f(0, 0, 0);
 	for (size_t i = 0; i < parameter.LocalForceFields.size(); i++)
 	{
 		if (!parameter.LocalForceFields[i].IsGlobal)
 			continue;
-
-		GlobalVelocitySum += Velocities[i];
+		acc_sum += accs[i];
 	}
 
-	GlobalModifyLocation += GlobalVelocitySum * deltaFrame;
+	return acc_sum;
 }
 
 void LocalForceFieldInstance::Reset()
 {
 	Velocities.fill(SIMD::Vec3f(0, 0, 0));
-	VelocitySum = SIMD::Vec3f(0, 0, 0);
-	GlobalVelocitySum = SIMD::Vec3f(0, 0, 0);
-	GlobalModifyLocation = SIMD::Vec3f(0, 0, 0);
-	ExternalVelocity = SIMD::Vec3f(0, 0, 0);
 }
 
 } // namespace Effekseer
