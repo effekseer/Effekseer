@@ -20,19 +20,57 @@ Effekseer For C++を、DirectX 11/12を使用したWindowsゲーム/アプリケ
 > **Note**  
 > 本ドキュメントのサンプルソースは、アプリケーション内での算術ライブラリをDirextX ToolKit(`DirectX::SimpleMath`)として記述しています。必要に応じて読み替えてください。    
 
-## **重要：導入先のゲーム/アプリケーションの環境を確認する**
+## **重要：導入先のアプリケーションの環境を確認する**
 
 導入先となる、あなたのアプリケーションのプロジェクト設定を確認します。  
 
-TODO: 以下を確認してもらう
+以下の４つを確認してください。  
+以降のビルド・導入で必要になります。  
 
-- VisualStudioのバージョン
+- VisualStudioのバージョン（例：Visual Studio 2022）
 - DirectXのバージョン（DirectX 11 or 12）
 - プラットフォーム（x86 or x64）
 - プロジェクト設定の「ランタイムライブラリ」設定（マルチスレッドデバッグ or マルチスレッドデバッグDLL）
 
 > **Note**  
 > DXライブラリを使用している場合は、Effekseer For C++ではなく、Effekseer For DXライブラリを利用してください。
+
+### プラットフォームとランタイムライブラリ設定の確認方法
+
+> **Note**  
+> 確認方法が分かる方は、本項を読み飛ばしても問題ありません。
+
+Visual Studioのプロジェクトのプロパティ画面にて確認することができます。  
+
+以下は、「Debug」「Release」の２つの構成があるときの確認方法の例です。  
+
+1. ソリューションエクスプローラーで、アプリケーションのプロジェクトを右クリックします。
+
+2. 表示されるメニューから、「プロパティ」を選択して、プロパティページを開きます。  
+（図のソリューション/プロジェクトの名称や構成は一例です）  
+![VisualStudio_OpenSolution](images/VisualStudio_OpenSolution_Ja.png)    
+> **Note**  
+> プロジェクトが複数ある場合は、Effekseerを使いたいプロジェクトのプロパティを開いてください。 
+ 
+3. プラットフォームは、画面上部の「プラットフォーム(P)」から確認することができます。  
+![VisualStudio_Platform](images/VisualStudio_Platform_Ja.png)  
+
+> **Note**  
+> 「アクティブ」と書かれているプラットフォームが、あなたが最後にビルド・実行時に使用したプラットフォーム設定です。確認してください。  
+
+> **Note**  
+> 多くの場合、`Win32` `x86` `x64`などが設定されています。  
+ 
+4. ソリューションエクスプローラーの、 構成プロパティ > C/C++ > コード生成を選択します。
+
+5. **画面左上の「構成(C)」を`Debug`に設定してから**、「ランタイムライブラリ」を確認してください。  
+6. つづいて、**画面左上の「構成(C)」を`Release`に設定してから**、「ランタイムライブラリ」を確認してください。  
+
+> **Note**  
+> 多くの場合、構成ごとに異なる設定がされているため、「Debug」「Release」それぞれの設定を確認しておきます。  
+
+> **Note**  
+> `マルチスレッド (/MT)` `マルチスレッド デバッグ (/MTd)` `マルチスレッド DLL (/MD)` `マルチスレッド デバッグ DLL (/MDd)` のいずれかに設定されています。  
 
 ## CMakeのインストール
 
@@ -46,8 +84,8 @@ CMakeを公式サイトからダウンロード、インストールしてくだ
 
 > **Warning**  
 > このとき、必ず「**Add CMake to the system PATH for all users**」か「**Add CMake to the system PATH for the current user**」のどちらかにチェックを入れて、PATHを通してください。  
-> ![CMake_InstallOptions](images/CMake_InstallOptions.png)
 > （環境変数/PATHを自力で設定できる場合は、自力で設定しても問題ありません）  
+> ![CMake_InstallOptions](images/CMake_InstallOptions.png)  
 
 
 ## Effekseer For C++のビルド
@@ -59,11 +97,12 @@ CMakeを公式サイトからダウンロード、インストールしてくだ
 例えば Visual Studio 2022で32bit（x86）の場合、実行されるバッチファイルは `build_msvc2022_x86.bat`です。
 
 
-しばらく待つと、installフォルダが作成され、その中にインクルードファイルとライブラリファイルが生成されます。  
+しばらく待つと、installフォルダが作成され、その中に「インクルードファイル」と「ライブラリファイル」が生成されます。  
 例えば Visual Studio 2022で32bit（x86）の場合、生成されるinstallフォルダは `install_msvc2022_x86` です。  
-**以降、このフォルダのことを「インストールフォルダ」と呼びます。** **   
+**以降、このフォルダのことを「インストールフォルダ」と呼びます。**   
 
-> **Warning** vulkanについて  
+> **Warning**  
+> vulkanについて  
 > vulkanを使っていない場合、**`build_vulkan_xxxxxxxxx.bat`は使用しないでください**。  
 > vulkanは、DirectXやOpenGLとは異なるグラフィックスAPIです。  
 
@@ -95,8 +134,8 @@ Effekseer for Cppをビルドしたときに出力されたインストールフ
 
 TODO: includeディレクトリと同様に書く
 
-> **Note** `xxxxxxd.lib`ファイルについて
-> **d**が末尾についているライブラリファイルは、デバッグビルド構成設定のライブラリファイルです。  
+> **Note**  
+> `xxxxxxd.lib`のように、が末尾についているライブラリファイルは、デバッグビルド構成設定のライブラリファイルです。  
 
 ### ファイルの配置を再度チェック
 以下のようなファイル/フォルダ構成になっているか、再度確認しておきます。  
@@ -215,9 +254,9 @@ for (int i = 0; i < 4; ++i)
 }
 ```
 
-> **Warning** **EffekseerのCameraMatrix**  
+> **Warning**  
 > EffekseerでのCameraMatrixは、**カメラの姿勢行列の逆行列**を指します。  
-> 一方で、フレームワークによっては、カメラの姿勢行列のことをCameraMatrix、その逆行列のことをViewMatrixと呼んでいることもあります。  
+> 一方で、カメラの姿勢行列のことをCameraMatrix、その逆行列のことをViewMatrixと呼ぶフレームワークもあります。  
 > その場合、EffekseerのCameraMatrixにはViewMatrixをセットしてください。  
 
 ## 座標系の設定
