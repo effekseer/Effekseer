@@ -37,14 +37,14 @@ layout(set = 0, binding = 1, std140) uniform PS_ConstantBuffer
     vec4 reconstructionParam2;
 } _393;
 
-layout(set = 1, binding = 0) uniform sampler2D Sampler_sampler_uvDistortionTex;
+layout(set = 1, binding = 3) uniform sampler2D Sampler_sampler_uvDistortionTex;
 layout(set = 1, binding = 0) uniform sampler2D Sampler_sampler_colorTex;
-layout(set = 1, binding = 0) uniform sampler2D Sampler_sampler_alphaTex;
-layout(set = 1, binding = 0) uniform sampler2D Sampler_sampler_blendUVDistortionTex;
-layout(set = 1, binding = 0) uniform sampler2D Sampler_sampler_blendTex;
-layout(set = 1, binding = 0) uniform sampler2D Sampler_sampler_blendAlphaTex;
-layout(set = 1, binding = 0) uniform sampler2D Sampler_sampler_backTex;
-layout(set = 1, binding = 0) uniform sampler2D Sampler_sampler_depthTex;
+layout(set = 1, binding = 2) uniform sampler2D Sampler_sampler_alphaTex;
+layout(set = 1, binding = 6) uniform sampler2D Sampler_sampler_blendUVDistortionTex;
+layout(set = 1, binding = 4) uniform sampler2D Sampler_sampler_blendTex;
+layout(set = 1, binding = 5) uniform sampler2D Sampler_sampler_blendAlphaTex;
+layout(set = 1, binding = 1) uniform sampler2D Sampler_sampler_backTex;
+layout(set = 1, binding = 7) uniform sampler2D Sampler_sampler_depthTex;
 
 layout(location = 0) centroid in vec4 Input_UV_Others;
 layout(location = 1) in vec4 Input_ProjBinormal;

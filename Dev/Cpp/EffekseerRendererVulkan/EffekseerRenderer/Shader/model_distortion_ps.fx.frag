@@ -23,8 +23,8 @@ layout(set = 0, binding = 1, std140) uniform PS_ConstantBuffer
 } _155;
 
 layout(set = 1, binding = 0) uniform sampler2D Sampler_sampler_colorTex;
-layout(set = 1, binding = 0) uniform sampler2D Sampler_sampler_backTex;
-layout(set = 1, binding = 0) uniform sampler2D Sampler_sampler_depthTex;
+layout(set = 1, binding = 1) uniform sampler2D Sampler_sampler_backTex;
+layout(set = 1, binding = 2) uniform sampler2D Sampler_sampler_depthTex;
 
 layout(location = 0) centroid in vec2 Input_UV;
 layout(location = 1) in vec4 Input_ProjBinormal;
