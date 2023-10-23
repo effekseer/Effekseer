@@ -7,6 +7,7 @@
 #include "Effekseer.Math.h"
 #include "Effekseer.Matrix44.h"
 #include "Effekseer.Vector3D.h"
+#include <cmath>
 #include <limits>
 
 //----------------------------------------------------------------------------------
@@ -581,9 +582,9 @@ bool Matrix43::IsValid() const
 	{
 		for (int n = 0; n < 3; n++)
 		{
-			if (isinf(Value[m][n]))
+			if (std::isinf(Value[m][n]))
 				return false;
-			if (isnan(Value[m][n]))
+			if (std::isnan(Value[m][n]))
 				return false;
 		}
 	}
