@@ -2,7 +2,6 @@
 #ifndef __EFFEKSEER_MODEL_H__
 #define __EFFEKSEER_MODEL_H__
 
-#include "../Effekseer.Base.h"
 #include "../Effekseer.Color.h"
 #include "../Effekseer.Manager.h"
 #include "../Effekseer.Resource.h"

@@ -2,7 +2,6 @@
 #ifndef __EFFEKSEER_MODELLOADER_H__
 #define __EFFEKSEER_MODELLOADER_H__
 
-#include "../Effekseer.Base.h"
 #include "Model.h"
 
 namespace Effekseer

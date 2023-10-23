@@ -19,6 +19,7 @@ set(LOCAL_SOURCES
 
 set(PublicHeaders
     EffekseerRendererDX11.h
+    EffekseerRenderer/EffekseerRendererDX11.Base.h
     EffekseerRenderer/EffekseerRendererDX11.Base.Pre.h
     EffekseerRenderer/EffekseerRendererDX11.Renderer.h)
 
@@ -47,7 +48,7 @@ endforeach()
 install(
     TARGETS ${PROJECT_NAME}
     EXPORT ${PROJECT_NAME}-export
-    INCLUDES DESTINATION include/EffekseerRendererDX11
+    INCLUDES DESTINATION include
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib)
 

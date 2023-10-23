@@ -5,7 +5,6 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include "Effekseer.Base.h"
 #include "Effekseer.Manager.h"
 #include "Effekseer.Resource.h"
 #include "Effekseer.Vector3D.h"

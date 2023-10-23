@@ -3,6 +3,7 @@
 #include "../Effekseer.Instance.h"
 #include "../Effekseer.InstanceGlobal.h"
 #include "../Effekseer.InternalScript.h"
+#include "../Effekseer.InternalStruct.h"
 #include "DynamicParameter.h"
 #include <algorithm>
 
@@ -242,7 +243,8 @@ std::array<float, 4> Gradient::GetColorAndIntensity(float x) const
 	auto key = ColorKey();
 	key.Position = x;
 
-	auto it = std::lower_bound(Colors.begin(), Colors.begin() + ColorCount, key, [](const ColorKey& a, const ColorKey& b) { return a.Position < b.Position; });
+	auto it = std::lower_bound(Colors.begin(), Colors.begin() + ColorCount, key, [](const ColorKey& a, const ColorKey& b)
+							   { return a.Position < b.Position; });
 	auto ind = static_cast<int32_t>(std::distance(Colors.begin(), it));
 
 	{
@@ -295,7 +297,8 @@ float Gradient::GetAlpha(float x) const
 	auto key = AlphaKey();
 	key.Position = x;
 
-	auto it = std::lower_bound(Alphas.begin(), Alphas.begin() + AlphaCount, key, [](const AlphaKey& a, const AlphaKey& b) { return a.Position < b.Position; });
+	auto it = std::lower_bound(Alphas.begin(), Alphas.begin() + AlphaCount, key, [](const AlphaKey& a, const AlphaKey& b)
+							   { return a.Position < b.Position; });
 	auto ind = static_cast<int32_t>(std::distance(Alphas.begin(), it));
 
 	{

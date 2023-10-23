@@ -1,0 +1,1 @@
+cmake -S src -B build_install_use

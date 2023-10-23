@@ -3,7 +3,6 @@
 #define __EFFEKSEER_MATERIALLOADER_H__
 
 #include "Effekseer.Base.Pre.h"
-#include "Effekseer.Base.h"
 
 namespace Effekseer
 {

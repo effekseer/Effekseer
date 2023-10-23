@@ -2,7 +2,7 @@
 #ifndef __EFFEKSEER_FCURVES_H__
 #define __EFFEKSEER_FCURVES_H__
 
-#include "Effekseer.Base.h"
+#include "Effekseer.Base.Pre.h"
 #include "Effekseer.InternalStruct.h"
 #include "Effekseer.Random.h"
 #include "SIMD/Vec2f.h"
