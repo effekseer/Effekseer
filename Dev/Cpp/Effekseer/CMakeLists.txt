@@ -200,10 +200,12 @@ foreach (file ${effekseer_public_h})
     install(FILES ${file} DESTINATION include/Effekseer/${dir})
 endforeach()
 
+target_include_directories(${PROJECT_NAME} INTERFACE
+    $<INSTALL_INTERFACE:include/Effekseer>)
+
 install(
     TARGETS ${PROJECT_NAME}
     EXPORT ${PROJECT_NAME}-export
-    INCLUDES DESTINATION include
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib)
 

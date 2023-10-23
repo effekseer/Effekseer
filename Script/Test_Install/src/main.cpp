@@ -1,4 +1,4 @@
-#include <Effekseer/Effekseer.h>
+#include <Effekseer.h>
 
 #ifdef _WIN32
 #include <EffekseerRendererDX11/EffekseerRendererDX11.h>
