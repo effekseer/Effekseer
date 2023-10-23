@@ -31,6 +31,10 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/../Effe
 set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${PublicHeaders}")
 target_link_libraries(${PROJECT_NAME} PUBLIC Effekseer EffekseerRendererCommon)
 
+target_include_directories(${PROJECT_NAME} PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<INSTALL_INTERFACE:include/EffekseerRendererDX11>)
+
 if(CLANG_FORMAT_ENABLED)
     clang_format(${PROJECT_NAME})
 endif()
@@ -48,7 +52,6 @@ endforeach()
 install(
     TARGETS ${PROJECT_NAME}
     EXPORT ${PROJECT_NAME}-export
-    INCLUDES DESTINATION include
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib)
 

@@ -1,7 +1,7 @@
 #include <Effekseer.h>
 
 #ifdef _WIN32
-#include <EffekseerRendererDX11/EffekseerRendererDX11.h>
+#include <EffekseerRendererDX11.h>
 #endif
 
 int main()
