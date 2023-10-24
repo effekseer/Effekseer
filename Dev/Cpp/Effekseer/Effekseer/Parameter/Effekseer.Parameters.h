@@ -3,7 +3,7 @@
 #define __EFFEKSEER_PARAMETERS_H__
 
 #include "../Effekseer.Base.Pre.h"
-#include "../Effekseer.InternalStruct.h"
+#include "../Effekseer.Color.h"
 
 namespace Effekseer
 {

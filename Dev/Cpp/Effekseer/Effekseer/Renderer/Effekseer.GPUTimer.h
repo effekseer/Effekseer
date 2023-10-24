@@ -2,7 +2,7 @@
 #ifndef __EFFEKSEER_GPU_TIMER_H__
 #define __EFFEKSEER_GPU_TIMER_H__
 
-#include "../Effekseer.Base.h"
+#include "../Effekseer.Base.Pre.h"
 
 namespace Effekseer
 {

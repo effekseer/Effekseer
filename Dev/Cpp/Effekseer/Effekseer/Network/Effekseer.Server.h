@@ -2,7 +2,7 @@
 #ifndef __EFFEKSEER_SERVER_H__
 #define __EFFEKSEER_SERVER_H__
 
-#include "../Effekseer.Base.h"
+#include "../Effekseer.Base.Pre.h"
 
 namespace Effekseer
 {

@@ -19,6 +19,7 @@ set(LOCAL_SOURCES
 
 set(PublicHeaders
     EffekseerRendererDX11.h
+    EffekseerRenderer/EffekseerRendererDX11.Base.h
     EffekseerRenderer/EffekseerRendererDX11.Base.Pre.h
     EffekseerRenderer/EffekseerRendererDX11.Renderer.h)
 
@@ -29,6 +30,10 @@ add_library(${PROJECT_NAME} STATIC ${LOCAL_SOURCES})
 target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/../Effekseer ${EFK_THIRDPARTY_INCLUDES})
 set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${PublicHeaders}")
 target_link_libraries(${PROJECT_NAME} PUBLIC Effekseer EffekseerRendererCommon)
+
+target_include_directories(${PROJECT_NAME} PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<INSTALL_INTERFACE:include/EffekseerRendererDX11>)
 
 if(CLANG_FORMAT_ENABLED)
     clang_format(${PROJECT_NAME})
@@ -47,7 +52,6 @@ endforeach()
 install(
     TARGETS ${PROJECT_NAME}
     EXPORT ${PROJECT_NAME}-export
-    INCLUDES DESTINATION include/EffekseerRendererDX11
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib)
 

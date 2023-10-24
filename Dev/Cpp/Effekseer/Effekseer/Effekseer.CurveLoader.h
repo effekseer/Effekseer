@@ -5,8 +5,7 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include "Effekseer.Base.h"
-
+#include "Effekseer.Base.Pre.h"
 #include "Effekseer.Curve.h"
 #include "Effekseer.DefaultFile.h"
 #include "Effekseer.File.h"

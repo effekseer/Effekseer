@@ -14,6 +14,7 @@ set(effekseer_public_h
     Effekseer/Effekseer.DefaultFile.h
     Effekseer/Effekseer.File.h
     Effekseer/Effekseer.Manager.h
+    Effekseer/Effekseer.Math.h
     Effekseer/Effekseer.Matrix43.h
     Effekseer/Effekseer.Matrix44.h
     Effekseer/Effekseer.Resource.h
@@ -29,9 +30,11 @@ set(effekseer_public_h
     Effekseer/IO/Effekseer.EfkEfcFactory.h
 
     Effekseer/SIMD/Base.h
+    Effekseer/SIMD/Float4.h
     Effekseer/SIMD/Float4_Gen.h
     Effekseer/SIMD/Float4_NEON.h
     Effekseer/SIMD/Float4_SSE.h
+    Effekseer/SIMD/Int4.h
     Effekseer/SIMD/Int4_Gen.h
     Effekseer/SIMD/Int4_NEON.h
     Effekseer/SIMD/Int4_SSE.h
@@ -197,10 +200,13 @@ foreach (file ${effekseer_public_h})
     install(FILES ${file} DESTINATION include/Effekseer/${dir})
 endforeach()
 
+target_include_directories(${PROJECT_NAME} PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<INSTALL_INTERFACE:include/Effekseer>)
+
 install(
     TARGETS ${PROJECT_NAME}
     EXPORT ${PROJECT_NAME}-export
-    INCLUDES DESTINATION include
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib)
 
