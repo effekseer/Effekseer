@@ -26,6 +26,11 @@ add_library(EffekseerSoundOSMixer STATIC
     ${effekseer_sound_h}
     ${effekseer_sound_src})
 
+target_link_directories(
+    EffekseerSoundOSMixer
+    PRIVATE
+    ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES})
+
 target_link_libraries(${PROJECT_NAME} PUBLIC
     debug "${OSM_LIB_DEBUG}"
     optimized "${OSM_LIB_RELEASE}")
