@@ -26,6 +26,11 @@ add_library(EffekseerSoundOSMixer STATIC
     ${effekseer_sound_h}
     ${effekseer_sound_src})
 
+target_include_directories(
+    EffekseerSoundOSMixer
+    PRIVATE
+    ${EFK_THIRDPARTY_INCLUDES})
+
 target_link_directories(
     EffekseerSoundOSMixer
     PRIVATE
