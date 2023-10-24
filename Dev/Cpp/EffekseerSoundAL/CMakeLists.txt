@@ -7,32 +7,60 @@ if(OpenAL_FOUND)
 
     project(EffekseerSoundAL CXX)
     
+    set(effekseer_sound_h
+        EffekseerSound/EffekseerSoundAL.SoundImplemented.h
+        EffekseerSound/EffekseerSoundAL.SoundLoader.h
+        EffekseerSound/EffekseerSoundAL.SoundPlayer.h
+        EffekseerSound/EffekseerSoundAL.SoundVoice.h)
+    
     set(effekseer_sound_src
         EffekseerSound/EffekseerSoundAL.Sound.cpp
         EffekseerSound/EffekseerSoundAL.SoundLoader.cpp
         EffekseerSound/EffekseerSoundAL.SoundPlayer.cpp
         EffekseerSound/EffekseerSoundAL.SoundVoice.cpp)
     
-    add_library(EffekseerSoundAL STATIC ${effekseer_sound_src})
+    set(PublicHeaders
+        EffekseerSoundAL.h)
     
-    include_directories(../include/)
+    set(files
+        ${PublicHeaders}
+        ${effekseer_sound_h}
+        ${effekseer_sound_src})
     
-    set_target_properties(EffekseerSoundAL PROPERTIES LINKER_LANGUAGE CXX)
     
-    if (MSVC)
-    set_target_properties(EffekseerSoundAL PROPERTIES OUTPUT_NAME_DEBUG "EffekseerSoundAL" )
-    set_target_properties(EffekseerSoundAL PROPERTIES OUTPUT_NAME_RELEASE "EffekseerSoundAL" )
-    else()
-    set_target_properties(EffekseerSoundAL PROPERTIES OUTPUT_NAME "EffekseerSoundAL" )
+    FilterFolder("${files}")
+    
+    add_library(EffekseerSoundAL STATIC
+        ${effekseer_sound_h}
+        ${effekseer_sound_src})
+    
+    target_include_directories(${PROJECT_NAME} PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+        $<INSTALL_INTERFACE:include/EffekseerSoundAL>)
+    
+    if(CLANG_FORMAT_ENABLED)
+        clang_format(${PROJECT_NAME})
     endif()
     
-    if (MSVC)
+    WarnError(${PROJECT_NAME})
+    
+    foreach (file ${PublicHeaders})
+        get_filename_component(dir ${file} DIRECTORY)
+        install(FILES ${file} DESTINATION include/EffekseerSoundAL/${dir})
+    endforeach()
+    
     install(
-        TARGETS EffekseerSoundAL
+        TARGETS ${PROJECT_NAME}
+        EXPORT ${PROJECT_NAME}-export
         ARCHIVE DESTINATION lib
         LIBRARY DESTINATION lib)
-    endif()
-
+    
+    install(
+        EXPORT ${PROJECT_NAME}-export
+        FILE ${PROJECT_NAME}-config.cmake
+        DESTINATION lib/cmake
+        EXPORT_LINK_INTERFACE_LIBRARIES)
+    
 else()
     message("EffekseerSoundAL : OpenAL is not found.")
 endif()
