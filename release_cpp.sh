@@ -127,9 +127,7 @@ cp docs/releasenotes_cpp.txt $RDIR_R/releasenotes.txt
 
 cp Release/CMakeLists.txt $RDIR_R/.
 robocopy Downloads/glfw $RDIR_R/Examples/Utils/glfw/. /S
-cp Release/build_msvc2017.bat $RDIR_R/build_msvc2017.bat
-cp Release/build_msvc2019.bat $RDIR_R/build_msvc2019.bat
-cp Release/build_vulkan_msvc2019.bat $RDIR_R/build_vulkan_msvc2019.bat
+cp Release/build_msvc.bat $RDIR_R/build_msvc.bat
 
 cp Release/build_macOS.sh $RDIR_R/build_macOS.sh
 
