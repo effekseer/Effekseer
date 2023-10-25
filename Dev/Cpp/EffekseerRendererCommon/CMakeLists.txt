@@ -53,7 +53,7 @@ FilterFolder("${LocalHeaders}")
 FilterFolder("${LocalSources}")
 
 add_library(${PROJECT_NAME} STATIC ${PublicHeaders} ${LocalHeaders} ${LocalSources})
-target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/../Effekseer ${EFK_THIRDPARTY_INCLUDES})
+target_include_directories(${PROJECT_NAME} PRIVATE ${EFK_THIRDPARTY_INCLUDES})
 target_link_libraries(${PROJECT_NAME} PUBLIC Effekseer)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
@@ -80,11 +80,14 @@ set_target_properties(
     ${PROJECT_NAME} PROPERTIES PUBLIC_HEADER 
      "${PublicHeaders}")
 
+foreach (file ${PublicHeaders})
+    get_filename_component(dir ${file} DIRECTORY)
+    install(FILES ${file} DESTINATION include/EffekseerRendererCommon/${dir})
+endforeach()
+
 install(
     TARGETS ${PROJECT_NAME}
     EXPORT ${PROJECT_NAME}-export
-    INCLUDES DESTINATION include/EffekseerRendererCommon
-    PUBLIC_HEADER DESTINATION include/EffekseerRendererCommon
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib)
 
