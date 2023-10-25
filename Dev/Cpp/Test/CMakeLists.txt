@@ -26,6 +26,20 @@ set(effekseer_test_src
     Backend/OpenGL.cpp
 )
 
+include_directories(
+    ${EFK_THIRDPARTY_INCLUDES}
+    ../Effekseer/
+    ../EffekseerRendererGL/
+    ../EffekseerSoundAL/
+    )
+
+if(WIN32)
+include_directories(
+    ${EFK_THIRDPARTY_INCLUDES}
+    ../EffekseerRendererDX11/
+    )
+endif()
+
 set(common_lib)
 set(common_inc)
 
@@ -91,12 +105,6 @@ else()
 endif()
 
 add_executable(${PROJECT_NAME} ${effekseer_test_src})
-
-target_include_directories(
-    ${PROJECT_NAME}
-    PRIVATE
-    ${EFK_THIRDPARTY_INCLUDES})
-
 target_link_directories(${PROJECT_NAME} PRIVATE ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES})
 target_link_libraries(${PROJECT_NAME} PRIVATE TestRuntimeFramework)
 

@@ -55,6 +55,20 @@ if(WIN32)
     )
 endif()
 
+include_directories(
+    ${EFK_THIRDPARTY_INCLUDES}
+    ../Effekseer/
+    ../EffekseerRendererGL/
+    ../EffekseerSoundAL/
+    )
+
+if(WIN32)
+include_directories(
+    ${EFK_THIRDPARTY_INCLUDES}
+    ../EffekseerRendererDX11/
+    )
+endif()
+
 set(common_lib)
 set(common_inc)
 
@@ -121,9 +135,8 @@ else()
 endif()
 
 add_library(${PROJECT_NAME} ${effekseer_test_src})
-
 target_link_directories(${PROJECT_NAME} PUBLIC ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES})
-target_include_directories(${PROJECT_NAME} PUBLIC ./ ${EFK_THIRDPARTY_INCLUDES})
+target_include_directories(${PROJECT_NAME} PUBLIC ./)
 
 if(BUILD_VULKAN)
     find_package(Vulkan REQUIRED)

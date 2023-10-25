@@ -128,14 +128,15 @@ list(APPEND cpps ${cpps_g})
 FilterFolder("${hs}")
 FilterFolder("${cpps}")
 
-add_library(Viewer SHARED ${cpps} ${hs})
-
-target_include_directories(
-    Viewer
-    PRIVATE
+include_directories(
 	${EFK_THIRDPARTY_INCLUDES}
+	../include/
+	../EffekseerRendererGL/
+	../EffekseerSoundOSMixer/
+	../
 )
 
+add_library(Viewer SHARED ${cpps} ${hs})
 target_link_directories(
     Viewer
     PRIVATE
