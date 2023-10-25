@@ -31,6 +31,9 @@ target_include_directories(
     PRIVATE
     ${EFK_THIRDPARTY_INCLUDES})
 
+target_link_libraries(${PROJECT_NAME} PUBLIC
+    Effekseer)
+
 target_link_directories(
     EffekseerSoundOSMixer
     PRIVATE

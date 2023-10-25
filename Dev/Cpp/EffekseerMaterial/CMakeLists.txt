@@ -24,9 +24,6 @@ else()
     file(GLOB_RECURSE srcs *.cpp)
 endif()
 
-# set include directories
-include_directories(../include/)
-
 # Add compile targets
 add_library( EffekseerMaterial STATIC ${hs} ${srcs} )
 

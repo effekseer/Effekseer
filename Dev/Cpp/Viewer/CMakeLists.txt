@@ -172,11 +172,6 @@ if(WIN32)
     add_definitions(-DIMGUI_IMPL_OPENGL_LOADER_GLEW)
 endif()
 
-link_directories(
-    ${PROJECT_SOURCE_DIR}/../lib/
-)
-
-
 if(CLANG_FORMAT_ENABLED)
     clang_format(Viewer)
 endif()

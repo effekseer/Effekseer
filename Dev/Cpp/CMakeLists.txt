@@ -79,17 +79,6 @@ if (BUILD_VIEWER OR BUILD_EDITOR)
     add_subdirectory(3rdParty)
 endif()
 
-# set include directories
-include_directories(
-	Effekseer/
-	include/
-	)
-
-# set lib directories
-link_directories(
-	${PROJECT_SOURCE_DIR}/lib/
-	)
-
 # Add compile targets
 if (BUILD_DX12 OR BUILD_METAL OR BUILD_VULKAN)
     set(BUILD_TEST_TEMP ${BUILD_TEST})

@@ -20,10 +20,6 @@ file(GLOB hs
     Dialog/*.h
     Graphics/*.h)
 
-link_directories(
-    ${PROJECT_SOURCE_DIR}/../lib/
-    )
-
 # Add compile targets
 add_executable(
     EffekseerMaterialEditor
@@ -137,7 +133,9 @@ FIND_PACKAGE(OpenGL REQUIRED)
 find_package(X11 REQUIRED)
 find_package(Threads REQUIRED)
 
-include_directories(
+target_include_directories(
+    EffekseerMaterialEditor
+    PRIVATE
     ${OPENGL_INCLUDE_DIR}
     ${X11_INCLUDE_DIR})
 
