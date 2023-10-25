@@ -10,20 +10,6 @@ set(effekseer_take_screenshots_src
     Helper.cpp
 )
 
-include_directories(
-    ${EFK_THIRDPARTY_INCLUDES}
-    ../Effekseer/
-    ../EffekseerRendererGL/
-    ../EffekseerSoundAL/
-    )
-
-if(WIN32)
-include_directories(
-    ${EFK_THIRDPARTY_INCLUDES}
-    ../EffekseerRendererDX11/
-    )
-endif()
-
 set(common_lib)
 set(common_inc)
 
@@ -73,6 +59,18 @@ endif()
 add_executable(${PROJECT_NAME} ${effekseer_take_screenshots_src})
 target_link_directories(${PROJECT_NAME} PRIVATE ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES})
 target_link_libraries(${PROJECT_NAME} PRIVATE TestRuntimeFramework)
+
+target_include_directories(
+    ${PROJECT_NAME} PRIVATE
+    ${EFK_THIRDPARTY_INCLUDES}
+    )
+
+if(WIN32)
+target_include_directories(
+    ${PROJECT_NAME} PRIVATE
+    ${EFK_THIRDPARTY_INCLUDES}
+    )
+endif()
 
 if (NOT APPLE)
     if(WIN32)

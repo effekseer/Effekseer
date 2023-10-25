@@ -28,6 +28,9 @@ add_library(EffekseerSoundXAudio2 STATIC
     ${effekseer_sound_h}
     ${effekseer_sound_src})
 
+target_link_libraries(${PROJECT_NAME} PUBLIC
+    Effekseer)
+
 target_include_directories(${PROJECT_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
     $<INSTALL_INTERFACE:include/EffekseerSoundXAudio2>)

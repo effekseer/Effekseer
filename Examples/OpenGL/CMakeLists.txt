@@ -58,7 +58,10 @@ endif()
 if(UNIX AND NOT APPLE)
     find_package(X11 REQUIRED)
 
-    include_directories(${X11_INCLUDE_DIR})
+    target_include_directories(
+        ${PROJECT_NAME}
+        PRIVATE
+        ${X11_INCLUDE_DIR})
 
     target_link_libraries(
         ${PROJECT_NAME}
