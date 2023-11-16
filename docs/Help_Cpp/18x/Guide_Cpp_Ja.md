@@ -5,13 +5,12 @@ Effekseer For C++を、C++言語とDirectX 11/12を使用したWindowsゲーム/
 このガイドは以下の環境を対象にしています。  
 環境の違いによる差異は、適宜読み替えてください。  
 
-**また、Effekseer for C++バージョン1.8での説明になります。**  
-
 - Windows 10/11
 - Microsoft Visual Studio 2019/2022
 - DirectX 11/12
 - XAudio2(無くても良い)
 - x86/x64
+- Effekseer for C++ 1.8
 
 > **Note**  
 > **ライブラリ導入に不慣れな方は、事前にプロジェクトのバックアップを取ることを推奨します。**  
@@ -27,7 +26,7 @@ Effekseer For C++を、C++言語とDirectX 11/12を使用したWindowsゲーム/
 - [3. Effekseer For C++のビルド](#3-effekseer-for-cのビルド)
   - [3.1. ダウンロード](#31-ダウンロード)
   - [3.2. ビルド](#32-ビルド)
-- [4. ライブラリファイルの配置](#4-ライブラリファイルの配置)
+- [4. ビルドしたライブラリファイルの配置](#4-ビルドしたライブラリファイルの配置)
   - [4.1. ヘッダファイル（.h）の配置](#41-ヘッダファイルhの配置)
   - [4.2. ライブラリファイル（.lib）の配置](#42-ライブラリファイルlibの配置)
   - [4.3. ファイルの配置を再度チェック](#43-ファイルの配置を再度チェック)
@@ -37,39 +36,42 @@ Effekseer For C++を、C++言語とDirectX 11/12を使用したWindowsゲーム/
   - [5.3. 適用](#53-適用)
 - [6. アプリケーションでエフェクトを再生する](#6-アプリケーションでエフェクトを再生する)
   - [6.1. 再生するエフェクトファイルを用意する](#61-再生するエフェクトファイルを用意する)
-  - [6.2. サンプルソースの解説](#62-サンプルソースの解説)
-    - [6.2.1. includeとpragma文の記述](#621-includeとpragma文の記述)
-    - [6.2.2. エフェクトのマネージャーの作成](#622-エフェクトのマネージャーの作成)
-    - [6.2.3. 描画モジュールの作成・設定](#623-描画モジュールの作成設定)
-    - [6.2.4. サウンドモジュールの作成(XAudio2使用時のみ)](#624-サウンドモジュールの作成xaudio2使用時のみ)
-    - [6.2.5. 座標系の設定](#625-座標系の設定)
-    - [6.2.6. 投影行列とカメラ行列の作成](#626-投影行列とカメラ行列の作成)
-    - [6.2.7. エフェクトの読み込み](#627-エフェクトの読み込み)
-    - [6.2.8. エフェクトの再生と制御](#628-エフェクトの再生と制御)
-    - [6.2.9. \[毎フレーム実行\]Managerの更新処理](#629-毎フレーム実行managerの更新処理)
-    - [6.2.10. \[毎フレーム実行\]Rendererの更新と描画処理](#6210-毎フレーム実行rendererの更新と描画処理)
-    - [6.2.11. 動作を確認する](#6211-動作を確認する)
+  - [6.2. includeとpragma文の記述](#62-includeとpragma文の記述)
+  - [6.3. エフェクトのマネージャーの作成](#63-エフェクトのマネージャーの作成)
+  - [6.4. 描画モジュールの作成](#64-描画モジュールの作成)
+  - [6.5. 作成した描画モジュールの設定](#65-作成した描画モジュールの設定)
+  - [6.6. サウンドモジュールの作成(XAudio2使用時のみ)](#66-サウンドモジュールの作成xaudio2使用時のみ)
+  - [6.7. 座標系の設定](#67-座標系の設定)
+  - [6.8. 投影行列とカメラ行列の作成](#68-投影行列とカメラ行列の作成)
+  - [6.9. エフェクトの読み込み](#69-エフェクトの読み込み)
+  - [6.10. エフェクトの再生と制御](#610-エフェクトの再生と制御)
+  - [6.11. \[DirectX12のみ、毎フレーム実行\]フレーム開始時の処理](#611-directx12のみ毎フレーム実行フレーム開始時の処理)
+  - [6.12. \[毎フレーム実行\]Managerの更新処理](#612-毎フレーム実行managerの更新処理)
+  - [6.13. \[毎フレーム実行\]Rendererの更新と描画処理](#613-毎フレーム実行rendererの更新と描画処理)
+  - [6.14. \[DirectX12のみ、毎フレーム実行\]コマンドリスト終了処理](#614-directx12のみ毎フレーム実行コマンドリスト終了処理)
+  - [6.15. 動作を確認する](#615-動作を確認する)
 - [7. カメラと座標系をアプリケーションと一致させる](#7-カメラと座標系をアプリケーションと一致させる)
   - [7.1. カメラを同期させる](#71-カメラを同期させる)
   - [7.2. 座標系をアプリケーションと一致させる](#72-座標系をアプリケーションと一致させる)
   - [7.3. レイヤーパラメータの設定](#73-レイヤーパラメータの設定)
-- [8. 付録 エフェクトの基本的な制御](#8-付録-エフェクトの基本的な制御)
+- [8. \[付録\] エフェクトの基本的な制御](#8-付録-エフェクトの基本的な制御)
   - [8.1. エフェクトを再生する](#81-エフェクトを再生する)
   - [8.2. エフェクトを移動させる](#82-エフェクトを移動させる)
-  - [8.3. エフェクトを停止させる](#83-エフェクトを停止させる)
+  - [8.3. エフェクトを回転させる](#83-エフェクトを回転させる)
+  - [8.4. エフェクトを拡大縮小させる](#84-エフェクトを拡大縮小させる)
+  - [8.5. エフェクトを停止させる](#85-エフェクトを停止させる)
+  - [8.6. エフェクトをループ再生する](#86-エフェクトをループ再生する)
 - [9. トラブルシューティング（うまく動かないとき）](#9-トラブルシューティングうまく動かないとき)
   - [9.1. 「WindowsによってPCが保護されました」と表示される](#91-windowsによってpcが保護されましたと表示される)
   - [9.2. CMakeビルド関連でうまく行かない時](#92-cmakeビルド関連でうまく行かない時)
   - [9.3. 導入先アプリケーションでのビルドエラー](#93-導入先アプリケーションでのビルドエラー)
-    - [9.3.1. 「エラー	LNK1104	ファイル 'Effekseer.lib' を開くことができません。」](#931-エラーlnk1104ファイル-effekseerlib-を開くことができません)
-    - [9.3.2. 「エラー	E1696	ソース ファイルを開けません "Effekseer.h"」「エラー	C1083	include ファイルを開けません。'Effekseer.h':No such file or directory」](#932-エラーe1696ソース-ファイルを開けません-effekseerhエラーc1083include-ファイルを開けませんeffekseerhno-such-file-or-directory)
-    - [9.3.3. TODO: プロジェクト設定の差異に起因するエラーについても書いておく](#933-todo-プロジェクト設定の差異に起因するエラーについても書いておく)
-  - [9.4. エフェクトが映らない時](#94-エフェクトが映らない時)
+    - [9.3.1. 「LNK1104	ファイル 'Effekseer.lib' を開くことができません。」「E1696	ソース ファイルを開けません "Effekseer.h"」「C1083		include ファイルを開けません。'Effekseer.h':No such file or directory」](#931-lnk1104ファイル-effekseerlib-を開くことができませんe1696ソース-ファイルを開けません-effekseerhc1083include-ファイルを開けませんeffekseerhno-such-file-or-directory)
+    - [9.3.2. 「LNK2001	外部シンボル "public: \_\_thiscall Effekseer::Matrix44::Matrix44(void)" (??0Matrix44@Effekseer@@QAE@XZ) は未解決です」「LNK4272	ライブラリのコンピューターの種類 'x64' がターゲットのコンピューターの種類' x86' と競合しています」「LNK2038	'RuntimeLibrary' の不一致が検出されました。値 'MDd\_DynamicDebug' が MTd\_StaticDebug の値 'GraphEditor.obj' と一致しません。」](#932-lnk2001外部シンボル-public-__thiscall-effekseermatrix44matrix44void-0matrix44effekseerqaexz-は未解決ですlnk4272ライブラリのコンピューターの種類-x64-がターゲットのコンピューターの種類-x86-と競合していますlnk2038runtimelibrary-の不一致が検出されました値-mdd_dynamicdebug-が-mtd_staticdebug-の値-grapheditorobj-と一致しません)
 
 
 ## 1. 導入先のアプリケーションの環境を確認
 
-正しい構成のEffekseerを導入するため、まずは導入先となる、あなたのアプリケーションのプロジェクト設定を確認します。  
+正しい構成のEffekseerを導入するため、まずは導入先のアプリケーションのプロジェクト設定を確認します。  
 
 **以下の４つを確認してください。  
 以降のビルド・導入で必要になります。**  
@@ -95,11 +97,11 @@ Visual Studioのプロジェクトのプロパティ画面にて確認するこ�
 
 以下は、「Debug」「Release」の２つの構成があるときの確認方法の例です。  
 
-1. ソリューションエクスプローラーで、アプリケーションのプロジェクトを右クリックします。
+1. ソリューションエクスプローラーで、導入先のプロジェクトを右クリックします。
 
 2. 表示されるメニューから、「プロパティ」を選択して、プロパティページを開きます。  
 （図のソリューション/プロジェクトの名称や構成は一例です）  
-![VisualStudio_OpenSolution](images/VisualStudio_OpenSolution_Ja.png)  
+![VisualStudio_OpenProjectProperty](images/VisualStudio_OpenProjectProperty_Ja.png)
 
 > **Note**  
 > プロジェクトが複数ある場合は、Effekseerを使いたいプロジェクトのプロパティを開いてください。 
@@ -112,14 +114,9 @@ Visual Studioのプロジェクトのプロパティ画面にて確認するこ�
 > **Note**  
 > 多くの場合、`Win32` `x86` `x64`などが設定されています。  
  
-1. ソリューションエクスプローラーの、 構成プロパティ > C/C++ > コード生成を選択します。
+4. ソリューションエクスプローラーの、 構成プロパティ > C/C++ > コード生成を選択します。
 
-2. **画面左上の「構成(C)」を`Debug`に設定してから**、「ランタイムライブラリ」を確認してください。  
-3. つづいて、**画面左上の「構成(C)」を`Release`に設定してから**、「ランタイムライブラリ」を確認してください。  
-
-> **Note**  
-> 多くの場合、構成ごとに異なる設定がされているため、「Debug」「Release」それぞれの設定を確認しておきます。  
-
+5. **画面左上の「構成(C)」を`Debug`か`Release`のどちらかに設定してから**、「ランタイムライブラリ」を確認してください。  
 > **Note**  
 > `マルチスレッド (/MT)` `マルチスレッド デバッグ (/MTd)` `マルチスレッド DLL (/MD)` `マルチスレッド デバッグ DLL (/MDd)` のいずれかに設定されています。  
 
@@ -130,8 +127,13 @@ Effekseer For C++には、ビルド済みのバイナリは含まれていませ
 
 ビルドをするためには、CMakeというソフトウェアを使います。  
 
-CMakeを公式サイトからダウンロード、インストールしてください。  
-[https://cmake.org/download/](https://cmake.org/download/)  
+CMakeを公式サイトからダウンロード、インストールしてください。   
+
+**CMakeダウンロードページ: <a href="https://cmake.org/download/" target="_blank" rel="noopener noreferrer">https://cmake.org/download/</a>**  
+
+> **Warning**  
+> Sourceではなく、Installerをダウンロードしてください。  
+> 例えば、64bit版のWindowsを使っている場合は、Windows x64 Installer(`cmake-x.xx.0-xxx-windows-x86_64.msi`)をダウンロードします。
 
 **このとき、必ず「Add CMake to the system PATH for all users」か「Add CMake to the system PATH for the current user」のどちらかにチェックを入れて、PATHを通してください。**  
 (環境変数/PATHを自力で設定できる場合は、自力で設定しても問題ありません)  
@@ -147,7 +149,7 @@ CMakeを公式サイトからダウンロード、インストールしてくだ
 
 まず、Effekseer for C++(`EffekseerForCppXXX.zip`)をダウンロード、解凍してください。  
 
-[https://github.com/effekseer/Effekseer/releases](https://github.com/effekseer/Effekseer/releases)  
+**Effekseer for C++ダウンロードページ: <a href="https://github.com/effekseer/Effekseer/releases" target="_blank" rel="noopener noreferrer">https://github.com/effekseer/Effekseer/releases</a>**
 
 ### 3.2. ビルド
 
@@ -157,7 +159,7 @@ CMakeを公式サイトからダウンロード、インストールしてくだ
 
 > **Note**  
 > Windows Defenderなどのセキュリティソフトによって、起動が停止されることがあります。  
-> 関連: [「WindowsによってPCが保護されました」と表示される](#91-windowsによってpcが保護されましたと表示される)
+> 関連: [9.1. 「WindowsによってPCが保護されました」と表示される](#91-windowsによってpcが保護されましたと表示される)
 
 実行すると、コンソールが表示されます。  
 以下は、表示される内容の例です。(表示されるプリセットは、Effekseer for C++のバージョンによって異なる場合があります。)  
@@ -179,10 +181,9 @@ Enter preset number:
 ```
 
 表示されているプリセットから、  
- [導入先のアプリケーションの環境を確認](#1-導入先のアプリケーションの環境を確認)で確認した、`VisualStudioのバージョン`や`プラットフォーム`に合ったプリセットを見つけてください。  
+ [1. 導入先のアプリケーションの環境を確認](#1-導入先のアプリケーションの環境を確認)で確認した、`VisualStudioのバージョン`や`プラットフォーム`に合ったプリセットを見つけてください。  
 
-例えば、「Visual Studioバージョンが`2022`、プラットフォームが`x64`」ならば、使用するプリセットは「`Visual Studio 2022(x64)`」です。  
-もし、「Visual Studioバージョンが`2019`、プラットフォームが`Win32`」ならば、使用するプリセットは「`Visual Studio 2019(x86)`」です。  
+例えば、「Visual Studioバージョンが`2022`、プラットフォームが`x64`」ならば使用するプリセットは「`Visual Studio 2022(x64)`」で、「Visual Studioバージョンが`2019`、プラットフォームが`Win32`」ならば使用するプリセットは「`Visual Studio 2019(x86)`」です。  
 
 > **Note**  
 > プラットフォームが`Win32`である場合は、`(x86)`のプリセットを選択してください。   
@@ -191,7 +192,7 @@ Enter preset number:
 > vulkanを使っていない場合、**`with Vulkan`が付いたプリセットは使用しないでください**。  
 > vulkanは、DirectXやOpenGLとは異なるグラフィックスAPIです。  
 
-適切なプリセットを見つけたら、対応する番号を入力し、Enterキーを押してください。  
+**適切なプリセットを見つけたら、対応する番号を入力し、Enterキーを押してください。**  
 
 つづいて、ランタイムライブラリDLL設定を有効化するかの確認が表示されます。  
 
@@ -199,110 +200,170 @@ Enter preset number:
 Enable runtime library DLL option?(y/n):
 ```
 
- [導入先のアプリケーションの環境を確認](#1-導入先のアプリケーションの環境を確認)**で確認した、`プロジェクト設定の「ランタイムライブラリ」設定`に合わせて、以下のように入力し、Enterキーを押してください。**  
- ビルドが開始します。  
+ [1. 導入先のアプリケーションの環境を確認](#1-導入先のアプリケーションの環境を確認)**で確認した、`プロジェクト設定の「ランタイムライブラリ」設定`に合わせて、以下のように入力し、Enterキーを押してください。**  
+ 
+  
 
 - `マルチスレッド (/MT)`or`マルチスレッド デバッグ (/MTd)`: `n`
 - `マルチスレッド DLL (/MD)`or`マルチスレッド デバッグ DLL (/MDd)`: `y`
 
+ビルドが開始します。  
 しばらく待つと、ビルドが完了します。  
-インストールフォルダが作成され、その中にインクルードファイルとライブラリファイルが生成されます。  
+（成否にかかわらず、ビルドの処理が終了すると`続行するには何かキーを押してください`と表示されます。）
+
+インストールフォルダが作成されます。  
 
 例えば、Visual Studio 2022でx86の場合、  
 生成されるインストールフォルダは `install_msvc2022_x86` です。  
 **以降、このフォルダのことを「インストールフォルダ」と呼びます。**   
 
-**インストールフォルダの中にインクルードファイルとライブラリファイルが正しく生成されているか確認してください。**  
+インストールフォルダは、以下のようなフォルダ構成で、インクルードファイルやライブラリファイルが生成されます。  
+**インストールフォルダと、中身のファイルやフォルダが正しく生成されているか、確認してください。**  
+
+```
+📁install_msvcXXXX_XXX/ <- インストールフォルダ
+ ├ 📁include/
+ │ │ (それぞれのフォルダに、ヘッダファイル(.h)などが入っている)
+ │ ├ 📁Effekseer/
+ │ ├ 📁EffekseerRendererCommon/
+ │ ├ 📁EffekseerRendererDX9/
+ │ ├ 📁EffekseerRendererDX11/
+ │ ├ 📁EffekseerRendererDX12/
+ │ ├ 📁EffekseerRendererLLGI/
+ │ ├ 📁EffekseerSoundDSound/
+ │ ├ 📁EffekseerSoundXAudio2/
+ │ ├ 📁GLFW/
+ │ └ 📁LLGI/
+ └ 📁lib/
+ 　 │ (ライブラリファイル(.lib)が、いくつも入っている
+ 　 └ 例：Effekseer.lib、Effekseerd.lib、EffekseerRendererCommon.lib、EffekseerRendererDX12.lib)
+```
+
 
 
 > **Note**  
-> ビルドに失敗した場合は、トラブルシューティングの解決法を確認してください。  
-> [トラブルシューティング：cmakeビルド関連でうまく行かない時](#92-cmakeビルド関連でうまく行かない時)
+> ビルドに失敗した場合は、トラブルシューティングを確認してください。  
+> [9.2. CMakeビルド関連でうまく行かない時](#92-cmakeビルド関連でうまく行かない時)
 
-## 4. ライブラリファイルの配置
+## 4. ビルドしたライブラリファイルの配置
 
-さきほどEffekseer for Cppをビルドしたときに出力されたEffekseerのライブラリファイルを、導入先のアプリケーションのプロジェクトで使えるように、プロジェクトフォルダ内に配置していきます。  
-
-> **Note**  
-> ファイルやフォルダの配置は、分かる方は自由に設定してください。  
-> 本ドキュメントでは、一例を紹介します。  
+さきほど[3. Effekseer For C++のビルド](#3-effekseer-for-cのビルド)で出来上がったインストールフォルダから、環境に合わせて必要なものを導入先のアプリケーションのプロジェクトへコピーします。
 
 > **Note**  
-> **ここでは、アプリケーションのプロジェクト（.projファイル）があるフォルダのことを、「プロジェクトフォルダ」と呼びます。**
+> 本ドキュメント上でのファイルやフォルダの配置は、一例です。  
+> 分かる方は自由に設定してください。  
+
+> **Note**  
+> **ここでは、アプリケーションのプロジェクト（.projファイル）があるフォルダのことを、「導入先プロジェクトフォルダ」と呼びます。**
 
 ### 4.1. ヘッダファイル（.h）の配置
 
 インクルードするための、ヘッダファイル(.h)をコピーします。
 
-Effekseer for Cppをビルドしたときに出力された、**インストールフォルダ(例：`install_msvc2022_x86/`)内のファイル/フォルダーを使います。**  
+[3. Effekseer For C++のビルド](#3-effekseer-for-cのビルド)で出来上がったインストールフォルダ(例: `install_msvc2022_x86/`)から、環境に合わせて必要なものをコピーします。
 
-**`[プロジェクトフォルダ]/Libraries/Effekseer]`へコピーしてください。**  
+**以下を`[導入先プロジェクトフォルダ]/Libraries/Effekseer/Include/]`へコピーしてください。**  
 **フォルダごと、中身のファイルやフォルダを含めてコピーしてください。**  
 
+**<必ずコピー>**
 - `[インストールフォルダ]/include/Effekseer`  
 - `[インストールフォルダ]/include/EffekseerRendererCommon`  
 - `[インストールフォルダ]/include/EffekseerSoundXAudio2`
 
-**DirectX 11の場合のみ**  
+**<DirectX 11の場合は以下もコピー>**  
 - `[インストールフォルダ]/include/EffekseerRendererDX11`  
 
-**DirectX 12の場合のみ**  
+**<DirectX 12の場合は以下もコピー>**  
 - `[インストールフォルダ]/include/EffekseerRendererDX12`  
+
+> **Note**  
+> `[導入先プロジェクトフォルダ]/Libraries/Effekseer/Include/`フォルダは、自分で作成してください。
+
+![IncludeFiles](images/IncludeFiles_Ja.png)
+
 
 ### 4.2. ライブラリファイル（.lib）の配置
 
 つづいて、ライブラリファイル(.lib)をコピーします。  
 
 さきほどEffekseer for Cppをビルドしたときに出力されたインストールフォルダ(例：`install_msvc2022_x86/`)から、  
-**`[プロジェクトフォルダ]/Libraries/Effekseer]`へ、以下のファイルをコピーしてください。**  
+**`[導入先プロジェクトフォルダ]/Libraries/Effekseer/Lib]`へ、以下のファイルをコピーしてください。**  
 
+
+**<必ずコピー>**
 - `Effekseer.lib`
 - `Effekseerd.lib`
 - `EffekseerRendererCommon.lib`
 - `EffekseerRendererCommond.lib`
 
-**DirectX 11の場合のみ**  
+**<DirectX 11の場合は以下もコピー>**  
 - `EffekseerRendererDX11.lib`
 - `EffekseerRendererDX11d.lib`
 
-**DirectX 12の場合のみ**  
+**<DirectX 12の場合は以下もコピー>**  
 - `EffekseerRendererDX12.lib`
 - `EffekseerRendererDX12d.lib`
 
 > **Note**  
+> `[導入先プロジェクトフォルダ]/Libraries/Effekseer/Lib/`フォルダは、自分で作成してください。
+
+![LibraryFiles](images/LibraryFiles_Ja.png)
+
+> **Note**  
 > `xxxxxxd.lib`のように、`d`が末尾についているライブラリファイルは、Debugビルド構成設定のライブラリファイルです。  
+
 
 ### 4.3. ファイルの配置を再度チェック
 以下のようなファイル/フォルダ構成になっているか、再度確認しておきます。  
 
-DirectX 11の場合
+**DirectX 11の場合**
 ```
-[プロジェクトフォルダ] (導入先プロジェクト(.projファイル)の場所)
-└ Libraries/
-　└ Effekseer/
-　 　├ Include/
-　 　│ ├ Effekseer/
+📁[導入先プロジェクトフォルダ] (導入先プロジェクト(.projファイル)の場所)
+└ 📁Libraries/
+　└ 📁Effekseer/
+　 　├ 📁Include/
+　 　│ ├ 📁Effekseer/
 　 　│ │ └ ...
-　 　│ ├ EffekseerSoundXAudio2/
+　 　│ ├ 📁EffekseerSoundXAudio2/
 　 　│ │ └ ...
-　 　│ ├ EffekseerRendererCommon/
+　 　│ ├ 📁EffekseerRendererCommon/
 　 　│ │ └ ...
-　 　│ └ EffekseerRendererDX11/
+　 　│ └ 📁EffekseerRendererDX11/
 　 　│   └ ...
-　 　└ Lib/
-　 　　├ Effekseer.lib
-　 　　├ Effekseerd.lib
-　 　　├ EffekseerSoundXAudio2.lib
-　 　　├ EffekseerSoundXAudio2d.lib
-　 　　├ EffekseerRendererCommon.lib
-　 　　├ EffekseerRendererCommond.lib
-　 　　├ EffekseerRendererDX11.lib
-　 　　└ EffekseerRendererDX11d.lib
+　 　└ 📁Lib/
+　 　　├ 📄Effekseer.lib
+　 　　├ 📄Effekseerd.lib
+　 　　├ 📄EffekseerSoundXAudio2.lib
+　 　　├ 📄EffekseerSoundXAudio2d.lib
+　 　　├ 📄EffekseerRendererCommon.lib
+　 　　├ 📄EffekseerRendererCommond.lib
+　 　　├ 📄EffekseerRendererDX11.lib
+　 　　└ 📄EffekseerRendererDX11d.lib
 ```
 
-DirectX 12の場合
+**DirectX 12の場合**
 ```
-TODO: DirectX12の場合も書く
+📁[導入先プロジェクトフォルダ] (導入先プロジェクト(.projファイル)の場所)
+└ 📁Libraries/
+　└ 📁Effekseer/
+　 　├ 📁Include/
+　 　│ ├ 📁Effekseer/
+　 　│ │ └ ...
+　 　│ ├ 📁EffekseerSoundXAudio2/
+　 　│ │ └ ...
+　 　│ ├ 📁EffekseerRendererCommon/
+　 　│ │ └ ...
+　 　│ └ 📁EffekseerRendererDX11/
+　 　│   └ ...
+　 　└ 📁Lib/
+　 　　├ 📄Effekseer.lib
+　 　　├ 📄Effekseerd.lib
+　 　　├ 📄EffekseerSoundXAudio2.lib
+　 　　├ 📄EffekseerSoundXAudio2d.lib
+　 　　├ 📄EffekseerRendererCommon.lib
+　 　　├ 📄EffekseerRendererCommond.lib
+　 　　├ 📄EffekseerRendererDX12.lib
+　 　　└ 📄EffekseerRendererDX12d.lib
 ```
 
 ## 5. 導入先アプリケーションのVisualStudioプロジェクト設定
@@ -310,44 +371,49 @@ TODO: DirectX12の場合も書く
 導入先アプリケーションのアプリケーションが、Effekseer for C++ライブラリを扱えるようにプロジェクト設定をします。  
 「インクルードディレクトリ」と「ライブラリディレクトリ」の２つを設定します。  
 
-**ここからは、導入先のアプリケーションでの作業です。**  
-**導入先のアプリケーションの、VisualStudioのソリューション（プロジェクト）を開いてください。**   
+> **Note**  
+> **ここからは、導入先のアプリケーションでの作業です。**  
+> **導入先のアプリケーションの、VisualStudioのソリューション（プロジェクト）を開いてください。**   
 
 **VisualStudioで、導入先のプロジェクトのプロパティを開きます。**  
 
 1. ソリューションエクスプローラーから、導入先のアプリケーションのプロジェクトを右クリックします。  
-2. 表示されるメニューから、「プロパティ」を選択して、プロパティページを開きます。
+2. 表示されるメニューから、「プロパティ」を選択して、プロパティページを開きます。  
+（図のソリューション/プロジェクトの名称や構成は一例です）  
+![VisualStudio_OpenProjectProperty](images/VisualStudio_OpenProjectProperty_Ja.png)
 
 ### 5.1. インクルードディレクトリの設定
 
 インクルードファイルを配置した場所を登録するため、インクルードディレクトリを設定します。  
 
-1. **画面上部の構成を「すべての構成」、プラットフォームを[導入先のアプリケーションの環境を確認](#1-導入先のアプリケーションの環境を確認)で確認したプラットフォームに設定しておきます。**  
+1. **必ず、画面上部の構成を「すべての構成」、プラットフォームを[1. 導入先のアプリケーションの環境を確認](#1-導入先のアプリケーションの環境を確認)で確認したプラットフォームに設定しておきます。**  
 ![ConfigurationAndPlatform](images/VisualStudio_ConfigurationAndPlatform_Ja.png)
 1. 構成プロパティ > C/C++ > 全般 > 追加のインクルードディレクトリ > 編集 を選択します。  
 ![VisualStudio_IncludeDirectory_Ja](images/VisualStudio_IncludeDir_Ja.png)
 2. 以下を追記します。  
+
+**<必ず記述>**  
 ```
 .\Libraries\Effekseer\Include\Effekseer
 .\Libraries\Effekseer\Include\EffekseerSoundXAudio2
 .\Libraries\Effekseer\Include\EffekseerRendererCommon
 ```
-**DirectX 11の場合のみ**  
+**<DirectX 11の場合は以下も記述>**  
 ```
 .\Libraries\Effekseer\Include\EffekseerRendererDX11
 ```
-**DirectX 12の場合のみ**   
+**<DirectX 12の場合は以下も記述>**   
 ```
 .\Libraries\Effekseer\Include\EffekseerRendererDX12
 ```
 ![VisualStudio_IncludeDirAppend](images/VisualStudio_IncludeDirAppend_Ja.png)   
-3. 「OK」を押します。
+1. 「OK」を押します。
 
 ### 5.2. ライブラリディレクトリの設定
 
 同じように、ライブラリファイルも配置した場所を設定します。  
 
-1. **画面上部の構成を「すべての構成」、プラットフォームを[導入先のアプリケーションの環境を確認](#1-導入先のアプリケーションの環境を確認)で確認したプラットフォームに設定しておきます。**  
+1. **必ず、画面上部の構成を「すべての構成」、プラットフォームを[1. 導入先のアプリケーションの環境を確認](#1-導入先のアプリケーションの環境を確認)で確認したプラットフォームに設定しておきます。**  
 ![ConfigurationAndPlatform](images/VisualStudio_ConfigurationAndPlatform_Ja.png)
 2. 構成プロパティ > リンカー > 全般 > 追加のライブラリディレクトリ > 編集 を選択します。  
 ![VisualStudio_LibraryDir](images/VisualStudio_LibraryDir_Ja.png)
@@ -371,15 +437,22 @@ EffekseerのAPIをソースコード上から呼び出して、Effekseerの初�
 
 サンプルソースを参考にしながら実装してください。  
 
-DirectX11: [https://github.com/effekseer/Effekseer/tree/master/Examples/DirectX11](https://github.com/effekseer/Effekseer/tree/master/Examples/DirectX11)  
-DirectX12: [https://github.com/effekseer/Effekseer/tree/master/Examples/DirectX12](https://github.com/effekseer/Effekseer/tree/master/Examples/DirectX12)  
+- **DirectX11サンプルソース: [https://github.com/effekseer/Effekseer/tree/master/Examples/DirectX11](https://github.com/effekseer/Effekseer/tree/master/Examples/DirectX11)**  
+- **DirectX12サンプルソース: [https://github.com/effekseer/Effekseer/tree/master/Examples/DirectX12](https://github.com/effekseer/Effekseer/tree/master/Examples/DirectX12)**  
 
 
 また、以下でサンプルソースの解説をしますので、併せてご参照ください。  
 
+> **Note**  
+> サンプル内の`device`(`DeviceDX11` `DeviceDX12`)は、サンプル用の、グラフィックスやオーディオのデバイスを管理するクラスです。  
+> 実際のアプリケーションでは、アプリケーション側(またはフレームワークなど)で管理されます。  
+> サンプルソースで、`device`が使用されている箇所は、適宜アプリケーション側の環境に置き換えて実装をしてください。  
+
 ### 6.1. 再生するエフェクトファイルを用意する
 
-ダウンロードしたEffekseerForCppにある以下のファイルを、導入先のプロジェクトフォルダ(.projファイルがあるフォルダ)へコピーします。
+まず、再生するためのエフェクトを用意します。  
+本来はEffekseerエディタで作成しますが、今回はサンプルエフェクトを使います。  
+ダウンロードしたEffekseerForCppにある以下のファイルを、導入先プロジェクトフォルダ(.projファイルがあるフォルダ)へコピーします。
 
 - `Examples/Resources/Laser01.efkefc`
 - `Examples/Resources/Texture`(フォルダごと)
@@ -388,7 +461,7 @@ DirectX12: [https://github.com/effekseer/Effekseer/tree/master/Examples/DirectX1
 コピー後、以下のようなフォルダ構成になっていれば大丈夫です。  
 
 ```
-[プロジェクトフォルダ] (導入先プロジェクト(.projファイル)の場所)
+[導入先プロジェクトフォルダ] (導入先プロジェクト(.projファイル)の場所)
 ├ Laser01.efkefc
 ├ Texture/
 | └ ...
@@ -396,45 +469,52 @@ DirectX12: [https://github.com/effekseer/Effekseer/tree/master/Examples/DirectX1
   └ ...
 ```
 
-### 6.2. サンプルソースの解説
+### 6.2. includeとpragma文の記述
 
-サンプルソースの流れは以下の通りです。  
-
-
-> **Note**  
-> サンプル内の`device`(`DeviceDX11` `DeviceDX12`)は、サンプル用の、グラフィックスやオーディオのデバイスを管理するクラスです。  
-> 実際のアプリケーションでは、アプリケーション側(またはフレームワークなど)で管理されます。  
-> サンプルソースで、`device`が使用されている箇所は、適宜アプリケーション側の環境に置き換えて実装をしてください。  
-
-#### 6.2.1. includeとpragma文の記述
-
-
-**<<必ず記述>>**  
+**<必ず記述>**  
 ```cpp
 #ifndef _DEBUG
 #pragma comment(lib, "Effekseer.lib")
+#else
+#pragma comment(lib, "Effekseerd.lib")
+#endif
 #include <Effekseer.h>
 ```
 
-**XAudio2使用時（Effekseerを使って音を再生する時）のみ**  
+**<XAudio2使用時（Effekseerを使って音を再生する時）は以下も記述>**  
 ```cpp
+#ifndef _DEBUG
 #pragma comment(lib, "EffekseerSoundXAudio2.lib")
+#else
+#pragma comment(lib, "EffekseerSoundXAudio2d.lib")
+#endif
 #include <EffekseerSoundXAudio2.h>
 ```
 
-**DirectX11使用時のみ**  
+**<DirectX11使用時は以下も記述>**  
 ```cpp
+#ifndef _DEBUG
 #pragma comment(lib, "EffekseerRendererDX11.lib")
+#else
+#pragma comment(lib, "EffekseerRendererDX11d.lib")
+#endif
 #include <EffekseerRendererDX11.h>
 ```
-**DirectX12使用時のみ**  
+
+**<DirectX12使用時は以下も記述>**  
 ```cpp
+#ifndef _DEBUG
 #pragma comment(lib, "EffekseerRendererDX12.lib")
+#else
+#pragma comment(lib, "EffekseerRendererDX12d.lib")
+#endif
 #include <EffekseerRendererDX12.h>
-//TODO: あとで調べながら書く
 ```
 
-#### 6.2.2. エフェクトのマネージャーの作成
+必要なヘッダファイルのインクルードと、ライブラリファイルのリンクを行うように指定します。  
+デバッグ構成のときは、`XXXXXXXd.lib`を使うようにします。  
+
+### 6.3. エフェクトのマネージャーの作成
 
 ```cpp
 // Create a manager of effects
@@ -448,17 +528,58 @@ DirectX12: [https://github.com/effekseer/Effekseer/tree/master/Examples/DirectX1
 > `Effekseer::ManagerRef`や`Effekseer::EffectRef`など、Effekseerの型で`Ref`が付くものは、スマートポインタで管理されています。  
 > これらは、オブジェクトを使用する変数が無くなると自動で解放されます。  
 
-#### 6.2.3. 描画モジュールの作成・設定
+### 6.4. 描画モジュールの作成
+
+**<DirectX11の場合>**
 
 ```cpp
 // Create a  graphics device
 // 描画デバイスの作成
-auto graphicsDevice = ::EffekseerRendererDX11::CreateGraphicsDevice(device.GetID3D11Device(), device.GetID3D11DeviceContext());
+::Effekseer::Backend::GraphicsDeviceRef graphicsDevice;
+graphicsDevice = ::EffekseerRendererDX11::CreateGraphicsDevice(device.GetID3D11Device(), device.GetID3D11DeviceContext());
 
 // Create a renderer of effects
 // エフェクトのレンダラーの作成
-auto efkRenderer = ::EffekseerRendererDX11::Renderer::Create(graphicsDevice, 8000);
+::EffekseerRenderer::RendererRef efkRenderer;
+efkRenderer = ::EffekseerRendererDX11::Renderer::Create(graphicsDevice, 8000);
+```
 
+**<DirectX12の場合>**
+```cpp
+// Create a  graphics device
+// 描画デバイスの作成
+::Effekseer::Backend::GraphicsDeviceRef graphicsDevice;
+graphicsDevice = ::EffekseerRendererDX12::CreateGraphicsDevice(device.GetID3D12Device(), device.GetCommandQueue(), 3);
+
+// Create a renderer of effects
+// エフェクトのレンダラーの作成
+::EffekseerRenderer::RendererRef efkRenderer;
+DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM;
+efkRenderer = ::EffekseerRendererDX12::Create(graphicsDevice, &format, 1, DXGI_FORMAT_UNKNOWN, false, 8000);
+
+// Create a memory pool
+// メモリプールの作成
+::Effekseer::RefPtr<EffekseerRenderer::SingleFrameMemoryPool> efkMemoryPool;
+efkMemoryPool = EffekseerRenderer::CreateSingleFrameMemoryPool(efkRenderer->GetGraphicsDevice());
+
+// Create a command list
+// コマンドリストの作成
+::Effekseer::RefPtr<EffekseerRenderer::CommandList> efkCommandList;
+efkCommandList = EffekseerRenderer::CreateCommandList(efkRenderer->GetGraphicsDevice(), efkMemoryPool);
+```
+
+DirectX11では、`::EffekseerRendererDX11::CreateGraphicsDevice()`で、DirextX11のDevice(`ID3D11Device*`)とDeviceContext(`ID3D11DeviceContext*`)を引数として渡します。  
+
+DirectX12では、`::EffekseerRendererDX12::CreateGraphicsDevice()`で、DirectX12のDevice(`ID3D12Device*`)とCommandQueue(`ID3D12CommandQueue*`)を引数として渡します。  
+**`::EffekseerRendererDX12::Create`の第2,4引数は、レンダーターゲットと深度バッファのフォーマット`DXGI_FORMAT`を渡します。  
+導入先のアプリケーションに合ったものを渡してください。**  
+
+**サンプルソース上では、サンプル用のデバイス管理クラス(`device`, `DeviceDX11`/`DeviceDX12`)からDevice等を取得し、セットしています。**  
+**実際に組み込む際は、アプリケーション/フレームワークに合わせた実装に置き換えてください。**
+
+### 6.5. 作成した描画モジュールの設定
+
+```cpp
 // Sprcify rendering modules
 // 描画モジュールの設定
 efkManager->SetSpriteRenderer(efkRenderer->CreateSpriteRenderer());
@@ -477,19 +598,14 @@ efkManager->SetMaterialLoader(efkRenderer->CreateMaterialLoader());
 efkManager->SetCurveLoader(Effekseer::MakeRefPtr<Effekseer::CurveLoader>());
 ```
 
-TODO: DirectX12の場合も書く
+### 6.6. サウンドモジュールの作成(XAudio2使用時のみ)
 
-`::EffekseerRendererDX11::CreateGraphicsDevice()`では、DirextX11のDevice(`ID3D11Device*`)とDeviceContext(`ID3D11DeviceContext*`)を引数として渡します。  
-
-**ここでは、サンプル用のデバイス管理クラス(`device`, `DeviceDX11`/`DeviceDX12`)からDevice等を取得し、セットしています。**  
-**アプリケーション/フレームワークに合わせて、置き換えながら実装してください。**
-
-#### 6.2.4. サウンドモジュールの作成(XAudio2使用時のみ)
-
+**XAudio2使用時(Effekseerを使って音を再生する時)のみ、実装してください。**  
 ```cpp
 // Specify sound modules
 // サウンドモジュールの設定
-auto efkSound = ::EffekseerSound::Sound::Create(device.GetIXAudio2(), 16, 16);
+::EffekseerSound::SoundRef efkSound;
+efkSound = ::EffekseerSound::Sound::Create(device.GetIXAudio2(), 16, 16);
 
 // Specify a metho to play sound from an instance of efkSound
 // 音再生用インスタンスから再生機能を指定
@@ -502,14 +618,13 @@ efkManager->SetSoundPlayer(efkSound->CreateSoundPlayer());
 efkManager->SetSoundLoader(efkSound->CreateSoundLoader());
 ```
 
-**XAudio2使用時(Effekseerを使って音を再生する時)のみ、実装してください。**  
 
 エフェクトに設定した音を再生するための、サウンドモジュールの作成と設定をします。  
 
 **ここでも、サンプル用に用意されているデバイス管理クラス(`device`, `DeviceDX11`/`DeviceDX12`)から`IXAudio2*`を取得し、セットしています。**  
 **アプリケーション/フレームワークに合わせて、置き換えながら実装してください。**
 
-#### 6.2.5. 座標系の設定
+### 6.7. 座標系の設定
 
 ```cpp
 // Setup the coordinate system. This must be matched with your application.
@@ -518,15 +633,16 @@ efkManager->SetCoordinateSystem(Effekseer::CoordinateSystem::RH);
 ```
 
 座標系を設定します。  
-導入先のアプリケーションの座標系と一致させる必要がありますが、まずは動作確認のため、右手座標系(`LH`)で実装してみてください。  
-(座標系については後述します。(関連: [カメラと座標系をアプリケーションと一致させる](#7-カメラと座標系をアプリケーションと一致させる)))
 
-#### 6.2.6. 投影行列とカメラ行列の作成
+実際には、導入先のアプリケーションの座標系と一致させる必要がありますが、まずは動作確認のため、右手座標系(`RH`)で実装します。  
+(座標系については後述します。(関連: [7. カメラと座標系をアプリケーションと一致させる](#7-カメラと座標系をアプリケーションと一致させる)))
+
+### 6.8. 投影行列とカメラ行列の作成
 
 ```cpp
 // Specify a position of view
 // 視点位置を確定
-auto viewerPosition = ::Effekseer::Vector3D(10.0f, 5.0f, 20.0f);
+::Effekseer::Vector3D viewerPosition = ::Effekseer::Vector3D(10.0f, 5.0f, 20.0f);
 
 // Specify a projection matrix
 // 投影行列を設定
@@ -541,17 +657,18 @@ cameraMatrix.LookAtRH(viewerPosition, ::Effekseer::Vector3D(0.0f, 0.0f, 0.0f), :
 
 投影(射影)行列とカメラ行列を作成します。  
 
-ここでも、アプリケーションのものと一致(同期)させる必要がありますが、まずは動作確認のため、右手座標系(RH)の固定の投影行列/カメラ行列を作成して使用します。  
+こちらも実際には、アプリケーションのものと一致(同期)させる必要がありますが、まずは動作確認のため、右手座標系(RH)の固定の投影行列/カメラ行列を作成して使用します。  
 
-#### 6.2.7. エフェクトの読み込み
+### 6.9. エフェクトの読み込み
 
 ```cpp
 // Load an effect
 // エフェクトの読込
-auto effect = Effekseer::Effect::Create(efkManager, u"Laser01.efkefc");
+Effekseer::EffectRef effect;
+effect = Effekseer::Effect::Create(efkManager, u"Laser01.efkefc");
 ```
 
-[再生するエフェクトファイルを用意する](#61-再生するエフェクトファイルを用意する)でコピーしてきたエフェクトファイル(`.efkefc`)から、エフェクトを読み込みます。  
+[6.1. 再生するエフェクトファイルを用意する](#61-再生するエフェクトファイルを用意する)でコピーしてきたエフェクトファイル(`.efkefc`)から、エフェクトを読み込みます。  
 戻り値として、読み込まれたエフェクトデータ(`EffectRef`)が返ってきます。  
 
 `EffectRef`(`effect`)は、再生中のエフェクトではなく、「エフェクトを再生するために必要なデータ」です。  
@@ -559,7 +676,7 @@ auto effect = Effekseer::Effect::Create(efkManager, u"Laser01.efkefc");
 
 また、読み込み処理なので、比較的処理時間が長くなります。  
 
-そのため、 基本的には１種類のエフェクトファイルに対して、１度のみ実行するだけで良いです。  
+そのため、基本的には`Effekseer::Effect::Create`は、１種類のエフェクトファイルに対して１度のみ実行するだけで良いです。  
 
 > **Warning**  
 > サンプルソース中の`EFK_EXAMPLE_ASSETS_DIR_U16`は、サンプル専用のマクロです。  
@@ -570,11 +687,16 @@ auto effect = Effekseer::Effect::Create(efkManager, u"Laser01.efkefc");
 > 通常の文字列リテラル(`"ABCDE"`)や、通常の文字列(`char*`,`std::string`)をそのまま使うことはできません。  
 > 上記のソースでは、文字列リテラルの前に`u`を付けることによって、`char16_t*`型の文字列リテラルにしています。  
 
-#### 6.2.8. エフェクトの再生と制御
+### 6.10. エフェクトの再生と制御
 
 
 ```cpp
+// Elapsed frames
+// 経過したフレーム数のカウンタ
 int32_t time = 0;
+
+// Handle for the effect instance. Used to control the played effect.
+// エフェクトのインスタンスのハンドル。再生したエフェクトの制御に使う。
 Effekseer::Handle efkHandle = 0;
 
 while (device.NewFrame())
@@ -610,14 +732,40 @@ while (device.NewFrame())
 > **Note**  
 > `while (device.NewFrame()) {}`がメインループにあたります。  
 > この中が１フレーム間に実行する処理になるので、毎フレーム実行したい処理はここに実装されています。  
-> (メインループの実装もサンプル用です。導入先のアプリケーションやフレームワークの実装と置き換えて捉えて実装してください)  
+> (メインループの実装もサンプル用です。メインループは、導入先のアプリケーションやフレームワークの実装と置き換えて捉えて実装してください)  
 
 毎フレーム`time`をインクリメントさせることで、経過フレーム数をカウントしています。  
 
 `Effekseer::Handle`(`efkHandle`)を使うことで、再生中のエフェクトの、移動や停止などの制御を行っています。  
 
+### 6.11. [DirectX12のみ、毎フレーム実行]フレーム開始時の処理
 
-#### 6.2.9. [毎フレーム実行]Managerの更新処理
+
+```cpp
+while (device.NewFrame())
+{
+  // <<DirectX 12の時のみ、以下を追記>>
+
+  // Call on starting of a frame
+  // フレームの開始時に呼ぶ
+  efkMemoryPool->NewFrame();
+
+  // Begin a command list
+  // コマンドリストを開始する。
+  EffekseerRendererDX12::BeginCommandList(efkCommandList, device.GetCommandList());
+  efkRenderer->SetCommandList(efkCommandList);
+
+  ...(略)
+```
+
+**DirectX 12の時のみ、毎フレーム行う必要があります。**  
+メインループのはじめに、描画に使用するコマンドリストの記録を開始します。  
+さきほどの、[6.10. エフェクトの再生と制御](#610-エフェクトの再生と制御) でのメインループのはじめに追記してください。  
+
+
+ここでも、サンプル用に用意されているデバイス管理クラス(`device`)からGetCommandListを取得してセットしていますが、こちらも導入先のアプリケーションに合わせて置き換えて実装します。  
+
+### 6.12. [毎フレーム実行]Managerの更新処理
 
 ```cpp
 // Set layer parameters
@@ -639,7 +787,7 @@ LayerParameterの更新(`efkManager->SetLayerParameter`)と、Managerの更新(`
 Managerの更新の際には、引数に`Effekseer::Manager::UpdateParameter`を渡すことが出来ます。  
 これを使うことで、経過フレームや更新回数、非同期処理などに関する制御が可能です。
 
-#### 6.2.10. [毎フレーム実行]Rendererの更新と描画処理
+### 6.13. [毎フレーム実行]Rendererの更新と描画処理
 
 ```cpp
 // Execute functions about DirectX
@@ -679,8 +827,6 @@ efkRenderer->EndRendering();
 device.PresentDevice();
 ```
 
-TODO: DirectX12についても書く
-
 **この処理は毎フレーム実行する(メインループの中に書く)必要があります。**  
 
 **DirectXでの描画処理の開始から、描画処理の終了までの間に行うようにしてください。**  
@@ -688,16 +834,34 @@ TODO: DirectX12についても書く
 
 経過時間の更新や、投影/カメラ行列のセットをしてから、描画処理を行います。  
 
-`efkRenderer->SetTime(time / 60.0f);`では、[エフェクトの再生と制御](#628-エフェクトの再生と制御)で作成し、毎フレームインクリメントさせた`time`を使って、経過時間をセットしています。  
-このサンプルでは、フレームレートが60fpsなので、`time`を60で割っています。  
+`efkRenderer->SetTime(time / 60.0f);`では、[6.10. エフェクトの再生と制御](#610-エフェクトの再生と制御)で作成し、毎フレームインクリメントさせた`time`を使って、経過時間をセットしています。  
+このサンプルでは、フレームレートが60fpsであるとして、`time`を60で割っています。  
 
-#### 6.2.11. 動作を確認する
+### 6.14. [DirectX12のみ、毎フレーム実行]コマンドリスト終了処理
 
-この状態で、ビルド・実行してみてください。  
+```cpp
+// <<DirectX 12の時のみ、以下を追記>>
+// ※efkRenderer->EndRendering();の直後に実装する
 
-正しく導入できていれば、下図のようなエフェクトが再生されているはずです。  
+// Finish a command list
+// コマンドリストを終了する。
+efkRenderer->SetCommandList(nullptr);
+EffekseerRendererDX12::EndCommandList(efkCommandList);
+```
 
-もし、正しく再生されなかったり、コンパイル/リンクエラーなどが出た場合には、トラブルシューティングをご確認ください。  
+**DirectX 12の時のみ、毎フレーム行う必要があります。**  
+さきほどの、[6.13. [毎フレーム実行]Rendererの更新と描画処理](#613-毎フレーム実行rendererの更新と描画処理) でのメインループの終盤、`efkRenderer->EndRendering();`の直後に実装してください。  
+
+### 6.15. 動作を確認する
+
+ここまでが、最低限のエフェクトの再生をする実装です。  
+
+一度、ビルド・実行を試してみてください。  
+
+正しく導入できていれば、下図のようにエフェクトが再生されているはずです。  
+
+もし、正しく再生されなかったり、コンパイル/リンクエラーなどが出た場合には、どこかに誤りがある可能性があります。確認・修正してください。  
+[9. トラブルシューティング（うまく動かないとき）](#9-トラブルシューティングうまく動かないとき)もご活用ください。  
 
 ![LaserEffect](images/LaserEffect.png)  
 
@@ -713,7 +877,7 @@ Effekseerとアプリケーションのカメラと座標系を一致させる�
 
 以下は、投影(射影)行列とカメラ行列を同期させる実装例です。  
 
-**以下を、[[毎フレーム実行]rendererの更新と描画処理](#6210-毎フレーム実行rendererの更新と描画処理)の、`efkRenderer->SetProjectionMatrix`や`efkRenderer->SetCameraMatrix`を呼び出している箇所の前に追加します。**  
+**以下を、[6.13. [毎フレーム実行]Rendererの更新と描画処理](#613-毎フレーム実行rendererの更新と描画処理) の、`efkRenderer->SetProjectionMatrix`や`efkRenderer->SetCameraMatrix`を呼び出している箇所の前に追加します。**  
 
 ```cpp
 // efkRenderer->SetProjectionMatrix efkRenderer->SetCameraMatrixを呼び出す前に追加
@@ -748,8 +912,8 @@ for (int i = 0; i < 4; ++i)
 この座標系を、アプリケーションと一致させる必要があります。  
 (Effekseerの座標系はデフォルトでは右手系（RH）です)  
 
-**もし、あなたのアプリケーションが左手系であれば、Effekseerの初期化時に左手系座標系に設定する必要があります。**  
-**[座標系の設定](#625-座標系の設定)での該当する実装を、以下のように書き換えることで、左手(LH)座標系に変更することができます。**  
+**もし、導入先のアプリケーションが左手系であれば、Effekseerの初期化時に左手系座標系に設定する必要があります。**  
+**[6.7. 座標系の設定](#67-座標系の設定)で`m_efkManager->SetCoordinateSystem`を呼び出している箇所を、以下のように書き換えることで、左手(LH)座標系に変更することができます。**  
 (右手座標系である場合は、サンプルそのまま(RH)で問題ありません)
 
 ```cpp
@@ -762,9 +926,8 @@ m_efkManager->SetCoordinateSystem(Effekseer::CoordinateSystem::LH);
 > **Note**  
 > 左手/右手座標系の違いは、**XYZ軸の正(プラス)の向きの組み合わせ**です。  
 > 下図のように、左右の手の親指/人差し指/中指の方向が、XYZ軸の正(プラス)の向きに対応しています。  
-> ![CoordinateSystem](images/HelpCpp_CoordinateSystem.png)
 > これにより、導入先のアプリケーションの座標系を調べることができます。  
-> TODO: 図の空きスペースに、Z-upの画像も入れておく
+> ![CoordinateSystem](images/HelpCpp_CoordinateSystem.png)
 
 ### 7.3. レイヤーパラメータの設定
 
@@ -773,7 +936,7 @@ m_efkManager->SetCoordinateSystem(Effekseer::CoordinateSystem::LH);
 これも、実際のカメラの座標に合わせる必要があります。  
 
 以下は、実際のカメラ座標に合わせて`layerParameter.ViewerPosition`を設定する実装例です。  
-**[[毎フレーム実行]managerの更新処理](#629-毎フレーム実行managerの更新処理)での該当箇所を、以下のように追記、変更します。**  
+**[6.12. [毎フレーム実行]Managerの更新処理](#612-毎フレーム実行managerの更新処理)での該当箇所を、以下のように追記、変更します。**  
 
 ```cpp
 // レイヤーパラメータの設定
@@ -783,22 +946,97 @@ Effekseer::Manager::LayerParameter layerParameter;
 layerParameter.ViewerPosition = ::Effekseer::Vector3D(invEfkCameraMatrix.Values[3][0], invEfkCameraMatrix.Values[3][1], invEfkCameraMatrix.Values[3][2]);
 ```
 
-[カメラを同期させる](#71-カメラを同期させる)でアプリケーションと同期させた、Effekseer側のカメラ行列 `cameraMatrix`から、カメラ座標を取り出しています。  
+さきほど、[7.1. カメラを同期させる](#71-カメラを同期させる)でアプリケーションと同期させた、Effekseer側のカメラ行列 `cameraMatrix`から、カメラの座標を取り出しています。  
 
 
-## 8. 付録 エフェクトの基本的な制御
+## 8. [付録] エフェクトの基本的な制御
+
+エフェクトの制御について、基礎的なものを解説します。  
 
 > **Note**   
-> `Effekseer::EffectRef`と`Effekseer::EffectHandle`について  
-> TODO: 図解する  
+> - `Effekseer::EffectRef`は、`Effekseer::Effect::Create`で読み込んだエフェクトのデータへの参照です。エフェクトを再生開始するために使います。  
+> - `Effekseer::EffectHandle`は、再生したエフェクトのインスタンス1つ1つの識別番号です。再生したエフェクトについての操作をするために使います。`efkManager->Play`で再生したときの戻り値などで、取得することができます。  
+>
+> 下図はイメージ図です。  
 > ![EffectRefHandle_Explain](images/EffectRefHandle_Explain_Ja.png)
 
 ### 8.1. エフェクトを再生する
 
+`efkManager->Play`で、エフェクトを再生します。  
+引数で、エフェクトの位置を指定することもできます。  
+
+**戻り値の`Effekseer::Handle`を用いて、再生したエフェクトのインスタンスに対して制御を行うことができます**。  
+
+```cpp
+Effekseer::Handle efkHandle = 0;
+// エフェクトを表示したい座標を設定する
+efkHandle = efkManager->Play(effect, 0.0f, 0.0f, 0.0f);
+```
+
 ### 8.2. エフェクトを移動させる
 
-### 8.3. エフェクトを停止させる
+`efkManager->SetLocation`で、エフェクトのインスタンスを任意の座標に移動させます。
 
+```cpp
+efkManager->SetLocation(efkHandle, 1.0f, 1.0f, 1.0f);
+```
+
+`efkManager->AddLocation`で、指定した座標だけ動かすこともできます。
+```cpp
+efkManager->AddLocation(efkHandle, ::Effekseer::Vector3D(0.2f, 0.0f, 0.0f));
+```
+
+### 8.3. エフェクトを回転させる
+
+`efkManager->SetRotation`で、エフェクトのインスタンスの姿勢を回転させます。  
+
+角度はラジアンで指定します。
+
+```cpp
+// XYZ座標軸についての回転
+efkManager->SetRotation(efkHandle, 3.141592653589f, 0.0f, 0.0f);
+```
+
+### 8.4. エフェクトを拡大縮小させる
+
+`efkManager->SetScale`で、エフェクトのインスタンスの拡大縮小を設定します。
+
+```cpp
+// 2倍のスケールに設定
+efkManager->SetScale(efkHandle, 2.0f, 2.0f, 2.0f);
+```
+
+### 8.5. エフェクトを停止させる
+
+`efkManager->StopEffect`で、エフェクトのインスタンスを停止させます。  
+
+```cpp
+efkManager->StopEffect(efkHandle);
+```
+
+`efkManager->SetPaused`で、一時停止や再開をすることもできます。
+
+```cpp
+// 一時停止
+efkManager->SetPaused(efkHandle, true);
+
+// 再開
+efkManager->SetPaused(efkHandle, false);
+```
+
+### 8.6. エフェクトをループ再生する
+
+エフェクトが再生終了していたら、新たに再度再生しなおすことで、ループ再生をすることができます。  
+
+```cpp
+// 毎フレーム、エフェクトが再生終了しているか確認する
+if (efkManager->Exists(efkHandle))
+{
+  // 新たにエフェクトを再生し直す。座標はエフェクトを表示したい場所を設定する
+  // (位置や回転、拡大縮小も設定しなおす必要がある)
+  efkHandle = efkManager->Play(efkManager, 0.0f, 0.0f, 0.0f);
+}
+```
 
 ## 9. トラブルシューティング（うまく動かないとき）
 
@@ -812,12 +1050,12 @@ Widnows Defenderによる表示です。
 
 ### 9.2. CMakeビルド関連でうまく行かない時
 
-以下をお試しください。  
+以下を確認またはお試しください。  
 
 - GitHubのmasterブランチからcloneしている場合、Releasesページ([https://github.com/effekseer/Effekseer/releases](https://github.com/effekseer/Effekseer/releases))からfor C++をダウンロードしてお試しください
 - CMakeの最新バージョンがインストールされているか
 - CMakeのパスが通っているか  
-(出来ていなければ、自力でパスを通すか、CMakeを再インストールしてください。その際、必ず「Add CMake to the system PATH for all users」か「Add CMake to the system PATH for the current user」のどちらかにチェックを入れて、PATHを通してください)
+(出来ていなければ、自力でパスを通すか、CMakeを再インストールしてください。再インストールの際には、必ず「Add CMake to the system PATH for all users」か「Add CMake to the system PATH for the current user」のどちらかにチェックを入れて、PATHを通してください)
 - 誤ってvulkanのプリセットを使ってビルドしていないか
 
 ### 9.3. 導入先アプリケーションでのビルドエラー
@@ -826,28 +1064,30 @@ Widnows Defenderによる表示です。
 > 以下で示すエラー文は一例です。  
 > `Effekseer.h` `Effekseer.lib`のようなファイル名などは、適宜読み替えてください。  
 
-#### 9.3.1. 「エラー	LNK1104	ファイル 'Effekseer.lib' を開くことができません。」
+#### 9.3.1. 「LNK1104	ファイル 'Effekseer.lib' を開くことができません。」「E1696	ソース ファイルを開けません "Effekseer.h"」「C1083		include ファイルを開けません。'Effekseer.h':No such file or directory」
 
-libファイルが見つからない等の理由で、開くことができない状態です。  
+いずれかが発生した場合は、該当するファイルが見つからない等の理由で、開くことができない状態です。  
 以下を確認してください。
 
-- libファイルが正しいディレクトリに置かれているか
-- ライブラリディレクトリが適切に設定されているか
-- `#pragma comment(lib, "Effekseer.lib")`などのプリプロセッサ文にタイプミスなどが無いか
+- 該当のファイルが正しいディレクトリに置かれているか
+- プロジェクトのプロパティの、`ライブラリディレクトリ`や`インクルードディレクトリ`が正しく設定されているか
+- プロジェクトのプロパティの、`ライブラリディレクトリ`や`インクルードディレクトリ`が、適切なプロジェクトや構成、プラットフォームに対して設定されているか
+- `#include <Effekseer.h>` `#pragma comment(lib, "Effekseer.lib")`などのプリプロセッサ文が正しいか
 
-#### 9.3.2. 「エラー	E1696	ソース ファイルを開けません "Effekseer.h"」「エラー	C1083	include ファイルを開けません。'Effekseer.h':No such file or directory」
+> **Note**  
+> プロジェクトのプロパティは、プロパティページ上部の構成・プラットフォームに対してのみ適用されます。  
+> 
+> 正しく設定したつもりであっても、選択した構成やプラットフォームに誤りがあることにより、`ライブラリディレクトリ`や`インクルードディレクトリ`が正しく設定されていないこともあります。  
+> 
+> ライブラリディレクトリやインクルードディレクトリを設定する際は、[5.1. インクルードディレクトリの設定](#51-インクルードディレクトリの設定)や[5.2. ライブラリディレクトリの設定](#52-ライブラリディレクトリの設定)にあるように、必ず適切な`ライブラリディレクトリ`や`インクルードディレクトリ`を選択してください。  
+> ![VisualStudio_ConfigurationAndPlatform](images/VisualStudio_ConfigurationAndPlatform_Ja.png)
 
-ソースファイルが見つからない等の理由で、開くことができない状態です。  
-以下が正しいか確認してください。
+#### 9.3.2. 「LNK2001	外部シンボル "public: __thiscall Effekseer::Matrix44::Matrix44(void)" (??0Matrix44@Effekseer@@QAE@XZ) は未解決です」「LNK4272	ライブラリのコンピューターの種類 'x64' がターゲットのコンピューターの種類' x86' と競合しています」「LNK2038	'RuntimeLibrary' の不一致が検出されました。値 'MDd_DynamicDebug' が MTd_StaticDebug の値 'GraphEditor.obj' と一致しません。」
 
-- ソースファイルのディレクトリ
-- Project設定の`Includeディレクトリ`
-- `#include <Effekseer.h>`などのプリプロセッサ文
+いずれかが発生した場合は、[3. Effekseer For C++のビルド](#3-effekseer-for-cのビルド)でビルドした際に選択したプリセットや設定に誤りがあったと考えられます。  
 
-#### 9.3.3. TODO: プロジェクト設定の差異に起因するエラーについても書いておく
+以下の手順で、正しいプリセットや設定で、再度Effekseer For C++のビルドを行ってください。
 
-プラットフォームやマルチスレッドDLL設定の違いでのエラーについて
-
-### 9.4. エフェクトが映らない時
-
-TODO:
+1. Effekseer For C++の、ビルドフォルダ(`build_msvcXXXX_XXXX`)とインストールフォルダ(`install_msvcXXXX_XXXX`)を削除する
+2. 導入先のプロジェクトに合ったプリセットや設定で、Effekseer For C++をビルドする([3. Effekseer For C++のビルド](#3-effekseer-for-cのビルド))
+3. インストールフォルダに新たに生成されたライブラリファイルを、導入先のプロジェクトへコピーしなおす([4. ビルドしたライブラリファイルの配置](#4-ビルドしたライブラリファイルの配置))  
