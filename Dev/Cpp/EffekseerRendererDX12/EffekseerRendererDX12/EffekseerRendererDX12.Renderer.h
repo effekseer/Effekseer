@@ -2,7 +2,7 @@
 #ifndef __EFFEKSEERRENDERER_DX12_RENDERER_H__
 #define __EFFEKSEERRENDERER_DX12_RENDERER_H__
 
-#include "EffekseerRendererDX12.Base.h"
+#include "EffekseerRendererDX12.Base.Pre.h"
 #include <EffekseerRendererCommon/EffekseerRenderer.Renderer.h>
 #include <functional>
 

@@ -2,8 +2,8 @@
 #ifndef __EFFEKSEERRENDERER_METAL_RENDERER_H__
 #define __EFFEKSEERRENDERER_METAL_RENDERER_H__
 
-#include "../../EffekseerRendererCommon/EffekseerRenderer.Renderer.h"
-#include "EffekseerRendererMetal.Base.h"
+#include <EffekseerRendererCommon/EffekseerRenderer.Renderer.h>
+#include "EffekseerRendererMetal.Base.Pre.h"
 #include <functional>
 
 #import <MetalKit/MetalKit.h>

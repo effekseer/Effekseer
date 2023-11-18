@@ -2,7 +2,7 @@
 #ifndef __EFFEKSEERRENDERER_VULKAN_RENDERER_H__
 #define __EFFEKSEERRENDERER_VULKAN_RENDERER_H__
 
-#include "EffekseerRendererVulkan.Base.h"
+#include "EffekseerRendererVulkan.Base.Pre.h"
 #include <EffekseerRendererCommon/EffekseerRenderer.Renderer.h>
 #include <functional>
 
