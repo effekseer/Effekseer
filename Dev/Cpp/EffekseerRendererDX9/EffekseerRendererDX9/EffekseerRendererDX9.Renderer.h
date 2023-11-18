@@ -5,7 +5,7 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include "EffekseerRendererDX9.Base.h"
+#include "EffekseerRendererDX9.Base.Pre.h"
 #include <EffekseerRendererCommon/EffekseerRenderer.Renderer.h>
 
 //----------------------------------------------------------------------------------
