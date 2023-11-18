@@ -19,21 +19,21 @@ set(LOCAL_SOURCES
 
 set(PublicHeaders
     EffekseerRendererDX11.h
-    EffekseerRenderer/EffekseerRendererDX11.Base.h
-    EffekseerRenderer/EffekseerRendererDX11.Base.Pre.h
-    EffekseerRenderer/EffekseerRendererDX11.Renderer.h)
+    EffekseerRendererDX11/EffekseerRendererDX11.Base.h
+    EffekseerRendererDX11/EffekseerRendererDX11.Base.Pre.h
+    EffekseerRendererDX11/EffekseerRendererDX11.Renderer.h)
 
 #--------------------
 # Projects
 
 add_library(${PROJECT_NAME} STATIC ${LOCAL_SOURCES})
-target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/../Effekseer ${EFK_THIRDPARTY_INCLUDES})
+target_include_directories(${PROJECT_NAME} PRIVATE ${EFK_THIRDPARTY_INCLUDES})
 set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${PublicHeaders}")
 target_link_libraries(${PROJECT_NAME} PUBLIC Effekseer EffekseerRendererCommon)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-    $<INSTALL_INTERFACE:include/EffekseerRendererDX11>)
+    $<INSTALL_INTERFACE:include>)
 
 if(CLANG_FORMAT_ENABLED)
     clang_format(${PROJECT_NAME})
@@ -46,7 +46,7 @@ WarnError(${PROJECT_NAME})
 
 foreach (file ${PublicHeaders})
     get_filename_component(dir ${file} DIRECTORY)
-    install(FILES ${file} DESTINATION include/EffekseerRendererDX11/${dir})
+    install(FILES ${file} DESTINATION include/${dir})
 endforeach()
 
 install(

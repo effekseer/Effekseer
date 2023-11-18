@@ -1,7 +1,7 @@
 #include "../TestHelper.h"
 #include "Helper.h"
 
-#include "../../../EffekseerRendererGL/EffekseerRenderer/GraphicsDevice.h"
+#include <EffekseerRendererGL/GraphicsDevice.h>
 #include <RenderingEnvironment/RenderingEnvironmentGL.h>
 
 #include <iostream>
@@ -21,6 +21,7 @@ void Backend_OpenGL()
 }
 
 #if !defined(__FROM_CI__)
-TestRegister Test_Backend_OpenGL("Backend.OpenGL", []() -> void { Backend_OpenGL(); });
+TestRegister Test_Backend_OpenGL("Backend.OpenGL", []() -> void
+								 { Backend_OpenGL(); });
 
 #endif

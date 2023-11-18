@@ -5,12 +5,11 @@
 
 #ifdef _WIN32
 #include "../Graphics/Platform/DX11/efk.GraphicsDX11.h"
-#include <EffekseerRendererDX11/EffekseerRenderer/GraphicsDevice.h>
+#include <EffekseerRendererDX11/GraphicsDevice.h>
 #endif
 
-#include <EffekseerRendererGL/EffekseerRenderer/GraphicsDevice.h>
-
-#include "../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
+#include <EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h>
+#include <EffekseerRendererGL/GraphicsDevice.h>
 
 #include "Image.h"
 #include "NodeFrameTimeline.h"
@@ -2414,7 +2413,8 @@ bool GUIManager::GradientHDR(int32_t gradientID, Effekseer::Tool::GradientHDRSta
 
 bool GUIManager::BeginPlot(const char16_t* label, const Vec2& size, PlotFlags flags)
 {
-	return ImPlot::BeginPlot(utf8str<256>(label), ImVec2(size.X, size.Y), (ImPlotFlags)flags);;
+	return ImPlot::BeginPlot(utf8str<256>(label), ImVec2(size.X, size.Y), (ImPlotFlags)flags);
+	;
 }
 
 void GUIManager::EndPlot()

@@ -6,9 +6,9 @@
 #include <functional>
 #include <vector>
 
-#include "../../EffekseerRendererCommon/EffekseerRenderer.Renderer.h"
 #include "../Math/Vector2I.h"
 #include "../Parameters.h"
+#include <EffekseerRendererCommon/EffekseerRenderer.Renderer.h>
 
 namespace efk
 {

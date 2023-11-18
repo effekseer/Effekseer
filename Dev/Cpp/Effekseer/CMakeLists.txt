@@ -197,12 +197,12 @@ WarnError(${PROJECT_NAME})
 
 foreach (file ${effekseer_public_h})
     get_filename_component(dir ${file} DIRECTORY)
-    install(FILES ${file} DESTINATION include/Effekseer/${dir})
+    install(FILES ${file} DESTINATION include/${dir})
 endforeach()
 
 target_include_directories(${PROJECT_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-    $<INSTALL_INTERFACE:include/Effekseer>)
+    $<INSTALL_INTERFACE:include>)
 
 install(
     TARGETS ${PROJECT_NAME}

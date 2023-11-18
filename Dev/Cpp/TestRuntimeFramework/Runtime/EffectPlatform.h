@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <vector>
 
-#include "../../EffekseerRendererCommon/EffekseerRenderer.Renderer.h"
+#include <EffekseerRendererCommon/EffekseerRenderer.Renderer.h>
 
 struct EffectPlatformInitializingParameter
 {

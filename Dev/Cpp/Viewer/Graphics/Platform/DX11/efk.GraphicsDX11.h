@@ -2,9 +2,9 @@
 #pragma once
 
 #include <Effekseer.h>
-#include <EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.Renderer.h>
-#include <EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.RendererImplemented.h>
-#include <EffekseerRendererDX11/EffekseerRenderer/GraphicsDevice.h>
+#include <EffekseerRendererDX11/EffekseerRendererDX11.Renderer.h>
+#include <EffekseerRendererDX11/EffekseerRendererDX11.RendererImplemented.h>
+#include <EffekseerRendererDX11/GraphicsDevice.h>
 
 #include "../../efk.Graphics.h"
 

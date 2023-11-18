@@ -2,29 +2,29 @@ cmake_minimum_required(VERSION 3.15)
 project(EffekseerRendererLLGI)
 
 set(PublicHeaders
-    Common.h
+    EffekseerRendererLLGI/Common.h
 )
 
 set(LocalHeaders
-    EffekseerRendererLLGI.Base.h
-    EffekseerRendererLLGI.Base.Pre.h
-    EffekseerRendererLLGI.MaterialLoader.h
-    EffekseerRendererLLGI.ModelRenderer.h
-    EffekseerRendererLLGI.Renderer.h
-    EffekseerRendererLLGI.RendererImplemented.h
-    EffekseerRendererLLGI.RenderState.h
-    EffekseerRendererLLGI.Shader.h
-    GraphicsDevice.h
+    EffekseerRendererLLGI/EffekseerRendererLLGI.Base.h
+    EffekseerRendererLLGI/EffekseerRendererLLGI.Base.Pre.h
+    EffekseerRendererLLGI/EffekseerRendererLLGI.MaterialLoader.h
+    EffekseerRendererLLGI/EffekseerRendererLLGI.ModelRenderer.h
+    EffekseerRendererLLGI/EffekseerRendererLLGI.Renderer.h
+    EffekseerRendererLLGI/EffekseerRendererLLGI.RendererImplemented.h
+    EffekseerRendererLLGI/EffekseerRendererLLGI.RenderState.h
+    EffekseerRendererLLGI/EffekseerRendererLLGI.Shader.h
+    EffekseerRendererLLGI/GraphicsDevice.h
 )
 
 set(LocalSources
-    Common.cpp
-    EffekseerRendererLLGI.MaterialLoader.cpp
-    EffekseerRendererLLGI.ModelRenderer.cpp
-    EffekseerRendererLLGI.Renderer.cpp
-    EffekseerRendererLLGI.RenderState.cpp
-    EffekseerRendererLLGI.Shader.cpp
-    GraphicsDevice.cpp
+    EffekseerRendererLLGI/Common.cpp
+    EffekseerRendererLLGI/EffekseerRendererLLGI.MaterialLoader.cpp
+    EffekseerRendererLLGI/EffekseerRendererLLGI.ModelRenderer.cpp
+    EffekseerRendererLLGI/EffekseerRendererLLGI.Renderer.cpp
+    EffekseerRendererLLGI/EffekseerRendererLLGI.RenderState.cpp
+    EffekseerRendererLLGI/EffekseerRendererLLGI.Shader.cpp
+    EffekseerRendererLLGI/GraphicsDevice.cpp
 )
 
 FilterFolder("${PublicHeaders}")
@@ -32,12 +32,12 @@ FilterFolder("${LocalHeaders}")
 FilterFolder("${LocalSources}")
 
 add_library(${PROJECT_NAME} STATIC ${PublicHeaders} ${LocalHeaders} ${LocalSources})
-target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/../Effekseer ${CMAKE_CURRENT_LIST_DIR}/../3rdparty/LLGI/src ${EFK_THIRDPARTY_INCLUDES})
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/../3rdparty/LLGI/src ${EFK_THIRDPARTY_INCLUDES})
 target_link_libraries(${PROJECT_NAME} PUBLIC Effekseer EffekseerRendererCommon LLGI)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-    $<INSTALL_INTERFACE:include/EffekseerRendererLLGI>
+    $<INSTALL_INTERFACE:include>
 )
 
 WarnError(${PROJECT_NAME})
@@ -48,13 +48,12 @@ set_target_properties(
 
 foreach (file ${PublicHeaders})
     get_filename_component(dir ${file} DIRECTORY)
-    install(FILES ${file} DESTINATION include/EffekseerRendererLLGI/${dir})
+    install(FILES ${file} DESTINATION include/${dir})
 endforeach()
 
 install(
     TARGETS ${PROJECT_NAME}
     EXPORT ${PROJECT_NAME}-export
-    INCLUDES DESTINATION include/EffekseerRendererLLGI
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib)
 

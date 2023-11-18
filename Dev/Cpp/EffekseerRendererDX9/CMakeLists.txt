@@ -19,20 +19,20 @@ set(LOCAL_SOURCES
 
 set(PublicHeaders
     EffekseerRendererDX9.h
-    EffekseerRenderer/EffekseerRendererDX9.Base.Pre.h
-    EffekseerRenderer/EffekseerRendererDX9.Renderer.h)
+    EffekseerRendererDX9/EffekseerRendererDX9.Base.Pre.h
+    EffekseerRendererDX9/EffekseerRendererDX9.Renderer.h)
 
 #--------------------
 # Projects
 
 add_library(${PROJECT_NAME} STATIC ${LOCAL_SOURCES})
-target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/../Effekseer ${EFK_THIRDPARTY_INCLUDES})
+target_include_directories(${PROJECT_NAME} PRIVATE ${EFK_THIRDPARTY_INCLUDES})
 set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${PublicHeader}")
 target_link_libraries(${PROJECT_NAME} PUBLIC Effekseer EffekseerRendererCommon)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-    $<INSTALL_INTERFACE:include/EffekseerRendererDX9>)
+    $<INSTALL_INTERFACE:include>)
 
 if(CLANG_FORMAT_ENABLED)
     clang_format(${PROJECT_NAME})
@@ -47,7 +47,7 @@ endif()
 
 foreach (file ${PublicHeaders})
     get_filename_component(dir ${file} DIRECTORY)
-    install(FILES ${file} DESTINATION include/EffekseerRendererDX9/${dir})
+    install(FILES ${file} DESTINATION include/${dir})
 endforeach()
 
 install(

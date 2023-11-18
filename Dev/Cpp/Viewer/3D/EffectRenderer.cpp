@@ -8,12 +8,12 @@
 
 namespace WhiteParticle_Model_VS
 {
-#include <EffekseerRendererDX11/EffekseerRenderer/ShaderHeader/model_unlit_vs.h>
+#include <EffekseerRendererDX11/ShaderHeader/model_unlit_vs.h>
 }
 
 namespace WhiteParticle_Sprite_VS
 {
-#include <EffekseerRendererDX11/EffekseerRenderer/ShaderHeader/sprite_unlit_vs.h>
+#include <EffekseerRendererDX11/ShaderHeader/sprite_unlit_vs.h>
 }
 
 namespace WhiteParticle_PS
@@ -33,7 +33,7 @@ namespace PostEffect_Overdraw_PS
 
 #endif
 
-#include "../EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.ModelRenderer.h"
+#include <EffekseerRendererGL/EffekseerRendererGL.ModelRenderer.h>
 
 #include "../Shaders/GLSL_GL_Header/line_ps.h"
 #include "../Shaders/GLSL_GL_Header/line_vs.h"
@@ -46,8 +46,8 @@ namespace PostEffect_Overdraw_PS
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/spdlog.h>
 
-#include "../EffekseerRendererGL/EffekseerRenderer/ShaderHeader/model_unlit_vs.h"
-#include "../EffekseerRendererGL/EffekseerRenderer/ShaderHeader/sprite_unlit_vs.h"
+#include <EffekseerRendererGL/ShaderHeader/model_unlit_vs.h>
+#include <EffekseerRendererGL/ShaderHeader/sprite_unlit_vs.h>
 
 #include "../GUI/RenderImage.h"
 
@@ -500,7 +500,8 @@ void EffectRenderer::ResizeScreen(const Vector2I& screenSize)
 
 	hdrRenderTextureMSAA = nullptr;
 
-	const auto createRenderTexture = [&](Effekseer::Tool::Vector2I size, Effekseer::Backend::TextureFormatType format, int samples) {
+	const auto createRenderTexture = [&](Effekseer::Tool::Vector2I size, Effekseer::Backend::TextureFormatType format, int samples)
+	{
 		Effekseer::Backend::TextureParameter param;
 		param.Format = format;
 		param.Size[0] = size.X;

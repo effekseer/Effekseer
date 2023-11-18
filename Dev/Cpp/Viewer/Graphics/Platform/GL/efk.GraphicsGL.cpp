@@ -5,8 +5,8 @@
 #endif
 
 #include "efk.GraphicsGL.h"
-#include <EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.GLExtension.h>
-#include <EffekseerRendererGL/EffekseerRenderer/GraphicsDevice.h>
+#include <EffekseerRendererGL/EffekseerRendererGL.GLExtension.h>
+#include <EffekseerRendererGL/GraphicsDevice.h>
 
 namespace efk
 {

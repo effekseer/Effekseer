@@ -1,4 +1,4 @@
-#include "../../EffekseerRendererCommon/EffekseerRenderer.CommonUtils.h"
+#include <EffekseerRendererCommon/EffekseerRenderer.CommonUtils.h>
 
 #include "../TestHelper.h"
 
@@ -41,7 +41,8 @@ void VertexTest(bool isValidValue)
 
 	auto alphaThreshold = EffekseerRenderer::GetVertexAlphaThreshold(v);
 
-	auto getExpect = [&](float value) -> float {
+	auto getExpect = [&](float value) -> float
+	{
 		if (isValidValue)
 		{
 			return value;
@@ -62,10 +63,11 @@ void VertexTest()
 {
 	VertexTest<EffekseerRenderer::AdvancedSimpleVertex>(true);
 	VertexTest<EffekseerRenderer::AdvancedLightingVertex>(true);
-	//VertexTest<EffekseerRenderer::AdvancedVertexDistortion>(true);
+	// VertexTest<EffekseerRenderer::AdvancedVertexDistortion>(true);
 	VertexTest<EffekseerRenderer::SimpleVertex>(false);
 	VertexTest<EffekseerRenderer::LightingVertex>(false);
-	//VertexTest<EffekseerRenderer::VertexDistortion>(false);
+	// VertexTest<EffekseerRenderer::VertexDistortion>(false);
 	VertexTest<EffekseerRenderer::DynamicVertex>(false);
 }
-TestRegister Runtime_VertexTest("Runtime.Vertex", []() -> void { VertexTest(); });
+TestRegister Runtime_VertexTest("Runtime.Vertex", []() -> void
+								{ VertexTest(); });
