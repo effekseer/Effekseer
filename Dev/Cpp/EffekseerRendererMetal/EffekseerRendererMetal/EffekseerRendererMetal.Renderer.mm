@@ -1,7 +1,7 @@
 #include "EffekseerRendererMetal.Renderer.h"
-#include "../../EffekseerRendererCommon/EffekseerRenderer.CommonUtils.h"
-#include "../../EffekseerRendererLLGI/EffekseerRendererLLGI.Shader.h"
-#include "../../EffekseerRendererLLGI/EffekseerRendererLLGI.MaterialLoader.h"
+#include <EffekseerRendererCommon/EffekseerRenderer.CommonUtils.h>
+#include <EffekseerRendererLLGI/EffekseerRendererLLGI.Shader.h>
+#include <EffekseerRendererLLGI/EffekseerRendererLLGI.MaterialLoader.h>
 #include "../../3rdParty/LLGI/src/Metal/LLGI.CommandListMetal.h"
 #include "../../3rdParty/LLGI/src/Metal/LLGI.GraphicsMetal.h"
 #include "../../3rdParty/LLGI/src/Metal/LLGI.RenderPassMetal.h"
