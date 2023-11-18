@@ -4,48 +4,48 @@ cmake_minimum_required(VERSION 3.1)
 # Setup source codes
 
 set(PublicHeaders
-    EffekseerRenderer.Renderer.h
-    EffekseerRenderer.RenderStateBase.h
-    EffekseerRenderer.ModelRendererBase.h
-    EffekseerRenderer.RibbonRendererBase.h
-    EffekseerRenderer.RingRendererBase.h
-    EffekseerRenderer.SpriteRendererBase.h
-    EffekseerRenderer.StandardRenderer.h
-    EffekseerRenderer.TrackRendererBase.h
-    EffekseerRenderer.CommonUtils.h
-    EffekseerRenderer.ShaderBase.h
-    EffekseerRenderer.Renderer_Impl.h
-    GraphicsDeviceCPU.h
-    ModelLoader.h
-    TextureLoader.h
-    VertexBuffer.h
+    EffekseerRendererCommon/EffekseerRenderer.Renderer.h
+    EffekseerRendererCommon/EffekseerRenderer.RenderStateBase.h
+    EffekseerRendererCommon/EffekseerRenderer.ModelRendererBase.h
+    EffekseerRendererCommon/EffekseerRenderer.RibbonRendererBase.h
+    EffekseerRendererCommon/EffekseerRenderer.RingRendererBase.h
+    EffekseerRendererCommon/EffekseerRenderer.SpriteRendererBase.h
+    EffekseerRendererCommon/EffekseerRenderer.StandardRenderer.h
+    EffekseerRendererCommon/EffekseerRenderer.TrackRendererBase.h
+    EffekseerRendererCommon/EffekseerRenderer.CommonUtils.h
+    EffekseerRendererCommon/EffekseerRenderer.ShaderBase.h
+    EffekseerRendererCommon/EffekseerRenderer.Renderer_Impl.h
+    EffekseerRendererCommon/GraphicsDeviceCPU.h
+    EffekseerRendererCommon/ModelLoader.h
+    EffekseerRendererCommon/TextureLoader.h
+    EffekseerRendererCommon/VertexBuffer.h
 )
 
 set(LocalHeaders
-    EffekseerRendererFlags.h
-    EffekseerRenderer.CommonUtils.h
-    EffekseerRenderer.DDSTextureLoader.h
-    EffekseerRenderer.PngTextureLoader.h
-    EffekseerRenderer.TGATextureLoader.h
+    EffekseerRendererCommon/EffekseerRendererFlags.h
+    EffekseerRendererCommon/EffekseerRenderer.CommonUtils.h
+    EffekseerRendererCommon/EffekseerRenderer.DDSTextureLoader.h
+    EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h
+    EffekseerRendererCommon/EffekseerRenderer.TGATextureLoader.h
 )
 
 set(LocalSources
-    EffekseerRenderer.CommonUtils.cpp
-    EffekseerRenderer.DDSTextureLoader.cpp
-    EffekseerRenderer.ModelRendererBase.cpp
-    EffekseerRenderer.PngTextureLoader.cpp
-    EffekseerRenderer.Renderer.cpp
-    EffekseerRenderer.Renderer_Impl.cpp
-    EffekseerRenderer.RenderStateBase.cpp
-    EffekseerRenderer.RibbonRendererBase.cpp
-    EffekseerRenderer.RingRendererBase.cpp
-    EffekseerRenderer.SpriteRendererBase.cpp
-    EffekseerRenderer.TGATextureLoader.cpp
-    EffekseerRenderer.TrackRendererBase.cpp
-    GraphicsDeviceCPU.cpp
-    ModelLoader.cpp
-    TextureLoader.cpp
-    VertexBuffer.cpp
+    EffekseerRendererCommon/EffekseerRenderer.CommonUtils.cpp
+    EffekseerRendererCommon/EffekseerRenderer.DDSTextureLoader.cpp
+    EffekseerRendererCommon/EffekseerRenderer.ModelRendererBase.cpp
+    EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.cpp
+    EffekseerRendererCommon/EffekseerRenderer.Renderer.cpp
+    EffekseerRendererCommon/EffekseerRenderer.Renderer_Impl.cpp
+    EffekseerRendererCommon/EffekseerRenderer.RenderStateBase.cpp
+    EffekseerRendererCommon/EffekseerRenderer.RibbonRendererBase.cpp
+    EffekseerRendererCommon/EffekseerRenderer.RingRendererBase.cpp
+    EffekseerRendererCommon/EffekseerRenderer.SpriteRendererBase.cpp
+    EffekseerRendererCommon/EffekseerRenderer.TGATextureLoader.cpp
+    EffekseerRendererCommon/EffekseerRenderer.TrackRendererBase.cpp
+    EffekseerRendererCommon/GraphicsDeviceCPU.cpp
+    EffekseerRendererCommon/ModelLoader.cpp
+    EffekseerRendererCommon/TextureLoader.cpp
+    EffekseerRendererCommon/VertexBuffer.cpp
 )
 
 FilterFolder("${PublicHeaders}")
@@ -57,8 +57,8 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${EFK_THIRDPARTY_INCLUDES})
 target_link_libraries(${PROJECT_NAME} PUBLIC Effekseer)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/>
-    $<INSTALL_INTERFACE:include/EffekseerRendererCommon>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<INSTALL_INTERFACE:include>
 )
 
 if(USE_LIBPNG_LOADER)
@@ -82,7 +82,7 @@ set_target_properties(
 
 foreach (file ${PublicHeaders})
     get_filename_component(dir ${file} DIRECTORY)
-    install(FILES ${file} DESTINATION include/EffekseerRendererCommon/${dir})
+    install(FILES ${file} DESTINATION include/${dir})
 endforeach()
 
 install(

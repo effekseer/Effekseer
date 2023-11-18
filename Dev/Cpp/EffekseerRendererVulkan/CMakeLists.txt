@@ -19,21 +19,21 @@ set(LOCAL_SOURCES
 
 set(PublicHeaders
     EffekseerRendererVulkan.h
-    EffekseerRenderer/EffekseerRendererVulkan.Base.Pre.h
-    EffekseerRenderer/EffekseerRendererVulkan.Renderer.h)
+    EffekseerRendererVulkan/EffekseerRendererVulkan.Base.Pre.h
+    EffekseerRendererVulkan/EffekseerRendererVulkan.Renderer.h)
 
 #--------------------
 # Projects
 
 add_library(${PROJECT_NAME} STATIC ${LOCAL_SOURCES})
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/../Effekseer ${CMAKE_CURRENT_LIST_DIR}/../3rdparty/LLGI/src ${EFK_THIRDPARTY_INCLUDES})
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/../3rdparty/LLGI/src ${EFK_THIRDPARTY_INCLUDES})
 target_include_directories(${PROJECT_NAME} PRIVATE ${Vulkan_INCLUDE_DIRS})
 set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${PublicHeaders}")
 target_link_libraries(${PROJECT_NAME} PUBLIC Effekseer EffekseerRendererCommon EffekseerRendererLLGI LLGI)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-    $<INSTALL_INTERFACE:include/EffekseerRendererVulkan>)
+    $<INSTALL_INTERFACE:include>)
 
 if(CLANG_FORMAT_ENABLED)
     clang_format(${PROJECT_NAME})
@@ -46,13 +46,12 @@ endif()
 
 foreach (file ${PublicHeaders})
     get_filename_component(dir ${file} DIRECTORY)
-    install(FILES ${file} DESTINATION include/EffekseerRendererVulkan/${dir})
+    install(FILES ${file} DESTINATION include/${dir})
 endforeach()
 
 install(
     TARGETS ${PROJECT_NAME}
     EXPORT ${PROJECT_NAME}-export
-    INCLUDES DESTINATION include/EffekseerRendererVulkan
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib)
 

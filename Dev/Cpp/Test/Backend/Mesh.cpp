@@ -4,9 +4,9 @@
 #include <RenderingEnvironment/RenderingEnvironmentGL.h>
 
 #ifdef _WIN32
-#include "../../EffekseerRendererDX11/EffekseerRenderer/GraphicsDevice.h"
-#include <RenderingEnvironment/RenderingEnvironmentDX11.h>
 #include <EffekseerRendererDX11.h>
+#include <EffekseerRendererDX11/GraphicsDevice.h>
+#include <RenderingEnvironment/RenderingEnvironmentDX11.h>
 
 namespace DX11VS_Mesh
 {
@@ -21,8 +21,8 @@ namespace DX11PS_Mesh
 #endif
 
 #undef None
-#include "../../EffekseerRendererGL/EffekseerRenderer/GraphicsDevice.h"
 #include <EffekseerRendererGL.h>
+#include <EffekseerRendererGL/GraphicsDevice.h>
 #include <memory>
 
 #include "../Shaders/GLSL_GL_Header/mesh_ps.h"
@@ -132,10 +132,12 @@ void Backend_Mesh(std::shared_ptr<RenderingEnvironment> window)
 }
 
 #if !defined(__FROM_CI__)
-TestRegister Test_Backend_Mesh_GL("Backend.Mesh_GL", []() -> void { Backend_Mesh(std::make_shared<RenderingEnvironmentGL>(std::array<int, 2>({1280, 720}), "Backend.Mesh")); });
+TestRegister Test_Backend_Mesh_GL("Backend.Mesh_GL", []() -> void
+								  { Backend_Mesh(std::make_shared<RenderingEnvironmentGL>(std::array<int, 2>({1280, 720}), "Backend.Mesh")); });
 
 #ifdef _WIN32
-TestRegister Test_Backend_Mesh_DX11("Backend.Mesh_DX11", []() -> void { Backend_Mesh(std::make_shared<RenderingEnvironmentDX11>(std::array<int, 2>({1280, 720}), "Backend.Mesh")); });
+TestRegister Test_Backend_Mesh_DX11("Backend.Mesh_DX11", []() -> void
+									{ Backend_Mesh(std::make_shared<RenderingEnvironmentDX11>(std::array<int, 2>({1280, 720}), "Backend.Mesh")); });
 #endif
 
 #endif

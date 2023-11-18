@@ -1,8 +1,7 @@
 #include "RenderingEnvironmentDX11.h"
 #include <Effekseer.h>
 #include <EffekseerRendererDX11.h>
-
-#include "../../EffekseerRendererDX11/EffekseerRenderer/GraphicsDevice.h"
+#include <EffekseerRendererDX11/GraphicsDevice.h>
 
 RenderingEnvironmentDX11::RenderingEnvironmentDX11(std::array<int32_t, 2> windowSize, const char* title)
 	: RenderingEnvironment(false, windowSize, title)

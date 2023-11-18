@@ -20,9 +20,9 @@
 
 #include <ImGradientHDR.h>
 
-#include "../Effekseer/Effekseer/Material/Effekseer.MaterialFile.h"
 #include "../EffekseerMaterialCompiler/OpenGL/EffekseerMaterialCompilerGL.h"
-#include "../EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.MaterialLoader.h"
+#include <Effekseer/Material/Effekseer.MaterialFile.h>
+#include <EffekseerRendererGL/EffekseerRendererGL.MaterialLoader.h>
 
 #include <boxer.h>
 

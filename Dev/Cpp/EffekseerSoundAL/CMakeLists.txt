@@ -8,16 +8,16 @@ if(OpenAL_FOUND)
     project(EffekseerSoundAL CXX)
     
     set(effekseer_sound_h
-        EffekseerSound/EffekseerSoundAL.SoundImplemented.h
-        EffekseerSound/EffekseerSoundAL.SoundLoader.h
-        EffekseerSound/EffekseerSoundAL.SoundPlayer.h
-        EffekseerSound/EffekseerSoundAL.SoundVoice.h)
+        EffekseerSoundAL/EffekseerSoundAL.SoundImplemented.h
+        EffekseerSoundAL/EffekseerSoundAL.SoundLoader.h
+        EffekseerSoundAL/EffekseerSoundAL.SoundPlayer.h
+        EffekseerSoundAL/EffekseerSoundAL.SoundVoice.h)
     
     set(effekseer_sound_src
-        EffekseerSound/EffekseerSoundAL.Sound.cpp
-        EffekseerSound/EffekseerSoundAL.SoundLoader.cpp
-        EffekseerSound/EffekseerSoundAL.SoundPlayer.cpp
-        EffekseerSound/EffekseerSoundAL.SoundVoice.cpp)
+        EffekseerSoundAL/EffekseerSoundAL.Sound.cpp
+        EffekseerSoundAL/EffekseerSoundAL.SoundLoader.cpp
+        EffekseerSoundAL/EffekseerSoundAL.SoundPlayer.cpp
+        EffekseerSoundAL/EffekseerSoundAL.SoundVoice.cpp)
     
     set(PublicHeaders
         EffekseerSoundAL.h)
@@ -39,7 +39,7 @@ if(OpenAL_FOUND)
 
     target_include_directories(${PROJECT_NAME} PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-        $<INSTALL_INTERFACE:include/EffekseerSoundAL>)
+        $<INSTALL_INTERFACE:include>)
     
     if(CLANG_FORMAT_ENABLED)
         clang_format(${PROJECT_NAME})
@@ -49,7 +49,7 @@ if(OpenAL_FOUND)
     
     foreach (file ${PublicHeaders})
         get_filename_component(dir ${file} DIRECTORY)
-        install(FILES ${file} DESTINATION include/EffekseerSoundAL/${dir})
+        install(FILES ${file} DESTINATION include/${dir})
     endforeach()
     
     install(

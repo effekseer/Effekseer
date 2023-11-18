@@ -2,16 +2,16 @@ cmake_minimum_required(VERSION 3.15)
 project(EffekseerSoundXAudio2 CXX)
 
 set(effekseer_sound_h
-    EffekseerSound/EffekseerSoundXAudio2.SoundImplemented.h
-    EffekseerSound/EffekseerSoundXAudio2.SoundLoader.h
-    EffekseerSound/EffekseerSoundXAudio2.SoundPlayer.h
-    EffekseerSound/EffekseerSoundXAudio2.SoundVoice.h)
+    EffekseerSoundXAudio2/EffekseerSoundXAudio2.SoundImplemented.h
+    EffekseerSoundXAudio2/EffekseerSoundXAudio2.SoundLoader.h
+    EffekseerSoundXAudio2/EffekseerSoundXAudio2.SoundPlayer.h
+    EffekseerSoundXAudio2/EffekseerSoundXAudio2.SoundVoice.h)
 
 set(effekseer_sound_src
-    EffekseerSound/EffekseerSoundXAudio2.Sound.cpp
-    EffekseerSound/EffekseerSoundXAudio2.SoundLoader.cpp
-    EffekseerSound/EffekseerSoundXAudio2.SoundPlayer.cpp
-    EffekseerSound/EffekseerSoundXAudio2.SoundVoice.cpp)
+    EffekseerSoundXAudio2/EffekseerSoundXAudio2.Sound.cpp
+    EffekseerSoundXAudio2/EffekseerSoundXAudio2.SoundLoader.cpp
+    EffekseerSoundXAudio2/EffekseerSoundXAudio2.SoundPlayer.cpp
+    EffekseerSoundXAudio2/EffekseerSoundXAudio2.SoundVoice.cpp)
 
 set(PublicHeaders
     EffekseerSoundXAudio2.h)
@@ -33,7 +33,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
 
 target_include_directories(${PROJECT_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-    $<INSTALL_INTERFACE:include/EffekseerSoundXAudio2>)
+    $<INSTALL_INTERFACE:include>)
 
 if(CLANG_FORMAT_ENABLED)
     clang_format(${PROJECT_NAME})
@@ -43,7 +43,7 @@ WarnError(${PROJECT_NAME})
 
 foreach (file ${PublicHeaders})
     get_filename_component(dir ${file} DIRECTORY)
-    install(FILES ${file} DESTINATION include/EffekseerSoundXAudio2/${dir})
+    install(FILES ${file} DESTINATION include/${dir})
 endforeach()
 
 install(

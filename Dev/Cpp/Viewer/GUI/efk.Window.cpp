@@ -1,7 +1,7 @@
 #include "efk.Window.h"
-#include "../Effekseer/Effekseer/Effekseer.DefaultFile.h"
-#include "../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
 #include <Common/StringHelper.h>
+#include <Effekseer/Effekseer.DefaultFile.h>
+#include <EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h>
 #include <imgui.h>
 #include <imgui_internal.h>
 #include <memory>
@@ -126,7 +126,8 @@ bool Window::Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, Effek
 
 	maximized = glfwGetWindowAttrib(window, GLFW_MAXIMIZED) > 0;
 
-	mainWindow_->DpiChanged = [this](float scale) -> void { GLFW_ContentScaleCallback(window, scale, 1.0f); };
+	mainWindow_->DpiChanged = [this](float scale) -> void
+	{ GLFW_ContentScaleCallback(window, scale, 1.0f); };
 
 #ifdef _WIN32
 	if (mainWindow->IsFrameless())
@@ -227,7 +228,7 @@ void Window::Present()
 
 void Window::Close()
 {
-	//lfwSetWindowShouldClose(window, 1);
+	// lfwSetWindowShouldClose(window, 1);
 	GLFW_CloseCallback(window);
 }
 

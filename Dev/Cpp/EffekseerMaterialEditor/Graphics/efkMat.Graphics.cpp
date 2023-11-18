@@ -11,17 +11,17 @@
 #include "efkMat.Graphics.h"
 
 #include <Common/StringHelper.h>
+#include <EffekseerRendererCommon/TextureLoader.h>
 #include <IO/IO.h>
-#include <TextureLoader.h>
 #include <algorithm>
 #include <fstream>
 #include <iostream>
 
 #include "../EffekseerMaterialCompiler/OpenGL/EffekseerMaterialCompilerGL.h"
-#include "../EffekseerRendererCommon/EffekseerRenderer.CommonUtils.h"
-#include "../EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.MaterialLoader.h"
-#include "../EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.Shader.h"
-#include "../EffekseerRendererGL/EffekseerRendererGL.h"
+#include <EffekseerRendererCommon/EffekseerRenderer.CommonUtils.h>
+#include <EffekseerRendererGL.h>
+#include <EffekseerRendererGL/EffekseerRendererGL.MaterialLoader.h>
+#include <EffekseerRendererGL/EffekseerRendererGL.Shader.h>
 
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "../ThirdParty/tiny_obj_loader.h"
