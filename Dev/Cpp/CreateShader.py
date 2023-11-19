@@ -3,17 +3,17 @@ import subprocess
 import sys
 
 transpiler_path = 'ShaderTranspiler'
-root_path = 'EffekseerRendererDX11/EffekseerRenderer/Shader/'
+root_path = 'EffekseerRendererDX11/EffekseerRendererDX11/Shader/'
 
-dx9_root_path = 'EffekseerRendererDX9/EffekseerRenderer/Shader/'
-dx12_root_path = 'EffekseerRendererDX12/EffekseerRenderer/Shader/'
-metal_root_path = 'EffekseerRendererMetal/EffekseerRenderer/Shader/'
-vulkan_root_path = 'EffekseerRendererVulkan/EffekseerRenderer/Shader/'
+dx9_root_path = 'EffekseerRendererDX9/EffekseerRendererDX9/Shader/'
+dx12_root_path = 'EffekseerRendererDX12/EffekseerRendererDX12/Shader/'
+metal_root_path = 'EffekseerRendererMetal/EffekseerRendererMetal/Shader/'
+vulkan_root_path = 'EffekseerRendererVulkan/EffekseerRendererVulkan/Shader/'
 
-gl_2_root_path = 'EffekseerRendererGL/EffekseerRenderer/Shader_2/'
-gl_3_root_path = 'EffekseerRendererGL/EffekseerRenderer/Shader_3/'
-gl_es2_root_path = 'EffekseerRendererGL/EffekseerRenderer/Shader_ES2/'
-gl_es3_root_path = 'EffekseerRendererGL/EffekseerRenderer/Shader_ES3/'
+gl_2_root_path = 'EffekseerRendererGL/EffekseerRendererGL/Shader_2/'
+gl_3_root_path = 'EffekseerRendererGL/EffekseerRendererGL/Shader_3/'
+gl_es2_root_path = 'EffekseerRendererGL/EffekseerRendererGL/Shader_ES2/'
+gl_es3_root_path = 'EffekseerRendererGL/EffekseerRendererGL/Shader_ES3/'
 
 verts = [
         root_path + 'ad_sprite_unlit_vs.fx', root_path + 'ad_sprite_lit_vs.fx', root_path + 'ad_sprite_distortion_vs.fx', root_path + 'ad_model_unlit_vs.fx', root_path + 'ad_model_lit_vs.fx', root_path + 'ad_model_distortion_vs.fx',
