@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <string>
 #include <vector>
+#include <iterator>
 
 #include "Effekseer.CustomAllocator.h"
 
@@ -107,7 +108,7 @@ public:
 	FixedSizeString(const T* ptr)
 	{
 		size_t original_length = Traits::length(ptr);
-		size_ = std::min(data_.size() - 1, original_length);
+		size_ = (std::min)(data_.size() - 1, original_length);
 		memcpy(data_.data(), ptr, size_ * sizeof(T));
 		data_[size_] = 0;
 	}
@@ -158,7 +159,7 @@ public:
 
 	FixedSizeString<T, N>& operator+=(const FixedSizeString<T, N>& c)
 	{
-		const auto new_size = std::min(this->size_ + c.size_, static_cast<size_t>(N));
+		const auto new_size = (std::min)(this->size_ + c.size_, static_cast<size_t>(N));
 		const auto copied_size = new_size - this->size_;
 
 		memcpy(data_.data() + size_, c.data_.data(), copied_size * sizeof(T));
