@@ -139,7 +139,7 @@ Model::Emitter Model::GetEmitter(IRandObject* g, int32_t time, CoordinateSystem 
 		return GetEmitterFromVertex(g, time, coordinate, magnification);
 	}
 
-	int32_t faceInd = (int32_t)((GetFaceCount(time) - 1) * (g->GetRand()));
+	int32_t faceInd = static_cast<int32_t>(GetFaceCount(time) * g->GetRand());
 	faceInd = Clamp(faceInd, GetFaceCount(time) - 1, 0);
 	const Face& face = GetFaces(time)[faceInd];
 	const Vertex& v0 = GetVertexes(time)[face.Indexes[0]];
@@ -185,7 +185,7 @@ Model::Emitter Model::GetEmitterFromVertex(IRandObject* g, int32_t time, Coordin
 		return Model::Emitter{};
 	}
 
-	int32_t vertexInd = (int32_t)((GetVertexCount(time) - 1) * (g->GetRand()));
+	int32_t vertexInd = static_cast<int32_t>(GetVertexCount(time) * g->GetRand());
 	vertexInd = Clamp(vertexInd, GetVertexCount(time) - 1, 0);
 	const Vertex& v = GetVertexes(time)[vertexInd];
 
@@ -246,7 +246,7 @@ Model::Emitter Model::GetEmitterFromFace(IRandObject* g, int32_t time, Coordinat
 		return Model::Emitter{};
 	}
 
-	int32_t faceInd = (int32_t)((GetFaceCount(time) - 1) * (g->GetRand()));
+	int32_t faceInd = static_cast<int32_t>(GetFaceCount(time) * g->GetRand());
 	faceInd = Clamp(faceInd, GetFaceCount(time) - 1, 0);
 	const Face& face = GetFaces(time)[faceInd];
 	const Vertex& v0 = GetVertexes(time)[face.Indexes[0]];
