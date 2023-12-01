@@ -1,6 +1,9 @@
 #pragma once
 
+#include "../Effekseer.InstanceGlobal.h"
 #include "../Effekseer.InternalStruct.h"
+#include "../SIMD/Vec3f.h"
+#include "../Utils/BinaryVersion.h"
 
 namespace Effekseer
 {
@@ -15,7 +18,6 @@ enum class KillType : int32_t
 
 struct KillRulesParameter
 {
-
 	KillType Type = KillType::None;
 	int IsScaleAndRotationApplied = 1;
 
@@ -42,92 +44,13 @@ struct KillRulesParameter
 		} Sphere;
 	};
 
-	void Load(unsigned char*& pos, int version)
-	{
-		if (version >= Version17Alpha5)
-		{
-			memcpy(&Type, pos, sizeof(int32_t));
-			pos += sizeof(int32_t);
+	void Load(unsigned char*& pos, int version);
 
-			memcpy(&IsScaleAndRotationApplied, pos, sizeof(int));
-			pos += sizeof(int);
+	void Magnify(float magnification);
 
-			if (Type == KillType::Box)
-			{
-				memcpy(&Box.Center, pos, sizeof(Vector3D));
-				pos += sizeof(Vector3D);
+	void MakeCoordinateSystemLH();
 
-				memcpy(&Box.Size, pos, sizeof(Vector3D));
-				pos += sizeof(Vector3D);
-
-				memcpy(&Box.IsKillInside, pos, sizeof(int));
-				pos += sizeof(int);
-			}
-			else if (Type == KillType::Plane)
-			{
-				memcpy(&Plane.PlaneAxis, pos, sizeof(Vector3D));
-				pos += sizeof(Vector3D);
-
-				memcpy(&Plane.PlaneOffset, pos, sizeof(float));
-				pos += sizeof(float);
-
-				const auto length = Vector3D::Length(Vector3D{Plane.PlaneAxis.x, Plane.PlaneAxis.y, Plane.PlaneAxis.z});
-				Plane.PlaneAxis.x /= length;
-				Plane.PlaneAxis.y /= length;
-				Plane.PlaneAxis.z /= length;
-			}
-			else if (Type == KillType::Sphere)
-			{
-				memcpy(&Sphere.Center, pos, sizeof(Vector3D));
-				pos += sizeof(Vector3D);
-
-				memcpy(&Sphere.Radius, pos, sizeof(float));
-				pos += sizeof(float);
-
-				memcpy(&Sphere.IsKillInside, pos, sizeof(int));
-				pos += sizeof(int);
-			}
-		}
-		else
-		{
-			Type = KillType::None;
-			IsScaleAndRotationApplied = 1;
-		}
-	}
-
-	void Magnify(float magnification)
-	{
-		if (Type == KillType::Box)
-		{
-			Box.Center *= magnification;
-			Box.Size *= magnification;
-		}
-		else if (Type == KillType::Plane)
-		{
-			Plane.PlaneOffset *= magnification;
-		}
-		else if (Type == KillType::Sphere)
-		{
-			Sphere.Center *= magnification;
-			Sphere.Radius *= magnification;
-		}
-	}
-
-	void MakeCoordinateSystemLH()
-	{
-		if (Type == KillType::Box)
-		{
-			Box.Center.z *= -1.0F;
-		}
-		else if (Type == KillType::Plane)
-		{
-			Plane.PlaneAxis.z *= -1.0F;
-		}
-		else if (Type == KillType::Sphere)
-		{
-			Sphere.Center.z *= -1.0F;
-		}
-	}
+	static bool CheckRemoved(const KillRulesParameter& param, const InstanceGlobal& instance_global, const SIMD::Vec3f& prev_global_position);
 };
 
 } // namespace Effekseer
