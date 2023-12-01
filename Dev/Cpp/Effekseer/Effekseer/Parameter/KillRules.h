@@ -4,6 +4,8 @@
 #include "../Effekseer.InternalStruct.h"
 #include "../SIMD/Vec3f.h"
 #include "../Utils/BinaryVersion.h"
+#include <optional>
+#include <variant>
 
 namespace Effekseer
 {
@@ -16,10 +18,24 @@ enum class KillType : int32_t
 	Sphere = 3
 };
 
+struct SphereShape
+{
+	Vector3D Center;
+	float Radius;
+};
+
+struct BoxShape
+{
+	Vector3D Center;
+	Vector3D Size;
+};
+
 struct KillRulesParameter
 {
 	KillType Type = KillType::None;
 	int IsScaleAndRotationApplied = 1;
+
+	std::optional<std::variant<SphereShape, BoxShape>> shape_;
 
 	union
 	{
