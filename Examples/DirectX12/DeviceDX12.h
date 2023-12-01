@@ -3,7 +3,6 @@
 #include <DX12/LLGI.CommandListDX12.h>
 #include <DX12/LLGI.GraphicsDX12.h>
 #include <EffekseerRendererDX12.h>
-#include <EffekseerSoundXAudio2.h>
 #include <LLGI.Compiler.h>
 #include <LLGI.Graphics.h>
 #include <LLGI.Platform.h>
@@ -31,7 +30,6 @@ private:
 	IXAudio2MasteringVoice* xa2MasterVoice = nullptr;
 
 	::EffekseerRenderer::RendererRef efkRenderer;
-	::EffekseerSound::SoundRef efkSound;
 	::Effekseer::RefPtr<EffekseerRenderer::SingleFrameMemoryPool> efkMemoryPool;
 	::Effekseer::RefPtr<EffekseerRenderer::CommandList> efkCommandList;
 

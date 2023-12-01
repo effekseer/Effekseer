@@ -182,7 +182,8 @@ void DeviceDX11::SetupEffekseerModules(::Effekseer::ManagerRef efkManager)
 {
 	// Create a  graphics device
 	// 描画デバイスの作成
-	auto graphicsDevice = ::EffekseerRendererDX11::CreateGraphicsDevice(GetID3D11Device(), GetID3D11DeviceContext());
+	::Effekseer::Backend::GraphicsDeviceRef graphicsDevice;
+	graphicsDevice = ::EffekseerRendererDX11::CreateGraphicsDevice(GetID3D11Device(), GetID3D11DeviceContext());
 
 	// Create a renderer of effects
 	// エフェクトのレンダラーの作成
@@ -204,18 +205,4 @@ void DeviceDX11::SetupEffekseerModules(::Effekseer::ManagerRef efkManager)
 	efkManager->SetModelLoader(efkRenderer->CreateModelLoader());
 	efkManager->SetMaterialLoader(efkRenderer->CreateMaterialLoader());
 	efkManager->SetCurveLoader(Effekseer::MakeRefPtr<Effekseer::CurveLoader>());
-
-	// Specify sound modules
-	// サウンドモジュールの設定
-	efkSound = ::EffekseerSound::Sound::Create(GetIXAudio2(), 16, 16);
-
-	// Specify a metho to play sound from an instance of efkSound
-	// 音再生用インスタンスから再生機能を指定
-	efkManager->SetSoundPlayer(efkSound->CreateSoundPlayer());
-
-	// Specify a sound data loader
-	// It can be extended by yourself. It is loaded from a file on now.
-	// サウンドデータの読込機能を設定する。
-	// ユーザーが独自で拡張できる。現在はファイルから読み込んでいる。
-	efkManager->SetSoundLoader(efkSound->CreateSoundLoader());
 }

@@ -3,7 +3,6 @@
 #include "../Utils/Input.h"
 #include "../Utils/Window.h"
 #include <EffekseerRendererDX11.h>
-#include <EffekseerSoundXAudio2.h>
 #include <XAudio2.h>
 #include <d3d11.h>
 #include <wrl/client.h>
@@ -32,7 +31,6 @@ private:
 	IXAudio2MasteringVoice* xa2MasterVoice = nullptr;
 
 	::EffekseerRendererDX11::RendererRef efkRenderer;
-	::EffekseerSound::SoundRef efkSound;
 
 public:
 	DeviceDX11() = default;
