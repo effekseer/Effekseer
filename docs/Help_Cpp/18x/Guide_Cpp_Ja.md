@@ -943,7 +943,7 @@ m_efkManager->SetCoordinateSystem(Effekseer::CoordinateSystem::LH);
 > 左手/右手座標系の違いは、**XYZ軸の正(プラス)の向きの組み合わせ**です。  
 > 下図のように、左右の手の親指/人差し指/中指の方向が、XYZ軸の正(プラス)の向きに対応しています。  
 > これにより、導入先のアプリケーションの座標系を調べることができます。  
-> ![CoordinateSystem](images/HelpCpp_CoordinateSystem.png)
+> ![CoordinateSystem](images/HelpCpp_CoordinateSystem_Ja.png)
 
 ### 7.3. レイヤーパラメータの設定
 
