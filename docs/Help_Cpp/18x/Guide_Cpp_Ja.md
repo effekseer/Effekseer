@@ -8,7 +8,6 @@ Effekseer For C++を、C++言語とDirectX 11/12を使用したWindowsゲーム/
 - Windows 10/11
 - Microsoft Visual Studio 2019/2022
 - DirectX 11/12
-- XAudio2(無くても良い)
 - x86/x64
 - Effekseer for C++ 1.8
 
@@ -40,17 +39,16 @@ Effekseer For C++を、C++言語とDirectX 11/12を使用したWindowsゲーム/
   - [6.3. エフェクトのマネージャーの作成](#63-エフェクトのマネージャーの作成)
   - [6.4. 描画モジュールの作成](#64-描画モジュールの作成)
   - [6.5. 作成した描画モジュールの設定](#65-作成した描画モジュールの設定)
-  - [6.6. サウンドモジュールの作成(XAudio2使用時のみ)](#66-サウンドモジュールの作成xaudio2使用時のみ)
-  - [6.7. 座標系の設定](#67-座標系の設定)
-  - [6.8. 投影行列とカメラ行列の作成](#68-投影行列とカメラ行列の作成)
-  - [6.9. エフェクトの読み込み](#69-エフェクトの読み込み)
-  - [6.10. エフェクトの再生と制御](#610-エフェクトの再生と制御)
-  - [6.11. \[DirectX12のみ、毎フレーム実行\]フレーム開始時の処理](#611-directx12のみ毎フレーム実行フレーム開始時の処理)
-  - [6.12. \[毎フレーム実行\]Managerの更新処理](#612-毎フレーム実行managerの更新処理)
-  - [6.13. \[毎フレーム実行\]Rendererの更新と描画処理](#613-毎フレーム実行rendererの更新と描画処理)
-  - [6.14. \[DirectX12のみ、毎フレーム実行\]コマンドリスト終了処理](#614-directx12のみ毎フレーム実行コマンドリスト終了処理)
-  - [6.15. \[DirectX12のみ\]解放処理](#615-directx12のみ解放処理)
-  - [6.16. 動作を確認する](#616-動作を確認する)
+  - [6.6. 座標系の設定](#66-座標系の設定)
+  - [6.7. 投影行列とカメラ行列の作成](#67-投影行列とカメラ行列の作成)
+  - [6.8. エフェクトの読み込み](#68-エフェクトの読み込み)
+  - [6.9. エフェクトの再生と制御](#69-エフェクトの再生と制御)
+  - [6.10. \[DirectX12のみ、毎フレーム実行\]フレーム開始時の処理](#610-directx12のみ毎フレーム実行フレーム開始時の処理)
+  - [6.11. \[毎フレーム実行\]Managerの更新処理](#611-毎フレーム実行managerの更新処理)
+  - [6.12. \[毎フレーム実行\]Rendererの更新と描画処理](#612-毎フレーム実行rendererの更新と描画処理)
+  - [6.13. \[DirectX12のみ、毎フレーム実行\]コマンドリスト終了処理](#613-directx12のみ毎フレーム実行コマンドリスト終了処理)
+  - [6.14. \[DirectX12のみ\]解放処理](#614-directx12のみ解放処理)
+  - [6.15. 動作を確認する](#615-動作を確認する)
 - [7. カメラと座標系をアプリケーションと一致させる](#7-カメラと座標系をアプリケーションと一致させる)
   - [7.1. カメラを同期させる](#71-カメラを同期させる)
   - [7.2. 座標系をアプリケーションと一致させる](#72-座標系をアプリケーションと一致させる)
@@ -232,7 +230,6 @@ Enable runtime library DLL option?(y/n):
  │ ├ 📁EffekseerRendererDX12/
  │ ├ 📁EffekseerRendererLLGI/
  │ ├ 📁EffekseerSoundDSound/
- │ ├ 📁EffekseerSoundXAudio2/
  │ ├ 📁GLFW/
  │ └ 📁LLGI/
  └ 📁lib/
@@ -269,7 +266,6 @@ Enable runtime library DLL option?(y/n):
 **<必ずコピー>**
 - `[インストールフォルダ]/include/Effekseer`  
 - `[インストールフォルダ]/include/EffekseerRendererCommon`  
-- `[インストールフォルダ]/include/EffekseerSoundXAudio2`
 
 **<DirectX 11の場合は以下もコピー>**  
 - `[インストールフォルダ]/include/EffekseerRendererDX11`  
@@ -325,8 +321,6 @@ Enable runtime library DLL option?(y/n):
 　 　├ 📁Include/
 　 　│ ├ 📁Effekseer/
 　 　│ │ └ ...
-　 　│ ├ 📁EffekseerSoundXAudio2/
-　 　│ │ └ ...
 　 　│ ├ 📁EffekseerRendererCommon/
 　 　│ │ └ ...
 　 　│ └ 📁EffekseerRendererDX11/
@@ -334,8 +328,6 @@ Enable runtime library DLL option?(y/n):
 　 　└ 📁Lib/
 　 　　├ 📄Effekseer.lib
 　 　　├ 📄Effekseerd.lib
-　 　　├ 📄EffekseerSoundXAudio2.lib
-　 　　├ 📄EffekseerSoundXAudio2d.lib
 　 　　├ 📄EffekseerRendererCommon.lib
 　 　　├ 📄EffekseerRendererCommond.lib
 　 　　├ 📄EffekseerRendererDX11.lib
@@ -350,17 +342,13 @@ Enable runtime library DLL option?(y/n):
 　 　├ 📁Include/
 　 　│ ├ 📁Effekseer/
 　 　│ │ └ ...
-　 　│ ├ 📁EffekseerSoundXAudio2/
-　 　│ │ └ ...
 　 　│ ├ 📁EffekseerRendererCommon/
 　 　│ │ └ ...
-　 　│ └ 📁EffekseerRendererDX11/
+　 　│ └ 📁EffekseerRendererDX12/
 　 　│   └ ...
 　 　└ 📁Lib/
 　 　　├ 📄Effekseer.lib
 　 　　├ 📄Effekseerd.lib
-　 　　├ 📄EffekseerSoundXAudio2.lib
-　 　　├ 📄EffekseerSoundXAudio2d.lib
 　 　　├ 📄EffekseerRendererCommon.lib
 　 　　├ 📄EffekseerRendererCommond.lib
 　 　　├ 📄EffekseerRendererDX12.lib
@@ -396,7 +384,6 @@ Enable runtime library DLL option?(y/n):
 **<必ず記述>**  
 ```
 .\Libraries\Effekseer\Include\Effekseer
-.\Libraries\Effekseer\Include\EffekseerSoundXAudio2
 .\Libraries\Effekseer\Include\EffekseerRendererCommon
 ```
 **<DirectX 11の場合は以下も記述>**  
@@ -444,8 +431,8 @@ EffekseerのAPIをソースコード上から呼び出して、Effekseerの初�
 
 また、以下でサンプルソースの解説をしますので、併せてご参照ください。  
 
-> **Note**  
-> サンプル内の`device`(`DeviceDX11` `DeviceDX12`)は、サンプル用の、グラフィックスやオーディオのデバイスを管理するクラスです。  
+> [!NOTE]  
+> サンプル内の`device`(`DeviceDX11` `DeviceDX12`)は、サンプル用の、グラフィックスAPIのデバイスを管理するクラスです。  
 > 実際のアプリケーションでは、アプリケーション側(またはフレームワークなど)で管理されます。  
 > サンプルソースで、`device`が使用されている箇所は、適宜アプリケーション側の環境に置き換えて実装をしてください。  
 
@@ -457,16 +444,13 @@ EffekseerのAPIをソースコード上から呼び出して、Effekseerの初�
 
 - `Examples/Resources/Laser01.efkefc`
 - `Examples/Resources/Texture`(フォルダごと)
-- `Examples/Resources/Sound`(フォルダごと)
 
 コピー後、以下のようなフォルダ構成になっていれば大丈夫です。  
 
 ```
 [導入先プロジェクトフォルダ] (導入先プロジェクト(.projファイル)の場所)
 ├ Laser01.efkefc
-├ Texture/
-| └ ...
-└ Sound/
+└ Texture/
   └ ...
 ```
 
@@ -480,16 +464,6 @@ EffekseerのAPIをソースコード上から呼び出して、Effekseerの初�
 #pragma comment(lib, "Effekseerd.lib")
 #endif
 #include <Effekseer.h>
-```
-
-**<XAudio2使用時（Effekseerを使って音を再生する時）は以下も記述>**  
-```cpp
-#ifndef _DEBUG
-#pragma comment(lib, "EffekseerSoundXAudio2.lib")
-#else
-#pragma comment(lib, "EffekseerSoundXAudio2d.lib")
-#endif
-#include <EffekseerSoundXAudio2.h>
 ```
 
 **<DirectX11使用時は以下も記述>**  
@@ -599,33 +573,8 @@ efkManager->SetMaterialLoader(efkRenderer->CreateMaterialLoader());
 efkManager->SetCurveLoader(Effekseer::MakeRefPtr<Effekseer::CurveLoader>());
 ```
 
-### 6.6. サウンドモジュールの作成(XAudio2使用時のみ)
 
-**XAudio2使用時(Effekseerを使って音を再生する時)のみ、実装してください。**  
-```cpp
-// Specify sound modules
-// サウンドモジュールの設定
-::EffekseerSound::SoundRef efkSound;
-efkSound = ::EffekseerSound::Sound::Create(device.GetIXAudio2(), 16, 16);
-
-// Specify a metho to play sound from an instance of efkSound
-// 音再生用インスタンスから再生機能を指定
-efkManager->SetSoundPlayer(efkSound->CreateSoundPlayer());
-
-// Specify a sound data loader
-// It can be extended by yourself. It is loaded from a file on now.
-// サウンドデータの読込機能を設定する。
-// ユーザーが独自で拡張できる。現在はファイルから読み込んでいる。
-efkManager->SetSoundLoader(efkSound->CreateSoundLoader());
-```
-
-
-エフェクトに設定した音を再生するための、サウンドモジュールの作成と設定をします。  
-
-**ここでも、サンプル用に用意されているデバイス管理クラス(`device`, `DeviceDX11`/`DeviceDX12`)から`IXAudio2*`を取得し、セットしています。**  
-**アプリケーション/フレームワークに合わせて、置き換えながら実装してください。**
-
-### 6.7. 座標系の設定
+### 6.6. 座標系の設定
 
 ```cpp
 // Setup the coordinate system. This must be matched with your application.
@@ -638,7 +587,7 @@ efkManager->SetCoordinateSystem(Effekseer::CoordinateSystem::RH);
 実際には、導入先のアプリケーションの座標系と一致させる必要がありますが、まずは動作確認のため、右手座標系(`RH`)で実装します。  
 (座標系については後述します。(関連: [7. カメラと座標系をアプリケーションと一致させる](#7-カメラと座標系をアプリケーションと一致させる)))
 
-### 6.8. 投影行列とカメラ行列の作成
+### 6.7. 投影行列とカメラ行列の作成
 
 ```cpp
 // Specify a position of view
@@ -660,7 +609,7 @@ cameraMatrix.LookAtRH(viewerPosition, ::Effekseer::Vector3D(0.0f, 0.0f, 0.0f), :
 
 こちらも実際には、アプリケーションのものと一致(同期)させる必要がありますが、まずは動作確認のため、右手座標系(RH)の固定の投影行列/カメラ行列を作成して使用します。  
 
-### 6.9. エフェクトの読み込み
+### 6.8. エフェクトの読み込み
 
 ```cpp
 // Load an effect
@@ -688,7 +637,7 @@ effect = Effekseer::Effect::Create(efkManager, u"Laser01.efkefc");
 > 通常の文字列リテラル(`"ABCDE"`)や、通常の文字列(`char*`,`std::string`)をそのまま使うことはできません。  
 > 上記のソースでは、文字列リテラルの前に`u`を付けることによって、`char16_t*`型の文字列リテラルにしています。  
 
-### 6.10. エフェクトの再生と制御
+### 6.9. エフェクトの再生と制御
 
 
 ```cpp
@@ -739,7 +688,7 @@ while (device.NewFrame())
 
 `Effekseer::Handle`(`efkHandle`)を使うことで、再生中のエフェクトの、移動や停止などの制御を行っています。  
 
-### 6.11. [DirectX12のみ、毎フレーム実行]フレーム開始時の処理
+### 6.10. [DirectX12のみ、毎フレーム実行]フレーム開始時の処理
 
 
 ```cpp
@@ -761,12 +710,12 @@ while (device.NewFrame())
 
 **DirectX 12の時のみ、毎フレーム行う必要があります。**  
 メインループのはじめに、描画に使用するコマンドリストの記録を開始します。  
-さきほどの、[6.10. エフェクトの再生と制御](#610-エフェクトの再生と制御) でのメインループのはじめに追記してください。  
+さきほどの、[6.9. エフェクトの再生と制御](#69-エフェクトの再生と制御) でのメインループのはじめに追記してください。  
 
 
 ここでも、サンプル用に用意されているデバイス管理クラス(`device`)からGetCommandListを取得してセットしていますが、こちらも導入先のアプリケーションに合わせて置き換えて実装します。  
 
-### 6.12. [毎フレーム実行]Managerの更新処理
+### 6.11. [毎フレーム実行]Managerの更新処理
 
 ```cpp
 // Set layer parameters
@@ -788,7 +737,7 @@ LayerParameterの更新(`efkManager->SetLayerParameter`)と、Managerの更新(`
 Managerの更新の際には、引数に`Effekseer::Manager::UpdateParameter`を渡すことが出来ます。  
 これを使うことで、経過フレームや更新回数、非同期処理などに関する制御が可能です。
 
-### 6.13. [毎フレーム実行]Rendererの更新と描画処理
+### 6.12. [毎フレーム実行]Rendererの更新と描画処理
 
 ```cpp
 // Execute functions about DirectX
@@ -835,10 +784,10 @@ device.PresentDevice();
 
 経過時間の更新や、投影/カメラ行列のセットをしてから、描画処理を行います。  
 
-`efkRenderer->SetTime(time / 60.0f);`では、[6.10. エフェクトの再生と制御](#610-エフェクトの再生と制御)で作成し、毎フレームインクリメントさせた`time`を使って、経過時間をセットしています。  
+`efkRenderer->SetTime(time / 60.0f);`では、[6.9. エフェクトの再生と制御](#69-エフェクトの再生と制御)で作成し、毎フレームインクリメントさせた`time`を使って、経過時間をセットしています。  
 このサンプルでは、フレームレートが60fpsであるとして、`time`を60で割っています。  
 
-### 6.14. [DirectX12のみ、毎フレーム実行]コマンドリスト終了処理
+### 6.13. [DirectX12のみ、毎フレーム実行]コマンドリスト終了処理
 
 ```cpp
 // <<DirectX 12の時のみ、以下を追記>>
@@ -851,9 +800,9 @@ EffekseerRendererDX12::EndCommandList(efkCommandList);
 ```
 
 **DirectX 12の時のみ、毎フレーム行う必要があります。**  
-さきほどの、[6.13. [毎フレーム実行]Rendererの更新と描画処理](#613-毎フレーム実行rendererの更新と描画処理) でのメインループの終盤、`efkRenderer->EndRendering();`の直後に実装してください。  
+さきほどの、[6.12. [毎フレーム実行]Rendererの更新と描画処理](#612-毎フレーム実行rendererの更新と描画処理) でのメインループの終盤、`efkRenderer->EndRendering();`の直後に実装してください。  
 
-### 6.15. [DirectX12のみ]解放処理
+### 6.14. [DirectX12のみ]解放処理
 
 ```cpp
 // 		time++;
@@ -868,7 +817,7 @@ efkRenderer.Reset();
 DirectX12のみ、解放処理を行います。  
 メインループが終わった直後に実装します。  
 
-### 6.16. 動作を確認する
+### 6.15. 動作を確認する
 
 ここまでが、最低限のエフェクトの再生をする実装です。  
 
@@ -893,7 +842,7 @@ Effekseerとアプリケーションのカメラと座標系を一致させる�
 
 以下は、投影(射影)行列とカメラ行列を同期させる実装例です。  
 
-**以下を、[6.13. [毎フレーム実行]Rendererの更新と描画処理](#613-毎フレーム実行rendererの更新と描画処理) の、`efkRenderer->SetProjectionMatrix`や`efkRenderer->SetCameraMatrix`を呼び出している箇所の前に追加します。**  
+**以下を、[6.12. [毎フレーム実行]Rendererの更新と描画処理](#612-毎フレーム実行rendererの更新と描画処理) の、`efkRenderer->SetProjectionMatrix`や`efkRenderer->SetCameraMatrix`を呼び出している箇所の前に追加します。**  
 
 ```cpp
 // efkRenderer->SetProjectionMatrix efkRenderer->SetCameraMatrixを呼び出す前に追加
@@ -929,7 +878,7 @@ for (int i = 0; i < 4; ++i)
 (Effekseerの座標系はデフォルトでは右手系（RH）です)  
 
 **もし、導入先のアプリケーションが左手系であれば、Effekseerの初期化時に左手系座標系に設定する必要があります。**  
-**[6.7. 座標系の設定](#67-座標系の設定)で`m_efkManager->SetCoordinateSystem`を呼び出している箇所を、以下のように書き換えることで、左手(LH)座標系に変更することができます。**  
+**[6.6. 座標系の設定](#66-座標系の設定)で`m_efkManager->SetCoordinateSystem`を呼び出している箇所を、以下のように書き換えることで、左手(LH)座標系に変更することができます。**  
 (右手座標系である場合は、サンプルそのまま(RH)で問題ありません)
 
 ```cpp
@@ -952,7 +901,7 @@ m_efkManager->SetCoordinateSystem(Effekseer::CoordinateSystem::LH);
 これも、実際のカメラの座標に合わせる必要があります。  
 
 以下は、実際のカメラ座標に合わせて`layerParameter.ViewerPosition`を設定する実装例です。  
-**[6.12. [毎フレーム実行]Managerの更新処理](#612-毎フレーム実行managerの更新処理)での該当箇所を、以下のように追記、変更します。**  
+**[6.11. [毎フレーム実行]Managerの更新処理](#611-毎フレーム実行managerの更新処理)での該当箇所を、以下のように追記、変更します。**  
 
 ```cpp
 // レイヤーパラメータの設定
