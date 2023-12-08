@@ -11,11 +11,11 @@ Effekseer For C++を、C++言語とDirectX 11/12を使用したWindowsゲーム/
 - x86/x64
 - Effekseer for C++ 1.8
 
-> **Note**  
+> [!NOTE]  
 > **ライブラリ導入に不慣れな方は、事前にプロジェクトのバックアップを取ることを推奨します。**  
 > 導入時の操作を間違えると、アプリケーションのプロジェクト設定に異常が発生する可能性があります。  
 
-> **Note**  
+> [!NOTE]  
 > 本ドキュメントでは、導入先のゲーム/アプリケーションのことを「アプリケーション」と呼称します。  
 
 
@@ -84,12 +84,12 @@ Effekseer For C++を、C++言語とDirectX 11/12を使用したWindowsゲーム/
 - **プロジェクト設定の「ランタイムライブラリ」設定**  
 （マルチスレッド(デバッグ) or マルチスレッド(デバッグ)DLL）
 
-> **Note**  
+> [!NOTE]  
 > DXライブラリを使用している場合は、Effekseer For C++ではなく、Effekseer For DXライブラリを利用してください。  
 
 ### 1.1. プラットフォームとランタイムライブラリ設定の確認方法
 
-> **Note**  
+> [!NOTE]  
 > 確認方法が分かる方は、本項を読み飛ばしても問題ありません。
 
 Visual Studioのプロジェクトのプロパティ画面にて確認することができます。  
@@ -102,21 +102,21 @@ Visual Studioのプロジェクトのプロパティ画面にて確認するこ�
 （図のソリューション/プロジェクトの名称や構成は一例です）  
 ![VisualStudio_OpenProjectProperty](images/VisualStudio_OpenProjectProperty_Ja.png)
 
-> **Note**  
+> [!NOTE]  
 > プロジェクトが複数ある場合は、Effekseerを使いたいプロジェクトのプロパティを開いてください。 
  
 3. プラットフォームは、画面上部の「プラットフォーム(P)」から確認することができます。  
 ![VisualStudio_Platform](images/VisualStudio_Platform_Ja.png)  
-> **Note**  
+> [!NOTE]  
 > 「アクティブ」と書かれているプラットフォームが、あなたが現在使用中のプラットフォーム設定です。  
 
-> **Note**  
+> [!NOTE]  
 > 多くの場合、`Win32` `x86` `x64`などが設定されています。  
  
 4. ソリューションエクスプローラーの、 構成プロパティ > C/C++ > コード生成を選択します。
 
 5. **画面左上の「構成(C)」を`Debug`か`Release`のどちらかに設定してから**、「ランタイムライブラリ」を確認してください。  
-> **Note**  
+> [!NOTE]  
 > `マルチスレッド (/MT)` `マルチスレッド デバッグ (/MTd)` `マルチスレッド DLL (/MD)` `マルチスレッド デバッグ DLL (/MDd)` のいずれかに設定されています。  
 
 ## 2. CMakeのインストール
@@ -130,7 +130,7 @@ CMakeを公式サイトからダウンロード、インストールしてくだ
 
 **CMakeダウンロードページ: <a href="https://cmake.org/download/" target="_blank" rel="noopener noreferrer">https://cmake.org/download/</a>**  
 
-> **Warning**  
+> [!IMPORTANT]  
 > Sourceではなく、Installerをダウンロードしてください。  
 > 例えば、64bit版のWindowsを使っている場合は、Windows x64 Installer(`cmake-x.xx.0-xxx-windows-x86_64.msi`)をダウンロードします。
 
@@ -138,7 +138,7 @@ CMakeを公式サイトからダウンロード、インストールしてくだ
 (環境変数/PATHを自力で設定できる場合は、自力で設定しても問題ありません)  
 ![CMake_InstallOptions](images/CMake_InstallOptions.png)  
 
-> **Note**  
+> [!NOTE]  
 > Windows Defenderなどのセキュリティソフトによって、起動が停止されることがあります。  
 > 関連: [「WindowsによってPCが保護されました」と表示される](#91-windowsによってpcが保護されましたと表示される)
 
@@ -156,7 +156,7 @@ CMakeを公式サイトからダウンロード、インストールしてくだ
 
 `build_msvc.bat`を実行してください。  
 
-> **Note**  
+> [!NOTE]  
 > Windows Defenderなどのセキュリティソフトによって、起動が停止されることがあります。  
 > 関連: [9.1. 「WindowsによってPCが保護されました」と表示される](#91-windowsによってpcが保護されましたと表示される)
 
@@ -184,10 +184,10 @@ Enter preset number:
 
 例えば、「Visual Studioバージョンが`2022`、プラットフォームが`x64`」ならば使用するプリセットは「`Visual Studio 2022(x64)`」で、「Visual Studioバージョンが`2019`、プラットフォームが`Win32`」ならば使用するプリセットは「`Visual Studio 2019(x86)`」です。  
 
-> **Note**  
+> [!NOTE]  
 > プラットフォームが`Win32`である場合は、`(x86)`のプリセットを選択してください。   
 
-> **Warining**  
+> [!WARNING]  
 > vulkanを使っていない場合、**`with Vulkan`が付いたプリセットは使用しないでください**。  
 > vulkanは、DirectXやOpenGLとは異なるグラフィックスAPIです。  
 
@@ -239,7 +239,7 @@ Enable runtime library DLL option?(y/n):
 
 
 
-> **Note**  
+> [!NOTE]  
 > ビルドに失敗した場合は、トラブルシューティングを確認してください。  
 > [9.2. CMakeビルド関連でうまく行かない時](#92-cmakeビルド関連でうまく行かない時)
 
@@ -247,11 +247,11 @@ Enable runtime library DLL option?(y/n):
 
 さきほど[3. Effekseer For C++のビルド](#3-effekseer-for-cのビルド)で出来上がったインストールフォルダから、環境に合わせて必要なものを導入先のアプリケーションのプロジェクトへコピーします。
 
-> **Note**  
+> [!NOTE]  
 > 本ドキュメント上でのファイルやフォルダの配置は、一例です。  
 > 分かる方は自由に設定してください。  
 
-> **Note**  
+> [!NOTE]  
 > **ここでは、アプリケーションのプロジェクト（.projファイル）があるフォルダのことを、「導入先プロジェクトフォルダ」と呼びます。**
 
 ### 4.1. ヘッダファイル（.h）の配置
@@ -273,7 +273,7 @@ Enable runtime library DLL option?(y/n):
 **<DirectX 12の場合は以下もコピー>**  
 - `[インストールフォルダ]/include/EffekseerRendererDX12`  
 
-> **Note**  
+> [!NOTE]  
 > `[導入先プロジェクトフォルダ]/Libraries/Effekseer/Include/`フォルダは、自分で作成してください。
 
 ![IncludeFiles](images/IncludeFiles_Ja.png)
@@ -301,12 +301,12 @@ Enable runtime library DLL option?(y/n):
 - `EffekseerRendererDX12.lib`
 - `EffekseerRendererDX12d.lib`
 
-> **Note**  
+> [!NOTE]  
 > `[導入先プロジェクトフォルダ]/Libraries/Effekseer/Lib/`フォルダは、自分で作成してください。
 
 ![LibraryFiles](images/LibraryFiles_Ja.png)
 
-> **Note**  
+> [!NOTE]  
 > `xxxxxxd.lib`のように、`d`が末尾についているライブラリファイルは、Debugビルド構成設定のライブラリファイルです。  
 
 
@@ -360,7 +360,7 @@ Enable runtime library DLL option?(y/n):
 導入先アプリケーションのアプリケーションが、Effekseer for C++ライブラリを扱えるようにプロジェクト設定をします。  
 「インクルードディレクトリ」と「ライブラリディレクトリ」の２つを設定します。  
 
-> **Note**  
+> [!NOTE]  
 > **ここからは、導入先のアプリケーションでの作業です。**  
 > **導入先のアプリケーションの、VisualStudioのソリューション（プロジェクト）を開いてください。**   
 
@@ -499,7 +499,7 @@ EffekseerのAPIをソースコード上から呼び出して、Effekseerの初�
 
 `Effekseer::Manager`を作成、初期化します。  
 
-> **Note**  
+> [!TIP]  
 > `Effekseer::ManagerRef`や`Effekseer::EffectRef`など、Effekseerの型で`Ref`が付くものは、スマートポインタで管理されています。  
 > これらは、オブジェクトを使用する変数が無くなると自動で解放されます。  
 
@@ -628,11 +628,11 @@ effect = Effekseer::Effect::Create(efkManager, u"Laser01.efkefc");
 
 そのため、基本的には`Effekseer::Effect::Create`は、１種類のエフェクトファイルに対して１度のみ実行するだけで良いです。  
 
-> **Warning**  
+> [!WARNING]  
 > サンプルソース中の`EFK_EXAMPLE_ASSETS_DIR_U16`は、サンプル専用のマクロです。  
 > 導入先のアプリケーションで使うことができません。  
 
-> **Note**  
+> [!NOTE]  
 > `Effekseer::Effect::Create()`関数の第２引数の`path`(.efkefcファイルのパス)は、`char16_t*`型です。  
 > 通常の文字列リテラル(`"ABCDE"`)や、通常の文字列(`char*`,`std::string`)をそのまま使うことはできません。  
 > 上記のソースでは、文字列リテラルの前に`u`を付けることによって、`char16_t*`型の文字列リテラルにしています。  
@@ -679,7 +679,7 @@ while (device.NewFrame())
 
 エフェクトを毎フレームを移動させつつ、120フレームごとに停止、再生します。  
 
-> **Note**  
+> [!NOTE]  
 > `while (device.NewFrame()) {}`がメインループにあたります。  
 > この中が１フレーム間に実行する処理になるので、毎フレーム実行したい処理はここに実装されています。  
 > (メインループの実装もサンプル用です。メインループは、導入先のアプリケーションやフレームワークの実装と置き換えて捉えて実装してください)  
@@ -860,12 +860,12 @@ for (int i = 0; i < 4; ++i)
 }
 ```
 
-> **Note**  
+> [!NOTE]  
 > `appProjectionMatrix`や`invAppCameraMatrix`は、アプリケーション側の投影(射影)行列とカメラ行列にあたります。  
 > また、DirectXTKの`DirectX::SimpleMath::Matrix`型であるときの実装例です。  
 > 導入先のアプリケーションに合わせて置き換えて実装してください。  
 
-> **Warning**  
+> [!IMPORTANT]  
 > EffekseerのCameraMatrixは、**カメラの姿勢行列の逆行列**を指します。  
 > 一方で、カメラの姿勢行列のことをCameraMatrix、その逆行列のことをViewMatrixとするフレームワークも多いです。  
 > そのため、上記の実装例では、CameraMatrixの逆行列をセットしています。  
@@ -888,7 +888,7 @@ m_efkManager->SetCoordinateSystem(Effekseer::CoordinateSystem::LH);
 ...
 ```
 
-> **Note**  
+> [!NOTE]  
 > 左手/右手座標系の違いは、**XYZ軸の正(プラス)の向きの組み合わせ**です。  
 > 下図のように、左右の手の親指/人差し指/中指の方向が、XYZ軸の正(プラス)の向きに対応しています。  
 > これにより、導入先のアプリケーションの座標系を調べることができます。  
@@ -918,7 +918,7 @@ layerParameter.ViewerPosition = ::Effekseer::Vector3D(invEfkCameraMatrix.Values[
 
 エフェクトの制御について、基礎的なものを解説します。  
 
-> **Note**   
+> [!NOTE]   
 > - `Effekseer::EffectRef`は、`Effekseer::Effect::Create`で読み込んだエフェクトのデータへの参照です。エフェクトを再生開始するために使います。  
 > - `Effekseer::EffectHandle`は、再生したエフェクトのインスタンス1つ1つの識別番号です。再生したエフェクトについての操作をするために使います。`efkManager->Play`で再生したときの戻り値などで、取得することができます。  
 >
@@ -1025,7 +1025,7 @@ Widnows Defenderによる表示です。
 
 ### 9.3. 導入先アプリケーションでのビルドエラー
 
-> **Note**  
+> [!NOTE]  
 > 以下で示すエラー文は一例です。  
 > `Effekseer.h` `Effekseer.lib`のようなファイル名などは、適宜読み替えてください。  
 
@@ -1039,7 +1039,7 @@ Widnows Defenderによる表示です。
 - プロジェクトのプロパティの、`ライブラリディレクトリ`や`インクルードディレクトリ`が、適切なプロジェクトや構成、プラットフォームに対して設定されているか
 - `#include <Effekseer.h>` `#pragma comment(lib, "Effekseer.lib")`などのプリプロセッサ文が正しいか
 
-> **Note**  
+> [!NOTE]  
 > プロジェクトのプロパティは、プロパティページ上部の構成・プラットフォームに対してのみ適用されます。  
 > 
 > 正しく設定したつもりであっても、選択した構成やプラットフォームに誤りがあることにより、`ライブラリディレクトリ`や`インクルードディレクトリ`が正しく設定されていないこともあります。  
