@@ -13,6 +13,16 @@
 namespace Effekseer
 {
 
+enum class DirectionalAxisType : int
+{
+	XPositive,
+	XNegative,
+	YPositive,
+	YNegative,
+	ZPositive,
+	ZNegative
+};
+
 struct RotationState
 {
 	union
@@ -30,13 +40,6 @@ struct RotationState
 		} random;
 
 		InstanceEasing<SIMD::Vec3f> easing;
-		/*
-		struct
-		{
-			SIMD::Vec3f start;
-			SIMD::Vec3f end;
-		} easing;
-		*/
 
 		struct
 		{
@@ -60,6 +63,10 @@ struct RotationState
 		{
 			SIMD::Vec3f offset;
 		} fcruve;
+
+		struct
+		{
+		} velocity;
 	};
 };
 
@@ -70,10 +77,9 @@ enum class ParameterRotationType : int32_t
 	ParameterRotationType_Easing = 2,
 	ParameterRotationType_AxisPVA = 3,
 	ParameterRotationType_AxisEasing = 4,
-
 	ParameterRotationType_FCurve = 5,
-
 	ParameterRotationType_RotateToViewpoint = 6,
+	ParameterRotationType_Velocity = 7,
 
 	ParameterRotationType_None = 0x7fffffff - 1,
 };
@@ -115,6 +121,11 @@ struct ParameterRotationAxisEasing
 	ParameterEasingFloat easing{Version16Alpha9, Version16Alpha9};
 };
 
+struct ParameterRotationVelocity
+{
+	DirectionalAxisType axis;
+};
+
 struct RotationParameter
 {
 	ParameterRotationType RotationType = ParameterRotationType::ParameterRotationType_None;
@@ -126,6 +137,8 @@ struct RotationParameter
 
 	ParameterRotationAxisPVA RotationAxisPVA;
 	ParameterRotationAxisEasing RotationAxisEasing;
+
+	ParameterRotationVelocity RotationVelocity;
 
 	void Load(unsigned char*& pos, int version);
 
@@ -144,7 +157,11 @@ struct RotationFunctions
 
 	static void InitRotation(RotationState& rotation_values, const RotationParameter& rotationParam, RandObject& rand, const Effect* effect, const InstanceGlobal* instanceGlobal, float m_LivingTime, float m_LivedTime, const Instance* m_pParent, const DynamicFactorParameter& dynamicFactor);
 
+	static bool CalculateInGlobal(const RotationParameter& rotationParam);
+
 	static SIMD::Mat43f CalculateRotation(RotationState& rotation_values, const RotationParameter& rotationParam, RandObject& rand, const Effect* effect, const InstanceGlobal* instanceGlobal, float m_LivingTime, float m_LivedTime, const Instance* m_pParent, const DynamicFactorParameter& dynamicFactor, const Vector3D& viewpoint);
+
+	static SIMD::Mat43f CalculateRotationGlobal(RotationState& rotation_state, const RotationParameter& rotationParam, const SIMD::Vec3f& globalVelocity);
 };
 
 } // namespace Effekseer

@@ -28,7 +28,8 @@ namespace Effekseer.Binary
 		Ver17Alpha5 = 1704,
 		Ver17Alpha6 = 1705,
 		Ver17 = 1710,
-		Latest = Ver17,
+		Ver18Alpha1 = 1800,
+		Latest = Ver18Alpha1,
 	}
 
 	public class Exporter
@@ -986,6 +987,7 @@ namespace Effekseer.Binary
 				float compatibility = 1.0f;
 				node_data.Add(compatibility.GetBytes());
 
+				// Export kill rules
 				{
 					node_data.Add(n.KillRulesValues.Type.GetValueAsInt().GetBytes());
 					node_data.Add(BitConverter.GetBytes(n.KillRulesValues.IsScaleAndRotationApplied ? 1 : 0));
@@ -1017,6 +1019,14 @@ namespace Effekseer.Binary
 						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.SphereRadius));
 						node_data.Add(BitConverter.GetBytes(n.KillRulesValues.SphereIsKillInside ? 1 : 0));
 					}
+				}
+
+				// Export collisions
+				{
+					node_data.Add(BitConverter.GetBytes(n.CollisionsValues.IsEnabled.Value ? 1 : 0));
+					node_data.Add(BitConverter.GetBytes(n.CollisionsValues.Bounce.Value));
+					node_data.Add(BitConverter.GetBytes(n.CollisionsValues.Height.Value));
+					node_data.Add(BitConverter.GetBytes((int)n.CollisionsValues.WorldCoordinateSyatem.Value));
 				}
 
 				node_data.Add(RendererCommonValues.GetBytes(n.RendererCommonValues, n.AdvancedRendererCommonValuesValues, texture_and_index, normalTexture_and_index, distortionTexture_and_index, material_and_index, ConvertLoadingFilePath));

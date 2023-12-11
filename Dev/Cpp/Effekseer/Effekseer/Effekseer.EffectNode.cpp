@@ -228,6 +228,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		GenerationLocation.load(pos, ef->GetVersion());
 		DepthValues.Load(pos, ef->GetVersion());
 		KillParam.Load(pos, ef->GetVersion());
+		Collisions.Load(pos, ef->GetVersion());
 
 		if (m_effect->GetVersion() >= 3)
 		{

@@ -90,6 +90,14 @@ void RotationParameter::Load(unsigned char*& pos, int version)
 		memcpy(&size, pos, sizeof(int));
 		pos += sizeof(int);
 	}
+	else if (RotationType == ParameterRotationType::ParameterRotationType_Velocity)
+	{
+		memcpy(&size, pos, sizeof(int));
+		pos += sizeof(int);
+
+		memcpy(&RotationVelocity.axis, pos, sizeof(DirectionalAxisType));
+		pos += sizeof(int);
+	}
 }
 
 void RotationParameter::MakeCoordinateSystemLH()
@@ -239,6 +247,15 @@ void RotationFunctions::InitRotation(RotationState& rotation_values, const Rotat
 	}
 }
 
+bool RotationFunctions::CalculateInGlobal(const RotationParameter& rotationParam)
+{
+	if (rotationParam.RotationType == ParameterRotationType::ParameterRotationType_Velocity)
+	{
+		return true;
+	}
+	return false;
+}
+
 SIMD::Mat43f RotationFunctions::CalculateRotation(RotationState& rotation_values, const RotationParameter& rotationParam, RandObject& rand, const Effect* effect, const InstanceGlobal* instanceGlobal, float m_LivingTime, float m_LivedTime, const Instance* m_pParent, const DynamicFactorParameter& dynamicFactor, const Vector3D& viewpoint)
 {
 	SIMD::Vec3f localAngle;
@@ -323,6 +340,68 @@ SIMD::Mat43f RotationFunctions::CalculateRotation(RotationState& rotation_values
 		SIMD::Vec3f axis = rotation_values.axis.axis;
 
 		matRot = SIMD::Mat43f::RotationAxis(axis, rotation_values.axis.rotation);
+	}
+	else
+	{
+		matRot = SIMD::Mat43f::Identity;
+	}
+
+	return matRot;
+}
+
+SIMD::Mat43f RotationFunctions::CalculateRotationGlobal(RotationState& rotation_state, const RotationParameter& rotationParam, const SIMD::Vec3f& globalVelocity)
+{
+	SIMD::Vec3f localAngle = SIMD::Vec3f(0, 0, 0);
+
+	if (rotationParam.RotationType == ParameterRotationType::ParameterRotationType_Velocity)
+	{
+		if (globalVelocity.GetSquaredLength() > 0.00001)
+		{
+			const auto dir = globalVelocity.GetNormal();
+			const auto dir_y = Clamp(dir.GetY(), 1.0f, -1.0f);
+			const auto angle_x = -asinf(dir_y);
+			float angle_y = 0;
+			if (fabsf(dir_y) < 0.999f)
+			{
+				angle_y = atan2f(dir.GetX(), dir.GetZ());
+			}
+			localAngle.SetX(angle_x);
+			localAngle.SetY(angle_y);
+			localAngle.SetZ(0);
+		}
+		else
+		{
+			localAngle = SIMD::Vec3f{0, 0, 0};
+		}
+	}
+
+	SIMD::Mat43f matRot;
+	if (rotationParam.RotationType == ParameterRotationType::ParameterRotationType_Velocity)
+	{
+		if (rotationParam.RotationVelocity.axis == DirectionalAxisType::ZPositive)
+		{
+			matRot = SIMD::Mat43f::RotationZXY(localAngle.GetZ(), localAngle.GetX(), localAngle.GetY());
+		}
+		else if (rotationParam.RotationVelocity.axis == DirectionalAxisType::ZNegative)
+		{
+			matRot = SIMD::Mat43f::RotationY(EFK_PI) * SIMD::Mat43f::RotationZXY(localAngle.GetZ(), localAngle.GetX(), localAngle.GetY());
+		}
+		else if (rotationParam.RotationVelocity.axis == DirectionalAxisType::XPositive)
+		{
+			matRot = SIMD::Mat43f::RotationY(EFK_PI / 2) * SIMD::Mat43f::RotationZXY(localAngle.GetZ(), localAngle.GetX(), localAngle.GetY());
+		}
+		else if (rotationParam.RotationVelocity.axis == DirectionalAxisType::XNegative)
+		{
+			matRot = SIMD::Mat43f::RotationY(-EFK_PI / 2) * SIMD::Mat43f::RotationZXY(localAngle.GetZ(), localAngle.GetX(), localAngle.GetY());
+		}
+		else if (rotationParam.RotationVelocity.axis == DirectionalAxisType::YPositive)
+		{
+			matRot = SIMD::Mat43f::RotationX(EFK_PI / 2) * SIMD::Mat43f::RotationZXY(localAngle.GetZ(), localAngle.GetX(), localAngle.GetY());
+		}
+		else if (rotationParam.RotationVelocity.axis == DirectionalAxisType::YNegative)
+		{
+			matRot = SIMD::Mat43f::RotationX(-EFK_PI / 2) * SIMD::Mat43f::RotationZXY(localAngle.GetZ(), localAngle.GetX(), localAngle.GetY());
+		}
 	}
 	else
 	{

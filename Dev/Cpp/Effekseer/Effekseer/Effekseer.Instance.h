@@ -25,6 +25,7 @@
 #include "ForceField/ForceFields.h"
 
 #include "Parameter/AlphaCutoff.h"
+#include "Parameter/Collisions.h"
 #include "Parameter/CustomData.h"
 #include "Parameter/Rotation.h"
 #include "Parameter/Scaling.h"
@@ -75,7 +76,7 @@ protected:
 
 	SIMD::Vec3f parentPosition_;
 
-	SIMD::Vec3f steeringVec_;
+	SIMD::Vec3f steering_vec_;
 
 	SIMD::Vec3f location_modify_global_;
 	SIMD::Vec3f velocity_modify_global_;
@@ -116,7 +117,7 @@ public:
 		float steeringSpeed;
 	} followParentParam;
 
-	InstanceTranslationState translation_values;
+	InstanceTranslationState translation_state_;
 
 	RotationState rotation_values;
 
@@ -177,6 +178,8 @@ public:
 	AlphaCuttoffState alpha_cutoff_values;
 
 	float m_AlphaThreshold = 0.0f;
+
+	CollisionsState collisionState_;
 
 	Instance(ManagerImplemented* pManager, EffectNodeImplemented* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup);
 

@@ -62,6 +62,10 @@ namespace Effekseer.Data
 			private set;
 		}
 
+		[Selected(ID = 0, Value = 7)]
+		[IO(Export = true)]
+		public RotationVelocityParamater Velocity { get; private set; } = new RotationVelocityParamater();
+
 		internal RotationValues()
 		{
 			Type = new Value.Enum<ParamaterType>(ParamaterType.Fixed);
@@ -214,6 +218,11 @@ namespace Effekseer.Data
 			}
 		}
 
+		public class RotationVelocityParamater
+		{
+			public Value.Enum<PlaneAxisType> Axis { get; private set; } = new Value.Enum<PlaneAxisType>(PlaneAxisType.XPositive);
+		}
+
 		public enum ParamaterType : int
 		{
 			[Key(key = "Rotation_ParamaterType_Fixed")]
@@ -230,6 +239,8 @@ namespace Effekseer.Data
 			RotationFCurve = 5,
 			[Key(key = "Rotation_ParamaterType_RotateToViewpoint")]
 			RotateToViewpoint = 6,
+			[Key(key = "Rotation_ParamaterType_RotateToVelocity")]
+			RotateToVelocity = 7,
 		}
 	}
 }

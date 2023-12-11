@@ -3,6 +3,22 @@ using Effekseer.Data.Value;
 
 namespace Effekseer.Data
 {
+	public enum PlaneAxisType : int
+	{
+		[Key(key = "PlaneAxisType_XPositive")]
+		XPositive,
+		[Key(key = "PlaneAxisType_XNegative")]
+		XNegative,
+		[Key(key = "PlaneAxisType_YPositive")]
+		YPositive,
+		[Key(key = "PlaneAxisType_YNegative")]
+		YNegative,
+		[Key(key = "PlaneAxisType_ZPositive")]
+		ZPositive,
+		[Key(key = "PlaneAxisType_ZNegative")]
+		ZNegative
+	}
+
 	public class KillRulesValues
 	{
 
@@ -52,7 +68,7 @@ namespace Effekseer.Data
 			get;
 			set;
 		}
-		
+
 		[Key(key = "KillRules_Box_Size")]
 		[Selected(ID = 1, Value = 1)]
 		public Value.Vector3D BoxSize
@@ -76,7 +92,7 @@ namespace Effekseer.Data
 			get;
 			set;
 		}
-		
+
 		[Key(key = "KillRules_Plane_PlaneOffset")]
 		[Selected(ID = 1, Value = 2)]
 		public Value.Float PlaneOffset
@@ -84,7 +100,7 @@ namespace Effekseer.Data
 			get;
 			set;
 		}
-		
+
 		[Key(key = "KillRules_Sphere_Center")]
 		[Selected(ID = 1, Value = 3)]
 		public Value.Vector3D SphereCenter
@@ -92,7 +108,7 @@ namespace Effekseer.Data
 			get;
 			set;
 		}
-		
+
 		[Key(key = "KillRules_Sphere_Radius")]
 		[Selected(ID = 1, Value = 3)]
 		public Value.Float SphereRadius
@@ -100,8 +116,8 @@ namespace Effekseer.Data
 			get;
 			set;
 		}
-		
-		
+
+
 		[Key(key = "KillRules_Sphere_IsKillInside")]
 		[Selected(ID = 1, Value = 3)]
 		public Value.Boolean SphereIsKillInside
@@ -109,8 +125,8 @@ namespace Effekseer.Data
 			get;
 			set;
 		}
-		
-				
+
+
 		[Key(key = "KillRules_IsScaleAndRotationApplied")]
 		[Selected(ID = 1, Value = 1)]
 		[Selected(ID = 1, Value = 2)]
@@ -125,11 +141,11 @@ namespace Effekseer.Data
 		{
 			Type = new Enum<KillType>(KillType.None);
 			IsScaleAndRotationApplied = new Boolean(true);
-			
+
 			BoxCenter = new Vector3D(0F, 0F, 0F);
 			BoxSize = new Vector3D(0.5F, 0.5F, 0.5F,
-				float.MaxValue, 0, 
-				float.MaxValue, 0, 
+				float.MaxValue, 0,
+				float.MaxValue, 0,
 				float.MaxValue, 0);
 			BoxIsKillInside = new Boolean(false);
 
@@ -152,23 +168,7 @@ namespace Effekseer.Data
 			[Key(key = "KillType_Sphere")]
 			Sphere
 		}
-		
-		public enum PlaneAxisType : int 
-		{
-			[Key(key = "PlaneAxisType_XPositive")]
-			XPositive,
-			[Key(key = "PlaneAxisType_XNegative")]
-			XNegative,
-			[Key(key = "PlaneAxisType_YPositive")]
-			YPositive,
-			[Key(key = "PlaneAxisType_YNegative")]
-			YNegative,
-			[Key(key = "PlaneAxisType_ZPositive")]
-			ZPositive,
-			[Key(key = "PlaneAxisType_ZNegative")]
-			ZNegative
-		}
-		
+
 		public class PlaneAxisSpace
 		{
 			public readonly Vector3D Normal;

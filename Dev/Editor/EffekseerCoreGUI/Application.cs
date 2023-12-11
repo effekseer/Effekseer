@@ -215,6 +215,7 @@ namespace Effekseer
 			MultiLanguageTextProvider.LoadCSV("Effekseer.csv");
 			MultiLanguageTextProvider.LoadCSV("Effekseer_Options.csv");
 			MultiLanguageTextProvider.LoadCSV("Effekseer_BasicSettings.csv");
+			MultiLanguageTextProvider.LoadCSV("Effekseer_Collisions.csv");
 			MultiLanguageTextProvider.LoadCSV("Effekseer_Position.csv");
 			MultiLanguageTextProvider.LoadCSV("Effekseer_Rotation.csv");
 			MultiLanguageTextProvider.LoadCSV("Effekseer_Scale.csv");
