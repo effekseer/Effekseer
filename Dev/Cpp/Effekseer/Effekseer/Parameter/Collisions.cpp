@@ -1,4 +1,5 @@
 #include "Collisions.h"
+#include <string.h>
 
 namespace Effekseer
 {
