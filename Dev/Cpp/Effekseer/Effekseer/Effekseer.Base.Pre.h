@@ -33,7 +33,7 @@
 //----------------------------------------------------------------------------------
 
 #ifdef _WIN32
-//#include <windows.h>
+// #include <windows.h>
 #elif defined(_PSVITA)
 #elif defined(_PS4)
 #elif defined(_SWITCH)
@@ -81,6 +81,7 @@ class MaterialLoader;
 class SoundLoader;
 class ModelLoader;
 class CurveLoader;
+class VectorFieldLoader;
 
 class Texture;
 class SoundData;
@@ -128,7 +129,7 @@ using ThreadNativeHandleType = std::thread::native_handle_type;
 	static_assert(std::is_class<decltype(val)>::value != true, "val must not be class/struct"); \
 	if ((val) != nullptr)                                                                       \
 	{                                                                                           \
-		delete[](val);                                                                          \
+		delete[] (val);                                                                         \
 		(val) = nullptr;                                                                        \
 	}
 
@@ -332,11 +333,11 @@ T Clamp(T t, U max_, V min_)
 }
 
 /**
-    @brief    Convert UTF16 into UTF8
-    @param    dst    a pointer to destination buffer
-    @param    dst_size    a length of destination buffer
-    @param    src            a source buffer
-    @return    length except 0
+	@brief    Convert UTF16 into UTF8
+	@param    dst    a pointer to destination buffer
+	@param    dst_size    a length of destination buffer
+	@param    src            a source buffer
+	@return    length except 0
 */
 inline int32_t ConvertUtf16ToUtf8(char* dst, int32_t dst_size, const char16_t* src)
 {
@@ -380,11 +381,11 @@ inline int32_t ConvertUtf16ToUtf8(char* dst, int32_t dst_size, const char16_t* s
 }
 
 /**
-    @brief    Convert UTF8 into UTF16
-    @param    dst    a pointer to destination buffer
-    @param    dst_size    a length of destination buffer
-    @param    src            a source buffer
-    @return    length except 0
+	@brief    Convert UTF8 into UTF16
+	@param    dst    a pointer to destination buffer
+	@param    dst_size    a length of destination buffer
+	@param    src            a source buffer
+	@return    length except 0
 */
 inline int32_t ConvertUtf8ToUtf16(char16_t* dst, int32_t dst_size, const char* src)
 {
@@ -729,6 +730,9 @@ RefPtr<T> MakeRefPtr(Arg&&... args)
 	return RefPtr<T>(new T(args...));
 }
 
+class VectorFieldScalar;
+class VectorFieldVector;
+
 using SettingRef = RefPtr<Setting>;
 using ManagerRef = RefPtr<Manager>;
 using EffectRef = RefPtr<Effect>;
@@ -737,6 +741,8 @@ using SoundDataRef = RefPtr<SoundData>;
 using ModelRef = RefPtr<Model>;
 using MaterialRef = RefPtr<Material>;
 using CurveRef = RefPtr<Curve>;
+using VectorFieldScalarRef = RefPtr<VectorFieldScalar>;
+using VectorFieldVectorRef = RefPtr<VectorFieldVector>;
 
 using SpriteRendererRef = RefPtr<SpriteRenderer>;
 using RibbonRendererRef = RefPtr<RibbonRenderer>;
@@ -752,6 +758,7 @@ using MaterialLoaderRef = RefPtr<MaterialLoader>;
 using SoundLoaderRef = RefPtr<SoundLoader>;
 using ModelLoaderRef = RefPtr<ModelLoader>;
 using CurveLoaderRef = RefPtr<CurveLoader>;
+using VectorFieldLoaderRef = RefPtr<VectorFieldLoader>;
 using ProceduralModelGeneratorRef = RefPtr<ProceduralModelGenerator>;
 
 /**

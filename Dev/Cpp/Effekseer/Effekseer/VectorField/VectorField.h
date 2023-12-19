@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Effekseer.Resource.h"
 #include "../SIMD/Vec3f.h"
 #include "../Utils/Effekseer.CustomAllocator.h"
 #include <array>
@@ -15,7 +16,7 @@ enum class VectorFieldSamplingMode
 };
 
 template <class T>
-class VectorField
+class VectorField : public Resource
 {
 private:
 	std::array<int32_t, 3> size_;
@@ -104,4 +105,6 @@ public:
 using VectorFieldScalar = VectorField<float>;
 using VectorFieldVector = VectorField<SIMD::Vec3f>;
 
+using VectorFieldScalarRef = RefPtr<VectorFieldScalar>;
+using VectorFieldVectorRef = RefPtr<VectorFieldVector>;
 } // namespace Effekseer
