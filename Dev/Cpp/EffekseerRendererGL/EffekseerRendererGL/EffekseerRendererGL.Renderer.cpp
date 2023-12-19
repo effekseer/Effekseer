@@ -239,7 +239,7 @@ bool RendererImplemented::Initialize()
 	ShaderCodeView lit_ps(get_model_lit_ps(GetDeviceType()));
 
 	const auto texLocUnlit = GetTextureLocations(EffekseerRenderer::RendererShaderType::Unlit);
-	const auto texLocLit = GetTextureLocations(EffekseerRenderer::RendererShaderType::AdvancedLit);
+	const auto texLocLit = GetTextureLocations(EffekseerRenderer::RendererShaderType::Lit);
 	const auto texLocDist = GetTextureLocations(EffekseerRenderer::RendererShaderType::BackDistortion);
 	const auto texLocAdUnlit = GetTextureLocations(EffekseerRenderer::RendererShaderType::AdvancedUnlit);
 	const auto texLocAdLit = GetTextureLocations(EffekseerRenderer::RendererShaderType::AdvancedLit);
