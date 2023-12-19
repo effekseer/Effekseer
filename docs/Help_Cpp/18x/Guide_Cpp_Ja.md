@@ -16,7 +16,7 @@ Effekseer For C++を、C++言語とDirectX 11/12を使用したWindowsゲーム/
 > 導入時の操作を間違えると、アプリケーションのプロジェクト設定に異常が発生する可能性があります。  
 
 > [!NOTE]  
-> 本ドキュメントでは、導入先のゲーム/アプリケーションのことを「アプリケーション」と呼称します。  
+> 本ガイドでは、導入先のゲーム/アプリケーションのことを「アプリケーション」と呼称します。  
 
 
 - [1. 導入先のアプリケーションの環境を確認](#1-導入先のアプリケーションの環境を確認)
@@ -64,8 +64,8 @@ Effekseer For C++を、C++言語とDirectX 11/12を使用したWindowsゲーム/
   - [9.1. 「WindowsによってPCが保護されました」と表示される](#91-windowsによってpcが保護されましたと表示される)
   - [9.2. CMakeビルド関連でうまく行かない時](#92-cmakeビルド関連でうまく行かない時)
   - [9.3. 導入先アプリケーションでのビルドエラー](#93-導入先アプリケーションでのビルドエラー)
-    - [9.3.1. 「LNK1104	ファイル 'Effekseer.lib' を開くことができません。」「E1696	ソース ファイルを開けません "Effekseer.h"」「C1083		include ファイルを開けません。'Effekseer.h':No such file or directory」](#931-lnk1104ファイル-effekseerlib-を開くことができませんe1696ソース-ファイルを開けません-effekseerhc1083include-ファイルを開けませんeffekseerhno-such-file-or-directory)
-    - [9.3.2. 「LNK2001	外部シンボル "public: \_\_thiscall Effekseer::Matrix44::Matrix44(void)" (??0Matrix44@Effekseer@@QAE@XZ) は未解決です」「LNK4272	ライブラリのコンピューターの種類 'x64' がターゲットのコンピューターの種類' x86' と競合しています」「LNK2038	'RuntimeLibrary' の不一致が検出されました。値 'MDd\_DynamicDebug' が MTd\_StaticDebug の値 'GraphEditor.obj' と一致しません。」](#932-lnk2001外部シンボル-public-__thiscall-effekseermatrix44matrix44void-0matrix44effekseerqaexz-は未解決ですlnk4272ライブラリのコンピューターの種類-x64-がターゲットのコンピューターの種類-x86-と競合していますlnk2038runtimelibrary-の不一致が検出されました値-mdd_dynamicdebug-が-mtd_staticdebug-の値-grapheditorobj-と一致しません)
+    - [9.3.1. ライブラリ/インクルードファイルが開けない](#931-ライブラリインクルードファイルが開けない)
+    - [9.3.2. ライブラリのリンクに失敗する](#932-ライブラリのリンクに失敗する)
 
 
 ## 1. 導入先のアプリケーションの環境を確認
@@ -96,28 +96,21 @@ Visual Studioのプロジェクトのプロパティ画面にて確認するこ�
 
 以下は、「Debug」「Release」の２つの構成があるときの確認方法の例です。  
 
-1. ソリューションエクスプローラーで、導入先のプロジェクトを右クリックします。
-
-2. 表示されるメニューから、「プロパティ」を選択して、プロパティページを開きます。  
-（図のソリューション/プロジェクトの名称や構成は一例です）  
+1. 導入先のアプリケーションのVisualStudioのソリューションを開きます。
+2. ソリューションエクスプローラーで、導入先のプロジェクトを右クリックします。  
+(プロジェクトが複数ある場合は、Effekseerを使いたいプロジェクトのプロパティを開いてください)   
+3. 表示されるメニューから、「プロパティ」を選択して、プロパティページを開きます。  
+(図のソリューション/プロジェクトの名称や構成は一例です)  
 ![VisualStudio_OpenProjectProperty](images/VisualStudio_OpenProjectProperty_Ja.png)
 
-> [!NOTE]  
-> プロジェクトが複数ある場合は、Effekseerを使いたいプロジェクトのプロパティを開いてください。 
- 
-3. プラットフォームは、画面上部の「プラットフォーム(P)」から確認することができます。  
+4. プラットフォームは、画面上部の「プラットフォーム(P)」から確認することができます。  
+多くの場合、`Win32` `x86` `x64`などが設定されています。  
+(「アクティブ」と書かれているプラットフォームが、あなたが現在使用中のプラットフォーム設定です)  
 ![VisualStudio_Platform](images/VisualStudio_Platform_Ja.png)  
-> [!NOTE]  
-> 「アクティブ」と書かれているプラットフォームが、あなたが現在使用中のプラットフォーム設定です。  
+5. 構成プロパティ > C/C++ > コード生成を選択します。
 
-> [!NOTE]  
-> 多くの場合、`Win32` `x86` `x64`などが設定されています。  
- 
-4. ソリューションエクスプローラーの、 構成プロパティ > C/C++ > コード生成を選択します。
-
-5. **画面左上の「構成(C)」を`Debug`か`Release`のどちらかに設定してから**、「ランタイムライブラリ」を確認してください。  
-> [!NOTE]  
-> `マルチスレッド (/MT)` `マルチスレッド デバッグ (/MTd)` `マルチスレッド DLL (/MD)` `マルチスレッド デバッグ DLL (/MDd)` のいずれかに設定されています。  
+6. **画面左上の「構成(C)」を`Debug`か`Release`のどちらかに設定してから**、「ランタイムライブラリ」を確認してください。  
+`マルチスレッド (/MT)` `マルチスレッド デバッグ (/MTd)` `マルチスレッド DLL (/MD)` `マルチスレッド デバッグ DLL (/MDd)` のいずれかに設定されています。  
 
 ## 2. CMakeのインストール
 
@@ -161,7 +154,7 @@ CMakeを公式サイトからダウンロード、インストールしてくだ
 > 関連: [9.1. 「WindowsによってPCが保護されました」と表示される](#91-windowsによってpcが保護されましたと表示される)
 
 実行すると、コンソールが表示されます。  
-以下は、表示される内容の例です。(表示されるプリセットは、Effekseer for C++のバージョンによって異なる場合があります。)  
+以下は、表示される内容の例です。
 
 ```
 Preset numbers for building Effekseer for cpp:
@@ -184,12 +177,10 @@ Enter preset number:
 
 例えば、「Visual Studioバージョンが`2022`、プラットフォームが`x64`」ならば使用するプリセットは「`Visual Studio 2022(x64)`」で、「Visual Studioバージョンが`2019`、プラットフォームが`Win32`」ならば使用するプリセットは「`Visual Studio 2019(x86)`」です。  
 
-> [!NOTE]  
-> プラットフォームが`Win32`である場合は、`(x86)`のプリセットを選択してください。   
+(プラットフォームが`Win32`である場合は、`(x86)`のプリセットを選択してください)   
 
 > [!WARNING]  
-> vulkanを使っていない場合、**`with Vulkan`が付いたプリセットは使用しないでください**。  
-> vulkanは、DirectXやOpenGLとは異なるグラフィックスAPIです。  
+> Vulkanを使っていない場合、**`with Vulkan`が付いたプリセットは使用しないでください**。  
 
 **適切なプリセットを見つけたら、対応する番号を入力し、Enterキーを押してください。**  
 
@@ -199,12 +190,11 @@ Enter preset number:
 Enable runtime library DLL option?(y/n):
 ```
 
- [1. 導入先のアプリケーションの環境を確認](#1-導入先のアプリケーションの環境を確認)**で確認した、`プロジェクト設定の「ランタイムライブラリ」設定`に合わせて、以下のように入力し、Enterキーを押してください。**  
+ [1. 導入先のアプリケーションの環境を確認](#1-導入先のアプリケーションの環境を確認)**で確認した、`プロジェクト設定の「ランタイムライブラリ」設定`に合わせて、`y`か`n`のどちらかを入力して、Enterキーを押してください。**  
  
   
-
-- `マルチスレッド (/MT)`or`マルチスレッド デバッグ (/MTd)`: `n`
 - `マルチスレッド DLL (/MD)`or`マルチスレッド デバッグ DLL (/MDd)`: `y`
+- `マルチスレッド (/MT)`or`マルチスレッド デバッグ (/MTd)`: `n`
 
 ビルドが開始します。  
 しばらく待つと、ビルドが完了します。  
@@ -216,7 +206,7 @@ Enable runtime library DLL option?(y/n):
 生成されるインストールフォルダは `install_msvc2022_x86` です。  
 **以降、このフォルダのことを「インストールフォルダ」と呼びます。**   
 
-インストールフォルダは、以下のようなフォルダ構成で、インクルードファイルやライブラリファイルが生成されます。  
+インストールフォルダは、以下のようなフォルダ構成です。  
 **インストールフォルダと、中身のファイルやフォルダが正しく生成されているか、確認してください。**  
 
 ```
@@ -237,10 +227,8 @@ Enable runtime library DLL option?(y/n):
  　 └ 例：Effekseer.lib、Effekseerd.lib、EffekseerRendererCommon.lib、EffekseerRendererDX12.lib)
 ```
 
-
-
 > [!NOTE]  
-> ビルドに失敗した場合は、トラブルシューティングを確認してください。  
+> ビルドがうまく行かない場合は、トラブルシューティングを確認してください。  
 > [9.2. CMakeビルド関連でうまく行かない時](#92-cmakeビルド関連でうまく行かない時)
 
 ## 4. ビルドしたライブラリファイルの配置
@@ -283,7 +271,7 @@ Enable runtime library DLL option?(y/n):
 
 つづいて、ライブラリファイル(.lib)をコピーします。  
 
-さきほどEffekseer for Cppをビルドしたときに出力されたインストールフォルダ(例：`install_msvc2022_x86/`)から、  
+さきほどEffekseer for Cppをビルドしたときに出力されたインストールフォルダ(例：`install_msvc2022_x86/lib`)から、  
 **`[導入先プロジェクトフォルダ]/Libraries/Effekseer/Lib]`へ、以下のファイルをコピーしてください。**  
 
 
@@ -546,8 +534,7 @@ efkCommandList = EffekseerRenderer::CreateCommandList(efkRenderer->GetGraphicsDe
 DirectX11では、`::EffekseerRendererDX11::CreateGraphicsDevice()`で、DirextX11のDevice(`ID3D11Device*`)とDeviceContext(`ID3D11DeviceContext*`)を引数として渡します。  
 
 DirectX12では、`::EffekseerRendererDX12::CreateGraphicsDevice()`で、DirectX12のDevice(`ID3D12Device*`)とCommandQueue(`ID3D12CommandQueue*`)を引数として渡します。  
-**`::EffekseerRendererDX12::Create`の第2,4引数は、レンダーターゲットと深度バッファのフォーマット`DXGI_FORMAT`を渡します。  
-導入先のアプリケーションに合ったものを渡してください。**  
+また、`::EffekseerRendererDX12::Create`の第2,4引数は、レンダーターゲットと深度バッファのフォーマット`DXGI_FORMAT`を渡します。
 
 **サンプルソース上では、サンプル用のデバイス管理クラス(`device`, `DeviceDX11`/`DeviceDX12`)からDevice等を取得し、セットしています。**  
 **実際に組み込む際は、アプリケーション/フレームワークに合わせた実装に置き換えてください。**
@@ -555,7 +542,7 @@ DirectX12では、`::EffekseerRendererDX12::CreateGraphicsDevice()`で、DirectX
 ### 6.5. 作成した描画モジュールの設定
 
 ```cpp
-// Sprcify rendering modules
+// Specify rendering modules
 // 描画モジュールの設定
 efkManager->SetSpriteRenderer(efkRenderer->CreateSpriteRenderer());
 efkManager->SetRibbonRenderer(efkRenderer->CreateRibbonRenderer());
@@ -1029,7 +1016,13 @@ Widnows Defenderによる表示です。
 > 以下で示すエラー文は一例です。  
 > `Effekseer.h` `Effekseer.lib`のようなファイル名などは、適宜読み替えてください。  
 
-#### 9.3.1. 「LNK1104	ファイル 'Effekseer.lib' を開くことができません。」「E1696	ソース ファイルを開けません "Effekseer.h"」「C1083		include ファイルを開けません。'Effekseer.h':No such file or directory」
+#### 9.3.1. ライブラリ/インクルードファイルが開けない
+
+エラーメッセージの例：  
+
+- `LNK1104 ファイル 'Effekseer.lib' を開くことができません。`
+- `E1696 ソース ファイルを開けません "Effekseer.h"`
+- `C1083 include ファイルを開けません。'Effekseer.h':No such file or directory`
 
 いずれかが発生した場合は、該当するファイルが見つからない等の理由で、開くことができない状態です。  
 以下を確認してください。
@@ -1047,7 +1040,16 @@ Widnows Defenderによる表示です。
 > ライブラリディレクトリやインクルードディレクトリを設定する際は、[5.1. インクルードディレクトリの設定](#51-インクルードディレクトリの設定)や[5.2. ライブラリディレクトリの設定](#52-ライブラリディレクトリの設定)にあるように、必ず適切な`ライブラリディレクトリ`や`インクルードディレクトリ`を選択してください。  
 > ![VisualStudio_ConfigurationAndPlatform](images/VisualStudio_ConfigurationAndPlatform_Ja.png)
 
-#### 9.3.2. 「LNK2001	外部シンボル "public: __thiscall Effekseer::Matrix44::Matrix44(void)" (??0Matrix44@Effekseer@@QAE@XZ) は未解決です」「LNK4272	ライブラリのコンピューターの種類 'x64' がターゲットのコンピューターの種類' x86' と競合しています」「LNK2038	'RuntimeLibrary' の不一致が検出されました。値 'MDd_DynamicDebug' が MTd_StaticDebug の値 'GraphEditor.obj' と一致しません。」
+#### 9.3.2. ライブラリのリンクに失敗する
+
+エラーメッセージの例：  
+
+- `LNK2001 外部シンボル "public: __thiscall Effekseer::Matrix44::Matrix44(void)" (??0Matrix44@Effekseer@@QAE@XZ) は未解決です`
+- `LNK2019 未解決の外部シンボル "__imp__rand" が関数 "private: static int __cdecl Effekseer::ManagerImplemented::Rand(void)" (?Rand@ManagerImplemented@Effekseer@@CAHXZ)' で参照されました。`
+- `LNK4272 ライブラリのコンピューターの種類 'x64' がターゲットのコンピューターの種類' x86' と競合しています`
+- `LNK1112 モジュールのコンピューターの種類 'x64' がターゲットのコンピューターの種類' x86' と競合しています` 
+- `LNK2038 'RuntimeLibrary' の不一致が検出されました。値 'MDd_DynamicDebug' が MTd_StaticDebug の値 'GraphEditor.obj' と一致しません。`
+
 
 いずれかが発生した場合は、[3. Effekseer For C++のビルド](#3-effekseer-for-cのビルド)でビルドした際に選択したプリセットや設定に誤りがあったと考えられます。  
 
