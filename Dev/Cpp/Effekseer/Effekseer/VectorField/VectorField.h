@@ -15,18 +15,19 @@ enum class VectorFieldSamplingMode
 	Repeat,
 };
 
-template <class T>
 class VectorField : public Resource
 {
 private:
 	std::array<int32_t, 3> size_;
-	CustomAlignedVector<T> data_;
+	CustomAlignedVector<float> data_;
+	int32_t stride_ = 0;
 
 public:
-	void Init(const std::array<int32_t, 3>& size)
+	void Init(const std::array<int32_t, 3>& size, int32_t stride)
 	{
 		size_ = size;
-		data_.resize(size_[0] * size_[1] * size_[2]);
+		stride_ = stride;
+		data_.resize((size_[0] * size_[1] * size_[2]) * stride_);
 	}
 
 	std::array<int32_t, 3> GetSize() const
@@ -34,7 +35,7 @@ public:
 		return size_;
 	}
 
-	T GetData(const std::array<int32_t, 3>& position, VectorFieldSamplingMode sampling_mode) const
+	std::array<float, 3> GetData(const std::array<int32_t, 3>& position, VectorFieldSamplingMode sampling_mode) const
 	{
 		auto p = position;
 		if (sampling_mode == VectorFieldSamplingMode::Clamp)
@@ -52,16 +53,36 @@ public:
 			}
 		}
 
-		return data_[position[0] + position[1] * size_[0] + position[2] * size_[0] * size_[1]];
+		std::array<float, 3> ret;
+		ret.fill(0.0f);
+		for (int i = 0; i < stride_; i++)
+		{
+			ret[i] = data_[(position[0] + position[1] * size_[0] + position[2] * size_[0] * size_[1]) * stride_ + i];
+		}
+
+		return ret;
 	}
 
-	void SetData(const T& value, const std::array<int32_t, 3>& position)
+	void SetData(const std::array<float, 3>& value, const std::array<int32_t, 3>& position)
 	{
-		data_[position[0] + position[1] * size_[0] + position[2] * size_[0] * size_[1]] = value;
+		for (int i = 0; i < stride_; i++)
+		{
+			data_[(position[0] + position[1] * size_[0] + position[2] * size_[0] * size_[1]) * stride_ + i] = value[i];
+		}
 	}
 
-	T GetData(const std::array<float, 3>& position, VectorFieldSamplingMode sampling_mode) const
+	std::array<float, 3> GetData(const std::array<float, 3>& position, VectorFieldSamplingMode sampling_mode) const
 	{
+		const auto lerp = [&](std::array<float, 3> v1, std::array<float, 3> v2, float a)
+		{
+			std::array<float, 3> ret;
+			for (int i = 0; i < stride_; i++)
+			{
+				ret[i] = (v2[i] - v1[i]) * a + v1[i];
+			}
+			return ret;
+		};
+
 		std::array<int32_t, 3> iv[2];
 		std::array<float, 3> dv;
 		for (size_t i = 0; i < 3; i++)
@@ -71,7 +92,7 @@ public:
 			iv[1][i] = iv[0][i] + 1;
 		}
 
-		T v[2][2][2];
+		std::array<float, 3> v[2][2][2];
 		for (int z = 0; z < 2; z++)
 		{
 			for (int y = 0; y < 2; y++)
@@ -83,28 +104,32 @@ public:
 			}
 		}
 
-		T vxy[2][2];
+		std::array<float, 3> vxy[2][2];
 		for (int y = 0; y < 2; y++)
 		{
 			for (int x = 0; x < 2; x++)
 			{
-				vxy[x][y] = v[x][y][0] * (1.0f - dv[2]) + v[x][y][1] * (dv[2]);
+				vxy[x][y] = lerp(v[x][y][0], v[x][y][1], dv[2]);
 			}
 		}
 
-		T vx[2];
+		std::array<float, 3> vx[2];
 		for (int x = 0; x < 2; x++)
 		{
-			vx[x] = vxy[x][0] * (1.0f - dv[1]) + vxy[x][1] * (dv[1]);
+			vx[x] = lerp(vxy[x][0], vxy[x][1], dv[1]);
 		}
 
-		return vx[0] * (1.0f - dv[0]) + vx[1] * (dv[0]);
+		auto ret = lerp(vx[0], vx[1], dv[0]);
+
+		for (size_t i = stride_; i < ret.size(); i++)
+		{
+			ret[i] = 0.0f;
+		}
+
+		return ret;
 	}
 };
 
-using VectorFieldScalar = VectorField<float>;
-using VectorFieldVector = VectorField<SIMD::Vec3f>;
+using VectorFieldRef = RefPtr<VectorField>;
 
-using VectorFieldScalarRef = RefPtr<VectorFieldScalar>;
-using VectorFieldVectorRef = RefPtr<VectorFieldVector>;
 } // namespace Effekseer

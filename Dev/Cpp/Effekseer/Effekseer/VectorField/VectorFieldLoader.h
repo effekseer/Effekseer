@@ -9,13 +9,9 @@ namespace Effekseer
 class VectorFieldLoader : public ReferenceObject
 {
 public:
-	virtual VectorFieldScalarRef LoadAsScalar(const void* data, int32_t size);
+	virtual VectorFieldRef Load(const void* data, int32_t size);
 
-	virtual VectorFieldVectorRef LoadAsVector(const void* data, int32_t size);
-
-	virtual void Unload(VectorFieldScalarRef data);
-
-	virtual void Unload(VectorFieldVectorRef data);
+	virtual void Unload(VectorFieldRef data);
 };
 
 } // namespace Effekseer
