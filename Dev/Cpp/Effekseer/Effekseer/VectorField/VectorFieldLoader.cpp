@@ -87,7 +87,7 @@ VectorFieldRef VectorFieldLoader::Load(const void* data, int32_t size)
 	VectorFieldRef ret = MakeRefPtr<VectorField>();
 
 	ret->Init(
-		std::array<int32_t, 3>{header->Size[0], header->Size[1], header->Size[2]});
+		std::array<int32_t, 3>{header->Size[0], header->Size[1], header->Size[2]}, stride);
 
 	for (int z = 0; z < header->Size[2]; z++)
 	{

@@ -51,6 +51,13 @@ struct TestRegister
 		abort();                                                        \
 	}
 
+#define EXPECT_EQUAL_NEAR(v1, v2, error)                                 \
+	if (!(std::abs(v1 - v2) <= error))                                   \
+	{                                                                    \
+		printf("%s(%d): FAILED: " #v1 " " #v2 "\n", __FILE__, __LINE__); \
+		abort();                                                         \
+	}
+
 struct Performance
 {
 	uint32_t min, max, average, median;

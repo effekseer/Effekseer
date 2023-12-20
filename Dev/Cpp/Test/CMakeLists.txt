@@ -17,6 +17,7 @@ set(effekseer_test_src
     Runtime/Network.cpp
     Runtime/Math.cpp
     Runtime/Misc.cpp
+    Runtime/VectorField.cpp
     Backend/Helper.h
     Backend/Helper.cpp
     Backend/Textures.cpp

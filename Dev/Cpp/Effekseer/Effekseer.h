@@ -51,5 +51,6 @@
 #include "Effekseer/SIMD/Vec4f.h"
 #include "Effekseer/Sound/Effekseer.SoundPlayer.h"
 #include "Effekseer/Utils/Effekseer.CustomAllocator.h"
-
+#include "Effekseer/VectorField/VectorField.h"
+#include "Effekseer/VectorField/VectorFieldLoader.h"
 #endif

@@ -730,8 +730,8 @@ RefPtr<T> MakeRefPtr(Arg&&... args)
 	return RefPtr<T>(new T(args...));
 }
 
-class VectorFieldScalar;
-class VectorFieldVector;
+class VectorField;
+class VectorFieldLoader;
 
 using SettingRef = RefPtr<Setting>;
 using ManagerRef = RefPtr<Manager>;
@@ -741,8 +741,7 @@ using SoundDataRef = RefPtr<SoundData>;
 using ModelRef = RefPtr<Model>;
 using MaterialRef = RefPtr<Material>;
 using CurveRef = RefPtr<Curve>;
-using VectorFieldScalarRef = RefPtr<VectorFieldScalar>;
-using VectorFieldVectorRef = RefPtr<VectorFieldVector>;
+using VectorFieldRef = RefPtr<VectorField>;
 
 using SpriteRendererRef = RefPtr<SpriteRenderer>;
 using RibbonRendererRef = RefPtr<RibbonRenderer>;

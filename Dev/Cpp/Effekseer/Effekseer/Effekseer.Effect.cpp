@@ -22,6 +22,7 @@
 #include "Model/ProceduralModelGenerator.h"
 #include "Model/ProceduralModelParameter.h"
 #include "Utils/Effekseer.BinaryReader.h"
+#include "VectorField/VectorFieldLoader.h"
 
 #include <array>
 #include <functional>

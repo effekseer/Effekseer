@@ -291,24 +291,14 @@ public:
 		CachedCurves.SetLoader(loader);
 	}
 
-	VectorFieldScalarRef GetVectorFieldScalarLoader() const
+	VectorFieldLoaderRef GetVectorFieldLoader() const
 	{
-		return CachedVectorFieldScalars.GetLoader();
+		return CachedVectorFields.GetLoader();
 	}
 
-	void SetVectorFieldScalarLoader(VectorFieldScalarRef loader)
+	void SetVectorFieldLoader(VectorFieldLoaderRef loader)
 	{
-		CachedVectorFieldScalars.SetLoader(loader);
-	}
-
-	VectorFieldVectorRef GetVectorFieldVectorLoader() const
-	{
-		return CachedVectorFieldVectors.GetLoader();
-	}
-
-	void SetVectorFieldVectorLoader(VectorFieldVectorRef loader)
-	{
-		CachedVectorFieldVectors.SetLoader(loader);
+		CachedVectorFields.SetLoader(loader);
 	}
 
 	ProceduralModelGeneratorRef GetProceduralMeshGenerator() const
@@ -352,8 +342,7 @@ public:
 		CachedMaterials.SetIsCacheEnabled(value);
 		CachedSounds.SetIsCacheEnabled(value);
 		CachedCurves.SetIsCacheEnabled(value);
-		CachedVectorFieldScalars.SetIsCacheEnabled(value);
-		CachedVectorFieldVectors.SetIsCacheEnabled(value);
+		CachedVectorFields.SetIsCacheEnabled(value);
 		CachedProceduralModels.SetIsCacheEnabled(value);
 	}
 
@@ -362,8 +351,7 @@ public:
 	CachedResources<SoundLoaderRef, SoundDataRef> CachedSounds;
 	CachedResources<MaterialLoaderRef, MaterialRef> CachedMaterials;
 	CachedResources<CurveLoaderRef, CurveRef> CachedCurves;
-	CachedResources<VectorFieldLoaderRef, VectorFieldScalarRef> CachedVectorFieldScalars;
-	CachedResources<VectorFieldLoaderRef, VectorFieldVectorRef> CachedVectorFieldVectors;
+	CachedResources<VectorFieldLoaderRef, VectorFieldRef> CachedVectorFields;
 	CachedParameterResources<ProceduralModelGeneratorRef, ProceduralModelParameter, ModelRef> CachedProceduralModels;
 };
 
