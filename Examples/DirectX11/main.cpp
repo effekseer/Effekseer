@@ -8,6 +8,8 @@
 
 int main(int argc, char** argv)
 {
+	// Devices for this sample. Use those of your application.
+	// サンプルソース用のデバイス管理クラス。実際には、導入先のアプリケーションのものを使う。
 	DeviceDX11 device;
 	device.Initialize("DirectDX11", Utils::Vec2I{1280, 720});
 
@@ -16,16 +18,20 @@ int main(int argc, char** argv)
 
 	// Create a manager of effects
 	// エフェクトのマネージャーの作成
-	auto efkManager = ::Effekseer::Manager::Create(8000);
+	::Effekseer::ManagerRef efkManager = ::Effekseer::Manager::Create(8000);
 
 	// Setup effekseer modules
 	// Effekseerのモジュールをセットアップする
 	device.SetupEffekseerModules(efkManager);
-	auto efkRenderer = device.GetEffekseerRenderer();
+	::EffekseerRendererDX11::RendererRef efkRenderer = device.GetEffekseerRenderer();
+
+	// Setup the coordinate system. This must be matched with your application.
+	// 座標系を設定する。アプリケーションと一致させる必要がある。
+	efkManager->SetCoordinateSystem(Effekseer::CoordinateSystem::RH);
 
 	// Specify a position of view
 	// 視点位置を確定
-	auto viewerPosition = ::Effekseer::Vector3D(10.0f, 5.0f, 20.0f);
+	::Effekseer::Vector3D viewerPosition = ::Effekseer::Vector3D(10.0f, 5.0f, 20.0f);
 
 	// Specify a projection matrix
 	// 投影行列を設定
@@ -39,13 +45,21 @@ int main(int argc, char** argv)
 
 	// Load an effect
 	// エフェクトの読込
-	auto effect = Effekseer::Effect::Create(efkManager, EFK_EXAMPLE_ASSETS_DIR_U16 "Laser01.efkefc");
+	Effekseer::EffectRef effect;
+	effect = Effekseer::Effect::Create(efkManager, EFK_EXAMPLE_ASSETS_DIR_U16 "Laser01.efkefc");
 
+	// Elapsed frames
+	// 経過したフレーム数のカウンタ
 	int32_t time = 0;
+
+	// Handle for the effect instance. Used to control the played effect.
+	// エフェクトのインスタンスのハンドル。再生したエフェクトの制御に使う。
 	Effekseer::Handle efkHandle = 0;
 
 	while (device.NewFrame())
 	{
+		// Stop and play effects every 120 frames(for sample)
+		// 120フレームごとに、エフェクトを停止、再生する(サンプル用)
 		if (time % 120 == 0)
 		{
 			// Play an effect
@@ -94,7 +108,7 @@ int main(int argc, char** argv)
 		// Begin to rendering effects
 		// エフェクトの描画開始処理を行う。
 		efkRenderer->BeginRendering();
-
+		
 		// Render effects
 		// エフェクトの描画を行う。
 		Effekseer::Manager::DrawParameter drawParameter;

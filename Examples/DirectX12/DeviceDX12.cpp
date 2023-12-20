@@ -127,11 +127,12 @@ void DeviceDX12::SetupEffekseerModules(::Effekseer::ManagerRef efkManager)
 {
 	// Create a  graphics device
 	// 描画デバイスの作成
-	auto graphicsDevice = ::EffekseerRendererDX12::CreateGraphicsDevice(GetID3D12Device(), GetCommandQueue(), 3);
+	::Effekseer::Backend::GraphicsDeviceRef graphicsDevice;
+	graphicsDevice = ::EffekseerRendererDX12::CreateGraphicsDevice(GetID3D12Device(), GetCommandQueue(), 3);
 
 	// Create a renderer of effects
 	// エフェクトのレンダラーの作成
-	auto format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	efkRenderer = ::EffekseerRendererDX12::Create(graphicsDevice, &format, 1, DXGI_FORMAT_UNKNOWN, false, 8000);
 
 	// Create a memory pool
