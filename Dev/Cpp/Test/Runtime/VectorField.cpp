@@ -109,6 +109,18 @@ void VectorFieldTest()
 			}
 		}
 	}
+
+	{
+		auto vf_path = GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/VectorFields/vf_simple.vf";
+
+		Effekseer::VectorFieldLoader loader;
+		auto vectorField = loader.Load(vf_path.c_str());
+
+		{
+			auto v = vectorField->GetData(std::array<float, 3>{0.0f, 0.0f, 0.0f}, Effekseer::VectorFieldSamplingMode::Clamp);
+			EXPECT_TRUE(v[0] == 0.0f);
+		}
+	}
 }
 
 TestRegister Runtime_VectorFieldTest("Runtime.VectorField", []() -> void

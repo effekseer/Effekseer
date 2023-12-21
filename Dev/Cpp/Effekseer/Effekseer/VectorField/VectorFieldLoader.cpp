@@ -1,4 +1,5 @@
 #include "VectorFieldLoader.h"
+#include "../Effekseer.DefaultFile.h"
 
 namespace Effekseer
 {
@@ -60,6 +61,35 @@ struct VectorFieldHeader
 #pragma pack(pop)
 
 } // namespace
+
+VectorFieldLoader::VectorFieldLoader(::Effekseer::FileInterfaceRef fileInterface)
+{
+	if (fileInterface != nullptr)
+	{
+		fileInterface_ = fileInterface;
+	}
+	else
+	{
+		fileInterface_ = MakeRefPtr<DefaultFileInterface>();
+	}
+}
+
+VectorFieldRef VectorFieldLoader::Load(const char16_t* path)
+{
+	auto reader = fileInterface_->OpenRead(path);
+	if (reader == nullptr)
+	{
+		return nullptr;
+	}
+
+	size_t size = reader->GetLength();
+	std::vector<uint8_t> data;
+	data.resize(size);
+
+	reader->Read(data.data(), size);
+
+	return Load(data.data(), static_cast<int32_t>(size));
+}
 
 VectorFieldRef VectorFieldLoader::Load(const void* data, int32_t size)
 {
