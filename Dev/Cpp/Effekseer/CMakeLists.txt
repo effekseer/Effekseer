@@ -99,6 +99,8 @@ file(GLOB effekseer_h
     Effekseer/Model/SplineGenerator.h
     Effekseer/Network/*.h
     Effekseer/Network/data/*.h
+    Effekseer/VectorField/VectorField.h
+    Effekseer/VectorField/VectorFieldLoader.h
 )
 
 set(effekseer_src
@@ -155,6 +157,8 @@ set(effekseer_src
     Effekseer/Network/Effekseer.Server.cpp
     Effekseer/Network/Effekseer.Session.cpp
     Effekseer/Network/Effekseer.Socket.cpp
+    Effekseer/VectorField/VectorField.cpp
+    Effekseer/VectorField/VectorFieldLoader.cpp
 )
 
 add_library(${PROJECT_NAME} STATIC

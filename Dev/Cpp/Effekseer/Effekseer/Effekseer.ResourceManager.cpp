@@ -10,6 +10,7 @@
 #include "Effekseer.TextureLoader.h"
 #include "Model/ModelLoader.h"
 #include "Model/ProceduralModelGenerator.h"
+#include "VectorField/VectorFieldLoader.h"
 
 //----------------------------------------------------------------------------------
 //

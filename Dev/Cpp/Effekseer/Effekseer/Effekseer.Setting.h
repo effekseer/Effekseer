@@ -175,6 +175,26 @@ public:
 
 	/**
 		@brief
+		\~English get a vector field loader
+		\~Japanese ベクトル場ローダーを取得する。
+		@return
+		\~English	loader
+		\~Japanese ローダー
+*/
+	VectorFieldLoaderRef GetVectorFieldLoader() const;
+
+	/**
+		@brief
+		\~English specfiy a vector field loader
+		\~Japanese ベクトル場ローダーを設定する。
+		@param	loader
+		\~English	loader
+		\~Japanese ローダー
+	*/
+	void SetVectorFieldLoader(VectorFieldLoaderRef loader);
+
+	/**
+		@brief
 		\~English get a mesh generator
 		\~Japanese メッシュジェネレーターを取得する。
 		@return
