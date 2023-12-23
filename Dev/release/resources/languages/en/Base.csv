@@ -12,5 +12,5 @@ Disabled_Name,Disabled
 WorldCoordinateSyatemType_Local_Name,Local
 WorldCoordinateSyatemType_World_Name,World
 ,
-Font_Normal,resources/GenShinGothic-Monospace-Normal.ttf
+Font_Normal,resources/fonts/GenShinGothic-Monospace-Normal.ttf
 Font_Bold,resources/fonts/GenShinGothic-Monospace-Bold.ttf

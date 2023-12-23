@@ -49,17 +49,17 @@ namespace Effekseer.GUI
 
 		public static void Load(swig.GraphicsDevice graphicsDevice)
 		{
-			Play = LoadAppResource(graphicsDevice, "resources/Play.png");
-			Stop = LoadAppResource(graphicsDevice, "resources/Stop.png");
-			Pause = LoadAppResource(graphicsDevice, "resources/Pause.png");
-			Step = LoadAppResource(graphicsDevice, "resources/Step.png");
-			BackStep = LoadAppResource(graphicsDevice, "resources/BackStep.png");
+			Play = LoadAppResource(graphicsDevice, "resources/icons/Play.png");
+			Stop = LoadAppResource(graphicsDevice, "resources/icons/Stop.png");
+			Pause = LoadAppResource(graphicsDevice, "resources/icons/Pause.png");
+			Step = LoadAppResource(graphicsDevice, "resources/icons/Step.png");
+			BackStep = LoadAppResource(graphicsDevice, "resources/icons/BackStep.png");
 
 			Icons["Copy"] = LoadAppResource(graphicsDevice, "resources/icons/Copy.png");
 			Icons["Paste"] = LoadAppResource(graphicsDevice, "resources/icons/Paste.png");
 			Icons["Help"] = LoadAppResource(graphicsDevice, "resources/icons/Help.png");
 
-			Icons["AppIcon"] = LoadAppResource(graphicsDevice, "resources/icon.png");
+			Icons["AppIcon"] = LoadAppResource(graphicsDevice, "resources/icons/AppIcon.png");
 
 			Icons["VisibleShow"] = LoadAppResource(graphicsDevice, "resources/icons/Visible_Show.png");
 			Icons["VisibleHide"] = LoadAppResource(graphicsDevice, "resources/icons/Visible_Hide.png");

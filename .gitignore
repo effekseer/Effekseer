@@ -41,7 +41,13 @@ Dev/release/*.lib
 Dev/release/*.dll
 Dev/release/*.config
 Dev/release/*.xml
+Dev/release/*imgui.ini
+Dev/release/*runtimeconfig.json
+Dev/release/*log.txt
+Dev/release/runtimes/
 Dev/release/resources/fonts/
+Dev/release/resources/icons/
+Dev/release/tools/
 
 Dev/Cpp/include/
 Dev/Cpp/lib/
@@ -49,11 +55,5 @@ Downloads/*/
 Dev/Editor/packages/
 mono_crash.*.json
 mono_crash.*.blob
-Dev/release/imgui.ini
 Script/__pycache__/aceutils.cpython-37.pyc
-
-
-Dev/release/resources/icons/Copy.png
-Dev/release/resources/icons/Paste.png
-
 Tool/fbxsdk
