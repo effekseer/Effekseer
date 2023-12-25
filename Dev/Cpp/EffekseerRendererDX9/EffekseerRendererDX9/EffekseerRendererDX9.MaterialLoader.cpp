@@ -1,7 +1,6 @@
 ﻿#include "EffekseerRendererDX9.MaterialLoader.h"
 #include "EffekseerRendererDX9.ModelRenderer.h"
 #include "EffekseerRendererDX9.Shader.h"
-#include <d3dcompiler.h>
 #include <iostream>
 
 #include "../EffekseerMaterialCompiler/DirectX9/EffekseerMaterialCompilerDX9.h"
