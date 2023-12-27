@@ -81,6 +81,8 @@ protected:
 	SIMD::Vec3f location_modify_global_;
 	SIMD::Vec3f velocity_modify_global_;
 
+	SIMD::Vec3f globalDirection_;
+
 public:
 	static const int32_t ChildrenMax = 16;
 
@@ -245,6 +247,8 @@ public:
 	bool AreChildrenActive() const;
 
 	float GetFlipbookIndexAndNextRate() const;
+
+	SIMD::Vec3f GetGlobalDirection() const;
 
 private:
 	void UpdateTransform(float deltaFrame);

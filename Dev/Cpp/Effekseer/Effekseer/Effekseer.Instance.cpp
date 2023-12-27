@@ -231,6 +231,7 @@ void Instance::Initialize(Instance* parent, float spawnDeltaFrame, int32_t insta
 
 	prevPosition_ = SIMD::Vec3f(0, 0, 0);
 	prevLocalVelocity_ = SIMD::Vec3f(0, 0, 0);
+	globalDirection_ = SIMD::Vec3f(0, 1, 0);
 	location_modify_global_ = SIMD::Vec3f(0, 0, 0);
 	velocity_modify_global_ = SIMD::Vec3f(0, 0, 0);
 }
@@ -572,6 +573,11 @@ float Instance::GetFlipbookIndexAndNextRate() const
 	return GetFlipbookIndexAndNextRate(CommonValue.UVs[0].Type, CommonValue.UVs[0], uvAnimationData_[0]);
 }
 
+SIMD::Vec3f Instance::GetGlobalDirection() const
+{
+	return globalDirection_;
+}
+
 void Instance::UpdateTransform(float deltaFrame)
 {
 	// 計算済なら終了
@@ -758,7 +764,14 @@ void Instance::UpdateTransform(float deltaFrame)
 
 		globalMatrix_.Step(calcMat, m_LivingTime);
 
-		prevGlobalPosition_ = globalMatrix_.GetCurrent().GetTranslation();
+		SIMD::Vec3f currentGlbalPosition = globalMatrix_.GetCurrent().GetTranslation();
+		SIMD::Vec3f deltaPosition = currentGlbalPosition - prevGlobalPosition_;
+
+		if (!deltaPosition.IsZero())
+		{
+			globalDirection_ = deltaPosition.GetNormal();
+		}
+		prevGlobalPosition_ = currentGlbalPosition;
 
 		globalMatrix_rendered = calcMat;
 	}

@@ -9,6 +9,7 @@ RS_RenderingOrder_FirstCreatedInstanceIsFirst_Name,Orden de aparición
 RS_RenderingOrder_FirstCreatedInstanceIsLast_Name,Revertido
 BillboardType_Billboard_Name,Panel
 BillboardType_RotatedBillboard_Name,Rotar Panel
+BillboardType_DirectionalBillboard_Name,移動方向ビルボード
 BillboardType_YAxisFixed_Name,Eje-Y fijado
 BillboardType_Fixed_Name,Fijado
 StandardColorType_Fixed_Name,Fijado

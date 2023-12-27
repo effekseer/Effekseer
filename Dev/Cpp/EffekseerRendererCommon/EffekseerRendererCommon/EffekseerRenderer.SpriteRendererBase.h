@@ -279,9 +279,7 @@ protected:
 			vs[3].SetUV2(1.0f, 0.0f);
 		}
 
-		if (parameter.Billboard == ::Effekseer::BillboardType::Billboard ||
-			parameter.Billboard == ::Effekseer::BillboardType::RotatedBillboard ||
-			parameter.Billboard == ::Effekseer::BillboardType::YAxisFixed)
+		if (parameter.Billboard != ::Effekseer::BillboardType::Fixed)
 		{
 			Effekseer::SIMD::Mat43f mat_rot = Effekseer::SIMD::Mat43f::Identity;
 			Effekseer::SIMD::Vec3f s;
@@ -294,11 +292,11 @@ protected:
 
 				ApplyViewOffset(instMat, camera, instanceParameter.ViewOffsetDistance);
 
-				CalcBillboard(parameter.Billboard, mat_rot, s, R, F, instMat, m_renderer->GetCameraFrontDirection());
+				CalcBillboard(parameter.Billboard, mat_rot, s, R, F, instMat, m_renderer->GetCameraFrontDirection(), instanceParameter.Direction);
 			}
 			else
 			{
-				CalcBillboard(parameter.Billboard, mat_rot, s, R, F, instanceParameter.SRTMatrix43, m_renderer->GetCameraFrontDirection());
+				CalcBillboard(parameter.Billboard, mat_rot, s, R, F, instanceParameter.SRTMatrix43, m_renderer->GetCameraFrontDirection(), instanceParameter.Direction);
 			}
 
 			for (int i = 0; i < 4; i++)

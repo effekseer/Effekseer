@@ -79,6 +79,8 @@ public:
 
 		Color AllColor;
 		int32_t Time;
+		SIMD::Vec3f Direction;
+
 		std::array<float, 4> CustomData1;
 		std::array<float, 4> CustomData2;
 	};
