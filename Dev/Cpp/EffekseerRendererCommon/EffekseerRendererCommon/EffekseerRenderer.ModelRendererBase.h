@@ -779,7 +779,7 @@ public:
 			Effekseer::SIMD::Vec3f R;
 			Effekseer::SIMD::Vec3f F;
 
-			CalcBillboard(btype, mat43, s, R, F, instanceParameter.SRTMatrix43, renderer->GetCameraFrontDirection());
+			CalcBillboard(btype, mat43, s, R, F, instanceParameter.SRTMatrix43, renderer->GetCameraFrontDirection(), instanceParameter.Direction);
 
 			mat44 = ::Effekseer::SIMD::Mat43f::Scaling(s) * mat43;
 		}

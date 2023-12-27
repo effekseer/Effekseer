@@ -315,6 +315,11 @@ void EffectNodeRing::Rendering(const Instance& instance, const Instance* next_in
 			instanceParameter.ViewOffsetDistance = instance.translation_state_.view_offset.distance;
 		}
 
+		if (nodeParameter.Billboard == BillboardType::DirectionalBillboard)
+		{
+			instanceParameter.Direction = instance.GetGlobalDirection();
+		}
+
 		CalcCustomData(&instance, instanceParameter.CustomData1, instanceParameter.CustomData2);
 
 		renderer->Rendering(nodeParameter, instanceParameter, userData);

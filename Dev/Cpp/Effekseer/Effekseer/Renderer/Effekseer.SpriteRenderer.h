@@ -74,6 +74,8 @@ public:
 
 		float ViewOffsetDistance;
 
+		SIMD::Vec3f Direction;
+
 		std::array<float, 4> CustomData1;
 		std::array<float, 4> CustomData2;
 	};

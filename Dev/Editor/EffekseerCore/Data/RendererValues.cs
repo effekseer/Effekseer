@@ -1045,6 +1045,8 @@ namespace Effekseer.Data
 			Billboard = 0,
 			[Key(key = "BillboardType_RotatedBillboard")]
 			RotatedBillboard = 3,
+			[Key(key = "BillboardType_DirectionalBillboard")]
+			DirectionalBillboard = 4,
 			[Key(key = "BillboardType_YAxisFixed")]
 			YAxisFixed = 1,
 			[Key(key = "BillboardType_Fixed")]

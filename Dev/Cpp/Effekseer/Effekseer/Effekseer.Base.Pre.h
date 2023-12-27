@@ -208,6 +208,7 @@ enum class BillboardType : int32_t
 	YAxisFixed = 1,
 	Fixed = 2,
 	RotatedBillboard = 3,
+	DirectionalBillboard = 4,
 };
 
 enum class CoordinateSystem : int32_t
