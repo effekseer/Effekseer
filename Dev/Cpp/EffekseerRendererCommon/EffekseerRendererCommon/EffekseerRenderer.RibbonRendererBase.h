@@ -12,6 +12,7 @@
 #include "EffekseerRenderer.CommonUtils.h"
 #include "EffekseerRenderer.RenderStateBase.h"
 #include "EffekseerRenderer.StandardRenderer.h"
+#include "TrailRenderer.h"
 
 //-----------------------------------------------------------------------------------
 //
@@ -45,313 +46,6 @@ protected:
 
 	int32_t customData1Count_ = 0;
 	int32_t customData2Count_ = 0;
-
-	template <typename VERTEX, int TARGET>
-	void AssignUV(StrideView<VERTEX> v, float uvX1, float uvX2, float uvY1, float uvY2)
-	{
-		if (TARGET == 0)
-		{
-			v[0].UV[0] = uvX1;
-			v[0].UV[1] = uvY1;
-
-			v[1].UV[0] = uvX2;
-			v[1].UV[1] = uvY1;
-
-			v[2].UV[0] = uvX1;
-			v[2].UV[1] = uvY2;
-
-			v[3].UV[0] = uvX2;
-			v[3].UV[1] = uvY2;
-		}
-		else if (TARGET == 1)
-		{
-			v[0].UV2[0] = uvX1;
-			v[0].UV2[1] = uvY1;
-
-			v[1].UV2[0] = uvX2;
-			v[1].UV2[1] = uvY1;
-
-			v[2].UV2[0] = uvX1;
-			v[2].UV2[1] = uvY2;
-
-			v[3].UV2[0] = uvX2;
-			v[3].UV2[1] = uvY2;
-		}
-		else if (TARGET == 2)
-		{
-			SetVertexAlphaUV(v[0], uvX1, 0);
-			SetVertexAlphaUV(v[0], uvY1, 1);
-
-			SetVertexAlphaUV(v[1], uvX2, 0);
-			SetVertexAlphaUV(v[1], uvY1, 1);
-
-			SetVertexAlphaUV(v[2], uvX1, 0);
-			SetVertexAlphaUV(v[2], uvY2, 1);
-
-			SetVertexAlphaUV(v[3], uvX2, 0);
-			SetVertexAlphaUV(v[3], uvY2, 1);
-		}
-		else if (TARGET == 3)
-		{
-			SetVertexUVDistortionUV(v[0], uvX1, 0);
-			SetVertexUVDistortionUV(v[0], uvY1, 1);
-
-			SetVertexUVDistortionUV(v[1], uvX2, 0);
-			SetVertexUVDistortionUV(v[1], uvY1, 1);
-
-			SetVertexUVDistortionUV(v[2], uvX1, 0);
-			SetVertexUVDistortionUV(v[2], uvY2, 1);
-
-			SetVertexUVDistortionUV(v[3], uvX2, 0);
-			SetVertexUVDistortionUV(v[3], uvY2, 1);
-		}
-		else if (TARGET == 4)
-		{
-			SetVertexBlendUV(v[0], uvX1, 0);
-			SetVertexBlendUV(v[0], uvY1, 1);
-
-			SetVertexBlendUV(v[1], uvX2, 0);
-			SetVertexBlendUV(v[1], uvY1, 1);
-
-			SetVertexBlendUV(v[2], uvX1, 0);
-			SetVertexBlendUV(v[2], uvY2, 1);
-
-			SetVertexBlendUV(v[3], uvX2, 0);
-			SetVertexBlendUV(v[3], uvY2, 1);
-		}
-		else if (TARGET == 5)
-		{
-			SetVertexBlendAlphaUV(v[0], uvX1, 0);
-			SetVertexBlendAlphaUV(v[0], uvY1, 1);
-
-			SetVertexBlendAlphaUV(v[1], uvX2, 0);
-			SetVertexBlendAlphaUV(v[1], uvY1, 1);
-
-			SetVertexBlendAlphaUV(v[2], uvX1, 0);
-			SetVertexBlendAlphaUV(v[2], uvY2, 1);
-
-			SetVertexBlendAlphaUV(v[3], uvX2, 0);
-			SetVertexBlendAlphaUV(v[3], uvY2, 1);
-		}
-		else if (TARGET == 6)
-		{
-			SetVertexBlendUVDistortionUV(v[0], uvX1, 0);
-			SetVertexBlendUVDistortionUV(v[0], uvY1, 1);
-
-			SetVertexBlendUVDistortionUV(v[1], uvX2, 0);
-			SetVertexBlendUVDistortionUV(v[1], uvY1, 1);
-
-			SetVertexBlendUVDistortionUV(v[2], uvX1, 0);
-			SetVertexBlendUVDistortionUV(v[2], uvY2, 1);
-
-			SetVertexBlendUVDistortionUV(v[3], uvX2, 0);
-			SetVertexBlendUVDistortionUV(v[3], uvY2, 1);
-		}
-	}
-
-	template <typename VERTEX, int TARGET>
-	void AssignUVs(const efkRibbonNodeParam& parameter, StrideView<VERTEX> verteies)
-	{
-		float uvx = 0.0f;
-		float uvw = 1.0f;
-		float uvy = 0.0f;
-		float uvh = 1.0f;
-
-		if (parameter.TextureUVTypeParameterPtr->Type == ::Effekseer::TextureUVType::Strech)
-		{
-			verteies.Reset();
-
-			for (size_t loop = 0; loop < instances.size() - 1; loop++)
-			{
-				const auto& param = instances[loop];
-				if (TARGET == 0)
-				{
-					uvx = param.UV.X;
-					uvw = param.UV.Width;
-					uvy = param.UV.Y;
-					uvh = param.UV.Height;
-				}
-				else if (TARGET == 2)
-				{
-					uvx = param.AlphaUV.X;
-					uvw = param.AlphaUV.Width;
-					uvy = param.AlphaUV.Y;
-					uvh = param.AlphaUV.Height;
-				}
-				else if (TARGET == 3)
-				{
-					uvx = param.UVDistortionUV.X;
-					uvw = param.UVDistortionUV.Width;
-					uvy = param.UVDistortionUV.Y;
-					uvh = param.UVDistortionUV.Height;
-				}
-				else if (TARGET == 4)
-				{
-					uvx = param.BlendUV.X;
-					uvw = param.BlendUV.Width;
-					uvy = param.BlendUV.Y;
-					uvh = param.BlendUV.Height;
-				}
-				else if (TARGET == 5)
-				{
-					uvx = param.BlendAlphaUV.X;
-					uvw = param.BlendAlphaUV.Width;
-					uvy = param.BlendAlphaUV.Y;
-					uvh = param.BlendAlphaUV.Height;
-				}
-				else if (TARGET == 6)
-				{
-					uvx = param.BlendUVDistortionUV.X;
-					uvw = param.BlendUVDistortionUV.Width;
-					uvy = param.BlendUVDistortionUV.Y;
-					uvh = param.BlendUVDistortionUV.Height;
-				}
-
-				for (int32_t sploop = 0; sploop < parameter.SplineDivision; sploop++)
-				{
-					float percent1 = (float)(param.InstanceIndex * parameter.SplineDivision + sploop) /
-									 (float)((param.InstanceCount - 1) * parameter.SplineDivision);
-
-					float percent2 = (float)(param.InstanceIndex * parameter.SplineDivision + sploop + 1) /
-									 (float)((param.InstanceCount - 1) * parameter.SplineDivision);
-
-					auto uvX1 = uvx;
-					auto uvX2 = uvx + uvw;
-					auto uvY1 = uvy + percent1 * uvh;
-					auto uvY2 = uvy + percent2 * uvh;
-
-					AssignUV<VERTEX, TARGET>(verteies, uvX1, uvX2, uvY1, uvY2);
-
-					verteies += 4;
-				}
-			}
-		}
-		else if (parameter.TextureUVTypeParameterPtr->Type == ::Effekseer::TextureUVType::Tile)
-		{
-			const auto& uvParam = *parameter.TextureUVTypeParameterPtr;
-
-			verteies.Reset();
-
-			for (size_t loop = 0; loop < instances.size() - 1; loop++)
-			{
-				auto& param = instances[loop];
-				if (TARGET == 0)
-				{
-					uvx = param.UV.X;
-					uvw = param.UV.Width;
-					uvy = param.UV.Y;
-					uvh = param.UV.Height;
-				}
-				else if (TARGET == 2)
-				{
-					uvx = param.AlphaUV.X;
-					uvw = param.AlphaUV.Width;
-					uvy = param.AlphaUV.Y;
-					uvh = param.AlphaUV.Height;
-				}
-				else if (TARGET == 3)
-				{
-					uvx = param.UVDistortionUV.X;
-					uvw = param.UVDistortionUV.Width;
-					uvy = param.UVDistortionUV.Y;
-					uvh = param.UVDistortionUV.Height;
-				}
-				else if (TARGET == 4)
-				{
-					uvx = param.BlendUV.X;
-					uvw = param.BlendUV.Width;
-					uvy = param.BlendUV.Y;
-					uvh = param.BlendUV.Height;
-				}
-				else if (TARGET == 5)
-				{
-					uvx = param.BlendAlphaUV.X;
-					uvw = param.BlendAlphaUV.Width;
-					uvy = param.BlendAlphaUV.Y;
-					uvh = param.BlendAlphaUV.Height;
-				}
-				else if (TARGET == 6)
-				{
-					uvx = param.BlendUVDistortionUV.X;
-					uvw = param.BlendUVDistortionUV.Width;
-					uvy = param.BlendUVDistortionUV.Y;
-					uvh = param.BlendUVDistortionUV.Height;
-				}
-
-				if (loop < uvParam.TileEdgeTail)
-				{
-					float uvBegin = uvy;
-					float uvEnd = uvy + uvh * uvParam.TileLoopAreaBegin;
-
-					for (int32_t sploop = 0; sploop < parameter.SplineDivision; sploop++)
-					{
-						float percent1 = (float)(param.InstanceIndex * parameter.SplineDivision + sploop) /
-										 (float)((uvParam.TileEdgeTail) * parameter.SplineDivision);
-
-						float percent2 = (float)(param.InstanceIndex * parameter.SplineDivision + sploop + 1) /
-										 (float)((uvParam.TileEdgeTail) * parameter.SplineDivision);
-
-						auto uvX1 = uvx;
-						auto uvX2 = uvx + uvw;
-						auto uvY1 = uvBegin + (uvEnd - uvBegin) * percent1;
-						auto uvY2 = uvBegin + (uvEnd - uvBegin) * percent2;
-
-						AssignUV<VERTEX, TARGET>(verteies, uvX1, uvX2, uvY1, uvY2);
-
-						verteies += 4;
-					}
-				}
-				else if (loop >= param.InstanceCount - 1 - uvParam.TileEdgeHead)
-				{
-					float uvBegin = uvy + uvh * uvParam.TileLoopAreaEnd;
-					float uvEnd = uvy + uvh * 1.0f;
-
-					for (int32_t sploop = 0; sploop < parameter.SplineDivision; sploop++)
-					{
-						float percent1 =
-							(float)((param.InstanceIndex - (param.InstanceCount - 1 - uvParam.TileEdgeHead)) * parameter.SplineDivision +
-									sploop) /
-							(float)((uvParam.TileEdgeHead) * parameter.SplineDivision);
-
-						float percent2 =
-							(float)((param.InstanceIndex - (param.InstanceCount - 1 - uvParam.TileEdgeHead)) * parameter.SplineDivision +
-									sploop + 1) /
-							(float)((uvParam.TileEdgeHead) * parameter.SplineDivision);
-
-						auto uvX1 = uvx;
-						auto uvX2 = uvx + uvw;
-						auto uvY1 = uvBegin + (uvEnd - uvBegin) * percent1;
-						auto uvY2 = uvBegin + (uvEnd - uvBegin) * percent2;
-
-						AssignUV<VERTEX, TARGET>(verteies, uvX1, uvX2, uvY1, uvY2);
-
-						verteies += 4;
-					}
-				}
-				else
-				{
-					float uvBegin = uvy + uvh * uvParam.TileLoopAreaBegin;
-					float uvEnd = uvy + uvh * uvParam.TileLoopAreaEnd;
-
-					for (int32_t sploop = 0; sploop < parameter.SplineDivision; sploop++)
-					{
-						float percent1 = (float)(sploop) / (float)(parameter.SplineDivision);
-
-						float percent2 = (float)(sploop + 1) / (float)(parameter.SplineDivision);
-
-						auto uvX1 = uvx;
-						auto uvX2 = uvx + uvw;
-						auto uvY1 = uvBegin + (uvEnd - uvBegin) * percent1;
-						auto uvY2 = uvBegin + (uvEnd - uvBegin) * percent2;
-
-						AssignUV<VERTEX, TARGET>(verteies, uvX1, uvX2, uvY1, uvY2);
-
-						verteies += 4;
-					}
-				}
-			}
-		}
-	}
 
 	template <typename VERTEX, bool FLIP_RGB>
 	void RenderSplines(const efkRibbonNodeParam& parameter, const ::Effekseer::SIMD::Mat44f& camera)
@@ -471,22 +165,40 @@ protected:
 				if (parameter.SplineDivision > 1)
 				{
 					verteies[0].Pos = ToStruct(spline_left.GetValue(param.InstanceIndex + sploop / (float)parameter.SplineDivision));
-					verteies[1].Pos = ToStruct(spline_right.GetValue(param.InstanceIndex + sploop / (float)parameter.SplineDivision));
+					verteies[5].Pos = ToStruct(spline_right.GetValue(param.InstanceIndex + sploop / (float)parameter.SplineDivision));
 
 					verteies[0].SetColor(Effekseer::Color::Lerp(param.Colors[0], param.Colors[2], percent_instance), FLIP_RGB);
-					verteies[1].SetColor(Effekseer::Color::Lerp(param.Colors[1], param.Colors[3], percent_instance), FLIP_RGB);
+					verteies[5].SetColor(Effekseer::Color::Lerp(param.Colors[1], param.Colors[3], percent_instance), FLIP_RGB);
+
+					verteies[1].Pos = (verteies[0].Pos + verteies[5].Pos) / 2.0f;
+					verteies[1].Col = Effekseer::Color::Lerp(verteies[0].Col, verteies[5].Col, 0.5f);
+					verteies[4] = verteies[1];
 				}
 				else
 				{
-					for (int i = 0; i < 2; i++)
 					{
-						verteies[i].Pos.X = param.Positions[i];
-						verteies[i].Pos.Y = 0.0f;
-						verteies[i].Pos.Z = 0.0f;
-						verteies[i].SetColor(param.Colors[i], FLIP_RGB);
-						verteies[i].SetFlipbookIndexAndNextRate(param.FlipbookIndexAndNextRate);
-						verteies[i].SetAlphaThreshold(param.AlphaThreshold);
+						verteies[0].Pos.X = param.Positions[0];
+						verteies[0].Pos.Y = 0.0f;
+						verteies[0].Pos.Z = 0.0f;
+						verteies[0].SetColor(param.Colors[0], FLIP_RGB);
+						verteies[0].SetFlipbookIndexAndNextRate(param.FlipbookIndexAndNextRate);
+						verteies[0].SetAlphaThreshold(param.AlphaThreshold);
 					}
+
+					{
+						verteies[5].Pos.X = param.Positions[1];
+						verteies[5].Pos.Y = 0.0f;
+						verteies[5].Pos.Z = 0.0f;
+						verteies[5].SetColor(param.Colors[1], FLIP_RGB);
+						verteies[5].SetFlipbookIndexAndNextRate(param.FlipbookIndexAndNextRate);
+						verteies[5].SetAlphaThreshold(param.AlphaThreshold);
+					}
+
+					verteies[1].Pos = (verteies[0].Pos + verteies[5].Pos) / 2.0f;
+					verteies[1].Col = Effekseer::Color::Lerp(verteies[0].Col, verteies[5].Col, 0.5f);
+					verteies[1].SetFlipbookIndexAndNextRate(param.FlipbookIndexAndNextRate);
+					verteies[1].SetAlphaThreshold(param.AlphaThreshold);
+					verteies[4] = verteies[1];
 				}
 
 				if (parameter.ViewpointDependent)
@@ -516,7 +228,7 @@ protected:
 					}
 					else
 					{
-						for (int i = 0; i < 2; i++)
+						for (int i : {0, 1, 4, 5})
 						{
 							verteies[i].Pos.X = verteies[i].Pos.X * s.GetX();
 						}
@@ -544,7 +256,7 @@ protected:
 														  t.GetY(),
 														  t.GetZ());
 
-						for (int i = 0; i < 2; i++)
+						for (int i : {0, 1, 4, 5})
 						{
 							verteies[i].Pos = ToStruct(::Effekseer::SIMD::Vec3f::Transform(verteies[i].Pos, mat_rot));
 						}
@@ -571,7 +283,7 @@ protected:
 											 parameter.DepthParameterPtr,
 											 parameter.IsRightHand);
 
-						for (int i = 0; i < 2; i++)
+						for (int i : {0, 1, 4, 5})
 						{
 							verteies[i].Pos = ToStruct(::Effekseer::SIMD::Vec3f::Transform(verteies[i].Pos, mat));
 						}
@@ -584,9 +296,11 @@ protected:
 				}
 				else
 				{
-					verteies[2] = verteies[0];
-					verteies[3] = verteies[1];
-					verteies += 4;
+					verteies[6] = verteies[0];
+					verteies[7] = verteies[1];
+					verteies[10] = verteies[4];
+					verteies[11] = verteies[5];
+					verteies += 8;
 				}
 
 				if (!isFirst)
@@ -600,20 +314,6 @@ protected:
 				}
 			}
 		}
-
-		// calculate UV
-		AssignUVs<VERTEX, 0>(parameter, verteies);
-
-		if (VertexUV2Required<VERTEX>())
-		{
-			AssignUVs<VERTEX, 1>(parameter, verteies);
-		}
-
-		AssignUVs<VERTEX, 2>(parameter, verteies);
-		AssignUVs<VERTEX, 3>(parameter, verteies);
-		AssignUVs<VERTEX, 4>(parameter, verteies);
-		AssignUVs<VERTEX, 5>(parameter, verteies);
-		AssignUVs<VERTEX, 6>(parameter, verteies);
 
 		if (VertexNormalRequired<VERTEX>())
 		{
@@ -640,7 +340,7 @@ protected:
 				else
 				{
 					Effekseer::SIMD::Vec3f axisOld = axisBefore;
-					axis = (vs_[5].Pos - vs_[3].Pos);
+					axis = (vs_[9].Pos - vs_[7].Pos);
 					axis = SafeNormalize(axis);
 					axisBefore = axis;
 
@@ -667,6 +367,10 @@ protected:
 					vs_[0].SetPackedTangent(packedTangent, FLIP_RGB);
 					vs_[1].SetPackedNormal(packedNormal, FLIP_RGB);
 					vs_[1].SetPackedTangent(packedTangent, FLIP_RGB);
+					vs_[4].SetPackedNormal(packedNormal, FLIP_RGB);
+					vs_[4].SetPackedTangent(packedTangent, FLIP_RGB);
+					vs_[5].SetPackedNormal(packedNormal, FLIP_RGB);
+					vs_[5].SetPackedTangent(packedTangent, FLIP_RGB);
 
 					vs_ += 2;
 				}
@@ -678,6 +382,10 @@ protected:
 					vs_[0].SetPackedTangent(packedTangent, FLIP_RGB);
 					vs_[1].SetPackedNormal(packedNormal, FLIP_RGB);
 					vs_[1].SetPackedTangent(packedTangent, FLIP_RGB);
+					vs_[4].SetPackedNormal(packedNormal, FLIP_RGB);
+					vs_[4].SetPackedTangent(packedTangent, FLIP_RGB);
+					vs_[5].SetPackedNormal(packedNormal, FLIP_RGB);
+					vs_[5].SetPackedTangent(packedTangent, FLIP_RGB);
 
 					vs_ += 2;
 				}
@@ -685,19 +393,35 @@ protected:
 				{
 					const auto packedNormal = PackVector3DF(normal);
 					const auto packedTangent = PackVector3DF(tangent);
-					vs_[0].SetPackedNormal(packedNormal, FLIP_RGB);
-					vs_[0].SetPackedTangent(packedTangent, FLIP_RGB);
-					vs_[1].SetPackedNormal(packedNormal, FLIP_RGB);
-					vs_[1].SetPackedTangent(packedTangent, FLIP_RGB);
-					vs_[2].SetPackedNormal(packedNormal, FLIP_RGB);
-					vs_[2].SetPackedTangent(packedTangent, FLIP_RGB);
-					vs_[3].SetPackedNormal(packedNormal, FLIP_RGB);
-					vs_[3].SetPackedTangent(packedTangent, FLIP_RGB);
-
-					vs_ += 4;
+					for (int offset : {0, 6})
+					{
+						vs_[0 + offset].SetPackedNormal(packedNormal, FLIP_RGB);
+						vs_[0 + offset].SetPackedTangent(packedTangent, FLIP_RGB);
+						vs_[1 + offset].SetPackedNormal(packedNormal, FLIP_RGB);
+						vs_[1 + offset].SetPackedTangent(packedTangent, FLIP_RGB);
+						vs_[4 + offset].SetPackedNormal(packedNormal, FLIP_RGB);
+						vs_[4 + offset].SetPackedTangent(packedTangent, FLIP_RGB);
+						vs_[5 + offset].SetPackedNormal(packedNormal, FLIP_RGB);
+						vs_[5 + offset].SetPackedTangent(packedTangent, FLIP_RGB);
+					}
+					vs_ += 8;
 				}
 			}
 		}
+
+		// calculate UV
+		TrailRendererUtils::AssignUVs<VERTEX, efkRibbonInstanceParam, 0>(*parameter.TextureUVTypeParameterPtr, instances, verteies, parameter.SplineDivision);
+
+		if (VertexUV2Required<VERTEX>())
+		{
+			TrailRendererUtils::AssignUVs<VERTEX, efkRibbonInstanceParam, 1>(*parameter.TextureUVTypeParameterPtr, instances, verteies, parameter.SplineDivision);
+		}
+
+		TrailRendererUtils::AssignUVs<VERTEX, efkRibbonInstanceParam, 2>(*parameter.TextureUVTypeParameterPtr, instances, verteies, parameter.SplineDivision);
+		TrailRendererUtils::AssignUVs<VERTEX, efkRibbonInstanceParam, 3>(*parameter.TextureUVTypeParameterPtr, instances, verteies, parameter.SplineDivision);
+		TrailRendererUtils::AssignUVs<VERTEX, efkRibbonInstanceParam, 4>(*parameter.TextureUVTypeParameterPtr, instances, verteies, parameter.SplineDivision);
+		TrailRendererUtils::AssignUVs<VERTEX, efkRibbonInstanceParam, 5>(*parameter.TextureUVTypeParameterPtr, instances, verteies, parameter.SplineDivision);
+		TrailRendererUtils::AssignUVs<VERTEX, efkRibbonInstanceParam, 6>(*parameter.TextureUVTypeParameterPtr, instances, verteies, parameter.SplineDivision);
 
 		// custom parameter
 		if (customData1Count_ > 0)
@@ -709,7 +433,7 @@ protected:
 
 				for (int32_t sploop = 0; sploop < parameter.SplineDivision; sploop++)
 				{
-					for (size_t i = 0; i < 4; i++)
+					for (size_t i = 0; i < 8; i++)
 					{
 						auto c = (float*)(&custom[0]);
 						memcpy(c, param.CustomData1.data(), sizeof(float) * customData1Count_);
@@ -728,7 +452,7 @@ protected:
 
 				for (int32_t sploop = 0; sploop < parameter.SplineDivision; sploop++)
 				{
-					for (size_t i = 0; i < 4; i++)
+					for (size_t i = 0; i < 8; i++)
 					{
 						auto c = (float*)(&custom[0]);
 						memcpy(c, param.CustomData2.data(), sizeof(float) * customData2Count_);
@@ -827,7 +551,7 @@ public:
 	void BeginRenderingGroup(const efkRibbonNodeParam& param, int32_t count, void* userData) override
 	{
 		m_ribbonCount = 0;
-		int32_t vertexCount = ((count - 1) * param.SplineDivision) * 4;
+		int32_t vertexCount = ((count - 1) * param.SplineDivision) * 8;
 		if (vertexCount <= 0)
 			return;
 
