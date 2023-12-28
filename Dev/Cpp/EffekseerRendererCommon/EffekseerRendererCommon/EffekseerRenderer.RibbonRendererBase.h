@@ -47,7 +47,6 @@ protected:
 	int32_t customData1Count_ = 0;
 	int32_t customData2Count_ = 0;
 
-
 	template <typename VERTEX, bool FLIP_RGB>
 	void RenderSplines(const efkRibbonNodeParam& parameter, const ::Effekseer::SIMD::Mat44f& camera)
 	{
@@ -297,10 +296,10 @@ protected:
 				}
 				else
 				{
-					verteies[2] = verteies[0];
-					verteies[3] = verteies[1];
-					verteies[6] = verteies[4];
-					verteies[7] = verteies[5];
+					verteies[6] = verteies[0];
+					verteies[7] = verteies[1];
+					verteies[10] = verteies[4];
+					verteies[11] = verteies[5];
 					verteies += 8;
 				}
 
