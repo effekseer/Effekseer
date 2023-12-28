@@ -18,6 +18,7 @@ set(PublicHeaders
     EffekseerRendererCommon/GraphicsDeviceCPU.h
     EffekseerRendererCommon/ModelLoader.h
     EffekseerRendererCommon/TextureLoader.h
+    EffekseerRendererCommon/TrailRenderer.h
     EffekseerRendererCommon/VertexBuffer.h
 )
 

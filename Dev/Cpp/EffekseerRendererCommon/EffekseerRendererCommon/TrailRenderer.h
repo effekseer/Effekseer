@@ -356,14 +356,13 @@ public:
 
 					for (int32_t sploop = 0; sploop < spline_division; sploop++)
 					{
+						const int headOffset = param.InstanceCount - 1 - uvParam.TileEdgeHead;
 						float percent1 =
-							(float)((param.InstanceIndex - (param.InstanceCount - 1 - uvParam.TileEdgeHead)) * spline_division +
-									sploop) /
+							(float)((param.InstanceIndex - headOffset) * spline_division + sploop) /
 							(float)((uvParam.TileEdgeHead) * spline_division);
 
 						float percent2 =
-							(float)((param.InstanceIndex - (param.InstanceCount - 1 - uvParam.TileEdgeHead)) * spline_division +
-									sploop + 1) /
+							(float)((param.InstanceIndex - headOffset) * spline_division + sploop + 1) /
 							(float)((uvParam.TileEdgeHead) * spline_division);
 
 						auto uvX1 = uvx;
