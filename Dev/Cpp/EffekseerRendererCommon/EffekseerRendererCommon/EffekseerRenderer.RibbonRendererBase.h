@@ -340,7 +340,7 @@ protected:
 				else
 				{
 					Effekseer::SIMD::Vec3f axisOld = axisBefore;
-					axis = (vs_[5].Pos - vs_[3].Pos);
+					axis = (vs_[9].Pos - vs_[7].Pos);
 					axis = SafeNormalize(axis);
 					axisBefore = axis;
 
