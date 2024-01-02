@@ -23,7 +23,7 @@ env:
 jobs:
   win_x86_build:
     name: Build Windows(x86)
-    runs-on: windows-2019
+    runs-on: windows-2022
     steps:
       - uses: actions/checkout@v2
       - run: |
@@ -43,7 +43,7 @@ jobs:
 
   tests:
     name: Run Tests
-    runs-on: windows-2019
+    runs-on: windows-2022
     steps:
       - name: Setup Python
         uses: actions/setup-python@v2
@@ -91,7 +91,7 @@ jobs:
             os: ubuntu-20.04
             label: Linux
           - name: windows_x64
-            os: windows-2019
+            os: windows-2022
             label: Win
           - name: mac
             os: macos-11
