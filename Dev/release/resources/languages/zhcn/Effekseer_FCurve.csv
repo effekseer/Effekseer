@@ -13,7 +13,7 @@ FCurve_DeletePoint,删除选中的关键帧
 FCurve_Copy,复制
 FCurve_PaseteOnZero,将复制的F曲线粘贴在第0帧
 FCurve_PasteOnCurrentTime,将复制的F曲线粘贴在当前时间
-FCurve_PasteOnCursor,将复制的F曲线粘贴在光标位置（似乎有BUG）
+FCurve_PasteOnCursor,将复制的F曲线粘贴在光标位置
 FCurve_Overwrite,用复制的F曲线覆盖
 FCurve_AlignKey,对齐选中的关键帧
 FCurve_AlignValue,对齐选中的值
