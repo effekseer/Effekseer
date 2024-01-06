@@ -13,5 +13,5 @@ Disabled_Name,禁用
 WorldCoordinateSyatemType_Local_Name,本地
 WorldCoordinateSyatemType_World_Name,世界
 ,
-Font_Normal,resources/SourceHanSans-Normal.ttc
-Font_Bold,resources/SourceHanSans-Normal.ttc
+Font_Normal,resources/fonts/SourceHanSans-Normal.ttc
+Font_Bold,resources/fonts/SourceHanSans-Normal.ttc
