@@ -157,7 +157,7 @@ When the bat script is executed, the console will be displayed.
 Below is an example of what will be displayed. 
 
 ```
-Preset numbers for building Effekseer for cpp:.
+Preset numbers for building Effekseer for cpp:
 [1] Visual Studio 2017(x86)
 [2] Visual Studio 2017(x64)
 [3] Visual Studio 2019(x86)
@@ -268,7 +268,7 @@ From the Install Folder (e.g. `install_msvc2022_x86/`) created in [3. Build Effe
 Next, copy the library file (.lib).
 
 From the Install Folder where Effekseer for Cpp was built(e.g. `install_msvc2022_x86/lib`),  
-**copy the following files to `[Your Project Folder]/Libraries/Effekseer/Lib]`.**    
+**copy the following files to `[Your Project Folder]/Libraries/Effekseer/Lib`.**    
 (Create the folder `[Your Project Folder]/Libraries/Effekseer/Lib/` manually.)
 
 
@@ -427,7 +427,7 @@ First, prepare the effect to be played.
 Originally, this should be created in the Effekseer editor, but this time we will use the sample effect.  
 Copy the following files from the downloaded EffekseerForCpp to the project folder (.proj file folder).
 
-- `Examples/Resources/Laser01.efkefc`.
+- `Examples/Resources/Laser01.efkefc`
 - `Examples/Resources/Texture` (entire folder, including all files and folders inside)
 
 After copying, the folder structure should look like the following.
@@ -945,7 +945,7 @@ It can be looped by if the effect has finished playing, playing it again anew.
 
 ```cpp
 // Check every frame to see if the effect has finished playing.
-if (efkManager->Exists(efkHandle))
+if (efkManager->Exists(efkHandle) == false)
 {
   // Play the effect again. Set the coordinates to the location where you want to display the effect.
   // (position, rotation, and scaling must also be re-set)

@@ -248,7 +248,7 @@ Enable runtime library DLL option?(y/n):
 
 [3. Effekseer For C++のビルド](#3-effekseer-for-cのビルド)で出来上がったインストールフォルダ(例: `install_msvc2022_x86/`)から、環境に合わせて必要なものをコピーします。
 
-**以下を`[導入先プロジェクトフォルダ]/Libraries/Effekseer/Include/]`へコピーしてください。**  
+**以下を`[導入先プロジェクトフォルダ]/Libraries/Effekseer/Include/`へコピーしてください。**  
 **フォルダごと、中身のファイルやフォルダを含めてコピーしてください。**  
 
 **<必ずコピー>**
@@ -982,7 +982,7 @@ efkManager->SetPaused(efkHandle, false);
 
 ```cpp
 // 毎フレーム、エフェクトが再生終了しているか確認する
-if (efkManager->Exists(efkHandle))
+if (efkManager->Exists(efkHandle) == false)
 {
   // 新たにエフェクトを再生し直す。座標はエフェクトを表示したい場所を設定する
   // (位置や回転、拡大縮小も設定しなおす必要がある)
