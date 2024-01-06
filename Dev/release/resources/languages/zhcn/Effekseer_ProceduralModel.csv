@@ -40,17 +40,17 @@ PM_AxisType_Name,轴
 
 PM_ShapeNoise_Name,形状噪声
 
-PM_TiltNoiseFreq_Name,Tilt噪声 频率
-PM_TiltNoiseOffset_Name,Tilt噪声 偏移
-PM_TiltNoisePower_Name,Tilt噪声 强度
+PM_TiltNoiseFreq_Name,倾斜噪声 频率
+PM_TiltNoiseOffset_Name,倾斜噪声 偏移
+PM_TiltNoisePower_Name,倾斜噪声 强度
 
-PM_WaveNoiseFreq_Name,Wave噪声 频率
-PM_WaveNoiseOffset_Name,Wave噪声 偏移
-PM_WaveNoisePower_Name,Wave噪声 强度
+PM_WaveNoiseFreq_Name,波噪声 频率
+PM_WaveNoiseOffset_Name,波噪声 偏移
+PM_WaveNoisePower_Name,波噪声 强度
 
-PM_CurlNoiseFreq_Name,Curl噪声 频率
-PM_CurlNoiseOffset_Name,Curl噪声 偏移
-PM_CurlNoisePower_Name,Curl噪声 强度
+PM_CurlNoiseFreq_Name,卷曲噪声 频率
+PM_CurlNoiseOffset_Name,卷曲噪声 偏移
+PM_CurlNoisePower_Name,卷曲噪声 强度
 
 PM_VertexColor_Name,顶点颜色
 
