@@ -36,7 +36,7 @@ void NodeRendererTextureUVTypeParameter::Load(uint8_t*& pos, int32_t version)
 	if (Type == TextureUVType::Strech)
 	{
 	}
-	else if (Type == TextureUVType::Tile)
+	else if (Type == TextureUVType::TilePerParticle)
 	{
 		memcpy(&TileEdgeHead, pos, sizeof(TileEdgeHead));
 		pos += sizeof(TileEdgeHead);
@@ -49,6 +49,11 @@ void NodeRendererTextureUVTypeParameter::Load(uint8_t*& pos, int32_t version)
 
 		memcpy(&TileLoopAreaEnd, pos, sizeof(TileLoopAreaEnd));
 		pos += sizeof(TileLoopAreaEnd);
+	}
+	else if (Type == TextureUVType::Tile)
+	{
+		memcpy(&TileLength, pos, sizeof(TileLength));
+		pos += sizeof(TileLength);
 	}
 }
 

@@ -17,8 +17,9 @@ void LoadGradient(Gradient& gradient, uint8_t*& pos, int32_t version);
 */
 enum class TextureUVType : int32_t
 {
-	Strech,
-	Tile,
+	Strech = 0,
+	TilePerParticle = 1,
+	Tile = 2,
 };
 
 /**

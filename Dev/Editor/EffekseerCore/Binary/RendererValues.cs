@@ -68,6 +68,10 @@ namespace Effekseer.Binary
 
 			if (value.Type.Value == Data.TextureUVType.Tile)
 			{
+				data.Add(value.TileLength.Value.GetBytes());
+			}
+			else if (value.Type.Value == Data.TextureUVType.TilePerParticle)
+			{
 				data.Add(value.TileEdgeHead.Value.GetBytes());
 				data.Add(value.TileEdgeTail.Value.GetBytes());
 				data.Add(value.TileLoopingArea.X.Value.GetBytes());

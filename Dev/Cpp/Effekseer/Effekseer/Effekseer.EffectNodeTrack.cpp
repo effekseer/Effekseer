@@ -94,6 +94,9 @@ void EffectNodeTrack::BeginRendering(int32_t count, Manager* manager, const Inst
 		m_nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
 		m_nodeParameter.TextureUVTypeParameterPtr = &TextureUVType;
 		m_nodeParameter.IsRightHand = manager->GetCoordinateSystem() == CoordinateSystem::RH;
+
+		auto scale = global->EffectGlobalMatrix.GetScale();
+		m_nodeParameter.GlobalScale = (scale.GetX() + scale.GetY() + scale.GetZ()) / 3.0f;
 		m_nodeParameter.Maginification = GetEffect()->GetMaginification();
 
 		m_nodeParameter.EnableViewOffset = (TranslationParam.TranslationType == ParameterTranslationType_ViewOffset);
@@ -134,6 +137,7 @@ void EffectNodeTrack::BeginRenderingGroup(InstanceGroup* group, Manager* manager
 			{
 				assert(false);
 			}
+			bool isParentAlived = true;
 
 			m_instanceParameter.UV = groupFirst->GetUV(0, livingTime, livedTime);
 			m_instanceParameter.AlphaUV = groupFirst->GetUV(1, livingTime, livedTime);

@@ -199,7 +199,7 @@ public:
 	}
 
 	template <typename VERTEX, typename INSTANCE, int TARGET>
-	static void AssignUVs(const Effekseer::NodeRendererTextureUVTypeParameter& uvParam, Effekseer::CustomAlignedVector<INSTANCE>& instances, StrideView<VERTEX> verteies, int spline_division)
+	static void AssignUVs(const Effekseer::NodeRendererTextureUVTypeParameter& uvParam, Effekseer::CustomAlignedVector<INSTANCE>& instances, StrideView<VERTEX> verteies, int spline_division, float globalScale)
 	{
 		float uvx = 0.0f;
 		float uvw = 1.0f;
@@ -275,7 +275,7 @@ public:
 				}
 			}
 		}
-		else if (uvParam.Type == ::Effekseer::TextureUVType::Tile)
+		else if (uvParam.Type == ::Effekseer::TextureUVType::TilePerParticle)
 		{
 			verteies.Reset();
 
@@ -398,6 +398,89 @@ public:
 						verteies += 8;
 					}
 				}
+			}
+		}
+		else if (uvParam.Type == ::Effekseer::TextureUVType::Tile)
+		{
+			float current = 0.0f;
+			float lengthAll = 0.0f;
+			const float lengthPerUV = uvParam.TileLength * globalScale;
+			for (size_t loop = 0; loop < instances.size() - 1; loop++)
+			{
+				const float length = (instances[loop + 1].SRTMatrix43.GetTranslation() - instances[loop].SRTMatrix43.GetTranslation()).GetLength();
+				lengthAll += length;
+			}
+
+			current = lengthPerUV - fmod(lengthAll, lengthPerUV);
+
+			verteies.Reset();
+			for (size_t loop = 0; loop < instances.size() - 1; loop++)
+			{
+				const float length = (instances[loop + 1].SRTMatrix43.GetTranslation() - instances[loop].SRTMatrix43.GetTranslation()).GetLength();
+				const auto& param = instances[loop];
+				if (TARGET == 0)
+				{
+					uvx = param.UV.X;
+					uvw = param.UV.Width;
+					uvy = param.UV.Y;
+					uvh = param.UV.Height;
+				}
+				else if (TARGET == 2)
+				{
+					uvx = param.AlphaUV.X;
+					uvw = param.AlphaUV.Width;
+					uvy = param.AlphaUV.Y;
+					uvh = param.AlphaUV.Height;
+				}
+				else if (TARGET == 3)
+				{
+					uvx = param.UVDistortionUV.X;
+					uvw = param.UVDistortionUV.Width;
+					uvy = param.UVDistortionUV.Y;
+					uvh = param.UVDistortionUV.Height;
+				}
+				else if (TARGET == 4)
+				{
+					uvx = param.BlendUV.X;
+					uvw = param.BlendUV.Width;
+					uvy = param.BlendUV.Y;
+					uvh = param.BlendUV.Height;
+				}
+				else if (TARGET == 5)
+				{
+					uvx = param.BlendAlphaUV.X;
+					uvw = param.BlendAlphaUV.Width;
+					uvy = param.BlendAlphaUV.Y;
+					uvh = param.BlendAlphaUV.Height;
+				}
+				else if (TARGET == 6)
+				{
+					uvx = param.BlendUVDistortionUV.X;
+					uvw = param.BlendUVDistortionUV.Width;
+					uvy = param.BlendUVDistortionUV.Y;
+					uvh = param.BlendUVDistortionUV.Height;
+				}
+
+				for (int32_t sploop = 0; sploop < spline_division; sploop++)
+				{
+					float percent1 = (float)(sploop) / (float)(spline_division);
+					float percent2 = (float)(sploop + 1) / (float)(spline_division);
+					float current1 = current + length * percent1;
+					float current2 = current + length * percent2;
+
+					auto uvX1 = uvx;
+					auto uvX2 = uvx + uvw * 0.5f;
+					auto uvX3 = uvx + uvw;
+
+					auto uvY1 = uvy + (current1 / lengthPerUV) * uvh;
+					auto uvY2 = uvy + (current2 / lengthPerUV) * uvh;
+
+					AssignUV<VERTEX, TARGET>(verteies, uvX1, uvX2, uvX3, uvY1, uvY2);
+
+					verteies += 8;
+				}
+
+				current += length;
 			}
 		}
 	}

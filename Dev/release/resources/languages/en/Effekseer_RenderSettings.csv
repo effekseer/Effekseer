@@ -18,11 +18,13 @@ StandardColorType_Easing_Name,Easing
 StandardColorType_FCurve_Name,F-Curve (RGBA)
 StandardColorType_Gradient_Name,Gradient
 TextureUVTypeParameter_Type_Name,UV Type
+TextureUVTypeParameter_TileLength_Name,Tile Length
 TextureUVTypeParameter_TileEdgeHead_Name,The number of tile on Head
 TextureUVTypeParameter_TileEdgeTail_Name,The number of tile on Tail
 TextureUVTypeParameter_TileLoopingArea_Name,Looping area
 TextureUVTypeParameter_Type_Strech_Name,Strech
 TextureUVTypeParameter_Type_Tile_Name,Tile
+TextureUVTypeParameter_Type_TilePerParticle_Name,Tile(Per particle)
 ,
 CullingType_Front_Name,Front view
 CullingType_Back_Name,Back view
