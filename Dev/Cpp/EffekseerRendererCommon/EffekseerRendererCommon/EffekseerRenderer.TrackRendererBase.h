@@ -475,18 +475,20 @@ protected:
 		}
 
 		// calculate UV
-		TrailRendererUtils::AssignUVs<VERTEX, efkTrackInstanceParam, 0>(*parameter.TextureUVTypeParameterPtr, instances, verteies, parameter.SplineDivision);
+		const auto global_scale = parameter.GlobalScale * parameter.Maginification;
+
+		TrailRendererUtils::AssignUVs<VERTEX, efkTrackInstanceParam, 0>(*parameter.TextureUVTypeParameterPtr, instances, verteies, parameter.SplineDivision, global_scale);
 
 		if (VertexUV2Required<VERTEX>())
 		{
-			TrailRendererUtils::AssignUVs<VERTEX, efkTrackInstanceParam, 1>(*parameter.TextureUVTypeParameterPtr, instances, verteies, parameter.SplineDivision);
+			TrailRendererUtils::AssignUVs<VERTEX, efkTrackInstanceParam, 1>(*parameter.TextureUVTypeParameterPtr, instances, verteies, parameter.SplineDivision, global_scale);
 		}
 
-		TrailRendererUtils::AssignUVs<VERTEX, efkTrackInstanceParam, 2>(*parameter.TextureUVTypeParameterPtr, instances, verteies, parameter.SplineDivision);
-		TrailRendererUtils::AssignUVs<VERTEX, efkTrackInstanceParam, 3>(*parameter.TextureUVTypeParameterPtr, instances, verteies, parameter.SplineDivision);
-		TrailRendererUtils::AssignUVs<VERTEX, efkTrackInstanceParam, 4>(*parameter.TextureUVTypeParameterPtr, instances, verteies, parameter.SplineDivision);
-		TrailRendererUtils::AssignUVs<VERTEX, efkTrackInstanceParam, 5>(*parameter.TextureUVTypeParameterPtr, instances, verteies, parameter.SplineDivision);
-		TrailRendererUtils::AssignUVs<VERTEX, efkTrackInstanceParam, 6>(*parameter.TextureUVTypeParameterPtr, instances, verteies, parameter.SplineDivision);
+		TrailRendererUtils::AssignUVs<VERTEX, efkTrackInstanceParam, 2>(*parameter.TextureUVTypeParameterPtr, instances, verteies, parameter.SplineDivision, global_scale);
+		TrailRendererUtils::AssignUVs<VERTEX, efkTrackInstanceParam, 3>(*parameter.TextureUVTypeParameterPtr, instances, verteies, parameter.SplineDivision, global_scale);
+		TrailRendererUtils::AssignUVs<VERTEX, efkTrackInstanceParam, 4>(*parameter.TextureUVTypeParameterPtr, instances, verteies, parameter.SplineDivision, global_scale);
+		TrailRendererUtils::AssignUVs<VERTEX, efkTrackInstanceParam, 5>(*parameter.TextureUVTypeParameterPtr, instances, verteies, parameter.SplineDivision, global_scale);
+		TrailRendererUtils::AssignUVs<VERTEX, efkTrackInstanceParam, 6>(*parameter.TextureUVTypeParameterPtr, instances, verteies, parameter.SplineDivision, global_scale);
 
 		// custom parameter
 		if (customData1Count_ > 0)

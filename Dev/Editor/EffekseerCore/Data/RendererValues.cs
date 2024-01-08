@@ -11,7 +11,9 @@ namespace Effekseer.Data
 		[Key(key = "TextureUVTypeParameter_Type_Strech")]
 		Strech = 0,
 		[Key(key = "TextureUVTypeParameter_Type_Tile")]
-		Tile = 1,
+		Tile = 2,
+		[Key(key = "TextureUVTypeParameter_Type_TilePerParticle")]
+		TilePerParticle = 1,
 	}
 
 	public enum TrailSmoothingType : int
@@ -40,16 +42,20 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		[Key(key = "TextureUVTypeParameter_TileEdgeHead")]
+		[Key(key = "TextureUVTypeParameter_TileLength")]
 		[Selected(ID = 0, Value = (int)TextureUVType.Tile)]
+		public Value.Float TileLength { get; private set; } = new Value.Float(1, float.MaxValue, 0.1f);
+
+		[Key(key = "TextureUVTypeParameter_TileEdgeHead")]
+		[Selected(ID = 0, Value = (int)TextureUVType.TilePerParticle)]
 		public Value.Int TileEdgeHead { get; private set; }
 
 		[Key(key = "TextureUVTypeParameter_TileEdgeTail")]
-		[Selected(ID = 0, Value = (int)TextureUVType.Tile)]
+		[Selected(ID = 0, Value = (int)TextureUVType.TilePerParticle)]
 		public Value.Int TileEdgeTail { get; private set; }
 
 		[Key(key = "TextureUVTypeParameter_TileLoopingArea")]
-		[Selected(ID = 0, Value = (int)TextureUVType.Tile)]
+		[Selected(ID = 0, Value = (int)TextureUVType.TilePerParticle)]
 		public Value.Vector2D TileLoopingArea { get; private set; }
 		public TextureUVTypeParameter()
 		{

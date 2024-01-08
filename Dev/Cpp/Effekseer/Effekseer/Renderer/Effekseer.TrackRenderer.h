@@ -36,6 +36,7 @@ public:
 		int32_t SplineDivision;
 
 		bool IsRightHand;
+		float GlobalScale = 1.0f;
 		float Maginification = 1.0f;
 
 		NodeRendererDepthParameter* DepthParameterPtr = nullptr;

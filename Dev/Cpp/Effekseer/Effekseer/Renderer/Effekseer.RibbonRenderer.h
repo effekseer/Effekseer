@@ -39,6 +39,7 @@ public:
 		bool ViewpointDependent;
 
 		bool IsRightHand;
+		float GlobalScale = 1.0f;
 		float Maginification = 1.0f;
 
 		int32_t SplineDivision;
