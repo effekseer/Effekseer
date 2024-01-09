@@ -186,29 +186,23 @@ void RenderState::Update(bool forced)
 
 		if (m_active.TextureWrapTypes[i] != m_next.TextureWrapTypes[i] || forced)
 		{
+			std::array<int32_t, 3> wraps = {
+				D3DTADDRESS_WRAP,
+				D3DTADDRESS_CLAMP,
+				D3DTADDRESS_MIRROR,
+			};
+
+			auto wrap = wraps[static_cast<int32_t>(m_next.TextureWrapTypes[i])];
+
 			// for VTF
 			if (i < 4)
 			{
-				m_renderer->GetDevice()->SetSamplerState(
-					i + D3DVERTEXTEXTURESAMPLER0,
-					D3DSAMP_ADDRESSU,
-					m_next.TextureWrapTypes[i] == ::Effekseer::TextureWrapType::Repeat ? D3DTADDRESS_WRAP : D3DTADDRESS_CLAMP);
-
-				m_renderer->GetDevice()->SetSamplerState(
-					i + D3DVERTEXTEXTURESAMPLER0,
-					D3DSAMP_ADDRESSV,
-					m_next.TextureWrapTypes[i] == ::Effekseer::TextureWrapType::Repeat ? D3DTADDRESS_WRAP : D3DTADDRESS_CLAMP);
+				m_renderer->GetDevice()->SetSamplerState(i + D3DVERTEXTEXTURESAMPLER0, D3DSAMP_ADDRESSU, wrap);
+				m_renderer->GetDevice()->SetSamplerState(i + D3DVERTEXTEXTURESAMPLER0, D3DSAMP_ADDRESSV, wrap);
 			}
 
-			m_renderer->GetDevice()->SetSamplerState(
-				i,
-				D3DSAMP_ADDRESSU,
-				m_next.TextureWrapTypes[i] == ::Effekseer::TextureWrapType::Repeat ? D3DTADDRESS_WRAP : D3DTADDRESS_CLAMP);
-
-			m_renderer->GetDevice()->SetSamplerState(
-				i,
-				D3DSAMP_ADDRESSV,
-				m_next.TextureWrapTypes[i] == ::Effekseer::TextureWrapType::Repeat ? D3DTADDRESS_WRAP : D3DTADDRESS_CLAMP);
+			m_renderer->GetDevice()->SetSamplerState(i, D3DSAMP_ADDRESSU, wrap);
+			m_renderer->GetDevice()->SetSamplerState(i, D3DSAMP_ADDRESSV, wrap);
 		}
 	}
 

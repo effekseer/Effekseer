@@ -25,7 +25,7 @@ private:
 	static const int32_t CulTypeCount = 3;
 	static const int32_t AlphaTypeCount = 5;
 	static const int32_t TextureFilterCount = 2;
-	static const int32_t TextureWrapCount = 2;
+	static const int32_t TextureWrapCount = 3;
 
 	RendererImplemented* m_renderer;
 	ID3D11RasterizerState* m_rStates[CulTypeCount];

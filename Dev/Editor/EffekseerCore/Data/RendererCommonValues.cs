@@ -1232,6 +1232,8 @@ namespace Effekseer.Data
 			Repeat = 0,
 			[Key(key = "WrapType_Clamp")]
 			Clamp = 1,
+			[Key(key = "WrapType_Mirror")]
+			Mirror = 2,
 		}
 
 		public enum UVType : int

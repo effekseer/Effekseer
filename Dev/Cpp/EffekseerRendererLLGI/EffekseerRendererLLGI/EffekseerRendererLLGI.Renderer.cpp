@@ -783,9 +783,10 @@ void RendererImplemented::SetPixelBufferToShader(const void* data, int32_t size,
 void RendererImplemented::SetTextures(Shader* shader, Effekseer::Backend::TextureRef* textures, int32_t count)
 {
 	auto state = GetRenderState()->GetActiveState();
-	LLGI::TextureWrapMode ws[2];
+	std::array<LLGI::TextureWrapMode, 3> ws;
 	ws[(int)Effekseer::TextureWrapType::Clamp] = LLGI::TextureWrapMode::Clamp;
 	ws[(int)Effekseer::TextureWrapType::Repeat] = LLGI::TextureWrapMode::Repeat;
+	ws[(int)Effekseer::TextureWrapType::Mirror] = LLGI::TextureWrapMode::Mirror;
 
 	LLGI::TextureMinMagFilter fs[2];
 	fs[(int)Effekseer::TextureFilterType::Linear] = LLGI::TextureMinMagFilter::Linear;

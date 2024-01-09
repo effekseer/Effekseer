@@ -137,9 +137,10 @@ RenderState::RenderState(RendererImplemented* renderer, D3D11_COMPARISON_FUNC de
 	{
 		for (int32_t w = 0; w < TextureWrapCount; w++)
 		{
-			D3D11_TEXTURE_ADDRESS_MODE Addres[] = {
+			D3D11_TEXTURE_ADDRESS_MODE addresses[] = {
 				D3D11_TEXTURE_ADDRESS_WRAP,
 				D3D11_TEXTURE_ADDRESS_CLAMP,
+				D3D11_TEXTURE_ADDRESS_MIRROR,
 			};
 
 			D3D11_FILTER Filter[] = {
@@ -154,9 +155,9 @@ RenderState::RenderState(RendererImplemented* renderer, D3D11_COMPARISON_FUNC de
 
 			D3D11_SAMPLER_DESC SamlerDesc = {
 				Filter[f],
-				Addres[w],
-				Addres[w],
-				Addres[w],
+				addresses[w],
+				addresses[w],
+				addresses[w],
 				0.0f,
 				Anisotropic[f],
 				D3D11_COMPARISON_ALWAYS,
