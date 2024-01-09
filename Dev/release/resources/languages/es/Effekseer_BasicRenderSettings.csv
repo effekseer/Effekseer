@@ -44,6 +44,7 @@ FilterType_Nearest_Name,Más cercano-próximo
 FilterType_Linear_Name,Interpolación Lineal
 WrapType_Repeat_Name,Repetir
 WrapType_Clamp_Name,Pinza
+WrapType_Mirror_Name,Mirror
 AlphaBlendType_Opacity_Name,Opacidad
 AlphaBlendType_Blend_Name,Blend
 AlphaBlendType_Add_Name,Additivo

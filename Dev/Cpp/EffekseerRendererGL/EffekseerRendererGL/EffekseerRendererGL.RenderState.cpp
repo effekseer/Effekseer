@@ -168,7 +168,7 @@ void RenderState::Update(bool forced)
 	static const GLint glfilterMin[] = {GL_NEAREST, GL_LINEAR_MIPMAP_LINEAR};
 	static const GLint glfilterMin_NoneMipmap[] = {GL_NEAREST, GL_LINEAR};
 	static const GLint glfilterMag[] = {GL_NEAREST, GL_LINEAR};
-	static const GLint glwrap[] = {GL_REPEAT, GL_CLAMP_TO_EDGE};
+	static const GLint glwrap[] = {GL_REPEAT, GL_CLAMP_TO_EDGE, GL_MIRRORED_REPEAT};
 
 	if (m_renderer->GetDeviceType() == OpenGLDeviceType::OpenGL3 || m_renderer->GetDeviceType() == OpenGLDeviceType::OpenGLES3)
 	{
@@ -213,9 +213,9 @@ void RenderState::Update(bool forced)
 			{
 				GLExt::glActiveTexture(GL_TEXTURE0 + i);
 
-				int32_t wrap_ = (int32_t)m_next.TextureWrapTypes[i];
-				GLExt::glSamplerParameteri(m_samplers[i], GL_TEXTURE_WRAP_S, glwrap[wrap_]);
-				GLExt::glSamplerParameteri(m_samplers[i], GL_TEXTURE_WRAP_T, glwrap[wrap_]);
+				int32_t wrap = static_cast<int32_t>(m_next.TextureWrapTypes[i]);
+				GLExt::glSamplerParameteri(m_samplers[i], GL_TEXTURE_WRAP_S, glwrap[wrap]);
+				GLExt::glSamplerParameteri(m_samplers[i], GL_TEXTURE_WRAP_T, glwrap[wrap]);
 
 				GLExt::glBindSampler(i, m_samplers[i]);
 			}

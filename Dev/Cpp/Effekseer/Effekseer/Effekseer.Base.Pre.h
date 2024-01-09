@@ -190,6 +190,7 @@ enum class TextureWrapType : int32_t
 {
 	Repeat = 0,
 	Clamp = 1,
+	Mirror = 2,
 };
 
 enum class CullingType : int32_t

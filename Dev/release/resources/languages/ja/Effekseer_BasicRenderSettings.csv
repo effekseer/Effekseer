@@ -37,6 +37,7 @@ FilterType_Nearest_Name,最近傍
 FilterType_Linear_Name,線形
 WrapType_Repeat_Name,繰り返し
 WrapType_Clamp_Name,クランプ
+WrapType_Mirror_Name,ミラー
 AlphaBlendType_Opacity_Name,不透明
 AlphaBlendType_Blend_Name,通常
 AlphaBlendType_Add_Name,加算
