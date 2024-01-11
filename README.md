@@ -25,6 +25,8 @@ Effekseer主要用作遊戲開發,不僅是程序員而且設計師也可進行�
 
 [![](http://img.youtube.com/vi/WwNX9TO7guA/0.jpg)](https://www.youtube.com/watch?v=WwNX9TO7guA)
 
+* master branch is the development branch. Please don't use master branch for production.
+
 Supported platforms
 =========
 

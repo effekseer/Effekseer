@@ -18,7 +18,7 @@ on:
       - 17x
 
 env:
-  EFFEKSEER_VERSION: 170
+  EFFEKSEER_VERSION: 180Beta1
 
 jobs:
   win_x86_build:
