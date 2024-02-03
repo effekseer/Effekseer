@@ -383,7 +383,7 @@ void Instance::FirstUpdate()
 
 	m_pEffectNode->InitializeRenderedInstance(*this, *ownGroup_, m_pManager);
 
-	if (m_pEffectNode->IsRendered)
+	if (m_pEffectNode->IsRendered && m_pEffectNode->GpuParticlesResource)
 	{
 		if (auto gpuParticles = m_pManager->GetGpuParticles())
 		{
