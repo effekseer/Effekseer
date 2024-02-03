@@ -90,15 +90,11 @@ PostProcess::PostProcess(Backend::GraphicsDeviceRef graphicsDevice, Backend::Sha
 		uniformBufferPS_ = graphicsDevice->CreateUniformBuffer(uniformBufferPSSize, nullptr);
 	}
 
-	drawParam_.TextureCount = 0;
-	drawParam_.TextureSamplingTypes.fill(Backend::TextureSamplingType::Linear);
-	drawParam_.TextureWrapTypes.fill(Backend::TextureWrapType::Clamp);
-
 	drawParam_.VertexBufferPtr = vb_;
 	drawParam_.IndexBufferPtr = ib_;
 	drawParam_.PipelineStatePtr = pip_;
-	drawParam_.VertexUniformBufferPtr = uniformBufferVS_;
-	drawParam_.PixelUniformBufferPtr = uniformBufferPS_;
+	drawParam_.VertexUniformBufferPtrs[0] = uniformBufferVS_;
+	drawParam_.PixelUniformBufferPtrs[0] = uniformBufferPS_;
 	drawParam_.PrimitiveCount = 2;
 	drawParam_.InstanceCount = 1;
 }

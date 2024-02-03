@@ -164,23 +164,14 @@ void Backend_Textures()
 
 		Effekseer::Backend::DrawParameter drawParam;
 
-		drawParam.TextureCount = 3;
-		drawParam.TexturePtrs[0] = texDst1;
-		drawParam.TextureSamplingTypes[0] = Effekseer::Backend::TextureSamplingType::Nearest;
-		drawParam.TextureWrapTypes[0] = Effekseer::Backend::TextureWrapType::Clamp;
-
-		drawParam.TexturePtrs[1] = texDst2;
-		drawParam.TextureSamplingTypes[1] = Effekseer::Backend::TextureSamplingType::Nearest;
-		drawParam.TextureWrapTypes[1] = Effekseer::Backend::TextureWrapType::Clamp;
-
-		drawParam.TexturePtrs[2] = texDst3;
-		drawParam.TextureSamplingTypes[2] = Effekseer::Backend::TextureSamplingType::Nearest;
-		drawParam.TextureWrapTypes[2] = Effekseer::Backend::TextureWrapType::Clamp;
+		drawParam.SetTexture(0, texDst1, Effekseer::Backend::TextureWrapType::Clamp, Effekseer::Backend::TextureSamplingType::Nearest);
+		drawParam.SetTexture(1, texDst2, Effekseer::Backend::TextureWrapType::Clamp, Effekseer::Backend::TextureSamplingType::Nearest);
+		drawParam.SetTexture(2, texDst3, Effekseer::Backend::TextureWrapType::Clamp, Effekseer::Backend::TextureSamplingType::Nearest);
 
 		drawParam.VertexBufferPtr = vb;
 		drawParam.IndexBufferPtr = ib;
 		drawParam.PipelineStatePtr = pip;
-		drawParam.VertexUniformBufferPtr = cb;
+		drawParam.VertexUniformBufferPtrs[0] = cb;
 		drawParam.PrimitiveCount = 2;
 		drawParam.InstanceCount = 1;
 		graphicsDevice->Draw(drawParam);

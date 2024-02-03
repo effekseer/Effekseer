@@ -7,6 +7,7 @@
 #include "EffekseerRendererLLGI.MaterialLoader.h"
 #include "EffekseerRendererLLGI.ModelRenderer.h"
 #include "EffekseerRendererLLGI.Shader.h"
+#include "EffekseerRendererLLGI.GpuParticles.h"
 
 #include <EffekseerRendererCommon/EffekseerRenderer.RibbonRendererBase.h>
 #include <EffekseerRendererCommon/EffekseerRenderer.RingRendererBase.h>
@@ -486,20 +487,23 @@ void RendererImplemented::SetRestorationOfStatesFlag(bool flag)
 
 void RendererImplemented::ChangeRenderPassPipelineState(LLGI::RenderPassPipelineStateKey key)
 {
+	auto gd = graphicsDevice_.DownCast<EffekseerRendererLLGI::Backend::GraphicsDevice>();
+
 	auto it = renderpassPipelineStates_.find(key);
 	if (it != renderpassPipelineStates_.end())
 	{
 		currentRenderPassPipelineState_ = it->second;
+		gd->SetRenderPassPipelineState(currentRenderPassPipelineState_.get());
 	}
 	else
 	{
-		auto gd = graphicsDevice_.DownCast<EffekseerRendererLLGI::Backend::GraphicsDevice>();
 		auto pipelineState = LLGI::CreateSharedPtr(gd->GetGraphics()->CreateRenderPassPipelineState(key));
 		if (pipelineState != nullptr)
 		{
 			renderpassPipelineStates_[key] = pipelineState;
 		}
 		currentRenderPassPipelineState_ = pipelineState;
+		gd->SetRenderPassPipelineState(currentRenderPassPipelineState_.get());
 	}
 }
 
@@ -544,6 +548,10 @@ bool RendererImplemented::EndRendering()
 void RendererImplemented::SetCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList)
 {
 	commandList_ = commandList;
+
+	auto device = GetGraphicsDevice().DownCast<Backend::GraphicsDevice>();
+	auto cl = commandList_.DownCast<CommandList>();
+	device->SetCommandList((cl) ? cl->GetInternal() : nullptr);
 }
 
 Effekseer::Backend::IndexBufferRef RendererImplemented::GetIndexBuffer()
@@ -588,6 +596,16 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 ::Effekseer::TrackRendererRef RendererImplemented::CreateTrackRenderer()
 {
 	return ::Effekseer::TrackRendererRef(new ::EffekseerRenderer::TrackRendererBase<RendererImplemented, false>(this));
+}
+
+::Effekseer::GpuParticlesRef RendererImplemented::CreateGpuParticles(const Effekseer::GpuParticles::Settings& settings)
+{
+	auto gpuParticles = ::Effekseer::GpuParticlesRef(new ::EffekseerRendererLLGI::GpuParticles(this));
+	if (!gpuParticles->InitSystem(settings))
+	{
+		return nullptr;
+	}
+	return gpuParticles;
 }
 
 ::Effekseer::TextureLoaderRef RendererImplemented::CreateTextureLoader(::Effekseer::FileInterfaceRef fileInterface)

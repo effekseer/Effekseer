@@ -175,10 +175,10 @@ namespace Effekseer.Data.Value
 			DrawnAs drawnas = Data.DrawnAs.CenterAndAmplitude,
 			ColorSpace colorSpace = Data.ColorSpace.RGBA)
 		{
-			R = new IntWithRandom(r, r_max, r_min);
-			G = new IntWithRandom(g, g_max, g_min);
-			B = new IntWithRandom(b, b_max, b_min);
-			A = new IntWithRandom(a, a_max, a_min);
+			R = new IntWithRandom(r, r_max, r_min, DrawnAs.MaxAndMin);
+			G = new IntWithRandom(g, g_max, g_min, DrawnAs.MaxAndMin);
+			B = new IntWithRandom(b, b_max, b_min, DrawnAs.MaxAndMin);
+			A = new IntWithRandom(a, a_max, a_min, DrawnAs.MaxAndMin);
 			DrawnAs = drawnas;
 			SetColorSpace(colorSpace, false, false);
 
@@ -303,23 +303,28 @@ namespace Effekseer.Data.Value
 			Command.CommandManager.EndCollection();
 		}
 
-		public static implicit operator byte[](ColorWithRandom value)
+		public byte[] GetBytes()
 		{
 			byte[] values = new byte[sizeof(byte) * 10]
 			{
-				(byte)value.ColorSpace,
+				(byte)ColorSpace,
 				(byte)0,	// reserved
-				(byte)value.R.Max,
-				(byte)value.G.Max,
-				(byte)value.B.Max,
-				(byte)value.A.Max,
-				(byte)value.R.Min,
-				(byte)value.G.Min,
-				(byte)value.B.Min,
-				(byte)value.A.Min
+				(byte)R.Max,
+				(byte)G.Max,
+				(byte)B.Max,
+				(byte)A.Max,
+				(byte)R.Min,
+				(byte)G.Min,
+				(byte)B.Min,
+				(byte)A.Min
 			};
 
 			return values;
+		}
+
+		public static implicit operator byte[](ColorWithRandom value)
+		{
+			return value.GetBytes();
 		}
 	}
 }

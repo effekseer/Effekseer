@@ -99,6 +99,13 @@ namespace Effekseer.Data
 			get;
 			private set;
 		} = new CollisionsValues();
+		
+		[IO(Export = true)]
+		public GpuParticlesValues GpuParticles
+		{
+			get;
+			private set;
+		}
 
 		/// <summary>
 		/// コンストラクタ
@@ -121,6 +128,7 @@ namespace Effekseer.Data
 			SoundValues = new SoundValues(basepath);
 			AdvancedRendererCommonValuesValues = new Data.AdvancedRenderCommonValues(basepath);
 			KillRulesValues = new KillRulesValues();
+			GpuParticles = new GpuParticlesValues(basepath);
 		}
 	}
 }

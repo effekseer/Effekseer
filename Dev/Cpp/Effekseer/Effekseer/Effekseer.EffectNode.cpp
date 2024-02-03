@@ -23,6 +23,7 @@
 #include "Effekseer.Setting.h"
 #include "Sound/Effekseer.SoundPlayer.h"
 #include "Utils/Effekseer.BinaryReader.h"
+#include "Parameter/GpuParticlesParameter.h"
 
 #include "Utils/Compatiblity.h"
 
@@ -297,6 +298,23 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		LoadRendererParameter(pos, m_effect->GetSetting());
 
 		Sound.Load(pos, ef->GetVersion());
+
+		if (m_effect->GetVersion() >= Version18Alpha1)
+		{
+			int gpuParticleEnabled = 0;
+			memcpy(&gpuParticleEnabled, pos, sizeof(int));
+			pos += sizeof(int);
+
+			if (gpuParticleEnabled)
+			{
+				auto gpuParticlesParamSet = LoadGpuParticlesParameter(pos, ef->GetVersion());
+
+				if (auto gpuParticles = setting->GetGpuParticles())
+				{
+					GpuParticlesResource = gpuParticles->CreateResource(gpuParticlesParamSet, m_effect);
+				}
+			}
+		}
 
 		AdjustSettings(setting);
 	}

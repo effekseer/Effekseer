@@ -382,6 +382,20 @@ void Instance::FirstUpdate()
 	prevLocalVelocity_ = SIMD::Vec3f(0, 0, 0);
 
 	m_pEffectNode->InitializeRenderedInstance(*this, *ownGroup_, m_pManager);
+
+	if (m_pEffectNode->IsRendered)
+	{
+		if (auto gpuParticles = m_pManager->GetGpuParticles())
+		{
+			m_gpuEmitterID = gpuParticles->NewEmitter(m_pEffectNode->GpuParticlesResource, (GpuParticles::ParticleGroupID)GetInstanceGlobal());
+
+			if (m_gpuEmitterID >= 0)
+			{
+				gpuParticles->SetRandomSeed(m_gpuEmitterID, (uint32_t)m_randObject.GetRandInt());
+				gpuParticles->StartEmit(m_gpuEmitterID);
+			}
+		}
+	}
 }
 
 void Instance::Update(float deltaFrame, bool shown)
@@ -435,6 +449,28 @@ void Instance::Update(float deltaFrame, bool shown)
 	}
 
 	UpdateTransform(deltaFrame);
+
+	// Update gpu particles emitter parameters
+	if (m_gpuEmitterID >= 0)
+	{
+		if (auto gpuParticles = m_pManager->GetGpuParticles())
+		{
+			gpuParticles->SetDeltaTime(m_gpuEmitterID, deltaFrame);
+
+			gpuParticles->SetTransform(m_gpuEmitterID, ToStruct(globalMatrix_rendered));
+
+			auto& paramSet = m_pEffectNode->GpuParticlesResource->GetParamSet();
+			if ((BindType)paramSet.RenderColor.ColorInherit == BindType::NotBind_Root)
+			{
+				InstanceGlobal* instanceGlobal = m_pContainer->GetRootInstance();
+				gpuParticles->SetColor(m_gpuEmitterID, instanceGlobal->GlobalColor);
+			}
+			else
+			{
+				gpuParticles->SetColor(m_gpuEmitterID, ColorInheritance);
+			}
+		}
+	}
 
 	// Get parent color.
 	if (m_pParent != nullptr)
@@ -564,6 +600,7 @@ bool Instance::AreChildrenActive() const
 			return true;
 		}
 	}
+
 	return false;
 }
 
@@ -915,6 +952,12 @@ void Instance::Kill()
 		for (InstanceGroup* group = childrenGroups_; group != nullptr; group = group->NextUsedByInstance)
 		{
 			group->IsReferencedFromInstance = false;
+		}
+
+		if (m_gpuEmitterID >= 0)
+		{
+			m_pManager->GetGpuParticles()->StopEmit(m_gpuEmitterID);
+			m_gpuEmitterID = -1;
 		}
 
 		m_State = eInstanceState::INSTANCE_STATE_REMOVED;

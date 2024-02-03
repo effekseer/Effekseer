@@ -18,3 +18,4 @@ Fcurve_Elm_Blend,Blend
 Fcurve_Elm_BlendAlpha,BlendAlpha
 Fcurve_Elm_BlendUVDistortion,Distorsón Blend UV
 Fcurve_Elm_AlphaThreshold,Umbral Alpha
+Fcurve_Elm_GpuParticles_ColorAll,GpuPtcl-Todo el color(RGBA)

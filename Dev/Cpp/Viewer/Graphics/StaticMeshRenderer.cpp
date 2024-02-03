@@ -194,16 +194,13 @@ void StaticMeshRenderer::Render(const RendererParameter& rendererParameter)
 
 	Effekseer::Backend::DrawParameter drawParam;
 
-	drawParam.TextureCount = 1;
-	drawParam.TexturePtrs[0] = staticMesh_->Texture != nullptr ? staticMesh_->Texture : dummyTexture_;
-	drawParam.TextureSamplingTypes[0] = Backend::TextureSamplingType::Linear;
-	drawParam.TextureWrapTypes[0] = Backend::TextureWrapType::Repeat;
+	drawParam.SetTexture(0, staticMesh_->Texture != nullptr ? staticMesh_->Texture : dummyTexture_, Backend::TextureWrapType::Repeat, Backend::TextureSamplingType::Linear);
 
 	drawParam.VertexBufferPtr = staticMesh_->GetVertexBuffer();
 	drawParam.IndexBufferPtr = staticMesh_->GetIndexBuffer();
 	drawParam.PipelineStatePtr = pip_;
-	drawParam.VertexUniformBufferPtr = uniformBufferVS_;
-	drawParam.PixelUniformBufferPtr = uniformBufferPS_;
+	drawParam.VertexUniformBufferPtrs[0] = uniformBufferVS_;
+	drawParam.PixelUniformBufferPtrs[0] = uniformBufferPS_;
 	drawParam.PrimitiveCount = staticMesh_->GetIndexCount() / 3;
 	drawParam.InstanceCount = 1;
 	graphicsDevice_->Draw(drawParam);

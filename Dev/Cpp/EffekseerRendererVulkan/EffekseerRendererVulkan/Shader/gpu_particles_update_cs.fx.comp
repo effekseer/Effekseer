@@ -1,0 +1,448 @@
+#version 430
+layout(local_size_x = 256, local_size_y = 1, local_size_z = 1) in;
+
+struct EmitterData
+{
+    uint FlagBits;
+    uint Seed;
+    uint ParticleHead;
+    uint ParticleSize;
+    uint TrailHead;
+    uint TrailSize;
+    uint TrailPhase;
+    uint NextEmitCount;
+    uint TotalEmitCount;
+    uint EmitPointCount;
+    float TimeCount;
+    float TimeStopped;
+    uint Reserved0;
+    uint Reserved1;
+    float DeltaTime;
+    uint Color;
+    mat4x3 Transform;
+};
+
+struct ParticleData
+{
+    uint FlagBits;
+    uint Seed;
+    float LifeAge;
+    uint InheritColor;
+    uvec2 DirectionSpeed;
+    uint Color;
+    uint Padding;
+    mat4x3 Transform;
+};
+
+struct ParameterData
+{
+    int EmitCount;
+    int EmitPerFrame;
+    float EmitOffset;
+    uint Padding0;
+    vec2 LifeTime;
+    uint EmitShapeType;
+    uint Padding1;
+    vec4 EmitShapeData[2];
+    vec3 Direction;
+    float Spread;
+    vec2 InitialSpeed;
+    vec2 Damping;
+    vec4 AngularOffset[2];
+    vec4 AngularVelocity[2];
+    vec4 ScaleData1[2];
+    vec4 ScaleData2[2];
+    vec3 ScaleEasing;
+    uint ScaleFlags;
+    vec3 Gravity;
+    uint Padding2;
+    vec3 VortexCenter;
+    float VortexRotation;
+    vec3 VortexAxis;
+    float VortexAttraction;
+    float TurbulencePower;
+    uint TurbulenceSeed;
+    float TurbulenceScale;
+    float TurbulenceOctave;
+    uint RenderState;
+    uint ShapeType;
+    uint ShapeData;
+    float ShapeSize;
+    float Emissive;
+    float FadeIn;
+    float FadeOut;
+    uint MaterialType;
+    uvec4 ColorData;
+    vec3 ColorEasing;
+    uint ColorFlags;
+};
+
+struct TrailData
+{
+    vec3 Position;
+    uint Direction;
+};
+
+layout(set = 0, binding = 1, std140) uniform cb1
+{
+    layout(row_major) EmitterData emitter;
+} _592;
+
+layout(set = 2, binding = 0, std430) buffer Particles
+{
+    layout(row_major) ParticleData _data[];
+} Particles_1;
+
+layout(set = 0, binding = 0, std140) uniform cb0
+{
+    ParameterData paramData;
+} _659;
+
+layout(set = 2, binding = 1, std430) buffer Trails
+{
+    TrailData _data[];
+} Trails_1;
+
+layout(set = 1, binding = 2) uniform sampler3D Sampler_NoiseSamp;
+layout(set = 1, binding = 4) uniform sampler2D Sampler_GradientSamp;
+
+uint RandomUint(inout uint seed)
+{
+    uint state = seed;
+    seed = (seed * 747796405u) + 2891336453u;
+    uint word = ((state >> ((state >> 28u) + 4u)) ^ state) * 277803737u;
+    return (word >> 22u) ^ word;
+}
+
+float RandomFloat(inout uint seed)
+{
+    uint param = seed;
+    uint _437 = RandomUint(param);
+    seed = param;
+    return float(_437) / 4294967296.0;
+}
+
+float RandomFloatRange(inout uint seed, vec2 maxmin)
+{
+    uint param = seed;
+    float _450 = RandomFloat(param);
+    seed = param;
+    return mix(maxmin.y, maxmin.x, _450);
+}
+
+vec4 RandomFloat4Range(inout uint seed, vec4 maxmin[2])
+{
+    uint param = seed;
+    float _461 = RandomFloat(param);
+    seed = param;
+    return mix(maxmin[1], maxmin[0], vec4(_461));
+}
+
+vec4 UnpackFloat4(uvec2 bits)
+{
+    return vec4(unpackHalf2x16(uvec4(bits.x, bits.x >> uint(16), bits.y, bits.y >> uint(16)).x).x, unpackHalf2x16(uvec4(bits.x, bits.x >> uint(16), bits.y, bits.y >> uint(16)).y).x, unpackHalf2x16(uvec4(bits.x, bits.x >> uint(16), bits.y, bits.y >> uint(16)).z).x, unpackHalf2x16(uvec4(bits.x, bits.x >> uint(16), bits.y, bits.y >> uint(16)).w).x);
+}
+
+uint PackNormalizedFloat3(vec3 v)
+{
+    uvec3 i = uvec3(((v + vec3(1.0)) * 0.5) * 1023.0);
+    return (i.x | (i.y << uint(10))) | (i.z << uint(20));
+}
+
+vec3 Vortex(float rotation, float attraction, inout vec3 center, inout vec3 axis, vec3 position, mat4x3 transform)
+{
+    center = transform[3] + center;
+    axis = normalize(transform * vec4(axis, 0.0));
+    vec3 diff = position - center;
+    float _distance = length(diff);
+    if (_distance == 0.0)
+    {
+        return vec3(0.0);
+    }
+    vec3 radial = diff / vec3(_distance);
+    vec3 tangent = cross(axis, radial);
+    radial = cross(tangent, axis);
+    return (tangent * rotation) - (radial * attraction);
+}
+
+float EasingSpeed(float t, vec3 params)
+{
+    return ((((params.x * t) * t) * t) + ((params.y * t) * t)) + (params.z * t);
+}
+
+vec4 UnpackColor(uint color32)
+{
+    return vec4(float(color32 & 255u), float((color32 >> uint(8)) & 255u), float((color32 >> uint(16)) & 255u), float((color32 >> uint(24)) & 255u)) / vec4(255.0);
+}
+
+vec4 RandomColorRange(inout uint seed, uvec2 maxmin)
+{
+    uint param = maxmin.y;
+    uint param_1 = maxmin.x;
+    uint param_2 = seed;
+    float _477 = RandomFloat(param_2);
+    seed = param_2;
+    return mix(UnpackColor(param), UnpackColor(param_1), vec4(_477));
+}
+
+vec3 HSV2RGB(vec3 c)
+{
+    vec4 k = vec4(1.0, 0.666666686534881591796875, 0.3333333432674407958984375, 3.0);
+    vec3 p = abs((fract(c.xxx + k.xyz) * 6.0) - k.www);
+    return mix(k.xxx, clamp(p - k.xxx, vec3(0.0), vec3(1.0)), vec3(c.y)) * c.z;
+}
+
+mat4x3 TRSMatrix(vec3 translation, vec3 rotation, vec3 scale)
+{
+    vec3 s = sin(rotation);
+    vec3 c = cos(rotation);
+    mat4x3 m;
+    m[0].x = scale.x * ((c.z * c.y) + ((s.z * s.x) * s.y));
+    m[1].x = scale.y * (s.z * c.x);
+    m[2].x = scale.z * ((c.z * (-s.y)) + ((s.z * s.x) * c.y));
+    m[3].x = translation.x;
+    m[0].y = scale.x * (((-s.z) * c.y) + ((c.z * s.x) * s.y));
+    m[1].y = scale.y * (c.z * c.x);
+    m[2].y = scale.z * (((-s.z) * (-s.y)) + ((c.z * s.x) * c.y));
+    m[3].y = translation.y;
+    m[0].z = scale.x * (c.x * s.y);
+    m[1].z = scale.y * (-s.x);
+    m[2].z = scale.z * (c.x * c.y);
+    m[3].z = translation.z;
+    return m;
+}
+
+uvec2 PackFloat4(vec4 v)
+{
+    uvec4 v16 = uvec4(packHalf2x16(vec2(v.x, 0.0)), packHalf2x16(vec2(v.y, 0.0)), packHalf2x16(vec2(v.z, 0.0)), packHalf2x16(vec2(v.w, 0.0)));
+    return uvec2(v16.x | (v16.y << uint(16)), v16.z | (v16.w << uint(16)));
+}
+
+uint PackColor(vec4 color)
+{
+    uvec4 colori = uvec4(clamp(color * 255.0, vec4(0.0), vec4(255.0)));
+    return ((colori.x | (colori.y << uint(8))) | (colori.z << uint(16))) | (colori.w << uint(24));
+}
+
+void _main(uvec3 dtid)
+{
+    uint particleID = _592.emitter.ParticleHead + dtid.x;
+    ParticleData particle;
+    particle.FlagBits = Particles_1._data[particleID].FlagBits;
+    particle.Seed = Particles_1._data[particleID].Seed;
+    particle.LifeAge = Particles_1._data[particleID].LifeAge;
+    particle.InheritColor = Particles_1._data[particleID].InheritColor;
+    particle.DirectionSpeed = Particles_1._data[particleID].DirectionSpeed;
+    particle.Color = Particles_1._data[particleID].Color;
+    particle.Padding = Particles_1._data[particleID].Padding;
+    particle.Transform = Particles_1._data[particleID].Transform;
+    if ((particle.FlagBits & 1u) != 0u)
+    {
+        uint updateCount = (particle.FlagBits >> uint(1)) & 255u;
+        float deltaTime = _592.emitter.DeltaTime;
+        uint seed = particle.Seed;
+        uint param = seed;
+        vec2 param_1 = _659.paramData.LifeTime;
+        float _666 = RandomFloatRange(param, param_1);
+        seed = param;
+        float lifeTime = _666;
+        float lifeRatio = particle.LifeAge / lifeTime;
+        uint param_2 = seed;
+        vec2 param_3 = _659.paramData.Damping;
+        float _680 = RandomFloatRange(param_2, param_3);
+        seed = param_2;
+        float damping = _680 * 0.00999999977648258209228515625;
+        uint param_4 = seed;
+        vec4 param_5[2];
+        param_5[0] = _659.paramData.AngularOffset[0];
+        param_5[1] = _659.paramData.AngularOffset[1];
+        vec4 _696 = RandomFloat4Range(param_4, param_5);
+        seed = param_4;
+        vec4 angularOffset = _696;
+        uint param_6 = seed;
+        vec4 param_7[2];
+        param_7[0] = _659.paramData.AngularVelocity[0];
+        param_7[1] = _659.paramData.AngularVelocity[1];
+        vec4 _710 = RandomFloat4Range(param_6, param_7);
+        seed = param_6;
+        vec4 angularVelocity = _710;
+        vec3 position = particle.Transform[3];
+        uvec2 param_8 = particle.DirectionSpeed;
+        vec4 directionSpeed = UnpackFloat4(param_8);
+        vec3 velocity = directionSpeed.xyz * directionSpeed.w;
+        if (_592.emitter.TrailSize > 0u)
+        {
+            uint trailID = (_592.emitter.TrailHead + (dtid.x * _659.paramData.ShapeData)) + _592.emitter.TrailPhase;
+            TrailData trail;
+            trail.Position = position;
+            vec3 param_9 = directionSpeed.xyz;
+            trail.Direction = PackNormalizedFloat3(param_9);
+            Trails_1._data[trailID].Position = trail.Position;
+            Trails_1._data[trailID].Direction = trail.Direction;
+        }
+        particle.FlagBits &= 4294966785u;
+        particle.FlagBits |= (clamp(updateCount + 1u, 0u, 255u) << uint(1));
+        particle.LifeAge += deltaTime;
+        if (particle.LifeAge >= lifeTime)
+        {
+            particle.FlagBits &= 4294967294u;
+        }
+        velocity += (_659.paramData.Gravity * deltaTime);
+        if ((_659.paramData.VortexRotation != 0.0) || (_659.paramData.VortexAttraction != 0.0))
+        {
+            float param_10 = _659.paramData.VortexRotation;
+            float param_11 = _659.paramData.VortexAttraction;
+            vec3 param_12 = _659.paramData.VortexCenter;
+            vec3 param_13 = _659.paramData.VortexAxis;
+            vec3 param_14 = position;
+            mat4x3 param_15 = _592.emitter.Transform;
+            vec3 _834 = Vortex(param_10, param_11, param_12, param_13, param_14, param_15);
+            velocity += (_834 * deltaTime);
+        }
+        if (_659.paramData.TurbulencePower != 0.0)
+        {
+            vec4 vfTexel = textureLod(Sampler_NoiseSamp, (position / vec3(8.0)) + vec3(0.5), 0.0);
+            velocity += ((((vfTexel.xyz * 2.0) - vec3(1.0)) * _659.paramData.TurbulencePower) * deltaTime);
+        }
+        float speed = length(velocity);
+        if (speed > 0.0)
+        {
+            float newSpeed = max(0.0, speed - (damping * deltaTime));
+            velocity *= (newSpeed / speed);
+        }
+        position += (velocity * deltaTime);
+        directionSpeed.w = length(velocity);
+        if (directionSpeed.w > 9.9999997473787516355514526367188e-05)
+        {
+            vec3 _909 = normalize(velocity);
+            directionSpeed.x = _909.x;
+            directionSpeed.y = _909.y;
+            directionSpeed.z = _909.z;
+        }
+        vec3 rotation = angularOffset.xyz + (angularVelocity.xyz * particle.LifeAge);
+        vec4 scale = vec4(1.0);
+        uint scaleMode = _659.paramData.ScaleFlags & 7u;
+        if (scaleMode == 0u)
+        {
+            uint param_16 = seed;
+            vec4 param_17[2];
+            param_17[0] = _659.paramData.ScaleData1[0];
+            param_17[1] = _659.paramData.ScaleData1[1];
+            vec4 _947 = RandomFloat4Range(param_16, param_17);
+            seed = param_16;
+            scale = _947;
+        }
+        else
+        {
+            if (scaleMode == 2u)
+            {
+                uint param_18 = seed;
+                vec4 param_19[2];
+                param_19[0] = _659.paramData.ScaleData1[0];
+                param_19[1] = _659.paramData.ScaleData1[1];
+                vec4 _964 = RandomFloat4Range(param_18, param_19);
+                seed = param_18;
+                vec4 scale1 = _964;
+                uint param_20 = seed;
+                vec4 param_21[2];
+                param_21[0] = _659.paramData.ScaleData2[0];
+                param_21[1] = _659.paramData.ScaleData2[1];
+                vec4 _978 = RandomFloat4Range(param_20, param_21);
+                seed = param_20;
+                vec4 scale2 = _978;
+                float param_22 = lifeRatio;
+                vec3 param_23 = _659.paramData.ScaleEasing;
+                scale = mix(scale1, scale2, vec4(EasingSpeed(param_22, param_23)));
+            }
+        }
+        uint colorMode = _659.paramData.ColorFlags & 7u;
+        vec4 color = vec4(1.0);
+        if (colorMode == 0u)
+        {
+            uint param_24 = _659.paramData.ColorData.x;
+            color = UnpackColor(param_24);
+        }
+        else
+        {
+            if (colorMode == 1u)
+            {
+                uint param_25 = seed;
+                uvec2 param_26 = _659.paramData.ColorData.xy;
+                vec4 _1017 = RandomColorRange(param_25, param_26);
+                seed = param_25;
+                color = _1017;
+            }
+            else
+            {
+                if (colorMode == 2u)
+                {
+                    uint param_27 = seed;
+                    uvec2 param_28 = _659.paramData.ColorData.xy;
+                    vec4 _1031 = RandomColorRange(param_27, param_28);
+                    seed = param_27;
+                    vec4 colorStart = _1031;
+                    uint param_29 = seed;
+                    uvec2 param_30 = _659.paramData.ColorData.zw;
+                    vec4 _1040 = RandomColorRange(param_29, param_30);
+                    seed = param_29;
+                    vec4 colorEnd = _1040;
+                    float param_31 = lifeRatio;
+                    vec3 param_32 = _659.paramData.ColorEasing;
+                    color = mix(colorStart, colorEnd, vec4(EasingSpeed(param_31, param_32)));
+                }
+                else
+                {
+                    if ((colorMode == 3u) || (colorMode == 4u))
+                    {
+                        color = textureLod(Sampler_GradientSamp, vec2(lifeRatio, 0.0), 0.0);
+                    }
+                }
+            }
+        }
+        if (((_659.paramData.ColorFlags >> uint(5)) & 1u) != 0u)
+        {
+            vec3 param_33 = color.xyz;
+            vec3 _1082 = HSV2RGB(param_33);
+            color.x = _1082.x;
+            color.y = _1082.y;
+            color.z = _1082.z;
+        }
+        uint colorInherit = (_659.paramData.ColorFlags >> uint(3)) & 3u;
+        if ((colorInherit == 2u) || (colorInherit == 3u))
+        {
+            uint param_34 = _592.emitter.Color;
+            color *= UnpackColor(param_34);
+        }
+        else
+        {
+            uint param_35 = particle.InheritColor;
+            color *= UnpackColor(param_35);
+        }
+        color.w *= clamp(particle.LifeAge / _659.paramData.FadeIn, 0.0, 1.0);
+        color.w *= clamp((lifeTime - particle.LifeAge) / _659.paramData.FadeOut, 0.0, 1.0);
+        vec3 param_36 = position;
+        vec3 param_37 = rotation;
+        vec3 param_38 = (scale.xyz * scale.w) * _659.paramData.ShapeSize;
+        particle.Transform = TRSMatrix(param_36, param_37, param_38);
+        vec4 param_39 = directionSpeed;
+        particle.DirectionSpeed = PackFloat4(param_39);
+        vec4 param_40 = color;
+        particle.Color = PackColor(param_40);
+        Particles_1._data[particleID].FlagBits = particle.FlagBits;
+        Particles_1._data[particleID].Seed = particle.Seed;
+        Particles_1._data[particleID].LifeAge = particle.LifeAge;
+        Particles_1._data[particleID].InheritColor = particle.InheritColor;
+        Particles_1._data[particleID].DirectionSpeed = particle.DirectionSpeed;
+        Particles_1._data[particleID].Color = particle.Color;
+        Particles_1._data[particleID].Padding = particle.Padding;
+        Particles_1._data[particleID].Transform = particle.Transform;
+    }
+}
+
+void main()
+{
+    uvec3 dtid = gl_GlobalInvocationID;
+    uvec3 param = dtid;
+    _main(param);
+}
+

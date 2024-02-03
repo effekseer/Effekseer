@@ -7,7 +7,7 @@ add_executable(Example_Metal main.mm DeviceMetal.mm DeviceMetal.h)
 target_include_directories(
     Example_Metal
     PRIVATE
-    ${Vulkan_INCLUDE_DIRS}
+	${EFK_THIRDPARTY_INCLUDES}
     ${EFK_RUNTIME_ROOT}/Effekseer
     ${EFK_RUNTIME_ROOT}/EffekseerRendererMetal
     ${EFK_RUNTIME_ROOT}/3rdParty/LLGI/src/
@@ -21,7 +21,7 @@ target_link_libraries(
     LLGI
     EffekseerRendererMetal
     Example_Utils
-    ${Vulkan_LIBRARIES}
+    ${EFK_EXAMPLES_GLFW}
 )
 
 
@@ -30,8 +30,9 @@ find_library(METAL_LIBRARY Metal)
 find_library(APPKIT_LIBRARY AppKit)
 find_library(METALKIT_LIBRARY MetalKit)
 find_library(QUARTZ_CORE_LIBRARY QuartzCore)
+find_library(IOKIT_FRAMEWORK IOKit)
 
-set(EXTRA_LIBS ${COCOA_LIBRARY} ${APPKIT_LIBRARY} ${METAL_LIBRARY} ${METALKIT_LIBRARY} ${QUARTZ_CORE_LIBRARY})
+set(EXTRA_LIBS ${COCOA_LIBRARY} ${APPKIT_LIBRARY} ${METAL_LIBRARY} ${METALKIT_LIBRARY} ${QUARTZ_CORE_LIBRARY} ${IOKIT_FRAMEWORK})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${EXTRA_LIBS})
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY FOLDER "Examples") 

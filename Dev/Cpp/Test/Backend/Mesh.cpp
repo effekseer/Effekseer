@@ -119,7 +119,7 @@ void Backend_Mesh(std::shared_ptr<RenderingEnvironment> window)
 		drawParam.VertexBufferPtr = vb;
 		drawParam.IndexBufferPtr = ib;
 		drawParam.PipelineStatePtr = pip;
-		drawParam.VertexUniformBufferPtr = cb;
+		drawParam.VertexUniformBufferPtrs[0] = cb;
 		drawParam.PrimitiveCount = 2;
 		drawParam.InstanceCount = 1;
 		graphicsDevice->Draw(drawParam);

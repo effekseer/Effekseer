@@ -146,9 +146,7 @@ namespace Effekseer.Data.Value
 
 		public static explicit operator byte[](Float value)
 		{
-			byte[] values = new byte[sizeof(float) * 1];
-			BitConverter.GetBytes(value.Value).CopyTo(values, sizeof(float) * 0);
-			return values;
+			return value.GetBytes();
 		}
 
 		public byte[] GetBytes(float mul = 1.0f)

@@ -8,6 +8,7 @@
 #include <Utils/LLGI.CommandListPool.h>
 #include <EffekseerRendererMetal.h>
 #include "../Utils/Window.h"
+#include "../Utils/Input.h"
 
 class DeviceMetal
 {
@@ -33,15 +34,22 @@ public:
 		return { size.X, size.Y };
 	}
 
-	id<MTLRenderCommandEncoder> GetEncoder()
+	id<MTLRenderCommandEncoder> GetRenderEncoder()
 	{
 		return static_cast<LLGI::CommandListMetal*>(commandList)->GetRenderCommandEncorder();
+	}
+	id<MTLComputeCommandEncoder> GetComputeEncoder()
+	{
+		return static_cast<LLGI::CommandListMetal*>(commandList)->GetComputeCommandEncorder();
 	}
 
 	bool Initialize(const char* windowTitle, Utils::Vec2I windowSize);
 	void Terminate();
-	void ClearScreen();
 	bool NewFrame();
+	void BeginComputePass();
+	void EndComputePass();
+	void BeginRenderPass();
+	void EndRenderPass();
 	void PresentDevice();
 
 	void SetupEffekseerModules(::Effekseer::ManagerRef efkManager);

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../Utils/Input.h"
+#include "../Utils/Window.h"
 #include <DX12/LLGI.CommandListDX12.h>
 #include <DX12/LLGI.GraphicsDX12.h>
 #include <EffekseerRendererDX12.h>
@@ -71,8 +73,11 @@ public:
 
 	bool Initialize(const char* windowTitle, Utils::Vec2I windowSize);
 	void Terminate();
-	void ClearScreen();
 	bool NewFrame();
+	void BeginComputePass();
+	void EndComputePass();
+	void BeginRenderPass();
+	void EndRenderPass();
 	void PresentDevice();
 
 	void SetupEffekseerModules(::Effekseer::ManagerRef efkManager);

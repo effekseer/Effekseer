@@ -7,11 +7,7 @@ endif()
 project(Effekseer C CXX)
 
 # C++ version
-if(APPLE)
-    set(CMAKE_CXX_STANDARD 14)
-else()	
-    set(CMAKE_CXX_STANDARD 17)
-endif()
+set(CMAKE_CXX_STANDARD 17)
 
 function(WarnError target)
     if(MSVC)

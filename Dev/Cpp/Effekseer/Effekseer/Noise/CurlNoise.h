@@ -50,6 +50,11 @@ public:
 	LightCurlNoise(int32_t seed, float scale, int32_t octave);
 
 	SIMD::Vec3f Get(SIMD::Vec3f pos) const;
+
+	const uint32_t* VectorField() const
+	{
+		return &vectorField_[0][0][0];
+	}
 };
 
 } // namespace Effekseer

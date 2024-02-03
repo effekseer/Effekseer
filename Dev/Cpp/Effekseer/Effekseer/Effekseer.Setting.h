@@ -34,6 +34,7 @@ private:
 
 	std::vector<RefPtr<EffectFactory>> effectFactories_;
 	RefPtr<ResourceManager> resourceManager_;
+	GpuParticlesRef gpuParticles_;
 
 protected:
 	Setting();
@@ -212,6 +213,26 @@ public:
 		\~Japanese ジェネレータ
 	*/
 	void SetProceduralMeshGenerator(ProceduralModelGeneratorRef generator);
+	
+	/**
+		@brief
+		\~English get a gpu particle system
+		\~Japanese GPUパーティクルシステムを取得する。
+		@return
+		\~English	gpu particle system
+		\~Japanese GPUパーティクルシステム
+	*/
+	GpuParticlesRef GetGpuParticles() const;
+
+	/**
+		@brief
+		\~English specfiy a gpu particle system
+		\~Japanese GPUパーティクルシステムを設定する。
+		@param	gpu particle system
+		\~English	gpu particle system
+		\~Japanese GPUパーティクルシステム
+	*/
+	void SetGpuParticles(GpuParticlesRef gpuParticles);
 
 	/**
 		@brief

@@ -113,6 +113,36 @@ static
 #include "ShaderHeader/model_lit_ps.h"
 } // namespace Model_Lit_PS
 
+namespace GpuParticles_Clear_CS
+{
+static
+#include "ShaderHeader/gpu_particles_clear_cs.h"
+} // namespace GpuParticles_Clear_CS
+
+namespace GpuParticles_Spawn_CS
+{
+static
+#include "ShaderHeader/gpu_particles_spawn_cs.h"
+} // namespace GpuParticles_Spawn_CS
+
+namespace GpuParticles_Update_CS
+{
+static
+#include "ShaderHeader/gpu_particles_update_cs.h"
+} // namespace GpuParticles_Update_CS
+
+namespace GpuParticles_Render_VS
+{
+static
+#include "ShaderHeader/gpu_particles_render_vs.h"
+} // namespace GpuParticles_Render_VS
+
+namespace GpuParticles_Render_PS
+{
+static
+#include "ShaderHeader/gpu_particles_render_ps.h"
+} // namespace GpuParticles_Render_PS
+
 namespace EffekseerRendererDX12
 {
 
@@ -178,6 +208,12 @@ namespace EffekseerRendererDX12
 		renderer->fixedShader_.ModelDistortion_VS, Model_Distortion_VS::g_main, sizeof(Model_Distortion_VS::g_main));
 	allocate_(
 		renderer->fixedShader_.ModelDistortion_PS, Model_Distortion_PS::g_main, sizeof(Model_Distortion_PS::g_main));
+
+	allocate_(renderer->fixedShader_.GpuParticles_Clear_CS, GpuParticles_Clear_CS::g_main, sizeof(GpuParticles_Clear_CS::g_main));
+	allocate_(renderer->fixedShader_.GpuParticles_Spawn_CS, GpuParticles_Spawn_CS::g_main, sizeof(GpuParticles_Spawn_CS::g_main));
+	allocate_(renderer->fixedShader_.GpuParticles_Update_CS, GpuParticles_Update_CS::g_main, sizeof(GpuParticles_Update_CS::g_main));
+	allocate_(renderer->fixedShader_.GpuParticles_Render_VS, GpuParticles_Render_VS::g_main, sizeof(GpuParticles_Render_VS::g_main));
+	allocate_(renderer->fixedShader_.GpuParticles_Render_PS, GpuParticles_Render_PS::g_main, sizeof(GpuParticles_Render_PS::g_main));
 
 	renderer->platformType_ = Effekseer::CompiledMaterialPlatformType::DirectX12;
 	renderer->materialCompiler_ = new Effekseer::MaterialCompilerDX12();
@@ -260,28 +296,31 @@ CommandListProperty GetCommandListProperty(Effekseer::RefPtr<EffekseerRenderer::
 void BeginCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList, ID3D12GraphicsCommandList* dx12CommandList)
 {
 	assert(commandList != nullptr);
+	auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList.Get());
 
 	if (dx12CommandList)
 	{
 		LLGI::PlatformContextDX12 context;
 		context.commandList = dx12CommandList;
 
-		auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList.Get());
 		c->GetInternal()->BeginWithPlatform(&context);
 		c->SetState(EffekseerRendererLLGI::CommandListState::RunningWithPlatformCommandList);
 	}
 	else
 	{
-		auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList.Get());
 		c->GetInternal()->Begin();
 		c->SetState(EffekseerRendererLLGI::CommandListState::Running);
 	}
+
+	c->GetInternal()->BeginComputePass();
 }
 
 void EndCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList)
 {
 	assert(commandList != nullptr);
 	auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList.Get());
+
+	c->GetInternal()->EndComputePass();
 
 	if (c->GetState() == EffekseerRendererLLGI::CommandListState::RunningWithPlatformCommandList)
 	{

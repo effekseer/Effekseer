@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
+using static Effekseer.InternalScript.SSAGenerator;
 
 namespace Effekseer.Data.Value
 {
@@ -186,26 +188,28 @@ namespace Effekseer.Data.Value
 			Command.CommandManager.Execute(cmd);
 		}
 
-		public static implicit operator byte[](Color value)
+		public byte[] GetBytes()
 		{
-			if (value.ColorSpace == ColorSpace.RGBA)
+			if (ColorSpace == ColorSpace.RGBA)
 			{
-				byte[] values = new byte[sizeof(byte) * 4] { (byte)value.R, (byte)value.G, (byte)value.B, (byte)value.A };
+				byte[] values = new byte[sizeof(byte) * 4] { (byte)R, (byte)G, (byte)B, (byte)A };
 				return values;
 			}
 			else
 			{
 				Utils.RGBHSVColor color;
-
-				color.RH = value.R.Value;
-				color.GS = value.G.Value;
-				color.BV = value.B.Value;
+				color.RH = R.Value;
+				color.GS = G.Value;
+				color.BV = B.Value;
 				color = Utils.RGBHSVColor.HSVToRGB(color);
-
-				byte[] values = new byte[sizeof(byte) * 4] { (byte)value.R, (byte)value.G, (byte)value.B, (byte)value.A };
+				byte[] values = new byte[sizeof(byte) * 4] { (byte)color.RH, (byte)color.GS, (byte)color.BV, (byte)A };
 				return values;
-
 			}
+		}
+
+		public static implicit operator byte[](Color value)
+		{
+			return value.GetBytes();
 		}
 
 		public void ChangeColorSpace(ColorSpace colorSpace)

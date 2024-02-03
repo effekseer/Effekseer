@@ -25,6 +25,7 @@
 #include "Renderer/Effekseer.RingRenderer.h"
 #include "Renderer/Effekseer.SpriteRenderer.h"
 #include "Renderer/Effekseer.TrackRenderer.h"
+#include "Renderer/Effekseer.GpuParticles.h"
 
 #include "Effekseer.SoundLoader.h"
 #include "Sound/Effekseer.SoundPlayer.h"
@@ -172,19 +173,33 @@ void ManagerImplemented::StopStoppingEffects()
 			{
 				Instance* pRootInstance = group->GetFirst();
 
-				if (pRootInstance && pRootInstance->IsActive() && !pRootInstance->IsFirstTime())
+				if (pRootInstance && pRootInstance->IsActive())
 				{
-					if (!pRootInstance->AreChildrenActive())
+					if (pRootInstance->IsFirstTime() || pRootInstance->AreChildrenActive())
 					{
-						// when a sound is not playing.
-						if (m_soundPlayer == nullptr || !m_soundPlayer->CheckPlayingTag(draw_set.GlobalPointer))
-						{
-							isRemoving = true;
-						}
+						continue;
 					}
 				}
 			}
+
+			// when a sound is playing.
+			if (m_soundPlayer && m_soundPlayer->CheckPlayingTag(draw_set.GlobalPointer))
+			{
+				continue;
+			}
+
+			// when gpu particles are found
+			if (auto gpuParticles = GetGpuParticles())
+			{
+				if (gpuParticles->GetParticleCount((GpuParticles::ParticleGroupID)draw_set.GlobalPointer) > 0)
+				{
+					continue;
+				}
+			}
+			
+			isRemoving = true;
 		}
+
 
 		if (isRemoving)
 		{
@@ -351,6 +366,11 @@ void ManagerImplemented::ExecuteEvents()
 			if (GetSoundPlayer() != nullptr)
 			{
 				GetSoundPlayer()->StopTag(ds.second.GlobalPointer);
+			}
+
+			if (GetGpuParticles() != nullptr)
+			{
+				GetGpuParticles()->KillParticles((GpuParticles::ParticleGroupID)ds.second.GlobalPointer);
 			}
 		}
 
@@ -618,6 +638,16 @@ GPUTimerRef ManagerImplemented::GetGPUTimer()
 void ManagerImplemented::SetGPUTimer(GPUTimerRef gpuTimer)
 {
 	m_gpuTimer = gpuTimer;
+}
+
+GpuParticlesRef ManagerImplemented::GetGpuParticles()
+{
+	return m_setting->GetGpuParticles();
+}
+
+void ManagerImplemented::SetGpuParticles(GpuParticlesRef gpuParticles)
+{
+	m_setting->SetGpuParticles(gpuParticles);
 }
 
 SoundPlayerRef ManagerImplemented::GetSoundPlayer()
@@ -1354,6 +1384,8 @@ void ManagerImplemented::Update(const UpdateParameter& parameter)
 		times = 1;
 	}
 
+	m_nextComputeCount = times;
+
 	BeginUpdate();
 
 	if (m_WorkerThreads.size() == 0)
@@ -1746,6 +1778,19 @@ void ManagerImplemented::ResetAndPlayWithDataSet(DrawSet& drawSet, float frame)
 	drawSet.GlobalPointer->EndDeltaFrame();
 }
 
+void ManagerImplemented::Compute()
+{
+	if (auto gpuParticles = GetGpuParticles())
+	{
+		for (int i = 0; i < m_nextComputeCount; i++)
+		{
+			gpuParticles->ComputeFrame();
+		}
+
+		gpuParticles->ResetDeltaTime();
+	}
+}
+
 void ManagerImplemented::Draw(const Manager::DrawParameter& drawParameter)
 {
 	PROFILER_BLOCK("Manager::Draw", profiler::colors::Blue);
@@ -1814,6 +1859,11 @@ void ManagerImplemented::Draw(const Manager::DrawParameter& drawParameter)
 		{
 			render(m_renderingDrawSets[i]);
 		}
+	}
+
+	if (auto gpuParticles = GetGpuParticles())
+	{
+		gpuParticles->RenderFrame();
 	}
 
 	if (m_gpuTimer != nullptr)
@@ -1943,6 +1993,11 @@ void ManagerImplemented::DrawFront(const Manager::DrawParameter& drawParameter)
 		{
 			render(m_renderingDrawSets[i]);
 		}
+	}
+
+	if (auto gpuParticles = GetGpuParticles())
+	{
+		gpuParticles->RenderFrame();
 	}
 
 	if (m_gpuTimer != nullptr)

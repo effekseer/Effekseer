@@ -48,6 +48,7 @@ namespace Effekseer
 				typeof(Dock.ProceduralModel),
 				typeof(Dock.AdvancedRenderCommonValues),
 				typeof(Dock.Profiler),
+				typeof(Dock.GpuParticlesValues),
 			};
 
 			System.OperatingSystem os = System.Environment.OSVersion;

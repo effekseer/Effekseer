@@ -28,6 +28,12 @@
 #include "ShaderHeader/model_unlit_ps.h"
 #include "ShaderHeader/model_unlit_vs.h"
 
+#include "ShaderHeader/gpu_particles_clear_cs.h"
+#include "ShaderHeader/gpu_particles_spawn_cs.h"
+#include "ShaderHeader/gpu_particles_update_cs.h"
+#include "ShaderHeader/gpu_particles_render_vs.h"
+#include "ShaderHeader/gpu_particles_render_ps.h"
+
 #define GENERATE_VIEW(x) {{x, static_cast<int32_t>(sizeof(x))}};
 
 namespace EffekseerRendererVulkan
@@ -60,6 +66,12 @@ static void CreateFixedShaderForVulkan(EffekseerRendererLLGI::FixedShader* shade
 	shader->ModelLit_PS = GENERATE_VIEW(model_lit_ps);
 	shader->ModelDistortion_VS = GENERATE_VIEW(model_distortion_vs);
 	shader->ModelDistortion_PS = GENERATE_VIEW(model_distortion_ps);
+
+	shader->GpuParticles_Clear_CS = GENERATE_VIEW(gpu_particles_clear_cs);
+	shader->GpuParticles_Spawn_CS = GENERATE_VIEW(gpu_particles_spawn_cs);
+	shader->GpuParticles_Update_CS = GENERATE_VIEW(gpu_particles_update_cs);
+	shader->GpuParticles_Render_VS = GENERATE_VIEW(gpu_particles_render_vs);
+	shader->GpuParticles_Render_PS = GENERATE_VIEW(gpu_particles_render_ps);
 }
 
 ::Effekseer::Backend::GraphicsDeviceRef CreateGraphicsDevice(

@@ -138,5 +138,17 @@ namespace Effekseer.Data.Value
 		{
 			return value._value;
 		}
+
+		public static explicit operator byte[](Int value)
+		{
+			return value.GetBytes();
+		}
+
+		public byte[] GetBytes()
+		{
+			byte[] values = new byte[sizeof(int) * 1];
+			BitConverter.GetBytes(Value).CopyTo(values, sizeof(int) * 0);
+			return values;
+		}
 	}
 }

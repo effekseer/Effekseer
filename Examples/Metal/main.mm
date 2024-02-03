@@ -74,9 +74,9 @@ int main(int argc, char** argv)
 		Effekseer::Manager::UpdateParameter updateParameter;
 		efkManager->Update(updateParameter);
 
-		// Execute functions about DirectX
-		// DirectXの処理
-		device.ClearScreen();
+		// Begin to rendering pass
+		// 描画パスの開始
+		device.BeginRenderPass();
 
 		// Update a time
 		// 時間を更新する
@@ -105,6 +105,10 @@ int main(int argc, char** argv)
 		// Finish to rendering effects
 		// エフェクトの描画終了処理を行う。
 		efkRenderer->EndRendering();
+
+		// Finish to rendering pass
+		// 描画パスの終了
+		device.EndRenderPass();
 
 		// Execute functions about DirectX
 		// DirectXの処理

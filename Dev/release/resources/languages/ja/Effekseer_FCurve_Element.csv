@@ -18,3 +18,4 @@ Fcurve_Elm_Blend,ブレンド
 Fcurve_Elm_BlendAlpha,ブレンドアルファ
 Fcurve_Elm_BlendUVDistortion,ブレンドUV歪み
 Fcurve_Elm_AlphaThreshold,アルファ閾値
+Fcurve_Elm_GpuParticles_ColorAll,GpuPtcl-全体色(RGBA)

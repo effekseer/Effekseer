@@ -8,6 +8,7 @@
 
 #include "EffekseerRendererDX11.DeviceObject.h"
 #include "EffekseerRendererDX11.GPUTimer.h"
+#include "EffekseerRendererDX11.GpuParticles.h"
 #include "EffekseerRendererDX11.MaterialLoader.h"
 #include "EffekseerRendererDX11.ModelRenderer.h"
 #include "EffekseerRendererDX11.Shader.h"
@@ -600,6 +601,16 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 ::Effekseer::GPUTimerRef RendererImplemented::CreateGPUTimer()
 {
 	return ::Effekseer::GPUTimerRef(new ::EffekseerRendererDX11::GPUTimer(this, true));
+}
+
+::Effekseer::GpuParticlesRef RendererImplemented::CreateGpuParticles(const Effekseer::GpuParticles::Settings& settings)
+{
+	auto gpuParticles = ::Effekseer::GpuParticlesRef(new ::EffekseerRendererDX11::GpuParticles(this, true));
+	if (!gpuParticles->InitSystem(settings))
+	{
+		return nullptr;
+	}
+	return gpuParticles;
 }
 
 //----------------------------------------------------------------------------------

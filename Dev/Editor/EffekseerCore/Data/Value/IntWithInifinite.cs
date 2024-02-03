@@ -1,7 +1,10 @@
-﻿using System;
+﻿using Effekseer.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using static Effekseer.InternalScript.SSAGenerator;
+using static IronPython.Runtime.Profiler;
 
 namespace Effekseer.Data.Value
 {
@@ -51,6 +54,18 @@ namespace Effekseer.Data.Value
 
 			IsDynamicEquationEnabled = new Boolean();
 			DynamicEquation = new DynamicEquationReference();
+		}
+
+		public byte[] GetBytes(int valueWhenInfinite = int.MaxValue)
+		{
+			if (Infinite.Value)
+			{
+				return valueWhenInfinite.GetBytes();
+			}
+			else
+			{
+				return Value.GetBytes();
+			}
 		}
 	}
 }
