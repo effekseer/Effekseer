@@ -5,7 +5,7 @@ Rotation_ParamaterType_AxisPVA_Name,角度・速度・加速度（任意轴）
 Rotation_ParamaterType_AxisEasing_Name,缓动（任意轴）
 Rotation_ParamaterType_RotationFCurve_Name,旋转（F曲线）
 Rotation_ParamaterType_RotateToViewpoint_Name,旋转至摄像机方向
-Rotation_ParameterType_RotateToVelocity_Name,旋转至移动方向
+Rotation_ParamaterType_RotateToVelocity_Name,旋转至移动方向
 Rotation_FixedParamater_Rotation_Name,角度
 Rotation_FixedParamater_Rotation_Desc,实例的旋转角度，角度制
 Rotation_PVAParamater_Rotation_Name,角度

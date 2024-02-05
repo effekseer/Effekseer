@@ -37,7 +37,7 @@ FilterType_Nearest_Name,临近
 FilterType_Linear_Name,线性插值
 WrapType_Repeat_Name,重复
 WrapType_Clamp_Name,裁剪
-WrapType_Mirror_Name,Mirror
+WrapType_Mirror_Name,镜像
 AlphaBlendType_Opacity_Name,不透明
 AlphaBlendType_Blend_Name,混合
 AlphaBlendType_Add_Name,加法

@@ -48,16 +48,16 @@ LFF_FF_3_Name,力场3
 LFF_FF_4_Name,力场4
 ,
 LFF_Turbulence_RandomSeed_Name,随机种子
-LFF_Turbulence_RandomSeed_Desc,湍流的值根据这个值随机变化。
+LFF_Turbulence_RandomSeed_Desc,湍流的噪声根据这个值随机变化。
 LFF_Turbulence_FieldScale_Name,粒度
-LFF_Turbulence_FieldScale_Desc,增大此值可增加湍流的粒度。
+LFF_Turbulence_FieldScale_Desc,增大此值可增大湍流的粒度。
 LFF_Turbulence_Complexity_Name,复杂度
-LFF_Turbulence_Complexity_Desc,增大此值使湍流更复杂。但也增大了运算量。
+LFF_Turbulence_Complexity_Desc,增大此值使湍流更复杂，但也会增大运算量。
 ,
 LFF_Gravity_Gravity_Name,重力
 LFF_Gravity_Gravity_Desc,重力对于实例的影响
 LFF_AttractiveForce_Resistance_Name,阻力
-LFF_AttractiveForce_Resistance_Desc,Resistance to the directional pull of the attractor（引力方向的阻力？没明白。）
+LFF_AttractiveForce_Resistance_Desc,对引力点施加的力的阻力
 LFF_AttractiveForce_MinimumRange_Name,最小范围
 LFF_AttractiveForce_MinimumRange_Desc,此范围内的实例将受到引力的影响
 LFF_AttractiveForce_MaximumRange_Name,最大范围
