@@ -19,6 +19,10 @@ SystemLanguage GetSystemLanguage()
 	{
 		return SystemLanguage::English;
 	}
+	else if (primaryLangID == LANG_CHINESE)
+	{
+		return SystemLanguage::SimplifiedChinese;
+	}
 
 	return SystemLanguage::Unknown;
 }

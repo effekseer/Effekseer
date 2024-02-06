@@ -10,6 +10,7 @@ enum class SystemLanguage : int32_t
 {
 	Japanese = 0,
 	English = 1,
+	SimplifiedChinese = 2,
 	Unknown = -1,
 };
 

@@ -16,6 +16,9 @@ SystemLanguage GetSystemLanguage()
 	if (localeStr.find("en") != std::string::npos)
 		return SystemLanguage::English;
 
+	if (localeStr.find("zh-") != std::string::npos)
+		return SystemLanguage::SimplifiedChinese;
+
 	return SystemLanguage::Unknown;
 }
 
