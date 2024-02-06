@@ -13,6 +13,7 @@ namespace Effekseer.swig {
 public enum SystemLanguage {
   Japanese = 0,
   English = 1,
+  SimplifiedChinese = 2,
   Unknown = -1
 }
 
