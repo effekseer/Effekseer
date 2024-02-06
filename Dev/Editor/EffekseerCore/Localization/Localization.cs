@@ -106,7 +106,12 @@ namespace Effekseer
 
 		internal static void LoadCSV(string path, string language)
 		{
-			using (var streamReader = new System.IO.StreamReader(RootDirectory + "resources/languages/" + language + "/" + path, Encoding.UTF8))
+			var csvFilePath = RootDirectory + "resources/languages/" + language + "/" + path;
+			if (!System.IO.File.Exists(csvFilePath)) {
+				Utils.Logger.Write(string.Format("Missing language file : {0}", csvFilePath));
+				return;
+			}
+			using (var streamReader = new System.IO.StreamReader(csvFilePath, Encoding.UTF8))
 			{
 				var records = Utils.CsvReaader.Read(streamReader.ReadToEnd());
 
