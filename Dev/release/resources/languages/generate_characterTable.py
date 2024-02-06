@@ -1,10 +1,13 @@
 import csv
 from pathlib import Path
 
-target_dirs = [Path('ja'),Path('en')]
+target_dirs = [Path('ja'),Path('en'),Path('es'),Path('zhcn')]
 
 fixed_characters = r'''
+α
+β
 English
+Castellano
 日本語
 簡体中文
 简体中文
