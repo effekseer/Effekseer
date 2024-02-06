@@ -238,6 +238,7 @@ namespace Effekseer
 			MultiLanguageTextProvider.LoadCSV("Effekseer_Profiler.csv");
 			MultiLanguageTextProvider.LoadCSV("Effekseer_GpuParticles.csv");
 			LanguageTable.CreateTableFromDirectory(EntryDirectory);
+			LanguageTable.StoreLanguageNames(EntryDirectory);
 			GUI.Manager.UpdateFont();
 		}
 
