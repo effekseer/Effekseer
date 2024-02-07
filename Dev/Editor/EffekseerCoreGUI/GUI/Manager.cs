@@ -82,7 +82,12 @@ namespace Effekseer.GUI
 		{
 			try
 			{
-				System.Diagnostics.Process.Start(path);
+				var info = new System.Diagnostics.ProcessStartInfo
+				{
+					FileName = path,
+					UseShellExecute = true
+				};
+				System.Diagnostics.Process.Start(info);
 			}
 			catch
 			{
