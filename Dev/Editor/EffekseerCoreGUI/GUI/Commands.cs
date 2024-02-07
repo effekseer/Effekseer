@@ -569,7 +569,7 @@ namespace Effekseer.GUI
 		{
 			try
 			{
-				System.Diagnostics.Process.Start(url);
+				System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url) {UseShellExecute = true});
 			}
 			catch
 			{
