@@ -721,7 +721,12 @@ namespace Effekseer.GUI.Dock
 				try
 				{
 					// open process
-					System.Diagnostics.Process.Start(fileItem.FilePath);
+					var info = new System.Diagnostics.ProcessStartInfo
+					{
+						FileName = fileItem.FilePath,
+						UseShellExecute = true
+					};
+					System.Diagnostics.Process.Start(info);
 				}
 				catch (Exception)
 				{
@@ -747,11 +752,22 @@ namespace Effekseer.GUI.Dock
 
 				if (swig.GUIManager.IsMacOSX())
 				{
-					System.Diagnostics.Process.Start("open", dirPath);
+					var info = new System.Diagnostics.ProcessStartInfo
+					{
+						FileName = "open",
+						Arguments = dirPath,
+						UseShellExecute = true
+					};
+					System.Diagnostics.Process.Start(info);
 				}
 				else
 				{
-					System.Diagnostics.Process.Start(dirPath);
+					var info = new System.Diagnostics.ProcessStartInfo
+					{
+						FileName = dirPath,
+						UseShellExecute = true
+					};
+					System.Diagnostics.Process.Start(info);
 				}
 			}
 			catch (Exception)
