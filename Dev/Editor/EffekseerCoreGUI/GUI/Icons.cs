@@ -58,5 +58,7 @@ namespace Effekseer.GUI
 
 		public const string NavMenu = "\xec40";
 		public const string NavFilter = "\xec41";
+		public const string FileView = "\xec42";
+		public const string Remove = "\xec43";
 	}
 }

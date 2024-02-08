@@ -731,6 +731,8 @@ public:
 
 	bool ImageButtonOriginal(std::shared_ptr<Effekseer::Tool::Image> user_texture_id, float x, float y);
 
+	bool IconButton(const char16_t* icon);
+
 	bool Checkbox(const char16_t* label, bool* v);
 
 	bool RadioButton(const char16_t* label, bool active);
