@@ -74,6 +74,8 @@ public:
 	// Used for collision detection by kill rules
 	SIMD::Mat44f InvertedEffectGlobalMatrix;
 
+	bool IsUsingGpuParticles = false;
+
 	bool IsGlobalColorSet = false;
 	Color GlobalColor = Color(255, 255, 255, 255);
 

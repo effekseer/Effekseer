@@ -191,7 +191,7 @@ void ManagerImplemented::StopStoppingEffects()
 			// when gpu particles are found
 			if (auto gpuParticles = GetGpuParticles())
 			{
-				if (gpuParticles->GetParticleCount((GpuParticles::ParticleGroupID)draw_set.GlobalPointer) > 0)
+				if (gpuParticles->GetParticleCount(draw_set.GlobalPointer) > 0)
 				{
 					continue;
 				}
@@ -370,7 +370,7 @@ void ManagerImplemented::ExecuteEvents()
 
 			if (GetGpuParticles() != nullptr)
 			{
-				GetGpuParticles()->KillParticles((GpuParticles::ParticleGroupID)ds.second.GlobalPointer);
+				GetGpuParticles()->KillParticles(ds.second.GlobalPointer);
 			}
 		}
 
@@ -1663,6 +1663,14 @@ void ManagerImplemented::UpdateHandleInternal(DrawSet& drawSet)
 		}
 	}
 
+	if (drawSet.GlobalPointer->IsUsingGpuParticles)
+	{
+		if (auto gpuParticles = GetGpuParticles())
+		{
+			gpuParticles->SetDeltaTime(drawSet.GlobalPointer, drawSet.GlobalPointer->GetNextDeltaFrame());
+		}
+	}
+
 	drawSet.GlobalPointer->EndDeltaFrame();
 }
 
@@ -1786,8 +1794,6 @@ void ManagerImplemented::Compute()
 		{
 			gpuParticles->ComputeFrame();
 		}
-
-		gpuParticles->ResetDeltaTime();
 	}
 }
 

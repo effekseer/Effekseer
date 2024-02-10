@@ -441,7 +441,7 @@ void GpuParticles::ComputeFrame()
 				command.ThreadCount = { 1, 1, 1 };
 				graphics->Dispatch(command);
 			}
-			else if (GetEmitterParticleCount(emitter, paramSet) == 0)
+			else if (emitter.data.TimeCount >= paramSet.Basic.EmitOffset && GetEmitterParticleCount(emitter, paramSet) == 0)
 			{
 				FreeEmitter(emitterID);
 			}
@@ -658,7 +658,7 @@ GpuParticles::ResourceRef GpuParticles::CreateResource(const ParamSet& paramSet,
 	return resource;
 }
 
-GpuParticles::EmitterID GpuParticles::NewEmitter(ResourceRef resource, ParticleGroupID groupID)
+GpuParticles::EmitterID GpuParticles::NewEmitter(ResourceRef resource, Effekseer::InstanceGlobal* instanceGlobal)
 {
 	std::lock_guard<std::mutex> lock(m_mutex);
 
@@ -676,7 +676,7 @@ GpuParticles::EmitterID GpuParticles::NewEmitter(ResourceRef resource, ParticleG
 
 	Emitter& emitter = m_emitters[emitterID];
 	emitter.resource = resource.DownCast<Resource>();
-	emitter.groupID = groupID;
+	emitter.instanceGlobal = instanceGlobal;
 	emitter.data = {};
 	emitter.data.Color = 0xFFFFFFFF;
 	emitter.data.Transform = {
@@ -718,7 +718,7 @@ void GpuParticles::FreeEmitter(EmitterID emitterID)
 
 	Emitter& emitter = m_emitters[emitterID];
 	emitter.resource = nullptr;
-	emitter.groupID = 0;
+	emitter.instanceGlobal = nullptr;
 	emitter.data.FlagBits = 0;
 
 	m_particleAllocator.Deallocate({ emitter.data.ParticleHead, emitter.data.ParticleSize });
@@ -749,13 +749,6 @@ void GpuParticles::SetRandomSeed(EmitterID emitterID, uint32_t seed)
 	emitter.data.Seed = seed;
 }
 
-void GpuParticles::SetDeltaTime(EmitterID emitterID, float deltaTime)
-{
-	assert(emitterID >= 0 && emitterID < m_emitters.size());
-	Emitter& emitter = m_emitters[emitterID];
-	emitter.data.DeltaTime = deltaTime;
-}
-
 void GpuParticles::SetTransform(EmitterID emitterID, const Effekseer::Matrix43& transform)
 {
 	assert(emitterID >= 0 && emitterID < m_emitters.size());
@@ -774,42 +767,45 @@ void GpuParticles::SetColor(EmitterID emitterID, Effekseer::Color color)
 	emitter.data.Color = *reinterpret_cast<uint32_t*>(&color);
 }
 
-void GpuParticles::KillParticles(ParticleGroupID groupID)
+void GpuParticles::SetDeltaTime(Effekseer::InstanceGlobal* instanceGlobal, float deltaTime)
+{
+	for (EmitterID emitterID = 0; emitterID < (EmitterID)m_emitters.size(); emitterID++)
+	{
+		auto& emitter = m_emitters[emitterID];
+		if (emitter.IsAlive() && emitter.instanceGlobal == instanceGlobal)
+		{
+			emitter.data.DeltaTime = deltaTime;
+		}
+	}
+}
+
+void GpuParticles::KillParticles(Effekseer::InstanceGlobal* instanceGlobal)
 {
 	std::lock_guard<std::mutex> lock(m_mutex);
 
 	for (EmitterID emitterID = 0; emitterID < (EmitterID)m_emitters.size(); emitterID++)
 	{
 		auto& emitter = m_emitters[emitterID];
-		if (emitter.IsAlive() && emitter.groupID == groupID)
+		if (emitter.IsAlive() && emitter.instanceGlobal == instanceGlobal)
 		{
 			FreeEmitter(emitterID);
 		}
 	}
 }
 
-int32_t GpuParticles::GetParticleCount(ParticleGroupID groupID)
+int32_t GpuParticles::GetParticleCount(Effekseer::InstanceGlobal* instanceGlobal)
 {
 	int32_t count = 0;
 
 	for (EmitterID emitterID = 0; emitterID < (EmitterID)m_emitters.size(); emitterID++)
 	{
 		auto& emitter = m_emitters[emitterID];
-		if (emitter.IsAlive() && emitter.groupID == groupID)
+		if (emitter.IsAlive() && emitter.instanceGlobal == instanceGlobal)
 		{
 			count += GetEmitterParticleCount(emitter, emitter.resource->paramSet);
 		}
 	}
 	return count;
-}
-
-void GpuParticles::ResetDeltaTime()
-{
-	for (EmitterID emitterID = 0; emitterID < (EmitterID)m_emitters.size(); emitterID++)
-	{
-		auto& emitter = m_emitters[emitterID];
-		emitter.data.DeltaTime = 0.0f;
-	}
 }
 
 GpuParticles::ParameterData GpuParticles::ToParamData(const ParamSet& paramSet)

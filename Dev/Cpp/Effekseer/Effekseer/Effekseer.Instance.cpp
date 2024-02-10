@@ -387,7 +387,7 @@ void Instance::FirstUpdate()
 	{
 		if (auto gpuParticles = m_pManager->GetGpuParticles())
 		{
-			m_gpuEmitterID = gpuParticles->NewEmitter(m_pEffectNode->GpuParticlesResource, (GpuParticles::ParticleGroupID)GetInstanceGlobal());
+			m_gpuEmitterID = gpuParticles->NewEmitter(m_pEffectNode->GpuParticlesResource, GetInstanceGlobal());
 
 			if (m_gpuEmitterID >= 0)
 			{
@@ -455,8 +455,6 @@ void Instance::Update(float deltaFrame, bool shown)
 	{
 		if (auto gpuParticles = m_pManager->GetGpuParticles())
 		{
-			gpuParticles->SetDeltaTime(m_gpuEmitterID, deltaFrame);
-
 			gpuParticles->SetTransform(m_gpuEmitterID, ToStruct(globalMatrix_rendered));
 
 			auto& paramSet = m_pEffectNode->GpuParticlesResource->GetParamSet();
@@ -469,6 +467,8 @@ void Instance::Update(float deltaFrame, bool shown)
 			{
 				gpuParticles->SetColor(m_gpuEmitterID, ColorInheritance);
 			}
+
+			GetInstanceGlobal()->IsUsingGpuParticles = true;
 		}
 	}
 

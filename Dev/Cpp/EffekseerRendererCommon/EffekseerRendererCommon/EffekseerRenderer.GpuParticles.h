@@ -51,7 +51,7 @@ public:
 		EmitterData data;
 		UniformBufferRef buffer;
 		Effekseer::RefPtr<Resource> resource;
-		ParticleGroupID groupID;
+		Effekseer::InstanceGlobal* instanceGlobal;
 
 		bool IsAlive() const
 		{
@@ -112,7 +112,7 @@ public:
 
 	virtual ResourceRef CreateResource(const ParamSet& paramSet, const Effekseer::Effect* effect) override;
 
-	virtual EmitterID NewEmitter(ResourceRef resource, ParticleGroupID groupID) override;
+	virtual EmitterID NewEmitter(ResourceRef resource, Effekseer::InstanceGlobal* instanceGlobal) override;
 
 	virtual void StartEmit(EmitterID emitterID) override;
 
@@ -120,17 +120,15 @@ public:
 
 	virtual void SetRandomSeed(EmitterID emitterID, uint32_t seed) override;
 
-	virtual void SetDeltaTime(EmitterID emitterID, float deltaTime) override;
-
 	virtual void SetTransform(EmitterID emitterID, const Effekseer::Matrix43& transform) override;
 
 	virtual void SetColor(EmitterID emitterID, Effekseer::Color color) override;
 
-	virtual void KillParticles(ParticleGroupID groupID) override;
+	virtual void SetDeltaTime(Effekseer::InstanceGlobal* instanceGlobal, float deltaTime) override;
 
-	virtual int32_t GetParticleCount(ParticleGroupID groupID) override;
+	virtual void KillParticles(Effekseer::InstanceGlobal* instanceGlobal) override;
 
-	virtual void ResetDeltaTime() override;
+	virtual int32_t GetParticleCount(Effekseer::InstanceGlobal* instanceGlobal) override;
 
 protected:
 	PipelineStateRef CreatePiplineState(const ParamSet& paramSet);

@@ -279,7 +279,6 @@ public:
 	using ResourceRef = Effekseer::RefPtr<Resource>;
 
 	using EmitterID = int32_t;
-	using ParticleGroupID = int64_t;
 	static constexpr int32_t InvalidID = -1;
 
 public:
@@ -295,7 +294,7 @@ public:
 
 	virtual ResourceRef CreateResource(const ParamSet& paramSet, const Effect* effect) { return nullptr; }
 
-	virtual EmitterID NewEmitter(ResourceRef paramRes, ParticleGroupID groupID) { return InvalidID; }
+	virtual EmitterID NewEmitter(ResourceRef paramRes, Effekseer::InstanceGlobal* instanceGlobal) { return InvalidID; }
 
 	virtual void StartEmit(EmitterID emitterID) {}
 
@@ -303,17 +302,15 @@ public:
 
 	virtual void SetRandomSeed(EmitterID emitterID, uint32_t seed) {}
 
-	virtual void SetDeltaTime(EmitterID emitterID, float deltaTime) {}
-
 	virtual void SetTransform(EmitterID emitterID, const Effekseer::Matrix43& transform) {}
 
 	virtual void SetColor(EmitterID emitterID, Effekseer::Color color) {}
 
-	virtual void KillParticles(ParticleGroupID groupID) {}
+	virtual void SetDeltaTime(Effekseer::InstanceGlobal* instanceGlobal, float deltaTime) {}
 
-	virtual int32_t GetParticleCount(ParticleGroupID groupID) { return 0; }
+	virtual void KillParticles(Effekseer::InstanceGlobal* instanceGlobal) {}
 
-	virtual void ResetDeltaTime() {}
+	virtual int32_t GetParticleCount(Effekseer::InstanceGlobal* instanceGlobal) { return 0; }
 
 protected:
 	Settings m_settings;
