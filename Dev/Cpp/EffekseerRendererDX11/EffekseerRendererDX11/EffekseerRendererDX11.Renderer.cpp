@@ -7,7 +7,7 @@
 #include "EffekseerRendererDX11.RendererImplemented.h"
 
 #include "EffekseerRendererDX11.DeviceObject.h"
-#include "EffekseerRendererDX11.GPUTimer.h"
+#include "EffekseerRendererDX11.GpuTimer.h"
 #include "EffekseerRendererDX11.GpuParticles.h"
 #include "EffekseerRendererDX11.MaterialLoader.h"
 #include "EffekseerRendererDX11.ModelRenderer.h"
@@ -598,9 +598,9 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 	return ::Effekseer::TrackRendererRef(new ::EffekseerRenderer::TrackRendererBase<RendererImplemented, false>(this));
 }
 
-::Effekseer::GPUTimerRef RendererImplemented::CreateGPUTimer()
+::Effekseer::GpuTimerRef RendererImplemented::CreateGpuTimer()
 {
-	return ::Effekseer::GPUTimerRef(new ::EffekseerRendererDX11::GPUTimer(this, true));
+	return ::Effekseer::GpuTimerRef(new ::EffekseerRendererDX11::GpuTimer(this, true));
 }
 
 ::Effekseer::GpuParticlesRef RendererImplemented::CreateGpuParticles(const Effekseer::GpuParticles::Settings& settings)

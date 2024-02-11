@@ -7,7 +7,7 @@
 #include "EffekseerRendererGL.RendererImplemented.h"
 
 #include "EffekseerRendererGL.DeviceObject.h"
-#include "EffekseerRendererGL.GPUTimer.h"
+#include "EffekseerRendererGL.GpuTimer.h"
 #include "EffekseerRendererGL.MaterialLoader.h"
 #include "EffekseerRendererGL.ModelRenderer.h"
 #include "EffekseerRendererGL.Shader.h"
@@ -662,9 +662,9 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-::Effekseer::GPUTimerRef RendererImplemented::CreateGPUTimer()
+::Effekseer::GpuTimerRef RendererImplemented::CreateGpuTimer()
 {
-	return ::Effekseer::MakeRefPtr<GPUTimer>(this);
+	return ::Effekseer::MakeRefPtr<GpuTimer>(this);
 }
 
 //----------------------------------------------------------------------------------

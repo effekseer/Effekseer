@@ -277,7 +277,7 @@ public:
 	/**
 		@brief	GPUタイマーを生成する。
 	*/
-	virtual ::Effekseer::GPUTimerRef CreateGPUTimer() { return nullptr; }
+	virtual ::Effekseer::GpuTimerRef CreateGpuTimer() { return nullptr; }
 
 	/**
 		@brief	GPUパーティクルを生成する。

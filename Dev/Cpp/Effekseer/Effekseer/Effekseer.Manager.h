@@ -270,14 +270,14 @@ public:
 		\~English get an GPU performance timer
 		\~Japanese GPUパフォーマンスタイマー取得する。
 	*/
-	virtual GPUTimerRef GetGPUTimer() = 0;
+	virtual GpuTimerRef GetGpuTimer() = 0;
 
 	/**
 		@brief
 		\~English get an GPU performance timer
 		\~Japanese GPUパフォーマンスタイマーを設定する。
 	*/
-	virtual void SetGPUTimer(GPUTimerRef gpuTimer) = 0;
+	virtual void SetGpuTimer(GpuTimerRef gpuTimer) = 0;
 	
 	/**
 		@brief

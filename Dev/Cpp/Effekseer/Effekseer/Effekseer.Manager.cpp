@@ -19,7 +19,7 @@
 
 #include "Effekseer.Setting.h"
 
-#include "Renderer/Effekseer.GPUTimer.h"
+#include "Renderer/Effekseer.GpuTimer.h"
 #include "Renderer/Effekseer.ModelRenderer.h"
 #include "Renderer/Effekseer.RibbonRenderer.h"
 #include "Renderer/Effekseer.RingRenderer.h"
@@ -630,12 +630,12 @@ void ManagerImplemented::SetTrackRenderer(TrackRendererRef renderer)
 	m_trackRenderer = renderer;
 }
 
-GPUTimerRef ManagerImplemented::GetGPUTimer()
+GpuTimerRef ManagerImplemented::GetGpuTimer()
 {
 	return m_gpuTimer;
 }
 
-void ManagerImplemented::SetGPUTimer(GPUTimerRef gpuTimer)
+void ManagerImplemented::SetGpuTimer(GpuTimerRef gpuTimer)
 {
 	m_gpuTimer = gpuTimer;
 }

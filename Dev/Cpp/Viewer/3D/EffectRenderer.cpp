@@ -354,7 +354,7 @@ bool EffectRenderer::Initialize(std::shared_ptr<GraphicsDevice> graphicsDevice,
 	::Effekseer::RingRendererRef ring_renderer = renderer_->CreateRingRenderer();
 	::Effekseer::ModelRendererRef model_renderer = renderer_->CreateModelRenderer();
 	::Effekseer::TrackRendererRef track_renderer = renderer_->CreateTrackRenderer();
-	::Effekseer::GPUTimerRef gpu_timer = renderer_->CreateGPUTimer();
+	::Effekseer::GpuTimerRef gpu_timer = renderer_->CreateGpuTimer();
 	::Effekseer::GpuParticlesRef gpu_particles = renderer_->CreateGpuParticles();
 
 	if (sprite_renderer == nullptr)
@@ -370,7 +370,7 @@ bool EffectRenderer::Initialize(std::shared_ptr<GraphicsDevice> graphicsDevice,
 	manager_->SetRingRenderer(ring_renderer);
 	manager_->SetModelRenderer(model_renderer);
 	manager_->SetTrackRenderer(track_renderer);
-	manager_->SetGPUTimer(gpu_timer);
+	manager_->SetGpuTimer(gpu_timer);
 	manager_->SetGpuParticles(gpu_particles);
 
 	if (graphics_->GetGraphics()->GetGraphicsDevice() != nullptr)

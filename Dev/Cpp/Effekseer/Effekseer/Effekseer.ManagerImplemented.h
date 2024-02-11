@@ -181,7 +181,7 @@ private:
 
 	TrackRendererRef m_trackRenderer;
 
-	GPUTimerRef m_gpuTimer;
+	GpuTimerRef m_gpuTimer;
 
 	SoundPlayerRef m_soundPlayer;
 
@@ -257,9 +257,9 @@ public:
 
 	void SetTrackRenderer(TrackRendererRef renderer) override;
 
-	GPUTimerRef GetGPUTimer() override;
+	GpuTimerRef GetGpuTimer() override;
 
-	void SetGPUTimer(GPUTimerRef gpuTimer) override;
+	void SetGpuTimer(GpuTimerRef gpuTimer) override;
 
 	GpuParticlesRef GetGpuParticles() override;
 

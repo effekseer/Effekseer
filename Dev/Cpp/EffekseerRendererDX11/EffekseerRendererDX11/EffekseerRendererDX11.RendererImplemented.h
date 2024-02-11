@@ -137,7 +137,7 @@ public:
 
 	::Effekseer::TrackRendererRef CreateTrackRenderer();
 
-	::Effekseer::GPUTimerRef CreateGPUTimer() override;
+	::Effekseer::GpuTimerRef CreateGpuTimer() override;
 
 	::Effekseer::GpuParticlesRef CreateGpuParticles(const Effekseer::GpuParticles::Settings& settings = {}) override;
 

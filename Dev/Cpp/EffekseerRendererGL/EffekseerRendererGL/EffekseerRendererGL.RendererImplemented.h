@@ -150,7 +150,7 @@ public:
 	/**
 	@brief	GPUタイマーを生成する。
 	*/
-	::Effekseer::GPUTimerRef CreateGPUTimer() override;
+	::Effekseer::GpuTimerRef CreateGpuTimer() override;
 
 	/**
 		@brief	テクスチャ読込クラスを生成する。

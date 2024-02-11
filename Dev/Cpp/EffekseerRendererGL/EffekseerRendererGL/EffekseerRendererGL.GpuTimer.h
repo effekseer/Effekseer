@@ -16,14 +16,14 @@ namespace EffekseerRendererGL
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-class GPUTimer : public DeviceObject, public ::Effekseer::GPUTimer
+class GpuTimer : public DeviceObject, public ::Effekseer::GpuTimer
 {
 	static constexpr uint32_t NUM_PHASES = 2;
 
 public:
-	GPUTimer(RendererImplemented* renderer);
+	GpuTimer(RendererImplemented* renderer);
 
-	virtual ~GPUTimer();
+	virtual ~GpuTimer();
 
 	void InitDevice();
 	void ReleaseDevice();
@@ -33,7 +33,7 @@ public: // For device restore
 	virtual void OnLostDevice();
 	virtual void OnResetDevice();
 
-public: // GPUTimer
+public: // GpuTimer
 	virtual void BeginFrame() override;
 	virtual void EndFrame() override;
 	virtual void AddTimer(const void* object) override;

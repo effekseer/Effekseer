@@ -2,7 +2,7 @@
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-#include "EffekseerRendererGL.GPUTimer.h"
+#include "EffekseerRendererGL.GpuTimer.h"
 
 //-----------------------------------------------------------------------------------
 //
@@ -12,11 +12,11 @@ namespace EffekseerRendererGL
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-GPUTimer::GPUTimer(RendererImplemented* renderer)
+GpuTimer::GpuTimer(RendererImplemented* renderer)
 	: DeviceObject(renderer->GetInternalGraphicsDevice().Get())
 	, m_renderer(renderer)
 {
-	m_renderer->GetStandardRenderer()->UpdateGPUTimerCount(+1);
+	m_renderer->GetStandardRenderer()->UpdateGpuTimerCount(+1);
 	m_renderer->AddRef();
 
 	InitDevice();
@@ -25,18 +25,18 @@ GPUTimer::GPUTimer(RendererImplemented* renderer)
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-GPUTimer::~GPUTimer()
+GpuTimer::~GpuTimer()
 {
 	ReleaseDevice();
 
-	m_renderer->GetStandardRenderer()->UpdateGPUTimerCount(-1);
+	m_renderer->GetStandardRenderer()->UpdateGpuTimerCount(-1);
 	m_renderer->Release();
 }
 
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-void GPUTimer::InitDevice()
+void GpuTimer::InitDevice()
 {
 	for (auto& kv : m_timeData)
 	{
@@ -49,7 +49,7 @@ void GPUTimer::InitDevice()
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-void GPUTimer::ReleaseDevice()
+void GpuTimer::ReleaseDevice()
 {
 	for (auto& kv : m_timeData)
 	{
@@ -62,7 +62,7 @@ void GPUTimer::ReleaseDevice()
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-void GPUTimer::OnLostDevice()
+void GpuTimer::OnLostDevice()
 {
 	ReleaseDevice();
 }
@@ -70,7 +70,7 @@ void GPUTimer::OnLostDevice()
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-void GPUTimer::OnResetDevice()
+void GpuTimer::OnResetDevice()
 {
 	InitDevice();
 }
@@ -78,7 +78,7 @@ void GPUTimer::OnResetDevice()
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-void GPUTimer::BeginFrame()
+void GpuTimer::BeginFrame()
 {
 	assert(m_state != State::DuringFrame);
 
@@ -93,7 +93,7 @@ void GPUTimer::BeginFrame()
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-void GPUTimer::EndFrame()
+void GpuTimer::EndFrame()
 {
 	assert(m_state == State::DuringFrame);
 
@@ -103,7 +103,7 @@ void GPUTimer::EndFrame()
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-void GPUTimer::UpdateResults()
+void GpuTimer::UpdateResults()
 {
 	for (auto& kv : m_timeData)
 	{
@@ -132,7 +132,7 @@ void GPUTimer::UpdateResults()
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-void GPUTimer::AddTimer(const void* object)
+void GpuTimer::AddTimer(const void* object)
 {
 	assert(m_timeData.find(object) == m_timeData.end());
 
@@ -147,7 +147,7 @@ void GPUTimer::AddTimer(const void* object)
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-void GPUTimer::RemoveTimer(const void* object)
+void GpuTimer::RemoveTimer(const void* object)
 {
 	auto it = m_timeData.find(object);
 	if (it != m_timeData.end())
@@ -163,7 +163,7 @@ void GPUTimer::RemoveTimer(const void* object)
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-void GPUTimer::Start(const void* object, uint32_t phase)
+void GpuTimer::Start(const void* object, uint32_t phase)
 {
 	assert(phase < NUM_PHASES);
 
@@ -181,7 +181,7 @@ void GPUTimer::Start(const void* object, uint32_t phase)
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-void GPUTimer::Stop(const void* object, uint32_t phase)
+void GpuTimer::Stop(const void* object, uint32_t phase)
 {
 	assert(phase < NUM_PHASES);
 
@@ -198,7 +198,7 @@ void GPUTimer::Stop(const void* object, uint32_t phase)
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-int32_t GPUTimer::GetResult(const void* object)
+int32_t GpuTimer::GetResult(const void* object)
 {
 	assert(m_state == State::ResultUpdated || m_state == State::AfterFrame);
 

@@ -7,15 +7,15 @@
 namespace Effekseer
 {
 
-class GPUTimer;
-using GPUTimerRef = RefPtr<GPUTimer>;
+class GpuTimer;
+using GpuTimerRef = RefPtr<GpuTimer>;
 
-class GPUTimer : public ReferenceObject
+class GpuTimer : public ReferenceObject
 {
 public:
-	GPUTimer() = default;
+	GpuTimer() = default;
 
-	virtual ~GPUTimer() = default;
+	virtual ~GpuTimer() = default;
 
 	virtual void BeginFrame() {}
 

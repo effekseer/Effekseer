@@ -888,7 +888,7 @@ public:
 		m_renderer->GetRenderState()->Pop();
 	}
 
-	void UpdateGPUTimerCount(int32_t count)
+	void UpdateGpuTimerCount(int32_t count)
 	{
 		gpuTimerCount_ += count;
 	}
