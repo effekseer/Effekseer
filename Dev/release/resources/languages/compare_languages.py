@@ -27,7 +27,7 @@ for lang_keyword in lang_keywords:
         relative_path = csv_path.relative_to(tte_le)
         relative_path_key = str(relative_path).replace("\\", "/")
 
-        print(f"other {relative_path}")
+        print(f"Loading {relative_path}")
         with open(csv_path, encoding="utf-8") as f:
             reader = csv.reader(f)
             for row in reader:

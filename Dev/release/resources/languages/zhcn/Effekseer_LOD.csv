@@ -1,4 +1,4 @@
-﻿LOD_Name,细节层级（LOD）
+LOD_Name,细节层级（LOD）
 LOD_Level,层级
 LOD_Description,Configure Levels of Details to utilize.\nWhen level is enabled you can specify minimum distance away from viewer for the LOD to be selected
 LOD_Level_Minimum_Distance,最小距离

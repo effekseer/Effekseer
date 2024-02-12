@@ -1,4 +1,4 @@
-﻿LOD_Name,LOD設定
+LOD_Name,LOD設定
 LOD_Level,レベル
 LOD_Description,LODを使用する場合、レベルごとの視点からの最小距離を指定します。
 LOD_Level_Minimum_Distance,最小距離

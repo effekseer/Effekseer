@@ -1,4 +1,4 @@
-﻿LOD_Name,Niveles de detalles
+LOD_Name,Niveles de detalles
 LOD_Level,Nivel
 LOD_Description,Configure los niveles de detalles para utilizar.\nCuando el nivel está habilitado, puede especificar la distancia mínima del espectador para que se seleccione el LOD
 LOD_Level_Minimum_Distance,Distancia minima
