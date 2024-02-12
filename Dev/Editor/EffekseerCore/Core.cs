@@ -1605,7 +1605,7 @@ namespace Effekseer
 		/// </summary>
 		public static string GetToolHelpURL()
 		{
-			const string baseURL = "https://effekseer.github.io/Helps/17x/Tool/";
+			const string baseURL = "https://effekseer.github.io/Helps/18x/Tool/";
 			string language = (LanguageTable.Languages[LanguageTable.SelectedIndex] == "ja") ? "ja" : "en";
 			return baseURL + language + "/";
 		}
