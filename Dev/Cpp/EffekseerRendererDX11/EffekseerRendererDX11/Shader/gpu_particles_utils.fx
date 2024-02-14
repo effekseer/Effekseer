@@ -1,5 +1,7 @@
 #include "gpu_particles_data.h"
 
+#define PI 3.141592f
+
 uint PackColor(float4 color)
 {
     uint4 colori = uint4(clamp(color * 255.0f, 0.0, 255.0));
@@ -89,39 +91,33 @@ float4 RandomColorRange(inout uint seed, uint2 maxmin)
 
 float3 RandomDirection(inout uint seed)
 {
-    float theta = 2.0f * 3.14159f * RandomFloat(seed);
-    float phi = 2.0f * 3.14159f * RandomFloat(seed);
-
-    float3 randDir = float3(
-        sin(phi) * cos(theta),
-        sin(phi) * sin(theta),
-        cos(phi));
-
-    return randDir;
+    float cosTheta = -2.0f * RandomFloat(seed) + 1.0f;
+    float sinTheta = sqrt(1.0f - cosTheta * cosTheta);
+    float phi = 2.0f * PI * RandomFloat(seed);
+    return float3(sinTheta * cos(phi), sinTheta * sin(phi), cosTheta);
 }
 
-float3 RandomCircle(inout uint seed, float3 axis)
+float3 RandomCircle(inout uint seed, float3 axis, float innerRadius, float outerRadius)
 {
-    float theta = 2.0f * 3.14159f * RandomFloat(seed);
-
+    float theta = 2.0f * PI * RandomFloat(seed);
     float3 randDir = float3(cos(theta), 0.0f, sin(theta));
+    float radius = sqrt(lerp(innerRadius * innerRadius, outerRadius * outerRadius, RandomFloat(seed)));
 
     axis = normalize(axis);
     if (abs(axis.y) != 1.0f) {
         float3 up = float3(0.0f, 1.0f, 0.0f);
         float3 right = normalize(cross(up, axis));
         float3 front = cross(axis, right);
-        return mul(randDir, float3x3(right, axis, front));
+        return mul(randDir, float3x3(right, axis, front)) * radius;
     }
     else {
-        return randDir * sign(axis.y);
+        return randDir * sign(axis.y) * radius;
     }
-    return randDir;
 }
 
 float3 RandomSpread(inout uint seed, float3 baseDir, float angle)
 {
-    float theta = 2.0f * 3.14159f * RandomFloat(seed);
+    float theta = 2.0f * PI * RandomFloat(seed);
     float phi = angle * RandomFloat(seed);
 
     float3 randDir = float3(

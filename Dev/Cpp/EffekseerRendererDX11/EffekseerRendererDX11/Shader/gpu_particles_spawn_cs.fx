@@ -17,7 +17,7 @@ void main(uint3 dtid : SV_DispatchThreadID)
 {
     uint seed = emitter.Seed ^ (emitter.TotalEmitCount + dtid.x);
     float3 position = emitter.Transform[3];
-    float3 direction = RandomSpread(seed, paramData.Direction, paramData.Spread * 3.141592f / 180.0f);
+    float3 direction = RandomSpread(seed, paramData.Direction, paramData.Spread * PI / 180.0f);
     float speed = RandomFloatRange(seed, paramData.InitialSpeed);
 
     if (paramData.EmitShapeType == 1) {
@@ -30,8 +30,7 @@ void main(uint3 dtid : SV_DispatchThreadID)
         float3 circleAxis = mul(float4(paramData.EmitShapeData[0].xyz, 0.0f), emitter.Transform).xyz;
         float circleInner = paramData.EmitShapeData[1].x;
         float circleOuter = paramData.EmitShapeData[1].y;
-        float circleRadius = lerp(circleInner, circleOuter, RandomFloat(seed));
-        position += RandomCircle(seed, circleAxis) * circleRadius;
+        position += RandomCircle(seed, circleAxis, circleInner, circleOuter);
     } else if (paramData.EmitShapeType == 3) {
         float sphereRadius = paramData.EmitShapeData[0].x;
         position += RandomDirection(seed) * sphereRadius;
