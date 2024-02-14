@@ -219,15 +219,15 @@ float3 Vortex(thread const float& rotation, thread const float& attraction, thre
 {
     center = transform[3] + center;
     axis = fast::normalize(transform * float4(axis, 0.0));
-    float3 diff = position - center;
-    float _distance = length(diff);
-    if (_distance == 0.0)
+    float3 localPos = position - center;
+    float3 axisToPos = localPos - (axis * dot(axis, localPos));
+    float _distance = length(axisToPos);
+    if (_distance < 9.9999997473787516355514526367188e-05)
     {
         return float3(0.0);
     }
-    float3 radial = diff / float3(_distance);
+    float3 radial = fast::normalize(axisToPos);
     float3 tangent = cross(axis, radial);
-    radial = cross(tangent, axis);
     return (tangent * rotation) - (radial * attraction);
 }
 
@@ -298,9 +298,9 @@ uint PackColor(thread const float4& color)
 }
 
 static inline __attribute__((always_inline))
-void _main(thread const uint3& dtid, constant cb1& _592, device Particles& Particles_1, constant cb0& _659, device Trails& Trails_1, texture3d<float> NoiseTex, sampler NoiseSamp, texture2d<float> GradientTex, sampler GradientSamp)
+void _main(thread const uint3& dtid, constant cb1& _596, device Particles& Particles_1, constant cb0& _663, device Trails& Trails_1, texture3d<float> NoiseTex, sampler NoiseSamp, texture2d<float> GradientTex, sampler GradientSamp)
 {
-    uint particleID = _592.emitter.ParticleHead + dtid.x;
+    uint particleID = _596.emitter.ParticleHead + dtid.x;
     ParticleData particle;
     particle.FlagBits = Particles_1._data[particleID].FlagBits;
     particle.Seed = Particles_1._data[particleID].Seed;
@@ -313,40 +313,40 @@ void _main(thread const uint3& dtid, constant cb1& _592, device Particles& Parti
     if ((particle.FlagBits & 1u) != 0u)
     {
         uint updateCount = (particle.FlagBits >> uint(1)) & 255u;
-        float deltaTime = _592.emitter.DeltaTime;
+        float deltaTime = _596.emitter.DeltaTime;
         uint seed = particle.Seed;
         uint param = seed;
-        float2 param_1 = _659.paramData.LifeTime;
-        float _666 = RandomFloatRange(param, param_1);
+        float2 param_1 = _663.paramData.LifeTime;
+        float _670 = RandomFloatRange(param, param_1);
         seed = param;
-        float lifeTime = _666;
+        float lifeTime = _670;
         float lifeRatio = particle.LifeAge / lifeTime;
         uint param_2 = seed;
-        float2 param_3 = _659.paramData.Damping;
-        float _680 = RandomFloatRange(param_2, param_3);
+        float2 param_3 = _663.paramData.Damping;
+        float _684 = RandomFloatRange(param_2, param_3);
         seed = param_2;
-        float damping = _680 * 0.00999999977648258209228515625;
+        float damping = _684 * 0.00999999977648258209228515625;
         uint param_4 = seed;
         spvUnsafeArray<float4, 2> param_5;
-        param_5[0] = _659.paramData.AngularOffset[0];
-        param_5[1] = _659.paramData.AngularOffset[1];
-        float4 _696 = RandomFloat4Range(param_4, param_5);
+        param_5[0] = _663.paramData.AngularOffset[0];
+        param_5[1] = _663.paramData.AngularOffset[1];
+        float4 _700 = RandomFloat4Range(param_4, param_5);
         seed = param_4;
-        float4 angularOffset = _696;
+        float4 angularOffset = _700;
         uint param_6 = seed;
         spvUnsafeArray<float4, 2> param_7;
-        param_7[0] = _659.paramData.AngularVelocity[0];
-        param_7[1] = _659.paramData.AngularVelocity[1];
-        float4 _710 = RandomFloat4Range(param_6, param_7);
+        param_7[0] = _663.paramData.AngularVelocity[0];
+        param_7[1] = _663.paramData.AngularVelocity[1];
+        float4 _714 = RandomFloat4Range(param_6, param_7);
         seed = param_6;
-        float4 angularVelocity = _710;
+        float4 angularVelocity = _714;
         float3 position = particle.Transform[3];
         uint2 param_8 = particle.DirectionSpeed;
         float4 directionSpeed = UnpackFloat4(param_8);
         float3 velocity = directionSpeed.xyz * directionSpeed.w;
-        if (_592.emitter.TrailSize > 0u)
+        if (_596.emitter.TrailSize > 0u)
         {
-            uint trailID = (_592.emitter.TrailHead + (dtid.x * _659.paramData.ShapeData)) + _592.emitter.TrailPhase;
+            uint trailID = (_596.emitter.TrailHead + (dtid.x * _663.paramData.ShapeData)) + _596.emitter.TrailPhase;
             TrailData trail;
             trail.Position = position;
             float3 param_9 = directionSpeed.xyz;
@@ -361,22 +361,22 @@ void _main(thread const uint3& dtid, constant cb1& _592, device Particles& Parti
         {
             particle.FlagBits &= 4294967294u;
         }
-        velocity += (float3(_659.paramData.Gravity) * deltaTime);
-        if ((_659.paramData.VortexRotation != 0.0) || (_659.paramData.VortexAttraction != 0.0))
+        velocity += (float3(_663.paramData.Gravity) * deltaTime);
+        if ((_663.paramData.VortexRotation != 0.0) || (_663.paramData.VortexAttraction != 0.0))
         {
-            float param_10 = _659.paramData.VortexRotation;
-            float param_11 = _659.paramData.VortexAttraction;
-            float3 param_12 = float3(_659.paramData.VortexCenter);
-            float3 param_13 = float3(_659.paramData.VortexAxis);
+            float param_10 = _663.paramData.VortexRotation;
+            float param_11 = _663.paramData.VortexAttraction;
+            float3 param_12 = float3(_663.paramData.VortexCenter);
+            float3 param_13 = float3(_663.paramData.VortexAxis);
             float3 param_14 = position;
-            float4x3 param_15 = transpose(_592.emitter.Transform);
-            float3 _834 = Vortex(param_10, param_11, param_12, param_13, param_14, param_15);
-            velocity += (_834 * deltaTime);
+            float4x3 param_15 = transpose(_596.emitter.Transform);
+            float3 _838 = Vortex(param_10, param_11, param_12, param_13, param_14, param_15);
+            velocity += (_838 * deltaTime);
         }
-        if (_659.paramData.TurbulencePower != 0.0)
+        if (_663.paramData.TurbulencePower != 0.0)
         {
-            float4 vfTexel = NoiseTex.sample(NoiseSamp, ((position / float3(8.0)) + float3(0.5)), level(0.0));
-            velocity += ((((vfTexel.xyz * 2.0) - float3(1.0)) * _659.paramData.TurbulencePower) * deltaTime);
+            float4 vfTexel = NoiseTex.sample(NoiseSamp, ((position * _663.paramData.TurbulenceScale) + float3(0.5)), level(0.0));
+            velocity += ((((vfTexel.xyz * 2.0) - float3(1.0)) * _663.paramData.TurbulencePower) * deltaTime);
         }
         float speed = length(velocity);
         if (speed > 0.0)
@@ -388,23 +388,23 @@ void _main(thread const uint3& dtid, constant cb1& _592, device Particles& Parti
         directionSpeed.w = length(velocity);
         if (directionSpeed.w > 9.9999997473787516355514526367188e-05)
         {
-            float3 _909 = fast::normalize(velocity);
-            directionSpeed.x = _909.x;
-            directionSpeed.y = _909.y;
-            directionSpeed.z = _909.z;
+            float3 _913 = fast::normalize(velocity);
+            directionSpeed.x = _913.x;
+            directionSpeed.y = _913.y;
+            directionSpeed.z = _913.z;
         }
         float3 rotation = angularOffset.xyz + (angularVelocity.xyz * particle.LifeAge);
         float4 scale = float4(1.0);
-        uint scaleMode = _659.paramData.ScaleFlags & 7u;
+        uint scaleMode = _663.paramData.ScaleFlags & 7u;
         if (scaleMode == 0u)
         {
             uint param_16 = seed;
             spvUnsafeArray<float4, 2> param_17;
-            param_17[0] = _659.paramData.ScaleData1[0];
-            param_17[1] = _659.paramData.ScaleData1[1];
-            float4 _947 = RandomFloat4Range(param_16, param_17);
+            param_17[0] = _663.paramData.ScaleData1[0];
+            param_17[1] = _663.paramData.ScaleData1[1];
+            float4 _951 = RandomFloat4Range(param_16, param_17);
             seed = param_16;
-            scale = _947;
+            scale = _951;
         }
         else
         {
@@ -412,28 +412,28 @@ void _main(thread const uint3& dtid, constant cb1& _592, device Particles& Parti
             {
                 uint param_18 = seed;
                 spvUnsafeArray<float4, 2> param_19;
-                param_19[0] = _659.paramData.ScaleData1[0];
-                param_19[1] = _659.paramData.ScaleData1[1];
-                float4 _964 = RandomFloat4Range(param_18, param_19);
+                param_19[0] = _663.paramData.ScaleData1[0];
+                param_19[1] = _663.paramData.ScaleData1[1];
+                float4 _968 = RandomFloat4Range(param_18, param_19);
                 seed = param_18;
-                float4 scale1 = _964;
+                float4 scale1 = _968;
                 uint param_20 = seed;
                 spvUnsafeArray<float4, 2> param_21;
-                param_21[0] = _659.paramData.ScaleData2[0];
-                param_21[1] = _659.paramData.ScaleData2[1];
-                float4 _978 = RandomFloat4Range(param_20, param_21);
+                param_21[0] = _663.paramData.ScaleData2[0];
+                param_21[1] = _663.paramData.ScaleData2[1];
+                float4 _982 = RandomFloat4Range(param_20, param_21);
                 seed = param_20;
-                float4 scale2 = _978;
+                float4 scale2 = _982;
                 float param_22 = lifeRatio;
-                float3 param_23 = float3(_659.paramData.ScaleEasing);
+                float3 param_23 = float3(_663.paramData.ScaleEasing);
                 scale = mix(scale1, scale2, float4(EasingSpeed(param_22, param_23)));
             }
         }
-        uint colorMode = _659.paramData.ColorFlags & 7u;
+        uint colorMode = _663.paramData.ColorFlags & 7u;
         float4 color = float4(1.0);
         if (colorMode == 0u)
         {
-            uint param_24 = _659.paramData.ColorData.x;
+            uint param_24 = _663.paramData.ColorData.x;
             color = UnpackColor(param_24);
         }
         else
@@ -441,27 +441,27 @@ void _main(thread const uint3& dtid, constant cb1& _592, device Particles& Parti
             if (colorMode == 1u)
             {
                 uint param_25 = seed;
-                uint2 param_26 = _659.paramData.ColorData.xy;
-                float4 _1017 = RandomColorRange(param_25, param_26);
+                uint2 param_26 = _663.paramData.ColorData.xy;
+                float4 _1021 = RandomColorRange(param_25, param_26);
                 seed = param_25;
-                color = _1017;
+                color = _1021;
             }
             else
             {
                 if (colorMode == 2u)
                 {
                     uint param_27 = seed;
-                    uint2 param_28 = _659.paramData.ColorData.xy;
-                    float4 _1031 = RandomColorRange(param_27, param_28);
+                    uint2 param_28 = _663.paramData.ColorData.xy;
+                    float4 _1035 = RandomColorRange(param_27, param_28);
                     seed = param_27;
-                    float4 colorStart = _1031;
+                    float4 colorStart = _1035;
                     uint param_29 = seed;
-                    uint2 param_30 = _659.paramData.ColorData.zw;
-                    float4 _1040 = RandomColorRange(param_29, param_30);
+                    uint2 param_30 = _663.paramData.ColorData.zw;
+                    float4 _1044 = RandomColorRange(param_29, param_30);
                     seed = param_29;
-                    float4 colorEnd = _1040;
+                    float4 colorEnd = _1044;
                     float param_31 = lifeRatio;
-                    float3 param_32 = float3(_659.paramData.ColorEasing);
+                    float3 param_32 = float3(_663.paramData.ColorEasing);
                     color = mix(colorStart, colorEnd, float4(EasingSpeed(param_31, param_32)));
                 }
                 else
@@ -473,18 +473,18 @@ void _main(thread const uint3& dtid, constant cb1& _592, device Particles& Parti
                 }
             }
         }
-        if (((_659.paramData.ColorFlags >> uint(5)) & 1u) != 0u)
+        if (((_663.paramData.ColorFlags >> uint(5)) & 1u) != 0u)
         {
             float3 param_33 = color.xyz;
-            float3 _1082 = HSV2RGB(param_33);
-            color.x = _1082.x;
-            color.y = _1082.y;
-            color.z = _1082.z;
+            float3 _1086 = HSV2RGB(param_33);
+            color.x = _1086.x;
+            color.y = _1086.y;
+            color.z = _1086.z;
         }
-        uint colorInherit = (_659.paramData.ColorFlags >> uint(3)) & 3u;
+        uint colorInherit = (_663.paramData.ColorFlags >> uint(3)) & 3u;
         if ((colorInherit == 2u) || (colorInherit == 3u))
         {
-            uint param_34 = _592.emitter.Color;
+            uint param_34 = _596.emitter.Color;
             color *= UnpackColor(param_34);
         }
         else
@@ -492,11 +492,11 @@ void _main(thread const uint3& dtid, constant cb1& _592, device Particles& Parti
             uint param_35 = particle.InheritColor;
             color *= UnpackColor(param_35);
         }
-        color.w *= fast::clamp(particle.LifeAge / _659.paramData.FadeIn, 0.0, 1.0);
-        color.w *= fast::clamp((lifeTime - particle.LifeAge) / _659.paramData.FadeOut, 0.0, 1.0);
+        color.w *= fast::clamp(particle.LifeAge / _663.paramData.FadeIn, 0.0, 1.0);
+        color.w *= fast::clamp((lifeTime - particle.LifeAge) / _663.paramData.FadeOut, 0.0, 1.0);
         float3 param_36 = position;
         float3 param_37 = rotation;
-        float3 param_38 = (scale.xyz * scale.w) * _659.paramData.ShapeSize;
+        float3 param_38 = (scale.xyz * scale.w) * _663.paramData.ShapeSize;
         particle.Transform = TRSMatrix(param_36, param_37, param_38);
         float4 param_39 = directionSpeed;
         particle.DirectionSpeed = PackFloat4(param_39);
@@ -513,11 +513,11 @@ void _main(thread const uint3& dtid, constant cb1& _592, device Particles& Parti
     }
 }
 
-kernel void main0(constant cb0& _659 [[buffer(0)]], constant cb1& _592 [[buffer(1)]], device Particles& Particles_1 [[buffer(10)]], device Trails& Trails_1 [[buffer(11)]], texture3d<float> NoiseTex [[texture(2)]], texture2d<float> GradientTex [[texture(4)]], sampler NoiseSamp [[sampler(2)]], sampler GradientSamp [[sampler(4)]], uint3 gl_GlobalInvocationID [[thread_position_in_grid]])
+kernel void main0(constant cb0& _663 [[buffer(0)]], constant cb1& _596 [[buffer(1)]], device Particles& Particles_1 [[buffer(10)]], device Trails& Trails_1 [[buffer(11)]], texture3d<float> NoiseTex [[texture(2)]], texture2d<float> GradientTex [[texture(4)]], sampler NoiseSamp [[sampler(2)]], sampler GradientSamp [[sampler(4)]], uint3 gl_GlobalInvocationID [[thread_position_in_grid]])
 {
     uint3 dtid = gl_GlobalInvocationID;
     uint3 param = dtid;
-    _main(param, _592, Particles_1, _659, Trails_1, NoiseTex, NoiseSamp, GradientTex, GradientSamp);
+    _main(param, _596, Particles_1, _663, Trails_1, NoiseTex, NoiseSamp, GradientTex, GradientSamp);
 }
 
 )";

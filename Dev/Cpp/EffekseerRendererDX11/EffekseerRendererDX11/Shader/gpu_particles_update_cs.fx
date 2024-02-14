@@ -23,15 +23,15 @@ float3 Vortex(float rotation, float attraction, float3 center, float3 axis, floa
     center = transform[3] + center;
     axis = normalize(mul(float4(axis, 0.0f), transform));
 
-    float3 diff = position - center;
-    float distance = length(diff);
-    if (distance == 0.0f) {
+    float3 localPos = position - center;
+    float3 axisToPos = localPos - axis * dot(axis, localPos);
+    float distance = length(axisToPos);
+    if (distance < 0.0001f) {
         return float3(0.0f, 0.0f, 0.0f);
     }
 
-    float3 radial = diff / distance;
+    float3 radial = normalize(axisToPos);
     float3 tangent = cross(axis, radial);
-    radial = cross(tangent, axis);
     return tangent * rotation - radial * attraction;
 }
 
@@ -87,7 +87,7 @@ void main(uint3 dtid : SV_DispatchThreadID)
         }
         // Turbulence
         if (paramData.TurbulencePower != 0.0f) {
-            float4 vfTexel = NoiseTex.SampleLevel(NoiseSamp, position / 8.0f + 0.5f, 0);
+            float4 vfTexel = NoiseTex.SampleLevel(NoiseSamp, position * paramData.TurbulenceScale + 0.5f, 0);
             velocity += (vfTexel.xyz * 2.0f - 1.0f) * paramData.TurbulencePower * deltaTime;
         }
 
