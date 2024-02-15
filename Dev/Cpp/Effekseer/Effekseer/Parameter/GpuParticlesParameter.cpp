@@ -25,6 +25,7 @@ GpuParticles::ParamSet LoadGpuParticlesParameter(uint8_t*& pos, int32_t version)
 	paramSet.Basic.LifeTime = Read<std::array<float, 2>>(pos);
 
 	paramSet.EmitShape.Type = (GpuParticles::EmitShape)Read<uint8_t>(pos);
+	paramSet.EmitShape.RotationApplied = Read<uint8_t>(pos) != 0;
 	switch (paramSet.EmitShape.Type)
 	{
 	case GpuParticles::EmitShape::Point:

@@ -85,6 +85,9 @@ namespace Effekseer.Data
 			[Key(key = "GpuParticles_EmitShape_ModelSize")]
 			public Value.Float ModelSize { get; private set; } = new Value.Float(value: 1.0f, min: 0.0f);
 
+			[Key(key = "GpuParticles_EmitShape_RotationApplied")]
+			public Value.Boolean RotationApplied { get; private set; } = new(value: false);
+
 			public EmitShapeParams(Value.Path basepath)
 			{
 				ModelPath = new Value.PathForModel(basepath, new MultiLanguageString("ModelFilter"), true, "");

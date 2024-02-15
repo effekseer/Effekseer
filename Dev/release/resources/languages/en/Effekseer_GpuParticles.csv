@@ -38,6 +38,8 @@ GpuParticles_EmitShape_ModelPath_Name,Mesh
 GpuParticles_EmitShape_ModelPath_Desc,Mesh paths used for mesh geometry.
 GpuParticles_EmitShape_ModelSize_Name,Size
 GpuParticles_EmitShape_ModelSize_Desc,Size of mesh shape.
+GpuParticles_EmitShape_RotationApplied_Name,Set angle on spawn
+GpuParticles_EmitShape_RotationApplied_Desc,Valid for circles, spheres, and models
 
 GpuParticles_Position_Name,Position
 GpuParticles_Position_Direction_Name,Direction

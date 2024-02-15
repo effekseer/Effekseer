@@ -97,21 +97,20 @@ float3 RandomDirection(inout uint seed)
     return float3(sinTheta * cos(phi), sinTheta * sin(phi), cosTheta);
 }
 
-float3 RandomCircle(inout uint seed, float3 axis, float innerRadius, float outerRadius)
+float3 RandomCircle(inout uint seed, float3 axis)
 {
     float theta = 2.0f * PI * RandomFloat(seed);
-    float3 randDir = float3(cos(theta), 0.0f, sin(theta));
-    float radius = sqrt(lerp(innerRadius * innerRadius, outerRadius * outerRadius, RandomFloat(seed)));
+    float3 direction = float3(cos(theta), 0.0f, sin(theta));
 
     axis = normalize(axis);
     if (abs(axis.y) != 1.0f) {
         float3 up = float3(0.0f, 1.0f, 0.0f);
         float3 right = normalize(cross(up, axis));
         float3 front = cross(axis, right);
-        return mul(randDir, float3x3(right, axis, front)) * radius;
+        return mul(direction, float3x3(right, axis, front));
     }
     else {
-        return randDir * sign(axis.y) * radius;
+        return direction * sign(axis.y);
     }
 }
 

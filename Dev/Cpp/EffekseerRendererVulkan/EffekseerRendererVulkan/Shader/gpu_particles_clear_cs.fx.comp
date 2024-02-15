@@ -42,7 +42,7 @@ struct ParameterData
     uint Padding0;
     vec2 LifeTime;
     uint EmitShapeType;
-    uint Padding1;
+    uint EmitRotationApplied;
     vec4 EmitShapeData[2];
     vec3 Direction;
     float Spread;

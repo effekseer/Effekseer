@@ -8,7 +8,7 @@ struct ParameterData
 
     float2 LifeTime;
     uint EmitShapeType;
-    uint Padding1;
+    uint EmitRotationApplied;
     
     float4 EmitShapeData[2];
 

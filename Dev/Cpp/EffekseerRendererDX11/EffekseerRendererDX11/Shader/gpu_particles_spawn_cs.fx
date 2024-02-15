@@ -30,20 +30,32 @@ void main(uint3 dtid : SV_DispatchThreadID)
         float3 circleAxis = mul(float4(paramData.EmitShapeData[0].xyz, 0.0f), emitter.Transform).xyz;
         float circleInner = paramData.EmitShapeData[1].x;
         float circleOuter = paramData.EmitShapeData[1].y;
-        position += RandomCircle(seed, circleAxis, circleInner, circleOuter);
+        float circleRadius = sqrt(lerp(circleInner * circleInner, circleOuter * circleOuter, RandomFloat(seed)));
+        float3 circleDirection = RandomCircle(seed, circleAxis);
+        position += circleDirection * circleRadius;
+        if (paramData.EmitRotationApplied) {
+            direction = mul(direction, float3x3(cross(circleAxis, circleDirection), circleAxis, circleDirection));
+        }
     } else if (paramData.EmitShapeType == 3) {
         float sphereRadius = paramData.EmitShapeData[0].x;
-        position += RandomDirection(seed) * sphereRadius;
+        float3 sphereDirection = RandomDirection(seed);
+        position += sphereDirection * sphereRadius;
+        if (paramData.EmitRotationApplied) {
+            float3 sphereUp = float3(0.0f, 1.0f, 0.0f);
+            direction = mul(direction, float3x3(cross(sphereUp, sphereDirection), sphereUp, sphereDirection));
+        }
     } else if (paramData.EmitShapeType == 4) {
         float modelSize = paramData.EmitShapeData[0].y;
         if (emitter.EmitPointCount > 0) {
             uint emitIndex = RandomUint(seed) % emitter.EmitPointCount;
             EmitPoint emitPoint = EmitPoints[emitIndex];
             position += mul(float4(emitPoint.Position * modelSize, 0.0f), emitter.Transform).xyz;
-            float3 emitNormal = UnpackNormalizedFloat3(emitPoint.Normal);
-            float3 emitBinormal = UnpackNormalizedFloat3(emitPoint.Binormal);
-            float3 emitTangent = UnpackNormalizedFloat3(emitPoint.Tangent);
-            direction = mul(direction, float3x3(normalize(emitTangent), normalize(emitBinormal), normalize(emitNormal)));
+            if (paramData.EmitRotationApplied) {
+                float3 emitNormal = UnpackNormalizedFloat3(emitPoint.Normal);
+                float3 emitBinormal = UnpackNormalizedFloat3(emitPoint.Binormal);
+                float3 emitTangent = UnpackNormalizedFloat3(emitPoint.Tangent);
+                direction = mul(direction, float3x3(normalize(emitTangent), normalize(emitBinormal), normalize(emitNormal)));
+            }
         }
     }
 

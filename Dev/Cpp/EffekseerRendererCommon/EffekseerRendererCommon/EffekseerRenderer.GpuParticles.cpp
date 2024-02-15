@@ -813,6 +813,7 @@ GpuParticles::ParameterData GpuParticles::ToParamData(const ParamSet& paramSet)
 	ParameterData data{};
 	data.LifeTime = paramSet.Basic.LifeTime;
 	data.EmitShapeType = (uint)paramSet.EmitShape.Type;
+	data.EmitRotationApplied = (uint)paramSet.EmitShape.RotationApplied;
 
 	data.EmitShapeData[0] = paramSet.EmitShape.Data[0];
 	data.EmitShapeData[1] = paramSet.EmitShape.Data[1];

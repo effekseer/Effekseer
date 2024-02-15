@@ -38,6 +38,8 @@ GpuParticles_EmitShape_ModelPath_Name,Malla
 GpuParticles_EmitShape_ModelPath_Desc,Trayectorias de malla utilizadas para la geometría de la malla.
 GpuParticles_EmitShape_ModelSize_Name,Tamaño
 GpuParticles_EmitShape_ModelSize_Desc,Tamaño de la forma de la malla.
+GpuParticles_EmitShape_RotationApplied_Name,Ajustar ángulo en la Aparición
+GpuParticles_EmitShape_RotationApplied_Desc,Válido para círculo, esfera y modelo
 
 GpuParticles_Position_Name,Posición
 GpuParticles_Position_Direction_Name,Dirección

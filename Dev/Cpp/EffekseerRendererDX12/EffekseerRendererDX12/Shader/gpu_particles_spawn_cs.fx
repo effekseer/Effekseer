@@ -27,7 +27,7 @@ struct ParameterData
     uint Padding0;
     float2 LifeTime;
     uint EmitShapeType;
-    uint Padding1;
+    uint EmitRotationApplied;
     float4 EmitShapeData[2];
     float3 Direction;
     float Spread;
@@ -86,12 +86,12 @@ struct ParticleData
 
 cbuffer cb1 : register(b1)
 {
-    EmitterData _489_emitter : packoffset(c0);
+    EmitterData _490_emitter : packoffset(c0);
 };
 
 cbuffer cb0 : register(b0)
 {
-    ParameterData _513_paramData : packoffset(c0);
+    ParameterData _514_paramData : packoffset(c0);
 };
 
 ByteAddressBuffer EmitPoints : register(t1);
@@ -133,13 +133,13 @@ float RandomFloat(inout uint seed)
 float3 RandomSpread(inout uint seed, inout float3 baseDir, float angle)
 {
     uint param = seed;
-    float _415 = RandomFloat(param);
+    float _416 = RandomFloat(param);
     seed = param;
-    float theta = 6.28318023681640625f * _415;
+    float theta = 6.283184051513671875f * _416;
     uint param_1 = seed;
-    float _422 = RandomFloat(param_1);
+    float _423 = RandomFloat(param_1);
     seed = param_1;
-    float phi = angle * _422;
+    float phi = angle * _423;
     float3 randDir = float3(sin(phi) * cos(theta), sin(phi) * sin(theta), cos(phi));
     baseDir = normalize(baseDir);
     if (abs(baseDir.z) != 1.0f)
@@ -168,33 +168,33 @@ float3 RandomDirection(inout uint seed)
     uint param = seed;
     float _324 = RandomFloat(param);
     seed = param;
-    float theta = 6.28318023681640625f * _324;
+    float cosTheta = ((-2.0f) * _324) + 1.0f;
+    float sinTheta = sqrt(1.0f - (cosTheta * cosTheta));
     uint param_1 = seed;
-    float _330 = RandomFloat(param_1);
+    float _338 = RandomFloat(param_1);
     seed = param_1;
-    float phi = 6.28318023681640625f * _330;
-    float3 randDir = float3(sin(phi) * cos(theta), sin(phi) * sin(theta), cos(phi));
-    return randDir;
+    float phi = 6.283184051513671875f * _338;
+    return float3(sinTheta * cos(phi), sinTheta * sin(phi), cosTheta);
 }
 
 float3 RandomCircle(inout uint seed, inout float3 axis)
 {
     uint param = seed;
-    float _353 = RandomFloat(param);
+    float _356 = RandomFloat(param);
     seed = param;
-    float theta = 6.28318023681640625f * _353;
-    float3 randDir = float3(cos(theta), 0.0f, sin(theta));
+    float theta = 6.283184051513671875f * _356;
+    float3 direction = float3(cos(theta), 0.0f, sin(theta));
     axis = normalize(axis);
     if (abs(axis.y) != 1.0f)
     {
         float3 up = float3(0.0f, 1.0f, 0.0f);
         float3 right = normalize(cross(up, axis));
         float3 front = cross(axis, right);
-        return mul(randDir, float3x3(float3(right), float3(axis), float3(front)));
+        return mul(direction, float3x3(float3(right), float3(axis), float3(front)));
     }
     else
     {
-        return randDir * sign(axis.y);
+        return direction * sign(axis.y);
     }
 }
 
@@ -232,111 +232,125 @@ uint2 PackFloat4(float4 v)
 
 void _main(uint3 dtid)
 {
-    uint seed = _489_emitter.Seed ^ (_489_emitter.TotalEmitCount + dtid.x);
-    float3 position = _489_emitter.Transform[3];
+    uint seed = _490_emitter.Seed ^ (_490_emitter.TotalEmitCount + dtid.x);
+    float3 position = _490_emitter.Transform[3];
     uint param = seed;
-    float3 param_1 = _513_paramData.Direction;
-    float param_2 = (_513_paramData.Spread * 3.1415920257568359375f) / 180.0f;
-    float3 _528 = RandomSpread(param, param_1, param_2);
+    float3 param_1 = _514_paramData.Direction;
+    float param_2 = (_514_paramData.Spread * 3.1415920257568359375f) / 180.0f;
+    float3 _529 = RandomSpread(param, param_1, param_2);
     seed = param;
-    float3 direction = _528;
+    float3 direction = _529;
     uint param_3 = seed;
-    float2 param_4 = _513_paramData.InitialSpeed;
-    float _537 = RandomFloatRange(param_3, param_4);
+    float2 param_4 = _514_paramData.InitialSpeed;
+    float _538 = RandomFloatRange(param_3, param_4);
     seed = param_3;
-    float speed = _537;
-    if (_513_paramData.EmitShapeType == 1u)
+    float speed = _538;
+    if (_514_paramData.EmitShapeType == 1u)
     {
-        float3 lineStart = mul(float4(_513_paramData.EmitShapeData[0].xyz, 0.0f), _489_emitter.Transform);
-        float3 lineEnd = mul(float4(_513_paramData.EmitShapeData[1].xyz, 0.0f), _489_emitter.Transform);
-        float lineWidth = _513_paramData.EmitShapeData[1].w;
+        float3 lineStart = mul(float4(_514_paramData.EmitShapeData[0].xyz, 0.0f), _490_emitter.Transform);
+        float3 lineEnd = mul(float4(_514_paramData.EmitShapeData[1].xyz, 0.0f), _490_emitter.Transform);
+        float lineWidth = _514_paramData.EmitShapeData[1].w;
         uint param_5 = seed;
-        float _577 = RandomFloat(param_5);
+        float _578 = RandomFloat(param_5);
         seed = param_5;
-        position += lerp(lineStart, lineEnd, _577.xxx);
+        position += lerp(lineStart, lineEnd, _578.xxx);
         uint param_6 = seed;
-        float3 _585 = RandomDirection(param_6);
+        float3 _586 = RandomDirection(param_6);
         seed = param_6;
-        position += ((_585 * lineWidth) * 0.5f);
+        position += ((_586 * lineWidth) * 0.5f);
     }
     else
     {
-        if (_513_paramData.EmitShapeType == 2u)
+        if (_514_paramData.EmitShapeType == 2u)
         {
-            float3 circleAxis = mul(float4(_513_paramData.EmitShapeData[0].xyz, 0.0f), _489_emitter.Transform);
-            float circleInner = _513_paramData.EmitShapeData[1].x;
-            float circleOuter = _513_paramData.EmitShapeData[1].y;
+            float3 circleAxis = mul(float4(_514_paramData.EmitShapeData[0].xyz, 0.0f), _490_emitter.Transform);
+            float circleInner = _514_paramData.EmitShapeData[1].x;
+            float circleOuter = _514_paramData.EmitShapeData[1].y;
             uint param_7 = seed;
-            float _621 = RandomFloat(param_7);
+            float _626 = RandomFloat(param_7);
             seed = param_7;
-            float circleRadius = lerp(circleInner, circleOuter, _621);
+            float circleRadius = sqrt(lerp(circleInner * circleInner, circleOuter * circleOuter, _626));
             uint param_8 = seed;
             float3 param_9 = circleAxis;
-            float3 _628 = RandomCircle(param_8, param_9);
+            float3 _635 = RandomCircle(param_8, param_9);
             seed = param_8;
-            position += (_628 * circleRadius);
+            float3 circleDirection = _635;
+            position += (circleDirection * circleRadius);
+            if (_514_paramData.EmitRotationApplied != 0u)
+            {
+                direction = mul(direction, float3x3(float3(cross(circleAxis, circleDirection)), float3(circleAxis), float3(circleDirection)));
+            }
         }
         else
         {
-            if (_513_paramData.EmitShapeType == 3u)
+            if (_514_paramData.EmitShapeType == 3u)
             {
-                float sphereRadius = _513_paramData.EmitShapeData[0].x;
+                float sphereRadius = _514_paramData.EmitShapeData[0].x;
                 uint param_10 = seed;
-                float3 _645 = RandomDirection(param_10);
+                float3 _680 = RandomDirection(param_10);
                 seed = param_10;
-                position += (_645 * sphereRadius);
+                float3 sphereDirection = _680;
+                position += (sphereDirection * sphereRadius);
+                if (_514_paramData.EmitRotationApplied != 0u)
+                {
+                    float3 sphereUp = float3(0.0f, 1.0f, 0.0f);
+                    direction = mul(direction, float3x3(float3(cross(sphereUp, sphereDirection)), float3(sphereUp), float3(sphereDirection)));
+                }
             }
             else
             {
-                if (_513_paramData.EmitShapeType == 4u)
+                if (_514_paramData.EmitShapeType == 4u)
                 {
-                    float modelSize = _513_paramData.EmitShapeData[0].y;
-                    if (_489_emitter.EmitPointCount > 0u)
+                    float modelSize = _514_paramData.EmitShapeData[0].y;
+                    if (_490_emitter.EmitPointCount > 0u)
                     {
                         uint param_11 = seed;
-                        uint _668 = RandomUint(param_11);
+                        uint _730 = RandomUint(param_11);
                         seed = param_11;
-                        uint emitIndex = _668 % _489_emitter.EmitPointCount;
-                        EmitPoint _684;
-                        _684.Position = asfloat(EmitPoints.Load3(emitIndex * 32 + 0));
-                        _684.Normal = EmitPoints.Load(emitIndex * 32 + 12);
-                        _684.Binormal = EmitPoints.Load(emitIndex * 32 + 16);
-                        _684.Tangent = EmitPoints.Load(emitIndex * 32 + 20);
-                        _684.UV = EmitPoints.Load(emitIndex * 32 + 24);
-                        _684.VColor = EmitPoints.Load(emitIndex * 32 + 28);
+                        uint emitIndex = _730 % _490_emitter.EmitPointCount;
+                        EmitPoint _746;
+                        _746.Position = asfloat(EmitPoints.Load3(emitIndex * 32 + 0));
+                        _746.Normal = EmitPoints.Load(emitIndex * 32 + 12);
+                        _746.Binormal = EmitPoints.Load(emitIndex * 32 + 16);
+                        _746.Tangent = EmitPoints.Load(emitIndex * 32 + 20);
+                        _746.UV = EmitPoints.Load(emitIndex * 32 + 24);
+                        _746.VColor = EmitPoints.Load(emitIndex * 32 + 28);
                         EmitPoint emitPoint;
-                        emitPoint.Position = _684.Position;
-                        emitPoint.Normal = _684.Normal;
-                        emitPoint.Binormal = _684.Binormal;
-                        emitPoint.Tangent = _684.Tangent;
-                        emitPoint.UV = _684.UV;
-                        emitPoint.VColor = _684.VColor;
-                        position += mul(float4(emitPoint.Position * modelSize, 0.0f), _489_emitter.Transform);
-                        uint param_12 = emitPoint.Normal;
-                        float3 emitNormal = UnpackNormalizedFloat3(param_12);
-                        uint param_13 = emitPoint.Binormal;
-                        float3 emitBinormal = UnpackNormalizedFloat3(param_13);
-                        uint param_14 = emitPoint.Tangent;
-                        float3 emitTangent = UnpackNormalizedFloat3(param_14);
-                        direction = mul(direction, float3x3(float3(normalize(emitTangent)), float3(normalize(emitBinormal)), float3(normalize(emitNormal))));
+                        emitPoint.Position = _746.Position;
+                        emitPoint.Normal = _746.Normal;
+                        emitPoint.Binormal = _746.Binormal;
+                        emitPoint.Tangent = _746.Tangent;
+                        emitPoint.UV = _746.UV;
+                        emitPoint.VColor = _746.VColor;
+                        position += mul(float4(emitPoint.Position * modelSize, 0.0f), _490_emitter.Transform);
+                        if (_514_paramData.EmitRotationApplied != 0u)
+                        {
+                            uint param_12 = emitPoint.Normal;
+                            float3 emitNormal = UnpackNormalizedFloat3(param_12);
+                            uint param_13 = emitPoint.Binormal;
+                            float3 emitBinormal = UnpackNormalizedFloat3(param_13);
+                            uint param_14 = emitPoint.Tangent;
+                            float3 emitTangent = UnpackNormalizedFloat3(param_14);
+                            direction = mul(direction, float3x3(float3(normalize(emitTangent)), float3(normalize(emitBinormal)), float3(normalize(emitNormal))));
+                        }
                     }
                 }
             }
         }
     }
-    direction = mul(float4(direction, 0.0f), _489_emitter.Transform);
-    uint particleID = _489_emitter.ParticleHead + ((_489_emitter.TotalEmitCount + dtid.x) % _489_emitter.ParticleSize);
+    direction = mul(float4(direction, 0.0f), _490_emitter.Transform);
+    uint particleID = _490_emitter.ParticleHead + ((_490_emitter.TotalEmitCount + dtid.x) % _490_emitter.ParticleSize);
     ParticleData particle;
     particle.FlagBits = 1u;
     particle.Seed = seed;
     particle.LifeAge = 0.0f;
-    if (_513_paramData.ColorFlags == 0u)
+    if (_514_paramData.ColorFlags == 0u)
     {
         particle.InheritColor = 4294967295u;
     }
     else
     {
-        particle.InheritColor = _489_emitter.Color;
+        particle.InheritColor = _490_emitter.Color;
     }
     particle.Color = 4294967295u;
     particle.Padding = 0u;

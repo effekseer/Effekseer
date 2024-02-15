@@ -33,6 +33,7 @@ namespace Effekseer.Binary
 			data.Add(value.Basic.LifeTime.GetBytes());
 
 			data.Add(((byte)value.EmitShape.Shape.Value).GetBytes());
+			data.Add((value.EmitShape.RotationApplied.Value ? (byte)1 : (byte)0).GetBytes());
 			switch (value.EmitShape.Shape.Value)
 			{
 				case Data.GpuParticlesValues.EmitShapeParams.ShapeType.Point:

@@ -136,6 +136,7 @@ public:
 			};
 
 			EmitShape Type;
+			bool RotationApplied;
 			union
 			{
 				std::array<float4, 2> Data;
