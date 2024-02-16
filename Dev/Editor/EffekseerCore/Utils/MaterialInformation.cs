@@ -233,12 +233,15 @@ namespace Effekseer.Utils
 					descriptions.Add((Language)lang, desc);
 				}
 
-				if (!string.IsNullOrEmpty(summaries[Language.English]))
+				summary = string.Empty;
+				description = string.Empty;
+
+				if (summaries.ContainsKey(Language.English) && !string.IsNullOrEmpty(summaries[Language.English]))
 				{
 					summary = summaries[Language.English];
 					description = descriptions[Language.English];
 				}
-				else
+				else if (summaries.ContainsKey(Language.Japanese))
 				{
 					summary = summaries[Language.Japanese];
 					description = descriptions[Language.Japanese];

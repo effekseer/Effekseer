@@ -2033,13 +2033,26 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 	// param 2
 	BinaryWriter bwParam2;
 
+	const auto storeSummary = [](BinaryWriter& bw, std::shared_ptr<NodeDescription> node_description)
+	{
+		if (node_description != nullptr)
+		{
+			bw.Push(GetVectorFromStr(node_description->Summary));
+			bw.Push(GetVectorFromStr(node_description->Detail));
+		}
+		else
+		{
+			bw.Push(GetVectorFromStr(""));
+			bw.Push(GetVectorFromStr(""));
+		}
+	};
+
 	{
 		bwParam2.Push(static_cast<int32_t>(CustomData.size()));
 
 		for (size_t ci = 0; ci < CustomData.size(); ci++)
 		{
-			bwParam2.Push(GetVectorFromStr(CustomData[ci].Description->Summary));
-			bwParam2.Push(GetVectorFromStr(CustomData[ci].Description->Detail));
+			storeSummary(bwParam2, CustomData[ci].Description);
 		}
 	}
 
@@ -2047,16 +2060,14 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 
 	for (size_t i = 0; i < result.Textures.size(); i++)
 	{
-		bwParam2.Push(GetVectorFromStr(result.Textures[i]->Description->Summary));
-		bwParam2.Push(GetVectorFromStr(result.Textures[i]->Description->Detail));
+		storeSummary(bwParam2, result.Textures[i]->Description);
 	}
 
 	bwParam2.Push(static_cast<int32_t>(result.Uniforms.size()));
 
 	for (size_t i = 0; i < result.Uniforms.size(); i++)
 	{
-		bwParam2.Push(GetVectorFromStr(result.Uniforms[i]->Description->Summary));
-		bwParam2.Push(GetVectorFromStr(result.Uniforms[i]->Description->Detail));
+		storeSummary(bwParam2, result.Uniforms[i]->Description);
 	}
 
 	{
@@ -2064,8 +2075,7 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 
 		for (size_t i = 0; i < result.Gradients.size(); i++)
 		{
-			bwParam2.Push(GetVectorFromStr(result.Gradients[i]->Description->Summary));
-			bwParam2.Push(GetVectorFromStr(result.Gradients[i]->Description->Detail));
+			storeSummary(bwParam2, result.Gradients[i]->Description);
 		}
 	}
 

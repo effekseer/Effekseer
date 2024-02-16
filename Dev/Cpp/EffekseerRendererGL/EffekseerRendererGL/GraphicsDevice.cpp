@@ -1434,7 +1434,7 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 	GLExt::glUseProgram(shader->GetProgram());
 
 	// textures
-	for (int32_t i = 0; i < drawParam.ResourceSlotCount; i++)
+	for (int32_t i = 0; i < std::min(static_cast<int>(shader->GetTextureLocations().size()), drawParam.ResourceSlotCount); i++)
 	{
 		const auto textureSlot = shader->GetTextureLocations()[i];
 
