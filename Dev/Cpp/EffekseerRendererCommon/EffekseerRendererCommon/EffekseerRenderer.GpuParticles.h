@@ -6,51 +6,97 @@
 namespace EffekseerRenderer
 {
 
-class GpuParticles : public Effekseer::GpuParticles
+namespace GpuParticles
 {
-public:
-	using ComputeBufferRef = Effekseer::Backend::ComputeBufferRef;
-	using UniformBufferRef = Effekseer::Backend::UniformBufferRef;
-	using TextureRef = Effekseer::Backend::TextureRef;
-	using ComputeCommand = Effekseer::Backend::DispatchParameter;
-	using ShaderRef = Effekseer::Backend::ShaderRef;
-	using VertexLayoutRef = Effekseer::Backend::VertexLayoutRef;
-	using PipelineStateRef = Effekseer::Backend::PipelineStateRef;
+using float2 = Effekseer::GpuParticles::float2;
+using float3 = Effekseer::GpuParticles::float3;
+using float4 = Effekseer::GpuParticles::float4;
+using float4x3 = Effekseer::GpuParticles::float4x3;
+using float4x4 = Effekseer::GpuParticles::float4x4;
 
-	struct Shaders
-	{
-		ShaderRef csParticleClear;
-		ShaderRef csParticleSpawn;
-		ShaderRef csParticleUpdate;
-		ShaderRef rsParticleRender;
-	};
+using int2 = Effekseer::GpuParticles::int2;
+using int3 = Effekseer::GpuParticles::int3;
+using int4 = Effekseer::GpuParticles::int4;
+
+using uint = Effekseer::GpuParticles::uint;
+using uint2 = Effekseer::GpuParticles::uint2;
+using uint3 = Effekseer::GpuParticles::uint3;
+using uint4 = Effekseer::GpuParticles::uint4;
 
 #include "Shader/gpu_particles_data.h"
 
-	class Resource : public Effekseer::GpuParticles::Resource
-	{
-	public:
-		Resource() = default;
-		~Resource() = default;
-		virtual const ParamSet& GetParamSet() const override { return paramSet; }
+using ComputeBufferRef = Effekseer::Backend::ComputeBufferRef;
+using UniformBufferRef = Effekseer::Backend::UniformBufferRef;
+using TextureRef = Effekseer::Backend::TextureRef;
+using ComputeCommand = Effekseer::Backend::DispatchParameter;
+using ShaderRef = Effekseer::Backend::ShaderRef;
+using VertexLayoutRef = Effekseer::Backend::VertexLayoutRef;
+using PipelineStateRef = Effekseer::Backend::PipelineStateRef;
 
-	public:
-		ParamSet paramSet;
-		const Effekseer::Effect* effect = nullptr;
-		PipelineStateRef piplineState;
-		UniformBufferRef paramBuffer;
-		TextureRef noiseTexture;
-		TextureRef fieldTexture;
-		TextureRef gradientTexture;
-		ComputeBufferRef emitPoints;
-		uint32_t emitPointCount = 0;
+union PipelineStateKey
+{
+	uint32_t Data;
+	struct
+	{
+		uint8_t BlendType;
+		uint8_t CullingType;
+		uint8_t ZTest;
+		uint8_t ZWrite;
+	};
+};
+
+class Resource : public Effekseer::GpuParticles::Resource
+{
+public:
+	Resource() = default;
+	~Resource() = default;
+	virtual const Effekseer::GpuParticles::ParamSet& GetParamSet() const override { return paramSet; }
+
+public:
+	Effekseer::GpuParticles::ParamSet paramSet;
+	const Effekseer::Effect* effect = nullptr;
+	PipelineStateKey piplineStateKey;
+	UniformBufferRef paramBuffer;
+	TextureRef noiseTexture;
+	TextureRef fieldTexture;
+	TextureRef gradientTexture;
+	ComputeBufferRef emitPoints;
+	uint32_t emitPointCount = 0;
+};
+using ResourceRef = Effekseer::RefPtr<Resource>;
+
+}
+
+class GpuParticleFactory : public Effekseer::GpuParticleFactory
+{
+public:
+	GpuParticleFactory(Effekseer::Backend::GraphicsDeviceRef graphics);
+	Effekseer::GpuParticles::ResourceRef CreateResource(const Effekseer::GpuParticles::ParamSet& paramSet, const Effekseer::Effect* effect);
+
+protected:
+	GpuParticles::ParameterData ToParamData(const Effekseer::GpuParticles::ParamSet& paramSet);
+	GpuParticles::PipelineStateKey ToPiplineStateKey(const Effekseer::GpuParticles::ParamSet& paramSet);
+
+private:
+	Effekseer::Backend::GraphicsDeviceRef m_graphics;
+};
+
+class GpuParticleSystem : public Effekseer::GpuParticleSystem
+{
+public:
+	struct Shaders
+	{
+		GpuParticles::ShaderRef csParticleClear;
+		GpuParticles::ShaderRef csParticleSpawn;
+		GpuParticles::ShaderRef csParticleUpdate;
+		GpuParticles::ShaderRef rsParticleRender;
 	};
 
 	struct Emitter
 	{
-		EmitterData data;
-		UniformBufferRef buffer;
-		Effekseer::RefPtr<Resource> resource;
+		GpuParticles::EmitterData data;
+		GpuParticles::UniformBufferRef buffer;
+		Effekseer::RefPtr<GpuParticles::Resource> resource;
 		Effekseer::InstanceGlobal* instanceGlobal;
 
 		bool IsAlive() const
@@ -76,11 +122,11 @@ public:
 	};
 	struct Particle
 	{
-		ParticleData data;
+		GpuParticles::ParticleData data;
 	};
 	struct Trail
 	{
-		TrailData data;
+		GpuParticles::TrailData data;
 	};
 
 	struct Block
@@ -98,9 +144,9 @@ public:
 	};
 
 public:
-	GpuParticles(Renderer* renderer);
+	GpuParticleSystem(Renderer* renderer);
 
-	virtual ~GpuParticles();
+	virtual ~GpuParticleSystem();
 
 	virtual bool InitSystem(const Settings& settings) override;
 
@@ -110,9 +156,7 @@ public:
 
 	virtual void RenderFrame() override;
 
-	virtual ResourceRef CreateResource(const ParamSet& paramSet, const Effekseer::Effect* effect) override;
-
-	virtual EmitterID NewEmitter(ResourceRef resource, Effekseer::InstanceGlobal* instanceGlobal) override;
+	virtual EmitterID NewEmitter(Effekseer::GpuParticles::ResourceRef resource, Effekseer::InstanceGlobal* instanceGlobal) override;
 
 	virtual void StartEmit(EmitterID emitterID) override;
 
@@ -130,15 +174,12 @@ public:
 
 	virtual int32_t GetParticleCount(Effekseer::InstanceGlobal* instanceGlobal) override;
 
-protected:
-	PipelineStateRef CreatePiplineState(const ParamSet& paramSet);
-
 private:
-	ParameterData ToParamData(const ParamSet& paramSet);
-
-	int32_t GetEmitterParticleCount(const Emitter& emitter, const ParamSet& paramSet);
+	int32_t GetEmitterParticleCount(const Emitter& emitter, const Effekseer::GpuParticles::ParamSet& paramSet);
 
 	void FreeEmitter(EmitterID emitterID);
+
+	GpuParticles::PipelineStateRef GetOrCreatePipelineState(GpuParticles::PipelineStateKey key);
 
 protected:
 	static constexpr uint32_t EmitterUnitSize = 16;
@@ -152,23 +193,24 @@ protected:
 	BlockAllocator m_particleAllocator;
 	BlockAllocator m_trailAllocator;
 
-	UniformBufferRef m_ubufConstants;
+	GpuParticles::UniformBufferRef m_ubufConstants;
 
-	ComputeBufferRef m_cbufParticles;
-	ComputeBufferRef m_cbufTrails;
+	GpuParticles::ComputeBufferRef m_cbufParticles;
+	GpuParticles::ComputeBufferRef m_cbufTrails;
 
-	PipelineStateRef m_pipelineParticleClear;
-	PipelineStateRef m_pipelineParticleSpawn;
-	PipelineStateRef m_pipelineParticleUpdate;
+	GpuParticles::PipelineStateRef m_pipelineParticleClear;
+	GpuParticles::PipelineStateRef m_pipelineParticleSpawn;
+	GpuParticles::PipelineStateRef m_pipelineParticleUpdate;
+	Effekseer::CustomVector<std::tuple<GpuParticles::PipelineStateKey, GpuParticles::PipelineStateRef>> m_pipelineParticleRenders;
 
 	Shaders m_shaders;
 
-	ComputeBufferRef m_dummyEmitPoints;
-	TextureRef m_dummyVectorTexture;
-	TextureRef m_dummyColorTexture;
-	TextureRef m_dummyNormalTexture;
+	GpuParticles::ComputeBufferRef m_dummyEmitPoints;
+	GpuParticles::TextureRef m_dummyVectorTexture;
+	GpuParticles::TextureRef m_dummyColorTexture;
+	GpuParticles::TextureRef m_dummyNormalTexture;
 
-	VertexLayoutRef m_vertexLayout;
+	GpuParticles::VertexLayoutRef m_vertexLayout;
 	Effekseer::ModelRef m_modelSprite;
 	Effekseer::ModelRef m_modelTrail;
 };

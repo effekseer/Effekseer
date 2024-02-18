@@ -164,9 +164,14 @@ public:
 	::Effekseer::TrackRendererRef CreateTrackRenderer() override;
 
 	/**
-		@brief	GPUパーティクルを生成する。
+		@brief	GPUパーティクルシステムを生成する。
 	*/
-	::Effekseer::GpuParticlesRef CreateGpuParticles(const Effekseer::GpuParticles::Settings& settings = {}) override;
+	::Effekseer::GpuParticleSystemRef CreateGpuParticleSystem(const Effekseer::GpuParticleSystem::Settings& settings = {}) override;
+	
+	/**
+		@brief	GPUパーティクルファクトリを生成する。
+	*/
+	::Effekseer::GpuParticleFactoryRef CreateGpuParticleFactory() override;
 
 	/**
 		@brief	テクスチャ読込クラスを生成する。

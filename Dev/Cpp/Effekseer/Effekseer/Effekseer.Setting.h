@@ -34,7 +34,7 @@ private:
 
 	std::vector<RefPtr<EffectFactory>> effectFactories_;
 	RefPtr<ResourceManager> resourceManager_;
-	GpuParticlesRef gpuParticles_;
+	GpuParticleFactoryRef gpuParticleFactory_;
 
 protected:
 	Setting();
@@ -217,22 +217,22 @@ public:
 	/**
 		@brief
 		\~English get a gpu particle system
-		\~Japanese GPUパーティクルシステムを取得する。
+		\~Japanese GPUパーティクルファクトリを取得する。
 		@return
 		\~English	gpu particle system
-		\~Japanese GPUパーティクルシステム
+		\~Japanese GPUパーティクルファクトリ
 	*/
-	GpuParticlesRef GetGpuParticles() const;
+	GpuParticleFactoryRef GetGpuParticleFactory() const;
 
 	/**
 		@brief
 		\~English specfiy a gpu particle system
-		\~Japanese GPUパーティクルシステムを設定する。
+		\~Japanese GPUパーティクルファクトリを設定する。
 		@param	gpu particle system
 		\~English	gpu particle system
-		\~Japanese GPUパーティクルシステム
+		\~Japanese GPUパーティクルファクトリ
 	*/
-	void SetGpuParticles(GpuParticlesRef gpuParticles);
+	void SetGpuParticleFactory(GpuParticleFactoryRef gpuParticleFactory);
 
 	/**
 		@brief

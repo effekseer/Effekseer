@@ -385,14 +385,14 @@ void Instance::FirstUpdate()
 
 	if (m_pEffectNode->IsRendered && m_pEffectNode->GpuParticlesResource)
 	{
-		if (auto gpuParticles = m_pManager->GetGpuParticles())
+		if (auto gpuParticleSystem = m_pManager->GetGpuParticleSystem())
 		{
-			m_gpuEmitterID = gpuParticles->NewEmitter(m_pEffectNode->GpuParticlesResource, GetInstanceGlobal());
+			m_gpuEmitterID = gpuParticleSystem->NewEmitter(m_pEffectNode->GpuParticlesResource, GetInstanceGlobal());
 
 			if (m_gpuEmitterID >= 0)
 			{
-				gpuParticles->SetRandomSeed(m_gpuEmitterID, (uint32_t)m_randObject.GetRandInt());
-				gpuParticles->StartEmit(m_gpuEmitterID);
+				gpuParticleSystem->SetRandomSeed(m_gpuEmitterID, (uint32_t)m_randObject.GetRandInt());
+				gpuParticleSystem->StartEmit(m_gpuEmitterID);
 			}
 		}
 	}
@@ -453,19 +453,19 @@ void Instance::Update(float deltaFrame, bool shown)
 	// Update gpu particles emitter parameters
 	if (m_gpuEmitterID >= 0)
 	{
-		if (auto gpuParticles = m_pManager->GetGpuParticles())
+		if (auto gpuParticleSystem = m_pManager->GetGpuParticleSystem())
 		{
-			gpuParticles->SetTransform(m_gpuEmitterID, ToStruct(globalMatrix_rendered));
+			gpuParticleSystem->SetTransform(m_gpuEmitterID, ToStruct(globalMatrix_rendered));
 
 			auto& paramSet = m_pEffectNode->GpuParticlesResource->GetParamSet();
 			if ((BindType)paramSet.RenderColor.ColorInherit == BindType::NotBind_Root)
 			{
 				InstanceGlobal* instanceGlobal = m_pContainer->GetRootInstance();
-				gpuParticles->SetColor(m_gpuEmitterID, instanceGlobal->GlobalColor);
+				gpuParticleSystem->SetColor(m_gpuEmitterID, instanceGlobal->GlobalColor);
 			}
 			else
 			{
-				gpuParticles->SetColor(m_gpuEmitterID, ColorInheritance);
+				gpuParticleSystem->SetColor(m_gpuEmitterID, ColorInheritance);
 			}
 
 			GetInstanceGlobal()->IsUsingGpuParticles = true;
@@ -956,7 +956,7 @@ void Instance::Kill()
 
 		if (m_gpuEmitterID >= 0)
 		{
-			m_pManager->GetGpuParticles()->StopEmit(m_gpuEmitterID);
+			m_pManager->GetGpuParticleSystem()->StopEmit(m_gpuEmitterID);
 			m_gpuEmitterID = -1;
 		}
 

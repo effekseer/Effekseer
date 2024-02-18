@@ -189,9 +189,9 @@ void ManagerImplemented::StopStoppingEffects()
 			}
 
 			// when gpu particles are found
-			if (auto gpuParticles = GetGpuParticles())
+			if (auto gpuParticleSystem = GetGpuParticleSystem())
 			{
-				if (gpuParticles->GetParticleCount(draw_set.GlobalPointer) > 0)
+				if (gpuParticleSystem->GetParticleCount(draw_set.GlobalPointer) > 0)
 				{
 					continue;
 				}
@@ -368,9 +368,9 @@ void ManagerImplemented::ExecuteEvents()
 				GetSoundPlayer()->StopTag(ds.second.GlobalPointer);
 			}
 
-			if (GetGpuParticles() != nullptr)
+			if (GetGpuParticleSystem() != nullptr)
 			{
-				GetGpuParticles()->KillParticles(ds.second.GlobalPointer);
+				GetGpuParticleSystem()->KillParticles(ds.second.GlobalPointer);
 			}
 		}
 
@@ -640,14 +640,24 @@ void ManagerImplemented::SetGpuTimer(GpuTimerRef gpuTimer)
 	m_gpuTimer = gpuTimer;
 }
 
-GpuParticlesRef ManagerImplemented::GetGpuParticles()
+GpuParticleSystemRef ManagerImplemented::GetGpuParticleSystem()
 {
-	return m_setting->GetGpuParticles();
+	return m_gpuParticleSystem;
 }
 
-void ManagerImplemented::SetGpuParticles(GpuParticlesRef gpuParticles)
+void ManagerImplemented::SetGpuParticleSystem(GpuParticleSystemRef system)
 {
-	m_setting->SetGpuParticles(gpuParticles);
+	m_gpuParticleSystem = system;
+}
+
+GpuParticleFactoryRef ManagerImplemented::GetGpuParticleFactory()
+{
+	return m_setting->GetGpuParticleFactory();
+}
+
+void ManagerImplemented::SetGpuParticleFactory(GpuParticleFactoryRef factory)
+{
+	m_setting->SetGpuParticleFactory(factory);
 }
 
 SoundPlayerRef ManagerImplemented::GetSoundPlayer()
@@ -1665,9 +1675,9 @@ void ManagerImplemented::UpdateHandleInternal(DrawSet& drawSet)
 
 	if (drawSet.GlobalPointer->IsUsingGpuParticles)
 	{
-		if (auto gpuParticles = GetGpuParticles())
+		if (auto gpuParticleSystem = GetGpuParticleSystem())
 		{
-			gpuParticles->SetDeltaTime(drawSet.GlobalPointer, drawSet.GlobalPointer->GetNextDeltaFrame());
+			gpuParticleSystem->SetDeltaTime(drawSet.GlobalPointer, drawSet.GlobalPointer->GetNextDeltaFrame());
 		}
 	}
 
@@ -1788,11 +1798,11 @@ void ManagerImplemented::ResetAndPlayWithDataSet(DrawSet& drawSet, float frame)
 
 void ManagerImplemented::Compute()
 {
-	if (auto gpuParticles = GetGpuParticles())
+	if (auto gpuParticleSystem = GetGpuParticleSystem())
 	{
 		for (int i = 0; i < m_nextComputeCount; i++)
 		{
-			gpuParticles->ComputeFrame();
+			gpuParticleSystem->ComputeFrame();
 		}
 	}
 }
@@ -1867,9 +1877,9 @@ void ManagerImplemented::Draw(const Manager::DrawParameter& drawParameter)
 		}
 	}
 
-	if (auto gpuParticles = GetGpuParticles())
+	if (auto gpuParticleSystem = GetGpuParticleSystem())
 	{
-		gpuParticles->RenderFrame();
+		gpuParticleSystem->RenderFrame();
 	}
 
 	if (m_gpuTimer != nullptr)
@@ -2001,9 +2011,9 @@ void ManagerImplemented::DrawFront(const Manager::DrawParameter& drawParameter)
 		}
 	}
 
-	if (auto gpuParticles = GetGpuParticles())
+	if (auto gpuParticleSystem = GetGpuParticleSystem())
 	{
-		gpuParticles->RenderFrame();
+		gpuParticleSystem->RenderFrame();
 	}
 
 	if (m_gpuTimer != nullptr)

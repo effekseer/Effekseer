@@ -190,20 +190,14 @@ void Setting::SetProceduralMeshGenerator(ProceduralModelGeneratorRef generator)
 	resourceManager_->SetProceduralMeshGenerator(generator);
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-GpuParticlesRef Setting::GetGpuParticles() const
+GpuParticleFactoryRef Setting::GetGpuParticleFactory() const
 {
-	return gpuParticles_;
+	return gpuParticleFactory_;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void Setting::SetGpuParticles(GpuParticlesRef gpuParticles)
+void Setting::SetGpuParticleFactory(GpuParticleFactoryRef gpuParticleFactory)
 {
-	gpuParticles_ = gpuParticles;
+	gpuParticleFactory_ = gpuParticleFactory;
 }
 
 //----------------------------------------------------------------------------------

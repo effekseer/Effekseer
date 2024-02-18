@@ -598,14 +598,19 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 	return ::Effekseer::TrackRendererRef(new ::EffekseerRenderer::TrackRendererBase<RendererImplemented, false>(this));
 }
 
-::Effekseer::GpuParticlesRef RendererImplemented::CreateGpuParticles(const Effekseer::GpuParticles::Settings& settings)
+::Effekseer::GpuParticleSystemRef RendererImplemented::CreateGpuParticleSystem(const Effekseer::GpuParticleSystem::Settings& settings)
 {
-	auto gpuParticles = ::Effekseer::GpuParticlesRef(new ::EffekseerRendererLLGI::GpuParticles(this));
-	if (!gpuParticles->InitSystem(settings))
+	auto gpuParticleSystem = ::Effekseer::GpuParticleSystemRef(new ::EffekseerRendererLLGI::GpuParticleSystem(this));
+	if (!gpuParticleSystem->InitSystem(settings))
 	{
 		return nullptr;
 	}
-	return gpuParticles;
+	return gpuParticleSystem;
+}
+
+::Effekseer::GpuParticleFactoryRef RendererImplemented::CreateGpuParticleFactory()
+{
+	return ::Effekseer::GpuParticleFactoryRef(new ::EffekseerRenderer::GpuParticleFactory(GetGraphicsDevice()));
 }
 
 ::Effekseer::TextureLoaderRef RendererImplemented::CreateTextureLoader(::Effekseer::FileInterfaceRef fileInterface)

@@ -603,14 +603,19 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 	return ::Effekseer::GpuTimerRef(new ::EffekseerRendererDX11::GpuTimer(this, true));
 }
 
-::Effekseer::GpuParticlesRef RendererImplemented::CreateGpuParticles(const Effekseer::GpuParticles::Settings& settings)
+::Effekseer::GpuParticleSystemRef RendererImplemented::CreateGpuParticleSystem(const Effekseer::GpuParticleSystem::Settings& settings)
 {
-	auto gpuParticles = ::Effekseer::GpuParticlesRef(new ::EffekseerRendererDX11::GpuParticles(this, true));
-	if (!gpuParticles->InitSystem(settings))
+	auto gpuParticleSystem = ::Effekseer::GpuParticleSystemRef(new ::EffekseerRendererDX11::GpuParticleSystem(this, true));
+	if (!gpuParticleSystem->InitSystem(settings))
 	{
 		return nullptr;
 	}
-	return gpuParticles;
+	return gpuParticleSystem;
+}
+
+::Effekseer::GpuParticleFactoryRef RendererImplemented::CreateGpuParticleFactory()
+{
+	return ::Effekseer::GpuParticleFactoryRef(new ::EffekseerRenderer::GpuParticleFactory(GetGraphicsDevice()));
 }
 
 //----------------------------------------------------------------------------------

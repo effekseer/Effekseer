@@ -7,14 +7,14 @@
 namespace EffekseerRendererDX11
 {
 
-class GpuParticles
+class GpuParticleSystem
 	: public DeviceObject,
-	  public EffekseerRenderer::GpuParticles
+	  public EffekseerRenderer::GpuParticleSystem
 {
 public:
-	GpuParticles(RendererImplemented* renderer, bool hasRefCount);
+	GpuParticleSystem(RendererImplemented* renderer, bool hasRefCount);
 
-	virtual ~GpuParticles();
+	virtual ~GpuParticleSystem();
 
 public: // GpuParticles
 	virtual bool InitSystem(const Settings& settings) override;

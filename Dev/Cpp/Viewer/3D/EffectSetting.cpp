@@ -11,6 +11,7 @@
 #include <EffekseerSoundOSMixer.h>
 
 #include <EffekseerRendererCommon/TextureLoader.h>
+#include <EffekseerRendererCommon/EffekseerRenderer.GpuParticles.h>
 
 namespace Effekseer::Tool
 {
@@ -53,9 +54,9 @@ std::shared_ptr<EffectSetting> EffectSetting::Create(std::shared_ptr<Effekseer::
 		setting->SetMaterialLoader(EffekseerRendererGL::CreateMaterialLoader(gd, fileInterface));
 	}
 
-	return ret;
+	setting->SetGpuParticleFactory(Effekseer::GpuParticleFactoryRef(new ::EffekseerRenderer::GpuParticleFactory(gd)));
 
-	return nullptr;
+	return ret;
 }
 
 } // namespace Effekseer::Tool

@@ -181,6 +181,8 @@ private:
 
 	TrackRendererRef m_trackRenderer;
 
+	GpuParticleSystemRef m_gpuParticleSystem;
+
 	GpuTimerRef m_gpuTimer;
 
 	SoundPlayerRef m_soundPlayer;
@@ -261,9 +263,13 @@ public:
 
 	void SetGpuTimer(GpuTimerRef gpuTimer) override;
 
-	GpuParticlesRef GetGpuParticles() override;
+	GpuParticleSystemRef GetGpuParticleSystem() override;
 
-	void SetGpuParticles(GpuParticlesRef gpuParticles) override;
+	void SetGpuParticleSystem(GpuParticleSystemRef system) override;
+
+	GpuParticleFactoryRef GetGpuParticleFactory() override;
+
+	void SetGpuParticleFactory(GpuParticleFactoryRef factory) override;
 
 	const SettingRef& GetSetting() const override;
 

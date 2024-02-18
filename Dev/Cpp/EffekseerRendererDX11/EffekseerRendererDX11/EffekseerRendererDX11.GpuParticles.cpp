@@ -39,27 +39,27 @@ namespace PS_ParticleRender
 
 }
 
-GpuParticles::GpuParticles(RendererImplemented* renderer, bool hasRefCount)
+GpuParticleSystem::GpuParticleSystem(RendererImplemented* renderer, bool hasRefCount)
 	: DeviceObject(renderer, hasRefCount)
-	, EffekseerRenderer::GpuParticles(renderer)
+	, EffekseerRenderer::GpuParticleSystem(renderer)
 {
 }
 
-GpuParticles::~GpuParticles()
+GpuParticleSystem::~GpuParticleSystem()
 {
 }
 
-void GpuParticles::OnLostDevice()
+void GpuParticleSystem::OnLostDevice()
 {
 }
 
-void GpuParticles::OnResetDevice()
+void GpuParticleSystem::OnResetDevice()
 {
 }
 
-bool GpuParticles::InitSystem(const Settings& settings)
+bool GpuParticleSystem::InitSystem(const Settings& settings)
 {
-	bool result = EffekseerRenderer::GpuParticles::InitSystem(settings);
+	bool result = EffekseerRenderer::GpuParticleSystem::InitSystem(settings);
 	if (result == false)
 	{
 		return false;

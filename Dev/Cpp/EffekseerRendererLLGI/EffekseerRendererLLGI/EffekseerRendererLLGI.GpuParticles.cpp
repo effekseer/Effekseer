@@ -4,18 +4,18 @@
 namespace EffekseerRendererLLGI
 {
 
-GpuParticles::GpuParticles(RendererImplemented* renderer)
-	: EffekseerRenderer::GpuParticles(renderer)
+GpuParticleSystem::GpuParticleSystem(RendererImplemented* renderer)
+	: EffekseerRenderer::GpuParticleSystem(renderer)
 {
 }
 
-GpuParticles::~GpuParticles()
+GpuParticleSystem::~GpuParticleSystem()
 {
 }
 
-bool GpuParticles::InitSystem(const Settings& settings)
+bool GpuParticleSystem::InitSystem(const Settings& settings)
 {
-	bool result = EffekseerRenderer::GpuParticles::InitSystem(settings);
+	bool result = EffekseerRenderer::GpuParticleSystem::InitSystem(settings);
 	if (result == false)
 	{
 		return false;

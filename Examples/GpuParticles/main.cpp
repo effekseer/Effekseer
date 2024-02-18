@@ -62,7 +62,8 @@ int main(int argc, char** argv)
 
 	// Setup GPUParticles module
 	// GPUParticlesモジュールをセットアップする
-	efkManager->SetGpuParticles(efkRenderer->CreateGpuParticles());
+	efkManager->SetGpuParticleFactory(efkRenderer->CreateGpuParticleFactory());
+	efkManager->SetGpuParticleSystem(efkRenderer->CreateGpuParticleSystem());
 
 	// Specify a position of view
 	// 視点位置を確定

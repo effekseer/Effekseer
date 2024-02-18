@@ -6,13 +6,13 @@
 namespace EffekseerRendererLLGI
 {
 
-class GpuParticles
-	: public EffekseerRenderer::GpuParticles
+class GpuParticleSystem
+	: public EffekseerRenderer::GpuParticleSystem
 {
 public:
-	GpuParticles(RendererImplemented* renderer);
+	GpuParticleSystem(RendererImplemented* renderer);
 
-	virtual ~GpuParticles();
+	virtual ~GpuParticleSystem();
 
 public: // GpuParticles
 	virtual bool InitSystem(const Settings& settings) override;

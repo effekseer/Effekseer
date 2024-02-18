@@ -309,9 +309,9 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			{
 				auto gpuParticlesParamSet = LoadGpuParticlesParameter(pos, ef->GetVersion());
 
-				if (auto gpuParticles = setting->GetGpuParticles())
+				if (auto factory = setting->GetGpuParticleFactory())
 				{
-					GpuParticlesResource = gpuParticles->CreateResource(gpuParticlesParamSet, m_effect);
+					GpuParticlesResource = factory->CreateResource(gpuParticlesParamSet, m_effect);
 				}
 			}
 		}

@@ -281,17 +281,31 @@ public:
 	
 	/**
 		@brief
-		\~English get an GPU performance timer
-		\~Japanese GPUパフォーマンスタイマー取得する。
+		\~English get an GPU particle system
+		\~Japanese GPUパーティクルシステム取得する。
 	*/
-	virtual GpuParticlesRef GetGpuParticles() = 0;
+	virtual GpuParticleSystemRef GetGpuParticleSystem() = 0;
 
 	/**
 		@brief
-		\~English get an GPU performance timer
-		\~Japanese GPUパフォーマンスタイマーを設定する。
+		\~English get an GPU particle system
+		\~Japanese GPUパーティクルシステムを設定する。
 	*/
-	virtual void SetGpuParticles(GpuParticlesRef gpuParticles) = 0;
+	virtual void SetGpuParticleSystem(GpuParticleSystemRef system) = 0;
+
+	/**
+	@brief
+	\~English get an GPU particle factory
+	\~Japanese GPUパーティクルファクトリ取得する。
+	*/
+	virtual GpuParticleFactoryRef GetGpuParticleFactory() = 0;
+
+	/**
+	@brief
+	\~English get an GPU particle factory
+	\~Japanese GPUパーティクルファクトリを設定する。
+	*/
+	virtual void SetGpuParticleFactory(GpuParticleFactoryRef factory) = 0;
 
 	/**
 		@brief	設定クラスを取得する。
