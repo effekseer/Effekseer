@@ -22,6 +22,11 @@ int main(int argc, char** argv)
 	device.SetupEffekseerModules(efkManager);
 	auto efkRenderer = device.GetEffekseerRenderer();
 
+	// Setup GPUParticles module
+	// GPUParticlesモジュールをセットアップする
+	efkManager->SetGpuParticleFactory(efkRenderer->CreateGpuParticleFactory());
+	efkManager->SetGpuParticleSystem(efkRenderer->CreateGpuParticleSystem());
+
 	// Specify a position of view
 	// 視点位置を確定
 	auto viewerPosition = ::Effekseer::Vector3D(10.0f, 5.0f, 20.0f);

@@ -306,8 +306,8 @@ using ResourceBinder = std::variant<std::nullptr_t, TextureBinder, ComputeBuffer
 struct DrawParameter
 {
 public:
-	static const int BufferSlotCount = 4;
-	static const int ResourceSlotCount = 16;
+	static constexpr int BufferSlotCount = 4;
+	static constexpr int ResourceSlotCount = 16;
 
 	VertexBufferRef VertexBufferPtr;
 	IndexBufferRef IndexBufferPtr;
