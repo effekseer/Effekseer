@@ -141,12 +141,14 @@ struct ParamSet
 		struct LineParams
 		{
 			float3 Start;
+			float Padding;
 			float3 End;
 			float Width;
 		};
 		struct CircleParams
 		{
 			float3 Axis;
+			float Padding;
 			float Inner;
 			float Outer;
 		};
