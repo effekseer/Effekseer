@@ -942,7 +942,7 @@ GpuParticles::PipelineStateRef GpuParticleSystem::GetOrCreatePipelineState(GpuPa
 		}
 	}
 
-	switch (key.CullingType)
+	switch ((Effekseer::CullingType)key.CullingType)
 	{
 	case Effekseer::CullingType::Front:
 		pipParams.Culling = CullingType::Clockwise;
