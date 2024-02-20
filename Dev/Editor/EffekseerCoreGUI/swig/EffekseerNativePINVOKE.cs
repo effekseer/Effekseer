@@ -1870,6 +1870,9 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_ImageButtonOriginal___")]
   public static extern bool GUIManager_ImageButtonOriginal(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2, float jarg3, float jarg4);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_IconButton___")]
+  public static extern bool GUIManager_IconButton(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_Checkbox___")]
   public static extern bool GUIManager_Checkbox(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2, [global::System.Runtime.InteropServices.In, global::System.Runtime.InteropServices.Out, global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPArray,ArraySubType=System.Runtime.InteropServices.UnmanagedType.I1)]bool[] jarg3);
 

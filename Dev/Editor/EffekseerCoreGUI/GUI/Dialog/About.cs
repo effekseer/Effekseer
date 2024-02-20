@@ -39,9 +39,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
-[Official Website](http://effekseer.github.io/)
+- [Official Website](http://effekseer.github.io/)
 
-[Github](https://github.com/effekseer/Effekseer)
+- [GitHub](https://github.com/effekseer/Effekseer)
+
+- Partial icons by [Icons8](https://icons8.com)
 
 ";
 

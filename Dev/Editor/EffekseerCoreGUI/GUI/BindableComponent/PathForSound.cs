@@ -1,265 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
-using System.Text.RegularExpressions;
-
-#if !DOTNET_STARNDARD
-using System.Media;
-#endif
 
 namespace Effekseer.GUI.BindableComponent
 {
-	class PathForSound : Control, IParameterControl
+	class PathForSound : PathBase
 	{
-		string id1 = "";
-		string id2 = "";
-		string id3 = "";
-
-		Data.Value.PathForSound binding = null;
-
-		string filePath = string.Empty;
-		string formatText1 = string.Empty;
-		string formatText2 = string.Empty;
-		bool isHovered = false;
-
-		public bool EnableUndo { get; set; } = true;
-
-		public Data.Value.PathForSound Binding
-		{
-			get
-			{
-				return binding;
-			}
-			set
-			{
-				if (binding == value) return;
-
-				binding = value;
-
-				Read();
-			}
-		}
+		string formatText = string.Empty;
 
 		public PathForSound()
 		{
-			id1 = "###" + Manager.GetUniqueID().ToString();
-			id2 = "###" + Manager.GetUniqueID().ToString();
-			id3 = "###" + Manager.GetUniqueID().ToString();
+			fileType = FileType.Sound;
+			filter = MultiLanguageTextProvider.GetText("SoundFilter");
 		}
 
-		public void SetBinding(object o)
+		protected override void UpdateSubParts(float width)
 		{
-			var o_ = o as Data.Value.PathForSound;
-			Binding = o_;
+			Manager.NativeManager.SetNextItemWidth(width);
+			Manager.NativeManager.InputText(id2, formatText, swig.InputTextFlags.ReadOnly);
 		}
 
-		public void FixValue()
+		protected override void UpdateInfo()
 		{
-		}
+			base.UpdateInfo();
 
-		public override void OnDisposed()
-		{
-			/*
-#if !DOTNET_STARNDARD
-			if (player != null)
-			{
-				player.Stop();
-				player.Dispose();
-				player = null;
-			}
-#endif
-			*/
-		}
-
-		public override void OnDropped(string path, ref bool handle)
-		{
-			if (isHovered)
-			{
-				if (CheckExtension(path))
-				{
-					binding.SetAbsolutePath(path);
-					Read();
-				}
-
-				handle = true;
-			}
-		}
-
-		public override void Update()
-		{
-			isHovered = false;
-
-			if (binding == null) return;
-
-			string dd = null;
-
-			float buttonSizeX = Manager.NativeManager.GetTextLineHeightWithSpacing() * 2;
-
-			if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("Load") + id1, buttonSizeX))
-			{
-				btn_load_Click();
-			}
-
-			if (dd == null) dd = DragAndDrops.UpdateFileDst(FileType.Sound);
-
-			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
-
-			Manager.NativeManager.SameLine();
-
-			Manager.NativeManager.Text(filePath);
-
-			if (dd == null) dd = DragAndDrops.UpdateFileDst(FileType.Sound);
-
-			if (Manager.NativeManager.IsItemHovered())
-			{
-				Manager.NativeManager.SetTooltip(filePath);
-			}
-
-			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
-
-			if (filePath != string.Empty)
-			{
-				if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("Delete") + id2, buttonSizeX))
-				{
-					btn_delete_Click();
-				}
-
-				isHovered = isHovered || Manager.NativeManager.IsItemHovered();
-
-				Manager.NativeManager.SameLine();
-
-				Manager.NativeManager.Text(formatText1);
-
-				isHovered = isHovered || Manager.NativeManager.IsItemHovered();
-
-				/*
-				if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("PlayString") + id3, buttonSizeX))
-				{
-					btn_play_Click();
-				}
-
-				isHovered = isHovered || Manager.NativeManager.IsItemHovered();
-				*/
-
-				Manager.NativeManager.SameLine();
-
-				Manager.NativeManager.Text(formatText2);
-
-				isHovered = isHovered || Manager.NativeManager.IsItemHovered();
-			}
-
-			if (dd != null)
-			{
-				Dropped(dd);
-			}
-		}
-
-		public void Dropped(string path)
-		{
-			if (CheckExtension(path))
-			{
-				binding.SetAbsolutePath(path);
-				Read();
-			}
-		}
-
-		private void btn_load_Click()
-		{
-			if (binding == null) return;
-
-			var filter = MultiLanguageTextProvider.GetText("SoundFilter");
-			var result = swig.FileDialog.OpenDialog(filter, System.IO.Directory.GetCurrentDirectory());
-
-			if (!string.IsNullOrEmpty(result))
-			{
-				var filepath = result;
-
-				/*
-				OpenFileDialog ofd = new OpenFileDialog();
-
-				ofd.InitialDirectory = System.IO.Directory.GetCurrentDirectory();
-				ofd.Filter = binding.Filter;
-				ofd.FilterIndex = 2;
-				ofd.Multiselect = false;
-
-				if (ofd.ShowDialog() == DialogResult.OK)
-				{
-					var filepath = ofd.FileName;
-					*/
-				binding.SetAbsolutePath(filepath);
-
-				System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(filepath));
-			}
-			else
-			{
-				return;
-			}
-
-			Read();
-		}
-
-		private void btn_delete_Click()
-		{
-			/*
-#if !DOTNET_STARNDARD
-			if (player != null)
-			{
-				player.Stop();
-				player.Dispose();
-				player = null;
-			}
-#endif
-			*/
-			binding.SetAbsolutePath("");
-			Read();
-		}
-
-		/*
-#if !DOTNET_STARNDARD
-		SoundPlayer player = null;
-#endif
-		private void btn_play_Click()
-		{
-#if !DOTNET_STARNDARD
-			if (player != null)
-			{
-				player.Stop();
-				player.Dispose();
-			}
-			string path = binding.GetAbsolutePath();
-			if (File.Exists(path))
-			{
-				player = new SoundPlayer(path);
-				player.Play();
-			}
-#endif
-		}
-		*/
-
-		void Read()
-		{
-			if (binding != null)
-			{
-				filePath = binding.GetRelativePath();
-				if (filePath.Length > 0)
-				{
-					UpdateInfo();
-				}
-				else
-				{
-				}
-			}
-			else
-			{
-				filePath = string.Empty;
-			}
-		}
-
-		void UpdateInfo()
-		{
 			string path = binding.GetAbsolutePath();
 
 			try
@@ -292,10 +57,8 @@ namespace Effekseer.GUI.BindableComponent
 					else if (chunk == 0x61746164)   // "data"
 					{
 						ulong time = (ulong)chunkSize * 1000 / bytePerSec;
-						formatText1 = System.String.Format("[Format] {0}ch {1}Hz",
-							channels, sampleRate);
-						formatText2 = System.String.Format("[TotalTime] {0:00}:{1:00}.{2:00}",
-							time / 1000 / 60, time / 1000 % 60, time % 1000 / 10);
+						formatText = System.String.Format("{0}ch, {1}Hz, {2:00}:{3:00}.{4:00}",
+							channels, sampleRate, time / 1000 / 60, time / 1000 % 60, time % 1000 / 10);
 						break;
 					}
 					reader.BaseStream.Seek(chunkSize, SeekOrigin.Current);
@@ -307,12 +70,6 @@ namespace Effekseer.GUI.BindableComponent
 			catch (Exception)
 			{
 			}
-		}
-
-		private bool CheckExtension(string path)
-		{
-			var filters = binding.Filter.ToString().Split(',');
-			return filters.Any(_ => "." + _ == System.IO.Path.GetExtension(path).ToLower());
 		}
 	}
 }

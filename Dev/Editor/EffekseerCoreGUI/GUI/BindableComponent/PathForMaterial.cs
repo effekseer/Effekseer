@@ -1,133 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Effekseer.GUI.BindableComponent
 {
-	class PathForMaterial : Control, IParameterControl
+	class PathForMaterial : PathBase
 	{
-		string id1 = "";
-		string id2 = "";
-		string id3 = "";
-		string id4 = "";
-
-		Data.Value.PathForMaterial binding = null;
-
-		string relativeFilePath = string.Empty;
-		string absoluteFilePath = string.Empty;
-
-		bool isHovered = false;
-
 		Utils.MaterialInformation matInfo = new Utils.MaterialInformation();
 
 		Utils.CompiledMaterialInformation compiledMatInfo = new Utils.CompiledMaterialInformation();
 		Utils.CompiledMaterialInformationErrorCode errorCode = Utils.CompiledMaterialInformationErrorCode.OK;
 
-		public bool EnableUndo { get; set; } = true;
-
-		public Data.Value.PathForMaterial Binding
-		{
-			get
-			{
-				return binding;
-			}
-			set
-			{
-				if (binding == value) return;
-
-				binding = value;
-
-				Read();
-			}
-		}
-
 		public PathForMaterial()
 		{
-			id1 = "###" + Manager.GetUniqueID().ToString();
-			id2 = "###" + Manager.GetUniqueID().ToString();
-			id3 = "###" + Manager.GetUniqueID().ToString();
-			id4 = "###" + Manager.GetUniqueID().ToString();
+			fileType = FileType.Material;
+			filter = MultiLanguageTextProvider.GetText("MaterialFilter");
 		}
 
-		public void SetBinding(object o)
+		protected override void UpdateSubParts(float width)
 		{
-			var o_ = o as Data.Value.PathForMaterial;
-			Binding = o_;
-		}
-
-		public void FixValue()
-		{
-		}
-
-		public override void OnDisposed()
-		{
-		}
-
-		public override void OnDropped(string path, ref bool handle)
-		{
-			if (isHovered)
-			{
-				if (CheckExtension(path))
-				{
-					binding.SetAbsolutePath(path);
-					Read();
-				}
-
-				handle = true;
-			}
-		}
-
-		public override void Update()
-		{
-			isHovered = false;
-
-			if (binding == null) return;
-
-			string dd = null;
-
-			float buttonSizeX = Manager.NativeManager.GetTextLineHeightWithSpacing() * 2;
-
-			if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("Load") + id1, buttonSizeX))
-			{
-				btn_load_Click();
-			}
-
-			if (dd == null) dd = DragAndDrops.UpdateFileDst(FileType.Material);
-
-			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
-
-			Manager.NativeManager.SameLine();
-
-			// show path
-			Manager.NativeManager.Text(relativeFilePath);
-
-			if (dd == null) dd = DragAndDrops.UpdateFileDst(FileType.Material);
-
-			if (Manager.NativeManager.IsItemHovered())
-			{
-				Manager.NativeManager.SetTooltip(relativeFilePath);
-			}
-
-			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
-
 			// 
-			if (absoluteFilePath != string.Empty)
+			if (filePath != string.Empty)
 			{
-
-				if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("Delete") + id2, buttonSizeX))
-				{
-					btn_delete_Click();
-				}
-
-				Manager.NativeManager.SameLine();
-
-				if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("Material_Edit_Name") + id3, buttonSizeX))
+				if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("Material_Edit_Name")))
 				{
 					if (Process.MaterialEditor.Run())
 					{
-						Process.MaterialEditor.OpenOrCreateMaterial(absoluteFilePath);
+						Process.MaterialEditor.OpenOrCreateMaterial(binding.AbsolutePath);
 					}
 				}
 
@@ -145,7 +44,7 @@ namespace Effekseer.GUI.BindableComponent
 					Manager.NativeManager.PushStyleColor(swig.ImGuiColFlags.Button, 0xff0000ff);
 				}
 
-				if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("Material_GenCache_Name") + id4, buttonSizeX * 2.2f))
+				if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("Material_GenCache_Name")))
 				{
 					GenerateCompiledMaterial();
 				}
@@ -164,7 +63,7 @@ namespace Effekseer.GUI.BindableComponent
 			}
 			else
 			{
-				if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("Material_Create_Name"), buttonSizeX))
+				if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("Material_Create_Name")))
 				{
 					var filter = MultiLanguageTextProvider.GetText("MaterialFilter");
 					var result = swig.FileDialog.SaveDialog(filter, System.IO.Directory.GetCurrentDirectory());
@@ -189,7 +88,7 @@ namespace Effekseer.GUI.BindableComponent
 
 							if (System.IO.File.Exists(filepath))
 							{
-								LoadFile(filepath);
+								LoadFile(filepath, false);
 								Read();
 							}
 						}
@@ -201,65 +100,6 @@ namespace Effekseer.GUI.BindableComponent
 					Manager.NativeManager.SetTooltip(MultiLanguageTextProvider.GetText("Material_Create_Desc"));
 				}
 			}
-
-			if (dd != null)
-			{
-				Dropped(dd);
-			}
-		}
-
-		public void Dropped(string path)
-		{
-			if (CheckExtension(path))
-			{
-				LoadFile(path);
-				Read();
-			}
-		}
-
-		private void btn_load_Click()
-		{
-			if (binding == null) return;
-
-			var filter = MultiLanguageTextProvider.GetText("MaterialFilter");
-			var result = swig.FileDialog.OpenDialog(filter, System.IO.Directory.GetCurrentDirectory());
-
-			if (!string.IsNullOrEmpty(result))
-			{
-				var filepath = result;
-				LoadFile(filepath);
-			}
-			else
-			{
-				return;
-			}
-
-			Read();
-		}
-
-		private void btn_delete_Click()
-		{
-			if (binding == null) return;
-			binding.SetAbsolutePath(string.Empty);
-
-			Read();
-		}
-
-
-		void Read()
-		{
-			if (binding != null)
-			{
-				absoluteFilePath = binding.GetAbsolutePath();
-				relativeFilePath = binding.GetRelativePath();
-			}
-			else
-			{
-				absoluteFilePath = string.Empty;
-				relativeFilePath = string.Empty;
-			}
-
-			UpdateInformation();
 		}
 
 		void GenerateCompiledMaterial()
@@ -269,13 +109,7 @@ namespace Effekseer.GUI.BindableComponent
 			UpdateInformation();
 		}
 
-		private bool CheckExtension(string path)
-		{
-			var filters = MultiLanguageTextProvider.GetText("MaterialFilter").Split(',');
-			return filters.Any(_ => "." + _ == System.IO.Path.GetExtension(path).ToLower());
-		}
-
-		void LoadFile(string filepath)
+		protected override void LoadFile(string filepath, bool isReloading)
 		{
 			binding.SetAbsolutePath(filepath);
 
