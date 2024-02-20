@@ -3,7 +3,7 @@ Texture2D g_texture : register(t0);
 SamplerState g_sampler : register(s0);
 
 
-cbuffer PS_ConstantBuffer : register(b1)
+cbuffer PS_ConstantBuffer : register(b0)
 {
 	float4 g_filterParams;
 	float4 g_intensity;

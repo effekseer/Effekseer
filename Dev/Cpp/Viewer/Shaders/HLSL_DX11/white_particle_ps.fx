@@ -1,5 +1,5 @@
 
-cbuffer PS_ConstanBuffer : register(b1)
+cbuffer PS_ConstanBuffer : register(b0)
 {
 	float4 fLightDirection;
 	float4 fLightColor;
