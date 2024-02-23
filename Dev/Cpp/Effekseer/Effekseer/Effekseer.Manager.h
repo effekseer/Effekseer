@@ -960,14 +960,14 @@ public:
 		\~English	Gets the GPU time (microseconds) taken to render the all effects.
 		\~Japanese	エフェクト全ての描画処理にかかるGPU時間(マイクロ秒)を取得する。
 	*/
-	virtual int32_t GetGPUTime() const = 0;
+	virtual int32_t GetGpuTime() const = 0;
 
 	/**
 		@brief
 		\~English	Gets the GPU time (microseconds) taken to render the effect.
 		\~Japanese	エフェクトの描画処理にかかるGPU時間(マイクロ秒)を取得する。
 	*/
-	virtual int32_t GetGPUTime(Handle handle) const = 0;
+	virtual int32_t GetGpuTime(Handle handle) const = 0;
 
 	/**
 		@brief

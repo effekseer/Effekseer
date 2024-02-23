@@ -218,7 +218,7 @@ void ServerImplemented::UpdateProfiler(InternalClient& client)
 				if (handleAndDrawSet.second.ParameterPointer == profile.effect)
 				{
 					profile.handleCount += 1;
-					profile.gpuTime += manager->GetGPUTime(handleAndDrawSet.first);
+					profile.gpuTime += manager->GetGpuTime(handleAndDrawSet.first);
 					break;
 				}
 			}
@@ -227,7 +227,7 @@ void ServerImplemented::UpdateProfiler(InternalClient& client)
 		fbManagers.emplace_back(Data::CreateNetworkManagerProfile(fbb,
 																  (uint32_t)drawSets.size(),
 																  manager->GetUpdateTime() + manager->GetDrawTime(),
-																  manager->GetGPUTime()));
+																  manager->GetGpuTime()));
 	}
 
 	for (auto& profile : effectProfiles)

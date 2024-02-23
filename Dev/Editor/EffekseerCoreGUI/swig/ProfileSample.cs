@@ -98,22 +98,22 @@ public class ProfileSample : global::System.IDisposable {
       } 
     }
   
-    public float CPUTime {
+    public float CpuTime {
       set {
-        EffekseerNativePINVOKE.ProfileSample_Manager_CPUTime_set(swigCPtr, value);
+        EffekseerNativePINVOKE.ProfileSample_Manager_CpuTime_set(swigCPtr, value);
       } 
       get {
-        float ret = EffekseerNativePINVOKE.ProfileSample_Manager_CPUTime_get(swigCPtr);
+        float ret = EffekseerNativePINVOKE.ProfileSample_Manager_CpuTime_get(swigCPtr);
         return ret;
       } 
     }
   
-    public float GPUTime {
+    public float GpuTime {
       set {
-        EffekseerNativePINVOKE.ProfileSample_Manager_GPUTime_set(swigCPtr, value);
+        EffekseerNativePINVOKE.ProfileSample_Manager_GpuTime_set(swigCPtr, value);
       } 
       get {
-        float ret = EffekseerNativePINVOKE.ProfileSample_Manager_GPUTime_get(swigCPtr);
+        float ret = EffekseerNativePINVOKE.ProfileSample_Manager_GpuTime_get(swigCPtr);
         return ret;
       } 
     }
@@ -190,12 +190,12 @@ public class ProfileSample : global::System.IDisposable {
       } 
     }
   
-    public float GPUTime {
+    public float GpuTime {
       set {
-        EffekseerNativePINVOKE.ProfileSample_Effect_GPUTime_set(swigCPtr, value);
+        EffekseerNativePINVOKE.ProfileSample_Effect_GpuTime_set(swigCPtr, value);
       } 
       get {
-        float ret = EffekseerNativePINVOKE.ProfileSample_Effect_GPUTime_get(swigCPtr);
+        float ret = EffekseerNativePINVOKE.ProfileSample_Effect_GpuTime_get(swigCPtr);
         return ret;
       } 
     }

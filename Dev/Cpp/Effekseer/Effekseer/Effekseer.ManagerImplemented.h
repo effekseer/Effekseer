@@ -453,9 +453,9 @@ public:
 
 	int GetDrawTime() const override;
 
-	int32_t GetGPUTime() const override;
+	int32_t GetGpuTime() const override;
 
-	int32_t GetGPUTime(Handle handle) const override;
+	int32_t GetGpuTime(Handle handle) const override;
 
 	int32_t GetRestInstancesCount() const override;
 

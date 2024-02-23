@@ -2239,7 +2239,7 @@ int ManagerImplemented::GetDrawTime() const
 	return m_drawTime;
 }
 
-int32_t ManagerImplemented::GetGPUTime() const
+int32_t ManagerImplemented::GetGpuTime() const
 {
 	if (m_gpuTimer != nullptr)
 	{
@@ -2253,7 +2253,7 @@ int32_t ManagerImplemented::GetGPUTime() const
 	return 0;
 }
 
-int32_t ManagerImplemented::GetGPUTime(Handle handle) const
+int32_t ManagerImplemented::GetGpuTime(Handle handle) const
 {
 	if (m_gpuTimer != nullptr)
 	{

@@ -164,13 +164,13 @@ public class EffectRenderer : global::System.IDisposable {
     return ret;
   }
 
-  public int GetCPUTime() {
-    int ret = EffekseerNativePINVOKE.EffectRenderer_GetCPUTime(swigCPtr);
+  public int GetCpuTime() {
+    int ret = EffekseerNativePINVOKE.EffectRenderer_GetCpuTime(swigCPtr);
     return ret;
   }
 
-  public int GetGPUTime() {
-    int ret = EffekseerNativePINVOKE.EffectRenderer_GetGPUTime(swigCPtr);
+  public int GetGpuTime() {
+    int ret = EffekseerNativePINVOKE.EffectRenderer_GetGpuTime(swigCPtr);
     return ret;
   }
 
