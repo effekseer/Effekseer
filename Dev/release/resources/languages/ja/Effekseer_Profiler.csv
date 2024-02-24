@@ -2,6 +2,6 @@ Profiler,プロファイラ
 Profiler_Start,プロファイル開始
 Profiler_Stop,プロファイル停止
 Profiler_Reset,記録クリア
-Profiler_CpuUsage,CPU使用率
-Profiler_GpuUsage,GPU使用率
+Profiler_CpuUsage,CPU使用時間
+Profiler_GpuUsage,GPU使用時間
 Profiler_Handles,エフェクト数
