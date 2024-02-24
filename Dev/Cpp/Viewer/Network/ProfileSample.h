@@ -12,8 +12,8 @@ struct ProfileSample
 	struct Manager
 	{
 		uint32_t HandleCount = 0;
-		float CPUTime = 0.0f;
-		float GPUTime = 0.0f;
+		float CpuTime = 0.0f;
+		float GpuTime = 0.0f;
 	};
 	std::vector<Manager> Managers;
 
@@ -21,7 +21,7 @@ struct ProfileSample
 	{
 		std::u16string Key;
 		uint32_t HandleCount = 0;
-		float GPUTime = 0.0f;
+		float GpuTime = 0.0f;
 	};
 	std::vector<Effect> Effects;
 };

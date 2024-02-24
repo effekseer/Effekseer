@@ -53,8 +53,8 @@ ProfileSample NetworkClient::ReadProfileSample()
 	for (auto& profileManager : profileSample.Managers)
 	{
 		ProfileSample::Manager resultManager;
-		resultManager.CPUTime = profileManager.CPUTime;
-		resultManager.GPUTime = profileManager.GPUTime;
+		resultManager.CpuTime = profileManager.CpuTime;
+		resultManager.GpuTime = profileManager.GpuTime;
 		resultManager.HandleCount = profileManager.HandleCount;
 		result.Managers.emplace_back(resultManager);
 	}
@@ -63,7 +63,7 @@ ProfileSample NetworkClient::ReadProfileSample()
 	{
 		ProfileSample::Effect resultEffect;
 		resultEffect.Key = profileEffect.Key;
-		resultEffect.GPUTime = profileEffect.GPUTime;
+		resultEffect.GpuTime = profileEffect.GpuTime;
 		resultEffect.HandleCount = profileEffect.HandleCount;
 		result.Effects.emplace_back(resultEffect);
 	}

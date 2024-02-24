@@ -5156,25 +5156,25 @@ SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_GetAndResetVerte
 }
 
 
-SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_GetCPUTime___(void * jarg1) {
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_GetCpuTime___(void * jarg1) {
   int jresult ;
   Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
   int32_t result;
   
   arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
-  result = (int32_t)(arg1)->GetCPUTime();
+  result = (int32_t)(arg1)->GetCpuTime();
   jresult = result; 
   return jresult;
 }
 
 
-SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_GetGPUTime___(void * jarg1) {
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_GetGpuTime___(void * jarg1) {
   int jresult ;
   Effekseer::Tool::EffectRenderer *arg1 = (Effekseer::Tool::EffectRenderer *) 0 ;
   int32_t result;
   
   arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
-  result = (int32_t)(arg1)->GetGPUTime();
+  result = (int32_t)(arg1)->GetGpuTime();
   jresult = result; 
   return jresult;
 }
@@ -5462,45 +5462,45 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_ProfileSample_Manager_
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSample_Manager_CPUTime_set___(void * jarg1, float jarg2) {
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSample_Manager_CpuTime_set___(void * jarg1, float jarg2) {
   Effekseer::Tool::ProfileSample::Manager *arg1 = (Effekseer::Tool::ProfileSample::Manager *) 0 ;
   float arg2 ;
   
   arg1 = (Effekseer::Tool::ProfileSample::Manager *)jarg1; 
   arg2 = (float)jarg2; 
-  if (arg1) (arg1)->CPUTime = arg2;
+  if (arg1) (arg1)->CpuTime = arg2;
 }
 
 
-SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ProfileSample_Manager_CPUTime_get___(void * jarg1) {
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ProfileSample_Manager_CpuTime_get___(void * jarg1) {
   float jresult ;
   Effekseer::Tool::ProfileSample::Manager *arg1 = (Effekseer::Tool::ProfileSample::Manager *) 0 ;
   float result;
   
   arg1 = (Effekseer::Tool::ProfileSample::Manager *)jarg1; 
-  result = (float) ((arg1)->CPUTime);
+  result = (float) ((arg1)->CpuTime);
   jresult = result; 
   return jresult;
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSample_Manager_GPUTime_set___(void * jarg1, float jarg2) {
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSample_Manager_GpuTime_set___(void * jarg1, float jarg2) {
   Effekseer::Tool::ProfileSample::Manager *arg1 = (Effekseer::Tool::ProfileSample::Manager *) 0 ;
   float arg2 ;
   
   arg1 = (Effekseer::Tool::ProfileSample::Manager *)jarg1; 
   arg2 = (float)jarg2; 
-  if (arg1) (arg1)->GPUTime = arg2;
+  if (arg1) (arg1)->GpuTime = arg2;
 }
 
 
-SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ProfileSample_Manager_GPUTime_get___(void * jarg1) {
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ProfileSample_Manager_GpuTime_get___(void * jarg1) {
   float jresult ;
   Effekseer::Tool::ProfileSample::Manager *arg1 = (Effekseer::Tool::ProfileSample::Manager *) 0 ;
   float result;
   
   arg1 = (Effekseer::Tool::ProfileSample::Manager *)jarg1; 
-  result = (float) ((arg1)->GPUTime);
+  result = (float) ((arg1)->GpuTime);
   jresult = result; 
   return jresult;
 }
@@ -5595,23 +5595,23 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_ProfileSample_Effect_H
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSample_Effect_GPUTime_set___(void * jarg1, float jarg2) {
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ProfileSample_Effect_GpuTime_set___(void * jarg1, float jarg2) {
   Effekseer::Tool::ProfileSample::Effect *arg1 = (Effekseer::Tool::ProfileSample::Effect *) 0 ;
   float arg2 ;
   
   arg1 = (Effekseer::Tool::ProfileSample::Effect *)jarg1; 
   arg2 = (float)jarg2; 
-  if (arg1) (arg1)->GPUTime = arg2;
+  if (arg1) (arg1)->GpuTime = arg2;
 }
 
 
-SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ProfileSample_Effect_GPUTime_get___(void * jarg1) {
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ProfileSample_Effect_GpuTime_get___(void * jarg1) {
   float jresult ;
   Effekseer::Tool::ProfileSample::Effect *arg1 = (Effekseer::Tool::ProfileSample::Effect *) 0 ;
   float result;
   
   arg1 = (Effekseer::Tool::ProfileSample::Effect *)jarg1; 
-  result = (float) ((arg1)->GPUTime);
+  result = (float) ((arg1)->GpuTime);
   jresult = result; 
   return jresult;
 }

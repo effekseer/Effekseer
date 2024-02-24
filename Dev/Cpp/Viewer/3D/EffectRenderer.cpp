@@ -625,9 +625,9 @@ void EffectRenderer::UpdatePaused()
 void EffectRenderer::Update()
 {
 	/*{
-		int32_t gpuTime = manager_->GetGPUTime();
+		int32_t gpuTime = manager_->GetGpuTime();
 		char log[256];
-		snprintf(log, sizeof(log), "GPUTime: %d\n", gpuTime);
+		snprintf(log, sizeof(log), "GpuTime: %d\n", gpuTime);
 		OutputDebugStringA(log);
 	}*/
 
@@ -1142,14 +1142,14 @@ void EffectRenderer::SetPostEffectParameter(const Effekseer::Tool::PostEffectPar
 	postEffectParameter_ = param;
 }
 
-int32_t EffectRenderer::GetCPUTime()
+int32_t EffectRenderer::GetCpuTime()
 {
 	return manager_->GetUpdateTime() + manager_->GetDrawTime();
 }
 
-int32_t EffectRenderer::GetGPUTime()
+int32_t EffectRenderer::GetGpuTime()
 {
-	return manager_->GetGPUTime();
+	return manager_->GetGpuTime();
 }
 
 } // namespace Tool

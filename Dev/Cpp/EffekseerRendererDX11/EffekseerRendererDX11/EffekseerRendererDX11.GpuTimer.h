@@ -26,19 +26,19 @@ public:
 
 	void InitDevice();
 	void ReleaseDevice();
-	void UpdateResults();
+	void UpdateResults(Effekseer::GpuStage stage);
 
 public: // For device restore
 	virtual void OnLostDevice();
 	virtual void OnResetDevice();
 
 public: // GpuTimer
-	virtual void BeginFrame() override;
-	virtual void EndFrame() override;
+	virtual void BeginStage(Effekseer::GpuStage stage) override;
+	virtual void EndStage(Effekseer::GpuStage stage) override;
 	virtual void AddTimer(const void* object) override;
 	virtual void RemoveTimer(const void* object) override;
-	virtual void Start(const void* object, uint32_t phase) override;
-	virtual void Stop(const void* object, uint32_t phase) override;
+	virtual void Start(const void* object) override;
+	virtual void Stop(const void* object) override;
 	virtual int32_t GetResult(const void* object) override;
 
 private:
@@ -46,19 +46,20 @@ private:
 	{
 		Backend::D3D11QueryPtr startQuery[NUM_PHASES];
 		Backend::D3D11QueryPtr stopQuery[NUM_PHASES];
-		bool queryRequested[NUM_PHASES] = {};
+		Effekseer::GpuStage queryedStage[NUM_PHASES] = {};
 		int32_t result = 0;
 	};
 	std::unordered_map<const void*, TimeData> m_timeData;
-	Backend::D3D11QueryPtr m_disjoint;
+	Backend::D3D11QueryPtr m_disjoint[8];
 	
 	enum class State {
 		NoResult,
-		DuringFrame,
-		AfterFrame,
+		DuringStage,
+		AfterStage,
 		ResultUpdated,
 	};
-	State m_state = State::NoResult;
+	State m_stageState[8] = {};
+	Effekseer::GpuStage m_currentStage = {};
 };
 
 //-----------------------------------------------------------------------------------

@@ -119,8 +119,8 @@ void ClientImplemented::OnProfileSample(const Session::Message& msg)
 	for (auto fbManager : *fb->managers())
 	{
 		ProfileSample::Manager profileManager;
-		profileManager.CPUTime = fbManager->cpu_time();
-		profileManager.GPUTime = fbManager->gpu_time();
+		profileManager.CpuTime = fbManager->cpu_time();
+		profileManager.GpuTime = fbManager->gpu_time();
 		profileManager.HandleCount = fbManager->handle_count();
 		profileSample.Managers.emplace_back(profileManager);
 	}
@@ -129,7 +129,7 @@ void ClientImplemented::OnProfileSample(const Session::Message& msg)
 	{
 		ProfileSample::Effect profileEffect;
 		profileEffect.Key.assign((const char16_t*)fbEffect->key()->data(), (size_t)fbEffect->key()->size());
-		profileEffect.GPUTime = fbEffect->gpu_time();
+		profileEffect.GpuTime = fbEffect->gpu_time();
 		profileEffect.HandleCount = fbEffect->handle_count();
 		profileSample.Effects.emplace_back(profileEffect);
 	}

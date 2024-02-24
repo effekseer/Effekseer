@@ -114,8 +114,8 @@ namespace Effekseer.GUI.Dock
 
 			public void Update(swig.GUIManager gui, ref Texts texts)
 			{
-				CpuChart.Push(Manager.Viewer.EffectRenderer.GetCPUTime());
-				GpuChart.Push(Manager.Viewer.EffectRenderer.GetGPUTime());
+				CpuChart.Push(Manager.Viewer.EffectRenderer.GetCpuTime());
+				GpuChart.Push(Manager.Viewer.EffectRenderer.GetGpuTime());
 
 				if (gui.Button(texts.ProfilerReset))
 				{
@@ -173,8 +173,8 @@ namespace Effekseer.GUI.Dock
 				public void PushData(swig.ProfileSample.Manager data)
 				{
 					HandleCountChart.Push(data.HandleCount);
-					CpuTimeChart.Push(data.CPUTime);
-					GpuTimeChart.Push(data.GPUTime);
+					CpuTimeChart.Push(data.CpuTime);
+					GpuTimeChart.Push(data.GpuTime);
 				}
 			}
 
@@ -214,7 +214,7 @@ namespace Effekseer.GUI.Dock
 				public void PushData(swig.ProfileSample.Effect data)
 				{
 					HandleCountChart.Push(data.HandleCount);
-					GpuTimeChart.Push(data.GPUTime);
+					GpuTimeChart.Push(data.GpuTime);
 				}
 			}
 

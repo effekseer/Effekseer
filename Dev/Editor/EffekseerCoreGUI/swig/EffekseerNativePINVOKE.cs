@@ -1284,11 +1284,11 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRenderer_GetAndResetVertexCount___")]
   public static extern int EffectRenderer_GetAndResetVertexCount(global::System.Runtime.InteropServices.HandleRef jarg1);
 
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRenderer_GetCPUTime___")]
-  public static extern int EffectRenderer_GetCPUTime(global::System.Runtime.InteropServices.HandleRef jarg1);
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRenderer_GetCpuTime___")]
+  public static extern int EffectRenderer_GetCpuTime(global::System.Runtime.InteropServices.HandleRef jarg1);
 
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRenderer_GetGPUTime___")]
-  public static extern int EffectRenderer_GetGPUTime(global::System.Runtime.InteropServices.HandleRef jarg1);
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRenderer_GetGpuTime___")]
+  public static extern int EffectRenderer_GetGpuTime(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRenderer_RandomSeed_set___")]
   public static extern void EffectRenderer_RandomSeed_set(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
@@ -1362,17 +1362,17 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSample_Manager_HandleCount_get___")]
   public static extern uint ProfileSample_Manager_HandleCount_get(global::System.Runtime.InteropServices.HandleRef jarg1);
 
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSample_Manager_CPUTime_set___")]
-  public static extern void ProfileSample_Manager_CPUTime_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSample_Manager_CpuTime_set___")]
+  public static extern void ProfileSample_Manager_CpuTime_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
 
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSample_Manager_CPUTime_get___")]
-  public static extern float ProfileSample_Manager_CPUTime_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSample_Manager_CpuTime_get___")]
+  public static extern float ProfileSample_Manager_CpuTime_get(global::System.Runtime.InteropServices.HandleRef jarg1);
 
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSample_Manager_GPUTime_set___")]
-  public static extern void ProfileSample_Manager_GPUTime_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSample_Manager_GpuTime_set___")]
+  public static extern void ProfileSample_Manager_GpuTime_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
 
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSample_Manager_GPUTime_get___")]
-  public static extern float ProfileSample_Manager_GPUTime_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSample_Manager_GpuTime_get___")]
+  public static extern float ProfileSample_Manager_GpuTime_get(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_ProfileSample_Manager___")]
   public static extern global::System.IntPtr new_ProfileSample_Manager();
@@ -1399,11 +1399,11 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSample_Effect_HandleCount_get___")]
   public static extern uint ProfileSample_Effect_HandleCount_get(global::System.Runtime.InteropServices.HandleRef jarg1);
 
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSample_Effect_GPUTime_set___")]
-  public static extern void ProfileSample_Effect_GPUTime_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSample_Effect_GpuTime_set___")]
+  public static extern void ProfileSample_Effect_GpuTime_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
 
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSample_Effect_GPUTime_get___")]
-  public static extern float ProfileSample_Effect_GPUTime_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ProfileSample_Effect_GpuTime_get___")]
+  public static extern float ProfileSample_Effect_GpuTime_get(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_ProfileSample_Effect___")]
   public static extern global::System.IntPtr new_ProfileSample_Effect();
