@@ -1,13 +1,15 @@
 #define NOMINMAX
-#include "efkMat.Editor.h"
-#include "efkMat.CommandManager.h"
-#include "efkMat.Models.h"
+#define IMGUI_DEFINE_MATH_OPERATORS 1
 
-#include <imgui_node_editor.h>
+#include "efkMat.Editor.h"
 
 #include <imgui_node_editor_internal.h>
 
-#include <imgui_internal.h>
+// #include <imgui_internal.h>
+
+#include "efkMat.CommandManager.h"
+#include "efkMat.Models.h"
+
 #include <nfd.h>
 
 #include <GUI/MainWindow.h>
@@ -2107,8 +2109,7 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 							   ImVec2(itemRectMax.x, itemRectMin.y + 30 * mainWindow->GetDPIScale()),
 							   IM_COL32(110, 110, 110, 255),
 							   ed::GetStyle().NodeRounding,
-							   ImDrawCornerFlags_Top);
-
+							   ImDrawFlags_RoundCornersTop);
 	node->ClearPosDirtied();
 }
 

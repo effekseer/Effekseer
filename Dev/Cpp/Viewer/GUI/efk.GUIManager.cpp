@@ -11,14 +11,14 @@
 #include <EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h>
 #include <EffekseerRendererGL/GraphicsDevice.h>
 
+#include "../3rdParty/imgui_addon/fcurve/fcurve.h"
+#include "../3rdParty/imgui_addon/implot/implot.h"
+
 #include "Image.h"
 #include "NodeFrameTimeline.h"
 #include "efk.GUIManager.h"
 
 #include "../EditorCommon/GUI/JapaneseFont.h"
-
-#include "../3rdParty/imgui_addon/fcurve/fcurve.h"
-#include "../3rdParty/imgui_addon/implot/implot.h"
 
 #include "../3rdParty/Boxer/boxer.h"
 
@@ -380,7 +380,7 @@ bool GUIManager::Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, E
 void GUIManager::InitializeGUI(std::shared_ptr<Effekseer::Tool::GraphicsDevice> graphicsDevice)
 {
 	ImGui::CreateContext();
-	ImGui::GetCurrentContext()->PlatformLocaleDecimalPoint = *localeconv()->decimal_point;
+	ImGui::GetIO().PlatformLocaleDecimalPoint = *localeconv()->decimal_point;
 
 	ImGuiIO& io = ImGui::GetIO();
 
@@ -425,7 +425,6 @@ void GUIManager::InitializeGUI(std::shared_ptr<Effekseer::Tool::GraphicsDevice> 
 	markdownConfig_.linkCallback = GUIManager::MarkdownLinkCallback;
 
 	ImPlot::CreateContext();
-	ImPlot::GetStyle().AntiAliasedLines = true;
 }
 
 void GUIManager::ResetGUIStyle()
@@ -1792,17 +1791,17 @@ int GUIManager::GetKeyIndex(Key key)
 
 bool GUIManager::IsKeyDown(int user_key_index)
 {
-	return ImGui::IsKeyDown(user_key_index);
+	return ImGui::IsKeyDown(static_cast<ImGuiKey>(user_key_index));
 }
 
 bool GUIManager::IsKeyPressed(int user_key_index)
 {
-	return ImGui::IsKeyPressed(user_key_index);
+	return ImGui::IsKeyPressed(static_cast<ImGuiKey>(user_key_index));
 }
 
 bool GUIManager::IsKeyReleased(int user_key_index)
 {
-	return ImGui::IsKeyReleased(user_key_index);
+	return ImGui::IsKeyReleased(static_cast<ImGuiKey>(user_key_index));
 }
 
 bool GUIManager::IsShiftKeyDown()
@@ -1824,7 +1823,7 @@ int GUIManager::GetPressedKeyIndex(bool repeat)
 {
 	for (int i = 0; i < 512; i++)
 	{
-		if (ImGui::IsKeyPressed(i, repeat))
+		if (ImGui::IsKeyPressed(static_cast<ImGuiKey>(i), repeat))
 		{
 			return i;
 		}

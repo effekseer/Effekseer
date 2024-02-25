@@ -4,6 +4,10 @@
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "gdiplus.lib")
 
+#define IMGUI_DEFINE_MATH_OPERATORS 1
+
+#include "efkMat.Editor.h"
+
 #include "Config.h"
 #include "Dialog/Dialog.h"
 #include "Graphics/efkMat.Graphics.h"
@@ -11,7 +15,6 @@
 #include "../IPC/IPC.h"
 
 #include <GLFW/glfw3.h>
-#include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
@@ -19,8 +22,6 @@
 #include <efkMat.Models.h>
 #include <efkMat.Parameters.h>
 #include <efkMat.TextExporter.h>
-
-#include "efkMat.Editor.h"
 
 #include <efkMat.CommandManager.h>
 #include <efkMat.StringContainer.h>
