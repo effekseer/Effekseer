@@ -78,7 +78,7 @@ namespace Effekseer.GUI.BindableComponent
 
 			valueChangingProp.Enable(binding);
 
-			if (Manager.NativeManager.DragInt(id, internalValue, binding.Step))
+			if (Manager.NativeManager.DragInt(id, internalValue, binding.Step, binding.Min, binding.Max, "%d"))
 			{
 				if (EnableUndo)
 				{

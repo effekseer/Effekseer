@@ -147,7 +147,7 @@ namespace Effekseer.GUI.BindableComponent
 			if (Manager.NativeManager.DragInt2EfkEx(id, internalValue, binding.Step,
 				range_1_min, range_1_max,
 				range_2_min, range_2_max,
-				txt_r1 + ":" + "%.0f", txt_r2 + ":" + "%.0f"))
+				txt_r1 + ":" + "%d", txt_r2 + ":" + "%d"))
 			{
 				if (EnableUndo)
 				{
