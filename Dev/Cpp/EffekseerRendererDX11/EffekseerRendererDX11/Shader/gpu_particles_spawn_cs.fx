@@ -16,18 +16,18 @@ RWStructuredBuffer<ParticleData> Particles : register(u0);
 void main(uint3 dtid : SV_DispatchThreadID)
 {
     uint seed = emitter.Seed ^ (emitter.TotalEmitCount + dtid.x);
-    float3 position = emitter.Transform[3];
+    float3 position = float3(0.0f, 0.0f, 0.0f);
     float3 direction = RandomSpread(seed, paramData.Direction, paramData.Spread * PI / 180.0f);
     float speed = RandomFloatRange(seed, paramData.InitialSpeed);
 
     if (paramData.EmitShapeType == 1) {
-        float3 lineStart = mul(float4(paramData.EmitShapeData[0].xyz, 0.0f), emitter.Transform).xyz;
-        float3 lineEnd = mul(float4(paramData.EmitShapeData[1].xyz, 0.0f), emitter.Transform).xyz;
+        float3 lineStart = paramData.EmitShapeData[0].xyz;
+        float3 lineEnd = paramData.EmitShapeData[1].xyz;
         float lineWidth = paramData.EmitShapeData[1].w;
         position += lerp(lineStart, lineEnd, RandomFloat(seed));
         position += RandomDirection(seed) * lineWidth * 0.5f;
     } else if (paramData.EmitShapeType == 2) {
-        float3 circleAxis = mul(float4(paramData.EmitShapeData[0].xyz, 0.0f), emitter.Transform).xyz;
+        float3 circleAxis = paramData.EmitShapeData[0].xyz;
         float circleInner = paramData.EmitShapeData[1].x;
         float circleOuter = paramData.EmitShapeData[1].y;
         float circleRadius = sqrt(lerp(circleInner * circleInner, circleOuter * circleOuter, RandomFloat(seed)));
@@ -49,7 +49,7 @@ void main(uint3 dtid : SV_DispatchThreadID)
         if (emitter.EmitPointCount > 0) {
             uint emitIndex = RandomUint(seed) % emitter.EmitPointCount;
             EmitPoint emitPoint = EmitPoints[emitIndex];
-            position += mul(float4(emitPoint.Position * modelSize, 0.0f), emitter.Transform).xyz;
+            position += emitPoint.Position * modelSize;
             if (paramData.EmitRotationApplied) {
                 float3 emitNormal = UnpackNormalizedFloat3(emitPoint.Normal);
                 float3 emitBinormal = UnpackNormalizedFloat3(emitPoint.Binormal);
@@ -59,6 +59,7 @@ void main(uint3 dtid : SV_DispatchThreadID)
         }
     }
 
+    position = mul(float4(position, 1.0f), emitter.Transform).xyz;
     direction = mul(float4(direction, 0.0f), emitter.Transform).xyz;
 
     uint particleID = emitter.ParticleHead + (emitter.TotalEmitCount + dtid.x) % emitter.ParticleSize;
