@@ -372,6 +372,8 @@ void Instance::FirstUpdate()
 	if (m_pEffectNode->GenerationLocation.EffectsRotation)
 	{
 		prevPosition_ = SIMD::Vec3f::Transform(prevPosition_, m_GenerationLocation);
+		globalDirection_ = SIMD::Vec3f::Transform(globalDirection_, m_GenerationLocation.Get3x3SubMatrix());
+		globalDirection_ = SIMD::Vec3f::Transform(globalDirection_, m_ParentMatrix);
 	}
 	else
 	{
