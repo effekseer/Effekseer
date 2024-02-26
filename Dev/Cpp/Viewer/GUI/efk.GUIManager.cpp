@@ -2455,12 +2455,12 @@ void GUIManager::SetupPlotAxisTicks(PlotAxis axis, double vMin, double vMax, int
 
 void GUIManager::PlotLine(const char16_t* label, const double* xValues, const double* yValues, int32_t count, int32_t offset)
 {
-	ImPlot::PlotLine(utf8str<256>(label), xValues, yValues, count, offset);
+	ImPlot::PlotLine(utf8str<256>(label), xValues, yValues, count, ImPlotLineFlags_None, offset);
 }
 
 void GUIManager::PlotShaded(const char16_t* label, const double* xValues, const double* yValues, int32_t count, double yRef, int32_t offset)
 {
-	ImPlot::PlotShaded(utf8str<256>(label), xValues, yValues, count, yRef, offset);
+	ImPlot::PlotShaded(utf8str<256>(label), xValues, yValues, count, yRef, ImPlotShadedFlags_None, offset);
 }
 
 void GUIManager::SetNextPlotLineStyle(const Vec4& color, float weight)
