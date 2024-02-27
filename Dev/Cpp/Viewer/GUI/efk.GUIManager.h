@@ -792,17 +792,17 @@ public:
 				 float v_speed = 1.0f,
 				 int v_min = 0,
 				 int v_max = 0,
-				 const char* display_format = "%.0f"); // If v_min >= v_max we have no bound
-	bool DragInt2(const char16_t* label, int* v, float v_speed = 1.0f, int v_min = 0, int v_max = 0, const char* display_format = "%.0f");
-	bool DragInt3(const char16_t* label, int* v, float v_speed = 1.0f, int v_min = 0, int v_max = 0, const char* display_format = "%.0f");
-	bool DragInt4(const char16_t* label, int* v, float v_speed = 1.0f, int v_min = 0, int v_max = 0, const char* display_format = "%.0f");
+				 const char* display_format = "%d"); // If v_min >= v_max we have no bound
+	bool DragInt2(const char16_t* label, int* v, float v_speed = 1.0f, int v_min = 0, int v_max = 0, const char* display_format = "%d");
+	bool DragInt3(const char16_t* label, int* v, float v_speed = 1.0f, int v_min = 0, int v_max = 0, const char* display_format = "%d");
+	bool DragInt4(const char16_t* label, int* v, float v_speed = 1.0f, int v_min = 0, int v_max = 0, const char* display_format = "%d");
 	bool DragIntRange2(const char16_t* label,
 					   int* v_current_min,
 					   int* v_current_max,
 					   float v_speed = 1.0f,
 					   int v_min = 0,
 					   int v_max = 0,
-					   const char* display_format = "%.0f",
+					   const char* display_format = "%d",
 					   const char* display_format_max = nullptr);
 
 	// Drags(Ex)
