@@ -94,18 +94,18 @@ namespace Effekseer.Data
 			}
 		}
 
-		public class PositionParams
+		public class VelocityParams
 		{
-			[Key(key = "GpuParticles_Position_Direction")]
+			[Key(key = "GpuParticles_Velocity_Direction")]
 			public Value.Vector3D Direction { get; private set; } = new Value.Vector3D(0.0f, 0.0f, 1.0f);
 
-			[Key(key = "GpuParticles_Position_Spread")]
+			[Key(key = "GpuParticles_Velocity_Spread")]
 			public Value.Float Spread { get; private set; } = new Value.Float(value: 15.0f, min: 0.0f, max: 180.0f);
 
-			[Key(key = "GpuParticles_Position_InitialSpeed")]
+			[Key(key = "GpuParticles_Velocity_InitialSpeed")]
 			public Value.FloatWithRandom InitialSpeed { get; private set; } = new Value.FloatWithRandom(value: 1.0f);
 
-			[Key(key = "GpuParticles_Position_Damping")]
+			[Key(key = "GpuParticles_Velocity_Damping")]
 			public Value.FloatWithRandom Damping { get; private set; } = new Value.FloatWithRandom(value: 0.0f, min: 0.0f);
 		}
 
@@ -371,8 +371,8 @@ namespace Effekseer.Data
 
 		[IO(Export = true)]
 		[Selected(ID = 0, Value = 1)]
-		[TreeNode(id = "GpuParticles_Position", key = "GpuParticles_Position")]
-		public PositionParams Position { get; private set; } = new PositionParams();
+		[TreeNode(id = "GpuParticles_Velocity", key = "GpuParticles_Velocity")]
+		public VelocityParams Velocity { get; private set; } = new VelocityParams();
 
 		[IO(Export = true)]
 		[Selected(ID = 0, Value = 1)]

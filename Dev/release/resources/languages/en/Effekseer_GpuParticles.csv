@@ -41,15 +41,15 @@ GpuParticles_EmitShape_ModelSize_Desc,Size of mesh shape.
 GpuParticles_EmitShape_RotationApplied_Name,Set angle on spawn
 GpuParticles_EmitShape_RotationApplied_Desc,Valid for circles, spheres, and models
 
-GpuParticles_Position_Name,Position
-GpuParticles_Position_Direction_Name,Direction
-GpuParticles_Position_Direction_Desc,Direction of movement when spawning particles.
-GpuParticles_Position_Spread_Name,Spread
-GpuParticles_Position_Spread_Desc,Angle of random diffusion in the direction of movement when spawning particles.
-GpuParticles_Position_InitialSpeed_Name,Initial Speed
-GpuParticles_Position_InitialSpeed_Desc,Initial speed of movement when spawning particles.
-GpuParticles_Position_Damping_Name,Damping
-GpuParticles_Position_Damping_Desc,Damping force during particle motion.
+GpuParticles_Velocity_Name,Velocity
+GpuParticles_Velocity_Direction_Name,Direction
+GpuParticles_Velocity_Direction_Desc,Direction of movement when spawning particles.
+GpuParticles_Velocity_Spread_Name,Spread
+GpuParticles_Velocity_Spread_Desc,Angle of random diffusion in the direction of movement when spawning particles.
+GpuParticles_Velocity_InitialSpeed_Name,Initial Speed
+GpuParticles_Velocity_InitialSpeed_Desc,Initial speed of movement when spawning particles.
+GpuParticles_Velocity_Damping_Name,Damping
+GpuParticles_Velocity_Damping_Desc,Damping force during particle motion.
 
 GpuParticles_Rotation_Name,Rotation
 GpuParticles_Rotation_InitialAngle_Name,Initial Angle

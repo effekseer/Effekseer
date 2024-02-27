@@ -47,10 +47,10 @@ GpuParticles::ParamSet LoadGpuParticlesParameter(uint8_t*& pos, int32_t version)
 		break;
 	}
 
-	paramSet.Position.Direction = Read<float3>(pos);
-	paramSet.Position.Spread = Read<float>(pos);
-	paramSet.Position.InitialSpeed = Read<std::array<float, 2>>(pos);
-	paramSet.Position.Damping = Read<std::array<float, 2>>(pos);
+	paramSet.Velocity.Direction = Read<float3>(pos);
+	paramSet.Velocity.Spread = Read<float>(pos);
+	paramSet.Velocity.InitialSpeed = Read<std::array<float, 2>>(pos);
+	paramSet.Velocity.Damping = Read<std::array<float, 2>>(pos);
 
 	paramSet.Rotation.Offset = Read<std::array<float3, 2>>(pos);
 	paramSet.Rotation.Velocity = Read<std::array<float3, 2>>(pos);

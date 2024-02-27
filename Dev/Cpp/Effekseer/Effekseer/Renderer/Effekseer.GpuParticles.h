@@ -175,14 +175,14 @@ struct ParamSet
 	};
 	EmitShapeParams EmitShape;
 
-	struct PositionParams
+	struct VelocityParams
 	{
 		float3 Direction;
 		float Spread;
 		std::array<float, 2> InitialSpeed;
 		std::array<float, 2> Damping;
 	};
-	PositionParams Position;
+	VelocityParams Velocity;
 
 	struct RotationParams
 	{

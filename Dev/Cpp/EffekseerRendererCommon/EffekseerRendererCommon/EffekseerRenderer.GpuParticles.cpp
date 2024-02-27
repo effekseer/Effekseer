@@ -248,10 +248,10 @@ GpuParticles::ParameterData GpuParticleFactory::ToParamData(const Effekseer::Gpu
 	data.EmitShapeData[0] = paramSet.EmitShape.Data[0];
 	data.EmitShapeData[1] = paramSet.EmitShape.Data[1];
 
-	data.Direction = paramSet.Position.Direction;
-	data.Spread = paramSet.Position.Spread;
-	data.InitialSpeed = paramSet.Position.InitialSpeed;
-	data.Damping = paramSet.Position.Damping;
+	data.Direction = paramSet.Velocity.Direction;
+	data.Spread = paramSet.Velocity.Spread;
+	data.InitialSpeed = paramSet.Velocity.InitialSpeed;
+	data.Damping = paramSet.Velocity.Damping;
 
 	data.AngularOffset[0] = float4(paramSet.Rotation.Offset[0], 0.0f);
 	data.AngularOffset[1] = float4(paramSet.Rotation.Offset[1], 0.0f);

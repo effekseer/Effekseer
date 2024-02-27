@@ -57,10 +57,10 @@ namespace Effekseer.Binary
 					break;
 			}
 
-			data.Add(value.Position.Direction.GetBytes());
-			data.Add(value.Position.Spread.GetBytes());
-			data.Add(value.Position.InitialSpeed.GetBytes());
-			data.Add(value.Position.Damping.GetBytes());
+			data.Add(value.Velocity.Direction.GetBytes());
+			data.Add(value.Velocity.Spread.GetBytes());
+			data.Add(value.Velocity.InitialSpeed.GetBytes());
+			data.Add(value.Velocity.Damping.GetBytes());
 
 			data.Add(value.Rotation.InitialAngle.GetBytes());
 			data.Add(value.Rotation.AngularVelocity.GetBytes());

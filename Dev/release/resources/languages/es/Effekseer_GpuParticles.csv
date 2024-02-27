@@ -41,15 +41,15 @@ GpuParticles_EmitShape_ModelSize_Desc,Tamaño de la forma de la malla.
 GpuParticles_EmitShape_RotationApplied_Name,Ajustar ángulo en la Aparición
 GpuParticles_EmitShape_RotationApplied_Desc,Válido para círculo, esfera y modelo
 
-GpuParticles_Position_Name,Posición
-GpuParticles_Position_Direction_Name,Dirección
-GpuParticles_Position_Direction_Desc,Dirección de movimiento cuando se generan partículas.
-GpuParticles_Position_Spread_Name,Dispersión
-GpuParticles_Position_Spread_Desc,Ángulo de difusión aleatoria en la dirección del movimiento cuando se generan partículas.
-GpuParticles_Position_InitialSpeed_Name,Velocidad Inicial
-GpuParticles_Position_InitialSpeed_Desc,Velocidad inicial del movimiento al desovar partículas.
-GpuParticles_Position_Damping_Name,Amortiguación
-GpuParticles_Position_Damping_Desc,Fuerza de amortiguación durante el movimiento de las partículas.
+GpuParticles_Velocity_Name,Velocidad
+GpuParticles_Velocity_Direction_Name,Dirección
+GpuParticles_Velocity_Direction_Desc,Dirección de movimiento cuando se generan partículas.
+GpuParticles_Velocity_Spread_Name,Dispersión
+GpuParticles_Velocity_Spread_Desc,Ángulo de difusión aleatoria en la dirección del movimiento cuando se generan partículas.
+GpuParticles_Velocity_InitialSpeed_Name,Velocidad Inicial
+GpuParticles_Velocity_InitialSpeed_Desc,Velocidad inicial del movimiento al desovar partículas.
+GpuParticles_Velocity_Damping_Name,Amortiguación
+GpuParticles_Velocity_Damping_Desc,Fuerza de amortiguación durante el movimiento de las partículas.
 
 GpuParticles_Rotation_Name,Rotación
 GpuParticles_Rotation_InitialAngle_Name,Ángulo inicial
