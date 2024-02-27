@@ -80,9 +80,9 @@ struct ParticleData
     uint Seed;
     float LifeAge;
     uint InheritColor;
-    uint2 DirectionSpeed;
     uint Color;
-    uint Padding;
+    uint Direction;
+    uint2 Velocity;
     float4x3 Transform;
 };
 

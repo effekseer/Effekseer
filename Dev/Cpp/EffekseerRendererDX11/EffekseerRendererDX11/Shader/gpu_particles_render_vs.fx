@@ -51,7 +51,7 @@ void transformSprite(ParticleData particle, inout float3 position)
     else if (paramData.ShapeData == 1) {
         // DirectionalBillboard
         float3 R, U, F;
-        U = UnpackFloat4(particle.DirectionSpeed).xyz;
+        U = normalize(UnpackNormalizedFloat3(particle.Direction));
         F = constants.CameraFront;
         R = normalize(cross(U, F));
         U = normalize(cross(F, R));
@@ -84,7 +84,7 @@ void transformTrail(ParticleData particle, inout float3 position, inout float2 u
     uint segmentID = min(vertexID / 2, trailLength);
     if (segmentID == 0) {
         trailPosition = particle.Transform[3];
-        trailDirection = normalize(UnpackFloat4(particle.DirectionSpeed).xyz);
+        trailDirection = normalize(UnpackNormalizedFloat3(particle.Direction));
     }
     else {
         uint trailID = emitter.TrailHead + instanceID * paramData.ShapeData;

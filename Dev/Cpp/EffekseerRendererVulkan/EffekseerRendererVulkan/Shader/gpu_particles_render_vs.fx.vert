@@ -6,9 +6,9 @@ struct ParticleData
     uint Seed;
     float LifeAge;
     uint InheritColor;
-    uvec2 DirectionSpeed;
     uint Color;
-    uint Padding;
+    uint Direction;
+    uvec2 Velocity;
     mat4x3 Transform;
 };
 
@@ -123,17 +123,17 @@ struct TrailData
 layout(set = 0, binding = 1, std140) uniform cb1
 {
     ParameterData paramData;
-} _188;
+} _121;
 
 layout(set = 0, binding = 0, std140) uniform cb0
 {
     layout(row_major) DrawConstants constants;
-} _202;
+} _136;
 
 layout(set = 0, binding = 2, std140) uniform cb2
 {
     layout(row_major) EmitterData emitter;
-} _325;
+} _259;
 
 layout(set = 2, binding = 1, std430) readonly buffer Trails
 {
@@ -157,25 +157,26 @@ layout(location = 2) out vec3 _entryPointOutput_WorldN;
 layout(location = 3) out vec3 _entryPointOutput_WorldB;
 layout(location = 4) out vec3 _entryPointOutput_WorldT;
 
-vec4 UnpackFloat4(uvec2 bits)
+vec3 UnpackNormalizedFloat3(uint bits)
 {
-    return vec4(unpackHalf2x16(uvec4(bits.x, bits.x >> uint(16), bits.y, bits.y >> uint(16)).x).x, unpackHalf2x16(uvec4(bits.x, bits.x >> uint(16), bits.y, bits.y >> uint(16)).y).x, unpackHalf2x16(uvec4(bits.x, bits.x >> uint(16), bits.y, bits.y >> uint(16)).z).x, unpackHalf2x16(uvec4(bits.x, bits.x >> uint(16), bits.y, bits.y >> uint(16)).w).x);
+    vec3 v = vec3(uvec3(bits, bits >> uint(10), bits >> uint(20)) & uvec3(1023u));
+    return ((v / vec3(1023.0)) * 2.0) - vec3(1.0);
 }
 
 void transformSprite(ParticleData particle, inout vec3 position)
 {
     position = particle.Transform * vec4(position, 0.0);
-    if (_188.paramData.ShapeData == 0u)
+    if (_121.paramData.ShapeData == 0u)
     {
-        position = _202.constants.BillboardMat * vec4(position, 0.0);
+        position = _136.constants.BillboardMat * vec4(position, 0.0);
     }
     else
     {
-        if (_188.paramData.ShapeData == 1u)
+        if (_121.paramData.ShapeData == 1u)
         {
-            uvec2 param = particle.DirectionSpeed;
-            vec3 U = UnpackFloat4(param).xyz;
-            vec3 F = _202.constants.CameraFront;
+            uint param = particle.Direction;
+            vec3 U = normalize(UnpackNormalizedFloat3(param));
+            vec3 F = _136.constants.CameraFront;
             vec3 R = normalize(cross(U, F));
             U = normalize(cross(F, R));
             R = normalize(cross(U, F));
@@ -183,9 +184,9 @@ void transformSprite(ParticleData particle, inout vec3 position)
         }
         else
         {
-            if (_188.paramData.ShapeData == 2u)
+            if (_121.paramData.ShapeData == 2u)
             {
-                position = _202.constants.YAxisFixedMat * vec4(position, 0.0);
+                position = _136.constants.YAxisFixedMat * vec4(position, 0.0);
             }
         }
     }
@@ -197,29 +198,23 @@ void transformModel(ParticleData particle, inout vec3 position)
     position = particle.Transform * vec4(position, 1.0);
 }
 
-vec3 UnpackNormalizedFloat3(uint bits)
-{
-    vec3 v = vec3(uvec3(bits, bits >> uint(10), bits >> uint(20)) & uvec3(1023u));
-    return ((v / vec3(1023.0)) * 2.0) - vec3(1.0);
-}
-
 void transformTrail(ParticleData particle, inout vec3 position, inout vec2 uv, uint instanceID, uint vertexID)
 {
     uint updateCount = (particle.FlagBits >> uint(1)) & 255u;
-    uint trailLength = min(_188.paramData.ShapeData, updateCount);
+    uint trailLength = min(_121.paramData.ShapeData, updateCount);
     uint segmentID = min((vertexID / 2u), trailLength);
     vec3 trailPosition;
     vec3 trailDirection;
     if (segmentID == 0u)
     {
         trailPosition = particle.Transform[3];
-        uvec2 param = particle.DirectionSpeed;
-        trailDirection = normalize(UnpackFloat4(param).xyz);
+        uint param = particle.Direction;
+        trailDirection = normalize(UnpackNormalizedFloat3(param));
     }
     else
     {
-        uint trailID = _325.emitter.TrailHead + (instanceID * _188.paramData.ShapeData);
-        trailID += ((((_188.paramData.ShapeData + _325.emitter.TrailPhase) - segmentID) + 1u) % _188.paramData.ShapeData);
+        uint trailID = _259.emitter.TrailHead + (instanceID * _121.paramData.ShapeData);
+        trailID += ((((_121.paramData.ShapeData + _259.emitter.TrailPhase) - segmentID) + 1u) % _121.paramData.ShapeData);
         TrailData trail;
         trail.Position = Trails_1._data[trailID].Position;
         trail.Direction = Trails_1._data[trailID].Direction;
@@ -228,8 +223,8 @@ void transformTrail(ParticleData particle, inout vec3 position, inout vec2 uv, u
         trailDirection = normalize(UnpackNormalizedFloat3(param_1));
         uv.y = float(segmentID) / float(trailLength);
     }
-    vec3 trailTangent = normalize(cross(_202.constants.CameraFront, trailDirection));
-    position = (trailTangent * position.x) * _188.paramData.ShapeSize;
+    vec3 trailTangent = normalize(cross(_136.constants.CameraFront, trailDirection));
+    position = (trailTangent * position.x) * _121.paramData.ShapeSize;
     position += trailPosition;
 }
 
@@ -240,15 +235,15 @@ vec4 UnpackColor(uint color32)
 
 VS_Output _main(VS_Input _input)
 {
-    uint index = _325.emitter.ParticleHead + _input.InstanceID;
+    uint index = _259.emitter.ParticleHead + _input.InstanceID;
     ParticleData particle;
     particle.FlagBits = Particles_1._data[index].FlagBits;
     particle.Seed = Particles_1._data[index].Seed;
     particle.LifeAge = Particles_1._data[index].LifeAge;
     particle.InheritColor = Particles_1._data[index].InheritColor;
-    particle.DirectionSpeed = Particles_1._data[index].DirectionSpeed;
     particle.Color = Particles_1._data[index].Color;
-    particle.Padding = Particles_1._data[index].Padding;
+    particle.Direction = Particles_1._data[index].Direction;
+    particle.Velocity = Particles_1._data[index].Velocity;
     particle.Transform = Particles_1._data[index].Transform;
     VS_Output _output;
     if ((particle.FlagBits & 1u) != 0u)
@@ -256,7 +251,7 @@ VS_Output _main(VS_Input _input)
         vec3 position = _input.Pos;
         vec2 uv = _input.UV;
         vec4 color = _input.Color;
-        if (_188.paramData.ShapeType == 0u)
+        if (_121.paramData.ShapeType == 0u)
         {
             ParticleData param = particle;
             vec3 param_1 = position;
@@ -265,7 +260,7 @@ VS_Output _main(VS_Input _input)
         }
         else
         {
-            if (_188.paramData.ShapeType == 1u)
+            if (_121.paramData.ShapeType == 1u)
             {
                 ParticleData param_2 = particle;
                 vec3 param_3 = position;
@@ -274,7 +269,7 @@ VS_Output _main(VS_Input _input)
             }
             else
             {
-                if (_188.paramData.ShapeType == 2u)
+                if (_121.paramData.ShapeType == 2u)
                 {
                     ParticleData param_4 = particle;
                     vec3 param_5 = position;
@@ -289,15 +284,15 @@ VS_Output _main(VS_Input _input)
         }
         uint param_9 = particle.Color;
         color *= UnpackColor(param_9);
-        vec4 _492 = color;
-        vec3 _494 = _492.xyz * _188.paramData.Emissive;
-        color.x = _494.x;
-        color.y = _494.y;
-        color.z = _494.z;
-        _output.Pos = (vec4(position, 1.0) * _202.constants.CameraMat) * _202.constants.ProjMat;
+        vec4 _427 = color;
+        vec3 _429 = _427.xyz * _121.paramData.Emissive;
+        color.x = _429.x;
+        color.y = _429.y;
+        color.z = _429.z;
+        _output.Pos = (vec4(position, 1.0) * _136.constants.CameraMat) * _136.constants.ProjMat;
         _output.UV = uv;
         _output.Color = color;
-        if (_188.paramData.MaterialType == 1u)
+        if (_121.paramData.MaterialType == 1u)
         {
             _output.WorldN = particle.Transform * vec4(_input.Normal, 0.0);
             _output.WorldB = particle.Transform * vec4(_input.Binormal, 0.0);
@@ -309,7 +304,7 @@ VS_Output _main(VS_Input _input)
         _output.Pos = vec4(0.0);
         _output.UV = vec2(0.0);
         _output.Color = vec4(0.0);
-        if (_188.paramData.MaterialType == 1u)
+        if (_121.paramData.MaterialType == 1u)
         {
             _output.WorldN = vec3(0.0);
             _output.WorldB = vec3(0.0);

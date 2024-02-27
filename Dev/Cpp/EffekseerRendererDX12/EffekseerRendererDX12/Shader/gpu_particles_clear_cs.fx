@@ -25,9 +25,9 @@ struct ParticleData
     uint Seed;
     float LifeAge;
     uint InheritColor;
-    uint2 DirectionSpeed;
     uint Color;
-    uint Padding;
+    uint Direction;
+    uint2 Velocity;
     column_major float4x3 Transform;
 };
 
@@ -76,13 +76,13 @@ struct ParameterData
 
 cbuffer cb1 : register(b1)
 {
-    EmitterData _72_emitter : packoffset(c0);
+    EmitterData _21_emitter : packoffset(c0);
 };
 
 RWByteAddressBuffer Particles : register(u0);
 cbuffer cb0 : register(b0)
 {
-    ParameterData _148_paramData : packoffset(c0);
+    ParameterData _104_paramData : packoffset(c0);
 };
 
 
@@ -92,43 +92,25 @@ struct SPIRV_Cross_Input
     uint3 gl_GlobalInvocationID : SV_DispatchThreadID;
 };
 
-uint spvPackHalf2x16(float2 value)
-{
-    uint2 Packed = f32tof16(value);
-    return Packed.x | (Packed.y << 16);
-}
-
-float2 spvUnpackHalf2x16(uint value)
-{
-    return f16tof32(uint2(value & 0xffff, value >> 16));
-}
-
-uint2 PackFloat4(float4 v)
-{
-    uint4 v16 = uint4(spvPackHalf2x16(float2(v.x, 0.0f)), spvPackHalf2x16(float2(v.y, 0.0f)), spvPackHalf2x16(float2(v.z, 0.0f)), spvPackHalf2x16(float2(v.w, 0.0f)));
-    return uint2(v16.x | (v16.y << uint(16)), v16.z | (v16.w << uint(16)));
-}
-
 void _main(uint3 dtid)
 {
-    uint particleID = _72_emitter.ParticleHead + dtid.x;
+    uint particleID = _21_emitter.ParticleHead + dtid.x;
     ParticleData particle;
     particle.FlagBits = 0u;
     particle.Seed = 0u;
     particle.LifeAge = 0.0f;
     particle.InheritColor = 0u;
     particle.Color = 0u;
-    particle.Padding = 0u;
-    float4 param = 0.0f.xxxx;
-    particle.DirectionSpeed = PackFloat4(param);
+    particle.Direction = 0u;
+    particle.Velocity = uint2(0u, 0u);
     particle.Transform = float4x3(0.0f.xxx, 0.0f.xxx, 0.0f.xxx, 0.0f.xxx);
     Particles.Store(particleID * 80 + 0, particle.FlagBits);
     Particles.Store(particleID * 80 + 4, particle.Seed);
     Particles.Store(particleID * 80 + 8, asuint(particle.LifeAge));
     Particles.Store(particleID * 80 + 12, particle.InheritColor);
-    Particles.Store2(particleID * 80 + 16, particle.DirectionSpeed);
-    Particles.Store(particleID * 80 + 24, particle.Color);
-    Particles.Store(particleID * 80 + 28, particle.Padding);
+    Particles.Store(particleID * 80 + 16, particle.Color);
+    Particles.Store(particleID * 80 + 20, particle.Direction);
+    Particles.Store2(particleID * 80 + 24, particle.Velocity);
     Particles.Store(particleID * 80 + 32, asuint(particle.Transform[0].x));
     Particles.Store(particleID * 80 + 36, asuint(particle.Transform[1].x));
     Particles.Store(particleID * 80 + 40, asuint(particle.Transform[2].x));

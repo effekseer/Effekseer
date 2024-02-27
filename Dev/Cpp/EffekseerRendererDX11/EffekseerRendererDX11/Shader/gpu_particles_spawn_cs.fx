@@ -74,9 +74,9 @@ void main(uint3 dtid : SV_DispatchThreadID)
         particle.InheritColor = emitter.Color;
     }
     particle.Color = 0xFFFFFFFF;
-    particle.Padding = 0;
 
     particle.Transform = TRSMatrix(position, float3(0.0, 0.0, 0.0), float3(1.0, 1.0, 1.0));
-    particle.DirectionSpeed = PackFloat4(float4(direction, speed));
+    particle.Direction = PackNormalizedFloat3(direction);
+    particle.Velocity = PackFloat4(float4(direction * speed, 0.0f));
     Particles[particleID] = particle;
 }

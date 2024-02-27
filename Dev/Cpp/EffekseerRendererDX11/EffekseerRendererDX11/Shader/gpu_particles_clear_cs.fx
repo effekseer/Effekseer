@@ -22,8 +22,8 @@ void main(uint3 dtid : SV_DispatchThreadID)
     particle.LifeAge = 0.0f;
     particle.InheritColor = 0;
     particle.Color = 0;
-    particle.Padding = 0;
-    particle.DirectionSpeed = PackFloat4(float4(0.0f, 0.0f, 0.0f, 0.0f));
+    particle.Direction = 0;
+    particle.Velocity = uint2(0, 0);
     particle.Transform = float4x3(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
     
     Particles[particleID] = particle;

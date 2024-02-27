@@ -28,9 +28,9 @@ struct ParticleData
     uint Seed;
     float LifeAge;
     uint InheritColor;
-    uvec2 DirectionSpeed;
     uint Color;
-    uint Padding;
+    uint Direction;
+    uvec2 Velocity;
     mat4x3 Transform;
 };
 
@@ -80,7 +80,7 @@ struct ParameterData
 layout(set = 0, binding = 1, std140) uniform cb1
 {
     layout(row_major) EmitterData emitter;
-} _72;
+} _21;
 
 layout(set = 2, binding = 0, std430) buffer Particles
 {
@@ -90,34 +90,27 @@ layout(set = 2, binding = 0, std430) buffer Particles
 layout(set = 0, binding = 0, std140) uniform cb0
 {
     ParameterData paramData;
-} _148;
-
-uvec2 PackFloat4(vec4 v)
-{
-    uvec4 v16 = uvec4(packHalf2x16(vec2(v.x, 0.0)), packHalf2x16(vec2(v.y, 0.0)), packHalf2x16(vec2(v.z, 0.0)), packHalf2x16(vec2(v.w, 0.0)));
-    return uvec2(v16.x | (v16.y << uint(16)), v16.z | (v16.w << uint(16)));
-}
+} _104;
 
 void _main(uvec3 dtid)
 {
-    uint particleID = _72.emitter.ParticleHead + dtid.x;
+    uint particleID = _21.emitter.ParticleHead + dtid.x;
     ParticleData particle;
     particle.FlagBits = 0u;
     particle.Seed = 0u;
     particle.LifeAge = 0.0;
     particle.InheritColor = 0u;
     particle.Color = 0u;
-    particle.Padding = 0u;
-    vec4 param = vec4(0.0);
-    particle.DirectionSpeed = PackFloat4(param);
+    particle.Direction = 0u;
+    particle.Velocity = uvec2(0u);
     particle.Transform = mat4x3(vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0));
     Particles_1._data[particleID].FlagBits = particle.FlagBits;
     Particles_1._data[particleID].Seed = particle.Seed;
     Particles_1._data[particleID].LifeAge = particle.LifeAge;
     Particles_1._data[particleID].InheritColor = particle.InheritColor;
-    Particles_1._data[particleID].DirectionSpeed = particle.DirectionSpeed;
     Particles_1._data[particleID].Color = particle.Color;
-    Particles_1._data[particleID].Padding = particle.Padding;
+    Particles_1._data[particleID].Direction = particle.Direction;
+    Particles_1._data[particleID].Velocity = particle.Velocity;
     Particles_1._data[particleID].Transform = particle.Transform;
 }
 
