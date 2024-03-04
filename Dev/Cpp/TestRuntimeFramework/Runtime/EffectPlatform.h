@@ -144,7 +144,7 @@ public:
 			Effekseer::CustomVector<uint8_t> initialData;
 			initialData.resize(sizeof(float) * 4 * heightSize);
 			texParam.Format = Effekseer::Backend::TextureFormatType::R32G32B32A32_FLOAT;
-			texParam.Size = {1, heightSize};
+			texParam.Size = {1, heightSize, 1};
 
 			for (size_t i = 0; i < heightSize; i++)
 			{
