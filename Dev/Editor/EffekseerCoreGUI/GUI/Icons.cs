@@ -37,6 +37,7 @@ namespace Effekseer.GUI
 		public const string PanelLOD = "\xec26";
 		public const string PanelKillRules = "\xec27";
 		public const string PanelGpuParticles = "\xec28";
+		public const string PanelCollisions = "\xec29";
 
 		public const string NodeTypeEmpty = "\xec20";
 		public const string NodeTypeSprite = "\xec21";

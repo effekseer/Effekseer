@@ -14,7 +14,7 @@ namespace Effekseer.GUI.Menu
 			new DockSettings("Rotation", typeof(Dock.RotationValues), Icons.PanelRotation),
 			new DockSettings("Scale", typeof(Dock.ScaleValues), Icons.PanelScale),
 			new DockSettings("Depth", typeof(Dock.DepthValues), Icons.PanelDepth),
-			new DockSettings("Collisions", typeof(Dock.CollisionsValues), Icons.PanelDepth),
+			new DockSettings("Collisions", typeof(Dock.CollisionsValues), Icons.PanelCollisions),
 			new DockSettings("RenderSettings", typeof(Dock.RendererValues), Icons.PanelRender),
 			new DockSettings("BasicRenderSettings", typeof(Dock.RendererCommonValues), Icons.PanelRenderCommon),
 			new DockSettings("AdvancedRenderSettings", typeof(Dock.AdvancedRenderCommonValues), Icons.PanelAdvancedRenderCommon),
