@@ -84,7 +84,6 @@ if (BUILD_VULKAN)
         glslang
         glslang-default-resource-limits
         SPIRV
-        OGLCompiler
         OSDependent
         EffekseerRendererVulkan
     )

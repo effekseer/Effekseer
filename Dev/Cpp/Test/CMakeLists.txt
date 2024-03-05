@@ -130,7 +130,6 @@ if(BUILD_VULKAN)
         PRIVATE 
         glslang
         SPIRV
-        OGLCompiler
         OSDependent
     )
     
