@@ -136,7 +136,7 @@ is_from_ci = 'from_ci' in sys.argv
 
 if isWin():
     with CurrentDir('Tool/EffekseerLauncher'):
-        call('build_windows.bat')
+        call('call build_windows.bat')
 
 if isMac():
     with CurrentDir('Tool/EffekseerLauncher'):
