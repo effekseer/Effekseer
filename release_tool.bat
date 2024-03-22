@@ -8,27 +8,30 @@ echo Compile Editor
 echo Copy application
 
 mkdir %RDIR%\Tool
+mkdir %RDIR%\Tool\bin
 
-robocopy Dev\release %RDIR%\Tool
+robocopy Dev\release %RDIR%\Tool\bin
 
-mkdir %RDIR%\Tool\scripts
-mkdir %RDIR%\Tool\scripts\export
-copy Dev\release\scripts\export\Default.cs %RDIR%\Tool\scripts\export\.
+mkdir %RDIR%\Tool\bin\scripts
+mkdir %RDIR%\Tool\bin\scripts\export
+copy Dev\release\scripts\export\Default.cs %RDIR%\Tool\bin\scripts\export\.
 
-mkdir %RDIR%\Tool\tools
-copy Dev\release\tools\fbxToEffekseerCurveConverter.exe %RDIR%\Tool\tools\.
-copy Dev\release\tools\fbxToEffekseerModelConverter.exe %RDIR%\Tool\tools\.
-copy Dev\release\tools\libfbxsdk.dll %RDIR%\Tool\tools\.
+mkdir %RDIR%\Tool\bin\tools
+copy Dev\release\tools\fbxToEffekseerCurveConverter.exe %RDIR%\Tool\bin\tools\.
+copy Dev\release\tools\fbxToEffekseerModelConverter.exe %RDIR%\Tool\bin\tools\.
+copy Dev\release\tools\libfbxsdk.dll %RDIR%\Tool\bin\tools\.
 
-copy Dev\release\tools\EffekseerMaterialCompilerDX9.dll %RDIR%\Tool\tools\.
-copy Dev\release\tools\EffekseerMaterialCompilerDX11.dll %RDIR%\Tool\tools\.
-copy Dev\release\tools\EffekseerMaterialCompilerDX12.dll %RDIR%\Tool\tools\.
-copy Dev\release\tools\EffekseerMaterialCompilerGL.dll %RDIR%\Tool\tools\.
-copy Dev\release\tools\EffekseerMaterialCompilerMetal.dll %RDIR%\Tool\tools\.
+copy Dev\release\tools\EffekseerMaterialCompilerDX9.dll %RDIR%\Tool\bin\tools\.
+copy Dev\release\tools\EffekseerMaterialCompilerDX11.dll %RDIR%\Tool\bin\tools\.
+copy Dev\release\tools\EffekseerMaterialCompilerDX12.dll %RDIR%\Tool\bin\tools\.
+copy Dev\release\tools\EffekseerMaterialCompilerGL.dll %RDIR%\Tool\bin\tools\.
+copy Dev\release\tools\EffekseerMaterialCompilerMetal.dll %RDIR%\Tool\bin\tools\.
 
 
-mkdir %RDIR%\Tool\resources
-robocopy Dev\release\resources\ %RDIR%\Tool\resources\. /s
+mkdir %RDIR%\Tool\bin\resources
+robocopy Dev\release\resources\ %RDIR%\Tool\bin\resources\. /s
+
+copy Tool\EffekseerLauncher\build_windows\Release\EffekseerLauncher.exe %RDIR%\Tool\Effekseer.exe
 
 echo Sample
 

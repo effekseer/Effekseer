@@ -134,6 +134,10 @@ env["IGNORE_BUILD"] = os.getenv('IGNORE_BUILD', '0')
 is_x86 = env['X86'] == '1'
 is_from_ci = 'from_ci' in sys.argv
 
+if isWin():
+    with CurrentDir('Tool/EffekseerLauncher'):
+        call('call build_windows.bat')
+
 if isMac():
     with CurrentDir('Tool/EffekseerLauncher'):
         call('sh build_macosx.sh')
@@ -184,7 +188,7 @@ if env['IGNORE_BUILD'] == '0':
         call('chmod +x Dev/release/tools/libfbxsdk.so')
         call('cp -r Dev/release/linux-x64/publish/* Dev/release/')
         call('rm -rf -r Dev/release/linux-x64')
-
+    
 if env['PACKAGEING_FOR_MAC'] == '1' and isMac():
     cd('Dev')
     mkdir('Mac/Effekseer.app/Contents/Resources/')
