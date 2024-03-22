@@ -31,7 +31,7 @@ copy Dev\release\tools\EffekseerMaterialCompilerMetal.dll %RDIR%\Tool\bin\tools\
 mkdir %RDIR%\Tool\bin\resources
 robocopy Dev\release\resources\ %RDIR%\Tool\bin\resources\. /s
 
-copy Dev\EffekseerLauncher\build_windows\Release\EffekseerLauncher.exe %RDIR%\Tool\Effekseer.exe
+copy Tool\EffekseerLauncher\build_windows\Release\EffekseerLauncher.exe %RDIR%\Tool\Effekseer.exe
 
 echo Sample
 
