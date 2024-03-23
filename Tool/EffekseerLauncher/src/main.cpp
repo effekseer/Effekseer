@@ -57,23 +57,70 @@ void SetCurrentDir(const char* path)
 #endif
 }
 
-FILE* Popen(const char* path, const char* mode)
-{
 #ifdef _WIN32
-	return _popen(path, mode);
-#else
-	return popen(path, mode);
-#endif
-}
+struct Platform
+{
+	PROCESS_INFORMATION pi;
+	STARTUPINFO si;
+	Platform()
+	{
+		ZeroMemory(&pi, sizeof(pi));
+		ZeroMemory(&si, sizeof(si));
+		si.cb = sizeof(si);
+	}
 
-void Pclose(FILE* file)
-{
-#ifdef _WIN32
-	_pclose(file);
+	~Platform()
+	{
+		CloseHandle(pi.hProcess);
+		CloseHandle(pi.hThread);
+	}
+
+	bool Execute(const char* cmd)
+	{
+		return CreateProcess(nullptr, (LPSTR)cmd, nullptr, nullptr, FALSE, 0, nullptr, nullptr, &si, &pi) == TRUE;
+	}
+
+	void Wait()
+	{
+		WaitForSingleObject(pi.hProcess, INFINITE);
+	}
+};
 #else
-	pclose(file);
+struct Platform
+{
+	FILE* fp = nullptr;
+	Platform() = default;
+	~Platform()
+	{
+		if (fp != nullptr)
+		{
+			pclose(fp);
+		}
+	}
+
+	bool Execute(const char* cmd)
+	{
+		fp = popen(cmd, "r");
+		if (fp == nullptr)
+		{
+			return false;
+		}
+		return true;
+	}
+
+	void Wait()
+	{
+		std::array<char, 256> buffer;
+		while (!feof(fp))
+		{
+			fgets(buffer.data(), buffer.size(), fp);
+			std::cout << buffer.data();
+		}
+
+		pclose(fp);
+	}
+};
 #endif
-}
 
 int mainLoop(int argc, char* argv[])
 {
@@ -92,29 +139,18 @@ int mainLoop(int argc, char* argv[])
 		cmd = cmd + " \"" + argv[i] + "\"";
 	}
 
-	auto fp = Popen(cmd.c_str(), "r");
-	if (fp == nullptr)
+	Platform platform;
+	if (!platform.Execute(cmd.c_str()))
 	{
 		std::cout << "Failed to call " << cmd << std::endl;
 		return 1;
 	}
 
-	std::array<char, 256> buffer;
-
-	while (!feof(fp))
-	{
-		fgets(buffer.data(), buffer.size(), fp);
-		std::cout << buffer.data();
-	}
-
-	Pclose(fp);
-
 	std::cout << "Finished " << cmd << std::endl;
-
 	return 0;
 }
 
-#if defined(_WIN32)
+#if defined(NDEBUG) && defined(_WIN32)
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int nShowCmd)
 {
 	return mainLoop(__argc, __argv);
