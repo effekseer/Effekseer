@@ -507,7 +507,7 @@ void GpuParticleSystem::ComputeFrame()
 					}
 				}
 
-				if (paramSet.EmitShape.Type == EmitShape::Model)
+				if (paramSet.EmitShape.Type == EmitShapeT::Model)
 				{
 					if (!emitter.resource->emitPoints)
 					{
@@ -673,9 +673,9 @@ void GpuParticleSystem::RenderFrame()
 			Effekseer::ModelRef model;
 			switch (paramSet.RenderShape.Type)
 			{
-				case RenderShape::Sprite: model = m_modelSprite; break;
-				case RenderShape::Model: model = effect->GetModel(paramSet.RenderShape.Data); break;
-				case RenderShape::Trail: model = m_modelTrail; break;
+				case RenderShapeT::Sprite: model = m_modelSprite; break;
+				case RenderShapeT::Model: model = effect->GetModel(paramSet.RenderShape.Data); break;
+				case RenderShapeT::Trail: model = m_modelTrail; break;
 			}
 
 			if (model)
@@ -747,7 +747,7 @@ GpuParticleSystem::EmitterID GpuParticleSystem::NewEmitter(Effekseer::GpuParticl
 	emitter.data.ParticleHead = particleBlock.offset;
 	emitter.data.ParticleSize = particleBlock.size;
 
-	if (paramSet.RenderShape.Type == RenderShape::Trail)
+	if (paramSet.RenderShape.Type == RenderShapeT::Trail)
 	{
 		Block trailBlock = m_trailAllocator.Allocate(particlesMaxCount * paramSet.RenderShape.Data);
 		if (trailBlock.size == 0)

@@ -22,26 +22,26 @@ GpuParticles::ParamSet LoadGpuParticlesParameter(uint8_t*& pos, int32_t version)
 	paramSet.Basic.EmitOffset = Read<float>(pos);
 	paramSet.Basic.LifeTime = Read<std::array<float, 2>>(pos);
 
-	paramSet.EmitShape.Type = (EmitShape)Read<uint8_t>(pos);
+	paramSet.EmitShape.Type = (EmitShapeT)Read<uint8_t>(pos);
 	paramSet.EmitShape.RotationApplied = Read<uint8_t>(pos) != 0;
 	switch (paramSet.EmitShape.Type)
 	{
-	case EmitShape::Point:
+	case EmitShapeT::Point:
 		break;
-	case EmitShape::Line:
+	case EmitShapeT::Line:
 		paramSet.EmitShape.Line.Start = Read<float3>(pos);
 		paramSet.EmitShape.Line.End = Read<float3>(pos);
 		paramSet.EmitShape.Line.Width = Read<float>(pos);
 		break;
-	case EmitShape::Circle:
+	case EmitShapeT::Circle:
 		paramSet.EmitShape.Circle.Axis = Read<float3>(pos);
 		paramSet.EmitShape.Circle.Inner = Read<float>(pos);
 		paramSet.EmitShape.Circle.Outer = Read<float>(pos);
 		break;
-	case EmitShape::Sphere:
+	case EmitShapeT::Sphere:
 		paramSet.EmitShape.Sphere.Radius = Read<float>(pos);
 		break;
-	case EmitShape::Model:
+	case EmitShapeT::Model:
 		paramSet.EmitShape.Model.Index = Read<int32_t>(pos);
 		paramSet.EmitShape.Model.Size = Read<float>(pos);
 		break;
@@ -105,7 +105,7 @@ GpuParticles::ParamSet LoadGpuParticlesParameter(uint8_t*& pos, int32_t version)
 	paramSet.RenderBasic.ZWrite = Read<uint8_t>(pos);
 	paramSet.RenderBasic.ZTest = Read<uint8_t>(pos);
 
-	paramSet.RenderShape.Type = (RenderShape)Read<uint8_t>(pos);
+	paramSet.RenderShape.Type = (RenderShapeT)Read<uint8_t>(pos);
 	paramSet.RenderShape.Data = Read<uint32_t>(pos);
 	paramSet.RenderShape.Size = Read<float>(pos);
 
