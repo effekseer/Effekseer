@@ -100,7 +100,7 @@ inline vector4<T> operator*(vector4<T> a, T b)
 }
 
 
-enum class EmitShape : uint32_t
+enum class EmitShapeT : uint32_t
 {
 	Point, Line, Circle, Sphere, Model,
 };
@@ -116,7 +116,7 @@ enum class ColorSpaceType : uint32_t
 {
 	RGBA, HSVA,
 };
-enum class RenderShape : uint32_t
+enum class RenderShapeT : uint32_t
 {
 	Sprite, Model, Trail,
 };
@@ -162,7 +162,7 @@ struct ParamSet
 			float Size;
 		};
 
-		EmitShape Type;
+		EmitShapeT Type;
 		bool RotationApplied;
 		union
 		{
@@ -241,7 +241,7 @@ struct ParamSet
 
 	struct RenderShapeParams
 	{
-		RenderShape Type;
+		RenderShapeT Type;
 		uint32_t Data;
 		float Size;
 	};
