@@ -26,6 +26,8 @@ public:
 
 	virtual ~GpuTimer() = default;
 
+	virtual void UpdateResults() {}
+
 	virtual void BeginStage(GpuStage stage) {}
 
 	virtual void EndStage(GpuStage stage) {}

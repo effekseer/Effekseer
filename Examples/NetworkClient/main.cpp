@@ -38,12 +38,16 @@ int main(int argc, char** argv)
 			efkClient->Reload(efkManager, EFK_EXAMPLE_ASSETS_DIR_U16 u"Laser01_reload.efkefc", u"Laser01");
 		}
 
-		// Execute functions about Rendering
-		// 描画の処理
-		device.ClearScreen();
+		// Begin to rendering pass
+		// 描画パスの開始
+		device.BeginRenderPass();
 
-		// Execute functions about DirectX
-		// DirectXの処理
+		// Finish to rendering pass
+		// 描画パスの終了
+		device.EndRenderPass();
+
+		// Update the display
+		// ディスプレイを更新
 		device.PresentDevice();
 
 		time++;

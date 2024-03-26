@@ -1441,6 +1441,11 @@ void ManagerImplemented::Update(const UpdateParameter& parameter)
 	EndUpdate();
 
 	ExecuteSounds();
+
+	if (m_gpuTimer)
+	{
+		m_gpuTimer->UpdateResults();
+	}
 }
 
 void ManagerImplemented::DoUpdate(const UpdateParameter& parameter, int times)

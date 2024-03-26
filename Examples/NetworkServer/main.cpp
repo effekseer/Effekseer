@@ -3,6 +3,8 @@
 #define DEVICE_OPENGL
 //#define DEVICE_DX9
 //#define DEVICE_DX11
+//#define DEVICE_DX12
+//#define DEVICE_VULKAN
 
 #include <stdio.h>
 #include <string>
@@ -15,6 +17,10 @@
 #include "../DirectX9/DeviceDX9.h"
 #elif defined(DEVICE_DX11)
 #include "../DirectX11/DeviceDX11.h"
+#elif defined(DEVICE_DX12)
+#include "../DirectX12/DeviceDX12.h"
+#elif defined(DEVICE_VULKAN)
+#include "../Vulkan/DeviceVulkan.h"
 #endif
 
 const Utils::Vec2I screenSize = {1280, 720};
@@ -30,6 +36,12 @@ int main(int argc, char** argv)
 #elif defined(DEVICE_DX11)
 	DeviceDX11 device;
 	device.Initialize("NetworkServer (DirectX11)", screenSize);
+#elif defined(DEVICE_DX12)
+	DeviceDX12 device;
+	device.Initialize("NetworkServer (DirectX12)", screenSize);
+#elif defined(DEVICE_VULKAN)
+	DeviceVulkan device;
+	device.Initialize("NetworkServer (Vulkan)", screenSize);
 #endif
 
 	// Create a manager of effects
@@ -38,7 +50,7 @@ int main(int argc, char** argv)
 
 	// Setup effekseer modules
 	// Effekseerのモジュールをセットアップする
-	device.SetupEffekseerModules(efkManager);
+	device.SetupEffekseerModules(efkManager, true);
 	auto efkRenderer = device.GetEffekseerRenderer();
 
 	// Create a server for effect
@@ -82,6 +94,11 @@ int main(int argc, char** argv)
 
 		if (time % 120 == 0)
 		{
+			if (efkHandle)
+			{
+				efkManager->StopEffect(efkHandle);
+			}
+			
 			// Play an effect
 			// エフェクトの再生
 			efkHandle = efkManager->Play(effect, 0, 0, 0);
@@ -98,9 +115,9 @@ int main(int argc, char** argv)
 		Effekseer::Manager::UpdateParameter updateParameter;
 		efkManager->Update(updateParameter);
 
-		// Execute functions about Rendering
-		// 描画の処理
-		device.ClearScreen();
+		// Begin to rendering pass
+		// 描画パスの開始
+		device.BeginRenderPass();
 
 		// Update a time
 		// 時間を更新する
@@ -130,8 +147,12 @@ int main(int argc, char** argv)
 		// エフェクトの描画終了処理を行う。
 		efkRenderer->EndRendering();
 
-		// Execute functions about DirectX
-		// DirectXの処理
+		// Finish to rendering pass
+		// 描画パスの終了
+		device.EndRenderPass();
+
+		// Update the display
+		// ディスプレイを更新
 		device.PresentDevice();
 
 		time++;

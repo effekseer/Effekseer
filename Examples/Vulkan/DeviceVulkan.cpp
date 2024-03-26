@@ -125,7 +125,7 @@ void DeviceVulkan::PresentDevice()
 	platform->Present();
 }
 
-void DeviceVulkan::SetupEffekseerModules(::Effekseer::ManagerRef efkManager)
+void DeviceVulkan::SetupEffekseerModules(::Effekseer::ManagerRef efkManager, bool usingProfiler)
 {
 	// Create a  graphics device
 	// 描画デバイスの作成
@@ -169,4 +169,9 @@ void DeviceVulkan::SetupEffekseerModules(::Effekseer::ManagerRef efkManager)
 	efkManager->SetModelLoader(efkRenderer->CreateModelLoader());
 	efkManager->SetMaterialLoader(efkRenderer->CreateMaterialLoader());
 	efkManager->SetCurveLoader(Effekseer::MakeRefPtr<Effekseer::CurveLoader>());
+
+	if (usingProfiler)
+	{
+		efkManager->SetGpuTimer(efkRenderer->CreateGpuTimer());
+	}
 }

@@ -162,6 +162,11 @@ public:
 		@brief	軌跡レンダラーを生成する。
 	*/
 	::Effekseer::TrackRendererRef CreateTrackRenderer() override;
+	
+	/**
+		@brief	GPUタイマーを生成する。
+	*/
+	::Effekseer::GpuTimerRef CreateGpuTimer() override;
 
 	/**
 		@brief	GPUパーティクルシステムを生成する。
@@ -216,6 +221,14 @@ public:
 	void SetTextures(Shader* shader, Effekseer::Backend::TextureRef* textures, int32_t count);
 
 	void ResetRenderState() override;
+
+	void ResetQuery(LLGI::Query* query);
+
+	void BeginQuery(LLGI::Query* query, uint32_t queryIndex);
+
+	void EndQuery(LLGI::Query* query, uint32_t queryIndex);
+
+	void RecordTimestamp(LLGI::Query* query, uint32_t queryIndex);
 
 	virtual int GetRef() override
 	{

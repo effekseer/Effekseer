@@ -136,6 +136,10 @@ int main(int argc, char** argv)
 		// 描画パスの開始
 		device.BeginRenderPass();
 
+		// Begin to rendering pass
+		// 描画パスの開始
+		device.BeginRenderPass();
+
 		// Specify a projection matrix
 		// 投影行列を設定
 		efkRenderer->SetProjectionMatrix(projectionMatrix);
@@ -159,6 +163,10 @@ int main(int argc, char** argv)
 		// Finish to rendering effects
 		// エフェクトの描画終了処理を行う。
 		efkRenderer->EndRendering();
+
+		// Finish to rendering pass
+		// 描画パスの終了
+		device.EndRenderPass();
 
 		// Finish to rendering pass
 		// 描画パスの終了

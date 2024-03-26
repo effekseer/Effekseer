@@ -183,7 +183,7 @@ void DeviceMetal::PresentDevice()
 	platform->Present();
 }
 
-void DeviceMetal::SetupEffekseerModules(::Effekseer::ManagerRef efkManager)
+void DeviceMetal::SetupEffekseerModules(::Effekseer::ManagerRef efkManager, bool usingProfiler)
 {
 	// Create a renderer of effects
 	// エフェクトのレンダラーの作成
@@ -214,4 +214,9 @@ void DeviceMetal::SetupEffekseerModules(::Effekseer::ManagerRef efkManager)
 	efkManager->SetModelLoader(efkRenderer->CreateModelLoader());
 	efkManager->SetMaterialLoader(efkRenderer->CreateMaterialLoader());
 	efkManager->SetCurveLoader(Effekseer::MakeRefPtr<Effekseer::CurveLoader>());
+	
+	if (usingProfiler)
+	{
+		efkManager->SetGpuTimer(efkRenderer->CreateGpuTimer());
+	}
 }

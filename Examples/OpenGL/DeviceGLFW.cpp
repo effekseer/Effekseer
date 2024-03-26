@@ -51,12 +51,6 @@ void DeviceGLFW::Terminate()
 	}
 }
 
-void DeviceGLFW::ClearScreen()
-{
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}
-
 bool DeviceGLFW::NewFrame()
 {
 	if (glfwWindowShouldClose(glfwWindow))
@@ -74,12 +68,22 @@ bool DeviceGLFW::NewFrame()
 	return true;
 }
 
+void DeviceGLFW::BeginRenderPass()
+{
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void DeviceGLFW::EndRenderPass()
+{
+}
+
 void DeviceGLFW::PresentDevice()
 {
 	glfwSwapBuffers(glfwWindow);
 }
 
-void DeviceGLFW::SetupEffekseerModules(::Effekseer::ManagerRef efkManager)
+void DeviceGLFW::SetupEffekseerModules(::Effekseer::ManagerRef efkManager, bool usingProfiler)
 {
 	// Create a  graphics device
 	// 描画デバイスの作成
@@ -121,4 +125,9 @@ void DeviceGLFW::SetupEffekseerModules(::Effekseer::ManagerRef efkManager)
 	// ユーザーが独自で拡張できる。現在はファイルから読み込んでいる。
 	efkManager->SetSoundLoader(efkSound->CreateSoundLoader());
 #endif
+
+	if (usingProfiler)
+	{
+		efkManager->SetGpuTimer(efkRenderer->CreateGpuTimer());
+	}
 }
