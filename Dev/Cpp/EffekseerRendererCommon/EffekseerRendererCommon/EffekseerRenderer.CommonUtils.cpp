@@ -154,8 +154,7 @@ void CalcBillboard(::Effekseer::BillboardType billboardType,
 
 			F = frontDir;
 			R = ::Effekseer::SIMD::Vec3f::Cross(U, F).GetNormal();
-			U = ::Effekseer::SIMD::Vec3f::Cross(F, R).GetNormal();
-			R = ::Effekseer::SIMD::Vec3f::Cross(U, F).GetNormal();
+			F = ::Effekseer::SIMD::Vec3f::Cross(R, U).GetNormal();
 		}
 
 		dst.X = {R.GetX(), U.GetX(), F.GetX(), t.GetX()};

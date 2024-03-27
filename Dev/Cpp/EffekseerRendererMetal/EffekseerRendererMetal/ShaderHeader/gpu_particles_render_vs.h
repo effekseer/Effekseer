@@ -212,8 +212,7 @@ void transformSprite(thread const ParticleData& particle, thread float3& positio
             float3 U = fast::normalize(UnpackNormalizedFloat3(param));
             float3 F = float3(_136.constants.CameraFront);
             float3 R = fast::normalize(cross(U, F));
-            U = fast::normalize(cross(F, R));
-            R = fast::normalize(cross(U, F));
+            F = fast::normalize(cross(R, U));
             position = float3x3(float3(R), float3(U), float3(F)) * position;
         }
         else
@@ -234,7 +233,7 @@ void transformModel(thread const ParticleData& particle, thread float3& position
 }
 
 static inline __attribute__((always_inline))
-void transformTrail(thread const ParticleData& particle, thread float3& position, thread float2& uv, thread const uint& instanceID, thread const uint& vertexID, constant cb1& _121, constant cb0& _136, constant cb2& _259, const device Trails& Trails_1)
+void transformTrail(thread const ParticleData& particle, thread float3& position, thread float2& uv, thread const uint& instanceID, thread const uint& vertexID, constant cb1& _121, constant cb0& _136, constant cb2& _255, const device Trails& Trails_1)
 {
     uint updateCount = (particle.FlagBits >> uint(1)) & 255u;
     uint trailLength = min(_121.paramData.ShapeData, updateCount);
@@ -249,8 +248,8 @@ void transformTrail(thread const ParticleData& particle, thread float3& position
     }
     else
     {
-        uint trailID = _259.emitter.TrailHead + (instanceID * _121.paramData.ShapeData);
-        trailID += ((((_121.paramData.ShapeData + _259.emitter.TrailPhase) - segmentID) + 1u) % _121.paramData.ShapeData);
+        uint trailID = _255.emitter.TrailHead + (instanceID * _121.paramData.ShapeData);
+        trailID += ((((_121.paramData.ShapeData + _255.emitter.TrailPhase) - segmentID) + 1u) % _121.paramData.ShapeData);
         TrailData trail;
         trail.Position = float3(Trails_1._data[trailID].Position);
         trail.Direction = Trails_1._data[trailID].Direction;
@@ -271,9 +270,9 @@ float4 UnpackColor(thread const uint& color32)
 }
 
 static inline __attribute__((always_inline))
-VS_Output _main(VS_Input _input, constant cb1& _121, constant cb0& _136, constant cb2& _259, const device Trails& Trails_1, const device Particles& Particles_1)
+VS_Output _main(VS_Input _input, constant cb1& _121, constant cb0& _136, constant cb2& _255, const device Trails& Trails_1, const device Particles& Particles_1)
 {
-    uint index = _259.emitter.ParticleHead + _input.InstanceID;
+    uint index = _255.emitter.ParticleHead + _input.InstanceID;
     ParticleData particle;
     particle.FlagBits = Particles_1._data[index].FlagBits;
     particle.Seed = Particles_1._data[index].Seed;
@@ -314,7 +313,7 @@ VS_Output _main(VS_Input _input, constant cb1& _121, constant cb0& _136, constan
                     float2 param_6 = uv;
                     uint param_7 = _input.InstanceID;
                     uint param_8 = _input.VertexID;
-                    transformTrail(param_4, param_5, param_6, param_7, param_8, _121, _136, _259, Trails_1);
+                    transformTrail(param_4, param_5, param_6, param_7, param_8, _121, _136, _255, Trails_1);
                     position = param_5;
                     uv = param_6;
                 }
@@ -322,11 +321,11 @@ VS_Output _main(VS_Input _input, constant cb1& _121, constant cb0& _136, constan
         }
         uint param_9 = particle.Color;
         color *= UnpackColor(param_9);
-        float4 _427 = color;
-        float3 _429 = _427.xyz * _121.paramData.Emissive;
-        color.x = _429.x;
-        color.y = _429.y;
-        color.z = _429.z;
+        float4 _423 = color;
+        float3 _425 = _423.xyz * _121.paramData.Emissive;
+        color.x = _425.x;
+        color.y = _425.y;
+        color.z = _425.z;
         _output.Pos = _136.constants.ProjMat * (_136.constants.CameraMat * float4(position, 1.0));
         _output.UV = uv;
         _output.Color = color;
@@ -352,7 +351,7 @@ VS_Output _main(VS_Input _input, constant cb1& _121, constant cb0& _136, constan
     return _output;
 }
 
-vertex main0_out main0(main0_in in [[stage_in]], constant cb0& _136 [[buffer(0)]], constant cb1& _121 [[buffer(1)]], constant cb2& _259 [[buffer(2)]], const device Particles& Particles_1 [[buffer(10)]], const device Trails& Trails_1 [[buffer(11)]], uint gl_InstanceIndex [[instance_id]], uint gl_VertexIndex [[vertex_id]])
+vertex main0_out main0(main0_in in [[stage_in]], constant cb0& _136 [[buffer(0)]], constant cb1& _121 [[buffer(1)]], constant cb2& _255 [[buffer(2)]], const device Particles& Particles_1 [[buffer(10)]], const device Trails& Trails_1 [[buffer(11)]], uint gl_InstanceIndex [[instance_id]], uint gl_VertexIndex [[vertex_id]])
 {
     main0_out out = {};
     VS_Input _input;
@@ -364,7 +363,7 @@ vertex main0_out main0(main0_in in [[stage_in]], constant cb0& _136 [[buffer(0)]
     _input.Color = in.input_Color;
     _input.InstanceID = gl_InstanceIndex;
     _input.VertexID = gl_VertexIndex;
-    VS_Output flattenTemp = _main(_input, _121, _136, _259, Trails_1, Particles_1);
+    VS_Output flattenTemp = _main(_input, _121, _136, _255, Trails_1, Particles_1);
     out.gl_Position = flattenTemp.Pos;
     out._entryPointOutput_UV = flattenTemp.UV;
     out._entryPointOutput_Color = flattenTemp.Color;

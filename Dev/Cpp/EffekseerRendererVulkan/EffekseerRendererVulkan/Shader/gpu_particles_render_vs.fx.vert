@@ -133,7 +133,7 @@ layout(set = 0, binding = 0, std140) uniform cb0
 layout(set = 0, binding = 2, std140) uniform cb2
 {
     layout(row_major) EmitterData emitter;
-} _259;
+} _255;
 
 layout(set = 2, binding = 1, std430) readonly buffer Trails
 {
@@ -178,8 +178,7 @@ void transformSprite(ParticleData particle, inout vec3 position)
             vec3 U = normalize(UnpackNormalizedFloat3(param));
             vec3 F = _136.constants.CameraFront;
             vec3 R = normalize(cross(U, F));
-            U = normalize(cross(F, R));
-            R = normalize(cross(U, F));
+            F = normalize(cross(R, U));
             position = mat3(vec3(R), vec3(U), vec3(F)) * position;
         }
         else
@@ -213,8 +212,8 @@ void transformTrail(ParticleData particle, inout vec3 position, inout vec2 uv, u
     }
     else
     {
-        uint trailID = _259.emitter.TrailHead + (instanceID * _121.paramData.ShapeData);
-        trailID += ((((_121.paramData.ShapeData + _259.emitter.TrailPhase) - segmentID) + 1u) % _121.paramData.ShapeData);
+        uint trailID = _255.emitter.TrailHead + (instanceID * _121.paramData.ShapeData);
+        trailID += ((((_121.paramData.ShapeData + _255.emitter.TrailPhase) - segmentID) + 1u) % _121.paramData.ShapeData);
         TrailData trail;
         trail.Position = Trails_1._data[trailID].Position;
         trail.Direction = Trails_1._data[trailID].Direction;
@@ -235,7 +234,7 @@ vec4 UnpackColor(uint color32)
 
 VS_Output _main(VS_Input _input)
 {
-    uint index = _259.emitter.ParticleHead + _input.InstanceID;
+    uint index = _255.emitter.ParticleHead + _input.InstanceID;
     ParticleData particle;
     particle.FlagBits = Particles_1._data[index].FlagBits;
     particle.Seed = Particles_1._data[index].Seed;
@@ -284,11 +283,11 @@ VS_Output _main(VS_Input _input)
         }
         uint param_9 = particle.Color;
         color *= UnpackColor(param_9);
-        vec4 _427 = color;
-        vec3 _429 = _427.xyz * _121.paramData.Emissive;
-        color.x = _429.x;
-        color.y = _429.y;
-        color.z = _429.z;
+        vec4 _423 = color;
+        vec3 _425 = _423.xyz * _121.paramData.Emissive;
+        color.x = _425.x;
+        color.y = _425.y;
+        color.z = _425.z;
         _output.Pos = (vec4(position, 1.0) * _136.constants.CameraMat) * _136.constants.ProjMat;
         _output.UV = uv;
         _output.Color = color;

@@ -54,8 +54,7 @@ void transformSprite(ParticleData particle, inout float3 position)
         U = normalize(UnpackNormalizedFloat3(particle.Direction));
         F = constants.CameraFront;
         R = normalize(cross(U, F));
-        U = normalize(cross(F, R));
-        R = normalize(cross(U, F));
+        F = normalize(cross(R, U));
         position = mul(position, float3x3(R, U, F));
     }
     else if (paramData.ShapeData == 2) {
