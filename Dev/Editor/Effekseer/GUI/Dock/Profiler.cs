@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Drawing;
+using System.Security.Policy;
 
 namespace Effekseer.GUI.Dock
 {
@@ -36,28 +37,35 @@ namespace Effekseer.GUI.Dock
 			public string ID { get; private set; }
 			public double[] TimeBuffer { get; private set; }
 			public double[] ValueBuffer { get; private set; }
+			public double[] ModifiedValueBuffer { get; private set; }
 			public swig.Vec4 Color { get; set; }
-			public double MaxValue { get; set; } = 100.0;
 			public double LatestValue { get; private set; } = 0.0;
 			public int BufferOffset { get; private set; } = 0;
 			public int FrameCount { get; private set; } = 0;
 
-			public TimeValueChart(string idstr, int bufferLength, swig.Vec4 color)
+			public TimeValueChart(string idstr, int bufferLength, swig.Vec4 color, bool modifyValues)
 			{
 				ID = idstr;
+				Color = color;
 				TimeBuffer = new double[bufferLength];
 				ValueBuffer = new double[bufferLength];
-				Color = color;
+				if (modifyValues)
+				{
+					ModifiedValueBuffer = new double[bufferLength];
+				}
 			}
 
 			public void Reset()
 			{
 				FrameCount = 0;
 				BufferOffset = 0;
-				MaxValue = 100.0;
 				LatestValue = 0.0;
 				Array.Clear(TimeBuffer, 0, TimeBuffer.Length);
 				Array.Clear(ValueBuffer, 0, ValueBuffer.Length);
+				if (ModifiedValueBuffer != null)
+				{
+					Array.Clear(ModifiedValueBuffer, 0, ModifiedValueBuffer.Length);
+				}
 			}
 
 			public void Push(double value)
@@ -65,8 +73,6 @@ namespace Effekseer.GUI.Dock
 				LatestValue = value;
 				TimeBuffer[BufferOffset] = FrameCount;
 				ValueBuffer[BufferOffset] = LatestValue;
-				MaxValue = Math.Max(MaxValue, value);
-
 
 				FrameCount++;
 				if (++BufferOffset >= ValueBuffer.Length)
@@ -75,23 +81,87 @@ namespace Effekseer.GUI.Dock
 				}
 			}
 
-			public void Update(swig.GUIManager gui)
+			public double GetMaxValue(int offset, int length)
+			{
+				var buffer = ModifiedValueBuffer ?? ValueBuffer;
+
+				double maxValue = 0.0f;
+				for (int i = 0; i < length; i++)
+				{
+					maxValue = Math.Max(maxValue, buffer[(offset + i) % buffer.Length]);
+				}
+				return maxValue;
+			}
+
+			public double GetMean(int offset, int length)
+			{
+				double sum = 0.0;
+				for (int i = 0; i < length; i++)
+				{
+					int index = (offset + i) % ValueBuffer.Length;
+					sum += ValueBuffer[index];
+				}
+				return sum / length;
+			}
+
+			public double GetStdDev(int offset, int length, double mean)
+			{
+				double stdDev = 0.0;
+				for (int i = 0; i < length; i++)
+				{
+					int index = (offset + i) % ValueBuffer.Length;
+					stdDev += Math.Pow(ValueBuffer[index] - mean, 2.0);
+				}
+				return Math.Sqrt(stdDev / length);
+			}
+
+			public void ModifyValues(int offset, int length, double mean, double stdDev)
+			{
+				for (int i = 0; i < length; i++)
+				{
+					int index = (offset + i) % ValueBuffer.Length;
+					if (Math.Abs(ValueBuffer[index] - mean) <= 4 * stdDev)
+					{
+						ModifiedValueBuffer[index] = ValueBuffer[index];
+					}
+					else
+					{
+						ModifiedValueBuffer[index] = 0.0f;
+					}
+				}
+			}
+
+			public void DrawChart(swig.GUIManager gui)
 			{
 				var region = gui.GetContentRegionAvail();
 
 				double minTime = FrameCount - region.X;
 				double maxTime = FrameCount;
 
+				int offset = (int)Math.Max(0, minTime);
+				int length = (int)(maxTime - minTime);
+
+				if (ModifiedValueBuffer != null)
+				{
+					double mean = GetMean(offset, length);
+					double stdDev = GetStdDev(offset, length, mean);
+					ModifyValues(offset, length, mean, stdDev);
+				}
+				var buffer = ModifiedValueBuffer ?? ValueBuffer;
+
+				double minValue = 0.0;
+				double maxValue = GetMaxValue(offset, length);
+
 				if (gui.BeginPlot(ID, new swig.Vec2(-1, 140), swig.PlotFlags.NoInputs))
 				{
 					gui.SetupPlotAxis(swig.PlotAxis.X1, null, swig.PlotAxisFlags.None);
 					gui.SetupPlotAxis(swig.PlotAxis.Y1, null, swig.PlotAxisFlags.None);
 					gui.SetupPlotAxisLimits(swig.PlotAxis.X1, minTime, maxTime, swig.Cond.Always);
-					gui.SetupPlotAxisLimits(swig.PlotAxis.Y1, 0, MaxValue, swig.Cond.Always);
+					gui.SetupPlotAxisLimits(swig.PlotAxis.Y1, minValue, maxValue, swig.Cond.Always);
 					gui.SetNextPlotFillStyle(Color, 0.4f);
 					gui.SetNextPlotLineStyle(Color, 1.0f);
-					gui.PlotShaded(ID + "_Data", TimeBuffer, ValueBuffer, ValueBuffer.Length, 0.0, BufferOffset);
-					gui.PlotLine(ID + "_Data", TimeBuffer, ValueBuffer, ValueBuffer.Length, BufferOffset);
+					gui.PlotShaded(ID + "_Data", TimeBuffer, buffer, buffer.Length, 0.0, BufferOffset);
+					gui.PlotLine(ID + "_Data", TimeBuffer, buffer, buffer.Length, BufferOffset);
 					gui.EndPlot();
 				}
 			}
@@ -104,8 +174,8 @@ namespace Effekseer.GUI.Dock
 
 			public EditorProfiler()
 			{
-				CpuChart = new TimeValueChart("##CPUPlot", BufferLength, CpuGraphColor);
-				GpuChart = new TimeValueChart("##GPUPlot", BufferLength, GpuGraphColor);
+				CpuChart = new TimeValueChart("##CPUPlot", BufferLength, CpuGraphColor, true);
+				GpuChart = new TimeValueChart("##GPUPlot", BufferLength, GpuGraphColor, true);
 			}
 
 			public void Reset()
@@ -125,10 +195,10 @@ namespace Effekseer.GUI.Dock
 				}
 
 				gui.Text(texts.ProfilerCpuUsage + ": " + CpuChart.LatestValue + "us");
-				CpuChart.Update(gui);
+				CpuChart.DrawChart(gui);
 
 				gui.Text(texts.ProfilerGpuUsage + ": " + GpuChart.LatestValue + "us");
-				GpuChart.Update(gui);
+				GpuChart.DrawChart(gui);
 			}
 		};
 		EditorProfiler editorProfiler = new EditorProfiler();
@@ -144,31 +214,29 @@ namespace Effekseer.GUI.Dock
 
 				public ManagerProfiler(int number)
 				{
-					HandleCountChart = new TimeValueChart("##MgrHandlePlot_" + number, BufferLength, InstanceGraphColor);
-					HandleCountChart.MaxValue = 5;
-					CpuTimeChart = new TimeValueChart("##MgrCpuPlot_" + number, BufferLength, CpuGraphColor);
-					GpuTimeChart = new TimeValueChart("##MgrGpuPlot_" + number, BufferLength, GpuGraphColor);
+					HandleCountChart = new TimeValueChart("##MgrHandlePlot_" + number, BufferLength, InstanceGraphColor, false);
+					CpuTimeChart = new TimeValueChart("##MgrCpuPlot_" + number, BufferLength, CpuGraphColor, true);
+					GpuTimeChart = new TimeValueChart("##MgrGpuPlot_" + number, BufferLength, GpuGraphColor, true);
 				}
 
 				public void Reset()
 				{
 					HandleCountChart.Reset();
-					HandleCountChart.MaxValue = 5;
 					CpuTimeChart.Reset();
 					GpuTimeChart.Reset();
 				}
 
 				public void Update(swig.GUIManager gui, ref Texts texts)
 				{
-					string titleLabel = string.Format("Manager{0} ({2}:{1})###Manager{0}", Number, HandleCountChart.LatestValue, texts.ProfilerHandles);
+					string titleLabel = string.Format("All Effects ({2}:{1})###AllEffects{0}", Number, HandleCountChart.LatestValue, texts.ProfilerHandles);
 					if (gui.CollapsingHeader(titleLabel))
 					{
 						gui.Text(texts.ProfilerHandles + ": " + HandleCountChart.LatestValue);
-						HandleCountChart.Update(gui);
+						HandleCountChart.DrawChart(gui);
 						gui.Text(texts.ProfilerCpuUsage + ": " + CpuTimeChart.LatestValue + "us");
-						CpuTimeChart.Update(gui);
+						CpuTimeChart.DrawChart(gui);
 						gui.Text(texts.ProfilerGpuUsage + ": " + GpuTimeChart.LatestValue + "us");
-						GpuTimeChart.Update(gui);
+						GpuTimeChart.DrawChart(gui);
 					}
 				}
 
@@ -189,15 +257,13 @@ namespace Effekseer.GUI.Dock
 				public EffectProfiler(string key)
 				{
 					Key = key;
-					HandleCountChart = new TimeValueChart("##EfcHandlePlot_" + Key, BufferLength, InstanceGraphColor);
-					HandleCountChart.MaxValue = 5;
-					GpuTimeChart = new TimeValueChart("##EfcGpuPlot_" + Key, BufferLength, GpuGraphColor);
+					HandleCountChart = new TimeValueChart("##EfcHandlePlot_" + Key, BufferLength, InstanceGraphColor, false);
+					GpuTimeChart = new TimeValueChart("##EfcGpuPlot_" + Key, BufferLength, GpuGraphColor, true);
 				}
 
 				public void Reset()
 				{
 					HandleCountChart.Reset();
-					HandleCountChart.MaxValue = 5;
 					GpuTimeChart.Reset();
 				}
 
@@ -207,9 +273,9 @@ namespace Effekseer.GUI.Dock
 					if (gui.CollapsingHeader(titleLabel))
 					{
 						gui.Text(texts.ProfilerHandles + ": " + HandleCountChart.LatestValue);
-						HandleCountChart.Update(gui);
+						HandleCountChart.DrawChart(gui);
 						gui.Text(texts.ProfilerGpuUsage + ": " + GpuTimeChart.LatestValue + "us");
-						GpuTimeChart.Update(gui);
+						GpuTimeChart.DrawChart(gui);
 					}
 				}
 
@@ -230,14 +296,18 @@ namespace Effekseer.GUI.Dock
 				{
 					managerProfiler.Reset();
 				}
-				foreach (var kv in EffectProfilers)
-				{
-					kv.Value.Reset();
-				}
+				EffectProfilers.Clear();
 			}
 
 			public void Update(swig.GUIManager gui, ref Texts texts)
 			{
+				if (gui.Button(texts.ProfilerReset))
+				{
+					Reset();
+				}
+
+				gui.SameLine();
+
 				if (!Manager.Network.IsProfiling())
 				{
 					gui.BeginDisabled(!Manager.Network.IsConnected());
@@ -264,7 +334,7 @@ namespace Effekseer.GUI.Dock
 
 				gui.SameLine();
 
-				if (gui.Button(texts.Network))
+				if (gui.IconButton(Icons.PanelNetwork))
 				{
 					Manager.SelectOrShowWindow(typeof(Dock.Network));
 				}
@@ -280,17 +350,10 @@ namespace Effekseer.GUI.Dock
 					gui.Text(texts.NetworkDisconnected);
 				}
 
-				if (gui.Button(texts.ProfilerReset))
-				{
-					Reset();
-				}
-
-				gui.SameLine();
-
 				gui.PushItemWidth(-1);
 				if (gui.InputTextWithHint("###ProfilerFilter", FilterText, "Filter..."))
 				{
-					FilterText = gui.GetInputTextResult();
+					FilterText = gui.GetInputTextResult().ToLower();
 				}
 				gui.PopItemWidth();
 
@@ -322,7 +385,7 @@ namespace Effekseer.GUI.Dock
 						{
 							EffectProfilers[effectProfileSample.Key] = new EffectProfiler(effectProfileSample.Key);
 						}
-							
+
 						var effectProfiler = EffectProfilers[effectProfileSample.Key];
 						effectProfiler.PushData(effectProfileSample);
 					}
@@ -334,7 +397,10 @@ namespace Effekseer.GUI.Dock
 				}
 				foreach (var kv in EffectProfilers)
 				{
-					kv.Value.Update(gui, ref texts);
+					if (string.IsNullOrEmpty(FilterText) || kv.Key.ToLower().Contains(FilterText))
+					{
+						kv.Value.Update(gui, ref texts);
+					}
 				}
 			}
 		};
