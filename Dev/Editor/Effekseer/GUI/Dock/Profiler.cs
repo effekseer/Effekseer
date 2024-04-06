@@ -8,7 +8,7 @@ namespace Effekseer.GUI.Dock
 {
 	public class Profiler : DockPanel
 	{
-		private const int BufferLength = 60 * 5;
+		private const int BufferLength = 5 * 60 * 60;
 		private static readonly swig.Vec4 InstanceGraphColor = new swig.Vec4(0.8f, 0.8f, 0.8f, 1.0f);
 		private static readonly swig.Vec4 CpuGraphColor = new swig.Vec4(0.4f, 0.65f, 0.8f, 1.0f);
 		private static readonly swig.Vec4 GpuGraphColor = new swig.Vec4(0.8f, 0.4f, 0.65f, 1.0f);
@@ -77,7 +77,9 @@ namespace Effekseer.GUI.Dock
 
 			public void Update(swig.GUIManager gui)
 			{
-				double minTime = FrameCount - ValueBuffer.Length;
+				var region = gui.GetContentRegionAvail();
+
+				double minTime = FrameCount - region.X;
 				double maxTime = FrameCount;
 
 				if (gui.BeginPlot(ID, new swig.Vec2(-1, 140), swig.PlotFlags.NoInputs))
