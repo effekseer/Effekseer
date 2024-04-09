@@ -65,8 +65,6 @@ namespace Effekseer.GUI.Dock
 
 		protected override void UpdateInternal()
 		{
-			Manager.NativeManager.Separator();
-
 			LevelParameter[] levels = new LevelParameter[]
 			{
 				new LevelParameter(0, Core.LodValues.Lod0Enabled, Core.LodValues.Distance0),

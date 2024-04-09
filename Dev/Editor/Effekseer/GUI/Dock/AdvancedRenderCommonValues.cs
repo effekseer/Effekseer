@@ -52,8 +52,6 @@ namespace Effekseer.GUI.Dock
 			if (isFirstUpdate)
 			{
 			}
-
-			Manager.NativeManager.Separator();
 		}
 
 		object GetTargetObject()

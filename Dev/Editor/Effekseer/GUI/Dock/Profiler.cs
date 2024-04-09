@@ -420,8 +420,6 @@ namespace Effekseer.GUI.Dock
 		{
 			var gui = Manager.NativeManager;
 
-			gui.Separator();
-
 			if (gui.BeginTabBar("Mode"))
 			{
 				if (gui.BeginTabItem("Editor"))

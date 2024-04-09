@@ -83,8 +83,6 @@ namespace Effekseer.GUI.Dock
 
 		protected override void UpdateInternal()
 		{
-			Manager.NativeManager.Separator();
-
 			var mainRenderer = Manager.Viewer.EffectRenderer;
 			mainRenderer.GuideWidth = Core.Recording.RecordingWidth.Value;
 			mainRenderer.GuideHeight = Core.Recording.RecordingHeight.Value;

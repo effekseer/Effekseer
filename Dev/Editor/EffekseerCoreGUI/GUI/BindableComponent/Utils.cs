@@ -126,14 +126,14 @@ namespace Effekseer.GUI.BindableComponent
 		public void Update()
 		{
 			float dpiScale = Manager.DpiScale;
-			swig.Vec2 size = new swig.Vec2(18 * dpiScale, 18 * dpiScale);
+			swig.Vec2 size = new swig.Vec2(20 * dpiScale, 20 * dpiScale);
 
 			if (!Images.Icons.ContainsKey("Copy"))
 			{
 				ErrorUtils.ThrowFileNotfound();
 			}
 
-			if (Manager.NativeManager.ImageButton(Images.Icons["Copy"], size.X, size.Y))
+			if (Manager.NativeManager.IconButton(Icons.Copy))
 			{
 				var o = getter();
 				if (o != null)
@@ -147,9 +147,7 @@ namespace Effekseer.GUI.BindableComponent
 				Manager.NativeManager.SetTooltip(MultiLanguageTextProvider.GetText("Panel_Copy_Desc"));
 			}
 
-			Manager.NativeManager.SameLine();
-
-			if (Manager.NativeManager.ImageButton(Images.Icons["Paste"], size.X, size.Y))
+			if (Manager.NativeManager.IconButton(Icons.Paste))
 			{
 				var str = Manager.NativeManager.GetClipboardText();
 

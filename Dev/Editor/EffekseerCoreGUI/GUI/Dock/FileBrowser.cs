@@ -75,11 +75,6 @@ namespace Effekseer.GUI.Dock
 
 			Manager.NativeManager.PushItemWidth(-1);
 
-			// Address bar
-			UpdateAddressBar(dpiScale, regionSize, spacing);
-
-			Manager.NativeManager.Separator();
-
 			// Display all files
 			UpdateFileView(dpiScale, regionSize, spacing);
 
@@ -96,76 +91,83 @@ namespace Effekseer.GUI.Dock
 
 		protected override void UpdateToolbar()
 		{
-		}
-
-		void UpdateAddressBar(float dpiScale, swig.Vec2 regionSize, swig.Vec2 spacing)
-		{
-			float buttonWidth = Manager.NativeManager.GetTextLineHeight() + Manager.NativeManager.GetStyleVar2(swig.ImGuiStyleVarFlags.FramePadding).X * 2;
-
-			// Back directory
-			if (Manager.NativeManager.Button("↑", buttonWidth) &&
-				!String.IsNullOrEmpty(CurrentPath))
+			if (Manager.NativeManager.BeginMenuBar())
 			{
-				UpdateFileListWithProjectPath(CurrentPath);
-			}
+				Manager.NativeManager.PushStyleColor(swig.ImGuiColFlags.Button, 0);
+				//Manager.NativeManager.SetCursorPosY(Manager.NativeManager.GetCursorPosY() + 4);
 
-			Manager.NativeManager.SameLine();
+				var padding = Manager.NativeManager.GetStyleVar2(swig.ImGuiStyleVarFlags.WindowPadding);
+				var windowSize = Manager.NativeManager.GetWindowSize();
+				float regionWidth = windowSize.X - padding.X * 2.0f;
+				float buttonSize = 20 * Manager.DpiScale;
+				float spacing = Manager.NativeManager.GetStyleVar2(swig.ImGuiStyleVarFlags.ItemSpacing).X;
 
-			// Display current directory
-			if (addressActivated || addressEditing)
-			{
-				Manager.NativeManager.PushItemWidth(regionSize.X - buttonWidth * 3 - spacing.X * 3);
-
-				if (addressActivated)
+				// Back directory
+				if (Manager.NativeManager.IconButton(Icons.ArrowUp) &&
+					!String.IsNullOrEmpty(CurrentPath))
 				{
-					Manager.NativeManager.SetKeyboardFocusHere();
-					addressEditing = true;
-					addressActivated = false;
+					UpdateFileListWithProjectPath(CurrentPath);
 				}
 
-				if (Manager.NativeManager.InputText("###AddressText", addressText))
+				// Display current directory
+				if (addressActivated || addressEditing)
 				{
-					addressText = Manager.NativeManager.GetInputTextResult();
-					UpdateFileList(addressText);
+					Manager.NativeManager.PushItemWidth(regionWidth - buttonSize * 3 - spacing * 3);
+
+					if (addressActivated)
+					{
+						Manager.NativeManager.SetKeyboardFocusHere();
+						addressEditing = true;
+						addressActivated = false;
+					}
+
+					if (Manager.NativeManager.InputText("###AddressText", addressText))
+					{
+						addressText = Manager.NativeManager.GetInputTextResult();
+						UpdateFileList(addressText);
+					}
+					if (Manager.NativeManager.IsItemDeactivated())
+					{
+						addressEditing = false;
+						addressText = CurrentPath;
+					}
+
+					Manager.NativeManager.PopItemWidth();
 				}
-				if (Manager.NativeManager.IsItemDeactivated())
+				else
 				{
-					addressEditing = false;
-					addressText = CurrentPath;
+					string label = Path.GetFileName(CurrentPath) + "###AddressButton";
+
+					Manager.NativeManager.PushStyleColor(swig.ImGuiColFlags.Button, 0x20FFFFFF);
+
+					if (Manager.NativeManager.Button(label, regionWidth - buttonSize * 3 - spacing * 3))
+					{
+						addressActivated = true;
+					}
+
+					Manager.NativeManager.PopStyleColor();
 				}
 
-				Manager.NativeManager.PopItemWidth();
-			}
-			else
-			{
-				string label = Path.GetFileName(CurrentPath) + "###AddressButton";
-				if (Manager.NativeManager.Button(label, regionSize.X - buttonWidth * 3 - spacing.X * 3))
+				if (Manager.NativeManager.IconButton(Icons.NavMenu))
 				{
-					addressActivated = true;
+					Manager.NativeManager.OpenPopup(OptionMenuPopupId);
+				} 
+
+				UpdateOptionMenu();
+
+				if (Manager.NativeManager.IconButton(Icons.Help))
+				{
+					Commands.ShowURL(DocURL);
 				}
+
+				if (BindableComponent.Functions.CanShowTip())
+				{
+					Manager.NativeManager.SetTooltip(MultiLanguageTextProvider.GetText("Panel_Help_Desc"));
+				}
+
+				Manager.NativeManager.PopStyleColor();
+				Manager.NativeManager.EndMenuBar();
 			}
-
-			Manager.NativeManager.SameLine();
-
-			if (Manager.NativeManager.Button(Icons.NavMenu, buttonWidth))
-			{
-				Manager.NativeManager.OpenPopup(OptionMenuPopupId);
-			}
-
-			UpdateOptionMenu();
-
-			Manager.NativeManager.SameLine();
-
-			if (Manager.NativeManager.Button("?", buttonWidth))
-			{
-				Commands.ShowURL(DocURL);
-			}
-
-			if (BindableComponent.Functions.CanShowTip())
-			{
-				Manager.NativeManager.SetTooltip(MultiLanguageTextProvider.GetText("Panel_Help_Desc"));
-			}
-
 		}
 
 		void UpdateOptionMenu()
