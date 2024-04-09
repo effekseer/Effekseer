@@ -44,8 +44,6 @@ namespace Effekseer.GUI.Dock
 
 		protected override void UpdateInternal()
 		{
-			Manager.NativeManager.Separator();
-
 			float width = Manager.NativeManager.GetContentRegionAvail().X;
 
 			Manager.NativeManager.PushItemWidth(width - Manager.NativeManager.GetTextLineHeight() * 5.5f);

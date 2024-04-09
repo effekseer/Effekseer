@@ -63,8 +63,6 @@ namespace Effekseer.GUI.Dock
 
 		protected override void UpdateInternal()
 		{
-			Manager.NativeManager.Separator();
-
 			Manager.NativeManager.Text(MultiLanguageTextProvider.GetText("DynamicInput"));
 
 			paramerterListInput.Update();

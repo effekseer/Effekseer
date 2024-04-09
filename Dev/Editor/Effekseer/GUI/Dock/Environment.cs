@@ -48,7 +48,6 @@ namespace Effekseer.GUI.Dock
 				isFiestUpdate = false;
 			}
 
-			Manager.NativeManager.Separator();
 			paramerterList.Update();
 		}
 

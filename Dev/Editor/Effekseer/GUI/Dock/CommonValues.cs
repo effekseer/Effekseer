@@ -56,7 +56,6 @@ namespace Effekseer.GUI.Dock
 			{
 			}
 
-			Manager.NativeManager.Separator();
 			paramerterList_Node.Update();
 			paramerterList_Common.Update();
 		}

@@ -61,5 +61,12 @@ namespace Effekseer.GUI
 		public const string NavFilter = "\xec41";
 		public const string FileView = "\xec42";
 		public const string Remove = "\xec43";
+		public const string Help = "\xec44";
+		public const string Copy = "\xec45";
+		public const string Paste = "\xec46";
+		public const string ArrowUp = "\xec47";
+		public const string ArrowDown = "\xec48";
+		public const string ArrowLeft = "\xec49";
+		public const string ArrowRight = "\xec4a";
 	}
 }
