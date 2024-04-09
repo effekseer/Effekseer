@@ -61,9 +61,6 @@ namespace Effekseer.GUI
 
 			Icons["AppIcon"] = LoadAppResource(graphicsDevice, "resources/icons/AppIcon.png");
 
-			Icons["VisibleShow"] = LoadAppResource(graphicsDevice, "resources/icons/Visible_Show.png");
-			Icons["VisibleHide"] = LoadAppResource(graphicsDevice, "resources/icons/Visible_Hide.png");
-
 			Icons["EnlargeAnchor"] = LoadAppResource(graphicsDevice, "resources/icons/EnlargeAnchor.png");
 			Icons["ShrinkAnchor"] = LoadAppResource(graphicsDevice, "resources/icons/ShrinkAnchor.png");
 

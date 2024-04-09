@@ -521,7 +521,7 @@ namespace Effekseer.GUI.Dock
 			var visible = Node.IsRendered;
 
 			float buttonSize = Manager.NativeManager.GetTextLineHeight();
-			if (Manager.NativeManager.ImageButton(Images.GetIcon(visible ? "VisibleShow" : "VisibleHide"), buttonSize, buttonSize))
+			if (Manager.NativeManager.IconButton(visible ? Icons.VisibleShow : Icons.VisibleHide, buttonSize))
 			{
 				int LEFT_SHIFT = 340;
 				int RIGHT_SHIFT = 344;
@@ -614,6 +614,8 @@ namespace Effekseer.GUI.Dock
 
 			Manager.NativeManager.TableSetColumnIndex(1);
 
+			Manager.NativeManager.SetCursorPosY(Manager.NativeManager.GetCursorPosY() + 5);
+
 			UpdateLODButton();
 
 			Manager.NativeManager.SameLine();
@@ -633,7 +635,7 @@ namespace Effekseer.GUI.Dock
 
 				if (Children.Count != 0)
 				{
-					Children.Internal.Last().UpdateDDTargetSeparator(true);
+					//Children.Internal.Last().UpdateDDTargetSeparator(true);
 				}
 
 				// pair with TreeNodeEx

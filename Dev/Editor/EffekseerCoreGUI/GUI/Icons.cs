@@ -68,5 +68,7 @@ namespace Effekseer.GUI
 		public const string ArrowDown = "\xec48";
 		public const string ArrowLeft = "\xec49";
 		public const string ArrowRight = "\xec4a";
+		public const string VisibleShow = "\xec4b";
+		public const string VisibleHide = "\xec4c";
 	}
 }

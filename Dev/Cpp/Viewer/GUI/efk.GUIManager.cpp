@@ -1180,14 +1180,14 @@ bool GUIManager::ImageButtonOriginal(std::shared_ptr<Effekseer::Tool::Image> use
 	return ImGui::ImageButton(ToImTextureID(user_texture_id), ImVec2(x, y), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1));
 }
 
-bool GUIManager::IconButton(const char16_t* icon)
+bool GUIManager::IconButton(const char16_t* icon, float size)
 {
 	const auto& style = ImGui::GetStyle();
 	const float fontSize = ImGui::GetFontSize();
-	const float frameHeight = ImGui::GetFrameHeight();
-	const float padding = (frameHeight - fontSize) * 0.5f;
-	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(padding, style.FramePadding.y));
-	bool result = ImGui::Button(utf8str<16>(icon), ImVec2(frameHeight, frameHeight));
+	size = (size > 0.0f) ? size : ImGui::GetFrameHeight();
+	const float padding = (size - fontSize) * 0.5f;
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(padding, padding));
+	bool result = ImGui::Button(utf8str<16>(icon), ImVec2(size, size));
 	ImGui::PopStyleVar();
 	return result;
 }
