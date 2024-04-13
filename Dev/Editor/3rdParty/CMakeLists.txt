@@ -2,6 +2,28 @@
 enable_language(CSharp)
 cmake_minimum_required(VERSION 3.23)
 
+add_library(FlatBuffers
+  SHARED
+  FlatBuffers/ByteBuffer.cs
+  FlatBuffers/ByteBufferUtil.cs
+  FlatBuffers/FlatBufferBuilder.cs
+  FlatBuffers/FlatBufferConstants.cs
+  FlatBuffers/IFlatbufferObject.cs
+  FlatBuffers/Offset.cs
+  FlatBuffers/Struct.cs
+  FlatBuffers/Table.cs
+)
+
+set_target_properties(FlatBuffers PROPERTIES
+    DOTNET_SDK "Microsoft.NET.Sdk"
+    DOTNET_TARGET_FRAMEWORK "net5.0")
+
+set_property(TARGET FlatBuffers PROPERTY VS_GLOBAL_AllowUnsafeBlocks "true")
+set_property(TARGET FlatBuffers PROPERTY VS_GLOBAL_AppendTargetFrameworkToOutputPath "false")
+
+set_target_properties (FlatBuffers PROPERTIES FOLDER Thirdparty)
+
+
 add_library(PartsTreeSystem
   SHARED
   PartsTreeSystem/PartsTreeSystem/AccessKey.cs
