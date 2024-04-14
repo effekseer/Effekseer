@@ -98,7 +98,7 @@ namespace Effekseer.GUI.Dock
 						flags = swig.WindowFlags.NoScrollbar;
 					}
 
-					var windowPadding = (NoPadding) ? new swig.Vec2(0.0f, 0.0f) : new swig.Vec2(4.0f * dpiScale, 4.0f * dpiScale);
+					var windowPadding = (NoPadding) ? new swig.Vec2(0.0f, 0.0f) : new swig.Vec2(4.0f * dpiScale, 2.0f * dpiScale);
 
 					Manager.NativeManager.PushStyleVar(swig.ImGuiStyleVarFlags.WindowPadding, windowPadding);
 

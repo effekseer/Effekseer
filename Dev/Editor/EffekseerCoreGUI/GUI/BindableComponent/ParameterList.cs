@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
+using Effekseer.swig;
 
 namespace Effekseer.GUI.BindableComponent
 {
@@ -35,8 +36,9 @@ namespace Effekseer.GUI.BindableComponent
 		static void ChangeColumns2WithLabelWidth()
 		{
 			var regionAvail = Manager.NativeManager.GetContentRegionAvail();
-			Manager.NativeManager.Columns(2);
-			Manager.NativeManager.SetColumnWidth(0, (int)(regionAvail.X * 0.3f));
+			Manager.NativeManager.BeginTable("ParameterList", 2, TableFlags.BordersInner);
+			Manager.NativeManager.TableSetupColumn("Label", TableColumnFlags.NoResize | TableColumnFlags.WidthFixed, regionAvail.X * 0.3f);
+			Manager.NativeManager.TableSetupColumn("Parameter");
 		}
 
 		public ParameterList()
@@ -45,6 +47,9 @@ namespace Effekseer.GUI.BindableComponent
 
 		public override void Update()
 		{
+			float dpiScale = Manager.DpiScale;
+
+			Manager.NativeManager.PushStyleVar(ImGuiStyleVarFlags.CellPadding, new swig.Vec2(3.0f * dpiScale, 3.0f * dpiScale));
 			ChangeColumns2WithLabelWidth();
 
 			var indent = new IndentInformation();
@@ -52,7 +57,8 @@ namespace Effekseer.GUI.BindableComponent
 			indent.IsSelecter = false;
 			collection.Update(indent);
 
-			Manager.NativeManager.Columns(1);
+			Manager.NativeManager.EndTable();
+			Manager.NativeManager.PopStyleVar();
 
 			isFirstUpdate = false;
 		}
@@ -136,6 +142,8 @@ namespace Effekseer.GUI.BindableComponent
 
 				controlRows.Lock();
 
+				float dpiScale = Manager.DpiScale;
+
 				for (int i = 0; i < controlRows.Internal.Count; i++)
 				{
 					var ctrl = controlRows.Internal[i].Control;
@@ -162,8 +170,7 @@ namespace Effekseer.GUI.BindableComponent
 							if (item.BindingValue is Data.Group.IToggleMode)
 							{
 								// CollapsingHeader with toggle
-								Manager.NativeManager.Columns(1);
-								Manager.NativeManager.Spacing();
+								Manager.NativeManager.EndTable();
 
 								var toggleId = "###" + item.TreeNodeID + "_toggle";
 								var toggleMode = item.BindingValue as Data.Group.IToggleMode;
@@ -191,8 +198,7 @@ namespace Effekseer.GUI.BindableComponent
 							}
 							else if (item.TreeNodeType == Data.TreeNodeType.Large)
 							{
-								Manager.NativeManager.Columns(1);
-								Manager.NativeManager.Spacing();
+								Manager.NativeManager.EndTable();
 
 								var valueChanged = item.Children.IsValueChangedFromDefault;
 
@@ -219,19 +225,13 @@ namespace Effekseer.GUI.BindableComponent
 							{
 								var flag = swig.TreeNodeFlags.SpanFullWidth;
 
-								Manager.NativeManager.Columns(1);
+								Manager.NativeManager.EndTable();
 
 								if (Manager.NativeManager.TreeNodeEx(label, flag))
 								{
 									ChangeColumns2WithLabelWidth();
 
 									currentIndent = item.Children.Update(currentIndent);
-
-									// Avoid Tree node bug
-									Manager.NativeManager.Columns(1);
-									Manager.NativeManager.TreePop();
-									Manager.NativeManager.Spacing();
-									Manager.NativeManager.Columns(2);
 								}
 								else
 								{
@@ -252,15 +252,10 @@ namespace Effekseer.GUI.BindableComponent
 					}
 					else
 					{
-						if (
-							(currentIndent.Indent > controlRows[i].SelectorIndent ||
-							controlRows[i].IsSelector ||
-							(currentIndent.Indent == controlRows[i].SelectorIndent && currentIndent.IsSelecter)))
-						{
-							Manager.NativeManager.Separator();
-						}
+						Manager.NativeManager.TableNextColumn();
 
 						// Show a label
+						Manager.NativeManager.SetCursorPosX(Manager.NativeManager.GetCursorPosX() + 4.0f * dpiScale);
 						Manager.NativeManager.SetCursorPosY(Manager.NativeManager.GetCursorPosY() + Manager.TextOffsetY);
 
 						// TODO : Make better imeplementation
@@ -284,14 +279,12 @@ namespace Effekseer.GUI.BindableComponent
 							Manager.NativeManager.EndTooltip();
 						}
 
-						Manager.NativeManager.NextColumn();
+						Manager.NativeManager.TableNextColumn();
 
 						// Show a content
 						Manager.NativeManager.PushItemWidth(-1);
 						ctrl.Update();
 						Manager.NativeManager.PopItemWidth();
-
-						Manager.NativeManager.NextColumn();
 
 						currentIndent.Indent = controlRows[i].SelectorIndent;
 						currentIndent.IsSelecter = controlRows[i].IsSelector;
