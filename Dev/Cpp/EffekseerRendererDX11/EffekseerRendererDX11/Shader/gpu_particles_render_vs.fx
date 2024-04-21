@@ -2,7 +2,7 @@
 
 cbuffer cb0 : register(b0)
 {
-    DrawConstants constants;
+    RenderConstants constants;
 };
 cbuffer cb1 : register(b1)
 {
@@ -69,6 +69,9 @@ void transformSprite(ParticleData particle, inout float3 position)
 void transformModel(ParticleData particle, inout float3 position)
 {
     // Position and Rotation and Scale Transform
+    if (constants.CoordinateReversed) {
+        position.z = -position.z;
+    }
     position = mul(float4(position, 1.0f), particle.Transform).xyz;
 }
 

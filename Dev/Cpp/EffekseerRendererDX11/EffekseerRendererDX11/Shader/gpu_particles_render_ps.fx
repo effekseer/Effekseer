@@ -2,7 +2,7 @@
 
 cbuffer cb0 : register(b0)
 {
-    DrawConstants constants;
+    RenderConstants constants;
 };
 cbuffer cb1 : register(b1)
 {

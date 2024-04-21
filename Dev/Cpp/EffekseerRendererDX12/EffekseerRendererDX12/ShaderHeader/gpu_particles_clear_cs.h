@@ -9,7 +9,7 @@
 //
 // Buffer Definitions: 
 //
-// cbuffer cb1
+// cbuffer cb2
 // {
 //
 //   struct EmitterData
@@ -43,7 +43,7 @@
 // Name                                 Type  Format         Dim Slot Elements
 // ------------------------------ ---------- ------- ----------- ---- --------
 // Particles                             UAV    byte         r/w    0        1
-// cb1                               cbuffer      NA          NA    1        1
+// cb2                               cbuffer      NA          NA    2        1
 //
 //
 //
@@ -60,12 +60,12 @@
 // no Output
 cs_5_0
 dcl_globalFlags refactoringAllowed
-dcl_constantbuffer cb1[1], immediateIndexed
+dcl_constantbuffer cb2[1], immediateIndexed
 dcl_uav_raw u0
 dcl_input vThreadID.x
 dcl_temps 2
 dcl_thread_group 256, 1, 1
-iadd r0.x, cb1[0].z, vThreadID.x
+iadd r0.x, cb2[0].z, vThreadID.x
 imul null, r0.y, r0.x, l(80)
 imad r1.xyzw, r0.xxxx, l(80, 80, 80, 80), l(16, 32, 48, 64)
 store_raw u0.xyzw, r0.y, l(0,0,0,0)
@@ -79,10 +79,10 @@ ret
 
 const BYTE g_main[] =
 {
-     68,  88,  66,  67, 255, 133, 
-     48,  77, 193,  53, 243, 221, 
-    246, 151,  55, 225,  63, 206, 
-    153, 186,   1,   0,   0,   0, 
+     68,  88,  66,  67, 111,  92, 
+     37, 117, 212,  65, 126, 175, 
+    103, 246,  74, 173, 193,  75, 
+     60, 196,   1,   0,   0,   0, 
     208,   5,   0,   0,   5,   0, 
       0,   0,  52,   0,   0,   0, 
     128,   3,   0,   0, 144,   3, 
@@ -107,11 +107,11 @@ const BYTE g_main[] =
       0,   0, 134,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
-      0,   0,   0,   0,   1,   0, 
+      0,   0,   0,   0,   2,   0, 
       0,   0,   1,   0,   0,   0, 
       1,   0,   0,   0,  80,  97, 
     114, 116, 105,  99, 108, 101, 
-    115,   0,  99,  98,  49,   0, 
+    115,   0,  99,  98,  50,   0, 
     171, 171, 134,   0,   0,   0, 
       1,   0,   0,   0, 164,   0, 
       0,   0, 112,   0,   0,   0, 
@@ -238,7 +238,7 @@ const BYTE g_main[] =
      80,   0,   5,   0,  99,   0, 
       0,   0, 106,   8,   0,   1, 
      89,   0,   0,   4,  70, 142, 
-     32,   0,   1,   0,   0,   0, 
+     32,   0,   2,   0,   0,   0, 
       1,   0,   0,   0, 157,   0, 
       0,   3,   0, 224,  17,   0, 
       0,   0,   0,   0,  95,   0, 
@@ -249,7 +249,7 @@ const BYTE g_main[] =
       0,   0,   1,   0,   0,   0, 
      30,   0,   0,   7,  18,   0, 
      16,   0,   0,   0,   0,   0, 
-     42, 128,  32,   0,   1,   0, 
+     42, 128,  32,   0,   2,   0, 
       0,   0,   0,   0,   0,   0, 
      10,   0,   2,   0,  38,   0, 
       0,   8,   0, 208,   0,   0, 

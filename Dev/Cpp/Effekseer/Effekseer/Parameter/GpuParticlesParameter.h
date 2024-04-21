@@ -7,7 +7,7 @@
 namespace Effekseer
 {
 
-GpuParticles::ParamSet LoadGpuParticlesParameter(uint8_t*& pos, int32_t version);
+GpuParticles::ParamSet LoadGpuParticlesParameter(uint8_t*& pos, int32_t version, float magnification, CoordinateSystem coordinateSystem);
 
 } // namespace Effekseer
 

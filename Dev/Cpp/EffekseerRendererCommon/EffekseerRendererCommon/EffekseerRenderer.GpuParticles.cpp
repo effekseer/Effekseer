@@ -396,8 +396,12 @@ bool GpuParticleSystem::InitSystem(const Settings& settings)
 	m_particleAllocator.Init(settings.ParticleMaxCount, ParticleUnitSize);
 	m_trailAllocator.Init(settings.TrailMaxCount, ParticleUnitSize);
 
-	GpuParticles::DrawConstants cdata{};
-	m_ubufConstants = graphics->CreateUniformBuffer(sizeof(GpuParticles::DrawConstants), &cdata);
+	GpuParticles::ComputeConstants computeConstants{};
+	m_ubufComputeConstants = graphics->CreateUniformBuffer(sizeof(GpuParticles::ComputeConstants), &computeConstants);
+
+	GpuParticles::RenderConstants renderConstants{};
+	m_ubufRenderConstants = graphics->CreateUniformBuffer(sizeof(GpuParticles::RenderConstants), &renderConstants);
+	
 	m_cbufParticles = graphics->CreateComputeBuffer((int32_t)settings.ParticleMaxCount, (int32_t)sizeof(Particle), nullptr, false);
 	m_cbufTrails = graphics->CreateComputeBuffer((int32_t)settings.TrailMaxCount, (int32_t)sizeof(Trail), nullptr, false);
 
@@ -450,12 +454,18 @@ void GpuParticleSystem::SetShaders(const Shaders& shaders)
 	}
 }
 
-void GpuParticleSystem::ComputeFrame()
+void GpuParticleSystem::ComputeFrame(const Context& context)
 {
 	using namespace Effekseer::GpuParticles;
 
 	auto renderer = m_rendererBase;
 	auto graphics = renderer->GetGraphicsDevice();
+
+	{
+		GpuParticles::ComputeConstants cdata{};
+		cdata.CoordinateReversed = context.CoordinateReversed;
+		graphics->UpdateUniformBuffer(m_ubufComputeConstants, sizeof(GpuParticles::ComputeConstants), 0, &cdata);
+	}
 
 	for (auto emitterID : m_newEmitterIDs)
 	{
@@ -466,8 +476,9 @@ void GpuParticleSystem::ComputeFrame()
 		GpuParticles::ComputeCommand command;
 		command.PipelineStatePtr = m_pipelineParticleClear;
 
-		command.UniformBufferPtrs[0] = emitter.resource->paramBuffer;
-		command.UniformBufferPtrs[1] = emitter.buffer;
+		command.UniformBufferPtrs[0] = m_ubufComputeConstants;
+		command.UniformBufferPtrs[1] = emitter.resource->paramBuffer;
+		command.UniformBufferPtrs[2] = emitter.buffer;
 		command.SetComputeBuffer(0, m_cbufParticles, false);
 
 		command.GroupCount = { (int32_t)emitter.data.ParticleSize / 256, 1, 1 };
@@ -530,8 +541,9 @@ void GpuParticleSystem::ComputeFrame()
 				GpuParticles::ComputeCommand command;
 				command.PipelineStatePtr = m_pipelineParticleSpawn;
 
-				command.UniformBufferPtrs[0] = emitter.resource->paramBuffer;
-				command.UniformBufferPtrs[1] = emitter.buffer;
+				command.UniformBufferPtrs[0] = m_ubufComputeConstants;
+				command.UniformBufferPtrs[1] = emitter.resource->paramBuffer;
+				command.UniformBufferPtrs[2] = emitter.buffer;
 				command.SetComputeBuffer(0, m_cbufParticles, false);
 				command.SetComputeBuffer(1, (emitter.resource->emitPoints) ? emitter.resource->emitPoints : m_dummyEmitPoints, true);
 
@@ -557,8 +569,9 @@ void GpuParticleSystem::ComputeFrame()
 			GpuParticles::ComputeCommand command;
 			command.PipelineStatePtr = m_pipelineParticleUpdate;
 
-			command.UniformBufferPtrs[0] = emitter.resource->paramBuffer;
-			command.UniformBufferPtrs[1] = emitter.buffer;
+			command.UniformBufferPtrs[0] = m_ubufComputeConstants;
+			command.UniformBufferPtrs[1] = emitter.resource->paramBuffer;
+			command.UniformBufferPtrs[2] = emitter.buffer;
 			command.SetComputeBuffer(0, m_cbufParticles, false);
 			command.SetComputeBuffer(1, m_cbufTrails, false);
 
@@ -581,7 +594,7 @@ void GpuParticleSystem::ComputeFrame()
 	}
 }
 
-void GpuParticleSystem::RenderFrame()
+void GpuParticleSystem::RenderFrame(const Context& context)
 {
 	using namespace Effekseer::GpuParticles;
 
@@ -589,32 +602,35 @@ void GpuParticleSystem::RenderFrame()
 	auto graphics = renderer->GetGraphicsDevice();
 
 	// Update constant buffer
-	GpuParticles::DrawConstants cdata{};
-	cdata.ProjMat = renderer->GetProjectionMatrix();
-	cdata.CameraMat = renderer->GetCameraMatrix();
+	{
+		GpuParticles::RenderConstants cdata{};
+		cdata.CoordinateReversed = context.CoordinateReversed;
+		cdata.ProjMat = renderer->GetProjectionMatrix();
+		cdata.CameraMat = renderer->GetCameraMatrix();
 
-	Effekseer::Matrix44	inv{};
-	Effekseer::Matrix44::Inverse(inv, cdata.CameraMat);
-	cdata.BillboardMat = {
-		float4{ inv.Values[0][0], inv.Values[1][0], inv.Values[2][0], 0.0f },
-		float4{ inv.Values[0][1], inv.Values[1][1], inv.Values[2][1], 0.0f },
-		float4{ inv.Values[0][2], inv.Values[1][2], inv.Values[2][2], 0.0f }
-	};
-	cdata.YAxisFixedMat = {
-		float4{ inv.Values[0][0], 0.0f, inv.Values[2][0], 0.0f },
-		float4{ inv.Values[0][1], 1.0f, inv.Values[2][1], 0.0f },
-		float4{ inv.Values[0][2], 0.0f, inv.Values[2][2], 0.0f }
-	};
-	auto normalize = [](Effekseer::Vector3D v) {
-		Effekseer::Vector3D::Normal(v, v);
-		return v;
-	};
-	cdata.CameraPos = renderer->GetCameraPosition();
-	cdata.CameraFront = normalize(renderer->GetCameraFrontDirection());
-	cdata.LightDir = normalize(renderer->GetLightDirection());
-	cdata.LightColor = renderer->GetLightColor().ToFloat4();
-	cdata.LightAmbient = renderer->GetLightAmbientColor().ToFloat4();
-	graphics->UpdateUniformBuffer(m_ubufConstants, sizeof(GpuParticles::DrawConstants), 0, &cdata);
+		Effekseer::Matrix44	inv{};
+		Effekseer::Matrix44::Inverse(inv, cdata.CameraMat);
+		cdata.BillboardMat = {
+			float4{ inv.Values[0][0], inv.Values[1][0], inv.Values[2][0], 0.0f },
+			float4{ inv.Values[0][1], inv.Values[1][1], inv.Values[2][1], 0.0f },
+			float4{ inv.Values[0][2], inv.Values[1][2], inv.Values[2][2], 0.0f }
+		};
+		cdata.YAxisFixedMat = {
+			float4{ inv.Values[0][0], 0.0f, inv.Values[2][0], 0.0f },
+			float4{ inv.Values[0][1], 1.0f, inv.Values[2][1], 0.0f },
+			float4{ inv.Values[0][2], 0.0f, inv.Values[2][2], 0.0f }
+		};
+		auto normalize = [](Effekseer::Vector3D v) {
+			Effekseer::Vector3D::Normal(v, v);
+			return v;
+			};
+		cdata.CameraPos = renderer->GetCameraPosition();
+		cdata.CameraFront = normalize(renderer->GetCameraFrontDirection());
+		cdata.LightDir = normalize(renderer->GetLightDirection());
+		cdata.LightColor = renderer->GetLightColor().ToFloat4();
+		cdata.LightAmbient = renderer->GetLightAmbientColor().ToFloat4();
+		graphics->UpdateUniformBuffer(m_ubufRenderConstants, sizeof(GpuParticles::RenderConstants), 0, &cdata);
+	}
 
 	auto toSamplingType = [](uint8_t filterType){
 		return (static_cast<Effekseer::TextureFilterType>(filterType) == Effekseer::TextureFilterType::Linear) ? Effekseer::Backend::TextureSamplingType::Linear : Effekseer::Backend::TextureSamplingType::Nearest;
@@ -634,7 +650,7 @@ void GpuParticleSystem::RenderFrame()
 			Effekseer::Backend::DrawParameter drawParams;
 			drawParams.PipelineStatePtr = GetOrCreatePipelineState(emitter.resource->piplineStateKey);
 
-			drawParams.VertexUniformBufferPtrs[0] = drawParams.PixelUniformBufferPtrs[0] = m_ubufConstants;
+			drawParams.VertexUniformBufferPtrs[0] = drawParams.PixelUniformBufferPtrs[0] = m_ubufRenderConstants;
 			drawParams.VertexUniformBufferPtrs[1] = drawParams.PixelUniformBufferPtrs[1] = emitter.resource->paramBuffer;
 			drawParams.VertexUniformBufferPtrs[2] = emitter.buffer;
 

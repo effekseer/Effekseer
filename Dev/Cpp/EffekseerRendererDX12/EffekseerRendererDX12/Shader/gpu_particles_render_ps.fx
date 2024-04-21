@@ -51,10 +51,10 @@ struct ParameterData
     uint ColorFlags;
 };
 
-struct DrawConstants
+struct RenderConstants
 {
     float3 CameraPos;
-    float Reserved0;
+    uint CoordinateReversed;
     float3 CameraFront;
     float Reserved1;
     float3 LightDir;
@@ -74,7 +74,7 @@ cbuffer cb1 : register(b1)
 
 cbuffer cb0 : register(b0)
 {
-    DrawConstants _103_constants : packoffset(c0);
+    RenderConstants _103_constants : packoffset(c0);
 };
 
 Texture2D<float4> ColorTex : register(t2);

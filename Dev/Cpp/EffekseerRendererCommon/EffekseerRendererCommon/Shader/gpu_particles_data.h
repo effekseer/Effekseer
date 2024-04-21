@@ -102,10 +102,21 @@ struct EmitPoint
     uint VColor;
 };
 
-struct DrawConstants
+#define COORDINATE_SYSTEM_RH 0
+#define COORDINATE_SYSTEM_LH 1
+
+struct ComputeConstants
+{
+    uint CoordinateReversed;
+    float Reserved0;
+    float Reserved1;
+    float Reserved2;
+};
+
+struct RenderConstants
 {
     float3 CameraPos;
-    float Reserved0;
+    uint CoordinateReversed;
     float3 CameraFront;
     float Reserved1;
     

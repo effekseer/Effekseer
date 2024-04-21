@@ -65,7 +65,7 @@ struct EmitterData
     float3x4 Transform;
 };
 
-struct cb1
+struct cb2
 {
     EmitterData emitter;
 };
@@ -142,7 +142,7 @@ struct ParameterData
     uint ColorFlags;
 };
 
-struct cb0
+struct cb1
 {
     ParameterData paramData;
 };
@@ -162,6 +162,19 @@ struct TrailData_1
 struct Trails
 {
     TrailData_1 _data[1];
+};
+
+struct ComputeConstants
+{
+    uint CoordinateReversed;
+    float Reserved0;
+    float Reserved1;
+    float Reserved2;
+};
+
+struct cb0
+{
+    ComputeConstants constants;
 };
 
 static inline __attribute__((always_inline))
@@ -304,7 +317,7 @@ uint PackColor(thread const float4& color)
 }
 
 static inline __attribute__((always_inline))
-void _main(thread const uint3& dtid, constant cb1& _620, device Particles& Particles_1, constant cb0& _687, device Trails& Trails_1, texture3d<float> NoiseTex, sampler NoiseSamp, texture2d<float> GradientTex, sampler GradientSamp)
+void _main(thread const uint3& dtid, constant cb2& _620, device Particles& Particles_1, constant cb1& _687, device Trails& Trails_1, texture3d<float> NoiseTex, sampler NoiseSamp, texture2d<float> GradientTex, sampler GradientSamp)
 {
     uint particleID = _620.emitter.ParticleHead + dtid.x;
     ParticleData particle;
@@ -390,7 +403,7 @@ void _main(thread const uint3& dtid, constant cb1& _620, device Particles& Parti
         }
         if (_687.paramData.TurbulencePower != 0.0)
         {
-            float4 vfTexel = NoiseTex.sample(NoiseSamp, (((position * _687.paramData.TurbulenceScale) * 0.125) + float3(0.5)), level(0.0));
+            float4 vfTexel = NoiseTex.sample(NoiseSamp, ((position * _687.paramData.TurbulenceScale) + float3(0.5)), level(0.0));
             position += ((((vfTexel.xyz * 2.0) - float3(1.0)) * _687.paramData.TurbulencePower) * deltaTime);
         }
         float3 diff = position - lastPosition;
@@ -407,9 +420,9 @@ void _main(thread const uint3& dtid, constant cb1& _620, device Particles& Parti
             spvUnsafeArray<float4, 2> param_18;
             param_18[0] = _687.paramData.ScaleData1[0];
             param_18[1] = _687.paramData.ScaleData1[1];
-            float4 _973 = RandomFloat4Range(param_17, param_18);
+            float4 _971 = RandomFloat4Range(param_17, param_18);
             seed = param_17;
-            scale = _973;
+            scale = _971;
         }
         else
         {
@@ -419,16 +432,16 @@ void _main(thread const uint3& dtid, constant cb1& _620, device Particles& Parti
                 spvUnsafeArray<float4, 2> param_20;
                 param_20[0] = _687.paramData.ScaleData1[0];
                 param_20[1] = _687.paramData.ScaleData1[1];
-                float4 _990 = RandomFloat4Range(param_19, param_20);
+                float4 _988 = RandomFloat4Range(param_19, param_20);
                 seed = param_19;
-                float4 scale1 = _990;
+                float4 scale1 = _988;
                 uint param_21 = seed;
                 spvUnsafeArray<float4, 2> param_22;
                 param_22[0] = _687.paramData.ScaleData2[0];
                 param_22[1] = _687.paramData.ScaleData2[1];
-                float4 _1004 = RandomFloat4Range(param_21, param_22);
+                float4 _1002 = RandomFloat4Range(param_21, param_22);
                 seed = param_21;
-                float4 scale2 = _1004;
+                float4 scale2 = _1002;
                 float param_23 = lifeRatio;
                 float3 param_24 = float3(_687.paramData.ScaleEasing);
                 scale = mix(scale1, scale2, float4(EasingSpeed(param_23, param_24)));
@@ -447,9 +460,9 @@ void _main(thread const uint3& dtid, constant cb1& _620, device Particles& Parti
             {
                 uint param_26 = seed;
                 uint2 param_27 = _687.paramData.ColorData.xy;
-                float4 _1043 = RandomColorRange(param_26, param_27);
+                float4 _1041 = RandomColorRange(param_26, param_27);
                 seed = param_26;
-                color = _1043;
+                color = _1041;
             }
             else
             {
@@ -457,14 +470,14 @@ void _main(thread const uint3& dtid, constant cb1& _620, device Particles& Parti
                 {
                     uint param_28 = seed;
                     uint2 param_29 = _687.paramData.ColorData.xy;
-                    float4 _1057 = RandomColorRange(param_28, param_29);
+                    float4 _1055 = RandomColorRange(param_28, param_29);
                     seed = param_28;
-                    float4 colorStart = _1057;
+                    float4 colorStart = _1055;
                     uint param_30 = seed;
                     uint2 param_31 = _687.paramData.ColorData.zw;
-                    float4 _1066 = RandomColorRange(param_30, param_31);
+                    float4 _1064 = RandomColorRange(param_30, param_31);
                     seed = param_30;
-                    float4 colorEnd = _1066;
+                    float4 colorEnd = _1064;
                     float param_32 = lifeRatio;
                     float3 param_33 = float3(_687.paramData.ColorEasing);
                     color = mix(colorStart, colorEnd, float4(EasingSpeed(param_32, param_33)));
@@ -481,10 +494,10 @@ void _main(thread const uint3& dtid, constant cb1& _620, device Particles& Parti
         if (((_687.paramData.ColorFlags >> uint(5)) & 1u) != 0u)
         {
             float3 param_34 = color.xyz;
-            float3 _1108 = HSV2RGB(param_34);
-            color.x = _1108.x;
-            color.y = _1108.y;
-            color.z = _1108.z;
+            float3 _1106 = HSV2RGB(param_34);
+            color.x = _1106.x;
+            color.y = _1106.y;
+            color.z = _1106.z;
         }
         uint colorInherit = (_687.paramData.ColorFlags >> uint(3)) & 3u;
         if ((colorInherit == 2u) || (colorInherit == 3u))
@@ -520,7 +533,7 @@ void _main(thread const uint3& dtid, constant cb1& _620, device Particles& Parti
     }
 }
 
-kernel void main0(constant cb0& _687 [[buffer(0)]], constant cb1& _620 [[buffer(1)]], device Particles& Particles_1 [[buffer(10)]], device Trails& Trails_1 [[buffer(11)]], texture3d<float> NoiseTex [[texture(2)]], texture2d<float> GradientTex [[texture(4)]], sampler NoiseSamp [[sampler(2)]], sampler GradientSamp [[sampler(4)]], uint3 gl_GlobalInvocationID [[thread_position_in_grid]])
+kernel void main0(constant cb1& _687 [[buffer(1)]], constant cb2& _620 [[buffer(2)]], device Particles& Particles_1 [[buffer(10)]], device Trails& Trails_1 [[buffer(11)]], texture3d<float> NoiseTex [[texture(2)]], texture2d<float> GradientTex [[texture(4)]], sampler NoiseSamp [[sampler(2)]], sampler GradientSamp [[sampler(4)]], uint3 gl_GlobalInvocationID [[thread_position_in_grid]])
 {
     uint3 dtid = gl_GlobalInvocationID;
     uint3 param = dtid;

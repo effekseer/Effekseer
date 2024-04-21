@@ -53,10 +53,10 @@ struct ParameterData
     uint ColorFlags;
 };
 
-struct DrawConstants
+struct RenderConstants
 {
     vec3 CameraPos;
-    float Reserved0;
+    uint CoordinateReversed;
     vec3 CameraFront;
     float Reserved1;
     vec3 LightDir;
@@ -76,7 +76,7 @@ layout(set = 0, binding = 1, std140) uniform cb1
 
 layout(set = 0, binding = 0, std140) uniform cb0
 {
-    layout(row_major) DrawConstants constants;
+    layout(row_major) RenderConstants constants;
 } _103;
 
 layout(set = 1, binding = 2) uniform sampler2D Sampler_ColorSamp;

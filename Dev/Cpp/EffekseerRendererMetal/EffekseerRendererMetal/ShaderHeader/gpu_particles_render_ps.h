@@ -64,10 +64,10 @@ struct cb1
     ParameterData paramData;
 };
 
-struct DrawConstants
+struct RenderConstants
 {
     packed_float3 CameraPos;
-    float Reserved0;
+    uint CoordinateReversed;
     packed_float3 CameraFront;
     float Reserved1;
     packed_float3 LightDir;
@@ -82,7 +82,7 @@ struct DrawConstants
 
 struct cb0
 {
-    DrawConstants constants;
+    RenderConstants constants;
 };
 
 struct main0_out

@@ -2,9 +2,13 @@
 
 cbuffer cb0 : register(b0)
 {
+    ComputeConstants constants;
+};
+cbuffer cb1 : register(b1)
+{
     ParameterData paramData;
 }
-cbuffer cb1 : register(b1)
+cbuffer cb2 : register(b2)
 {
     EmitterData emitter;
 }
@@ -98,7 +102,7 @@ void main(uint3 dtid : SV_DispatchThreadID)
         }
         // Turbulence
         if (paramData.TurbulencePower != 0.0f) {
-            float4 vfTexel = NoiseTex.SampleLevel(NoiseSamp, position * paramData.TurbulenceScale * 0.125f + 0.5f, 0);
+            float4 vfTexel = NoiseTex.SampleLevel(NoiseSamp, position * paramData.TurbulenceScale + 0.5f, 0);
             position += (vfTexel.xyz * 2.0f - 1.0f) * paramData.TurbulencePower * deltaTime;
         }
 
