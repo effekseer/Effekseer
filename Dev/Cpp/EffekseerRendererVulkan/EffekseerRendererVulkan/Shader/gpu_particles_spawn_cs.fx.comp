@@ -65,6 +65,14 @@ struct ParameterData
     uint ColorFlags;
 };
 
+struct ComputeConstants
+{
+    uint CoordinateReversed;
+    float Reserved0;
+    float Reserved1;
+    float Reserved2;
+};
+
 struct EmitPoint
 {
     vec3 Position;
@@ -87,15 +95,20 @@ struct ParticleData
     mat4x3 Transform;
 };
 
-layout(set = 0, binding = 1, std140) uniform cb1
+layout(set = 0, binding = 2, std140) uniform cb2
 {
     layout(row_major) EmitterData emitter;
 } _514;
 
-layout(set = 0, binding = 0, std140) uniform cb0
+layout(set = 0, binding = 1, std140) uniform cb1
 {
     ParameterData paramData;
 } _536;
+
+layout(set = 0, binding = 0, std140) uniform cb0
+{
+    ComputeConstants constants;
+} _651;
 
 layout(set = 2, binding = 1, std430) readonly buffer EmitPoints
 {
@@ -277,6 +290,10 @@ void _main(uvec3 dtid)
             position += (circleDirection * circleRadius);
             if (_536.paramData.EmitRotationApplied != 0u)
             {
+                if (_651.constants.CoordinateReversed != 0u)
+                {
+                    circleDirection.z = -circleDirection.z;
+                }
                 direction = mat3(vec3(cross(circleAxis, circleDirection)), vec3(circleAxis), vec3(circleDirection)) * direction;
             }
         }
@@ -286,13 +303,17 @@ void _main(uvec3 dtid)
             {
                 float sphereRadius = _536.paramData.EmitShapeData[0].x;
                 uint param_10 = seed;
-                vec3 _680 = RandomDirection(param_10);
+                vec3 _693 = RandomDirection(param_10);
                 seed = param_10;
-                vec3 sphereDirection = _680;
+                vec3 sphereDirection = _693;
                 position += (sphereDirection * sphereRadius);
                 if (_536.paramData.EmitRotationApplied != 0u)
                 {
                     vec3 sphereUp = vec3(0.0, 1.0, 0.0);
+                    if (_651.constants.CoordinateReversed != 0u)
+                    {
+                        sphereDirection.z = -sphereDirection.z;
+                    }
                     direction = mat3(vec3(cross(sphereUp, sphereDirection)), vec3(sphereUp), vec3(sphereDirection)) * direction;
                 }
             }
@@ -304,24 +325,22 @@ void _main(uvec3 dtid)
                     if (_514.emitter.EmitPointCount > 0u)
                     {
                         uint param_11 = seed;
-                        uint _730 = RandomUint(param_11);
+                        uint _752 = RandomUint(param_11);
                         seed = param_11;
-                        uint emitIndex = _730 % _514.emitter.EmitPointCount;
-                        EmitPoint emitPoint;
-                        emitPoint.Position = EmitPoints_1._data[emitIndex].Position;
-                        emitPoint.Normal = EmitPoints_1._data[emitIndex].Normal;
-                        emitPoint.Binormal = EmitPoints_1._data[emitIndex].Binormal;
-                        emitPoint.Tangent = EmitPoints_1._data[emitIndex].Tangent;
-                        emitPoint.UV = EmitPoints_1._data[emitIndex].UV;
-                        emitPoint.VColor = EmitPoints_1._data[emitIndex].VColor;
-                        position += (emitPoint.Position * modelSize);
+                        uint emitIndex = _752 % _514.emitter.EmitPointCount;
+                        vec3 emitPosition = EmitPoints_1._data[emitIndex].Position;
+                        if (_651.constants.CoordinateReversed != 0u)
+                        {
+                            emitPosition.z = -emitPosition.z;
+                        }
+                        position += (emitPosition * modelSize);
                         if (_536.paramData.EmitRotationApplied != 0u)
                         {
-                            uint param_12 = emitPoint.Normal;
+                            uint param_12 = EmitPoints_1._data[emitIndex].Normal;
                             vec3 emitNormal = UnpackNormalizedFloat3(param_12);
-                            uint param_13 = emitPoint.Binormal;
+                            uint param_13 = EmitPoints_1._data[emitIndex].Binormal;
                             vec3 emitBinormal = UnpackNormalizedFloat3(param_13);
-                            uint param_14 = emitPoint.Tangent;
+                            uint param_14 = EmitPoints_1._data[emitIndex].Tangent;
                             vec3 emitTangent = UnpackNormalizedFloat3(param_14);
                             direction = mat3(vec3(normalize(emitTangent)), vec3(normalize(emitBinormal)), vec3(normalize(emitNormal))) * direction;
                         }
@@ -329,6 +348,10 @@ void _main(uvec3 dtid)
                 }
             }
         }
+    }
+    if (_651.constants.CoordinateReversed != 0u)
+    {
+        direction.z = -direction.z;
     }
     position = _514.emitter.Transform * vec4(position, 1.0);
     direction = _514.emitter.Transform * vec4(direction, 0.0);

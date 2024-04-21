@@ -31,6 +31,14 @@ struct ParticleData
     column_major float4x3 Transform;
 };
 
+struct ComputeConstants
+{
+    uint CoordinateReversed;
+    float Reserved0;
+    float Reserved1;
+    float Reserved2;
+};
+
 struct ParameterData
 {
     int EmitCount;
@@ -74,7 +82,7 @@ struct ParameterData
     uint ColorFlags;
 };
 
-cbuffer cb1 : register(b1)
+cbuffer cb2 : register(b2)
 {
     EmitterData _21_emitter : packoffset(c0);
 };
@@ -82,7 +90,12 @@ cbuffer cb1 : register(b1)
 RWByteAddressBuffer Particles : register(u0);
 cbuffer cb0 : register(b0)
 {
-    ParameterData _104_paramData : packoffset(c0);
+    ComputeConstants _95_constants : packoffset(c0);
+};
+
+cbuffer cb1 : register(b1)
+{
+    ParameterData _108_paramData : packoffset(c0);
 };
 
 

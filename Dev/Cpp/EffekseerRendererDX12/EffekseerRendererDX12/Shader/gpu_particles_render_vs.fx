@@ -75,10 +75,10 @@ struct ParameterData
     uint ColorFlags;
 };
 
-struct DrawConstants
+struct RenderConstants
 {
     float3 CameraPos;
-    float Reserved0;
+    uint CoordinateReversed;
     float3 CameraFront;
     float Reserved1;
     float3 LightDir;
@@ -125,12 +125,12 @@ cbuffer cb1 : register(b1)
 
 cbuffer cb0 : register(b0)
 {
-    DrawConstants _136_constants : packoffset(c0);
+    RenderConstants _136_constants : packoffset(c0);
 };
 
 cbuffer cb2 : register(b2)
 {
-    EmitterData _255_emitter : packoffset(c0);
+    EmitterData _265_emitter : packoffset(c0);
 };
 
 ByteAddressBuffer Trails : register(t1);
@@ -210,6 +210,10 @@ void transformSprite(ParticleData particle, inout float3 position)
 
 void transformModel(ParticleData particle, inout float3 position)
 {
+    if (_136_constants.CoordinateReversed != 0u)
+    {
+        position.z = -position.z;
+    }
     position = mul(float4(position, 1.0f), particle.Transform);
 }
 
@@ -228,14 +232,14 @@ void transformTrail(ParticleData particle, inout float3 position, inout float2 u
     }
     else
     {
-        uint trailID = _255_emitter.TrailHead + (instanceID * _121_paramData.ShapeData);
-        trailID += ((((_121_paramData.ShapeData + _255_emitter.TrailPhase) - segmentID) + 1u) % _121_paramData.ShapeData);
-        TrailData _289;
-        _289.Position = asfloat(Trails.Load3(trailID * 16 + 0));
-        _289.Direction = Trails.Load(trailID * 16 + 12);
+        uint trailID = _265_emitter.TrailHead + (instanceID * _121_paramData.ShapeData);
+        trailID += ((((_121_paramData.ShapeData + _265_emitter.TrailPhase) - segmentID) + 1u) % _121_paramData.ShapeData);
+        TrailData _299;
+        _299.Position = asfloat(Trails.Load3(trailID * 16 + 0));
+        _299.Direction = Trails.Load(trailID * 16 + 12);
         TrailData trail;
-        trail.Position = _289.Position;
-        trail.Direction = _289.Direction;
+        trail.Position = _299.Position;
+        trail.Direction = _299.Direction;
         trailPosition = trail.Position;
         uint param_1 = trail.Direction;
         trailDirection = normalize(UnpackNormalizedFloat3(param_1));
@@ -253,25 +257,25 @@ float4 UnpackColor(uint color32)
 
 VS_Output _main(VS_Input _input)
 {
-    uint index = _255_emitter.ParticleHead + _input.InstanceID;
-    ParticleData _340;
-    _340.FlagBits = Particles.Load(index * 80 + 0);
-    _340.Seed = Particles.Load(index * 80 + 4);
-    _340.LifeAge = asfloat(Particles.Load(index * 80 + 8));
-    _340.InheritColor = Particles.Load(index * 80 + 12);
-    _340.Color = Particles.Load(index * 80 + 16);
-    _340.Direction = Particles.Load(index * 80 + 20);
-    _340.Velocity = Particles.Load2(index * 80 + 24);
-    _340.Transform = asfloat(uint4x3(Particles.Load(index * 80 + 32), Particles.Load(index * 80 + 48), Particles.Load(index * 80 + 64), Particles.Load(index * 80 + 36), Particles.Load(index * 80 + 52), Particles.Load(index * 80 + 68), Particles.Load(index * 80 + 40), Particles.Load(index * 80 + 56), Particles.Load(index * 80 + 72), Particles.Load(index * 80 + 44), Particles.Load(index * 80 + 60), Particles.Load(index * 80 + 76)));
+    uint index = _265_emitter.ParticleHead + _input.InstanceID;
+    ParticleData _349;
+    _349.FlagBits = Particles.Load(index * 80 + 0);
+    _349.Seed = Particles.Load(index * 80 + 4);
+    _349.LifeAge = asfloat(Particles.Load(index * 80 + 8));
+    _349.InheritColor = Particles.Load(index * 80 + 12);
+    _349.Color = Particles.Load(index * 80 + 16);
+    _349.Direction = Particles.Load(index * 80 + 20);
+    _349.Velocity = Particles.Load2(index * 80 + 24);
+    _349.Transform = asfloat(uint4x3(Particles.Load(index * 80 + 32), Particles.Load(index * 80 + 48), Particles.Load(index * 80 + 64), Particles.Load(index * 80 + 36), Particles.Load(index * 80 + 52), Particles.Load(index * 80 + 68), Particles.Load(index * 80 + 40), Particles.Load(index * 80 + 56), Particles.Load(index * 80 + 72), Particles.Load(index * 80 + 44), Particles.Load(index * 80 + 60), Particles.Load(index * 80 + 76)));
     ParticleData particle;
-    particle.FlagBits = _340.FlagBits;
-    particle.Seed = _340.Seed;
-    particle.LifeAge = _340.LifeAge;
-    particle.InheritColor = _340.InheritColor;
-    particle.Color = _340.Color;
-    particle.Direction = _340.Direction;
-    particle.Velocity = _340.Velocity;
-    particle.Transform = _340.Transform;
+    particle.FlagBits = _349.FlagBits;
+    particle.Seed = _349.Seed;
+    particle.LifeAge = _349.LifeAge;
+    particle.InheritColor = _349.InheritColor;
+    particle.Color = _349.Color;
+    particle.Direction = _349.Direction;
+    particle.Velocity = _349.Velocity;
+    particle.Transform = _349.Transform;
     VS_Output _output;
     if ((particle.FlagBits & 1u) != 0u)
     {
@@ -311,11 +315,11 @@ VS_Output _main(VS_Input _input)
         }
         uint param_9 = particle.Color;
         color *= UnpackColor(param_9);
-        float4 _423 = color;
-        float3 _425 = _423.xyz * _121_paramData.Emissive;
-        color.x = _425.x;
-        color.y = _425.y;
-        color.z = _425.z;
+        float4 _432 = color;
+        float3 _434 = _432.xyz * _121_paramData.Emissive;
+        color.x = _434.x;
+        color.y = _434.y;
+        color.z = _434.z;
         _output.Pos = mul(_136_constants.ProjMat, mul(_136_constants.CameraMat, float4(position, 1.0f)));
         _output.UV = uv;
         _output.Color = color;

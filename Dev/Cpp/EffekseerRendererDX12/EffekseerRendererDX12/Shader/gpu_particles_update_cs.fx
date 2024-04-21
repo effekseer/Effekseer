@@ -80,18 +80,31 @@ struct TrailData
     uint Direction;
 };
 
-cbuffer cb1 : register(b1)
+struct ComputeConstants
+{
+    uint CoordinateReversed;
+    float Reserved0;
+    float Reserved1;
+    float Reserved2;
+};
+
+cbuffer cb2 : register(b2)
 {
     EmitterData _620_emitter : packoffset(c0);
 };
 
 RWByteAddressBuffer Particles : register(u0);
-cbuffer cb0 : register(b0)
+cbuffer cb1 : register(b1)
 {
     ParameterData _687_paramData : packoffset(c0);
 };
 
 RWByteAddressBuffer Trails : register(u1);
+cbuffer cb0 : register(b0)
+{
+    ComputeConstants _1224_constants : packoffset(c0);
+};
+
 Texture3D<float4> NoiseTex : register(t2);
 SamplerState NoiseSamp : register(s2);
 Texture2D<float4> GradientTex : register(t4);
@@ -335,7 +348,7 @@ void _main(uint3 dtid)
         }
         if (_687_paramData.TurbulencePower != 0.0f)
         {
-            float4 vfTexel = NoiseTex.SampleLevel(NoiseSamp, ((position * _687_paramData.TurbulenceScale) * 0.125f) + 0.5f.xxx, 0.0f);
+            float4 vfTexel = NoiseTex.SampleLevel(NoiseSamp, (position * _687_paramData.TurbulenceScale) + 0.5f.xxx, 0.0f);
             position += ((((vfTexel.xyz * 2.0f) - 1.0f.xxx) * _687_paramData.TurbulencePower) * deltaTime);
         }
         float3 diff = position - lastPosition;
@@ -352,9 +365,9 @@ void _main(uint3 dtid)
             float4 param_18[2];
             param_18[0] = _687_paramData.ScaleData1[0];
             param_18[1] = _687_paramData.ScaleData1[1];
-            float4 _973 = RandomFloat4Range(param_17, param_18);
+            float4 _971 = RandomFloat4Range(param_17, param_18);
             seed = param_17;
-            scale = _973;
+            scale = _971;
         }
         else
         {
@@ -364,16 +377,16 @@ void _main(uint3 dtid)
                 float4 param_20[2];
                 param_20[0] = _687_paramData.ScaleData1[0];
                 param_20[1] = _687_paramData.ScaleData1[1];
-                float4 _990 = RandomFloat4Range(param_19, param_20);
+                float4 _988 = RandomFloat4Range(param_19, param_20);
                 seed = param_19;
-                float4 scale1 = _990;
+                float4 scale1 = _988;
                 uint param_21 = seed;
                 float4 param_22[2];
                 param_22[0] = _687_paramData.ScaleData2[0];
                 param_22[1] = _687_paramData.ScaleData2[1];
-                float4 _1004 = RandomFloat4Range(param_21, param_22);
+                float4 _1002 = RandomFloat4Range(param_21, param_22);
                 seed = param_21;
-                float4 scale2 = _1004;
+                float4 scale2 = _1002;
                 float param_23 = lifeRatio;
                 float3 param_24 = _687_paramData.ScaleEasing;
                 scale = lerp(scale1, scale2, EasingSpeed(param_23, param_24).xxxx);
@@ -392,9 +405,9 @@ void _main(uint3 dtid)
             {
                 uint param_26 = seed;
                 uint2 param_27 = _687_paramData.ColorData.xy;
-                float4 _1043 = RandomColorRange(param_26, param_27);
+                float4 _1041 = RandomColorRange(param_26, param_27);
                 seed = param_26;
-                color = _1043;
+                color = _1041;
             }
             else
             {
@@ -402,14 +415,14 @@ void _main(uint3 dtid)
                 {
                     uint param_28 = seed;
                     uint2 param_29 = _687_paramData.ColorData.xy;
-                    float4 _1057 = RandomColorRange(param_28, param_29);
+                    float4 _1055 = RandomColorRange(param_28, param_29);
                     seed = param_28;
-                    float4 colorStart = _1057;
+                    float4 colorStart = _1055;
                     uint param_30 = seed;
                     uint2 param_31 = _687_paramData.ColorData.zw;
-                    float4 _1066 = RandomColorRange(param_30, param_31);
+                    float4 _1064 = RandomColorRange(param_30, param_31);
                     seed = param_30;
-                    float4 colorEnd = _1066;
+                    float4 colorEnd = _1064;
                     float param_32 = lifeRatio;
                     float3 param_33 = _687_paramData.ColorEasing;
                     color = lerp(colorStart, colorEnd, EasingSpeed(param_32, param_33).xxxx);
@@ -426,10 +439,10 @@ void _main(uint3 dtid)
         if (((_687_paramData.ColorFlags >> uint(5)) & 1u) != 0u)
         {
             float3 param_34 = color.xyz;
-            float3 _1108 = HSV2RGB(param_34);
-            color.x = _1108.x;
-            color.y = _1108.y;
-            color.z = _1108.z;
+            float3 _1106 = HSV2RGB(param_34);
+            color.x = _1106.x;
+            color.y = _1106.y;
+            color.z = _1106.z;
         }
         uint colorInherit = (_687_paramData.ColorFlags >> uint(3)) & 3u;
         if ((colorInherit == 2u) || (colorInherit == 3u))

@@ -1829,9 +1829,12 @@ void ManagerImplemented::Compute()
 	{
 		ScopedGpuTime gpuTime(m_gpuTimer, gpuParticleSystem.Get());
 
+		GpuParticleSystem::Context context{};
+		context.CoordinateReversed = GetCoordinateSystem() != CoordinateSystem::RH;
+
 		for (int i = 0; i < m_nextComputeCount; i++)
 		{
-			gpuParticleSystem->ComputeFrame();
+			gpuParticleSystem->ComputeFrame(context);
 		}
 	}
 }
@@ -1903,7 +1906,9 @@ void ManagerImplemented::Draw(const Manager::DrawParameter& drawParameter)
 	{
 		ScopedGpuTime gpuTime(m_gpuTimer, gpuParticleSystem.Get());
 
-		gpuParticleSystem->RenderFrame();
+		GpuParticleSystem::Context context{};
+		context.CoordinateReversed = GetCoordinateSystem() != CoordinateSystem::RH;
+		gpuParticleSystem->RenderFrame(context);
 	}
 
 	// calculate a time
@@ -2025,7 +2030,9 @@ void ManagerImplemented::DrawFront(const Manager::DrawParameter& drawParameter)
 	{
 		ScopedGpuTime gpuTime(m_gpuTimer, gpuParticleSystem.Get());
 
-		gpuParticleSystem->RenderFrame();
+		GpuParticleSystem::Context context{};
+		context.CoordinateReversed = GetCoordinateSystem() != CoordinateSystem::RH;
+		gpuParticleSystem->RenderFrame(context);
 	}
 
 	// calculate a time

@@ -152,9 +152,9 @@ public:
 
 	virtual void SetShaders(const Shaders& shaders);
 
-	virtual void ComputeFrame() override;
+	virtual void ComputeFrame(const Context& context) override;
 
-	virtual void RenderFrame() override;
+	virtual void RenderFrame(const Context& context) override;
 
 	virtual EmitterID NewEmitter(Effekseer::GpuParticles::ResourceRef resource, Effekseer::InstanceGlobal* instanceGlobal) override;
 
@@ -193,7 +193,8 @@ protected:
 	BlockAllocator m_particleAllocator;
 	BlockAllocator m_trailAllocator;
 
-	GpuParticles::UniformBufferRef m_ubufConstants;
+	GpuParticles::UniformBufferRef m_ubufComputeConstants;
+	GpuParticles::UniformBufferRef m_ubufRenderConstants;
 
 	GpuParticles::ComputeBufferRef m_cbufParticles;
 	GpuParticles::ComputeBufferRef m_cbufTrails;

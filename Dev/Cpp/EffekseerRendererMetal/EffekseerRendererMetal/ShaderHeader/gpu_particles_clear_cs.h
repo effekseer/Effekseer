@@ -27,7 +27,7 @@ struct EmitterData
     float3x4 Transform;
 };
 
-struct cb1
+struct cb2
 {
     EmitterData emitter;
 };
@@ -59,6 +59,19 @@ struct ParticleData_1
 struct Particles
 {
     ParticleData_1 _data[1];
+};
+
+struct ComputeConstants
+{
+    uint CoordinateReversed;
+    float Reserved0;
+    float Reserved1;
+    float Reserved2;
+};
+
+struct cb0
+{
+    ComputeConstants constants;
 };
 
 struct ParameterData
@@ -104,13 +117,13 @@ struct ParameterData
     uint ColorFlags;
 };
 
-struct cb0
+struct cb1
 {
     ParameterData paramData;
 };
 
 static inline __attribute__((always_inline))
-void _main(thread const uint3& dtid, constant cb1& _21, device Particles& Particles_1)
+void _main(thread const uint3& dtid, constant cb2& _21, device Particles& Particles_1)
 {
     uint particleID = _21.emitter.ParticleHead + dtid.x;
     ParticleData particle;
@@ -132,7 +145,7 @@ void _main(thread const uint3& dtid, constant cb1& _21, device Particles& Partic
     Particles_1._data[particleID].Transform = transpose(particle.Transform);
 }
 
-kernel void main0(constant cb1& _21 [[buffer(1)]], device Particles& Particles_1 [[buffer(10)]], uint3 gl_GlobalInvocationID [[thread_position_in_grid]])
+kernel void main0(constant cb2& _21 [[buffer(2)]], device Particles& Particles_1 [[buffer(10)]], uint3 gl_GlobalInvocationID [[thread_position_in_grid]])
 {
     uint3 dtid = gl_GlobalInvocationID;
     uint3 param = dtid;

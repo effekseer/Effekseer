@@ -83,7 +83,15 @@ struct TrailData
     uint Direction;
 };
 
-layout(set = 0, binding = 1, std140) uniform cb1
+struct ComputeConstants
+{
+    uint CoordinateReversed;
+    float Reserved0;
+    float Reserved1;
+    float Reserved2;
+};
+
+layout(set = 0, binding = 2, std140) uniform cb2
 {
     layout(row_major) EmitterData emitter;
 } _620;
@@ -93,7 +101,7 @@ layout(set = 2, binding = 0, std430) buffer Particles
     layout(row_major) ParticleData _data[];
 } Particles_1;
 
-layout(set = 0, binding = 0, std140) uniform cb0
+layout(set = 0, binding = 1, std140) uniform cb1
 {
     ParameterData paramData;
 } _687;
@@ -102,6 +110,11 @@ layout(set = 2, binding = 1, std430) buffer Trails
 {
     TrailData _data[];
 } Trails_1;
+
+layout(set = 0, binding = 0, std140) uniform cb0
+{
+    ComputeConstants constants;
+} _1224;
 
 layout(set = 1, binding = 2) uniform sampler3D Sampler_NoiseSamp;
 layout(set = 1, binding = 4) uniform sampler2D Sampler_GradientSamp;
@@ -316,7 +329,7 @@ void _main(uvec3 dtid)
         }
         if (_687.paramData.TurbulencePower != 0.0)
         {
-            vec4 vfTexel = textureLod(Sampler_NoiseSamp, ((position * _687.paramData.TurbulenceScale) * 0.125) + vec3(0.5), 0.0);
+            vec4 vfTexel = textureLod(Sampler_NoiseSamp, (position * _687.paramData.TurbulenceScale) + vec3(0.5), 0.0);
             position += ((((vfTexel.xyz * 2.0) - vec3(1.0)) * _687.paramData.TurbulencePower) * deltaTime);
         }
         vec3 diff = position - lastPosition;
@@ -333,9 +346,9 @@ void _main(uvec3 dtid)
             vec4 param_18[2];
             param_18[0] = _687.paramData.ScaleData1[0];
             param_18[1] = _687.paramData.ScaleData1[1];
-            vec4 _973 = RandomFloat4Range(param_17, param_18);
+            vec4 _971 = RandomFloat4Range(param_17, param_18);
             seed = param_17;
-            scale = _973;
+            scale = _971;
         }
         else
         {
@@ -345,16 +358,16 @@ void _main(uvec3 dtid)
                 vec4 param_20[2];
                 param_20[0] = _687.paramData.ScaleData1[0];
                 param_20[1] = _687.paramData.ScaleData1[1];
-                vec4 _990 = RandomFloat4Range(param_19, param_20);
+                vec4 _988 = RandomFloat4Range(param_19, param_20);
                 seed = param_19;
-                vec4 scale1 = _990;
+                vec4 scale1 = _988;
                 uint param_21 = seed;
                 vec4 param_22[2];
                 param_22[0] = _687.paramData.ScaleData2[0];
                 param_22[1] = _687.paramData.ScaleData2[1];
-                vec4 _1004 = RandomFloat4Range(param_21, param_22);
+                vec4 _1002 = RandomFloat4Range(param_21, param_22);
                 seed = param_21;
-                vec4 scale2 = _1004;
+                vec4 scale2 = _1002;
                 float param_23 = lifeRatio;
                 vec3 param_24 = _687.paramData.ScaleEasing;
                 scale = mix(scale1, scale2, vec4(EasingSpeed(param_23, param_24)));
@@ -373,9 +386,9 @@ void _main(uvec3 dtid)
             {
                 uint param_26 = seed;
                 uvec2 param_27 = _687.paramData.ColorData.xy;
-                vec4 _1043 = RandomColorRange(param_26, param_27);
+                vec4 _1041 = RandomColorRange(param_26, param_27);
                 seed = param_26;
-                color = _1043;
+                color = _1041;
             }
             else
             {
@@ -383,14 +396,14 @@ void _main(uvec3 dtid)
                 {
                     uint param_28 = seed;
                     uvec2 param_29 = _687.paramData.ColorData.xy;
-                    vec4 _1057 = RandomColorRange(param_28, param_29);
+                    vec4 _1055 = RandomColorRange(param_28, param_29);
                     seed = param_28;
-                    vec4 colorStart = _1057;
+                    vec4 colorStart = _1055;
                     uint param_30 = seed;
                     uvec2 param_31 = _687.paramData.ColorData.zw;
-                    vec4 _1066 = RandomColorRange(param_30, param_31);
+                    vec4 _1064 = RandomColorRange(param_30, param_31);
                     seed = param_30;
-                    vec4 colorEnd = _1066;
+                    vec4 colorEnd = _1064;
                     float param_32 = lifeRatio;
                     vec3 param_33 = _687.paramData.ColorEasing;
                     color = mix(colorStart, colorEnd, vec4(EasingSpeed(param_32, param_33)));
@@ -407,10 +420,10 @@ void _main(uvec3 dtid)
         if (((_687.paramData.ColorFlags >> uint(5)) & 1u) != 0u)
         {
             vec3 param_34 = color.xyz;
-            vec3 _1108 = HSV2RGB(param_34);
-            color.x = _1108.x;
-            color.y = _1108.y;
-            color.z = _1108.z;
+            vec3 _1106 = HSV2RGB(param_34);
+            color.x = _1106.x;
+            color.y = _1106.y;
+            color.z = _1106.z;
         }
         uint colorInherit = (_687.paramData.ColorFlags >> uint(3)) & 3u;
         if ((colorInherit == 2u) || (colorInherit == 3u))

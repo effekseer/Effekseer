@@ -34,6 +34,14 @@ struct ParticleData
     mat4x3 Transform;
 };
 
+struct ComputeConstants
+{
+    uint CoordinateReversed;
+    float Reserved0;
+    float Reserved1;
+    float Reserved2;
+};
+
 struct ParameterData
 {
     int EmitCount;
@@ -77,7 +85,7 @@ struct ParameterData
     uint ColorFlags;
 };
 
-layout(set = 0, binding = 1, std140) uniform cb1
+layout(set = 0, binding = 2, std140) uniform cb2
 {
     layout(row_major) EmitterData emitter;
 } _21;
@@ -89,8 +97,13 @@ layout(set = 2, binding = 0, std430) buffer Particles
 
 layout(set = 0, binding = 0, std140) uniform cb0
 {
+    ComputeConstants constants;
+} _95;
+
+layout(set = 0, binding = 1, std140) uniform cb1
+{
     ParameterData paramData;
-} _104;
+} _108;
 
 void _main(uvec3 dtid)
 {

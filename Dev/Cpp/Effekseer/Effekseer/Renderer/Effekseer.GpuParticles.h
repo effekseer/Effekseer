@@ -326,6 +326,10 @@ public:
 		uint32_t ParticleMaxCount = 1 * 1024 * 1024;
 		uint32_t TrailMaxCount = 4 * 1024 * 1024;
 	};
+	struct Context
+	{
+		bool CoordinateReversed;
+	};
 
 	using EmitterID = int32_t;
 	static constexpr int32_t InvalidID = -1;
@@ -337,9 +341,9 @@ public:
 	
 	virtual bool InitSystem(const Settings& settings) { return true; }
 
-	virtual void ComputeFrame() {}
+	virtual void ComputeFrame(const Context& context) {}
 
-	virtual void RenderFrame() {}
+	virtual void RenderFrame(const Context& context) {}
 
 	virtual EmitterID NewEmitter(GpuParticles::ResourceRef paramRes, Effekseer::InstanceGlobal* instanceGlobal) { return InvalidID; }
 

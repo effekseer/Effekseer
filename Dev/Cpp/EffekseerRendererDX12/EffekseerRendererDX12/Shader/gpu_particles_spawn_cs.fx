@@ -62,6 +62,14 @@ struct ParameterData
     uint ColorFlags;
 };
 
+struct ComputeConstants
+{
+    uint CoordinateReversed;
+    float Reserved0;
+    float Reserved1;
+    float Reserved2;
+};
+
 struct EmitPoint
 {
     float3 Position;
@@ -84,14 +92,19 @@ struct ParticleData
     column_major float4x3 Transform;
 };
 
-cbuffer cb1 : register(b1)
+cbuffer cb2 : register(b2)
 {
     EmitterData _514_emitter : packoffset(c0);
 };
 
-cbuffer cb0 : register(b0)
+cbuffer cb1 : register(b1)
 {
     ParameterData _536_paramData : packoffset(c0);
+};
+
+cbuffer cb0 : register(b0)
+{
+    ComputeConstants _651_constants : packoffset(c0);
 };
 
 ByteAddressBuffer EmitPoints : register(t1);
@@ -284,6 +297,10 @@ void _main(uint3 dtid)
             position += (circleDirection * circleRadius);
             if (_536_paramData.EmitRotationApplied != 0u)
             {
+                if (_651_constants.CoordinateReversed != 0u)
+                {
+                    circleDirection.z = -circleDirection.z;
+                }
                 direction = mul(direction, float3x3(float3(cross(circleAxis, circleDirection)), float3(circleAxis), float3(circleDirection)));
             }
         }
@@ -293,13 +310,17 @@ void _main(uint3 dtid)
             {
                 float sphereRadius = _536_paramData.EmitShapeData[0].x;
                 uint param_10 = seed;
-                float3 _680 = RandomDirection(param_10);
+                float3 _693 = RandomDirection(param_10);
                 seed = param_10;
-                float3 sphereDirection = _680;
+                float3 sphereDirection = _693;
                 position += (sphereDirection * sphereRadius);
                 if (_536_paramData.EmitRotationApplied != 0u)
                 {
                     float3 sphereUp = float3(0.0f, 1.0f, 0.0f);
+                    if (_651_constants.CoordinateReversed != 0u)
+                    {
+                        sphereDirection.z = -sphereDirection.z;
+                    }
                     direction = mul(direction, float3x3(float3(cross(sphereUp, sphereDirection)), float3(sphereUp), float3(sphereDirection)));
                 }
             }
@@ -311,31 +332,22 @@ void _main(uint3 dtid)
                     if (_514_emitter.EmitPointCount > 0u)
                     {
                         uint param_11 = seed;
-                        uint _730 = RandomUint(param_11);
+                        uint _752 = RandomUint(param_11);
                         seed = param_11;
-                        uint emitIndex = _730 % _514_emitter.EmitPointCount;
-                        EmitPoint _746;
-                        _746.Position = asfloat(EmitPoints.Load3(emitIndex * 32 + 0));
-                        _746.Normal = EmitPoints.Load(emitIndex * 32 + 12);
-                        _746.Binormal = EmitPoints.Load(emitIndex * 32 + 16);
-                        _746.Tangent = EmitPoints.Load(emitIndex * 32 + 20);
-                        _746.UV = EmitPoints.Load(emitIndex * 32 + 24);
-                        _746.VColor = EmitPoints.Load(emitIndex * 32 + 28);
-                        EmitPoint emitPoint;
-                        emitPoint.Position = _746.Position;
-                        emitPoint.Normal = _746.Normal;
-                        emitPoint.Binormal = _746.Binormal;
-                        emitPoint.Tangent = _746.Tangent;
-                        emitPoint.UV = _746.UV;
-                        emitPoint.VColor = _746.VColor;
-                        position += (emitPoint.Position * modelSize);
+                        uint emitIndex = _752 % _514_emitter.EmitPointCount;
+                        float3 emitPosition = asfloat(EmitPoints.Load3(emitIndex * 32 + 0));
+                        if (_651_constants.CoordinateReversed != 0u)
+                        {
+                            emitPosition.z = -emitPosition.z;
+                        }
+                        position += (emitPosition * modelSize);
                         if (_536_paramData.EmitRotationApplied != 0u)
                         {
-                            uint param_12 = emitPoint.Normal;
+                            uint param_12 = EmitPoints.Load(emitIndex * 32 + 12);
                             float3 emitNormal = UnpackNormalizedFloat3(param_12);
-                            uint param_13 = emitPoint.Binormal;
+                            uint param_13 = EmitPoints.Load(emitIndex * 32 + 16);
                             float3 emitBinormal = UnpackNormalizedFloat3(param_13);
-                            uint param_14 = emitPoint.Tangent;
+                            uint param_14 = EmitPoints.Load(emitIndex * 32 + 20);
                             float3 emitTangent = UnpackNormalizedFloat3(param_14);
                             direction = mul(direction, float3x3(float3(normalize(emitTangent)), float3(normalize(emitBinormal)), float3(normalize(emitNormal))));
                         }
@@ -343,6 +355,10 @@ void _main(uint3 dtid)
                 }
             }
         }
+    }
+    if (_651_constants.CoordinateReversed != 0u)
+    {
+        direction.z = -direction.z;
     }
     position = mul(float4(position, 1.0f), _514_emitter.Transform);
     direction = mul(float4(direction, 0.0f), _514_emitter.Transform);

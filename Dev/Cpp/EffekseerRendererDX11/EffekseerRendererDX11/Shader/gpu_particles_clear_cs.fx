@@ -2,9 +2,13 @@
 
 cbuffer cb0 : register(b0)
 {
+    ComputeConstants constants;
+};
+cbuffer cb1 : register(b1)
+{
     ParameterData paramData;
 }
-cbuffer cb1 : register(b1)
+cbuffer cb2 : register(b2)
 {
     EmitterData emitter;
 }
