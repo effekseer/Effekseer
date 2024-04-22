@@ -232,11 +232,13 @@ namespace Effekseer.GUI.BindableComponent
 									ChangeColumns2WithLabelWidth();
 
 									currentIndent = item.Children.Update(currentIndent);
+
+									// Avoid Tree node bug
+									Manager.NativeManager.EndTable();
+									Manager.NativeManager.TreePop();
 								}
-								else
-								{
-									ChangeColumns2WithLabelWidth();
-								}
+
+								ChangeColumns2WithLabelWidth();
 							}
 							else
 							{
