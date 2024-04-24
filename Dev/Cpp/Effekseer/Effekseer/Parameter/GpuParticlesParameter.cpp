@@ -87,10 +87,10 @@ GpuParticles::ParamSet LoadGpuParticlesParameter(uint8_t*& pos, int32_t version,
 
 	paramSet.Scale.Type = (ScaleType)Read<uint8_t>(pos);
 
-	auto ReadScale4 = [](uint8_t*& pos, float magnification)
+	auto ReadScale4 = [](uint8_t*& pos)
 	{
-		float s0 = Read<float>(pos) * magnification;
-		float s1 = Read<float>(pos) * magnification;
+		float s0 = Read<float>(pos);
+		float s1 = Read<float>(pos);
 		float3 xyz0 = Read<float3>(pos);
 		float3 xyz1 = Read<float3>(pos);
 		return std::array<float4, 2>{ float4(xyz0.x, xyz0.y, xyz0.z, s0), float4(xyz1.x, xyz1.y, xyz1.z, s1) };
@@ -98,11 +98,11 @@ GpuParticles::ParamSet LoadGpuParticlesParameter(uint8_t*& pos, int32_t version,
 	switch (paramSet.Scale.Type)
 	{
 	case ScaleType::Fixed:
-		paramSet.Scale.Fixed.Scale = ReadScale4(pos, magnification);
+		paramSet.Scale.Fixed.Scale = ReadScale4(pos);
 		break;
 	case ScaleType::Easing:
-		paramSet.Scale.Easing.Start = ReadScale4(pos, magnification);
-		paramSet.Scale.Easing.End = ReadScale4(pos, magnification);
+		paramSet.Scale.Easing.Start = ReadScale4(pos);
+		paramSet.Scale.Easing.End = ReadScale4(pos);
 		paramSet.Scale.Easing.Speed = Read<float3>(pos);
 		break;
 	default:
@@ -126,7 +126,7 @@ GpuParticles::ParamSet LoadGpuParticlesParameter(uint8_t*& pos, int32_t version,
 
 	paramSet.RenderShape.Type = (RenderShapeT)Read<uint8_t>(pos);
 	paramSet.RenderShape.Data = Read<uint32_t>(pos);
-	paramSet.RenderShape.Size = Read<float>(pos);
+	paramSet.RenderShape.Size = Read<float>(pos) * magnification;
 
 	paramSet.RenderColor.ColorInherit = (BindType)Read<uint8_t>(pos);
 	paramSet.RenderColor.ColorAllType = (ColorParamType)Read<uint8_t>(pos);
