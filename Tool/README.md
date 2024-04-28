@@ -15,6 +15,8 @@ fbxsdk/{os}/lib/
 
 ```
 
+Current Effekseer uses FBX SDK 2020.2.1.0
+
 ## Build
 
 ### Windows
