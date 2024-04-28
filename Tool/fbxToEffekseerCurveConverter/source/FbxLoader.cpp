@@ -10,7 +10,7 @@ void FbxLoader::LoadNodeInfo(FbxNode* _pNode, FbxNodeInfo* _pNodeInfo)
 
 	// Load Child
 	_pNodeInfo->mChildCount = _pNode->GetChildCount();
-	
+
 	for (int i = 0; i < _pNodeInfo->mChildCount; i++)
 	{
 		FbxNodeInfo* lNode = new FbxNodeInfo();
@@ -103,7 +103,6 @@ void FbxLoader::LoadAttribute(FbxNode* _pNode, FbxNodeInfo* _pNodeInfo)
 		_pNodeInfo->mAttributeID = -1;
 		_pNodeInfo->mAttributeType = "eNull";
 	}
-
 }
 
 void FbxLoader::LoadNurbsCurve(FbxNode* _pNode, FbxNodeInfo* _pNodeInfo)
@@ -141,7 +140,7 @@ void FbxLoader::LoadNurbsCurve(FbxNode* _pNode, FbxNodeInfo* _pNodeInfo)
 	pNurbsCurve->mDimension = pFbxNurbs->GetDimension();
 }
 
-FbxInfo* FbxLoader::Imoport(std::string _Filepath)
+std::shared_ptr<FbxInfo> FbxLoader::Imoport(const std::string& file_path)
 {
 	// Import Scene
 	FbxManager* pManager = FbxManager::Create();
@@ -149,7 +148,7 @@ FbxInfo* FbxLoader::Imoport(std::string _Filepath)
 	pManager->SetIOSettings(pIOS);
 
 	FbxImporter* pImpoter = FbxImporter::Create(pManager, "");
-	if (!pImpoter->Initialize(_Filepath.c_str(), -1, pManager->GetIOSettings()))
+	if (!pImpoter->Initialize(file_path.c_str(), -1, pManager->GetIOSettings()))
 	{
 		printf("Call to FbxImporter::Initialize() failed.\n");
 		printf("Error returned: %s\n\n", pImpoter->GetStatus().GetErrorString());
@@ -160,19 +159,19 @@ FbxInfo* FbxLoader::Imoport(std::string _Filepath)
 	pImpoter->Import(pScene);
 	pImpoter->Destroy();
 
-	FbxInfo* lFbxInfo = new FbxInfo();
+	auto fbx_info = std::make_shared<FbxInfo>();
 
-	lFbxInfo->mNodeCount = pScene->GetNodeCount();
+	fbx_info->mNodeCount = pScene->GetNodeCount();
 
-	for (int i = 0; i < lFbxInfo->mNodeCount; i++)
+	for (int i = 0; i < fbx_info->mNodeCount; i++)
 	{
-		FbxNodeInfo* lNode = new FbxNodeInfo();
-		lFbxInfo->mNodes.push_back(lNode);
+		auto node = std::make_shared<FbxNodeInfo>();
+		fbx_info->mNodes.push_back(node);
 
-		LoadNodeInfo(pScene->GetNode(i), lNode);
+		LoadNodeInfo(pScene->GetNode(i), node.get());
 	}
 
 	pManager->Destroy();
 
-	return lFbxInfo;
+	return fbx_info;
 }

@@ -1,5 +1,6 @@
 #include "FbxCurveConverter.h"
 #include <fstream>
+#include <iostream>
 
 FbxNurbsCurveData* FbxCurveConverter::SearchNurbsCurve(const FbxNodeInfo& _pNodeInfo)
 {
@@ -18,7 +19,7 @@ FbxNurbsCurveData* FbxCurveConverter::SearchNurbsCurve(const FbxNodeInfo& _pNode
 	return nullptr;
 }
 
-bool FbxCurveConverter::Export(const std::string _Filepath, const FbxInfo& _pFbxeInfo)
+bool FbxCurveConverter::Export(const std::string& file_path, const FbxInfo& _pFbxeInfo)
 {
 	FbxNurbsCurveData* pCurve = nullptr;
 
@@ -26,7 +27,7 @@ bool FbxCurveConverter::Export(const std::string _Filepath, const FbxInfo& _pFbx
 	{
 		// search export data
 		pCurve = SearchNurbsCurve(*_pFbxeInfo.mNodes[i]);
-		
+
 		if (pCurve != nullptr)
 		{
 			break;
@@ -35,22 +36,17 @@ bool FbxCurveConverter::Export(const std::string _Filepath, const FbxInfo& _pFbx
 
 	if (pCurve == nullptr)
 	{
+		std::cout << "Error : Curve is not found" << std::endl;
+
 		return false;
 	}
-
-	// change extention
-	std::string lFilepath = _Filepath;
-	std::string::size_type lExtentionPos = lFilepath.find_last_of('.');
-
-	lFilepath = lFilepath.substr(0, lExtentionPos);
-	lFilepath.append(".efkcurve");
 
 	//
 	//   Start Export
 	//
 
 	// create export file
-	std::ofstream ofs(lFilepath, std::ios::out | std::ios::binary);
+	std::ofstream ofs(file_path, std::ios::out | std::ios::binary);
 
 	// export version
 	int version = ConverterVersion;

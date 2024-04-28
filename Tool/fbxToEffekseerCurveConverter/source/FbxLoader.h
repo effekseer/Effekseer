@@ -4,6 +4,7 @@
 #include <fbxsdk.h>
 #include <vector>
 #include <string>
+#include <memory>
 
 struct FbxNurbsCurveData
 {
@@ -49,15 +50,7 @@ struct FbxNodeInfo
 struct FbxInfo
 {
 	int mNodeCount;
-	std::vector<FbxNodeInfo*> mNodes;
-
-	~FbxInfo()
-	{
-		for (auto it : mNodes)
-		{
-			delete it;
-		}
-	}
+	std::vector<std::shared_ptr<FbxNodeInfo>> mNodes;
 };
 
 class FbxLoader
@@ -69,5 +62,5 @@ private:
 	static void LoadNurbsCurve(FbxNode* _pNode, FbxNodeInfo* _pNodeInfo);
 
 public:
-	static FbxInfo* Imoport(std::string _Filepath);
+	static std::shared_ptr<FbxInfo> Imoport(const std::string& file_path);
 };
