@@ -3,6 +3,7 @@
 #include "../SIMD/Vec2f.h"
 #include "../SIMD/Vec3f.h"
 #include "../SIMD/Vec4f.h"
+#include "../SIMD/Bridge.h"
 #include "../SIMD/Utils.h"
 #include "Model.h"
 #include "PointCacheGenerator.h"
