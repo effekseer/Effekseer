@@ -38,6 +38,7 @@ struct alignas(16) Float4
 	Float4(__m128 rhs) { s = rhs; }
 	Float4(__m128i rhs) { s = _mm_castsi128_ps(rhs); }
 	Float4(float x, float y, float z, float w) { s = _mm_setr_ps(x, y, z, w); }
+	Float4(const std::array<float, 4>& v) { *this = Load4(&v); }
 	Float4(float i) { s = _mm_set_ps1(i); }
 
 	float GetX() const { return _mm_cvtss_f32(s); }

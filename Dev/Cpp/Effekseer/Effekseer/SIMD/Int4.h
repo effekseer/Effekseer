@@ -3,6 +3,7 @@
 #define __EFFEKSEER_SIMD_INT4_H__
 
 #include <cstdint>
+#include <array>
 #include "Base.h"
 
 #if defined(EFK_SIMD_NEON)

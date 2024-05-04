@@ -31,6 +31,7 @@ struct alignas(16) Int4
 	Int4() = default;
 	Int4(const Int4& rhs) = default;
 	Int4(int32_t x, int32_t y, int32_t z, int32_t w) { vi[0] = x; vi[1] = y; vi[2] = z; vi[3] = w; }
+	Int4(const std::array<int32_t, 4>& v) { *this = Load4(&v); }
 	Int4(int32_t i) { vi[0] = i; vi[1] = i; vi[2] = i; vi[3] = i; }
 
 	int32_t GetX() const { return vi[0]; }

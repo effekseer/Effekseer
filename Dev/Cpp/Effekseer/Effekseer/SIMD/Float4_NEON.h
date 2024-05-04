@@ -37,6 +37,7 @@ struct alignas(16) Float4
 	Float4(float32x4_t rhs) { s = rhs; }
 	Float4(uint32x4_t rhs) { s = vreinterpretq_f32_u32(rhs); }
 	Float4(float x, float y, float z, float w) { const float f[4] = {x, y, z, w}; s = vld1q_f32(f); }
+	Float4(const std::array<float, 4>& v) { *this = Load4(&v); }
 	Float4(float i) { s = vdupq_n_f32(i); }
 	
 	float GetX() const { return vgetq_lane_f32(s, 0); }

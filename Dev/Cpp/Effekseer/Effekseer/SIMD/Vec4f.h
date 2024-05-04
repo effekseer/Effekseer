@@ -7,6 +7,8 @@
 
 namespace Effekseer
 {
+
+struct Color;
 	
 namespace SIMD
 {
@@ -18,6 +20,8 @@ struct Vec4f
 	Vec4f() = default;
 	Vec4f(const Vec4f& vec) = default;
 	Vec4f(const Float4& vec): s(vec) {}
+	Vec4f(const std::array<float, 4>& vec): s(vec[0], vec[1], vec[2], vec[3]) {}
+	Vec4f(const Color& vec);
 
 	float GetX() const { return s.GetX(); }
 	float GetY() const { return s.GetY(); }
@@ -47,9 +51,21 @@ struct Vec4f
 		return *this;
 	}
 
+	Vec4f& operator*=(float o)
+	{
+		s *= o;
+		return *this;
+	}
+
 	Vec4f& operator/=(const Vec4f& o)
 	{
 		this->s = this->s / o.s;
+		return *this;
+	}
+
+	Vec4f& operator/=(float o)
+	{
+		s *= o;
 		return *this;
 	}
 
@@ -69,7 +85,11 @@ inline Vec4f operator-(const Vec4f& lhs, const Vec4f& rhs) { return Vec4f{lhs.s 
 
 inline Vec4f operator*(const Vec4f& lhs, const Vec4f& rhs) { return Vec4f{lhs.s * rhs.s}; }
 
+inline Vec4f operator*(const Vec4f& lhs, float rhs) { return Vec4f{lhs.s * rhs}; }
+
 inline Vec4f operator/(const Vec4f& lhs, const Vec4f& rhs) { return Vec4f{lhs.s / rhs.s}; }
+
+inline Vec4f operator/(const Vec4f& lhs, float rhs) { return Vec4f{lhs.s / rhs}; }
 
 inline bool operator==(const Vec4f& lhs, const Vec4f& rhs)
 {

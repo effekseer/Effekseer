@@ -40,6 +40,7 @@ struct alignas(16) Float4
 	Float4() = default;
 	Float4(const Float4& rhs) = default;
 	Float4(float x, float y, float z, float w) { vf[0] = x; vf[1] = y; vf[2] = z; vf[3] = w; }
+	Float4(const std::array<float, 4>& v) { *this = Load4(&v); }
 	Float4(float i) { vf[0] = i; vf[1] = i; vf[2] = i; vf[3] = i; }
 
 	float GetX() const { return vf[0]; }

@@ -64,10 +64,10 @@ void main(uint3 dtid : SV_DispatchThreadID)
             }
             position += emitPosition * modelSize;
             if (paramData.EmitRotationApplied) {
-                float3 emitNormal = UnpackNormalizedFloat3(EmitPoints[emitIndex].Normal);
-                float3 emitBinormal = UnpackNormalizedFloat3(EmitPoints[emitIndex].Binormal);
-                float3 emitTangent = UnpackNormalizedFloat3(EmitPoints[emitIndex].Tangent);
-                direction = mul(direction, float3x3(normalize(emitTangent), normalize(emitBinormal), normalize(emitNormal)));
+                float3 emitNormal = normalize(UnpackNormalizedFloat3(EmitPoints[emitIndex].Normal));
+                float3 emitTangent = normalize(UnpackNormalizedFloat3(EmitPoints[emitIndex].Tangent));
+                float3 emitBinormal = normalize(cross(emitTangent, emitNormal));
+                direction = mul(direction, float3x3(emitTangent, emitBinormal, emitNormal));
             }
         }
     }

@@ -95,11 +95,11 @@ struct TrailData
 struct EmitPoint
 {
     float3 Position;
+    uint Reserved;
     uint Normal;
-    uint Binormal;
     uint Tangent;
     uint UV;
-    uint VColor;
+    uint Color;
 };
 
 #define COORDINATE_SYSTEM_RH 0

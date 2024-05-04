@@ -76,11 +76,11 @@ struct ComputeConstants
 struct EmitPoint
 {
     vec3 Position;
+    uint Reserved;
     uint Normal;
-    uint Binormal;
     uint Tangent;
     uint UV;
-    uint VColor;
+    uint Color;
 };
 
 struct ParticleData
@@ -337,12 +337,11 @@ void _main(uvec3 dtid)
                         if (_536.paramData.EmitRotationApplied != 0u)
                         {
                             uint param_12 = EmitPoints_1._data[emitIndex].Normal;
-                            vec3 emitNormal = UnpackNormalizedFloat3(param_12);
-                            uint param_13 = EmitPoints_1._data[emitIndex].Binormal;
-                            vec3 emitBinormal = UnpackNormalizedFloat3(param_13);
-                            uint param_14 = EmitPoints_1._data[emitIndex].Tangent;
-                            vec3 emitTangent = UnpackNormalizedFloat3(param_14);
-                            direction = mat3(vec3(normalize(emitTangent)), vec3(normalize(emitBinormal)), vec3(normalize(emitNormal))) * direction;
+                            vec3 emitNormal = normalize(UnpackNormalizedFloat3(param_12));
+                            uint param_13 = EmitPoints_1._data[emitIndex].Tangent;
+                            vec3 emitTangent = normalize(UnpackNormalizedFloat3(param_13));
+                            vec3 emitBinormal = normalize(cross(emitTangent, emitNormal));
+                            direction = mat3(vec3(emitTangent), vec3(emitBinormal), vec3(emitNormal)) * direction;
                         }
                     }
                 }
@@ -369,14 +368,14 @@ void _main(uvec3 dtid)
         particle.InheritColor = _514.emitter.Color;
     }
     particle.Color = 4294967295u;
-    vec3 param_15 = position;
-    vec3 param_16 = vec3(0.0);
-    vec3 param_17 = vec3(1.0);
-    particle.Transform = TRSMatrix(param_15, param_16, param_17);
-    vec3 param_18 = direction;
-    particle.Direction = PackNormalizedFloat3(param_18);
-    vec4 param_19 = vec4(direction * speed, 0.0);
-    particle.Velocity = PackFloat4(param_19);
+    vec3 param_14 = position;
+    vec3 param_15 = vec3(0.0);
+    vec3 param_16 = vec3(1.0);
+    particle.Transform = TRSMatrix(param_14, param_15, param_16);
+    vec3 param_17 = direction;
+    particle.Direction = PackNormalizedFloat3(param_17);
+    vec4 param_18 = vec4(direction * speed, 0.0);
+    particle.Velocity = PackFloat4(param_18);
     Particles_1._data[particleID].FlagBits = particle.FlagBits;
     Particles_1._data[particleID].Seed = particle.Seed;
     Particles_1._data[particleID].LifeAge = particle.LifeAge;

@@ -2,6 +2,7 @@
 #include "../Effekseer.InternalStruct.h"
 #include "../Effekseer.Vector2D.h"
 #include "../Effekseer.Vector3D.h"
+#include "../Effekseer.Color.h"
 #include "Vec2f.h"
 #include "Vec3f.h"
 #include "Vec4f.h"
@@ -35,8 +36,8 @@ Vec3f::Vec3f(const Vector3D& vec)
 {
 }
 
-Vec3f::Vec3f(const std::array<float, 3>& vec)
-	: s(vec[0], vec[1], vec[2], 0.0f)
+Vec4f::Vec4f(const Color& vec)
+	: s(vec.R / 255.0f, vec.G / 255.0f, vec.B / 255.0f, vec.A / 255.0f)
 {
 }
 

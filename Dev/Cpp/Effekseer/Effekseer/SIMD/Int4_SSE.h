@@ -27,6 +27,7 @@ struct alignas(16) Int4
 	Int4(__m128i rhs) { s = rhs; }
 	Int4(__m128 rhs) { s = _mm_castps_si128(rhs); }
 	Int4(int32_t x, int32_t y, int32_t z, int32_t w) { s = _mm_setr_epi32((int)x, (int)y, (int)z, (int)w); }
+	Int4(const std::array<int32_t, 4>& v) { *this = Load4(&v); }
 	Int4(int32_t i) { s = _mm_set1_epi32((int)i); }
 
 	int32_t GetX() const { return _mm_cvtsi128_si32(s); }

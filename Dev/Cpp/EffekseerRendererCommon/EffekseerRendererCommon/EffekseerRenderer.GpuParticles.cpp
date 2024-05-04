@@ -2,6 +2,7 @@
 #include "EffekseerRenderer.CommonUtils.h"
 #include "EffekseerRenderer.Renderer_Impl.h"
 #include "../Effekseer/Effekseer/Noise/CurlNoise.h"
+#include "../Effekseer/Effekseer/Model/PointCacheGenerator.h"
 
 namespace EffekseerRenderer
 {
@@ -12,50 +13,6 @@ namespace
 inline constexpr uint32_t RoundUp(uint32_t x, uint32_t unit)
 {
 	return (x + unit - 1) / unit * unit;
-}
-
-inline uint32_t PackNormal(GpuParticles::float3 v)
-{
-	uint32_t x = std::clamp(uint32_t((v.x + 1.0f) * 0.5f * 1023.0f), 0u, 1023u);
-	uint32_t y = std::clamp(uint32_t((v.y + 1.0f) * 0.5f * 1023.0f), 0u, 1023u);
-	uint32_t z = std::clamp(uint32_t((v.z + 1.0f) * 0.5f * 1023.0f), 0u, 1023u);
-	return x | (y << 10) | (z << 20);
-}
-
-inline uint32_t PackUV(GpuParticles::float2 v)
-{
-	uint32_t x = std::clamp(uint32_t(v.x * 65535.0f), 0u, 65535u);
-	uint32_t y = std::clamp(uint32_t(v.y * 65535.0f), 0u, 65535u);
-	return x | (y << 16);
-}
-
-inline uint32_t PackColor(GpuParticles::float4 v)
-{
-	uint32_t x = std::clamp(uint32_t(v.x * 255.0f), 0u, 255u);
-	uint32_t y = std::clamp(uint32_t(v.y * 255.0f), 0u, 255u);
-	uint32_t z = std::clamp(uint32_t(v.y * 255.0f), 0u, 255u);
-	uint32_t w = std::clamp(uint32_t(v.y * 255.0f), 0u, 255u);
-	return x | (y << 8) | (z << 16) | (w << 24);
-}
-
-struct Random {
-	std::mt19937 engine;
-	std::uniform_real_distribution<float> dist;
-	
-	Random(uint32_t seed): engine(seed), dist(0.0f, 1.0f) {
-	}
-
-	float operator()() {
-		return dist(engine);
-	}
-};
-
-template <class T>
-T RandomTriangle(Random& random, T a, T b, T c) {
-	float u = random(), v = random();
-	float t = std::min(u, v), s = std::max(u, v);
-	float ma = t, mb = 1.0f - s, mc = s - t;
-	return a * ma + b * mb + c * mc;
 }
 
 const Effekseer::Vector3D VEC_UP = {0.0f, 1.0f, 0.0f};
@@ -107,82 +64,7 @@ Effekseer::ModelRef CreateTrailModel()
 	return Effekseer::MakeRefPtr<Effekseer::Model>(vertexes, faces);
 }
 
-std::vector<GpuParticles::EmitPoint> GeneratePointCache(Effekseer::ModelRef model, uint32_t pointCount, uint32_t seed)
-{
-	std::vector<std::vector<float>> modelFaceAreas;
-	float totalArea = 0.0f;
-
-	int32_t frameCount = model->GetFrameCount();
-	modelFaceAreas.resize((size_t)frameCount);
-
-	for (int32_t frameIndex = 0; frameIndex < frameCount; frameIndex++)
-	{
-		auto vertexes = model->GetVertexes(frameIndex);
-		int32_t vertexCount = model->GetVertexCount(frameIndex);
-		auto faces = model->GetFaces(frameIndex);
-		int32_t faceCount = model->GetFaceCount(frameIndex);
-
-		auto& faceAreas = modelFaceAreas[frameIndex];
-		faceAreas.resize((size_t)faceCount);
-
-		for (int32_t faceIndex = 0; faceIndex < faceCount; faceIndex++)
-		{
-			auto& v0 = vertexes[faces[faceIndex].Indexes[0]];
-			auto& v1 = vertexes[faces[faceIndex].Indexes[1]];
-			auto& v2 = vertexes[faces[faceIndex].Indexes[2]];
-			float r0 = Effekseer::Vector3D::Length(v0.Position - v1.Position);
-			float r1 = Effekseer::Vector3D::Length(v1.Position - v2.Position);
-			float r2 = Effekseer::Vector3D::Length(v2.Position - v0.Position);
-			float s = (r0 + r1 + r2) / 2.0f;
-			float area = sqrt(s * (s - r0) * (s - r1) * (s - r2));
-			totalArea += area;
-			faceAreas[faceIndex] = area;
-		}
-	}
-	
-	Random random(seed);
-	std::vector<GpuParticles::EmitPoint> points;
-	points.resize(pointCount);
-
-	uint32_t pointIndex = 0;
-	float summedArea = 0.0f;
-	for (int32_t frameIndex = 0; frameIndex < frameCount; frameIndex++)
-	{
-		auto vertexes = model->GetVertexes(frameIndex);
-		int32_t vertexCount = model->GetVertexCount(frameIndex);
-		auto faces = model->GetFaces(frameIndex);
-		int32_t faceCount = model->GetFaceCount(frameIndex);
-
-		auto& faceAreas = modelFaceAreas[frameIndex];
-
-		for (int32_t faceIndex = 0; faceIndex < faceCount; faceIndex++)
-		{
-			auto& v0 = vertexes[faces[faceIndex].Indexes[0]];
-			auto& v1 = vertexes[faces[faceIndex].Indexes[1]];
-			auto& v2 = vertexes[faces[faceIndex].Indexes[2]];
-
-			summedArea += faceAreas[faceIndex];
-
-			uint32_t genCount = (uint32_t)(summedArea / totalArea * pointCount) - pointIndex;
-			for (uint32_t i = 0; i < genCount; i++)
-			{
-				GpuParticles::EmitPoint& point = points[(size_t)pointIndex + i];
-				point.Position = RandomTriangle<GpuParticles::float3>(random, v0.Position, v1.Position, v2.Position);
-				point.Normal = PackNormal(RandomTriangle<GpuParticles::float3>(random, v0.Normal, v1.Normal, v2.Normal));
-				point.Binormal = PackNormal(RandomTriangle<GpuParticles::float3>(random, v0.Binormal, v1.Binormal, v2.Binormal));
-				point.Tangent = PackNormal(RandomTriangle<GpuParticles::float3>(random, v0.Tangent, v1.Tangent, v2.Tangent));
-				point.UV = PackUV(RandomTriangle<GpuParticles::float2>(random, v0.UV, v1.UV, v2.UV));
-				point.VColor = PackColor(RandomTriangle<GpuParticles::float4>(random, v0.VColor.ToFloat4(), v1.VColor.ToFloat4(), v2.VColor.ToFloat4()));
-			}
-			pointIndex += genCount;
-		}
-	}
-
-	return points;
 }
-
-}
-
 
 GpuParticleFactory::GpuParticleFactory(Effekseer::Backend::GraphicsDeviceRef graphics)
 	: m_graphics(graphics)
@@ -524,7 +406,16 @@ void GpuParticleSystem::ComputeFrame(const Context& context)
 					{
 						if (auto model = emitter.resource->effect->GetModel(paramSet.EmitShape.Model.Index))
 						{
-							auto points = GeneratePointCache(model, 16 * 1024, 1);
+							const uint32_t PointCount = 16 * 1024;
+							Effekseer::CustomVector<GpuParticles::EmitPoint> points;
+							points.resize(PointCount);
+
+							Effekseer::PointCacheGenerator pcgen;
+							pcgen.SetSourceModel(model);
+							pcgen.SetPointBuffer(&points[0].Position, sizeof(GpuParticles::EmitPoint));
+							pcgen.SetAttributeBuffer(&points[0].Normal, sizeof(GpuParticles::EmitPoint));
+							pcgen.Generate(PointCount, 1);
+
 							emitter.resource->emitPointCount = (uint32_t)points.size();
 							emitter.resource->emitPoints = graphics->CreateComputeBuffer(
 								(int32_t)points.size(), (int32_t)sizeof(GpuParticles::EmitPoint), points.data(), true);

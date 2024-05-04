@@ -26,6 +26,7 @@ struct alignas(16) Int4
 	Int4(const Int4& rhs) = default;
 	Int4(int32x4_t rhs) { s = rhs; }
 	Int4(int32_t x, int32_t y, int32_t z, int32_t w) { const int32_t v[4] = {x, y, z, w}; s = vld1q_s32(v); }
+	Int4(const std::array<int32_t, 4>& v) { *this = Load4(&v); }
 	Int4(int32_t i) { s = vdupq_n_s32(i); }
 	
 	int32_t GetX() const { return vgetq_lane_s32(s, 0); }
