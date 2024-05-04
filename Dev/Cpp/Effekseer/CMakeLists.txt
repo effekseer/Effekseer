@@ -98,6 +98,7 @@ file(GLOB effekseer_h
     Effekseer/Model/Model.h
     Effekseer/Model/ModelLoader.h
     Effekseer/Model/SplineGenerator.h
+    Effekseer/Model/PointCacheGenerator.h
     Effekseer/Network/*.h
     Effekseer/Network/data/*.h
     Effekseer/VectorField/VectorField.h
@@ -155,6 +156,7 @@ set(effekseer_src
     Effekseer/Model/Model.cpp
     Effekseer/Model/ModelLoader.cpp
     Effekseer/Model/SplineGenerator.cpp
+    Effekseer/Model/PointCacheGenerator.cpp
     Effekseer/Network/Effekseer.Client.cpp
     Effekseer/Network/Effekseer.Server.cpp
     Effekseer/Network/Effekseer.Session.cpp
