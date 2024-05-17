@@ -775,7 +775,14 @@ void Instance::UpdateTransform(float deltaFrame)
 			SIMD::Vec3f vel = SIMD::Vec3f::Transform(prevLocalVelocity_, r) + (velocity_modify_global_ + acc_global_sum);
 
 			InstanceGlobal* instanceGlobal = m_pContainer->GetRootInstance();
-			const auto result = CollisionsFunctions::Update(collisionState_, m_pEffectNode->Collisions, pos, prevGlobalPosition_, vel, instanceGlobal->EffectGlobalMatrix.GetTranslation());
+			const auto result = CollisionsFunctions::Update(
+				collisionState_,
+				m_pEffectNode->Collisions,
+				pos,
+				prevGlobalPosition_,
+				vel,
+				instanceGlobal->EffectGlobalMatrix.GetTranslation(),
+				m_pEffectNode->GetEffect()->GetMaginification());
 			location_modify_global_ -= std::get<1>(result);
 			acc_global_sum += std::get<0>(result);
 		}

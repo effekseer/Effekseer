@@ -33,7 +33,8 @@ struct CollisionsFunctions
 		const SIMD::Vec3f& next_position_global,
 		const SIMD::Vec3f& position_global,
 		const SIMD::Vec3f& velocity_global,
-		const SIMD::Vec3f& position_center_local);
+		const SIMD::Vec3f& position_center_local,
+		float magnificationScale);
 };
 
 } // namespace Effekseer

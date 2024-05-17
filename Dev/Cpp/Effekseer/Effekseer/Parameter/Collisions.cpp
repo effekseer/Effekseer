@@ -31,7 +31,8 @@ std::tuple<SIMD::Vec3f, SIMD::Vec3f> CollisionsFunctions::Update(
 	const SIMD::Vec3f& next_position_global,
 	const SIMD::Vec3f& position_global,
 	const SIMD::Vec3f& velocity_global,
-	const SIMD::Vec3f& position_center_local)
+	const SIMD::Vec3f& position_center_local,
+	float magnification)
 {
 	if (!parameter.IsEnabled)
 	{
@@ -48,10 +49,12 @@ std::tuple<SIMD::Vec3f, SIMD::Vec3f> CollisionsFunctions::Update(
 		current_position -= position_center_local;
 	}
 
-	if (next_position.GetY() < parameter.Height && current_position.GetY() >= parameter.Height)
+	const auto height = parameter.Height * magnification;
+
+	if (next_position.GetY() < height && current_position.GetY() >= height)
 	{
 		auto diff = next_position - current_position;
-		auto pos_diff = diff * (current_position.GetY() - parameter.Height) / diff.GetY();
+		auto pos_diff = diff * (current_position.GetY() - height) / diff.GetY();
 		return {SIMD::Vec3f(0, -velocity_global.GetY() * (1.0f + parameter.Bounce), 0), pos_diff};
 	}
 	else
