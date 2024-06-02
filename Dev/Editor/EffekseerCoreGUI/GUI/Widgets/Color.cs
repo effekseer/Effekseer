@@ -9,9 +9,9 @@ namespace Effekseer.GUI.Widgets
 {
 	class Color
 	{
-		public static Inspector.InspectorGuiResult Update(object value, Inspector.InspectorGuiState state)
+		public static Inspector.InspectorWidgetResult Update(object value, Inspector.WidgetState state)
 		{
-			var ret = new Inspector.InspectorGuiResult();
+			var ret = new Inspector.InspectorWidgetResult();
 
 			if (value is Asset.Color color)
 			{

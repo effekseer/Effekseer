@@ -29,9 +29,9 @@ namespace Effekseer.GUI.Widgets
 			public CopyAndPaste<Asset.Gradient> copyAndPaste;
 		}
 
-		public static Inspector.InspectorGuiResult GuiGradient(object value, Inspector.InspectorGuiState state)
+		public static Inspector.InspectorWidgetResult GuiGradient(object value, Inspector.WidgetState state)
 		{
-			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
+			Inspector.InspectorWidgetResult ret = new Inspector.InspectorWidgetResult();
 			var isPopupShown = false;
 
 			var actualValue = (Asset.Gradient)value;

@@ -24,7 +24,7 @@ add_library(EffekseerCoreGUI
     SHARED
     ${files}
     GUI/Inspector/Inspector.cs
-    GUI/Inspector/InspectorGUI.cs
+    GUI/Inspector/InspectorWidget.cs
     GUI/Widgets/Color.cs
     GUI/Widgets/Gradient.cs
     GUI/Widgets/Texture.cs

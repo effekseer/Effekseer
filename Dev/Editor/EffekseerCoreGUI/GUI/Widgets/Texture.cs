@@ -20,9 +20,9 @@ namespace Effekseer.GUI.Widgets
 			public string ID_Reset = "###" + Manager.GetUniqueID().ToString();
 		}
 
-		public static Inspector.InspectorGuiResult Update(object value, Inspector.InspectorGuiState state)
+		public static Inspector.InspectorWidgetResult Update(object value, Inspector.WidgetState state)
 		{
-			var ret = new Inspector.InspectorGuiResult();
+			var ret = new Inspector.InspectorWidgetResult();
 
 			var guiState = state.UserData as State;
 			if (guiState == null)
@@ -221,9 +221,9 @@ namespace Effekseer.GUI.Widgets
 			}
 		}
 
-		public static Inspector.InspectorGuiResult Dropped(object value, string path, Inspector.InspectorGuiState state)
+		public static Inspector.InspectorWidgetResult Dropped(object value, string path, Inspector.WidgetState state)
 		{
-			var ret = new Inspector.InspectorGuiResult();
+			var ret = new Inspector.InspectorWidgetResult();
 
 			var guiState = state.UserData as State;
 			if (guiState == null)

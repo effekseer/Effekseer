@@ -13,9 +13,9 @@ namespace Effekseer.GUI.Widgets
 	class Widgets
 	{
 
-		public static Inspector.InspectorGuiResult GuiBool(object value, Inspector.InspectorGuiState state)
+		public static Inspector.InspectorWidgetResult GuiBool(object value, Inspector.WidgetState state)
 		{
-			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
+			Inspector.InspectorWidgetResult ret = new Inspector.InspectorWidgetResult();
 
 			if (value is bool bValue)
 			{
@@ -33,9 +33,9 @@ namespace Effekseer.GUI.Widgets
 			}
 			return ret;
 		}
-		public static Inspector.InspectorGuiResult GuiInt(object value, Inspector.InspectorGuiState state)
+		public static Inspector.InspectorWidgetResult GuiInt(object value, Inspector.WidgetState state)
 		{
-			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
+			Inspector.InspectorWidgetResult ret = new Inspector.InspectorWidgetResult();
 
 			// step
 			var stepAttribute = Functions.GetAttributeFromList<Asset.IntStepAttribute>(state.Attriubutes);
@@ -121,9 +121,9 @@ namespace Effekseer.GUI.Widgets
 		}
 
 
-		public static Inspector.InspectorGuiResult GuiIntWithInfinite(object value, Inspector.InspectorGuiState state)
+		public static Inspector.InspectorWidgetResult GuiIntWithInfinite(object value, Inspector.WidgetState state)
 		{
-			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
+			Inspector.InspectorWidgetResult ret = new Inspector.InspectorWidgetResult();
 
 			// step
 			var stepAttribute = Functions.GetAttributeFromList<Asset.IntStepAttribute>(state.Attriubutes);
@@ -168,9 +168,9 @@ namespace Effekseer.GUI.Widgets
 		}
 
 
-		public static Inspector.InspectorGuiResult GuiIntWithRange(object value, Inspector.InspectorGuiState state)
+		public static Inspector.InspectorWidgetResult GuiIntWithRange(object value, Inspector.WidgetState state)
 		{
-			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
+			Inspector.InspectorWidgetResult ret = new Inspector.InspectorWidgetResult();
 			Asset.IntWithRange intWithRange = value as Asset.IntWithRange;
 
 			// step
@@ -321,10 +321,10 @@ namespace Effekseer.GUI.Widgets
 			return ret;
 		}
 
-		public static Inspector.InspectorGuiResult GuiVector2I(object value, Inspector.InspectorGuiState state)
+		public static Inspector.InspectorWidgetResult GuiVector2I(object value, Inspector.WidgetState state)
 		{
 
-			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
+			Inspector.InspectorWidgetResult ret = new Inspector.InspectorWidgetResult();
 
 			// step
 			var stepAttribute = Functions.GetAttributeFromList<Asset.IntStepAttribute>(state.Attriubutes);
@@ -356,9 +356,9 @@ namespace Effekseer.GUI.Widgets
 			return ret;
 		}
 
-		public static Inspector.InspectorGuiResult GuiFloat(object value, Inspector.InspectorGuiState state)
+		public static Inspector.InspectorWidgetResult GuiFloat(object value, Inspector.WidgetState state)
 		{
-			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
+			Inspector.InspectorWidgetResult ret = new Inspector.InspectorWidgetResult();
 
 			// step
 			var stepAttribute = Functions.GetAttributeFromList<Asset.FloatStepAttribute>(state.Attriubutes);
@@ -443,9 +443,9 @@ namespace Effekseer.GUI.Widgets
 			return ret;
 		}
 
-		public static Inspector.InspectorGuiResult GuiFloatWithRange(object value, Inspector.InspectorGuiState state)
+		public static Inspector.InspectorWidgetResult GuiFloatWithRange(object value, Inspector.WidgetState state)
 		{
-			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
+			Inspector.InspectorWidgetResult ret = new Inspector.InspectorWidgetResult();
 			Asset.FloatWithRange floatWithRange = value as Asset.FloatWithRange;
 
 			// step
@@ -597,9 +597,9 @@ namespace Effekseer.GUI.Widgets
 			return ret;
 		}
 
-		public static Inspector.InspectorGuiResult GuiString(object value, Inspector.InspectorGuiState state)
+		public static Inspector.InspectorWidgetResult GuiString(object value, Inspector.WidgetState state)
 		{
-			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
+			Inspector.InspectorWidgetResult ret = new Inspector.InspectorWidgetResult();
 			if (value is string sValue)
 			{
 				bool isMultiline = false;
@@ -635,10 +635,10 @@ namespace Effekseer.GUI.Widgets
 
 
 
-		public static Inspector.InspectorGuiResult GuiVector2F(object value, Inspector.InspectorGuiState state)
+		public static Inspector.InspectorWidgetResult GuiVector2F(object value, Inspector.WidgetState state)
 		{
 
-			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
+			Inspector.InspectorWidgetResult ret = new Inspector.InspectorWidgetResult();
 
 			// step
 			var stepAttribute = Functions.GetAttributeFromList<Asset.FloatStepAttribute>(state.Attriubutes);
@@ -671,9 +671,9 @@ namespace Effekseer.GUI.Widgets
 		}
 
 
-		public static Inspector.InspectorGuiResult GuiVector2WithRange(object value, Inspector.InspectorGuiState state)
+		public static Inspector.InspectorWidgetResult GuiVector2WithRange(object value, Inspector.WidgetState state)
 		{
-			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
+			Inspector.InspectorWidgetResult ret = new Inspector.InspectorWidgetResult();
 
 			// step
 			var stepAttribute = Functions.GetAttributeFromList<Asset.FloatStepAttribute>(state.Attriubutes);
@@ -805,9 +805,9 @@ namespace Effekseer.GUI.Widgets
 		}
 
 
-		public static Inspector.InspectorGuiResult GuiVector3F(object value, Inspector.InspectorGuiState state)
+		public static Inspector.InspectorWidgetResult GuiVector3F(object value, Inspector.WidgetState state)
 		{
-			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
+			Inspector.InspectorWidgetResult ret = new Inspector.InspectorWidgetResult();
 
 			// step
 			var stepAttribute = Functions.GetAttributeFromList<Asset.FloatStepAttribute>(state.Attriubutes);
@@ -933,9 +933,9 @@ namespace Effekseer.GUI.Widgets
 		}
 
 
-		public static Inspector.InspectorGuiResult GuiVector3WithRange(object value, Inspector.InspectorGuiState state)
+		public static Inspector.InspectorWidgetResult GuiVector3WithRange(object value, Inspector.WidgetState state)
 		{
-			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
+			Inspector.InspectorWidgetResult ret = new Inspector.InspectorWidgetResult();
 
 			// step
 			var stepAttribute = Functions.GetAttributeFromList<Asset.FloatStepAttribute>(state.Attriubutes);
@@ -1121,9 +1121,9 @@ namespace Effekseer.GUI.Widgets
 		}
 
 
-		public static Inspector.InspectorGuiResult GuiVector4F(object value, Inspector.InspectorGuiState state)
+		public static Inspector.InspectorWidgetResult GuiVector4F(object value, Inspector.WidgetState state)
 		{
-			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
+			Inspector.InspectorWidgetResult ret = new Inspector.InspectorWidgetResult();
 
 			if (value is Vector4F vec4Value)
 			{
@@ -1222,9 +1222,9 @@ namespace Effekseer.GUI.Widgets
 		}
 
 
-		public static Inspector.InspectorGuiResult GuiEnum(object value, Inspector.InspectorGuiState state)
+		public static Inspector.InspectorWidgetResult GuiEnum(object value, Inspector.WidgetState state)
 		{
-			Inspector.InspectorGuiResult ret = new Inspector.InspectorGuiResult();
+			Inspector.InspectorWidgetResult ret = new Inspector.InspectorWidgetResult();
 
 			var enumType = value.GetType();
 			var isEnum = enumType.IsEnum;

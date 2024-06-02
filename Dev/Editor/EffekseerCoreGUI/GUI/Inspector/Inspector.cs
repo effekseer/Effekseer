@@ -74,10 +74,9 @@ namespace Effekseer.GUI.Inspector
 
 	/// <summary>
 	/// State about widget.<br/>
-	/// This can be accessed from inspector widgets.<br/>
-	/// Basically, this has data only for the current widget.
+	/// This can be accessed from inspector widgets.
 	/// </summary>
-	class InspectorGuiState
+	class WidgetState
 	{
 		public string Id { get; private set; }
 
@@ -86,7 +85,7 @@ namespace Effekseer.GUI.Inspector
 
 		public List<Attribute> Attriubutes { get; private set; }
 
-		public InspectorGuiState(string id)
+		public WidgetState(string id)
 		{
 			Id = id;
 			Attriubutes = new List<Attribute>();
@@ -95,33 +94,100 @@ namespace Effekseer.GUI.Inspector
 
 
 	/// <summary>
-	/// Information about field and subelements.
-	/// Subelements are held as a tree structure by the inspector.
+	/// Information about the target of the widget.<br/>
+	/// Subelements(ex. class, struct, collection) are held as a tree structure by the inspector.
 	/// </summary>
-	class InspectorGuiInfo
+	class WidgetInfo
 	{
-		public InspectorGuiInfo()
+		public WidgetInfo()
 		{
-			State = new InspectorGuiState("###" + Manager.GetUniqueID().ToString());
-			SubElements = new List<InspectorGuiInfo>();
+			State = new WidgetState("###" + Manager.GetUniqueID().ToString());
+			Children = new List<WidgetInfo>();
 		}
 
 		public bool isRoot = false;
 
-		public InspectorGuiState State { get; private set; }
+		// Visibility control
+		public bool IsVisibilityController { get; private set; } = false;
+		public int VisibilityControlID { get; private set; } = -1;
+		public int VisibilityControlledValue { get; private set; } = -1;
 
+		public WidgetState State { get; private set; }
+
+		// symbol of the field
 		public string Name { get; set; }
 
-		// Sub elements of gui(ex. list, class, struct)
-		public List<InspectorGuiInfo> SubElements { get; private set; }
+		// data from attributes
+		public string Key { get; private set; } = string.Empty;
+		public string Description { get; private set; } = string.Empty;
+		public bool EnableDescription { get; private set; } = true;
+		public string Label { get; private set; } = string.Empty;
+		public int VisibilityControllID { get; set; } = -1;
+
+		// Subelements of widget(ex. list, class, collection)
+		public List<WidgetInfo> Children { get; private set; }
+
+		public void SetupFromAttributes()
+		{
+			// KeyAttribute
+			{
+				Key = string.Empty;
+				Description = string.Empty;
+				Label = string.Empty;
+				var attr = (KeyAttribute)State.Attriubutes.FirstOrDefault(_ => _ is KeyAttribute);
+				if (attr != null)
+				{
+					Key = attr.key + "_Name";
+
+					if (MultiLanguageTextProvider.HasKey(Key))
+					{
+						Label = MultiLanguageTextProvider.GetText(Key);
+					}
+					else if (MultiLanguageTextProvider.HasKey(attr.key))
+					{
+						EnableDescription = false;
+						Label = MultiLanguageTextProvider.GetText(attr.key);
+					}
+
+					Key = attr.key + "_Desc";
+					if (MultiLanguageTextProvider.HasKey(Key))
+					{
+						Description = MultiLanguageTextProvider.GetText(Key);
+					}
+					else if (MultiLanguageTextProvider.HasKey(attr.key))
+					{
+						//description = MultiLanguageTextProvider.HasKey(attr.key);
+					}
+				}
+			}
+			// VisiblityControllerAttributes
+			IsVisibilityController = false;
+			{
+				var attr = (Asset.VisiblityControllerAttribute)State.Attriubutes.FirstOrDefault(_ => _ is Asset.VisiblityControllerAttribute);
+				if (attr != null)
+				{
+					IsVisibilityController = true;
+					VisibilityControlID = attr.ID;
+				}
+			}
+			// VisiblityControlledAttributes
+			{
+				VisibilityControllID = -1;
+				var attr = (Asset.VisiblityControlledAttribute)State.Attriubutes.FirstOrDefault(_ => _ is Asset.VisiblityControlledAttribute);
+				if (attr != null)
+				{
+					VisibilityControllID = attr.ID;
+				}
+			}
+		}
 	}
 
 	public class Inspector
 	{
 		// Function to process the widgets
-		private readonly InspectorGuiDictionary GuiDictionary = new InspectorGuiDictionary();
+		private readonly InspectorWidgetDictionary WidgetDictionary = new InspectorWidgetDictionary();
 
-		private InspectorGuiInfo RootGuiInfo = new InspectorGuiInfo();
+		private WidgetInfo RootWidgetInfo = new WidgetInfo();
 
 		private object LastTarget = null;
 
@@ -129,7 +195,7 @@ namespace Effekseer.GUI.Inspector
 
 		public Inspector()
 		{
-			RootGuiInfo.isRoot = true;
+			RootWidgetInfo.isRoot = true;
 		}
 
 		/// <summary>
@@ -157,14 +223,14 @@ namespace Effekseer.GUI.Inspector
 
 
 		/// <summary>
-		/// Generate InspectorGuiInfo(recursively)
+		/// Generate WidgetInfo(recursively)
 		/// </summary>
 		/// <param name="targetValue">Instance that generate info</param>
 		/// <param name="targetFieldInfo">FieldInfo that generate info</param>
 		/// <returns></returns>
-		InspectorGuiInfo GenerateInspectorGuiInfo(object targetValue, FieldInfo targetFieldInfo)
+		WidgetInfo GenerateWidgetInfo(object targetValue, FieldInfo targetFieldInfo)
 		{
-			InspectorGuiInfo info = new InspectorGuiInfo();
+			WidgetInfo info = new WidgetInfo();
 
 			var targetType = targetFieldInfo.FieldType;
 			info.Name = targetFieldInfo.Name + "(type: " + targetType.Name + ")";
@@ -174,11 +240,12 @@ namespace Effekseer.GUI.Inspector
 			{
 				info.State.Attriubutes.Add(attr);
 			}
+			info.SetupFromAttributes();
 
-			bool hasGuiFunction =
-						targetType.IsEnum ||	// Enum is not supported by HasFunction
-						GuiDictionary.HasFunction(targetType);
-			if (hasGuiFunction)
+			bool hasWidgetiFunction =
+						targetType.IsEnum ||    // Enum is not supported by HasFunction
+						WidgetDictionary.HasFunction(targetType);
+			if (hasWidgetiFunction)
 			{
 				return info;
 			}
@@ -193,23 +260,23 @@ namespace Effekseer.GUI.Inspector
 					UpdateVisiblityControllers(targetValue);
 				}
 
-				info.SubElements.Add(GenerateInspectorGuiInfo(
-					fieldInTgt != null ? fieldInTgt.GetValue(targetValue) : null, 
+				info.Children.Add(GenerateWidgetInfo(
+					fieldInTgt != null ? fieldInTgt.GetValue(targetValue) : null,
 					fieldInTgt));
 			}
 			return info;
 		}
 
 		/// <summary>
-		/// Generate fieldGuiInfo recursively for each field.<br/>
-		/// Existing fieldGuiInfo will be cleared.
+		/// Generate fieldWidgetInfo recursively for each field.<br/>
+		/// Existing fieldWidgetInfo will be cleared.
 		/// </summary>
 		/// <param name="target">Target node or target object</param>
 		/// <param name="targetType">Type of field in target. If this is null, all fields in target will be generated.</param>
-		private void InitializeFieldGuiInfo(object target, Type targetType = null)
+		private void InitializeWidgetInfo(object target, Type targetType = null)
 		{
-			RootGuiInfo.SubElements.Clear();
-			RootGuiInfo.State.Attriubutes.Clear();
+			RootWidgetInfo.Children.Clear();
+			RootWidgetInfo.State.Attriubutes.Clear();
 
 			var fields = target.GetType().GetFields();
 			foreach (var field in fields)
@@ -222,7 +289,7 @@ namespace Effekseer.GUI.Inspector
 				{
 					UpdateVisiblityControllers(targetValue);
 				}
-				RootGuiInfo.SubElements.Add(GenerateInspectorGuiInfo(targetValue, field));
+				RootWidgetInfo.Children.Add(GenerateWidgetInfo(targetValue, field));
 			}
 		}
 
@@ -242,8 +309,7 @@ namespace Effekseer.GUI.Inspector
 		{
 			var regionAvail = Manager.NativeManager.GetContentRegionAvail();
 			if (Manager.NativeManager.BeginTable("Table", 2,
-				swig.TableFlags.BordersInnerV |
-				swig.TableFlags.SizingFixedFit | swig.TableFlags.SizingStretchProp |
+				swig.TableFlags.BordersInnerV | swig.TableFlags.SizingFixedFit | swig.TableFlags.SizingStretchProp |
 				swig.TableFlags.NoSavedSettings))
 			{
 				// Set columns width
@@ -264,24 +330,24 @@ namespace Effekseer.GUI.Inspector
 
 
 		/// <summary>
-		/// Update the inspector gui recursively for each field.
+		/// Update labels and widgets recursively for each field.
 		/// </summary>
 		/// <param name="context">EditorContext</param>
 		/// <param name="targetNode">Node that is being inspected.<br/>
 		/// If it's null, also possible to inspect objects that do not belong to Node.</param>
 		/// <param name="targetObject">Object to be inspected. Processed in this function.</param>
 		/// <param name="elementGetterSetterArray"></param>
-		/// <param name="guiInfo">GuiInfo about targetObject</param>
-		private void UpdateObjectGuis(
-			Asset.EffectAssetEditorContext context, 
-			Asset.Node targetNode, object targetObject, 
-			PartsTreeSystem.ElementGetterSetterArray elementGetterSetterArray, InspectorGuiInfo guiInfo)
+		/// <param name="widgetInfo">Widget info about targetObject</param>
+		private void UpdateParameterGrid(
+			Asset.EffectAssetEditorContext context,
+			Asset.Node targetNode, object targetObject,
+			PartsTreeSystem.ElementGetterSetterArray elementGetterSetterArray, WidgetInfo widgetInfo)
 		{
 			var field = elementGetterSetterArray.FieldInfos.Last();
 
 			bool isValueChanged = false;
 
-			
+
 			if (targetNode != null)
 			{
 				var prop = context.EditorProperty.Properties.FirstOrDefault(_ => _.InstanceID == targetNode?.InstanceID);
@@ -306,55 +372,20 @@ namespace Effekseer.GUI.Inspector
 				valueType = valueType.GetGenericArguments()[0];
 			}
 
-			var guiFunctionKey = valueType;
+			var widgetFunctionKey = valueType;
 
 			// when valueType is enum, the key is System.Enum 
 			if (valueType.IsEnum)
 			{
-				guiFunctionKey = typeof(System.Enum);
+				widgetFunctionKey = typeof(System.Enum);
 			}
 
 
-			// key attrs
-			string description = string.Empty;
-			bool enableDescription = true;
-			string labelStr = string.Empty;
-			{
-				var attr = (KeyAttribute)field.GetCustomAttribute(typeof(KeyAttribute));
-				if (attr != null)
-				{
-					string key = attr.key + "_Name";
-
-					if (MultiLanguageTextProvider.HasKey(key))
-					{
-						labelStr = MultiLanguageTextProvider.GetText(key);
-					}
-					else if (MultiLanguageTextProvider.HasKey(attr.key))
-					{
-						enableDescription = false;
-						labelStr = MultiLanguageTextProvider.GetText(attr.key);
-					}
-
-					key = attr.key + "_Desc";
-					if (MultiLanguageTextProvider.HasKey(key))
-					{
-						description = MultiLanguageTextProvider.GetText(key);
-					}
-					else if (MultiLanguageTextProvider.HasKey(attr.key))
-					{
-						//description = MultiLanguageTextProvider.HasKey(attr.key);
-					}
-				}
-			}
-			// VisiblityControllerAttributes
-			bool isVisibilityController = false;
-			{
-				var attr = (Asset.VisiblityControllerAttribute)field.GetCustomAttribute(typeof(Asset.VisiblityControllerAttribute));
-				if (attr != null)
-				{
-					isVisibilityController = true;
-				}
-			}
+			// data in attributes
+			string description = widgetInfo.Description;
+			bool enableDescription = widgetInfo.EnableDescription;
+			string labelStr = widgetInfo.Label;
+			bool isVisibilityController = widgetInfo.IsVisibilityController;
 			// VisiblityControlledAttributes
 			{
 				bool isVisible = true;
@@ -387,7 +418,7 @@ namespace Effekseer.GUI.Inspector
 
 
 			// update subfields
-			if (!GuiDictionary.HasFunction(guiFunctionKey))
+			if (!WidgetDictionary.HasFunction(widgetFunctionKey))
 			{
 				// Toggle mode
 				if (value is Asset.IToggleMode toggleMode)
@@ -395,8 +426,8 @@ namespace Effekseer.GUI.Inspector
 					// End the current table for display a toggle
 					EndTable();
 
-					var toggleId = "###" + guiInfo.State.Id + "_toggle";
-					var collapsingHeaderLabel = labelStr + "###" + guiInfo.State.Id + "_label";
+					var toggleId = "###" + widgetInfo.State.Id + "_toggle";
+					var collapsingHeaderLabel = labelStr + "###" + widgetInfo.State.Id + "_label";
 					bool enabled = toggleMode.Enabled;
 					bool opened = Manager.NativeManager.CollapsingHeaderWithToggle(collapsingHeaderLabel, swig.TreeNodeFlags.None, toggleId, ref enabled);
 
@@ -426,11 +457,11 @@ namespace Effekseer.GUI.Inspector
 				int i = 0;
 				foreach (var f in subFields)
 				{
-					if (value != null && !isList && guiInfo.SubElements.Count > i)
+					if (value != null && !isList && widgetInfo.Children.Count > i)
 					{
 						UpdateVisiblityControllers(value);
 						elementGetterSetterArray.Push(value, f);
-						UpdateObjectGuis(context, targetNode, targetObject, elementGetterSetterArray, guiInfo.SubElements[i]);
+						UpdateParameterGrid(context, targetNode, targetObject, elementGetterSetterArray, widgetInfo.Children[i]);
 						elementGetterSetterArray.Pop();
 					}
 					++i;
@@ -440,19 +471,19 @@ namespace Effekseer.GUI.Inspector
 			}
 
 
+			bool isShowHorizonalSeparator = isVisibilityController;
+
 			Manager.NativeManager.TableNextRow();
 
 			// name column(left side of table)
 			Manager.NativeManager.TableNextColumn();
+			// for debugging. this should be delete.
+			//name = (isValueChanged ? "*" : "") + name + " " + guiInfo.Id;
 
-			bool isShowHorizonalSeparator = isVisibilityController;
 			if (isShowHorizonalSeparator)
 			{
 				Manager.NativeManager.Separator();
 			}
-
-			// for debugging. this should be delete.
-			//name = (isValueChanged ? "*" : "") + name + " " + guiInfo.Id;
 
 			Manager.NativeManager.Text(labelStr);
 
@@ -477,7 +508,7 @@ namespace Effekseer.GUI.Inspector
 			}
 
 			// TODO : ignore "public List<Node> Children = new List<Node>();" node member.
-			if (GuiDictionary.HasFunction(guiFunctionKey))
+			if (WidgetDictionary.HasFunction(widgetFunctionKey))
 			{
 				if (isValueChanged)
 				{
@@ -485,21 +516,21 @@ namespace Effekseer.GUI.Inspector
 					Manager.NativeManager.PushStyleVar(swig.ImGuiStyleVarFlags.FrameBorderSize, 1);
 				}
 
-				var func = GuiDictionary.GetFunction(guiFunctionKey);
+				var func = WidgetDictionary.GetFunction(widgetFunctionKey);
 
 				if (isList)
 				{
 					IList arrayValue = (IList)value;
 
-					// generate/regenerate subeElements when there are not enougth GuiIDs.
-					// generate it here because the number of elements can't read in GenerateFieldGuiIds
-					if (arrayValue.Count > guiInfo.SubElements.Count())
+					// generate/regenerate subeElements when there are not enougth WidgetIDs.
+					// generate it here because the number of elements can't read in GenerateFieldWidgetIds
+					if (arrayValue.Count > widgetInfo.Children.Count())
 					{
-						guiInfo.SubElements.Clear();
+						widgetInfo.Children.Clear();
 
 						foreach (var v in arrayValue)
 						{
-							guiInfo.SubElements.Add(new InspectorGuiInfo());
+							widgetInfo.Children.Add(new WidgetInfo());
 						}
 					}
 
@@ -508,7 +539,7 @@ namespace Effekseer.GUI.Inspector
 					{
 						var v = arrayValue[j];
 						elementGetterSetterArray.Push(arrayValue, j);
-						var result = func(v, guiInfo.SubElements[j].State);
+						var result = func(v, widgetInfo.Children[j].State);
 						if (result.isEdited)
 						{
 							if (valueType.IsValueType)
@@ -537,7 +568,7 @@ namespace Effekseer.GUI.Inspector
 				}
 				else
 				{
-					var result = func(value, guiInfo.State);
+					var result = func(value, widgetInfo.State);
 					if (result.isEdited)
 					{
 						elementGetterSetterArray.SetValue(result.value);
@@ -578,10 +609,10 @@ namespace Effekseer.GUI.Inspector
 		/// <param name="context"></param>
 		/// <param name="targetObject"></param>
 		/// <param name="elementGetterSetterArray"></param>
-		/// <param name="guiInfo"></param>
+		/// <param name="widgetInfo"></param>
 		/// <returns></returns>
-		private bool DropObjectGuis(string path, Asset.EffectAssetEditorContext context
-			, object targetObject, PartsTreeSystem.ElementGetterSetterArray elementGetterSetterArray, InspectorGuiInfo guiInfo)
+		private bool DropParameterGrid(string path, Asset.EffectAssetEditorContext context
+			, object targetObject, PartsTreeSystem.ElementGetterSetterArray elementGetterSetterArray, WidgetInfo widgetInfo)
 		{
 			var field = elementGetterSetterArray.FieldInfos.Last();
 			var value = elementGetterSetterArray.GetValue();
@@ -598,12 +629,12 @@ namespace Effekseer.GUI.Inspector
 				valueType = valueType.GetGenericArguments()[0];
 			}
 
-			var guiFunctionKey = valueType;
+			var widgetFunctionKey = valueType;
 
 			// when valueType is enum, the key is System.Enum 
 			if (valueType.IsEnum)
 			{
-				guiFunctionKey = typeof(System.Enum);
+				widgetFunctionKey = typeof(System.Enum);
 			}
 
 			// VisiblityControlledAttributes
@@ -625,19 +656,19 @@ namespace Effekseer.GUI.Inspector
 			}
 
 			// update subfields
-			if (!(GuiDictionary.HasFunction(guiFunctionKey)))
+			if (!(WidgetDictionary.HasFunction(widgetFunctionKey)))
 			{
 				var subFields = valueType.GetFields();
 				int i = 0;
 				bool edited = false;
 				foreach (var f in subFields)
 				{
-					if (value != null && !isList && guiInfo.SubElements.Count > i)
-					//if (!isList && guiInfo.SubElements.Count > i)
+					if (value != null && !isList && widgetInfo.Children.Count > i)
+					//if (!isList && widgetInfo.SubElements.Count > i)
 					{
 						UpdateVisiblityControllers(value);
 						elementGetterSetterArray.Push(value, f);
-						edited = DropObjectGuis(path, context, targetObject, elementGetterSetterArray, guiInfo.SubElements[i]);
+						edited = DropParameterGrid(path, context, targetObject, elementGetterSetterArray, widgetInfo.Children[i]);
 						elementGetterSetterArray.Pop();
 					}
 					++i;
@@ -646,23 +677,23 @@ namespace Effekseer.GUI.Inspector
 				return edited;
 			}
 
-			if (GuiDictionary.HasDropFunction(guiFunctionKey))
+			if (WidgetDictionary.HasDropFunction(widgetFunctionKey))
 			{
-				var func = GuiDictionary.GetDropFunction(guiFunctionKey);
+				var func = WidgetDictionary.GetDropFunction(widgetFunctionKey);
 
 				if (isList)
 				{
 					IList arrayValue = (IList)value;
 
-					// generate/regenerate subElements when there are not enougth GuiIDs.
-					// generate it here because the number of elements can't read in GenerateFieldGuiIds
-					if (arrayValue.Count > guiInfo.SubElements.Count())
+					// generate/regenerate subElements when there are not enougth WidgetIDs.
+					// generate it here because the number of elements can't read in GenerateWidgetIds
+					if (arrayValue.Count > widgetInfo.Children.Count())
 					{
-						guiInfo.SubElements.Clear();
+						widgetInfo.Children.Clear();
 
 						foreach (var v in arrayValue)
 						{
-							guiInfo.SubElements.Add(new InspectorGuiInfo());
+							widgetInfo.Children.Add(new WidgetInfo());
 						}
 					}
 
@@ -672,7 +703,7 @@ namespace Effekseer.GUI.Inspector
 						var v = arrayValue[j];
 
 						elementGetterSetterArray.Push(arrayValue, j);
-						var result = func(v, path, guiInfo.SubElements[j].State);
+						var result = func(v, path, widgetInfo.Children[j].State);
 						if (result.isEdited)
 						{
 							if (valueType.IsValueType)
@@ -693,7 +724,7 @@ namespace Effekseer.GUI.Inspector
 				}
 				else
 				{
-					var result = func(value, path, guiInfo.State);
+					var result = func(value, path, widgetInfo.State);
 					if (result.isEdited)
 					{
 						elementGetterSetterArray.SetValue(result.value);
@@ -721,11 +752,11 @@ namespace Effekseer.GUI.Inspector
 
 		public void Update(Asset.EffectAssetEditorContext context, Asset.Node targetNode, object target)
 		{
-			// Generate field GUI IDs when the target is selected or changed.
+			// Generate field Widget IDs when the target is selected or changed.
 			// TODO: this had better do at OnAfterSelect()
 			if (targetNode?.InstanceID != ((Asset.Node)LastTarget)?.InstanceID)
 			{
-				InitializeFieldGuiInfo(target);
+				InitializeWidgetInfo(target);
 				LastTarget = targetNode;
 				return;
 			}
@@ -740,7 +771,7 @@ namespace Effekseer.GUI.Inspector
 				{
 					elementGetterSetterArray.Push(target, field);
 					UpdateVisiblityControllers(target);
-					UpdateObjectGuis(context, targetNode, target, elementGetterSetterArray, RootGuiInfo.SubElements[i]);
+					UpdateParameterGrid(context, targetNode, target, elementGetterSetterArray, RootWidgetInfo.Children[i]);
 					elementGetterSetterArray.Pop();
 					++i;
 				}
@@ -750,11 +781,11 @@ namespace Effekseer.GUI.Inspector
 
 		public void Update(Asset.EffectAssetEditorContext context, Asset.Node targetNode, Type targetType = null)
 		{
-			// Generate field GUI IDs when the target is selected or changed.
+			// Generate field Widget IDs when the target is selected or changed.
 			// TODO: this had better do at OnAfterSelect()
 			if (targetNode?.InstanceID != ((Asset.Node)LastTarget)?.InstanceID)
 			{
-				InitializeFieldGuiInfo(targetNode, targetType);
+				InitializeWidgetInfo(targetNode, targetType);
 				LastTarget = targetNode;
 				return;
 			}
@@ -774,7 +805,7 @@ namespace Effekseer.GUI.Inspector
 
 					elementGetterSetterArray.Push(targetNode, field);
 					UpdateVisiblityControllers(targetNode);
-					UpdateObjectGuis(context, targetNode, targetNode, elementGetterSetterArray, RootGuiInfo.SubElements[i]);
+					UpdateParameterGrid(context, targetNode, targetNode, elementGetterSetterArray, RootWidgetInfo.Children[i]);
 					elementGetterSetterArray.Pop();
 					++i;
 				}
@@ -785,11 +816,11 @@ namespace Effekseer.GUI.Inspector
 
 		public void Update(Asset.EffectAssetEditorContext context, PartsTreeSystem.Asset targetAsset)
 		{
-			// Generate field GUI IDs when the target is selected or changed.
+			// Generate field Widget IDs when the target is selected or changed.
 			// TODO: this had better do at OnAfterSelect()
 			if (targetAsset != null && !ReferenceEquals(targetAsset, LastTarget))
 			{
-				InitializeFieldGuiInfo(targetAsset);
+				InitializeWidgetInfo(targetAsset);
 				LastTarget = targetAsset;
 				return;
 			}
@@ -805,7 +836,7 @@ namespace Effekseer.GUI.Inspector
 				{
 					elementGetterSetterArray.Push(targetAsset, field);
 					UpdateVisiblityControllers(targetAsset);
-					UpdateObjectGuis(context, null, targetAsset, elementGetterSetterArray, RootGuiInfo.SubElements[i]);
+					UpdateParameterGrid(context, null, targetAsset, elementGetterSetterArray, RootWidgetInfo.Children[i]);
 					elementGetterSetterArray.Pop();
 					++i;
 				}
@@ -815,8 +846,8 @@ namespace Effekseer.GUI.Inspector
 
 		public bool Drop(string path, Asset.EffectAssetEditorContext context, Asset.Node targetNode, Type targetType = null)
 		{
-			// skip if GuiInfo is not yet generated
-			if (RootGuiInfo.SubElements.Count <= 0)
+			// skip if WidgetInfo is not yet generated
+			if (RootWidgetInfo.Children.Count <= 0)
 			{
 				return false;
 			}
@@ -833,7 +864,7 @@ namespace Effekseer.GUI.Inspector
 
 				elementGetterSetterArray.Push(targetNode, field);
 				UpdateVisiblityControllers(targetNode);
-				var eddited = DropObjectGuis(path, context, targetNode, elementGetterSetterArray, RootGuiInfo.SubElements[i]);
+				var eddited = DropParameterGrid(path, context, targetNode, elementGetterSetterArray, RootWidgetInfo.Children[i]);
 				elementGetterSetterArray.Pop();
 				++i;
 

@@ -1,31 +1,24 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
-using System.IO;
-using System.Linq;
-using Effekseer.GUI.BindableComponent;
 using Effekseer.Asset;
 
 namespace Effekseer.GUI.Inspector
 {
-	class InspectorGuiResult
+	class InspectorWidgetResult
 	{
 		public bool isEdited;
 		public object value;
 	}
 
-	// Œ^î•ñ‚ÆGui‚ğ•\¦‚·‚éŠÖ”‚ğ•R‚Ã‚¯‚éƒNƒ‰ƒX
-	class InspectorGuiDictionary
+	class InspectorWidgetDictionary
 	{
-		private Dictionary<Type, Func<object, InspectorGuiState, InspectorGuiResult>> FuncDictionary { get; }
+		private Dictionary<Type, Func<object, WidgetState, InspectorWidgetResult>> FuncDictionary { get; }
 
-		private Dictionary<Type, Func<object, string, InspectorGuiState, InspectorGuiResult>> DropFuncDictionary { get; }
+		private Dictionary<Type, Func<object, string, WidgetState, InspectorWidgetResult>> DropFuncDictionary { get; }
 
-		public InspectorGuiDictionary()
+		public InspectorWidgetDictionary()
 		{
-			// Œ^î•ñ‚ÆGui‚ğ•\¦‚·‚éŠÖ”‚ğ•R‚Ã‚¯‚é
-			FuncDictionary = new Dictionary<Type, Func<object, InspectorGuiState, InspectorGuiResult>>
+			FuncDictionary = new Dictionary<Type, Func<object, WidgetState, InspectorWidgetResult>>
 			{
 				{ typeof(bool), Widgets.Widgets.GuiBool },
 				{ typeof(int), Widgets.Widgets.GuiInt },
@@ -49,7 +42,7 @@ namespace Effekseer.GUI.Inspector
 				{ typeof(Asset.TextureAsset), Widgets.Texture.Update},
             };
 
-			DropFuncDictionary = new Dictionary<Type, Func<object, string, InspectorGuiState, InspectorGuiResult>> {
+			DropFuncDictionary = new Dictionary<Type, Func<object, string, WidgetState, InspectorWidgetResult>> {
 				{ typeof(Asset.TextureAsset), Widgets.Texture.Dropped},
 			};
 		}
@@ -64,12 +57,12 @@ namespace Effekseer.GUI.Inspector
 			return DropFuncDictionary.ContainsKey(type);
 		}
 
-		public Func<object, InspectorGuiState, InspectorGuiResult> GetFunction(Type type)
+		public Func<object, WidgetState, InspectorWidgetResult> GetFunction(Type type)
 		{
 			return FuncDictionary[type];
 		}
 
-		public Func<object, string, InspectorGuiState, InspectorGuiResult> GetDropFunction(Type type)
+		public Func<object, string, WidgetState, InspectorWidgetResult> GetDropFunction(Type type)
 		{
 			return DropFuncDictionary[type];
 		}
