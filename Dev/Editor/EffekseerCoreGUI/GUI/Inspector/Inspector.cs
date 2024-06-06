@@ -119,9 +119,28 @@ namespace Effekseer.GUI.Inspector
 
 		// data from attributes
 		public string Key { get; private set; } = string.Empty;
-		public string Description { get; private set; } = string.Empty;
+		public string Description
+		{
+			get {
+				if (multiLanguageDescription != null)
+				{
+					return multiLanguageDescription.Value;
+				}
+				return string.Empty;
+			}
+		}
+		private MultiLanguageString multiLanguageDescription = null;
 		public bool EnableDescription { get; private set; } = true;
-		public string Label { get; private set; } = string.Empty;
+		public string Label { 
+			get {
+				if (multiLanguageLabel != null)
+				{
+					return multiLanguageLabel.Value;
+				}
+				return string.Empty;
+			}
+		}
+		private MultiLanguageString multiLanguageLabel = null;
 		public int VisibilityControllID { get; set; } = -1;
 
 		// Subelements of widget(ex. list, class, collection)
@@ -132,8 +151,6 @@ namespace Effekseer.GUI.Inspector
 			// KeyAttribute
 			{
 				Key = string.Empty;
-				Description = string.Empty;
-				Label = string.Empty;
 				var attr = (KeyAttribute)State.Attriubutes.FirstOrDefault(_ => _ is KeyAttribute);
 				if (attr != null)
 				{
@@ -141,22 +158,22 @@ namespace Effekseer.GUI.Inspector
 
 					if (MultiLanguageTextProvider.HasKey(Key))
 					{
-						Label = MultiLanguageTextProvider.GetText(Key);
+						multiLanguageLabel = new MultiLanguageString(Key);
 					}
 					else if (MultiLanguageTextProvider.HasKey(attr.key))
 					{
 						EnableDescription = false;
-						Label = MultiLanguageTextProvider.GetText(attr.key);
+						multiLanguageLabel = new MultiLanguageString(attr.key);
 					}
 
 					Key = attr.key + "_Desc";
 					if (MultiLanguageTextProvider.HasKey(Key))
 					{
-						Description = MultiLanguageTextProvider.GetText(Key);
+						multiLanguageDescription = new MultiLanguageString(Key);
 					}
 					else if (MultiLanguageTextProvider.HasKey(attr.key))
 					{
-						//description = MultiLanguageTextProvider.HasKey(attr.key);
+						//multiLanguageDescription = new MultiLanguageString(attr.key);
 					}
 				}
 			}
