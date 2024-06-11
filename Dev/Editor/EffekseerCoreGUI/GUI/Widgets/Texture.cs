@@ -1,8 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
-using System.IO;
 using System.Linq;
 
 namespace Effekseer.GUI.Widgets
@@ -16,115 +11,123 @@ namespace Effekseer.GUI.Widgets
 			public string filePath = string.Empty;
 			public string infoText = string.Empty;
 			public Thumbnail thumbnail = null;
-			public string ID_Popup = "###" + Manager.GetUniqueID().ToString();
-			public string ID_Reset = "###" + Manager.GetUniqueID().ToString();
+			public string id1 = "###" + Manager.GetUniqueID().ToString();
+			public string id2 = "###" + Manager.GetUniqueID().ToString();
+			public string idPopup = "###" + Manager.GetUniqueID().ToString();
+			public string idReset = "###" + Manager.GetUniqueID().ToString();
 		}
 
 		public static Inspector.InspectorWidgetResult Update(object value, Inspector.WidgetState state)
 		{
 			var ret = new Inspector.InspectorWidgetResult();
 
-			var guiState = state.UserData as State;
-			if (guiState == null)
+			var appendedState = state.UserData as State;
+			if (appendedState == null)
 			{
-				guiState = new State();
-				state.UserData = guiState;
+				appendedState = new State();
+				state.UserData = appendedState;
 			}
 
 			var texture = (Asset.TextureAsset)value;
+			var previousTexture = texture;
+			var thumbnail = appendedState.thumbnail;
+			appendedState.isHovered = false;
+			appendedState.isPopupShown = false;
+
+			string dd = null;
+
+			var size = Manager.NativeManager.GetContentRegionAvail();
+			float itemSpacing = 4;
+			float lineHeight = Manager.NativeManager.GetFrameHeight();
+			float lineSpacing = Manager.NativeManager.GetFrameHeightWithSpacing() - lineHeight;
+			float imageSize = lineHeight * 2 + lineSpacing;
+			float buttonSizeX = Manager.NativeManager.GetTextLineHeightWithSpacing() * 2;
+
+			float cursorX = Manager.NativeManager.GetCursorPosX();
+			float cursorY = Manager.NativeManager.GetCursorPosY();
+
+			Manager.NativeManager.BeginGroup();
 
 			{
-				var previousTexture = texture;
-				guiState.isHovered = false;
-				guiState.isPopupShown = false;
-
-				string dd = null;
-
-				float buttonSizeX = Manager.NativeManager.GetTextLineHeightWithSpacing() * 2;
-
-				if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("Load") + state.Id + "_Load", buttonSizeX))
+				if (thumbnail != null && thumbnail.Image != null)
 				{
-					btn_load_Click(ref texture, guiState);
+					Manager.NativeManager.ImageData(thumbnail.Image, imageSize, imageSize);
 				}
+				else
+				{
+					float x = Manager.NativeManager.GetCursorScreenPosX();
+					float y = Manager.NativeManager.GetCursorScreenPosY();
+					Manager.NativeManager.AddRectFilled(x, y, x + imageSize, y + imageSize, 0xff383838, 0, 0);
+				}
+			}
 
-				Popup(ref texture, guiState);
+			{
+				Manager.NativeManager.SetCursorPosX(cursorX + imageSize + itemSpacing);
+				Manager.NativeManager.SetCursorPosY(cursorY);
 
-				if (dd == null) dd = DragAndDrops.UpdateFileDst(FileType.Texture);
-
-				guiState.isHovered = guiState.isHovered || Manager.NativeManager.IsItemHovered();
-
-				Manager.NativeManager.SameLine();
-
-				Manager.NativeManager.Text(guiState.filePath);
+				Manager.NativeManager.SetNextItemWidth(size.X - imageSize - buttonSizeX - itemSpacing * 2 - 1);
+				Manager.NativeManager.InputText(appendedState.id1, appendedState.filePath, swig.InputTextFlags.ReadOnly);
 
 				if (Manager.NativeManager.IsItemHovered())
 				{
-					Manager.NativeManager.SetTooltip(guiState.filePath);
+					Manager.NativeManager.SetTooltip(appendedState.filePath);
 				}
 
-				if (dd == null) dd = DragAndDrops.UpdateFileDst(FileType.Texture);
+				Manager.NativeManager.SameLine();
 
-				guiState.isHovered = guiState.isHovered || Manager.NativeManager.IsItemHovered();
-
-				if (guiState.thumbnail != null)
+				Manager.NativeManager.SetCursorPosX(cursorX + size.X - buttonSizeX - 1);
+				Manager.NativeManager.SetCursorPosY(cursorY);
+				if (Manager.NativeManager.IconButton(Icons.FileView))
 				{
-					if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("Delete") + state.Id + "_Delete", buttonSizeX))
-					{
-						btn_delete_Click(ref texture, guiState);
-					}
+					btn_load_Click(ref texture, appendedState);
+				}
+			}
 
-					Popup(ref texture, guiState);
+			{
+				Manager.NativeManager.SetCursorPosX(cursorX + imageSize + itemSpacing);
+				Manager.NativeManager.SetCursorPosY(cursorY + lineHeight + lineSpacing);
 
-					if (dd == null) dd = DragAndDrops.UpdateFileDst(FileType.Texture);
+				// subparts
+				{
+					float width = size.X - imageSize - buttonSizeX - itemSpacing * 2 - 1;
+					Manager.NativeManager.SetNextItemWidth(width);
+					//Manager.NativeManager.Text(appendedState.infoText + appendedState.id2);
+					Manager.NativeManager.InputText(appendedState.id2, appendedState.infoText, swig.InputTextFlags.ReadOnly);
+				}
 
-					guiState.isHovered = guiState.isHovered || Manager.NativeManager.IsItemHovered();
-
+				if (thumbnail != null)
+				{
 					Manager.NativeManager.SameLine();
 
-					Manager.NativeManager.Text(guiState.infoText);
+					Manager.NativeManager.SetCursorPosX(cursorX + size.X - buttonSizeX - 1);
+					Manager.NativeManager.SetCursorPosY(cursorY + lineHeight + lineSpacing);
 
-					Popup(ref texture, guiState);
-
-					if (dd == null) dd = DragAndDrops.UpdateFileDst(FileType.Texture);
-
-					guiState.isHovered = guiState.isHovered || Manager.NativeManager.IsItemHovered();
-
-					if (guiState.thumbnail != null)
+					if (Manager.NativeManager.IconButton(Icons.Remove))
 					{
-						var image = guiState.thumbnail.Image;
-						float imageSizeX = image.GetWidth();
-						float imageSizeY = image.GetHeight();
-						if (imageSizeX < imageSizeY)
-						{
-							Manager.NativeManager.ImageData(image, 128 * imageSizeX / imageSizeY, 128);
-						}
-						else if (imageSizeX > imageSizeY)
-						{
-							Manager.NativeManager.ImageData(image, 128, 128 * imageSizeY / imageSizeX);
-						}
-						else
-						{
-							Manager.NativeManager.ImageData(image, 128, 128);
-						}
-
-						Popup(ref texture, guiState);
+						btn_delete_Click(ref texture, appendedState);
 					}
-
-					if (dd == null) dd = DragAndDrops.UpdateFileDst(FileType.Texture);
-
-					guiState.isHovered = guiState.isHovered || Manager.NativeManager.IsItemHovered();
 				}
+			}
 
-				if (dd != null)
-				{
-					Dropped(ref texture, guiState, dd);
-				}
+			Manager.NativeManager.SetCursorPosX(cursorX);
+			Manager.NativeManager.SetCursorPosY(cursorY + imageSize);
 
-				if (texture != previousTexture)
-				{
-					ret.value = texture;
-					ret.isEdited = true;
-				}
+			Manager.NativeManager.EndGroup();
+
+			Popup(ref texture, appendedState);
+
+			if (dd == null) dd = DragAndDrops.UpdateFileDst(FileType.Texture);
+			appendedState.isHovered = appendedState.isHovered || Manager.NativeManager.IsItemHovered();
+
+			if (dd != null)
+			{
+				Dropped(ref texture, appendedState, dd);
+			}
+
+			if (texture != previousTexture)
+			{
+				ret.value = texture;
+				ret.isEdited = true;
 			}
 
 			return ret;
@@ -208,9 +211,9 @@ namespace Effekseer.GUI.Widgets
 		{
 			if (guiState.isPopupShown) return;
 
-			if (Manager.NativeManager.BeginPopupContextItem(guiState.ID_Popup))
+			if (Manager.NativeManager.BeginPopupContextItem(guiState.idPopup))
 			{
-				if (WidgetHelper.ShowResetButton(guiState.ID_Reset))
+				if (WidgetHelper.ShowResetButton(guiState.idReset))
 				{
 					texture = null;
 				}
@@ -239,6 +242,7 @@ namespace Effekseer.GUI.Widgets
 				if (guiState.isHovered)
 				{
 					Dropped(ref texture, guiState, path);
+					ret.isHovered = true;
 				}
 
 				if (texture != previousTexture)

@@ -715,12 +715,14 @@ namespace Effekseer.GUI.Inspector
 					}
 
 					bool isEdited = false;
+					bool isHovered = false;
 					for (int j = 0; j < arrayValue.Count; j++)
 					{
 						var v = arrayValue[j];
 
 						elementGetterSetterArray.Push(arrayValue, j);
-						var result = func(v, path, widgetInfo.Children[j].State);
+						var state = widgetInfo.Children[j].State;
+						var result = func(v, path, state);
 						if (result.isEdited)
 						{
 							if (valueType.IsValueType)
@@ -729,6 +731,10 @@ namespace Effekseer.GUI.Inspector
 							}
 							isEdited = true;
 						}
+						if (result.isHovered)
+						{
+							isHovered = true;
+						}
 						elementGetterSetterArray.Pop();
 						++j;
 					}
@@ -736,8 +742,8 @@ namespace Effekseer.GUI.Inspector
 					{
 						field.SetValue(targetObject, arrayValue);
 						context.CommandManager.NotifyEditFields((PartsTreeSystem.IInstance)targetObject);
-						return true;
 					}
+					return isHovered;
 				}
 				else
 				{
@@ -746,9 +752,8 @@ namespace Effekseer.GUI.Inspector
 					{
 						elementGetterSetterArray.SetValue(result.value);
 						context.CommandManager.NotifyEditFields((PartsTreeSystem.IInstance)targetObject);
-						return true;
 					}
-
+					return result.isHovered;
 				}
 			}
 

@@ -6,8 +6,9 @@ namespace Effekseer.GUI.Inspector
 {
 	class InspectorWidgetResult
 	{
-		public bool isEdited;
-		public object value;
+		public bool isEdited = false;
+		public bool isHovered = false;
+		public object value = null;
 	}
 
 	class InspectorWidgetDictionary
