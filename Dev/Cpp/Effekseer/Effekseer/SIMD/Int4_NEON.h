@@ -290,7 +290,7 @@ inline Int4 Int4::Mask()
 	static_assert(Z >= 2, "indexZ is must be set 0 or 1.");
 	static_assert(W >= 2, "indexW is must be set 0 or 1.");
 	const uint32_t in[4] = {0xffffffff * X, 0xffffffff * Y, 0xffffffff * Z, 0xffffffff * W};
-	return vld1q_u32(in);
+	return vreinterpretq_s32_u32(vld1q_u32(in));
 }
 
 inline uint32_t Int4::MoveMask(const Int4& in)
