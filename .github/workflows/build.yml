@@ -99,7 +99,7 @@ jobs:
             os: windows-2019
             label: Win
           - name: mac
-            os: macos-11
+            os: macos-12
             label: Mac
 
     name: Build on ${{ matrix.name }}
