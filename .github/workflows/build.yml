@@ -99,7 +99,7 @@ jobs:
             os: windows-2019
             label: Win
           - name: mac
-            os: macos-11
+            os: macos-12
             label: Mac
 
     name: Build on ${{ matrix.name }}
@@ -148,7 +148,7 @@ jobs:
           if [ "${{ matrix.name }}" = "mac" ];
           then
               export PACKAGEING_FOR_MAC=1
-              sudo xcode-select --switch /Applications/Xcode_11.7.app
+              sudo xcode-select --switch /Applications/Xcode_13.1.app
           fi
           python3 build.py || python build.py
                 
