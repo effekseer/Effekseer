@@ -60,3 +60,5 @@ mono_crash.*.json
 mono_crash.*.blob
 Script/__pycache__/aceutils.cpython-37.pyc
 Tool/fbxsdk
+
+EffekseerTool/
