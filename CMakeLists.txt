@@ -350,12 +350,16 @@ if(BUILD_VIEWER OR BUILD_EXAMPLES OR BUILD_TEST)
                         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
     )
 
+    find_package(PkgConfig REQUIRED)
+
+    # Check for glfw3
+    pkg_check_modules(GLFW3 glfw3)
+
+    set(GLFW3_LIB_DEBUG ${GLFW3_LIBRARIES})
+    set(GLFW3_LIB_RELEASE ${GLFW3_LIBRARIES})
+    
     if(BUILD_WITH_POSTFIX)
-        set(GLFW3_LIB_DEBUG "glfwd")
-        set(GLFW3_LIB_RELEASE "glfw")
-    else()
-        set(GLFW3_LIB_DEBUG "glfw")
-        set(GLFW3_LIB_RELEASE "glfw")
+        set(GLFW3_LIB_DEBUG "${GLFW3_LIB_DEBUG}d")
     endif()
 
     list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glfw/include)
