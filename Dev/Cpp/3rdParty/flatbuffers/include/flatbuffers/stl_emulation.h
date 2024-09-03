@@ -627,7 +627,7 @@ class span FLATBUFFERS_FINAL_CLASS {
  private:
   // This is a naive implementation with 'count_' member even if (Extent != dynamic_extent).
   pointer const data_;
-  const size_type count_;
+  size_type count_; // https://github.com/google/flatbuffers/pull/7227
 };
 
  #if !defined(FLATBUFFERS_SPAN_MINIMAL)
