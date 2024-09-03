@@ -187,22 +187,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
      
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4.1.7
         with:
           name: Effekseer${{ env.EFFEKSEER_VERSION }}Win
           path: dist/
                 
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4.1.7
         with:
           name: Effekseer${{ env.EFFEKSEER_VERSION }}Linux
           path: dist/
       
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4.1.7
         with:
           name: EffekseerForCpp${{ env.EFFEKSEER_VERSION }}
           path: dist/EffekseerForCpp
       
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4.1.7
         with:
           name: Effekseer${{ env.EFFEKSEER_VERSION }}Mac
           path: dist/
