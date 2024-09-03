@@ -350,14 +350,20 @@ if(BUILD_VIEWER OR BUILD_EXAMPLES OR BUILD_TEST)
                         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
     )
 
-    find_package(PkgConfig REQUIRED)
+    
 
     # Check for glfw3
-    pkg_check_modules(GLFW3 glfw3)
+    if(WIN32)
+        message(STATUS "Skipping pkg-config checks on Windows")
+        set(GLFW3_LIB_DEBUG "glfw3")
+        set(GLFW3_LIB_RELEASE "glfw3")
+    else()
+        find_package(PkgConfig REQUIRED)
+        pkg_check_modules(GLFW3 glfw3)
+        set(GLFW3_LIB_DEBUG ${GLFW3_LIBRARIES})
+        set(GLFW3_LIB_RELEASE ${GLFW3_LIBRARIES})
+    endif()
 
-    set(GLFW3_LIB_DEBUG ${GLFW3_LIBRARIES})
-    set(GLFW3_LIB_RELEASE ${GLFW3_LIBRARIES})
-    
     if(BUILD_WITH_POSTFIX)
         set(GLFW3_LIB_DEBUG "${GLFW3_LIB_DEBUG}d")
     endif()
