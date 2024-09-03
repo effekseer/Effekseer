@@ -37,12 +37,22 @@
 #include "Geometry/GeometryUtility.h"
 #include "Utils/Profiler.h"
 
+#if defined(AVOID_USING_CHRONO)
+#include <time.h>
+#endif
+
 namespace Effekseer
 {
 
 static int64_t GetTime(void)
 {
+#if defined(AVOID_USING_CHRONO)
+	timespec t;
+	clock_gettime(CLOCK_REALTIME, &t);
+	return (t.tv_sec * 1000000LL) + (t.tv_nsec / 1000);
+#else
 	return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
+#endif
 }
 
 //! TODO should be moved
