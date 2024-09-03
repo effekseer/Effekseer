@@ -353,7 +353,7 @@ if(BUILD_VIEWER OR BUILD_EXAMPLES OR BUILD_TEST)
     
 
     # Check for glfw3
-    if(WIN32)
+    if(WIN32 OR APPLE)
         message(STATUS "Skipping pkg-config checks on Windows")
         set(GLFW3_LIB_DEBUG "glfw3")
         set(GLFW3_LIB_RELEASE "glfw3")
