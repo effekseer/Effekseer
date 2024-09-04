@@ -238,9 +238,16 @@ if(BUILD_VIEWER)
     )
     list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng/include)
     list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng/lib)
+
+    if(WIN32 OR APPLE)
+        list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng/lib)
+    else()
+        list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng/lib64)
+    endif()
     
     if(MSVC)
         set(LIBPNG_LIB_DEBUG "libpng16_staticd")
+    
         set(LIBPNG_LIB_RELEASE "libpng16_static")
     elseif(BUILD_WITH_POSTFIX)
         set(LIBPNG_LIB_DEBUG "png16d")
@@ -281,7 +288,12 @@ if(BUILD_VIEWER)
     endif()
 
     list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libgd/include)
-    list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libgd/lib)
+    if(WIN32 OR APPLE)
+        list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libgd/lib)
+    else()
+        list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libgd/lib64)
+    endif()
+    
 
     # OpenSoundMixer
     ExternalProject_Add(
@@ -311,23 +323,28 @@ endif()
 if(BUILD_VIEWER OR BUILD_TEST)
     # glew
     if(NOT APPLE)
-    ExternalProject_Add(
-        ExternalProject_glew
-        SOURCE_DIR      ${CMAKE_CURRENT_SOURCE_DIR}/Downloads/glew
-        PREFIX          ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Build/glew
-        INSTALL_DIR     ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glew
-        PATCH_COMMAND   ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Dev/3rdPartyPatch/glew-CMakeLists.txt <SOURCE_DIR>/CMakeLists.txt
-        CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glew
-                        -DCMAKE_USER_MAKE_RULES_OVERRIDE=${CMAKE_CURRENT_SOURCE_DIR}/Dev/CFlagOverrides.cmake
-                        -DEFK_USE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
-                        -DSANITIZE_ENABLED=${SANITIZE_ENABLED}
-                        -DBUILD_SHARED_LIBS=OFF
-                        -DGLEW_BUILD_INFO=OFF
-                        -DBUILD_UTILS=OFF
-                        -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
-    )
-    list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glew/include)
-    list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glew/lib)
+        ExternalProject_Add(
+            ExternalProject_glew
+            SOURCE_DIR      ${CMAKE_CURRENT_SOURCE_DIR}/Downloads/glew
+            PREFIX          ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Build/glew
+            INSTALL_DIR     ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glew
+            PATCH_COMMAND   ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Dev/3rdPartyPatch/glew-CMakeLists.txt <SOURCE_DIR>/CMakeLists.txt
+            CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glew
+                            -DCMAKE_USER_MAKE_RULES_OVERRIDE=${CMAKE_CURRENT_SOURCE_DIR}/Dev/CFlagOverrides.cmake
+                            -DEFK_USE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
+                            -DSANITIZE_ENABLED=${SANITIZE_ENABLED}
+                            -DBUILD_SHARED_LIBS=OFF
+                            -DGLEW_BUILD_INFO=OFF
+                            -DBUILD_UTILS=OFF
+                            -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
+        )
+        list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glew/include)
+        if(WIN32 OR APPLE)
+            list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glew/lib)
+        else()
+            list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glew/lib64)
+        endif()
+    
     endif()
 endif()
 
@@ -350,30 +367,20 @@ if(BUILD_VIEWER OR BUILD_EXAMPLES OR BUILD_TEST)
                         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
     )
 
-    
-
-    # Check for glfw3
-    if(WIN32 OR APPLE)
-        if(BUILD_WITH_POSTFIX)
-            set(GLFW3_LIB_DEBUG "glfw3d")
-            set(GLFW3_LIB_RELEASE "glfw3")
-        else()
-            set(GLFW3_LIB_DEBUG "glfw3")
-            set(GLFW3_LIB_RELEASE "glfw3")
-        endif()
-    else()
-        find_package(PkgConfig REQUIRED)
-        pkg_check_modules(GLFW3 glfw3)
-        set(GLFW3_LIB_DEBUG ${GLFW3_LIBRARIES})
-        set(GLFW3_LIB_RELEASE ${GLFW3_LIBRARIES})
-    endif()
-
     if(BUILD_WITH_POSTFIX)
-        set(GLFW3_LIB_DEBUG "${GLFW3_LIB_DEBUG}d")
+        set(GLFW3_LIB_DEBUG "glfw3d")
+        set(GLFW3_LIB_RELEASE "glfw3")
+    else()
+        set(GLFW3_LIB_DEBUG "glfw3")
+        set(GLFW3_LIB_RELEASE "glfw3")
     endif()
 
     list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glfw/include)
-    list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glfw/lib)
+    if(WIN32 OR APPLE)
+        list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glfw/lib)
+    else()
+        list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glfw/lib64)
+    endif()
 endif()
 
 list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/Dev/Cpp/3rdParty/flatbuffers/include)
