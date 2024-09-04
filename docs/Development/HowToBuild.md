@@ -33,7 +33,7 @@ Requirements
 
 - Required packages:
   - Ubuntu: `libx11-dev libgl1-mesa-dev libxrandr-dev libxi-dev x11proto-xf86vidmode-dev libx11-xcb-dev xorg-dev libglu1-mesa-dev libpulse-dev libgtk-3-dev libopenal-dev python3-distutils zenity`
-  - Fedora 40: `gtk3-devel pulseaudio-libs-devel openal-soft-devel mesa-libGLU-devel libX11-devel libxcb-devel libXi-devel libXrandr-devel mesa-libGL-devel python3 dotnet zenity`
+  - Fedora 40: `gtk3-devel pulseaudio-libs-devel openal-soft-devel mesa-libGLU-devel libX11-devel libxcb-devel libXi-devel libXrandr-devel mesa-libGL-devel python3 dotnet zenity ninja-build`
 
 Get code and resources
 ----------
