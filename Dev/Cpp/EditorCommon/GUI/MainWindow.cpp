@@ -74,6 +74,12 @@ bool MainWindow::InitializeInternal(const char16_t* title, MainWindowState state
 	float yscale = 1.0f;
 	glfwGetMonitorContentScale(primary, &xscale, &yscale);
 	dpiScale_ = xscale;
+#elif defined(__linux__)
+	GLFWmonitor* primary = glfwGetPrimaryMonitor();
+	float xscale = 1.0f;
+	float yscale = 1.0f;
+	glfwGetMonitorContentScale(primary, &xscale, &yscale);
+	dpiScale_ = xscale;
 #endif
 
 	return true;

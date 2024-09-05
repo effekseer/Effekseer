@@ -3,6 +3,7 @@
 #include "../Common/ShaderGeneratorCommon.h"
 
 #include <iostream>
+#include <algorithm>
 #undef min
 #undef max
 
