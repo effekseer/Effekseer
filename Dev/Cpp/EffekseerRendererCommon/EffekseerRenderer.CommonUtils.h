@@ -650,7 +650,8 @@ void CalcBillboard(::Effekseer::BillboardType billboardType,
 				   ::Effekseer::SIMD::Vec3f& R,
 				   ::Effekseer::SIMD::Vec3f& F,
 				   const ::Effekseer::SIMD::Mat43f& src,
-				   const ::Effekseer::SIMD::Vec3f& frontDirection);
+				   const ::Effekseer::SIMD::Vec3f& frontDirection,
+				   bool verticalFlipped);
 
 void ApplyDepthParameters(::Effekseer::SIMD::Mat43f& mat,
 						  const ::Effekseer::SIMD::Vec3f& cameraFront,
