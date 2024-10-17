@@ -87,7 +87,8 @@ void CalcBillboard(::Effekseer::BillboardType billboardType,
 				   ::Effekseer::SIMD::Vec3f& F,
 				   const ::Effekseer::SIMD::Mat43f& src,
 				   const ::Effekseer::SIMD::Vec3f& frontDirection,
-				   const ::Effekseer::SIMD::Vec3f& instanceDirection)
+				   const ::Effekseer::SIMD::Vec3f& instanceDirection,
+				   bool verticalFlipped)
 {
 	auto frontDir = frontDirection;
 
@@ -106,6 +107,11 @@ void CalcBillboard(::Effekseer::BillboardType billboardType,
 			F = frontDir;
 			R = ::Effekseer::SIMD::Vec3f::Cross(Up, F).GetNormal();
 			U = ::Effekseer::SIMD::Vec3f::Cross(F, R).GetNormal();
+
+			if (verticalFlipped)
+			{
+				U = -U;
+			}
 		}
 		else if (billboardType == ::Effekseer::BillboardType::RotatedBillboard)
 		{
@@ -131,6 +137,13 @@ void CalcBillboard(::Effekseer::BillboardType billboardType,
 				c_z = 1.0f;
 			}
 
+			if (verticalFlipped)
+			{
+				U = -U;
+				c_z = -c_z;
+				s_z = -s_z;
+			}
+
 			::Effekseer::SIMD::Vec3f r_temp = R;
 			::Effekseer::SIMD::Vec3f u_temp = U;
 
@@ -143,6 +156,11 @@ void CalcBillboard(::Effekseer::BillboardType billboardType,
 			F = frontDir;
 			R = ::Effekseer::SIMD::Vec3f::Cross(U, F).GetNormal();
 			F = ::Effekseer::SIMD::Vec3f::Cross(R, U).GetNormal();
+			
+			if (verticalFlipped)
+			{
+				R = -R;
+			}
 		}
 		else if (billboardType == ::Effekseer::BillboardType::DirectionalBillboard)
 		{
@@ -155,6 +173,11 @@ void CalcBillboard(::Effekseer::BillboardType billboardType,
 			F = frontDir;
 			R = ::Effekseer::SIMD::Vec3f::Cross(U, F).GetNormal();
 			F = ::Effekseer::SIMD::Vec3f::Cross(R, U).GetNormal();
+
+			if (verticalFlipped)
+			{
+				R = -R;
+			}
 		}
 
 		dst.X = {R.GetX(), U.GetX(), F.GetX(), t.GetX()};
