@@ -293,11 +293,11 @@ protected:
 
 				ApplyViewOffset(instMat, camera, instanceParameter.ViewOffsetDistance);
 
-				CalcBillboard(parameter.Billboard, mat_rot, s, R, F, instMat, renderer_->GetCameraFrontDirection(), instanceParameter.Direction);
+				CalcBillboard(parameter.Billboard, mat_rot, s, R, F, instMat, renderer_->GetCameraFrontDirection(), instanceParameter.Direction, renderer_->IsVerticalFlipped());
 			}
 			else
 			{
-				CalcBillboard(parameter.Billboard, mat_rot, s, R, F, instanceParameter.SRTMatrix43, renderer_->GetCameraFrontDirection(), instanceParameter.Direction);
+				CalcBillboard(parameter.Billboard, mat_rot, s, R, F, instanceParameter.SRTMatrix43, renderer_->GetCameraFrontDirection(), instanceParameter.Direction, renderer_->IsVerticalFlipped());
 			}
 
 			for (int i = 0; i < 4; i++)
