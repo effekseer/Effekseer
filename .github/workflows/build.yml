@@ -65,7 +65,7 @@ jobs:
             os: windows-2019
             label: Win_x86
           - name: mac
-            os: macos-11
+            os: macos-12
             label: Mac
 
     name: Build on ${{ matrix.name }}
