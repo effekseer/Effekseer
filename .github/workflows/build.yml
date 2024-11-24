@@ -77,7 +77,7 @@ jobs:
         shell: cmd
 
       - name: Upload Test
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: Test
           path: build/Dev/Cpp/Test/Release/
@@ -171,13 +171,13 @@ jobs:
 
       - name: Upload ForCpp
         if: matrix.name == 'windows_x64'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: EffekseerForCpp${{ env.EFFEKSEER_VERSION }}
           path: EffekseerForCpp
 
       - name: Upload ${{matrix.name}} Tool
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Effekseer${{ env.EFFEKSEER_VERSION }}${{matrix.label}}
           path: EffekseerTool
@@ -187,22 +187,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
      
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4
         with:
           name: Effekseer${{ env.EFFEKSEER_VERSION }}Win
           path: dist/
                 
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4
         with:
           name: Effekseer${{ env.EFFEKSEER_VERSION }}Linux
           path: dist/
       
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4
         with:
           name: EffekseerForCpp${{ env.EFFEKSEER_VERSION }}
           path: dist/EffekseerForCpp
       
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4
         with:
           name: Effekseer${{ env.EFFEKSEER_VERSION }}Mac
           path: dist/
@@ -223,7 +223,7 @@ jobs:
           done
           
       - name: Upload Release artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: EffekseerReleaseAll
           path: pub
