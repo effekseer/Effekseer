@@ -210,6 +210,10 @@ public:
 						loader_->Ungenerate(resource);
 					}
 				}
+				else
+				{
+					loader_->Ungenerate(resource);
+				}
 			}
 		}
 
