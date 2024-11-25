@@ -23,6 +23,12 @@ jobs:
     name: Run Tests
     runs-on: windows-2019
     steps:
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+          architecture: 'x64'
+
       - uses: actions/checkout@v2
       - run: |
          git submodule update --init
@@ -40,7 +46,7 @@ jobs:
         shell: cmd
 
       - name: Upload Test
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: Test
           path: build/Dev/Cpp/Test/Release/
@@ -65,12 +71,17 @@ jobs:
             os: windows-2019
             label: Win_x86
           - name: mac
-            os: macos-11
+            os: macos-12
             label: Mac
 
     name: Build on ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
     steps:
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+          architecture: 'x64'
 
       - uses: actions/checkout@v2
         with:
@@ -105,7 +116,7 @@ jobs:
           if [ "${{ matrix.name }}" = "mac" ];
           then
               export PACKAGEING_FOR_MAC=1
-              sudo xcode-select --switch /Applications/Xcode_11.7.app
+              sudo xcode-select --switch /Applications/Xcode_13.1.app
           fi
           if [ "${{ matrix.name }}" = "windows_x86" ];
           then
@@ -138,13 +149,13 @@ jobs:
 
       - name: Upload ForCpp
         if: matrix.name == 'windows_x64'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: EffekseerForCpp${{ env.EFFEKSEER_VERSION }}
           path: EffekseerForCpp
 
       - name: Upload ${{matrix.name}} Tool
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Effekseer${{ env.EFFEKSEER_VERSION }}${{matrix.label}}
           path: EffekseerTool
@@ -154,22 +165,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
      
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4
         with:
           name: Effekseer${{ env.EFFEKSEER_VERSION }}Win
           path: dist/
                 
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4
         with:
           name: Effekseer${{ env.EFFEKSEER_VERSION }}Linux
           path: dist/
       
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4
         with:
           name: EffekseerForCpp${{ env.EFFEKSEER_VERSION }}
           path: dist/EffekseerForCpp
       
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4
         with:
           name: Effekseer${{ env.EFFEKSEER_VERSION }}Mac
           path: dist/
@@ -190,7 +201,7 @@ jobs:
           done
           
       - name: Upload Release artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: EffekseerReleaseAll
           path: pub
