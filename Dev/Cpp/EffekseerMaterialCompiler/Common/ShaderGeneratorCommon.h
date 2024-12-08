@@ -13,6 +13,8 @@ const char* GetGradientFunctions();
 
 const char* GetNoiseFunctions();
 
+const char* GetHsvFunctions();
+
 // TODO : support metal
 const char* GetLinearGammaFunctions();
 
