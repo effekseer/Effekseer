@@ -196,6 +196,7 @@ void main()
 	vec4 vcolor = modelColor;
 
 	// Dummy
+	bool isFrontFace = false;
 	vec2 screenUV = vec2(0.0, 0.0);
 	float meshZ = 0.0;
 
@@ -311,6 +312,7 @@ void main() {
 	vec3 objectScale = vec3(1.0, 1.0, 1.0);
 
 	// Dummy
+	bool isFrontFace = false;
 	vec2 screenUV = vec2(0.0, 0.0);
 	float meshZ = 0.0;
 
@@ -352,6 +354,7 @@ void main() {
 	vec3 objectScale = vec3(1.0, 1.0, 1.0);
 
 	// Dummy
+	bool isFrontFace = false;
 	vec2 screenUV = vec2(0.0, 0.0);
 	float meshZ = 0.0;
 
@@ -535,6 +538,7 @@ void main()
 	vec4 vcolor = v_VColor;
 	vec3 objectScale = vec3(1.0, 1.0, 1.0);
 
+	bool isFrontFace = gl_FrontFacing;
 	vec2 screenUV = v_PosP.xy / v_PosP.w;
 	float meshZ =   v_PosP.z / v_PosP.w;
 	screenUV.xy = vec2(screenUV.x + 1.0, screenUV.y + 1.0) * 0.5;
@@ -724,6 +728,7 @@ void ShaderGenerator::ExportHeader(std::ostringstream& maincode, MaterialFile* m
 	// gradient
 	bool hasGradient = false;
 	bool hasNoise = false;
+	bool hasHsv = false;
 
 	for (const auto& type : materialFile->RequiredMethods)
 	{
@@ -735,6 +740,10 @@ void ShaderGenerator::ExportHeader(std::ostringstream& maincode, MaterialFile* m
 		{
 			hasNoise = true;
 		}
+		else if (type == MaterialFile::RequiredPredefinedMethodType::Hsv)
+		{
+			hasHsv = true;
+		}
 	}
 
 	if (hasGradient)
@@ -745,6 +754,11 @@ void ShaderGenerator::ExportHeader(std::ostringstream& maincode, MaterialFile* m
 	if (hasNoise)
 	{
 		maincode << Effekseer::Shader::GetNoiseFunctions();
+	}
+
+	if (hasHsv)
+	{
+		maincode << Effekseer::Shader::GetHsvFunctions();
 	}
 
 	for (const auto& gradient : materialFile->FixedGradients)

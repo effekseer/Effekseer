@@ -69,10 +69,12 @@ inline std::string GetMaterialCommonDefine(ShaderGeneratorTarget type)
 #define POSITION0 POSITION
 #define SV_POSITION POSITION
 #define SV_Target COLOR
+#define SV_IsFrontFace VFACE
+#define face_t float
+#define IsFrontFace(face) (face > 0.0f)
 )";
 	}
-
-	if (type == ShaderGeneratorTarget::PSSL)
+	else if (type == ShaderGeneratorTarget::PSSL)
 	{
 		ss << R"(
 #define SV_POSITION S_POSITION
@@ -80,6 +82,16 @@ inline std::string GetMaterialCommonDefine(ShaderGeneratorTarget type)
 #define SV_Target S_TARGET_OUTPUT
 #define SampleLevel SampleLOD
 #define SV_InstanceID S_INSTANCE_ID
+#define SV_IsFrontFace S_FRONT_FACE
+#define face_t bool
+#define IsFrontFace(face) (face)
+)";
+	}
+	else
+	{
+		ss << R"(
+#define face_t bool
+#define IsFrontFace(face) (face)
 )";
 	}
 
@@ -205,6 +217,7 @@ VS_Output main( const VS_Input Input )
 	float4 vcolor = Input.Color;
 
 	// Dummy
+	bool isFrontFace = false;
 	float2 screenUV = float2(0.0, 0.0);
 	float meshZ =  0.0f;
 )";
@@ -235,6 +248,7 @@ VS_Output main( const VS_Input Input )
 	float4 vcolor = Input.Color;
 
 	// Dummy
+	bool isFrontFace = false;
 	float2 screenUV = float2(0.0, 0.0);
 	float meshZ =  0.0f;
 )";
@@ -381,6 +395,7 @@ VS_Output main( const VS_Input Input )
 	float4 vcolor = modelColor;
 
 	// Dummy
+	bool isFrontFace = false;
 	float2 screenUV = float2(0.0, 0.0);
 	float meshZ =  0.0f;
 )";
@@ -564,7 +579,7 @@ float3 calcDirectionalLightDiffuseColor(float3 diffuseColor, float3 normal, floa
 
 #endif
 
-float4 main( const PS_Input Input ) : SV_Target
+float4 main( const PS_Input Input, face_t face: SV_IsFrontFace ) : SV_Target
 {
 	float2 uv1 = Input.UV1;
 	float2 uv2 = Input.UV2;
@@ -577,6 +592,7 @@ float4 main( const PS_Input Input ) : SV_Target
 	float3 pixelNormalDir = worldNormal;
 	float4 vcolor = Input.VColor;
 
+	bool isFrontFace = IsFrontFace(face);
 	float2 screenUV = Input.PosP.xy / Input.PosP.w;
 	float meshZ =  Input.PosP.z / Input.PosP.w;
 	screenUV.xy = float2(screenUV.x + 1.0, 1.0 - screenUV.y) * 0.5;
@@ -730,6 +746,7 @@ int32_t ShaderGenerator::ExportHeader(std::ostringstream& maincode, MaterialFile
 	// gradient
 	bool hasGradient = false;
 	bool hasNoise = false;
+	bool hasHsv = false;
 
 	for (const auto& type : materialFile->RequiredMethods)
 	{
@@ -741,6 +758,10 @@ int32_t ShaderGenerator::ExportHeader(std::ostringstream& maincode, MaterialFile
 		{
 			hasNoise = true;
 		}
+		else if (type == MaterialFile::RequiredPredefinedMethodType::Hsv)
+		{
+			hasHsv = true;
+		}
 	}
 
 	if (hasGradient)
@@ -751,6 +772,11 @@ int32_t ShaderGenerator::ExportHeader(std::ostringstream& maincode, MaterialFile
 	if (hasNoise)
 	{
 		maincode << Effekseer::Shader::GetNoiseFunctions();
+	}
+
+	if (hasHsv)
+	{
+		maincode << Effekseer::Shader::GetHsvFunctions();
 	}
 
 	for (const auto& gradient : materialFile->FixedGradients)

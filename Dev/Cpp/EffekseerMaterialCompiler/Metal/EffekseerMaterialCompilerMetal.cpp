@@ -214,6 +214,7 @@ vertex ShaderOutput1 main0 (ShaderInput1 i [[stage_in]], constant ShaderUniform1
     float4 vcolor = modelColor;
 
     // Dummy
+	bool isFrontFace = false;
     float2 screenUV = float2(0.0f, 0.0f);
     float meshZ =  0.0f;
 )";
@@ -328,6 +329,7 @@ vertex ShaderOutput1 main0 (ShaderInput1 i [[stage_in]], constant ShaderUniform1
     float4 vcolor = i.atColor;
 
     // Dummy
+	bool isFrontFace = false;
     float2 screenUV = float2(0.0f, 0.0f);
     float meshZ =  0.0f;
 )";
@@ -359,6 +361,7 @@ vertex ShaderOutput1 main0 (ShaderInput1 i [[stage_in]], constant ShaderUniform1
     float4 vcolor = i.atColor;
 
     // Dummy
+	bool isFrontFace = false;
     float2 screenUV = float2(0.0f, 0.0f);
     float meshZ =  0.0f;
 )";
@@ -499,7 +502,7 @@ float3 calcDirectionalLightDiffuseColor(float3 lightColor, float3 diffuseColor, 
 
 #endif
 
-fragment ShaderOutput2 main0 (ShaderInput2 i [[stage_in]], constant ShaderUniform2& u [[buffer(0)]]
+fragment ShaderOutput2 main0 (ShaderInput2 i [[stage_in]], bool isFrontFace [[front_facing]]
 //$IN_TEX$
 )
 {
@@ -716,6 +719,7 @@ void ExportHeader(std::ostringstream& maincode, MaterialFile* materialFile, int 
 	bool hasGradient = false;
 	bool hasNoise = false;
 	bool hasLight = false;
+	bool hasHsv = false;
 	for (const auto& type : materialFile->RequiredMethods)
 	{
 		if (type == MaterialFile::RequiredPredefinedMethodType::Gradient)
@@ -730,6 +734,10 @@ void ExportHeader(std::ostringstream& maincode, MaterialFile* materialFile, int 
 		{
 			hasLight = true;
 		}
+		else if (type == MaterialFile::RequiredPredefinedMethodType::Hsv)
+		{
+			hasHsv = true;
+		}
 	}
 
 	if (hasGradient)
@@ -740,6 +748,11 @@ void ExportHeader(std::ostringstream& maincode, MaterialFile* materialFile, int 
 	if (hasNoise)
 	{
 		maincode << Effekseer::Shader::GetNoiseFunctions();
+	}
+
+	if (hasHsv)
+	{
+		maincode << Effekseer::Shader::GetHsvFunctions();
 	}
 
 	if (hasLight)
