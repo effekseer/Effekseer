@@ -112,6 +112,7 @@ enum class NodeType
 	FMod,
 
 	Step,
+	SmoothStep,
 	Ceil,
 	Floor,
 	Frac,
@@ -159,7 +160,9 @@ enum class NodeType
 	GradientParameter, //! 1703
 	SampleGradient,	   //! 1703
 
+	WhiteNoise, //! 1710
 	SimpleNoise, //! 1703
+	CellularNoise, //! 1710
 
 	Light, //! 1703
 

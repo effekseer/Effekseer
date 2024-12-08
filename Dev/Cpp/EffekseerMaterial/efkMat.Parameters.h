@@ -788,6 +788,69 @@ public:
 		output->Name = "Output";
 		output->Type = ValueType::Float1;
 		OutputPins.push_back(output);
+
+		auto edgeProp = std::make_shared<NodePropertyParameter>();
+		edgeProp->Name = "Edge";
+		edgeProp->Type = ValueType::Float1;
+		edgeProp->DefaultValues[0] = 0.5f;
+		Properties.push_back(edgeProp);
+
+		auto valueProp = std::make_shared<NodePropertyParameter>();
+		valueProp->Name = "Value";
+		valueProp->Type = ValueType::Float1;
+		valueProp->DefaultValues[0] = 0.0f;
+		Properties.push_back(valueProp);
+	}
+};
+
+class NodeSmoothStep : public NodeParameter
+{
+public:
+	NodeSmoothStep()
+	{
+		Type = NodeType::SmoothStep;
+		TypeName = "SmoothStep";
+		Group = std::vector<std::string>{"Math"};
+
+		auto edge1 = std::make_shared<PinParameter>();
+		edge1->Name = "Edge1";
+		edge1->Type = ValueType::Float1;
+		edge1->DefaultValues[0] = 0.4f;
+		InputPins.push_back(edge1);
+
+		auto edge2 = std::make_shared<PinParameter>();
+		edge2->Name = "Edge2";
+		edge2->Type = ValueType::Float1;
+		edge2->DefaultValues[0] = 0.6f;
+		InputPins.push_back(edge2);
+
+		auto value = std::make_shared<PinParameter>();
+		value->Name = "Value";
+		value->Type = ValueType::Float1;
+		InputPins.push_back(value);
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "Output";
+		output->Type = ValueType::Float1;
+		OutputPins.push_back(output);
+
+		auto edge1Prop = std::make_shared<NodePropertyParameter>();
+		edge1Prop->Name = "Edge1";
+		edge1Prop->Type = ValueType::Float1;
+		edge1Prop->DefaultValues[0] = 0.4f;
+		Properties.push_back(edge1Prop);
+
+		auto edge2Prop = std::make_shared<NodePropertyParameter>();
+		edge2Prop->Name = "Edge2";
+		edge2Prop->Type = ValueType::Float1;
+		edge2Prop->DefaultValues[0] = 0.6f;
+		Properties.push_back(edge2Prop);
+
+		auto valueProp = std::make_shared<NodePropertyParameter>();
+		valueProp->Name = "Value";
+		valueProp->Type = ValueType::Float1;
+		valueProp->DefaultValues[0] = 0.0f;
+		Properties.push_back(valueProp);
 	}
 };
 
@@ -1855,6 +1918,29 @@ public:
 	}
 };
 
+class NodeWhiteNoise : public NodeParameter
+{
+public:
+	NodeWhiteNoise()
+	{
+		Type = NodeType::WhiteNoise;
+		TypeName = "WhiteNoise";
+		Group = std::vector<std::string>{"Noise"};
+
+		{
+			auto input = std::make_shared<PinParameter>();
+			input->Name = "UV";
+			input->Type = ValueType::Float2;
+			InputPins.push_back(input);
+		}
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "Value";
+		output->Type = ValueType::Float1;
+		OutputPins.push_back(output);
+	}
+};
+
 class NodeSimpleNoise : public NodeParameter
 {
 public:
@@ -1875,6 +1961,38 @@ public:
 			auto input = std::make_shared<PinParameter>();
 			input->Name = "Scale";
 			input->Type = ValueType::Float1;
+			input->DefaultValues[0] = 1.0f;
+			InputPins.push_back(input);
+		}
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "Value";
+		output->Type = ValueType::Float1;
+		OutputPins.push_back(output);
+	}
+};
+
+class NodeCellularNoise : public NodeParameter
+{
+public:
+	NodeCellularNoise()
+	{
+		Type = NodeType::CellularNoise;
+		TypeName = "CellularNoise";
+		Group = std::vector<std::string>{"Noise"};
+
+		{
+			auto input = std::make_shared<PinParameter>();
+			input->Name = "UV";
+			input->Type = ValueType::Float2;
+			InputPins.push_back(input);
+		}
+
+		{
+			auto input = std::make_shared<PinParameter>();
+			input->Name = "Scale";
+			input->Type = ValueType::Float1;
+			input->DefaultValues[0] = 1.0f;
 			InputPins.push_back(input);
 		}
 

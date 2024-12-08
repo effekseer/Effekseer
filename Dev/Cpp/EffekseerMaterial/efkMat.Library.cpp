@@ -18,6 +18,7 @@ Library::Library()
 	Contents.push_back(std::make_shared<LibraryContent<NodeFloor>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeFrac>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeStep>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeSmoothStep>>());
 
 	Contents.push_back(std::make_shared<LibraryContent<NodeMin>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeMax>>());
@@ -76,7 +77,9 @@ Library::Library()
 	Contents.push_back(std::make_shared<LibraryContent<NodeGradientParameter>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeGradient>>());
 
+	Contents.push_back(std::make_shared<LibraryContent<NodeWhiteNoise>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeSimpleNoise>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeCellularNoise>>());
 
 	Contents.push_back(std::make_shared<LibraryContent<NodeLight>>());
 

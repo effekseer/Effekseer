@@ -245,6 +245,20 @@ float SimpleNoise(float2 uv, float scale) {
 	return ret;
 }
 
+float CellularNoise(float2 uv, float scale) {
+	uv *= scale;
+	float2 iuv = floor(uv), fuv = frac(uv);
+	float dist = 5.0;
+	for (int y = -1; y <= 1; y++) {
+		for (int x = -1; x <= 1; x++) {
+			float2 neighbor = float2(x, y);
+			float2 diff = neighbor + Rand2(iuv + neighbor) - fuv;
+			dist = min(dist, length(diff));
+		}
+	}
+	return dist;
+}
+
 )";
 
 std::string GetFixedGradient(const char* name, const Gradient& gradient)
