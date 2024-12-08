@@ -245,6 +245,35 @@ float SimpleNoise(float2 uv, float scale) {
 	return ret;
 }
 
+float CellularNoise(float2 uv, float scale) {
+	uv *= scale;
+	float2 iuv = floor(uv), fuv = FRAC(uv);
+	float dist = 5.0;
+	for (int y = -1; y <= 1; y++) {
+		for (int x = -1; x <= 1; x++) {
+			float2 neighbor = float2(x, y);
+			float2 diff = neighbor + Rand2(iuv + neighbor) - fuv;
+			dist = min(dist, length(diff));
+		}
+	}
+	return dist;
+}
+)";
+
+static const char* material_hsv_functions =  R"(
+float3 RGBToHSV(float3 rgb) {
+	float4 K = float4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
+	float4 P = LERP(float4(rgb.bg, K.wz), float4(rgb.gb, K.xy), step(rgb.b, rgb.g));
+	float4 Q = LERP(float4(P.xyw, rgb.r), float4(rgb.r, P.yzx), step(P.x, rgb.r));
+	float D = Q.x - min(Q.w, Q.y);
+	float E = 1e-10;
+	return float3(abs(Q.z + (Q.w - Q.y)/(6.0 * D + E)), D / (Q.x + E), Q.x);
+}
+float3 HSVToRGB(float3 hsv) {
+    float4 K = float4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+    float3 P = abs(FRAC(hsv.xxx + K.xyz) * 6.0 - K.www);
+    return hsv.z * LERP(K.xxx, clamp(P - K.xxx, 0.0, 1.0), hsv.y);
+}
 )";
 
 std::string GetFixedGradient(const char* name, const Gradient& gradient)
@@ -359,6 +388,11 @@ const char* GetNoiseFunctions()
 const char* GetLinearGammaFunctions()
 {
 	return material_lineargamma_functions;
+}
+
+const char* GetHsvFunctions()
+{
+	return material_hsv_functions;
 }
 
 } // namespace Shader
