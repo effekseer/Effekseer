@@ -506,6 +506,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 	bool hasNoise = false;
 	bool hasLight = false;
 	bool hasLocalTime = false;
+	bool hasHsv = false;
 
 	for (const auto& node : nodes)
 	{
@@ -529,6 +530,11 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 		{
 			hasLocalTime = true;
 		}
+		else if (node->Parameter->Type == NodeType::RgbToHsv ||
+				 node->Parameter->Type == NodeType::HsvToRgb)
+		{
+			hasHsv = true;
+		}
 	}
 
 	if (hasGradient)
@@ -549,6 +555,11 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 	if (hasLocalTime)
 	{
 		requiredPredefinedMethodTypes.emplace_back(RequiredPredefinedMethodType::LocalTime);
+	}
+
+	if (hasHsv)
+	{
+		requiredPredefinedMethodTypes.emplace_back(RequiredPredefinedMethodType::Hsv);
 	}
 
 	// Generate exporter node
@@ -1666,6 +1677,18 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 			ret << GetTypeName(node->Outputs[rgbInd].Type) << " " << node->Outputs[rgbInd].Name << "=" << node->Outputs[rgbaInd].Name
 				<< ".xyz;" << std::endl;
 		}
+	}
+
+	if (node->Target->Parameter->Type == NodeType::RgbToHsv)
+	{
+		ret << GetTypeName(ValueType::Float3) << " " << node->Outputs[0].Name << "= RGBToHSV("
+			<< GetInputArg(ValueType::Float3, node->Inputs[0]) << ");" << std::endl;
+	}
+
+	if (node->Target->Parameter->Type == NodeType::HsvToRgb)
+	{
+		ret << GetTypeName(ValueType::Float3) << " " << node->Outputs[0].Name << "= HSVToRGB("
+			<< GetInputArg(ValueType::Float3, node->Inputs[0]) << ");" << std::endl;
 	}
 
 	if (node->Target->Parameter->Type == NodeType::Gradient)

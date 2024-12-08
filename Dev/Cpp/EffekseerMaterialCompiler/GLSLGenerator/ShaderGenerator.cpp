@@ -725,6 +725,7 @@ void ShaderGenerator::ExportHeader(std::ostringstream& maincode, MaterialFile* m
 	// gradient
 	bool hasGradient = false;
 	bool hasNoise = false;
+	bool hasHsv = false;
 
 	for (const auto& type : materialFile->RequiredMethods)
 	{
@@ -736,6 +737,10 @@ void ShaderGenerator::ExportHeader(std::ostringstream& maincode, MaterialFile* m
 		{
 			hasNoise = true;
 		}
+		else if (type == MaterialFile::RequiredPredefinedMethodType::Hsv)
+		{
+			hasHsv = true;
+		}
 	}
 
 	if (hasGradient)
@@ -746,6 +751,11 @@ void ShaderGenerator::ExportHeader(std::ostringstream& maincode, MaterialFile* m
 	if (hasNoise)
 	{
 		maincode << Effekseer::Shader::GetNoiseFunctions();
+	}
+
+	if (hasHsv)
+	{
+		maincode << Effekseer::Shader::GetHsvFunctions();
 	}
 
 	for (const auto& gradient : materialFile->FixedGradients)

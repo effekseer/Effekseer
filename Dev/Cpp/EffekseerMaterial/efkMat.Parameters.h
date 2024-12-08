@@ -1829,6 +1829,49 @@ public:
 	}
 };
 
+class NodeRgbToHsv : public NodeParameter
+{
+public:
+	NodeRgbToHsv()
+	{
+		Type = NodeType::RgbToHsv;
+		TypeName = "RgbToHsv";
+		Group = std::vector<std::string>{"Color"};
+
+		auto input = std::make_shared<PinParameter>();
+		input->Name = "RGB";
+		input->Type = ValueType::Float3;
+		InputPins.push_back(input);
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "HSV";
+		output->Type = ValueType::Float3;
+		OutputPins.push_back(output);
+	}
+};
+
+
+class NodeHsvToRgb : public NodeParameter
+{
+public:
+	NodeHsvToRgb()
+	{
+		Type = NodeType::HsvToRgb;
+		TypeName = "HsvToRgb";
+		Group = std::vector<std::string>{"Color"};
+
+		auto input = std::make_shared<PinParameter>();
+		input->Name = "HSV";
+		input->Type = ValueType::Float3;
+		InputPins.push_back(input);
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "RGB";
+		output->Type = ValueType::Float3;
+		OutputPins.push_back(output);
+	}
+};
+
 class NodeGradient : public NodeParameter
 {
 public:

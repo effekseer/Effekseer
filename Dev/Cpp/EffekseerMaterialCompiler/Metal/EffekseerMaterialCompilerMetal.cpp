@@ -717,6 +717,7 @@ void ExportHeader(std::ostringstream& maincode, MaterialFile* materialFile, int 
 	bool hasGradient = false;
 	bool hasNoise = false;
 	bool hasLight = false;
+	bool hasHsv = false;
 	for (const auto& type : materialFile->RequiredMethods)
 	{
 		if (type == MaterialFile::RequiredPredefinedMethodType::Gradient)
@@ -731,6 +732,10 @@ void ExportHeader(std::ostringstream& maincode, MaterialFile* materialFile, int 
 		{
 			hasLight = true;
 		}
+		else if (type == MaterialFile::RequiredPredefinedMethodType::Hsv)
+		{
+			hasHsv = true;
+		}
 	}
 
 	if (hasGradient)
@@ -741,6 +746,11 @@ void ExportHeader(std::ostringstream& maincode, MaterialFile* materialFile, int 
 	if (hasNoise)
 	{
 		maincode << Effekseer::Shader::GetNoiseFunctions();
+	}
+
+	if (hasHsv)
+	{
+		maincode << Effekseer::Shader::GetHsvFunctions();
 	}
 
 	if (hasLight)

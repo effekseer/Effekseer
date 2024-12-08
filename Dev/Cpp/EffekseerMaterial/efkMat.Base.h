@@ -156,6 +156,9 @@ enum class NodeType
 
 	DepthFade,
 
+	RgbToHsv,
+	HsvToRgb,
+
 	Gradient,		   //! 1703
 	GradientParameter, //! 1703
 	SampleGradient,	   //! 1703
@@ -194,6 +197,7 @@ enum class RequiredPredefinedMethodType : int32_t
 	Noise = 1,
 	Light = 2,
 	LocalTime = 3,
+	Hsv = 4,
 };
 
 class PinParameter;

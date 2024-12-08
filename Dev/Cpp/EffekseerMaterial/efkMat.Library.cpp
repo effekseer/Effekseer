@@ -72,6 +72,10 @@ Library::Library()
 	Contents.push_back(std::make_shared<LibraryContent<NodeParameter3>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeParameter4>>());
 
+	// ColorSpace
+	Contents.push_back(std::make_shared<LibraryContent<NodeRgbToHsv>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeHsvToRgb>>());
+
 	// Gradient
 	Contents.push_back(std::make_shared<LibraryContent<NodeSampleGradient>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeGradientParameter>>());
