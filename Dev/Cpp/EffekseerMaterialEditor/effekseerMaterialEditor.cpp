@@ -720,15 +720,31 @@ int mainLoop(int argc, char* argv[])
 
 				if (uobj != nullptr)
 				{
+					auto writeCode = [](const std::string& code) {
+						int line = 1;
+						for (size_t index = 0; index < code.size(); line++)
+						{
+							size_t offset = code.find('\n', index);
+							if (offset == code.npos)
+							{
+								offset = code.size() - index;
+							}
+							ImGui::Text("%4d|", line);
+							ImGui::SameLine();
+							ImGui::TextUnformatted(&code[index], &code[offset]);
+							index = offset + 1;
+						}
+					};
+
 					if (ImGui::TreeNode("VS"))
 					{
-						ImGui::Text(uobj->GetPreview()->VS.c_str());
+						writeCode(uobj->GetPreview()->VS);
 						ImGui::TreePop();
 					}
 
 					if (ImGui::TreeNode("PS"))
 					{
-						ImGui::Text(uobj->GetPreview()->PS.c_str());
+						writeCode(uobj->GetPreview()->PS);
 						ImGui::TreePop();
 					}
 				}
