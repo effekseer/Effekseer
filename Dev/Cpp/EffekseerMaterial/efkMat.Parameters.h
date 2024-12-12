@@ -467,6 +467,181 @@ public:
 	}
 };
 
+class NodeBranch : public NodeParameter
+{
+public:
+	NodeBranch()
+	{
+		Type = NodeType::Branch;
+		TypeName = "Branch";
+		Group = std::vector<std::string>{"Logical"};
+
+		auto conditionPin = std::make_shared<PinParameter>();
+		conditionPin->Name = "Condition";
+		conditionPin->Type = ValueType::Bool;
+		conditionPin->DefaultValues[0] = 0.5f;
+		InputPins.push_back(conditionPin);
+
+		auto truePin = std::make_shared<PinParameter>();
+		truePin->Name = "True";
+		truePin->Type = ValueType::FloatN;
+		InputPins.push_back(truePin);
+
+		auto falsePin = std::make_shared<PinParameter>();
+		falsePin->Name = "False";
+		falsePin->Type = ValueType::FloatN;
+		InputPins.push_back(falsePin);
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "Output";
+		output->Type = ValueType::FloatN;
+		OutputPins.push_back(output);
+
+		auto trueProp = std::make_shared<NodePropertyParameter>();
+		trueProp->Name = "True";
+		trueProp->Type = ValueType::Float1;
+		trueProp->DefaultValues[0] = 0.0f;
+		Properties.push_back(trueProp);
+
+		auto falseProp = std::make_shared<NodePropertyParameter>();
+		falseProp->Name = "False";
+		falseProp->Type = ValueType::Float1;
+		falseProp->DefaultValues[0] = 0.0f;
+		Properties.push_back(falseProp);
+	}
+
+	ValueType
+		GetOutputType(std::shared_ptr<Material> material, std::shared_ptr<Node> node, const std::vector<ValueType>& inputTypes) const override
+	{
+		if (inputTypes[1] == ValueType::Float1)
+			return inputTypes[2];
+
+		if (inputTypes[2] == ValueType::Float1)
+			return inputTypes[1];
+
+		return inputTypes[1];
+	}
+};
+
+class NodeCompare : public NodeParameter
+{
+public:
+	NodeCompare()
+	{
+		Type = NodeType::Compare;
+		TypeName = "Compare";
+		Group = std::vector<std::string>{"Logical"};
+
+		auto aPin = std::make_shared<PinParameter>();
+		aPin->Name = "A";
+		aPin->Type = ValueType::Float1;
+		InputPins.push_back(aPin);
+
+		auto bPin = std::make_shared<PinParameter>();
+		bPin->Name = "B";
+		bPin->Type = ValueType::Float1;
+		InputPins.push_back(bPin);
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "Output";
+		output->Type = ValueType::Bool;
+		OutputPins.push_back(output);
+		
+		auto aProp = std::make_shared<NodePropertyParameter>();
+		aProp->Name = "A";
+		aProp->Type = ValueType::Float1;
+		aProp->DefaultValues[0] = 0.0f;
+		Properties.push_back(aProp);
+
+		auto bProp = std::make_shared<NodePropertyParameter>();
+		bProp->Name = "B";
+		bProp->Type = ValueType::Float1;
+		bProp->DefaultValues[0] = 0.0f;
+		Properties.push_back(bProp);
+
+		auto condProp = std::make_shared<NodePropertyParameter>();
+		condProp->Name = "Condition";
+		condProp->Type = ValueType::Enum;
+		condProp->DefaultValues[0] = 0;
+		Properties.push_back(condProp);	
+
+		BehaviorComponents = {std::make_shared<NodeParameterBehaviorComponentTwoInputMath>()};
+	}
+};
+
+class NodeBoolAnd : public NodeParameter
+{
+public:
+	NodeBoolAnd()
+	{
+		Type = NodeType::BoolAnd;
+		TypeName = "BoolAnd";
+		Group = std::vector<std::string>{"Logical"};
+
+		auto input1 = std::make_shared<PinParameter>();
+		input1->Name = "V1";
+		input1->Type = ValueType::Bool;
+		InputPins.push_back(input1);
+
+		auto input2 = std::make_shared<PinParameter>();
+		input2->Name = "V2";
+		input2->Type = ValueType::Bool;
+		InputPins.push_back(input2);
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "Output";
+		output->Type = ValueType::Bool;
+		OutputPins.push_back(output);
+	}
+};
+
+class NodeBoolOr : public NodeParameter
+{
+public:
+	NodeBoolOr()
+	{
+		Type = NodeType::BoolOr;
+		TypeName = "BoolOr";
+		Group = std::vector<std::string>{"Logical"};
+
+		auto input1 = std::make_shared<PinParameter>();
+		input1->Name = "V1";
+		input1->Type = ValueType::Bool;
+		InputPins.push_back(input1);
+
+		auto input2 = std::make_shared<PinParameter>();
+		input2->Name = "V2";
+		input2->Type = ValueType::Bool;
+		InputPins.push_back(input2);
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "Output";
+		output->Type = ValueType::Bool;
+		OutputPins.push_back(output);
+	}
+};
+
+class NodeBoolNot : public NodeParameter
+{
+public:
+	NodeBoolNot()
+	{
+		Type = NodeType::BoolNot;
+		TypeName = "BoolNot";
+		Group = std::vector<std::string>{"Logical"};
+
+		auto input = std::make_shared<PinParameter>();
+		input->Name = "V";
+		input->Type = ValueType::Bool;
+		InputPins.push_back(input);
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "Output";
+		output->Type = ValueType::Bool;
+		OutputPins.push_back(output);
+	}
+};
+
 class NodeAbs : public NodeParameter
 {
 public:

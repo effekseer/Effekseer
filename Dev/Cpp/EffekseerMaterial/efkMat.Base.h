@@ -102,6 +102,12 @@ enum class NodeType
 	Parameter3,
 	Parameter4,
 
+	Branch,
+	Compare,
+	BoolAnd,
+	BoolOr,
+	BoolNot,
+
 	Abs,
 	Sine,
 	Arctangent2,

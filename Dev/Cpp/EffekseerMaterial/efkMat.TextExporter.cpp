@@ -1276,7 +1276,7 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 		{
 			return GetInputArg(type_, pin_);
 		}
-		return GetInputArg(pin_.Type, prop_->Floats[0]);
+		return GetInputArg(type_, prop_->Floats[0]);
 	};
 
 	std::ostringstream ret;
@@ -1361,6 +1361,41 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 	{
 		ret << GetTypeName(ValueType::Float4) << " " << node->Outputs[0].Name << "=" << node->Outputs[0].UniformValue->UniformName << ";"
 			<< std::endl;
+	}
+
+	if (node->Target->Parameter->Type == NodeType::Branch)
+	{
+		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "=" << node->Inputs[0].Name << "?"
+			<< exportInputOrProp(node->Outputs[0].Type, node->Inputs[1], node->Target->Properties[0]) << ":"
+			<< exportInputOrProp(node->Outputs[0].Type, node->Inputs[2], node->Target->Properties[1]) << ";" << std::endl;
+	}
+
+	if (node->Target->Parameter->Type == NodeType::Compare)
+	{
+		const char* op[6] = {"<", "<=", ">", ">=", "==", "!="};
+		int condition = static_cast<int>(node->Target->Properties[2]->Floats[0]);
+		condition = std::clamp(condition, 0, 6);
+		if (condition >= 0 && condition < 6)
+		{
+			ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "="
+				<< exportInputOrProp(node->Inputs[0].Type, node->Inputs[0], node->Target->Properties[0]) << op[condition]
+				<< exportInputOrProp(node->Inputs[1].Type, node->Inputs[1], node->Target->Properties[1]) << ";" << std::endl;
+		}
+	}
+
+	if (node->Target->Parameter->Type == NodeType::BoolAnd)
+	{
+		ret << "bool " << node->Outputs[0].Name << "=" << node->Inputs[0].Name << "&&" << node->Inputs[1].Name << ";" << std::endl;
+	}
+
+	if (node->Target->Parameter->Type == NodeType::BoolOr)
+	{
+		ret << "bool " << node->Outputs[0].Name << "=" << node->Inputs[0].Name << "||" << node->Inputs[1].Name << ";" << std::endl;
+	}
+
+	if (node->Target->Parameter->Type == NodeType::BoolNot)
+	{
+		ret << "bool " << node->Outputs[0].Name << "=" << "!" << node->Inputs[0].Name << ";" << std::endl;
 	}
 
 	if (node->Target->Parameter->Type == NodeType::Sine)
@@ -2188,6 +2223,8 @@ std::string TextExporter::GetTypeName(ValueType type) const
 		return "$F3$";
 	if (type == ValueType::Float4)
 		return "$F4$";
+	if (type == ValueType::Bool)
+		return "bool";
 	return "";
 }
 

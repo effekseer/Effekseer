@@ -72,6 +72,13 @@ Library::Library()
 	Contents.push_back(std::make_shared<LibraryContent<NodeParameter3>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeParameter4>>());
 
+	// Logical
+	Contents.push_back(std::make_shared<LibraryContent<NodeBranch>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeCompare>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeBoolAnd>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeBoolOr>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeBoolNot>>());
+
 	// ColorSpace
 	Contents.push_back(std::make_shared<LibraryContent<NodeRgbToHsv>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeHsvToRgb>>());

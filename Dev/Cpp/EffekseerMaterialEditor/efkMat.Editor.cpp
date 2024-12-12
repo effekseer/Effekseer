@@ -1520,13 +1520,34 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 					ImGui::EndCombo();
 				}
 			}
-			else
+			else if (name == std::string("ShadingModel"))
 			{
 				const char* items[] = {"Lit", "Unlit"};
 
 				if (ImGui::BeginCombo(nameStr.c_str(), items[static_cast<int>(floatValues[0])]))
 				{
 					for (size_t i = 0; i < 2; i++)
+					{
+						auto isSelected = static_cast<int>(floatValues[0]) == i;
+						if (ImGui::Selectable(items[i], isSelected))
+						{
+							floatValues[0] = i;
+							material->ChangeValue(p, floatValues);
+							material->MakeDirty(node);
+						}
+						if (isSelected)
+							ImGui::SetItemDefaultFocus();
+					}
+					ImGui::EndCombo();
+				}
+			}
+			else if (name == std::string("Condition"))
+			{
+				const char* items[] = {"A < B", "A <= B", "A > B", "A >= B", "A == B", "A != B"};
+
+				if (ImGui::BeginCombo(nameStr.c_str(), items[static_cast<int>(floatValues[0])]))
+				{
+					for (size_t i = 0; i < 6; i++)
 					{
 						auto isSelected = static_cast<int>(floatValues[0]) == i;
 						if (ImGui::Selectable(items[i], isSelected))
