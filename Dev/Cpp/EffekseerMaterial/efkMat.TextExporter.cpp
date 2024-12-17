@@ -1949,8 +1949,7 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 
 		auto dotArg = compiler->Dot(compiler->Normalize(compiler->Subtract(compiler->CameraPosition(), compiler->WorldPosition())),
 									compiler->NormalPixelDir());
-		auto maxminusabsArg =
-			compiler->Abs(compiler->Subtract(compiler->AddConstant(1.0f), compiler->Max(compiler->AddConstant(0.0f), dotArg)));
+		auto maxminusabsArg = compiler->Subtract(compiler->AddConstant(1.0f), compiler->Abs(dotArg));
 		auto powArg = compiler->Pow(maxminusabsArg, exponentArg);
 		compiler->Add(compiler->Mul(powArg, compiler->Subtract(compiler->AddConstant(1.0f), baseReflectFractionArg)),
 					  baseReflectFractionArg,
