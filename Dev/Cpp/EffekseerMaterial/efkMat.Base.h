@@ -107,6 +107,7 @@ enum class NodeType
 	BoolAnd,
 	BoolOr,
 	BoolNot,
+	IsFrontFace,
 
 	Abs,
 	Sine,

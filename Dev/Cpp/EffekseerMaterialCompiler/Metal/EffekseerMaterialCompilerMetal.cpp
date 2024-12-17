@@ -215,6 +215,7 @@ vertex ShaderOutput1 main0 (ShaderInput1 i [[stage_in]], constant ShaderUniform1
     float4 vcolor = modelColor;
 
     // Dummy
+	bool isFrontFace = false;
     float2 screenUV = float2(0.0f, 0.0f);
     float meshZ =  0.0f;
 )";
@@ -329,6 +330,7 @@ vertex ShaderOutput1 main0 (ShaderInput1 i [[stage_in]], constant ShaderUniform1
     float4 vcolor = i.atColor;
 
     // Dummy
+	bool isFrontFace = false;
     float2 screenUV = float2(0.0f, 0.0f);
     float meshZ =  0.0f;
 )";
@@ -360,6 +362,7 @@ vertex ShaderOutput1 main0 (ShaderInput1 i [[stage_in]], constant ShaderUniform1
     float4 vcolor = i.atColor;
 
     // Dummy
+	bool isFrontFace = false;
     float2 screenUV = float2(0.0f, 0.0f);
     float meshZ =  0.0f;
 )";
@@ -500,7 +503,7 @@ float3 calcDirectionalLightDiffuseColor(float3 lightColor, float3 diffuseColor, 
 
 #endif
 
-fragment ShaderOutput2 main0 (ShaderInput2 i [[stage_in]], constant ShaderUniform2& u [[buffer(1)]]
+fragment ShaderOutput2 main0 (ShaderInput2 i [[stage_in]], bool isFrontFace [[front_facing]], constant ShaderUniform2& u [[buffer(1)]]
 //$IN_TEX$
 )
 {

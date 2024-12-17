@@ -642,6 +642,22 @@ public:
 	}
 };
 
+class NodeIsFrontFace : public NodeParameter
+{
+public:
+	NodeIsFrontFace()
+	{
+		Type = NodeType::IsFrontFace;
+		TypeName = "IsFrontFace";
+		Group = std::vector<std::string>{"Logical"};
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "Output";
+		output->Type = ValueType::Bool;
+		OutputPins.push_back(output);
+	}
+};
+
 class NodeAbs : public NodeParameter
 {
 public:

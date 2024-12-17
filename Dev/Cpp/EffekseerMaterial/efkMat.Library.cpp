@@ -78,6 +78,7 @@ Library::Library()
 	Contents.push_back(std::make_shared<LibraryContent<NodeBoolAnd>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeBoolOr>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeBoolNot>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeIsFrontFace>>());
 
 	// ColorSpace
 	Contents.push_back(std::make_shared<LibraryContent<NodeRgbToHsv>>());

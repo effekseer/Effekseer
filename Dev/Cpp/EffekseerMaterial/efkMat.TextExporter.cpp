@@ -1398,6 +1398,11 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 		ret << "bool " << node->Outputs[0].Name << "=" << "!" << node->Inputs[0].Name << ";" << std::endl;
 	}
 
+	if (node->Target->Parameter->Type == NodeType::IsFrontFace)
+	{
+		ret << "bool " << node->Outputs[0].Name << "=" << "isFrontFace" << ";" << std::endl;
+	}
+
 	if (node->Target->Parameter->Type == NodeType::Sine)
 	{
 		exportIn1Out1("sin");
