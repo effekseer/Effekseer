@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 
 if(APPLE)
-  set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "Minimum OS X deployment version" FORCE)
+  set(CMAKE_OSX_DEPLOYMENT_TARGET "10.14" CACHE STRING "Minimum OS X deployment version" FORCE)
 endif()
 
 project(EffekseerLauncher C CXX)
