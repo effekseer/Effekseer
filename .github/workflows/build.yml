@@ -71,7 +71,7 @@ jobs:
             os: windows-2019
             label: Win_x86
           - name: mac
-            os: macos-12
+            os: macos-13
             label: Mac
 
     name: Build on ${{ matrix.name }}
@@ -92,12 +92,6 @@ jobs:
           git lfs install
           git lfs pull
 
-      - name: Install Cmake for macOS (because of libpng)
-        if: matrix.name == 'mac'
-        uses: jwlawson/actions-setup-cmake@v1.4
-        with:
-          cmake-version: '3.18.x'
-
       - name: Install Linux Dependencies
         if: matrix.name == 'linux'
         run: |
@@ -116,7 +110,7 @@ jobs:
           if [ "${{ matrix.name }}" = "mac" ];
           then
               export PACKAGEING_FOR_MAC=1
-              sudo xcode-select --switch /Applications/Xcode_13.1.app
+              sudo xcode-select --switch /Applications/Xcode_14.1.app
           fi
           if [ "${{ matrix.name }}" = "windows_x86" ];
           then
