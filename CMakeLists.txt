@@ -122,7 +122,7 @@ if(BUILD_WITH_EASY_PROFILER)
                         -DSANITIZE_ENABLED=${SANITIZE_ENABLED}
                         -DBUILD_SHARED_LIBS=OFF
                         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
-                        -DCMAKE_OSX_ARCHITECTURES:STRING=x86_64|arm64
+                        -DCMAKE_OSX_ARCHITECTURES:STRING=x86_64$<SEMICOLON>arm64
     )
 
     if(BUILD_WITH_POSTFIX)
@@ -192,7 +192,7 @@ if(BUILD_VIEWER)
                         -DASM686=off
                         -DAMD64=off
                         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
-                        -DCMAKE_OSX_ARCHITECTURES:STRING=x86_64|arm64
+                        -DCMAKE_OSX_ARCHITECTURES:STRING=x86_64$<SEMICOLON>arm64
     )
     
     list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/include)
@@ -235,7 +235,7 @@ if(BUILD_VIEWER)
                         -DPNG_EXECUTABLES=OFF
                         -DPNG_TESTS=OFF
                         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
-                        -DCMAKE_OSX_ARCHITECTURES:STRING=x86_64|arm64
+                        -DCMAKE_OSX_ARCHITECTURES:STRING=x86_64$<SEMICOLON>arm64
     )
     list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng/include)
     list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng/lib)
@@ -272,7 +272,7 @@ if(BUILD_VIEWER)
                         -DBUILD_STATIC_LIBS=ON
                         -DBUILD_SHARED_LIBS=OFF
                         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
-                        -DCMAKE_OSX_ARCHITECTURES:STRING=x86_64|arm64
+                        -DCMAKE_OSX_ARCHITECTURES:STRING=x86_64$<SEMICOLON>arm64
     )
 
     if(MSVC)
@@ -305,7 +305,7 @@ if(BUILD_VIEWER)
                         -DEFK_USE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
                         -DSANITIZE_ENABLED=${SANITIZE_ENABLED}
                         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
-                        -DCMAKE_OSX_ARCHITECTURES:STRING=x86_64|arm64
+                        -DCMAKE_OSX_ARCHITECTURES:STRING=x86_64$<SEMICOLON>arm64
     )
     list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/Downloads/OpenSoundMixer/src)
     list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/OpenSoundMixer/lib)
@@ -364,7 +364,7 @@ if(BUILD_VIEWER OR BUILD_EXAMPLES OR BUILD_TEST)
                         -DGLFW_BUILD_DOCS=OFF
                         -DGLFW_INSTALL=ON
                         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
-                        -DCMAKE_OSX_ARCHITECTURES:STRING=x86_64|arm64
+                        -DCMAKE_OSX_ARCHITECTURES:STRING=x86_64$<SEMICOLON>arm64
     )
 
     if(BUILD_WITH_POSTFIX)
