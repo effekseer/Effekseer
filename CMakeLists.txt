@@ -229,7 +229,6 @@ if(BUILD_VIEWER)
                         -DEFK_USE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
                         -DSANITIZE_ENABLED=${SANITIZE_ENABLED}
                         -DZLIB_ROOT=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/
-                        -DPNG_BUILD_ZLIB=ON
                         -DPNG_SHARED=OFF
                         -DPNG_EXECUTABLES=OFF
                         -DPNG_TESTS=OFF
