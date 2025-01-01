@@ -219,6 +219,7 @@ if(BUILD_VIEWER)
         set(LIBPNG_INSTALL ${CMAKE_COMMAND} --install . --prefix <INSTALL_DIR>)
     endif()
 
+    if(APPLE)
     ExternalProject_Add(
         ExternalProject_libpng
         DEPENDS         ExternalProject_zlib
@@ -235,10 +236,31 @@ if(BUILD_VIEWER)
                         -DPNG_FRAMEWORK=OFF
                         -DPNG_EXECUTABLES=OFF
                         -DPNG_TESTS=OFF
-                        -DPNG_ARM_NEON="false"
                         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
-                        -DCMAKE_OSX_ARCHITECTURES:STRING=x86_64$<SEMICOLON>arm64
+                        -DCMAKE_OSX_ARCHITECTURES:STRING=x86_64$<SEMICOLON>arm64 # For apple Silicon
+                        -DPNG_HARDWARE_OPTIMIZATIONS=OFF # HACK: For apple Silicon
     )
+    else()
+    ExternalProject_Add(
+        ExternalProject_libpng
+        DEPENDS         ExternalProject_zlib
+        SOURCE_DIR      ${CMAKE_CURRENT_SOURCE_DIR}/Dev/Cpp/3rdParty/libpng
+        PREFIX          ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Build/libpng
+        INSTALL_DIR     ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng
+        INSTALL_COMMAND ${LIBPNG_INSTALL}
+        CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng
+                        -DCMAKE_USER_MAKE_RULES_OVERRIDE=${CMAKE_CURRENT_SOURCE_DIR}/Dev/CFlagOverrides.cmake
+                        -DEFK_USE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
+                        -DSANITIZE_ENABLED=${SANITIZE_ENABLED}
+                        -DZLIB_ROOT=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/
+                        -DPNG_SHARED=OFF
+                        -DPNG_FRAMEWORK=OFF
+                        -DPNG_EXECUTABLES=OFF
+                        -DPNG_TESTS=OFF
+                        -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
+    )
+    endif()
+
     list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng/include)
     list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng/lib)
     if(EXISTS "${ExternalProject_libpng_INSTALL_DIR}/lib64")
