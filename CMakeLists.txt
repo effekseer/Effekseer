@@ -234,6 +234,7 @@ if(BUILD_VIEWER)
                         -DPNG_SHARED=OFF
                         -DPNG_EXECUTABLES=OFF
                         -DPNG_TESTS=OFF
+                        -DPNG_ARM_NEON:STRING=off
                         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
                         -DCMAKE_OSX_ARCHITECTURES:STRING=x86_64$<SEMICOLON>arm64
     )
