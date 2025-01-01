@@ -237,6 +237,7 @@ if(BUILD_VIEWER)
                         -DPNG_TESTS=OFF
                         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
                         -DCMAKE_OSX_ARCHITECTURES:STRING=x86_64$<SEMICOLON>arm64
+                        -DPNG_ARM_NEON:STRING=off
     )
     list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng/include)
     list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng/lib)
