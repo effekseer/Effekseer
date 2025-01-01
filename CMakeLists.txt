@@ -235,7 +235,7 @@ if(BUILD_VIEWER)
                         -DPNG_FRAMEWORK=OFF
                         -DPNG_EXECUTABLES=OFF
                         -DPNG_TESTS=OFF
-                        -DPNG_ARM_NEON=OFF
+                        -DPNG_ARM_NEON="false"
                         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
                         -DCMAKE_OSX_ARCHITECTURES:STRING=x86_64$<SEMICOLON>arm64
     )
