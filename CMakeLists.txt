@@ -232,6 +232,7 @@ if(BUILD_VIEWER)
                         -DSANITIZE_ENABLED=${SANITIZE_ENABLED}
                         -DZLIB_ROOT=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/
                         -DPNG_SHARED=OFF
+                        -DPNG_FRAMEWORK=OFF
                         -DPNG_EXECUTABLES=OFF
                         -DPNG_TESTS=OFF
                         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
