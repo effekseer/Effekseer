@@ -39,7 +39,7 @@ Vec4 Convert(mqoio::Color v)
 
 }
 
-std::optional<Model> MQOLoader::Load(std::string_view filepath)
+std::optional<Model> MQOLoader::LoadModel(std::string_view filepath)
 {
     mqoio::Loader mqoLoader;
     auto loadResult = mqoLoader.Load(std::string(filepath));

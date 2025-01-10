@@ -4,6 +4,7 @@
 #include <string_view>
 #include <optional>
 #include "EfkRes.Model.h"
+#include "EfkRes.Curve.h"
 
 namespace efkres
 {
@@ -14,7 +15,8 @@ public:
 	FBXLoader() = default;
 	~FBXLoader() = default;
 
-	std::optional<Model> Load(std::string_view filepath);
+	std::optional<Model> LoadModel(std::string_view filepath);
+	std::optional<Curve> LoadCurve(std::string_view filepath);
 };
 
 }

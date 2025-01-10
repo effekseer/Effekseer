@@ -14,7 +14,7 @@ public:
 	GLTFLoader() = default;
 	~GLTFLoader() = default;
 
-	std::optional<Model> Load(std::string_view filepath);
+	std::optional<Model> LoadModel(std::string_view filepath);
 };
 
 }

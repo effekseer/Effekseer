@@ -104,7 +104,7 @@ Mat43 ConvertMatrix(const std::vector<double>& src)
 
 }
 
-std::optional<Model> GLTFLoader::Load(std::string_view filepath)
+std::optional<Model> GLTFLoader::LoadModel(std::string_view filepath)
 {
     std::string_view fileExt = filepath.substr(filepath.find_last_of('.'));
 

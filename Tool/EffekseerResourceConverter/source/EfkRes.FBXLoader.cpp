@@ -32,7 +32,7 @@ Mat43 Convert(ufbx_matrix src)
 
 }
 
-std::optional<Model> FBXLoader::Load(std::string_view filepath)
+std::optional<Model> FBXLoader::LoadModel(std::string_view filepath)
 {
     ufbx_load_opts opts{};
     ufbx_error error{};
@@ -188,6 +188,41 @@ std::optional<Model> FBXLoader::Load(std::string_view filepath)
 
     ufbx_free_scene(scene);
     return std::move(model);
+}
+
+std::optional<Curve> FBXLoader::LoadCurve(std::string_view filepath)
+{
+    ufbx_load_opts opts{};
+    ufbx_error error{};
+    ufbx_scene* scene = ufbx_load_file(ufbx_string_view(filepath.data(), filepath.size()), &opts, &error);
+    if (!scene)
+    {
+        return std::nullopt;
+    }
+
+    if (scene->nurbs_curves.count == 0)
+    {
+        return std::nullopt;
+    }
+
+    Curve curve;
+
+    auto srcCurve = scene->nurbs_curves[0];
+    for (auto point : srcCurve->control_points)
+    {
+        curve.controllPoints.push_back(Convert(point));
+    }
+    for (auto knot : srcCurve->basis.knot_vector)
+    {
+        curve.knotValues.push_back(knot);
+    }
+
+    curve.order = srcCurve->basis.order;
+    curve.dimension = srcCurve->basis.is_2d ? 2 : 3;
+    curve.step = 16;
+    curve.type = 0;
+
+    return curve;
 }
 
 }

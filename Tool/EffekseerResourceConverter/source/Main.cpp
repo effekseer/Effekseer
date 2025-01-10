@@ -6,6 +6,7 @@
 #include "EfkRes.GLTFLoader.h"
 #include "EfkRes.MQOLoader.h"
 #include "EfkRes.EfkModelSaver.h"
+#include "EfkRes.EfkCurveSaver.h"
 
 struct MainArgs
 {
@@ -107,38 +108,65 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-    std::optional<Model> model;
-
-    if (args.inputFileExt == ".fbx" || args.inputFileExt == ".obj")
-    {
-        FBXLoader fbxLoader;
-        model = fbxLoader.Load(args.inputFile);
-    }
-    else if (args.inputFileExt == ".gltf" || args.inputFileExt == ".glb")
-    {
-        GLTFLoader gltfLoader;
-        model = gltfLoader.Load(args.inputFile);
-    }
-    else if (args.inputFileExt == ".mqo")
-    {
-        MQOLoader mqoLoader;
-        model = mqoLoader.Load(args.inputFile);
-    }
-
-    if (!model.has_value())
-    {
-        fprintf(stderr, "Failed to load: %s\n", args.inputFile.c_str());
-        return -1;
-    }
-
     if (args.outputFileExt == ".efkmodel")
     {
-        EfkModelSaver efkModelSaver;
-        efkModelSaver.SetModelScale(args.modelScale);
-        if (!efkModelSaver.Save(args.outputFile, model.value()))
+        std::optional<Model> model;
+
+        if (args.inputFileExt == ".fbx" || args.inputFileExt == ".obj")
         {
-            fprintf(stderr, "Failed to save: %s\n", args.outputFile.c_str());
+            FBXLoader fbxLoader;
+            model = fbxLoader.LoadModel(args.inputFile);
+        }
+        else if (args.inputFileExt == ".gltf" || args.inputFileExt == ".glb")
+        {
+            GLTFLoader gltfLoader;
+            model = gltfLoader.LoadModel(args.inputFile);
+        }
+        else if (args.inputFileExt == ".mqo")
+        {
+            MQOLoader mqoLoader;
+            model = mqoLoader.LoadModel(args.inputFile);
+        }
+
+        if (!model.has_value())
+        {
+            fprintf(stderr, "Failed to load: %s\n", args.inputFile.c_str());
             return -1;
+        }
+        else
+        {
+            EfkModelSaver efkModelSaver;
+            efkModelSaver.SetModelScale(args.modelScale);
+            if (!efkModelSaver.Save(args.outputFile, model.value()))
+            {
+                fprintf(stderr, "Failed to save: %s\n", args.outputFile.c_str());
+                return -1;
+            }
+        }
+    }
+    else if (args.outputFileExt == ".efkcurve")
+    {
+        std::optional<Curve> curve;
+
+        if (args.inputFileExt == ".fbx")
+        {
+            FBXLoader fbxLoader;
+            curve = fbxLoader.LoadCurve(args.inputFile);
+        }
+
+        if (!curve.has_value())
+        {
+            fprintf(stderr, "Failed to load: %s\n", args.inputFile.c_str());
+            return -1;
+        }
+        else
+        {
+            EfkCurveSaver efkCurveSaver;
+            if (!efkCurveSaver.Save(args.outputFile, curve.value()))
+            {
+                fprintf(stderr, "Failed to save: %s\n", args.outputFile.c_str());
+                return -1;
+            }
         }
     }
 
