@@ -56,6 +56,9 @@ namespace Effekseer.GUI
 				case ".efkmodel":
 				case ".fbx":
 				case ".mqo":
+				case ".gltf":
+				case ".glb":
+				case ".obj":
 					image = Images.Icons["FileModel128"];
 					break;
 				case ".efkmat":

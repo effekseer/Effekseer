@@ -37,10 +37,10 @@
 // Name                 Index   Mask Register SysValue Format   Used
 // -------------------- ----- ------ -------- -------- ------ ------
 // TEXCOORD                 0   xyz         0     NONE  float   xyz 
-// TEXCOORD                 1   xyz         1     NONE  float       
-// TEXCOORD                 2   xyz         2     NONE  float       
-// TEXCOORD                 3   xyz         3     NONE  float       
-// TEXCOORD                 4   xy          4     NONE  float   xy  
+// TEXCOORD                 1   xy          1     NONE  float       
+// TEXCOORD                 2   xy          2     NONE  float       
+// TEXCOORD                 3   xy          3     NONE  float   xy  
+// TEXCOORD                 4   xy          4     NONE  float       
 // TEXCOORD                 5   xyzw        5     NONE  float   xyzw
 // SV_InstanceID            0   x           6   INSTID   uint   x   
 //
@@ -57,7 +57,7 @@
 vs_4_0
 dcl_constantbuffer cb0[248], dynamicIndexed
 dcl_input v0.xyz
-dcl_input v4.xy
+dcl_input v3.xy
 dcl_input v5.xyzw
 dcl_input_sgv v6.x, instance_id
 dcl_output o0.xyzw
@@ -67,8 +67,8 @@ dcl_output_siv o3.xyzw, position
 dcl_temps 2
 mov r0.x, v6.x
 mul o0.xyzw, v5.xyzw, cb0[r0.x + 204].xyzw
-mad r0.y, v4.y, cb0[r0.x + 164].w, cb0[r0.x + 164].y
-mad o1.x, v4.x, cb0[r0.x + 164].z, cb0[r0.x + 164].x
+mad r0.y, v3.y, cb0[r0.x + 164].w, cb0[r0.x + 164].y
+mad o1.x, v3.x, cb0[r0.x + 164].z, cb0[r0.x + 164].x
 mad o1.y, cb0[247].y, r0.y, cb0[247].x
 ishl r0.x, v6.x, l(2)
 mul r1.xyzw, v0.yyyy, cb0[r0.x + 5].xyzw
@@ -87,10 +87,10 @@ ret
 
 const BYTE g_main[] =
 {
-     68,  88,  66,  67,  48, 243, 
-     43,  42, 185,  68, 169,  13, 
-    174, 241,   1, 175,  16, 137, 
-    170, 125,   1,   0,   0,   0, 
+     68,  88,  66,  67, 103,  98, 
+    194,   5,  43,  74, 204, 243, 
+    244, 141, 207,  71,  36,  83, 
+     92, 232,   1,   0,   0,   0, 
      56,   7,   0,   0,   5,   0, 
       0,   0,  52,   0,   0,   0, 
     100,   2,   0,   0,  52,   3, 
@@ -199,19 +199,19 @@ const BYTE g_main[] =
       0,   0,   1,   0,   0,   0, 
       0,   0,   0,   0,   3,   0, 
       0,   0,   1,   0,   0,   0, 
-      7,   0,   0,   0, 176,   0, 
+      3,   0,   0,   0, 176,   0, 
       0,   0,   2,   0,   0,   0, 
       0,   0,   0,   0,   3,   0, 
       0,   0,   2,   0,   0,   0, 
-      7,   0,   0,   0, 176,   0, 
+      3,   0,   0,   0, 176,   0, 
       0,   0,   3,   0,   0,   0, 
       0,   0,   0,   0,   3,   0, 
       0,   0,   3,   0,   0,   0, 
-      7,   0,   0,   0, 176,   0, 
-      0,   0,   4,   0,   0,   0, 
-      0,   0,   0,   0,   3,   0, 
-      0,   0,   4,   0,   0,   0, 
       3,   3,   0,   0, 176,   0, 
+      0,   0,   4,   0,   0,   0, 
+      0,   0,   0,   0,   3,   0, 
+      0,   0,   4,   0,   0,   0, 
+      3,   0,   0,   0, 176,   0, 
       0,   0,   5,   0,   0,   0, 
       0,   0,   0,   0,   3,   0, 
       0,   0,   5,   0,   0,   0, 
@@ -255,7 +255,7 @@ const BYTE g_main[] =
       0,   3, 114,  16,  16,   0, 
       0,   0,   0,   0,  95,   0, 
       0,   3,  50,  16,  16,   0, 
-      4,   0,   0,   0,  95,   0, 
+      3,   0,   0,   0,  95,   0, 
       0,   3, 242,  16,  16,   0, 
       5,   0,   0,   0,  96,   0, 
       0,   4,  18,  16,  16,   0, 
@@ -283,7 +283,7 @@ const BYTE g_main[] =
       0,   0,  50,   0,   0,  15, 
      34,   0,  16,   0,   0,   0, 
       0,   0,  26,  16,  16,   0, 
-      4,   0,   0,   0,  58, 128, 
+      3,   0,   0,   0,  58, 128, 
      32,   6,   0,   0,   0,   0, 
     164,   0,   0,   0,  10,   0, 
      16,   0,   0,   0,   0,   0, 
@@ -293,7 +293,7 @@ const BYTE g_main[] =
       0,   0,  50,   0,   0,  15, 
      18,  32,  16,   0,   1,   0, 
       0,   0,  10,  16,  16,   0, 
-      4,   0,   0,   0,  42, 128, 
+      3,   0,   0,   0,  42, 128, 
      32,   6,   0,   0,   0,   0, 
     164,   0,   0,   0,  10,   0, 
      16,   0,   0,   0,   0,   0, 

@@ -1,10 +1,10 @@
 struct VS_Input
 {
     float3 Pos;
-    float3 Normal;
-    float3 Binormal;
-    float3 Tangent;
-    float2 UV;
+    float2 OctNormal;
+    float2 OctTangent;
+    float2 UV1;
+    float2 UV2;
     float4 Color;
     uint Index;
 };
@@ -35,10 +35,10 @@ cbuffer VS_ConstantBuffer : register(b0)
 static float4 gl_Position;
 static int gl_InstanceIndex;
 static float3 Input_Pos;
-static float3 Input_Normal;
-static float3 Input_Binormal;
-static float3 Input_Tangent;
-static float2 Input_UV;
+static float2 Input_OctNormal;
+static float2 Input_OctTangent;
+static float2 Input_UV1;
+static float2 Input_UV2;
 static float4 Input_Color;
 static float4 _entryPointOutput_Color;
 static float2 _entryPointOutput_UV;
@@ -47,10 +47,10 @@ static float4 _entryPointOutput_PosP;
 struct SPIRV_Cross_Input
 {
     float3 Input_Pos : TEXCOORD0;
-    float3 Input_Normal : TEXCOORD1;
-    float3 Input_Binormal : TEXCOORD2;
-    float3 Input_Tangent : TEXCOORD3;
-    float2 Input_UV : TEXCOORD4;
+    float2 Input_OctNormal : TEXCOORD1;
+    float2 Input_OctTangent : TEXCOORD2;
+    float2 Input_UV1 : TEXCOORD3;
+    float2 Input_UV2 : TEXCOORD4;
     float4 Input_Color : TEXCOORD5;
     uint gl_InstanceIndex : SV_InstanceID;
 };
@@ -74,7 +74,7 @@ VS_Output _main(VS_Input Input)
     float4 worldPos = mul(mModel, localPos);
     Output.PosVS = mul(_31_mCameraProj, worldPos);
     Output.Color = modelColor;
-    float2 outputUV = Input.UV;
+    float2 outputUV = Input.UV1;
     outputUV.x = (outputUV.x * uv.z) + uv.x;
     outputUV.y = (outputUV.y * uv.w) + uv.y;
     outputUV.y = _31_mUVInversed.x + (_31_mUVInversed.y * outputUV.y);
@@ -87,10 +87,10 @@ void vert_main()
 {
     VS_Input Input;
     Input.Pos = Input_Pos;
-    Input.Normal = Input_Normal;
-    Input.Binormal = Input_Binormal;
-    Input.Tangent = Input_Tangent;
-    Input.UV = Input_UV;
+    Input.OctNormal = Input_OctNormal;
+    Input.OctTangent = Input_OctTangent;
+    Input.UV1 = Input_UV1;
+    Input.UV2 = Input_UV2;
     Input.Color = Input_Color;
     Input.Index = uint(gl_InstanceIndex);
     VS_Output flattenTemp = _main(Input);
@@ -104,10 +104,10 @@ SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
 {
     gl_InstanceIndex = int(stage_input.gl_InstanceIndex);
     Input_Pos = stage_input.Input_Pos;
-    Input_Normal = stage_input.Input_Normal;
-    Input_Binormal = stage_input.Input_Binormal;
-    Input_Tangent = stage_input.Input_Tangent;
-    Input_UV = stage_input.Input_UV;
+    Input_OctNormal = stage_input.Input_OctNormal;
+    Input_OctTangent = stage_input.Input_OctTangent;
+    Input_UV1 = stage_input.Input_UV1;
+    Input_UV2 = stage_input.Input_UV2;
     Input_Color = stage_input.Input_Color;
     vert_main();
     SPIRV_Cross_Output stage_output;

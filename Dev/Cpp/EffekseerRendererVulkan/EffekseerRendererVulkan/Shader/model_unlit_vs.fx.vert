@@ -3,10 +3,10 @@
 struct VS_Input
 {
     vec3 Pos;
-    vec3 Normal;
-    vec3 Binormal;
-    vec3 Tangent;
-    vec2 UV;
+    vec2 OctNormal;
+    vec2 OctTangent;
+    vec2 UV1;
+    vec2 UV2;
     vec4 Color;
     uint Index;
 };
@@ -32,10 +32,10 @@ layout(set = 0, binding = 0, std140) uniform VS_ConstantBuffer
 } _31;
 
 layout(location = 0) in vec3 Input_Pos;
-layout(location = 1) in vec3 Input_Normal;
-layout(location = 2) in vec3 Input_Binormal;
-layout(location = 3) in vec3 Input_Tangent;
-layout(location = 4) in vec2 Input_UV;
+layout(location = 1) in vec2 Input_OctNormal;
+layout(location = 2) in vec2 Input_OctTangent;
+layout(location = 3) in vec2 Input_UV1;
+layout(location = 4) in vec2 Input_UV2;
 layout(location = 5) in vec4 Input_Color;
 layout(location = 0) centroid out vec4 _entryPointOutput_Color;
 layout(location = 1) centroid out vec2 _entryPointOutput_UV;
@@ -52,7 +52,7 @@ VS_Output _main(VS_Input Input)
     vec4 worldPos = localPos * mModel;
     Output.PosVS = worldPos * _31.mCameraProj;
     Output.Color = modelColor;
-    vec2 outputUV = Input.UV;
+    vec2 outputUV = Input.UV1;
     outputUV.x = (outputUV.x * uv.z) + uv.x;
     outputUV.y = (outputUV.y * uv.w) + uv.y;
     outputUV.y = _31.mUVInversed.x + (_31.mUVInversed.y * outputUV.y);
@@ -65,10 +65,10 @@ void main()
 {
     VS_Input Input;
     Input.Pos = Input_Pos;
-    Input.Normal = Input_Normal;
-    Input.Binormal = Input_Binormal;
-    Input.Tangent = Input_Tangent;
-    Input.UV = Input_UV;
+    Input.OctNormal = Input_OctNormal;
+    Input.OctTangent = Input_OctTangent;
+    Input.UV1 = Input_UV1;
+    Input.UV2 = Input_UV2;
     Input.Color = Input_Color;
     Input.Index = uint(gl_InstanceIndex);
     VS_Output flattenTemp = _main(Input);

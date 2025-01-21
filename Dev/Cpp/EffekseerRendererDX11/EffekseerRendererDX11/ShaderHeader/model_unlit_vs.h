@@ -37,11 +37,11 @@
 // Name                 Index   Mask Register SysValue Format   Used
 // -------------------- ----- ------ -------- -------- ------ ------
 // POSITION                 0   xyz         0     NONE  float   xyz 
-// NORMAL                   0   xyz         1     NONE  float       
-// NORMAL                   1   xyz         2     NONE  float       
-// NORMAL                   2   xyz         3     NONE  float       
-// TEXCOORD                 0   xy          4     NONE  float   xy  
-// NORMAL                   3   xyzw        5     NONE  float   xyzw
+// NORMAL                   0   xy          1     NONE  float       
+// NORMAL                   1   xy          2     NONE  float       
+// TEXCOORD                 0   xy          3     NONE  float   xy  
+// TEXCOORD                 1   xy          4     NONE  float       
+// NORMAL                   2   xyzw        5     NONE  float   xyzw
 // SV_InstanceID            0   x           6   INSTID   uint   x   
 //
 //
@@ -57,7 +57,7 @@
 vs_4_0
 dcl_constantbuffer cb0[248], dynamicIndexed
 dcl_input v0.xyz
-dcl_input v4.xy
+dcl_input v3.xy
 dcl_input v5.xyzw
 dcl_input_sgv v6.x, instance_id
 dcl_output_siv o0.xyzw, position
@@ -78,8 +78,8 @@ mov o0.xyzw, r0.xyzw
 mov o3.xyzw, r0.xyzw
 mov r0.x, v6.x
 mul o1.xyzw, v5.xyzw, cb0[r0.x + 204].xyzw
-mad r0.y, v4.y, cb0[r0.x + 164].w, cb0[r0.x + 164].y
-mad o2.x, v4.x, cb0[r0.x + 164].z, cb0[r0.x + 164].x
+mad r0.y, v3.y, cb0[r0.x + 164].w, cb0[r0.x + 164].y
+mad o2.x, v3.x, cb0[r0.x + 164].z, cb0[r0.x + 164].x
 mad o2.y, cb0[247].y, r0.y, cb0[247].x
 ret 
 // Approximately 17 instruction slots used
@@ -87,10 +87,10 @@ ret
 
 const BYTE g_main[] =
 {
-     68,  88,  66,  67, 220,  47, 
-     29, 166, 149, 165,  83,  52, 
-    160,  26,  41, 152,  22,  23, 
-    123,  57,   1,   0,   0,   0, 
+     68,  88,  66,  67,  78,  20, 
+    153,  80,   0, 109,  14,  32, 
+    219, 213,  99,  96, 102,  24, 
+    216, 167,   1,   0,   0,   0, 
      44,   7,   0,   0,   5,   0, 
       0,   0,  52,   0,   0,   0, 
      68,   2,   0,   0,  36,   3, 
@@ -193,21 +193,21 @@ const BYTE g_main[] =
       0,   0, 185,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
       0,   0,   3,   0,   0,   0, 
-      1,   0,   0,   0,   7,   0, 
+      1,   0,   0,   0,   3,   0, 
       0,   0, 185,   0,   0,   0, 
       1,   0,   0,   0,   0,   0, 
       0,   0,   3,   0,   0,   0, 
-      2,   0,   0,   0,   7,   0, 
-      0,   0, 185,   0,   0,   0, 
-      2,   0,   0,   0,   0,   0, 
-      0,   0,   3,   0,   0,   0, 
-      3,   0,   0,   0,   7,   0, 
+      2,   0,   0,   0,   3,   0, 
       0,   0, 192,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
       0,   0,   3,   0,   0,   0, 
-      4,   0,   0,   0,   3,   3, 
+      3,   0,   0,   0,   3,   3, 
+      0,   0, 192,   0,   0,   0, 
+      1,   0,   0,   0,   0,   0, 
+      0,   0,   3,   0,   0,   0, 
+      4,   0,   0,   0,   3,   0, 
       0,   0, 185,   0,   0,   0, 
-      3,   0,   0,   0,   0,   0, 
+      2,   0,   0,   0,   0,   0, 
       0,   0,   3,   0,   0,   0, 
       5,   0,   0,   0,  15,  15, 
       0,   0, 201,   0,   0,   0, 
@@ -253,7 +253,7 @@ const BYTE g_main[] =
       0,   3, 114,  16,  16,   0, 
       0,   0,   0,   0,  95,   0, 
       0,   3,  50,  16,  16,   0, 
-      4,   0,   0,   0,  95,   0, 
+      3,   0,   0,   0,  95,   0, 
       0,   3, 242,  16,  16,   0, 
       5,   0,   0,   0,  96,   0, 
       0,   4,  18,  16,  16,   0, 
@@ -347,7 +347,7 @@ const BYTE g_main[] =
       0,   0,  50,   0,   0,  15, 
      34,   0,  16,   0,   0,   0, 
       0,   0,  26,  16,  16,   0, 
-      4,   0,   0,   0,  58, 128, 
+      3,   0,   0,   0,  58, 128, 
      32,   6,   0,   0,   0,   0, 
     164,   0,   0,   0,  10,   0, 
      16,   0,   0,   0,   0,   0, 
@@ -357,7 +357,7 @@ const BYTE g_main[] =
       0,   0,  50,   0,   0,  15, 
      18,  32,  16,   0,   2,   0, 
       0,   0,  10,  16,  16,   0, 
-      4,   0,   0,   0,  42, 128, 
+      3,   0,   0,   0,  42, 128, 
      32,   6,   0,   0,   0,   0, 
     164,   0,   0,   0,  10,   0, 
      16,   0,   0,   0,   0,   0, 

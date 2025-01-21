@@ -177,13 +177,14 @@ D3D11InputLayoutPtr CreateInputLayout(GraphicsDevice& graphicsDevice, VertexLayo
 {
 	Effekseer::CustomAlignedVector<D3D11_INPUT_ELEMENT_DESC> elements;
 
-	std::array<DXGI_FORMAT, 6> formats;
+	std::array<DXGI_FORMAT, 7> formats;
 	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R32_FLOAT)] = DXGI_FORMAT_R32_FLOAT;
 	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT)] = DXGI_FORMAT_R32G32_FLOAT;
 	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT)] = DXGI_FORMAT_R32G32B32_FLOAT;
 	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R32G32B32A32_FLOAT)] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM)] = DXGI_FORMAT_R8G8B8A8_UNORM;
 	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UINT)] = DXGI_FORMAT_R8G8B8A8_UINT;
+	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R16G16_UNORM)] = DXGI_FORMAT_R16G16_UNORM;
 
 	int32_t layoutOffset = 0;
 	for (size_t i = 0; i < vertexLayout->GetElements().size(); i++)

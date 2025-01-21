@@ -625,11 +625,11 @@ Effekseer::Backend::VertexLayoutRef GetModelRendererVertexLayout(Effekseer::Back
 {
 	const Effekseer::Backend::VertexLayoutElement vlElem[6] = {
 		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "Input_Pos", "POSITION", 0},
-		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "Input_Normal", "NORMAL", 0},
-		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "Input_Binormal", "NORMAL", 1},
-		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "Input_Tangent", "NORMAL", 2},
-		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "Input_UV", "TEXCOORD", 0},
-		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "Input_Color", "NORMAL", 3},
+		{Effekseer::Backend::VertexLayoutFormat::R16G16_UNORM, "Input_Normal", "NORMAL", 0},
+		{Effekseer::Backend::VertexLayoutFormat::R16G16_UNORM, "Input_Tangent", "NORMAL", 1},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "Input_UV1", "TEXCOORD", 0},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "Input_UV2", "TEXCOORD", 1},
+		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "Input_Color", "NORMAL", 2},
 	};
 
 	return graphicsDevice->CreateVertexLayout(vlElem, 6);

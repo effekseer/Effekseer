@@ -44,6 +44,12 @@ inline uint32_t PackNormal(SIMD::Vec3f v)
 	return xyz[0] | (xyz[1] << 10) | (xyz[2] << 20);
 }
 
+inline uint32_t PackTangent(SIMD::Vec3f v, float sign)
+{
+	uint32_t bits = PackNormal(v);
+	return bits | (static_cast<uint32_t>(sign < 0.0f) << 31);
+}
+
 inline uint32_t PackUV(SIMD::Vec2f v)
 {
 	v *= 65535.0f;
@@ -136,6 +142,12 @@ void PointCacheGenerator::Generate(uint32_t pointCount, uint32_t seed)
 			auto& v0 = vertexes[faces[faceIndex].Indexes[0]];
 			auto& v1 = vertexes[faces[faceIndex].Indexes[1]];
 			auto& v2 = vertexes[faces[faceIndex].Indexes[2]];
+			auto n0 = Model::OctNormalDecode(Model::UnpackUnorm2(v0.OctNormal));
+			auto n1 = Model::OctNormalDecode(Model::UnpackUnorm2(v1.OctNormal));
+			auto n2 = Model::OctNormalDecode(Model::UnpackUnorm2(v2.OctNormal));
+			auto [t0, s0] = Model::OctTangentDecode(Model::UnpackUnorm2(v0.OctTangent));
+			auto [t1, s1] = Model::OctTangentDecode(Model::UnpackUnorm2(v1.OctTangent));
+			auto [t2, s2] = Model::OctTangentDecode(Model::UnpackUnorm2(v2.OctTangent));
 
 			summedArea += faceAreas[faceIndex];
 
@@ -145,9 +157,9 @@ void PointCacheGenerator::Generate(uint32_t pointCount, uint32_t seed)
 				Point* point = reinterpret_cast<Point*>(pointBuffer_ + pointIndex * pointStride_);
 				Attribute* attrib = reinterpret_cast<Attribute*>(attribBuffer_ + pointIndex * attribStride_);
 				point->Position = SIMD::ToStruct(RandomTriangle<SIMD::Vec3f>(random, v0.Position, v1.Position, v2.Position));
-				attrib->PackedNormal = PackNormal(RandomTriangle<SIMD::Vec3f>(random, v0.Normal, v1.Normal, v2.Normal));
-				attrib->PackedTangent = PackNormal(RandomTriangle<SIMD::Vec3f>(random, v0.Tangent, v1.Tangent, v2.Tangent));
-				attrib->PackedUV = PackUV(RandomTriangle<SIMD::Vec2f>(random, v0.UV, v1.UV, v2.UV));
+				attrib->PackedNormal = PackNormal(RandomTriangle<SIMD::Vec3f>(random, n0, n1, n2));
+				attrib->PackedTangent = PackTangent(RandomTriangle<SIMD::Vec3f>(random, t0, t1, t2), s0);
+				attrib->PackedUV = PackUV(RandomTriangle<SIMD::Vec2f>(random, v0.UV1, v1.UV1, v2.UV1));
 				attrib->PackedColor = PackColor(RandomTriangle<SIMD::Vec4f>(random, v0.VColor, v1.VColor, v2.VColor));
 				pointIndex += 1;
 			}

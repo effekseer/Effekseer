@@ -334,13 +334,14 @@ bool Texture::Init(LLGI::Texture* texture)
 
 bool VertexLayout::Init(const Effekseer::Backend::VertexLayoutElement* elements, int32_t elementCount)
 {
-	std::array<LLGI::VertexLayoutFormat, 6> formats;
+	std::array<LLGI::VertexLayoutFormat, 7> formats;
 	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R32_FLOAT)] = LLGI::VertexLayoutFormat::R32_FLOAT;
 	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT)] = LLGI::VertexLayoutFormat::R32G32_FLOAT;
 	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT)] = LLGI::VertexLayoutFormat::R32G32B32_FLOAT;
 	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R32G32B32A32_FLOAT)] = LLGI::VertexLayoutFormat::R32G32B32A32_FLOAT;
 	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM)] = LLGI::VertexLayoutFormat::R8G8B8A8_UNORM;
 	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UINT)] = LLGI::VertexLayoutFormat::R8G8B8A8_UINT;
+	formats[static_cast<int32_t>(Effekseer::Backend::VertexLayoutFormat::R16G16_UNORM)] = LLGI::VertexLayoutFormat::R16G16_UNORM;
 
 	elements_.resize(elementCount);
 

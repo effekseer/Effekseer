@@ -3,10 +3,10 @@
 struct VS_Input
 {
     vec3 Pos;
-    vec3 Normal;
-    vec3 Binormal;
-    vec3 Tangent;
-    vec2 UV;
+    vec2 OctNormal;
+    vec2 OctTangent;
+    vec2 UV1;
+    vec2 UV2;
     vec4 Color;
 };
 
@@ -36,10 +36,10 @@ struct VS_ConstantBuffer
 uniform VS_ConstantBuffer CBVS0;
 
 attribute vec3 Input_Pos;
-attribute vec3 Input_Normal;
-attribute vec3 Input_Binormal;
-attribute vec3 Input_Tangent;
-attribute vec2 Input_UV;
+attribute vec2 Input_OctNormal;
+attribute vec2 Input_OctTangent;
+attribute vec2 Input_UV1;
+attribute vec2 Input_UV2;
 attribute vec4 Input_Color;
 centroid varying vec4 _VSPS_Color;
 centroid varying vec2 _VSPS_UV;
@@ -47,6 +47,31 @@ varying vec3 _VSPS_WorldN;
 varying vec3 _VSPS_WorldB;
 varying vec3 _VSPS_WorldT;
 varying vec4 _VSPS_PosP;
+
+vec3 decodeOct(vec2 oct)
+{
+    vec3 v = vec3(oct, (1.0 - abs(oct.x)) - abs(oct.y));
+    float t = max(-v.z, 0.0);
+    vec3 _56 = v;
+    vec3 _61 = v;
+    vec2 _63 = _61.xy + ((-sign(_56.xy)) * t);
+    v.x = _63.x;
+    v.y = _63.y;
+    return normalize(v);
+}
+
+void decodeOct(inout vec2 octNormal, inout vec2 octTangent, inout vec3 normal, out vec3 binormal, inout vec3 tangent)
+{
+    octNormal = (octNormal * 2.0) - vec2(1.0);
+    vec2 param = octNormal;
+    normal = decodeOct(param);
+    octTangent = (octTangent * 2.0) - vec2(1.0);
+    float s = sign(octTangent.y);
+    octTangent = vec2(octTangent.x, (abs(octTangent.y) * 2.0) - 1.0);
+    vec2 param_1 = octTangent;
+    tangent = decodeOct(param_1);
+    binormal = cross(normal, tangent) * s;
+}
 
 VS_Output _main(VS_Input Input)
 {
@@ -57,17 +82,23 @@ VS_Output _main(VS_Input Input)
     vec4 worldPos = CBVS0.mModel * localPos;
     Output.PosVS = CBVS0.mCameraProj * worldPos;
     Output.Color = modelColor;
-    vec2 outputUV = Input.UV;
+    vec2 outputUV = Input.UV1;
     outputUV.x = (outputUV.x * uv.z) + uv.x;
     outputUV.y = (outputUV.y * uv.w) + uv.y;
     outputUV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * outputUV.y);
     Output.UV = outputUV;
-    vec4 localNormal = vec4(Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0);
-    vec4 localBinormal = vec4(Input.Binormal.x, Input.Binormal.y, Input.Binormal.z, 0.0);
-    vec4 localTangent = vec4(Input.Tangent.x, Input.Tangent.y, Input.Tangent.z, 0.0);
-    vec4 worldNormal = CBVS0.mModel * localNormal;
-    vec4 worldBinormal = CBVS0.mModel * localBinormal;
-    vec4 worldTangent = CBVS0.mModel * localTangent;
+    vec2 param = Input.OctNormal;
+    vec2 param_1 = Input.OctTangent;
+    vec3 param_2;
+    vec3 param_3;
+    vec3 param_4;
+    decodeOct(param, param_1, param_2, param_3, param_4);
+    vec3 localNormal = param_2;
+    vec3 localBinormal = param_3;
+    vec3 localTangent = param_4;
+    vec4 worldNormal = CBVS0.mModel * vec4(localNormal, 0.0);
+    vec4 worldBinormal = CBVS0.mModel * vec4(localTangent, 0.0);
+    vec4 worldTangent = CBVS0.mModel * vec4(localBinormal, 0.0);
     worldNormal = normalize(worldNormal);
     worldBinormal = normalize(worldBinormal);
     worldTangent = normalize(worldTangent);
@@ -82,10 +113,10 @@ void main()
 {
     VS_Input Input;
     Input.Pos = Input_Pos;
-    Input.Normal = Input_Normal;
-    Input.Binormal = Input_Binormal;
-    Input.Tangent = Input_Tangent;
-    Input.UV = Input_UV;
+    Input.OctNormal = Input_OctNormal;
+    Input.OctTangent = Input_OctTangent;
+    Input.UV1 = Input_UV1;
+    Input.UV2 = Input_UV2;
     Input.Color = Input_Color;
     VS_Output flattenTemp = _main(Input);
     gl_Position = flattenTemp.PosVS;

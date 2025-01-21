@@ -365,6 +365,7 @@ enum class VertexLayoutFormat
 	R32G32B32A32_FLOAT,
 	R8G8B8A8_UNORM,
 	R8G8B8A8_UINT,
+	R16G16_UNORM,
 };
 
 struct VertexLayoutElement
@@ -723,6 +724,10 @@ inline int32_t GetVertexLayoutFormatSize(VertexLayoutFormat format)
 	else if (format == Effekseer::Backend::VertexLayoutFormat::R32G32B32A32_FLOAT)
 	{
 		size = sizeof(float) * 4;
+	}
+	else if (format == Effekseer::Backend::VertexLayoutFormat::R16G16_UNORM)
+	{
+		size = sizeof(uint16_t) * 2;
 	}
 	else
 	{

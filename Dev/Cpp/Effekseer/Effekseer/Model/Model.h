@@ -28,15 +28,15 @@ class Model : public Resource
 {
 public:
 	static const int32_t Version = 1;
-	static const int32_t LastetVersion = 5;
+	static const int32_t LatestVersion = 6;
 
 	struct Vertex
 	{
 		Vector3D Position;
-		Vector3D Normal;
-		Vector3D Binormal;
-		Vector3D Tangent;
-		Vector2D UV;
+		uint32_t OctNormal;
+		uint32_t OctTangent;
+		Vector2D UV1;
+		Vector2D UV2;
 		Color VColor;
 	};
 
@@ -108,6 +108,20 @@ public:
 	bool GenerateWireIndexBuffer(Backend::GraphicsDevice* graphicsDevice);
 
 	bool GetIsWireIndexBufferGenerated() const;
+
+	static std::array<Vector3D, 3> GetVertexTBN(const Vertex& vertex);
+
+	static Vector2D OctNormalEncode(Vector3D n);
+
+	static Vector2D OctTangentEncode(Vector3D t, float sign);
+
+	static Vector3D OctNormalDecode(Vector2D oct);
+
+	static std::tuple<Vector3D, float> OctTangentDecode(Vector2D oct);
+
+	static uint32_t PackUnorm2(Vector2D vec);
+	
+	static Vector2D UnpackUnorm2(uint32_t value);
 };
 
 } // namespace Effekseer

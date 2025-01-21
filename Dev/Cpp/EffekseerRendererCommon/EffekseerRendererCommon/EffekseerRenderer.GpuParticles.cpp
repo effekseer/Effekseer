@@ -15,18 +15,17 @@ inline constexpr uint32_t RoundUp(uint32_t x, uint32_t unit)
 	return (x + unit - 1) / unit * unit;
 }
 
-const Effekseer::Vector3D VEC_UP = {0.0f, 1.0f, 0.0f};
-const Effekseer::Vector3D VEC_RIGHT = {1.0f, 0.0f, 0.0f};
-const Effekseer::Vector3D VEC_FRONT = {0.0f, 0.0f, 1.0f};
+const uint32_t VEC_FRONT = Effekseer::Model::PackUnorm2(Effekseer::Model::OctNormalEncode({0.0f, 0.0f, 1.0f}));
+const uint32_t VEC_RIGHT = Effekseer::Model::PackUnorm2(Effekseer::Model::OctTangentEncode({1.0f, 0.0f, 0.0f}, 1.0f));
 const Effekseer::Color COLOR_WHITE = {255, 255, 255, 255};
 
 Effekseer::ModelRef CreateSpriteModel()
 {
 	Effekseer::CustomVector<Effekseer::Model::Vertex> vertexes = {
-		{ { -0.5f,  0.5f, 0.0f }, VEC_FRONT, VEC_UP, VEC_RIGHT, {0.0f, 0.0f}, COLOR_WHITE },
-		{ { -0.5f, -0.5f, 0.0f }, VEC_FRONT, VEC_UP, VEC_RIGHT, {0.0f, 1.0f}, COLOR_WHITE },
-		{ {  0.5f,  0.5f, 0.0f }, VEC_FRONT, VEC_UP, VEC_RIGHT, {1.0f, 0.0f}, COLOR_WHITE },
-		{ {  0.5f, -0.5f, 0.0f }, VEC_FRONT, VEC_UP, VEC_RIGHT, {1.0f, 1.0f}, COLOR_WHITE },
+		{ { -0.5f,  0.5f, 0.0f }, VEC_FRONT, VEC_RIGHT, {0.0f, 0.0f}, {0.0f, 0.0f}, COLOR_WHITE },
+		{ { -0.5f, -0.5f, 0.0f }, VEC_FRONT, VEC_RIGHT, {0.0f, 1.0f}, {0.0f, 1.0f}, COLOR_WHITE },
+		{ {  0.5f,  0.5f, 0.0f }, VEC_FRONT, VEC_RIGHT, {1.0f, 0.0f}, {1.0f, 0.0f}, COLOR_WHITE },
+		{ {  0.5f, -0.5f, 0.0f }, VEC_FRONT, VEC_RIGHT, {1.0f, 1.0f}, {1.0f, 1.0f}, COLOR_WHITE },
 	};
 	Effekseer::CustomVector<Effekseer::Model::Face> faces = {
 		{ {0, 2, 1} }, { {1, 2, 3} }
@@ -45,11 +44,11 @@ Effekseer::ModelRef CreateTrailModel()
 		v.Position.X = (i % 2 == 0) ? -0.5f : 0.5f;
 		v.Position.Y = 0.0f;
 		v.Position.Z = 0.0f;
-		v.Binormal = VEC_FRONT;
-		v.Normal = VEC_UP;
-		v.Tangent = VEC_RIGHT;
-		v.UV.X = (i % 2 == 0) ? 0.0f : 1.0f;
-		v.UV.Y = (float)(i / 2) / (float)(TrailJoints - 1);
+		v.OctNormal = VEC_FRONT;
+		v.OctTangent = VEC_RIGHT;
+		v.UV1.X = (i % 2 == 0) ? 0.0f : 1.0f;
+		v.UV1.Y = (float)(i / 2) / (float)(TrailJoints - 1);
+		v.UV2 = v.UV1;
 		v.VColor = COLOR_WHITE;
 		vertexes[i] = v;
 	}

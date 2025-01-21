@@ -1,6 +1,7 @@
 #pragma once
 
 #include <math.h>
+#include <algorithm>
 #include <array>
 
 namespace efkres
@@ -284,6 +285,75 @@ inline Vec3 yAxis(Quat qQuat)
 	double fTzz = fTz * qQuat.z;
 
 	return Vec3(fTxy - fTwz, 1.0 - (fTxx + fTzz), fTyz + fTwx);
+}
+
+inline Vec2 OctNormalEncode(Vec3 n)
+{
+	n = n.Normalized();
+	n /= abs(n.x) + abs(n.y) + abs(n.z);
+
+	Vec2 res;
+	if (n.z >= 0.0f)
+	{
+		res.x = n.x;
+		res.y = n.y;
+	}
+	else
+	{
+		res.x = (1.0 - abs(n.y)) * (n.x >= 0.0f ? 1.0 : -1.0);
+		res.y = (1.0 - abs(n.x)) * (n.y >= 0.0f ? 1.0 : -1.0);
+	}
+	res.x = res.x * 0.5 + 0.5;
+	res.y = res.y * 0.5 + 0.5;
+
+	return res;
+}
+
+inline Vec2 OctTangentEncode(Vec3 t, double sign)
+{
+	const double bias = 1.0 / (double)32767.0;
+	Vec2 res = OctNormalEncode(t);
+	res.y = std::max(res.y, bias);
+	res.y = res.y * 0.5 + 0.5;
+	res.y = sign >= 0.0 ? res.y : 1.0 - res.y;
+	return res;
+}
+
+inline Vec3 OctNormalDecode(Vec2 oct) {
+	Vec2 f(oct.x * 2.0f - 1.0f, oct.y * 2.0f - 1.0f);
+	Vec3 n(f.x, f.y, 1.0f - abs(f.x) - abs(f.y));
+	double t = std::clamp(-n.z, 0.0, 1.0);
+	n.x += n.x >= 0.0 ? -t : t;
+	n.y += n.y >= 0.0 ? -t : t;
+	return n.Normalized();
+}
+
+inline std::tuple<Vec3, double> OctTangentDecode(Vec2 oct) {
+	oct.y = oct.y * 2.0 - 1.0;
+	double sign = oct.y >= 0.0 ? 1.0 : -1.0;
+	oct.y = abs(oct.y);
+	Vec3 res = OctNormalDecode(oct);
+	return std::make_tuple(res, sign);
+}
+
+inline uint32_t PackUnorm2(Vec2 vec)
+{
+	using limits = std::numeric_limits<uint16_t>;
+
+	uint32_t value = 0;
+	value |= (uint16_t)std::clamp(vec.x * limits::max(), (double)limits::min(), (double)limits::max());
+	value |= (uint16_t)std::clamp(vec.y * limits::max(), (double)limits::min(), (double)limits::max()) << 16;
+	return value;
+}
+
+inline Vec2 UnpackUnorm2(uint32_t value)
+{
+	using limits = std::numeric_limits<uint16_t>;
+
+	Vec2 vec;
+	vec.x = (value & 0xFFFF) / (double)limits::max();
+	vec.y = ((value >> 16) & 0xFFFF) / (double)limits::max();
+	return vec;
 }
 
 }

@@ -1,3 +1,4 @@
+#include "oct_common_vs.fx"
 
 cbuffer VS_ConstantBuffer : register(b0)
 {
@@ -48,11 +49,11 @@ cbuffer VS_ConstantBuffer : register(b0)
 struct VS_Input
 {
 	float3 Pos : POSITION0;
-	float3 Normal : NORMAL0;
-	float3 Binormal : NORMAL1;
-	float3 Tangent : NORMAL2;
-	float2 UV : TEXCOORD0;
-	float4 Color : NORMAL3;
+	float2 OctNormal : NORMAL0;
+	float2 OctTangent : NORMAL1;
+	float2 UV1 : TEXCOORD0;
+	float2 UV2 : TEXCOORD1;
+	float4 Color : NORMAL2;
 
 #if defined(ENABLE_DIVISOR)
 	float Index : BLENDINDICES0;
@@ -148,20 +149,20 @@ VS_Output main(const VS_Input Input)
 
 	Output.PosVS = mul(mCameraProj, worldPos);
 
-	float2 outputUV = Input.UV;
+	float2 outputUV = Input.UV1;
 	outputUV.x = outputUV.x * uv.z + uv.x;
 	outputUV.y = outputUV.y * uv.w + uv.y;
 	outputUV.y = mUVInversed.x + mUVInversed.y * outputUV.y;
 	Output.UV_Others.xy = outputUV;
 
 #if defined(ENABLE_LIGHTING) || defined(ENABLE_DISTORTION)
-	float4 localNormal = {Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0};
-	float4 localBinormal = {Input.Binormal.x, Input.Binormal.y, Input.Binormal.z, 0.0};
-	float4 localTangent = {Input.Tangent.x, Input.Tangent.y, Input.Tangent.z, 0.0};
 
-	float4 worldNormal = mul(mModel, localNormal);
-	float4 worldBinormal = mul(mModel, localBinormal);
-	float4 worldTangent = mul(mModel, localTangent);
+	float3 localNormal, localBinormal, localTangent;
+	decodeOct(Input.OctNormal, Input.OctTangent, localNormal, localBinormal, localTangent);
+	
+	float4 worldNormal = mul(mModel, float4(localNormal, 0.0f));
+	float4 worldBinormal = mul(mModel, float4(localBinormal, 0.0f));
+	float4 worldTangent = mul(mModel, float4(localTangent, 0.0f));
 
 	worldNormal = normalize(worldNormal);
 	worldBinormal = normalize(worldBinormal);
@@ -180,14 +181,14 @@ VS_Output main(const VS_Input Input)
 
 #else
 	// Unlit
-	float4 localNormal = {Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0};
-	localNormal = normalize(mul(mModel, localNormal));
+	float3 localNormal = decodeOct(Input.OctNormal);
+	float4 worldNormal = normalize(mul(mModel, float4(localNormal, 0.0f)));
 	Output.WorldN = localNormal.xyz;
 	
 #endif
 	Output.Color = modelColor;
 
-	CalculateAndStoreAdvancedParameter(Input.UV, Output.UV_Others.xy, alphaUV, uvDistortionUV, blendUV, blendAlphaUV, blendUVDistortionUV, flipbookIndexAndNextRate, modelAlphaThreshold, Output);
+	CalculateAndStoreAdvancedParameter(Input.UV1, Output.UV_Others.xy, alphaUV, uvDistortionUV, blendUV, blendAlphaUV, blendUVDistortionUV, flipbookIndexAndNextRate, modelAlphaThreshold, Output);
 
 #if !defined(DISABLED_SOFT_PARTICLE) || defined(ENABLE_DISTORTION)
 	Output.PosP = Output.PosVS;

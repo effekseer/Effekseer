@@ -17,10 +17,10 @@ struct VS_Output
 struct VS_Input
 {
     vec3 Pos;
-    vec3 Normal;
-    vec3 Binormal;
-    vec3 Tangent;
-    vec2 UV;
+    vec2 OctNormal;
+    vec2 OctTangent;
+    vec2 UV1;
+    vec2 UV2;
     vec4 Color;
     uint Index;
 };
@@ -44,13 +44,13 @@ layout(set = 0, binding = 0, std140) uniform VS_ConstantBuffer
     vec4 fLightColor;
     vec4 fLightAmbient;
     vec4 mUVInversed;
-} _372;
+} _451;
 
 layout(location = 0) in vec3 Input_Pos;
-layout(location = 1) in vec3 Input_Normal;
-layout(location = 2) in vec3 Input_Binormal;
-layout(location = 3) in vec3 Input_Tangent;
-layout(location = 4) in vec2 Input_UV;
+layout(location = 1) in vec2 Input_OctNormal;
+layout(location = 2) in vec2 Input_OctTangent;
+layout(location = 3) in vec2 Input_UV1;
+layout(location = 4) in vec2 Input_UV2;
 layout(location = 5) in vec4 Input_Color;
 layout(location = 0) centroid out vec4 _entryPointOutput_Color;
 layout(location = 1) centroid out vec4 _entryPointOutput_UV_Others;
@@ -61,6 +61,31 @@ layout(location = 5) out vec4 _entryPointOutput_Alpha_Dist_UV;
 layout(location = 6) out vec4 _entryPointOutput_Blend_Alpha_Dist_UV;
 layout(location = 7) out vec4 _entryPointOutput_Blend_FBNextIndex_UV;
 layout(location = 8) out vec4 _entryPointOutput_PosP;
+
+vec3 decodeOct(vec2 oct)
+{
+    vec3 v = vec3(oct, (1.0 - abs(oct.x)) - abs(oct.y));
+    float t = max(-v.z, 0.0);
+    vec3 _96 = v;
+    vec3 _101 = v;
+    vec2 _103 = _101.xy + ((-sign(_96.xy)) * t);
+    v.x = _103.x;
+    v.y = _103.y;
+    return normalize(v);
+}
+
+void decodeOct(inout vec2 octNormal, inout vec2 octTangent, inout vec3 normal, out vec3 binormal, inout vec3 tangent)
+{
+    octNormal = (octNormal * 2.0) - vec2(1.0);
+    vec2 param = octNormal;
+    normal = decodeOct(param);
+    octTangent = (octTangent * 2.0) - vec2(1.0);
+    float s = sign(octTangent.y);
+    octTangent = vec2(octTangent.x, (abs(octTangent.y) * 2.0) - 1.0);
+    vec2 param_1 = octTangent;
+    tangent = decodeOct(param_1);
+    binormal = cross(normal, tangent) * s;
+}
 
 vec2 GetFlipbookOriginUV(vec2 FlipbookUV, float FlipbookIndex, float DivideX, vec2 flipbookOneSize, vec2 flipbookOffset)
 {
@@ -162,11 +187,11 @@ void CalculateAndStoreAdvancedParameter(vec2 uv, vec2 uv1, vec4 alphaUV, vec4 uv
     vec2 flipbookNextIndexUV = vec2(0.0);
     float param = flipbookRate;
     vec2 param_1 = flipbookNextIndexUV;
-    vec4 param_2 = _372.flipbookParameter1;
-    vec4 param_3 = _372.flipbookParameter2;
+    vec4 param_2 = _451.flipbookParameter1;
+    vec4 param_3 = _451.flipbookParameter2;
     float param_4 = flipbookIndexAndNextRate;
     vec2 param_5 = uv1;
-    vec2 param_6 = vec2(_372.mUVInversed.xy);
+    vec2 param_6 = vec2(_451.mUVInversed.xy);
     ApplyFlipbookVS(param, param_1, param_2, param_3, param_4, param_5, param_6);
     flipbookRate = param;
     flipbookNextIndexUV = param_1;
@@ -174,42 +199,48 @@ void CalculateAndStoreAdvancedParameter(vec2 uv, vec2 uv1, vec4 alphaUV, vec4 uv
     vsoutput.Blend_FBNextIndex_UV.w = flipbookNextIndexUV.y;
     vsoutput.UV_Others.z = flipbookRate;
     vsoutput.UV_Others.w = modelAlphaThreshold;
-    vsoutput.Alpha_Dist_UV.y = _372.mUVInversed.x + (_372.mUVInversed.y * vsoutput.Alpha_Dist_UV.y);
-    vsoutput.Alpha_Dist_UV.w = _372.mUVInversed.x + (_372.mUVInversed.y * vsoutput.Alpha_Dist_UV.w);
-    vsoutput.Blend_FBNextIndex_UV.y = _372.mUVInversed.x + (_372.mUVInversed.y * vsoutput.Blend_FBNextIndex_UV.y);
-    vsoutput.Blend_Alpha_Dist_UV.y = _372.mUVInversed.x + (_372.mUVInversed.y * vsoutput.Blend_Alpha_Dist_UV.y);
-    vsoutput.Blend_Alpha_Dist_UV.w = _372.mUVInversed.x + (_372.mUVInversed.y * vsoutput.Blend_Alpha_Dist_UV.w);
+    vsoutput.Alpha_Dist_UV.y = _451.mUVInversed.x + (_451.mUVInversed.y * vsoutput.Alpha_Dist_UV.y);
+    vsoutput.Alpha_Dist_UV.w = _451.mUVInversed.x + (_451.mUVInversed.y * vsoutput.Alpha_Dist_UV.w);
+    vsoutput.Blend_FBNextIndex_UV.y = _451.mUVInversed.x + (_451.mUVInversed.y * vsoutput.Blend_FBNextIndex_UV.y);
+    vsoutput.Blend_Alpha_Dist_UV.y = _451.mUVInversed.x + (_451.mUVInversed.y * vsoutput.Blend_Alpha_Dist_UV.y);
+    vsoutput.Blend_Alpha_Dist_UV.w = _451.mUVInversed.x + (_451.mUVInversed.y * vsoutput.Blend_Alpha_Dist_UV.w);
 }
 
 VS_Output _main(VS_Input Input)
 {
     uint index = Input.Index;
-    mat4 mModel = _372.mModel_Inst[index];
-    vec4 uv = _372.fUV[index];
-    vec4 alphaUV = _372.fAlphaUV[index];
-    vec4 uvDistortionUV = _372.fUVDistortionUV[index];
-    vec4 blendUV = _372.fBlendUV[index];
-    vec4 blendAlphaUV = _372.fBlendAlphaUV[index];
-    vec4 blendUVDistortionUV = _372.fBlendUVDistortionUV[index];
-    vec4 modelColor = _372.fModelColor[index] * Input.Color;
-    float flipbookIndexAndNextRate = _372.fFlipbookIndexAndNextRate[index].x;
-    float modelAlphaThreshold = _372.fModelAlphaThreshold[index].x;
+    mat4 mModel = _451.mModel_Inst[index];
+    vec4 uv = _451.fUV[index];
+    vec4 alphaUV = _451.fAlphaUV[index];
+    vec4 uvDistortionUV = _451.fUVDistortionUV[index];
+    vec4 blendUV = _451.fBlendUV[index];
+    vec4 blendAlphaUV = _451.fBlendAlphaUV[index];
+    vec4 blendUVDistortionUV = _451.fBlendUVDistortionUV[index];
+    vec4 modelColor = _451.fModelColor[index] * Input.Color;
+    float flipbookIndexAndNextRate = _451.fFlipbookIndexAndNextRate[index].x;
+    float modelAlphaThreshold = _451.fModelAlphaThreshold[index].x;
     VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec4(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0));
     vec4 localPosition = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     vec4 worldPos = localPosition * mModel;
-    Output.PosVS = worldPos * _372.mCameraProj;
-    vec2 outputUV = Input.UV;
+    Output.PosVS = worldPos * _451.mCameraProj;
+    vec2 outputUV = Input.UV1;
     outputUV.x = (outputUV.x * uv.z) + uv.x;
     outputUV.y = (outputUV.y * uv.w) + uv.y;
-    outputUV.y = _372.mUVInversed.x + (_372.mUVInversed.y * outputUV.y);
+    outputUV.y = _451.mUVInversed.x + (_451.mUVInversed.y * outputUV.y);
     Output.UV_Others.x = outputUV.x;
     Output.UV_Others.y = outputUV.y;
-    vec4 localNormal = vec4(Input.Normal.x, Input.Normal.y, Input.Normal.z, 0.0);
-    vec4 localBinormal = vec4(Input.Binormal.x, Input.Binormal.y, Input.Binormal.z, 0.0);
-    vec4 localTangent = vec4(Input.Tangent.x, Input.Tangent.y, Input.Tangent.z, 0.0);
-    vec4 worldNormal = localNormal * mModel;
-    vec4 worldBinormal = localBinormal * mModel;
-    vec4 worldTangent = localTangent * mModel;
+    vec2 param = Input.OctNormal;
+    vec2 param_1 = Input.OctTangent;
+    vec3 param_2;
+    vec3 param_3;
+    vec3 param_4;
+    decodeOct(param, param_1, param_2, param_3, param_4);
+    vec3 localNormal = param_2;
+    vec3 localBinormal = param_3;
+    vec3 localTangent = param_4;
+    vec4 worldNormal = vec4(localNormal, 0.0) * mModel;
+    vec4 worldBinormal = vec4(localBinormal, 0.0) * mModel;
+    vec4 worldTangent = vec4(localTangent, 0.0) * mModel;
     worldNormal = normalize(worldNormal);
     worldBinormal = normalize(worldBinormal);
     worldTangent = normalize(worldTangent);
@@ -217,18 +248,18 @@ VS_Output _main(VS_Input Input)
     Output.WorldB = worldBinormal.xyz;
     Output.WorldT = worldTangent.xyz;
     Output.Color = modelColor;
-    vec2 param = Input.UV;
-    vec2 param_1 = Output.UV_Others.xy;
-    vec4 param_2 = alphaUV;
-    vec4 param_3 = uvDistortionUV;
-    vec4 param_4 = blendUV;
-    vec4 param_5 = blendAlphaUV;
-    vec4 param_6 = blendUVDistortionUV;
-    float param_7 = flipbookIndexAndNextRate;
-    float param_8 = modelAlphaThreshold;
-    VS_Output param_9 = Output;
-    CalculateAndStoreAdvancedParameter(param, param_1, param_2, param_3, param_4, param_5, param_6, param_7, param_8, param_9);
-    Output = param_9;
+    vec2 param_5 = Input.UV1;
+    vec2 param_6 = Output.UV_Others.xy;
+    vec4 param_7 = alphaUV;
+    vec4 param_8 = uvDistortionUV;
+    vec4 param_9 = blendUV;
+    vec4 param_10 = blendAlphaUV;
+    vec4 param_11 = blendUVDistortionUV;
+    float param_12 = flipbookIndexAndNextRate;
+    float param_13 = modelAlphaThreshold;
+    VS_Output param_14 = Output;
+    CalculateAndStoreAdvancedParameter(param_5, param_6, param_7, param_8, param_9, param_10, param_11, param_12, param_13, param_14);
+    Output = param_14;
     Output.PosP = Output.PosVS;
     return Output;
 }
@@ -237,10 +268,10 @@ void main()
 {
     VS_Input Input;
     Input.Pos = Input_Pos;
-    Input.Normal = Input_Normal;
-    Input.Binormal = Input_Binormal;
-    Input.Tangent = Input_Tangent;
-    Input.UV = Input_UV;
+    Input.OctNormal = Input_OctNormal;
+    Input.OctTangent = Input_OctTangent;
+    Input.UV1 = Input_UV1;
+    Input.UV2 = Input_UV2;
     Input.Color = Input_Color;
     Input.Index = uint(gl_InstanceIndex);
     VS_Output flattenTemp = _main(Input);
