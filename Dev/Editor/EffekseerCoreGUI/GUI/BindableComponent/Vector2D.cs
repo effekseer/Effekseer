@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.BindableComponent
 {
-	class Int2 : Control, IParameterControl
+	class Vector2D : Control, IParameterControl
 	{
 		string id = "";
 		string id_c = "";
 		string id_reset = "";
 
-		Data.Value.Int2 binding = null;
+		Data.Value.Vector2D binding = null;
 
 		bool isPopupShown = false;
 
@@ -20,11 +20,11 @@ namespace Effekseer.GUI.BindableComponent
 
 		bool isActive = false;
 
-		int[] internalValue = new int[] { 0, 0 };
+		float[] internalValue = new float[] { 0.0f, 0.0f };
 
 		public bool EnableUndo { get; set; } = true;
 
-		public Data.Value.Int2 Binding
+		public Data.Value.Vector2D Binding
 		{
 			get
 			{
@@ -44,7 +44,7 @@ namespace Effekseer.GUI.BindableComponent
 			}
 		}
 
-		public Int2()
+		public Vector2D()
 		{
 			id = "###" + Manager.GetUniqueID().ToString();
 			id_c = "###" + Manager.GetUniqueID().ToString();
@@ -53,7 +53,7 @@ namespace Effekseer.GUI.BindableComponent
 
 		public void SetBinding(object o)
 		{
-			var o_ = o as Data.Value.Int2;
+			var o_ = o as Data.Value.Vector2D;
 			Binding = o_;
 		}
 
@@ -90,17 +90,17 @@ namespace Effekseer.GUI.BindableComponent
 
 			valueChangingProp.Enable(binding);
 
-			int step = 1;
+			float step = 1.0f;
 			if (binding != null)
 			{
 				internalValue[0] = binding.X.Value;
 				internalValue[1] = binding.Y.Value;
-				step = binding.X.Step;
+				step = binding.X.Step / 10.0f;
 			}
 
-			if (Manager.NativeManager.DragInt2EfkEx(id, internalValue, step,
-				int.MinValue, int.MaxValue,
-				int.MinValue, int.MaxValue,
+			if (Manager.NativeManager.DragFloat2EfkEx(id, internalValue, step,
+				float.MinValue, float.MaxValue,
+				float.MinValue, float.MaxValue,
 				"X:" + Core.Option.GetFloatFormat(), "Y:" + Core.Option.GetFloatFormat()))
 			{
 				FixValueInternal(isActive);
@@ -122,7 +122,6 @@ namespace Effekseer.GUI.BindableComponent
 
 		void Popup()
 		{
-			/*
 			if (isPopupShown) return;
 
 			if (Manager.NativeManager.BeginPopupContextItem(id_c))
@@ -133,7 +132,6 @@ namespace Effekseer.GUI.BindableComponent
 
 				isPopupShown = true;
 			}
-			*/
 		}
 	}
 }
