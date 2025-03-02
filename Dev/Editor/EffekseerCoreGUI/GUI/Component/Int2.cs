@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Component
 {
-	class Vector2D : Control, IParameterControl
+	class Int2 : Control, IParameterControl
 	{
 		string id = "";
 		string id_c = "";
 		string id_reset = "";
 
-		Data.Value.Vector2D binding = null;
+		Data.Value.Int2 binding = null;
 
 		bool isPopupShown = false;
 
@@ -20,11 +20,11 @@ namespace Effekseer.GUI.Component
 
 		bool isActive = false;
 
-		float[] internalValue = new float[] { 0.0f, 0.0f };
+		int[] internalValue = new int[] { 0, 0 };
 
 		public bool EnableUndo { get; set; } = true;
 
-		public Data.Value.Vector2D Binding
+		public Data.Value.Int2 Binding
 		{
 			get
 			{
@@ -44,7 +44,7 @@ namespace Effekseer.GUI.Component
 			}
 		}
 
-		public Vector2D()
+		public Int2()
 		{
 			id = "###" + Manager.GetUniqueID().ToString();
 			id_c = "###" + Manager.GetUniqueID().ToString();
@@ -53,7 +53,7 @@ namespace Effekseer.GUI.Component
 
 		public void SetBinding(object o)
 		{
-			var o_ = o as Data.Value.Vector2D;
+			var o_ = o as Data.Value.Int2;
 			Binding = o_;
 		}
 
@@ -90,18 +90,18 @@ namespace Effekseer.GUI.Component
 
 			valueChangingProp.Enable(binding);
 
-			float step = 1.0f;
+			int step = 1;
 			if (binding != null)
 			{
 				internalValue[0] = binding.X.Value;
 				internalValue[1] = binding.Y.Value;
-				step = binding.X.Step / 10.0f;
+				step = binding.X.Step;
 			}
 
-			if (Manager.NativeManager.DragFloat2EfkEx(id, internalValue, step,
-				float.MinValue, float.MaxValue,
-				float.MinValue, float.MaxValue,
-				"X:" + Core.Option.GetFloatFormat(), "Y:" + Core.Option.GetFloatFormat()))
+			if (Manager.NativeManager.DragInt2EfkEx(id, internalValue, step,
+				int.MinValue, int.MaxValue,
+				int.MinValue, int.MaxValue,
+				"X:%d", "Y:%d"))
 			{
 				FixValueInternal(isActive);
 			}
@@ -122,6 +122,7 @@ namespace Effekseer.GUI.Component
 
 		void Popup()
 		{
+			/*
 			if (isPopupShown) return;
 
 			if (Manager.NativeManager.BeginPopupContextItem(id_c))
@@ -132,6 +133,7 @@ namespace Effekseer.GUI.Component
 
 				isPopupShown = true;
 			}
+			*/
 		}
 	}
 }
