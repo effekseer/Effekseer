@@ -493,13 +493,18 @@ static const char* label_edit_node = "##EDIT_NODE";
 
 bool Editor::InputText(const char* label, std::string& text)
 {
-	char buf[255];
-	memcpy(buf, text.c_str(), text.size());
-	buf[text.size()] = 0;
-
-	if (ImGui::InputText(label, buf, 255))
+	std::array<char, 256> local_buffer;
+	const auto max_len = std::min(text.size(), local_buffer.size() - 1);
+	if (text.size() > 0)
 	{
-		text = buf;
+		memcpy(local_buffer.data(), text.c_str(), max_len);
+	}
+
+	local_buffer[max_len] = 0;
+
+	if (ImGui::InputText(label, local_buffer.data(), local_buffer.size() - 1))
+	{
+		text = local_buffer.data();
 		return true;
 	}
 
@@ -1393,10 +1398,7 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 		}
 		else if (type == ValueType::String)
 		{
-			// is memory safe?
-
 			auto str = p->Str;
-			str.resize(str.size() + 16, 0);
 
 			// Shader result doesn't change
 			if (InputText(nameStr.c_str(), str))
