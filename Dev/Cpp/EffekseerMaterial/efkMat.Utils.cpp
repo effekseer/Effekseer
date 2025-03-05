@@ -46,30 +46,36 @@ std::string GetConstantTextureName(int64_t guid)
 	return std::string("_ConstantTexture_") + std::to_string(guid);
 }
 
-bool IsValidName(const char* name)
+bool IsValidName(const std::string& name)
 {
-	if (name[0] == 0)
+	if (name.size() == 0)
+	{
 		return false;
+	}
 
-	if (isdigit(name[0]))
+	if (std::isdigit(name[0]))
+	{
 		return false;
+	}
 
 	if (name[0] == '_')
-		return false;
-
-	int32_t i = 0;
-	while (true)
 	{
+		return false;
+	}
 
-		if (name[i] == 0)
-			break;
-
-		if (!isdigit(name[i]) && !isalpha(name[i]) && name[i] != '_')
+	for (size_t i = 0; i < name.size(); i++)
+	{
+		// only ascii
+		if (name[i] <= 0)
 		{
 			return false;
 		}
 
-		i++;
+		if (!std::isdigit(name[i]) &&
+			!std::isalpha(name[i]) && name[i] != '_')
+		{
+			return false;
+		}
 	}
 
 	return true;

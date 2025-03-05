@@ -106,7 +106,7 @@ WarningType NodeParameterBehaviorComponentParameter::GetWarning(std::shared_ptr<
 {
 	assert(node->Parameter->Properties[0]->Name == "Name");
 
-	if (!IsValidName(node->Properties[0]->Str.c_str()))
+	if (!IsValidName(node->Properties[0]->Str))
 	{
 		return WarningType::InvalidName;
 	}

@@ -869,7 +869,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 		{
 			extracted.second->UniformName = "efk_texture_" + std::to_string(extracted.first);
 
-			if (!IsValidName(extracted.second->Name.c_str()) || usedName.count(extracted.second->Name) > 0)
+			if (!IsValidName(extracted.second->Name) || usedName.count(extracted.second->Name) > 0)
 			{
 				if (extracted.second->IsInternal)
 				{
@@ -895,7 +895,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 		{
 			extracted.second->UniformName = "efk_uniform_" + std::to_string(extracted.first);
 
-			if (!IsValidName(extracted.second->Name.c_str()) || usedName.count(extracted.second->Name) > 0)
+			if (!IsValidName(extracted.second->Name) || usedName.count(extracted.second->Name) > 0)
 			{
 				extracted.second->Name = extracted.second->UniformName;
 			}
@@ -914,7 +914,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 		{
 			extracted.second->UniformName = "efk_gradient_" + std::to_string(extracted.first);
 
-			if (!IsValidName(extracted.second->Name.c_str()) || usedName.count(extracted.second->Name) > 0)
+			if (!IsValidName(extracted.second->Name) || usedName.count(extracted.second->Name) > 0)
 			{
 				extracted.second->Name = extracted.second->UniformName;
 			}
