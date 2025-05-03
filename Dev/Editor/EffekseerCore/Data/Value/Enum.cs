@@ -99,6 +99,11 @@ namespace Effekseer.Data.Value
 			return typeof(T);
 		}
 
+		public override void ResetValue()
+		{
+			SetValue(DefaultValue);
+		}
+
 		public static implicit operator T(Enum<T> value)
 		{
 			return value._value;

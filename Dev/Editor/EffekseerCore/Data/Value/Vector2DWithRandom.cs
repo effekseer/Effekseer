@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Effekseer.Data.Value
 {
-	public class Vector2DWithRandom : IValueChangedFromDefault
+	public class Vector2DWithRandom : IResettableValue, IValueChangedFromDefault
 	{
 		public FloatWithRandom X
 		{
@@ -47,6 +47,15 @@ namespace Effekseer.Data.Value
 			Y = new FloatWithRandom(y, y_max, y_min, drawnas, y_step);
 			DrawnAs = drawnas;
 			DefaultDrawnAs = DrawnAs;
+		}
+
+		public void ResetValue()
+		{
+			Command.CommandManager.StartCollection();
+			X.ResetValue();
+			Y.ResetValue();
+			DrawnAs = DefaultDrawnAs;
+			Command.CommandManager.EndCollection();
 		}
 
 		public byte[] GetBytes(float mul = 1.0f)

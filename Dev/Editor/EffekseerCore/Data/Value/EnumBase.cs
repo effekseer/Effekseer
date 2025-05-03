@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Effekseer.Data.Value
 {
-	public abstract class EnumBase
+	public abstract class EnumBase : IResettableValue
 	{
 		public abstract int GetValueAsInt();
 		public abstract int GetDefaultValueAsInt();
@@ -14,6 +14,8 @@ namespace Effekseer.Data.Value
 		public event ChangedValueEventHandler OnChanged;
 
 		public abstract Type GetEnumType();
+
+		public abstract void ResetValue();
 
 		protected void Change(object value, ChangedValueType type)
 		{
