@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Effekseer.Data.Value
 {
-	public class Color : IValueChangedFromDefault
+	public class Color : IResettableValue, IValueChangedFromDefault
 	{
 		public Int R
 		{
@@ -184,6 +184,16 @@ namespace Effekseer.Data.Value
 				isCombined);
 
 			Command.CommandManager.Execute(cmd);
+		}
+
+		public void ResetValue()
+		{
+			Command.CommandManager.StartCollection();
+			R.ResetValue();
+			G.ResetValue();
+			B.ResetValue();
+			A.ResetValue();
+			Command.CommandManager.EndCollection();
 		}
 
 		public static implicit operator byte[](Color value)

@@ -136,7 +136,14 @@ namespace Effekseer.Data.Value
 
 		public void ResetValue()
 		{
+			Command.CommandManager.StartCollection();
 			SetValue(DefaultValue);
+			if (CanSelectDynamicEquation)
+			{
+				IsDynamicEquationEnabled.ResetValue();
+				DynamicEquation.SetValue(null);
+			}
+			Command.CommandManager.EndCollection();
 		}
 
 		public static implicit operator float(Float value)

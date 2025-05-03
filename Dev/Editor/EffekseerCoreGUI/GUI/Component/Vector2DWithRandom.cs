@@ -13,6 +13,7 @@ namespace Effekseer.GUI.Component
 		string id_r1 = "";
 		string id_r2 = "";
 		string id_c = "";
+		string id_reset = "";
 
 		bool isPopupShown = false;
 
@@ -66,6 +67,7 @@ namespace Effekseer.GUI.Component
 			id_r1 = "###" + Manager.GetUniqueID().ToString();
 			id_r2 = "###" + Manager.GetUniqueID().ToString();
 			id_c = "###" + Manager.GetUniqueID().ToString();
+			id_reset = "###" + Manager.GetUniqueID().ToString();
 		}
 
 		public void SetBinding(object o)
@@ -246,8 +248,10 @@ namespace Effekseer.GUI.Component
 
 			if (Manager.NativeManager.BeginPopupContextItem(id_c))
 			{
-				var txt_r_r1 = Resources.GetString("Gauss");
-				var txt_r_r2 = Resources.GetString("Range");
+				Functions.ShowReset(binding, id_reset);
+
+				var txt_r_r1 = MultiLanguageTextProvider.GetText("Gauss");
+				var txt_r_r2 = MultiLanguageTextProvider.GetText("Range");
 
 				if (Manager.NativeManager.RadioButton(txt_r_r1 + id_r1, binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude))
 				{

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Effekseer.Data.Value
 {
-	public class ColorWithRandom : IValueChangedFromDefault
+	public class ColorWithRandom : IResettableValue, IValueChangedFromDefault
 	{
 		public IntWithRandom R
 		{
@@ -286,6 +286,18 @@ namespace Effekseer.Data.Value
 				isCombined);
 
 			Command.CommandManager.Execute(cmd);
+		}
+
+		public void ResetValue()
+		{
+			Command.CommandManager.StartCollection();
+			SetColorSpace(DefaultColorSpace, false, false);
+			R.ResetValue();
+			G.ResetValue();
+			B.ResetValue();
+			A.ResetValue();
+			DrawnAs = DefaultDrawnAs;
+			Command.CommandManager.EndCollection();
 		}
 
 		public void ChangeColorSpace(ColorSpace colorSpace, bool link = false)

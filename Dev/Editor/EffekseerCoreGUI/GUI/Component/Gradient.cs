@@ -24,6 +24,7 @@ namespace Effekseer.GUI.Component
 		string id_alpha_position = "";
 		string id_alpha_value = "";
 		string id_alpha_delete = "";
+		string id_reset = "";
 
 		bool isPopupShown = false;
 
@@ -63,6 +64,7 @@ namespace Effekseer.GUI.Component
 			id_alpha_position = "###" + Manager.GetUniqueID().ToString();
 			id_alpha_value = "###" + Manager.GetUniqueID().ToString();
 			id_alpha_delete = "###" + Manager.GetUniqueID().ToString();
+			id_reset =  "###" + Manager.GetUniqueID().ToString();
 
 			copyAndPaste = new CopyAndPaste("Gradient", 
 				() => new GradientCopyPasteHolder { Gradient = Binding }, 
@@ -139,9 +141,11 @@ namespace Effekseer.GUI.Component
 			Manager.NativeManager.SetNextWindowPos(new swig.Vec2(windowPos.X, Manager.NativeManager.GetCursorScreenPosY()), swig.Cond.Always, new swig.Vec2(0, 0));
 			Manager.NativeManager.SetNextWindowSize(windowSize.X, 0.0f, swig.Cond.Always);
 
-			if (Manager.NativeManager.BeginPopup(id_c, swig.WindowFlags.NoMove | swig.WindowFlags.AlwaysAutoResize))
+			if (Manager.NativeManager.BeginPopup(id_c, swig.WindowFlags.NoMove | swig.WindowFlags.AlwaysAutoResize | swig.WindowFlags.MenuBar))
 			{
 				copyAndPaste.Update();
+				Manager.NativeManager.SameLine();
+				Functions.ShowReset(binding, id_reset);
 
 				var contentSize = Manager.NativeManager.GetContentRegionAvail();
 				float buttonWidth = 50.0f * Manager.GetUIScaleBasedOnFontSize();

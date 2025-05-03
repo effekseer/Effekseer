@@ -101,6 +101,7 @@ namespace Effekseer.GUI.Component
 			if (Manager.NativeManager.Button(Resources.GetString("ResetParam_Name") + id))
 			{
 				value.ResetValue();
+				Manager.NativeManager.CloseCurrentPopup();
 			}
 
 			if (CanShowTip())
