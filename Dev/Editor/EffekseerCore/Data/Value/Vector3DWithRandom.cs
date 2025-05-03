@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Effekseer.Data.Value
 {
-	public class Vector3DWithRandom : IValueChangedFromDefault
+	public class Vector3DWithRandom : IResettableValue, IValueChangedFromDefault
 	{
 		public FloatWithRandom X
 		{
@@ -83,6 +83,22 @@ namespace Effekseer.Data.Value
 			DynamicEquationMax = new DynamicEquationReference();
 			DrawnAs = drawnas;
 			DefaultDrawnAs = DrawnAs;
+		}
+
+		public void ResetValue()
+		{
+			Command.CommandManager.StartCollection();
+			X.ResetValue();
+			Y.ResetValue();
+			Z.ResetValue();
+			if (CanSelectDynamicEquation)
+			{
+				IsDynamicEquationEnabled.ResetValue();
+				DynamicEquationMin.SetValue(null);
+				DynamicEquationMax.SetValue(null);
+			}
+			DrawnAs = DefaultDrawnAs;
+			Command.CommandManager.EndCollection();
 		}
 
 		public byte[] GetBytes(float mul = 1.0f)

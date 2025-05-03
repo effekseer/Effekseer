@@ -8,7 +8,7 @@ using static IronPython.Runtime.Profiler;
 
 namespace Effekseer.Data.Value
 {
-	public class IntWithInifinite : IValueChangedFromDefault
+	public class IntWithInifinite : IResettableValue, IValueChangedFromDefault
 	{
 		public Int Value
 		{
@@ -54,6 +54,19 @@ namespace Effekseer.Data.Value
 
 			IsDynamicEquationEnabled = new Boolean();
 			DynamicEquation = new DynamicEquationReference();
+		}
+
+		public void ResetValue()
+		{
+			Command.CommandManager.StartCollection();
+			Value.ResetValue();
+			Infinite.ResetValue();
+			if (CanSelectDynamicEquation)
+			{
+				IsDynamicEquationEnabled.ResetValue();
+				DynamicEquation.SetValue(null);
+			}
+			Command.CommandManager.EndCollection();
 		}
 
 		public byte[] GetBytes(int valueWhenInfinite = int.MaxValue)

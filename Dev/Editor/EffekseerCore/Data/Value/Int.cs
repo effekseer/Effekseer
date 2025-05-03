@@ -6,7 +6,7 @@ using Effekseer.Utils;
 
 namespace Effekseer.Data.Value
 {
-	public class Int : IValueChangedFromDefault
+	public class Int : IResettableValue, IValueChangedFromDefault
 	{
 		int _value = 0;
 		int _max = int.MaxValue;
@@ -132,6 +132,11 @@ namespace Effekseer.Data.Value
 			if (_value == converted) return;
 			_value = converted;
 			CallChanged(_value, ChangedValueType.Execute);
+		}
+
+		public void ResetValue()
+		{
+			SetValue(DefaultValue);
 		}
 
 		public static implicit operator int(Int value)

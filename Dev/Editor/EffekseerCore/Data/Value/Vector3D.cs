@@ -76,6 +76,11 @@ namespace Effekseer.Data.Value
 			X.ResetValue();
 			Y.ResetValue();
 			Z.ResetValue();
+			if (CanSelectDynamicEquation)
+			{
+				IsDynamicEquationEnabled.ResetValue();
+				DynamicEquation.SetValue(null);
+			}
 			Command.CommandManager.EndCollection();
 		}
 

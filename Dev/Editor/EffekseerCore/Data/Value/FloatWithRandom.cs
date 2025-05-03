@@ -6,7 +6,7 @@ using Effekseer.Utils;
 
 namespace Effekseer.Data.Value
 {
-	public class FloatWithRandom : IValueChangedFromDefault
+	public class FloatWithRandom : IResettableValue, IValueChangedFromDefault
 	{
 		float _value_center = 0;
 		float _value_max = 0;
@@ -349,6 +349,22 @@ namespace Effekseer.Data.Value
 			_value_center = new_center;
 			_value_max = new_max;
 			_value_min = new_min;
+		}
+
+		public void ResetValue()
+		{
+			Command.CommandManager.StartCollection();
+			SetCenter(DefaultValueCenter);
+			SetMax(DefaultValueMax);
+			SetMin(DefaultValueMin);
+			if (CanSelectDynamicEquation)
+			{
+				IsDynamicEquationEnabled.ResetValue();
+				DynamicEquationMin.SetValue(null);
+				DynamicEquationMax.SetValue(null);
+			}
+			DrawnAs = DefaultDrawnAs;
+			Command.CommandManager.EndCollection();
 		}
 
 		public byte[] GetBytes(float mul = 1.0f)

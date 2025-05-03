@@ -100,6 +100,11 @@ namespace Effekseer.Data.Value
 			return typeof(T);
 		}
 
+		public override void ResetValue()
+		{
+			SetValue(DefaultValue);
+		}
+
 		public byte[] GetBytes()
 		{
 			var n = GetValueAsInt();

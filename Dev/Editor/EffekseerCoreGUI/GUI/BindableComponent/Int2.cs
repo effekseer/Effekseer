@@ -122,7 +122,6 @@ namespace Effekseer.GUI.BindableComponent
 
 		void Popup()
 		{
-			/*
 			if (isPopupShown) return;
 
 			if (Manager.NativeManager.BeginPopupContextItem(id_c))
@@ -133,7 +132,6 @@ namespace Effekseer.GUI.BindableComponent
 
 				isPopupShown = true;
 			}
-			*/
 		}
 	}
 }
