@@ -7,7 +7,7 @@ using Effekseer.Utils;
 
 namespace Effekseer.Data.Value
 {
-	public class Gradient
+	public class Gradient : IResettableValue
 	{
 		public unsafe struct ColorMarker
 		{
@@ -300,6 +300,11 @@ namespace Effekseer.Data.Value
 		public void SetValueDirectly(State value)
 		{
 			_value = (State)value.Clone();
+		}
+
+		public void ResetValue()
+		{
+			SetValue(DefaultValue);
 		}
 
 		protected void CallChanged(object value, ChangedValueType type)

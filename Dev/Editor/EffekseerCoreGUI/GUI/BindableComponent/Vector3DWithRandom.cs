@@ -15,6 +15,7 @@ namespace Effekseer.GUI.BindableComponent
 		string id_c = "";
 		string id_d1 = "";
 		string id_d2 = "";
+		string id_reset = "";
 
 		bool isPopupShown = false;
 
@@ -74,6 +75,7 @@ namespace Effekseer.GUI.BindableComponent
 			id_c = "###" + Manager.GetUniqueID().ToString();
 			id_d1 = "###" + Manager.GetUniqueID().ToString();
 			id_d2 = "###" + Manager.GetUniqueID().ToString();
+			id_reset = "###" + Manager.GetUniqueID().ToString();
 		}
 
 		public void SetBinding(object o)
@@ -285,6 +287,8 @@ namespace Effekseer.GUI.BindableComponent
 
 			if (Manager.NativeManager.BeginPopupContextItem(id_c))
 			{
+				Functions.ShowReset(binding, id_reset);
+
 				if (binding.CanSelectDynamicEquation)
 				{
 					DynamicSelector.Popup(id_c, binding.DynamicEquationMax, binding.DynamicEquationMin, binding.IsDynamicEquationEnabled);

@@ -101,6 +101,7 @@ namespace Effekseer.GUI.BindableComponent
 			if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("ResetParam_Name") + id))
 			{
 				value.ResetValue();
+				Manager.NativeManager.CloseCurrentPopup();
 			}
 
 			if (CanShowTip())

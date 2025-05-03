@@ -9,8 +9,12 @@ namespace Effekseer.GUI.BindableComponent
 	class ColorCtrl : Control, IParameterControl
 	{
 		string id = "";
+		string id_c = "";
+		string id_reset = "";
 
 		Data.Value.Color binding = null;
+
+		bool isPopupShown = false;
 
 		/// <summary>
 		/// function. A border is shown when value is changed.
@@ -72,6 +76,8 @@ namespace Effekseer.GUI.BindableComponent
 
 		public unsafe override void Update()
 		{
+			isPopupShown = false;
+
 			if (binding != null)
 			{
 				StoreIfDifferentColor(ref internalValue[0], binding.R);
@@ -86,7 +92,7 @@ namespace Effekseer.GUI.BindableComponent
 				? (swig.ColorEditFlags.DisplayRGB | swig.ColorEditFlags.InputRGB)
 				: (swig.ColorEditFlags.DisplayHSV | swig.ColorEditFlags.InputHSV);
 
-			if (Manager.NativeManager.ColorEdit4(id, internalValue, colorSpace))
+			if (Manager.NativeManager.ColorEdit4(id, internalValue, swig.ColorEditFlags.NoOptions | colorSpace))
 			{
 				if (EnableUndo)
 				{
@@ -102,6 +108,8 @@ namespace Effekseer.GUI.BindableComponent
 			}
 
 			valueChangingProp.Disable();
+
+			Popup();
 
 			var isActive_Current = Manager.NativeManager.IsItemActive();
 
@@ -122,6 +130,20 @@ namespace Effekseer.GUI.BindableComponent
 			}
 
 			dst = src / 255.0f;
+		}
+
+		void Popup()
+		{
+			if (isPopupShown) return;
+
+			if (Manager.NativeManager.BeginPopupContextItem(id_c))
+			{
+				Functions.ShowReset(binding, id_reset);
+
+				Manager.NativeManager.EndPopup();
+
+				isPopupShown = true;
+			}
 		}
 	}
 }

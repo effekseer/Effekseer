@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Effekseer.Data.Value
 {
-	public class Boolean : IValueChangedFromDefault
+	public class Boolean : IResettableValue, IValueChangedFromDefault
 	{
 		bool _value = false;
 
@@ -70,6 +70,11 @@ namespace Effekseer.Data.Value
 
 			_value = value;
 			OnChanged?.Invoke(this, new ChangedValueEventArgs(_value, ChangedValueType.Execute));
+		}
+
+		public void ResetValue()
+		{
+			SetValue(DefaultValue);
 		}
 
 		public static implicit operator bool(Boolean value)

@@ -13,6 +13,7 @@ namespace Effekseer.GUI.BindableComponent
 		string id_c = "";
 		string id_r1 = "";
 		string id_r2 = "";
+		string id_reset = "";
 
 		/// <summary>
 		/// a popup is shown in this frame.
@@ -100,6 +101,7 @@ namespace Effekseer.GUI.BindableComponent
 			id_c = "###" + Manager.GetUniqueID().ToString();
 			id_r1 = "###" + Manager.GetUniqueID().ToString();
 			id_r2 = "###" + Manager.GetUniqueID().ToString();
+			id_reset = "###" + Manager.GetUniqueID().ToString();
 		}
 
 		public void SetBinding(object o)
@@ -194,6 +196,8 @@ namespace Effekseer.GUI.BindableComponent
 
 			if (Manager.NativeManager.BeginPopupContextItem(id_c))
 			{
+				Functions.ShowReset(binding, id_reset);
+
 				var txt_r_r1 = "RGBA";
 				var txt_r_r2 = "HSVA";
 

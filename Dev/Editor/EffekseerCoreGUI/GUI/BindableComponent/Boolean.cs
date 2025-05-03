@@ -9,8 +9,12 @@ namespace Effekseer.GUI.BindableComponent
 	class Boolean : Control, IParameterControl
 	{
 		string id = "";
+		string id_c = "";
+		string id_reset = "";
 
 		Data.Value.Boolean binding = null;
+
+		bool isPopupShown = false;
 
 		ValueChangingProperty valueChangingProp = new ValueChangingProperty();
 
@@ -40,6 +44,8 @@ namespace Effekseer.GUI.BindableComponent
 		public Boolean()
 		{
 			id = "###" + Manager.GetUniqueID().ToString();
+			id_c = "###" + Manager.GetUniqueID().ToString();
+			id_reset = "###" + Manager.GetUniqueID().ToString();
 		}
 
 		public void SetBinding(object o)
@@ -54,6 +60,8 @@ namespace Effekseer.GUI.BindableComponent
 
 		public override void Update()
 		{
+			isPopupShown = false;
+
 			if (binding != null)
 			{
 				internalValue[0] = binding.Value;
@@ -73,7 +81,23 @@ namespace Effekseer.GUI.BindableComponent
 				}
 			}
 
+			Popup();
+
 			valueChangingProp.Disable();
+		}
+
+		void Popup()
+		{
+			if (isPopupShown) return;
+
+			if (Manager.NativeManager.BeginPopupContextItem(id_c))
+			{
+				Functions.ShowReset(binding, id_reset);
+
+				Manager.NativeManager.EndPopup();
+
+				isPopupShown = true;
+			}
 		}
 	}
 }

@@ -12,6 +12,7 @@ namespace Effekseer.GUI.BindableComponent
 		string id2 = "";
 		string id_c = "";
 		string id_d = "";
+		string id_reset = "";
 
 		Data.Value.IntWithInifinite binding = null;
 
@@ -52,6 +53,7 @@ namespace Effekseer.GUI.BindableComponent
 			id2 = "###" + Manager.GetUniqueID().ToString();
 			id_c = "###" + Manager.GetUniqueID().ToString();
 			id_d = "###" + Manager.GetUniqueID().ToString();
+			id_reset = "###" + Manager.GetUniqueID().ToString();
 		}
 
 		public void SetBinding(object o)
@@ -95,7 +97,11 @@ namespace Effekseer.GUI.BindableComponent
 
 			Manager.NativeManager.PushItemWidth(60);
 
-			if (Manager.NativeManager.DragInt(id1, internalValue, binding.Value.Step, binding.Value.Min, binding.Value.Max, "%d"))
+			Manager.NativeManager.BeginDisabled(isInfinite[0]);
+
+			string format = isInfinite[0] ? "-" : "%d";
+			
+			if (Manager.NativeManager.DragInt(id1, internalValue, binding.Value.Step, binding.Value.Min, binding.Value.Max, format))
 			{
 				if (EnableUndo)
 				{
@@ -106,6 +112,8 @@ namespace Effekseer.GUI.BindableComponent
 					binding.Value.SetValueDirectly(internalValue[0]);
 				}
 			}
+
+			Manager.NativeManager.EndDisabled();
 
 			Popup();
 
@@ -155,6 +163,8 @@ namespace Effekseer.GUI.BindableComponent
 
 			if (Manager.NativeManager.BeginPopupContextItem(id_c))
 			{
+				Functions.ShowReset(binding, id_reset);
+
 				DynamicSelector.Popup(id_c, binding.DynamicEquation, binding.IsDynamicEquationEnabled);
 
 				Manager.NativeManager.EndPopup();
