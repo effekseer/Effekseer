@@ -62,7 +62,7 @@ jobs:
         name: [linux,windows_x64,windows_x86,mac]
         include:
           - name: linux
-            os: ubuntu-20.04
+            os: ubuntu-22.04
             label: Linux
           - name: windows_x64
             os: windows-2019
