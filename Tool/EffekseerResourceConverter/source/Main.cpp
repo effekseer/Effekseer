@@ -5,6 +5,7 @@
 #include "EfkRes.FBXLoader.h"
 #include "EfkRes.GLTFLoader.h"
 #include "EfkRes.MQOLoader.h"
+#include "EfkRes.GEOLoader.h"
 #include "EfkRes.EfkModelSaver.h"
 #include "EfkRes.EfkCurveSaver.h"
 
@@ -116,6 +117,11 @@ int main(int argc, char* argv[])
         {
             MQOLoader mqoLoader;
             model = mqoLoader.LoadModel(args.inputFile);
+        }
+        else if (args.inputFileExt == ".geo" || args.inputFileExt == ".bgeo")
+        {
+            GEOLoader geoLoader;
+            model = geoLoader.LoadModel(args.inputFile);
         }
 
         if (!model.has_value())

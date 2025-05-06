@@ -9,6 +9,69 @@
 namespace efkres
 {
 
+class BinaryReader
+{
+	FILE* m_fp = nullptr;
+
+public:
+	BinaryReader() = default;
+
+	~BinaryReader()
+	{
+		Close();
+	}
+
+	bool Open(const char* filepath)
+	{
+		errno_t err = fopen_s(&m_fp, filepath, "rb");
+		return err == 0;
+	}
+
+	void Close()
+	{
+		if (m_fp)
+		{
+			fclose(m_fp);
+		}
+	}
+
+	void Read(void* data, size_t size)
+	{
+		fread(data, size, 1, m_fp);
+	}
+
+	template <class T, std::enable_if_t<std::is_arithmetic_v<T>, std::nullptr_t> = nullptr>
+	T Read()
+	{
+		T data{};
+		fread(&data, sizeof(data), 1, m_fp);
+		return data;
+	}
+
+	template <class T, size_t N>
+	std::array<T, N> Read()
+	{
+		std::array<T, N> data{};
+		fread(data.data(), sizeof(T) * N, 1, m_fp);
+		return data;
+	}
+
+	void SetPosition(size_t position)
+	{
+		fseek(m_fp, static_cast<long>(position), SEEK_SET);
+	}
+
+	void MovePosition(int offset)
+	{
+		fseek(m_fp, offset, SEEK_CUR);
+	}
+
+	size_t GetPosition() const
+	{
+		return static_cast<size_t>(ftell(m_fp));
+	}
+};
+
 class BinaryWriter
 {
 	FILE* m_fp = nullptr;

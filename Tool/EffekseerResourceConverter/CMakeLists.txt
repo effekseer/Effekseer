@@ -6,8 +6,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 file(GLOB_RECURSE LOCAL_HEADERS source/*.h)
 file(GLOB_RECURSE LOCAL_SOURCES source/*.cpp)
 
-file(GLOB_RECURSE EXTERNAL_HEADERS external/*.h)
-file(GLOB_RECURSE EXTERNAL_SOURCES external/*.c)
+file(GLOB_RECURSE EXTERNAL_HEADERS external/*.h external/*.hpp)
+file(GLOB_RECURSE EXTERNAL_SOURCES external/*.c external/*.cpp)
 
 set(LOCAL_FILES
     ${LOCAL_HEADERS} ${LOCAL_SOURCES}
@@ -23,4 +23,4 @@ endforeach()
 
 add_executable(${PROJECT_NAME} ${LOCAL_FILES})
 
-target_include_directories(${PROJECT_NAME} PRIVATE external/ufbx external/tinygltf external/mqoio)
+target_include_directories(${PROJECT_NAME} PRIVATE external/ufbx external/tinygltf external/mqoio external/nlohmann)
