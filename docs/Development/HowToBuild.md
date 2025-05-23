@@ -50,7 +50,7 @@ git lfs install
 git lfs pull
 ```
 
-Build to develop Editor
+Build to develop the Editor
 ----------
 
 ### Windows
@@ -71,7 +71,7 @@ cmake -DBUILD_VIEWER=ON -DBUILD_EDITOR=ON ..
 
 ### macOS
 
-Execure following command at the repository root.
+Execute the following command at the repository root.
 
 ```
 mkdir build
@@ -113,11 +113,23 @@ cd Dev/release
 ./Effekseer
 ```
 
+Run the tests
+-------------
+
+After building you can run the included unit test suite from the repository root with:
+
+```
+python3 -m unittest Script/test_screenshot.py -v
+```
+
+This command checks generated screenshots against the reference data and reports
+the results.
+
 ## How to release
 
 * Windows
 
-Visual Studio 2017 are required.
+Visual Studio 2017 is required.
 
 Please read ``` .github/workflows/build.yml ```
 
