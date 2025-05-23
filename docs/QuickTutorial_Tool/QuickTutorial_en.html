@@ -117,7 +117,7 @@ The <b>Basic Settings</b> window contains all of the standard parameters for twe
 
 As mentioned earlier, inheritance is a feature of this program. If for example, Node A is a parent of Node B, then every single particle that Node A spawns will have an instance of Node B attached to it (so you can have particles that emit other particles). The Basic Settings window has a few parameters I purposely skipped over, that apply to inheritance.
 <br><br>
-<b>Inherit Position/Rotation/Scale</b> are self-explanitory in what they do, but the drop-down options may be less clear. There are the following three options:<br><br>
+<b>Inherit Position/Rotation/Scale</b> are self-explanatory in what they do, but the drop-down options may be less clear. There are the following three options:<br><br>
 <ul>
 <li><b>Always:</b> As long as the parent particle exists, this child particle will constantly update its inherited values to match that of the parent particle.</li>
 <li><b>Only on Create:</b> This child particle will inherit the value from the parent particle on spawn, but will then act on its own, ignoring any further updates to the parent particle's values.</li>
@@ -185,9 +185,9 @@ In many ways, this is very similar to the circular spawn method (except adding a
 
 <a name="position_rotation_scale"></a>
 <h3>Position/Rotation/Scale</h3>
-The three most important windows for modifying the behavior of emitted particles are the Position, Rotation, and Scale windows. Their names are self-explanitory. The <b>Position</b> windows lets you control how the particles move through space over time. The <b>Rotation</b> window lets you control the orientation and angular velocity of the particles. The <b>Scale</b> window lets you modify the size of the particle over its lifetime.
+The three most important windows for modifying the behavior of emitted particles are the Position, Rotation, and Scale windows. Their names are self-explanatory. The <b>Position</b> window lets you control how the particles move through space over time. The <b>Rotation</b> window lets you control the orientation and angular velocity of the particles. The <b>Scale</b> window lets you modify the size of the particle over its lifetime.
 <br><br>
-Each of these windows allows you to choose among different methods of modifying these values over time. By default, the mode is set to <b>Fixed</b>, meaning the emitted particles will take on a static value for that attribute, and stay at that value for the entire duration of its existance. The other modes are explained below. 
+Each of these windows allows you to choose among different methods of modifying these values over time. By default, the mode is set to <b>Fixed</b>, meaning the emitted particles will take on a static value for that attribute, and stay at that value for the entire duration of its existence. The other modes are explained below. 
 
 <a name="pva"></a>
 <h3>PVA</h3>
@@ -221,7 +221,7 @@ The Y-axis of the graph represents value, and the X-axis of the graph represents
 <br><br>
 <div style="text-align:center;"><img src="effektut-files/fcurve.png" /></div>
 <br>
-To actually add points to the graph, you use the <b>X/Y/Z</b> keys on your keyboard (which intuitively coorespond with the setting of values for the X/Y/Z fields, respectively). Clicking on a point will select it, and you can drag it to reposition it. Dragging straight up or down from a point will create a pivot for a Bezier curve (if the point is set to Bezier mode, which is the default).
+To actually add points to the graph, you use the <b>X/Y/Z</b> keys on your keyboard (which intuitively correspond with the setting of values for the X/Y/Z fields, respectively). Clicking on a point will select it, and you can drag it to reposition it. Dragging straight up or down from a point will create a pivot for a Bezier curve (if the point is set to Bezier mode, which is the default).
 <br><br>
 <b>Type</b> sets the style of line that connects to and from the selected point. The <b>Linear</b> option will force the lines to be straight, while the <b>Bezier</b> option will allow the lines to be curved.
 <br><br>
@@ -288,7 +288,7 @@ In the <b>Render</b> window, you can choose the method of drawing the texture to
 <br><br>
 <div style="text-align:center;"><img src="effektut-files/billboards.png" /></div>
 
-<b>Color All</b> blends a solid color over top the entirety of the texture image. <b>Vertex Color</b> on the other hand lets you specify up to four different colors, each cooresponding to a corner of the surface. These colors will blend together by creating a gradient over the surface of the sprite. 
+<b>Color All</b> blends a solid color over top the entirety of the texture image. <b>Vertex Color</b> on the other hand lets you specify up to four different colors, each corresponding to a corner of the surface. These colors will blend together by creating a gradient over the surface of the sprite. 
 <br><br>
 Color All offers the ability to randomize the RGBA/HSVA components of the blending color, or offers the ability to gradually ease from one color to another over the lifetime of the particle. You can also use F-Curves for setting the color. This works the same way as the F-Curves for position, except you use the R/G/B/A keys on your keyboard to set waypoints. The F-Curves only offer RGBA mode, and not HSVA mode. However, Hue and Value are fairly easy to replicate using RGB components, as in the images below:
 <br><br>

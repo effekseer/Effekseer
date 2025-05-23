@@ -1,5 +1,5 @@
 ﻿All the licenses of these effects are CC-0.
-We'd appreciate it if you could credit Effekseer and a contributor somewhere in your works.
+We'd appreciate it if you could credit Effekseer and the contributor somewhere in your works.
 
 A sample stored in this directory is only part of sample.
 You can download other effects from the official site.
