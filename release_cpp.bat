@@ -1,62 +1,40 @@
+@echo off
+SETLOCAL ENABLEDELAYEDEXPANSION
 SET RDIR_R=EffekseerForCpp
 
-rmdir %RDIR_R%
-mkdir %RDIR_R%
-
-mkdir %RDIR_R%\cmake\
+if exist "%RDIR_R%" rmdir /s /q "%RDIR_R%"
+mkdir "%RDIR_R%"
+mkdir "%RDIR_R%\cmake"
 
 echo Copy runtime
-mkdir %RDIR_R%\Examples\
+mkdir "%RDIR_R%\Examples"
+mkdir "%RDIR_R%\src"
+mkdir "%RDIR_R%\src\include"
+mkdir "%RDIR_R%\src\lib"
 
-mkdir %RDIR_R%\src
-mkdir %RDIR_R%\src\include
-mkdir %RDIR_R%\src\lib
+for %%F in (
+    "Dev\Cpp\Effekseer\Effekseer.h"
+    "Dev\Cpp\EffekseerRendererDX9\EffekseerRendererDX9.h"
+    "Dev\Cpp\EffekseerRendererDX11\EffekseerRendererDX11.h"
+    "Dev\Cpp\EffekseerRendererGL\EffekseerRendererGL.h"
+    "Dev\Cpp\EffekseerSoundXAudio2\EffekseerSoundXAudio2.h"
+    "Dev\Cpp\EffekseerSoundAL\EffekseerSoundAL.h"
+) do copy %%F "%RDIR_R%\src\include\"
 
-copy Dev\Cpp\Effekseer\Effekseer.h %RDIR_R%\src\include\.
-copy Dev\Cpp\EffekseerRendererDX9\EffekseerRendererDX9.h %RDIR_R%\src\include\.
-copy Dev\Cpp\EffekseerRendererDX11\EffekseerRendererDX11.h %RDIR_R%\src\include\.
-copy Dev\Cpp\EffekseerRendererGL\EffekseerRendererGL.h %RDIR_R%\src\include\.
-copy Dev\Cpp\EffekseerSoundXAudio2\EffekseerSoundXAudio2.h %RDIR_R%\src\include\.
-copy Dev\Cpp\EffekseerSoundAL\EffekseerSoundAL.h %RDIR_R%\src\include\.
 
-mkdir %RDIR_R%\src\Effekseer
-robocopy Dev\Cpp\Effekseer %RDIR_R%\src\Effekseer *.h *.cpp *.fx CMakeLists.txt /S
-
-mkdir %RDIR_R%\src\EffekseerRendererDX9
-robocopy Dev\Cpp\EffekseerRendererDX9 %RDIR_R%\src\EffekseerRendererDX9 *.h *.cpp *.fx CMakeLists.txt /S
-
-mkdir %RDIR_R%\src\EffekseerRendererDX11
-robocopy Dev\Cpp\EffekseerRendererDX11 %RDIR_R%\src\EffekseerRendererDX11 *.h *.cpp *.fx CMakeLists.txt /S
-
-mkdir %RDIR_R%\src\EffekseerRendererDX12
-robocopy Dev\Cpp\EffekseerRendererDX12 %RDIR_R%\src\EffekseerRendererDX12 *.h *.cpp *.fx *.bat CMakeLists.txt /S
-
-mkdir %RDIR_R%\src\EffekseerRendererGL
-robocopy Dev\Cpp\EffekseerRendererGL %RDIR_R%\src\EffekseerRendererGL *.h *.cpp *.fx CMakeLists.txt /S
-
-mkdir %RDIR_R%\src\EffekseerRendererLLGI
-robocopy Dev\Cpp\EffekseerRendererLLGI %RDIR_R%\src\EffekseerRendererLLGI *.h *.cpp CMakeLists.txt /S
-
-mkdir %RDIR_R%\src\EffekseerRendererCommon
-robocopy Dev\Cpp\EffekseerRendererCommon %RDIR_R%\src\EffekseerRendererCommon *.h *.cpp *.fx CMakeLists.txt /S
-
-mkdir %RDIR_R%\src\EffekseerRendererMetal
-robocopy Dev\Cpp\EffekseerRendererMetal %RDIR_R%\src\EffekseerRendererMetal *.h *.cpp *.mm CMakeLists.txt /S
-
-mkdir %RDIR_R%\src\EffekseerRendererVulkan
-robocopy Dev\Cpp\EffekseerRendererVulkan %RDIR_R%\src\EffekseerRendererVulkan *.h *.cpp *.vert *.frag *.inl *.py CMakeLists.txt /S
-
-mkdir %RDIR_R%\src\EffekseerSoundXAudio2
-robocopy Dev\Cpp\EffekseerSoundXAudio2 %RDIR_R%\src\EffekseerSoundXAudio2 *.h *.cpp *.fx CMakeLists.txt /S
-
-mkdir %RDIR_R%\src\EffekseerSoundAL
-robocopy Dev\Cpp\EffekseerSoundAL %RDIR_R%\src\EffekseerSoundAL *.h *.cpp *.fx CMakeLists.txt /S
-
-mkdir %RDIR_R%\src\EffekseerSoundDSound
-robocopy Dev\Cpp\EffekseerSoundDSound %RDIR_R%\src\EffekseerSoundDSound *.h *.cpp *.fx CMakeLists.txt /S
-
-mkdir %RDIR_R%\src\EffekseerMaterialCompiler
-robocopy Dev\Cpp\EffekseerMaterialCompiler %RDIR_R%\src\EffekseerMaterialCompiler *.h *.cpp CMakeLists.txt /S
+call :copy_runtime Effekseer *.h *.cpp *.fx CMakeLists.txt
+call :copy_runtime EffekseerRendererDX9 *.h *.cpp *.fx CMakeLists.txt
+call :copy_runtime EffekseerRendererDX11 *.h *.cpp *.fx CMakeLists.txt
+call :copy_runtime EffekseerRendererDX12 *.h *.cpp *.fx *.bat CMakeLists.txt
+call :copy_runtime EffekseerRendererGL *.h *.cpp *.fx CMakeLists.txt
+call :copy_runtime EffekseerRendererLLGI *.h *.cpp CMakeLists.txt
+call :copy_runtime EffekseerRendererCommon *.h *.cpp *.fx CMakeLists.txt
+call :copy_runtime EffekseerRendererMetal *.h *.cpp *.mm CMakeLists.txt
+call :copy_runtime EffekseerRendererVulkan *.h *.cpp *.vert *.frag *.inl *.py CMakeLists.txt
+call :copy_runtime EffekseerSoundXAudio2 *.h *.cpp *.fx CMakeLists.txt
+call :copy_runtime EffekseerSoundAL *.h *.cpp *.fx CMakeLists.txt
+call :copy_runtime EffekseerSoundDSound *.h *.cpp *.fx CMakeLists.txt
+call :copy_runtime EffekseerMaterialCompiler *.h *.cpp CMakeLists.txt
 
 mkdir %RDIR_R%\src\3rdParty\LLGI
 robocopy Dev\Cpp\3rdParty\LLGI %RDIR_R%\src\3rdParty\LLGI /S
@@ -80,13 +58,13 @@ copy cmake\FilterFolder.cmake %RDIR_R%\cmake\.
 
 echo Sample
 
-mkdir %RDIR%\Sample
-robocopy Release\Sample %RDIR%\Sample *.efkproj *.efkefc *.efkmodel *.txt *.png *.mqo *.fbx /S
+mkdir %RDIR_R%\Sample
+robocopy Release\Sample %RDIR_R%\Sample *.efkproj *.efkefc *.efkmodel *.txt *.png *.mqo *.fbx /S
 
 echo License
-cp LICENSE %RDIR_R%/LICENSE.txt
-cp LICENSE_RUNTIME_DIRECTX %RDIR_R%/LICENSE_RUNTIME_DIRECTX.txt
-cp LICENSE_RUNTIME_VULKAN %RDIR_R%/LICENSE_RUNTIME_VULKAN.txt
+copy LICENSE %RDIR_R%\LICENSE.txt
+copy LICENSE_RUNTIME_DIRECTX %RDIR_R%\LICENSE_RUNTIME_DIRECTX.txt
+copy LICENSE_RUNTIME_VULKAN %RDIR_R%\LICENSE_RUNTIME_VULKAN.txt
 
 echo Readme
 copy docs\Help_Cpp_Ja.html %RDIR_R%\Help_Cpp_Ja.html
@@ -98,4 +76,14 @@ copy Release\build_msvc.bat %RDIR_R%\build_msvc.bat
 
 copy Release\build_macOS.sh %RDIR_R%\build_macOS.sh
 
+goto :eof
+
+:copy_runtime
+set DIR=%1
+shift
+if not exist "%RDIR_R%\src\%DIR%" mkdir "%RDIR_R%\src\%DIR%"
+robocopy "Dev\Cpp\%DIR%" "%RDIR_R%\src\%DIR%" %* /S
+goto :eof
+
+:eof
 pause
