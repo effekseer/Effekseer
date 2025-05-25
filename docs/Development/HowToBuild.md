@@ -146,3 +146,8 @@ The C++ runtime package can be created on any platform using:
 ```
 python3 release_cpp.py
 ```
+
+The editor package can be created on Windows and Linux with:
+```
+python3 release_tool.py
+```
