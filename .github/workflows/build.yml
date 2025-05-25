@@ -154,7 +154,7 @@ jobs:
       - name: Prepare ForCpp
         if: matrix.name == 'windows_x64'
         run: |
-          release_cpp.bat
+          python release_cpp.py
         shell: cmd
         
       - name: Prepare Windows Tool
