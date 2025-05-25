@@ -16,7 +16,7 @@ Imgui is revised on EffekseerEditor.
 
 ## Windows 
 
-Execute releae.bat
+Execute `python3 release_tool.py`
 
 
 ## imgui customization

@@ -156,17 +156,19 @@ jobs:
         run: |
           python release_cpp.py
         shell: cmd
-        
-      - name: Prepare Windows Tool
-        run: |
-          release_tool.bat
+      - name: Prepare Tool (Windows)
         if: matrix.name == 'windows_x64'
+        run: |
+          python release_tool.py
         shell: cmd
 
-      - name: Prepare Linux Tool
-        run: |
-          bash ./release_tool.sh
+      - name: Prepare Tool (Linux)
         if: matrix.name == 'linux'
+        run: |
+          python3 release_tool.py
+        shell: bash
+
+        
 
       - name: Upload ForCpp
         if: matrix.name == 'windows_x64'
