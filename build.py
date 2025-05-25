@@ -184,8 +184,11 @@ def main():
         os.makedirs('Mac/Package', exist_ok=True)
 
         copy_tree('Mac/Effekseer.app', 'Mac/Package/Effekseer.app')
-        run_command('ln -s /Applications Applications > /dev/null 2>&1')
-        run_command('mv Applications Mac/Package/')
+        link = Path('Applications')
+        if link.exists() or link.is_symlink():
+            link.unlink()
+        link.symlink_to('/Applications', target_is_directory=True)
+        shutil.move('Applications', 'Mac/Package/')
         run_command('hdiutil create Effekseer.dmg -volname "Effekseer" -srcfolder "Mac/Package"')
 
         cd('../')

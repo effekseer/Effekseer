@@ -140,3 +140,9 @@ Please read ``` .github/workflows/build.yml ```
 * Linux
 
 Please read ``` .github/workflows/build.yml ```
+
+The C++ runtime package can be created on any platform using:
+
+```
+python3 release_cpp.py
+```
