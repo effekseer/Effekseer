@@ -159,7 +159,7 @@ jobs:
         
       - name: Prepare Windows Tool
         run: |
-          release_tool.bat
+          python release_tool.py
         if: matrix.name == 'windows_x64'
         shell: cmd
 
