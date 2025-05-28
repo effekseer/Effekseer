@@ -129,9 +129,11 @@ int mainLoop(int argc, char* argv[])
 	std::string cmd;
 
 #ifdef _WIN32
-	cmd = ".\\bin\\Effekseer.exe";
+        cmd = ".\\bin\\Effekseer.exe";
+#elif defined(__APPLE__)
+        cmd = "../Resources/Effekseer";
 #else
-	cmd = "../Resources/Effekseer";
+        cmd = "./bin/Effekseer";
 #endif
 
 	for (int i = 1; i < argc; i++)
