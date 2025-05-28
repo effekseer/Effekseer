@@ -165,7 +165,7 @@ jobs:
 
       - name: Prepare Linux Tool
         run: |
-          bash ./release_tool.sh
+          python3 release_tool.py
         if: matrix.name == 'linux'
 
       - name: Upload ForCpp
