@@ -123,6 +123,10 @@ def main():
         with CurrentDir('Tool/EffekseerLauncher'):
             run_command('sh build_macosx.sh')
 
+    if is_linux():
+        with CurrentDir('Tool/EffekseerLauncher'):
+            run_command('sh build_linux.sh')
+
     if env['IGNORE_BUILD'] == '0':
         os.makedirs('build', exist_ok=True)
 
