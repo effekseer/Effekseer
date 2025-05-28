@@ -17,4 +17,6 @@ elseif(WIN32)
   set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /SUBSYSTEM:WINDOWS")
 
   add_executable(EffekseerLauncher src/main.cpp resources.rc)
+elseif(UNIX)
+  add_executable(EffekseerLauncher src/main.cpp)
 endif()
