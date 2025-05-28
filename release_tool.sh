@@ -18,7 +18,8 @@ if ! command -v robocopy >/dev/null; then
             echo "Include $p"
         done
         echo "Copy from $from to $to"
-        rsync -av --exclude='*' "${include[@]}" "$from/" "$to"
+        # Ensure directories are included so files can be copied recursively
+        rsync -av --include='*/' "${include[@]}" --exclude='*' "$from/" "$to"
     }
 fi
 
