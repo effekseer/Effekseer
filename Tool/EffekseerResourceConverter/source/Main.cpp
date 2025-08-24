@@ -80,7 +80,7 @@ public:
         printf("Usage: InputFile {-o OutputFile} {Options}\n");
         printf("\n");
         printf("InputFile:\n");
-        printf("    Supports: *.fbx, *.gltf, *.glb, *.obj, *.mqo\n");
+        printf("    Supports: *.fbx, *.gltf, *.glb, *.obj, *.mqo, *.geo, *.bgeo\n");
         printf("OutputFile:\n");
         printf("    Supports: *.efkmodel, *.efkcurve\n");
         printf("Options:");
@@ -91,16 +91,6 @@ public:
 int main(int argc, char* argv[])
 {
     using namespace efkres;
-    
-    auto normal = Vec3(1, 0, 1).Normalized();
-    auto tangent = Vec3(1, 0, -1).Normalized();
-    auto binormal = Vec3(0, 1, 0).Normalized();
-
-    Quat quat{};
-    quat.SetTBN(normal, tangent, binormal);
-    auto normal2 = xAxis(quat);
-    auto tangent2 = yAxis(quat);
-    auto binormal2 = CrossProduct(normal2, tangent2);
 
     MainArgs args;
     if (!args.Parse(argc, argv))
