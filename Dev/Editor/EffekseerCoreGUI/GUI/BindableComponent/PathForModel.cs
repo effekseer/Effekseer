@@ -17,9 +17,9 @@ namespace Effekseer.GUI.BindableComponent
 		{
 			if (!string.IsNullOrEmpty(filePath))
 			{
-				var ext = System.IO.Path.GetExtension(filePath).ToLower().Replace(".", "");
+				var ext = System.IO.Path.GetExtension(filePath).ToLower();
 
-				if (ext != "efkmodel")
+				if (ext != ".efkmodel")
 				{
 					if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("ResetMaginification")))
 					{
@@ -42,7 +42,7 @@ namespace Effekseer.GUI.BindableComponent
 		protected override void LoadFile(string filepath, bool isReloading)
 		{
 			// Convert file
-			var ext = System.IO.Path.GetExtension(filepath).ToLower().Replace(".", "");
+			var ext = System.IO.Path.GetExtension(filepath).ToLower();
 			var newFilepath = System.IO.Path.ChangeExtension(filepath, ".efkmodel");
 
 			Effekseer.Utils.ModelInformation modelInfo = new Utils.ModelInformation();
@@ -73,7 +73,7 @@ namespace Effekseer.GUI.BindableComponent
 
 			Dialog.OpenModel omd = new Dialog.OpenModel(modelInfo.Scale);
 
-			if (ext == "fbx" || ext == "mqo")
+			if (CheckExtension(ext) && ext != ".efkmodel")
 			{
 				omd.Show("");
 			}
@@ -89,7 +89,7 @@ namespace Effekseer.GUI.BindableComponent
 			omd.OnOK = () =>
 			{
 
-				if (ext == "fbx")
+				if (CheckExtension(ext) && ext != ".efkmodel")
 				{
 					var oldFilepath = filepath;
 					bool doGenerate = false;
@@ -103,7 +103,7 @@ namespace Effekseer.GUI.BindableComponent
 
 					if (doGenerate)
 					{
-						string converterPath = Manager.GetEntryDirectory() + "/tools/fbxToEffekseerModelConverter";
+						string converterPath = Manager.GetEntryDirectory() + "/tools/EffekseerResourceConverter";
 
 						// japanese file path is not supported.
 						try
@@ -137,7 +137,7 @@ namespace Effekseer.GUI.BindableComponent
 
 						info.FileName = converterPath;
 
-						info.Arguments = "\"" + oldFilepath + "\" \"" + newFilepath + "\" -scale " + omd.Magnification.ToString();
+						info.Arguments = "\"" + oldFilepath + "\" -o \"" + newFilepath + "\" -s " + omd.Magnification.ToString();
 
 						if (!System.IO.File.Exists(oldFilepath))
 						{
@@ -157,12 +157,14 @@ namespace Effekseer.GUI.BindableComponent
 
 						info.UseShellExecute = false;
 						info.RedirectStandardOutput = true;
+						info.RedirectStandardError = true;
 						info.RedirectStandardInput = false;
 						info.CreateNoWindow = true;
 
 						System.Diagnostics.Process p = System.Diagnostics.Process.Start(info);
 
 						string outputs = p.StandardOutput.ReadToEnd();
+						string errors = p.StandardError.ReadToEnd();
 
 						p.WaitForExit();
 						p.Dispose();
@@ -174,75 +176,9 @@ namespace Effekseer.GUI.BindableComponent
 						}
 						else
 						{
-							var msg = " Failed to load. \n" + outputs;
+							var msg = " Failed to load. \n" + outputs + errors;
 
 							swig.GUIManager.show(msg, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
-						}
-
-						try
-						{
-							string tempFilePath = Path.GetTempPath() + System.IO.Path.GetFileName(filepath);
-							System.IO.File.Delete(tempFilePath);
-						}
-						catch
-						{
-
-						}
-					}
-				}
-
-				if (ext == "mqo")
-				{
-					var oldFilepath = filepath;
-
-					bool doGenerate = false;
-
-					if (!System.IO.File.Exists(newFilepath) ||
-						System.IO.File.GetLastWriteTime(oldFilepath) != System.IO.File.GetLastWriteTime(newFilepath) ||
-						modelInfo.Scale != omd.Magnification)
-					{
-						doGenerate = true;
-					}
-
-					if (doGenerate)
-					{
-						string converterPath = Manager.GetEntryDirectory() + "/tools/mqoToEffekseerModelConverter";
-
-						// japanese file path is not supported.
-						try
-						{
-							string tempFilePath = Path.GetTempPath() + System.IO.Path.GetFileName(filepath);
-							System.IO.File.Copy(oldFilepath, tempFilePath);
-							oldFilepath = tempFilePath;
-						}
-						catch
-						{
-
-						}
-
-						System.Diagnostics.ProcessStartInfo info = new System.Diagnostics.ProcessStartInfo();
-
-						var os = System.Environment.OSVersion;
-						if (os.Platform == PlatformID.Win32NT ||
-							os.Platform == PlatformID.Win32S ||
-							os.Platform == PlatformID.Win32Windows ||
-							os.Platform == PlatformID.WinCE)
-						{
-							converterPath += ".exe";
-						}
-
-						try
-						{
-							mqoToEffekseerModelConverter.Program.Call(new[] { oldFilepath, newFilepath, "-scale", omd.Magnification.ToString() });
-						}
-						catch
-						{
-
-						}
-
-						if (System.IO.File.Exists(newFilepath))
-						{
-							System.IO.File.SetLastWriteTime(newFilepath, System.IO.File.GetLastWriteTime(oldFilepath));
 						}
 
 						try
