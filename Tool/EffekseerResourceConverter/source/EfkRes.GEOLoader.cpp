@@ -51,9 +51,9 @@ private:
 public:
 	BgeoParser() = default;
 
-	json Parse(const char* filename)
+	json Parse(const std::string& filename)
 	{
-		if (!m_reader.Open(filename))
+		if (!m_reader.Open(filename.c_str()))
 		{
 			return false;
 		}
@@ -512,7 +512,7 @@ std::optional<Model> GEOLoader::LoadModel(std::string_view filepath)
 	if (fileExt == ".bgeo")
 	{
 		BgeoParser parser;
-		jsonData = parser.Parse(filepath.data());
+		jsonData = parser.Parse(std::string(filepath));
 	}
 	else if (fileExt == ".geo")
 	{
