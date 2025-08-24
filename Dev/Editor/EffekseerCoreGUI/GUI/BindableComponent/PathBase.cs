@@ -96,6 +96,8 @@ namespace Effekseer.GUI.BindableComponent
 			{
 				binding.SetAbsolutePath(path);
 				Read();
+
+				LoadFile(path, false);
 			}
 		}
 

@@ -661,6 +661,11 @@ namespace Effekseer.GUI.Dock
 					case ".efkmodel":
 					case ".fbx":
 					case ".mqo":
+					case ".gltf":
+					case ".glb":
+					case ".obj":
+					case ".geo":
+					case ".bgeo":
 						type = FileType.Model;
 						iconStr = Icons.FileModel;
 						iconImage = Images.Icons["FileModel128"];
