@@ -114,7 +114,7 @@ jobs:
           if [ "${{ matrix.name }}" = "mac" ];
           then
               export PACKAGEING_FOR_MAC=1
-              sudo xcode-select --switch /Applications/Xcode_14.1.app
+              sudo xcode-select --switch /Applications/Xcode_15.0.1.app
           fi
           if [ "${{ matrix.name }}" = "windows_x86" ];
           then
