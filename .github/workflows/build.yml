@@ -34,9 +34,11 @@ jobs:
          git submodule update --init
          git lfs install
          git lfs pull
-        
+
       - name: Build
-        run: python build.py from_ci
+        run: |
+         python -m pip install setuptools
+         python build.py from_ci
         shell: cmd
 
       - name: Test
@@ -89,8 +91,8 @@ jobs:
           fetch-depth: 1
 
       - run: |
-          git lfs install
-          git lfs pull
+         git lfs install
+         git lfs pull
 
       - name: Install Linux Dependencies
         if: matrix.name == 'linux'
@@ -107,6 +109,8 @@ jobs:
       - name: Build
         shell: bash
         run: |
+          python3 -m pip install setuptools
+
           if [ "${{ matrix.name }}" = "mac" ];
           then
               export PACKAGEING_FOR_MAC=1
