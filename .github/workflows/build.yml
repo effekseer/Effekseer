@@ -48,7 +48,7 @@ jobs:
 
   tests:
     name: Run Tests
-    runs-on: windows-2019
+    runs-on: windows-2022
     steps:
       - name: Setup Python
         uses: actions/setup-python@v2
@@ -152,7 +152,7 @@ jobs:
           if [ "${{ matrix.name }}" = "mac" ];
           then
               export PACKAGEING_FOR_MAC=1
-              sudo xcode-select --switch /Applications/Xcode_14.1.app
+              sudo xcode-select --switch /Applications/Xcode_15.0.1.app
           fi
           python3 build.py || python build.py
                 
