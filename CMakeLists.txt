@@ -383,6 +383,7 @@ if(BUILD_VIEWER OR BUILD_EXAMPLES OR BUILD_TEST)
                         -DCMAKE_DEBUG_POSTFIX=d
                         -DCMAKE_USER_MAKE_RULES_OVERRIDE=${CMAKE_CURRENT_SOURCE_DIR}/Dev/CFlagOverrides.cmake
                         -DEFK_USE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
+                        -DUSE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
                         -DSANITIZE_ENABLED=${SANITIZE_ENABLED}
                         -DGLFW_BUILD_EXAMPLES=OFF
                         -DGLFW_BUILD_TESTS=OFF
