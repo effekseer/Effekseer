@@ -26,7 +26,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.10'
+          python-version: '3.12'
           architecture: 'x64'
 
       - uses: actions/checkout@v2
@@ -80,7 +80,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.10'
+          python-version: '3.12'
           architecture: 'x64'
 
       - uses: actions/checkout@v2
