@@ -151,6 +151,7 @@ if env['IGNORE_BUILD'] == '0':
             r"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\MSBuild.exe",
         ]
 
+        msbuild_path = None
         candidate = None
         for candidate in candidates:
             if os.path.exists(candidate):
