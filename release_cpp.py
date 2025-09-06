@@ -60,7 +60,7 @@ def main():
     shutil.copytree("Dev/Cpp/3rdParty/stb_effekseer", rdir/"src"/"3rdParty"/"stb_effekseer", dirs_exist_ok=True, ignore=shutil.ignore_patterns("*", "!*.h"))
 
     # samples
-    patterns = ["*.h", "*.cpp", "*.mm", "*.txt", "*.fx", "*.efk", "*.wav", "*.png"]
+    patterns = ["*.h", "*.cpp", "*.mm", "*.txt", "*.fx", "*.efk", "*.efkefc", "*.wav", "*.png"]
     for pattern in patterns:
         for f in Path("Examples").rglob(pattern):
             if f.is_file():
@@ -70,6 +70,7 @@ def main():
 
     shutil.copy("Dev/Cpp/CMakeLists.txt", rdir/"src")
     shutil.copy("cmake/FilterFolder.cmake", rdir/"cmake")
+    shutil.copy("cmake/LinkAppleLibs.cmake", rdir/"cmake")
 
     shutil.copy("LICENSE", rdir/"LICENSE.txt")
     shutil.copy("LICENSE_RUNTIME_DIRECTX", rdir/"LICENSE_RUNTIME_DIRECTX.txt")
