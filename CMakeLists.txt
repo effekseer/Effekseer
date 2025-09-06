@@ -46,7 +46,7 @@ else()
 endif()
 
 include(cmake/ClangFormat.cmake)
-include(cmake/LinkAppleLibs)
+include(cmake/LinkAppleLibs.cmake)
 
 if (BUILD_VIEWER)
     set(USE_LIBPNG_LOADER ON)
