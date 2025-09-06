@@ -46,6 +46,7 @@ else()
 endif()
 
 include(cmake/ClangFormat.cmake)
+include(cmake/LinkAppleLibs.cmake)
 
 if (BUILD_VIEWER)
     set(USE_LIBPNG_LOADER ON)
@@ -229,7 +230,7 @@ if(BUILD_VIEWER)
                         -DSANITIZE_ENABLED=${SANITIZE_ENABLED}
                         -DZLIB_INCLUDE_DIRS=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/include
                         -DZLIB_INCLUDE_DIR=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/include
-                        -DPNG_BUILD_ZLIB=ON
+                        -DZLIB_ROOT=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib
                         -DPNG_SHARED=OFF
                         -DPNG_EXECUTABLES=OFF
                         -DPNG_TESTS=OFF
@@ -341,6 +342,7 @@ if(BUILD_VIEWER OR BUILD_EXAMPLES OR BUILD_TEST)
                         -DCMAKE_DEBUG_POSTFIX=d
                         -DCMAKE_USER_MAKE_RULES_OVERRIDE=${CMAKE_CURRENT_SOURCE_DIR}/Dev/CFlagOverrides.cmake
                         -DEFK_USE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
+                        -DUSE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
                         -DSANITIZE_ENABLED=${SANITIZE_ENABLED}
                         -DGLFW_BUILD_EXAMPLES=OFF
                         -DGLFW_BUILD_TESTS=OFF
