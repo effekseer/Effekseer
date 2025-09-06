@@ -77,6 +77,7 @@ robocopy Examples %RDIR_R%\Examples\ *.h *.cpp *.mm *.txt *.fx *.efk *.wav *.png
 copy Dev\Cpp\CMakeLists.txt %RDIR_R%\src\.
 
 copy cmake\FilterFolder.cmake %RDIR_R%\cmake\.
+copy cmake\LinkAppleLibs.cmake %RDIR_R%\cmake\.
 
 echo Sample
 
