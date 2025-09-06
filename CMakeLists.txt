@@ -45,15 +45,16 @@ else()
     option(BUILD_METAL "Build metal modules" OFF)
 endif()
 
-# Link required macOS frameworks when using GLFW
+# Collect macOS frameworks required when linking with GLFW
 if (APPLE)
     find_library(QUARTZ_CORE_FRAMEWORK QuartzCore)
-    if(QUARTZ_CORE_FRAMEWORK)
-        link_libraries("${QUARTZ_CORE_FRAMEWORK}")
-    endif()
     find_library(METAL_FRAMEWORK Metal)
+    set(GLFW_MACOS_FRAMEWORKS "")
+    if(QUARTZ_CORE_FRAMEWORK)
+        list(APPEND GLFW_MACOS_FRAMEWORKS "${QUARTZ_CORE_FRAMEWORK}")
+    endif()
     if(METAL_FRAMEWORK)
-        link_libraries("${METAL_FRAMEWORK}")
+        list(APPEND GLFW_MACOS_FRAMEWORKS "${METAL_FRAMEWORK}")
     endif()
 endif()
 
@@ -411,6 +412,11 @@ if(BUILD_VIEWER OR BUILD_EXAMPLES OR BUILD_TEST)
     else()
         set(GLFW3_LIB_DEBUG "glfw3")
         set(GLFW3_LIB_RELEASE "glfw3")
+    endif()
+
+    if(APPLE)
+        list(APPEND GLFW3_LIB_DEBUG ${GLFW_MACOS_FRAMEWORKS})
+        list(APPEND GLFW3_LIB_RELEASE ${GLFW_MACOS_FRAMEWORKS})
     endif()
 
     list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glfw/include)

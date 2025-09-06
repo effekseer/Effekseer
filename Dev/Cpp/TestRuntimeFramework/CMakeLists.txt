@@ -185,15 +185,15 @@ target_link_libraries(
     ${PROJECT_NAME}
     PUBLIC
     ${common_lib}
-    debug glfw3d
-    optimized glfw3
+    debug "${GLFW3_LIB_DEBUG}"
+    optimized "${GLFW3_LIB_RELEASE}"
 )
 else()
 target_link_libraries(
     ${PROJECT_NAME}
     PUBLIC
     ${common_lib}
-    glfw3
+    "${GLFW3_LIB_RELEASE}"
     dl
 )
 endif()
