@@ -120,26 +120,7 @@ if(NOT WIN32)
     )
 endif()
 
-if(APPLE)
-    find_library(COCOA_LIBRARY Cocoa)
-    find_library(METAL_LIBRARY Metal)
-    find_library(APPKIT_LIBRARY AppKit)
-    find_library(METALKIT_LIBRARY MetalKit)
-    find_library(QUARTZ_CORE_LIBRARY QuartzCore)
-    find_library(IOKIT_FRAMEWORK IOKit)
-
-    target_link_libraries(
-        ${PROJECT_NAME}
-        PRIVATE
-        ${COCOA_FRAMEWORK}
-        ${METAL_LIBRARY}
-        ${METALKIT_LIBRARY}
-        ${QUARTZ_CORE_LIBRARY}
-        ${IOKIT_FRAMEWORK}
-        ${CORE_FOUNDATION_FRAMEWORK}
-        ${CORE_VIDEO_FRAMEWORK}
-    )
-endif()
+LinkAppleLibs(${PROJECT_NAME})
 
 if(UNIX AND NOT APPLE)
     find_package(X11 REQUIRED)
