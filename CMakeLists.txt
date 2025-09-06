@@ -229,7 +229,7 @@ if(BUILD_VIEWER)
                         -DSANITIZE_ENABLED=${SANITIZE_ENABLED}
                         -DZLIB_INCLUDE_DIRS=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/include
                         -DZLIB_INCLUDE_DIR=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/include
-                        -DPNG_BUILD_ZLIB=ON
+                        -DZLIB_ROOT=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib
                         -DPNG_SHARED=OFF
                         -DPNG_EXECUTABLES=OFF
                         -DPNG_TESTS=OFF
