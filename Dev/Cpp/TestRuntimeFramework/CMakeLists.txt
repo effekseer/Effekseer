@@ -110,28 +110,6 @@ else()
     find_package(OpenAL)
     list(APPEND common_inc ${OPENAL_INCLUDE_DIR})
     list(APPEND common_lib ${OPENAL_LIBRARY})
-
-    if(APPLE)
-        find_library(COCOA_FRAMEWORK Cocoa)
-        find_library(METAL_LIBRARY Metal)
-        find_library(APPKIT_LIBRARY AppKit)
-        find_library(METALKIT_LIBRARY MetalKit)
-        find_library(QUARTZ_CORE_LIBRARY QuartzCore)
-        find_library(IOKIT_FRAMEWORK IOKit)
-        find_library(CORE_FOUNDATION_FRAMEWORK CoreFoundation)
-        find_library(CORE_VIDEO_FRAMEWORK CoreVideo)
-        list(APPEND common_lib
-            ${COCOA_FRAMEWORK}
-            ${APPKIT_LIBRARY} 
-            ${METAL_LIBRARY} 
-            ${METALKIT_LIBRARY} 
-            ${QUARTZ_CORE_LIBRARY}
-            ${OPENGL_LIBRARIES}
-            ${IOKIT_FRAMEWORK}
-            ${CORE_FOUNDATION_FRAMEWORK}
-            ${CORE_VIDEO_FRAMEWORK})
-    endif()
-
 endif()
 
 add_library(${PROJECT_NAME} ${effekseer_test_src})
@@ -197,6 +175,8 @@ target_link_libraries(
     dl
 )
 endif()
+
+LinkAppleLibs(${PROJECT_NAME})
 
 if(UNIX AND NOT APPLE)
     find_package(X11 REQUIRED)
