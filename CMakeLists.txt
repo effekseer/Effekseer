@@ -45,6 +45,18 @@ else()
     option(BUILD_METAL "Build metal modules" OFF)
 endif()
 
+# Link required macOS frameworks when using GLFW
+if (APPLE)
+    find_library(QUARTZ_CORE_FRAMEWORK QuartzCore)
+    if(QUARTZ_CORE_FRAMEWORK)
+        link_libraries("${QUARTZ_CORE_FRAMEWORK}")
+    endif()
+    find_library(METAL_FRAMEWORK Metal)
+    if(METAL_FRAMEWORK)
+        link_libraries("${METAL_FRAMEWORK}")
+    endif()
+endif()
+
 include(cmake/ClangFormat.cmake)
 
 if (BUILD_VIEWER)
