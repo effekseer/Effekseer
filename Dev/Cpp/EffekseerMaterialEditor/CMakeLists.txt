@@ -111,7 +111,7 @@ target_link_libraries(
     ${CMAKE_THREAD_LIBS_INIT}
     ${OPENGL_LIBRARIES})
 
-    LinkAppleLibs(EffekseerMaterialEditor)
+    LinkAppleLibs(${PROJECT_NAME})
     set_target_properties(EffekseerMaterialEditor PROPERTIES XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME YES)
 
 else()
