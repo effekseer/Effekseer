@@ -23,12 +23,12 @@ env:
 jobs:
   win_x86_build:
     name: Build Windows(x86)
-    runs-on: windows-2019
+    runs-on: windows-2022
     steps:
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.8'
+          python-version: '3.12'
 
       - uses: actions/checkout@v2
       - run: |
@@ -48,13 +48,18 @@ jobs:
 
   tests:
     name: Run Tests
-    runs-on: windows-2019
+    runs-on: windows-2022
     steps:
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.8'
+          python-version: '3.12'
           architecture: 'x64'
+
+      - name: Pip
+        run: |
+         python -m pip install setuptools
+        shell: cmd
 
       - uses: actions/checkout@v2
       - run: |
@@ -96,10 +101,10 @@ jobs:
             os: ubuntu-22.04
             label: Linux
           - name: windows_x64
-            os: windows-2019
+            os: windows-2022
             label: Win
           - name: mac
-            os: macos-13
+            os: macos-14
             label: Mac
 
     name: Build on ${{ matrix.name }}
@@ -147,7 +152,7 @@ jobs:
           if [ "${{ matrix.name }}" = "mac" ];
           then
               export PACKAGEING_FOR_MAC=1
-              sudo xcode-select --switch /Applications/Xcode_14.1.app
+              sudo xcode-select --switch /Applications/Xcode_15.0.1.app
           fi
           python3 build.py || python build.py
                 

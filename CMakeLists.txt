@@ -45,6 +45,18 @@ else()
     option(BUILD_METAL "Build metal modules" OFF)
 endif()
 
+# Link required macOS frameworks when using GLFW
+if (APPLE)
+    find_library(QUARTZ_CORE_FRAMEWORK QuartzCore)
+    if(QUARTZ_CORE_FRAMEWORK)
+        link_libraries("${QUARTZ_CORE_FRAMEWORK}")
+    endif()
+    find_library(METAL_FRAMEWORK Metal)
+    if(METAL_FRAMEWORK)
+        link_libraries("${METAL_FRAMEWORK}")
+    endif()
+endif()
+
 include(cmake/ClangFormat.cmake)
 
 if (BUILD_VIEWER)
@@ -383,6 +395,7 @@ if(BUILD_VIEWER OR BUILD_EXAMPLES OR BUILD_TEST)
                         -DCMAKE_DEBUG_POSTFIX=d
                         -DCMAKE_USER_MAKE_RULES_OVERRIDE=${CMAKE_CURRENT_SOURCE_DIR}/Dev/CFlagOverrides.cmake
                         -DEFK_USE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
+                        -DUSE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
                         -DSANITIZE_ENABLED=${SANITIZE_ENABLED}
                         -DGLFW_BUILD_EXAMPLES=OFF
                         -DGLFW_BUILD_TESTS=OFF

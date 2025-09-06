@@ -1,4 +1,4 @@
-﻿cmake_minimum_required (VERSION 3.0.0)
+﻿cmake_minimum_required (VERSION 3.15)
 project(Example_Multithread)
 
 add_executable(${PROJECT_NAME} main.cpp)
