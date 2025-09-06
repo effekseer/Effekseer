@@ -72,7 +72,7 @@ mkdir %RDIR_R%\src\3rdParty\stb_effekseer
 robocopy Dev\Cpp\3rdParty\stb_effekseer %RDIR_R%\src\3rdParty\stb_effekseer *.h
 
 echo Samples for runtimes
-robocopy Examples %RDIR_R%\Examples\ *.h *.cpp *.mm *.txt *.fx *.efk *.wav *.png /S
+robocopy Examples %RDIR_R%\Examples\ *.h *.cpp *.mm *.txt *.fx *.efk *.efkefc *.wav *.png /S
 
 copy Dev\Cpp\CMakeLists.txt %RDIR_R%\src\.
 
