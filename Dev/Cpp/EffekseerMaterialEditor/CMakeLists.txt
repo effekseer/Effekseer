@@ -104,23 +104,14 @@ elseif(APPLE)
 FIND_PACKAGE(Threads REQUIRED)
 FIND_PACKAGE(OpenGL REQUIRED)
 
-# For Mac
-find_library(COCOA_FRAMEWORK Cocoa)
-find_library(COCOA_FRAMEWORK Cocoa)
-find_library(IOKIT_FRAMEWORK IOKit)
-find_library(CORE_FOUNDATION_FRAMEWORK CoreFoundation)
-find_library(CORE_VIDEO_FRAMEWORK CoreVideo)
 
 target_link_libraries(
     EffekseerMaterialEditor
     PRIVATE
     ${CMAKE_THREAD_LIBS_INIT}
-    ${COCOA_FRAMEWORK}
-    ${OPENGL_LIBRARIES}
-    ${IOKIT_FRAMEWORK}
-    ${CORE_FOUNDATION_FRAMEWORK}
-    ${CORE_VIDEO_FRAMEWORK})
+    ${OPENGL_LIBRARIES})
 
+    LinkAppleLibs(${PROJECT_NAME})
     set_target_properties(EffekseerMaterialEditor PROPERTIES XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME YES)
 
 else()
