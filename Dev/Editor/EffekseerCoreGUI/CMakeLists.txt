@@ -27,7 +27,7 @@ add_library(EffekseerCoreGUI
 
 set_target_properties(EffekseerCoreGUI PROPERTIES
     DOTNET_SDK "Microsoft.NET.Sdk"
-    DOTNET_TARGET_FRAMEWORK "net6.0")
+    DOTNET_TARGET_FRAMEWORK "net9.0")
 
 set_target_properties(EffekseerCoreGUI PROPERTIES VS_DOTNET_REFERENCES "System;System.Xml;System.Xml.Linq;System.IO.Compression;Microsoft.CSharp;System.IO.Compression.FileSystem")
 set_property(TARGET EffekseerCoreGUI PROPERTY VS_PACKAGE_REFERENCES "Newtonsoft.Json_13.0.1;DynamicLanguageRuntime_1.2.2")
