@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Platforms>x64</Platforms>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DefineConstants>TRACE;DOTNET_STARNDARD</DefineConstants>
     <OutputPath>../../release/</OutputPath>

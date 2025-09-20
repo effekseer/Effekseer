@@ -20,7 +20,7 @@ add_executable(EffekseerEditorLit
 
 set_target_properties(EffekseerEditorLit PROPERTIES
     DOTNET_SDK "Microsoft.NET.Sdk"
-    DOTNET_TARGET_FRAMEWORK "net6.0")
+    DOTNET_TARGET_FRAMEWORK "net9.0")
 
 set_target_properties(EffekseerEditorLit PROPERTIES
     VS_DOTNET_REFERENCES "System;System.Xml;System.Xml.Linq;System.Text.RegularExpressions;Microsoft.CSharp;System.IO.Compression")
