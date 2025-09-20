@@ -107,6 +107,10 @@ endif()
 
 if(MSVC)
     add_definitions(/MP)
+    add_compile_options(
+        $<$<COMPILE_LANGUAGE:C>:/utf-8>
+        $<$<COMPILE_LANGUAGE:CXX>:/utf-8>
+    )
 endif()
 
 
