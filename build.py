@@ -154,9 +154,10 @@ def main():
 
         if is_mac():
             run_command('dotnet build Dev/Editor/Effekseer/Effekseer.csproj')
-            run_command('dotnet publish Dev/Editor/Effekseer/Effekseer.csproj -c Release --self-contained -r osx.10.11-x64')
-            run_command('cp -r Dev/release/osx.10.11-x64/publish/* Dev/release/')
-            run_command('rm -rf -r Dev/release/osx.10.11-x64')
+            runtime_identifier = 'osx-x64'
+            run_command(f'dotnet publish Dev/Editor/Effekseer/Effekseer.csproj -c Release --self-contained -r {runtime_identifier}')
+            run_command(f'cp -r Dev/release/{runtime_identifier}/publish/* Dev/release/')
+            run_command(f'rm -rf -r Dev/release/{runtime_identifier}')
 
         elif is_windows():
             run_command('dotnet build Dev/Editor/Effekseer/Effekseer.csproj')
