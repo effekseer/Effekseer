@@ -9,6 +9,7 @@ set(effekseer_public_h
     Effekseer.Modules.h
     Effekseer.SIMD.h
     Effekseer/Effekseer.Base.Pre.h
+    Effekseer/Effekseer.Base.h
     Effekseer/Effekseer.Effect.h
     Effekseer/Effekseer.Color.h
     Effekseer/Effekseer.DefaultFile.h
@@ -70,6 +71,9 @@ set(effekseer_public_h
     Effekseer/Effekseer.SoundLoader.h
     Effekseer/Effekseer.WorkerThread.h
     Effekseer/Effekseer.ResourceManager.h
+
+    Effekseer/VectorField/VectorField.h
+    Effekseer/VectorField/VectorFieldLoader.h
 )
 
 file(GLOB effekseer_h
