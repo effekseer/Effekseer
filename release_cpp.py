@@ -57,7 +57,7 @@ def main():
     shutil.copytree("Dev/Cpp/3rdParty/LLGI", rdir/"src"/"3rdParty"/"LLGI", dirs_exist_ok=True)
     shutil.copytree("Dev/Cpp/3rdParty/glslang", rdir/"src"/"3rdParty"/"glslang", dirs_exist_ok=True)
     shutil.rmtree(rdir/"src"/"3rdParty"/"glslang"/"Test", ignore_errors=True)
-    shutil.copytree("Dev/Cpp/3rdParty/stb_effekseer", rdir/"src"/"3rdParty"/"stb_effekseer", dirs_exist_ok=True, ignore=shutil.ignore_patterns("*", "!*.h"))
+    shutil.copytree("Dev/Cpp/3rdParty/stb_effekseer", rdir/"src"/"3rdParty"/"stb_effekseer", dirs_exist_ok=True)
 
     # samples
     patterns = ["*.h", "*.cpp", "*.mm", "*.txt", "*.fx", "*.efk", "*.efkefc", "*.wav", "*.png"]
