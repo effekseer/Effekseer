@@ -1,6 +1,7 @@
 #include "Mat44f.h"
 #include "../Effekseer.Matrix44.h"
 #include <cmath>
+#include <limits>
 
 namespace Effekseer
 {
@@ -30,8 +31,8 @@ Mat44f::Mat44f(const Matrix44& mat)
 //----------------------------------------------------------------------------------
 bool Mat44f::IsValid() const
 {
-	const Float4 nan{NAN};
-	const Float4 inf{INFINITY};
+	const Float4 nan{std::numeric_limits<float>::quiet_NaN()};
+	const Float4 inf{std::numeric_limits<float>::infinity()};
 	Float4 res = Float4::Equal(X, nan) | Float4::Equal(Y, nan) | Float4::Equal(Z, nan) | Float4::Equal(W, nan) | Float4::Equal(X, inf) |
 				 Float4::Equal(Y, inf) | Float4::Equal(Z, inf) | Float4::Equal(W, inf);
 	return Float4::MoveMask(res) == 0;
