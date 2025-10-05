@@ -159,7 +159,21 @@ if (USE_OSM OR BUILD_VIEWER)
 endif()
 
 if(BUILD_VIEWER OR BUILD_TEST)
-    add_subdirectory(3rdParty/spdlog EXCLUDE_FROM_ALL)
+    if(CMAKE_VERSION VERSION_LESS 3.31)
+        add_subdirectory(3rdParty/spdlog EXCLUDE_FROM_ALL)
+    else()
+        # Newer CMake versions (>= 3.31) drop support for projects that still
+        # declare compatibility with CMake < 3.5.  The upstream spdlog
+        # submodule bundled with Effekseer has not been updated yet and fails
+        # configuration with CMake 3.31+, which is used on the macOS CI
+        # runners.  Avoid processing spdlog's CMake project in that case and
+        # instead provide a lightweight interface target that exposes the
+        # headers required by the rest of the build.
+        add_library(spdlog INTERFACE)
+        target_include_directories(
+            spdlog
+            INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/spdlog/include/)
+    endif()
     list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/spdlog/include/)
 endif()
 
