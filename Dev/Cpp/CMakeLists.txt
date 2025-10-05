@@ -160,6 +160,9 @@ endif()
 
 if(BUILD_VIEWER OR BUILD_TEST)
     add_subdirectory(3rdParty/spdlog EXCLUDE_FROM_ALL)
+    if(MSVC AND TARGET spdlog)
+        target_compile_options(spdlog INTERFACE $<$<COMPILE_LANGUAGE:CXX>:/utf-8>)
+    endif()
     list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/spdlog/include/)
 endif()
 
