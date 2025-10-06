@@ -179,17 +179,17 @@ if env['IGNORE_BUILD'] == '0':
             if is_from_ci:
                 suffix += ' -D FROM_CI=ON'
             if is_x86:
-                call('cmake .. -A Win32 -DBUILD_VIEWER=ON' + suffix)
+                call('cmake .. -A Win32 -DBUILD_VIEWER=ON -DCMAKE_POLICY_VERSION_MINIMUM=3.10 ' + suffix)
             else:
                 # run tests on x64
-                call('cmake .. -A x64 -DBUILD_VIEWER=ON -D BUILD_TEST=ON -D BUILD_EXAMPLES=ON' + suffix)
+                call('cmake .. -A x64 -DBUILD_VIEWER=ON -D BUILD_TEST=ON -D BUILD_EXAMPLES=ON -DCMAKE_POLICY_VERSION_MINIMUM=3.10 ' + suffix)
 
         elif isMac():
-            call('cmake .. -G "Xcode" -DBUILD_VIEWER=ON -D BUILD_TEST=ON -D BUILD_EXAMPLES=ON')
+            call('cmake .. -G "Xcode" -DBUILD_VIEWER=ON -D BUILD_TEST=ON -D BUILD_EXAMPLES=ON -DCMAKE_POLICY_VERSION_MINIMUM=3.10 ')
         elif find_executable('ninja'):
-            call('cmake .. -G Ninja -DBUILD_VIEWER=ON -D BUILD_TEST=ON -D BUILD_EXAMPLES=ON')
+            call('cmake .. -G Ninja -DBUILD_VIEWER=ON -D BUILD_TEST=ON -D BUILD_EXAMPLES=ON -DCMAKE_POLICY_VERSION_MINIMUM=3.10 ')
         else:
-            call('cmake .. -G "Unix Makefiles" -DBUILD_VIEWER=ON')
+            call('cmake .. -G "Unix Makefiles" -DBUILD_VIEWER=ON -DCMAKE_POLICY_VERSION_MINIMUM=3.10')
         call('cmake --build . --config Release')
 
     if isWin():
