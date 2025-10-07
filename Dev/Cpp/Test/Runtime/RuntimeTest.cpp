@@ -18,7 +18,7 @@
 #endif
 
 #include "../Effekseer/Effekseer/Effekseer.Base.h"
-#include "../Effekseer/Effekseer/Noise/CurlNoise.h"
+#include "../Effekseer/Effekseer/Noise/Effekseer.CurlNoise.h"
 #include "../TestHelper.h"
 #include <iostream>
 

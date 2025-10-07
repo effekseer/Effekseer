@@ -1,6 +1,6 @@
 #include <cassert>
 #include <chrono>
-#include "Noise/CurlNoise.h"
+#include "Noise/Effekseer.CurlNoise.h"
 
 #define ASSERT(e) assert(e)
 //#define ASSERT(e) if (!(e)) printf("assert failed.\n");

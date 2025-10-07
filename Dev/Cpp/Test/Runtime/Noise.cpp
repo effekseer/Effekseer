@@ -1,5 +1,5 @@
 #include <chrono>
-#include "Effekseer/Noise/CurlNoise.h"
+#include "Effekseer/Noise/Effekseer.CurlNoise.h"
 #include "Effekseer/Effekseer.Random.h"
 #include "../TestHelper.h"
 
