@@ -1,8 +1,8 @@
 #include <Effekseer.h>
 #include <Effekseer/Effekseer.ResourceManager.h>
 #include <Effekseer/Effekseer.TextureLoader.h>
-#include <Effekseer/Model/ProceduralModelGenerator.h>
-#include <Effekseer/Model/ProceduralModelParameter.h>
+#include <Effekseer/Model/Effekseer.ProceduralModelGenerator.h>
+#include <Effekseer/Model/Effekseer.ProceduralModelParameter.h>
 
 #include "../TestHelper.h"
 

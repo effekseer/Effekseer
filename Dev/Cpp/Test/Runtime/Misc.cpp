@@ -1,4 +1,4 @@
-#include "Effekseer/Geometry/GeometryUtility.h"
+#include "Effekseer/Geometry/Effekseer.GeometryUtility.h"
 
 #include "../TestHelper.h"
 
