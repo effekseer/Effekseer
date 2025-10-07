@@ -1,8 +1,8 @@
 ﻿#define NOMINMAX
 #include "EffekseerRendererDX11.GpuParticles.h"
-#include "EffekseerRendererDX11.Shader.h"
+#include "../Effekseer/Effekseer/Noise/Effekseer.CurlNoise.h"
 #include "EffekseerRendererDX11.RenderState.h"
-#include "../Effekseer/Effekseer/Noise/CurlNoise.h"
+#include "EffekseerRendererDX11.Shader.h"
 
 namespace EffekseerRendererDX11
 {
@@ -37,7 +37,7 @@ namespace PS_ParticleRender
 #include "ShaderHeader/gpu_particles_render_ps.h"
 }
 
-}
+} // namespace
 
 GpuParticleSystem::GpuParticleSystem(RendererImplemented* renderer, bool hasRefCount)
 	: DeviceObject(renderer, hasRefCount)
@@ -73,12 +73,11 @@ bool GpuParticleSystem::InitSystem(const Settings& settings)
 	shaders.csParticleUpdate = graphics->CreateComputeShader(ShaderData(CS_ParticleUpdate), ShaderSize(CS_ParticleUpdate));
 
 	shaders.rsParticleRender = graphics->CreateShaderFromBinary(
-		ShaderData(VS_ParticleRender), ShaderSize(VS_ParticleRender),
-		ShaderData(PS_ParticleRender), ShaderSize(PS_ParticleRender));
+		ShaderData(VS_ParticleRender), ShaderSize(VS_ParticleRender), ShaderData(PS_ParticleRender), ShaderSize(PS_ParticleRender));
 
 	SetShaders(shaders);
 
 	return true;
 }
 
-}
+} // namespace EffekseerRendererDX11

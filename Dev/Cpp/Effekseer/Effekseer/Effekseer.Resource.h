@@ -5,7 +5,7 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include "Backend/GraphicsDevice.h"
+#include "Backend/Effekseer.GraphicsDevice.h"
 #include "Effekseer.Base.Pre.h"
 #include "Utils/Effekseer.CustomAllocator.h"
 

@@ -8,9 +8,9 @@
 #include "Effekseer.MaterialLoader.h"
 #include "Effekseer.SoundLoader.h"
 #include "Effekseer.TextureLoader.h"
-#include "Model/ModelLoader.h"
-#include "Model/ProceduralModelGenerator.h"
-#include "VectorField/VectorFieldLoader.h"
+#include "Model/Effekseer.ModelLoader.h"
+#include "Model/Effekseer.ProceduralModelGenerator.h"
+#include "VectorField/Effekseer.VectorFieldLoader.h"
 
 //----------------------------------------------------------------------------------
 //

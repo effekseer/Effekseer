@@ -4,9 +4,9 @@
 
 #include "Effekseer.Base.Pre.h"
 #include "Effekseer.Resource.h"
-#include "Model//ProceduralModelParameter.h"
-#include "Model/ProceduralModelGenerator.h"
-#include "Utils/String.h"
+#include "Model/Effekseer.ProceduralModelGenerator.h"
+#include "Model/Effekseer.ProceduralModelParameter.h"
+#include "Utils/Effekseer.String.h"
 #include <algorithm>
 
 namespace Effekseer

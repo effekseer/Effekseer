@@ -2,8 +2,7 @@
 //
 //----------------------------------------------------------------------------------
 #include "Effekseer.WorkerThread.h"
-
-#include "Utils/Profiler.h"
+#include "Utils/Effekseer.Profiler.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -34,7 +33,8 @@ WorkerThread::~WorkerThread()
 //----------------------------------------------------------------------------------
 void WorkerThread::Launch()
 {
-	m_Thread = std::thread([this]() {
+	m_Thread = std::thread([this]()
+						   {
 		PROFILER_THREAD("WorkerThread");
 		while (1)
 		{
@@ -51,8 +51,7 @@ void WorkerThread::Launch()
 			m_TaskRequested.store(false);
 			m_TaskCompleted.store(true);
 			m_TaskWaitCV.notify_all();
-		}
-	});
+		} });
 }
 
 //----------------------------------------------------------------------------------
@@ -83,7 +82,8 @@ void WorkerThread::RunAsync(std::function<void()> task)
 void WorkerThread::WaitForComplete()
 {
 	std::unique_lock<std::mutex> lock(m_Mutex);
-	m_TaskWaitCV.wait(lock, [this]() { return m_TaskCompleted.load(); });
+	m_TaskWaitCV.wait(lock, [this]()
+					  { return m_TaskCompleted.load(); });
 	m_Task = nullptr;
 }
 

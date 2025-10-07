@@ -9,8 +9,8 @@
 #include "Effekseer.Effect.h"
 #include "Effekseer.InternalScript.h"
 #include "Effekseer.Vector3D.h"
-#include "Model/ProceduralModelParameter.h"
-#include "Utils/BinaryVersion.h"
+#include "Model/Effekseer.ProceduralModelParameter.h"
+#include "Utils/Effekseer.BinaryVersion.h"
 #include "Utils/Effekseer.CustomAllocator.h"
 #include <assert.h>
 #include <memory>

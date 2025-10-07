@@ -2,7 +2,7 @@
 #ifndef __EFFEKSEER_COMPILED_MATERIAL_H__
 #define __EFFEKSEER_COMPILED_MATERIAL_H__
 
-#include "../Utils/BinaryVersion.h"
+#include "../Utils/Effekseer.BinaryVersion.h"
 #include "Effekseer.MaterialCompiler.h"
 #include <array>
 #include <assert.h>

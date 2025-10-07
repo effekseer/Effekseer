@@ -1,7 +1,7 @@
 ﻿#ifndef __EFFEKSEER_H__
 #define __EFFEKSEER_H__
 
-#include "Effekseer/Backend/GraphicsDevice.h"
+#include "Effekseer/Backend/Effekseer.GraphicsDevice.h"
 #include "Effekseer/Effekseer.Base.Pre.h"
 #include "Effekseer/Effekseer.Color.h"
 #include "Effekseer/Effekseer.Curve.h"
@@ -21,13 +21,13 @@
 #include "Effekseer/Effekseer.TextureLoader.h"
 #include "Effekseer/Effekseer.Vector2D.h"
 #include "Effekseer/Effekseer.Vector3D.h"
-#include "Effekseer/Model/Model.h"
-#include "Effekseer/Model/ModelLoader.h"
+#include "Effekseer/Model/Effekseer.Model.h"
+#include "Effekseer/Model/Effekseer.ModelLoader.h"
 #include "Effekseer/Network/Effekseer.Client.h"
 #include "Effekseer/Network/Effekseer.Server.h"
 #include "Effekseer/Parameter/Effekseer.Parameters.h"
-#include "Effekseer/Renderer/Effekseer.GpuTimer.h"
 #include "Effekseer/Renderer/Effekseer.GpuParticles.h"
+#include "Effekseer/Renderer/Effekseer.GpuTimer.h"
 #include "Effekseer/Renderer/Effekseer.ModelRenderer.h"
 #include "Effekseer/Renderer/Effekseer.RibbonRenderer.h"
 #include "Effekseer/Renderer/Effekseer.RingRenderer.h"
@@ -52,6 +52,6 @@
 #include "Effekseer/SIMD/Vec4f.h"
 #include "Effekseer/Sound/Effekseer.SoundPlayer.h"
 #include "Effekseer/Utils/Effekseer.CustomAllocator.h"
-#include "Effekseer/VectorField/VectorField.h"
-#include "Effekseer/VectorField/VectorFieldLoader.h"
+#include "Effekseer/VectorField/Effekseer.VectorField.h"
+#include "Effekseer/VectorField/Effekseer.VectorFieldLoader.h"
 #endif

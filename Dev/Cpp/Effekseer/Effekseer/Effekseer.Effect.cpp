@@ -3,7 +3,7 @@
 //
 //----------------------------------------------------------------------------------
 #include "Effekseer.Effect.h"
-#include "Backend/GraphicsDevice.h"
+#include "Backend/Effekseer.GraphicsDevice.h"
 #include "Effekseer.CurveLoader.h"
 #include "Effekseer.DefaultEffectLoader.h"
 #include "Effekseer.EffectImplemented.h"
@@ -17,12 +17,12 @@
 #include "Effekseer.Setting.h"
 #include "Effekseer.SoundLoader.h"
 #include "Effekseer.TextureLoader.h"
-#include "Model/Model.h"
-#include "Model/ModelLoader.h"
-#include "Model/ProceduralModelGenerator.h"
-#include "Model/ProceduralModelParameter.h"
+#include "Model/Effekseer.Model.h"
+#include "Model/Effekseer.ModelLoader.h"
+#include "Model/Effekseer.ProceduralModelGenerator.h"
+#include "Model/Effekseer.ProceduralModelParameter.h"
 #include "Utils/Effekseer.BinaryReader.h"
-#include "VectorField/VectorFieldLoader.h"
+#include "VectorField/Effekseer.VectorFieldLoader.h"
 
 #include <array>
 #include <functional>

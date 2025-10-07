@@ -22,14 +22,14 @@
 #include "Effekseer.EffectNodeRing.h"
 #include "Effekseer.EffectNodeSprite.h"
 #include "Effekseer.EffectNodeTrack.h"
-#include "ForceField/ForceFields.h"
+#include "ForceField/Effekseer.ForceFields.h"
 
-#include "Parameter/AlphaCutoff.h"
-#include "Parameter/Collisions.h"
-#include "Parameter/CustomData.h"
-#include "Parameter/Rotation.h"
-#include "Parameter/Scaling.h"
-#include "Parameter/UV.h"
+#include "Parameter/Effekseer.AlphaCutoff.h"
+#include "Parameter/Effekseer.Collisions.h"
+#include "Parameter/Effekseer.CustomData.h"
+#include "Parameter/Effekseer.Rotation.h"
+#include "Parameter/Effekseer.Scaling.h"
+#include "Parameter/Effekseer.UV.h"
 
 namespace Effekseer
 {
@@ -182,7 +182,7 @@ public:
 	float m_AlphaThreshold = 0.0f;
 
 	CollisionsState collisionState_;
-	
+
 	int32_t m_gpuEmitterID = -1;
 
 	Instance(ManagerImplemented* pManager, EffectNodeImplemented* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup);

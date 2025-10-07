@@ -21,11 +21,10 @@
 #include "Effekseer.EffectNodeSprite.h"
 #include "Effekseer.Resource.h"
 #include "Effekseer.Setting.h"
+#include "Parameter/Effekseer.GpuParticlesParameter.h"
 #include "Sound/Effekseer.SoundPlayer.h"
 #include "Utils/Effekseer.BinaryReader.h"
-#include "Parameter/GpuParticlesParameter.h"
-
-#include "Utils/Compatiblity.h"
+#include "Utils/Effekseer.Compatiblity.h"
 
 //----------------------------------------------------------------------------------
 //

@@ -9,9 +9,9 @@
 #include "Effekseer.Matrix43.h"
 #include "Effekseer.Matrix44.h"
 #include "Effekseer.WorkerThread.h"
-#include "Geometry/GeometryUtility.h"
+#include "Geometry/Effekseer.GeometryUtility.h"
 #include "Utils/Effekseer.CustomAllocator.h"
-#include "Utils/InstancePool.h"
+#include "Utils/Effekseer.InstancePool.h"
 
 namespace Effekseer
 {

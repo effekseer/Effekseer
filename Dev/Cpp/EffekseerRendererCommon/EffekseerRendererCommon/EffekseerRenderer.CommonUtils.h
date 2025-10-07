@@ -7,7 +7,7 @@
 #include "EffekseerRendererFlags.h"
 #include <Effekseer.h>
 #include <Effekseer/Material/Effekseer.CompiledMaterial.h>
-#include <Effekseer/Model/SplineGenerator.h>
+#include <Effekseer/Model/Effekseer.SplineGenerator.h>
 #include <algorithm>
 #include <array>
 #include <assert.h>

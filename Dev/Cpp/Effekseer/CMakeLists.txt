@@ -23,11 +23,11 @@ set(effekseer_public_h
     Effekseer/Effekseer.Setting.h
     Effekseer/Effekseer.Vector2D.h
     Effekseer/Effekseer.Vector3D.h
-    Effekseer/Backend/GraphicsDevice.h
+    Effekseer/Backend/Effekseer.GraphicsDevice.h
     Effekseer/Network/Effekseer.Server.h
     Effekseer/Network/Effekseer.Client.h
     Effekseer/Utils/Effekseer.CustomAllocator.h
-    Effekseer/Utils/String.h
+    Effekseer/Utils/Effekseer.String.h
     Effekseer/IO/Effekseer.EfkEfcFactory.h
 
     Effekseer/SIMD/Base.h
@@ -61,19 +61,17 @@ set(effekseer_public_h
     Effekseer/Renderer/Effekseer.GpuParticles.h
     Effekseer/Effekseer.EffectLoader.h
     Effekseer/Effekseer.TextureLoader.h
-    Effekseer/Model/Model.h
-    Effekseer/Model/ModelLoader.h
     Effekseer/Effekseer.MaterialLoader.h
-    Effekseer/Model/Model.h
     Effekseer/Effekseer.Curve.h
     Effekseer/Effekseer.CurveLoader.h
-    Effekseer/Sound/Effekseer.SoundPlayer.h
     Effekseer/Effekseer.SoundLoader.h
     Effekseer/Effekseer.WorkerThread.h
     Effekseer/Effekseer.ResourceManager.h
-
-    Effekseer/VectorField/VectorField.h
-    Effekseer/VectorField/VectorFieldLoader.h
+    Effekseer/Model/Effekseer.Model.h
+    Effekseer/Model/Effekseer.ModelLoader.h
+    Effekseer/Sound/Effekseer.SoundPlayer.h
+    Effekseer/VectorField/Effekseer.VectorField.h
+    Effekseer/VectorField/Effekseer.VectorFieldLoader.h
 )
 
 file(GLOB effekseer_h
@@ -82,32 +80,32 @@ file(GLOB effekseer_h
     Effekseer/Renderer/*.h
     Effekseer/Material/*.h
     Effekseer/Parameter/*.h
-    Effekseer/Parameter/AllTypeColor.h
-    Effekseer/Parameter/AlphaCutoff.h
-    Effekseer/Parameter/BasicSettings.h
-    Effekseer/Parameter/CustomData.h
-    Effekseer/Parameter/DepthParameter.h
-    Effekseer/Parameter/KillRules.h
-    Effekseer/Parameter/LOD.h
-    Effekseer/Parameter/Rotation.h
-    Effekseer/Parameter/Scaling.h
-    Effekseer/Parameter/Sound.h
-    Effekseer/Parameter/UV.h
+    Effekseer/Parameter/Effekseer.AllTypeColor.h
+    Effekseer/Parameter/Effekseer.AlphaCutoff.h
+    Effekseer/Parameter/Effekseer.BasicSettings.h
+    Effekseer/Parameter/Effekseer.CustomData.h
+    Effekseer/Parameter/Effekseer.DepthParameter.h
+    Effekseer/Parameter/Effekseer.KillRules.h
+    Effekseer/Parameter/Effekseer.LOD.h
+    Effekseer/Parameter/Effekseer.Rotation.h
+    Effekseer/Parameter/Effekseer.Scaling.h
+    Effekseer/Parameter/Effekseer.Sound.h
+    Effekseer/Parameter/Effekseer.UV.h
     Effekseer/IO/*.h
     Effekseer/Utils/*.h
     Effekseer/Noise/*.h
     Effekseer/ForceField/*.h
     Effekseer/Backend/*.h
-    Effekseer/Model/ProceduralModelGenerator.h
-    Effekseer/Model/ProceduralModelParameter.h
-    Effekseer/Model/Model.h
-    Effekseer/Model/ModelLoader.h
-    Effekseer/Model/SplineGenerator.h
-    Effekseer/Model/PointCacheGenerator.h
+    Effekseer/Model/Effekseer.ProceduralModelGenerator.h
+    Effekseer/Model/Effekseer.ProceduralModelParameter.h
+    Effekseer/Model/Effekseer.Model.h
+    Effekseer/Model/Effekseer.ModelLoader.h
+    Effekseer/Model/Effekseer.SplineGenerator.h
+    Effekseer/Model/Effekseer.PointCacheGenerator.h
     Effekseer/Network/*.h
     Effekseer/Network/data/*.h
-    Effekseer/VectorField/VectorField.h
-    Effekseer/VectorField/VectorFieldLoader.h
+    Effekseer/VectorField/Effekseer.VectorField.h
+    Effekseer/VectorField/Effekseer.VectorFieldLoader.h
 )
 
 set(effekseer_src
@@ -145,29 +143,29 @@ set(effekseer_src
     Effekseer/Material/Effekseer.CompiledMaterial.cpp
     Effekseer/Material/Effekseer.MaterialCompiler.cpp
     Effekseer/IO/Effekseer.EfkEfcFactory.cpp
-    Effekseer/Parameter/Collisions.cpp
-    Effekseer/Parameter/Easing.cpp
+    Effekseer/Parameter/Effekseer.Collisions.cpp
+    Effekseer/Parameter/Effekseer.Easing.cpp
     Effekseer/Parameter/Effekseer.Parameters.cpp
-    Effekseer/Parameter/KillRules.cpp
-    Effekseer/Parameter/GpuParticlesParameter.cpp
-    Effekseer/Parameter/Rotation.cpp
+    Effekseer/Parameter/Effekseer.KillRules.cpp
+    Effekseer/Parameter/Effekseer.GpuParticlesParameter.cpp
+    Effekseer/Parameter/Effekseer.Rotation.cpp
     Effekseer/Utils/Effekseer.CustomAllocator.cpp
     Effekseer/SIMD/Mat43f.cpp
     Effekseer/SIMD/Mat44f.cpp
     Effekseer/SIMD/Utils.cpp
-    Effekseer/Noise/CurlNoise.cpp
-    Effekseer/ForceField/ForceFields.cpp
-    Effekseer/Model/ProceduralModelGenerator.cpp
-    Effekseer/Model/Model.cpp
-    Effekseer/Model/ModelLoader.cpp
-    Effekseer/Model/SplineGenerator.cpp
-    Effekseer/Model/PointCacheGenerator.cpp
+    Effekseer/Noise/Effekseer.CurlNoise.cpp
+    Effekseer/ForceField/Effekseer.ForceFields.cpp
+    Effekseer/Model/Effekseer.ProceduralModelGenerator.cpp
+    Effekseer/Model/Effekseer.Model.cpp
+    Effekseer/Model/Effekseer.ModelLoader.cpp
+    Effekseer/Model/Effekseer.SplineGenerator.cpp
+    Effekseer/Model/Effekseer.PointCacheGenerator.cpp
     Effekseer/Network/Effekseer.Client.cpp
     Effekseer/Network/Effekseer.Server.cpp
     Effekseer/Network/Effekseer.Session.cpp
     Effekseer/Network/Effekseer.Socket.cpp
-    Effekseer/VectorField/VectorField.cpp
-    Effekseer/VectorField/VectorFieldLoader.cpp
+    Effekseer/VectorField/Effekseer.VectorField.cpp
+    Effekseer/VectorField/Effekseer.VectorFieldLoader.cpp
 )
 
 add_library(${PROJECT_NAME} STATIC

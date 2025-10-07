@@ -1,43 +1,34 @@
 #include "Effekseer.Manager.h"
-#include "Effekseer.ManagerImplemented.h"
-
+#include "Effekseer.CurveLoader.h"
+#include "Effekseer.DefaultEffectLoader.h"
 #include "Effekseer.Effect.h"
 #include "Effekseer.EffectImplemented.h"
-#include "Effekseer.Resource.h"
-#include "SIMD/Utils.h"
-
 #include "Effekseer.EffectNode.h"
 #include "Effekseer.Instance.h"
 #include "Effekseer.InstanceChunk.h"
 #include "Effekseer.InstanceContainer.h"
 #include "Effekseer.InstanceGlobal.h"
 #include "Effekseer.InstanceGroup.h"
-
-#include "Effekseer.DefaultEffectLoader.h"
+#include "Effekseer.ManagerImplemented.h"
 #include "Effekseer.MaterialLoader.h"
-#include "Effekseer.TextureLoader.h"
-
+#include "Effekseer.Resource.h"
 #include "Effekseer.Setting.h"
-
+#include "Effekseer.SoundLoader.h"
+#include "Effekseer.TextureLoader.h"
+#include "Effekseer/Model/Effekseer.ModelLoader.h"
+#include "Geometry/Effekseer.GeometryUtility.h"
+#include "Renderer/Effekseer.GpuParticles.h"
 #include "Renderer/Effekseer.GpuTimer.h"
 #include "Renderer/Effekseer.ModelRenderer.h"
 #include "Renderer/Effekseer.RibbonRenderer.h"
 #include "Renderer/Effekseer.RingRenderer.h"
 #include "Renderer/Effekseer.SpriteRenderer.h"
 #include "Renderer/Effekseer.TrackRenderer.h"
-#include "Renderer/Effekseer.GpuParticles.h"
-
-#include "Effekseer.SoundLoader.h"
+#include "SIMD/Utils.h"
 #include "Sound/Effekseer.SoundPlayer.h"
-
-#include "Effekseer.CurveLoader.h"
-#include "Model/ModelLoader.h"
-
+#include "Utils/Effekseer.Profiler.h"
 #include <algorithm>
 #include <iostream>
-
-#include "Geometry/GeometryUtility.h"
-#include "Utils/Profiler.h"
 
 namespace Effekseer
 {
@@ -196,10 +187,9 @@ void ManagerImplemented::StopStoppingEffects()
 					continue;
 				}
 			}
-			
+
 			isRemoving = true;
 		}
-
 
 		if (isRemoving)
 		{
@@ -637,7 +627,7 @@ GpuTimerRef ManagerImplemented::GetGpuTimer()
 
 void ManagerImplemented::SetGpuTimer(GpuTimerRef gpuTimer)
 {
-	if (m_gpuTimer  && m_gpuParticleSystem)
+	if (m_gpuTimer && m_gpuParticleSystem)
 	{
 		m_gpuTimer->RemoveTimer(m_gpuParticleSystem.Get());
 	}
@@ -657,7 +647,7 @@ GpuParticleSystemRef ManagerImplemented::GetGpuParticleSystem()
 
 void ManagerImplemented::SetGpuParticleSystem(GpuParticleSystemRef system)
 {
-	if (m_gpuTimer  && m_gpuParticleSystem)
+	if (m_gpuTimer && m_gpuParticleSystem)
 	{
 		m_gpuTimer->RemoveTimer(m_gpuParticleSystem.Get());
 	}
@@ -1975,7 +1965,7 @@ void ManagerImplemented::DrawFront(const Manager::DrawParameter& drawParameter)
 
 	// start to record a time
 	int64_t beginTime = ::Effekseer::GetTime();
-	
+
 	ScopedGpuStage gpuPass(m_gpuTimer, GpuStage::DrawFront);
 
 	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, GetSetting()->GetCoordinateSystem());

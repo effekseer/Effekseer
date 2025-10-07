@@ -4,7 +4,7 @@
 
 #include "../Effekseer.Base.Pre.h"
 #include "../Parameter/Effekseer.Parameters.h"
-#include "../Utils/BinaryVersion.h"
+#include "../Utils/Effekseer.BinaryVersion.h"
 #include <array>
 #include <assert.h>
 #include <map>

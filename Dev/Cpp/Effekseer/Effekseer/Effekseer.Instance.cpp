@@ -9,7 +9,7 @@
 #include "Effekseer.Manager.h"
 #include "Effekseer.ManagerImplemented.h"
 #include "Effekseer.Setting.h"
-#include "Model/Model.h"
+#include "Model/Effekseer.Model.h"
 
 namespace Effekseer
 {

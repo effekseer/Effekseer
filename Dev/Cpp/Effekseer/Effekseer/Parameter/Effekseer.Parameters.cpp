@@ -4,7 +4,7 @@
 #include "../Effekseer.InstanceGlobal.h"
 #include "../Effekseer.InternalScript.h"
 #include "../Effekseer.InternalStruct.h"
-#include "DynamicParameter.h"
+#include "Effekseer.DynamicParameter.h"
 #include <algorithm>
 
 namespace Effekseer

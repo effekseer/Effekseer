@@ -1,8 +1,8 @@
 #include "EffekseerRenderer.GpuParticles.h"
 #include "EffekseerRenderer.CommonUtils.h"
 #include "EffekseerRenderer.Renderer_Impl.h"
-#include "../Effekseer/Effekseer/Noise/CurlNoise.h"
-#include "../Effekseer/Effekseer/Model/PointCacheGenerator.h"
+#include "../Effekseer/Effekseer/Noise/Effekseer.CurlNoise.h"
+#include "../Effekseer/Effekseer/Model/Effekseer.PointCacheGenerator.h"
 
 namespace EffekseerRenderer
 {
