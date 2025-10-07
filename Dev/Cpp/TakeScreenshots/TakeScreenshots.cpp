@@ -10,7 +10,7 @@
 #include <Runtime/EffectPlatformGL.h>
 
 #include "../Effekseer/Effekseer/Effekseer.Base.h"
-#include "../Effekseer/Effekseer/Noise/CurlNoise.h"
+#include "../Effekseer/Effekseer/Noise/Effekseer.CurlNoise.h"
 
 #include "Helper.h"
 
