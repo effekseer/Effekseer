@@ -1,8 +1,8 @@
 #include "EffekseerRenderer.GpuParticles.h"
+#include "../Effekseer/Effekseer/Model/Effekseer.PointCacheGenerator.h"
+#include "../Effekseer/Effekseer/Noise/Effekseer.CurlNoise.h"
 #include "EffekseerRenderer.CommonUtils.h"
 #include "EffekseerRenderer.Renderer_Impl.h"
-#include "../Effekseer/Effekseer/Noise/Effekseer.CurlNoise.h"
-#include "../Effekseer/Effekseer/Model/Effekseer.PointCacheGenerator.h"
 
 namespace EffekseerRenderer
 {
@@ -23,14 +23,13 @@ const Effekseer::Color COLOR_WHITE = {255, 255, 255, 255};
 Effekseer::ModelRef CreateSpriteModel()
 {
 	Effekseer::CustomVector<Effekseer::Model::Vertex> vertexes = {
-		{ { -0.5f,  0.5f, 0.0f }, VEC_FRONT, VEC_UP, VEC_RIGHT, {0.0f, 0.0f}, COLOR_WHITE },
-		{ { -0.5f, -0.5f, 0.0f }, VEC_FRONT, VEC_UP, VEC_RIGHT, {0.0f, 1.0f}, COLOR_WHITE },
-		{ {  0.5f,  0.5f, 0.0f }, VEC_FRONT, VEC_UP, VEC_RIGHT, {1.0f, 0.0f}, COLOR_WHITE },
-		{ {  0.5f, -0.5f, 0.0f }, VEC_FRONT, VEC_UP, VEC_RIGHT, {1.0f, 1.0f}, COLOR_WHITE },
+		{{-0.5f, 0.5f, 0.0f}, VEC_FRONT, VEC_UP, VEC_RIGHT, {0.0f, 0.0f}, COLOR_WHITE},
+		{{-0.5f, -0.5f, 0.0f}, VEC_FRONT, VEC_UP, VEC_RIGHT, {0.0f, 1.0f}, COLOR_WHITE},
+		{{0.5f, 0.5f, 0.0f}, VEC_FRONT, VEC_UP, VEC_RIGHT, {1.0f, 0.0f}, COLOR_WHITE},
+		{{0.5f, -0.5f, 0.0f}, VEC_FRONT, VEC_UP, VEC_RIGHT, {1.0f, 1.0f}, COLOR_WHITE},
 	};
 	Effekseer::CustomVector<Effekseer::Model::Face> faces = {
-		{ {0, 2, 1} }, { {1, 2, 3} }
-	};
+		{{0, 2, 1}}, {{1, 2, 3}}};
 	return Effekseer::MakeRefPtr<Effekseer::Model>(vertexes, faces);
 }
 
@@ -40,7 +39,8 @@ Effekseer::ModelRef CreateTrailModel()
 	Effekseer::CustomVector<Effekseer::Model::Vertex> vertexes;
 
 	vertexes.resize(TrailJoints * 2);
-	for (size_t i = 0; i < TrailJoints * 2; i++) {
+	for (size_t i = 0; i < TrailJoints * 2; i++)
+	{
 		Effekseer::Model::Vertex v{};
 		v.Position.X = (i % 2 == 0) ? -0.5f : 0.5f;
 		v.Position.Y = 0.0f;
@@ -56,15 +56,16 @@ Effekseer::ModelRef CreateTrailModel()
 
 	Effekseer::CustomVector<Effekseer::Model::Face> faces;
 	faces.resize((TrailJoints - 1) * 2);
-	for (size_t i = 0; i < TrailJoints - 1; i++) {
+	for (size_t i = 0; i < TrailJoints - 1; i++)
+	{
 		int32_t ofs = (int32_t)(2 * i);
-		faces[i * 2 + 0] = Effekseer::Model::Face{ { ofs + 0, ofs + 2, ofs + 1 } };
-		faces[i * 2 + 1] = Effekseer::Model::Face{ { ofs + 1, ofs + 2, ofs + 3 } };
+		faces[i * 2 + 0] = Effekseer::Model::Face{{ofs + 0, ofs + 2, ofs + 1}};
+		faces[i * 2 + 1] = Effekseer::Model::Face{{ofs + 1, ofs + 2, ofs + 3}};
 	}
 	return Effekseer::MakeRefPtr<Effekseer::Model>(vertexes, faces);
 }
 
-}
+} // namespace
 
 GpuParticleFactory::GpuParticleFactory(Effekseer::Backend::GraphicsDeviceRef graphics)
 	: m_graphics(graphics)
@@ -86,7 +87,7 @@ Effekseer::GpuParticles::ResourceRef GpuParticleFactory::CreateResource(const Ef
 
 		Effekseer::Backend::TextureParameter texParam;
 		texParam.Format = Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM;
-		texParam.Size = { 8, 8, 8 };
+		texParam.Size = {8, 8, 8};
 		texParam.Dimension = 3;
 
 		Effekseer::CustomVector<uint8_t> initialData;
@@ -100,7 +101,7 @@ Effekseer::GpuParticles::ResourceRef GpuParticleFactory::CreateResource(const Ef
 	{
 		Effekseer::Backend::TextureParameter texParam;
 		texParam.Format = Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM;
-		texParam.Size = { 32, 1, 1 };
+		texParam.Size = {32, 1, 1};
 		texParam.Dimension = 2;
 
 		Effekseer::CustomVector<uint8_t> initialData;
@@ -283,7 +284,7 @@ bool GpuParticleSystem::InitSystem(const Settings& settings)
 
 	GpuParticles::RenderConstants renderConstants{};
 	m_ubufRenderConstants = graphics->CreateUniformBuffer(sizeof(GpuParticles::RenderConstants), &renderConstants);
-	
+
 	m_cbufParticles = graphics->CreateComputeBuffer((int32_t)settings.ParticleMaxCount, (int32_t)sizeof(Particle), nullptr, false);
 	m_cbufTrails = graphics->CreateComputeBuffer((int32_t)settings.TrailMaxCount, (int32_t)sizeof(Trail), nullptr, false);
 
@@ -298,7 +299,7 @@ bool GpuParticleSystem::InitSystem(const Settings& settings)
 	{
 		Effekseer::Backend::TextureParameter texParam{};
 		texParam.Format = Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM;
-		texParam.Size = { 1, 1, 1 };
+		texParam.Size = {1, 1, 1};
 		texParam.Dimension = 3;
 		m_dummyVectorTexture = graphics->CreateTexture(texParam, {0, 0, 0, 0});
 	}
@@ -363,8 +364,8 @@ void GpuParticleSystem::ComputeFrame(const Context& context)
 		command.UniformBufferPtrs[2] = emitter.buffer;
 		command.SetComputeBuffer(0, m_cbufParticles, false);
 
-		command.GroupCount = { (int32_t)emitter.data.ParticleSize / 256, 1, 1 };
-		command.ThreadCount = { 256, 1, 1 };
+		command.GroupCount = {(int32_t)emitter.data.ParticleSize / 256, 1, 1};
+		command.ThreadCount = {256, 1, 1};
 		graphics->Dispatch(command);
 	}
 	m_newEmitterIDs.clear();
@@ -382,7 +383,7 @@ void GpuParticleSystem::ComputeFrame(const Context& context)
 			emitter.data.TotalEmitCount += emitter.data.NextEmitCount;
 			emitter.data.NextEmitCount = 0;
 
-			if (emitter.data.TotalEmitCount >= paramSet.Basic.EmitCount)
+			if (static_cast<int32_t>(emitter.data.TotalEmitCount) >= paramSet.Basic.EmitCount)
 			{
 				emitter.SetEmitting(false);
 				emitter.data.TimeStopped = emitter.data.TimeCount;
@@ -438,8 +439,8 @@ void GpuParticleSystem::ComputeFrame(const Context& context)
 				command.SetComputeBuffer(0, m_cbufParticles, false);
 				command.SetComputeBuffer(1, (emitter.resource->emitPoints) ? emitter.resource->emitPoints : m_dummyEmitPoints, true);
 
-				command.GroupCount = { (int32_t)emitter.data.NextEmitCount, 1, 1 };
-				command.ThreadCount = { 1, 1, 1 };
+				command.GroupCount = {(int32_t)emitter.data.NextEmitCount, 1, 1};
+				command.ThreadCount = {1, 1, 1};
 				graphics->Dispatch(command);
 			}
 			else if (emitter.data.TimeCount >= paramSet.Basic.EmitOffset && GetEmitterParticleCount(emitter, paramSet) == 0)
@@ -466,15 +467,12 @@ void GpuParticleSystem::ComputeFrame(const Context& context)
 			command.SetComputeBuffer(0, m_cbufParticles, false);
 			command.SetComputeBuffer(1, m_cbufTrails, false);
 
-			command.SetTexture(2, (emitter.resource->noiseTexture) ? emitter.resource->noiseTexture : m_dummyVectorTexture,
-				Effekseer::Backend::TextureWrapType::Repeat, Effekseer::Backend::TextureSamplingType::Linear);
-			command.SetTexture(3, (emitter.resource->fieldTexture) ? emitter.resource->fieldTexture : m_dummyVectorTexture,
-				Effekseer::Backend::TextureWrapType::Repeat, Effekseer::Backend::TextureSamplingType::Linear);
-			command.SetTexture(4, (emitter.resource->gradientTexture) ? emitter.resource->gradientTexture : m_dummyColorTexture,
-				Effekseer::Backend::TextureWrapType::Clamp, Effekseer::Backend::TextureSamplingType::Linear);
+			command.SetTexture(2, (emitter.resource->noiseTexture) ? emitter.resource->noiseTexture : m_dummyVectorTexture, Effekseer::Backend::TextureWrapType::Repeat, Effekseer::Backend::TextureSamplingType::Linear);
+			command.SetTexture(3, (emitter.resource->fieldTexture) ? emitter.resource->fieldTexture : m_dummyVectorTexture, Effekseer::Backend::TextureWrapType::Repeat, Effekseer::Backend::TextureSamplingType::Linear);
+			command.SetTexture(4, (emitter.resource->gradientTexture) ? emitter.resource->gradientTexture : m_dummyColorTexture, Effekseer::Backend::TextureWrapType::Clamp, Effekseer::Backend::TextureSamplingType::Linear);
 
-			command.GroupCount = { (int32_t)emitter.data.ParticleSize / 256, 1, 1 };
-			command.ThreadCount = { 256, 1, 1 };
+			command.GroupCount = {(int32_t)emitter.data.ParticleSize / 256, 1, 1};
+			command.ThreadCount = {256, 1, 1};
 			graphics->Dispatch(command);
 
 			if (emitter.data.TrailSize > 0)
@@ -499,22 +497,21 @@ void GpuParticleSystem::RenderFrame(const Context& context)
 		cdata.ProjMat = renderer->GetProjectionMatrix();
 		cdata.CameraMat = renderer->GetCameraMatrix();
 
-		Effekseer::Matrix44	inv{};
+		Effekseer::Matrix44 inv{};
 		Effekseer::Matrix44::Inverse(inv, cdata.CameraMat);
 		cdata.BillboardMat = {
-			float4{ inv.Values[0][0], inv.Values[1][0], inv.Values[2][0], 0.0f },
-			float4{ inv.Values[0][1], inv.Values[1][1], inv.Values[2][1], 0.0f },
-			float4{ inv.Values[0][2], inv.Values[1][2], inv.Values[2][2], 0.0f }
-		};
+			float4{inv.Values[0][0], inv.Values[1][0], inv.Values[2][0], 0.0f},
+			float4{inv.Values[0][1], inv.Values[1][1], inv.Values[2][1], 0.0f},
+			float4{inv.Values[0][2], inv.Values[1][2], inv.Values[2][2], 0.0f}};
 		cdata.YAxisFixedMat = {
-			float4{ inv.Values[0][0], 0.0f, inv.Values[2][0], 0.0f },
-			float4{ inv.Values[0][1], 1.0f, inv.Values[2][1], 0.0f },
-			float4{ inv.Values[0][2], 0.0f, inv.Values[2][2], 0.0f }
-		};
-		auto normalize = [](Effekseer::Vector3D v) {
+			float4{inv.Values[0][0], 0.0f, inv.Values[2][0], 0.0f},
+			float4{inv.Values[0][1], 1.0f, inv.Values[2][1], 0.0f},
+			float4{inv.Values[0][2], 0.0f, inv.Values[2][2], 0.0f}};
+		auto normalize = [](Effekseer::Vector3D v)
+		{
 			Effekseer::Vector3D::Normal(v, v);
 			return v;
-			};
+		};
 		cdata.CameraPos = renderer->GetCameraPosition();
 		cdata.CameraFront = normalize(renderer->GetCameraFrontDirection());
 		cdata.LightDir = normalize(renderer->GetLightDirection());
@@ -523,10 +520,12 @@ void GpuParticleSystem::RenderFrame(const Context& context)
 		graphics->UpdateUniformBuffer(m_ubufRenderConstants, sizeof(GpuParticles::RenderConstants), 0, &cdata);
 	}
 
-	auto toSamplingType = [](uint8_t filterType){
+	auto toSamplingType = [](uint8_t filterType)
+	{
 		return (static_cast<Effekseer::TextureFilterType>(filterType) == Effekseer::TextureFilterType::Linear) ? Effekseer::Backend::TextureSamplingType::Linear : Effekseer::Backend::TextureSamplingType::Nearest;
 	};
-	auto toWrapType = [](uint8_t wrapType){
+	auto toWrapType = [](uint8_t wrapType)
+	{
 		return (static_cast<Effekseer::TextureWrapType>(wrapType) == Effekseer::TextureWrapType::Repeat) ? Effekseer::Backend::TextureWrapType::Repeat : Effekseer::Backend::TextureWrapType::Clamp;
 	};
 
@@ -550,9 +549,7 @@ void GpuParticleSystem::RenderFrame(const Context& context)
 
 			auto setTexture = [&](int32_t slot, Effekseer::TextureRef texture, GpuParticles::TextureRef defaultTexture)
 			{
-				drawParams.SetTexture(2 + slot, texture ? texture->GetBackend() : defaultTexture, 
-					toWrapType(paramSet.RenderMaterial.TextureWraps[slot]), 
-					toSamplingType(paramSet.RenderMaterial.TextureFilters[slot]));
+				drawParams.SetTexture(2 + slot, texture ? texture->GetBackend() : defaultTexture, toWrapType(paramSet.RenderMaterial.TextureWraps[slot]), toSamplingType(paramSet.RenderMaterial.TextureFilters[slot]));
 			};
 
 			if (paramSet.RenderMaterial.Material == MaterialType::Unlit)
@@ -580,9 +577,15 @@ void GpuParticleSystem::RenderFrame(const Context& context)
 			Effekseer::ModelRef model;
 			switch (paramSet.RenderShape.Type)
 			{
-				case RenderShapeT::Sprite: model = m_modelSprite; break;
-				case RenderShapeT::Model: model = effect->GetModel(paramSet.RenderShape.Data); break;
-				case RenderShapeT::Trail: model = m_modelTrail; break;
+			case RenderShapeT::Sprite:
+				model = m_modelSprite;
+				break;
+			case RenderShapeT::Model:
+				model = effect->GetModel(paramSet.RenderShape.Data);
+				break;
+			case RenderShapeT::Trail:
+				model = m_modelTrail;
+				break;
 			}
 
 			if (model)
@@ -608,7 +611,7 @@ void GpuParticleSystem::RenderFrame(const Context& context)
 						drawParams.PrimitiveCount = model->GetFaceCount(i);
 					}
 					drawParams.InstanceCount = emitter.data.ParticleSize;
-					
+
 					graphics->Draw(drawParams);
 				}
 			}
@@ -640,10 +643,9 @@ GpuParticleSystem::EmitterID GpuParticleSystem::NewEmitter(Effekseer::GpuParticl
 	emitter.data = {};
 	emitter.data.Color = 0xFFFFFFFF;
 	emitter.data.Transform = {
-		float4{ 1.0f, 0.0f, 0.0f, 0.0f },
-		float4{ 0.0f, 1.0f, 0.0f, 0.0f },
-		float4{ 0.0f, 0.0f, 1.0f, 0.0f }
-	};
+		float4{1.0f, 0.0f, 0.0f, 0.0f},
+		float4{0.0f, 1.0f, 0.0f, 0.0f},
+		float4{0.0f, 0.0f, 1.0f, 0.0f}};
 	emitter.SetFlagBits(true, false);
 
 	Block particleBlock = m_particleAllocator.Allocate(particlesMaxCount);
@@ -681,8 +683,8 @@ void GpuParticleSystem::FreeEmitter(EmitterID emitterID)
 	emitter.instanceGlobal = nullptr;
 	emitter.data.FlagBits = 0;
 
-	m_particleAllocator.Deallocate({ emitter.data.ParticleHead, emitter.data.ParticleSize });
-	m_trailAllocator.Deallocate({ emitter.data.TrailHead, emitter.data.TrailSize });
+	m_particleAllocator.Deallocate({emitter.data.ParticleHead, emitter.data.ParticleSize});
+	m_trailAllocator.Deallocate({emitter.data.TrailHead, emitter.data.TrailSize});
 	m_emitterFreeList.push_front(emitterID);
 }
 
@@ -716,10 +718,9 @@ void GpuParticleSystem::SetTransform(EmitterID emitterID, const Effekseer::Matri
 	assert(emitterID >= 0 && emitterID < m_emitters.size());
 	Emitter& emitter = m_emitters[emitterID];
 	emitter.data.Transform = {
-		float4{ transform.Value[0][0], transform.Value[1][0], transform.Value[2][0], transform.Value[3][0] },
-		float4{ transform.Value[0][1], transform.Value[1][1], transform.Value[2][1], transform.Value[3][1] },
-		float4{ transform.Value[0][2], transform.Value[1][2], transform.Value[2][2], transform.Value[3][2] }
-	};
+		float4{transform.Value[0][0], transform.Value[1][0], transform.Value[2][0], transform.Value[3][0]},
+		float4{transform.Value[0][1], transform.Value[1][1], transform.Value[2][1], transform.Value[3][1]},
+		float4{transform.Value[0][2], transform.Value[1][2], transform.Value[2][2], transform.Value[3][2]}};
 }
 
 void GpuParticleSystem::SetColor(EmitterID emitterID, Effekseer::Color color)
@@ -862,8 +863,8 @@ GpuParticles::PipelineStateRef GpuParticleSystem::GetOrCreatePipelineState(GpuPa
 		break;
 	}
 
-	pipParams.IsDepthTestEnabled = key.ZTest;
-	pipParams.IsDepthWriteEnabled = key.ZWrite;
+	pipParams.IsDepthTestEnabled = key.ZTest > 0;
+	pipParams.IsDepthWriteEnabled = key.ZWrite > 0;
 	pipParams.ShaderPtr = m_shaders.rsParticleRender;
 	pipParams.VertexLayoutPtr = m_vertexLayout;
 
@@ -874,4 +875,4 @@ GpuParticles::PipelineStateRef GpuParticleSystem::GetOrCreatePipelineState(GpuPa
 	return pipeline;
 }
 
-}
+} // namespace EffekseerRenderer

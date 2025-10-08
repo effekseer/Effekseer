@@ -1,7 +1,7 @@
 ﻿#if (defined(__EFFEKSEER_NETWORK_ENABLED__))
 
-#include <string.h>
 #include "Effekseer.Session.h"
+#include <string.h>
 
 namespace Effekseer
 {
@@ -18,7 +18,8 @@ Session::~Session()
 void Session::Open(Socket* socket)
 {
 	socket_ = socket;
-	thread_ = std::thread([this](){ RecvThread(); });
+	thread_ = std::thread([this]()
+						  { RecvThread(); });
 }
 
 void Session::Close()
@@ -50,7 +51,7 @@ void Session::Update()
 			auto it = messageHandlers_.find(header.targetID);
 			if (it != messageHandlers_.end())
 			{
-				it->second(Message{ ByteData(payload) });
+				it->second(Message{ByteData(payload)});
 			}
 		}
 		else if (header.type == PacketType::Request)
@@ -58,7 +59,7 @@ void Session::Update()
 			auto it = requestHandlers_.find(header.targetID);
 			if (it != requestHandlers_.end())
 			{
-				it->second(Request{ header.sourceID, ByteData(payload) });
+				it->second(Request{header.sourceID, ByteData(payload)});
 			}
 		}
 		else if (header.type == PacketType::Response)
@@ -66,7 +67,7 @@ void Session::Update()
 			auto it = responseHandlers_.find(header.targetID);
 			if (it != responseHandlers_.end())
 			{
-				it->second(Response{ header.code, ByteData(payload) });
+				it->second(Response{header.code, ByteData(payload)});
 				responseHandlers_.erase(it);
 			}
 		}
@@ -91,7 +92,7 @@ void Session::RecvThread()
 
 		size_t offset = 0;
 		while (offset < packetBufferFilled_ ||
-			(state_ == State::ReceivePayload && currentHeader_.payloadSize == 0))
+			   (state_ == State::ReceivePayload && currentHeader_.payloadSize == 0))
 		{
 			const uint8_t* dataPtr = &packetBuffer_[offset];
 			const size_t dataSize = packetBufferFilled_ - offset;
@@ -270,9 +271,11 @@ void Session::OnRequested(uint16_t requestID, RequestHandler requestHandler)
 	}
 }
 
-void Session::PacketHeader::Set(PacketType inType, 
-	uint16_t inTargetID, uint16_t inSourceID, 
-	int32_t inCode, uint32_t inPayloadSize)
+void Session::PacketHeader::Set(PacketType inType,
+								uint16_t inTargetID,
+								uint16_t inSourceID,
+								int32_t inCode,
+								uint32_t inPayloadSize)
 {
 	signature[0] = 0xAA;
 	signature[1] = 0x55;
@@ -286,12 +289,9 @@ void Session::PacketHeader::Set(PacketType inType,
 
 bool Session::PacketHeader::IsValid() const
 {
-	return signature[0] == 0xAA
-		&& signature[1] == 0x55
-		&& (type == PacketType::Message || type == PacketType::Request || type == PacketType::Response)
-		&& reserved == 0;
+	return signature[0] == 0xAA && signature[1] == 0x55 && (type == PacketType::Message || type == PacketType::Request || type == PacketType::Response) && reserved == 0;
 }
 
-}
+} // namespace Effekseer
 
 #endif
