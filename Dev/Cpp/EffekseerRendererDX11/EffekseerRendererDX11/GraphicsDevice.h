@@ -63,7 +63,7 @@ using ComputeBufferRef = Effekseer::RefPtr<ComputeBuffer>;
 
 DXGI_FORMAT GetTextureFormatType(Effekseer::Backend::TextureFormatType format);
 
-D3D11InputLayoutPtr CreateInputLayout(GraphicsDevice& graphicsDevice, VertexLayoutRef vertexLayout, const void* vertexBufferData, int32_t vertexBufferSize);
+D3D11InputLayoutPtr CreateInputLayout(GraphicsDevice& graphics_device, VertexLayoutRef vertex_layout, const void* vertex_buffer_data, int32_t vertex_buffer_size);
 
 class DeviceObject
 {
@@ -84,17 +84,17 @@ class VertexBuffer
 private:
 	EffekseerRenderer::DirtiedBlock blocks_;
 
-	GraphicsDevice* graphicsDevice_ = nullptr;
+	GraphicsDevice* graphics_device_ = nullptr;
 	D3D11BufferPtr buffer_ = nullptr;
 	int32_t size_ = 0;
-	bool isDynamic_ = false;
+	bool is_dynamic_ = false;
 
 public:
-	VertexBuffer(GraphicsDevice* graphicsDevice);
+	VertexBuffer(GraphicsDevice* graphics_device);
 
 	~VertexBuffer() override;
 
-	bool Allocate(const void* src, int32_t size, bool isDynamic);
+	bool Allocate(const void* src, int32_t size, bool is_dynamic);
 
 	void Deallocate();
 
@@ -102,7 +102,7 @@ public:
 
 	void OnResetDevice() override;
 
-	bool Init(const void* src, int32_t size, bool isDynamic);
+	bool Init(const void* src, int32_t size, bool is_dynamic);
 
 	void UpdateData(const void* src, int32_t size, int32_t offset);
 
@@ -124,16 +124,16 @@ class IndexBuffer
 private:
 	EffekseerRenderer::DirtiedBlock blocks_;
 
-	GraphicsDevice* graphicsDevice_ = nullptr;
+	GraphicsDevice* graphics_device_ = nullptr;
 	D3D11BufferPtr buffer_ = nullptr;
 	int32_t stride_ = 0;
 
 public:
-	IndexBuffer(GraphicsDevice* graphicsDevice);
+	IndexBuffer(GraphicsDevice* graphics_device);
 
 	~IndexBuffer() override;
 
-	bool Allocate(const void* src, int32_t elementCount, int32_t stride);
+	bool Allocate(const void* src, int32_t element_count, int32_t stride);
 
 	void Deallocate();
 
@@ -141,7 +141,7 @@ public:
 
 	void OnResetDevice() override;
 
-	bool Init(const void* src, int32_t elementCount, int32_t stride);
+	bool Init(const void* src, int32_t element_count, int32_t stride);
 
 	void UpdateData(const void* src, int32_t size, int32_t offset);
 
@@ -156,16 +156,16 @@ class UniformBuffer
 	  public Effekseer::Backend::UniformBuffer
 {
 private:
-	GraphicsDevice* graphicsDevice_ = nullptr;
+	GraphicsDevice* graphics_device_ = nullptr;
 	D3D11BufferPtr buffer_;
 	Effekseer::CustomVector<uint8_t> data_;
-	bool isDirtied_ = false;
+	bool is_dirtied_ = false;
 
 public:
-	UniformBuffer(GraphicsDevice* graphicsDevice);
+	UniformBuffer(GraphicsDevice* graphics_device);
 	~UniformBuffer() override;
 
-	bool Init(int32_t size, const void* initialData);
+	bool Init(int32_t size, const void* initial_data);
 
 	ID3D11Buffer* GetBuffer() const
 	{
@@ -184,16 +184,16 @@ class ComputeBuffer
 	  public Effekseer::Backend::ComputeBuffer
 {
 private:
-	GraphicsDevice* graphicsDevice_ = nullptr;
+	GraphicsDevice* graphics_device_ = nullptr;
 	D3D11BufferPtr buffer_;
 	D3D11ShaderResourceViewPtr srv_;
 	D3D11UnorderedAccessViewPtr uav_;
 
 public:
-	ComputeBuffer(GraphicsDevice* graphicsDevice);
+	ComputeBuffer(GraphicsDevice* graphics_device);
 	~ComputeBuffer() override;
 
-	bool Init(int32_t elementCount, int32_t elementSize, const void* initialData);
+	bool Init(int32_t element_count, int32_t element_size, const void* initial_data);
 
 	void UpdateData(const void* src, int32_t size, int32_t offset);
 
@@ -223,13 +223,13 @@ class Texture
 	D3D11RenderTargetViewPtr rtv_;
 	D3D11DepthStencilViewPtr dsv_;
 
-	GraphicsDevice* graphicsDevice_ = nullptr;
+	GraphicsDevice* graphics_device_ = nullptr;
 
 public:
-	Texture(GraphicsDevice* graphicsDevice);
+	Texture(GraphicsDevice* graphics_device);
 	~Texture() override;
 
-	bool Init(const Effekseer::Backend::TextureParameter& param, const Effekseer::CustomVector<uint8_t>& initialData);
+	bool Init(const Effekseer::Backend::TextureParameter& param, const Effekseer::CustomVector<uint8_t>& initial_data);
 
 	bool Init(const Effekseer::Backend::RenderTextureParameter& param);
 
@@ -279,7 +279,7 @@ public:
 	VertexLayout() = default;
 	~VertexLayout() = default;
 
-	bool Init(const Effekseer::Backend::VertexLayoutElement* elements, int32_t elementCount);
+	bool Init(const Effekseer::Backend::VertexLayoutElement* elements, int32_t element_count);
 
 	const Effekseer::CustomVector<Effekseer::Backend::VertexLayoutElement>& GetElements() const
 	{
@@ -292,12 +292,12 @@ class RenderPass
 	  public Effekseer::Backend::RenderPass
 {
 private:
-	GraphicsDevice* graphicsDevice_ = nullptr;
+	GraphicsDevice* graphics_device_ = nullptr;
 	Effekseer::FixedSizeVector<Effekseer::Backend::TextureRef, Effekseer::Backend::RenderTargetMax> textures_;
 	Effekseer::Backend::TextureRef depthTexture_;
 
 public:
-	RenderPass(GraphicsDevice* graphicsDevice);
+	RenderPass(GraphicsDevice* graphics_device);
 	~RenderPass() override;
 
 	bool Init(Effekseer::FixedSizeVector<Effekseer::Backend::TextureRef, Effekseer::Backend::RenderTargetMax>& textures, Effekseer::Backend::TextureRef depthTexture);
@@ -318,21 +318,21 @@ class Shader
 	  public Effekseer::Backend::Shader
 {
 private:
-	GraphicsDevice* graphicsDevice_ = nullptr;
-	Effekseer::CustomVector<uint8_t> vsData_;
+	GraphicsDevice* graphics_device_ = nullptr;
+	Effekseer::CustomVector<uint8_t> vs_data_;
 	D3D11VertexShaderPtr vs_;
 	D3D11PixelShaderPtr ps_;
 	D3D11ComputeShaderPtr cs_;
 
 public:
-	Shader(GraphicsDevice* graphicsDevice);
+	Shader(GraphicsDevice* graphics_device);
 	~Shader() override;
-	bool Init(const void* vertexShaderData, int32_t vertexShaderDataSize, const void* pixelShaderData, int32_t pixelShaderDataSize);
-	bool InitAsCompute(const void* computeShaderData, int32_t computeShaderDataSize);
+	bool Init(const void* vertex_shader_data, int32_t vertex_shader_data_size, const void* pixel_shader_data, int32_t pixel_shader_data_size);
+	bool InitAsCompute(const void* compute_shader_data, int32_t compute_shader_data_size);
 
 	const Effekseer::CustomVector<uint8_t>& GetVertexShaderData() const
 	{
-		return vsData_;
+		return vs_data_;
 	}
 
 	ID3D11VertexShader* GetVertexShader() const
@@ -358,16 +358,16 @@ class PipelineState
 	static const int32_t LayoutElementMax = 16;
 
 private:
-	GraphicsDevice* graphicsDevice_ = nullptr;
+	GraphicsDevice* graphics_device_ = nullptr;
 	Effekseer::Backend::PipelineStateParameter param_;
 
-	D3D11RasterizerStatePtr rasterizerState_;
-	D3D11DepthStencilStatePtr depthStencilState_;
-	D3D11BlendStatePtr blendState_;
-	D3D11InputLayoutPtr inputLayout_;
+	D3D11RasterizerStatePtr rasterizer_state_;
+	D3D11DepthStencilStatePtr depth_stencil_state_;
+	D3D11BlendStatePtr blend_state_;
+	D3D11InputLayoutPtr input_layout_;
 
 public:
-	PipelineState(GraphicsDevice* graphicsDevice);
+	PipelineState(GraphicsDevice* graphics_device);
 	~PipelineState() override;
 
 	bool Init(const Effekseer::Backend::PipelineStateParameter& param);
@@ -379,22 +379,22 @@ public:
 
 	ID3D11RasterizerState* GetRasterizerState() const
 	{
-		return rasterizerState_.get();
+		return rasterizer_state_.get();
 	}
 
 	ID3D11DepthStencilState* GetDepthStencilState() const
 	{
-		return depthStencilState_.get();
+		return depth_stencil_state_.get();
 	}
 
 	ID3D11BlendState* GetBlendState() const
 	{
-		return blendState_.get();
+		return blend_state_.get();
 	}
 
 	ID3D11InputLayout* GetInputLayout() const
 	{
-		return inputLayout_.get();
+		return input_layout_.get();
 	}
 };
 

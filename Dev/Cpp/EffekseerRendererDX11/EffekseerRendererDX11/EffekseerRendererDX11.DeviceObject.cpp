@@ -13,16 +13,16 @@ namespace EffekseerRendererDX11
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-DeviceObject::DeviceObject(RendererImplemented* renderer, bool hasRefCount)
+DeviceObject::DeviceObject(RendererImplemented* renderer, bool has_ref_count)
 	: m_renderer(renderer)
-	, hasRefCount_(hasRefCount)
+	, has_ref_count_(has_ref_count)
 {
-	if (hasRefCount_)
+	if (has_ref_count_)
 	{
 		ES_SAFE_ADDREF(m_renderer);
 	}
 
-	m_renderer->m_deviceObjects.insert(this);
+	m_renderer->device_objects_.insert(this);
 }
 
 //----------------------------------------------------------------------------------
@@ -30,8 +30,8 @@ DeviceObject::DeviceObject(RendererImplemented* renderer, bool hasRefCount)
 //----------------------------------------------------------------------------------
 DeviceObject::~DeviceObject()
 {
-	m_renderer->m_deviceObjects.erase(this);
-	if (hasRefCount_)
+	m_renderer->device_objects_.erase(this);
+	if (has_ref_count_)
 	{
 		ES_SAFE_RELEASE(m_renderer);
 	}

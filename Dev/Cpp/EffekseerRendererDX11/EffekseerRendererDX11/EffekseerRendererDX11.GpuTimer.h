@@ -20,7 +20,7 @@ class GpuTimer : public DeviceObject, public ::Effekseer::GpuTimer
 	static constexpr uint32_t NUM_PHASES = 2;
 
 public:
-	GpuTimer(RendererImplemented* renderer, bool hasRefCount);
+	GpuTimer(RendererImplemented* renderer, bool has_ref_count);
 
 	virtual ~GpuTimer();
 
@@ -49,8 +49,8 @@ private:
 		Effekseer::GpuStage queryedStage[NUM_PHASES] = {};
 		int32_t result = 0;
 	};
-	std::unordered_map<const void*, TimeData> m_timeData;
-	Backend::D3D11QueryPtr m_disjoint[8];
+	std::unordered_map<const void*, TimeData> time_data_;
+	Backend::D3D11QueryPtr disjoint_[8];
 	
 	enum class State {
 		NoResult,
@@ -58,8 +58,8 @@ private:
 		AfterStage,
 		ResultUpdated,
 	};
-	State m_stageState[8] = {};
-	Effekseer::GpuStage m_currentStage = {};
+	State stage_states_[8] = {};
+	Effekseer::GpuStage current_stage_ = {};
 };
 
 //-----------------------------------------------------------------------------------

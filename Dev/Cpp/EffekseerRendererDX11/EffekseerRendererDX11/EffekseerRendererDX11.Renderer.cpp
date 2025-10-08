@@ -270,16 +270,11 @@ RendererRef Renderer::Create(
 //
 //----------------------------------------------------------------------------------
 RendererImplemented::RendererImplemented(int32_t squareMaxCount)
-	: m_device(nullptr)
-	, m_context(nullptr)
-	, m_squareMaxCount(squareMaxCount)
-	, m_coordinateSystem(::Effekseer::CoordinateSystem::RH)
-	, m_renderState(nullptr)
-	, m_restorationOfStates(true)
-	, m_standardRenderer(nullptr)
-	, m_distortingCallback(nullptr)
+	: device_(nullptr)
+	, context_(nullptr)
+	, square_max_count_(squareMaxCount)
 {
-	m_state = new OriginalState();
+	state_ = new OriginalState();
 }
 
 //----------------------------------------------------------------------------------
@@ -291,10 +286,10 @@ RendererImplemented::~RendererImplemented()
 
 	assert(GetRef() == 0);
 
-	ES_SAFE_DELETE(m_distortingCallback);
-	ES_SAFE_DELETE(m_standardRenderer);
-	ES_SAFE_DELETE(m_state);
-	ES_SAFE_DELETE(m_renderState);
+	ES_SAFE_DELETE(distorting_callback_);
+	ES_SAFE_DELETE(standard_renderer_);
+	ES_SAFE_DELETE(state_);
+	ES_SAFE_DELETE(render_state_);
 }
 
 //----------------------------------------------------------------------------------
@@ -302,12 +297,12 @@ RendererImplemented::~RendererImplemented()
 //----------------------------------------------------------------------------------
 void RendererImplemented::OnLostDevice()
 {
-	if (graphicsDevice_ != nullptr)
+	if (graphics_device_ != nullptr)
 	{
-		graphicsDevice_->LostDevice();
+		graphics_device_->LostDevice();
 	}
 
-	for (auto& device : m_deviceObjects)
+	for (auto& device : device_objects_)
 	{
 		device->OnLostDevice();
 	}
@@ -318,14 +313,14 @@ void RendererImplemented::OnLostDevice()
 //----------------------------------------------------------------------------------
 void RendererImplemented::OnResetDevice()
 {
-	for (auto& device : m_deviceObjects)
+	for (auto& device : device_objects_)
 	{
 		device->OnResetDevice();
 	}
 
-	if (graphicsDevice_ != nullptr)
+	if (graphics_device_ != nullptr)
 	{
-		graphicsDevice_->ResetDevice();
+		graphics_device_->ResetDevice();
 	}
 }
 
@@ -333,14 +328,14 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 									 D3D11_COMPARISON_FUNC depthFunc,
 									 bool isMSAAEnabled)
 {
-	graphicsDevice_ = graphicsDevice;
-	m_device = graphicsDevice->GetDevice();
-	m_context = graphicsDevice->GetContext();
-	m_depthFunc = depthFunc;
+	graphics_device_ = graphicsDevice;
+	device_ = graphicsDevice->GetDevice();
+	context_ = graphicsDevice->GetContext();
+	depth_func_ = depthFunc;
 
 	// generate a vertex buffer
 	{
-		GetImpl()->InternalVertexBuffer = std::make_shared<EffekseerRenderer::VertexBufferRing>(graphicsDevice_, EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * m_squareMaxCount * 4, 1);
+		GetImpl()->InternalVertexBuffer = std::make_shared<EffekseerRenderer::VertexBufferRing>(graphics_device_, EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * square_max_count_ * 4, 1);
 		if (!GetImpl()->InternalVertexBuffer->GetIsValid())
 		{
 			GetImpl()->InternalVertexBuffer = nullptr;
@@ -348,22 +343,22 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 		}
 	}
 
-	if (!EffekseerRenderer::GenerateIndexDataStride<int16_t>(graphicsDevice_, m_squareMaxCount, indexBuffer_, indexBufferForWireframe_))
+	if (!EffekseerRenderer::GenerateIndexDataStride<int16_t>(graphics_device_, square_max_count_, index_buffer_, index_buffer_for_wireframe_))
 	{
 		return false;
 	}
 
-	m_renderState = new RenderState(this, m_depthFunc, isMSAAEnabled);
+	render_state_ = new RenderState(this, depth_func_, isMSAAEnabled);
 
-	auto vlUnlit = EffekseerRenderer::GetVertexLayout(graphicsDevice_, EffekseerRenderer::RendererShaderType::Unlit).DownCast<Backend::VertexLayout>();
-	auto vlLit = EffekseerRenderer::GetVertexLayout(graphicsDevice_, EffekseerRenderer::RendererShaderType::Lit).DownCast<Backend::VertexLayout>();
-	auto vlDist = EffekseerRenderer::GetVertexLayout(graphicsDevice_, EffekseerRenderer::RendererShaderType::BackDistortion).DownCast<Backend::VertexLayout>();
-	auto vlUnlitAd = EffekseerRenderer::GetVertexLayout(graphicsDevice_, EffekseerRenderer::RendererShaderType::AdvancedUnlit).DownCast<Backend::VertexLayout>();
-	auto vlLitAd = EffekseerRenderer::GetVertexLayout(graphicsDevice_, EffekseerRenderer::RendererShaderType::AdvancedLit).DownCast<Backend::VertexLayout>();
-	auto vlDistAd = EffekseerRenderer::GetVertexLayout(graphicsDevice_, EffekseerRenderer::RendererShaderType::AdvancedBackDistortion).DownCast<Backend::VertexLayout>();
+	auto vlUnlit = EffekseerRenderer::GetVertexLayout(graphics_device_, EffekseerRenderer::RendererShaderType::Unlit).DownCast<Backend::VertexLayout>();
+	auto vlLit = EffekseerRenderer::GetVertexLayout(graphics_device_, EffekseerRenderer::RendererShaderType::Lit).DownCast<Backend::VertexLayout>();
+	auto vlDist = EffekseerRenderer::GetVertexLayout(graphics_device_, EffekseerRenderer::RendererShaderType::BackDistortion).DownCast<Backend::VertexLayout>();
+	auto vlUnlitAd = EffekseerRenderer::GetVertexLayout(graphics_device_, EffekseerRenderer::RendererShaderType::AdvancedUnlit).DownCast<Backend::VertexLayout>();
+	auto vlLitAd = EffekseerRenderer::GetVertexLayout(graphics_device_, EffekseerRenderer::RendererShaderType::AdvancedLit).DownCast<Backend::VertexLayout>();
+	auto vlDistAd = EffekseerRenderer::GetVertexLayout(graphics_device_, EffekseerRenderer::RendererShaderType::AdvancedBackDistortion).DownCast<Backend::VertexLayout>();
 
-	auto shader_unlit = Shader::Create(graphicsDevice_,
-									   graphicsDevice_->CreateShaderFromBinary(
+	auto shader_unlit = Shader::Create(graphics_device_,
+									   graphics_device_->CreateShaderFromBinary(
 										   Standard_VS::g_main,
 										   sizeof(Standard_VS::g_main),
 										   Standard_PS::g_main,
@@ -374,8 +369,8 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 		return false;
 	GetImpl()->ShaderUnlit = std::unique_ptr<EffekseerRenderer::ShaderBase>(shader_unlit);
 
-	auto shader_ad_unlit = Shader::Create(graphicsDevice_,
-										  graphicsDevice_->CreateShaderFromBinary(
+	auto shader_ad_unlit = Shader::Create(graphics_device_,
+										  graphics_device_->CreateShaderFromBinary(
 											  Standard_VS_Ad::g_main,
 											  sizeof(Standard_VS_Ad::g_main),
 											  Standard_PS_Ad::g_main,
@@ -386,8 +381,8 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 		return false;
 	GetImpl()->ShaderAdUnlit = std::unique_ptr<EffekseerRenderer::ShaderBase>(shader_ad_unlit);
 
-	auto shader_distortion = Shader::Create(graphicsDevice_,
-											graphicsDevice_->CreateShaderFromBinary(
+	auto shader_distortion = Shader::Create(graphics_device_,
+											graphics_device_->CreateShaderFromBinary(
 												Standard_Distortion_VS::g_main,
 												sizeof(Standard_Distortion_VS::g_main),
 												Standard_Distortion_PS::g_main,
@@ -398,8 +393,8 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 		return false;
 	GetImpl()->ShaderDistortion = std::unique_ptr<EffekseerRenderer::ShaderBase>(shader_distortion);
 
-	auto shader_ad_distortion = Shader::Create(graphicsDevice_,
-											   graphicsDevice_->CreateShaderFromBinary(
+	auto shader_ad_distortion = Shader::Create(graphics_device_,
+											   graphics_device_->CreateShaderFromBinary(
 												   Standard_Distortion_VS_Ad::g_main,
 												   sizeof(Standard_Distortion_VS_Ad::g_main),
 												   Standard_Distortion_PS_Ad::g_main,
@@ -410,8 +405,8 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 		return false;
 	GetImpl()->ShaderAdDistortion = std::unique_ptr<EffekseerRenderer::ShaderBase>(shader_ad_distortion);
 
-	auto shader_lit = Shader::Create(graphicsDevice_,
-									 graphicsDevice_->CreateShaderFromBinary(
+	auto shader_lit = Shader::Create(graphics_device_,
+									 graphics_device_->CreateShaderFromBinary(
 										 Standard_Lighting_VS::g_main,
 										 sizeof(Standard_Lighting_VS::g_main),
 										 Standard_Lighting_PS::g_main,
@@ -422,8 +417,8 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 		return false;
 	GetImpl()->ShaderLit = std::unique_ptr<EffekseerRenderer::ShaderBase>(shader_lit);
 
-	auto shader_ad_lit = Shader::Create(graphicsDevice_,
-										graphicsDevice_->CreateShaderFromBinary(
+	auto shader_ad_lit = Shader::Create(graphics_device_,
+										graphics_device_->CreateShaderFromBinary(
 											Standard_Lighting_VS_Ad::g_main,
 											sizeof(Standard_Lighting_VS_Ad::g_main),
 											Standard_Lighting_PS_Ad::g_main,
@@ -452,7 +447,7 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 	shader_ad_lit->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
 	shader_ad_lit->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::PixelConstantBuffer));
 
-	m_standardRenderer =
+	standard_renderer_ =
 		new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>(this);
 
 	GetImpl()->CreateProxyTextures(this);
@@ -468,7 +463,7 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 //----------------------------------------------------------------------------------
 void RendererImplemented::SetRestorationOfStatesFlag(bool flag)
 {
-	m_restorationOfStates = flag;
+	restoration_of_states_ = flag;
 }
 
 //----------------------------------------------------------------------------------
@@ -476,21 +471,21 @@ void RendererImplemented::SetRestorationOfStatesFlag(bool flag)
 //----------------------------------------------------------------------------------
 bool RendererImplemented::BeginRendering()
 {
-	assert(m_device != nullptr);
+	assert(device_ != nullptr);
 
 	impl->CalculateCameraProjectionMatrix();
 
-	if (m_restorationOfStates)
+	if (restoration_of_states_)
 	{
-		m_state->SaveState(m_device, m_context);
+		state_->SaveState(device_, context_);
 	}
 
 	// reset states
-	m_renderState->GetActiveState().Reset();
-	m_renderState->Update(true);
+	render_state_->GetActiveState().Reset();
+	render_state_->Update(true);
 
 	// reset a renderer
-	m_standardRenderer->ResetAndRenderingIfRequired();
+	standard_renderer_->ResetAndRenderingIfRequired();
 
 	return true;
 }
@@ -500,19 +495,19 @@ bool RendererImplemented::BeginRendering()
 //----------------------------------------------------------------------------------
 bool RendererImplemented::EndRendering()
 {
-	assert(m_device != nullptr);
+	assert(device_ != nullptr);
 
 	// reset a renderer
-	m_standardRenderer->ResetAndRenderingIfRequired();
+	standard_renderer_->ResetAndRenderingIfRequired();
 
 	// restore states
-	if (m_restorationOfStates)
+	if (restoration_of_states_)
 	{
-		m_state->LoadState(m_device, m_context);
-		m_state->ReleaseState();
+		state_->LoadState(device_, context_);
+		state_->ReleaseState();
 	}
 
-	currentndexBuffer_ = nullptr;
+	current_index_buffer_ = nullptr;
 
 	return true;
 }
@@ -522,7 +517,7 @@ bool RendererImplemented::EndRendering()
 //----------------------------------------------------------------------------------
 ID3D11Device* RendererImplemented::GetDevice()
 {
-	return m_device;
+	return device_;
 }
 
 //----------------------------------------------------------------------------------
@@ -530,16 +525,16 @@ ID3D11Device* RendererImplemented::GetDevice()
 //----------------------------------------------------------------------------------
 ID3D11DeviceContext* RendererImplemented::GetContext()
 {
-	return m_context;
+	return context_;
 }
 
 Effekseer::Backend::IndexBufferRef RendererImplemented::GetIndexBuffer()
 {
 	if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
 	{
-		return indexBufferForWireframe_;
+		return index_buffer_for_wireframe_;
 	}
-	return indexBuffer_;
+	return index_buffer_;
 }
 
 //----------------------------------------------------------------------------------
@@ -547,7 +542,7 @@ Effekseer::Backend::IndexBufferRef RendererImplemented::GetIndexBuffer()
 //----------------------------------------------------------------------------------
 int32_t RendererImplemented::GetSquareMaxCount() const
 {
-	return m_squareMaxCount;
+	return square_max_count_;
 }
 
 //----------------------------------------------------------------------------------
@@ -555,7 +550,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 //----------------------------------------------------------------------------------
 ::EffekseerRenderer::RenderStateBase* RendererImplemented::GetRenderState()
 {
-	return m_renderState;
+	return render_state_;
 }
 
 //----------------------------------------------------------------------------------
@@ -623,7 +618,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 //----------------------------------------------------------------------------------
 ::Effekseer::TextureLoaderRef RendererImplemented::CreateTextureLoader(::Effekseer::FileInterfaceRef fileInterface)
 {
-	return ::EffekseerRenderer::CreateTextureLoader(graphicsDevice_, fileInterface, ::Effekseer::ColorSpaceType::Gamma);
+	return ::EffekseerRenderer::CreateTextureLoader(graphics_device_, fileInterface, ::Effekseer::ColorSpaceType::Gamma);
 }
 
 //----------------------------------------------------------------------------------
@@ -631,38 +626,38 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 //----------------------------------------------------------------------------------
 ::Effekseer::ModelLoaderRef RendererImplemented::CreateModelLoader(::Effekseer::FileInterfaceRef fileInterface)
 {
-	return ::Effekseer::MakeRefPtr<EffekseerRenderer::ModelLoader>(graphicsDevice_, fileInterface);
+	return ::Effekseer::MakeRefPtr<EffekseerRenderer::ModelLoader>(graphics_device_, fileInterface);
 }
 
 ::Effekseer::MaterialLoaderRef RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterfaceRef fileInterface)
 {
-	return ::Effekseer::MakeRefPtr<MaterialLoader>(graphicsDevice_, fileInterface);
+	return ::Effekseer::MakeRefPtr<MaterialLoader>(graphics_device_, fileInterface);
 }
 
 void RendererImplemented::SetBackground(ID3D11ShaderResourceView* background)
 {
-	if (m_backgroundDX11 == nullptr)
+	if (background_dx11_ == nullptr)
 	{
-		m_backgroundDX11 = graphicsDevice_->CreateTexture(background, nullptr, nullptr);
+		background_dx11_ = graphics_device_->CreateTexture(background, nullptr, nullptr);
 	}
 	else
 	{
-		auto texture = static_cast<Backend::Texture*>(m_backgroundDX11.Get());
+		auto texture = static_cast<Backend::Texture*>(background_dx11_.Get());
 		texture->Init(background, nullptr, nullptr);
 	}
 
-	EffekseerRenderer::Renderer::SetBackground((background) ? m_backgroundDX11 : nullptr);
+	EffekseerRenderer::Renderer::SetBackground((background) ? background_dx11_ : nullptr);
 }
 
 EffekseerRenderer::DistortingCallback* RendererImplemented::GetDistortingCallback()
 {
-	return m_distortingCallback;
+	return distorting_callback_;
 }
 
 void RendererImplemented::SetDistortingCallback(EffekseerRenderer::DistortingCallback* callback)
 {
-	ES_SAFE_DELETE(m_distortingCallback);
-	m_distortingCallback = callback;
+	ES_SAFE_DELETE(distorting_callback_);
+	distorting_callback_ = callback;
 }
 
 //----------------------------------------------------------------------------------
@@ -685,7 +680,7 @@ void RendererImplemented::SetVertexBuffer(const Effekseer::Backend::VertexBuffer
 void RendererImplemented::SetIndexBuffer(const Effekseer::Backend::IndexBufferRef& indexBuffer)
 {
 	auto ptr = static_cast<Backend::IndexBuffer*>(indexBuffer.Get());
-	currentndexBuffer_ = indexBuffer;
+	current_index_buffer_ = indexBuffer;
 	GetContext()->IASetIndexBuffer(ptr->GetBuffer(), ptr->GetStrideType() == Effekseer::Backend::IndexBufferStrideType::Stride2 ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT, 0);
 }
 
@@ -744,7 +739,7 @@ void RendererImplemented::DrawPolygonInstanced(int32_t vertexCount, int32_t inde
 
 void RendererImplemented::BeginShader(Shader* shader)
 {
-	currentShader = shader;
+	current_shader_ = shader;
 	GetContext()->VSSetShader(shader->GetVertexShader(), nullptr, 0);
 	GetContext()->PSSetShader(shader->GetPixelShader(), nullptr, 0);
 }
@@ -754,24 +749,24 @@ void RendererImplemented::BeginShader(Shader* shader)
 //----------------------------------------------------------------------------------
 void RendererImplemented::EndShader(Shader* shader)
 {
-	currentShader = nullptr;
+	current_shader_ = nullptr;
 }
 
 void RendererImplemented::SetVertexBufferToShader(const void* data, int32_t size, int32_t dstOffset)
 {
-	assert(currentShader != nullptr);
-	assert(currentShader->GetVertexConstantBufferSize() >= size + dstOffset);
+	assert(current_shader_ != nullptr);
+	assert(current_shader_->GetVertexConstantBufferSize() >= size + dstOffset);
 
-	auto p = static_cast<uint8_t*>(currentShader->GetVertexConstantBuffer()) + dstOffset;
+	auto p = static_cast<uint8_t*>(current_shader_->GetVertexConstantBuffer()) + dstOffset;
 	memcpy(p, data, size);
 }
 
 void RendererImplemented::SetPixelBufferToShader(const void* data, int32_t size, int32_t dstOffset)
 {
-	assert(currentShader != nullptr);
-	assert(currentShader->GetPixelConstantBufferSize() >= size + dstOffset);
+	assert(current_shader_ != nullptr);
+	assert(current_shader_->GetPixelConstantBufferSize() >= size + dstOffset);
 
-	auto p = static_cast<uint8_t*>(currentShader->GetPixelConstantBuffer()) + dstOffset;
+	auto p = static_cast<uint8_t*>(current_shader_->GetPixelConstantBuffer()) + dstOffset;
 	memcpy(p, data, size);
 }
 
@@ -800,13 +795,13 @@ void RendererImplemented::SetTextures(Shader* shader, ::Effekseer::Backend::Text
 
 void RendererImplemented::ResetRenderState()
 {
-	m_renderState->GetActiveState().Reset();
-	m_renderState->Update(true);
+	render_state_->GetActiveState().Reset();
+	render_state_->Update(true);
 }
 
 Effekseer::Backend::GraphicsDeviceRef RendererImplemented::GetGraphicsDevice() const
 {
-	return graphicsDevice_;
+	return graphics_device_;
 }
 
 void RendererImplemented::ResetStateForDefferedContext()

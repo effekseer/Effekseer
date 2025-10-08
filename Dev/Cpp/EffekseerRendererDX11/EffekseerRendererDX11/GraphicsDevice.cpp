@@ -225,16 +225,16 @@ void DeviceObject::OnResetDevice()
 }
 
 VertexBuffer::VertexBuffer(GraphicsDevice* graphicsDevice)
-	: graphicsDevice_(graphicsDevice)
+	: graphics_device_(graphicsDevice)
 {
-	ES_SAFE_ADDREF(graphicsDevice_);
-	graphicsDevice_->Register(this);
+	ES_SAFE_ADDREF(graphics_device_);
+	graphics_device_->Register(this);
 }
 
 VertexBuffer::~VertexBuffer()
 {
-	graphicsDevice_->Unregister(this);
-	ES_SAFE_RELEASE(graphicsDevice_);
+	graphics_device_->Unregister(this);
+	ES_SAFE_RELEASE(graphics_device_);
 }
 
 bool VertexBuffer::Allocate(const void* src, int32_t size, bool isDynamic)
@@ -255,7 +255,7 @@ bool VertexBuffer::Allocate(const void* src, int32_t size, bool isDynamic)
 	hSubResourceData.SysMemSlicePitch = 0;
 
 	ID3D11Buffer* vb = nullptr;
-	HRESULT hr = graphicsDevice_->GetDevice()->CreateBuffer(&hBufferDesc, src != nullptr ? &hSubResourceData : 0, &vb);
+	HRESULT hr = graphics_device_->GetDevice()->CreateBuffer(&hBufferDesc, src != nullptr ? &hSubResourceData : 0, &vb);
 	if (FAILED(hr))
 	{
 		return false;
@@ -263,7 +263,7 @@ bool VertexBuffer::Allocate(const void* src, int32_t size, bool isDynamic)
 
 	buffer_ = Effekseer::CreateUniqueReference(vb);
 
-	if (isDynamic_)
+	if (is_dynamic_)
 	{
 		blocks_.Allocate(size, 0);
 	}
@@ -283,15 +283,15 @@ void VertexBuffer::OnLostDevice()
 
 void VertexBuffer::OnResetDevice()
 {
-	Allocate(nullptr, size_, isDynamic_);
+	Allocate(nullptr, size_, is_dynamic_);
 }
 
 bool VertexBuffer::Init(const void* src, int32_t size, bool isDynamic)
 {
 	size_ = size;
-	isDynamic_ = isDynamic;
+	is_dynamic_ = isDynamic;
 
-	return Allocate(src, size_, isDynamic_);
+	return Allocate(src, size_, is_dynamic_);
 }
 
 void VertexBuffer::UpdateData(const void* src, int32_t size, int32_t offset)
@@ -302,14 +302,14 @@ void VertexBuffer::UpdateData(const void* src, int32_t size, int32_t offset)
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 
-	if (isDynamic_)
+	if (is_dynamic_)
 	{
-		graphicsDevice_->GetContext()->Map(
+		graphics_device_->GetContext()->Map(
 			buffer_.get(), 0, dirtied ? D3D11_MAP_WRITE_DISCARD : D3D11_MAP_WRITE_NO_OVERWRITE, 0, &mappedResource);
 	}
 	else
 	{
-		graphicsDevice_->GetContext()->Map(
+		graphics_device_->GetContext()->Map(
 			buffer_.get(), 0, D3D11_MAP_READ_WRITE, 0, &mappedResource);
 	}
 
@@ -318,7 +318,7 @@ void VertexBuffer::UpdateData(const void* src, int32_t size, int32_t offset)
 	dst += offset;
 	memcpy(dst, src, size);
 
-	graphicsDevice_->GetContext()->Unmap(buffer_.get(), 0);
+	graphics_device_->GetContext()->Unmap(buffer_.get(), 0);
 }
 
 void VertexBuffer::MakeAllDirtied()
@@ -327,16 +327,16 @@ void VertexBuffer::MakeAllDirtied()
 }
 
 IndexBuffer::IndexBuffer(GraphicsDevice* graphicsDevice)
-	: graphicsDevice_(graphicsDevice)
+	: graphics_device_(graphicsDevice)
 {
-	ES_SAFE_ADDREF(graphicsDevice_);
-	graphicsDevice_->Register(this);
+	ES_SAFE_ADDREF(graphics_device_);
+	graphics_device_->Register(this);
 }
 
 IndexBuffer::~IndexBuffer()
 {
-	graphicsDevice_->Unregister(this);
-	ES_SAFE_RELEASE(graphicsDevice_);
+	graphics_device_->Unregister(this);
+	ES_SAFE_RELEASE(graphics_device_);
 }
 
 bool IndexBuffer::Allocate(const void* src, int32_t elementCount, int32_t stride)
@@ -355,7 +355,7 @@ bool IndexBuffer::Allocate(const void* src, int32_t elementCount, int32_t stride
 	hSubResourceData.SysMemSlicePitch = 0;
 
 	ID3D11Buffer* ib = nullptr;
-	if (FAILED(graphicsDevice_->GetDevice()->CreateBuffer(&hBufferDesc, src != nullptr ? &hSubResourceData : nullptr, &ib)))
+	if (FAILED(graphics_device_->GetDevice()->CreateBuffer(&hBufferDesc, src != nullptr ? &hSubResourceData : nullptr, &ib)))
 	{
 		return false;
 	}
@@ -398,7 +398,7 @@ void IndexBuffer::UpdateData(const void* src, int32_t size, int32_t offset)
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 
-	graphicsDevice_->GetContext()->Map(
+	graphics_device_->GetContext()->Map(
 		buffer_.get(), 0, D3D11_MAP_READ_WRITE, 0, &mappedResource);
 
 	auto dst = static_cast<uint8_t*>(mappedResource.pData);
@@ -406,20 +406,20 @@ void IndexBuffer::UpdateData(const void* src, int32_t size, int32_t offset)
 	dst += offset;
 	memcpy(dst, src, size);
 
-	graphicsDevice_->GetContext()->Unmap(buffer_.get(), 0);
+	graphics_device_->GetContext()->Unmap(buffer_.get(), 0);
 }
 
 UniformBuffer::UniformBuffer(GraphicsDevice* graphicsDevice)
-	: graphicsDevice_(graphicsDevice)
+	: graphics_device_(graphicsDevice)
 {
-	ES_SAFE_ADDREF(graphicsDevice_);
-	graphicsDevice_->Register(this);
+	ES_SAFE_ADDREF(graphics_device_);
+	graphics_device_->Register(this);
 }
 
 UniformBuffer ::~UniformBuffer()
 {
-	graphicsDevice_->Unregister(this);
-	ES_SAFE_RELEASE(graphicsDevice_);
+	graphics_device_->Unregister(this);
+	ES_SAFE_RELEASE(graphics_device_);
 }
 
 bool UniformBuffer::Init(int32_t size, const void* initialData)
@@ -438,7 +438,7 @@ bool UniformBuffer::Init(int32_t size, const void* initialData)
 	hSubResourceData.SysMemSlicePitch = 0;
 
 	ID3D11Buffer* buffer;
-	if (FAILED(graphicsDevice_->GetDevice()->CreateBuffer(&hBufferDesc, initialData != nullptr ? &hSubResourceData : nullptr, &buffer)))
+	if (FAILED(graphics_device_->GetDevice()->CreateBuffer(&hBufferDesc, initialData != nullptr ? &hSubResourceData : nullptr, &buffer)))
 	{
 		return false;
 	}
@@ -453,7 +453,7 @@ bool UniformBuffer::Init(int32_t size, const void* initialData)
 	}
 	else
 	{
-		isDirtied_ = true;
+		is_dirtied_ = true;
 	}
 
 	return true;
@@ -468,34 +468,34 @@ void UniformBuffer::UpdateData(const void* src, int32_t size, int32_t offset)
 		memcpy(data_.data() + offset, src, size);
 	}
 
-	isDirtied_ = true;
+	is_dirtied_ = true;
 }
 
 void UniformBuffer::UpdateDataActually()
 {
-	if (!isDirtied_)
+	if (!is_dirtied_)
 		return;
-	isDirtied_ = false;
+	is_dirtied_ = false;
 
-	graphicsDevice_->GetContext()->UpdateSubresource(buffer_.get(), 0, nullptr, data_.data(), 0, 0);
+	graphics_device_->GetContext()->UpdateSubresource(buffer_.get(), 0, nullptr, data_.data(), 0, 0);
 }
 
 bool UniformBuffer::GetIsDirtied() const
 {
-	return isDirtied_;
+	return is_dirtied_;
 }
 
 ComputeBuffer::ComputeBuffer(GraphicsDevice* graphicsDevice)
-	: graphicsDevice_(graphicsDevice)
+	: graphics_device_(graphicsDevice)
 {
-	ES_SAFE_ADDREF(graphicsDevice_);
-	graphicsDevice_->Register(this);
+	ES_SAFE_ADDREF(graphics_device_);
+	graphics_device_->Register(this);
 }
 
 ComputeBuffer ::~ComputeBuffer()
 {
-	graphicsDevice_->Unregister(this);
-	ES_SAFE_RELEASE(graphicsDevice_);
+	graphics_device_->Unregister(this);
+	ES_SAFE_RELEASE(graphics_device_);
 }
 
 bool ComputeBuffer::Init(int32_t elementCount, int32_t elementSize, const void* initialData)
@@ -514,7 +514,7 @@ bool ComputeBuffer::Init(int32_t elementCount, int32_t elementSize, const void* 
 	hSubResourceData.SysMemSlicePitch = 0;
 
 	ID3D11Buffer* buffer;
-	if (FAILED(graphicsDevice_->GetDevice()->CreateBuffer(&hBufferDesc, initialData != nullptr ? &hSubResourceData : nullptr, &buffer)))
+	if (FAILED(graphics_device_->GetDevice()->CreateBuffer(&hBufferDesc, initialData != nullptr ? &hSubResourceData : nullptr, &buffer)))
 	{
 		return false;
 	}
@@ -527,7 +527,7 @@ bool ComputeBuffer::Init(int32_t elementCount, int32_t elementSize, const void* 
 	srvDesc.Buffer.NumElements = static_cast<UINT>(elementCount);
 
 	ID3D11ShaderResourceView* srv = nullptr;
-	if (FAILED(graphicsDevice_->GetDevice()->CreateShaderResourceView(buffer, &srvDesc, &srv)))
+	if (FAILED(graphics_device_->GetDevice()->CreateShaderResourceView(buffer, &srvDesc, &srv)))
 	{
 		return false;
 	}
@@ -541,7 +541,7 @@ bool ComputeBuffer::Init(int32_t elementCount, int32_t elementSize, const void* 
 	uavDesc.Buffer.Flags = 0;
 
 	ID3D11UnorderedAccessView* uav = nullptr;
-	if (FAILED(graphicsDevice_->GetDevice()->CreateUnorderedAccessView(buffer, &uavDesc, &uav)))
+	if (FAILED(graphics_device_->GetDevice()->CreateUnorderedAccessView(buffer, &uavDesc, &uav)))
 	{
 		return false;
 	}
@@ -557,20 +557,20 @@ void ComputeBuffer::UpdateData(const void* src, int32_t size, int32_t offset)
 	dstBox.right = static_cast<UINT>(offset + size);
 	dstBox.bottom = 1;
 	dstBox.back = 1;
-	graphicsDevice_->GetContext()->UpdateSubresource(buffer_.get(), 0, &dstBox, src, 0, 0);
+	graphics_device_->GetContext()->UpdateSubresource(buffer_.get(), 0, &dstBox, src, 0, 0);
 }
 
 Texture::Texture(GraphicsDevice* graphicsDevice)
-	: graphicsDevice_(graphicsDevice)
+	: graphics_device_(graphicsDevice)
 {
-	ES_SAFE_ADDREF(graphicsDevice_);
-	graphicsDevice_->Register(this);
+	ES_SAFE_ADDREF(graphics_device_);
+	graphics_device_->Register(this);
 }
 
 Texture::~Texture()
 {
-	graphicsDevice_->Unregister(this);
-	ES_SAFE_RELEASE(graphicsDevice_);
+	graphics_device_->Unregister(this);
+	ES_SAFE_RELEASE(graphics_device_);
 }
 
 bool Texture::Init(const Effekseer::Backend::TextureParameter& param, const Effekseer::CustomVector<uint8_t>& initialData)
@@ -582,10 +582,10 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param, const Effe
 		return false;
 	}
 
-	auto device = graphicsDevice_->GetDevice();
+	auto device = graphics_device_->GetDevice();
 	assert(device != nullptr);
 
-	auto context = graphicsDevice_->GetContext();
+	auto context = graphics_device_->GetContext();
 	assert(context != nullptr);
 
 	auto isCompressed = param.Format == Effekseer::Backend::TextureFormatType::BC1 ||
@@ -819,7 +819,7 @@ bool Texture::Init(const Effekseer::Backend::RenderTextureParameter& param)
 
 bool Texture::Init(const Effekseer::Backend::DepthTextureParameter& param)
 {
-	auto device = graphicsDevice_->GetDevice();
+	auto device = graphics_device_->GetDevice();
 	assert(device != nullptr);
 
 	DXGI_FORMAT format = DXGI_FORMAT_R24G8_TYPELESS;
@@ -971,14 +971,14 @@ bool VertexLayout::Init(const Effekseer::Backend::VertexLayoutElement* elements,
 }
 
 RenderPass::RenderPass(GraphicsDevice* graphicsDevice)
-	: graphicsDevice_(graphicsDevice)
+	: graphics_device_(graphicsDevice)
 {
-	ES_SAFE_ADDREF(graphicsDevice_);
+	ES_SAFE_ADDREF(graphics_device_);
 }
 
 RenderPass::~RenderPass()
 {
-	ES_SAFE_RELEASE(graphicsDevice_);
+	ES_SAFE_RELEASE(graphics_device_);
 }
 
 bool RenderPass::Init(Effekseer::FixedSizeVector<Effekseer::Backend::TextureRef, Effekseer::Backend::RenderTargetMax>& textures, Effekseer::Backend::TextureRef depthTexture)
@@ -990,14 +990,14 @@ bool RenderPass::Init(Effekseer::FixedSizeVector<Effekseer::Backend::TextureRef,
 }
 
 Shader::Shader(GraphicsDevice* graphicsDevice)
-	: graphicsDevice_(graphicsDevice)
+	: graphics_device_(graphicsDevice)
 {
-	ES_SAFE_ADDREF(graphicsDevice_);
+	ES_SAFE_ADDREF(graphics_device_);
 }
 
 Shader::~Shader()
 {
-	ES_SAFE_RELEASE(graphicsDevice_);
+	ES_SAFE_RELEASE(graphics_device_);
 }
 
 bool Shader::Init(const void* vertexShaderData, int32_t vertexShaderDataSize, const void* pixelShaderData, int32_t pixelShaderDataSize)
@@ -1006,14 +1006,14 @@ bool Shader::Init(const void* vertexShaderData, int32_t vertexShaderDataSize, co
 	ID3D11VertexShader* vs = nullptr;
 	ID3D11PixelShader* ps = nullptr;
 
-	hr = graphicsDevice_->GetDevice()->CreateVertexShader(vertexShaderData, vertexShaderDataSize, nullptr, &vs);
+	hr = graphics_device_->GetDevice()->CreateVertexShader(vertexShaderData, vertexShaderDataSize, nullptr, &vs);
 
 	if (FAILED(hr))
 	{
 		return false;
 	}
 
-	hr = graphicsDevice_->GetDevice()->CreatePixelShader(pixelShaderData, pixelShaderDataSize, nullptr, &ps);
+	hr = graphics_device_->GetDevice()->CreatePixelShader(pixelShaderData, pixelShaderDataSize, nullptr, &ps);
 
 	if (FAILED(hr))
 	{
@@ -1025,14 +1025,14 @@ bool Shader::Init(const void* vertexShaderData, int32_t vertexShaderDataSize, co
 	ps_ = Effekseer::CreateUniqueReference(ps);
 
 	auto start = reinterpret_cast<const uint8_t*>(vertexShaderData);
-	vsData_.assign(start, start + vertexShaderDataSize);
+	vs_data_.assign(start, start + vertexShaderDataSize);
 	return true;
 }
 
 bool Shader::InitAsCompute(const void* computeShaderData, int32_t computeShaderDataSize)
 {
 	ID3D11ComputeShader* cs = nullptr;
-	if (FAILED(graphicsDevice_->GetDevice()->CreateComputeShader(computeShaderData, computeShaderDataSize, nullptr, &cs)))
+	if (FAILED(graphics_device_->GetDevice()->CreateComputeShader(computeShaderData, computeShaderDataSize, nullptr, &cs)))
 	{
 		return false;
 	}
@@ -1041,14 +1041,14 @@ bool Shader::InitAsCompute(const void* computeShaderData, int32_t computeShaderD
 }
 
 PipelineState::PipelineState(GraphicsDevice* graphicsDevice)
-	: graphicsDevice_(graphicsDevice)
+	: graphics_device_(graphicsDevice)
 {
-	ES_SAFE_ADDREF(graphicsDevice_);
+	ES_SAFE_ADDREF(graphics_device_);
 }
 
 PipelineState ::~PipelineState()
 {
-	ES_SAFE_RELEASE(graphicsDevice_);
+	ES_SAFE_RELEASE(graphics_device_);
 }
 
 bool PipelineState::Init(const Effekseer::Backend::PipelineStateParameter& param)
@@ -1083,7 +1083,7 @@ bool PipelineState::Init(const Effekseer::Backend::PipelineStateParameter& param
 	rsDesc.DepthClipEnable = TRUE;
 	rsDesc.MultisampleEnable = param.IsMSAAEnabled ? TRUE : FALSE;
 	rsDesc.FrontCounterClockwise = FALSE;
-	graphicsDevice_->GetDevice()->CreateRasterizerState(&rsDesc, &rasterizerState);
+	graphics_device_->GetDevice()->CreateRasterizerState(&rsDesc, &rasterizerState);
 
 	std::array<D3D11_COMPARISON_FUNC, 8> compares;
 	compares[static_cast<int32_t>(Effekseer::Backend::CompareFuncType::Never)] = D3D11_COMPARISON_NEVER;
@@ -1095,7 +1095,7 @@ bool PipelineState::Init(const Effekseer::Backend::PipelineStateParameter& param
 	compares[static_cast<int32_t>(Effekseer::Backend::CompareFuncType::GreaterEqual)] = D3D11_COMPARISON_GREATER_EQUAL;
 	compares[static_cast<int32_t>(Effekseer::Backend::CompareFuncType::Always)] = D3D11_COMPARISON_ALWAYS;
 
-	rasterizerState_ = Effekseer::CreateUniqueReference(rasterizerState);
+	rasterizer_state_ = Effekseer::CreateUniqueReference(rasterizerState);
 
 	ID3D11DepthStencilState* depthStencilState = nullptr;
 
@@ -1105,9 +1105,9 @@ bool PipelineState::Init(const Effekseer::Backend::PipelineStateParameter& param
 	dsDesc.DepthWriteMask = param.IsDepthWriteEnabled ? D3D11_DEPTH_WRITE_MASK_ALL : D3D11_DEPTH_WRITE_MASK_ZERO;
 	dsDesc.DepthFunc = compares[static_cast<int32_t>(param.DepthFunc)];
 	dsDesc.StencilEnable = FALSE;
-	graphicsDevice_->GetDevice()->CreateDepthStencilState(&dsDesc, &depthStencilState);
+	graphics_device_->GetDevice()->CreateDepthStencilState(&dsDesc, &depthStencilState);
 
-	depthStencilState_ = Effekseer::CreateUniqueReference(depthStencilState);
+	depth_stencil_state_ = Effekseer::CreateUniqueReference(depthStencilState);
 
 	D3D11_BLEND_DESC blendDesc;
 	ZeroMemory(&blendDesc, sizeof(blendDesc));
@@ -1148,17 +1148,17 @@ bool PipelineState::Init(const Effekseer::Backend::PipelineStateParameter& param
 
 	ID3D11BlendState* blendState = nullptr;
 
-	graphicsDevice_->GetDevice()->CreateBlendState(&blendDesc, &blendState);
+	graphics_device_->GetDevice()->CreateBlendState(&blendDesc, &blendState);
 
-	blendState_ = Effekseer::CreateUniqueReference(blendState);
+	blend_state_ = Effekseer::CreateUniqueReference(blendState);
 
 	if (vertexLayout->GetElements().size() >= LayoutElementMax)
 	{
 		return false;
 	}
 
-	inputLayout_ = CreateInputLayout(*graphicsDevice_, vertexLayout, shader->GetVertexShaderData().data(), shader->GetVertexShaderData().size());
-	if (inputLayout_ == nullptr)
+	input_layout_ = CreateInputLayout(*graphics_device_, vertexLayout, shader->GetVertexShaderData().data(), shader->GetVertexShaderData().size());
+	if (input_layout_ == nullptr)
 	{
 		return false;
 	}

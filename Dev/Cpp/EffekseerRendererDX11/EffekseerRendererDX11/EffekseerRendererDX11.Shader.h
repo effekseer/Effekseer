@@ -12,18 +12,18 @@ namespace EffekseerRendererDX11
 class Shader : public ::EffekseerRenderer::ShaderBase
 {
 private:
-	Effekseer::Backend::GraphicsDeviceRef graphicsDevice_;
+	Effekseer::Backend::GraphicsDeviceRef graphics_device_;
 	Backend::ShaderRef shader_;
-	Backend::ShaderRef shaderOverride_;
+	Backend::ShaderRef shader_override_;
 
-	Backend::D3D11InputLayoutPtr vertexDeclaration_;
-	ID3D11Buffer* m_constantBufferToVS;
-	ID3D11Buffer* m_constantBufferToPS;
+	Backend::D3D11InputLayoutPtr vertex_declaration_;
+	ID3D11Buffer* constant_buffer_to_vs_ = nullptr;
+	ID3D11Buffer* constant_buffer_to_ps_ = nullptr;
 
-	void* m_vertexConstantBuffer = nullptr;
-	void* m_pixelConstantBuffer = nullptr;
-	int32_t vertexConstantBufferSize_ = 0;
-	int32_t pixelConstantBufferSize_ = 0;
+	void* vertex_constant_buffer_ = nullptr;
+	void* pixel_constant_buffer_ = nullptr;
+	int32_t vertex_constant_buffer_size_ = 0;
+	int32_t pixel_constant_buffer_size_ = 0;
 
 	Shader(Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
 		   Backend::ShaderRef shader,
@@ -40,31 +40,31 @@ public:
 public:
 	void OverrideShader(::Effekseer::Backend::ShaderRef shader) override
 	{
-		shaderOverride_ = shader.DownCast<Backend::Shader>();
+		shader_override_ = shader.DownCast<Backend::Shader>();
 	}
 
 public:
 	ID3D11VertexShader* GetVertexShader() const
 	{
-		if (shaderOverride_ != nullptr)
+		if (shader_override_ != nullptr)
 		{
-			return shaderOverride_->GetVertexShader();
+			return shader_override_->GetVertexShader();
 		}
 
 		return shader_->GetVertexShader();
 	}
 	ID3D11PixelShader* GetPixelShader() const
 	{
-		if (shaderOverride_ != nullptr)
+		if (shader_override_ != nullptr)
 		{
-			return shaderOverride_->GetPixelShader();
+			return shader_override_->GetPixelShader();
 		}
 
 		return shader_->GetPixelShader();
 	}
 	ID3D11InputLayout* GetLayoutInterface() const
 	{
-		return vertexDeclaration_.get();
+		return vertex_declaration_.get();
 	}
 
 	void SetVertexConstantBufferSize(int32_t size);
@@ -72,20 +72,20 @@ public:
 
 	int32_t GetVertexConstantBufferSize() const
 	{
-		return vertexConstantBufferSize_;
+		return vertex_constant_buffer_size_;
 	}
 	int32_t GetPixelConstantBufferSize() const
 	{
-		return pixelConstantBufferSize_;
+		return pixel_constant_buffer_size_;
 	}
 
 	void* GetVertexConstantBuffer()
 	{
-		return m_vertexConstantBuffer;
+		return vertex_constant_buffer_;
 	}
 	void* GetPixelConstantBuffer()
 	{
-		return m_pixelConstantBuffer;
+		return pixel_constant_buffer_;
 	}
 
 	void SetConstantBuffer();

@@ -18,13 +18,13 @@ namespace EffekseerRendererDX11
 class MaterialLoader : public ::Effekseer::MaterialLoader
 {
 private:
-	Effekseer::Backend::GraphicsDeviceRef graphicsDevice_;
-	::Effekseer::FileInterfaceRef fileInterface_ = nullptr;
+	Effekseer::Backend::GraphicsDeviceRef graphics_device_;
+	::Effekseer::FileInterfaceRef file_interface_ = nullptr;
 
-	::Effekseer::MaterialRef LoadAcutually(::Effekseer::MaterialFile& materialFile, ::Effekseer::CompiledMaterialBinary* binary);
+	::Effekseer::MaterialRef LoadActually(::Effekseer::MaterialFile& material_file, ::Effekseer::CompiledMaterialBinary* binary);
 
 public:
-	MaterialLoader(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterfaceRef fileInterface);
+	MaterialLoader(Effekseer::Backend::GraphicsDeviceRef graphics_device, ::Effekseer::FileInterfaceRef fileInterface);
 	virtual ~MaterialLoader();
 
 	::Effekseer::MaterialRef Load(const char16_t* path) override;

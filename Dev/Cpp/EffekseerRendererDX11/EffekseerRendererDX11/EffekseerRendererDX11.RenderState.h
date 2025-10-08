@@ -27,11 +27,11 @@ private:
 	static const int32_t TextureFilterCount = 2;
 	static const int32_t TextureWrapCount = 3;
 
-	RendererImplemented* m_renderer;
-	ID3D11RasterizerState* m_rStates[CulTypeCount];
-	ID3D11DepthStencilState* m_dStates[DepthTestCount][DepthWriteCount];
-	ID3D11BlendState* m_bStates[AlphaTypeCount];
-	ID3D11SamplerState* m_sStates[TextureFilterCount][TextureWrapCount];
+	RendererImplemented* renderer_ = nullptr;
+	ID3D11RasterizerState* rasterizer_states_[CulTypeCount];
+	ID3D11DepthStencilState* depth_stencil_states_[DepthTestCount][DepthWriteCount];
+	ID3D11BlendState* blend_states_[AlphaTypeCount];
+	ID3D11SamplerState* sampler_states_[TextureFilterCount][TextureWrapCount];
 
 public:
 	RenderState(RendererImplemented* renderer, D3D11_COMPARISON_FUNC depthFunc, bool isMSAAEnabled);

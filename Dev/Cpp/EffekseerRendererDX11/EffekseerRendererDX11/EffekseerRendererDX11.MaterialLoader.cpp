@@ -12,13 +12,13 @@
 namespace EffekseerRendererDX11
 {
 
-MaterialLoader::MaterialLoader(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterfaceRef fileInterface)
-	: graphicsDevice_(graphicsDevice)
-	, fileInterface_(fileInterface)
+MaterialLoader::MaterialLoader(Effekseer::Backend::GraphicsDeviceRef graphics_device, ::Effekseer::FileInterfaceRef file_interface)
+	: graphics_device_(graphics_device)
+	, file_interface_(file_interface)
 {
-	if (fileInterface == nullptr)
+	if (file_interface == nullptr)
 	{
-		fileInterface_ = Effekseer::MakeRefPtr<Effekseer::DefaultFileInterface>();
+		file_interface_ = Effekseer::MakeRefPtr<Effekseer::DefaultFileInterface>();
 	}
 }
 
@@ -31,7 +31,7 @@ MaterialLoader ::~MaterialLoader()
 	// code file
 	{
 		auto binaryPath = std::u16string(path) + u"d";
-		auto reader = fileInterface_->OpenRead(binaryPath.c_str());
+		auto reader = file_interface_->OpenRead(binaryPath.c_str());
 
 		if (reader != nullptr)
 		{
@@ -46,7 +46,7 @@ MaterialLoader ::~MaterialLoader()
 
 	// code file
 	{
-		auto reader = fileInterface_->OpenRead(path);
+		auto reader = file_interface_->OpenRead(path);
 
 		if (reader != nullptr)
 		{
@@ -62,7 +62,7 @@ MaterialLoader ::~MaterialLoader()
 	return nullptr;
 }
 
-::Effekseer::MaterialRef MaterialLoader::LoadAcutually(::Effekseer::MaterialFile& materialFile, ::Effekseer::CompiledMaterialBinary* binary)
+::Effekseer::MaterialRef MaterialLoader::LoadActually(::Effekseer::MaterialFile& materialFile, ::Effekseer::CompiledMaterialBinary* binary)
 {
 	if (binary == nullptr)
 	{
@@ -94,10 +94,10 @@ MaterialLoader ::~MaterialLoader()
 
 		if (material->IsSimpleVertex)
 		{
-			auto vl = EffekseerRenderer::GetMaterialSimpleVertexLayout(graphicsDevice_).DownCast<Backend::VertexLayout>();
+			auto vl = EffekseerRenderer::GetMaterialSimpleVertexLayout(graphics_device_).DownCast<Backend::VertexLayout>();
 
-			shader = Shader::Create(graphicsDevice_,
-									graphicsDevice_->CreateShaderFromBinary(
+			shader = Shader::Create(graphics_device_,
+									graphics_device_->CreateShaderFromBinary(
 										(uint8_t*)binary->GetVertexShaderData(shaderTypes[st]),
 										binary->GetVertexShaderSize(shaderTypes[st]),
 										(uint8_t*)binary->GetPixelShaderData(shaderTypes[st]),
@@ -107,10 +107,10 @@ MaterialLoader ::~MaterialLoader()
 		}
 		else
 		{
-			auto vl = EffekseerRenderer::GetMaterialSpriteVertexLayout(graphicsDevice_, static_cast<int32_t>(materialFile.GetCustomData1Count()), static_cast<int32_t>(materialFile.GetCustomData2Count())).DownCast<Backend::VertexLayout>();
+			auto vl = EffekseerRenderer::GetMaterialSpriteVertexLayout(graphics_device_, static_cast<int32_t>(materialFile.GetCustomData1Count()), static_cast<int32_t>(materialFile.GetCustomData2Count())).DownCast<Backend::VertexLayout>();
 
-			shader = Shader::Create(graphicsDevice_,
-									graphicsDevice_->CreateShaderFromBinary(
+			shader = Shader::Create(graphics_device_,
+									graphics_device_->CreateShaderFromBinary(
 										(uint8_t*)binary->GetVertexShaderData(shaderTypes[st]),
 										binary->GetVertexShaderSize(shaderTypes[st]),
 										(uint8_t*)binary->GetPixelShaderData(shaderTypes[st]),
@@ -145,13 +145,13 @@ MaterialLoader ::~MaterialLoader()
 	{
 		auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(materialFile, true, st, 40);
 
-		auto vl = EffekseerRenderer::GetMaterialModelVertexLayout(graphicsDevice_).DownCast<Backend::VertexLayout>();
+		auto vl = EffekseerRenderer::GetMaterialModelVertexLayout(graphics_device_).DownCast<Backend::VertexLayout>();
 
 		// compile
 		std::string log;
 
-		auto shader = Shader::Create(graphicsDevice_,
-									 graphicsDevice_->CreateShaderFromBinary(
+		auto shader = Shader::Create(graphics_device_,
+									 graphics_device_->CreateShaderFromBinary(
 										 (uint8_t*)binary->GetVertexShaderData(shaderTypesModel[st]),
 										 binary->GetVertexShaderSize(shaderTypesModel[st]),
 										 (uint8_t*)binary->GetPixelShaderData(shaderTypesModel[st]),
@@ -216,7 +216,7 @@ MaterialLoader ::~MaterialLoader()
 		}
 		auto binary = compiled.GetBinary(::Effekseer::CompiledMaterialPlatformType::DirectX11);
 
-		return LoadAcutually(materialFile, binary);
+		return LoadActually(materialFile, binary);
 	}
 	else
 	{
@@ -230,7 +230,7 @@ MaterialLoader ::~MaterialLoader()
 		auto compiler = ::Effekseer::CreateUniqueReference(new Effekseer::MaterialCompilerDX11());
 		auto binary = ::Effekseer::CreateUniqueReference(compiler->Compile(&materialFile));
 
-		return LoadAcutually(materialFile, binary.get());
+		return LoadActually(materialFile, binary.get());
 	}
 }
 

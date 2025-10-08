@@ -39,8 +39,8 @@ namespace PS_ParticleRender
 
 } // namespace
 
-GpuParticleSystem::GpuParticleSystem(RendererImplemented* renderer, bool hasRefCount)
-	: DeviceObject(renderer, hasRefCount)
+GpuParticleSystem::GpuParticleSystem(RendererImplemented* renderer, bool has_ref_count)
+	: DeviceObject(renderer, has_ref_count)
 	, EffekseerRenderer::GpuParticleSystem(renderer)
 {
 }

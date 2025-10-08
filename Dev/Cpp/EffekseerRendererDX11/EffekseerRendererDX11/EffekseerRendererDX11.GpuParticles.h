@@ -12,7 +12,7 @@ class GpuParticleSystem
 	  public EffekseerRenderer::GpuParticleSystem
 {
 public:
-	GpuParticleSystem(RendererImplemented* renderer, bool hasRefCount);
+	GpuParticleSystem(RendererImplemented* renderer, bool has_ref_count);
 
 	virtual ~GpuParticleSystem();
 
