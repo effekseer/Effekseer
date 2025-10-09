@@ -70,7 +70,7 @@ using ResourceRef = Effekseer::RefPtr<Resource>;
 class GpuParticleFactory : public Effekseer::GpuParticleFactory
 {
 public:
-	GpuParticleFactory(Effekseer::Backend::GraphicsDeviceRef graphics);
+	GpuParticleFactory(Effekseer::Backend::GraphicsDeviceRef graphics_device);
 	Effekseer::GpuParticles::ResourceRef CreateResource(const Effekseer::GpuParticles::ParamSet& paramSet, const Effekseer::Effect* effect);
 
 protected:
@@ -78,7 +78,7 @@ protected:
 	GpuParticles::PipelineStateKey ToPiplineStateKey(const Effekseer::GpuParticles::ParamSet& paramSet);
 
 private:
-	Effekseer::Backend::GraphicsDeviceRef m_graphics;
+	Effekseer::Backend::GraphicsDeviceRef graphics_device_;
 };
 
 class GpuParticleSystem : public Effekseer::GpuParticleSystem
@@ -185,35 +185,37 @@ protected:
 	static constexpr uint32_t EmitterUnitSize = 16;
 	static constexpr uint32_t ParticleUnitSize = 256;
 
-	Renderer* m_rendererBase;
-	std::mutex m_mutex;
-	std::deque<EmitterID> m_emitterFreeList;
-	std::vector<EmitterID> m_newEmitterIDs;
-	std::vector<Emitter> m_emitters;
-	BlockAllocator m_particleAllocator;
-	BlockAllocator m_trailAllocator;
+	Renderer* renderer_ = nullptr;
+	Effekseer::Backend::GraphicsDeviceRef graphics_device_;
 
-	GpuParticles::UniformBufferRef m_ubufComputeConstants;
-	GpuParticles::UniformBufferRef m_ubufRenderConstants;
+	std::mutex mutex_;
+	std::deque<EmitterID> emitter_free_list_;
+	std::vector<EmitterID> new_emitter_ids_;
+	std::vector<Emitter> emitters_;
+	BlockAllocator particle_allocator_;
+	BlockAllocator trail_allocator_;
 
-	GpuParticles::ComputeBufferRef m_cbufParticles;
-	GpuParticles::ComputeBufferRef m_cbufTrails;
+	GpuParticles::UniformBufferRef ubuf_compute_constants_;
+	GpuParticles::UniformBufferRef ubuf_render_constants_;
 
-	GpuParticles::PipelineStateRef m_pipelineParticleClear;
-	GpuParticles::PipelineStateRef m_pipelineParticleSpawn;
-	GpuParticles::PipelineStateRef m_pipelineParticleUpdate;
-	Effekseer::CustomVector<std::tuple<GpuParticles::PipelineStateKey, GpuParticles::PipelineStateRef>> m_pipelineParticleRenders;
+	GpuParticles::ComputeBufferRef cbuf_particles_;
+	GpuParticles::ComputeBufferRef cbuf_trails_;
 
-	Shaders m_shaders;
+	GpuParticles::PipelineStateRef pipeline_particle_clear_;
+	GpuParticles::PipelineStateRef pipeline_particle_spawn_;
+	GpuParticles::PipelineStateRef pipeline_particle_update_;
+	Effekseer::CustomVector<std::tuple<GpuParticles::PipelineStateKey, GpuParticles::PipelineStateRef>> pipeline_particle_renders_;
 
-	GpuParticles::ComputeBufferRef m_dummyEmitPoints;
-	GpuParticles::TextureRef m_dummyVectorTexture;
-	GpuParticles::TextureRef m_dummyColorTexture;
-	GpuParticles::TextureRef m_dummyNormalTexture;
+	Shaders shaders_;
 
-	GpuParticles::VertexLayoutRef m_vertexLayout;
-	Effekseer::ModelRef m_modelSprite;
-	Effekseer::ModelRef m_modelTrail;
+	GpuParticles::ComputeBufferRef dummy_emit_points_;
+	GpuParticles::TextureRef dummy_vector_texture_;
+	GpuParticles::TextureRef dummy_color_texture_;
+	GpuParticles::TextureRef dummy_normal_texture_;
+
+	GpuParticles::VertexLayoutRef vertex_layout_;
+	Effekseer::ModelRef model_sprite_;
+	Effekseer::ModelRef model_trail_;
 };
 
 }
