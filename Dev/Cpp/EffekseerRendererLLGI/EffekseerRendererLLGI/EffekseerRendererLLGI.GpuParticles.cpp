@@ -21,7 +21,7 @@ bool GpuParticleSystem::InitSystem(const Settings& settings)
 		return false;
 	}
 
-	auto renderer = (RendererImplemented*)m_rendererBase;
+	auto renderer = (RendererImplemented*)renderer_;
 	auto graphics = renderer->GetGraphicsDevice();
 
 	const auto& csClear = Backend::Serialize(renderer->fixedShader_.GpuParticles_Clear_CS);

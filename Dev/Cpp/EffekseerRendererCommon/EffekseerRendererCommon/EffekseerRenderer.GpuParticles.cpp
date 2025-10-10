@@ -68,7 +68,7 @@ Effekseer::ModelRef CreateTrailModel()
 } // namespace
 
 GpuParticleFactory::GpuParticleFactory(Effekseer::Backend::GraphicsDeviceRef graphics)
-	: m_graphics(graphics)
+	: graphics_device_(graphics)
 {
 }
 
@@ -94,7 +94,7 @@ Effekseer::GpuParticles::ResourceRef GpuParticleFactory::CreateResource(const Ef
 		initialData.resize(sizeof(uint32_t) * 8 * 8 * 8);
 		memcpy(initialData.data(), noise.VectorField(), initialData.size());
 
-		resource->noiseTexture = m_graphics->CreateTexture(texParam, initialData);
+		resource->noiseTexture = graphics_device_->CreateTexture(texParam, initialData);
 	}
 
 	if (paramSet.RenderColor.ColorAllType == ColorParamType::FCurve || paramSet.RenderColor.ColorAllType == ColorParamType::Gradient)
@@ -109,12 +109,12 @@ Effekseer::GpuParticles::ResourceRef GpuParticleFactory::CreateResource(const Ef
 		initialData.resize(gradient.Pixels.size() * sizeof(uint32_t));
 		memcpy(initialData.data(), gradient.Pixels.data(), initialData.size());
 
-		resource->gradientTexture = m_graphics->CreateTexture(texParam, initialData);
+		resource->gradientTexture = graphics_device_->CreateTexture(texParam, initialData);
 	}
 
 	// Initialize parameter data
 	GpuParticles::ParameterData paramData = ToParamData(paramSet);
-	resource->paramBuffer = m_graphics->CreateUniformBuffer(sizeof(GpuParticles::ParameterData), &paramData);
+	resource->paramBuffer = graphics_device_->CreateUniformBuffer(sizeof(GpuParticles::ParameterData), &paramData);
 
 	return resource;
 }
@@ -254,8 +254,9 @@ void GpuParticleSystem::BlockAllocator::Deallocate(Block releasingBlock)
 }
 
 GpuParticleSystem::GpuParticleSystem(Renderer* renderer)
-	: m_rendererBase(renderer)
+	: renderer_(renderer)
 {
+	graphics_device_ = renderer_->GetGraphicsDevice();
 }
 
 GpuParticleSystem::~GpuParticleSystem()
@@ -264,76 +265,88 @@ GpuParticleSystem::~GpuParticleSystem()
 
 bool GpuParticleSystem::InitSystem(const Settings& settings)
 {
-	auto graphics = m_rendererBase->GetGraphicsDevice();
-
 	m_settings = settings;
-	m_emitters.resize(settings.EmitterMaxCount);
+	emitters_.resize(settings.EmitterMaxCount);
 
 	for (uint32_t index = 0; index < settings.EmitterMaxCount; index++)
 	{
-		m_emitterFreeList.push_back(index);
-		m_emitters[index].buffer = graphics->CreateUniformBuffer(sizeof(GpuParticles::EmitterData), nullptr);
+		emitter_free_list_.push_back(index);
+		emitters_[index].buffer = graphics_device_->CreateUniformBuffer(sizeof(GpuParticles::EmitterData), nullptr);
 	}
-	m_newEmitterIDs.reserve(settings.EmitterMaxCount);
+	new_emitter_ids_.reserve(settings.EmitterMaxCount);
 
-	m_particleAllocator.Init(settings.ParticleMaxCount, ParticleUnitSize);
-	m_trailAllocator.Init(settings.TrailMaxCount, ParticleUnitSize);
+	particle_allocator_.Init(settings.ParticleMaxCount, ParticleUnitSize);
+	trail_allocator_.Init(settings.TrailMaxCount, ParticleUnitSize);
 
 	GpuParticles::ComputeConstants computeConstants{};
-	m_ubufComputeConstants = graphics->CreateUniformBuffer(sizeof(GpuParticles::ComputeConstants), &computeConstants);
+	ubuf_compute_constants_ = graphics_device_->CreateUniformBuffer(sizeof(GpuParticles::ComputeConstants), &computeConstants);
 
 	GpuParticles::RenderConstants renderConstants{};
-	m_ubufRenderConstants = graphics->CreateUniformBuffer(sizeof(GpuParticles::RenderConstants), &renderConstants);
+	ubuf_render_constants_ = graphics_device_->CreateUniformBuffer(sizeof(GpuParticles::RenderConstants), &renderConstants);
 
-	m_cbufParticles = graphics->CreateComputeBuffer((int32_t)settings.ParticleMaxCount, (int32_t)sizeof(Particle), nullptr, false);
-	m_cbufTrails = graphics->CreateComputeBuffer((int32_t)settings.TrailMaxCount, (int32_t)sizeof(Trail), nullptr, false);
+	cbuf_particles_ = graphics_device_->CreateComputeBuffer((int32_t)settings.ParticleMaxCount, (int32_t)sizeof(Particle), nullptr, false);
+	cbuf_trails_ = graphics_device_->CreateComputeBuffer((int32_t)settings.TrailMaxCount, (int32_t)sizeof(Trail), nullptr, false);
 
-	m_vertexLayout = EffekseerRenderer::GetModelRendererVertexLayout(graphics);
+	vertex_layout_ = EffekseerRenderer::GetModelRendererVertexLayout(graphics_device_);
 
-	m_modelSprite = CreateSpriteModel();
-	m_modelSprite->StoreBufferToGPU(graphics.Get());
+	model_sprite_ = CreateSpriteModel();
+	model_sprite_->StoreBufferToGPU(graphics_device_.Get());
 
-	m_modelTrail = CreateTrailModel();
-	m_modelTrail->StoreBufferToGPU(graphics.Get());
+	model_trail_ = CreateTrailModel();
+	model_trail_->StoreBufferToGPU(graphics_device_.Get());
 
 	{
 		Effekseer::Backend::TextureParameter texParam{};
 		texParam.Format = Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM;
 		texParam.Size = {1, 1, 1};
 		texParam.Dimension = 3;
-		m_dummyVectorTexture = graphics->CreateTexture(texParam, {0, 0, 0, 0});
-	}
-	{
-		GpuParticles::EmitPoint dummyData = {};
-		m_dummyEmitPoints = graphics->CreateComputeBuffer(1, sizeof(dummyData), &dummyData, true);
+		dummy_vector_texture_ = graphics_device_->CreateTexture(texParam, {0, 0, 0, 0});
 	}
 
-	m_dummyColorTexture = m_rendererBase->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);
-	m_dummyNormalTexture = m_rendererBase->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::Normal);
+	{
+		Effekseer::Backend::TextureParameter texParam{};
+		texParam.Format = Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM;
+		texParam.Size = {1, 1, 1};
+		texParam.MipLevelCount = 1;
+		texParam.Dimension = 2;
+		dummy_color_texture_ = graphics_device_->CreateTexture(texParam, {255, 255, 255, 255});
+	}
+
+	{
+		Effekseer::Backend::TextureParameter texParam{};
+		texParam.Format = Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM;
+		texParam.Size = {1, 1, 1};
+		texParam.MipLevelCount = 1;
+		texParam.Dimension = 2;
+		dummy_normal_texture_ = graphics_device_->CreateTexture(texParam, {127, 127, 255, 255});
+	}
+
+	{
+		GpuParticles::EmitPoint dummyData = {};
+		dummy_emit_points_ = graphics_device_->CreateComputeBuffer(1, sizeof(dummyData), &dummyData, true);
+	}
 
 	return true;
 }
 
 void GpuParticleSystem::SetShaders(const Shaders& shaders)
 {
-	m_shaders = shaders;
-
-	auto graphics = m_rendererBase->GetGraphicsDevice();
+	shaders_ = shaders;
 
 	{
 		Effekseer::Backend::PipelineStateParameter params{};
-		params.ShaderPtr = m_shaders.csParticleClear;
-		m_pipelineParticleClear = graphics->CreatePipelineState(params);
+		params.ShaderPtr = shaders_.csParticleClear;
+		pipeline_particle_clear_ = graphics_device_->CreatePipelineState(params);
 	}
 	{
 		Effekseer::Backend::PipelineStateParameter params{};
-		params.ShaderPtr = m_shaders.csParticleSpawn;
-		m_pipelineParticleSpawn = graphics->CreatePipelineState(params);
+		params.ShaderPtr = shaders_.csParticleSpawn;
+		pipeline_particle_spawn_ = graphics_device_->CreatePipelineState(params);
 	}
 	{
 		Effekseer::Backend::PipelineStateParameter params{};
-		params.ShaderPtr = m_shaders.csParticleUpdate;
-		m_pipelineParticleUpdate = graphics->CreatePipelineState(params);
+		params.ShaderPtr = shaders_.csParticleUpdate;
+		pipeline_particle_update_ = graphics_device_->CreatePipelineState(params);
 	}
 }
 
@@ -341,39 +354,36 @@ void GpuParticleSystem::ComputeFrame(const Context& context)
 {
 	using namespace Effekseer::GpuParticles;
 
-	auto renderer = m_rendererBase;
-	auto graphics = renderer->GetGraphicsDevice();
-
 	{
 		GpuParticles::ComputeConstants cdata{};
 		cdata.CoordinateReversed = context.CoordinateReversed;
-		graphics->UpdateUniformBuffer(m_ubufComputeConstants, sizeof(GpuParticles::ComputeConstants), 0, &cdata);
+		graphics_device_->UpdateUniformBuffer(ubuf_compute_constants_, sizeof(GpuParticles::ComputeConstants), 0, &cdata);
 	}
 
-	for (auto emitterID : m_newEmitterIDs)
+	for (auto emitterID : new_emitter_ids_)
 	{
 		// Initialize particle data region
-		auto& emitter = m_emitters[emitterID];
-		graphics->UpdateUniformBuffer(emitter.buffer, sizeof(GpuParticles::EmitterData), 0, &emitter.data);
+		auto& emitter = emitters_[emitterID];
+		graphics_device_->UpdateUniformBuffer(emitter.buffer, sizeof(GpuParticles::EmitterData), 0, &emitter.data);
 
 		GpuParticles::ComputeCommand command;
-		command.PipelineStatePtr = m_pipelineParticleClear;
+		command.PipelineStatePtr = pipeline_particle_clear_;
 
-		command.UniformBufferPtrs[0] = m_ubufComputeConstants;
+		command.UniformBufferPtrs[0] = ubuf_compute_constants_;
 		command.UniformBufferPtrs[1] = emitter.resource->paramBuffer;
 		command.UniformBufferPtrs[2] = emitter.buffer;
-		command.SetComputeBuffer(0, m_cbufParticles, false);
+		command.SetComputeBuffer(0, cbuf_particles_, false);
 
 		command.GroupCount = {(int32_t)emitter.data.ParticleSize / 256, 1, 1};
 		command.ThreadCount = {256, 1, 1};
-		graphics->Dispatch(command);
+		graphics_device_->Dispatch(command);
 	}
-	m_newEmitterIDs.clear();
+	new_emitter_ids_.clear();
 
 	// Spawn particles
-	for (EmitterID emitterID = 0; emitterID < (EmitterID)m_emitters.size(); emitterID++)
+	for (EmitterID emitterID = 0; emitterID < (EmitterID)emitters_.size(); emitterID++)
 	{
-		auto& emitter = m_emitters[emitterID];
+		auto& emitter = emitters_[emitterID];
 		if (emitter.IsAlive())
 		{
 			auto& paramSet = emitter.resource->paramSet;
@@ -418,7 +428,7 @@ void GpuParticleSystem::ComputeFrame(const Context& context)
 							pcgen.Generate(PointCount, 1);
 
 							emitter.resource->emitPointCount = (uint32_t)points.size();
-							emitter.resource->emitPoints = graphics->CreateComputeBuffer(
+							emitter.resource->emitPoints = graphics_device_->CreateComputeBuffer(
 								(int32_t)points.size(), (int32_t)sizeof(GpuParticles::EmitPoint), points.data(), true);
 						}
 					}
@@ -426,22 +436,22 @@ void GpuParticleSystem::ComputeFrame(const Context& context)
 				}
 			}
 
-			graphics->UpdateUniformBuffer(emitter.buffer, sizeof(GpuParticles::EmitterData), 0, &emitter.data);
+			graphics_device_->UpdateUniformBuffer(emitter.buffer, sizeof(GpuParticles::EmitterData), 0, &emitter.data);
 
 			if (emitter.data.NextEmitCount > 0)
 			{
 				GpuParticles::ComputeCommand command;
-				command.PipelineStatePtr = m_pipelineParticleSpawn;
+				command.PipelineStatePtr = pipeline_particle_spawn_;
 
-				command.UniformBufferPtrs[0] = m_ubufComputeConstants;
+				command.UniformBufferPtrs[0] = ubuf_compute_constants_;
 				command.UniformBufferPtrs[1] = emitter.resource->paramBuffer;
 				command.UniformBufferPtrs[2] = emitter.buffer;
-				command.SetComputeBuffer(0, m_cbufParticles, false);
-				command.SetComputeBuffer(1, (emitter.resource->emitPoints) ? emitter.resource->emitPoints : m_dummyEmitPoints, true);
+				command.SetComputeBuffer(0, cbuf_particles_, false);
+				command.SetComputeBuffer(1, (emitter.resource->emitPoints) ? emitter.resource->emitPoints : dummy_emit_points_, true);
 
 				command.GroupCount = {(int32_t)emitter.data.NextEmitCount, 1, 1};
 				command.ThreadCount = {1, 1, 1};
-				graphics->Dispatch(command);
+				graphics_device_->Dispatch(command);
 			}
 			else if (emitter.data.TimeCount >= paramSet.Basic.EmitOffset && GetEmitterParticleCount(emitter, paramSet) == 0)
 			{
@@ -451,29 +461,29 @@ void GpuParticleSystem::ComputeFrame(const Context& context)
 	}
 
 	// Update particles
-	for (EmitterID emitterID = 0; emitterID < (EmitterID)m_emitters.size(); emitterID++)
+	for (EmitterID emitterID = 0; emitterID < (EmitterID)emitters_.size(); emitterID++)
 	{
-		auto& emitter = m_emitters[emitterID];
+		auto& emitter = emitters_[emitterID];
 		if (emitter.IsAlive())
 		{
 			auto& paramSet = emitter.resource->paramSet;
 
 			GpuParticles::ComputeCommand command;
-			command.PipelineStatePtr = m_pipelineParticleUpdate;
+			command.PipelineStatePtr = pipeline_particle_update_;
 
-			command.UniformBufferPtrs[0] = m_ubufComputeConstants;
+			command.UniformBufferPtrs[0] = ubuf_compute_constants_;
 			command.UniformBufferPtrs[1] = emitter.resource->paramBuffer;
 			command.UniformBufferPtrs[2] = emitter.buffer;
-			command.SetComputeBuffer(0, m_cbufParticles, false);
-			command.SetComputeBuffer(1, m_cbufTrails, false);
+			command.SetComputeBuffer(0, cbuf_particles_, false);
+			command.SetComputeBuffer(1, cbuf_trails_, false);
 
-			command.SetTexture(2, (emitter.resource->noiseTexture) ? emitter.resource->noiseTexture : m_dummyVectorTexture, Effekseer::Backend::TextureWrapType::Repeat, Effekseer::Backend::TextureSamplingType::Linear);
-			command.SetTexture(3, (emitter.resource->fieldTexture) ? emitter.resource->fieldTexture : m_dummyVectorTexture, Effekseer::Backend::TextureWrapType::Repeat, Effekseer::Backend::TextureSamplingType::Linear);
-			command.SetTexture(4, (emitter.resource->gradientTexture) ? emitter.resource->gradientTexture : m_dummyColorTexture, Effekseer::Backend::TextureWrapType::Clamp, Effekseer::Backend::TextureSamplingType::Linear);
+			command.SetTexture(2, (emitter.resource->noiseTexture) ? emitter.resource->noiseTexture : dummy_vector_texture_, Effekseer::Backend::TextureWrapType::Repeat, Effekseer::Backend::TextureSamplingType::Linear);
+			command.SetTexture(3, (emitter.resource->fieldTexture) ? emitter.resource->fieldTexture : dummy_vector_texture_, Effekseer::Backend::TextureWrapType::Repeat, Effekseer::Backend::TextureSamplingType::Linear);
+			command.SetTexture(4, (emitter.resource->gradientTexture) ? emitter.resource->gradientTexture : dummy_color_texture_, Effekseer::Backend::TextureWrapType::Clamp, Effekseer::Backend::TextureSamplingType::Linear);
 
 			command.GroupCount = {(int32_t)emitter.data.ParticleSize / 256, 1, 1};
 			command.ThreadCount = {256, 1, 1};
-			graphics->Dispatch(command);
+			graphics_device_->Dispatch(command);
 
 			if (emitter.data.TrailSize > 0)
 			{
@@ -487,8 +497,7 @@ void GpuParticleSystem::RenderFrame(const Context& context)
 {
 	using namespace Effekseer::GpuParticles;
 
-	auto renderer = m_rendererBase;
-	auto graphics = renderer->GetGraphicsDevice();
+	auto renderer = renderer_;
 
 	// Update constant buffer
 	{
@@ -517,7 +526,7 @@ void GpuParticleSystem::RenderFrame(const Context& context)
 		cdata.LightDir = normalize(renderer->GetLightDirection());
 		cdata.LightColor = renderer->GetLightColor().ToFloat4();
 		cdata.LightAmbient = renderer->GetLightAmbientColor().ToFloat4();
-		graphics->UpdateUniformBuffer(m_ubufRenderConstants, sizeof(GpuParticles::RenderConstants), 0, &cdata);
+		graphics_device_->UpdateUniformBuffer(ubuf_render_constants_, sizeof(GpuParticles::RenderConstants), 0, &cdata);
 	}
 
 	auto toSamplingType = [](uint8_t filterType)
@@ -529,9 +538,9 @@ void GpuParticleSystem::RenderFrame(const Context& context)
 		return (static_cast<Effekseer::TextureWrapType>(wrapType) == Effekseer::TextureWrapType::Repeat) ? Effekseer::Backend::TextureWrapType::Repeat : Effekseer::Backend::TextureWrapType::Clamp;
 	};
 
-	for (EmitterID emitterID = 0; emitterID < (EmitterID)m_emitters.size(); emitterID++)
+	for (EmitterID emitterID = 0; emitterID < (EmitterID)emitters_.size(); emitterID++)
 	{
-		auto& emitter = m_emitters[emitterID];
+		auto& emitter = emitters_[emitterID];
 		if (emitter.IsAlive())
 		{
 			auto effect = emitter.resource->effect;
@@ -540,12 +549,12 @@ void GpuParticleSystem::RenderFrame(const Context& context)
 			Effekseer::Backend::DrawParameter drawParams;
 			drawParams.PipelineStatePtr = GetOrCreatePipelineState(emitter.resource->piplineStateKey);
 
-			drawParams.VertexUniformBufferPtrs[0] = drawParams.PixelUniformBufferPtrs[0] = m_ubufRenderConstants;
+			drawParams.VertexUniformBufferPtrs[0] = drawParams.PixelUniformBufferPtrs[0] = ubuf_render_constants_;
 			drawParams.VertexUniformBufferPtrs[1] = drawParams.PixelUniformBufferPtrs[1] = emitter.resource->paramBuffer;
 			drawParams.VertexUniformBufferPtrs[2] = emitter.buffer;
 
-			drawParams.SetComputeBuffer(0, m_cbufParticles);
-			drawParams.SetComputeBuffer(1, m_cbufTrails);
+			drawParams.SetComputeBuffer(0, cbuf_particles_);
+			drawParams.SetComputeBuffer(1, cbuf_trails_);
 
 			auto setTexture = [&](int32_t slot, Effekseer::TextureRef texture, GpuParticles::TextureRef defaultTexture)
 			{
@@ -555,22 +564,22 @@ void GpuParticleSystem::RenderFrame(const Context& context)
 			if (paramSet.RenderMaterial.Material == MaterialType::Unlit)
 			{
 				auto colorTexture = effect->GetColorImage(paramSet.RenderMaterial.TextureIndexes[0]);
-				setTexture(0, colorTexture, m_dummyColorTexture);
-				setTexture(1, nullptr, m_dummyNormalTexture);
+				setTexture(0, colorTexture, dummy_color_texture_);
+				setTexture(1, nullptr, dummy_normal_texture_);
 			}
 			else if (paramSet.RenderMaterial.Material == MaterialType::Lighting)
 			{
 				auto colorTexture = effect->GetColorImage(paramSet.RenderMaterial.TextureIndexes[0]);
 				auto normalTexture = effect->GetNormalImage(paramSet.RenderMaterial.TextureIndexes[1]);
-				setTexture(0, colorTexture, m_dummyColorTexture);
-				setTexture(1, normalTexture, m_dummyNormalTexture);
+				setTexture(0, colorTexture, dummy_color_texture_);
+				setTexture(1, normalTexture, dummy_normal_texture_);
 			}
 			else
 			{
 				for (int32_t slot = 0; slot < 4; slot++)
 				{
 					auto texture = effect->GetColorImage(paramSet.RenderMaterial.TextureIndexes[slot]);
-					setTexture(slot, texture, m_dummyColorTexture);
+					setTexture(slot, texture, dummy_color_texture_);
 				}
 			}
 
@@ -578,13 +587,13 @@ void GpuParticleSystem::RenderFrame(const Context& context)
 			switch (paramSet.RenderShape.Type)
 			{
 			case RenderShapeT::Sprite:
-				model = m_modelSprite;
+				model = model_sprite_;
 				break;
 			case RenderShapeT::Model:
 				model = effect->GetModel(paramSet.RenderShape.Data);
 				break;
 			case RenderShapeT::Trail:
-				model = m_modelTrail;
+				model = model_trail_;
 				break;
 			}
 
@@ -592,7 +601,7 @@ void GpuParticleSystem::RenderFrame(const Context& context)
 			{
 				if (!model->GetIsBufferStoredOnGPU())
 				{
-					model->StoreBufferToGPU(graphics.Get());
+					model->StoreBufferToGPU(graphics_device_.Get());
 				}
 
 				int32_t modelFrameCount = model->GetFrameCount();
@@ -612,7 +621,7 @@ void GpuParticleSystem::RenderFrame(const Context& context)
 					}
 					drawParams.InstanceCount = emitter.data.ParticleSize;
 
-					graphics->Draw(drawParams);
+					graphics_device_->Draw(drawParams);
 				}
 			}
 		}
@@ -623,21 +632,21 @@ GpuParticleSystem::EmitterID GpuParticleSystem::NewEmitter(Effekseer::GpuParticl
 {
 	using namespace Effekseer::GpuParticles;
 
-	std::lock_guard<std::mutex> lock(m_mutex);
+	std::lock_guard<std::mutex> lock(mutex_);
 
-	if (m_emitterFreeList.size() == 0)
+	if (emitter_free_list_.size() == 0)
 	{
 		return InvalidID;
 	}
 
-	EmitterID emitterID = m_emitterFreeList.front();
+	EmitterID emitterID = emitter_free_list_.front();
 
 	auto& paramSet = resource->GetParamSet();
 	uint32_t particlesMaxCount = (uint32_t)(round((double)paramSet.Basic.LifeTime[0] * paramSet.Basic.EmitPerFrame));
 	particlesMaxCount = std::min(particlesMaxCount, (uint32_t)paramSet.Basic.EmitCount);
 	particlesMaxCount = RoundUp(particlesMaxCount, ParticleUnitSize);
 
-	Emitter& emitter = m_emitters[emitterID];
+	Emitter& emitter = emitters_[emitterID];
 	emitter.resource = resource.DownCast<GpuParticles::Resource>();
 	emitter.instanceGlobal = instanceGlobal;
 	emitter.data = {};
@@ -648,7 +657,7 @@ GpuParticleSystem::EmitterID GpuParticleSystem::NewEmitter(Effekseer::GpuParticl
 		float4{0.0f, 0.0f, 1.0f, 0.0f}};
 	emitter.SetFlagBits(true, false);
 
-	Block particleBlock = m_particleAllocator.Allocate(particlesMaxCount);
+	Block particleBlock = particle_allocator_.Allocate(particlesMaxCount);
 	if (particleBlock.size == 0)
 	{
 		return InvalidID;
@@ -658,56 +667,56 @@ GpuParticleSystem::EmitterID GpuParticleSystem::NewEmitter(Effekseer::GpuParticl
 
 	if (paramSet.RenderShape.Type == RenderShapeT::Trail)
 	{
-		Block trailBlock = m_trailAllocator.Allocate(particlesMaxCount * paramSet.RenderShape.Data);
+		Block trailBlock = trail_allocator_.Allocate(particlesMaxCount * paramSet.RenderShape.Data);
 		if (trailBlock.size == 0)
 		{
-			m_particleAllocator.Deallocate(particleBlock);
+			particle_allocator_.Deallocate(particleBlock);
 			return InvalidID;
 		}
 		emitter.data.TrailHead = trailBlock.offset;
 		emitter.data.TrailSize = trailBlock.size;
 	}
 
-	m_newEmitterIDs.push_back(emitterID);
-	m_emitterFreeList.pop_front();
+	new_emitter_ids_.push_back(emitterID);
+	emitter_free_list_.pop_front();
 
 	return emitterID;
 }
 
 void GpuParticleSystem::FreeEmitter(EmitterID emitterID)
 {
-	assert(emitterID >= 0 && emitterID < m_emitters.size());
+	assert(emitterID >= 0 && emitterID < emitters_.size());
 
-	Emitter& emitter = m_emitters[emitterID];
+	Emitter& emitter = emitters_[emitterID];
 	emitter.resource = nullptr;
 	emitter.instanceGlobal = nullptr;
 	emitter.data.FlagBits = 0;
 
-	m_particleAllocator.Deallocate({emitter.data.ParticleHead, emitter.data.ParticleSize});
-	m_trailAllocator.Deallocate({emitter.data.TrailHead, emitter.data.TrailSize});
-	m_emitterFreeList.push_front(emitterID);
+	particle_allocator_.Deallocate({emitter.data.ParticleHead, emitter.data.ParticleSize});
+	trail_allocator_.Deallocate({emitter.data.TrailHead, emitter.data.TrailSize});
+	emitter_free_list_.push_front(emitterID);
 }
 
 void GpuParticleSystem::StartEmit(EmitterID emitterID)
 {
-	assert(emitterID >= 0 && emitterID < m_emitters.size());
-	Emitter& emitter = m_emitters[emitterID];
+	assert(emitterID >= 0 && emitterID < emitters_.size());
+	Emitter& emitter = emitters_[emitterID];
 	emitter.SetEmitting(true);
 	emitter.data.TimeCount = 0.0f;
 }
 
 void GpuParticleSystem::StopEmit(EmitterID emitterID)
 {
-	assert(emitterID >= 0 && emitterID < m_emitters.size());
-	Emitter& emitter = m_emitters[emitterID];
+	assert(emitterID >= 0 && emitterID < emitters_.size());
+	Emitter& emitter = emitters_[emitterID];
 	emitter.SetEmitting(false);
 	emitter.data.TimeStopped = emitter.data.TimeCount;
 }
 
 void GpuParticleSystem::SetRandomSeed(EmitterID emitterID, uint32_t seed)
 {
-	assert(emitterID >= 0 && emitterID < m_emitters.size());
-	Emitter& emitter = m_emitters[emitterID];
+	assert(emitterID >= 0 && emitterID < emitters_.size());
+	Emitter& emitter = emitters_[emitterID];
 	emitter.data.Seed = seed;
 }
 
@@ -715,8 +724,8 @@ void GpuParticleSystem::SetTransform(EmitterID emitterID, const Effekseer::Matri
 {
 	using namespace Effekseer::GpuParticles;
 
-	assert(emitterID >= 0 && emitterID < m_emitters.size());
-	Emitter& emitter = m_emitters[emitterID];
+	assert(emitterID >= 0 && emitterID < emitters_.size());
+	Emitter& emitter = emitters_[emitterID];
 	emitter.data.Transform = {
 		float4{transform.Value[0][0], transform.Value[1][0], transform.Value[2][0], transform.Value[3][0]},
 		float4{transform.Value[0][1], transform.Value[1][1], transform.Value[2][1], transform.Value[3][1]},
@@ -725,16 +734,16 @@ void GpuParticleSystem::SetTransform(EmitterID emitterID, const Effekseer::Matri
 
 void GpuParticleSystem::SetColor(EmitterID emitterID, Effekseer::Color color)
 {
-	assert(emitterID >= 0 && emitterID < m_emitters.size());
-	Emitter& emitter = m_emitters[emitterID];
+	assert(emitterID >= 0 && emitterID < emitters_.size());
+	Emitter& emitter = emitters_[emitterID];
 	emitter.data.Color = *reinterpret_cast<uint32_t*>(&color);
 }
 
 void GpuParticleSystem::SetDeltaTime(Effekseer::InstanceGlobal* instanceGlobal, float deltaTime)
 {
-	for (EmitterID emitterID = 0; emitterID < (EmitterID)m_emitters.size(); emitterID++)
+	for (EmitterID emitterID = 0; emitterID < (EmitterID)emitters_.size(); emitterID++)
 	{
-		auto& emitter = m_emitters[emitterID];
+		auto& emitter = emitters_[emitterID];
 		if (emitter.IsAlive() && emitter.instanceGlobal == instanceGlobal)
 		{
 			emitter.data.DeltaTime = deltaTime;
@@ -744,11 +753,11 @@ void GpuParticleSystem::SetDeltaTime(Effekseer::InstanceGlobal* instanceGlobal, 
 
 void GpuParticleSystem::KillParticles(Effekseer::InstanceGlobal* instanceGlobal)
 {
-	std::lock_guard<std::mutex> lock(m_mutex);
+	std::lock_guard<std::mutex> lock(mutex_);
 
-	for (EmitterID emitterID = 0; emitterID < (EmitterID)m_emitters.size(); emitterID++)
+	for (EmitterID emitterID = 0; emitterID < (EmitterID)emitters_.size(); emitterID++)
 	{
-		auto& emitter = m_emitters[emitterID];
+		auto& emitter = emitters_[emitterID];
 		if (emitter.IsAlive() && emitter.instanceGlobal == instanceGlobal)
 		{
 			FreeEmitter(emitterID);
@@ -760,9 +769,9 @@ int32_t GpuParticleSystem::GetParticleCount(Effekseer::InstanceGlobal* instanceG
 {
 	int32_t count = 0;
 
-	for (EmitterID emitterID = 0; emitterID < (EmitterID)m_emitters.size(); emitterID++)
+	for (EmitterID emitterID = 0; emitterID < (EmitterID)emitters_.size(); emitterID++)
 	{
-		auto& emitter = m_emitters[emitterID];
+		auto& emitter = emitters_[emitterID];
 		if (emitter.IsAlive() && emitter.instanceGlobal == instanceGlobal)
 		{
 			count += GetEmitterParticleCount(emitter, emitter.resource->paramSet);
@@ -799,7 +808,7 @@ GpuParticles::PipelineStateRef GpuParticleSystem::GetOrCreatePipelineState(GpuPa
 {
 	using namespace Effekseer::Backend;
 
-	for (auto& [cachedKey, cachedPipeline] : m_pipelineParticleRenders)
+	for (auto& [cachedKey, cachedPipeline] : pipeline_particle_renders_)
 	{
 		if (cachedKey.Data == key.Data)
 		{
@@ -865,12 +874,12 @@ GpuParticles::PipelineStateRef GpuParticleSystem::GetOrCreatePipelineState(GpuPa
 
 	pipParams.IsDepthTestEnabled = key.ZTest > 0;
 	pipParams.IsDepthWriteEnabled = key.ZWrite > 0;
-	pipParams.ShaderPtr = m_shaders.rsParticleRender;
-	pipParams.VertexLayoutPtr = m_vertexLayout;
+	pipParams.ShaderPtr = shaders_.rsParticleRender;
+	pipParams.VertexLayoutPtr = vertex_layout_;
 
-	GpuParticles::PipelineStateRef pipeline = m_rendererBase->GetGraphicsDevice()->CreatePipelineState(pipParams);
+	GpuParticles::PipelineStateRef pipeline = graphics_device_->CreatePipelineState(pipParams);
 
-	m_pipelineParticleRenders.emplace_back(key, pipeline);
+	pipeline_particle_renders_.emplace_back(key, pipeline);
 
 	return pipeline;
 }
