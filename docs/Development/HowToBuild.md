@@ -125,7 +125,7 @@ the results.
 
 * Windows
 
-Visual Studio 2019 is required.
+Visual Studio 2022 is required.
 
 Please read ``` .github/workflows/build.yml ```
 
