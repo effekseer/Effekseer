@@ -20,6 +20,12 @@ void CollisionsParameter::Load(unsigned char*& pos, int version)
 		memcpy(&Height, pos, sizeof(float));
 		pos += sizeof(float);
 
+		if (version >= Version18Alpha2)
+		{
+			memcpy(&Friction, pos, sizeof(float));
+			pos += sizeof(float);
+		}
+
 		memcpy(&WorldCoordinateSyatem, pos, sizeof(int));
 		pos += sizeof(int);
 	}
@@ -51,11 +57,27 @@ std::tuple<SIMD::Vec3f, SIMD::Vec3f> CollisionsFunctions::Update(
 
 	const auto height = parameter.Height * magnification;
 
-	if (next_position.GetY() < height && current_position.GetY() >= height)
+if (next_position.GetY() < height && current_position.GetY() >= height)
 	{
 		auto diff = next_position - current_position;
 		auto pos_diff = diff * (current_position.GetY() - height) / diff.GetY();
-		return {SIMD::Vec3f(0, -velocity_global.GetY() * (1.0f + parameter.Bounce), 0), pos_diff};
+
+		float friction = parameter.Friction;
+		if (friction < 0.0f)
+		{
+			friction = 0.0f;
+		}
+		if (friction > 1.0f)
+		{
+			friction = 1.0f;
+		}
+
+		SIMD::Vec3f velocity_change(
+			-velocity_global.GetX() * friction,
+			-velocity_global.GetY() * (1.0f + parameter.Bounce),
+			-velocity_global.GetZ() * friction);
+
+		return {velocity_change, pos_diff};
 	}
 	else
 	{
