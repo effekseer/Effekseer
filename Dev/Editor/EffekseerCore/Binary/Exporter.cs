@@ -29,7 +29,8 @@ namespace Effekseer.Binary
 		Ver17Alpha6 = 1705,
 		Ver17 = 1710,
 		Ver18Alpha1 = 1800,
-		Latest = Ver18Alpha1,
+		Ver18Alpha2 = 1801,
+		Latest = Ver18Alpha2,
 	}
 
 	public class Exporter
@@ -1065,6 +1066,7 @@ namespace Effekseer.Binary
 					node_data.Add(BitConverter.GetBytes(n.CollisionsValues.IsEnabled.Value ? 1 : 0));
 					node_data.Add(BitConverter.GetBytes(n.CollisionsValues.Bounce.Value));
 					node_data.Add(BitConverter.GetBytes(n.CollisionsValues.Height.Value));
+					node_data.Add(BitConverter.GetBytes(n.CollisionsValues.Friction.Value));
 					node_data.Add(BitConverter.GetBytes((int)n.CollisionsValues.WorldCoordinateSyatem.Value));
 				}
 

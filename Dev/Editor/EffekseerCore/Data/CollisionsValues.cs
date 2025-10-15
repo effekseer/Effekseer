@@ -24,6 +24,9 @@ namespace Effekseer.Data
 		[Key(key = "Collisions_Height")]
 		public Value.Float Height { get; set; } = new Value.Float(0.0f);
 
+		[Key(key = "Collisions_Friction")]
+		public Value.Float Friction { get; set; } = new Value.Float(0.0f);
+
 		[Key(key = "Collisions_CoordinateSystem")]
 		public Value.Enum<WorldCoordinateSyatemType> WorldCoordinateSyatem { get; set; } = new Value.Enum<WorldCoordinateSyatemType>();
 	}

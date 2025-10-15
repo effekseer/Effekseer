@@ -21,6 +21,7 @@ struct CollisionsParameter
 	bool IsEnabled = false;
 	float Bounce = 1.0f;
 	float Height = 0.0f;
+	float Friction = 0.0f;
 	WorldCoordinateSyatemType WorldCoordinateSyatem = WorldCoordinateSyatemType::Local;
 	void Load(unsigned char*& pos, int version);
 };
