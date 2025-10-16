@@ -132,7 +132,6 @@ namespace Effekseer.Binary
 			AddPartialColor();
 			AddPosition();
 
-
 			void AddPartialColor()
 			{
 				data.Add(param.Color);

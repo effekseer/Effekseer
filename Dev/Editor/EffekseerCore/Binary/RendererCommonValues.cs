@@ -99,6 +99,8 @@ namespace Effekseer.Binary
 				AddUvBytes(advanceValue, data, texInfoRepo);
 			}
 
+			data.Add(BitConverter.GetBytes(value.UVFlipHorizontalProbability.Value));
+
 			// Inheritance
 			data.Add(value.ColorInheritType.GetValueAsInt().GetBytes());
 

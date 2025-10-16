@@ -31,6 +31,7 @@ BRS_UV3_Name,UV(UV Distorsión de Textura)
 BRS_UV4_Name,UV(Blend Textura)
 BRS_UV5_Name,UV(Blend Textura Alpha)
 BRS_UV6_Name,UV(Blend UV Distorsión de Textura)
+BRS_UVFlipHorizontalProbability_Name,Probabilidad de volteo horizontal de UV
 BRS_UVTextureReferenceTarget_Name,Referenciado
 BRS_ColorInheritType_Name,Heredar Color
 BRS_ColorInheritType_Desc,Tipo de herencia de color para este nodo sobre su nodo -padre-

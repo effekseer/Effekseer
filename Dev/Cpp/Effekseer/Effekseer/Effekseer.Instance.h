@@ -183,6 +183,8 @@ public:
 
 	CollisionsState collisionState_;
 
+	bool isUVFlippedH_ = false;
+
 	int32_t m_gpuEmitterID = -1;
 
 	Instance(ManagerImplemented* pManager, EffectNodeImplemented* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup);
@@ -246,6 +248,16 @@ public:
 		return m_randObject;
 	}
 
+	void SetUVFlippedH(bool isFlipped)
+	{
+		isUVFlippedH_ = isFlipped;
+	}
+
+	bool IsUVFlippedH() const
+	{
+		return isUVFlippedH_;
+	}
+
 	bool AreChildrenActive() const;
 
 	float GetFlipbookIndexAndNextRate() const;
@@ -260,6 +272,8 @@ private:
 	float GetFlipbookIndexAndNextRate(const UVAnimationType& UVType, const UVParameter& UV, const InstanceUVState& data) const;
 
 	float GetUVTime() const;
+
+	RectF ApplyUVHorizontalFlip(RectF uv) const;
 
 	EffectNode* GetEffectNode() const
 	{

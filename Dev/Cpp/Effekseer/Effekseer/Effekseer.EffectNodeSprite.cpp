@@ -267,6 +267,8 @@ void EffectNodeSprite::InitializeRenderedInstance(Instance& instance, InstanceGr
 		instValues._color = instValues._originalColor;
 	}
 
+	ApplyRendererCommonUVHorizontalFlip(instance, rand);
+
 	instance.ColorInheritance = instValues._color;
 }
 

@@ -363,6 +363,20 @@ void EffectNodeImplemented::CalcCustomData(const Instance* instance, std::array<
 	}
 }
 
+void EffectNodeImplemented::ApplyRendererCommonUVHorizontalFlip(Instance& instance, IRandObject& rand) const
+{
+	bool isFlipped = false;
+
+	const int32_t probability = RendererCommon.UVHorizontalFlipProbability;
+	if (probability > 0)
+	{
+		const auto threshold = static_cast<float>(probability);
+		isFlipped = rand.GetRand() * 100.0f < threshold;
+	}
+
+	instance.SetUVFlippedH(isFlipped);
+}
+
 bool EffectNodeImplemented::Traverse(const std::function<bool(EffectNodeImplemented*)>& visitor)
 {
 	if (!visitor(this))
