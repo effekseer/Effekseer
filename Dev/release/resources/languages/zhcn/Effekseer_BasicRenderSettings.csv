@@ -24,6 +24,7 @@ BRS_UV3_Name,UV（UV扭曲纹理）
 BRS_UV4_Name,UV（混合纹理）
 BRS_UV5_Name,UV（混合Alpha纹理）
 BRS_UV6_Name,UV（混合UV扭曲纹理）
+BRS_UVFlipHorizontalProbability_Name,UV水平翻转概率
 BRS_UVTextureReferenceTarget_Name,引用
 BRS_ColorInheritType_Name,继承颜色
 BRS_ColorInheritType_Desc,实例是否复制其父节点的颜色

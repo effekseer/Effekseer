@@ -191,6 +191,8 @@ void EffectNodeModel::InitializeRenderedInstance(Instance& instance, InstanceGro
 	AllTypeColorFunctions::Init(instValues.allColorValues, rand, AllColor);
 	instValues._original = AllTypeColorFunctions::Calculate(instValues.allColorValues, AllColor, instance.m_LivingTime, instance.m_LivedTime);
 
+	ApplyRendererCommonUVHorizontalFlip(instance, rand);
+
 	// TODO refactor
 	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
 	{

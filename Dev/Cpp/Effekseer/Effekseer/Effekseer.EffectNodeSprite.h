@@ -83,8 +83,6 @@ public:
 		{
 
 		} positionValues;
-
-		bool IsUVFlippedH;
 	};
 
 	SpriteRenderer::NodeParameter nodeParam_;
@@ -97,7 +95,6 @@ public:
 
 	SpriteColorParameter SpriteColor;
 	SpritePositionParameter SpritePosition;
-	int32_t SpriteHorizontalFlipProbability = 0;
 
 	EffectNodeSprite(Effect* effect, unsigned char*& pos)
 		: EffectNodeImplemented(effect, pos)

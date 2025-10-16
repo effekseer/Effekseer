@@ -975,20 +975,33 @@ void Instance::Kill()
 
 RectF Instance::GetUV(const int32_t index) const
 {
-	return UVFunctions::GetUV(
-		uvAnimationData_[index],
-		m_pEffectNode->RendererCommon.UVs[index],
-		m_LivingTime,
-		m_LivedTime);
+	return ApplyUVHorizontalFlip(
+		UVFunctions::GetUV(
+			uvAnimationData_[index],
+			m_pEffectNode->RendererCommon.UVs[index],
+			m_LivingTime,
+			m_LivedTime));
 }
 
 RectF Instance::GetUV(const int32_t index, float livingTime, float livedTime) const
 {
-	return UVFunctions::GetUV(
-		uvAnimationData_[index],
-		m_pEffectNode->RendererCommon.UVs[index],
-		livingTime,
-		livedTime);
+	return ApplyUVHorizontalFlip(
+		UVFunctions::GetUV(
+			uvAnimationData_[index],
+			m_pEffectNode->RendererCommon.UVs[index],
+			livingTime,
+			livedTime));
+}
+
+RectF Instance::ApplyUVHorizontalFlip(RectF uv) const
+{
+	if (isUVFlippedH_)
+	{
+		uv.X += uv.Width;
+		uv.Width = -uv.Width;
+	}
+
+	return uv;
 }
 
 std::array<float, 4> Instance::GetCustomData(int32_t index) const

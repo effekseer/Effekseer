@@ -81,7 +81,6 @@ RS_Sprite_Position_Fixed_LL_Name,左下角的坐标
 RS_Sprite_Position_Fixed_LR_Name,右下角的坐标
 RS_Sprite_Position_Fixed_UL_Name,左上角的坐标
 RS_Sprite_Position_Fixed_UR_Name,右上角的坐标
-RS_Sprite_FlipHorizontalProbability_Name,水平翻转概率
 ,
 RS_Ribbon_ViewpointDependent_Name,跟随视点
 RS_Ribbon_ColorAll_Name,整体颜色

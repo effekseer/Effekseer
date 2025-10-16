@@ -334,6 +334,8 @@ void EffectNodeRing::InitializeRenderedInstance(Instance& instance, InstanceGrou
 {
 	IRandObject* rand = &instance.GetRandObject();
 
+	ApplyRendererCommonUVHorizontalFlip(instance, *rand);
+
 	InstanceValues& instValues = instance.rendererValues.ring;
 
 	InitializeSingleValues(Shape.StartingAngle, instValues.startingAngle, manager, rand);

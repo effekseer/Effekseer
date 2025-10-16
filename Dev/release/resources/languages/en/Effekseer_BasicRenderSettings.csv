@@ -25,6 +25,7 @@ BRS_UV3_Name,UV(UV Distortion Texture)
 BRS_UV4_Name,UV(Blend Texture)
 BRS_UV5_Name,UV(Blend Alpha Texture)
 BRS_UV6_Name,UV(Blend UV Distortion Texture)
+BRS_UVFlipHorizontalProbability_Name,UV Horizontal Flip Probability
 BRS_UVTextureReferenceTarget_Name,Referenced
 BRS_ColorInheritType_Name,Inherit Color
 BRS_ColorInheritType_Desc,When this instance should copy its parent node's color

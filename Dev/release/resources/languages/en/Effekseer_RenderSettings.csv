@@ -81,7 +81,6 @@ RS_Sprite_Position_Fixed_LL_Name,Lower-Left Coord
 RS_Sprite_Position_Fixed_LR_Name,Lower-Right Coord
 RS_Sprite_Position_Fixed_UL_Name,Upper-Left Coord
 RS_Sprite_Position_Fixed_UR_Name,Upper-Right Coord
-RS_Sprite_FlipHorizontalProbability_Name,Horizontal Flip Probability
 ,
 RS_Ribbon_ViewpointDependent_Name,Follow Viewpoint
 RS_Ribbon_ColorAll_Name,Color All

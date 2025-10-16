@@ -83,7 +83,6 @@ RS_Sprite_Position_Fixed_LL_Name,Inferior-Coord. izquierda
 RS_Sprite_Position_Fixed_LR_Name,Inferior-Coord. derecha
 RS_Sprite_Position_Fixed_UL_Name,Superior-Coord. izquierda
 RS_Sprite_Position_Fixed_UR_Name,Superior-Coord. derecha
-RS_Sprite_FlipHorizontalProbability_Name,Probabilidad de volteo horizontal
 ,
 RS_Ribbon_ViewpointDependent_Name,Seguir punto de vista
 RS_Ribbon_ColorAll_Name,Todo color

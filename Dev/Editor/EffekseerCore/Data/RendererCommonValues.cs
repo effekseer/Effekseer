@@ -912,6 +912,9 @@ namespace Effekseer.Data
 			private set;
 		}
 
+		[Key(key = "BRS_UVFlipHorizontalProbability")]
+		public Value.Int UVFlipHorizontalProbability { get; private set; } = new Value.Int(0, 100, 0);
+
 		[Selector(ID = 2)]
 		[Key(key = "BRS_UV")]
 		public Value.Enum<UVType> UV

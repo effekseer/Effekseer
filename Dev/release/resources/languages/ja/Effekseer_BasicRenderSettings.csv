@@ -24,6 +24,7 @@ BRS_UV3_Name,UV(UV歪み画像)
 BRS_UV4_Name,UV(ブレンド画像)
 BRS_UV5_Name,UV(ブレンドアルファ画像)
 BRS_UV6_Name,UV(ブレンドUV歪み画像)
+BRS_UVFlipHorizontalProbability_Name,UV左右反転確率
 BRS_UVTextureReferenceTarget_Name,参照画像
 BRS_ColorInheritType_Name,色への影響
 BRS_ColorInheritType_Desc,親ノードからの色への影響

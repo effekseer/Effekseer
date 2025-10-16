@@ -307,6 +307,8 @@ void EffectNodeRibbon::InitializeRenderedInstance(Instance& instance, InstanceGr
 	AllTypeColorFunctions::Init(instValues.allColorValues, rand, RibbonAllColor);
 	instValues._original = AllTypeColorFunctions::Calculate(instValues.allColorValues, RibbonAllColor, instance.m_LivingTime, instance.m_LivedTime);
 
+	ApplyRendererCommonUVHorizontalFlip(instance, rand);
+
 	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
 	{
 		instValues._color = Color::Mul(instValues._original, instance.ColorParent);

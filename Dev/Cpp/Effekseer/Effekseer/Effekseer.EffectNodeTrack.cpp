@@ -238,6 +238,9 @@ void EffectNodeTrack::InitializeRenderedInstance(Instance& instance, InstanceGro
 {
 	auto& instValues = instanceGroup.rendererValues.track;
 
+	IRandObject& rand = instance.GetRandObject();
+	ApplyRendererCommonUVHorizontalFlip(instance, rand);
+
 	// Calculate only center
 	int32_t time = (int32_t)instance.m_LivingTime;
 	int32_t livedTime = (int32_t)instance.m_LivedTime;

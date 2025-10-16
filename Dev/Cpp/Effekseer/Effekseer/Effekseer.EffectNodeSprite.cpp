@@ -105,16 +105,6 @@ void EffectNodeSprite::LoadRendererParameter(unsigned char*& pos, const SettingR
 		pos += sizeof(Vector2D) * 4;
 	}
 
-	if (m_effect->GetVersion() >= Version18Alpha2)
-	{
-		memcpy(&SpriteHorizontalFlipProbability, pos, sizeof(SpriteHorizontalFlipProbability));
-		pos += sizeof(SpriteHorizontalFlipProbability);
-	}
-	else
-	{
-		SpriteHorizontalFlipProbability = 0;
-	}
-
 	if (m_effect->GetVersion() >= 3)
 	{
 	}
@@ -223,25 +213,12 @@ void EffectNodeSprite::Rendering(const Instance& instance, const Instance* next_
 			instanceParameter.Positions[3] = SpritePosition.fixed.ur;
 		}
 
-		const bool isHorizontalFlipped = instValues.IsUVFlippedH;
-		auto applyHorizontalFlip = [isHorizontalFlipped](RectF uv) -> RectF
-		{
-			if (!isHorizontalFlipped)
-			{
-				return uv;
-			}
-
-			uv.X += uv.Width;
-			uv.Width = -uv.Width;
-			return uv;
-		};
-
-		instanceParameter.UV = applyHorizontalFlip(instance.GetUV(0));
-		instanceParameter.AlphaUV = applyHorizontalFlip(instance.GetUV(1));
-		instanceParameter.UVDistortionUV = applyHorizontalFlip(instance.GetUV(2));
-		instanceParameter.BlendUV = applyHorizontalFlip(instance.GetUV(3));
-		instanceParameter.BlendAlphaUV = applyHorizontalFlip(instance.GetUV(4));
-		instanceParameter.BlendUVDistortionUV = applyHorizontalFlip(instance.GetUV(5));
+		instanceParameter.UV = instance.GetUV(0);
+		instanceParameter.AlphaUV = instance.GetUV(1);
+		instanceParameter.UVDistortionUV = instance.GetUV(2);
+		instanceParameter.BlendUV = instance.GetUV(3);
+		instanceParameter.BlendAlphaUV = instance.GetUV(4);
+		instanceParameter.BlendUVDistortionUV = instance.GetUV(5);
 
 		instanceParameter.FlipbookIndexAndNextRate = instance.GetFlipbookIndexAndNextRate();
 
@@ -290,12 +267,7 @@ void EffectNodeSprite::InitializeRenderedInstance(Instance& instance, InstanceGr
 		instValues._color = instValues._originalColor;
 	}
 
-	instValues.IsUVFlippedH = false;
-	if (SpriteHorizontalFlipProbability > 0)
-	{
-		const auto probability = static_cast<float>(SpriteHorizontalFlipProbability);
-		instValues.IsUVFlippedH = rand.GetRand() * 100.0f < probability;
-	}
+	ApplyRendererCommonUVHorizontalFlip(instance, rand);
 
 	instance.ColorInheritance = instValues._color;
 }

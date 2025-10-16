@@ -80,7 +80,6 @@ RS_Sprite_Position_Fixed_LL_Name,左下座標
 RS_Sprite_Position_Fixed_LR_Name,右下座標
 RS_Sprite_Position_Fixed_UL_Name,左上座標
 RS_Sprite_Position_Fixed_UR_Name,右上座標
-RS_Sprite_FlipHorizontalProbability_Name,左右反転確率
 ,
 RS_Ribbon_ViewpointDependent_Name,視点追従
 RS_Ribbon_ColorAll_Name,全体色
