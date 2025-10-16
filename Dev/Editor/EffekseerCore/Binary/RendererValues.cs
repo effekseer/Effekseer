@@ -131,7 +131,7 @@ namespace Effekseer.Binary
 
 			AddPartialColor();
 			AddPosition();
-
+			data.Add(BitConverter.GetBytes(param.FlipHorizontalProbability.Value));
 
 			void AddPartialColor()
 			{

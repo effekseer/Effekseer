@@ -381,6 +381,9 @@ namespace Effekseer.Data
 				private set;
 			}
 
+			[Key(key = "RS_Sprite_FlipHorizontalProbability")]
+			public Value.Int FlipHorizontalProbability { get; private set; }
+
 			public SpriteParamater(Path basepath)
 			{
 				RenderingOrder = new Value.Enum<Data.RenderingOrder>(Data.RenderingOrder.FirstCreatedInstanceIsFirst);
@@ -401,6 +404,7 @@ namespace Effekseer.Data
 				Position_Fixed_UL = new Value.Vector2D(-0.5f, 0.5f);
 				Position_Fixed_UR = new Value.Vector2D(0.5f, 0.5f);
 				ColorTexture = new Value.Path(basepath, new MultiLanguageString(""), true, "");
+				FlipHorizontalProbability = new Value.Int(0, 100, 0);
 			}
 			public enum ColorType : int
 			{
