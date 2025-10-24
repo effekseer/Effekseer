@@ -68,6 +68,10 @@ If the input is not connected, use the value of the property."
 ,
 Step_Node_Name,Step
 Step_Node_Desc,"Outputs 1 if the value input to V is larger than Edge, and outputs 0 if it is smaller."
+SmoothStep_Node_Name,Smooth Step
+SmoothStep_Node_Desc,"Outputs a smooth Hermite interpolation result between 0 and 1 when the value input to V is between Edge1 and Edge2.
+If less than Edge1, outputs 0.
+If greater than Edge2, outputs 1."
 ,
 Abs_Node_Name,Absolute
 Abs_Node_Desc,Outputs the absolute value of V.
@@ -115,6 +119,25 @@ If the input is not connected, use the value of the property.
 If alpha is 1, V1 is output.
 If alpha is 0, output V2.
 If alpha is 0.7, V1 x 0.3 + V2 x 0.7 is output."
+,
+Logical_Name,Logic
+Branch_Node_Name,Branch
+Branch_Node_Desc,"The output changes based on the value input to Condition.
+If the Condition value is True, outputs the value input to True.
+If the Condition value is False, outputs the value input to False."
+Compare_Node_Name,Compare
+Compare_Node_Desc,"Compares A and B based on the condition set in Condition.
+If the condition is met, outputs True.
+If the condition is not met, outputs False."
+BoolAnd_Node_Name,Logical AND
+BoolAnd_Node_Desc,The output is True if both V1 and V2 are True.
+BoolOr_Node_Name,Logical OR
+BoolOr_Node_Desc,The output is True if either V1 or V2 is True.
+BoolNot_Node_Name,Logical NOT
+BoolNot_Node_Desc,Inverts and outputs V
+IsFrontFace_Node_Name,IsFrontFace
+IsFrontFace_Node_Desc,"Outputs True when rendering the front face.
+Outputs False when rendering the back face."
 ,
 Model_Name,Model
 WorldPosition_Node_Name,VertexPosition
@@ -230,6 +253,16 @@ GradientParameter_Node_Desc,"Outputs a gradient set externally."
 Noise_Name,Noise
 SimpleNoise_Node_Name,Simple Noise
 SimpleNoise_Node_Desc,Outputs noise.
+WhiteNoise_Node_Name,White Noise
+WhiteNoise_Node_Desc,Outputs noise.
+CellularNoise_Node_Name,Cellular Noise
+CellularNoise_Node_Desc,Outputs noise.
+,
+Color_Name,Color
+RgbToHsv_Node_Name,RGB to HSV
+RgbToHsv_Node_Desc,Converts color space RGB to HSV.
+HsvToRgb_Node_Name,HSV to RGB
+HsvToRgb_Node_Desc,Converts color space HSV to RGB.
 ,
 Environment_Name,Environment
 Light_Node_Name,Light

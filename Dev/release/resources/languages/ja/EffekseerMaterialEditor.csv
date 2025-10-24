@@ -69,6 +69,10 @@ Fmod_Node_Desc,"V1をV2で割った余りを出力します。
 ,
 Step_Node_Name,ステップ
 Step_Node_Desc,Vに入力された値がEdgeより大きい場合、1を、小さい場合、0を出力します。
+SmoothStep_Node_Name,スムースステップ
+SmoothStep_Node_Desc,"Vに入力された値がEdge1とEdge2の間にある場合、0~1の滑らかなエルミート補間の結果を出力します。
+Edge1より小さい場合、0を出力します。
+Edge2より大きい場合、1を出力します。"
 ,
 Abs_Node_Name,絶対値
 Abs_Node_Desc,Vの絶対値を出力します。
@@ -116,6 +120,25 @@ LinearInterpolate_Node_Desc,"V1とV2の間をアルファの割合で補完し�
 アルファが1だったらV1を出力します。
 アルファが0だったらV2を出力します。
 アルファが0.7だったらV1 x 0.3 + V2 x 0.7を出力します。"
+,
+Logical_Name,論理
+Branch_Node_Name,分岐
+Branch_Node_Desc,"Conditionに入力した値によって出力が変わります。
+Conditionの値がTrueの場合、Trueに入力した値を出力します。
+Conditionの値がFalseの場合、Falseに入力した値を出力します。"
+Compare_Node_Name,比較
+Compare_Node_Desc,"Conditionに設定した条件によって、AとBの比較を行います。
+条件が成立する場合、Trueを出力します。
+条件が成立しない場合、Falseを出力します。"
+BoolAnd_Node_Name,論理積 (AND)
+BoolAnd_Node_Desc,V1とV2がどちらもTrueの場合、出力はTrueになります。
+BoolOr_Node_Name,論理和 (OR)
+BoolOr_Node_Desc,V1とV2がどちらかがTrueの場合、出力はTrueになります。
+BoolNot_Node_Name,論理否定 (NOT)
+BoolNot_Node_Desc,Vを反転して出力します
+IsFrontFace_Node_Name,IsFrontFace
+IsFrontFace_Node_Desc,"表面をレンダリングしている場合、Trueを出力します。
+裏面をレンダリングしている場合、Falseを出力します。"
 ,
 Model_Name,モデル
 WorldPosition_Node_Name,頂点座標
@@ -228,6 +251,16 @@ GradientParameter_Node_Desc,"外部から設定されたグラディエントを
 Noise_Name,ノイズ
 SimpleNoise_Node_Name,シンプルノイズ
 SimpleNoise_Node_Desc,ノイズを出力します。
+WhiteNoise_Node_Name,ホワイトノイズ
+WhiteNoise_Node_Desc,ノイズを出力します。
+CellularNoise_Node_Name,セルラーノイズ
+CellularNoise_Node_Desc,ノイズを出力します。
+,
+Color_Name,色
+RgbToHsv_Node_Name,RGB to HSV
+RgbToHsv_Node_Desc,RGB色空間をHSV色空間に変換します。
+HsvToRgb_Node_Name,HSV to RGB
+HsvToRgb_Node_Desc,HSV色空間をRGB色空間に変換します。
 ,
 Environment_Name,環境
 Light_Node_Name,ライト
