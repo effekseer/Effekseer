@@ -3,6 +3,8 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+#include <limits>
+
 #include "Effekseer.EffectNode.h"
 #include "Effekseer.Effect.h"
 #include "Effekseer.EffectImplemented.h"
@@ -84,7 +86,7 @@ void EffectNodeImplemented::AdjustSettings(const SettingRef& setting)
 			DepthValues.DepthOffset *= m_effect->GetMaginification();
 			DepthValues.SoftParticle *= m_effect->GetMaginification();
 
-			if (DepthValues.DepthParameter.DepthClipping < FLT_MAX / 10)
+			if (DepthValues.DepthParameter.DepthClipping < std::numeric_limits<float>::max() / 10)
 			{
 				DepthValues.DepthParameter.DepthClipping *= m_effect->GetMaginification();
 			}
@@ -632,16 +634,19 @@ EffectInstanceTerm EffectNodeImplemented::CalculateInstanceTerm(EffectInstanceTe
 {
 	EffectInstanceTerm ret;
 
-	auto addWithClip = [](int v1, int v2) -> int
+	const int int_max = std::numeric_limits<int>::max();
+	const int half_int_max = int_max / 2;
+
+	auto addWithClip = [half_int_max, int_max](int v1, int v2) -> int
 	{
 		v1 = Max(v1, 0);
 		v2 = Max(v2, 0);
 
-		if (v1 >= INT_MAX / 2)
-			return INT_MAX;
+		if (v1 >= half_int_max)
+			return int_max;
 
-		if (v2 >= INT_MAX / 2)
-			return INT_MAX;
+		if (v2 >= half_int_max)
+			return int_max;
 
 		return v1 + v2;
 	};
@@ -651,8 +656,8 @@ EffectInstanceTerm EffectNodeImplemented::CalculateInstanceTerm(EffectInstanceTe
 
 	if (CommonValues.RemoveWhenLifeIsExtinct <= 0)
 	{
-		lifeMin = INT_MAX;
-		lifeMax = INT_MAX;
+		lifeMin = int_max;
+		lifeMax = int_max;
 	}
 
 	auto firstBeginMin = static_cast<int32_t>(CommonValues.GenerationTimeOffset.min);
@@ -662,18 +667,18 @@ EffectInstanceTerm EffectNodeImplemented::CalculateInstanceTerm(EffectInstanceTe
 
 	auto lastBeginMin = 0;
 	auto lastBeginMax = 0;
-	if (CommonValues.MaxGeneration > INT_MAX / 2)
+	if (CommonValues.MaxGeneration > half_int_max)
 	{
-		lastBeginMin = INT_MAX / 2;
+		lastBeginMin = half_int_max;
 	}
 	else
 	{
 		lastBeginMin = firstBeginMin + static_cast<int32_t>((CommonValues.MaxGeneration - 1) * CommonValues.GenerationTime.min);
 	}
 
-	if (CommonValues.MaxGeneration > INT_MAX / 2)
+	if (CommonValues.MaxGeneration > half_int_max)
 	{
-		lastBeginMax = INT_MAX / 2;
+		lastBeginMax = half_int_max;
 	}
 	else
 	{
@@ -696,7 +701,7 @@ EffectInstanceTerm EffectNodeImplemented::CalculateInstanceTerm(EffectInstanceTe
 		if (firstEndMax - firstBeginMax > parentFirstTermMax)
 			firstEndMax = firstBeginMax + parentFirstTermMax;
 
-		if (lastEndMin > INT_MAX / 2)
+		if (lastEndMin > half_int_max)
 		{
 			lastBeginMin = parentLastTermMin;
 			lastEndMin = parentLastTermMin;
@@ -706,7 +711,7 @@ EffectInstanceTerm EffectNodeImplemented::CalculateInstanceTerm(EffectInstanceTe
 			lastEndMin = lastBeginMin + parentLastTermMin;
 		}
 
-		if (lastEndMax > INT_MAX / 2)
+		if (lastEndMax > half_int_max)
 		{
 			lastBeginMax = parentLastTermMax;
 			lastEndMax = parentLastTermMax;

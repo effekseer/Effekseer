@@ -215,7 +215,7 @@ void Instance::Initialize(Instance* parent, float spawnDeltaFrame, int32_t insta
 	m_pParent = parent;
 	m_ParentMatrix = SIMD::Mat43f::Identity;
 	m_LivingTime = 0.0f;
-	m_LivedTime = FLT_MAX;
+	m_LivedTime = std::numeric_limits<float>::max();
 	m_RemovingTime = 0.0f;
 
 	spawnDeltaFrame_ = spawnDeltaFrame;

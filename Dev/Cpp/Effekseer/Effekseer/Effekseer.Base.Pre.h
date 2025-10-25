@@ -11,6 +11,7 @@
 #include <cfloat>
 #include <climits>
 #include <functional>
+#include <limits>
 #include <memory>
 #include <stdint.h>
 #include <stdio.h>
@@ -18,6 +19,11 @@
 #include <string>
 #include <thread>
 #include <vector>
+
+#if _WIN32
+#undef min
+#undef max
+#endif
 
 //----------------------------------------------------------------------------------
 //
@@ -1014,7 +1020,7 @@ struct NodeRendererDepthParameter
 	bool IsDepthOffsetScaledWithParticleScale = false;
 	ZSortType ZSort = ZSortType::None;
 	float SuppressionOfScalingByDepth = 1.0f;
-	float DepthClipping = FLT_MAX;
+	float DepthClipping = std::numeric_limits<float>::max();
 };
 
 /**
