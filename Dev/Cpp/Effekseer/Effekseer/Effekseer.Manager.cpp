@@ -1732,7 +1732,7 @@ void ManagerImplemented::Preupdate(DrawSet& drawSet)
 bool ManagerImplemented::IsClippedWithDepth(DrawSet& drawSet, InstanceContainer* container, const Manager::DrawParameter& drawParameter)
 {
 	// don't use this parameter
-	if (container->m_pEffectNode->DepthValues.DepthParameter.DepthClipping > FLT_MAX / 10)
+	if (container->m_pEffectNode->DepthValues.DepthParameter.DepthClipping > std::numeric_limits<float>::max() / 10)
 		return false;
 
 	SIMD::Vec3f pos = drawSet.GetGlobalMatrix().GetTranslation();
