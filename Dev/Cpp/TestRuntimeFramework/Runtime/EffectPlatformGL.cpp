@@ -1,12 +1,10 @@
-#if !defined(__APPLE__)
-#define GLEW_STATIC
-typedef char GLchar;
-#include <GL/glew.h>
-#endif
-
 #include "EffectPlatformGL.h"
 #include "../../3rdParty/stb/stb_image_write.h"
 #include <EffekseerRendererGL.h>
+#include <EffekseerRendererGL/EffekseerRendererGL.GLExtension.h>
+#include <OpenGLExtensions.h>
+
+namespace GL = EffekseerRendererGL::GLExt;
 
 class DistortingCallbackGL : public EffekseerRenderer::DistortingCallback
 {
@@ -33,7 +31,8 @@ public:
 	virtual bool OnDistorting(EffekseerRenderer::Renderer* renderer) override
 	{
 		glBindTexture(GL_TEXTURE_2D, texture);
-		glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, width_, height_);
+		Effekseer::OpenGLHelper::glCopyTexSubImage2D(
+			GL_TEXTURE_2D, 0, 0, 0, 0, 0, width_, height_);
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		reinterpret_cast<::EffekseerRendererGL::Renderer*>(renderer)->SetBackground(texture);
@@ -53,7 +52,7 @@ EffekseerRenderer::RendererRef EffectPlatformGL::CreateRenderer()
 
 EffectPlatformGL::~EffectPlatformGL()
 {
-	glDeleteFramebuffers(1, &frameBuffer_);
+	GL::glDeleteFramebuffers(1, &frameBuffer_);
 }
 
 void EffectPlatformGL::InitializeDevice(const EffectPlatformInitializingParameter& param)
@@ -72,7 +71,9 @@ void EffectPlatformGL::InitializeDevice(const EffectPlatformInitializingParamete
 
 	checkedTexture_ = graphicsDevice_->CreateTexture(textureParam, data);
 
-	glGenFramebuffers(1, &frameBuffer_);
+	Effekseer::OpenGLHelper::Initialize();
+
+	GL::glGenFramebuffers(1, &frameBuffer_);
 }
 
 void EffectPlatformGL::BeginRendering()
@@ -82,11 +83,21 @@ void EffectPlatformGL::BeginRendering()
 
 	const auto prop = EffekseerRendererGL::GetTextureProperty(checkedTexture_);
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, frameBuffer_);
-	glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, prop.Buffer, 0);
-	glBlitFramebuffer(0, 0, initParam_.WindowSize[0], initParam_.WindowSize[1], 0, 0, initParam_.WindowSize[0], initParam_.WindowSize[1], GL_COLOR_BUFFER_BIT, GL_NEAREST);
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+	GL::glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	GL::glBindFramebuffer(GL_READ_FRAMEBUFFER, frameBuffer_);
+	GL::glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, prop.Buffer, 0);
+	Effekseer::OpenGLHelper::glBlitFramebuffer(
+		0,
+		0,
+		initParam_.WindowSize[0],
+		initParam_.WindowSize[1],
+		0,
+		0,
+		initParam_.WindowSize[0],
+		initParam_.WindowSize[1],
+		GL_COLOR_BUFFER_BIT,
+		GL_NEAREST);
+	GL::glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 	glFlush();
 	glFinish();
 }

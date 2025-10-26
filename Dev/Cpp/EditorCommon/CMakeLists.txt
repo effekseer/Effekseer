@@ -98,4 +98,4 @@ set_target_properties(EditorCommon PROPERTIES LINKER_LANGUAGE CXX)
 
 target_include_directories(EditorCommon
     PUBLIC ${PROJECT_SOURCE_DIR}
-	)
+)

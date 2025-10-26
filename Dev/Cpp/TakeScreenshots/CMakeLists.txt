@@ -72,23 +72,6 @@ target_include_directories(
     )
 endif()
 
-if (NOT APPLE)
-    if(WIN32)
-    target_link_libraries(
-        ${PROJECT_NAME}
-        PRIVATE
-        debug libglew32d
-        optimized libglew32
-    )
-    else()
-    target_link_libraries(
-        ${PROJECT_NAME}
-        PRIVATE
-        GLEW
-    )
-    endif()
-endif()
-
 add_dependencies(TakeScreenshots ExternalProject_glfw)
 
 if(BUILD_WITH_EASY_PROFILER)

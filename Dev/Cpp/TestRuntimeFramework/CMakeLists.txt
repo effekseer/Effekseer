@@ -60,6 +60,7 @@ include_directories(
     ../Effekseer/
     ../EffekseerRendererGL/
     ../EffekseerSoundAL/
+    ../OpenGLHelper/
     )
 
 if(WIN32)
@@ -97,6 +98,7 @@ if(BUILD_VULKAN)
 endif()
 
 list(APPEND common_lib Effekseer)
+list(APPEND common_lib OpenGLHelper)
 
 if (MSVC)
 else()
@@ -149,10 +151,6 @@ if(BUILD_VULKAN)
 endif()
 
 add_dependencies(${PROJECT_NAME} ExternalProject_glfw)
-
-if (NOT APPLE)
-    add_dependencies(${PROJECT_NAME} ExternalProject_glew)
-endif()
 
 if(BUILD_WITH_EASY_PROFILER)
     add_dependencies(${PROJECT_NAME} ExternalProject_easy_profiler)

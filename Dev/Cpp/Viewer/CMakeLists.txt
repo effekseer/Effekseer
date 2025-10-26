@@ -146,6 +146,7 @@ target_link_libraries(
     Viewer
     PRIVATE
     EditorCommon
+    OpenGLHelper
     Boxer
     imgui
     imgui_platform
@@ -167,11 +168,6 @@ add_dependencies(Viewer
 	ExternalProject_glfw 
 	ExternalProject_OpenSoundMixer)
 
-if(WIN32)
-    add_dependencies(Viewer ExternalProject_glew)
-    add_definitions(-DIMGUI_IMPL_OPENGL_LOADER_GLEW)
-endif()
-
 if(CLANG_FORMAT_ENABLED)
     clang_format(Viewer)
 endif()
@@ -192,8 +188,6 @@ if (WIN32)
         EffekseerRendererDX11
         EffekseerRendererGL
         EffekseerSoundOSMixer
-        debug libglew32d
-        optimized libglew32
     )
 
 elseif(APPLE)

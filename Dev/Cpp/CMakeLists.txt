@@ -149,6 +149,9 @@ if(BUILD_VIEWER OR BUILD_TEST)
     list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/spdlog/include/)
 endif()
 
+add_subdirectory("OpenGLHelper")
+set_target_properties (OpenGLHelper PROPERTIES FOLDER Libraries)
+
 if (BUILD_VIEWER)
     add_subdirectory("EditorCommon")
     set_target_properties (EditorCommon PROPERTIES FOLDER Editor)

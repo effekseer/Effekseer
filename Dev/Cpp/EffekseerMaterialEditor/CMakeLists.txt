@@ -38,7 +38,7 @@ if (MSVC)
 endif()
 
 if(WIN32)
-    add_dependencies(EffekseerMaterialEditor ExternalProject_glew ExternalProject_glfw)
+    add_dependencies(EffekseerMaterialEditor ExternalProject_glfw)
 endif()
 
 target_compile_definitions(EffekseerMaterialEditor PRIVATE NOMINMAX)
@@ -49,6 +49,7 @@ target_include_directories(
     ${EFK_THIRDPARTY_INCLUDES}
     ../include/
     ../EffekseerMaterial/
+    ../OpenGLHelper/
     ThirdParty/picojson/)
 
 target_link_directories(
@@ -62,6 +63,7 @@ target_link_libraries(
     PRIVATE
     Effekseer
     EffekseerRendererGL
+    OpenGLHelper
     EffekseerMaterial
     EditorCommon
     Boxer
@@ -91,15 +93,7 @@ if(USE_LIBPNG_LOADER)
 
 endif()
 
-if (WIN32)
-
-target_link_libraries(
-    EffekseerMaterialEditor
-    PRIVATE
-    debug libglew32d
-    optimized libglew32)
-
-elseif(APPLE)
+if(APPLE)
 
 FIND_PACKAGE(Threads REQUIRED)
 FIND_PACKAGE(OpenGL REQUIRED)
@@ -114,7 +108,7 @@ target_link_libraries(
     LinkAppleLibs(${PROJECT_NAME})
     set_target_properties(EffekseerMaterialEditor PROPERTIES XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME YES)
 
-else()
+elseif(UNIX AND NOT APPLE)
 
 # For Linux
 
