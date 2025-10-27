@@ -22,6 +22,7 @@ These data will also be distributed with the source data for editing, improving 
 ### GPU Particles
 
 GPU particles are supported to make it easier to display particles in large numbers.
+It is implementing in 1.8.
 
 ### Mobile and Web Browser Optimization
 
