@@ -57,22 +57,25 @@ std::array<uint8_t, 4> QuantizeUnorm8(Vec4 v)
 	};
 }
 
+std::array<uint16_t, 2> QuantizeUnorm16(Vec2 v)
+{
+	return {
+		QuantizeIntValue<uint16_t>(v.x),
+		QuantizeIntValue<uint16_t>(v.y),
+	};
+}
+
 }
 
 bool EfkModelSaver::Save(std::string_view filepath, const Model& model)
 {
-	return SaveAsVersion5(std::string(filepath).c_str(), model);
-}
-
-bool EfkModelSaver::SaveAsVersion5(const char* filepath, const Model& model)
-{
-	const int32_t version = 5;
+	const int32_t version = 6;
 	float modelScale = m_scale;
 	int32_t modelCount = 1;
 	int32_t frameCount = 1;
 
 	BinaryWriter writer;
-	if (!writer.Open(filepath))
+	if (!writer.Open(std::string(filepath).c_str()))
 	{
 		return false;
 	}
@@ -102,21 +105,45 @@ bool EfkModelSaver::SaveAsVersion5(const char* filepath, const Model& model)
 
 		auto& mesh = *node.mesh;
 
-		for (auto& vertex : mesh.vertices)
+		if (version <= 5)
 		{
-			auto position = QuantizeFloat32(node.transform.TransformPosition(vertex.position * modelScale));
-			auto normal = QuantizeFloat32(node.transform.TransformDirection(vertex.normal));
-			auto binormal = QuantizeFloat32(node.transform.TransformDirection(vertex.binormal));
-			auto tangent = QuantizeFloat32(node.transform.TransformDirection(vertex.tangent));
-			auto uv = QuantizeFloat32(vertex.uv1);
-			auto color = QuantizeUnorm8(vertex.color);
+			for (auto& vertex : mesh.vertices)
+			{
+				auto position = QuantizeFloat32(node.transform.TransformPosition(vertex.position * modelScale));
+				auto normal = QuantizeFloat32(node.transform.TransformDirection(vertex.normal));
+				auto binormal = QuantizeFloat32(node.transform.TransformDirection(vertex.binormal));
+				auto tangent = QuantizeFloat32(node.transform.TransformDirection(vertex.tangent));
+				auto uv = QuantizeFloat32(vertex.uv1);
+				auto color = QuantizeUnorm8(vertex.color);
 
-			writer.Write(position.data(), sizeof(float) * 3);
-			writer.Write(normal.data(), sizeof(float) * 3);
-			writer.Write(binormal.data(), sizeof(float) * 3);
-			writer.Write(tangent.data(), sizeof(float) * 3);
-			writer.Write(uv.data(), sizeof(float) * 2);
-			writer.Write(color.data(), sizeof(uint8_t) * 4);
+				writer.Write(position);
+				writer.Write(normal);
+				writer.Write(binormal);
+				writer.Write(tangent);
+				writer.Write(uv);
+				writer.Write(color);
+			}
+		}
+		else if (version >= 6)
+		{
+			for (auto& vertex : mesh.vertices)
+			{
+				auto position = QuantizeFloat32(node.transform.TransformPosition(vertex.position * modelScale));
+				auto normal = QuantizeFloat32(node.transform.TransformDirection(vertex.normal));
+				auto binormal = QuantizeFloat32(node.transform.TransformDirection(vertex.binormal));
+				auto tangent = QuantizeFloat32(node.transform.TransformDirection(vertex.tangent));
+				auto uv1 = QuantizeFloat32(vertex.uv1);
+				auto uv2 = QuantizeFloat32(vertex.uv2);
+				auto color = QuantizeUnorm8(vertex.color);
+
+				writer.Write(position);
+				writer.Write(normal);
+				writer.Write(binormal);
+				writer.Write(tangent);
+				writer.Write(uv1);
+				writer.Write(uv2);
+				writer.Write(color);
+			}
 		}
 	}
 

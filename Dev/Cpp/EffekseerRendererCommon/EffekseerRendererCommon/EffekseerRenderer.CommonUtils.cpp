@@ -623,16 +623,17 @@ Effekseer::Backend::VertexLayoutRef GetVertexLayout(Effekseer::Backend::Graphics
 
 Effekseer::Backend::VertexLayoutRef GetModelRendererVertexLayout(Effekseer::Backend::GraphicsDeviceRef graphicsDevice)
 {
-	const Effekseer::Backend::VertexLayoutElement vlElem[6] = {
+	const Effekseer::Backend::VertexLayoutElement vlElem[7] = {
 		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "Input_Pos", "POSITION", 0},
 		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "Input_Normal", "NORMAL", 0},
 		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "Input_Binormal", "NORMAL", 1},
 		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "Input_Tangent", "NORMAL", 2},
-		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "Input_UV", "TEXCOORD", 0},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "Input_UV1", "TEXCOORD", 0},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "Input_UV2", "TEXCOORD", 1},
 		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "Input_Color", "NORMAL", 3},
 	};
 
-	return graphicsDevice->CreateVertexLayout(vlElem, 6);
+	return graphicsDevice->CreateVertexLayout(vlElem, 7);
 }
 
 Effekseer::Backend::VertexLayoutRef GetMaterialSimpleVertexLayout(Effekseer::Backend::GraphicsDeviceRef graphicsDevice)
@@ -709,16 +710,17 @@ Effekseer::Backend::VertexLayoutRef GetMaterialSpriteVertexLayout(Effekseer::Bac
 
 Effekseer::Backend::VertexLayoutRef GetMaterialModelVertexLayout(Effekseer::Backend::GraphicsDeviceRef graphicsDevice)
 {
-	const Effekseer::Backend::VertexLayoutElement vlElem[6] = {
+	const Effekseer::Backend::VertexLayoutElement vlElem[7] = {
 		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "a_Position", "POSITION", 0},
 		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "a_Normal", "NORMAL", 0},
 		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "a_Binormal", "NORMAL", 1},
 		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "a_Tangent", "NORMAL", 2},
-		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "a_TexCoord", "TEXCOORD", 0},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "a_TexCoord1", "TEXCOORD", 0},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "a_TexCoord2", "TEXCOORD", 1},
 		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "a_Color", "NORMAL", 3},
 	};
 
-	return graphicsDevice->CreateVertexLayout(vlElem, 6);
+	return graphicsDevice->CreateVertexLayout(vlElem, 7);
 }
 
 bool DirtiedBlock::Allocate(int32_t size, int32_t offset)

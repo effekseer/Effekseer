@@ -19,9 +19,6 @@ public:
 	void SetModelScale(double scale) { m_scale = scale; }
 
 private:
-	bool SaveAsVersion5(const char* filepath, const Model& model);
-
-private:
 	double m_scale = 1.0;
 
 };
