@@ -23,10 +23,10 @@ const Effekseer::Color COLOR_WHITE = {255, 255, 255, 255};
 Effekseer::ModelRef CreateSpriteModel()
 {
 	Effekseer::CustomVector<Effekseer::Model::Vertex> vertexes = {
-		{{-0.5f, 0.5f, 0.0f}, VEC_FRONT, VEC_UP, VEC_RIGHT, {0.0f, 0.0f}, COLOR_WHITE},
-		{{-0.5f, -0.5f, 0.0f}, VEC_FRONT, VEC_UP, VEC_RIGHT, {0.0f, 1.0f}, COLOR_WHITE},
-		{{0.5f, 0.5f, 0.0f}, VEC_FRONT, VEC_UP, VEC_RIGHT, {1.0f, 0.0f}, COLOR_WHITE},
-		{{0.5f, -0.5f, 0.0f}, VEC_FRONT, VEC_UP, VEC_RIGHT, {1.0f, 1.0f}, COLOR_WHITE},
+		{{-0.5f, 0.5f, 0.0f}, VEC_FRONT, VEC_UP, VEC_RIGHT, {0.0f, 0.0f}, {0.0f, 0.0f}, COLOR_WHITE},
+		{{-0.5f, -0.5f, 0.0f}, VEC_FRONT, VEC_UP, VEC_RIGHT, {0.0f, 1.0f}, {0.0f, 1.0f}, COLOR_WHITE},
+		{{0.5f, 0.5f, 0.0f}, VEC_FRONT, VEC_UP, VEC_RIGHT, {1.0f, 0.0f}, {1.0f, 0.0f}, COLOR_WHITE},
+		{{0.5f, -0.5f, 0.0f}, VEC_FRONT, VEC_UP, VEC_RIGHT, {1.0f, 1.0f}, {1.0f, 1.0f}, COLOR_WHITE},
 	};
 	Effekseer::CustomVector<Effekseer::Model::Face> faces = {
 		{{0, 2, 1}}, {{1, 2, 3}}};
@@ -48,8 +48,8 @@ Effekseer::ModelRef CreateTrailModel()
 		v.Binormal = VEC_FRONT;
 		v.Normal = VEC_UP;
 		v.Tangent = VEC_RIGHT;
-		v.UV.X = (i % 2 == 0) ? 0.0f : 1.0f;
-		v.UV.Y = (float)(i / 2) / (float)(TrailJoints - 1);
+		v.UV1.X = v.UV2.X = (i % 2 == 0) ? 0.0f : 1.0f;
+		v.UV1.Y = v.UV2.Y = (float)(i / 2) / (float)(TrailJoints - 1);
 		v.VColor = COLOR_WHITE;
 		vertexes[i] = v;
 	}

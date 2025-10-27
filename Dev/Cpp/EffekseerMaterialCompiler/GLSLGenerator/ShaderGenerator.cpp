@@ -105,8 +105,9 @@ LAYOUT(0) IN vec4 a_Position;
 LAYOUT(1) IN vec3 a_Normal;
 LAYOUT(2) IN vec3 a_Binormal;
 LAYOUT(3) IN vec3 a_Tangent;
-LAYOUT(4) IN vec2 a_TexCoord;
-LAYOUT(5) IN vec4 a_Color;
+LAYOUT(4) IN vec2 a_TexCoord1;
+LAYOUT(5) IN vec2 a_TexCoord2;
+LAYOUT(6) IN vec4 a_Color;
 )"
 	R"(
 
@@ -191,11 +192,8 @@ void main()
 	objectScale.z = length(modelMatRot * vec3(0.0, 0.0, 1.0));
 
 	// UV
-	vec2 uv1 = a_TexCoord.xy * uvOffset.zw + uvOffset.xy;
-	vec2 uv2 = a_TexCoord.xy;
-
-	//uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
-	//uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
+	vec2 uv1 = a_TexCoord1 * uvOffset.zw + uvOffset.xy;
+	vec2 uv2 = a_TexCoord2 * uvOffset.zw + uvOffset.xy;
 
 	vec3 pixelNormalDir = worldNormal;
 	

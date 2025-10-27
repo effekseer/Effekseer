@@ -153,8 +153,9 @@ struct ShaderInput1 {
   float3 a_Normal [[attribute(1)]];
   float3 a_Binormal [[attribute(2)]];
   float3 a_Tangent [[attribute(3)]];
-  float2 a_TexCoord [[attribute(4)]];
-  float4 a_Color [[attribute(5)]];
+  float2 a_TexCoord1 [[attribute(4)]];
+  float2 a_TexCoord2 [[attribute(5)]];
+  float4 a_Color [[attribute(6)]];
 };
 
 struct ShaderOutput1 {
@@ -210,8 +211,8 @@ vertex ShaderOutput1 main0 (ShaderInput1 i [[stage_in]], constant ShaderUniform1
 	objectScale.z = length(modelMatRot * float3(0.0, 0.0, 1.0));
 
     // UV
-    float2 uv1 = i.a_TexCoord.xy * uvOffset.zw + uvOffset.xy;
-    float2 uv2 = i.a_TexCoord.xy;
+    float2 uv1 = i.a_TexCoord1 * uvOffset.zw + uvOffset.xy;
+    float2 uv2 = i.a_TexCoord2 * uvOffset.zw + uvOffset.xy;
 
     float3 pixelNormalDir = worldNormal;
     
