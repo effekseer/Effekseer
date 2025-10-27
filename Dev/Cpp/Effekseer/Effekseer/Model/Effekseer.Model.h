@@ -28,7 +28,7 @@ class Model : public Resource
 {
 public:
 	static const int32_t Version = 1;
-	static const int32_t LastetVersion = 5;
+	static const int32_t LatestVersion = 6;
 
 	struct Vertex
 	{
@@ -36,7 +36,8 @@ public:
 		Vector3D Normal;
 		Vector3D Binormal;
 		Vector3D Tangent;
-		Vector2D UV;
+		Vector2D UV1;
+		Vector2D UV2;
 		Color VColor;
 	};
 

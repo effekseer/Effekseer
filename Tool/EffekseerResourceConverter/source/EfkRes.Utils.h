@@ -109,6 +109,12 @@ public:
 		fwrite(&data, sizeof(data), 1, m_fp);
 	}
 
+	template <class T, size_t N>
+	void Write(const std::array<T, N>& data)
+	{
+		fwrite(data.data(), sizeof(T) * N, 1, m_fp);
+	}
+
 	void SetPosition(size_t position)
 	{
 		fseek(m_fp, static_cast<long>(position), SEEK_SET);

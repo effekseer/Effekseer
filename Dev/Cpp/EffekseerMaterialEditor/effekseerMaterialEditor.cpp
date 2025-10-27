@@ -722,13 +722,13 @@ int mainLoop(int argc, char* argv[])
 				{
 					if (ImGui::TreeNode("VS"))
 					{
-						ImGui::Text(uobj->GetPreview()->VS.c_str());
+						ImGui::TextUnformatted(uobj->GetPreview()->VS.c_str());
 						ImGui::TreePop();
 					}
 
 					if (ImGui::TreeNode("PS"))
 					{
-						ImGui::Text(uobj->GetPreview()->PS.c_str());
+						ImGui::TextUnformatted(uobj->GetPreview()->PS.c_str());
 						ImGui::TreePop();
 					}
 				}
