@@ -1,14 +1,7 @@
 
-#ifdef __APPLE__
-#include <OpenGL/gl.h>
-#elif defined(_WIN32)
-#include <GL/glew.h>
-#else
-#define GL_GLEXT_PROTOTYPES
-#include <GL/gl.h>
-#endif
-
 #include "efkMat.Graphics.h"
+
+#include <OpenGLExtensions.h>
 
 #include <Common/StringHelper.h>
 #include <EffekseerRendererCommon/TextureLoader.h>
@@ -719,9 +712,7 @@ void Preview::Render()
 			{
 				if (textures_[i]->Name == uniformLayout_->GetTextures()[j].c_str())
 				{
-					drawParam.SetTexture(j, textures_[i]->TexturePtr->GetTexture(), 
-						textures_[i]->SamplerType == TextureSamplerType::Repeat ? Effekseer::Backend::TextureWrapType::Repeat : Effekseer::Backend::TextureWrapType::Clamp,
-						Effekseer::Backend::TextureSamplingType::Linear);
+					drawParam.SetTexture(j, textures_[i]->TexturePtr->GetTexture(), textures_[i]->SamplerType == TextureSamplerType::Repeat ? Effekseer::Backend::TextureWrapType::Repeat : Effekseer::Backend::TextureWrapType::Clamp, Effekseer::Backend::TextureSamplingType::Linear);
 				}
 			}
 		}

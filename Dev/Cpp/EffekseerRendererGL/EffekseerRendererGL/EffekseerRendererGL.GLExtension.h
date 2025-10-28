@@ -75,7 +75,6 @@ typedef ptrdiff_t GLintptr;
 typedef char GLchar;
 
 #define GL_ELEMENT_ARRAY_BUFFER 0x8893
-#define GL_STREAM_DRAW 0x88E0
 #define GL_DYNAMIC_DRAW 0x88E8
 #define GL_FUNC_ADD 0x8006
 #define GL_MIN 0x8007
@@ -103,18 +102,11 @@ typedef char GLchar;
 #define GL_ELEMENT_ARRAY_BUFFER_BINDING 0x8895
 #define GL_SRGB8_ALPHA8 0x8C43
 
-#define GL_FRAMEBUFFER_SRGB 0x8DB9
-
-#define GL_MAP_READ_BIT 0x0001
 #define GL_MAP_WRITE_BIT 0x0002
-#define GL_MAP_INVALIDATE_RANGE_BIT 0x0004
-#define GL_MAP_INVALIDATE_BUFFER_BIT 0x0008
-#define GL_MAP_FLUSH_EXPLICIT_BIT 0x0010
 #define GL_MAP_UNSYNCHRONIZED_BIT 0x0020
 
 #define GL_R8 0x8229
 #define GL_R16F 0x822D
-#define GL_R32F 0x822E
 #define GL_RG 0x8227
 #define GL_RG16F 0x822f
 
@@ -125,8 +117,6 @@ typedef char GLchar;
 
 #define GL_DEPTH24_STENCIL8 0x88F0
 #define GL_DEPTH32F_STENCIL8 0x8CAD
-#define GL_DEPTH_COMPONENT24 0x81A6
-
 #define GL_DEPTH_STENCIL 0x84F9
 
 #define GL_FRAMEBUFFER 0x8D40
@@ -139,21 +129,7 @@ typedef char GLchar;
 #define GL_COLOR_ATTACHMENT1 0x8CE1
 #define GL_COLOR_ATTACHMENT2 0x8CE2
 #define GL_COLOR_ATTACHMENT3 0x8CE3
-#define GL_COLOR_ATTACHMENT4 0x8CE4
-#define GL_COLOR_ATTACHMENT5 0x8CE5
-#define GL_COLOR_ATTACHMENT6 0x8CE6
-#define GL_COLOR_ATTACHMENT7 0x8CE7
-#define GL_COLOR_ATTACHMENT8 0x8CE8
-#define GL_COLOR_ATTACHMENT9 0x8CE9
-#define GL_COLOR_ATTACHMENT10 0x8CEA
-#define GL_COLOR_ATTACHMENT11 0x8CEB
-#define GL_COLOR_ATTACHMENT12 0x8CEC
-#define GL_COLOR_ATTACHMENT13 0x8CED
-#define GL_COLOR_ATTACHMENT14 0x8CEE
-#define GL_COLOR_ATTACHMENT15 0x8CEF
 #define GL_DEPTH_ATTACHMENT 0x8D00
-#define GL_STENCIL_ATTACHMENT 0x8D20
-
 #define GL_RED 0x1903
 
 #define GL_MAX_VARYING_VECTORS 0x8DFC
@@ -176,15 +152,8 @@ typedef char GLchar;
 #define GL_TEXTURE_3D 0x806F
 #define GL_TEXTURE_BINDING_3D 0x806A
 
-// TODO why redifinition
-//#ifndef GL_WRITE_ONLY
-#define GL_WRITE_ONLY 0x000088b9
-//#endif
-
-#define GL_TIME_ELAPSED           0x88BF
-#define GL_QUERY_RESULT           0x8866
-#define GL_QUERY_RESULT_AVAILABLE 0x8867
-
+#define GL_TIME_ELAPSED 0x88BF
+#define GL_QUERY_RESULT 0x8866
 namespace EffekseerRendererGL
 {
 namespace GLExt
@@ -297,14 +266,14 @@ void glCopyTexSubImage3D(GLenum target,
 						 GLsizei width,
 						 GLsizei height);
 
-void glGenQueries(GLsizei n, GLuint *ids);
-void glDeleteQueries(GLsizei n, const GLuint *ids);
+void glGenQueries(GLsizei n, GLuint* ids);
+void glDeleteQueries(GLsizei n, const GLuint* ids);
 void glBeginQuery(GLenum target, GLuint id);
 void glEndQuery(GLenum target);
-void glGetQueryObjectiv(GLuint id, GLenum pname, GLint *params);
-void glGetQueryObjectuiv(GLuint id, GLenum pname, GLuint *params);
-void glGetQueryObjecti64v(GLuint id, GLenum pname, int64_t *params);
-void glGetQueryObjectui64v(GLuint id, GLenum pname, uint64_t *params);
+void glGetQueryObjectiv(GLuint id, GLenum pname, GLint* params);
+void glGetQueryObjectuiv(GLuint id, GLenum pname, GLuint* params);
+void glGetQueryObjecti64v(GLuint id, GLenum pname, int64_t* params);
+void glGetQueryObjectui64v(GLuint id, GLenum pname, uint64_t* params);
 
 //----------------------------------------------------------------------------------
 //

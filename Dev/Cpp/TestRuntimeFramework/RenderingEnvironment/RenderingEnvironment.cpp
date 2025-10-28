@@ -1,6 +1,9 @@
 
 #include "RenderingEnvironment.h"
 
+#include <EffekseerRendererGL/EffekseerRendererGL.GLExtension.h>
+#include <OpenGLExtensions.h>
+
 #if defined(WIN32) || defined(__APPLE__) || defined(__linux__)
 
 #ifdef _WIN32
@@ -24,6 +27,8 @@
 #endif
 
 #endif
+
+namespace GL = EffekseerRendererGL::GLExt;
 
 void* RenderingEnvironment::GetNativePtr(int32_t index)
 {
@@ -86,6 +91,7 @@ RenderingEnvironment::RenderingEnvironment(bool isOpenGLMode, std::array<int32_t
 	if (isOpenGLMode_)
 	{
 		glfwMakeContextCurrent(glfwWindow_);
+		Effekseer::OpenGLHelper::Initialize();
 	}
 }
 

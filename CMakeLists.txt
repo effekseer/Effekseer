@@ -366,35 +366,6 @@ if(BUILD_VIEWER)
     endif()
 endif()
 
-if(BUILD_VIEWER OR BUILD_TEST)
-    # glew
-    if(NOT APPLE)
-        ExternalProject_Add(
-            ExternalProject_glew
-            SOURCE_DIR      ${CMAKE_CURRENT_SOURCE_DIR}/Downloads/glew
-            PREFIX          ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Build/glew
-            INSTALL_DIR     ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glew
-            PATCH_COMMAND   ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Dev/3rdPartyPatch/glew-CMakeLists.txt <SOURCE_DIR>/CMakeLists.txt
-            CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glew
-                            -DCMAKE_USER_MAKE_RULES_OVERRIDE=${CMAKE_CURRENT_SOURCE_DIR}/Dev/CFlagOverrides.cmake
-                            -DEFK_USE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
-                            -DSANITIZE_ENABLED=${SANITIZE_ENABLED}
-                            -DBUILD_SHARED_LIBS=OFF
-                            -DGLEW_BUILD_INFO=OFF
-                            -DBUILD_UTILS=OFF
-                            -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
-                            ${EFK_MSVC_RUNTIME_LIBRARY_ARGS}
-        )
-
-        list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glew/include)
-        list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glew/lib)
-        if(EXISTS "${ExternalProject_glew_INSTALL_DIR}/lib64")
-            list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glew/lib64)
-        endif()
-    
-    endif()
-endif()
-
 if(BUILD_VIEWER OR BUILD_EXAMPLES OR BUILD_TEST)
     # glfw
     ExternalProject_Add(
@@ -483,6 +454,5 @@ if (BUILD_VIEWER)
     set_target_properties (ExternalProject_glfw PROPERTIES FOLDER Thirdparty)
     set_target_properties (ExternalProject_OpenSoundMixer PROPERTIES FOLDER Thirdparty)
     if(NOT APPLE)
-        set_target_properties (ExternalProject_glew PROPERTIES FOLDER Thirdparty)
     endif()
 endif()

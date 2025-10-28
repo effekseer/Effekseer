@@ -1,12 +1,9 @@
 #ifdef _WIN32
-#define GLEW_STATIC 1
-#include <GL/glew.h>
-#endif
-
-#ifdef _WIN32
 #include "../Graphics/Platform/DX11/efk.GraphicsDX11.h"
 #include <EffekseerRendererDX11/GraphicsDevice.h>
 #endif
+
+#include <OpenGLExtensions.h>
 
 #include <EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h>
 #include <EffekseerRendererGL/GraphicsDevice.h>
@@ -369,9 +366,7 @@ bool GUIManager::Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, E
 	{
 		window->MakeCurrent();
 
-#ifdef _WIN32
-		glewInit();
-#endif
+		Effekseer::OpenGLHelper::Initialize();
 	}
 
 	return true;

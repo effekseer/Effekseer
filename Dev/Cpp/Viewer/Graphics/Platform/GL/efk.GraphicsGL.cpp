@@ -1,12 +1,10 @@
 
-#ifdef _WIN32
-#define GLEW_STATIC 1
-#include <GL/glew.h>
-#endif
-
 #include "efk.GraphicsGL.h"
 #include <EffekseerRendererGL/EffekseerRendererGL.GLExtension.h>
 #include <EffekseerRendererGL/GraphicsDevice.h>
+#include <OpenGLExtensions.h>
+
+namespace GL = EffekseerRendererGL::GLExt;
 
 namespace efk
 {
@@ -22,7 +20,7 @@ bool SaveTextureGL(std::vector<Effekseer::Color>& dst, GLuint texture, int32_t w
 	glBindTexture(GL_TEXTURE_2D, texture);
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, src.data());
+	Effekseer::OpenGLHelper::glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, src.data());
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -48,10 +46,10 @@ GraphicsGL::GraphicsGL()
 
 GraphicsGL::~GraphicsGL()
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glDeleteFramebuffers(1, &frameBuffer);
-	glDeleteFramebuffers(1, &frameBufferForCopySrc);
-	glDeleteFramebuffers(1, &frameBufferForCopyDst);
+	GL::glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	GL::glDeleteFramebuffers(1, &frameBuffer);
+	GL::glDeleteFramebuffers(1, &frameBufferForCopySrc);
+	GL::glDeleteFramebuffers(1, &frameBufferForCopyDst);
 }
 
 bool GraphicsGL::Initialize(void* windowHandle, int32_t windowWidth, int32_t windowHeight)
@@ -61,21 +59,23 @@ bool GraphicsGL::Initialize(void* windowHandle, int32_t windowWidth, int32_t win
 
 	glDisable(GL_FRAMEBUFFER_SRGB);
 
-	glGenFramebuffers(1, &frameBuffer);
+	graphicsDevice_ = Effekseer::MakeRefPtr<EffekseerRendererGL::Backend::GraphicsDevice>(EffekseerRendererGL::OpenGLDeviceType::OpenGL3);
+
+	Effekseer::OpenGLHelper::Initialize();
+
+	GL::glGenFramebuffers(1, &frameBuffer);
 
 	// for bug
-	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	GL::glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+	GL::glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	GLCheckError();
 
 	// TODO
 	// create VAO
 
 	// for glBlitFramebuffer
-	glGenFramebuffers(1, &frameBufferForCopySrc);
-	glGenFramebuffers(1, &frameBufferForCopyDst);
-
-	graphicsDevice_ = Effekseer::MakeRefPtr<EffekseerRendererGL::Backend::GraphicsDevice>(EffekseerRendererGL::OpenGLDeviceType::OpenGL3);
+	GL::glGenFramebuffers(1, &frameBufferForCopySrc);
+	GL::glGenFramebuffers(1, &frameBufferForCopyDst);
 
 	return true;
 }
@@ -103,20 +103,22 @@ void GraphicsGL::CopyTo(Effekseer::Backend::TextureRef src, Effekseer::Backend::
 
 		if (s->GetParameter().SampleCount > 1)
 		{
-			glBindFramebuffer(GL_FRAMEBUFFER, frameBufferForCopySrc);
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, s->GetRenderBuffer());
+			GL::glBindFramebuffer(GL_FRAMEBUFFER, frameBufferForCopySrc);
+			Effekseer::OpenGLHelper::glFramebufferRenderbuffer(
+				GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, s->GetRenderBuffer());
 		}
 		else
 		{
-			glBindFramebuffer(GL_FRAMEBUFFER, frameBufferForCopySrc);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, s->GetBuffer(), 0);
+			GL::glBindFramebuffer(GL_FRAMEBUFFER, frameBufferForCopySrc);
+			GL::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, s->GetBuffer(), 0);
 		}
 
 		glBindTexture(GL_TEXTURE_2D, d->GetBuffer());
-		glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, dst->GetParameter().Size[0], dst->GetParameter().Size[1]);
+		Effekseer::OpenGLHelper::glCopyTexSubImage2D(
+			GL_TEXTURE_2D, 0, 0, 0, 0, 0, dst->GetParameter().Size[0], dst->GetParameter().Size[1]);
 		glBindTexture(GL_TEXTURE_2D, 0);
 
-		glBindFramebuffer(GL_FRAMEBUFFER, backupFramebuffer);
+		GL::glBindFramebuffer(GL_FRAMEBUFFER, backupFramebuffer);
 	}
 }
 
@@ -147,15 +149,15 @@ void GraphicsGL::SetRenderTarget(std::vector<Effekseer::Backend::TextureRef> ren
 	// reset
 	for (int32_t i = 0; i < 4; i++)
 	{
-		glActiveTexture(GL_TEXTURE0 + i);
+		GL::glActiveTexture(GL_TEXTURE0 + i);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
-	glActiveTexture(GL_TEXTURE0);
+	GL::glActiveTexture(GL_TEXTURE0);
 	GLCheckError();
 
 	if (renderTextures[0] == nullptr)
 	{
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		GL::glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glDrawBuffer(GL_BACK);
 		glViewport(0, 0, windowWidth, windowHeight);
 		currentRenderTargetCount_ = 0;
@@ -163,7 +165,7 @@ void GraphicsGL::SetRenderTarget(std::vector<Effekseer::Backend::TextureRef> ren
 	}
 	else
 	{
-		glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+		GL::glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
 
 		auto rt = renderTextures[0].DownCast<EffekseerRendererGL::Backend::Texture>();
 		auto dt = depthTexture.DownCast<EffekseerRendererGL::Backend::Texture>();
@@ -174,40 +176,45 @@ void GraphicsGL::SetRenderTarget(std::vector<Effekseer::Backend::TextureRef> ren
 
 			if (rti == nullptr)
 			{
-				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_RENDERBUFFER, 0);
-				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, 0, 0);
+				Effekseer::OpenGLHelper::glFramebufferRenderbuffer(
+					GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_RENDERBUFFER, 0);
+				GL::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, 0, 0);
 			}
 			else if (rti->GetParameter().SampleCount > 1)
 			{
-				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_RENDERBUFFER, rti->GetRenderBuffer());
+				Effekseer::OpenGLHelper::glFramebufferRenderbuffer(
+					GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_RENDERBUFFER, rti->GetRenderBuffer());
 			}
 			else
 			{
-				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, rti->GetBuffer(), 0);
+				GL::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, rti->GetBuffer(), 0);
 			}
 		}
 
 		for (size_t i = renderTextures.size(); i < 4; i++)
 		{
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_RENDERBUFFER, 0);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, 0, 0);
+			Effekseer::OpenGLHelper::glFramebufferRenderbuffer(
+				GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_RENDERBUFFER, 0);
+			GL::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, 0, 0);
 		}
 
 		if (dt != nullptr)
 		{
 			if (dt->GetParameter().SampleCount > 1)
 			{
-				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, dt->GetRenderBuffer());
+				Effekseer::OpenGLHelper::glFramebufferRenderbuffer(
+					GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, dt->GetRenderBuffer());
 			}
 			else
 			{
-				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, dt->GetBuffer(), 0);
+				GL::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, dt->GetBuffer(), 0);
 			}
 		}
 		else
 		{
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, 0);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, 0, 0);
+			Effekseer::OpenGLHelper::glFramebufferRenderbuffer(
+				GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, 0);
+			GL::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, 0, 0);
 		}
 
 		static const GLenum bufs[] = {
@@ -216,7 +223,7 @@ void GraphicsGL::SetRenderTarget(std::vector<Effekseer::Backend::TextureRef> ren
 			GL_COLOR_ATTACHMENT2,
 			GL_COLOR_ATTACHMENT3,
 		};
-		glDrawBuffers(renderTextures.size(), bufs);
+		GL::glDrawBuffers(renderTextures.size(), bufs);
 
 		GLCheckError();
 
@@ -265,7 +272,7 @@ void GraphicsGL::Clear(Effekseer::Color color)
 
 		for (int32_t i = 0; i < currentRenderTargetCount_; i++)
 		{
-			glClearBufferfv(GL_COLOR, i, colorf.data());
+			Effekseer::OpenGLHelper::glClearBufferfv(GL_COLOR, i, colorf.data());
 			GLCheckError();
 		}
 
@@ -273,7 +280,7 @@ void GraphicsGL::Clear(Effekseer::Color color)
 		{
 			glDepthMask(GL_TRUE);
 			float clearDepth[] = {1.0f};
-			glClearBufferfv(GL_DEPTH, 0, clearDepth);
+			Effekseer::OpenGLHelper::glClearBufferfv(GL_DEPTH, 0, clearDepth);
 			GLCheckError();
 		}
 	}
@@ -288,24 +295,35 @@ void GraphicsGL::ResolveRenderTarget(Effekseer::Backend::TextureRef src, Effekse
 
 	GLint frameBufferBinding = 0;
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &frameBufferBinding);
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, frameBufferForCopySrc);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, frameBufferForCopyDst);
+	GL::glBindFramebuffer(GL_READ_FRAMEBUFFER, frameBufferForCopySrc);
+	GL::glBindFramebuffer(GL_DRAW_FRAMEBUFFER, frameBufferForCopyDst);
 	GLCheckError();
 
-	glFramebufferRenderbuffer(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rtSrc->GetRenderBuffer());
-	glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, rtDest->GetBuffer(), 0);
+	Effekseer::OpenGLHelper::glFramebufferRenderbuffer(
+		GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rtSrc->GetRenderBuffer());
+	GL::glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, rtDest->GetBuffer(), 0);
 	GLCheckError();
 
-	glBlitFramebuffer(0, 0, src->GetParameter().Size[0], src->GetParameter().Size[1], 0, 0, dest->GetParameter().Size[0], dest->GetParameter().Size[1], GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	Effekseer::OpenGLHelper::glBlitFramebuffer(
+		0,
+		0,
+		src->GetParameter().Size[0],
+		src->GetParameter().Size[1],
+		0,
+		0,
+		dest->GetParameter().Size[0],
+		dest->GetParameter().Size[1],
+		GL_COLOR_BUFFER_BIT,
+		GL_NEAREST);
 	GLCheckError();
 
-	glFramebufferRenderbuffer(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, 0);
-	glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
+	Effekseer::OpenGLHelper::glFramebufferRenderbuffer(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, 0);
+	GL::glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
 	GLCheckError();
 
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER, frameBufferBinding);
+	GL::glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+	GL::glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	GL::glBindFramebuffer(GL_FRAMEBUFFER, frameBufferBinding);
 }
 
 void GraphicsGL::ResetDevice()

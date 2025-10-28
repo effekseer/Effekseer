@@ -140,23 +140,6 @@ if(BUILD_VULKAN)
     )
 endif()
 
-if (NOT APPLE)
-    if(WIN32)
-    target_link_libraries(
-        TestCpp
-        PRIVATE
-        debug libglew32d
-        optimized libglew32
-    )
-    else()
-    target_link_libraries(
-        TestCpp
-        PRIVATE
-        GLEW
-    )
-    endif()
-endif()
-
 add_dependencies(TestCpp ExternalProject_glfw)
 
 if(BUILD_WITH_EASY_PROFILER)
