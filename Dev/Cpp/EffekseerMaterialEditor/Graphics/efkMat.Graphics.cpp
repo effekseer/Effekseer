@@ -712,7 +712,17 @@ void Preview::Render()
 			{
 				if (textures_[i]->Name == uniformLayout_->GetTextures()[j].c_str())
 				{
-					drawParam.SetTexture(j, textures_[i]->TexturePtr->GetTexture(), textures_[i]->SamplerType == TextureSamplerType::Repeat ? Effekseer::Backend::TextureWrapType::Repeat : Effekseer::Backend::TextureWrapType::Clamp, Effekseer::Backend::TextureSamplingType::Linear);
+					Effekseer::Backend::TextureRef texture;
+					if (textures_[i]->TexturePtr != nullptr)
+					{
+						texture = textures_[i]->TexturePtr->GetTexture();
+					}
+					else
+					{
+						texture = black_->GetTexture();
+					}
+
+					drawParam.SetTexture(j, texture, textures_[i]->SamplerType == TextureSamplerType::Repeat ? Effekseer::Backend::TextureWrapType::Repeat : Effekseer::Backend::TextureWrapType::Clamp, Effekseer::Backend::TextureSamplingType::Linear);
 				}
 			}
 		}
