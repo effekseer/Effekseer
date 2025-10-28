@@ -506,6 +506,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 	bool hasNoise = false;
 	bool hasLight = false;
 	bool hasLocalTime = false;
+	bool hasParticleTime = false;
 	bool hasHsv = false;
 
 	for (const auto& node : nodes)
@@ -529,6 +530,10 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 		else if (node->Parameter->Type == NodeType::LocalTime)
 		{
 			hasLocalTime = true;
+		}
+		else if (node->Parameter->Type == NodeType::ParticleTime)
+		{
+			hasParticleTime = true;
 		}
 		else if (node->Parameter->Type == NodeType::RgbToHsv ||
 				 node->Parameter->Type == NodeType::HsvToRgb)
@@ -560,6 +565,11 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 	if (hasHsv)
 	{
 		requiredPredefinedMethodTypes.emplace_back(RequiredPredefinedMethodType::Hsv);
+	}
+
+	if (hasParticleTime)
+	{
+		requiredPredefinedMethodTypes.emplace_back(RequiredPredefinedMethodType::ParticleTime);
 	}
 
 	// Generate exporter node
@@ -1805,6 +1815,23 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "="
 			<< "$LOCALTIME$"
 			<< ";" << std::endl;
+	}
+
+	if (node->Target->Parameter->Type == NodeType::ParticleTime)
+	{
+		if (node->Outputs[0].IsConnected)
+		{
+			ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "="
+				<< "$PARTICLE_TIME_NORMALIZED$"
+				<< ";" << std::endl;
+		}
+
+		if (node->Outputs[1].IsConnected)
+		{
+			ret << GetTypeName(node->Outputs[1].Type) << " " << node->Outputs[1].Name << "="
+				<< "$PARTICLE_TIME_SECONDS$"
+				<< ";" << std::endl;
+		}
 	}
 
 	if (node->Target->Parameter->Type == NodeType::CameraPositionWS)

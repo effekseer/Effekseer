@@ -533,6 +533,7 @@ protected:
 			{
 				v[vi].SetFlipbookIndexAndNextRate(instanceParameter.FlipbookIndexAndNextRate);
 				v[vi].SetAlphaThreshold(instanceParameter.AlphaThreshold);
+				v[vi].SetParticleTime(instanceParameter.ParticleTimes[0], instanceParameter.ParticleTimes[1]);
 			}
 
 			if (VertexNormalRequired<VERTEX>())

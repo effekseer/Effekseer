@@ -260,6 +260,9 @@ protected:
 				v[0].SetAlphaThreshold(param.AlphaThreshold);
 				v[1].SetAlphaThreshold(param.AlphaThreshold);
 				v[2].SetAlphaThreshold(param.AlphaThreshold);
+				v[0].SetParticleTime(param.ParticleTimes[0], param.ParticleTimes[1]);
+				v[1].SetParticleTime(param.ParticleTimes[0], param.ParticleTimes[1]);
+				v[2].SetParticleTime(param.ParticleTimes[0], param.ParticleTimes[1]);
 
 				if (parameter.SplineDivision > 1)
 				{

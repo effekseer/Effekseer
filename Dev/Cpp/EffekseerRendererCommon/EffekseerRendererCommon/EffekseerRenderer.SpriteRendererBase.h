@@ -196,6 +196,7 @@ protected:
 
 			verteies[i].SetFlipbookIndexAndNextRate(instanceParameter.FlipbookIndexAndNextRate);
 			verteies[i].SetAlphaThreshold(instanceParameter.AlphaThreshold);
+			verteies[i].SetParticleTime(instanceParameter.ParticleTimes[0], instanceParameter.ParticleTimes[1]);
 		}
 
 		verteies[0].UV[0] = instanceParameter.UV.X;

@@ -65,6 +65,7 @@ struct DynamicVertex
 	};
 
 	float UV2[2];
+	float ParticleTimes[2];
 
 	void SetFlipbookIndexAndNextRate(float value)
 	{
@@ -108,6 +109,12 @@ struct DynamicVertex
 	{
 		UV2[0] = u;
 		UV2[1] = v;
+	}
+
+	void SetParticleTime(float normalized, float seconds)
+	{
+		ParticleTimes[0] = normalized;
+		ParticleTimes[1] = seconds;
 	}
 };
 
@@ -178,6 +185,10 @@ struct LightingVertex
 		UV2[0] = u;
 		UV2[1] = v;
 	}
+
+	void SetParticleTime(float normalized, float seconds)
+	{
+	}
 };
 
 struct SimpleVertex
@@ -196,6 +207,10 @@ struct SimpleVertex
 	{
 	}
 	void SetAlphaThreshold(float value)
+	{
+	}
+
+	void SetParticleTime(float normalized, float seconds)
 	{
 	}
 
@@ -292,6 +307,10 @@ struct AdvancedLightingVertex
 		UV2[0] = u;
 		UV2[1] = v;
 	}
+
+	void SetParticleTime(float normalized, float seconds)
+	{
+	}
 };
 
 struct AdvancedSimpleVertex
@@ -336,6 +355,10 @@ struct AdvancedSimpleVertex
 	}
 
 	void SetPackedNormal(const VertexColor& normal, bool flipRGB)
+	{
+	}
+
+	void SetParticleTime(float normalized, float seconds)
 	{
 	}
 

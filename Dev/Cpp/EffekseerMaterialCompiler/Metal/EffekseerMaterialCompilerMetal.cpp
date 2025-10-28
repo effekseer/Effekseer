@@ -245,6 +245,7 @@ struct ShaderInput1 {
   float4 atPosition [[attribute(0)]];
   float4 atColor [[attribute(1)]];
   float4 atTexCoord [[attribute(2)]];
+  float2 atParticleTime [[attribute(3)]];
 };
 struct ShaderOutput1 {
   float4 gl_Position [[position]];
@@ -256,6 +257,7 @@ struct ShaderOutput1 {
   float3 v_WorldT;
   float3 v_WorldB;
   float4 v_PosP;
+  float2 v_ParticleTime;
 };
 
 struct ShaderUniform1 {
@@ -277,6 +279,7 @@ struct ShaderInput1 {
   float3 atTangent [[attribute(3)]];
   float2 atTexCoord [[attribute(4)]];
   float2 atTexCoord2 [[attribute(5)]];
+  float2 atParticleTime [[attribute(6)]];
   //$C_IN1$
   //$C_IN2$
 };
@@ -290,6 +293,7 @@ struct ShaderOutput1 {
   float3 v_WorldT;
   float3 v_WorldB;
   float4 v_PosP;
+  float2 v_ParticleTime;
   //$C_OUT1$
   //$C_OUT2$
 };
@@ -328,6 +332,7 @@ vertex ShaderOutput1 main0 (ShaderInput1 i [[stage_in]], constant ShaderUniform1
 
     float3 pixelNormalDir = worldNormal;
     float4 vcolor = i.atColor;
+    o.v_ParticleTime = i.atParticleTime;
 
     // Dummy
 	bool isFrontFace = false;
@@ -360,6 +365,7 @@ vertex ShaderOutput1 main0 (ShaderInput1 i [[stage_in]], constant ShaderUniform1
     o.v_WorldT = worldTangent;
     float3 pixelNormalDir = worldNormal;
     float4 vcolor = i.atColor;
+    o.v_ParticleTime = i.atParticleTime;
 
     // Dummy
 	bool isFrontFace = false;
@@ -401,6 +407,7 @@ struct ShaderInput2 {
   float3 v_WorldT;
   float3 v_WorldB;
   float4 v_PosP;
+  float2 v_ParticleTime;
   //$C_PIN1$
   //$C_PIN2$
 };
@@ -516,6 +523,7 @@ fragment ShaderOutput2 main0 (ShaderInput2 i [[stage_in]], bool isFrontFace [[fr
     float3 worldBinormal = i.v_WorldB;
     float3 pixelNormalDir = worldNormal;
     float4 vcolor = i.v_VColor;
+    float2 particleTime = i.v_ParticleTime;
     float3 objectScale = float3(1.0, 1.0, 1.0);
     float2 screenUV = i.v_PosP.xy / i.v_PosP.w;
 	float meshZ =  i.v_PosP.z / i.v_PosP.w;
@@ -944,10 +952,21 @@ ShaderData GenerateShader(MaterialFile* materialFile, MaterialShaderType shaderT
 				ExportUniform(userUniforms, 4, (materialFile->Gradients[i].Name + "_" + std::to_string(j)).c_str());
 			}
 		}
+
 		baseCode = Replace(baseCode, "$EFFECTSCALE$", "predefined_uniform.y");
 		baseCode = Replace(baseCode, "$LOCALTIME$", "predefined_uniform.w");
 		baseCode = Replace(baseCode, "$UV$", "uv");
 		baseCode = Replace(baseCode, "$MOD", "mod");
+		if (stage == 0)
+		{
+			baseCode = Replace(baseCode, "$PARTICLE_TIME_NORMALIZED$", "atParticleTime.x");
+			baseCode = Replace(baseCode, "$PARTICLE_TIME_SECONDS$", "atParticleTime.y");
+		}
+		else
+		{
+			baseCode = Replace(baseCode, "$PARTICLE_TIME_NORMALIZED$", "particleTime.x");
+			baseCode = Replace(baseCode, "$PARTICLE_TIME_SECONDS$", "particleTime.y");
+		}
 
 		// replace uniforms
 		int32_t actualUniformCount = std::min(maximumUniformCount, materialFile->GetUniformCount());

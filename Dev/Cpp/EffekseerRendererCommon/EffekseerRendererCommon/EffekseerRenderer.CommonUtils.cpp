@@ -637,26 +637,28 @@ Effekseer::Backend::VertexLayoutRef GetModelRendererVertexLayout(Effekseer::Back
 
 Effekseer::Backend::VertexLayoutRef GetMaterialSimpleVertexLayout(Effekseer::Backend::GraphicsDeviceRef graphicsDevice)
 {
-	const Effekseer::Backend::VertexLayoutElement vlElem[3] = {
+	const Effekseer::Backend::VertexLayoutElement vlElem[4] = {
 		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "atPosition", "POSITION", 0},
 		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "atColor", "NORMAL", 0},
 		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "atTexCoord", "TEXCOORD", 0},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "atParticleTime", "TEXCOORD", 1},
 	};
 
-	return graphicsDevice->CreateVertexLayout(vlElem, 3);
+	return graphicsDevice->CreateVertexLayout(vlElem, 4);
 }
 
 Effekseer::Backend::VertexLayoutRef GetMaterialSpriteVertexLayout(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, int32_t customData1, int32_t customData2)
 {
-	Effekseer::Backend::VertexLayoutElement vlElem[8] = {
+	Effekseer::Backend::VertexLayoutElement vlElem[9] = {
 		{Effekseer::Backend::VertexLayoutFormat::R32G32B32_FLOAT, "atPosition", "POSITION", 0},
 		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "atColor", "NORMAL", 0},
 		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "atNormal", "NORMAL", 1},
 		{Effekseer::Backend::VertexLayoutFormat::R8G8B8A8_UNORM, "atTangent", "NORMAL", 2},
 		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "atTexCoord", "TEXCOORD", 0},
 		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "atTexCoord2", "TEXCOORD", 1},
-		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "", "TEXCOORD", 2},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "atParticleTime", "TEXCOORD", 2},
 		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "", "TEXCOORD", 3},
+		{Effekseer::Backend::VertexLayoutFormat::R32G32_FLOAT, "", "TEXCOORD", 4},
 	};
 
 	auto getFormat = [](int32_t i) -> Effekseer::Backend::VertexLayoutFormat
@@ -674,9 +676,9 @@ Effekseer::Backend::VertexLayoutRef GetMaterialSpriteVertexLayout(Effekseer::Bac
 		return Effekseer::Backend::VertexLayoutFormat::R32_FLOAT;
 	};
 
-	int32_t offset = 40;
-	int count = 6;
-	int semanticIndex = 2;
+	int32_t offset = 48;
+	int count = 7;
+	int semanticIndex = 3;
 	const char* customData1Name = "atCustomData1";
 	const char* customData2Name = "atCustomData2";
 

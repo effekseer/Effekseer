@@ -117,6 +117,7 @@ LAYOUT(3) OUT mediump vec4 v_WorldN_PX;
 LAYOUT(4) OUT mediump vec4 v_WorldB_PY;
 LAYOUT(5) OUT mediump vec4 v_WorldT_PZ;
 LAYOUT(6) OUT mediump vec4 v_PosP;
+LAYOUT(7) OUT mediump vec2 v_ParticleTime;
 //$C_OUT1$
 //$C_OUT2$
 )";
@@ -234,6 +235,7 @@ static const char g_material_sprite_vs_src_pre_simple[] =
 LAYOUT(0) IN vec4 atPosition;
 LAYOUT(1) IN vec4 atColor;
 LAYOUT(2) IN vec4 atTexCoord;
+LAYOUT(3) IN vec2 atParticleTime;
 )"
 
 	R"(
@@ -244,6 +246,7 @@ LAYOUT(3) OUT mediump vec4 v_WorldN_PX;
 LAYOUT(4) OUT mediump vec4 v_WorldB_PY;
 LAYOUT(5) OUT mediump vec4 v_WorldT_PZ;
 LAYOUT(6) OUT mediump vec4 v_PosP;
+LAYOUT(7) OUT mediump vec2 v_ParticleTime;
 )";
 
 static const char g_material_sprite_vs_src_pre_simple_uniform[] =
@@ -265,6 +268,7 @@ LAYOUT(2) IN vec3 atNormal;
 LAYOUT(3) IN vec3 atTangent;
 LAYOUT(4) IN vec2 atTexCoord;
 LAYOUT(5) IN vec2 atTexCoord2;
+LAYOUT(6) IN vec2 atParticleTime;
 //$C_IN1$
 //$C_IN2$
 )"
@@ -332,6 +336,7 @@ void main() {
 
 	vec3 pixelNormalDir = worldNormal;
 	vec4 vcolor = atColor;
+	v_ParticleTime = atParticleTime;
 )";
 
 static const char g_material_sprite_vs_src_suf1[] =
@@ -375,6 +380,7 @@ void main() {
 	v_WorldT_PZ.xyz = worldTangent;
 	vec3 pixelNormalDir = worldNormal;
 	vec4 vcolor = atColor;
+	v_ParticleTime = atParticleTime;
 )";
 
 static const char g_material_sprite_vs_src_suf2[] =
@@ -416,6 +422,7 @@ LAYOUT(3) IN mediump vec4 v_WorldN_PX;
 LAYOUT(4) IN mediump vec4 v_WorldB_PY;
 LAYOUT(5) IN mediump vec4 v_WorldT_PZ;
 LAYOUT(6) IN mediump vec4 v_PosP;
+LAYOUT(7) IN mediump vec2 v_ParticleTime;
 //$C_PIN1$
 //$C_PIN2$
 
@@ -537,6 +544,7 @@ void main()
 	vec3 worldBinormal = v_WorldB_PY.xyz;
 	vec3 pixelNormalDir = worldNormal;
 	vec4 vcolor = v_VColor;
+	vec2 particleTime = v_ParticleTime;
 	vec3 objectScale = vec3(1.0, 1.0, 1.0);
 
 	bool isFrontFace = gl_FrontFacing;
@@ -1085,6 +1093,16 @@ uniform vec4 customData2s[_INSTANCE_COUNT_];
 		baseCode = Replace(baseCode, "$LOCALTIME$", "predefined_uniform.w");
 		baseCode = Replace(baseCode, "$UV$", "uv");
 		baseCode = Replace(baseCode, "$MOD", "mod");
+		if (stage == 0)
+		{
+			baseCode = Replace(baseCode, "$PARTICLE_TIME_NORMALIZED$", "atParticleTime.x");
+			baseCode = Replace(baseCode, "$PARTICLE_TIME_SECONDS$", "atParticleTime.y");
+		}
+		else
+		{
+			baseCode = Replace(baseCode, "$PARTICLE_TIME_NORMALIZED$", "particleTime.x");
+			baseCode = Replace(baseCode, "$PARTICLE_TIME_SECONDS$", "particleTime.y");
+		}
 
 		// replace textures
 		for (int32_t i = 0; i < actualTextureCount; i++)
