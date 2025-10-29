@@ -152,11 +152,15 @@ TextureObject_Node_Desc,"Muestra la imagen especificada.
 No se puede mostrar directamente porque es una imagen."
 ,
 Output_Node_Name,Salida
+Normalized_Name,Normalizado
+Seconds_Name,Segundos
 Comment_Node_Name,Comentario
 ,
 Constant_Name,Constante
 Time_Node_Name,Tiempo
 Time_Node_Desc,Muestra la hora actual en segundos.
+ParticleTime_Node_Name,Tiempo partícula
+ParticleTime_Node_Desc,"Muestra el progreso de vida normalizado y los segundos transcurridos para cada partícula."
 EffectScale_Node_Name,Escala Effecto
 EffectScale_Node_Desc,Obtiene la escala especificada cuando se carga el archivo de efectos.
 CameraPositionWS_Node_Name,Posición cámara

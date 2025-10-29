@@ -34,6 +34,8 @@ Alpha_Name,Alpha
 Name_Name,名称
 Input_Name,V
 Output_Name, 
+Normalized_Name,归一化值
+Seconds_Name,秒数
 Comment_Name,注释
 Priority_Name,优先级
 Priority_Desc,"优先级越低，屏幕在其他编辑器上显示的位置就越高。"
@@ -157,6 +159,8 @@ Time_Node_Name,时间
 Time_Node_Desc,以秒输出当前时间。
 LocalTime_Node_Name,局部时间
 LocalTime_Node_Desc,输出特效生成之后以秒计数的时间。
+ParticleTime_Node_Name,粒子时间
+ParticleTime_Node_Desc,输出每个粒子的寿命进度（归一化）和经过的秒数。
 EffectScale_Node_Name,特效缩放
 EffectScale_Node_Desc,获取特效文件被加载时设置的缩放。
 CameraPositionWS_Node_Name,相机位置
