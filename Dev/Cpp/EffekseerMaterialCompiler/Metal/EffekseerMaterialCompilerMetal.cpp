@@ -2,8 +2,8 @@
 #include "../3rdParty/LLGI/src/Metal/LLGI.CompilerMetal.h"
 #include "../Common/ShaderGeneratorCommon.h"
 
-#include <iostream>
 #include <algorithm>
+#include <iostream>
 
 namespace Effekseer
 {
@@ -167,6 +167,7 @@ struct ShaderOutput1 {
   float3 v_WorldT;
   float3 v_WorldB;
   float4 v_PosP;
+  float2 v_ParticleTime;
   //$C_OUT1$
   //$C_OUT2$
 };
@@ -175,6 +176,7 @@ struct ShaderUniform1 {
   float4x4 ModelMatrix[40];
   float4 UVOffset[40];
   float4 ModelColor[40];
+  float4 ModelParticleTime[40];
   float4 mUVInversed;
   float4 predefined_uniform;
   float4 cameraPosition;
@@ -192,6 +194,7 @@ vertex ShaderOutput1 main0 (ShaderInput1 i [[stage_in]], constant ShaderUniform1
     float4x4 modelMatrix = u.ModelMatrix[instanceIndex];
     float4 uvOffset = u.UVOffset[instanceIndex];
     float4 modelColor = u.ModelColor[instanceIndex];
+    float2 particleTime = u.ModelParticleTime[instanceIndex].xy;
     float3x3 modelMatRot;
     modelMatRot[0] = modelMatrix[0].xyz;
     modelMatRot[1] = modelMatrix[1].xyz;
@@ -231,6 +234,7 @@ static const char g_material_model_vs_src_suf2[] =
     o.v_UV1 = uv1;
     o.v_UV2 = uv2;
     o.v_VColor = vcolor;
+    o.v_ParticleTime = particleTime.xy;
     o.gl_Position = u.ProjectionMatrix * float4(worldPos, 1.0);
     o.v_PosP = o.gl_Position;
     //o.v_ScreenUV.xy = o.gl_Position.xy / o.gl_Position.w;
@@ -333,6 +337,7 @@ vertex ShaderOutput1 main0 (ShaderInput1 i [[stage_in]], constant ShaderUniform1
     float3 pixelNormalDir = worldNormal;
     float4 vcolor = i.atColor;
     o.v_ParticleTime = i.atParticleTime;
+    float2 particleTime = i.atParticleTime;
 
     // Dummy
 	bool isFrontFace = false;
@@ -366,6 +371,7 @@ vertex ShaderOutput1 main0 (ShaderInput1 i [[stage_in]], constant ShaderUniform1
     float3 pixelNormalDir = worldNormal;
     float4 vcolor = i.atColor;
     o.v_ParticleTime = i.atParticleTime;
+    float2 particleTime = i.atParticleTime;
 
     // Dummy
 	bool isFrontFace = false;
@@ -957,16 +963,8 @@ ShaderData GenerateShader(MaterialFile* materialFile, MaterialShaderType shaderT
 		baseCode = Replace(baseCode, "$LOCALTIME$", "predefined_uniform.w");
 		baseCode = Replace(baseCode, "$UV$", "uv");
 		baseCode = Replace(baseCode, "$MOD", "mod");
-		if (stage == 0)
-		{
-			baseCode = Replace(baseCode, "$PARTICLE_TIME_NORMALIZED$", "atParticleTime.x");
-			baseCode = Replace(baseCode, "$PARTICLE_TIME_SECONDS$", "atParticleTime.y");
-		}
-		else
-		{
-			baseCode = Replace(baseCode, "$PARTICLE_TIME_NORMALIZED$", "particleTime.x");
-			baseCode = Replace(baseCode, "$PARTICLE_TIME_SECONDS$", "particleTime.y");
-		}
+		baseCode = Replace(baseCode, "$PARTICLE_TIME_NORMALIZED$", "particleTime.x");
+		baseCode = Replace(baseCode, "$PARTICLE_TIME_SECONDS$", "particleTime.y");
 
 		// replace uniforms
 		int32_t actualUniformCount = std::min(maximumUniformCount, materialFile->GetUniformCount());

@@ -221,6 +221,7 @@ VS_Output main( const VS_Input Input )
 	float4 vcolor = Input.Color;
 
 	Output.ParticleTime = Input.ParticleTime;
+	float2 particleTime = Input.ParticleTime.xy;
 
 	// Dummy
 	bool isFrontFace = false;
@@ -254,6 +255,7 @@ VS_Output main( const VS_Input Input )
 	float4 vcolor = Input.Color;
 
 	Output.ParticleTime = Input.ParticleTime;
+	float2 particleTime = Input.ParticleTime.xy;
 
 	// Dummy
 	bool isFrontFace = false;
@@ -326,6 +328,7 @@ struct VS_Output
 	float3 WorldB : TEXCOORD5;
 	float4 PosP : TEXCOORD6;
 	//float2 ScreenUV : TEXCOORD6;
+	float2 ParticleTime : TEXCOORD7;
 	//$C_OUT1$
 	//$C_OUT2$
 };
@@ -340,10 +343,11 @@ float4x4 mCameraProj		: register( c0 );
 float4x4 mModel[10]		: register( c4 );
 float4	fUV[10]			: register( c44 );
 float4	fModelColor[10]		: register( c54 );
+float4	fModelParticleTime[10]	: register( c64 );
 
-float4 mUVInversed		: register(c64);
-float4 predefined_uniform : register(c65);
-float4 cameraPosition : register(c66);
+float4 mUVInversed		: register(c74);
+float4 predefined_uniform : register(c75);
+float4 cameraPosition : register(c76);
 )";
 	}
 	else
@@ -353,10 +357,11 @@ float4x4 mCameraProj		: register( c0 );
 float4x4 mModel[40]		: register( c4 );
 float4	fUV[40]			: register( c164 );
 float4	fModelColor[40]		: register( c204 );
+float4	fModelParticleTime[40]	: register( c244 );
 
-float4 mUVInversed		: register(c244);
-float4 predefined_uniform : register(c245);
-float4 cameraPosition : register(c246);
+float4 mUVInversed		: register(c284);
+float4 predefined_uniform : register(c285);
+float4 cameraPosition : register(c286);
 )";
 	}
 
@@ -374,6 +379,7 @@ VS_Output main( const VS_Input Input )
 	float4x4 matModel = mModel[Input.Index];
 	float4 uv = fUV[Input.Index];
 	float4 modelColor = fModelColor[Input.Index] * Input.Color;
+	float2 particleTime = fModelParticleTime[Input.Index].xy;
 
 	VS_Output Output = (VS_Output)0;
 	float4 localPosition = { Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0 }; 
@@ -422,6 +428,7 @@ static char* model_vs_suf2 = R"(
 	Output.VColor = modelColor;
 	Output.UV1 = uv1;
 	Output.UV2 = uv2;
+	Output.ParticleTime = particleTime.xy;
 
 	Output.PosP = Output.Position;
 	//Output.ScreenUV = Output.Position.xy / Output.Position.w;
@@ -1086,16 +1093,8 @@ ShaderData ShaderGenerator::GenerateShader(MaterialFile* materialFile,
 		baseCode = Replace(baseCode, "$LOCALTIME$", "predefined_uniform.w");
 		baseCode = Replace(baseCode, "$UV$", "uv");
 		baseCode = Replace(baseCode, "$MOD", "fmod");
-		if (stage == 0)
-		{
-			baseCode = Replace(baseCode, "$PARTICLE_TIME_NORMALIZED$", "Input.ParticleTime.x");
-			baseCode = Replace(baseCode, "$PARTICLE_TIME_SECONDS$", "Input.ParticleTime.y");
-		}
-		else
-		{
-			baseCode = Replace(baseCode, "$PARTICLE_TIME_NORMALIZED$", "particleTime.x");
-			baseCode = Replace(baseCode, "$PARTICLE_TIME_SECONDS$", "particleTime.y");
-		}
+		baseCode = Replace(baseCode, "$PARTICLE_TIME_NORMALIZED$", "particleTime.x");
+		baseCode = Replace(baseCode, "$PARTICLE_TIME_SECONDS$", "particleTime.y");
 
 		// replace textures
 		for (int32_t i = 0; i < actualTextureCount; i++)

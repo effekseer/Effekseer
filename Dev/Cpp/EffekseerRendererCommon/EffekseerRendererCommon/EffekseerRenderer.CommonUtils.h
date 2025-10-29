@@ -801,6 +801,7 @@ struct MaterialShaderParameterGenerator
 	int32_t VertexModelMatrixOffset = -1;
 	int32_t VertexModelUVOffset = -1;
 	int32_t VertexModelColorOffset = -1;
+	int32_t VertexModelParticleTimeOffset = -1;
 
 	int32_t VertexModelCustomData1Offset = -1;
 	int32_t VertexModelCustomData2Offset = -1;
@@ -834,6 +835,9 @@ struct MaterialShaderParameterGenerator
 			vsOffset += sizeof(float) * 4 * instanceCount;
 
 			VertexModelColorOffset = vsOffset;
+			vsOffset += sizeof(float) * 4 * instanceCount;
+
+			VertexModelParticleTimeOffset = vsOffset;
 			vsOffset += sizeof(float) * 4 * instanceCount;
 
 			VertexInversedFlagOffset = vsOffset;
