@@ -286,6 +286,7 @@ LAYOUT(3) OUT mediump vec4 v_WorldN_PX;
 LAYOUT(4) OUT mediump vec4 v_WorldB_PY;
 LAYOUT(5) OUT mediump vec4 v_WorldT_PZ;
 LAYOUT(6) OUT mediump vec4 v_PosP;
+LAYOUT(7) OUT mediump vec2 v_ParticleTime;
 //$C_OUT1$
 //$C_OUT2$
 )";

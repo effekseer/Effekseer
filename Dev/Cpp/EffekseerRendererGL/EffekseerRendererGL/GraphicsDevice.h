@@ -3,11 +3,13 @@
 #define __EFFEKSEERRENDERER_GL_GRAPHICS_DEVICE_H__
 
 #include "EffekseerRendererGL.GLExtension.h"
+#include <array>
 #include <Effekseer.h>
 #include <EffekseerRendererCommon/EffekseerRenderer.CommonUtils.h>
 #include <assert.h>
 #include <functional>
 #include <set>
+#include <string>
 
 namespace EffekseerRendererGL
 {
@@ -352,6 +354,7 @@ private:
 	bool isValid_ = true;
 	bool is_restoration_of_states_required_ = true;
 	GLint frontFace_ = 0;
+	std::array<std::string, 3> last_shader_errors_;
 
 public:
 	GraphicsDevice(OpenGLDeviceType deviceType, bool isExtensionsEnabled = true);
@@ -416,6 +419,12 @@ public:
 	}
 
 	Effekseer::Backend::TextureRef CreateTexture(GLuint buffer, bool hasMipmap, const std::function<void()>& onDisposed);
+
+	void ClearLastShaderError();
+	void SetLastShaderError(const std::string& vertex, const std::string& pixel, const std::string& program);
+	const std::string& GetLastVertexShaderError() const;
+	const std::string& GetLastPixelShaderError() const;
+	const std::string& GetLastProgramShaderError() const;
 };
 
 } // namespace Backend
