@@ -258,7 +258,7 @@ if(BUILD_VIEWER)
                         -DPNG_FRAMEWORK=OFF
                         -DPNG_EXECUTABLES=OFF
                         -DPNG_TESTS=OFF
-                        -DPNG_BUILD_ZLIB=ON
+                        -DZLIB_USE_STATIC_LIBS=ON
                         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
                         ${EFK_MSVC_RUNTIME_LIBRARY_ARGS}
                         -DCMAKE_OSX_ARCHITECTURES:STRING=arm64$<SEMICOLON>x86_64 # For apple Silicon
@@ -281,7 +281,7 @@ if(BUILD_VIEWER)
                         -DPNG_FRAMEWORK=OFF
                         -DPNG_EXECUTABLES=OFF
                         -DPNG_TESTS=OFF
-                        -DPNG_BUILD_ZLIB=ON
+                        -DZLIB_USE_STATIC_LIBS=ON
                         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
                         ${EFK_MSVC_RUNTIME_LIBRARY_ARGS}
     )
