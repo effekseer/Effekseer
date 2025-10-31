@@ -258,6 +258,7 @@ if(BUILD_VIEWER)
                         -DPNG_FRAMEWORK=OFF
                         -DPNG_EXECUTABLES=OFF
                         -DPNG_TESTS=OFF
+                        -DPNG_BUILD_ZLIB=ON
                         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
                         ${EFK_MSVC_RUNTIME_LIBRARY_ARGS}
                         -DCMAKE_OSX_ARCHITECTURES:STRING=arm64$<SEMICOLON>x86_64 # For apple Silicon
@@ -280,6 +281,7 @@ if(BUILD_VIEWER)
                         -DPNG_FRAMEWORK=OFF
                         -DPNG_EXECUTABLES=OFF
                         -DPNG_TESTS=OFF
+                        -DPNG_BUILD_ZLIB=ON
                         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
                         ${EFK_MSVC_RUNTIME_LIBRARY_ARGS}
     )
@@ -319,6 +321,7 @@ if(BUILD_VIEWER)
                         -DZLIB_ROOT=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib
                         -DBUILD_STATIC_LIBS=ON
                         -DBUILD_SHARED_LIBS=OFF
+                        -DPNG_BUILD_ZLIB=ON
                         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
                         ${EFK_MSVC_RUNTIME_LIBRARY_ARGS}
                         -DCMAKE_OSX_ARCHITECTURES:STRING=arm64$<SEMICOLON>x86_64
