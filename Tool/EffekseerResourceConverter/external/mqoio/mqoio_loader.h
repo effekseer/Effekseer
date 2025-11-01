@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string.h>
+#include <optional>
 #include <fstream>
 #include "mqoio_data.h"
 #include "mqoio_lexer.h"
@@ -59,7 +61,7 @@ public:
 		{
 			if (tokens[n].Kind == TokenKind::Letter && tokens[n].Letter == "Scene")
 			{
-				data.Scene = LoadScene(tokens, n);
+				data.SceneInfo = LoadScene(tokens, n);
 			}
 			else if (tokens[n].Kind == TokenKind::Letter && tokens[n].Letter == "Material")
 			{

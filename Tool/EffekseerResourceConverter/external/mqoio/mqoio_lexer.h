@@ -273,18 +273,8 @@ private:
 				NextChar(s, pos, ln, col);
 				ch1 = s[pos];
 			}
-			double f = 0.0;
-			if (std::from_chars(&sb[0], &sb[0] + sb.size(), f).ec == std::errc{})
-			{
-				return Token(f, _ln, _col);
-			}
-			else
-			{
-				std::stringstream ss;
-				ss << "Invalid number : " << sb << " line =" << ln << " col = " << col;
-				err = ss.str();
-				return std::nullopt;
-			}
+			double f = std::stod(sb);
+			return Token(f, _ln, _col);
 		}
 		else if (IsBinarySizeStart(ch1))
 		{
@@ -302,8 +292,7 @@ private:
 			pos += 3;
 			ln++;
 
-			size_t binSize = 0;
-			std::from_chars(sb.data(), sb.data() + sb.size(), binSize);
+			int binSize = std::stoi(sb);
 
 			const char* binPtr = s.data() + pos;
 			pos += (int)binSize;
