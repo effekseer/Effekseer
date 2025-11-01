@@ -169,9 +169,10 @@ def main():
             run_command('dotnet publish Dev/Editor/Effekseer/Effekseer.csproj -c Release --self-contained -r linux-x64')
             run_command('chmod +x Dev/release/Effekseer')
             run_command('chmod +x Dev/release/EffekseerMaterialEditor')
-            run_command('chmod +x Dev/release/tools/fbxToEffekseerCurveConverter')
-            run_command('chmod +x Dev/release/tools/fbxToEffekseerModelConverter')
-            run_command('chmod +x Dev/release/tools/libfbxsdk.so')
+            run_command('chmod +x Dev/release/tools/EffekseerResourceConverter')
+            # run_command('chmod +x Dev/release/tools/fbxToEffekseerCurveConverter')
+            # run_command('chmod +x Dev/release/tools/fbxToEffekseerModelConverter')
+            # run_command('chmod +x Dev/release/tools/libfbxsdk.so')
             run_command('cp -r Dev/release/linux-x64/publish/* Dev/release/')
             run_command('rm -rf -r Dev/release/linux-x64')
 

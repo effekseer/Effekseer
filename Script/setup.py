@@ -9,10 +9,10 @@ shutil.copytree("../ResourceData/tool/resources/icons","../Dev/release/resources
 
 pf = platform.system()
 if pf == 'Windows':
-    shutil.copyfile("../ResourceData/tool/tools/win/EffekseerResourceConverter.exe", "../Dev/release/tools/EffekseerResourceConverter.exe")
+    pass
 
 if pf == 'Darwin':
-    shutil.copyfile("../ResourceData/tool/tools/mac/EffekseerResourceConverter", "../Dev/release/tools/EffekseerResourceConverter")
+    pass
 
 if pf == 'Linux':
-    shutil.copyfile("../ResourceData/tool/tools/linux/EffekseerResourceConverter", "../Dev/release/tools/EffekseerResourceConverter")
+    pass

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string>
 #include <charconv>
 #include "EfkRes.Math.h"
@@ -38,7 +39,7 @@ public:
                 }
                 else if (option == "-s")
                 {
-                    std::from_chars(arg.data(), arg.data() + arg.size(), modelScale);
+                    modelScale = strtod(arg.data(), nullptr);
                 }
                 else if (option == "")
                 {

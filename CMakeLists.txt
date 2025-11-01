@@ -18,6 +18,7 @@ option(BUILD_VIEWER "Build viewer" OFF)
 option(BUILD_EDITOR "Build editor" OFF)
 option(BUILD_TEST "Build test" OFF)
 option(BUILD_EXAMPLES "Build examples" ON)
+option(BUILD_TOOLS "Build tools" ON)
 option(BUILD_UNITYPLUGIN "is built as unity plugin" OFF)
 option(BUILD_UNITYPLUGIN_FOR_IOS "is built as unity plugin for ios" OFF)
 option(FROM_CI "from ci" OFF)
@@ -437,6 +438,10 @@ if(BUILD_EXAMPLES)
 
     set(EFK_RUNTIME_ROOT ${CMAKE_CURRENT_LIST_DIR}/Dev/Cpp)
     add_subdirectory(Examples)
+endif()
+
+if(BUILD_TOOLS)
+    add_subdirectory(Tool)
 endif()
 
 # specify filters

@@ -24,3 +24,7 @@ endforeach()
 add_executable(${PROJECT_NAME} ${LOCAL_FILES})
 
 target_include_directories(${PROJECT_NAME} PRIVATE external/ufbx external/tinygltf external/mqoio external/nlohmann)
+
+set_target_properties( EffekseerResourceConverter PROPERTIES RUNTIME_OUTPUT_DIRECTORY  ${CMAKE_SOURCE_DIR}/Dev/release/tools )
+set_target_properties( EffekseerResourceConverter PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG  ${CMAKE_SOURCE_DIR}/Dev/release/tools )
+set_target_properties( EffekseerResourceConverter PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE  ${CMAKE_SOURCE_DIR}/Dev/release/tools )
