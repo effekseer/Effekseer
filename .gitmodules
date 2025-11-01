@@ -7,9 +7,6 @@
 [submodule "Downloads/glfw"]
 	path = Downloads/glfw
 	url = https://github.com/glfw/glfw
-[submodule "Downloads/zlib"]
-	path = Downloads/zlib
-	url = https://github.com/madler/zlib
 [submodule "Dev/Cpp/3rdParty/LLGI"]
 	path = Dev/Cpp/3rdParty/LLGI
 	url = https://github.com/altseed/LLGI
@@ -46,3 +43,6 @@
 [submodule "Dev/Cpp/3rdParty/libpng"]
 	path = Dev/Cpp/3rdParty/libpng
 	url = https://github.com/effekseer/libpng
+[submodule "Dev/Cpp/3rdParty/zlib"]
+	path = Dev/Cpp/3rdParty/zlib
+	url = https://github.com/effekseer/zlib.git

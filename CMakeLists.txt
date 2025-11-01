@@ -198,7 +198,7 @@ if(BUILD_VIEWER)
 
     ExternalProject_Add(
         ExternalProject_zlib
-        SOURCE_DIR      ${CMAKE_CURRENT_SOURCE_DIR}/Downloads/zlib
+        SOURCE_DIR      ${CMAKE_CURRENT_SOURCE_DIR}/Dev/Cpp/3rdParty/zlib
         PREFIX          ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Build/zlib
         INSTALL_DIR     ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib
         INSTALL_COMMAND ${ZLIB_INSTALL}
@@ -208,6 +208,7 @@ if(BUILD_VIEWER)
                         -DSANITIZE_ENABLED=${SANITIZE_ENABLED}
                         -DASM686=off
                         -DAMD64=off
+                        -DZLIB_BUILD_EXAMPLES=OFF
                         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
                         ${EFK_MSVC_RUNTIME_LIBRARY_ARGS}
                         -DCMAKE_OSX_ARCHITECTURES:STRING=arm64$<SEMICOLON>x86_64
@@ -219,12 +220,15 @@ if(BUILD_VIEWER)
     if(MSVC)
         set(ZLIB_LIB_DEBUG "zlibstaticd")
         set(ZLIB_LIB_RELEASE "zlibstatic")
+    elseif(APPLE)
+        set(ZLIB_LIB_DEBUG "libz.a")
+        set(ZLIB_LIB_RELEASE "libz.a")
+    elseif(UNIX)
+        set(ZLIB_LIB_DEBUG "libz.a")
+        set(ZLIB_LIB_RELEASE "libz.a")
     elseif(BUILD_WITH_POSTFIX)
         set(ZLIB_LIB_DEBUG "z")
         set(ZLIB_LIB_RELEASE "z")
-    elseif(UNIX AND NOT APPLE)
-        set(ZLIB_LIB_DEBUG "libz.a")
-        set(ZLIB_LIB_RELEASE "libz.a")
     else()
         set(ZLIB_LIB_DEBUG "z")
         set(ZLIB_LIB_RELEASE "z")
@@ -251,6 +255,7 @@ if(BUILD_VIEWER)
                         -DEFK_USE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
                         -DSANITIZE_ENABLED=${SANITIZE_ENABLED}
                         -DZLIB_ROOT=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/
+                        -DZLIB_USE_STATIC_LIBS=ON
                         -DPNG_SHARED=OFF
                         -DPNG_FRAMEWORK=OFF
                         -DPNG_EXECUTABLES=OFF
@@ -273,6 +278,7 @@ if(BUILD_VIEWER)
                         -DEFK_USE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
                         -DSANITIZE_ENABLED=${SANITIZE_ENABLED}
                         -DZLIB_ROOT=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/
+                        -DZLIB_USE_STATIC_LIBS=ON
                         -DPNG_SHARED=OFF
                         -DPNG_FRAMEWORK=OFF
                         -DPNG_EXECUTABLES=OFF
@@ -314,6 +320,7 @@ if(BUILD_VIEWER)
                         -DEFK_USE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
                         -DSANITIZE_ENABLED=${SANITIZE_ENABLED}
                         -DZLIB_ROOT=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib
+                        -DZLIB_USE_STATIC_LIBS=ON
                         -DBUILD_STATIC_LIBS=ON
                         -DBUILD_SHARED_LIBS=OFF
                         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
