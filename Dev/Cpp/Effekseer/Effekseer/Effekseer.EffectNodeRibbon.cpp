@@ -286,6 +286,8 @@ void EffectNodeRibbon::Rendering(const Instance& instance, const Instance* next_
 		}
 
 		m_instanceParameter.InstanceIndex = index;
+		m_instanceParameter.ParticleTimes[0] = instance.GetNormalizedLivetime();
+		m_instanceParameter.ParticleTimes[1] = instance.m_LivingTime / 60.0f;
 		renderer->Rendering(m_nodeParameter, m_instanceParameter, userData);
 	}
 }

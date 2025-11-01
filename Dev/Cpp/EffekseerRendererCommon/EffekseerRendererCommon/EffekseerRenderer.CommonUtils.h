@@ -65,6 +65,7 @@ struct DynamicVertex
 	};
 
 	float UV2[2];
+	float ParticleTimes[2];
 
 	void SetFlipbookIndexAndNextRate(float value)
 	{
@@ -108,6 +109,12 @@ struct DynamicVertex
 	{
 		UV2[0] = u;
 		UV2[1] = v;
+	}
+
+	void SetParticleTime(float normalized, float seconds)
+	{
+		ParticleTimes[0] = normalized;
+		ParticleTimes[1] = seconds;
 	}
 };
 
@@ -178,6 +185,10 @@ struct LightingVertex
 		UV2[0] = u;
 		UV2[1] = v;
 	}
+
+	void SetParticleTime(float normalized, float seconds)
+	{
+	}
 };
 
 struct SimpleVertex
@@ -196,6 +207,10 @@ struct SimpleVertex
 	{
 	}
 	void SetAlphaThreshold(float value)
+	{
+	}
+
+	void SetParticleTime(float normalized, float seconds)
 	{
 	}
 
@@ -292,6 +307,10 @@ struct AdvancedLightingVertex
 		UV2[0] = u;
 		UV2[1] = v;
 	}
+
+	void SetParticleTime(float normalized, float seconds)
+	{
+	}
 };
 
 struct AdvancedSimpleVertex
@@ -336,6 +355,10 @@ struct AdvancedSimpleVertex
 	}
 
 	void SetPackedNormal(const VertexColor& normal, bool flipRGB)
+	{
+	}
+
+	void SetParticleTime(float normalized, float seconds)
 	{
 	}
 
@@ -778,6 +801,7 @@ struct MaterialShaderParameterGenerator
 	int32_t VertexModelMatrixOffset = -1;
 	int32_t VertexModelUVOffset = -1;
 	int32_t VertexModelColorOffset = -1;
+	int32_t VertexModelParticleTimeOffset = -1;
 
 	int32_t VertexModelCustomData1Offset = -1;
 	int32_t VertexModelCustomData2Offset = -1;
@@ -811,6 +835,9 @@ struct MaterialShaderParameterGenerator
 			vsOffset += sizeof(float) * 4 * instanceCount;
 
 			VertexModelColorOffset = vsOffset;
+			vsOffset += sizeof(float) * 4 * instanceCount;
+
+			VertexModelParticleTimeOffset = vsOffset;
 			vsOffset += sizeof(float) * 4 * instanceCount;
 
 			VertexInversedFlagOffset = vsOffset;

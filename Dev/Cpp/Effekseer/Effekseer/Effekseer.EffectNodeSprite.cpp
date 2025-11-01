@@ -234,6 +234,9 @@ void EffectNodeSprite::Rendering(const Instance& instance, const Instance* next_
 			instanceParameter.Direction = instance.GetGlobalDirection();
 		}
 
+		instanceParameter.ParticleTimes[0] = instance.GetNormalizedLivetime();
+		instanceParameter.ParticleTimes[1] = instance.m_LivingTime / 60.0f;
+
 		CalcCustomData(&instance, instanceParameter.CustomData1, instanceParameter.CustomData2);
 
 		renderer->Rendering(nodeParam_, instanceParameter, userData);

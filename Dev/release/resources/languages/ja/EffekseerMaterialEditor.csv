@@ -34,6 +34,8 @@ Alpha_Name,アルファ
 Name_Name,名称
 Input_Name,V
 Output_Name, 
+Normalized_Name,正規化値
+Seconds_Name,秒数
 Comment_Name,コメント
 Priority_Name,優先度
 Priority_Desc,低い優先度ほど、他のエディタの画面の上の位置に表示されます。
@@ -182,6 +184,8 @@ Time_Node_Name,時間
 Time_Node_Desc,現在の時間を秒単位で出力します。
 LocalTime_Node_Name,ローカル時間
 LocalTime_Node_Desc,エフェクトが生成されてからの時間を秒単位で出力します。
+ParticleTime_Node_Name,パーティクル時間
+ParticleTime_Node_Desc,各パーティクルの寿命の進行度（正規化値）と経過秒数を出力します。
 EffectScale_Node_Name,エフェクト拡大率
 EffectScale_Node_Desc,エフェクトファイルを読み込んだときに指定される拡大率を取得します。
 CameraPositionWS_Node_Name,カメラ位置

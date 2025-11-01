@@ -177,6 +177,7 @@ enum class NodeType
 	Light, //! 1703
 
 	LocalTime, //! 1703
+	ParticleTime, //! 1810
 
 	Comment,
 	Function, // Unimplemented
@@ -205,6 +206,7 @@ enum class RequiredPredefinedMethodType : int32_t
 	Light = 2,
 	LocalTime = 3,
 	Hsv = 4,
+	ParticleTime = 5,
 };
 
 class PinParameter;

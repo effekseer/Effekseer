@@ -1629,6 +1629,27 @@ public:
 	}
 };
 
+class NodeParticleTime : public NodeParameter
+{
+public:
+	NodeParticleTime()
+	{
+		Type = NodeType::ParticleTime;
+		TypeName = "ParticleTime";
+		Group = std::vector<std::string>{"Constant"};
+
+		auto normalized = std::make_shared<PinParameter>();
+		normalized->Name = "Normalized";
+		normalized->Type = ValueType::Float1;
+		OutputPins.push_back(normalized);
+
+		auto seconds = std::make_shared<PinParameter>();
+		seconds->Name = "Seconds";
+		seconds->Type = ValueType::Float1;
+		OutputPins.push_back(seconds);
+	}
+};
+
 class NodeEffectScale : public NodeParameter
 {
 public:

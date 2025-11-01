@@ -290,6 +290,11 @@ protected:
 					}
 				}
 
+				for (int idx : {0, 1, 4, 5})
+				{
+					verteies[idx].SetParticleTime(param.ParticleTimes[0], param.ParticleTimes[1]);
+				}
+
 				if (isFirst || isLast)
 				{
 					verteies += 2;

@@ -34,6 +34,8 @@ Alpha_Name,Alpha
 Name_Name,Name
 Input_Name,V
 Output_Name, 
+Normalized_Name,Normalized
+Seconds_Name,Seconds
 Comment_Name,Comment
 Priority_Name,Priority
 Priority_Desc,"The lower the priority, the higher the screen is shown in other editors."
@@ -183,6 +185,8 @@ Time_Node_Name,Time
 Time_Node_Desc,Outputs the current time in seconds.
 LocalTime_Node_Name,LocalTime
 LocalTime_Node_Desc,Outputs the time in seconds since the effect was generated.
+ParticleTime_Node_Name,ParticleTime
+ParticleTime_Node_Desc,Outputs each particle's normalized lifetime progress and elapsed seconds.
 EffectScale_Node_Name,EffectScale
 EffectScale_Node_Desc,Gets the scale specified when the effect file is loaded.
 CameraPositionWS_Node_Name,CameraPosition

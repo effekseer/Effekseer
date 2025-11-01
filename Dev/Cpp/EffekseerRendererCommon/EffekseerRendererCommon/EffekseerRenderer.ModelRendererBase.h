@@ -58,6 +58,10 @@ struct ModelRendererVertexConstantBuffer
 	{
 	}
 
+	void SetModelParticleTime(int32_t index, float normalized, float seconds)
+	{
+	}
+
 	float ModelColor[MODEL_COUNT][4];
 
 	float LightDirection[4];
@@ -145,6 +149,10 @@ struct ModelRendererAdvancedVertexConstantBuffer
 		ModelAlphaThreshold[index][0] = value;
 	}
 
+	void SetModelParticleTime(int32_t index, float normalized, float seconds)
+	{
+	}
+
 	float ModelColor[MODEL_COUNT][4];
 
 	float LightDirection[4];
@@ -160,6 +168,7 @@ struct ModelRendererMaterialVertexConstantBuffer
 	Effekseer::Matrix44 ModelMatrix[MODEL_COUNT];
 	float ModelUV[MODEL_COUNT][4];
 	float ModelColor[MODEL_COUNT][4];
+	float ModelParticleTime[MODEL_COUNT][4];
 
 	float LightDirection[4];
 	float LightColor[4];
@@ -197,6 +206,14 @@ struct ModelRendererMaterialVertexConstantBuffer
 	void SetModelAlphaThreshold(int32_t index, float value)
 	{
 	}
+
+	void SetModelParticleTime(int32_t index, float normalized, float seconds)
+	{
+		ModelParticleTime[index][0] = normalized;
+		ModelParticleTime[index][1] = seconds;
+		ModelParticleTime[index][2] = 0.0f;
+		ModelParticleTime[index][3] = 0.0f;
+	}
 };
 
 enum class ModelRendererVertexType
@@ -229,6 +246,7 @@ protected:
 
 	std::vector<Effekseer::Color> colorsSorted_;
 	std::vector<int32_t> timesSorted_;
+	std::vector<std::array<float, 2>> particleTimesSorted_;
 	std::vector<std::array<float, 4>> customData1Sorted_;
 	std::vector<std::array<float, 4>> customData2Sorted_;
 
@@ -246,6 +264,7 @@ protected:
 
 	std::vector<Effekseer::Color> m_colors;
 	std::vector<int32_t> m_times;
+	std::vector<std::array<float, 2>> m_particleTimes;
 	std::vector<std::array<float, 4>> customData1_;
 	std::vector<std::array<float, 4>> customData2_;
 
@@ -357,6 +376,7 @@ protected:
 			viewOffsetDistanceSorted_.resize(m_matrixes.size());
 			colorsSorted_.resize(m_matrixes.size());
 			timesSorted_.resize(m_matrixes.size());
+			particleTimesSorted_.resize(m_matrixes.size());
 
 			if (customData1Count_ > 0)
 			{
@@ -382,6 +402,7 @@ protected:
 				viewOffsetDistanceSorted_[keyValues_[i].Value] = m_viewOffsetDistance[i];
 				colorsSorted_[keyValues_[i].Value] = m_colors[i];
 				timesSorted_[keyValues_[i].Value] = m_times[i];
+				particleTimesSorted_[keyValues_[i].Value] = m_particleTimes[i];
 			}
 
 			if (customData1Count_ > 0)
@@ -412,6 +433,7 @@ protected:
 			m_viewOffsetDistance = viewOffsetDistanceSorted_;
 			m_colors = colorsSorted_;
 			m_times = timesSorted_;
+			m_particleTimes = particleTimesSorted_;
 			customData1_ = customData1Sorted_;
 			customData2_ = customData2Sorted_;
 		}
@@ -456,7 +478,7 @@ protected:
 		predefined_uniforms[3] = param.LocalTime;
 
 		// vs
-		int32_t vsOffset = sizeof(Effekseer::Matrix44) + (sizeof(Effekseer::Matrix44) + sizeof(float) * 4 * 2) * InstanceCount;
+		int32_t vsOffset = sizeof(Effekseer::Matrix44) + (sizeof(Effekseer::Matrix44) + sizeof(float) * 4 * 3) * InstanceCount;
 
 		renderer->SetVertexBufferToShader(uvInversedMaterial.data(), sizeof(float) * 4, vsOffset);
 		vsOffset += (sizeof(float) * 4);
@@ -723,6 +745,7 @@ public:
 		m_viewOffsetDistance.clear();
 		m_colors.clear();
 		m_times.clear();
+		m_particleTimes.clear();
 		customData1_.clear();
 		customData2_.clear();
 
@@ -738,6 +761,7 @@ public:
 		viewOffsetDistanceSorted_.clear();
 		colorsSorted_.clear();
 		timesSorted_.clear();
+		particleTimesSorted_.clear();
 		customData1Sorted_.clear();
 		customData2Sorted_.clear();
 
@@ -806,6 +830,7 @@ public:
 		m_viewOffsetDistance.push_back(instanceParameter.ViewOffsetDistance);
 		m_colors.push_back(instanceParameter.AllColor);
 		m_times.push_back(instanceParameter.Time);
+		m_particleTimes.push_back({instanceParameter.ParticleTimes[0], instanceParameter.ParticleTimes[1]});
 
 		if (customData1Count_ > 0)
 		{
@@ -1171,6 +1196,7 @@ public:
 													 m_blendUVDistortionUV[loop + num].Height);
 					vcb->SetModelFlipbookIndexAndNextRate(num, m_flipbookIndexAndNextRate[loop + num]);
 					vcb->SetModelAlphaThreshold(num, m_alphaThreshold[loop + num]);
+					vcb->SetModelParticleTime(num, m_particleTimes[loop + num][0], m_particleTimes[loop + num][1]);
 
 					ColorToFloat4(m_colors[loop + num], vcb->ModelColor[num]);
 
@@ -1233,6 +1259,7 @@ public:
 				vcb->ModelUV[0][1] = m_uv[loop].Y;
 				vcb->ModelUV[0][2] = m_uv[loop].Width;
 				vcb->ModelUV[0][3] = m_uv[loop].Height;
+				vcb->SetModelParticleTime(0, m_particleTimes[loop][0], m_particleTimes[loop][1]);
 
 				vcb->SetModelAlphaUV(0, m_alphaUV[loop].X, m_alphaUV[loop].Y, m_alphaUV[loop].Width, m_alphaUV[loop].Height);
 				vcb->SetModelUVDistortionUV(

@@ -83,6 +83,8 @@ public:
 
 		SIMD::Vec3f Direction;
 
+		float ParticleTimes[2];
+
 		std::array<float, 4> CustomData1;
 		std::array<float, 4> CustomData2;
 	};
