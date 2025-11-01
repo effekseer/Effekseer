@@ -208,6 +208,7 @@ if(BUILD_VIEWER)
                         -DSANITIZE_ENABLED=${SANITIZE_ENABLED}
                         -DASM686=off
                         -DAMD64=off
+                        -DZLIB_BUILD_EXAMPLES=OFF
                         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
                         ${EFK_MSVC_RUNTIME_LIBRARY_ARGS}
                         -DCMAKE_OSX_ARCHITECTURES:STRING=arm64$<SEMICOLON>x86_64
