@@ -1,3 +1,5 @@
+#include <string.h>
+#include <algorithm>
 #include <ufbx.h>
 #include "EfkRes.Utils.h"
 #include "EfkRes.FBXLoader.h"

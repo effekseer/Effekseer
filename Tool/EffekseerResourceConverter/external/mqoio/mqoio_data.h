@@ -68,7 +68,7 @@ struct Scene
 
 struct Data
 {
-	Scene Scene;
+	Scene SceneInfo;
 	std::vector<Material> Materials;
 	std::vector<Object> Objects;
 };
