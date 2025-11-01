@@ -46,3 +46,6 @@
 [submodule "Dev/Cpp/3rdParty/libpng"]
 	path = Dev/Cpp/3rdParty/libpng
 	url = https://github.com/effekseer/libpng
+[submodule "Dev/Cpp/3rdParty/zlib"]
+	path = Dev/Cpp/3rdParty/zlib
+	url = https://github.com/effekseer/zlib.git
