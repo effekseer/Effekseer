@@ -180,28 +180,28 @@ bool DDSTextureLoader::Load(const void* data, int32_t size)
 	if (format == Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM ||
 		format == Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM_SRGB)
 	{
-		textureFormatType = Effekseer::TextureFormatType::ABGR8;
+		textureFormatType_ = Effekseer::TextureFormatType::ABGR8;
 		blockSize = 4;
 		isCompressed = false;
 	}
 	else if (format == Effekseer::Backend::TextureFormatType::BC1 ||
 			 format == Effekseer::Backend::TextureFormatType::BC1_SRGB)
 	{
-		textureFormatType = Effekseer::TextureFormatType::BC1;
+		textureFormatType_ = Effekseer::TextureFormatType::BC1;
 		blockSize = 8;
 		isCompressed = true;
 	}
 	else if (format == Effekseer::Backend::TextureFormatType::BC2 ||
 			 format == Effekseer::Backend::TextureFormatType::BC2_SRGB)
 	{
-		textureFormatType = Effekseer::TextureFormatType::BC2;
+		textureFormatType_ = Effekseer::TextureFormatType::BC2;
 		blockSize = 16;
 		isCompressed = true;
 	}
 	else if (format == Effekseer::Backend::TextureFormatType::BC3 ||
 			 format == Effekseer::Backend::TextureFormatType::BC3_SRGB)
 	{
-		textureFormatType = Effekseer::TextureFormatType::BC3;
+		textureFormatType_ = Effekseer::TextureFormatType::BC3;
 		blockSize = 16;
 		isCompressed = true;
 	}
@@ -210,7 +210,7 @@ bool DDSTextureLoader::Load(const void* data, int32_t size)
 		return false;
 	}
 
-	backendTextureFormatType = format;
+	backendTextureFormatType_ = format;
 	uint32_t mipLevelCount = dds.dwMipMapCount;
 	if (mipLevelCount == 0)
 	{
@@ -255,8 +255,8 @@ bool DDSTextureLoader::Load(const void* data, int32_t size)
 		p += textureSize;
 	}
 
-	textureWidth = static_cast<int32_t>(dds.dwWidth);
-	textureHeight = static_cast<int32_t>(dds.dwHeight);
+	textureWidth_ = static_cast<int32_t>(dds.dwWidth);
+	textureHeight_ = static_cast<int32_t>(dds.dwHeight);
 
 	return true;
 }

@@ -31,11 +31,11 @@ bool GpuParticleSystem::InitSystem(const Settings& settings)
 	const auto& psRender = Backend::Serialize(renderer->fixedShader_.GpuParticles_Render_PS);
 
 	Shaders shaders;
-	shaders.csParticleClear = graphics->CreateComputeShader(csClear.data(), (int32_t)csClear.size());
-	shaders.csParticleSpawn = graphics->CreateComputeShader(csSpawn.data(), (int32_t)csSpawn.size());
-	shaders.csParticleUpdate = graphics->CreateComputeShader(csUpdate.data(), (int32_t)csUpdate.size());
+	shaders.CsParticleClear = graphics->CreateComputeShader(csClear.data(), (int32_t)csClear.size());
+	shaders.CsParticleSpawn = graphics->CreateComputeShader(csSpawn.data(), (int32_t)csSpawn.size());
+	shaders.CsParticleUpdate = graphics->CreateComputeShader(csUpdate.data(), (int32_t)csUpdate.size());
 
-	shaders.rsParticleRender = graphics->CreateShaderFromBinary(
+	shaders.RsParticleRender = graphics->CreateShaderFromBinary(
 		vsRender.data(), (int32_t)vsRender.size(),
 		psRender.data(), (int32_t)psRender.size());
 

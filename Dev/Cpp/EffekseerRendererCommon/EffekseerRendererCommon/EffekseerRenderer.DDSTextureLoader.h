@@ -31,10 +31,10 @@ public:
 private:
 	::Effekseer::CustomVector<Texture> textures_;
 
-	int32_t textureWidth = 0;
-	int32_t textureHeight = 0;
-	Effekseer::TextureFormatType textureFormatType = Effekseer::TextureFormatType::ABGR8;
-	Effekseer::Backend::TextureFormatType backendTextureFormatType = Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM;
+	int32_t textureWidth_ = 0;
+	int32_t textureHeight_ = 0;
+	Effekseer::TextureFormatType textureFormatType_ = Effekseer::TextureFormatType::ABGR8;
+	Effekseer::Backend::TextureFormatType backendTextureFormatType_ = Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM;
 
 public:
 	bool Load(const void* data, int32_t size);
@@ -47,12 +47,12 @@ public:
 
 	Effekseer::TextureFormatType GetTextureFormat()
 	{
-		return textureFormatType;
+		return textureFormatType_;
 	}
 
 	Effekseer::Backend::TextureFormatType GetBackendTextureFormat() const
 	{
-		return backendTextureFormatType;
+		return backendTextureFormatType_;
 	}
 };
 } // namespace EffekseerRenderer

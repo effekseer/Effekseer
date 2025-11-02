@@ -34,11 +34,11 @@ void CollisionsParameter::Load(unsigned char*& pos, int version)
 std::tuple<SIMD::Vec3f, SIMD::Vec3f> CollisionsFunctions::Update(
 	CollisionsState& state,
 	const CollisionsParameter& parameter,
-	const SIMD::Vec3f& next_position_global,
-	const SIMD::Vec3f& position_global,
-	const SIMD::Vec3f& velocity_global,
-	const SIMD::Vec3f& position_center_local,
-	float magnification)
+	const SIMD::Vec3f& nextPositionGlobal,
+	const SIMD::Vec3f& positionGlobal,
+	const SIMD::Vec3f& velocityGlobal,
+	const SIMD::Vec3f& positionCenterLocal,
+	float magnificationScale)
 {
 	if (!parameter.IsEnabled)
 	{
@@ -46,21 +46,21 @@ std::tuple<SIMD::Vec3f, SIMD::Vec3f> CollisionsFunctions::Update(
 			SIMD::Vec3f(0, 0, 0), SIMD::Vec3f(0, 0, 0)};
 	}
 
-	auto next_position = next_position_global;
-	auto current_position = position_global;
+	auto nextPosition = nextPositionGlobal;
+	auto currentPosition = positionGlobal;
 
 	if (parameter.WorldCoordinateSyatem == WorldCoordinateSyatemType::Local)
 	{
-		next_position -= position_center_local;
-		current_position -= position_center_local;
+		nextPosition -= positionCenterLocal;
+		currentPosition -= positionCenterLocal;
 	}
 
-	const auto height = parameter.Height * magnification;
+	const auto height = parameter.Height * magnificationScale;
 
-if (next_position.GetY() < height && current_position.GetY() >= height)
+	if (nextPosition.GetY() < height && currentPosition.GetY() >= height)
 	{
-		auto diff = next_position - current_position;
-		auto pos_diff = diff * (current_position.GetY() - height) / diff.GetY();
+		auto diff = nextPosition - currentPosition;
+		auto positionDiff = diff * (currentPosition.GetY() - height) / diff.GetY();
 
 		float friction = parameter.Friction;
 		if (friction < 0.0f)
@@ -72,12 +72,12 @@ if (next_position.GetY() < height && current_position.GetY() >= height)
 			friction = 1.0f;
 		}
 
-		SIMD::Vec3f velocity_change(
-			-velocity_global.GetX() * friction,
-			-velocity_global.GetY() * (1.0f + parameter.Bounce),
-			-velocity_global.GetZ() * friction);
+		SIMD::Vec3f velocityChange(
+			-velocityGlobal.GetX() * friction,
+			-velocityGlobal.GetY() * (1.0f + parameter.Bounce),
+			-velocityGlobal.GetZ() * friction);
 
-		return {velocity_change, pos_diff};
+		return {velocityChange, positionDiff};
 	}
 	else
 	{

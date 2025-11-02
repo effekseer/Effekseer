@@ -31,10 +31,10 @@ struct CollisionsFunctions
 	static std::tuple<SIMD::Vec3f, SIMD::Vec3f> Update(
 		CollisionsState& state,
 		const CollisionsParameter& parameter,
-		const SIMD::Vec3f& next_position_global,
-		const SIMD::Vec3f& position_global,
-		const SIMD::Vec3f& velocity_global,
-		const SIMD::Vec3f& position_center_local,
+		const SIMD::Vec3f& nextPositionGlobal,
+		const SIMD::Vec3f& positionGlobal,
+		const SIMD::Vec3f& velocityGlobal,
+		const SIMD::Vec3f& positionCenterLocal,
 		float magnificationScale);
 };
 

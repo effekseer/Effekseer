@@ -68,11 +68,11 @@ bool GpuParticleSystem::InitSystem(const Settings& settings)
 	auto graphics = GetRenderer()->GetGraphicsDevice();
 
 	Shaders shaders;
-	shaders.csParticleClear = graphics->CreateComputeShader(ShaderData(CS_ParticleClear), ShaderSize(CS_ParticleClear));
-	shaders.csParticleSpawn = graphics->CreateComputeShader(ShaderData(CS_ParticleSpawn), ShaderSize(CS_ParticleSpawn));
-	shaders.csParticleUpdate = graphics->CreateComputeShader(ShaderData(CS_ParticleUpdate), ShaderSize(CS_ParticleUpdate));
+	shaders.CsParticleClear = graphics->CreateComputeShader(ShaderData(CS_ParticleClear), ShaderSize(CS_ParticleClear));
+	shaders.CsParticleSpawn = graphics->CreateComputeShader(ShaderData(CS_ParticleSpawn), ShaderSize(CS_ParticleSpawn));
+	shaders.CsParticleUpdate = graphics->CreateComputeShader(ShaderData(CS_ParticleUpdate), ShaderSize(CS_ParticleUpdate));
 
-	shaders.rsParticleRender = graphics->CreateShaderFromBinary(
+	shaders.RsParticleRender = graphics->CreateShaderFromBinary(
 		ShaderData(VS_ParticleRender), ShaderSize(VS_ParticleRender), ShaderData(PS_ParticleRender), ShaderSize(PS_ParticleRender));
 
 	SetShaders(shaders);
