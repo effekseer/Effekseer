@@ -153,7 +153,6 @@ bool Socket::Connect(const char* host, int32_t port)
 
 	if (ret == SocketError)
 	{
-		// If connection is not in progress, connection failed
 #if defined(EfkWinSock)
 		int error = ::WSAGetLastError();
 		if (error != WSAEWOULDBLOCK)
@@ -161,6 +160,7 @@ bool Socket::Connect(const char* host, int32_t port)
 		if (errno != EINPROGRESS)
 #endif
 		{
+			// If connection is not in progress, connection failed
 			Close();
 			return false;
 		}
