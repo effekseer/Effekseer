@@ -55,7 +55,7 @@ public:
 public:
 	Effekseer::GpuParticles::ParamSet ParamSet;
 	const Effekseer::Effect* Effect = nullptr;
-	PipelineStateKey PipelineStateKey;
+	PipelineStateKey GPUPipelineStateKey;
 	UniformBufferRef ParamBuffer;
 	TextureRef NoiseTexture;
 	TextureRef FieldTexture;

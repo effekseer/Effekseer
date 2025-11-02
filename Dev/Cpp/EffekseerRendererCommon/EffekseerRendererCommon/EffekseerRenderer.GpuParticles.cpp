@@ -79,7 +79,7 @@ Effekseer::GpuParticles::ResourceRef GpuParticleFactory::CreateResource(const Ef
 	auto resource = Effekseer::MakeRefPtr<GpuParticles::Resource>();
 	resource->ParamSet = paramSet;
 	resource->Effect = effect;
-	resource->PipelineStateKey = ToPiplineStateKey(paramSet);
+	resource->GPUPipelineStateKey = ToPiplineStateKey(paramSet);
 
 	if (paramSet.Force.TurbulencePower != 0.0f)
 	{
@@ -546,7 +546,7 @@ void GpuParticleSystem::RenderFrame(const Context& context)
 			auto& paramSet = emitter.Resource->ParamSet;
 
 			Effekseer::Backend::DrawParameter drawParams;
-			drawParams.PipelineStatePtr = GetOrCreatePipelineState(emitter.Resource->PipelineStateKey);
+			drawParams.PipelineStatePtr = GetOrCreatePipelineState(emitter.Resource->GPUPipelineStateKey);
 
 			drawParams.VertexUniformBufferPtrs[0] = drawParams.PixelUniformBufferPtrs[0] = renderConstantsUniformBuffer_;
 			drawParams.VertexUniformBufferPtrs[1] = drawParams.PixelUniformBufferPtrs[1] = emitter.Resource->ParamBuffer;
