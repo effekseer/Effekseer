@@ -185,7 +185,7 @@ VertexArrayObject::VertexArrayObject()
 	if (GLExt::IsSupportedVertexArray())
 	{
 		GLExt::glGenVertexArrays(1, &vao_);
-		gen_thread_id_ = std::this_thread::get_id();
+		creationThreadId_ = std::this_thread::get_id();
 	}
 }
 
@@ -195,7 +195,7 @@ VertexArrayObject::~VertexArrayObject()
 	{
 		const auto thread_id_ = std::this_thread::get_id();
 
-		if (gen_thread_id_ != thread_id_)
+		if (creationThreadId_ != thread_id_)
 		{
 			Effekseer::Log(Effekseer::LogType::Error, "It have to delete the shader in a thread where the shader is generated.");
 		}
@@ -1220,7 +1220,7 @@ GraphicsDevice::~GraphicsDevice()
 
 void GraphicsDevice::ClearLastShaderError()
 {
-	for (auto& error : last_shader_errors_)
+	for (auto& error : lastShaderErrors_)
 	{
 		error.clear();
 	}
@@ -1228,34 +1228,34 @@ void GraphicsDevice::ClearLastShaderError()
 
 void GraphicsDevice::SetLastShaderError(const std::string& vertex, const std::string& pixel, const std::string& program)
 {
-	last_shader_errors_[0] = vertex;
-	last_shader_errors_[1] = pixel;
-	last_shader_errors_[2] = program;
+	lastShaderErrors_[0] = vertex;
+	lastShaderErrors_[1] = pixel;
+	lastShaderErrors_[2] = program;
 }
 
 const std::string& GraphicsDevice::GetLastVertexShaderError() const
 {
-	return last_shader_errors_[0];
+	return lastShaderErrors_[0];
 }
 
 const std::string& GraphicsDevice::GetLastPixelShaderError() const
 {
-	return last_shader_errors_[1];
+	return lastShaderErrors_[1];
 }
 
 const std::string& GraphicsDevice::GetLastProgramShaderError() const
 {
-	return last_shader_errors_[2];
+	return lastShaderErrors_[2];
 }
 
 bool GraphicsDevice::GetIsRestorationOfStatesRequired() const
 {
-	return is_restoration_of_states_required_;
+	return isRestorationOfStatesRequired_;
 }
 
 void GraphicsDevice::SetIsRestorationOfStatesRequired(bool value)
 {
-	is_restoration_of_states_required_ = value;
+	isRestorationOfStatesRequired_ = value;
 }
 
 bool GraphicsDevice::GetIsValid() const

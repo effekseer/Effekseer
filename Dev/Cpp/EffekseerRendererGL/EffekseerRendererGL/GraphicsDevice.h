@@ -52,7 +52,7 @@ class VertexArrayObject
 {
 private:
 	GLuint vao_ = 0;
-	std::thread::id gen_thread_id_ = std::thread::id{};
+	std::thread::id creationThreadId_ = std::thread::id{};
 
 public:
 	VertexArrayObject();
@@ -352,9 +352,9 @@ private:
 	GLuint frameBufferTemp_ = 0;
 	std::map<DevicePropertyType, int> properties_;
 	bool isValid_ = true;
-	bool is_restoration_of_states_required_ = true;
+	bool isRestorationOfStatesRequired_ = true;
 	GLint frontFace_ = 0;
-	std::array<std::string, 3> last_shader_errors_;
+	std::array<std::string, 3> lastShaderErrors_;
 
 public:
 	GraphicsDevice(OpenGLDeviceType deviceType, bool isExtensionsEnabled = true);
