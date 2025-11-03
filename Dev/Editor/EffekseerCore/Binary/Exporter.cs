@@ -1064,9 +1064,9 @@ namespace Effekseer.Binary
 				// Export collisions
 				{
 					node_data.Add(BitConverter.GetBytes(n.CollisionsValues.IsEnabled.Value ? 1 : 0));
-					node_data.Add(BitConverter.GetBytes(n.CollisionsValues.Bounce.Value));
-					node_data.Add(BitConverter.GetBytes(n.CollisionsValues.Height.Value));
-					node_data.Add(BitConverter.GetBytes(n.CollisionsValues.Friction.Value));
+					node_data.Add(n.CollisionsValues.Bounce.GetBytes());
+					node_data.Add(n.CollisionsValues.Height.GetBytes());
+					node_data.Add(n.CollisionsValues.Friction.GetBytes());
 					node_data.Add(BitConverter.GetBytes((int)n.CollisionsValues.WorldCoordinateSyatem.Value));
 				}
 

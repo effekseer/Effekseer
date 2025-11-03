@@ -1,4 +1,5 @@
 #include "Effekseer.Collisions.h"
+#include "../Effekseer.Random.h"
 #include <string.h>
 
 namespace Effekseer
@@ -6,28 +7,51 @@ namespace Effekseer
 
 void CollisionsParameter::Load(unsigned char*& pos, int version)
 {
-	if (version >= Version18Alpha1)
+	if (version < Version18Alpha2)
 	{
-		int isEnabled = 0;
-		memcpy(&isEnabled, pos, sizeof(int));
-		pos += sizeof(int);
+		return;
+	}
 
-		IsEnabled = isEnabled > 0;
+	int isEnabled = 0;
+	memcpy(&isEnabled, pos, sizeof(int));
+	pos += sizeof(int);
 
-		memcpy(&Bounce, pos, sizeof(float));
-		pos += sizeof(float);
+	IsEnabled = isEnabled > 0;
 
-		memcpy(&Height, pos, sizeof(float));
-		pos += sizeof(float);
+	random_float bounceCandidate{};
+	memcpy(&bounceCandidate, pos, sizeof(random_float));
+	pos += sizeof(random_float);
 
-		if (version >= Version18Alpha2)
-		{
-			memcpy(&Friction, pos, sizeof(float));
-			pos += sizeof(float);
-		}
+	float heightCandidate = 0.0f;
+	memcpy(&heightCandidate, pos, sizeof(float));
+	pos += sizeof(float);
 
-		memcpy(&WorldCoordinateSyatem, pos, sizeof(int));
-		pos += sizeof(int);
+	random_float frictionCandidate{};
+	memcpy(&frictionCandidate, pos, sizeof(random_float));
+	pos += sizeof(random_float);
+
+	int worldCandidate = 0;
+	memcpy(&worldCandidate, pos, sizeof(int));
+	pos += sizeof(int);
+
+	Bounce = bounceCandidate;
+	Height = heightCandidate;
+	Friction = frictionCandidate;
+	WorldCoordinateSyatem = static_cast<WorldCoordinateSyatemType>(worldCandidate);
+}
+
+void CollisionsFunctions::Initialize(CollisionsState& state, const CollisionsParameter& parameter, RandObject& rand)
+{
+	state.Bounce = parameter.Bounce.getValue(rand);
+	state.Friction = parameter.Friction.getValue(rand);
+
+	if (state.Friction < 0.0f)
+	{
+		state.Friction = 0.0f;
+	}
+	else if (state.Friction > 1.0f)
+	{
+		state.Friction = 1.0f;
 	}
 }
 
@@ -62,7 +86,7 @@ std::tuple<SIMD::Vec3f, SIMD::Vec3f> CollisionsFunctions::Update(
 		auto diff = nextPosition - currentPosition;
 		auto positionDiff = diff * (currentPosition.GetY() - height) / diff.GetY();
 
-		float friction = parameter.Friction;
+		float friction = state.Friction;
 		if (friction < 0.0f)
 		{
 			friction = 0.0f;
@@ -74,7 +98,7 @@ std::tuple<SIMD::Vec3f, SIMD::Vec3f> CollisionsFunctions::Update(
 
 		SIMD::Vec3f velocityChange(
 			-velocityGlobal.GetX() * friction,
-			-velocityGlobal.GetY() * (1.0f + parameter.Bounce),
+			-velocityGlobal.GetY() * (1.0f + state.Bounce),
 			-velocityGlobal.GetZ() * friction);
 
 		return {velocityChange, positionDiff};
