@@ -2,4 +2,5 @@ Collisions,Collisions
 Collisions_Bounce_Name,Bounce
 Collisions_Height_Name,Height
 Collisions_Friction_Name,Friction
+Collisions_LifetimeReduction_Name,Lifetime Reduction
 Collisions_CoordinateSystem_Name,CoordinateSystem

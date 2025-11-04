@@ -1067,6 +1067,7 @@ namespace Effekseer.Binary
 					node_data.Add(n.CollisionsValues.Bounce.GetBytes());
 					node_data.Add(n.CollisionsValues.Height.GetBytes());
 					node_data.Add(n.CollisionsValues.Friction.GetBytes());
+					node_data.Add(n.CollisionsValues.LifetimeReductionPerCollision.GetBytes());
 					node_data.Add(BitConverter.GetBytes((int)n.CollisionsValues.WorldCoordinateSyatem.Value));
 				}
 

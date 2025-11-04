@@ -29,5 +29,8 @@ namespace Effekseer.Data
 
 		[Key(key = "Collisions_CoordinateSystem")]
 		public Value.Enum<WorldCoordinateSyatemType> WorldCoordinateSyatem { get; set; } = new Value.Enum<WorldCoordinateSyatemType>();
+
+		[Key(key = "Collisions_LifetimeReduction")]
+		public Value.FloatWithRandom LifetimeReductionPerCollision { get; set; } = new Value.FloatWithRandom(0.0f, min: 0.0f, step: 0.1f);
 	}
 }
