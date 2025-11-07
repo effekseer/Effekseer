@@ -58,7 +58,7 @@ jobs:
 
       - name: Pip
         run: |
-         python -m pip install setuptools
+         python -m pip install setuptools pillow
         shell: cmd
 
       - uses: actions/checkout@v2
@@ -118,8 +118,8 @@ jobs:
 
       - name: Pip
         run: |
-          python -m pip install setuptools
-          python3 -m pip install setuptools
+          python -m pip install setuptools pillow
+          python3 -m pip install setuptools pillow
 
       - uses: actions/checkout@v2
         with:
