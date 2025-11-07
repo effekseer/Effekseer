@@ -245,8 +245,8 @@ private:
 
 static json FindOrNull(const json& dict, const char* key)
 {
-	auto it = dict.find(key); 
-	return it != dict.end() ? it.value() : nullptr;
+	auto it = dict.find(key);
+	return (it != dict.end()) ? it.value() : json(nullptr);
 }
 
 class GeoAttribute

@@ -184,8 +184,9 @@ def main():
         mkdir('Mac/Effekseer.app/Contents/MacOS/')
         shutil.copy('../Tool/EffekseerLauncher/build_macosx/EffekseerLauncher', 'Mac/Effekseer.app/Contents/MacOS/')
 
-        run_command('chmod +x Mac/Effekseer.app/Contents/Resources/tools/fbxToEffekseerCurveConverter')
-        run_command('chmod +x Mac/Effekseer.app/Contents/Resources/tools/fbxToEffekseerModelConverter')
+        run_command('chmod +x Mac/Effekseer.app/Contents/Resources/tools/EffekseerResourceConverter')
+        # run_command('chmod +x Mac/Effekseer.app/Contents/Resources/tools/fbxToEffekseerCurveConverter')
+        # run_command('chmod +x Mac/Effekseer.app/Contents/Resources/tools/fbxToEffekseerModelConverter')
 
         os.makedirs('Mac/Package', exist_ok=True)
 

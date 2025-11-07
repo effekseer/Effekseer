@@ -23,8 +23,13 @@ public:
 
 	bool Open(const char* filepath)
 	{
+#if defined(_WIN32)
 		errno_t err = fopen_s(&m_fp, filepath, "rb");
 		return err == 0;
+#else
+		m_fp = fopen(filepath, "rb");
+		return m_fp != nullptr;
+#endif
 	}
 
 	void Close()
@@ -86,8 +91,13 @@ public:
 
 	bool Open(const char* filepath)
 	{
+#if defined(_WIN32)
 		errno_t err = fopen_s(&m_fp, filepath, "wb");
 		return err == 0;
+#else
+		m_fp = fopen(filepath, "wb");
+		return m_fp != nullptr;
+#endif
 	}
 
 	void Close()
