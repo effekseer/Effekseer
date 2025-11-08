@@ -42,16 +42,19 @@ void CollisionsParameter::Load(unsigned char*& pos, int version)
 
 void CollisionsFunctions::Initialize(CollisionsState& state, const CollisionsParameter& parameter, RandObject& rand)
 {
-	state.Bounce = parameter.Bounce.getValue(rand);
-	state.Friction = parameter.Friction.getValue(rand);
+	if (parameter.IsEnabled)
+	{
+		state.Bounce = parameter.Bounce.getValue(rand);
+		state.Friction = parameter.Friction.getValue(rand);
 
-	if (state.Friction < 0.0f)
-	{
-		state.Friction = 0.0f;
-	}
-	else if (state.Friction > 1.0f)
-	{
-		state.Friction = 1.0f;
+		if (state.Friction < 0.0f)
+		{
+			state.Friction = 0.0f;
+		}
+		else if (state.Friction > 1.0f)
+		{
+			state.Friction = 1.0f;
+		}
 	}
 }
 
