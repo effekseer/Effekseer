@@ -23,7 +23,8 @@ struct VS_Input
 	float3 Normal : NORMAL0;
 	float3 Binormal : NORMAL1;
 	float3 Tangent : NORMAL2;
-	float2 UV : TEXCOORD0;
+	float2 UV1 : TEXCOORD0;
+	float2 UV2 : TEXCOORD1;
 	float4 Color : NORMAL3;
 #if defined(ENABLE_DIVISOR)
 	float Index		: BLENDINDICES0;
@@ -88,7 +89,7 @@ VS_Output main(const VS_Input Input)
 	Output.PosVS = mul(mCameraProj, worldPos);
 	Output.Color = modelColor;
 
-	float2 outputUV = Input.UV;
+	float2 outputUV = Input.UV1;
 	outputUV.x = outputUV.x * uv.z + uv.x;
 	outputUV.y = outputUV.y * uv.w + uv.y;
 	outputUV.y = mUVInversed.x + mUVInversed.y * outputUV.y;

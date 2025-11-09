@@ -51,7 +51,8 @@ struct VS_Input
 	float3 Normal : NORMAL0;
 	float3 Binormal : NORMAL1;
 	float3 Tangent : NORMAL2;
-	float2 UV : TEXCOORD0;
+	float2 UV1 : TEXCOORD0;
+	float2 UV2 : TEXCOORD1;
 	float4 Color : NORMAL3;
 
 #if defined(ENABLE_DIVISOR)
@@ -148,7 +149,7 @@ VS_Output main(const VS_Input Input)
 
 	Output.PosVS = mul(mCameraProj, worldPos);
 
-	float2 outputUV = Input.UV;
+	float2 outputUV = Input.UV1;
 	outputUV.x = outputUV.x * uv.z + uv.x;
 	outputUV.y = outputUV.y * uv.w + uv.y;
 	outputUV.y = mUVInversed.x + mUVInversed.y * outputUV.y;
@@ -187,7 +188,7 @@ VS_Output main(const VS_Input Input)
 #endif
 	Output.Color = modelColor;
 
-	CalculateAndStoreAdvancedParameter(Input.UV, Output.UV_Others.xy, alphaUV, uvDistortionUV, blendUV, blendAlphaUV, blendUVDistortionUV, flipbookIndexAndNextRate, modelAlphaThreshold, Output);
+	CalculateAndStoreAdvancedParameter(Input.UV1, Output.UV_Others.xy, alphaUV, uvDistortionUV, blendUV, blendAlphaUV, blendUVDistortionUV, flipbookIndexAndNextRate, modelAlphaThreshold, Output);
 
 #if !defined(DISABLED_SOFT_PARTICLE) || defined(ENABLE_DISTORTION)
 	Output.PosP = Output.PosVS;
