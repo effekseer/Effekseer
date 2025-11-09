@@ -33,7 +33,8 @@ struct VS_Input
     float3 Normal;
     float3 Binormal;
     float3 Tangent;
-    float2 UV;
+    float2 UV1;
+    float2 UV2;
     float4 Color;
     uint Index;
 };
@@ -79,8 +80,9 @@ struct main0_in
     float3 Input_Normal [[attribute(1)]];
     float3 Input_Binormal [[attribute(2)]];
     float3 Input_Tangent [[attribute(3)]];
-    float2 Input_UV [[attribute(4)]];
-    float4 Input_Color [[attribute(5)]];
+    float2 Input_UV1 [[attribute(4)]];
+    float2 Input_UV2 [[attribute(5)]];
+    float4 Input_Color [[attribute(6)]];
 };
 
 static inline __attribute__((always_inline))
@@ -224,7 +226,7 @@ VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& _372)
     float4 localPosition = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     float4 worldPos = localPosition * mModel;
     Output.PosVS = _372.mCameraProj * worldPos;
-    float2 outputUV = Input.UV;
+    float2 outputUV = Input.UV1;
     outputUV.x = (outputUV.x * uv.z) + uv.x;
     outputUV.y = (outputUV.y * uv.w) + uv.y;
     outputUV.y = _372.mUVInversed.x + (_372.mUVInversed.y * outputUV.y);
@@ -243,7 +245,7 @@ VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& _372)
     Output.WorldB = worldBinormal.xyz;
     Output.WorldT = worldTangent.xyz;
     Output.Color = modelColor;
-    float2 param = Input.UV;
+    float2 param = Input.UV1;
     float2 param_1 = Output.UV_Others.xy;
     float4 param_2 = alphaUV;
     float4 param_3 = uvDistortionUV;
@@ -267,7 +269,8 @@ vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& _37
     Input.Normal = in.Input_Normal;
     Input.Binormal = in.Input_Binormal;
     Input.Tangent = in.Input_Tangent;
-    Input.UV = in.Input_UV;
+    Input.UV1 = in.Input_UV1;
+    Input.UV2 = in.Input_UV2;
     Input.Color = in.Input_Color;
     Input.Index = gl_InstanceIndex;
     VS_Output flattenTemp = _main(Input, _372);

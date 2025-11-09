@@ -23,7 +23,8 @@ struct VS_Input
     vec3 Normal;
     vec3 Binormal;
     vec3 Tangent;
-    vec2 UV;
+    vec2 UV1;
+    vec2 UV2;
     vec4 Color;
     uint Index;
 };
@@ -55,8 +56,9 @@ layout(location = 0) in vec3 Input_Pos;
 layout(location = 1) in vec3 Input_Normal;
 layout(location = 2) in vec3 Input_Binormal;
 layout(location = 3) in vec3 Input_Tangent;
-layout(location = 4) in vec2 Input_UV;
-layout(location = 5) in vec4 Input_Color;
+layout(location = 4) in vec2 Input_UV1;
+layout(location = 5) in vec2 Input_UV2;
+layout(location = 6) in vec4 Input_Color;
 #ifdef GL_ARB_shader_draw_parameters
 #define SPIRV_Cross_BaseInstance gl_BaseInstanceARB
 #else
@@ -211,7 +213,7 @@ VS_Output _main(VS_Input Input)
     vec4 localPosition = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
     vec4 worldPos = localPosition * mModel;
     Output.PosVS = worldPos * spvWorkaroundRowMajor(CBVS0.mCameraProj);
-    vec2 outputUV = Input.UV;
+    vec2 outputUV = Input.UV1;
     outputUV.x = (outputUV.x * uv.z) + uv.x;
     outputUV.y = (outputUV.y * uv.w) + uv.y;
     outputUV.y = CBVS0.mUVInversed.x + (CBVS0.mUVInversed.y * outputUV.y);
@@ -230,7 +232,7 @@ VS_Output _main(VS_Input Input)
     Output.WorldB = worldBinormal.xyz;
     Output.WorldT = worldTangent.xyz;
     Output.Color = modelColor;
-    vec2 param = Input.UV;
+    vec2 param = Input.UV1;
     vec2 param_1 = Output.UV_Others.xy;
     vec4 param_2 = alphaUV;
     vec4 param_3 = uvDistortionUV;
@@ -253,7 +255,8 @@ void main()
     Input.Normal = Input_Normal;
     Input.Binormal = Input_Binormal;
     Input.Tangent = Input_Tangent;
-    Input.UV = Input_UV;
+    Input.UV1 = Input_UV1;
+    Input.UV2 = Input_UV2;
     Input.Color = Input_Color;
     Input.Index = uint((gl_InstanceID + SPIRV_Cross_BaseInstance));
     VS_Output flattenTemp = _main(Input);
