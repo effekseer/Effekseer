@@ -89,7 +89,7 @@ AdvancedParameter DisolveAdvancedParameter(thread const PS_Input& psinput)
 static inline __attribute__((always_inline))
 float3 PositivePow(thread const float3& base, thread const float3& power)
 {
-    return pow(fast::max(abs(base), float3(1.1920928955078125e-07)), power);
+    return powr(fast::max(abs(base), float3(1.1920928955078125e-07)), power);
 }
 
 static inline __attribute__((always_inline))
@@ -291,7 +291,7 @@ float4 _main(PS_Input Input, constant PS_ConstantBuffer& _434, texture2d<float> 
     {
         float3 cameraVec = fast::normalize(-_434.fCameraFrontDirection.xyz);
         float CdotN = fast::clamp(dot(cameraVec, float3(localNormal.x, localNormal.y, localNormal.z)), 0.0, 1.0);
-        float4 FalloffBlendColor = mix(_434.fFalloffEndColor, _434.fFalloffBeginColor, float4(pow(CdotN, _434.fFalloffParameter.z)));
+        float4 FalloffBlendColor = mix(_434.fFalloffEndColor, _434.fFalloffBeginColor, float4(powr(CdotN, _434.fFalloffParameter.z)));
         if (_434.fFalloffParameter.y == 0.0)
         {
             float4 _692 = Output;

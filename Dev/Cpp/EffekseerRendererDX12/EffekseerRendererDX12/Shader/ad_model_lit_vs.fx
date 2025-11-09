@@ -18,7 +18,8 @@ struct VS_Input
     float3 Normal;
     float3 Binormal;
     float3 Tangent;
-    float2 UV;
+    float2 UV1;
+    float2 UV2;
     float4 Color;
     uint Index;
 };
@@ -53,7 +54,8 @@ static float3 Input_Pos;
 static float3 Input_Normal;
 static float3 Input_Binormal;
 static float3 Input_Tangent;
-static float2 Input_UV;
+static float2 Input_UV1;
+static float2 Input_UV2;
 static float4 Input_Color;
 static float4 _entryPointOutput_Color;
 static float4 _entryPointOutput_UV_Others;
@@ -71,8 +73,9 @@ struct SPIRV_Cross_Input
     float3 Input_Normal : TEXCOORD1;
     float3 Input_Binormal : TEXCOORD2;
     float3 Input_Tangent : TEXCOORD3;
-    float2 Input_UV : TEXCOORD4;
-    float4 Input_Color : TEXCOORD5;
+    float2 Input_UV1 : TEXCOORD4;
+    float2 Input_UV2 : TEXCOORD5;
+    float4 Input_Color : TEXCOORD6;
     uint gl_InstanceIndex : SV_InstanceID;
 };
 
@@ -246,7 +249,7 @@ VS_Output _main(VS_Input Input)
     float4 localPosition = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
     float4 worldPos = mul(mModel, localPosition);
     Output.PosVS = mul(_372_mCameraProj, worldPos);
-    float2 outputUV = Input.UV;
+    float2 outputUV = Input.UV1;
     outputUV.x = (outputUV.x * uv.z) + uv.x;
     outputUV.y = (outputUV.y * uv.w) + uv.y;
     outputUV.y = _372_mUVInversed.x + (_372_mUVInversed.y * outputUV.y);
@@ -265,7 +268,7 @@ VS_Output _main(VS_Input Input)
     Output.WorldB = worldBinormal.xyz;
     Output.WorldT = worldTangent.xyz;
     Output.Color = modelColor;
-    float2 param = Input.UV;
+    float2 param = Input.UV1;
     float2 param_1 = Output.UV_Others.xy;
     float4 param_2 = alphaUV;
     float4 param_3 = uvDistortionUV;
@@ -288,7 +291,8 @@ void vert_main()
     Input.Normal = Input_Normal;
     Input.Binormal = Input_Binormal;
     Input.Tangent = Input_Tangent;
-    Input.UV = Input_UV;
+    Input.UV1 = Input_UV1;
+    Input.UV2 = Input_UV2;
     Input.Color = Input_Color;
     Input.Index = uint(gl_InstanceIndex);
     VS_Output flattenTemp = _main(Input);
@@ -311,7 +315,8 @@ SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
     Input_Normal = stage_input.Input_Normal;
     Input_Binormal = stage_input.Input_Binormal;
     Input_Tangent = stage_input.Input_Tangent;
-    Input_UV = stage_input.Input_UV;
+    Input_UV1 = stage_input.Input_UV1;
+    Input_UV2 = stage_input.Input_UV2;
     Input_Color = stage_input.Input_Color;
     vert_main();
     SPIRV_Cross_Output stage_output;

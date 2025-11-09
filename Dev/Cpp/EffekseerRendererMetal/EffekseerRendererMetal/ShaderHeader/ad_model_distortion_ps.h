@@ -78,7 +78,7 @@ AdvancedParameter DisolveAdvancedParameter(thread const PS_Input& psinput)
 static inline __attribute__((always_inline))
 float3 PositivePow(thread const float3& base, thread const float3& power)
 {
-    return pow(fast::max(abs(base), float3(1.1920928955078125e-07)), power);
+    return powr(fast::max(abs(base), float3(1.1920928955078125e-07)), power);
 }
 
 static inline __attribute__((always_inline))
