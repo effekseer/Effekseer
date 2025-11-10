@@ -786,6 +786,11 @@ void Instance::UpdateTransform(float deltaFrame)
 				m_pEffectNode->GetEffect()->GetMaginification());
 			location_modify_global_ -= std::get<1>(result);
 			acc_global_sum += std::get<0>(result);
+
+			if (collisionState_.CollidedThisFrame && collisionState_.LifetimeReduction > 0.0f)
+			{
+				m_LivedTime = std::max(m_LivedTime - collisionState_.LifetimeReduction, 0.0f);
+			}
 		}
 
 		if (RotationFunctions::CalculateInGlobal(m_pEffectNode->RotationParam))

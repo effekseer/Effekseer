@@ -1,5 +1,6 @@
 #include "Effekseer.Collisions.h"
 #include "../Effekseer.Random.h"
+#include <algorithm>
 #include <string.h>
 
 namespace Effekseer
@@ -30,6 +31,11 @@ void CollisionsParameter::Load(unsigned char*& pos, int version)
 	memcpy(&frictionCandidate, pos, sizeof(random_float));
 	pos += sizeof(random_float);
 
+	random_float lifetimeReductionCandidate{};
+
+	memcpy(&lifetimeReductionCandidate, pos, sizeof(random_float));
+	pos += sizeof(random_float);
+
 	int worldCandidate = 0;
 	memcpy(&worldCandidate, pos, sizeof(int));
 	pos += sizeof(int);
@@ -38,6 +44,7 @@ void CollisionsParameter::Load(unsigned char*& pos, int version)
 	Height = heightCandidate;
 	Friction = frictionCandidate;
 	WorldCoordinateSyatem = static_cast<WorldCoordinateSyatemType>(worldCandidate);
+	LifetimeReductionPerCollision = lifetimeReductionCandidate;
 }
 
 void CollisionsFunctions::Initialize(CollisionsState& state, const CollisionsParameter& parameter, RandObject& rand)
@@ -46,6 +53,8 @@ void CollisionsFunctions::Initialize(CollisionsState& state, const CollisionsPar
 	{
 		state.Bounce = parameter.Bounce.getValue(rand);
 		state.Friction = parameter.Friction.getValue(rand);
+		state.LifetimeReduction = std::max(parameter.LifetimeReductionPerCollision.getValue(rand), 0.0f);
+		state.CollidedThisFrame = false;
 
 		if (state.Friction < 0.0f)
 		{
@@ -67,6 +76,8 @@ std::tuple<SIMD::Vec3f, SIMD::Vec3f> CollisionsFunctions::Update(
 	const SIMD::Vec3f& positionCenterLocal,
 	float magnificationScale)
 {
+	state.CollidedThisFrame = false;
+
 	if (!parameter.IsEnabled)
 	{
 		return {
@@ -103,6 +114,8 @@ std::tuple<SIMD::Vec3f, SIMD::Vec3f> CollisionsFunctions::Update(
 			-velocityGlobal.GetX() * friction,
 			-velocityGlobal.GetY() * (1.0f + state.Bounce),
 			-velocityGlobal.GetZ() * friction);
+
+		state.CollidedThisFrame = true;
 
 		return {velocityChange, positionDiff};
 	}

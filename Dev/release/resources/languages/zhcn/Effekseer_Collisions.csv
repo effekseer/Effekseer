@@ -2,4 +2,5 @@ Collisions,碰撞
 Collisions_Bounce_Name,弹力
 Collisions_Height_Name,高度
 Collisions_Friction_Name,摩擦
+Collisions_LifetimeReduction_Name,碰撞时寿命缩减量
 Collisions_CoordinateSystem_Name,坐标系

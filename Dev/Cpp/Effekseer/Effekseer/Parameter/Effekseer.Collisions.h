@@ -19,6 +19,8 @@ struct CollisionsState
 {
 	float Bounce = 1.0f;
 	float Friction = 0.0f;
+	bool CollidedThisFrame = false;
+	float LifetimeReduction = 0.0f;
 };
 
 struct CollisionsParameter
@@ -28,6 +30,7 @@ struct CollisionsParameter
 	float Height = 0.0f;
 	random_float Friction = {0.0f, 0.0f};
 	WorldCoordinateSyatemType WorldCoordinateSyatem = WorldCoordinateSyatemType::Local;
+	random_float LifetimeReductionPerCollision = {0.0f, 0.0f};
 
 	CollisionsParameter()
 	{
@@ -35,6 +38,8 @@ struct CollisionsParameter
 		Bounce.min = 1.0f;
 		Friction.max = 0.0f;
 		Friction.min = 0.0f;
+		LifetimeReductionPerCollision.max = 0.0f;
+		LifetimeReductionPerCollision.min = 0.0f;
 	}
 
 	void Load(unsigned char*& pos, int version);
