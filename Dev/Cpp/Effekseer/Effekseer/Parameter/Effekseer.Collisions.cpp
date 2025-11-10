@@ -1,7 +1,7 @@
 #include "Effekseer.Collisions.h"
 #include "../Effekseer.Random.h"
-#include <string.h>
 #include <algorithm>
+#include <string.h>
 
 namespace Effekseer
 {
@@ -32,27 +32,13 @@ void CollisionsParameter::Load(unsigned char*& pos, int version)
 	pos += sizeof(random_float);
 
 	random_float lifetimeReductionCandidate{};
+
+	memcpy(&lifetimeReductionCandidate, pos, sizeof(random_float));
+	pos += sizeof(random_float);
+
 	int worldCandidate = 0;
-	{
-		auto currentPos = pos;
-
-		memcpy(&lifetimeReductionCandidate, pos, sizeof(random_float));
-		pos += sizeof(random_float);
-
-		memcpy(&worldCandidate, pos, sizeof(int));
-		pos += sizeof(int);
-
-		if (worldCandidate != static_cast<int>(WorldCoordinateSyatemType::Local) &&
-			worldCandidate != static_cast<int>(WorldCoordinateSyatemType::Global))
-		{
-			// Fallback to old binary layout without lifetime reduction.
-			pos = currentPos;
-			memcpy(&worldCandidate, pos, sizeof(int));
-			pos += sizeof(int);
-			lifetimeReductionCandidate.max = 0.0f;
-			lifetimeReductionCandidate.min = 0.0f;
-		}
-	}
+	memcpy(&worldCandidate, pos, sizeof(int));
+	pos += sizeof(int);
 
 	Bounce = bounceCandidate;
 	Height = heightCandidate;
