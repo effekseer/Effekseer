@@ -149,6 +149,7 @@ set(effekseer_src
     Effekseer/Parameter/Effekseer.KillRules.cpp
     Effekseer/Parameter/Effekseer.GpuParticlesParameter.cpp
     Effekseer/Parameter/Effekseer.Rotation.cpp
+    Effekseer/Parameter/Effekseer.Trigger.cpp
     Effekseer/Utils/Effekseer.CustomAllocator.cpp
     Effekseer/SIMD/Mat43f.cpp
     Effekseer/SIMD/Mat44f.cpp

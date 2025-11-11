@@ -199,28 +199,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			}
 		}
 
-		if (ef->GetVersion() >= Version17Alpha1)
-		{
-			uint8_t flags = 0;
-			memcpy(&flags, pos, sizeof(uint8_t));
-			pos += sizeof(uint8_t);
-
-			if (flags & (1 << 0))
-			{
-				memcpy(&TriggerParam.ToStartGeneration, pos, sizeof(TriggerValues));
-				pos += sizeof(TriggerValues);
-			}
-			if (flags & (1 << 1))
-			{
-				memcpy(&TriggerParam.ToStopGeneration, pos, sizeof(TriggerValues));
-				pos += sizeof(TriggerValues);
-			}
-			if (flags & (1 << 2))
-			{
-				memcpy(&TriggerParam.ToRemove, pos, sizeof(TriggerValues));
-				pos += sizeof(TriggerValues);
-			}
-		}
+		TriggerParam.Load(pos, ef->GetVersion());
 
 		LODsParam.Load(pos, ef->GetVersion());
 		TranslationParam.Load(pos, ef->GetVersion());

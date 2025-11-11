@@ -29,6 +29,7 @@
 #include "Parameter/Effekseer.Sound.h"
 #include "Parameter/Effekseer.SpawnMethod.h"
 #include "Parameter/Effekseer.Translation.h"
+#include "Parameter/Effekseer.Trigger.h"
 #include "Parameter/Effekseer.UV.h"
 #include "Renderer/Effekseer.GpuParticles.h"
 #include "SIMD/Utils.h"
@@ -37,29 +38,10 @@
 namespace Effekseer
 {
 
-enum class TriggerType : uint8_t
-{
-	None = 0,
-	ExternalTrigger = 1,
-};
-
-struct alignas(2) TriggerValues
-{
-	TriggerType type = TriggerType::None;
-	uint8_t index = 0;
-};
-
 struct SteeringBehaviorParameter
 {
 	random_float MaxFollowSpeed;
 	random_float SteeringSpeed;
-};
-
-struct TriggerParameter
-{
-	TriggerValues ToStartGeneration;
-	TriggerValues ToStopGeneration;
-	TriggerValues ToRemove;
 };
 
 struct ParameterRendererCommon
