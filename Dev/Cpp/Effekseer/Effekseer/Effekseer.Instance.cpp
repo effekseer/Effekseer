@@ -534,12 +534,9 @@ void Instance::Update(float deltaFrame, bool shown)
 			}
 
 			// remove by trigger
-			if (!removed && m_pEffectNode->TriggerParam.ToRemove.type != TriggerType::None)
+			if (!removed && IsTriggerActivated(m_pEffectNode->TriggerParam.ToRemove, GetInstanceGlobal(), m_pParent))
 			{
-				if (GetInstanceGlobal()->GetInputTriggerCount(m_pEffectNode->TriggerParam.ToRemove.index) > 0)
-				{
-					removed = true;
-				}
+				removed = true;
 			}
 
 			// checking kill rules
@@ -605,6 +602,11 @@ bool Instance::AreChildrenActive() const
 	}
 
 	return false;
+}
+
+bool Instance::HasCollidedThisFrame() const
+{
+	return collisionState_.CollidedThisFrame;
 }
 
 float Instance::GetFlipbookIndexAndNextRate() const

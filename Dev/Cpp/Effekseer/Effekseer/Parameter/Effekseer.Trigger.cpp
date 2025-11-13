@@ -1,6 +1,9 @@
 ﻿
 #include "Effekseer.Trigger.h"
 
+#include "../Effekseer.Instance.h"
+#include "../Effekseer.InstanceGlobal.h"
+
 #include <cstring>
 
 #include "../Utils/Effekseer.BinaryVersion.h"
@@ -41,6 +44,23 @@ void TriggerParameter::Load(uint8_t*& pos, int32_t version)
 	if (flags & (1 << 2))
 	{
 		loadValue(ToRemove);
+	}
+}
+
+bool IsTriggerActivated(const TriggerValues& trigger, InstanceGlobal* global, Instance* parent)
+{
+	switch (trigger.type)
+	{
+	case TriggerType::None:
+		return false;
+	case TriggerType::ExternalTrigger:
+		return global != nullptr && global->GetInputTriggerCount(trigger.index) > 0;
+	case TriggerType::ParentRemoved:
+		return parent != nullptr && parent->GetState() != eInstanceState::INSTANCE_STATE_ACTIVE;
+	case TriggerType::ParentCollided:
+		return parent != nullptr && parent->HasCollidedThisFrame();
+	default:
+		return false;
 	}
 }
 

@@ -260,6 +260,8 @@ public:
 
 	bool AreChildrenActive() const;
 
+	bool HasCollidedThisFrame() const;
+
 	float GetFlipbookIndexAndNextRate() const;
 
 	SIMD::Vec3f GetGlobalDirection() const;

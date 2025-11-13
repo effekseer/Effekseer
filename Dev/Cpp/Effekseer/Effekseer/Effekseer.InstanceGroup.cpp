@@ -82,19 +82,17 @@ Instance* InstanceGroup::CreateRootInstance()
 
 void InstanceGroup::GenerateInstancesIfRequired(float localTime, RandObject& rand, Instance* parent)
 {
-	if (m_generationState == GenerationState::BeforeStart &&
-		m_effectNode->TriggerParam.ToStartGeneration.type != TriggerType::None)
+	if (m_generationState == GenerationState::BeforeStart)
 	{
-		if (m_global->GetInputTriggerCount(m_effectNode->TriggerParam.ToStartGeneration.index) > 0)
+		if (IsTriggerActivated(m_effectNode->TriggerParam.ToStartGeneration, m_global, parent))
 		{
 			m_generationState = GenerationState::Generating;
 			m_nextGenerationTime = m_generationOffsetTime + localTime;
 		}
 	}
-	if (m_generationState == GenerationState::Generating &&
-		m_effectNode->TriggerParam.ToStopGeneration.type != TriggerType::None)
+	if (m_generationState == GenerationState::Generating)
 	{
-		if (m_global->GetInputTriggerCount(m_effectNode->TriggerParam.ToStopGeneration.index) > 0)
+		if (IsTriggerActivated(m_effectNode->TriggerParam.ToStopGeneration, m_global, parent))
 		{
 			m_generationState = GenerationState::Ended;
 		}
