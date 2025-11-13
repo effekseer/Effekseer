@@ -49,6 +49,8 @@ TriggerType_Trigger0_Name,トリガー0
 TriggerType_Trigger1_Name,トリガー1
 TriggerType_Trigger2_Name,トリガー2
 TriggerType_Trigger3_Name,トリガー3
+TriggerType_ParentRemoved_Name,親消滅時
+TriggerType_ParentCollided_Name,親衝突時
 
 BasicSettings_Trigger_GenerationEnabled_Name,生成が有効
 BasicSettings_Trigger_GenerationEnabled_Desc,再生開始時に生成が有効かどうか

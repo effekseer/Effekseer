@@ -42,6 +42,8 @@ TriggerType_Trigger0_Name,Trigger0
 TriggerType_Trigger1_Name,Trigger1
 TriggerType_Trigger2_Name,Trigger2
 TriggerType_Trigger3_Name,Trigger3
+TriggerType_ParentRemoved_Name,On Parent Removed
+TriggerType_ParentCollided_Name,On Parent Collision
 
 BasicSettings_Trigger_GenerationEnabled_Name,Spawn Enabled
 BasicSettings_Trigger_GenerationEnabled_Desc,Whether generation is enabled at the start of playback.

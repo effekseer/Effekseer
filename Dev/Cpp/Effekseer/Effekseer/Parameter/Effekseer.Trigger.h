@@ -7,10 +7,15 @@
 namespace Effekseer
 {
 
+class Instance;
+class InstanceGlobal;
+
 enum class TriggerType : uint8_t
 {
 	None = 0,
 	ExternalTrigger = 1,
+	ParentRemoved = 2,
+	ParentCollided = 3,
 };
 
 struct alignas(2) TriggerValues
@@ -27,6 +32,8 @@ struct TriggerParameter
 
 	void Load(uint8_t*& pos, int32_t version);
 };
+
+bool IsTriggerActivated(const TriggerValues& trigger, InstanceGlobal* global, Instance* parent);
 
 } // namespace Effekseer
 
