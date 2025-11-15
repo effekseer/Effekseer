@@ -153,7 +153,7 @@ void PointCacheGenerator::Generate(uint32_t pointCount, uint32_t seed)
 				point->Position = SIMD::ToStruct(RandomTriangle<SIMD::Vec3f>(random, v0.Position, v1.Position, v2.Position));
 				attrib->PackedNormal = PackNormal(RandomTriangle<SIMD::Vec3f>(random, v0.Normal, v1.Normal, v2.Normal));
 				attrib->PackedTangent = PackNormal(RandomTriangle<SIMD::Vec3f>(random, v0.Tangent, v1.Tangent, v2.Tangent));
-				attrib->PackedUV = PackUV(RandomTriangle<SIMD::Vec2f>(random, v0.UV, v1.UV, v2.UV));
+				attrib->PackedUV = PackUV(RandomTriangle<SIMD::Vec2f>(random, v0.UV1, v1.UV1, v2.UV1));
 				attrib->PackedColor = PackColor(RandomTriangle<SIMD::Vec4f>(random, v0.VColor, v1.VColor, v2.VColor));
 				pointIndex += 1;
 			}

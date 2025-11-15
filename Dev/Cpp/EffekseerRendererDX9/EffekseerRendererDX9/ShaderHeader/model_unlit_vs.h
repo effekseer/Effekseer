@@ -30,8 +30,8 @@
     def c64, 4, 0, 0, 0
     dcl_texcoord v0
     dcl_texcoord4 v1
-    dcl_texcoord5 v2
-    dcl_texcoord6 v3
+    dcl_texcoord6 v2
+    dcl_texcoord7 v3
     dcl_texcoord o0
     dcl_texcoord1 o1.xy
     dcl_texcoord2 o2
@@ -131,9 +131,9 @@ const BYTE g_vs30_main[] =
      31,   0,   0,   2,   5,   0, 
       4, 128,   1,   0,  15, 144, 
      31,   0,   0,   2,   5,   0, 
-      5, 128,   2,   0,  15, 144, 
+      6, 128,   2,   0,  15, 144, 
      31,   0,   0,   2,   5,   0, 
-      6, 128,   3,   0,  15, 144, 
+      7, 128,   3,   0,  15, 144, 
      31,   0,   0,   2,   5,   0, 
       0, 128,   0,   0,  15, 224, 
      31,   0,   0,   2,   5,   0, 

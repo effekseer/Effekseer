@@ -296,7 +296,8 @@ struct VS_Input
 	float3 Normal		: NORMAL0;
 	float3 Binormal		: NORMAL1;
 	float3 Tangent		: NORMAL2;
-	float2 UV		: TEXCOORD0;
+	float2 UV1		: TEXCOORD0;
+	float2 UV2		: TEXCOORD1;
 	float4 Color		: NORMAL3;
 )";
 
@@ -397,13 +398,8 @@ VS_Output main( const VS_Input Input )
 	objectScale.y = length(mul(matRotModel, float3(0.0, 1.0, 0.0)));
 	objectScale.z = length(mul(matRotModel, float3(0.0, 0.0, 1.0)));
 
-	float2 uv1;
-	uv1.x = Input.UV.x * uv.z + uv.x;
-	uv1.y = Input.UV.y * uv.w + uv.y;
-	float2 uv2 = Input.UV;
-
-	//uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
-	//uv2.y = mUVInversed.x + mUVInversed.y * uv2.y;
+	float2 uv1 = Input.UV1 * uv.zw + uv.xy;
+	float2 uv2 = Input.UV2 * uv.zw + uv.xy;
 
 	float3 pixelNormalDir = worldNormal;
 	float4 vcolor = modelColor;

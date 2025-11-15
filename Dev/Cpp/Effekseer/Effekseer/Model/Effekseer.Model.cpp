@@ -31,7 +31,7 @@ Model::Model(const void* data, int32_t size)
 		p += sizeof(int32_t);
 	}
 
-	if (version_ > LastetVersion)
+	if (version_ > LatestVersion)
 	{
 		models_.resize(1);
 		return;
@@ -60,18 +60,39 @@ Model::Model(const void* data, int32_t size)
 
 		models_[f].vertexes.resize(vertexCount);
 
-		if (version_ >= 1)
+		if (version_ >= 6)
 		{
 			memcpy(models_[f].vertexes.data(), p, sizeof(Vertex) * vertexCount);
 			p += sizeof(Vertex) * vertexCount;
 		}
 		else
 		{
+			Vertex* vertexes = models_[f].vertexes.data();
+
+			const Color defaultColor(255, 255, 255, 255);
 			for (int32_t i = 0; i < vertexCount; i++)
 			{
-				memcpy((void*)&models_[f].vertexes[i], p, sizeof(Vertex) - sizeof(Color));
-				models_[f].vertexes[i].VColor = Color(255, 255, 255, 255);
-				p += sizeof(Vertex) - sizeof(Color);
+				memcpy(&vertexes[i].Position, p, sizeof(Vector3D));
+				p += sizeof(Vector3D);
+				memcpy(&vertexes[i].Normal, p, sizeof(Vector3D));
+				p += sizeof(Vector3D);
+				memcpy(&vertexes[i].Binormal, p, sizeof(Vector3D));
+				p += sizeof(Vector3D);
+				memcpy(&vertexes[i].Tangent, p, sizeof(Vector3D));
+				p += sizeof(Vector3D);
+				memcpy(&vertexes[i].UV1, p, sizeof(Vector2D));
+				p += sizeof(Vector2D);
+				vertexes[i].UV2 = vertexes[i].UV1;
+
+				if (version_ >= 1)
+				{
+					memcpy(&vertexes[i].VColor, p, sizeof(Color));
+					p += sizeof(Color);
+				}
+				else
+				{
+					vertexes[i].VColor = defaultColor;
+				}
 			}
 		}
 

@@ -50,8 +50,8 @@
     dcl_texcoord v0
     dcl_texcoord1 v1
     dcl_texcoord4 v2
-    dcl_texcoord5 v3
-    dcl_texcoord6 v4
+    dcl_texcoord6 v3
+    dcl_texcoord7 v4
     dcl_texcoord o0
     dcl_texcoord1 o1
     dcl_texcoord2 o2.xyz
@@ -392,9 +392,9 @@ const BYTE g_vs30_main[] =
      15, 144,  31,   0,   0,   2, 
       5,   0,   4, 128,   2,   0, 
      15, 144,  31,   0,   0,   2, 
-      5,   0,   5, 128,   3,   0, 
+      5,   0,   6, 128,   3,   0, 
      15, 144,  31,   0,   0,   2, 
-      5,   0,   6, 128,   4,   0, 
+      5,   0,   7, 128,   4,   0, 
      15, 144,  31,   0,   0,   2, 
       5,   0,   0, 128,   0,   0, 
      15, 224,  31,   0,   0,   2, 

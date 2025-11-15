@@ -321,7 +321,8 @@ ModelRef ProceduralModelGenerator::ConvertMeshToModel(const ProceduralMesh& mesh
 		vs[i].Position = ToStruct(mesh.Vertexes[i].Position);
 		vs[i].Normal = ToStruct(mesh.Vertexes[i].Normal);
 		vs[i].Tangent = ToStruct(mesh.Vertexes[i].Tangent);
-		vs[i].UV = ToStruct(mesh.Vertexes[i].UV);
+		vs[i].UV1 = ToStruct(mesh.Vertexes[i].UV);
+		vs[i].UV2 = vs[i].UV1;
 		Vector3D::Cross(vs[i].Binormal, vs[i].Normal, vs[i].Tangent);
 		Vector3D::Normal(vs[i].Binormal, vs[i].Binormal);
 		vs[i].VColor = mesh.Vertexes[i].VColor;
