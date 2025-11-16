@@ -4,7 +4,7 @@
 
 #include "Effekseer.Socket.h"
 
-#if defined(_WIN32) && !defined(_PS4)
+#if defined(_WIN32) && !defined(_PS4) && !defined(_PS5)
 #else
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -20,7 +20,7 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 void Socket::Initialize()
 {
-#if defined(_WIN32) && !defined(_PS4)
+#if defined(_WIN32) && !defined(_PS4) && !defined(_PS5)
 	// Initialize  Winsock
 	WSADATA m_WsaData;
 	::WSAStartup(MAKEWORD(2, 0), &m_WsaData);
@@ -32,7 +32,7 @@ void Socket::Initialize()
 //----------------------------------------------------------------------------------
 void Socket::Finalize()
 {
-#if defined(_WIN32) && !defined(_PS4)
+#if defined(_WIN32) && !defined(_PS4) && !defined(_PS5)
 	// Dispose winsock or decrease a counter
 	WSACleanup();
 #endif
@@ -51,7 +51,7 @@ EfkSocket Socket::GenSocket()
 //----------------------------------------------------------------------------------
 void Socket::Close(EfkSocket s)
 {
-#if defined(_WIN32) && !defined(_PS4)
+#if defined(_WIN32) && !defined(_PS4) && !defined(_PS5)
 	::closesocket(s);
 #else
 	::close(s);
@@ -63,7 +63,7 @@ void Socket::Close(EfkSocket s)
 //----------------------------------------------------------------------------------
 void Socket::Shutsown(EfkSocket s)
 {
-#if defined(_WIN32) && !defined(_PS4)
+#if defined(_WIN32) && !defined(_PS4) && !defined(_PS5)
 	::shutdown(s, SD_BOTH);
 #else
 	::shutdown(s, SHUT_RDWR);
@@ -75,7 +75,7 @@ void Socket::Shutsown(EfkSocket s)
 //----------------------------------------------------------------------------------
 bool Socket::Listen(EfkSocket s, int32_t backlog)
 {
-#if defined(_WIN32) && !defined(_PS4)
+#if defined(_WIN32) && !defined(_PS4) && !defined(_PS5)
 	return ::listen(s, backlog) != SocketError;
 #else
 	return listen(s, backlog) >= 0;
