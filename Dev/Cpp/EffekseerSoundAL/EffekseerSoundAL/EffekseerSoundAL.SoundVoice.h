@@ -21,8 +21,8 @@ class SoundImplemented;
 
 class SoundVoice
 {
-	ALuint					m_source;
-	::Effekseer::SoundTag	m_tag;
+	ALuint source_ = 0;
+	::Effekseer::SoundTag tag_ = nullptr;
 
 public:
 	SoundVoice( ALuint source );
@@ -38,14 +38,14 @@ public:
 
 	bool CheckPlaying();
 
-	::Effekseer::SoundTag GetTag()	{return m_tag;}
+	::Effekseer::SoundTag GetTag()	{ return tag_; }
 };
 
 class SoundVoiceContainer
 {
-	ALuint* m_sources;
-	int m_num;
-	std::list<SoundVoice*>	m_voiceList;
+	ALuint* sources_ = nullptr;
+	int num_ = 0;
+	std::list<SoundVoice*> voiceList_;
 
 public:
 	SoundVoiceContainer( SoundImplemented* sound, int num );

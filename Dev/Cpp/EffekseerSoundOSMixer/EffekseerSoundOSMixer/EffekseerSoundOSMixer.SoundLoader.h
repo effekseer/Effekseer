@@ -12,8 +12,8 @@ class SoundImplemented;
 
 class SoundLoader : public ::Effekseer::SoundLoader
 {
-	SoundImplementedRef m_sound;
-	::Effekseer::FileInterfaceRef m_fileInterface;
+	SoundImplementedRef sound_ = nullptr;
+	::Effekseer::FileInterfaceRef fileInterface_ = nullptr;
 
 public:
 	SoundLoader(const SoundImplementedRef& sound, ::Effekseer::FileInterfaceRef fileInterface = nullptr);

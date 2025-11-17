@@ -25,8 +25,8 @@ class SoundVoiceContainer;
 
 class SoundImplemented : public Sound, public Effekseer::ReferenceObject
 {
-	SoundVoiceContainer*	m_voiceContainer;
-	bool					m_mute;
+	SoundVoiceContainer* voiceContainer_ = nullptr;
+	bool mute_ = false;
 
 public:
 	SoundImplemented();
@@ -47,7 +47,7 @@ public:
 
 	void SetMute( bool mute ) override;
 
-	bool GetMute() 			{return m_mute;}
+	bool GetMute() { return mute_; }
 
 	SoundVoice* GetVoice();
 	

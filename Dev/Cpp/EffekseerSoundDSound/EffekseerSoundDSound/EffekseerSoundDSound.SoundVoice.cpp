@@ -15,11 +15,9 @@ namespace EffekseerSound
 //
 //----------------------------------------------------------------------------------
 SoundVoice::SoundVoice(SoundImplemented* sound)
-	: m_sound(sound)
-	, m_dsbuf(nullptr)
-	, m_tag(nullptr)
+	: sound_(sound)
 {
-	ES_SAFE_ADDREF(m_sound);
+	ES_SAFE_ADDREF(sound_);
 }
 
 //----------------------------------------------------------------------------------
@@ -29,11 +27,11 @@ SoundVoice::~SoundVoice()
 {
 	Stop();
 
-	if (m_dsbuf)
+	if (dsbuf_)
 	{
-		m_dsbuf->Release();
+		dsbuf_->Release();
 	}
-	ES_SAFE_RELEASE(m_sound);
+	ES_SAFE_RELEASE(sound_);
 }
 
 //----------------------------------------------------------------------------------
@@ -45,22 +43,22 @@ void SoundVoice::Play(::Effekseer::SoundTag tag, const ::Effekseer::SoundPlayer:
 
 	Stop();
 
-	m_data = parameter.Data;
+	data_ = parameter.Data;
 
-	m_sound->GetDevice()->DuplicateSoundBuffer((IDirectSoundBuffer*)soundData->GetBuffer(), (IDirectSoundBuffer**)&m_dsbuf);
+	sound_->GetDevice()->DuplicateSoundBuffer((IDirectSoundBuffer*)soundData->GetBuffer(), (IDirectSoundBuffer**)&dsbuf_);
 
-	m_tag = tag;
+	tag_ = tag;
 
-	m_dsbuf->SetVolume((LONG)(2000.0f * log10f(parameter.Volume)));
+	dsbuf_->SetVolume((LONG)(2000.0f * log10f(parameter.Volume)));
 
-	m_dsbuf->SetFrequency((DWORD)(soundData->GetSampleRate() * powf(2.0f, parameter.Pitch)));
+	dsbuf_->SetFrequency((DWORD)(soundData->GetSampleRate() * powf(2.0f, parameter.Pitch)));
 
 	if (parameter.Mode3D)
 	{
 	}
 	else
 	{
-		float pan = m_sound->CalculatePan(parameter.Position) + parameter.Pan;
+		float pan = sound_->CalculatePan(parameter.Position) + parameter.Pan;
 		int32_t level = (int32_t)(2000.0f * log10f(1.0f - fabsf(pan)));
 		if (level < -10000)
 		{
@@ -68,14 +66,14 @@ void SoundVoice::Play(::Effekseer::SoundTag tag, const ::Effekseer::SoundPlayer:
 		}
 		if (pan > 0.0f)
 		{
-			m_dsbuf->SetPan(-level);
+			dsbuf_->SetPan(-level);
 		}
 		else
 		{
-			m_dsbuf->SetPan(level);
+			dsbuf_->SetPan(level);
 		}
 	}
-	m_dsbuf->Play(0, 0, 0);
+	dsbuf_->Play(0, 0, 0);
 }
 
 //----------------------------------------------------------------------------------
@@ -83,14 +81,14 @@ void SoundVoice::Play(::Effekseer::SoundTag tag, const ::Effekseer::SoundPlayer:
 //----------------------------------------------------------------------------------
 void SoundVoice::Stop()
 {
-	if (m_dsbuf == nullptr)
+	if (dsbuf_ == nullptr)
 	{
 		return;
 	}
-	m_dsbuf->Stop();
-	m_dsbuf->Release();
-	m_dsbuf = nullptr;
-	m_data = nullptr;
+	dsbuf_->Stop();
+	dsbuf_->Release();
+	dsbuf_ = nullptr;
+	data_ = nullptr;
 }
 
 //----------------------------------------------------------------------------------
@@ -98,17 +96,17 @@ void SoundVoice::Stop()
 //----------------------------------------------------------------------------------
 void SoundVoice::Pause(bool pause)
 {
-	if (m_dsbuf == nullptr)
+	if (dsbuf_ == nullptr)
 	{
 		return;
 	}
 	if (pause)
 	{
-		m_dsbuf->Stop();
+		dsbuf_->Stop();
 	}
 	else
 	{
-		m_dsbuf->Play(0, 0, 0);
+		dsbuf_->Play(0, 0, 0);
 	}
 }
 
@@ -117,12 +115,12 @@ void SoundVoice::Pause(bool pause)
 //----------------------------------------------------------------------------------
 bool SoundVoice::CheckPlaying()
 {
-	if (m_dsbuf == nullptr)
+	if (dsbuf_ == nullptr)
 	{
 		return false;
 	}
 	DWORD status;
-	m_dsbuf->GetStatus(&status);
+	dsbuf_->GetStatus(&status);
 	return (status & DSBSTATUS_PLAYING) != 0;
 }
 
@@ -133,7 +131,7 @@ SoundVoiceContainer::SoundVoiceContainer(SoundImplemented* sound, int num)
 {
 	for (int i = 0; i < num; i++)
 	{
-		m_voiceList.push_back(new SoundVoice(sound));
+		voiceList_.push_back(new SoundVoice(sound));
 	}
 }
 
@@ -143,12 +141,12 @@ SoundVoiceContainer::SoundVoiceContainer(SoundImplemented* sound, int num)
 SoundVoiceContainer::~SoundVoiceContainer()
 {
 	std::list<SoundVoice*>::iterator it;
-	for (it = m_voiceList.begin(); it != m_voiceList.end(); it++)
+	for (it = voiceList_.begin(); it != voiceList_.end(); it++)
 	{
 		SoundVoice* voice = *it;
 		delete voice;
 	}
-	m_voiceList.clear();
+	voiceList_.clear();
 }
 
 //----------------------------------------------------------------------------------
@@ -156,28 +154,28 @@ SoundVoiceContainer::~SoundVoiceContainer()
 //----------------------------------------------------------------------------------
 SoundVoice* SoundVoiceContainer::GetVoice()
 {
-	if (m_voiceList.empty())
+	if (voiceList_.empty())
 	{
 		return nullptr;
 	}
 
 	// 停止ボイスを探す
 	std::list<SoundVoice*>::iterator it;
-	for (it = m_voiceList.begin(); it != m_voiceList.end(); it++)
+	for (it = voiceList_.begin(); it != voiceList_.end(); it++)
 	{
 		SoundVoice* voice = *it;
 		if (!voice->CheckPlaying())
 		{
-			m_voiceList.erase(it);
-			m_voiceList.push_back(voice);
+			voiceList_.erase(it);
+			voiceList_.push_back(voice);
 			return voice;
 		}
 	}
 
 	// 停止ボイスがないときは最前ボイスを使用
-	SoundVoice* voice = m_voiceList.front();
-	m_voiceList.pop_front();
-	m_voiceList.push_back(voice);
+	SoundVoice* voice = voiceList_.front();
+	voiceList_.pop_front();
+	voiceList_.push_back(voice);
 	voice->Stop();
 
 	return voice;
@@ -189,7 +187,7 @@ SoundVoice* SoundVoiceContainer::GetVoice()
 void SoundVoiceContainer::StopTag(::Effekseer::SoundTag tag)
 {
 	std::list<SoundVoice*>::iterator it;
-	for (it = m_voiceList.begin(); it != m_voiceList.end(); it++)
+	for (it = voiceList_.begin(); it != voiceList_.end(); it++)
 	{
 		SoundVoice* voice = *it;
 		if (tag == voice->GetTag())
@@ -205,7 +203,7 @@ void SoundVoiceContainer::StopTag(::Effekseer::SoundTag tag)
 void SoundVoiceContainer::PauseTag(::Effekseer::SoundTag tag, bool pause)
 {
 	std::list<SoundVoice*>::iterator it;
-	for (it = m_voiceList.begin(); it != m_voiceList.end(); it++)
+	for (it = voiceList_.begin(); it != voiceList_.end(); it++)
 	{
 		SoundVoice* voice = *it;
 		if (tag == voice->GetTag())
@@ -221,7 +219,7 @@ void SoundVoiceContainer::PauseTag(::Effekseer::SoundTag tag, bool pause)
 bool SoundVoiceContainer::CheckPlayingTag(::Effekseer::SoundTag tag)
 {
 	std::list<SoundVoice*>::iterator it;
-	for (it = m_voiceList.begin(); it != m_voiceList.end(); it++)
+	for (it = voiceList_.begin(); it != voiceList_.end(); it++)
 	{
 		SoundVoice* voice = *it;
 		if (tag == voice->GetTag() && voice->CheckPlaying())
@@ -238,7 +236,7 @@ bool SoundVoiceContainer::CheckPlayingTag(::Effekseer::SoundTag tag)
 void SoundVoiceContainer::StopData(const ::Effekseer::SoundDataRef& soundData)
 {
 	std::list<SoundVoice*>::iterator it;
-	for (it = m_voiceList.begin(); it != m_voiceList.end(); it++)
+	for (it = voiceList_.begin(); it != voiceList_.end(); it++)
 	{
 		SoundVoice* voice = *it;
 		if (soundData == voice->GetData())
@@ -254,7 +252,7 @@ void SoundVoiceContainer::StopData(const ::Effekseer::SoundDataRef& soundData)
 void SoundVoiceContainer::StopAll()
 {
 	std::list<SoundVoice*>::iterator it;
-	for (it = m_voiceList.begin(); it != m_voiceList.end(); it++)
+	for (it = voiceList_.begin(); it != voiceList_.end(); it++)
 	{
 		SoundVoice* voice = *it;
 		voice->Stop();

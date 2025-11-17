@@ -9,12 +9,12 @@ namespace EffekseerSound
 {
 
 SoundLoader::SoundLoader(const SoundImplementedRef& sound, ::Effekseer::FileInterfaceRef fileInterface)
-	: m_sound(sound)
-	, m_fileInterface(fileInterface)
+	: sound_(sound)
+	, fileInterface_(fileInterface)
 {
-	if (m_fileInterface == nullptr)
+	if (fileInterface_ == nullptr)
 	{
-		m_fileInterface = Effekseer::MakeRefPtr<Effekseer::DefaultFileInterface>();
+		fileInterface_ = Effekseer::MakeRefPtr<Effekseer::DefaultFileInterface>();
 	}
 }
 
@@ -26,7 +26,7 @@ SoundLoader::~SoundLoader()
 {
 	assert(path != nullptr);
 
-	auto reader = m_fileInterface->OpenRead(path);
+	auto reader = fileInterface_->OpenRead(path);
 	if (reader == nullptr)
 		return nullptr;
 
@@ -39,14 +39,14 @@ SoundLoader::~SoundLoader()
 
 ::Effekseer::SoundDataRef SoundLoader::Load(const void* data, int32_t size)
 {
-	osm::Sound* osmSound = m_sound->GetDevice()->CreateSound(data, (int32_t)size, false);
+	osm::Sound* osmSound = sound_->GetDevice()->CreateSound(data, (int32_t)size, false);
 	if (osmSound == nullptr)
 	{
 		return nullptr;
 	}
 
 	auto soundData = ::Effekseer::MakeRefPtr<SoundData>();
-	soundData->osmSound = osmSound;
+	soundData->osmSound_ = osmSound;
 	return soundData;
 }
 
@@ -54,9 +54,9 @@ void SoundLoader::Unload(::Effekseer::SoundDataRef soundData)
 {
 	if (soundData != nullptr)
 	{
-		m_sound->StopData(soundData);
+		sound_->StopData(soundData);
 		SoundData* soundDataImpl = (SoundData*)soundData.Get();
-		ES_SAFE_RELEASE(soundDataImpl->osmSound);
+		ES_SAFE_RELEASE(soundDataImpl->osmSound_);
 	}
 }
 

@@ -23,7 +23,7 @@ class SoundPlayer
 	: public ::Effekseer::SoundPlayer
 {
 private:
-	SoundImplementedRef	m_sound;
+	SoundImplementedRef sound_ = nullptr;
 
 public:
 	SoundPlayer( const SoundImplementedRef& sound );

@@ -19,7 +19,7 @@ namespace EffekseerSound
 class SoundLoader
 	: public ::Effekseer::SoundLoader
 {
-	::Effekseer::FileInterfaceRef m_fileInterface;
+	::Effekseer::FileInterfaceRef fileInterface_ = nullptr;
 
 public:
 	SoundLoader( ::Effekseer::FileInterfaceRef fileInterface = NULL );

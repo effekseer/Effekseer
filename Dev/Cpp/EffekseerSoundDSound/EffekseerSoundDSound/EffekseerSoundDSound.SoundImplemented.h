@@ -26,11 +26,12 @@ class SoundVoiceContainer;
 
 class SoundImplemented : public Sound, public Effekseer::ReferenceObject
 {
-	IDirectSound8* m_dsound;
+	IDirectSound8* dsound_ = nullptr;
 
-	SoundVoiceContainer* m_voiceContainer;
-	bool m_mute;
-	int32_t m_leftPos, m_rightPos;
+	SoundVoiceContainer* voiceContainer_ = nullptr;
+	bool mute_ = false;
+	int32_t leftPos_ = 0;
+	int32_t rightPos_ = 0;
 
 public:
 	SoundImplemented();
@@ -54,12 +55,12 @@ public:
 
 	bool GetMute()
 	{
-		return m_mute;
+		return mute_;
 	}
 
 	IDirectSound8* GetDevice()
 	{
-		return m_dsound;
+		return dsound_;
 	}
 
 	SoundVoice* GetVoice();

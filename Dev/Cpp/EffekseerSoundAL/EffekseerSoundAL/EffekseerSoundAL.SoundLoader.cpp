@@ -13,14 +13,14 @@ namespace SupportOpenAL
 class BinaryFileReader : public Effekseer::FileReader
 {
 private:
-	uint8_t* origin = nullptr;
-	int32_t pos = 0;
+	uint8_t* origin_ = nullptr;
+	int32_t pos_ = 0;
 	int32_t size_ = 0;
 
 public:
 	BinaryFileReader(const void* data, int32_t size)
 	{
-		origin = (uint8_t*)data;
+		origin_ = (uint8_t*)data;
 		size_ = size;
 	}
 
@@ -28,30 +28,30 @@ public:
 
 	size_t Read(void* buffer, size_t size) override
 	{
-		if (pos + size > size_)
+		if (pos_ + size > size_)
 		{
-			size = size_ - pos;
+			size = size_ - pos_;
 		}
 
-		memcpy(buffer, (origin + pos), size);
-		pos += size;
+		memcpy(buffer, (origin_ + pos_), size);
+		pos_ += size;
 		return size;
 	}
 
-	void Seek(int position) override { pos = position; }
+	void Seek(int position) override { pos_ = position; }
 
-	int GetPosition() const override { return pos; }
+	int GetPosition() const override { return pos_; }
 
 	size_t GetLength() const override { return size_; }
 };
 }
 
 SoundLoader::SoundLoader( ::Effekseer::FileInterfaceRef fileInterface )
-	: m_fileInterface( fileInterface )
+	: fileInterface_( fileInterface )
 {
-	if (m_fileInterface == nullptr)
+	if (fileInterface_ == nullptr)
 	{
-		m_fileInterface = Effekseer::MakeRefPtr<Effekseer::DefaultFileInterface>();
+		fileInterface_ = Effekseer::MakeRefPtr<Effekseer::DefaultFileInterface>();
 	}
 }
 
@@ -168,10 +168,10 @@ SoundLoader::~SoundLoader()
 	ALenum format = (wavefmt.nChannels == 2) ? AL_FORMAT_STEREO16 : AL_FORMAT_MONO16;
 
 	auto soundData = ::Effekseer::MakeRefPtr<SoundData>();
-	soundData->channels = wavefmt.nChannels;
-	soundData->sampleRate = wavefmt.nSamplesPerSec;
-	alGenBuffers(1, &soundData->buffer);
-	alBufferData(soundData->buffer, format, buffer, size, wavefmt.nSamplesPerSec);
+	soundData->channels_ = wavefmt.nChannels;
+	soundData->sampleRate_ = wavefmt.nSamplesPerSec;
+	alGenBuffers(1, &soundData->buffer_);
+	alBufferData(soundData->buffer_, format, buffer, size, wavefmt.nSamplesPerSec);
 	delete[] buffer;
 
 	return soundData;
@@ -181,7 +181,7 @@ SoundLoader::~SoundLoader()
 {
 	assert(path != nullptr);
 
-	auto reader = m_fileInterface->OpenRead(path);
+	auto reader = fileInterface_->OpenRead(path);
 	if (reader == nullptr)
 		return nullptr;
 
@@ -199,7 +199,7 @@ void SoundLoader::Unload( ::Effekseer::SoundDataRef soundData )
 	if (soundData != nullptr)
 	{
 		SoundData* soundDataImpl = (SoundData*)soundData.Get();
-		alDeleteBuffers(1, &soundDataImpl->buffer);
+		alDeleteBuffers(1, &soundDataImpl->buffer_);
 		soundData = nullptr;
 	}
 }

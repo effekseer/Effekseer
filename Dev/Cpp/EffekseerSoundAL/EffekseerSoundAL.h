@@ -2,9 +2,6 @@
 #ifndef	__EFFEKSEERSOUND_BASE_PRE_H__
 #define	__EFFEKSEERSOUND_BASE_PRE_H__
 
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
 #if defined(_WIN32)
 #include <AL/al.h>
 #elif defined(__APPLE__)
@@ -15,77 +12,44 @@
 
 #include <Effekseer.h>
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 namespace EffekseerSound
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 class Sound;
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 }
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
 #endif	// __EFFEKSEERSOUND_BASE_PRE_H__
 
 #ifndef	__EFFEKSEERSOUND_AL_H__
 #define	__EFFEKSEERSOUND_AL_H__
 
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
-
-//----------------------------------------------------------------------------------
-// Lib
-//----------------------------------------------------------------------------------
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 namespace EffekseerSound
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-	
+
 /**
-	@brief	サウンドデータ
+	@brief	~english Sound data
+	@brief	~japanese サウンドデータ
 */
 class SoundData : public ::Effekseer::SoundData
 {	
 public:
-	int32_t GetChannels() const  { return channels; }
-	int32_t GetSampleRate() const  { return sampleRate; }
-	ALuint GetBuffer() const { return buffer; }
+	int32_t GetChannels() const { return channels_; }
+	int32_t GetSampleRate() const { return sampleRate_; }
+	ALuint GetBuffer() const { return buffer_; }
 
 private:
 	friend class SoundLoader;
 
-	/**
-		@brief	チャンネル数。
-	*/
-	int32_t			channels;
+	int32_t channels_ = 0;
 	
-	/**
-		@brief	サンプリング周波数。
-	*/
-	int32_t			sampleRate;
+	int32_t sampleRate_ = 0;
 
-	/**
-		@brief	OpenALバッファ。
-	*/
-	ALuint			buffer;
+	ALuint buffer_ = 0;
 };
 using SoundDataRef = Effekseer::RefPtr<SoundData>;
 
 /**
-	@brief	サウンドクラス
+	@brief	~english Sound class
+	@brief	~japanese サウンドクラス
 */
 class Sound;
 using SoundRef = Effekseer::RefPtr<Sound>;
@@ -98,52 +62,54 @@ protected:
 
 public:
 	/**
-		@brief	インスタンスを生成する。
-		@param	device	[in]	XAudio2のデバイス
-		@param	voiceCount1ch	[in]	モノラルボイス数
-		@param	voiceCount2ch	[in]	ステレオボイス数
-		@return	インスタンス
+		@brief	~english Create an instance.
+		@brief	~japanese インスタンスを生成する。
+		@param	numVoices	[in]	~english Number of voices
+		@param	numVoices	[in]	~japanese ボイス数
+		@return	~english Instance
+		@return	~japanese インスタンス
 	*/
 	static SoundRef Create( int32_t numVoices );
 	
 	/**
-		@brief	このインスタンスを破棄する。
+		@brief	~english Destroy this instance.
+		@brief	~japanese このインスタンスを破棄する。
 	*/
 	virtual void Destroy() = 0;
 	
 	/**
-		@brief	リスナー設定
+		@brief	~english Set listener.
+		@brief	~japanese リスナー設定。
 	*/
 	virtual void SetListener( const ::Effekseer::Vector3D& pos, 
 		const ::Effekseer::Vector3D& at, const ::Effekseer::Vector3D& up ) = 0;
 	
 	/**
-		@brief	サウンドプレイヤを生成する。
+		@brief	~english Create a sound player.
+		@brief	~japanese サウンドプレイヤを生成する。
 	*/
 	virtual ::Effekseer::SoundPlayerRef CreateSoundPlayer() = 0;
 
 	/**
-		@brief	標準のサウンド読込インスタンスを生成する。
+		@brief	~english Create a default sound loader.
+		@brief	~japanese 標準のサウンド読込インスタンスを生成する。
 	*/
 	virtual ::Effekseer::SoundLoaderRef CreateSoundLoader( ::Effekseer::FileInterfaceRef fileInterface = NULL ) = 0;
 	
 	/**
-		@brief	全発音を停止
+		@brief	~english Stop all voices.
+		@brief	~japanese 全発音を停止。
 	*/
 	virtual void StopAllVoices() = 0;
 
 	/**
-		@brief	ミュート設定
+		@brief	~english Set mute.
+		@brief	~japanese ミュート設定。
 	*/
 	virtual void SetMute( bool mute ) = 0;
 
 };
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 }
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
 #endif	// __EFFEKSEERSOUND_AL_H__

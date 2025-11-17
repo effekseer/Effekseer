@@ -30,11 +30,7 @@ SoundRef Sound::Create( int32_t numVoices )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-SoundImplemented::SoundImplemented()
-	: m_mute	( false )
-	, m_voiceContainer( NULL )
-{
-}
+SoundImplemented::SoundImplemented() = default;
 
 //----------------------------------------------------------------------------------
 //
@@ -42,7 +38,7 @@ SoundImplemented::SoundImplemented()
 SoundImplemented::~SoundImplemented()
 {
 	StopAllVoices();
-	delete m_voiceContainer;
+	delete voiceContainer_;
 }
 
 //----------------------------------------------------------------------------------
@@ -50,7 +46,7 @@ SoundImplemented::~SoundImplemented()
 //----------------------------------------------------------------------------------
 bool SoundImplemented::Initialize( int32_t numVoices )
 {
-	m_voiceContainer = new SoundVoiceContainer( this, numVoices );
+	voiceContainer_ = new SoundVoiceContainer( this, numVoices );
 	
 	return true;
 }
@@ -104,7 +100,7 @@ void SoundImplemented::Destroy()
 //----------------------------------------------------------------------------------
 void SoundImplemented::StopAllVoices()
 {
-	m_voiceContainer->StopAll();
+	voiceContainer_->StopAll();
 }
 
 //----------------------------------------------------------------------------------
@@ -112,7 +108,7 @@ void SoundImplemented::StopAllVoices()
 //----------------------------------------------------------------------------------
 void SoundImplemented::SetMute( bool mute )
 {
-	m_mute = mute;
+	mute_ = mute;
 }
 
 //----------------------------------------------------------------------------------
@@ -120,7 +116,7 @@ void SoundImplemented::SetMute( bool mute )
 //----------------------------------------------------------------------------------
 SoundVoice* SoundImplemented::GetVoice()
 {
-	return m_voiceContainer->GetVoice();
+	return voiceContainer_->GetVoice();
 }
 
 //----------------------------------------------------------------------------------
@@ -128,7 +124,7 @@ SoundVoice* SoundImplemented::GetVoice()
 //----------------------------------------------------------------------------------
 void SoundImplemented::StopTag( ::Effekseer::SoundTag tag )
 {
-	m_voiceContainer->StopTag(tag);
+	voiceContainer_->StopTag(tag);
 }
 
 //----------------------------------------------------------------------------------
@@ -136,7 +132,7 @@ void SoundImplemented::StopTag( ::Effekseer::SoundTag tag )
 //----------------------------------------------------------------------------------
 void SoundImplemented::PauseTag( ::Effekseer::SoundTag tag, bool pause )
 {
-	m_voiceContainer->PauseTag(tag, pause);
+	voiceContainer_->PauseTag(tag, pause);
 }
 
 //----------------------------------------------------------------------------------
@@ -144,7 +140,7 @@ void SoundImplemented::PauseTag( ::Effekseer::SoundTag tag, bool pause )
 //----------------------------------------------------------------------------------
 bool SoundImplemented::CheckPlayingTag( ::Effekseer::SoundTag tag )
 {
-	return m_voiceContainer->CheckPlayingTag(tag);
+	return voiceContainer_->CheckPlayingTag(tag);
 }
 
 //----------------------------------------------------------------------------------

@@ -20,14 +20,14 @@ namespace SupportDSound
 class BinaryFileReader : public Effekseer::FileReader
 {
 private:
-	uint8_t* origin = nullptr;
-	int32_t pos = 0;
+	uint8_t* origin_ = nullptr;
+	int32_t pos_ = 0;
 	int32_t size_ = 0;
 
 public:
 	BinaryFileReader(const void* data, int32_t size)
 	{
-		origin = (uint8_t*)data;
+		origin_ = (uint8_t*)data;
 		size_ = size;
 	}
 
@@ -37,24 +37,24 @@ public:
 
 	size_t Read(void* buffer, size_t size) override
 	{
-		if (pos + size > size_)
+		if (pos_ + size > size_)
 		{
-			size = size_ - pos;
+			size = size_ - pos_;
 		}
 
-		memcpy(buffer, (origin + pos), size);
-		pos += static_cast<int32_t>(size);
+		memcpy(buffer, (origin_ + pos_), size);
+		pos_ += static_cast<int32_t>(size);
 		return size;
 	}
 
 	void Seek(int position) override
 	{
-		pos = position;
+		pos_ = position;
 	}
 
 	int GetPosition() const override
 	{
-		return pos;
+		return pos_;
 	}
 
 	size_t GetLength() const override
@@ -68,12 +68,12 @@ public:
 //
 //----------------------------------------------------------------------------------
 SoundLoader::SoundLoader(const SoundImplementedRef& sound, ::Effekseer::FileInterfaceRef fileInterface)
-	: m_sound(sound)
-	, m_fileInterface(fileInterface)
+	: sound_(sound)
+	, fileInterface_(fileInterface)
 {
-	if (m_fileInterface == nullptr)
+	if (fileInterface_ == nullptr)
 	{
-		m_fileInterface = Effekseer::MakeRefPtr<Effekseer::DefaultFileInterface>();
+		fileInterface_ = Effekseer::MakeRefPtr<Effekseer::DefaultFileInterface>();
 	}
 }
 
@@ -190,7 +190,7 @@ SoundLoader::~SoundLoader()
 
 	IDirectSoundBuffer* dsbufTmp = 0;
 	IDirectSoundBuffer8* dsbuf = nullptr;
-	hr = m_sound->GetDevice()->CreateSoundBuffer(&dsdesc, &dsbufTmp, nullptr);
+	hr = sound_->GetDevice()->CreateSoundBuffer(&dsdesc, &dsbufTmp, nullptr);
 	if (hr == DS_OK)
 	{
 		hr = dsbufTmp->QueryInterface(IID_IDirectSoundBuffer8, (void**)&dsbuf);
@@ -214,9 +214,9 @@ SoundLoader::~SoundLoader()
 	delete[] buffer;
 
 	SoundDataRef soundData = ::Effekseer::MakeRefPtr<SoundData>();
-	soundData->channels = wavefmt.nChannels;
-	soundData->sampleRate = wavefmt.nSamplesPerSec;
-	soundData->buffer = dsbuf;
+	soundData->channels_ = wavefmt.nChannels;
+	soundData->sampleRate_ = wavefmt.nSamplesPerSec;
+	soundData->buffer_ = dsbuf;
 
 	return soundData;
 }
@@ -225,7 +225,7 @@ SoundLoader::~SoundLoader()
 {
 	assert(path != nullptr);
 
-	auto reader = m_fileInterface->OpenRead(path);
+	auto reader = fileInterface_->OpenRead(path);
 	if (reader == nullptr)
 		return nullptr;
 
@@ -243,9 +243,9 @@ void SoundLoader::Unload(::Effekseer::SoundDataRef soundData)
 	if (soundData != nullptr)
 	{
 		// stop a voice which plays this data
-		m_sound->StopData(soundData);
+		sound_->StopData(soundData);
 		SoundData* soundDataImpl = (SoundData*)soundData.Get();
-		ES_SAFE_RELEASE(soundDataImpl->buffer);
+		ES_SAFE_RELEASE(soundDataImpl->buffer_);
 	}
 }
 

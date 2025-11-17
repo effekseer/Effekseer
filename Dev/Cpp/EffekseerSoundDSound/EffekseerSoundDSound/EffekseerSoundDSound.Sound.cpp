@@ -29,14 +29,7 @@ SoundRef Sound::Create(IDirectSound8* dsound)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-SoundImplemented::SoundImplemented()
-	: m_dsound(nullptr)
-	, m_mute(false)
-	, m_voiceContainer(nullptr)
-	, m_leftPos(0)
-	, m_rightPos(0)
-{
-}
+SoundImplemented::SoundImplemented() = default;
 
 //----------------------------------------------------------------------------------
 //
@@ -44,9 +37,9 @@ SoundImplemented::SoundImplemented()
 SoundImplemented::~SoundImplemented()
 {
 	StopAllVoices();
-	if (m_voiceContainer)
+	if (voiceContainer_)
 	{
-		delete m_voiceContainer;
+		delete voiceContainer_;
 	}
 }
 
@@ -55,10 +48,10 @@ SoundImplemented::~SoundImplemented()
 //----------------------------------------------------------------------------------
 bool SoundImplemented::Initialize(IDirectSound8* dsound)
 {
-	m_dsound = dsound;
+	dsound_ = dsound;
 
 	// ボイスを作成
-	m_voiceContainer = new SoundVoiceContainer(this, 32);
+	voiceContainer_ = new SoundVoiceContainer(this, 32);
 
 	return true;
 }
@@ -111,7 +104,7 @@ void SoundImplemented::Destroy()
 //----------------------------------------------------------------------------------
 void SoundImplemented::StopAllVoices()
 {
-	m_voiceContainer->StopAll();
+	voiceContainer_->StopAll();
 }
 
 //----------------------------------------------------------------------------------
@@ -119,7 +112,7 @@ void SoundImplemented::StopAllVoices()
 //----------------------------------------------------------------------------------
 void SoundImplemented::SetMute(bool mute)
 {
-	m_mute = mute;
+	mute_ = mute;
 }
 
 //----------------------------------------------------------------------------------
@@ -127,7 +120,7 @@ void SoundImplemented::SetMute(bool mute)
 //----------------------------------------------------------------------------------
 SoundVoice* SoundImplemented::GetVoice()
 {
-	return m_voiceContainer->GetVoice();
+	return voiceContainer_->GetVoice();
 }
 
 //----------------------------------------------------------------------------------
@@ -135,7 +128,7 @@ SoundVoice* SoundImplemented::GetVoice()
 //----------------------------------------------------------------------------------
 void SoundImplemented::StopTag(::Effekseer::SoundTag tag)
 {
-	m_voiceContainer->StopTag(tag);
+	voiceContainer_->StopTag(tag);
 }
 
 //----------------------------------------------------------------------------------
@@ -143,7 +136,7 @@ void SoundImplemented::StopTag(::Effekseer::SoundTag tag)
 //----------------------------------------------------------------------------------
 void SoundImplemented::PauseTag(::Effekseer::SoundTag tag, bool pause)
 {
-	m_voiceContainer->PauseTag(tag, pause);
+	voiceContainer_->PauseTag(tag, pause);
 }
 
 //----------------------------------------------------------------------------------
@@ -151,7 +144,7 @@ void SoundImplemented::PauseTag(::Effekseer::SoundTag tag, bool pause)
 //----------------------------------------------------------------------------------
 bool SoundImplemented::CheckPlayingTag(::Effekseer::SoundTag tag)
 {
-	return m_voiceContainer->CheckPlayingTag(tag);
+	return voiceContainer_->CheckPlayingTag(tag);
 }
 
 //----------------------------------------------------------------------------------
@@ -159,7 +152,7 @@ bool SoundImplemented::CheckPlayingTag(::Effekseer::SoundTag tag)
 //----------------------------------------------------------------------------------
 void SoundImplemented::StopData(const ::Effekseer::SoundDataRef& soundData)
 {
-	m_voiceContainer->StopData(soundData);
+	voiceContainer_->StopData(soundData);
 }
 
 //----------------------------------------------------------------------------------
@@ -167,8 +160,8 @@ void SoundImplemented::StopData(const ::Effekseer::SoundDataRef& soundData)
 //----------------------------------------------------------------------------------
 void SoundImplemented::SetPanRange(int32_t leftPos, int32_t rightPos)
 {
-	m_leftPos = leftPos;
-	m_rightPos = rightPos;
+	leftPos_ = leftPos;
+	rightPos_ = rightPos;
 }
 
 //----------------------------------------------------------------------------------
@@ -176,23 +169,23 @@ void SoundImplemented::SetPanRange(int32_t leftPos, int32_t rightPos)
 //----------------------------------------------------------------------------------
 float SoundImplemented::CalculatePan(const Effekseer::Vector3D& position)
 {
-	if (m_leftPos == m_rightPos)
+	if (leftPos_ == rightPos_)
 	{
 		return 0;
 	}
 
 	int32_t pos = (int32_t)position.X;
-	if (pos <= m_leftPos)
+	if (pos <= leftPos_)
 	{
 		return -1.0f;
 	}
-	else if (pos >= m_rightPos)
+	else if (pos >= rightPos_)
 	{
 		return 1.0f;
 	}
 	else
 	{
-		return (float)(pos - m_leftPos) / (m_rightPos - m_leftPos);
+		return (float)(pos - leftPos_) / (rightPos_ - leftPos_);
 	}
 }
 

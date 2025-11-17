@@ -21,10 +21,10 @@ class SoundImplemented;
 
 class SoundVoice
 {
-	SoundImplemented*		m_sound;
-	IXAudio2SourceVoice*	m_xavoice;
-	::Effekseer::SoundTag	m_tag;
-	::Effekseer::SoundDataRef	m_data;
+	SoundImplemented* sound_ = nullptr;
+	IXAudio2SourceVoice* xavoice_ = nullptr;
+	::Effekseer::SoundTag tag_ = nullptr;
+	::Effekseer::SoundDataRef data_;
 
 public:
 	SoundVoice( SoundImplemented* sound, const WAVEFORMATEX* format );
@@ -40,14 +40,14 @@ public:
 
 	bool CheckPlaying();
 
-	::Effekseer::SoundTag GetTag() const	{return m_tag;}
+	::Effekseer::SoundTag GetTag() const	{ return tag_; }
 
-	const ::Effekseer::SoundDataRef& GetData() const	{return m_data;}
+	const ::Effekseer::SoundDataRef& GetData() const	{ return data_; }
 };
 
 class SoundVoiceContainer
 {
-	std::list<SoundVoice*>	m_voiceList;
+	std::list<SoundVoice*> voiceList_;
 
 public:
 	SoundVoiceContainer( SoundImplemented* sound, int num, const WAVEFORMATEX* format );

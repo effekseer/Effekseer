@@ -20,11 +20,7 @@ SoundRef Sound::Create(osm::Manager* soundManager)
 	return nullptr;
 }
 
-SoundImplemented::SoundImplemented()
-	: m_manager(nullptr)
-	, m_mute(false)
-{
-}
+SoundImplemented::SoundImplemented() = default;
 
 SoundImplemented::~SoundImplemented()
 {
@@ -33,7 +29,7 @@ SoundImplemented::~SoundImplemented()
 
 bool SoundImplemented::Initialize(osm::Manager* soundManager)
 {
-	m_manager = soundManager;
+	manager_ = soundManager;
 
 	return true;
 }
@@ -42,11 +38,11 @@ void SoundImplemented::SetListener(const ::Effekseer::Vector3D& pos, const ::Eff
 {
 	using Vector3D = ::Effekseer::Vector3D;
 
-	m_listener.position = pos;
-	Vector3D::Sub(m_listener.forwardVector, at, pos);
-	Vector3D::Normal(m_listener.forwardVector, m_listener.forwardVector);
-	Vector3D::Normal(m_listener.upVector, up);
-	Vector3D::Cross(m_listener.rightVector, m_listener.forwardVector, m_listener.upVector);
+	listener_.position_ = pos;
+	Vector3D::Sub(listener_.forwardVector_, at, pos);
+	Vector3D::Normal(listener_.forwardVector_, listener_.forwardVector_);
+	Vector3D::Normal(listener_.upVector_, up);
+	Vector3D::Cross(listener_.rightVector_, listener_.forwardVector_, listener_.upVector_);
 }
 
 void SoundImplemented::Destroy()
@@ -56,11 +52,11 @@ void SoundImplemented::Destroy()
 
 void SoundImplemented::Update()
 {
-	for (auto it = m_instances.begin(); it != m_instances.end();)
+	for (auto it = instances_.begin(); it != instances_.end();)
 	{
-		if (!m_manager->IsPlaying(it->id))
+		if (!manager_->IsPlaying(it->id_))
 		{
-			it = m_instances.erase(it);
+			it = instances_.erase(it);
 		}
 		else
 		{
@@ -81,43 +77,43 @@ void SoundImplemented::Update()
 
 void SoundImplemented::StopAll()
 {
-	m_manager->StopAll();
+	manager_->StopAll();
 }
 
 void SoundImplemented::SetMute(bool mute)
 {
-	m_mute = mute;
+	mute_ = mute;
 }
 
 void SoundImplemented::AddInstance(const Instance& instance)
 {
-	m_instances.push_back(instance);
+	instances_.push_back(instance);
 }
 
 void SoundImplemented::StopTag(::Effekseer::SoundTag tag)
 {
-	for (auto it = m_instances.begin(); it != m_instances.end(); it++)
+	for (auto it = instances_.begin(); it != instances_.end(); it++)
 	{
-		if (it->tag == tag)
+		if (it->tag_ == tag)
 		{
-			m_manager->Stop(it->id);
+			manager_->Stop(it->id_);
 		}
 	}
 }
 
 void SoundImplemented::PauseTag(::Effekseer::SoundTag tag, bool pause)
 {
-	for (auto it = m_instances.begin(); it != m_instances.end(); it++)
+	for (auto it = instances_.begin(); it != instances_.end(); it++)
 	{
-		if (it->tag == tag)
+		if (it->tag_ == tag)
 		{
 			if (pause)
 			{
-				m_manager->Pause(it->id);
+				manager_->Pause(it->id_);
 			}
 			else
 			{
-				m_manager->Resume(it->id);
+				manager_->Resume(it->id_);
 			}
 		}
 	}
@@ -126,11 +122,11 @@ void SoundImplemented::PauseTag(::Effekseer::SoundTag tag, bool pause)
 bool SoundImplemented::CheckPlayingTag(::Effekseer::SoundTag tag)
 {
 	bool isPlaying = false;
-	for (auto it = m_instances.begin(); it != m_instances.end(); it++)
+	for (auto it = instances_.begin(); it != instances_.end(); it++)
 	{
-		if (it->tag == tag)
+		if (it->tag_ == tag)
 		{
-			isPlaying |= m_manager->IsPlaying(it->id);
+			isPlaying |= manager_->IsPlaying(it->id_);
 		}
 	}
 	return isPlaying;
@@ -138,11 +134,11 @@ bool SoundImplemented::CheckPlayingTag(::Effekseer::SoundTag tag)
 
 void SoundImplemented::StopData(const ::Effekseer::SoundDataRef& soundData)
 {
-	for (auto it = m_instances.begin(); it != m_instances.end(); it++)
+	for (auto it = instances_.begin(); it != instances_.end(); it++)
 	{
-		if (it->data == soundData)
+		if (it->data_ == soundData)
 		{
-			m_manager->Stop(it->id);
+			manager_->Stop(it->id_);
 		}
 	}
 }
@@ -151,7 +147,7 @@ void SoundImplemented::Calculate3DSound(const ::Effekseer::Vector3D& position, f
 {
 	using Vector3D = ::Effekseer::Vector3D;
 
-	Vector3D diff = position - m_listener.position;
+	Vector3D diff = position - listener_.position_;
 	float distance = Vector3D::Length(diff);
 
 	if (distance == 0.0f)
@@ -177,7 +173,7 @@ void SoundImplemented::Calculate3DSound(const ::Effekseer::Vector3D& position, f
 
 	// Calculate pan
 	Vector3D relativeVector = diff * (1.0f / distance);
-	pan = Vector3D::Dot(relativeVector, m_listener.rightVector);
+	pan = Vector3D::Dot(relativeVector, listener_.rightVector_);
 }
 
 } // namespace EffekseerSound

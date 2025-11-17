@@ -33,12 +33,7 @@ SoundRef Sound::Create(IXAudio2* xaudio2, int32_t num1chVoices, int32_t num2chVo
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-SoundImplemented::SoundImplemented()
-	: m_xaudio2(nullptr)
-	, m_mute(false)
-{
-	memset(m_voiceContainer, 0, sizeof(m_voiceContainer));
-}
+SoundImplemented::SoundImplemented() = default;
 
 //----------------------------------------------------------------------------------
 //
@@ -48,7 +43,7 @@ SoundImplemented::~SoundImplemented()
 	StopAllVoices();
 	for (int i = 0; i < 2; i++)
 	{
-		delete m_voiceContainer[i];
+		delete voiceContainer_[i];
 	}
 }
 
@@ -57,10 +52,10 @@ SoundImplemented::~SoundImplemented()
 //----------------------------------------------------------------------------------
 bool SoundImplemented::Initialize(IXAudio2* xaudio2, int32_t num1chVoices, int32_t num2chVoices)
 {
-	m_xaudio2 = xaudio2;
+	xaudio2_ = xaudio2;
 
 	// X3DAudioを初期化
-	X3DAudioInitialize(SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT, X3DAUDIO_SPEED_OF_SOUND, m_x3daudio);
+	X3DAudioInitialize(SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT, X3DAUDIO_SPEED_OF_SOUND, x3daudio_);
 
 	// 入力ボイスを作成
 	WAVEFORMATEX format = {0};
@@ -72,13 +67,13 @@ bool SoundImplemented::Initialize(IXAudio2* xaudio2, int32_t num1chVoices, int32
 	format.nChannels = 1;
 	format.nBlockAlign = format.wBitsPerSample / 8 * format.nChannels;
 	format.nAvgBytesPerSec = format.nSamplesPerSec * format.nBlockAlign;
-	m_voiceContainer[0] = new SoundVoiceContainer(this, num1chVoices, &format);
+	voiceContainer_[0] = new SoundVoiceContainer(this, num1chVoices, &format);
 
 	// ステレオボイスを作成
 	format.nChannels = 2;
 	format.nBlockAlign = format.wBitsPerSample / 8 * format.nChannels;
 	format.nAvgBytesPerSec = format.nSamplesPerSec * format.nBlockAlign;
-	m_voiceContainer[1] = new SoundVoiceContainer(this, num2chVoices, &format);
+	voiceContainer_[1] = new SoundVoiceContainer(this, num2chVoices, &format);
 
 	return true;
 }
@@ -91,15 +86,15 @@ void SoundImplemented::SetListener(const ::Effekseer::Vector3D& pos, const ::Eff
 	::Effekseer::Vector3D front;
 	::Effekseer::Vector3D::Sub(front, at, pos);
 
-	memset(&m_listener, 0, sizeof(m_listener));
-	m_listener.OrientTop = *(X3DAUDIO_VECTOR*)&up;
-	m_listener.OrientFront.x = -front.X;
-	m_listener.OrientFront.y = -front.Y;
-	m_listener.OrientFront.z = -front.Z;
-	m_listener.Position = *(X3DAUDIO_VECTOR*)&pos;
-	m_listener.Velocity.x = 0.0f;
-	m_listener.Velocity.y = 0.0f;
-	m_listener.Velocity.z = 0.0f;
+	memset(&listener_, 0, sizeof(listener_));
+	listener_.OrientTop = *(X3DAUDIO_VECTOR*)&up;
+	listener_.OrientFront.x = -front.X;
+	listener_.OrientFront.y = -front.Y;
+	listener_.OrientFront.z = -front.Z;
+	listener_.Position = *(X3DAUDIO_VECTOR*)&pos;
+	listener_.Velocity.x = 0.0f;
+	listener_.Velocity.y = 0.0f;
+	listener_.Velocity.z = 0.0f;
 }
 
 //----------------------------------------------------------------------------------
@@ -133,7 +128,7 @@ void SoundImplemented::StopAllVoices()
 {
 	for (int i = 0; i < 2; i++)
 	{
-		m_voiceContainer[i]->StopAll();
+		voiceContainer_[i]->StopAll();
 	}
 }
 
@@ -142,7 +137,7 @@ void SoundImplemented::StopAllVoices()
 //----------------------------------------------------------------------------------
 void SoundImplemented::SetMute(bool mute)
 {
-	m_mute = mute;
+	mute_ = mute;
 }
 
 //----------------------------------------------------------------------------------
@@ -153,7 +148,7 @@ SoundVoice* SoundImplemented::GetVoice(int32_t channel)
 	IXAudio2SourceVoice* voice = nullptr;
 	if (channel >= 1 && channel <= 2)
 	{
-		return m_voiceContainer[channel - 1]->GetVoice();
+		return voiceContainer_[channel - 1]->GetVoice();
 	}
 	return nullptr;
 }
@@ -165,7 +160,7 @@ void SoundImplemented::StopTag(::Effekseer::SoundTag tag)
 {
 	for (int i = 0; i < 2; i++)
 	{
-		m_voiceContainer[i]->StopTag(tag);
+		voiceContainer_[i]->StopTag(tag);
 	}
 }
 
@@ -176,7 +171,7 @@ void SoundImplemented::PauseTag(::Effekseer::SoundTag tag, bool pause)
 {
 	for (int i = 0; i < 2; i++)
 	{
-		m_voiceContainer[i]->PauseTag(tag, pause);
+		voiceContainer_[i]->PauseTag(tag, pause);
 	}
 }
 
@@ -187,7 +182,7 @@ bool SoundImplemented::CheckPlayingTag(::Effekseer::SoundTag tag)
 {
 	for (int i = 0; i < 2; i++)
 	{
-		if (m_voiceContainer[i]->CheckPlayingTag(tag))
+		if (voiceContainer_[i]->CheckPlayingTag(tag))
 		{
 			return true;
 		}
@@ -202,7 +197,7 @@ void SoundImplemented::StopData(const ::Effekseer::SoundDataRef& soundData)
 {
 	for (int i = 0; i < 2; i++)
 	{
-		m_voiceContainer[i]->StopData(soundData);
+		voiceContainer_[i]->StopData(soundData);
 	}
 }
 
@@ -229,7 +224,7 @@ void SoundImplemented::Calculate3DSound(
 	settings.SrcChannelCount = input;
 	settings.DstChannelCount = output;
 	settings.pMatrixCoefficients = matrix;
-	X3DAudioCalculate(m_x3daudio, &m_listener, &emitter, X3DAUDIO_CALCULATE_MATRIX, &settings);
+	X3DAudioCalculate(x3daudio_, &listener_, &emitter, X3DAUDIO_CALCULATE_MATRIX, &settings);
 }
 
 //----------------------------------------------------------------------------------

@@ -24,25 +24,25 @@ class SoundImplemented : public Sound, public Effekseer::ReferenceObject
 public:
 	struct Instance
 	{
-		int32_t id;
-		Effekseer::SoundTag tag;
-		Effekseer::SoundDataRef data;
+		int32_t id_ = 0;
+		Effekseer::SoundTag tag_ = nullptr;
+		Effekseer::SoundDataRef data_;
 	};
 
 	struct Listener
 	{
-		Effekseer::Vector3D position;
-		Effekseer::Vector3D forwardVector;
-		Effekseer::Vector3D upVector;
-		Effekseer::Vector3D rightVector;
+		Effekseer::Vector3D position_;
+		Effekseer::Vector3D forwardVector_;
+		Effekseer::Vector3D upVector_;
+		Effekseer::Vector3D rightVector_;
 	};
 
 private:
-	osm::Manager* m_manager;
-	bool m_mute;
+	osm::Manager* manager_ = nullptr;
+	bool mute_ = false;
 
-	std::vector<Instance> m_instances;
-	Listener m_listener;
+	std::vector<Instance> instances_;
+	Listener listener_;
 
 public:
 	SoundImplemented();
@@ -68,12 +68,12 @@ public:
 
 	bool GetMute()
 	{
-		return m_mute;
+		return mute_;
 	}
 
 	osm::Manager* GetDevice()
 	{
-		return m_manager;
+		return manager_;
 	}
 
 	void AddInstance(const Instance& instance);

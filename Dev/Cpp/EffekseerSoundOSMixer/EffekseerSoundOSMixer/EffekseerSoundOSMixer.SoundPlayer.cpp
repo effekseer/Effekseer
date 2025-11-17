@@ -15,9 +15,8 @@ namespace EffekseerSound
 //
 //----------------------------------------------------------------------------------
 SoundPlayer::SoundPlayer(const SoundImplementedRef& sound)
-	: m_sound(sound)
-{
-}
+	: sound_(sound)
+{}
 
 //----------------------------------------------------------------------------------
 //
@@ -31,7 +30,7 @@ SoundPlayer::~SoundPlayer()
 //----------------------------------------------------------------------------------
 ::Effekseer::SoundHandle SoundPlayer::Play(::Effekseer::SoundTag tag, const ::Effekseer::SoundPlayer::InstanceParameter& parameter)
 {
-	if (m_sound->GetMute())
+	if (sound_->GetMute())
 	{
 		return nullptr;
 	}
@@ -43,7 +42,7 @@ SoundPlayer::~SoundPlayer()
 
 	auto soundDataImpl = (const SoundData*)parameter.Data.Get();
 
-	auto device = m_sound->GetDevice();
+	auto device = sound_->GetDevice();
 	int32_t id = device->Play((osm::Sound*)soundDataImpl->GetOsmSound());
 
 	if (parameter.Pitch != 0.0f)
@@ -60,7 +59,7 @@ SoundPlayer::~SoundPlayer()
 	if (parameter.Mode3D)
 	{
 		float rolloff, pan;
-		m_sound->Calculate3DSound(parameter.Position, parameter.Distance, rolloff, pan);
+		sound_->Calculate3DSound(parameter.Position, parameter.Distance, rolloff, pan);
 		device->SetVolume(id, rolloff * parameter.Volume);
 		device->SetPanningPosition(id, pan);
 	}
@@ -71,10 +70,10 @@ SoundPlayer::~SoundPlayer()
 	}
 
 	SoundImplemented::Instance instance;
-	instance.id = id;
-	instance.tag = tag;
-	instance.data = parameter.Data;
-	m_sound->AddInstance(instance);
+	instance.id_ = id;
+	instance.tag_ = tag;
+	instance.data_ = parameter.Data;
+	sound_->AddInstance(instance);
 
 	return reinterpret_cast<Effekseer::SoundHandle>(static_cast<int64_t>(id));
 }
@@ -85,7 +84,7 @@ SoundPlayer::~SoundPlayer()
 void SoundPlayer::Stop(::Effekseer::SoundHandle handle, ::Effekseer::SoundTag tag)
 {
 	int32_t id = (int32_t)(intptr_t)handle;
-	m_sound->GetDevice()->Stop(id);
+	sound_->GetDevice()->Stop(id);
 }
 
 //----------------------------------------------------------------------------------
@@ -96,11 +95,11 @@ void SoundPlayer::Pause(::Effekseer::SoundHandle handle, ::Effekseer::SoundTag t
 	int32_t id = (int32_t)(intptr_t)handle;
 	if (pause)
 	{
-		m_sound->GetDevice()->Pause(id);
+		sound_->GetDevice()->Pause(id);
 	}
 	else
 	{
-		m_sound->GetDevice()->Resume(id);
+		sound_->GetDevice()->Resume(id);
 	}
 }
 
@@ -110,7 +109,7 @@ void SoundPlayer::Pause(::Effekseer::SoundHandle handle, ::Effekseer::SoundTag t
 bool SoundPlayer::CheckPlaying(::Effekseer::SoundHandle handle, ::Effekseer::SoundTag tag)
 {
 	int32_t id = (int32_t)(intptr_t)handle;
-	return m_sound->GetDevice()->IsPlaying(id);
+	return sound_->GetDevice()->IsPlaying(id);
 }
 
 //----------------------------------------------------------------------------------
@@ -118,7 +117,7 @@ bool SoundPlayer::CheckPlaying(::Effekseer::SoundHandle handle, ::Effekseer::Sou
 //----------------------------------------------------------------------------------
 void SoundPlayer::StopTag(::Effekseer::SoundTag tag)
 {
-	m_sound->StopTag(tag);
+	sound_->StopTag(tag);
 }
 
 //----------------------------------------------------------------------------------
@@ -126,7 +125,7 @@ void SoundPlayer::StopTag(::Effekseer::SoundTag tag)
 //----------------------------------------------------------------------------------
 void SoundPlayer::PauseTag(::Effekseer::SoundTag tag, bool pause)
 {
-	m_sound->PauseTag(tag, pause);
+	sound_->PauseTag(tag, pause);
 }
 
 //----------------------------------------------------------------------------------
@@ -134,7 +133,7 @@ void SoundPlayer::PauseTag(::Effekseer::SoundTag tag, bool pause)
 //----------------------------------------------------------------------------------
 bool SoundPlayer::CheckPlayingTag(::Effekseer::SoundTag tag)
 {
-	return m_sound->CheckPlayingTag(tag);
+	return sound_->CheckPlayingTag(tag);
 }
 
 //----------------------------------------------------------------------------------
@@ -142,7 +141,7 @@ bool SoundPlayer::CheckPlayingTag(::Effekseer::SoundTag tag)
 //----------------------------------------------------------------------------------
 void SoundPlayer::StopAll()
 {
-	m_sound->StopAll();
+	sound_->StopAll();
 }
 
 //----------------------------------------------------------------------------------

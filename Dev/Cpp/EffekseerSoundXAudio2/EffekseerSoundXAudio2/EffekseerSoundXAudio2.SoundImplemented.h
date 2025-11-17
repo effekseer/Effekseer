@@ -28,12 +28,12 @@ class SoundVoiceContainer;
 
 class SoundImplemented : public Sound, public Effekseer::ReferenceObject
 {
-	IXAudio2* m_xaudio2;
-	X3DAUDIO_HANDLE m_x3daudio;
-	X3DAUDIO_LISTENER m_listener;
+	IXAudio2* xaudio2_ = nullptr;
+	X3DAUDIO_HANDLE x3daudio_ = {};
+	X3DAUDIO_LISTENER listener_ = {};
 
-	SoundVoiceContainer* m_voiceContainer[2];
-	bool m_mute;
+	SoundVoiceContainer* voiceContainer_[2] = {};
+	bool mute_ = false;
 
 public:
 	SoundImplemented();
@@ -57,12 +57,12 @@ public:
 
 	bool GetMute()
 	{
-		return m_mute;
+		return mute_;
 	}
 
 	IXAudio2* GetDevice()
 	{
-		return m_xaudio2;
+		return xaudio2_;
 	}
 
 	SoundVoice* GetVoice(int32_t channel);
