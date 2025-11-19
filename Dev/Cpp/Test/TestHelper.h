@@ -7,20 +7,24 @@
 #include <map>
 #include <memory>
 #include <numeric>
+#include <optional>
+#include <regex>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string>
+#include <string_view>
 #include <vector>
 
-std::u16string GetDirectoryPathAsU16(const char* path);
+[[nodiscard]] std::u16string GetDirectoryPathAsU16(const char* path);
 
-std::vector<uint8_t> LoadFile(const char16_t* path);
+[[nodiscard]] std::vector<uint8_t> LoadFile(const char16_t* path);
 
 struct InternalTestHelper;
 
 struct ParsedArgs
 {
 	std::string Filter;
+	std::optional<std::regex> FilterPattern;
 };
 
 class TestHelper
@@ -60,11 +64,11 @@ struct TestRegister
 
 struct Performance
 {
-	uint32_t min, max, average, median;
+	uint32_t Min, Max, Average, Median;
 
 	void Print(const char* label)
 	{
-		printf("%s: Min=%u, Max=%u, Ave=%u, Med:%u\n", label, min, max, average, median);
+		printf("%s: Min=%u, Max=%u, Ave=%u, Med:%u\n", label, Min, Max, Average, Median);
 	}
 };
 
@@ -89,9 +93,9 @@ inline Performance TestPerformance(size_t iterationCount, Func&& func)
 	std::sort(counts.begin(), counts.end());
 
 	Performance result;
-	result.min = static_cast<uint32_t>(counts.front());
-	result.max = static_cast<uint32_t>(counts.back());
-	result.average = static_cast<uint32_t>(std::accumulate(counts.begin(), counts.end(), 0) / counts.size());
-	result.median = counts[counts.size() / 2];
+	result.Min = static_cast<uint32_t>(counts.front());
+	result.Max = static_cast<uint32_t>(counts.back());
+	result.Average = static_cast<uint32_t>(std::accumulate(counts.begin(), counts.end(), 0) / counts.size());
+	result.Median = counts[counts.size() / 2];
 	return result;
 };
