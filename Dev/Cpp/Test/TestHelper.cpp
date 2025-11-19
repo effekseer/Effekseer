@@ -4,6 +4,10 @@
 #include <windows.h>
 #endif
 
+#include <array>
+#include <cassert>
+#include <filesystem>
+#include <fstream>
 #include <functional>
 #include <iostream>
 #include <map>
@@ -14,16 +18,12 @@
 #include "../3rdParty/stb/stb_image_write.h"
 
 #if defined(_WIN32)
-static std::wstring ToWide(const char* text)
+static std::wstring ToWide(std::string_view text)
 {
-	int Len = ::MultiByteToWideChar(CP_ACP, 0, text, -1, NULL, 0);
-
-	wchar_t* pOut = new wchar_t[Len + 1];
-	::MultiByteToWideChar(CP_ACP, 0, text, -1, pOut, Len);
-	std::wstring Out(pOut);
-	delete[] pOut;
-
-	return Out;
+	const auto length = ::MultiByteToWideChar(CP_ACP, 0, text.data(), static_cast<int>(text.size()), nullptr, 0);
+	std::wstring output(length, L'\0');
+	::MultiByteToWideChar(CP_ACP, 0, text.data(), static_cast<int>(text.size()), output.data(), length);
+	return output;
 }
 #endif
 
@@ -32,41 +32,46 @@ std::u16string GetDirectoryPathAsU16(const char* path)
 	auto p = Effekseer::PathHelper::GetDirectoryName(std::string(path));
 
 #ifdef _WIN32
-	auto w = ToWide(p.c_str());
-	return std::u16string((const char16_t*)w.c_str());
+	auto w = ToWide(p);
+	return std::u16string(reinterpret_cast<const char16_t*>(w.c_str()));
 #else
-	char16_t dst[512];
-	Effekseer::ConvertUtf8ToUtf16(dst, 512, p.c_str());
-	return std::u16string(dst);
+	std::array<char16_t, 512> dst{};
+	Effekseer::ConvertUtf8ToUtf16(dst.data(), static_cast<int>(dst.size()), p.c_str());
+	return std::u16string(dst.data());
 #endif
 }
 
 std::vector<uint8_t> LoadFile(const char16_t* path)
 {
-	char path8[256];
-	Effekseer::ConvertUtf16ToUtf8(path8, 256, path);
+	std::array<char, 256> path8{};
+	Effekseer::ConvertUtf16ToUtf8(path8.data(), static_cast<int>(path8.size()), path);
 
-	FILE* filePtr = NULL;
-#ifdef _WIN32
-	_wfopen_s(&filePtr, (const wchar_t*)path, L"rb");
-#else
-	filePtr = fopen((const char*)path8, "rb");
-#endif
+	const auto fsPath = std::filesystem::path(std::u16string(path));
 
-	if (filePtr == nullptr)
+	std::ifstream file(fsPath, std::ios::binary);
+	if (!file)
 	{
-		printf("Failed to load %s./n", path8);
-		assert(0);
+		printf("Failed to load %s.\n", path8.data());
+		assert(false);
+		return {};
 	}
 
-	fseek(filePtr, 0, SEEK_END);
-	auto size = ftell(filePtr);
-	fseek(filePtr, 0, SEEK_SET);
+	std::error_code ec;
+	const auto fileSize = std::filesystem::file_size(fsPath, ec);
+	if (ec != std::error_code())
+	{
+		printf("Failed to get file size for %s. %s\n", path8.data(), ec.message().c_str());
+		assert(false);
+		return {};
+	}
 
-	std::vector<uint8_t> data;
-	data.resize(size);
-	fread(data.data(), 1, size, filePtr);
-	fclose(filePtr);
+	std::vector<uint8_t> data(static_cast<size_t>(fileSize));
+	if (!file.read(reinterpret_cast<char*>(data.data()), static_cast<std::streamsize>(data.size())))
+	{
+		printf("Failed to fully read %s.\n", path8.data());
+		assert(false);
+		return {};
+	}
 
 	return data;
 }
@@ -75,36 +80,37 @@ struct InternalTestHelper
 {
 	std::string Root;
 	bool IsCaptureRequired = false;
-	std::map<std::string, std::function<void()>> tests;
+	std::map<std::string, std::function<void()>, std::less<>> Tests;
 };
 
 std::shared_ptr<InternalTestHelper> TestHelper::Get()
 {
-	// HACK for initializing order in some platforms
-	static std::shared_ptr<InternalTestHelper> internalTestHelper;
-
-	if (internalTestHelper == nullptr)
-	{
-		internalTestHelper = std::shared_ptr<InternalTestHelper>(new InternalTestHelper());
-	}
-
+	static auto internalTestHelper = std::make_shared<InternalTestHelper>();
 	return internalTestHelper;
 }
 
 ParsedArgs TestHelper::ParseArg(int argc, char* argv[])
 {
-	ParsedArgs args;
+	ParsedArgs args{};
 
-	bool isVulkanMode = false;
-	std::string filter;
+	using namespace std::literals;
+	constexpr auto filterPrefix = "--filter="sv;
 
 	for (int i = 0; i < argc; i++)
 	{
-		auto v = std::string(argv[i]);
+		const std::string_view arg(argv[i]);
 
-		if (v.find("--filter=") == 0)
+		if (arg.compare(0, filterPrefix.size(), filterPrefix) == 0)
 		{
-			args.Filter = v.substr(strlen("--filter="));
+			args.Filter = std::string(arg.substr(filterPrefix.size()));
+			try
+			{
+				args.FilterPattern.emplace(args.Filter);
+			}
+			catch (const std::regex_error& e)
+			{
+				std::cerr << "Invalid filter regex '" << args.Filter << "': " << e.what() << std::endl;
+			}
 		}
 	}
 
@@ -113,33 +119,22 @@ ParsedArgs TestHelper::ParseArg(int argc, char* argv[])
 
 void TestHelper::Run(const ParsedArgs& args)
 {
-	auto helper = Get();
+	const auto helper = Get();
+	const auto& filter = args.FilterPattern;
 
-	if (args.Filter == "")
+	for (const auto& [name, func] : helper->Tests)
 	{
-		for (auto& f : helper->tests)
+		if (filter && !std::regex_match(name, *filter))
 		{
-			std::cout << "Start : " << f.first << std::endl;
-			f.second();
+			continue;
 		}
-	}
-	else
-	{
-		std::basic_regex<char> re(args.Filter);
-
-		for (auto& f : Get()->tests)
-		{
-			if (!std::regex_match(f.first, re))
-				continue;
-
-			std::cout << "Start : " << f.first << std::endl;
-			f.second();
-		}
+		std::cout << "Start : " << name << std::endl;
+		func();
 	}
 }
 
 void TestHelper::RegisterTest(const char* name, std::function<void()> func)
 {
 	auto helper = Get();
-	helper->tests[name] = func;
+	helper->Tests.emplace(name, std::move(func));
 }
