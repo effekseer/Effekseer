@@ -818,7 +818,7 @@ int32_t ShaderGenerator::ExportHeader(std::ostringstream& maincode, MaterialFile
 		else
 		{
 			maincode << model_vs_pre_;
-			cind = 7 + instanceCount * 6;
+			cind = 7 + instanceCount * 7;
 		}
 	}
 	else
