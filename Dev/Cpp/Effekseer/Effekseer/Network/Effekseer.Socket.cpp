@@ -5,6 +5,9 @@
 
 #if defined(_WIN32) && !defined(_PS4)
 #else
+#include <errno.h>
+#include <fcntl.h>
+#include <sys/select.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #endif
@@ -131,6 +134,15 @@ bool Socket::Connect(const char* host, int32_t port)
 	// create a socket
 	handle_ = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
+	// Set socket to non-blocking mode
+#if defined(EfkWinSock)
+	u_long val = 1;
+	ioctlsocket(handle_, FIONBIO, &val);
+#elif defined(EfkBSDSock)
+	int flags = fcntl(handle_, F_GETFL, 0);
+	fcntl(handle_, F_SETFL, flags | O_NONBLOCK);
+#endif
+
 	// connect to the remort host
 	SockAddrIn sockAddr = {};
 	sockAddr.sin_family = AF_INET;
@@ -138,21 +150,70 @@ bool Socket::Connect(const char* host, int32_t port)
 	sockAddr.sin_addr = addr;
 
 	int32_t ret = ::connect(handle_, (SockAddr*)(&sockAddr), sizeof(SockAddrIn));
+
 	if (ret == SocketError)
 	{
-		Close();
-		return false;
+#if defined(EfkWinSock)
+		int error = ::WSAGetLastError();
+		if (error != WSAEWOULDBLOCK)
+#elif defined(EfkBSDSock)
+		if (errno != EINPROGRESS)
+#endif
+		{
+			// If connection is not in progress, connection failed
+			Close();
+			return false;
+		}
+		else
+		{
+			// Wait for connection to complete or timeout
+			fd_set wfds;
+			FD_ZERO(&wfds);
+			FD_SET(handle_, &wfds);
+
+			struct timeval tv;
+			tv.tv_sec = 2;
+			tv.tv_usec = 0;
+			int selectRet = 0;
+#if defined(EfkWinSock)
+			selectRet = ::select(0, nullptr, &wfds, nullptr, &tv);
+			if (selectRet == 0 || selectRet == SocketError)
+#elif defined(EfkBSDSock)
+			selectRet = ::select(handle_ + 1, nullptr, &wfds, nullptr, &tv);
+			if (selectRet == 0 || selectRet < 0)
+#endif
+			{
+				// Timeout or Socket error
+				Close();
+				return false;
+			}
+
+			// Check connection
+			int so_error = 0;
+#if defined(EfkWinSock)
+			int len = sizeof(so_error);
+			if (::getsockopt(handle_, SOL_SOCKET, SO_ERROR, (char*)&so_error, &len) == SocketError || so_error != 0)
+#elif defined(EfkBSDSock)
+			socklen_t len = sizeof(so_error);
+			if (::getsockopt(handle_, SOL_SOCKET, SO_ERROR, &so_error, &len) < 0 || so_error != 0)
+#endif
+			{
+				Close();
+				return false;
+			}
+		}
 	}
 
-	sockAddr_ = sockAddr;
+	// Set socket back to blocking mode for Send/Recv operations
+#if defined(EfkWinSock)
+	val = 0;
+	::ioctlsocket(handle_, FIONBIO, &val);
+#elif defined(EfkBSDSock)
+	flags = fcntl(handle_, F_GETFL, 0);
+	::fcntl(handle_, F_SETFL, flags & ~O_NONBLOCK);
+#endif
 
-//#if defined(EfkWinSock)
-//	u_long val = 1;
-//	ioctlsocket(handle_, FIONBIO, &val);
-//#elif defined(EfkBSDSock)
-//	int val = 1;
-//	ioctl(handle_, FIONBIO, &val);
-//#endif
+	sockAddr_ = sockAddr;
 
 	return true;
 }
