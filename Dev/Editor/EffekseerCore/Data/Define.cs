@@ -262,6 +262,10 @@ namespace Effekseer.Data
 		Trigger2 = 1 + (2 << 8),
 		[Key(key = "TriggerType_Trigger3")]
 		Trigger3 = 1 + (3 << 8),
+		[Key(key = "TriggerType_ParentRemoved")]
+		ParentRemoved = 2,
+		[Key(key = "TriggerType_ParentCollided")]
+		ParentCollided = 3,
 	}
 
 	public enum LODBehaviourType : int
