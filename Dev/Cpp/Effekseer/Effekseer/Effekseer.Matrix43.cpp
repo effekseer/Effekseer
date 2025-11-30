@@ -1,8 +1,4 @@
 ﻿
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 #include "Effekseer.Matrix43.h"
 #include "Effekseer.Math.h"
 #include "Effekseer.Matrix44.h"
@@ -10,9 +6,6 @@
 #include <cmath>
 #include <limits>
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 #if (defined(_M_AMD64) || defined(_M_X64)) || (defined(_M_IX86_FP) && _M_IX86_FP >= 2) || defined(__SSE2__)
 #define EFK_SSE2
 #include <emmintrin.h>
@@ -21,33 +14,17 @@
 #include <arm_neon.h>
 #endif
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-#if defined(_MSC_VER)
-#define EFK_ALIGN_AS(n) __declspec(align(n))
-#else
-#define EFK_ALIGN_AS(n) alignas(n)
-#endif
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 namespace Effekseer
 {
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Matrix43::Indentity()
 {
-	static const Matrix43 indentity = {{{1.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 0.0f}}};
-	memcpy(Value, indentity.Value, sizeof(indentity));
+	memset(Value, 0, sizeof(float) * 12);
+	Value[0][0] = 1.0f;
+	Value[1][1] = 1.0f;
+	Value[2][2] = 1.0f;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Matrix43::Scaling(float x, float y, float z)
 {
 	memset(Value, 0, sizeof(float) * 12);
@@ -56,9 +33,6 @@ void Matrix43::Scaling(float x, float y, float z)
 	Value[2][2] = z;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Matrix43::RotationX(float angle)
 {
 	float c, s;
@@ -81,9 +55,6 @@ void Matrix43::RotationX(float angle)
 	Value[3][2] = 0.0f;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Matrix43::RotationY(float angle)
 {
 	float c, s;
@@ -106,9 +77,6 @@ void Matrix43::RotationY(float angle)
 	Value[3][2] = 0.0f;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Matrix43::RotationZ(float angle)
 {
 	float c, s;
@@ -130,9 +98,6 @@ void Matrix43::RotationZ(float angle)
 	Value[3][1] = 0.0f;
 	Value[3][2] = 0.0f;
 }
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Matrix43::RotationXYZ(float rx, float ry, float rz)
 {
 	float cx, sx, cy, sy, cz, sz;
@@ -182,9 +147,6 @@ void Matrix43::RotationXYZ(float rx, float ry, float rz)
 	Value[3][2] = 0.0f;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Matrix43::RotationZXY(float rz, float rx, float ry)
 {
 	float cx, sx, cy, sy, cz, sz;
@@ -233,9 +195,6 @@ void Matrix43::RotationZXY(float rz, float rx, float ry)
 	Value[3][1] = 0.0f;
 	Value[3][2] = 0.0f;
 }
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Matrix43::RotationAxis(const Vector3D& axis, float angle)
 {
 	const float c = cosf(angle);
@@ -259,9 +218,6 @@ void Matrix43::RotationAxis(const Vector3D& axis, float angle)
 	Value[3][2] = 0.0f;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Matrix43::RotationAxis(const Vector3D& axis, float s, float c)
 {
 	const float cc = 1.0f - c;
@@ -283,9 +239,6 @@ void Matrix43::RotationAxis(const Vector3D& axis, float s, float c)
 	Value[3][2] = 0.0f;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Matrix43::Translation(float x, float y, float z)
 {
 	Indentity();
@@ -294,9 +247,6 @@ void Matrix43::Translation(float x, float y, float z)
 	Value[3][2] = z;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Matrix43::GetSRT(Vector3D& s, Matrix43& r, Vector3D& t) const
 {
 #if defined(EFK_SSE2)
@@ -318,8 +268,7 @@ void Matrix43::GetSRT(Vector3D& s, Matrix43& r, Vector3D& t) const
 	__m128 vscq = _mm_add_ps(_mm_add_ps(s0, s1), s2);
 	__m128 vsc = _mm_sqrt_ps(vscq);
 	__m128 vscr = _mm_div_ps(vsc, vscq);
-	EFK_ALIGN_AS(16)
-	float sc[4];
+	alignas(16) float sc[4];
 	_mm_store_ps(sc, vsc);
 	s.X = sc[0];
 	s.Y = sc[1];
@@ -387,9 +336,6 @@ void Matrix43::GetSRT(Vector3D& s, Matrix43& r, Vector3D& t) const
 #endif
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Matrix43::GetScale(Vector3D& s) const
 {
 #ifdef SSE_MODULE
@@ -434,8 +380,7 @@ void Matrix43::GetScale(Vector3D& s) const
 	s2 = _mm_mul_ps(s2, s2);
 	__m128 vscq = _mm_add_ps(_mm_add_ps(s0, s1), s2);
 	__m128 sc_v = _mm_sqrt_ps(vscq);
-	EFK_ALIGN_AS(16)
-	float sc[4];
+	alignas(16) float sc[4];
 	_mm_store_ps(sc, sc_v);
 	s.X = sc[0];
 	s.Y = sc[1];
@@ -468,9 +413,6 @@ void Matrix43::GetScale(Vector3D& s) const
 #endif
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Matrix43::GetRotation(Matrix43& r) const
 {
 #if defined(EFK_SSE2)
@@ -533,9 +475,6 @@ void Matrix43::GetRotation(Matrix43& r) const
 #endif
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Matrix43::GetTranslation(Vector3D& t) const
 {
 	t.X = Value[3][0];
@@ -543,9 +482,6 @@ void Matrix43::GetTranslation(Vector3D& t) const
 	t.Z = Value[3][2];
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Matrix43::SetSRT(const Vector3D& s, const Matrix43& r, const Vector3D& t)
 {
 	Value[0][0] = s.X * r.Value[0][0];
@@ -591,9 +527,6 @@ bool Matrix43::IsValid() const
 	return true;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Matrix43::Multiple(Matrix43& out, const Matrix43& in1, const Matrix43& in2)
 {
 #if defined(EFK_SSE2)
@@ -639,8 +572,7 @@ void Matrix43::Multiple(Matrix43& out, const Matrix43& in1, const Matrix43& in2)
 		o_v3 = _mm_shuffle_ps(o_v2, o_v2, _MM_SHUFFLE(2, 2, 2, 2));
 	}
 	{
-		EFK_ALIGN_AS(16)
-		const uint32_t mask_u32[4] = {0xffffffff, 0x00000000, 0x00000000, 0x00000000};
+		alignas(16) const uint32_t mask_u32[4] = {0xffffffff, 0x00000000, 0x00000000, 0x00000000};
 		__m128 mask = _mm_load_ps((const float*)mask_u32);
 		s2_v0 = _mm_shuffle_ps(s2_v0, s2_v0, _MM_SHUFFLE(2, 1, 0, 0));
 		s2_v1 = _mm_shuffle_ps(s2_v1, s2_v1, _MM_SHUFFLE(2, 1, 0, 0));
@@ -737,10 +669,4 @@ void Matrix43::Multiple(Matrix43& out, const Matrix43& in1, const Matrix43& in2)
 #endif
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 } // namespace Effekseer
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
