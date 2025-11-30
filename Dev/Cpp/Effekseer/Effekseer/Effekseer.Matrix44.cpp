@@ -1,28 +1,14 @@
-﻿
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-#include "Effekseer.Matrix44.h"
+﻿#include "Effekseer.Matrix44.h"
 #include "Effekseer.Math.h"
 #include "Effekseer.Vector3D.h"
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 namespace Effekseer
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 Matrix44::Matrix44()
 {
 	Indentity();
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 Matrix44& Matrix44::Indentity()
 {
 	memset(Values, 0, sizeof(float) * 16);
@@ -33,9 +19,6 @@ Matrix44& Matrix44::Indentity()
 	return *this;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 Matrix44& Matrix44::Transpose()
 {
 	for (int32_t c = 0; c < 4; c++)
@@ -51,18 +34,11 @@ Matrix44& Matrix44::Transpose()
 	return *this;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 Matrix44& Matrix44::LookAtRH(const Vector3D& eye, const Vector3D& at, const Vector3D& up)
 {
-	// F=正面、R=右方向、U=上方向
-	Vector3D F;
-	Vector3D R;
-	Vector3D U;
-	Vector3D::Normal(F, Vector3D::Sub(F, eye, at));
-	Vector3D::Normal(R, Vector3D::Cross(R, up, F));
-	Vector3D::Normal(U, Vector3D::Cross(U, F, R));
+	Vector3D F = Vector3D::Normal(Vector3D::Sub(F, eye, at));
+	Vector3D R = Vector3D::Normal(Vector3D::Cross(R, up, F));
+	Vector3D U = Vector3D::Normal(Vector3D::Cross(U, F, R));
 
 	Values[0][0] = R.X;
 	Values[1][0] = R.Y;
@@ -86,18 +62,11 @@ Matrix44& Matrix44::LookAtRH(const Vector3D& eye, const Vector3D& at, const Vect
 	return *this;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 Matrix44& Matrix44::LookAtLH(const Vector3D& eye, const Vector3D& at, const Vector3D& up)
 {
-	// F=正面、R=右方向、U=上方向
-	Vector3D F;
-	Vector3D R;
-	Vector3D U;
-	Vector3D::Normal(F, Vector3D::Sub(F, at, eye));
-	Vector3D::Normal(R, Vector3D::Cross(R, up, F));
-	Vector3D::Normal(U, Vector3D::Cross(U, F, R));
+	Vector3D F = Vector3D::Normal(Vector3D::Sub(F, at, eye));
+	Vector3D R = Vector3D::Normal(Vector3D::Cross(R, up, F));
+	Vector3D U = Vector3D::Normal(Vector3D::Cross(U, F, R));
 
 	Values[0][0] = R.X;
 	Values[1][0] = R.Y;
@@ -121,9 +90,6 @@ Matrix44& Matrix44::LookAtLH(const Vector3D& eye, const Vector3D& at, const Vect
 	return *this;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 Matrix44& Matrix44::PerspectiveFovRH(float ovY, float aspect, float zn, float zf)
 {
 	float yScale = 1 / tanf(ovY / 2);
@@ -151,9 +117,6 @@ Matrix44& Matrix44::PerspectiveFovRH(float ovY, float aspect, float zn, float zf
 	return *this;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 Matrix44& Matrix44::PerspectiveFovRH_OpenGL(float ovY, float aspect, float zn, float zf)
 {
 	float yScale = 1 / tanf(ovY / 2);
@@ -183,9 +146,6 @@ Matrix44& Matrix44::PerspectiveFovRH_OpenGL(float ovY, float aspect, float zn, f
 	return *this;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 Matrix44& Matrix44::PerspectiveFovLH(float ovY, float aspect, float zn, float zf)
 {
 	float yScale = 1 / tanf(ovY / 2);
@@ -213,9 +173,6 @@ Matrix44& Matrix44::PerspectiveFovLH(float ovY, float aspect, float zn, float zf
 	return *this;
 }
 
-//----------------------------------------------------------------------------------
-//
-//---------------------------------------------------------------------------------
 Matrix44& Matrix44::PerspectiveFovLH_OpenGL(float ovY, float aspect, float zn, float zf)
 {
 	float yScale = 1 / tanf(ovY / 2);
@@ -243,9 +200,6 @@ Matrix44& Matrix44::PerspectiveFovLH_OpenGL(float ovY, float aspect, float zn, f
 	return *this;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 Matrix44& Matrix44::OrthographicRH(float width, float height, float zn, float zf)
 {
 	Values[0][0] = 2 / width;
@@ -270,9 +224,6 @@ Matrix44& Matrix44::OrthographicRH(float width, float height, float zn, float zf
 	return *this;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 Matrix44& Matrix44::OrthographicLH(float width, float height, float zn, float zf)
 {
 	Values[0][0] = 2 / width;
@@ -297,9 +248,6 @@ Matrix44& Matrix44::OrthographicLH(float width, float height, float zn, float zf
 	return *this;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Matrix44::Scaling(float x, float y, float z)
 {
 	memset(Values, 0, sizeof(float) * 16);
@@ -309,9 +257,6 @@ void Matrix44::Scaling(float x, float y, float z)
 	Values[3][3] = 1.0f;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Matrix44::RotationX(float angle)
 {
 	float c, s;
@@ -338,9 +283,6 @@ void Matrix44::RotationX(float angle)
 	Values[3][3] = 1.0f;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Matrix44::RotationY(float angle)
 {
 	float c, s;
@@ -367,9 +309,6 @@ void Matrix44::RotationY(float angle)
 	Values[3][3] = 1.0f;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Matrix44::RotationZ(float angle)
 {
 	float c, s;
@@ -396,9 +335,6 @@ void Matrix44::RotationZ(float angle)
 	Values[3][3] = 1.0f;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Matrix44::Translation(float x, float y, float z)
 {
 	Indentity();
@@ -407,9 +343,6 @@ void Matrix44::Translation(float x, float y, float z)
 	Values[3][2] = z;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Matrix44::RotationAxis(const Vector3D& axis, float angle)
 {
 	const float c = cosf(angle);
@@ -433,9 +366,6 @@ void Matrix44::RotationAxis(const Vector3D& axis, float angle)
 	Values[3][2] = 0.0f;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Matrix44::Quaternion(float x, float y, float z, float w)
 {
 	float xx = x * x;
@@ -469,9 +399,6 @@ void Matrix44::Quaternion(float x, float y, float z, float w)
 	Values[3][3] = 1.0f;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 Matrix44& Matrix44::Mul(Matrix44& o, const Matrix44& in1, const Matrix44& in2)
 {
 	Matrix44 _in1 = in1;
@@ -492,9 +419,6 @@ Matrix44& Matrix44::Mul(Matrix44& o, const Matrix44& in1, const Matrix44& in2)
 	return o;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 Matrix44& Matrix44::Inverse(Matrix44& o, const Matrix44& in)
 {
 	float a11 = in.Values[0][0];
@@ -514,7 +438,6 @@ Matrix44& Matrix44::Inverse(Matrix44& o, const Matrix44& in)
 	float a43 = in.Values[3][2];
 	float a44 = in.Values[3][3];
 
-	/* 行列式の計算 */
 	float b11 = +a22 * (a33 * a44 - a43 * a34) - a23 * (a32 * a44 - a42 * a34) + a24 * (a32 * a43 - a42 * a33);
 	float b12 = -a12 * (a33 * a44 - a43 * a34) + a13 * (a32 * a44 - a42 * a34) - a14 * (a32 * a43 - a42 * a33);
 	float b13 = +a12 * (a23 * a44 - a43 * a24) - a13 * (a22 * a44 - a42 * a24) + a14 * (a22 * a43 - a42 * a23);
@@ -535,7 +458,6 @@ Matrix44& Matrix44::Inverse(Matrix44& o, const Matrix44& in)
 	float b43 = -a11 * (a22 * a43 - a42 * a23) + a12 * (a21 * a43 - a41 * a23) - a13 * (a21 * a42 - a41 * a22);
 	float b44 = +a11 * (a22 * a33 - a32 * a23) - a12 * (a21 * a33 - a31 * a23) + a13 * (a21 * a32 - a31 * a22);
 
-	// 行列式の逆数をかける
 	float Det = (a11 * b11) + (a12 * b21) + (a13 * b31) + (a14 * b41);
 	if ((-FLT_MIN <= Det) && (Det <= +FLT_MIN))
 	{
@@ -565,10 +487,4 @@ Matrix44& Matrix44::Inverse(Matrix44& o, const Matrix44& in)
 	return o;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 } // namespace Effekseer
-  //----------------------------------------------------------------------------------
-  //
-  //----------------------------------------------------------------------------------

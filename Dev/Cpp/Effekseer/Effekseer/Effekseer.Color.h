@@ -2,61 +2,58 @@
 #ifndef __EFFEKSEER_COLOR_H__
 #define __EFFEKSEER_COLOR_H__
 
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
 #include <stdint.h>
 #include <array>
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 namespace Effekseer
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-enum ColorMode
+
+/**
+	@brief
+	\~English Color space mode
+	\~Japanese	色空間モード
+*/
+enum ColorMode : uint32_t
 {
-	COLOR_MODE_RGBA,
-	COLOR_MODE_HSVA,
-	COLOR_MODE_DWORD = 0x7FFFFFFF
+	COLOR_MODE_RGBA,	// RGB + α
+	COLOR_MODE_HSVA,	// HSV + α
 };
 
 /**
-	@brief	色
+	@brief	8bit UNorm RGBA color
 */
-#pragma pack(push, 1)
 struct Color
 {
 	/**
-		@brief	赤
+		@brief
+		\~English	Red
+		\~Japanese	赤
 	*/
 	uint8_t R;
 
 	/**
-		@brief	緑
+		@brief
+		\~English	Green
+		\~Japanese	緑
 	*/
 	uint8_t G;
 
 	/**
-		@brief	青
+		@brief
+		\~English	Blue
+		\~Japanese	青
 	*/
 	uint8_t B;
 
 	/**
-		@brief	透明度
+		@brief
+		\~English	Alpha
+		\~Japanese	透明度
 	*/
 	uint8_t A;
 
-	/**
-		@brief	コンストラクタ
-	*/
 	Color() = default;
 
-	/**
-		@brief	コンストラクタ
-	*/
 	Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 
 	/**
@@ -66,40 +63,37 @@ struct Color
 	*/
 	std::array<float, 4> ToFloat4() const
 	{
-		std::array<float, 4> fc;
-		fc[0] = static_cast<float>(R) / 255.0f;
-		fc[1] = static_cast<float>(G) / 255.0f;
-		fc[2] = static_cast<float>(B) / 255.0f;
-		fc[3] = static_cast<float>(A) / 255.0f;
-		return fc;
+		return {
+			static_cast<float>(R) / 255.0f,
+			static_cast<float>(G) / 255.0f,
+			static_cast<float>(B) / 255.0f,
+			static_cast<float>(A) / 255.0f
+		};
 	}
 
 	/**
-		@brief	乗算
+		@brief
+		\~English	Multiply colors
+		\~Japanese	色の乗算
 	*/
 	static Color Mul(Color in1, Color in2);
 	static Color Mul(Color in1, float in2);
 
 	/**
-		@brief	線形補間
+		@brief
+		\~English	Linearly interpolate between colors
+		\~Japanese	色の線形補間
 	*/
 	static Color Lerp(const Color in1, const Color in2, float t);
 
+	bool operator==(const Color& o) const
+	{
+		return R == o.R && G == o.G && B == o.B && A == o.A;
+	}
+
 	bool operator!=(const Color& o) const
 	{
-		if (R != o.R)
-			return true;
-
-		if (G != o.G)
-			return true;
-
-		if (B != o.B)
-			return true;
-
-		if (A != o.A)
-			return true;
-
-		return false;
+		return R != o.R || G != o.G || B != o.B || A != o.A;
 	}
 
 	bool operator<(const Color& o) const
@@ -119,12 +113,7 @@ struct Color
 		return false;
 	}
 };
-#pragma pack(pop)
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
 } // namespace Effekseer
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
 #endif // __EFFEKSEER_COLOR_H__
