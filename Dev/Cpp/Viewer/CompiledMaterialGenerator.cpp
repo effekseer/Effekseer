@@ -26,6 +26,7 @@ bool CompiledMaterialGenerator::Initialize(const char* directory)
 	names[Effekseer::CompiledMaterialPlatformType::Switch] = "Switch";
 	names[Effekseer::CompiledMaterialPlatformType::PS4] = "PS4";
 	names[Effekseer::CompiledMaterialPlatformType::PS5] = "PS5";
+	names[Effekseer::CompiledMaterialPlatformType::Switch2] = "Switch2";
 
 	for (auto& name : names)
 	{
@@ -65,7 +66,8 @@ bool CompiledMaterialGenerator::Initialize(const char* directory)
 
 bool CompiledMaterialGenerator::Compile(const char* dstPath, const char* srcPath)
 {
-	auto load = [](const char* path) -> std::vector<uint8_t> {
+	auto load = [](const char* path) -> std::vector<uint8_t>
+	{
 		std::ifstream file(path, std::ios::binary);
 		if (!file)
 		{
@@ -129,7 +131,8 @@ bool CompiledMaterialGenerator::Compile(const char* dstPath, const char* srcPath
 		std::vector<uint8_t> psRefractionModelBinary;
 
 		auto compile_and_store =
-			[&compiler, &materialFile](Effekseer::MaterialShaderType type, std::vector<uint8_t>& vs, std::vector<uint8_t>& ps) -> bool {
+			[&compiler, &materialFile](Effekseer::MaterialShaderType type, std::vector<uint8_t>& vs, std::vector<uint8_t>& ps) -> bool
+		{
 			auto binary = Effekseer::RefPtr<Effekseer::CompiledMaterialBinary>(compiler->Compile(&materialFile));
 
 			if (binary != nullptr)

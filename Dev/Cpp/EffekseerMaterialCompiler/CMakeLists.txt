@@ -269,6 +269,43 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/Dev/Cpp/EffekseerMaterialCompiler/Switch")
     endif()
 endif()
 
+if(EXISTS "${CMAKE_SOURCE_DIR}/Dev/Cpp/EffekseerMaterialCompiler/Switch2")
+    add_library(
+        EffekseerMaterialCompilerSwitch2
+        SHARED
+        Switch2/EffekseerMaterialCompilerSwitch2.h
+        Switch2/EffekseerMaterialCompilerSwitch2.cpp
+    )
+
+    target_link_libraries(
+        EffekseerMaterialCompilerSwitch2
+        PRIVATE
+        EffekseerMaterialCompilerGLSLGenerator
+    )
+
+
+    target_compile_definitions(EffekseerMaterialCompilerSwitch2 PRIVATE __SHARED_OBJECT__=1)
+
+    set_target_properties(
+        EffekseerMaterialCompilerSwitch2
+        PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
+        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
+        RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
+        RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
+    )
+
+    set_target_properties(EffekseerMaterialCompilerSwitch2
+        PROPERTIES
+        DEBUG_POSTFIX ".Debug")
+
+    set_property(TARGET EffekseerMaterialCompilerSwitch2 PROPERTY FOLDER Libraries)
+
+    if(CLANG_FORMAT_ENABLED)
+        clang_format(EffekseerMaterialCompilerSwitch2)
+    endif()
+endif()
+
 if(EXISTS "${CMAKE_SOURCE_DIR}/Dev/Cpp/EffekseerMaterialCompiler/PS4/")
     add_library(
         EffekseerMaterialCompilerPS4
