@@ -10,7 +10,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#if defined(_WIN32) && !defined(_PS4)
+#if defined(_WIN32) && !defined(_PS4) && !defined(_PS5)
 
 #ifdef __EFFEKSEER_FOR_UE4__
 #include "Windows/AllowWindowsPlatformTypes.h"
@@ -46,7 +46,7 @@ namespace Effekseer
 //
 //----------------------------------------------------------------------------------
 
-#if defined(_WIN32) && !defined(_PS4)
+#if defined(_WIN32) && !defined(_PS4) && !defined(_PS5)
 
 typedef SOCKET EfkSocket;
 typedef int SOCKLEN;

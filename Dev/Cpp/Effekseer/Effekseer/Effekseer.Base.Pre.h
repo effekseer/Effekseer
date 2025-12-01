@@ -38,6 +38,8 @@
 #elif defined(_PS4)
 #elif defined(_SWITCH)
 #elif defined(_XBOXONE)
+#elif defined(_PS5)
+#elif defined(_SWITCH2)
 #else
 #include <pthread.h>
 #include <sys/time.h>

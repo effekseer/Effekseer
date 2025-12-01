@@ -27,7 +27,7 @@ enum class CompiledMaterialPlatformType : int32_t
 	Switch = 50,
 	XBoxOne = 60,
 	PS5 = 70,
-
+	Switch2 = 80,
 };
 
 class CompiledMaterial
