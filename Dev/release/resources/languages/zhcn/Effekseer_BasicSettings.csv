@@ -42,6 +42,8 @@ TriggerType_Trigger0_Name,触发器0
 TriggerType_Trigger1_Name,触发器1
 TriggerType_Trigger2_Name,触发器2
 TriggerType_Trigger3_Name,触发器3
+TriggerType_ParentRemoved_Name,父级消失时
+TriggerType_ParentCollided_Name,父级碰撞时
 
 BasicSettings_Trigger_GenerationEnabled_Name,启用生成
 BasicSettings_Trigger_GenerationEnabled_Desc,播放开始时生成是否有效。
