@@ -235,7 +235,7 @@ void EffectNodeSprite::Rendering(const Instance& instance, const Instance* next_
 		}
 
 		instanceParameter.ParticleTimes[0] = instance.GetNormalizedLivetime();
-		instanceParameter.ParticleTimes[1] = instance.m_LivingTime / 60.0f;
+		instanceParameter.ParticleTimes[1] = instance.livingTime_ / 60.0f;
 
 		CalcCustomData(&instance, instanceParameter.CustomData1, instanceParameter.CustomData2);
 
@@ -258,7 +258,7 @@ void EffectNodeSprite::InitializeRenderedInstance(Instance& instance, InstanceGr
 	IRandObject& rand = instance.GetRandObject();
 
 	AllTypeColorFunctions::Init(instValues.allColorValues, rand, SpriteAllColor);
-	instValues._originalColor = AllTypeColorFunctions::Calculate(instValues.allColorValues, SpriteAllColor, instance.m_LivingTime, instance.m_LivedTime);
+	instValues._originalColor = AllTypeColorFunctions::Calculate(instValues.allColorValues, SpriteAllColor, instance.livingTime_, instance.livedTime_);
 
 	// TODO : Refactor
 	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
@@ -279,7 +279,7 @@ void EffectNodeSprite::UpdateRenderedInstance(Instance& instance, InstanceGroup&
 {
 	InstanceValues& instValues = instance.rendererValues.sprite;
 
-	instValues._originalColor = AllTypeColorFunctions::Calculate(instValues.allColorValues, SpriteAllColor, instance.m_LivingTime, instance.m_LivedTime);
+	instValues._originalColor = AllTypeColorFunctions::Calculate(instValues.allColorValues, SpriteAllColor, instance.livingTime_, instance.livedTime_);
 
 	float fadeAlpha = GetFadeAlpha(instance);
 	if (fadeAlpha != 1.0f)

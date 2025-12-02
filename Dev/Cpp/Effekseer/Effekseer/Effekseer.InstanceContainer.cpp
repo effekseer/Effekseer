@@ -227,7 +227,7 @@ void InstanceContainer::Draw(bool recursive)
 		{
 			for (InstanceGroup* group = m_headGroups; group != nullptr; group = group->NextUsedByContainer)
 			{
-				for (auto instance : group->m_instances)
+				for (auto instance : group->instances_)
 				{
 					if (instance->IsActive())
 					{
@@ -249,16 +249,16 @@ void InstanceContainer::Draw(bool recursive)
 
 				if (m_pEffectNode->RenderingOrder == RenderingOrder_FirstCreatedInstanceIsFirst)
 				{
-					auto it = group->m_instances.begin();
+					auto it = group->instances_.begin();
 					int32_t index = 0;
-					while (it != group->m_instances.end())
+					while (it != group->instances_.end())
 					{
 						if ((*it)->IsActive())
 						{
 							auto it_temp = it;
 							it_temp++;
 
-							if (it_temp != group->m_instances.end())
+							if (it_temp != group->instances_.end())
 							{
 								(*it)->Draw((*it_temp), index, userData);
 							}
@@ -275,16 +275,16 @@ void InstanceContainer::Draw(bool recursive)
 				}
 				else
 				{
-					auto it = group->m_instances.rbegin();
+					auto it = group->instances_.rbegin();
 					int32_t index = 0;
-					while (it != group->m_instances.rend())
+					while (it != group->instances_.rend())
 					{
 						if ((*it)->IsActive())
 						{
 							auto it_temp = it;
 							it_temp++;
 
-							if (it_temp != group->m_instances.rend())
+							if (it_temp != group->instances_.rend())
 							{
 								(*it)->Draw((*it_temp), index, userData);
 							}

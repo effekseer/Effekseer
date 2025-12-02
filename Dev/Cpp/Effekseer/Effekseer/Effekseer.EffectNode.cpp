@@ -570,23 +570,23 @@ float EffectNodeImplemented::GetFadeAlpha(const Instance& instance) const
 {
 	float alpha = 1.0f;
 
-	if (RendererCommon.FadeInType == ParameterRendererCommon::FADEIN_ON && instance.m_LivingTime < RendererCommon.FadeIn.Frame)
+	if (RendererCommon.FadeInType == ParameterRendererCommon::FADEIN_ON && instance.livingTime_ < RendererCommon.FadeIn.Frame)
 	{
 		float v = 1.0f;
-		RendererCommon.FadeIn.Value.setValueToArg(v, 0.0f, 1.0f, (float)instance.m_LivingTime / (float)RendererCommon.FadeIn.Frame);
+		RendererCommon.FadeIn.Value.setValueToArg(v, 0.0f, 1.0f, (float)instance.livingTime_ / (float)RendererCommon.FadeIn.Frame);
 
 		alpha *= v;
 	}
 
 	if (RendererCommon.FadeOutType == ParameterRendererCommon::FADEOUT_WITHIN_LIFETIME)
 	{
-		if (instance.m_LivingTime + RendererCommon.FadeOut.Frame > instance.m_LivedTime)
+		if (instance.livingTime_ + RendererCommon.FadeOut.Frame > instance.livedTime_)
 		{
 			float v = 1.0f;
 			RendererCommon.FadeOut.Value.setValueToArg(v,
 													   1.0f,
 													   0.0f,
-													   (float)(instance.m_LivingTime + RendererCommon.FadeOut.Frame - instance.m_LivedTime) /
+													   (float)(instance.livingTime_ + RendererCommon.FadeOut.Frame - instance.livedTime_) /
 														   (float)RendererCommon.FadeOut.Frame);
 
 			alpha *= v;
@@ -600,7 +600,7 @@ float EffectNodeImplemented::GetFadeAlpha(const Instance& instance) const
 			RendererCommon.FadeOut.Value.setValueToArg(v,
 													   1.0f,
 													   0.0f,
-													   instance.m_RemovingTime / RendererCommon.FadeOut.Frame);
+													   instance.removingTime_ / RendererCommon.FadeOut.Frame);
 
 			alpha *= v;
 		}
