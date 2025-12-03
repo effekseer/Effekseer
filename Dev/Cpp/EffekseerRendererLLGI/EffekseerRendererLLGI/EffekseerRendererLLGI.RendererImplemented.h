@@ -54,24 +54,24 @@ protected:
 	Effekseer::Backend::IndexBufferRef currentndexBuffer_;
 	Effekseer::Backend::IndexBufferRef indexBuffer_;
 	Effekseer::Backend::IndexBufferRef indexBufferForWireframe_;
-	int32_t m_squareMaxCount;
+	int32_t squareMaxCount_;
 	Shader* currentShader = nullptr;
 
 	bool isReversedDepth_ = false;
 
-	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>* m_standardRenderer;
+	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>* standardRenderer_;
 
-	::Effekseer::CoordinateSystem m_coordinateSystem;
+	::Effekseer::CoordinateSystem coordinateSystem_;
 
-	::EffekseerRenderer::RenderStateBase* m_renderState;
+	::EffekseerRenderer::RenderStateBase* renderState_;
 
-	std::set<DeviceObject*> m_deviceObjects;
+	std::set<DeviceObject*> deviceObjects_;
 
-	EffekseerRenderer::DistortingCallback* m_distortingCallback;
+	EffekseerRenderer::DistortingCallback* distortingCallback_;
 
-	::Effekseer::Backend::TextureRef m_backgroundLLGI;
+	::Effekseer::Backend::TextureRef backgroundLLGI_;
 
-	Effekseer::RenderMode m_renderMode = Effekseer::RenderMode::Normal;
+	Effekseer::RenderMode renderMode_ = Effekseer::RenderMode::Normal;
 
 	Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList_ = nullptr;
 
@@ -198,7 +198,7 @@ public:
 
 	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>* GetStandardRenderer()
 	{
-		return m_standardRenderer;
+		return standardRenderer_;
 	}
 
 	void SetVertexBuffer(LLGI::Buffer* vertexBuffer, int32_t stride);

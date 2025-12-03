@@ -226,25 +226,25 @@ void EffectNodeRing::BeginRendering(int32_t count, Manager* manager, const Insta
 	RingRendererRef renderer = manager->GetRingRenderer();
 	if (renderer != nullptr)
 	{
-		nodeParameter.EffectPointer = GetEffect();
-		nodeParameter.LocalTime = global->GetUpdatedFrame() / 60.0f;
-		nodeParameter.ZTest = RendererCommon.ZTest;
-		nodeParameter.ZWrite = RendererCommon.ZWrite;
-		nodeParameter.Billboard = Billboard;
-		nodeParameter.VertexCount = VertexCount;
-		nodeParameter.IsRightHand = manager->GetCoordinateSystem() == CoordinateSystem::RH;
-		nodeParameter.Maginification = GetEffect()->GetMaginification();
+		nodeParameter_.EffectPointer = GetEffect();
+		nodeParameter_.LocalTime = global->GetUpdatedFrame() / 60.0f;
+		nodeParameter_.ZTest = RendererCommon.ZTest;
+		nodeParameter_.ZWrite = RendererCommon.ZWrite;
+		nodeParameter_.Billboard = Billboard;
+		nodeParameter_.VertexCount = VertexCount;
+		nodeParameter_.IsRightHand = manager->GetCoordinateSystem() == CoordinateSystem::RH;
+		nodeParameter_.Maginification = GetEffect()->GetMaginification();
 
-		nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
-		nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
-		nodeParameter.StartingFade = Shape.StartingFade;
-		nodeParameter.EndingFade = Shape.EndingFade;
+		nodeParameter_.DepthParameterPtr = &DepthValues.DepthParameter;
+		nodeParameter_.BasicParameterPtr = &RendererCommon.BasicParameter;
+		nodeParameter_.StartingFade = Shape.StartingFade;
+		nodeParameter_.EndingFade = Shape.EndingFade;
 
-		nodeParameter.EnableViewOffset = (TranslationParam.TranslationType == ParameterTranslationType_ViewOffset);
+		nodeParameter_.EnableViewOffset = (TranslationParam.TranslationType == ParameterTranslationType_ViewOffset);
 
-		nodeParameter.UserData = GetRenderingUserData();
+		nodeParameter_.UserData = GetRenderingUserData();
 
-		renderer->BeginRendering(nodeParameter, count, userData);
+		renderer->BeginRendering(nodeParameter_, count, userData);
 	}
 }
 
@@ -303,24 +303,24 @@ void EffectNodeRing::Rendering(const Instance& instance, const Instance* next_in
 
 		instanceParameter.FlipbookIndexAndNextRate = instance.GetFlipbookIndexAndNextRate();
 
-		instanceParameter.AlphaThreshold = instance.m_AlphaThreshold;
+		instanceParameter.AlphaThreshold = instance.alphaThreshold_;
 
 		if (instance.m_pEffectNode->TranslationParam.TranslationType == ParameterTranslationType_ViewOffset)
 		{
 			instanceParameter.ViewOffsetDistance = instance.translation_state_.view_offset.distance;
 		}
 
-		if (nodeParameter.Billboard == BillboardType::DirectionalBillboard)
+		if (nodeParameter_.Billboard == BillboardType::DirectionalBillboard)
 		{
 			instanceParameter.Direction = instance.GetGlobalDirection();
 		}
 
 		instanceParameter.ParticleTimes[0] = instance.GetNormalizedLivetime();
-		instanceParameter.ParticleTimes[1] = instance.m_LivingTime / 60.0f;
+		instanceParameter.ParticleTimes[1] = instance.livingTime_ / 60.0f;
 
 		CalcCustomData(&instance, instanceParameter.CustomData1, instanceParameter.CustomData2);
 
-		renderer->Rendering(nodeParameter, instanceParameter, userData);
+		renderer->Rendering(nodeParameter_, instanceParameter, userData);
 	}
 }
 
@@ -329,7 +329,7 @@ void EffectNodeRing::EndRendering(Manager* manager, void* userData)
 	RingRendererRef renderer = manager->GetRingRenderer();
 	if (renderer != nullptr)
 	{
-		renderer->EndRendering(nodeParameter, userData);
+		renderer->EndRendering(nodeParameter_, userData);
 	}
 }
 
@@ -353,9 +353,9 @@ void EffectNodeRing::InitializeRenderedInstance(Instance& instance, InstanceGrou
 	AllTypeColorFunctions::Init(instValues.centerColor.allColorValues, *rand, CenterColor);
 	AllTypeColorFunctions::Init(instValues.innerColor.allColorValues, *rand, InnerColor);
 
-	instValues.outerColor.original = AllTypeColorFunctions::Calculate(instValues.outerColor.allColorValues, OuterColor, instance.m_LivingTime, instance.m_LivedTime);
-	instValues.centerColor.original = AllTypeColorFunctions::Calculate(instValues.centerColor.allColorValues, CenterColor, instance.m_LivingTime, instance.m_LivedTime);
-	instValues.innerColor.original = AllTypeColorFunctions::Calculate(instValues.innerColor.allColorValues, InnerColor, instance.m_LivingTime, instance.m_LivedTime);
+	instValues.outerColor.original = AllTypeColorFunctions::Calculate(instValues.outerColor.allColorValues, OuterColor, instance.livingTime_, instance.livedTime_);
+	instValues.centerColor.original = AllTypeColorFunctions::Calculate(instValues.centerColor.allColorValues, CenterColor, instance.livingTime_, instance.livedTime_);
+	instValues.innerColor.original = AllTypeColorFunctions::Calculate(instValues.innerColor.allColorValues, InnerColor, instance.livingTime_, instance.livedTime_);
 
 	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
 	{
@@ -385,9 +385,9 @@ void EffectNodeRing::UpdateRenderedInstance(Instance& instance, InstanceGroup& i
 
 	UpdateSingleValues(instance, CenterRatio, instValues.centerRatio);
 
-	instValues.outerColor.original = AllTypeColorFunctions::Calculate(instValues.outerColor.allColorValues, OuterColor, instance.m_LivingTime, instance.m_LivedTime);
-	instValues.centerColor.original = AllTypeColorFunctions::Calculate(instValues.centerColor.allColorValues, CenterColor, instance.m_LivingTime, instance.m_LivedTime);
-	instValues.innerColor.original = AllTypeColorFunctions::Calculate(instValues.innerColor.allColorValues, InnerColor, instance.m_LivingTime, instance.m_LivedTime);
+	instValues.outerColor.original = AllTypeColorFunctions::Calculate(instValues.outerColor.allColorValues, OuterColor, instance.livingTime_, instance.livedTime_);
+	instValues.centerColor.original = AllTypeColorFunctions::Calculate(instValues.centerColor.allColorValues, CenterColor, instance.livingTime_, instance.livedTime_);
+	instValues.innerColor.original = AllTypeColorFunctions::Calculate(instValues.innerColor.allColorValues, InnerColor, instance.livingTime_, instance.livedTime_);
 
 	float fadeAlpha = GetFadeAlpha(instance);
 	if (fadeAlpha != 1.0f)
@@ -514,8 +514,8 @@ void EffectNodeRing::UpdateLocationValues(Instance& instance, const RingLocation
 {
 	if (param.type == RingLocationParameter::PVA)
 	{
-		values.current = values.pva.start + values.pva.velocity * instance.m_LivingTime +
-						 values.pva.acceleration * instance.m_LivingTime * instance.m_LivingTime * 0.5f;
+		values.current = values.pva.start + values.pva.velocity * instance.livingTime_ +
+						 values.pva.acceleration * instance.livingTime_ * instance.livingTime_ * 0.5f;
 	}
 	else if (param.type == RingLocationParameter::Easing)
 	{

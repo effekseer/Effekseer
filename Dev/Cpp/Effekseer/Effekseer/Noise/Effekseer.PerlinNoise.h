@@ -19,7 +19,7 @@ namespace Effekseer
 class PerlinNoise
 {
 	using Pint = std::uint_fast8_t;
-	std::array<Pint, 512> p{{}};
+	std::array<Pint, 512> p_{{}};
 
 	uint32_t seed_ = 0;
 
@@ -52,16 +52,16 @@ public:
 		seed_ = seed;
 
 		for (std::size_t i{}; i < 256; ++i)
-			this->p[i] = static_cast<Pint>(i);
+			this->p_[i] = static_cast<Pint>(i);
 
 		for (std::size_t i{}; i < 256; ++i)
 		{
 			auto target = static_cast<std::size_t>(GetRand(0, 255));
-			std::swap(p[i], p[target]);
+			std::swap(p_[i], p_[target]);
 		}
 
 		for (std::size_t i{}; i < 256; ++i)
-			this->p[256 + i] = this->p[i];
+			this->p_[256 + i] = this->p_[i];
 	}
 
 private:
@@ -179,15 +179,15 @@ public:
 		const float v{uvw.GetY()};
 		const float w{uvw.GetZ()};
 
-		const uint32_t a0{this->p[x_int] + y_int};
-		const uint32_t a1{this->p[a0] + z_int};
-		const uint32_t a2{this->p[a0 + 1] + z_int};
-		const uint32_t b0{this->p[x_int + 1] + y_int};
-		const uint32_t b1{this->p[b0] + z_int};
-		const uint32_t b2{this->p[b0 + 1] + z_int};
+		const uint32_t a0{this->p_[x_int] + y_int};
+		const uint32_t a1{this->p_[a0] + z_int};
+		const uint32_t a2{this->p_[a0 + 1] + z_int};
+		const uint32_t b0{this->p_[x_int + 1] + y_int};
+		const uint32_t b1{this->p_[b0] + z_int};
+		const uint32_t b2{this->p_[b0 + 1] + z_int};
 
-		SIMD::Int4 vp1(p[a1], p[a2], p[a1 + 1], p[a2 + 1]);
-		SIMD::Int4 vp2(p[b1], p[b2], p[b1 + 1], p[b2 + 1]);
+		SIMD::Int4 vp1(p_[a1], p_[a2], p_[a1 + 1], p_[a2 + 1]);
+		SIMD::Int4 vp2(p_[b1], p_[b2], p_[b1 + 1], p_[b2 + 1]);
 
 		SIMD::Float4 vx1 = in.Dup<0>();
 		SIMD::Float4 vx2 = vx1 - SIMD::Float4(1.0f);

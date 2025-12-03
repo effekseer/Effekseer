@@ -29,8 +29,8 @@ class Setting : public ReferenceObject
 {
 private:
 	//! coordinate system
-	CoordinateSystem m_coordinateSystem;
-	EffectLoaderRef m_effectLoader;
+	CoordinateSystem coordinateSystem_;
+	EffectLoaderRef effectLoader_;
 
 	std::vector<RefPtr<EffectFactory>> effectFactories_;
 	RefPtr<ResourceManager> resourceManager_;

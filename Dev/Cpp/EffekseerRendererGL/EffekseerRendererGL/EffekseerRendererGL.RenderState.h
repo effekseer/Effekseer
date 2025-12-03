@@ -20,10 +20,10 @@ namespace EffekseerRendererGL
 class RenderState : public ::EffekseerRenderer::RenderStateBase
 {
 private:
-	RendererImplemented* m_renderer;
-	bool m_isCCW = true;
+	RendererImplemented* renderer_;
+	bool isCCW_ = true;
 
-	std::array<GLuint, Effekseer::TextureSlotMax> m_samplers;
+	std::array<GLuint, Effekseer::TextureSlotMax> samplers_;
 
 public:
 	RenderState(RendererImplemented* renderer);

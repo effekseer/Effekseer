@@ -19,11 +19,11 @@ namespace EffekseerRendererDX9
 class Shader : public ::EffekseerRenderer::ShaderBase
 {
 private:
-	void* m_vertexConstantBuffer;
-	void* m_pixelConstantBuffer;
+	void* vertexConstantBuffer_;
+	void* pixelConstantBuffer_;
 
-	int32_t m_vertexRegisterCount;
-	int32_t m_pixelRegisterCount;
+	int32_t vertexRegisterCount_;
+	int32_t pixelRegisterCount_;
 
 	Backend::GraphicsDeviceRef graphicsDevice_;
 	Backend::ShaderRef shader_;
@@ -75,11 +75,11 @@ public:
 
 	void* GetVertexConstantBuffer()
 	{
-		return m_vertexConstantBuffer;
+		return vertexConstantBuffer_;
 	}
 	void* GetPixelConstantBuffer()
 	{
-		return m_pixelConstantBuffer;
+		return pixelConstantBuffer_;
 	}
 
 	void SetConstantBuffer();

@@ -163,8 +163,8 @@ void EffectNodeRibbon::BeginRenderingGroup(InstanceGroup* group, Manager* manage
 
 			if (TimeType == TrailTimeType::FirstParticle)
 			{
-				livingTime = groupFirst->m_LivingTime;
-				livedTime = groupFirst->m_LivedTime;
+				livingTime = groupFirst->livingTime_;
+				livedTime = groupFirst->livedTime_;
 			}
 			else if (TimeType == TrailTimeType::ParticleGroup)
 			{
@@ -185,7 +185,7 @@ void EffectNodeRibbon::BeginRenderingGroup(InstanceGroup* group, Manager* manage
 
 			m_instanceParameter.FlipbookIndexAndNextRate = groupFirst->GetFlipbookIndexAndNextRate();
 
-			m_instanceParameter.AlphaThreshold = groupFirst->m_AlphaThreshold;
+			m_instanceParameter.AlphaThreshold = groupFirst->alphaThreshold_;
 
 			if (m_nodeParameter.EnableViewOffset)
 			{
@@ -287,7 +287,7 @@ void EffectNodeRibbon::Rendering(const Instance& instance, const Instance* next_
 
 		m_instanceParameter.InstanceIndex = index;
 		m_instanceParameter.ParticleTimes[0] = instance.GetNormalizedLivetime();
-		m_instanceParameter.ParticleTimes[1] = instance.m_LivingTime / 60.0f;
+		m_instanceParameter.ParticleTimes[1] = instance.livingTime_ / 60.0f;
 		renderer->Rendering(m_nodeParameter, m_instanceParameter, userData);
 	}
 }
@@ -307,7 +307,7 @@ void EffectNodeRibbon::InitializeRenderedInstance(Instance& instance, InstanceGr
 	IRandObject& rand = instance.GetRandObject();
 
 	AllTypeColorFunctions::Init(instValues.allColorValues, rand, RibbonAllColor);
-	instValues._original = AllTypeColorFunctions::Calculate(instValues.allColorValues, RibbonAllColor, instance.m_LivingTime, instance.m_LivedTime);
+	instValues._original = AllTypeColorFunctions::Calculate(instValues.allColorValues, RibbonAllColor, instance.livingTime_, instance.livedTime_);
 
 	ApplyRendererCommonUVHorizontalFlip(instance, rand);
 
@@ -327,7 +327,7 @@ void EffectNodeRibbon::UpdateRenderedInstance(Instance& instance, InstanceGroup&
 {
 	InstanceValues& instValues = instance.rendererValues.ribbon;
 
-	instValues._original = AllTypeColorFunctions::Calculate(instValues.allColorValues, RibbonAllColor, instance.m_LivingTime, instance.m_LivedTime);
+	instValues._original = AllTypeColorFunctions::Calculate(instValues.allColorValues, RibbonAllColor, instance.livingTime_, instance.livedTime_);
 
 	float fadeAlpha = GetFadeAlpha(instance);
 	if (fadeAlpha != 1.0f)

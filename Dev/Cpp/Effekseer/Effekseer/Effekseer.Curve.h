@@ -44,18 +44,18 @@ public:
 	static const int32_t Version = 1;
 
 private:
-	int mControllPointCount;
-	std::vector<dVector4> mControllPoint;
+	int controlPointCount_;
+	std::vector<dVector4> controlPoints_;
 
-	int mKnotCount;
-	std::vector<double> mKnotValue;
+	int knotCount_;
+	std::vector<double> knotValues_;
 
-	int mOrder;
-	int mStep;
-	int mType;
-	int mDimension;
+	int order_;
+	int step_;
+	int type_;
+	int dimension_;
 
-	float mLength;
+	float length_;
 
 private:
 	/**
@@ -115,57 +115,57 @@ public:
 		p += sizeof(int32_t);
 
 		// load controll point count
-		memcpy(&mControllPointCount, p, sizeof(int32_t));
+		memcpy(&controlPointCount_, p, sizeof(int32_t));
 		p += sizeof(int32_t);
 
 		// load controll points
-		for (int i = 0; i < mControllPointCount; i++)
+		for (int i = 0; i < controlPointCount_; i++)
 		{
 			dVector4 value;
 			memcpy(&value, p, sizeof(dVector4));
 			p += sizeof(dVector4);
-			mControllPoint.push_back(value);
+			controlPoints_.push_back(value);
 		}
 
 		// load knot count
-		memcpy(&mKnotCount, p, sizeof(int32_t));
+		memcpy(&knotCount_, p, sizeof(int32_t));
 		p += sizeof(int32_t);
 
 		// load knot values
-		for (int i = 0; i < mKnotCount; i++)
+		for (int i = 0; i < knotCount_; i++)
 		{
 			double value;
 			memcpy(&value, p, sizeof(double));
 			p += sizeof(double);
-			mKnotValue.push_back(value);
+			knotValues_.push_back(value);
 		}
 
 		// load order
-		memcpy(&mOrder, p, sizeof(int32_t));
+		memcpy(&order_, p, sizeof(int32_t));
 		p += sizeof(int32_t);
 
 		// load step
-		memcpy(&mStep, p, sizeof(int32_t));
+		memcpy(&step_, p, sizeof(int32_t));
 		p += sizeof(int32_t);
 
 		// load type
-		memcpy(&mType, p, sizeof(int32_t));
+		memcpy(&type_, p, sizeof(int32_t));
 		p += sizeof(int32_t);
 
 		// load dimension
-		memcpy(&mDimension, p, sizeof(int32_t));
+		memcpy(&dimension_, p, sizeof(int32_t));
 		p += sizeof(int32_t);
 
 		// calc curve length
-		mLength = 0;
+		length_ = 0;
 
-		for (int i = 1; i < mControllPointCount; i++)
+		for (int i = 1; i < controlPointCount_; i++)
 		{
-			dVector4 p0 = mControllPoint[i - 1];
-			dVector4 p1 = mControllPoint[i];
+			dVector4 p0 = controlPoints_[i - 1];
+			dVector4 p1 = controlPoints_[i];
 
 			float len = Vector3D::Length(Vector3D((float)p1.X, (float)p1.Y, (float)p1.Z) - Vector3D((float)p0.X, (float)p0.Y, (float)p0.Z));
-			mLength += len;
+			length_ += len;
 		}
 
 		ES_SAFE_DELETE_ARRAY(pData);
@@ -177,28 +177,28 @@ public:
 
 	Vector3D CalcuratePoint(float t, float magnification)
 	{
-		if (t == 0.0f && mControllPoint.size() > 0)
+		if (t == 0.0f && controlPoints_.size() > 0)
 		{
 			return {
-				static_cast<float>(mControllPoint[0].X * magnification),
-				static_cast<float>(mControllPoint[0].Y * magnification),
-				static_cast<float>(mControllPoint[0].Z * magnification)};
+				static_cast<float>(controlPoints_[0].X * magnification),
+				static_cast<float>(controlPoints_[0].Y * magnification),
+				static_cast<float>(controlPoints_[0].Z * magnification)};
 		}
 
-		int p = mOrder; // 次数
+		int p = order_; // 次数
 
-		std::vector<double> bs(mControllPointCount); // B-Spline 基底関数の計算結果(重み値を積算)
+		std::vector<double> bs(controlPointCount_); // B-Spline 基底関数の計算結果(重み値を積算)
 
 		// ノット列の要素を +1 する
-		auto knot = mKnotValue;
-		knot.push_back(mKnotValue[mKnotValue.size() - 1] + 1);
+		auto knot = knotValues_;
+		knot.push_back(knotValues_[knotValues_.size() - 1] + 1);
 
 		float t_rate = float(knot.back() - 1);
 
 		double wSum = 0; // bs の合計
-		for (int j = 0; j < mControllPointCount; ++j)
+		for (int j = 0; j < controlPointCount_; ++j)
 		{
-			bs[j] = mControllPoint[j].W * CalcBSplineBasisFunc(knot, j, p, t * (t_rate));
+			bs[j] = controlPoints_[j].W * CalcBSplineBasisFunc(knot, j, p, t * (t_rate));
 
 			if (!std::isnan(bs[j]))
 			{
@@ -207,12 +207,12 @@ public:
 		}
 
 		Vector3D ans(0, 0, 0); // 計算結果
-		for (int j = 0; j < mControllPointCount; ++j)
+		for (int j = 0; j < controlPointCount_; ++j)
 		{
 			Vector3D d;
-			d.X = (float)mControllPoint[j].X * magnification * (float)bs[j] / (float)wSum;
-			d.Y = (float)mControllPoint[j].Y * magnification * (float)bs[j] / (float)wSum;
-			d.Z = (float)mControllPoint[j].Z * magnification * (float)bs[j] / (float)wSum;
+			d.X = (float)controlPoints_[j].X * magnification * (float)bs[j] / (float)wSum;
+			d.Y = (float)controlPoints_[j].Y * magnification * (float)bs[j] / (float)wSum;
+			d.Z = (float)controlPoints_[j].Z * magnification * (float)bs[j] / (float)wSum;
 			if (!std::isnan(d.X) && !std::isnan(d.Y) && !std::isnan(d.Z))
 			{
 				ans += d;
@@ -227,42 +227,42 @@ public:
 	//
 	int GetControllPointCount()
 	{
-		return mControllPointCount;
+		return controlPointCount_;
 	}
 	dVector4 GetControllPoint(int index)
 	{
-		return mControllPoint[index];
+		return controlPoints_[index];
 	}
 
 	int GetKnotCount()
 	{
-		return mKnotCount;
+		return knotCount_;
 	}
 	double GetKnotValue(int index)
 	{
-		return mKnotValue[index];
+		return knotValues_[index];
 	}
 
 	int GetOrder()
 	{
-		return mOrder;
+		return order_;
 	}
 	int GetStep()
 	{
-		return mStep;
+		return step_;
 	}
 	int GetType()
 	{
-		return mType;
+		return type_;
 	}
 	int GetDimension()
 	{
-		return mDimension;
+		return dimension_;
 	}
 
 	float GetLength()
 	{
-		return mLength;
+		return length_;
 	}
 
 }; // end class

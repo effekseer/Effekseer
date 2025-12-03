@@ -119,26 +119,26 @@ void ManagerImplemented::DrawSet::SetGlobalMatrix(const SIMD::Mat43f& mat)
 
 Handle ManagerImplemented::AddDrawSet(const EffectRef& effect, InstanceContainer* pInstanceContainer, InstanceGlobal* pGlobalPointer)
 {
-	Handle Temp = m_NextHandle;
+	Handle Temp = nextHandle_;
 
 	// avoid an overflow
-	if (m_NextHandle > std::numeric_limits<int32_t>::max() - 1)
+	if (nextHandle_ > std::numeric_limits<int32_t>::max() - 1)
 	{
-		m_NextHandle = 0;
+		nextHandle_ = 0;
 	}
-	m_NextHandle++;
+	nextHandle_++;
 
 	DrawSet drawset(effect, pInstanceContainer, pGlobalPointer);
 	drawset.Self = Temp;
 
-	m_DrawSets[Temp] = drawset;
+	drawSets_[Temp] = drawset;
 
 	return Temp;
 }
 
 void ManagerImplemented::StopStoppingEffects()
 {
-	for (auto& draw_set_it : m_DrawSets)
+	for (auto& draw_set_it : drawSets_)
 	{
 		DrawSet& draw_set = draw_set_it.second;
 		if (draw_set.IsRemoving)
@@ -174,7 +174,7 @@ void ManagerImplemented::StopStoppingEffects()
 			}
 
 			// when a sound is playing.
-			if (m_soundPlayer && m_soundPlayer->CheckPlayingTag(draw_set.GlobalPointer))
+			if (soundPlayer_ && soundPlayer_->CheckPlayingTag(draw_set.GlobalPointer))
 			{
 				continue;
 			}
@@ -202,8 +202,8 @@ void ManagerImplemented::GCDrawSet(bool isRemovingManager)
 {
 	// dispose instance groups
 	{
-		auto it = m_RemovingDrawSets[1].begin();
-		while (it != m_RemovingDrawSets[1].end())
+		auto it = removingDrawSets_[1].begin();
+		while (it != removingDrawSets_[1].end())
 		{
 			// HACK for UpdateHandle
 			if (it->second.UpdateCountAfterRemoving < 2)
@@ -224,22 +224,22 @@ void ManagerImplemented::GCDrawSet(bool isRemovingManager)
 
 			drawset.ParameterPointer = nullptr;
 
-			if (m_gpuTimer != nullptr)
+			if (gpuTimer_ != nullptr)
 			{
-				m_gpuTimer->RemoveTimer(drawset.GlobalPointer);
+				gpuTimer_->RemoveTimer(drawset.GlobalPointer);
 			}
 
 			ES_SAFE_DELETE(drawset.GlobalPointer);
 
-			it = m_RemovingDrawSets[1].erase(it);
+			it = removingDrawSets_[1].erase(it);
 		}
-		m_RemovingDrawSets[1].clear();
+		removingDrawSets_[1].clear();
 	}
 
 	// wait next frame to be removed
 	{
-		auto it = m_RemovingDrawSets[0].begin();
-		while (it != m_RemovingDrawSets[0].end())
+		auto it = removingDrawSets_[0].begin();
+		while (it != removingDrawSets_[0].end())
 		{
 			// HACK for UpdateHandle
 			if (it->second.UpdateCountAfterRemoving < 1)
@@ -249,15 +249,15 @@ void ManagerImplemented::GCDrawSet(bool isRemovingManager)
 				it->second.UpdateCountAfterRemoving++;
 			}
 
-			m_RemovingDrawSets[1][(*it).first] = (*it).second;
-			it = m_RemovingDrawSets[0].erase(it);
+			removingDrawSets_[1][(*it).first] = (*it).second;
+			it = removingDrawSets_[0].erase(it);
 		}
-		m_RemovingDrawSets[0].clear();
+		removingDrawSets_[0].clear();
 	}
 
 	{
-		auto it = m_DrawSets.begin();
-		while (it != m_DrawSets.end())
+		auto it = drawSets_.begin();
+		while (it != drawSets_.end())
 		{
 			DrawSet& draw_set = (*it).second;
 
@@ -268,8 +268,8 @@ void ManagerImplemented::GCDrawSet(bool isRemovingManager)
 					(*it).second.RemovingCallback(this, (*it).first, isRemovingManager);
 				}
 
-				m_RemovingDrawSets[0][(*it).first] = (*it).second;
-				it = m_DrawSets.erase(it);
+				removingDrawSets_[0][(*it).first] = (*it).second;
+				it = drawSets_.erase(it);
 			}
 			else
 			{
@@ -341,7 +341,7 @@ int ManagerImplemented::Rand()
 
 void ManagerImplemented::ExecuteEvents()
 {
-	for (auto& ds : m_DrawSets)
+	for (auto& ds : drawSets_)
 	{
 		if (ds.second.GoingToStop)
 		{
@@ -380,7 +380,7 @@ void ManagerImplemented::StoreSortingDrawSets(const Manager::DrawParameter& draw
 {
 	sortedRenderingDrawSets_.clear();
 
-	for (const auto& ds : m_renderingDrawSets)
+	for (const auto& ds : renderingDrawSets_)
 	{
 		sortedRenderingDrawSets_.emplace_back(ds);
 	}
@@ -428,27 +428,27 @@ bool ManagerImplemented::CanDraw(const DrawSet& drawSet, const Manager::DrawPara
 }
 
 ManagerImplemented::ManagerImplemented(int instance_max, bool autoFlip)
-	: m_autoFlip(autoFlip)
-	, m_NextHandle(0)
-	, m_instance_max(instance_max)
-	, m_setting(nullptr)
-	, m_sequenceNumber(0)
-	, m_spriteRenderer(nullptr)
-	, m_ribbonRenderer(nullptr)
-	, m_ringRenderer(nullptr)
-	, m_modelRenderer(nullptr)
-	, m_trackRenderer(nullptr)
+	: autoFlip_(autoFlip)
+	, nextHandle_(0)
+	, instanceMax_(instance_max)
+	, setting_(nullptr)
+	, sequenceNumber_(0)
+	, spriteRenderer_(nullptr)
+	, ribbonRenderer_(nullptr)
+	, ringRenderer_(nullptr)
+	, modelRenderer_(nullptr)
+	, trackRenderer_(nullptr)
 
-	, m_soundPlayer(nullptr)
-	, m_randFunc(nullptr)
+	, soundPlayer_(nullptr)
+	, randFunc_(nullptr)
 {
-	m_setting = Setting::Create();
+	setting_ = Setting::Create();
 
 	SetRandFunc(Rand);
 
-	m_renderingDrawSets.reserve(64);
+	renderingDrawSets_.reserve(64);
 
-	int chunk_max = (m_instance_max + InstanceChunk::InstancesOfChunk - 1) / InstanceChunk::InstancesOfChunk;
+	int chunk_max = (instanceMax_ + InstanceChunk::InstancesOfChunk - 1) / InstanceChunk::InstancesOfChunk;
 
 	for (auto& chunks : instanceChunks_)
 	{
@@ -460,15 +460,15 @@ ManagerImplemented::ManagerImplemented(int instance_max, bool autoFlip)
 	pooledInstanceGroup_.Init(instance_max, 32, true);
 	pooledInstanceContainers_.Init(instance_max, 32, true);
 
-	m_setting->SetEffectLoader(Effect::CreateEffectLoader());
+	setting_->SetEffectLoader(Effect::CreateEffectLoader());
 	EffekseerPrintDebug("*** Create : Manager\n");
 }
 
 ManagerImplemented::~ManagerImplemented()
 {
-	if (m_WorkerThreads.size() > 0)
+	if (workerThreads_.size() > 0)
 	{
-		m_WorkerThreads[0].WaitForComplete();
+		workerThreads_[0].WaitForComplete();
 	}
 
 	StopAllEffects();
@@ -528,9 +528,9 @@ void ManagerImplemented::ReleaseGroup(InstanceGroup* group)
 
 void ManagerImplemented::LaunchWorkerThreads(uint32_t threadCount)
 {
-	m_WorkerThreads.resize(threadCount);
+	workerThreads_.resize(threadCount);
 
-	for (auto& worker : m_WorkerThreads)
+	for (auto& worker : workerThreads_)
 	{
 		worker.Launch();
 	}
@@ -538,223 +538,223 @@ void ManagerImplemented::LaunchWorkerThreads(uint32_t threadCount)
 
 ThreadNativeHandleType ManagerImplemented::GetWorkerThreadHandle(uint32_t threadID)
 {
-	if (threadID < m_WorkerThreads.size())
+	if (threadID < workerThreads_.size())
 	{
-		return m_WorkerThreads[threadID].GetThreadHandle();
+		return workerThreads_[threadID].GetThreadHandle();
 	}
 	return 0;
 }
 
 uint32_t ManagerImplemented::GetSequenceNumber() const
 {
-	return m_sequenceNumber;
+	return sequenceNumber_;
 }
 
 RandFunc ManagerImplemented::GetRandFunc() const
 {
-	return m_randFunc;
+	return randFunc_;
 }
 
 void ManagerImplemented::SetRandFunc(RandFunc func)
 {
-	m_randFunc = func;
+	randFunc_ = func;
 }
 
 CoordinateSystem ManagerImplemented::GetCoordinateSystem() const
 {
-	return m_setting->GetCoordinateSystem();
+	return setting_->GetCoordinateSystem();
 }
 
 void ManagerImplemented::SetCoordinateSystem(CoordinateSystem coordinateSystem)
 {
-	m_setting->SetCoordinateSystem(coordinateSystem);
+	setting_->SetCoordinateSystem(coordinateSystem);
 }
 
 SpriteRendererRef ManagerImplemented::GetSpriteRenderer()
 {
-	return m_spriteRenderer;
+	return spriteRenderer_;
 }
 
 void ManagerImplemented::SetSpriteRenderer(SpriteRendererRef renderer)
 {
-	m_spriteRenderer = renderer;
+	spriteRenderer_ = renderer;
 }
 
 RibbonRendererRef ManagerImplemented::GetRibbonRenderer()
 {
-	return m_ribbonRenderer;
+	return ribbonRenderer_;
 }
 
 void ManagerImplemented::SetRibbonRenderer(RibbonRendererRef renderer)
 {
-	m_ribbonRenderer = renderer;
+	ribbonRenderer_ = renderer;
 }
 
 RingRendererRef ManagerImplemented::GetRingRenderer()
 {
-	return m_ringRenderer;
+	return ringRenderer_;
 }
 
 void ManagerImplemented::SetRingRenderer(RingRendererRef renderer)
 {
-	m_ringRenderer = renderer;
+	ringRenderer_ = renderer;
 }
 
 ModelRendererRef ManagerImplemented::GetModelRenderer()
 {
-	return m_modelRenderer;
+	return modelRenderer_;
 }
 
 void ManagerImplemented::SetModelRenderer(ModelRendererRef renderer)
 {
-	m_modelRenderer = renderer;
+	modelRenderer_ = renderer;
 }
 
 TrackRendererRef ManagerImplemented::GetTrackRenderer()
 {
-	return m_trackRenderer;
+	return trackRenderer_;
 }
 
 void ManagerImplemented::SetTrackRenderer(TrackRendererRef renderer)
 {
-	m_trackRenderer = renderer;
+	trackRenderer_ = renderer;
 }
 
 GpuTimerRef ManagerImplemented::GetGpuTimer()
 {
-	return m_gpuTimer;
+	return gpuTimer_;
 }
 
 void ManagerImplemented::SetGpuTimer(GpuTimerRef gpuTimer)
 {
-	if (m_gpuTimer && m_gpuParticleSystem)
+	if (gpuTimer_ && gpuParticleSystem_)
 	{
-		m_gpuTimer->RemoveTimer(m_gpuParticleSystem.Get());
+		gpuTimer_->RemoveTimer(gpuParticleSystem_.Get());
 	}
 
-	m_gpuTimer = gpuTimer;
+	gpuTimer_ = gpuTimer;
 
-	if (m_gpuTimer && m_gpuParticleSystem)
+	if (gpuTimer_ && gpuParticleSystem_)
 	{
-		m_gpuTimer->AddTimer(m_gpuParticleSystem.Get());
+		gpuTimer_->AddTimer(gpuParticleSystem_.Get());
 	}
 }
 
 GpuParticleSystemRef ManagerImplemented::GetGpuParticleSystem()
 {
-	return m_gpuParticleSystem;
+	return gpuParticleSystem_;
 }
 
 void ManagerImplemented::SetGpuParticleSystem(GpuParticleSystemRef system)
 {
-	if (m_gpuTimer && m_gpuParticleSystem)
+	if (gpuTimer_ && gpuParticleSystem_)
 	{
-		m_gpuTimer->RemoveTimer(m_gpuParticleSystem.Get());
+		gpuTimer_->RemoveTimer(gpuParticleSystem_.Get());
 	}
 
-	m_gpuParticleSystem = system;
+	gpuParticleSystem_ = system;
 
-	if (m_gpuTimer && m_gpuParticleSystem)
+	if (gpuTimer_ && gpuParticleSystem_)
 	{
-		m_gpuTimer->AddTimer(m_gpuParticleSystem.Get());
+		gpuTimer_->AddTimer(gpuParticleSystem_.Get());
 	}
 }
 
 GpuParticleFactoryRef ManagerImplemented::GetGpuParticleFactory()
 {
-	return m_setting->GetGpuParticleFactory();
+	return setting_->GetGpuParticleFactory();
 }
 
 void ManagerImplemented::SetGpuParticleFactory(GpuParticleFactoryRef factory)
 {
-	m_setting->SetGpuParticleFactory(factory);
+	setting_->SetGpuParticleFactory(factory);
 }
 
 SoundPlayerRef ManagerImplemented::GetSoundPlayer()
 {
-	return m_soundPlayer;
+	return soundPlayer_;
 }
 
 void ManagerImplemented::SetSoundPlayer(SoundPlayerRef soundPlayer)
 {
-	m_soundPlayer = soundPlayer;
+	soundPlayer_ = soundPlayer;
 }
 
 const SettingRef& ManagerImplemented::GetSetting() const
 {
-	return m_setting;
+	return setting_;
 }
 
 void ManagerImplemented::SetSetting(const SettingRef& setting)
 {
-	m_setting = setting;
+	setting_ = setting;
 }
 
 EffectLoaderRef ManagerImplemented::GetEffectLoader()
 {
-	return m_setting->GetEffectLoader();
+	return setting_->GetEffectLoader();
 }
 
 void ManagerImplemented::SetEffectLoader(EffectLoaderRef effectLoader)
 {
-	m_setting->SetEffectLoader(effectLoader);
+	setting_->SetEffectLoader(effectLoader);
 }
 
 TextureLoaderRef ManagerImplemented::GetTextureLoader()
 {
-	return m_setting->GetTextureLoader();
+	return setting_->GetTextureLoader();
 }
 
 void ManagerImplemented::SetTextureLoader(TextureLoaderRef textureLoader)
 {
-	m_setting->SetTextureLoader(textureLoader);
+	setting_->SetTextureLoader(textureLoader);
 }
 
 SoundLoaderRef ManagerImplemented::GetSoundLoader()
 {
-	return m_setting->GetSoundLoader();
+	return setting_->GetSoundLoader();
 }
 
 void ManagerImplemented::SetSoundLoader(SoundLoaderRef soundLoader)
 {
-	m_setting->SetSoundLoader(soundLoader);
+	setting_->SetSoundLoader(soundLoader);
 }
 
 ModelLoaderRef ManagerImplemented::GetModelLoader()
 {
-	return m_setting->GetModelLoader();
+	return setting_->GetModelLoader();
 }
 
 void ManagerImplemented::SetModelLoader(ModelLoaderRef modelLoader)
 {
-	m_setting->SetModelLoader(modelLoader);
+	setting_->SetModelLoader(modelLoader);
 }
 
 MaterialLoaderRef ManagerImplemented::GetMaterialLoader()
 {
-	return m_setting->GetMaterialLoader();
+	return setting_->GetMaterialLoader();
 }
 
 void ManagerImplemented::SetMaterialLoader(MaterialLoaderRef loader)
 {
-	m_setting->SetMaterialLoader(loader);
+	setting_->SetMaterialLoader(loader);
 }
 
 CurveLoaderRef ManagerImplemented::GetCurveLoader()
 {
-	return m_setting->GetCurveLoader();
+	return setting_->GetCurveLoader();
 }
 
 void ManagerImplemented::SetCurveLoader(CurveLoaderRef loader)
 {
-	m_setting->SetCurveLoader(loader);
+	setting_->SetCurveLoader(loader);
 }
 
 void ManagerImplemented::StopEffect(Handle handle)
 {
-	if (m_DrawSets.count(handle) > 0)
+	if (drawSets_.count(handle) > 0)
 	{
-		DrawSet& drawSet = m_DrawSets[handle];
+		DrawSet& drawSet = drawSets_[handle];
 		drawSet.GoingToStop = true;
 		drawSet.IsRemoving = true;
 	}
@@ -762,7 +762,7 @@ void ManagerImplemented::StopEffect(Handle handle)
 
 void ManagerImplemented::StopAllEffects()
 {
-	for (auto& it : m_DrawSets)
+	for (auto& it : drawSets_)
 	{
 		it.second.GoingToStop = true;
 		it.second.IsRemoving = true;
@@ -771,15 +771,15 @@ void ManagerImplemented::StopAllEffects()
 
 void ManagerImplemented::StopRoot(Handle handle)
 {
-	if (m_DrawSets.count(handle) > 0)
+	if (drawSets_.count(handle) > 0)
 	{
-		m_DrawSets[handle].GoingToStopRoot = true;
+		drawSets_[handle].GoingToStopRoot = true;
 	}
 }
 
 void ManagerImplemented::StopRoot(const EffectRef& effect)
 {
-	for (auto& it : m_DrawSets)
+	for (auto& it : drawSets_)
 	{
 		if (it.second.ParameterPointer == effect)
 		{
@@ -790,13 +790,13 @@ void ManagerImplemented::StopRoot(const EffectRef& effect)
 
 bool ManagerImplemented::Exists(Handle handle)
 {
-	if (m_DrawSets.count(handle) > 0)
+	if (drawSets_.count(handle) > 0)
 	{
 		// always exists before update
-		if (!m_DrawSets[handle].IsPreupdated)
+		if (!drawSets_[handle].IsPreupdated)
 			return true;
 
-		if (m_DrawSets[handle].IsRemoving)
+		if (drawSets_[handle].IsRemoving)
 			return false;
 		return true;
 	}
@@ -805,8 +805,8 @@ bool ManagerImplemented::Exists(Handle handle)
 
 EffectRef ManagerImplemented::GetEffect(Handle handle)
 {
-	auto it = m_DrawSets.find(handle);
-	if (it != m_DrawSets.end())
+	auto it = drawSets_.find(handle);
+	if (it != drawSets_.end())
 	{
 		return it->second.ParameterPointer;
 	}
@@ -816,9 +816,9 @@ EffectRef ManagerImplemented::GetEffect(Handle handle)
 
 int32_t ManagerImplemented::GetInstanceCount(Handle handle)
 {
-	if (m_DrawSets.count(handle) > 0)
+	if (drawSets_.count(handle) > 0)
 	{
-		return m_DrawSets[handle].GlobalPointer->GetInstanceCount();
+		return drawSets_[handle].GlobalPointer->GetInstanceCount();
 	}
 	return 0;
 }
@@ -826,7 +826,7 @@ int32_t ManagerImplemented::GetInstanceCount(Handle handle)
 int32_t ManagerImplemented::GetTotalInstanceCount() const
 {
 	int32_t instanceCount = 0;
-	for (auto pair : m_DrawSets)
+	for (auto pair : drawSets_)
 	{
 		const DrawSet& drawSet = pair.second;
 		instanceCount += drawSet.GlobalPointer->GetInstanceCount();
@@ -836,9 +836,9 @@ int32_t ManagerImplemented::GetTotalInstanceCount() const
 
 int32_t ManagerImplemented::GetCurrentLOD(Handle handle)
 {
-	if (m_DrawSets.count(handle) > 0)
+	if (drawSets_.count(handle) > 0)
 	{
-		DrawSet& drawSet = m_DrawSets[handle];
+		DrawSet& drawSet = drawSets_[handle];
 		return drawSet.GlobalPointer->CurrentLevelOfDetails;
 	}
 
@@ -849,24 +849,24 @@ const Manager::LayerParameter& ManagerImplemented::GetLayerParameter(int32_t lay
 {
 	if (layer >= 0 && layer < LayerCount)
 	{
-		return m_layerParameters[layer];
+		return layerParameters_[layer];
 	}
-	return m_layerParameters[0];
+	return layerParameters_[0];
 }
 
 void ManagerImplemented::SetLayerParameter(int32_t layer, const LayerParameter& layerParameter)
 {
 	if (layer >= 0 && layer < LayerCount)
 	{
-		m_layerParameters[layer] = layerParameter;
+		layerParameters_[layer] = layerParameter;
 	}
 }
 
 Matrix43 ManagerImplemented::GetMatrix(Handle handle)
 {
-	if (m_DrawSets.count(handle) > 0)
+	if (drawSets_.count(handle) > 0)
 	{
-		DrawSet& drawSet = m_DrawSets[handle];
+		DrawSet& drawSet = drawSets_[handle];
 		return ToStruct(drawSet.GetGlobalMatrix());
 	}
 
@@ -875,9 +875,9 @@ Matrix43 ManagerImplemented::GetMatrix(Handle handle)
 
 void ManagerImplemented::SetMatrix(Handle handle, const Matrix43& mat)
 {
-	if (m_DrawSets.count(handle) > 0)
+	if (drawSets_.count(handle) > 0)
 	{
-		DrawSet& drawSet = m_DrawSets[handle];
+		DrawSet& drawSet = drawSets_[handle];
 		Vector3D t;
 		mat.GetSRT(drawSet.Scaling, drawSet.Rotation, t);
 		drawSet.SetGlobalMatrix(mat);
@@ -888,9 +888,9 @@ Vector3D ManagerImplemented::GetLocation(Handle handle)
 {
 	Vector3D location;
 
-	if (m_DrawSets.count(handle) > 0)
+	if (drawSets_.count(handle) > 0)
 	{
-		DrawSet& drawSet = m_DrawSets[handle];
+		DrawSet& drawSet = drawSets_[handle];
 		auto mat = drawSet.GetGlobalMatrix();
 
 		location.X = mat.X.GetW();
@@ -903,9 +903,9 @@ Vector3D ManagerImplemented::GetLocation(Handle handle)
 
 void ManagerImplemented::SetLocation(Handle handle, float x, float y, float z)
 {
-	if (m_DrawSets.count(handle) > 0)
+	if (drawSets_.count(handle) > 0)
 	{
-		DrawSet& drawSet = m_DrawSets[handle];
+		DrawSet& drawSet = drawSets_[handle];
 		auto mat = drawSet.GetGlobalMatrix();
 
 		mat.X.SetW(x);
@@ -923,9 +923,9 @@ void ManagerImplemented::SetLocation(Handle handle, const Vector3D& location)
 
 void ManagerImplemented::AddLocation(Handle handle, const Vector3D& location)
 {
-	if (m_DrawSets.count(handle) > 0)
+	if (drawSets_.count(handle) > 0)
 	{
-		DrawSet& drawSet = m_DrawSets[handle];
+		DrawSet& drawSet = drawSets_[handle];
 		auto mat = drawSet.GetGlobalMatrix();
 		mat.X.SetW(mat.X.GetW() + location.X);
 		mat.Y.SetW(mat.Y.GetW() + location.Y);
@@ -936,9 +936,9 @@ void ManagerImplemented::AddLocation(Handle handle, const Vector3D& location)
 
 void ManagerImplemented::SetRotation(Handle handle, float x, float y, float z)
 {
-	if (m_DrawSets.count(handle) > 0)
+	if (drawSets_.count(handle) > 0)
 	{
-		DrawSet& drawSet = m_DrawSets[handle];
+		DrawSet& drawSet = drawSets_[handle];
 
 		auto mat = drawSet.GetGlobalMatrix();
 
@@ -952,9 +952,9 @@ void ManagerImplemented::SetRotation(Handle handle, float x, float y, float z)
 
 void ManagerImplemented::SetRotation(Handle handle, const Vector3D& axis, float angle)
 {
-	if (m_DrawSets.count(handle) > 0)
+	if (drawSets_.count(handle) > 0)
 	{
-		DrawSet& drawSet = m_DrawSets[handle];
+		DrawSet& drawSet = drawSets_[handle];
 
 		auto mat = drawSet.GetGlobalMatrix();
 		const auto t = mat.GetTranslation();
@@ -966,9 +966,9 @@ void ManagerImplemented::SetRotation(Handle handle, const Vector3D& axis, float 
 
 void ManagerImplemented::SetScale(Handle handle, float x, float y, float z)
 {
-	if (m_DrawSets.count(handle) > 0)
+	if (drawSets_.count(handle) > 0)
 	{
-		DrawSet& drawSet = m_DrawSets[handle];
+		DrawSet& drawSet = drawSets_[handle];
 
 		auto mat = drawSet.GetGlobalMatrix();
 		const auto t = mat.GetTranslation();
@@ -980,9 +980,9 @@ void ManagerImplemented::SetScale(Handle handle, float x, float y, float z)
 
 void ManagerImplemented::SetAllColor(Handle handle, Color color)
 {
-	if (m_DrawSets.count(handle) > 0)
+	if (drawSets_.count(handle) > 0)
 	{
-		auto& drawSet = m_DrawSets[handle];
+		auto& drawSet = drawSets_[handle];
 
 		drawSet.GlobalPointer->IsGlobalColorSet = true;
 		drawSet.GlobalPointer->GlobalColor = color;
@@ -996,9 +996,9 @@ void ManagerImplemented::SetTargetLocation(Handle handle, float x, float y, floa
 
 void ManagerImplemented::SetTargetLocation(Handle handle, const Vector3D& location)
 {
-	if (m_DrawSets.count(handle) > 0)
+	if (drawSets_.count(handle) > 0)
 	{
-		DrawSet& drawSet = m_DrawSets[handle];
+		DrawSet& drawSet = drawSets_[handle];
 
 		InstanceGlobal* instanceGlobal = drawSet.GlobalPointer;
 		instanceGlobal->SetTargetLocation(location);
@@ -1009,14 +1009,14 @@ void ManagerImplemented::SetTargetLocation(Handle handle, const Vector3D& locati
 
 float ManagerImplemented::GetDynamicInput(Handle handle, int32_t index)
 {
-	auto it = m_DrawSets.find(handle);
-	if (it != m_DrawSets.end())
+	auto it = drawSets_.find(handle);
+	if (it != drawSets_.end())
 	{
 		auto globalPtr = it->second.GlobalPointer;
-		if (index < 0 || globalPtr->dynamicInputParameters.size() <= index)
+		if (index < 0 || globalPtr->dynamicInputParameters_.size() <= index)
 			return 0.0f;
 
-		return globalPtr->dynamicInputParameters[index];
+		return globalPtr->dynamicInputParameters_[index];
 	}
 
 	return 0.0f;
@@ -1024,16 +1024,16 @@ float ManagerImplemented::GetDynamicInput(Handle handle, int32_t index)
 
 void ManagerImplemented::SetDynamicInput(Handle handle, int32_t index, float value)
 {
-	if (m_DrawSets.count(handle) > 0)
+	if (drawSets_.count(handle) > 0)
 	{
-		DrawSet& drawSet = m_DrawSets[handle];
+		DrawSet& drawSet = drawSets_[handle];
 
 		InstanceGlobal* instanceGlobal = drawSet.GlobalPointer;
 
-		if (index < 0 || (int32_t)instanceGlobal->dynamicInputParameters.size() <= index)
+		if (index < 0 || (int32_t)instanceGlobal->dynamicInputParameters_.size() <= index)
 			return;
 
-		instanceGlobal->dynamicInputParameters[index] = value;
+		instanceGlobal->dynamicInputParameters_[index] = value;
 
 		drawSet.IsParameterChanged = true;
 	}
@@ -1041,9 +1041,9 @@ void ManagerImplemented::SetDynamicInput(Handle handle, int32_t index, float val
 
 void ManagerImplemented::SendTrigger(Handle handle, int32_t index)
 {
-	if (m_DrawSets.count(handle) > 0)
+	if (drawSets_.count(handle) > 0)
 	{
-		DrawSet& drawSet = m_DrawSets[handle];
+		DrawSet& drawSet = drawSets_[handle];
 
 		drawSet.GlobalPointer->AddInputTriggerCount(index);
 	}
@@ -1051,9 +1051,9 @@ void ManagerImplemented::SendTrigger(Handle handle, int32_t index)
 
 Matrix43 ManagerImplemented::GetBaseMatrix(Handle handle)
 {
-	if (m_DrawSets.count(handle) > 0)
+	if (drawSets_.count(handle) > 0)
 	{
-		return ToStruct(m_DrawSets[handle].BaseMatrix);
+		return ToStruct(drawSets_[handle].BaseMatrix);
 	}
 
 	return Matrix43();
@@ -1061,27 +1061,27 @@ Matrix43 ManagerImplemented::GetBaseMatrix(Handle handle)
 
 void ManagerImplemented::SetBaseMatrix(Handle handle, const Matrix43& mat)
 {
-	if (m_DrawSets.count(handle) > 0)
+	if (drawSets_.count(handle) > 0)
 	{
-		m_DrawSets[handle].BaseMatrix = mat;
-		m_DrawSets[handle].DoUseBaseMatrix = true;
-		m_DrawSets[handle].IsParameterChanged = true;
+		drawSets_[handle].BaseMatrix = mat;
+		drawSets_[handle].DoUseBaseMatrix = true;
+		drawSets_[handle].IsParameterChanged = true;
 	}
 }
 
 void ManagerImplemented::SetRemovingCallback(Handle handle, EffectInstanceRemovingCallback callback)
 {
-	if (m_DrawSets.count(handle) > 0)
+	if (drawSets_.count(handle) > 0)
 	{
-		m_DrawSets[handle].RemovingCallback = callback;
+		drawSets_[handle].RemovingCallback = callback;
 	}
 }
 
 bool ManagerImplemented::GetShown(Handle handle)
 {
-	if (m_DrawSets.count(handle) > 0)
+	if (drawSets_.count(handle) > 0)
 	{
-		return m_DrawSets[handle].IsShown;
+		return drawSets_[handle].IsShown;
 	}
 
 	return false;
@@ -1089,17 +1089,17 @@ bool ManagerImplemented::GetShown(Handle handle)
 
 void ManagerImplemented::SetShown(Handle handle, bool shown)
 {
-	if (m_DrawSets.count(handle) > 0)
+	if (drawSets_.count(handle) > 0)
 	{
-		m_DrawSets[handle].IsShown = shown;
+		drawSets_[handle].IsShown = shown;
 	}
 }
 
 bool ManagerImplemented::GetPaused(Handle handle)
 {
-	if (m_DrawSets.count(handle) > 0)
+	if (drawSets_.count(handle) > 0)
 	{
-		return m_DrawSets[handle].IsPaused;
+		return drawSets_[handle].IsPaused;
 	}
 
 	return false;
@@ -1107,33 +1107,33 @@ bool ManagerImplemented::GetPaused(Handle handle)
 
 void ManagerImplemented::SetPaused(Handle handle, bool paused)
 {
-	if (m_DrawSets.count(handle) > 0)
+	if (drawSets_.count(handle) > 0)
 	{
-		m_DrawSets[handle].IsPaused = paused;
+		drawSets_[handle].IsPaused = paused;
 	}
 }
 
 void ManagerImplemented::SetSpawnDisabled(Handle handle, bool spawnDisabled)
 {
-	if (m_DrawSets.count(handle) > 0)
+	if (drawSets_.count(handle) > 0)
 	{
-		m_DrawSets[handle].GlobalPointer->IsSpawnDisabled = spawnDisabled;
+		drawSets_[handle].GlobalPointer->IsSpawnDisabled = spawnDisabled;
 	}
 }
 
 bool ManagerImplemented::GetSpawnDisabled(Handle handle)
 {
-	if (m_DrawSets.count(handle) > 0)
+	if (drawSets_.count(handle) > 0)
 	{
-		return m_DrawSets[handle].GlobalPointer->IsSpawnDisabled;
+		return drawSets_[handle].GlobalPointer->IsSpawnDisabled;
 	}
 	return false;
 }
 
 void ManagerImplemented::SetPausedToAllEffects(bool paused)
 {
-	std::map<Handle, DrawSet>::iterator it = m_DrawSets.begin();
-	while (it != m_DrawSets.end())
+	std::map<Handle, DrawSet>::iterator it = drawSets_.begin();
+	while (it != drawSets_.end())
 	{
 		(*it).second.IsPaused = paused;
 		++it;
@@ -1142,9 +1142,9 @@ void ManagerImplemented::SetPausedToAllEffects(bool paused)
 
 int32_t ManagerImplemented::GetLayer(Handle handle)
 {
-	auto it = m_DrawSets.find(handle);
+	auto it = drawSets_.find(handle);
 
-	if (it != m_DrawSets.end())
+	if (it != drawSets_.end())
 	{
 		return it->second.GlobalPointer->GetLayer();
 	}
@@ -1156,9 +1156,9 @@ void ManagerImplemented::SetLayer(Handle handle, int32_t layer)
 {
 	if (layer >= 0 && layer < LayerCount)
 	{
-		auto it = m_DrawSets.find(handle);
+		auto it = drawSets_.find(handle);
 
-		if (it != m_DrawSets.end())
+		if (it != drawSets_.end())
 		{
 			return it->second.GlobalPointer->SetLayer(layer);
 		}
@@ -1167,9 +1167,9 @@ void ManagerImplemented::SetLayer(Handle handle, int32_t layer)
 
 int64_t ManagerImplemented::GetGroupMask(Handle handle) const
 {
-	auto it = m_DrawSets.find(handle);
+	auto it = drawSets_.find(handle);
 
-	if (it != m_DrawSets.end())
+	if (it != drawSets_.end())
 	{
 		return it->second.GroupMask;
 	}
@@ -1179,9 +1179,9 @@ int64_t ManagerImplemented::GetGroupMask(Handle handle) const
 
 void ManagerImplemented::SetGroupMask(Handle handle, int64_t groupmask)
 {
-	auto it = m_DrawSets.find(handle);
+	auto it = drawSets_.find(handle);
 
-	if (it != m_DrawSets.end())
+	if (it != drawSets_.end())
 	{
 		it->second.GroupMask = groupmask;
 	}
@@ -1189,26 +1189,26 @@ void ManagerImplemented::SetGroupMask(Handle handle, int64_t groupmask)
 
 float ManagerImplemented::GetSpeed(Handle handle) const
 {
-	auto it = m_DrawSets.find(handle);
-	if (it == m_DrawSets.end())
+	auto it = drawSets_.find(handle);
+	if (it == drawSets_.end())
 		return 0.0f;
 	return it->second.Speed;
 }
 
 void ManagerImplemented::SetSpeed(Handle handle, float speed)
 {
-	if (m_DrawSets.count(handle) > 0)
+	if (drawSets_.count(handle) > 0)
 	{
-		m_DrawSets[handle].Speed = speed;
-		m_DrawSets[handle].IsParameterChanged = true;
+		drawSets_[handle].Speed = speed;
+		drawSets_[handle].IsParameterChanged = true;
 	}
 }
 
 void ManagerImplemented::SetRandomSeed(Handle handle, int32_t seed)
 {
-	if (m_DrawSets.count(handle) > 0)
+	if (drawSets_.count(handle) > 0)
 	{
-		auto& drawSet = m_DrawSets[handle];
+		auto& drawSet = drawSets_[handle];
 		auto pGlobal = drawSet.GlobalPointer;
 		pGlobal->GetRandObject().SetSeed(seed);
 	}
@@ -1216,7 +1216,7 @@ void ManagerImplemented::SetRandomSeed(Handle handle, int32_t seed)
 
 void ManagerImplemented::SetTimeScaleByGroup(int64_t groupmask, float timeScale)
 {
-	for (auto& it : m_DrawSets)
+	for (auto& it : drawSets_)
 	{
 		if ((it.second.GroupMask & groupmask) != 0)
 		{
@@ -1227,9 +1227,9 @@ void ManagerImplemented::SetTimeScaleByGroup(int64_t groupmask, float timeScale)
 
 void ManagerImplemented::SetTimeScaleByHandle(Handle handle, float timeScale)
 {
-	auto it = m_DrawSets.find(handle);
+	auto it = drawSets_.find(handle);
 
-	if (it != m_DrawSets.end())
+	if (it != drawSets_.end())
 	{
 		it->second.TimeScale = timeScale;
 	}
@@ -1237,17 +1237,17 @@ void ManagerImplemented::SetTimeScaleByHandle(Handle handle, float timeScale)
 
 void ManagerImplemented::SetAutoDrawing(Handle handle, bool autoDraw)
 {
-	if (m_DrawSets.count(handle) > 0)
+	if (drawSets_.count(handle) > 0)
 	{
-		m_DrawSets[handle].IsAutoDrawing = autoDraw;
+		drawSets_[handle].IsAutoDrawing = autoDraw;
 	}
 }
 
 void* ManagerImplemented::GetUserData(Handle handle)
 {
-	auto it = m_DrawSets.find(handle);
+	auto it = drawSets_.find(handle);
 
-	if (it != m_DrawSets.end())
+	if (it != drawSets_.end())
 	{
 		return it->second.GlobalPointer->GetUserData();
 	}
@@ -1257,9 +1257,9 @@ void* ManagerImplemented::GetUserData(Handle handle)
 
 void ManagerImplemented::SetUserData(Handle handle, void* userData)
 {
-	auto it = m_DrawSets.find(handle);
+	auto it = drawSets_.find(handle);
 
-	if (it != m_DrawSets.end())
+	if (it != drawSets_.end())
 	{
 		it->second.GlobalPointer->SetUserData(userData);
 	}
@@ -1269,13 +1269,13 @@ void ManagerImplemented::Flip()
 {
 	PROFILER_BLOCK("Manager::Flip", profiler::colors::Red);
 
-	if (!m_autoFlip)
+	if (!autoFlip_)
 	{
-		m_renderingMutex.lock();
+		renderingMutex_.lock();
 	}
 
 	// execute preupdate
-	for (auto& drawSet : m_DrawSets)
+	for (auto& drawSet : drawSets_)
 	{
 		Preupdate(drawSet.second);
 	}
@@ -1286,11 +1286,11 @@ void ManagerImplemented::Flip()
 
 	GCDrawSet(false);
 
-	m_renderingDrawSets.clear();
-	m_renderingDrawSetMaps.clear();
+	renderingDrawSets_.clear();
+	renderingDrawSetMaps_.clear();
 
 	{
-		for (auto& it : m_DrawSets)
+		for (auto& it : drawSets_)
 		{
 			DrawSet& ds = it.second;
 			EffectImplemented* effect = (EffectImplemented*)ds.ParameterPointer.Get();
@@ -1345,14 +1345,14 @@ void ManagerImplemented::Flip()
 				ds.IsParameterChanged = false;
 			}
 
-			m_renderingDrawSets.push_back(ds);
-			m_renderingDrawSetMaps[it.first] = it.second;
+			renderingDrawSets_.push_back(ds);
+			renderingDrawSetMaps_[it.first] = it.second;
 		}
 	}
 
-	if (!m_autoFlip)
+	if (!autoFlip_)
 	{
-		m_renderingMutex.unlock();
+		renderingMutex_.unlock();
 	}
 }
 
@@ -1372,9 +1372,9 @@ void ManagerImplemented::Update(const UpdateParameter& parameter)
 	int64_t beginTime = ::Effekseer::GetTime();
 
 	// Hack for GC
-	for (size_t i = 0; i < m_RemovingDrawSets.size(); i++)
+	for (size_t i = 0; i < removingDrawSets_.size(); i++)
 	{
-		for (auto& ds : m_RemovingDrawSets[i])
+		for (auto& ds : removingDrawSets_[i])
 		{
 			ds.second.UpdateCountAfterRemoving++;
 		}
@@ -1383,7 +1383,7 @@ void ManagerImplemented::Update(const UpdateParameter& parameter)
 	// add frames
 	float maximumDeltaFrame = 0;
 
-	for (auto& drawSet : m_DrawSets)
+	for (auto& drawSet : drawSets_)
 	{
 		float df = drawSet.second.IsPaused ? 0 : parameter.DeltaFrame * drawSet.second.Speed * drawSet.second.TimeScale;
 		drawSet.second.NextUpdateFrame += df;
@@ -1404,37 +1404,37 @@ void ManagerImplemented::Update(const UpdateParameter& parameter)
 		times = 1;
 	}
 
-	m_nextComputeCount = times;
+	nextComputeCount_ = times;
 
 	BeginUpdate();
 
-	if (m_WorkerThreads.size() == 0)
+	if (workerThreads_.size() == 0)
 	{
 		DoUpdate(parameter, times);
 	}
 	else
 	{
-		m_WorkerThreads[0].WaitForComplete();
+		workerThreads_[0].WaitForComplete();
 		// Process on worker thread
-		m_WorkerThreads[0].RunAsync([this, parameter, times]()
+		workerThreads_[0].RunAsync([this, parameter, times]()
 									{ DoUpdate(parameter, times); });
 
 		if (parameter.SyncUpdate)
 		{
-			m_WorkerThreads[0].WaitForComplete();
+			workerThreads_[0].WaitForComplete();
 		}
 	}
 
 	// end to measure time
-	m_updateTime = (int)(Effekseer::GetTime() - beginTime);
+	updateTime_ = (int)(Effekseer::GetTime() - beginTime);
 
 	EndUpdate();
 
 	ExecuteSounds();
 
-	if (m_gpuTimer)
+	if (gpuTimer_)
 	{
-		m_gpuTimer->UpdateResults();
+		gpuTimer_->UpdateResults();
 	}
 }
 
@@ -1445,7 +1445,7 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter, int times)
 	for (int32_t t = 0; t < times; t++)
 	{
 		// specify delta frames
-		for (auto& drawSet : m_DrawSets)
+		for (auto& drawSet : drawSets_)
 		{
 			if (drawSet.second.NextUpdateFrame >= parameter.UpdateInterval)
 			{
@@ -1474,16 +1474,16 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter, int times)
 			// wakeup threads and wait to complete threads are hevery, so multithread the updates if you have a large number of instances.
 			const size_t multithreadingChunkThreshold = 4;
 
-			if (m_WorkerThreads.size() >= 2 && chunks.size() >= multithreadingChunkThreshold)
+			if (workerThreads_.size() >= 2 && chunks.size() >= multithreadingChunkThreshold)
 			{
-				const uint32_t chunkStep = (uint32_t)m_WorkerThreads.size();
+				const uint32_t chunkStep = (uint32_t)workerThreads_.size();
 
-				for (uint32_t threadID = 1; threadID < (uint32_t)m_WorkerThreads.size(); threadID++)
+				for (uint32_t threadID = 1; threadID < (uint32_t)workerThreads_.size(); threadID++)
 				{
 					const uint32_t chunkOffset = threadID;
 					// Process on worker thread
 					PROFILER_BLOCK("DoUpdate::RunAsyncGroup", profiler::colors::Red100);
-					m_WorkerThreads[threadID].RunAsync([this, &chunks, chunkOffset, chunkStep]()
+					workerThreads_[threadID].RunAsync([this, &chunks, chunkOffset, chunkStep]()
 													   {
 						PROFILER_BLOCK("DoUpdate::RunAsync", profiler::colors::Red200);
 						for (size_t i = chunkOffset; i < chunks.size(); i += chunkStep)
@@ -1502,10 +1502,10 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter, int times)
 				}
 
 				// Wait for all worker threads completion
-				for (uint32_t threadID = 1; threadID < (uint32_t)m_WorkerThreads.size(); threadID++)
+				for (uint32_t threadID = 1; threadID < (uint32_t)workerThreads_.size(); threadID++)
 				{
 					PROFILER_BLOCK("DoUpdate::WaitForComplete", profiler::colors::Red400);
-					m_WorkerThreads[threadID].WaitForComplete();
+					workerThreads_[threadID].WaitForComplete();
 				}
 			}
 			else
@@ -1528,13 +1528,13 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter, int times)
 
 		{
 			PROFILER_BLOCK("DoUpdate::UpdateHandleInternal", profiler::colors::Red600);
-			for (auto& drawSet : m_DrawSets)
+			for (auto& drawSet : drawSets_)
 			{
 				UpdateHandleInternal(drawSet.second);
 			}
 		}
 
-		for (auto& drawSet : m_DrawSets)
+		for (auto& drawSet : drawSets_)
 		{
 			drawSet.second.AreChildrenOfRootGenerated = true;
 		}
@@ -1543,15 +1543,15 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter, int times)
 
 void ManagerImplemented::BeginUpdate()
 {
-	m_renderingMutex.lock();
-	m_isLockedWithRenderingMutex = true;
+	renderingMutex_.lock();
+	isLockedWithRenderingMutex_ = true;
 
-	if (m_autoFlip)
+	if (autoFlip_)
 	{
 		Flip();
 	}
 
-	m_sequenceNumber++;
+	sequenceNumber_++;
 }
 
 void ManagerImplemented::EndUpdate()
@@ -1578,15 +1578,15 @@ void ManagerImplemented::EndUpdate()
 	}
 	std::fill(creatableChunkOffsets_.begin(), creatableChunkOffsets_.end(), 0);
 
-	m_renderingMutex.unlock();
-	m_isLockedWithRenderingMutex = false;
+	renderingMutex_.unlock();
+	isLockedWithRenderingMutex_ = false;
 }
 
 void ManagerImplemented::UpdateHandle(Handle handle, float deltaFrame)
 {
 	{
-		auto it = m_DrawSets.find(handle);
-		if (it != m_DrawSets.end())
+		auto it = drawSets_.find(handle);
+		if (it != drawSets_.end())
 		{
 			DrawSet& drawSet = it->second;
 
@@ -1611,8 +1611,8 @@ void ManagerImplemented::UpdateHandle(Handle handle, float deltaFrame)
 
 void ManagerImplemented::UpdateHandleToMoveToFrame(Handle handle, float frame)
 {
-	auto it = m_DrawSets.find(handle);
-	if (it == m_DrawSets.end())
+	auto it = drawSets_.find(handle);
+	if (it == drawSets_.end())
 	{
 		return;
 	}
@@ -1653,7 +1653,7 @@ void ManagerImplemented::UpdateInstancesByInstanceGlobal(const DrawSet& drawSet)
 void ManagerImplemented::UpdateHandleInternal(DrawSet& drawSet)
 {
 	// evaluate LOD
-	drawSet.UpdateLevelOfDetails(m_layerParameters[drawSet.GlobalPointer->GetLayer()]);
+	drawSet.UpdateLevelOfDetails(layerParameters_[drawSet.GlobalPointer->GetLayer()]);
 
 	// calculate dynamic parameters
 	auto e = static_cast<EffectImplemented*>(drawSet.ParameterPointer.Get());
@@ -1668,7 +1668,7 @@ void ManagerImplemented::UpdateHandleInternal(DrawSet& drawSet)
 		if (e->dynamicEquation[i].GetRunningPhase() != InternalScript::RunningPhaseType::Global)
 			continue;
 
-		drawSet.GlobalPointer->dynamicEqResults[i] = e->dynamicEquation[i].Execute(drawSet.GlobalPointer->dynamicInputParameters,
+		drawSet.GlobalPointer->dynamicEqResults[i] = e->dynamicEquation[i].Execute(drawSet.GlobalPointer->dynamicInputParameters_,
 																				   globals,
 																				   std::array<float, 5>(),
 																				   RandCallback::Rand,
@@ -1732,12 +1732,12 @@ void ManagerImplemented::Preupdate(DrawSet& drawSet)
 bool ManagerImplemented::IsClippedWithDepth(DrawSet& drawSet, InstanceContainer* container, const Manager::DrawParameter& drawParameter)
 {
 	// don't use this parameter
-	if (container->m_pEffectNode->DepthValues.DepthParameter.DepthClipping > std::numeric_limits<float>::max() / 10)
+	if (container->effectNode_->DepthValues.DepthParameter.DepthClipping > std::numeric_limits<float>::max() / 10)
 		return false;
 
 	SIMD::Vec3f pos = drawSet.GetGlobalMatrix().GetTranslation();
 	auto distance = SIMD::Vec3f::Dot(pos - SIMD::Vec3f(drawParameter.CameraPosition), SIMD::Vec3f(drawParameter.CameraFrontDirection));
-	if (container->m_pEffectNode->DepthValues.DepthParameter.DepthClipping < distance)
+	if (container->effectNode_->DepthValues.DepthParameter.DepthClipping < distance)
 	{
 		return true;
 	}
@@ -1813,16 +1813,16 @@ void ManagerImplemented::ResetAndPlayWithDataSet(DrawSet& drawSet, float frame)
 
 void ManagerImplemented::Compute()
 {
-	ScopedGpuStage gpuPass(m_gpuTimer, GpuStage::Compute);
+	ScopedGpuStage gpuPass(gpuTimer_, GpuStage::Compute);
 
 	if (auto gpuParticleSystem = GetGpuParticleSystem())
 	{
-		ScopedGpuTime gpuTime(m_gpuTimer, gpuParticleSystem.Get());
+		ScopedGpuTime gpuTime(gpuTimer_, gpuParticleSystem.Get());
 
 		GpuParticleSystem::Context context{};
 		context.CoordinateReversed = GetCoordinateSystem() != CoordinateSystem::RH;
 
-		for (int i = 0; i < m_nextComputeCount; i++)
+		for (int i = 0; i < nextComputeCount_; i++)
 		{
 			gpuParticleSystem->ComputeFrame(context);
 		}
@@ -1833,17 +1833,17 @@ void ManagerImplemented::Draw(const Manager::DrawParameter& drawParameter)
 {
 	PROFILER_BLOCK("Manager::Draw", profiler::colors::Blue);
 
-	if (m_WorkerThreads.size() > 0)
+	if (workerThreads_.size() > 0)
 	{
-		m_WorkerThreads[0].WaitForComplete();
+		workerThreads_[0].WaitForComplete();
 	}
 
-	std::lock_guard<std::recursive_mutex> lock(m_renderingMutex);
+	std::lock_guard<std::recursive_mutex> lock(renderingMutex_);
 
 	// start to record a time
 	int64_t beginTime = ::Effekseer::GetTime();
 
-	ScopedGpuStage gpuPass(m_gpuTimer, GpuStage::Draw);
+	ScopedGpuStage gpuPass(gpuTimer_, GpuStage::Draw);
 
 	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, GetSetting()->GetCoordinateSystem());
 
@@ -1856,7 +1856,7 @@ void ManagerImplemented::Draw(const Manager::DrawParameter& drawParameter)
 
 		if (drawSet.IsAutoDrawing)
 		{
-			ScopedGpuTime gpuTime(m_gpuTimer, drawSet.GlobalPointer);
+			ScopedGpuTime gpuTime(gpuTimer_, drawSet.GlobalPointer);
 
 			if (drawSet.GlobalPointer->RenderedInstanceContainers.size() > 0)
 			{
@@ -1886,15 +1886,15 @@ void ManagerImplemented::Draw(const Manager::DrawParameter& drawParameter)
 	}
 	else
 	{
-		for (size_t i = 0; i < m_renderingDrawSets.size(); i++)
+		for (size_t i = 0; i < renderingDrawSets_.size(); i++)
 		{
-			render(m_renderingDrawSets[i]);
+			render(renderingDrawSets_[i]);
 		}
 	}
 
 	if (auto gpuParticleSystem = GetGpuParticleSystem())
 	{
-		ScopedGpuTime gpuTime(m_gpuTimer, gpuParticleSystem.Get());
+		ScopedGpuTime gpuTime(gpuTimer_, gpuParticleSystem.Get());
 
 		GpuParticleSystem::Context context{};
 		context.CoordinateReversed = GetCoordinateSystem() != CoordinateSystem::RH;
@@ -1902,17 +1902,17 @@ void ManagerImplemented::Draw(const Manager::DrawParameter& drawParameter)
 	}
 
 	// calculate a time
-	m_drawTime = (int)(Effekseer::GetTime() - beginTime);
+	drawTime_ = (int)(Effekseer::GetTime() - beginTime);
 }
 
 void ManagerImplemented::DrawBack(const Manager::DrawParameter& drawParameter)
 {
-	std::lock_guard<std::recursive_mutex> lock(m_renderingMutex);
+	std::lock_guard<std::recursive_mutex> lock(renderingMutex_);
 
 	// start to record a time
 	int64_t beginTime = ::Effekseer::GetTime();
 
-	ScopedGpuStage gpuPass(m_gpuTimer, GpuStage::DrawBack);
+	ScopedGpuStage gpuPass(gpuTimer_, GpuStage::DrawBack);
 
 	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, GetSetting()->GetCoordinateSystem());
 
@@ -1925,7 +1925,7 @@ void ManagerImplemented::DrawBack(const Manager::DrawParameter& drawParameter)
 
 		if (drawSet.IsAutoDrawing)
 		{
-			ScopedGpuTime gpuTime(m_gpuTimer, drawSet.GlobalPointer);
+			ScopedGpuTime gpuTime(gpuTimer_, drawSet.GlobalPointer);
 
 			auto e = (EffectImplemented*)drawSet.ParameterPointer.Get();
 			for (int32_t j = 0; j < e->renderingNodesThreshold; j++)
@@ -1949,24 +1949,24 @@ void ManagerImplemented::DrawBack(const Manager::DrawParameter& drawParameter)
 	}
 	else
 	{
-		for (size_t i = 0; i < m_renderingDrawSets.size(); i++)
+		for (size_t i = 0; i < renderingDrawSets_.size(); i++)
 		{
-			render(m_renderingDrawSets[i]);
+			render(renderingDrawSets_[i]);
 		}
 	}
 
 	// calculate a time
-	m_drawTime = (int)(Effekseer::GetTime() - beginTime);
+	drawTime_ = (int)(Effekseer::GetTime() - beginTime);
 }
 
 void ManagerImplemented::DrawFront(const Manager::DrawParameter& drawParameter)
 {
-	std::lock_guard<std::recursive_mutex> lock(m_renderingMutex);
+	std::lock_guard<std::recursive_mutex> lock(renderingMutex_);
 
 	// start to record a time
 	int64_t beginTime = ::Effekseer::GetTime();
 
-	ScopedGpuStage gpuPass(m_gpuTimer, GpuStage::DrawFront);
+	ScopedGpuStage gpuPass(gpuTimer_, GpuStage::DrawFront);
 
 	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, GetSetting()->GetCoordinateSystem());
 
@@ -1979,7 +1979,7 @@ void ManagerImplemented::DrawFront(const Manager::DrawParameter& drawParameter)
 
 		if (drawSet.IsAutoDrawing)
 		{
-			ScopedGpuTime gpuTime(m_gpuTimer, drawSet.GlobalPointer);
+			ScopedGpuTime gpuTime(gpuTimer_, drawSet.GlobalPointer);
 
 			if (drawSet.GlobalPointer->RenderedInstanceContainers.size() > 0)
 			{
@@ -2010,15 +2010,15 @@ void ManagerImplemented::DrawFront(const Manager::DrawParameter& drawParameter)
 	}
 	else
 	{
-		for (size_t i = 0; i < m_renderingDrawSets.size(); i++)
+		for (size_t i = 0; i < renderingDrawSets_.size(); i++)
 		{
-			render(m_renderingDrawSets[i]);
+			render(renderingDrawSets_[i]);
 		}
 	}
 
 	if (auto gpuParticleSystem = GetGpuParticleSystem())
 	{
-		ScopedGpuTime gpuTime(m_gpuTimer, gpuParticleSystem.Get());
+		ScopedGpuTime gpuTime(gpuTimer_, gpuParticleSystem.Get());
 
 		GpuParticleSystem::Context context{};
 		context.CoordinateReversed = GetCoordinateSystem() != CoordinateSystem::RH;
@@ -2026,7 +2026,7 @@ void ManagerImplemented::DrawFront(const Manager::DrawParameter& drawParameter)
 	}
 
 	// calculate a time
-	m_drawTime = (int)(Effekseer::GetTime() - beginTime);
+	drawTime_ = (int)(Effekseer::GetTime() - beginTime);
 }
 
 Handle ManagerImplemented::Play(const EffectRef& effect, float x, float y, float z)
@@ -2043,9 +2043,9 @@ Handle ManagerImplemented::Play(const EffectRef& effect, const Vector3D& positio
 
 	// Create root
 	InstanceGlobal* pGlobal = new InstanceGlobal();
-	if (m_gpuTimer != nullptr)
+	if (gpuTimer_ != nullptr)
 	{
-		m_gpuTimer->AddTimer(pGlobal);
+		gpuTimer_->AddTimer(pGlobal);
 	}
 
 	int32_t randomSeed = 0;
@@ -2060,7 +2060,7 @@ Handle ManagerImplemented::Play(const EffectRef& effect, const Vector3D& positio
 
 	pGlobal->GetRandObject().SetSeed(randomSeed);
 
-	pGlobal->dynamicInputParameters = e->defaultDynamicInputs;
+	pGlobal->dynamicInputParameters_ = e->defaultDynamicInputs;
 
 	pGlobal->RenderedInstanceContainers.resize(e->renderingNodesCount);
 	for (size_t i = 0; i < pGlobal->RenderedInstanceContainers.size(); i++)
@@ -2072,7 +2072,7 @@ Handle ManagerImplemented::Play(const EffectRef& effect, const Vector3D& positio
 	// an instance is created in Preupdate because effects need to show instances without update(0 frame)
 	Handle handle = AddDrawSet(effect, nullptr, pGlobal);
 
-	auto& drawSet = m_DrawSets[handle];
+	auto& drawSet = drawSets_[handle];
 
 	drawSet.SetGlobalMatrix(SIMD::Mat43f::Translation(position));
 	drawSet.StartFrame = startFrame;
@@ -2085,7 +2085,7 @@ int ManagerImplemented::GetCameraCullingMaskToShowAllEffects()
 {
 	int mask = 0;
 
-	for (auto& ds : m_DrawSets)
+	for (auto& ds : drawSets_)
 	{
 		auto layerBits = ds.second.GlobalPointer->GetLayerBits();
 		mask |= layerBits;
@@ -2096,17 +2096,17 @@ int ManagerImplemented::GetCameraCullingMaskToShowAllEffects()
 
 void ManagerImplemented::DrawHandle(Handle handle, const Manager::DrawParameter& drawParameter)
 {
-	if (m_WorkerThreads.size() > 0)
+	if (workerThreads_.size() > 0)
 	{
-		m_WorkerThreads[0].WaitForComplete();
+		workerThreads_[0].WaitForComplete();
 	}
 
-	std::lock_guard<std::recursive_mutex> lock(m_renderingMutex);
+	std::lock_guard<std::recursive_mutex> lock(renderingMutex_);
 
 	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, GetSetting()->GetCoordinateSystem());
 
-	auto it = m_renderingDrawSetMaps.find(handle);
-	if (it != m_renderingDrawSetMaps.end())
+	auto it = renderingDrawSetMaps_.find(handle);
+	if (it != renderingDrawSetMaps_.end())
 	{
 		DrawSet& drawSet = it->second;
 
@@ -2134,17 +2134,17 @@ void ManagerImplemented::DrawHandle(Handle handle, const Manager::DrawParameter&
 
 void ManagerImplemented::DrawHandleBack(Handle handle, const Manager::DrawParameter& drawParameter)
 {
-	if (m_WorkerThreads.size() > 0)
+	if (workerThreads_.size() > 0)
 	{
-		m_WorkerThreads[0].WaitForComplete();
+		workerThreads_[0].WaitForComplete();
 	}
 
-	std::lock_guard<std::recursive_mutex> lock(m_renderingMutex);
+	std::lock_guard<std::recursive_mutex> lock(renderingMutex_);
 
 	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, GetSetting()->GetCoordinateSystem());
 
-	std::map<Handle, DrawSet>::iterator it = m_renderingDrawSetMaps.find(handle);
-	if (it != m_renderingDrawSetMaps.end())
+	std::map<Handle, DrawSet>::iterator it = renderingDrawSetMaps_.find(handle);
+	if (it != renderingDrawSetMaps_.end())
 	{
 		DrawSet& drawSet = it->second;
 		auto e = (EffectImplemented*)drawSet.ParameterPointer.Get();
@@ -2166,17 +2166,17 @@ void ManagerImplemented::DrawHandleBack(Handle handle, const Manager::DrawParame
 
 void ManagerImplemented::DrawHandleFront(Handle handle, const Manager::DrawParameter& drawParameter)
 {
-	if (m_WorkerThreads.size() > 0)
+	if (workerThreads_.size() > 0)
 	{
-		m_WorkerThreads[0].WaitForComplete();
+		workerThreads_[0].WaitForComplete();
 	}
 
-	std::lock_guard<std::recursive_mutex> lock(m_renderingMutex);
+	std::lock_guard<std::recursive_mutex> lock(renderingMutex_);
 
 	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, GetSetting()->GetCoordinateSystem());
 
-	std::map<Handle, DrawSet>::iterator it = m_renderingDrawSetMaps.find(handle);
-	if (it != m_renderingDrawSetMaps.end())
+	std::map<Handle, DrawSet>::iterator it = renderingDrawSetMaps_.find(handle);
+	if (it != renderingDrawSetMaps_.end())
 	{
 		DrawSet& drawSet = it->second;
 		auto e = (EffectImplemented*)drawSet.ParameterPointer.Get();
@@ -2207,9 +2207,9 @@ bool ManagerImplemented::GetIsCulled(Handle handle, const Manager::DrawParameter
 {
 	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, GetSetting()->GetCoordinateSystem());
 
-	if (m_DrawSets.count(handle) > 0)
+	if (drawSets_.count(handle) > 0)
 	{
-		return !CanDraw(m_DrawSets[handle], drawParameter, cullingPlanes);
+		return !CanDraw(drawSets_[handle], drawParameter, cullingPlanes);
 	}
 
 	return true;
@@ -2217,27 +2217,27 @@ bool ManagerImplemented::GetIsCulled(Handle handle, const Manager::DrawParameter
 
 int ManagerImplemented::GetUpdateTime() const
 {
-	return m_updateTime;
+	return updateTime_;
 };
 
 int ManagerImplemented::GetDrawTime() const
 {
-	return m_drawTime;
+	return drawTime_;
 }
 
 int32_t ManagerImplemented::GetGpuTime() const
 {
-	if (m_gpuTimer != nullptr)
+	if (gpuTimer_ != nullptr)
 	{
 		int32_t timeCount = 0;
-		for (auto& kv : m_DrawSets)
+		for (auto& kv : drawSets_)
 		{
-			timeCount += m_gpuTimer->GetResult(kv.second.GlobalPointer);
+			timeCount += gpuTimer_->GetResult(kv.second.GlobalPointer);
 		}
 
-		if (m_gpuParticleSystem)
+		if (gpuParticleSystem_)
 		{
-			timeCount += m_gpuTimer->GetResult(m_gpuParticleSystem.Get());
+			timeCount += gpuTimer_->GetResult(gpuParticleSystem_.Get());
 		}
 		return timeCount;
 	}
@@ -2246,12 +2246,12 @@ int32_t ManagerImplemented::GetGpuTime() const
 
 int32_t ManagerImplemented::GetGpuTime(Handle handle) const
 {
-	if (m_gpuTimer != nullptr)
+	if (gpuTimer_ != nullptr)
 	{
-		auto it = m_DrawSets.find(handle);
-		if (it != m_DrawSets.end())
+		auto it = drawSets_.find(handle);
+		if (it != drawSets_.end())
 		{
-			return m_gpuTimer->GetResult(it->second.GlobalPointer);
+			return gpuTimer_->GetResult(it->second.GlobalPointer);
 		}
 	}
 	return 0;
@@ -2266,11 +2266,11 @@ void ManagerImplemented::BeginReloadEffect(const EffectRef& effect, bool doLockT
 {
 	if (doLockThread)
 	{
-		m_renderingMutex.lock();
-		m_isLockedWithRenderingMutex = true;
+		renderingMutex_.lock();
+		isLockedWithRenderingMutex_ = true;
 	}
 
-	for (auto& it : m_DrawSets)
+	for (auto& it : drawSets_)
 	{
 		if (it.second.ParameterPointer != effect)
 			continue;
@@ -2287,7 +2287,7 @@ void ManagerImplemented::BeginReloadEffect(const EffectRef& effect, bool doLockT
 
 void ManagerImplemented::EndReloadEffect(const EffectRef& effect, bool doLockThread)
 {
-	for (auto& it : m_DrawSets)
+	for (auto& it : drawSets_)
 	{
 		auto& ds = it.second;
 
@@ -2306,19 +2306,19 @@ void ManagerImplemented::EndReloadEffect(const EffectRef& effect, bool doLockThr
 
 	if (doLockThread)
 	{
-		m_renderingMutex.unlock();
-		m_isLockedWithRenderingMutex = false;
+		renderingMutex_.unlock();
+		isLockedWithRenderingMutex_ = false;
 	}
 }
 
 void ManagerImplemented::LockRendering()
 {
-	m_renderingMutex.lock();
+	renderingMutex_.lock();
 }
 
 void ManagerImplemented::UnlockRendering()
 {
-	m_renderingMutex.unlock();
+	renderingMutex_.unlock();
 }
 
 void ManagerImplemented::RequestToPlaySound(Instance* instance, const EffectNodeImplemented* node)
@@ -2339,35 +2339,35 @@ void ManagerImplemented::RequestToPlaySound(Instance* instance, const EffectNode
 		parameter.Distance = node->Sound.Distance;
 		parameter.UserData = instanceGlobal->GetUserData();
 
-		std::lock_guard<std::mutex> lock(m_soundMutex);
-		m_requestedSounds.emplace(static_cast<SoundTag>(instanceGlobal), parameter);
+		std::lock_guard<std::mutex> lock(soundMutex_);
+		requestedSounds_.emplace(static_cast<SoundTag>(instanceGlobal), parameter);
 	}
 }
 
 void ManagerImplemented::ExecuteSounds()
 {
-	if (m_requestedSounds.empty())
+	if (requestedSounds_.empty())
 	{
 		return;
 	}
 
-	std::lock_guard<std::mutex> lock(m_soundMutex);
+	std::lock_guard<std::mutex> lock(soundMutex_);
 
 	auto player = GetSoundPlayer();
 	if (player != nullptr)
 	{
-		while (!m_requestedSounds.empty())
+		while (!requestedSounds_.empty())
 		{
-			auto sound = m_requestedSounds.back();
+			auto sound = requestedSounds_.back();
 			player->Play(sound.first, sound.second);
-			m_requestedSounds.pop();
+			requestedSounds_.pop();
 		}
 	}
 	else
 	{
-		while (!m_requestedSounds.empty())
+		while (!requestedSounds_.empty())
 		{
-			m_requestedSounds.pop();
+			requestedSounds_.pop();
 		}
 	}
 }

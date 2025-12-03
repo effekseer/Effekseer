@@ -137,21 +137,21 @@ TextureProperty GetTextureProperty(::Effekseer::Backend::TextureRef texture)
 //
 //----------------------------------------------------------------------------------
 OriginalState::OriginalState()
-	: m_blendState(nullptr)
-	, m_depthStencilState(nullptr)
-	, m_depthStencilStateRef(0)
-	, m_vertexConstantBuffer(nullptr)
-	, m_pixelConstantBuffer(nullptr)
-	, m_layout(nullptr)
+	: blendState_(nullptr)
+	, depthStencilState_(nullptr)
+	, depthStencilState_Ref(0)
+	, vertexConstantBuffer_(nullptr)
+	, pixelConstantBuffer_(nullptr)
+	, layout_(nullptr)
 
-	, m_pRasterizerState(nullptr)
-	, m_pVS(nullptr)
-	, m_pPS(nullptr)
-	, m_pVB(nullptr)
-	, m_pIB(nullptr)
+	, rasterizerState_(nullptr)
+	, vs_(nullptr)
+	, ps_(nullptr)
+	, vertexBuffer_(nullptr)
+	, indexBuffer_(nullptr)
 {
-	m_samplers.fill(nullptr);
-	m_psSRVs.fill(nullptr);
+	samplers_.fill(nullptr);
+	psSrvs_.fill(nullptr);
 }
 
 //----------------------------------------------------------------------------------
@@ -167,25 +167,25 @@ OriginalState::~OriginalState()
 //----------------------------------------------------------------------------------
 void OriginalState::SaveState(ID3D11Device* device, ID3D11DeviceContext* context)
 {
-	context->PSGetSamplers(0, Effekseer::TextureSlotMax, m_samplers.data());
-	context->OMGetBlendState(&m_blendState, m_blendFactor.data(), &m_blendSampleMask);
-	context->OMGetDepthStencilState(&m_depthStencilState, &m_depthStencilStateRef);
-	context->RSGetState(&m_pRasterizerState);
+	context->PSGetSamplers(0, Effekseer::TextureSlotMax, samplers_.data());
+	context->OMGetBlendState(&blendState_, blendFactor_.data(), &blendSampleMask_);
+	context->OMGetDepthStencilState(&depthStencilState_, &depthStencilState_Ref);
+	context->RSGetState(&rasterizerState_);
 
-	context->VSGetConstantBuffers(0, 1, &m_vertexConstantBuffer);
-	context->PSGetConstantBuffers(0, 1, &m_pixelConstantBuffer);
+	context->VSGetConstantBuffers(0, 1, &vertexConstantBuffer_);
+	context->PSGetConstantBuffers(0, 1, &pixelConstantBuffer_);
 
-	context->VSGetShader(&m_pVS, nullptr, nullptr);
-	context->PSGetShader(&m_pPS, nullptr, nullptr);
+	context->VSGetShader(&vs_, nullptr, nullptr);
+	context->PSGetShader(&ps_, nullptr, nullptr);
 
-	context->IAGetInputLayout(&m_layout);
+	context->IAGetInputLayout(&layout_);
 
-	context->IAGetPrimitiveTopology(&m_topology);
+	context->IAGetPrimitiveTopology(&topology_);
 
-	context->PSGetShaderResources(0, Effekseer::TextureSlotMax, m_psSRVs.data());
+	context->PSGetShaderResources(0, Effekseer::TextureSlotMax, psSrvs_.data());
 
-	context->IAGetVertexBuffers(0, 1, &m_pVB, &m_vbStrides, &m_vbOffset);
-	context->IAGetIndexBuffer(&m_pIB, &m_ibFormat, &m_ibOffset);
+	context->IAGetVertexBuffers(0, 1, &vertexBuffer_, &vbStrides_, &vbOffset_);
+	context->IAGetIndexBuffer(&indexBuffer_, &ibFormat_, &ibOffset_);
 }
 
 //----------------------------------------------------------------------------------
@@ -193,25 +193,25 @@ void OriginalState::SaveState(ID3D11Device* device, ID3D11DeviceContext* context
 //----------------------------------------------------------------------------------
 void OriginalState::LoadState(ID3D11Device* device, ID3D11DeviceContext* context)
 {
-	context->PSSetSamplers(0, Effekseer::TextureSlotMax, m_samplers.data());
-	context->OMSetBlendState(m_blendState, m_blendFactor.data(), m_blendSampleMask);
-	context->OMSetDepthStencilState(m_depthStencilState, m_depthStencilStateRef);
-	context->RSSetState(m_pRasterizerState);
+	context->PSSetSamplers(0, Effekseer::TextureSlotMax, samplers_.data());
+	context->OMSetBlendState(blendState_, blendFactor_.data(), blendSampleMask_);
+	context->OMSetDepthStencilState(depthStencilState_, depthStencilState_Ref);
+	context->RSSetState(rasterizerState_);
 
-	context->VSSetConstantBuffers(0, 1, &m_vertexConstantBuffer);
-	context->PSSetConstantBuffers(0, 1, &m_pixelConstantBuffer);
+	context->VSSetConstantBuffers(0, 1, &vertexConstantBuffer_);
+	context->PSSetConstantBuffers(0, 1, &pixelConstantBuffer_);
 
-	context->VSSetShader(m_pVS, nullptr, 0);
-	context->PSSetShader(m_pPS, nullptr, 0);
+	context->VSSetShader(vs_, nullptr, 0);
+	context->PSSetShader(ps_, nullptr, 0);
 
-	context->IASetInputLayout(m_layout);
+	context->IASetInputLayout(layout_);
 
-	context->IASetPrimitiveTopology(m_topology);
+	context->IASetPrimitiveTopology(topology_);
 
-	context->PSSetShaderResources(0, Effekseer::TextureSlotMax, m_psSRVs.data());
+	context->PSSetShaderResources(0, Effekseer::TextureSlotMax, psSrvs_.data());
 
-	context->IASetVertexBuffers(0, 1, &m_pVB, &m_vbStrides, &m_vbOffset);
-	context->IASetIndexBuffer(m_pIB, m_ibFormat, m_ibOffset);
+	context->IASetVertexBuffers(0, 1, &vertexBuffer_, &vbStrides_, &vbOffset_);
+	context->IASetIndexBuffer(indexBuffer_, ibFormat_, ibOffset_);
 }
 
 //----------------------------------------------------------------------------------
@@ -219,31 +219,31 @@ void OriginalState::LoadState(ID3D11Device* device, ID3D11DeviceContext* context
 //----------------------------------------------------------------------------------
 void OriginalState::ReleaseState()
 {
-	for (size_t i = 0; i < m_samplers.size(); i++)
+	for (size_t i = 0; i < samplers_.size(); i++)
 	{
-		ES_SAFE_RELEASE(m_samplers[i]);
+		ES_SAFE_RELEASE(samplers_[i]);
 	}
-	ES_SAFE_RELEASE(m_blendState);
+	ES_SAFE_RELEASE(blendState_);
 
-	ES_SAFE_RELEASE(m_depthStencilState);
+	ES_SAFE_RELEASE(depthStencilState_);
 
-	ES_SAFE_RELEASE(m_pRasterizerState);
+	ES_SAFE_RELEASE(rasterizerState_);
 
-	ES_SAFE_RELEASE(m_vertexConstantBuffer);
-	ES_SAFE_RELEASE(m_pixelConstantBuffer);
+	ES_SAFE_RELEASE(vertexConstantBuffer_);
+	ES_SAFE_RELEASE(pixelConstantBuffer_);
 
-	ES_SAFE_RELEASE(m_pVS);
-	ES_SAFE_RELEASE(m_pPS);
+	ES_SAFE_RELEASE(vs_);
+	ES_SAFE_RELEASE(ps_);
 
-	ES_SAFE_RELEASE(m_layout);
+	ES_SAFE_RELEASE(layout_);
 
-	for (size_t i = 0; i < m_psSRVs.size(); i++)
+	for (size_t i = 0; i < psSrvs_.size(); i++)
 	{
-		ES_SAFE_RELEASE(m_psSRVs[i]);
+		ES_SAFE_RELEASE(psSrvs_[i]);
 	}
 
-	ES_SAFE_RELEASE(m_pVB);
-	ES_SAFE_RELEASE(m_pIB);
+	ES_SAFE_RELEASE(vertexBuffer_);
+	ES_SAFE_RELEASE(indexBuffer_);
 }
 
 RendererRef Renderer::Create(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,

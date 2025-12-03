@@ -23,35 +23,35 @@ using Vertex = EffekseerRenderer::SimpleVertex;
 class OriginalState : public ::Effekseer::SIMD::AlignedAllocationPolicy<16>
 {
 private:
-	std::array<ID3D11SamplerState*, Effekseer::TextureSlotMax> m_samplers;
+	std::array<ID3D11SamplerState*, Effekseer::TextureSlotMax> samplers_;
 
-	ID3D11BlendState* m_blendState;
-	std::array<float, Effekseer::TextureSlotMax> m_blendFactor;
-	UINT m_blendSampleMask;
+	ID3D11BlendState* blendState_;
+	std::array<float, Effekseer::TextureSlotMax> blendFactor_;
+	UINT blendSampleMask_;
 
-	ID3D11DepthStencilState* m_depthStencilState;
-	UINT m_depthStencilStateRef;
+	ID3D11DepthStencilState* depthStencilState_;
+	UINT depthStencilState_Ref;
 
-	ID3D11RasterizerState* m_pRasterizerState;
+	ID3D11RasterizerState* rasterizerState_;
 
-	ID3D11Buffer* m_vertexConstantBuffer;
-	ID3D11Buffer* m_pixelConstantBuffer;
+	ID3D11Buffer* vertexConstantBuffer_;
+	ID3D11Buffer* pixelConstantBuffer_;
 
-	ID3D11VertexShader* m_pVS;
-	ID3D11PixelShader* m_pPS;
+	ID3D11VertexShader* vs_;
+	ID3D11PixelShader* ps_;
 
-	ID3D11InputLayout* m_layout;
-	D3D11_PRIMITIVE_TOPOLOGY m_topology;
+	ID3D11InputLayout* layout_;
+	D3D11_PRIMITIVE_TOPOLOGY topology_;
 
-	std::array<ID3D11ShaderResourceView*, Effekseer::TextureSlotMax> m_psSRVs;
+	std::array<ID3D11ShaderResourceView*, Effekseer::TextureSlotMax> psSrvs_;
 
-	ID3D11Buffer* m_pVB;
-	UINT m_vbStrides;
-	UINT m_vbOffset;
+	ID3D11Buffer* vertexBuffer_;
+	UINT vbStrides_;
+	UINT vbOffset_;
 
-	ID3D11Buffer* m_pIB;
-	DXGI_FORMAT m_ibFormat;
-	UINT m_ibOffset;
+	ID3D11Buffer* indexBuffer_;
+	DXGI_FORMAT ibFormat_;
+	UINT ibOffset_;
 
 public:
 	OriginalState();

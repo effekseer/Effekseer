@@ -43,7 +43,7 @@ public: // GpuTimer
 	virtual int32_t GetResult(const void* object) override;
 
 private:
-	RendererImplemented* m_renderer = nullptr;
+	RendererImplemented* renderer_ = nullptr;
 
 	struct TimeData
 	{
@@ -51,7 +51,7 @@ private:
 		Effekseer::GpuStage queryedStage[NUM_PHASES] = {};
 		int32_t result = 0;
 	};
-	std::unordered_map<const void*, TimeData> m_timeData;
+	std::unordered_map<const void*, TimeData> timeData_;
 	
 	enum class State : uint8_t {
 		NoResult,
@@ -59,8 +59,8 @@ private:
 		AfterStage,
 		ResultUpdated,
 	};
-	State m_stageState[8] = {};
-	Effekseer::GpuStage m_currentStage = {};
+	State stageState_[8] = {};
+	Effekseer::GpuStage currentStage_ = {};
 };
 
 //-----------------------------------------------------------------------------------

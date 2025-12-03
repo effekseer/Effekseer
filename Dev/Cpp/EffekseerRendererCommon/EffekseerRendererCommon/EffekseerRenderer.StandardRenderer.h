@@ -269,7 +269,7 @@ template <typename RENDERER, typename SHADER>
 class StandardRenderer
 {
 private:
-	RENDERER* m_renderer;
+	RENDERER* renderer_;
 
 	struct RenderInfo
 	{
@@ -300,7 +300,7 @@ private:
 public:
 	StandardRenderer(RENDERER* renderer)
 	{
-		m_renderer = renderer;
+		renderer_ = renderer;
 	}
 
 	virtual ~StandardRenderer()
@@ -355,9 +355,9 @@ public:
 
 		const int32_t requiredSize = count * stride;
 		const auto spriteStride = stride * 4;
-		const auto maxVertexCount = m_renderer->GetSquareMaxCount() * 4;
+		const auto maxVertexCount = renderer_->GetSquareMaxCount() * 4;
 
-		std::shared_ptr<EffekseerRenderer::VertexBuffer>& internal_vertex_buffer = m_renderer->GetImpl()->InternalVertexBuffer;
+		std::shared_ptr<EffekseerRenderer::VertexBuffer>& internal_vertex_buffer = renderer_->GetImpl()->InternalVertexBuffer;
 
 		if (requiredSize > internal_vertex_buffer->GetSize() || requiredSize == 0)
 		{
@@ -375,7 +375,7 @@ public:
 		internal_vertex_buffer->Allocate(requiredSize, spriteStride, result);
 		data = std::get<0>(result);
 
-		if (renderInfos_.size() > 0 && renderInfos_.back().state == state && (renderInfos_.back().size + requiredSize) / spriteStride <= m_renderer->GetSquareMaxCount())
+		if (renderInfos_.size() > 0 && renderInfos_.back().state == state && (renderInfos_.back().size + requiredSize) / spriteStride <= renderer_->GetSquareMaxCount())
 		{
 			RenderInfo& renderInfo = renderInfos_.back();
 			renderInfo.size += requiredSize;
@@ -387,7 +387,7 @@ public:
 			renderInfo.size = requiredSize;
 			renderInfo.offset = std::get<1>(result);
 			renderInfo.stride = stride;
-			renderInfo.hasDistortion = state.Collector.IsBackgroundRequiredOnFirstPass && m_renderer->GetDistortingCallback() != nullptr;
+			renderInfo.hasDistortion = state.Collector.IsBackgroundRequiredOnFirstPass && renderer_->GetDistortingCallback() != nullptr;
 			renderInfos_.emplace_back(renderInfo);
 		}
 	}
@@ -418,14 +418,14 @@ public:
 			return;
 		}
 
-		std::shared_ptr<EffekseerRenderer::VertexBuffer>& internal_vertex_buffer = m_renderer->GetImpl()->InternalVertexBuffer;
+		std::shared_ptr<EffekseerRenderer::VertexBuffer>& internal_vertex_buffer = renderer_->GetImpl()->InternalVertexBuffer;
 		auto vertex_buffer = internal_vertex_buffer->Upload();
 
 		for (auto& info : renderInfos_)
 		{
 			const auto& state = info.state;
 
-			const auto& mProj = m_renderer->GetProjectionMatrix();
+			const auto& mProj = renderer_->GetProjectionMatrix();
 
 			int32_t stride = CalculateCurrentStride(state);
 
@@ -447,15 +447,15 @@ public:
 				// only sprite
 				int32_t renderBufferSize = info.size;
 
-				const auto maxVertexCount = m_renderer->GetSquareMaxCount() * 4;
+				const auto maxVertexCount = renderer_->GetSquareMaxCount() * 4;
 				const auto currentVertexCount = renderBufferSize / stride;
 				if (currentVertexCount > maxVertexCount)
 				{
-					renderBufferSize = m_renderer->GetSquareMaxCount() * (stride * 4);
+					renderBufferSize = renderer_->GetSquareMaxCount() * (stride * 4);
 				}
 
 				RenderingInternal(
-					m_renderer->GetCameraMatrix(),
+					renderer_->GetCameraMatrix(),
 					mProj,
 					std::tuple<Effekseer::Backend::VertexBufferRef, int>(vertex_buffer, info.offset),
 					renderBufferSize,
@@ -480,17 +480,17 @@ public:
 
 		if (isBackgroundRequired)
 		{
-			auto callback = m_renderer->GetDistortingCallback();
+			auto callback = renderer_->GetDistortingCallback();
 			if (callback != nullptr)
 			{
-				if (!callback->OnDistorting(m_renderer))
+				if (!callback->OnDistorting(renderer_))
 				{
 					return;
 				}
 			}
 		}
 
-		if (isBackgroundRequired && m_renderer->GetBackground() == 0)
+		if (isBackgroundRequired && renderer_->GetBackground() == 0)
 		{
 			return;
 		}
@@ -498,12 +498,12 @@ public:
 		auto textures = renderState.Collector.Textures;
 		if (isBackgroundRequired)
 		{
-			textures[renderState.Collector.BackgroundIndex] = m_renderer->GetBackground();
+			textures[renderState.Collector.BackgroundIndex] = renderer_->GetBackground();
 		}
 
 		::Effekseer::Backend::TextureRef depthTexture = nullptr;
 		::EffekseerRenderer::DepthReconstructionParameter reconstructionParam;
-		m_renderer->GetImpl()->GetDepth(depthTexture, reconstructionParam);
+		renderer_->GetImpl()->GetDepth(depthTexture, reconstructionParam);
 
 		if (renderState.Collector.IsDepthRequired)
 		{
@@ -512,7 +512,7 @@ public:
 											renderState.SoftParticleDistanceNearOffset == 0.0f &&
 											renderState.Collector.ShaderType != RendererShaderType::Material))
 			{
-				depthTexture = m_renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);
+				depthTexture = renderer_->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);
 			}
 
 			textures[renderState.Collector.DepthIndex] = depthTexture;
@@ -529,7 +529,7 @@ public:
 			{
 				if (renderPass == 0)
 				{
-					if (m_renderer->GetBackground() == 0)
+					if (renderer_->GetBackground() == 0)
 					{
 						return;
 					}
@@ -549,14 +549,14 @@ public:
 		}
 		else
 		{
-			shader_ = (SHADER*)m_renderer->GetImpl()->GetShader(renderState.Collector.ShaderType);
+			shader_ = (SHADER*)renderer_->GetImpl()->GetShader(renderState.Collector.ShaderType);
 		}
 
 		// validate
 		if (shader_ == nullptr)
 			return;
 
-		RenderStateBase::State& state = m_renderer->GetRenderState()->Push();
+		RenderStateBase::State& state = renderer_->GetRenderState()->Push();
 		state.DepthTest = renderState.DepthTest;
 		state.DepthWrite = renderState.DepthWrite;
 		state.CullingType = renderState.CullingType;
@@ -567,7 +567,7 @@ public:
 			state.AlphaBlend = ::Effekseer::AlphaBlendType::Blend;
 		}
 
-		m_renderer->BeginShader(shader_);
+		renderer_->BeginShader(shader_);
 
 		for (int32_t i = 0; i < renderState.Collector.TextureCount; i++)
 		{
@@ -575,13 +575,13 @@ public:
 			state.TextureWrapTypes[i] = renderState.Collector.TextureWrapTypes[i];
 		}
 
-		m_renderer->SetTextures(shader_, textures.data(), renderState.Collector.TextureCount);
+		renderer_->SetTextures(shader_, textures.data(), renderState.Collector.TextureCount);
 
 		std::array<float, 4> uvInversed;
 		std::array<float, 4> uvInversedBack;
 		std::array<float, 4> uvInversedMaterial;
 
-		if (m_renderer->GetTextureUVStyle() == UVStyle::VerticalFlipped)
+		if (renderer_->GetTextureUVStyle() == UVStyle::VerticalFlipped)
 		{
 			uvInversed[0] = 1.0f;
 			uvInversed[1] = -1.0f;
@@ -592,7 +592,7 @@ public:
 			uvInversed[1] = 1.0f;
 		}
 
-		if (m_renderer->GetBackgroundTextureUVStyle() == UVStyle::VerticalFlipped)
+		if (renderer_->GetBackgroundTextureUVStyle() == UVStyle::VerticalFlipped)
 		{
 			uvInversedBack[0] = 1.0f;
 			uvInversedBack[1] = -1.0f;
@@ -615,54 +615,54 @@ public:
 
 			// camera
 			float cameraPosition[4];
-			::Effekseer::SIMD::Vec3f cameraPosition3 = m_renderer->GetCameraPosition();
+			::Effekseer::SIMD::Vec3f cameraPosition3 = renderer_->GetCameraPosition();
 			VectorToFloat4(cameraPosition3, cameraPosition);
 			// time
 			std::array<float, 4> predefined_uniforms;
 			predefined_uniforms.fill(0.5f);
-			predefined_uniforms[0] = m_renderer->GetTime();
+			predefined_uniforms[0] = renderer_->GetTime();
 			predefined_uniforms[1] = renderState.Maginification;
-			predefined_uniforms[2] = m_renderer->GetImpl()->MaintainGammaColorInLinearColorSpace ? 1.0f : 0.0f;
+			predefined_uniforms[2] = renderer_->GetImpl()->MaintainGammaColorInLinearColorSpace ? 1.0f : 0.0f;
 			predefined_uniforms[3] = renderState.LocalTime;
 
 			// vs
 			int32_t vsOffset = 0;
-			m_renderer->SetVertexBufferToShader(&mstCamera, sizeof(Effekseer::Matrix44), vsOffset);
+			renderer_->SetVertexBufferToShader(&mstCamera, sizeof(Effekseer::Matrix44), vsOffset);
 			vsOffset += sizeof(Effekseer::Matrix44);
 
-			m_renderer->SetVertexBufferToShader(&mstProj, sizeof(Effekseer::Matrix44), vsOffset);
+			renderer_->SetVertexBufferToShader(&mstProj, sizeof(Effekseer::Matrix44), vsOffset);
 			vsOffset += sizeof(Effekseer::Matrix44);
 
-			m_renderer->SetVertexBufferToShader(uvInversedMaterial.data(), sizeof(float) * 4, vsOffset);
+			renderer_->SetVertexBufferToShader(uvInversedMaterial.data(), sizeof(float) * 4, vsOffset);
 			vsOffset += (sizeof(float) * 4);
 
-			m_renderer->SetVertexBufferToShader(predefined_uniforms.data(), sizeof(float) * 4, vsOffset);
+			renderer_->SetVertexBufferToShader(predefined_uniforms.data(), sizeof(float) * 4, vsOffset);
 			vsOffset += (sizeof(float) * 4);
 
-			m_renderer->SetVertexBufferToShader(cameraPosition, sizeof(float) * 4, vsOffset);
+			renderer_->SetVertexBufferToShader(cameraPosition, sizeof(float) * 4, vsOffset);
 			vsOffset += (sizeof(float) * 4);
 
 			for (size_t i = 0; i < renderState.MaterialUniformCount; i++)
 			{
-				m_renderer->SetVertexBufferToShader(renderState.MaterialUniforms[i].data(), sizeof(float) * 4, vsOffset);
+				renderer_->SetVertexBufferToShader(renderState.MaterialUniforms[i].data(), sizeof(float) * 4, vsOffset);
 				vsOffset += (sizeof(float) * 4);
 			}
 
 			for (size_t i = 0; i < renderState.MaterialGradientCount; i++)
 			{
-				m_renderer->SetVertexBufferToShader(renderState.MaterialGradients[i].data(), sizeof(float) * 4 * 13, vsOffset);
+				renderer_->SetVertexBufferToShader(renderState.MaterialGradients[i].data(), sizeof(float) * 4 * 13, vsOffset);
 				vsOffset += (sizeof(float) * 4) * 13;
 			}
 
 			// ps
 			int32_t psOffset = 0;
-			m_renderer->SetPixelBufferToShader(uvInversedMaterial.data(), sizeof(float) * 4, psOffset);
+			renderer_->SetPixelBufferToShader(uvInversedMaterial.data(), sizeof(float) * 4, psOffset);
 			psOffset += (sizeof(float) * 4);
 
-			m_renderer->SetPixelBufferToShader(predefined_uniforms.data(), sizeof(float) * 4, psOffset);
+			renderer_->SetPixelBufferToShader(predefined_uniforms.data(), sizeof(float) * 4, psOffset);
 			psOffset += (sizeof(float) * 4);
 
-			m_renderer->SetPixelBufferToShader(cameraPosition, sizeof(float) * 4, psOffset);
+			renderer_->SetPixelBufferToShader(cameraPosition, sizeof(float) * 4, psOffset);
 			psOffset += (sizeof(float) * 4);
 
 			SoftParticleParameter softParticleParam;
@@ -679,10 +679,10 @@ public:
 				reconstructionParam.ProjectionMatrix43,
 				reconstructionParam.ProjectionMatrix44);
 
-			m_renderer->SetPixelBufferToShader(softParticleParam.reconstructionParam1.data(), sizeof(float) * 4, psOffset);
+			renderer_->SetPixelBufferToShader(softParticleParam.reconstructionParam1.data(), sizeof(float) * 4, psOffset);
 			psOffset += (sizeof(float) * 4);
 
-			m_renderer->SetPixelBufferToShader(softParticleParam.reconstructionParam2.data(), sizeof(float) * 4, psOffset);
+			renderer_->SetPixelBufferToShader(softParticleParam.reconstructionParam2.data(), sizeof(float) * 4, psOffset);
 			psOffset += (sizeof(float) * 4);
 
 			// shader model
@@ -691,38 +691,38 @@ public:
 			float lightColor[4];
 			float lightAmbientColor[4];
 
-			::Effekseer::SIMD::Vec3f lightDirection3 = m_renderer->GetLightDirection();
+			::Effekseer::SIMD::Vec3f lightDirection3 = renderer_->GetLightDirection();
 			lightDirection3 = lightDirection3.GetNormal();
 			VectorToFloat4(lightDirection3, lightDirection);
-			ColorToFloat4(m_renderer->GetLightColor(), lightColor);
-			ColorToFloat4(m_renderer->GetLightAmbientColor(), lightAmbientColor);
+			ColorToFloat4(renderer_->GetLightColor(), lightColor);
+			ColorToFloat4(renderer_->GetLightAmbientColor(), lightAmbientColor);
 
-			m_renderer->SetPixelBufferToShader(lightDirection, sizeof(float) * 4, psOffset);
+			renderer_->SetPixelBufferToShader(lightDirection, sizeof(float) * 4, psOffset);
 			psOffset += (sizeof(float) * 4);
 
-			m_renderer->SetPixelBufferToShader(lightColor, sizeof(float) * 4, psOffset);
+			renderer_->SetPixelBufferToShader(lightColor, sizeof(float) * 4, psOffset);
 			psOffset += (sizeof(float) * 4);
 
-			m_renderer->SetPixelBufferToShader(lightAmbientColor, sizeof(float) * 4, psOffset);
+			renderer_->SetPixelBufferToShader(lightAmbientColor, sizeof(float) * 4, psOffset);
 			psOffset += (sizeof(float) * 4);
 
 			// refraction
 			if (renderState.Collector.MaterialDataPtr->RefractionUserPtr != nullptr && renderPass == 0)
 			{
-				auto mat = m_renderer->GetCameraMatrix();
-				m_renderer->SetPixelBufferToShader(&mat, sizeof(float) * 16, psOffset);
+				auto mat = renderer_->GetCameraMatrix();
+				renderer_->SetPixelBufferToShader(&mat, sizeof(float) * 16, psOffset);
 				psOffset += (sizeof(float) * 16);
 			}
 
 			for (size_t i = 0; i < renderState.MaterialUniformCount; i++)
 			{
-				m_renderer->SetPixelBufferToShader(renderState.MaterialUniforms[i].data(), sizeof(float) * 4, psOffset);
+				renderer_->SetPixelBufferToShader(renderState.MaterialUniforms[i].data(), sizeof(float) * 4, psOffset);
 				psOffset += (sizeof(float) * 4);
 			}
 
 			for (size_t i = 0; i < renderState.MaterialGradientCount; i++)
 			{
-				m_renderer->SetPixelBufferToShader(renderState.MaterialGradients[i].data(), sizeof(float) * 4 * 13, psOffset);
+				renderer_->SetPixelBufferToShader(renderState.MaterialGradients[i].data(), sizeof(float) * 4 * 13, psOffset);
 				psOffset += (sizeof(float) * 4) * 13;
 			}
 		}
@@ -735,20 +735,20 @@ public:
 			vcb.uvInversed[1] = uvInversed[1];
 			vcb.flipbookParameter = ToVertexBuffer(renderState.Flipbook);
 
-			m_renderer->SetVertexBufferToShader(&vcb, sizeof(StandardRendererVertexBuffer), 0);
+			renderer_->SetVertexBufferToShader(&vcb, sizeof(StandardRendererVertexBuffer), 0);
 
 			// ps
 			PixelConstantBuffer pcb{};
 			pcb.MiscFlags.fill(0.0f);
-			pcb.MiscFlags[0] = m_renderer->GetImpl()->MaintainGammaColorInLinearColorSpace ? 1.0f : 0.0f;
+			pcb.MiscFlags[0] = renderer_->GetImpl()->MaintainGammaColorInLinearColorSpace ? 1.0f : 0.0f;
 
 			pcb.FalloffParam.Enable = 0;
 
-			auto lightDirection3 = m_renderer->GetLightDirection();
+			auto lightDirection3 = renderer_->GetLightDirection();
 			Effekseer::Vector3D::Normal(lightDirection3, lightDirection3);
 			pcb.LightDirection = lightDirection3.ToFloat4();
-			pcb.LightColor = m_renderer->GetLightColor().ToFloat4();
-			pcb.LightAmbientColor = m_renderer->GetLightAmbientColor().ToFloat4();
+			pcb.LightColor = renderer_->GetLightColor().ToFloat4();
+			pcb.LightAmbientColor = renderer_->GetLightAmbientColor().ToFloat4();
 
 			pcb.FlipbookParam.EnableInterpolation = static_cast<float>(renderState.Flipbook.EnableInterpolation);
 			pcb.FlipbookParam.InterpolationType = static_cast<float>(renderState.Flipbook.InterpolationType);
@@ -781,7 +781,7 @@ public:
 			pcb.UVInversedBack[0] = uvInversedBack[0];
 			pcb.UVInversedBack[1] = uvInversedBack[1];
 
-			m_renderer->SetPixelBufferToShader(&pcb, sizeof(PixelConstantBuffer), 0);
+			renderer_->SetPixelBufferToShader(&pcb, sizeof(PixelConstantBuffer), 0);
 		}
 		else
 		{
@@ -795,7 +795,7 @@ public:
 
 			vcb.flipbookParameter = ToVertexBuffer(renderState.Flipbook);
 
-			m_renderer->SetVertexBufferToShader(&vcb, sizeof(StandardRendererVertexBuffer), 0);
+			renderer_->SetVertexBufferToShader(&vcb, sizeof(StandardRendererVertexBuffer), 0);
 
 			if (distortion)
 			{
@@ -826,13 +826,13 @@ public:
 					reconstructionParam.ProjectionMatrix43,
 					reconstructionParam.ProjectionMatrix44);
 
-				m_renderer->SetPixelBufferToShader(&pcb, sizeof(PixelConstantBufferDistortion), 0);
+				renderer_->SetPixelBufferToShader(&pcb, sizeof(PixelConstantBufferDistortion), 0);
 			}
 			else
 			{
 				PixelConstantBuffer pcb;
 				pcb.MiscFlags.fill(0.0f);
-				pcb.MiscFlags[0] = m_renderer->GetImpl()->MaintainGammaColorInLinearColorSpace ? 1.0f : 0.0f;
+				pcb.MiscFlags[0] = renderer_->GetImpl()->MaintainGammaColorInLinearColorSpace ? 1.0f : 0.0f;
 
 				pcb.FalloffParam.Enable = 0;
 				pcb.FlipbookParam.EnableInterpolation = static_cast<float>(renderState.Flipbook.EnableInterpolation);
@@ -866,26 +866,26 @@ public:
 				pcb.UVInversedBack[0] = uvInversedBack[0];
 				pcb.UVInversedBack[1] = uvInversedBack[1];
 
-				m_renderer->SetPixelBufferToShader(&pcb, sizeof(PixelConstantBuffer), 0);
+				renderer_->SetPixelBufferToShader(&pcb, sizeof(PixelConstantBuffer), 0);
 			}
 		}
 
 		shader_->SetConstantBuffer();
 
-		m_renderer->GetRenderState()->Update(distortion);
+		renderer_->GetRenderState()->Update(distortion);
 
 		assert(std::get<1>(vertexBuffer) % stride == 0);
 
-		m_renderer->SetVertexBuffer(std::get<0>(vertexBuffer), stride);
-		m_renderer->SetIndexBuffer(m_renderer->GetIndexBuffer());
-		m_renderer->SetLayout(shader_);
-		m_renderer->GetImpl()->CurrentRenderingUserData = renderState.RenderingUserData;
-		m_renderer->GetImpl()->CurrentHandleUserData = renderState.HandleUserData;
-		m_renderer->DrawSprites(bufferSize / stride / 4, std::get<1>(vertexBuffer) / stride);
+		renderer_->SetVertexBuffer(std::get<0>(vertexBuffer), stride);
+		renderer_->SetIndexBuffer(renderer_->GetIndexBuffer());
+		renderer_->SetLayout(shader_);
+		renderer_->GetImpl()->CurrentRenderingUserData = renderState.RenderingUserData;
+		renderer_->GetImpl()->CurrentHandleUserData = renderState.HandleUserData;
+		renderer_->DrawSprites(bufferSize / stride / 4, std::get<1>(vertexBuffer) / stride);
 
-		m_renderer->EndShader(shader_);
+		renderer_->EndShader(shader_);
 
-		m_renderer->GetRenderState()->Pop();
+		renderer_->GetRenderState()->Pop();
 	}
 
 	void UpdateGpuTimerCount(int32_t count)

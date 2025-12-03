@@ -129,7 +129,7 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 	{
 		ModelRenderer::InstanceParameter instanceParameter;
 		instanceParameter.SRTMatrix43 = instance.GetRenderedGlobalMatrix();
-		instanceParameter.Time = (int32_t)instance.m_LivingTime;
+		instanceParameter.Time = (int32_t)instance.livingTime_;
 
 		instanceParameter.UV = instance.GetUV(0);
 		instanceParameter.AlphaUV = instance.GetUV(1);
@@ -140,7 +140,7 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 
 		instanceParameter.FlipbookIndexAndNextRate = instance.GetFlipbookIndexAndNextRate();
 
-		instanceParameter.AlphaThreshold = instance.m_AlphaThreshold;
+		instanceParameter.AlphaThreshold = instance.alphaThreshold_;
 
 		if (nodeParam_.EnableViewOffset)
 		{
@@ -153,7 +153,7 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 		}
 
 		instanceParameter.ParticleTimes[0] = instance.GetNormalizedLivetime();
-		instanceParameter.ParticleTimes[1] = instance.m_LivingTime / 60.0f;
+		instanceParameter.ParticleTimes[1] = instance.livingTime_ / 60.0f;
 
 		CalcCustomData(&instance, instanceParameter.CustomData1, instanceParameter.CustomData2);
 
@@ -192,7 +192,7 @@ void EffectNodeModel::InitializeRenderedInstance(Instance& instance, InstanceGro
 	InstanceValues& instValues = instance.rendererValues.model;
 
 	AllTypeColorFunctions::Init(instValues.allColorValues, rand, AllColor);
-	instValues._original = AllTypeColorFunctions::Calculate(instValues.allColorValues, AllColor, instance.m_LivingTime, instance.m_LivedTime);
+	instValues._original = AllTypeColorFunctions::Calculate(instValues.allColorValues, AllColor, instance.livingTime_, instance.livedTime_);
 
 	ApplyRendererCommonUVHorizontalFlip(instance, rand);
 
@@ -213,7 +213,7 @@ void EffectNodeModel::UpdateRenderedInstance(Instance& instance, InstanceGroup& 
 {
 	InstanceValues& instValues = instance.rendererValues.model;
 
-	instValues._original = AllTypeColorFunctions::Calculate(instValues.allColorValues, AllColor, instance.m_LivingTime, instance.m_LivedTime);
+	instValues._original = AllTypeColorFunctions::Calculate(instValues.allColorValues, AllColor, instance.livingTime_, instance.livedTime_);
 
 	float fadeAlpha = GetFadeAlpha(instance);
 	if (fadeAlpha != 1.0f)

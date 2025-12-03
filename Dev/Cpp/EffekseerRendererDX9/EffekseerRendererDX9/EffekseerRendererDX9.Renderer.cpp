@@ -124,24 +124,24 @@ RendererRef Renderer::Create(LPDIRECT3DDEVICE9 device, int32_t squareMaxCount)
 //
 //----------------------------------------------------------------------------------
 RendererImplemented::RendererImplemented(int32_t squareMaxCount)
-	: m_squareMaxCount(squareMaxCount)
-	, m_coordinateSystem(::Effekseer::CoordinateSystem::RH)
-	, m_state_vertexShader(nullptr)
-	, m_state_pixelShader(nullptr)
-	, m_state_vertexDeclaration(nullptr)
-	, m_state_IndexData(nullptr)
-	, m_state_pTexture({})
-	, m_renderState(nullptr)
-	, m_isChangedDevice(false)
-	, m_restorationOfStates(true)
-	, m_standardRenderer(nullptr)
-	, m_distortingCallback(nullptr)
+	: squareMaxCount_(squareMaxCount)
+	, coordinateSystem_(::Effekseer::CoordinateSystem::RH)
+	, stateVertexShader_(nullptr)
+	, statePixelShader_(nullptr)
+	, stateVertexDeclaration_(nullptr)
+	, stateIndexData_(nullptr)
+	, stateTextures_({})
+	, renderState_(nullptr)
+	, isChangedDevice_(false)
+	, restorationOfStates_(true)
+	, standardRenderer_(nullptr)
+	, distortingCallback_(nullptr)
 {
-	m_state_streamData.fill(nullptr);
-	m_state_OffsetInBytes.fill(0);
-	m_state_pStride.fill(0);
+	stateStreamData_.fill(nullptr);
+	stateOffsetInBytes_.fill(0);
+	stateStride_.fill(0);
 
-	SetRestorationOfStatesFlag(m_restorationOfStates);
+	SetRestorationOfStatesFlag(restorationOfStates_);
 }
 
 //----------------------------------------------------------------------------------
@@ -153,9 +153,9 @@ RendererImplemented::~RendererImplemented()
 
 	assert(GetRef() == 0);
 
-	ES_SAFE_DELETE(m_distortingCallback);
-	ES_SAFE_DELETE(m_standardRenderer);
-	ES_SAFE_DELETE(m_renderState);
+	ES_SAFE_DELETE(distortingCallback_);
+	ES_SAFE_DELETE(standardRenderer_);
+	ES_SAFE_DELETE(renderState_);
 }
 
 //----------------------------------------------------------------------------------
@@ -176,11 +176,11 @@ void RendererImplemented::OnResetDevice()
 {
 	graphicsDevice_->ResetDevice();
 
-	if (m_isChangedDevice)
+	if (isChangedDevice_)
 	{
-		EffekseerRenderer::GenerateIndexDataStride<int16_t>(graphicsDevice_, m_squareMaxCount, indexBuffer_, indexBufferForWireframe_);
+		EffekseerRenderer::GenerateIndexDataStride<int16_t>(graphicsDevice_, squareMaxCount_, indexBuffer_, indexBufferForWireframe_);
 
-		m_isChangedDevice = false;
+		isChangedDevice_ = false;
 	}
 
 	GetImpl()->CreateProxyTextures(this);
@@ -192,7 +192,7 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice)
 
 	// generate a vertex buffer
 	{
-		GetImpl()->InternalVertexBuffer = std::make_shared<EffekseerRenderer::VertexBufferRing>(graphicsDevice_, EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * m_squareMaxCount * 4, 1);
+		GetImpl()->InternalVertexBuffer = std::make_shared<EffekseerRenderer::VertexBufferRing>(graphicsDevice_, EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * squareMaxCount_ * 4, 1);
 		if (!GetImpl()->InternalVertexBuffer->GetIsValid())
 		{
 			GetImpl()->InternalVertexBuffer = nullptr;
@@ -200,12 +200,12 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice)
 		}
 	}
 
-	if (!EffekseerRenderer::GenerateIndexDataStride<int16_t>(graphicsDevice_, m_squareMaxCount, indexBuffer_, indexBufferForWireframe_))
+	if (!EffekseerRenderer::GenerateIndexDataStride<int16_t>(graphicsDevice_, squareMaxCount_, indexBuffer_, indexBufferForWireframe_))
 	{
 		return false;
 	}
 
-	m_renderState = new RenderState(this);
+	renderState_ = new RenderState(this);
 
 	auto vlUnlit = EffekseerRenderer::GetVertexLayout(graphicsDevice_, EffekseerRenderer::RendererShaderType::Unlit).DownCast<Backend::VertexLayout>();
 	auto vlLit = EffekseerRenderer::GetVertexLayout(graphicsDevice_, EffekseerRenderer::RendererShaderType::Lit).DownCast<Backend::VertexLayout>();
@@ -309,7 +309,7 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice)
 	shader_ad_lit->SetVertexConstantBufferSize(sizeof(EffekseerRenderer::StandardRendererVertexBuffer));
 	shader_ad_lit->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::PixelConstantBuffer));
 
-	m_standardRenderer =
+	standardRenderer_ =
 		new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>(this);
 
 	GetImpl()->CreateProxyTextures(this);
@@ -329,18 +329,18 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice)
 //----------------------------------------------------------------------------------
 void RendererImplemented::SetRestorationOfStatesFlag(bool flag)
 {
-	m_restorationOfStates = flag;
+	restorationOfStates_ = flag;
 	if (flag)
 	{
-		m_state_VertexShaderConstantF.resize(256 * 4);
-		m_state_PixelShaderConstantF.resize(256 * 4);
+		stateVertexShaderConstantF_.resize(256 * 4);
+		statePixelShaderConstantF_.resize(256 * 4);
 	}
 	else
 	{
-		m_state_VertexShaderConstantF.clear();
-		m_state_PixelShaderConstantF.shrink_to_fit();
-		m_state_VertexShaderConstantF.clear();
-		m_state_PixelShaderConstantF.shrink_to_fit();
+		stateVertexShaderConstantF_.clear();
+		statePixelShaderConstantF_.shrink_to_fit();
+		stateVertexShaderConstantF_.clear();
+		statePixelShaderConstantF_.shrink_to_fit();
 	}
 }
 
@@ -352,59 +352,59 @@ bool RendererImplemented::BeginRendering()
 	impl->CalculateCameraProjectionMatrix();
 
 	// ステートを保存する
-	if (m_restorationOfStates)
+	if (restorationOfStates_)
 	{
-		GetDevice()->GetRenderState(D3DRS_ALPHABLENDENABLE, &m_state_D3DRS_ALPHABLENDENABLE);
-		GetDevice()->GetRenderState(D3DRS_BLENDOP, &m_state_D3DRS_BLENDOP);
-		GetDevice()->GetRenderState(D3DRS_DESTBLEND, &m_state_D3DRS_DESTBLEND);
-		GetDevice()->GetRenderState(D3DRS_SRCBLEND, &m_state_D3DRS_SRCBLEND);
-		GetDevice()->GetRenderState(D3DRS_ALPHAREF, &m_state_D3DRS_ALPHAREF);
+		GetDevice()->GetRenderState(D3DRS_ALPHABLENDENABLE, &stateAlphaBlendEnable_);
+		GetDevice()->GetRenderState(D3DRS_BLENDOP, &stateBlendOp_);
+		GetDevice()->GetRenderState(D3DRS_DESTBLEND, &stateDestBlend_);
+		GetDevice()->GetRenderState(D3DRS_SRCBLEND, &stateSrcBlend_);
+		GetDevice()->GetRenderState(D3DRS_ALPHAREF, &stateAlphaRef_);
 
-		GetDevice()->GetRenderState(D3DRS_DESTBLENDALPHA, &m_state_D3DRS_DESTBLENDALPHA);
-		GetDevice()->GetRenderState(D3DRS_SRCBLENDALPHA, &m_state_D3DRS_SRCBLENDALPHA);
-		GetDevice()->GetRenderState(D3DRS_SEPARATEALPHABLENDENABLE, &m_state_D3DRS_SEPARATEALPHABLENDENABLE);
-		GetDevice()->GetRenderState(D3DRS_BLENDOPALPHA, &m_state_D3DRS_BLENDOPALPHA);
+		GetDevice()->GetRenderState(D3DRS_DESTBLENDALPHA, &stateDestBlendAlpha_);
+		GetDevice()->GetRenderState(D3DRS_SRCBLENDALPHA, &stateSrcBlendAlpha_);
+		GetDevice()->GetRenderState(D3DRS_SEPARATEALPHABLENDENABLE, &stateSeparateAlphaBlendEnable_);
+		GetDevice()->GetRenderState(D3DRS_BLENDOPALPHA, &stateBlendOpAlpha_);
 
-		GetDevice()->GetRenderState(D3DRS_ZENABLE, &m_state_D3DRS_ZENABLE);
-		GetDevice()->GetRenderState(D3DRS_ZWRITEENABLE, &m_state_D3DRS_ZWRITEENABLE);
-		GetDevice()->GetRenderState(D3DRS_ALPHATESTENABLE, &m_state_D3DRS_ALPHATESTENABLE);
-		GetDevice()->GetRenderState(D3DRS_CULLMODE, &m_state_D3DRS_CULLMODE);
+		GetDevice()->GetRenderState(D3DRS_ZENABLE, &stateZEnable_);
+		GetDevice()->GetRenderState(D3DRS_ZWRITEENABLE, &stateZWriteEnable_);
+		GetDevice()->GetRenderState(D3DRS_ALPHATESTENABLE, &stateAlphaTestEnable_);
+		GetDevice()->GetRenderState(D3DRS_CULLMODE, &stateCullMode_);
 
-		GetDevice()->GetRenderState(D3DRS_COLORVERTEX, &m_state_D3DRS_COLORVERTEX);
-		GetDevice()->GetRenderState(D3DRS_LIGHTING, &m_state_D3DRS_LIGHTING);
-		GetDevice()->GetRenderState(D3DRS_SHADEMODE, &m_state_D3DRS_SHADEMODE);
+		GetDevice()->GetRenderState(D3DRS_COLORVERTEX, &stateColorVertex_);
+		GetDevice()->GetRenderState(D3DRS_LIGHTING, &stateLighting_);
+		GetDevice()->GetRenderState(D3DRS_SHADEMODE, &stateShadeMode_);
 
-		for (int i = 0; i < static_cast<int>(m_state_D3DSAMP_MAGFILTER.size()); i++)
+		for (int i = 0; i < static_cast<int>(stateSamplerMagFilter_.size()); i++)
 		{
-			GetDevice()->GetSamplerState(i, D3DSAMP_MAGFILTER, &m_state_D3DSAMP_MAGFILTER[i]);
-			GetDevice()->GetSamplerState(i, D3DSAMP_MINFILTER, &m_state_D3DSAMP_MINFILTER[i]);
-			GetDevice()->GetSamplerState(i, D3DSAMP_MIPFILTER, &m_state_D3DSAMP_MIPFILTER[i]);
-			GetDevice()->GetSamplerState(i, D3DSAMP_ADDRESSU, &m_state_D3DSAMP_ADDRESSU[i]);
-			GetDevice()->GetSamplerState(i, D3DSAMP_ADDRESSV, &m_state_D3DSAMP_ADDRESSV[i]);
+			GetDevice()->GetSamplerState(i, D3DSAMP_MAGFILTER, &stateSamplerMagFilter_[i]);
+			GetDevice()->GetSamplerState(i, D3DSAMP_MINFILTER, &stateSamplerMinFilter_[i]);
+			GetDevice()->GetSamplerState(i, D3DSAMP_MIPFILTER, &stateSamplerMipFilter_[i]);
+			GetDevice()->GetSamplerState(i, D3DSAMP_ADDRESSU, &stateSamplerAddressU_[i]);
+			GetDevice()->GetSamplerState(i, D3DSAMP_ADDRESSV, &stateSamplerAddressV_[i]);
 		}
 
-		GetDevice()->GetVertexShader(&m_state_vertexShader);
-		GetDevice()->GetPixelShader(&m_state_pixelShader);
-		GetDevice()->GetVertexDeclaration(&m_state_vertexDeclaration);
+		GetDevice()->GetVertexShader(&stateVertexShader_);
+		GetDevice()->GetPixelShader(&statePixelShader_);
+		GetDevice()->GetVertexDeclaration(&stateVertexDeclaration_);
 
-		for (size_t i = 0; i < m_state_streamData.size(); i++)
+		for (size_t i = 0; i < stateStreamData_.size(); i++)
 		{
-			GetDevice()->GetStreamSource((UINT)i, &m_state_streamData[i], &m_state_OffsetInBytes[i], &m_state_pStride[i]);
-			GetDevice()->GetStreamSourceFreq((UINT)i, &m_state_streamFreq[i]);
+			GetDevice()->GetStreamSource((UINT)i, &stateStreamData_[i], &stateOffsetInBytes_[i], &stateStride_[i]);
+			GetDevice()->GetStreamSourceFreq((UINT)i, &stateStreamFreq_[i]);
 		}
 
-		GetDevice()->GetIndices(&m_state_IndexData);
+		GetDevice()->GetIndices(&stateIndexData_);
 
 		GetDevice()->GetVertexShaderConstantF(
-			0, m_state_VertexShaderConstantF.data(), static_cast<int>(m_state_VertexShaderConstantF.size()) / 4);
+			0, stateVertexShaderConstantF_.data(), static_cast<int>(stateVertexShaderConstantF_.size()) / 4);
 		GetDevice()->GetVertexShaderConstantF(
-			0, m_state_PixelShaderConstantF.data(), static_cast<int>(m_state_PixelShaderConstantF.size()) / 4);
+			0, statePixelShaderConstantF_.data(), static_cast<int>(statePixelShaderConstantF_.size()) / 4);
 
-		for (int i = 0; i < static_cast<int>(m_state_pTexture.size()); i++)
+		for (int i = 0; i < static_cast<int>(stateTextures_.size()); i++)
 		{
-			GetDevice()->GetTexture(i, &m_state_pTexture[i]);
+			GetDevice()->GetTexture(i, &stateTextures_[i]);
 		}
-		GetDevice()->GetFVF(&m_state_FVF);
+		GetDevice()->GetFVF(&stateFvf_);
 	}
 
 	// ステート初期値設定
@@ -415,14 +415,14 @@ bool RendererImplemented::BeginRendering()
 	GetDevice()->SetRenderState(D3DRS_LIGHTING, FALSE);
 	GetDevice()->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_GOURAUD);
 
-	m_renderState->GetActiveState().Reset();
-	m_renderState->Update(true);
+	renderState_->GetActiveState().Reset();
+	renderState_->Update(true);
 
 	GetDevice()->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 	GetDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
 
 	// レンダラーリセット
-	m_standardRenderer->ResetAndRenderingIfRequired();
+	standardRenderer_->ResetAndRenderingIfRequired();
 
 	return true;
 }
@@ -433,69 +433,69 @@ bool RendererImplemented::BeginRendering()
 bool RendererImplemented::EndRendering()
 {
 	// レンダラーリセット
-	m_standardRenderer->ResetAndRenderingIfRequired();
+	standardRenderer_->ResetAndRenderingIfRequired();
 
 	// ステートを復元する
-	if (m_restorationOfStates)
+	if (restorationOfStates_)
 	{
-		GetDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, m_state_D3DRS_ALPHABLENDENABLE);
-		GetDevice()->SetRenderState(D3DRS_BLENDOP, m_state_D3DRS_BLENDOP);
-		GetDevice()->SetRenderState(D3DRS_DESTBLEND, m_state_D3DRS_DESTBLEND);
-		GetDevice()->SetRenderState(D3DRS_SRCBLEND, m_state_D3DRS_SRCBLEND);
-		GetDevice()->SetRenderState(D3DRS_ALPHAREF, m_state_D3DRS_ALPHAREF);
+		GetDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, stateAlphaBlendEnable_);
+		GetDevice()->SetRenderState(D3DRS_BLENDOP, stateBlendOp_);
+		GetDevice()->SetRenderState(D3DRS_DESTBLEND, stateDestBlend_);
+		GetDevice()->SetRenderState(D3DRS_SRCBLEND, stateSrcBlend_);
+		GetDevice()->SetRenderState(D3DRS_ALPHAREF, stateAlphaRef_);
 
-		GetDevice()->SetRenderState(D3DRS_DESTBLENDALPHA, m_state_D3DRS_DESTBLENDALPHA);
-		GetDevice()->SetRenderState(D3DRS_SRCBLENDALPHA, m_state_D3DRS_SRCBLENDALPHA);
-		GetDevice()->SetRenderState(D3DRS_SEPARATEALPHABLENDENABLE, m_state_D3DRS_SEPARATEALPHABLENDENABLE);
-		GetDevice()->SetRenderState(D3DRS_BLENDOPALPHA, m_state_D3DRS_BLENDOPALPHA);
+		GetDevice()->SetRenderState(D3DRS_DESTBLENDALPHA, stateDestBlendAlpha_);
+		GetDevice()->SetRenderState(D3DRS_SRCBLENDALPHA, stateSrcBlendAlpha_);
+		GetDevice()->SetRenderState(D3DRS_SEPARATEALPHABLENDENABLE, stateSeparateAlphaBlendEnable_);
+		GetDevice()->SetRenderState(D3DRS_BLENDOPALPHA, stateBlendOpAlpha_);
 
-		GetDevice()->SetRenderState(D3DRS_ZENABLE, m_state_D3DRS_ZENABLE);
-		GetDevice()->SetRenderState(D3DRS_ZWRITEENABLE, m_state_D3DRS_ZWRITEENABLE);
-		GetDevice()->SetRenderState(D3DRS_ALPHATESTENABLE, m_state_D3DRS_ALPHATESTENABLE);
-		GetDevice()->SetRenderState(D3DRS_CULLMODE, m_state_D3DRS_CULLMODE);
+		GetDevice()->SetRenderState(D3DRS_ZENABLE, stateZEnable_);
+		GetDevice()->SetRenderState(D3DRS_ZWRITEENABLE, stateZWriteEnable_);
+		GetDevice()->SetRenderState(D3DRS_ALPHATESTENABLE, stateAlphaTestEnable_);
+		GetDevice()->SetRenderState(D3DRS_CULLMODE, stateCullMode_);
 
-		GetDevice()->SetRenderState(D3DRS_COLORVERTEX, m_state_D3DRS_COLORVERTEX);
-		GetDevice()->SetRenderState(D3DRS_LIGHTING, m_state_D3DRS_LIGHTING);
-		GetDevice()->SetRenderState(D3DRS_SHADEMODE, m_state_D3DRS_SHADEMODE);
+		GetDevice()->SetRenderState(D3DRS_COLORVERTEX, stateColorVertex_);
+		GetDevice()->SetRenderState(D3DRS_LIGHTING, stateLighting_);
+		GetDevice()->SetRenderState(D3DRS_SHADEMODE, stateShadeMode_);
 
-		for (int i = 0; i < static_cast<int>(m_state_D3DSAMP_MAGFILTER.size()); i++)
+		for (int i = 0; i < static_cast<int>(stateSamplerMagFilter_.size()); i++)
 		{
-			GetDevice()->SetSamplerState(i, D3DSAMP_MAGFILTER, m_state_D3DSAMP_MAGFILTER[i]);
-			GetDevice()->SetSamplerState(i, D3DSAMP_MINFILTER, m_state_D3DSAMP_MINFILTER[i]);
-			GetDevice()->SetSamplerState(i, D3DSAMP_MIPFILTER, m_state_D3DSAMP_MIPFILTER[i]);
-			GetDevice()->SetSamplerState(i, D3DSAMP_ADDRESSU, m_state_D3DSAMP_ADDRESSU[i]);
-			GetDevice()->SetSamplerState(i, D3DSAMP_ADDRESSV, m_state_D3DSAMP_ADDRESSV[i]);
+			GetDevice()->SetSamplerState(i, D3DSAMP_MAGFILTER, stateSamplerMagFilter_[i]);
+			GetDevice()->SetSamplerState(i, D3DSAMP_MINFILTER, stateSamplerMinFilter_[i]);
+			GetDevice()->SetSamplerState(i, D3DSAMP_MIPFILTER, stateSamplerMipFilter_[i]);
+			GetDevice()->SetSamplerState(i, D3DSAMP_ADDRESSU, stateSamplerAddressU_[i]);
+			GetDevice()->SetSamplerState(i, D3DSAMP_ADDRESSV, stateSamplerAddressV_[i]);
 		}
 
-		GetDevice()->SetVertexShader(m_state_vertexShader);
-		ES_SAFE_RELEASE(m_state_vertexShader);
+		GetDevice()->SetVertexShader(stateVertexShader_);
+		ES_SAFE_RELEASE(stateVertexShader_);
 
-		GetDevice()->SetPixelShader(m_state_pixelShader);
-		ES_SAFE_RELEASE(m_state_pixelShader);
+		GetDevice()->SetPixelShader(statePixelShader_);
+		ES_SAFE_RELEASE(statePixelShader_);
 
-		GetDevice()->SetVertexDeclaration(m_state_vertexDeclaration);
-		ES_SAFE_RELEASE(m_state_vertexDeclaration);
+		GetDevice()->SetVertexDeclaration(stateVertexDeclaration_);
+		ES_SAFE_RELEASE(stateVertexDeclaration_);
 
-		for (size_t i = 0; i < m_state_streamData.size(); i++)
+		for (size_t i = 0; i < stateStreamData_.size(); i++)
 		{
-			GetDevice()->SetStreamSource((UINT)i, m_state_streamData[i], m_state_OffsetInBytes[i], m_state_pStride[i]);
-			ES_SAFE_RELEASE(m_state_streamData[i]);
-			GetDevice()->SetStreamSourceFreq((UINT)i, m_state_streamFreq[i]);
+			GetDevice()->SetStreamSource((UINT)i, stateStreamData_[i], stateOffsetInBytes_[i], stateStride_[i]);
+			ES_SAFE_RELEASE(stateStreamData_[i]);
+			GetDevice()->SetStreamSourceFreq((UINT)i, stateStreamFreq_[i]);
 		}
 
-		GetDevice()->SetIndices(m_state_IndexData);
-		ES_SAFE_RELEASE(m_state_IndexData);
+		GetDevice()->SetIndices(stateIndexData_);
+		ES_SAFE_RELEASE(stateIndexData_);
 
-		GetDevice()->SetVertexShaderConstantF(0, m_state_VertexShaderConstantF.data(), (UINT)m_state_VertexShaderConstantF.size() / 4);
-		GetDevice()->SetVertexShaderConstantF(0, m_state_PixelShaderConstantF.data(), (UINT)m_state_PixelShaderConstantF.size() / 4);
+		GetDevice()->SetVertexShaderConstantF(0, stateVertexShaderConstantF_.data(), (UINT)stateVertexShaderConstantF_.size() / 4);
+		GetDevice()->SetVertexShaderConstantF(0, statePixelShaderConstantF_.data(), (UINT)statePixelShaderConstantF_.size() / 4);
 
-		for (int i = 0; i < static_cast<int>(m_state_pTexture.size()); i++)
+		for (int i = 0; i < static_cast<int>(stateTextures_.size()); i++)
 		{
-			GetDevice()->SetTexture(i, m_state_pTexture[i]);
-			ES_SAFE_RELEASE(m_state_pTexture[i]);
+			GetDevice()->SetTexture(i, stateTextures_[i]);
+			ES_SAFE_RELEASE(stateTextures_[i]);
 		}
 
-		GetDevice()->SetFVF(m_state_FVF);
+		GetDevice()->SetFVF(stateFvf_);
 	}
 
 	currentndexBuffer_ = nullptr;
@@ -514,7 +514,7 @@ Effekseer::Backend::IndexBufferRef RendererImplemented::GetIndexBuffer()
 
 int32_t RendererImplemented::GetSquareMaxCount() const
 {
-	return m_squareMaxCount;
+	return squareMaxCount_;
 }
 
 //----------------------------------------------------------------------------------
@@ -522,7 +522,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 //----------------------------------------------------------------------------------
 ::EffekseerRenderer::RenderStateBase* RendererImplemented::GetRenderState()
 {
-	return m_renderState;
+	return renderState_;
 }
 
 //----------------------------------------------------------------------------------
@@ -590,35 +590,35 @@ void RendererImplemented::SetBackground(IDirect3DTexture9* background)
 {
 	if (background == nullptr)
 	{
-		m_backgroundDX9.Reset();
+		backgroundDX9_.Reset();
 		EffekseerRenderer::Renderer::SetBackground(nullptr);
 		return;
 	}
 
-	if (m_backgroundDX9 == nullptr)
+	if (backgroundDX9_ == nullptr)
 	{
-		m_backgroundDX9 = graphicsDevice_->CreateTexture(
+		backgroundDX9_ = graphicsDevice_->CreateTexture(
 			background, [](auto texture) -> auto {}, [](auto texture) -> auto {});
 	}
 	else
 	{
-		auto texture = static_cast<Backend::Texture*>(m_backgroundDX9.Get());
+		auto texture = static_cast<Backend::Texture*>(backgroundDX9_.Get());
 		texture->Init(
 			background, [](auto texture) -> auto {}, [](auto texture) -> auto {});
 	}
 
-	EffekseerRenderer::Renderer::SetBackground(m_backgroundDX9);
+	EffekseerRenderer::Renderer::SetBackground(backgroundDX9_);
 }
 
 EffekseerRenderer::DistortingCallback* RendererImplemented::GetDistortingCallback()
 {
-	return m_distortingCallback;
+	return distortingCallback_;
 }
 
 void RendererImplemented::SetDistortingCallback(EffekseerRenderer::DistortingCallback* callback)
 {
-	ES_SAFE_DELETE(m_distortingCallback);
-	m_distortingCallback = callback;
+	ES_SAFE_DELETE(distortingCallback_);
+	distortingCallback_ = callback;
 }
 
 void RendererImplemented::SetVertexBuffer(const Effekseer::Backend::VertexBufferRef& vertexBuffer, int32_t size)
@@ -761,7 +761,7 @@ void RendererImplemented::ChangeDevice(LPDIRECT3DDEVICE9 device)
 {
 	graphicsDevice_->ChangeDevice(device);
 
-	m_isChangedDevice = true;
+	isChangedDevice_ = true;
 }
 
 //----------------------------------------------------------------------------------
@@ -769,8 +769,8 @@ void RendererImplemented::ChangeDevice(LPDIRECT3DDEVICE9 device)
 //----------------------------------------------------------------------------------
 void RendererImplemented::ResetRenderState()
 {
-	m_renderState->GetActiveState().Reset();
-	m_renderState->Update(true);
+	renderState_->GetActiveState().Reset();
+	renderState_->Update(true);
 }
 
 LPDIRECT3DDEVICE9 RendererImplemented::GetDevice()

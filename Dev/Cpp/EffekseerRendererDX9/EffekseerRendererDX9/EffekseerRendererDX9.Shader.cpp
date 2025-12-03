@@ -19,10 +19,10 @@ Shader::Shader(Backend::GraphicsDeviceRef graphicsDevice,
 	: graphicsDevice_(graphicsDevice)
 	, shader_(shader)
 	, vertexLayout_(vertexLayout)
-	, m_vertexConstantBuffer(nullptr)
-	, m_pixelConstantBuffer(nullptr)
-	, m_vertexRegisterCount(0)
-	, m_pixelRegisterCount(0)
+	, vertexConstantBuffer_(nullptr)
+	, pixelConstantBuffer_(nullptr)
+	, vertexRegisterCount_(0)
+	, pixelRegisterCount_(0)
 {
 }
 
@@ -31,8 +31,8 @@ Shader::Shader(Backend::GraphicsDeviceRef graphicsDevice,
 //-----------------------------------------------------------------------------------
 Shader::~Shader()
 {
-	ES_SAFE_DELETE_ARRAY(m_vertexConstantBuffer);
-	ES_SAFE_DELETE_ARRAY(m_pixelConstantBuffer);
+	ES_SAFE_DELETE_ARRAY(vertexConstantBuffer_);
+	ES_SAFE_DELETE_ARRAY(pixelConstantBuffer_);
 }
 
 //-----------------------------------------------------------------------------------
@@ -52,11 +52,11 @@ void Shader::SetVertexConstantBufferSize(int32_t size)
 	// TOTO replace align method
 	size = ((size + 15) / 16) * 16;
 
-	ES_SAFE_DELETE_ARRAY(m_vertexConstantBuffer);
-	m_vertexConstantBuffer = new uint8_t[size];
-	m_vertexRegisterCount = size / (sizeof(float) * 4);
+	ES_SAFE_DELETE_ARRAY(vertexConstantBuffer_);
+	vertexConstantBuffer_ = new uint8_t[size];
+	vertexRegisterCount_ = size / (sizeof(float) * 4);
 
-	assert(m_vertexRegisterCount <= 256);
+	assert(vertexRegisterCount_ <= 256);
 }
 
 //-----------------------------------------------------------------------------------
@@ -66,11 +66,11 @@ void Shader::SetPixelConstantBufferSize(int32_t size)
 {
 	size = ((size + 15) / 16) * 16;
 
-	ES_SAFE_DELETE_ARRAY(m_pixelConstantBuffer);
-	m_pixelConstantBuffer = new uint8_t[size];
-	m_pixelRegisterCount = size / (sizeof(float) * 4);
+	ES_SAFE_DELETE_ARRAY(pixelConstantBuffer_);
+	pixelConstantBuffer_ = new uint8_t[size];
+	pixelRegisterCount_ = size / (sizeof(float) * 4);
 
-	assert(m_pixelRegisterCount <= 256);
+	assert(pixelRegisterCount_ <= 256);
 }
 
 //-----------------------------------------------------------------------------------
@@ -79,14 +79,14 @@ void Shader::SetPixelConstantBufferSize(int32_t size)
 void Shader::SetConstantBuffer()
 {
 	// DirectX9 ignores a slot
-	if (m_vertexRegisterCount > 0)
+	if (vertexRegisterCount_ > 0)
 	{
-		graphicsDevice_->GetDevice()->SetVertexShaderConstantF(0, (float*)m_vertexConstantBuffer, m_vertexRegisterCount);
+		graphicsDevice_->GetDevice()->SetVertexShaderConstantF(0, (float*)vertexConstantBuffer_, vertexRegisterCount_);
 	}
 
-	if (m_pixelRegisterCount > 0)
+	if (pixelRegisterCount_ > 0)
 	{
-		graphicsDevice_->GetDevice()->SetPixelShaderConstantF(0, (float*)m_pixelConstantBuffer, m_pixelRegisterCount);
+		graphicsDevice_->GetDevice()->SetPixelShaderConstantF(0, (float*)pixelConstantBuffer_, pixelRegisterCount_);
 	}
 }
 

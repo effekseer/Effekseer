@@ -43,22 +43,22 @@ class alignas(32) InstanceGroup
 	friend class ManagerImplemented;
 
 private:
-	ManagerImplemented* m_manager = nullptr;
-	EffectNodeImplemented* m_effectNode = nullptr;
-	InstanceContainer* m_container = nullptr;
-	InstanceGlobal* m_global = nullptr;
+	ManagerImplemented* manager_ = nullptr;
+	EffectNodeImplemented* effectNode_ = nullptr;
+	InstanceContainer* container_ = nullptr;
+	InstanceGlobal* global_ = nullptr;
 
-	GenerationState m_generationState = GenerationState::BeforeStart;
+	GenerationState generationState_ = GenerationState::BeforeStart;
 
 	// The number of generated instances.
-	int32_t m_generatedCount = 0;
+	int32_t generatedCount_ = 0;
 
 	// The maximum number of instances to generate.
-	int32_t m_maxGenerationCount = 0;
+	int32_t maxGenerationCount_ = 0;
 
 	// The time to generate next instance.
-	float m_nextGenerationTime = 0.0f;
-	float m_generationOffsetTime = 0.0f;
+	float nextGenerationTime_ = 0.0f;
+	float generationOffsetTime_ = 0.0f;
 	float time_ = 0.0f;
 
 	SIMD::Mat43f parentMatrix_;
@@ -67,8 +67,8 @@ private:
 	SIMD::Vec3f parentScale_;
 
 	// インスタンスの実体
-	IntrusiveList<Instance> m_instances;
-	IntrusiveList<Instance> m_removingInstances;
+	IntrusiveList<Instance> instances_;
+	IntrusiveList<Instance> removingInstances_;
 
 	InstanceGroup(ManagerImplemented* manager, EffectNodeImplemented* effectNode, InstanceContainer* container, InstanceGlobal* global);
 
@@ -132,7 +132,7 @@ public:
 
 	InstanceGlobal* GetRootInstance() const
 	{
-		return m_global;
+		return global_;
 	}
 
 	const SIMD::Mat43f& GetParentMatrix() const

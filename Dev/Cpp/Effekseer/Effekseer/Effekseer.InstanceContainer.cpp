@@ -24,11 +24,11 @@ namespace Effekseer
 //
 //----------------------------------------------------------------------------------
 InstanceContainer::InstanceContainer(ManagerImplemented* pManager, EffectNode* pEffectNode, InstanceGlobal* pGlobal)
-	: m_pManager(pManager)
-	, m_pEffectNode((EffectNodeImplemented*)pEffectNode)
-	, m_pGlobal(pGlobal)
-	, m_headGroups(nullptr)
-	, m_tailGroups(nullptr)
+	: manager_(pManager)
+	, effectNode_((EffectNodeImplemented*)pEffectNode)
+	, global_(pGlobal)
+	, headGroups_(nullptr)
+	, tailGroups_(nullptr)
 
 {
 	auto en = (EffectNodeImplemented*)pEffectNode;
@@ -45,12 +45,12 @@ InstanceContainer::~InstanceContainer()
 {
 	RemoveForcibly(false);
 
-	assert(m_headGroups == nullptr);
-	assert(m_tailGroups == nullptr);
+	assert(headGroups_ == nullptr);
+	assert(tailGroups_ == nullptr);
 
-	for (auto child : m_Children)
+	for (auto child : children_)
 	{
-		m_pManager->ReleaseInstanceContainer(child);
+		manager_->ReleaseInstanceContainer(child);
 	}
 }
 
@@ -59,14 +59,14 @@ InstanceContainer::~InstanceContainer()
 //----------------------------------------------------------------------------------
 void InstanceContainer::AddChild(InstanceContainer* pContainter)
 {
-	m_Children.push_back(pContainter);
+	children_.push_back(pContainter);
 }
 
 InstanceContainer* InstanceContainer::GetChild(int index)
 {
-	assert(index < static_cast<int32_t>(m_Children.size()));
+	assert(index < static_cast<int32_t>(children_.size()));
 
-	auto it = m_Children.begin();
+	auto it = children_.begin();
 	for (int i = 0; i < index; i++)
 	{
 		it++;
@@ -82,16 +82,16 @@ void InstanceContainer::RemoveInvalidGroups()
 	/* 最後に存在する有効なグループ */
 	InstanceGroup* tailGroup = nullptr;
 
-	for (InstanceGroup* group = m_headGroups; group != nullptr;)
+	for (InstanceGroup* group = headGroups_; group != nullptr;)
 	{
 		if (!group->IsReferencedFromInstance && group->GetInstanceCount() == 0)
 		{
 			InstanceGroup* next = group->NextUsedByContainer;
-			m_pManager->ReleaseGroup(group);
+			manager_->ReleaseGroup(group);
 
-			if (m_headGroups == group)
+			if (headGroups_ == group)
 			{
-				m_headGroups = next;
+				headGroups_ = next;
 			}
 			group = next;
 
@@ -107,9 +107,9 @@ void InstanceContainer::RemoveInvalidGroups()
 		}
 	}
 
-	m_tailGroups = tailGroup;
+	tailGroups_ = tailGroup;
 
-	assert(m_tailGroups == nullptr || m_tailGroups->NextUsedByContainer == nullptr);
+	assert(tailGroups_ == nullptr || tailGroups_->NextUsedByContainer == nullptr);
 }
 
 //----------------------------------------------------------------------------------
@@ -117,25 +117,25 @@ void InstanceContainer::RemoveInvalidGroups()
 //----------------------------------------------------------------------------------
 InstanceGroup* InstanceContainer::CreateInstanceGroup()
 {
-	InstanceGroup* group = m_pManager->CreateInstanceGroup(m_pEffectNode, this, m_pGlobal);
+	InstanceGroup* group = manager_->CreateInstanceGroup(effectNode_, this, global_);
 	if (group == nullptr)
 	{
 		return nullptr;
 	}
 
-	if (m_tailGroups != nullptr)
+	if (tailGroups_ != nullptr)
 	{
-		m_tailGroups->NextUsedByContainer = group;
-		m_tailGroups = group;
+		tailGroups_->NextUsedByContainer = group;
+		tailGroups_ = group;
 	}
 	else
 	{
-		assert(m_headGroups == nullptr);
-		m_headGroups = group;
-		m_tailGroups = group;
+		assert(headGroups_ == nullptr);
+		headGroups_ = group;
+		tailGroups_ = group;
 	}
 
-	m_pEffectNode->InitializeRenderedInstanceGroup(*group, m_pManager);
+	effectNode_->InitializeRenderedInstanceGroup(*group, manager_);
 
 	return group;
 }
@@ -145,7 +145,7 @@ InstanceGroup* InstanceContainer::CreateInstanceGroup()
 //----------------------------------------------------------------------------------
 InstanceGroup* InstanceContainer::GetFirstGroup() const
 {
-	return m_headGroups;
+	return headGroups_;
 }
 
 //----------------------------------------------------------------------------------
@@ -154,7 +154,7 @@ InstanceGroup* InstanceContainer::GetFirstGroup() const
 void InstanceContainer::Update(bool recursive, bool shown)
 {
 	// 更新
-	for (InstanceGroup* group = m_headGroups; group != nullptr; group = group->NextUsedByContainer)
+	for (InstanceGroup* group = headGroups_; group != nullptr; group = group->NextUsedByContainer)
 	{
 		group->Update(shown);
 	}
@@ -164,7 +164,7 @@ void InstanceContainer::Update(bool recursive, bool shown)
 
 	if (recursive)
 	{
-		for (auto child : m_Children)
+		for (auto child : children_)
 		{
 			child->Update(recursive, shown);
 		}
@@ -176,9 +176,9 @@ void InstanceContainer::Update(bool recursive, bool shown)
 //----------------------------------------------------------------------------------
 void InstanceContainer::ApplyBaseMatrix(bool recursive, const SIMD::Mat43f& mat)
 {
-	if (m_pEffectNode->GetType() != EffectNodeType::Root)
+	if (effectNode_->GetType() != EffectNodeType::Root)
 	{
-		for (InstanceGroup* group = m_headGroups; group != nullptr; group = group->NextUsedByContainer)
+		for (InstanceGroup* group = headGroups_; group != nullptr; group = group->NextUsedByContainer)
 		{
 			group->ApplyBaseMatrix(mat);
 		}
@@ -186,7 +186,7 @@ void InstanceContainer::ApplyBaseMatrix(bool recursive, const SIMD::Mat43f& mat)
 
 	if (recursive)
 	{
-		for (auto child : m_Children)
+		for (auto child : children_)
 		{
 			child->ApplyBaseMatrix(recursive, mat);
 		}
@@ -200,7 +200,7 @@ void InstanceContainer::RemoveForcibly(bool recursive)
 {
 	KillAllInstances(false);
 
-	for (InstanceGroup* group = m_headGroups; group != nullptr; group = group->NextUsedByContainer)
+	for (InstanceGroup* group = headGroups_; group != nullptr; group = group->NextUsedByContainer)
 	{
 		group->RemoveForcibly();
 	}
@@ -208,7 +208,7 @@ void InstanceContainer::RemoveForcibly(bool recursive)
 
 	if (recursive)
 	{
-		for (auto child : m_Children)
+		for (auto child : children_)
 		{
 			child->RemoveForcibly(recursive);
 		}
@@ -220,14 +220,14 @@ void InstanceContainer::RemoveForcibly(bool recursive)
 //----------------------------------------------------------------------------------
 void InstanceContainer::Draw(bool recursive)
 {
-	if (m_pEffectNode->GetType() != EffectNodeType::Root && m_pEffectNode->GetType() != EffectNodeType::NoneType)
+	if (effectNode_->GetType() != EffectNodeType::Root && effectNode_->GetType() != EffectNodeType::NoneType)
 	{
 		/* 個数計測 */
 		int32_t count = 0;
 		{
-			for (InstanceGroup* group = m_headGroups; group != nullptr; group = group->NextUsedByContainer)
+			for (InstanceGroup* group = headGroups_; group != nullptr; group = group->NextUsedByContainer)
 			{
-				for (auto instance : group->m_instances)
+				for (auto instance : group->instances_)
 				{
 					if (instance->IsActive())
 					{
@@ -237,28 +237,28 @@ void InstanceContainer::Draw(bool recursive)
 			}
 		}
 
-		if ((count > 0 && m_pEffectNode->IsRendered && (m_pGlobal->CurrentLevelOfDetails & m_pEffectNode->LODsParam.MatchingLODs) > 0) || m_pEffectNode->CanDrawWithNonMatchingLOD())
+		if ((count > 0 && effectNode_->IsRendered && (global_->CurrentLevelOfDetails & effectNode_->LODsParam.MatchingLODs) > 0) || effectNode_->CanDrawWithNonMatchingLOD())
 		{
-			void* userData = m_pGlobal->GetUserData();
+			void* userData = global_->GetUserData();
 
-			m_pEffectNode->BeginRendering(count, m_pManager, m_pGlobal, userData);
+			effectNode_->BeginRendering(count, manager_, global_, userData);
 
-			for (InstanceGroup* group = m_headGroups; group != nullptr; group = group->NextUsedByContainer)
+			for (InstanceGroup* group = headGroups_; group != nullptr; group = group->NextUsedByContainer)
 			{
-				m_pEffectNode->BeginRenderingGroup(group, m_pManager, userData);
+				effectNode_->BeginRenderingGroup(group, manager_, userData);
 
-				if (m_pEffectNode->RenderingOrder == RenderingOrder_FirstCreatedInstanceIsFirst)
+				if (effectNode_->RenderingOrder == RenderingOrder_FirstCreatedInstanceIsFirst)
 				{
-					auto it = group->m_instances.begin();
+					auto it = group->instances_.begin();
 					int32_t index = 0;
-					while (it != group->m_instances.end())
+					while (it != group->instances_.end())
 					{
 						if ((*it)->IsActive())
 						{
 							auto it_temp = it;
 							it_temp++;
 
-							if (it_temp != group->m_instances.end())
+							if (it_temp != group->instances_.end())
 							{
 								(*it)->Draw((*it_temp), index, userData);
 							}
@@ -275,16 +275,16 @@ void InstanceContainer::Draw(bool recursive)
 				}
 				else
 				{
-					auto it = group->m_instances.rbegin();
+					auto it = group->instances_.rbegin();
 					int32_t index = 0;
-					while (it != group->m_instances.rend())
+					while (it != group->instances_.rend())
 					{
 						if ((*it)->IsActive())
 						{
 							auto it_temp = it;
 							it_temp++;
 
-							if (it_temp != group->m_instances.rend())
+							if (it_temp != group->instances_.rend())
 							{
 								(*it)->Draw((*it_temp), index, userData);
 							}
@@ -299,16 +299,16 @@ void InstanceContainer::Draw(bool recursive)
 					}
 				}
 
-				m_pEffectNode->EndRenderingGroup(group, m_pManager, userData);
+				effectNode_->EndRenderingGroup(group, manager_, userData);
 			}
 
-			m_pEffectNode->EndRendering(m_pManager, userData);
+			effectNode_->EndRendering(manager_, userData);
 		}
 	}
 
 	if (recursive)
 	{
-		for (auto child : m_Children)
+		for (auto child : children_)
 		{
 			child->Draw(recursive);
 		}
@@ -320,14 +320,14 @@ void InstanceContainer::Draw(bool recursive)
 //----------------------------------------------------------------------------------
 void InstanceContainer::KillAllInstances(bool recursive)
 {
-	for (InstanceGroup* group = m_headGroups; group != nullptr; group = group->NextUsedByContainer)
+	for (InstanceGroup* group = headGroups_; group != nullptr; group = group->NextUsedByContainer)
 	{
 		group->KillAllInstances();
 	}
 
 	if (recursive)
 	{
-		for (auto child : m_Children)
+		for (auto child : children_)
 		{
 			child->KillAllInstances(recursive);
 		}
@@ -339,7 +339,7 @@ void InstanceContainer::KillAllInstances(bool recursive)
 //----------------------------------------------------------------------------------
 InstanceGlobal* InstanceContainer::GetRootInstance()
 {
-	return m_pGlobal;
+	return global_;
 }
 
 //----------------------------------------------------------------------------------

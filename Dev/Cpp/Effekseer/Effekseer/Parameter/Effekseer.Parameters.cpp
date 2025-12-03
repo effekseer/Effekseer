@@ -85,7 +85,7 @@ void ApplyEq_(T& dstParam, const Effect* e, const InstanceGlobal* instg, const I
 		locals[i] = 0.0f;
 	}
 
-	locals[4] = parrentInstance != nullptr ? parrentInstance->m_LivingTime / 60.0f : 0.0f;
+	locals[4] = parrentInstance != nullptr ? parrentInstance->livingTime_ / 60.0f : 0.0f;
 
 	auto e_ = static_cast<const EffectImplemented*>(e);
 	auto& dp = e_->GetDynamicEquation()[dpInd];

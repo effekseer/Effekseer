@@ -84,7 +84,7 @@ bool InternalScript::Load(uint8_t* data, int size)
 	int32_t registerCount = 0;
 
 	reader.Read(version_);
-	reader.Read(runningPhase);
+	reader.Read(runningPhase_);
 	reader.Read(registerCount);
 	reader.Read(operatorCount_);
 
@@ -104,13 +104,13 @@ bool InternalScript::Load(uint8_t* data, int size)
 		}
 	}
 
-	reader.Read(operators, static_cast<int32_t>(size - reader.GetOffset()));
+	reader.Read(operators_, static_cast<int32_t>(size - reader.GetOffset()));
 
 	if (reader.GetStatus() == BinaryReaderStatus::Failed)
 		return false;
 
 	// check operators
-	auto operatorReader = BinaryReader<true>(operators.data(), operators.size());
+	auto operatorReader = BinaryReader<true>(operators_.data(), operators_.size());
 
 	for (int i = 0; i < operatorCount_; i++)
 	{
@@ -194,19 +194,19 @@ std::array<float, 4> InternalScript::Execute(const std::array<float, 4>& externa
 	{
 		// type
 		OperatorType type;
-		memcpy(&type, operators.data() + offset, sizeof(OperatorType));
+		memcpy(&type, operators_.data() + offset, sizeof(OperatorType));
 		offset += sizeof(int);
 
 		int32_t inputCount = 0;
-		memcpy(&inputCount, operators.data() + offset, sizeof(int));
+		memcpy(&inputCount, operators_.data() + offset, sizeof(int));
 		offset += sizeof(int);
 
 		int32_t outputCount = 0;
-		memcpy(&outputCount, operators.data() + offset, sizeof(int));
+		memcpy(&outputCount, operators_.data() + offset, sizeof(int));
 		offset += sizeof(int);
 
 		int32_t attributeCount = 0;
-		memcpy(&attributeCount, operators.data() + offset, sizeof(int));
+		memcpy(&attributeCount, operators_.data() + offset, sizeof(int));
 		offset += sizeof(int);
 
 		auto inputOffset = offset;
@@ -221,7 +221,7 @@ std::array<float, 4> InternalScript::Execute(const std::array<float, 4>& externa
 		for (int j = 0; j < inputCount; j++)
 		{
 			int index = 0;
-			memcpy(&index, operators.data() + inputOffset, sizeof(int));
+			memcpy(&index, operators_.data() + inputOffset, sizeof(int));
 			inputOffset += sizeof(int);
 
 			tempInputs[j] = GetRegisterValue(index, externals, globals, locals);
@@ -230,7 +230,7 @@ std::array<float, 4> InternalScript::Execute(const std::array<float, 4>& externa
 		for (int j = 0; j < outputCount; j++)
 		{
 			int index = 0;
-			memcpy(&index, operators.data() + outputOffset, sizeof(int));
+			memcpy(&index, operators_.data() + outputOffset, sizeof(int));
 			outputOffset += sizeof(int);
 
 			if (type == OperatorType::Add)
@@ -278,7 +278,7 @@ std::array<float, 4> InternalScript::Execute(const std::array<float, 4>& externa
 			else if (type == OperatorType::Constant)
 			{
 				float att = 0;
-				memcpy(&att, operators.data() + attributeOffset, sizeof(int));
+				memcpy(&att, operators_.data() + attributeOffset, sizeof(int));
 				registers[index] = att;
 			}
 		}

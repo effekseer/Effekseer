@@ -7,77 +7,77 @@ namespace Effekseer
 {
 
 DefaultFileReader::DefaultFileReader(FILE* filePtr)
-	: m_filePtr(filePtr)
+	: filePtr_(filePtr)
 {
 	assert(filePtr != nullptr);
 }
 
 DefaultFileReader::~DefaultFileReader()
 {
-	fclose(m_filePtr);
+	fclose(filePtr_);
 }
 
 size_t DefaultFileReader::Read(void* buffer, size_t size)
 {
-	return fread(buffer, 1, size, m_filePtr);
+	return fread(buffer, 1, size, filePtr_);
 }
 
 void DefaultFileReader::Seek(int position)
 {
-	fseek(m_filePtr, (size_t)position, SEEK_SET);
+	fseek(filePtr_, (size_t)position, SEEK_SET);
 }
 
 int DefaultFileReader::GetPosition() const
 {
-	return (int)ftell(m_filePtr);
+	return (int)ftell(filePtr_);
 }
 
 size_t DefaultFileReader::GetLength() const
 {
-	long position = ftell(m_filePtr);
-	fseek(m_filePtr, 0, SEEK_END);
-	long length = ftell(m_filePtr);
-	fseek(m_filePtr, position, SEEK_SET);
+	long position = ftell(filePtr_);
+	fseek(filePtr_, 0, SEEK_END);
+	long length = ftell(filePtr_);
+	fseek(filePtr_, position, SEEK_SET);
 	return (size_t)length;
 }
 
 DefaultFileWriter::DefaultFileWriter(FILE* filePtr)
-	: m_filePtr(filePtr)
+	: filePtr_(filePtr)
 {
 	assert(filePtr != nullptr);
 }
 
 DefaultFileWriter::~DefaultFileWriter()
 {
-	fclose(m_filePtr);
+	fclose(filePtr_);
 }
 
 size_t DefaultFileWriter::Write(const void* buffer, size_t size)
 {
-	return fwrite(buffer, 1, size, m_filePtr);
+	return fwrite(buffer, 1, size, filePtr_);
 }
 
 void DefaultFileWriter::Flush()
 {
-	fflush(m_filePtr);
+	fflush(filePtr_);
 }
 
 void DefaultFileWriter::Seek(int position)
 {
-	fseek(m_filePtr, (size_t)position, SEEK_SET);
+	fseek(filePtr_, (size_t)position, SEEK_SET);
 }
 
 int DefaultFileWriter::GetPosition() const
 {
-	return (int)ftell(m_filePtr);
+	return (int)ftell(filePtr_);
 }
 
 size_t DefaultFileWriter::GetLength() const
 {
-	long position = ftell(m_filePtr);
-	fseek(m_filePtr, 0, SEEK_END);
-	long length = ftell(m_filePtr);
-	fseek(m_filePtr, position, SEEK_SET);
+	long position = ftell(filePtr_);
+	fseek(filePtr_, 0, SEEK_END);
+	long length = ftell(filePtr_);
+	fseek(filePtr_, position, SEEK_SET);
 	return (size_t)length;
 }
 

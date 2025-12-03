@@ -17,8 +17,8 @@ private:
 
 	Backend::VertexLayoutRef vertexLayout_;
 
-	void* m_vertexConstantBuffer;
-	void* m_pixelConstantBuffer;
+	void* vertexConstantBuffer_;
+	void* pixelConstantBuffer_;
 	int32_t vertexConstantBufferSize = 0;
 	int32_t pixelConstantBufferSize = 0;
 
@@ -76,11 +76,11 @@ public:
 
 	void* GetVertexConstantBuffer()
 	{
-		return m_vertexConstantBuffer;
+		return vertexConstantBuffer_;
 	}
 	void* GetPixelConstantBuffer()
 	{
-		return m_pixelConstantBuffer;
+		return pixelConstantBuffer_;
 	}
 
 	void SetConstantBuffer();

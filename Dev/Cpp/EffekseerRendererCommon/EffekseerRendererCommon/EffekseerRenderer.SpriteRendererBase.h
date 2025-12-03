@@ -31,9 +31,9 @@ template <typename RENDERER, bool FLIP_RGB_FLAG>
 class SpriteRendererBase : public ::Effekseer::SpriteRenderer, public ::Effekseer::SIMD::AlignedAllocationPolicy<16>
 {
 protected:
-	RENDERER* m_renderer;
-	int32_t m_spriteCount;
-	uint8_t* m_ringBufferData;
+	RENDERER* renderer_;
+	int32_t spriteCount_;
+	uint8_t* ringBufferData_;
 
 	struct KeyValue
 	{
@@ -50,12 +50,12 @@ protected:
 
 public:
 	SpriteRendererBase(RENDERER* renderer)
-		: m_renderer(renderer)
-		, m_spriteCount(0)
-		, m_ringBufferData(nullptr)
+		: renderer_(renderer)
+		, spriteCount_(0)
+		, ringBufferData_(nullptr)
 	{
 		// reserve buffers
-		instances.reserve(m_renderer->GetSquareMaxCount());
+		instances.reserve(renderer_->GetSquareMaxCount());
 	}
 
 	virtual ~SpriteRendererBase()
@@ -136,18 +136,18 @@ protected:
 		state.LocalTime = param.LocalTime;
 
 		state.CopyMaterialFromParameterToState(
-			m_renderer,
+			renderer_,
 			param.EffectPointer,
 			param.BasicParameterPtr);
 
 		customData1Count_ = state.CustomData1Count;
 		customData2Count_ = state.CustomData2Count;
 
-		instanceMaxCount_ = (std::min)(count, m_renderer->GetSquareMaxCount());
+		instanceMaxCount_ = (std::min)(count, renderer_->GetSquareMaxCount());
 		vertexCount_ = instanceMaxCount_ * 4;
 
-		renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(state, vertexCount_, stride_, (void*&)m_ringBufferData);
-		m_spriteCount = 0;
+		renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(state, vertexCount_, stride_, (void*&)ringBufferData_);
+		spriteCount_ = 0;
 
 		instances.clear();
 	}
@@ -158,8 +158,8 @@ protected:
 	{
 		if (parameter.ZSort == Effekseer::ZSortType::None)
 		{
-			auto cameraMat = m_renderer->GetCameraMatrix();
-			const auto& state = m_renderer->GetStandardRenderer()->GetState();
+			auto cameraMat = renderer_->GetCameraMatrix();
+			const auto& state = renderer_->GetStandardRenderer()->GetState();
 
 			RenderingInstance(instanceParameter, parameter, state, cameraMat);
 		}
@@ -181,10 +181,10 @@ protected:
 							const efkSpriteInstanceParam& instanceParameter,
 							const ::Effekseer::SIMD::Mat44f& camera)
 	{
-		if (m_ringBufferData == nullptr)
+		if (ringBufferData_ == nullptr)
 			return;
 
-		StrideView<VERTEX> verteies(m_ringBufferData, stride_, 4);
+		StrideView<VERTEX> verteies(ringBufferData_, stride_, 4);
 
 		for (int i = 0; i < 4; i++)
 		{
@@ -293,11 +293,11 @@ protected:
 
 				ApplyViewOffset(instMat, camera, instanceParameter.ViewOffsetDistance);
 
-				CalcBillboard(parameter.Billboard, mat_rot, s, R, F, instMat, m_renderer->GetCameraFrontDirection(), instanceParameter.Direction);
+				CalcBillboard(parameter.Billboard, mat_rot, s, R, F, instMat, renderer_->GetCameraFrontDirection(), instanceParameter.Direction);
 			}
 			else
 			{
-				CalcBillboard(parameter.Billboard, mat_rot, s, R, F, instanceParameter.SRTMatrix43, m_renderer->GetCameraFrontDirection(), instanceParameter.Direction);
+				CalcBillboard(parameter.Billboard, mat_rot, s, R, F, instanceParameter.SRTMatrix43, renderer_->GetCameraFrontDirection(), instanceParameter.Direction);
 			}
 
 			for (int i = 0; i < 4; i++)
@@ -307,8 +307,8 @@ protected:
 			}
 
 			ApplyDepthParameters(mat_rot,
-								 m_renderer->GetCameraFrontDirection(),
-								 m_renderer->GetCameraPosition(),
+								 renderer_->GetCameraFrontDirection(),
+								 renderer_->GetCameraPosition(),
 								 s,
 								 parameter.DepthParameterPtr,
 								 parameter.IsRightHand);
@@ -342,8 +342,8 @@ protected:
 			}
 
 			ApplyDepthParameters(mat,
-								 m_renderer->GetCameraFrontDirection(),
-								 m_renderer->GetCameraPosition(),
+								 renderer_->GetCameraFrontDirection(),
+								 renderer_->GetCameraPosition(),
 								 parameter.DepthParameterPtr,
 								 parameter.IsRightHand);
 
@@ -377,7 +377,7 @@ protected:
 		// custom parameter
 		if (customData1Count_ > 0)
 		{
-			StrideView<float> custom(m_ringBufferData + sizeof(DynamicVertex), stride_, 4);
+			StrideView<float> custom(ringBufferData_ + sizeof(DynamicVertex), stride_, 4);
 			for (int i = 0; i < 4; i++)
 			{
 				auto c = (float*)(&custom[i]);
@@ -387,7 +387,7 @@ protected:
 
 		if (customData2Count_ > 0)
 		{
-			StrideView<float> custom(m_ringBufferData + sizeof(DynamicVertex) + sizeof(float) * customData1Count_, stride_, 4);
+			StrideView<float> custom(ringBufferData_ + sizeof(DynamicVertex) + sizeof(float) * customData1Count_, stride_, 4);
 			for (int i = 0; i < 4; i++)
 			{
 				auto c = (float*)(&custom[i]);
@@ -395,8 +395,8 @@ protected:
 			}
 		}
 
-		m_ringBufferData += (stride_ * 4);
-		m_spriteCount++;
+		ringBufferData_ += (stride_ * 4);
+		spriteCount_++;
 	}
 
 	void EndRendering_(RENDERER* renderer, const efkSpriteNodeParam& param)
@@ -407,7 +407,7 @@ protected:
 			{
 				efkVector3D t = kv.Value.SRTMatrix43.GetTranslation();
 
-				auto frontDirection = m_renderer->GetCameraFrontDirection();
+				auto frontDirection = renderer_->GetCameraFrontDirection();
 				if (!param.IsRightHand)
 				{
 					frontDirection = -frontDirection;
@@ -429,7 +429,7 @@ protected:
 
 			for (auto& kv : instances)
 			{
-				auto camera = m_renderer->GetCameraMatrix();
+				auto camera = renderer_->GetCameraMatrix();
 				const auto& state = renderer->GetStandardRenderer()->GetState();
 
 				RenderingInstance(kv.Value, param, state, camera);
@@ -442,24 +442,24 @@ protected:
 public:
 	void BeginRendering(const efkSpriteNodeParam& parameter, int32_t count, void* userData) override
 	{
-		BeginRendering_(m_renderer, count, parameter, userData);
+		BeginRendering_(renderer_, count, parameter, userData);
 	}
 
 	void Rendering(const efkSpriteNodeParam& parameter, const efkSpriteInstanceParam& instanceParameter, void* userData) override
 	{
-		if (m_ringBufferData == nullptr)
+		if (ringBufferData_ == nullptr)
 			return;
-		if (m_spriteCount == m_renderer->GetSquareMaxCount())
+		if (spriteCount_ == renderer_->GetSquareMaxCount())
 			return;
-		Rendering_(parameter, instanceParameter, m_renderer->GetCameraMatrix());
+		Rendering_(parameter, instanceParameter, renderer_->GetCameraMatrix());
 	}
 
 	void EndRendering(const efkSpriteNodeParam& parameter, void* userData) override
 	{
-		if (m_ringBufferData == nullptr)
+		if (ringBufferData_ == nullptr)
 			return;
 
-		EndRendering_(m_renderer, parameter);
+		EndRendering_(renderer_, parameter);
 	}
 };
 //----------------------------------------------------------------------------------

@@ -26,7 +26,7 @@ typedef ::Effekseer::RefPtr<ModelRenderer> ModelRendererRef;
 class ModelRenderer : public ::EffekseerRenderer::ModelRendererBase
 {
 private:
-	RendererImplementedRef m_renderer;
+	RendererImplementedRef renderer_;
 	Shader* shader_advanced_lit_ = nullptr;
 	Shader* shader_advanced_unlit_ = nullptr;
 	Shader* shader_advanced_distortion_ = nullptr;

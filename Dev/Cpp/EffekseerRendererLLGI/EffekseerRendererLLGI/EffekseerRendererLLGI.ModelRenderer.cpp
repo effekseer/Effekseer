@@ -18,13 +18,13 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 							 Shader* shader_lighting_texture_normal,
 							 Shader* shader_texture,
 							 Shader* shader_distortion_texture)
-	: m_renderer(renderer)
+	: renderer_(renderer)
 	, shader_ad_lit_(shader_ad_lit)
 	, shader_ad_unlit_(shader_ad_unlit)
 	, shader_ad_distortion_(shader_ad_distortion)
-	, m_shader_lighting_texture_normal(shader_lighting_texture_normal)
-	, m_shader_texture(shader_texture)
-	, m_shader_distortion_texture(shader_distortion_texture)
+	, shaderLightingTextureNormal_(shader_lighting_texture_normal)
+	, shaderTexture_(shader_texture)
+	, shaderDistortionTexture_(shader_distortion_texture)
 {
 	// Ad
 	{
@@ -44,8 +44,8 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 
 	{
 		std::array<Shader*, 2> shaders;
-		shaders[0] = m_shader_lighting_texture_normal;
-		shaders[1] = m_shader_texture;
+		shaders[0] = shaderLightingTextureNormal_;
+		shaders[1] = shaderTexture_;
 
 		for (size_t i = 0; i < shaders.size(); i++)
 		{
@@ -53,21 +53,21 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 			shaders[i]->SetPixelConstantBufferSize(sizeof(::EffekseerRenderer::PixelConstantBuffer));
 		}
 
-		m_shader_distortion_texture->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<LLGI_InstanceCount>));
-		m_shader_distortion_texture->SetPixelConstantBufferSize(sizeof(::EffekseerRenderer::PixelConstantBufferDistortion));
+		shaderDistortionTexture_->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<LLGI_InstanceCount>));
+		shaderDistortionTexture_->SetPixelConstantBufferSize(sizeof(::EffekseerRenderer::PixelConstantBufferDistortion));
 	}
 
 	VertexType = EffekseerRenderer::ModelRendererVertexType::Instancing;
 
-	graphicsDevice_ = m_renderer->GetGraphicsDeviceInternal().Get();
+	graphicsDevice_ = renderer_->GetGraphicsDeviceInternal().Get();
 	LLGI::SafeAddRef(graphicsDevice_);
 }
 
 ModelRenderer::~ModelRenderer()
 {
-	ES_SAFE_DELETE(m_shader_lighting_texture_normal);
-	ES_SAFE_DELETE(m_shader_texture);
-	ES_SAFE_DELETE(m_shader_distortion_texture);
+	ES_SAFE_DELETE(shaderLightingTextureNormal_);
+	ES_SAFE_DELETE(shaderTexture_);
+	ES_SAFE_DELETE(shaderDistortionTexture_);
 
 	ES_SAFE_DELETE(shader_ad_unlit_);
 	ES_SAFE_DELETE(shader_ad_lit_);
@@ -174,12 +174,12 @@ ModelRendererRef ModelRenderer::Create(RendererImplemented* renderer, FixedShade
 
 void ModelRenderer::BeginRendering(const efkModelNodeParam& parameter, int32_t count, void* userData)
 {
-	BeginRendering_(m_renderer, parameter, count, userData);
+	BeginRendering_(renderer_, parameter, count, userData);
 }
 
 void ModelRenderer::Rendering(const efkModelNodeParam& parameter, const InstanceParameter& instanceParameter, void* userData)
 {
-	Rendering_<RendererImplemented>(m_renderer, parameter, instanceParameter, userData);
+	Rendering_<RendererImplemented>(renderer_, parameter, instanceParameter, userData);
 }
 
 void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userData)
@@ -211,7 +211,7 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 		return;
 	}
 
-	if (m_renderer->GetRenderMode() == Effekseer::RenderMode::Wireframe)
+	if (renderer_->GetRenderMode() == Effekseer::RenderMode::Wireframe)
 	{
 		model->GenerateWireIndexBuffer(graphicsDevice_);
 		if (!model->GetIsWireIndexBufferGenerated())
@@ -221,7 +221,7 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 	}
 
 	EndRendering_<RendererImplemented, Shader, Effekseer::Model, true, LLGI_InstanceCount>(
-		m_renderer, shader_ad_lit_, shader_ad_unlit_, shader_ad_distortion_, m_shader_lighting_texture_normal, m_shader_texture, m_shader_distortion_texture, parameter, userData);
+		renderer_, shader_ad_lit_, shader_ad_unlit_, shader_ad_distortion_, shaderLightingTextureNormal_, shaderTexture_, shaderDistortionTexture_, parameter, userData);
 }
 
 } // namespace EffekseerRendererLLGI

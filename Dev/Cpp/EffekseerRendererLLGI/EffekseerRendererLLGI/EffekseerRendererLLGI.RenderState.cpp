@@ -6,7 +6,7 @@ namespace EffekseerRendererLLGI
 {
 
 RenderState::RenderState(RendererImplemented* renderer)
-	: m_renderer(renderer)
+	: renderer_(renderer)
 {
 }
 
@@ -20,12 +20,12 @@ void RenderState::Update(bool forced)
 	bool changeRasterizer = forced;
 	bool changeBlend = forced;
 
-	if (m_active.DepthTest != m_next.DepthTest || forced)
+	if (active_.DepthTest != next_.DepthTest || forced)
 	{
 		changeDepth = true;
 	}
 
-	if (m_active.DepthWrite != m_next.DepthWrite || forced)
+	if (active_.DepthWrite != next_.DepthWrite || forced)
 	{
 		changeDepth = true;
 	}
@@ -34,48 +34,48 @@ void RenderState::Update(bool forced)
 	{
 	}
 
-	if (m_active.CullingType != m_next.CullingType || forced)
+	if (active_.CullingType != next_.CullingType || forced)
 	{
 		changeRasterizer = true;
 	}
 
 	if (changeRasterizer)
 	{
-		auto cullingType = (int32_t)m_next.CullingType;
+		auto cullingType = (int32_t)next_.CullingType;
 	}
 
-	if (m_active.AlphaBlend != m_next.AlphaBlend || forced)
+	if (active_.AlphaBlend != next_.AlphaBlend || forced)
 	{
 		changeBlend = true;
 	}
 
 	if (changeBlend)
 	{
-		auto alphaBlend = (int32_t)m_next.AlphaBlend;
+		auto alphaBlend = (int32_t)next_.AlphaBlend;
 	}
 
 	for (int32_t i = 0; i < Effekseer::TextureSlotMax; i++)
 	{
 		bool changeSampler = forced;
 
-		if (m_active.TextureFilterTypes[i] != m_next.TextureFilterTypes[i] || forced)
+		if (active_.TextureFilterTypes[i] != next_.TextureFilterTypes[i] || forced)
 		{
 			changeSampler = true;
 		}
 
-		if (m_active.TextureWrapTypes[i] != m_next.TextureWrapTypes[i] || forced)
+		if (active_.TextureWrapTypes[i] != next_.TextureWrapTypes[i] || forced)
 		{
 			changeSampler = true;
 		}
 
 		if (changeSampler)
 		{
-			auto filter = (int32_t)m_next.TextureFilterTypes[i];
-			auto wrap = (int32_t)m_next.TextureWrapTypes[i];
+			auto filter = (int32_t)next_.TextureFilterTypes[i];
+			auto wrap = (int32_t)next_.TextureWrapTypes[i];
 		}
 	}
 
-	m_active = m_next;
+	active_ = next_;
 }
 
 } // namespace EffekseerRendererLLGI

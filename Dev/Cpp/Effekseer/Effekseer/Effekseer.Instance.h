@@ -140,18 +140,18 @@ public:
 	eInstanceState m_State = eInstanceState::INSTANCE_STATE_ACTIVE;
 
 	// 生存時間
-	float m_LivedTime = 0;
+	float livedTime_ = 0;
 
 	// 生成されてからの時間
-	float m_LivingTime = 0;
+	float livingTime_ = 0;
 
 	// 削除されてからの時間
-	float m_RemovingTime = 0;
+	float removingTime_ = 0;
 
 	std::array<InstanceUVState, ParameterRendererCommon::UVParameterNum> uvAnimationData_;
 
 	// Spawning Method matrix
-	SIMD::Mat43f m_GenerationLocation;
+	SIMD::Mat43f generationLocation_;
 
 	// a transform matrix in the world coordinate
 	TimeSeriesMatrix globalMatrix_;
@@ -159,10 +159,10 @@ public:
 	SIMD::Mat43f globalMatrix_rendered;
 
 	// parent's transform matrix
-	SIMD::Mat43f m_ParentMatrix;
+	SIMD::Mat43f parentMatrix_;
 
 	// FirstUpdate実行前
-	bool m_IsFirstTime;
+	bool isFirstTime_;
 
 	// 変換用行列が計算済かどうか
 	bool m_GlobalMatrix43Calculated = false;
@@ -175,23 +175,23 @@ public:
 
 	int32_t m_InstanceNumber = 0;
 
-	uint32_t m_sequenceNumber = 0;
+	uint32_t sequenceNumber_ = 0;
 
-	AlphaCuttoffState alpha_cutoff_values;
+	AlphaCuttoffState alphaCutoffValues_;
 
-	float m_AlphaThreshold = 0.0f;
+	float alphaThreshold_ = 0.0f;
 
 	CollisionsState collisionState_;
 
 	bool isUVFlippedH_ = false;
 
-	int32_t m_gpuEmitterID = -1;
+	int32_t gpuEmitterID_ = -1;
 
 	Instance(ManagerImplemented* pManager, EffectNodeImplemented* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup);
 
 	virtual ~Instance();
 
-	void GenerateChildrenInRequired();
+	void GenerateChildrenIfRequired();
 
 	void UpdateChildrenGroupMatrix();
 
@@ -200,12 +200,12 @@ public:
 public:
 	float GetNormalizedLivetime() const
 	{
-		return Clamp(m_LivingTime / m_LivedTime, 1.0f, 0.0f);
+		return Clamp(livingTime_ / livedTime_, 1.0f, 0.0f);
 	}
 
 	bool IsFirstTime() const
 	{
-		return m_IsFirstTime;
+		return isFirstTime_;
 	}
 
 	eInstanceState GetState() const;

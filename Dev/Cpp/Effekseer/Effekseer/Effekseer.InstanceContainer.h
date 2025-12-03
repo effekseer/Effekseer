@@ -29,22 +29,22 @@ class alignas(32) InstanceContainer : public IntrusiveList<InstanceContainer>::N
 
 private:
 	// マネージャ
-	ManagerImplemented* m_pManager;
+	ManagerImplemented* manager_;
 
 	// パラメーター
-	EffectNodeImplemented* m_pEffectNode;
+	EffectNodeImplemented* effectNode_;
 
 	// グローバル
-	InstanceGlobal* m_pGlobal;
+	InstanceGlobal* global_;
 
 	// 子のコンテナ
-	IntrusiveList<InstanceContainer> m_Children;
+	IntrusiveList<InstanceContainer> children_;
 
 	// グループの連結リストの先頭
-	InstanceGroup* m_headGroups;
+	InstanceGroup* headGroups_;
 
 	// グループの連結リストの最後
-	InstanceGroup* m_tailGroups;
+	InstanceGroup* tailGroups_;
 
 	// コンストラクタ
 	InstanceContainer(ManagerImplemented* pManager, EffectNode* pEffectNode, InstanceGlobal* pGlobal);

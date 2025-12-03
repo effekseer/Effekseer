@@ -116,18 +116,18 @@ public:
 	};
 
 private:
-	CustomVector<WorkerThread> m_WorkerThreads;
+	CustomVector<WorkerThread> workerThreads_;
 
 	//! whether does rendering and update handle flipped automatically
-	bool m_autoFlip = true;
+	bool autoFlip_ = true;
 
 	//! next handle
-	Handle m_NextHandle = 0;
+	Handle nextHandle_ = 0;
 
 	// 確保済みインスタンス数
-	int m_instance_max;
+	int instanceMax_;
 
-	int m_nextComputeCount;
+	int nextComputeCount_;
 
 	/**
 		@note
@@ -145,54 +145,54 @@ private:
 	std::array<int32_t, GenerationsMax> creatableChunkOffsets_;
 
 	// playing objects
-	CustomAlignedMap<Handle, DrawSet> m_DrawSets;
+	CustomAlignedMap<Handle, DrawSet> drawSets_;
 
 	//! objects which are waiting to be disposed
-	std::array<CustomAlignedMap<Handle, DrawSet>, 2> m_RemovingDrawSets;
+	std::array<CustomAlignedMap<Handle, DrawSet>, 2> removingDrawSets_;
 
 	//! objects on rendering
-	CustomAlignedVector<DrawSet> m_renderingDrawSets;
+	CustomAlignedVector<DrawSet> renderingDrawSets_;
 
 	//! objects on rendering temporaly (sorted)
 	CustomAlignedVector<DrawSet> sortedRenderingDrawSets_;
 
 	//! objects on rendering
-	CustomAlignedMap<Handle, DrawSet> m_renderingDrawSetMaps;
+	CustomAlignedMap<Handle, DrawSet> renderingDrawSetMaps_;
 
 	// mutex for rendering
-	std::recursive_mutex m_renderingMutex;
-	bool m_isLockedWithRenderingMutex = false;
+	std::recursive_mutex renderingMutex_;
+	bool isLockedWithRenderingMutex_ = false;
 
-	SettingRef m_setting;
+	SettingRef setting_;
 
-	int m_updateTime;
-	int m_computeTime;
-	int m_drawTime;
+	int updateTime_;
+	int computeTime_;
+	int drawTime_;
 
-	uint32_t m_sequenceNumber;
+	uint32_t sequenceNumber_;
 
-	SpriteRendererRef m_spriteRenderer;
+	SpriteRendererRef spriteRenderer_;
 
-	RibbonRendererRef m_ribbonRenderer;
+	RibbonRendererRef ribbonRenderer_;
 
-	RingRendererRef m_ringRenderer;
+	RingRendererRef ringRenderer_;
 
-	ModelRendererRef m_modelRenderer;
+	ModelRendererRef modelRenderer_;
 
-	TrackRendererRef m_trackRenderer;
+	TrackRendererRef trackRenderer_;
 
-	GpuParticleSystemRef m_gpuParticleSystem;
+	GpuParticleSystemRef gpuParticleSystem_;
 
-	GpuTimerRef m_gpuTimer;
+	GpuTimerRef gpuTimer_;
 
-	SoundPlayerRef m_soundPlayer;
+	SoundPlayerRef soundPlayer_;
 
-	RandFunc m_randFunc;
+	RandFunc randFunc_;
 
-	std::array<LayerParameter, LayerCount> m_layerParameters;
+	std::array<LayerParameter, LayerCount> layerParameters_;
 
-	std::queue<std::pair<SoundTag, SoundPlayer::InstanceParameter>> m_requestedSounds;
-	std::mutex m_soundMutex;
+	std::queue<std::pair<SoundTag, SoundPlayer::InstanceParameter>> requestedSounds_;
+	std::mutex soundMutex_;
 
 	Handle AddDrawSet(const EffectRef& effect, InstanceContainer* pInstanceContainer, InstanceGlobal* pGlobalPointer);
 
@@ -465,7 +465,7 @@ public:
 
 	const CustomAlignedMap<Handle, DrawSet>& GetPlayingDrawSets() const
 	{
-		return m_DrawSets;
+		return drawSets_;
 	}
 
 	virtual int GetRef() override

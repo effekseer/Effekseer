@@ -44,49 +44,49 @@ CurveRef CurveLoader::Load(const void* data, int32_t size)
 	reader.Read(converter_version);
 
 	// load controll point count
-	reader.Read(curve->mControllPointCount);
+	reader.Read(curve->controlPointCount_);
 
 	// load controll points
-	for (int i = 0; i < curve->mControllPointCount; i++)
+	for (int i = 0; i < curve->controlPointCount_; i++)
 	{
 		dVector4 value;
 		reader.Read(value);
-		curve->mControllPoint.push_back(value);
+		curve->controlPoints_.push_back(value);
 	}
 
 	// load knot count
-	reader.Read(curve->mKnotCount);
+	reader.Read(curve->knotCount_);
 
 	// load knot values
-	for (int i = 0; i < curve->mKnotCount; i++)
+	for (int i = 0; i < curve->knotCount_; i++)
 	{
 		double value;
 		reader.Read(value);
-		curve->mKnotValue.push_back(value);
+		curve->knotValues_.push_back(value);
 	}
 
 	// load order
-	reader.Read(curve->mOrder);
+	reader.Read(curve->order_);
 
 	// load step
-	reader.Read(curve->mStep);
+	reader.Read(curve->step_);
 
 	// load type
-	reader.Read(curve->mType);
+	reader.Read(curve->type_);
 
 	// load dimension
-	reader.Read(curve->mDimension);
+	reader.Read(curve->dimension_);
 
 	// calc curve length
-	curve->mLength = 0;
+	curve->length_ = 0;
 
-	for (int i = 1; i < curve->mControllPointCount; i++)
+	for (int i = 1; i < curve->controlPointCount_; i++)
 	{
-		dVector4 p0 = curve->mControllPoint[i - 1];
-		dVector4 p1 = curve->mControllPoint[i];
+		dVector4 p0 = curve->controlPoints_[i - 1];
+		dVector4 p1 = curve->controlPoints_[i];
 
 		float len = Vector3D::Length(Vector3D((float)p1.X, (float)p1.Y, (float)p1.Z) - Vector3D((float)p0.X, (float)p0.Y, (float)p0.Z));
-		curve->mLength += len;
+		curve->length_ += len;
 	}
 
 	return curve;
