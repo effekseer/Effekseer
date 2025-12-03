@@ -485,11 +485,11 @@ public:
 class ReferenceObject : public IReference
 {
 private:
-	mutable std::atomic<int32_t> m_reference;
+	mutable std::atomic<int32_t> reference_;
 
 public:
 	ReferenceObject()
-		: m_reference(1)
+		: reference_(1)
 	{
 	}
 
@@ -499,26 +499,26 @@ public:
 
 	virtual int AddRef()
 	{
-		std::atomic_fetch_add_explicit(&m_reference, 1, std::memory_order_consume);
+		std::atomic_fetch_add_explicit(&reference_, 1, std::memory_order_consume);
 
-		return m_reference;
+		return reference_;
 	}
 
 	virtual int GetRef()
 	{
-		return m_reference;
+		return reference_;
 	}
 
 	virtual int Release()
 	{
-		bool destroy = std::atomic_fetch_sub_explicit(&m_reference, 1, std::memory_order_consume) == 1;
+		bool destroy = std::atomic_fetch_sub_explicit(&reference_, 1, std::memory_order_consume) == 1;
 		if (destroy)
 		{
 			delete this;
 			return 0;
 		}
 
-		return m_reference;
+		return reference_;
 	}
 };
 

@@ -32,7 +32,7 @@ namespace Effekseer
 //
 //----------------------------------------------------------------------------------
 Setting::Setting()
-	: m_coordinateSystem(CoordinateSystem::RH)
+	: coordinateSystem_(CoordinateSystem::RH)
 {
 	auto effectFactory = MakeRefPtr<EffectFactory>();
 	AddEffectFactory(effectFactory);
@@ -66,7 +66,7 @@ SettingRef Setting::Create()
 //----------------------------------------------------------------------------------
 CoordinateSystem Setting::GetCoordinateSystem() const
 {
-	return m_coordinateSystem;
+	return coordinateSystem_;
 }
 
 //----------------------------------------------------------------------------------
@@ -74,7 +74,7 @@ CoordinateSystem Setting::GetCoordinateSystem() const
 //----------------------------------------------------------------------------------
 void Setting::SetCoordinateSystem(CoordinateSystem coordinateSystem)
 {
-	m_coordinateSystem = coordinateSystem;
+	coordinateSystem_ = coordinateSystem;
 }
 
 //----------------------------------------------------------------------------------
@@ -82,7 +82,7 @@ void Setting::SetCoordinateSystem(CoordinateSystem coordinateSystem)
 //----------------------------------------------------------------------------------
 EffectLoaderRef Setting::GetEffectLoader()
 {
-	return m_effectLoader;
+	return effectLoader_;
 }
 
 //----------------------------------------------------------------------------------
@@ -90,7 +90,7 @@ EffectLoaderRef Setting::GetEffectLoader()
 //----------------------------------------------------------------------------------
 void Setting::SetEffectLoader(EffectLoaderRef loader)
 {
-	m_effectLoader = loader;
+	effectLoader_ = loader;
 }
 
 //----------------------------------------------------------------------------------

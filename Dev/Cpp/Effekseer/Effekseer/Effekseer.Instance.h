@@ -175,17 +175,17 @@ public:
 
 	int32_t m_InstanceNumber = 0;
 
-	uint32_t m_sequenceNumber = 0;
+	uint32_t sequenceNumber_ = 0;
 
-	AlphaCuttoffState alpha_cutoff_values;
+	AlphaCuttoffState alphaCutoffValues_;
 
-	float m_AlphaThreshold = 0.0f;
+	float alphaThreshold_ = 0.0f;
 
 	CollisionsState collisionState_;
 
 	bool isUVFlippedH_ = false;
 
-	int32_t m_gpuEmitterID = -1;
+	int32_t gpuEmitterID_ = -1;
 
 	Instance(ManagerImplemented* pManager, EffectNodeImplemented* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup);
 

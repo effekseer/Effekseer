@@ -148,7 +148,7 @@ void EffectNodeTrack::BeginRenderingGroup(InstanceGroup* group, Manager* manager
 
 			m_instanceParameter.FlipbookIndexAndNextRate = groupFirst->GetFlipbookIndexAndNextRate();
 
-			m_instanceParameter.AlphaThreshold = groupFirst->m_AlphaThreshold;
+			m_instanceParameter.AlphaThreshold = groupFirst->alphaThreshold_;
 
 			if (m_nodeParameter.EnableViewOffset)
 			{

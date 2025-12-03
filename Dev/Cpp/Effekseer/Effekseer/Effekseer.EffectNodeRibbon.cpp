@@ -185,7 +185,7 @@ void EffectNodeRibbon::BeginRenderingGroup(InstanceGroup* group, Manager* manage
 
 			m_instanceParameter.FlipbookIndexAndNextRate = groupFirst->GetFlipbookIndexAndNextRate();
 
-			m_instanceParameter.AlphaThreshold = groupFirst->m_AlphaThreshold;
+			m_instanceParameter.AlphaThreshold = groupFirst->alphaThreshold_;
 
 			if (m_nodeParameter.EnableViewOffset)
 			{

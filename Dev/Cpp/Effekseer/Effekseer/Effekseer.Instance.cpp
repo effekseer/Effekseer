@@ -179,7 +179,7 @@ void Instance::ResetGlobalMatrix(const SIMD::Mat43f& mat)
 		return;
 	}
 
-	m_sequenceNumber = m_pManager->GetSequenceNumber();
+	sequenceNumber_ = m_pManager->GetSequenceNumber();
 	globalMatrix_.Reset(mat, livingTime_);
 	UpdateChildrenGroupMatrix();
 	m_GlobalMatrix43Calculated = true;
@@ -192,7 +192,7 @@ void Instance::UpdateGlobalMatrix(const SIMD::Mat43f& mat)
 		return;
 	}
 
-	m_sequenceNumber = m_pManager->GetSequenceNumber();
+	sequenceNumber_ = m_pManager->GetSequenceNumber();
 	globalMatrix_.Step(mat, livingTime_);
 	UpdateChildrenGroupMatrix();
 	m_GlobalMatrix43Calculated = true;
@@ -348,7 +348,7 @@ void Instance::FirstUpdate()
 		UVFunctions::InitUVState(uvAnimationData_[i], rand, m_pEffectNode->RendererCommon.UVs[i]);
 	}
 
-	m_AlphaThreshold = AlphaCutoffFunctions::InitAlphaThreshold(alpha_cutoff_values, rand, m_pEffectNode->AlphaCutoff, m_pParent, effect, instanceGlobal);
+	alphaThreshold_ = AlphaCutoffFunctions::InitAlphaThreshold(alphaCutoffValues_, rand, m_pEffectNode->AlphaCutoff, m_pParent, effect, instanceGlobal);
 
 	// CustomData
 	for (int32_t index = 0; index < 2; index++)
@@ -390,12 +390,12 @@ void Instance::FirstUpdate()
 	{
 		if (auto gpuParticleSystem = m_pManager->GetGpuParticleSystem())
 		{
-			m_gpuEmitterID = gpuParticleSystem->NewEmitter(m_pEffectNode->GpuParticlesResource, GetInstanceGlobal());
+			gpuEmitterID_ = gpuParticleSystem->NewEmitter(m_pEffectNode->GpuParticlesResource, GetInstanceGlobal());
 
-			if (m_gpuEmitterID >= 0)
+			if (gpuEmitterID_ >= 0)
 			{
-				gpuParticleSystem->SetRandomSeed(m_gpuEmitterID, (uint32_t)m_randObject.GetRandInt());
-				gpuParticleSystem->StartEmit(m_gpuEmitterID);
+				gpuParticleSystem->SetRandomSeed(gpuEmitterID_, (uint32_t)m_randObject.GetRandInt());
+				gpuParticleSystem->StartEmit(gpuEmitterID_);
 			}
 		}
 	}
@@ -415,7 +415,7 @@ void Instance::Update(float deltaFrame, bool shown)
 	bool isParentSequenceChanged = false;
 	if (m_pParent != nullptr)
 	{
-		isParentSequenceChanged = m_pParent->m_sequenceNumber >= m_sequenceNumber;
+		isParentSequenceChanged = m_pParent->sequenceNumber_ >= sequenceNumber_;
 	}
 
 	const bool isUpdateRequired = deltaFrame != 0.0f || m_pEffectNode->RotationParam.RotationType == ParameterRotationType::ParameterRotationType_RotateToViewpoint;
@@ -454,21 +454,21 @@ void Instance::Update(float deltaFrame, bool shown)
 	UpdateTransform(deltaFrame);
 
 	// Update gpu particles emitter parameters
-	if (m_gpuEmitterID >= 0)
+	if (gpuEmitterID_ >= 0)
 	{
 		if (auto gpuParticleSystem = m_pManager->GetGpuParticleSystem())
 		{
-			gpuParticleSystem->SetTransform(m_gpuEmitterID, ToStruct(globalMatrix_rendered));
+			gpuParticleSystem->SetTransform(gpuEmitterID_, ToStruct(globalMatrix_rendered));
 
 			auto& paramSet = m_pEffectNode->GpuParticlesResource->GetParamSet();
 			if ((BindType)paramSet.RenderColor.ColorInherit == BindType::NotBind_Root)
 			{
 				InstanceGlobal* instanceGlobal = m_pContainer->GetRootInstance();
-				gpuParticleSystem->SetColor(m_gpuEmitterID, instanceGlobal->GlobalColor);
+				gpuParticleSystem->SetColor(gpuEmitterID_, instanceGlobal->GlobalColor);
 			}
 			else
 			{
-				gpuParticleSystem->SetColor(m_gpuEmitterID, ColorInheritance);
+				gpuParticleSystem->SetColor(gpuEmitterID_, ColorInheritance);
 			}
 
 			GetInstanceGlobal()->IsUsingGpuParticles = true;
@@ -498,7 +498,7 @@ void Instance::Update(float deltaFrame, bool shown)
 		auto instanceGlobal = this->m_pContainer->GetRootInstance();
 		auto& rand = m_randObject;
 
-		m_AlphaThreshold = AlphaCutoffFunctions::CalcAlphaThreshold(rand, m_pParent, m_pEffectNode->AlphaCutoff, alpha_cutoff_values, effect, instanceGlobal, livingTime_, livedTime_);
+		alphaThreshold_ = AlphaCutoffFunctions::CalcAlphaThreshold(rand, m_pParent, m_pEffectNode->AlphaCutoff, alphaCutoffValues_, effect, instanceGlobal, livingTime_, livedTime_);
 	}
 
 	if (m_State == eInstanceState::INSTANCE_STATE_ACTIVE)
@@ -631,7 +631,7 @@ void Instance::UpdateTransform(float deltaFrame)
 
 	if (m_pEffectNode->GetType() != EffectNodeType::Root)
 	{
-		m_sequenceNumber = ((ManagerImplemented*)m_pManager)->GetSequenceNumber();
+		sequenceNumber_ = ((ManagerImplemented*)m_pManager)->GetSequenceNumber();
 		const auto coordinateSystem = m_pEffectNode->GetEffect()->GetSetting()->GetCoordinateSystem();
 
 		if (m_pParent != nullptr)
@@ -954,7 +954,7 @@ void Instance::Draw(Instance* next, int32_t index, void* userData)
 	if ((GetInstanceGlobal()->CurrentLevelOfDetails & m_pEffectNode->LODsParam.MatchingLODs) == 0 && !m_pEffectNode->CanDrawWithNonMatchingLOD())
 		return;
 
-	if (m_sequenceNumber != ((ManagerImplemented*)m_pManager)->GetSequenceNumber())
+	if (sequenceNumber_ != ((ManagerImplemented*)m_pManager)->GetSequenceNumber())
 	{
 		UpdateTransform(0);
 	}
@@ -971,10 +971,10 @@ void Instance::Kill()
 			group->IsReferencedFromInstance = false;
 		}
 
-		if (m_gpuEmitterID >= 0)
+		if (gpuEmitterID_ >= 0)
 		{
-			m_pManager->GetGpuParticleSystem()->StopEmit(m_gpuEmitterID);
-			m_gpuEmitterID = -1;
+			m_pManager->GetGpuParticleSystem()->StopEmit(gpuEmitterID_);
+			gpuEmitterID_ = -1;
 		}
 
 		m_State = eInstanceState::INSTANCE_STATE_REMOVED;

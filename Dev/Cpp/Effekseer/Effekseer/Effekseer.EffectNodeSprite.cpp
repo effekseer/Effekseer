@@ -222,7 +222,7 @@ void EffectNodeSprite::Rendering(const Instance& instance, const Instance* next_
 
 		instanceParameter.FlipbookIndexAndNextRate = instance.GetFlipbookIndexAndNextRate();
 
-		instanceParameter.AlphaThreshold = instance.m_AlphaThreshold;
+		instanceParameter.AlphaThreshold = instance.alphaThreshold_;
 
 		if (nodeParam_.EnableViewOffset)
 		{

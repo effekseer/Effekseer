@@ -33,21 +33,21 @@ class InstanceGlobal
 
 private:
 	/* このエフェクトで使用しているインスタンス数 */
-	int m_instanceCount;
+	int instanceCount_;
 
 	/* 更新されたフレーム数 */
-	float m_updatedFrame;
+	float updatedFrame_;
 
-	InstanceContainer* m_rootContainer;
-	SIMD::Vec3f m_targetLocation = SIMD::Vec3f(0.0f, 0.0f, 0.0f);
+	InstanceContainer* rootContainer_;
+	SIMD::Vec3f targetLocation_ = SIMD::Vec3f(0.0f, 0.0f, 0.0f);
 
-	RandObject m_randObjects;
-	std::array<float, 4> dynamicInputParameters;
-	std::array<uint8_t, 4> m_inputTriggerCounts;
+	RandObject randObjects_;
+	std::array<float, 4> dynamicInputParameters_;
+	std::array<uint8_t, 4> inputTriggerCounts_;
 
 	float nextDeltaFrame_ = 0.0f;
 	int32_t layer_ = 0;
-	void* m_userData = nullptr;
+	void* userData_ = nullptr;
 
 	//! placement new
 	static void* operator new(size_t size);
@@ -87,7 +87,7 @@ public:
 
 	const std::array<float, 4>& GetDynamicInputParameters() const
 	{
-		return dynamicInputParameters;
+		return dynamicInputParameters_;
 	}
 
 	uint32_t GetInputTriggerCount(uint32_t index) const;
@@ -96,7 +96,7 @@ public:
 
 	RandObject& GetRandObject()
 	{
-		return m_randObjects;
+		return randObjects_;
 	}
 
 	void IncInstanceCount();
@@ -130,11 +130,11 @@ public:
 
 	void SetUserData(void* userData)
 	{
-		m_userData = userData;
+		userData_ = userData;
 	}
 	void* GetUserData() const
 	{
-		return m_userData;
+		return userData_;
 	}
 };
 //----------------------------------------------------------------------------------

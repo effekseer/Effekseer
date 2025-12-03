@@ -186,7 +186,7 @@ public:
 	}
 
 private:
-	RingRenderer::NodeParameter nodeParameter;
+	RingRenderer::NodeParameter nodeParameter_;
 
 	void LoadSingleParameter(unsigned char*& pos, RingSingleParameter& param, int version);
 

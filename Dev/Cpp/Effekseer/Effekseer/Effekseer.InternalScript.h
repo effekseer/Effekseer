@@ -45,9 +45,9 @@ private:
 	};
 
 private:
-	RunningPhaseType runningPhase = RunningPhaseType::Local;
+	RunningPhaseType runningPhase_ = RunningPhaseType::Local;
 	std::vector<float> registers_;
-	std::vector<uint8_t> operators;
+	std::vector<uint8_t> operators_;
 	int32_t version_ = 0;
 	int32_t operatorCount_ = 0;
 	std::array<int32_t, 4> outputRegisters_;
@@ -72,7 +72,7 @@ public:
 								 void* userData) const;
 	RunningPhaseType GetRunningPhase() const
 	{
-		return runningPhase;
+		return runningPhase_;
 	}
 };
 

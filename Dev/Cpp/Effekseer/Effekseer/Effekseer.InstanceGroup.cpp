@@ -18,9 +18,9 @@ namespace Effekseer
 //
 //----------------------------------------------------------------------------------
 InstanceGroup::InstanceGroup(ManagerImplemented* manager, EffectNodeImplemented* effectNode, InstanceContainer* container, InstanceGlobal* global)
-	: m_manager(manager)
-	, m_effectNode(effectNode)
-	, m_container(container)
+	: manager_(manager)
+	, effectNode_(effectNode)
+	, container_(container)
 	, global_(global)
 {
 	parentMatrix_ = SIMD::Mat43f::Identity;
@@ -46,23 +46,23 @@ void InstanceGroup::Initialize(RandObject& rand, Instance* parent)
 {
 	generatedCount_ = 0;
 
-	auto gt = ApplyEq(m_effectNode->GetEffect(), global_, parent, &rand, m_effectNode->CommonValues.RefEqGenerationTimeOffset, m_effectNode->CommonValues.GenerationTimeOffset);
+	auto gt = ApplyEq(effectNode_->GetEffect(), global_, parent, &rand, effectNode_->CommonValues.RefEqGenerationTimeOffset, effectNode_->CommonValues.GenerationTimeOffset);
 
 	generationOffsetTime_ = gt.getValue(rand);
 	nextGenerationTime_ = generationOffsetTime_;
 
-	if (m_effectNode->CommonValues.RefEqMaxGeneration >= 0)
+	if (effectNode_->CommonValues.RefEqMaxGeneration >= 0)
 	{
-		auto maxGene = static_cast<float>(m_effectNode->CommonValues.MaxGeneration);
-		ApplyEq(maxGene, m_effectNode->GetEffect(), global_, parent, &rand, m_effectNode->CommonValues.RefEqMaxGeneration, maxGene);
+		auto maxGene = static_cast<float>(effectNode_->CommonValues.MaxGeneration);
+		ApplyEq(maxGene, effectNode_->GetEffect(), global_, parent, &rand, effectNode_->CommonValues.RefEqMaxGeneration, maxGene);
 		maxGenerationCount_ = static_cast<int32_t>(maxGene);
 	}
 	else
 	{
-		maxGenerationCount_ = m_effectNode->CommonValues.MaxGeneration;
+		maxGenerationCount_ = effectNode_->CommonValues.MaxGeneration;
 	}
 
-	if (m_effectNode->TriggerParam.ToStartGeneration.type == TriggerType::None)
+	if (effectNode_->TriggerParam.ToStartGeneration.type == TriggerType::None)
 	{
 		generationState_ = GenerationState::Generating;
 	}
@@ -70,7 +70,7 @@ void InstanceGroup::Initialize(RandObject& rand, Instance* parent)
 
 Instance* InstanceGroup::CreateRootInstance()
 {
-	auto instance = m_manager->CreateInstance(m_effectNode, m_container, this);
+	auto instance = manager_->CreateInstance(effectNode_, container_, this);
 	if (instance != nullptr)
 	{
 		instances_.push_back(instance);
@@ -84,7 +84,7 @@ void InstanceGroup::GenerateInstancesIfRequired(float localTime, RandObject& ran
 {
 	if (generationState_ == GenerationState::BeforeStart)
 	{
-		if (IsTriggerActivated(m_effectNode->TriggerParam.ToStartGeneration, global_, parent))
+		if (IsTriggerActivated(effectNode_->TriggerParam.ToStartGeneration, global_, parent))
 		{
 			generationState_ = GenerationState::Generating;
 			nextGenerationTime_ = generationOffsetTime_ + localTime;
@@ -92,13 +92,13 @@ void InstanceGroup::GenerateInstancesIfRequired(float localTime, RandObject& ran
 	}
 	if (generationState_ == GenerationState::Generating)
 	{
-		if (IsTriggerActivated(m_effectNode->TriggerParam.ToStopGeneration, global_, parent))
+		if (IsTriggerActivated(effectNode_->TriggerParam.ToStopGeneration, global_, parent))
 		{
 			generationState_ = GenerationState::Ended;
 		}
 	}
 
-	const bool isSpawnRestrictedByLOD = (global_->CurrentLevelOfDetails & m_effectNode->LODsParam.MatchingLODs) == 0 && !m_effectNode->CanSpawnWithNonMatchingLOD();
+	const bool isSpawnRestrictedByLOD = (global_->CurrentLevelOfDetails & effectNode_->LODsParam.MatchingLODs) == 0 && !effectNode_->CanSpawnWithNonMatchingLOD();
 	const bool canSpawn = !global_->IsSpawnDisabled && !isSpawnRestrictedByLOD;
 
 	// GenerationTimeOffset can be minus value.
@@ -111,7 +111,7 @@ void InstanceGroup::GenerateInstancesIfRequired(float localTime, RandObject& ran
 		if (canSpawn)
 		{
 			// Create a particle
-			auto instance = m_manager->CreateInstance(m_effectNode, m_container, this);
+			auto instance = manager_->CreateInstance(effectNode_, container_, this);
 			if (instance != nullptr)
 			{
 				instances_.push_back(instance);
@@ -123,7 +123,7 @@ void InstanceGroup::GenerateInstancesIfRequired(float localTime, RandObject& ran
 			generatedCount_++;
 		}
 
-		auto gt = ApplyEq(m_effectNode->GetEffect(), global_, parent, &rand, m_effectNode->CommonValues.RefEqGenerationTime, m_effectNode->CommonValues.GenerationTime);
+		auto gt = ApplyEq(effectNode_->GetEffect(), global_, parent, &rand, effectNode_->CommonValues.RefEqGenerationTime, effectNode_->CommonValues.GenerationTime);
 		nextGenerationTime_ += Max(0.0f, gt.getValue(rand));
 	}
 }
@@ -187,9 +187,9 @@ void InstanceGroup::ApplyBaseMatrix(const SIMD::Mat43f& mat)
 
 void InstanceGroup::SetParentMatrix(const SIMD::Mat43f& mat)
 {
-	TranslationParentBindType tType = m_effectNode->CommonValues.TranslationBindType;
-	BindType rType = m_effectNode->CommonValues.RotationBindType;
-	BindType sType = m_effectNode->CommonValues.ScalingBindType;
+	TranslationParentBindType tType = effectNode_->CommonValues.TranslationBindType;
+	BindType rType = effectNode_->CommonValues.RotationBindType;
+	BindType sType = effectNode_->CommonValues.ScalingBindType;
 
 	auto rootGroup = global_->GetRootContainer()->GetFirstGroup();
 

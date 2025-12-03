@@ -43,9 +43,9 @@ class alignas(32) InstanceGroup
 	friend class ManagerImplemented;
 
 private:
-	ManagerImplemented* m_manager = nullptr;
-	EffectNodeImplemented* m_effectNode = nullptr;
-	InstanceContainer* m_container = nullptr;
+	ManagerImplemented* manager_ = nullptr;
+	EffectNodeImplemented* effectNode_ = nullptr;
+	InstanceContainer* container_ = nullptr;
 	InstanceGlobal* global_ = nullptr;
 
 	GenerationState generationState_ = GenerationState::BeforeStart;
