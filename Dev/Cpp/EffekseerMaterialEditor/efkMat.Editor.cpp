@@ -770,7 +770,7 @@ void Editor::Update()
 	{
 		ImGui::OpenPopup(label_new_node);
 		searchingKeywords_.fill(0);
-		searchingKeywords_Actual_.fill(0);
+		searchingKeywordsActual_.fill(0);
 		isJustNewNodePanelOpened_ = true;
 		currentPin = nullptr;
 		popupPosition = posOnEditor;
@@ -1043,19 +1043,19 @@ void Editor::UpdatePopup()
 				return false;
 			}
 
-			if (searchingKeywords_Actual_[0] == 0)
+			if (searchingKeywordsActual_[0] == 0)
 			{
 				return true;
 			}
 
 			auto name = c->Name;
 
-			if (name.find(searchingKeywords_Actual_.data()) != std::string::npos)
+			if (name.find(searchingKeywordsActual_.data()) != std::string::npos)
 				return true;
 
 			for (auto keyword : c->Keywords)
 			{
-				if (keyword.find(searchingKeywords_Actual_.data()) != std::string::npos)
+				if (keyword.find(searchingKeywordsActual_.data()) != std::string::npos)
 					return true;
 			}
 
@@ -1074,12 +1074,12 @@ void Editor::UpdatePopup()
 
 		for (size_t c = 0; c < searchingKeywords_.size(); c++)
 		{
-			searchingKeywords_Actual_[c] = tolower(searchingKeywords_[c]);
-			if (searchingKeywords_Actual_[c] == 0)
+			searchingKeywordsActual_[c] = tolower(searchingKeywords_[c]);
+			if (searchingKeywordsActual_[c] == 0)
 				break;
 		}
 
-		if (searchingKeywords_Actual_[0] == 0)
+		if (searchingKeywordsActual_[0] == 0)
 		{
 			for (auto group : library->Root->Groups)
 			{
@@ -1261,7 +1261,7 @@ void Editor::UpdateCreating()
 				popupPosition = posOnEditor;
 				ImGui::OpenPopup(label_new_node);
 				searchingKeywords_.fill(0);
-				searchingKeywords_Actual_.fill(0);
+				searchingKeywordsActual_.fill(0);
 				isJustNewNodePanelOpened_ = true;
 				ed::Resume();
 			}
