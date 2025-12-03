@@ -769,8 +769,8 @@ void Editor::Update()
 	else if (ed::ShowBackgroundContextMenu())
 	{
 		ImGui::OpenPopup(label_new_node);
-		searchingKeywords.fill(0);
-		searchingKeywordsActual.fill(0);
+		searchingKeywords_.fill(0);
+		searchingKeywords_Actual_.fill(0);
 		isJustNewNodePanelOpened_ = true;
 		currentPin = nullptr;
 		popupPosition = posOnEditor;
@@ -1043,19 +1043,19 @@ void Editor::UpdatePopup()
 				return false;
 			}
 
-			if (searchingKeywordsActual[0] == 0)
+			if (searchingKeywords_Actual_[0] == 0)
 			{
 				return true;
 			}
 
 			auto name = c->Name;
 
-			if (name.find(searchingKeywordsActual.data()) != std::string::npos)
+			if (name.find(searchingKeywords_Actual_.data()) != std::string::npos)
 				return true;
 
 			for (auto keyword : c->Keywords)
 			{
-				if (keyword.find(searchingKeywordsActual.data()) != std::string::npos)
+				if (keyword.find(searchingKeywords_Actual_.data()) != std::string::npos)
 					return true;
 			}
 
@@ -1070,16 +1070,16 @@ void Editor::UpdatePopup()
 			ImGui::SetKeyboardFocusHere(0);
 		}
 
-		ImGui::InputText(StringContainer::GetValue("Search").c_str(), searchingKeywords.data(), searchingKeywords.size());
+		ImGui::InputText(StringContainer::GetValue("Search").c_str(), searchingKeywords_.data(), searchingKeywords_.size());
 
-		for (size_t c = 0; c < searchingKeywords.size(); c++)
+		for (size_t c = 0; c < searchingKeywords_.size(); c++)
 		{
-			searchingKeywordsActual[c] = tolower(searchingKeywords[c]);
-			if (searchingKeywordsActual[c] == 0)
+			searchingKeywords_Actual_[c] = tolower(searchingKeywords_[c]);
+			if (searchingKeywords_Actual_[c] == 0)
 				break;
 		}
 
-		if (searchingKeywordsActual[0] == 0)
+		if (searchingKeywords_Actual_[0] == 0)
 		{
 			for (auto group : library->Root->Groups)
 			{
@@ -1260,8 +1260,8 @@ void Editor::UpdateCreating()
 				ed::Suspend();
 				popupPosition = posOnEditor;
 				ImGui::OpenPopup(label_new_node);
-				searchingKeywords.fill(0);
-				searchingKeywordsActual.fill(0);
+				searchingKeywords_.fill(0);
+				searchingKeywords_Actual_.fill(0);
 				isJustNewNodePanelOpened_ = true;
 				ed::Resume();
 			}
