@@ -57,24 +57,24 @@ private:
 	Effekseer::Backend::IndexBufferRef indexBuffer_;
 	Effekseer::Backend::IndexBufferRef indexBufferForWireframe_;
 
-	int32_t m_squareMaxCount;
+	int32_t squareMaxCount_;
 
 	Shader* currentShader = nullptr;
 
-	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>* m_standardRenderer;
+	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>* standardRenderer_;
 
-	::EffekseerRenderer::RenderStateBase* m_renderState;
+	::EffekseerRenderer::RenderStateBase* renderState_;
 
-	OpenGLDeviceType m_deviceType;
+	OpenGLDeviceType deviceType_;
 
 	// for restoring states
-	RenderStateSet m_originalState;
+	RenderStateSet originalState_;
 
-	bool m_restorationOfStates;
+	bool restorationOfStates_;
 
-	EffekseerRenderer::DistortingCallback* m_distortingCallback;
+	EffekseerRenderer::DistortingCallback* distortingCallback_;
 
-	::Effekseer::Backend::TextureRef m_backgroundGL;
+	::Effekseer::Backend::TextureRef backgroundGL_;
 
 	// textures which are specified currently
 	std::vector<::Effekseer::Backend::TextureRef> currentTextures_;
@@ -172,7 +172,7 @@ public:
 
 	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>* GetStandardRenderer()
 	{
-		return m_standardRenderer;
+		return standardRenderer_;
 	}
 
 	void SetVertexBuffer(GLuint vertexBuffer, int32_t size);
@@ -203,7 +203,7 @@ public:
 
 	OpenGLDeviceType GetDeviceType() const override
 	{
-		return m_deviceType;
+		return deviceType_;
 	}
 
 	bool IsVertexArrayObjectSupported() const override;

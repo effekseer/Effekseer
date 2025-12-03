@@ -28,13 +28,13 @@ const char* GetFragmentShaderHeader(OpenGLDeviceType deviceType);
 class Shader : public ::EffekseerRenderer::ShaderBase
 {
 private:
-	OpenGLDeviceType m_deviceType;
+	OpenGLDeviceType deviceType_;
 	Backend::GraphicsDeviceRef graphicsDevice_;
 	Backend::ShaderRef shader_;
 	Backend::ShaderRef shaderOverride_;
 	Backend::VertexLayoutRef vertexLayout_;
 
-	int32_t m_vertexSize;
+	int32_t vertexSize_;
 
 	Backend::UniformBufferRef vertexConstantBuffer_;
 	Backend::UniformBufferRef pixelConstantBuffer_;

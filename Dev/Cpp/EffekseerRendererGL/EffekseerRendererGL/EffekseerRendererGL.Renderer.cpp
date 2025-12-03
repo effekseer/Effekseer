@@ -117,7 +117,7 @@ RendererRef Renderer::Create(Effekseer::Backend::GraphicsDeviceRef graphicsDevic
 
 int32_t RendererImplemented::GetIndexSpriteCount() const
 {
-	int vsSize = EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * m_squareMaxCount * 4;
+	int vsSize = EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * squareMaxCount_ * 4;
 
 	size_t size = sizeof(EffekseerRenderer::SimpleVertex);
 	size = (std::min)(size, sizeof(EffekseerRenderer::DynamicVertex));
@@ -130,12 +130,12 @@ int32_t RendererImplemented::GetIndexSpriteCount() const
 //
 //----------------------------------------------------------------------------------
 RendererImplemented::RendererImplemented(int32_t squareMaxCount, Backend::GraphicsDeviceRef graphicsDevice)
-	: m_squareMaxCount(squareMaxCount)
-	, m_renderState(nullptr)
-	, m_restorationOfStates(true)
-	, m_standardRenderer(nullptr)
-	, m_distortingCallback(nullptr)
-	, m_deviceType(graphicsDevice->GetDeviceType())
+	: squareMaxCount_(squareMaxCount)
+	, renderState_(nullptr)
+	, restorationOfStates_(true)
+	, standardRenderer_(nullptr)
+	, distortingCallback_(nullptr)
+	, deviceType_(graphicsDevice->GetDeviceType())
 {
 	graphicsDevice_ = graphicsDevice;
 	graphicsDevice_->SetIsRestorationOfStatesRequired(false);
@@ -148,9 +148,9 @@ RendererImplemented::~RendererImplemented()
 {
 	GetImpl()->DeleteProxyTextures(this);
 
-	ES_SAFE_DELETE(m_distortingCallback);
-	ES_SAFE_DELETE(m_standardRenderer);
-	ES_SAFE_DELETE(m_renderState);
+	ES_SAFE_DELETE(distortingCallback_);
+	ES_SAFE_DELETE(standardRenderer_);
+	ES_SAFE_DELETE(renderState_);
 
 	// NOTE : It is better to reset on a same context where Rendering method runs
 	renderingVAO_.reset();
@@ -222,7 +222,7 @@ bool RendererImplemented::Initialize()
 
 	GLCheckError();
 
-	m_renderState = new RenderState(this);
+	renderState_ = new RenderState(this);
 
 	ShaderCodeView unlit_ad_vs(get_ad_sprite_unlit_vs(GetDeviceType()));
 	ShaderCodeView unlit_ad_ps(get_ad_model_unlit_ps(GetDeviceType()));
@@ -355,9 +355,9 @@ bool RendererImplemented::Initialize()
 		shader->SetPixelConstantBufferSize(sizeof(EffekseerRenderer::PixelConstantBuffer));
 	}
 
-	SetSquareMaxCount(m_squareMaxCount);
+	SetSquareMaxCount(squareMaxCount_);
 
-	m_standardRenderer =
+	standardRenderer_ =
 		new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>(this);
 
 	GetImpl()->isSoftParticleEnabled = GetDeviceType() == OpenGLDeviceType::OpenGL3 || GetDeviceType() == OpenGLDeviceType::OpenGLES3;
@@ -396,7 +396,7 @@ bool RendererImplemented::Initialize()
 
 void RendererImplemented::SetRestorationOfStatesFlag(bool flag)
 {
-	m_restorationOfStates = flag;
+	restorationOfStates_ = flag;
 }
 
 //----------------------------------------------------------------------------------
@@ -409,40 +409,40 @@ bool RendererImplemented::BeginRendering()
 	impl->CalculateCameraProjectionMatrix();
 
 	// store state
-	if (m_restorationOfStates)
+	if (restorationOfStates_)
 	{
-		m_originalState.blend = glIsEnabled(GL_BLEND);
-		m_originalState.cullFace = glIsEnabled(GL_CULL_FACE);
-		m_originalState.depthTest = glIsEnabled(GL_DEPTH_TEST);
+		originalState_.blend = glIsEnabled(GL_BLEND);
+		originalState_.cullFace = glIsEnabled(GL_CULL_FACE);
+		originalState_.depthTest = glIsEnabled(GL_DEPTH_TEST);
 
 		if (GetDeviceType() == OpenGLDeviceType::OpenGL2)
 		{
-			m_originalState.texture = glIsEnabled(GL_TEXTURE_2D);
+			originalState_.texture = glIsEnabled(GL_TEXTURE_2D);
 		}
 
-		glGetBooleanv(GL_DEPTH_WRITEMASK, &m_originalState.depthWrite);
-		glGetIntegerv(GL_DEPTH_FUNC, &m_originalState.depthFunc);
-		glGetIntegerv(GL_CULL_FACE_MODE, &m_originalState.cullFaceMode);
-		glGetIntegerv(GL_BLEND_SRC_RGB, &m_originalState.blendSrc);
-		glGetIntegerv(GL_BLEND_DST_RGB, &m_originalState.blendDst);
-		glGetIntegerv(GL_BLEND_SRC_ALPHA, &m_originalState.blendSrcAlpha);
-		glGetIntegerv(GL_BLEND_DST_ALPHA, &m_originalState.blendDstAlpha);
-		glGetIntegerv(GL_BLEND_EQUATION, &m_originalState.blendEquation);
-		glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &m_originalState.arrayBufferBinding);
-		glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &m_originalState.elementArrayBufferBinding);
-		glGetIntegerv(GL_CURRENT_PROGRAM, &m_originalState.program);
+		glGetBooleanv(GL_DEPTH_WRITEMASK, &originalState_.depthWrite);
+		glGetIntegerv(GL_DEPTH_FUNC, &originalState_.depthFunc);
+		glGetIntegerv(GL_CULL_FACE_MODE, &originalState_.cullFaceMode);
+		glGetIntegerv(GL_BLEND_SRC_RGB, &originalState_.blendSrc);
+		glGetIntegerv(GL_BLEND_DST_RGB, &originalState_.blendDst);
+		glGetIntegerv(GL_BLEND_SRC_ALPHA, &originalState_.blendSrcAlpha);
+		glGetIntegerv(GL_BLEND_DST_ALPHA, &originalState_.blendDstAlpha);
+		glGetIntegerv(GL_BLEND_EQUATION, &originalState_.blendEquation);
+		glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &originalState_.arrayBufferBinding);
+		glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &originalState_.elementArrayBufferBinding);
+		glGetIntegerv(GL_CURRENT_PROGRAM, &originalState_.program);
 
-		for (size_t i = 0; i < m_originalState.boundTextures.size(); i++)
+		for (size_t i = 0; i < originalState_.boundTextures.size(); i++)
 		{
 			GLint bound = 0;
 			GLExt::glActiveTexture(GL_TEXTURE0 + (GLenum)i);
 			glGetIntegerv(GL_TEXTURE_BINDING_2D, &bound);
-			m_originalState.boundTextures[i] = bound;
+			originalState_.boundTextures[i] = bound;
 		}
 
 		if (GLExt::IsSupportedVertexArray())
 		{
-			glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &m_originalState.vao);
+			glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &originalState_.vao);
 		}
 	}
 
@@ -460,13 +460,13 @@ bool RendererImplemented::BeginRendering()
 	glDisable(GL_CULL_FACE);
 
 	currentTextures_.clear();
-	m_renderState->GetActiveState().Reset();
-	m_renderState->Update(true);
+	renderState_->GetActiveState().Reset();
+	renderState_->Update(true);
 
-	m_renderState->GetActiveState().TextureIDs.fill(0);
+	renderState_->GetActiveState().TextureIDs.fill(0);
 
 	// reset renderer
-	m_standardRenderer->ResetAndRenderingIfRequired();
+	standardRenderer_->ResetAndRenderingIfRequired();
 
 	GLCheckError();
 
@@ -481,7 +481,7 @@ bool RendererImplemented::EndRendering()
 	GLCheckError();
 
 	// reset renderer
-	m_standardRenderer->ResetAndRenderingIfRequired();
+	standardRenderer_->ResetAndRenderingIfRequired();
 
 	if (GLExt::IsSupportedVertexArray())
 	{
@@ -489,50 +489,50 @@ bool RendererImplemented::EndRendering()
 	}
 
 	// restore states
-	if (m_restorationOfStates)
+	if (restorationOfStates_)
 	{
 		if (GLExt::IsSupportedVertexArray())
 		{
-			GLExt::glBindVertexArray(m_originalState.vao);
+			GLExt::glBindVertexArray(originalState_.vao);
 		}
 
-		for (size_t i = 0; i < m_originalState.boundTextures.size(); i++)
+		for (size_t i = 0; i < originalState_.boundTextures.size(); i++)
 		{
 			GLExt::glActiveTexture(GL_TEXTURE0 + (GLenum)i);
-			glBindTexture(GL_TEXTURE_2D, m_originalState.boundTextures[i]);
+			glBindTexture(GL_TEXTURE_2D, originalState_.boundTextures[i]);
 		}
 		GLExt::glActiveTexture(GL_TEXTURE0);
 
-		if (m_originalState.blend)
+		if (originalState_.blend)
 			glEnable(GL_BLEND);
 		else
 			glDisable(GL_BLEND);
-		if (m_originalState.cullFace)
+		if (originalState_.cullFace)
 			glEnable(GL_CULL_FACE);
 		else
 			glDisable(GL_CULL_FACE);
-		if (m_originalState.depthTest)
+		if (originalState_.depthTest)
 			glEnable(GL_DEPTH_TEST);
 		else
 			glDisable(GL_DEPTH_TEST);
 
 		if (GetDeviceType() == OpenGLDeviceType::OpenGL2)
 		{
-			if (m_originalState.texture)
+			if (originalState_.texture)
 				glEnable(GL_TEXTURE_2D);
 			else
 				glDisable(GL_TEXTURE_2D);
 		}
 
-		glDepthFunc(m_originalState.depthFunc);
-		glDepthMask(m_originalState.depthWrite);
-		glCullFace(m_originalState.cullFaceMode);
-		GLExt::glBlendFuncSeparate(m_originalState.blendSrc, m_originalState.blendDst, m_originalState.blendSrcAlpha, m_originalState.blendDstAlpha);
-		GLExt::glBlendEquation(m_originalState.blendEquation);
+		glDepthFunc(originalState_.depthFunc);
+		glDepthMask(originalState_.depthWrite);
+		glCullFace(originalState_.cullFaceMode);
+		GLExt::glBlendFuncSeparate(originalState_.blendSrc, originalState_.blendDst, originalState_.blendSrcAlpha, originalState_.blendDstAlpha);
+		GLExt::glBlendEquation(originalState_.blendEquation);
 
-		GLExt::glBindBuffer(GL_ARRAY_BUFFER, m_originalState.arrayBufferBinding);
-		GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_originalState.elementArrayBufferBinding);
-		GLExt::glUseProgram(m_originalState.program);
+		GLExt::glBindBuffer(GL_ARRAY_BUFFER, originalState_.arrayBufferBinding);
+		GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, originalState_.elementArrayBufferBinding);
+		GLExt::glUseProgram(originalState_.program);
 
 		if (GetDeviceType() == OpenGLDeviceType::OpenGL3 || GetDeviceType() == OpenGLDeviceType::OpenGLES3)
 		{
@@ -564,7 +564,7 @@ Effekseer::Backend::IndexBufferRef RendererImplemented::GetIndexBuffer()
 //----------------------------------------------------------------------------------
 int32_t RendererImplemented::GetSquareMaxCount() const
 {
-	return m_squareMaxCount;
+	return squareMaxCount_;
 }
 
 //----------------------------------------------------------------------------------
@@ -577,9 +577,9 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 	glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &arrayBufferBinding);
 	glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &elementArrayBufferBinding);
 
-	m_squareMaxCount = count;
+	squareMaxCount_ = count;
 
-	int vertexBufferSize = EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * m_squareMaxCount * 4;
+	int vertexBufferSize = EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * squareMaxCount_ * 4;
 
 	bool isSupportedBufferRange = GLExt::IsSupportedBufferRange();
 #ifdef __ANDROID__
@@ -616,7 +616,7 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 //----------------------------------------------------------------------------------
 ::EffekseerRenderer::RenderStateBase* RendererImplemented::GetRenderState()
 {
-	return m_renderState;
+	return renderState_;
 }
 
 //----------------------------------------------------------------------------------
@@ -690,28 +690,28 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 
 void RendererImplemented::SetBackground(GLuint background, bool hasMipmap)
 {
-	if (m_backgroundGL == nullptr)
+	if (backgroundGL_ == nullptr)
 	{
-		m_backgroundGL = graphicsDevice_->CreateTexture(background, hasMipmap, nullptr);
+		backgroundGL_ = graphicsDevice_->CreateTexture(background, hasMipmap, nullptr);
 	}
 	else
 	{
-		auto texture = static_cast<Backend::Texture*>(m_backgroundGL.Get());
+		auto texture = static_cast<Backend::Texture*>(backgroundGL_.Get());
 		texture->Init(background, hasMipmap, nullptr);
 	}
 
-	EffekseerRenderer::Renderer::SetBackground((background) ? m_backgroundGL : nullptr);
+	EffekseerRenderer::Renderer::SetBackground((background) ? backgroundGL_ : nullptr);
 }
 
 EffekseerRenderer::DistortingCallback* RendererImplemented::GetDistortingCallback()
 {
-	return m_distortingCallback;
+	return distortingCallback_;
 }
 
 void RendererImplemented::SetDistortingCallback(EffekseerRenderer::DistortingCallback* callback)
 {
-	ES_SAFE_DELETE(m_distortingCallback);
-	m_distortingCallback = callback;
+	ES_SAFE_DELETE(distortingCallback_);
+	distortingCallback_ = callback;
 }
 
 //----------------------------------------------------------------------------------
@@ -872,7 +872,7 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::Backend::Textur
 
 	for (int i = count; i < currentTextures_.size(); i++)
 	{
-		m_renderState->GetActiveState().TextureIDs[i] = 0;
+		renderState_->GetActiveState().TextureIDs[i] = 0;
 	}
 
 	currentTextures_.resize(count);
@@ -891,12 +891,12 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::Backend::Textur
 
 		if (textures[i] != nullptr)
 		{
-			m_renderState->GetActiveState().TextureIDs[i] = id;
+			renderState_->GetActiveState().TextureIDs[i] = id;
 			currentTextures_[i] = textures[i];
 		}
 		else
 		{
-			m_renderState->GetActiveState().TextureIDs[i] = 0;
+			renderState_->GetActiveState().TextureIDs[i] = 0;
 			currentTextures_[i].Reset();
 		}
 
@@ -915,8 +915,8 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::Backend::Textur
 //----------------------------------------------------------------------------------
 void RendererImplemented::ResetRenderState()
 {
-	m_renderState->GetActiveState().Reset();
-	m_renderState->Update(true);
+	renderState_->GetActiveState().Reset();
+	renderState_->Update(true);
 }
 
 bool RendererImplemented::IsVertexArrayObjectSupported() const

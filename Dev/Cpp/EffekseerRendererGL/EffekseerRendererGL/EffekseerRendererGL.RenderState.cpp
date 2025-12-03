@@ -18,11 +18,11 @@ namespace EffekseerRendererGL
 //
 //-----------------------------------------------------------------------------------
 RenderState::RenderState(RendererImplemented* renderer)
-	: m_renderer(renderer)
+	: renderer_(renderer)
 {
-	if (m_renderer->GetDeviceType() == OpenGLDeviceType::OpenGL3 || m_renderer->GetDeviceType() == OpenGLDeviceType::OpenGLES3)
+	if (renderer_->GetDeviceType() == OpenGLDeviceType::OpenGL3 || renderer_->GetDeviceType() == OpenGLDeviceType::OpenGLES3)
 	{
-		GLExt::glGenSamplers(Effekseer::TextureSlotMax, m_samplers.data());
+		GLExt::glGenSamplers(Effekseer::TextureSlotMax, samplers_.data());
 	}
 
 	GLint frontFace = 0;
@@ -30,7 +30,7 @@ RenderState::RenderState(RendererImplemented* renderer)
 
 	if (GL_CW == frontFace)
 	{
-		m_isCCW = false;
+		isCCW_ = false;
 	}
 }
 
@@ -39,9 +39,9 @@ RenderState::RenderState(RendererImplemented* renderer)
 //-----------------------------------------------------------------------------------
 RenderState::~RenderState()
 {
-	if (m_renderer->GetDeviceType() == OpenGLDeviceType::OpenGL3 || m_renderer->GetDeviceType() == OpenGLDeviceType::OpenGLES3)
+	if (renderer_->GetDeviceType() == OpenGLDeviceType::OpenGL3 || renderer_->GetDeviceType() == OpenGLDeviceType::OpenGLES3)
 	{
-		GLExt::glDeleteSamplers(Effekseer::TextureSlotMax, m_samplers.data());
+		GLExt::glDeleteSamplers(Effekseer::TextureSlotMax, samplers_.data());
 	}
 }
 
@@ -75,7 +75,7 @@ void RenderState::Update(bool forced)
 
 	if (m_active.CullingType != m_next.CullingType || forced)
 	{
-		if (m_isCCW)
+		if (isCCW_)
 		{
 			if (m_next.CullingType == Effekseer::CullingType::Front)
 			{
@@ -135,7 +135,7 @@ void RenderState::Update(bool forced)
 				GLExt::glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
 				if (m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Blend)
 				{
-					if (m_renderer->GetImpl()->IsPremultipliedAlphaEnabled)
+					if (renderer_->GetImpl()->IsPremultipliedAlphaEnabled)
 					{
 						GLExt::glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 					}
@@ -146,7 +146,7 @@ void RenderState::Update(bool forced)
 				}
 				else if (m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Add)
 				{
-					if (m_renderer->GetImpl()->IsPremultipliedAlphaEnabled)
+					if (renderer_->GetImpl()->IsPremultipliedAlphaEnabled)
 					{
 						GLExt::glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE, GL_ZERO, GL_ONE);
 					}
@@ -170,12 +170,12 @@ void RenderState::Update(bool forced)
 	static const GLint glfilterMag[] = {GL_NEAREST, GL_LINEAR};
 	static const GLint glwrap[] = {GL_REPEAT, GL_CLAMP_TO_EDGE, GL_MIRRORED_REPEAT};
 
-	if (m_renderer->GetDeviceType() == OpenGLDeviceType::OpenGL3 || m_renderer->GetDeviceType() == OpenGLDeviceType::OpenGLES3)
+	if (renderer_->GetDeviceType() == OpenGLDeviceType::OpenGL3 || renderer_->GetDeviceType() == OpenGLDeviceType::OpenGLES3)
 	{
-		for (int32_t i = 0; i < (int32_t)m_renderer->GetCurrentTextures().size(); i++)
+		for (int32_t i = 0; i < (int32_t)renderer_->GetCurrentTextures().size(); i++)
 		{
 			// If a texture is not assigned, skip it.
-			const auto& texture = m_renderer->GetCurrentTextures()[i];
+			const auto& texture = renderer_->GetCurrentTextures()[i];
 			if (texture == nullptr)
 				continue;
 
@@ -192,21 +192,21 @@ void RenderState::Update(bool forced)
 
 				int32_t filter_ = (int32_t)m_next.TextureFilterTypes[i];
 
-				GLExt::glSamplerParameteri(m_samplers[i], GL_TEXTURE_MAG_FILTER, glfilterMag[filter_]);
+				GLExt::glSamplerParameteri(samplers_[i], GL_TEXTURE_MAG_FILTER, glfilterMag[filter_]);
 
 				if (texture->GetParameter().MipLevelCount != 1)
 				{
-					GLExt::glSamplerParameteri(m_samplers[i], GL_TEXTURE_MIN_FILTER, glfilterMin[filter_]);
+					GLExt::glSamplerParameteri(samplers_[i], GL_TEXTURE_MIN_FILTER, glfilterMin[filter_]);
 				}
 				else
 				{
-					GLExt::glSamplerParameteri(m_samplers[i], GL_TEXTURE_MIN_FILTER, glfilterMin_NoneMipmap[filter_]);
+					GLExt::glSamplerParameteri(samplers_[i], GL_TEXTURE_MIN_FILTER, glfilterMin_NoneMipmap[filter_]);
 				}
 
-				// glSamplerParameteri( m_samplers[i],  GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-				// glSamplerParameteri( m_samplers[i],  GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+				// glSamplerParameteri( samplers_[i],  GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+				// glSamplerParameteri( samplers_[i],  GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
-				GLExt::glBindSampler(i, m_samplers[i]);
+				GLExt::glBindSampler(i, samplers_[i]);
 			}
 
 			if (m_active.TextureWrapTypes[i] != m_next.TextureWrapTypes[i] || forced || m_active.TextureIDs[i] != m_next.TextureIDs[i])
@@ -214,20 +214,20 @@ void RenderState::Update(bool forced)
 				GLExt::glActiveTexture(GL_TEXTURE0 + i);
 
 				int32_t wrap = static_cast<int32_t>(m_next.TextureWrapTypes[i]);
-				GLExt::glSamplerParameteri(m_samplers[i], GL_TEXTURE_WRAP_S, glwrap[wrap]);
-				GLExt::glSamplerParameteri(m_samplers[i], GL_TEXTURE_WRAP_T, glwrap[wrap]);
+				GLExt::glSamplerParameteri(samplers_[i], GL_TEXTURE_WRAP_S, glwrap[wrap]);
+				GLExt::glSamplerParameteri(samplers_[i], GL_TEXTURE_WRAP_T, glwrap[wrap]);
 
-				GLExt::glBindSampler(i, m_samplers[i]);
+				GLExt::glBindSampler(i, samplers_[i]);
 			}
 		}
 	}
 	else
 	{
 		GLCheckError();
-		for (int32_t i = 0; i < (int32_t)m_renderer->GetCurrentTextures().size(); i++)
+		for (int32_t i = 0; i < (int32_t)renderer_->GetCurrentTextures().size(); i++)
 		{
 			// If a texture is not assigned, skip it.
-			const auto& texture = m_renderer->GetCurrentTextures()[i];
+			const auto& texture = renderer_->GetCurrentTextures()[i];
 			if (texture == nullptr)
 				continue;
 

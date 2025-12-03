@@ -36,7 +36,7 @@ public:
 	static const int32_t MaxInstanced = 20;
 
 private:
-	RendererImplemented* m_renderer;
+	RendererImplemented* renderer_;
 
 	Shader* shader_ad_lit_ = nullptr;
 	Shader* shader_ad_unlit_ = nullptr;

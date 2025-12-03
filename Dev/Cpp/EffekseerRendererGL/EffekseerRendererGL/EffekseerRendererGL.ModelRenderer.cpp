@@ -122,7 +122,7 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 							 Shader* shader_lit,
 							 Shader* shader_unlit,
 							 Shader* shader_distortion)
-	: m_renderer(renderer)
+	: renderer_(renderer)
 	, shader_ad_lit_(shader_ad_lit)
 	, shader_ad_unlit_(shader_ad_unlit)
 	, shader_ad_distortion_(shader_ad_distortion)
@@ -287,12 +287,12 @@ End:;
 
 void ModelRenderer::BeginRendering(const efkModelNodeParam& parameter, int32_t count, void* userData)
 {
-	BeginRendering_(m_renderer, parameter, count, userData);
+	BeginRendering_(renderer_, parameter, count, userData);
 }
 
 void ModelRenderer::Rendering(const efkModelNodeParam& parameter, const InstanceParameter& instanceParameter, void* userData)
 {
-	Rendering_<RendererImplemented>(m_renderer, parameter, instanceParameter, userData);
+	Rendering_<RendererImplemented>(renderer_, parameter, instanceParameter, userData);
 }
 
 void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userData)
@@ -324,7 +324,7 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 		return;
 	}
 
-	if (m_renderer->GetRenderMode() == Effekseer::RenderMode::Wireframe)
+	if (renderer_->GetRenderMode() == Effekseer::RenderMode::Wireframe)
 	{
 		model->GenerateWireIndexBuffer(graphicsDevice_.Get());
 		if (!model->GetIsWireIndexBufferGenerated())
@@ -336,12 +336,12 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 	if (VertexType == EffekseerRenderer::ModelRendererVertexType::Instancing)
 	{
 		EndRendering_<RendererImplemented, Shader, Effekseer::Model, true, InstanceCount>(
-			m_renderer, shader_ad_lit_, shader_ad_unlit_, shader_ad_distortion_, shader_lit_, shader_unlit_, shader_distortion_, parameter, userData);
+			renderer_, shader_ad_lit_, shader_ad_unlit_, shader_ad_distortion_, shader_lit_, shader_unlit_, shader_distortion_, parameter, userData);
 	}
 	else
 	{
 		EndRendering_<RendererImplemented, Shader, Effekseer::Model, false, 1>(
-			m_renderer, shader_ad_lit_, shader_ad_unlit_, shader_ad_distortion_, shader_lit_, shader_unlit_, shader_distortion_, parameter, userData);
+			renderer_, shader_ad_lit_, shader_ad_unlit_, shader_ad_distortion_, shader_lit_, shader_unlit_, shader_distortion_, parameter, userData);
 	}
 }
 

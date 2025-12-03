@@ -21,13 +21,13 @@ typedef ::Effekseer::RefPtr<ModelRenderer> ModelRendererRef;
 class ModelRenderer : public ::EffekseerRenderer::ModelRendererBase
 {
 private:
-	RendererImplemented* m_renderer;
+	RendererImplemented* renderer_;
 	Shader* shader_ad_lit_ = nullptr;
 	Shader* shader_ad_unlit_ = nullptr;
 	Shader* shader_ad_distortion_ = nullptr;
-	Shader* m_shader_lighting_texture_normal;
-	Shader* m_shader_texture;
-	Shader* m_shader_distortion_texture;
+	Shader* shaderLightingTextureNormal_;
+	Shader* shaderTexture_;
+	Shader* shaderDistortionTexture_;
 	Backend::GraphicsDevice* graphicsDevice_ = nullptr;
 
 	ModelRenderer(RendererImplemented* renderer,

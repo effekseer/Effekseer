@@ -6,7 +6,7 @@ namespace EffekseerRendererLLGI
 {
 
 RenderState::RenderState(RendererImplemented* renderer)
-	: m_renderer(renderer)
+	: renderer_(renderer)
 {
 }
 

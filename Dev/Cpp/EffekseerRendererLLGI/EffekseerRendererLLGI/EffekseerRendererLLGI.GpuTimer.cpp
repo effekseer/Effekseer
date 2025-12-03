@@ -4,16 +4,16 @@ namespace EffekseerRendererLLGI
 {
 
 GpuTimer::GpuTimer(RendererImplemented* renderer, bool hasRefCount)
-	: m_renderer(renderer)
+	: renderer_(renderer)
 {
-	m_renderer->AddRef();
-	m_renderer->GetStandardRenderer()->UpdateGpuTimerCount(+1);
+	renderer_->AddRef();
+	renderer_->GetStandardRenderer()->UpdateGpuTimerCount(+1);
 }
 
 GpuTimer::~GpuTimer()
 {
-	m_renderer->GetStandardRenderer()->UpdateGpuTimerCount(-1);
-	m_renderer->Release();
+	renderer_->GetStandardRenderer()->UpdateGpuTimerCount(-1);
+	renderer_->Release();
 }
 
 void GpuTimer::BeginStage(Effekseer::GpuStage stage)
@@ -21,15 +21,15 @@ void GpuTimer::BeginStage(Effekseer::GpuStage stage)
 	assert(stage != Effekseer::GpuStage::None);
 
 	uint32_t index = static_cast<uint32_t>(stage);
-	assert(m_stageState[index] != State::DuringStage);
+	assert(stageState_[index] != State::DuringStage);
 
-	if (m_stageState[index] == State::AfterStage)
+	if (stageState_[index] == State::AfterStage)
 	{
 		UpdateResults(stage);
 	}
 
-	m_stageState[index] = State::DuringStage;
-	m_currentStage = stage;
+	stageState_[index] = State::DuringStage;
+	currentStage_ = stage;
 }
 
 void GpuTimer::EndStage(Effekseer::GpuStage stage)
@@ -37,36 +37,36 @@ void GpuTimer::EndStage(Effekseer::GpuStage stage)
 	assert(stage != Effekseer::GpuStage::None);
 
 	uint32_t index = static_cast<uint32_t>(stage);
-	assert(m_stageState[index] == State::DuringStage);
+	assert(stageState_[index] == State::DuringStage);
 
-	m_stageState[index] = State::AfterStage;
-	m_currentStage = Effekseer::GpuStage::None;
+	stageState_[index] = State::AfterStage;
+	currentStage_ = Effekseer::GpuStage::None;
 }
 
 void GpuTimer::UpdateResults()
 {
 	for (uint32_t index = 1; index < 5; index++)
 	{
-		if (m_stageState[index] == State::AfterStage)
+		if (stageState_[index] == State::AfterStage)
 		{
 			UpdateResults(static_cast<Effekseer::GpuStage>(index));
 		}
 	}
 
-	for (auto& [object, timeData] : m_timeData)
+	for (auto& [object, timeData] : timeData_)
 	{
-		m_renderer->ResetQuery(timeData.queries.get());
+		renderer_->ResetQuery(timeData.queries.get());
 	}
 }
 
 void GpuTimer::UpdateResults(Effekseer::GpuStage stage)
 {
-	auto graphicsDevice = m_renderer->GetGraphicsDevice().DownCast<EffekseerRendererLLGI::Backend::GraphicsDevice>();
+	auto graphicsDevice = renderer_->GetGraphicsDevice().DownCast<EffekseerRendererLLGI::Backend::GraphicsDevice>();
 
 	assert(stage != Effekseer::GpuStage::None);
 	uint32_t index = static_cast<uint32_t>(stage);
 
-	for (auto& [object, timeData] : m_timeData)
+	for (auto& [object, timeData] : timeData_)
 	{
 		timeData.result = 0;
 
@@ -87,46 +87,46 @@ void GpuTimer::UpdateResults(Effekseer::GpuStage stage)
 		timeData.result = static_cast<int32_t>(elapsedTime);
 	}
 
-	m_stageState[index] = State::ResultUpdated;
+	stageState_[index] = State::ResultUpdated;
 }
 
 void GpuTimer::AddTimer(const void* object)
 {
-	assert(m_timeData.find(object) == m_timeData.end());
+	assert(timeData_.find(object) == timeData_.end());
 
-	auto graphicsDevice = m_renderer->GetGraphicsDevice().DownCast<EffekseerRendererLLGI::Backend::GraphicsDevice>();
+	auto graphicsDevice = renderer_->GetGraphicsDevice().DownCast<EffekseerRendererLLGI::Backend::GraphicsDevice>();
 
 	TimeData timeData;
 	timeData.queries = LLGI::CreateUniqueReference(graphicsDevice->GetGraphics()->CreateQuery(
 		LLGI::QueryType::Timestamp, NUM_QUERIES_PER_TIMER));
 
-	m_timeData.emplace(object, std::move(timeData));
+	timeData_.emplace(object, std::move(timeData));
 }
 
 void GpuTimer::RemoveTimer(const void* object)
 {
-	auto it = m_timeData.find(object);
-	if (it != m_timeData.end())
+	auto it = timeData_.find(object);
+	if (it != timeData_.end())
 	{
 		TimeData& timeData = it->second;
-		m_timeData.erase(it);
+		timeData_.erase(it);
 	}
 }
 
 void GpuTimer::Start(const void* object)
 {
-	assert(m_currentStage != Effekseer::GpuStage::None);
+	assert(currentStage_ != Effekseer::GpuStage::None);
 
-	auto it = m_timeData.find(object);
-	if (it != m_timeData.end())
+	auto it = timeData_.find(object);
+	if (it != timeData_.end())
 	{
 		TimeData& timeData = it->second;
 		for (uint32_t phase = 0; phase < NUM_PHASES; phase++)
 		{
 			if (timeData.queryedStage[phase] == Effekseer::GpuStage::None)
 			{
-				m_renderer->RecordTimestamp(timeData.queries.get(), QueryIndex(phase, TIMESTAMP_START));
-				timeData.queryedStage[phase] = m_currentStage;
+				renderer_->RecordTimestamp(timeData.queries.get(), QueryIndex(phase, TIMESTAMP_START));
+				timeData.queryedStage[phase] = currentStage_;
 				break;
 			}
 		}
@@ -135,17 +135,17 @@ void GpuTimer::Start(const void* object)
 
 void GpuTimer::Stop(const void* object)
 {
-	assert(m_currentStage != Effekseer::GpuStage::None);
+	assert(currentStage_ != Effekseer::GpuStage::None);
 
-	auto it = m_timeData.find(object);
-	if (it != m_timeData.end())
+	auto it = timeData_.find(object);
+	if (it != timeData_.end())
 	{
 		TimeData& timeData = it->second;
 		for (uint32_t phase = 0; phase < NUM_PHASES; phase++)
 		{
-			if (timeData.queryedStage[phase] == m_currentStage)
+			if (timeData.queryedStage[phase] == currentStage_)
 			{
-				m_renderer->RecordTimestamp(timeData.queries.get(), QueryIndex(phase, TIMESTAMP_STOP));
+				renderer_->RecordTimestamp(timeData.queries.get(), QueryIndex(phase, TIMESTAMP_STOP));
 				break;
 			}
 		}
@@ -154,8 +154,8 @@ void GpuTimer::Stop(const void* object)
 
 int32_t GpuTimer::GetResult(const void* object)
 {
-	auto it = m_timeData.find(object);
-	if (it != m_timeData.end())
+	auto it = timeData_.find(object);
+	if (it != timeData_.end())
 	{
 		TimeData& timeData = it->second;
 		return timeData.result;

@@ -11,15 +11,15 @@ Shader::Shader(Backend::GraphicsDeviceRef graphicsDevice,
 	: graphicsDevice_(graphicsDevice)
 	, shader_(shader)
 	, vertexLayout_(vertexLayout)
-	, m_vertexConstantBuffer(nullptr)
-	, m_pixelConstantBuffer(nullptr)
+	, vertexConstantBuffer_(nullptr)
+	, pixelConstantBuffer_(nullptr)
 {
 }
 
 Shader::~Shader()
 {
-	ES_SAFE_DELETE_ARRAY(m_vertexConstantBuffer);
-	ES_SAFE_DELETE_ARRAY(m_pixelConstantBuffer);
+	ES_SAFE_DELETE_ARRAY(vertexConstantBuffer_);
+	ES_SAFE_DELETE_ARRAY(pixelConstantBuffer_);
 }
 
 Shader* Shader::Create(Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
@@ -35,15 +35,15 @@ Shader* Shader::Create(Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
 
 void Shader::SetVertexConstantBufferSize(int32_t size)
 {
-	ES_SAFE_DELETE_ARRAY(m_vertexConstantBuffer);
-	m_vertexConstantBuffer = new uint8_t[size];
+	ES_SAFE_DELETE_ARRAY(vertexConstantBuffer_);
+	vertexConstantBuffer_ = new uint8_t[size];
 	vertexConstantBufferSize = size;
 }
 
 void Shader::SetPixelConstantBufferSize(int32_t size)
 {
-	ES_SAFE_DELETE_ARRAY(m_pixelConstantBuffer);
-	m_pixelConstantBuffer = new uint8_t[size];
+	ES_SAFE_DELETE_ARRAY(pixelConstantBuffer_);
+	pixelConstantBuffer_ = new uint8_t[size];
 	pixelConstantBufferSize = size;
 }
 

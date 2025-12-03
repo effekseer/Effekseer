@@ -149,9 +149,9 @@ void Shader::AssignAttribs()
 Shader::Shader(const Backend::GraphicsDeviceRef& graphicsDevice,
 			   Backend::ShaderRef shader,
 			   const char* name)
-	: m_deviceType(graphicsDevice->GetDeviceType())
+	: deviceType_(graphicsDevice->GetDeviceType())
 	, shader_(shader)
-	, m_vertexSize(0)
+	, vertexSize_(0)
 {
 	name_ = name;
 
