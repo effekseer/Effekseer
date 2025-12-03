@@ -19,7 +19,7 @@ namespace EffekseerRendererDX9
 class RenderState : public ::EffekseerRenderer::RenderStateBase
 {
 private:
-	RendererImplemented* m_renderer;
+	RendererImplemented* renderer_;
 
 public:
 	RenderState(RendererImplemented* renderer);

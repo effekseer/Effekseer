@@ -15,7 +15,7 @@ namespace EffekseerRendererDX9
 //
 //-----------------------------------------------------------------------------------
 RenderState::RenderState(RendererImplemented* renderer)
-	: m_renderer(renderer)
+	: renderer_(renderer)
 {
 }
 
@@ -31,134 +31,134 @@ RenderState::~RenderState()
 //-----------------------------------------------------------------------------------
 void RenderState::Update(bool forced)
 {
-	if (m_active.DepthTest != m_next.DepthTest || forced)
+	if (active_.DepthTest != next_.DepthTest || forced)
 	{
-		if (m_next.DepthTest)
+		if (next_.DepthTest)
 		{
-			m_renderer->GetDevice()->SetRenderState(D3DRS_ZENABLE, TRUE);
+			renderer_->GetDevice()->SetRenderState(D3DRS_ZENABLE, TRUE);
 		}
 		else
 		{
-			m_renderer->GetDevice()->SetRenderState(D3DRS_ZENABLE, FALSE);
+			renderer_->GetDevice()->SetRenderState(D3DRS_ZENABLE, FALSE);
 		}
 	}
 
-	if (m_active.DepthWrite != m_next.DepthWrite || forced)
+	if (active_.DepthWrite != next_.DepthWrite || forced)
 	{
-		if (m_next.DepthWrite)
+		if (next_.DepthWrite)
 		{
-			m_renderer->GetDevice()->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+			renderer_->GetDevice()->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 		}
 		else
 		{
-			m_renderer->GetDevice()->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+			renderer_->GetDevice()->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 		}
 	}
 
-	if (m_active.CullingType != m_next.CullingType || forced)
+	if (active_.CullingType != next_.CullingType || forced)
 	{
-		if (m_next.CullingType == ::Effekseer::CullingType::Front)
+		if (next_.CullingType == ::Effekseer::CullingType::Front)
 		{
-			m_renderer->GetDevice()->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+			renderer_->GetDevice()->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 		}
-		else if (m_next.CullingType == ::Effekseer::CullingType::Back)
+		else if (next_.CullingType == ::Effekseer::CullingType::Back)
 		{
-			m_renderer->GetDevice()->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
+			renderer_->GetDevice()->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
 		}
-		else if (m_next.CullingType == ::Effekseer::CullingType::Double)
+		else if (next_.CullingType == ::Effekseer::CullingType::Double)
 		{
-			m_renderer->GetDevice()->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+			renderer_->GetDevice()->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 		}
 	}
 
-	if (m_active.AlphaBlend != m_next.AlphaBlend || forced)
+	if (active_.AlphaBlend != next_.AlphaBlend || forced)
 	{
-		if (m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Opacity || m_renderer->GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
+		if (next_.AlphaBlend == ::Effekseer::AlphaBlendType::Opacity || renderer_->GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
 		{
-			m_renderer->GetDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-			m_renderer->GetDevice()->SetRenderState(D3DRS_SEPARATEALPHABLENDENABLE, TRUE);
-			m_renderer->GetDevice()->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
-			m_renderer->GetDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ZERO);
-			m_renderer->GetDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ONE);
-			m_renderer->GetDevice()->SetRenderState(D3DRS_DESTBLENDALPHA, D3DBLEND_ONE);
-			m_renderer->GetDevice()->SetRenderState(D3DRS_SRCBLENDALPHA, D3DBLEND_ONE);
-			m_renderer->GetDevice()->SetRenderState(D3DRS_BLENDOPALPHA, D3DBLENDOP_MAX);
-			m_renderer->GetDevice()->SetRenderState(D3DRS_ALPHAREF, 0);
+			renderer_->GetDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+			renderer_->GetDevice()->SetRenderState(D3DRS_SEPARATEALPHABLENDENABLE, TRUE);
+			renderer_->GetDevice()->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+			renderer_->GetDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ZERO);
+			renderer_->GetDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ONE);
+			renderer_->GetDevice()->SetRenderState(D3DRS_DESTBLENDALPHA, D3DBLEND_ONE);
+			renderer_->GetDevice()->SetRenderState(D3DRS_SRCBLENDALPHA, D3DBLEND_ONE);
+			renderer_->GetDevice()->SetRenderState(D3DRS_BLENDOPALPHA, D3DBLENDOP_MAX);
+			renderer_->GetDevice()->SetRenderState(D3DRS_ALPHAREF, 0);
 		}
-		else if (m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Blend)
+		else if (next_.AlphaBlend == ::Effekseer::AlphaBlendType::Blend)
 		{
-			m_renderer->GetDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-			m_renderer->GetDevice()->SetRenderState(D3DRS_SEPARATEALPHABLENDENABLE, TRUE);
-			m_renderer->GetDevice()->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
-			m_renderer->GetDevice()->SetRenderState(D3DRS_BLENDOPALPHA, D3DBLENDOP_ADD);
-			if (m_renderer->GetImpl()->IsPremultipliedAlphaEnabled)
+			renderer_->GetDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+			renderer_->GetDevice()->SetRenderState(D3DRS_SEPARATEALPHABLENDENABLE, TRUE);
+			renderer_->GetDevice()->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+			renderer_->GetDevice()->SetRenderState(D3DRS_BLENDOPALPHA, D3DBLENDOP_ADD);
+			if (renderer_->GetImpl()->IsPremultipliedAlphaEnabled)
 			{
-				m_renderer->GetDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-				m_renderer->GetDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
-				m_renderer->GetDevice()->SetRenderState(D3DRS_SRCBLENDALPHA, D3DBLEND_ONE);
-				m_renderer->GetDevice()->SetRenderState(D3DRS_DESTBLENDALPHA, D3DBLEND_INVSRCALPHA);
+				renderer_->GetDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+				renderer_->GetDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+				renderer_->GetDevice()->SetRenderState(D3DRS_SRCBLENDALPHA, D3DBLEND_ONE);
+				renderer_->GetDevice()->SetRenderState(D3DRS_DESTBLENDALPHA, D3DBLEND_INVSRCALPHA);
 			}
 			else
 			{
-				m_renderer->GetDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
-				m_renderer->GetDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-				m_renderer->GetDevice()->SetRenderState(D3DRS_DESTBLENDALPHA, D3DBLEND_ONE);
-				m_renderer->GetDevice()->SetRenderState(D3DRS_SRCBLENDALPHA, D3DBLEND_ONE);
+				renderer_->GetDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+				renderer_->GetDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+				renderer_->GetDevice()->SetRenderState(D3DRS_DESTBLENDALPHA, D3DBLEND_ONE);
+				renderer_->GetDevice()->SetRenderState(D3DRS_SRCBLENDALPHA, D3DBLEND_ONE);
 			}
-			m_renderer->GetDevice()->SetRenderState(D3DRS_ALPHAREF, 0);
+			renderer_->GetDevice()->SetRenderState(D3DRS_ALPHAREF, 0);
 		}
-		else if (m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Add)
+		else if (next_.AlphaBlend == ::Effekseer::AlphaBlendType::Add)
 		{
-			m_renderer->GetDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-			m_renderer->GetDevice()->SetRenderState(D3DRS_SEPARATEALPHABLENDENABLE, TRUE);
-			m_renderer->GetDevice()->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
-			m_renderer->GetDevice()->SetRenderState(D3DRS_BLENDOPALPHA, D3DBLENDOP_ADD);
+			renderer_->GetDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+			renderer_->GetDevice()->SetRenderState(D3DRS_SEPARATEALPHABLENDENABLE, TRUE);
+			renderer_->GetDevice()->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+			renderer_->GetDevice()->SetRenderState(D3DRS_BLENDOPALPHA, D3DBLENDOP_ADD);
 
-			if (m_renderer->GetImpl()->IsPremultipliedAlphaEnabled)
+			if (renderer_->GetImpl()->IsPremultipliedAlphaEnabled)
 			{
-				m_renderer->GetDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-				m_renderer->GetDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
-				m_renderer->GetDevice()->SetRenderState(D3DRS_SRCBLENDALPHA, D3DBLEND_ZERO);
-				m_renderer->GetDevice()->SetRenderState(D3DRS_DESTBLENDALPHA, D3DBLEND_ONE);
+				renderer_->GetDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+				renderer_->GetDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+				renderer_->GetDevice()->SetRenderState(D3DRS_SRCBLENDALPHA, D3DBLEND_ZERO);
+				renderer_->GetDevice()->SetRenderState(D3DRS_DESTBLENDALPHA, D3DBLEND_ONE);
 			}
 			else
 			{
-				m_renderer->GetDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-				m_renderer->GetDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
-				m_renderer->GetDevice()->SetRenderState(D3DRS_SRCBLENDALPHA, D3DBLEND_ONE);
-				m_renderer->GetDevice()->SetRenderState(D3DRS_DESTBLENDALPHA, D3DBLEND_ONE);
+				renderer_->GetDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+				renderer_->GetDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+				renderer_->GetDevice()->SetRenderState(D3DRS_SRCBLENDALPHA, D3DBLEND_ONE);
+				renderer_->GetDevice()->SetRenderState(D3DRS_DESTBLENDALPHA, D3DBLEND_ONE);
 			}
-			m_renderer->GetDevice()->SetRenderState(D3DRS_ALPHAREF, 0);
+			renderer_->GetDevice()->SetRenderState(D3DRS_ALPHAREF, 0);
 		}
-		else if (m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Sub)
+		else if (next_.AlphaBlend == ::Effekseer::AlphaBlendType::Sub)
 		{
-			m_renderer->GetDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-			m_renderer->GetDevice()->SetRenderState(D3DRS_SEPARATEALPHABLENDENABLE, TRUE);
-			m_renderer->GetDevice()->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_REVSUBTRACT);
-			m_renderer->GetDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
-			m_renderer->GetDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-			m_renderer->GetDevice()->SetRenderState(D3DRS_DESTBLENDALPHA, D3DBLEND_ONE);
-			m_renderer->GetDevice()->SetRenderState(D3DRS_SRCBLENDALPHA, D3DBLEND_ZERO);
-			m_renderer->GetDevice()->SetRenderState(D3DRS_BLENDOPALPHA, D3DBLENDOP_ADD);
-			m_renderer->GetDevice()->SetRenderState(D3DRS_ALPHAREF, 0);
+			renderer_->GetDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+			renderer_->GetDevice()->SetRenderState(D3DRS_SEPARATEALPHABLENDENABLE, TRUE);
+			renderer_->GetDevice()->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_REVSUBTRACT);
+			renderer_->GetDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+			renderer_->GetDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+			renderer_->GetDevice()->SetRenderState(D3DRS_DESTBLENDALPHA, D3DBLEND_ONE);
+			renderer_->GetDevice()->SetRenderState(D3DRS_SRCBLENDALPHA, D3DBLEND_ZERO);
+			renderer_->GetDevice()->SetRenderState(D3DRS_BLENDOPALPHA, D3DBLENDOP_ADD);
+			renderer_->GetDevice()->SetRenderState(D3DRS_ALPHAREF, 0);
 		}
-		else if (m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Mul)
+		else if (next_.AlphaBlend == ::Effekseer::AlphaBlendType::Mul)
 		{
-			m_renderer->GetDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-			m_renderer->GetDevice()->SetRenderState(D3DRS_SEPARATEALPHABLENDENABLE, TRUE);
-			m_renderer->GetDevice()->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
-			m_renderer->GetDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_SRCCOLOR);
-			m_renderer->GetDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ZERO);
-			m_renderer->GetDevice()->SetRenderState(D3DRS_DESTBLENDALPHA, D3DBLEND_ONE);
-			m_renderer->GetDevice()->SetRenderState(D3DRS_SRCBLENDALPHA, D3DBLEND_ZERO);
-			m_renderer->GetDevice()->SetRenderState(D3DRS_BLENDOPALPHA, D3DBLENDOP_ADD);
-			m_renderer->GetDevice()->SetRenderState(D3DRS_ALPHAREF, 0);
+			renderer_->GetDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+			renderer_->GetDevice()->SetRenderState(D3DRS_SEPARATEALPHABLENDENABLE, TRUE);
+			renderer_->GetDevice()->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+			renderer_->GetDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_SRCCOLOR);
+			renderer_->GetDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ZERO);
+			renderer_->GetDevice()->SetRenderState(D3DRS_DESTBLENDALPHA, D3DBLEND_ONE);
+			renderer_->GetDevice()->SetRenderState(D3DRS_SRCBLENDALPHA, D3DBLEND_ZERO);
+			renderer_->GetDevice()->SetRenderState(D3DRS_BLENDOPALPHA, D3DBLENDOP_ADD);
+			renderer_->GetDevice()->SetRenderState(D3DRS_ALPHAREF, 0);
 		}
 	}
 
 	for (int32_t i = 0; i < Effekseer::TextureSlotMax; i++)
 	{
-		if (m_active.TextureFilterTypes[i] != m_next.TextureFilterTypes[i] || forced)
+		if (active_.TextureFilterTypes[i] != next_.TextureFilterTypes[i] || forced)
 		{
 			const uint32_t MinFilterTable[] = {
 				D3DTEXF_POINT,
@@ -175,16 +175,16 @@ void RenderState::Update(bool forced)
 				D3DTEXF_LINEAR,
 			};
 
-			int32_t filter_ = (int32_t)m_next.TextureFilterTypes[i];
+			int32_t filter_ = (int32_t)next_.TextureFilterTypes[i];
 
 			// VTF is not supported
 
-			m_renderer->GetDevice()->SetSamplerState(i, D3DSAMP_MINFILTER, MinFilterTable[filter_]);
-			m_renderer->GetDevice()->SetSamplerState(i, D3DSAMP_MAGFILTER, MagFilterTable[filter_]);
-			m_renderer->GetDevice()->SetSamplerState(i, D3DSAMP_MIPFILTER, MipFilterTable[filter_]);
+			renderer_->GetDevice()->SetSamplerState(i, D3DSAMP_MINFILTER, MinFilterTable[filter_]);
+			renderer_->GetDevice()->SetSamplerState(i, D3DSAMP_MAGFILTER, MagFilterTable[filter_]);
+			renderer_->GetDevice()->SetSamplerState(i, D3DSAMP_MIPFILTER, MipFilterTable[filter_]);
 		}
 
-		if (m_active.TextureWrapTypes[i] != m_next.TextureWrapTypes[i] || forced)
+		if (active_.TextureWrapTypes[i] != next_.TextureWrapTypes[i] || forced)
 		{
 			std::array<int32_t, 3> wraps = {
 				D3DTADDRESS_WRAP,
@@ -192,21 +192,21 @@ void RenderState::Update(bool forced)
 				D3DTADDRESS_MIRROR,
 			};
 
-			auto wrap = wraps[static_cast<int32_t>(m_next.TextureWrapTypes[i])];
+			auto wrap = wraps[static_cast<int32_t>(next_.TextureWrapTypes[i])];
 
 			// for VTF
 			if (i < 4)
 			{
-				m_renderer->GetDevice()->SetSamplerState(i + D3DVERTEXTEXTURESAMPLER0, D3DSAMP_ADDRESSU, wrap);
-				m_renderer->GetDevice()->SetSamplerState(i + D3DVERTEXTEXTURESAMPLER0, D3DSAMP_ADDRESSV, wrap);
+				renderer_->GetDevice()->SetSamplerState(i + D3DVERTEXTEXTURESAMPLER0, D3DSAMP_ADDRESSU, wrap);
+				renderer_->GetDevice()->SetSamplerState(i + D3DVERTEXTEXTURESAMPLER0, D3DSAMP_ADDRESSV, wrap);
 			}
 
-			m_renderer->GetDevice()->SetSamplerState(i, D3DSAMP_ADDRESSU, wrap);
-			m_renderer->GetDevice()->SetSamplerState(i, D3DSAMP_ADDRESSV, wrap);
+			renderer_->GetDevice()->SetSamplerState(i, D3DSAMP_ADDRESSU, wrap);
+			renderer_->GetDevice()->SetSamplerState(i, D3DSAMP_ADDRESSV, wrap);
 		}
 	}
 
-	m_active = m_next;
+	active_ = next_;
 }
 
 //-----------------------------------------------------------------------------------

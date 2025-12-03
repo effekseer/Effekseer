@@ -101,7 +101,7 @@ ModelRenderer::ModelRenderer(const RendererImplementedRef& renderer,
 							 Shader* shader_lit,
 							 Shader* shader_unlit,
 							 Shader* shader_distortion)
-	: m_renderer(renderer)
+	: renderer_(renderer)
 	, shader_advanced_lit_(shader_advanced_lit)
 	, shader_advanced_unlit_(shader_advanced_unlit)
 	, shader_advanced_distortion_(shader_advanced_distortion)
@@ -239,12 +239,12 @@ ModelRendererRef ModelRenderer::Create(const RendererImplementedRef& renderer)
 
 void ModelRenderer::BeginRendering(const efkModelNodeParam& parameter, int32_t count, void* userData)
 {
-	BeginRendering_(m_renderer.Get(), parameter, count, userData);
+	BeginRendering_(renderer_.Get(), parameter, count, userData);
 }
 
 void ModelRenderer::Rendering(const efkModelNodeParam& parameter, const InstanceParameter& instanceParameter, void* userData)
 {
-	Rendering_<RendererImplemented>(m_renderer.Get(), parameter, instanceParameter, userData);
+	Rendering_<RendererImplemented>(renderer_.Get(), parameter, instanceParameter, userData);
 }
 
 //----------------------------------------------------------------------------------
@@ -279,7 +279,7 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 		return;
 	}
 
-	if (m_renderer->GetRenderMode() == Effekseer::RenderMode::Wireframe)
+	if (renderer_->GetRenderMode() == Effekseer::RenderMode::Wireframe)
 	{
 		model->GenerateWireIndexBuffer(graphicsDevice_.Get());
 		if (!model->GetIsWireIndexBufferGenerated())
@@ -294,7 +294,7 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 		Effekseer::Model,
 		true,
 		ModelRendererInstanceCount>(
-		m_renderer.Get(),
+		renderer_.Get(),
 		shader_advanced_lit_,
 		shader_advanced_unlit_,
 		shader_advanced_distortion_,

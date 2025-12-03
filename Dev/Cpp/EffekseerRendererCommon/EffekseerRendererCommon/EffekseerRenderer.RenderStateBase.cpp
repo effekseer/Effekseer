@@ -65,10 +65,10 @@ RenderStateBase::~RenderStateBase()
 RenderStateBase::State& RenderStateBase::Push()
 {
 	State newState;
-	m_next.CopyTo(newState);
-	m_stateStack.push(m_next);
-	m_next = newState;
-	return m_next;
+	next_.CopyTo(newState);
+	stateStack_.push(next_);
+	next_ = newState;
+	return next_;
 }
 
 //-----------------------------------------------------------------------------------
@@ -76,12 +76,12 @@ RenderStateBase::State& RenderStateBase::Push()
 //-----------------------------------------------------------------------------------
 void RenderStateBase::Pop()
 {
-	assert(!m_stateStack.empty());
+	assert(!stateStack_.empty());
 
-	State top = m_stateStack.top();
-	m_stateStack.pop();
+	State top = stateStack_.top();
+	stateStack_.pop();
 
-	m_next = top;
+	next_ = top;
 }
 
 //-----------------------------------------------------------------------------------
@@ -89,7 +89,7 @@ void RenderStateBase::Pop()
 //-----------------------------------------------------------------------------------
 RenderStateBase::State& RenderStateBase::GetActiveState()
 {
-	return m_next;
+	return next_;
 }
 
 //-----------------------------------------------------------------------------------

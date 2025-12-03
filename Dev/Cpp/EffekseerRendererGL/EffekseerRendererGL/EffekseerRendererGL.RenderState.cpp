@@ -52,9 +52,9 @@ void RenderState::Update(bool forced)
 {
 	GLCheckError();
 
-	if (m_active.DepthTest != m_next.DepthTest || forced)
+	if (active_.DepthTest != next_.DepthTest || forced)
 	{
-		if (m_next.DepthTest)
+		if (next_.DepthTest)
 		{
 			glEnable(GL_DEPTH_TEST);
 		}
@@ -66,28 +66,28 @@ void RenderState::Update(bool forced)
 
 	GLCheckError();
 
-	if (m_active.DepthWrite != m_next.DepthWrite || forced)
+	if (active_.DepthWrite != next_.DepthWrite || forced)
 	{
-		glDepthMask(m_next.DepthWrite);
+		glDepthMask(next_.DepthWrite);
 	}
 
 	GLCheckError();
 
-	if (m_active.CullingType != m_next.CullingType || forced)
+	if (active_.CullingType != next_.CullingType || forced)
 	{
 		if (isCCW_)
 		{
-			if (m_next.CullingType == Effekseer::CullingType::Front)
+			if (next_.CullingType == Effekseer::CullingType::Front)
 			{
 				glEnable(GL_CULL_FACE);
 				glCullFace(GL_FRONT);
 			}
-			else if (m_next.CullingType == Effekseer::CullingType::Back)
+			else if (next_.CullingType == Effekseer::CullingType::Back)
 			{
 				glEnable(GL_CULL_FACE);
 				glCullFace(GL_BACK);
 			}
-			else if (m_next.CullingType == Effekseer::CullingType::Double)
+			else if (next_.CullingType == Effekseer::CullingType::Double)
 			{
 				glDisable(GL_CULL_FACE);
 				glCullFace(GL_FRONT_AND_BACK);
@@ -95,17 +95,17 @@ void RenderState::Update(bool forced)
 		}
 		else
 		{
-			if (m_next.CullingType == Effekseer::CullingType::Front)
+			if (next_.CullingType == Effekseer::CullingType::Front)
 			{
 				glEnable(GL_CULL_FACE);
 				glCullFace(GL_BACK);
 			}
-			else if (m_next.CullingType == Effekseer::CullingType::Back)
+			else if (next_.CullingType == Effekseer::CullingType::Back)
 			{
 				glEnable(GL_CULL_FACE);
 				glCullFace(GL_FRONT);
 			}
-			else if (m_next.CullingType == Effekseer::CullingType::Double)
+			else if (next_.CullingType == Effekseer::CullingType::Double)
 			{
 				glDisable(GL_CULL_FACE);
 				glCullFace(GL_FRONT_AND_BACK);
@@ -115,17 +115,17 @@ void RenderState::Update(bool forced)
 
 	GLCheckError();
 
-	if (m_active.AlphaBlend != m_next.AlphaBlend || forced)
+	if (active_.AlphaBlend != next_.AlphaBlend || forced)
 	{
 		{
 			glEnable(GL_BLEND);
 
-			if (m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Opacity)
+			if (next_.AlphaBlend == ::Effekseer::AlphaBlendType::Opacity)
 			{
 				GLExt::glBlendEquationSeparate(GL_FUNC_ADD, GL_MAX);
 				GLExt::glBlendFuncSeparate(GL_ONE, GL_ZERO, GL_ONE, GL_ONE);
 			}
-			else if (m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Sub)
+			else if (next_.AlphaBlend == ::Effekseer::AlphaBlendType::Sub)
 			{
 				GLExt::glBlendEquationSeparate(GL_FUNC_REVERSE_SUBTRACT, GL_FUNC_ADD);
 				GLExt::glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE, GL_ZERO, GL_ONE);
@@ -133,7 +133,7 @@ void RenderState::Update(bool forced)
 			else
 			{
 				GLExt::glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
-				if (m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Blend)
+				if (next_.AlphaBlend == ::Effekseer::AlphaBlendType::Blend)
 				{
 					if (renderer_->GetImpl()->IsPremultipliedAlphaEnabled)
 					{
@@ -144,7 +144,7 @@ void RenderState::Update(bool forced)
 						GLExt::glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
 					}
 				}
-				else if (m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Add)
+				else if (next_.AlphaBlend == ::Effekseer::AlphaBlendType::Add)
 				{
 					if (renderer_->GetImpl()->IsPremultipliedAlphaEnabled)
 					{
@@ -155,7 +155,7 @@ void RenderState::Update(bool forced)
 						GLExt::glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE, GL_ONE, GL_ONE);
 					}
 				}
-				else if (m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Mul)
+				else if (next_.AlphaBlend == ::Effekseer::AlphaBlendType::Mul)
 				{
 					GLExt::glBlendFuncSeparate(GL_ZERO, GL_SRC_COLOR, GL_ZERO, GL_ONE);
 				}
@@ -179,7 +179,7 @@ void RenderState::Update(bool forced)
 			if (texture == nullptr)
 				continue;
 
-			if (m_active.TextureFilterTypes[i] != m_next.TextureFilterTypes[i] || forced || m_active.TextureIDs[i] != m_next.TextureIDs[i])
+			if (active_.TextureFilterTypes[i] != next_.TextureFilterTypes[i] || forced || active_.TextureIDs[i] != next_.TextureIDs[i])
 			{
 				GLExt::glActiveTexture(GL_TEXTURE0 + i);
 
@@ -190,7 +190,7 @@ void RenderState::Update(bool forced)
 				// assert(bound > 0);
 #endif
 
-				int32_t filter_ = (int32_t)m_next.TextureFilterTypes[i];
+				int32_t filter_ = (int32_t)next_.TextureFilterTypes[i];
 
 				GLExt::glSamplerParameteri(samplers_[i], GL_TEXTURE_MAG_FILTER, glfilterMag[filter_]);
 
@@ -209,11 +209,11 @@ void RenderState::Update(bool forced)
 				GLExt::glBindSampler(i, samplers_[i]);
 			}
 
-			if (m_active.TextureWrapTypes[i] != m_next.TextureWrapTypes[i] || forced || m_active.TextureIDs[i] != m_next.TextureIDs[i])
+			if (active_.TextureWrapTypes[i] != next_.TextureWrapTypes[i] || forced || active_.TextureIDs[i] != next_.TextureIDs[i])
 			{
 				GLExt::glActiveTexture(GL_TEXTURE0 + i);
 
-				int32_t wrap = static_cast<int32_t>(m_next.TextureWrapTypes[i]);
+				int32_t wrap = static_cast<int32_t>(next_.TextureWrapTypes[i]);
 				GLExt::glSamplerParameteri(samplers_[i], GL_TEXTURE_WRAP_S, glwrap[wrap]);
 				GLExt::glSamplerParameteri(samplers_[i], GL_TEXTURE_WRAP_T, glwrap[wrap]);
 
@@ -232,7 +232,7 @@ void RenderState::Update(bool forced)
 				continue;
 
 			// always changes because a flag is assigned into a texture
-			// if (m_active.TextureFilterTypes[i] != m_next.TextureFilterTypes[i] || forced)
+			// if (active_.TextureFilterTypes[i] != next_.TextureFilterTypes[i] || forced)
 			{
 				GLExt::glActiveTexture(GL_TEXTURE0 + i);
 				GLCheckError();
@@ -244,7 +244,7 @@ void RenderState::Update(bool forced)
 				assert(bound > 0);
 #endif
 
-				int32_t filter_ = (int32_t)m_next.TextureFilterTypes[i];
+				int32_t filter_ = (int32_t)next_.TextureFilterTypes[i];
 
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, glfilterMag[filter_]);
 				GLCheckError();
@@ -260,12 +260,12 @@ void RenderState::Update(bool forced)
 			}
 
 			// always changes because a flag is assigned into a texture
-			// if (m_active.TextureWrapTypes[i] != m_next.TextureWrapTypes[i] || forced)
+			// if (active_.TextureWrapTypes[i] != next_.TextureWrapTypes[i] || forced)
 			{
 				GLExt::glActiveTexture(GL_TEXTURE0 + i);
 				GLCheckError();
 
-				int32_t wrap_ = (int32_t)m_next.TextureWrapTypes[i];
+				int32_t wrap_ = (int32_t)next_.TextureWrapTypes[i];
 
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, glwrap[wrap_]);
 				GLCheckError();
@@ -279,7 +279,7 @@ void RenderState::Update(bool forced)
 
 	GLExt::glActiveTexture(GL_TEXTURE0);
 
-	m_active = m_next;
+	active_ = next_;
 
 	GLCheckError();
 }

@@ -29,78 +29,78 @@ private:
 	Effekseer::Backend::IndexBufferRef indexBuffer_;
 	Effekseer::Backend::IndexBufferRef indexBufferForWireframe_;
 
-	int32_t m_squareMaxCount;
+	int32_t squareMaxCount_;
 	Shader* currentShader = nullptr;
 
-	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>* m_standardRenderer;
+	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>* standardRenderer_;
 
-	::Effekseer::Matrix44 m_proj;
-	::Effekseer::Matrix44 m_camera;
-	::Effekseer::Matrix44 m_cameraProj;
+	::Effekseer::Matrix44 proj_;
+	::Effekseer::Matrix44 camera_;
+	::Effekseer::Matrix44 cameraProj_;
 
-	::Effekseer::Vector3D m_cameraPosition;
-	::Effekseer::Vector3D m_cameraFrontDirection;
+	::Effekseer::Vector3D cameraPosition_;
+	::Effekseer::Vector3D cameraFrontDirection_;
 
 	// 座標系
-	::Effekseer::CoordinateSystem m_coordinateSystem;
+	::Effekseer::CoordinateSystem coordinateSystem_;
 
-	::EffekseerRenderer::RenderStateBase* m_renderState;
+	::EffekseerRenderer::RenderStateBase* renderState_;
 
 	// ステート
-	DWORD m_state_FVF;
+	DWORD stateFvf_;
 
-	DWORD m_state_D3DRS_ALPHABLENDENABLE;
-	DWORD m_state_D3DRS_BLENDOP;
-	DWORD m_state_D3DRS_DESTBLEND;
-	DWORD m_state_D3DRS_SRCBLEND;
-	DWORD m_state_D3DRS_ALPHAREF;
+	DWORD stateAlphaBlendEnable_;
+	DWORD stateBlendOp_;
+	DWORD stateDestBlend_;
+	DWORD stateSrcBlend_;
+	DWORD stateAlphaRef_;
 
-	DWORD m_state_D3DRS_DESTBLENDALPHA;
-	DWORD m_state_D3DRS_SRCBLENDALPHA;
-	DWORD m_state_D3DRS_SEPARATEALPHABLENDENABLE;
-	DWORD m_state_D3DRS_BLENDOPALPHA;
+	DWORD stateDestBlendAlpha_;
+	DWORD stateSrcBlendAlpha_;
+	DWORD stateSeparateAlphaBlendEnable_;
+	DWORD stateBlendOpAlpha_;
 
-	DWORD m_state_D3DRS_ZENABLE;
-	DWORD m_state_D3DRS_ZWRITEENABLE;
-	DWORD m_state_D3DRS_ALPHATESTENABLE;
-	DWORD m_state_D3DRS_CULLMODE;
+	DWORD stateZEnable_;
+	DWORD stateZWriteEnable_;
+	DWORD stateAlphaTestEnable_;
+	DWORD stateCullMode_;
 
-	DWORD m_state_D3DRS_COLORVERTEX;
-	DWORD m_state_D3DRS_LIGHTING;
-	DWORD m_state_D3DRS_SHADEMODE;
+	DWORD stateColorVertex_;
+	DWORD stateLighting_;
+	DWORD stateShadeMode_;
 
-	std::array<DWORD, Effekseer::TextureSlotMax> m_state_D3DSAMP_MAGFILTER;
-	std::array<DWORD, Effekseer::TextureSlotMax> m_state_D3DSAMP_MINFILTER;
-	std::array<DWORD, Effekseer::TextureSlotMax> m_state_D3DSAMP_MIPFILTER;
-	std::array<DWORD, Effekseer::TextureSlotMax> m_state_D3DSAMP_ADDRESSU;
-	std::array<DWORD, Effekseer::TextureSlotMax> m_state_D3DSAMP_ADDRESSV;
+	std::array<DWORD, Effekseer::TextureSlotMax> stateSamplerMagFilter_;
+	std::array<DWORD, Effekseer::TextureSlotMax> stateSamplerMinFilter_;
+	std::array<DWORD, Effekseer::TextureSlotMax> stateSamplerMipFilter_;
+	std::array<DWORD, Effekseer::TextureSlotMax> stateSamplerAddressU_;
+	std::array<DWORD, Effekseer::TextureSlotMax> stateSamplerAddressV_;
 
-	IDirect3DVertexShader9* m_state_vertexShader;
-	IDirect3DPixelShader9* m_state_pixelShader;
-	IDirect3DVertexDeclaration9* m_state_vertexDeclaration;
+	IDirect3DVertexShader9* stateVertexShader_;
+	IDirect3DPixelShader9* statePixelShader_;
+	IDirect3DVertexDeclaration9* stateVertexDeclaration_;
 
-	std::array<IDirect3DVertexBuffer9*, 2> m_state_streamData;
-	std::array<UINT, 2> m_state_streamFreq;
-	std::array<UINT, 2> m_state_OffsetInBytes;
-	std::array<UINT, 2> m_state_pStride;
+	std::array<IDirect3DVertexBuffer9*, 2> stateStreamData_;
+	std::array<UINT, 2> stateStreamFreq_;
+	std::array<UINT, 2> stateOffsetInBytes_;
+	std::array<UINT, 2> stateStride_;
 
-	IDirect3DIndexBuffer9* m_state_IndexData;
+	IDirect3DIndexBuffer9* stateIndexData_;
 
-	std::vector<float> m_state_VertexShaderConstantF;
-	std::vector<float> m_state_PixelShaderConstantF;
+	std::vector<float> stateVertexShaderConstantF_;
+	std::vector<float> statePixelShaderConstantF_;
 
-	std::array<IDirect3DBaseTexture9*, 2> m_state_pTexture;
+	std::array<IDirect3DBaseTexture9*, 2> stateTextures_;
 
-	bool m_isChangedDevice;
+	bool isChangedDevice_;
 
-	bool m_restorationOfStates;
+	bool restorationOfStates_;
 
 	Backend::GraphicsDeviceRef graphicsDevice_ = nullptr;
 	Effekseer::Backend::VertexBufferRef instancedVertexBuffer_;
 
-	EffekseerRenderer::DistortingCallback* m_distortingCallback;
+	EffekseerRenderer::DistortingCallback* distortingCallback_;
 
-	::Effekseer::Backend::TextureRef m_backgroundDX9;
+	::Effekseer::Backend::TextureRef backgroundDX9_;
 
 public:
 	/**
@@ -187,7 +187,7 @@ public:
 
 	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader>* GetStandardRenderer()
 	{
-		return m_standardRenderer;
+		return standardRenderer_;
 	}
 
 	void SetVertexBuffer(const Effekseer::Backend::VertexBufferRef& vertexBuffer, int32_t size);

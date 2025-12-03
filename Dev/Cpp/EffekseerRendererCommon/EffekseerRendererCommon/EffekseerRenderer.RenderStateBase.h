@@ -41,9 +41,9 @@ public:
 	};
 
 protected:
-	std::stack<State> m_stateStack;
-	State m_active;
-	State m_next;
+	std::stack<State> stateStack_;
+	State active_;
+	State next_;
 
 public:
 	RenderStateBase();
