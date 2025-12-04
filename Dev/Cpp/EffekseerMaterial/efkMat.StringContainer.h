@@ -8,7 +8,7 @@ namespace EffekseerMaterial
 class StringContainer
 {
 private:
-	static std::unordered_map<std::string, std::string> values;
+	static std::unordered_map<std::string, std::string> values_;
 
 public:
 	StringContainer() = default;

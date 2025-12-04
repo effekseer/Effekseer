@@ -328,9 +328,9 @@ std::shared_ptr<Mesh> Mesh::Load(std::shared_ptr<Graphics> graphics, const char*
 	auto ib = graphics->GetGraphicsDevice()->CreateIndexBuffer(indexes.size(), indexes.data(), Effekseer::Backend::IndexBufferStrideType::Stride2);
 
 	auto mesh = std::make_shared<Mesh>();
-	mesh->vb = vb;
-	mesh->ib = ib;
-	mesh->indexCount = indexes.size();
+	mesh->vertexBuffer_ = vb;
+	mesh->indexBuffer_ = ib;
+	mesh->indexCount_ = indexes.size();
 
 	return mesh;
 }

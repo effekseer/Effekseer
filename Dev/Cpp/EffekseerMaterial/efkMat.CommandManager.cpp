@@ -3,8 +3,8 @@
 namespace EffekseerMaterial
 {
 DelegateCommand::DelegateCommand(const std::function<void()>& execute, const std::function<void()>& unexecute)
-	: execute(execute)
-	, unexecute(unexecute)
+	: execute_(execute)
+	, unexecute_(unexecute)
 {
 }
 
@@ -14,12 +14,12 @@ DelegateCommand::~DelegateCommand()
 
 void DelegateCommand::Execute()
 {
-	execute();
+	execute_();
 }
 
 void DelegateCommand::Unexecute()
 {
-	unexecute();
+	unexecute_();
 }
 
 CommandCollection::CommandCollection()
@@ -31,26 +31,26 @@ CommandCollection::~CommandCollection()
 
 void CommandCollection::AddCommand(std::shared_ptr<ICommand> command)
 {
-	if (commands.size() > 0)
+	if (commands_.size() > 0)
 	{
-		if (command->Merge(commands.back().get()))
+		if (command->Merge(commands_.back().get()))
 		{
-			commands.back() = command;
+			commands_.back() = command;
 		}
 		else
 		{
-			commands.push_back(command);
+			commands_.push_back(command);
 		}
 	}
 	else
 	{
-		commands.push_back(command);
+		commands_.push_back(command);
 	}
 }
 
 void CommandCollection::Execute()
 {
-	for (auto c : commands)
+	for (auto c : commands_)
 	{
 		c->Execute();
 	}
@@ -58,107 +58,107 @@ void CommandCollection::Execute()
 
 void CommandCollection::Unexecute()
 {
-	for (int32_t i = static_cast<int32_t>(commands.size()) - 1; i >= 0; i--)
+	for (int32_t i = static_cast<int32_t>(commands_.size()) - 1; i >= 0; i--)
 	{
-		commands[i]->Unexecute();
+		commands_[i]->Unexecute();
 	}
 }
 
 void CommandManager::StartCollection()
 {
-	if (collectionCount == 0)
+	if (collectionCount_ == 0)
 	{
-		collection = std::make_shared<CommandCollection>();
+		collection_ = std::make_shared<CommandCollection>();
 	}
 
-	collectionCount++;
+	collectionCount_++;
 }
 
 void CommandManager::EndCollection()
 {
-	collectionCount--;
+	collectionCount_--;
 
-	if (collectionCount == 0)
+	if (collectionCount_ == 0)
 	{
-		Execute(collection);
-		collection = nullptr;
+		Execute(collection_);
+		collection_ = nullptr;
 	}
 }
 
 void CommandManager::Execute(std::shared_ptr<ICommand> command)
 {
-	if (collectionCount > 0)
+	if (collectionCount_ > 0)
 	{
-		collection->AddCommand(command);
+		collection_->AddCommand(command);
 		command->Execute();
 	}
 	else
 	{
-		commands.resize(commandInd);
+		commands_.resize(commandInd_);
 
-		if (commands.size() > 0)
+		if (commands_.size() > 0)
 		{
-			if (isMergeEnabled && command->Merge(commands.back().get()))
+			if (isMergeEnabled_ && command->Merge(commands_.back().get()))
 			{
-				commands.back() = command;
+				commands_.back() = command;
 			}
 			else
 			{
-				commands.push_back(command);
-				commandInd++;
+				commands_.push_back(command);
+				commandInd_++;
 			}
 		}
 		else
 		{
-			commands.push_back(command);
-			commandInd++;
+			commands_.push_back(command);
+			commandInd_++;
 		}
 
 		command->Execute();
-		isMergeEnabled = true;
+		isMergeEnabled_ = true;
 	}
 
-	historyID++;
+	historyId_++;
 }
 
 void CommandManager::Undo()
 {
-	if (collectionCount > 0)
+	if (collectionCount_ > 0)
 		return;
-	if (commandInd == 0)
+	if (commandInd_ == 0)
 		return;
-	commands[commandInd - 1]->Unexecute();
-	commandInd--;
-	historyID++;
+	commands_[commandInd_ - 1]->Unexecute();
+	commandInd_--;
+	historyId_++;
 }
 
 void CommandManager::Redo()
 {
-	if (collectionCount > 0)
+	if (collectionCount_ > 0)
 		return;
-	if (commandInd == commands.size())
+	if (commandInd_ == commands_.size())
 		return;
-	commands[commandInd]->Execute();
-	commandInd++;
-	historyID++;
+	commands_[commandInd_]->Execute();
+	commandInd_++;
+	historyId_++;
 }
 
 void CommandManager::Reset()
 {
-	commands.clear();
-	commandInd = 0;
-	collectionCount = 0;
-	historyID = 0;
+	commands_.clear();
+	commandInd_ = 0;
+	collectionCount_ = 0;
+	historyId_ = 0;
 }
 
 void CommandManager::MakeMergeDisabled()
 {
-	isMergeEnabled = false;
+	isMergeEnabled_ = false;
 }
 
 uint64_t CommandManager::GetHistoryID()
 {
-	return historyID;
+	return historyId_;
 }
 
 } // namespace EffekseerMaterial

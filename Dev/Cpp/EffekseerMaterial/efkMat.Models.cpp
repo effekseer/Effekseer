@@ -400,12 +400,12 @@ void Node::UpdateRegion(const Vector2DF& pos, const Vector2DF& size)
 
 uint64_t Material::GetIDAndNext()
 {
-	auto ret = nextGUID;
-	nextGUID++;
+	auto ret = nextGuid_;
+	nextGuid_++;
 
-	if (nextGUID > std::numeric_limits<uint64_t>::max() - 0xff)
+	if (nextGuid_ > std::numeric_limits<uint64_t>::max() - 0xff)
 	{
-		nextGUID = 0xff;
+		nextGuid_ = 0xff;
 	}
 
 	return ret;
@@ -676,9 +676,9 @@ std::string Material::SaveAsStrInternal(std::vector<std::shared_ptr<Node>> nodes
 
 	if (aim == SaveLoadAimType::IO)
 	{
-		picojson::array textures_;
+		picojson::array textures__;
 
-		for (auto texture : textures)
+		for (auto texture : textures_)
 		{
 			picojson::object texture_;
 
@@ -693,10 +693,10 @@ std::string Material::SaveAsStrInternal(std::vector<std::shared_ptr<Node>> nodes
 			texture_.insert(std::make_pair("Path", picojson::value(relative)));
 			texture_.insert(std::make_pair("Type", picojson::value(static_cast<double>(texture.second->Type))));
 
-			textures_.push_back(picojson::value(texture_));
+			textures__.push_back(picojson::value(texture_));
 		}
 
-		rootJson.insert(std::make_pair("Textures", picojson::value(textures_)));
+		rootJson.insert(std::make_pair("Textures", picojson::value(textures__)));
 	}
 
 	auto str_main = picojson::value(rootJson).serialize();
@@ -776,7 +776,7 @@ void Material::LoadFromStrInternal(
 
 		if (guidMax > 255)
 		{
-			nextGUID = guidMax + 1;
+			nextGuid_ = guidMax + 1;
 		}
 	}
 
@@ -1016,13 +1016,13 @@ void Material::LoadFromStrInternal(
 
 	if (aim == SaveLoadAimType::IO)
 	{
-		picojson::value textures_obj = root_.get("Textures");
+		picojson::value textures__obj = root_.get("Textures");
 
-		if (textures_obj.is<picojson::array>())
+		if (textures__obj.is<picojson::array>())
 		{
-			picojson::array textures_ = textures_obj.get<picojson::array>();
+			picojson::array textures__ = textures__obj.get<picojson::array>();
 
-			for (auto texture_ : textures_)
+			for (auto texture_ : textures__)
 			{
 				auto path_obj = texture_.get("Path");
 				auto path = path_obj.get<std::string>();
@@ -1034,7 +1034,7 @@ void Material::LoadFromStrInternal(
 				auto texture = std::make_shared<TextureInfo>();
 				texture->Path = absolute;
 				texture->Type = static_cast<TextureValueType>(static_cast<int>(textureType));
-				textures[absolute] = texture;
+				textures_[absolute] = texture;
 			}
 		}
 	}
@@ -1529,7 +1529,7 @@ const std::vector<std::shared_ptr<Link>>& Material::GetLinks() const
 
 const std::map<std::string, std::shared_ptr<TextureInfo>> Material::GetTextures() const
 {
-	return textures;
+	return textures_;
 }
 
 std::shared_ptr<Node> Material::FindNode(uint64_t guid)
@@ -1577,9 +1577,9 @@ std::shared_ptr<TextureInfo> Material::FindTexture(const char* path)
 
 	auto key = std::string(path);
 
-	auto kv = textures.find(path);
+	auto kv = textures_.find(path);
 
-	if (kv != textures.end())
+	if (kv != textures_.end())
 	{
 		return kv->second;
 	}
@@ -1588,7 +1588,7 @@ std::shared_ptr<TextureInfo> Material::FindTexture(const char* path)
 
 	texture->Type = TextureValueType::Color;
 	texture->Path = path;
-	textures[key] = texture;
+	textures_[key] = texture;
 
 	return texture;
 }
@@ -1708,7 +1708,7 @@ void Material::ChangeValueTextureType(std::shared_ptr<TextureInfo> prop, Texture
 
 void Material::MakeDirty(std::shared_ptr<Node> node, bool doesUpdateWarnings)
 {
-	node->isDirtied = true;
+	node->isDirtied_ = true;
 
 	for (auto o : node->OutputPins)
 	{
@@ -1728,12 +1728,12 @@ void Material::MakeDirty(std::shared_ptr<Node> node, bool doesUpdateWarnings)
 
 void Material::ClearDirty(std::shared_ptr<Node> node)
 {
-	node->isDirtied = false;
+	node->isDirtied_ = false;
 }
 
 void Material::MakeContentDirty(std::shared_ptr<Node> node)
 {
-	node->isContentDirtied = true;
+	node->isContentDirtied_ = true;
 
 	for (auto o : node->OutputPins)
 	{
@@ -1750,7 +1750,7 @@ void Material::MakeContentDirty(std::shared_ptr<Node> node)
 
 void Material::ClearContentDirty(std::shared_ptr<Node> node)
 {
-	node->isContentDirtied = false;
+	node->isContentDirtied_ = false;
 }
 
 void Material::UpdateWarnings()
@@ -1781,7 +1781,7 @@ void Material::LoadFromStr(const char* json, std::shared_ptr<Library> library, c
 
 	nodes_.clear();
 	links_.clear();
-	textures.clear();
+	textures_.clear();
 
 	LoadFromStrInternal(json, Vector2DF(), library, basePath, SaveLoadAimType::IO);
 

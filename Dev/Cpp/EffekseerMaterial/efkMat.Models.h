@@ -116,8 +116,8 @@ class Node : public std::enable_shared_from_this<Node>
 {
 private:
 	friend class Material;
-	bool isDirtied = true;
-	bool isContentDirtied = false;
+	bool isDirtied_ = true;
+	bool isContentDirtied_ = false;
 	bool isPosDirtied_ = true;
 
 	std::weak_ptr<Material> material_;
@@ -166,12 +166,12 @@ public:
 
 	bool GetIsDirtied() const
 	{
-		return isDirtied;
+		return isDirtied_;
 	}
 
 	bool GetIsContentDirtied() const
 	{
-		return isContentDirtied;
+		return isContentDirtied_;
 	}
 
 	void MakePosDirtied()
@@ -245,9 +245,9 @@ private:
 
 	std::vector<std::shared_ptr<Node>> nodes_;
 	std::vector<std::shared_ptr<Link>> links_;
-	std::map<std::string, std::shared_ptr<TextureInfo>> textures;
+	std::map<std::string, std::shared_ptr<TextureInfo>> textures_;
 
-	uint64_t nextGUID = 0xff;
+	uint64_t nextGuid_ = 0xff;
 
 	uint64_t GetIDAndNext();
 
