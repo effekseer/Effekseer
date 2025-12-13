@@ -976,6 +976,12 @@ namespace Effekseer
 				updater.Update(root_node);
 			}
 
+			if (toolVersion < ParseVersion("1.80α3"))
+			{
+				var updater = new Utils.ProjectVersionUpdator17To18Alpha3();
+				updater.Update(root_node);
+			}
+
 			Command.CommandManager.Clear();
 			IsChanged = false;
 

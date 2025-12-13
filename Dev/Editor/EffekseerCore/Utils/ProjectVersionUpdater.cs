@@ -848,4 +848,57 @@ namespace Effekseer.Utils
 			return true;
 		}
 	}
+
+	class ProjectVersionUpdator17To18Alpha3 : ProjectVersionUpdator
+	{
+		public override bool Update(NodeRoot rootNode)
+		{
+			Action<Data.NodeBase> convert = null;
+			convert = (n) =>
+			{
+				var node = n as Data.Node;
+
+				if (node != null)
+				{
+					var common = node.CommonValues;
+
+					common.Generation.Timing.SetValueDirectly(Data.CommonValues.GenerationTimingType.Continuous);
+					common.Removal.WhenLifeIsExtinct.SetValueDirectly(common.RemoveWhenLifeIsExtinct.GetValue());
+					common.Removal.WhenParentIsRemoved.SetValueDirectly(common.RemoveWhenParentIsRemoved.GetValue());
+					common.Removal.WhenChildrenAreRemoved.SetValueDirectly(common.RemoveWhenAllChildrenAreRemoved.GetValue());
+
+					if (common.TriggerParam != null)
+					{
+						common.Removal.Trigger.SetValueDirectly(common.TriggerParam.ToRemove.GetValue());
+						common.Generation.ToStartGeneration.SetValueDirectly(common.TriggerParam.ToStartGeneration.GetValue());
+						common.Generation.ToStopGeneration.SetValueDirectly(common.TriggerParam.ToStopGeneration.GetValue());
+					}
+
+					common.Generation.GenerationTime.SetCenterDirectly(common.GenerationTime.Center);
+					common.Generation.GenerationTime.SetMaxDirectly(common.GenerationTime.Max);
+					common.Generation.GenerationTime.SetMinDirectly(common.GenerationTime.Min);
+					common.Generation.GenerationTime.DrawnAs = common.GenerationTime.DrawnAs;
+					common.Generation.GenerationTime.Step = common.GenerationTime.Step;
+					common.Generation.GenerationTime.DynamicEquationMax.SetValueWithIndex(common.GenerationTime.DynamicEquationMax.Index);
+					common.Generation.GenerationTime.DynamicEquationMin.SetValueWithIndex(common.GenerationTime.DynamicEquationMin.Index);
+
+					common.Generation.GenerationTimeOffset.SetCenterDirectly(common.GenerationTimeOffset.Center);
+					common.Generation.GenerationTimeOffset.SetMaxDirectly(common.GenerationTimeOffset.Max);
+					common.Generation.GenerationTimeOffset.SetMinDirectly(common.GenerationTimeOffset.Min);
+					common.Generation.GenerationTimeOffset.DrawnAs = common.GenerationTimeOffset.DrawnAs;
+					common.Generation.GenerationTimeOffset.Step = common.GenerationTimeOffset.Step;
+					common.Generation.GenerationTimeOffset.DynamicEquationMax.SetValueWithIndex(common.GenerationTimeOffset.DynamicEquationMax.Index);
+					common.Generation.GenerationTimeOffset.DynamicEquationMin.SetValueWithIndex(common.GenerationTimeOffset.DynamicEquationMin.Index);
+				}
+
+				for (int i = 0; i < n.Children.Count; i++)
+				{
+					convert(n.Children[i]);
+				}
+			};
+
+			convert(rootNode);
+			return true;
+		}
+	}
 }

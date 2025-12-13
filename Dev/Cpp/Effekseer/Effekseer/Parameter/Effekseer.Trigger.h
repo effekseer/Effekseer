@@ -29,6 +29,7 @@ struct TriggerParameter
 	TriggerValues ToStartGeneration;
 	TriggerValues ToStopGeneration;
 	TriggerValues ToRemove;
+	TriggerValues ToGenerateOnTrigger;
 
 	void Load(uint8_t*& pos, int32_t version);
 };

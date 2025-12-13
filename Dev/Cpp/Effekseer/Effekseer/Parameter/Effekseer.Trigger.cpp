@@ -16,6 +16,7 @@ void TriggerParameter::Load(uint8_t*& pos, int32_t version)
 	ToStartGeneration = {};
 	ToStopGeneration = {};
 	ToRemove = {};
+	ToGenerateOnTrigger = {};
 
 	if (version < Version17Alpha1)
 	{
@@ -44,6 +45,11 @@ void TriggerParameter::Load(uint8_t*& pos, int32_t version)
 	if (flags & (1 << 2))
 	{
 		loadValue(ToRemove);
+	}
+
+	if (version >= Version18Alpha3 && (flags & (1 << 3)))
+	{
+		loadValue(ToGenerateOnTrigger);
 	}
 }
 
