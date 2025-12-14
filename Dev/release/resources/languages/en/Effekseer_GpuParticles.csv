@@ -121,7 +121,7 @@ GpuParticles_RenderShape_Size_Desc,Size of the particle rendering shape
 
 GpuParticles_RenderColor_Name,Color
 GpuParticles_RenderColor_ColorInherit_Name,Color inheritance
-GpuParticles_RenderColor_ColorInherit_Desc,Affected by the color of the parent or root node
+GpuParticles_RenderColor_ColorInherit_Desc,How this node's (or root node's) render color affects GPU particles.
 GpuParticles_RenderColor_ColorAll_Name,Color All
 GpuParticles_RenderColor_ColorAll_Desc,Particle color
 GpuParticles_RenderColor_Emissive_Name,Emissive Scaling
