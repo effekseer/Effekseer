@@ -46,7 +46,7 @@ void InstanceGroup::Initialize(RandObject& rand, Instance* parent)
 {
 	generatedCount_ = 0;
 
-	auto gt = ApplyEq(effectNode_->GetEffect(), global_, parent, &rand, effectNode_->CommonValues.RefEqGenerationTimeOffset, effectNode_->CommonValues.GenerationTimeOffset);
+	auto gt = ApplyEq(effectNode_->GetEffect(), global_, parent, &rand, effectNode_->CommonValues.Generation.RefEqOffset, effectNode_->CommonValues.Generation.Offset);
 
 	generationOffsetTime_ = gt.getValue(rand);
 	nextGenerationTime_ = generationOffsetTime_;
@@ -62,7 +62,7 @@ void InstanceGroup::Initialize(RandObject& rand, Instance* parent)
 		maxGenerationCount_ = effectNode_->CommonValues.MaxGeneration;
 	}
 
-	if (effectNode_->TriggerParam.ToStartGeneration.type == TriggerType::None)
+	if (effectNode_->CommonValues.Generation.Type == GenerationTiming::Trigger || effectNode_->CommonValues.Generation.TriggerToStart.type == TriggerType::None)
 	{
 		generationState_ = GenerationState::Generating;
 	}
@@ -82,17 +82,24 @@ Instance* InstanceGroup::CreateRootInstance()
 
 void InstanceGroup::GenerateInstancesIfRequired(float localTime, RandObject& rand, Instance* parent)
 {
+	const auto generationType = effectNode_->CommonValues.Generation.Type;
+
+	if (generationState_ == GenerationState::Ended)
+	{
+		return;
+	}
+
 	if (generationState_ == GenerationState::BeforeStart)
 	{
-		if (IsTriggerActivated(effectNode_->TriggerParam.ToStartGeneration, global_, parent))
+		if (IsTriggerActivated(effectNode_->CommonValues.Generation.TriggerToStart, global_, parent))
 		{
 			generationState_ = GenerationState::Generating;
 			nextGenerationTime_ = generationOffsetTime_ + localTime;
 		}
 	}
-	if (generationState_ == GenerationState::Generating)
+	if (generationState_ == GenerationState::Generating && generationType == GenerationTiming::Continuous)
 	{
-		if (IsTriggerActivated(effectNode_->TriggerParam.ToStopGeneration, global_, parent))
+		if (IsTriggerActivated(effectNode_->CommonValues.Generation.TriggerToStop, global_, parent))
 		{
 			generationState_ = GenerationState::Ended;
 		}
@@ -100,6 +107,42 @@ void InstanceGroup::GenerateInstancesIfRequired(float localTime, RandObject& ran
 
 	const bool isSpawnRestrictedByLOD = (global_->CurrentLevelOfDetails & effectNode_->LODsParam.MatchingLODs) == 0 && !effectNode_->CanSpawnWithNonMatchingLOD();
 	const bool canSpawn = !global_->IsSpawnDisabled && !isSpawnRestrictedByLOD;
+
+	if (generationType == GenerationTiming::Trigger)
+	{
+		const bool canGenerateNow = generationState_ == GenerationState::Generating && localTime >= generationOffsetTime_;
+		if (canGenerateNow && IsTriggerActivated(effectNode_->CommonValues.Generation.TriggerToGenerate, global_, parent))
+		{
+			auto triggerCount = ApplyEq(effectNode_->GetEffect(), global_, parent, &rand, effectNode_->CommonValues.Generation.RefEqBurst, effectNode_->CommonValues.Generation.Burst);
+			int32_t requestCount = static_cast<int32_t>(triggerCount.getValue(rand));
+			requestCount = Max(requestCount, 0);
+
+			while (requestCount > 0 && maxGenerationCount_ > generatedCount_)
+			{
+				if (canSpawn)
+				{
+					auto instance = manager_->CreateInstance(effectNode_, container_, this);
+					if (instance != nullptr)
+					{
+						instances_.push_back(instance);
+						global_->IncInstanceCount();
+
+						instance->Initialize(parent, localTime, generatedCount_);
+					}
+				}
+
+				generatedCount_++;
+				requestCount--;
+			}
+
+			if (generatedCount_ >= maxGenerationCount_)
+			{
+				generationState_ = GenerationState::Ended;
+			}
+		}
+
+		return;
+	}
 
 	// GenerationTimeOffset can be minus value.
 	// Minus frame particles is generated simultaniously at frame 0.
@@ -123,7 +166,7 @@ void InstanceGroup::GenerateInstancesIfRequired(float localTime, RandObject& ran
 			generatedCount_++;
 		}
 
-		auto gt = ApplyEq(effectNode_->GetEffect(), global_, parent, &rand, effectNode_->CommonValues.RefEqGenerationTime, effectNode_->CommonValues.GenerationTime);
+		auto gt = ApplyEq(effectNode_->GetEffect(), global_, parent, &rand, effectNode_->CommonValues.Generation.RefEqInterval, effectNode_->CommonValues.Generation.Interval);
 		nextGenerationTime_ += Max(0.0f, gt.getValue(rand));
 	}
 }

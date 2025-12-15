@@ -17,20 +17,27 @@ namespace Effekseer.Binary
 		public int RefEqGenerationTimeMin;
 		public int RefEqGenerationTimeOffsetMax;
 		public int RefEqGenerationTimeOffsetMin;
+		public int RefEqTriggerGenerationCountMax;
+		public int RefEqTriggerGenerationCountMin;
 
 		public int MaxCreation;
 		public int TranslationEffectType;
 		public int RotationEffectType;
 		public int ScalingEffectType;
-		public int RemoveWhenLifeIsExtinct;
-		public int RemoveWhenParentIsRemoved;
-		public int RemoveWhenChildrenIsExtinct;
+		public int GenerationType;
+		public int RemovalFlags;
 		public int Life_Max;
 		public int Life_Min;
 		public float CreationTime_Max;
 		public float CreationTime_Min;
 		public float CreationTimeOffset_Max;
 		public float CreationTimeOffset_Min;
+		public int TriggerGenerationCount_Max;
+		public int TriggerGenerationCount_Min;
+		public ushort TriggerToStartGeneration;
+		public ushort TriggerToStopGeneration;
+		public ushort TriggerToRemove;
+		public ushort TriggerToGenerate;
 
 		public static byte[] GetBytes(Data.CommonValues value)
 		{
@@ -50,30 +57,6 @@ namespace Effekseer.Binary
 			}
 
 			{
-				// Trigger's parameters
-				int triggerFlags =
-					((value.TriggerParam.ToStartGeneration.Value != Data.TriggerType.None) ? (1 << 0) : 0) |
-					((value.TriggerParam.ToStopGeneration.Value != Data.TriggerType.None) ? (1 << 1) : 0) |
-					((value.TriggerParam.ToRemove.Value != Data.TriggerType.None) ? (1 << 2) : 0);
-				data.Add(((byte)triggerFlags).GetBytes());
-
-				if (value.TriggerParam.ToStartGeneration.Value != Data.TriggerType.None)
-				{
-					data.Add(((ushort)value.TriggerParam.ToStartGeneration.GetValue()).GetBytes());
-				}
-
-				if (value.TriggerParam.ToStopGeneration.Value != Data.TriggerType.None)
-				{
-					data.Add(((ushort)value.TriggerParam.ToStopGeneration.GetValue()).GetBytes());
-				}
-
-				if (value.TriggerParam.ToRemove.Value != Data.TriggerType.None)
-				{
-					data.Add(((ushort)value.TriggerParam.ToRemove.GetValue()).GetBytes());
-				}
-			}
-
-			{
 				data.Add(value.LodParameter.MatchingLODs.GetValue().GetBytes());
 				data.Add(value.LodParameter.LodBehaviour.GetValueAsInt().GetBytes());
 			}
@@ -88,10 +71,12 @@ namespace Effekseer.Binary
 			s_value.RefEqMaxGeneration = value.MaxGeneration.DynamicEquation.Index;
 			s_value.RefEqLifeMax = value.Life.DynamicEquationMax.Index;
 			s_value.RefEqLifeMin = value.Life.DynamicEquationMin.Index;
-			s_value.RefEqGenerationTimeMax = value.GenerationTime.DynamicEquationMax.Index;
-			s_value.RefEqGenerationTimeMin = value.GenerationTime.DynamicEquationMin.Index;
-			s_value.RefEqGenerationTimeOffsetMax = value.GenerationTimeOffset.DynamicEquationMax.Index;
-			s_value.RefEqGenerationTimeOffsetMin = value.GenerationTimeOffset.DynamicEquationMin.Index;
+			s_value.RefEqGenerationTimeMax = value.Generation.GenerationTime.DynamicEquationMax.Index;
+			s_value.RefEqGenerationTimeMin = value.Generation.GenerationTime.DynamicEquationMin.Index;
+			s_value.RefEqGenerationTimeOffsetMax = value.Generation.GenerationTimeOffset.DynamicEquationMax.Index;
+			s_value.RefEqGenerationTimeOffsetMin = value.Generation.GenerationTimeOffset.DynamicEquationMin.Index;
+			s_value.RefEqTriggerGenerationCountMax = value.Generation.TriggerCount.DynamicEquationMax.Index;
+			s_value.RefEqTriggerGenerationCountMin = value.Generation.TriggerCount.DynamicEquationMin.Index;
 
 			s_value.MaxCreation = value.MaxGeneration.Value;
 			if (value.MaxGeneration.Infinite)
@@ -103,39 +88,42 @@ namespace Effekseer.Binary
 			s_value.RotationEffectType = value.RotationEffectType.GetValueAsInt();
 			s_value.ScalingEffectType = value.ScaleEffectType.GetValueAsInt();
 
-			if (value.RemoveWhenLifeIsExtinct)
+			int removalFlags = 0;
+			if (value.Removal.WhenLifeIsExtinct)
 			{
-				s_value.RemoveWhenLifeIsExtinct = 1;
-			}
-			else
-			{
-				s_value.RemoveWhenLifeIsExtinct = 0;
+				removalFlags |= 1 << 0;
 			}
 
-			if (value.RemoveWhenParentIsRemoved)
+			if (value.Removal.WhenParentIsRemoved)
 			{
-				s_value.RemoveWhenParentIsRemoved = 1;
-			}
-			else
-			{
-				s_value.RemoveWhenParentIsRemoved = 0;
+				removalFlags |= 1 << 1;
 			}
 
-			if (value.RemoveWhenAllChildrenAreRemoved)
+			if (value.Removal.WhenAllChildrenAreRemoved)
 			{
-				s_value.RemoveWhenChildrenIsExtinct = 1;
+				removalFlags |= 1 << 2;
 			}
-			else
+
+			if (value.Removal.TriggerToRemove.Value != Data.TriggerType.None)
 			{
-				s_value.RemoveWhenChildrenIsExtinct = 0;
+				removalFlags |= 1 << 3;
 			}
+
+			s_value.RemovalFlags = removalFlags;
 
 			s_value.Life_Max = value.Life.Max;
 			s_value.Life_Min = value.Life.Min;
-			s_value.CreationTime_Max = value.GenerationTime.Max;
-			s_value.CreationTime_Min = value.GenerationTime.Min;
-			s_value.CreationTimeOffset_Max = value.GenerationTimeOffset.Max;
-			s_value.CreationTimeOffset_Min = value.GenerationTimeOffset.Min;
+			s_value.CreationTime_Max = value.Generation.GenerationTime.Max;
+			s_value.CreationTime_Min = value.Generation.GenerationTime.Min;
+			s_value.CreationTimeOffset_Max = value.Generation.GenerationTimeOffset.Max;
+			s_value.CreationTimeOffset_Min = value.Generation.GenerationTimeOffset.Min;
+			s_value.GenerationType = value.Generation.Timing.GetValueAsInt();
+			s_value.TriggerGenerationCount_Max = value.Generation.TriggerCount.Max;
+			s_value.TriggerGenerationCount_Min = value.Generation.TriggerCount.Min;
+			s_value.TriggerToStartGeneration = (ushort)value.Generation.ToStartGeneration.GetValue();
+			s_value.TriggerToStopGeneration = (ushort)value.Generation.ToStopGeneration.GetValue();
+			s_value.TriggerToRemove = (ushort)value.Removal.TriggerToRemove.GetValue();
+			s_value.TriggerToGenerate = (ushort)value.Generation.Trigger.GetValue();
 
 			return s_value;
 		}

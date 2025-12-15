@@ -509,7 +509,7 @@ void Instance::Update(float deltaFrame, bool shown)
 		if (m_pEffectNode->GetType() != EffectNodeType::Root)
 		{
 			// if pass time
-			if (m_pEffectNode->CommonValues.RemoveWhenLifeIsExtinct)
+			if (HasRemovalTiming(m_pEffectNode->CommonValues.Removal.Flags, RemovalTiming::WhenLifeIsExtinct))
 			{
 				if (livingTime_ > livedTime_)
 				{
@@ -518,7 +518,7 @@ void Instance::Update(float deltaFrame, bool shown)
 			}
 
 			// if remove parent
-			if (!removed && m_pEffectNode->CommonValues.RemoveWhenParentIsRemoved)
+			if (!removed && HasRemovalTiming(m_pEffectNode->CommonValues.Removal.Flags, RemovalTiming::WhenParentIsRemoved))
 			{
 				if (m_pParent == nullptr || m_pParent->GetState() != eInstanceState::INSTANCE_STATE_ACTIVE)
 				{
@@ -528,13 +528,14 @@ void Instance::Update(float deltaFrame, bool shown)
 			}
 
 			// if children are removed and going not to generate a child
-			if (!removed && m_pEffectNode->CommonValues.RemoveWhenChildrenIsExtinct)
+			if (!removed && HasRemovalTiming(m_pEffectNode->CommonValues.Removal.Flags, RemovalTiming::WhenChildrenIsExtinct))
 			{
 				removed = !AreChildrenActive();
 			}
 
 			// remove by trigger
-			if (!removed && IsTriggerActivated(m_pEffectNode->TriggerParam.ToRemove, GetInstanceGlobal(), m_pParent))
+			if (!removed && HasRemovalTiming(m_pEffectNode->CommonValues.Removal.Flags, RemovalTiming::WhenTriggered) &&
+				IsTriggerActivated(m_pEffectNode->CommonValues.Removal.TriggerToRemove, GetInstanceGlobal(), m_pParent))
 			{
 				removed = true;
 			}

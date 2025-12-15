@@ -199,7 +199,20 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			}
 		}
 
-		TriggerParam.Load(pos, ef->GetVersion());
+		if (ef->GetVersion() < Version18Alpha3)
+		{
+			TriggerParam.Load(pos, ef->GetVersion());
+
+			CommonValues.Generation.TriggerToStart = TriggerParam.ToStartGeneration;
+			CommonValues.Generation.TriggerToStop = TriggerParam.ToStopGeneration;
+			CommonValues.Removal.TriggerToRemove = TriggerParam.ToRemove;
+
+			if (CommonValues.Removal.TriggerToRemove.type != TriggerType::None)
+			{
+				CommonValues.Removal.Flags = static_cast<RemovalTiming>(static_cast<int32_t>(CommonValues.Removal.Flags) |
+																		static_cast<int32_t>(RemovalTiming::WhenTriggered));
+			}
+		}
 
 		LODsParam.Load(pos, ef->GetVersion());
 		TranslationParam.Load(pos, ef->GetVersion());
@@ -633,14 +646,14 @@ EffectInstanceTerm EffectNodeImplemented::CalculateInstanceTerm(EffectInstanceTe
 	int lifeMin = CommonValues.life.min;
 	int lifeMax = CommonValues.life.max;
 
-	if (CommonValues.RemoveWhenLifeIsExtinct <= 0)
+	if (!HasRemovalTiming(CommonValues.Removal.Flags, RemovalTiming::WhenLifeIsExtinct))
 	{
 		lifeMin = int_max;
 		lifeMax = int_max;
 	}
 
-	auto firstBeginMin = static_cast<int32_t>(CommonValues.GenerationTimeOffset.min);
-	auto firstBeginMax = static_cast<int32_t>(CommonValues.GenerationTimeOffset.max);
+	auto firstBeginMin = static_cast<int32_t>(CommonValues.Generation.Offset.min);
+	auto firstBeginMax = static_cast<int32_t>(CommonValues.Generation.Offset.max);
 	auto firstEndMin = addWithClip(firstBeginMin, lifeMin);
 	auto firstEndMax = addWithClip(firstBeginMax, lifeMax);
 
@@ -652,7 +665,7 @@ EffectInstanceTerm EffectNodeImplemented::CalculateInstanceTerm(EffectInstanceTe
 	}
 	else
 	{
-		lastBeginMin = firstBeginMin + static_cast<int32_t>((CommonValues.MaxGeneration - 1) * CommonValues.GenerationTime.min);
+		lastBeginMin = firstBeginMin + static_cast<int32_t>((CommonValues.MaxGeneration - 1) * CommonValues.Generation.Interval.min);
 	}
 
 	if (CommonValues.MaxGeneration > half_int_max)
@@ -661,7 +674,13 @@ EffectInstanceTerm EffectNodeImplemented::CalculateInstanceTerm(EffectInstanceTe
 	}
 	else
 	{
-		lastBeginMax = firstBeginMax + static_cast<int32_t>((CommonValues.MaxGeneration - 1) * CommonValues.GenerationTime.max);
+		lastBeginMax = firstBeginMax + static_cast<int32_t>((CommonValues.MaxGeneration - 1) * CommonValues.Generation.Interval.max);
+	}
+
+	if (CommonValues.Generation.Type == GenerationTiming::Trigger)
+	{
+		lastBeginMin = half_int_max;
+		lastBeginMax = half_int_max;
 	}
 
 	auto lastEndMin = addWithClip(lastBeginMin, lifeMin);
@@ -672,7 +691,7 @@ EffectInstanceTerm EffectNodeImplemented::CalculateInstanceTerm(EffectInstanceTe
 	auto parentLastTermMin = parentTerm.LastInstanceEndMin - parentTerm.LastInstanceStartMin;
 	auto parentLastTermMax = parentTerm.LastInstanceEndMax - parentTerm.LastInstanceStartMax;
 
-	if (CommonValues.RemoveWhenParentIsRemoved > 0)
+	if (HasRemovalTiming(CommonValues.Removal.Flags, RemovalTiming::WhenParentIsRemoved))
 	{
 		if (firstEndMin - firstBeginMin > parentFirstTermMin)
 			firstEndMin = firstBeginMin + parentFirstTermMin;
@@ -712,7 +731,7 @@ EffectInstanceTerm EffectNodeImplemented::CalculateInstanceTerm(EffectInstanceTe
 	ret.LastInstanceEndMax = addWithClip(parentTerm.LastInstanceStartMax, lastEndMax);
 
 	// check children
-	if (CommonValues.RemoveWhenChildrenIsExtinct > 0)
+	if (HasRemovalTiming(CommonValues.Removal.Flags, RemovalTiming::WhenChildrenIsExtinct))
 	{
 		int childFirstEndMin = 0;
 		int childFirstEndMax = 0;
