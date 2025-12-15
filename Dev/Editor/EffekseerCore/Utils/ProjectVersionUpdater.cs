@@ -865,11 +865,11 @@ namespace Effekseer.Utils
 					common.Generation.Timing.SetValueDirectly(Data.CommonValues.GenerationTimingType.Continuous);
 					common.Removal.WhenLifeIsExtinct.SetValueDirectly(common.RemoveWhenLifeIsExtinct.GetValue());
 					common.Removal.WhenParentIsRemoved.SetValueDirectly(common.RemoveWhenParentIsRemoved.GetValue());
-					common.Removal.WhenChildrenAreRemoved.SetValueDirectly(common.RemoveWhenAllChildrenAreRemoved.GetValue());
+					common.Removal.WhenAllChildrenAreRemoved.SetValueDirectly(common.RemoveWhenAllChildrenAreRemoved.GetValue());
 
 					if (common.TriggerParam != null)
 					{
-						common.Removal.Trigger.SetValueDirectly(common.TriggerParam.ToRemove.GetValue());
+						common.Removal.TriggerToRemove.SetValueDirectly(common.TriggerParam.ToRemove.GetValue());
 						common.Generation.ToStartGeneration.SetValueDirectly(common.TriggerParam.ToStartGeneration.GetValue());
 						common.Generation.ToStopGeneration.SetValueDirectly(common.TriggerParam.ToStopGeneration.GetValue());
 					}

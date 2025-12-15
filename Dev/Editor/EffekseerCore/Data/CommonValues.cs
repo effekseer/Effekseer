@@ -83,29 +83,29 @@ namespace Effekseer.Data
 
 		public class RemovalValues
 		{
-			[Key(key = "BasicSettings_RemoveWhenLifeIsExtinct")]
+			[Key(key = "BasicSettings_Removal_WhenLifeIsExtinct")]
 			public Value.Boolean WhenLifeIsExtinct
 			{
 				get;
 				private set;
 			}
 
-			[Key(key = "BasicSettings_RemoveWhenParentIsRemoved")]
+			[Key(key = "BasicSettings_Removal_WhenParentIsRemoved")]
 			public Value.Boolean WhenParentIsRemoved
 			{
 				get;
 				private set;
 			}
 
-			[Key(key = "BasicSettings_RemoveWhenAllChildrenAreRemoved")]
-			public Value.Boolean WhenChildrenAreRemoved
+			[Key(key = "BasicSettings_Removal_WhenAllChildrenAreRemoved")]
+			public Value.Boolean WhenAllChildrenAreRemoved
 			{
 				get;
 				private set;
 			}
 
-			[Key(key = "BasicSettings_Removal_Trigger")]
-			public Value.Enum<TriggerType> Trigger
+			[Key(key = "BasicSettings_Removal_TriggerToRemove")]
+			public Value.Enum<TriggerType> TriggerToRemove
 			{
 				get;
 				private set;
@@ -115,8 +115,8 @@ namespace Effekseer.Data
 			{
 				WhenLifeIsExtinct = new Value.Boolean(true);
 				WhenParentIsRemoved = new Value.Boolean(false);
-				WhenChildrenAreRemoved = new Value.Boolean(false);
-				Trigger = new Value.Enum<TriggerType>(TriggerType.None);
+				WhenAllChildrenAreRemoved = new Value.Boolean(false);
+				TriggerToRemove = new Value.Enum<TriggerType>(TriggerType.None);
 			}
 		}
 

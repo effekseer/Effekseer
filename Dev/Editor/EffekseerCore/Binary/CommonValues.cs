@@ -99,12 +99,12 @@ namespace Effekseer.Binary
 				removalFlags |= 1 << 1;
 			}
 
-			if (value.Removal.WhenChildrenAreRemoved)
+			if (value.Removal.WhenAllChildrenAreRemoved)
 			{
 				removalFlags |= 1 << 2;
 			}
 
-			if (value.Removal.Trigger.Value != Data.TriggerType.None)
+			if (value.Removal.TriggerToRemove.Value != Data.TriggerType.None)
 			{
 				removalFlags |= 1 << 3;
 			}
@@ -122,7 +122,7 @@ namespace Effekseer.Binary
 			s_value.TriggerGenerationCount_Min = value.Generation.TriggerCount.Min;
 			s_value.TriggerToStartGeneration = (ushort)value.Generation.ToStartGeneration.GetValue();
 			s_value.TriggerToStopGeneration = (ushort)value.Generation.ToStopGeneration.GetValue();
-			s_value.TriggerToRemove = (ushort)value.Removal.Trigger.GetValue();
+			s_value.TriggerToRemove = (ushort)value.Removal.TriggerToRemove.GetValue();
 			s_value.TriggerToGenerate = (ushort)value.Generation.Trigger.GetValue();
 
 			return s_value;
