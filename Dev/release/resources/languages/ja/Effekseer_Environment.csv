@@ -1,6 +1,8 @@
 Environment_Ground,地面
 EnvironmentGround_IsShown_Name,地面の表示
 EnvironmentGround_IsShown_Desc,地面を表示するかどうか切り替えます。
+EnvironmentGround_IsCollisionEnabled_Name,地面との衝突
+EnvironmentGround_IsCollisionEnabled_Desc,ビューアで地面への衝突を有効にします。
 EnvironmentGround_Height_Name,地面の高さ
 EnvironmentGround_Extent_Name,地面の広さ
 ,

@@ -1196,6 +1196,10 @@ class EffekseerNativePINVOKE {
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRendererParameter_GroundHeight_get___")]
   public static extern float EffectRendererParameter_GroundHeight_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRendererParameter_IsGroundCollisionEnabled_set___")]
+  public static extern void EffectRendererParameter_IsGroundCollisionEnabled_set(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2);
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRendererParameter_IsGroundCollisionEnabled_get___")]
+  public static extern bool EffectRendererParameter_IsGroundCollisionEnabled_get(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_EffectRendererParameter___")]
   public static extern global::System.IntPtr new_EffectRendererParameter();

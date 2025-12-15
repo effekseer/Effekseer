@@ -43,6 +43,13 @@ using RandFunc = std::function<int()>;
 using EffectInstanceRemovingCallback = std::function<void(Manager*, Handle, bool)>;
 
 /**
+	@brief
+	\~English Callback to query external collision. It returns true when a collision occurs and sets collisionPosition as the hit point.
+	\~Japanese 外部との衝突を問い合わせるためのコールバック。衝突した場合はtrueを返し、collisionPositionに衝突点を設定する。
+*/
+using CollisionCallback = std::function<bool(const Vector3D& startPosition, const Vector3D& endPosition, Vector3D& collisionPosition)>;
+
+/**
 	@brief エフェクト管理クラス
 */
 class Manager : public IReference
@@ -199,6 +206,20 @@ public:
 		@brief	ランダム関数を設定する。
 	*/
 	virtual void SetRandFunc(RandFunc func) = 0;
+
+	/**
+		@brief
+		\~English Set a callback to determine collision points against external objects.
+		\~Japanese 外部オブジェクトへの衝突判定に使用するコールバックを設定する。
+	*/
+	virtual void SetCollisionCallback(CollisionCallback callback) = 0;
+
+	/**
+		@brief
+		\~English Get a callback to determine collision points against external objects.
+		\~Japanese 外部オブジェクトへの衝突判定に使用するコールバックを取得する。
+	*/
+	virtual CollisionCallback GetCollisionCallback() const = 0;
 
 	/**
 		@brief	座標系を取得する。

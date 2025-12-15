@@ -188,6 +188,7 @@ private:
 	SoundPlayerRef soundPlayer_;
 
 	RandFunc randFunc_;
+	CollisionCallback collisionCallback_;
 
 	std::array<LayerParameter, LayerCount> layerParameters_;
 
@@ -238,6 +239,10 @@ public:
 	CoordinateSystem GetCoordinateSystem() const override;
 
 	void SetCoordinateSystem(CoordinateSystem coordinateSystem) override;
+
+	void SetCollisionCallback(CollisionCallback callback) override;
+
+	CollisionCallback GetCollisionCallback() const override;
 
 	SpriteRendererRef GetSpriteRenderer() override;
 

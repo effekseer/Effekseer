@@ -1,8 +1,10 @@
 #pragma once
 
 #include "../Effekseer.InternalStruct.h"
+#include "../Effekseer.Vector3D.h"
 #include "../SIMD/Vec3f.h"
 #include "../Utils/Effekseer.BinaryVersion.h"
+#include <functional>
 
 namespace Effekseer
 {
@@ -26,6 +28,7 @@ struct CollisionsState
 struct CollisionsParameter
 {
 	bool IsEnabled = false;
+	bool IsSceneCollisionWithExternal = false;
 	random_float Bounce = {1.0f, 1.0f};
 	float Height = 0.0f;
 	random_float Friction = {0.0f, 0.0f};
@@ -47,6 +50,8 @@ struct CollisionsParameter
 
 struct CollisionsFunctions
 {
+	using ExternalCollisionCallback = std::function<bool(const Vector3D& startPosition, const Vector3D& endPosition, Vector3D& collisionPosition)>;
+
 	static void Initialize(CollisionsState& state, const CollisionsParameter& parameter, RandObject& rand);
 
 	static std::tuple<SIMD::Vec3f, SIMD::Vec3f> Update(
@@ -56,7 +61,8 @@ struct CollisionsFunctions
 		const SIMD::Vec3f& positionGlobal,
 		const SIMD::Vec3f& velocityGlobal,
 		const SIMD::Vec3f& positionCenterLocal,
-		float magnificationScale);
+		float magnificationScale,
+		const ExternalCollisionCallback& externalCollision);
 };
 
 } // namespace Effekseer

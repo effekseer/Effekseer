@@ -786,7 +786,8 @@ void Instance::UpdateTransform(float deltaFrame)
 				prevGlobalPosition_,
 				vel,
 				instanceGlobal->EffectGlobalMatrix.GetTranslation(),
-				m_pEffectNode->GetEffect()->GetMaginification());
+				m_pEffectNode->GetEffect()->GetMaginification(),
+				static_cast<ManagerImplemented*>(m_pManager)->GetCollisionCallback());
 			location_modify_global_ -= std::get<1>(result);
 			acc_global_sum += std::get<0>(result);
 

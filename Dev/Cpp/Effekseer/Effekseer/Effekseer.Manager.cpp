@@ -560,6 +560,16 @@ void ManagerImplemented::SetRandFunc(RandFunc func)
 	randFunc_ = func;
 }
 
+void ManagerImplemented::SetCollisionCallback(CollisionCallback callback)
+{
+	collisionCallback_ = callback;
+}
+
+CollisionCallback ManagerImplemented::GetCollisionCallback() const
+{
+	return collisionCallback_;
+}
+
 CoordinateSystem ManagerImplemented::GetCoordinateSystem() const
 {
 	return setting_->GetCoordinateSystem();

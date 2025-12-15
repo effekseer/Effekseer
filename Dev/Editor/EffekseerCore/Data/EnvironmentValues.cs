@@ -11,6 +11,10 @@ namespace Effekseer.Data
 		[Undo(Undo = false)]
 		public Value.Boolean IsShown { get; private set; } = new Value.Boolean(false);
 
+		[Key(key = "EnvironmentGround_IsCollisionEnabled")]
+		[Undo(Undo = false)]
+		public Value.Boolean IsCollisionEnabled { get; private set; } = new Value.Boolean(false);
+
 		[Key(key = "EnvironmentGround_Height")]
 		[Undo(Undo = false)]
 		public Value.Float Height { get; private set; } = new Value.Float(0.0f, 1000.0f, -1000.0f);

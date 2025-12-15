@@ -1,6 +1,8 @@
 Environment_Ground,地面
 EnvironmentGround_IsShown_Name,地面可见
 EnvironmentGround_IsShown_Desc,切换地面的可见性
+EnvironmentGround_IsCollisionEnabled_Name,地面碰撞
+EnvironmentGround_IsCollisionEnabled_Desc,在查看器中启用与地面的碰撞
 EnvironmentGround_Height_Name,地面高度
 EnvironmentGround_Extent_Name,地面宽度
 ,

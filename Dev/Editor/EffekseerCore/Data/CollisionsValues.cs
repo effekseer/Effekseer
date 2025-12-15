@@ -18,6 +18,9 @@ namespace Effekseer.Data
 		[Key(key = "Enabled")]
 		public Value.Boolean IsEnabled { get; set; } = new Value.Boolean(false);
 
+		[Key(key = "Collisions_ExternalCollision")]
+		public Value.Boolean IsSceneCollisionEnabled { get; set; } = new Value.Boolean(false);
+
 		[Key(key = "Collisions_Bounce")]
 		public Value.FloatWithRandom Bounce { get; set; } = new Value.FloatWithRandom(1.0f, step: 0.1f);
 

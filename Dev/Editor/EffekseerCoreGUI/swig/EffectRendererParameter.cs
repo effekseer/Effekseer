@@ -182,6 +182,16 @@ public class EffectRendererParameter : global::System.IDisposable {
     } 
   }
 
+  public bool IsGroundCollisionEnabled {
+    set {
+      EffekseerNativePINVOKE.EffectRendererParameter_IsGroundCollisionEnabled_set(swigCPtr, value);
+    } 
+    get {
+      bool ret = EffekseerNativePINVOKE.EffectRendererParameter_IsGroundCollisionEnabled_get(swigCPtr);
+      return ret;
+    } 
+  }
+
   public EffectRendererParameter() : this(EffekseerNativePINVOKE.new_EffectRendererParameter(), true) {
   }
 
