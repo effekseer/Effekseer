@@ -51,8 +51,8 @@ BasicSettings_Generation_StartTrigger_Name,Spawn Start Trigger
 BasicSettings_Generation_StartTrigger_Desc,Trigger to start instance generation.
 BasicSettings_Generation_StopTrigger_Name,Spawn Stop Trigger
 BasicSettings_Generation_StopTrigger_Desc,Trigger to stop instance generation.
-BasicSettings_Removal_Trigger_Name,Destroy Trigger
-BasicSettings_Removal_Trigger_Desc,Trigger to destroy
+BasicSettings_Removal_Trigger_Name,Destroy on Trigger
+BasicSettings_Removal_Trigger_Desc,Destroys when the specified trigger fires.
 BasicSettings_GenerationTiming_Name,Generation Mode
 BasicSettings_GenerationTiming_Desc,Switch between continuous spawning and trigger-based bursts.
 BasicSettings_GenerationTiming_Continuous_Name,Continuous

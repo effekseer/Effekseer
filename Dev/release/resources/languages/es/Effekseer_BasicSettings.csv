@@ -45,8 +45,8 @@ BasicSettings_Generation_StartTrigger_Name,Disparador de inicio de generación
 BasicSettings_Generation_StartTrigger_Desc,Disparador para iniciar la generación de instancias.
 BasicSettings_Generation_StopTrigger_Name,Disparador de detención de generación
 BasicSettings_Generation_StopTrigger_Desc,Disparador para detener la generación de instancias.
-BasicSettings_Removal_Trigger_Name,Disparador de destrucción
-BasicSettings_Removal_Trigger_Desc,Disparador para destruir.
+BasicSettings_Removal_Trigger_Name,Destruir al activarse el disparador
+BasicSettings_Removal_Trigger_Desc,Se destruye el nodo cuando se activa el disparador.
 BasicSettings_GenerationTiming_Name,Modo de generación
 BasicSettings_GenerationTiming_Desc,Cambia entre generación continua o basada en disparadores.
 BasicSettings_GenerationTiming_Continuous_Name,Continuo
