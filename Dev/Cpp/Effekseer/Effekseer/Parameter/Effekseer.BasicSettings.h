@@ -49,7 +49,7 @@ enum class GenerationTiming : int32_t
 	Trigger = 1,
 };
 
-struct ParameterCommonValues_8
+struct ParameterCommonValues_BackCompatibility_8
 {
 	int MaxGeneration;
 	BindType TranslationBindType;
@@ -63,7 +63,21 @@ struct ParameterCommonValues_8
 	float GenerationTimeOffset;
 };
 
-struct ParameterCommonValues_18Alpha2
+struct ParameterCommonValues_BackCompatibility_9
+{
+	int MaxGeneration = 1;
+	TranslationParentBindType TranslationBindType = TranslationParentBindType::Always;
+	BindType RotationBindType = BindType::Always;
+	BindType ScalingBindType = BindType::Always;
+	int RemoveWhenLifeIsExtinct = 1;
+	int RemoveWhenParentIsRemoved = 0;
+	int RemoveWhenChildrenIsExtinct = 0;
+	random_int life;
+	random_float GenerationTime;
+	random_float GenerationTimeOffset;
+};
+
+struct ParameterCommonValues_BackCompatibility_17
 {
 	int32_t RefEqMaxGeneration;
 	RefMinMax RefEqLife;
@@ -104,7 +118,7 @@ struct RemovalParameter
 	TriggerValues TriggerToRemove;
 };
 
-struct ParameterCommonValues_18Alpha3Binary
+struct ParameterCommonValues_18
 {
 	int32_t RefEqMaxGeneration;
 	RefMinMax RefEqLife;
@@ -177,8 +191,8 @@ struct ParameterCommonValues
 
 		if (ef->GetVersion() >= Version18Alpha3)
 		{
-			ParameterCommonValues_18Alpha3Binary param{};
-			auto copySize = Min<int32_t>(size, static_cast<int32_t>(sizeof(ParameterCommonValues_18Alpha3Binary)));
+			ParameterCommonValues_18 param{};
+			auto copySize = Min<int32_t>(size, static_cast<int32_t>(sizeof(ParameterCommonValues_18)));
 			memcpy(&param, pos, copySize);
 			pos += size;
 
@@ -216,39 +230,39 @@ struct ParameterCommonValues
 		}
 		else if (ef->GetVersion() >= 14)
 		{
-			assert(size == sizeof(ParameterCommonValues_18Alpha2));
-			ParameterCommonValues_18Alpha2 param_18alpha2;
-			memcpy(&param_18alpha2, pos, size);
+			assert(size == sizeof(ParameterCommonValues_BackCompatibility_17));
+			ParameterCommonValues_BackCompatibility_17 param_17;
+			memcpy(&param_17, pos, size);
 			pos += size;
 
-			RefEqMaxGeneration = param_18alpha2.RefEqMaxGeneration;
-			RefEqLife = param_18alpha2.RefEqLife;
-			Generation.RefEqInterval = param_18alpha2.RefEqGenerationTime;
-			Generation.RefEqOffset = param_18alpha2.RefEqGenerationTimeOffset;
+			RefEqMaxGeneration = param_17.RefEqMaxGeneration;
+			RefEqLife = param_17.RefEqLife;
+			Generation.RefEqInterval = param_17.RefEqGenerationTime;
+			Generation.RefEqOffset = param_17.RefEqGenerationTimeOffset;
 			Generation.RefEqBurst.Max = -1;
 			Generation.RefEqBurst.Min = -1;
 
-			MaxGeneration = param_18alpha2.MaxGeneration;
-			TranslationBindType = param_18alpha2.TranslationBindType;
+			MaxGeneration = param_17.MaxGeneration;
+			TranslationBindType = param_17.TranslationBindType;
 
-			RotationBindType = param_18alpha2.RotationBindType;
-			ScalingBindType = param_18alpha2.ScalingBindType;
+			RotationBindType = param_17.RotationBindType;
+			ScalingBindType = param_17.ScalingBindType;
 			Removal.Flags = RemovalTiming::None;
-			if (param_18alpha2.RemoveWhenLifeIsExtinct > 0)
+			if (param_17.RemoveWhenLifeIsExtinct > 0)
 			{
 				Removal.Flags = static_cast<RemovalTiming>(static_cast<int32_t>(Removal.Flags) | static_cast<int32_t>(RemovalTiming::WhenLifeIsExtinct));
 			}
-			if (param_18alpha2.RemoveWhenParentIsRemoved > 0)
+			if (param_17.RemoveWhenParentIsRemoved > 0)
 			{
 				Removal.Flags = static_cast<RemovalTiming>(static_cast<int32_t>(Removal.Flags) | static_cast<int32_t>(RemovalTiming::WhenParentIsRemoved));
 			}
-			if (param_18alpha2.RemoveWhenChildrenIsExtinct > 0)
+			if (param_17.RemoveWhenChildrenIsExtinct > 0)
 			{
 				Removal.Flags = static_cast<RemovalTiming>(static_cast<int32_t>(Removal.Flags) | static_cast<int32_t>(RemovalTiming::WhenChildrenIsExtinct));
 			}
-			life = param_18alpha2.life;
-			Generation.Interval = param_18alpha2.GenerationTime;
-			Generation.Offset = param_18alpha2.GenerationTimeOffset;
+			life = param_17.life;
+			Generation.Interval = param_17.GenerationTime;
+			Generation.Offset = param_17.GenerationTimeOffset;
 			Generation.Type = GenerationTiming::Continuous;
 			Generation.Burst.max = 1;
 			Generation.Burst.min = 1;
@@ -259,9 +273,8 @@ struct ParameterCommonValues
 		}
 		else if (ef->GetVersion() >= 9)
 		{
-			ParameterCommonValues_8 param_8{};
-			auto copySize = Min<int32_t>(size, static_cast<int32_t>(sizeof(ParameterCommonValues_8)));
-			memcpy(&param_8, pos, copySize);
+			ParameterCommonValues_BackCompatibility_9 param_9{};
+			memcpy(&param_9, pos, size);
 			pos += size;
 
 			RefEqMaxGeneration = -1;
@@ -274,29 +287,27 @@ struct ParameterCommonValues
 			Generation.RefEqBurst.Max = -1;
 			Generation.RefEqBurst.Min = -1;
 
-			MaxGeneration = param_8.MaxGeneration;
-			TranslationBindType = static_cast<TranslationParentBindType>(param_8.TranslationBindType);
+			MaxGeneration = param_9.MaxGeneration;
+			TranslationBindType = static_cast<TranslationParentBindType>(param_9.TranslationBindType);
 
-			RotationBindType = param_8.RotationBindType;
-			ScalingBindType = param_8.ScalingBindType;
+			RotationBindType = param_9.RotationBindType;
+			ScalingBindType = param_9.ScalingBindType;
 			Removal.Flags = RemovalTiming::None;
-			if (param_8.RemoveWhenLifeIsExtinct > 0)
+			if (param_9.RemoveWhenLifeIsExtinct > 0)
 			{
 				Removal.Flags = static_cast<RemovalTiming>(static_cast<int32_t>(Removal.Flags) | static_cast<int32_t>(RemovalTiming::WhenLifeIsExtinct));
 			}
-			if (param_8.RemoveWhenParentIsRemoved > 0)
+			if (param_9.RemoveWhenParentIsRemoved > 0)
 			{
 				Removal.Flags = static_cast<RemovalTiming>(static_cast<int32_t>(Removal.Flags) | static_cast<int32_t>(RemovalTiming::WhenParentIsRemoved));
 			}
-			if (param_8.RemoveWhenChildrenIsExtinct > 0)
+			if (param_9.RemoveWhenChildrenIsExtinct > 0)
 			{
 				Removal.Flags = static_cast<RemovalTiming>(static_cast<int32_t>(Removal.Flags) | static_cast<int32_t>(RemovalTiming::WhenChildrenIsExtinct));
 			}
-			life = param_8.life;
-			Generation.Interval.max = param_8.GenerationTime;
-			Generation.Interval.min = param_8.GenerationTime;
-			Generation.Offset.max = param_8.GenerationTimeOffset;
-			Generation.Offset.min = param_8.GenerationTimeOffset;
+			life = param_9.life;
+			Generation.Interval = param_9.GenerationTime;
+			Generation.Offset = param_9.GenerationTimeOffset;
 			Generation.Type = GenerationTiming::Continuous;
 			Generation.Burst.max = 1;
 			Generation.Burst.min = 1;
@@ -307,8 +318,8 @@ struct ParameterCommonValues
 		}
 		else
 		{
-			assert(size == sizeof(ParameterCommonValues_8));
-			ParameterCommonValues_8 param_8;
+			assert(size == sizeof(ParameterCommonValues_BackCompatibility_8));
+			ParameterCommonValues_BackCompatibility_8 param_8;
 			memcpy(&param_8, pos, size);
 			pos += size;
 
