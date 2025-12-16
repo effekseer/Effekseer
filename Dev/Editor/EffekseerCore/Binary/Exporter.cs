@@ -1064,7 +1064,7 @@ namespace Effekseer.Binary
 
 				// Export collisions
 				{
-					int collisionEnabled = n.CollisionsValues.IsEnabled.Value ? 1 : 0;
+					int collisionEnabled = n.CollisionsValues.IsGroundCollisionEnabled.Value ? 1 : 0;
 					int sceneCollisionEnabled = n.CollisionsValues.IsSceneCollisionEnabled.Value ? 1 : 0;
 					node_data.Add(BitConverter.GetBytes(collisionEnabled));
 					node_data.Add(BitConverter.GetBytes(sceneCollisionEnabled));

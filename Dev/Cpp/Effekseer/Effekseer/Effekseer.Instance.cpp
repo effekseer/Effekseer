@@ -767,7 +767,7 @@ void Instance::UpdateTransform(float deltaFrame)
 			acc_global_sum += acc_global;
 		}
 
-		if (m_pEffectNode->Collisions.IsEnabled)
+		if (m_pEffectNode->Collisions.IsGroundCollisionEnabled || m_pEffectNode->Collisions.IsSceneCollisionWithExternal)
 		{
 			recalculate_matrix = true;
 			SIMD::Vec3f s;

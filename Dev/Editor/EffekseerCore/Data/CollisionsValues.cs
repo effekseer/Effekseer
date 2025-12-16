@@ -19,7 +19,7 @@ namespace Effekseer.Data
 
 		[Selector(ID = SelectorID)]
 		[Key(key = "Collisions_EnableGround")]
-		public Value.Boolean IsEnabled { get; private set; } = new Value.Boolean(false);
+		public Value.Boolean IsGroundCollisionEnabled { get; private set; } = new Value.Boolean(false);
 
 		[Key(key = "Collisions_ExternalCollision")]
 		public Value.Boolean IsSceneCollisionEnabled { get; private set; } = new Value.Boolean(false);

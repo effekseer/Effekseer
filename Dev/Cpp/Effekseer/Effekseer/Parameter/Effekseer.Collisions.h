@@ -27,7 +27,7 @@ struct CollisionsState
 
 struct CollisionsParameter
 {
-	bool IsEnabled = false;
+	bool IsGroundCollisionEnabled = false;
 	bool IsSceneCollisionWithExternal = false;
 	random_float Bounce = {1.0f, 1.0f};
 	float Height = 0.0f;
