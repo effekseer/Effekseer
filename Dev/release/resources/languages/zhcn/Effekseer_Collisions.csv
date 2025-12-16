@@ -1,4 +1,5 @@
 Collisions,碰撞
+Collisions_EnableGround_Name,与地面碰撞
 Collisions_ExternalCollision_Name,外部碰撞
 Collisions_Bounce_Name,弹力
 Collisions_Height_Name,高度
