@@ -56,6 +56,7 @@ struct EffectRendererParameter
 	bool IsGroundShown = false;
 	int32_t GroundExtent = 10;
 	float GroundHeight = 0.0f;
+	bool IsGroundCollisionEnabled = false;
 };
 
 #if !defined(SWIG)
@@ -243,6 +244,39 @@ public:
 		{
 			groundRenderer_->SetExtent(parameter_.GroundExtent);
 			groundRenderer_->GroundHeight = parameter_.GroundHeight;
+		}
+
+		if (manager_ != nullptr)
+		{
+			if (parameter_.IsGroundCollisionEnabled)
+			{
+				const auto groundHeight = parameter_.GroundHeight;
+				manager_->SetCollisionCallback([groundHeight](const ::Effekseer::Vector3D& start, const ::Effekseer::Vector3D& end, ::Effekseer::Vector3D& collisionPosition) -> bool {
+					const auto diff = end - start;
+					if (diff.Y == 0.0f)
+					{
+						return false;
+					}
+
+					if (!(start.Y >= groundHeight && end.Y < groundHeight))
+					{
+						return false;
+					}
+
+					const auto rate = (groundHeight - start.Y) / diff.Y;
+					if (rate < 0.0f || rate > 1.0f)
+					{
+						return false;
+					}
+
+					collisionPosition = start + diff * rate;
+					return true;
+				});
+			}
+			else
+			{
+				manager_->SetCollisionCallback(nullptr);
+			}
 		}
 	}
 

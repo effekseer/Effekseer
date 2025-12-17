@@ -1,6 +1,8 @@
 Environment_Ground,Ground
 EnvironmentGround_IsShown_Name,Ground Visible
 EnvironmentGround_IsShown_Desc,Toggle the visibility of the ground
+EnvironmentGround_IsCollisionEnabled_Name,Ground Collision
+EnvironmentGround_IsCollisionEnabled_Desc,Enable collisions against the ground in the viewer
 EnvironmentGround_Height_Name,Ground Height
 EnvironmentGround_Extent_Name,Ground Extent
 ,

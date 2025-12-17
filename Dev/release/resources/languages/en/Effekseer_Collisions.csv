@@ -1,4 +1,6 @@
 Collisions,Collisions
+Collisions_EnableGround_Name,Collide With Ground
+Collisions_ExternalCollision_Name,External Collision
 Collisions_Bounce_Name,Bounce
 Collisions_Height_Name,Height
 Collisions_Friction_Name,Friction

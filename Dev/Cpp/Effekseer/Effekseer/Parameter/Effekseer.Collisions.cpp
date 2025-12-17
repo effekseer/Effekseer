@@ -13,11 +13,16 @@ void CollisionsParameter::Load(unsigned char*& pos, int version)
 		return;
 	}
 
-	int isEnabled = 0;
-	memcpy(&isEnabled, pos, sizeof(int));
+	int collisionEnabled = 0;
+	memcpy(&collisionEnabled, pos, sizeof(int));
 	pos += sizeof(int);
 
-	IsEnabled = isEnabled > 0;
+	int sceneCollisionEnabled = 0;
+	memcpy(&sceneCollisionEnabled, pos, sizeof(int));
+	pos += sizeof(int);
+
+	IsGroundCollisionEnabled = collisionEnabled > 0;
+	IsSceneCollisionWithExternal = sceneCollisionEnabled > 0;
 
 	random_float bounceCandidate{};
 	memcpy(&bounceCandidate, pos, sizeof(random_float));
@@ -49,7 +54,7 @@ void CollisionsParameter::Load(unsigned char*& pos, int version)
 
 void CollisionsFunctions::Initialize(CollisionsState& state, const CollisionsParameter& parameter, RandObject& rand)
 {
-	if (parameter.IsEnabled)
+	if (parameter.IsGroundCollisionEnabled || parameter.IsSceneCollisionWithExternal)
 	{
 		state.Bounce = parameter.Bounce.getValue(rand);
 		state.Friction = parameter.Friction.getValue(rand);
@@ -74,11 +79,12 @@ std::tuple<SIMD::Vec3f, SIMD::Vec3f> CollisionsFunctions::Update(
 	const SIMD::Vec3f& positionGlobal,
 	const SIMD::Vec3f& velocityGlobal,
 	const SIMD::Vec3f& positionCenterLocal,
-	float magnificationScale)
+	float magnificationScale,
+	const ExternalCollisionCallback& externalCollision)
 {
 	state.CollidedThisFrame = false;
 
-	if (!parameter.IsEnabled)
+	if (!parameter.IsGroundCollisionEnabled && !parameter.IsSceneCollisionWithExternal)
 	{
 		return {
 			SIMD::Vec3f(0, 0, 0), SIMD::Vec3f(0, 0, 0)};
@@ -87,6 +93,9 @@ std::tuple<SIMD::Vec3f, SIMD::Vec3f> CollisionsFunctions::Update(
 	auto nextPosition = nextPositionGlobal;
 	auto currentPosition = positionGlobal;
 
+	const auto currentPositionGlobal = positionGlobal;
+	const auto nextPositionGlobalValue = nextPositionGlobal;
+
 	if (parameter.WorldCoordinateSyatem == WorldCoordinateSyatemType::Local)
 	{
 		nextPosition -= positionCenterLocal;
@@ -94,12 +103,9 @@ std::tuple<SIMD::Vec3f, SIMD::Vec3f> CollisionsFunctions::Update(
 	}
 
 	const auto height = parameter.Height * magnificationScale;
+	const auto diffGlobal = nextPositionGlobalValue - currentPositionGlobal;
 
-	if (nextPosition.GetY() < height && currentPosition.GetY() >= height)
-	{
-		auto diff = nextPosition - currentPosition;
-		auto positionDiff = diff * (currentPosition.GetY() - height) / diff.GetY();
-
+	const auto resolveCollision = [&](const SIMD::Vec3f& collisionPosition) {
 		float friction = state.Friction;
 		if (friction < 0.0f)
 		{
@@ -117,7 +123,30 @@ std::tuple<SIMD::Vec3f, SIMD::Vec3f> CollisionsFunctions::Update(
 
 		state.CollidedThisFrame = true;
 
-		return {velocityChange, positionDiff};
+		return std::make_tuple(velocityChange, currentPositionGlobal - collisionPosition);
+	};
+
+	if (parameter.IsSceneCollisionWithExternal)
+	{
+		if (externalCollision)
+		{
+			Vector3D start(currentPositionGlobal.GetX(), currentPositionGlobal.GetY(), currentPositionGlobal.GetZ());
+			Vector3D end(nextPositionGlobalValue.GetX(), nextPositionGlobalValue.GetY(), nextPositionGlobalValue.GetZ());
+			Vector3D hit;
+			if (externalCollision(start, end, hit))
+			{
+				SIMD::Vec3f collisionPosition(hit.X, hit.Y, hit.Z);
+				return resolveCollision(collisionPosition);
+			}
+		}
+	}
+
+	if (parameter.IsGroundCollisionEnabled && nextPosition.GetY() < height && currentPosition.GetY() >= height && diffGlobal.GetY() != 0.0f)
+	{
+		const auto positionDiffRate = (currentPosition.GetY() - height) / diffGlobal.GetY();
+		const auto collisionPosition = currentPositionGlobal - diffGlobal * positionDiffRate;
+
+		return resolveCollision(collisionPosition);
 	}
 	else
 	{

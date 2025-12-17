@@ -1,4 +1,6 @@
 Collisions,衝突
+Collisions_EnableGround_Name,地面との衝突
+Collisions_ExternalCollision_Name,外部との衝突
 Collisions_Bounce_Name,バウンス
 Collisions_Height_Name,高さ
 Collisions_Friction_Name,摩擦

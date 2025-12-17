@@ -608,6 +608,7 @@ namespace Effekseer.GUI
 				renderParam.IsGroundShown = Core.Environment.Ground.IsShown.Value;
 				renderParam.GroundHeight = Core.Environment.Ground.Height.Value;
 				renderParam.GroundExtent = Core.Environment.Ground.Extent.Value;
+				renderParam.IsGroundCollisionEnabled = Core.Environment.Ground.IsCollisionEnabled.Value;
 
 				renderParam.BackgroundColor = new swig.Color
 				{

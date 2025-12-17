@@ -425,6 +425,7 @@ namespace Effekseer.GUI
 			Core.Environment.Background.BackgroundImage.OnChanged += OnChanged;
 
 			Core.Environment.Ground.IsShown.OnChanged += OnChanged;
+			Core.Environment.Ground.IsCollisionEnabled.OnChanged += OnChanged;
 			Core.Environment.Ground.Height.OnChanged += OnChanged;
 			Core.Environment.Ground.Extent.OnChanged += OnChanged;
 

@@ -4827,6 +4827,27 @@ SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_EffectRendererParameter_Groun
   return jresult;
 }
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRendererParameter_IsGroundCollisionEnabled_set___(void * jarg1, unsigned int jarg2) {
+  Effekseer::Tool::EffectRendererParameter *arg1 = (Effekseer::Tool::EffectRendererParameter *) 0 ;
+  bool arg2 ;
+  
+  arg1 = (Effekseer::Tool::EffectRendererParameter *)jarg1; 
+  arg2 = jarg2 ? true : false; 
+  if (arg1) (arg1)->IsGroundCollisionEnabled = arg2;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_EffectRendererParameter_IsGroundCollisionEnabled_get___(void * jarg1) {
+  unsigned int jresult ;
+  Effekseer::Tool::EffectRendererParameter *arg1 = (Effekseer::Tool::EffectRendererParameter *) 0 ;
+  bool result;
+  
+  arg1 = (Effekseer::Tool::EffectRendererParameter *)jarg1; 
+  result = (bool) ((arg1)->IsGroundCollisionEnabled);
+  jresult = result; 
+  return jresult;
+}
+
 
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_EffectRendererParameter___() {
   void * jresult ;
@@ -13740,4 +13761,3 @@ SWIGEXPORT std::shared_ptr< Effekseer::Tool::Image > * SWIGSTDCALL CSharp_Effeks
 #ifdef __cplusplus
 }
 #endif
-
