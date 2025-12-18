@@ -3,7 +3,6 @@
 #define __EFFEKSEER_MODEL_H__
 
 #include "../Effekseer.Color.h"
-#include "../Effekseer.Manager.h"
 #include "../Effekseer.Resource.h"
 #include "../Effekseer.Vector2D.h"
 #include "../Effekseer.Vector3D.h"

@@ -30,3 +30,10 @@ EffectBehavior_PlaybackSpeed_Desc,"Velocidad global de todos los nodulos
 1 = Velocidad normal
 EffectBehavior_TargetLocation_Name,Atracción
 EffectBehavior_TargetLocation_Desc,Punto de atracción global
+EffectBehavior_ExternalModels_Name,Modelos externos
+EffectBehavior_ExternalModels_Desc,Lista de modelos externos usados como emisores.
+EffectBehavior_ExternalModel_Path_Name,Modelo
+EffectBehavior_ExternalModel_Path_Desc,Modelo usado como fuente de emisión.
+EffectBehavior_ExternalModel_Translation_Name,Posición
+EffectBehavior_ExternalModel_Rotation_Name,Rotación
+EffectBehavior_ExternalModel_Scale_Name,Escala

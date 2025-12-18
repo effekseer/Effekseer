@@ -6,6 +6,7 @@
 // Include
 //----------------------------------------------------------------------------------
 #include "Effekseer.Base.Pre.h"
+#include "Effekseer.InstanceGlobal.h"
 #include "Effekseer.Matrix44.h"
 #include "Effekseer.Vector3D.h"
 
@@ -164,6 +165,16 @@ public:
 			LODのデバッグに役に立ちます。
 		*/
 		float DistanceBias = 0.0f;
+	};
+
+	struct PlayParameter
+	{
+		EffectRef Effect;
+		Vector3D Position = {0.0f, 0.0f, 0.0f};
+		Vector3D Rotation = {0.0f, 0.0f, 0.0f};
+		Vector3D Scale = {1.0f, 1.0f, 1.0f};
+		int32_t StartFrame = 0;
+		std::vector<ExternalModel> ExternalModels;
 	};
 
 protected:
@@ -954,6 +965,13 @@ public:
 		\~Japanese	途中から再生するための時間
 	*/
 	virtual Handle Play(const EffectRef& effect, const Vector3D& position, int32_t startFrame = 0) = 0;
+
+	/**
+		@brief
+		\~English	Play an effect with detailed parameters.
+		\~Japanese	再生用の詳細なパラメーターを指定して再生する。
+	*/
+	virtual Handle Play(const PlayParameter& parameter) = 0;
 
 	/**
 		@brief

@@ -7,7 +7,9 @@
 //----------------------------------------------------------------------------------
 #include "Effekseer.Base.h"
 #include "Effekseer.Color.h"
+#include "Effekseer.Matrix43.h"
 #include "Effekseer.Random.h"
+#include "Model/Effekseer.Model.h"
 #include "SIMD/Mat43f.h"
 #include "SIMD/Mat44f.h"
 #include "SIMD/Vec3f.h"
@@ -17,6 +19,23 @@
 //----------------------------------------------------------------------------------
 namespace Effekseer
 {
+
+struct ExternalModel
+{
+	ModelRef Model;
+	Matrix43 Transform;
+
+	ExternalModel()
+	{
+		Transform.Indentity();
+	}
+
+	ExternalModel(const ModelRef& model, const Matrix43& transform)
+		: Model(model)
+		, Transform(transform)
+	{
+	}
+};
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -82,6 +101,7 @@ public:
 	std::array<std::array<float, 4>, 16> dynamicEqResults;
 
 	std::vector<InstanceContainer*> RenderedInstanceContainers;
+	std::vector<ExternalModel> externalModels_;
 
 	std::array<float, 4> GetDynamicEquationResult(int32_t index);
 
@@ -135,6 +155,16 @@ public:
 	void* GetUserData() const
 	{
 		return userData_;
+	}
+
+	void SetExternalModels(const std::vector<ExternalModel>& models)
+	{
+		externalModels_ = models;
+	}
+
+	const std::vector<ExternalModel>& GetExternalModels() const
+	{
+		return externalModels_;
 	}
 };
 //----------------------------------------------------------------------------------

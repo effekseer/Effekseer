@@ -52,6 +52,9 @@ public:
 		bool EnableViewOffset = false;
 
 		bool IsProceduralMode = false;
+		bool IsExternalMode = false;
+		ModelRef ExternalModel = nullptr;
+		SIMD::Mat43f ExternalModelTransform = SIMD::Mat43f::Identity;
 
 		RefPtr<RenderingUserData> UserData;
 	};

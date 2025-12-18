@@ -28,7 +28,7 @@ public:
 
 public:
 	AlphaBlendType AlphaBlend;
-	int32_t ModelIndex;
+	int32_t ModelIndex = -1;
 	BillboardType Billboard;
 	CullingType Culling;
 

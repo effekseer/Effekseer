@@ -114,6 +114,8 @@ RS_Model_Model_Desc,モデルファイル
 RS_Model_Billboard_Name,配置方法
 RS_Model_Culling_Name,カリング
 RS_Model_Color_Name,全体色
+RS_Model_ExternalIndex_Name,外部モデルのインデックス
+RS_Model_ExternalIndex_Desc,振る舞いで設定した外部モデルのインデックス。
 ,
 RS_Ring_RingShape_Name,形状
 RS_Ring_RenderingOrder_Name,描画順

@@ -93,6 +93,7 @@ enum class ModelReferenceType : int32_t
 {
 	File,
 	Procedural,
+	External,
 };
 
 enum class BindType : int32_t

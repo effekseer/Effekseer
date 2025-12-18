@@ -2,6 +2,7 @@
 #include "../Sound/SoundDevice.h"
 #include "Effect.h"
 #include "EffectSetting.h"
+#include <Effekseer/Effekseer.InstanceGlobal.h>
 
 #ifdef _WIN32
 #include "../Graphics/Platform/DX11/efk.GraphicsDX11.h"
@@ -549,6 +550,63 @@ void EffectRenderer::PlayEffect()
 
 	assert(effect_ != nullptr);
 
+	auto createExternalModels = [&]() -> std::vector<Effekseer::ExternalModel> {
+		std::vector<Effekseer::ExternalModel> externalModels;
+
+		auto setting = manager_->GetSetting();
+		if (setting == nullptr)
+		{
+			return externalModels;
+		}
+
+		auto loader = setting->GetModelLoader();
+		if (loader == nullptr)
+		{
+			return externalModels;
+		}
+
+		for (const auto& external : externalModels_)
+		{
+			if (external.Path.empty())
+			{
+				continue;
+			}
+
+			auto model = loader->Load(external.Path.c_str());
+			if (model == nullptr)
+			{
+				continue;
+			}
+
+			Effekseer::Matrix43 tra, rot, scale, mat;
+			tra.Translation(external.PositionX, external.PositionY, external.PositionZ);
+			rot.RotationZXY(external.RotationZ, external.RotationX, external.RotationY);
+			scale.Scaling(external.ScaleX, external.ScaleY, external.ScaleZ);
+
+			mat.Indentity();
+			Effekseer::Matrix43::Multiple(mat, mat, scale);
+			Effekseer::Matrix43::Multiple(mat, mat, rot);
+			Effekseer::Matrix43::Multiple(mat, mat, tra);
+
+			Effekseer::ExternalModel dst(model, mat);
+			externalModels.emplace_back(dst);
+		}
+
+		return externalModels;
+	};
+
+	const auto externalModels = createExternalModels();
+
+	m_rootLocation.X = behavior_.PositionX;
+	m_rootLocation.Y = behavior_.PositionY;
+	m_rootLocation.Z = behavior_.PositionZ;
+	m_rootRotation.X = behavior_.RotationX;
+	m_rootRotation.Y = behavior_.RotationY;
+	m_rootRotation.Z = behavior_.RotationZ;
+	m_rootScale.X = behavior_.ScaleX;
+	m_rootScale.Y = behavior_.ScaleY;
+	m_rootScale.Z = behavior_.ScaleZ;
+
 	for (int32_t z = 0; z < behavior_.CountZ; z++)
 	{
 		for (int32_t y = 0; y < behavior_.CountY; y++)
@@ -567,7 +625,14 @@ void EffectRenderer::PlayEffect()
 				posY += behavior_.PositionY;
 				posZ += behavior_.PositionZ;
 
-				HandleHolder handleHolder(manager_->Play(effect_->GetEffect(), posX, posY, posZ));
+				Effekseer::Manager::PlayParameter playParameter;
+				playParameter.Effect = effect_->GetEffect();
+				playParameter.Position = {posX, posY, posZ};
+				playParameter.Rotation = {m_rootRotation.X, m_rootRotation.Y, m_rootRotation.Z};
+				playParameter.Scale = {m_rootScale.X, m_rootScale.Y, m_rootScale.Z};
+				playParameter.ExternalModels = externalModels;
+
+				HandleHolder handleHolder(manager_->Play(playParameter));
 
 				Effekseer::Matrix43 mat, matTra, matRot, matScale;
 				matTra.Translation(posX, posY, posZ);
@@ -1080,6 +1145,7 @@ const ViewerEffectBehavior& EffectRenderer::GetBehavior() const
 void EffectRenderer::SetBehavior(const ViewerEffectBehavior& behavior)
 {
 	behavior_ = behavior;
+	externalModels_ = behavior_.ExternalModels;
 }
 
 int EffectRenderer::GetCurrentLOD() const

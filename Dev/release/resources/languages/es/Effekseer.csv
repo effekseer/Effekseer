@@ -342,6 +342,7 @@ PermissionError_File_Mac,Mover los archivos asociados con el  efecto al director
 ,,
 ModelReferenceType_File_Name,Archivo,
 ModelReferenceType_ProdecualModel_Name,Modelo procedural,
+ModelReferenceType_ExternalModel_Name,Modelo externo,
 ,,
 TreeDisabled_Message,"Si el selector está activado se mostrarán los elementos de ajuste.",
 ,,

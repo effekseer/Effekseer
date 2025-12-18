@@ -80,10 +80,11 @@ namespace Effekseer.Binary
 				}
 				else
 				{
-					throw new Exception();
+					data.Add(value.Model.ExternalModelIndex.GetBytes());
 				}
 
 				data.Add(((int)value.Model.Type.Value).GetBytes());
+				data.Add(((int)value.Model.Coordinate.Value).GetBytes());
 			}
 			else if (type == Data.GenerationLocationValues.ParameterType.Circle)
 			{

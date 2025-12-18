@@ -115,6 +115,8 @@ RS_Model_Model_Desc,模型文件
 RS_Model_Billboard_Name,放置方法
 RS_Model_Culling_Name,剔除
 RS_Model_Color_Name,颜色
+RS_Model_ExternalIndex_Name,外部模型索引
+RS_Model_ExternalIndex_Desc,在“行为”面板中设置的外部模型索引。
 ,
 RS_Ring_RingShape_Name,形状
 RS_Ring_RenderingOrder_Name,渲染顺序

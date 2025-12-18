@@ -123,6 +123,16 @@ public class EffectRenderer : global::System.IDisposable {
     if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
   }
 
+  public ViewerExternalModelVector GetExternalModels() {
+    ViewerExternalModelVector ret = new ViewerExternalModelVector(EffekseerNativePINVOKE.EffectRenderer_GetExternalModels(swigCPtr), false);
+    return ret;
+  }
+
+  public void SetExternalModels(ViewerExternalModelVector models) {
+    EffekseerNativePINVOKE.EffectRenderer_SetExternalModels(swigCPtr, ViewerExternalModelVector.getCPtr(models));
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+  }
+
   public int GetCurrentLOD() {
     int ret = EffekseerNativePINVOKE.EffectRenderer_GetCurrentLOD(swigCPtr);
     return ret;

@@ -276,6 +276,7 @@ void Instance::FirstUpdate()
 	// calculate parent matrixt to get matrix
 	m_pParent->UpdateTransform(0);
 
+	UpdateParentMatrix(0.0f);
 	forceField_.Reset();
 	generationLocation_ = SIMD::Mat43f::Identity;
 
@@ -331,6 +332,8 @@ void Instance::FirstUpdate()
 	const auto magnification = ((EffectImplemented*)m_pEffectNode->GetEffect())->GetMaginification();
 	generationLocation_ = m_pEffectNode->GenerationLocation.GenerateGenerationPosition(
 		*(m_pEffectNode->GetEffect()),
+		instanceGlobal,
+		parentMatrix_,
 		m_InstanceNumber,
 		parentTime,
 		magnification,

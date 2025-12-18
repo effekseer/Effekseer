@@ -2,8 +2,11 @@
 
 #include "../Effekseer.Base.h"
 #include "../Effekseer.InternalStruct.h"
+#include "../Effekseer.InstanceGlobal.h"
 #include "../Model/Effekseer.Model.h"
 #include "../Utils/Effekseer.BinaryVersion.h"
+#include "../SIMD/Mat44f.h"
+#include "../SIMD/Utils.h"
 
 #include <stdint.h>
 
@@ -42,6 +45,12 @@ struct ParameterGenerationLocation
 		MODELTYPE_DWORD = 0x7fffffff,
 	};
 
+	enum class ModelCoordinateSpace : int32_t
+	{
+		Parent,
+		World,
+	};
+
 	enum eCircleType
 	{
 		CIRCLE_TYPE_RANDOM = 0,
@@ -74,6 +83,7 @@ struct ParameterGenerationLocation
 			ModelReferenceType Reference;
 			int32_t index;
 			eModelType type;
+			ModelCoordinateSpace Coordinate;
 		} model;
 
 		struct
@@ -169,6 +179,7 @@ struct ParameterGenerationLocation
 		else if (type == TYPE_MODEL)
 		{
 			model.Reference = ModelReferenceType::File;
+			model.Coordinate = ModelCoordinateSpace::Parent;
 
 			if (version >= Version16Alpha3)
 			{
@@ -181,6 +192,12 @@ struct ParameterGenerationLocation
 
 			memcpy(&model.type, pos, sizeof(int32_t));
 			pos += sizeof(int32_t);
+
+			if (version >= Version18Alpha3)
+			{
+				memcpy(&model.Coordinate, pos, sizeof(int32_t));
+				pos += sizeof(int32_t);
+			}
 		}
 		else if (type == TYPE_CIRCLE)
 		{
@@ -205,7 +222,7 @@ struct ParameterGenerationLocation
 		}
 	}
 
-	SIMD::Mat43f GenerateGenerationPosition(const Effect& effect, int instanceNumber, int parentTime, float magnification, CoordinateSystem coordinateSystem, RandObject& rand)
+	SIMD::Mat43f GenerateGenerationPosition(const Effect& effect, const InstanceGlobal* instanceGlobal, const SIMD::Mat43f& parentMatrix, int instanceNumber, int parentTime, float magnification, CoordinateSystem coordinateSystem, RandObject& rand)
 	{
 		const auto& param = *this;
 
@@ -309,6 +326,8 @@ struct ParameterGenerationLocation
 			ret = SIMD::Mat43f::Identity;
 			ModelRef modelRef = nullptr;
 			const ParameterGenerationLocation::eModelType modelType = param.model.type;
+			SIMD::Mat43f externalModelTransform = SIMD::Mat43f::Identity;
+			bool hasExternalModelTransform = false;
 
 			if (param.model.Reference == ModelReferenceType::File)
 			{
@@ -317,6 +336,17 @@ struct ParameterGenerationLocation
 			else if (param.model.Reference == ModelReferenceType::Procedural)
 			{
 				modelRef = effect.GetProceduralModel(param.model.index);
+			}
+			else if (param.model.Reference == ModelReferenceType::External && instanceGlobal != nullptr)
+			{
+				const auto& externalModels = instanceGlobal->GetExternalModels();
+				if (0 <= param.model.index && param.model.index < static_cast<int32_t>(externalModels.size()))
+				{
+					const auto& external = externalModels[param.model.index];
+					modelRef = external.Model;
+					externalModelTransform = SIMD::Mat43f(external.Transform);
+					hasExternalModelTransform = true;
+				}
 			}
 
 			{
@@ -360,21 +390,55 @@ struct ParameterGenerationLocation
 															   magnification);
 					}
 
-					ret = SIMD::Mat43f::Translation(emitter.Position);
+					SIMD::Vec3f position = SIMD::Vec3f(emitter.Position);
+					SIMD::Vec3f binormal = SIMD::Vec3f(emitter.Binormal);
+					SIMD::Vec3f tangent = SIMD::Vec3f(emitter.Tangent);
+					SIMD::Vec3f normal = SIMD::Vec3f(emitter.Normal);
+
+					if (hasExternalModelTransform)
+					{
+						const auto rotation = externalModelTransform.Get3x3SubMatrix();
+						position = SIMD::Vec3f::Transform(position, externalModelTransform);
+						binormal = SIMD::Vec3f::Transform(binormal, rotation);
+						tangent = SIMD::Vec3f::Transform(tangent, rotation);
+						normal = SIMD::Vec3f::Transform(normal, rotation);
+					}
+
+					if (param.model.Reference == ModelReferenceType::External &&
+						param.model.Coordinate == ParameterGenerationLocation::ModelCoordinateSpace::World)
+					{
+						Matrix44 parentMatrixStruct;
+						{
+							const auto parentMatrix44 = SIMD::Mat44f(parentMatrix);
+							parentMatrixStruct = ToStruct(parentMatrix44);
+						}
+						Matrix44 parentMatrixInv;
+						Matrix44::Inverse(parentMatrixInv, parentMatrixStruct);
+						const SIMD::Mat44f parentMatrixInvSimd(parentMatrixInv);
+
+						position = SIMD::Vec3f::Transform(position, parentMatrixInvSimd);
+
+						const auto parentRotation = parentMatrixInvSimd.GetRotation();
+						binormal = SIMD::Vec3f::Transform(binormal, parentRotation);
+						tangent = SIMD::Vec3f::Transform(tangent, parentRotation);
+						normal = SIMD::Vec3f::Transform(normal, parentRotation);
+					}
+
+					ret = SIMD::Mat43f::Translation(position);
 
 					if (param.EffectsRotation)
 					{
-						ret.X.SetX(emitter.Binormal.X);
-						ret.Y.SetX(emitter.Binormal.Y);
-						ret.Z.SetX(emitter.Binormal.Z);
+						ret.X.SetX(binormal.GetX());
+						ret.Y.SetX(binormal.GetY());
+						ret.Z.SetX(binormal.GetZ());
 
-						ret.X.SetY(emitter.Tangent.X);
-						ret.Y.SetY(emitter.Tangent.Y);
-						ret.Z.SetY(emitter.Tangent.Z);
+						ret.X.SetY(tangent.GetX());
+						ret.Y.SetY(tangent.GetY());
+						ret.Z.SetY(tangent.GetZ());
 
-						ret.X.SetZ(emitter.Normal.X);
-						ret.Y.SetZ(emitter.Normal.Y);
-						ret.Z.SetZ(emitter.Normal.Z);
+						ret.X.SetZ(normal.GetX());
+						ret.Y.SetZ(normal.GetY());
+						ret.Z.SetZ(normal.GetZ());
 					}
 				}
 			}

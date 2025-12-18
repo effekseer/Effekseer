@@ -308,17 +308,19 @@ public:
 bool EffectRecorder::Begin(int32_t squareMaxCount,
 						   Effekseer::Tool::EffectRendererParameter config,
 						   Vector2I screenSize,
-						   std::shared_ptr<Effekseer::Tool::GraphicsDevice> graphicsDevice,
-						   std::shared_ptr<Effekseer::Tool::EffectSetting> setting,
-						   const RecordingParameter& recordingParameter,
-						   Effekseer::Tool::Vector2I imageSize,
-						   bool isSRGBMode,
-						   Effekseer::Tool::ViewerEffectBehavior behavior,
-						   Effekseer::Tool::PostEffectParameter postEffectParameter,
-						   std::shared_ptr<Effekseer::Tool::Effect> effect)
+			   std::shared_ptr<Effekseer::Tool::GraphicsDevice> graphicsDevice,
+			   std::shared_ptr<Effekseer::Tool::EffectSetting> setting,
+			   const RecordingParameter& recordingParameter,
+			   Effekseer::Tool::Vector2I imageSize,
+			   bool isSRGBMode,
+			   Effekseer::Tool::ViewerEffectBehavior behavior,
+			   const std::vector<Effekseer::Tool::ViewerExternalModel>& externalModels,
+			   Effekseer::Tool::PostEffectParameter postEffectParameter,
+			   std::shared_ptr<Effekseer::Tool::Effect> effect)
 {
 	graphicsDevice_ = graphicsDevice;
 	recordingParameter_ = recordingParameter;
+	externalModels_ = externalModels;
 	int recScale = Effekseer::Max(1, recordingParameter.Scale);
 	imageSize_ = Effekseer::Tool::Vector2I(imageSize.X * recScale, imageSize.Y * recScale);
 
@@ -428,6 +430,7 @@ bool EffectRecorder::Begin(int32_t squareMaxCount,
 	generator_->SetEffect(effect);
 
 	generator_->SetBehavior(behavior);
+	generator_->SetExternalModels(externalModels_);
 
 	generator_->SetPostEffectParameter(postEffectParameter);
 

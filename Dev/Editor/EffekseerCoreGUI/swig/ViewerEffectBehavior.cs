@@ -457,6 +457,17 @@ public class ViewerEffectBehavior : global::System.IDisposable {
     } 
   }
 
+  public ViewerExternalModelVector ExternalModels {
+    set {
+      EffekseerNativePINVOKE.ViewerEffectBehavior_ExternalModels_set(swigCPtr, ViewerExternalModelVector.getCPtr(value));
+    } 
+    get {
+      global::System.IntPtr cPtr = EffekseerNativePINVOKE.ViewerEffectBehavior_ExternalModels_get(swigCPtr);
+      ViewerExternalModelVector ret = (cPtr == global::System.IntPtr.Zero) ? null : new ViewerExternalModelVector(cPtr, false);
+      return ret;
+    } 
+  }
+
   public ViewerEffectBehavior() : this(EffekseerNativePINVOKE.new_ViewerEffectBehavior(), true) {
   }
 

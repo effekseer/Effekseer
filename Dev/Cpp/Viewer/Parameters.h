@@ -1,6 +1,8 @@
 #pragma once
 
 #include <stdint.h>
+#include <string>
+#include <vector>
 
 namespace Effekseer::Tool
 {
@@ -41,6 +43,23 @@ struct PostEffectParameter
 
 	int ToneMapAlgorithm = 0;
 	float ToneMapExposure = 1.0f;
+};
+
+struct ViewerExternalModel
+{
+	std::u16string Path;
+
+	float PositionX = 0.0f;
+	float PositionY = 0.0f;
+	float PositionZ = 0.0f;
+
+	float RotationX = 0.0f;
+	float RotationY = 0.0f;
+	float RotationZ = 0.0f;
+
+	float ScaleX = 1.0f;
+	float ScaleY = 1.0f;
+	float ScaleZ = 1.0f;
 };
 
 struct ViewerParamater
@@ -109,6 +128,8 @@ struct ViewerEffectBehavior
 	bool TriggerInput1 = false;
 	bool TriggerInput2 = false;
 	bool TriggerInput3 = false;
+
+	std::vector<ViewerExternalModel> ExternalModels;
 };
 
 class NativeStatus

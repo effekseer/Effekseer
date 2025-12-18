@@ -842,6 +842,10 @@ namespace Effekseer.Data
 			[Selected(ID = 100, Value = (int)ModelReferenceType.ProceduralModel)]
 			public ProceduralModelReference Reference { get; private set; } = new ProceduralModelReference();
 
+			[Selected(ID = ModelReferenceTypeID, Value = (int)ModelReferenceType.ExternalModel)]
+			[Key(key = "RS_Model_ExternalIndex")]
+			public Value.Int ExternalModelIndex { get; private set; } = new Value.Int(0, ExternalModelValues.SlotCount - 1, 0);
+
 			[Key(key = "RS_Model_Billboard")]
 			public Value.Enum<BillboardType> Billboard { get; private set; }
 
