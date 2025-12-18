@@ -117,6 +117,8 @@ RS_Model_Model_Desc,Model File
 RS_Model_Billboard_Name,Configuration
 RS_Model_Culling_Name,Culling
 RS_Model_Color_Name,Color
+RS_Model_ExternalIndex_Name,External Model Index
+RS_Model_ExternalIndex_Desc,Index of the external model set in Behavior.
 ,
 RS_Ring_RingShape_Name,Shape
 RS_Ring_RenderingOrder_Name,Rendering Order

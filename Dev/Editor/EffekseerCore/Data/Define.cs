@@ -32,6 +32,8 @@ namespace Effekseer.Data
 		File = 0,
 		[Key(key = "ModelReferenceType_ProdecualModel")]
 		ProceduralModel = 1,
+		[Key(key = "ModelReferenceType_ExternalModel")]
+		ExternalModel = 2,
 	}
 
 

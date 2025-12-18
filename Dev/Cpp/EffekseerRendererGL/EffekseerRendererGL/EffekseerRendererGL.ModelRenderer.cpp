@@ -297,14 +297,18 @@ void ModelRenderer::Rendering(const efkModelNodeParam& parameter, const Instance
 
 void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userData)
 {
-	if (parameter.ModelIndex < 0)
+	if (!parameter.IsExternalMode && parameter.ModelIndex < 0)
 	{
 		return;
 	}
 
 	Effekseer::ModelRef model = nullptr;
 
-	if (parameter.IsProceduralMode)
+	if (parameter.IsExternalMode)
+	{
+		model = parameter.ExternalModel;
+	}
+	else if (parameter.IsProceduralMode)
 	{
 		model = parameter.EffectPointer->GetProceduralModel(parameter.ModelIndex);
 	}

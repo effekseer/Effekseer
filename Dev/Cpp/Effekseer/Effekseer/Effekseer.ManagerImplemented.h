@@ -452,6 +452,8 @@ public:
 
 	Handle Play(const EffectRef& effect, const Vector3D& position, int32_t startFrame) override;
 
+	Handle Play(const PlayParameter& parameter) override;
+
 	int GetCameraCullingMaskToShowAllEffects() override;
 
 	int GetUpdateTime() const override;

@@ -52,6 +52,8 @@ public:
 		bool EnableViewOffset = false;
 
 		bool IsProceduralMode = false;
+		bool IsExternalMode = false;
+		ModelRef ExternalModel = nullptr;
 
 		RefPtr<RenderingUserData> UserData;
 	};

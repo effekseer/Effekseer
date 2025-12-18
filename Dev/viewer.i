@@ -56,6 +56,7 @@ class"
 
 %template(ProfileSampleManagerVector) std::vector<Effekseer::Tool::ProfileSample::Manager>;
 %template(ProfileSampleEffectVector) std::vector<Effekseer::Tool::ProfileSample::Effect>;
+%template(ViewerExternalModelVector) std::vector<Effekseer::Tool::ViewerExternalModel>;
 
 //-----------------------------------------------------------------------------------
 //

@@ -127,6 +127,16 @@ namespace Effekseer.Data
 			private set;
 		}
 
+		[Key(key = "EffectBehavior_ExternalModels")]
+		[TreeNode(key = "EffectBehavior_ExternalModels", id = "EffectBehavior_ExternalModels")]
+		[IO(Export = true)]
+		[Undo(Undo = false)]
+		public ExternalModelValues ExternalModels
+		{
+			get;
+			private set;
+		}
+
 		public EffectBehaviorValues()
 		{
 			Location = new Value.Vector3D();
@@ -151,6 +161,8 @@ namespace Effekseer.Data
 			TargetLocation = new Value.Vector3D();
 
 			PlaybackSpeed = new Value.Float(1.0f, float.MaxValue, 0.0f, 0.1f);
+
+			ExternalModels = new ExternalModelValues();
 		}
 
 		/// <summary>
@@ -203,6 +215,8 @@ namespace Effekseer.Data
 			TargetLocation.X.SetValueDirectly(0.0f);
 			TargetLocation.Y.SetValueDirectly(0.0f);
 			TargetLocation.Z.SetValueDirectly(0.0f);
+
+			ExternalModels.Reset();
 		}
 	}
 }

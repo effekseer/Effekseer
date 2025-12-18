@@ -132,6 +132,7 @@ protected:
 
 	Vector2I screenSize_;
 	ViewerEffectBehavior behavior_;
+	std::vector<ViewerExternalModel> externalModels_;
 
 	Effekseer::Backend::TextureRef hdrRenderTextureMSAA;
 	Effekseer::Backend::TextureRef hdrRenderTexture;
@@ -224,6 +225,17 @@ public:
 
 	const ViewerEffectBehavior& GetBehavior() const;
 	void SetBehavior(const ViewerEffectBehavior& behavior);
+
+	const std::vector<ViewerExternalModel>& GetExternalModels() const
+	{
+		return externalModels_;
+	}
+
+	void SetExternalModels(const std::vector<ViewerExternalModel>& models)
+	{
+		externalModels_ = models;
+		behavior_.ExternalModels = externalModels_;
+	}
 
 	int GetCurrentLOD() const;
 

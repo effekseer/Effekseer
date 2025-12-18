@@ -323,6 +323,7 @@ PermissionError_File_Mac,将相关文件移入你的用户文件夹或可解决�
 ,,
 ModelReferenceType_File_Name,文件,
 ModelReferenceType_ProdecualModel_Name,程序化模型,
+ModelReferenceType_ExternalModel_Name,外部模型,
 ,,
 TreeDisabled_Message,"开启开关以显示设置项。",
 ,,

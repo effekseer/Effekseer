@@ -858,7 +858,7 @@ public:
 	{
 		if (matrixes_.size() == 0)
 			return;
-		if (param.ModelIndex < 0)
+		if (!param.IsExternalMode && param.ModelIndex < 0)
 			return;
 
 		if (renderer->GetExternalShaderSettings() == nullptr)
@@ -925,12 +925,17 @@ public:
 	{
 		if (matrixes_.size() == 0)
 			return;
-		if (param.ModelIndex < 0)
+
+		if (!param.IsExternalMode && param.ModelIndex < 0)
 			return;
 
 		::Effekseer::RefPtr<MODEL> model;
 
-		if (param.IsProceduralMode)
+		if (param.IsExternalMode)
+		{
+			model = param.ExternalModel;
+		}
+		else if (param.IsProceduralMode)
 		{
 			model = param.EffectPointer->GetProceduralModel(param.ModelIndex);
 		}

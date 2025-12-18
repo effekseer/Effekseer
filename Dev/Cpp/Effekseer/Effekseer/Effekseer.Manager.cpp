@@ -2091,6 +2091,34 @@ Handle ManagerImplemented::Play(const EffectRef& effect, const Vector3D& positio
 	return handle;
 }
 
+Handle ManagerImplemented::Play(const Manager::PlayParameter& parameter)
+{
+	if (parameter.Effect == nullptr)
+	{
+		return -1;
+	}
+
+	auto handle = Play(parameter.Effect, parameter.Position, parameter.StartFrame);
+	if (handle < 0)
+	{
+		return handle;
+	}
+
+	auto it = drawSets_.find(handle);
+	if (it == drawSets_.end())
+	{
+		return handle;
+	}
+
+	auto& drawSet = it->second;
+	drawSet.Scaling = parameter.Scale;
+	drawSet.Rotation.RotationZXY(parameter.Rotation.Z, parameter.Rotation.X, parameter.Rotation.Y);
+	drawSet.SetGlobalMatrix(SIMD::Mat43f::SRT(SIMD::Vec3f(drawSet.Scaling), drawSet.Rotation, SIMD::Vec3f(parameter.Position)));
+	drawSet.GlobalPointer->SetExternalModels(parameter.ExternalModels);
+
+	return handle;
+}
+
 int ManagerImplemented::GetCameraCullingMaskToShowAllEffects()
 {
 	int mask = 0;

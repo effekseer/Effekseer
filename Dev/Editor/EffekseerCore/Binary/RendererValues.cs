@@ -430,6 +430,10 @@ namespace Effekseer.Binary
 						data.Add((-1).GetBytes());
 					}
 				}
+				else if (value.Model.ModelReference.Value == Data.ModelReferenceType.ExternalModel)
+				{
+					data.Add(param.ExternalModelIndex.GetBytes());
+				}
 			}
 		}
 

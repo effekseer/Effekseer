@@ -29,3 +29,10 @@ EffectBehavior_PlaybackSpeed_Name,Playback Speed
 EffectBehavior_TargetLocation_Name,"Point of
 Attraction"
 EffectBehavior_TargetLocation_Desc,Point in space the instances are drawn to
+EffectBehavior_ExternalModels_Name,External Models
+EffectBehavior_ExternalModels_Desc,Models used as emitters for spawning.
+EffectBehavior_ExternalModel_Path_Name,Model
+EffectBehavior_ExternalModel_Path_Desc,Model asset used for emission.
+EffectBehavior_ExternalModel_Translation_Name,Translation
+EffectBehavior_ExternalModel_Rotation_Name,Rotation
+EffectBehavior_ExternalModel_Scale_Name,Scale

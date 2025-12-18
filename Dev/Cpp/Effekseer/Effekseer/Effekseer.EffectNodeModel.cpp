@@ -65,6 +65,14 @@ void EffectNodeModel::LoadRendererParameter(unsigned char*& pos, const SettingRe
 		memcpy(&ModelIndex, pos, sizeof(int));
 		pos += sizeof(int);
 	}
+	else if (Mode == ModelReferenceType::External)
+	{
+		if (m_effect->GetVersion() >= Version18Alpha3)
+		{
+			memcpy(&ModelIndex, pos, sizeof(int));
+			pos += sizeof(int);
+		}
+	}
 
 	if (m_effect->GetVersion() >= 12)
 	{
@@ -266,6 +274,16 @@ ModelRenderer::NodeParameter EffectNodeModel::GetNodeParameter(const Manager* ma
 	nodeParameter.EnableViewOffset = (TranslationParam.TranslationType == ParameterTranslationType_ViewOffset);
 
 	nodeParameter.IsProceduralMode = Mode == ModelReferenceType::Procedural;
+	nodeParameter.IsExternalMode = Mode == ModelReferenceType::External;
+
+	if (nodeParameter.IsExternalMode && global != nullptr)
+	{
+		const auto& externalModels = global->GetExternalModels();
+		if (0 <= ModelIndex && ModelIndex < static_cast<int32_t>(externalModels.size()))
+		{
+			nodeParameter.ExternalModel = externalModels[ModelIndex].Model;
+		}
+	}
 
 	nodeParameter.UserData = GetRenderingUserData();
 

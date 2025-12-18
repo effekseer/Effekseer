@@ -679,6 +679,97 @@ SWIGINTERN void std_vector_Sl_Effekseer_Tool_ProfileSample_Effect_Sg__SetRange(s
           throw std::out_of_range("index");
         std::copy(values.begin(), values.end(), self->begin()+index);
       }
+SWIGINTERN std::vector< Effekseer::Tool::ViewerExternalModel > *new_std_vector_Sl_Effekseer_Tool_ViewerExternalModel_Sg___SWIG_2(int capacity){
+        std::vector< Effekseer::Tool::ViewerExternalModel >* pv = 0;
+        if (capacity >= 0) {
+          pv = new std::vector< Effekseer::Tool::ViewerExternalModel >();
+          pv->reserve(capacity);
+       } else {
+          throw std::out_of_range("capacity");
+       }
+       return pv;
+      }
+SWIGINTERN Effekseer::Tool::ViewerExternalModel std_vector_Sl_Effekseer_Tool_ViewerExternalModel_Sg__getitemcopy(std::vector< Effekseer::Tool::ViewerExternalModel > *self,int index){
+        if (index>=0 && index<(int)self->size())
+          return (*self)[index];
+        else
+          throw std::out_of_range("index");
+      }
+SWIGINTERN std::vector< Effekseer::Tool::ViewerExternalModel >::value_type const &std_vector_Sl_Effekseer_Tool_ViewerExternalModel_Sg__getitem(std::vector< Effekseer::Tool::ViewerExternalModel > *self,int index){
+        if (index>=0 && index<(int)self->size())
+          return (*self)[index];
+        else
+          throw std::out_of_range("index");
+      }
+SWIGINTERN void std_vector_Sl_Effekseer_Tool_ViewerExternalModel_Sg__setitem(std::vector< Effekseer::Tool::ViewerExternalModel > *self,int index,Effekseer::Tool::ViewerExternalModel const &val){
+        if (index>=0 && index<(int)self->size())
+          (*self)[index] = val;
+        else
+          throw std::out_of_range("index");
+      }
+SWIGINTERN void std_vector_Sl_Effekseer_Tool_ViewerExternalModel_Sg__AddRange(std::vector< Effekseer::Tool::ViewerExternalModel > *self,std::vector< Effekseer::Tool::ViewerExternalModel > const &values){
+        self->insert(self->end(), values.begin(), values.end());
+      }
+SWIGINTERN std::vector< Effekseer::Tool::ViewerExternalModel > *std_vector_Sl_Effekseer_Tool_ViewerExternalModel_Sg__GetRange(std::vector< Effekseer::Tool::ViewerExternalModel > *self,int index,int count){
+        if (index < 0)
+          throw std::out_of_range("index");
+        if (count < 0)
+          throw std::out_of_range("count");
+        if (index >= (int)self->size()+1 || index+count > (int)self->size())
+          throw std::invalid_argument("invalid range");
+        return new std::vector< Effekseer::Tool::ViewerExternalModel >(self->begin()+index, self->begin()+index+count);
+      }
+SWIGINTERN void std_vector_Sl_Effekseer_Tool_ViewerExternalModel_Sg__Insert(std::vector< Effekseer::Tool::ViewerExternalModel > *self,int index,Effekseer::Tool::ViewerExternalModel const &x){
+        if (index>=0 && index<(int)self->size()+1)
+          self->insert(self->begin()+index, x);
+        else
+          throw std::out_of_range("index");
+      }
+SWIGINTERN void std_vector_Sl_Effekseer_Tool_ViewerExternalModel_Sg__InsertRange(std::vector< Effekseer::Tool::ViewerExternalModel > *self,int index,std::vector< Effekseer::Tool::ViewerExternalModel > const &values){
+        if (index>=0 && index<(int)self->size()+1)
+          self->insert(self->begin()+index, values.begin(), values.end());
+        else
+          throw std::out_of_range("index");
+      }
+SWIGINTERN void std_vector_Sl_Effekseer_Tool_ViewerExternalModel_Sg__RemoveAt(std::vector< Effekseer::Tool::ViewerExternalModel > *self,int index){
+        if (index>=0 && index<(int)self->size())
+          self->erase(self->begin() + index);
+        else
+          throw std::out_of_range("index");
+      }
+SWIGINTERN void std_vector_Sl_Effekseer_Tool_ViewerExternalModel_Sg__RemoveRange(std::vector< Effekseer::Tool::ViewerExternalModel > *self,int index,int count){
+        if (index < 0)
+          throw std::out_of_range("index");
+        if (count < 0)
+          throw std::out_of_range("count");
+        if (index >= (int)self->size()+1 || index+count > (int)self->size())
+          throw std::invalid_argument("invalid range");
+        self->erase(self->begin()+index, self->begin()+index+count);
+      }
+SWIGINTERN std::vector< Effekseer::Tool::ViewerExternalModel > *std_vector_Sl_Effekseer_Tool_ViewerExternalModel_Sg__Repeat(Effekseer::Tool::ViewerExternalModel const &value,int count){
+        if (count < 0)
+          throw std::out_of_range("count");
+        return new std::vector< Effekseer::Tool::ViewerExternalModel >(count, value);
+      }
+SWIGINTERN void std_vector_Sl_Effekseer_Tool_ViewerExternalModel_Sg__Reverse__SWIG_0(std::vector< Effekseer::Tool::ViewerExternalModel > *self){
+        std::reverse(self->begin(), self->end());
+      }
+SWIGINTERN void std_vector_Sl_Effekseer_Tool_ViewerExternalModel_Sg__Reverse__SWIG_1(std::vector< Effekseer::Tool::ViewerExternalModel > *self,int index,int count){
+        if (index < 0)
+          throw std::out_of_range("index");
+        if (count < 0)
+          throw std::out_of_range("count");
+        if (index >= (int)self->size()+1 || index+count > (int)self->size())
+          throw std::invalid_argument("invalid range");
+        std::reverse(self->begin()+index, self->begin()+index+count);
+      }
+SWIGINTERN void std_vector_Sl_Effekseer_Tool_ViewerExternalModel_Sg__SetRange(std::vector< Effekseer::Tool::ViewerExternalModel > *self,int index,std::vector< Effekseer::Tool::ViewerExternalModel > const &values){
+        if (index < 0)
+          throw std::out_of_range("index");
+        if (index+values.size() > self->size())
+          throw std::out_of_range("index");
+        std::copy(values.begin(), values.end(), self->begin()+index);
+      }
 
 struct SWIG_null_deleter {
   void operator() (void const *) const {
@@ -1597,6 +1688,371 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_ProfileSampleEffectVect
 }
 
 
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_ViewerExternalModelVector__SWIG_0___() {
+  void * jresult ;
+  std::vector< Effekseer::Tool::ViewerExternalModel > *result = 0 ;
+  
+  result = (std::vector< Effekseer::Tool::ViewerExternalModel > *)new std::vector< Effekseer::Tool::ViewerExternalModel >();
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_ViewerExternalModelVector__SWIG_1___(void * jarg1) {
+  void * jresult ;
+  std::vector< Effekseer::Tool::ViewerExternalModel > *arg1 = 0 ;
+  std::vector< Effekseer::Tool::ViewerExternalModel > *result = 0 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ViewerExternalModel > *)jarg1;
+  if (!arg1) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "std::vector< Effekseer::Tool::ViewerExternalModel > const & is null", 0);
+    return 0;
+  } 
+  result = (std::vector< Effekseer::Tool::ViewerExternalModel > *)new std::vector< Effekseer::Tool::ViewerExternalModel >((std::vector< Effekseer::Tool::ViewerExternalModel > const &)*arg1);
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModelVector_Clear___(void * jarg1) {
+  std::vector< Effekseer::Tool::ViewerExternalModel > *arg1 = 0 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ViewerExternalModel > *)jarg1; 
+  (arg1)->clear();
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModelVector_Add___(void * jarg1, void * jarg2) {
+  std::vector< Effekseer::Tool::ViewerExternalModel > *arg1 = 0 ;
+  Effekseer::Tool::ViewerExternalModel *arg2 = 0 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ViewerExternalModel > *)jarg1; 
+  arg2 = (Effekseer::Tool::ViewerExternalModel *)jarg2;
+  if (!arg2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Effekseer::Tool::ViewerExternalModel const & is null", 0);
+    return ;
+  } 
+  (arg1)->push_back((Effekseer::Tool::ViewerExternalModel const &)*arg2);
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModelVector_size___(void * jarg1) {
+  unsigned int jresult ;
+  std::vector< Effekseer::Tool::ViewerExternalModel > *arg1 = 0 ;
+  std::vector< Effekseer::Tool::ViewerExternalModel >::size_type result;
+  
+  arg1 = (std::vector< Effekseer::Tool::ViewerExternalModel > *)jarg1; 
+  result = ((std::vector< Effekseer::Tool::ViewerExternalModel > const *)arg1)->size();
+  jresult = (unsigned int)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModelVector_empty___(void * jarg1) {
+  unsigned int jresult ;
+  std::vector< Effekseer::Tool::ViewerExternalModel > *arg1 = 0 ;
+  bool result;
+  
+  arg1 = (std::vector< Effekseer::Tool::ViewerExternalModel > *)jarg1; 
+  result = (bool)((std::vector< Effekseer::Tool::ViewerExternalModel > const *)arg1)->empty();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModelVector_capacity___(void * jarg1) {
+  unsigned int jresult ;
+  std::vector< Effekseer::Tool::ViewerExternalModel > *arg1 = 0 ;
+  std::vector< Effekseer::Tool::ViewerExternalModel >::size_type result;
+  
+  arg1 = (std::vector< Effekseer::Tool::ViewerExternalModel > *)jarg1; 
+  result = ((std::vector< Effekseer::Tool::ViewerExternalModel > const *)arg1)->capacity();
+  jresult = (unsigned int)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModelVector_reserve___(void * jarg1, unsigned int jarg2) {
+  std::vector< Effekseer::Tool::ViewerExternalModel > *arg1 = 0 ;
+  std::vector< Effekseer::Tool::ViewerExternalModel >::size_type arg2 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ViewerExternalModel > *)jarg1; 
+  arg2 = (std::vector< Effekseer::Tool::ViewerExternalModel >::size_type)jarg2; 
+  (arg1)->reserve(SWIG_STD_MOVE(arg2));
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_ViewerExternalModelVector__SWIG_2___(int jarg1) {
+  void * jresult ;
+  int arg1 ;
+  std::vector< Effekseer::Tool::ViewerExternalModel > *result = 0 ;
+  
+  arg1 = (int)jarg1; 
+  try {
+    result = (std::vector< Effekseer::Tool::ViewerExternalModel > *)new_std_vector_Sl_Effekseer_Tool_ViewerExternalModel_Sg___SWIG_2(arg1);
+  } catch(std::out_of_range &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, 0, (&_e)->what());
+    return 0;
+  }
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModelVector_getitemcopy___(void * jarg1, int jarg2) {
+  void * jresult ;
+  std::vector< Effekseer::Tool::ViewerExternalModel > *arg1 = 0 ;
+  int arg2 ;
+  Effekseer::Tool::ViewerExternalModel result;
+  
+  arg1 = (std::vector< Effekseer::Tool::ViewerExternalModel > *)jarg1; 
+  arg2 = (int)jarg2; 
+  try {
+    result = std_vector_Sl_Effekseer_Tool_ViewerExternalModel_Sg__getitemcopy(arg1,arg2);
+  } catch(std::out_of_range &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, 0, (&_e)->what());
+    return 0;
+  }
+  jresult = new Effekseer::Tool::ViewerExternalModel(result); 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModelVector_getitem___(void * jarg1, int jarg2) {
+  void * jresult ;
+  std::vector< Effekseer::Tool::ViewerExternalModel > *arg1 = 0 ;
+  int arg2 ;
+  std::vector< Effekseer::Tool::ViewerExternalModel >::value_type *result = 0 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ViewerExternalModel > *)jarg1; 
+  arg2 = (int)jarg2; 
+  try {
+    result = (std::vector< Effekseer::Tool::ViewerExternalModel >::value_type *) &std_vector_Sl_Effekseer_Tool_ViewerExternalModel_Sg__getitem(arg1,arg2);
+  } catch(std::out_of_range &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, 0, (&_e)->what());
+    return 0;
+  }
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModelVector_setitem___(void * jarg1, int jarg2, void * jarg3) {
+  std::vector< Effekseer::Tool::ViewerExternalModel > *arg1 = 0 ;
+  int arg2 ;
+  Effekseer::Tool::ViewerExternalModel *arg3 = 0 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ViewerExternalModel > *)jarg1; 
+  arg2 = (int)jarg2; 
+  arg3 = (Effekseer::Tool::ViewerExternalModel *)jarg3;
+  if (!arg3) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Effekseer::Tool::ViewerExternalModel const & is null", 0);
+    return ;
+  } 
+  try {
+    std_vector_Sl_Effekseer_Tool_ViewerExternalModel_Sg__setitem(arg1,arg2,(Effekseer::Tool::ViewerExternalModel const &)*arg3);
+  } catch(std::out_of_range &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, 0, (&_e)->what());
+    return ;
+  }
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModelVector_AddRange___(void * jarg1, void * jarg2) {
+  std::vector< Effekseer::Tool::ViewerExternalModel > *arg1 = 0 ;
+  std::vector< Effekseer::Tool::ViewerExternalModel > *arg2 = 0 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ViewerExternalModel > *)jarg1; 
+  arg2 = (std::vector< Effekseer::Tool::ViewerExternalModel > *)jarg2;
+  if (!arg2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "std::vector< Effekseer::Tool::ViewerExternalModel > const & is null", 0);
+    return ;
+  } 
+  std_vector_Sl_Effekseer_Tool_ViewerExternalModel_Sg__AddRange(arg1,(std::vector< Effekseer::Tool::ViewerExternalModel > const &)*arg2);
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModelVector_GetRange___(void * jarg1, int jarg2, int jarg3) {
+  void * jresult ;
+  std::vector< Effekseer::Tool::ViewerExternalModel > *arg1 = 0 ;
+  int arg2 ;
+  int arg3 ;
+  std::vector< Effekseer::Tool::ViewerExternalModel > *result = 0 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ViewerExternalModel > *)jarg1; 
+  arg2 = (int)jarg2; 
+  arg3 = (int)jarg3; 
+  try {
+    result = (std::vector< Effekseer::Tool::ViewerExternalModel > *)std_vector_Sl_Effekseer_Tool_ViewerExternalModel_Sg__GetRange(arg1,arg2,arg3);
+  } catch(std::out_of_range &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, 0, (&_e)->what());
+    return 0;
+  } catch(std::invalid_argument &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentException, (&_e)->what(), "");
+    return 0;
+  }
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModelVector_Insert___(void * jarg1, int jarg2, void * jarg3) {
+  std::vector< Effekseer::Tool::ViewerExternalModel > *arg1 = 0 ;
+  int arg2 ;
+  Effekseer::Tool::ViewerExternalModel *arg3 = 0 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ViewerExternalModel > *)jarg1; 
+  arg2 = (int)jarg2; 
+  arg3 = (Effekseer::Tool::ViewerExternalModel *)jarg3;
+  if (!arg3) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Effekseer::Tool::ViewerExternalModel const & is null", 0);
+    return ;
+  } 
+  try {
+    std_vector_Sl_Effekseer_Tool_ViewerExternalModel_Sg__Insert(arg1,arg2,(Effekseer::Tool::ViewerExternalModel const &)*arg3);
+  } catch(std::out_of_range &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, 0, (&_e)->what());
+    return ;
+  }
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModelVector_InsertRange___(void * jarg1, int jarg2, void * jarg3) {
+  std::vector< Effekseer::Tool::ViewerExternalModel > *arg1 = 0 ;
+  int arg2 ;
+  std::vector< Effekseer::Tool::ViewerExternalModel > *arg3 = 0 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ViewerExternalModel > *)jarg1; 
+  arg2 = (int)jarg2; 
+  arg3 = (std::vector< Effekseer::Tool::ViewerExternalModel > *)jarg3;
+  if (!arg3) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "std::vector< Effekseer::Tool::ViewerExternalModel > const & is null", 0);
+    return ;
+  } 
+  try {
+    std_vector_Sl_Effekseer_Tool_ViewerExternalModel_Sg__InsertRange(arg1,arg2,(std::vector< Effekseer::Tool::ViewerExternalModel > const &)*arg3);
+  } catch(std::out_of_range &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, 0, (&_e)->what());
+    return ;
+  }
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModelVector_RemoveAt___(void * jarg1, int jarg2) {
+  std::vector< Effekseer::Tool::ViewerExternalModel > *arg1 = 0 ;
+  int arg2 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ViewerExternalModel > *)jarg1; 
+  arg2 = (int)jarg2; 
+  try {
+    std_vector_Sl_Effekseer_Tool_ViewerExternalModel_Sg__RemoveAt(arg1,arg2);
+  } catch(std::out_of_range &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, 0, (&_e)->what());
+    return ;
+  }
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModelVector_RemoveRange___(void * jarg1, int jarg2, int jarg3) {
+  std::vector< Effekseer::Tool::ViewerExternalModel > *arg1 = 0 ;
+  int arg2 ;
+  int arg3 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ViewerExternalModel > *)jarg1; 
+  arg2 = (int)jarg2; 
+  arg3 = (int)jarg3; 
+  try {
+    std_vector_Sl_Effekseer_Tool_ViewerExternalModel_Sg__RemoveRange(arg1,arg2,arg3);
+  } catch(std::out_of_range &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, 0, (&_e)->what());
+    return ;
+  } catch(std::invalid_argument &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentException, (&_e)->what(), "");
+    return ;
+  }
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModelVector_Repeat___(void * jarg1, int jarg2) {
+  void * jresult ;
+  Effekseer::Tool::ViewerExternalModel *arg1 = 0 ;
+  int arg2 ;
+  std::vector< Effekseer::Tool::ViewerExternalModel > *result = 0 ;
+  
+  arg1 = (Effekseer::Tool::ViewerExternalModel *)jarg1;
+  if (!arg1) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Effekseer::Tool::ViewerExternalModel const & is null", 0);
+    return 0;
+  } 
+  arg2 = (int)jarg2; 
+  try {
+    result = (std::vector< Effekseer::Tool::ViewerExternalModel > *)std_vector_Sl_Effekseer_Tool_ViewerExternalModel_Sg__Repeat((Effekseer::Tool::ViewerExternalModel const &)*arg1,arg2);
+  } catch(std::out_of_range &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, 0, (&_e)->what());
+    return 0;
+  }
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModelVector_Reverse__SWIG_0___(void * jarg1) {
+  std::vector< Effekseer::Tool::ViewerExternalModel > *arg1 = 0 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ViewerExternalModel > *)jarg1; 
+  std_vector_Sl_Effekseer_Tool_ViewerExternalModel_Sg__Reverse__SWIG_0(arg1);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModelVector_Reverse__SWIG_1___(void * jarg1, int jarg2, int jarg3) {
+  std::vector< Effekseer::Tool::ViewerExternalModel > *arg1 = 0 ;
+  int arg2 ;
+  int arg3 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ViewerExternalModel > *)jarg1; 
+  arg2 = (int)jarg2; 
+  arg3 = (int)jarg3; 
+  try {
+    std_vector_Sl_Effekseer_Tool_ViewerExternalModel_Sg__Reverse__SWIG_1(arg1,arg2,arg3);
+  } catch(std::out_of_range &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, 0, (&_e)->what());
+    return ;
+  } catch(std::invalid_argument &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentException, (&_e)->what(), "");
+    return ;
+  }
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModelVector_SetRange___(void * jarg1, int jarg2, void * jarg3) {
+  std::vector< Effekseer::Tool::ViewerExternalModel > *arg1 = 0 ;
+  int arg2 ;
+  std::vector< Effekseer::Tool::ViewerExternalModel > *arg3 = 0 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ViewerExternalModel > *)jarg1; 
+  arg2 = (int)jarg2; 
+  arg3 = (std::vector< Effekseer::Tool::ViewerExternalModel > *)jarg3;
+  if (!arg3) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "std::vector< Effekseer::Tool::ViewerExternalModel > const & is null", 0);
+    return ;
+  } 
+  try {
+    std_vector_Sl_Effekseer_Tool_ViewerExternalModel_Sg__SetRange(arg1,arg2,(std::vector< Effekseer::Tool::ViewerExternalModel > const &)*arg3);
+  } catch(std::out_of_range &_e) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, 0, (&_e)->what());
+    return ;
+  }
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_ViewerExternalModelVector___(void * jarg1) {
+  std::vector< Effekseer::Tool::ViewerExternalModel > *arg1 = 0 ;
+  
+  arg1 = (std::vector< Effekseer::Tool::ViewerExternalModel > *)jarg1; 
+  delete arg1;
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_Matrix44F___() {
   void * jresult ;
   Effekseer::Tool::Matrix44F *result = 0 ;
@@ -1937,6 +2393,249 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_PostEffectParameter___(
   Effekseer::Tool::PostEffectParameter *arg1 = 0 ;
   
   arg1 = (Effekseer::Tool::PostEffectParameter *)jarg1; 
+  delete arg1;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModel_Path_set___(void * jarg1, char16_t * jarg2) {
+  Effekseer::Tool::ViewerExternalModel *arg1 = 0 ;
+  std::u16string *arg2 = 0 ;
+  
+  arg1 = (Effekseer::Tool::ViewerExternalModel *)jarg1; 
+  if (!jarg2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "null u16string", 0);
+    return ;
+  }
+  ::std::u16string arg2_str(jarg2);
+  arg2 = &arg2_str; 
+  if (arg1) (arg1)->Path = *arg2;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModel_Path_get___(void * jarg1) {
+  void * jresult ;
+  Effekseer::Tool::ViewerExternalModel *arg1 = 0 ;
+  std::u16string *result = 0 ;
+  
+  arg1 = (Effekseer::Tool::ViewerExternalModel *)jarg1; 
+  result = (std::u16string *) & ((arg1)->Path);
+  jresult = SWIG_csharp_wstring_callback((const wchar_t*)result->c_str()); 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModel_PositionX_set___(void * jarg1, float jarg2) {
+  Effekseer::Tool::ViewerExternalModel *arg1 = 0 ;
+  float arg2 ;
+  
+  arg1 = (Effekseer::Tool::ViewerExternalModel *)jarg1; 
+  arg2 = (float)jarg2; 
+  if (arg1) (arg1)->PositionX = arg2;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModel_PositionX_get___(void * jarg1) {
+  float jresult ;
+  Effekseer::Tool::ViewerExternalModel *arg1 = 0 ;
+  float result;
+  
+  arg1 = (Effekseer::Tool::ViewerExternalModel *)jarg1; 
+  result = (float) ((arg1)->PositionX);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModel_PositionY_set___(void * jarg1, float jarg2) {
+  Effekseer::Tool::ViewerExternalModel *arg1 = 0 ;
+  float arg2 ;
+  
+  arg1 = (Effekseer::Tool::ViewerExternalModel *)jarg1; 
+  arg2 = (float)jarg2; 
+  if (arg1) (arg1)->PositionY = arg2;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModel_PositionY_get___(void * jarg1) {
+  float jresult ;
+  Effekseer::Tool::ViewerExternalModel *arg1 = 0 ;
+  float result;
+  
+  arg1 = (Effekseer::Tool::ViewerExternalModel *)jarg1; 
+  result = (float) ((arg1)->PositionY);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModel_PositionZ_set___(void * jarg1, float jarg2) {
+  Effekseer::Tool::ViewerExternalModel *arg1 = 0 ;
+  float arg2 ;
+  
+  arg1 = (Effekseer::Tool::ViewerExternalModel *)jarg1; 
+  arg2 = (float)jarg2; 
+  if (arg1) (arg1)->PositionZ = arg2;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModel_PositionZ_get___(void * jarg1) {
+  float jresult ;
+  Effekseer::Tool::ViewerExternalModel *arg1 = 0 ;
+  float result;
+  
+  arg1 = (Effekseer::Tool::ViewerExternalModel *)jarg1; 
+  result = (float) ((arg1)->PositionZ);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModel_RotationX_set___(void * jarg1, float jarg2) {
+  Effekseer::Tool::ViewerExternalModel *arg1 = 0 ;
+  float arg2 ;
+  
+  arg1 = (Effekseer::Tool::ViewerExternalModel *)jarg1; 
+  arg2 = (float)jarg2; 
+  if (arg1) (arg1)->RotationX = arg2;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModel_RotationX_get___(void * jarg1) {
+  float jresult ;
+  Effekseer::Tool::ViewerExternalModel *arg1 = 0 ;
+  float result;
+  
+  arg1 = (Effekseer::Tool::ViewerExternalModel *)jarg1; 
+  result = (float) ((arg1)->RotationX);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModel_RotationY_set___(void * jarg1, float jarg2) {
+  Effekseer::Tool::ViewerExternalModel *arg1 = 0 ;
+  float arg2 ;
+  
+  arg1 = (Effekseer::Tool::ViewerExternalModel *)jarg1; 
+  arg2 = (float)jarg2; 
+  if (arg1) (arg1)->RotationY = arg2;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModel_RotationY_get___(void * jarg1) {
+  float jresult ;
+  Effekseer::Tool::ViewerExternalModel *arg1 = 0 ;
+  float result;
+  
+  arg1 = (Effekseer::Tool::ViewerExternalModel *)jarg1; 
+  result = (float) ((arg1)->RotationY);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModel_RotationZ_set___(void * jarg1, float jarg2) {
+  Effekseer::Tool::ViewerExternalModel *arg1 = 0 ;
+  float arg2 ;
+  
+  arg1 = (Effekseer::Tool::ViewerExternalModel *)jarg1; 
+  arg2 = (float)jarg2; 
+  if (arg1) (arg1)->RotationZ = arg2;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModel_RotationZ_get___(void * jarg1) {
+  float jresult ;
+  Effekseer::Tool::ViewerExternalModel *arg1 = 0 ;
+  float result;
+  
+  arg1 = (Effekseer::Tool::ViewerExternalModel *)jarg1; 
+  result = (float) ((arg1)->RotationZ);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModel_ScaleX_set___(void * jarg1, float jarg2) {
+  Effekseer::Tool::ViewerExternalModel *arg1 = 0 ;
+  float arg2 ;
+  
+  arg1 = (Effekseer::Tool::ViewerExternalModel *)jarg1; 
+  arg2 = (float)jarg2; 
+  if (arg1) (arg1)->ScaleX = arg2;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModel_ScaleX_get___(void * jarg1) {
+  float jresult ;
+  Effekseer::Tool::ViewerExternalModel *arg1 = 0 ;
+  float result;
+  
+  arg1 = (Effekseer::Tool::ViewerExternalModel *)jarg1; 
+  result = (float) ((arg1)->ScaleX);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModel_ScaleY_set___(void * jarg1, float jarg2) {
+  Effekseer::Tool::ViewerExternalModel *arg1 = 0 ;
+  float arg2 ;
+  
+  arg1 = (Effekseer::Tool::ViewerExternalModel *)jarg1; 
+  arg2 = (float)jarg2; 
+  if (arg1) (arg1)->ScaleY = arg2;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModel_ScaleY_get___(void * jarg1) {
+  float jresult ;
+  Effekseer::Tool::ViewerExternalModel *arg1 = 0 ;
+  float result;
+  
+  arg1 = (Effekseer::Tool::ViewerExternalModel *)jarg1; 
+  result = (float) ((arg1)->ScaleY);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModel_ScaleZ_set___(void * jarg1, float jarg2) {
+  Effekseer::Tool::ViewerExternalModel *arg1 = 0 ;
+  float arg2 ;
+  
+  arg1 = (Effekseer::Tool::ViewerExternalModel *)jarg1; 
+  arg2 = (float)jarg2; 
+  if (arg1) (arg1)->ScaleZ = arg2;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewerExternalModel_ScaleZ_get___(void * jarg1) {
+  float jresult ;
+  Effekseer::Tool::ViewerExternalModel *arg1 = 0 ;
+  float result;
+  
+  arg1 = (Effekseer::Tool::ViewerExternalModel *)jarg1; 
+  result = (float) ((arg1)->ScaleZ);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_ViewerExternalModel___() {
+  void * jresult ;
+  Effekseer::Tool::ViewerExternalModel *result = 0 ;
+  
+  result = (Effekseer::Tool::ViewerExternalModel *)new Effekseer::Tool::ViewerExternalModel();
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_ViewerExternalModel___(void * jarg1) {
+  Effekseer::Tool::ViewerExternalModel *arg1 = 0 ;
+  
+  arg1 = (Effekseer::Tool::ViewerExternalModel *)jarg1; 
   delete arg1;
 }
 
@@ -2949,6 +3648,28 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_ViewerEffectBehavior_T
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerEffectBehavior_ExternalModels_set___(void * jarg1, void * jarg2) {
+  Effekseer::Tool::ViewerEffectBehavior *arg1 = 0 ;
+  std::vector< Effekseer::Tool::ViewerExternalModel > *arg2 = 0 ;
+  
+  arg1 = (Effekseer::Tool::ViewerEffectBehavior *)jarg1; 
+  arg2 = (std::vector< Effekseer::Tool::ViewerExternalModel > *)jarg2; 
+  if (arg1) (arg1)->ExternalModels = *arg2;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_ViewerEffectBehavior_ExternalModels_get___(void * jarg1) {
+  void * jresult ;
+  Effekseer::Tool::ViewerEffectBehavior *arg1 = 0 ;
+  std::vector< Effekseer::Tool::ViewerExternalModel > *result = 0 ;
+  
+  arg1 = (Effekseer::Tool::ViewerEffectBehavior *)jarg1; 
+  result = (std::vector< Effekseer::Tool::ViewerExternalModel > *)& ((arg1)->ExternalModels);
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_ViewerEffectBehavior___() {
   void * jresult ;
   Effekseer::Tool::ViewerEffectBehavior *result = 0 ;
@@ -3467,7 +4188,7 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_RecordingParameter___(v
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_EffectRecorder_Begin___(void * jarg1, int jarg2, void * jarg3, void * jarg4, void * jarg5, void * jarg6, void * jarg7, void * jarg8, unsigned int jarg9, void * jarg10, void * jarg11, void * jarg12) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_EffectRecorder_Begin___(void * jarg1, int jarg2, void * jarg3, void * jarg4, void * jarg5, void * jarg6, void * jarg7, void * jarg8, unsigned int jarg9, void * jarg10, void * jarg11, void * jarg12, void * jarg13) {
   unsigned int jresult ;
   Effekseer::Tool::EffectRecorder *arg1 = 0 ;
   int32_t arg2 ;
@@ -3479,14 +4200,15 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_EffectRecorder_Begin__
   Effekseer::Tool::Vector2I arg8 ;
   bool arg9 ;
   Effekseer::Tool::ViewerEffectBehavior arg10 ;
-  Effekseer::Tool::PostEffectParameter arg11 ;
-  std::shared_ptr< Effekseer::Tool::Effect > arg12 ;
+  std::vector< Effekseer::Tool::ViewerExternalModel > *arg11 = 0 ;
+  Effekseer::Tool::PostEffectParameter arg12 ;
+  std::shared_ptr< Effekseer::Tool::Effect > arg13 ;
   std::shared_ptr< Effekseer::Tool::EffectRecorder > *smartarg1 = 0 ;
   Effekseer::Tool::EffectRendererParameter *argp3 ;
   Effekseer::Tool::Vector2I *argp4 ;
   Effekseer::Tool::Vector2I *argp8 ;
   Effekseer::Tool::ViewerEffectBehavior *argp10 ;
-  Effekseer::Tool::PostEffectParameter *argp11 ;
+  Effekseer::Tool::PostEffectParameter *argp12 ;
   bool result;
   
   
@@ -3525,14 +4247,19 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_EffectRecorder_Begin__
     return 0;
   }
   arg10 = *argp10; 
-  argp11 = (Effekseer::Tool::PostEffectParameter *)jarg11; 
-  if (!argp11) {
+  arg11 = (std::vector< Effekseer::Tool::ViewerExternalModel > *)jarg11;
+  if (!arg11) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "std::vector< Effekseer::Tool::ViewerExternalModel > const & is null", 0);
+    return 0;
+  } 
+  argp12 = (Effekseer::Tool::PostEffectParameter *)jarg12; 
+  if (!argp12) {
     SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Attempt to dereference null Effekseer::Tool::PostEffectParameter", 0);
     return 0;
   }
-  arg11 = *argp11; 
-  if (jarg12) arg12 = *(std::shared_ptr< Effekseer::Tool::Effect > *)jarg12; 
-  result = (bool)(arg1)->Begin(arg2,SWIG_STD_MOVE(arg3),SWIG_STD_MOVE(arg4),SWIG_STD_MOVE(arg5),SWIG_STD_MOVE(arg6),(Effekseer::Tool::RecordingParameter const &)*arg7,SWIG_STD_MOVE(arg8),arg9,SWIG_STD_MOVE(arg10),SWIG_STD_MOVE(arg11),SWIG_STD_MOVE(arg12));
+  arg12 = *argp12; 
+  if (jarg13) arg13 = *(std::shared_ptr< Effekseer::Tool::Effect > *)jarg13; 
+  result = (bool)(arg1)->Begin(arg2,SWIG_STD_MOVE(arg3),SWIG_STD_MOVE(arg4),SWIG_STD_MOVE(arg5),SWIG_STD_MOVE(arg6),(Effekseer::Tool::RecordingParameter const &)*arg7,SWIG_STD_MOVE(arg8),arg9,SWIG_STD_MOVE(arg10),(std::vector< Effekseer::Tool::ViewerExternalModel > const &)*arg11,SWIG_STD_MOVE(arg12),SWIG_STD_MOVE(arg13));
   jresult = result; 
   return jresult;
 }
@@ -5147,6 +5874,32 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_SetBehavior___(
     return ;
   } 
   (arg1)->SetBehavior((Effekseer::Tool::ViewerEffectBehavior const &)*arg2);
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_GetExternalModels___(void * jarg1) {
+  void * jresult ;
+  Effekseer::Tool::EffectRenderer *arg1 = 0 ;
+  std::vector< Effekseer::Tool::ViewerExternalModel > *result = 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  result = (std::vector< Effekseer::Tool::ViewerExternalModel > *) &((Effekseer::Tool::EffectRenderer const *)arg1)->GetExternalModels();
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_SetExternalModels___(void * jarg1, void * jarg2) {
+  Effekseer::Tool::EffectRenderer *arg1 = 0 ;
+  std::vector< Effekseer::Tool::ViewerExternalModel > *arg2 = 0 ;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  arg2 = (std::vector< Effekseer::Tool::ViewerExternalModel > *)jarg2;
+  if (!arg2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "std::vector< Effekseer::Tool::ViewerExternalModel > const & is null", 0);
+    return ;
+  } 
+  (arg1)->SetExternalModels((std::vector< Effekseer::Tool::ViewerExternalModel > const &)*arg2);
 }
 
 
