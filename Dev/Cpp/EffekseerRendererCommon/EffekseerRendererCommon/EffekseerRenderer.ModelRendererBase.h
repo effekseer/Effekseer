@@ -791,10 +791,16 @@ public:
 	{
 		::Effekseer::BillboardType btype = parameter.Billboard;
 		Effekseer::SIMD::Mat44f mat44;
+		auto baseMatrix = instanceParameter.SRTMatrix43;
+
+		if (parameter.IsExternalMode)
+		{
+			baseMatrix *= parameter.ExternalModelTransform;
+		}
 
 		if (btype == ::Effekseer::BillboardType::Fixed)
 		{
-			mat44 = instanceParameter.SRTMatrix43;
+			mat44 = baseMatrix;
 		}
 		else
 		{
@@ -803,7 +809,7 @@ public:
 			Effekseer::SIMD::Vec3f R;
 			Effekseer::SIMD::Vec3f F;
 
-			CalcBillboard(btype, mat43, s, R, F, instanceParameter.SRTMatrix43, renderer->GetCameraFrontDirection(), instanceParameter.Direction);
+			CalcBillboard(btype, mat43, s, R, F, baseMatrix, renderer->GetCameraFrontDirection(), instanceParameter.Direction);
 
 			mat44 = ::Effekseer::SIMD::Mat43f::Scaling(s) * mat43;
 		}

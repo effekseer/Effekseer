@@ -282,6 +282,7 @@ ModelRenderer::NodeParameter EffectNodeModel::GetNodeParameter(const Manager* ma
 		if (0 <= ModelIndex && ModelIndex < static_cast<int32_t>(externalModels.size()))
 		{
 			nodeParameter.ExternalModel = externalModels[ModelIndex].Model;
+			nodeParameter.ExternalModelTransform = externalModels[ModelIndex].Transform;
 		}
 	}
 
