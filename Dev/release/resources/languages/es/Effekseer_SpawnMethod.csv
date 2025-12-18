@@ -49,3 +49,6 @@ SpawnMethod_Model_ExternalIndex_Name,Índice de modelo externo
 SpawnMethod_Model_ExternalIndex_Desc,Índice del modelo externo configurado en Comportamiento.
 SpawnMethod_Model_Coordinate_Name,Espacio del modelo externo
 SpawnMethod_Model_Coordinate_Desc,Tratar el modelo externo en el espacio local del padre o en el espacio mundial.
+,
+SpawnMethod_ModelCoordinate_Local_Name,Local
+SpawnMethod_ModelCoordinate_World_Name,Mundial

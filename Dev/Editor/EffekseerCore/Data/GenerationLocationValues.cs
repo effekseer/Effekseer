@@ -23,7 +23,7 @@ namespace Effekseer.Data
 		public enum ModelCoordinateType
 		{
 			[Key(key = "SpawnMethod_ModelCoordinate_Local")]
-			Parent = 0,
+			Local = 0,
 			[Key(key = "SpawnMethod_ModelCoordinate_World")]
 			World = 1,
 		}
@@ -227,7 +227,7 @@ namespace Effekseer.Data
 			{
 				get;
 				private set;
-			} = new Value.Enum<ModelCoordinateType>(ModelCoordinateType.Parent);
+			} = new Value.Enum<ModelCoordinateType>(ModelCoordinateType.Local);
 
 			[Key(key = "SpawnMethod_Model_Type")]
 			public Value.Enum<ModelType> Type

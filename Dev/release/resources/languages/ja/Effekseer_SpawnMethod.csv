@@ -49,3 +49,6 @@ SpawnMethod_Model_ExternalIndex_Name,外部モデルのインデックス
 SpawnMethod_Model_ExternalIndex_Desc,振る舞いで設定した外部モデルのインデックス。
 SpawnMethod_Model_Coordinate_Name,外部モデルの座標系
 SpawnMethod_Model_Coordinate_Desc,外部モデルを親のローカル座標系で扱うかワールド座標系で扱うか。
+,
+SpawnMethod_ModelCoordinate_Local_Name,ローカル
+SpawnMethod_ModelCoordinate_World_Name,ワールド

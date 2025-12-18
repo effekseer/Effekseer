@@ -49,3 +49,6 @@ SpawnMethod_Model_ExternalIndex_Name,外部模型索引
 SpawnMethod_Model_ExternalIndex_Desc,在“行为”面板中设置的外部模型索引。
 SpawnMethod_Model_Coordinate_Name,外部模型坐标系
 SpawnMethod_Model_Coordinate_Desc,在父局部坐标系或世界坐标系下处理外部模型。
+,
+SpawnMethod_ModelCoordinate_Local_Name,本地
+SpawnMethod_ModelCoordinate_World_Name,世界
