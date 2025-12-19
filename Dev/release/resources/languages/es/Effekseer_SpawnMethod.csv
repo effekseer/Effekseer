@@ -46,7 +46,7 @@ SpawnMethod_ModelType_RandomVertex_Name,Vertice aleatorio
 SpawnMethod_ModelType_Face_Name,Superficie
 SpawnMethod_ModelType_RandomFace_Name,Superficie aleatoria
 SpawnMethod_Model_ExternalIndex_Name,Índice de modelo externo
-SpawnMethod_Model_ExternalIndex_Desc,Índice del modelo externo configurado en Comportamiento.
+SpawnMethod_Model_ExternalIndex_Desc,Índice del modelo externo.
 SpawnMethod_Model_Coordinate_Name,Espacio del modelo externo
 SpawnMethod_Model_Coordinate_Desc,Tratar el modelo externo en el espacio local del padre o en el espacio mundial.
 ,

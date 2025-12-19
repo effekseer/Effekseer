@@ -849,7 +849,7 @@ namespace Effekseer.Utils
 		}
 	}
 
-	class ProjectVersionUpdator17To18Alpha3 : ProjectVersionUpdator
+	class ProjectVersionUpdator17To18Beta2 : ProjectVersionUpdator
 	{
 		public override bool Update(NodeRoot rootNode)
 		{

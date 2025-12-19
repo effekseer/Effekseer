@@ -46,7 +46,7 @@ SpawnMethod_ModelType_RandomVertex_Name,Random Vertex
 SpawnMethod_ModelType_Face_Name,Surface
 SpawnMethod_ModelType_RandomFace_Name,Random Surface
 SpawnMethod_Model_ExternalIndex_Name,External Model Index
-SpawnMethod_Model_ExternalIndex_Desc,Index of the external model set in Behavior.
+SpawnMethod_Model_ExternalIndex_Desc,External model index.
 SpawnMethod_Model_Coordinate_Name,External Model Space
 SpawnMethod_Model_Coordinate_Desc,Treat the external model in parent(local) or world space.
 ,

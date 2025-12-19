@@ -122,7 +122,7 @@ Fijado: El nodo se mantendrá fijado"
 RS_Model_Culling_Name,Mostrar
 RS_Model_Color_Name,Color
 RS_Model_ExternalIndex_Name,Índice de modelo externo
-RS_Model_ExternalIndex_Desc,Índice del modelo externo configurado en Comportamiento.
+RS_Model_ExternalIndex_Desc,Índice del modelo externo.
 ,
 RS_Ring_RingShape_Name,Forma
 RS_Ring_RenderingOrder_Name,Orden renderizado

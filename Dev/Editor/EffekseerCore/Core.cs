@@ -11,7 +11,7 @@ namespace Effekseer
 {
 	public class Core
 	{
-		public const string Version = "1.80β1";
+		public const string Version = "1.80β2";
 
 		public const string OptionFilePath = "config.option.xml";
 
@@ -976,9 +976,9 @@ namespace Effekseer
 				updater.Update(root_node);
 			}
 
-			if (toolVersion < ParseVersion("1.80α3"))
+			if (toolVersion < ParseVersion("1.80β2"))
 			{
-				var updater = new Utils.ProjectVersionUpdator17To18Alpha3();
+				var updater = new Utils.ProjectVersionUpdator17To18Beta2();
 				updater.Update(root_node);
 			}
 
