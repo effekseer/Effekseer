@@ -2,7 +2,7 @@
 #include "../Sound/SoundDevice.h"
 #include "Effect.h"
 #include "EffectSetting.h"
-#include <Effekseer/Effekseer.InstanceGlobal.h>
+#include <Effekseer/Effekseer.ExternalModel.h>
 
 #ifdef _WIN32
 #include "../Graphics/Platform/DX11/efk.GraphicsDX11.h"

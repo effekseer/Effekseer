@@ -6,7 +6,7 @@
 // Include
 //----------------------------------------------------------------------------------
 #include "Effekseer.Base.Pre.h"
-#include "Effekseer.InstanceGlobal.h"
+#include "Effekseer.ExternalModel.h"
 #include "Effekseer.Matrix44.h"
 #include "Effekseer.Vector3D.h"
 

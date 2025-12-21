@@ -7,9 +7,8 @@
 //----------------------------------------------------------------------------------
 #include "Effekseer.Base.h"
 #include "Effekseer.Color.h"
-#include "Effekseer.Matrix43.h"
+#include "Effekseer.ExternalModel.h"
 #include "Effekseer.Random.h"
-#include "Model/Effekseer.Model.h"
 #include "SIMD/Mat43f.h"
 #include "SIMD/Mat44f.h"
 #include "SIMD/Vec3f.h"
@@ -19,26 +18,6 @@
 //----------------------------------------------------------------------------------
 namespace Effekseer
 {
-
-struct ExternalModel
-{
-	ModelRef Model;
-	Matrix43 Transform;
-
-	ExternalModel()
-	{
-		Transform.Indentity();
-	}
-
-	ExternalModel(const ModelRef& model, const Matrix43& transform)
-		: Model(model)
-		, Transform(transform)
-	{
-	}
-};
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 
 /**
 	@brief	インスタンス共通部分

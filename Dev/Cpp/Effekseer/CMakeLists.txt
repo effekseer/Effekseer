@@ -15,6 +15,7 @@ set(effekseer_public_h
     Effekseer/Effekseer.DefaultFile.h
     Effekseer/Effekseer.File.h
     Effekseer/Effekseer.Manager.h
+    Effekseer/Effekseer.ExternalModel.h
     Effekseer/Effekseer.Math.h
     Effekseer/Effekseer.Matrix43.h
     Effekseer/Effekseer.Matrix44.h
