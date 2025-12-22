@@ -3,8 +3,6 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#include <limits>
-
 #include "Effekseer.EffectNode.h"
 #include "Effekseer.Effect.h"
 #include "Effekseer.EffectImplemented.h"
@@ -27,6 +25,8 @@
 #include "Sound/Effekseer.SoundPlayer.h"
 #include "Utils/Effekseer.BinaryReader.h"
 #include "Utils/Effekseer.Compatiblity.h"
+
+#include <limits>
 
 //----------------------------------------------------------------------------------
 //
