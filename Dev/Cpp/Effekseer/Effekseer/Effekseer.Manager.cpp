@@ -15,8 +15,8 @@
 #include "Effekseer.Setting.h"
 #include "Effekseer.SoundLoader.h"
 #include "Effekseer.TextureLoader.h"
-#include "Effekseer/Model/Effekseer.ModelLoader.h"
 #include "Geometry/Effekseer.GeometryUtility.h"
+#include "Model/Effekseer.ModelLoader.h"
 #include "Renderer/Effekseer.GpuParticles.h"
 #include "Renderer/Effekseer.GpuTimer.h"
 #include "Renderer/Effekseer.ModelRenderer.h"
@@ -1427,7 +1427,7 @@ void ManagerImplemented::Update(const UpdateParameter& parameter)
 		workerThreads_[0].WaitForComplete();
 		// Process on worker thread
 		workerThreads_[0].RunAsync([this, parameter, times]()
-									{ DoUpdate(parameter, times); });
+								   { DoUpdate(parameter, times); });
 
 		if (parameter.SyncUpdate)
 		{
@@ -1494,7 +1494,7 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter, int times)
 					// Process on worker thread
 					PROFILER_BLOCK("DoUpdate::RunAsyncGroup", profiler::colors::Red100);
 					workerThreads_[threadID].RunAsync([this, &chunks, chunkOffset, chunkStep]()
-													   {
+													  {
 						PROFILER_BLOCK("DoUpdate::RunAsync", profiler::colors::Red200);
 						for (size_t i = chunkOffset; i < chunks.size(); i += chunkStep)
 						{
