@@ -368,7 +368,7 @@ protected:
 	//! calculate with spline
 	T get3Point(const InstanceEasingType& v, float t) const
 	{
-		const float eps = 0.00001f;
+		const float eps = 0.000001f;
 
 		if (t > v.Rate)
 		{
