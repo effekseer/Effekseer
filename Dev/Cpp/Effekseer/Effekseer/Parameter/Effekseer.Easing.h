@@ -368,13 +368,17 @@ protected:
 	//! calculate with spline
 	T get3Point(const InstanceEasingType& v, float t) const
 	{
+		const float eps = 0.00001f;
+
 		if (t > v.Rate)
 		{
-			t = 1.0f + (t - v.Rate) / (1.0f - v.Rate);
+			const float oneMinusRate = Max(eps, 1.0f - v.Rate);
+			t = 1.0f + (t - v.Rate) / oneMinusRate;
 		}
 		else
 		{
-			t = t / v.Rate;
+			const float rate = Max(eps, v.Rate);
+			t = t / rate;
 		}
 
 		t = Clamp(t, 2.0f, 0.0f);

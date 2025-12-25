@@ -282,6 +282,7 @@ void EffectNodeSprite::UpdateRenderedInstance(Instance& instance, InstanceGroup&
 	instValues._originalColor = AllTypeColorFunctions::Calculate(instValues.allColorValues, SpriteAllColor, instance.livingTime_, instance.livedTime_);
 
 	float fadeAlpha = GetFadeAlpha(instance);
+	
 	if (fadeAlpha != 1.0f)
 	{
 		instValues._originalColor.A = (uint8_t)(instValues._originalColor.A * fadeAlpha);
