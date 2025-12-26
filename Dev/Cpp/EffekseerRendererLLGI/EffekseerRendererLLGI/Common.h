@@ -3,7 +3,8 @@
 #define __EFFEKSEERRENDERER_LLGI_COMMON_H__
 
 #include <Effekseer.h>
-#include <EffekseerRendererCommon/EffekseerRenderer.Renderer.h>
+
+#include "../EffekseerRendererCommon/EffekseerRendererCommon/EffekseerRenderer.Renderer.h"
 
 namespace EffekseerRenderer
 {

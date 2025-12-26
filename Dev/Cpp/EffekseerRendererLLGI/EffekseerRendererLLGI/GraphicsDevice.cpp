@@ -29,7 +29,7 @@ std::vector<uint8_t> Serialize(const std::vector<LLGI::DataStructure>& data)
 		offset += sizeof(int);
 
 		memcpy(ret.data() + offset, d.Data, d.Size);
-		size += d.Size;
+		offset += d.Size;
 	}
 
 	return ret;
