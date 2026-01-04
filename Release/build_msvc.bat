@@ -11,6 +11,10 @@ echo [7] Visual Studio 2019(x86) with Vulkan
 echo [8] Visual Studio 2019(x64) with Vulkan
 echo [9] Visual Studio 2022(x86) with Vulkan
 echo [10] Visual Studio 2022(x64) with Vulkan
+echo [11] Visual Studio 2026(x86)
+echo [12] Visual Studio 2026(x64)
+echo [13] Visual Studio 2026(x86) with Vulkan
+echo [14] Visual Studio 2026(x64) with Vulkan
 echo ------------------------------------
 
 :REENTER_PRESET
@@ -60,6 +64,24 @@ if %build_preset%==1 (
 ) else if %build_preset%==10 (
     set generator="Visual Studio 17 2022"
     set generate_dir="vulkan_msvc2022_x64"
+    set platform="x64"
+    set enable_vulkan=ON
+) else if %build_preset%==11 (
+    set generator="Visual Studio 18 2026"
+    set generate_dir="msvc2026_x86"
+    set platform="Win32"
+) else if %build_preset%==12 (
+    set generator="Visual Studio 18 2026"
+    set generate_dir="msvc2026_x64"
+    set platform="x64"
+) else if %build_preset%==13 (
+    set generator="Visual Studio 18 2026"
+    set generate_dir="vulkan_msvc2026_x86"
+    set platform="Win32"
+    set enable_vulkan=ON
+) else if %build_preset%==14 (
+    set generator="Visual Studio 18 2026"
+    set generate_dir="vulkan_msvc2026_x64"
     set platform="x64"
     set enable_vulkan=ON
 ) else (
