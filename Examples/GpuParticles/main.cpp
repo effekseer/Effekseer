@@ -1,4 +1,4 @@
-// Choose from the following graphics APIs you want to enable
+﻿// Choose from the following graphics APIs you want to enable
 // グラフィックスAPIを下記から選んで有効にしてください
 
 #ifdef _WIN32
@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <string>
+#include <vector>
 
 #include <Effekseer.h>
 
