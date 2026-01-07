@@ -28,6 +28,7 @@ const int32_t Version17 = 1710;
 const int32_t Version18Alpha1 = 1800;
 const int32_t Version18Alpha2 = 1801;
 const int32_t Version18Alpha3 = 1802;
+const int32_t Version18 = 1810;
 
 const int32_t CompiledMaterialVersion15 = 1;
 const int32_t CompiledMaterialVersion16 = 1610;
