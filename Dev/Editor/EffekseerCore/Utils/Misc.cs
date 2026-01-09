@@ -307,6 +307,17 @@ namespace Effekseer.Utils
 						resources.Models.Add(_node.GenerationLocationValues.Model.Model);
 					}
 				}
+
+				// Enumerate used curve paths
+				if (_node.LocationValues.Type == Data.LocationValues.ParamaterType.NurbsCurve)
+				{
+					var relative_path = _node.LocationValues.NurbsCurve.FilePath.RelativePath;
+
+					if (relative_path != string.Empty)
+					{
+						resources.Curves.Add(_node.LocationValues.NurbsCurve.FilePath);
+					}
+				}
 			}
 
 			for (int i = 0; i < node.Children.Count; i++)

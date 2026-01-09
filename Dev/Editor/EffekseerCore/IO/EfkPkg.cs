@@ -460,7 +460,7 @@ namespace Effekseer.IO
 					efkefcSave.EditorData = Core.SaveAsXmlDocument(root);
 
 					var binaryExporter = new Binary.Exporter();
-					byte[] data = efkefc.Save(binaryExporter);
+					byte[] data = efkefcSave.Save(binaryExporter);
 					File.WriteAllBytes(filePath, data);
 					File.SetLastWriteTime(filePath, file.LastWriteTime);
 				}
