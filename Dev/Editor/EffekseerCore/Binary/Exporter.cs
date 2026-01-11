@@ -586,7 +586,7 @@ namespace Effekseer.Binary
 				}
 			};
 
-			get_curves(Core.Root);
+			get_curves(rootNode);
 
 			{
 				int index = 0;
