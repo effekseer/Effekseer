@@ -442,11 +442,11 @@ namespace Effekseer.IO
 						return (entry != null) ? entry.Data : null;
 					};
 
-					NodeRoot root = Core.LoadFromXml(doc, filePath);
-					if (root == null) return false;
+					NodeRoot nodeRoot = Core.LoadFromXml(doc, filePath);
+					if (nodeRoot == null) return false;
 
 					// Resolve the path of dependent resources
-					var resourcePaths = Utils.Misc.FindResourcePaths(root, Binary.ExporterVersion.Latest);
+					var resourcePaths = Utils.Misc.FindResourcePaths(nodeRoot, Binary.ExporterVersion.Latest);
 					foreach (var list in resourcePaths.All)
 					{
 						ApplyEffectDependencies(list, dirPath, filePath);
@@ -456,8 +456,8 @@ namespace Effekseer.IO
 					Core.OnFileLoaded = backedupDelegate;
 
 					var efkefcSave = new EfkEfc();
-					efkefcSave.RootNode = root;
-					efkefcSave.EditorData = Core.SaveAsXmlDocument(root);
+					efkefcSave.RootNode = nodeRoot;
+					efkefcSave.EditorData = Core.SaveAsXmlDocument(nodeRoot);
 
 					var binaryExporter = new Binary.Exporter();
 					byte[] data = efkefcSave.Save(binaryExporter);
