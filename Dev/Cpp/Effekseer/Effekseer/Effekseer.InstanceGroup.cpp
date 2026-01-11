@@ -5,6 +5,7 @@
 #include "Effekseer.Instance.h"
 #include "Effekseer.InstanceContainer.h"
 #include "Effekseer.InstanceGlobal.h"
+#include "Parameter/Effekseer.Trigger.h"
 #include "Utils/Effekseer.CustomAllocator.h"
 #include <assert.h>
 
@@ -111,33 +112,38 @@ void InstanceGroup::GenerateInstancesIfRequired(float localTime, RandObject& ran
 	if (generationType == GenerationTiming::Trigger)
 	{
 		const bool canGenerateNow = generationState_ == GenerationState::Generating && localTime >= generationOffsetTime_;
-		if (canGenerateNow && IsTriggerActivated(effectNode_->CommonValues.Generation.TriggerToGenerate, global_, parent))
+		if (canGenerateNow)
 		{
-			auto triggerCount = ApplyEq(effectNode_->GetEffect(), global_, parent, &rand, effectNode_->CommonValues.Generation.RefEqBurst, effectNode_->CommonValues.Generation.Burst);
-			int32_t requestCount = static_cast<int32_t>(triggerCount.getValue(rand));
-			requestCount = Max(requestCount, 0);
-
-			while (requestCount > 0 && maxGenerationCount_ > generatedCount_)
+			uint32_t triggerCount = GetTriggerCount(effectNode_->CommonValues.Generation.TriggerToGenerate, global_, parent);
+			for (uint32_t triggerIndex = 0; triggerIndex < triggerCount && generatedCount_ < maxGenerationCount_; triggerIndex++)
 			{
-				if (canSpawn)
-				{
-					auto instance = manager_->CreateInstance(effectNode_, container_, this);
-					if (instance != nullptr)
-					{
-						instances_.push_back(instance);
-						global_->IncInstanceCount();
+				auto triggerSpawnCount = ApplyEq(effectNode_->GetEffect(), global_, parent, &rand, effectNode_->CommonValues.Generation.RefEqBurst, effectNode_->CommonValues.Generation.Burst);
+				int32_t requestCount = static_cast<int32_t>(triggerSpawnCount.getValue(rand));
+				requestCount = Max(requestCount, 0);
 
-						instance->Initialize(parent, localTime, generatedCount_);
+				while (requestCount > 0 && maxGenerationCount_ > generatedCount_)
+				{
+					if (canSpawn)
+					{
+						auto instance = manager_->CreateInstance(effectNode_, container_, this);
+						if (instance != nullptr)
+						{
+							instances_.push_back(instance);
+							global_->IncInstanceCount();
+
+							instance->Initialize(parent, localTime, generatedCount_);
+						}
 					}
+
+					generatedCount_++;
+					requestCount--;
 				}
 
-				generatedCount_++;
-				requestCount--;
-			}
-
-			if (generatedCount_ >= maxGenerationCount_)
-			{
-				generationState_ = GenerationState::Ended;
+				if (generatedCount_ >= maxGenerationCount_)
+				{
+					generationState_ = GenerationState::Ended;
+					break;
+				}
 			}
 		}
 

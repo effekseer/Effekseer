@@ -34,6 +34,7 @@ struct TriggerParameter
 };
 
 bool IsTriggerActivated(const TriggerValues& trigger, InstanceGlobal* global, Instance* parent);
+uint32_t GetTriggerCount(const TriggerValues& trigger, InstanceGlobal* global, Instance* parent);
 
 } // namespace Effekseer
 
