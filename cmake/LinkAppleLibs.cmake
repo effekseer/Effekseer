@@ -9,15 +9,16 @@ function(LinkAppleLibs PROJECT_NAME)
     find_library(CORE_FOUNDATION_FRAMEWORK CoreFoundation)
     find_library(CORE_VIDEO_FRAMEWORK CoreVideo)
 
-    target_link_libraries(${PROJECT_NAME} PRIVATE
-      ${COCOA_LIBRARY}
-      ${APPKIT_LIBRARY}
-      ${METAL_LIBRARY}
-      ${METALKIT_LIBRARY}
-      ${QUARTZ_CORE_LIBRARY}
-      ${IOKIT_FRAMEWORK}
-      ${OPENGL_LIBRARIES}
-      ${CORE_FOUNDATION_FRAMEWORK}
-      ${CORE_VIDEO_FRAMEWORK})
+    target_link_libraries(
+      ${PROJECT_NAME}
+      PRIVATE ${COCOA_LIBRARY}
+              ${APPKIT_LIBRARY}
+              ${METAL_LIBRARY}
+              ${METALKIT_LIBRARY}
+              ${QUARTZ_CORE_LIBRARY}
+              ${IOKIT_FRAMEWORK}
+              ${OPENGL_LIBRARIES}
+              ${CORE_FOUNDATION_FRAMEWORK}
+              ${CORE_VIDEO_FRAMEWORK})
   endif()
 endfunction()

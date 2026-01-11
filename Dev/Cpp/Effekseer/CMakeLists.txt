@@ -1,7 +1,7 @@
 project(Effekseer)
 cmake_minimum_required(VERSION 3.15)
 
-FIND_PACKAGE(Threads REQUIRED)
+find_package(Threads REQUIRED)
 
 # Setup source codes
 set(effekseer_public_h
@@ -30,7 +30,6 @@ set(effekseer_public_h
     Effekseer/Utils/Effekseer.CustomAllocator.h
     Effekseer/Utils/Effekseer.String.h
     Effekseer/IO/Effekseer.EfkEfcFactory.h
-
     Effekseer/SIMD/Base.h
     Effekseer/SIMD/Float4.h
     Effekseer/SIMD/Float4_Gen.h
@@ -51,7 +50,6 @@ set(effekseer_public_h
     Effekseer/SIMD/Mat44f.h
     Effekseer/SIMD/Quaternionf.h
     Effekseer/SIMD/Utils.h
-
     Effekseer/Parameter/Effekseer.Parameters.h
     Effekseer/Renderer/Effekseer.SpriteRenderer.h
     Effekseer/Renderer/Effekseer.RibbonRenderer.h
@@ -72,42 +70,42 @@ set(effekseer_public_h
     Effekseer/Model/Effekseer.ModelLoader.h
     Effekseer/Sound/Effekseer.SoundPlayer.h
     Effekseer/VectorField/Effekseer.VectorField.h
-    Effekseer/VectorField/Effekseer.VectorFieldLoader.h
-)
+    Effekseer/VectorField/Effekseer.VectorFieldLoader.h)
 
-file(GLOB effekseer_h
-    *.h
-    Effekseer/*.h
-    Effekseer/Renderer/*.h
-    Effekseer/Material/*.h
-    Effekseer/Parameter/*.h
-    Effekseer/Parameter/Effekseer.AllTypeColor.h
-    Effekseer/Parameter/Effekseer.AlphaCutoff.h
-    Effekseer/Parameter/Effekseer.BasicSettings.h
-    Effekseer/Parameter/Effekseer.CustomData.h
-    Effekseer/Parameter/Effekseer.DepthParameter.h
-    Effekseer/Parameter/Effekseer.KillRules.h
-    Effekseer/Parameter/Effekseer.LOD.h
-    Effekseer/Parameter/Effekseer.Rotation.h
-    Effekseer/Parameter/Effekseer.Scaling.h
-    Effekseer/Parameter/Effekseer.Sound.h
-    Effekseer/Parameter/Effekseer.UV.h
-    Effekseer/IO/*.h
-    Effekseer/Utils/*.h
-    Effekseer/Noise/*.h
-    Effekseer/ForceField/*.h
-    Effekseer/Backend/*.h
-    Effekseer/Model/Effekseer.ProceduralModelGenerator.h
-    Effekseer/Model/Effekseer.ProceduralModelParameter.h
-    Effekseer/Model/Effekseer.Model.h
-    Effekseer/Model/Effekseer.ModelLoader.h
-    Effekseer/Model/Effekseer.SplineGenerator.h
-    Effekseer/Model/Effekseer.PointCacheGenerator.h
-    Effekseer/Network/*.h
-    Effekseer/Network/data/*.h
-    Effekseer/VectorField/Effekseer.VectorField.h
-    Effekseer/VectorField/Effekseer.VectorFieldLoader.h
-)
+file(
+  GLOB
+  effekseer_h
+  *.h
+  Effekseer/*.h
+  Effekseer/Renderer/*.h
+  Effekseer/Material/*.h
+  Effekseer/Parameter/*.h
+  Effekseer/Parameter/Effekseer.AllTypeColor.h
+  Effekseer/Parameter/Effekseer.AlphaCutoff.h
+  Effekseer/Parameter/Effekseer.BasicSettings.h
+  Effekseer/Parameter/Effekseer.CustomData.h
+  Effekseer/Parameter/Effekseer.DepthParameter.h
+  Effekseer/Parameter/Effekseer.KillRules.h
+  Effekseer/Parameter/Effekseer.LOD.h
+  Effekseer/Parameter/Effekseer.Rotation.h
+  Effekseer/Parameter/Effekseer.Scaling.h
+  Effekseer/Parameter/Effekseer.Sound.h
+  Effekseer/Parameter/Effekseer.UV.h
+  Effekseer/IO/*.h
+  Effekseer/Utils/*.h
+  Effekseer/Noise/*.h
+  Effekseer/ForceField/*.h
+  Effekseer/Backend/*.h
+  Effekseer/Model/Effekseer.ProceduralModelGenerator.h
+  Effekseer/Model/Effekseer.ProceduralModelParameter.h
+  Effekseer/Model/Effekseer.Model.h
+  Effekseer/Model/Effekseer.ModelLoader.h
+  Effekseer/Model/Effekseer.SplineGenerator.h
+  Effekseer/Model/Effekseer.PointCacheGenerator.h
+  Effekseer/Network/*.h
+  Effekseer/Network/data/*.h
+  Effekseer/VectorField/Effekseer.VectorField.h
+  Effekseer/VectorField/Effekseer.VectorFieldLoader.h)
 
 set(effekseer_src
     Effekseer/Effekseer.Color.cpp
@@ -167,66 +165,61 @@ set(effekseer_src
     Effekseer/Network/Effekseer.Session.cpp
     Effekseer/Network/Effekseer.Socket.cpp
     Effekseer/VectorField/Effekseer.VectorField.cpp
-    Effekseer/VectorField/Effekseer.VectorFieldLoader.cpp
-)
+    Effekseer/VectorField/Effekseer.VectorFieldLoader.cpp)
 
-add_library(${PROJECT_NAME} STATIC
-    ${effekseer_public_h}
-    ${effekseer_h}
-    ${effekseer_src})
+add_library(${PROJECT_NAME} STATIC ${effekseer_public_h} ${effekseer_h}
+                                   ${effekseer_src})
 
-set(files
-    ${effekseer_public_h}
-    ${effekseer_h}
-    ${effekseer_src})
+set(files ${effekseer_public_h} ${effekseer_h} ${effekseer_src})
 
 target_include_directories(Effekseer PRIVATE ${EFK_THIRDPARTY_INCLUDES})
 target_link_libraries(Effekseer PUBLIC ${CMAKE_THREAD_LIBS_INIT})
 
-FilterFolder("${files}")
+filterfolder("${files}")
 if(CLANG_FORMAT_ENABLED)
-    clang_format(Effekseer)
+  clang_format(Effekseer)
 endif()
 
 if(NETWORK_ENABLED)
-    target_compile_definitions(Effekseer PUBLIC __EFFEKSEER_NETWORK_ENABLED__)
+  target_compile_definitions(Effekseer PUBLIC __EFFEKSEER_NETWORK_ENABLED__)
 endif()
 
 if(BUILD_WITH_EASY_PROFILER)
-    target_compile_definitions(Effekseer PUBLIC BUILD_WITH_EASY_PROFILER)
-    target_include_directories(Effekseer PUBLIC $<BUILD_INTERFACE:${EFK_PROFILER_INCLUDES}>)
-    target_link_directories(Effekseer PUBLIC $<BUILD_INTERFACE:${EFK_PROFILER_LIBRARY_DIRECTORIES}>)
+  target_compile_definitions(Effekseer PUBLIC BUILD_WITH_EASY_PROFILER)
+  target_include_directories(Effekseer
+                             PUBLIC $<BUILD_INTERFACE:${EFK_PROFILER_INCLUDES}>)
+  target_link_directories(
+    Effekseer PUBLIC $<BUILD_INTERFACE:${EFK_PROFILER_LIBRARY_DIRECTORIES}>)
 
-    target_link_libraries(Effekseer PUBLIC 
-        debug ${EASY_PROFILER_LIB_DEBUG}
-        optimized ${EASY_PROFILER_LIB_RELEASE})
+  target_link_libraries(Effekseer PUBLIC debug ${EASY_PROFILER_LIB_DEBUG}
+                                         optimized ${EASY_PROFILER_LIB_RELEASE})
 
-    if(MSVC)
-        target_link_libraries(Effekseer PUBLIC psapi)
-    endif()
+  if(MSVC)
+    target_link_libraries(Effekseer PUBLIC psapi)
+  endif()
 
-    add_dependencies(Effekseer ExternalProject_easy_profiler)
+  add_dependencies(Effekseer ExternalProject_easy_profiler)
 endif()
 
-WarnError(${PROJECT_NAME})
+warnerror(${PROJECT_NAME})
 
-foreach (file ${effekseer_public_h})
-    get_filename_component(dir ${file} DIRECTORY)
-    install(FILES ${file} DESTINATION include/${dir})
+foreach(file ${effekseer_public_h})
+  get_filename_component(dir ${file} DIRECTORY)
+  install(FILES ${file} DESTINATION include/${dir})
 endforeach()
 
-target_include_directories(${PROJECT_NAME} PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-    $<INSTALL_INTERFACE:include>)
+target_include_directories(
+  ${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+                         $<INSTALL_INTERFACE:include>)
 
 install(
-    TARGETS ${PROJECT_NAME}
-    EXPORT ${PROJECT_NAME}-export
-    ARCHIVE DESTINATION lib
-    LIBRARY DESTINATION lib)
+  TARGETS ${PROJECT_NAME}
+  EXPORT ${PROJECT_NAME}-export
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib)
 
 install(
-    EXPORT ${PROJECT_NAME}-export
-    FILE ${PROJECT_NAME}-config.cmake
-    DESTINATION lib/cmake
-    EXPORT_LINK_INTERFACE_LIBRARIES)
+  EXPORT ${PROJECT_NAME}-export
+  FILE ${PROJECT_NAME}-config.cmake
+  DESTINATION lib/cmake
+  EXPORT_LINK_INTERFACE_LIBRARIES)

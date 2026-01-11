@@ -15,9 +15,9 @@ find_package(EffekseerRendererCommon REQUIRED)
 target_link_libraries(install_use PUBLIC EffekseerRendererCommon)
 
 if(WIN32)
-    find_package(EffekseerRendererDX11 REQUIRED)
-    target_link_libraries(install_use PUBLIC EffekseerRendererDX11)
+  find_package(EffekseerRendererDX11 REQUIRED)
+  target_link_libraries(install_use PUBLIC EffekseerRendererDX11)
 
-    find_package(EffekseerSoundXAudio2 REQUIRED)
-    target_link_libraries(install_use PUBLIC EffekseerSoundXAudio2)
+  find_package(EffekseerSoundXAudio2 REQUIRED)
+  target_link_libraries(install_use PUBLIC EffekseerSoundXAudio2)
 endif()

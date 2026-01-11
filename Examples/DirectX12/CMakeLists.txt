@@ -1,44 +1,35 @@
-﻿cmake_minimum_required (VERSION 3.15)
+cmake_minimum_required(VERSION 3.15)
 
 project(Example_DirectX12)
 
 add_executable(Example_DirectX12 main.cpp DeviceDX12.cpp DeviceDX12.h)
 
 target_include_directories(
-    ${PROJECT_NAME}
-    PRIVATE
-    ${EFK_RUNTIME_ROOT}/Effekseer
-    ${EFK_RUNTIME_ROOT}/EffekseerRendererDX12
-    ${EFK_RUNTIME_ROOT}/EffekseerSoundXAudio2
-    ${EFK_RUNTIME_ROOT}/3rdParty/LLGI/src/
-    ../Utils
-)
+  ${PROJECT_NAME}
+  PRIVATE ${EFK_RUNTIME_ROOT}/Effekseer
+          ${EFK_RUNTIME_ROOT}/EffekseerRendererDX12
+          ${EFK_RUNTIME_ROOT}/EffekseerSoundXAudio2
+          ${EFK_RUNTIME_ROOT}/3rdParty/LLGI/src/
+          ../Utils)
 
 target_link_libraries(
-    ${PROJECT_NAME}
-    PRIVATE
-    Effekseer
-    LLGI
-    EffekseerRendererDX12
-    EffekseerSoundXAudio2
-    Example_Utils
-)
+  ${PROJECT_NAME} PRIVATE Effekseer LLGI EffekseerRendererDX12
+                          EffekseerSoundXAudio2 Example_Utils)
 
-set_property(TARGET ${PROJECT_NAME} PROPERTY FOLDER "Examples") 
+set_property(TARGET ${PROJECT_NAME} PROPERTY FOLDER "Examples")
 
 if(USE_LIBPNG_LOADER)
-    target_link_directories(
-        ${PROJECT_NAME}
-        PRIVATE
-        ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES}
-    )
+  target_link_directories(${PROJECT_NAME} PRIVATE
+                          ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES})
 
-    target_link_libraries(
-        ${PROJECT_NAME}
-        PRIVATE
-        debug "${LIBPNG_LIB_DEBUG}"
-        optimized "${LIBPNG_LIB_RELEASE}"
-        debug "${ZLIB_LIB_DEBUG}"
-        optimized "${ZLIB_LIB_RELEASE}"
-	)
+  target_link_libraries(
+    ${PROJECT_NAME}
+    PRIVATE debug
+            "${LIBPNG_LIB_DEBUG}"
+            optimized
+            "${LIBPNG_LIB_RELEASE}"
+            debug
+            "${ZLIB_LIB_DEBUG}"
+            optimized
+            "${ZLIB_LIB_RELEASE}")
 endif()
