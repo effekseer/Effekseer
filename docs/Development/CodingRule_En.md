@@ -10,6 +10,14 @@ Effekseer uses shared formatting and naming conventions to keep the code base co
 - Respect the existing style of imported third-party or auto-generated sources, even when it differs from the default Effekseer style.
 - For large clean-ups or reformatting tasks, coordinate with the maintainers before submitting a pull request.
 
+## CMake Guidelines
+
+### Formatting
+
+- Install `cmake-format` with `python -m pip install cmake-format`.
+- Run `python Script/Format_CMake.py` to format all `CMakeLists.txt` and `*.cmake` files on any platform.
+- The script skips `.git`, `build`, and `Dev/Cpp/3rdParty` to avoid reformatting generated or vendor code.
+
 ## C++ Guidelines
 
 ### Formatting

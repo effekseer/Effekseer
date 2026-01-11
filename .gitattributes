@@ -6,6 +6,7 @@
 *.cpp eol=lf
 *.cxx eol=lf
 *.cs eol=lf
+CMakeLists.txt eol=lf
 
 *.lib filter=lfs diff=lfs merge=lfs -text
 *.png filter=lfs diff=lfs merge=lfs -text

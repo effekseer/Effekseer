@@ -1,6 +1,6 @@
 # a function to generate filters by folders
 function(FilterFolder srcs)
-foreach(FILE ${srcs}) 
+  foreach(FILE ${srcs})
     # Get the directory of the source file
     get_filename_component(PARENT_DIR "${FILE}" DIRECTORY)
 
@@ -11,18 +11,18 @@ foreach(FILE ${srcs})
     string(REPLACE "/" "\\" GROUP "${GROUP}")
 
     # Group into "Source Files" and "Header Files"
-    if ("${FILE}" MATCHES ".*\\.cpp")
-       set(GROUP "${GROUP}")
+    if("${FILE}" MATCHES ".*\\.cpp")
+      set(GROUP "${GROUP}")
     elseif("${FILE}" MATCHES ".*\\.c")
-       set(GROUP "${GROUP}")
+      set(GROUP "${GROUP}")
     elseif("${FILE}" MATCHES ".*\\.cxx")
-       set(GROUP "${GROUP}")
+      set(GROUP "${GROUP}")
     elseif("${FILE}" MATCHES ".*\\.h")
-       set(GROUP "${GROUP}")
+      set(GROUP "${GROUP}")
     elseif("${FILE}" MATCHES ".*\\.mm")
-       set(GROUP "${GROUP}")
+      set(GROUP "${GROUP}")
     endif()
 
     source_group("${GROUP}" FILES "${FILE}")
-endforeach()
+  endforeach()
 endfunction(FilterFolder)

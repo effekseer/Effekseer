@@ -3,7 +3,9 @@ cmake_policy(SET CMP0091 NEW)
 cmake_minimum_required(VERSION 3.15)
 
 if(APPLE AND NOT CMAKE_SYSTEM_NAME STREQUAL "iOS")
-  set(CMAKE_OSX_DEPLOYMENT_TARGET "10.15" CACHE STRING "Minimum OS X deployment version" FORCE)
+  set(CMAKE_OSX_DEPLOYMENT_TARGET
+      "10.15"
+      CACHE STRING "Minimum OS X deployment version" FORCE)
 endif()
 
 project(Tools)
@@ -26,43 +28,65 @@ if(BUILD_OLD_TOOLS)
   if(WIN32)
 
     target_include_directories(fbxToEffekseerModelConverter
-                              PRIVATE fbxsdk/windows/include/)
+                               PRIVATE fbxsdk/windows/include/)
     target_link_directories(fbxToEffekseerModelConverter PRIVATE
                             fbxsdk/windows/lib/vs2019/x86/)
 
     target_include_directories(fbxToEffekseerCurveConverter
-                              PRIVATE fbxsdk/windows/include/)
+                               PRIVATE fbxsdk/windows/include/)
     target_link_directories(fbxToEffekseerCurveConverter PRIVATE
                             fbxsdk/windows/lib/vs2019/x86/)
 
   elseif(APPLE)
 
     target_include_directories(fbxToEffekseerModelConverter
-                              PRIVATE fbxsdk/mac/include/)
-    target_link_directories(fbxToEffekseerModelConverter PRIVATE fbxsdk/mac/lib/clang/release/)
+                               PRIVATE fbxsdk/mac/include/)
+    target_link_directories(fbxToEffekseerModelConverter PRIVATE
+                            fbxsdk/mac/lib/clang/release/)
     target_link_libraries(fbxToEffekseerModelConverter PRIVATE fbxsdk)
 
     target_include_directories(fbxToEffekseerCurveConverter
-                              PRIVATE fbxsdk/mac/include/)
-    target_link_directories(fbxToEffekseerCurveConverter PRIVATE fbxsdk/mac/lib/clang/release/)
+                               PRIVATE fbxsdk/mac/include/)
+    target_link_directories(fbxToEffekseerCurveConverter PRIVATE
+                            fbxsdk/mac/lib/clang/release/)
     target_link_libraries(fbxToEffekseerCurveConverter PRIVATE fbxsdk)
 
-    set_target_properties(fbxToEffekseerModelConverter PROPERTIES XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME YES)
-    set_target_properties(fbxToEffekseerCurveConverter PROPERTIES XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME YES)
+    set_target_properties(
+      fbxToEffekseerModelConverter
+      PROPERTIES XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME YES)
+    set_target_properties(
+      fbxToEffekseerCurveConverter
+      PROPERTIES XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME YES)
 
   else()
 
     target_include_directories(fbxToEffekseerModelConverter
-                              PRIVATE fbxsdk/linux/include/)
+                               PRIVATE fbxsdk/linux/include/)
     target_link_directories(fbxToEffekseerModelConverter PRIVATE
                             fbxsdk/linux/lib/gcc/x64/release/)
-    target_link_libraries(fbxToEffekseerModelConverter PRIVATE fbxsdk dl ltdl lzma pthread xml2 z)
+    target_link_libraries(
+      fbxToEffekseerModelConverter
+      PRIVATE fbxsdk
+              dl
+              ltdl
+              lzma
+              pthread
+              xml2
+              z)
 
     target_include_directories(fbxToEffekseerCurveConverter
-                              PRIVATE fbxsdk/linux/include/)
+                               PRIVATE fbxsdk/linux/include/)
     target_link_directories(fbxToEffekseerCurveConverter PRIVATE
                             fbxsdk/linux/lib/gcc/x64/release/)
-    target_link_libraries(fbxToEffekseerCurveConverter PRIVATE fbxsdk dl ltdl lzma pthread xml2 z)
+    target_link_libraries(
+      fbxToEffekseerCurveConverter
+      PRIVATE fbxsdk
+              dl
+              ltdl
+              lzma
+              pthread
+              xml2
+              z)
 
   endif()
 
