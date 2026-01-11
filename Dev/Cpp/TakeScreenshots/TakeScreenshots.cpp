@@ -14,11 +14,43 @@
 
 #include "Helper.h"
 
+#include <algorithm>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <memory>
 #include <string>
+#include <vector>
+
+namespace
+{
+std::vector<std::string> CollectEfkefcFiles(const std::string& directory)
+{
+	std::vector<std::string> paths;
+	std::filesystem::path dir_path(directory);
+	if (!std::filesystem::exists(dir_path))
+	{
+		return paths;
+	}
+
+	for (const auto& entry : std::filesystem::directory_iterator(dir_path))
+	{
+		if (!entry.is_regular_file())
+		{
+			continue;
+		}
+
+		const auto& path = entry.path();
+		if (path.extension() == ".efkefc")
+		{
+			paths.push_back(path.generic_string());
+		}
+	}
+
+	std::sort(paths.begin(), paths.end());
+	return paths;
+}
+} // namespace
 
 void TakeScreenshots()
 {
@@ -55,14 +87,22 @@ void TakeScreenshots()
 
 	// take screenshots of filepath in efkefclist.txt
 	std::ifstream ifs(GetDirectoryPath(__FILE__) + "./Scripts/processed/1.7/efkefclist.txt");
-	if (!ifs.is_open())
+	if (ifs.is_open())
 	{
-		return;
+		std::string effectFilepath;
+		while (std::getline(ifs, effectFilepath))
+		{
+			playAndTakeScreenShot(GetDirectoryPath(__FILE__) + "./Scripts/processed/1.7/" + effectFilepath);
+		}
 	}
-	std::string effectFilepath;
-	while (std::getline(ifs, effectFilepath))
+
 	{
-		playAndTakeScreenShot(GetDirectoryPath(__FILE__) + "./Scripts/processed/1.7/" + effectFilepath);
+		const auto temp_dir = GetDirectoryPath(__FILE__) + "../../../TestData/Effects/Temp/";
+		const auto temp_effects = CollectEfkefcFiles(temp_dir);
+		for (const auto& effect_path : temp_effects)
+		{
+			playAndTakeScreenShot(effect_path);
+		}
 	}
 
 	platform->Terminate();
