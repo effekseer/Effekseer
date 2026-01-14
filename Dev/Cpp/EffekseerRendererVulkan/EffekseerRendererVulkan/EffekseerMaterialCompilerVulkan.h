@@ -19,11 +19,20 @@ public:
 
 	CompiledMaterialBinary* Compile(MaterialFile* material) override;
 
-	int AddRef() override { return ReferenceObject::AddRef(); }
+	int AddRef() override
+	{
+		return ReferenceObject::AddRef();
+	}
 
-	int Release() override { return ReferenceObject::Release(); }
+	int Release() override
+	{
+		return ReferenceObject::Release();
+	}
 
-	int GetRef() override { return ReferenceObject::GetRef(); }
+	int GetRef() override
+	{
+		return ReferenceObject::GetRef();
+	}
 };
 
 } // namespace Effekseer

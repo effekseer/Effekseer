@@ -134,7 +134,8 @@ void VertexAnimation::Export(const char* path, std::shared_ptr<Scene> scene, std
 
 			for (auto v : mesh.Target->Vertexes)
 			{
-				auto getBoneMat = [&](int32_t i) -> FbxMatrix {
+				auto getBoneMat = [&](int32_t i) -> FbxMatrix
+				{
 					if (i < 0)
 						return nodeState.MatGlobal;
 					return boneMat[i];

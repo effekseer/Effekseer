@@ -188,7 +188,8 @@ bool MaterialFile::Load(const uint8_t* data, int32_t size)
 
 			if (version >= MaterialVersion17Alpha4)
 			{
-				const auto loadGradient = [&](std::vector<GradientParameter>& gradients) {
+				const auto loadGradient = [&](std::vector<GradientParameter>& gradients)
+				{
 					int gradientCount = 0;
 					memcpy(&gradientCount, data + offset, 4);
 					offset += sizeof(int);

@@ -28,7 +28,8 @@ void GenerateExportedImageWithBlendAndAdd(std::vector<Effekseer::Color>& pixelsB
 {
 	assert(pixels.size() == 9);
 
-	auto f2b = [](float v) -> uint8_t {
+	auto f2b = [](float v) -> uint8_t
+	{
 		auto v_ = v * 255;
 		if (v_ > 255)
 			v_ = 255;
@@ -37,7 +38,8 @@ void GenerateExportedImageWithBlendAndAdd(std::vector<Effekseer::Color>& pixelsB
 		return static_cast<uint8_t>(v_);
 	};
 
-	auto b2f = [](uint8_t v) -> float {
+	auto b2f = [](uint8_t v) -> float
+	{
 		return static_cast<float>(v) / 255.0f;
 	};
 
@@ -129,7 +131,7 @@ public:
 
 		char pathWOE[256];
 		char ext_[256];
-		//char path8_dst[256];
+		// char path8_dst[256];
 		Effekseer::ConvertUtf16ToUtf8(pathWOE, 256, pathWithoutExt);
 		Effekseer::ConvertUtf16ToUtf8(ext_, 256, ext);
 
@@ -308,15 +310,15 @@ public:
 bool EffectRecorder::Begin(int32_t squareMaxCount,
 						   Effekseer::Tool::EffectRendererParameter config,
 						   Vector2I screenSize,
-			   std::shared_ptr<Effekseer::Tool::GraphicsDevice> graphicsDevice,
-			   std::shared_ptr<Effekseer::Tool::EffectSetting> setting,
-			   const RecordingParameter& recordingParameter,
-			   Effekseer::Tool::Vector2I imageSize,
-			   bool isSRGBMode,
-			   Effekseer::Tool::ViewerEffectBehavior behavior,
-			   const std::vector<Effekseer::Tool::ViewerExternalModel>& externalModels,
-			   Effekseer::Tool::PostEffectParameter postEffectParameter,
-			   std::shared_ptr<Effekseer::Tool::Effect> effect)
+						   std::shared_ptr<Effekseer::Tool::GraphicsDevice> graphicsDevice,
+						   std::shared_ptr<Effekseer::Tool::EffectSetting> setting,
+						   const RecordingParameter& recordingParameter,
+						   Effekseer::Tool::Vector2I imageSize,
+						   bool isSRGBMode,
+						   Effekseer::Tool::ViewerEffectBehavior behavior,
+						   const std::vector<Effekseer::Tool::ViewerExternalModel>& externalModels,
+						   Effekseer::Tool::PostEffectParameter postEffectParameter,
+						   std::shared_ptr<Effekseer::Tool::Effect> effect)
 {
 	graphicsDevice_ = graphicsDevice;
 	recordingParameter_ = recordingParameter;
@@ -479,7 +481,8 @@ bool EffectRecorder::Step(int frames)
 
 			auto& pixels = pixelss[loop];
 
-			auto f2b = [](float v) -> uint8_t {
+			auto f2b = [](float v) -> uint8_t
+			{
 				auto v_ = v * 255;
 				if (v_ > 255)
 					v_ = 255;
@@ -488,7 +491,8 @@ bool EffectRecorder::Step(int frames)
 				return static_cast<uint8_t>(v_);
 			};
 
-			auto b2f = [](uint8_t v) -> float {
+			auto b2f = [](uint8_t v) -> float
+			{
 				auto v_ = (float)v / 255.0f;
 				return v_;
 			};

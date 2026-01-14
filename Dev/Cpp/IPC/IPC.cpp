@@ -28,8 +28,13 @@ private:
 	ipc_sharedmemory mem_ = {};
 
 public:
-	Command_Impl() {}
-	virtual ~Command_Impl() { Stop(); }
+	Command_Impl()
+	{
+	}
+	virtual ~Command_Impl()
+	{
+		Stop();
+	}
 
 	bool Start(const char* name, int32_t size)
 	{
@@ -144,17 +149,34 @@ public:
 	}
 };
 
-CommandQueue::CommandQueue() { impl = std::shared_ptr<Command_Impl>(new Command_Impl()); }
+CommandQueue::CommandQueue()
+{
+	impl = std::shared_ptr<Command_Impl>(new Command_Impl());
+}
 
-CommandQueue ::~CommandQueue() {}
+CommandQueue ::~CommandQueue()
+{
+}
 
-bool CommandQueue::Start(const char* name, int32_t size) { return impl->Start(name, size); }
+bool CommandQueue::Start(const char* name, int32_t size)
+{
+	return impl->Start(name, size);
+}
 
-void CommandQueue::Stop() { impl->Stop(); }
+void CommandQueue::Stop()
+{
+	impl->Stop();
+}
 
-bool CommandQueue::Write(const void* data, int32_t size) { return impl->Write(data, size); }
+bool CommandQueue::Write(const void* data, int32_t size)
+{
+	return impl->Write(data, size);
+}
 
-bool CommandQueue::Read(void* data, int32_t size) { return impl->Read(data, size); }
+bool CommandQueue::Read(void* data, int32_t size)
+{
+	return impl->Read(data, size);
+}
 
 bool CommandQueue::Enqueue(CommandData* data)
 {
@@ -197,8 +219,13 @@ private:
 	};
 
 public:
-	KeyValueFileStorage_Impl() {}
-	virtual ~KeyValueFileStorage_Impl() { Stop(); }
+	KeyValueFileStorage_Impl()
+	{
+	}
+	virtual ~KeyValueFileStorage_Impl()
+	{
+		Stop();
+	}
 
 	bool Start(const char* name)
 	{
@@ -356,27 +383,59 @@ public:
 		return 0;
 	}
 
-	void Lock() { ipc_sem_decrement(&coop_); }
-	void Unlock() { ipc_sem_increment(&coop_); }
+	void Lock()
+	{
+		ipc_sem_decrement(&coop_);
+	}
+	void Unlock()
+	{
+		ipc_sem_increment(&coop_);
+	}
 };
 
-KeyValueFileStorage::KeyValueFileStorage() { impl = std::shared_ptr<KeyValueFileStorage_Impl>(new KeyValueFileStorage_Impl()); }
-KeyValueFileStorage ::~KeyValueFileStorage() {}
+KeyValueFileStorage::KeyValueFileStorage()
+{
+	impl = std::shared_ptr<KeyValueFileStorage_Impl>(new KeyValueFileStorage_Impl());
+}
+KeyValueFileStorage ::~KeyValueFileStorage()
+{
+}
 
-bool KeyValueFileStorage::Start(const char* name) { return impl->Start(name); }
+bool KeyValueFileStorage::Start(const char* name)
+{
+	return impl->Start(name);
+}
 
-void KeyValueFileStorage::Stop() { impl->Stop(); }
+void KeyValueFileStorage::Stop()
+{
+	impl->Stop();
+}
 
-bool KeyValueFileStorage::AddRef(const char* key) { return impl->AddRef(key); }
+bool KeyValueFileStorage::AddRef(const char* key)
+{
+	return impl->AddRef(key);
+}
 
-bool KeyValueFileStorage::ReleaseRef(const char* key) { return impl->ReleaseRef(key); }
+bool KeyValueFileStorage::ReleaseRef(const char* key)
+{
+	return impl->ReleaseRef(key);
+}
 
-void KeyValueFileStorage::UpdateFile(const char* key, const void* data, int32_t size) { impl->UpdateFile(key, data, size); }
+void KeyValueFileStorage::UpdateFile(const char* key, const void* data, int32_t size)
+{
+	impl->UpdateFile(key, data, size);
+}
 int32_t KeyValueFileStorage::GetFile(const char* key, void* data, int32_t size, uint64_t& timestamp)
 {
 	return impl->GetFile(key, data, size, timestamp);
 }
-void KeyValueFileStorage::Lock() { impl->Lock(); }
-void KeyValueFileStorage::Unlock() { impl->Unlock(); }
+void KeyValueFileStorage::Lock()
+{
+	impl->Lock();
+}
+void KeyValueFileStorage::Unlock()
+{
+	impl->Unlock();
+}
 
 } // namespace IPC

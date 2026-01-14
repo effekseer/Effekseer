@@ -1,10 +1,10 @@
 ﻿
 #pragma once
 
-#include <unordered_map>
-#include "GraphicsDevice.h"
 #include "EffekseerRendererLLGI.RendererImplemented.h"
+#include "GraphicsDevice.h"
 #include <LLGI.Query.h>
+#include <unordered_map>
 
 namespace EffekseerRendererLLGI
 {
@@ -17,7 +17,8 @@ class GpuTimer : public ::Effekseer::GpuTimer
 
 	static constexpr uint32_t TIMESTAMP_START = 0;
 	static constexpr uint32_t TIMESTAMP_STOP = 1;
-	static constexpr uint32_t QueryIndex(uint32_t phase, uint32_t timestamp) {
+	static constexpr uint32_t QueryIndex(uint32_t phase, uint32_t timestamp)
+	{
 		return phase * NUM_TIMESTAMPS + timestamp;
 	}
 
@@ -48,8 +49,9 @@ private:
 		int32_t result = 0;
 	};
 	std::unordered_map<const void*, TimeData> timeData_;
-	
-	enum class State {
+
+	enum class State
+	{
 		NoResult,
 		DuringStage,
 		AfterStage,

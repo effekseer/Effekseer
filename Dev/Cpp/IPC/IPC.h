@@ -25,7 +25,8 @@ struct CommandData
 {
 	CommandType Type;
 
-	union {
+	union
+	{
 		std::array<char, 260> str;
 	};
 

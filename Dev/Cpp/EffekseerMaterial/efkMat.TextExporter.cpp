@@ -327,8 +327,7 @@ public:
 	int32_t SmoothStep(int32_t edge1, int32_t edge2, int32_t value, const std::string& name = "")
 	{
 		auto selfID = AddVariable(ValueType::Float1, name);
-		ExportVariable(selfID, "smoothstep(" + GetNameWithCast(edge1, ValueType::Float1) + "," + 
-			GetNameWithCast(edge2, ValueType::Float1) + "," + GetNameWithCast(value, ValueType::Float1) + ")");
+		ExportVariable(selfID, "smoothstep(" + GetNameWithCast(edge1, ValueType::Float1) + "," + GetNameWithCast(edge2, ValueType::Float1) + "," + GetNameWithCast(value, ValueType::Float1) + ")");
 		return selfID;
 	}
 	int32_t AppendVector(int32_t id1, int32_t id2, const std::string& name = "")

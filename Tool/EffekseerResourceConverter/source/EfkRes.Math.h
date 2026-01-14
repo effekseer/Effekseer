@@ -1,7 +1,7 @@
 #pragma once
 
-#include <math.h>
 #include <array>
+#include <math.h>
 
 namespace efkres
 {
@@ -18,31 +18,13 @@ struct Vec2
 	};
 
 	Vec2() = default;
-	Vec2(double x, double y)
-		: x(x), y(y)
-	{
-	}
+	Vec2(double x, double y) : x(x), y(y) {}
 };
-inline bool operator==(Vec2 lhs, Vec2 rhs)
-{
-	return lhs.x == rhs.x && lhs.y == rhs.y;
-}
-inline Vec2 operator+(Vec2 lhs, Vec2 rhs)
-{
-	return Vec2{ lhs.x + rhs.x, lhs.y + rhs.y };
-}
-inline Vec2 operator-(Vec2 lhs, Vec2 rhs)
-{
-	return Vec2{ lhs.x - rhs.x, lhs.y - rhs.y };
-}
-inline Vec2 operator*(Vec2 lhs, double rhs)
-{
-	return Vec2{ lhs.x * rhs, lhs.y * rhs };
-}
-inline Vec2 operator/(Vec2 lhs, double rhs)
-{
-	return Vec2{ lhs.x / rhs, lhs.y / rhs };
-}
+inline bool operator==(Vec2 lhs, Vec2 rhs) { return lhs.x == rhs.x && lhs.y == rhs.y; }
+inline Vec2 operator+(Vec2 lhs, Vec2 rhs) { return Vec2{lhs.x + rhs.x, lhs.y + rhs.y}; }
+inline Vec2 operator-(Vec2 lhs, Vec2 rhs) { return Vec2{lhs.x - rhs.x, lhs.y - rhs.y}; }
+inline Vec2 operator*(Vec2 lhs, double rhs) { return Vec2{lhs.x * rhs, lhs.y * rhs}; }
+inline Vec2 operator/(Vec2 lhs, double rhs) { return Vec2{lhs.x / rhs, lhs.y / rhs}; }
 
 struct Vec3
 {
@@ -56,20 +38,14 @@ struct Vec3
 	};
 
 	Vec3() = default;
-	Vec3(double x, double y, double z)
-		: x(x), y(y), z(z)
-	{
-	}
+	Vec3(double x, double y, double z) : x(x), y(y), z(z) {}
 
-	double Length() const
-	{
-		return sqrt(x * x + y * y + z * z);
-	}
+	double Length() const { return sqrt(x * x + y * y + z * z); }
 
 	Vec3 Normalized() const
 	{
 		double length = Length();
-		return { x / length, y / length, z / length };
+		return {x / length, y / length, z / length};
 	}
 
 	Vec3& operator+=(Vec3 rhs);
@@ -77,30 +53,12 @@ struct Vec3
 	Vec3& operator*=(double rhs);
 	Vec3& operator/=(double rhs);
 };
-inline bool operator==(Vec3 lhs, Vec3 rhs)
-{
-	return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z;
-}
-inline Vec3 operator+(Vec3 lhs, Vec3 rhs)
-{
-	return Vec3{ lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z };
-}
-inline Vec3 operator-(Vec3 lhs, Vec3 rhs)
-{
-	return Vec3{ lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z };
-}
-inline Vec3 operator*(Vec3 lhs, double rhs)
-{
-	return Vec3{ lhs.x * rhs, lhs.y * rhs, lhs.z * rhs };
-}
-inline Vec3 operator/(Vec3 lhs, double rhs)
-{
-	return Vec3{ lhs.x / rhs, lhs.y / rhs, lhs.z / rhs };
-}
-inline double DotProduct(Vec3 lhs, Vec3 rhs)
-{
-	return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
-}
+inline bool operator==(Vec3 lhs, Vec3 rhs) { return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z; }
+inline Vec3 operator+(Vec3 lhs, Vec3 rhs) { return Vec3{lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z}; }
+inline Vec3 operator-(Vec3 lhs, Vec3 rhs) { return Vec3{lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z}; }
+inline Vec3 operator*(Vec3 lhs, double rhs) { return Vec3{lhs.x * rhs, lhs.y * rhs, lhs.z * rhs}; }
+inline Vec3 operator/(Vec3 lhs, double rhs) { return Vec3{lhs.x / rhs, lhs.y / rhs, lhs.z / rhs}; }
+inline double DotProduct(Vec3 lhs, Vec3 rhs) { return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z; }
 inline Vec3 CrossProduct(Vec3 lhs, Vec3 rhs)
 {
 	return Vec3{
@@ -109,22 +67,10 @@ inline Vec3 CrossProduct(Vec3 lhs, Vec3 rhs)
 		lhs.x * rhs.y - lhs.y * rhs.x,
 	};
 }
-inline Vec3& Vec3::operator+=(Vec3 rhs)
-{
-	return *this = *this + rhs;
-}
-inline Vec3& Vec3::operator-=(Vec3 rhs)
-{
-	return *this = *this - rhs;
-}
-inline Vec3& Vec3::operator*=(double rhs)
-{
-	return *this = *this * rhs;
-}
-inline Vec3& Vec3::operator/=(double rhs)
-{
-	return *this = *this / rhs;
-}
+inline Vec3& Vec3::operator+=(Vec3 rhs) { return *this = *this + rhs; }
+inline Vec3& Vec3::operator-=(Vec3 rhs) { return *this = *this - rhs; }
+inline Vec3& Vec3::operator*=(double rhs) { return *this = *this * rhs; }
+inline Vec3& Vec3::operator/=(double rhs) { return *this = *this / rhs; }
 
 struct Vec4
 {
@@ -138,16 +84,9 @@ struct Vec4
 	};
 
 	Vec4() = default;
-	Vec4(double x, double y, double z, double w)
-		: x(x), y(y), z(z), w(w)
-	{
-	}
+	Vec4(double x, double y, double z, double w) : x(x), y(y), z(z), w(w) {}
 };
-inline bool operator==(Vec4 lhs, Vec4 rhs)
-{
-	return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z && lhs.w == rhs.w;
-}
-
+inline bool operator==(Vec4 lhs, Vec4 rhs) { return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z && lhs.w == rhs.w; }
 
 struct Mat43
 {
@@ -173,24 +112,13 @@ struct Mat43
 		cols[3] = col3;
 	}
 
-	Vec3 TransformPosition(Vec3 v) const
-	{
-		return cols[0] * v.x + cols[1] * v.y + cols[2] * v.z + cols[3];
-	}
+	Vec3 TransformPosition(Vec3 v) const { return cols[0] * v.x + cols[1] * v.y + cols[2] * v.z + cols[3]; }
 
-	Vec3 TransformDirection(Vec3 v) const
-	{
-		return cols[0] * v.x + cols[1] * v.y + cols[2] * v.z;
-	}
+	Vec3 TransformDirection(Vec3 v) const { return cols[0] * v.x + cols[1] * v.y + cols[2] * v.z; }
 
 	static Mat43 Identity()
 	{
-		return Mat43(
-			Vec3(1.0f, 0.0f, 0.0f),
-			Vec3(0.0f, 1.0f, 0.0f),
-			Vec3(0.0f, 0.0f, 1.0f),
-			Vec3(0.0f, 0.0f, 0.0f)
-		);
+		return Mat43(Vec3(1.0f, 0.0f, 0.0f), Vec3(0.0f, 1.0f, 0.0f), Vec3(0.0f, 0.0f, 1.0f), Vec3(0.0f, 0.0f, 0.0f));
 	}
 };
 
@@ -199,10 +127,7 @@ struct Quat
 	double x, y, z, w;
 
 	Quat() = default;
-	Quat(double w, double x, double y, double z)
-		: w(w), x(x), y(y), z(z)
-	{
-	}
+	Quat(double w, double x, double y, double z) : w(w), x(x), y(y), z(z) {}
 
 	Quat operator-() { return Quat(-w, -x, -y, -z); }
 
@@ -237,7 +162,7 @@ inline void Quat::SetTBN(Vec3 col0, Vec3 col1, Vec3 col2)
 	double maxVal = sqrt(pmax + 1.0) * 0.5;
 	double mult = 0.25 / maxVal;
 
-	switch(selected)
+	switch (selected)
 	{
 	case 0:
 		*this = Quat(maxVal, (col1.z - col2.y) * mult, (col2.x - col0.z) * mult, (col0.y - col1.x) * mult);
@@ -286,4 +211,4 @@ inline Vec3 yAxis(Quat qQuat)
 	return Vec3(fTxy - fTwz, 1.0 - (fTxx + fTzz), fTyz + fTwx);
 }
 
-}
+} // namespace efkres

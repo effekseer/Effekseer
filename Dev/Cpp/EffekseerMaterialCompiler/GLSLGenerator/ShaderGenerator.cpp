@@ -2,8 +2,8 @@
 #include "ShaderGenerator.h"
 #include "../Common/ShaderGeneratorCommon.h"
 
-#include <iostream>
 #include <algorithm>
+#include <iostream>
 #undef min
 #undef max
 

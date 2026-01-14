@@ -7,8 +7,8 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include <stdint.h>
 #include <atomic>
+#include <stdint.h>
 
 #if defined(_WIN32) && !defined(_PS4)
 #define EfkWinSock
@@ -64,7 +64,7 @@ public:
 	using Hostent = HOSTENT;
 	using SockAddrIn = SOCKADDR_IN;
 	using SockAddr = SOCKADDR;
-	
+
 	static const SockHandle InvalidHandle = INVALID_SOCKET;
 	static const int32_t SocketError = SOCKET_ERROR;
 	static const int32_t InaddrNone = INADDR_NONE;
@@ -101,14 +101,17 @@ public:
 
 	Socket& operator=(Socket&& rhs);
 
-	bool IsValid() const { return handle_ != InvalidHandle; }
+	bool IsValid() const
+	{
+		return handle_ != InvalidHandle;
+	}
 
 	void Close();
 
 	bool Connect(const char* host, int32_t port);
 
 	bool Listen(int32_t port, int32_t backlog);
-	
+
 	Socket Accept();
 
 	int32_t Send(const void* data, int32_t size);

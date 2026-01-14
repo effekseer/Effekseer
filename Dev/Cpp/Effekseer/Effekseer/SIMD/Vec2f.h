@@ -2,8 +2,8 @@
 #ifndef __EFFEKSEER_SIMD_VEC2F_H__
 #define __EFFEKSEER_SIMD_VEC2F_H__
 
-#include "Float4.h"
 #include "../Effekseer.Math.h"
+#include "Float4.h"
 
 namespace Effekseer
 {
@@ -20,24 +20,69 @@ struct Vec2f
 
 	explicit Vec2f() = default;
 	Vec2f(const Vec2f& vec) = default;
-	Vec2f(float x, float y): s(x, y, 0.0f, 1.0f) {}
-	Vec2f(const std::array<float, 2>& v): s(v[0], v[1], 0.0f, 1.0f) {}
-	Vec2f(const Float4& vec): s(vec) {}
+	Vec2f(float x, float y)
+		: s(x, y, 0.0f, 1.0f)
+	{
+	}
+	Vec2f(const std::array<float, 2>& v)
+		: s(v[0], v[1], 0.0f, 1.0f)
+	{
+	}
+	Vec2f(const Float4& vec)
+		: s(vec)
+	{
+	}
 	Vec2f(const Vector2D& vec);
 	Vec2f(const vector2d& vec);
 
-	float GetX() const { return s.GetX(); }
-	float GetY() const { return s.GetY(); }
+	float GetX() const
+	{
+		return s.GetX();
+	}
+	float GetY() const
+	{
+		return s.GetY();
+	}
 
-	void SetX(float o) { s.SetX(o); }
-	void SetY(float o) { s.SetY(o); }
+	void SetX(float o)
+	{
+		s.SetX(o);
+	}
+	void SetY(float o)
+	{
+		s.SetY(o);
+	}
 
-	Vec2f& operator+=(const Vec2f& o) { s += o.s; return *this; }
-	Vec2f& operator-=(const Vec2f& o) { s -= o.s; return *this; }
-	Vec2f& operator*=(const Vec2f& o) { s *= o.s; return *this; }
-	Vec2f& operator*=(float o) { s *= o; return *this; }
-	Vec2f& operator/=(const Vec2f& o) { s /= o.s; return *this; }
-	Vec2f& operator/=(float o) { s /= o; return *this; }
+	Vec2f& operator+=(const Vec2f& o)
+	{
+		s += o.s;
+		return *this;
+	}
+	Vec2f& operator-=(const Vec2f& o)
+	{
+		s -= o.s;
+		return *this;
+	}
+	Vec2f& operator*=(const Vec2f& o)
+	{
+		s *= o.s;
+		return *this;
+	}
+	Vec2f& operator*=(float o)
+	{
+		s *= o;
+		return *this;
+	}
+	Vec2f& operator/=(const Vec2f& o)
+	{
+		s /= o.s;
+		return *this;
+	}
+	Vec2f& operator/=(float o)
+	{
+		s /= o;
+		return *this;
+	}
 
 	float LengthSq() const;
 	float Length() const;

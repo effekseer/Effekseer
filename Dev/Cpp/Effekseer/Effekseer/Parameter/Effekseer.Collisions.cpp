@@ -105,7 +105,8 @@ std::tuple<SIMD::Vec3f, SIMD::Vec3f> CollisionsFunctions::Update(
 	const auto height = parameter.Height * magnificationScale;
 	const auto diffGlobal = nextPositionGlobalValue - currentPositionGlobal;
 
-	const auto resolveCollision = [&](const SIMD::Vec3f& collisionPosition) {
+	const auto resolveCollision = [&](const SIMD::Vec3f& collisionPosition)
+	{
 		float friction = state.Friction;
 		if (friction < 0.0f)
 		{

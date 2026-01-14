@@ -10,13 +10,15 @@ std::vector<std::vector<std::string>> ReadCSV(std::string csv)
 	bool inDQ = false;
 	bool isStarting = true;
 
-	std::function<bool(int)> isCurrentDQ = [&](int i) -> bool {
+	std::function<bool(int)> isCurrentDQ = [&](int i) -> bool
+	{
 		if (i >= csv.size())
 			return false;
 		return csv[i] == '"';
 	};
 
-	std::function<bool(int)> isNextDQ = [&](int i) -> bool {
+	std::function<bool(int)> isNextDQ = [&](int i) -> bool
+	{
 		if (i >= csv.size() - 1)
 			return false;
 		return csv[i + 1] == '"';

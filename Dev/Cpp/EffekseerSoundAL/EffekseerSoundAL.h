@@ -1,6 +1,6 @@
 ﻿
-#ifndef	__EFFEKSEERSOUND_BASE_PRE_H__
-#define	__EFFEKSEERSOUND_BASE_PRE_H__
+#ifndef __EFFEKSEERSOUND_BASE_PRE_H__
+#define __EFFEKSEERSOUND_BASE_PRE_H__
 
 #if defined(_WIN32)
 #include <AL/al.h>
@@ -17,10 +17,10 @@ namespace EffekseerSound
 class Sound;
 }
 
-#endif	// __EFFEKSEERSOUND_BASE_PRE_H__
+#endif // __EFFEKSEERSOUND_BASE_PRE_H__
 
-#ifndef	__EFFEKSEERSOUND_AL_H__
-#define	__EFFEKSEERSOUND_AL_H__
+#ifndef __EFFEKSEERSOUND_AL_H__
+#define __EFFEKSEERSOUND_AL_H__
 
 namespace EffekseerSound
 {
@@ -30,17 +30,26 @@ namespace EffekseerSound
 	@brief	~japanese サウンドデータ
 */
 class SoundData : public ::Effekseer::SoundData
-{	
+{
 public:
-	int32_t GetChannels() const { return channels_; }
-	int32_t GetSampleRate() const { return sampleRate_; }
-	ALuint GetBuffer() const { return buffer_; }
+	int32_t GetChannels() const
+	{
+		return channels_;
+	}
+	int32_t GetSampleRate() const
+	{
+		return sampleRate_;
+	}
+	ALuint GetBuffer() const
+	{
+		return buffer_;
+	}
 
 private:
 	friend class SoundLoader;
 
 	int32_t channels_ = 0;
-	
+
 	int32_t sampleRate_ = 0;
 
 	ALuint buffer_ = 0;
@@ -57,8 +66,12 @@ using SoundRef = Effekseer::RefPtr<Sound>;
 class Sound : public Effekseer::IReference
 {
 protected:
-	Sound() {}
-	virtual ~Sound() {}
+	Sound()
+	{
+	}
+	virtual ~Sound()
+	{
+	}
 
 public:
 	/**
@@ -69,21 +82,22 @@ public:
 		@return	~english Instance
 		@return	~japanese インスタンス
 	*/
-	static SoundRef Create( int32_t numVoices );
-	
+	static SoundRef Create(int32_t numVoices);
+
 	/**
 		@brief	~english Destroy this instance.
 		@brief	~japanese このインスタンスを破棄する。
 	*/
 	virtual void Destroy() = 0;
-	
+
 	/**
 		@brief	~english Set listener.
 		@brief	~japanese リスナー設定。
 	*/
-	virtual void SetListener( const ::Effekseer::Vector3D& pos, 
-		const ::Effekseer::Vector3D& at, const ::Effekseer::Vector3D& up ) = 0;
-	
+	virtual void SetListener(const ::Effekseer::Vector3D& pos,
+							 const ::Effekseer::Vector3D& at,
+							 const ::Effekseer::Vector3D& up) = 0;
+
 	/**
 		@brief	~english Create a sound player.
 		@brief	~japanese サウンドプレイヤを生成する。
@@ -94,8 +108,8 @@ public:
 		@brief	~english Create a default sound loader.
 		@brief	~japanese 標準のサウンド読込インスタンスを生成する。
 	*/
-	virtual ::Effekseer::SoundLoaderRef CreateSoundLoader( ::Effekseer::FileInterfaceRef fileInterface = NULL ) = 0;
-	
+	virtual ::Effekseer::SoundLoaderRef CreateSoundLoader(::Effekseer::FileInterfaceRef fileInterface = NULL) = 0;
+
 	/**
 		@brief	~english Stop all voices.
 		@brief	~japanese 全発音を停止。
@@ -106,10 +120,9 @@ public:
 		@brief	~english Set mute.
 		@brief	~japanese ミュート設定。
 	*/
-	virtual void SetMute( bool mute ) = 0;
-
+	virtual void SetMute(bool mute) = 0;
 };
 
-}
+} // namespace EffekseerSound
 
-#endif	// __EFFEKSEERSOUND_AL_H__
+#endif // __EFFEKSEERSOUND_AL_H__

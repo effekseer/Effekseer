@@ -22,10 +22,7 @@ struct Mat43f
 
 	Mat43f() = default;
 	Mat43f(const Mat43f& rhs) = default;
-	Mat43f(float m11, float m12, float m13,
-		   float m21, float m22, float m23,
-		   float m31, float m32, float m33,
-		   float m41, float m42, float m43);
+	Mat43f(float m11, float m12, float m13, float m21, float m22, float m23, float m31, float m32, float m33, float m41, float m42, float m43);
 	Mat43f(const Matrix43& mat);
 
 	bool IsValid() const;
@@ -76,10 +73,7 @@ struct Mat43f
 };
 
 inline Mat43f::Mat43f(
-	float m11, float m12, float m13,
-	float m21, float m22, float m23,
-	float m31, float m32, float m33,
-	float m41, float m42, float m43)
+	float m11, float m12, float m13, float m21, float m22, float m23, float m31, float m32, float m33, float m41, float m42, float m43)
 	: X(m11, m21, m31, m41)
 	, Y(m12, m22, m32, m42)
 	, Z(m13, m23, m33, m43)

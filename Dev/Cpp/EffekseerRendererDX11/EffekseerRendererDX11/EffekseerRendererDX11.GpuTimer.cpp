@@ -213,8 +213,10 @@ void GpuTimer::UpdateResults(Effekseer::GpuStage stage)
 			if (timeData.queryedStage[phase] == stage)
 			{
 				uint64_t startTime, stopTime;
-				if (!getTimeStamp(timeData.startQuery[phase].get(), startTime)) continue;
-				if (!getTimeStamp(timeData.stopQuery[phase].get(), stopTime)) continue;
+				if (!getTimeStamp(timeData.startQuery[phase].get(), startTime))
+					continue;
+				if (!getTimeStamp(timeData.stopQuery[phase].get(), stopTime))
+					continue;
 				elapsedTime += (stopTime - startTime) * 1000000 / disjoint.Frequency;
 				timeData.queryedStage[phase] = Effekseer::GpuStage::None;
 			}

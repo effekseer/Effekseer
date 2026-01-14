@@ -25,7 +25,7 @@ int main(int argc, char** argv)
 	// Effekseerのモジュールをセットアップする
 	device.SetupEffekseerModules(efkManager);
 	::EffekseerRenderer::RendererRef efkRenderer = device.GetEffekseerRenderer();
-	
+
 	// Setup the coordinate system. This must be matched with your application.
 	// 座標系を設定する。アプリケーションと一致させる必要がある。
 	efkManager->SetCoordinateSystem(Effekseer::CoordinateSystem::RH);

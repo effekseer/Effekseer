@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <string>
 
-#include <Effekseer.h>
 #include "DeviceMetal.h"
+#include <Effekseer.h>
 
 int main(int argc, char** argv)
 {

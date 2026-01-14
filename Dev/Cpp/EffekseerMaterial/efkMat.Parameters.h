@@ -511,7 +511,7 @@ public:
 	}
 
 	ValueType
-		GetOutputType(std::shared_ptr<Material> material, std::shared_ptr<Node> node, const std::vector<ValueType>& inputTypes) const override
+	GetOutputType(std::shared_ptr<Material> material, std::shared_ptr<Node> node, const std::vector<ValueType>& inputTypes) const override
 	{
 		if (inputTypes[1] == ValueType::Float1)
 			return inputTypes[2];
@@ -546,7 +546,7 @@ public:
 		output->Name = "Output";
 		output->Type = ValueType::Bool;
 		OutputPins.push_back(output);
-		
+
 		auto aProp = std::make_shared<NodePropertyParameter>();
 		aProp->Name = "A";
 		aProp->Type = ValueType::Float1;
@@ -563,7 +563,7 @@ public:
 		condProp->Name = "Condition";
 		condProp->Type = ValueType::Enum;
 		condProp->DefaultValues[0] = 0;
-		Properties.push_back(condProp);	
+		Properties.push_back(condProp);
 
 		BehaviorComponents = {std::make_shared<NodeParameterBehaviorComponentTwoInputMath>()};
 	}
@@ -2061,7 +2061,6 @@ public:
 		OutputPins.push_back(output);
 	}
 };
-
 
 class NodeHsvToRgb : public NodeParameter
 {

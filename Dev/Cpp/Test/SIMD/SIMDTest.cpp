@@ -1,20 +1,20 @@
-#include <cassert>
+#include "Effekseer.Matrix43.h"
+#include "Effekseer.Matrix44.h"
+#include "Effekseer.Vector2D.h"
+#include "Effekseer.Vector3D.h"
+#include "SIMD/Bridge.h"
 #include "SIMD/Float4.h"
 #include "SIMD/Int4.h"
-#include "SIMD/Bridge.h"
-#include "SIMD/Vec2f.h"
-#include "SIMD/Vec3f.h"
-#include "SIMD/Vec4f.h"
 #include "SIMD/Mat43f.h"
 #include "SIMD/Mat44f.h"
 #include "SIMD/Utils.h"
-#include "Effekseer.Vector2D.h"
-#include "Effekseer.Vector3D.h"
-#include "Effekseer.Matrix43.h"
-#include "Effekseer.Matrix44.h"
+#include "SIMD/Vec2f.h"
+#include "SIMD/Vec3f.h"
+#include "SIMD/Vec4f.h"
+#include <cassert>
 
 #define ASSERT(e) assert(e)
-//#define ASSERT(e) if (!(e)) printf("assert failed.\n");
+// #define ASSERT(e) if (!(e)) printf("assert failed.\n");
 
 using namespace Effekseer;
 using namespace Effekseer::SIMD;
@@ -95,8 +95,8 @@ void test_Float4()
 
 	{
 		Float4 a(1, 2, 3, 4), b(5, 6, 7, 8);
-		ASSERT(Float4::MulAddLane<0>(Float4(3), a, b) == Float4( 8, 13, 18, 23));
-		ASSERT(Float4::MulAddLane<1>(Float4(3), a, b) == Float4( 9, 15, 21, 27));
+		ASSERT(Float4::MulAddLane<0>(Float4(3), a, b) == Float4(8, 13, 18, 23));
+		ASSERT(Float4::MulAddLane<1>(Float4(3), a, b) == Float4(9, 15, 21, 27));
 		ASSERT(Float4::MulAddLane<2>(Float4(3), a, b) == Float4(10, 17, 24, 31));
 		ASSERT(Float4::MulAddLane<3>(Float4(3), a, b) == Float4(11, 19, 27, 35));
 	}
@@ -104,9 +104,9 @@ void test_Float4()
 	{
 		Float4 a(1, 2, 3, 4), b(5, 6, 7, 8);
 		ASSERT(Float4::MulSubLane<0>(Float4(30), a, b) == Float4(25, 20, 15, 10));
-		ASSERT(Float4::MulSubLane<1>(Float4(30), a, b) == Float4(24, 18, 12,  6));
-		ASSERT(Float4::MulSubLane<2>(Float4(30), a, b) == Float4(23, 16,  9,  2));
-		ASSERT(Float4::MulSubLane<3>(Float4(30), a, b) == Float4(22, 14,  6, -2));
+		ASSERT(Float4::MulSubLane<1>(Float4(30), a, b) == Float4(24, 18, 12, 6));
+		ASSERT(Float4::MulSubLane<2>(Float4(30), a, b) == Float4(23, 16, 9, 2));
+		ASSERT(Float4::MulSubLane<3>(Float4(30), a, b) == Float4(22, 14, 6, -2));
 	}
 
 	{
@@ -155,12 +155,12 @@ void test_Float4()
 		Float4 a(1, 2, 3, 4);
 		ASSERT(a == a.Convert4i().Convert4f());
 	}
-	
+
 	{
 		Float4 a(1, 2, 3, 4);
 		ASSERT(a.Convert4i() == Int4(1, 2, 3, 4));
 	}
-	
+
 	{
 		Float4 a(1, 2, 3, 4);
 		ASSERT(a.Dup<0>() == Float4(1, 1, 1, 1));
@@ -239,69 +239,64 @@ void test_Mat43f()
 {
 	{
 		Mat43f a(
-			1,  2,  3,
-			4,  5,  6,
-			7,  8,  9,
-			10, 11, 12);
+			1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
 		Mat43f b(
-			12, 11, 10,
-			9,  8,  7,
-			6,  5,  4,
-			3,  2,  1);
+			12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1);
 		Mat43f ret = a * b;
 		ASSERT(ret == Mat43f(
-			48,  42,  36,
-			129, 114,  99, 
-			210, 186, 162, 
-			294, 260, 226)
-		);
+						  48, 42, 36, 129, 114, 99, 210, 186, 162, 294, 260, 226));
 	}
 
 	{
 		Vec3f a(1, 2, 3);
 		Mat43f b(
-			1,  2,  3,
-			4,  5,  6,
-			7,  8,  9,
-			10, 11, 12);
+			1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
 		Vec3f ret = Vec3f::Transform(a, b);
 		ASSERT(ret == Vec3f(40, 47, 54));
 	}
 
 	{
 		Mat43f a = Mat43f::Scaling(5.0f, 6.0f, 7.0f);
-		Matrix43 b; b.Scaling(5.0f, 6.0f, 7.0f);
+		Matrix43 b;
+		b.Scaling(5.0f, 6.0f, 7.0f);
 		ASSERT(a == Mat43f(b));
 	}
 	{
 		Mat43f a = Mat43f::RotationX(12);
-		Matrix43 b; b.RotationX(12);
+		Matrix43 b;
+		b.RotationX(12);
 		ASSERT(a == Mat43f(b));
 	}
 	{
 		Mat43f a = Mat43f::RotationY(12);
-		Matrix43 b; b.RotationY(12);
+		Matrix43 b;
+		b.RotationY(12);
 		ASSERT(a == Mat43f(b));
 	}
 	{
 		Mat43f a = Mat43f::RotationZ(12);
-		Matrix43 b; b.RotationZ(12);
+		Matrix43 b;
+		b.RotationZ(12);
 		ASSERT(a == Mat43f(b));
 	}
 	{
 		Mat43f a = Mat43f::RotationXYZ(12, 34, 56);
-		Matrix43 b; b.RotationXYZ(12, 34, 56);
+		Matrix43 b;
+		b.RotationXYZ(12, 34, 56);
 		ASSERT(a == Mat43f(b));
 	}
 	{
 		Mat43f a = Mat43f::RotationAxis(Vec3f(1, 2, 3), 56);
-		Matrix43 b; b.RotationAxis(Vector3D(1, 2, 3), 56);
+		Matrix43 b;
+		b.RotationAxis(Vector3D(1, 2, 3), 56);
 		ASSERT(a == Mat43f(b));
 	}
 	{
 		Mat43f a = Mat43f::SRT(Vec3f(1, 2, 3), Mat43f::RotationXYZ(12, 34, 56), Vec3f(3.0f, 2.0f, 0.5f));
-		Matrix43 b; b.RotationXYZ(12, 34, 56);
-		Matrix43 c; c.SetSRT(Vector3D(1, 2, 3), b, Vector3D(3.0f, 2.0f, 0.5f));
+		Matrix43 b;
+		b.RotationXYZ(12, 34, 56);
+		Matrix43 c;
+		c.SetSRT(Vector3D(1, 2, 3), b, Vector3D(3.0f, 2.0f, 0.5f));
 		ASSERT(a == Mat43f(c));
 
 		Vec3f s1, t1;
@@ -322,47 +317,28 @@ void test_Mat44f()
 {
 	{
 		Mat44f a(
-			1,  2,  3,  4,
-			5,  6,  7,  8,
-			9, 10, 11, 12,
-			13, 14, 15, 16);
+			1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
 		Mat44f b(
-			16, 15, 14, 13,
-			12, 11, 10,  9,
-			8,  7,  6,  5,
-			4,  3,  2,  1);
+			16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1);
 		Mat44f ret = a * b;
 		ASSERT(ret == Mat44f(
-			80,  70,  60,  50, 
-			240, 214, 188, 162, 
-			400, 358, 316, 274, 
-			560, 502, 444, 386)
-		);
+						  80, 70, 60, 50, 240, 214, 188, 162, 400, 358, 316, 274, 560, 502, 444, 386));
 	}
 
 	{
 		Vec3f a(1, 2, 3);
 		Mat44f b(
-			1,  2,  3,  4,
-			5,  6,  7,  8,
-			9, 10, 11, 12,
-			13, 14, 15, 16);
+			1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
 		Vec3f ret = Vec3f::Transform(a, b);
 		ASSERT(ret == Vec3f(51, 58, 65));
 	}
 
 	{
 		Mat44f a(
-			1,  2,  3,  4,
-			5,  6,  7,  8,
-			9, 10, 11, 12,
-			13, 14, 15, 16);
+			1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
 		Mat44f b = a.Transpose();
 		ASSERT(b == Mat44f(
-			1, 5,  9, 13,
-			2, 6, 10, 14,
-			3, 7, 11, 15,
-			4, 8, 12, 16));
+						1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15, 4, 8, 12, 16));
 	}
 }
 
@@ -442,8 +418,8 @@ void test_Int4()
 
 	{
 		Int4 a(1, 2, 3, 4), b(5, 6, 7, 8);
-		ASSERT(Int4::MulAddLane<0>(Int4(3), a, b) == Int4( 8, 13, 18, 23));
-		ASSERT(Int4::MulAddLane<1>(Int4(3), a, b) == Int4( 9, 15, 21, 27));
+		ASSERT(Int4::MulAddLane<0>(Int4(3), a, b) == Int4(8, 13, 18, 23));
+		ASSERT(Int4::MulAddLane<1>(Int4(3), a, b) == Int4(9, 15, 21, 27));
 		ASSERT(Int4::MulAddLane<2>(Int4(3), a, b) == Int4(10, 17, 24, 31));
 		ASSERT(Int4::MulAddLane<3>(Int4(3), a, b) == Int4(11, 19, 27, 35));
 	}
@@ -451,9 +427,9 @@ void test_Int4()
 	{
 		Int4 a(1, 2, 3, 4), b(5, 6, 7, 8);
 		ASSERT(Int4::MulSubLane<0>(Int4(30), a, b) == Int4(25, 20, 15, 10));
-		ASSERT(Int4::MulSubLane<1>(Int4(30), a, b) == Int4(24, 18, 12,  6));
-		ASSERT(Int4::MulSubLane<2>(Int4(30), a, b) == Int4(23, 16,  9,  2));
-		ASSERT(Int4::MulSubLane<3>(Int4(30), a, b) == Int4(22, 14,  6, -2));
+		ASSERT(Int4::MulSubLane<1>(Int4(30), a, b) == Int4(24, 18, 12, 6));
+		ASSERT(Int4::MulSubLane<2>(Int4(30), a, b) == Int4(23, 16, 9, 2));
+		ASSERT(Int4::MulSubLane<3>(Int4(30), a, b) == Int4(22, 14, 6, -2));
 	}
 
 	{
@@ -506,14 +482,14 @@ void test_Int4()
 		Int4 a(1, 2, 3, 4);
 		ASSERT(a == a.Convert4f().Convert4i());
 	}
-	
+
 	{
 		Int4 a(1, 2, 3, 4);
 		ASSERT(a.Convert4f() == Float4(1.0f, 2.0f, 3.0f, 4.0f));
 	}
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
 	test_Float4();
 	test_Vec2f();

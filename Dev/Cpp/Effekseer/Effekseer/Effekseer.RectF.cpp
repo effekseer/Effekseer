@@ -5,7 +5,6 @@
 namespace Effekseer
 {
 
-
 Vector2D RectF::Position() const
 {
 	return Vector2D(X, Y);

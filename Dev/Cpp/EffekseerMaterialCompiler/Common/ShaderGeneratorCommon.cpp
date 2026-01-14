@@ -260,7 +260,7 @@ float CellularNoise(float2 uv, float scale) {
 }
 )";
 
-static const char* material_hsv_functions =  R"(
+static const char* material_hsv_functions = R"(
 float3 RGBToHSV(float3 rgb) {
 	float4 K = float4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
 	float4 P = LERP(float4(rgb.bg, K.wz), float4(rgb.gb, K.xy), step(rgb.b, rgb.g));

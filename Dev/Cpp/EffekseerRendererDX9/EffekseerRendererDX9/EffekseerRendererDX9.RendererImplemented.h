@@ -5,11 +5,11 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include <EffekseerRendererCommon/EffekseerRenderer.RenderStateBase.h>
-#include <EffekseerRendererCommon/EffekseerRenderer.StandardRenderer.h>
 #include "EffekseerRendererDX9.Base.h"
 #include "EffekseerRendererDX9.Renderer.h"
 #include "GraphicsDevice.h"
+#include <EffekseerRendererCommon/EffekseerRenderer.RenderStateBase.h>
+#include <EffekseerRendererCommon/EffekseerRenderer.StandardRenderer.h>
 #include <array>
 
 namespace EffekseerRendererDX9

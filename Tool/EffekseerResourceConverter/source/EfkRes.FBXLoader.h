@@ -1,10 +1,10 @@
 #pragma once
 
+#include "EfkRes.Curve.h"
+#include "EfkRes.Model.h"
+#include <optional>
 #include <stdint.h>
 #include <string_view>
-#include <optional>
-#include "EfkRes.Model.h"
-#include "EfkRes.Curve.h"
 
 namespace efkres
 {
@@ -19,4 +19,4 @@ public:
 	std::optional<Curve> LoadCurve(std::string_view filepath);
 };
 
-}
+} // namespace efkres

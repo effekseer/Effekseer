@@ -162,7 +162,7 @@ public:
 		@brief	軌跡レンダラーを生成する。
 	*/
 	::Effekseer::TrackRendererRef CreateTrackRenderer() override;
-	
+
 	/**
 		@brief	GPUタイマーを生成する。
 	*/
@@ -172,7 +172,7 @@ public:
 		@brief	GPUパーティクルシステムを生成する。
 	*/
 	::Effekseer::GpuParticleSystemRef CreateGpuParticleSystem(const Effekseer::GpuParticleSystem::Settings& settings = {}) override;
-	
+
 	/**
 		@brief	GPUパーティクルファクトリを生成する。
 	*/

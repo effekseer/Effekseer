@@ -1,9 +1,9 @@
 #pragma once
 
+#include "EfkRes.Model.h"
+#include <optional>
 #include <stdint.h>
 #include <string_view>
-#include <optional>
-#include "EfkRes.Model.h"
 
 namespace efkres
 {
@@ -17,4 +17,4 @@ public:
 	std::optional<Model> LoadModel(std::string_view filepath);
 };
 
-}
+} // namespace efkres

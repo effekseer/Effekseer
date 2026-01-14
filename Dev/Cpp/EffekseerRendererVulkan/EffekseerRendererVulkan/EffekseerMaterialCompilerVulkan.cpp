@@ -41,7 +41,6 @@ static void Serialize(std::vector<uint8_t>& dst, const LLGI::CompilerResult& res
 	}
 }
 
-
 } // namespace Effekseer
 
 namespace Effekseer
@@ -55,30 +54,58 @@ private:
 	std::array<std::vector<uint8_t>, static_cast<int32_t>(MaterialShaderType::Max)> pixelShaders_;
 
 public:
-	CompiledMaterialBinaryVulkan() {}
+	CompiledMaterialBinaryVulkan()
+	{
+	}
 
-	virtual ~CompiledMaterialBinaryVulkan() {}
+	virtual ~CompiledMaterialBinaryVulkan()
+	{
+	}
 
 	void SetVertexShaderData(MaterialShaderType type, const std::vector<uint8_t>& data)
 	{
 		vertexShaders_.at(static_cast<int>(type)) = data;
 	}
 
-	void SetPixelShaderData(MaterialShaderType type, const std::vector<uint8_t>& data) { pixelShaders_.at(static_cast<int>(type)) = data; }
+	void SetPixelShaderData(MaterialShaderType type, const std::vector<uint8_t>& data)
+	{
+		pixelShaders_.at(static_cast<int>(type)) = data;
+	}
 
-	const uint8_t* GetVertexShaderData(MaterialShaderType type) const override { return vertexShaders_.at(static_cast<int>(type)).data(); }
+	const uint8_t* GetVertexShaderData(MaterialShaderType type) const override
+	{
+		return vertexShaders_.at(static_cast<int>(type)).data();
+	}
 
-	int32_t GetVertexShaderSize(MaterialShaderType type) const override { return vertexShaders_.at(static_cast<int>(type)).size(); }
+	int32_t GetVertexShaderSize(MaterialShaderType type) const override
+	{
+		return vertexShaders_.at(static_cast<int>(type)).size();
+	}
 
-	const uint8_t* GetPixelShaderData(MaterialShaderType type) const override { return pixelShaders_.at(static_cast<int>(type)).data(); }
+	const uint8_t* GetPixelShaderData(MaterialShaderType type) const override
+	{
+		return pixelShaders_.at(static_cast<int>(type)).data();
+	}
 
-	int32_t GetPixelShaderSize(MaterialShaderType type) const override { return pixelShaders_.at(static_cast<int>(type)).size(); }
+	int32_t GetPixelShaderSize(MaterialShaderType type) const override
+	{
+		return pixelShaders_.at(static_cast<int>(type)).size();
+	}
 
-	int AddRef() override { return ReferenceObject::AddRef(); }
+	int AddRef() override
+	{
+		return ReferenceObject::AddRef();
+	}
 
-	int Release() override { return ReferenceObject::Release(); }
+	int Release() override
+	{
+		return ReferenceObject::Release();
+	}
 
-	int GetRef() override { return ReferenceObject::GetRef(); }
+	int GetRef() override
+	{
+		return ReferenceObject::GetRef();
+	}
 };
 
 CompiledMaterialBinary* MaterialCompilerVulkan::Compile(MaterialFile* material, int32_t maximumUniformCount, int32_t maximumTextureCount)
@@ -88,7 +115,8 @@ CompiledMaterialBinary* MaterialCompilerVulkan::Compile(MaterialFile* material, 
 
 	auto binary = new CompiledMaterialBinaryVulkan();
 
-	auto convertToVectorVS = [compiler](const std::string& str) -> std::vector<uint8_t> {
+	auto convertToVectorVS = [compiler](const std::string& str) -> std::vector<uint8_t>
+	{
 		std::vector<uint8_t> ret;
 
 		LLGI::CompilerResult result;
@@ -108,7 +136,8 @@ CompiledMaterialBinary* MaterialCompilerVulkan::Compile(MaterialFile* material, 
 		return ret;
 	};
 
-	auto convertToVectorPS = [compiler](const std::string& str) -> std::vector<uint8_t> {
+	auto convertToVectorPS = [compiler](const std::string& str) -> std::vector<uint8_t>
+	{
 		std::vector<uint8_t> ret;
 
 		LLGI::CompilerResult result;
@@ -128,12 +157,12 @@ CompiledMaterialBinary* MaterialCompilerVulkan::Compile(MaterialFile* material, 
 		return ret;
 	};
 
-	auto saveBinary = [&material, &binary, &convertToVectorVS, &convertToVectorPS, &maximumUniformCount, &maximumTextureCount](MaterialShaderType type) {
-		
+	auto saveBinary = [&material, &binary, &convertToVectorVS, &convertToVectorPS, &maximumUniformCount, &maximumTextureCount](MaterialShaderType type)
+	{
 		GLSL::ShaderGenerator generator;
 		auto shader = generator.GenerateShader(material, type, maximumUniformCount, maximumTextureCount, true, true, true, true, 0, true, true, true, 40);
 
-		//auto shader = Vulkan::GenerateShader(material, type, maximumTextureCount);
+		// auto shader = Vulkan::GenerateShader(material, type, maximumTextureCount);
 		binary->SetVertexShaderData(type, convertToVectorVS(shader.CodeVS));
 		binary->SetPixelShaderData(type, convertToVectorPS(shader.CodePS));
 	};

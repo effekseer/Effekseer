@@ -4,7 +4,8 @@ namespace Effekseer
 {
 
 template <class T>
-inline T Read(uint8_t*& pos) {
+inline T Read(uint8_t*& pos)
+{
 	T data;
 	memcpy(&data, pos, sizeof(T));
 	pos += sizeof(T);
@@ -93,7 +94,7 @@ GpuParticles::ParamSet LoadGpuParticlesParameter(uint8_t*& pos, int32_t version,
 		float s1 = Read<float>(pos);
 		float3 xyz0 = Read<float3>(pos);
 		float3 xyz1 = Read<float3>(pos);
-		return std::array<float4, 2>{ float4(xyz0.x, xyz0.y, xyz0.z, s0), float4(xyz1.x, xyz1.y, xyz1.z, s1) };
+		return std::array<float4, 2>{float4(xyz0.x, xyz0.y, xyz0.z, s0), float4(xyz1.x, xyz1.y, xyz1.z, s1)};
 	};
 	switch (paramSet.Scale.Type)
 	{

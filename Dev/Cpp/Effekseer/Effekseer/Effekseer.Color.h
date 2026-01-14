@@ -2,8 +2,8 @@
 #ifndef __EFFEKSEER_COLOR_H__
 #define __EFFEKSEER_COLOR_H__
 
-#include <stdint.h>
 #include <array>
+#include <stdint.h>
 
 namespace Effekseer
 {
@@ -15,8 +15,8 @@ namespace Effekseer
 */
 enum ColorMode : uint32_t
 {
-	COLOR_MODE_RGBA,	// RGB + α
-	COLOR_MODE_HSVA,	// HSV + α
+	COLOR_MODE_RGBA, // RGB + α
+	COLOR_MODE_HSVA, // HSV + α
 };
 
 /**
@@ -57,7 +57,7 @@ struct Color
 	Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 
 	/**
-		@brief 
+		@brief
 		\~English	Convert Color into std::array<float,4>
 		\~Japanese	Color から std::array<float,4> に変換する。
 	*/
@@ -67,8 +67,7 @@ struct Color
 			static_cast<float>(R) / 255.0f,
 			static_cast<float>(G) / 255.0f,
 			static_cast<float>(B) / 255.0f,
-			static_cast<float>(A) / 255.0f
-		};
+			static_cast<float>(A) / 255.0f};
 	}
 
 	/**

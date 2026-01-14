@@ -10,8 +10,8 @@
 
 #include <EffekseerSoundOSMixer.h>
 
-#include <EffekseerRendererCommon/TextureLoader.h>
 #include <EffekseerRendererCommon/EffekseerRenderer.GpuParticles.h>
+#include <EffekseerRendererCommon/TextureLoader.h>
 
 namespace Effekseer::Tool
 {

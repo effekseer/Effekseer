@@ -8,7 +8,7 @@
 
 namespace Effekseer
 {
-	
+
 namespace SIMD
 {
 
@@ -21,64 +21,101 @@ struct Float4;
 struct alignas(16) Int4
 {
 	int32x4_t s;
-	
+
 	Int4() = default;
 	Int4(const Int4& rhs) = default;
-	Int4(int32x4_t rhs) { s = rhs; }
-	Int4(int32_t x, int32_t y, int32_t z, int32_t w) { const int32_t v[4] = {x, y, z, w}; s = vld1q_s32(v); }
-	Int4(const std::array<int32_t, 4>& v) { *this = Load4(&v); }
-	Int4(int32_t i) { s = vdupq_n_s32(i); }
-	
-	int32_t GetX() const { return vgetq_lane_s32(s, 0); }
-	int32_t GetY() const { return vgetq_lane_s32(s, 1); }
-	int32_t GetZ() const { return vgetq_lane_s32(s, 2); }
-	int32_t GetW() const { return vgetq_lane_s32(s, 3); }
-	
-	void SetX(int32_t i) { s = vsetq_lane_s32(i, s, 0); }
-	void SetY(int32_t i) { s = vsetq_lane_s32(i, s, 1); }
-	void SetZ(int32_t i) { s = vsetq_lane_s32(i, s, 2); }
-	void SetW(int32_t i) { s = vsetq_lane_s32(i, s, 3); }
-	
+	Int4(int32x4_t rhs)
+	{
+		s = rhs;
+	}
+	Int4(int32_t x, int32_t y, int32_t z, int32_t w)
+	{
+		const int32_t v[4] = {x, y, z, w};
+		s = vld1q_s32(v);
+	}
+	Int4(const std::array<int32_t, 4>& v)
+	{
+		*this = Load4(&v);
+	}
+	Int4(int32_t i)
+	{
+		s = vdupq_n_s32(i);
+	}
+
+	int32_t GetX() const
+	{
+		return vgetq_lane_s32(s, 0);
+	}
+	int32_t GetY() const
+	{
+		return vgetq_lane_s32(s, 1);
+	}
+	int32_t GetZ() const
+	{
+		return vgetq_lane_s32(s, 2);
+	}
+	int32_t GetW() const
+	{
+		return vgetq_lane_s32(s, 3);
+	}
+
+	void SetX(int32_t i)
+	{
+		s = vsetq_lane_s32(i, s, 0);
+	}
+	void SetY(int32_t i)
+	{
+		s = vsetq_lane_s32(i, s, 1);
+	}
+	void SetZ(int32_t i)
+	{
+		s = vsetq_lane_s32(i, s, 2);
+	}
+	void SetW(int32_t i)
+	{
+		s = vsetq_lane_s32(i, s, 3);
+	}
+
 	Float4 Convert4f() const;
 	Float4 Cast4f() const;
-	
+
 	Int4& operator+=(const Int4& rhs);
 	Int4& operator-=(const Int4& rhs);
 	Int4& operator*=(const Int4& rhs);
 	Int4& operator*=(int32_t rhs);
 	Int4& operator/=(const Int4& rhs);
 	Int4& operator/=(int32_t rhs);
-	
+
 	static Int4 Load2(const void* mem);
 	static void Store2(void* mem, const Int4& i);
 	static Int4 Load3(const void* mem);
 	static void Store3(void* mem, const Int4& i);
 	static Int4 Load4(const void* mem);
 	static void Store4(void* mem, const Int4& i);
-	
+
 	static Int4 SetZero();
 	static Int4 Abs(const Int4& in);
 	static Int4 Min(const Int4& lhs, const Int4& rhs);
 	static Int4 Max(const Int4& lhs, const Int4& rhs);
 	static Int4 MulAdd(const Int4& a, const Int4& b, const Int4& c);
 	static Int4 MulSub(const Int4& a, const Int4& b, const Int4& c);
-	
-	template<size_t LANE>
+
+	template <size_t LANE>
 	static Int4 MulLane(const Int4& lhs, const Int4& rhs);
-	template<size_t LANE>
+	template <size_t LANE>
 	static Int4 MulAddLane(const Int4& a, const Int4& b, const Int4& c);
-	template<size_t LANE>
+	template <size_t LANE>
 	static Int4 MulSubLane(const Int4& a, const Int4& b, const Int4& c);
 	template <uint32_t indexX, uint32_t indexY, uint32_t indexZ, uint32_t indexW>
 	static Int4 Swizzle(const Int4& v);
-	
+
 	template <int COUNT>
 	static Int4 ShiftL(const Int4& in);
 	template <int COUNT>
 	static Int4 ShiftR(const Int4& in);
 	template <int COUNT>
 	static Int4 ShiftRA(const Int4& in);
-	
+
 	template <uint32_t X, uint32_t Y, uint32_t Z, uint32_t W>
 	static Int4 Mask();
 	static uint32_t MoveMask(const Int4& in);
@@ -91,7 +128,7 @@ struct alignas(16) Int4
 	static Int4 NearEqual(const Int4& lhs, const Int4& rhs, int32_t epsilon = DefaultEpsilon);
 	static Int4 IsZero(const Int4& in, int32_t epsilon = DefaultEpsilon);
 	static void Transpose(Int4& s0, Int4& s1, Int4& s2, Int4& s3);
-	
+
 private:
 	static Int4 SwizzleYZX(const Int4& in);
 	static Int4 SwizzleZXY(const Int4& in);
@@ -159,12 +196,30 @@ inline bool operator!=(const Int4& lhs, const Int4& rhs)
 	return Int4::MoveMask(Int4::Equal(lhs, rhs)) != 0xf;
 }
 
-inline Int4& Int4::operator+=(const Int4& rhs) { return *this = *this + rhs; }
-inline Int4& Int4::operator-=(const Int4& rhs) { return *this = *this - rhs; }
-inline Int4& Int4::operator*=(const Int4& rhs) { return *this = *this * rhs; }
-inline Int4& Int4::operator*=(int32_t rhs) { return *this = *this * rhs; }
-inline Int4& Int4::operator/=(const Int4& rhs) { return *this = *this / rhs; }
-inline Int4& Int4::operator/=(int32_t rhs) { return *this = *this / rhs; }
+inline Int4& Int4::operator+=(const Int4& rhs)
+{
+	return *this = *this + rhs;
+}
+inline Int4& Int4::operator-=(const Int4& rhs)
+{
+	return *this = *this - rhs;
+}
+inline Int4& Int4::operator*=(const Int4& rhs)
+{
+	return *this = *this * rhs;
+}
+inline Int4& Int4::operator*=(int32_t rhs)
+{
+	return *this = *this * rhs;
+}
+inline Int4& Int4::operator/=(const Int4& rhs)
+{
+	return *this = *this / rhs;
+}
+inline Int4& Int4::operator/=(int32_t rhs)
+{
+	return *this = *this / rhs;
+}
 
 inline Int4 Int4::Load2(const void* mem)
 {
@@ -231,7 +286,7 @@ inline Int4 Int4::MulSub(const Int4& a, const Int4& b, const Int4& c)
 	return vmlsq_s32(a.s, b.s, c.s);
 }
 
-template<size_t LANE>
+template <size_t LANE>
 inline Int4 Int4::MulLane(const Int4& lhs, const Int4& rhs)
 {
 	static_assert(LANE < 4, "LANE is must be less than 4.");
@@ -239,7 +294,7 @@ inline Int4 Int4::MulLane(const Int4& lhs, const Int4& rhs)
 	return vmulq_lane_s32(lhs.s, rhs2, LANE & 1);
 }
 
-template<size_t LANE>
+template <size_t LANE>
 inline Int4 Int4::MulAddLane(const Int4& a, const Int4& b, const Int4& c)
 {
 	static_assert(LANE < 4, "LANE is must be less than 4.");
@@ -247,7 +302,7 @@ inline Int4 Int4::MulAddLane(const Int4& a, const Int4& b, const Int4& c)
 	return vmlaq_lane_s32(a.s, b.s, c2, LANE & 1);
 }
 
-template<size_t LANE>
+template <size_t LANE>
 inline Int4 Int4::MulSubLane(const Int4& a, const Int4& b, const Int4& c)
 {
 	static_assert(LANE < 4, "LANE is must be less than 4.");
@@ -255,14 +310,14 @@ inline Int4 Int4::MulSubLane(const Int4& a, const Int4& b, const Int4& c)
 	return vmlsq_lane_s32(a.s, b.s, c2, LANE & 1);
 }
 
-//template <uint32_t indexX, uint32_t indexY, uint32_t indexZ, uint32_t indexW>
-//inline Int4 Int4::Swizzle(const Int4& v)
+// template <uint32_t indexX, uint32_t indexY, uint32_t indexZ, uint32_t indexW>
+// inline Int4 Int4::Swizzle(const Int4& v)
 //{
 //	static_assert(indexX < 4, "indexX is must be less than 4.");
 //	static_assert(indexY < 4, "indexY is must be less than 4.");
 //	static_assert(indexZ < 4, "indexZ is must be less than 4.");
 //	static_assert(indexW < 4, "indexW is must be less than 4.");
-//}
+// }
 
 template <int COUNT>
 inline Int4 Int4::ShiftL(const Int4& lhs)
@@ -347,7 +402,7 @@ inline void Int4::Transpose(Int4& s0, Int4& s1, Int4& s2, Int4& s3)
 	int32x4x2_t t1 = vzipq_s32(s1.s, s3.s);
 	int32x4x2_t t2 = vzipq_s32(t0.val[0], t1.val[0]);
 	int32x4x2_t t3 = vzipq_s32(t0.val[1], t1.val[1]);
-	
+
 	s0 = t2.val[0];
 	s1 = t2.val[1];
 	s2 = t3.val[0];

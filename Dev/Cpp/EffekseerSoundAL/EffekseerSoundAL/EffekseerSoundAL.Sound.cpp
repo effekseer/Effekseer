@@ -3,10 +3,10 @@
 // Include
 //----------------------------------------------------------------------------------
 #include "../EffekseerSoundAL.h"
+#include "EffekseerSoundAL.SoundImplemented.h"
+#include "EffekseerSoundAL.SoundLoader.h"
 #include "EffekseerSoundAL.SoundPlayer.h"
 #include "EffekseerSoundAL.SoundVoice.h"
-#include "EffekseerSoundAL.SoundLoader.h"
-#include "EffekseerSoundAL.SoundImplemented.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -17,10 +17,10 @@ namespace EffekseerSound
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-SoundRef Sound::Create( int32_t numVoices )
+SoundRef Sound::Create(int32_t numVoices)
 {
 	auto sound = Effekseer::MakeRefPtr<SoundImplemented>();
-	if( sound->Initialize( numVoices ) )
+	if (sound->Initialize(numVoices))
 	{
 		return sound;
 	}
@@ -44,18 +44,19 @@ SoundImplemented::~SoundImplemented()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool SoundImplemented::Initialize( int32_t numVoices )
+bool SoundImplemented::Initialize(int32_t numVoices)
 {
-	voiceContainer_ = new SoundVoiceContainer( this, numVoices );
-	
+	voiceContainer_ = new SoundVoiceContainer(this, numVoices);
+
 	return true;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void SoundImplemented::SetListener( const ::Effekseer::Vector3D& pos, 
-		const ::Effekseer::Vector3D& at, const ::Effekseer::Vector3D& up )
+void SoundImplemented::SetListener(const ::Effekseer::Vector3D& pos,
+								   const ::Effekseer::Vector3D& at,
+								   const ::Effekseer::Vector3D& up)
 {
 	::Effekseer::Vector3D front;
 	::Effekseer::Vector3D::Normal(front, at - pos);
@@ -86,11 +87,11 @@ void SoundImplemented::Destroy()
 {
 	return ::Effekseer::MakeRefPtr<SoundPlayer>(SoundImplementedRef::FromPinned(this));
 }
-	
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-::Effekseer::SoundLoaderRef SoundImplemented::CreateSoundLoader( ::Effekseer::FileInterfaceRef fileInterface )
+::Effekseer::SoundLoaderRef SoundImplemented::CreateSoundLoader(::Effekseer::FileInterfaceRef fileInterface)
 {
 	return ::Effekseer::MakeRefPtr<SoundLoader>(fileInterface);
 }
@@ -106,7 +107,7 @@ void SoundImplemented::StopAllVoices()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void SoundImplemented::SetMute( bool mute )
+void SoundImplemented::SetMute(bool mute)
 {
 	mute_ = mute;
 }
@@ -122,7 +123,7 @@ SoundVoice* SoundImplemented::GetVoice()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void SoundImplemented::StopTag( ::Effekseer::SoundTag tag )
+void SoundImplemented::StopTag(::Effekseer::SoundTag tag)
 {
 	voiceContainer_->StopTag(tag);
 }
@@ -130,7 +131,7 @@ void SoundImplemented::StopTag( ::Effekseer::SoundTag tag )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void SoundImplemented::PauseTag( ::Effekseer::SoundTag tag, bool pause )
+void SoundImplemented::PauseTag(::Effekseer::SoundTag tag, bool pause)
 {
 	voiceContainer_->PauseTag(tag, pause);
 }
@@ -138,7 +139,7 @@ void SoundImplemented::PauseTag( ::Effekseer::SoundTag tag, bool pause )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool SoundImplemented::CheckPlayingTag( ::Effekseer::SoundTag tag )
+bool SoundImplemented::CheckPlayingTag(::Effekseer::SoundTag tag)
 {
 	return voiceContainer_->CheckPlayingTag(tag);
 }
@@ -146,7 +147,7 @@ bool SoundImplemented::CheckPlayingTag( ::Effekseer::SoundTag tag )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerSound
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

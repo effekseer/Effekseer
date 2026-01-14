@@ -100,4 +100,3 @@ std::string GetParentDirectory(const std::string& path)
 	}
 	return path.substr(posBefore + 1, posAfter - posBefore - 1);
 }
-

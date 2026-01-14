@@ -8,7 +8,7 @@
 
 namespace Effekseer
 {
-	
+
 namespace SIMD
 {
 
@@ -31,45 +31,85 @@ struct Int4;
 struct alignas(16) Float4
 {
 	float32x4_t s;
-	
+
 	Float4() = default;
 	Float4(const Float4& rhs) = default;
-	Float4(float32x4_t rhs) { s = rhs; }
-	Float4(uint32x4_t rhs) { s = vreinterpretq_f32_u32(rhs); }
-	Float4(float x, float y, float z, float w) { const float f[4] = {x, y, z, w}; s = vld1q_f32(f); }
-	Float4(const std::array<float, 4>& v) { *this = Load4(&v); }
-	Float4(float i) { s = vdupq_n_f32(i); }
-	
-	float GetX() const { return vgetq_lane_f32(s, 0); }
-	float GetY() const { return vgetq_lane_f32(s, 1); }
-	float GetZ() const { return vgetq_lane_f32(s, 2); }
-	float GetW() const { return vgetq_lane_f32(s, 3); }
-	
-	void SetX(float i) { s = vsetq_lane_f32(i, s, 0); }
-	void SetY(float i) { s = vsetq_lane_f32(i, s, 1); }
-	void SetZ(float i) { s = vsetq_lane_f32(i, s, 2); }
-	void SetW(float i) { s = vsetq_lane_f32(i, s, 3); }
-	
+	Float4(float32x4_t rhs)
+	{
+		s = rhs;
+	}
+	Float4(uint32x4_t rhs)
+	{
+		s = vreinterpretq_f32_u32(rhs);
+	}
+	Float4(float x, float y, float z, float w)
+	{
+		const float f[4] = {x, y, z, w};
+		s = vld1q_f32(f);
+	}
+	Float4(const std::array<float, 4>& v)
+	{
+		*this = Load4(&v);
+	}
+	Float4(float i)
+	{
+		s = vdupq_n_f32(i);
+	}
+
+	float GetX() const
+	{
+		return vgetq_lane_f32(s, 0);
+	}
+	float GetY() const
+	{
+		return vgetq_lane_f32(s, 1);
+	}
+	float GetZ() const
+	{
+		return vgetq_lane_f32(s, 2);
+	}
+	float GetW() const
+	{
+		return vgetq_lane_f32(s, 3);
+	}
+
+	void SetX(float i)
+	{
+		s = vsetq_lane_f32(i, s, 0);
+	}
+	void SetY(float i)
+	{
+		s = vsetq_lane_f32(i, s, 1);
+	}
+	void SetZ(float i)
+	{
+		s = vsetq_lane_f32(i, s, 2);
+	}
+	void SetW(float i)
+	{
+		s = vsetq_lane_f32(i, s, 3);
+	}
+
 	template <size_t LANE>
 	Float4 Dup();
-	
+
 	Int4 Convert4i() const;
 	Int4 Cast4i() const;
-	
+
 	Float4& operator+=(const Float4& rhs);
 	Float4& operator-=(const Float4& rhs);
 	Float4& operator*=(const Float4& rhs);
 	Float4& operator*=(float rhs);
 	Float4& operator/=(const Float4& rhs);
 	Float4& operator/=(float rhs);
-	
+
 	static Float4 Load2(const void* mem);
 	static void Store2(void* mem, const Float4& i);
 	static Float4 Load3(const void* mem);
 	static void Store3(void* mem, const Float4& i);
 	static Float4 Load4(const void* mem);
 	static void Store4(void* mem, const Float4& i);
-	
+
 	static Float4 SetZero();
 	static Float4 SetInt(int32_t x, int32_t y, int32_t z, int32_t w);
 	static Float4 SetUInt(uint32_t x, uint32_t y, uint32_t z, uint32_t w);
@@ -82,19 +122,19 @@ struct alignas(16) Float4
 	static Float4 Ceil(const Float4& in);
 	static Float4 MulAdd(const Float4& a, const Float4& b, const Float4& c);
 	static Float4 MulSub(const Float4& a, const Float4& b, const Float4& c);
-	
-	template<size_t LANE>
+
+	template <size_t LANE>
 	static Float4 MulLane(const Float4& lhs, const Float4& rhs);
-	template<size_t LANE>
+	template <size_t LANE>
 	static Float4 MulAddLane(const Float4& a, const Float4& b, const Float4& c);
-	template<size_t LANE>
+	template <size_t LANE>
 	static Float4 MulSubLane(const Float4& a, const Float4& b, const Float4& c);
 	template <uint32_t indexX, uint32_t indexY, uint32_t indexZ, uint32_t indexW>
 	static Float4 Swizzle(const Float4& v);
-	
+
 	static Float4 Dot3(const Float4& lhs, const Float4& rhs);
 	static Float4 Cross3(const Float4& lhs, const Float4& rhs);
-	
+
 	template <uint32_t X, uint32_t Y, uint32_t Z, uint32_t W>
 	static Float4 Mask();
 	static uint32_t MoveMask(const Float4& in);
@@ -108,7 +148,7 @@ struct alignas(16) Float4
 	static Float4 NearEqual(const Float4& lhs, const Float4& rhs, float epsilon = DefaultEpsilon);
 	static Float4 IsZero(const Float4& in, float epsilon = DefaultEpsilon);
 	static void Transpose(Float4& s0, Float4& s1, Float4& s2, Float4& s3);
-	
+
 private:
 	static Float4 SwizzleYZX(const Float4& in);
 	static Float4 SwizzleZXY(const Float4& in);
@@ -117,9 +157,7 @@ private:
 template <size_t LANE>
 Float4 Float4::Dup()
 {
-	return (LANE < 2) ?
-		vdupq_lane_f32(vget_low_f32(s), LANE & 1) :
-		vdupq_lane_f32(vget_high_f32(s), LANE & 1);
+	return (LANE < 2) ? vdupq_lane_f32(vget_low_f32(s), LANE & 1) : vdupq_lane_f32(vget_high_f32(s), LANE & 1);
 }
 
 inline Float4 operator+(const Float4& lhs, const Float4& rhs)
@@ -192,12 +230,30 @@ inline bool operator!=(const Float4& lhs, const Float4& rhs)
 	return Float4::MoveMask(Float4::Equal(lhs, rhs)) != 0xf;
 }
 
-inline Float4& Float4::operator+=(const Float4& rhs) { return *this = *this + rhs; }
-inline Float4& Float4::operator-=(const Float4& rhs) { return *this = *this - rhs; }
-inline Float4& Float4::operator*=(const Float4& rhs) { return *this = *this * rhs; }
-inline Float4& Float4::operator*=(float rhs) { return *this = *this * rhs; }
-inline Float4& Float4::operator/=(const Float4& rhs) { return *this = *this / rhs; }
-inline Float4& Float4::operator/=(float rhs) { return *this = *this / rhs; }
+inline Float4& Float4::operator+=(const Float4& rhs)
+{
+	return *this = *this + rhs;
+}
+inline Float4& Float4::operator-=(const Float4& rhs)
+{
+	return *this = *this - rhs;
+}
+inline Float4& Float4::operator*=(const Float4& rhs)
+{
+	return *this = *this * rhs;
+}
+inline Float4& Float4::operator*=(float rhs)
+{
+	return *this = *this * rhs;
+}
+inline Float4& Float4::operator/=(const Float4& rhs)
+{
+	return *this = *this / rhs;
+}
+inline Float4& Float4::operator/=(float rhs)
+{
+	return *this = *this / rhs;
+}
 
 inline Float4 Float4::Load2(const void* mem)
 {
@@ -320,7 +376,7 @@ inline Float4 Float4::MulSub(const Float4& a, const Float4& b, const Float4& c)
 	return vmlsq_f32(a.s, b.s, c.s);
 }
 
-template<size_t LANE>
+template <size_t LANE>
 inline Float4 Float4::MulLane(const Float4& lhs, const Float4& rhs)
 {
 	static_assert(LANE < 4, "LANE is must be less than 4.");
@@ -328,7 +384,7 @@ inline Float4 Float4::MulLane(const Float4& lhs, const Float4& rhs)
 	return vmulq_lane_f32(lhs.s, rhs2, LANE & 1);
 }
 
-template<size_t LANE>
+template <size_t LANE>
 inline Float4 Float4::MulAddLane(const Float4& a, const Float4& b, const Float4& c)
 {
 	static_assert(LANE < 4, "LANE is must be less than 4.");
@@ -336,7 +392,7 @@ inline Float4 Float4::MulAddLane(const Float4& a, const Float4& b, const Float4&
 	return vmlaq_lane_f32(a.s, b.s, c2, LANE & 1);
 }
 
-template<size_t LANE>
+template <size_t LANE>
 inline Float4 Float4::MulSubLane(const Float4& a, const Float4& b, const Float4& c)
 {
 	static_assert(LANE < 4, "LANE is must be less than 4.");
@@ -344,14 +400,14 @@ inline Float4 Float4::MulSubLane(const Float4& a, const Float4& b, const Float4&
 	return vmlsq_lane_f32(a.s, b.s, c2, LANE & 1);
 }
 
-//template <uint32_t indexX, uint32_t indexY, uint32_t indexZ, uint32_t indexW>
-//inline Float4 Float4::Swizzle(const Float4& v)
+// template <uint32_t indexX, uint32_t indexY, uint32_t indexZ, uint32_t indexW>
+// inline Float4 Float4::Swizzle(const Float4& v)
 //{
 //	static_assert(indexX < 4, "indexX is must be less than 4.");
 //	static_assert(indexY < 4, "indexY is must be less than 4.");
 //	static_assert(indexZ < 4, "indexZ is must be less than 4.");
 //	static_assert(indexW < 4, "indexW is must be less than 4.");
-//}
+// }
 
 inline Float4 Float4::Dot3(const Float4& lhs, const Float4& rhs)
 {
@@ -437,7 +493,7 @@ inline void Float4::Transpose(Float4& s0, Float4& s1, Float4& s2, Float4& s3)
 	float32x4x2_t t1 = vzipq_f32(s1.s, s3.s);
 	float32x4x2_t t2 = vzipq_f32(t0.val[0], t1.val[0]);
 	float32x4x2_t t3 = vzipq_f32(t0.val[1], t1.val[1]);
-	
+
 	s0 = t2.val[0];
 	s1 = t2.val[1];
 	s2 = t3.val[0];

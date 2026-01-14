@@ -6,12 +6,12 @@
 
 #if defined(EFK_SIMD_GEN)
 
-#include <cstring>
 #include <algorithm>
+#include <cstring>
 
 namespace Effekseer
 {
-	
+
 namespace SIMD
 {
 
@@ -31,7 +31,8 @@ struct Int4;
 */
 struct alignas(16) Float4
 {
-	union {
+	union
+	{
 		float vf[4];
 		int32_t vi[4];
 		uint32_t vu[4];
@@ -39,22 +40,64 @@ struct alignas(16) Float4
 
 	Float4() = default;
 	Float4(const Float4& rhs) = default;
-	Float4(float x, float y, float z, float w) { vf[0] = x; vf[1] = y; vf[2] = z; vf[3] = w; }
-	Float4(const std::array<float, 4>& v) { *this = Load4(&v); }
-	Float4(float i) { vf[0] = i; vf[1] = i; vf[2] = i; vf[3] = i; }
+	Float4(float x, float y, float z, float w)
+	{
+		vf[0] = x;
+		vf[1] = y;
+		vf[2] = z;
+		vf[3] = w;
+	}
+	Float4(const std::array<float, 4>& v)
+	{
+		*this = Load4(&v);
+	}
+	Float4(float i)
+	{
+		vf[0] = i;
+		vf[1] = i;
+		vf[2] = i;
+		vf[3] = i;
+	}
 
-	float GetX() const { return vf[0]; }
-	float GetY() const { return vf[1]; }
-	float GetZ() const { return vf[2]; }
-	float GetW() const { return vf[3]; }
+	float GetX() const
+	{
+		return vf[0];
+	}
+	float GetY() const
+	{
+		return vf[1];
+	}
+	float GetZ() const
+	{
+		return vf[2];
+	}
+	float GetW() const
+	{
+		return vf[3];
+	}
 
-	void SetX(float o) { vf[0] = o; }
-	void SetY(float o) { vf[1] = o; }
-	void SetZ(float o) { vf[2] = o; }
-	void SetW(float o) { vf[3] = o; }
+	void SetX(float o)
+	{
+		vf[0] = o;
+	}
+	void SetY(float o)
+	{
+		vf[1] = o;
+	}
+	void SetZ(float o)
+	{
+		vf[2] = o;
+	}
+	void SetW(float o)
+	{
+		vf[3] = o;
+	}
 
 	template <size_t LANE>
-	Float4 Dup() { return Float4(vf[LANE], vf[LANE], vf[LANE], vf[LANE]); }
+	Float4 Dup()
+	{
+		return Float4(vf[LANE], vf[LANE], vf[LANE], vf[LANE]);
+	}
 
 	Int4 Convert4i() const;
 	Int4 Cast4i() const;
@@ -133,11 +176,11 @@ struct alignas(16) Float4
 	static Float4 MulAdd(const Float4& a, const Float4& b, const Float4& c);
 	static Float4 MulSub(const Float4& a, const Float4& b, const Float4& c);
 
-	template<size_t LANE>
+	template <size_t LANE>
 	static Float4 MulLane(const Float4& lhs, const Float4& rhs);
-	template<size_t LANE>
+	template <size_t LANE>
 	static Float4 MulAddLane(const Float4& a, const Float4& b, const Float4& c);
-	template<size_t LANE>
+	template <size_t LANE>
 	static Float4 MulSubLane(const Float4& a, const Float4& b, const Float4& c);
 	template <uint32_t indexX, uint32_t indexY, uint32_t indexZ, uint32_t indexW>
 	static Float4 Swizzle(const Float4& in);
@@ -436,7 +479,7 @@ inline Float4 Float4::MulAdd(const Float4& a, const Float4& b, const Float4& c)
 	for (size_t i = 0; i < 4; i++)
 	{
 		ret.vf[i] = a.vf[i] + b.vf[i] * c.vf[i];
-}
+	}
 	return ret;
 }
 
@@ -446,7 +489,7 @@ inline Float4 Float4::MulSub(const Float4& a, const Float4& b, const Float4& c)
 	for (size_t i = 0; i < 4; i++)
 	{
 		ret.vf[i] = a.vf[i] - b.vf[i] * c.vf[i];
-}
+	}
 	return ret;
 }
 
@@ -458,25 +501,25 @@ inline Float4 Float4::Dot3(const Float4& lhs, const Float4& rhs)
 
 inline Float4 Float4::Cross3(const Float4& lhs, const Float4& rhs)
 {
-	return Float4::Swizzle<1,2,0,3>(lhs) * Float4::Swizzle<2,0,1,3>(rhs) -
-		Float4::Swizzle<2,0,1,3>(lhs) * Float4::Swizzle<1,2,0,3>(rhs);
+	return Float4::Swizzle<1, 2, 0, 3>(lhs) * Float4::Swizzle<2, 0, 1, 3>(rhs) -
+		   Float4::Swizzle<2, 0, 1, 3>(lhs) * Float4::Swizzle<1, 2, 0, 3>(rhs);
 }
 
-template<size_t LANE>
+template <size_t LANE>
 Float4 Float4::MulLane(const Float4& lhs, const Float4& rhs)
 {
 	static_assert(LANE < 4, "LANE is must be less than 4.");
 	return lhs * rhs.vf[LANE];
 }
 
-template<size_t LANE>
+template <size_t LANE>
 Float4 Float4::MulAddLane(const Float4& a, const Float4& b, const Float4& c)
 {
 	static_assert(LANE < 4, "LANE is must be less than 4.");
 	return a + b * c.vf[LANE];
 }
 
-template<size_t LANE>
+template <size_t LANE>
 Float4 Float4::MulSubLane(const Float4& a, const Float4& b, const Float4& c)
 {
 	static_assert(LANE < 4, "LANE is must be less than 4.");
@@ -492,7 +535,6 @@ Float4 Float4::Swizzle(const Float4& in)
 	static_assert(indexW < 4, "indexW is must be less than 4.");
 	return Float4{in.vf[indexX], in.vf[indexY], in.vf[indexZ], in.vf[indexW]};
 }
-
 
 template <uint32_t X, uint32_t Y, uint32_t Z, uint32_t W>
 Float4 Float4::Mask()

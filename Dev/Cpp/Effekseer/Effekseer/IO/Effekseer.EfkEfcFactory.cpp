@@ -112,7 +112,8 @@ bool EfkEfcProperty::Load(const void* data, int32_t size)
 
 	int32_t infoVersion = 0;
 
-	auto loadStr = [this, &binaryReader, &infoVersion](std::vector<std::u16string>& dst) {
+	auto loadStr = [this, &binaryReader, &infoVersion](std::vector<std::u16string>& dst)
+	{
 		int32_t dataCount = 0;
 		binaryReader.Read(dataCount);
 

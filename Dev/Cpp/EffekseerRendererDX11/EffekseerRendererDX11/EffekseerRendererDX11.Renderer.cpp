@@ -7,8 +7,8 @@
 #include "EffekseerRendererDX11.RendererImplemented.h"
 
 #include "EffekseerRendererDX11.DeviceObject.h"
-#include "EffekseerRendererDX11.GpuTimer.h"
 #include "EffekseerRendererDX11.GpuParticles.h"
+#include "EffekseerRendererDX11.GpuTimer.h"
 #include "EffekseerRendererDX11.MaterialLoader.h"
 #include "EffekseerRendererDX11.ModelRenderer.h"
 #include "EffekseerRendererDX11.Shader.h"

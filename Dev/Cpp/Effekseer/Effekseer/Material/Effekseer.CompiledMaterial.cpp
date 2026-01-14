@@ -135,7 +135,8 @@ bool CompiledMaterial::Load(const uint8_t* data, int32_t size)
 
 		auto binary = new CompiledMaterialBinaryInternal();
 
-		auto loadFunc = [](const uint8_t* data, std::vector<uint8_t>& buffer, int32_t& offset) {
+		auto loadFunc = [](const uint8_t* data, std::vector<uint8_t>& buffer, int32_t& offset)
+		{
 			int size = 0;
 			memcpy(&size, data + offset, 4);
 			offset += sizeof(int);

@@ -3,9 +3,9 @@
 #define __EFFEKSEERRENDERER_GL_GRAPHICS_DEVICE_H__
 
 #include "EffekseerRendererGL.GLExtension.h"
-#include <array>
 #include <Effekseer.h>
 #include <EffekseerRendererCommon/EffekseerRenderer.CommonUtils.h>
+#include <array>
 #include <assert.h>
 #include <functional>
 #include <set>
