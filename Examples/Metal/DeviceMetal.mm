@@ -25,7 +25,7 @@ public:
 
 	bool OnNewFrame() override
 	{
-		return glfwWindowShouldClose(window_) == GL_FALSE;
+		return glfwWindowShouldClose(window_) == GLFW_FALSE;
 	}
 
 	void* GetNativePtr(int32_t index) override
