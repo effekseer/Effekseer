@@ -21,14 +21,18 @@ public:
 
 	Vector2D() = default;
 
-	Vector2D(float x, float y): X(x), Y(y) {}
+	Vector2D(float x, float y)
+		: X(x)
+		, Y(y)
+	{
+	}
 
 	Vector2D& operator+=(const Vector2D& value);
 
 	Vector2D& operator-=(const Vector2D& value);
 
 	/**
-		@brief 
+		@brief
 		\~English	Convert Vector2D into std::array<float,2>
 		\~Japanese	Vector2D から std::array<float,2> に変換する。
 	*/

@@ -9,14 +9,14 @@
 
 #if _DEBUG
 #pragma comment(lib, "debug/libfbxsdk.lib")
-//#pragma comment(lib, "debug/libfbxsdk-mt.lib")
-//#pragma comment(lib, "debug/libxml2-mt.lib")
-//#pragma comment(lib, "debug/zlib-mt.lib")
+// #pragma comment(lib, "debug/libfbxsdk-mt.lib")
+// #pragma comment(lib, "debug/libxml2-mt.lib")
+// #pragma comment(lib, "debug/zlib-mt.lib")
 #else
 #pragma comment(lib, "release/libfbxsdk.lib")
-//#pragma comment(lib, "release/libfbxsdk-mt.lib")
-//#pragma comment(lib, "release/libxml2-mt.lib")
-//#pragma comment(lib, "release/zlib-mt.lib")
+// #pragma comment(lib, "release/libfbxsdk-mt.lib")
+// #pragma comment(lib, "release/libxml2-mt.lib")
+// #pragma comment(lib, "release/zlib-mt.lib")
 #endif
 
 #ifdef _WIN32

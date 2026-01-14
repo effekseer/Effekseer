@@ -1,11 +1,11 @@
 #include "EffectPlatformMetal.h"
-#include "../../EffekseerRendererMetal/EffekseerRendererMetal.h"
 #include "../../3rdParty/LLGI/src/Metal/LLGI.CommandListMetal.h"
+#include "../../3rdParty/LLGI/src/Metal/LLGI.CompilerMetal.h"
 #include "../../3rdParty/LLGI/src/Metal/LLGI.GraphicsMetal.h"
+#include "../../3rdParty/LLGI/src/Metal/LLGI.Metal_Impl.h"
 #include "../../3rdParty/LLGI/src/Metal/LLGI.PlatformMetal.h"
 #include "../../3rdParty/LLGI/src/Metal/LLGI.TextureMetal.h"
-#include "../../3rdParty/LLGI/src/Metal/LLGI.CompilerMetal.h"
-#include "../../3rdParty/LLGI/src/Metal/LLGI.Metal_Impl.h"
+#include "../../EffekseerRendererMetal/EffekseerRendererMetal.h"
 #include "../3rdParty/LLGI/src/LLGI.CommandList.h"
 
 #include "../../3rdParty/LLGI/src/LLGI.Compiler.h"
@@ -131,27 +131,28 @@ fragment main0_out main0(main0_in in [[stage_in]], texture2d<float> txt [[textur
 class DistortingCallbackMetal : public EffekseerRenderer::DistortingCallback
 {
 	EffectPlatformMetal* platform_ = nullptr;
-    Effekseer::Backend::TextureRef texture_ = nullptr;
-    
+	Effekseer::Backend::TextureRef texture_ = nullptr;
+
 public:
-	DistortingCallbackMetal(EffectPlatformMetal* platform) : platform_(platform)
+	DistortingCallbackMetal(EffectPlatformMetal* platform)
+		: platform_(platform)
 	{
 	}
 
 	virtual ~DistortingCallbackMetal()
 	{
-        texture_.Reset();
+		texture_.Reset();
 	}
 
 	bool OnDistorting(EffekseerRenderer::Renderer* renderer) override
 	{
-        if (texture_ == nullptr)
+		if (texture_ == nullptr)
 		{
 			auto tex = (LLGI::TextureMetal*)(platform_->GetCheckedTexture());
 			texture_ = EffekseerRendererMetal::CreateTexture(renderer->GetGraphicsDevice(), tex->GetTexture());
 		}
 
-        renderer->SetBackground(texture_);
+		renderer->SetBackground(texture_);
 
 		return true;
 	}
@@ -159,9 +160,9 @@ public:
 
 void EffectPlatformMetal::CreateShaders()
 {
-    auto compiler =  new LLGI::CompilerMetal();
-    compiler->Initialize();
-    
+	auto compiler = new LLGI::CompilerMetal();
+	compiler->Initialize();
+
 	LLGI::CompilerResult result_vs;
 	LLGI::CompilerResult result_ps;
 
@@ -196,7 +197,7 @@ void EffectPlatformMetal::CreateShaders()
 
 EffekseerRenderer::RendererRef EffectPlatformMetal::CreateRenderer()
 {
-	auto renderer = EffekseerRendererMetal::Create(10000, MTLPixelFormatRGBA8Unorm,  MTLPixelFormatDepth32Float, false);
+	auto renderer = EffekseerRendererMetal::Create(10000, MTLPixelFormatRGBA8Unorm, MTLPixelFormatDepth32Float, false);
 
 	renderer->SetDistortingCallback(new DistortingCallbackMetal(this));
 
@@ -208,11 +209,19 @@ EffekseerRenderer::RendererRef EffectPlatformMetal::CreateRenderer()
 	return renderer;
 }
 
-EffectPlatformMetal::~EffectPlatformMetal() {}
+EffectPlatformMetal::~EffectPlatformMetal()
+{
+}
 
-void EffectPlatformMetal::InitializeDevice(const EffectPlatformInitializingParameter& param) { CreateCheckedTexture(); }
+void EffectPlatformMetal::InitializeDevice(const EffectPlatformInitializingParameter& param)
+{
+	CreateCheckedTexture();
+}
 
-void EffectPlatformMetal::DestroyDevice() { EffectPlatformLLGI::DestroyDevice(); }
+void EffectPlatformMetal::DestroyDevice()
+{
+	EffectPlatformLLGI::DestroyDevice();
+}
 
 void EffectPlatformMetal::BeginRendering()
 {
@@ -232,4 +241,7 @@ void EffectPlatformMetal::EndRendering()
 	EffectPlatformLLGI::EndRendering();
 }
 
-LLGI::Texture* EffectPlatformMetal::GetCheckedTexture() const { return checkTexture_; }
+LLGI::Texture* EffectPlatformMetal::GetCheckedTexture() const
+{
+	return checkTexture_;
+}

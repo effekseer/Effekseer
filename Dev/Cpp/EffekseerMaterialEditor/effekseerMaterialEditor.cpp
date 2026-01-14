@@ -720,7 +720,8 @@ int mainLoop(int argc, char* argv[])
 
 				if (uobj != nullptr)
 				{
-					auto writeCode = [](const std::string& code) {
+					auto writeCode = [](const std::string& code)
+					{
 						int line = 1;
 						for (size_t index = 0; index < code.size(); line++)
 						{

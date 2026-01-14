@@ -40,10 +40,10 @@ struct ExternalShaderSettings
 };
 
 /**
-	@brief	
+	@brief
 	\~english A callback to distort a background before drawing
 	\~japanese 背景を歪ませるエフェクトを描画する前に実行されるコールバック
-	
+
 */
 class DistortingCallback
 {
@@ -56,7 +56,7 @@ public:
 	}
 
 	/**
-	@brief	
+	@brief
 	\~english A callback
 	\~japanese コールバック
 	@note
@@ -277,18 +277,27 @@ public:
 	/**
 		@brief	GPUタイマーを生成する。
 	*/
-	virtual ::Effekseer::GpuTimerRef CreateGpuTimer() { return nullptr; }
+	virtual ::Effekseer::GpuTimerRef CreateGpuTimer()
+	{
+		return nullptr;
+	}
 
 	/**
 		@brief	GPUパーティクルを生成する。
 	*/
-	virtual ::Effekseer::GpuParticleSystemRef CreateGpuParticleSystem(const Effekseer::GpuParticleSystem::Settings& settings = {}) { return nullptr; }
-	
+	virtual ::Effekseer::GpuParticleSystemRef CreateGpuParticleSystem(const Effekseer::GpuParticleSystem::Settings& settings = {})
+	{
+		return nullptr;
+	}
+
 	/**
 		@brief	GPUパーティクルファクトリを生成する。
 	*/
-	virtual ::Effekseer::GpuParticleFactoryRef CreateGpuParticleFactory() { return nullptr; };
-	
+	virtual ::Effekseer::GpuParticleFactoryRef CreateGpuParticleFactory()
+	{
+		return nullptr;
+	};
+
 	/**
 		@brief	標準のテクスチャ読込クラスを生成する。
 	*/
@@ -446,14 +455,14 @@ public:
 	virtual void DeleteProxyTexture(Effekseer::Backend::TextureRef& texture);
 
 	/**
-		@brief	
+		@brief
 		\~English	Get a depth texture and parameters to reconstruct from z to depth
 		\~Japanese	深度画像とZから深度を復元するためのパラメーターを取得する。
 	*/
 	virtual void GetDepth(::Effekseer::Backend::TextureRef& texture, DepthReconstructionParameter& reconstructionParam);
 
 	/**
-		@brief	
+		@brief
 		\~English	Specify a depth texture and parameters to reconstruct from z to depth
 		\~Japanese	深度画像とZから深度を復元するためのパラメーターを設定する。
 	*/
@@ -467,7 +476,7 @@ public:
 	virtual void SetMaintainGammaColorInLinearColorSpace(bool value);
 
 	/**
-		@brief	
+		@brief
 		\~English	Get the graphics device
 		\~Japanese	グラフィクスデバイスを取得する。
 	*/

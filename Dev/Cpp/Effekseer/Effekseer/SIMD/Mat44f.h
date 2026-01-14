@@ -3,9 +3,9 @@
 #define __EFFEKSEER_SIMD_MAT44F_H__
 
 #include "Float4.h"
+#include "Mat43f.h"
 #include "Vec3f.h"
 #include "Vec4f.h"
-#include "Mat43f.h"
 
 namespace Effekseer
 {
@@ -21,13 +21,10 @@ struct Mat44f
 	Float4 Y;
 	Float4 Z;
 	Float4 W;
-	
+
 	Mat44f() = default;
 	Mat44f(const Mat44f& rhs) = default;
-	Mat44f(float m11, float m12, float m13, float m14,
-		   float m21, float m22, float m23, float m24,
-		   float m31, float m32, float m33, float m34,
-		   float m41, float m42, float m43, float m44);
+	Mat44f(float m11, float m12, float m13, float m14, float m21, float m22, float m23, float m24, float m31, float m32, float m33, float m34, float m41, float m42, float m43, float m44);
 	Mat44f(const Mat43f& mat);
 	Mat44f(const Matrix44& mat);
 
@@ -46,7 +43,7 @@ struct Mat44f
 	Mat44f Transpose() const;
 
 	Mat44f& operator*=(const Mat44f& rhs);
-	
+
 	Mat44f& operator*=(float rhs);
 
 	static const Mat44f Identity;
@@ -79,10 +76,7 @@ struct Mat44f
 };
 
 inline Mat44f::Mat44f(
-	float m11, float m12, float m13, float m14,
-	float m21, float m22, float m23, float m24,
-	float m31, float m32, float m33, float m34,
-	float m41, float m42, float m43, float m44)
+	float m11, float m12, float m13, float m14, float m21, float m22, float m23, float m24, float m31, float m32, float m33, float m34, float m41, float m42, float m43, float m44)
 	: X(m11, m21, m31, m41)
 	, Y(m12, m22, m32, m42)
 	, Z(m13, m23, m33, m43)

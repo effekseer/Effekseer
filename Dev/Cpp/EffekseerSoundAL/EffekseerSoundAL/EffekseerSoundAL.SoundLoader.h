@@ -1,6 +1,6 @@
 ﻿
-#ifndef	__EFFEKSEERSOUND_SOUND_LOADER_H__
-#define	__EFFEKSEERSOUND_SOUND_LOADER_H__
+#ifndef __EFFEKSEERSOUND_SOUND_LOADER_H__
+#define __EFFEKSEERSOUND_SOUND_LOADER_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -22,14 +22,14 @@ class SoundLoader
 	::Effekseer::FileInterfaceRef fileInterface_ = nullptr;
 
 public:
-	SoundLoader( ::Effekseer::FileInterfaceRef fileInterface = NULL );
+	SoundLoader(::Effekseer::FileInterfaceRef fileInterface = NULL);
 
 	virtual ~SoundLoader();
 
 	::Effekseer::SoundDataRef Load(::Effekseer::FileReaderRef reader);
 
 public:
-	::Effekseer::SoundDataRef Load( const char16_t* path ) override;
+	::Effekseer::SoundDataRef Load(const char16_t* path) override;
 
 	::Effekseer::SoundDataRef Load(const void* data, int32_t size) override;
 
@@ -39,8 +39,8 @@ public:
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerSound
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERSOUND_SOUND_LOADER_H__
+#endif // __EFFEKSEERSOUND_SOUND_LOADER_H__

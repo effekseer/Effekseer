@@ -1693,8 +1693,7 @@ inline RendererStateFlipbook ToState(const Effekseer::NodeRendererFlipbookParame
 template <typename T>
 bool GenerateIndexDataStride(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, int32_t squareMaxCount, Effekseer::Backend::IndexBufferRef& indexBuffer, Effekseer::Backend::IndexBufferRef& indexBufferForWireframe)
 {
-	auto stride = sizeof(T) == 2 ? 
-		Effekseer::Backend::IndexBufferStrideType::Stride2 : Effekseer::Backend::IndexBufferStrideType::Stride4;
+	auto stride = sizeof(T) == 2 ? Effekseer::Backend::IndexBufferStrideType::Stride2 : Effekseer::Backend::IndexBufferStrideType::Stride4;
 
 	{
 		std::vector<T> buffer;

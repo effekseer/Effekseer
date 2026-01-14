@@ -2,9 +2,9 @@
 #ifndef __EFFEKSEER_SIMD_FLOAT4_H__
 #define __EFFEKSEER_SIMD_FLOAT4_H__
 
-#include <cstdint>
-#include <array>
 #include "Base.h"
+#include <array>
+#include <cstdint>
 
 #if defined(EFK_SIMD_NEON)
 #include "Float4_NEON.h"

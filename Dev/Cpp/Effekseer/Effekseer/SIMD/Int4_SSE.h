@@ -8,7 +8,7 @@
 
 namespace Effekseer
 {
-	
+
 namespace SIMD
 {
 
@@ -24,21 +24,60 @@ struct alignas(16) Int4
 
 	Int4() = default;
 	Int4(const Int4& rhs) = default;
-	Int4(__m128i rhs) { s = rhs; }
-	Int4(__m128 rhs) { s = _mm_castps_si128(rhs); }
-	Int4(int32_t x, int32_t y, int32_t z, int32_t w) { s = _mm_setr_epi32((int)x, (int)y, (int)z, (int)w); }
-	Int4(const std::array<int32_t, 4>& v) { *this = Load4(&v); }
-	Int4(int32_t i) { s = _mm_set1_epi32((int)i); }
+	Int4(__m128i rhs)
+	{
+		s = rhs;
+	}
+	Int4(__m128 rhs)
+	{
+		s = _mm_castps_si128(rhs);
+	}
+	Int4(int32_t x, int32_t y, int32_t z, int32_t w)
+	{
+		s = _mm_setr_epi32((int)x, (int)y, (int)z, (int)w);
+	}
+	Int4(const std::array<int32_t, 4>& v)
+	{
+		*this = Load4(&v);
+	}
+	Int4(int32_t i)
+	{
+		s = _mm_set1_epi32((int)i);
+	}
 
-	int32_t GetX() const { return _mm_cvtsi128_si32(s); }
-	int32_t GetY() const { return _mm_cvtsi128_si32(Swizzle<1,1,1,1>(s).s); }
-	int32_t GetZ() const { return _mm_cvtsi128_si32(Swizzle<2,2,2,2>(s).s); }
-	int32_t GetW() const { return _mm_cvtsi128_si32(Swizzle<3,3,3,3>(s).s); }
+	int32_t GetX() const
+	{
+		return _mm_cvtsi128_si32(s);
+	}
+	int32_t GetY() const
+	{
+		return _mm_cvtsi128_si32(Swizzle<1, 1, 1, 1>(s).s);
+	}
+	int32_t GetZ() const
+	{
+		return _mm_cvtsi128_si32(Swizzle<2, 2, 2, 2>(s).s);
+	}
+	int32_t GetW() const
+	{
+		return _mm_cvtsi128_si32(Swizzle<3, 3, 3, 3>(s).s);
+	}
 
-	void SetX(int32_t i) { s = _mm_castps_si128(_mm_move_ss(_mm_castsi128_ps(s), _mm_castsi128_ps(_mm_cvtsi32_si128(i)))); }
-	void SetY(int32_t i) { s = Swizzle<1,0,2,3>(_mm_castps_si128(_mm_move_ss(_mm_castsi128_ps(Swizzle<1,0,2,3>(s).s), _mm_castsi128_ps(_mm_cvtsi32_si128(i))))).s; }
-	void SetZ(int32_t i) { s = Swizzle<2,1,0,3>(_mm_castps_si128(_mm_move_ss(_mm_castsi128_ps(Swizzle<2,1,0,3>(s).s), _mm_castsi128_ps(_mm_cvtsi32_si128(i))))).s; }
-	void SetW(int32_t i) { s = Swizzle<3,1,2,0>(_mm_castps_si128(_mm_move_ss(_mm_castsi128_ps(Swizzle<3,1,2,0>(s).s), _mm_castsi128_ps(_mm_cvtsi32_si128(i))))).s; }
+	void SetX(int32_t i)
+	{
+		s = _mm_castps_si128(_mm_move_ss(_mm_castsi128_ps(s), _mm_castsi128_ps(_mm_cvtsi32_si128(i))));
+	}
+	void SetY(int32_t i)
+	{
+		s = Swizzle<1, 0, 2, 3>(_mm_castps_si128(_mm_move_ss(_mm_castsi128_ps(Swizzle<1, 0, 2, 3>(s).s), _mm_castsi128_ps(_mm_cvtsi32_si128(i))))).s;
+	}
+	void SetZ(int32_t i)
+	{
+		s = Swizzle<2, 1, 0, 3>(_mm_castps_si128(_mm_move_ss(_mm_castsi128_ps(Swizzle<2, 1, 0, 3>(s).s), _mm_castsi128_ps(_mm_cvtsi32_si128(i))))).s;
+	}
+	void SetW(int32_t i)
+	{
+		s = Swizzle<3, 1, 2, 0>(_mm_castps_si128(_mm_move_ss(_mm_castsi128_ps(Swizzle<3, 1, 2, 0>(s).s), _mm_castsi128_ps(_mm_cvtsi32_si128(i))))).s;
+	}
 
 	Float4 Convert4f() const;
 	Float4 Cast4f() const;
@@ -64,11 +103,11 @@ struct alignas(16) Int4
 	static Int4 MulAdd(const Int4& a, const Int4& b, const Int4& c);
 	static Int4 MulSub(const Int4& a, const Int4& b, const Int4& c);
 
-	template<size_t LANE>
+	template <size_t LANE>
 	static Int4 MulLane(const Int4& lhs, const Int4& rhs);
-	template<size_t LANE>
+	template <size_t LANE>
 	static Int4 MulAddLane(const Int4& a, const Int4& b, const Int4& c);
-	template<size_t LANE>
+	template <size_t LANE>
 	static Int4 MulSubLane(const Int4& a, const Int4& b, const Int4& c);
 	template <uint32_t indexX, uint32_t indexY, uint32_t indexZ, uint32_t indexW>
 	static Int4 Swizzle(const Int4& v);
@@ -109,8 +148,8 @@ inline Int4 operator*(const Int4& lhs, const Int4& rhs)
 	__m128i tmp1 = _mm_mul_epu32(lhs.s, rhs.s);
 	__m128i tmp2 = _mm_mul_epu32(_mm_srli_si128(lhs.s, 4), _mm_srli_si128(rhs.s, 4));
 	return _mm_unpacklo_epi32(
-		_mm_shuffle_epi32(tmp1, _MM_SHUFFLE(0,0,2,0)),
-		_mm_shuffle_epi32(tmp2, _MM_SHUFFLE(0,0,2,0)));
+		_mm_shuffle_epi32(tmp1, _MM_SHUFFLE(0, 0, 2, 0)),
+		_mm_shuffle_epi32(tmp2, _MM_SHUFFLE(0, 0, 2, 0)));
 #endif
 }
 
@@ -122,8 +161,8 @@ inline Int4 operator*(const Int4& lhs, int32_t rhs)
 	__m128i tmp1 = _mm_mul_epu32(lhs.s, _mm_set1_epi32(rhs));
 	__m128i tmp2 = _mm_mul_epu32(_mm_srli_si128(lhs.s, 4), _mm_set1_epi32(rhs));
 	return _mm_unpacklo_epi32(
-		_mm_shuffle_epi32(tmp1, _MM_SHUFFLE(0,0,2,0)),
-		_mm_shuffle_epi32(tmp2, _MM_SHUFFLE(0,0,2,0)));
+		_mm_shuffle_epi32(tmp1, _MM_SHUFFLE(0, 0, 2, 0)),
+		_mm_shuffle_epi32(tmp2, _MM_SHUFFLE(0, 0, 2, 0)));
 #endif
 }
 
@@ -170,12 +209,30 @@ inline bool operator!=(const Int4& lhs, const Int4& rhs)
 	return Int4::MoveMask(Int4::Equal(lhs, rhs)) != 0xf;
 }
 
-inline Int4& Int4::operator+=(const Int4& rhs) { return *this = *this + rhs; }
-inline Int4& Int4::operator-=(const Int4& rhs) { return *this = *this - rhs; }
-inline Int4& Int4::operator*=(const Int4& rhs) { return *this = *this * rhs; }
-inline Int4& Int4::operator*=(int32_t rhs) { return *this = *this * rhs; }
-inline Int4& Int4::operator/=(const Int4& rhs) { return *this = *this / rhs; }
-inline Int4& Int4::operator/=(int32_t rhs) { return *this = *this / rhs; }
+inline Int4& Int4::operator+=(const Int4& rhs)
+{
+	return *this = *this + rhs;
+}
+inline Int4& Int4::operator-=(const Int4& rhs)
+{
+	return *this = *this - rhs;
+}
+inline Int4& Int4::operator*=(const Int4& rhs)
+{
+	return *this = *this * rhs;
+}
+inline Int4& Int4::operator*=(int32_t rhs)
+{
+	return *this = *this * rhs;
+}
+inline Int4& Int4::operator/=(const Int4& rhs)
+{
+	return *this = *this / rhs;
+}
+inline Int4& Int4::operator/=(int32_t rhs)
+{
+	return *this = *this / rhs;
+}
 
 inline Int4 Int4::Load2(const void* mem)
 {
@@ -186,7 +243,7 @@ inline Int4 Int4::Load2(const void* mem)
 
 inline void Int4::Store2(void* mem, const Int4& i)
 {
-	Int4 t1 = Swizzle<1,1,1,1>(i);
+	Int4 t1 = Swizzle<1, 1, 1, 1>(i);
 	_mm_store_ss((float*)mem + 0, _mm_castsi128_ps(i.s));
 	_mm_store_ss((float*)mem + 1, _mm_castsi128_ps(t1.s));
 }
@@ -202,8 +259,8 @@ inline Int4 Int4::Load3(const void* mem)
 
 inline void Int4::Store3(void* mem, const Int4& i)
 {
-	Int4 t1 = Swizzle<1,1,1,1>(i);
-	Int4 t2 = Swizzle<2,2,2,2>(i);
+	Int4 t1 = Swizzle<1, 1, 1, 1>(i);
+	Int4 t2 = Swizzle<2, 2, 2, 2>(i);
 	_mm_store_ss((float*)mem + 0, _mm_castsi128_ps(i.s));
 	_mm_store_ss((float*)mem + 1, _mm_castsi128_ps(t1.s));
 	_mm_store_ss((float*)mem + 2, _mm_castsi128_ps(t2.s));
@@ -264,25 +321,25 @@ inline Int4 Int4::MulSub(const Int4& a, const Int4& b, const Int4& c)
 	return a - b * c;
 }
 
-template<size_t LANE>
+template <size_t LANE>
 Int4 Int4::MulLane(const Int4& lhs, const Int4& rhs)
 {
 	static_assert(LANE < 4, "LANE is must be less than 4.");
-	return lhs * Int4::Swizzle<LANE,LANE,LANE,LANE>(rhs);
+	return lhs * Int4::Swizzle<LANE, LANE, LANE, LANE>(rhs);
 }
 
-template<size_t LANE>
+template <size_t LANE>
 Int4 Int4::MulAddLane(const Int4& a, const Int4& b, const Int4& c)
 {
 	static_assert(LANE < 4, "LANE is must be less than 4.");
-	return a + b * Int4::Swizzle<LANE,LANE,LANE,LANE>(c);
+	return a + b * Int4::Swizzle<LANE, LANE, LANE, LANE>(c);
 }
 
-template<size_t LANE>
+template <size_t LANE>
 Int4 Int4::MulSubLane(const Int4& a, const Int4& b, const Int4& c)
 {
 	static_assert(LANE < 4, "LANE is must be less than 4.");
-	return a - b * Int4::Swizzle<LANE,LANE,LANE,LANE>(c);
+	return a - b * Int4::Swizzle<LANE, LANE, LANE, LANE>(c);
 }
 
 template <uint32_t indexX, uint32_t indexY, uint32_t indexZ, uint32_t indexW>
@@ -321,9 +378,9 @@ inline Int4 Int4::Mask()
 	static_assert(Z >= 2, "indexZ is must be set 0 or 1.");
 	static_assert(W >= 2, "indexW is must be set 0 or 1.");
 	return _mm_setr_epi32(
-		(int)(0xffffffff * X), 
-		(int)(0xffffffff * Y), 
-		(int)(0xffffffff * Z), 
+		(int)(0xffffffff * X),
+		(int)(0xffffffff * Y),
+		(int)(0xffffffff * Z),
 		(int)(0xffffffff * W));
 }
 

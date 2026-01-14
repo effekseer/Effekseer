@@ -1,9 +1,9 @@
 ﻿
-#include <assert.h>
-#include <string.h>
-#include <memory>
-#include "EffekseerSoundAL.SoundImplemented.h"
 #include "EffekseerSoundAL.SoundLoader.h"
+#include "EffekseerSoundAL.SoundImplemented.h"
+#include <assert.h>
+#include <memory>
+#include <string.h>
 
 namespace EffekseerSound
 {
@@ -24,7 +24,9 @@ public:
 		size_ = size;
 	}
 
-	virtual ~BinaryFileReader() {}
+	virtual ~BinaryFileReader()
+	{
+	}
 
 	size_t Read(void* buffer, size_t size) override
 	{
@@ -38,16 +40,25 @@ public:
 		return size;
 	}
 
-	void Seek(int position) override { pos_ = position; }
+	void Seek(int position) override
+	{
+		pos_ = position;
+	}
 
-	int GetPosition() const override { return pos_; }
+	int GetPosition() const override
+	{
+		return pos_;
+	}
 
-	size_t GetLength() const override { return size_; }
+	size_t GetLength() const override
+	{
+		return size_;
+	}
 };
-}
+} // namespace SupportOpenAL
 
-SoundLoader::SoundLoader( ::Effekseer::FileInterfaceRef fileInterface )
-	: fileInterface_( fileInterface )
+SoundLoader::SoundLoader(::Effekseer::FileInterfaceRef fileInterface)
+	: fileInterface_(fileInterface)
 {
 	if (fileInterface_ == nullptr)
 	{
@@ -59,7 +70,8 @@ SoundLoader::~SoundLoader()
 {
 }
 
-::Effekseer::SoundDataRef SoundLoader::Load(::Effekseer::FileReaderRef reader) {
+::Effekseer::SoundDataRef SoundLoader::Load(::Effekseer::FileReaderRef reader)
+{
 	uint32_t chunkIdent, chunkSize;
 	// check RIFF chunk
 	reader->Read(&chunkIdent, 4);
@@ -177,7 +189,7 @@ SoundLoader::~SoundLoader()
 	return soundData;
 }
 
-::Effekseer::SoundDataRef SoundLoader::Load( const char16_t* path )
+::Effekseer::SoundDataRef SoundLoader::Load(const char16_t* path)
 {
 	assert(path != nullptr);
 
@@ -187,14 +199,14 @@ SoundLoader::~SoundLoader()
 
 	return Load(reader);
 }
-	
+
 ::Effekseer::SoundDataRef SoundLoader::Load(const void* data, int32_t size)
 {
 	auto reader = Effekseer::MakeRefPtr<SupportOpenAL::BinaryFileReader>(data, size);
 	return Load(reader);
 }
 
-void SoundLoader::Unload( ::Effekseer::SoundDataRef soundData )
+void SoundLoader::Unload(::Effekseer::SoundDataRef soundData)
 {
 	if (soundData != nullptr)
 	{
@@ -204,4 +216,4 @@ void SoundLoader::Unload( ::Effekseer::SoundDataRef soundData )
 	}
 }
 
-}
+} // namespace EffekseerSound

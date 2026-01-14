@@ -7,10 +7,10 @@
 #include "../Effekseer.Base.h"
 #include "Effekseer.Client.h"
 
-#include "Effekseer.Socket.h"
 #include "Effekseer.Session.h"
-#include <vector>
+#include "Effekseer.Socket.h"
 #include <deque>
+#include <vector>
 
 namespace Effekseer
 {
@@ -34,7 +34,7 @@ public:
 	void Reload(ManagerRef manager, const char16_t* path, const char16_t* key) override;
 
 	bool IsConnected() const override;
-	
+
 	void StartProfiling() override;
 	void StopProfiling() override;
 	ProfileSample ReadProfileSample() override;

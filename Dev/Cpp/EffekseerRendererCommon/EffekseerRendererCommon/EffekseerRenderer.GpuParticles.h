@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#include <random>
 #include "EffekseerRenderer.Renderer.h"
+#include <random>
 
 namespace EffekseerRenderer
 {
@@ -50,7 +50,10 @@ class Resource : public Effekseer::GpuParticles::Resource
 public:
 	Resource() = default;
 	~Resource() = default;
-	virtual const Effekseer::GpuParticles::ParamSet& GetParamSet() const override { return ParamSet; }
+	virtual const Effekseer::GpuParticles::ParamSet& GetParamSet() const override
+	{
+		return ParamSet;
+	}
 
 public:
 	Effekseer::GpuParticles::ParamSet ParamSet;
@@ -65,7 +68,7 @@ public:
 };
 using ResourceRef = Effekseer::RefPtr<Resource>;
 
-}
+} // namespace GpuParticles
 
 class GpuParticleFactory : public Effekseer::GpuParticleFactory
 {
@@ -218,4 +221,4 @@ protected:
 	Effekseer::ModelRef modelTrail_;
 };
 
-}
+} // namespace EffekseerRenderer

@@ -1,7 +1,7 @@
+#include "EfkRes.MQOLoader.h"
+#include "EfkRes.Utils.h"
 #include <algorithm>
 #include <mqoio_loader.h>
-#include "EfkRes.Utils.h"
-#include "EfkRes.MQOLoader.h"
 
 namespace efkres
 {
@@ -17,50 +17,38 @@ struct TriangleFace
 	int MaterialIndex = -1;
 };
 
-Vec2 Convert(mqoio::Vector2D v)
-{
-	return { v.X, v.Y };
-}
+Vec2 Convert(mqoio::Vector2D v) { return {v.X, v.Y}; }
 
-Vec3 Convert(mqoio::Vector3D v)
-{
-	return { v.X, v.Y, v.Z };
-}
+Vec3 Convert(mqoio::Vector3D v) { return {v.X, v.Y, v.Z}; }
 
-Vec4 Convert(mqoio::Vector4D v)
-{
-	return { v.X, v.Y, v.Z, v.W };
-}
+Vec4 Convert(mqoio::Vector4D v) { return {v.X, v.Y, v.Z, v.W}; }
 
-Vec4 Convert(mqoio::Color v)
-{
-	return { v.R, v.G, v.B, v.A };
-}
+Vec4 Convert(mqoio::Color v) { return {v.R, v.G, v.B, v.A}; }
 
-}
+} // namespace
 
 std::optional<Model> MQOLoader::LoadModel(std::string_view filepath)
 {
-    mqoio::Loader mqoLoader;
-    auto loadResult = mqoLoader.Load(std::string(filepath));
-    if (!loadResult.has_value())
-    {
-        return std::nullopt;
-    }
-    mqoio::Data mqoData(std::move(loadResult.value()));
+	mqoio::Loader mqoLoader;
+	auto loadResult = mqoLoader.Load(std::string(filepath));
+	if (!loadResult.has_value())
+	{
+		return std::nullopt;
+	}
+	mqoio::Data mqoData(std::move(loadResult.value()));
 
-    Model model;
+	Model model;
 
 	for (auto& mqoObj : mqoData.Objects)
-    {
+	{
 		if (!mqoObj.Visible)
 		{
 			continue;
 		}
 
-        Mesh& mesh = model.meshes.emplace_back();
-        
-        std::vector<TriangleFace> triFaces;
+		Mesh& mesh = model.meshes.emplace_back();
+
+		std::vector<TriangleFace> triFaces;
 
 		for (auto& mqoVertex : mqoObj.Vertexes)
 		{
@@ -68,8 +56,8 @@ std::optional<Model> MQOLoader::LoadModel(std::string_view filepath)
 			vertex.position = Convert(mqoVertex);
 		}
 
-        for (auto& mqoFace : mqoObj.Faces)
-        {
+		for (auto& mqoFace : mqoObj.Faces)
+		{
 			size_t vcount = mqoFace.Indexes.size();
 			for (size_t v = 3; v <= vcount; v++)
 			{
@@ -88,9 +76,9 @@ std::optional<Model> MQOLoader::LoadModel(std::string_view filepath)
 				}
 				else
 				{
-					triFace.Colors[0] = mqoio::Color{ 1.0, 1.0, 1.0, 1.0 };
-					triFace.Colors[1] = mqoio::Color{ 1.0, 1.0, 1.0, 1.0 };
-					triFace.Colors[2] = mqoio::Color{ 1.0, 1.0, 1.0, 1.0 };
+					triFace.Colors[0] = mqoio::Color{1.0, 1.0, 1.0, 1.0};
+					triFace.Colors[1] = mqoio::Color{1.0, 1.0, 1.0, 1.0};
+					triFace.Colors[2] = mqoio::Color{1.0, 1.0, 1.0, 1.0};
 				}
 
 				if (!mqoFace.UV.empty())
@@ -100,7 +88,7 @@ std::optional<Model> MQOLoader::LoadModel(std::string_view filepath)
 					triFace.UV[2] = mqoFace.UV[2 + offset];
 				}
 			}
-        }
+		}
 
 		// ñ@ê¸Ç…ÇÊÇÈï™äÑ
 		{
@@ -173,9 +161,12 @@ std::optional<Model> MQOLoader::LoadModel(std::string_view filepath)
 						for (auto faceIndex : faceGroups[i])
 						{
 							auto& mqoFace = triFaces[faceIndex];
-							if (mqoFace.Indexes[0] == oldV) mqoFace.Indexes[0] = newV;
-							if (mqoFace.Indexes[1] == oldV) mqoFace.Indexes[1] = newV;
-							if (mqoFace.Indexes[2] == oldV) mqoFace.Indexes[2] = newV;
+							if (mqoFace.Indexes[0] == oldV)
+								mqoFace.Indexes[0] = newV;
+							if (mqoFace.Indexes[1] == oldV)
+								mqoFace.Indexes[1] = newV;
+							if (mqoFace.Indexes[2] == oldV)
+								mqoFace.Indexes[2] = newV;
 						}
 					}
 				}
@@ -207,7 +198,7 @@ std::optional<Model> MQOLoader::LoadModel(std::string_view filepath)
 			{
 				auto& faceIndexList = vertexToFaceList[vertexIndex];
 				auto& vertex = mesh.vertices[vertexIndex];
-				
+
 				for (int faceIndex : faceIndexList)
 				{
 					vertex.normal += normals[faceIndex];
@@ -320,7 +311,7 @@ std::optional<Model> MQOLoader::LoadModel(std::string_view filepath)
 				}
 			}
 		}
-    }
+	}
 
 	for (auto& mesh : model.meshes)
 	{
@@ -329,7 +320,7 @@ std::optional<Model> MQOLoader::LoadModel(std::string_view filepath)
 		node.transform = Mat43::Identity();
 	}
 
-    return std::move(model);
+	return std::move(model);
 }
 
-}
+} // namespace efkres

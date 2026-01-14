@@ -1,6 +1,6 @@
 ﻿
-#ifndef	__EFFEKSEERRSOUND_SOUND_PLAYER_H__
-#define	__EFFEKSEERRSOUND_SOUND_PLAYER_H__
+#ifndef __EFFEKSEERRSOUND_SOUND_PLAYER_H__
+#define __EFFEKSEERRSOUND_SOUND_PLAYER_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -24,25 +24,25 @@ private:
 	SoundImplementedRef sound_ = nullptr;
 
 public:
-	SoundPlayer( const SoundImplementedRef& sound );
+	SoundPlayer(const SoundImplementedRef& sound);
 
 	virtual ~SoundPlayer();
 
 public:
-	::Effekseer::SoundHandle Play( ::Effekseer::SoundTag tag, 
-		const ::Effekseer::SoundPlayer::InstanceParameter& parameter );
-	
-	void Stop( ::Effekseer::SoundHandle handle, ::Effekseer::SoundTag tag );
+	::Effekseer::SoundHandle Play(::Effekseer::SoundTag tag,
+								  const ::Effekseer::SoundPlayer::InstanceParameter& parameter);
 
-	void Pause( ::Effekseer::SoundHandle handle, ::Effekseer::SoundTag tag, bool pause );
+	void Stop(::Effekseer::SoundHandle handle, ::Effekseer::SoundTag tag);
 
-	bool CheckPlaying( ::Effekseer::SoundHandle handle, ::Effekseer::SoundTag tag );
+	void Pause(::Effekseer::SoundHandle handle, ::Effekseer::SoundTag tag, bool pause);
 
-	void StopTag( ::Effekseer::SoundTag tag );
+	bool CheckPlaying(::Effekseer::SoundHandle handle, ::Effekseer::SoundTag tag);
 
-	void PauseTag( ::Effekseer::SoundTag tag, bool pause );
-	
-	bool CheckPlayingTag( ::Effekseer::SoundTag tag );
+	void StopTag(::Effekseer::SoundTag tag);
+
+	void PauseTag(::Effekseer::SoundTag tag, bool pause);
+
+	bool CheckPlayingTag(::Effekseer::SoundTag tag);
 
 	void StopAll();
 };
@@ -50,8 +50,8 @@ public:
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerSound
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERRSOUND_SOUND_PLAYER_H__
+#endif // __EFFEKSEERRSOUND_SOUND_PLAYER_H__

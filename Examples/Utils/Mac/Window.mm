@@ -53,8 +53,9 @@
 
 @end
 
-namespace Utils {
-	
+namespace Utils
+{
+
 struct Cocoa_Impl
 {
 	static void initialize()
@@ -148,29 +149,38 @@ bool WindowMac::Initialize(const char* title, const Vec2I& windowSize)
 {
 	Cocoa_Impl::initialize();
 	impl = std::make_shared<WindowMac_Impl>(title, windowSize);
-    windowSize_ = windowSize;
+	windowSize_ = windowSize;
 	return true;
 }
 
-bool WindowMac::DoEvent() { return impl->newFrame(); }
+bool WindowMac::DoEvent()
+{
+	return impl->newFrame();
+}
 
-void WindowMac::Terminate() { impl.reset(); }
+void WindowMac::Terminate()
+{
+	impl.reset();
+}
 
-void* WindowMac::GetNSWindowAsVoidPtr() { return impl->window; }
+void* WindowMac::GetNSWindowAsVoidPtr()
+{
+	return impl->window;
+}
 
 bool WindowMac::OnNewFrame()
 {
-    return DoEvent();
+	return DoEvent();
 }
-    
+
 void* WindowMac::GetNativePtr(int32_t index)
 {
-    return GetNSWindowAsVoidPtr();
+	return GetNSWindowAsVoidPtr();
 }
-    
+
 Vec2I WindowMac::GetWindowSize() const
 {
-    return windowSize_;
+	return windowSize_;
 }
-    
+
 } // namespace Utils

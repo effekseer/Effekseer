@@ -550,7 +550,8 @@ void EffectRenderer::PlayEffect()
 
 	assert(effect_ != nullptr);
 
-	auto createExternalModels = [&]() -> std::vector<Effekseer::ExternalModel> {
+	auto createExternalModels = [&]() -> std::vector<Effekseer::ExternalModel>
+	{
 		std::vector<Effekseer::ExternalModel> externalModels;
 
 		auto setting = manager_->GetSetting();

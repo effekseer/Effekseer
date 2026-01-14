@@ -26,28 +26,46 @@ public:
 
 	virtual ~GpuTimer() = default;
 
-	virtual void UpdateResults() {}
+	virtual void UpdateResults()
+	{
+	}
 
-	virtual void BeginStage(GpuStage stage) {}
+	virtual void BeginStage(GpuStage stage)
+	{
+	}
 
-	virtual void EndStage(GpuStage stage) {}
+	virtual void EndStage(GpuStage stage)
+	{
+	}
 
-	virtual void AddTimer(const void* object) {}
+	virtual void AddTimer(const void* object)
+	{
+	}
 
-	virtual void RemoveTimer(const void* object) {}
+	virtual void RemoveTimer(const void* object)
+	{
+	}
 
-	virtual void Start(const void* object) {}
+	virtual void Start(const void* object)
+	{
+	}
 
-	virtual void Stop(const void* object) {}
+	virtual void Stop(const void* object)
+	{
+	}
 
-	virtual int32_t GetResult(const void* object) { return -1; }
+	virtual int32_t GetResult(const void* object)
+	{
+		return -1;
+	}
 };
 
 class ScopedGpuStage
 {
 public:
 	ScopedGpuStage(GpuTimerRef timer, GpuStage stage)
-		: m_timer(timer), m_stage(stage)
+		: m_timer(timer)
+		, m_stage(stage)
 	{
 		if (m_timer)
 		{
@@ -72,7 +90,8 @@ class ScopedGpuTime
 {
 public:
 	ScopedGpuTime(GpuTimerRef timer, const void* object)
-		: m_timer(timer), m_object(object)
+		: m_timer(timer)
+		, m_object(object)
 	{
 		if (m_timer)
 		{

@@ -1,7 +1,7 @@
-#include <assert.h>
 #include "GraphicsDevice.h"
 #include <LLGI.Shader.h>
 #include <LLGI.Texture.h>
+#include <assert.h>
 
 namespace EffekseerRendererLLGI
 {
@@ -825,14 +825,17 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 		{
 			auto tex = textureBinder->Texture.DownCast<Backend::Texture>();
 			commandList_->SetTexture((tex) ? tex->GetTexture().get() : nullptr,
-				(LLGI::TextureWrapMode)textureBinder->WrapType,
-				(LLGI::TextureMinMagFilter)textureBinder->SamplingType, slot);
+									 (LLGI::TextureWrapMode)textureBinder->WrapType,
+									 (LLGI::TextureMinMagFilter)textureBinder->SamplingType,
+									 slot);
 		}
 		else if (auto computeBufferBinder = std::get_if<Effekseer::Backend::ComputeBufferBinder>(&binder))
 		{
 			auto buf = computeBufferBinder->ComputeBuffer.DownCast<Backend::ComputeBuffer>();
 			commandList_->SetComputeBuffer((buf) ? buf->GetBuffer() : nullptr,
-				(buf) ? buf->GetStride() : 0, slot, computeBufferBinder->ReadOnly);
+										   (buf) ? buf->GetStride() : 0,
+										   slot,
+										   computeBufferBinder->ReadOnly);
 		}
 	}
 
@@ -898,13 +901,17 @@ void GraphicsDevice::Dispatch(const Effekseer::Backend::DispatchParameter& dispa
 
 			auto tex = textureBinder->Texture.DownCast<Backend::Texture>();
 			commandList_->SetTexture((tex) ? tex->GetTexture().get() : nullptr,
-				ws[(size_t)textureBinder->WrapType], fs[(size_t)textureBinder->SamplingType], slot);
+									 ws[(size_t)textureBinder->WrapType],
+									 fs[(size_t)textureBinder->SamplingType],
+									 slot);
 		}
 		else if (auto computeBufferBinder = std::get_if<Effekseer::Backend::ComputeBufferBinder>(&binder))
 		{
 			auto buf = computeBufferBinder->ComputeBuffer.DownCast<Backend::ComputeBuffer>();
 			commandList_->SetComputeBuffer((buf) ? buf->GetBuffer() : nullptr,
-				(buf) ? buf->GetStride() : 0, slot, computeBufferBinder->ReadOnly);
+										   (buf) ? buf->GetStride() : 0,
+										   slot,
+										   computeBufferBinder->ReadOnly);
 		}
 	}
 

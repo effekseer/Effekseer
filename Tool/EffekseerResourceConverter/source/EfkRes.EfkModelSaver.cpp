@@ -1,6 +1,6 @@
-#include <algorithm>
-#include "EfkRes.Utils.h"
 #include "EfkRes.EfkModelSaver.h"
+#include "EfkRes.Utils.h"
+#include <algorithm>
 
 namespace efkres
 {
@@ -27,18 +27,11 @@ struct PackedMeshVertex2
 namespace
 {
 
-std::array<float, 2> QuantizeFloat32(Vec2 v)
-{
-	return { static_cast<float>(v.x), static_cast<float>(v.y) };
-}
+std::array<float, 2> QuantizeFloat32(Vec2 v) { return {static_cast<float>(v.x), static_cast<float>(v.y)}; }
 
-std::array<float, 3> QuantizeFloat32(Vec3 v)
-{
-	return { static_cast<float>(v.x), static_cast<float>(v.y), static_cast<float>(v.z) };
-}
+std::array<float, 3> QuantizeFloat32(Vec3 v) { return {static_cast<float>(v.x), static_cast<float>(v.y), static_cast<float>(v.z)}; }
 
-template <class T>
-T QuantizeIntValue(double value)
+template <class T> T QuantizeIntValue(double value)
 {
 	using limit = std::numeric_limits<T>;
 	double qValue = value * limit::max() + copysign(0.5, value);
@@ -65,7 +58,7 @@ std::array<uint16_t, 2> QuantizeUnorm16(Vec2 v)
 	};
 }
 
-}
+} // namespace
 
 bool EfkModelSaver::Save(std::string_view filepath, const Model& model)
 {
@@ -172,4 +165,4 @@ bool EfkModelSaver::Save(std::string_view filepath, const Model& model)
 	return true;
 }
 
-}
+} // namespace efkres

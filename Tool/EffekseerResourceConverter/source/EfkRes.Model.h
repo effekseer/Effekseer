@@ -1,9 +1,9 @@
 #pragma once
 
-#include <stdint.h>
-#include <array>
-#include <vector>
 #include "EfkRes.Math.h"
+#include <array>
+#include <stdint.h>
+#include <vector>
 
 namespace efkres
 {
@@ -42,4 +42,4 @@ struct Model
 	std::vector<Node> nodes;
 };
 
-}
+} // namespace efkres

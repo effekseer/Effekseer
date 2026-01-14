@@ -31,7 +31,6 @@ const int32_t MaterialVersion17Alpha4 = 1703;
 const int32_t MaterialVersion17 = 1710;
 const int32_t MaterialVersion18 = 1800;
 
-
 enum class TextureValueType
 {
 	Color,
@@ -170,13 +169,13 @@ enum class NodeType
 	GradientParameter, //! 1703
 	SampleGradient,	   //! 1703
 
-	WhiteNoise, //! 1710
-	SimpleNoise, //! 1703
+	WhiteNoise,	   //! 1710
+	SimpleNoise,   //! 1703
 	CellularNoise, //! 1710
 
 	Light, //! 1703
 
-	LocalTime, //! 1703
+	LocalTime,	  //! 1703
 	ParticleTime, //! 1810
 
 	Comment,

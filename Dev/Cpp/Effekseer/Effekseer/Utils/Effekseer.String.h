@@ -2,10 +2,10 @@
 #define __EFFEKSEER_STRING_H__
 
 #include <array>
+#include <iterator>
 #include <stdint.h>
 #include <string>
 #include <vector>
-#include <iterator>
 
 #include "Effekseer.CustomAllocator.h"
 

@@ -3,13 +3,13 @@
 
 #if !(defined(__EFFEKSEER_NETWORK_DISABLED__))
 
-#include <stdint.h>
-#include <functional>
-#include <thread>
-#include <mutex>
-#include <vector>
-#include <unordered_map>
 #include "Effekseer.Socket.h"
+#include <functional>
+#include <mutex>
+#include <stdint.h>
+#include <thread>
+#include <unordered_map>
+#include <vector>
 
 namespace Effekseer
 {
@@ -23,9 +23,15 @@ public:
 		size_t size = 0;
 
 		ByteData(const uint8_t* data, size_t size)
-			: data(data), size(size) {}
+			: data(data)
+			, size(size)
+		{
+		}
 		ByteData(const std::vector<uint8_t>& vec)
-			: data(vec.data()), size(vec.size()) {}
+			: data(vec.data())
+			, size(vec.size())
+		{
+		}
 	};
 
 	struct Message
@@ -68,7 +74,10 @@ public:
 
 	void OnRequested(uint16_t requestID, RequestHandler requestHandler);
 
-	bool IsActive() const { return socket_ != nullptr; }
+	bool IsActive() const
+	{
+		return socket_ != nullptr;
+	}
 
 private:
 	void RecvThread();
@@ -85,7 +94,9 @@ private:
 
 	enum class PacketType : uint8_t
 	{
-		Message, Request, Response,
+		Message,
+		Request,
+		Response,
 	};
 	struct PacketHeader
 	{
@@ -97,15 +108,18 @@ private:
 		int32_t code;
 		uint32_t payloadSize;
 
-		void Set(PacketType inType, 
-			uint16_t inTargetID, uint16_t inSourceID, 
-			int32_t inCode, uint32_t inPayloadSize);
+		void Set(PacketType inType,
+				 uint16_t inTargetID,
+				 uint16_t inSourceID,
+				 int32_t inCode,
+				 uint32_t inPayloadSize);
 		bool IsValid() const;
 	};
 
 	enum class State
 	{
-		SearchPacket, ReceivePayload,
+		SearchPacket,
+		ReceivePayload,
 	};
 	State state_ = State::SearchPacket;
 	uint8_t packetBuffer_[4096];

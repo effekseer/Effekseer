@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../Window.h"
-#include <string>
 #include <memory>
+#include <string>
 
 namespace Utils
 {
@@ -13,8 +13,8 @@ class WindowMac : public Window
 {
 private:
 	std::shared_ptr<WindowMac_Impl> impl = nullptr;
-    Vec2I windowSize_;
-    
+	Vec2I windowSize_;
+
 public:
 	WindowMac() = default;
 
@@ -27,12 +27,12 @@ public:
 	void Terminate();
 
 	void* GetNSWindowAsVoidPtr();
-    
-    bool OnNewFrame() override;
-    
-    void* GetNativePtr(int32_t index) override;
-    
-    Vec2I GetWindowSize() const override;
+
+	bool OnNewFrame() override;
+
+	void* GetNativePtr(int32_t index) override;
+
+	Vec2I GetWindowSize() const override;
 };
 
-} // namespace LLGI
+} // namespace Utils

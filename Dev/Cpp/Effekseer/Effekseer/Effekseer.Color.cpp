@@ -167,7 +167,7 @@ Color Color::Lerp(const Color in1, const Color in2, float t)
 	o.B = (uint8_t)Clamp(in1.B + (in2.B - in1.B) * t, 255, 0);
 	o.A = (uint8_t)Clamp(in1.A + (in2.A - in1.A) * t, 255, 0);
 	return o;
-	//#endif
+	// #endif
 }
 
 } // namespace Effekseer

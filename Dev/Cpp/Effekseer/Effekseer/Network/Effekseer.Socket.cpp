@@ -52,7 +52,8 @@ Socket::Socket()
 //
 //----------------------------------------------------------------------------------
 Socket::Socket(SockHandle handle, const SockAddrIn& sockAddr)
-	: handle_(handle), sockAddr_(sockAddr)
+	: handle_(handle)
+	, sockAddr_(sockAddr)
 {
 	Initialize();
 }
@@ -269,13 +270,13 @@ Socket Socket::Accept()
 		return Socket();
 	}
 
-//#if defined(EfkWinSock)
-//	u_long val = 1;
-//	ioctlsocket(retHandle, FIONBIO, &val);
-//#elif defined(EfkBSDSock)
-//	int val = 1;
-//	ioctl(retHandle, FIONBIO, &val);
-//#endif
+	// #if defined(EfkWinSock)
+	//	u_long val = 1;
+	//	ioctlsocket(retHandle, FIONBIO, &val);
+	// #elif defined(EfkBSDSock)
+	//	int val = 1;
+	//	ioctl(retHandle, FIONBIO, &val);
+	// #endif
 
 	return Socket(retHandle, sockAddr);
 }

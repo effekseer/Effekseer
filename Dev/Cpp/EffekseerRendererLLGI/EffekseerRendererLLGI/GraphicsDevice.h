@@ -367,7 +367,7 @@ public:
 	void Dispatch(const Effekseer::Backend::DispatchParameter& dispatchParam) override;
 
 	void BeginComputePass() override;
-	
+
 	void EndComputePass() override;
 
 	bool UpdateUniformBuffer(Effekseer::Backend::UniformBufferRef& buffer, int32_t size, int32_t offset, const void* data) override;

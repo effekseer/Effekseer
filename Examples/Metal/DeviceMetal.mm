@@ -1,26 +1,32 @@
 #define GLFW_EXPOSE_NATIVE_COCOA
+#include "DeviceMetal.h"
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>
-#include "DeviceMetal.h"
 
 class LLGIWindow : public LLGI::Window
 {
 	GLFWwindow* window_ = nullptr;
 
 public:
-	LLGIWindow(GLFWwindow* window) : window_(window) {}
-	
+	LLGIWindow(GLFWwindow* window)
+		: window_(window)
+	{
+	}
+
 	~LLGIWindow()
 	{
 		glfwDestroyWindow(window_);
 	}
-	
+
 	GLFWwindow* GetGLFWwindow()
 	{
 		return window_;
 	}
 
-	bool OnNewFrame() override { return glfwWindowShouldClose(window_) == GL_FALSE; }
+	bool OnNewFrame() override
+	{
+		return glfwWindowShouldClose(window_) == GLFW_FALSE;
+	}
 
 	void* GetNativePtr(int32_t index) override
 	{
@@ -59,7 +65,6 @@ bool DeviceMetal::Initialize(const char* windowTitle, Utils::Vec2I windowSize)
 	LLGI::PlatformParameter platformParam{};
 	platformParam.Device = LLGI::DeviceType::Metal;
 	platformParam.WaitVSync = true;
-
 
 	platform = LLGI::CreateSharedPtr(LLGI::CreatePlatform(platformParam, window.get()));
 
@@ -102,7 +107,7 @@ void DeviceMetal::Terminate()
 	graphics.reset();
 	platform.reset();
 	window.reset();
-	
+
 	glfwTerminate();
 }
 
@@ -120,12 +125,12 @@ bool DeviceMetal::NewFrame()
 	{
 		Utils::Input::UpdateKeyState(key, glfwGetKey(glfwWindow, key) != GLFW_RELEASE);
 	}
-	
+
 	if (!platform->NewFrame())
 	{
 		return false;
 	}
-	
+
 	memoryPool->NewFrame();
 
 	commandList = commandListPool->Get();
@@ -158,7 +163,7 @@ void DeviceMetal::EndComputePass()
 
 void DeviceMetal::BeginRenderPass()
 {
-	LLGI::Color8 color {0, 0, 0, 255};
+	LLGI::Color8 color{0, 0, 0, 255};
 	commandList->BeginRenderPass(platform->GetCurrentScreen(color, true, false));
 	EffekseerRendererMetal::BeginRenderPass(efkCommandList, GetRenderEncoder());
 }
@@ -189,7 +194,7 @@ void DeviceMetal::SetupEffekseerModules(::Effekseer::ManagerRef efkManager, bool
 	// エフェクトのレンダラーの作成
 	efkRenderer = ::EffekseerRendererMetal::Create(
 		8000, MTLPixelFormatBGRA8Unorm, MTLPixelFormatInvalid, false);
-	
+
 	// Create a memory pool
 	// メモリプールの作成
 	efkMemoryPool = EffekseerRenderer::CreateSingleFrameMemoryPool(efkRenderer->GetGraphicsDevice());
@@ -214,7 +219,7 @@ void DeviceMetal::SetupEffekseerModules(::Effekseer::ManagerRef efkManager, bool
 	efkManager->SetModelLoader(efkRenderer->CreateModelLoader());
 	efkManager->SetMaterialLoader(efkRenderer->CreateMaterialLoader());
 	efkManager->SetCurveLoader(Effekseer::MakeRefPtr<Effekseer::CurveLoader>());
-	
+
 	if (usingProfiler)
 	{
 		efkManager->SetGpuTimer(efkRenderer->CreateGpuTimer());

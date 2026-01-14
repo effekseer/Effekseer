@@ -51,7 +51,8 @@ IO::IO(int checkFileInterval)
 
 	if (checkFileInterval > 0)
 	{
-		checkFileThread = std::thread([this] { CheckFile(checkFileInterval_); });
+		checkFileThread = std::thread([this]
+									  { CheckFile(checkFileInterval_); });
 		isThreadRunning_ = true;
 	}
 }

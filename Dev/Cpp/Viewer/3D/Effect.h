@@ -22,7 +22,8 @@ public:
 
 		::Effekseer::EffectNodeImplemented* result = nullptr;
 
-		const auto& visitor = [&](::Effekseer::EffectNodeImplemented* node) -> bool {
+		const auto& visitor = [&](::Effekseer::EffectNodeImplemented* node) -> bool
+		{
 			const auto userData = node->GetRenderingUserData();
 			if (userData != nullptr)
 			{

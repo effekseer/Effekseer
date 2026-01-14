@@ -23,7 +23,12 @@ public:
 
 	Vector3D() = default;
 
-	Vector3D(float x, float y, float z): X(x), Y(y), Z(z) {}
+	Vector3D(float x, float y, float z)
+		: X(x)
+		, Y(y)
+		, Z(z)
+	{
+	}
 
 	Vector3D operator-();
 
@@ -121,7 +126,7 @@ public:
 	static Vector3D TransformWithW(const Vector3D& in, const Matrix44& mat);
 
 	/**
-		@brief 
+		@brief
 		\~English	Convert Vector3D into std::array<float,3>
 		\~Japanese	Vector3D から std::array<float,3> に変換する。
 	*/
@@ -131,7 +136,7 @@ public:
 	}
 
 	/**
-		@brief 
+		@brief
 		\~English	Convert Vector3D into std::array<float,4>
 		\~Japanese	Vector3D から std::array<float,4> に変換する。
 	*/

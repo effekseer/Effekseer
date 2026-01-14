@@ -15,8 +15,8 @@ public:
 	/**
 		@brief    Convert UTF16 into UTF8
 		@param    dst    a pointer to destination buffer
-	    @param    dst_size    a length of destination buffer
-	    @param    src            a source buffer
+		@param    dst_size    a length of destination buffer
+		@param    src            a source buffer
 		@param    src_size    a length of source buffer
 		@return    length except 0
 	*/
@@ -49,14 +49,14 @@ public:
 			else if ((wc & ~0x7ff) == 0)
 			{
 				*cp++ = ((wc >> 6) & 0x1f) | 0xc0;
-				*cp++ = ((wc)&0x3f) | 0x80;
+				*cp++ = ((wc) & 0x3f) | 0x80;
 				cnt += 2;
 			}
 			else
 			{
 				*cp++ = ((wc >> 12) & 0xf) | 0xe0;
 				*cp++ = ((wc >> 6) & 0x3f) | 0x80;
-				*cp++ = ((wc)&0x3f) | 0x80;
+				*cp++ = ((wc) & 0x3f) | 0x80;
 				cnt += 3;
 			}
 

@@ -18,7 +18,8 @@ void TestGeometryUtility()
 		Effekseer::Matrix44 transform;
 	};
 
-	const auto isRH = [](CoordinateStyleType style) {
+	const auto isRH = [](CoordinateStyleType style)
+	{
 		if (style == CoordinateStyleType::RH || style == CoordinateStyleType::RH_Reversed)
 		{
 			return true;
@@ -26,7 +27,8 @@ void TestGeometryUtility()
 		return false;
 	};
 
-	const auto isRevresed = [](CoordinateStyleType style) {
+	const auto isRevresed = [](CoordinateStyleType style)
+	{
 		if (style == CoordinateStyleType::RH_Reversed)
 		{
 			return true;
@@ -34,7 +36,8 @@ void TestGeometryUtility()
 		return false;
 	};
 
-	const auto getSystem = [](CoordinateStyleType style) {
+	const auto getSystem = [](CoordinateStyleType style)
+	{
 		if (style == CoordinateStyleType::RH || style == CoordinateStyleType::RH_Reversed)
 		{
 			return Effekseer::CoordinateSystem::RH;
@@ -42,7 +45,8 @@ void TestGeometryUtility()
 		return Effekseer::CoordinateSystem::LH;
 	};
 
-	const auto getReversedPerspectiveMatrixRH = [](float ovY, float aspect, float zn, float zf) {
+	const auto getReversedPerspectiveMatrixRH = [](float ovY, float aspect, float zn, float zf)
+	{
 		Effekseer::Matrix44 mat;
 		float yScale = 1 / tanf(ovY / 2);
 		float xScale = yScale / aspect;
@@ -69,7 +73,8 @@ void TestGeometryUtility()
 		return mat;
 	};
 
-	const auto getProjectionMatrix = [&](float ovY, float aspect, float zn, float zf, CoordinateStyleType coodinateStyle) {
+	const auto getProjectionMatrix = [&](float ovY, float aspect, float zn, float zf, CoordinateStyleType coodinateStyle)
+	{
 		Effekseer::Matrix44 projMat;
 		if (coodinateStyle == CoordinateStyleType::RH)
 		{
@@ -87,7 +92,8 @@ void TestGeometryUtility()
 		return projMat;
 	};
 
-	const auto getCameraMatrix = [&](Effekseer::Vector3D position, Effekseer::Vector3D focus, Effekseer::Vector3D up, CoordinateStyleType coodinateStyle) {
+	const auto getCameraMatrix = [&](Effekseer::Vector3D position, Effekseer::Vector3D focus, Effekseer::Vector3D up, CoordinateStyleType coodinateStyle)
+	{
 		Effekseer::Matrix44 cameraMat;
 		if (isRH(coodinateStyle))
 		{
@@ -101,7 +107,8 @@ void TestGeometryUtility()
 		return cameraMat;
 	};
 
-	const auto getCoordinatePosition = [](Effekseer::Vector3D position, bool isRightHand) {
+	const auto getCoordinatePosition = [](Effekseer::Vector3D position, bool isRightHand)
+	{
 		if (!isRightHand)
 		{
 			position.Z = -position.Z;
@@ -110,7 +117,8 @@ void TestGeometryUtility()
 		return position;
 	};
 
-	const auto run = [&](State state) {
+	const auto run = [&](State state)
+	{
 		bool isRightHand = isRH(state.coordinateStyle);
 
 		Effekseer::Vector3D cameraPos = getCoordinatePosition({0, 0, 20}, isRightHand);
@@ -258,4 +266,5 @@ void TestGeometryUtility()
 	}
 }
 
-TestRegister Misc_TestGeometryUtility("Misc.TestGeometryUtility", []() -> void { TestGeometryUtility(); });
+TestRegister Misc_TestGeometryUtility("Misc.TestGeometryUtility", []() -> void
+									  { TestGeometryUtility(); });

@@ -30,7 +30,10 @@ public:
 	struct ProfileSample
 	{
 		bool IsValid = false;
-		explicit operator bool() const { return IsValid; }
+		explicit operator bool() const
+		{
+			return IsValid;
+		}
 
 		struct Manager
 		{

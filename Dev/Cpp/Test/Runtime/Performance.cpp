@@ -38,7 +38,8 @@ std::map<std::string, PerformanceResult> CheckPerformancePlatform(EffectPlatform
 	param.WindowSize = {1280, 720};
 	platform->Initialize(param);
 
-	auto test = [&](const char16_t* name) -> PerformanceResult {
+	auto test = [&](const char16_t* name) -> PerformanceResult
+	{
 		srand(0);
 
 		PerformanceResult ret;
@@ -207,6 +208,7 @@ void CheckPerformance()
 
 #if defined(__linux__) || defined(__APPLE__) || defined(WIN32)
 
-TestRegister Performance_CheckPerformance("Performance.CheckPerformance", []() -> void { CheckPerformance(); });
+TestRegister Performance_CheckPerformance("Performance.CheckPerformance", []() -> void
+										  { CheckPerformance(); });
 
 #endif

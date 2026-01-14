@@ -226,4 +226,5 @@ void ResourceManager_Basic()
 	}
 }
 
-TestRegister ResourceManager_Basic_Test("ResourceManager.Basic", []() -> void { ResourceManager_Basic(); });
+TestRegister ResourceManager_Basic_Test("ResourceManager.Basic", []() -> void
+										{ ResourceManager_Basic(); });

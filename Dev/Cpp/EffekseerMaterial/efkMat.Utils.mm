@@ -1,6 +1,6 @@
 #if defined(__APPLE__)
-#import <Foundation/Foundation.h>
 #include "efkMat.Utils.h"
+#import <Foundation/Foundation.h>
 
 namespace EffekseerMaterial
 {

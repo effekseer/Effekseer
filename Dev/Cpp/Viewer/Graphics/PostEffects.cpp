@@ -303,7 +303,8 @@ void BloomPostEffect::Render(Effekseer::Backend::TextureRef dst, Effekseer::Back
 
 void BloomPostEffect::SetupBuffers(int32_t width, int32_t height)
 {
-	const auto createRenderTexture = [&](Effekseer::Tool::Vector2I size, Effekseer::Backend::TextureFormatType format) {
+	const auto createRenderTexture = [&](Effekseer::Tool::Vector2I size, Effekseer::Backend::TextureFormatType format)
+	{
 		Effekseer::Backend::TextureParameter param;
 		param.Format = format;
 		param.Size[0] = size.X;
@@ -312,7 +313,8 @@ void BloomPostEffect::SetupBuffers(int32_t width, int32_t height)
 		return graphicsDevice_->CreateTexture(param);
 	};
 
-	const auto createRenderPass = [&](Effekseer::Backend::TextureRef texture) {
+	const auto createRenderPass = [&](Effekseer::Backend::TextureRef texture)
+	{
 		Effekseer::FixedSizeVector<Effekseer::Backend::TextureRef, Effekseer::Backend::RenderTargetMax> textures;
 		textures.resize(1);
 		textures.at(0) = texture;

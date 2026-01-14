@@ -1,14 +1,14 @@
 #pragma once
 
-#include <Metal/LLGI.CommandListMetal.h>
-#include <Metal/LLGI.GraphicsMetal.h>
+#include "../Utils/Input.h"
+#include "../Utils/Window.h"
+#include <EffekseerRendererMetal.h>
 #include <LLGI.Compiler.h>
 #include <LLGI.Graphics.h>
 #include <LLGI.Platform.h>
+#include <Metal/LLGI.CommandListMetal.h>
+#include <Metal/LLGI.GraphicsMetal.h>
 #include <Utils/LLGI.CommandListPool.h>
-#include <EffekseerRendererMetal.h>
-#include "../Utils/Window.h"
-#include "../Utils/Input.h"
 
 class DeviceMetal
 {
@@ -26,12 +26,15 @@ private:
 
 public:
 	DeviceMetal() = default;
-	~DeviceMetal() { Terminate(); }
+	~DeviceMetal()
+	{
+		Terminate();
+	}
 
 	Utils::Vec2I GetWindowSize() const
 	{
 		auto size = window->GetWindowSize();
-		return { size.X, size.Y };
+		return {size.X, size.Y};
 	}
 
 	id<MTLRenderCommandEncoder> GetRenderEncoder()
@@ -53,5 +56,8 @@ public:
 	void PresentDevice();
 
 	void SetupEffekseerModules(::Effekseer::ManagerRef efkManager, bool usingProfiler = false);
-	::EffekseerRenderer::RendererRef GetEffekseerRenderer() { return efkRenderer; }
+	::EffekseerRenderer::RendererRef GetEffekseerRenderer()
+	{
+		return efkRenderer;
+	}
 };

@@ -213,7 +213,7 @@ public:
 		\~Japanese ジェネレータ
 	*/
 	void SetProceduralMeshGenerator(ProceduralModelGeneratorRef generator);
-	
+
 	/**
 		@brief
 		\~English get a gpu particle system
