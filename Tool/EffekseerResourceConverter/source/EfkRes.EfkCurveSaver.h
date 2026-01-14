@@ -1,9 +1,9 @@
 #pragma once
 
+#include "EfkRes.Curve.h"
+#include <optional>
 #include <stdint.h>
 #include <string_view>
-#include <optional>
-#include "EfkRes.Curve.h"
 
 namespace efkres
 {
@@ -18,7 +18,6 @@ public:
 
 private:
 	double m_scale = 1.0;
-
 };
 
-}
+} // namespace efkres

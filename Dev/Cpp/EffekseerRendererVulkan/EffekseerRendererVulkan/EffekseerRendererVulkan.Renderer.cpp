@@ -29,10 +29,10 @@
 #include "ShaderHeader/model_unlit_vs.h"
 
 #include "ShaderHeader/gpu_particles_clear_cs.h"
+#include "ShaderHeader/gpu_particles_render_ps.h"
+#include "ShaderHeader/gpu_particles_render_vs.h"
 #include "ShaderHeader/gpu_particles_spawn_cs.h"
 #include "ShaderHeader/gpu_particles_update_cs.h"
-#include "ShaderHeader/gpu_particles_render_vs.h"
-#include "ShaderHeader/gpu_particles_render_ps.h"
 
 #define GENERATE_VIEW(x) {{x, static_cast<int32_t>(sizeof(x))}};
 

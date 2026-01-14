@@ -3,9 +3,9 @@
 #define __EFFEKSEER_GPU_PARTICLES_H__
 
 #include "../Effekseer.Base.h"
+#include "../Effekseer.Color.h"
 #include "../Effekseer.Vector2D.h"
 #include "../Effekseer.Vector3D.h"
-#include "../Effekseer.Color.h"
 
 namespace Effekseer
 {
@@ -13,15 +13,34 @@ namespace Effekseer
 namespace GpuParticles
 {
 template <class T>
-struct vector2 {
+struct vector2
+{
 	T x, y;
 
 	vector2() = default;
-	vector2(T x, T y): x(x), y(y) {}
-	vector2(const std::array<T, 2>& rhs): x(rhs[0]), y(rhs[1]) {}
-	vector2(const Effekseer::Vector2D& rhs): x((T)rhs.X), y((T)rhs.Y) {}
-	vector2& operator=(const std::array<T, 2>& rhs) { return *this = vector2(rhs); }
-	vector2& operator=(const Effekseer::Vector2D& rhs) { return *this = vector2(rhs); }
+	vector2(T x, T y)
+		: x(x)
+		, y(y)
+	{
+	}
+	vector2(const std::array<T, 2>& rhs)
+		: x(rhs[0])
+		, y(rhs[1])
+	{
+	}
+	vector2(const Effekseer::Vector2D& rhs)
+		: x((T)rhs.X)
+		, y((T)rhs.Y)
+	{
+	}
+	vector2& operator=(const std::array<T, 2>& rhs)
+	{
+		return *this = vector2(rhs);
+	}
+	vector2& operator=(const Effekseer::Vector2D& rhs)
+	{
+		return *this = vector2(rhs);
+	}
 };
 template <class T>
 struct vector3
@@ -29,11 +48,32 @@ struct vector3
 	float x, y, z;
 
 	vector3() = default;
-	vector3(T x, T y, T z): x(x), y(y), z(z) {}
-	vector3(const std::array<T, 3>& rhs): x(rhs[0]), y(rhs[1]), z(rhs[2]) {}
-	vector3(const Effekseer::Vector3D& rhs): x((T)rhs.X), y((T)rhs.Y), z((T)rhs.Z) {}
-	vector3& operator=(const std::array<T, 3>& rhs) { return *this = vector3(rhs); }
-	vector3& operator=(const Effekseer::Vector3D& rhs) { return *this = vector3(rhs); }
+	vector3(T x, T y, T z)
+		: x(x)
+		, y(y)
+		, z(z)
+	{
+	}
+	vector3(const std::array<T, 3>& rhs)
+		: x(rhs[0])
+		, y(rhs[1])
+		, z(rhs[2])
+	{
+	}
+	vector3(const Effekseer::Vector3D& rhs)
+		: x((T)rhs.X)
+		, y((T)rhs.Y)
+		, z((T)rhs.Z)
+	{
+	}
+	vector3& operator=(const std::array<T, 3>& rhs)
+	{
+		return *this = vector3(rhs);
+	}
+	vector3& operator=(const Effekseer::Vector3D& rhs)
+	{
+		return *this = vector3(rhs);
+	}
 };
 template <class T>
 struct vector4
@@ -41,10 +81,31 @@ struct vector4
 	T x, y, z, w;
 
 	vector4() = default;
-	vector4(T x, T y, T z, T w): x(x), y(y), z(z), w(w) {}
-	vector4(vector3<T> v3, T w): x(v3.x), y(v3.y), z(v3.z), w(w) {}
-	vector4(const std::array<T, 4>& rhs): x(rhs[0]), y(rhs[1]), z(rhs[2]), w(rhs[3]) {}
-	vector4& operator=(const std::array<T, 4>& rhs) { return *this = vector4(rhs); }
+	vector4(T x, T y, T z, T w)
+		: x(x)
+		, y(y)
+		, z(z)
+		, w(w)
+	{
+	}
+	vector4(vector3<T> v3, T w)
+		: x(v3.x)
+		, y(v3.y)
+		, z(v3.z)
+		, w(w)
+	{
+	}
+	vector4(const std::array<T, 4>& rhs)
+		: x(rhs[0])
+		, y(rhs[1])
+		, z(rhs[2])
+		, w(rhs[3])
+	{
+	}
+	vector4& operator=(const std::array<T, 4>& rhs)
+	{
+		return *this = vector4(rhs);
+	}
 };
 
 using float2 = GpuParticles::vector2<float>;
@@ -62,73 +123,85 @@ using uint2 = GpuParticles::vector2<uint32_t>;
 using uint3 = GpuParticles::vector3<uint32_t>;
 using uint4 = GpuParticles::vector4<uint32_t>;
 
-
 template <class T>
 inline vector2<T> operator+(vector2<T> a, vector2<T> b)
 {
-	return vector2<T>{ a.x + b.x, a.y + b.y };
+	return vector2<T>{a.x + b.x, a.y + b.y};
 }
 
 template <class T>
 inline vector2<T> operator*(vector2<T> a, T b)
 {
-	return vector2<T>{ a.x * b, a.y * b };
+	return vector2<T>{a.x * b, a.y * b};
 }
 
 template <class T>
 inline vector3<T> operator+(vector3<T> a, vector3<T> b)
 {
-	return vector3<T>{ a.x + b.x, a.y + b.y, a.z + b.z };
+	return vector3<T>{a.x + b.x, a.y + b.y, a.z + b.z};
 }
 
 template <class T>
 inline vector3<T> operator*(vector3<T> a, T b)
 {
-	return vector3<T>{ a.x * b, a.y * b, a.z * b };
+	return vector3<T>{a.x * b, a.y * b, a.z * b};
 }
 
 template <class T>
 inline vector4<T> operator+(vector4<T> a, vector4<T> b)
 {
-	return vector4<T>{ a.x + b.x, a.y + b.y, a.z + b.z , a.w + b.w };
+	return vector4<T>{a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w};
 }
 
 template <class T>
 inline vector4<T> operator*(vector4<T> a, T b)
 {
-	return vector4<T>{ a.x * b, a.y * b, a.z * b, a.w * b };
+	return vector4<T>{a.x * b, a.y * b, a.z * b, a.w * b};
 }
-
 
 enum class EmitShapeT : uint32_t
 {
-	Point, Line, Circle, Sphere, Model,
+	Point,
+	Line,
+	Circle,
+	Sphere,
+	Model,
 };
 enum class ScaleType : uint32_t
 {
-	Fixed, PVA, Easing,
+	Fixed,
+	PVA,
+	Easing,
 };
 enum class ColorParamType : uint32_t
 {
-	Fixed, Random, Easing, FCurve, Gradient,
+	Fixed,
+	Random,
+	Easing,
+	FCurve,
+	Gradient,
 };
 enum class ColorSpaceType : uint32_t
 {
-	RGBA, HSVA,
+	RGBA,
+	HSVA,
 };
 enum class RenderShapeT : uint32_t
 {
-	Sprite, Model, Trail,
+	Sprite,
+	Model,
+	Trail,
 };
 enum class MaterialType : uint32_t
 {
-	Unlit, Lighting,
+	Unlit,
+	Lighting,
 };
-
 
 struct ParamSet
 {
-	struct BasicParams {
+	struct BasicParams
+	{
 		int32_t EmitCount;
 		int32_t EmitPerFrame;
 		float EmitOffset;
@@ -307,15 +380,17 @@ public:
 };
 using ResourceRef = Effekseer::RefPtr<Resource>;
 
-}
+} // namespace GpuParticles
 
 class GpuParticleFactory : public ReferenceObject
 {
 public:
-	virtual GpuParticles::ResourceRef CreateResource(const GpuParticles::ParamSet& paramSet, const Effect* effect) { return nullptr; }
+	virtual GpuParticles::ResourceRef CreateResource(const GpuParticles::ParamSet& paramSet, const Effect* effect)
+	{
+		return nullptr;
+	}
 };
 using GpuParticleFactoryRef = RefPtr<GpuParticleFactory>;
-
 
 class GpuParticleSystem : public ReferenceObject
 {
@@ -338,30 +413,57 @@ public:
 	GpuParticleSystem() = default;
 
 	virtual ~GpuParticleSystem() = default;
-	
-	virtual bool InitSystem(const Settings& settings) { return true; }
 
-	virtual void ComputeFrame(const Context& context) {}
+	virtual bool InitSystem(const Settings& settings)
+	{
+		return true;
+	}
 
-	virtual void RenderFrame(const Context& context) {}
+	virtual void ComputeFrame(const Context& context)
+	{
+	}
 
-	virtual EmitterID NewEmitter(GpuParticles::ResourceRef paramRes, Effekseer::InstanceGlobal* instanceGlobal) { return InvalidID; }
+	virtual void RenderFrame(const Context& context)
+	{
+	}
 
-	virtual void StartEmit(EmitterID emitterID) {}
+	virtual EmitterID NewEmitter(GpuParticles::ResourceRef paramRes, Effekseer::InstanceGlobal* instanceGlobal)
+	{
+		return InvalidID;
+	}
 
-	virtual void StopEmit(EmitterID emitterID) {}
+	virtual void StartEmit(EmitterID emitterID)
+	{
+	}
 
-	virtual void SetRandomSeed(EmitterID emitterID, uint32_t seed) {}
+	virtual void StopEmit(EmitterID emitterID)
+	{
+	}
 
-	virtual void SetTransform(EmitterID emitterID, const Effekseer::Matrix43& transform) {}
+	virtual void SetRandomSeed(EmitterID emitterID, uint32_t seed)
+	{
+	}
 
-	virtual void SetColor(EmitterID emitterID, Effekseer::Color color) {}
+	virtual void SetTransform(EmitterID emitterID, const Effekseer::Matrix43& transform)
+	{
+	}
 
-	virtual void SetDeltaTime(Effekseer::InstanceGlobal* instanceGlobal, float deltaTime) {}
+	virtual void SetColor(EmitterID emitterID, Effekseer::Color color)
+	{
+	}
 
-	virtual void KillParticles(Effekseer::InstanceGlobal* instanceGlobal) {}
+	virtual void SetDeltaTime(Effekseer::InstanceGlobal* instanceGlobal, float deltaTime)
+	{
+	}
 
-	virtual int32_t GetParticleCount(Effekseer::InstanceGlobal* instanceGlobal) { return 0; }
+	virtual void KillParticles(Effekseer::InstanceGlobal* instanceGlobal)
+	{
+	}
+
+	virtual int32_t GetParticleCount(Effekseer::InstanceGlobal* instanceGlobal)
+	{
+		return 0;
+	}
 
 protected:
 	Settings m_settings;

@@ -60,14 +60,14 @@ private:
 private:
 	/**
 	 * CalcBSplineBasisFunc : B-スプライン基底関数の計算
-	 * 
+	 *
 	 * const vector<double>& knot : ノット列
 	 * unsigned int j : ノット列の開始番号
 	 * unsigned int p : 次数
 	 * double t : 計算対象の独立変数
-	 * 
+	 *
 	 * ノット列は昇順である必要があるが、そのチェックは行わない
-	 * 
+	 *
 	 * 戻り値 : 計算結果
 	 */
 	double CalcBSplineBasisFunc(const std::vector<double>& knot, unsigned int j, unsigned int p, double t)

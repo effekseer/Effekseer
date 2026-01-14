@@ -1,8 +1,8 @@
 ﻿// Choose from the following graphics APIs you want to enable
 // グラフィックスAPIを下記から選んで有効にしてください
 #define DEVICE_OPENGL
-//#define DEVICE_DX9
-//#define DEVICE_DX11
+// #define DEVICE_DX9
+// #define DEVICE_DX11
 
 #include <map>
 #include <stdio.h>

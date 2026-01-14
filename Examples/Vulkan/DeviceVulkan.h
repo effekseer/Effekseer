@@ -1,14 +1,14 @@
 #pragma once
 
-#include <Vulkan/LLGI.CommandListVulkan.h>
-#include <Vulkan/LLGI.GraphicsVulkan.h>
+#include "../Utils/Input.h"
+#include "../Utils/Window.h"
+#include <EffekseerRendererVulkan.h>
 #include <LLGI.Compiler.h>
 #include <LLGI.Graphics.h>
 #include <LLGI.Platform.h>
 #include <Utils/LLGI.CommandListPool.h>
-#include <EffekseerRendererVulkan.h>
-#include "../Utils/Input.h"
-#include "../Utils/Window.h"
+#include <Vulkan/LLGI.CommandListVulkan.h>
+#include <Vulkan/LLGI.GraphicsVulkan.h>
 
 class DeviceVulkan
 {
@@ -26,12 +26,15 @@ private:
 
 public:
 	DeviceVulkan() = default;
-	~DeviceVulkan() { Terminate(); }
+	~DeviceVulkan()
+	{
+		Terminate();
+	}
 
 	Utils::Vec2I GetWindowSize() const
 	{
 		auto size = window->GetWindowSize();
-		return { size.X, size.Y };
+		return {size.X, size.Y};
 	}
 
 	VkPhysicalDevice GetVkPhysicalDevice()
@@ -74,5 +77,8 @@ public:
 	void PresentDevice();
 
 	void SetupEffekseerModules(::Effekseer::ManagerRef efkManager, bool usingProfiler = false);
-	::EffekseerRenderer::RendererRef GetEffekseerRenderer() { return efkRenderer; }
+	::EffekseerRenderer::RendererRef GetEffekseerRenderer()
+	{
+		return efkRenderer;
+	}
 };

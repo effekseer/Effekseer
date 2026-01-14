@@ -2,9 +2,9 @@
 
 #define FBXSDK_SHARED
 #include <fbxsdk.h>
-#include <vector>
-#include <string>
 #include <memory>
+#include <string>
+#include <vector>
 
 struct FbxNurbsCurveData
 {

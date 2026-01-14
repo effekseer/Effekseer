@@ -397,7 +397,7 @@ void ReloadTest()
 
 		platform->GetEffects()[0]->Reload(&manager, 1, effectData.data(), static_cast<int32_t>(effectData.size()));
 
-		//platform->Update();
+		// platform->Update();
 
 		platform->Draw();
 
@@ -620,7 +620,8 @@ void CullingTest()
 
 void RenderLimitTest()
 {
-	auto test = [](EffectPlatform* platform) {
+	auto test = [](EffectPlatform* platform)
+	{
 		EffectPlatformInitializingParameter param;
 		param.SpriteCount = 10;
 		platform->Initialize(param);
@@ -706,7 +707,8 @@ void SRGBLinearTestPlatform(EffectPlatform* platform, std::string baseResultPath
 	platform->Initialize(param);
 	platform->GetRenderer()->SetMaintainGammaColorInLinearColorSpace(true);
 
-	auto single10Test = [&](const char16_t* name, const char* savename) -> void {
+	auto single10Test = [&](const char16_t* name, const char* savename) -> void
+	{
 		srand(0);
 		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/" + name + u".efk").c_str());
 
@@ -718,7 +720,8 @@ void SRGBLinearTestPlatform(EffectPlatform* platform, std::string baseResultPath
 		platform->StopAllEffects();
 	};
 
-	auto single14Test = [&](const char16_t* name, const char* savename) -> void {
+	auto single14Test = [&](const char16_t* name, const char* savename) -> void
+	{
 		srand(0);
 		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/14/" + name + u".efk").c_str());
 
@@ -730,7 +733,8 @@ void SRGBLinearTestPlatform(EffectPlatform* platform, std::string baseResultPath
 		platform->StopAllEffects();
 	};
 
-	auto single15Test = [&](const char16_t* name, const char* savename) -> void {
+	auto single15Test = [&](const char16_t* name, const char* savename) -> void
+	{
 		srand(0);
 		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/15/" + name + u".efkefc").c_str());
 
@@ -742,7 +746,8 @@ void SRGBLinearTestPlatform(EffectPlatform* platform, std::string baseResultPath
 		platform->StopAllEffects();
 	};
 
-	auto single16Test = [&](const char16_t* name, const char* savename) -> void {
+	auto single16Test = [&](const char16_t* name, const char* savename) -> void
+	{
 		srand(0);
 		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/16/" + name + u".efkefc").c_str());
 
@@ -857,7 +862,8 @@ void LODsTest()
 
 		auto h = platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/LODs/SimpleLODs.efkefc").c_str());
 
-		auto setDistanceToEffect = [platform, h](double distance) {
+		auto setDistanceToEffect = [platform, h](double distance)
+		{
 			auto cameraFrontDirection = platform->GetRenderer()->GetCameraFrontDirection();
 			auto cameraPosition = platform->GetRenderer()->GetCameraPosition();
 			platform->GetManager()->SetLocation(h, cameraPosition - cameraFrontDirection * distance);
@@ -895,36 +901,52 @@ void LODsTest()
 
 #if defined(__linux__) || defined(__APPLE__) || defined(WIN32)
 
-TestRegister Runtime_CustomAllocatorTest("Runtime.CustomAllocatorTest", []() -> void { CustomAllocatorTest(); });
+TestRegister Runtime_CustomAllocatorTest("Runtime.CustomAllocatorTest", []() -> void
+										 { CustomAllocatorTest(); });
 
-TestRegister Runtime_InstanceDisposeTest("Runtime.InstanceDisposeTest", []() -> void { InstanceDisposeTest(); });
+TestRegister Runtime_InstanceDisposeTest("Runtime.InstanceDisposeTest", []() -> void
+										 { InstanceDisposeTest(); });
 
-TestRegister Runtime_ReloadTest("Runtime.ReloadTest", []() -> void { ReloadTest(); });
+TestRegister Runtime_ReloadTest("Runtime.ReloadTest", []() -> void
+								{ ReloadTest(); });
 
-TestRegister Runtime_UpdateToMoveTest("Runtime.UpdateToMoveTest", []() -> void { UpdateToMoveTest(); });
+TestRegister Runtime_UpdateToMoveTest("Runtime.UpdateToMoveTest", []() -> void
+									  { UpdateToMoveTest(); });
 
-TestRegister Runtime_MassPlayTest("Runtime.MassPlayTest", []() -> void { MassPlayTest(); });
+TestRegister Runtime_MassPlayTest("Runtime.MassPlayTest", []() -> void
+								  { MassPlayTest(); });
 
-TestRegister Runtime_PlaybackSpeedTest("Runtime.PlaybackSpeedTest", []() -> void { PlaybackSpeedTest(); });
+TestRegister Runtime_PlaybackSpeedTest("Runtime.PlaybackSpeedTest", []() -> void
+									   { PlaybackSpeedTest(); });
 
-TestRegister Runtime_PlaybackRandomSeedTest("Runtime.PlaybackRandomSeedTest", []() -> void { PlaybackRandomSeedTest(); });
+TestRegister Runtime_PlaybackRandomSeedTest("Runtime.PlaybackRandomSeedTest", []() -> void
+											{ PlaybackRandomSeedTest(); });
 
-TestRegister Runtime_StartingFrameTest("Runtime.StartingFrameTest", []() -> void { StartingFrameTest(); });
+TestRegister Runtime_StartingFrameTest("Runtime.StartingFrameTest", []() -> void
+									   { StartingFrameTest(); });
 
-TestRegister Runtime_UpdateHandleTest("Runtime.UpdateHandleTest", []() -> void { UpdateHandleTest(); });
+TestRegister Runtime_UpdateHandleTest("Runtime.UpdateHandleTest", []() -> void
+									  { UpdateHandleTest(); });
 
-TestRegister Runtime_DX11DefferedContextTest("Runtime.DX11DefferedContextTest", []() -> void { DX11DefferedContextTest(); });
+TestRegister Runtime_DX11DefferedContextTest("Runtime.DX11DefferedContextTest", []() -> void
+											 { DX11DefferedContextTest(); });
 
-TestRegister Runtime_BasicRuntimeDeviceLostTest("Runtime.BasicRuntimeDeviceLostTest", []() -> void { BasicRuntimeDeviceLostTest(); });
+TestRegister Runtime_BasicRuntimeDeviceLostTest("Runtime.BasicRuntimeDeviceLostTest", []() -> void
+												{ BasicRuntimeDeviceLostTest(); });
 
-TestRegister Runtime_ProceduralModelCacheTest("Runtime.ProceduralModelCacheTest", []() -> void { ProceduralModelCacheTest(); });
+TestRegister Runtime_ProceduralModelCacheTest("Runtime.ProceduralModelCacheTest", []() -> void
+											  { ProceduralModelCacheTest(); });
 
-TestRegister Runtime_CullingTest("Runtime.CullingTest", []() -> void { CullingTest(); });
+TestRegister Runtime_CullingTest("Runtime.CullingTest", []() -> void
+								 { CullingTest(); });
 
-TestRegister Runtime_RenderLimitTest("Runtime.RenderLimitTest", []() -> void { RenderLimitTest(); });
+TestRegister Runtime_RenderLimitTest("Runtime.RenderLimitTest", []() -> void
+									 { RenderLimitTest(); });
 
-TestRegister Runtime_SRGBLinearTest("Runtime.SRGBLinearTest", []() -> void { SRGBLinearTest(); });
+TestRegister Runtime_SRGBLinearTest("Runtime.SRGBLinearTest", []() -> void
+									{ SRGBLinearTest(); });
 
-TestRegister Runtime_LODsTest("Runtime.LODsTest", []() -> void { LODsTest(); });
+TestRegister Runtime_LODsTest("Runtime.LODsTest", []() -> void
+							  { LODsTest(); });
 
 #endif

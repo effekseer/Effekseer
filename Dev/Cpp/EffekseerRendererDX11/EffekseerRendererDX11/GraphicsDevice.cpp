@@ -1731,7 +1731,7 @@ void GraphicsDevice::Dispatch(const Effekseer::Backend::DispatchParameter& dispa
 	context_->CSSetShaderResources(0, (UINT)csSRVs.size(), csSRVs.data());
 	context_->CSSetSamplers(0, (UINT)csSamplers.size(), csSamplers.data());
 	context_->CSSetUnorderedAccessViews(0, (UINT)csUAVs.size(), csUAVs.data(), nullptr);
-	
+
 	auto gc = dispatchParam.GroupCount;
 	context_->Dispatch(std::min(gc[0], 65536), std::min(gc[1], 65536), std::min(gc[2], 65536));
 

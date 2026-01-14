@@ -2,39 +2,42 @@
 #ifndef __EFFEKSEER_SIMD_UTILS_H__
 #define __EFFEKSEER_SIMD_UTILS_H__
 
-#include <stdlib.h>
-#include "../Effekseer.Vector2D.h"
-#include "../Effekseer.Vector3D.h"
 #include "../Effekseer.Matrix43.h"
 #include "../Effekseer.Matrix44.h"
+#include "../Effekseer.Vector2D.h"
+#include "../Effekseer.Vector3D.h"
 #include "Float4.h"
 #include "Int4.h"
-#include "Vec2f.h"
-#include "Vec3f.h"
 #include "Mat43f.h"
 #include "Mat44f.h"
+#include "Vec2f.h"
+#include "Vec3f.h"
+#include <stdlib.h>
 
 namespace Effekseer
 {
-	
+
 namespace SIMD
 {
 
 template <size_t align>
-class AlignedAllocationPolicy {
+class AlignedAllocationPolicy
+{
 public:
-	static void* operator new(size_t size) {
+	static void* operator new(size_t size)
+	{
 #if defined(__EMSCRIPTEN__) && __EMSCRIPTEN_minor__ < 38
 		return malloc(size);
 #elif defined(_WIN32)
 		return _mm_malloc(size, align);
 #else
-		void *ptr = nullptr;
+		void* ptr = nullptr;
 		posix_memalign(&ptr, align, size);
 		return ptr;
 #endif
 	}
-	static void operator delete(void* ptr) {
+	static void operator delete(void* ptr)
+	{
 #if defined(__EMSCRIPTEN__) && __EMSCRIPTEN_minor__ < 38
 		free(ptr);
 #elif defined(_WIN32)

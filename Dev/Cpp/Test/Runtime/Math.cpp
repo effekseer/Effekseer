@@ -28,4 +28,5 @@ void TestQuaternionf()
 	}
 }
 
-TestRegister Math_TestQuaternionf("Math.Quaternionf", []() -> void { TestQuaternionf(); });
+TestRegister Math_TestQuaternionf("Math.Quaternionf", []() -> void
+								  { TestQuaternionf(); });

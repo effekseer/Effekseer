@@ -9,7 +9,10 @@ protected:
 	EffekseerRenderer::RendererRef CreateRenderer() override;
 
 public:
-	EffectPlatformMetal() : EffectPlatformLLGI(LLGI::DeviceType::Metal) {}
+	EffectPlatformMetal()
+		: EffectPlatformLLGI(LLGI::DeviceType::Metal)
+	{
+	}
 
 	virtual ~EffectPlatformMetal();
 

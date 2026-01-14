@@ -26,7 +26,8 @@ int main(int argc, char* argv[])
 	profiler::startListen();
 #endif
 
-	Effekseer::SetLogger([](Effekseer::LogType type, const std::string& s) -> void { std::cout << s << std::endl; });
+	Effekseer::SetLogger([](Effekseer::LogType type, const std::string& s) -> void
+						 { std::cout << s << std::endl; });
 
 	// You can specify "Test --filter=*.* to run a single test"
 	auto parsed = TestHelper::ParseArg(argc, argv);

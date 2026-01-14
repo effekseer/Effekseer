@@ -1,11 +1,11 @@
 #include "EffekseerRendererMetal.Renderer.h"
-#include <EffekseerRendererCommon/EffekseerRenderer.CommonUtils.h>
-#include <EffekseerRendererLLGI/EffekseerRendererLLGI.Shader.h>
-#include <EffekseerRendererLLGI/EffekseerRendererLLGI.MaterialLoader.h>
 #include "../../3rdParty/LLGI/src/Metal/LLGI.CommandListMetal.h"
 #include "../../3rdParty/LLGI/src/Metal/LLGI.GraphicsMetal.h"
-#include "../../3rdParty/LLGI/src/Metal/LLGI.RenderPassMetal.h"
 #include "../../3rdParty/LLGI/src/Metal/LLGI.Metal_Impl.h"
+#include "../../3rdParty/LLGI/src/Metal/LLGI.RenderPassMetal.h"
+#include <EffekseerRendererCommon/EffekseerRenderer.CommonUtils.h>
+#include <EffekseerRendererLLGI/EffekseerRendererLLGI.MaterialLoader.h>
+#include <EffekseerRendererLLGI/EffekseerRendererLLGI.Shader.h>
 
 #include "../../EffekseerMaterialCompiler/Metal/EffekseerMaterialCompilerMetal.h"
 
@@ -22,22 +22,22 @@
 #include "ShaderHeader/ad_model_unlit_ps.h"
 #include "ShaderHeader/ad_model_unlit_vs.h"
 
-#include "ShaderHeader/sprite_unlit_vs.h"
-#include "ShaderHeader/sprite_lit_vs.h"
 #include "ShaderHeader/sprite_distortion_vs.h"
+#include "ShaderHeader/sprite_lit_vs.h"
+#include "ShaderHeader/sprite_unlit_vs.h"
 
-#include "ShaderHeader/model_unlit_vs.h"
-#include "ShaderHeader/model_unlit_ps.h"
-#include "ShaderHeader/model_lit_vs.h"
-#include "ShaderHeader/model_lit_ps.h"
-#include "ShaderHeader/model_distortion_vs.h"
 #include "ShaderHeader/model_distortion_ps.h"
+#include "ShaderHeader/model_distortion_vs.h"
+#include "ShaderHeader/model_lit_ps.h"
+#include "ShaderHeader/model_lit_vs.h"
+#include "ShaderHeader/model_unlit_ps.h"
+#include "ShaderHeader/model_unlit_vs.h"
 
 #include "ShaderHeader/gpu_particles_clear_cs.h"
+#include "ShaderHeader/gpu_particles_render_ps.h"
+#include "ShaderHeader/gpu_particles_render_vs.h"
 #include "ShaderHeader/gpu_particles_spawn_cs.h"
 #include "ShaderHeader/gpu_particles_update_cs.h"
-#include "ShaderHeader/gpu_particles_render_vs.h"
-#include "ShaderHeader/gpu_particles_render_ps.h"
 
 #define GENERATE_VIEW(x) {{x, static_cast<int32_t>(sizeof(x))}};
 
@@ -46,17 +46,17 @@ namespace EffekseerRendererMetal
 
 ::Effekseer::MaterialLoaderRef CreateMaterialLoader(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, ::Effekseer::FileInterfaceRef fileInterface)
 {
-    auto gd = graphicsDevice.DownCast<EffekseerRendererLLGI::Backend::GraphicsDevice>();
-    auto compiler = new ::Effekseer::MaterialCompilerMetal();
-    auto ret = ::Effekseer::MaterialLoaderRef(new ::EffekseerRendererLLGI::MaterialLoader(gd, fileInterface, ::Effekseer::CompiledMaterialPlatformType::Metal, compiler));
-    ES_SAFE_RELEASE(compiler);
-    return ret;
+	auto gd = graphicsDevice.DownCast<EffekseerRendererLLGI::Backend::GraphicsDevice>();
+	auto compiler = new ::Effekseer::MaterialCompilerMetal();
+	auto ret = ::Effekseer::MaterialLoaderRef(new ::EffekseerRendererLLGI::MaterialLoader(gd, fileInterface, ::Effekseer::CompiledMaterialPlatformType::Metal, compiler));
+	ES_SAFE_RELEASE(compiler);
+	return ret;
 }
 
 ::Effekseer::Backend::GraphicsDeviceRef CreateDevice()
 {
-    auto graphics = new LLGI::GraphicsMetal();
-    graphics->Initialize(nullptr);
+	auto graphics = new LLGI::GraphicsMetal();
+	graphics->Initialize(nullptr);
 
 	auto ret = Effekseer::MakeRefPtr<EffekseerRendererLLGI::Backend::GraphicsDevice>(graphics);
 	ES_SAFE_RELEASE(graphics);
@@ -65,9 +65,9 @@ namespace EffekseerRendererMetal
 
 static void CreateFixedShaderForMetal(EffekseerRendererLLGI::FixedShader* shader)
 {
-    assert(shader);
-    if (!shader)
-        return;
+	assert(shader);
+	if (!shader)
+		return;
 
 	shader->AdvancedSpriteUnlit_VS = GENERATE_VIEW(metal_ad_sprite_unlit_vs);
 	shader->AdvancedSpriteLit_VS = GENERATE_VIEW(metal_ad_sprite_lit_vs);
@@ -90,7 +90,7 @@ static void CreateFixedShaderForMetal(EffekseerRendererLLGI::FixedShader* shader
 	shader->ModelLit_PS = GENERATE_VIEW(metal_model_lit_ps);
 	shader->ModelDistortion_VS = GENERATE_VIEW(metal_model_distortion_vs);
 	shader->ModelDistortion_PS = GENERATE_VIEW(metal_model_distortion_ps);
-	
+
 	shader->GpuParticles_Clear_CS = GENERATE_VIEW(metal_gpu_particles_clear_cs);
 	shader->GpuParticles_Spawn_CS = GENERATE_VIEW(metal_gpu_particles_spawn_cs);
 	shader->GpuParticles_Update_CS = GENERATE_VIEW(metal_gpu_particles_update_cs);
@@ -99,38 +99,38 @@ static void CreateFixedShaderForMetal(EffekseerRendererLLGI::FixedShader* shader
 }
 
 ::EffekseerRenderer::RendererRef Create(
-                                      ::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
-                                      int32_t squareMaxCount,
-                                      MTLPixelFormat renderTargetFormat,
-                                      MTLPixelFormat depthStencilFormat,
-									  bool isReversedDepth)
+	::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
+	int32_t squareMaxCount,
+	MTLPixelFormat renderTargetFormat,
+	MTLPixelFormat depthStencilFormat,
+	bool isReversedDepth)
 {
-    auto renderer = Effekseer::MakeRefPtr<::EffekseerRendererLLGI::RendererImplemented>(squareMaxCount);
-    renderer->materialCompiler_ = new ::Effekseer::MaterialCompilerMetal();
+	auto renderer = Effekseer::MakeRefPtr<::EffekseerRendererLLGI::RendererImplemented>(squareMaxCount);
+	renderer->materialCompiler_ = new ::Effekseer::MaterialCompilerMetal();
 
-    CreateFixedShaderForMetal(&renderer->fixedShader_);
+	CreateFixedShaderForMetal(&renderer->fixedShader_);
 
 	auto gd = graphicsDevice.DownCast<EffekseerRendererLLGI::Backend::GraphicsDevice>();
-    auto g = static_cast<LLGI::GraphicsMetal*>(gd->GetGraphics());
-    LLGI::RenderPassPipelineStateKey key;
-    key.RenderTargetFormats.resize(1);
-    key.RenderTargetFormats.at(0) = LLGI::ConvertFormat(renderTargetFormat);
-    key.DepthFormat = LLGI::ConvertFormat(depthStencilFormat);
-    key.IsColorCleared = false;
-    key.IsDepthCleared = false;
-    
-    if (renderer->Initialize(gd, key, isReversedDepth))
-    {
-        return renderer;
-    }
+	auto g = static_cast<LLGI::GraphicsMetal*>(gd->GetGraphics());
+	LLGI::RenderPassPipelineStateKey key;
+	key.RenderTargetFormats.resize(1);
+	key.RenderTargetFormats.at(0) = LLGI::ConvertFormat(renderTargetFormat);
+	key.DepthFormat = LLGI::ConvertFormat(depthStencilFormat);
+	key.IsColorCleared = false;
+	key.IsDepthCleared = false;
 
-    return nullptr;
+	if (renderer->Initialize(gd, key, isReversedDepth))
+	{
+		return renderer;
+	}
+
+	return nullptr;
 }
 
 ::EffekseerRenderer::RendererRef Create(int32_t squareMaxCount,
-                                      MTLPixelFormat renderTargetFormat,
-                                      MTLPixelFormat depthStencilFormat,
-									  bool isReversedDepth)
+										MTLPixelFormat renderTargetFormat,
+										MTLPixelFormat depthStencilFormat,
+										bool isReversedDepth)
 {
 	auto graphicDevice = CreateDevice();
 
@@ -146,8 +146,8 @@ static void CreateFixedShaderForMetal(EffekseerRendererLLGI::FixedShader* shader
 
 Effekseer::Backend::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, id<MTLTexture> texture)
 {
-    auto g = static_cast<::EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice.Get());
-    return g->CreateTexture((uint64_t)texture, []()-> void{});
+	auto g = static_cast<::EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice.Get());
+	return g->CreateTexture((uint64_t)texture, []() -> void {});
 }
 
 void BeginCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList)

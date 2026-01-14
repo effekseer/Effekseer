@@ -184,10 +184,12 @@ void Backend_Textures()
 }
 
 #if !defined(__FROM_CI__)
-TestRegister Test_Backend_Textures_GL("Backend.Textures_GL", []() -> void { Backend_Textures<RenderingEnvironmentGL>(); });
+TestRegister Test_Backend_Textures_GL("Backend.Textures_GL", []() -> void
+									  { Backend_Textures<RenderingEnvironmentGL>(); });
 
 #ifdef _WIN32
-TestRegister Test_Backend_Textures_DX11("Backend.Textures_DX11", []() -> void { Backend_Textures<RenderingEnvironmentDX11>(); });
+TestRegister Test_Backend_Textures_DX11("Backend.Textures_DX11", []() -> void
+										{ Backend_Textures<RenderingEnvironmentDX11>(); });
 #endif
 
 #endif

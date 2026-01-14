@@ -4,8 +4,8 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include <unordered_map>
 #include "EffekseerRendererDX11.DeviceObject.h"
+#include <unordered_map>
 
 //-----------------------------------------------------------------------------------
 //
@@ -51,8 +51,9 @@ private:
 	};
 	std::unordered_map<const void*, TimeData> time_data_;
 	Backend::D3D11QueryPtr disjoint_[8];
-	
-	enum class State {
+
+	enum class State
+	{
 		NoResult,
 		DuringStage,
 		AfterStage,

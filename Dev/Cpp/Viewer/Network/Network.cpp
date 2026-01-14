@@ -58,7 +58,7 @@ ProfileSample NetworkClient::ReadProfileSample()
 		resultManager.HandleCount = profileManager.HandleCount;
 		result.Managers.emplace_back(resultManager);
 	}
-	
+
 	for (auto& profileEffect : profileSample.Effects)
 	{
 		ProfileSample::Effect resultEffect;

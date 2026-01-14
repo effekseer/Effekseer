@@ -4,11 +4,11 @@
 #include "EffekseerRendererLLGI.RenderState.h"
 #include "EffekseerRendererLLGI.RendererImplemented.h"
 
+#include "EffekseerRendererLLGI.GpuParticles.h"
+#include "EffekseerRendererLLGI.GpuTimer.h"
 #include "EffekseerRendererLLGI.MaterialLoader.h"
 #include "EffekseerRendererLLGI.ModelRenderer.h"
 #include "EffekseerRendererLLGI.Shader.h"
-#include "EffekseerRendererLLGI.GpuParticles.h"
-#include "EffekseerRendererLLGI.GpuTimer.h"
 
 #include <EffekseerRendererCommon/EffekseerRenderer.RibbonRendererBase.h>
 #include <EffekseerRendererCommon/EffekseerRenderer.RingRendererBase.h>

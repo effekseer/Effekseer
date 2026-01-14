@@ -1,9 +1,9 @@
+#include "Noise/Effekseer.CurlNoise.h"
 #include <cassert>
 #include <chrono>
-#include "Noise/Effekseer.CurlNoise.h"
 
 #define ASSERT(e) assert(e)
-//#define ASSERT(e) if (!(e)) printf("assert failed.\n");
+// #define ASSERT(e) if (!(e)) printf("assert failed.\n");
 
 using namespace Effekseer;
 
@@ -20,7 +20,8 @@ void Test_Turbulence()
 	noise.Scale = 1;
 
 	Vec3f position{0.0f, 0.0f, 0.0f};
-	for (uint32_t iteration = 0; iteration < IterationCount; iteration++) {
+	for (uint32_t iteration = 0; iteration < IterationCount; iteration++)
+	{
 		position = noise.Get(position);
 		printf("- (%f, %f, %f)\n", position.GetX(), position.GetY(), position.GetZ());
 	}
@@ -35,7 +36,8 @@ void MeasurePerformance_Turbulence()
 	const uint32_t InstanceCount = 1000;
 
 	std::vector<std::unique_ptr<CurlNoise>> noise;
-	for (uint32_t instanceIndex = 0; instanceIndex < InstanceCount; instanceIndex++) {
+	for (uint32_t instanceIndex = 0; instanceIndex < InstanceCount; instanceIndex++)
+	{
 		noise.emplace_back(new CurlNoise(instanceIndex));
 		noise[instanceIndex]->Octave = 1.0f;
 		noise[instanceIndex]->Scale = 1.0f;
@@ -43,11 +45,14 @@ void MeasurePerformance_Turbulence()
 
 	printf("Turbulence Performance - Calls=%u, Instances:%u\n", CallCount, InstanceCount);
 
-	for (uint32_t iteration = 0; iteration < IterationCount; iteration++) {
+	for (uint32_t iteration = 0; iteration < IterationCount; iteration++)
+	{
 		auto t0 = high_resolution_clock::now();
-	
-		for (size_t calling = 0; calling < CallCount; calling++) {
-			for (size_t instanceIndex = 0; instanceIndex < InstanceCount; instanceIndex++) {
+
+		for (size_t calling = 0; calling < CallCount; calling++)
+		{
+			for (size_t instanceIndex = 0; instanceIndex < InstanceCount; instanceIndex++)
+			{
 				noise[instanceIndex]->Get(Vec3f(0.0f, 0.0f, 0.0f));
 			}
 		}
@@ -58,7 +63,7 @@ void MeasurePerformance_Turbulence()
 	}
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
 	Test_Turbulence();
 	MeasurePerformance_Turbulence();

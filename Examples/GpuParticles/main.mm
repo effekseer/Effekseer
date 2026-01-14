@@ -56,7 +56,8 @@ int main(int argc, char** argv)
 
 	size_t effectIndex = 0;
 	std::vector<Effekseer::EffectRef> effects;
-	for (size_t i = 0; i < sizeof(examplesFiles) / sizeof(const char16_t*); i++) {
+	for (size_t i = 0; i < sizeof(examplesFiles) / sizeof(const char16_t*); i++)
+	{
 		effects.push_back(Effekseer::Effect::Create(efkManager, examplesFiles[i]));
 	}
 

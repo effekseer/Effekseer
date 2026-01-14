@@ -6,12 +6,12 @@
 
 #if defined(EFK_SIMD_GEN)
 
-#include <cstring>
 #include <algorithm>
+#include <cstring>
 
 namespace Effekseer
 {
-	
+
 namespace SIMD
 {
 
@@ -22,7 +22,8 @@ struct Float4;
 */
 struct alignas(16) Int4
 {
-	union {
+	union
+	{
 		float vf[4];
 		int32_t vi[4];
 		uint32_t vu[4];
@@ -30,19 +31,58 @@ struct alignas(16) Int4
 
 	Int4() = default;
 	Int4(const Int4& rhs) = default;
-	Int4(int32_t x, int32_t y, int32_t z, int32_t w) { vi[0] = x; vi[1] = y; vi[2] = z; vi[3] = w; }
-	Int4(const std::array<int32_t, 4>& v) { *this = Load4(&v); }
-	Int4(int32_t i) { vi[0] = i; vi[1] = i; vi[2] = i; vi[3] = i; }
+	Int4(int32_t x, int32_t y, int32_t z, int32_t w)
+	{
+		vi[0] = x;
+		vi[1] = y;
+		vi[2] = z;
+		vi[3] = w;
+	}
+	Int4(const std::array<int32_t, 4>& v)
+	{
+		*this = Load4(&v);
+	}
+	Int4(int32_t i)
+	{
+		vi[0] = i;
+		vi[1] = i;
+		vi[2] = i;
+		vi[3] = i;
+	}
 
-	int32_t GetX() const { return vi[0]; }
-	int32_t GetY() const { return vi[1]; }
-	int32_t GetZ() const { return vi[2]; }
-	int32_t GetW() const { return vi[3]; }
+	int32_t GetX() const
+	{
+		return vi[0];
+	}
+	int32_t GetY() const
+	{
+		return vi[1];
+	}
+	int32_t GetZ() const
+	{
+		return vi[2];
+	}
+	int32_t GetW() const
+	{
+		return vi[3];
+	}
 
-	void SetX(int32_t o) { vi[0] = o; }
-	void SetY(int32_t o) { vi[1] = o; }
-	void SetZ(int32_t o) { vi[2] = o; }
-	void SetW(int32_t o) { vi[3] = o; }
+	void SetX(int32_t o)
+	{
+		vi[0] = o;
+	}
+	void SetY(int32_t o)
+	{
+		vi[1] = o;
+	}
+	void SetZ(int32_t o)
+	{
+		vi[2] = o;
+	}
+	void SetW(int32_t o)
+	{
+		vi[3] = o;
+	}
 
 	Float4 Convert4f() const;
 	Float4 Cast4f() const;
@@ -115,11 +155,11 @@ struct alignas(16) Int4
 	static Int4 MulAdd(const Int4& a, const Int4& b, const Int4& c);
 	static Int4 MulSub(const Int4& a, const Int4& b, const Int4& c);
 
-	template<size_t LANE>
+	template <size_t LANE>
 	static Int4 MulLane(const Int4& lhs, const Int4& rhs);
-	template<size_t LANE>
+	template <size_t LANE>
 	static Int4 MulAddLane(const Int4& a, const Int4& b, const Int4& c);
-	template<size_t LANE>
+	template <size_t LANE>
 	static Int4 MulSubLane(const Int4& a, const Int4& b, const Int4& c);
 	template <uint32_t indexX, uint32_t indexY, uint32_t indexZ, uint32_t indexW>
 	static Int4 Swizzle(const Int4& in);
@@ -361,7 +401,7 @@ inline Int4 Int4::MulAdd(const Int4& a, const Int4& b, const Int4& c)
 	for (size_t i = 0; i < 4; i++)
 	{
 		ret.vi[i] = a.vi[i] + b.vi[i] * c.vi[i];
-}
+	}
 	return ret;
 }
 
@@ -371,25 +411,25 @@ inline Int4 Int4::MulSub(const Int4& a, const Int4& b, const Int4& c)
 	for (size_t i = 0; i < 4; i++)
 	{
 		ret.vi[i] = a.vi[i] - b.vi[i] * c.vi[i];
-}
+	}
 	return ret;
 }
 
-template<size_t LANE>
+template <size_t LANE>
 Int4 Int4::MulLane(const Int4& lhs, const Int4& rhs)
 {
 	static_assert(LANE < 4, "LANE is must be less than 4.");
 	return lhs * rhs.vi[LANE];
 }
 
-template<size_t LANE>
+template <size_t LANE>
 Int4 Int4::MulAddLane(const Int4& a, const Int4& b, const Int4& c)
 {
 	static_assert(LANE < 4, "LANE is must be less than 4.");
 	return a + b * c.vi[LANE];
 }
 
-template<size_t LANE>
+template <size_t LANE>
 Int4 Int4::MulSubLane(const Int4& a, const Int4& b, const Int4& c)
 {
 	static_assert(LANE < 4, "LANE is must be less than 4.");

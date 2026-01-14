@@ -739,18 +739,15 @@ public:
 		Effekseer::Backend::DrawParameter drawParam;
 		for (int i = 0; i < buffers[pingpong].textures.size(); i++)
 		{
-			drawParam.SetTexture(i, buffers[pingpong].textures.at(i),
-				Effekseer::Backend::TextureWrapType::Clamp, Effekseer::Backend::TextureSamplingType::Nearest);
+			drawParam.SetTexture(i, buffers[pingpong].textures.at(i), Effekseer::Backend::TextureWrapType::Clamp, Effekseer::Backend::TextureSamplingType::Nearest);
 		}
 		int colorTableTextureIndex = buffers[pingpong].textures.size();
-		drawParam.SetTexture(colorTableTextureIndex, colorTableTexture,
-			Effekseer::Backend::TextureWrapType::Clamp, Effekseer::Backend::TextureSamplingType::Linear);
+		drawParam.SetTexture(colorTableTextureIndex, colorTableTexture, Effekseer::Backend::TextureWrapType::Clamp, Effekseer::Backend::TextureSamplingType::Linear);
 
 		if (trailMode)
 		{
 			int historiesTextureIndex = colorTableTextureIndex + 1;
-			drawParam.SetTexture(historiesTextureIndex, trailHistoriesTexture,
-				Effekseer::Backend::TextureWrapType::Clamp, Effekseer::Backend::TextureSamplingType::Linear);
+			drawParam.SetTexture(historiesTextureIndex, trailHistoriesTexture, Effekseer::Backend::TextureWrapType::Clamp, Effekseer::Backend::TextureSamplingType::Linear);
 
 			drawParam.VertexBufferPtr = trailVertexBuffer;
 			drawParam.IndexBufferPtr = trailRenderIndexBuffer;

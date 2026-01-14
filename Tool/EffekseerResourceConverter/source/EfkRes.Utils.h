@@ -1,10 +1,10 @@
 #pragma once
 
+#include "EfkRes.Model.h"
 #include <stdio.h>
 #include <string>
 #include <string_view>
 #include <type_traits>
-#include "EfkRes.Model.h"
 
 namespace efkres
 {
@@ -16,10 +16,7 @@ class BinaryReader
 public:
 	BinaryReader() = default;
 
-	~BinaryReader()
-	{
-		Close();
-	}
+	~BinaryReader() { Close(); }
 
 	bool Open(const char* filepath)
 	{
@@ -40,41 +37,27 @@ public:
 		}
 	}
 
-	void Read(void* data, size_t size)
-	{
-		fread(data, size, 1, m_fp);
-	}
+	void Read(void* data, size_t size) { fread(data, size, 1, m_fp); }
 
-	template <class T, std::enable_if_t<std::is_arithmetic_v<T>, std::nullptr_t> = nullptr>
-	T Read()
+	template <class T, std::enable_if_t<std::is_arithmetic_v<T>, std::nullptr_t> = nullptr> T Read()
 	{
 		T data{};
 		fread(&data, sizeof(data), 1, m_fp);
 		return data;
 	}
 
-	template <class T, size_t N>
-	std::array<T, N> Read()
+	template <class T, size_t N> std::array<T, N> Read()
 	{
 		std::array<T, N> data{};
 		fread(data.data(), sizeof(T) * N, 1, m_fp);
 		return data;
 	}
 
-	void SetPosition(size_t position)
-	{
-		fseek(m_fp, static_cast<long>(position), SEEK_SET);
-	}
+	void SetPosition(size_t position) { fseek(m_fp, static_cast<long>(position), SEEK_SET); }
 
-	void MovePosition(int offset)
-	{
-		fseek(m_fp, offset, SEEK_CUR);
-	}
+	void MovePosition(int offset) { fseek(m_fp, offset, SEEK_CUR); }
 
-	size_t GetPosition() const
-	{
-		return static_cast<size_t>(ftell(m_fp));
-	}
+	size_t GetPosition() const { return static_cast<size_t>(ftell(m_fp)); }
 };
 
 class BinaryWriter
@@ -84,10 +67,7 @@ class BinaryWriter
 public:
 	BinaryWriter() = default;
 
-	~BinaryWriter()
-	{
-		Close();
-	}
+	~BinaryWriter() { Close(); }
 
 	bool Open(const char* filepath)
 	{
@@ -108,32 +88,18 @@ public:
 		}
 	}
 
-	void Write(const void* data, size_t size)
-	{
-		fwrite(data, size, 1, m_fp);
-	}
+	void Write(const void* data, size_t size) { fwrite(data, size, 1, m_fp); }
 
-	template <class T, std::enable_if_t<std::is_arithmetic_v<T>, std::nullptr_t> = nullptr>
-	void Write(T data)
+	template <class T, std::enable_if_t<std::is_arithmetic_v<T>, std::nullptr_t> = nullptr> void Write(T data)
 	{
 		fwrite(&data, sizeof(data), 1, m_fp);
 	}
 
-	template <class T, size_t N>
-	void Write(const std::array<T, N>& data)
-	{
-		fwrite(data.data(), sizeof(T) * N, 1, m_fp);
-	}
+	template <class T, size_t N> void Write(const std::array<T, N>& data) { fwrite(data.data(), sizeof(T) * N, 1, m_fp); }
 
-	void SetPosition(size_t position)
-	{
-		fseek(m_fp, static_cast<long>(position), SEEK_SET);
-	}
+	void SetPosition(size_t position) { fseek(m_fp, static_cast<long>(position), SEEK_SET); }
 
-	size_t GetPosition() const
-	{
-		return static_cast<size_t>(ftell(m_fp));
-	}
+	size_t GetPosition() const { return static_cast<size_t>(ftell(m_fp)); }
 };
 
 inline void CalcTangentSpace(MeshVertex& v1, MeshVertex& v2, MeshVertex& v3)
@@ -185,4 +151,4 @@ inline void CalcTangentSpace(MeshVertex& v1, MeshVertex& v2, MeshVertex& v3)
 	v3.binormal = binormal;
 }
 
-}
+} // namespace efkres

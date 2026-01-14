@@ -32,8 +32,14 @@ public:
 
 	void Terminate();
 
-	Display*& GetDisplay() { return display_; }
-	::Window& GetWindow() { return window_; }
+	Display*& GetDisplay()
+	{
+		return display_;
+	}
+	::Window& GetWindow()
+	{
+		return window_;
+	}
 
 	bool OnNewFrame() override;
 
@@ -42,4 +48,4 @@ public:
 	Vec2I GetWindowSize() const override;
 };
 
-} // namespace LLGI
+} // namespace Utils

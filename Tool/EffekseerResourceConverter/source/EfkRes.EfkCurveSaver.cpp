@@ -1,6 +1,6 @@
-#include <algorithm>
-#include "EfkRes.Utils.h"
 #include "EfkRes.EfkCurveSaver.h"
+#include "EfkRes.Utils.h"
+#include <algorithm>
 
 namespace efkres
 {
@@ -44,4 +44,4 @@ bool EfkCurveSaver::Save(std::string_view filepath, const Curve& curve)
 	return true;
 }
 
-}
+} // namespace efkres

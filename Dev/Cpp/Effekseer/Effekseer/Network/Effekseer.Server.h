@@ -90,7 +90,7 @@ public:
 		\~Japanese	素材のルートパスを設定する。
 	*/
 	virtual void SetMaterialPath(const char16_t* materialPath) = 0;
-	
+
 	/**
 		@brief
 		\~English	Check the connection status

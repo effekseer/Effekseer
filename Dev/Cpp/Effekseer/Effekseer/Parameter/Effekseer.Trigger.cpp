@@ -26,7 +26,8 @@ void TriggerParameter::Load(uint8_t*& pos, int32_t version)
 	memcpy(&flags, pos, sizeof(uint8_t));
 	pos += sizeof(uint8_t);
 
-	auto loadValue = [&pos](TriggerValues& dst) {
+	auto loadValue = [&pos](TriggerValues& dst)
+	{
 		memcpy(&dst, pos, sizeof(TriggerValues));
 		pos += sizeof(TriggerValues);
 	};

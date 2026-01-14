@@ -310,7 +310,7 @@ public:
 		\~Japanese GPUパフォーマンスタイマーを設定する。
 	*/
 	virtual void SetGpuTimer(GpuTimerRef gpuTimer) = 0;
-	
+
 	/**
 		@brief
 		\~English get an GPU particle system

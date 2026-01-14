@@ -36,12 +36,11 @@ bool GpuParticleSystem::InitSystem(const Settings& settings)
 	shaders.CsParticleUpdate = graphics->CreateComputeShader(csUpdate.data(), (int32_t)csUpdate.size());
 
 	shaders.RsParticleRender = graphics->CreateShaderFromBinary(
-		vsRender.data(), (int32_t)vsRender.size(),
-		psRender.data(), (int32_t)psRender.size());
+		vsRender.data(), (int32_t)vsRender.size(), psRender.data(), (int32_t)psRender.size());
 
 	SetShaders(shaders);
 
 	return true;
 }
 
-}
+} // namespace EffekseerRendererLLGI

@@ -42,7 +42,10 @@ bool WindowLinux::Initialize(const char* title, const Vec2I& windowSize)
 	return true;
 }
 
-WindowLinux::~WindowLinux() { Terminate(); }
+WindowLinux::~WindowLinux()
+{
+	Terminate();
+}
 
 bool WindowLinux::DoEvent()
 {
@@ -87,7 +90,10 @@ void WindowLinux::Terminate()
 	XCloseDisplay(display_);
 }
 
-bool WindowLinux::OnNewFrame() { return DoEvent(); }
+bool WindowLinux::OnNewFrame()
+{
+	return DoEvent();
+}
 
 void* WindowLinux::GetNativePtr(int32_t index)
 {
@@ -98,6 +104,9 @@ void* WindowLinux::GetNativePtr(int32_t index)
 	return nullptr;
 }
 
-Vec2I WindowLinux::GetWindowSize() const { return windowSize_; }
+Vec2I WindowLinux::GetWindowSize() const
+{
+	return windowSize_;
+}
 
-} // namespace LLGI
+} // namespace Utils

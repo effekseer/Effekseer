@@ -108,7 +108,7 @@ int main(int argc, char** argv)
 		// Begin to rendering effects
 		// エフェクトの描画開始処理を行う。
 		efkRenderer->BeginRendering();
-		
+
 		// Render effects
 		// エフェクトの描画を行う。
 		Effekseer::Manager::DrawParameter drawParameter;

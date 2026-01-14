@@ -9,7 +9,7 @@ namespace Effekseer
 {
 
 /**
-	@brief	
+	@brief
 	\~English	Default file loader
 	\~Japanese	標準のファイル読み込みクラス
 */

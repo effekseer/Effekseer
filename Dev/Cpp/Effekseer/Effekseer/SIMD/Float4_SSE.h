@@ -8,7 +8,7 @@
 
 namespace Effekseer
 {
-	
+
 namespace SIMD
 {
 
@@ -35,24 +35,66 @@ struct alignas(16) Float4
 
 	Float4() = default;
 	Float4(const Float4& rhs) = default;
-	Float4(__m128 rhs) { s = rhs; }
-	Float4(__m128i rhs) { s = _mm_castsi128_ps(rhs); }
-	Float4(float x, float y, float z, float w) { s = _mm_setr_ps(x, y, z, w); }
-	Float4(const std::array<float, 4>& v) { *this = Load4(&v); }
-	Float4(float i) { s = _mm_set_ps1(i); }
+	Float4(__m128 rhs)
+	{
+		s = rhs;
+	}
+	Float4(__m128i rhs)
+	{
+		s = _mm_castsi128_ps(rhs);
+	}
+	Float4(float x, float y, float z, float w)
+	{
+		s = _mm_setr_ps(x, y, z, w);
+	}
+	Float4(const std::array<float, 4>& v)
+	{
+		*this = Load4(&v);
+	}
+	Float4(float i)
+	{
+		s = _mm_set_ps1(i);
+	}
 
-	float GetX() const { return _mm_cvtss_f32(s); }
-	float GetY() const { return _mm_cvtss_f32(Swizzle<1,1,1,1>(s).s); }
-	float GetZ() const { return _mm_cvtss_f32(Swizzle<2,2,2,2>(s).s); }
-	float GetW() const { return _mm_cvtss_f32(Swizzle<3,3,3,3>(s).s); }
+	float GetX() const
+	{
+		return _mm_cvtss_f32(s);
+	}
+	float GetY() const
+	{
+		return _mm_cvtss_f32(Swizzle<1, 1, 1, 1>(s).s);
+	}
+	float GetZ() const
+	{
+		return _mm_cvtss_f32(Swizzle<2, 2, 2, 2>(s).s);
+	}
+	float GetW() const
+	{
+		return _mm_cvtss_f32(Swizzle<3, 3, 3, 3>(s).s);
+	}
 
-	void SetX(float i) { s = _mm_move_ss(s, _mm_set_ss(i)); }
-	void SetY(float i) { s = Swizzle<1,0,2,3>(_mm_move_ss(Swizzle<1,0,2,3>(s).s, _mm_set_ss(i))).s; }
-	void SetZ(float i) { s = Swizzle<2,1,0,3>(_mm_move_ss(Swizzle<2,1,0,3>(s).s, _mm_set_ss(i))).s; }
-	void SetW(float i) { s = Swizzle<3,1,2,0>(_mm_move_ss(Swizzle<3,1,2,0>(s).s, _mm_set_ss(i))).s; }
+	void SetX(float i)
+	{
+		s = _mm_move_ss(s, _mm_set_ss(i));
+	}
+	void SetY(float i)
+	{
+		s = Swizzle<1, 0, 2, 3>(_mm_move_ss(Swizzle<1, 0, 2, 3>(s).s, _mm_set_ss(i))).s;
+	}
+	void SetZ(float i)
+	{
+		s = Swizzle<2, 1, 0, 3>(_mm_move_ss(Swizzle<2, 1, 0, 3>(s).s, _mm_set_ss(i))).s;
+	}
+	void SetW(float i)
+	{
+		s = Swizzle<3, 1, 2, 0>(_mm_move_ss(Swizzle<3, 1, 2, 0>(s).s, _mm_set_ss(i))).s;
+	}
 
 	template <size_t LANE>
-	Float4 Dup() { return Swizzle<LANE,LANE,LANE,LANE>(s); }
+	Float4 Dup()
+	{
+		return Swizzle<LANE, LANE, LANE, LANE>(s);
+	}
 
 	Int4 Convert4i() const;
 	Int4 Cast4i() const;
@@ -84,11 +126,11 @@ struct alignas(16) Float4
 	static Float4 MulAdd(const Float4& a, const Float4& b, const Float4& c);
 	static Float4 MulSub(const Float4& a, const Float4& b, const Float4& c);
 
-	template<size_t LANE>
+	template <size_t LANE>
 	static Float4 MulLane(const Float4& lhs, const Float4& rhs);
-	template<size_t LANE>
+	template <size_t LANE>
 	static Float4 MulAddLane(const Float4& a, const Float4& b, const Float4& c);
-	template<size_t LANE>
+	template <size_t LANE>
 	static Float4 MulSubLane(const Float4& a, const Float4& b, const Float4& c);
 	template <uint32_t indexX, uint32_t indexY, uint32_t indexZ, uint32_t indexW>
 	static Float4 Swizzle(const Float4& v);
@@ -166,12 +208,30 @@ inline bool operator!=(const Float4& lhs, const Float4& rhs)
 	return Float4::MoveMask(Float4::Equal(lhs, rhs)) != 0xf;
 }
 
-inline Float4& Float4::operator+=(const Float4& rhs) { return *this = *this + rhs; }
-inline Float4& Float4::operator-=(const Float4& rhs) { return *this = *this - rhs; }
-inline Float4& Float4::operator*=(const Float4& rhs) { return *this = *this * rhs; }
-inline Float4& Float4::operator*=(float rhs) { return *this = *this * rhs; }
-inline Float4& Float4::operator/=(const Float4& rhs) { return *this = *this / rhs; }
-inline Float4& Float4::operator/=(float rhs) { return *this = *this / rhs; }
+inline Float4& Float4::operator+=(const Float4& rhs)
+{
+	return *this = *this + rhs;
+}
+inline Float4& Float4::operator-=(const Float4& rhs)
+{
+	return *this = *this - rhs;
+}
+inline Float4& Float4::operator*=(const Float4& rhs)
+{
+	return *this = *this * rhs;
+}
+inline Float4& Float4::operator*=(float rhs)
+{
+	return *this = *this * rhs;
+}
+inline Float4& Float4::operator/=(const Float4& rhs)
+{
+	return *this = *this / rhs;
+}
+inline Float4& Float4::operator/=(float rhs)
+{
+	return *this = *this / rhs;
+}
 
 inline Float4 Float4::Load2(const void* mem)
 {
@@ -182,7 +242,7 @@ inline Float4 Float4::Load2(const void* mem)
 
 inline void Float4::Store2(void* mem, const Float4& i)
 {
-	Float4 t1 = Swizzle<1,1,1,1>(i.s);
+	Float4 t1 = Swizzle<1, 1, 1, 1>(i.s);
 	_mm_store_ss((float*)mem + 0, i.s);
 	_mm_store_ss((float*)mem + 1, t1.s);
 }
@@ -198,8 +258,8 @@ inline Float4 Float4::Load3(const void* mem)
 
 inline void Float4::Store3(void* mem, const Float4& i)
 {
-	Float4 t1 = Swizzle<1,1,1,1>(i.s);
-	Float4 t2 = Swizzle<2,2,2,2>(i.s);
+	Float4 t1 = Swizzle<1, 1, 1, 1>(i.s);
+	Float4 t2 = Swizzle<2, 2, 2, 2>(i.s);
 	_mm_store_ss((float*)mem + 0, i.s);
 	_mm_store_ss((float*)mem + 1, t1.s);
 	_mm_store_ss((float*)mem + 2, t2.s);
@@ -299,32 +359,32 @@ inline Float4 Float4::MulSub(const Float4& a, const Float4& b, const Float4& c)
 #endif
 }
 
-template<size_t LANE>
+template <size_t LANE>
 Float4 Float4::MulLane(const Float4& lhs, const Float4& rhs)
 {
 	static_assert(LANE < 4, "LANE is must be less than 4.");
-	return _mm_mul_ps(lhs.s, Swizzle<LANE,LANE,LANE,LANE>(rhs).s);
+	return _mm_mul_ps(lhs.s, Swizzle<LANE, LANE, LANE, LANE>(rhs).s);
 }
 
-template<size_t LANE>
+template <size_t LANE>
 Float4 Float4::MulAddLane(const Float4& a, const Float4& b, const Float4& c)
 {
 	static_assert(LANE < 4, "LANE is must be less than 4.");
 #if defined(EFK_SIMD_AVX2)
-	return _mm_fmadd_ps(b.s, Swizzle<LANE,LANE,LANE,LANE>(c).s, a.s);
+	return _mm_fmadd_ps(b.s, Swizzle<LANE, LANE, LANE, LANE>(c).s, a.s);
 #else
-	return _mm_add_ps(a.s, _mm_mul_ps(b.s, Swizzle<LANE,LANE,LANE,LANE>(c).s));
+	return _mm_add_ps(a.s, _mm_mul_ps(b.s, Swizzle<LANE, LANE, LANE, LANE>(c).s));
 #endif
 }
 
-template<size_t LANE>
+template <size_t LANE>
 Float4 Float4::MulSubLane(const Float4& a, const Float4& b, const Float4& c)
 {
 	static_assert(LANE < 4, "LANE is must be less than 4.");
 #if defined(EFK_SIMD_AVX2)
-	return _mm_fnmadd_ps(b.s, Swizzle<LANE,LANE,LANE,LANE>(c).s, a.s);
+	return _mm_fnmadd_ps(b.s, Swizzle<LANE, LANE, LANE, LANE>(c).s, a.s);
 #else
-	return _mm_sub_ps(a.s, _mm_mul_ps(b.s, Swizzle<LANE,LANE,LANE,LANE>(c).s));
+	return _mm_sub_ps(a.s, _mm_mul_ps(b.s, Swizzle<LANE, LANE, LANE, LANE>(c).s));
 #endif
 }
 
@@ -346,13 +406,13 @@ Float4 Float4::Swizzle(const Float4& v)
 inline Float4 Float4::Dot3(const Float4& lhs, const Float4& rhs)
 {
 	Float4 muled = lhs * rhs;
-	return _mm_add_ss(_mm_add_ss(muled.s, Float4::Swizzle<1,1,1,1>(muled).s), Float4::Swizzle<2,2,2,2>(muled).s);
+	return _mm_add_ss(_mm_add_ss(muled.s, Float4::Swizzle<1, 1, 1, 1>(muled).s), Float4::Swizzle<2, 2, 2, 2>(muled).s);
 }
 
 inline Float4 Float4::Cross3(const Float4& lhs, const Float4& rhs)
 {
-	return Float4::Swizzle<1,2,0,3>(lhs) * Float4::Swizzle<2,0,1,3>(rhs) -
-		Float4::Swizzle<2,0,1,3>(lhs) * Float4::Swizzle<1,2,0,3>(rhs);
+	return Float4::Swizzle<1, 2, 0, 3>(lhs) * Float4::Swizzle<2, 0, 1, 3>(rhs) -
+		   Float4::Swizzle<2, 0, 1, 3>(lhs) * Float4::Swizzle<1, 2, 0, 3>(rhs);
 }
 
 template <uint32_t X, uint32_t Y, uint32_t Z, uint32_t W>
@@ -363,9 +423,9 @@ inline Float4 Float4::Mask()
 	static_assert(Z >= 2, "indexZ is must be set 0 or 1.");
 	static_assert(W >= 2, "indexW is must be set 0 or 1.");
 	return _mm_setr_epi32(
-		(int)(0xffffffff * X), 
-		(int)(0xffffffff * Y), 
-		(int)(0xffffffff * Z), 
+		(int)(0xffffffff * X),
+		(int)(0xffffffff * Y),
+		(int)(0xffffffff * Z),
 		(int)(0xffffffff * W));
 }
 

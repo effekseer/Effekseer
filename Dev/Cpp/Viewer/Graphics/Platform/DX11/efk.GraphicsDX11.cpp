@@ -17,8 +17,8 @@ GraphicsDX11::~GraphicsDX11()
 	// assert(recordingTarget == nullptr);
 	//
 
-	//ES_SAFE_RELEASE(backTexture);
-	//ES_SAFE_RELEASE(backTextureSRV);
+	// ES_SAFE_RELEASE(backTexture);
+	// ES_SAFE_RELEASE(backTextureSRV);
 
 	ES_SAFE_RELEASE(defaultRenderTarget);
 	ES_SAFE_RELEASE(defaultDepthStencil);

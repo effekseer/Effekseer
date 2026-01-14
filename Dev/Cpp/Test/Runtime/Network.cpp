@@ -1,7 +1,7 @@
-#include <algorithm>
 #include "../../Effekseer/Effekseer.h"
 #include "../../Effekseer/Effekseer/Network/Effekseer.Session.h"
 #include "../TestHelper.h"
+#include <algorithm>
 
 namespace EffekseerRenderer
 {
@@ -17,7 +17,7 @@ void NetworkTest_Session()
 	Socket listenSocket;
 	listenSocket.Listen(PORT, 1);
 	EXPECT_TRUE(listenSocket.IsValid());
-	
+
 	Socket clientSocket;
 	clientSocket.Connect("127.0.0.1", PORT);
 	EXPECT_TRUE(clientSocket.IsValid());
@@ -34,26 +34,26 @@ void NetworkTest_Session()
 	EXPECT_TRUE(serverSession.IsActive());
 
 	bool received = false;
-	serverSession.OnReceived(10, [&](const Session::Message& msg){
+	serverSession.OnReceived(10, [&](const Session::Message& msg)
+							 {
 		received = true;
 		EXPECT_TRUE(msg.payload.size == 5);
-		EXPECT_TRUE(std::equal(msg.payload.data, msg.payload.data + msg.payload.size, std::vector<uint8_t>{1, 2, 3, 4, 5}.begin()));
-	});
+		EXPECT_TRUE(std::equal(msg.payload.data, msg.payload.data + msg.payload.size, std::vector<uint8_t>{1, 2, 3, 4, 5}.begin())); });
 	clientSession.Send(10, std::vector<uint8_t>{1, 2, 3, 4, 5});
 
 	bool requested = false, respond = false;
-	serverSession.OnRequested(10, [&](const Session::Request& req){
+	serverSession.OnRequested(10, [&](const Session::Request& req)
+							  {
 		requested = true;
 		EXPECT_TRUE(req.payload.size == 5);
 		EXPECT_TRUE(std::equal(req.payload.data, req.payload.data + req.payload.size, std::vector<uint8_t>{1, 2, 3, 4, 5}.begin()));
-		serverSession.SendResponse(req.responseID, 300, std::vector<uint8_t>{6, 7, 8, 9, 10});
-	});
-	clientSession.SendRequest(10, std::vector<uint8_t>{1, 2, 3, 4, 5}, [&](const Session::Response& res){
+		serverSession.SendResponse(req.responseID, 300, std::vector<uint8_t>{6, 7, 8, 9, 10}); });
+	clientSession.SendRequest(10, std::vector<uint8_t>{1, 2, 3, 4, 5}, [&](const Session::Response& res)
+							  {
 		respond = true;
 		EXPECT_TRUE(res.code == 300);
 		EXPECT_TRUE(res.payload.size == 5);
-		EXPECT_TRUE(std::equal(res.payload.data, res.payload.data + res.payload.size, std::vector<uint8_t>{6, 7, 8, 9, 10}.begin()));
-	});
+		EXPECT_TRUE(std::equal(res.payload.data, res.payload.data + res.payload.size, std::vector<uint8_t>{6, 7, 8, 9, 10}.begin())); });
 
 	for (int i = 0; i < 10; i++)
 	{
@@ -107,4 +107,5 @@ void NetworkTest()
 	NetworkTest_Session();
 	NetworkTest_ClientAndServer();
 }
-TestRegister Runtime_NetworkTest("Runtime.Network", []() -> void { NetworkTest(); });
+TestRegister Runtime_NetworkTest("Runtime.Network", []() -> void
+								 { NetworkTest(); });

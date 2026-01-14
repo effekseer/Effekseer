@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Effekseer.h>
 #include "ProfileSample.h"
+#include <Effekseer.h>
 
 namespace Effekseer::Tool
 {

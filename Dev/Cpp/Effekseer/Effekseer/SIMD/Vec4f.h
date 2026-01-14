@@ -2,14 +2,14 @@
 #ifndef __EFFEKSEER_SIMD_VEC4F_H__
 #define __EFFEKSEER_SIMD_VEC4F_H__
 
-#include "Float4.h"
 #include "../Effekseer.Math.h"
+#include "Float4.h"
 
 namespace Effekseer
 {
 
 struct Color;
-	
+
 namespace SIMD
 {
 
@@ -19,19 +19,49 @@ struct Vec4f
 
 	Vec4f() = default;
 	Vec4f(const Vec4f& vec) = default;
-	Vec4f(const Float4& vec): s(vec) {}
-	Vec4f(const std::array<float, 4>& vec): s(vec[0], vec[1], vec[2], vec[3]) {}
+	Vec4f(const Float4& vec)
+		: s(vec)
+	{
+	}
+	Vec4f(const std::array<float, 4>& vec)
+		: s(vec[0], vec[1], vec[2], vec[3])
+	{
+	}
 	Vec4f(const Color& vec);
 
-	float GetX() const { return s.GetX(); }
-	float GetY() const { return s.GetY(); }
-	float GetZ() const { return s.GetZ(); }
-	float GetW() const { return s.GetW(); }
+	float GetX() const
+	{
+		return s.GetX();
+	}
+	float GetY() const
+	{
+		return s.GetY();
+	}
+	float GetZ() const
+	{
+		return s.GetZ();
+	}
+	float GetW() const
+	{
+		return s.GetW();
+	}
 
-	void SetX(float o) { s.SetX(o); }
-	void SetY(float o) { s.SetY(o); }
-	void SetZ(float o) { s.SetZ(o); }
-	void SetW(float o) { s.SetW(o); }
+	void SetX(float o)
+	{
+		s.SetX(o);
+	}
+	void SetY(float o)
+	{
+		s.SetY(o);
+	}
+	void SetZ(float o)
+	{
+		s.SetZ(o);
+	}
+	void SetW(float o)
+	{
+		s.SetW(o);
+	}
 
 	Vec4f& operator+=(const Vec4f& o)
 	{
@@ -79,17 +109,35 @@ struct Vec4f
 	static Vec4f Transform(const Vec4f& lhs, const Mat44f& rhs);
 };
 
-inline Vec4f operator+(const Vec4f& lhs, const Vec4f& rhs) { return Vec4f{lhs.s + rhs.s}; }
+inline Vec4f operator+(const Vec4f& lhs, const Vec4f& rhs)
+{
+	return Vec4f{lhs.s + rhs.s};
+}
 
-inline Vec4f operator-(const Vec4f& lhs, const Vec4f& rhs) { return Vec4f{lhs.s - rhs.s}; }
+inline Vec4f operator-(const Vec4f& lhs, const Vec4f& rhs)
+{
+	return Vec4f{lhs.s - rhs.s};
+}
 
-inline Vec4f operator*(const Vec4f& lhs, const Vec4f& rhs) { return Vec4f{lhs.s * rhs.s}; }
+inline Vec4f operator*(const Vec4f& lhs, const Vec4f& rhs)
+{
+	return Vec4f{lhs.s * rhs.s};
+}
 
-inline Vec4f operator*(const Vec4f& lhs, float rhs) { return Vec4f{lhs.s * rhs}; }
+inline Vec4f operator*(const Vec4f& lhs, float rhs)
+{
+	return Vec4f{lhs.s * rhs};
+}
 
-inline Vec4f operator/(const Vec4f& lhs, const Vec4f& rhs) { return Vec4f{lhs.s / rhs.s}; }
+inline Vec4f operator/(const Vec4f& lhs, const Vec4f& rhs)
+{
+	return Vec4f{lhs.s / rhs.s};
+}
 
-inline Vec4f operator/(const Vec4f& lhs, float rhs) { return Vec4f{lhs.s / rhs}; }
+inline Vec4f operator/(const Vec4f& lhs, float rhs)
+{
+	return Vec4f{lhs.s / rhs};
+}
 
 inline bool operator==(const Vec4f& lhs, const Vec4f& rhs)
 {

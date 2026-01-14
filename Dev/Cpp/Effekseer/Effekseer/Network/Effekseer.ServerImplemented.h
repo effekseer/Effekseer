@@ -7,8 +7,8 @@
 #include "../Effekseer.Base.h"
 #include "Effekseer.Server.h"
 
-#include "Effekseer.Socket.h"
 #include "Effekseer.Session.h"
+#include "Effekseer.Socket.h"
 
 #include <string>
 

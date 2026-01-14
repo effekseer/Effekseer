@@ -4,9 +4,9 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include <unordered_map>
 #include "EffekseerRendererGL.DeviceObject.h"
 #include "EffekseerRendererGL.RendererImplemented.h"
+#include <unordered_map>
 
 //-----------------------------------------------------------------------------------
 //
@@ -52,8 +52,9 @@ private:
 		int32_t result = 0;
 	};
 	std::unordered_map<const void*, TimeData> timeData_;
-	
-	enum class State : uint8_t {
+
+	enum class State : uint8_t
+	{
 		NoResult,
 		DuringStage,
 		AfterStage,

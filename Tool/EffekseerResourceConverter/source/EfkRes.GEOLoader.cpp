@@ -1,11 +1,11 @@
-#include <fstream>
-#include <string>
-#include <vector>
-#include <map>
-#include <variant>
-#include <json.hpp>
-#include "EfkRes.Utils.h"
 #include "EfkRes.GEOLoader.h"
+#include "EfkRes.Utils.h"
+#include <fstream>
+#include <json.hpp>
+#include <map>
+#include <string>
+#include <variant>
+#include <vector>
 
 namespace efkres
 {
@@ -18,30 +18,30 @@ class BgeoParser
 {
 	static inline constexpr uint8_t JID_MAGIC = 0x7f;
 	static inline constexpr uint32_t JID_BINARY_MAGIC = 0x624a534e;
-	
-	static inline constexpr uint8_t JID_NULL			= 0x00;
-	static inline constexpr uint8_t JID_MAP_BEGIN		= 0x7b;
-	static inline constexpr uint8_t JID_MAP_END			= 0x7d;
-	static inline constexpr uint8_t JID_ARRAY_BEGIN		= 0x5b;
-	static inline constexpr uint8_t JID_ARRAY_END		= 0x5d;
-	static inline constexpr uint8_t JID_BOOL			= 0x10;
-	static inline constexpr uint8_t JID_INT8			= 0x11;
-	static inline constexpr uint8_t JID_INT16			= 0x12;
-	static inline constexpr uint8_t JID_INT32			= 0x13;
-	static inline constexpr uint8_t JID_INT64			= 0x14;
-	static inline constexpr uint8_t JID_UINT8			= 0x21;
-	static inline constexpr uint8_t JID_UINT16			= 0x22;
-	static inline constexpr uint8_t JID_REAL16			= 0x18;
-	static inline constexpr uint8_t JID_REAL32			= 0x19;
-	static inline constexpr uint8_t JID_REAL64			= 0x1a;
-	static inline constexpr uint8_t JID_STRING			= 0x27;
-	static inline constexpr uint8_t JID_FALSE			= 0x30;
-	static inline constexpr uint8_t JID_TRUE			= 0x31;
-	static inline constexpr uint8_t JID_TOKENDEF		= 0x2b;
-	static inline constexpr uint8_t JID_TOKENREF		= 0x26;
-	static inline constexpr uint8_t JID_TOKENUNDEF		= 0x2d;
-	static inline constexpr uint8_t JID_UNIFORM_ARRAY   = 0x40;
-	static inline constexpr uint8_t JID_KEY_SEPARATOR   = 0x3a;
+
+	static inline constexpr uint8_t JID_NULL = 0x00;
+	static inline constexpr uint8_t JID_MAP_BEGIN = 0x7b;
+	static inline constexpr uint8_t JID_MAP_END = 0x7d;
+	static inline constexpr uint8_t JID_ARRAY_BEGIN = 0x5b;
+	static inline constexpr uint8_t JID_ARRAY_END = 0x5d;
+	static inline constexpr uint8_t JID_BOOL = 0x10;
+	static inline constexpr uint8_t JID_INT8 = 0x11;
+	static inline constexpr uint8_t JID_INT16 = 0x12;
+	static inline constexpr uint8_t JID_INT32 = 0x13;
+	static inline constexpr uint8_t JID_INT64 = 0x14;
+	static inline constexpr uint8_t JID_UINT8 = 0x21;
+	static inline constexpr uint8_t JID_UINT16 = 0x22;
+	static inline constexpr uint8_t JID_REAL16 = 0x18;
+	static inline constexpr uint8_t JID_REAL32 = 0x19;
+	static inline constexpr uint8_t JID_REAL64 = 0x1a;
+	static inline constexpr uint8_t JID_STRING = 0x27;
+	static inline constexpr uint8_t JID_FALSE = 0x30;
+	static inline constexpr uint8_t JID_TRUE = 0x31;
+	static inline constexpr uint8_t JID_TOKENDEF = 0x2b;
+	static inline constexpr uint8_t JID_TOKENREF = 0x26;
+	static inline constexpr uint8_t JID_TOKENUNDEF = 0x2d;
+	static inline constexpr uint8_t JID_UNIFORM_ARRAY = 0x40;
+	static inline constexpr uint8_t JID_KEY_SEPARATOR = 0x3a;
 	static inline constexpr uint8_t JID_VALUE_SEPARATOR = 0x2c;
 
 private:
@@ -101,7 +101,7 @@ private:
 			return m_reader.Read<uint8_t>();
 		case JID_UINT16:
 			return m_reader.Read<uint16_t>();
-		//case JID_REAL16:
+		// case JID_REAL16:
 		//	return m_reader.Read<float16_t>();
 		case JID_REAL32:
 			return m_reader.Read<float>();
@@ -258,16 +258,8 @@ public:
 	Values values;
 
 public:
-	template <class T>
-	bool HasValueType()
-	{
-		return std::holds_alternative<std::vector<T>>(values);
-	}
-	template <class T>
-	T GetValue(size_t index)
-	{
-		return std::get<std::vector<T>>(values)[index];
-	}
+	template <class T> bool HasValueType() { return std::holds_alternative<std::vector<T>>(values); }
+	template <class T> T GetValue(size_t index) { return std::get<std::vector<T>>(values)[index]; }
 };
 
 class GeoAttributeList
@@ -320,7 +312,7 @@ public:
 					{
 						for (const json& v : tuples)
 						{
-							values.push_back(Vec2{ v[0], v[1] });
+							values.push_back(Vec2{v[0], v[1]});
 						}
 					}
 					else if (rawpagedata.is_array())
@@ -339,7 +331,7 @@ public:
 					{
 						for (const json& v : tuples)
 						{
-							values.push_back(Vec3{ v[0], v[1], v[2] });
+							values.push_back(Vec3{v[0], v[1], v[2]});
 						}
 					}
 					else if (rawpagedata.is_array())
@@ -358,7 +350,7 @@ public:
 					{
 						for (const json& v : tuples)
 						{
-							values.push_back(Vec4{ v[0], v[1], v[2], v[3] });
+							values.push_back(Vec4{v[0], v[1], v[2], v[3]});
 						}
 					}
 					else if (rawpagedata.is_array())
@@ -394,7 +386,7 @@ public:
 		{
 			pointAttrs.ParseJson(ParseGeoAttrs(*it));
 		}
-		
+
 		for (int32_t index : data["topology"]["pointref"]["indices"])
 		{
 			vertPointRef.push_back(index);
@@ -411,9 +403,11 @@ public:
 
 		auto& primData = data["primitives"][0][1];
 		json startvertex = FindOrNull(primData, "startvertex");
-		if (startvertex.is_null()) startvertex = FindOrNull(primData, "s_v");
+		if (startvertex.is_null())
+			startvertex = FindOrNull(primData, "s_v");
 		json nverticesRules = FindOrNull(primData, "nvertices_rle");
-		if (nverticesRules.is_null()) nverticesRules = FindOrNull(primData, "r_v");
+		if (nverticesRules.is_null())
+			nverticesRules = FindOrNull(primData, "r_v");
 
 		int32_t offset = startvertex;
 		for (size_t nvIndex = 0; nvIndex < nverticesRules.size(); nvIndex += 2)
@@ -427,6 +421,7 @@ public:
 			}
 		}
 	}
+
 private:
 	std::map<std::string, json> ParseGeoDict(const json& data)
 	{
@@ -501,14 +496,14 @@ private:
 	}
 };
 
-}
+} // namespace
 
 std::optional<Model> GEOLoader::LoadModel(std::string_view filepath)
 {
 	std::string_view fileExt = filepath.substr(filepath.find_last_of('.'));
 
 	json jsonData;
-	
+
 	if (fileExt == ".bgeo")
 	{
 		BgeoParser parser;
@@ -531,7 +526,7 @@ std::optional<Model> GEOLoader::LoadModel(std::string_view filepath)
 	GeoDocument doc;
 	doc.ParseJson(jsonData);
 
-	std::vector<std::string> vertexFormat = { "position" };
+	std::vector<std::string> vertexFormat = {"position"};
 	auto pointAttr = doc.pointAttrs.Get("P");
 	if (!pointAttr)
 	{
@@ -588,7 +583,7 @@ std::optional<Model> GEOLoader::LoadModel(std::string_view filepath)
 			if (vertColorAttr)
 			{
 				Vec3 color = vertColorAttr->GetValue<Vec3>(vertIndex);
-				vertex.color = { color.x, color.y, color.z, 1.0f };
+				vertex.color = {color.x, color.y, color.z, 1.0f};
 				if (vertAlphaAttr)
 				{
 					vertex.color.w = vertAlphaAttr->GetValue<float>(vertIndex);
@@ -597,7 +592,7 @@ std::optional<Model> GEOLoader::LoadModel(std::string_view filepath)
 			else if (pointColorAttr)
 			{
 				Vec3 color = pointColorAttr->GetValue<Vec3>(pointIndex);
-				vertex.color = { color.x, color.y, color.z, 1.0f };
+				vertex.color = {color.x, color.y, color.z, 1.0f};
 				if (pointAlphaAttr)
 				{
 					vertex.color.w = pointAlphaAttr->GetValue<float>(pointIndex);
@@ -606,7 +601,7 @@ std::optional<Model> GEOLoader::LoadModel(std::string_view filepath)
 			else if (primColorAttr)
 			{
 				const Vec3& color = primColorAttr->GetValue<Vec3>(primIndex);
-				vertex.color = { color.x, color.y, color.z, 1.0f };
+				vertex.color = {color.x, color.y, color.z, 1.0f};
 				if (primAlphaAttr)
 				{
 					vertex.color.w = primAlphaAttr->GetValue<float>(primIndex);
@@ -614,7 +609,7 @@ std::optional<Model> GEOLoader::LoadModel(std::string_view filepath)
 			}
 			else
 			{
-				vertex.color = { 1.0f, 1.0f, 1.0f, 1.0f };
+				vertex.color = {1.0f, 1.0f, 1.0f, 1.0f};
 			}
 
 			if (uv1Attr)
@@ -647,22 +642,22 @@ std::optional<Model> GEOLoader::LoadModel(std::string_view filepath)
 
 		if (vertCount == 3)
 		{
-			mesh.faces.push_back(MeshFace{ vertOffset, vertOffset + 1, vertOffset + 2 });
+			mesh.faces.push_back(MeshFace{vertOffset, vertOffset + 1, vertOffset + 2});
 		}
 		else if (vertCount == 4)
 		{
-			mesh.faces.push_back(MeshFace{ vertOffset, vertOffset + 1, vertOffset + 2 });
-			mesh.faces.push_back(MeshFace{ vertOffset, vertOffset + 2, vertOffset + 3 });
+			mesh.faces.push_back(MeshFace{vertOffset, vertOffset + 1, vertOffset + 2});
+			mesh.faces.push_back(MeshFace{vertOffset, vertOffset + 2, vertOffset + 3});
 		}
 	}
-	
-	model.nodes.push_back(Node{ &mesh, Mat43::Identity() });
 
-	//print(f"vertex format: {vertex_format}")
-	//print(f"vertex count: {len(vertices)}")
-	//print(f"triangle count: {len(triangles)}");
+	model.nodes.push_back(Node{&mesh, Mat43::Identity()});
+
+	// print(f"vertex format: {vertex_format}")
+	// print(f"vertex count: {len(vertices)}")
+	// print(f"triangle count: {len(triangles)}");
 
 	return std::move(model);
 }
 
-}
+} // namespace efkres

@@ -1,10 +1,10 @@
 ﻿// Choose from the following graphics APIs you want to enable
 // グラフィックスAPIを下記から選んで有効にしてください
 #define DEVICE_OPENGL
-//#define DEVICE_DX9
-//#define DEVICE_DX11
-//#define DEVICE_DX12
-//#define DEVICE_VULKAN
+// #define DEVICE_DX9
+// #define DEVICE_DX11
+// #define DEVICE_DX12
+// #define DEVICE_VULKAN
 
 #include <stdio.h>
 #include <string>
@@ -98,7 +98,7 @@ int main(int argc, char** argv)
 			{
 				efkManager->StopEffect(efkHandle);
 			}
-			
+
 			// Play an effect
 			// エフェクトの再生
 			efkHandle = efkManager->Play(effect, 0, 0, 0);

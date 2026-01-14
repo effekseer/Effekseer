@@ -2,9 +2,9 @@
 #ifndef __EFFEKSEER_SIMD_BASE_H__
 #define __EFFEKSEER_SIMD_BASE_H__
 
-#include <cstdint>
-#include <cmath>
 #include "../Effekseer.Math.h"
+#include <cmath>
+#include <cstdint>
 
 #if defined(__ARM_NEON__) || defined(__ARM_NEON)
 // ARMv7/ARM64 NEON

@@ -1,9 +1,9 @@
 #pragma once
 
-#include <stdint.h>
-#include <array>
-#include <vector>
 #include "EfkRes.Math.h"
+#include <array>
+#include <stdint.h>
+#include <vector>
 
 namespace efkres
 {
@@ -18,4 +18,4 @@ struct Curve
 	int dimension = 0;
 };
 
-}
+} // namespace efkres
