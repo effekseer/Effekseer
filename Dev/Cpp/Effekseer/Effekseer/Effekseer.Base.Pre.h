@@ -349,7 +349,11 @@ inline float AvoidZero(float value)
 	float eps = 0.000001f;
 	if (std::abs(value) < eps)
 	{
-		return Max(std::abs(value), eps) * std::signbit(value);
+		if (value > 0)
+		{
+			return eps;
+		}
+		return -eps;
 	}
 
 	return value;
