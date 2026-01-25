@@ -10,6 +10,7 @@
 #include "EffekseerRenderer.CommonUtils.h"
 #include "EffekseerRenderer.Renderer.h"
 #include "EffekseerRenderer.Renderer_Impl.h"
+#include "EffekseerRendererCommon/EffekseerRenderer.RenderStateBase.h"
 
 //-----------------------------------------------------------------------------------
 //
