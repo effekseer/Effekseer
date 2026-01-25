@@ -11,8 +11,8 @@
 #include <string.h>
 
 #include "EffekseerRenderer.CommonUtils.h"
-#include "EffekseerRenderer.RenderStateBase.h"
 #include "EffekseerRenderer.StandardRenderer.h"
+#include "EffekseerRendererCommon/EffekseerRenderer.RenderStateBase.h"
 
 #define __ZOFFSET__
 
@@ -197,6 +197,7 @@ protected:
 							const efkRingInstanceParam& instanceParameter,
 							const ::Effekseer::SIMD::Mat44f& camera)
 	{
+		float eps = 0.00001f;
 		::Effekseer::SIMD::Mat43f mat43{};
 
 		if (parameter.Billboard != ::Effekseer::BillboardType::Fixed)
@@ -335,8 +336,8 @@ protected:
 		::Effekseer::SIMD::Vec3f outerNext, innerNext, centerNext;
 
 		float currentAngleDegree = 0;
-		float fadeStartAngle = parameter.StartingFade;
-		float fadeEndingAngle = parameter.EndingFade;
+		float fadeStartAngle = Effekseer::AvoidZero(parameter.StartingFade);
+		float fadeEndingAngle = Effekseer::AvoidZero(parameter.EndingFade);
 
 		::Effekseer::SIMD::Vec3f outerCurrent(cos_ * outerRadius, sin_ * outerRadius, 0.0f);
 		::Effekseer::SIMD::Vec3f innerCurrent(cos_ * innerRadius, sin_ * innerRadius, 0.0f);
