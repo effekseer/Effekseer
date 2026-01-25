@@ -344,6 +344,17 @@ T Clamp(T t, U max_, V min_)
 	return t;
 }
 
+inline float AvoidZero(float value)
+{
+	float eps = 0.000001f;
+	if (std::abs(value) < eps)
+	{
+		return Max(std::abs(value), eps) * std::signbit(value);
+	}
+
+	return value;
+}
+
 /**
 	@brief    Convert UTF16 into UTF8
 	@param    dst    a pointer to destination buffer
