@@ -12,6 +12,7 @@
 
 #include "EffekseerRenderer.CommonUtils.h"
 #include "EffekseerRenderer.StandardRenderer.h"
+#include "EffekseerRendererCommon/EffekseerRenderer.RenderStateBase.h"
 
 #define __ZOFFSET__
 
