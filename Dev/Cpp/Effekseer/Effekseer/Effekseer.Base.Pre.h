@@ -8,6 +8,7 @@
 #include <array>
 #include <assert.h>
 #include <atomic>
+#include <cmath>
 #include <cfloat>
 #include <climits>
 #include <functional>
@@ -347,7 +348,7 @@ T Clamp(T t, U max_, V min_)
 inline float AvoidZero(float value)
 {
 	float eps = 0.000001f;
-	if (std::abs(value) < eps)
+	if (std::fabs(value) < eps)
 	{
 		if (value > 0)
 		{
