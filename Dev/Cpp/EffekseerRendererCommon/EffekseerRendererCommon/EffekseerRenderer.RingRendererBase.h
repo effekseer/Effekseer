@@ -245,11 +245,13 @@ protected:
 		}
 
 		int32_t singleVertexCount = parameter.VertexCount * 8;
+		const float vertexCount = Effekseer::AvoidZero(static_cast<float>(parameter.VertexCount));
+		const float invVertexCount = 1.0f / vertexCount;
 		// Vertex* verteies = (Vertex*)renderer_->GetVertexBuffer()->GetBufferDirect( sizeof(Vertex) * vertexCount );
 
 		StrideView<VERTEX> verteies(ringBufferData_, stride_, singleVertexCount);
 		const float circleAngleDegree = (instanceParameter.ViewingAngleEnd - instanceParameter.ViewingAngleStart);
-		const float stepAngleDegree = circleAngleDegree / (parameter.VertexCount);
+		const float stepAngleDegree = circleAngleDegree * invVertexCount;
 		const float stepAngle = (stepAngleDegree) / 180.0f * 3.141592f;
 		const float beginAngle = (instanceParameter.ViewingAngleStart + 90) / 180.0f * 3.141592f;
 
@@ -281,14 +283,14 @@ protected:
 		float sin_ = sinf(beginAngle);
 
 		float uv0Current = instanceParameter.UV.X;
-		const float uv0Step = instanceParameter.UV.Width / parameter.VertexCount;
+		const float uv0Step = instanceParameter.UV.Width * invVertexCount;
 		const float uv0v1 = instanceParameter.UV.Y;
 		const float uv0v2 = uv0v1 + instanceParameter.UV.Height * 0.5f;
 		const float uv0v3 = uv0v1 + instanceParameter.UV.Height;
 		float uv0texNext = 0.0f;
 
 		float uv1Current = 0.0f;
-		const float uv1Step = 1.0f / parameter.VertexCount;
+		const float uv1Step = invVertexCount;
 		const float uv1v1 = 0.0f;
 		const float uv1v2 = uv1v1 + 0.5f;
 		const float uv1v3 = uv1v1 + 1.0f;
@@ -305,11 +307,11 @@ protected:
 				instanceParameter.BlendUVDistortionUV.X};
 		const float advancedUVStep[advancedUVNum] =
 			{
-				instanceParameter.AlphaUV.Width / parameter.VertexCount,
-				instanceParameter.UVDistortionUV.Width / parameter.VertexCount,
-				instanceParameter.BlendUV.Width / parameter.VertexCount,
-				instanceParameter.BlendAlphaUV.Width / parameter.VertexCount,
-				instanceParameter.BlendUVDistortionUV.Width / parameter.VertexCount};
+				instanceParameter.AlphaUV.Width * invVertexCount,
+				instanceParameter.UVDistortionUV.Width * invVertexCount,
+				instanceParameter.BlendUV.Width * invVertexCount,
+				instanceParameter.BlendAlphaUV.Width * invVertexCount,
+				instanceParameter.BlendUVDistortionUV.Width * invVertexCount};
 		const float advancedUVv1[advancedUVNum] =
 			{
 				instanceParameter.AlphaUV.Y,
