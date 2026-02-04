@@ -17,6 +17,7 @@ struct VS_Input
     float3 Binormal;
     float3 Tangent;
     float2 UV;
+    float2 UV2;
     float4 Color;
     uint InstanceID;
     uint VertexID;
@@ -144,6 +145,7 @@ static float3 input_Normal;
 static float3 input_Binormal;
 static float3 input_Tangent;
 static float2 input_UV;
+static float2 input_UV2;
 static float4 input_Color;
 static float2 _entryPointOutput_UV;
 static float4 _entryPointOutput_Color;
@@ -158,7 +160,8 @@ struct SPIRV_Cross_Input
     float3 input_Binormal : TEXCOORD2;
     float3 input_Tangent : TEXCOORD3;
     float2 input_UV : TEXCOORD4;
-    float4 input_Color : TEXCOORD5;
+    float2 input_UV2 : TEXCOORD5;
+    float4 input_Color : TEXCOORD6;
     uint gl_VertexIndex : SV_VertexID;
     uint gl_InstanceIndex : SV_InstanceID;
 };
@@ -353,6 +356,7 @@ void vert_main()
     _input.Binormal = input_Binormal;
     _input.Tangent = input_Tangent;
     _input.UV = input_UV;
+    _input.UV2 = input_UV2;
     _input.Color = input_Color;
     _input.InstanceID = uint(gl_InstanceIndex);
     _input.VertexID = uint(gl_VertexIndex);
@@ -374,6 +378,7 @@ SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
     input_Binormal = stage_input.input_Binormal;
     input_Tangent = stage_input.input_Tangent;
     input_UV = stage_input.input_UV;
+    input_UV2 = stage_input.input_UV2;
     input_Color = stage_input.input_Color;
     vert_main();
     SPIRV_Cross_Output stage_output;

@@ -25,6 +25,7 @@ struct VS_Input
     float3 Binormal;
     float3 Tangent;
     float2 UV;
+    float2 UV2;
     float4 Color;
     uint InstanceID;
     uint VertexID;
@@ -186,7 +187,8 @@ struct main0_in
     float3 input_Binormal [[attribute(2)]];
     float3 input_Tangent [[attribute(3)]];
     float2 input_UV [[attribute(4)]];
-    float4 input_Color [[attribute(5)]];
+    float2 input_UV2 [[attribute(5)]];
+    float4 input_Color [[attribute(6)]];
 };
 
 static inline __attribute__((always_inline))
@@ -364,6 +366,7 @@ vertex main0_out main0(main0_in in [[stage_in]], constant cb0& _136 [[buffer(0)]
     _input.Binormal = in.input_Binormal;
     _input.Tangent = in.input_Tangent;
     _input.UV = in.input_UV;
+    _input.UV2 = in.input_UV2;
     _input.Color = in.input_Color;
     _input.InstanceID = gl_InstanceIndex;
     _input.VertexID = gl_VertexIndex;

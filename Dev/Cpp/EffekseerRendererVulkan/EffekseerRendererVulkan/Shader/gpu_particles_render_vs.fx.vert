@@ -19,6 +19,7 @@ struct VS_Input
     vec3 Binormal;
     vec3 Tangent;
     vec2 UV;
+    vec2 UV2;
     vec4 Color;
     uint InstanceID;
     uint VertexID;
@@ -150,7 +151,8 @@ layout(location = 1) in vec3 input_Normal;
 layout(location = 2) in vec3 input_Binormal;
 layout(location = 3) in vec3 input_Tangent;
 layout(location = 4) in vec2 input_UV;
-layout(location = 5) in vec4 input_Color;
+layout(location = 5) in vec2 input_UV2;
+layout(location = 6) in vec4 input_Color;
 layout(location = 0) out vec2 _entryPointOutput_UV;
 layout(location = 1) out vec4 _entryPointOutput_Color;
 layout(location = 2) out vec3 _entryPointOutput_WorldN;
@@ -325,6 +327,7 @@ void main()
     _input.Binormal = input_Binormal;
     _input.Tangent = input_Tangent;
     _input.UV = input_UV;
+    _input.UV2 = input_UV2;
     _input.Color = input_Color;
     _input.InstanceID = uint(gl_InstanceIndex);
     _input.VertexID = uint(gl_VertexIndex);
