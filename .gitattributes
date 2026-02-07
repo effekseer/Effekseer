@@ -1,5 +1,6 @@
 *.bat eol=crlf
 *.sh eol=lf
+*.md eol=lf
 *.vcxproj eol=crlf
 *.vcxproj.filters eol=crlf
 *.h eol=lf
