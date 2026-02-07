@@ -3,6 +3,11 @@
 
 > NOTE: See also ARCHITECTURE.md
 
+## Development Docs
+
+- Release procedure: [ReleaseGuide.md](./ReleaseGuide.md)
+- Effekseer-specific imgui changes: [ImGuiCustomization.md](./ImGuiCustomization.md)
+
 ## Effekseer
 
 Core module without a graphics device.
@@ -108,4 +113,3 @@ Not used. It will be removed.
 ```
 Dev/Editor/EffekseerOld
 ```
-
