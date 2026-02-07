@@ -30,13 +30,13 @@ BasicSettings_ParentEffectType_NotBind_Name,Never
 BasicSettings_ParentEffectType_NotBind_Root_Name,Root dependent (deprecated)
 BasicSettings_ParentEffectType_WhenCreating_Name,Only on create
 BasicSettings_ParentEffectType_Already_Name,Always
-
+,
 BasicSettings_TranslationParentEffectType_NotBind_FollowParent_Name,Never-FollowParent
 BasicSettings_TranslationParentEffectType_WhenCreating_FollowParent_Name,Only on create-FollowParent
-
+,
 BasicSettings_SteeringBehaviorParemeter_MaxFollowSpeed_Name,Max Follow Speed
 BasicSettings_SteeringBehaviorParameter_SteeringSpeed_Name,Steering Speed(%)
-
+,
 TriggerType_None_Name,None
 TriggerType_Trigger0_Name,Trigger0
 TriggerType_Trigger1_Name,Trigger1
@@ -44,7 +44,7 @@ TriggerType_Trigger2_Name,Trigger2
 TriggerType_Trigger3_Name,Trigger3
 TriggerType_ParentRemoved_Name,On Parent Removed
 TriggerType_ParentCollided_Name,On Parent Collision
-
+,
 BasicSettings_Generation_Enabled_Name,Spawn Enabled
 BasicSettings_Generation_Enabled_Desc,Whether generation is enabled at the start of playback.
 BasicSettings_Generation_StartTrigger_Name,Spawn Start Trigger

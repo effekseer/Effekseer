@@ -1,66 +1,66 @@
 AlphaTextureParameter_Texture_Name,Textura Alpha
 AlphaTextureParameter_Filter_Name,Filtro(Textura Alpha)
 AlphaTextureParameter_Wrap_Name,Envolutra(Textura Alpha)
-
+,
 UVDistortionTextureParameter_Texture_Name,Distorsión textura UV
 UVDistortionTextureParameter_Intensity_Name,Intensidad distorsión UV
 UVDistortionTextureParameter_Filter_Name,Filtro(Distorisón textura UV)
 UVDistortionTextureParameter_Wrap_Name,Envoltura(Distorisón textura UV)
-
+,
 AdvancedAlphaBlendType_AlphaBlend_Name,Alpha Blend
-
+,
 BlendTextureParameter_Texture_Name,Textura Blend
 BlendTextureParameter_BlendType_Name,Tipo Blend
 BlendTextureParameter_Filter_Name,Filtro(Textura Blend)
 BlendTextureParameter_Wrap_Name,Envoltura(Textura Blend)
-
+,
 BlendAlphaTextureParameter_Texture_Name,Textura Alpha Blend
 BlendAlphaTextureParameter_Filter_Name,Filtro(Textura AlphaBlend)
 BlendAlphaTextureParameter_Wrap_Name,Envoltura(Textura Alpha Blend)
-
+,
 BlendUVDistortionTextureParameter_Texture_Name,Blend UV Distorsión Textura
 BlendUVDistortionTextureParameter_Intensity_Name,Blend UV Distorsión Intensidad
 BlendUVDistortionTextureParameter_Filter_Name,Filtro(Blend UV Distorsión Textura)
 BlendUVDistortionTextureParameter_Wrap_Name,Envoltura(Blend UV Distorsión Textura)
-
+,
 BlendTextureParameters_Name,Blend Textura
 BlendTextureParameters_EnableBlendAlphaTexture_Name,Habilitar Blend Alpha Textura
 BlendTextureParameters_EnableBlendUVDistortionTexture_Name,Habilitar Blend UV Distorsión Textura
-
+,
 AlphaCutoffParameter_ParameterType_Name,Corte Alpha
-
+,
 AlphaCutoffParameter_FixedParameter_Fixed_Name,Umbral Alpha
-
+,
 AlphaCuroffParameter_FPIParameter_BeginThreshold_Name,Empezar umbral Alpha
 AlphaCuroffParameter_FPIParameter_TransitionFrameNum_Name,Secuencia número Frame (Inicio -> Segundo)
 AlphaCuroffParameter_FPIParameter_No2Threshold_Name,Segundo umbral Alpha
 AlphaCuroffParameter_FPIParameter_No3Threshold_Name,Tercer umbral Alpha
 AlphaCuroffParameter_FPIParameter_TransitionFrameNum2_Name,Secuencia número Frame (Tercer -> Fin)
 AlphaCuroffParameter_FPIParameter_EndThreshold_Name,Fin umbral Alpha
-
+,
 AlphaCutoffParameter_EdgeParameter_Threshold_Name,Borde Threshold
 AlphaCutoffParameter_EdgeParameter_Color_Name,Borde Color
 AlphaCutoffParameter_EdgeParameter_ColorScaling_Name,Borde Color escalado
-
+,
 AlphaCutoffParameter_ParameterType_Fixed_Name,Establecer Umbral Alpha
 AlphaCutoffParameter_ParameterType_FPI_Name,Interpolación cuatro puntos
 AlphaCutoffParameter_ParameterType_Easing_Name,Desplazamiento
 AlphaCutoffParameter_ParameterType_FCurve_Name,F-Curva
-
+,
 FalloffParameter_Name,Fallo
 FalloffParameter_ColorBlendType_Name,Tipo Color Blend
 FalloffParameter_BeginColor_Name,Color inicial
 FalloffParameter_EndColor_Name,Color final
 FalloffParameter_Pow_Name,Polvo
-
+,
 FalloffParameter_BlendType_Add_Name,Add
 FalloffParameter_BlendType_Sub_Name,Sub
 FalloffParameter_BlendType_Mul_Name,Mul
-
+,
 SoftParticleParameters_Name,Partícula suave
 SoftParticleParameters_DistanceFar_Name,Distance lejana
-SoftParticleParameters_DistanceFar_Desc,Si la distancia entre el objeto de fondo y la partícula es inferior a la especificada, las partículas se vuelven translúcidas.
+SoftParticleParameters_DistanceFar_Desc,"Si la distancia entre el objeto de fondo y la partícula es inferior a la especificada, las partículas se vuelven translúcidas."
 SoftParticleParameters_DistanceNear_Name,Distancia cercana
-SoftParticleParameters_DistanceNear_Desc,Si un desplazamiento sustraído de la distancia entre una cámara y la partícula es más corto que la distancia especificada, las partículas se vuelven translúcidas.
+SoftParticleParameters_DistanceNear_Desc,"Si un desplazamiento sustraído de la distancia entre una cámara y la partícula es más corto que la distancia especificada, las partículas se vuelven translúcidas."
 SoftParticleParameters_DistanceNearOffset_Name,Desplazamiento a corta distancia
 SoftParticleParameters_DistanceNearOffset_Desc,Desplazamiento para una distancia cercana

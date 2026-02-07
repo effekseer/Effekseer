@@ -8,7 +8,7 @@ FcurveTimelineMode_Percent_Name,Porcentaje(0-100)
 Fcurve_Key_Name,Tiempo
 Fcurve_Key_Frame_Name,Frame
 Fcurve_Key_Percent_Name,Porcentaje
-
+,
 FCurve_AddPoint,Agregar punto
 FCurve_DeletePoint,Eliminar punto seleccionado
 FCurve_Copy,Copiar

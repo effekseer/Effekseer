@@ -1,7 +1,7 @@
 GpuParticles,GPU粒子
 GpuParticles_Enabled_Name,启用
 GpuParticles_Enabled_Desc,若选中，则使用GPU粒子。
-
+,
 GpuParticles_Basic_Name,基础设置
 GpuParticles_Basic_EmitCount_Name,生成总量
 GpuParticles_Basic_EmitCount_Desc,要生成的粒子总数。
@@ -11,7 +11,7 @@ GpuParticles_Basic_EmitOffset_Name,生成开始时间
 GpuParticles_Basic_EmitOffset_Desc,从父粒子生成到子粒子第一次生成之间的延迟。
 GpuParticles_Basic_LifeTime_Name,生命周期
 GpuParticles_Basic_LifeTime_Desc,每个实例存在的时间
-
+,
 GpuParticles_EmitShape_Name,生成形状
 GpuParticles_EmitShape_ShapeType_Point_Name,点
 GpuParticles_EmitShape_ShapeType_Line_Name,线
@@ -40,7 +40,7 @@ GpuParticles_EmitShape_ModelSize_Name,尺寸
 GpuParticles_EmitShape_ModelSize_Desc,模型的大小
 GpuParticles_EmitShape_RotationApplied_Name,影响生成角度
 GpuParticles_EmitShape_RotationApplied_Desc,对于圆、球和模型有效
-
+,
 GpuParticles_Velocity_Name,速度
 GpuParticles_Velocity_Direction_Name,方向
 GpuParticles_Velocity_Direction_Desc,生成粒子时的移动方向。
@@ -50,13 +50,13 @@ GpuParticles_Velocity_InitialSpeed_Name,初始速度
 GpuParticles_Velocity_InitialSpeed_Desc,生成粒子时的初始移动速度。
 GpuParticles_Velocity_Damping_Name,阻尼
 GpuParticles_Velocity_Damping_Desc,粒子运动时的阻尼力。
-
+,
 GpuParticles_Rotation_Name,旋转
 GpuParticles_Rotation_InitialAngle_Name,初始角度
 GpuParticles_Rotation_InitialAngle_Desc,生成粒子时的角度。
 GpuParticles_Rotation_AngularVelocity_Name,角速度
 GpuParticles_Rotation_AngularVelocity_Desc,粒子旋转的速度
-
+,
 GpuParticles_Scale_Name,缩放
 GpuParticles_Scale_SingleScale_Name,单一缩放比率
 GpuParticles_Scale_SingleScale_Desc,单一缩放比率
@@ -70,7 +70,7 @@ GpuParticles_Scale_TerminalSingleScale_Name,结束（单一）
 GpuParticles_Scale_TerminalSingleScale_Desc,粒子销毁时的缩放比率。
 GpuParticles_Scale_TerminalXYZScale_Name,结束（XYZ）
 GpuParticles_Scale_TerminalXYZScale_Desc,粒子销毁时的XYZ缩放比率。
-
+,
 GpuParticles_Force_Name,力
 GpuParticles_Force_Gravity_Name,重力
 GpuParticles_Force_Gravity_Desc,粒子始终受到的单向力。
@@ -92,14 +92,14 @@ GpuParticles_Force_Turbulence_Scale_Name,粒度
 GpuParticles_Force_Turbulence_Scale_Desc,增大此值可增大湍流的粒度。
 GpuParticles_Force_Turbulence_Octave_Name,复杂度
 GpuParticles_Force_Turbulence_Octave_Desc,增大此值使湍流更复杂，但也会增大运算量。
-
+,
 GpuParticles_RenderBasic_Name,渲染
 GpuParticles_RenderBasic_TextureFilter_Name,过滤
 GpuParticles_RenderBasic_TextureWrap_Name,包裹
 GpuParticles_RenderBasic_BlendType_Name,混合
 GpuParticles_RenderBasic_ZWrite_Name,深度写入
 GpuParticles_RenderBasic_ZTest_Name,深度测试
-
+,
 GpuParticles_RenderShape_Name,形状
 GpuParticles_RenderShape_ShapeType_Sprite_Name,精灵
 GpuParticles_RenderShape_ShapeType_Model_Name,模型
@@ -118,7 +118,7 @@ GpuParticles_RenderShape_TrailLength_Name,轨迹长度
 GpuParticles_RenderShape_TrailLength_Desc,轨迹缓冲的大小
 GpuParticles_RenderShape_Size_Name,大小
 GpuParticles_RenderShape_Size_Desc,粒子的尺寸
-
+,
 GpuParticles_RenderColor_Name,颜色
 GpuParticles_RenderColor_ColorInherit_Name,颜色继承
 GpuParticles_RenderColor_ColorInherit_Desc,此节点（或根节点）的渲染颜色如何影响GPU粒子。
@@ -130,7 +130,7 @@ GpuParticles_RenderColor_FadeIn_Name,淡入
 GpuParticles_RenderColor_FadeIn_Desc,粒子淡入时间
 GpuParticles_RenderColor_FadeOut_Name,淡出
 GpuParticles_RenderColor_FadeOut_Desc,粒子淡出时间
-
+,
 GpuParticles_RenderMaterial_Name,材质
 GpuParticles_RenderMaterial_Material_Name,材质
 GpuParticles_RenderMaterial_MaterialType_Unlit_Name,不被照亮

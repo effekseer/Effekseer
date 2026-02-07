@@ -186,7 +186,7 @@ Time_Node_Desc,Muestra la hora actual en segundos.
 LocalTime_Node_Name,Tiempo local
 LocalTime_Node_Desc,Muestra el tiempo en segundos desde que se generó el efecto.
 ParticleTime_Node_Name,Tiempo partícula
-ParticleTime_Node_Desc,"Muestra el progreso de vida normalizado y los segundos transcurridos para cada partícula."
+ParticleTime_Node_Desc,Muestra el progreso de vida normalizado y los segundos transcurridos para cada partícula.
 EffectScale_Node_Name,Escala Effecto
 EffectScale_Node_Desc,Obtiene la escala especificada cuando se carga el archivo de efectos.
 CameraPositionWS_Node_Name,Posición cámara
@@ -243,16 +243,16 @@ Depth_Name,Profundidad
 ,
 DepthFade_Node_Name,Desvanecimiento de la profundidad
 DepthFade_Node_Desc,"Emite un valor menor a medida que se acerca al objeto de fondo.
-Salida 1 si la distancia es mayor que la distancia de desvanecimiento, 0 si la distancia es 0".
+Salida 1 si la distancia es mayor que la distancia de desvanecimiento, 0 si la distancia es 0."
 ,
 Gradient_Name,Gradiente
 SampleGradient_Node_Name,Muestrear gradiente
 SampleGradient_Node_Desc,"Emite una referencia de color del gradiente al color en la posición especificada.
 Si no hay entrada para el gradiente, se usa el gradiente de este nodo."
 Gradient_Node_Name,Gradiente
-Gradient_Node_Desc,"Este nodo emite un gradiente."
+Gradient_Node_Desc,Este nodo emite un gradiente.
 GradientParameter_Node_Name,Parámetro de gradiente
-GradientParameter_Node_Desc,"Emite un gradiente configurado externamente."
+GradientParameter_Node_Desc,Emite un gradiente configurado externamente.
 ,
 Noise_Name,Ruido
 SimpleNoise_Node_Name,Ruido simple
@@ -281,7 +281,7 @@ Error_SamePin,Error_MismoPin
 Error_SameDirection,Error_MismaDirección
 Error_Loop,Error_Bucle
 Error_Type,Error_Tipo
-Error_NewVersion,El archivo es demasiado nuevo para abrirlo. Por favor, actualice Effekseer
+Error_NewVersion,"El archivo es demasiado nuevo para abrirlo. Por favor, actualice Effekseer"
 Create_Link,Crear_enlace
 Create_Node,Crear_Nodo
 ,

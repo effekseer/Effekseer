@@ -1,17 +1,17 @@
 ProceduralModel_Name,程序化模型
-
+,
 ProceduralModelType_Mesh_Name,网格
 ProceduralModelType_Ribbon_Name,丝带
-
+,
 ProceduralModelPrimitiveType_Sphere_Name,球
 ProceduralModelPrimitiveType_Cone_Name,圆锥
 ProceduralModelPrimitiveType_Cylinder_Name,圆柱
 ProceduralModelPrimitiveType_Spline_Name,样条曲线
-
+,
 ProceduralModelCrossSectionType_Plane_Name,平面
 ProceduralModelCrossSectionType_Cross_Name,交叉
 ProceduralModelCrossSectionType_Point_Name,点
-
+,
 PM_Type_Name,类型
 PM_AngleBeginEnd_Name,区域（角）
 PM_Divisions_Name,细分
@@ -21,39 +21,39 @@ PM_Count_Name,丝带数量
 PM_RibbonScales_Name,丝带厚度
 PM_RibbonAngles_Name,丝带角度
 PM_RibbonNoises_Name,长度噪声
-
+,
 PM_Shape_Name,形状
-
+,
 PM_PrimitiveType_Name,形状类型
 PM_Radius_Name,半径1
 PM_Radius2_Name,半径2
 PM_Depth_Name,深度
 PM_DepthMin_Name,深度（底部）
 PM_DepthMax_Name,深度（顶部）
-
+,
 PM_Point1_Name,点1
 PM_Point2_Name,点2
 PM_Point3_Name,点3
 PM_Point4_Name,点4
-
+,
 PM_AxisType_Name,轴
-
+,
 PM_ShapeNoise_Name,形状噪声
-
+,
 PM_TiltNoiseFreq_Name,倾斜噪声 频率
 PM_TiltNoiseOffset_Name,倾斜噪声 偏移
 PM_TiltNoisePower_Name,倾斜噪声 强度
-
+,
 PM_WaveNoiseFreq_Name,波噪声 频率
 PM_WaveNoiseOffset_Name,波噪声 偏移
 PM_WaveNoisePower_Name,波噪声 强度
-
+,
 PM_CurlNoiseFreq_Name,卷曲噪声 频率
 PM_CurlNoiseOffset_Name,卷曲噪声 偏移
 PM_CurlNoisePower_Name,卷曲噪声 强度
-
+,
 PM_VertexColor_Name,顶点颜色
-
+,
 PM_ColorUpperLeft_Name,颜色・左上
 PM_ColorUpperCenter_Name,颜色・中上
 PM_ColorUpperRight_Name,颜色・右上
@@ -63,16 +63,16 @@ PM_ColorMiddleRight_Name,颜色・右中
 PM_ColorLowerLeft_Name,颜色・左下
 PM_ColorLowerCenter_Name,颜色・中下
 PM_ColorLowerRight_Name,颜色・右下
-
+,
 PM_ColorCenterPosition_Name,中心区域位置
 PM_ColorCenterArea_Name,中心区域比率
-
+,
 PM_VertexColorNoise_Name,顶点颜色噪声
-
+,
 PM_VertexColorNoiseFreq_Name,顶点颜色噪声 频率
 PM_VertexColorNoiseOffset_Name,顶点颜色噪声 偏移
 PM_VertexColorNoisePower_Name,顶点颜色噪声 强度
-
+,
 PM_UV_Name,UV
 PM_UVPosition_Name,UV位置
 PM_UVSize_Name,UV尺寸

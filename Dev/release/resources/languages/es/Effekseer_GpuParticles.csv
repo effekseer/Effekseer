@@ -1,7 +1,7 @@
 GpuParticles,Partículas GPU
 GpuParticles_Enabled_Name,Activado
-GpuParticles_Enabled_Desc,Si esta marcado, usa partículas GPU.
-
+GpuParticles_Enabled_Desc,"Si esta marcado, usa partículas GPU."
+,
 GpuParticles_Basic_Name,Básico
 GpuParticles_Basic_EmitCount_Name,Cuenta de generación
 GpuParticles_Basic_EmitCount_Desc,Número total de partículas a generar.
@@ -11,7 +11,7 @@ GpuParticles_Basic_EmitOffset_Name,Retraso Inicial
 GpuParticles_Basic_EmitOffset_Desc,Cantidad de tiempo que debe transcurrir después de la generación de la instancia antes de que comience a generar.
 GpuParticles_Basic_LifeTime_Name,Tiempo de vida
 GpuParticles_Basic_LifeTime_Desc,Tiempo que sobrevive cada instancia.
-
+,
 GpuParticles_EmitShape_Name,Emisión
 GpuParticles_EmitShape_ShapeType_Point_Name,Punto
 GpuParticles_EmitShape_ShapeType_Line_Name,Línea
@@ -39,8 +39,8 @@ GpuParticles_EmitShape_ModelPath_Desc,Trayectorias de malla utilizadas para la g
 GpuParticles_EmitShape_ModelSize_Name,Tamaño
 GpuParticles_EmitShape_ModelSize_Desc,Tamaño de la forma de la malla.
 GpuParticles_EmitShape_RotationApplied_Name,Ajustar ángulo en la Aparición
-GpuParticles_EmitShape_RotationApplied_Desc,Válido para círculo, esfera y modelo
-
+GpuParticles_EmitShape_RotationApplied_Desc,"Válido para círculo, esfera y modelo"
+,
 GpuParticles_Velocity_Name,Velocidad
 GpuParticles_Velocity_Direction_Name,Dirección
 GpuParticles_Velocity_Direction_Desc,Dirección de movimiento cuando se generan partículas.
@@ -50,13 +50,13 @@ GpuParticles_Velocity_InitialSpeed_Name,Velocidad Inicial
 GpuParticles_Velocity_InitialSpeed_Desc,Velocidad inicial del movimiento al desovar partículas.
 GpuParticles_Velocity_Damping_Name,Amortiguación
 GpuParticles_Velocity_Damping_Desc,Fuerza de amortiguación durante el movimiento de las partículas.
-
+,
 GpuParticles_Rotation_Name,Rotación
 GpuParticles_Rotation_InitialAngle_Name,Ángulo inicial
 GpuParticles_Rotation_InitialAngle_Desc,Angulo al generar particulas
 GpuParticles_Rotation_AngularVelocity_Name,Velocidad Angular
 GpuParticles_Rotation_AngularVelocity_Desc,Velocidad a la que rotan las partículas
-
+,
 GpuParticles_Scale_Name,Escala
 GpuParticles_Scale_SingleScale_Name,Escala única
 GpuParticles_Scale_SingleScale_Desc,Escala única.
@@ -70,7 +70,7 @@ GpuParticles_Scale_TerminalSingleScale_Name,Fin (Single)
 GpuParticles_Scale_TerminalSingleScale_Desc,Escala al final de la partícula.
 GpuParticles_Scale_TerminalXYZScale_Name,Fin (XYZ)
 GpuParticles_Scale_TerminalXYZScale_Desc,Escala XYZ al final de la partícula.
-
+,
 GpuParticles_Force_Name,Fuerza
 GpuParticles_Force_Gravity_Name,Gravedad
 GpuParticles_Force_Gravity_Desc,Fuerza unidireccional aplicada a las partículas en todo momento.
@@ -91,15 +91,15 @@ GpuParticles_Force_Turbulence_Seed_Desc,El flujo de turbulencia cambia según el
 GpuParticles_Force_Turbulence_Scale_Name,Escala del campo
 GpuParticles_Force_Turbulence_Scale_Desc,Un valor mayor incrementa el ancho de la turbulencia.
 GpuParticles_Force_Turbulence_Octave_Name,Complejidad
-GpuParticles_Force_Turbulence_Octave_Desc," ""Un valor mayor complica la turbulencia. Sin embargo"," el procesamiento se vuelve pesado""."
-
+GpuParticles_Force_Turbulence_Octave_Desc," ""Un valor mayor complica la turbulencia. Sin embargo, el procesamiento se vuelve pesado""."
+,
 GpuParticles_RenderBasic_Name,Renderizado
 GpuParticles_RenderBasic_TextureFilter_Name,Filtro
 GpuParticles_RenderBasic_TextureWrap_Name,Envolver
 GpuParticles_RenderBasic_BlendType_Name,Mezcla
 GpuParticles_RenderBasic_ZWrite_Name,Escritura en profundidad
 GpuParticles_RenderBasic_ZTest_Name,Prueba de profundidad
-
+,
 GpuParticles_RenderShape_Name,Forma
 GpuParticles_RenderShape_ShapeType_Sprite_Name,Sprite
 GpuParticles_RenderShape_ShapeType_Model_Name,Modelo
@@ -118,7 +118,7 @@ GpuParticles_RenderShape_TrailLength_Name,Longitud del camino
 GpuParticles_RenderShape_TrailLength_Desc,Tamaño del buffer de rastro
 GpuParticles_RenderShape_Size_Name,Tamaño de la forma
 GpuParticles_RenderShape_Size_Desc,Tamaño de la forma de renderizado de partículas
-
+,
 GpuParticles_RenderColor_Nombre,Color
 GpuParticles_RenderColor_ColorInherit_Name,Herencia de color
 GpuParticles_RenderColor_ColorInherit_Desc,Afectado por el color del nodo padre o raíz
@@ -130,7 +130,7 @@ GpuParticles_RenderColor_FadeIn_Name,Fundido de entrada
 GpuParticles_RenderColor_FadeIn_Desc,Tiempo de fundido de las partículas
 GpuParticles_RenderColor_FadeOut_Name,Fundido de salida
 GpuParticles_RenderColor_FadeOut_Desc,Tiempo de desvanecimiento de la partícula
-
+,
 GpuParticles_RenderMaterial_Name,Material
 GpuParticles_RenderMaterial_Material_Name,Material
 GpuParticles_RenderMaterial_MaterialType_Unlit_Name,No iluminado
@@ -140,6 +140,6 @@ GpuParticles_RenderMaterial_ColorTexture_Name,Textura de color
 GpuParticles_RenderMaterial_ColorTexture_Desc,
 GpuParticles_RenderMaterial_NormalTexture_Name,Textura Normal
 GpuParticles_RenderMaterial_NormalTexture_Desc,
-
+,
 GpuParticles_EmitShape_SphereRadius_Name,Radio
 GpuParticles_RenderColor_Name,Color

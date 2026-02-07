@@ -38,7 +38,7 @@ Normalized_Name,归一化值
 Seconds_Name,秒数
 Comment_Name,注释
 Priority_Name,优先级
-Priority_Desc,"优先级越低，屏幕在其他编辑器上显示的位置就越高。"
+Priority_Desc,优先级越低，屏幕在其他编辑器上显示的位置就越高。
 Sampler_Name,采样方法
 Sampler_Desc,"设置超出图像范围之外的颜色。
 Repeat - 从另一侧开始重复
@@ -172,7 +172,7 @@ TextureObjectParameter_Node_Name,参数图像
 TextureObjectParameter_Node_Desc,"输出外部设置的图像。
 参数中设置的概要和详细会在Effekseer和外部工具中显示。"
 TextureObject_Node_Name,图像
-TextureObject_Node_Desc,"输出设置的图像。"
+TextureObject_Node_Desc,输出设置的图像。
 ,
 Output_Node_Name,输出
 Comment_Node_Name,注释
@@ -246,9 +246,9 @@ SampleGradient_Node_Name,采样梯度
 SampleGradient_Node_Desc,"Outputs a color reference from the gradient to the color at the specified location.
 如果Gradient未连接输入值，则使用这个节点的梯度。"
 Gradient_Node_Name,梯度
-Gradient_Node_Desc,"输出一个梯度。"
+Gradient_Node_Desc,输出一个梯度。
 GradientParameter_Node_Name,梯度参数
-GradientParameter_Node_Desc,"输出一个外部设置的梯度。"
+GradientParameter_Node_Desc,输出一个外部设置的梯度。
 ,
 Noise_Name,噪声
 SimpleNoise_Node_Name,简单噪声
@@ -275,7 +275,7 @@ ConvertParam_Name,转换为参数
 Error_SameNode,×　不能连接到同一个节点。
 Error_SamePin,×　不能连接到同一个锚点。
 Error_SameDirection,×　不能连接到同一个方向。
-Error_Loop,Error_Loop,×　存在循环。
+Error_Loop,×　存在循环。
 Error_Type,×　类型不同。
 Error_NewVersion,文件过新。请更新Effekseer
 Create_Link,连接。
@@ -293,7 +293,7 @@ Starting_Open,打开材质
 ,
 Warning_WrongInputType,存在无效的输入类型
 Warning_WrongProperty,存在无效的属性
-Warning_DifferentSampler,"同一图像设置了不同的采样器"
+Warning_DifferentSampler,同一图像设置了不同的采样器
 Warning_SameName,存在名字相同的节点。
-Warning_InvalidName,"名字无效。（请阅读帮助。）"
+Warning_InvalidName,名字无效。（请阅读帮助。）
 Warning_PixelNodeAndNormal,像素法向不能连接到Normal（法向）。

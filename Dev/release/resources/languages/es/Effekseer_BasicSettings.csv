@@ -33,10 +33,10 @@ BasicSettings_ParentEffectType_NotBind_Name,Nunca
 BasicSettings_ParentEffectType_NotBind_Root_Name,Dependiendo de raiz (Obsoleto)
 BasicSettings_ParentEffectType_WhenCreating_Name,Solo al crear
 BasicSettings_ParentEffectType_Already_Name,Siempre
-
+,
 BasicSettings_TranslationParentEffectType_NotBind_FollowParent_Name,Nunca - Seguir herencia
 BasicSettings_TranslationParentEffectType_WhenCreating_FollowParent_Name,Solo al crear - Seguir herencia
-
+,
 BasicSettings_SteeringBehaviorParemeter_MaxFollowSpeed_Name,Seguir máxima velocidad
 BasicSettings_SteeringBehaviorParameter_SteeringSpeed_Name,Velocidad de dirección(%)
 BasicSettings_Generation_Enabled_Name,Generación habilitada
@@ -55,7 +55,7 @@ BasicSettings_Generation_SpawnTrigger_Name,Disparador de generación
 BasicSettings_Generation_SpawnTrigger_Desc,Disparador que genera partículas cuando el modo es Disparador.
 BasicSettings_Generation_SpawnCount_Name,Partículas por disparo
 BasicSettings_Generation_SpawnCount_Desc,Cantidad de partículas generadas cada vez que se activa el disparador.
-
+,
 TriggerType_None_Name,Ninguno
 TriggerType_Trigger0_Name,Disparador0
 TriggerType_Trigger1_Name,Disparador1

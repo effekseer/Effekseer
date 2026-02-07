@@ -12,7 +12,7 @@ Scale_SinglePVAParamater_Velocity_Name,拡大速度
 Scale_SinglePVAParamater_Velocity_Desc,インスタンスの拡大速度
 Scale_SinglePVAParamater_Acceleration_Name,拡大加速度
 Scale_SinglePVAParamater_Acceleration_Desc,インスタンスの初期拡大加速度
-
+,
 Scale_ParamaterType_Fixed_Name,拡大率
 Scale_ParamaterType_PVA_Name,拡大率・速度・加速度
 Scale_ParamaterType_Easing_Name,イージング

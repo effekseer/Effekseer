@@ -1,355 +1,355 @@
-AboutEffekseer,About Effekseer,
-System_FailedToInitialize,"Failed to generate drawing screen. DirectX version problems, memory shortage, Video Card Specifications, and so on.",
-AttractionForces,Force field (Local),
-AutoConnect,Auto-connect,
-BasicRenderSettings,Basic Render Settings,
-AdvancedRenderSettings,Advanced Render Settings,
-AdvancedRenderSettings2,Advanced Render Settings2,
-BasicSettings,Basic Settings,
-BasicSettings_Generation,Generation,
-BasicSettings_Removal,Removal,
-Behavior,Behavior,
-CameraMode,Camera Mode,
-CameraSettings,Camera Settings,
-Complement,Type,
-ConfirmSaveChanged,[{0}] has been changed. Do you want to save?,
-Connect,Connect,
-Culling,Culling,
-Delete,Del,
-Deviation,Dev.,
-Disconnect,Disconnect,
-Edit,Edit,
-End,End,
-EndFrame,End Frame,
-Export,Export,
-ExportAsAvi,Export as a AVI,
-ExportAsH264,Export as a mp4(h264),
-ExportAsGifAnimation,Export as a gif animation,
-ExportAsImages,Export as images,
-ExportAsSingleImage,Export as a single image,
-ExportedFrame,Exported frame,
-FCurves,F-Curves,
-Files,Files,
-FileBrowser,File Browser,
-Format,Format,
-Frame,Frame,
-Frequency_Frame,Frequency(Frame),
-Gauss,Gauss,
-GenerateAlpha,Generate alpha,
-GenerateAlpha2,Generate alpha(Blend+Add),
-Height,Height,
-Help,Help,
-Import,Import,
-Infinite,Infinite,
-InternalAbout,About Effekseer,
-InternalAddNode,Add Node,
-InternalBaskStep,Step(Back),
-InternalCopy,Copy Node,
-InternalExit,Exit,
-InternalInsertNode,Insert Node,
-InternalNew,New Project,
-InternalOpen,Open,
-InternalOpenSample,Open Sample Project,
-InternalOverwrite,Save,
-InternalPaste,Paste Node,
-InternalPasteInfo,Paste Node Info,
-InternalPauseOrResume,Pause/Resume,
-InternalRedo,Redo,
-InternalRemoveNode,Delete Node,
-InternalSaveAs,Save as...,
-InternalStep,Step,
-InternalStop,Stop,
-InternalUndo,Undo,
-InternalViewHelp,Manual,
-InternalRenameNode,Rename,
+AboutEffekseer,About Effekseer
+System_FailedToInitialize,"Failed to generate drawing screen. DirectX version problems, memory shortage, Video Card Specifications, and so on."
+AttractionForces,Force field (Local)
+AutoConnect,Auto-connect
+BasicRenderSettings,Basic Render Settings
+AdvancedRenderSettings,Advanced Render Settings
+AdvancedRenderSettings2,Advanced Render Settings2
+BasicSettings,Basic Settings
+BasicSettings_Generation,Generation
+BasicSettings_Removal,Removal
+Behavior,Behavior
+CameraMode,Camera Mode
+CameraSettings,Camera Settings
+Complement,Type
+ConfirmSaveChanged,[{0}] has been changed. Do you want to save?
+Connect,Connect
+Culling,Culling
+Delete,Del
+Deviation,Dev.
+Disconnect,Disconnect
+Edit,Edit
+End,End
+EndFrame,End Frame
+Export,Export
+ExportAsAvi,Export as a AVI
+ExportAsH264,Export as a mp4(h264)
+ExportAsGifAnimation,Export as a gif animation
+ExportAsImages,Export as images
+ExportAsSingleImage,Export as a single image
+ExportedFrame,Exported frame
+FCurves,F-Curves
+Files,Files
+FileBrowser,File Browser
+Format,Format
+Frame,Frame
+Frequency_Frame,Frequency(Frame)
+Gauss,Gauss
+GenerateAlpha,Generate alpha
+GenerateAlpha2,Generate alpha(Blend+Add)
+Height,Height
+Help,Help
+Import,Import
+Infinite,Infinite
+InternalAbout,About Effekseer
+InternalAddNode,Add Node
+InternalBaskStep,Step(Back)
+InternalCopy,Copy Node
+InternalExit,Exit
+InternalInsertNode,Insert Node
+InternalNew,New Project
+InternalOpen,Open
+InternalOpenSample,Open Sample Project
+InternalOverwrite,Save
+InternalPaste,Paste Node
+InternalPasteInfo,Paste Node Info
+InternalPauseOrResume,Pause/Resume
+InternalRedo,Redo
+InternalRemoveNode,Delete Node
+InternalSaveAs,Save as...
+InternalStep,Step
+InternalStop,Stop
+InternalUndo,Undo
+InternalViewHelp,Manual
+InternalRenameNode,Rename
 Recover,Recover
 Recover_LastSession,Last Session
 Recover_AutoSave,Auto Save...
 Recover_LastSession_Error,Unable to find backup file for last session
-RenameNode,Rename,
-Left,Left,
-Load,Load,
-MakeTransparent,Make transparent,
-Max,Max,
-Mean,Mean,
-Min,Min,
-Network,Network,
-NetworkAddress,Address,
-NetworkConnected,State：Connected,
-NetworkDisconnected,State：Disconnected,
-NetworkState,State：,
-Network_FailedToConnect,It failed to connect.,
-NodeTree,Node Tree,
-None,None,
-NotAbsolutePathError,This is not an absolute path.,
-Offset,Offset,
-Options,Options,
-PlayString,Play,
-Port,Port,
-Position,Position,
-PoVDistance,PoV Distance,
-Range,Range,
-RecentFiles,Recent Files,
-Record,Record,
-Recorder,Recorder,
-RecorderProgress,Progress in Recording...,
-RecorderAbort,Abort,
-Render,Render,
-RenderSettings,Render Settings,
-ResetMaginification,Reset maginification,
-ResetWindow,Reset Window Position,
-Resolution,Resolution,
-Right,Right,
-Rotation,Rotation,
-Sampling,Sampling,
-Scale,Scale,
-SendData,Send Data,
-ShowGuide,Show guide,
-Sound,Sound,
-SoundFilter,wav,
-SpawningMethod,Spawning Method,
-Start,Start,
-StartFrame,Start Frame,
-TransmitDataOnEdit,Transmit data on edit,
-TransmitDataOnLoad,Transmit data on load,
-TransmitDataOnSave,Transmit data on save,
-UnsavedChanges,*Unsaved Changes,
-UseOriginalImage,Use original image,
-Value,Val,
-View,View,
-Viewer,Viewer,
-ViewerControls,Viewer Controls,
-Viewpoint,Viewpoint,
-Width,Width,
-Window,Window,
-X,x,
-XCount,X Count,
-XRotation,X Rotation,
-Y,Y,
-YRotation,Y Rotation,
-Zoom,Zoom,
-Depth,Depth,
-Global,Global Settings,
-,,
-,,
-ResetParam_Name,Reset,
-ResetParam_Desc,Reset parameter into a default,
-,,
-EnlargeAnchor,Enlarge anchor,
+RenameNode,Rename
+Left,Left
+Load,Load
+MakeTransparent,Make transparent
+Max,Max
+Mean,Mean
+Min,Min
+Network,Network
+NetworkAddress,Address
+NetworkConnected,State：Connected
+NetworkDisconnected,State：Disconnected
+NetworkState,State：
+Network_FailedToConnect,It failed to connect.
+NodeTree,Node Tree
+None,None
+NotAbsolutePathError,This is not an absolute path.
+Offset,Offset
+Options,Options
+PlayString,Play
+Port,Port
+Position,Position
+PoVDistance,PoV Distance
+Range,Range
+RecentFiles,Recent Files
+Record,Record
+Recorder,Recorder
+RecorderProgress,Progress in Recording...
+RecorderAbort,Abort
+Render,Render
+RenderSettings,Render Settings
+ResetMaginification,Reset maginification
+ResetWindow,Reset Window Position
+Resolution,Resolution
+Right,Right
+Rotation,Rotation
+Sampling,Sampling
+Scale,Scale
+SendData,Send Data
+ShowGuide,Show guide
+Sound,Sound
+SoundFilter,wav
+SpawningMethod,Spawning Method
+Start,Start
+StartFrame,Start Frame
+TransmitDataOnEdit,Transmit data on edit
+TransmitDataOnLoad,Transmit data on load
+TransmitDataOnSave,Transmit data on save
+UnsavedChanges,*Unsaved Changes
+UseOriginalImage,Use original image
+Value,Val
+View,View
+Viewer,Viewer
+ViewerControls,Viewer Controls
+Viewpoint,Viewpoint
+Width,Width
+Window,Window
+X,x
+XCount,X Count
+XRotation,X Rotation
+Y,Y
+YRotation,Y Rotation
+Zoom,Zoom
+Depth,Depth
+Global,Global Settings
+,
+,
+ResetParam_Name,Reset
+ResetParam_Desc,Reset parameter into a default
+,
+EnlargeAnchor,Enlarge anchor
 EnlargeAnchor_Desc,"To make the value change smoothly,
-extend the anchor",
-ShrinkAnchor,Shrink anchor,
+extend the anchor"
+ShrinkAnchor,Shrink anchor
 ShrinkAnchor_Desc,"To make the value change suddenly
-move the anchor to the position of the key",
-,,
-FCurve_TimelineMode_Name,Timeline Mode,
-FCurve_TimelineMode_Desc,It specifies whether the timeline is set for real time or as a percentage of particle lifetime.,
-FCurve_Copy_Desc,It copies key points.,
-FCurve_Paste_Desc,It pastes key points.,
-,,
-AutoZoom,AutoZoom,
-AutoZoom_Desc,Adjust graph's height automatically,
-FCurve_Operation_Instruction_Desc,Operating Instructions(Mouse Over),
+move the anchor to the position of the key"
+,
+FCurve_TimelineMode_Name,Timeline Mode
+FCurve_TimelineMode_Desc,It specifies whether the timeline is set for real time or as a percentage of particle lifetime.
+FCurve_Copy_Desc,It copies key points.
+FCurve_Paste_Desc,It pastes key points.
+,
+AutoZoom,AutoZoom
+AutoZoom_Desc,Adjust graph's height automatically
+FCurve_Operation_Instruction_Desc,Operating Instructions(Mouse Over)
 FCurveCtrl_Desc,"Double click - Add, Remove points
 Alt+Wheel - Zoom horizontal
 Ctrl+Wheel - Zoom vertical
 Alt+LeftClick - Select multiple points and edit
 Shift+LeftClick - Switch selecting points
 Double click with labels - Change viewing area automatically
-Delete - Remove a point",
-,,
-ImageFilter_,Image File (*.png,*.tga)|*.png;*.tga
-ModelFilter_,"Model File (*.efkmodel,fbx,mqo,gltf,glb,obj,geo,bgeo)|*.efkmodel;*.fbx;*.mqo;*.gltf;*.glb;*.obj;*.geo;*.bgeo",
-SoundFilter_,Sound File (*.wav)|*.wav,
-ProjectFilter_,Effekseer Project (*.efkproj)|*.efkproj,
-,,
-Error_NotFound,{0} is not found.,
-,,
-EffekseerParticleFilter,efkefc,
-MaterialFilter,efkmat,
-ImageFilter,"png,dds,tga",
-ModelFilter,"efkmodel,fbx,mqo,gltf,glb,obj,geo,bgeo",
-ProjectFilter,efkproj,
-ProjectFilterNew,"efkproj,efkefc",
-EffekseerPackageFilter,efkpkg,
-CurveFilter,"efkcurve,fbx",
-,,
-,,
-Clipping,Clipping,
-,,
-Save,Save,
-Load,Load,
-,,
-StorageTarget,Setting save destination,
-StorageGlobal,Effekseer Application,
-StorageLocal,Effekseer Project,
-,,
-Panel_Copy_Desc,It copies parameters by panels.,
-Panel_Paste_Desc,It pastes parameters by panels.,
-Panel_Help_Desc,Show the panels documentation in a browser.,
-,,
-DynamicParameter_Name,Dynamic parameter,
-DynamicParameter_Desc,,
-DynamicInput,Input,
-DynamicName,Name,
-DynamicEquation,Expression,
-DynamicEq,Ex.,
-DynamicFixed,Fixed,
-DynamicDynamic,Dynamic,
-DynamicAdd,Add,
-DynamicDelete,Del,
-Compile,Compile,
-,,
-CompilePosition, : Line {0} Col {1},
-CompileErrror_InvalidToken,Invalid token {0} is found,
-CompileErrror_InvalidEoF,Unexpected end is found,
-CompileError_InvalidOperation,Invalid operation is found,
-CompileError_ArgSize,The number of arguments is wrong. Expected {0} Actual {1},
-CompileError_InvalidSubstitution,Invalid substitution is found,
-CompileError_UnknownFunction,Unkwon function {0} is found,
-CompileError_UnknownValue,Unkwon value {0} is found,
-Cancel,Cancel,
-,,
-,,
-Environment_Name,Environment,
-Environment_Desc,,
-Environment_Background,Background,
-Environment_Lighting,Lighting,
-Environment_PostEffect,PostEffect,
-,,
-,,
-Material_Create_Name,Create,
-Material_Create_Desc,Create new material file and open it with the material editor,
-Material_Edit_Name,Edit,
-Material_Edit_Desc,Edit spceified material file with the material editor,
-Material_GenCache_Name,Gen. Cache,
+Delete - Remove a point"
+,
+ImageFilter_,"Image File (*.png,*.tga)|*.png;*.tga"
+ModelFilter_,"Model File (*.efkmodel,fbx,mqo,gltf,glb,obj,geo,bgeo)|*.efkmodel;*.fbx;*.mqo;*.gltf;*.glb;*.obj;*.geo;*.bgeo"
+SoundFilter_,Sound File (*.wav)|*.wav
+ProjectFilter_,Effekseer Project (*.efkproj)|*.efkproj
+,
+Error_NotFound,{0} is not found.
+,
+EffekseerParticleFilter,efkefc
+MaterialFilter,efkmat
+ImageFilter,"png,dds,tga"
+ModelFilter,"efkmodel,fbx,mqo,gltf,glb,obj,geo,bgeo"
+ProjectFilter,efkproj
+ProjectFilterNew,"efkproj,efkefc"
+EffekseerPackageFilter,efkpkg
+CurveFilter,"efkcurve,fbx"
+,
+,
+Clipping,Clipping
+,
+Save,Save
+Load,Load
+,
+StorageTarget,Setting save destination
+StorageGlobal,Effekseer Application
+StorageLocal,Effekseer Project
+,
+Panel_Copy_Desc,It copies parameters by panels.
+Panel_Paste_Desc,It pastes parameters by panels.
+Panel_Help_Desc,Show the panels documentation in a browser.
+,
+DynamicParameter_Name,Dynamic parameter
+DynamicParameter_Desc,
+DynamicInput,Input
+DynamicName,Name
+DynamicEquation,Expression
+DynamicEq,Ex.
+DynamicFixed,Fixed
+DynamicDynamic,Dynamic
+DynamicAdd,Add
+DynamicDelete,Del
+Compile,Compile
+,
+CompilePosition, : Line {0} Col {1}
+CompileErrror_InvalidToken,Invalid token {0} is found
+CompileErrror_InvalidEoF,Unexpected end is found
+CompileError_InvalidOperation,Invalid operation is found
+CompileError_ArgSize,The number of arguments is wrong. Expected {0} Actual {1}
+CompileError_InvalidSubstitution,Invalid substitution is found
+CompileError_UnknownFunction,Unkwon function {0} is found
+CompileError_UnknownValue,Unkwon value {0} is found
+Cancel,Cancel
+,
+,
+Environment_Name,Environment
+Environment_Desc,
+Environment_Background,Background
+Environment_Lighting,Lighting
+Environment_PostEffect,PostEffect
+,
+,
+Material_Create_Name,Create
+Material_Create_Desc,Create new material file and open it with the material editor
+Material_Edit_Name,Edit
+Material_Edit_Desc,Edit spceified material file with the material editor
+Material_GenCache_Name,Gen. Cache
 Material_GenCache_Desc,"It generates caches.
 If the generated cache is placed in the same directory as the material file, loading will be faster.
 On some platforms, effects cannot be played without using cache.
 A cache that can be used on both Windows and Mac is generated
-by generating the cache on Mac after generating the cache on Windows.",
-Material_NoneCache,Cache - None,
+by generating the cache on Mac after generating the cache on Windows."
+Material_NoneCache,Cache - None
 Material_OldCache,"Cache - Old
-Please regenerate.",
+Please regenerate."
 Material_OldFomatCache,"Cache - OldFormat
-Please regenerate.",
+Please regenerate."
 Material_NewFomatCache,"Cache - Too new format.
-Plese use later version.",
-DefaultFormat,Default format,
-ExportDefaultFormat,Export as default format,
-DefaultFormatExample,Default format (*.efk)|*.efk,
-EfkPkgFormat,Effekseer package,
-ExportEfkPkgFormatDescription,Export as Effekseer package,
-ImportEfkPkgFormatDescription,Import from Effekseer package,
-EfkPkgFormatFilter,Effekseer package (*.efkpkg)|*.efkpkg,
-Maginification,Maginification,
-GlbFormat,glb format,
-ExportAsGlbFormat,Export as glb format,
-GlbFormatExample,glb format (*.glb)|*.glb,
-GlTFFormat,glTF format,
-ExportAsGlTFFormat,Export as glTF format,
-GlTFFormatExample,glTF format (*.glTF)|*.glTF,
-MismatchResourceError,Please update resource files!. call Script/setup.py or use cmake and rebuild ResourceData.,
-LayerLimitError,"The node tree is limited to {0} layers, including the root.",
-FileBrowser_OpenFile,Open,
-FileBrowser_DeleteFile,Delete,
-FileBrowser_RenameFile,Rename,
-FileBrowser_ShowInExplorer,Show in Explorer,
-FileBrowser_ShowInFinder,Show in Finder,
-FileBrowser_ImportFromPackage,Import from package,
-FileBrowser_ExportToPackage,Export to package,
-,,
-Easing_Start_Name,Start,
-Easing_Start_Desc,Starting point of easing,
-Easing_End_Name,End,
-Easing_End_Desc,Value of easing at end,
-Easing_Middle_Name,Middle,
-Easing_Middle_Desc,Value of easing at middle point,
-Easing_StartSpeed_Name,Ease In,
-Easing_StartSpeed_Desc,Initial rate of easing,
-Easing_EndSpeed_Name,Ease Out,
-Easing_EndSpeed_Desc,Rate of easing at end,
-,,
-Easing_StartSlowly3_Name,Slowest,
-Easing_StartSlowly2_Name,Slower,
-Easing_StartSlowly1_Name,Slow,
-Easing_StartNormal_Name,Normal,
-Easing_StartRapidly1_Name,Fast,
-Easing_StartRapidly2_Name,Faster,
-Easing_StartRapidly3_Name,Fastest,
-Easing_EndSlowly3_Name,Slowest,
-Easing_EndSlowly2_Name,Slower,
-Easing_EndSlowly1_Name,Slow,
-Easing_EndNormal_Name,Normal,
-Easing_EndRapidly1_Name,Fast,
-Easing_EndRapidly2_Name,Faster,
-Easing_EndRapidly3_Name,Fastest,
+Plese use later version."
+DefaultFormat,Default format
+ExportDefaultFormat,Export as default format
+DefaultFormatExample,Default format (*.efk)|*.efk
+EfkPkgFormat,Effekseer package
+ExportEfkPkgFormatDescription,Export as Effekseer package
+ImportEfkPkgFormatDescription,Import from Effekseer package
+EfkPkgFormatFilter,Effekseer package (*.efkpkg)|*.efkpkg
+Maginification,Maginification
+GlbFormat,glb format
+ExportAsGlbFormat,Export as glb format
+GlbFormatExample,glb format (*.glb)|*.glb
+GlTFFormat,glTF format
+ExportAsGlTFFormat,Export as glTF format
+GlTFFormatExample,glTF format (*.glTF)|*.glTF
+MismatchResourceError,Please update resource files!. call Script/setup.py or use cmake and rebuild ResourceData.
+LayerLimitError,"The node tree is limited to {0} layers, including the root."
+FileBrowser_OpenFile,Open
+FileBrowser_DeleteFile,Delete
+FileBrowser_RenameFile,Rename
+FileBrowser_ShowInExplorer,Show in Explorer
+FileBrowser_ShowInFinder,Show in Finder
+FileBrowser_ImportFromPackage,Import from package
+FileBrowser_ExportToPackage,Export to package
+,
+Easing_Start_Name,Start
+Easing_Start_Desc,Starting point of easing
+Easing_End_Name,End
+Easing_End_Desc,Value of easing at end
+Easing_Middle_Name,Middle
+Easing_Middle_Desc,Value of easing at middle point
+Easing_StartSpeed_Name,Ease In
+Easing_StartSpeed_Desc,Initial rate of easing
+Easing_EndSpeed_Name,Ease Out
+Easing_EndSpeed_Desc,Rate of easing at end
+,
+Easing_StartSlowly3_Name,Slowest
+Easing_StartSlowly2_Name,Slower
+Easing_StartSlowly1_Name,Slow
+Easing_StartNormal_Name,Normal
+Easing_StartRapidly1_Name,Fast
+Easing_StartRapidly2_Name,Faster
+Easing_StartRapidly3_Name,Fastest
+Easing_EndSlowly3_Name,Slowest
+Easing_EndSlowly2_Name,Slower
+Easing_EndSlowly1_Name,Slow
+Easing_EndNormal_Name,Normal
+Easing_EndRapidly1_Name,Fast
+Easing_EndRapidly2_Name,Faster
+Easing_EndRapidly3_Name,Fastest
 Easing_IsMiddleEnabled_Name,"Is Middle point 
-enabled",
+enabled"
 Easing_IsRandomGroupEnabled_Name,"Is Random group 
-enabled",
-Easing_RandomGroup_X_Name, X group,
-Easing_RandomGroup_Y_Name, Y group,
-Easing_RandomGroup_Z_Name, Z group,
-Easing_IsIndividualTypeEnabled_Name,Is Type individual,
-Easing_IndividualType_X_Name, X Type,
-Easing_IndividualType_Y_Name, Y Type,
-Easing_IndividualType_Z_Name, Z Type,
-Easing_Type_Name,Type,
-Easing_LeftRightSpeed_Name,EaseLeftRightSpeed,
-Easing_Linear_Name,Linear,
-Easing_EaseInQuadratic_Name,EaseInQuadratic,
-Easing_EaseOutQuadratic_Name,EaseOutQuadratic,
-Easing_EaseInOutQuadratic_Name,EaseInOutQuadratic,
-Easing_EaseInCubic_Name,EaseInCubic,
-Easing_EaseOutCubic_Name,EaseOutCubic,
-Easing_EaseInOutCubic_Name,EaseInOutCubic,
-Easing_EaseInQuartic_Name,EaseInQuartic,
-Easing_EaseOutQuartic_Name,EaseOutQuartic,
-Easing_EaseInOutQuartic_Name,EaseInOutQuartic,
-Easing_EaseInQuintic_Name,EaseInQuintic,
-Easing_EaseOutQuintic_Name,EaseOutQuintic,
-Easing_EaseInOutQuintic_Name,EaseInOutQuintic,
-Easing_EaseInBack_Name,EaseInBack,
-Easing_EaseOutBack_Name,EaseOutBack,
-Easing_EaseInOutBack_Name,EaseInOutBack,
-Easing_EaseInBounce_Name,EaseInBounce,
-Easing_EaseOutBounce_Name,EaseOutBounce,
-Easing_EaseInOutBounce_Name,EaseInOutBounce,
-,,
-FCurve_Name,F-Curve,
-FCurve_Desc,F-Curve,
-,,
-Recording_Scale_Name,Scale,
-Recording_Scale_Desc,Enlarge the area to record images.,
-,,
-PermissionError_File,Cannot read file {0}. Cannot read file {0}. You may not have permission to read the file.,
-PermissionError_File_Mac,Moving the files associated with the effect to your home directory may solve the problem.,
-,,
-ModelReferenceType_File_Name,File,
-ModelReferenceType_ProdecualModel_Name,ProceduralModel,
-ModelReferenceType_ExternalModel_Name,External Model,
-,,
-TreeDisabled_Message,"If the toggle is turned on, the setting items will be displayed.",
-,,
-Easing_Parameter_Name,Easing Parameter,
-,,
+enabled"
+Easing_RandomGroup_X_Name, X group
+Easing_RandomGroup_Y_Name, Y group
+Easing_RandomGroup_Z_Name, Z group
+Easing_IsIndividualTypeEnabled_Name,Is Type individual
+Easing_IndividualType_X_Name, X Type
+Easing_IndividualType_Y_Name, Y Type
+Easing_IndividualType_Z_Name, Z Type
+Easing_Type_Name,Type
+Easing_LeftRightSpeed_Name,EaseLeftRightSpeed
+Easing_Linear_Name,Linear
+Easing_EaseInQuadratic_Name,EaseInQuadratic
+Easing_EaseOutQuadratic_Name,EaseOutQuadratic
+Easing_EaseInOutQuadratic_Name,EaseInOutQuadratic
+Easing_EaseInCubic_Name,EaseInCubic
+Easing_EaseOutCubic_Name,EaseOutCubic
+Easing_EaseInOutCubic_Name,EaseInOutCubic
+Easing_EaseInQuartic_Name,EaseInQuartic
+Easing_EaseOutQuartic_Name,EaseOutQuartic
+Easing_EaseInOutQuartic_Name,EaseInOutQuartic
+Easing_EaseInQuintic_Name,EaseInQuintic
+Easing_EaseOutQuintic_Name,EaseOutQuintic
+Easing_EaseInOutQuintic_Name,EaseInOutQuintic
+Easing_EaseInBack_Name,EaseInBack
+Easing_EaseOutBack_Name,EaseOutBack
+Easing_EaseInOutBack_Name,EaseInOutBack
+Easing_EaseInBounce_Name,EaseInBounce
+Easing_EaseOutBounce_Name,EaseOutBounce
+Easing_EaseInOutBounce_Name,EaseInOutBounce
+,
+FCurve_Name,F-Curve
+FCurve_Desc,F-Curve
+,
+Recording_Scale_Name,Scale
+Recording_Scale_Desc,Enlarge the area to record images.
+,
+PermissionError_File,Cannot read file {0}. Cannot read file {0}. You may not have permission to read the file.
+PermissionError_File_Mac,Moving the files associated with the effect to your home directory may solve the problem.
+,
+ModelReferenceType_File_Name,File
+ModelReferenceType_ProdecualModel_Name,ProceduralModel
+ModelReferenceType_ExternalModel_Name,External Model
+,
+TreeDisabled_Message,"If the toggle is turned on, the setting items will be displayed."
+,
+Easing_Parameter_Name,Easing Parameter
+,
 Error_TooNewFile,"Version Error : 
 The file is created with a newer version of the tool.
-Please use the latest version of the tool.",
-Error_FailedToSave,It failed to save. A file is opend by other application or lack of specification.,
-Error_FailedToOpenHelp,Could not open help. Please see from the official website.,
-,,
-ChangeRestartValues_Message,It adapts to the next startup,
-,,
-ImportEfkPkgTitle,Importing the Effekseer package,
-ImportSourcePackage,Source package,
-ImportDestinationDirectory,Destination directory,
-ImportSourceFile,Source files,
-ImportDestinationFile,Destination files,
+Please use the latest version of the tool."
+Error_FailedToSave,It failed to save. A file is opend by other application or lack of specification.
+Error_FailedToOpenHelp,Could not open help. Please see from the official website.
+,
+ChangeRestartValues_Message,It adapts to the next startup
+,
+ImportEfkPkgTitle,Importing the Effekseer package
+ImportSourcePackage,Source package
+ImportDestinationDirectory,Destination directory
+ImportSourceFile,Source files
+ImportDestinationFile,Destination files
 ImportRemoveDirPath,Remove directory names from the path
 ImportAvoidOverwrite,Rename to avoid overwriting
 ImportMergeSameFiles,Rename same files to make them common
 ImportUseRootDir,Use the root directory
-,,
+,
 SendTrigger_Desc,Send a trigger to the currently playing effect

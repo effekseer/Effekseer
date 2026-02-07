@@ -26,6 +26,6 @@ Angular"
 Rotation_AxisPVAParamater_Acceleration_Desc,"Aceleracion de la velocidad angular del Nodo, en grados"
 Rotation_AxisEasingParamater_Axis_Name,Rotación eje
 Rotation_AxisEasingParamater_Axis_Desc,"Rotación del eje del Nodo, en grados"
-
+,
 Rotation_ParamaterType_RotateToViewpoint_Name,Rotar hacia la dirección de la vista
 Rotation_ParamaterType_RotateToVelocity_Name,Rotar hacia la dirección del movimiento

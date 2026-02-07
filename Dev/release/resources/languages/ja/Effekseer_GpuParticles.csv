@@ -1,7 +1,7 @@
 GpuParticles,GPUパーティクル
 GpuParticles_Enabled_Name,使用する
 GpuParticles_Enabled_Desc,ONにするとGPUパーティクルを使用します
-
+,
 GpuParticles_Basic_Name,基本設定
 GpuParticles_Basic_EmitCount_Name,生成数
 GpuParticles_Basic_EmitCount_Desc,放出するパーティクルの合計数
@@ -11,7 +11,7 @@ GpuParticles_Basic_EmitOffset_Name,生成開始時間
 GpuParticles_Basic_EmitOffset_Desc,パーティクルを放出開始する時間
 GpuParticles_Basic_LifeTime_Name,生存時間
 GpuParticles_Basic_LifeTime_Desc,パーティクルの生存時間
-
+,
 GpuParticles_EmitShape_Name,生成形状
 GpuParticles_EmitShape_ShapeType_Point_Name,点
 GpuParticles_EmitShape_ShapeType_Line_Name,線
@@ -40,7 +40,7 @@ GpuParticles_EmitShape_ModelSize_Name,サイズ
 GpuParticles_EmitShape_ModelSize_Desc,モデル形状のサイズ
 GpuParticles_EmitShape_RotationApplied_Name,生成角度に影響
 GpuParticles_EmitShape_RotationApplied_Desc,円、球、モデルで有効
-
+,
 GpuParticles_Velocity_Name,速度
 GpuParticles_Velocity_Direction_Name,方向
 GpuParticles_Velocity_Direction_Desc,パーティクル生成時の移動方向
@@ -50,13 +50,13 @@ GpuParticles_Velocity_InitialSpeed_Name,初期速度
 GpuParticles_Velocity_InitialSpeed_Desc,パーティクル生成時の速さ
 GpuParticles_Velocity_Damping_Name,速度減衰
 GpuParticles_Velocity_Damping_Desc,パーティクル運動時の減衰力
-
+,
 GpuParticles_Rotation_Name,回転
 GpuParticles_Rotation_InitialAngle_Name,初期角度
 GpuParticles_Rotation_InitialAngle_Desc,パーティクル生成時の角度
 GpuParticles_Rotation_AngularVelocity_Name,回転速度
 GpuParticles_Rotation_AngularVelocity_Desc,パーティクルが回転する速度
-
+,
 GpuParticles_Scale_Name,拡大率
 GpuParticles_Scale_SingleScale_Name,単一拡大率
 GpuParticles_Scale_SingleScale_Desc,単一の拡大率
@@ -70,7 +70,7 @@ GpuParticles_Scale_TerminalSingleScale_Name,終点 (単一)
 GpuParticles_Scale_TerminalSingleScale_Desc,パーティクル終了時の拡大率
 GpuParticles_Scale_TerminalXYZScale_Name,終点 (XYZ)
 GpuParticles_Scale_TerminalXYZScale_Desc,パーティクル終了時のXYZごとの拡大率
-
+,
 GpuParticles_Force_Name,力場
 GpuParticles_Force_Gravity_Name,重力
 GpuParticles_Force_Gravity_Desc,パーティクルに常時かかる一方向の力
@@ -92,14 +92,14 @@ GpuParticles_Force_Turbulence_Scale_Name,スケール
 GpuParticles_Force_Turbulence_Scale_Desc,乱流のスケール
 GpuParticles_Force_Turbulence_Octave_Name,複雑度
 GpuParticles_Force_Turbulence_Octave_Desc,乱流の複雑度
-
+,
 GpuParticles_RenderBasic_Name,描画設定
 GpuParticles_RenderBasic_TextureFilter_Name,フィルタ
 GpuParticles_RenderBasic_TextureWrap_Name,外側
 GpuParticles_RenderBasic_BlendType_Name,ブレンド
 GpuParticles_RenderBasic_ZWrite_Name,深度書き込み
 GpuParticles_RenderBasic_ZTest_Name,深度テスト
-
+,
 GpuParticles_RenderShape_Name,描画形状
 GpuParticles_RenderShape_ShapeType_Sprite_Name,スプライト
 GpuParticles_RenderShape_ShapeType_Model_Name,モデル
@@ -118,7 +118,7 @@ GpuParticles_RenderShape_TrailLength_Name,軌跡の長さ
 GpuParticles_RenderShape_TrailLength_Desc,軌跡バッファのサイズ
 GpuParticles_RenderShape_Size_Name,形状サイズ
 GpuParticles_RenderShape_Size_Desc,パーティクルの描画形状のサイズ
-
+,
 GpuParticles_RenderColor_Name,描画色
 GpuParticles_RenderColor_ColorInherit_Name,色継承
 GpuParticles_RenderColor_ColorInherit_Desc,このノード（またはルートノード）の描画色をGPUパーティクルへどのように影響させるか
@@ -130,7 +130,7 @@ GpuParticles_RenderColor_FadeIn_Name,フェードイン
 GpuParticles_RenderColor_FadeIn_Desc,パーティクルのフェードイン時間
 GpuParticles_RenderColor_FadeOut_Name,フェードアウト
 GpuParticles_RenderColor_FadeOut_Desc,パーティクルのフェードアウト時間
-
+,
 GpuParticles_RenderMaterial_Name,描画マテリアル
 GpuParticles_RenderMaterial_Material_Name,マテリアル
 GpuParticles_RenderMaterial_MaterialType_Unlit_Name,Unlit

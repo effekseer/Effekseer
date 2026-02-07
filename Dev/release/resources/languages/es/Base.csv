@@ -6,7 +6,7 @@ Select,Seleccionar
 ,
 Font_Normal,resources/fonts/GenShinGothic-Monospace-Normal.ttf
 Font_Bold,resources/fonts/GenShinGothic-Monospace-Bold.ttf
-
+,
 MultipleValues,Valores múltiples
 Enabled_Name,Habilitado
 Disabled_Name,Deshabilitado

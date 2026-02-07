@@ -1,7 +1,7 @@
 GpuParticles,GPU Particles
 GpuParticles_Enabled_Name,Enabled
-GpuParticles_Enabled_Desc,If checked, use GPU particles.
-
+GpuParticles_Enabled_Desc,"If checked, use GPU particles."
+,
 GpuParticles_Basic_Name,Basic
 GpuParticles_Basic_EmitCount_Name,Spawn count
 GpuParticles_Basic_EmitCount_Desc,Total number of particles to spawn.
@@ -11,7 +11,7 @@ GpuParticles_Basic_EmitOffset_Name,Initial Delay
 GpuParticles_Basic_EmitOffset_Desc,Amount of time that must elapse after instance spawns before it starts generating.
 GpuParticles_Basic_LifeTime_Name,Time to live
 GpuParticles_Basic_LifeTime_Desc,Length of time each instance survives.
-
+,
 GpuParticles_EmitShape_Name,Emission
 GpuParticles_EmitShape_ShapeType_Point_Name,Point
 GpuParticles_EmitShape_ShapeType_Line_Name,Line
@@ -39,8 +39,8 @@ GpuParticles_EmitShape_ModelPath_Desc,Mesh paths used for mesh geometry.
 GpuParticles_EmitShape_ModelSize_Name,Size
 GpuParticles_EmitShape_ModelSize_Desc,Size of mesh shape.
 GpuParticles_EmitShape_RotationApplied_Name,Set angle on spawn
-GpuParticles_EmitShape_RotationApplied_Desc,Valid for circles, spheres, and models
-
+GpuParticles_EmitShape_RotationApplied_Desc,"Valid for circles, spheres, and models"
+,
 GpuParticles_Velocity_Name,Velocity
 GpuParticles_Velocity_Direction_Name,Direction
 GpuParticles_Velocity_Direction_Desc,Direction of movement when spawning particles.
@@ -50,13 +50,13 @@ GpuParticles_Velocity_InitialSpeed_Name,Initial Speed
 GpuParticles_Velocity_InitialSpeed_Desc,Initial speed of movement when spawning particles.
 GpuParticles_Velocity_Damping_Name,Damping
 GpuParticles_Velocity_Damping_Desc,Damping force during particle motion.
-
+,
 GpuParticles_Rotation_Name,Rotation
 GpuParticles_Rotation_InitialAngle_Name,Initial Angle
 GpuParticles_Rotation_InitialAngle_Desc,Angle when spawning particles
 GpuParticles_Rotation_AngularVelocity_Name,Angular Velocity
 GpuParticles_Rotation_AngularVelocity_Desc,Velocity at which particles rotate
-
+,
 GpuParticles_Scale_Name,Scale
 GpuParticles_Scale_SingleScale_Name,Single Scale
 GpuParticles_Scale_SingleScale_Desc,Single scale.
@@ -70,7 +70,7 @@ GpuParticles_Scale_TerminalSingleScale_Name,End (Single)
 GpuParticles_Scale_TerminalSingleScale_Desc,Scale at end of particle.
 GpuParticles_Scale_TerminalXYZScale_Name,End (XYZ)
 GpuParticles_Scale_TerminalXYZScale_Desc,XYZ Scale at the end of particle.
-
+,
 GpuParticles_Force_Name,Force
 GpuParticles_Force_Gravity_Name,Gravity
 GpuParticles_Force_Gravity_Desc,One-directional force applied to particles at all times.
@@ -92,14 +92,14 @@ GpuParticles_Force_Turbulence_Scale_Name,Field Scale
 GpuParticles_Force_Turbulence_Scale_Desc,Larger value ​​increases the turbulence width.
 GpuParticles_Force_Turbulence_Octave_Name,Complexity
 GpuParticles_Force_Turbulence_Octave_Desc,"Larger value ​​complicates turbulence. However, processing becomes heavy."
-
+,
 GpuParticles_RenderBasic_Name,Rendering
 GpuParticles_RenderBasic_TextureFilter_Name,Filter
 GpuParticles_RenderBasic_TextureWrap_Name,Wrap
 GpuParticles_RenderBasic_BlendType_Name,Blend
 GpuParticles_RenderBasic_ZWrite_Name,Depth Write
 GpuParticles_RenderBasic_ZTest_Name,Depth Test
-
+,
 GpuParticles_RenderShape_Name,Shape
 GpuParticles_RenderShape_ShapeType_Sprite_Name,Sprite
 GpuParticles_RenderShape_ShapeType_Model_Name,Model
@@ -118,19 +118,19 @@ GpuParticles_RenderShape_TrailLength_Name,Trail Length
 GpuParticles_RenderShape_TrailLength_Desc,Trail buffer size
 GpuParticles_RenderShape_Size_Name,Shape Size
 GpuParticles_RenderShape_Size_Desc,Size of the particle rendering shape
-
+,
 GpuParticles_RenderColor_Name,Color
 GpuParticles_RenderColor_ColorInherit_Name,Color inheritance
 GpuParticles_RenderColor_ColorInherit_Desc,How this node's (or root node's) render color affects GPU particles.
 GpuParticles_RenderColor_ColorAll_Name,Color All
 GpuParticles_RenderColor_ColorAll_Desc,Particle color
 GpuParticles_RenderColor_Emissive_Name,Emissive Scaling
-GpuParticles_RenderColor_Emissive_Desc,"It multiplies the particle's color by the specified value."
+GpuParticles_RenderColor_Emissive_Desc,It multiplies the particle's color by the specified value.
 GpuParticles_RenderColor_FadeIn_Name,Fade-In
 GpuParticles_RenderColor_FadeIn_Desc,Particle fade-in time
 GpuParticles_RenderColor_FadeOut_Name,Fade-Out
 GpuParticles_RenderColor_FadeOut_Desc,Particle fade-out time
-
+,
 GpuParticles_RenderMaterial_Name,Material
 GpuParticles_RenderMaterial_Material_Name,Material
 GpuParticles_RenderMaterial_MaterialType_Unlit_Name,Unlit

@@ -17,7 +17,7 @@ BasicSettings_Removal_WhenLifeIsExtinct_Name,生命周期结束后销毁
 BasicSettings_Removal_WhenLifeIsExtinct_Desc,
 BasicSettings_Removal_WhenParentIsRemoved_Name,跟随父节点销毁
 BasicSettings_Removal_WhenParentIsRemoved_Desc,
-BasicSettings_Removal_WhenAllChildrenAreRemoved_Name,"子节点全部销毁时销毁"
+BasicSettings_Removal_WhenAllChildrenAreRemoved_Name,子节点全部销毁时销毁
 BasicSettings_Removal_WhenAllChildrenAreRemoved_Desc,
 BasicSettings_Life_Name,生命周期
 BasicSettings_Life_Desc,每个实例存在的时间
@@ -30,13 +30,13 @@ BasicSettings_ParentEffectType_NotBind_Name,从不
 BasicSettings_ParentEffectType_NotBind_Root_Name,依赖根节点（废弃）
 BasicSettings_ParentEffectType_WhenCreating_Name,仅生成时
 BasicSettings_ParentEffectType_Already_Name,始终
-
+,
 BasicSettings_TranslationParentEffectType_NotBind_FollowParent_Name,从不-跟随父节点
 BasicSettings_TranslationParentEffectType_WhenCreating_FollowParent_Name,仅生成时-跟随父节点
-
+,
 BasicSettings_SteeringBehaviorParemeter_MaxFollowSpeed_Name,最大跟随速度
 BasicSettings_SteeringBehaviorParameter_SteeringSpeed_Name,转向速度（%）
-
+,
 TriggerType_None_Name,无
 TriggerType_Trigger0_Name,触发器0
 TriggerType_Trigger1_Name,触发器1
@@ -44,7 +44,7 @@ TriggerType_Trigger2_Name,触发器2
 TriggerType_Trigger3_Name,触发器3
 TriggerType_ParentRemoved_Name,父级消失时
 TriggerType_ParentCollided_Name,父级碰撞时
-
+,
 BasicSettings_Generation_Enabled_Name,启用生成
 BasicSettings_Generation_Enabled_Desc,播放开始时生成是否有效。
 BasicSettings_Generation_StartTrigger_Name,开始生成的触发器
