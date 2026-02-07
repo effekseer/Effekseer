@@ -67,6 +67,10 @@ Si la entrada no está conectada, utiliza el valor de la propiedad."
 ,
 Step_Node_Name,Paso
 Step_Node_Desc,"Da salida a 1 si el valor introducido en V es mayor que el Borde, y da salida a 0 si es menor."
+SmoothStep_Node_Name,Paso Suave
+SmoothStep_Node_Desc,"Emite una interpolación Hermite suave entre 0 y 1 cuando el valor de V está entre Edge1 y Edge2.
+Si es menor que Edge1, emite 0.
+Si es mayor que Edge2, emite 1."
 ,
 Abs_Node_Name,Absoluto
 Abs_Node_Desc,Da salida al valor absoluto de V.
@@ -114,6 +118,25 @@ Si la entrada no está conectada, utiliza el valor de la propiedad.
 Si alpha es 1, V1 es salida.
 Si alpha es 0, salida V2.
 Si alpha es 0.7, V1 x 0.3 + V2 x 0.7 es salida."
+,
+Logical_Name,Lógica
+Branch_Node_Name,Rama
+Branch_Node_Desc,"La salida cambia según el valor introducido en Condition.
+Si Condition es True, emite el valor conectado a True.
+Si Condition es False, emite el valor conectado a False."
+Compare_Node_Name,Comparar
+Compare_Node_Desc,"Compara A y B según la condición configurada en Condition.
+Si la condición se cumple, emite True.
+Si no se cumple, emite False."
+BoolAnd_Node_Name,Y lógico (AND)
+BoolAnd_Node_Desc,La salida es True cuando V1 y V2 son True.
+BoolOr_Node_Name,O lógico (OR)
+BoolOr_Node_Desc,La salida es True cuando V1 o V2 es True.
+BoolNot_Node_Name,NO lógico (NOT)
+BoolNot_Node_Desc,Invierte y emite V.
+IsFrontFace_Node_Name,Cara frontal
+IsFrontFace_Node_Desc,"Emite True al renderizar la cara frontal.
+Emite False al renderizar la cara trasera."
 ,
 Model_Name,Modelo
 WorldPosition_Node_Name,PosiciónVertice
@@ -218,6 +241,20 @@ Depth_Name,Profundidad
 DepthFade_Name,Desvanecimiento de la profundidad
 DepthFade_Desc,"Emite un valor menor a medida que se acerca al objeto de fondo.
 Salida 1 si la distancia es mayor que la distancia de desvanecimiento, 0 si la distancia es 0".
+,
+Noise_Name,Ruido
+SimpleNoise_Node_Name,Ruido simple
+SimpleNoise_Node_Desc,Emite ruido.
+WhiteNoise_Node_Name,Ruido blanco
+WhiteNoise_Node_Desc,Emite ruido.
+CellularNoise_Node_Name,Ruido celular
+CellularNoise_Node_Desc,Emite ruido.
+,
+Color_Name,Color
+RgbToHsv_Node_Name,RGB a HSV
+RgbToHsv_Node_Desc,Convierte el espacio de color RGB a HSV.
+HsvToRgb_Node_Name,HSV a RGB
+HsvToRgb_Node_Desc,Convierte el espacio de color HSV a RGB.
 ,
 ConvertParam_Name,Convertir a parametros
 ,

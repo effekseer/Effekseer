@@ -1,6 +1,8 @@
+.gitattributes eol=lf
 *.bat eol=crlf
 *.sh eol=lf
 *.md eol=lf
+*.csv eol=crlf
 *.vcxproj eol=crlf
 *.vcxproj.filters eol=crlf
 *.h eol=lf

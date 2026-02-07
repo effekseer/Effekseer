@@ -70,6 +70,10 @@ Fmod_Node_Desc,"输出V1除以V2的余数。
 ,
 Step_Node_Name,步
 Step_Node_Desc,如果V的输入值大于Edge的输入值，输出1，反之输出0。
+SmoothStep_Node_Name,平滑步进
+SmoothStep_Node_Desc,"当输入到V的值在Edge1和Edge2之间时，输出0到1之间的平滑Hermite插值结果。
+小于Edge1时输出0。
+大于Edge2时输出1。"
 ,
 Abs_Node_Name,绝对值
 Abs_Node_Desc,输出V的绝对值。
@@ -116,7 +120,26 @@ LinearInterpolate_Node_Desc,"输出V1和V2以alpha为比率的线性插值。
 
 如果alpha为1，输出V1。
 如果alpha为0，输出V2。
-如果alpha为0.1，输出V1 x 0.3 + V2 x 0.7。"
+如果alpha为0.7，输出V1 x 0.3 + V2 x 0.7。"
+,
+Logical_Name,逻辑
+Branch_Node_Name,分支
+Branch_Node_Desc,"输出会根据输入到Condition的值而变化。
+Condition为True时，输出True端输入值。
+Condition为False时，输出False端输入值。"
+Compare_Node_Name,比较
+Compare_Node_Desc,"根据Condition中设置的条件比较A和B。
+条件成立时输出True。
+条件不成立时输出False。"
+BoolAnd_Node_Name,逻辑与 (AND)
+BoolAnd_Node_Desc,当V1和V2都为True时输出True。
+BoolOr_Node_Name,逻辑或 (OR)
+BoolOr_Node_Desc,当V1或V2任一为True时输出True。
+BoolNot_Node_Name,逻辑非 (NOT)
+BoolNot_Node_Desc,对V取反后输出。
+IsFrontFace_Node_Name,正面判定
+IsFrontFace_Node_Desc,"当前渲染正面时输出True。
+当前渲染背面时输出False。"
 ,
 Model_Name,模型
 WorldPosition_Node_Name,顶点位置
@@ -230,6 +253,16 @@ GradientParameter_Node_Desc,"输出一个外部设置的梯度。"
 Noise_Name,噪声
 SimpleNoise_Node_Name,简单噪声
 SimpleNoise_Node_Desc,输出噪声。
+WhiteNoise_Node_Name,白噪声
+WhiteNoise_Node_Desc,输出噪声。
+CellularNoise_Node_Name,蜂窝噪声
+CellularNoise_Node_Desc,输出噪声。
+,
+Color_Name,颜色
+RgbToHsv_Node_Name,RGB转HSV
+RgbToHsv_Node_Desc,将RGB色彩空间转换为HSV色彩空间。
+HsvToRgb_Node_Name,HSV转RGB
+HsvToRgb_Node_Desc,将HSV色彩空间转换为RGB色彩空间。
 ,
 Environment_Name,环境
 Light_Node_Name,光照

@@ -138,7 +138,7 @@ BoolOr_Node_Name,論理和 (OR)
 BoolOr_Node_Desc,V1とV2がどちらかがTrueの場合、出力はTrueになります。
 BoolNot_Node_Name,論理否定 (NOT)
 BoolNot_Node_Desc,Vを反転して出力します
-IsFrontFace_Node_Name,IsFrontFace
+IsFrontFace_Node_Name,表面判定
 IsFrontFace_Node_Desc,"表面をレンダリングしている場合、Trueを出力します。
 裏面をレンダリングしている場合、Falseを出力します。"
 ,
@@ -261,9 +261,9 @@ CellularNoise_Node_Name,セルラーノイズ
 CellularNoise_Node_Desc,ノイズを出力します。
 ,
 Color_Name,色
-RgbToHsv_Node_Name,RGB to HSV
+RgbToHsv_Node_Name,RGBからHSV
 RgbToHsv_Node_Desc,RGB色空間をHSV色空間に変換します。
-HsvToRgb_Node_Name,HSV to RGB
+HsvToRgb_Node_Name,HSVからRGB
 HsvToRgb_Node_Desc,HSV色空間をRGB色空間に変換します。
 ,
 Environment_Name,環境
