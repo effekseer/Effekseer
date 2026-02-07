@@ -10,6 +10,7 @@ ConfirmSaveChanged,[{0}] ha tenido cambios. ¿Quieres guardar los cambios?
 Cancel,Cancelar
 TextureCount,Imagen
 UniformCount,Parametros
+GradientCount,Cantidad de gradientes
 Delete_Name,Borrar
 ,
 Description_Name,Descripción
@@ -39,7 +40,7 @@ Priority_Desc,"Cuanto más baja sea la prioridad, más alto se mostrará la pant
 Sampler_Name,Muestra
 Sampler_Desc,"Especificar el tratamiento de una imagen.
 Repetir - repite desde el lado opuesto
-Pinza - mantiene el color del borde
+Pinza - mantiene el color del borde"
 UVIndex_Name,Índice UV
 ,
 ShadingModel_Name,Modelo sombreado
@@ -182,6 +183,8 @@ Comment_Node_Name,Comentario
 Constant_Name,Constante
 Time_Node_Name,Tiempo
 Time_Node_Desc,Muestra la hora actual en segundos.
+LocalTime_Node_Name,Tiempo local
+LocalTime_Node_Desc,Muestra el tiempo en segundos desde que se generó el efecto.
 ParticleTime_Node_Name,Tiempo partícula
 ParticleTime_Node_Desc,"Muestra el progreso de vida normalizado y los segundos transcurridos para cada partícula."
 EffectScale_Node_Name,Escala Effecto
@@ -238,9 +241,18 @@ Puede especificar cuántas imágenes se disponen en una ronda y el ángulo de ro
 ,
 Depth_Name,Profundidad
 ,
-DepthFade_Name,Desvanecimiento de la profundidad
-DepthFade_Desc,"Emite un valor menor a medida que se acerca al objeto de fondo.
+DepthFade_Node_Name,Desvanecimiento de la profundidad
+DepthFade_Node_Desc,"Emite un valor menor a medida que se acerca al objeto de fondo.
 Salida 1 si la distancia es mayor que la distancia de desvanecimiento, 0 si la distancia es 0".
+,
+Gradient_Name,Gradiente
+SampleGradient_Node_Name,Muestrear gradiente
+SampleGradient_Node_Desc,"Emite una referencia de color del gradiente al color en la posición especificada.
+Si no hay entrada para el gradiente, se usa el gradiente de este nodo."
+Gradient_Node_Name,Gradiente
+Gradient_Node_Desc,"Este nodo emite un gradiente."
+GradientParameter_Node_Name,Parámetro de gradiente
+GradientParameter_Node_Desc,"Emite un gradiente configurado externamente."
 ,
 Noise_Name,Ruido
 SimpleNoise_Node_Name,Ruido simple
@@ -255,6 +267,10 @@ RgbToHsv_Node_Name,RGB a HSV
 RgbToHsv_Node_Desc,Convierte el espacio de color RGB a HSV.
 HsvToRgb_Node_Name,HSV a RGB
 HsvToRgb_Node_Desc,Convierte el espacio de color HSV a RGB.
+,
+Environment_Name,Entorno
+Light_Node_Name,Luz
+Light_Node_Desc,Emite información sobre las luces configuradas externamente.
 ,
 ConvertParam_Name,Convertir a parametros
 ,

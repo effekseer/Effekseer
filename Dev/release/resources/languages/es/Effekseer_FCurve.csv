@@ -8,3 +8,13 @@ FcurveTimelineMode_Percent_Name,Porcentaje(0-100)
 Fcurve_Key_Name,Tiempo
 Fcurve_Key_Frame_Name,Frame
 Fcurve_Key_Percent_Name,Porcentaje
+
+FCurve_AddPoint,Agregar punto
+FCurve_DeletePoint,Eliminar punto seleccionado
+FCurve_Copy,Copiar
+FCurve_PaseteOnZero,Pegar F-Curve copiada en el frame 0
+FCurve_PasteOnCurrentTime,Pegar F-Curve copiada en el tiempo actual
+FCurve_PasteOnCursor,Pegar F-Curve copiada en el cursor
+FCurve_Overwrite,Sobrescribir con la F-Curve copiada
+FCurve_AlignKey,Alinear claves seleccionadas
+FCurve_AlignValue,Alinear valores seleccionados

@@ -151,3 +151,9 @@ RS_Ring_PVALocation_Velocity_Name,Velocidad
 RS_Ring_PVALocation_Velocity_Desc,Velocidad inicial del borde
 RS_Ring_PVALocation_Acceleration_Name,Aceleración
 RS_Ring_PVALocation_Acceleration_Desc,Aceleración del borde
+
+StandardColorType_Gradient_Name,Gradiente
+RS_TrailSmoothing_Name,Suavizado
+RS_TrailTimeSource_Name,Fuente del tiempo de color
+RS_TrailTimeSource_FirstParticle_Name,Primera partícula
+RS_TrailTimeSource_ParticleGroup_Name,Grupo

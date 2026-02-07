@@ -55,3 +55,11 @@ BasicSettings_Generation_SpawnTrigger_Name,Disparador de generación
 BasicSettings_Generation_SpawnTrigger_Desc,Disparador que genera partículas cuando el modo es Disparador.
 BasicSettings_Generation_SpawnCount_Name,Partículas por disparo
 BasicSettings_Generation_SpawnCount_Desc,Cantidad de partículas generadas cada vez que se activa el disparador.
+
+TriggerType_None_Name,Ninguno
+TriggerType_Trigger0_Name,Disparador0
+TriggerType_Trigger1_Name,Disparador1
+TriggerType_Trigger2_Name,Disparador2
+TriggerType_Trigger3_Name,Disparador3
+TriggerType_ParentRemoved_Name,Al eliminar padre
+TriggerType_ParentCollided_Name,Al colisionar padre

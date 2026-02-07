@@ -71,3 +71,7 @@ MouseMappingType_Blender_Name,Blender
 MouseMappingType_Maya_Name,Maya
 FileBrowser_ViewMode_IconView_Name,Vista de icono
 FileBrowser_ViewMode_ListView_Name,Vista de la lista
+
+Options_FloatFormatDigits_Desc,Cantidad de dígitos después del punto decimal
+RenderMode_NormalWithWireframe_Name,Normal+Malla de alambre
+RenderMode_Overdraw_Name,Sobredibujo

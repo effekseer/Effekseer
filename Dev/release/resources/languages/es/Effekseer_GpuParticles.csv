@@ -91,7 +91,7 @@ GpuParticles_Force_Turbulence_Seed_Desc,El flujo de turbulencia cambia según el
 GpuParticles_Force_Turbulence_Scale_Name,Escala del campo
 GpuParticles_Force_Turbulence_Scale_Desc,Un valor mayor incrementa el ancho de la turbulencia.
 GpuParticles_Force_Turbulence_Octave_Name,Complejidad
-GpuParticles_Force_Turbulence_Octave_Desc, "Un valor mayor complica la turbulencia. Sin embargo, el procesamiento se vuelve pesado".
+GpuParticles_Force_Turbulence_Octave_Desc," ""Un valor mayor complica la turbulencia. Sin embargo"," el procesamiento se vuelve pesado""."
 
 GpuParticles_RenderBasic_Name,Renderizado
 GpuParticles_RenderBasic_TextureFilter_Name,Filtro
@@ -125,7 +125,7 @@ GpuParticles_RenderColor_ColorInherit_Desc,Afectado por el color del nodo padre 
 GpuParticles_RenderColor_ColorAll_Name,Color Todo
 GpuParticles_RenderColor_ColorAll_Desc,Color de la partícula
 GpuParticles_RenderColor_Emissive_Name,Escalado Emisivo
-GpuParticles_RenderColor_Emissive_Desc, "Multiplica el color de la partícula por el valor especificado".
+GpuParticles_RenderColor_Emissive_Desc," ""Multiplica el color de la partícula por el valor especificado""."
 GpuParticles_RenderColor_FadeIn_Name,Fundido de entrada
 GpuParticles_RenderColor_FadeIn_Desc,Tiempo de fundido de las partículas
 GpuParticles_RenderColor_FadeOut_Name,Fundido de salida
@@ -140,3 +140,6 @@ GpuParticles_RenderMaterial_ColorTexture_Name,Textura de color
 GpuParticles_RenderMaterial_ColorTexture_Desc,
 GpuParticles_RenderMaterial_NormalTexture_Name,Textura Normal
 GpuParticles_RenderMaterial_NormalTexture_Desc,
+
+GpuParticles_EmitShape_SphereRadius_Name,Radio
+GpuParticles_RenderColor_Name,Color

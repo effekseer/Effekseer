@@ -344,7 +344,7 @@ ModelReferenceType_File_Name,Archivo,
 ModelReferenceType_ProdecualModel_Name,Modelo procedural,
 ModelReferenceType_ExternalModel_Name,Modelo externo,
 ,,
-TreeDisabled_Message,"Si el selector está activado se mostrarán los elementos de ajuste.",
+TreeDisabled_Message,Si el selector está activado se mostrarán los elementos de ajuste.,
 ,,
 Easing_Parameter_Name,Parametro de desplazamiento,
 ,,
@@ -363,3 +363,8 @@ ImportSourceFile,Fuente de archivos,
 ImportDestinationFile,Destino de archivos,
 ,,
 SendTrigger_Desc,Envía un disparo al efecto que se está reproduciendo
+
+ImportRemoveDirPath,Quitar los nombres de directorio de la ruta
+ImportAvoidOverwrite,Renombrar para evitar sobrescritura
+ImportMergeSameFiles,Renombrar archivos iguales para compartirlos
+ImportUseRootDir,Usar el directorio raíz

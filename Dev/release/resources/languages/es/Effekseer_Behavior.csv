@@ -27,7 +27,7 @@ EffectBehavior_TimeSpan_Desc,Tasa de aparición global de las partículas
 EffectBehavior_ColorAll_Name,Color global
 EffectBehavior_PlaybackSpeed_Name,Velocidad global
 EffectBehavior_PlaybackSpeed_Desc,"Velocidad global de todos los nodulos
-1 = Velocidad normal
+1 = Velocidad normal"
 EffectBehavior_TargetLocation_Name,Atracción
 EffectBehavior_TargetLocation_Desc,Punto de atracción global
 EffectBehavior_ExternalModels_Name,Modelos externos

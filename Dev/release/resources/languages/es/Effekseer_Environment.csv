@@ -27,3 +27,6 @@ Environment_Bloom_Intensity_Name,Intensidad
 Environment_Bloom_Threshold_Name,Umbral
 Environment_Bloom_SoftKnee_Name,Redondeado suave
 Environment_TonemapReinhard_Exposure_Name,Exposición
+
+EnvironmentGround_IsCollisionEnabled_Name,Colisión con el suelo
+EnvironmentGround_IsCollisionEnabled_Desc,Habilita colisiones contra el suelo en el visor
