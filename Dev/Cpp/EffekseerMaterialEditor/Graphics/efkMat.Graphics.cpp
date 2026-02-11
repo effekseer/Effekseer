@@ -273,6 +273,7 @@ std::shared_ptr<Mesh> Mesh::Load(std::shared_ptr<Graphics> graphics, const char*
 
 				vertexes[index_offset + v].UV1.X = attrib.texcoords[2 * idx.texcoord_index + 0];
 				vertexes[index_offset + v].UV1.Y = 1.0f - attrib.texcoords[2 * idx.texcoord_index + 1];
+				vertexes[index_offset + v].UV2 = vertexes[index_offset + v].UV1;
 				vertexes[index_offset + v].Color[0] = attrib.colors[3 * idx.vertex_index + 0] * 255;
 				vertexes[index_offset + v].Color[1] = attrib.colors[3 * idx.vertex_index + 1] * 255;
 				vertexes[index_offset + v].Color[2] = attrib.colors[3 * idx.vertex_index + 2] * 255;
@@ -361,6 +362,11 @@ bool Preview::Initialize(std::shared_ptr<Graphics> graphics)
 	vb[2].UV1.Y = 1.0;
 	vb[3].UV1.X = 0.0;
 	vb[3].UV1.Y = 1.0;
+
+	vb[0].UV2 = vb[0].UV1;
+	vb[1].UV2 = vb[1].UV1;
+	vb[2].UV2 = vb[2].UV1;
+	vb[3].UV2 = vb[3].UV1;
 
 	for (auto& v : vb)
 	{

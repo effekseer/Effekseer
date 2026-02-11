@@ -149,6 +149,7 @@ struct Vertex
 	Vector3 Binormal;
 	Vector3 Tangent;
 	Vector2 UV1;
+	Vector2 UV2;
 	std::array<uint8_t, 4> Color;
 };
 
