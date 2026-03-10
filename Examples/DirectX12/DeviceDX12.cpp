@@ -150,6 +150,10 @@ void DeviceDX12::SetupEffekseerModules(::Effekseer::ManagerRef efkManager, bool 
 	// エフェクトのレンダラーの作成
 	DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	efkRenderer = ::EffekseerRendererDX12::Create(graphicsDevice, &format, 1, DXGI_FORMAT_UNKNOWN, false, 8000);
+	if (efkRenderer == nullptr)
+	{
+		return;
+	}
 
 	// Create a memory pool
 	// メモリプールの作成

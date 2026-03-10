@@ -144,6 +144,10 @@ void DeviceVulkan::SetupEffekseerModules(::Effekseer::ManagerRef efkManager, boo
 	renderPassInfo.RenderTextureFormats[0] = VK_FORMAT_B8G8R8A8_UNORM;
 	renderPassInfo.DepthFormat = VK_FORMAT_D24_UNORM_S8_UINT;
 	efkRenderer = ::EffekseerRendererVulkan::Create(graphicsDevice, renderPassInfo, 8000);
+	if (efkRenderer == nullptr)
+	{
+		return;
+	}
 
 	// Create a memory pool
 	// メモリプールの作成

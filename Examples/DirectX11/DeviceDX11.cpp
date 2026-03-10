@@ -200,6 +200,10 @@ void DeviceDX11::SetupEffekseerModules(::Effekseer::ManagerRef efkManager, bool 
 	// Create a renderer of effects
 	// エフェクトのレンダラーの作成
 	efkRenderer = ::EffekseerRendererDX11::Renderer::Create(graphicsDevice, 8000);
+	if (efkRenderer == nullptr)
+	{
+		return;
+	}
 
 	// Sprcify rendering modules
 	// 描画モジュールの設定

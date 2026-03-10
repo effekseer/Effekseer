@@ -92,6 +92,10 @@ void DeviceGLFW::SetupEffekseerModules(::Effekseer::ManagerRef efkManager, bool 
 	// Create a renderer of effects
 	// エフェクトのレンダラーの作成
 	efkRenderer = ::EffekseerRendererGL::Renderer::Create(graphicsDevice, 8000);
+	if (efkRenderer == nullptr)
+	{
+		return;
+	}
 
 	// Sprcify rendering modules
 	// 描画モジュールの設定
