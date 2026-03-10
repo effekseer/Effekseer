@@ -83,6 +83,10 @@ std::string GetLanguageKey(SystemLanguage language)
 	{
 		return "zhcn";
 	}
+	else if (language == SystemLanguage::TraditionalChinese)
+	{
+		return "zhtw";
+	}
 
 	// Fallback
 	return "en";
@@ -101,6 +105,10 @@ SystemLanguage GetSystemLanguage(const std::string& key)
 	else if (key == "zhcn")
 	{
 		return SystemLanguage::SimplifiedChinese;
+	}
+	else if (key == "zhtw")
+	{
+		return SystemLanguage::TraditionalChinese;
 	}
 
 	return SystemLanguage::Unknown;

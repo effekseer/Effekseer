@@ -111,6 +111,10 @@ namespace Effekseer
 				{
 					language = "zhcn";
 				}
+				else if (systemLanguage == swig.SystemLanguage.TraditionalChinese)
+				{
+					language = "zhtw";
+				}
 			}
 			else
 			{

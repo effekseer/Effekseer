@@ -1,0 +1,2 @@
+Global_RandomSeed_Name,隨機種子
+Global_RandomSeed_Desc,"隨機種子。值為-1時，每次將隨機產生種子。"

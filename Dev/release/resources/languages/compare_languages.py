@@ -6,7 +6,7 @@ import sys
 
 root_path = Path("./")
 
-lang_keywords: List[str] = ["en", "ja", "es", "zhcn"]
+lang_keywords: List[str] = ["en", "ja", "es", "zhcn", "zhtw"]
 
 key_to_texts: Dict[str, Dict[str, str]] = {}
 
