@@ -194,6 +194,10 @@ void DeviceMetal::SetupEffekseerModules(::Effekseer::ManagerRef efkManager, bool
 	// エフェクトのレンダラーの作成
 	efkRenderer = ::EffekseerRendererMetal::Create(
 		8000, MTLPixelFormatBGRA8Unorm, MTLPixelFormatInvalid, false);
+	if (efkRenderer == nullptr)
+	{
+		return;
+	}
 
 	// Create a memory pool
 	// メモリプールの作成

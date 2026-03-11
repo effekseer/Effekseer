@@ -156,6 +156,10 @@ void DeviceDX9::SetupEffekseerModules(::Effekseer::ManagerRef efkManager, bool u
 	// Create a renderer of effects
 	// エフェクトのレンダラーの作成
 	efkRenderer = ::EffekseerRendererDX9::Renderer::Create(graphicsDevice, 8000);
+	if (efkRenderer == nullptr)
+	{
+		return;
+	}
 
 	// Sprcify rendering modules
 	// 描画モジュールの設定
