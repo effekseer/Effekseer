@@ -14,6 +14,7 @@ public enum SystemLanguage : int {
   Japanese = 0,
   English = 1,
   SimplifiedChinese = 2,
+  TraditionalChinese = 3,
   Unknown = -1
 }
 

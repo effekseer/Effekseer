@@ -1,7 +1,7 @@
 import csv
 from pathlib import Path
 
-target_dirs = [Path('ja'),Path('en'),Path('es'),Path('zhcn')]
+target_dirs = [Path('ja'),Path('en'),Path('es'),Path('zhcn'),Path('zhtw')]
 
 fixed_characters = r'''
 α

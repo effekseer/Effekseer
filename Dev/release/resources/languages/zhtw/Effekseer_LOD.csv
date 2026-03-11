@@ -1,0 +1,14 @@
+LOD_Name,細節層級（LOD）
+LOD_Level,層級
+LOD_Description,Configure Levels of Details to utilize.\nWhen level is enabled you can specify minimum distance away from viewer for the LOD to be selected
+LOD_Level_Minimum_Distance,最小距離
+LODBehaviour_Hide_Name,隱藏粒子
+LODBehaviour_DontSpawn_Name,停止生成新粒子
+LODBehaviour_DontSpawnAndHide_Name,停止生成新粒子並隱藏現存的粒子
+LOD_NotConfigured,LOD尚未設定
+LOD_Configure,LOD設定
+LOD_SelectMatching,選擇粒子正常顯示的層級
+LOD_Behaviour,當LOD不符合選擇時，粒子該如何顯示
+LOD_ApplyToChildren,將LOD設定應用於子節點
+LOD_Bias_Name,LOD距離偏移（m）
+LOD_Bias_Description,將指定值新增到到視窗的距離。可用於預覽LOD。

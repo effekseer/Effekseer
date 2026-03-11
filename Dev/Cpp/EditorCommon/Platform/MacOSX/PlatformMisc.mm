@@ -18,6 +18,10 @@ SystemLanguage GetSystemLanguage()
 	{
 		return SystemLanguage::Japanese;
 	}
+	else if ([languageID hasPrefix:@"zh-Hant"] || [languageID hasPrefix:@"zh-TW"] || [languageID hasPrefix:@"zh-HK"])
+	{
+		return SystemLanguage::TraditionalChinese;
+	}
 	else if ([languageID hasPrefix:@"zh-"])
 	{
 		return SystemLanguage::SimplifiedChinese;
