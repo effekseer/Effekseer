@@ -101,32 +101,6 @@ AlignedFreeFunc GetAlignedFreeFunc();
 */
 void SetAlignedFreeFunc(AlignedFreeFunc func);
 
-/**
-	@brief
-	\~English get an allocator
-	\~Japanese メモリ確保関数を取得する。
-*/
-MallocFunc GetMallocFunc();
-
-/**
-	\~English specify an allocator
-	\~Japanese メモリ確保関数を設定する。
-*/
-void SetMallocFunc(MallocFunc func);
-
-/**
-	@brief
-	\~English get a deallocator
-	\~Japanese メモリ破棄関数を取得する。
-*/
-FreeFunc GetFreeFunc();
-
-/**
-	\~English specify a deallocator
-	\~Japanese メモリ破棄関数を設定する。
-*/
-void SetFreeFunc(FreeFunc func);
-
 template <class T>
 struct CustomAllocator
 {
