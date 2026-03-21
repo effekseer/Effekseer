@@ -1,4 +1,9 @@
-echo DevID $1 User $2 Pass $3
+#!/bin/sh
+set -eu
+
+profile="${2:-${NOTARYTOOL_PROFILE:-effekseer-notarytool}}"
+
+echo "DevID $1 Profile $profile"
 
 for file in Effekseer/Effekseer.app/Contents/Resources/*.dylib ; do
     [ -f "$file" ] || continue
@@ -20,4 +25,4 @@ codesign --force --verify --verbose --sign "$1" "Effekseer/Effekseer.app" --deep
 hdiutil create Effekseer.dmg -volname "Effekseer" -srcfolder "Effekseer"
 
 codesign --force --verify --verbose --sign "$1" "Effekseer.dmg" --deep --options runtime --timestamp
-xcrun altool --notarize-app -t osx -f "Effekseer.dmg" --primary-bundle-id "jp.co.Effekseer.Effekseer" -u "$2" -p "$3"
+xcrun notarytool submit "Effekseer.dmg" --keychain-profile "$profile" --wait
