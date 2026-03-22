@@ -160,22 +160,20 @@ jobs:
         if: matrix.name == 'mac' && github.event_name != 'pull_request'
         shell: bash
         env:
-          MACOS_CERTIFICATE_P12: ${{ secrets.MACOS_CERTIFICATE_P12 }}
-          MACOS_CERTIFICATE_PASSWORD: ${{ secrets.MACOS_CERTIFICATE_PASSWORD }}
-          MACOS_KEYCHAIN_PASSWORD: ${{ secrets.MACOS_KEYCHAIN_PASSWORD }}
-          MACOS_DEVELOPER_ID_APPLICATION: ${{ secrets.MACOS_DEVELOPER_ID_APPLICATION }}
-          MACOS_NOTARY_APPLE_ID: ${{ secrets.MACOS_NOTARY_APPLE_ID }}
-          MACOS_NOTARY_TEAM_ID: ${{ secrets.MACOS_NOTARY_TEAM_ID }}
-          MACOS_NOTARY_APP_PASSWORD: ${{ secrets.MACOS_NOTARY_APP_PASSWORD }}
+          APPLE_CERT_P12_BASE64: ${{ secrets.APPLE_CERT_P12_BASE64 }}
+          APPLE_CERT_P12_PASSWORD: ${{ secrets.APPLE_CERT_P12_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          APPLE_NOTARY_APPLE_ID: ${{ secrets.APPLE_NOTARY_APPLE_ID }}
+          APPLE_NOTARY_TEAM_ID: ${{ secrets.APPLE_NOTARY_TEAM_ID }}
+          APPLE_NOTARY_APP_PASSWORD: ${{ secrets.APPLE_NOTARY_APP_PASSWORD }}
         run: |
           for name in \
-            MACOS_CERTIFICATE_P12 \
-            MACOS_CERTIFICATE_PASSWORD \
-            MACOS_KEYCHAIN_PASSWORD \
-            MACOS_DEVELOPER_ID_APPLICATION \
-            MACOS_NOTARY_APPLE_ID \
-            MACOS_NOTARY_TEAM_ID \
-            MACOS_NOTARY_APP_PASSWORD
+            APPLE_CERT_P12_BASE64 \
+            APPLE_CERT_P12_PASSWORD \
+            APPLE_SIGNING_IDENTITY \
+            APPLE_NOTARY_APPLE_ID \
+            APPLE_NOTARY_TEAM_ID \
+            APPLE_NOTARY_APP_PASSWORD
           do
             if [ -z "${!name}" ]; then
               echo "Missing required secret: $name" >&2
@@ -187,29 +185,29 @@ jobs:
         if: matrix.name == 'mac' && github.event_name != 'pull_request'
         shell: bash
         env:
-          MACOS_CERTIFICATE_P12: ${{ secrets.MACOS_CERTIFICATE_P12 }}
-          MACOS_CERTIFICATE_PASSWORD: ${{ secrets.MACOS_CERTIFICATE_PASSWORD }}
-          MACOS_KEYCHAIN_PASSWORD: ${{ secrets.MACOS_KEYCHAIN_PASSWORD }}
+          APPLE_CERT_P12_BASE64: ${{ secrets.APPLE_CERT_P12_BASE64 }}
+          APPLE_CERT_P12_PASSWORD: ${{ secrets.APPLE_CERT_P12_PASSWORD }}
         run: |
           CERTIFICATE_PATH="$RUNNER_TEMP/effekseer-build-certificate.p12"
           KEYCHAIN_PATH="$RUNNER_TEMP/effekseer-build.keychain-db"
-          echo "$MACOS_CERTIFICATE_P12" | base64 --decode > "$CERTIFICATE_PATH"
-          security create-keychain -p "$MACOS_KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          KEYCHAIN_PASSWORD="$(uuidgen)"
+          echo "$APPLE_CERT_P12_BASE64" | base64 --decode > "$CERTIFICATE_PATH"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
           security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
-          security unlock-keychain -p "$MACOS_KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
-          security import "$CERTIFICATE_PATH" -P "$MACOS_CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security import "$CERTIFICATE_PATH" -P "$APPLE_CERT_P12_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
           security list-keychains -d user -s "$KEYCHAIN_PATH"
           security default-keychain -d user -s "$KEYCHAIN_PATH"
-          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
 
       - name: Notarize macOS tool
         if: matrix.name == 'mac' && github.event_name != 'pull_request'
         shell: bash
         env:
-          MACOS_DEVELOPER_ID_APPLICATION: ${{ secrets.MACOS_DEVELOPER_ID_APPLICATION }}
-          MACOS_NOTARY_APPLE_ID: ${{ secrets.MACOS_NOTARY_APPLE_ID }}
-          MACOS_NOTARY_TEAM_ID: ${{ secrets.MACOS_NOTARY_TEAM_ID }}
-          MACOS_NOTARY_APP_PASSWORD: ${{ secrets.MACOS_NOTARY_APP_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          APPLE_NOTARY_APPLE_ID: ${{ secrets.APPLE_NOTARY_APPLE_ID }}
+          APPLE_NOTARY_TEAM_ID: ${{ secrets.APPLE_NOTARY_TEAM_ID }}
+          APPLE_NOTARY_APP_PASSWORD: ${{ secrets.APPLE_NOTARY_APP_PASSWORD }}
           NOTARYTOOL_PROFILE: effekseer-notarytool-ci
         run: |
           SIGN_WORKDIR="$RUNNER_TEMP/notarization"
@@ -220,11 +218,11 @@ jobs:
           (
             cd "$SIGN_WORKDIR"
             sh Effekseer_notarytool_setup.sh \
-              "$MACOS_NOTARY_APPLE_ID" \
-              "$MACOS_NOTARY_TEAM_ID" \
-              "$MACOS_NOTARY_APP_PASSWORD" \
+              "$APPLE_NOTARY_APPLE_ID" \
+              "$APPLE_NOTARY_TEAM_ID" \
+              "$APPLE_NOTARY_APP_PASSWORD" \
               "$NOTARYTOOL_PROFILE"
-            sh Effekseer_cert.sh "$MACOS_DEVELOPER_ID_APPLICATION" "$NOTARYTOOL_PROFILE"
+            sh Effekseer_cert.sh "$APPLE_SIGNING_IDENTITY" "$NOTARYTOOL_PROFILE"
           )
           cp "$SIGN_WORKDIR/Effekseer.dmg" "EffekseerTool/Effekseer.dmg"
 

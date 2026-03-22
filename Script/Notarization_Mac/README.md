@@ -75,20 +75,20 @@ Notes:
 This repository's CI can notarize the macOS tool on `push` and `release` builds by reusing these scripts.
 Configure the following GitHub Actions secrets before enabling the workflow on your repository:
 
-- `MACOS_CERTIFICATE_P12`
+- `APPLE_CERT_P12_BASE64`
   - Base64-encoded `.p12` file that contains the `Developer ID Application` certificate.
-- `MACOS_CERTIFICATE_PASSWORD`
+- `APPLE_CERT_P12_PASSWORD`
   - Password for the `.p12` file.
-- `MACOS_KEYCHAIN_PASSWORD`
-  - Temporary keychain password used on the GitHub Actions runner.
-- `MACOS_DEVELOPER_ID_APPLICATION`
+- `APPLE_SIGNING_IDENTITY`
   - Full certificate name, for example `Developer ID Application: Your Name (TEAMID)`.
-- `MACOS_NOTARY_APPLE_ID`
+- `APPLE_NOTARY_APPLE_ID`
   - Apple ID used for notarization.
-- `MACOS_NOTARY_TEAM_ID`
+- `APPLE_NOTARY_TEAM_ID`
   - Apple Developer Team ID.
-- `MACOS_NOTARY_APP_PASSWORD`
+- `APPLE_NOTARY_APP_PASSWORD`
   - App-specific password for the Apple ID above.
+
+The workflow generates a temporary keychain password on the runner, so no extra secret is required for that.
 
 The workflow skips notarization on `pull_request` because repository secrets are not available there.
 
@@ -191,20 +191,20 @@ sh Effekseer_notarytool_log.sh "Request ID" "effekseer-notarytool" "notarytool_l
 このリポジトリの CI では、これらのスクリプトを使って `push` と `release` の macOS ビルドを公証できます。
 有効化する前に、リポジトリの GitHub Actions secrets に次を設定してください。
 
-- `MACOS_CERTIFICATE_P12`
+- `APPLE_CERT_P12_BASE64`
   - `Developer ID Application` 証明書を含む `.p12` を base64 化した文字列。
-- `MACOS_CERTIFICATE_PASSWORD`
+- `APPLE_CERT_P12_PASSWORD`
   - `.p12` のパスワード。
-- `MACOS_KEYCHAIN_PASSWORD`
-  - GitHub Actions ランナー上で一時キーチェーンに使うパスワード。
-- `MACOS_DEVELOPER_ID_APPLICATION`
+- `APPLE_SIGNING_IDENTITY`
   - 証明書のフルネーム。例: `Developer ID Application: Your Name (TEAMID)`。
-- `MACOS_NOTARY_APPLE_ID`
+- `APPLE_NOTARY_APPLE_ID`
   - notarization に使う Apple ID。
-- `MACOS_NOTARY_TEAM_ID`
+- `APPLE_NOTARY_TEAM_ID`
   - Apple Developer の Team ID。
-- `MACOS_NOTARY_APP_PASSWORD`
+- `APPLE_NOTARY_APP_PASSWORD`
   - 上記 Apple ID の app-specific password。
+
+一時キーチェーン用のパスワードは workflow 側で都度生成するため、追加の secret は不要です。
 
 `pull_request` ではリポジトリ secrets が使えないため、公証ステップは自動的にスキップされます。
 
