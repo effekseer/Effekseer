@@ -105,10 +105,27 @@ else()
     set(BUILD_WITH_POSTFIX OFF)
 endif()
 
+set(EFK_MSVC_RUNTIME_LIBRARY_ARGS "")
+
 if(MSVC)
     add_definitions(/MP)
     add_compile_options($<$<COMPILE_LANGUAGE:C>:/utf-8>
                         $<$<COMPILE_LANGUAGE:CXX>:/utf-8>)
+
+    if(USE_MSVC_RUNTIME_LIBRARY_DLL)
+        set(EFK_MSVC_RUNTIME_LIBRARY_VALUE "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+    else()
+        set(EFK_MSVC_RUNTIME_LIBRARY_VALUE "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    endif()
+
+    if(POLICY CMP0091)
+        cmake_policy(SET CMP0091 NEW)
+    endif()
+
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "${EFK_MSVC_RUNTIME_LIBRARY_VALUE}")
+    set(EFK_MSVC_RUNTIME_LIBRARY_ARGS
+        -DCMAKE_POLICY_DEFAULT_CMP0091=NEW
+        -DCMAKE_MSVC_RUNTIME_LIBRARY=${EFK_MSVC_RUNTIME_LIBRARY_VALUE})
 endif()
 
 
@@ -124,6 +141,7 @@ if(BUILD_WITH_EASY_PROFILER)
                         -DEFK_USE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
                         -DSANITIZE_ENABLED=${SANITIZE_ENABLED}
                         -DBUILD_SHARED_LIBS=OFF
+                        ${EFK_MSVC_RUNTIME_LIBRARY_ARGS}
                         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
     )
 
@@ -150,15 +168,8 @@ if(BUILD_VULKAN)
     else()
 
         # Hack for GLSLANG
-        if (MSVC)
-            # CMAKE_MSVC_RUNTIME_LIBRARY can be only used if minimum required is larger than 3.17
-            if(USE_MSVC_RUNTIME_LIBRARY_DLL)
-                cmake_policy(SET CMP0091 NEW)
-                set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
-            else()
-                cmake_policy(SET CMP0091 NEW)
-                set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-            endif()
+        if(MSVC AND DEFINED EFK_MSVC_RUNTIME_LIBRARY_VALUE)
+            set(CMAKE_MSVC_RUNTIME_LIBRARY "${EFK_MSVC_RUNTIME_LIBRARY_VALUE}")
         endif()
 
         set(ENABLE_HLSL OFF CACHE BOOL "For glslang" FORCE)
@@ -193,6 +204,7 @@ if(BUILD_VIEWER)
                         -DASM686=off
                         -DAMD64=off
                         -DZLIB_BUILD_EXAMPLES=OFF
+                        ${EFK_MSVC_RUNTIME_LIBRARY_ARGS}
                         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
                         -DCMAKE_POLICY_VERSION_MINIMUM=3.10
     )
@@ -247,6 +259,7 @@ if(BUILD_VIEWER)
                             -DPNG_EXECUTABLES=OFF
                             -DPNG_TESTS=OFF
                             -DPNG_HARDWARE_OPTIMIZATIONS=OFF
+                            ${EFK_MSVC_RUNTIME_LIBRARY_ARGS}
                             -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
                             -DCMAKE_POLICY_VERSION_MINIMUM=3.10
         )
@@ -268,6 +281,7 @@ if(BUILD_VIEWER)
                             -DPNG_FRAMEWORK=OFF
                             -DPNG_EXECUTABLES=OFF
                             -DPNG_TESTS=OFF
+                            ${EFK_MSVC_RUNTIME_LIBRARY_ARGS}
                             -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
                             -DCMAKE_POLICY_VERSION_MINIMUM=3.10
         )
@@ -305,6 +319,7 @@ if(BUILD_VIEWER)
                         -DZLIB_ROOT=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib
                         -DBUILD_STATIC_LIBS=ON
                         -DBUILD_SHARED_LIBS=OFF
+                        ${EFK_MSVC_RUNTIME_LIBRARY_ARGS}
                         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
                         -DCMAKE_POLICY_VERSION_MINIMUM=3.10
     )
@@ -334,6 +349,7 @@ if(BUILD_VIEWER)
                         -DCMAKE_USER_MAKE_RULES_OVERRIDE=${CMAKE_CURRENT_SOURCE_DIR}/Dev/CFlagOverrides.cmake
                         -DEFK_USE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
                         -DSANITIZE_ENABLED=${SANITIZE_ENABLED}
+                        ${EFK_MSVC_RUNTIME_LIBRARY_ARGS}
                         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
                         -DCMAKE_POLICY_VERSION_MINIMUM=3.10
     )
@@ -365,6 +381,7 @@ if(BUILD_VIEWER OR BUILD_TEST)
                         -DBUILD_SHARED_LIBS=OFF
                         -DGLEW_BUILD_INFO=OFF
                         -DBUILD_UTILS=OFF
+                        ${EFK_MSVC_RUNTIME_LIBRARY_ARGS}
                         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
                         -DCMAKE_POLICY_VERSION_MINIMUM=3.10
     )
@@ -390,6 +407,7 @@ if(BUILD_VIEWER OR BUILD_EXAMPLES OR BUILD_TEST)
                         -DGLFW_BUILD_TESTS=OFF
                         -DGLFW_BUILD_DOCS=OFF
                         -DGLFW_INSTALL=ON
+                        ${EFK_MSVC_RUNTIME_LIBRARY_ARGS}
                         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
                         -DCMAKE_POLICY_VERSION_MINIMUM=3.10
     )
