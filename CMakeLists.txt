@@ -180,7 +180,7 @@ if(BUILD_VIEWER)
 
     ExternalProject_Add(
         ExternalProject_zlib
-        SOURCE_DIR      ${CMAKE_CURRENT_SOURCE_DIR}/Downloads/zlib
+        SOURCE_DIR      ${CMAKE_CURRENT_SOURCE_DIR}/Dev/Cpp/3rdParty/zlib
         PREFIX          ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Build/zlib
         INSTALL_DIR     ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib
         INSTALL_COMMAND ${ZLIB_INSTALL}
@@ -190,6 +190,7 @@ if(BUILD_VIEWER)
                         -DSANITIZE_ENABLED=${SANITIZE_ENABLED}
                         -DASM686=off
                         -DAMD64=off
+                        -DZLIB_BUILD_EXAMPLES=OFF
                         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
                         -DCMAKE_POLICY_VERSION_MINIMUM=3.10
     )
@@ -223,29 +224,57 @@ if(BUILD_VIEWER)
         set(LIBPNG_INSTALL ${CMAKE_COMMAND} --install . --prefix <INSTALL_DIR>)
     endif()
 
-    ExternalProject_Add(
-        ExternalProject_libpng
-        DEPENDS         ExternalProject_zlib
-        SOURCE_DIR      ${CMAKE_CURRENT_SOURCE_DIR}/Dev/Cpp/3rdParty/libpng
-        PREFIX          ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Build/libpng
-        INSTALL_DIR     ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng
-        INSTALL_COMMAND ${LIBPNG_INSTALL}
-        CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng
-                        -DCMAKE_USER_MAKE_RULES_OVERRIDE=${CMAKE_CURRENT_SOURCE_DIR}/Dev/CFlagOverrides.cmake
-                        -DEFK_USE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
-                        -DSANITIZE_ENABLED=${SANITIZE_ENABLED}
-                        -DZLIB_INCLUDE_DIRS=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/include
-                        -DZLIB_INCLUDE_DIR=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/include
-                        -DZLIB_ROOT=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib
-                        -DZLIB_USE_STATIC_LIBS=ON
-                        -DPNG_SHARED=OFF
-                        -DPNG_EXECUTABLES=OFF
-                        -DPNG_TESTS=OFF
-                        -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
-                        -DCMAKE_POLICY_VERSION_MINIMUM=3.10
-    )
+    if(APPLE)
+        # libpng may otherwise pick a dynamic zlib and embed build-machine-only
+        # rpaths that fail distribution checks.
+        ExternalProject_Add(
+            ExternalProject_libpng
+            DEPENDS         ExternalProject_zlib
+            SOURCE_DIR      ${CMAKE_CURRENT_SOURCE_DIR}/Dev/Cpp/3rdParty/libpng
+            PREFIX          ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Build/libpng
+            INSTALL_DIR     ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng
+            INSTALL_COMMAND ${LIBPNG_INSTALL}
+            CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng
+                            -DCMAKE_USER_MAKE_RULES_OVERRIDE=${CMAKE_CURRENT_SOURCE_DIR}/Dev/CFlagOverrides.cmake
+                            -DEFK_USE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
+                            -DSANITIZE_ENABLED=${SANITIZE_ENABLED}
+                            -DZLIB_ROOT=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/
+                            -DZLIB_USE_STATIC_LIBS=ON
+                            -DPNG_SHARED=OFF
+                            -DPNG_FRAMEWORK=OFF
+                            -DPNG_EXECUTABLES=OFF
+                            -DPNG_TESTS=OFF
+                            -DPNG_HARDWARE_OPTIMIZATIONS=OFF
+                            -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
+                            -DCMAKE_POLICY_VERSION_MINIMUM=3.10
+        )
+    else()
+        ExternalProject_Add(
+            ExternalProject_libpng
+            DEPENDS         ExternalProject_zlib
+            SOURCE_DIR      ${CMAKE_CURRENT_SOURCE_DIR}/Dev/Cpp/3rdParty/libpng
+            PREFIX          ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Build/libpng
+            INSTALL_DIR     ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng
+            INSTALL_COMMAND ${LIBPNG_INSTALL}
+            CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng
+                            -DCMAKE_USER_MAKE_RULES_OVERRIDE=${CMAKE_CURRENT_SOURCE_DIR}/Dev/CFlagOverrides.cmake
+                            -DEFK_USE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
+                            -DSANITIZE_ENABLED=${SANITIZE_ENABLED}
+                            -DZLIB_ROOT=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/
+                            -DZLIB_USE_STATIC_LIBS=ON
+                            -DPNG_SHARED=OFF
+                            -DPNG_FRAMEWORK=OFF
+                            -DPNG_EXECUTABLES=OFF
+                            -DPNG_TESTS=OFF
+                            -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
+                            -DCMAKE_POLICY_VERSION_MINIMUM=3.10
+        )
+    endif()
     list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng/include)
     list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng/lib)
+    if(EXISTS "${ExternalProject_libpng_INSTALL_DIR}/lib64")
+        list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng/lib64)
+    endif()
     
     if(MSVC)
         set(LIBPNG_LIB_DEBUG "libpng16_staticd")
