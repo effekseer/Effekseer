@@ -237,6 +237,7 @@ if(BUILD_VIEWER)
                         -DZLIB_INCLUDE_DIRS=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/include
                         -DZLIB_INCLUDE_DIR=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/include
                         -DZLIB_ROOT=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib
+                        -DZLIB_USE_STATIC_LIBS=ON
                         -DPNG_SHARED=OFF
                         -DPNG_EXECUTABLES=OFF
                         -DPNG_TESTS=OFF
