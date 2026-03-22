@@ -7,7 +7,7 @@ This folder contains helper scripts for codesigning, notarizing, and stapling th
 ### Files
 
 - `Effekseer_cert.sh`
-  - Codesigns the app bundle and bundled executables, creates `Effekseer.dmg`, and submits it for notarization with `xcrun notarytool` using a Keychain profile.
+  - Codesigns the app bundle and bundled executables, creates a temporary zip for app notarization, creates `Effekseer.dmg`, and submits both for notarization with `xcrun notarytool` using a Keychain profile.
 - `Effekseer_cert_check.sh`
   - Checks the notarization status using the request ID with `xcrun notarytool` and the same Keychain profile.
 - `Effekseer_notarytool_setup.sh`
@@ -62,8 +62,10 @@ Notes:
 
 - The scripts use `xcrun notarytool` and `xcrun stapler`.
 - `Effekseer_cert.sh` expects the app bundle and related tools to already be built and placed under `Effekseer/`.
+- `notarytool` does not accept a raw `.app` bundle, so the script creates a temporary zip archive for app notarization and removes it afterward.
 - `Effekseer_notarytool_setup.sh` is the only script that handles the App-specific password, and it stores that secret in the Keychain for reuse.
 - `Effekseer_notarytool_log.sh` is useful when `notarytool submit` returns a rejection and you need the JSON issue report.
+- When `Effekseer_cert.sh` fails, it writes notarization logs to `Effekseer-app-notarytool-log.json` or `Effekseer-dmg-notarytool-log.json` if a request ID can be recovered.
 - `Effekseer_cert.sh` now performs this full order: notarize app, staple app, create DMG from the stapled app, notarize DMG, staple DMG.
 - If the app still shows the Gatekeeper warning, check whether the bundle was modified after signing or whether the quarantine attribute is still present.
 
@@ -150,8 +152,10 @@ sh Effekseer_notarytool_log.sh "Request ID" "effekseer-notarytool" "notarytool_l
 
 - スクリプトは `xcrun notarytool` と `xcrun stapler` を使用します。
 - `Effekseer_cert.sh` は、`Effekseer/` 配下にアプリ本体と関連ツールがすでに配置されていることを前提としています。
+- `notarytool` は `.app` 直送を受け付けないため、スクリプトは一時的に zip 化してから app を notarize し、終了後に削除します。
 - `Effekseer_notarytool_setup.sh` だけが App-specific password を扱い、その後はキーチェーン内の profile を再利用します。
 - `Effekseer_notarytool_log.sh` は、`notarytool submit` が拒否されたときの JSON 形式の issue report を確認するのに便利です。
+- `Effekseer_cert.sh` が失敗した場合、Request ID を取得できれば `Effekseer-app-notarytool-log.json` または `Effekseer-dmg-notarytool-log.json` にログを保存します。
 - `Effekseer_cert.sh` は、`app` を Notarization → staple → DMG 作成 → DMG Notarization → DMG staple の順で処理します。
 - 起動できない場合は、署名の破損、Gatekeeper の拒否、quarantine 属性の残存を順に確認してください。
 
