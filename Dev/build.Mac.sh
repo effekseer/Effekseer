@@ -10,3 +10,4 @@ cmake -G "Unix Makefiles" -D BUILD_VIEWER=ON -D CMAKE_BUILD_TYPE=Release -D "CMA
 make;)
 
 cp Temp/Viewer/libViewer.dylib release/
+
