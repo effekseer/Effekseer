@@ -182,7 +182,7 @@ jobs:
           done
 
       - name: Setup macOS signing keychain
-        if: matrix.name == 'mac' && github.event_name != 'pull_request'
+        if: matrix.name == 'mac'
         shell: bash
         env:
           APPLE_CERT_P12_BASE64: ${{ secrets.APPLE_CERT_P12_BASE64 }}
@@ -201,7 +201,7 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
 
       - name: Notarize macOS tool
-        if: matrix.name == 'mac' && github.event_name != 'pull_request'
+        if: matrix.name == 'mac'
         shell: bash
         env:
           APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
