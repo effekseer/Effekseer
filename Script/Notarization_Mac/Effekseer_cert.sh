@@ -42,22 +42,25 @@ submit_and_log_failure() {
 
 echo "DevID $1 Profile $profile"
 
-for file in "$app_path"/Contents/Resources/*.dylib ; do
-    [ -f "$file" ] || continue
-    echo codesign "$file"
-    codesign --force --verify --verbose --sign "$1" "$file" --deep --options runtime --entitlements entitlements.plist --timestamp
-done
+find "$app_path/Contents" -type f \( -name '*.dylib' -o -perm -u+x -o -perm -g+x -o -perm -o+x \) -exec sh -c '
+    file="$1"
+    sign_id="$2"
+    echo "Signing $file"
+    case "$file" in
+        *.dylib)
+            codesign --force --sign "$sign_id" --options runtime --timestamp "$file"
+            ;;
+        *)
+            codesign --force --sign "$sign_id" --options runtime --entitlements entitlements.plist --timestamp "$file"
+            ;;
+    esac
+' sh {} "$1" \;
 
-codesign --force --verify --verbose --sign "$1" "$app_path/Contents/Resources/EffekseerMaterialEditor" --deep --options runtime --entitlements entitlements.plist --timestamp
-codesign --force --verify --verbose --sign "$1" "$app_path/Contents/Resources/Effekseer" --deep --options runtime --entitlements entitlements.plist --timestamp
-codesign --force --verify --verbose --sign "$1" "$app_path/Contents/Resources/tools/libfbxsdk.dylib" --deep --options runtime --entitlements entitlements.plist --timestamp
-codesign --force --verify --verbose --sign "$1" "$app_path/Contents/Resources/tools/libEffekseerMaterialCompilerGL.dylib" --deep --options runtime --entitlements entitlements.plist --timestamp
-codesign --force --verify --verbose --sign "$1" "$app_path/Contents/Resources/tools/mqoToEffekseerModelConverter" --deep --options runtime --entitlements entitlements.plist --timestamp
-codesign --force --verify --verbose --sign "$1" "$app_path/Contents/Resources/tools/libEffekseerMaterialCompilerMetal.dylib" --deep --options runtime --entitlements entitlements.plist --timestamp
-codesign --force --verify --verbose --sign "$1" "$app_path/Contents/Resources/tools/fbxToEffekseerModelConverter" --deep --options runtime --entitlements entitlements.plist --timestamp
-codesign --force --verify --verbose --sign "$1" "$app_path/Contents/Resources/tools/fbxToEffekseerCurveConverter" --deep --options runtime --entitlements entitlements.plist --timestamp
-codesign --force --verify --verbose --sign "$1" "$app_path/Contents/MacOS/EffekseerLauncher" --deep --options runtime --entitlements entitlements.plist --timestamp
-codesign --force --verify --verbose --sign "$1" "$app_path" --deep --options runtime --entitlements entitlements.plist --timestamp
+echo "Signing app bundle: $app_path"
+codesign --force --sign "$1" --options runtime --entitlements entitlements.plist --timestamp "$app_path"
+
+echo "Verifying app bundle signature"
+codesign --verify --deep --strict --verbose=4 "$app_path"
 
 echo "Creating zip for app notarization: $app_zip"
 ditto -c -k --keepParent "$app_path" "$app_zip"
@@ -71,7 +74,11 @@ xcrun stapler staple "$app_path"
 echo "Creating dmg from stapled app bundle: $dmg_path"
 hdiutil create "$dmg_path" -volname "Effekseer" -srcfolder "Effekseer"
 
-codesign --force --verify --verbose --sign "$1" "$dmg_path" --deep --options runtime --timestamp
+echo "Signing dmg: $dmg_path"
+codesign --force --sign "$1" --timestamp "$dmg_path"
+
+echo "Verifying dmg signature"
+codesign --verify --verbose=4 "$dmg_path"
 echo "Notarizing dmg: $dmg_path"
 submit_and_log_failure "$dmg_path" "dmg" "$profile" "Effekseer-dmg-notarytool-log.json" "$dmg_submit_out"
 
