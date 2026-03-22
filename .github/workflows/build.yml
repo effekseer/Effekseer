@@ -157,7 +157,7 @@ jobs:
           python3 build.py || python build.py
 
       - name: Validate macOS notarization secrets
-        if: matrix.name == 'mac' && github.event_name != 'pull_request'
+        if: matrix.name == 'mac'
         shell: bash
         env:
           APPLE_CERT_P12_BASE64: ${{ secrets.APPLE_CERT_P12_BASE64 }}
