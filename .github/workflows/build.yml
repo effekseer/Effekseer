@@ -235,7 +235,7 @@ jobs:
             ${{ runner.temp }}/notarization/Effekseer-app-notarytool-log.json
             ${{ runner.temp }}/notarization/Effekseer-dmg-notarytool-log.json
           if-no-files-found: ignore
-                
+
       - name: Prepare ForCpp
         if: matrix.name == 'windows_x64'
         run: |
