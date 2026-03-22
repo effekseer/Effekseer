@@ -70,6 +70,28 @@ Notes:
 - `Effekseer_cert.sh` signs bundled executables and `.dylib` files first, then signs the app bundle and the DMG.
 - If the app still shows the Gatekeeper warning, check whether the bundle was modified after signing or whether the quarantine attribute is still present.
 
+### GitHub Actions
+
+This repository's CI can notarize the macOS tool on `push` and `release` builds by reusing these scripts.
+Configure the following GitHub Actions secrets before enabling the workflow on your repository:
+
+- `MACOS_CERTIFICATE_P12`
+  - Base64-encoded `.p12` file that contains the `Developer ID Application` certificate.
+- `MACOS_CERTIFICATE_PASSWORD`
+  - Password for the `.p12` file.
+- `MACOS_KEYCHAIN_PASSWORD`
+  - Temporary keychain password used on the GitHub Actions runner.
+- `MACOS_DEVELOPER_ID_APPLICATION`
+  - Full certificate name, for example `Developer ID Application: Your Name (TEAMID)`.
+- `MACOS_NOTARY_APPLE_ID`
+  - Apple ID used for notarization.
+- `MACOS_NOTARY_TEAM_ID`
+  - Apple Developer Team ID.
+- `MACOS_NOTARY_APP_PASSWORD`
+  - App-specific password for the Apple ID above.
+
+The workflow skips notarization on `pull_request` because repository secrets are not available there.
+
 ### Troubleshooting
 
 If the app cannot be opened on macOS, check these in order:
@@ -163,6 +185,28 @@ sh Effekseer_notarytool_log.sh "Request ID" "effekseer-notarytool" "notarytool_l
 - `Effekseer_cert.sh` は、`-perm -u+x -o -perm -g+x -o -perm -o+x` で拾える実行ビット付きファイルを署名対象にします。
 - `Effekseer_cert.sh` は、`Effekseer` のような Rosetta 下で動く leaf 実行ファイルに `com.apple.security.cs.allow-jit` などの entitlements を付けます。
 - 起動できない場合は、署名の破損、Gatekeeper の拒否、quarantine 属性の残存を順に確認してください。
+
+### GitHub Actions
+
+このリポジトリの CI では、これらのスクリプトを使って `push` と `release` の macOS ビルドを公証できます。
+有効化する前に、リポジトリの GitHub Actions secrets に次を設定してください。
+
+- `MACOS_CERTIFICATE_P12`
+  - `Developer ID Application` 証明書を含む `.p12` を base64 化した文字列。
+- `MACOS_CERTIFICATE_PASSWORD`
+  - `.p12` のパスワード。
+- `MACOS_KEYCHAIN_PASSWORD`
+  - GitHub Actions ランナー上で一時キーチェーンに使うパスワード。
+- `MACOS_DEVELOPER_ID_APPLICATION`
+  - 証明書のフルネーム。例: `Developer ID Application: Your Name (TEAMID)`。
+- `MACOS_NOTARY_APPLE_ID`
+  - notarization に使う Apple ID。
+- `MACOS_NOTARY_TEAM_ID`
+  - Apple Developer の Team ID。
+- `MACOS_NOTARY_APP_PASSWORD`
+  - 上記 Apple ID の app-specific password。
+
+`pull_request` ではリポジトリ secrets が使えないため、公証ステップは自動的にスキップされます。
 
 ### 問題調査
 

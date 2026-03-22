@@ -155,6 +155,88 @@ jobs:
               sudo xcode-select --switch /Applications/Xcode_15.0.1.app
           fi
           python3 build.py || python build.py
+
+      - name: Validate macOS notarization secrets
+        if: matrix.name == 'mac' && github.event_name != 'pull_request'
+        shell: bash
+        env:
+          MACOS_CERTIFICATE_P12: ${{ secrets.MACOS_CERTIFICATE_P12 }}
+          MACOS_CERTIFICATE_PASSWORD: ${{ secrets.MACOS_CERTIFICATE_PASSWORD }}
+          MACOS_KEYCHAIN_PASSWORD: ${{ secrets.MACOS_KEYCHAIN_PASSWORD }}
+          MACOS_DEVELOPER_ID_APPLICATION: ${{ secrets.MACOS_DEVELOPER_ID_APPLICATION }}
+          MACOS_NOTARY_APPLE_ID: ${{ secrets.MACOS_NOTARY_APPLE_ID }}
+          MACOS_NOTARY_TEAM_ID: ${{ secrets.MACOS_NOTARY_TEAM_ID }}
+          MACOS_NOTARY_APP_PASSWORD: ${{ secrets.MACOS_NOTARY_APP_PASSWORD }}
+        run: |
+          for name in \
+            MACOS_CERTIFICATE_P12 \
+            MACOS_CERTIFICATE_PASSWORD \
+            MACOS_KEYCHAIN_PASSWORD \
+            MACOS_DEVELOPER_ID_APPLICATION \
+            MACOS_NOTARY_APPLE_ID \
+            MACOS_NOTARY_TEAM_ID \
+            MACOS_NOTARY_APP_PASSWORD
+          do
+            if [ -z "${!name}" ]; then
+              echo "Missing required secret: $name" >&2
+              exit 1
+            fi
+          done
+
+      - name: Setup macOS signing keychain
+        if: matrix.name == 'mac' && github.event_name != 'pull_request'
+        shell: bash
+        env:
+          MACOS_CERTIFICATE_P12: ${{ secrets.MACOS_CERTIFICATE_P12 }}
+          MACOS_CERTIFICATE_PASSWORD: ${{ secrets.MACOS_CERTIFICATE_PASSWORD }}
+          MACOS_KEYCHAIN_PASSWORD: ${{ secrets.MACOS_KEYCHAIN_PASSWORD }}
+        run: |
+          CERTIFICATE_PATH="$RUNNER_TEMP/effekseer-build-certificate.p12"
+          KEYCHAIN_PATH="$RUNNER_TEMP/effekseer-build.keychain-db"
+          echo "$MACOS_CERTIFICATE_P12" | base64 --decode > "$CERTIFICATE_PATH"
+          security create-keychain -p "$MACOS_KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$MACOS_KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security import "$CERTIFICATE_PATH" -P "$MACOS_CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
+          security list-keychains -d user -s "$KEYCHAIN_PATH"
+          security default-keychain -d user -s "$KEYCHAIN_PATH"
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+
+      - name: Notarize macOS tool
+        if: matrix.name == 'mac' && github.event_name != 'pull_request'
+        shell: bash
+        env:
+          MACOS_DEVELOPER_ID_APPLICATION: ${{ secrets.MACOS_DEVELOPER_ID_APPLICATION }}
+          MACOS_NOTARY_APPLE_ID: ${{ secrets.MACOS_NOTARY_APPLE_ID }}
+          MACOS_NOTARY_TEAM_ID: ${{ secrets.MACOS_NOTARY_TEAM_ID }}
+          MACOS_NOTARY_APP_PASSWORD: ${{ secrets.MACOS_NOTARY_APP_PASSWORD }}
+          NOTARYTOOL_PROFILE: effekseer-notarytool-ci
+        run: |
+          SIGN_WORKDIR="$RUNNER_TEMP/notarization"
+          rm -rf "$SIGN_WORKDIR"
+          mkdir -p "$SIGN_WORKDIR/Effekseer"
+          cp Script/Notarization_Mac/* "$SIGN_WORKDIR/"
+          cp -R Dev/Mac/Effekseer.app "$SIGN_WORKDIR/Effekseer/"
+          (
+            cd "$SIGN_WORKDIR"
+            sh Effekseer_notarytool_setup.sh \
+              "$MACOS_NOTARY_APPLE_ID" \
+              "$MACOS_NOTARY_TEAM_ID" \
+              "$MACOS_NOTARY_APP_PASSWORD" \
+              "$NOTARYTOOL_PROFILE"
+            sh Effekseer_cert.sh "$MACOS_DEVELOPER_ID_APPLICATION" "$NOTARYTOOL_PROFILE"
+          )
+          cp "$SIGN_WORKDIR/Effekseer.dmg" "EffekseerTool/Effekseer.dmg"
+
+      - name: Upload macOS notarization logs
+        if: failure() && matrix.name == 'mac'
+        uses: actions/upload-artifact@v4
+        with:
+          name: EffekseerNotarizationLogs
+          path: |
+            ${{ runner.temp }}/notarization/Effekseer-app-notarytool-log.json
+            ${{ runner.temp }}/notarization/Effekseer-dmg-notarytool-log.json
+          if-no-files-found: ignore
                 
       - name: Prepare ForCpp
         if: matrix.name == 'windows_x64'
