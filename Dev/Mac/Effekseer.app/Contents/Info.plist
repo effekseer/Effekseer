@@ -3,9 +3,29 @@
 "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
   <dict>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>en</string>
+    <key>CFBundleIdentifier</key>
+    <string>com.effekseer.Effekseer</string>
     <key>CFBundleExecutable</key>
     <string>EffekseerLauncher</string>
+    <key>CFBundleName</key>
+    <string>Effekseer</string>
+    <key>CFBundleDisplayName</key>
+    <string>Effekseer</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundleShortVersionString</key>
+    <string>1.73.0</string>
+    <key>CFBundleVersion</key>
+    <string>1.73.0</string>
     <key>CFBundleIconFile</key>
     <string>Icon.icns</string>
+    <key>LSMinimumSystemVersion</key>
+    <string>10.15</string>
+    <key>NSPrincipalClass</key>
+    <string>NSApplication</string>
   </dict>
 </plist>
