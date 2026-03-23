@@ -274,36 +274,34 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: Effekseer${{ env.EFFEKSEER_VERSION }}Win
-          path: dist/
+          path: dist/Effekseer${{ env.EFFEKSEER_VERSION }}Win
                 
       - uses: actions/download-artifact@v4
         with:
           name: Effekseer${{ env.EFFEKSEER_VERSION }}Linux
-          path: dist/
+          path: dist/Effekseer${{ env.EFFEKSEER_VERSION }}Linux
       
       - uses: actions/download-artifact@v4
         with:
           name: EffekseerForCpp${{ env.EFFEKSEER_VERSION }}
-          path: dist/EffekseerForCpp
+          path: dist/EffekseerForCpp${{ env.EFFEKSEER_VERSION }}
       
       - uses: actions/download-artifact@v4
         with:
           name: Effekseer${{ env.EFFEKSEER_VERSION }}Mac
-          path: dist/
+          path: dist/Effekseer${{ env.EFFEKSEER_VERSION }}Mac
       
       - name: Prepare Release
         run: |
-          mkdir -p dist
           mkdir -p pub
           cd dist
-          for d in *;
+          for asset in \
+            "Effekseer${{ env.EFFEKSEER_VERSION }}Win" \
+            "Effekseer${{ env.EFFEKSEER_VERSION }}Linux" \
+            "Effekseer${{ env.EFFEKSEER_VERSION }}Mac" \
+            "EffekseerForCpp${{ env.EFFEKSEER_VERSION }}"
           do
-            if [ -d $d ];
-            then
-              zip -r ../pub/$d.zip $d/*
-            else
-              cp $d ../pub/
-            fi
+            zip -r "../pub/$asset.zip" "$asset"
           done
           
       - name: Upload Release artifact
@@ -315,17 +313,20 @@ jobs:
       - name: Deploy to Github Releases
         if: github.event_name == 'release'
         run: |
-          cd pub
           releaseId=$(jq --raw-output '.release.id' ${GITHUB_EVENT_PATH})
           echo "Upload to release $releaseId"
-          for filename in *;
+          for filename in \
+            "Effekseer${{ env.EFFEKSEER_VERSION }}Win.zip" \
+            "Effekseer${{ env.EFFEKSEER_VERSION }}Linux.zip" \
+            "Effekseer${{ env.EFFEKSEER_VERSION }}Mac.zip" \
+            "EffekseerForCpp${{ env.EFFEKSEER_VERSION }}.zip"
           do
             url="https://uploads.github.com/repos/${GITHUB_REPOSITORY}/releases/$releaseId/assets?name=$(basename $filename)"
             echo "Upload $filename to $url"
             curl -L \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Content-Type: application/binary" \
-            --data-binary @"$filename" \
+            --data-binary @"pub/$filename" \
             "$url"
           done
         
