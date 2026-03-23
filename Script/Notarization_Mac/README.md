@@ -7,7 +7,7 @@ This folder contains helper scripts for codesigning, notarizing, and stapling th
 ### Files
 
 - `Effekseer_cert.sh`
-  - Signs bundled executables that have any executable bit set with the app entitlements, signs `.dylib` files without entitlements, then signs the app bundle, creates a temporary zip for app notarization, creates `Effekseer.dmg`, and submits both for notarization with `xcrun notarytool` using a Keychain profile.
+  - Signs bundled executables that have any executable bit set with the app entitlements, signs `.dylib` files without entitlements, then signs the app bundle, creates a temporary zip for app notarization, recreates `Effekseer.dmg` with the app bundle and an `Applications` symlink, and submits both for notarization with `xcrun notarytool` using a Keychain profile.
 - `Effekseer_cert_check.sh`
   - Checks the notarization status using the request ID with `xcrun notarytool` and the same Keychain profile.
 - `Effekseer_notarytool_setup.sh`
@@ -66,9 +66,31 @@ Notes:
 - `Effekseer_notarytool_setup.sh` is the only script that handles the App-specific password, and it stores that secret in the Keychain for reuse.
 - `Effekseer_notarytool_log.sh` is useful when `notarytool submit` returns a rejection and you need the JSON issue report.
 - When `Effekseer_cert.sh` fails, it writes notarization logs to `Effekseer-app-notarytool-log.json` or `Effekseer-dmg-notarytool-log.json` if a request ID can be recovered.
-- `Effekseer_cert.sh` now performs this full order: notarize app, staple app, create DMG from the stapled app, notarize DMG, staple DMG.
+- `Effekseer_cert.sh` now performs this full order: notarize app, staple app, recreate the DMG from the stapled app and an `Applications` symlink, notarize DMG, staple DMG.
 - `Effekseer_cert.sh` signs bundled executables and `.dylib` files first, then signs the app bundle and the DMG.
 - If the app still shows the Gatekeeper warning, check whether the bundle was modified after signing or whether the quarantine attribute is still present.
+
+### GitHub Actions
+
+This repository's CI can notarize the macOS tool on `push` and `release` builds by reusing these scripts.
+Configure the following GitHub Actions secrets before enabling the workflow on your repository:
+
+- `APPLE_CERT_P12_BASE64`
+  - Base64-encoded `.p12` file that contains the `Developer ID Application` certificate.
+- `APPLE_CERT_P12_PASSWORD`
+  - Password for the `.p12` file.
+- `APPLE_SIGNING_IDENTITY`
+  - Full certificate name, for example `Developer ID Application: Your Name (TEAMID)`.
+- `APPLE_NOTARY_APPLE_ID`
+  - Apple ID used for notarization.
+- `APPLE_NOTARY_TEAM_ID`
+  - Apple Developer Team ID.
+- `APPLE_NOTARY_APP_PASSWORD`
+  - App-specific password for the Apple ID above.
+
+The workflow generates a temporary keychain password on the runner, so no extra secret is required for that.
+
+The workflow skips notarization on `pull_request` because repository secrets are not available there.
 
 ### Troubleshooting
 
@@ -103,7 +125,7 @@ log show --last 1h --predicate 'process == "syspolicyd"'
 ### ファイル
 
 - `Effekseer_cert.sh`
-  - 実行ビットが付いた同梱ファイルには app の entitlements を付けて署名し、`.dylib` は entitlements なしで署名します。その後でアプリ本体に署名し、`Effekseer.dmg` を作成して `xcrun notarytool` で Notarization を申請します。
+  - 実行ビットが付いた同梱ファイルには app の entitlements を付けて署名し、`.dylib` は entitlements なしで署名します。その後でアプリ本体に署名し、アプリ本体と `Applications` シンボリックリンクを含む `Effekseer.dmg` を再作成して `xcrun notarytool` で Notarization を申請します。
 - `Effekseer_cert_check.sh`
   - Request ID を使って `xcrun notarytool` で Notarization の状況を確認します。
 - `entitlements.plist`
@@ -158,11 +180,33 @@ sh Effekseer_notarytool_log.sh "Request ID" "effekseer-notarytool" "notarytool_l
 - `Effekseer_notarytool_setup.sh` だけが App-specific password を扱い、その後はキーチェーン内の profile を再利用します。
 - `Effekseer_notarytool_log.sh` は、`notarytool submit` が拒否されたときの JSON 形式の issue report を確認するのに便利です。
 - `Effekseer_cert.sh` が失敗した場合、Request ID を取得できれば `Effekseer-app-notarytool-log.json` または `Effekseer-dmg-notarytool-log.json` にログを保存します。
-- `Effekseer_cert.sh` は、`app` を Notarization → staple → DMG 作成 → DMG Notarization → DMG staple の順で処理します。
+- `Effekseer_cert.sh` は、`app` を Notarization → staple → `Applications` リンク付き DMG 再作成 → DMG Notarization → DMG staple の順で処理します。
 - `Effekseer_cert.sh` は、まず leaf バイナリを `--options runtime` と `--timestamp` 付きで署名し、その後に app bundle を署名します。
 - `Effekseer_cert.sh` は、`-perm -u+x -o -perm -g+x -o -perm -o+x` で拾える実行ビット付きファイルを署名対象にします。
 - `Effekseer_cert.sh` は、`Effekseer` のような Rosetta 下で動く leaf 実行ファイルに `com.apple.security.cs.allow-jit` などの entitlements を付けます。
 - 起動できない場合は、署名の破損、Gatekeeper の拒否、quarantine 属性の残存を順に確認してください。
+
+### GitHub Actions
+
+このリポジトリの CI では、これらのスクリプトを使って `push` と `release` の macOS ビルドを公証できます。
+有効化する前に、リポジトリの GitHub Actions secrets に次を設定してください。
+
+- `APPLE_CERT_P12_BASE64`
+  - `Developer ID Application` 証明書を含む `.p12` を base64 化した文字列。
+- `APPLE_CERT_P12_PASSWORD`
+  - `.p12` のパスワード。
+- `APPLE_SIGNING_IDENTITY`
+  - 証明書のフルネーム。例: `Developer ID Application: Your Name (TEAMID)`。
+- `APPLE_NOTARY_APPLE_ID`
+  - notarization に使う Apple ID。
+- `APPLE_NOTARY_TEAM_ID`
+  - Apple Developer の Team ID。
+- `APPLE_NOTARY_APP_PASSWORD`
+  - 上記 Apple ID の app-specific password。
+
+一時キーチェーン用のパスワードは workflow 側で都度生成するため、追加の secret は不要です。
+
+`pull_request` ではリポジトリ secrets が使えないため、公証ステップは自動的にスキップされます。
 
 ### 問題調査
 

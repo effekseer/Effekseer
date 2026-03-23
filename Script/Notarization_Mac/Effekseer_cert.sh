@@ -5,10 +5,11 @@ profile="${2:-${NOTARYTOOL_PROFILE:-effekseer-notarytool}}"
 app_path="Effekseer/Effekseer.app"
 dmg_path="Effekseer.dmg"
 app_zip="Effekseer-app.zip"
+package_dir="$(mktemp -d "${TMPDIR:-/tmp}/effekseer-dmg-package.XXXXXX")"
 app_submit_out="$(mktemp "${TMPDIR:-/tmp}/effekseer-app-notarytool.XXXXXX")"
 dmg_submit_out="$(mktemp "${TMPDIR:-/tmp}/effekseer-dmg-notarytool.XXXXXX")"
 
-trap 'rm -f "$app_zip" "$app_submit_out" "$dmg_submit_out"' EXIT
+trap 'rm -rf "$package_dir"; rm -f "$app_zip" "$app_submit_out" "$dmg_submit_out"' EXIT
 
 submit_and_log_failure() {
     artifact="$1"
@@ -71,8 +72,12 @@ submit_and_log_failure "$app_zip" "app bundle" "$profile" "Effekseer-app-notaryt
 echo "Stapling app bundle: $app_path"
 xcrun stapler staple "$app_path"
 
+echo "Preparing dmg staging directory: $package_dir"
+cp -R "$app_path" "$package_dir/"
+ln -s /Applications "$package_dir/Applications"
+
 echo "Creating dmg from stapled app bundle: $dmg_path"
-hdiutil create "$dmg_path" -volname "Effekseer" -srcfolder "Effekseer"
+hdiutil create "$dmg_path" -volname "Effekseer" -srcfolder "$package_dir"
 
 echo "Signing dmg: $dmg_path"
 codesign --force --sign "$1" --timestamp "$dmg_path"
