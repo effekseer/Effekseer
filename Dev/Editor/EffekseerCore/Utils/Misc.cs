@@ -295,6 +295,39 @@ namespace Effekseer.Utils
 							resources.Materials.Add(_node.RendererCommonValues.MaterialFile.Path);
 						}
 					}
+
+					if (_node.GpuParticles.Enabled.Value)
+					{
+						var colorTexturePath = _node.GpuParticles.RenderMaterial.ColorTexture.Path.RelativePath;
+						if (colorTexturePath != string.Empty)
+						{
+							resources.ColorTextures.Add(_node.GpuParticles.RenderMaterial.ColorTexture.Path);
+						}
+
+						var normalTexturePath = _node.GpuParticles.RenderMaterial.NormalTexture.Path.RelativePath;
+						if (normalTexturePath != string.Empty)
+						{
+							resources.NormalTextures.Add(_node.GpuParticles.RenderMaterial.NormalTexture.Path);
+						}
+
+						if (_node.GpuParticles.EmitShape.Shape.Value == Data.GpuParticlesValues.EmitShapeParams.ShapeType.Model)
+						{
+							var modelPath = _node.GpuParticles.EmitShape.ModelPath.RelativePath;
+							if (modelPath != string.Empty)
+							{
+								resources.Models.Add(_node.GpuParticles.EmitShape.ModelPath);
+							}
+						}
+
+						if (_node.GpuParticles.RenderShape.Shape.Value == Data.GpuParticlesValues.RenderShapeParams.ShapeType.Model)
+						{
+							var modelPath = _node.GpuParticles.RenderShape.ModelPath.RelativePath;
+							if (modelPath != string.Empty)
+							{
+								resources.Models.Add(_node.GpuParticles.RenderShape.ModelPath);
+							}
+						}
+					}
 				}
 
 				// Enumulate used model data path
@@ -332,7 +365,8 @@ namespace Effekseer.Utils
 		{
 			var rendered = node.IsRendered.Value && node.DrawingValues.Type.Value != Data.RendererValues.ParamaterType.None;
 			var hasSound = node.SoundValues.Type.GetValue() == Data.SoundValues.ParamaterType.Use;
-			return rendered || hasSound;
+			var hasGpuParticles = node.GpuParticles.Enabled;
+			return rendered || hasSound || hasGpuParticles;
 		}
 
 		static bool IsRenderedNodeGroup(Data.Node node)
