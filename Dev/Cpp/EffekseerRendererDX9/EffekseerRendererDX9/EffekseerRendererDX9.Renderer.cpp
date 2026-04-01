@@ -8,6 +8,7 @@
 
 #include "EffekseerRendererDX9.MaterialLoader.h"
 #include "EffekseerRendererDX9.ModelRenderer.h"
+#include "EffekseerRendererDX9.GpuTimer.h"
 #include "EffekseerRendererDX9.Shader.h"
 #include <EffekseerRendererCommon/EffekseerRenderer.Renderer_Impl.h>
 #include <EffekseerRendererCommon/EffekseerRenderer.RibbonRendererBase.h>
@@ -563,6 +564,16 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 ::Effekseer::TrackRendererRef RendererImplemented::CreateTrackRenderer()
 {
 	return ::Effekseer::TrackRendererRef(new ::EffekseerRenderer::TrackRendererBase<RendererImplemented, true>(this));
+}
+
+::Effekseer::GpuTimerRef RendererImplemented::CreateGpuTimer()
+{
+	auto timer = ::Effekseer::MakeRefPtr<GpuTimer>(this);
+	if (!timer->GetIsValid())
+	{
+		return nullptr;
+	}
+	return timer;
 }
 
 //----------------------------------------------------------------------------------

@@ -165,6 +165,11 @@ public:
 	::Effekseer::TrackRendererRef CreateTrackRenderer();
 
 	/**
+		@brief	GPUタイマーを生成する。
+	*/
+	::Effekseer::GpuTimerRef CreateGpuTimer() override;
+
+	/**
 		@brief	テクスチャ読込クラスを生成する。
 	*/
 	::Effekseer::TextureLoaderRef CreateTextureLoader(::Effekseer::FileInterfaceRef fileInterface = nullptr);

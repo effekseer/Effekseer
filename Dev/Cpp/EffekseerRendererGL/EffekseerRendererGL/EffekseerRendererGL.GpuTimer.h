@@ -34,6 +34,7 @@ public: // For device restore
 	virtual void OnResetDevice();
 
 public: // GpuTimer
+	virtual void UpdateResults() override;
 	virtual void BeginStage(Effekseer::GpuStage stage) override;
 	virtual void EndStage(Effekseer::GpuStage stage) override;
 	virtual void AddTimer(const void* object) override;

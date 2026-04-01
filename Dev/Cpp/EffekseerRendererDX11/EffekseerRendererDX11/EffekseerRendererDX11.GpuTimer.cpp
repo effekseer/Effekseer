@@ -115,6 +115,20 @@ void GpuTimer::OnResetDevice()
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
+void GpuTimer::UpdateResults()
+{
+	for (uint32_t index = 1; index < 5; index++)
+	{
+		if (stage_states_[index] == State::AfterStage)
+		{
+			UpdateResults(static_cast<Effekseer::GpuStage>(index));
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------------
+//
+//-----------------------------------------------------------------------------------
 void GpuTimer::BeginStage(Effekseer::GpuStage stage)
 {
 	assert(stage != Effekseer::GpuStage::None);
@@ -316,13 +330,7 @@ void GpuTimer::Stop(const void* object)
 //-----------------------------------------------------------------------------------
 int32_t GpuTimer::GetResult(const void* object)
 {
-	for (uint32_t index = 1; index < 5; index++)
-	{
-		if (stage_states_[index] == State::AfterStage)
-		{
-			UpdateResults(static_cast<Effekseer::GpuStage>(index));
-		}
-	}
+	UpdateResults();
 
 	auto it = time_data_.find(object);
 	if (it != time_data_.end())
