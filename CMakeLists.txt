@@ -228,6 +228,8 @@ if(BUILD_VIEWER)
       -DSANITIZE_ENABLED=${SANITIZE_ENABLED}
       -DASM686=off
       -DAMD64=off
+      -DZLIB_BUILD_SHARED=OFF
+      -DZLIB_BUILD_STATIC=ON
       -DZLIB_BUILD_EXAMPLES=OFF
       -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
       ${EFK_MSVC_RUNTIME_LIBRARY_ARGS}
@@ -239,8 +241,8 @@ if(BUILD_VIEWER)
        ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/lib)
 
   if(MSVC)
-    set(ZLIB_LIB_DEBUG "zlibstaticd")
-    set(ZLIB_LIB_RELEASE "zlibstatic")
+    set(ZLIB_LIB_DEBUG "zsd")
+    set(ZLIB_LIB_RELEASE "zs")
   elseif(APPLE)
     set(ZLIB_LIB_DEBUG "libz.a")
     set(ZLIB_LIB_RELEASE "libz.a")

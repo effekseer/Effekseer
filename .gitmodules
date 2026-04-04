@@ -39,10 +39,11 @@
 	url = https://github.com/effekseer/ImGradientHDR.git
 [submodule "Dev/Cpp/3rdParty/libpng"]
 	path = Dev/Cpp/3rdParty/libpng
-	url = https://github.com/effekseer/libpng
+	url = https://github.com/pnggroup/libpng.git
 [submodule "Dev/Cpp/3rdParty/zlib"]
 	path = Dev/Cpp/3rdParty/zlib
 	url = https://github.com/effekseer/zlib.git
+	branch = effekseer-18x
 [submodule "Dev/Cpp/3rdParty/libgd"]
 	path = Dev/Cpp/3rdParty/libgd
 	url = https://github.com/libgd/libgd.git
