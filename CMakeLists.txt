@@ -377,7 +377,7 @@ if(BUILD_VIEWER)
   # OpenSoundMixer
   ExternalProject_Add(
     ExternalProject_OpenSoundMixer
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Downloads/OpenSoundMixer
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Dev/Cpp/3rdParty/OpenSoundMixer
     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Build/OpenSoundMixer
     INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/OpenSoundMixer
     CMAKE_ARGS
@@ -390,7 +390,7 @@ if(BUILD_VIEWER)
       ${EFK_MSVC_RUNTIME_LIBRARY_ARGS}
       -DCMAKE_OSX_ARCHITECTURES:STRING=arm64$<SEMICOLON>x86_64)
   list(APPEND EFK_THIRDPARTY_INCLUDES
-       ${CMAKE_CURRENT_SOURCE_DIR}/Downloads/OpenSoundMixer/src)
+       ${CMAKE_CURRENT_SOURCE_DIR}/Dev/Cpp/3rdParty/OpenSoundMixer/src)
   list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES
        ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/OpenSoundMixer/lib)
 
