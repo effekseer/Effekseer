@@ -12525,23 +12525,25 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginFullsc
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginDock___(void * jarg1, void * jarg2, void * jarg3, unsigned int * jarg4, unsigned int jarg5, int jarg6) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginDock___(void * jarg1, void * jarg2, void * jarg3, void * jarg4, unsigned int * jarg5, unsigned int jarg6, int jarg7) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = 0 ;
   char16_t *arg2 = 0 ;
   char16_t *arg3 = 0 ;
-  bool *arg4 = 0 ;
-  bool arg5 ;
-  efk::WindowFlags arg6 ;
+  char16_t *arg4 = 0 ;
+  bool *arg5 = 0 ;
+  bool arg6 ;
+  efk::WindowFlags arg7 ;
   bool result;
   
   arg1 = (efk::GUIManager *)jarg1; 
   arg2 = (char16_t *)jarg2; 
   arg3 = (char16_t *)jarg3; 
-  arg4 = (bool *)jarg4; 
-  arg5 = jarg5 ? true : false; 
-  arg6 = (efk::WindowFlags)jarg6; 
-  result = (bool)(arg1)->BeginDock((char16_t const *)arg2,(char16_t const *)arg3,arg4,arg5,arg6);
+  arg4 = (char16_t *)jarg4; 
+  arg5 = (bool *)jarg5; 
+  arg6 = jarg6 ? true : false; 
+  arg7 = (efk::WindowFlags)jarg7; 
+  result = (bool)(arg1)->BeginDock((char16_t const *)arg2,(char16_t const *)arg3,(char16_t const *)arg4,arg5,arg6,arg7);
   jresult = result; 
   return jresult;
 }
@@ -14621,4 +14623,3 @@ SWIGEXPORT std::shared_ptr< Effekseer::Tool::Image > * SWIGSTDCALL CSharp_Effeks
 #ifdef __cplusplus
 }
 #endif
-

@@ -23,6 +23,30 @@ namespace Effekseer.GUI.Dock
 			}
 		}
 
+		string tabDisplayLabel = null;
+
+		public string TabDisplayLabel
+		{
+			get
+			{
+				if (tabDisplayLabel != null)
+				{
+					return tabDisplayLabel;
+				}
+
+				if (AllowsShortTab && !string.IsNullOrEmpty(Label))
+				{
+					return Label.Substring(0, 1);
+				}
+
+				return string.Empty;
+			}
+			set
+			{
+				tabDisplayLabel = value;
+			}
+		}
+
 		public string DocPage { get; set; } = string.Empty;
 
 		public string DocURL
@@ -108,7 +132,7 @@ namespace Effekseer.GUI.Dock
 					}
 
 					bool dockEnabled = Manager.NativeManager.BeginDock(
-						Label, TabLabel, ref opened, Visibled && Windowed && !NoCloseButton, flags);
+						Label, TabLabel, TabDisplayLabel, ref opened, Visibled && Windowed && !NoCloseButton, flags);
 
 					Visibled = Manager.NativeManager.IsDockVisibled();
 					Windowed = Manager.NativeManager.IsDockWindowed();

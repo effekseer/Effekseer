@@ -1699,8 +1699,8 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
-  public bool BeginDock(string label, string tabLabel, ref bool p_open, bool allowClose, WindowFlags extra_flags) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_BeginDock(swigCPtr, label, tabLabel, ref p_open, allowClose, (int)extra_flags);
+  public bool BeginDock(string label, string tabLabel, string tabDisplayLabel, ref bool p_open, bool allowClose, WindowFlags extra_flags) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginDock(swigCPtr, label, tabLabel, tabDisplayLabel, ref p_open, allowClose, (int)extra_flags);
     return ret;
   }
 
