@@ -413,7 +413,7 @@ if(BUILD_VIEWER
   # glfw
   ExternalProject_Add(
     ExternalProject_glfw
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Downloads/glfw
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Dev/Cpp/3rdParty/glfw
     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Build/glfw
     INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glfw
     CMAKE_ARGS

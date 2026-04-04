@@ -80,7 +80,7 @@ def main():
     shutil.copy("docs/Help_Cpp_En.html", rdir/"Help_Cpp_En.html")
 
     shutil.copy("Release/CMakeLists.txt", rdir)
-    shutil.copytree("Downloads/glfw", rdir/"Examples"/"Utils"/"glfw", dirs_exist_ok=True)
+    shutil.copytree("Dev/Cpp/3rdParty/glfw", rdir/"Examples"/"Utils"/"glfw", dirs_exist_ok=True)
     shutil.copy("Release/build_msvc.bat", rdir/"build_msvc.bat")
     shutil.copy("Release/build_macOS.sh", rdir/"build_macOS.sh")
 
