@@ -1,5 +1,5 @@
-[submodule "Downloads/OpenSoundMixer"]
-	path = Downloads/OpenSoundMixer
+[submodule "Dev/Cpp/3rdParty/OpenSoundMixer"]
+	path = Dev/Cpp/3rdParty/OpenSoundMixer
 	url = https://github.com/effekseer/OpenSoundMixer
 [submodule "Dev/Cpp/3rdParty/glfw"]
 	path = Dev/Cpp/3rdParty/glfw
