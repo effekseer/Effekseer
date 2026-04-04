@@ -228,6 +228,8 @@ if(BUILD_VIEWER)
       -DSANITIZE_ENABLED=${SANITIZE_ENABLED}
       -DASM686=off
       -DAMD64=off
+      -DZLIB_BUILD_SHARED=OFF
+      -DZLIB_BUILD_STATIC=ON
       -DZLIB_BUILD_EXAMPLES=OFF
       -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
       ${EFK_MSVC_RUNTIME_LIBRARY_ARGS}
@@ -239,8 +241,8 @@ if(BUILD_VIEWER)
        ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/lib)
 
   if(MSVC)
-    set(ZLIB_LIB_DEBUG "zlibstaticd")
-    set(ZLIB_LIB_RELEASE "zlibstatic")
+    set(ZLIB_LIB_DEBUG "zsd")
+    set(ZLIB_LIB_RELEASE "zs")
   elseif(APPLE)
     set(ZLIB_LIB_DEBUG "libz.a")
     set(ZLIB_LIB_RELEASE "libz.a")
@@ -262,6 +264,20 @@ if(BUILD_VIEWER)
     set(LIBPNG_INSTALL ${CMAKE_COMMAND} --install . --prefix <INSTALL_DIR>)
   endif()
 
+  set(
+    LIBPNG_ZLIB_CMAKE_ARGS
+    -DZLIB_ROOT=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/
+    -DZLIB_USE_STATIC_LIBS=ON)
+
+  if(MSVC)
+    list(
+      APPEND
+      LIBPNG_ZLIB_CMAKE_ARGS
+      -DZLIB_INCLUDE_DIR=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/include
+      -DZLIB_LIBRARY_RELEASE=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/lib/${ZLIB_LIB_RELEASE}.lib
+      -DZLIB_LIBRARY_DEBUG=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/lib/${ZLIB_LIB_DEBUG}.lib)
+  endif()
+
   if(APPLE)
     # HACK :
     # https://github.com/pnggroup/libpng/issues/372#issuecomment-2278215058
@@ -277,8 +293,7 @@ if(BUILD_VIEWER)
         -DCMAKE_USER_MAKE_RULES_OVERRIDE=${CMAKE_CURRENT_SOURCE_DIR}/Dev/CFlagOverrides.cmake
         -DEFK_USE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
         -DSANITIZE_ENABLED=${SANITIZE_ENABLED}
-        -DZLIB_ROOT=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/
-        -DZLIB_USE_STATIC_LIBS=ON
+        ${LIBPNG_ZLIB_CMAKE_ARGS}
         -DPNG_SHARED=OFF
         -DPNG_FRAMEWORK=OFF
         -DPNG_EXECUTABLES=OFF
@@ -302,8 +317,7 @@ if(BUILD_VIEWER)
         -DCMAKE_USER_MAKE_RULES_OVERRIDE=${CMAKE_CURRENT_SOURCE_DIR}/Dev/CFlagOverrides.cmake
         -DEFK_USE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
         -DSANITIZE_ENABLED=${SANITIZE_ENABLED}
-        -DZLIB_ROOT=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/
-        -DZLIB_USE_STATIC_LIBS=ON
+        ${LIBPNG_ZLIB_CMAKE_ARGS}
         -DPNG_SHARED=OFF
         -DPNG_FRAMEWORK=OFF
         -DPNG_EXECUTABLES=OFF
