@@ -61,9 +61,6 @@ std::shared_ptr<EffekseerMaterial::Node> g_selectedNode;
 
 bool g_showDebugWindow = false;
 
-std::array<bool, 512> keyState;
-std::array<bool, 512> keyStatePre;
-
 class IOCallback : public Effekseer::IOCallback
 {
 public:
@@ -334,9 +331,6 @@ int mainLoop(int argc, char* argv[])
 
 	g_editor = std::make_shared<EffekseerMaterial::Editor>(graphics);
 
-	keyStatePre.fill(false);
-	keyState.fill(false);
-
 	bool isFirstFrame = true;
 	int framecount = 0;
 	int leftWidth = 220 * mainWindow->GetDPIScale();
@@ -376,7 +370,7 @@ int mainLoop(int argc, char* argv[])
 
 		if (isFontUpdated)
 		{
-			ImGui_ImplOpenGL3_DestroyFontsTexture();
+			ImGui_ImplOpenGL3_DestroyDeviceObjects();
 			io.Fonts->Clear();
 
 			Effekseer::Editor::AddFontFromFileTTF(
@@ -437,12 +431,6 @@ int mainLoop(int argc, char* argv[])
 		ImGui::NewFrame();
 
 		{
-			keyState = keyStatePre;
-			for (int i = 0; i < 512; i++)
-			{
-				keyStatePre[i] = ImGui::GetIO().KeysDown[i];
-			}
-
 			if (material != nullptr)
 			{
 				if (!ImGui::IsAnyItemActive())

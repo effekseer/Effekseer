@@ -29,6 +29,8 @@
 
 #include "GradientHDRState.h"
 
+#include <cstring>
+
 namespace ImGui
 {
 static ImVec2 operator+(const ImVec2& lhs, const ImVec2& rhs)
@@ -58,9 +60,9 @@ bool ImageButton_(ImTextureID user_texture_id,
 
 	// Default to using texture ID as ID. User can still push string/integer prefixes.
 	// We could hash the size/uv to create a unique ID but that would prevent the user from animating UV.
-	PushID((void*)user_texture_id);
-	const ImGuiID id = window->GetID("#image");
-	PopID();
+	char idBuffer[32];
+	ImFormatString(idBuffer, IM_ARRAYSIZE(idBuffer), "#image/%llx", (unsigned long long)user_texture_id);
+	const ImGuiID id = window->GetID(idBuffer);
 
 	const ImVec2 padding = (frame_padding >= 0) ? ImVec2((float)frame_padding, (float)frame_padding) : style.FramePadding;
 	const ImRect bb(window->DC.CursorPos, window->DC.CursorPos + size + padding * 2);
@@ -175,7 +177,7 @@ static ImTextureID ToImTextureID(std::shared_ptr<Effekseer::Tool::Image> image)
 			auto t_dx11 = dynamic_cast<EffekseerRendererDX11::Backend::Texture*>(texture.Get());
 			if (t_dx11 != nullptr)
 			{
-				return reinterpret_cast<ImTextureID>(t_dx11->GetSRV());
+				return static_cast<ImTextureID>(reinterpret_cast<size_t>(t_dx11->GetSRV()));
 			}
 #endif
 			auto t_gl = dynamic_cast<EffekseerRendererGL::Backend::Texture*>(texture.Get());
@@ -189,11 +191,11 @@ static ImTextureID ToImTextureID(std::shared_ptr<Effekseer::Tool::Image> image)
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 				glBindTexture(GL_TEXTURE_2D, bound);
 
-				return reinterpret_cast<ImTextureID>(static_cast<size_t>(buffer));
+				return static_cast<ImTextureID>(buffer);
 			}
 		}
 	}
-	return nullptr;
+	return ImTextureID_Invalid;
 }
 
 bool DragFloatN(const char* label,
@@ -375,7 +377,7 @@ bool GUIManager::Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, E
 void GUIManager::InitializeGUI(std::shared_ptr<Effekseer::Tool::GraphicsDevice> graphicsDevice)
 {
 	ImGui::CreateContext();
-	ImGui::GetIO().PlatformLocaleDecimalPoint = *localeconv()->decimal_point;
+	ImGui::GetPlatformIO().Platform_LocaleDecimalPoint = *localeconv()->decimal_point;
 
 	ImGuiIO& io = ImGui::GetIO();
 
@@ -568,7 +570,7 @@ void GUIManager::InvalidateFont()
 {
 	if (deviceType == Effekseer::Tool::DeviceType::OpenGL)
 	{
-		ImGui_ImplOpenGL3_DestroyFontsTexture();
+		ImGui_ImplOpenGL3_DestroyDeviceObjects();
 	}
 #if _WIN32
 	else if (deviceType == Effekseer::Tool::DeviceType::DirectX11)
@@ -1172,7 +1174,10 @@ bool GUIManager::ImageButton(std::shared_ptr<Effekseer::Tool::Image> user_textur
 
 bool GUIManager::ImageButtonOriginal(std::shared_ptr<Effekseer::Tool::Image> user_texture_id, float x, float y)
 {
-	return ImGui::ImageButton(ToImTextureID(user_texture_id), ImVec2(x, y), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1));
+	ImGui::PushID(user_texture_id.get());
+	const bool result = ImGui::ImageButton("##image", ToImTextureID(user_texture_id), ImVec2(x, y), ImVec2(0, 0), ImVec2(1, 1), ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1));
+	ImGui::PopID();
+	return result;
 }
 
 bool GUIManager::IconButton(const char16_t* icon, float size)
@@ -1500,7 +1505,7 @@ bool GUIManager::CollapsingHeaderWithToggle(const char16_t* label, TreeNodeFlags
 	ImVec2 cursorPosBefore = ImGui::GetCursorScreenPos();
 	ImVec2 region = ImGui::GetContentRegionAvail();
 
-	bool result = CollapsingHeader(label, (TreeNodeFlags)((uint32_t)flags | ImGuiTreeNodeFlags_AllowItemOverlap));
+	bool result = CollapsingHeader(label, (TreeNodeFlags)((uint32_t)flags | ImGuiTreeNodeFlags_AllowOverlap));
 
 	ImVec2 cursorPosAfter = ImGui::GetCursorScreenPos();
 
@@ -1736,8 +1741,8 @@ void GUIManager::AddFontFromAtlasImage(const char16_t* filename, uint16_t baseCo
 	config.MergeMode = true;
 	ImFont* font = io.Fonts->AddFontDefault(&config);
 
-	int glyphSizeX = font->FontSize;
-	int glyphSizeY = font->FontSize;
+	int glyphSizeX = static_cast<int>(font->LegacySize);
+	int glyphSizeY = static_cast<int>(font->LegacySize);
 	float offsetX = 2 * GetDpiScale();
 
 	std::vector<int> rectIDs;
@@ -1756,7 +1761,7 @@ void GUIManager::AddFontFromAtlasImage(const char16_t* filename, uint16_t baseCo
 	{
 		if (auto* rect = io.Fonts->GetCustomRectByIndex(rectIDs[i]))
 		{
-			ImU32* rectPixels = (ImU32*)texturePixels + rect->Y * textureWidth + rect->X;
+			ImU32* rectPixels = (ImU32*)texturePixels + rect->y * textureWidth + rect->x;
 			const ImU32* atlasPixels = (const ImU32*)&imagePixels[0] + (sizeY * (i / countX) * imageWidth) + (sizeX * (i % countX));
 
 			// for (int posY = 0; posY < sizeY; posY++)
@@ -1771,17 +1776,17 @@ void GUIManager::AddFontFromAtlasImage(const char16_t* filename, uint16_t baseCo
 
 bool GUIManager::BeginChildFrame(uint32_t id, const Vec2& size, WindowFlags flags)
 {
-	return ImGui::BeginChildFrame(id, ImVec2(size.X, size.Y), (int32_t)flags);
+	return ImGui::BeginChild(id, ImVec2(size.X, size.Y), ImGuiChildFlags_FrameStyle, (ImGuiWindowFlags)flags);
 }
 
 void GUIManager::EndChildFrame()
 {
-	ImGui::EndChildFrame();
+	ImGui::EndChild();
 }
 
 int GUIManager::GetKeyIndex(Key key)
 {
-	return ImGui::GetKeyIndex((ImGuiKey)key);
+	return static_cast<int>(static_cast<ImGuiKey>(key));
 }
 
 bool GUIManager::IsKeyDown(int user_key_index)
@@ -2107,7 +2112,8 @@ bool GUIManager::BeginDock(const char16_t* label, const char16_t* tabLabel, bool
 	ImGuiWindow* window = ImGui::GetCurrentWindow();
 	if (window && !window->DockTabLabel[0])
 	{
-		strcpy(window->DockTabLabel, utf8TabLabel);
+		std::strncpy(window->DockTabLabel, utf8TabLabel, sizeof(window->DockTabLabel) - 1);
+		window->DockTabLabel[sizeof(window->DockTabLabel) - 1] = '\0';
 	}
 
 	return result;

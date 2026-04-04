@@ -339,11 +339,13 @@ void AddTextVertical(ImDrawList *DrawList, ImVec2 pos, ImU32 col, const char *te
     if (!text_end)
         text_end = text_begin + strlen(text_begin);
     ImGuiContext& g = *GImGui;
-    ImFont* font = g.Font;
+    ImFontBaked* font_baked = ImGui::GetFontBaked();
+    if (font_baked == nullptr)
+        return;
     // Align to be pixel perfect
     pos.x = ImFloor(pos.x);
     pos.y = ImFloor(pos.y);
-    const float scale = g.FontSize / font->FontSize;
+    const float scale = 1.0f;
     const char* s = text_begin;
     int chars_exp = (int)(text_end - s);
     int chars_rnd = 0;
@@ -360,7 +362,7 @@ void AddTextVertical(ImDrawList *DrawList, ImVec2 pos, ImU32 col, const char *te
             if (c == 0) // Malformed UTF-8?
                 break;
         }
-        const ImFontGlyph * glyph = font->FindGlyph((ImWchar)c);
+        const ImFontGlyph * glyph = font_baked->FindGlyph((ImWchar)c);
         if (glyph == nullptr) {
             continue;
         }
@@ -3064,7 +3066,7 @@ void EndPlot() {
                 ImGui::SetKeyOwner(ImGuiKey_MouseWheelY, plot.Items.ID);
                 if (IO.MouseWheel != 0.0f) {
                     ImVec2 max_step = legend.Rect.GetSize() * 0.67f;
-                    float font_size = ImGui::GetCurrentWindow()->CalcFontSize();
+                    float font_size = ImGui::GetFontSize();
                     float scroll_step = ImFloor(ImMin(2 * font_size, max_step.x));
                     legend.Scroll.x += scroll_step * IO.MouseWheel;
                     legend.Scroll.y += scroll_step * IO.MouseWheel;
@@ -3583,7 +3585,7 @@ void EndSubplots() {
                 ImGui::SetKeyOwner(ImGuiKey_MouseWheelY, subplot.Items.ID);
                 if (IO.MouseWheel != 0.0f) {
                     ImVec2 max_step = legend.Rect.GetSize() * 0.67f;
-                    float font_size = ImGui::GetCurrentWindow()->CalcFontSize();
+                    float font_size = ImGui::GetFontSize();
                     float scroll_step = ImFloor(ImMin(2 * font_size, max_step.x));
                     legend.Scroll.x += scroll_step * IO.MouseWheel;
                     legend.Scroll.y += scroll_step * IO.MouseWheel;
