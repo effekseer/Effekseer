@@ -1754,14 +1754,24 @@ void Editor::UpdatePreview()
 	size.y = Preview::TextureSize;
 	ImGui::Image((void*)preview_->GetInternal(), size, ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 
-	if (ImGui::ImageButton((ImTextureID)previewTypeButtons_[0]->GetInternal(), ImVec2(20.0, 20.0), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0)))
+	if (ImGui::ImageButton(
+			"##preview_screen",
+			ImTextureRef((ImTextureID)previewTypeButtons_[0]->GetInternal()),
+			ImVec2(20.0, 20.0),
+			ImVec2(0.0, 1.0),
+			ImVec2(1.0, 0.0)))
 	{
 		preview_->ModelType = PreviewModelType::Screen;
 	}
 
 	ImGui::SameLine();
 
-	if (ImGui::ImageButton((ImTextureID)previewTypeButtons_[1]->GetInternal(), ImVec2(20.0, 20.0), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0)))
+	if (ImGui::ImageButton(
+			"##preview_sphere",
+			ImTextureRef((ImTextureID)previewTypeButtons_[1]->GetInternal()),
+			ImVec2(20.0, 20.0),
+			ImVec2(0.0, 1.0),
+			ImVec2(1.0, 0.0)))
 	{
 		preview_->ModelType = PreviewModelType::Sphere;
 	}
@@ -2068,7 +2078,11 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 		if (preview != nullptr)
 		{
 			if (ImGui::ImageButton(
-					(ImTextureID)previewTypeButtons_[0]->GetInternal(), ImVec2(20.0, 20.0), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0)))
+					"##preview_screen",
+					ImTextureRef((ImTextureID)previewTypeButtons_[0]->GetInternal()),
+					ImVec2(20.0, 20.0),
+					ImVec2(0.0, 1.0),
+					ImVec2(1.0, 0.0)))
 			{
 				preview->GetPreview()->ModelType = PreviewModelType::Screen;
 			}
@@ -2076,7 +2090,11 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 			ImGui::SameLine();
 
 			if (ImGui::ImageButton(
-					(ImTextureID)previewTypeButtons_[1]->GetInternal(), ImVec2(20.0, 20.0), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0)))
+					"##preview_sphere",
+					ImTextureRef((ImTextureID)previewTypeButtons_[1]->GetInternal()),
+					ImVec2(20.0, 20.0),
+					ImVec2(0.0, 1.0),
+					ImVec2(1.0, 0.0)))
 			{
 				preview->GetPreview()->ModelType = PreviewModelType::Sphere;
 			}

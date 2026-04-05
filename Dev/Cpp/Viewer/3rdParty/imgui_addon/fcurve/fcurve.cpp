@@ -566,7 +566,7 @@ namespace ImGui
 		const bool isKeyAutoZoomMode = min_kv.x <= max_kv.x;
 		const auto isAutoZoomMode = isKeyAutoZoomMode || isValueAutoZoomMode;
 
-		if (!BeginChildFrame(id, size, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse))
+		if (!BeginChild(id, size, ImGuiChildFlags_FrameStyle, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse))
 		{
 			return false;
 		}
@@ -871,7 +871,7 @@ namespace ImGui
 
 		context.Store(window);
 
-		EndChildFrame();
+		EndChild();
 	}
 
 	bool StartSelectingAreaFCurve()
