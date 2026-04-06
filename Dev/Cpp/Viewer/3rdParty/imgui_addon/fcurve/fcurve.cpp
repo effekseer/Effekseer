@@ -566,12 +566,13 @@ namespace ImGui
 		const bool isKeyAutoZoomMode = min_kv.x <= max_kv.x;
 		const auto isAutoZoomMode = isKeyAutoZoomMode || isValueAutoZoomMode;
 
-		if (!BeginChild(id, size, ImGuiChildFlags_FrameStyle, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse))
+		const bool childVisible = BeginChild(id, size, ImGuiChildFlags_FrameStyle, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+		ImGuiWindow* window = GetCurrentWindow();
+		if (!childVisible)
 		{
 			return false;
 		}
 
-		ImGuiWindow* window = GetCurrentWindow();
 		if (window->SkipItems)
 		{
 			return false;

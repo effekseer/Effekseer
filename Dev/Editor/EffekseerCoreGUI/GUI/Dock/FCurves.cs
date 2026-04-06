@@ -157,11 +157,16 @@ namespace Effekseer.GUI.Dock
 
 			Manager.NativeManager.Columns(3);
 
-			if (isFirstUpdate)
+			// Docked on startup, the first visible frame may still report a transient size.
+			// Delay the one-time column width initialization until the panel has a stable area.
+			bool canInitializeColumns = isFirstUpdate
+				&& contentSize.X > 64.0f * dpiScale
+				&& contentSize.Y > 64.0f * dpiScale;
+
+			if (canInitializeColumns)
 			{
 				Manager.NativeManager.SetColumnWidth(0, contentSize.X * 0.24f);
-				Manager.NativeManager.SetColumnWidth(1, contentSize.X * 0.5f);
-				Manager.NativeManager.SetColumnWidth(2, contentSize.X * 0.26f);
+				Manager.NativeManager.SetColumnWidth(1, contentSize.X * 0.50f);
 			}
 
 			Manager.NativeManager.Spacing();
@@ -266,7 +271,8 @@ namespace Effekseer.GUI.Dock
 
 			var scale = new swig.Vec2(12, 4);
 
-			if (Manager.NativeManager.BeginFCurve(1, graphSize, Manager.Viewer.Current, scale, autoZoomRangeMin, autoZoomRangeMax))
+			var canRenderFCurve = Manager.NativeManager.BeginFCurve(1, graphSize, Manager.Viewer.Current, scale, autoZoomRangeMin, autoZoomRangeMax);
+			if (canRenderFCurve)
 			{
 				var clicked = Manager.NativeManager.IsMouseClicked(0, false) && Manager.NativeManager.IsWindowHovered();
 				var panning = Manager.NativeManager.IsFCurvePanning();
@@ -309,8 +315,8 @@ namespace Effekseer.GUI.Dock
 					canControl = false;
 				}
 
-				Manager.NativeManager.EndFCurve();
 			}
+			Manager.NativeManager.EndFCurve();
 
 
 			// Reset area
@@ -329,7 +335,10 @@ namespace Effekseer.GUI.Dock
 
 			CheckAndApplyUpdate(treeNodes);
 
-			isFirstUpdate = false;
+			if (canInitializeColumns)
+			{
+				isFirstUpdate = false;
+			}
 		}
 
 		protected override void UpdateToolbar()
