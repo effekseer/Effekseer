@@ -351,13 +351,22 @@ LRESULT CALLBACK Window::WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 		GetClientRect(hwnd, &rect);
 		if (point.x >= rect.left && point.x < rect.right)
 		{
-
-			if (point.y >= rect.top && point.y < rect.top + 6 && !window->maximized)
+			const float dpiScale = window->mainWindow_->GetDPIScale();
+			const float resizeBorderHeight = 6.0f * dpiScale;
+			float titleBarHeight = 32.0f * dpiScale;
+			if (GImGui != nullptr)
 			{
-				glfwSetCursor(window->window, window->vertResize);
+				if (ImGuiWindow* mainMenu = ImGui::FindWindowByName("##MainMenuBar"))
+				{
+					titleBarHeight = mainMenu->Size.y;
+				}
+			}
+
+			if (point.y >= rect.top && point.y < rect.top + resizeBorderHeight && !window->maximized)
+			{
 				return HTTOP;
 			}
-			else if (point.y >= rect.top && point.y < rect.top + 32 * window->mainWindow_->GetDPIScale() && ImGui::GetHoveredID() == 0 && GImGui->HoveredWindow == ImGui::FindWindowByName("##MainMenuBar"))
+			else if (GImGui != nullptr && point.y >= rect.top && point.y < rect.top + titleBarHeight && ImGui::GetHoveredID() == 0 && GImGui->HoveredWindow == ImGui::FindWindowByName("##MainMenuBar"))
 			{
 				return HTCAPTION;
 			}

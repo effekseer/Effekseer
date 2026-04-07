@@ -58,7 +58,10 @@ namespace Effekseer.GUI.Menu
 
 		public void UpdateSystemBar()
 		{
-			Manager.NativeManager.PushStyleVar(swig.ImGuiStyleVarFlags.FramePadding, new swig.Vec2(0.0f, 8.0f * Manager.DpiScale));
+			float desiredBarHeight = 32.0f * Manager.DpiScale;
+			float textHeight = Manager.NativeManager.GetTextLineHeight();
+			float framePaddingY = System.Math.Max((desiredBarHeight - textHeight) * 0.5f, 0.0f);
+			Manager.NativeManager.PushStyleVar(swig.ImGuiStyleVarFlags.FramePadding, new swig.Vec2(0.0f, framePaddingY));
 			Manager.NativeManager.BeginMainMenuBar();
 
 			var windowSize = Manager.NativeManager.GetWindowSize();

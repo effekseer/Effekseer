@@ -543,7 +543,7 @@ void NodeGraphEditor::render()
                         menuNode=node;
                         open_context_menu=true;
                     }
-                    else if (io.MouseReleased[2] || ImGui::IsKeyPressed(io.KeyMap[ImGuiKey_Home]) || io.MouseDoubleClicked[0]) node_to_center_view_around = node;
+                    else if (io.MouseReleased[2] || ImGui::IsKeyPressed(ImGuiKey_Home) || io.MouseDoubleClicked[0]) node_to_center_view_around = node;
                 }
                 ImGui::PopID();
             }
@@ -1437,7 +1437,7 @@ void NodeGraphEditor::render()
 
 
             // Open context menu
-            if (!open_context_menu && (node_hovered_in_scene || node_hovered_in_list) && ((ImGui::IsKeyReleased(io.KeyMap[ImGuiKey_Delete]) && !ImGui::GetIO().WantTextInput) || mustDeleteANodeSoon)) {
+            if (!open_context_menu && (node_hovered_in_scene || node_hovered_in_list) && ((ImGui::IsKeyReleased(ImGuiKey_Delete) && !ImGui::GetIO().WantTextInput) || mustDeleteANodeSoon)) {
                 // Delete selected node directly:
                 menuNode = node_hovered_in_scene ? node_hovered_in_scene : node_hovered_in_list ? node_hovered_in_list : NULL;
                 if (menuNode==node_to_fire_edit_callback) node_to_fire_edit_callback = NULL;
@@ -3119,6 +3119,5 @@ void TestNodeGraphEditor()  {
 }	//nmespace ImGui
 
 #endif //IMGUINODEGRAPHEDITOR_NOTESTDEMO
-
 
 

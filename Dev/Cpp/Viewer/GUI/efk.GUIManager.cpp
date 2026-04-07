@@ -29,6 +29,8 @@
 
 #include "GradientHDRState.h"
 
+#include <cstring>
+
 namespace ImGui
 {
 static ImVec2 operator+(const ImVec2& lhs, const ImVec2& rhs)
@@ -58,9 +60,9 @@ bool ImageButton_(ImTextureID user_texture_id,
 
 	// Default to using texture ID as ID. User can still push string/integer prefixes.
 	// We could hash the size/uv to create a unique ID but that would prevent the user from animating UV.
-	PushID((void*)user_texture_id);
-	const ImGuiID id = window->GetID("#image");
-	PopID();
+	char idBuffer[32];
+	ImFormatString(idBuffer, IM_ARRAYSIZE(idBuffer), "#image/%llx", (unsigned long long)user_texture_id);
+	const ImGuiID id = window->GetID(idBuffer);
 
 	const ImVec2 padding = (frame_padding >= 0) ? ImVec2((float)frame_padding, (float)frame_padding) : style.FramePadding;
 	const ImRect bb(window->DC.CursorPos, window->DC.CursorPos + size + padding * 2);
@@ -88,6 +90,145 @@ bool ImageButton_(ImTextureID user_texture_id,
 
 namespace efk
 {
+namespace
+{
+ImGuiKey NormalizeUserKeyIndex(int user_key_index)
+{
+	if (user_key_index <= 0)
+	{
+		return ImGuiKey_None;
+	}
+
+	if (user_key_index >= ImGuiKey_NamedKey_BEGIN && user_key_index < ImGuiKey_NamedKey_END)
+	{
+		return static_cast<ImGuiKey>(user_key_index);
+	}
+
+	// Keep accepting the legacy GLFW key indices that the C# layer still stores in shortcut/config code.
+	if (user_key_index >= 48 && user_key_index <= 57)
+	{
+		return static_cast<ImGuiKey>(ImGuiKey_0 + (user_key_index - 48));
+	}
+
+	if (user_key_index >= 65 && user_key_index <= 90)
+	{
+		return static_cast<ImGuiKey>(ImGuiKey_A + (user_key_index - 65));
+	}
+
+	if (user_key_index >= 290 && user_key_index <= 313)
+	{
+		return static_cast<ImGuiKey>(ImGuiKey_F1 + (user_key_index - 290));
+	}
+
+	if (user_key_index >= 320 && user_key_index <= 329)
+	{
+		return static_cast<ImGuiKey>(ImGuiKey_Keypad0 + (user_key_index - 320));
+	}
+
+	switch (user_key_index)
+	{
+	case 32:
+		return ImGuiKey_Space;
+	case 39:
+		return ImGuiKey_Apostrophe;
+	case 44:
+		return ImGuiKey_Comma;
+	case 45:
+		return ImGuiKey_Minus;
+	case 46:
+		return ImGuiKey_Period;
+	case 47:
+		return ImGuiKey_Slash;
+	case 59:
+		return ImGuiKey_Semicolon;
+	case 61:
+		return ImGuiKey_Equal;
+	case 91:
+		return ImGuiKey_LeftBracket;
+	case 92:
+		return ImGuiKey_Backslash;
+	case 93:
+		return ImGuiKey_RightBracket;
+	case 96:
+		return ImGuiKey_GraveAccent;
+	case 161:
+		return ImGuiKey_Oem102;
+	case 256:
+		return ImGuiKey_Escape;
+	case 257:
+		return ImGuiKey_Enter;
+	case 258:
+		return ImGuiKey_Tab;
+	case 259:
+		return ImGuiKey_Backspace;
+	case 260:
+		return ImGuiKey_Insert;
+	case 261:
+		return ImGuiKey_Delete;
+	case 262:
+		return ImGuiKey_RightArrow;
+	case 263:
+		return ImGuiKey_LeftArrow;
+	case 264:
+		return ImGuiKey_DownArrow;
+	case 265:
+		return ImGuiKey_UpArrow;
+	case 266:
+		return ImGuiKey_PageUp;
+	case 267:
+		return ImGuiKey_PageDown;
+	case 268:
+		return ImGuiKey_Home;
+	case 269:
+		return ImGuiKey_End;
+	case 280:
+		return ImGuiKey_CapsLock;
+	case 281:
+		return ImGuiKey_ScrollLock;
+	case 282:
+		return ImGuiKey_NumLock;
+	case 283:
+		return ImGuiKey_PrintScreen;
+	case 284:
+		return ImGuiKey_Pause;
+	case 330:
+		return ImGuiKey_KeypadDecimal;
+	case 331:
+		return ImGuiKey_KeypadDivide;
+	case 332:
+		return ImGuiKey_KeypadMultiply;
+	case 333:
+		return ImGuiKey_KeypadSubtract;
+	case 334:
+		return ImGuiKey_KeypadAdd;
+	case 335:
+		return ImGuiKey_KeypadEnter;
+	case 336:
+		return ImGuiKey_KeypadEqual;
+	case 340:
+		return ImGuiKey_LeftShift;
+	case 341:
+		return ImGuiKey_LeftCtrl;
+	case 342:
+		return ImGuiKey_LeftAlt;
+	case 343:
+		return ImGuiKey_LeftSuper;
+	case 344:
+		return ImGuiKey_RightShift;
+	case 345:
+		return ImGuiKey_RightCtrl;
+	case 346:
+		return ImGuiKey_RightAlt;
+	case 347:
+		return ImGuiKey_RightSuper;
+	case 348:
+		return ImGuiKey_Menu;
+	default:
+		return ImGuiKey_None;
+	}
+}
+} // namespace
+
 void ResizeBicubic(uint32_t* dst,
 				   int32_t dstWidth,
 				   int32_t dstHeight,
@@ -175,7 +316,7 @@ static ImTextureID ToImTextureID(std::shared_ptr<Effekseer::Tool::Image> image)
 			auto t_dx11 = dynamic_cast<EffekseerRendererDX11::Backend::Texture*>(texture.Get());
 			if (t_dx11 != nullptr)
 			{
-				return reinterpret_cast<ImTextureID>(t_dx11->GetSRV());
+				return static_cast<ImTextureID>(reinterpret_cast<size_t>(t_dx11->GetSRV()));
 			}
 #endif
 			auto t_gl = dynamic_cast<EffekseerRendererGL::Backend::Texture*>(texture.Get());
@@ -189,11 +330,11 @@ static ImTextureID ToImTextureID(std::shared_ptr<Effekseer::Tool::Image> image)
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 				glBindTexture(GL_TEXTURE_2D, bound);
 
-				return reinterpret_cast<ImTextureID>(static_cast<size_t>(buffer));
+				return static_cast<ImTextureID>(buffer);
 			}
 		}
 	}
-	return nullptr;
+	return ImTextureID_Invalid;
 }
 
 bool DragFloatN(const char* label,
@@ -375,7 +516,7 @@ bool GUIManager::Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, E
 void GUIManager::InitializeGUI(std::shared_ptr<Effekseer::Tool::GraphicsDevice> graphicsDevice)
 {
 	ImGui::CreateContext();
-	ImGui::GetIO().PlatformLocaleDecimalPoint = *localeconv()->decimal_point;
+	ImGui::GetPlatformIO().Platform_LocaleDecimalPoint = *localeconv()->decimal_point;
 
 	ImGuiIO& io = ImGui::GetIO();
 
@@ -568,7 +709,7 @@ void GUIManager::InvalidateFont()
 {
 	if (deviceType == Effekseer::Tool::DeviceType::OpenGL)
 	{
-		ImGui_ImplOpenGL3_DestroyFontsTexture();
+		ImGui_ImplOpenGL3_DestroyDeviceObjects();
 	}
 #if _WIN32
 	else if (deviceType == Effekseer::Tool::DeviceType::DirectX11)
@@ -1172,7 +1313,31 @@ bool GUIManager::ImageButton(std::shared_ptr<Effekseer::Tool::Image> user_textur
 
 bool GUIManager::ImageButtonOriginal(std::shared_ptr<Effekseer::Tool::Image> user_texture_id, float x, float y)
 {
-	return ImGui::ImageButton(ToImTextureID(user_texture_id), ImVec2(x, y), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1));
+	ImGui::PushID(user_texture_id.get());
+	ImGuiWindow* window = ImGui::GetCurrentWindow();
+	const ImGuiID id = window->GetID("##image");
+	const ImVec2 buttonMin = window->DC.CursorPos;
+	const ImVec2 buttonMax(buttonMin.x + x, buttonMin.y + y);
+	const ImRect bb(buttonMin, buttonMax);
+	ImGui::ItemSize(bb);
+	bool result = false;
+	if (ImGui::ItemAdd(bb, id))
+	{
+		bool hovered = false;
+		bool held = false;
+		result = ImGui::ButtonBehavior(bb, id, &hovered, &held, ImGuiButtonFlags_PressedOnClick);
+
+		const ImU32 col = ImGui::GetColorU32((held && hovered) ? ImGuiCol_ButtonActive : hovered ? ImGuiCol_ButtonHovered : ImGuiCol_Button);
+		const ImGuiStyle& style = ImGui::GetStyle();
+		ImGui::RenderNavHighlight(bb, id);
+		ImGui::RenderFrame(bb.Min, bb.Max, col, true, style.FrameRounding);
+
+		const ImVec2 uv0(0.08f, 0.15f);
+		const ImVec2 uv1(0.92f, 0.96f);
+		window->DrawList->AddImage(ToImTextureID(user_texture_id), buttonMin, buttonMax, uv0, uv1, ImGui::GetColorU32(ImVec4(1, 1, 1, 1)));
+	}
+	ImGui::PopID();
+	return result;
 }
 
 bool GUIManager::IconButton(const char16_t* icon, float size)
@@ -1500,7 +1665,7 @@ bool GUIManager::CollapsingHeaderWithToggle(const char16_t* label, TreeNodeFlags
 	ImVec2 cursorPosBefore = ImGui::GetCursorScreenPos();
 	ImVec2 region = ImGui::GetContentRegionAvail();
 
-	bool result = CollapsingHeader(label, (TreeNodeFlags)((uint32_t)flags | ImGuiTreeNodeFlags_AllowItemOverlap));
+	bool result = CollapsingHeader(label, (TreeNodeFlags)((uint32_t)flags | ImGuiTreeNodeFlags_AllowOverlap));
 
 	ImVec2 cursorPosAfter = ImGui::GetCursorScreenPos();
 
@@ -1732,18 +1897,26 @@ void GUIManager::AddFontFromAtlasImage(const char16_t* filename, uint16_t baseCo
 	int32_t imageWidth = pngloader.GetWidth();
 	int32_t imageHeight = pngloader.GetHeight();
 
-	ImFontConfig config;
-	config.MergeMode = true;
-	ImFont* font = io.Fonts->AddFontDefault(&config);
+	ImFont* font = io.Fonts->Fonts.empty() ? io.Fonts->AddFontDefault() : io.Fonts->Fonts.back();
+	float fontSize = font->LegacySize > 0.0f ? font->LegacySize : ImGui::GetStyle().FontSizeBase;
+	if (fontSize <= 0.0f)
+	{
+		fontSize = 13.0f;
+	}
 
-	int glyphSizeX = font->FontSize;
-	int glyphSizeY = font->FontSize;
+	// ImGui 1.92 stores glyphs per baked font size, so keep the icon glyphs on the
+	// same baked size as the UI font instead of relying on the legacy single-size path.
+	font->GetFontBaked(fontSize);
+	font->Flags |= ImFontFlags_LockBakedSizes;
+
+	int glyphSizeX = static_cast<int>(fontSize);
+	int glyphSizeY = static_cast<int>(fontSize);
 	float offsetX = 2 * GetDpiScale();
 
 	std::vector<int> rectIDs;
 	for (int32_t i = 0; i < countX * countY; i++)
 	{
-		rectIDs.push_back(io.Fonts->AddCustomRectFontGlyph(font, (ImWchar)baseCode + i, glyphSizeX, glyphSizeY, glyphSizeX + offsetX));
+		rectIDs.push_back(io.Fonts->AddCustomRectFontGlyphForSize(font, fontSize, (ImWchar)baseCode + i, glyphSizeX, glyphSizeY, glyphSizeX + offsetX));
 	}
 
 	io.Fonts->Build();
@@ -1756,7 +1929,7 @@ void GUIManager::AddFontFromAtlasImage(const char16_t* filename, uint16_t baseCo
 	{
 		if (auto* rect = io.Fonts->GetCustomRectByIndex(rectIDs[i]))
 		{
-			ImU32* rectPixels = (ImU32*)texturePixels + rect->Y * textureWidth + rect->X;
+			ImU32* rectPixels = (ImU32*)texturePixels + rect->y * textureWidth + rect->x;
 			const ImU32* atlasPixels = (const ImU32*)&imagePixels[0] + (sizeY * (i / countX) * imageWidth) + (sizeX * (i % countX));
 
 			// for (int posY = 0; posY < sizeY; posY++)
@@ -1771,32 +1944,35 @@ void GUIManager::AddFontFromAtlasImage(const char16_t* filename, uint16_t baseCo
 
 bool GUIManager::BeginChildFrame(uint32_t id, const Vec2& size, WindowFlags flags)
 {
-	return ImGui::BeginChildFrame(id, ImVec2(size.X, size.Y), (int32_t)flags);
+	return ImGui::BeginChild(id, ImVec2(size.X, size.Y), ImGuiChildFlags_FrameStyle, (ImGuiWindowFlags)flags);
 }
 
 void GUIManager::EndChildFrame()
 {
-	ImGui::EndChildFrame();
+	ImGui::EndChild();
 }
 
 int GUIManager::GetKeyIndex(Key key)
 {
-	return ImGui::GetKeyIndex((ImGuiKey)key);
+	return static_cast<int>(static_cast<ImGuiKey>(key));
 }
 
 bool GUIManager::IsKeyDown(int user_key_index)
 {
-	return ImGui::IsKeyDown(static_cast<ImGuiKey>(user_key_index));
+	const auto key = NormalizeUserKeyIndex(user_key_index);
+	return key != ImGuiKey_None && ImGui::IsKeyDown(key);
 }
 
 bool GUIManager::IsKeyPressed(int user_key_index)
 {
-	return ImGui::IsKeyPressed(static_cast<ImGuiKey>(user_key_index));
+	const auto key = NormalizeUserKeyIndex(user_key_index);
+	return key != ImGuiKey_None && ImGui::IsKeyPressed(key);
 }
 
 bool GUIManager::IsKeyReleased(int user_key_index)
 {
-	return ImGui::IsKeyReleased(static_cast<ImGuiKey>(user_key_index));
+	const auto key = NormalizeUserKeyIndex(user_key_index);
+	return key != ImGuiKey_None && ImGui::IsKeyReleased(key);
 }
 
 bool GUIManager::IsShiftKeyDown()
@@ -1818,7 +1994,8 @@ int GUIManager::GetPressedKeyIndex(bool repeat)
 {
 	for (int i = 0; i < 512; i++)
 	{
-		if (ImGui::IsKeyPressed(static_cast<ImGuiKey>(i), repeat))
+		const auto key = NormalizeUserKeyIndex(i);
+		if (key != ImGuiKey_None && ImGui::IsKeyPressed(key, repeat))
 		{
 			return i;
 		}
@@ -2092,7 +2269,7 @@ bool GUIManager::BeginFullscreen(const char16_t* label)
 	return visible;
 }
 
-bool GUIManager::BeginDock(const char16_t* label, const char16_t* tabLabel, bool* p_open, bool allowClose, WindowFlags extra_flags)
+bool GUIManager::BeginDock(const char16_t* label, const char16_t* tabLabel, const char16_t* tabDisplayLabel, bool* p_open, bool allowClose, WindowFlags extra_flags)
 {
 	if (!allowClose)
 	{
@@ -2101,13 +2278,29 @@ bool GUIManager::BeginDock(const char16_t* label, const char16_t* tabLabel, bool
 
 	utf8str<256> utf8Label(label);
 	utf8str<256> utf8TabLabel(tabLabel);
+	utf8str<64> utf8TabDisplayLabel(tabDisplayLabel);
+
+	if (ImGuiWindow* existingWindow = ImGui::FindWindowByName(utf8Label))
+	{
+		std::strncpy(existingWindow->DockTabLabel, utf8TabLabel, sizeof(existingWindow->DockTabLabel) - 1);
+		existingWindow->DockTabLabel[sizeof(existingWindow->DockTabLabel) - 1] = '\0';
+		std::strncpy(existingWindow->DockTabDisplayLabel, utf8TabDisplayLabel, sizeof(existingWindow->DockTabDisplayLabel) - 1);
+		existingWindow->DockTabDisplayLabel[sizeof(existingWindow->DockTabDisplayLabel) - 1] = '\0';
+		std::strncpy(existingWindow->DockMenuLabel, utf8Label, sizeof(existingWindow->DockMenuLabel) - 1);
+		existingWindow->DockMenuLabel[sizeof(existingWindow->DockMenuLabel) - 1] = '\0';
+	}
 
 	bool result = ImGui::Begin(utf8Label, p_open, (ImGuiWindowFlags)extra_flags);
 
 	ImGuiWindow* window = ImGui::GetCurrentWindow();
-	if (window && !window->DockTabLabel[0])
+	if (window)
 	{
-		strcpy(window->DockTabLabel, utf8TabLabel);
+		std::strncpy(window->DockTabLabel, utf8TabLabel, sizeof(window->DockTabLabel) - 1);
+		window->DockTabLabel[sizeof(window->DockTabLabel) - 1] = '\0';
+		std::strncpy(window->DockTabDisplayLabel, utf8TabDisplayLabel, sizeof(window->DockTabDisplayLabel) - 1);
+		window->DockTabDisplayLabel[sizeof(window->DockTabDisplayLabel) - 1] = '\0';
+		std::strncpy(window->DockMenuLabel, utf8Label, sizeof(window->DockMenuLabel) - 1);
+		window->DockMenuLabel[sizeof(window->DockMenuLabel) - 1] = '\0';
 	}
 
 	return result;

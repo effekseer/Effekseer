@@ -38,6 +38,7 @@
 #include <spdlog/spdlog.h>
 
 #include <fstream>
+#include <filesystem>
 #include <iostream>
 #include <sstream>
 
@@ -60,9 +61,6 @@ std::shared_ptr<EffekseerMaterial::Editor> g_editor;
 std::shared_ptr<EffekseerMaterial::Node> g_selectedNode;
 
 bool g_showDebugWindow = false;
-
-std::array<bool, 512> keyState;
-std::array<bool, 512> keyStatePre;
 
 class IOCallback : public Effekseer::IOCallback
 {
@@ -200,22 +198,35 @@ void ChangeLanguage(const std::string& key)
 int mainLoop(int argc, char* argv[])
 {
 	bool ipcMode = false;
-
-	if (argc >= 2 && std::string(argv[1]) == "ipc")
-	{
-		ipcMode = true;
-	}
-
 	std::string languageKey;
+	std::string startupMaterialPath;
 
 	if (argc >= 2)
 	{
 		for (int i = 1; i < argc; i++)
 		{
-			if (std::string(argv[i - 1]) == "--language" || std::string(argv[i - 1]) == "-l")
+			const auto arg = std::string(argv[i]);
+
+			if (i == 1 && arg == "ipc")
 			{
-				languageKey = argv[i];
-				break;
+				ipcMode = true;
+				continue;
+			}
+
+			if (arg == "--language" || arg == "-l")
+			{
+				if (i + 1 < argc)
+				{
+					languageKey = argv[++i];
+				}
+				continue;
+			}
+
+			if (startupMaterialPath.empty() && !arg.empty() && arg[0] != '-')
+			{
+				std::error_code ec;
+				const auto path = std::filesystem::absolute(std::filesystem::u8path(arg), ec);
+				startupMaterialPath = ec ? arg : path.u8string();
 			}
 		}
 	}
@@ -334,8 +345,10 @@ int mainLoop(int argc, char* argv[])
 
 	g_editor = std::make_shared<EffekseerMaterial::Editor>(graphics);
 
-	keyStatePre.fill(false);
-	keyState.fill(false);
+	if (!startupMaterialPath.empty())
+	{
+		g_editor->LoadOrSelect(startupMaterialPath.c_str());
+	}
 
 	bool isFirstFrame = true;
 	int framecount = 0;
@@ -376,7 +389,7 @@ int mainLoop(int argc, char* argv[])
 
 		if (isFontUpdated)
 		{
-			ImGui_ImplOpenGL3_DestroyFontsTexture();
+			ImGui_ImplOpenGL3_DestroyDeviceObjects();
 			io.Fonts->Clear();
 
 			Effekseer::Editor::AddFontFromFileTTF(
@@ -437,12 +450,6 @@ int mainLoop(int argc, char* argv[])
 		ImGui::NewFrame();
 
 		{
-			keyState = keyStatePre;
-			for (int i = 0; i < 512; i++)
-			{
-				keyStatePre[i] = ImGui::GetIO().KeysDown[i];
-			}
-
 			if (material != nullptr)
 			{
 				if (!ImGui::IsAnyItemActive())
@@ -678,7 +685,7 @@ int mainLoop(int argc, char* argv[])
 			// HACK because of imgui specification
 			if (framecount == 3)
 			{
-				if (!ipcMode)
+				if (!ipcMode && startupMaterialPath.empty())
 				{
 					auto creatDialog = std::make_shared<EffekseerMaterial::NewOrOpenDialog>(g_editor);
 					// ImGui::OpenPopup(creatDialog->GetID());
