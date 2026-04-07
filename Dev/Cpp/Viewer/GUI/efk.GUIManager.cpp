@@ -1314,7 +1314,28 @@ bool GUIManager::ImageButton(std::shared_ptr<Effekseer::Tool::Image> user_textur
 bool GUIManager::ImageButtonOriginal(std::shared_ptr<Effekseer::Tool::Image> user_texture_id, float x, float y)
 {
 	ImGui::PushID(user_texture_id.get());
-	const bool result = ImGui::ImageButton("##image", ToImTextureID(user_texture_id), ImVec2(x, y), ImVec2(0, 0), ImVec2(1, 1), ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1));
+	ImGuiWindow* window = ImGui::GetCurrentWindow();
+	const ImGuiID id = window->GetID("##image");
+	const ImVec2 buttonMin = window->DC.CursorPos;
+	const ImVec2 buttonMax(buttonMin.x + x, buttonMin.y + y);
+	const ImRect bb(buttonMin, buttonMax);
+	ImGui::ItemSize(bb);
+	bool result = false;
+	if (ImGui::ItemAdd(bb, id))
+	{
+		bool hovered = false;
+		bool held = false;
+		result = ImGui::ButtonBehavior(bb, id, &hovered, &held, ImGuiButtonFlags_PressedOnClick);
+
+		const ImU32 col = ImGui::GetColorU32((held && hovered) ? ImGuiCol_ButtonActive : hovered ? ImGuiCol_ButtonHovered : ImGuiCol_Button);
+		const ImGuiStyle& style = ImGui::GetStyle();
+		ImGui::RenderNavHighlight(bb, id);
+		ImGui::RenderFrame(bb.Min, bb.Max, col, true, style.FrameRounding);
+
+		const ImVec2 uv0(0.08f, 0.15f);
+		const ImVec2 uv1(0.92f, 0.96f);
+		window->DrawList->AddImage(ToImTextureID(user_texture_id), buttonMin, buttonMax, uv0, uv1, ImGui::GetColorU32(ImVec4(1, 1, 1, 1)));
+	}
 	ImGui::PopID();
 	return result;
 }
