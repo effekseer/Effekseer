@@ -34,115 +34,115 @@ namespace efk
 // Flags for ImGui::Begin()
 enum class WindowFlags : int32_t
 {
-	None = 0,
-	NoTitleBar = 1 << 0,		// Disable title-bar
-	NoResize = 1 << 1,			// Disable user resizing with the lower-right grip
-	NoMove = 1 << 2,			// Disable user moving the window
-	NoScrollbar = 1 << 3,		// Disable scrollbars (window can still scroll with mouse or programatically)
-	NoScrollWithMouse = 1 << 4, // Disable user vertically scrolling with mouse wheel. On child window, mouse wheel will be forwarded to the
-								// parent unless NoScrollbar is also set.
-	NoCollapse = 1 << 5,		// Disable user collapsing window by double-clicking on it
-	AlwaysAutoResize = 1 << 6,	// Resize every window to its content every frame
+	None = ImGuiWindowFlags_None,
+	NoTitleBar = ImGuiWindowFlags_NoTitleBar,			  // Disable title-bar
+	NoResize = ImGuiWindowFlags_NoResize,				  // Disable user resizing with the lower-right grip
+	NoMove = ImGuiWindowFlags_NoMove,					  // Disable user moving the window
+	NoScrollbar = ImGuiWindowFlags_NoScrollbar,			  // Disable scrollbars (window can still scroll with mouse or programatically)
+	NoScrollWithMouse = ImGuiWindowFlags_NoScrollWithMouse, // Disable user vertically scrolling with mouse wheel. On child window, mouse wheel will be forwarded to the
+															// parent unless NoScrollbar is also set.
+	NoCollapse = ImGuiWindowFlags_NoCollapse,				// Disable user collapsing window by double-clicking on it
+	AlwaysAutoResize = ImGuiWindowFlags_AlwaysAutoResize,	// Resize every window to its content every frame
 	// ShowBorders          = 1 << 7,   // Show borders around windows and items (OBSOLETE! Use e.g. style.FrameBorderSize=1.0f to enable
 	// borders).
-	NoSavedSettings = 1 << 8, // Never load/save settings in .ini file
-	NoInputs = 1 << 9,		  // Disable catching mouse or keyboard inputs, hovering test with pass through.
-	MenuBar = 1 << 10,		  // Has a menu-bar
+	NoSavedSettings = ImGuiWindowFlags_NoSavedSettings, // Never load/save settings in .ini file
+	NoMouseInputs = ImGuiWindowFlags_NoMouseInputs,	   // Disable catching mouse inputs, hovering test with pass through.
+	NoInputs = ImGuiWindowFlags_NoInputs,			   // Disable catching mouse or keyboard inputs, hovering test with pass through.
+	MenuBar = ImGuiWindowFlags_MenuBar,				   // Has a menu-bar
 	HorizontalScrollbar =
-		1 << 11, // Allow horizontal scrollbar to appear (off by default). You may use SetNextWindowContentSize(ImVec2(width,0.0f)); prior
+		ImGuiWindowFlags_HorizontalScrollbar, // Allow horizontal scrollbar to appear (off by default). You may use SetNextWindowContentSize(ImVec2(width,0.0f)); prior
 	// to calling Begin() to specify width. Read code in imgui_demo in the "Horizontal Scrolling" section.
-	NoFocusOnAppearing = 1 << 12, // Disable taking focus when transitioning from hidden to visible state
+	NoFocusOnAppearing = ImGuiWindowFlags_NoFocusOnAppearing, // Disable taking focus when transitioning from hidden to visible state
 	NoBringToFrontOnFocus =
-		1 << 13,						 // Disable bringing window to front when taking focus (e.g. clicking on it or programatically giving it focus)
-	AlwaysVerticalScrollbar = 1 << 14,	 // Always show vertical scrollbar (even if ContentSize.y < Size.y)
-	AlwaysHorizontalScrollbar = 1 << 15, // Always show horizontal scrollbar (even if ContentSize.x < Size.x)
-	AlwaysUseWindowPadding = 1 << 16,	 // Ensure child windows without border uses style.WindowPadding (ignored by default for non-bordered
-										 // child windows, because more convenient)
+		ImGuiWindowFlags_NoBringToFrontOnFocus,			 // Disable bringing window to front when taking focus (e.g. clicking on it or programatically giving it focus)
+	AlwaysVerticalScrollbar = ImGuiWindowFlags_AlwaysVerticalScrollbar,	 // Always show vertical scrollbar (even if ContentSize.y < Size.y)
+	AlwaysHorizontalScrollbar = ImGuiWindowFlags_AlwaysHorizontalScrollbar, // Always show horizontal scrollbar (even if ContentSize.x < Size.x)
+	AlwaysUseWindowPadding = ImGuiWindowFlags_None,						 // Obsoleted in imgui 1.90. Use child flags if this becomes necessary again.
 	// ResizeFromAnySide = 1 << 17,  // (WIP) Enable resize from any corners and borders. Your back-end needs to honor the different values
 	// of io.MouseCursor set by imgui.
-	NoNavInputs = 1 << 18, // No gamepad/keyboard navigation within the window
-	NoNavFocus = 1 << 19,  // No focusing toward this window with gamepad/keyboard navigation (e.g. skipped by CTRL+TAB)
+	NoNavInputs = ImGuiWindowFlags_NoNavInputs, // No gamepad/keyboard navigation within the window
+	NoNavFocus = ImGuiWindowFlags_NoNavFocus,   // No focusing toward this window with gamepad/keyboard navigation (e.g. skipped by CTRL+TAB)
 };
 
 // Enumeration for ColorEdit3() / ColorEdit4() / ColorPicker3() / ColorPicker4() / ColorButton()
 enum class ColorEditFlags : int32_t
 {
-	None = 0,
-	NoAlpha = 1 << 1,		 //              // ColorEdit, ColorPicker, ColorButton: ignore Alpha component (will only read 3 components from the input pointer).
-	NoPicker = 1 << 2,		 //              // ColorEdit: disable picker when clicking on color square.
-	NoOptions = 1 << 3,		 //              // ColorEdit: disable toggling options menu when right-clicking on inputs/small preview.
-	NoSmallPreview = 1 << 4, //              // ColorEdit, ColorPicker: disable color square preview next to the inputs. (e.g. to show only the inputs)
-	NoInputs = 1 << 5,		 //              // ColorEdit, ColorPicker: disable inputs sliders/text widgets (e.g. to show only the small preview color square).
-	NoTooltip = 1 << 6,		 //              // ColorEdit, ColorPicker, ColorButton: disable tooltip when hovering the preview.
-	NoLabel = 1 << 7,		 //              // ColorEdit, ColorPicker: disable display of inline text label (the label is still forwarded to the tooltip and picker).
-	NoSidePreview = 1 << 8,	 //              // ColorPicker: disable bigger color preview on right side of the picker, use small color square preview instead.
-	NoDragDrop = 1 << 9,	 //              // ColorEdit: disable drag and drop target. ColorButton: disable drag and drop source.
-	NoBorder = 1 << 10,		 //              // ColorButton: disable border (which is enforced by default)
+	None = ImGuiColorEditFlags_None,
+	NoAlpha = ImGuiColorEditFlags_NoAlpha,			  //              // ColorEdit, ColorPicker, ColorButton: ignore Alpha component (will only read 3 components from the input pointer).
+	NoPicker = ImGuiColorEditFlags_NoPicker,		  //              // ColorEdit: disable picker when clicking on color square.
+	NoOptions = ImGuiColorEditFlags_NoOptions,		  //              // ColorEdit: disable toggling options menu when right-clicking on inputs/small preview.
+	NoSmallPreview = ImGuiColorEditFlags_NoSmallPreview, //              // ColorEdit, ColorPicker: disable color square preview next to the inputs. (e.g. to show only the inputs)
+	NoInputs = ImGuiColorEditFlags_NoInputs,		  //              // ColorEdit, ColorPicker: disable inputs sliders/text widgets (e.g. to show only the small preview color square).
+	NoTooltip = ImGuiColorEditFlags_NoTooltip,		  //              // ColorEdit, ColorPicker, ColorButton: disable tooltip when hovering the preview.
+	NoLabel = ImGuiColorEditFlags_NoLabel,			  //              // ColorEdit, ColorPicker: disable display of inline text label (the label is still forwarded to the tooltip and picker).
+	NoSidePreview = ImGuiColorEditFlags_NoSidePreview, //              // ColorPicker: disable bigger color preview on right side of the picker, use small color square preview instead.
+	NoDragDrop = ImGuiColorEditFlags_NoDragDrop,	  //              // ColorEdit: disable drag and drop target. ColorButton: disable drag and drop source.
+	NoBorder = ImGuiColorEditFlags_NoBorder,		  //              // ColorButton: disable border (which is enforced by default)
 
 	// User Options (right-click on widget to change some of them).
-	AlphaBar = 1 << 16,			//              // ColorEdit, ColorPicker: show vertical alpha bar/gradient in picker.
-	AlphaPreview = 1 << 17,		//              // ColorEdit, ColorPicker, ColorButton: display preview as a transparent color over a checkerboard, instead of opaque.
-	AlphaPreviewHalf = 1 << 18, //              // ColorEdit, ColorPicker, ColorButton: display half opaque / half checkerboard, instead of opaque.
-	HDR = 1 << 19,				//              // (WIP) ColorEdit: Currently only disable 0.0f..1.0f limits in RGBA edition (note: you probably want to use ImGuiColorEditFlags_Float flag as well).
-	DisplayRGB = 1 << 20,		// [Display]    // ColorEdit: override _display_ type among RGB/HSV/Hex. ColorPicker: select any combination using one or more of RGB/HSV/Hex.
-	DisplayHSV = 1 << 21,		// [Display]    // "
-	DisplayHex = 1 << 22,		// [Display]    // "
-	Uint8 = 1 << 23,			// [DataType]   // ColorEdit, ColorPicker, ColorButton: _display_ values formatted as 0..255.
-	Float = 1 << 24,			// [DataType]   // ColorEdit, ColorPicker, ColorButton: _display_ values formatted as 0.0f..1.0f floats instead of 0..255 integers. No round-trip of value via integers.
-	PickerHueBar = 1 << 25,		// [Picker]     // ColorPicker: bar for Hue, rectangle for Sat/Value.
-	PickerHueWheel = 1 << 26,	// [Picker]     // ColorPicker: wheel for Hue, triangle for Sat/Value.
-	InputRGB = 1 << 27,			// [Input]      // ColorEdit, ColorPicker: input and output data in RGB format.
-	InputHSV = 1 << 28,			// [Input]      // ColorEdit, ColorPicker: input and output data in HSV format.
+	AlphaBar = ImGuiColorEditFlags_AlphaBar,			  //              // ColorEdit, ColorPicker: show vertical alpha bar/gradient in picker.
+	AlphaPreview = ImGuiColorEditFlags_AlphaPreview,	  //              // Alpha preview became the default in imgui 1.91.8, so this now aliases 0.
+	AlphaPreviewHalf = ImGuiColorEditFlags_AlphaPreviewHalf, //              // ColorEdit, ColorPicker, ColorButton: display half opaque / half checkerboard, instead of opaque.
+	HDR = ImGuiColorEditFlags_HDR,						  //              // (WIP) ColorEdit: Currently only disable 0.0f..1.0f limits in RGBA edition (note: you probably want to use ImGuiColorEditFlags_Float flag as well).
+	DisplayRGB = ImGuiColorEditFlags_DisplayRGB,		  // [Display]    // ColorEdit: override _display_ type among RGB/HSV/Hex. ColorPicker: select any combination using one or more of RGB/HSV/Hex.
+	DisplayHSV = ImGuiColorEditFlags_DisplayHSV,		  // [Display]    // "
+	DisplayHex = ImGuiColorEditFlags_DisplayHex,		  // [Display]    // "
+	Uint8 = ImGuiColorEditFlags_Uint8,					  // [DataType]   // ColorEdit, ColorPicker, ColorButton: _display_ values formatted as 0..255.
+	Float = ImGuiColorEditFlags_Float,					  // [DataType]   // ColorEdit, ColorPicker, ColorButton: _display_ values formatted as 0.0f..1.0f floats instead of 0..255 integers. No round-trip of value via integers.
+	PickerHueBar = ImGuiColorEditFlags_PickerHueBar,	  // [Picker]     // ColorPicker: bar for Hue, rectangle for Sat/Value.
+	PickerHueWheel = ImGuiColorEditFlags_PickerHueWheel,  // [Picker]     // ColorPicker: wheel for Hue, triangle for Sat/Value.
+	InputRGB = ImGuiColorEditFlags_InputRGB,			  // [Input]      // ColorEdit, ColorPicker: input and output data in RGB format.
+	InputHSV = ImGuiColorEditFlags_InputHSV,			  // [Input]      // ColorEdit, ColorPicker: input and output data in HSV format.
 };
 
 enum class Cond : int32_t
 {
-	None = 0,
-	Always = 1 << 0,	   // Set the variable
-	Once = 1 << 1,		   // Set the variable once per runtime session (only the first call with succeed)
-	FirstUseEver = 1 << 2, // Set the variable if the window has no saved data (if doesn't exist in the .ini file)
-	Appearing = 1 << 3	   // Set the variable if the window is appearing after being hidden/inactive (or the first time)
+	None = ImGuiCond_None,
+	Always = ImGuiCond_Always,		 // Set the variable
+	Once = ImGuiCond_Once,			 // Set the variable once per runtime session (only the first call with succeed)
+	FirstUseEver = ImGuiCond_FirstUseEver, // Set the variable if the window has no saved data (if doesn't exist in the .ini file)
+	Appearing = ImGuiCond_Appearing	 // Set the variable if the window is appearing after being hidden/inactive (or the first time)
 };
 
 enum class ComboFlags : int32_t
 {
-	None = 0,
-	PopupAlignLeft = 1 << 0, // Align the popup toward the left by default
-	HeightSmall = 1 << 1,	 // Max ~4 items visible. Tip: If you want your combo popup to be a specific size you can use
+	None = ImGuiComboFlags_None,
+	PopupAlignLeft = ImGuiComboFlags_PopupAlignLeft, // Align the popup toward the left by default
+	HeightSmall = ImGuiComboFlags_HeightSmall,		  // Max ~4 items visible. Tip: If you want your combo popup to be a specific size you can use
 							 // SetNextWindowSizeConstraints() prior to calling BeginCombo()
-	HeightRegular = 1 << 2,	 // Max ~8 items visible (default)
-	HeightLarge = 1 << 3,	 // Max ~20 items visible
-	HeightLargest = 1 << 4,	 // As many fitting items as possible
-	NoArrowButton = 1 << 5,	 // Display on the preview box without the square arrow button
-	NoPreview = 1 << 6,		 // Display only a square arrow button
+	HeightRegular = ImGuiComboFlags_HeightRegular,	// Max ~8 items visible (default)
+	HeightLarge = ImGuiComboFlags_HeightLarge,		// Max ~20 items visible
+	HeightLargest = ImGuiComboFlags_HeightLargest,	// As many fitting items as possible
+	NoArrowButton = ImGuiComboFlags_NoArrowButton,	// Display on the preview box without the square arrow button
+	NoPreview = ImGuiComboFlags_NoPreview,			// Display only a square arrow button
 };
 
 enum class SelectableFlags : int32_t
 {
-	None = 0,
-	DontClosePopups = 1 << 0, // Clicking this don't close parent popup window
-	SpanAllColumns = 1 << 1,  // Selectable frame can span all columns (text will still fit in current column)
-	AllowDoubleClick = 1 << 2 // Generate press events on double clicks too
+	None = ImGuiSelectableFlags_None,
+	DontClosePopups = ImGuiSelectableFlags_NoAutoClosePopups, // Clicking this don't close parent popup window
+	SpanAllColumns = ImGuiSelectableFlags_SpanAllColumns,	 // Selectable frame can span all columns (text will still fit in current column)
+	AllowDoubleClick = ImGuiSelectableFlags_AllowDoubleClick // Generate press events on double clicks too
 };
 
 enum class TreeNodeFlags : int32_t
 {
-	None = 0,
-	Selected = 1 << 0,				// Draw as selected
-	Framed = 1 << 1,				// Full colored frame (e.g. for CollapsingHeader)
-	AllowItemOverlap = 1 << 2,		// Hit testing to allow subsequent widgets to overlap this one
-	NoTreePushOnOpen = 1 << 3,		// Don't do a TreePush() when open (e.g. for CollapsingHeader) = no extra indent nor pushing on ID stack
-	NoAutoOpenOnLog = 1 << 4,		// Don't automatically and temporarily open node when Logging is active (by default logging will automatically open tree nodes)
-	DefaultOpen = 1 << 5,			// Default node to be open
-	OpenOnDoubleClick = 1 << 6,		// Need double-click to open node
-	OpenOnArrow = 1 << 7,			// Only open when clicking on the arrow part. If ImGuiTreeNodeFlags_OpenOnDoubleClick is also set, single-click arrow or double-click all box to open.
-	Leaf = 1 << 8,					// No collapsing, no arrow (use as a convenience for leaf nodes).
-	Bullet = 1 << 9,				// Display a bullet instead of arrow
-	FramePadding = 1 << 10,			// Use FramePadding (even for an unframed text node) to vertically align text baseline to regular widget height. Equivalent to calling AlignTextToFramePadding().
-	SpanAvailWidth = 1 << 11,		// Extend hit box to the right-most edge, even if not framed. This is not the default in order to allow adding other items on the same line. In the future we may refactor the hit system to be front-to-back, allowing natural overlaps and then this can become the default.
-	SpanFullWidth = 1 << 12,		// Extend hit box to the left-most and right-most edges (bypass the indented area).
-	NavLeftJumpsBackHere = 1 << 13, // (WIP) Nav: left direction may move to this TreeNode() from any of its child (items submitted between TreeNode and TreePop)
-	CollapsingHeader = Framed | NoTreePushOnOpen | NoAutoOpenOnLog
+	None = ImGuiTreeNodeFlags_None,
+	Selected = ImGuiTreeNodeFlags_Selected,				 // Draw as selected
+	Framed = ImGuiTreeNodeFlags_Framed,					 // Full colored frame (e.g. for CollapsingHeader)
+	AllowItemOverlap = ImGuiTreeNodeFlags_AllowOverlap,	 // Hit testing to allow subsequent widgets to overlap this one
+	NoTreePushOnOpen = ImGuiTreeNodeFlags_NoTreePushOnOpen, // Don't do a TreePush() when open (e.g. for CollapsingHeader) = no extra indent nor pushing on ID stack
+	NoAutoOpenOnLog = ImGuiTreeNodeFlags_NoAutoOpenOnLog, // Don't automatically and temporarily open node when Logging is active (by default logging will automatically open tree nodes)
+	DefaultOpen = ImGuiTreeNodeFlags_DefaultOpen,		 // Default node to be open
+	OpenOnDoubleClick = ImGuiTreeNodeFlags_OpenOnDoubleClick, // Need double-click to open node
+	OpenOnArrow = ImGuiTreeNodeFlags_OpenOnArrow,		 // Only open when clicking on the arrow part. If ImGuiTreeNodeFlags_OpenOnDoubleClick is also set, single-click arrow or double-click all box to open.
+	Leaf = ImGuiTreeNodeFlags_Leaf,						 // No collapsing, no arrow (use as a convenience for leaf nodes).
+	Bullet = ImGuiTreeNodeFlags_Bullet,					 // Display a bullet instead of arrow
+	FramePadding = ImGuiTreeNodeFlags_FramePadding,		 // Use FramePadding (even for an unframed text node) to vertically align text baseline to regular widget height. Equivalent to calling AlignTextToFramePadding().
+	SpanAvailWidth = ImGuiTreeNodeFlags_SpanAvailWidth,	 // Extend hit box to the right-most edge, even if not framed. This is not the default in order to allow adding other items on the same line. In the future we may refactor the hit system to be front-to-back, allowing natural overlaps and then this can become the default.
+	SpanFullWidth = ImGuiTreeNodeFlags_SpanFullWidth,	 // Extend hit box to the left-most and right-most edges (bypass the indented area).
+	NavLeftJumpsBackHere = ImGuiTreeNodeFlags_NavLeftJumpsBackHere, // Compatibility alias retained by imgui.
+	CollapsingHeader = ImGuiTreeNodeFlags_CollapsingHeader
 };
 
 enum class MouseCursor : int32_t
@@ -159,117 +159,117 @@ enum class MouseCursor : int32_t
 
 enum InputTextFlags
 {
-	None = 0,
-	CharsDecimal = 1 << 0,		 // Allow 0123456789.+-*/
-	CharsHexadecimal = 1 << 1,	 // Allow 0123456789ABCDEFabcdef
-	CharsUppercase = 1 << 2,	 // Turn a..z into A..Z
-	CharsNoBlank = 1 << 3,		 // Filter out spaces, tabs
-	AutoSelectAll = 1 << 4,		 // Select entire text when first taking mouse focus
-	EnterReturnsTrue = 1 << 5,	 // Return 'true' when Enter is pressed (as opposed to when the value was modified)
-	CallbackCompletion = 1 << 6, // Call user function on pressing TAB (for completion handling)
-	CallbackHistory = 1 << 7,	 // Call user function on pressing Up/Down arrows (for history handling)
-	CallbackAlways = 1 << 8,	 // Call user function every time. User code may query cursor position, modify text buffer.
+	None = ImGuiInputTextFlags_None,
+	CharsDecimal = ImGuiInputTextFlags_CharsDecimal,		 // Allow 0123456789.+-*/
+	CharsHexadecimal = ImGuiInputTextFlags_CharsHexadecimal, // Allow 0123456789ABCDEFabcdef
+	CharsUppercase = ImGuiInputTextFlags_CharsUppercase,	 // Turn a..z into A..Z
+	CharsNoBlank = ImGuiInputTextFlags_CharsNoBlank,		 // Filter out spaces, tabs
+	AutoSelectAll = ImGuiInputTextFlags_AutoSelectAll,		 // Select entire text when first taking mouse focus
+	EnterReturnsTrue = ImGuiInputTextFlags_EnterReturnsTrue, // Return 'true' when Enter is pressed (as opposed to when the value was modified)
+	CallbackCompletion = ImGuiInputTextFlags_CallbackCompletion, // Call user function on pressing TAB (for completion handling)
+	CallbackHistory = ImGuiInputTextFlags_CallbackHistory,	 // Call user function on pressing Up/Down arrows (for history handling)
+	CallbackAlways = ImGuiInputTextFlags_CallbackAlways,	 // Call user function every time. User code may query cursor position, modify text buffer.
 	CallbackCharFilter =
-		1 << 9,					   // Call user function to filter character. Modify data->EventChar to replace/filter input, or return 1 to discard character.
-	AllowTabInput = 1 << 10,	   // Pressing TAB input a '\t' character into the text field
-	CtrlEnterForNewLine = 1 << 11, // In multi-line mode, unfocus with Enter, add new line with Ctrl+Enter (default is opposite: unfocus
+		ImGuiInputTextFlags_CallbackCharFilter,		// Call user function to filter character. Modify data->EventChar to replace/filter input, or return 1 to discard character.
+	AllowTabInput = ImGuiInputTextFlags_AllowTabInput, // Pressing TAB input a '\t' character into the text field
+	CtrlEnterForNewLine = ImGuiInputTextFlags_CtrlEnterForNewLine, // In multi-line mode, unfocus with Enter, add new line with Ctrl+Enter (default is opposite: unfocus
 								   // with Ctrl+Enter, add line with Enter).
-	NoHorizontalScroll = 1 << 12,  // Disable following the cursor horizontally
-	AlwaysInsertMode = 1 << 13,	   // Insert mode
-	ReadOnly = 1 << 14,			   // Read-only mode
-	Password = 1 << 15,			   // Password mode, display all characters as '*'
-	NoUndoRedo = 1 << 16,		   // Disable undo/redo. Note that input text owns the text data while active, if you want to provide your own
+	NoHorizontalScroll = ImGuiInputTextFlags_NoHorizontalScroll, // Disable following the cursor horizontally
+	AlwaysInsertMode = ImGuiInputTextFlags_AlwaysOverwrite,	   // Insert mode (legacy wrapper name kept for compatibility)
+	ReadOnly = ImGuiInputTextFlags_ReadOnly,					   // Read-only mode
+	Password = ImGuiInputTextFlags_Password,					   // Password mode, display all characters as '*'
+	NoUndoRedo = ImGuiInputTextFlags_NoUndoRedo,				   // Disable undo/redo. Note that input text owns the text data while active, if you want to provide your own
 								   // undo/redo stack you need e.g. to call ClearActiveID().
-	CharsScientific = 1 << 17,	   // Allow 0123456789.+-*/eE (Scientific notation input)
+	CharsScientific = ImGuiInputTextFlags_CharsScientific,	   // Allow 0123456789.+-*/eE (Scientific notation input)
 };
 
 enum class ImGuiColFlags : int32_t
 {
-	Text,
-	TextDisabled,
-	WindowBg, // Background of normal windows
-	ChildBg,  // Background of child windows
-	PopupBg,  // Background of popups, menus, tooltips windows
-	Border,
-	BorderShadow,
-	FrameBg, // Background of checkbox, radio button, plot, slider, text input
-	FrameBgHovered,
-	FrameBgActive,
-	TitleBg,
-	TitleBgActive,
-	TitleBgCollapsed,
-	MenuBarBg,
-	ScrollbarBg,
-	ScrollbarGrab,
-	ScrollbarGrabHovered,
-	ScrollbarGrabActive,
-	CheckMark,
-	SliderGrab,
-	SliderGrabActive,
-	Button,
-	ButtonHovered,
-	ButtonActive,
-	Header, // Header* colors are used for CollapsingHeader, TreeNode, Selectable, MenuItem
-	HeaderHovered,
-	HeaderActive,
-	Separator,
-	SeparatorHovered,
-	SeparatorActive,
-	ResizeGrip, // Resize grip in lower-right and lower-left corners of windows.
-	ResizeGripHovered,
-	ResizeGripActive,
-	Tab, // TabItem in a TabBar
-	TabHovered,
-	TabActive,
-	TabUnfocused,
-	TabUnfocusedActive,
-	DockingPreview, // Preview overlay color when about to docking something
-	DockingEmptyBg, // Background color for empty node (e.g. CentralNode with no window docked into it)
-	PlotLines,
-	PlotLinesHovered,
-	PlotHistogram,
-	PlotHistogramHovered,
-	TableHeaderBg,	   // Table header background
-	TableBorderStrong, // Table outer and header borders (prefer using Alpha=1.0 here)
-	TableBorderLight,  // Table inner borders (prefer using Alpha=1.0 here)
-	TableRowBg,		   // Table row background (even rows)
-	TableRowBgAlt,	   // Table row background (odd rows)
-	TextSelectedBg,
-	DragDropTarget,		   // Rectangle highlighting a drop target
-	NavHighlight,		   // Gamepad/keyboard: current highlighted item
-	NavWindowingHighlight, // Highlight window when using CTRL+TAB
-	NavWindowingDimBg,	   // Darken/colorize entire screen behind the CTRL+TAB window list, when active
-	ModalWindowDimBg,	   // Darken/colorize entire screen behind a modal window, when one is active
+	Text = ImGuiCol_Text,
+	TextDisabled = ImGuiCol_TextDisabled,
+	WindowBg = ImGuiCol_WindowBg, // Background of normal windows
+	ChildBg = ImGuiCol_ChildBg,   // Background of child windows
+	PopupBg = ImGuiCol_PopupBg,   // Background of popups, menus, tooltips windows
+	Border = ImGuiCol_Border,
+	BorderShadow = ImGuiCol_BorderShadow,
+	FrameBg = ImGuiCol_FrameBg, // Background of checkbox, radio button, plot, slider, text input
+	FrameBgHovered = ImGuiCol_FrameBgHovered,
+	FrameBgActive = ImGuiCol_FrameBgActive,
+	TitleBg = ImGuiCol_TitleBg,
+	TitleBgActive = ImGuiCol_TitleBgActive,
+	TitleBgCollapsed = ImGuiCol_TitleBgCollapsed,
+	MenuBarBg = ImGuiCol_MenuBarBg,
+	ScrollbarBg = ImGuiCol_ScrollbarBg,
+	ScrollbarGrab = ImGuiCol_ScrollbarGrab,
+	ScrollbarGrabHovered = ImGuiCol_ScrollbarGrabHovered,
+	ScrollbarGrabActive = ImGuiCol_ScrollbarGrabActive,
+	CheckMark = ImGuiCol_CheckMark,
+	SliderGrab = ImGuiCol_SliderGrab,
+	SliderGrabActive = ImGuiCol_SliderGrabActive,
+	Button = ImGuiCol_Button,
+	ButtonHovered = ImGuiCol_ButtonHovered,
+	ButtonActive = ImGuiCol_ButtonActive,
+	Header = ImGuiCol_Header, // Header* colors are used for CollapsingHeader, TreeNode, Selectable, MenuItem
+	HeaderHovered = ImGuiCol_HeaderHovered,
+	HeaderActive = ImGuiCol_HeaderActive,
+	Separator = ImGuiCol_Separator,
+	SeparatorHovered = ImGuiCol_SeparatorHovered,
+	SeparatorActive = ImGuiCol_SeparatorActive,
+	ResizeGrip = ImGuiCol_ResizeGrip, // Resize grip in lower-right and lower-left corners of windows.
+	ResizeGripHovered = ImGuiCol_ResizeGripHovered,
+	ResizeGripActive = ImGuiCol_ResizeGripActive,
+	Tab = ImGuiCol_Tab,
+	TabHovered = ImGuiCol_TabHovered,
+	TabActive = ImGuiCol_TabActive,
+	TabUnfocused = ImGuiCol_TabUnfocused,
+	TabUnfocusedActive = ImGuiCol_TabUnfocusedActive,
+	DockingPreview = ImGuiCol_DockingPreview,
+	DockingEmptyBg = ImGuiCol_DockingEmptyBg,
+	PlotLines = ImGuiCol_PlotLines,
+	PlotLinesHovered = ImGuiCol_PlotLinesHovered,
+	PlotHistogram = ImGuiCol_PlotHistogram,
+	PlotHistogramHovered = ImGuiCol_PlotHistogramHovered,
+	TableHeaderBg = ImGuiCol_TableHeaderBg,
+	TableBorderStrong = ImGuiCol_TableBorderStrong,
+	TableBorderLight = ImGuiCol_TableBorderLight,
+	TableRowBg = ImGuiCol_TableRowBg,
+	TableRowBgAlt = ImGuiCol_TableRowBgAlt,
+	TextSelectedBg = ImGuiCol_TextSelectedBg,
+	DragDropTarget = ImGuiCol_DragDropTarget,
+	NavHighlight = ImGuiCol_NavHighlight,
+	NavWindowingHighlight = ImGuiCol_NavWindowingHighlight,
+	NavWindowingDimBg = ImGuiCol_NavWindowingDimBg,
+	ModalWindowDimBg = ImGuiCol_ModalWindowDimBg,
 };
 
 enum ImGuiStyleVarFlags : int32_t
 {
-	Alpha,				 // float     Alpha
-	DisabledAlpha,		 // float     DisabledAlpha
-	WindowPadding,		 // ImVec2    WindowPadding
-	WindowRounding,		 // float     WindowRounding
-	WindowBorderSize,	 // float     WindowBorderSize
-	WindowMinSize,		 // ImVec2    WindowMinSize
-	WindowTitleAlign,	 // ImVec2    WindowTitleAlign
-	ChildRounding,		 // float     ChildRounding
-	ChildBorderSize,	 // float     ChildBorderSize
-	PopupRounding,		 // float     PopupRounding
-	PopupBorderSize,	 // float     PopupBorderSize
-	FramePadding,		 // ImVec2    FramePadding
-	FrameRounding,		 // float     FrameRounding
-	FrameBorderSize,	 // float     FrameBorderSize
-	ItemSpacing,		 // ImVec2    ItemSpacing
-	ItemInnerSpacing,	 // ImVec2    ItemInnerSpacing
-	IndentSpacing,		 // float     IndentSpacing
-	CellPadding,		 // ImVec2    CellPadding
-	ScrollbarSize,		 // float     ScrollbarSize
-	ScrollbarRounding,	 // float     ScrollbarRounding
-	GrabMinSize,		 // float     GrabMinSize
-	GrabRounding,		 // float     GrabRounding
-	TabRounding,		 // float     TabRounding
-	ButtonTextAlign,	 // ImVec2    ButtonTextAlign
-	SelectableTextAlign, // ImVec2    SelectableTextAlign
-	LayoutAlign,		 // float     LayoutAlign
+	Alpha = ImGuiStyleVar_Alpha,				 // float     Alpha
+	DisabledAlpha = ImGuiStyleVar_DisabledAlpha, // float     DisabledAlpha
+	WindowPadding = ImGuiStyleVar_WindowPadding, // ImVec2    WindowPadding
+	WindowRounding = ImGuiStyleVar_WindowRounding, // float     WindowRounding
+	WindowBorderSize = ImGuiStyleVar_WindowBorderSize, // float     WindowBorderSize
+	WindowMinSize = ImGuiStyleVar_WindowMinSize, // ImVec2    WindowMinSize
+	WindowTitleAlign = ImGuiStyleVar_WindowTitleAlign, // ImVec2    WindowTitleAlign
+	ChildRounding = ImGuiStyleVar_ChildRounding, // float     ChildRounding
+	ChildBorderSize = ImGuiStyleVar_ChildBorderSize, // float     ChildBorderSize
+	PopupRounding = ImGuiStyleVar_PopupRounding, // float     PopupRounding
+	PopupBorderSize = ImGuiStyleVar_PopupBorderSize, // float     PopupBorderSize
+	FramePadding = ImGuiStyleVar_FramePadding,	 // ImVec2    FramePadding
+	FrameRounding = ImGuiStyleVar_FrameRounding, // float     FrameRounding
+	FrameBorderSize = ImGuiStyleVar_FrameBorderSize, // float     FrameBorderSize
+	ItemSpacing = ImGuiStyleVar_ItemSpacing,	 // ImVec2    ItemSpacing
+	ItemInnerSpacing = ImGuiStyleVar_ItemInnerSpacing, // ImVec2    ItemInnerSpacing
+	IndentSpacing = ImGuiStyleVar_IndentSpacing, // float     IndentSpacing
+	CellPadding = ImGuiStyleVar_CellPadding,	 // ImVec2    CellPadding
+	ScrollbarSize = ImGuiStyleVar_ScrollbarSize, // float     ScrollbarSize
+	ScrollbarRounding = ImGuiStyleVar_ScrollbarRounding, // float     ScrollbarRounding
+	GrabMinSize = ImGuiStyleVar_GrabMinSize,	 // float     GrabMinSize
+	GrabRounding = ImGuiStyleVar_GrabRounding,	 // float     GrabRounding
+	TabRounding = ImGuiStyleVar_TabRounding,	 // float     TabRounding
+	ButtonTextAlign = ImGuiStyleVar_ButtonTextAlign, // ImVec2    ButtonTextAlign
+	SelectableTextAlign = ImGuiStyleVar_SelectableTextAlign, // ImVec2    SelectableTextAlign
+	LayoutAlign = ImGuiStyleVar_LayoutAlign,	 // float     LayoutAlign
 };
 
 enum class FCurveInterporationType : int32_t

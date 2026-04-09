@@ -1607,7 +1607,7 @@ bool GUIManager::InputText(const char16_t* label, const char16_t* text, InputTex
 	memcpy(buf, text_.data, std::min((int32_t)text_.size, 250));
 	buf[std::min((int32_t)text_.size, 250)] = 0;
 
-	auto ret = ImGui::InputText(utf8str<256>(label), buf, 260, (ImGuiWindowFlags)flags);
+	auto ret = ImGui::InputText(utf8str<256>(label), buf, 260, (ImGuiInputTextFlags)flags);
 
 	inputTextResult = Effekseer::Tool::StringHelper::ConvertUtf8ToUtf16(buf);
 
@@ -1637,7 +1637,7 @@ bool GUIManager::InputTextWithHint(const char16_t* label, const char16_t* text, 
 	memcpy(buf, text_.data, std::min((int32_t)text_.size, 250));
 	buf[std::min((int32_t)text_.size, 250)] = 0;
 
-	auto ret = ImGui::InputTextWithHint(utf8str<256>(label), utf8str<256>(hint), buf, 260, (ImGuiWindowFlags)flags);
+	auto ret = ImGui::InputTextWithHint(utf8str<256>(label), utf8str<256>(hint), buf, 260, (ImGuiInputTextFlags)flags);
 
 	inputTextResult = Effekseer::Tool::StringHelper::ConvertUtf8ToUtf16(buf);
 
