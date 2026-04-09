@@ -11,10 +11,10 @@
 namespace Effekseer.swig {
 
 public enum SelectableFlags : int {
-  None = 0,
-  DontClosePopups = 1 << 0,
-  SpanAllColumns = 1 << 1,
-  AllowDoubleClick = 1 << 2
+  None = ImGuiSelectableFlags_None,
+  DontClosePopups = ImGuiSelectableFlags_NoAutoClosePopups,
+  SpanAllColumns = ImGuiSelectableFlags_SpanAllColumns,
+  AllowDoubleClick = ImGuiSelectableFlags_AllowDoubleClick
 }
 
 }

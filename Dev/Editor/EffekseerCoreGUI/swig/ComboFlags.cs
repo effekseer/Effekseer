@@ -11,14 +11,14 @@
 namespace Effekseer.swig {
 
 public enum ComboFlags : int {
-  None = 0,
-  PopupAlignLeft = 1 << 0,
-  HeightSmall = 1 << 1,
-  HeightRegular = 1 << 2,
-  HeightLarge = 1 << 3,
-  HeightLargest = 1 << 4,
-  NoArrowButton = 1 << 5,
-  NoPreview = 1 << 6
+  None = ImGuiComboFlags_None,
+  PopupAlignLeft = ImGuiComboFlags_PopupAlignLeft,
+  HeightSmall = ImGuiComboFlags_HeightSmall,
+  HeightRegular = ImGuiComboFlags_HeightRegular,
+  HeightLarge = ImGuiComboFlags_HeightLarge,
+  HeightLargest = ImGuiComboFlags_HeightLargest,
+  NoArrowButton = ImGuiComboFlags_NoArrowButton,
+  NoPreview = ImGuiComboFlags_NoPreview
 }
 
 }

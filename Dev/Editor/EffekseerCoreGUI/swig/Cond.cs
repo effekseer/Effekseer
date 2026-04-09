@@ -11,11 +11,11 @@
 namespace Effekseer.swig {
 
 public enum Cond : int {
-  None = 0,
-  Always = 1 << 0,
-  Once = 1 << 1,
-  FirstUseEver = 1 << 2,
-  Appearing = 1 << 3
+  None = ImGuiCond_None,
+  Always = ImGuiCond_Always,
+  Once = ImGuiCond_Once,
+  FirstUseEver = ImGuiCond_FirstUseEver,
+  Appearing = ImGuiCond_Appearing
 }
 
 }
