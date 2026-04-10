@@ -72,7 +72,7 @@ void CollisionsFunctions::Initialize(CollisionsState& state, const CollisionsPar
 	}
 }
 
-std::tuple<SIMD::Vec3f, SIMD::Vec3f> CollisionsFunctions::Update(
+CollisionsFunctions::Result CollisionsFunctions::Update(
 	CollisionsState& state,
 	const CollisionsParameter& parameter,
 	const SIMD::Vec3f& nextPositionGlobal,
@@ -102,7 +102,7 @@ std::tuple<SIMD::Vec3f, SIMD::Vec3f> CollisionsFunctions::Update(
 		currentPosition -= positionCenterLocal;
 	}
 
-	const auto height = parameter.Height * magnificationScale;
+	const auto groundHeight = parameter.Height * magnificationScale;
 	const auto diffGlobal = nextPositionGlobalValue - currentPositionGlobal;
 
 	const auto resolveCollision = [&](const SIMD::Vec3f& collisionPosition)
@@ -117,14 +117,14 @@ std::tuple<SIMD::Vec3f, SIMD::Vec3f> CollisionsFunctions::Update(
 			friction = 1.0f;
 		}
 
-		SIMD::Vec3f velocityChange(
+		SIMD::Vec3f acceleration(
 			-velocityGlobal.GetX() * friction,
 			-velocityGlobal.GetY() * (1.0f + state.Bounce),
 			-velocityGlobal.GetZ() * friction);
 
 		state.CollidedThisFrame = true;
 
-		return std::make_tuple(velocityChange, currentPositionGlobal - collisionPosition);
+		return Result{acceleration, collisionPosition - currentPositionGlobal};
 	};
 
 	if (parameter.IsSceneCollisionWithExternal)
@@ -142,10 +142,18 @@ std::tuple<SIMD::Vec3f, SIMD::Vec3f> CollisionsFunctions::Update(
 		}
 	}
 
-	if (parameter.IsGroundCollisionEnabled && nextPosition.GetY() < height && currentPosition.GetY() >= height && diffGlobal.GetY() != 0.0f)
+	if (parameter.IsGroundCollisionEnabled && nextPosition.GetY() <= groundHeight && currentPosition.GetY() >= groundHeight)
 	{
-		const auto positionDiffRate = (currentPosition.GetY() - height) / diffGlobal.GetY();
-		const auto collisionPosition = currentPositionGlobal - diffGlobal * positionDiffRate;
+		Effekseer::SIMD::Vec3f collisionPosition;
+		if (diffGlobal.GetY() == 0)
+		{
+			collisionPosition = currentPositionGlobal;
+		}
+		else
+		{
+			const auto positionDiffRate = (currentPosition.GetY() - groundHeight) / diffGlobal.GetY();
+			collisionPosition = currentPositionGlobal - diffGlobal * positionDiffRate;
+		}
 
 		return resolveCollision(collisionPosition);
 	}

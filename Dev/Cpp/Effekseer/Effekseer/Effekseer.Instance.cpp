@@ -791,8 +791,8 @@ void Instance::UpdateTransform(float deltaFrame)
 				instanceGlobal->EffectGlobalMatrix.GetTranslation(),
 				m_pEffectNode->GetEffect()->GetMaginification(),
 				static_cast<ManagerImplemented*>(m_pManager)->GetCollisionCallback());
-			location_modify_global_ -= std::get<1>(result);
-			acc_global_sum += std::get<0>(result);
+			location_modify_global_ += result.PositionChange;
+			acc_global_sum += result.VelocityChange;
 
 			if (collisionState_.CollidedThisFrame && collisionState_.LifetimeReduction > 0.0f)
 			{
