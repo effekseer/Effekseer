@@ -46,6 +46,7 @@ list(
   GUI/ReloadableImage.cpp
   GUI/RenderImage.cpp
   GUI/GradientHDRState.cpp
+  GUI/efk.GUIManagerValidation.cpp
   Network/Network.cpp
   Recorder/EffectRecorder.cpp
   Recorder/AVIExporter.cpp

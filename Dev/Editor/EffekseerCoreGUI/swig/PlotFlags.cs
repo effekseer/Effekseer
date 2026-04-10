@@ -18,12 +18,12 @@ public enum PlotFlags : int {
   NoInputs = 1 << 3,
   NoMenus = 1 << 4,
   NoBoxSelect = 1 << 5,
-  NoChild = 1 << 6,
-  NoFrame = 1 << 7,
-  Equal = 1 << 8,
-  Crosshairs = 1 << 9,
-  AntiAliased = 1 << 10,
-  CanvasOnly = NoTitle|NoLegend|NoMenus|NoBoxSelect|NoMouseText
+  NoFrame = 1 << 6,
+  Equal = 1 << 7,
+  Crosshairs = 1 << 8,
+  NoChild = 0,
+  AntiAliased = 0,
+  CanvasOnly = (1 << 0)|(1 << 1)|(1 << 4)|(1 << 5)|(1 << 2)
 }
 
 }

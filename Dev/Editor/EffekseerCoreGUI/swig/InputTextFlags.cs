@@ -11,25 +11,25 @@
 namespace Effekseer.swig {
 
 public enum InputTextFlags {
-  None = ImGuiInputTextFlags_None,
-  CharsDecimal = ImGuiInputTextFlags_CharsDecimal,
-  CharsHexadecimal = ImGuiInputTextFlags_CharsHexadecimal,
-  CharsUppercase = ImGuiInputTextFlags_CharsUppercase,
-  CharsNoBlank = ImGuiInputTextFlags_CharsNoBlank,
-  AutoSelectAll = ImGuiInputTextFlags_AutoSelectAll,
-  EnterReturnsTrue = ImGuiInputTextFlags_EnterReturnsTrue,
-  CallbackCompletion = ImGuiInputTextFlags_CallbackCompletion,
-  CallbackHistory = ImGuiInputTextFlags_CallbackHistory,
-  CallbackAlways = ImGuiInputTextFlags_CallbackAlways,
-  CallbackCharFilter = ImGuiInputTextFlags_CallbackCharFilter,
-  AllowTabInput = ImGuiInputTextFlags_AllowTabInput,
-  CtrlEnterForNewLine = ImGuiInputTextFlags_CtrlEnterForNewLine,
-  NoHorizontalScroll = ImGuiInputTextFlags_NoHorizontalScroll,
-  AlwaysInsertMode = ImGuiInputTextFlags_AlwaysOverwrite,
-  ReadOnly = ImGuiInputTextFlags_ReadOnly,
-  Password = ImGuiInputTextFlags_Password,
-  NoUndoRedo = ImGuiInputTextFlags_NoUndoRedo,
-  CharsScientific = ImGuiInputTextFlags_CharsScientific
+  None = 0,
+  CharsDecimal = 1 << 0,
+  CharsHexadecimal = 1 << 1,
+  CharsScientific = 1 << 2,
+  CharsUppercase = 1 << 3,
+  CharsNoBlank = 1 << 4,
+  AutoSelectAll = 1 << 12,
+  EnterReturnsTrue = 1 << 6,
+  CallbackCompletion = 1 << 18,
+  CallbackHistory = 1 << 19,
+  CallbackAlways = 1 << 20,
+  CallbackCharFilter = 1 << 21,
+  AllowTabInput = 1 << 5,
+  CtrlEnterForNewLine = 1 << 8,
+  NoHorizontalScroll = 1 << 15,
+  AlwaysInsertMode = 1 << 11,
+  ReadOnly = 1 << 9,
+  Password = 1 << 10,
+  NoUndoRedo = 1 << 16
 }
 
 }

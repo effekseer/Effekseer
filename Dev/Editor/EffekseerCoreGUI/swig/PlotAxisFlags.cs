@@ -18,18 +18,18 @@ public enum PlotAxisFlags : int {
   NoTickLabels = 1 << 3,
   NoInitialFit = 1 << 4,
   NoMenus = 1 << 5,
-  Opposite = 1 << 6,
-  Foreground = 1 << 7,
-  LogScale = 1 << 8,
-  Time = 1 << 9,
+  Opposite = 1 << 8,
+  Foreground = 1 << 9,
+  LogScale = 0,
+  Time = 0,
   Invert = 1 << 10,
   AutoFit = 1 << 11,
   RangeFit = 1 << 12,
-  LockMin = 1 << 13,
-  LockMax = 1 << 14,
-  Lock = LockMin|LockMax,
-  NoDecorations = NoLabel|NoGridLines|NoTickMarks|NoTickLabels,
-  AuxDefault = NoGridLines|Opposite
+  LockMin = 1 << 14,
+  LockMax = 1 << 15,
+  Lock = (1 << 14)|(1 << 15),
+  NoDecorations = (1 << 0)|(1 << 1)|(1 << 2)|(1 << 3),
+  AuxDefault = (1 << 1)|(1 << 8)
 }
 
 }
