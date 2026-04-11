@@ -263,7 +263,7 @@ public:
 			if (parameter_.IsGroundCollisionEnabled)
 			{
 				const auto groundHeight = parameter_.GroundHeight;
-				manager_->SetCollisionCallback([groundHeight](const ::Effekseer::Vector3D& start, const ::Effekseer::Vector3D& end, ::Effekseer::Vector3D& collisionPosition) -> bool
+				manager_->SetCollisionCallback([groundHeight](const ::Effekseer::Vector3D& start, const ::Effekseer::Vector3D& end, ::Effekseer::Vector3D& collisionPosition, ::Effekseer::Vector3D& collisionNormal) -> bool
 											   {
 					const auto diff = end - start;
 					if (diff.Y == 0.0f)
@@ -283,6 +283,7 @@ public:
 					}
 
 					collisionPosition = start + diff * rate;
+					collisionNormal = ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f);
 					return true; });
 			}
 			else

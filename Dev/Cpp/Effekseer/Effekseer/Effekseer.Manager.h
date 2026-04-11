@@ -45,10 +45,11 @@ using EffectInstanceRemovingCallback = std::function<void(Manager*, Handle, bool
 
 /**
 	@brief
-	\~English Callback to query external collision. It returns true when a collision occurs and sets collisionPosition as the hit point.
-	\~Japanese 外部との衝突を問い合わせるためのコールバック。衝突した場合はtrueを返し、collisionPositionに衝突点を設定する。
+	\~English Callback to query external collision. It returns true when a collision occurs and sets collisionPosition as the hit point and collisionNormal as the surface normal.
+	\~Japanese 外部との衝突を問い合わせるためのコールバック。衝突した場合はtrueを返し、collisionPositionに衝突点、collisionNormalに衝突面の法線を設定する。
 */
-using CollisionCallback = std::function<bool(const Vector3D& startPosition, const Vector3D& endPosition, Vector3D& collisionPosition)>;
+using CollisionCallback =
+	std::function<bool(const Vector3D& startPosition, const Vector3D& endPosition, Vector3D& collisionPosition, Vector3D& collisionNormal)>;
 
 /**
 	@brief エフェクト管理クラス

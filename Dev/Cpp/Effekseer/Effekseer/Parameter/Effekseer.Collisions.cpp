@@ -105,7 +105,7 @@ CollisionsFunctions::Result CollisionsFunctions::Update(
 	const auto groundHeight = parameter.Height * magnificationScale;
 	const auto diffGlobal = nextPositionGlobalValue - currentPositionGlobal;
 
-	const auto resolveCollision = [&](const SIMD::Vec3f& collisionPosition)
+	const auto resolveCollision = [&](const SIMD::Vec3f& collisionPosition, SIMD::Vec3f collisionNormal)
 	{
 		float friction = state.Friction;
 		if (friction < 0.0f)
@@ -117,10 +117,18 @@ CollisionsFunctions::Result CollisionsFunctions::Update(
 			friction = 1.0f;
 		}
 
-		SIMD::Vec3f acceleration(
-			-velocityGlobal.GetX() * friction,
-			-velocityGlobal.GetY() * (1.0f + state.Bounce),
-			-velocityGlobal.GetZ() * friction);
+		if (collisionNormal.IsZero())
+		{
+			collisionNormal = SIMD::Vec3f(0.0f, 1.0f, 0.0f);
+		}
+		else
+		{
+			collisionNormal = collisionNormal.GetNormal();
+		}
+
+		const auto normalVelocity = collisionNormal * SIMD::Vec3f::Dot(velocityGlobal, collisionNormal);
+		const auto tangentVelocity = velocityGlobal - normalVelocity;
+		const auto acceleration = tangentVelocity * -friction + normalVelocity * -(1.0f + state.Bounce);
 
 		state.CollidedThisFrame = true;
 
@@ -134,10 +142,12 @@ CollisionsFunctions::Result CollisionsFunctions::Update(
 			Vector3D start(currentPositionGlobal.GetX(), currentPositionGlobal.GetY(), currentPositionGlobal.GetZ());
 			Vector3D end(nextPositionGlobalValue.GetX(), nextPositionGlobalValue.GetY(), nextPositionGlobalValue.GetZ());
 			Vector3D hit;
-			if (externalCollision(start, end, hit))
+			Vector3D normal;
+			if (externalCollision(start, end, hit, normal))
 			{
 				SIMD::Vec3f collisionPosition(hit.X, hit.Y, hit.Z);
-				return resolveCollision(collisionPosition);
+				SIMD::Vec3f collisionNormal(normal.X, normal.Y, normal.Z);
+				return resolveCollision(collisionPosition, collisionNormal);
 			}
 		}
 	}
@@ -155,7 +165,7 @@ CollisionsFunctions::Result CollisionsFunctions::Update(
 			collisionPosition = currentPositionGlobal - diffGlobal * positionDiffRate;
 		}
 
-		return resolveCollision(collisionPosition);
+		return resolveCollision(collisionPosition, SIMD::Vec3f(0.0f, 1.0f, 0.0f));
 	}
 	else
 	{

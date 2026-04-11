@@ -56,7 +56,8 @@ struct CollisionsFunctions
 		SIMD::Vec3f PositionChange;
 	};
 
-	using ExternalCollisionCallback = std::function<bool(const Vector3D& startPosition, const Vector3D& endPosition, Vector3D& collisionPosition)>;
+	using ExternalCollisionCallback =
+		std::function<bool(const Vector3D& startPosition, const Vector3D& endPosition, Vector3D& collisionPosition, Vector3D& collisionNormal)>;
 
 	static void Initialize(CollisionsState& state, const CollisionsParameter& parameter, RandObject& rand);
 
