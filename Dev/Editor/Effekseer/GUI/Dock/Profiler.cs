@@ -412,8 +412,15 @@ namespace Effekseer.GUI.Dock
 			DocPage = "profiler.html";
 		}
 
+		public override void Update()
+		{
+			base.Update();
+			Manager.Viewer.EffectRenderer.SetGpuTimerEnabled(Visibled && !ShouldBeRemoved);
+		}
+
 		public override void OnDisposed()
 		{
+			Manager.Viewer.EffectRenderer.SetGpuTimerEnabled(false);
 		}
 
 		protected override void UpdateInternal()

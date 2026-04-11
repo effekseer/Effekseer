@@ -1490,6 +1490,9 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRenderer_SetStep___")]
   public static extern void EffectRenderer_SetStep(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRenderer_SetGpuTimerEnabled___")]
+  public static extern void EffectRenderer_SetGpuTimerEnabled(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_EffectRenderer_GetParameter___")]
   public static extern global::System.IntPtr EffectRenderer_GetParameter(global::System.Runtime.InteropServices.HandleRef jarg1);
 

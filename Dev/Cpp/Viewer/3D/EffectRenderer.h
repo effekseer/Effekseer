@@ -166,6 +166,8 @@ protected:
 
 	Effekseer::Backend::ShaderRef whiteParticleSpriteShader_;
 	Effekseer::Backend::ShaderRef whiteParticleModelShader_;
+	Effekseer::GpuTimerRef gpuTimer_;
+	bool gpuTimerEnabled_ = false;
 
 	std::shared_ptr<GroundRenderer> groundRenderer_;
 
@@ -242,6 +244,8 @@ public:
 	int32_t GetInstanceCount() const;
 
 	void SetStep(int32_t step);
+
+	void SetGpuTimerEnabled(bool enabled);
 
 	EffectRendererParameter GetParameter() const
 	{

@@ -147,6 +147,10 @@ public class EffectRenderer : global::System.IDisposable {
     EffekseerNativePINVOKE.EffectRenderer_SetStep(swigCPtr, step);
   }
 
+  public void SetGpuTimerEnabled(bool enabled) {
+    EffekseerNativePINVOKE.EffectRenderer_SetGpuTimerEnabled(swigCPtr, enabled);
+  }
+
   public EffectRendererParameter GetParameter() {
     EffectRendererParameter ret = new EffectRendererParameter(EffekseerNativePINVOKE.EffectRenderer_GetParameter(swigCPtr), true);
     return ret;

@@ -355,7 +355,7 @@ bool EffectRenderer::Initialize(std::shared_ptr<GraphicsDevice> graphicsDevice,
 	::Effekseer::RingRendererRef ring_renderer = renderer_->CreateRingRenderer();
 	::Effekseer::ModelRendererRef model_renderer = renderer_->CreateModelRenderer();
 	::Effekseer::TrackRendererRef track_renderer = renderer_->CreateTrackRenderer();
-	::Effekseer::GpuTimerRef gpu_timer = renderer_->CreateGpuTimer();
+	gpuTimer_ = renderer_->CreateGpuTimer();
 	::Effekseer::GpuParticleSystemRef gpu_particles = renderer_->CreateGpuParticleSystem();
 
 	if (sprite_renderer == nullptr)
@@ -371,8 +371,8 @@ bool EffectRenderer::Initialize(std::shared_ptr<GraphicsDevice> graphicsDevice,
 	manager_->SetRingRenderer(ring_renderer);
 	manager_->SetModelRenderer(model_renderer);
 	manager_->SetTrackRenderer(track_renderer);
-	manager_->SetGpuTimer(gpu_timer);
 	manager_->SetGpuParticleSystem(gpu_particles);
+	manager_->SetGpuTimer(nullptr);
 
 	if (graphics_->GetGraphics()->GetGraphicsDevice() != nullptr)
 	{
@@ -826,6 +826,12 @@ void EffectRenderer::Update()
 
 void EffectRenderer::Update(int32_t frame)
 {
+	const bool suppressGpuTimer = frame > 1 && gpuTimerEnabled_;
+	if (suppressGpuTimer)
+	{
+		manager_->SetGpuTimer(nullptr);
+	}
+
 	if (frame <= 0)
 	{
 		Effekseer::Manager::UpdateParameter updateParameter;
@@ -860,6 +866,11 @@ void EffectRenderer::Update(int32_t frame)
 		{
 			Update();
 		}
+	}
+
+	if (suppressGpuTimer)
+	{
+		manager_->SetGpuTimer(gpuTimer_);
 	}
 }
 
@@ -1185,6 +1196,15 @@ int32_t EffectRenderer::GetInstanceCount() const
 void EffectRenderer::SetStep(int32_t step)
 {
 	m_step = step;
+}
+
+void EffectRenderer::SetGpuTimerEnabled(bool enabled)
+{
+	gpuTimerEnabled_ = enabled;
+	if (manager_ != nullptr)
+	{
+		manager_->SetGpuTimer(gpuTimerEnabled_ ? gpuTimer_ : nullptr);
+	}
 }
 
 Effekseer::Tool::PostEffectParameter EffectRenderer::GetPostEffectParameter() const

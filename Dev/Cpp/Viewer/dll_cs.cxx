@@ -5937,6 +5937,16 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_SetStep___(void
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_SetGpuTimerEnabled___(void * jarg1, unsigned int jarg2) {
+  Effekseer::Tool::EffectRenderer *arg1 = 0 ;
+  bool arg2 ;
+  
+  arg1 = (Effekseer::Tool::EffectRenderer *)jarg1; 
+  arg2 = jarg2 ? true : false; 
+  (arg1)->SetGpuTimerEnabled(arg2);
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_EffectRenderer_GetParameter___(void * jarg1) {
   void * jresult ;
   Effekseer::Tool::EffectRenderer *arg1 = 0 ;
@@ -14623,4 +14633,3 @@ SWIGEXPORT std::shared_ptr< Effekseer::Tool::Image > * SWIGSTDCALL CSharp_Effeks
 #ifdef __cplusplus
 }
 #endif
-
