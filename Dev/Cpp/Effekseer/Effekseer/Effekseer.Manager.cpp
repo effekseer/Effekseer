@@ -1825,6 +1825,14 @@ void ManagerImplemented::Compute()
 {
 	ScopedGpuStage gpuPass(gpuTimer_, GpuStage::Compute);
 
+	const bool hasGpuParticlesDrawSet =
+		std::any_of(drawSets_.begin(), drawSets_.end(), [](const auto& drawSet) { return drawSet.second.GlobalPointer->IsUsingGpuParticles; });
+
+	if (!hasGpuParticlesDrawSet)
+	{
+		return;
+	}
+
 	if (auto gpuParticleSystem = GetGpuParticleSystem())
 	{
 		ScopedGpuTime gpuTime(gpuTimer_, gpuParticleSystem.Get());
