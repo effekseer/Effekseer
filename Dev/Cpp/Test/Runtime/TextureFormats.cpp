@@ -103,11 +103,11 @@ void TextureFormatsTest()
 
 #elif defined(__APPLE__)
 
-	//{
-	//	auto platform = std::make_shared<EffectPlatformMetal>();
-	//	BasicRuntimeTestPlatform(platform.get(), "", "_Metal");
-	//	platform->Terminate();
-	//}
+	{
+		auto platform = std::make_shared<EffectPlatformMetal>();
+		TextureFormatsPlatform(platform.get(), "", "_Metal");
+		platform->Terminate();
+	}
 
 	{
 		auto platform = std::make_shared<EffectPlatformGL>();
