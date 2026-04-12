@@ -144,9 +144,11 @@ typedef char GLchar;
 #define GL_COMPRESSED_RGBA_S3TC_DXT1_EXT 0x83F1
 #define GL_COMPRESSED_RGBA_S3TC_DXT3_EXT 0x83F2
 #define GL_COMPRESSED_RGBA_S3TC_DXT5_EXT 0x83F3
+#define GL_COMPRESSED_RGBA_BPTC_UNORM 0x8E8C
 #define GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT 0x8C4D
 #define GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT 0x8C4E
 #define GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT 0x8C4F
+#define GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM 0x8E8D
 
 #define GL_TEXTURE_2D_ARRAY 0x8C1A
 #define GL_TEXTURE_BINDING_2D_ARRAY 0x8C1D
@@ -166,6 +168,7 @@ bool IsSupportedVertexArray();
 bool IsSupportedBufferRange();
 bool IsSupportedMapBuffer();
 bool IsSupportedQueries();
+bool IsSupportedBPTC();
 
 //! for some devices to avoid a bug
 void MakeMapBufferInvalid();
