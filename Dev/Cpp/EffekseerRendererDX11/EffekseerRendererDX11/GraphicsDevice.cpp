@@ -157,6 +157,10 @@ DXGI_FORMAT GetTextureFormatType(Effekseer::Backend::TextureFormatType format)
 	{
 		return DXGI_FORMAT_BC3_UNORM;
 	}
+	else if (format == Effekseer::Backend::TextureFormatType::BC7)
+	{
+		return DXGI_FORMAT_BC7_UNORM;
+	}
 	else if (format == Effekseer::Backend::TextureFormatType::BC1_SRGB)
 	{
 		return DXGI_FORMAT_BC1_UNORM_SRGB;
@@ -168,6 +172,10 @@ DXGI_FORMAT GetTextureFormatType(Effekseer::Backend::TextureFormatType format)
 	else if (format == Effekseer::Backend::TextureFormatType::BC3_SRGB)
 	{
 		return DXGI_FORMAT_BC3_UNORM_SRGB;
+	}
+	else if (format == Effekseer::Backend::TextureFormatType::BC7_SRGB)
+	{
+		return DXGI_FORMAT_BC7_UNORM_SRGB;
 	}
 
 	return DXGI_FORMAT_UNKNOWN;
@@ -591,9 +599,11 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param, const Effe
 	auto isCompressed = param.Format == Effekseer::Backend::TextureFormatType::BC1 ||
 						param.Format == Effekseer::Backend::TextureFormatType::BC2 ||
 						param.Format == Effekseer::Backend::TextureFormatType::BC3 ||
+						param.Format == Effekseer::Backend::TextureFormatType::BC7 ||
 						param.Format == Effekseer::Backend::TextureFormatType::BC1_SRGB ||
 						param.Format == Effekseer::Backend::TextureFormatType::BC2_SRGB ||
-						param.Format == Effekseer::Backend::TextureFormatType::BC3_SRGB;
+						param.Format == Effekseer::Backend::TextureFormatType::BC3_SRGB ||
+						param.Format == Effekseer::Backend::TextureFormatType::BC7_SRGB;
 
 	int32_t sizePerWidth = 0;
 	int32_t height = 0;

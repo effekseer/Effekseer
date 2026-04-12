@@ -249,6 +249,10 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param, const Effe
 	{
 		texParam.Format = LLGI::TextureFormatType::BC3;
 	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::BC7)
+	{
+		texParam.Format = LLGI::TextureFormatType::BC7;
+	}
 	else if (param.Format == Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM_SRGB)
 	{
 		texParam.Format = LLGI::TextureFormatType::R8G8B8A8_UNORM_SRGB;
@@ -268,6 +272,10 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param, const Effe
 	else if (param.Format == Effekseer::Backend::TextureFormatType::BC3_SRGB)
 	{
 		texParam.Format = LLGI::TextureFormatType::BC3_SRGB;
+	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::BC7_SRGB)
+	{
+		texParam.Format = LLGI::TextureFormatType::BC7_SRGB;
 	}
 	else
 	{

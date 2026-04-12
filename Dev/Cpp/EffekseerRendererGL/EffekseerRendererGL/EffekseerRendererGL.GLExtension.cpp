@@ -264,6 +264,7 @@ static bool g_isSupportedVertexArray = false;
 static bool g_isSurrpotedBufferRange = false;
 static bool g_isSurrpotedMapBuffer = false;
 static bool g_isSupportedQueries = false;
+static bool g_isSupportedBPTC = false;
 static OpenGLDeviceType g_deviceType = OpenGLDeviceType::OpenGL2;
 
 #if _WIN32
@@ -330,6 +331,7 @@ bool Initialize(OpenGLDeviceType deviceType, bool isExtensionsEnabled)
 	if (g_isInitialized)
 		return true;
 	g_deviceType = deviceType;
+	g_isSupportedBPTC = false;
 #if _WIN32
 	GET_PROC_REQ(glDeleteBuffers);
 	GET_PROC_REQ(glCreateShader);
@@ -499,6 +501,11 @@ bool Initialize(OpenGLDeviceType deviceType, bool isExtensionsEnabled)
 
 #endif
 
+	const char* glExtensions = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
+	g_isSupportedBPTC = (glExtensions != nullptr) &&
+						(strstr(glExtensions, "GL_ARB_texture_compression_bptc") != nullptr ||
+						 strstr(glExtensions, "GL_EXT_texture_compression_bptc") != nullptr);
+
 	g_isInitialized = true;
 	return true;
 }
@@ -521,6 +528,11 @@ bool IsSupportedMapBuffer()
 bool IsSupportedQueries()
 {
 	return g_isSupportedQueries;
+}
+
+bool IsSupportedBPTC()
+{
+	return g_isSupportedBPTC;
 }
 
 void MakeMapBufferInvalid()

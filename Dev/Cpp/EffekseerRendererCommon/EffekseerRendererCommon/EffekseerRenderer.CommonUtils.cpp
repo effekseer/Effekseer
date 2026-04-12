@@ -540,6 +540,11 @@ void CalculateAlignedTextureInformation(Effekseer::Backend::TextureFormatType fo
 		sizePerWidth = 16 * aligned(size[0], blockSize) / blockSize;
 		height = aligned(size[1], blockSize) / blockSize;
 	}
+	else if (format == Effekseer::Backend::TextureFormatType::BC7)
+	{
+		sizePerWidth = 16 * aligned(size[0], blockSize) / blockSize;
+		height = aligned(size[1], blockSize) / blockSize;
+	}
 	else if (format == Effekseer::Backend::TextureFormatType::BC1_SRGB)
 	{
 		sizePerWidth = 8 * aligned(size[0], blockSize) / blockSize;
@@ -551,6 +556,11 @@ void CalculateAlignedTextureInformation(Effekseer::Backend::TextureFormatType fo
 		height = aligned(size[1], blockSize) / blockSize;
 	}
 	else if (format == Effekseer::Backend::TextureFormatType::BC3_SRGB)
+	{
+		sizePerWidth = 16 * aligned(size[0], blockSize) / blockSize;
+		height = aligned(size[1], blockSize) / blockSize;
+	}
+	else if (format == Effekseer::Backend::TextureFormatType::BC7_SRGB)
 	{
 		sizePerWidth = 16 * aligned(size[0], blockSize) / blockSize;
 		height = aligned(size[1], blockSize) / blockSize;

@@ -57,11 +57,13 @@ enum class TextureFormatType
 	BC1,
 	BC2,
 	BC3,
+	BC7,
 	R8G8B8A8_UNORM_SRGB,
 	B8G8R8A8_UNORM_SRGB,
 	BC1_SRGB,
 	BC2_SRGB,
 	BC3_SRGB,
+	BC7_SRGB,
 
 	//! You don't need to implement DepthTexture for a runtime
 	D32,

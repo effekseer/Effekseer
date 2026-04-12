@@ -500,9 +500,21 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param, const Effe
 	auto isCompressed = param.Format == Effekseer::Backend::TextureFormatType::BC1 ||
 						param.Format == Effekseer::Backend::TextureFormatType::BC2 ||
 						param.Format == Effekseer::Backend::TextureFormatType::BC3 ||
+						param.Format == Effekseer::Backend::TextureFormatType::BC7 ||
 						param.Format == Effekseer::Backend::TextureFormatType::BC1_SRGB ||
 						param.Format == Effekseer::Backend::TextureFormatType::BC2_SRGB ||
-						param.Format == Effekseer::Backend::TextureFormatType::BC3_SRGB;
+						param.Format == Effekseer::Backend::TextureFormatType::BC3_SRGB ||
+						param.Format == Effekseer::Backend::TextureFormatType::BC7_SRGB;
+
+	const bool isBC7 = param.Format == Effekseer::Backend::TextureFormatType::BC7 ||
+						 param.Format == Effekseer::Backend::TextureFormatType::BC7_SRGB;
+
+	if (isBC7 && !GLExt::IsSupportedBPTC())
+	{
+		Effekseer::Log(Effekseer::LogType::Error,
+					   "BC7 texture is not supported on this OpenGL device. BPTC extension is required.");
+		return false;
+	}
 
 	const size_t initialDataSize = initialData.size();
 	const void* initialDataPtr = initialData.size() > 0 ? initialData.data() : nullptr;
@@ -564,6 +576,10 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param, const Effe
 		{
 			format = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
 		}
+		else if (param.Format == Effekseer::Backend::TextureFormatType::BC7)
+		{
+			format = GL_COMPRESSED_RGBA_BPTC_UNORM;
+		}
 		else if (param.Format == Effekseer::Backend::TextureFormatType::BC1_SRGB)
 		{
 			format = GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT;
@@ -575,6 +591,10 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param, const Effe
 		else if (param.Format == Effekseer::Backend::TextureFormatType::BC3_SRGB)
 		{
 			format = GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT;
+		}
+		else if (param.Format == Effekseer::Backend::TextureFormatType::BC7_SRGB)
+		{
+			format = GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM;
 		}
 
 		GLExt::glCompressedTexImage2D(target,

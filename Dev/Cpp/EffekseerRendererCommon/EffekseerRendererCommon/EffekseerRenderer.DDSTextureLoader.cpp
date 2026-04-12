@@ -20,6 +20,8 @@ enum class DdsDx10Format : uint32_t
 	BC4_SNORM = 81,
 	BC5_UNORM = 83,
 	BC5_SNORM = 84,
+	BC7_UNORM = 98,
+	BC7_UNORM_SRGB = 99,
 };
 
 constexpr uint32_t MakeFourCC(const char v1, const char v2, const char v3, const char v4)
@@ -142,6 +144,14 @@ bool DDSTextureLoader::Load(const void* data, int32_t size)
 			{
 				return Effekseer::Backend::TextureFormatType::BC3_SRGB;
 			}
+			else if (dds_dxt10.dxgiFormat == DdsDx10Format::BC7_UNORM)
+			{
+				return Effekseer::Backend::TextureFormatType::BC7;
+			}
+			else if (dds_dxt10.dxgiFormat == DdsDx10Format::BC7_UNORM_SRGB)
+			{
+				return Effekseer::Backend::TextureFormatType::BC7_SRGB;
+			}
 			else
 			{
 				return Effekseer::Backend::TextureFormatType::Unknown;
@@ -202,6 +212,13 @@ bool DDSTextureLoader::Load(const void* data, int32_t size)
 			 format == Effekseer::Backend::TextureFormatType::BC3_SRGB)
 	{
 		textureFormatType_ = Effekseer::TextureFormatType::BC3;
+		blockSize = 16;
+		isCompressed = true;
+	}
+	else if (format == Effekseer::Backend::TextureFormatType::BC7 ||
+			 format == Effekseer::Backend::TextureFormatType::BC7_SRGB)
+	{
+		textureFormatType_ = Effekseer::TextureFormatType::BC7;
 		blockSize = 16;
 		isCompressed = true;
 	}

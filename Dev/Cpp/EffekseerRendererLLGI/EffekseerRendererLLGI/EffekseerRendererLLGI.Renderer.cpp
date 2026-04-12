@@ -83,6 +83,9 @@ LLGI::TextureFormatType ConvertTextureFormat(Effekseer::Backend::TextureFormatTy
 	case Effekseer::Backend::TextureFormatType::BC3:
 		return LLGI::TextureFormatType::BC3;
 		break;
+	case Effekseer::Backend::TextureFormatType::BC7:
+		return LLGI::TextureFormatType::BC7;
+		break;
 	case Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM_SRGB:
 		return LLGI::TextureFormatType::R8G8B8A8_UNORM_SRGB;
 		break;
@@ -97,6 +100,9 @@ LLGI::TextureFormatType ConvertTextureFormat(Effekseer::Backend::TextureFormatTy
 		break;
 	case Effekseer::Backend::TextureFormatType::BC3_SRGB:
 		return LLGI::TextureFormatType::BC3_SRGB;
+		break;
+	case Effekseer::Backend::TextureFormatType::BC7_SRGB:
+		return LLGI::TextureFormatType::BC7_SRGB;
 		break;
 	case Effekseer::Backend::TextureFormatType::D32:
 		return LLGI::TextureFormatType::D32;
