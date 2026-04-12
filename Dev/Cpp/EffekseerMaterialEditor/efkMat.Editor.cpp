@@ -1032,7 +1032,7 @@ void Editor::UpdatePopup()
 				auto desc = std::string("Key : ") + c->KeywordsShown + "\n";
 				desc += StringContainer::GetValue((c->Name + "_Node_Desc").c_str(), "");
 
-				ImGui::SetTooltip(desc.c_str());
+				ImGui::SetTooltip("%s", desc.c_str());
 			}
 		};
 
@@ -1412,7 +1412,7 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 			{
 				if (ImGui::IsItemHovered() && !ImGui::IsItemActive())
 				{
-					ImGui::SetTooltip(p->Str.c_str());
+					ImGui::SetTooltip("%s", p->Str.c_str());
 				}
 			};
 
@@ -1690,7 +1690,7 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 
 		if (ImGui::IsItemHovered() && !ImGui::IsItemActive() && descStr != "")
 		{
-			ImGui::SetTooltip(descStr.c_str());
+			ImGui::SetTooltip("%s", descStr.c_str());
 		}
 	};
 
@@ -1721,11 +1721,11 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 	if (node->Parameter->HasDescription)
 	{
 		ImGui::Separator();
-		ImGui::Text(StringContainer::GetValue("Description_Name").c_str());
+		ImGui::Text("%s", StringContainer::GetValue("Description_Name").c_str());
 
 		if (ImGui::IsItemHovered())
 		{
-			ImGui::SetTooltip(StringContainer::GetValue("Description_Desc").c_str());
+			ImGui::SetTooltip("%s", StringContainer::GetValue("Description_Desc").c_str());
 		}
 
 		// is memory safe?
@@ -1782,11 +1782,11 @@ void Editor::UpdatePreview()
 		if (previewTextureCount_ > Effekseer::UserTextureSlotMax)
 		{
 			ImGui::TextColored(
-				ImColor(255, 0, 0, 255), (textureNumHeader + " %d / %d").c_str(), previewTextureCount_, Effekseer::UserTextureSlotMax);
+				ImColor(255, 0, 0, 255), "%s %d / %d", textureNumHeader.c_str(), previewTextureCount_, Effekseer::UserTextureSlotMax);
 		}
 		else
 		{
-			ImGui::Text((textureNumHeader + " %d / %d").c_str(), previewTextureCount_, Effekseer::UserTextureSlotMax);
+			ImGui::Text("%s %d / %d", textureNumHeader.c_str(), previewTextureCount_, Effekseer::UserTextureSlotMax);
 		}
 	}
 
@@ -1798,11 +1798,11 @@ void Editor::UpdatePreview()
 		if (previewUniformCount_ > uniformMax)
 		{
 			ImGui::TextColored(
-				ImColor(255, 0, 0, 255), (uniformNumHeader + " %d / %d").c_str(), previewUniformCount_, uniformMax);
+				ImColor(255, 0, 0, 255), "%s %d / %d", uniformNumHeader.c_str(), previewUniformCount_, uniformMax);
 		}
 		else
 		{
-			ImGui::Text((uniformNumHeader + " %d / %d").c_str(), previewUniformCount_, uniformMax);
+			ImGui::Text("%s %d / %d", uniformNumHeader.c_str(), previewUniformCount_, uniformMax);
 		}
 	}
 
@@ -1813,11 +1813,11 @@ void Editor::UpdatePreview()
 		if (previewGradientCount_ > uniformMax)
 		{
 			ImGui::TextColored(
-				ImColor(255, 0, 0, 255), (uniformNumHeader + " %d / %d").c_str(), previewGradientCount_, uniformMax);
+				ImColor(255, 0, 0, 255), "%s %d / %d", uniformNumHeader.c_str(), previewGradientCount_, uniformMax);
 		}
 		else
 		{
-			ImGui::Text((uniformNumHeader + " %d / %d").c_str(), previewGradientCount_, uniformMax);
+			ImGui::Text("%s %d / %d", uniformNumHeader.c_str(), previewGradientCount_, uniformMax);
 		}
 	}
 }
@@ -1879,7 +1879,7 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 
 		ImGui::BeginVertical("content");
 		ImGui::BeginHorizontal("horizontal");
-		ImGui::Text(node->Properties[0]->Str.c_str());
+		ImGui::Text("%s", node->Properties[0]->Str.c_str());
 		ImGui::EndHorizontal();
 
 		auto editor = reinterpret_cast<ax::NodeEditor::Detail::EditorContext*>(ed::GetCurrentEditor());
@@ -1951,7 +1951,7 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 		headerName = node->Parameter->GetHeader(GetSelectedMaterial(), node);
 	}
 
-	ImGui::Text(headerName.c_str());
+	ImGui::Text("%s", headerName.c_str());
 
 	// show preview button
 	ImGui::Spring(1, 0);
@@ -2004,11 +2004,11 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 
 			if (pin->IsEnabled)
 			{
-				ImGui::Text(text.c_str());
+				ImGui::Text("%s", text.c_str());
 			}
 			else
 			{
-				ImGui::TextColored(ImColor(100, 100, 100), text.c_str());
+				ImGui::TextColored(ImColor(100, 100, 100), "%s", text.c_str());
 			}
 
 			ImGui::EndHorizontal();
@@ -2091,9 +2091,10 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 				typeShape = "-";
 			}
 
-			ImGui::Text((StringContainer::GetValue((pin->Parameter->Name + "_Name").c_str(), pin->Parameter->Name.c_str()) +
-						 std::string(" ") + typeShape)
-							.c_str());
+			ImGui::Text("%s",
+						 (StringContainer::GetValue((pin->Parameter->Name + "_Name").c_str(), pin->Parameter->Name.c_str()) +
+						  std::string(" ") + typeShape)
+							 .c_str());
 
 			ImGui::EndHorizontal();
 
@@ -2112,27 +2113,27 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 	{
 		if (node->CurrentWarning == WarningType::DifferentSampler)
 		{
-			ImGui::TextColored(ImColor(1.0f, 0.0f, 0.0f, 1.0f), StringContainer::GetValue("Warning_DifferentSampler").c_str());
+			ImGui::TextColored(ImColor(1.0f, 0.0f, 0.0f, 1.0f), "%s", StringContainer::GetValue("Warning_DifferentSampler").c_str());
 		}
 		else if (node->CurrentWarning == WarningType::WrongInputType)
 		{
-			ImGui::TextColored(ImColor(1.0f, 0.0f, 0.0f, 1.0f), StringContainer::GetValue("Warning_WrongInputType").c_str());
+			ImGui::TextColored(ImColor(1.0f, 0.0f, 0.0f, 1.0f), "%s", StringContainer::GetValue("Warning_WrongInputType").c_str());
 		}
 		else if (node->CurrentWarning == WarningType::WrongProperty)
 		{
-			ImGui::TextColored(ImColor(1.0f, 0.0f, 0.0f, 1.0f), StringContainer::GetValue("Warning_WrongProperty").c_str());
+			ImGui::TextColored(ImColor(1.0f, 0.0f, 0.0f, 1.0f), "%s", StringContainer::GetValue("Warning_WrongProperty").c_str());
 		}
 		else if (node->CurrentWarning == WarningType::SameName)
 		{
-			ImGui::TextColored(ImColor(1.0f, 0.0f, 0.0f, 1.0f), StringContainer::GetValue("Warning_SameName").c_str());
+			ImGui::TextColored(ImColor(1.0f, 0.0f, 0.0f, 1.0f), "%s", StringContainer::GetValue("Warning_SameName").c_str());
 		}
 		else if (node->CurrentWarning == WarningType::InvalidName)
 		{
-			ImGui::TextColored(ImColor(1.0f, 0.0f, 0.0f, 1.0f), StringContainer::GetValue("Warning_InvalidName").c_str());
+			ImGui::TextColored(ImColor(1.0f, 0.0f, 0.0f, 1.0f), "%s", StringContainer::GetValue("Warning_InvalidName").c_str());
 		}
 		else if (node->CurrentWarning == WarningType::PixelNodeAndNormal)
 		{
-			ImGui::TextColored(ImColor(1.0f, 0.0f, 0.0f, 1.0f), StringContainer::GetValue("Warning_PixelNodeAndNormal").c_str());
+			ImGui::TextColored(ImColor(1.0f, 0.0f, 0.0f, 1.0f), "%s", StringContainer::GetValue("Warning_PixelNodeAndNormal").c_str());
 		}
 		else
 		{
