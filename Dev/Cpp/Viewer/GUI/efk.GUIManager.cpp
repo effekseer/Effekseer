@@ -1227,14 +1227,9 @@ void GUIManager::Text(const char16_t* text)
 
 void GUIManager::TextWrapped(const char16_t* text)
 {
-	if (std::char_traits<char16_t>::length(text) < 1024)
-	{
-		ImGui::TextWrapped("%s", utf8str<1024>(text));
-	}
-	else
-	{
-		ImGui::TextWrapped("%s", Effekseer::Tool::StringHelper::ConvertUtf16ToUtf8(text).c_str());
-	}
+	auto func = [](const char* c) -> void
+	{ ImGui::TextWrapped("%s", c); };
+	CallWithUtf16ToUtf8(func, text);
 }
 
 Vec2 GUIManager::CalcTextSize(const char16_t* text)
