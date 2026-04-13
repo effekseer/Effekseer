@@ -1200,7 +1200,7 @@ void GUIManager::SetColumnOffset(int column_index, float offset_x)
 	ImGui::SetColumnOffset(column_index, offset_x);
 }
 
-void CallWithEscaped(const std::function<void(const char*)>& f, const char16_t* text)
+void CallWithUtf16ToUtf8(const std::function<void(const char*)>& f, const char16_t* text)
 {
 	if (text == nullptr)
 	{
@@ -1222,7 +1222,7 @@ void GUIManager::Text(const char16_t* text)
 {
 	auto func = [](const char* c) -> void
 	{ ImGui::Text("%s", c); };
-	CallWithEscaped(func, text);
+	CallWithUtf16ToUtf8(func, text);
 }
 
 void GUIManager::TextWrapped(const char16_t* text)
@@ -1701,7 +1701,7 @@ void GUIManager::SetTooltip(const char16_t* text)
 {
 	auto func = [](const char* c) -> void
 	{ ImGui::SetTooltip("%s", c); };
-	CallWithEscaped(func, text);
+	CallWithUtf16ToUtf8(func, text);
 }
 
 void GUIManager::BeginTooltip()
