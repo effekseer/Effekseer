@@ -59,7 +59,7 @@ public:
 		bool open = true;
 		if (ImGui::BeginPopupModal(GetID(), &open, ImGuiWindowFlags_NoResize))
 		{
-			ImGui::Text(StringContainer::GetValue("Starting", "Starting").c_str());
+			ImGui::Text("%s", StringContainer::GetValue("Starting", "Starting").c_str());
 			ImGui::Separator();
 
 			const float buttonWidth = ImGui::GetContentRegionAvail().x;
@@ -116,7 +116,7 @@ public:
 			auto message = StringContainer::GetValue("ConfirmSaveChanged", "[{0}] has been changed. Do you want to save?");
 			message = Replace(message, "{0}", content_->GetName());
 
-			ImGui::Text(message.c_str());
+			ImGui::Text("%s", message.c_str());
 			ImGui::Separator();
 
 			const float buttonWidth = (ImGui::GetContentRegionAvail().x -

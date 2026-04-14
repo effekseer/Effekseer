@@ -1200,83 +1200,36 @@ void GUIManager::SetColumnOffset(int column_index, float offset_x)
 	ImGui::SetColumnOffset(column_index, offset_x);
 }
 
-void CallWithEscaped(const std::function<void(const char*)>& f, const char16_t* text)
+void CallWithUtf16ToUtf8(const std::function<void(const char*)>& f, const char16_t* text)
 {
-	bool isPersentFound = false;
-	for (size_t i = 0;; i++)
+	if (text == nullptr)
 	{
-		if (text[i] == 0)
-		{
-			break;
-		}
-
-		if (text[i] == u'%')
-		{
-			isPersentFound = true;
-			break;
-		}
+		f("");
+		return;
 	}
 
-	if (isPersentFound)
+	if (std::char_traits<char16_t>::length(text) < 1024)
 	{
-		// HACK
-		std::u16string text_;
-		for (size_t i = 0;; i++)
-		{
-			if (text[i] == 0)
-			{
-				break;
-			}
-
-			if (text[i] == u'%')
-			{
-				text_ += u"%%";
-			}
-			else
-			{
-				text_ += text[i];
-			}
-		}
-
-		if (std::char_traits<char16_t>::length(text_.c_str()) < 1024)
-		{
-			f(utf8str<1024>(text_.c_str()));
-		}
-		else
-		{
-			f(Effekseer::Tool::StringHelper::ConvertUtf16ToUtf8(text_).c_str());
-		}
+		f(utf8str<1024>(text));
 	}
 	else
 	{
-		if (std::char_traits<char16_t>::length(text) < 1024)
-		{
-			f(utf8str<1024>(text));
-		}
-		else
-		{
-			f(Effekseer::Tool::StringHelper::ConvertUtf16ToUtf8(text).c_str());
-		}
+		f(Effekseer::Tool::StringHelper::ConvertUtf16ToUtf8(text).c_str());
 	}
 }
 
 void GUIManager::Text(const char16_t* text)
 {
 	auto func = [](const char* c) -> void
-	{ ImGui::Text(c); };
-	CallWithEscaped(func, text);
+	{ ImGui::Text("%s", c); };
+	CallWithUtf16ToUtf8(func, text);
 }
 
 void GUIManager::TextWrapped(const char16_t* text)
 {
-	if (std::char_traits<char16_t>::length(text) < 1024)
-	{
-		ImGui::TextWrapped(utf8str<1024>(text));
-	}
-	else
-	{
-		ImGui::TextWrapped(Effekseer::Tool::StringHelper::ConvertUtf16ToUtf8(text).c_str());
-	}
+	auto func = [](const char* c) -> void
+	{ ImGui::TextWrapped("%s", c); };
+	CallWithUtf16ToUtf8(func, text);
 }
 
 Vec2 GUIManager::CalcTextSize(const char16_t* text)
@@ -1742,8 +1695,8 @@ bool GUIManager::SelectableContent(const char16_t* idstr, const char16_t* label,
 void GUIManager::SetTooltip(const char16_t* text)
 {
 	auto func = [](const char* c) -> void
-	{ ImGui::SetTooltip(c); };
-	CallWithEscaped(func, text);
+	{ ImGui::SetTooltip("%s", c); };
+	CallWithUtf16ToUtf8(func, text);
 }
 
 void GUIManager::BeginTooltip()
