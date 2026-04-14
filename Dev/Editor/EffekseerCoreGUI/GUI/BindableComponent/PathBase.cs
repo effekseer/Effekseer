@@ -177,6 +177,10 @@ namespace Effekseer.GUI.BindableComponent
 				}
 			}
 
+			Manager.NativeManager.SetCursorPosX(cursorX);
+			Manager.NativeManager.SetCursorPosY(cursorY + imageSize);
+			Manager.NativeManager.Dummy(new swig.Vector2I());
+
 			Manager.NativeManager.EndGroup();
 
 			Popup();
