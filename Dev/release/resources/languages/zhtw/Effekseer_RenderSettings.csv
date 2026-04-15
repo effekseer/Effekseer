@@ -16,7 +16,7 @@ StandardColorType_Fixed_Name,固定
 StandardColorType_Random_Name,隨機
 StandardColorType_Easing_Name,緩動
 StandardColorType_FCurve_Name,F曲線（RGBA）
-StandardColorType_Gradient_Name,梯度
+StandardColorType_Gradient_Name,漸變
 TextureUVTypeParameter_Type_Name,UV類型
 TextureUVTypeParameter_TileLength_Name,瓦片長度
 TextureUVTypeParameter_TileEdgeHead_Name,頭部的瓦片數量

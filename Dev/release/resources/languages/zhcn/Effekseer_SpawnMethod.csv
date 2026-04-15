@@ -48,7 +48,7 @@ SpawnMethod_ModelType_RandomFace_Name,随机表面
 SpawnMethod_Model_ExternalIndex_Name,外部模型索引
 SpawnMethod_Model_ExternalIndex_Desc,外部模型索引。
 SpawnMethod_Model_Coordinate_Name,外部模型坐标系
-SpawnMethod_Model_Coordinate_Desc,在父局部坐标系或世界坐标系下处理外部模型。
+SpawnMethod_Model_Coordinate_Desc,外部模型是使用父节点的本地坐标系，还是使用世界坐标系进行处理。
 ,
 SpawnMethod_ModelCoordinate_Local_Name,本地
 SpawnMethod_ModelCoordinate_World_Name,世界

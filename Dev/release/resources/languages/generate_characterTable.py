@@ -30,10 +30,11 @@ for target_dir in target_dirs:
                 for c in rows[1]:
                     characters.add(c)
 
+sorted_chars = sorted(characters, key = lambda char: ord(char))
 
 characterTable = fixed_characters
 
-for c in characters:
+for c in sorted_chars:
     characterTable += c
 
 f = open('characterTable.txt', 'w', encoding='utf8')

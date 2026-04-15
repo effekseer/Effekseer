@@ -3,7 +3,7 @@ GpuParticles_Enabled_Name,啟用
 GpuParticles_Enabled_Desc,若選中，則使用GPU粒子。
 ,
 GpuParticles_Basic_Name,基礎設定
-GpuParticles_Basic_EmitCount_Name,生成總量
+GpuParticles_Basic_EmitCount_Name,生成總數
 GpuParticles_Basic_EmitCount_Desc,要生成的粒子總數。
 GpuParticles_Basic_EmitPerFrame_Name,每幀生成數量
 GpuParticles_Basic_EmitPerFrame_Desc,每幀生成的粒子數量。

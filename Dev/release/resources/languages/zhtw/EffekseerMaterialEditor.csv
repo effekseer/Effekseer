@@ -10,7 +10,7 @@ ConfirmSaveChanged,[{0}] 已被修改。是否要儲存？
 Cancel,取消
 TextureCount,圖片數量
 UniformCount,引數數量
-GradientCount,梯度數量
+GradientCount,漸變數量
 Delete_Name,刪除
 ,
 Description_Name,說明
@@ -232,8 +232,8 @@ Rotator_Node_Desc,"旋轉輸入值（主要是UV）並將其輸出。
 用于在材质中旋转图像。
 角度的1表示一圈。"
 PolarCoords_Node_Name,極座標
-PolarCoords_Node_Desc,"Outputs UVs located on the radiation from the center.
-You can specify how many images are arranged in one round and the rotation angle."
+PolarCoords_Node_Desc,"輸出由中心向外呈放射狀排列的UV。
+可設定單圈內排列的圖像數量，以及旋轉角度。"
 ,
 Depth_Name,深度
 ,
@@ -241,14 +241,14 @@ DepthFade_Node_Name,深度衰減
 DepthFade_Node_Desc,"越接近背景物體，輸出的值越小。
 如果距离大于FadeDistance则输出1，如果距离为0则输出0。"
 ,
-Gradient_Name,梯度
-SampleGradient_Node_Name,取樣梯度
-SampleGradient_Node_Desc,"Outputs a color reference from the gradient to the color at the specified location.
-如果Gradient未连接输入值，则使用这个节点的梯度。"
-Gradient_Node_Name,梯度
-Gradient_Node_Desc,輸出一個梯度。
-GradientParameter_Node_Name,梯度引數
-GradientParameter_Node_Desc,輸出一個外部設定的梯度。
+Gradient_Name,漸變
+SampleGradient_Node_Name,取樣漸變
+SampleGradient_Node_Desc,"從漸變中讀取指定位置的顏色並輸出。
+若Gradient未連結輸入值，則使用節點本身的漸變。"
+Gradient_Node_Name,漸變
+Gradient_Node_Desc,輸出一個漸變。
+GradientParameter_Node_Name,漸變引數
+GradientParameter_Node_Desc,輸出一個外部設定的漸變。
 ,
 Noise_Name,噪聲
 SimpleNoise_Node_Name,簡單噪聲
