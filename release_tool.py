@@ -109,11 +109,8 @@ def main():
     if is_linux:
         linux_executables = [
             bin_dir / "Effekseer",
-            bin_dir / "EffekseerLit",
             bin_dir / "EffekseerMaterialEditor",
             tools_dir / "EffekseerResourceConverter",
-            tools_dir / "fbxToEffekseerCurveConverter",
-            tools_dir / "fbxToEffekseerModelConverter",
         ]
         for executable in linux_executables:
             ensure_executable(executable)
