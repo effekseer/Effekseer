@@ -294,6 +294,14 @@ jobs:
       - name: Prepare Release
         run: |
           mkdir -p pub
+          chmod +x \
+            dist/Effekseer${{ env.EFFEKSEER_VERSION }}Linux/Tool/Effekseer \
+            dist/Effekseer${{ env.EFFEKSEER_VERSION }}Linux/Tool/bin/Effekseer \
+            dist/Effekseer${{ env.EFFEKSEER_VERSION }}Linux/Tool/bin/EffekseerLit \
+            dist/Effekseer${{ env.EFFEKSEER_VERSION }}Linux/Tool/bin/EffekseerMaterialEditor \
+            dist/Effekseer${{ env.EFFEKSEER_VERSION }}Linux/Tool/bin/tools/EffekseerResourceConverter \
+            dist/Effekseer${{ env.EFFEKSEER_VERSION }}Linux/Tool/bin/tools/fbxToEffekseerCurveConverter \
+            dist/Effekseer${{ env.EFFEKSEER_VERSION }}Linux/Tool/bin/tools/fbxToEffekseerModelConverter || true
           cd dist
           for asset in \
             "Effekseer${{ env.EFFEKSEER_VERSION }}Win" \

@@ -17,6 +17,12 @@ def copy_patterns(src: Path, dst: Path, patterns):
                 shutil.copy2(f, dest)
 
 
+def ensure_executable(path: Path):
+    if path.exists() and path.is_file():
+        mode = path.stat().st_mode
+        path.chmod(mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+
+
 def main():
     rdir = Path(os.environ.get("RDIR", "EffekseerTool"))
     if rdir.exists():
@@ -65,7 +71,10 @@ def main():
     for f in tool_names:
         src = Path("Dev/release/tools") / f
         if src.exists():
-            shutil.copy(src, tools_dir / f)
+            dest = tools_dir / f
+            shutil.copy(src, dest)
+            if is_linux and src.suffix == "":
+                ensure_executable(dest)
 
     if is_windows:
         compilers = ["DX9", "DX11", "DX12", "GL", "Metal"]
@@ -95,7 +104,19 @@ def main():
         dest = rdir / "Tool" / "Effekseer"
         if launcher.exists():
             shutil.copy(launcher, dest)
-            dest.chmod(dest.stat().st_mode | stat.S_IEXEC)
+            ensure_executable(dest)
+
+    if is_linux:
+        linux_executables = [
+            bin_dir / "Effekseer",
+            bin_dir / "EffekseerLit",
+            bin_dir / "EffekseerMaterialEditor",
+            tools_dir / "EffekseerResourceConverter",
+            tools_dir / "fbxToEffekseerCurveConverter",
+            tools_dir / "fbxToEffekseerModelConverter",
+        ]
+        for executable in linux_executables:
+            ensure_executable(executable)
 
     print("Sample")
     sample_dir = rdir / "Sample"
