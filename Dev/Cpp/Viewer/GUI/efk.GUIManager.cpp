@@ -742,10 +742,27 @@ void GUIManager::ResetGUI()
 
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
+
+	auto& style = ImGui::GetStyle();
+	if (style.FontSizeBase > 0.0f)
+	{
+		ImGui::PushFont(nullptr, style.FontSizeBase);
+		isDefaultFontSizePushed_ = true;
+	}
+	else
+	{
+		isDefaultFontSizePushed_ = false;
+	}
 }
 
 void GUIManager::RenderGUI(bool isValid)
 {
+	if (isDefaultFontSizePushed_)
+	{
+		ImGui::PopFont();
+		isDefaultFontSizePushed_ = false;
+	}
+
 	ImGui::EndFrame();
 
 	if (isValid)
@@ -1115,6 +1132,18 @@ float GUIManager::GetFrameHeightWithSpacing()
 float GUIManager::GetDpiScale() const
 {
 	return mainWindow_->GetDPIScale();
+}
+
+void GUIManager::SetFontSizeBase(float size)
+{
+	auto& style = ImGui::GetStyle();
+	style.FontSizeBase = size;
+	style._NextFrameFontSizeBase = size;
+}
+
+float GUIManager::GetFontSizeBase() const
+{
+	return ImGui::GetStyle().FontSizeBase;
 }
 
 int GUIManager::GetItemID()

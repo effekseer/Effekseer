@@ -618,18 +618,20 @@ namespace Effekseer.GUI
 				NativeManager.InvalidateFont();
 				var appDirectory = Manager.GetEntryDirectory();
 				var type = Core.Option.Font.Value;
+				var fontSize = Core.Option.FontSize.Value;
 
 				NativeManager.ClearAllFonts();
+				NativeManager.SetFontSizeBase(fontSize);
 
 				var characterTable = System.IO.Path.Combine(appDirectory, "resources/languages/characterTable.txt");
 
 				if (type == Data.FontType.Normal)
 				{
-					NativeManager.AddFontFromFileTTF(System.IO.Path.Combine(appDirectory, MultiLanguageTextProvider.GetText("Font_Normal")), characterTable, MultiLanguageTextProvider.GetText("CharacterTable"), Core.Option.FontSize.Value);
+					NativeManager.AddFontFromFileTTF(System.IO.Path.Combine(appDirectory, MultiLanguageTextProvider.GetText("Font_Normal")), characterTable, MultiLanguageTextProvider.GetText("CharacterTable"), fontSize);
 				}
 				else if (type == Data.FontType.Bold)
 				{
-					NativeManager.AddFontFromFileTTF(System.IO.Path.Combine(appDirectory, MultiLanguageTextProvider.GetText("Font_Bold")), characterTable, MultiLanguageTextProvider.GetText("CharacterTable"), Core.Option.FontSize.Value);
+					NativeManager.AddFontFromFileTTF(System.IO.Path.Combine(appDirectory, MultiLanguageTextProvider.GetText("Font_Bold")), characterTable, MultiLanguageTextProvider.GetText("CharacterTable"), fontSize);
 				}
 
 				NativeManager.AddFontFromAtlasImage(System.IO.Path.Combine(appDirectory, "resources/icons/MenuIcons.png"), 0xec00, 24, 24, 16, 16);

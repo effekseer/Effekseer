@@ -428,6 +428,15 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public void SetFontSizeBase(float size) {
+    EffekseerNativePINVOKE.GUIManager_SetFontSizeBase(swigCPtr, size);
+  }
+
+  public float GetFontSizeBase() {
+    float ret = EffekseerNativePINVOKE.GUIManager_GetFontSizeBase(swigCPtr);
+    return ret;
+  }
+
   public int GetItemID() {
     int ret = EffekseerNativePINVOKE.GUIManager_GetItemID(swigCPtr);
     return ret;
