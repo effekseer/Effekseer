@@ -742,6 +742,14 @@ void GUIManager::ResetGUI()
 
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
+
+	auto& style = ImGui::GetStyle();
+	if (style.FontSizeBase > 0.0f)
+	{
+		// The font atlas may have been rebuilt immediately before this frame.
+		// Refresh the currently bound size against the rebuilt default font.
+		ImGui::UpdateCurrentFontSize(0.0f);
+	}
 }
 
 void GUIManager::RenderGUI(bool isValid)
@@ -1115,6 +1123,13 @@ float GUIManager::GetFrameHeightWithSpacing()
 float GUIManager::GetDpiScale() const
 {
 	return mainWindow_->GetDPIScale();
+}
+
+void GUIManager::SetFontSizeBase(float size)
+{
+	auto& style = ImGui::GetStyle();
+	style.FontSizeBase = size;
+	style._NextFrameFontSizeBase = size;
 }
 
 int GUIManager::GetItemID()

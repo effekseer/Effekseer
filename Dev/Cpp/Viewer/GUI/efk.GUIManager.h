@@ -695,6 +695,7 @@ public:
 	float GetFrameHeight();
 	float GetFrameHeightWithSpacing();
 	float GetDpiScale() const;
+	void SetFontSizeBase(float size);
 
 	int GetItemID();
 	void SetFocusID(int id);

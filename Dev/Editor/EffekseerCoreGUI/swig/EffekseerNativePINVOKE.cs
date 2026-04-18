@@ -2004,6 +2004,9 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_GetDpiScale___")]
   public static extern float GUIManager_GetDpiScale(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_SetFontSizeBase___")]
+  public static extern void GUIManager_SetFontSizeBase(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_GetItemID___")]
   public static extern int GUIManager_GetItemID(global::System.Runtime.InteropServices.HandleRef jarg1);
 
