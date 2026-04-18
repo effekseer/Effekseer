@@ -746,23 +746,14 @@ void GUIManager::ResetGUI()
 	auto& style = ImGui::GetStyle();
 	if (style.FontSizeBase > 0.0f)
 	{
-		ImGui::PushFont(nullptr, style.FontSizeBase);
-		isDefaultFontSizePushed_ = true;
-	}
-	else
-	{
-		isDefaultFontSizePushed_ = false;
+		// The font atlas may have been rebuilt immediately before this frame.
+		// Refresh the currently bound size against the rebuilt default font.
+		ImGui::UpdateCurrentFontSize(0.0f);
 	}
 }
 
 void GUIManager::RenderGUI(bool isValid)
 {
-	if (isDefaultFontSizePushed_)
-	{
-		ImGui::PopFont();
-		isDefaultFontSizePushed_ = false;
-	}
-
 	ImGui::EndFrame();
 
 	if (isValid)
@@ -1139,11 +1130,6 @@ void GUIManager::SetFontSizeBase(float size)
 	auto& style = ImGui::GetStyle();
 	style.FontSizeBase = size;
 	style._NextFrameFontSizeBase = size;
-}
-
-float GUIManager::GetFontSizeBase() const
-{
-	return ImGui::GetStyle().FontSizeBase;
 }
 
 int GUIManager::GetItemID()

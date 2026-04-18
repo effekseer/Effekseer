@@ -566,7 +566,6 @@ private:
 	ImGuiID imguiWindowID;
 
 	ImGui::MarkdownConfig markdownConfig_;
-	bool isDefaultFontSizePushed_ = false;
 
 	Effekseer::FramerateController framerateController_;
 
@@ -697,7 +696,6 @@ public:
 	float GetFrameHeightWithSpacing();
 	float GetDpiScale() const;
 	void SetFontSizeBase(float size);
-	float GetFontSizeBase() const;
 
 	int GetItemID();
 	void SetFocusID(int id);

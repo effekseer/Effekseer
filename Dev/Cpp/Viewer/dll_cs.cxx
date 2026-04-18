@@ -7873,18 +7873,6 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetFontSizeBase___(
 }
 
 
-SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetFontSizeBase___(void * jarg1) {
-  float jresult ;
-  efk::GUIManager *arg1 = 0 ;
-  float result;
-  
-  arg1 = (efk::GUIManager *)jarg1; 
-  result = (float)((efk::GUIManager const *)arg1)->GetFontSizeBase();
-  jresult = result; 
-  return jresult;
-}
-
-
 SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetItemID___(void * jarg1) {
   int jresult ;
   efk::GUIManager *arg1 = 0 ;
