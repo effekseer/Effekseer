@@ -92,6 +92,34 @@ namespace efk
 {
 namespace
 {
+float GetWindowFramebufferScale(const std::shared_ptr<Effekseer::MainWindow>& mainWindow)
+{
+	if (mainWindow == nullptr)
+	{
+		return 1.0f;
+	}
+
+	auto glfwWindow = mainWindow->GetGLFWWindows();
+	if (glfwWindow == nullptr)
+	{
+		return 1.0f;
+	}
+
+	int windowWidth = 0;
+	int windowHeight = 0;
+	int framebufferWidth = 0;
+	int framebufferHeight = 0;
+	glfwGetWindowSize(glfwWindow, &windowWidth, &windowHeight);
+	glfwGetFramebufferSize(glfwWindow, &framebufferWidth, &framebufferHeight);
+
+	if (windowWidth <= 0 || windowHeight <= 0)
+	{
+		return 1.0f;
+	}
+
+	return static_cast<float>(framebufferWidth) / static_cast<float>(windowWidth);
+}
+
 ImGuiKey NormalizeUserKeyIndex(int user_key_index)
 {
 	if (user_key_index <= 0)
@@ -1866,16 +1894,37 @@ void GUIManager::AddFontFromAtlasImage(const char16_t* filename, uint16_t baseCo
 	int32_t imageHeight = pngloader.GetHeight();
 
 	ImFont* font = io.Fonts->Fonts.empty() ? io.Fonts->AddFontDefault() : io.Fonts->Fonts.back();
-	float fontSize = font->LegacySize > 0.0f ? font->LegacySize : ImGui::GetStyle().FontSizeBase;
+	float fontSize = ImGui::GetStyle().FontSizeBase;
+	if (fontSize <= 0.0f)
+	{
+		fontSize = ImGui::GetFontSize();
+	}
 	if (fontSize <= 0.0f)
 	{
 		fontSize = 13.0f;
 	}
 
-	// ImGui 1.92 stores glyphs per baked font size, so keep the icon glyphs on the
-	// same baked size as the UI font instead of relying on the legacy single-size path.
-	font->GetFontBaked(fontSize);
-	font->Flags |= ImFontFlags_LockBakedSizes;
+	// Merge icon glyphs into the current UI font so menu labels and icons share
+	// the same baked font entry.
+	ImFontConfig config;
+	config.MergeMode = true;
+	config.DstFont = font;
+	config.SizePixels = fontSize;
+	font = io.Fonts->AddFontDefault(&config);
+
+	// ImGui 1.92 keys baked fonts by size and rasterizer density. On macOS the
+	// actual density comes from the framebuffer scale, not GLFW content scale.
+	float rasterizerDensity = GetWindowFramebufferScale(mainWindow_);
+	if (rasterizerDensity <= 0.0f)
+	{
+		rasterizerDensity = GetDpiScale();
+	}
+	if (rasterizerDensity <= 0.0f)
+	{
+		rasterizerDensity = 1.0f;
+	}
+	font->CurrentRasterizerDensity = rasterizerDensity;
+	font->GetFontBaked(fontSize, rasterizerDensity);
 
 	int glyphSizeX = static_cast<int>(fontSize);
 	int glyphSizeY = static_cast<int>(fontSize);
