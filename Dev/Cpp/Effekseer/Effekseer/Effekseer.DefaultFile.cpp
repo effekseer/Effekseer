@@ -6,6 +6,11 @@
 namespace Effekseer
 {
 
+namespace
+{
+constexpr int32_t kUtf8PathBufferSize = 1024;
+}
+
 DefaultFileReader::DefaultFileReader(FILE* filePtr)
 	: filePtr_(filePtr)
 {
@@ -87,8 +92,8 @@ FileReaderRef DefaultFileInterface::OpenRead(const char16_t* path)
 #ifdef _WIN32
 	_wfopen_s(&filePtr, (const wchar_t*)path, L"rb");
 #else
-	char path8[256];
-	ConvertUtf16ToUtf8(path8, 256, path);
+	char path8[kUtf8PathBufferSize];
+	ConvertUtf16ToUtf8(path8, kUtf8PathBufferSize, path);
 	filePtr = fopen(path8, "rb");
 #endif
 
@@ -106,8 +111,8 @@ FileWriterRef DefaultFileInterface::OpenWrite(const char16_t* path)
 #ifdef _WIN32
 	_wfopen_s(&filePtr, (const wchar_t*)path, L"wb");
 #else
-	char path8[256];
-	ConvertUtf16ToUtf8(path8, 256, path);
+	char path8[kUtf8PathBufferSize];
+	ConvertUtf16ToUtf8(path8, kUtf8PathBufferSize, path);
 	filePtr = fopen(path8, "wb");
 #endif
 
