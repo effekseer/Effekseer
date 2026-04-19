@@ -392,7 +392,7 @@ void GpuParticleSystem::ComputeFrame(const Context& context)
 			emitter.Data.TotalEmitCount += emitter.Data.NextEmitCount;
 			emitter.Data.NextEmitCount = 0;
 
-			if (static_cast<int32_t>(emitter.Data.TotalEmitCount) >= paramSet.Basic.EmitCount)
+			if (paramSet.Basic.EmitCount >= 0 && static_cast<int32_t>(emitter.Data.TotalEmitCount) >= paramSet.Basic.EmitCount)
 			{
 				emitter.SetEmitting(false);
 				emitter.Data.TimeStopped = emitter.Data.TimeCount;
@@ -782,7 +782,9 @@ int32_t GpuParticleSystem::GetParticleCount(Effekseer::InstanceGlobal* instanceG
 int32_t GpuParticleSystem::GetEmitterParticleCount(const Emitter& emitter, const Effekseer::GpuParticles::ParamSet& paramSet)
 {
 	int32_t maxParticleCount = static_cast<int32_t>(paramSet.Basic.LifeTime[0] * paramSet.Basic.EmitPerFrame);
-	float emitDuration = static_cast<float>(paramSet.Basic.EmitCount) / static_cast<float>(paramSet.Basic.EmitPerFrame);
+	float emitDuration = (paramSet.Basic.EmitCount > 0)
+							 ? static_cast<float>(paramSet.Basic.EmitCount) / static_cast<float>(paramSet.Basic.EmitPerFrame)
+							 : std::numeric_limits<float>::infinity();
 	float timeCount = std::max(0.0f, emitter.Data.TimeCount - paramSet.Basic.EmitOffset);
 
 	if (!emitter.IsEmitting())
