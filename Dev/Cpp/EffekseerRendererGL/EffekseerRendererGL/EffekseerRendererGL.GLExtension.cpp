@@ -446,7 +446,7 @@ bool Initialize(OpenGLDeviceType deviceType, bool isExtensionsEnabled)
 	g_isSurrpotedBufferRange = true;
 	g_isSurrpotedMapBuffer = true;
 #else
-	char* glExtensions = (char*)glGetString(GL_EXTENSIONS);
+	const char* glExtensionsGLES2 = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
 
 	if (isExtensionsEnabled)
 	{
@@ -462,10 +462,10 @@ bool Initialize(OpenGLDeviceType deviceType, bool isExtensionsEnabled)
 	}
 
 	g_isSupportedVertexArray = (g_glGenVertexArraysOES && g_glDeleteVertexArraysOES && g_glBindVertexArrayOES &&
-								((glExtensions && strstr(glExtensions, "OES_vertex_array_object")) ? true : false));
+								((glExtensionsGLES2 && strstr(glExtensionsGLES2, "OES_vertex_array_object")) ? true : false));
 #else
 	g_isSupportedVertexArray = (g_glGenVertexArraysOES && g_glDeleteVertexArraysOES && g_glBindVertexArrayOES &&
-								((glExtensions && strstr(glExtensions, "GL_OES_vertex_array_object")) ? true : false));
+								((glExtensionsGLES2 && strstr(glExtensionsGLES2, "GL_OES_vertex_array_object")) ? true : false));
 #endif
 
 	// Some smartphone causes segmentation fault.
@@ -482,7 +482,8 @@ bool Initialize(OpenGLDeviceType deviceType, bool isExtensionsEnabled)
 	}
 	g_isSurrpotedBufferRange = (g_glMapBufferRangeEXT && g_glUnmapBufferOES);
 	g_isSurrpotedMapBuffer =
-		(g_glMapBufferOES && g_glUnmapBufferOES && ((glExtensions && strstr(glExtensions, "GL_OES_mapbuffer")) ? true : false));
+		(g_glMapBufferOES && g_glUnmapBufferOES &&
+		 ((glExtensionsGLES2 && strstr(glExtensionsGLES2, "GL_OES_mapbuffer")) ? true : false));
 #endif
 
 #endif
