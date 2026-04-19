@@ -18,7 +18,7 @@ on:
       - 17x
 
 env:
-  EFFEKSEER_VERSION: 1.80.0
+  EFFEKSEER_VERSION: 1.80.1
 
 jobs:
   win_x86_build:
