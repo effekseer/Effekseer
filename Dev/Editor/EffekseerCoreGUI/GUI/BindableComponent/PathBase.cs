@@ -6,6 +6,7 @@ namespace Effekseer.GUI.BindableComponent
 {
 	class PathBase : Control, IParameterControl
 	{
+		protected int uniqueID = 0;
 		protected string id1 = "";
 		protected string id2 = "";
 		protected string id_c = "";
@@ -56,6 +57,7 @@ namespace Effekseer.GUI.BindableComponent
 
 		public PathBase()
 		{
+			uniqueID = Manager.GetUniqueID();
 			id1 = "###" + Manager.GetUniqueID().ToString();
 			id2 = "###" + Manager.GetUniqueID().ToString();
 			id_c = "###" + Manager.GetUniqueID().ToString();
@@ -151,10 +153,12 @@ namespace Effekseer.GUI.BindableComponent
 
 				Manager.NativeManager.SetCursorPosX(cursorX + size.X - buttonSizeX - 1);
 				Manager.NativeManager.SetCursorPosY(cursorY);
+				Manager.NativeManager.PushID(uniqueID * 10 + 1);
 				if (Manager.NativeManager.IconButton(Icons.FileView))
 				{
 					btn_load_Click();
 				}
+				Manager.NativeManager.PopID();
 			}
 
 			{
@@ -170,10 +174,12 @@ namespace Effekseer.GUI.BindableComponent
 					Manager.NativeManager.SetCursorPosX(cursorX + size.X - buttonSizeX - 1);
 					Manager.NativeManager.SetCursorPosY(cursorY + lineHeight + lineSpacing);
 
+					Manager.NativeManager.PushID(uniqueID * 10 + 2);
 					if (Manager.NativeManager.IconButton(Icons.Remove))
 					{
 						btn_delete_Click();
 					}
+					Manager.NativeManager.PopID();
 				}
 			}
 

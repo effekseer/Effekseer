@@ -10,11 +10,17 @@ namespace Effekseer.GUI.BindableComponent
 
 		Utils.CompiledMaterialInformation compiledMatInfo = new Utils.CompiledMaterialInformation();
 		Utils.CompiledMaterialInformationErrorCode errorCode = Utils.CompiledMaterialInformationErrorCode.OK;
+		readonly string idEdit;
+		readonly string idGenCache;
+		readonly string idCreate;
 
 		public PathForMaterial()
 		{
 			fileType = FileType.Material;
 			filter = MultiLanguageTextProvider.GetText("MaterialFilter");
+			idEdit = MultiLanguageTextProvider.GetText("Material_Edit_Name") + "###" + Manager.GetUniqueID().ToString();
+			idGenCache = MultiLanguageTextProvider.GetText("Material_GenCache_Name") + "###" + Manager.GetUniqueID().ToString();
+			idCreate = MultiLanguageTextProvider.GetText("Material_Create_Name") + "###" + Manager.GetUniqueID().ToString();
 		}
 
 		protected override void UpdateSubParts(float width)
@@ -22,7 +28,7 @@ namespace Effekseer.GUI.BindableComponent
 			// 
 			if (filePath != string.Empty)
 			{
-				if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("Material_Edit_Name")))
+				if (Manager.NativeManager.Button(idEdit))
 				{
 					if (Process.MaterialEditor.Run())
 					{
@@ -44,7 +50,7 @@ namespace Effekseer.GUI.BindableComponent
 					Manager.NativeManager.PushStyleColor(swig.ImGuiColFlags.Button, 0xff0000ff);
 				}
 
-				if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("Material_GenCache_Name")))
+				if (Manager.NativeManager.Button(idGenCache))
 				{
 					GenerateCompiledMaterial();
 				}
@@ -63,7 +69,7 @@ namespace Effekseer.GUI.BindableComponent
 			}
 			else
 			{
-				if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("Material_Create_Name")))
+				if (Manager.NativeManager.Button(idCreate))
 				{
 					var filter = MultiLanguageTextProvider.GetText("MaterialFilter");
 					var result = swig.FileDialog.SaveDialog(filter, System.IO.Directory.GetCurrentDirectory());

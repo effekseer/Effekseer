@@ -284,9 +284,11 @@ namespace Effekseer.GUI.BindableComponent
 						Manager.NativeManager.TableNextColumn();
 
 						// Show a content
+						Manager.NativeManager.PushID(controlRows.Internal[i].GetHashCode());
 						Manager.NativeManager.PushItemWidth(-1);
 						ctrl.Update();
 						Manager.NativeManager.PopItemWidth();
+						Manager.NativeManager.PopID();
 
 						currentIndent.Indent = controlRows[i].SelectorIndent;
 						currentIndent.IsSelecter = controlRows[i].IsSelector;
