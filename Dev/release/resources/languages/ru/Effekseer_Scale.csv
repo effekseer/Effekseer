@@ -1,0 +1,25 @@
+﻿Scale_FixedParamater_Scale_Name,"Масштаб"
+Scale_FixedParamater_Scale_Desc,"Увеличение экземпляра"
+Scale_PVAParamater_Scale_Name,"Масштаб"
+Scale_PVAParamater_Scale_Desc,"Увеличение экземпляра"
+Scale_PVAParamater_Velocity_Name,"Скорость
+расширения"
+Scale_PVAParamater_Velocity_Desc,"Начальная скорость расширения экземпляра"
+Scale_PVAParamater_Acceleration_Name,"Ускорение
+расширения"
+Scale_PVAParamater_Acceleration_Desc,"Ускорение скорости расширения экземпляра"
+Scale_SinglePVAParamater_Scale_Name,"Масштаб"
+Scale_SinglePVAParamater_Scale_Desc,"Увеличение экземпляра"
+Scale_SinglePVAParamater_Velocity_Name,"Скорость
+расширения"
+Scale_SinglePVAParamater_Velocity_Desc,"Начальная скорость расширения экземпляра"
+Scale_SinglePVAParamater_Acceleration_Name,"Ускорение
+расширения"
+Scale_SinglePVAParamater_Acceleration_Desc,"Ускорение скорости расширения экземпляра"
+Scale_ParamaterType_Fixed_Name,Фикс. масштаб
+Scale_ParamaterType_PVA_Name,PVA
+Scale_ParamaterType_Easing_Name,Интерполяция
+Scale_ParamaterType_FCurve_Name,F-Кривая
+Scale_ParamaterType_SinglePVA_Name,PVA (Единый)
+Scale_ParamaterType_SingleEasing_Name,Интерполяция (Единый)
+Scale_ParamaterType_SingleFCurve_Name,F-Кривая (Единый)

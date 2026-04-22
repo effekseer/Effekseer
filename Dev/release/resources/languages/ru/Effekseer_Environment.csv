@@ -1,0 +1,32 @@
+Environment_Ground,Земля
+EnvironmentGround_IsShown_Name,Видимость земли
+EnvironmentGround_IsShown_Desc,Включить/выключить видимость земли
+EnvironmentGround_IsCollisionEnabled_Name,Столкновение с землей
+EnvironmentGround_IsCollisionEnabled_Desc,"Включить столкновения с землей в просмотрщике.
+Это влияет только на внешние столкновения."
+EnvironmentGround_Height_Name,Высота земли
+EnvironmentGround_Extent_Name,Размер земли
+
+Environment_BackgroundColor_Name,Цвет фона
+Environment_BackgroundColor_Desc,Цвет фона
+Environment_BackgroundImage_Name,Фоновое изображение
+Environment_BackgroundImage_Desc,Фоновое изображение
+Environment_LightDirection_Name,Направление света
+Environment_LightDirection_Desc,Ориентация направленного света
+Environment_LightColor_Name,Цвет света
+Environment_LightColor_Desc,Диффузный цвет света
+Environment_LightAmbientColor_Name,Цвет окружения
+Environment_LightAmbientColor_Desc,Цвет окружающего света
+Environment_BloomSwitch_Name,Блум
+Environment_BloomSwitch_Desc,Эффект создает ореолы света, исходящие от границ ярких областей изображения.
+Environment_TonemapSelector_Name,Тонмаппинг
+
+EffectSwitch_Off_Name,Выкл
+EffectSwitch_On_Name,Вкл
+TonemapAlgorithm_Off_Name,Выкл
+TonemapAlgorithm_Reinhard_Name,Рейнхард
+
+Environment_Bloom_Intensity_Name,Интенсивность
+Environment_Bloom_Threshold_Name,Порог
+Environment_Bloom_SoftKnee_Name,Мягкий изгиб
+Environment_TonemapReinhard_Exposure_Name,Экспозиция

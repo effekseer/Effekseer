@@ -1,0 +1,26 @@
+Sound_ParamaterType_None_Name,Выкл
+Sound_ParamaterType_Use_Name,Вкл
+
+Sound_PanType_Sound2D_Name,2D
+Sound_PanType_Sound3D_Name,3D
+
+Sound_Wave_Name,Звуковой файл
+Sound_Wave_Desc,Использование WAV-файлов
+Sound_Volume_Name,Громкость
+Sound_Volume_Desc,"Громкость
+Диапазон: 0.0 ~ 1.0
+0 - тишина, 1 - исходная громкость."
+Sound_Pitch_Name,Высота тона
+Sound_Pitch_Desc,"Высота тона (Единицы: Октава)
+Диапазон: -4.0 ~ +4.0
+0.0 - исходная, +1.0 - удвоенная частота, -1.0 - половинная частота."
+Sound_PanType_Name,Тип панорамы
+Sound_PanType_Desc,Тип панорамы
+Sound_Pan_Name,Панорама
+Sound_Pan_Desc,"Панорамирование звука.
+Диапазон: -1.0 ~ +1.0
+0.0 - центр, -1.0 - лево, 1.0 - право."
+Sound_Distance_Name,Диапазон затухания
+Sound_Distance_Desc,Расстояние, на котором происходит затухание звука
+Sound_Delay_Name,Задержка
+Sound_Delay_Desc,"Время в кадрах между созданием экземпляра и воспроизведением звука"

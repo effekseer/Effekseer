@@ -1,0 +1,74 @@
+﻿Options_RenderingMode_Name,Режим рендера
+Options_RenderingMode_Desc,Режим рендеринга эффектов
+Options_ViewerMode_Name,Режим просмотра
+Options_ViewerMode_Desc,Режим просмотра эффектов.
+Options_GridColor_Name,Цвет сетки
+Options_GridColor_Desc,Цвет сетки
+Options_IsGridShown_Name,Видимость сетки
+Options_IsGridShown_Desc,Включить/выключить видимость сетки
+Options_IsXYGridShown_Name,Видимость сетки X-Y
+Options_IsXYGridShown_Desc,Включить/выключить видимость сетки по осям X-Y
+Options_IsXZGridShown_Name,Видимость сетки X-Z
+Options_IsXZGridShown_Desc,Включить/выключить видимость сетки по осям X-Z
+Options_IsYZGridShown_Name,Видимость сетки Y-Z
+Options_IsYZGridShown_Desc,Включить/выключить видимость сетки по осям Y-Z
+Options_GridLength_Name,Размер сетки
+Options_GridLength_Desc,Размеры отображаемой сетки
+Options_Magnification_Name,Масштаб вывода
+Options_Magnification_Desc,Масштаб вывода
+Options_ExternalMagnification_Name,Масштаб вывода
+Options_ExternalMagnification_Desc,Масштаб вывода
+Options_FPS_Name,Частота кадров
+Options_FPS_Desc,Частота кадров вывода
+Options_Coordinate_Name,Система координат
+Options_Coordinate_Desc,Используемая система координат
+Options_ColorSpace_Name,Цветовое пространство
+Options_ColorSpace_Desc,Цветовое пространство
+Options_Font_Name,Шрифт
+Options_Font_Desc,Шрифт
+Options_FontSize_Name,Размер шрифта
+Options_FontSize_Desc,Размер шрифта
+Options_MouseRotInvX_Name,Поворот мыши (X)
+Options_MouseRotInvX_Desc,Инвертировать вращение вокруг оси X
+Options_MouseRotInvY_Name,Поворот мыши (Y)
+Options_MouseRotInvY_Desc,Инвертировать вращение вокруг оси Y
+Options_MouseSlideInvX_Name,Панорамирование (X)
+Options_MouseSlideInvX_Desc,Инвертировать направление панорамирования по оси X
+Options_MouseSlideInvY_Name,Панорамирование (Y)
+Options_MouseSlideInvY_Desc,Инвертировать направление панорамирования по оси Y
+Options_LanguageSelector_Name,Язык
+Options_LanguageSelector_Desc,Язык интерфейса
+Options_DistortionType_Name,Метод искажения
+Options_DistortionType_Desc,Метод искажения
+Options_MouseMappingType_Name,Схема мыши
+Options_FileBrowserViewMode_Name,Режим просмотра файлов
+Options_FileBrowserIconSize_Name,Размер иконок
+Options_FloatFormatDigits_Name,Точность чисел
+Options_FloatFormatDigits_Desc,Количество знаков после запятой
+Options_AutoSaveIntervalMin_Name,Интервал автосохранения (мин)
+Options_AutoSaveIntervalMin_Desc,Интервал между резервными автосохранениями. Установите 0 для отключения.
+RenderMode_Normal_Name,Обычный
+RenderMode_Wireframe_Name,Каркас
+RenderMode_NormalWithWireframe_Name,Обычный+Каркас
+RenderMode_Overdraw_Name,Перерисовка
+ViewMode_3D_Name,3D
+ViewMode_2D_Name,2D
+FPSType_60FPS_Name,60 FPS
+FPSType_30FPS_Name,30 FPS
+FPSType_20FPS_Name,20 FPS
+FPSType_15FPS_Name,15 FPS
+CoordinateType_Right_Name,Правосторонняя
+CoordinateType_Left_Name,Левосторонняя
+ColorSpaceType_GammaSpace_Name,Гамма-пространство
+ColorSpaceType_LinearSpace_Name,Линейное пространство
+FontType_Normal_Name,Обычный
+FontType_Bold_Name,Жирный
+DistortionMethodType_Current_Name,Текущий
+DistortionMethodType_Effekseer120_Name,Совместимый с 1.20
+DistortionMethodType_Disabled_Name,Выкл
+MouseMappingType_Effekseer_Name,Effekseer
+MouseMappingType_Unity_Name,Unity
+MouseMappingType_Blender_Name,Blender
+MouseMappingType_Maya_Name,Maya
+FileBrowser_ViewMode_IconView_Name,Значки
+FileBrowser_ViewMode_ListView_Name,Список

@@ -1,0 +1,13 @@
+CharacterTable,default
+
+Save,Сохранить
+Cancel,Отмена
+Select,Выбрать
+MultipleValues,Несколько значений
+Enabled_Name,Вкл.
+Disabled_Name,Выкл.
+WorldCoordinateSyatemType_Local_Name,Local
+WorldCoordinateSyatemType_World_Name,World
+
+Font_Normal,resources/fonts/arialmt.ttf
+Font_Bold,resources/fonts/arial_bolditalicmt.ttf
