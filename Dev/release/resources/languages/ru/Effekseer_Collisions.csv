@@ -1,0 +1,8 @@
+Collisions,Столкновения
+Collisions_EnableGround_Name,Столкновение с землей
+Collisions_ExternalCollision_Name,Внешнее столкновение
+Collisions_Bounce_Name,Отскок
+Collisions_Height_Name,Высота
+Collisions_Friction_Name,Трение
+Collisions_LifetimeReduction_Name,Уменьшение времени жизни
+Collisions_CoordinateSystem_Name,Система координат

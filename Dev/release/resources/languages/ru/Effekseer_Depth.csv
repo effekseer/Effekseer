@@ -1,0 +1,19 @@
+Depth_DepthOffset_Name,Z-Смещение
+Depth_DepthOffset_Desc,Смещение по оси Z при рендеринге частицы.
+Depth_IsScaleChangedDependingOnDepthOffset_Name,"Не изменять масштаб
+при Z-смещении"
+Depth_IsScaleChangedDependingOnDepthOffset_Desc,Изменяется ли масштаб при Z-смещении
+Depth_IsDepthOffsetChangedDependingOnParticleScale_Name,Масштабировать Z-смещение
+Depth_IsDepthOffsetChangedDependingOnParticleScale_Desc,Увеличивается ли Z-смещение с масштабом частиц
+Depth_ZSort_Name,Сортировка по глубине
+Depth_ZSort_Desc,Сортировка по расстоянию
+Depth_DepthClipping_Name,Обрезка по глубине
+Depth_DepthClipping_Desc,Частицы дальше указанного значения не рендерятся.
+Depth_SuppressionOfScalingByDepth_Name,Подавление масштаба глубиной
+Depth_SuppressionOfScalingByDepth_Desc,"Не изменяет масштаб при изменении глубины.
+Если значение 1.0, параметр не используется, если 0.0, масштабирования нет."
+Depth_DrawingPriority_Name,Приоритет отрисовки
+Depth_DrawingPriority_Desc,Узел с меньшим приоритетом отрисовывается раньше
+ZsortType_None_Name,Нет
+ZsortType_NormalOrder_Name,Прямой порядок
+ZsortType_ReverseOrder_Name,Обратный порядок

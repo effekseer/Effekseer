@@ -1,0 +1,7 @@
+Profiler,Профилировщик
+Profiler_Start,Начать профилирование
+Profiler_Stop,Остановить профилирование
+Profiler_Reset,Очистить данные
+Profiler_CpuUsage,Загрузка CPU
+Profiler_GpuUsage,Загрузка GPU
+Profiler_Handles,Эффекты

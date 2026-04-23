@@ -1,0 +1,294 @@
+File,Файл
+New,Создать
+Load,Открыть
+SaveAs,Сохранить как
+Save,Сохранить
+Search,Поиск
+Ja,日本語
+En,English
+ConfirmSaveChanged,[{0}] был изменен. Сохранить изменения?
+Cancel,Отмена
+TextureCount,Изображения
+UniformCount,Параметры
+GradientCount,Градиенты
+Delete_Name,Удалить
+
+Description_Name,Описание
+Description_Desc,"Эти параметры отображаются в других редакторах.
+Краткое описание отображается как метка.
+Подробное описание отображается при клике или наведении мыши в большинстве случаев."
+Language_Name,Язык
+Summary_Name,Кратко
+Detail_Name,Подробно
+
+Value_Name,Зн.
+Value1_Name,Зн1
+Value2_Name,Зн2
+Value3_Name,Зн3
+Value4_Name,Зн4
+ConstValue1_Name,Зн1
+ConstValue2_Name,Зн2
+Alpha_Name,Альфа
+Name_Name,Имя
+Input_Name,Вход
+Output_Name,Выход
+Normalized_Name,Нормир.
+Seconds_Name,Секунды
+Comment_Name,Комментарий
+Priority_Name,Приоритет
+Priority_Desc,"Чем ниже приоритет, тем выше элемент отображается в других редакторах."
+Sampler_Name,Семплер
+Sampler_Desc,"Указывает, как обрабатывать выход за пределы изображения.
+Repeat - повторять с противоположной стороны
+Clamp - сохранять цвет края"
+UVIndex_Name,Индекс UV
+
+ShadingModel_Name,Модель затенения
+Lit_Name,Освещаемый
+Unlit_Name,Неосвещаемый
+Speed_Name,Скорость
+ConstSpeed_Name,Пост. скор.
+
+Math_Name,Математика
+Add_Node_Name,Сложение
+Add_Node_Desc,"Выводит результат сложения V1 и V2.
+Если вход не подключен, используется значение свойства."
+Subtract_Node_Name,Вычитание
+Subtract_Node_Desc,"Выводит результат вычитания V2 из V1.
+Если вход не подключен, используется значение свойства."
+Multiply_Node_Name,Умножение
+Multiply_Node_Desc,"Выводит результат умножения V1 на V2.
+Если вход не подключен, используется значение свойства."
+Divide_Node_Name,Деление
+Divide_Node_Desc,"Выводит результат деления V1 на V2.
+Если вход не подключен, используется значение свойства."
+Fmod_Node_Name,Остаток
+Fmod_Node_Desc,"Выводит остаток от деления V1 на V2.
+Если вход не подключен, используется значение свойства."
+
+Step_Node_Name,Порог
+Step_Node_Desc,"Выводит 1, если значение на входе V больше Edge, и 0, если меньше."
+SmoothStep_Node_Name,Плавный порог
+SmoothStep_Node_Desc,"Выводит результат гладкой эрмитовой интерполяции между 0 и 1, когда значение на входе V находится между Edge1 и Edge2.
+Если меньше Edge1, выводит 0.
+Если больше Edge2, выводит 1."
+
+Abs_Node_Name,Модуль
+Abs_Node_Desc,Выводит абсолютное значение V.
+ComponentMask_Node_Name,Маска элементов
+ComponentMask_Node_Desc,"Извлекает элементы из V.
+Например, извлечь часть из 4 чисел и вывести 2 числа."
+AppendVector_Node_Name,Объединить элементы
+AppendVector_Node_Desc,"Объединяет элементы V1 и V2.
+Например, ввести число 3 и число 1 и вывести число 4."
+OneMinus_Node_Name,1-V
+OneMinus_Node_Desc,Выводит 1-V.
+Sine_Node_Name,Синус
+Sine_Node_Desc,Выводит синус V.
+Arctangent2_Node_Name,Арктангенс2
+Arctangent2_Node_Desc,"Выводит арктангенс X/Y.
+Если вход не подключен, используется значение свойства."
+Ceil_Node_Name,Округл. вверх
+Ceil_Node_Desc,Выводит результат округления V вверх.
+Floor_Node_Name,Округл. вниз
+Floor_Node_Desc,Выводит результат округления V вниз.
+Clamp_Node_Name,Ограничение
+Clamp_Node_Desc,Выводит значение V, ограниченное между Min и Max.
+Frac_Node_Name,Дробная часть
+Frac_Node_Desc,"Выводит дробную часть V.
+Например, при вводе 1.15 выводит 0.15."
+Min_Node_Name,Минимум
+Min_Node_Desc,Выводит наименьшее значение из V1 и V2.
+Max_Node_Name,Максимум
+Max_Node_Desc,Выводит наибольшее значение из V1 и V2.
+Power_Node_Name,Степень
+Power_Node_Desc,Выводит значение Base, возведенное в степень Exp.
+SquareRoot_Node_Name,Кв. корень
+SquareRoot_Node_Desc,Выводит квадратный корень из V.
+DotProduct_Node_Name,Скаляр. произв.
+DotProduct_Node_Desc,Выводит скалярное произведение V1 и V2.
+CrossProduct_Node_Name,Вектор. произв.
+CrossProduct_Node_Desc,Выводит векторное произведение V1 и V2.
+Normalize_Node_Name,Нормализация
+Normalize_Node_Desc,"Выводит нормализованное значение V.
+Убедитесь, что длина входного вектора равна 1."
+LinearInterpolate_Node_Name,Лин. интерпол.
+LinearInterpolate_Node_Desc,"Выводит значение, интерполированное между V1 и V2 с коэффициентом alpha.
+Если вход не подключен, используется значение свойства.
+
+Если alpha = 1, выводит V1.
+Если alpha = 0, выводит V2.
+Если alpha = 0.7, выводит V1 x 0.3 + V2 x 0.7."
+
+Logical_Name,Логика
+Branch_Node_Name,Ветвление
+Branch_Node_Desc,"Вывод изменяется в зависимости от значения на входе Condition.
+Если значение Condition равно True, выводит значение на входе True.
+Если значение Condition равно False, выводит значение на входе False."
+Compare_Node_Name,Сравнение
+Compare_Node_Desc,"Сравнивает A и B на основе условия, установленного в Condition.
+Если условие выполнено, выводит True.
+Если условие не выполнено, выводит False."
+BoolAnd_Node_Name,И
+BoolAnd_Node_Desc,Выводит True, если и V1, и V2 равны True.
+BoolOr_Node_Name,ИЛИ
+BoolOr_Node_Desc,Выводит True, если либо V1, либо V2 равен True.
+BoolNot_Node_Name,НЕ
+BoolNot_Node_Desc,Инвертирует V и выводит результат.
+IsFrontFace_Node_Name,Лицевая грань
+IsFrontFace_Node_Desc,"Выводит True при рендеринге лицевой грани.
+Выводит False при рендеринге тыльной грани."
+
+Model_Name,Модель
+WorldPosition_Node_Name,Поз. вершины
+WorldPosition_Node_Desc,Выводит позиции вершин частиц.
+TextureCoordinate_Node_Name,UV
+TextureCoordinate_Node_Desc,"Выводит UV-координаты частиц.
+Переключая номер UV, вы можете использовать UV до его изменения параметрами UV в Effekseer."
+Panner_Node_Name,Движение UV
+Panner_Node_Desc,"Перемещает UV-координаты частиц во времени и выводит их.
+Вы можете ввести UV-координаты, время и скорость движения.
+Если вход не подключен, используется значение свойства."
+VertexNormalWS_Node_Name,Нормаль вершины
+VertexNormalWS_Node_Desc,Выводит нормали вершин частиц.
+PixelNormalWS_Node_Name,Нормаль пикселя
+PixelNormalWS_Node_Desc,"Выводит нормаль частицы после изменения направления
+нормали для каждого пикселя входом Normal в узле Output."
+VertexTangentWS_Node_Name,Тангенс вершины
+VertexTangentWS_Node_Desc,
+VertexColor_Node_Name,Цвет вершины
+VertexColor_Node_Desc,"Выводит цвет вершин частиц.
+Включает все цвета спрайта, кольца и т.д."
+ObjectScale_Node_Name,Масштаб объекта
+ObjectScale_Node_Desc,"Выводит коэффициент увеличения частиц в Effekseer.
+
+Однако действителен только при использовании в WorldPositionOffset узла Output с моделью."
+
+Texture_Name,Изображение
+SampleTexture_Node_Name,Выборка изображения
+SampleTexture_Node_Desc,Получает пиксели из изображения.
+TextureObjectParameter_Node_Name,Параметр-изобр.
+TextureObjectParameter_Node_Desc,"Выводит изображение, заданное извне.
+Оно не может быть отображено напрямую, так как является изображением.
+Краткое и подробное описание, указанное в параметрах, отображается в Effekseer и внешних инструментах."
+TextureObject_Node_Name,Константа-изобр.
+TextureObject_Node_Desc,"Выводит указанное изображение.
+Оно не может быть отображено напрямую, так как является изображением."
+
+Output_Node_Name,Выход
+Comment_Node_Name,Комментарий
+
+Constant_Name,Константа
+Time_Node_Name,Время
+Time_Node_Desc,Выводит текущее время в секундах.
+LocalTime_Node_Name,Лок. время
+LocalTime_Node_Desc,Выводит время в секундах с момента создания эффекта.
+ParticleTime_Node_Name,Время частицы
+ParticleTime_Node_Desc,Выводит нормализованный прогресс жизни каждой частицы и прошедшие секунды.
+EffectScale_Node_Name,Масштаб эффекта
+EffectScale_Node_Desc,Получает масштаб, указанный при загрузке файла эффекта.
+CameraPositionWS_Node_Name,Поз. камеры
+CameraPositionWS_Node_Desc,Выводит позицию камеры.
+Constant1_Node_Name,Константа 1
+Constant1_Node_Desc,Выводит значение, указанное в свойстве.
+Constant2_Node_Name,Константа 2
+Constant2_Node_Desc,Выводит значение, указанное в свойстве.
+Constant3_Node_Name,Константа 3
+Constant3_Node_Desc,Выводит значение, указанное в свойстве.
+Constant4_Node_Name,Константа 4
+Constant4_Node_Desc,Выводит значение, указанное в свойстве.
+Parameter_Name,Парам.
+Parameter1_Node_Name,Парам 1
+Parameter1_Node_Desc,"Выводит параметры, заданные извне.
+Этот параметр является общим для каждого узла.
+Краткое и подробное описание, указанное в параметрах, отображается в Effekseer и внешних инструментах."
+Parameter2_Node_Name,Парам 2
+Parameter2_Node_Desc,"Выводит параметры, заданные извне.
+Этот параметр является общим для каждого узла.
+Краткое и подробное описание, указанное в параметрах, отображается в Effekseer и внешних инструментах."
+Parameter3_Node_Name,Парам 3
+Parameter3_Node_Desc,"Выводит параметры, заданные извне.
+Этот параметр является общим для каждого узла.
+Краткое и подробное описание, указанное в параметрах, отображается в Effekseer и внешних инструментах."
+Parameter4_Node_Name,Парам 4
+Parameter4_Node_Desc,"Выводит параметры, заданные извне.
+Этот параметр является общим для каждого узла.
+Краткое и подробное описание, указанное в параметрах, отображается в Effekseer и внешних инструментах."
+CustomData1_Node_Name,Польз. данные 1
+CustomData1_Node_Desc,"Выводит параметры, заданные извне.
+Этот параметр может быть установлен индивидуально для каждой частицы.
+Краткое и подробное описание, указанное в параметрах, отображается в Effekseer и внешних инструментах."
+CustomData2_Node_Name,Польз. данные 2
+CustomData2_Node_Desc,"Выводит параметры, заданные извне.
+Этот параметр может быть установлен индивидуально для каждой частицы.
+Краткое и подробное описание, указанное в параметрах, отображается в Effekseer и внешних инструментах."
+
+Advanced_Name,Расшир.
+
+Fresnel_Node_Name,Френель
+Fresnel_Node_Desc,"Чем больше поверхность отклоняется от направления на камеру, тем большее значение выводится.
+Вы можете указать интенсивность в свойствах."
+Rotator_Node_Name,Вращатель
+Rotator_Node_Desc,"Входное значение (в основном UV) поворачивается и выводится.
+Используется для поворота изображения на материале.
+Угол выражается как 1 за оборот."
+PolarCoords_Node_Name,Полярные коорд.
+PolarCoords_Node_Desc,"Выводит UV, расположенные радиально от центра.
+Вы можете указать, сколько изображений располагается в одном обороте, и угол поворота."
+
+Depth_Name,Глубина
+
+DepthFade_Node_Name,Затухание по глубине
+DepthFade_Node_Desc,"Выводит меньшее значение по мере приближения к объекту фона.
+Выводит 1, если расстояние больше FadeDistance, и 0, если расстояние равно 0."
+
+Gradient_Name,Градиент
+SampleGradient_Node_Name,Выборка градиента
+SampleGradient_Node_Desc,"Выводит цвет из градиента в указанной позиции.
+Если для градиента не задан вход, используется градиент этого узла."
+Gradient_Node_Name,Градиент
+Gradient_Node_Desc,"Этот узел выводит градиент."
+GradientParameter_Node_Name,Параметр-градиент
+GradientParameter_Node_Desc,"Выводит градиент, заданный извне."
+
+Noise_Name,Шум
+SimpleNoise_Node_Name,Простой шум
+SimpleNoise_Node_Desc,Выводит шум.
+WhiteNoise_Node_Name,Белый шум
+WhiteNoise_Node_Desc,Выводит шум.
+CellularNoise_Node_Name,Сот. шум
+CellularNoise_Node_Desc,Выводит шум.
+
+Color_Name,Цвет
+RgbToHsv_Node_Name,RGB в HSV
+RgbToHsv_Node_Desc,Преобразует цветовое пространство из RGB в HSV.
+HsvToRgb_Node_Name,HSV в RGB
+HsvToRgb_Node_Desc,Преобразует цветовое пространство из HSV в RGB.
+
+Environment_Name,Окружение
+Light_Node_Name,Свет
+Light_Node_Desc,Выводит информацию о внешнем освещении.
+
+ConvertParam_Name,Преобразовать в параметр
+
+Error_SameNode,Ошибка_Тот же узел
+Error_SamePin,Ошибка_Тот же пин
+Error_SameDirection,Ошибка_То же направление
+Error_Loop,Ошибка_Цикл
+Error_Type,Ошибка_Тип
+Error_NewVersion,Файл слишком новый, чтобы его открыть. Пожалуйста, обновите Effekseer
+Create_Link,Создать_Связь
+Create_Node,Создать_Узел
+
+Starting,Запуск
+Starting_New,Создать новый материал
+Starting_Open,Открыть материал
+
+Warning_WrongInputType,Недопустимый тип входа
+Warning_WrongProperty,Недопустимое свойство
+Warning_DifferentSampler,"Разные семплеры
+назначены одному изображению."
+Warning_SameName,Узел с таким именем уже существует.
+Warning_InvalidName,"Недопустимое имя.
+(Пожалуйста, прочтите справку.)"
+Warning_PixelNodeAndNormal,PixelNormal не может быть подключен к Normal

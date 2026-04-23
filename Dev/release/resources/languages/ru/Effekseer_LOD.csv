@@ -1,0 +1,14 @@
+﻿LOD_Name,Уровни детализации
+LOD_Level,Уровень
+LOD_Description,Настройте используемые уровни детализации.\nКогда уровень включен, вы можете указать минимальное расстояние до наблюдателя для выбора этого LOD.
+LOD_Level_Minimum_Distance,Мин. расстояние
+LODBehaviour_Hide_Name,Скрыть частицы
+LODBehaviour_DontSpawn_Name,Остановить порождение
+LODBehaviour_DontSpawnAndHide_Name,Остановить порождение и скрыть существующие
+LOD_NotConfigured,Уровни детализации не настроены
+LOD_Configure,Настроить
+LOD_SelectMatching,Выбрать LOD, на которых узел ведет себя как обычно
+LOD_Behaviour,Поведение частицы, когда LOD не соответствует выбору
+LOD_ApplyToChildren,Применить настройки LOD к дочерним элементам
+LOD_Bias_Name,Смещение дистанции LOD (м)
+LOD_Bias_Description,Добавляет указанное значение к вычисленному расстоянию от наблюдателя. Полезно для предпросмотра LOD.

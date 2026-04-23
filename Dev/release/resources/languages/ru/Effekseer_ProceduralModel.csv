@@ -1,0 +1,85 @@
+﻿ProceduralModel_Name,Процедурная модель
+
+ProceduralModelType_Mesh_Name,Сетка
+ProceduralModelType_Ribbon_Name,Лента
+
+ProceduralModelPrimitiveType_Sphere_Name,Сфера
+ProceduralModelPrimitiveType_Cone_Name,Конус
+ProceduralModelPrimitiveType_Cylinder_Name,Цилиндр
+ProceduralModelPrimitiveType_Spline_Name,Сплайн
+
+ProceduralModelCrossSectionType_Plane_Name,Плоскость
+ProceduralModelCrossSectionType_Cross_Name,Крест
+ProceduralModelCrossSectionType_Point_Name,Точка
+
+PM_Type_Name,Тип
+PM_AngleBeginEnd_Name,Область (Угол)
+PM_Divisions_Name,Сегментация
+PM_Rotate_Name,Угол поворота
+PM_Vertices_Name,Кол-во вершин
+PM_Count_Name,Кол-во лент
+PM_RibbonScales_Name,Толщина ленты
+PM_RibbonAngles_Name,Углы ленты
+PM_RibbonNoises_Name,Шум длины
+
+PM_Shape_Name,Форма
+
+PM_PrimitiveType_Name,Тип формы
+PM_Radius_Name,Радиус 1
+PM_Radius2_Name,Радиус 2
+PM_Depth_Name,Глубина
+PM_DepthMin_Name,Глубина (Низ)
+PM_DepthMax_Name,Глубина (Верх)
+
+PM_Point1_Name,Точка 1
+PM_Point2_Name,Точка 2
+PM_Point3_Name,Точка 3
+PM_Point4_Name,Точка 4
+
+PM_AxisType_Name,Ось
+
+PM_ShapeNoise_Name,Шум формы
+
+PM_TiltNoiseFreq_Name,Частота наклона
+PM_TiltNoiseOffset_Name,Смещение наклона
+PM_TiltNoisePower_Name,Сила наклона
+
+PM_WaveNoiseFreq_Name,Частота волны
+PM_WaveNoiseOffset_Name,Смещение волны
+PM_WaveNoisePower_Name,Сила волны
+
+PM_CurlNoiseFreq_Name,Частота завихрений
+PM_CurlNoiseOffset_Name,Смещение завихрений
+PM_CurlNoisePower_Name,Сила завихрений
+
+PM_VertexColor_Name,Цвет вершин
+
+PM_ColorLeft_Name,Цвет-Левый
+PM_ColorCenter_Name,Цвет-Центр
+PM_ColorRight_Name,Цвет-Правый
+PM_ColorLeftMiddle_Name,Цвет-ЛевыйЦентр
+PM_ColorCenterMiddle_Name,Цвет-ЦентрЦентр
+PM_ColorRightMiddle_Name,Цвет-ПравыйЦентр
+
+PM_ColorUpperLeft_Name,Цвет-ВерхЛевый
+PM_ColorUpperCenter_Name,Цвет-ВерхЦентр
+PM_ColorUpperRight_Name,Цвет-ВерхПравый
+PM_ColorMiddleLeft_Name,Цвет-СерединаЛевый
+PM_ColorMiddleCenter_Name,Цвет-СерединаЦентр
+PM_ColorMiddleRight_Name,Цвет-СерединаПравый
+PM_ColorLowerLeft_Name,Цвет-НизЛевый
+PM_ColorLowerCenter_Name,Цвет-НизЦентр
+PM_ColorLowerRight_Name,Цвет-НизПравый
+
+PM_ColorCenterPosition_Name,Позиция центр. области
+PM_ColorCenterArea_Name,Размер центр. области
+
+PM_VertexColorNoise_Name,Шум цвета вершин
+
+PM_VertexColorNoiseFreq_Name,Частота шума цвета
+PM_VertexColorNoiseOffset_Name,Смещение шума цвета
+PM_VertexColorNoisePower_Name,Сила шума цвета
+
+PM_UV_Name,UV
+PM_UVPosition_Name,Позиция UV
+PM_UVSize_Name,Размер UV

@@ -1,0 +1,19 @@
+FcurveEdge_Constant_Name,Постоянный
+FcurveEdge_Loop_Name,Цикл
+FcurveEdge_LoopInversely_Name,Обратный цикл
+FcurveInterpolation_Bezier_Name,Безье
+FcurveInterpolation_Linear_Name,Линейная
+FcurveTimelineMode_Time_Name,Время (Кадр)
+FcurveTimelineMode_Percent_Name,Процент (0-100)
+Fcurve_Key_Name,Время
+Fcurve_Key_Frame_Name,Кадр
+Fcurve_Key_Percent_Name,Процент
+FCurve_AddPoint,Добавить точку
+FCurve_DeletePoint,Удалить выбранную точку
+FCurve_Copy,Копировать
+FCurve_PaseteOnZero,Вставить скопированную F-Кривую на 0 кадр
+FCurve_PasteOnCurrentTime,Вставить скопированную F-Кривую на текущее время
+FCurve_PasteOnCursor,Вставить скопированную F-Кривую на курсор
+FCurve_Overwrite,Перезаписать скопированной F-Кривой
+FCurve_AlignKey,Выровнять выбранные ключи
+FCurve_AlignValue,Выровнять выбранные значения

@@ -1,0 +1,21 @@
+Fcurve_Elm_Location,Позиция
+Fcurve_Elm_Angle,Угол
+Fcurve_Elm_ScalingFactor,Масштаб
+Fcurve_Elm_ScalingFactor_Single,Масштаб (Одиночный)
+Fcurve_Elm_UV_Start,UV (Старт)
+Fcurve_Elm_UV_Size,UV (Размер)
+Fcurve_Elm_Render_Color,Общий цвет (RGBA)
+Fcurve_Elm_Track_Color_L,"Цвет трека, Левый (RGBA)"
+Fcurve_Elm_Track_Color_LC,"Цвет трека, Левый-Центр (RGBA)"
+Fcurve_Elm_Track_Color_C,"Цвет трека, Центр (RGBA)"
+Fcurve_Elm_Track_Color_CM,"Цвет трека, Центр-Середина (RGBA)"
+Fcurve_Elm_Track_Color_R,"Цвет трека, Правый (RGBA)"
+Fcurve_Elm_Track_Color_RC,"Цвет трека, Правый-Центр (RGBA)"
+Fcurve_Elm_CustomData,Пользовательские данные
+Fcurve_Elm_Alpha,Альфа
+Fcurve_Elm_UVDistortion,UV-Искажение
+Fcurve_Elm_Blend,Смешивание
+Fcurve_Elm_BlendAlpha,Альфа-смешивание
+Fcurve_Elm_BlendUVDistortion,UV-Искажение смешивания
+Fcurve_Elm_AlphaThreshold,Порог альфы
+Fcurve_Elm_GpuParticles_ColorAll,GpuPtcl-Общий цвет (RGBA)

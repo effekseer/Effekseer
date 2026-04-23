@@ -1,0 +1,33 @@
+KillRules,Правила уничтожения
+KillRules_Description,"Правила уничтожения позволяют указать область, в которой частицы должны быть уничтожены.
+ - Box используется для уничтожения частицы, когда она перемещается внутрь или наружу указанного блока.
+ - Plane используется для уничтожения частицы, когда она выходит за определенную позицию вдоль указанной оси.
+ - Sphere используется для уничтожения частицы, когда она перемещается внутрь или наружу указанной сферы."
+KillRules_Type_Name,Тип
+KillRules_Box_Center_Name,Центр блока
+KillRules_Box_Size_Name,Размер блока
+KillRules_Box_IsKillInside_Name,Уничтожать внутри
+KillRules_Box_IsKillInside_Desc,"Если включено, частицы будут уничтожены, если они окажутся ВНУТРИ блока.
+Если отключено (по умолчанию), они будут уничтожены, когда окажутся СНАРУЖИ блока."
+KillRules_IsScaleAndRotationApplied_Name,"Применять масштаб и
+поворот"
+KillRules_IsScaleAndRotationApplied_Desc,"Если включено (по умолчанию), форма уничтожения будет поворачиваться и масштабироваться вместе с эффектом.
+Если отключено, ориентация и масштаб формы уничтожения останутся постоянными"
+KillRules_Plane_Axis_Name,Ось плоскости
+KillRules_Plane_PlaneOffset_Name,"Смещение плоскости
+вдоль оси"
+KillRules_Sphere_Center_Name,Центр сферы
+KillRules_Sphere_Radius_Name,Радиус сферы
+KillRules_Sphere_IsKillInside_Name,Уничтожать внутри
+KillRules_Sphere_IsKillInside_Desc,"Если включено, частицы будут уничтожены, если они окажутся ВНУТРИ сферы.
+Если отключено (по умолчанию), они будут уничтожены, когда окажутся СНАРУЖИ сферы."
+KillType_None_Name,Нет
+KillType_Box_Name,Блок
+KillType_Plane_Name,Плоскость
+KillType_Sphere_Name,Сфера
+PlaneAxisType_XPositive_Name,Положит. X
+PlaneAxisType_XNegative_Name,Отрицат. X
+PlaneAxisType_YPositive_Name,Положит. Y
+PlaneAxisType_YNegative_Name,Отрицат. Y
+PlaneAxisType_ZPositive_Name,Положит. Z
+PlaneAxisType_ZNegative_Name,Отрицат. Z

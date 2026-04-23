@@ -1,0 +1,32 @@
+Rotation_ParamaterType_Fixed_Name,Фикс. угол
+Rotation_ParamaterType_PVA_Name,PVA
+Rotation_ParamaterType_Easing_Name,Интерполяция
+Rotation_ParamaterType_AxisPVA_Name,PVA (Произв. ось)
+Rotation_ParamaterType_AxisEasing_Name,Интерполяция (Произв. ось)
+Rotation_ParamaterType_RotationFCurve_Name,Поворот (F-Кривая)
+Rotation_ParamaterType_RotateToViewpoint_Name,Повернуть в сторону камеры
+Rotation_ParamaterType_RotateToVelocity_Name,Повернуть по направлению движения
+Rotation_FixedParamater_Rotation_Name,Угол
+Rotation_FixedParamater_Rotation_Desc,"Поворот экземпляра, в градусах"
+Rotation_PVAParamater_Rotation_Name,Угол
+Rotation_PVAParamater_Rotation_Desc,"Начальный поворот экземпляра, в градусах"
+Rotation_PVAParamater_Velocity_Name,"Угловая
+скорость"
+Rotation_PVAParamater_Velocity_Desc,"Начальная угловая скорость экземпляра, в градусах"
+Rotation_PVAParamater_Acceleration_Name,"Угловое
+ускорение"
+Rotation_PVAParamater_Acceleration_Desc,"Ускорение угловой скорости экземпляра, в градусах"
+Rotation_AxisPVAParamater_Axis_Name,"Ось
+вращения"
+Rotation_AxisPVAParamater_Axis_Desc,Ось вращения экземпляра
+Rotation_AxisPVAParamater_Rotation_Name,Угол
+Rotation_AxisPVAParamater_Rotation_Desc,"Начальный поворот экземпляра, в градусах"
+Rotation_AxisPVAParamater_Velocity_Name,"Угловая
+скорость"
+Rotation_AxisPVAParamater_Velocity_Desc,"Начальная угловая скорость экземпляра, в градусах"
+Rotation_AxisPVAParamater_Acceleration_Name,"Угловое
+ускорение"
+Rotation_AxisPVAParamater_Acceleration_Desc,"Ускорение угловой скорости экземпляра, в градусах"
+Rotation_AxisEasingParamater_Axis_Name,"Ось
+вращения"
+Rotation_AxisEasingParamater_Axis_Desc,Ось вращения экземпляра

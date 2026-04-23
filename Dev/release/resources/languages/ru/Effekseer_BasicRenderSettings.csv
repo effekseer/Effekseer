@@ -1,0 +1,111 @@
+BRS_Material_Name,Материал
+BRS_EmissiveScaling_Name,Масштаб эмиссии
+BRS_EmissiveScaling_Desc,"Умножает цвет частицы на указанное значение.
+Чем выше значение, тем ярче цвет. При значении 1 изображение используется как есть.
+Доступно только когда материал является Стандартным или Освещенным.
+В средах, не поддерживающих HDR, увеличение значения может привести к странным цветам."
+BRS_ColorTexture_Name,Текстура
+BRS_ColorTexture_Desc,Изображение цвета/искажения
+BRS_Filter_Name,Фильтр
+BRS_Wrap_Name,Обёртка
+BRS_NormalTexture_Name,Карта нормалей
+BRS_NormalTexture_Desc,Изображение векторов нормалей
+BRS_Filter2_Name,Фильтр
+BRS_Wrap2_Name,Обёртка
+BRS_DistortionIntensity_Name,"Интенсивность
+искажения"
+BRS_AlphaBlend_Name,Смешение
+BRS_ZWrite_Name,Запись глубины
+BRS_ZTest_Name,Тест глубины
+BRS_FadeInType_Name,Появление
+BRS_FadeOutType_Name,Исчезновение
+BRS_UV_Name,UV
+BRS_UV2_Name,UV (Альфа-текстура)
+BRS_UV3_Name,UV (Текстура искажения UV)
+BRS_UV4_Name,UV (Текстура смешивания)
+BRS_UV5_Name,UV (Альфа-текстура смешивания)
+BRS_UV6_Name,UV (Текстура искажения UV смешивания)
+BRS_UVFlipHorizontalProbability_Name,Вероятность отражения UV по X
+BRS_UVTextureReferenceTarget_Name,Ссылка на
+BRS_ColorInheritType_Name,Наследовать цвет
+BRS_ColorInheritType_Desc,Когда этот экземпляр должен копировать цвет родительского узла
+BRS_CustomData1_Name,Пользовательские данные 1
+BRS_CustomData2_Name,Пользовательские данные 2
+MaterialType_Default_Name,Стандартный
+MaterialType_BackDistortion_Name,Искажение (Задний план)
+MaterialType_Lighting_Name,Освещение
+MaterialType_File_Name,Файл
+FilterType_Nearest_Name,Ближайший сосед
+FilterType_Linear_Name,Линейная интерполяция
+WrapType_Repeat_Name,Повтор
+WrapType_Clamp_Name,Ограничение
+WrapType_Mirror_Name,Зеркало
+AlphaBlendType_Opacity_Name,Непрозрачность
+AlphaBlendType_Blend_Name,Смешение
+AlphaBlendType_Add_Name,Сложение
+AlphaBlendType_Sub_Name,Вычитание
+AlphaBlendType_Mul_Name,Умножение
+UVTextureReferenceTargetType_None_Name,Нет (128x128)
+UVTextureReferenceTargetType_Texture1_Name,Изображение 1
+UVTextureReferenceTargetType_Texture2_Name,Изображение 2
+UVTextureReferenceTargetType_Texture3_Name,Изображение 3
+UVTextureReferenceTargetType_Texture4_Name,Изображение 4
+MaterialFileParameter_Path_Name,Путь
+BRS_FadeIn_Frame_Name,Длительность
+BRS_FadeIn_Frame_Desc,Длительность появления в кадрах
+BRS_FadeIn_StartSpeed_Name,Вход
+BRS_FadeIn_StartSpeed_Desc,Начальная скорость интерполяции
+BRS_FadeIn_EndSpeed_Name,Выход
+BRS_FadeIn_EndSpeed_Desc,Конечная скорость интерполяции
+BRS_FadeOut_Frame_Name,Длительность
+BRS_FadeOut_Frame_Desc,Длительность исчезновения в кадрах
+BRS_FadeOut_StartSpeed_Name,Вход
+BRS_FadeOut_StartSpeed_Desc,Начальная скорость интерполяции
+BRS_FadeOut_EndSpeed_Name,Выход
+BRS_FadeOut_EndSpeed_Desc,Конечная скорость интерполяции
+FadeType_None_Name,Выкл.
+FadeType_Use_Name,Вкл.
+FadeType_WithinLifetime_Name,Исчезновение в течение жизни
+FadeType_AfterRemoved_Name,Исчезновение после удаления
+UVType_Default_Name,Стандартный
+UVType_Fixed_Name,Фиксированный
+UVType_Animation_Name,Анимация
+UVType_Scroll_Name,Прокрутка
+UVType_FCurve_Name,F-Кривая
+CustomDataType_None_Name,Нет
+CustomDataType_Fixed2D_Name,Фикс. 2D
+CustomDataType_Random2D_Name,Случ. 2D
+CustomDataType_Easing2D_Name,Интерпол. 2D
+CustomDataType_FCurve2D_Name,F-Кривая 2D
+CustomDataType_Fixed4D_Name,Фикс. 4D
+CustomDataType_FCurveColor_Name,F-Кривая-Цвет
+CustomDataType_None_Name,Нет
+CustomDataType_Fixed2D_Name,Фикс. 2D
+CustomDataType_Random2D_Name,Случ. 2D
+CustomDataType_Easing2D_Name,Интерпол. 2D
+CustomDataType_FCurve2D_Name,F-Кривая 2D
+CustomDataType_Fixed4D_Name,Фикс. 4D
+CustomDataType_FCurveColor_Name,F-Кривая-Цвет
+CustomDataType_DynamicInput_Name,Динамический вход
+UVFixedParamater_Start_Name,Старт
+UVFixedParamater_Size_Name,Размер
+UVAnimationParamater_Start_Name,Старт
+UVAnimationParamater_Size_Name,Размер
+UVAnimationParamater_FrameLength_Name,Длина кадра
+UVAnimationParamater_FrameCountX_Name,Кол-во по X
+UVAnimationParamater_FrameCountY_Name,Кол-во по Y
+UVAnimationParamater_LoopType_Name,Цикл
+UVAnimationParamater_StartSheet_Name,Начальный лист
+UVAnimationSupportedFrameBlendParameter_Type_Name,Тип смешивания кадров флипбука
+UVScrollParamater_Start_Name,Старт
+UVScrollParamater_Size_Name,Размер
+UVScrollParamater_Speed_Name,Скорость прокрутки
+UVFCurveParamater_Start_Name,Старт
+UVFCurveParamater_Size_Name,Размер
+UVLoopType_Once_Name,Нет
+UVLoopType_Loop_Name,Цикл
+UVLoopType_ReverceLoop_Name,Обратный цикл
+FlipbookInterpolationType_None_Name,Нет
+FlipbookInterpolationType_Lerp_Name,Лин. интерп.
+
+CustomData_Name,Пользовательские данные

@@ -1,0 +1,351 @@
+AboutEffekseer,О Effekseer
+System_FailedToInitialize,"Не удалось создать экран рендеринга. Проблемы с версией DirectX, нехватка памяти, характеристики видеокарты и т.д."
+AttractionForces,Силовое поле (Лок.)
+AutoConnect,Автоподключение
+BasicRenderSettings,Основные настройки рендеринга
+AdvancedRenderSettings,Расшир. настройки рендеринга
+AdvancedRenderSettings2,Расшир. настройки рендеринга 2
+BasicSettings,Основные настройки
+BasicSettings_Generation,Генерация
+BasicSettings_Removal,Удаление
+Behavior,Поведение
+CameraMode,Режим камеры
+CameraSettings,Настройки камеры
+Complement,Тип
+ConfirmSaveChanged,"[{0}] был изменен. Сохранить изменения?"
+Connect,Подключить
+Culling,Отсечение
+Delete,Удалить
+Deviation,Откл.
+Disconnect,Отключить
+Edit,Правка
+End,Конец
+EndFrame,Конечный кадр
+Export,Экспорт
+ExportAsAvi,Экспорт как AVI
+ExportAsH264,Экспорт как mp4 (h264)
+ExportAsGifAnimation,Экспорт как gif-анимацию
+ExportAsImages,Экспорт как изображения
+ExportAsSingleImage,Экспорт как одно изображение
+ExportedFrame,Экспортированный кадр
+FCurves,F-Кривые
+Files,Файлы
+FileBrowser,Проводник файлов
+Format,Формат
+Frame,Кадр
+Frequency_Frame,Частота (Кадр)
+Gauss,Гаусс
+GenerateAlpha,Создать альфа
+GenerateAlpha2,Создать альфа (Blend+Add)
+Height,Высота
+Help,Помощь
+Import,Импорт
+Infinite,Бесконечно
+InternalAbout,О программе Effekseer
+InternalAddNode,Добавить узел
+InternalBaskStep,Шаг назад
+InternalCopy,Копировать узел
+InternalExit,Выход
+InternalInsertNode,Вставить узел
+InternalNew,Новый проект
+InternalOpen,Открыть
+InternalOpenSample,Открыть пример проекта
+InternalOverwrite,Сохранить
+InternalPaste,Вставить узел
+InternalPasteInfo,Вставить информацию об узле
+InternalPauseOrResume,Пауза/Продолжить
+InternalRedo,Повторить
+InternalRemoveNode,Удалить узел
+InternalSaveAs,Сохранить как...
+InternalStep,Шаг
+InternalStop,Стоп
+InternalUndo,Отменить
+InternalViewHelp,Руководство
+InternalRenameNode,Переименовать
+Recover,Восстановить
+Recover_LastSession,Последний сеанс
+Recover_AutoSave,Автосохранение...
+Recover_LastSession_Error,Не удалось найти файл резервной копии для последнего сеанса
+RenameNode,Переименовать узел
+Left,Влево
+Load,Загрузить
+MakeTransparent,Сделать прозрачным
+Max,Макс.
+Mean,Сред.
+Min,Мин.
+Network,Сеть
+NetworkAddress,Адрес
+NetworkConnected,Состояние: Подключено
+NetworkDisconnected,Состояние: Отключено
+NetworkState,Состояние:
+Network_FailedToConnect,Не удалось подключиться.
+NodeTree,Дерево узлов
+None,Нет
+NotAbsolutePathError,Это не абсолютный путь.
+Offset,Смещение
+Options,Настройки
+PlayString,Воспроизвести
+Port,Порт
+Position,Позиция
+PoVDistance,Расстояние до центра
+Range,Диапазон
+RecentFiles,Недавние файлы
+Record,Запись
+Recorder,Рекордер
+RecorderProgress,Прогресс записи...
+RecorderAbort,Прервать
+Render,Рендер
+RenderSettings,Настройки рендеринга
+ResetMaginification,Сбросить масштаб
+ResetWindow,Сбросить положение окна
+Resolution,Разрешение
+Right,Вправо
+Rotation,Поворот
+Sampling,Семплирование
+Scale,Масштаб
+SendData,Отправить данные
+ShowGuide,Показать сетку
+Sound,Звук
+SoundFilter,wav
+SpawningMethod,Метод порождения
+Start,Старт
+StartFrame,Начальный кадр
+TransmitDataOnEdit,Передавать данные при правке
+TransmitDataOnLoad,Передавать данные при загрузке
+TransmitDataOnSave,Передавать данные при сохранении
+UnsavedChanges,*Несохраненные изменения
+UseOriginalImage,Использовать исходное изображение
+Value,Знач.
+View,Вид
+Viewer,Просмотрщик
+ViewerControls,Элементы управления просмотра
+Viewpoint,Точка обзора
+Width,Ширина
+Window,Окно
+X,x
+XCount,Кол-во по X
+XRotation,Поворот по X
+Y,y
+YRotation,Поворот по Y
+Zoom,Масштаб
+Depth,Глубина
+Global,Глобальные настройки
+
+ResetParam_Name,Сброс
+ResetParam_Desc,Сбросить параметр в значение по умолчанию
+
+EnlargeAnchor,Увеличить якорь
+EnlargeAnchor_Desc,"Для плавного изменения значения,
+расширьте якорь"
+ShrinkAnchor,Уменьшить якорь
+ShrinkAnchor_Desc,"Для резкого изменения значения,
+переместите якорь в позицию ключа"
+
+FCurve_TimelineMode_Name,Режим шкалы времени
+FCurve_TimelineMode_Desc,Определяет, установлена ли шкала времени как реальное время или как процент от времени жизни частицы.
+FCurve_Copy_Desc,Копирует ключевые точки.
+FCurve_Paste_Desc,Вставляет ключевые точки.
+
+AutoZoom,Автомасштаб
+AutoZoom_Desc,Автоматически подбирать высоту графика
+FCurve_Operation_Instruction_Desc,Инструкция по управлению (Наведение мыши)
+FCurveCtrl_Desc,"Двойной клик - Добавить/Удалить точку
+Alt+Колесо - Горизонтальный зум
+Ctrl+Колесо - Вертикальный зум
+Alt+ЛКМ - Выбор нескольких точек и правка
+Shift+ЛКМ - Переключение выбора точек
+Двойной клик по меткам - Автоматическое изменение области просмотра
+Delete - Удалить точку"
+
+ImageFilter_,"Файлы изображений (*.png;*.tga)|*.png;*.tga"
+ModelFilter_,"Файлы моделей (*.efkmodel;*.fbx;*.mqo;*.gltf;*.glb;*.obj;*.geo;*.bgeo)|*.efkmodel;*.fbx;*.mqo;*.gltf;*.glb;*.obj;*.geo;*.bgeo"
+SoundFilter_,Звуковой файл (*.wav)|*.wav
+ProjectFilter_,Проект Effekseer (*.efkproj)|*.efkproj
+
+Error_NotFound,{0} не найден.
+
+EffekseerParticleFilter,efkefc
+MaterialFilter,efkmat
+ImageFilter,"png,dds,tga"
+ModelFilter,"efkmodel,fbx,mqo,gltf,glb,obj,geo,bgeo"
+ProjectFilter,efkproj
+ProjectFilterNew,"efkproj,efkefc"
+EffekseerPackageFilter,efkpkg
+CurveFilter,"efkcurve,fbx"
+
+Clipping,Обрезка
+
+Save,Сохранить
+Load,Загрузить
+
+StorageTarget,Назначение сохранения
+StorageGlobal,Приложение Effekseer
+StorageLocal,Проект Effekseer
+
+Panel_Copy_Desc,Копирует параметры по панелям.
+Panel_Paste_Desc,Вставляет параметры по панелям.
+Panel_Help_Desc,Показать документацию по панелям в браузере.
+
+DynamicParameter_Name,Динамический параметр
+DynamicParameter_Desc,
+DynamicInput,Вход
+DynamicName,Имя
+DynamicEquation,Выражение
+DynamicEq,Пример.
+DynamicFixed,Фикс.
+DynamicDynamic,Динам.
+DynamicAdd,Добавить
+DynamicDelete,Удалить
+Compile,Компилировать
+
+CompilePosition, : Строка {0} Столбец {1}
+CompileErrror_InvalidToken,Обнаружен недопустимый токен {0}
+CompileErrror_InvalidEoF,Обнаружен неожиданный конец
+CompileError_InvalidOperation,Обнаружена недопустимая операция
+CompileError_ArgSize,Неверное количество аргументов. Ожидалось {0}, получено {1}
+CompileError_InvalidSubstitution,Обнаружена недопустимая подстановка
+CompileError_UnknownFunction,Обнаружена неизвестная функция {0}
+CompileError_UnknownValue,Обнаружено неизвестное значение {0}
+Cancel,Отмена
+
+Environment_Name,Окружение
+Environment_Desc,
+Environment_Background,Фон
+Environment_Lighting,Освещение
+Environment_PostEffect,Пост-эффект
+
+Material_Create_Name,Создать
+Material_Create_Desc,Создать новый файл материала и открыть его в редакторе материалов
+Material_Edit_Name,Править
+Material_Edit_Desc,Редактировать указанный файл материала в редакторе материалов
+Material_GenCache_Name,Создать кеш
+Material_GenCache_Desc,"Создает кеши.
+Если сгенерированный кеш поместить в ту же директорию, что и файл материала, загрузка будет происходить быстрее.
+На некоторых платформах эффекты не могут быть воспроизведены без использования кеша.
+Кеш, который можно использовать как в Windows, так и в Mac, генерируется
+путем создания кеша на Mac после создания кеша в Windows."
+Material_NoneCache,Кеш - Нет
+Material_OldCache,"Кеш - Старый
+Пожалуйста, пересоздайте."
+Material_OldFomatCache,"Кеш - Старый формат
+Пожалуйста, пересоздайте."
+Material_NewFomatCache,"Кеш - Слишком новый формат.
+Пожалуйста, используйте более позднюю версию."
+DefaultFormat,Формат по умолчанию
+ExportDefaultFormat,Экспорт в формат по умолчанию
+DefaultFormatExample,Формат по умолчанию (*.efk)|*.efk
+EfkPkgFormat,Пакет Effekseer
+ExportEfkPkgFormatDescription,Экспортировать как пакет Effekseer
+ImportEfkPkgFormatDescription,Импортировать из пакета Effekseer
+EfkPkgFormatFilter,Пакет Effekseer (*.efkpkg)|*.efkpkg
+Maginification,Масштаб
+GlbFormat,Формат glb
+ExportAsGlbFormat,Экспорт в формат glb
+GlbFormatExample,Формат glb (*.glb)|*.glb
+GlTFFormat,Формат glTF
+ExportAsGlTFFormat,Экспорт в формат glTF
+GlTFFormatExample,Формат glTF (*.glTF)|*.glTF
+MismatchResourceError,Пожалуйста, обновите файлы ресурсов! Вызовите Script/setup.py или используйте cmake и пересоберите ResourceData.
+LayerLimitError,"Дерево узлов ограничено {0} слоями, включая корневой."
+FileBrowser_OpenFile,Открыть
+FileBrowser_DeleteFile,Удалить
+FileBrowser_RenameFile,Переименовать
+FileBrowser_ShowInExplorer,Показать в проводнике
+FileBrowser_ShowInFinder,Показать в Finder
+FileBrowser_ImportFromPackage,Импорт из пакета
+FileBrowser_ExportToPackage,Экспорт в пакет
+
+Easing_Start_Name,Старт
+Easing_Start_Desc,Начальная точка интерполяции
+Easing_End_Name,Конец
+Easing_End_Desc,Значение интерполяции в конце
+Easing_Middle_Name,Середина
+Easing_Middle_Desc,Значение интерполяции в средней точке
+Easing_StartSpeed_Name,Вход
+Easing_StartSpeed_Desc,Начальная скорость интерполяции
+Easing_EndSpeed_Name,Выход
+Easing_EndSpeed_Desc,Скорость интерполяции в конце
+
+Easing_StartSlowly3_Name,Медл. всего
+Easing_StartSlowly2_Name,Медленнее
+Easing_StartSlowly1_Name,Медленно
+Easing_StartNormal_Name,Норм.
+Easing_StartRapidly1_Name,Быстро
+Easing_StartRapidly2_Name,Быстрее
+Easing_StartRapidly3_Name,Быстр. всего
+Easing_EndSlowly3_Name,Медл. всего
+Easing_EndSlowly2_Name,Медленнее
+Easing_EndSlowly1_Name,Медленно
+Easing_EndNormal_Name,Норм.
+Easing_EndRapidly1_Name,Быстро
+Easing_EndRapidly2_Name,Быстрее
+Easing_EndRapidly3_Name,Быстр. всего
+Easing_IsMiddleEnabled_Name,"Средняя точка 
+включена"
+Easing_IsRandomGroupEnabled_Name,"Случайная группа 
+включена"
+Easing_RandomGroup_X_Name, Группа X
+Easing_RandomGroup_Y_Name, Группа Y
+Easing_RandomGroup_Z_Name, Группа Z
+Easing_IsIndividualTypeEnabled_Name,Индивид. тип
+Easing_IndividualType_X_Name, Тип X
+Easing_IndividualType_Y_Name, Тип Y
+Easing_IndividualType_Z_Name, Тип Z
+Easing_Type_Name,Тип
+Easing_LeftRightSpeed_Name,Скорость входа/выхода
+Easing_Linear_Name,Линейная
+Easing_EaseInQuadratic_Name,Квад. вход
+Easing_EaseOutQuadratic_Name,Квад. выход
+Easing_EaseInOutQuadratic_Name,Квад. вх/вых
+Easing_EaseInCubic_Name,Куб. вход
+Easing_EaseOutCubic_Name,Куб. выход
+Easing_EaseInOutCubic_Name,Куб. вх/вых
+Easing_EaseInQuartic_Name,Кварт. вход
+Easing_EaseOutQuartic_Name,Кварт. выход
+Easing_EaseInOutQuartic_Name,Кварт. вх/вых
+Easing_EaseInQuintic_Name,Квинт. вход
+Easing_EaseOutQuintic_Name,Квинт. выход
+Easing_EaseInOutQuintic_Name,Квинт. вх/вых
+Easing_EaseInBack_Name,Пружина вход
+Easing_EaseOutBack_Name,Пружина выход
+Easing_EaseInOutBack_Name,Пружина вх/вых
+Easing_EaseInBounce_Name,Отскок вход
+Easing_EaseOutBounce_Name,Отскок выход
+Easing_EaseInOutBounce_Name,Отскок вх/вых
+
+FCurve_Name,F-Кривая
+FCurve_Desc,F-Кривая
+
+Recording_Scale_Name,Масштаб
+Recording_Scale_Desc,Увеличить область для записи изображений.
+
+PermissionError_File,Не удается прочитать файл {0}. Возможно, у вас нет разрешения на чтение файла.
+PermissionError_File_Mac,Перемещение файлов, связанных с эффектом, в ваш домашний каталог может решить проблему.
+
+ModelReferenceType_File_Name,Файл
+ModelReferenceType_ProdecualModel_Name,Процедурная модель
+ModelReferenceType_ExternalModel_Name,Внешняя модель
+
+TreeDisabled_Message,"Если тумблер включен, отобразятся настройки."
+
+Easing_Parameter_Name,Параметр интерполяции
+
+Error_TooNewFile,"Ошибка версии:
+Файл создан в более новой версии инструмента.
+Пожалуйста, используйте последнюю версию инструмента."
+Error_FailedToSave,Не удалось сохранить. Файл открыт другим приложением или не хватает спецификаций.
+Error_FailedToOpenHelp,Не удалось открыть справку. Пожалуйста, обратитесь к официальному сайту.
+
+ChangeRestartValues_Message,Изменения применятся при следующем запуске
+
+ImportEfkPkgTitle,Импорт пакета Effekseer
+ImportSourcePackage,Исходный пакет
+ImportDestinationDirectory,Целевая папка
+ImportSourceFile,Исходные файлы
+ImportDestinationFile,Целевые файлы
+ImportRemoveDirPath,Удалить имена папок из пути
+ImportAvoidOverwrite,Переименовать во избежание перезаписи
+ImportMergeSameFiles,Переименовать одинаковые файлы, чтобы сделать их общими
+ImportUseRootDir,Использовать корневую папку
+
+SendTrigger_Desc,Отправить триггер на текущий воспроизводимый эффект

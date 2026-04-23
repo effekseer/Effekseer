@@ -1,0 +1,13 @@
+Culling_IsShown_Name,Включить отсечение
+Culling_IsShown_Desc,Отображать ли скрытые поверхности
+Culling_IsShown_Name,Включить отсечение
+Culling_IsShown_Desc,Отображать ли скрытые поверхности
+Culling_Type_Name,Режим отсечения
+
+Culling_Sphere_Radius_Name,Радиус
+Culling_Sphere_Radius_Desc,Радиус сферического отсечения
+Culling_Sphere_Location_Name,Позиция
+Culling_Sphere_Location_Desc,Центральное положение
+
+Culling_ParamaterType_None_Name,Нет
+Culling_ParamaterType_Sphere_Name,Сферический
