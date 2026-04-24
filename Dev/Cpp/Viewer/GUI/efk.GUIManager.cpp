@@ -1330,9 +1330,13 @@ bool GUIManager::ImageButtonOriginal(std::shared_ptr<Effekseer::Tool::Image> use
 		ImGui::RenderNavHighlight(bb, id);
 		ImGui::RenderFrame(bb.Min, bb.Max, col, true, style.FrameRounding);
 
-		const ImVec2 uv0(0.08f, 0.15f);
-		const ImVec2 uv1(0.92f, 0.96f);
-		window->DrawList->AddImage(ToImTextureID(user_texture_id), buttonMin, buttonMax, uv0, uv1, ImGui::GetColorU32(ImVec4(1, 1, 1, 1)));
+		const ImVec2 imageSize(user_texture_id->GetWidth(), user_texture_id->GetHeight());
+		const ImVec2 imagePadding((x - imageSize.x) * 0.5f, (y - imageSize.y) * 0.5f);
+		const ImVec2 imageMin(buttonMin.x + imagePadding.x, buttonMin.y + imagePadding.y);
+		const ImVec2 imageMax(buttonMax.x - imagePadding.x, buttonMax.y - imagePadding.y);
+		const ImVec2 uv0(0.08f, 0.08f);
+		const ImVec2 uv1(0.92f, 0.92f);
+		window->DrawList->AddImage(ToImTextureID(user_texture_id), imageMin, imageMax, uv0, uv1, ImGui::GetColorU32(ImVec4(1, 1, 1, 1)));
 	}
 	ImGui::PopID();
 	return result;

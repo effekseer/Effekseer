@@ -78,7 +78,7 @@ namespace Effekseer.GUI.Menu
 		private void AddWindowButtons(Vec2 windowSize)
 		{
 			var size = Manager.NativeManager.GetWindowSize();
-			float buttonY = size.Y - 1;
+			float buttonY = size.Y;
 			float buttonX = buttonY * 44 / 32;
 
 			void ShowButton(int offset, Image icon, Action onClick)
