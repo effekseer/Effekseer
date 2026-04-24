@@ -1155,9 +1155,11 @@ float GUIManager::GetDpiScale() const
 
 void GUIManager::SetFontSizeBase(float size)
 {
+	const float fontSize = size * GetDpiScale();
+
 	auto& style = ImGui::GetStyle();
-	style.FontSizeBase = size;
-	style._NextFrameFontSizeBase = size;
+	style.FontSizeBase = fontSize;
+	style._NextFrameFontSizeBase = fontSize;
 }
 
 int GUIManager::GetItemID()
