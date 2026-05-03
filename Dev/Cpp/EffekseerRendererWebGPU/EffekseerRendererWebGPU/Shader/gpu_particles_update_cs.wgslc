@@ -1,0 +1,832 @@
+wgslcodediagnostic(off, derivative_uniformity);
+
+struct EmitterData_1_1 {
+  FlagBits : u32,
+  Seed : u32,
+  ParticleHead : u32,
+  ParticleSize : u32,
+  TrailHead : u32,
+  TrailSize : u32,
+  TrailPhase : u32,
+  NextEmitCount : u32,
+  TotalEmitCount : u32,
+  EmitPointCount : u32,
+  TimeCount : f32,
+  TimeStopped : f32,
+  Reserved0 : u32,
+  Reserved1 : u32,
+  DeltaTime : f32,
+  Color : u32,
+  Transform : mat3x4<f32>,
+}
+
+struct cb2_1_1 {
+  _620_emitter : EmitterData_1_1,
+}
+
+@group(0) @binding(2) var<uniform> v_1 : cb2_1_1;
+
+struct Particles {
+  m_1 : array<u32>,
+}
+
+@group(2) @binding(0) var<storage, read_write> Particles_1 : Particles;
+
+struct ParameterData {
+  EmitCount : i32,
+  EmitPerFrame : i32,
+  EmitOffset : f32,
+  Padding0 : u32,
+  LifeTime : vec2<f32>,
+  EmitShapeType : u32,
+  EmitRotationApplied : u32,
+  EmitShapeData : array<vec4<f32>, 2u>,
+  Direction : vec3<f32>,
+  Spread : f32,
+  InitialSpeed : vec2<f32>,
+  Damping : vec2<f32>,
+  AngularOffset : array<vec4<f32>, 2u>,
+  AngularVelocity : array<vec4<f32>, 2u>,
+  ScaleData1 : array<vec4<f32>, 2u>,
+  ScaleData2 : array<vec4<f32>, 2u>,
+  ScaleEasing : vec3<f32>,
+  ScaleFlags : u32,
+  Gravity : vec3<f32>,
+  Padding2 : u32,
+  VortexCenter : vec3<f32>,
+  VortexRotation : f32,
+  VortexAxis : vec3<f32>,
+  VortexAttraction : f32,
+  TurbulencePower : f32,
+  TurbulenceSeed : u32,
+  TurbulenceScale : f32,
+  TurbulenceOctave : f32,
+  RenderState : u32,
+  ShapeType : u32,
+  ShapeData : u32,
+  ShapeSize : f32,
+  Emissive : f32,
+  FadeIn : f32,
+  FadeOut : f32,
+  MaterialType : u32,
+  ColorData : vec4<u32>,
+  ColorEasing : vec3<f32>,
+  ColorFlags : u32,
+}
+
+struct cb1 {
+  _687_paramData : ParameterData,
+}
+
+@group(0) @binding(1) var<uniform> v_2 : cb1;
+
+@group(2) @binding(1) var<storage, read_write> Trails : Particles;
+
+@group(1) @binding(2) var NoiseTex : texture_3d<f32>;
+
+@group(2) @binding(2) var NoiseSamp : sampler;
+
+@group(1) @binding(4) var GradientTex : texture_2d<f32>;
+
+@group(2) @binding(4) var GradientSamp : sampler;
+
+var<private> gl_GlobalInvocationID : vec3<u32>;
+
+struct ComputeConstants {
+  CoordinateReversed : u32,
+  Reserved0 : f32,
+  Reserved1 : f32,
+  Reserved2 : f32,
+}
+
+struct cb0 {
+  _1224_constants : ComputeConstants,
+}
+
+@group(0) @binding(0) var<uniform> v_3 : cb0;
+
+@group(1) @binding(3) var FieldTex : texture_3d<f32>;
+
+@group(2) @binding(3) var FieldSamp : sampler;
+
+struct SPIRV_Cross_Input {
+  gl_GlobalInvocationID : vec3<u32>,
+}
+
+@compute @workgroup_size(256u, 1u, 1u)
+fn main(@builtin(global_invocation_id) v_4 : vec3<u32>) {
+  var stage_input : SPIRV_Cross_Input;
+  var param : SPIRV_Cross_Input;
+  stage_input.gl_GlobalInvocationID = v_4;
+  param = stage_input;
+  v_5(&(param));
+}
+
+fn v_6(value : ptr<function, vec2<f32>>) -> u32 {
+  var Packed : vec2<u32>;
+  Packed = vec2<u32>(pack2x16float(vec2<f32>((*(value)).x, 0.0f)), pack2x16float(vec2<f32>((*(value)).y, 0.0f)));
+  return (Packed.x | (Packed.y << bitcast<u32>(16i)));
+}
+
+fn v_7(value : ptr<function, u32>) -> vec2<f32> {
+  return vec2<f32>(unpack2x16float(vec2<u32>((*(value) & 65535u), (*(value) >> bitcast<u32>(16i))).x).x, unpack2x16float(vec2<u32>((*(value) & 65535u), (*(value) >> bitcast<u32>(16i))).y).x);
+}
+
+fn v_8(seed : ptr<function, u32>) -> u32 {
+  var state : u32;
+  var word : u32;
+  state = *(seed);
+  *(seed) = ((*(seed) * 747796405u) + 2891336453u);
+  word = (((state >> ((state >> 28u) + 4u)) ^ state) * 277803737u);
+  return ((word >> 22u) ^ word);
+}
+
+fn v_9(seed : ptr<function, u32>) -> f32 {
+  var param : u32;
+  var _461 : u32;
+  var param_43 : u32;
+  param = *(seed);
+  param_43 = param;
+  let v_10 = v_8(&(param_43));
+  param = param_43;
+  _461 = v_10;
+  *(seed) = param;
+  return (f32(_461) / 4294967296.0f);
+}
+
+fn v_11(seed : ptr<function, u32>, maxmin : ptr<function, vec2<f32>>) -> f32 {
+  var param : u32;
+  var _474 : f32;
+  var param_44 : u32;
+  param = *(seed);
+  param_44 = param;
+  let v_12 = v_9(&(param_44));
+  param = param_44;
+  _474 = v_12;
+  *(seed) = param;
+  return mix((*(maxmin)).y, (*(maxmin)).x, _474);
+}
+
+fn v_13(seed : ptr<function, u32>, maxmin : ptr<function, array<vec4<f32>, 2u>>) -> vec4<f32> {
+  var param : u32;
+  var _485 : f32;
+  var param_45 : u32;
+  param = *(seed);
+  param_45 = param;
+  let v_14 = v_9(&(param_45));
+  param = param_45;
+  _485 = v_14;
+  *(seed) = param;
+  let v_15 = (*(maxmin))[1i];
+  let v_16 = (*(maxmin))[0i];
+  let v_17 = _485;
+  return mix(v_15, v_16, vec4<f32>(v_17, v_17, v_17, v_17));
+}
+
+fn v_18(bits : ptr<function, u32>) -> vec3<f32> {
+  var v : vec3<f32>;
+  v = vec3<f32>((vec3<u32>(*(bits), (*(bits) >> 10u), (*(bits) >> 20u)) & vec3<u32>(1023u)));
+  return (((v / vec3<f32>(1023.0f)) * 2.0f) - vec3<f32>(1.0f));
+}
+
+fn v_19(bits : ptr<function, vec2<u32>>) -> vec4<f32> {
+  var param : u32;
+  var param_46 : u32;
+  var param_47 : u32;
+  var param_48 : u32;
+  param = vec4<u32>((*(bits)).x, ((*(bits)).x >> 16u), (*(bits)).y, ((*(bits)).y >> 16u)).x;
+  let v_20 = v_7(&(param)).x;
+  param_46 = vec4<u32>((*(bits)).x, ((*(bits)).x >> 16u), (*(bits)).y, ((*(bits)).y >> 16u)).y;
+  let v_21 = v_7(&(param_46)).x;
+  param_47 = vec4<u32>((*(bits)).x, ((*(bits)).x >> 16u), (*(bits)).y, ((*(bits)).y >> 16u)).z;
+  let v_22 = v_7(&(param_47)).x;
+  param_48 = vec4<u32>((*(bits)).x, ((*(bits)).x >> 16u), (*(bits)).y, ((*(bits)).y >> 16u)).w;
+  return vec4<f32>(v_20, v_21, v_22, v_7(&(param_48)).x);
+}
+
+fn v_23(v : ptr<function, vec3<f32>>) -> u32 {
+  var i : vec3<u32>;
+  i = vec3<u32>((((*(v) + vec3<f32>(1.0f)) * 0.5f) * 1023.0f));
+  return ((i.x | (i.y << 10u)) | (i.z << 20u));
+}
+
+fn v_24(rotation : ptr<function, f32>, attraction : ptr<function, f32>, center : ptr<function, vec3<f32>>, axis : ptr<function, vec3<f32>>, position : ptr<function, vec3<f32>>, transform : ptr<function, mat4x3<f32>>) -> vec3<f32> {
+  var localPos : vec3<f32>;
+  var axisToPos : vec3<f32>;
+  var _distance : f32;
+  var radial : vec3<f32>;
+  var tangent : vec3<f32>;
+  *(center) = ((*(transform))[3i] + *(center));
+  let v_25 = *(transform);
+  let v_26 = *(axis);
+  *(axis) = normalize((v_25 * vec4<f32>(v_26.x, v_26.y, v_26.z, 0.0f)));
+  localPos = (*(position) - *(center));
+  axisToPos = (localPos - (*(axis) * dot(*(axis), localPos)));
+  _distance = length(axisToPos);
+  if ((_distance < 0.00009999999747378752f)) {
+    return vec3<f32>();
+  }
+  radial = normalize(axisToPos);
+  tangent = cross(*(axis), radial);
+  return ((tangent * *(rotation)) - (radial * *(attraction)));
+}
+
+fn v_27(t : ptr<function, f32>, params : ptr<function, vec3<f32>>) -> f32 {
+  return ((((((*(params)).x * *(t)) * *(t)) * *(t)) + (((*(params)).y * *(t)) * *(t))) + ((*(params)).z * *(t)));
+}
+
+fn v_28(color32 : ptr<function, u32>) -> vec4<f32> {
+  return (vec4<f32>(f32((*(color32) & 255u)), f32(((*(color32) >> 8u) & 255u)), f32(((*(color32) >> 16u) & 255u)), f32(((*(color32) >> 24u) & 255u))) / vec4<f32>(255.0f));
+}
+
+fn v_29(seed : ptr<function, u32>, maxmin : ptr<function, vec2<u32>>) -> vec4<f32> {
+  var param : u32;
+  var param_1 : u32;
+  var param_2 : u32;
+  var _501 : f32;
+  var param_49 : u32;
+  var param_50 : u32;
+  var param_51 : u32;
+  param = (*(maxmin)).y;
+  param_1 = (*(maxmin)).x;
+  param_2 = *(seed);
+  param_49 = param_2;
+  let v_30 = v_9(&(param_49));
+  param_2 = param_49;
+  _501 = v_30;
+  *(seed) = param_2;
+  param_50 = param;
+  let v_31 = v_28(&(param_50));
+  param_51 = param_1;
+  let v_32 = v_28(&(param_51));
+  let v_33 = _501;
+  return mix(v_31, v_32, vec4<f32>(v_33, v_33, v_33, v_33));
+}
+
+fn v_34(c : ptr<function, vec3<f32>>) -> vec3<f32> {
+  var k : vec4<f32>;
+  var p : vec3<f32>;
+  k = vec4<f32>(1.0f, 0.6666666865348815918f, 0.3333333432674407959f, 3.0f);
+  p = abs(((fract(((*(c)).xxx + k.xyz)) * 6.0f) - k.www));
+  let v_35 = k.xxx;
+  let v_36 = clamp((p - k.xxx), vec3<f32>(), vec3<f32>(1.0f));
+  let v_37 = (*(c)).y;
+  return (mix(v_35, v_36, vec3<f32>(v_37, v_37, v_37)) * (*(c)).z);
+}
+
+fn v_38(translation : ptr<function, vec3<f32>>, rotation : ptr<function, vec3<f32>>, scale : ptr<function, vec3<f32>>) -> mat4x3<f32> {
+  var s : vec3<f32>;
+  var c : vec3<f32>;
+  var m : mat4x3<f32>;
+  s = sin(*(rotation));
+  c = cos(*(rotation));
+  m[0i].x = ((*(scale)).x * ((c.z * c.y) + ((s.z * s.x) * s.y)));
+  m[1i].x = ((*(scale)).y * (s.z * c.x));
+  m[2i].x = ((*(scale)).z * ((c.z * -(s.y)) + ((s.z * s.x) * c.y)));
+  m[3i].x = (*(translation)).x;
+  m[0i].y = ((*(scale)).x * ((-(s.z) * c.y) + ((c.z * s.x) * s.y)));
+  m[1i].y = ((*(scale)).y * (c.z * c.x));
+  m[2i].y = ((*(scale)).z * ((-(s.z) * -(s.y)) + ((c.z * s.x) * c.y)));
+  m[3i].y = (*(translation)).y;
+  m[0i].z = ((*(scale)).x * (c.x * s.y));
+  m[1i].z = ((*(scale)).y * -(s.x));
+  m[2i].z = ((*(scale)).z * (c.x * c.y));
+  m[3i].z = (*(translation)).z;
+  return m;
+}
+
+fn v_39(v : ptr<function, vec4<f32>>) -> vec2<u32> {
+  var v16 : vec4<u32>;
+  var param : vec2<f32>;
+  var param_52 : vec2<f32>;
+  var param_53 : vec2<f32>;
+  var param_54 : vec2<f32>;
+  param = vec2<f32>((*(v)).x, 0.0f);
+  let v_40 = v_6(&(param));
+  param_52 = vec2<f32>((*(v)).y, 0.0f);
+  let v_41 = v_6(&(param_52));
+  param_53 = vec2<f32>((*(v)).z, 0.0f);
+  let v_42 = v_6(&(param_53));
+  param_54 = vec2<f32>((*(v)).w, 0.0f);
+  v16 = vec4<u32>(v_40, v_41, v_42, v_6(&(param_54)));
+  return vec2<u32>((v16.x | (v16.y << 16u)), (v16.z | (v16.w << 16u)));
+}
+
+fn v_43(color : ptr<function, vec4<f32>>) -> u32 {
+  var colori : vec4<u32>;
+  colori = vec4<u32>(clamp((*(color) * 255.0f), vec4<f32>(), vec4<f32>(255.0f)));
+  return (((colori.x | (colori.y << 8u)) | (colori.z << 16u)) | (colori.w << 24u));
+}
+
+struct ParticleData {
+  FlagBits : u32,
+  Seed : u32,
+  LifeAge : f32,
+  InheritColor : u32,
+  Color : u32,
+  Direction : u32,
+  Velocity : vec2<u32>,
+  Transform : mat4x3<f32>,
+}
+
+struct TrailData {
+  Position : vec3<f32>,
+  Direction : u32,
+}
+
+fn v_44(dtid : ptr<function, vec3<u32>>) {
+  var particleID : u32;
+  var _638 : ParticleData;
+  var byteAddrTemp : i32;
+  var particle : ParticleData;
+  var updateCount : u32;
+  var deltaTime : f32;
+  var seed : u32;
+  var param : u32;
+  var param_1 : vec2<f32>;
+  var _694 : f32;
+  var param_55 : u32;
+  var param_56 : vec2<f32>;
+  var lifeTime : f32;
+  var lifeRatio : f32;
+  var param_2 : u32;
+  var param_3 : vec2<f32>;
+  var _708 : f32;
+  var param_57 : u32;
+  var param_58 : vec2<f32>;
+  var damping : f32;
+  var param_4 : u32;
+  var param_5 : array<vec4<f32>, 2u>;
+  var _724 : vec4<f32>;
+  var param_59 : u32;
+  var param_60 : array<vec4<f32>, 2u>;
+  var angularOffset : vec4<f32>;
+  var param_6 : u32;
+  var param_7 : array<vec4<f32>, 2u>;
+  var _738 : vec4<f32>;
+  var param_61 : u32;
+  var param_62 : array<vec4<f32>, 2u>;
+  var angularVelocity : vec4<f32>;
+  var position : vec3<f32>;
+  var lastPosition : vec3<f32>;
+  var param_8 : u32;
+  var direction : vec3<f32>;
+  var param_63 : u32;
+  var param_9 : vec2<u32>;
+  var velocity : vec3<f32>;
+  var param_64 : vec2<u32>;
+  var trailID : u32;
+  var trail : TrailData;
+  var param_10 : vec3<f32>;
+  var param_65 : vec3<f32>;
+  var byteAddrTemp_1 : i32;
+  var byteAddrTemp_2 : i32;
+  var speed : f32;
+  var newSpeed : f32;
+  var param_11 : f32;
+  var param_12 : f32;
+  var param_13 : vec3<f32>;
+  var param_14 : vec3<f32>;
+  var param_15 : vec3<f32>;
+  var param_16 : mat4x3<f32>;
+  var _888 : vec3<f32>;
+  var param_66 : f32;
+  var param_67 : f32;
+  var param_68 : vec3<f32>;
+  var param_69 : vec3<f32>;
+  var param_70 : vec3<f32>;
+  var param_71 : mat4x3<f32>;
+  var vfTexel : vec4<f32>;
+  var diff : vec3<f32>;
+  var rotation : vec3<f32>;
+  var scale : vec4<f32>;
+  var scaleMode : u32;
+  var param_17 : u32;
+  var param_18 : array<vec4<f32>, 2u>;
+  var _971 : vec4<f32>;
+  var param_72 : u32;
+  var param_73 : array<vec4<f32>, 2u>;
+  var param_19 : u32;
+  var param_20 : array<vec4<f32>, 2u>;
+  var _988 : vec4<f32>;
+  var param_74 : u32;
+  var param_75 : array<vec4<f32>, 2u>;
+  var scale1 : vec4<f32>;
+  var param_21 : u32;
+  var param_22 : array<vec4<f32>, 2u>;
+  var _1002 : vec4<f32>;
+  var param_76 : u32;
+  var param_77 : array<vec4<f32>, 2u>;
+  var scale2 : vec4<f32>;
+  var param_23 : f32;
+  var param_24 : vec3<f32>;
+  var param_78 : f32;
+  var param_79 : vec3<f32>;
+  var colorMode : u32;
+  var color : vec4<f32>;
+  var param_25 : u32;
+  var param_80 : u32;
+  var param_26 : u32;
+  var param_27 : vec2<u32>;
+  var _1041 : vec4<f32>;
+  var param_81 : u32;
+  var param_82 : vec2<u32>;
+  var param_28 : u32;
+  var param_29 : vec2<u32>;
+  var _1055 : vec4<f32>;
+  var param_83 : u32;
+  var param_84 : vec2<u32>;
+  var colorStart : vec4<f32>;
+  var param_30 : u32;
+  var param_31 : vec2<u32>;
+  var _1064 : vec4<f32>;
+  var param_85 : u32;
+  var param_86 : vec2<u32>;
+  var colorEnd : vec4<f32>;
+  var param_32 : f32;
+  var param_33 : vec3<f32>;
+  var param_87 : f32;
+  var param_88 : vec3<f32>;
+  var param_34 : vec3<f32>;
+  var _1106 : vec3<f32>;
+  var param_89 : vec3<f32>;
+  var colorInherit : u32;
+  var param_35 : u32;
+  var param_90 : u32;
+  var param_36 : u32;
+  var param_91 : u32;
+  var param_37 : vec3<f32>;
+  var param_38 : vec3<f32>;
+  var param_39 : vec3<f32>;
+  var param_92 : vec3<f32>;
+  var param_93 : vec3<f32>;
+  var param_94 : vec3<f32>;
+  var param_40 : vec4<f32>;
+  var param_95 : vec4<f32>;
+  var param_41 : vec3<f32>;
+  var param_96 : vec3<f32>;
+  var param_42 : vec4<f32>;
+  var param_97 : vec4<f32>;
+  var byteAddrTemp_3 : i32;
+  var byteAddrTemp_4 : i32;
+  var byteAddrTemp_5 : i32;
+  var byteAddrTemp_6 : i32;
+  var byteAddrTemp_7 : i32;
+  var byteAddrTemp_8 : i32;
+  var byteAddrTemp_9 : i32;
+  var byteAddrTemp_10 : i32;
+  var byteAddrTemp_11 : i32;
+  var byteAddrTemp_12 : i32;
+  var byteAddrTemp_13 : i32;
+  var byteAddrTemp_14 : i32;
+  var byteAddrTemp_15 : i32;
+  var byteAddrTemp_16 : i32;
+  var byteAddrTemp_17 : i32;
+  var byteAddrTemp_18 : i32;
+  var byteAddrTemp_19 : i32;
+  var byteAddrTemp_20 : i32;
+  var byteAddrTemp_21 : i32;
+  particleID = (v_1._620_emitter.ParticleHead + (*(dtid)).x);
+  _638.FlagBits = Particles_1.m_1[bitcast<i32>((((particleID * 80u) + 0u) >> bitcast<u32>(2i)))];
+  _638.Seed = Particles_1.m_1[bitcast<i32>((((particleID * 80u) + 4u) >> bitcast<u32>(2i)))];
+  _638.LifeAge = bitcast<f32>(Particles_1.m_1[bitcast<i32>((((particleID * 80u) + 8u) >> bitcast<u32>(2i)))]);
+  _638.InheritColor = Particles_1.m_1[bitcast<i32>((((particleID * 80u) + 12u) >> bitcast<u32>(2i)))];
+  _638.Color = Particles_1.m_1[bitcast<i32>((((particleID * 80u) + 16u) >> bitcast<u32>(2i)))];
+  _638.Direction = Particles_1.m_1[bitcast<i32>((((particleID * 80u) + 20u) >> bitcast<u32>(2i)))];
+  byteAddrTemp = bitcast<i32>((((particleID * 80u) + 24u) >> bitcast<u32>(2i)));
+  _638.Velocity = vec2<u32>(Particles_1.m_1[byteAddrTemp], Particles_1.m_1[(byteAddrTemp + 1i)]);
+  let v_45 = bitcast<vec3<f32>>(vec3<u32>(Particles_1.m_1[bitcast<i32>((((particleID * 80u) + 32u) >> bitcast<u32>(2i)))], Particles_1.m_1[bitcast<i32>((((particleID * 80u) + 48u) >> bitcast<u32>(2i)))], Particles_1.m_1[bitcast<i32>((((particleID * 80u) + 64u) >> bitcast<u32>(2i)))]));
+  let v_46 = bitcast<vec3<f32>>(vec3<u32>(Particles_1.m_1[bitcast<i32>((((particleID * 80u) + 36u) >> bitcast<u32>(2i)))], Particles_1.m_1[bitcast<i32>((((particleID * 80u) + 52u) >> bitcast<u32>(2i)))], Particles_1.m_1[bitcast<i32>((((particleID * 80u) + 68u) >> bitcast<u32>(2i)))]));
+  let v_47 = bitcast<vec3<f32>>(vec3<u32>(Particles_1.m_1[bitcast<i32>((((particleID * 80u) + 40u) >> bitcast<u32>(2i)))], Particles_1.m_1[bitcast<i32>((((particleID * 80u) + 56u) >> bitcast<u32>(2i)))], Particles_1.m_1[bitcast<i32>((((particleID * 80u) + 72u) >> bitcast<u32>(2i)))]));
+  let v_48 = bitcast<vec3<f32>>(vec3<u32>(Particles_1.m_1[bitcast<i32>((((particleID * 80u) + 44u) >> bitcast<u32>(2i)))], Particles_1.m_1[bitcast<i32>((((particleID * 80u) + 60u) >> bitcast<u32>(2i)))], Particles_1.m_1[bitcast<i32>((((particleID * 80u) + 76u) >> bitcast<u32>(2i)))]));
+  _638.Transform = mat4x3<f32>(vec3<f32>(v_45.x, v_45.y, v_45.z), vec3<f32>(v_46.x, v_46.y, v_46.z), vec3<f32>(v_47.x, v_47.y, v_47.z), vec3<f32>(v_48.x, v_48.y, v_48.z));
+  particle.FlagBits = _638.FlagBits;
+  particle.Seed = _638.Seed;
+  particle.LifeAge = _638.LifeAge;
+  particle.InheritColor = _638.InheritColor;
+  particle.Color = _638.Color;
+  particle.Direction = _638.Direction;
+  particle.Velocity = _638.Velocity;
+  particle.Transform = _638.Transform;
+  if (((particle.FlagBits & 1u) != 0u)) {
+    updateCount = ((particle.FlagBits >> 1u) & 255u);
+    deltaTime = v_1._620_emitter.DeltaTime;
+    seed = particle.Seed;
+    param = seed;
+    param_1 = v_2._687_paramData.LifeTime;
+    param_55 = param;
+    param_56 = param_1;
+    let v_49 = v_11(&(param_55), &(param_56));
+    param = param_55;
+    _694 = v_49;
+    seed = param;
+    lifeTime = _694;
+    lifeRatio = (particle.LifeAge / lifeTime);
+    param_2 = seed;
+    param_3 = v_2._687_paramData.Damping;
+    param_57 = param_2;
+    param_58 = param_3;
+    let v_50 = v_11(&(param_57), &(param_58));
+    param_2 = param_57;
+    _708 = v_50;
+    seed = param_2;
+    damping = (_708 * 0.00999999977648258209f);
+    param_4 = seed;
+    param_5[0i] = v_2._687_paramData.AngularOffset[0i];
+    param_5[1i] = v_2._687_paramData.AngularOffset[1i];
+    param_59 = param_4;
+    param_60 = param_5;
+    let v_51 = v_13(&(param_59), &(param_60));
+    param_4 = param_59;
+    _724 = v_51;
+    seed = param_4;
+    angularOffset = _724;
+    param_6 = seed;
+    param_7[0i] = v_2._687_paramData.AngularVelocity[0i];
+    param_7[1i] = v_2._687_paramData.AngularVelocity[1i];
+    param_61 = param_6;
+    param_62 = param_7;
+    let v_52 = v_13(&(param_61), &(param_62));
+    param_6 = param_61;
+    _738 = v_52;
+    seed = param_6;
+    angularVelocity = _738;
+    position = particle.Transform[3i];
+    lastPosition = position;
+    param_8 = particle.Direction;
+    param_63 = param_8;
+    direction = normalize(v_18(&(param_63)));
+    param_9 = particle.Velocity;
+    param_64 = param_9;
+    velocity = v_19(&(param_64)).xyz;
+    if ((v_1._620_emitter.TrailSize > 0u)) {
+      trailID = ((v_1._620_emitter.TrailHead + ((*(dtid)).x * v_2._687_paramData.ShapeData)) + v_1._620_emitter.TrailPhase);
+      trail.Position = position;
+      param_10 = direction;
+      param_65 = param_10;
+      trail.Direction = v_23(&(param_65));
+      byteAddrTemp_1 = bitcast<i32>((((trailID * 16u) + 0u) >> bitcast<u32>(2i)));
+      let v_53 = byteAddrTemp_1;
+      Trails.m_1[v_53] = bitcast<vec3<u32>>(trail.Position).x;
+      let v_54 = (byteAddrTemp_1 + 1i);
+      Trails.m_1[v_54] = bitcast<vec3<u32>>(trail.Position).y;
+      let v_55 = (byteAddrTemp_1 + 2i);
+      Trails.m_1[v_55] = bitcast<vec3<u32>>(trail.Position).z;
+      byteAddrTemp_2 = bitcast<i32>((((trailID * 16u) + 12u) >> bitcast<u32>(2i)));
+      let v_56 = byteAddrTemp_2;
+      Trails.m_1[v_56] = trail.Direction;
+    }
+    particle.FlagBits = (particle.FlagBits & 4294966785u);
+    let v_57 = (clamp((updateCount + 1u), 0u, 255u) << 1u);
+    particle.FlagBits = (particle.FlagBits | v_57);
+    let v_58 = deltaTime;
+    particle.LifeAge = (particle.LifeAge + v_58);
+    if ((particle.LifeAge >= lifeTime)) {
+      particle.FlagBits = (particle.FlagBits & 4294967294u);
+    }
+    let v_59 = (v_2._687_paramData.Gravity * deltaTime);
+    velocity = (velocity + v_59);
+    speed = length(velocity);
+    if ((speed > 0.0f)) {
+      newSpeed = max(0.0f, (speed - (damping * deltaTime)));
+      let v_60 = (newSpeed / speed);
+      velocity = (velocity * v_60);
+    }
+    let v_61 = (velocity * deltaTime);
+    position = (position + v_61);
+    if ((!((v_2._687_paramData.VortexRotation == 0.0f)) | !((v_2._687_paramData.VortexAttraction == 0.0f)))) {
+      param_11 = v_2._687_paramData.VortexRotation;
+      param_12 = v_2._687_paramData.VortexAttraction;
+      param_13 = v_2._687_paramData.VortexCenter;
+      param_14 = v_2._687_paramData.VortexAxis;
+      param_15 = position;
+      param_16 = transpose(v_1._620_emitter.Transform);
+      param_66 = param_11;
+      param_67 = param_12;
+      param_68 = param_13;
+      param_69 = param_14;
+      param_70 = param_15;
+      param_71 = param_16;
+      let v_62 = v_24(&(param_66), &(param_67), &(param_68), &(param_69), &(param_70), &(param_71));
+      param_13 = param_68;
+      param_14 = param_69;
+      _888 = v_62;
+      let v_63 = (_888 * deltaTime);
+      position = (position + v_63);
+    }
+    if (!((v_2._687_paramData.TurbulencePower == 0.0f))) {
+      vfTexel = textureSampleLevel(NoiseTex, NoiseSamp, ((position * v_2._687_paramData.TurbulenceScale) + vec3<f32>(0.5f)), 0.0f);
+      let v_64 = ((((vfTexel.xyz * 2.0f) - vec3<f32>(1.0f)) * v_2._687_paramData.TurbulencePower) * deltaTime);
+      position = (position + v_64);
+    }
+    diff = (position - lastPosition);
+    if ((length(diff) > 0.00009999999747378752f)) {
+      direction = normalize(diff);
+    }
+    rotation = (angularOffset.xyz + (angularVelocity.xyz * particle.LifeAge));
+    scale = vec4<f32>(1.0f);
+    scaleMode = (v_2._687_paramData.ScaleFlags & 7u);
+    if ((scaleMode == 0u)) {
+      param_17 = seed;
+      param_18[0i] = v_2._687_paramData.ScaleData1[0i];
+      param_18[1i] = v_2._687_paramData.ScaleData1[1i];
+      param_72 = param_17;
+      param_73 = param_18;
+      let v_65 = v_13(&(param_72), &(param_73));
+      param_17 = param_72;
+      _971 = v_65;
+      seed = param_17;
+      scale = _971;
+    } else if ((scaleMode == 2u)) {
+      param_19 = seed;
+      param_20[0i] = v_2._687_paramData.ScaleData1[0i];
+      param_20[1i] = v_2._687_paramData.ScaleData1[1i];
+      param_74 = param_19;
+      param_75 = param_20;
+      let v_66 = v_13(&(param_74), &(param_75));
+      param_19 = param_74;
+      _988 = v_66;
+      seed = param_19;
+      scale1 = _988;
+      param_21 = seed;
+      param_22[0i] = v_2._687_paramData.ScaleData2[0i];
+      param_22[1i] = v_2._687_paramData.ScaleData2[1i];
+      param_76 = param_21;
+      param_77 = param_22;
+      let v_67 = v_13(&(param_76), &(param_77));
+      param_21 = param_76;
+      _1002 = v_67;
+      seed = param_21;
+      scale2 = _1002;
+      param_23 = lifeRatio;
+      param_24 = v_2._687_paramData.ScaleEasing;
+      let v_68 = scale1;
+      let v_69 = scale2;
+      param_78 = param_23;
+      param_79 = param_24;
+      let v_70 = v_27(&(param_78), &(param_79));
+      scale = mix(v_68, v_69, vec4<f32>(v_70, v_70, v_70, v_70));
+    }
+    colorMode = (v_2._687_paramData.ColorFlags & 7u);
+    color = vec4<f32>(1.0f);
+    if ((colorMode == 0u)) {
+      param_25 = v_2._687_paramData.ColorData.x;
+      param_80 = param_25;
+      color = v_28(&(param_80));
+    } else if ((colorMode == 1u)) {
+      param_26 = seed;
+      param_27 = v_2._687_paramData.ColorData.xy;
+      param_81 = param_26;
+      param_82 = param_27;
+      let v_71 = v_29(&(param_81), &(param_82));
+      param_26 = param_81;
+      _1041 = v_71;
+      seed = param_26;
+      color = _1041;
+    } else if ((colorMode == 2u)) {
+      param_28 = seed;
+      param_29 = v_2._687_paramData.ColorData.xy;
+      param_83 = param_28;
+      param_84 = param_29;
+      let v_72 = v_29(&(param_83), &(param_84));
+      param_28 = param_83;
+      _1055 = v_72;
+      seed = param_28;
+      colorStart = _1055;
+      param_30 = seed;
+      param_31 = v_2._687_paramData.ColorData.zw;
+      param_85 = param_30;
+      param_86 = param_31;
+      let v_73 = v_29(&(param_85), &(param_86));
+      param_30 = param_85;
+      _1064 = v_73;
+      seed = param_30;
+      colorEnd = _1064;
+      param_32 = lifeRatio;
+      param_33 = v_2._687_paramData.ColorEasing;
+      let v_74 = colorStart;
+      let v_75 = colorEnd;
+      param_87 = param_32;
+      param_88 = param_33;
+      let v_76 = v_27(&(param_87), &(param_88));
+      color = mix(v_74, v_75, vec4<f32>(v_76, v_76, v_76, v_76));
+    } else if (((colorMode == 3u) | (colorMode == 4u))) {
+      color = textureSampleLevel(GradientTex, GradientSamp, vec2<f32>(lifeRatio, 0.0f), 0.0f);
+    }
+    if ((((v_2._687_paramData.ColorFlags >> 5u) & 1u) != 0u)) {
+      param_34 = color.xyz;
+      param_89 = param_34;
+      _1106 = v_34(&(param_89));
+      color.x = _1106.x;
+      color.y = _1106.y;
+      color.z = _1106.z;
+    }
+    colorInherit = ((v_2._687_paramData.ColorFlags >> 3u) & 3u);
+    if (((colorInherit == 2u) | (colorInherit == 3u))) {
+      param_35 = v_1._620_emitter.Color;
+      param_90 = param_35;
+      let v_77 = v_28(&(param_90));
+      color = (color * v_77);
+    } else {
+      param_36 = particle.InheritColor;
+      param_91 = param_36;
+      let v_78 = v_28(&(param_91));
+      color = (color * v_78);
+    }
+    let v_79 = clamp((particle.LifeAge / v_2._687_paramData.FadeIn), 0.0f, 1.0f);
+    color.w = (color.w * v_79);
+    let v_80 = clamp(((lifeTime - particle.LifeAge) / v_2._687_paramData.FadeOut), 0.0f, 1.0f);
+    color.w = (color.w * v_80);
+    param_37 = position;
+    param_38 = rotation;
+    param_39 = ((scale.xyz * scale.w) * v_2._687_paramData.ShapeSize);
+    param_92 = param_37;
+    param_93 = param_38;
+    param_94 = param_39;
+    particle.Transform = v_38(&(param_92), &(param_93), &(param_94));
+    let v_81 = velocity;
+    param_40 = vec4<f32>(v_81.x, v_81.y, v_81.z, 0.0f);
+    param_95 = param_40;
+    particle.Velocity = v_39(&(param_95));
+    param_41 = direction;
+    param_96 = param_41;
+    particle.Direction = v_23(&(param_96));
+    param_42 = color;
+    param_97 = param_42;
+    particle.Color = v_43(&(param_97));
+    byteAddrTemp_3 = bitcast<i32>((((particleID * 80u) + 0u) >> bitcast<u32>(2i)));
+    let v_82 = byteAddrTemp_3;
+    Particles_1.m_1[v_82] = particle.FlagBits;
+    byteAddrTemp_4 = bitcast<i32>((((particleID * 80u) + 4u) >> bitcast<u32>(2i)));
+    let v_83 = byteAddrTemp_4;
+    Particles_1.m_1[v_83] = particle.Seed;
+    byteAddrTemp_5 = bitcast<i32>((((particleID * 80u) + 8u) >> bitcast<u32>(2i)));
+    let v_84 = byteAddrTemp_5;
+    Particles_1.m_1[v_84] = bitcast<u32>(particle.LifeAge);
+    byteAddrTemp_6 = bitcast<i32>((((particleID * 80u) + 12u) >> bitcast<u32>(2i)));
+    let v_85 = byteAddrTemp_6;
+    Particles_1.m_1[v_85] = particle.InheritColor;
+    byteAddrTemp_7 = bitcast<i32>((((particleID * 80u) + 16u) >> bitcast<u32>(2i)));
+    let v_86 = byteAddrTemp_7;
+    Particles_1.m_1[v_86] = particle.Color;
+    byteAddrTemp_8 = bitcast<i32>((((particleID * 80u) + 20u) >> bitcast<u32>(2i)));
+    let v_87 = byteAddrTemp_8;
+    Particles_1.m_1[v_87] = particle.Direction;
+    byteAddrTemp_9 = bitcast<i32>((((particleID * 80u) + 24u) >> bitcast<u32>(2i)));
+    let v_88 = byteAddrTemp_9;
+    Particles_1.m_1[v_88] = particle.Velocity.x;
+    let v_89 = (byteAddrTemp_9 + 1i);
+    Particles_1.m_1[v_89] = particle.Velocity.y;
+    byteAddrTemp_10 = bitcast<i32>((((particleID * 80u) + 32u) >> bitcast<u32>(2i)));
+    let v_90 = byteAddrTemp_10;
+    Particles_1.m_1[v_90] = bitcast<u32>(particle.Transform[0i].x);
+    byteAddrTemp_11 = bitcast<i32>((((particleID * 80u) + 36u) >> bitcast<u32>(2i)));
+    let v_91 = byteAddrTemp_11;
+    Particles_1.m_1[v_91] = bitcast<u32>(particle.Transform[1i].x);
+    byteAddrTemp_12 = bitcast<i32>((((particleID * 80u) + 40u) >> bitcast<u32>(2i)));
+    let v_92 = byteAddrTemp_12;
+    Particles_1.m_1[v_92] = bitcast<u32>(particle.Transform[2i].x);
+    byteAddrTemp_13 = bitcast<i32>((((particleID * 80u) + 44u) >> bitcast<u32>(2i)));
+    let v_93 = byteAddrTemp_13;
+    Particles_1.m_1[v_93] = bitcast<u32>(particle.Transform[3i].x);
+    byteAddrTemp_14 = bitcast<i32>((((particleID * 80u) + 48u) >> bitcast<u32>(2i)));
+    let v_94 = byteAddrTemp_14;
+    Particles_1.m_1[v_94] = bitcast<u32>(particle.Transform[0i].y);
+    byteAddrTemp_15 = bitcast<i32>((((particleID * 80u) + 52u) >> bitcast<u32>(2i)));
+    let v_95 = byteAddrTemp_15;
+    Particles_1.m_1[v_95] = bitcast<u32>(particle.Transform[1i].y);
+    byteAddrTemp_16 = bitcast<i32>((((particleID * 80u) + 56u) >> bitcast<u32>(2i)));
+    let v_96 = byteAddrTemp_16;
+    Particles_1.m_1[v_96] = bitcast<u32>(particle.Transform[2i].y);
+    byteAddrTemp_17 = bitcast<i32>((((particleID * 80u) + 60u) >> bitcast<u32>(2i)));
+    let v_97 = byteAddrTemp_17;
+    Particles_1.m_1[v_97] = bitcast<u32>(particle.Transform[3i].y);
+    byteAddrTemp_18 = bitcast<i32>((((particleID * 80u) + 64u) >> bitcast<u32>(2i)));
+    let v_98 = byteAddrTemp_18;
+    Particles_1.m_1[v_98] = bitcast<u32>(particle.Transform[0i].z);
+    byteAddrTemp_19 = bitcast<i32>((((particleID * 80u) + 68u) >> bitcast<u32>(2i)));
+    let v_99 = byteAddrTemp_19;
+    Particles_1.m_1[v_99] = bitcast<u32>(particle.Transform[1i].z);
+    byteAddrTemp_20 = bitcast<i32>((((particleID * 80u) + 72u) >> bitcast<u32>(2i)));
+    let v_100 = byteAddrTemp_20;
+    Particles_1.m_1[v_100] = bitcast<u32>(particle.Transform[2i].z);
+    byteAddrTemp_21 = bitcast<i32>((((particleID * 80u) + 76u) >> bitcast<u32>(2i)));
+    let v_101 = byteAddrTemp_21;
+    Particles_1.m_1[v_101] = bitcast<u32>(particle.Transform[3i].z);
+  }
+}
+
+fn v_102() {
+  var dtid : vec3<u32>;
+  var param : vec3<u32>;
+  var param_98 : vec3<u32>;
+  dtid = gl_GlobalInvocationID;
+  param = dtid;
+  param_98 = param;
+  v_44(&(param_98));
+}
+
+fn v_5(stage_input : ptr<function, SPIRV_Cross_Input>) {
+  gl_GlobalInvocationID = (*(stage_input)).gl_GlobalInvocationID;
+  v_102();
+}

@@ -17,6 +17,7 @@ namespace TestCSharp
 		{
 			ZLib.Test();
 			MaterialInformation.Test();
+			MaterialCacheGeneratorTest.Test();
 
 			var script = new InternalScriptTest();
 			script.Test();

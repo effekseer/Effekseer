@@ -1,0 +1,650 @@
+wgslcodediagnostic(off, derivative_uniformity);
+
+struct EmitterData_1_1 {
+  FlagBits : u32,
+  Seed : u32,
+  ParticleHead : u32,
+  ParticleSize : u32,
+  TrailHead : u32,
+  TrailSize : u32,
+  TrailPhase : u32,
+  NextEmitCount : u32,
+  TotalEmitCount : u32,
+  EmitPointCount : u32,
+  TimeCount : f32,
+  TimeStopped : f32,
+  Reserved0 : u32,
+  Reserved1 : u32,
+  DeltaTime : f32,
+  Color : u32,
+  Transform : mat3x4<f32>,
+}
+
+struct cb2_1_1 {
+  _514_emitter : EmitterData_1_1,
+}
+
+@group(0) @binding(2) var<uniform> v_1 : cb2_1_1;
+
+struct ParameterData {
+  EmitCount : i32,
+  EmitPerFrame : i32,
+  EmitOffset : f32,
+  Padding0 : u32,
+  LifeTime : vec2<f32>,
+  EmitShapeType : u32,
+  EmitRotationApplied : u32,
+  EmitShapeData : array<vec4<f32>, 2u>,
+  Direction : vec3<f32>,
+  Spread : f32,
+  InitialSpeed : vec2<f32>,
+  Damping : vec2<f32>,
+  AngularOffset : array<vec4<f32>, 2u>,
+  AngularVelocity : array<vec4<f32>, 2u>,
+  ScaleData1 : array<vec4<f32>, 2u>,
+  ScaleData2 : array<vec4<f32>, 2u>,
+  ScaleEasing : vec3<f32>,
+  ScaleFlags : u32,
+  Gravity : vec3<f32>,
+  Padding2 : u32,
+  VortexCenter : vec3<f32>,
+  VortexRotation : f32,
+  VortexAxis : vec3<f32>,
+  VortexAttraction : f32,
+  TurbulencePower : f32,
+  TurbulenceSeed : u32,
+  TurbulenceScale : f32,
+  TurbulenceOctave : f32,
+  RenderState : u32,
+  ShapeType : u32,
+  ShapeData : u32,
+  ShapeSize : f32,
+  Emissive : f32,
+  FadeIn : f32,
+  FadeOut : f32,
+  MaterialType : u32,
+  ColorData : vec4<u32>,
+  ColorEasing : vec3<f32>,
+  ColorFlags : u32,
+}
+
+struct cb1 {
+  _536_paramData : ParameterData,
+}
+
+@group(0) @binding(1) var<uniform> v_2 : cb1;
+
+struct ComputeConstants {
+  CoordinateReversed : u32,
+  Reserved0 : f32,
+  Reserved1 : f32,
+  Reserved2 : f32,
+}
+
+struct cb0 {
+  _651_constants : ComputeConstants,
+}
+
+@group(0) @binding(0) var<uniform> v_3 : cb0;
+
+struct EmitPoints {
+  m_1 : array<u32>,
+}
+
+@group(2) @binding(1) var<storage, read> EmitPoints_1 : EmitPoints;
+
+struct Particles {
+  m_2 : array<u32>,
+}
+
+@group(2) @binding(0) var<storage, read_write> Particles_1 : Particles;
+
+var<private> gl_GlobalInvocationID : vec3<u32>;
+
+struct SPIRV_Cross_Input {
+  gl_GlobalInvocationID : vec3<u32>,
+}
+
+@compute @workgroup_size(1u, 1u, 1u)
+fn main(@builtin(global_invocation_id) v_4 : vec3<u32>) {
+  var stage_input : SPIRV_Cross_Input;
+  var param : SPIRV_Cross_Input;
+  stage_input.gl_GlobalInvocationID = v_4;
+  param = stage_input;
+  v_5(&(param));
+}
+
+fn v_6(value : ptr<function, vec2<f32>>) -> u32 {
+  var Packed : vec2<u32>;
+  Packed = vec2<u32>(pack2x16float(vec2<f32>((*(value)).x, 0.0f)), pack2x16float(vec2<f32>((*(value)).y, 0.0f)));
+  return (Packed.x | (Packed.y << bitcast<u32>(16i)));
+}
+
+fn v_7(seed : ptr<function, u32>) -> u32 {
+  var state : u32;
+  var word : u32;
+  state = *(seed);
+  *(seed) = ((*(seed) * 747796405u) + 2891336453u);
+  word = (((state >> ((state >> 28u) + 4u)) ^ state) * 277803737u);
+  return ((word >> 22u) ^ word);
+}
+
+fn v_8(seed : ptr<function, u32>) -> f32 {
+  var param : u32;
+  var _326 : u32;
+  var param_19 : u32;
+  param = *(seed);
+  param_19 = param;
+  let v_9 = v_7(&(param_19));
+  param = param_19;
+  _326 = v_9;
+  *(seed) = param;
+  return (f32(_326) / 4294967296.0f);
+}
+
+fn v_10(seed : ptr<function, u32>, baseDir : ptr<function, vec3<f32>>, angle : ptr<function, f32>) -> vec3<f32> {
+  var param : u32;
+  var _440 : f32;
+  var param_20 : u32;
+  var theta : f32;
+  var param_1 : u32;
+  var _447 : f32;
+  var param_21 : u32;
+  var phi : f32;
+  var randDir : vec3<f32>;
+  var front : vec3<f32>;
+  var right : vec3<f32>;
+  var up : vec3<f32>;
+  param = *(seed);
+  param_20 = param;
+  let v_11 = v_8(&(param_20));
+  param = param_20;
+  _440 = v_11;
+  *(seed) = param;
+  theta = (6.283184051513671875f * _440);
+  param_1 = *(seed);
+  param_21 = param_1;
+  let v_12 = v_8(&(param_21));
+  param_1 = param_21;
+  _447 = v_12;
+  *(seed) = param_1;
+  phi = (*(angle) * _447);
+  randDir = vec3<f32>((sin(phi) * cos(theta)), (sin(phi) * sin(theta)), cos(phi));
+  *(baseDir) = normalize(*(baseDir));
+  if (!((abs((*(baseDir)).z) == 1.0f))) {
+    front = vec3<f32>(0.0f, 0.0f, 1.0f);
+    right = normalize(cross(front, *(baseDir)));
+    up = cross(*(baseDir), right);
+    let v_13 = right;
+    let v_14 = up;
+    let v_15 = *(baseDir);
+    return (mat3x3<f32>(vec3<f32>(v_13.x, v_13.y, v_13.z), vec3<f32>(v_14.x, v_14.y, v_14.z), vec3<f32>(v_15.x, v_15.y, v_15.z)) * randDir);
+  } else {
+    return (randDir * sign((*(baseDir)).z));
+  }
+  return vec3<f32>();
+}
+
+fn v_16(seed : ptr<function, u32>, maxmin : ptr<function, vec2<f32>>) -> f32 {
+  var param : u32;
+  var _339 : f32;
+  var param_22 : u32;
+  param = *(seed);
+  param_22 = param;
+  let v_17 = v_8(&(param_22));
+  param = param_22;
+  _339 = v_17;
+  *(seed) = param;
+  return mix((*(maxmin)).y, (*(maxmin)).x, _339);
+}
+
+fn v_18(seed : ptr<function, u32>) -> vec3<f32> {
+  var param : u32;
+  var _348 : f32;
+  var param_23 : u32;
+  var cosTheta : f32;
+  var sinTheta : f32;
+  var param_1 : u32;
+  var _362 : f32;
+  var param_24 : u32;
+  var phi : f32;
+  param = *(seed);
+  param_23 = param;
+  let v_19 = v_8(&(param_23));
+  param = param_23;
+  _348 = v_19;
+  *(seed) = param;
+  cosTheta = ((-2.0f * _348) + 1.0f);
+  sinTheta = sqrt((1.0f - (cosTheta * cosTheta)));
+  param_1 = *(seed);
+  param_24 = param_1;
+  let v_20 = v_8(&(param_24));
+  param_1 = param_24;
+  _362 = v_20;
+  *(seed) = param_1;
+  phi = (6.283184051513671875f * _362);
+  return vec3<f32>((sinTheta * cos(phi)), (sinTheta * sin(phi)), cosTheta);
+}
+
+fn v_21(seed : ptr<function, u32>, axis : ptr<function, vec3<f32>>) -> vec3<f32> {
+  var param : u32;
+  var _380 : f32;
+  var param_25 : u32;
+  var theta : f32;
+  var direction : vec3<f32>;
+  var up : vec3<f32>;
+  var right : vec3<f32>;
+  var front : vec3<f32>;
+  param = *(seed);
+  param_25 = param;
+  let v_22 = v_8(&(param_25));
+  param = param_25;
+  _380 = v_22;
+  *(seed) = param;
+  theta = (6.283184051513671875f * _380);
+  direction = vec3<f32>(cos(theta), 0.0f, sin(theta));
+  *(axis) = normalize(*(axis));
+  if (!((abs((*(axis)).y) == 1.0f))) {
+    up = vec3<f32>(0.0f, 1.0f, 0.0f);
+    right = normalize(cross(up, *(axis)));
+    front = cross(*(axis), right);
+    let v_23 = right;
+    let v_24 = *(axis);
+    let v_25 = front;
+    return (mat3x3<f32>(vec3<f32>(v_23.x, v_23.y, v_23.z), vec3<f32>(v_24.x, v_24.y, v_24.z), vec3<f32>(v_25.x, v_25.y, v_25.z)) * direction);
+  } else {
+    return (direction * sign((*(axis)).y));
+  }
+  return vec3<f32>();
+}
+
+fn v_26(bits : ptr<function, u32>) -> vec3<f32> {
+  var v : vec3<f32>;
+  v = vec3<f32>((vec3<u32>(*(bits), (*(bits) >> 10u), (*(bits) >> 20u)) & vec3<u32>(1023u)));
+  return (((v / vec3<f32>(1023.0f)) * 2.0f) - vec3<f32>(1.0f));
+}
+
+fn v_27(translation : ptr<function, vec3<f32>>, rotation : ptr<function, vec3<f32>>, scale : ptr<function, vec3<f32>>) -> mat4x3<f32> {
+  var s : vec3<f32>;
+  var c : vec3<f32>;
+  var m : mat4x3<f32>;
+  s = sin(*(rotation));
+  c = cos(*(rotation));
+  m[0i].x = ((*(scale)).x * ((c.z * c.y) + ((s.z * s.x) * s.y)));
+  m[1i].x = ((*(scale)).y * (s.z * c.x));
+  m[2i].x = ((*(scale)).z * ((c.z * -(s.y)) + ((s.z * s.x) * c.y)));
+  m[3i].x = (*(translation)).x;
+  m[0i].y = ((*(scale)).x * ((-(s.z) * c.y) + ((c.z * s.x) * s.y)));
+  m[1i].y = ((*(scale)).y * (c.z * c.x));
+  m[2i].y = ((*(scale)).z * ((-(s.z) * -(s.y)) + ((c.z * s.x) * c.y)));
+  m[3i].y = (*(translation)).y;
+  m[0i].z = ((*(scale)).x * (c.x * s.y));
+  m[1i].z = ((*(scale)).y * -(s.x));
+  m[2i].z = ((*(scale)).z * (c.x * c.y));
+  m[3i].z = (*(translation)).z;
+  return m;
+}
+
+fn v_28(v : ptr<function, vec3<f32>>) -> u32 {
+  var i : vec3<u32>;
+  i = vec3<u32>((((*(v) + vec3<f32>(1.0f)) * 0.5f) * 1023.0f));
+  return ((i.x | (i.y << 10u)) | (i.z << 20u));
+}
+
+fn v_29(v : ptr<function, vec4<f32>>) -> vec2<u32> {
+  var v16 : vec4<u32>;
+  var param : vec2<f32>;
+  var param_26 : vec2<f32>;
+  var param_27 : vec2<f32>;
+  var param_28 : vec2<f32>;
+  param = vec2<f32>((*(v)).x, 0.0f);
+  let v_30 = v_6(&(param));
+  param_26 = vec2<f32>((*(v)).y, 0.0f);
+  let v_31 = v_6(&(param_26));
+  param_27 = vec2<f32>((*(v)).z, 0.0f);
+  let v_32 = v_6(&(param_27));
+  param_28 = vec2<f32>((*(v)).w, 0.0f);
+  v16 = vec4<u32>(v_30, v_31, v_32, v_6(&(param_28)));
+  return vec2<u32>((v16.x | (v16.y << 16u)), (v16.z | (v16.w << 16u)));
+}
+
+struct ParticleData {
+  FlagBits : u32,
+  Seed : u32,
+  LifeAge : f32,
+  InheritColor : u32,
+  Color : u32,
+  Direction : u32,
+  Velocity : vec2<u32>,
+  Transform : mat4x3<f32>,
+}
+
+fn v_33(dtid : ptr<function, vec3<u32>>) {
+  var seed : u32;
+  var position : vec3<f32>;
+  var param : u32;
+  var param_1 : vec3<f32>;
+  var param_2 : f32;
+  var _552 : vec3<f32>;
+  var param_29 : u32;
+  var param_30 : vec3<f32>;
+  var param_31 : f32;
+  var direction : vec3<f32>;
+  var param_3 : u32;
+  var param_4 : vec2<f32>;
+  var _561 : f32;
+  var param_32 : u32;
+  var param_33 : vec2<f32>;
+  var speed : f32;
+  var lineStart : vec3<f32>;
+  var lineEnd : vec3<f32>;
+  var lineWidth : f32;
+  var param_5 : u32;
+  var _586 : f32;
+  var param_34 : u32;
+  var param_6 : u32;
+  var _594 : vec3<f32>;
+  var param_35 : u32;
+  var circleAxis : vec3<f32>;
+  var circleInner : f32;
+  var circleOuter : f32;
+  var param_7 : u32;
+  var _626 : f32;
+  var param_36 : u32;
+  var circleRadius : f32;
+  var param_8 : u32;
+  var param_9 : vec3<f32>;
+  var _635 : vec3<f32>;
+  var param_37 : u32;
+  var param_38 : vec3<f32>;
+  var circleDirection : vec3<f32>;
+  var sphereRadius : f32;
+  var param_10 : u32;
+  var _693 : vec3<f32>;
+  var param_39 : u32;
+  var sphereDirection : vec3<f32>;
+  var sphereUp : vec3<f32>;
+  var modelSize : f32;
+  var param_11 : u32;
+  var _752 : u32;
+  var param_40 : u32;
+  var emitIndex : u32;
+  var emitPosition : vec3<f32>;
+  var byteAddrTemp : i32;
+  var param_12 : u32;
+  var emitNormal : vec3<f32>;
+  var param_41 : u32;
+  var param_13 : u32;
+  var emitTangent : vec3<f32>;
+  var param_42 : u32;
+  var emitBinormal : vec3<f32>;
+  var particleID : u32;
+  var particle : ParticleData;
+  var param_14 : vec3<f32>;
+  var param_15 : vec3<f32>;
+  var param_16 : vec3<f32>;
+  var param_43 : vec3<f32>;
+  var param_44 : vec3<f32>;
+  var param_45 : vec3<f32>;
+  var param_17 : vec3<f32>;
+  var param_46 : vec3<f32>;
+  var param_18 : vec4<f32>;
+  var param_47 : vec4<f32>;
+  var byteAddrTemp_1 : i32;
+  var byteAddrTemp_2 : i32;
+  var byteAddrTemp_3 : i32;
+  var byteAddrTemp_4 : i32;
+  var byteAddrTemp_5 : i32;
+  var byteAddrTemp_6 : i32;
+  var byteAddrTemp_7 : i32;
+  var byteAddrTemp_8 : i32;
+  var byteAddrTemp_9 : i32;
+  var byteAddrTemp_10 : i32;
+  var byteAddrTemp_11 : i32;
+  var byteAddrTemp_12 : i32;
+  var byteAddrTemp_13 : i32;
+  var byteAddrTemp_14 : i32;
+  var byteAddrTemp_15 : i32;
+  var byteAddrTemp_16 : i32;
+  var byteAddrTemp_17 : i32;
+  var byteAddrTemp_18 : i32;
+  var byteAddrTemp_19 : i32;
+  seed = (v_1._514_emitter.Seed ^ (v_1._514_emitter.TotalEmitCount + (*(dtid)).x));
+  position = vec3<f32>();
+  param = seed;
+  param_1 = v_2._536_paramData.Direction;
+  param_2 = ((v_2._536_paramData.Spread * 3.1415920257568359375f) / 180.0f);
+  param_29 = param;
+  param_30 = param_1;
+  param_31 = param_2;
+  let v_34 = v_10(&(param_29), &(param_30), &(param_31));
+  param = param_29;
+  param_1 = param_30;
+  _552 = v_34;
+  seed = param;
+  direction = _552;
+  param_3 = seed;
+  param_4 = v_2._536_paramData.InitialSpeed;
+  param_32 = param_3;
+  param_33 = param_4;
+  let v_35 = v_16(&(param_32), &(param_33));
+  param_3 = param_32;
+  _561 = v_35;
+  seed = param_3;
+  speed = _561;
+  if ((v_2._536_paramData.EmitShapeType == 1u)) {
+    lineStart = v_2._536_paramData.EmitShapeData[0i].xyz;
+    lineEnd = v_2._536_paramData.EmitShapeData[1i].xyz;
+    lineWidth = v_2._536_paramData.EmitShapeData[1i].w;
+    param_5 = seed;
+    param_34 = param_5;
+    let v_36 = v_8(&(param_34));
+    param_5 = param_34;
+    _586 = v_36;
+    seed = param_5;
+    let v_37 = lineStart;
+    let v_38 = lineEnd;
+    let v_39 = _586;
+    let v_40 = mix(v_37, v_38, vec3<f32>(v_39, v_39, v_39));
+    position = (position + v_40);
+    param_6 = seed;
+    param_35 = param_6;
+    let v_41 = v_18(&(param_35));
+    param_6 = param_35;
+    _594 = v_41;
+    seed = param_6;
+    let v_42 = ((_594 * lineWidth) * 0.5f);
+    position = (position + v_42);
+  } else if ((v_2._536_paramData.EmitShapeType == 2u)) {
+    circleAxis = v_2._536_paramData.EmitShapeData[0i].xyz;
+    circleInner = v_2._536_paramData.EmitShapeData[1i].x;
+    circleOuter = v_2._536_paramData.EmitShapeData[1i].y;
+    param_7 = seed;
+    param_36 = param_7;
+    let v_43 = v_8(&(param_36));
+    param_7 = param_36;
+    _626 = v_43;
+    seed = param_7;
+    circleRadius = sqrt(mix((circleInner * circleInner), (circleOuter * circleOuter), _626));
+    param_8 = seed;
+    param_9 = circleAxis;
+    param_37 = param_8;
+    param_38 = param_9;
+    let v_44 = v_21(&(param_37), &(param_38));
+    param_8 = param_37;
+    param_9 = param_38;
+    _635 = v_44;
+    seed = param_8;
+    circleDirection = _635;
+    let v_45 = (circleDirection * circleRadius);
+    position = (position + v_45);
+    if ((v_2._536_paramData.EmitRotationApplied != 0u)) {
+      if ((v_3._651_constants.CoordinateReversed != 0u)) {
+        circleDirection.z = -(circleDirection.z);
+      }
+      let v_46 = cross(circleAxis, circleDirection);
+      let v_47 = circleAxis;
+      let v_48 = circleDirection;
+      direction = (mat3x3<f32>(vec3<f32>(v_46.x, v_46.y, v_46.z), vec3<f32>(v_47.x, v_47.y, v_47.z), vec3<f32>(v_48.x, v_48.y, v_48.z)) * direction);
+    }
+  } else if ((v_2._536_paramData.EmitShapeType == 3u)) {
+    sphereRadius = v_2._536_paramData.EmitShapeData[0i].x;
+    param_10 = seed;
+    param_39 = param_10;
+    let v_49 = v_18(&(param_39));
+    param_10 = param_39;
+    _693 = v_49;
+    seed = param_10;
+    sphereDirection = _693;
+    let v_50 = (sphereDirection * sphereRadius);
+    position = (position + v_50);
+    if ((v_2._536_paramData.EmitRotationApplied != 0u)) {
+      sphereUp = vec3<f32>(0.0f, 1.0f, 0.0f);
+      if ((v_3._651_constants.CoordinateReversed != 0u)) {
+        sphereDirection.z = -(sphereDirection.z);
+      }
+      let v_51 = cross(sphereUp, sphereDirection);
+      let v_52 = sphereUp;
+      let v_53 = sphereDirection;
+      direction = (mat3x3<f32>(vec3<f32>(v_51.x, v_51.y, v_51.z), vec3<f32>(v_52.x, v_52.y, v_52.z), vec3<f32>(v_53.x, v_53.y, v_53.z)) * direction);
+    }
+  } else if ((v_2._536_paramData.EmitShapeType == 4u)) {
+    modelSize = v_2._536_paramData.EmitShapeData[0i].y;
+    if ((v_1._514_emitter.EmitPointCount > 0u)) {
+      param_11 = seed;
+      param_40 = param_11;
+      let v_54 = v_7(&(param_40));
+      param_11 = param_40;
+      _752 = v_54;
+      seed = param_11;
+      emitIndex = (_752 % v_1._514_emitter.EmitPointCount);
+      byteAddrTemp = bitcast<i32>((((emitIndex * 32u) + 0u) >> bitcast<u32>(2i)));
+      emitPosition = bitcast<vec3<f32>>(vec3<u32>(EmitPoints_1.m_1[byteAddrTemp], EmitPoints_1.m_1[(byteAddrTemp + 1i)], EmitPoints_1.m_1[(byteAddrTemp + 2i)]));
+      if ((v_3._651_constants.CoordinateReversed != 0u)) {
+        emitPosition.z = -(emitPosition.z);
+      }
+      let v_55 = (emitPosition * modelSize);
+      position = (position + v_55);
+      if ((v_2._536_paramData.EmitRotationApplied != 0u)) {
+        param_12 = EmitPoints_1.m_1[bitcast<i32>((((emitIndex * 32u) + 16u) >> bitcast<u32>(2i)))];
+        param_41 = param_12;
+        emitNormal = normalize(v_26(&(param_41)));
+        param_13 = EmitPoints_1.m_1[bitcast<i32>((((emitIndex * 32u) + 20u) >> bitcast<u32>(2i)))];
+        param_42 = param_13;
+        emitTangent = normalize(v_26(&(param_42)));
+        emitBinormal = normalize(cross(emitTangent, emitNormal));
+        let v_56 = emitTangent;
+        let v_57 = emitBinormal;
+        let v_58 = emitNormal;
+        direction = (mat3x3<f32>(vec3<f32>(v_56.x, v_56.y, v_56.z), vec3<f32>(v_57.x, v_57.y, v_57.z), vec3<f32>(v_58.x, v_58.y, v_58.z)) * direction);
+      }
+    }
+  }
+  if ((v_3._651_constants.CoordinateReversed != 0u)) {
+    direction.z = -(direction.z);
+  }
+  let v_59 = transpose(v_1._514_emitter.Transform);
+  let v_60 = position;
+  position = (v_59 * vec4<f32>(v_60.x, v_60.y, v_60.z, 1.0f));
+  let v_61 = transpose(v_1._514_emitter.Transform);
+  let v_62 = direction;
+  direction = (v_61 * vec4<f32>(v_62.x, v_62.y, v_62.z, 0.0f));
+  particleID = (v_1._514_emitter.ParticleHead + ((v_1._514_emitter.TotalEmitCount + (*(dtid)).x) % v_1._514_emitter.ParticleSize));
+  particle.FlagBits = 1u;
+  particle.Seed = seed;
+  particle.LifeAge = 0.0f;
+  if ((v_2._536_paramData.ColorFlags == 0u)) {
+    particle.InheritColor = 4294967295u;
+  } else {
+    particle.InheritColor = v_1._514_emitter.Color;
+  }
+  particle.Color = 4294967295u;
+  param_14 = position;
+  param_15 = vec3<f32>();
+  param_16 = vec3<f32>(1.0f);
+  param_43 = param_14;
+  param_44 = param_15;
+  param_45 = param_16;
+  particle.Transform = v_27(&(param_43), &(param_44), &(param_45));
+  param_17 = direction;
+  param_46 = param_17;
+  particle.Direction = v_28(&(param_46));
+  let v_63 = (direction * speed);
+  param_18 = vec4<f32>(v_63.x, v_63.y, v_63.z, 0.0f);
+  param_47 = param_18;
+  particle.Velocity = v_29(&(param_47));
+  byteAddrTemp_1 = bitcast<i32>((((particleID * 80u) + 0u) >> bitcast<u32>(2i)));
+  let v_64 = byteAddrTemp_1;
+  Particles_1.m_2[v_64] = particle.FlagBits;
+  byteAddrTemp_2 = bitcast<i32>((((particleID * 80u) + 4u) >> bitcast<u32>(2i)));
+  let v_65 = byteAddrTemp_2;
+  Particles_1.m_2[v_65] = particle.Seed;
+  byteAddrTemp_3 = bitcast<i32>((((particleID * 80u) + 8u) >> bitcast<u32>(2i)));
+  let v_66 = byteAddrTemp_3;
+  Particles_1.m_2[v_66] = bitcast<u32>(particle.LifeAge);
+  byteAddrTemp_4 = bitcast<i32>((((particleID * 80u) + 12u) >> bitcast<u32>(2i)));
+  let v_67 = byteAddrTemp_4;
+  Particles_1.m_2[v_67] = particle.InheritColor;
+  byteAddrTemp_5 = bitcast<i32>((((particleID * 80u) + 16u) >> bitcast<u32>(2i)));
+  let v_68 = byteAddrTemp_5;
+  Particles_1.m_2[v_68] = particle.Color;
+  byteAddrTemp_6 = bitcast<i32>((((particleID * 80u) + 20u) >> bitcast<u32>(2i)));
+  let v_69 = byteAddrTemp_6;
+  Particles_1.m_2[v_69] = particle.Direction;
+  byteAddrTemp_7 = bitcast<i32>((((particleID * 80u) + 24u) >> bitcast<u32>(2i)));
+  let v_70 = byteAddrTemp_7;
+  Particles_1.m_2[v_70] = particle.Velocity.x;
+  let v_71 = (byteAddrTemp_7 + 1i);
+  Particles_1.m_2[v_71] = particle.Velocity.y;
+  byteAddrTemp_8 = bitcast<i32>((((particleID * 80u) + 32u) >> bitcast<u32>(2i)));
+  let v_72 = byteAddrTemp_8;
+  Particles_1.m_2[v_72] = bitcast<u32>(particle.Transform[0i].x);
+  byteAddrTemp_9 = bitcast<i32>((((particleID * 80u) + 36u) >> bitcast<u32>(2i)));
+  let v_73 = byteAddrTemp_9;
+  Particles_1.m_2[v_73] = bitcast<u32>(particle.Transform[1i].x);
+  byteAddrTemp_10 = bitcast<i32>((((particleID * 80u) + 40u) >> bitcast<u32>(2i)));
+  let v_74 = byteAddrTemp_10;
+  Particles_1.m_2[v_74] = bitcast<u32>(particle.Transform[2i].x);
+  byteAddrTemp_11 = bitcast<i32>((((particleID * 80u) + 44u) >> bitcast<u32>(2i)));
+  let v_75 = byteAddrTemp_11;
+  Particles_1.m_2[v_75] = bitcast<u32>(particle.Transform[3i].x);
+  byteAddrTemp_12 = bitcast<i32>((((particleID * 80u) + 48u) >> bitcast<u32>(2i)));
+  let v_76 = byteAddrTemp_12;
+  Particles_1.m_2[v_76] = bitcast<u32>(particle.Transform[0i].y);
+  byteAddrTemp_13 = bitcast<i32>((((particleID * 80u) + 52u) >> bitcast<u32>(2i)));
+  let v_77 = byteAddrTemp_13;
+  Particles_1.m_2[v_77] = bitcast<u32>(particle.Transform[1i].y);
+  byteAddrTemp_14 = bitcast<i32>((((particleID * 80u) + 56u) >> bitcast<u32>(2i)));
+  let v_78 = byteAddrTemp_14;
+  Particles_1.m_2[v_78] = bitcast<u32>(particle.Transform[2i].y);
+  byteAddrTemp_15 = bitcast<i32>((((particleID * 80u) + 60u) >> bitcast<u32>(2i)));
+  let v_79 = byteAddrTemp_15;
+  Particles_1.m_2[v_79] = bitcast<u32>(particle.Transform[3i].y);
+  byteAddrTemp_16 = bitcast<i32>((((particleID * 80u) + 64u) >> bitcast<u32>(2i)));
+  let v_80 = byteAddrTemp_16;
+  Particles_1.m_2[v_80] = bitcast<u32>(particle.Transform[0i].z);
+  byteAddrTemp_17 = bitcast<i32>((((particleID * 80u) + 68u) >> bitcast<u32>(2i)));
+  let v_81 = byteAddrTemp_17;
+  Particles_1.m_2[v_81] = bitcast<u32>(particle.Transform[1i].z);
+  byteAddrTemp_18 = bitcast<i32>((((particleID * 80u) + 72u) >> bitcast<u32>(2i)));
+  let v_82 = byteAddrTemp_18;
+  Particles_1.m_2[v_82] = bitcast<u32>(particle.Transform[2i].z);
+  byteAddrTemp_19 = bitcast<i32>((((particleID * 80u) + 76u) >> bitcast<u32>(2i)));
+  let v_83 = byteAddrTemp_19;
+  Particles_1.m_2[v_83] = bitcast<u32>(particle.Transform[3i].z);
+}
+
+fn v_84() {
+  var dtid : vec3<u32>;
+  var param : vec3<u32>;
+  var param_48 : vec3<u32>;
+  dtid = gl_GlobalInvocationID;
+  param = dtid;
+  param_48 = param;
+  v_33(&(param_48));
+}
+
+fn v_5(stage_input : ptr<function, SPIRV_Cross_Input>) {
+  gl_GlobalInvocationID = (*(stage_input)).gl_GlobalInvocationID;
+  v_84();
+}

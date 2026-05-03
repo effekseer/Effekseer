@@ -16,7 +16,8 @@ set(effekseer_test_src
 
 if(BUILD_DX12
    OR BUILD_METAL
-   OR BUILD_VULKAN)
+   OR BUILD_VULKAN
+   OR BUILD_WEBGPU)
   list(APPEND effekseer_test_src Runtime/EffectPlatformLLGI.h
        Runtime/EffectPlatformLLGI.cpp)
 endif()
@@ -34,6 +35,11 @@ endif()
 if(BUILD_VULKAN)
   list(APPEND effekseer_test_src Runtime/EffectPlatformVulkan.h
        Runtime/EffectPlatformVulkan.cpp)
+endif()
+
+if(BUILD_WEBGPU)
+  list(APPEND effekseer_test_src Runtime/EffectPlatformWebGPU.h
+       Runtime/EffectPlatformWebGPU.cpp)
 endif()
 
 if(WIN32)
@@ -56,6 +62,10 @@ if(WIN32)
   include_directories(${EFK_THIRDPARTY_INCLUDES} ../EffekseerRendererDX11/)
 endif()
 
+if(BUILD_WEBGPU)
+  include_directories(../3rdParty/LLGI/src)
+endif()
+
 set(common_lib)
 set(common_inc)
 
@@ -68,7 +78,8 @@ endif()
 
 if(BUILD_DX12
    OR BUILD_METAL
-   OR BUILD_VULKAN)
+   OR BUILD_VULKAN
+   OR BUILD_WEBGPU)
   list(APPEND common_lib LLGI)
 endif()
 
@@ -82,6 +93,10 @@ endif()
 
 if(BUILD_VULKAN)
   list(APPEND common_lib EffekseerRendererVulkan)
+endif()
+
+if(BUILD_WEBGPU)
+  list(APPEND common_lib EffekseerRendererWebGPU)
 endif()
 
 list(APPEND common_lib Effekseer)

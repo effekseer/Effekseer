@@ -81,7 +81,8 @@ endif()
 # Add compile targets
 if(BUILD_DX12
    OR BUILD_METAL
-   OR BUILD_VULKAN)
+   OR BUILD_VULKAN
+   OR BUILD_WEBGPU)
   set(BUILD_TEST_TEMP ${BUILD_TEST})
   set(BUILD_TEST OFF)
   set(USE_CREATE_COMPILER_FUNCTION
@@ -135,6 +136,11 @@ if(BUILD_VULKAN)
   set_property(TARGET EffekseerRendererVulkan PROPERTY FOLDER Libraries)
 endif()
 
+if(BUILD_WEBGPU)
+  add_subdirectory(EffekseerRendererWebGPU)
+  set_property(TARGET EffekseerRendererWebGPU PROPERTY FOLDER Libraries)
+endif()
+
 if(USE_OPENAL)
   add_subdirectory(EffekseerSoundAL)
   set_property(TARGET EffekseerSoundAL PROPERTY FOLDER Libraries)
@@ -176,6 +182,9 @@ if(BUILD_VIEWER)
   set_target_properties(IPC PROPERTIES FOLDER Editor)
   add_subdirectory("EffekseerMaterialCompiler")
   add_dependencies(Viewer ResourceData)
+  if(TARGET EffekseerMaterialCompilerWebGPU)
+    add_dependencies(Viewer EffekseerMaterialCompilerWebGPU)
+  endif()
 endif()
 
 if(BUILD_TEST)

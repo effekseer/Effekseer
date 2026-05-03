@@ -1,0 +1,212 @@
+wgslcodediagnostic(off, derivative_uniformity);
+
+@group(1) @binding(0) var _colorTex : texture_2d<f32>;
+
+@group(2) @binding(0) var sampler_colorTex : sampler;
+
+struct PS_ConstantBuffer {
+  _155_g_scale : vec4<f32>,
+  _155_mUVInversedBack : vec4<f32>,
+  _155_fFlipbookParameter : vec4<f32>,
+  _155_fUVDistortionParameter : vec4<f32>,
+  _155_fBlendTextureParameter : vec4<f32>,
+  _155_softParticleParam : vec4<f32>,
+  _155_reconstructionParam1 : vec4<f32>,
+  _155_reconstructionParam2 : vec4<f32>,
+}
+
+@group(0) @binding(1) var<uniform> v : PS_ConstantBuffer;
+
+@group(1) @binding(1) var _backTex : texture_2d<f32>;
+
+@group(2) @binding(1) var sampler_backTex : sampler;
+
+@group(1) @binding(2) var _depthTex : texture_2d<f32>;
+
+@group(2) @binding(2) var sampler_depthTex : sampler;
+
+var<private> gl_FragCoord : vec4<f32>;
+
+var<private> Input_UV : vec2<f32>;
+
+var<private> Input_ProjBinormal : vec4<f32>;
+
+var<private> Input_ProjTangent : vec4<f32>;
+
+var<private> Input_PosP : vec4<f32>;
+
+var<private> Input_Color : vec4<f32>;
+
+var<private> _entryPointOutput : vec4<f32>;
+
+var<private> v_1 : vec4<f32>;
+
+struct SPIRV_Cross_Input {
+  Input_UV : vec2<f32>,
+  Input_ProjBinormal : vec4<f32>,
+  Input_ProjTangent : vec4<f32>,
+  Input_PosP : vec4<f32>,
+  Input_Color : vec4<f32>,
+  gl_FragCoord : vec4<f32>,
+}
+
+fn main_inner(v_2 : vec2<f32>, v_3 : vec4<f32>, v_4 : vec4<f32>, v_5 : vec4<f32>, v_6 : vec4<f32>, v_7 : vec4<f32>) {
+  var stage_input : SPIRV_Cross_Input;
+  var param : SPIRV_Cross_Input;
+  stage_input.Input_UV = v_2;
+  stage_input.Input_ProjBinormal = v_3;
+  stage_input.Input_ProjTangent = v_4;
+  stage_input.Input_PosP = v_5;
+  stage_input.Input_Color = v_6;
+  stage_input.gl_FragCoord = v_7;
+  param = stage_input;
+  v_1 = v_8(&(param))._entryPointOutput;
+}
+
+fn v_9(backgroundZ : ptr<function, f32>, meshZ : ptr<function, f32>, softparticleParam : ptr<function, vec4<f32>>, reconstruct1 : ptr<function, vec4<f32>>, reconstruct2 : ptr<function, vec4<f32>>) -> f32 {
+  var distanceFar : f32;
+  var distanceNear : f32;
+  var distanceNearOffset : f32;
+  var rescale : vec2<f32>;
+  var params : vec4<f32>;
+  var zs : vec2<f32>;
+  var depth : vec2<f32>;
+  var dir : f32;
+  var alphaFar : f32;
+  var alphaNear : f32;
+  distanceFar = (*(softparticleParam)).x;
+  distanceNear = (*(softparticleParam)).y;
+  distanceNearOffset = (*(softparticleParam)).z;
+  rescale = (*(reconstruct1)).xy;
+  params = *(reconstruct2);
+  zs = vec2<f32>(((*(backgroundZ) * rescale.x) + rescale.y), *(meshZ));
+  let v_10 = (zs * params.w);
+  let v_11 = params.y;
+  let v_12 = params.x;
+  depth = ((v_10 - vec2<f32>(v_11, v_11)) / (vec2<f32>(v_12, v_12) - (zs * params.z)));
+  dir = sign(depth.x);
+  let v_13 = dir;
+  depth = (depth * v_13);
+  alphaFar = ((depth.x - depth.y) / distanceFar);
+  alphaNear = ((depth.y - distanceNearOffset) / distanceNear);
+  return min(max(min(alphaFar, alphaNear), 0.0f), 1.0f);
+}
+
+struct PS_Input {
+  PosVS : vec4<f32>,
+  UV : vec2<f32>,
+  ProjBinormal : vec4<f32>,
+  ProjTangent : vec4<f32>,
+  PosP : vec4<f32>,
+  Color : vec4<f32>,
+}
+
+fn v_14(Input : ptr<function, PS_Input>) -> vec4<f32> {
+  var Output : vec4<f32>;
+  var pos : vec2<f32>;
+  var posR : vec2<f32>;
+  var posU : vec2<f32>;
+  var xscale : f32;
+  var yscale : f32;
+  var uv : vec2<f32>;
+  var color : vec3<f32>;
+  var screenPos : vec4<f32>;
+  var screenUV : vec2<f32>;
+  var backgroundZ : f32;
+  var param : f32;
+  var param_1 : f32;
+  var param_2 : vec4<f32>;
+  var param_3 : vec4<f32>;
+  var param_4 : vec4<f32>;
+  var param_5 : f32;
+  var param_6 : f32;
+  var param_7 : vec4<f32>;
+  var param_8 : vec4<f32>;
+  var param_9 : vec4<f32>;
+  Output = textureSample(_colorTex, sampler_colorTex, (*(Input)).UV);
+  let v_15 = (*(Input)).Color.w;
+  Output.w = (Output.w * v_15);
+  let v_16 = (*(Input)).PosP.xy;
+  let v_17 = (*(Input)).PosP.w;
+  pos = (v_16 / vec2<f32>(v_17, v_17));
+  let v_18 = (*(Input)).ProjTangent.xy;
+  let v_19 = (*(Input)).ProjTangent.w;
+  posR = (v_18 / vec2<f32>(v_19, v_19));
+  let v_20 = (*(Input)).ProjBinormal.xy;
+  let v_21 = (*(Input)).ProjBinormal.w;
+  posU = (v_20 / vec2<f32>(v_21, v_21));
+  xscale = ((((Output.x * 2.0f) - 1.0f) * (*(Input)).Color.x) * v._155_g_scale.x);
+  yscale = ((((Output.y * 2.0f) - 1.0f) * (*(Input)).Color.y) * v._155_g_scale.x);
+  uv = ((pos + ((posR - pos) * xscale)) + ((posU - pos) * yscale));
+  uv.x = ((uv.x + 1.0f) * 0.5f);
+  uv.y = (1.0f - ((uv.y + 1.0f) * 0.5f));
+  uv.y = (v._155_mUVInversedBack.x + (v._155_mUVInversedBack.y * uv.y));
+  color = textureSample(_backTex, sampler_backTex, uv).xyz;
+  Output.x = color.x;
+  Output.y = color.y;
+  Output.z = color.z;
+  let v_22 = (*(Input)).PosP;
+  let v_23 = (*(Input)).PosP.w;
+  screenPos = (v_22 / vec4<f32>(v_23, v_23, v_23, v_23));
+  screenUV = ((screenPos.xy + vec2<f32>(1.0f)) / vec2<f32>(2.0f));
+  screenUV.y = (1.0f - screenUV.y);
+  if (!((v._155_softParticleParam.w == 0.0f))) {
+    backgroundZ = textureSample(_depthTex, sampler_depthTex, screenUV).x;
+    param = backgroundZ;
+    param_1 = screenPos.z;
+    param_2 = v._155_softParticleParam;
+    param_3 = v._155_reconstructionParam1;
+    param_4 = v._155_reconstructionParam2;
+    param_5 = param;
+    param_6 = param_1;
+    param_7 = param_2;
+    param_8 = param_3;
+    param_9 = param_4;
+    let v_24 = v_9(&(param_5), &(param_6), &(param_7), &(param_8), &(param_9));
+    Output.w = (Output.w * v_24);
+  }
+  if ((Output.w == 0.0f)) {
+    discard;
+    return vec4<f32>();
+  }
+  return Output;
+}
+
+fn v_25() {
+  var Input : PS_Input;
+  var _314 : vec4<f32>;
+  var param : PS_Input;
+  Input.PosVS = gl_FragCoord;
+  Input.UV = Input_UV;
+  Input.ProjBinormal = Input_ProjBinormal;
+  Input.ProjTangent = Input_ProjTangent;
+  Input.PosP = Input_PosP;
+  Input.Color = Input_Color;
+  param = Input;
+  _314 = v_14(&(param));
+  _entryPointOutput = _314;
+}
+
+struct SPIRV_Cross_Output {
+  _entryPointOutput : vec4<f32>,
+}
+
+fn v_8(stage_input : ptr<function, SPIRV_Cross_Input>) -> SPIRV_Cross_Output {
+  var stage_output : SPIRV_Cross_Output;
+  gl_FragCoord = (*(stage_input)).gl_FragCoord;
+  gl_FragCoord.w = (1.0f / gl_FragCoord.w);
+  Input_UV = (*(stage_input)).Input_UV;
+  Input_ProjBinormal = (*(stage_input)).Input_ProjBinormal;
+  Input_ProjTangent = (*(stage_input)).Input_ProjTangent;
+  Input_PosP = (*(stage_input)).Input_PosP;
+  Input_Color = (*(stage_input)).Input_Color;
+  v_25();
+  stage_output._entryPointOutput = _entryPointOutput;
+  return stage_output;
+}
+
+@fragment
+fn main(@location(0u) @interpolate(perspective, centroid) v_26 : vec2<f32>, @location(1u) v_27 : vec4<f32>, @location(2u) v_28 : vec4<f32>, @location(3u) v_29 : vec4<f32>, @location(4u) @interpolate(perspective, centroid) v_30 : vec4<f32>, @builtin(position) v_31 : vec4<f32>) -> @location(0u) vec4<f32> {
+  main_inner(v_26, v_27, v_28, v_29, v_30, v_31);
+  return v_1;
+}

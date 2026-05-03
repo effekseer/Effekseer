@@ -17,6 +17,10 @@
 #include <Runtime/EffectPlatformVulkan.h>
 #endif
 
+#ifdef __EFFEKSEER_BUILD_WEBGPU__
+#include <Runtime/EffectPlatformWebGPU.h>
+#endif
+
 #include "../Effekseer/Effekseer/Effekseer.Base.h"
 #include "../Effekseer/Effekseer/Noise/Effekseer.CurlNoise.h"
 #include "../TestHelper.h"
@@ -497,6 +501,14 @@ void InstanceDisposeTest()
 	}
 #endif
 
+#ifdef __EFFEKSEER_BUILD_WEBGPU__
+	{
+		auto platform = std::make_shared<EffectPlatformWebGPU>();
+		InstanceDisposeTestPlatform(platform.get());
+		platform->Terminate();
+	}
+#endif
+
 #ifdef _WIN32
 #ifdef __EFFEKSEER_BUILD_DX12__
 	{
@@ -657,6 +669,13 @@ void RenderLimitTest()
 	}
 #endif
 
+#ifdef __EFFEKSEER_BUILD_WEBGPU__
+	{
+		auto platform = std::make_shared<EffectPlatformWebGPU>();
+		test(platform.get());
+	}
+#endif
+
 #ifdef _WIN32
 	{
 
@@ -793,6 +812,14 @@ void SRGBLinearTest()
 	{
 		auto platform = std::make_shared<EffectPlatformVulkan>();
 		SRGBLinearTestPlatform(platform.get(), "", "_Vulkan");
+		platform->Terminate();
+	}
+#endif
+
+#ifdef __EFFEKSEER_BUILD_WEBGPU__
+	{
+		auto platform = std::make_shared<EffectPlatformWebGPU>();
+		SRGBLinearTestPlatform(platform.get(), "", "_WebGPU");
 		platform->Terminate();
 	}
 #endif

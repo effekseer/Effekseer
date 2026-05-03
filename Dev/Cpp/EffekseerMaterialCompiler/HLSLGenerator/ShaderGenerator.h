@@ -22,6 +22,7 @@ enum class ShaderGeneratorTarget
 	DirectX12,
 	PSSL,
 	XBOXONE,
+	WebGPU,
 };
 
 class ShaderGenerator

@@ -652,4 +652,3 @@ void main()
             return model_lit_ps_gles2;
         return nullptr;
     }
-    

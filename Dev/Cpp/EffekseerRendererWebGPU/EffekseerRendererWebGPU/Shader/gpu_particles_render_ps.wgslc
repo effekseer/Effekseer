@@ -1,0 +1,186 @@
+wgslcodediagnostic(off, derivative_uniformity);
+
+@group(1) @binding(2) var ColorTex : texture_2d<f32>;
+
+@group(2) @binding(2) var ColorSamp : sampler;
+
+struct ParameterData {
+  EmitCount : i32,
+  EmitPerFrame : i32,
+  EmitOffset : f32,
+  Padding0 : u32,
+  LifeTime : vec2<f32>,
+  EmitShapeType : u32,
+  EmitRotationApplied : u32,
+  EmitShapeData : array<vec4<f32>, 2u>,
+  Direction : vec3<f32>,
+  Spread : f32,
+  InitialSpeed : vec2<f32>,
+  Damping : vec2<f32>,
+  AngularOffset : array<vec4<f32>, 2u>,
+  AngularVelocity : array<vec4<f32>, 2u>,
+  ScaleData1 : array<vec4<f32>, 2u>,
+  ScaleData2 : array<vec4<f32>, 2u>,
+  ScaleEasing : vec3<f32>,
+  ScaleFlags : u32,
+  Gravity : vec3<f32>,
+  Padding2 : u32,
+  VortexCenter : vec3<f32>,
+  VortexRotation : f32,
+  VortexAxis : vec3<f32>,
+  VortexAttraction : f32,
+  TurbulencePower : f32,
+  TurbulenceSeed : u32,
+  TurbulenceScale : f32,
+  TurbulenceOctave : f32,
+  RenderState : u32,
+  ShapeType : u32,
+  ShapeData : u32,
+  ShapeSize : f32,
+  Emissive : f32,
+  FadeIn : f32,
+  FadeOut : f32,
+  MaterialType : u32,
+  ColorData : vec4<u32>,
+  ColorEasing : vec3<f32>,
+  ColorFlags : u32,
+}
+
+struct cb1 {
+  _45_paramData : ParameterData,
+}
+
+@group(0) @binding(1) var<uniform> v : cb1;
+
+@group(1) @binding(3) var NormalTex : texture_2d<f32>;
+
+@group(2) @binding(3) var NormalSamp : sampler;
+
+struct RenderConstants_1_1 {
+  CameraPos : vec3<f32>,
+  CoordinateReversed : u32,
+  CameraFront : vec3<f32>,
+  Reserved1 : f32,
+  LightDir : vec3<f32>,
+  Reserved2 : f32,
+  LightColor : vec4<f32>,
+  LightAmbient : vec4<f32>,
+  ProjMat : mat4x4<f32>,
+  CameraMat : mat4x4<f32>,
+  BillboardMat : mat3x4<f32>,
+  YAxisFixedMat : mat3x4<f32>,
+}
+
+struct cb0_1_1 {
+  _103_constants : RenderConstants_1_1,
+}
+
+@group(0) @binding(0) var<uniform> v_1 : cb0_1_1;
+
+var<private> gl_FragCoord : vec4<f32>;
+
+var<private> input_UV : vec2<f32>;
+
+var<private> input_Color : vec4<f32>;
+
+var<private> input_WorldN : vec3<f32>;
+
+var<private> input_WorldB : vec3<f32>;
+
+var<private> input_WorldT : vec3<f32>;
+
+var<private> _entryPointOutput : vec4<f32>;
+
+var<private> v_2 : vec4<f32>;
+
+struct SPIRV_Cross_Input {
+  input_UV : vec2<f32>,
+  input_Color : vec4<f32>,
+  input_WorldN : vec3<f32>,
+  input_WorldB : vec3<f32>,
+  input_WorldT : vec3<f32>,
+  gl_FragCoord : vec4<f32>,
+}
+
+fn main_inner(v_3 : vec2<f32>, v_4 : vec4<f32>, v_5 : vec3<f32>, v_6 : vec3<f32>, v_7 : vec3<f32>, v_8 : vec4<f32>) {
+  var stage_input : SPIRV_Cross_Input;
+  var param : SPIRV_Cross_Input;
+  stage_input.input_UV = v_3;
+  stage_input.input_Color = v_4;
+  stage_input.input_WorldN = v_5;
+  stage_input.input_WorldB = v_6;
+  stage_input.input_WorldT = v_7;
+  stage_input.gl_FragCoord = v_8;
+  param = stage_input;
+  v_2 = v_9(&(param))._entryPointOutput;
+}
+
+struct PS_Input {
+  Pos : vec4<f32>,
+  UV : vec2<f32>,
+  Color : vec4<f32>,
+  WorldN : vec3<f32>,
+  WorldB : vec3<f32>,
+  WorldT : vec3<f32>,
+}
+
+fn v_10(_input : ptr<function, PS_Input>) -> vec4<f32> {
+  var color : vec4<f32>;
+  var texNormal : vec3<f32>;
+  var normal : vec3<f32>;
+  var diffuse : f32;
+  var _122 : vec4<f32>;
+  var _124 : vec3<f32>;
+  color = ((*(_input)).Color * textureSample(ColorTex, ColorSamp, (*(_input)).UV));
+  if ((v._45_paramData.MaterialType == 1u)) {
+    texNormal = ((textureSample(NormalTex, NormalSamp, (*(_input)).UV).xyz * 2.0f) - vec3<f32>(1.0f));
+    let v_11 = (*(_input)).WorldT;
+    let v_12 = (*(_input)).WorldB;
+    let v_13 = (*(_input)).WorldN;
+    normal = normalize((mat3x3<f32>(vec3<f32>(v_11.x, v_11.y, v_11.z), vec3<f32>(v_12.x, v_12.y, v_12.z), vec3<f32>(v_13.x, v_13.y, v_13.z)) * texNormal));
+    diffuse = max(dot(v_1._103_constants.LightDir, normal), 0.0f);
+    _122 = color;
+    _124 = (_122.xyz * ((v_1._103_constants.LightColor.xyz * diffuse) + v_1._103_constants.LightAmbient.xyz));
+    color.x = _124.x;
+    color.y = _124.y;
+    color.z = _124.z;
+  }
+  return color;
+}
+
+fn v_14() {
+  var _input : PS_Input;
+  var param : PS_Input;
+  _input.Pos = gl_FragCoord;
+  _input.UV = input_UV;
+  _input.Color = input_Color;
+  _input.WorldN = input_WorldN;
+  _input.WorldB = input_WorldB;
+  _input.WorldT = input_WorldT;
+  param = _input;
+  _entryPointOutput = v_10(&(param));
+}
+
+struct SPIRV_Cross_Output {
+  _entryPointOutput : vec4<f32>,
+}
+
+fn v_9(stage_input : ptr<function, SPIRV_Cross_Input>) -> SPIRV_Cross_Output {
+  var stage_output : SPIRV_Cross_Output;
+  gl_FragCoord = (*(stage_input)).gl_FragCoord;
+  gl_FragCoord.w = (1.0f / gl_FragCoord.w);
+  input_UV = (*(stage_input)).input_UV;
+  input_Color = (*(stage_input)).input_Color;
+  input_WorldN = (*(stage_input)).input_WorldN;
+  input_WorldB = (*(stage_input)).input_WorldB;
+  input_WorldT = (*(stage_input)).input_WorldT;
+  v_14();
+  stage_output._entryPointOutput = _entryPointOutput;
+  return stage_output;
+}
+
+@fragment
+fn main(@location(0u) v_15 : vec2<f32>, @location(1u) v_16 : vec4<f32>, @location(2u) v_17 : vec3<f32>, @location(3u) v_18 : vec3<f32>, @location(4u) v_19 : vec3<f32>, @builtin(position) v_20 : vec4<f32>) -> @location(0u) vec4<f32> {
+  main_inner(v_15, v_16, v_17, v_18, v_19, v_20);
+  return v_2;
+}

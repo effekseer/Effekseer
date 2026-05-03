@@ -34,6 +34,7 @@ option(NETWORK_ENABLED "Whether a network module is enabled" ON)
 
 option(BUILD_GL "Build OpenGL" ON)
 option(BUILD_VULKAN "Build vulkan modules" OFF)
+option(BUILD_WEBGPU "Build WebGPU modules" OFF)
 
 if(WIN32)
   option(BUILD_DX9 "Build DirectX9 modules" ON)
@@ -87,6 +88,20 @@ else()
       OFF
       CACHE BOOL "For LLGI" FORCE)
   set(BUILD_VULKAN_COMPILER
+      OFF
+      CACHE BOOL "For LLGI" FORCE)
+endif()
+
+if(BUILD_WEBGPU)
+  set(BUILD_WEBGPU
+      ON
+      CACHE BOOL "For LLGI" FORCE)
+  set(BUILD_VULKAN_COMPILER
+      ON
+      CACHE BOOL "For LLGI" FORCE)
+  add_definitions(-D__EFFEKSEER_BUILD_WEBGPU__)
+else()
+  set(BUILD_WEBGPU
       OFF
       CACHE BOOL "For LLGI" FORCE)
 endif()

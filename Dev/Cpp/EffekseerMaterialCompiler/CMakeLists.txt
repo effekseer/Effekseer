@@ -157,6 +157,44 @@ if(WIN32)
 
 endif()
 
+if(BUILD_WEBGPU)
+  add_library(
+    EffekseerMaterialCompilerWebGPU SHARED
+    ../EffekseerRendererWebGPU/EffekseerRendererWebGPU/EffekseerMaterialCompilerWebGPU.h
+    ../EffekseerRendererWebGPU/EffekseerRendererWebGPU/EffekseerMaterialCompilerWebGPU.cpp)
+
+  target_link_libraries(
+    EffekseerMaterialCompilerWebGPU
+    PRIVATE Effekseer EffekseerMaterialCompilerHLSLGenerator LLGI
+            ShaderTranspilerCore)
+
+  target_include_directories(EffekseerMaterialCompilerWebGPU
+                             PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/..)
+
+  target_compile_definitions(EffekseerMaterialCompilerWebGPU
+                             PRIVATE __SHARED_OBJECT__=1)
+
+  set_target_properties(
+    EffekseerMaterialCompilerWebGPU
+    PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
+               LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
+               RUNTIME_OUTPUT_DIRECTORY_DEBUG
+               "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
+               RUNTIME_OUTPUT_DIRECTORY_RELEASE
+               "${CMAKE_SOURCE_DIR}/Dev/release/tools/")
+
+  if(MSVC OR APPLE)
+    set_target_properties(EffekseerMaterialCompilerWebGPU
+                          PROPERTIES DEBUG_POSTFIX ".Debug")
+  endif()
+
+  set_property(TARGET EffekseerMaterialCompilerWebGPU PROPERTY FOLDER Libraries)
+
+  if(CLANG_FORMAT_ENABLED)
+    clang_format(EffekseerMaterialCompilerWebGPU)
+  endif()
+endif()
+
 if(WIN32 AND BUILD_DX12)
   add_library(
     EffekseerMaterialCompilerDX12 SHARED

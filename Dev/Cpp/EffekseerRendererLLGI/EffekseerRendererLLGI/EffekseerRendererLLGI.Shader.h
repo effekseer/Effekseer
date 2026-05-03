@@ -45,7 +45,7 @@ public:
 	{
 		if (shaderOverride_ != nullptr)
 		{
-			shaderOverride_->GetVertexShader();
+			return shaderOverride_->GetVertexShader();
 		}
 		return shader_->GetVertexShader();
 	}
@@ -53,7 +53,7 @@ public:
 	{
 		if (shaderOverride_ != nullptr)
 		{
-			shaderOverride_->GetPixelShader();
+			return shaderOverride_->GetPixelShader();
 		}
 		return shader_->GetPixelShader();
 	}

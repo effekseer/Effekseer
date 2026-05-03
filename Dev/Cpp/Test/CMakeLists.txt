@@ -44,7 +44,8 @@ endif()
 
 if(BUILD_DX12
    OR BUILD_METAL
-   OR BUILD_VULKAN)
+   OR BUILD_VULKAN
+   OR BUILD_WEBGPU)
   list(APPEND common_lib LLGI)
 endif()
 
@@ -58,6 +59,10 @@ endif()
 
 if(BUILD_VULKAN)
   list(APPEND common_lib EffekseerRendererVulkan)
+endif()
+
+if(BUILD_WEBGPU)
+  list(APPEND common_lib EffekseerRendererWebGPU)
 endif()
 
 list(APPEND common_lib Effekseer)

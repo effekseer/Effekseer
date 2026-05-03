@@ -1,6 +1,7 @@
 #include "CompiledMaterialGenerator.h"
 #include "../Effekseer/Effekseer/Material/Effekseer.MaterialCompiler.h"
 #include <fstream>
+#include <filesystem>
 
 typedef Effekseer::MaterialCompiler*(EFK_STDCALL* CreateCompilerFunc)();
 
@@ -23,6 +24,7 @@ bool CompiledMaterialGenerator::Initialize(const char* directory)
 	names[Effekseer::CompiledMaterialPlatformType::Metal] = "Metal";
 	names[Effekseer::CompiledMaterialPlatformType::Vulkan] = "VK";
 	names[Effekseer::CompiledMaterialPlatformType::OpenGL] = "GL";
+	names[Effekseer::CompiledMaterialPlatformType::WebGPU] = "WebGPU";
 	names[Effekseer::CompiledMaterialPlatformType::Switch] = "Switch";
 	names[Effekseer::CompiledMaterialPlatformType::PS4] = "PS4";
 	names[Effekseer::CompiledMaterialPlatformType::PS5] = "PS5";
@@ -30,32 +32,33 @@ bool CompiledMaterialGenerator::Initialize(const char* directory)
 
 	for (auto& name : names)
 	{
-		std::string path = directory;
+		auto path = std::filesystem::path(directory);
 
 #ifdef _WIN32
-		path += "EffekseerMaterialCompiler";
+		auto filename = std::string("EffekseerMaterialCompiler");
 #elif defined(__APPLE__)
-		path += "libEffekseerMaterialCompiler";
+		auto filename = std::string("libEffekseerMaterialCompiler");
 #else
-		path += "libEffekseerMaterialCompiler";
+		auto filename = std::string("libEffekseerMaterialCompiler");
 #endif
 
-		path += name.second;
+		filename += name.second;
 
 #ifdef _WIN32
 #ifdef _DEBUG
-		path += ".Debug.dll";
+		filename += ".Debug.dll";
 #else
-		path += ".dll";
+		filename += ".dll";
 #endif
 #elif defined(__APPLE__)
-		path += ".dylib";
+		filename += ".dylib";
 #else
-		path += ".so";
+		filename += ".so";
 #endif
+		path /= filename;
 
 		auto dll = std::make_shared<DynamicLinkLibrary>();
-		if (dll->Load(path.c_str()))
+		if (dll->Load(path.string().c_str()))
 		{
 			dlls_[name.first] = dll;
 		}
@@ -119,7 +122,16 @@ bool CompiledMaterialGenerator::Compile(const char* dstPath, const char* srcPath
 #else
 		auto createCompiler = dll.second->GetProc<CreateCompilerFunc>("CreateCompiler");
 #endif
+		if (createCompiler == nullptr)
+		{
+			return false;
+		}
+
 		auto compiler = Effekseer::RefPtr<Effekseer::MaterialCompiler>(createCompiler());
+		if (compiler == nullptr)
+		{
+			return false;
+		}
 
 		std::vector<uint8_t> vsStandardBinary;
 		std::vector<uint8_t> psStandardBinary;
@@ -130,30 +142,31 @@ bool CompiledMaterialGenerator::Compile(const char* dstPath, const char* srcPath
 		std::vector<uint8_t> vsRefractionModelBinary;
 		std::vector<uint8_t> psRefractionModelBinary;
 
-		auto compile_and_store =
-			[&compiler, &materialFile](Effekseer::MaterialShaderType type, std::vector<uint8_t>& vs, std::vector<uint8_t>& ps) -> bool
-		{
-			auto binary = Effekseer::RefPtr<Effekseer::CompiledMaterialBinary>(compiler->Compile(&materialFile));
-
-			if (binary != nullptr)
-			{
-				vs.resize(binary->GetVertexShaderSize(type));
-				memcpy(vs.data(), binary->GetVertexShaderData(type), binary->GetVertexShaderSize(type));
-
-				ps.resize(binary->GetPixelShaderSize(type));
-				memcpy(ps.data(), binary->GetPixelShaderData(type), binary->GetPixelShaderSize(type));
-			}
-
-			return binary != nullptr;
-		};
-
-		if (!compile_and_store(Effekseer::MaterialShaderType::Standard, vsStandardBinary, psStandardBinary) ||
-			!compile_and_store(Effekseer::MaterialShaderType::Model, vsModelBinary, psModelBinary) ||
-			!compile_and_store(Effekseer::MaterialShaderType::Refraction, vsRefractionStandardBinary, psRefractionStandardBinary) ||
-			!compile_and_store(Effekseer::MaterialShaderType::RefractionModel, vsRefractionModelBinary, psRefractionModelBinary))
+		auto binary = Effekseer::RefPtr<Effekseer::CompiledMaterialBinary>(compiler->Compile(&materialFile));
+		if (binary == nullptr)
 		{
 			return false;
 		}
+
+		auto store = [&binary](Effekseer::MaterialShaderType type, std::vector<uint8_t>& vs, std::vector<uint8_t>& ps) -> void
+		{
+			vs.resize(binary->GetVertexShaderSize(type));
+			if (!vs.empty())
+			{
+				memcpy(vs.data(), binary->GetVertexShaderData(type), vs.size());
+			}
+
+			ps.resize(binary->GetPixelShaderSize(type));
+			if (!ps.empty())
+			{
+				memcpy(ps.data(), binary->GetPixelShaderData(type), ps.size());
+			}
+		};
+
+		store(Effekseer::MaterialShaderType::Standard, vsStandardBinary, psStandardBinary);
+		store(Effekseer::MaterialShaderType::Model, vsModelBinary, psModelBinary);
+		store(Effekseer::MaterialShaderType::Refraction, vsRefractionStandardBinary, psRefractionStandardBinary);
+		store(Effekseer::MaterialShaderType::RefractionModel, vsRefractionModelBinary, psRefractionModelBinary);
 
 		if (vsStandardBinary.size() > 0 && psStandardBinary.size() > 0 && vsModelBinary.size() > 0 && psModelBinary.size() > 0)
 		{

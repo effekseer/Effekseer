@@ -1,0 +1,303 @@
+diagnostic(off, derivative_uniformity);
+
+struct PS_ConstantBuffer {
+  _225_fLightDirection : vec4<f32>,
+  _225_fLightColor : vec4<f32>,
+  _225_fLightAmbient : vec4<f32>,
+  _225_fFlipbookParameter : vec4<f32>,
+  _225_fUVDistortionParameter : vec4<f32>,
+  _225_fBlendTextureParameter : vec4<f32>,
+  _225_fCameraFrontDirection : vec4<f32>,
+  _225_fFalloffParameter : vec4<f32>,
+  _225_fFalloffBeginColor : vec4<f32>,
+  _225_fFalloffEndColor : vec4<f32>,
+  _225_fEmissiveScaling : vec4<f32>,
+  _225_fEdgeColor : vec4<f32>,
+  _225_fEdgeParameter : vec4<f32>,
+  _225_softParticleParam : vec4<f32>,
+  _225_reconstructionParam1 : vec4<f32>,
+  _225_reconstructionParam2 : vec4<f32>,
+  _225_mUVInversedBack : vec4<f32>,
+  _225_miscFlags : vec4<f32>,
+}
+
+@group(0) @binding(1) var<uniform> v : PS_ConstantBuffer;
+
+@group(1) @binding(0) var _colorTex : texture_2d<f32>;
+
+@group(2) @binding(0) var sampler_colorTex : sampler;
+
+@group(1) @binding(1) var _normalTex : texture_2d<f32>;
+
+@group(2) @binding(1) var sampler_normalTex : sampler;
+
+@group(1) @binding(2) var _depthTex : texture_2d<f32>;
+
+@group(2) @binding(2) var sampler_depthTex : sampler;
+
+var<private> gl_FragCoord : vec4<f32>;
+
+var<private> Input_Color : vec4<f32>;
+
+var<private> Input_UV : vec2<f32>;
+
+var<private> Input_WorldN : vec3<f32>;
+
+var<private> Input_WorldB : vec3<f32>;
+
+var<private> Input_WorldT : vec3<f32>;
+
+var<private> Input_PosP : vec4<f32>;
+
+var<private> _entryPointOutput : vec4<f32>;
+
+var<private> v_1 : vec4<f32>;
+
+struct SPIRV_Cross_Input {
+  Input_Color : vec4<f32>,
+  Input_UV : vec2<f32>,
+  Input_WorldN : vec3<f32>,
+  Input_WorldB : vec3<f32>,
+  Input_WorldT : vec3<f32>,
+  Input_PosP : vec4<f32>,
+  gl_FragCoord : vec4<f32>,
+}
+
+fn main_inner(v_2 : vec4<f32>, v_3 : vec2<f32>, v_4 : vec3<f32>, v_5 : vec3<f32>, v_6 : vec3<f32>, v_7 : vec4<f32>, v_8 : vec4<f32>) {
+  var stage_input : SPIRV_Cross_Input;
+  var param : SPIRV_Cross_Input;
+  stage_input.Input_Color = v_2;
+  stage_input.Input_UV = v_3;
+  stage_input.Input_WorldN = v_4;
+  stage_input.Input_WorldB = v_5;
+  stage_input.Input_WorldT = v_6;
+  stage_input.Input_PosP = v_7;
+  stage_input.gl_FragCoord = v_8;
+  param = stage_input;
+  v_1 = v_9(&(param))._entryPointOutput;
+}
+
+fn v_10(base : ptr<function, vec3<f32>>, power : ptr<function, vec3<f32>>) -> vec3<f32> {
+  return pow(max(abs(*(base)), vec3<f32>(0.00000011920928955078f)), *(power));
+}
+
+fn v_11(c : ptr<function, vec3<f32>>) -> vec3<f32> {
+  var param : vec3<f32>;
+  var param_1 : vec3<f32>;
+  var param_9 : vec3<f32>;
+  var param_10 : vec3<f32>;
+  param = *(c);
+  param_1 = vec3<f32>(0.4166666567325592041f);
+  param_9 = param;
+  param_10 = param_1;
+  return max(((v_10(&(param_9), &(param_10)) * 1.05499994754791259766f) - vec3<f32>(0.05499999970197677612f)), vec3<f32>());
+}
+
+fn v_12(c : ptr<function, vec4<f32>>) -> vec4<f32> {
+  var param : vec3<f32>;
+  var param_11 : vec3<f32>;
+  param = (*(c)).xyz;
+  param_11 = param;
+  let v_13 = v_11(&(param_11));
+  return vec4<f32>(v_13.x, v_13.y, v_13.z, (*(c)).w);
+}
+
+fn v_14(c : ptr<function, vec4<f32>>, isValid : ptr<function, bool>) -> vec4<f32> {
+  var param : vec4<f32>;
+  var param_12 : vec4<f32>;
+  if (!(*(isValid))) {
+    return *(c);
+  }
+  param = *(c);
+  param_12 = param;
+  return v_12(&(param_12));
+}
+
+fn v_15(backgroundZ : ptr<function, f32>, meshZ : ptr<function, f32>, softparticleParam : ptr<function, vec4<f32>>, reconstruct1 : ptr<function, vec4<f32>>, reconstruct2 : ptr<function, vec4<f32>>) -> f32 {
+  var distanceFar : f32;
+  var distanceNear : f32;
+  var distanceNearOffset : f32;
+  var rescale : vec2<f32>;
+  var params : vec4<f32>;
+  var zs : vec2<f32>;
+  var depth : vec2<f32>;
+  var dir : f32;
+  var alphaFar : f32;
+  var alphaNear : f32;
+  distanceFar = (*(softparticleParam)).x;
+  distanceNear = (*(softparticleParam)).y;
+  distanceNearOffset = (*(softparticleParam)).z;
+  rescale = (*(reconstruct1)).xy;
+  params = *(reconstruct2);
+  zs = vec2<f32>(((*(backgroundZ) * rescale.x) + rescale.y), *(meshZ));
+  let v_16 = (zs * params.w);
+  let v_17 = params.y;
+  let v_18 = params.x;
+  depth = ((v_16 - vec2<f32>(v_17, v_17)) / (vec2<f32>(v_18, v_18) - (zs * params.z)));
+  dir = sign(depth.x);
+  let v_19 = dir;
+  depth = (depth * v_19);
+  alphaFar = ((depth.x - depth.y) / distanceFar);
+  alphaNear = ((depth.y - distanceNearOffset) / distanceNear);
+  return min(max(min(alphaFar, alphaNear), 0.0f), 1.0f);
+}
+
+fn v_20(c : ptr<function, vec3<f32>>) -> vec3<f32> {
+  return min(*(c), (*(c) * ((*(c) * ((*(c) * 0.30530601739883422852f) + vec3<f32>(0.68217110633850097656f))) + vec3<f32>(0.01252287812530994415f))));
+}
+
+fn v_21(c : ptr<function, vec4<f32>>) -> vec4<f32> {
+  var param : vec3<f32>;
+  var param_13 : vec3<f32>;
+  param = (*(c)).xyz;
+  param_13 = param;
+  let v_22 = v_20(&(param_13));
+  return vec4<f32>(v_22.x, v_22.y, v_22.z, (*(c)).w);
+}
+
+fn v_23(c : ptr<function, vec4<f32>>, isValid : ptr<function, bool>) -> vec4<f32> {
+  var param : vec4<f32>;
+  var param_14 : vec4<f32>;
+  if (!(*(isValid))) {
+    return *(c);
+  }
+  param = *(c);
+  param_14 = param;
+  return v_21(&(param_14));
+}
+
+struct PS_Input {
+  PosVS : vec4<f32>,
+  Color : vec4<f32>,
+  UV : vec2<f32>,
+  WorldN : vec3<f32>,
+  WorldB : vec3<f32>,
+  WorldT : vec3<f32>,
+  PosP : vec4<f32>,
+}
+
+fn v_24(Input : ptr<function, PS_Input>) -> vec4<f32> {
+  var convertColorSpace : bool;
+  var param : vec4<f32>;
+  var param_1 : bool;
+  var Output : vec4<f32>;
+  var param_15 : vec4<f32>;
+  var param_16 : bool;
+  var texNormal : vec3<f32>;
+  var localNormal : vec3<f32>;
+  var diffuse : f32;
+  var _300 : vec4<f32>;
+  var _311 : vec3<f32>;
+  var _321 : vec4<f32>;
+  var _323 : vec3<f32>;
+  var screenPos : vec4<f32>;
+  var screenUV : vec2<f32>;
+  var backgroundZ : f32;
+  var param_2 : f32;
+  var param_3 : f32;
+  var param_4 : vec4<f32>;
+  var param_5 : vec4<f32>;
+  var param_6 : vec4<f32>;
+  var param_17 : f32;
+  var param_18 : f32;
+  var param_19 : vec4<f32>;
+  var param_20 : vec4<f32>;
+  var param_21 : vec4<f32>;
+  var param_7 : vec4<f32>;
+  var param_8 : bool;
+  var param_22 : vec4<f32>;
+  var param_23 : bool;
+  convertColorSpace = !((v._225_miscFlags.x == 0.0f));
+  param = textureSample(_colorTex, sampler_colorTex, (*(Input)).UV);
+  param_1 = convertColorSpace;
+  param_15 = param;
+  param_16 = param_1;
+  Output = (v_14(&(param_15), &(param_16)) * (*(Input)).Color);
+  texNormal = ((textureSample(_normalTex, sampler_normalTex, (*(Input)).UV).xyz - vec3<f32>(0.5f)) * 2.0f);
+  let v_25 = (*(Input)).WorldT;
+  let v_26 = (*(Input)).WorldB;
+  let v_27 = (*(Input)).WorldN;
+  localNormal = normalize((mat3x3<f32>(vec3<f32>(v_25.x, v_25.y, v_25.z), vec3<f32>(v_26.x, v_26.y, v_26.z), vec3<f32>(v_27.x, v_27.y, v_27.z)) * texNormal));
+  diffuse = max(dot(v._225_fLightDirection.xyz, localNormal), 0.0f);
+  _300 = Output;
+  _311 = (_300.xyz * ((v._225_fLightColor.xyz * diffuse) + v._225_fLightAmbient.xyz));
+  Output.x = _311.x;
+  Output.y = _311.y;
+  Output.z = _311.z;
+  _321 = Output;
+  _323 = (_321.xyz * v._225_fEmissiveScaling.x);
+  Output.x = _323.x;
+  Output.y = _323.y;
+  Output.z = _323.z;
+  let v_28 = (*(Input)).PosP;
+  let v_29 = (*(Input)).PosP.w;
+  screenPos = (v_28 / vec4<f32>(v_29, v_29, v_29, v_29));
+  screenUV = ((screenPos.xy + vec2<f32>(1.0f)) / vec2<f32>(2.0f));
+  screenUV.y = (1.0f - screenUV.y);
+  screenUV.y = (v._225_mUVInversedBack.x + (v._225_mUVInversedBack.y * screenUV.y));
+  if (!((v._225_softParticleParam.w == 0.0f))) {
+    backgroundZ = textureSample(_depthTex, sampler_depthTex, screenUV).x;
+    param_2 = backgroundZ;
+    param_3 = screenPos.z;
+    param_4 = v._225_softParticleParam;
+    param_5 = v._225_reconstructionParam1;
+    param_6 = v._225_reconstructionParam2;
+    param_17 = param_2;
+    param_18 = param_3;
+    param_19 = param_4;
+    param_20 = param_5;
+    param_21 = param_6;
+    let v_30 = v_15(&(param_17), &(param_18), &(param_19), &(param_20), &(param_21));
+    Output.w = (Output.w * v_30);
+  }
+  if ((Output.w == 0.0f)) {
+    discard;
+    return vec4<f32>();
+  }
+  param_7 = Output;
+  param_8 = convertColorSpace;
+  param_22 = param_7;
+  param_23 = param_8;
+  return v_23(&(param_22), &(param_23));
+}
+
+fn v_31() {
+  var Input : PS_Input;
+  var _435 : vec4<f32>;
+  var param : PS_Input;
+  Input.PosVS = gl_FragCoord;
+  Input.Color = Input_Color;
+  Input.UV = Input_UV;
+  Input.WorldN = Input_WorldN;
+  Input.WorldB = Input_WorldB;
+  Input.WorldT = Input_WorldT;
+  Input.PosP = Input_PosP;
+  param = Input;
+  _435 = v_24(&(param));
+  _entryPointOutput = _435;
+}
+
+struct SPIRV_Cross_Output {
+  _entryPointOutput : vec4<f32>,
+}
+
+fn v_9(stage_input : ptr<function, SPIRV_Cross_Input>) -> SPIRV_Cross_Output {
+  var stage_output : SPIRV_Cross_Output;
+  gl_FragCoord = (*(stage_input)).gl_FragCoord;
+  gl_FragCoord.w = (1.0f / gl_FragCoord.w);
+  Input_Color = (*(stage_input)).Input_Color;
+  Input_UV = (*(stage_input)).Input_UV;
+  Input_WorldN = (*(stage_input)).Input_WorldN;
+  Input_WorldB = (*(stage_input)).Input_WorldB;
+  Input_WorldT = (*(stage_input)).Input_WorldT;
+  Input_PosP = (*(stage_input)).Input_PosP;
+  v_31();
+  stage_output._entryPointOutput = _entryPointOutput;
+  return stage_output;
+}
+
+@fragment
+fn main(@location(0u) @interpolate(perspective, centroid) v_32 : vec4<f32>, @location(1u) @interpolate(perspective, centroid) v_33 : vec2<f32>, @location(2u) v_34 : vec3<f32>, @location(3u) v_35 : vec3<f32>, @location(4u) v_36 : vec3<f32>, @location(5u) v_37 : vec4<f32>, @builtin(position) v_38 : vec4<f32>) -> @location(0u) vec4<f32> {
+  main_inner(v_32, v_33, v_34, v_35, v_36, v_37, v_38);
+  return v_1;
+}

@@ -26,6 +26,8 @@ bool PiplineStateKey::operator<(const PiplineStateKey& v) const
 {
 	if (shader != v.shader)
 		return shader < v.shader;
+	if (vertexBufferStride != v.vertexBufferStride)
+		return vertexBufferStride < v.vertexBufferStride;
 	if (state.AlphaBlend != v.state.AlphaBlend)
 		return state.AlphaBlend < v.state.AlphaBlend;
 	if (state.CullingType != v.state.CullingType)
@@ -141,6 +143,7 @@ LLGI::PipelineState* RendererImplemented::GetOrCreatePiplineState()
 	key.shader = currentShader;
 	key.topologyType = currentTopologyType_;
 	key.renderPassPipelineState = currentRenderPassPipelineState_.get();
+	key.vertexBufferStride = currentVertexBufferStride_;
 
 	auto it = piplineStates_.find(key);
 	if (it != piplineStates_.end())
@@ -169,6 +172,7 @@ LLGI::PipelineState* RendererImplemented::GetOrCreatePiplineState()
 		piplineState->VertexLayoutSemantics[i] = currentShader->GetVertexLayouts()->GetElements()[i].Semantic;
 	}
 	piplineState->VertexLayoutCount = static_cast<int32_t>(currentShader->GetVertexLayouts()->GetElements().size());
+	piplineState->VertexBufferStride = currentVertexBufferStride_;
 
 	piplineState->Topology = currentTopologyType_;
 
@@ -192,7 +196,18 @@ LLGI::PipelineState* RendererImplemented::GetOrCreatePiplineState()
 	}
 	else
 	{
-		piplineState->Culling = (LLGI::CullingMode)key.state.CullingType;
+		if (key.state.CullingType == ::Effekseer::CullingType::Back)
+		{
+			piplineState->Culling = LLGI::CullingMode::Clockwise;
+		}
+		else if (key.state.CullingType == ::Effekseer::CullingType::Front)
+		{
+			piplineState->Culling = LLGI::CullingMode::CounterClockwise;
+		}
+		else if (key.state.CullingType == ::Effekseer::CullingType::Double)
+		{
+			piplineState->Culling = LLGI::CullingMode::DoubleSide;
+		}
 	}
 
 	piplineState->IsBlendEnabled = true;

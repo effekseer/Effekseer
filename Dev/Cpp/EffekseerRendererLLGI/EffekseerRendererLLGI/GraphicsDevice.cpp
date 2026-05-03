@@ -113,9 +113,9 @@ bool VertexBuffer::Init(int32_t size, bool isDynamic)
 
 void VertexBuffer::UpdateData(const void* src, int32_t size, int32_t offset)
 {
-	if (auto dst = static_cast<uint8_t*>(buffer_->Lock()))
+	if (auto dst = static_cast<uint8_t*>(buffer_->Lock(offset, size)))
 	{
-		memcpy(dst + offset, src, size);
+		memcpy(dst, src, size);
 		buffer_->Unlock();
 	}
 }
@@ -168,9 +168,9 @@ bool IndexBuffer::Init(int32_t elementCount, int32_t stride)
 
 void IndexBuffer::UpdateData(const void* src, int32_t size, int32_t offset)
 {
-	if (auto dst = static_cast<uint8_t*>(buffer_->Lock()))
+	if (auto dst = static_cast<uint8_t*>(buffer_->Lock(offset, size)))
 	{
-		memcpy(dst + offset, src, size);
+		memcpy(dst, src, size);
 		buffer_->Unlock();
 	}
 }
@@ -208,8 +208,10 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param, const Effe
 	texParam.Size = LLGI::Vec3I(param.Size[0], param.Size[1], param.Size[2]);
 	texParam.MipLevelCount = param.MipLevelCount < 1 ? count : param.MipLevelCount;
 
-	// TODO : Fix it
-	texParam.MipLevelCount = 1;
+	if (!graphicsDevice_->GetGraphics()->GetIsMipmapGenerationSupportedOnTextureLoad())
+	{
+		texParam.MipLevelCount = 1;
+	}
 
 	LLGI::TextureFormatType format = LLGI::TextureFormatType::R8G8B8A8_UNORM;
 
@@ -293,6 +295,7 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param, const Effe
 	}
 
 	texture->Unlock();
+	texture->GenerateMipMaps();
 
 	texture_ = LLGI::CreateSharedPtr(texture);
 	param_ = param;

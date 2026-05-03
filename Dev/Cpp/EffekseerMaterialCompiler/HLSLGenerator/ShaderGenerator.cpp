@@ -48,7 +48,7 @@ inline std::string GetMaterialCommonDefine(ShaderGeneratorTarget type)
 #define FRAC frac
 #define LERP lerp
 )";
-	if (type == ShaderGeneratorTarget::DirectX11 || type == ShaderGeneratorTarget::DirectX12)
+	if (type == ShaderGeneratorTarget::DirectX11 || type == ShaderGeneratorTarget::DirectX12 || type == ShaderGeneratorTarget::WebGPU)
 	{
 		ss << R"(
 #define C_LINEAR linear
@@ -98,7 +98,7 @@ inline std::string GetMaterialCommonDefine(ShaderGeneratorTarget type)
 	return ss.str();
 }
 
-static char* material_common_vs_functions = R"(
+static const char* material_common_vs_functions = R"(
 
 float2 GetUV(float2 uv)
 {
@@ -117,7 +117,7 @@ float CalcDepthFade(float2 screenUV, float meshZ, float softParticleParam) { ret
 
 )";
 
-static char* material_sprite_vs_pre_simple = R"(
+static const char* material_sprite_vs_pre_simple = R"(
 
 struct VS_Input
 {
@@ -152,7 +152,7 @@ float4 cameraPosition : register(c10);
 
 )";
 
-static char* material_sprite_vs_pre = R"(
+static const char* material_sprite_vs_pre = R"(
 
 struct VS_Input
 {
@@ -194,7 +194,7 @@ float4 cameraPosition : register(c10);
 
 )";
 
-static char* material_sprite_vs_suf1_simple = R"(
+static const char* material_sprite_vs_suf1_simple = R"(
 
 
 VS_Output main( const VS_Input Input )
@@ -229,7 +229,7 @@ VS_Output main( const VS_Input Input )
 	float meshZ =  0.0f;
 )";
 
-static char* material_sprite_vs_suf1 = R"(
+static const char* material_sprite_vs_suf1 = R"(
 
 VS_Output main( const VS_Input Input )
 {
@@ -263,7 +263,7 @@ VS_Output main( const VS_Input Input )
 	float meshZ =  0.0f;
 )";
 
-static char* material_sprite_vs_suf2 = R"(
+static const char* material_sprite_vs_suf2 = R"(
 
 	worldPos = worldPos + worldPositionOffset;
 
@@ -373,7 +373,7 @@ float4 cameraPosition : register(c286);
 	return ss.str();
 }
 
-static char* model_vs_suf1 = R"(
+static const char* model_vs_suf1 = R"(
 
 VS_Output main( const VS_Input Input )
 {
@@ -410,7 +410,7 @@ VS_Output main( const VS_Input Input )
 	float meshZ =  0.0f;
 )";
 
-static char* model_vs_suf2 = R"(
+static const char* model_vs_suf2 = R"(
 
 	worldPos = worldPos + worldPositionOffset;
 
@@ -614,7 +614,7 @@ float4 main( const PS_Input Input, face_t face: SV_IsFrontFace ) : SV_Target
 	return ss.str();
 }
 
-static char* g_material_ps_suf2_unlit = R"(
+static const char* g_material_ps_suf2_unlit = R"(
 
 	float4 Output = float4(emissive, opacity);
 
@@ -626,7 +626,7 @@ static char* g_material_ps_suf2_unlit = R"(
 
 )";
 
-static char* g_material_ps_suf2_lit = R"(
+static const char* g_material_ps_suf2_lit = R"(
 	float3 viewDir = normalize(cameraPosition.xyz - worldPos);
 	float3 diffuse = calcDirectionalLightDiffuseColor(baseColor, pixelNormalDir, lightDirection.xyz, ambientOcclusion);
 	float3 specular = lightColor.xyz * lightScale * calcLightingGGX(pixelNormalDir, viewDir, lightDirection.xyz, roughness, 0.9);
@@ -948,6 +948,21 @@ ShaderGenerator::ShaderGenerator(
 	, ps_suf2_refraction_(HLSL::GetMaterialPS_Suf2_Refraction(target).c_str())
 	, target_(target)
 {
+	if (target_ == ShaderGeneratorTarget::WebGPU)
+	{
+		sprite_vs_suf2_ = Replace(sprite_vs_suf2_, "mul(mCamera, float4(worldPos, 1.0))", "mul(float4(worldPos, 1.0), mCamera)");
+		sprite_vs_suf2_ = Replace(sprite_vs_suf2_, "mul(mProj, cameraPos)", "mul(cameraPos, mProj)");
+		model_vs_suf1_ = Replace(model_vs_suf1_, "mul( matModel, localPosition )", "mul( localPosition, matModel )");
+		model_vs_suf1_ = Replace(model_vs_suf1_, "mul( matRotModel, Input.Normal )", "mul( Input.Normal, matRotModel )");
+		model_vs_suf1_ = Replace(model_vs_suf1_, "mul( matRotModel, Input.Binormal )", "mul( Input.Binormal, matRotModel )");
+		model_vs_suf1_ = Replace(model_vs_suf1_, "mul( matRotModel, Input.Tangent )", "mul( Input.Tangent, matRotModel )");
+		model_vs_suf1_ = Replace(model_vs_suf1_, "mul(matRotModel, float3(1.0, 0.0, 0.0))", "mul(float3(1.0, 0.0, 0.0), matRotModel)");
+		model_vs_suf1_ = Replace(model_vs_suf1_, "mul(matRotModel, float3(0.0, 1.0, 0.0))", "mul(float3(0.0, 1.0, 0.0), matRotModel)");
+		model_vs_suf1_ = Replace(model_vs_suf1_, "mul(matRotModel, float3(0.0, 0.0, 1.0))", "mul(float3(0.0, 0.0, 1.0), matRotModel)");
+		model_vs_suf2_ = Replace(model_vs_suf2_, "mul( mCameraProj,  float4(worldPos, 1.0) )", "mul( float4(worldPos, 1.0), mCameraProj )");
+
+		ps_suf2_refraction_ = Replace(ps_suf2_refraction_, "mul((float3x3)cameraMat, pixelNormalDir)", "mul(pixelNormalDir, (float3x3)cameraMat)");
+	}
 }
 
 ShaderData ShaderGenerator::GenerateShader(MaterialFile* materialFile,

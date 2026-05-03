@@ -25,6 +25,7 @@ public:
 	EffekseerRenderer::RenderStateBase::State state;
 	LLGI::TopologyType topologyType;
 	LLGI::RenderPassPipelineState* renderPassPipelineState = nullptr;
+	int32_t vertexBufferStride = 0;
 	bool operator<(const PiplineStateKey& v) const;
 };
 
