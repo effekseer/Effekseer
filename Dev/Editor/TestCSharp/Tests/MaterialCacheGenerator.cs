@@ -6,7 +6,7 @@ namespace TestCSharp
 {
 	class MaterialCacheGeneratorTest
 	{
-		const int WebGPUPlatform = 90;
+		const int WebGPUPlatform = (int)Effekseer.Utils.CompiledMaterialPlatformType.WebGPU;
 
 		public static void Test()
 		{

@@ -179,35 +179,17 @@ LLGI::PipelineState* RendererImplemented::GetOrCreatePiplineState()
 	piplineState->IsDepthTestEnabled = key.state.DepthTest;
 	piplineState->IsDepthWriteEnabled = key.state.DepthWrite;
 
-	if (isReversedDepth_)
+	if (key.state.CullingType == ::Effekseer::CullingType::Front)
 	{
-		if (key.state.CullingType == ::Effekseer::CullingType::Front)
-		{
-			piplineState->Culling = LLGI::CullingMode::Clockwise;
-		}
-		else if (key.state.CullingType == ::Effekseer::CullingType::Back)
-		{
-			piplineState->Culling = LLGI::CullingMode::CounterClockwise;
-		}
-		else if (key.state.CullingType == ::Effekseer::CullingType::Double)
-		{
-			piplineState->Culling = LLGI::CullingMode::DoubleSide;
-		}
+		piplineState->Culling = LLGI::CullingMode::Clockwise;
 	}
-	else
+	else if (key.state.CullingType == ::Effekseer::CullingType::Back)
 	{
-		if (key.state.CullingType == ::Effekseer::CullingType::Front)
-		{
-			piplineState->Culling = LLGI::CullingMode::Clockwise;
-		}
-		else if (key.state.CullingType == ::Effekseer::CullingType::Back)
-		{
-			piplineState->Culling = LLGI::CullingMode::CounterClockwise;
-		}
-		else if (key.state.CullingType == ::Effekseer::CullingType::Double)
-		{
-			piplineState->Culling = LLGI::CullingMode::DoubleSide;
-		}
+		piplineState->Culling = LLGI::CullingMode::CounterClockwise;
+	}
+	else if (key.state.CullingType == ::Effekseer::CullingType::Double)
+	{
+		piplineState->Culling = LLGI::CullingMode::DoubleSide;
 	}
 
 	piplineState->IsBlendEnabled = true;
