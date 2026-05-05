@@ -28,7 +28,7 @@ set(PublicHeaders
 
 add_library(${PROJECT_NAME} STATIC ${LOCAL_SOURCES})
 target_include_directories(
-  ${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/../3rdparty/LLGI/src
+  ${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/../3rdParty/LLGI/src
                           ${CMAKE_CURRENT_LIST_DIR}/../EffekseerRendererVulkan
                           ${EFK_THIRDPARTY_INCLUDES})
 

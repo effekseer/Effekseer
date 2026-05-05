@@ -19,6 +19,10 @@
 EM_JS(void, effekseer_report_test_result, (int result, const char* message), {
 	let text = UTF8ToString(message);
 	let status = result === 0 ? 'passed' : 'failed';
+	if (Module.llgiTestResult && Module.llgiTestResult.status === 'failed') {
+		console.log('EFFEKSEER_TEST_FAIL', Module.llgiTestResult.message);
+		return;
+	}
 	if (status === 'passed' && Module.llgiLastWebGPUError) {
 		status = 'failed';
 		text = Module.llgiLastWebGPUError;
