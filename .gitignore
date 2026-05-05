@@ -1,5 +1,7 @@
 # Temporary
-build/
+/build
+/build-*
+/build_*
 .vs/
 
 # Compiled Object files

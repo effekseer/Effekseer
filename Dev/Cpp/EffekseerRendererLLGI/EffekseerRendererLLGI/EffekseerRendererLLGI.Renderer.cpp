@@ -181,11 +181,11 @@ LLGI::PipelineState* RendererImplemented::GetOrCreatePiplineState()
 
 	if (isReversedDepth_)
 	{
-		if (key.state.CullingType == ::Effekseer::CullingType::Back)
+		if (key.state.CullingType == ::Effekseer::CullingType::Front)
 		{
 			piplineState->Culling = LLGI::CullingMode::Clockwise;
 		}
-		else if (key.state.CullingType == ::Effekseer::CullingType::Front)
+		else if (key.state.CullingType == ::Effekseer::CullingType::Back)
 		{
 			piplineState->Culling = LLGI::CullingMode::CounterClockwise;
 		}
@@ -196,11 +196,11 @@ LLGI::PipelineState* RendererImplemented::GetOrCreatePiplineState()
 	}
 	else
 	{
-		if (key.state.CullingType == ::Effekseer::CullingType::Back)
+		if (key.state.CullingType == ::Effekseer::CullingType::Front)
 		{
 			piplineState->Culling = LLGI::CullingMode::Clockwise;
 		}
-		else if (key.state.CullingType == ::Effekseer::CullingType::Front)
+		else if (key.state.CullingType == ::Effekseer::CullingType::Back)
 		{
 			piplineState->Culling = LLGI::CullingMode::CounterClockwise;
 		}

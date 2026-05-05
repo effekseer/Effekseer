@@ -7,6 +7,36 @@ namespace EffekseerRendererLLGI
 {
 namespace Backend
 {
+namespace
+{
+LLGI::TextureWrapMode ToLLGITextureWrapMode(Effekseer::Backend::TextureWrapType wrapType)
+{
+	switch (wrapType)
+	{
+	case Effekseer::Backend::TextureWrapType::Clamp:
+		return LLGI::TextureWrapMode::Clamp;
+	case Effekseer::Backend::TextureWrapType::Repeat:
+		return LLGI::TextureWrapMode::Repeat;
+	default:
+		assert(0);
+		return LLGI::TextureWrapMode::Clamp;
+	}
+}
+
+LLGI::TextureMinMagFilter ToLLGITextureMinMagFilter(Effekseer::Backend::TextureSamplingType samplingType)
+{
+	switch (samplingType)
+	{
+	case Effekseer::Backend::TextureSamplingType::Linear:
+		return LLGI::TextureMinMagFilter::Linear;
+	case Effekseer::Backend::TextureSamplingType::Nearest:
+		return LLGI::TextureMinMagFilter::Nearest;
+	default:
+		assert(0);
+		return LLGI::TextureMinMagFilter::Linear;
+	}
+}
+} // namespace
 
 std::vector<uint8_t> Serialize(const std::vector<LLGI::DataStructure>& data)
 {
@@ -291,7 +321,9 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param, const Effe
 
 	if (initialData.size() > 0)
 	{
-		memcpy(buf, initialData.data(), initialData.size());
+		const auto textureMemorySize = LLGI::GetTextureMemorySize(texParam.Format, texParam.Size);
+		const auto copySize = (std::min)(initialData.size(), static_cast<size_t>(textureMemorySize));
+		memcpy(buf, initialData.data(), copySize);
 	}
 
 	texture->Unlock();
@@ -836,8 +868,8 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 		{
 			auto tex = textureBinder->Texture.DownCast<Backend::Texture>();
 			commandList_->SetTexture((tex) ? tex->GetTexture().get() : nullptr,
-									 (LLGI::TextureWrapMode)textureBinder->WrapType,
-									 (LLGI::TextureMinMagFilter)textureBinder->SamplingType,
+									 ToLLGITextureWrapMode(textureBinder->WrapType),
+									 ToLLGITextureMinMagFilter(textureBinder->SamplingType),
 									 slot);
 		}
 		else if (auto computeBufferBinder = std::get_if<Effekseer::Backend::ComputeBufferBinder>(&binder))
@@ -902,18 +934,10 @@ void GraphicsDevice::Dispatch(const Effekseer::Backend::DispatchParameter& dispa
 		auto& binder = dispatchParam.ResourceBinders[slot];
 		if (auto textureBinder = std::get_if<Effekseer::Backend::TextureBinder>(&binder))
 		{
-			LLGI::TextureWrapMode ws[2];
-			ws[(int)Effekseer::Backend::TextureWrapType::Clamp] = LLGI::TextureWrapMode::Clamp;
-			ws[(int)Effekseer::Backend::TextureWrapType::Repeat] = LLGI::TextureWrapMode::Repeat;
-
-			LLGI::TextureMinMagFilter fs[2];
-			fs[(int)Effekseer::Backend::TextureSamplingType::Linear] = LLGI::TextureMinMagFilter::Linear;
-			fs[(int)Effekseer::Backend::TextureSamplingType::Nearest] = LLGI::TextureMinMagFilter::Nearest;
-
 			auto tex = textureBinder->Texture.DownCast<Backend::Texture>();
 			commandList_->SetTexture((tex) ? tex->GetTexture().get() : nullptr,
-									 ws[(size_t)textureBinder->WrapType],
-									 fs[(size_t)textureBinder->SamplingType],
+									 ToLLGITextureWrapMode(textureBinder->WrapType),
+									 ToLLGITextureMinMagFilter(textureBinder->SamplingType),
 									 slot);
 		}
 		else if (auto computeBufferBinder = std::get_if<Effekseer::Backend::ComputeBufferBinder>(&binder))

@@ -233,16 +233,6 @@ def write_header(name, data):
         f.write("};\n")
 
 
-def postprocess_wgsl(source):
-    source = re.sub(r"\((localPos|worldPos|localNormal|localBinormal|localTangent) \* (mModel)\)", r"(\2 * \1)", source)
-    source = re.sub(r"\((\w+) \* (v\._\w+_mCameraProj)\)", r"(\2 * \1)", source)
-    source = re.sub(r"\(\(([^()]+ \+ [^()]+)\) \* (v\._\w+_mCameraProj)\)", r"(\2 * (\1))", source)
-    source = source.replace("worldNormal = normalize(worldNormal);", "worldNormal = vec4<f32>(normalize(worldNormal.xyz), 0.0f);")
-    source = source.replace("worldBinormal = normalize(worldBinormal);", "worldBinormal = vec4<f32>(normalize(worldBinormal.xyz), 0.0f);")
-    source = source.replace("worldTangent = normalize(worldTangent);", "worldTangent = vec4<f32>(normalize(worldTangent.xyz), 0.0f);")
-    return source
-
-
 def transpile(name, stage, ext):
     if not os.path.isfile(transpiler):
         raise FileNotFoundError(
@@ -261,6 +251,7 @@ def transpile(name, stage, ext):
             transpiler,
             stage,
             "-W",
+            "--fix-wgsl-matrix-direction",
             "--input",
             input_path,
             "--output",
@@ -272,7 +263,6 @@ def transpile(name, stage, ext):
 
     with open(output_path, "r", newline="\n") as f:
         wgsl = f.read()
-    wgsl = postprocess_wgsl(wgsl)
     with open(output_path, "w", newline="\n") as f:
         f.write(wgsl)
     with open(compiled_path, "wb") as f:

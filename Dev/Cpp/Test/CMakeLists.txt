@@ -6,6 +6,7 @@ set(effekseer_test_src
     main.cpp
     TestHelper.h
     TestHelper.cpp
+    Runtime/BasicRendering.h
     Runtime/BasicRendering.cpp
     Runtime/RuntimeTest.cpp
     Runtime/Performance.cpp
@@ -62,6 +63,7 @@ if(BUILD_VULKAN)
 endif()
 
 if(BUILD_WEBGPU)
+  list(APPEND effekseer_test_src Runtime/BasicRenderingWebGPU.cpp)
   list(APPEND common_lib EffekseerRendererWebGPU)
 endif()
 

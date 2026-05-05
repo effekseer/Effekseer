@@ -24,7 +24,6 @@ set(PublicHeaders
 add_library(${PROJECT_NAME} STATIC ${LOCAL_SOURCES})
 target_include_directories(
   ${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/../3rdparty/LLGI/src
-                          ${CMAKE_CURRENT_LIST_DIR}/../3rdparty/LLGI/tools/ShaderTranspilerCore
                           ${CMAKE_CURRENT_LIST_DIR}/../EffekseerRendererVulkan
                           ${EFK_THIRDPARTY_INCLUDES})
 
@@ -39,11 +38,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER
 target_link_libraries(${PROJECT_NAME} PUBLIC Effekseer EffekseerRendererCommon
                                              EffekseerRendererLLGI LLGI)
 target_link_libraries(${PROJECT_NAME} PRIVATE $<BUILD_INTERFACE:ShaderTranspilerCore>)
-target_link_directories(
-  ${PROJECT_NAME}
-  PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/Dev/Cpp/3rdParty/LLGI/EP/Install/glslang/lib>
-    $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/Dev/Cpp/3rdParty/LLGI/EP/Install/SPIRV-Cross/lib>)
 
 target_include_directories(
   ${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
