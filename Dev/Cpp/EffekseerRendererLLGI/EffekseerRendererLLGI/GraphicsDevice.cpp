@@ -17,6 +17,8 @@ LLGI::TextureWrapMode ToLLGITextureWrapMode(Effekseer::Backend::TextureWrapType 
 		return LLGI::TextureWrapMode::Clamp;
 	case Effekseer::Backend::TextureWrapType::Repeat:
 		return LLGI::TextureWrapMode::Repeat;
+	case Effekseer::Backend::TextureWrapType::Mirror:
+		return LLGI::TextureWrapMode::Mirror;
 	default:
 		assert(0);
 		return LLGI::TextureWrapMode::Clamp;

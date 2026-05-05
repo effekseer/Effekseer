@@ -284,6 +284,7 @@ enum class TextureWrapType
 {
 	Clamp,
 	Repeat,
+	Mirror,
 };
 
 enum class TextureSamplingType

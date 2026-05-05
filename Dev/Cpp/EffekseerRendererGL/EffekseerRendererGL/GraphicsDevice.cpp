@@ -1563,11 +1563,9 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 			static const GLint glfilterMin[] = {GL_NEAREST, GL_LINEAR_MIPMAP_LINEAR};
 			static const GLint glfilterMin_NoneMipmap[] = {GL_NEAREST, GL_LINEAR};
 			static const GLint glfilterMag[] = {GL_NEAREST, GL_LINEAR};
-			static const GLint glwrap[] = {GL_REPEAT, GL_CLAMP_TO_EDGE};
-
 			GLint filterMin = 0;
 			GLint filterMag = 0;
-			GLint wrap = 0;
+			GLint wrap = GL_REPEAT;
 
 			if (textureBinder->SamplingType == Effekseer::Backend::TextureSamplingType::Linear)
 			{
@@ -1596,11 +1594,15 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 
 			if (textureBinder->WrapType == Effekseer::Backend::TextureWrapType::Clamp)
 			{
-				wrap = glwrap[1];
+				wrap = GL_CLAMP_TO_EDGE;
+			}
+			else if (textureBinder->WrapType == Effekseer::Backend::TextureWrapType::Mirror)
+			{
+				wrap = GL_MIRRORED_REPEAT;
 			}
 			else
 			{
-				wrap = glwrap[0];
+				wrap = GL_REPEAT;
 			}
 
 			if (deviceType_ == OpenGLDeviceType::OpenGL3 || deviceType_ == OpenGLDeviceType::OpenGLES3)

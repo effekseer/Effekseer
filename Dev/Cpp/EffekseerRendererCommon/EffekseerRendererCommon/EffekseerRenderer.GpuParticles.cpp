@@ -534,7 +534,16 @@ void GpuParticleSystem::RenderFrame(const Context& context)
 	};
 	auto toWrapType = [](uint8_t wrapType)
 	{
-		return (static_cast<Effekseer::TextureWrapType>(wrapType) == Effekseer::TextureWrapType::Repeat) ? Effekseer::Backend::TextureWrapType::Repeat : Effekseer::Backend::TextureWrapType::Clamp;
+		switch (static_cast<Effekseer::TextureWrapType>(wrapType))
+		{
+		case Effekseer::TextureWrapType::Repeat:
+			return Effekseer::Backend::TextureWrapType::Repeat;
+		case Effekseer::TextureWrapType::Mirror:
+			return Effekseer::Backend::TextureWrapType::Mirror;
+		case Effekseer::TextureWrapType::Clamp:
+		default:
+			return Effekseer::Backend::TextureWrapType::Clamp;
+		}
 	};
 
 	for (EmitterID emitterID = 0; emitterID < (EmitterID)emitters_.size(); emitterID++)
