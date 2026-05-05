@@ -63,8 +63,9 @@ const server = http.createServer((request, response) => {
 
 	const relativePath = decodeURIComponent(requestUrl.pathname === '/' ? `/${htmlFile}` : requestUrl.pathname);
 	const filePath = path.resolve(root, `.${relativePath}`);
+	const relativeFromRoot = path.relative(root, filePath);
 
-	if (!filePath.startsWith(root) || !fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
+	if (relativeFromRoot.startsWith('..') || path.isAbsolute(relativeFromRoot) || !fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
 		response.writeHead(404);
 		response.end('Not found');
 		return;

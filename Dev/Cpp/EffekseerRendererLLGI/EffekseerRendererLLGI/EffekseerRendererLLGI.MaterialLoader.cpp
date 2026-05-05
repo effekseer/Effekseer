@@ -346,7 +346,7 @@ MaterialLoader ::~MaterialLoader()
 
 		auto binary = compiled.GetHasValue(platformType_) ? compiled.GetBinary(platformType_) : nullptr;
 		std::unique_ptr<::Effekseer::CompiledMaterialBinary, ::Effekseer::ReferenceDeleter<::Effekseer::CompiledMaterialBinary>> generatedBinary;
-		if (platformType_ == ::Effekseer::CompiledMaterialPlatformType::WebGPU && materialCompiler_ != nullptr)
+		if (binary == nullptr && platformType_ == ::Effekseer::CompiledMaterialPlatformType::WebGPU && materialCompiler_ != nullptr)
 		{
 			generatedBinary = ::Effekseer::CreateUniqueReference(materialCompiler_->Compile(&materialFile));
 			if (generatedBinary != nullptr)
