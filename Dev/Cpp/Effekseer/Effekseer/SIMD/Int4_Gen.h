@@ -482,10 +482,10 @@ inline Int4 Int4::ShiftRA(const Int4& lhs)
 template <uint32_t X, uint32_t Y, uint32_t Z, uint32_t W>
 Int4 Int4::Mask()
 {
-	static_assert(X >= 2, "indexX is must be set 0 or 1.");
-	static_assert(Y >= 2, "indexY is must be set 0 or 1.");
-	static_assert(Z >= 2, "indexZ is must be set 0 or 1.");
-	static_assert(W >= 2, "indexW is must be set 0 or 1.");
+	static_assert(X < 2, "indexX is must be set 0 or 1.");
+	static_assert(Y < 2, "indexY is must be set 0 or 1.");
+	static_assert(Z < 2, "indexZ is must be set 0 or 1.");
+	static_assert(W < 2, "indexW is must be set 0 or 1.");
 	Int4 ret;
 	ret.vu[0] = 0xffffffff * X;
 	ret.vu[1] = 0xffffffff * Y;
@@ -496,7 +496,8 @@ Int4 Int4::Mask()
 
 inline uint32_t Int4::MoveMask(const Int4& in)
 {
-	return (in.vu[0] & 0x1) | (in.vu[1] & 0x2) | (in.vu[2] & 0x4) | (in.vu[3] & 0x8);
+	return ((in.vu[0] >> 31) & 0x1) | (((in.vu[1] >> 31) & 0x1) << 1) | (((in.vu[2] >> 31) & 0x1) << 2) |
+		   (((in.vu[3] >> 31) & 0x1) << 3);
 }
 
 inline Int4 Int4::Equal(const Int4& lhs, const Int4& rhs)

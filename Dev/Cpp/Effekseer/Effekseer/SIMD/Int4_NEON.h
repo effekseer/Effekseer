@@ -340,20 +340,20 @@ inline Int4 Int4::ShiftRA(const Int4& lhs)
 template <uint32_t X, uint32_t Y, uint32_t Z, uint32_t W>
 inline Int4 Int4::Mask()
 {
-	static_assert(X >= 2, "indexX is must be set 0 or 1.");
-	static_assert(Y >= 2, "indexY is must be set 0 or 1.");
-	static_assert(Z >= 2, "indexZ is must be set 0 or 1.");
-	static_assert(W >= 2, "indexW is must be set 0 or 1.");
+	static_assert(X < 2, "indexX is must be set 0 or 1.");
+	static_assert(Y < 2, "indexY is must be set 0 or 1.");
+	static_assert(Z < 2, "indexZ is must be set 0 or 1.");
+	static_assert(W < 2, "indexW is must be set 0 or 1.");
 	const uint32_t in[4] = {0xffffffff * X, 0xffffffff * Y, 0xffffffff * Z, 0xffffffff * W};
 	return vreinterpretq_s32_u32(vld1q_u32(in));
 }
 
 inline uint32_t Int4::MoveMask(const Int4& in)
 {
-	uint16x4_t u16x4 = vmovn_u32(vreinterpretq_u32_s32(in.s));
-	uint16_t u16[4];
-	vst1_u16(u16, u16x4);
-	return (u16[0] & 1) | (u16[1] & 2) | (u16[2] & 4) | (u16[3] & 8);
+	uint32_t u32[4];
+	vst1q_u32(u32, vreinterpretq_u32_s32(in.s));
+	return ((u32[0] >> 31) & 0x1) | (((u32[1] >> 31) & 0x1) << 1) | (((u32[2] >> 31) & 0x1) << 2) |
+		   (((u32[3] >> 31) & 0x1) << 3);
 }
 
 inline Int4 Int4::Equal(const Int4& lhs, const Int4& rhs)

@@ -373,10 +373,10 @@ inline Int4 Int4::ShiftRA(const Int4& lhs)
 template <uint32_t X, uint32_t Y, uint32_t Z, uint32_t W>
 inline Int4 Int4::Mask()
 {
-	static_assert(X >= 2, "indexX is must be set 0 or 1.");
-	static_assert(Y >= 2, "indexY is must be set 0 or 1.");
-	static_assert(Z >= 2, "indexZ is must be set 0 or 1.");
-	static_assert(W >= 2, "indexW is must be set 0 or 1.");
+	static_assert(X < 2, "indexX is must be set 0 or 1.");
+	static_assert(Y < 2, "indexY is must be set 0 or 1.");
+	static_assert(Z < 2, "indexZ is must be set 0 or 1.");
+	static_assert(W < 2, "indexW is must be set 0 or 1.");
 	return _mm_setr_epi32(
 		(int)(0xffffffff * X),
 		(int)(0xffffffff * Y),

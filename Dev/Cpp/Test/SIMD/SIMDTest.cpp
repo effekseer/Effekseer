@@ -175,6 +175,15 @@ void test_Float4()
 		Float4 ret = Float4::Select(mask, a, b);
 		ASSERT(ret == Float4(1, 2, 2, 1));
 	}
+
+	{
+		Float4 mask = Float4::Mask<0, 1, 0, 1>();
+		ASSERT(Float4::MoveMask(mask) == 0xa);
+	}
+
+	{
+		ASSERT(Float4::MoveMask(Float4(1, -2, 3, -4)) == 0xa);
+	}
 }
 
 void test_Vec2f()
@@ -430,6 +439,15 @@ void test_Int4()
 		ASSERT(Int4::MulSubLane<1>(Int4(30), a, b) == Int4(24, 18, 12, 6));
 		ASSERT(Int4::MulSubLane<2>(Int4(30), a, b) == Int4(23, 16, 9, 2));
 		ASSERT(Int4::MulSubLane<3>(Int4(30), a, b) == Int4(22, 14, 6, -2));
+	}
+
+	{
+		Int4 mask = Int4::Mask<0, 1, 0, 1>();
+		ASSERT(mask == Int4(0, -1, 0, -1));
+	}
+
+	{
+		ASSERT(Int4::MoveMask(Int4(1, -2, 3, -4)) == 0xa);
 	}
 
 	{
