@@ -13,6 +13,21 @@
 #include <easy/profiler.h>
 #endif
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+
+EM_JS(void, effekseer_report_test_result, (int result, const char* message), {
+	let text = UTF8ToString(message);
+	let status = result === 0 ? 'passed' : 'failed';
+	if (status === 'passed' && Module.llgiLastWebGPUError) {
+		status = 'failed';
+		text = Module.llgiLastWebGPUError;
+	}
+	Module.llgiTestResult = { status: status, message: text };
+	console.log(status === 'passed' ? 'EFFEKSEER_TEST_PASS' : 'EFFEKSEER_TEST_FAIL', text);
+});
+#endif
+
 int main(int argc, char* argv[])
 {
 	[[maybe_unused]] const bool onCI = argc >= 2;
@@ -32,6 +47,10 @@ int main(int argc, char* argv[])
 	// You can specify "Test --filter=*.* to run a single test"
 	auto parsed = TestHelper::ParseArg(argc, argv);
 	TestHelper::Run(parsed);
+
+#ifdef __EMSCRIPTEN__
+	effekseer_report_test_result(0, "completed");
+#endif
 
 #if _WIN32
 	//_CrtDumpMemoryLeaks();

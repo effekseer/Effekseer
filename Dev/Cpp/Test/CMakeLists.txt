@@ -2,29 +2,42 @@ cmake_minimum_required(VERSION 3.10)
 
 project(TestCpp)
 
-set(effekseer_test_src
-    main.cpp
-    TestHelper.h
-    TestHelper.cpp
-    Runtime/BasicRendering.h
-    Runtime/BasicRendering.cpp
-    Runtime/RuntimeTest.cpp
-    Runtime/Performance.cpp
-    Runtime/TextureFormats.cpp
-    Runtime/Vertex.cpp
-    Runtime/ResourceManager.cpp
-    Runtime/String.cpp
-    Runtime/Network.cpp
-    Runtime/Math.cpp
-    Runtime/Misc.cpp
-    Runtime/VectorField.cpp
-    Backend/Helper.h
-    Backend/Helper.cpp
-    Backend/Textures.cpp
-    Backend/Mesh.cpp
-    Backend/RenderPass.cpp
-    Backend/GPUParticle.cpp
-    Backend/OpenGL.cpp)
+if(BUILD_WEBGPU_BROWSER_TEST AND NOT EMSCRIPTEN)
+  message(FATAL_ERROR "BUILD_WEBGPU_BROWSER_TEST requires an Emscripten CMake toolchain.")
+endif()
+if(BUILD_WEBGPU_BROWSER_TEST AND NOT BUILD_WEBGPU)
+  message(FATAL_ERROR "BUILD_WEBGPU_BROWSER_TEST requires BUILD_WEBGPU.")
+endif()
+
+if(BUILD_WEBGPU_BROWSER_TEST)
+  set(effekseer_test_src main.cpp TestHelper.h TestHelper.cpp
+                         Runtime/WebGPUBrowserRendering.cpp)
+  set(effekseer_browser_player_src Runtime/WebGPUBrowserPlayer.cpp)
+else()
+  set(effekseer_test_src
+      main.cpp
+      TestHelper.h
+      TestHelper.cpp
+      Runtime/BasicRendering.h
+      Runtime/BasicRendering.cpp
+      Runtime/RuntimeTest.cpp
+      Runtime/Performance.cpp
+      Runtime/TextureFormats.cpp
+      Runtime/Vertex.cpp
+      Runtime/ResourceManager.cpp
+      Runtime/String.cpp
+      Runtime/Network.cpp
+      Runtime/Math.cpp
+      Runtime/Misc.cpp
+      Runtime/VectorField.cpp
+      Backend/Helper.h
+      Backend/Helper.cpp
+      Backend/Textures.cpp
+      Backend/Mesh.cpp
+      Backend/RenderPass.cpp
+      Backend/GPUParticle.cpp
+      Backend/OpenGL.cpp)
+endif()
 
 include_directories(${EFK_THIRDPARTY_INCLUDES} ../Effekseer/
                     ../EffekseerRendererGL/ ../EffekseerSoundAL/)
@@ -36,7 +49,9 @@ endif()
 set(common_lib)
 set(common_inc)
 
-list(APPEND common_lib EffekseerRendererGL)
+if(NOT BUILD_WEBGPU_BROWSER_TEST)
+  list(APPEND common_lib EffekseerRendererGL)
+endif()
 
 if(WIN32)
   list(APPEND common_lib EffekseerRendererDX11)
@@ -62,14 +77,17 @@ if(BUILD_VULKAN)
   list(APPEND common_lib EffekseerRendererVulkan)
 endif()
 
-if(BUILD_WEBGPU)
+if(BUILD_WEBGPU AND NOT BUILD_WEBGPU_BROWSER_TEST)
   list(APPEND effekseer_test_src Runtime/BasicRenderingWebGPU.cpp)
+  list(APPEND common_lib EffekseerRendererWebGPU)
+elseif(BUILD_WEBGPU)
   list(APPEND common_lib EffekseerRendererWebGPU)
 endif()
 
 list(APPEND common_lib Effekseer)
 
-if(MSVC)
+if(BUILD_WEBGPU_BROWSER_TEST)
+elseif(MSVC)
 
 else()
   find_package(Threads REQUIRED)
@@ -112,6 +130,13 @@ target_link_directories(${PROJECT_NAME} PRIVATE
                         ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES})
 target_link_libraries(${PROJECT_NAME} PRIVATE TestRuntimeFramework)
 
+if(BUILD_WEBGPU_BROWSER_TEST)
+  add_executable(EffekseerWebGPUBrowserPlayer ${effekseer_browser_player_src})
+  target_link_libraries(EffekseerWebGPUBrowserPlayer PRIVATE TestRuntimeFramework)
+  target_link_directories(EffekseerWebGPUBrowserPlayer
+                          PRIVATE ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES})
+endif()
+
 if(BUILD_VULKAN)
   find_package(Vulkan REQUIRED)
 
@@ -127,13 +152,15 @@ if(BUILD_VULKAN)
     ${CMAKE_CURRENT_BINARY_DIR}/../3rdParty/LLGI/EP/Install/glslang/lib)
 endif()
 
-add_dependencies(TestCpp ExternalProject_glfw)
+if(NOT BUILD_WEBGPU_BROWSER_TEST)
+  add_dependencies(TestCpp ExternalProject_glfw)
+endif()
 
 if(BUILD_WITH_EASY_PROFILER)
   add_dependencies(TestCpp ExternalProject_easy_profiler)
 endif()
 
-if(UNIX AND NOT APPLE)
+if(UNIX AND NOT APPLE AND NOT BUILD_WEBGPU_BROWSER_TEST)
   find_package(X11 REQUIRED)
   target_link_libraries(TestCpp PRIVATE ${X11_LIBRARIES})
   find_package(Threads REQUIRED)
@@ -156,6 +183,39 @@ if(MSVC)
   set_target_properties(TestCpp PROPERTIES OUTPUT_NAME_RELEASE "TestCpp")
 else()
   set_target_properties(TestCpp PROPERTIES OUTPUT_NAME "TestCpp")
+endif()
+
+if(BUILD_WEBGPU_BROWSER_TEST)
+  set_target_properties(TestCpp PROPERTIES SUFFIX ".html")
+  target_link_options(
+    TestCpp
+    PRIVATE
+    "--pre-js=${CMAKE_CURRENT_SOURCE_DIR}/Runtime/browser/pre_effekseer_webgpu_test.js"
+    "--preload-file=${CMAKE_CURRENT_SOURCE_DIR}/../../../TestData@/TestData"
+    "-sALLOW_MEMORY_GROWTH=1"
+    "-sASYNCIFY=1"
+    "-sASSERTIONS=1")
+
+  set_target_properties(EffekseerWebGPUBrowserPlayer PROPERTIES SUFFIX ".html")
+  target_link_options(
+    EffekseerWebGPUBrowserPlayer
+    PRIVATE
+    "--pre-js=${CMAKE_CURRENT_SOURCE_DIR}/Runtime/browser/pre_effekseer_webgpu_player.js"
+    "--preload-file=${CMAKE_CURRENT_SOURCE_DIR}/../../../TestData@/TestData"
+    "-sALLOW_MEMORY_GROWTH=1"
+    "-sASYNCIFY=1"
+    "-sASSERTIONS=1")
+
+  enable_testing()
+  find_program(NODE_EXE node)
+  if(NODE_EXE)
+    add_test(
+      NAME Effekseer_WebGPU_Browser
+      COMMAND
+        ${NODE_EXE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/../3rdParty/LLGI/src_test/browser/run_webgpu_browser_test.mjs
+        $<TARGET_FILE:TestCpp> --filter=Runtime.WebGPUBrowser.*)
+  endif()
 endif()
 
 filterfolder("${effekseer_test_src}")

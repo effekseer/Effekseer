@@ -99,6 +99,13 @@ EffectPlatformLLGI ::~EffectPlatformLLGI()
 
 void EffectPlatformLLGI::InitializeWindow()
 {
+#if defined(__EMSCRIPTEN__)
+	llgiWindow_ = LLGI::CreateWindow("Effekseer WebGPU Browser Test", LLGI::Vec2I(initParam_.WindowSize[0], initParam_.WindowSize[1]));
+	if (llgiWindow_ == nullptr)
+	{
+		throw "Failed to create an window.";
+	}
+#else
 	if (!glfwInit())
 	{
 		throw "Failed to initialize glfw";
@@ -115,9 +122,11 @@ void EffectPlatformLLGI::InitializeWindow()
 	}
 
 	llgiWindow_ = new LLGIWindow(glfwWindow_);
+#endif
 
 	LLGI::PlatformParameter platformParam;
 	platformParam.Device = deviceType_;
+	platformParam.WaitVSync = initParam_.VSync;
 	platform_ = LLGI::CreatePlatform(platformParam, llgiWindow_);
 	graphics_ = platform_->CreateGraphics();
 	sfMemoryPool_ = graphics_->CreateSingleFrameMemoryPool(1024 * 1024, 128);
@@ -135,7 +144,9 @@ bool EffectPlatformLLGI::DoEvent()
 	if (!platform_->NewFrame())
 		return false;
 
+#if !defined(__EMSCRIPTEN__)
 	glfwPollEvents();
+#endif
 
 	sfMemoryPool_->NewFrame();
 	commandList_ = LLGI::CreateSharedPtr(commandListPool_->Get(true));
@@ -161,12 +172,14 @@ void EffectPlatformLLGI::DestroyDevice()
 
 	ES_SAFE_DELETE(llgiWindow_);
 
+#if !defined(__EMSCRIPTEN__)
 	if (glfwWindow_ != nullptr)
 	{
 		glfwDestroyWindow(glfwWindow_);
 		glfwTerminate();
 		glfwWindow_ = nullptr;
 	}
+#endif
 
 	ES_SAFE_RELEASE(renderPass_);
 	ES_SAFE_RELEASE(colorBuffer_);
@@ -250,7 +263,7 @@ void EffectPlatformLLGI::EndRendering()
 	commandList_->End();
 }
 
-bool EffectPlatformLLGI::TakeScreenshot(const char* path)
+std::vector<uint8_t> EffectPlatformLLGI::CaptureScreenPixels()
 {
 	commandList_->WaitUntilCompleted();
 
@@ -271,7 +284,23 @@ bool EffectPlatformLLGI::TakeScreenshot(const char* path)
 		}
 	}
 
+	return data;
+}
+
+bool EffectPlatformLLGI::TakeScreenshot(const char* path)
+{
+#if defined(__EMSCRIPTEN__)
+	(void)path;
+	return false;
+#else
+	auto data = CaptureScreenPixels();
+	if (data.empty())
+	{
+		return false;
+	}
+
 	stbi_write_png(path, initParam_.WindowSize[0], initParam_.WindowSize[1], 4, data.data(), initParam_.WindowSize[0] * 4);
 
 	return true;
+#endif
 }

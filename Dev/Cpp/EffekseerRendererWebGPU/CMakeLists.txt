@@ -4,6 +4,11 @@ project(EffekseerRendererWebGPU)
 file(GLOB_RECURSE LOCAL_HEADERS_WebGPU *.h)
 file(GLOB_RECURSE LOCAL_SOURCES_WebGPU *.cpp)
 
+if(BUILD_WEBGPU_BROWSER_TEST)
+  list(FILTER LOCAL_SOURCES_WebGPU EXCLUDE REGEX
+       "EffekseerMaterialCompilerWebGPU\\.cpp$")
+endif()
+
 list(APPEND LOCAL_HEADERS_WebGPU
      ../EffekseerMaterialCompiler/HLSLGenerator/ShaderGenerator.h
      ../EffekseerMaterialCompiler/Common/ShaderGeneratorCommon.h)
@@ -37,7 +42,10 @@ set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER
                                                  "${PublicHeaders}")
 target_link_libraries(${PROJECT_NAME} PUBLIC Effekseer EffekseerRendererCommon
                                              EffekseerRendererLLGI LLGI)
-target_link_libraries(${PROJECT_NAME} PRIVATE $<BUILD_INTERFACE:ShaderTranspilerCore>)
+if(NOT BUILD_WEBGPU_BROWSER_TEST)
+  target_link_libraries(${PROJECT_NAME} PRIVATE
+                        $<BUILD_INTERFACE:ShaderTranspilerCore>)
+endif()
 
 target_include_directories(
   ${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>

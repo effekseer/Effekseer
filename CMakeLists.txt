@@ -35,6 +35,11 @@ option(NETWORK_ENABLED "Whether a network module is enabled" ON)
 option(BUILD_GL "Build OpenGL" ON)
 option(BUILD_VULKAN "Build vulkan modules" OFF)
 option(BUILD_WEBGPU "Build WebGPU modules" OFF)
+option(BUILD_WEBGPU_BROWSER_TEST "Build browser WebGPU tests with Emscripten" OFF)
+
+if(BUILD_WEBGPU_BROWSER_TEST)
+  enable_testing()
+endif()
 
 if(WIN32)
   option(BUILD_DX9 "Build DirectX9 modules" ON)
@@ -96,9 +101,15 @@ if(BUILD_WEBGPU)
   set(BUILD_WEBGPU
       ON
       CACHE BOOL "For LLGI" FORCE)
-  set(BUILD_VULKAN_COMPILER
-      ON
-      CACHE BOOL "For LLGI" FORCE)
+  if(BUILD_WEBGPU_BROWSER_TEST)
+    set(BUILD_VULKAN_COMPILER
+        OFF
+        CACHE BOOL "For LLGI" FORCE)
+  else()
+    set(BUILD_VULKAN_COMPILER
+        ON
+        CACHE BOOL "For LLGI" FORCE)
+  endif()
   add_definitions(-D__EFFEKSEER_BUILD_WEBGPU__)
 else()
   set(BUILD_WEBGPU
@@ -434,7 +445,7 @@ endif()
 
 if(BUILD_VIEWER
    OR BUILD_EXAMPLES
-   OR BUILD_TEST)
+   OR (BUILD_TEST AND NOT BUILD_WEBGPU_BROWSER_TEST))
   # glfw
   ExternalProject_Add(
     ExternalProject_glfw

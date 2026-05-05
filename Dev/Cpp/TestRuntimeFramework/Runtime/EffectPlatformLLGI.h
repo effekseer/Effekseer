@@ -136,6 +136,7 @@ public:
 	virtual void BeginRendering() override;
 	virtual void EndRendering() override;
 
+	std::vector<uint8_t> CaptureScreenPixels();
 	bool TakeScreenshot(const char* path) override;
 
 	LLGI::Graphics* GetGraphics() const

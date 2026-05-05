@@ -132,8 +132,10 @@ void EffectPlatform::Initialize(const EffectPlatformInitializingParameter& param
 
 	manager_->SetCoordinateSystem(param.CoordinateSyatem);
 
+#if !defined(__EMSCRIPTEN__)
 	// support multithread in 1.6
 	manager_->LaunchWorkerThreads(4);
+#endif
 
 	isInitialized_ = true;
 }
