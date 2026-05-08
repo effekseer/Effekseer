@@ -171,14 +171,18 @@ def main():
                 if not x64_file.exists():
                     continue
                 dst_file = dst_dir / rel
-                try:
-                    result = subprocess.run(
-                        ['lipo', '-create', str(arm64_file), str(x64_file), '-output', str(dst_file)],
-                        capture_output=True, text=True)
-                    if result.returncode == 0:
-                        print(f'Lipo merged: {rel}')
-                except Exception:
-                    pass
+                result = subprocess.run(
+                    ['lipo', '-create', str(arm64_file), str(x64_file), '-output', str(dst_file)],
+                    capture_output=True, text=True)
+                if result.returncode == 0:
+                    print(f'Lipo merged: {rel}')
+                else:
+                    print(f'Lipo merge failed: {rel}')
+                    if result.stdout:
+                        print(result.stdout)
+                    if result.stderr:
+                        print(result.stderr, file=sys.stderr)
+                    raise RuntimeError(f'Failed to merge universal binary: {rel}')
 
             shutil.rmtree('Dev/release/osx-arm64')
             shutil.rmtree('Dev/release/osx-x64')
