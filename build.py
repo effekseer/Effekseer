@@ -171,6 +171,15 @@ def main():
                 if not x64_file.exists():
                     continue
                 dst_file = dst_dir / rel
+
+                # Only merge native Mach-O binaries; managed .NET DLLs are
+                # architecture-independent and were already copied above.
+                file_type = subprocess.run(
+                    ['file', str(arm64_file)],
+                    capture_output=True, text=True).stdout
+                if 'Mach-O' not in file_type:
+                    continue
+
                 result = subprocess.run(
                     ['lipo', '-create', str(arm64_file), str(x64_file), '-output', str(dst_file)],
                     capture_output=True, text=True)
