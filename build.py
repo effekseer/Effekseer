@@ -154,10 +154,34 @@ def main():
 
         if is_mac():
             run_command('dotnet build Dev/Editor/Effekseer/Effekseer.csproj')
-            runtime_identifier = 'osx-x64'
-            run_command(f'dotnet publish Dev/Editor/Effekseer/Effekseer.csproj -c Release --self-contained -r {runtime_identifier}')
-            run_command(f'cp -r Dev/release/{runtime_identifier}/publish/* Dev/release/')
-            run_command(f'rm -rf -r Dev/release/{runtime_identifier}')
+            run_command('dotnet publish Dev/Editor/Effekseer/Effekseer.csproj -c Release --self-contained -r osx-arm64')
+            run_command('dotnet publish Dev/Editor/Effekseer/Effekseer.csproj -c Release --self-contained -r osx-x64')
+
+            arm64_dir = Path('Dev/release/osx-arm64/publish')
+            x64_dir = Path('Dev/release/osx-x64/publish')
+            dst_dir = Path('Dev/release')
+
+            shutil.copytree(arm64_dir, dst_dir, dirs_exist_ok=True)
+
+            for arm64_file in arm64_dir.rglob('*'):
+                if not arm64_file.is_file():
+                    continue
+                rel = arm64_file.relative_to(arm64_dir)
+                x64_file = x64_dir / rel
+                if not x64_file.exists():
+                    continue
+                dst_file = dst_dir / rel
+                try:
+                    result = subprocess.run(
+                        ['lipo', '-create', str(arm64_file), str(x64_file), '-output', str(dst_file)],
+                        capture_output=True, text=True)
+                    if result.returncode == 0:
+                        print(f'Lipo merged: {rel}')
+                except Exception:
+                    pass
+
+            shutil.rmtree('Dev/release/osx-arm64')
+            shutil.rmtree('Dev/release/osx-x64')
 
         elif is_windows():
             run_command('dotnet build Dev/Editor/Effekseer/Effekseer.csproj')
