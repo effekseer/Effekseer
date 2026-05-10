@@ -10,7 +10,8 @@ void GLAPIENTRY glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum seve
 {
 	if (type != GL_DEBUG_TYPE_PORTABILITY && type != GL_DEBUG_TYPE_OTHER)
 	{
-		std::cout << message << std::endl;
+		std::cout.write(message, length);
+		std::cout << std::endl;
 	}
 }
 #endif
