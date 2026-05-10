@@ -1077,7 +1077,7 @@ ShaderData GenerateShader(MaterialFile* materialFile, MaterialShaderType shaderT
 		if (isSprite)
 		{
 			shaderData.CodeVS =
-				Replace(shaderData.CodeVS, "//$C_IN1$", GetType(materialFile->GetCustomData1Count()) + " atCustomData1 [[attribute(6)]];");
+				Replace(shaderData.CodeVS, "//$C_IN1$", GetType(materialFile->GetCustomData1Count()) + " atCustomData1 [[attribute(7)]];");
 		}
 		shaderData.CodeVS =
 			Replace(shaderData.CodeVS, "//$C_OUT1$", GetType(materialFile->GetCustomData1Count()) + " v_CustomData1;");
@@ -1090,7 +1090,7 @@ ShaderData GenerateShader(MaterialFile* materialFile, MaterialShaderType shaderT
 		if (isSprite)
 		{
 			shaderData.CodeVS =
-				Replace(shaderData.CodeVS, "//$C_IN2$", GetType(materialFile->GetCustomData2Count()) + " atCustomData2 [[attribute(7)]];");
+				Replace(shaderData.CodeVS, "//$C_IN2$", GetType(materialFile->GetCustomData2Count()) + " atCustomData2 [[attribute(8)]];");
 		}
 		shaderData.CodeVS =
 			Replace(shaderData.CodeVS, "//$C_OUT2$", GetType(materialFile->GetCustomData2Count()) + " v_CustomData2;");
