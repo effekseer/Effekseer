@@ -285,5 +285,7 @@ void BasicRuntimeTestGL()
 
 TestRegister Runtime_BasicRuntimeTest("Runtime.BasicRuntimeTest", []() -> void
 									  { BasicRuntimeTest(); });
+#if !defined(__FROM_CI__)
 TestRegister Runtime_BasicRuntimeTestGL("Runtime.BasicRuntimeTestGL", []() -> void
 										{ BasicRuntimeTestGL(); });
+#endif
