@@ -19,11 +19,6 @@ The parts will be controllable with a few parameters, and users will be able to 
 In addition, a library of material data used for standard effects will be created and distributed license-free.
 These data will also be distributed with the source data for editing, improving editability and solving the licensing problem of the unknown source of the material data.
 
-### GPU Particles
-
-GPU particles are supported to make it easier to display particles in large numbers.
-It is implementing in 1.8.
-
 ### Mobile and Web Browser Optimization
 
 Internal design will be reviewed and optimized on mobile and web browsers.
@@ -31,3 +26,4 @@ Internal design will be reviewed and optimized on mobile and web browsers.
 ### WebGPU Support
 
 Supports WebGPU, the next WebGL standard.
+https://github.com/effekseer/EffekseerForWeb
