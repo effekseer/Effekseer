@@ -140,6 +140,8 @@ void EffectPlatform::Initialize(const EffectPlatformInitializingParameter& param
 		manager_->SetRingRenderer(renderer_->CreateRingRenderer());
 		manager_->SetModelRenderer(renderer_->CreateModelRenderer());
 		manager_->SetTrackRenderer(renderer_->CreateTrackRenderer());
+		manager_->SetGpuParticleSystem(renderer_->CreateGpuParticleSystem());
+		manager_->SetGpuParticleFactory(renderer_->CreateGpuParticleFactory());
 
 		manager_->SetTextureLoader(renderer_->CreateTextureLoader());
 		manager_->SetModelLoader(renderer_->CreateModelLoader());
@@ -239,6 +241,7 @@ bool EffectPlatform::Update()
 		updateParameter.UpdateInterval = 0.0;
 		manager_->Update(updateParameter);
 	}
+	manager_->Compute();
 
 	BeginRendering();
 
