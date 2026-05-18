@@ -25,6 +25,13 @@ struct ParsedArgs
 {
 	std::string Filter;
 	std::optional<std::regex> FilterPattern;
+	bool List = false;
+};
+
+enum class TestExecutionMode
+{
+	Default,
+	FilterOnly,
 };
 
 class TestHelper
@@ -37,14 +44,14 @@ public:
 
 	static void Run(const ParsedArgs& args);
 
-	static void RegisterTest(const char* name, std::function<void()> func);
+	static void RegisterTest(const char* name, std::function<void()> func, TestExecutionMode executionMode = TestExecutionMode::Default);
 };
 
 struct TestRegister
 {
-	TestRegister(const char* name, std::function<void()> func)
+	TestRegister(const char* name, std::function<void()> func, TestExecutionMode executionMode = TestExecutionMode::Default)
 	{
-		TestHelper::RegisterTest(name, func);
+		TestHelper::RegisterTest(name, func, executionMode);
 	}
 };
 

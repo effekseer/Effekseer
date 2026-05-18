@@ -74,14 +74,7 @@ void WebGPUModelColorTest()
 	EffectPlatformInitializingParameter param;
 
 	auto run = [&](EffectPlatform* platform, const char* suffix) -> void {
-		srand(0);
-		platform->Initialize(param);
-		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/14/Model_Parameters1.efk").c_str());
-		for (size_t i = 0; i < 30; i++)
-		{
-			platform->Update();
-		}
-		platform->TakeScreenshot((std::string("Model_Parameters1") + suffix + ".png").c_str());
+		BasicRuntimeTestPlatformCase(param, platform, "", suffix, "Model_Parameters1");
 		platform->Terminate();
 	};
 
@@ -103,33 +96,28 @@ void WebGPUScreenshotSmokeTest()
 	EffectPlatformInitializingParameter param;
 
 	auto run = [&](EffectPlatform* platform, const char* suffix) -> void {
-		platform->Initialize(param);
-
-		auto singleTest = [&](const char16_t* directory, const char16_t* name, const char16_t* ext, const char* savename) -> void {
-			srand(0);
-			platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/" + directory + u"/" + name + ext).c_str());
-			for (size_t i = 0; i < 30; i++)
+		BasicRuntimeTestPlatformCases(
+			param,
+			platform,
+			"",
+			suffix,
 			{
-				platform->Update();
-			}
-			platform->TakeScreenshot((std::string(savename) + suffix + ".png").c_str());
-			platform->StopAllEffects();
-		};
-
-		singleTest(u"10", u"SimpleLaser", u".efk", "Smoke_SimpleLaser");
-		singleTest(u"10", u"Ribbon_Parameters1", u".efk", "Smoke_Ribbon_Parameters1");
-		singleTest(u"10", u"Ring_Parameters1", u".efk", "Smoke_Ring_Parameters1");
-		singleTest(u"10", u"Track_Parameters1", u".efk", "Smoke_Track_Parameters1");
-		singleTest(u"10", u"Sprite_Parameters1", u".efk", "Smoke_Sprite_Parameters1");
-		singleTest(u"10", u"Distortions1", u".efk", "Smoke_Distortions1");
-		singleTest(u"14", u"Model_Parameters1", u".efk", "Smoke_Model_Parameters1");
-		singleTest(u"15", u"Lighing_Parameters1", u".efkefc", "Smoke_Lighing_Parameters1");
-		singleTest(u"15", u"DynamicParameter1", u".efkefc", "Smoke_DynamicParameter1");
-		singleTest(u"15", u"BasicRenderSettings_Blend", u".efkefc", "Smoke_BasicRenderSettings_Blend");
-		singleTest(u"15", u"Material_Sampler1", u".efkefc", "Smoke_Material_Sampler1");
-		singleTest(u"15", u"Material_UV1", u".efkefc", "Smoke_Material_UV1");
-		singleTest(u"15", u"Material_CustomData1", u".efkefc", "Smoke_Material_CustomData1");
-		singleTest(u"15", u"Material_CustomDataMax", u".efkefc", "Smoke_Material_CustomDataMax");
+				"SimpleLaser",
+				"Ribbon_Parameters1",
+				"Ring_Parameters1",
+				"Track_Parameters1",
+				"Sprite_Parameters1",
+				"Distortions1",
+				"Model_Parameters1",
+				"Lighing_Parameters1",
+				"DynamicParameter1",
+				"BasicRenderSettings_Blend",
+				"Material_Sampler1",
+				"Material_UV1",
+				"Material_CustomData1",
+				"Material_CustomDataMax",
+			},
+			"Smoke_");
 
 		platform->Terminate();
 	};
@@ -203,22 +191,7 @@ void WebGPUMaterialUVTest()
 	EffectPlatformInitializingParameter param;
 
 	auto run = [&](EffectPlatform* platform, const char* suffix) -> void {
-		platform->Initialize(param);
-
-		auto singleTest = [&](const char16_t* name, const char* savename) -> void {
-			srand(0);
-			platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/15/" + name + u".efkefc").c_str());
-			for (size_t i = 0; i < 30; i++)
-			{
-				platform->Update();
-			}
-			platform->TakeScreenshot((std::string(savename) + suffix + ".png").c_str());
-			platform->StopAllEffects();
-		};
-
-		singleTest(u"Material_UV1", "Material_UV1");
-		singleTest(u"Material_UV2", "Material_UV2");
-
+		BasicRuntimeTestPlatformCases(param, platform, "", suffix, {"Material_UV1", "Material_UV2"});
 		platform->Terminate();
 	};
 
@@ -327,6 +300,22 @@ void WebGPUCompiledMaterialTest()
 	}
 #endif
 }
+
+struct WebGPUBasicRenderingCaseTestRegistration
+{
+	WebGPUBasicRenderingCaseTestRegistration()
+	{
+		RegisterBasicRuntimeTestPlatformCases(
+			"WebGPU",
+			"_WebGPU",
+			[]() -> std::shared_ptr<EffectPlatform>
+			{
+				return std::make_shared<EffectPlatformWebGPU>();
+			});
+	}
+};
+
+WebGPUBasicRenderingCaseTestRegistration webGPUBasicRenderingCaseTestRegistration;
 
 } // namespace
 

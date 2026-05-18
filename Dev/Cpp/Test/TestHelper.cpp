@@ -80,7 +80,14 @@ struct InternalTestHelper
 {
 	std::string Root;
 	bool IsCaptureRequired = false;
-	std::map<std::string, std::function<void()>, std::less<>> Tests;
+
+	struct TestEntry
+	{
+		std::function<void()> Func;
+		TestExecutionMode ExecutionMode = TestExecutionMode::Default;
+	};
+
+	std::map<std::string, TestEntry, std::less<>> Tests;
 };
 
 std::shared_ptr<InternalTestHelper> TestHelper::Get()
@@ -99,6 +106,11 @@ ParsedArgs TestHelper::ParseArg(int argc, char* argv[])
 	for (int i = 0; i < argc; i++)
 	{
 		const std::string_view arg(argv[i]);
+
+		if (arg == "--list")
+		{
+			args.List = true;
+		}
 
 		if (arg.compare(0, filterPrefix.size(), filterPrefix) == 0)
 		{
@@ -122,19 +134,28 @@ void TestHelper::Run(const ParsedArgs& args)
 	const auto helper = Get();
 	const auto& filter = args.FilterPattern;
 
-	for (const auto& [name, func] : helper->Tests)
+	for (const auto& [name, test] : helper->Tests)
 	{
 		if (filter && !std::regex_match(name, *filter))
 		{
 			continue;
 		}
+		if (args.List)
+		{
+			std::cout << name << std::endl;
+			continue;
+		}
+		if (!filter && test.ExecutionMode == TestExecutionMode::FilterOnly)
+		{
+			continue;
+		}
 		std::cout << "Start : " << name << std::endl;
-		func();
+		test.Func();
 	}
 }
 
-void TestHelper::RegisterTest(const char* name, std::function<void()> func)
+void TestHelper::RegisterTest(const char* name, std::function<void()> func, TestExecutionMode executionMode)
 {
 	auto helper = Get();
-	helper->Tests.emplace(name, std::move(func));
+	helper->Tests.emplace(name, InternalTestHelper::TestEntry{std::move(func), executionMode});
 }

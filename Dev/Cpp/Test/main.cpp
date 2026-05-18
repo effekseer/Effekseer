@@ -48,7 +48,9 @@ int main(int argc, char* argv[])
 	Effekseer::SetLogger([](Effekseer::LogType type, const std::string& s) -> void
 						 { std::cout << s << std::endl; });
 
-	// You can specify "Test --filter=*.* to run a single test"
+	// Examples:
+	//   TestCpp --filter=Runtime.BasicRendering.WebGPU.SimpleLaser
+	//   TestCpp --list --filter=Runtime.BasicRendering.WebGPU.*
 	auto parsed = TestHelper::ParseArg(argc, argv);
 	TestHelper::Run(parsed);
 
