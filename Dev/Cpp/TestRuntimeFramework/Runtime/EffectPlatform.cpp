@@ -298,3 +298,10 @@ void EffectPlatform::StopAllEffects()
 		manager_->StopAllEffects();
 	}
 }
+
+void EffectPlatform::ClearLoadedEffects()
+{
+	effectHandles_.clear();
+	effects_.clear();
+	buffers_.clear();
+}

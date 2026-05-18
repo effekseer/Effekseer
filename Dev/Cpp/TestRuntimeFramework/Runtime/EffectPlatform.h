@@ -98,6 +98,7 @@ public:
 	bool Draw();
 
 	void StopAllEffects();
+	void ClearLoadedEffects();
 
 	virtual bool TakeScreenshot(const char* path)
 	{

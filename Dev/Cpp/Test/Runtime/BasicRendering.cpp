@@ -196,6 +196,11 @@ void RunBasicRenderingCase(
 {
 	const auto renderer = platform->GetRenderer();
 	const auto cameraMat = renderer->GetCameraMatrix();
+	const auto backgroundTextureUVStyle = renderer->GetBackgroundTextureUVStyle();
+	auto background = renderer->GetBackground();
+	::Effekseer::Backend::TextureRef depthTexture;
+	::EffekseerRenderer::DepthReconstructionParameter depthReconstructionParam{};
+	renderer->GetDepth(depthTexture, depthReconstructionParam);
 	const auto changesCamera = testCase.Camera != BasicRenderingCamera::Default;
 
 	if (changesCamera)
@@ -223,11 +228,18 @@ void RunBasicRenderingCase(
 	const auto screenshotPath = baseResultPath + screenshotPrefix + testCase.ScreenshotName + suffix + ".png";
 	platform->TakeScreenshot(screenshotPath.c_str());
 	platform->StopAllEffects();
+	platform->ClearLoadedEffects();
 
 	if (changesCamera)
 	{
 		renderer->SetCameraMatrix(cameraMat);
 	}
+	if (testCase.OverridesBackgroundTextureUVStyle)
+	{
+		renderer->SetBackgroundTextureUVStyle(backgroundTextureUVStyle);
+	}
+	renderer->SetBackground(background);
+	renderer->SetDepth(depthTexture, depthReconstructionParam);
 }
 
 template <class T>
@@ -322,6 +334,18 @@ void RegisterBasicRuntimeTestPlatformCases(
 	const char* suffix,
 	std::function<std::shared_ptr<EffectPlatform>()> createPlatform)
 {
+	const auto allCasesTestName = std::string("Runtime.BasicRendering.") + platformName;
+	TestHelper::RegisterTest(
+		allCasesTestName.c_str(),
+		[suffix = std::string(suffix), createPlatform]() -> void
+		{
+			EffectPlatformInitializingParameter param;
+			auto platform = createPlatform();
+			BasicRuntimeTestPlatform(param, platform.get(), "", suffix);
+			platform->Terminate();
+		},
+		TestExecutionMode::FilterOnly);
+
 	for (const auto& testCase : GetBasicRenderingCases())
 	{
 		const auto testName = std::string("Runtime.BasicRendering.") + platformName + "." + testCase.Name;

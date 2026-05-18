@@ -1224,7 +1224,7 @@ std::string ShaderGenerator::GeneratePixelShader(MaterialFile* materialFile,
 	{
 		ss << R"(
 	let airRefraction = 1.0;
-	var dir = (vec4<f32>(pixelNormalDir, 0.0) * v.cameraMat).xyz;
+	var dir = (v.cameraMat * vec4<f32>(pixelNormalDir, 0.0)).xyz;
 	dir.y = -dir.y;
 	var distortUV = dir.xy * (refraction - airRefraction);
 	distortUV = distortUV + screenUV;

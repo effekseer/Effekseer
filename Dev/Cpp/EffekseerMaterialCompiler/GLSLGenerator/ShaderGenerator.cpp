@@ -597,6 +597,9 @@ static const char g_material_fs_src_suf2_refraction[] =
 	float airRefraction = 1.0;
 
 	vec3 dir = mat3(cameraMat) * pixelNormalDir;
+#ifdef _REFRACTION_Y_INVERTED_
+	dir.y = -dir.y;
+#endif
 	vec2 distortUV = dir.xy * (refraction - airRefraction);
 
 	distortUV += screenUV;
@@ -955,6 +958,7 @@ ShaderData ShaderGenerator::GenerateShader(MaterialFile* materialFile,
 		{
 			// Vulkan
 			maincode << "#define gl_InstanceID gl_InstanceIndex" << std::endl;
+			maincode << "#define _REFRACTION_Y_INVERTED_ 1" << std::endl;
 		}
 
 		int32_t actualUniformCount = std::min(maximumUniformCount, materialFile->GetUniformCount());

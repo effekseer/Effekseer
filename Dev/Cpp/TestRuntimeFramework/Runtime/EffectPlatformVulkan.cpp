@@ -4,6 +4,7 @@
 #include "../../3rdParty/LLGI/src/Vulkan/LLGI.GraphicsVulkan.h"
 #include "../../3rdParty/LLGI/src/Vulkan/LLGI.PlatformVulkan.h"
 #include "../../3rdParty/LLGI/src/Vulkan/LLGI.TextureVulkan.h"
+#include "../../EffekseerRendererLLGI/EffekseerRendererLLGI/EffekseerRendererLLGI.Renderer.h"
 #include "../3rdParty/LLGI/src/LLGI.CommandList.h"
 
 #include "../../3rdParty/LLGI/src/LLGI.Compiler.h"
@@ -246,11 +247,14 @@ LLGI::Texture* EffectPlatformVulkan::GetBackgroundTexture()
 void EffectPlatformVulkan::UpdateBackgroundTextureForDistortion()
 {
 	auto background = GetBackgroundTexture();
+	auto efkCommandList = static_cast<EffekseerRendererLLGI::CommandList*>(commandListEfk_.Get())->GetInternal();
 
+	efkCommandList->EndRenderPassWithPlatformPtr();
 	commandList_->EndRenderPass();
 	commandList_->CopyTexture(colorBuffer_, background);
 
 	renderPass_->SetIsColorCleared(false);
 	renderPass_->SetIsDepthCleared(false);
 	commandList_->BeginRenderPass(renderPass_);
+	efkCommandList->BeginRenderPassWithPlatformPtr(nullptr);
 }
