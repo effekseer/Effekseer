@@ -161,23 +161,22 @@ std::string AdaptBoolExpression(std::string expression, const std::unordered_map
 		}
 
 		const auto& name = variableType.first;
-		const auto vectorType = VectorConstructorForType(variableType.second);
 		expression = ReplaceRegex(
 			expression,
 			std::regex("\\b" + name + R"(\s*<\s*f32\(([^,\(\)]*)\))"),
-			"all(" + name + " < " + vectorType + "($1))");
+			name + ".x < f32($1)");
 		expression = ReplaceRegex(
 			expression,
 			std::regex("\\b" + name + R"(\s*>\s*f32\(([^,\(\)]*)\))"),
-			"all(" + name + " > " + vectorType + "($1))");
+			name + ".x > f32($1)");
 		expression = ReplaceRegex(
 			expression,
 			std::regex("\\b" + name + R"(\s*<=\s*f32\(([^,\(\)]*)\))"),
-			"all(" + name + " <= " + vectorType + "($1))");
+			name + ".x <= f32($1)");
 		expression = ReplaceRegex(
 			expression,
 			std::regex("\\b" + name + R"(\s*>=\s*f32\(([^,\(\)]*)\))"),
-			"all(" + name + " >= " + vectorType + "($1))");
+			name + ".x >= f32($1)");
 	}
 
 	return expression;

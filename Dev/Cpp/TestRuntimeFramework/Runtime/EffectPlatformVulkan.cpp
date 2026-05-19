@@ -215,6 +215,25 @@ void EffectPlatformVulkan::DestroyDevice()
 	EffectPlatformLLGI::DestroyDevice();
 }
 
+void EffectPlatformVulkan::BeginCompute()
+{
+	EffectPlatformLLGI::BeginCompute();
+
+	auto cl = static_cast<LLGI::CommandListVulkan*>(commandList_.get());
+	EffekseerRendererVulkan::BeginCommandList(commandListEfk_, static_cast<VkCommandBuffer>(cl->GetCommandBuffer()));
+	GetRenderer()->SetCommandList(commandListEfk_);
+	GetRenderer()->GetGraphicsDevice()->BeginComputePass();
+}
+
+void EffectPlatformVulkan::EndCompute()
+{
+	GetRenderer()->GetGraphicsDevice()->EndComputePass();
+	GetRenderer()->SetCommandList(nullptr);
+	EffekseerRendererVulkan::EndCommandList(commandListEfk_);
+
+	EffectPlatformLLGI::EndCompute();
+}
+
 void EffectPlatformVulkan::BeginRendering()
 {
 	EffectPlatformLLGI::BeginRendering();

@@ -70,6 +70,12 @@ protected:
 	virtual void DestroyDevice()
 	{
 	}
+	virtual void BeginCompute()
+	{
+	}
+	virtual void EndCompute()
+	{
+	}
 	virtual void BeginRendering()
 	{
 	}

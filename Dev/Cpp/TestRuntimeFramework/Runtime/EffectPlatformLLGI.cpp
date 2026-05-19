@@ -196,6 +196,20 @@ void EffectPlatformLLGI::DestroyDevice()
 	commandList_.reset();
 }
 
+void EffectPlatformLLGI::BeginCompute()
+{
+	if (!isCommandListBegun_)
+	{
+		commandList_->Begin();
+		sfMemoryPoolEfk_->NewFrame();
+		isCommandListBegun_ = true;
+	}
+}
+
+void EffectPlatformLLGI::EndCompute()
+{
+}
+
 void EffectPlatformLLGI::BeginRendering()
 {
 	LLGI::Color8 color;
@@ -207,7 +221,12 @@ void EffectPlatformLLGI::BeginRendering()
 	renderPass_->SetIsColorCleared(true);
 	renderPass_->SetIsDepthCleared(true);
 
-	commandList_->Begin();
+	if (!isCommandListBegun_)
+	{
+		commandList_->Begin();
+		sfMemoryPoolEfk_->NewFrame();
+		isCommandListBegun_ = true;
+	}
 	commandList_->BeginRenderPass(renderPass_);
 
 	// check
@@ -216,8 +235,6 @@ void EffectPlatformLLGI::BeginRendering()
 	commandList_->SetPipelineState(pip_);
 	commandList_->SetTexture(checkTexture_, LLGI::TextureWrapMode::Repeat, LLGI::TextureMinMagFilter::Nearest, 0);
 	commandList_->Draw(2);
-
-	sfMemoryPoolEfk_->NewFrame();
 }
 
 void EffectPlatformLLGI::EndRendering()
@@ -261,6 +278,7 @@ void EffectPlatformLLGI::EndRendering()
 	commandList_->EndRenderPass();
 
 	commandList_->End();
+	isCommandListBegun_ = false;
 }
 
 std::vector<uint8_t> EffectPlatformLLGI::CaptureScreenPixels()

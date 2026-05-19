@@ -47,7 +47,7 @@ struct ParameterData {
 }
 
 struct cb1 {
-  _45_paramData : ParameterData,
+  _49_paramData : ParameterData,
 }
 
 @group(0) @binding(1) var<uniform> v : cb1;
@@ -72,7 +72,7 @@ struct RenderConstants_1_1 {
 }
 
 struct cb0_1_1 {
-  _103_constants : RenderConstants_1_1,
+  _107_constants : RenderConstants_1_1,
 }
 
 @group(0) @binding(0) var<uniform> v_1 : cb0_1_1;
@@ -80,6 +80,8 @@ struct cb0_1_1 {
 var<private> gl_FragCoord : vec4<f32>;
 
 var<private> input_UV : vec2<f32>;
+
+var<private> input_UV2 : vec2<f32>;
 
 var<private> input_Color : vec4<f32>;
 
@@ -95,6 +97,7 @@ var<private> v_2 : vec4<f32>;
 
 struct SPIRV_Cross_Input {
   input_UV : vec2<f32>,
+  input_UV2 : vec2<f32>,
   input_Color : vec4<f32>,
   input_WorldN : vec3<f32>,
   input_WorldB : vec3<f32>,
@@ -102,85 +105,97 @@ struct SPIRV_Cross_Input {
   gl_FragCoord : vec4<f32>,
 }
 
-fn main_inner(v_3 : vec2<f32>, v_4 : vec4<f32>, v_5 : vec3<f32>, v_6 : vec3<f32>, v_7 : vec3<f32>, v_8 : vec4<f32>) {
+fn main_inner(v_3 : vec2<f32>, v_4 : vec2<f32>, v_5 : vec4<f32>, v_6 : vec3<f32>, v_7 : vec3<f32>, v_8 : vec3<f32>, v_9 : vec4<f32>) {
   var stage_input : SPIRV_Cross_Input;
   var param : SPIRV_Cross_Input;
   stage_input.input_UV = v_3;
-  stage_input.input_Color = v_4;
-  stage_input.input_WorldN = v_5;
-  stage_input.input_WorldB = v_6;
-  stage_input.input_WorldT = v_7;
-  stage_input.gl_FragCoord = v_8;
+  stage_input.input_UV2 = v_4;
+  stage_input.input_Color = v_5;
+  stage_input.input_WorldN = v_6;
+  stage_input.input_WorldB = v_7;
+  stage_input.input_WorldT = v_8;
+  stage_input.gl_FragCoord = v_9;
   param = stage_input;
-  v_2 = v_9(&(param))._entryPointOutput;
+  v_2 = v_10(&(param))._entryPointOutput;
 }
 
 struct PS_Input {
   Pos : vec4<f32>,
   UV : vec2<f32>,
+  UV2 : vec2<f32>,
   Color : vec4<f32>,
   WorldN : vec3<f32>,
   WorldB : vec3<f32>,
   WorldT : vec3<f32>,
 }
 
-fn v_10(_input : ptr<function, PS_Input>) -> vec4<f32> {
+fn v_11(_input : ptr<function, PS_Input>) -> vec4<f32> {
   var color : vec4<f32>;
+  var uv2 : vec2<f32>;
   var texNormal : vec3<f32>;
   var normal : vec3<f32>;
   var diffuse : f32;
-  var _122 : vec4<f32>;
-  var _124 : vec3<f32>;
+  var _125 : vec4<f32>;
+  var _127 : vec3<f32>;
+  var _144 : vec4<f32>;
+  var _146 : vec2<f32>;
   color = ((*(_input)).Color * textureSample(ColorTex, ColorSamp, (*(_input)).UV));
-  if ((v._45_paramData.MaterialType == 1u)) {
+  uv2 = (*(_input)).UV2;
+  if ((v._49_paramData.MaterialType == 1u)) {
     texNormal = ((textureSample(NormalTex, NormalSamp, (*(_input)).UV).xyz * 2.0f) - vec3<f32>(1.0f));
-    let v_11 = (*(_input)).WorldT;
-    let v_12 = (*(_input)).WorldB;
-    let v_13 = (*(_input)).WorldN;
-    normal = normalize((mat3x3<f32>(vec3<f32>(v_11.x, v_11.y, v_11.z), vec3<f32>(v_12.x, v_12.y, v_12.z), vec3<f32>(v_13.x, v_13.y, v_13.z)) * texNormal));
-    diffuse = max(dot(v_1._103_constants.LightDir, normal), 0.0f);
-    _122 = color;
-    _124 = (_122.xyz * ((v_1._103_constants.LightColor.xyz * diffuse) + v_1._103_constants.LightAmbient.xyz));
-    color.x = _124.x;
-    color.y = _124.y;
-    color.z = _124.z;
+    let v_12 = (*(_input)).WorldT;
+    let v_13 = (*(_input)).WorldB;
+    let v_14 = (*(_input)).WorldN;
+    normal = normalize((mat3x3<f32>(vec3<f32>(v_12.x, v_12.y, v_12.z), vec3<f32>(v_13.x, v_13.y, v_13.z), vec3<f32>(v_14.x, v_14.y, v_14.z)) * texNormal));
+    diffuse = max(dot(v_1._107_constants.LightDir, normal), 0.0f);
+    _125 = color;
+    _127 = (_125.xyz * ((v_1._107_constants.LightColor.xyz * diffuse) + v_1._107_constants.LightAmbient.xyz));
+    color.x = _127.x;
+    color.y = _127.y;
+    color.z = _127.z;
   }
+  _144 = color;
+  _146 = (_144.xy + (uv2 * (v._49_paramData.FadeIn - v._49_paramData.FadeIn)));
+  color.x = _146.x;
+  color.y = _146.y;
   return color;
 }
 
-fn v_14() {
+fn v_15() {
   var _input : PS_Input;
   var param : PS_Input;
   _input.Pos = gl_FragCoord;
   _input.UV = input_UV;
+  _input.UV2 = input_UV2;
   _input.Color = input_Color;
   _input.WorldN = input_WorldN;
   _input.WorldB = input_WorldB;
   _input.WorldT = input_WorldT;
   param = _input;
-  _entryPointOutput = v_10(&(param));
+  _entryPointOutput = v_11(&(param));
 }
 
 struct SPIRV_Cross_Output {
   _entryPointOutput : vec4<f32>,
 }
 
-fn v_9(stage_input : ptr<function, SPIRV_Cross_Input>) -> SPIRV_Cross_Output {
+fn v_10(stage_input : ptr<function, SPIRV_Cross_Input>) -> SPIRV_Cross_Output {
   var stage_output : SPIRV_Cross_Output;
   gl_FragCoord = (*(stage_input)).gl_FragCoord;
   gl_FragCoord.w = (1.0f / gl_FragCoord.w);
   input_UV = (*(stage_input)).input_UV;
+  input_UV2 = (*(stage_input)).input_UV2;
   input_Color = (*(stage_input)).input_Color;
   input_WorldN = (*(stage_input)).input_WorldN;
   input_WorldB = (*(stage_input)).input_WorldB;
   input_WorldT = (*(stage_input)).input_WorldT;
-  v_14();
+  v_15();
   stage_output._entryPointOutput = _entryPointOutput;
   return stage_output;
 }
 
 @fragment
-fn main(@location(0u) v_15 : vec2<f32>, @location(1u) v_16 : vec4<f32>, @location(2u) v_17 : vec3<f32>, @location(3u) v_18 : vec3<f32>, @location(4u) v_19 : vec3<f32>, @builtin(position) v_20 : vec4<f32>) -> @location(0u) vec4<f32> {
-  main_inner(v_15, v_16, v_17, v_18, v_19, v_20);
+fn main(@location(0u) v_16 : vec2<f32>, @location(1u) v_17 : vec2<f32>, @location(2u) v_18 : vec4<f32>, @location(3u) v_19 : vec3<f32>, @location(4u) v_20 : vec3<f32>, @location(5u) v_21 : vec3<f32>, @builtin(position) v_22 : vec4<f32>) -> @location(0u) vec4<f32> {
+  main_inner(v_16, v_17, v_18, v_19, v_20, v_21, v_22);
   return v_2;
 }

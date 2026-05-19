@@ -241,7 +241,9 @@ bool EffectPlatform::Update()
 		updateParameter.UpdateInterval = 0.0;
 		manager_->Update(updateParameter);
 	}
+	BeginCompute();
 	manager_->Compute();
+	EndCompute();
 
 	BeginRendering();
 

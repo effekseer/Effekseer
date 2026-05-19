@@ -107,7 +107,7 @@ cbuffer cb0 : register(b0)
     ComputeConstants _651_constants : packoffset(c0);
 };
 
-ByteAddressBuffer EmitPoints : register(t1);
+RWByteAddressBuffer EmitPoints : register(u1);
 RWByteAddressBuffer Particles : register(u0);
 
 static uint3 gl_GlobalInvocationID;

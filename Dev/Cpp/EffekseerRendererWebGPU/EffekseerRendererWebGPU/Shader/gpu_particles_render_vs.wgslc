@@ -125,6 +125,8 @@ var<private> gl_Position : vec4<f32>;
 
 var<private> _entryPointOutput_UV : vec2<f32>;
 
+var<private> _entryPointOutput_UV2 : vec2<f32>;
+
 var<private> _entryPointOutput_Color : vec4<f32>;
 
 var<private> _entryPointOutput_WorldN : vec3<f32>;
@@ -135,15 +137,17 @@ var<private> _entryPointOutput_WorldT : vec3<f32>;
 
 var<private> v_4 : vec2<f32>;
 
-var<private> v_5 : vec4<f32>;
+var<private> v_5 : vec2<f32>;
 
-var<private> v_6 : vec3<f32>;
+var<private> v_6 : vec4<f32>;
 
 var<private> v_7 : vec3<f32>;
 
 var<private> v_8 : vec3<f32>;
 
-var<private> v_9 : vec4<f32>;
+var<private> v_9 : vec3<f32>;
+
+var<private> v_10 : vec4<f32>;
 
 struct SPIRV_Cross_Input {
   input_Pos : vec3<f32>,
@@ -159,6 +163,7 @@ struct SPIRV_Cross_Input {
 
 struct SPIRV_Cross_Output {
   _entryPointOutput_UV : vec2<f32>,
+  _entryPointOutput_UV2 : vec2<f32>,
   _entryPointOutput_Color : vec4<f32>,
   _entryPointOutput_WorldN : vec3<f32>,
   _entryPointOutput_WorldB : vec3<f32>,
@@ -166,30 +171,31 @@ struct SPIRV_Cross_Output {
   gl_Position : vec4<f32>,
 }
 
-fn main_inner(v_10 : vec3<f32>, v_11 : vec3<f32>, v_12 : vec3<f32>, v_13 : vec3<f32>, v_14 : vec2<f32>, v_15 : vec2<f32>, v_16 : vec4<f32>, v_17 : u32, v_18 : u32) {
+fn main_inner(v_11 : vec3<f32>, v_12 : vec3<f32>, v_13 : vec3<f32>, v_14 : vec3<f32>, v_15 : vec2<f32>, v_16 : vec2<f32>, v_17 : vec4<f32>, v_18 : u32, v_19 : u32) {
   var stage_input : SPIRV_Cross_Input;
   var flattenTemp : SPIRV_Cross_Output;
   var param : SPIRV_Cross_Input;
-  stage_input.input_Pos = v_10;
-  stage_input.input_Normal = v_11;
-  stage_input.input_Binormal = v_12;
-  stage_input.input_Tangent = v_13;
-  stage_input.input_UV = v_14;
-  stage_input.input_UV2 = v_15;
-  stage_input.input_Color = v_16;
-  stage_input.gl_VertexIndex = v_17;
-  stage_input.gl_InstanceIndex = v_18;
+  stage_input.input_Pos = v_11;
+  stage_input.input_Normal = v_12;
+  stage_input.input_Binormal = v_13;
+  stage_input.input_Tangent = v_14;
+  stage_input.input_UV = v_15;
+  stage_input.input_UV2 = v_16;
+  stage_input.input_Color = v_17;
+  stage_input.gl_VertexIndex = v_18;
+  stage_input.gl_InstanceIndex = v_19;
   param = stage_input;
-  flattenTemp = v_19(&(param));
+  flattenTemp = v_20(&(param));
   v_4 = flattenTemp._entryPointOutput_UV;
-  v_5 = flattenTemp._entryPointOutput_Color;
-  v_6 = flattenTemp._entryPointOutput_WorldN;
-  v_7 = flattenTemp._entryPointOutput_WorldB;
-  v_8 = flattenTemp._entryPointOutput_WorldT;
-  v_9 = flattenTemp.gl_Position;
+  v_5 = flattenTemp._entryPointOutput_UV2;
+  v_6 = flattenTemp._entryPointOutput_Color;
+  v_7 = flattenTemp._entryPointOutput_WorldN;
+  v_8 = flattenTemp._entryPointOutput_WorldB;
+  v_9 = flattenTemp._entryPointOutput_WorldT;
+  v_10 = flattenTemp.gl_Position;
 }
 
-fn v_20(bits : ptr<function, u32>) -> vec3<f32> {
+fn v_21(bits : ptr<function, u32>) -> vec3<f32> {
   var v : vec3<f32>;
   v = vec3<f32>((vec3<u32>(*(bits), (*(bits) >> 10u), (*(bits) >> 20u)) & vec3<u32>(1023u)));
   return (((v / vec3<f32>(1023.0f)) * 2.0f) - vec3<f32>(1.0f));
@@ -206,46 +212,46 @@ struct ParticleData {
   Transform : mat4x3<f32>,
 }
 
-fn v_21(particle : ptr<function, ParticleData>, position : ptr<function, vec3<f32>>) {
+fn v_22(particle : ptr<function, ParticleData>, position : ptr<function, vec3<f32>>) {
   var param : u32;
   var U : vec3<f32>;
   var param_10 : u32;
   var F : vec3<f32>;
   var R : vec3<f32>;
-  let v_22 = (*(particle)).Transform;
-  let v_23 = *(position);
-  *(position) = (v_22 * vec4<f32>(v_23.x, v_23.y, v_23.z, 0.0f));
+  let v_23 = (*(particle)).Transform;
+  let v_24 = *(position);
+  *(position) = (v_23 * vec4<f32>(v_24.x, v_24.y, v_24.z, 0.0f));
   if ((v_1._121_paramData.ShapeData == 0u)) {
-    let v_24 = transpose(v_2._136_constants.BillboardMat);
-    let v_25 = *(position);
-    *(position) = (v_24 * vec4<f32>(v_25.x, v_25.y, v_25.z, 0.0f));
+    let v_25 = transpose(v_2._136_constants.BillboardMat);
+    let v_26 = *(position);
+    *(position) = (v_25 * vec4<f32>(v_26.x, v_26.y, v_26.z, 0.0f));
   } else if ((v_1._121_paramData.ShapeData == 1u)) {
     param = (*(particle)).Direction;
     param_10 = param;
-    U = normalize(v_20(&(param_10)));
+    U = normalize(v_21(&(param_10)));
     F = v_2._136_constants.CameraFront;
     R = normalize(cross(U, F));
     F = normalize(cross(R, U));
-    let v_26 = R;
-    let v_27 = U;
-    let v_28 = F;
-    *(position) = (mat3x3<f32>(vec3<f32>(v_26.x, v_26.y, v_26.z), vec3<f32>(v_27.x, v_27.y, v_27.z), vec3<f32>(v_28.x, v_28.y, v_28.z)) * *(position));
+    let v_27 = R;
+    let v_28 = U;
+    let v_29 = F;
+    *(position) = (mat3x3<f32>(vec3<f32>(v_27.x, v_27.y, v_27.z), vec3<f32>(v_28.x, v_28.y, v_28.z), vec3<f32>(v_29.x, v_29.y, v_29.z)) * *(position));
   } else if ((v_1._121_paramData.ShapeData == 2u)) {
-    let v_29 = transpose(v_2._136_constants.YAxisFixedMat);
-    let v_30 = *(position);
-    *(position) = (v_29 * vec4<f32>(v_30.x, v_30.y, v_30.z, 0.0f));
+    let v_30 = transpose(v_2._136_constants.YAxisFixedMat);
+    let v_31 = *(position);
+    *(position) = (v_30 * vec4<f32>(v_31.x, v_31.y, v_31.z, 0.0f));
   }
-  let v_31 = (*(particle)).Transform[3i];
-  *(position) = (*(position) + v_31);
+  let v_32 = (*(particle)).Transform[3i];
+  *(position) = (*(position) + v_32);
 }
 
-fn v_32(particle : ptr<function, ParticleData>, position : ptr<function, vec3<f32>>) {
+fn v_33(particle : ptr<function, ParticleData>, position : ptr<function, vec3<f32>>) {
   if ((v_2._136_constants.CoordinateReversed != 0u)) {
     (*(position)).z = -((*(position)).z);
   }
-  let v_33 = (*(particle)).Transform;
-  let v_34 = *(position);
-  *(position) = (v_33 * vec4<f32>(v_34.x, v_34.y, v_34.z, 1.0f));
+  let v_34 = (*(particle)).Transform;
+  let v_35 = *(position);
+  *(position) = (v_34 * vec4<f32>(v_35.x, v_35.y, v_35.z, 1.0f));
 }
 
 struct TrailData {
@@ -253,7 +259,7 @@ struct TrailData {
   Direction : u32,
 }
 
-fn v_35(particle : ptr<function, ParticleData>, position : ptr<function, vec3<f32>>, uv : ptr<function, vec2<f32>>, instanceID : ptr<function, u32>, vertexID : ptr<function, u32>) {
+fn v_36(particle : ptr<function, ParticleData>, position : ptr<function, vec3<f32>>, uv : ptr<function, vec2<f32>>, instanceID : ptr<function, u32>, vertexID : ptr<function, u32>) {
   var updateCount : u32;
   var trailLength : u32;
   var segmentID : u32;
@@ -275,11 +281,11 @@ fn v_35(particle : ptr<function, ParticleData>, position : ptr<function, vec3<f3
     trailPosition = (*(particle)).Transform[3i];
     param = (*(particle)).Direction;
     param_11 = param;
-    trailDirection = normalize(v_20(&(param_11)));
+    trailDirection = normalize(v_21(&(param_11)));
   } else {
     trailID = (v_3._265_emitter.TrailHead + (*(instanceID) * v_1._121_paramData.ShapeData));
-    let v_36 = ((((v_1._121_paramData.ShapeData + v_3._265_emitter.TrailPhase) - segmentID) + 1u) % v_1._121_paramData.ShapeData);
-    trailID = (trailID + v_36);
+    let v_37 = ((((v_1._121_paramData.ShapeData + v_3._265_emitter.TrailPhase) - segmentID) + 1u) % v_1._121_paramData.ShapeData);
+    trailID = (trailID + v_37);
     byteAddrTemp = bitcast<i32>((((trailID * 16u) + 0u) >> bitcast<u32>(2i)));
     _299.Position = bitcast<vec3<f32>>(vec3<u32>(Trails_1.m[byteAddrTemp], Trails_1.m[(byteAddrTemp + 1i)], Trails_1.m[(byteAddrTemp + 2i)]));
     _299.Direction = Trails_1.m[bitcast<i32>((((trailID * 16u) + 12u) >> bitcast<u32>(2i)))];
@@ -288,16 +294,16 @@ fn v_35(particle : ptr<function, ParticleData>, position : ptr<function, vec3<f3
     trailPosition = trail.Position;
     param_1 = trail.Direction;
     param_12 = param_1;
-    trailDirection = normalize(v_20(&(param_12)));
+    trailDirection = normalize(v_21(&(param_12)));
     (*(uv)).y = (f32(segmentID) / f32(trailLength));
   }
   trailTangent = normalize(cross(v_2._136_constants.CameraFront, trailDirection));
   *(position) = ((trailTangent * (*(position)).x) * v_1._121_paramData.ShapeSize);
-  let v_37 = trailPosition;
-  *(position) = (*(position) + v_37);
+  let v_38 = trailPosition;
+  *(position) = (*(position) + v_38);
 }
 
-fn v_38(color32 : ptr<function, u32>) -> vec4<f32> {
+fn v_39(color32 : ptr<function, u32>) -> vec4<f32> {
   return (vec4<f32>(f32((*(color32) & 255u)), f32(((*(color32) >> 8u) & 255u)), f32(((*(color32) >> 16u) & 255u)), f32(((*(color32) >> 24u) & 255u))) / vec4<f32>(255.0f));
 }
 
@@ -316,19 +322,21 @@ struct VS_Input {
 struct VS_Output {
   Pos : vec4<f32>,
   UV : vec2<f32>,
+  UV2 : vec2<f32>,
   Color : vec4<f32>,
   WorldN : vec3<f32>,
   WorldB : vec3<f32>,
   WorldT : vec3<f32>,
 }
 
-fn v_39(_input : ptr<function, VS_Input>) -> VS_Output {
+fn v_40(_input : ptr<function, VS_Input>) -> VS_Output {
   var index : u32;
   var _349 : ParticleData;
   var byteAddrTemp : i32;
   var particle : ParticleData;
   var position : vec3<f32>;
   var uv : vec2<f32>;
+  var uv2 : vec2<f32>;
   var color : vec4<f32>;
   var param : ParticleData;
   var param_1 : vec3<f32>;
@@ -350,8 +358,8 @@ fn v_39(_input : ptr<function, VS_Input>) -> VS_Output {
   var param_21 : u32;
   var param_9 : u32;
   var param_22 : u32;
-  var _432 : vec4<f32>;
-  var _434 : vec3<f32>;
+  var _434 : vec4<f32>;
+  var _436 : vec3<f32>;
   var _output : VS_Output;
   index = (v_3._265_emitter.ParticleHead + (*(_input)).InstanceID);
   _349.FlagBits = Particles.m[bitcast<i32>((((index * 80u) + 0u) >> bitcast<u32>(2i)))];
@@ -362,11 +370,11 @@ fn v_39(_input : ptr<function, VS_Input>) -> VS_Output {
   _349.Direction = Particles.m[bitcast<i32>((((index * 80u) + 20u) >> bitcast<u32>(2i)))];
   byteAddrTemp = bitcast<i32>((((index * 80u) + 24u) >> bitcast<u32>(2i)));
   _349.Velocity = vec2<u32>(Particles.m[byteAddrTemp], Particles.m[(byteAddrTemp + 1i)]);
-  let v_40 = bitcast<vec3<f32>>(vec3<u32>(Particles.m[bitcast<i32>((((index * 80u) + 32u) >> bitcast<u32>(2i)))], Particles.m[bitcast<i32>((((index * 80u) + 48u) >> bitcast<u32>(2i)))], Particles.m[bitcast<i32>((((index * 80u) + 64u) >> bitcast<u32>(2i)))]));
-  let v_41 = bitcast<vec3<f32>>(vec3<u32>(Particles.m[bitcast<i32>((((index * 80u) + 36u) >> bitcast<u32>(2i)))], Particles.m[bitcast<i32>((((index * 80u) + 52u) >> bitcast<u32>(2i)))], Particles.m[bitcast<i32>((((index * 80u) + 68u) >> bitcast<u32>(2i)))]));
-  let v_42 = bitcast<vec3<f32>>(vec3<u32>(Particles.m[bitcast<i32>((((index * 80u) + 40u) >> bitcast<u32>(2i)))], Particles.m[bitcast<i32>((((index * 80u) + 56u) >> bitcast<u32>(2i)))], Particles.m[bitcast<i32>((((index * 80u) + 72u) >> bitcast<u32>(2i)))]));
-  let v_43 = bitcast<vec3<f32>>(vec3<u32>(Particles.m[bitcast<i32>((((index * 80u) + 44u) >> bitcast<u32>(2i)))], Particles.m[bitcast<i32>((((index * 80u) + 60u) >> bitcast<u32>(2i)))], Particles.m[bitcast<i32>((((index * 80u) + 76u) >> bitcast<u32>(2i)))]));
-  _349.Transform = mat4x3<f32>(vec3<f32>(v_40.x, v_40.y, v_40.z), vec3<f32>(v_41.x, v_41.y, v_41.z), vec3<f32>(v_42.x, v_42.y, v_42.z), vec3<f32>(v_43.x, v_43.y, v_43.z));
+  let v_41 = bitcast<vec3<f32>>(vec3<u32>(Particles.m[bitcast<i32>((((index * 80u) + 32u) >> bitcast<u32>(2i)))], Particles.m[bitcast<i32>((((index * 80u) + 48u) >> bitcast<u32>(2i)))], Particles.m[bitcast<i32>((((index * 80u) + 64u) >> bitcast<u32>(2i)))]));
+  let v_42 = bitcast<vec3<f32>>(vec3<u32>(Particles.m[bitcast<i32>((((index * 80u) + 36u) >> bitcast<u32>(2i)))], Particles.m[bitcast<i32>((((index * 80u) + 52u) >> bitcast<u32>(2i)))], Particles.m[bitcast<i32>((((index * 80u) + 68u) >> bitcast<u32>(2i)))]));
+  let v_43 = bitcast<vec3<f32>>(vec3<u32>(Particles.m[bitcast<i32>((((index * 80u) + 40u) >> bitcast<u32>(2i)))], Particles.m[bitcast<i32>((((index * 80u) + 56u) >> bitcast<u32>(2i)))], Particles.m[bitcast<i32>((((index * 80u) + 72u) >> bitcast<u32>(2i)))]));
+  let v_44 = bitcast<vec3<f32>>(vec3<u32>(Particles.m[bitcast<i32>((((index * 80u) + 44u) >> bitcast<u32>(2i)))], Particles.m[bitcast<i32>((((index * 80u) + 60u) >> bitcast<u32>(2i)))], Particles.m[bitcast<i32>((((index * 80u) + 76u) >> bitcast<u32>(2i)))]));
+  _349.Transform = mat4x3<f32>(vec3<f32>(v_41.x, v_41.y, v_41.z), vec3<f32>(v_42.x, v_42.y, v_42.z), vec3<f32>(v_43.x, v_43.y, v_43.z), vec3<f32>(v_44.x, v_44.y, v_44.z));
   particle.FlagBits = _349.FlagBits;
   particle.Seed = _349.Seed;
   particle.LifeAge = _349.LifeAge;
@@ -378,13 +386,14 @@ fn v_39(_input : ptr<function, VS_Input>) -> VS_Output {
   if (((particle.FlagBits & 1u) != 0u)) {
     position = (*(_input)).Pos;
     uv = (*(_input)).UV;
+    uv2 = (*(_input)).UV2;
     color = (*(_input)).Color;
     if ((v_1._121_paramData.ShapeType == 0u)) {
       param = particle;
       param_1 = position;
       param_13 = param;
       param_14 = param_1;
-      v_21(&(param_13), &(param_14));
+      v_22(&(param_13), &(param_14));
       param_1 = param_14;
       position = param_1;
     } else if ((v_1._121_paramData.ShapeType == 1u)) {
@@ -392,7 +401,7 @@ fn v_39(_input : ptr<function, VS_Input>) -> VS_Output {
       param_3 = position;
       param_15 = param_2;
       param_16 = param_3;
-      v_32(&(param_15), &(param_16));
+      v_33(&(param_15), &(param_16));
       param_3 = param_16;
       position = param_3;
     } else if ((v_1._121_paramData.ShapeType == 2u)) {
@@ -406,7 +415,7 @@ fn v_39(_input : ptr<function, VS_Input>) -> VS_Output {
       param_19 = param_6;
       param_20 = param_7;
       param_21 = param_8;
-      v_35(&(param_17), &(param_18), &(param_19), &(param_20), &(param_21));
+      v_36(&(param_17), &(param_18), &(param_19), &(param_20), &(param_21));
       param_5 = param_18;
       param_6 = param_19;
       position = param_5;
@@ -414,31 +423,33 @@ fn v_39(_input : ptr<function, VS_Input>) -> VS_Output {
     }
     param_9 = particle.Color;
     param_22 = param_9;
-    let v_44 = v_38(&(param_22));
-    color = (color * v_44);
-    _432 = color;
-    _434 = (_432.xyz * v_1._121_paramData.Emissive);
-    color.x = _434.x;
-    color.y = _434.y;
-    color.z = _434.z;
-    let v_45 = position;
-    _output.Pos = ((vec4<f32>(v_45.x, v_45.y, v_45.z, 1.0f) * v_2._136_constants.CameraMat) * v_2._136_constants.ProjMat);
+    let v_45 = v_39(&(param_22));
+    color = (color * v_45);
+    _434 = color;
+    _436 = (_434.xyz * v_1._121_paramData.Emissive);
+    color.x = _436.x;
+    color.y = _436.y;
+    color.z = _436.z;
+    let v_46 = position;
+    _output.Pos = (v_2._136_constants.ProjMat * (v_2._136_constants.CameraMat * vec4<f32>(v_46.x, v_46.y, v_46.z, 1.0f)));
     _output.UV = uv;
+    _output.UV2 = uv2;
     _output.Color = color;
     if ((v_1._121_paramData.MaterialType == 1u)) {
-      let v_46 = particle.Transform;
-      let v_47 = (*(_input)).Normal;
-      _output.WorldN = (v_46 * vec4<f32>(v_47.x, v_47.y, v_47.z, 0.0f));
-      let v_48 = particle.Transform;
-      let v_49 = (*(_input)).Binormal;
-      _output.WorldB = (v_48 * vec4<f32>(v_49.x, v_49.y, v_49.z, 0.0f));
-      let v_50 = particle.Transform;
-      let v_51 = (*(_input)).Tangent;
-      _output.WorldT = (v_50 * vec4<f32>(v_51.x, v_51.y, v_51.z, 0.0f));
+      let v_47 = particle.Transform;
+      let v_48 = (*(_input)).Normal;
+      _output.WorldN = (v_47 * vec4<f32>(v_48.x, v_48.y, v_48.z, 0.0f));
+      let v_49 = particle.Transform;
+      let v_50 = (*(_input)).Binormal;
+      _output.WorldB = (v_49 * vec4<f32>(v_50.x, v_50.y, v_50.z, 0.0f));
+      let v_51 = particle.Transform;
+      let v_52 = (*(_input)).Tangent;
+      _output.WorldT = (v_51 * vec4<f32>(v_52.x, v_52.y, v_52.z, 0.0f));
     }
   } else {
     _output.Pos = vec4<f32>();
     _output.UV = vec2<f32>();
+    _output.UV2 = vec2<f32>();
     _output.Color = vec4<f32>();
     if ((v_1._121_paramData.MaterialType == 1u)) {
       _output.WorldN = vec3<f32>();
@@ -449,7 +460,7 @@ fn v_39(_input : ptr<function, VS_Input>) -> VS_Output {
   return _output;
 }
 
-fn v_52() {
+fn v_53() {
   var _input : VS_Input;
   var flattenTemp : VS_Output;
   var param : VS_Input;
@@ -463,16 +474,17 @@ fn v_52() {
   _input.InstanceID = bitcast<u32>(gl_InstanceIndex);
   _input.VertexID = bitcast<u32>(gl_VertexIndex);
   param = _input;
-  flattenTemp = v_39(&(param));
+  flattenTemp = v_40(&(param));
   gl_Position = flattenTemp.Pos;
   _entryPointOutput_UV = flattenTemp.UV;
+  _entryPointOutput_UV2 = flattenTemp.UV2;
   _entryPointOutput_Color = flattenTemp.Color;
   _entryPointOutput_WorldN = flattenTemp.WorldN;
   _entryPointOutput_WorldB = flattenTemp.WorldB;
   _entryPointOutput_WorldT = flattenTemp.WorldT;
 }
 
-fn v_19(stage_input : ptr<function, SPIRV_Cross_Input>) -> SPIRV_Cross_Output {
+fn v_20(stage_input : ptr<function, SPIRV_Cross_Input>) -> SPIRV_Cross_Output {
   var stage_output : SPIRV_Cross_Output;
   gl_VertexIndex = bitcast<i32>((*(stage_input)).gl_VertexIndex);
   gl_InstanceIndex = bitcast<i32>((*(stage_input)).gl_InstanceIndex);
@@ -483,9 +495,10 @@ fn v_19(stage_input : ptr<function, SPIRV_Cross_Input>) -> SPIRV_Cross_Output {
   input_UV = (*(stage_input)).input_UV;
   input_UV2 = (*(stage_input)).input_UV2;
   input_Color = (*(stage_input)).input_Color;
-  v_52();
+  v_53();
   stage_output.gl_Position = gl_Position;
   stage_output._entryPointOutput_UV = _entryPointOutput_UV;
+  stage_output._entryPointOutput_UV2 = _entryPointOutput_UV2;
   stage_output._entryPointOutput_Color = _entryPointOutput_Color;
   stage_output._entryPointOutput_WorldN = _entryPointOutput_WorldN;
   stage_output._entryPointOutput_WorldB = _entryPointOutput_WorldB;
@@ -497,19 +510,21 @@ struct tint_symbol {
   @location(0u)
   m_1 : vec2<f32>,
   @location(1u)
-  m_2 : vec4<f32>,
+  m_2 : vec2<f32>,
   @location(2u)
-  m_3 : vec3<f32>,
+  m_3 : vec4<f32>,
   @location(3u)
   m_4 : vec3<f32>,
   @location(4u)
   m_5 : vec3<f32>,
+  @location(5u)
+  m_6 : vec3<f32>,
   @builtin(position)
-  m_6 : vec4<f32>,
+  m_7 : vec4<f32>,
 }
 
 @vertex
-fn main(@location(0u) v_53 : vec3<f32>, @location(1u) v_54 : vec3<f32>, @location(2u) v_55 : vec3<f32>, @location(3u) v_56 : vec3<f32>, @location(4u) v_57 : vec2<f32>, @location(5u) v_58 : vec2<f32>, @location(6u) v_59 : vec4<f32>, @builtin(vertex_index) v_60 : u32, @builtin(instance_index) v_61 : u32) -> tint_symbol {
-  main_inner(v_53, v_54, v_55, v_56, v_57, v_58, v_59, v_60, v_61);
-  return tint_symbol(v_4, v_5, v_6, v_7, v_8, v_9);
+fn main(@location(0u) v_54 : vec3<f32>, @location(1u) v_55 : vec3<f32>, @location(2u) v_56 : vec3<f32>, @location(3u) v_57 : vec3<f32>, @location(4u) v_58 : vec2<f32>, @location(5u) v_59 : vec2<f32>, @location(6u) v_60 : vec4<f32>, @builtin(vertex_index) v_61 : u32, @builtin(instance_index) v_62 : u32) -> tint_symbol {
+  main_inner(v_54, v_55, v_56, v_57, v_58, v_59, v_60, v_61, v_62);
+  return tint_symbol(v_4, v_5, v_6, v_7, v_8, v_9, v_10);
 }

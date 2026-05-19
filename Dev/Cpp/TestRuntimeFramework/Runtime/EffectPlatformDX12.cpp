@@ -157,6 +157,23 @@ void EffectPlatformDX12::DestroyDevice()
 	EffectPlatformLLGI::DestroyDevice();
 }
 
+void EffectPlatformDX12::BeginCompute()
+{
+	EffectPlatformLLGI::BeginCompute();
+
+	auto cl = static_cast<LLGI::CommandListDX12*>(commandList_.get());
+	EffekseerRendererDX12::BeginCommandList(commandListEfk_, cl->GetCommandList());
+	GetRenderer()->SetCommandList(commandListEfk_);
+}
+
+void EffectPlatformDX12::EndCompute()
+{
+	GetRenderer()->SetCommandList(nullptr);
+	EffekseerRendererDX12::EndCommandList(commandListEfk_);
+
+	EffectPlatformLLGI::EndCompute();
+}
+
 void EffectPlatformDX12::BeginRendering()
 {
 	EffectPlatformLLGI::BeginRendering();

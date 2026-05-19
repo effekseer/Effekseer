@@ -122,6 +122,7 @@ protected:
 	LLGI::Texture* checkTexture_ = nullptr;
 	LLGI::TextureFormatType screenFormat_ = LLGI::TextureFormatType::R8G8B8A8_UNORM;
 	LLGI::DeviceType deviceType_;
+	bool isCommandListBegun_ = false;
 
 	void InitializeWindow() override;
 	void Present() override;
@@ -133,6 +134,8 @@ public:
 	EffectPlatformLLGI(LLGI::DeviceType deviceType);
 	virtual ~EffectPlatformLLGI();
 
+	virtual void BeginCompute() override;
+	virtual void EndCompute() override;
 	virtual void BeginRendering() override;
 	virtual void EndRendering() override;
 

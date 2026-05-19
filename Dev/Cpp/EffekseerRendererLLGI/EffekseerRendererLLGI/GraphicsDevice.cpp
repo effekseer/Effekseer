@@ -1,6 +1,7 @@
 #include "GraphicsDevice.h"
 #include <LLGI.Shader.h>
 #include <LLGI.Texture.h>
+#include <algorithm>
 #include <assert.h>
 
 namespace EffekseerRendererLLGI
@@ -539,11 +540,12 @@ ComputeBuffer::~ComputeBuffer()
 bool ComputeBuffer::Init(int32_t stride, int32_t size, const void* initialData, bool readOnly)
 {
 	stride_ = stride;
+	readOnly_ = readOnly;
 
 	LLGI::BufferUsageType usageType = LLGI::BufferUsageType::ComputeRead;
 	if (readOnly)
 	{
-		usageType = usageType | LLGI::BufferUsageType::MapWrite;
+		usageType = usageType | LLGI::BufferUsageType::ComputeWrite | LLGI::BufferUsageType::CopyDst;
 	}
 	else
 	{
@@ -562,6 +564,20 @@ bool ComputeBuffer::Init(int32_t stride, int32_t size, const void* initialData, 
 
 void ComputeBuffer::UpdateData(const void* src, int32_t size, int32_t offset)
 {
+	if (!buffer_)
+	{
+		return;
+	}
+
+	if (readOnly_)
+	{
+		if (offset == 0)
+		{
+			graphicsDevice_->QueueBufferUpload(buffer_, src, size);
+		}
+		return;
+	}
+
 	if (buffer_)
 	{
 		void* dst = buffer_->Lock(offset, size);
@@ -654,8 +670,9 @@ LLGI::PipelineState* PipelineState::GetOrCreatePipelineState(LLGI::RenderPassPip
 	return nullptr;
 }
 
-GraphicsDevice::GraphicsDevice(LLGI::Graphics* graphics)
+GraphicsDevice::GraphicsDevice(LLGI::Graphics* graphics, bool usesRawComputeBufferStride)
 	: graphics_(graphics)
+	, usesRawComputeBufferStride_(usesRawComputeBufferStride)
 {
 	ES_SAFE_ADDREF(graphics_);
 }
@@ -686,6 +703,16 @@ LLGI::Graphics* GraphicsDevice::GetGraphics()
 	return graphics_;
 }
 
+int32_t GraphicsDevice::GetComputeBufferBindingStride(const ComputeBuffer* buffer) const
+{
+	if (buffer == nullptr)
+	{
+		return 0;
+	}
+
+	return usesRawComputeBufferStride_ ? static_cast<int32_t>(sizeof(uint32_t)) : buffer->GetStride();
+}
+
 void GraphicsDevice::QueueMipMapGeneration(LLGI::Texture* texture)
 {
 	if (texture == nullptr)
@@ -694,6 +721,44 @@ void GraphicsDevice::QueueMipMapGeneration(LLGI::Texture* texture)
 	}
 
 	pendingMipMapTextures_.emplace_back(LLGI::CreateSharedPtr(texture, true));
+}
+
+void GraphicsDevice::QueueBufferUpload(const std::shared_ptr<LLGI::Buffer>& destination, const void* data, int32_t size)
+{
+	if (destination == nullptr || data == nullptr || size <= 0)
+	{
+		return;
+	}
+
+	auto upload = LLGI::CreateSharedPtr(graphics_->CreateBuffer(LLGI::BufferUsageType::MapWrite | LLGI::BufferUsageType::CopySrc, size));
+	if (upload == nullptr)
+	{
+		return;
+	}
+
+	if (auto dst = upload->Lock(0, size))
+	{
+		memcpy(dst, data, size);
+		upload->Unlock();
+
+		if (usesRawComputeBufferStride_)
+		{
+			auto memoryPool = LLGI::CreateSharedPtr(graphics_->CreateSingleFrameMemoryPool(std::max(size, 1024), 1));
+			auto uploadCommandList = LLGI::CreateSharedPtr(graphics_->CreateCommandList(memoryPool.get()));
+			if (memoryPool != nullptr && uploadCommandList != nullptr)
+			{
+				memoryPool->NewFrame();
+				uploadCommandList->Begin();
+				uploadCommandList->CopyBuffer(upload.get(), destination.get());
+				uploadCommandList->End();
+				graphics_->Execute(uploadCommandList.get());
+				uploadCommandList->WaitUntilCompleted();
+				return;
+			}
+		}
+
+		pendingBufferUploads_.push_back({upload, destination});
+	}
 }
 
 void GraphicsDevice::FlushPendingMipMapGenerations()
@@ -709,6 +774,21 @@ void GraphicsDevice::FlushPendingMipMapGenerations()
 	}
 
 	pendingMipMapTextures_.clear();
+}
+
+void GraphicsDevice::FlushPendingBufferUploads()
+{
+	if (commandList_ == nullptr || pendingBufferUploads_.empty())
+	{
+		return;
+	}
+
+	for (auto& upload : pendingBufferUploads_)
+	{
+		commandList_->CopyBuffer(upload.Source.get(), upload.Destination.get());
+	}
+
+	pendingBufferUploads_.clear();
 }
 
 void GraphicsDevice::Register(DeviceObject* deviceObject)
@@ -921,7 +1001,7 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 		{
 			auto buf = computeBufferBinder->ComputeBuffer.DownCast<Backend::ComputeBuffer>();
 			commandList_->SetComputeBuffer((buf) ? buf->GetBuffer() : nullptr,
-										   (buf) ? buf->GetStride() : 0,
+										   GetComputeBufferBindingStride(buf.Get()),
 										   slot,
 										   computeBufferBinder->ReadOnly);
 		}
@@ -940,6 +1020,7 @@ void GraphicsDevice::BeginRenderPass(Effekseer::Backend::RenderPassRef& renderPa
 		return;
 	}
 
+	FlushPendingBufferUploads();
 	FlushPendingMipMapGenerations();
 
 	auto llgiRenderPass = renderPass.DownCast<Backend::RenderPass>()->GetRenderPass();
@@ -957,6 +1038,8 @@ void GraphicsDevice::EndRenderPass()
 
 void GraphicsDevice::Dispatch(const Effekseer::Backend::DispatchParameter& dispatchParam)
 {
+	FlushPendingBufferUploads();
+
 	auto pipeline = dispatchParam.PipelineStatePtr.DownCast<PipelineState>();
 	if (pipeline == nullptr)
 	{
@@ -991,7 +1074,7 @@ void GraphicsDevice::Dispatch(const Effekseer::Backend::DispatchParameter& dispa
 		{
 			auto buf = computeBufferBinder->ComputeBuffer.DownCast<Backend::ComputeBuffer>();
 			commandList_->SetComputeBuffer((buf) ? buf->GetBuffer() : nullptr,
-										   (buf) ? buf->GetStride() : 0,
+										   GetComputeBufferBindingStride(buf.Get()),
 										   slot,
 										   computeBufferBinder->ReadOnly);
 		}
@@ -1007,6 +1090,7 @@ void GraphicsDevice::Dispatch(const Effekseer::Backend::DispatchParameter& dispa
 
 void GraphicsDevice::BeginComputePass()
 {
+	FlushPendingBufferUploads();
 	FlushPendingMipMapGenerations();
 	commandList_->BeginComputePass();
 }

@@ -143,6 +143,25 @@ void EffectPlatformWebGPU::DestroyDevice()
 	EffectPlatformLLGI::DestroyDevice();
 }
 
+void EffectPlatformWebGPU::BeginCompute()
+{
+	EffectPlatformLLGI::BeginCompute();
+
+	auto memoryPool = static_cast<EffekseerRendererLLGI::SingleFrameMemoryPool*>(sfMemoryPoolEfk_.Get());
+	commandListEfk_ = Effekseer::MakeRefPtr<EffekseerRendererLLGI::CommandList>(graphics_, commandList_.get(), memoryPool->GetInternal());
+	GetRenderer()->SetCommandList(commandListEfk_);
+	GetRenderer()->GetGraphicsDevice()->BeginComputePass();
+}
+
+void EffectPlatformWebGPU::EndCompute()
+{
+	GetRenderer()->GetGraphicsDevice()->EndComputePass();
+	GetRenderer()->SetCommandList(nullptr);
+	commandListEfk_.Reset();
+
+	EffectPlatformLLGI::EndCompute();
+}
+
 void EffectPlatformWebGPU::BeginRendering()
 {
 	EffectPlatformLLGI::BeginRendering();

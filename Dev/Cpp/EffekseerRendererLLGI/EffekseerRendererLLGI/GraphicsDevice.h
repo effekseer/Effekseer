@@ -265,6 +265,7 @@ class ComputeBuffer
 	int32_t stride_ = 0;
 	GraphicsDevice* graphicsDevice_ = nullptr;
 	std::function<void()> onDisposed_;
+	bool readOnly_ = false;
 
 public:
 	ComputeBuffer(GraphicsDevice* graphicsDevice);
@@ -312,16 +313,26 @@ class GraphicsDevice
 	: public Effekseer::Backend::GraphicsDevice
 {
 private:
+	struct PendingBufferUpload
+	{
+		std::shared_ptr<LLGI::Buffer> Source;
+		std::shared_ptr<LLGI::Buffer> Destination;
+	};
+
 	std::set<DeviceObject*> objects_;
 	LLGI::Graphics* graphics_ = nullptr;
 	LLGI::CommandList* commandList_ = nullptr;
 	LLGI::RenderPassPipelineState* renderPassPipelineState_ = nullptr;
 	std::vector<std::shared_ptr<LLGI::Texture>> pendingMipMapTextures_;
+	std::vector<PendingBufferUpload> pendingBufferUploads_;
+	bool usesRawComputeBufferStride_ = false;
 
 	void FlushPendingMipMapGenerations();
+	void FlushPendingBufferUploads();
+	int32_t GetComputeBufferBindingStride(const ComputeBuffer* buffer) const;
 
 public:
-	GraphicsDevice(LLGI::Graphics* graphics);
+	GraphicsDevice(LLGI::Graphics* graphics, bool usesRawComputeBufferStride = false);
 
 	~GraphicsDevice() override;
 
@@ -332,6 +343,7 @@ public:
 	LLGI::Graphics* GetGraphics();
 
 	void QueueMipMapGeneration(LLGI::Texture* texture);
+	void QueueBufferUpload(const std::shared_ptr<LLGI::Buffer>& destination, const void* data, int32_t size);
 
 	void Register(DeviceObject* deviceObject);
 
