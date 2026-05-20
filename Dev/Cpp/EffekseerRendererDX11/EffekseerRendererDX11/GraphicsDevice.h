@@ -45,7 +45,7 @@ class Texture;
 class RenderPass;
 class PipelineState;
 class UniformLayout;
-class ComputeBuffer;
+class StorageBuffer;
 
 using GraphicsDeviceRef = Effekseer::RefPtr<GraphicsDevice>;
 using VertexBufferRef = Effekseer::RefPtr<VertexBuffer>;
@@ -59,7 +59,7 @@ using TextureRef = Effekseer::RefPtr<Texture>;
 using RenderPassRef = Effekseer::RefPtr<RenderPass>;
 using PipelineStateRef = Effekseer::RefPtr<PipelineState>;
 using UniformLayoutRef = Effekseer::RefPtr<UniformLayout>;
-using ComputeBufferRef = Effekseer::RefPtr<ComputeBuffer>;
+using StorageBufferRef = Effekseer::RefPtr<StorageBuffer>;
 
 DXGI_FORMAT GetTextureFormatType(Effekseer::Backend::TextureFormatType format);
 
@@ -179,9 +179,9 @@ public:
 	bool GetIsDirtied() const;
 };
 
-class ComputeBuffer
+class StorageBuffer
 	: public DeviceObject,
-	  public Effekseer::Backend::ComputeBuffer
+	  public Effekseer::Backend::StorageBuffer
 {
 private:
 	GraphicsDevice* graphics_device_ = nullptr;
@@ -190,8 +190,8 @@ private:
 	D3D11UnorderedAccessViewPtr uav_;
 
 public:
-	ComputeBuffer(GraphicsDevice* graphics_device);
-	~ComputeBuffer() override;
+	StorageBuffer(GraphicsDevice* graphics_device);
+	~StorageBuffer() override;
 
 	bool Init(int32_t element_count, int32_t element_size, const void* initial_data);
 
@@ -441,7 +441,7 @@ public:
 
 	Effekseer::Backend::UniformBufferRef CreateUniformBuffer(int32_t size, const void* initialData) override;
 
-	Effekseer::Backend::ComputeBufferRef CreateComputeBuffer(int32_t elementCount, int32_t elementSize, const void* initialData, bool readOnly) override;
+	Effekseer::Backend::StorageBufferRef CreateStorageBuffer(int32_t elementCount, int32_t elementSize, const void* initialData, Effekseer::Backend::StorageBufferUsage usage) override;
 
 	Effekseer::Backend::VertexLayoutRef CreateVertexLayout(const Effekseer::Backend::VertexLayoutElement* elements, int32_t elementCount) override;
 
@@ -472,7 +472,7 @@ public:
 
 	bool UpdateUniformBuffer(Effekseer::Backend::UniformBufferRef& buffer, int32_t size, int32_t offset, const void* data) override;
 
-	bool UpdateComputeBuffer(Effekseer::Backend::ComputeBufferRef& buffer, int32_t size, int32_t offset, const void* data) override;
+	bool UpdateStorageBuffer(Effekseer::Backend::StorageBufferRef& buffer, int32_t size, int32_t offset, const void* data) override;
 
 	//! for DirectX11
 	Effekseer::Backend::TextureRef CreateTexture(ID3D11ShaderResourceView* srv, ID3D11RenderTargetView* rtv, ID3D11DepthStencilView* dsv);

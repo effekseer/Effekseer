@@ -493,20 +493,20 @@ bool UniformBuffer::GetIsDirtied() const
 	return is_dirtied_;
 }
 
-ComputeBuffer::ComputeBuffer(GraphicsDevice* graphicsDevice)
+StorageBuffer::StorageBuffer(GraphicsDevice* graphicsDevice)
 	: graphics_device_(graphicsDevice)
 {
 	ES_SAFE_ADDREF(graphics_device_);
 	graphics_device_->Register(this);
 }
 
-ComputeBuffer ::~ComputeBuffer()
+StorageBuffer::~StorageBuffer()
 {
 	graphics_device_->Unregister(this);
 	ES_SAFE_RELEASE(graphics_device_);
 }
 
-bool ComputeBuffer::Init(int32_t elementCount, int32_t elementSize, const void* initialData)
+bool StorageBuffer::Init(int32_t elementCount, int32_t elementSize, const void* initialData)
 {
 	D3D11_BUFFER_DESC hBufferDesc;
 	hBufferDesc.ByteWidth = static_cast<UINT>(elementCount * elementSize);
@@ -558,7 +558,7 @@ bool ComputeBuffer::Init(int32_t elementCount, int32_t elementSize, const void* 
 	return true;
 }
 
-void ComputeBuffer::UpdateData(const void* src, int32_t size, int32_t offset)
+void StorageBuffer::UpdateData(const void* src, int32_t size, int32_t offset)
 {
 	D3D11_BOX dstBox{};
 	dstBox.left = static_cast<UINT>(offset);
@@ -1382,9 +1382,11 @@ Effekseer::Backend::UniformBufferRef GraphicsDevice::CreateUniformBuffer(int32_t
 	return ret;
 }
 
-Effekseer::Backend::ComputeBufferRef GraphicsDevice::CreateComputeBuffer(int32_t elementCount, int32_t elementSize, const void* initialData, bool readOnly)
+Effekseer::Backend::StorageBufferRef GraphicsDevice::CreateStorageBuffer(int32_t elementCount, int32_t elementSize, const void* initialData, Effekseer::Backend::StorageBufferUsage usage)
 {
-	auto ret = Effekseer::MakeRefPtr<ComputeBuffer>(this);
+	(void)usage;
+
+	auto ret = Effekseer::MakeRefPtr<StorageBuffer>(this);
 
 	if (!ret->Init(elementCount, elementSize, initialData))
 	{
@@ -1589,12 +1591,12 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 			srvs[slot] = texture->GetSRV();
 			samplers[slot] = samplers_[static_cast<int>(textureBinder->SamplingType)][static_cast<int>(textureBinder->WrapType)].get();
 		}
-		else if (auto computeBufferBinder = std::get_if<Effekseer::Backend::ComputeBufferBinder>(&binder))
+		else if (auto storageBufferBinder = std::get_if<Effekseer::Backend::StorageBufferBinder>(&binder))
 		{
-			auto computeBuffer = computeBufferBinder->ComputeBuffer.DownCast<Backend::ComputeBuffer>();
-			if (computeBufferBinder->ReadOnly)
+			auto storageBuffer = storageBufferBinder->StorageBuffer.DownCast<Backend::StorageBuffer>();
+			if (storageBuffer != nullptr && storageBufferBinder->Access == Effekseer::Backend::StorageBufferAccess::ReadOnly)
 			{
-				srvs[slot] = computeBuffer->GetSRV();
+				srvs[slot] = storageBuffer->GetSRV();
 			}
 		}
 	}
@@ -1722,16 +1724,16 @@ void GraphicsDevice::Dispatch(const Effekseer::Backend::DispatchParameter& dispa
 			csSRVs[slot] = texture->GetSRV();
 			csSamplers[slot] = samplers_[static_cast<int>(textureBinder->SamplingType)][static_cast<int>(textureBinder->WrapType)].get();
 		}
-		else if (auto computeBufferBinder = std::get_if<Effekseer::Backend::ComputeBufferBinder>(&binder))
+		else if (auto storageBufferBinder = std::get_if<Effekseer::Backend::StorageBufferBinder>(&binder))
 		{
-			auto computeBuffer = computeBufferBinder->ComputeBuffer.DownCast<Backend::ComputeBuffer>();
-			if (computeBufferBinder->ReadOnly)
+			auto storageBuffer = storageBufferBinder->StorageBuffer.DownCast<Backend::StorageBuffer>();
+			if (storageBuffer != nullptr && storageBufferBinder->Access == Effekseer::Backend::StorageBufferAccess::ReadOnly)
 			{
-				csSRVs[slot] = computeBuffer->GetSRV();
+				csSRVs[slot] = storageBuffer->GetSRV();
 			}
-			else if (slot < (int32_t)csUAVs.size())
+			else if (storageBuffer != nullptr && slot < (int32_t)csUAVs.size())
 			{
-				csUAVs[slot] = computeBuffer->GetUAV();
+				csUAVs[slot] = storageBuffer->GetUAV();
 			}
 		}
 	}
@@ -1763,14 +1765,14 @@ bool GraphicsDevice::UpdateUniformBuffer(Effekseer::Backend::UniformBufferRef& b
 	return true;
 }
 
-bool GraphicsDevice::UpdateComputeBuffer(Effekseer::Backend::ComputeBufferRef& buffer, int32_t size, int32_t offset, const void* data)
+bool GraphicsDevice::UpdateStorageBuffer(Effekseer::Backend::StorageBufferRef& buffer, int32_t size, int32_t offset, const void* data)
 {
 	if (buffer == nullptr)
 	{
 		return false;
 	}
 
-	auto b = static_cast<ComputeBuffer*>(buffer.Get());
+	auto b = static_cast<StorageBuffer*>(buffer.Get());
 
 	b->UpdateData(data, size, offset);
 

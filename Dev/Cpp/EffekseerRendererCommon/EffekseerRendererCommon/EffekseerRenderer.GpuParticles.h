@@ -25,7 +25,7 @@ using uint4 = Effekseer::GpuParticles::uint4;
 
 #include "Shader/gpu_particles_data.h"
 
-using ComputeBufferRef = Effekseer::Backend::ComputeBufferRef;
+using StorageBufferRef = Effekseer::Backend::StorageBufferRef;
 using UniformBufferRef = Effekseer::Backend::UniformBufferRef;
 using TextureRef = Effekseer::Backend::TextureRef;
 using ComputeCommand = Effekseer::Backend::DispatchParameter;
@@ -63,7 +63,7 @@ public:
 	TextureRef NoiseTexture;
 	TextureRef FieldTexture;
 	TextureRef GradientTexture;
-	ComputeBufferRef EmitPoints;
+	StorageBufferRef EmitPoints;
 	uint32_t EmitPointCount = 0;
 };
 using ResourceRef = Effekseer::RefPtr<Resource>;
@@ -201,8 +201,8 @@ protected:
 	GpuParticles::UniformBufferRef computeConstantsUniformBuffer_;
 	GpuParticles::UniformBufferRef renderConstantsUniformBuffer_;
 
-	GpuParticles::ComputeBufferRef particlesComputeBuffer_;
-	GpuParticles::ComputeBufferRef trailsComputeBuffer_;
+	GpuParticles::StorageBufferRef particlesStorageBuffer_;
+	GpuParticles::StorageBufferRef trailsStorageBuffer_;
 
 	GpuParticles::PipelineStateRef pipelineParticleClear_;
 	GpuParticles::PipelineStateRef pipelineParticleSpawn_;
@@ -211,7 +211,7 @@ protected:
 
 	Shaders shaders_;
 
-	GpuParticles::ComputeBufferRef dummyEmitPoints_;
+	GpuParticles::StorageBufferRef dummyEmitPoints_;
 	GpuParticles::TextureRef dummyVectorTexture_;
 	GpuParticles::TextureRef dummyColorTexture_;
 	GpuParticles::TextureRef dummyNormalTexture_;

@@ -257,21 +257,21 @@ public:
 	void UpdateData(const void* src, int32_t size, int32_t offset);
 };
 
-class ComputeBuffer
+class StorageBuffer
 	: public DeviceObject,
-	  public Effekseer::Backend::ComputeBuffer
+	  public Effekseer::Backend::StorageBuffer
 {
 	std::shared_ptr<LLGI::Buffer> buffer_;
 	int32_t stride_ = 0;
 	GraphicsDevice* graphicsDevice_ = nullptr;
 	std::function<void()> onDisposed_;
-	bool readOnly_ = false;
+	Effekseer::Backend::StorageBufferUsage usage_ = Effekseer::Backend::StorageBufferUsage::ReadWrite;
 
 public:
-	ComputeBuffer(GraphicsDevice* graphicsDevice);
-	~ComputeBuffer() override;
+	StorageBuffer(GraphicsDevice* graphicsDevice);
+	~StorageBuffer() override;
 
-	bool Init(int32_t stride, int32_t size, const void* initialData, bool readOnly);
+	bool Init(int32_t stride, int32_t size, const void* initialData, Effekseer::Backend::StorageBufferUsage usage);
 
 	LLGI::Buffer* GetBuffer() const
 	{
@@ -283,7 +283,7 @@ public:
 		return stride_;
 	}
 
-	void UpdateData(const void* src, int32_t size, int32_t offset);
+	bool UpdateData(const void* src, int32_t size, int32_t offset);
 };
 
 class PipelineState
@@ -325,14 +325,15 @@ private:
 	LLGI::RenderPassPipelineState* renderPassPipelineState_ = nullptr;
 	std::vector<std::shared_ptr<LLGI::Texture>> pendingMipMapTextures_;
 	std::vector<PendingBufferUpload> pendingBufferUploads_;
-	bool usesRawComputeBufferStride_ = false;
+	bool usesImmediateBufferUpload_ = false;
 
 	void FlushPendingMipMapGenerations();
 	void FlushPendingBufferUploads();
-	int32_t GetComputeBufferBindingStride(const ComputeBuffer* buffer) const;
+	int32_t GetStorageBufferBindingStride(const StorageBuffer* buffer) const;
+	void BindResourceBinders(const std::array<Effekseer::Backend::ResourceBinder, Effekseer::Backend::DrawParameter::ResourceSlotCount>& resourceBinders);
 
 public:
-	GraphicsDevice(LLGI::Graphics* graphics, bool usesRawComputeBufferStride = false);
+	GraphicsDevice(LLGI::Graphics* graphics, bool usesImmediateBufferUpload = false);
 
 	~GraphicsDevice() override;
 
@@ -367,7 +368,7 @@ public:
 
 	Effekseer::Backend::UniformBufferRef CreateUniformBuffer(int32_t size, const void* initialData) override;
 
-	Effekseer::Backend::ComputeBufferRef CreateComputeBuffer(int32_t elementCount, int32_t elementSize, const void* initialData, bool readOnly) override;
+	Effekseer::Backend::StorageBufferRef CreateStorageBuffer(int32_t elementCount, int32_t elementSize, const void* initialData, Effekseer::Backend::StorageBufferUsage usage) override;
 
 	Effekseer::Backend::PipelineStateRef CreatePipelineState(const Effekseer::Backend::PipelineStateParameter& param) override;
 
@@ -391,7 +392,7 @@ public:
 
 	bool UpdateUniformBuffer(Effekseer::Backend::UniformBufferRef& buffer, int32_t size, int32_t offset, const void* data) override;
 
-	bool UpdateComputeBuffer(Effekseer::Backend::ComputeBufferRef& buffer, int32_t size, int32_t offset, const void* data) override;
+	bool UpdateStorageBuffer(Effekseer::Backend::StorageBufferRef& buffer, int32_t size, int32_t offset, const void* data) override;
 };
 
 } // namespace Backend

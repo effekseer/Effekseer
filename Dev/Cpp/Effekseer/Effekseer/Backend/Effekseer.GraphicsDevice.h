@@ -27,7 +27,7 @@ class Texture;
 class RenderPass;
 class PipelineState;
 class UniformLayout;
-class ComputeBuffer;
+class StorageBuffer;
 
 using GraphicsDeviceRef = RefPtr<GraphicsDevice>;
 using VertexBufferRef = RefPtr<VertexBuffer>;
@@ -40,7 +40,7 @@ using TextureRef = RefPtr<Texture>;
 using RenderPassRef = RefPtr<RenderPass>;
 using PipelineStateRef = RefPtr<PipelineState>;
 using UniformLayoutRef = RefPtr<UniformLayout>;
-using ComputeBufferRef = RefPtr<ComputeBuffer>;
+using StorageBufferRef = RefPtr<StorageBuffer>;
 
 static const int32_t RenderTargetMax = 4;
 
@@ -193,12 +193,12 @@ public:
 	virtual ~UniformBuffer() = default;
 };
 
-class ComputeBuffer
+class StorageBuffer
 	: public ReferenceObject
 {
 public:
-	ComputeBuffer() = default;
-	virtual ~ComputeBuffer() = default;
+	StorageBuffer() = default;
+	virtual ~StorageBuffer() = default;
 };
 
 class PipelineState
@@ -293,18 +293,30 @@ enum class TextureSamplingType
 	Nearest,
 };
 
+enum class StorageBufferUsage
+{
+	ReadOnly,
+	ReadWrite,
+};
+
+enum class StorageBufferAccess
+{
+	ReadOnly,
+	ReadWrite,
+};
+
 struct TextureBinder
 {
 	TextureRef Texture;
 	TextureWrapType WrapType = TextureWrapType::Repeat;
 	TextureSamplingType SamplingType = TextureSamplingType::Linear;
 };
-struct ComputeBufferBinder
+struct StorageBufferBinder
 {
-	ComputeBufferRef ComputeBuffer;
-	bool ReadOnly;
+	StorageBufferRef StorageBuffer;
+	StorageBufferAccess Access = StorageBufferAccess::ReadOnly;
 };
-using ResourceBinder = std::variant<std::nullptr_t, TextureBinder, ComputeBufferBinder>;
+using ResourceBinder = std::variant<std::nullptr_t, TextureBinder, StorageBufferBinder>;
 
 struct DrawParameter
 {
@@ -329,9 +341,9 @@ public:
 	{
 		ResourceBinders[slot] = TextureBinder{texture, wrapType, samplingType};
 	}
-	void SetComputeBuffer(int32_t slot, ComputeBufferRef computeBuffer)
+	void SetStorageBuffer(int32_t slot, StorageBufferRef storageBuffer, StorageBufferAccess access = StorageBufferAccess::ReadOnly)
 	{
-		ResourceBinders[slot] = ComputeBufferBinder{computeBuffer, true};
+		ResourceBinders[slot] = StorageBufferBinder{storageBuffer, access};
 	}
 };
 
@@ -354,9 +366,9 @@ public:
 	{
 		ResourceBinders[slot] = TextureBinder{texture, wrapType, samplingType};
 	}
-	void SetComputeBuffer(int32_t slot, ComputeBufferRef computeBuffer, bool readonly)
+	void SetStorageBuffer(int32_t slot, StorageBufferRef storageBuffer, StorageBufferAccess access)
 	{
-		ResourceBinders[slot] = ComputeBufferBinder{computeBuffer, readonly};
+		ResourceBinders[slot] = StorageBufferBinder{storageBuffer, access};
 	}
 };
 
@@ -566,14 +578,14 @@ public:
 	}
 
 	/**
-		@brief	Update content of an uniform buffer
+		@brief	Update content of a storage buffer
 		@param	buffer	buffer
 		@param	size	the size of updated buffer
 		@param	offset	the offset of updated buffer
 		@param	data	updating data
 		@return	Succeeded in updating?
 	*/
-	virtual bool UpdateComputeBuffer(ComputeBufferRef& buffer, int32_t size, int32_t offset, const void* data)
+	virtual bool UpdateStorageBuffer(StorageBufferRef& buffer, int32_t size, int32_t offset, const void* data)
 	{
 		return false;
 	}
@@ -660,12 +672,12 @@ public:
 	}
 
 	/**
-		@brief	Create ComputeBuffer
+		@brief	Create StorageBuffer
 		@param	size	the size of buffer
 		@param	initialData	the initial data of buffer. If it is null, not initialized.
-		@return	ComputeBuffer
+		@return	StorageBuffer
 	*/
-	virtual ComputeBufferRef CreateComputeBuffer(int32_t elementCount, int32_t elementSize, const void* initialData, bool readOnly)
+	virtual StorageBufferRef CreateStorageBuffer(int32_t elementCount, int32_t elementSize, const void* initialData, StorageBufferUsage usage)
 	{
 		return nullptr;
 	}

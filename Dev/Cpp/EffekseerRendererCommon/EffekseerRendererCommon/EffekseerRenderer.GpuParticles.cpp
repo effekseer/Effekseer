@@ -283,8 +283,10 @@ bool GpuParticleSystem::InitSystem(const Settings& settings)
 	GpuParticles::RenderConstants renderConstants{};
 	renderConstantsUniformBuffer_ = graphicsDevice_->CreateUniformBuffer(sizeof(GpuParticles::RenderConstants), &renderConstants);
 
-	particlesComputeBuffer_ = graphicsDevice_->CreateComputeBuffer((int32_t)settings.ParticleMaxCount, (int32_t)sizeof(Particle), nullptr, false);
-	trailsComputeBuffer_ = graphicsDevice_->CreateComputeBuffer((int32_t)settings.TrailMaxCount, (int32_t)sizeof(Trail), nullptr, false);
+	particlesStorageBuffer_ = graphicsDevice_->CreateStorageBuffer(
+		(int32_t)settings.ParticleMaxCount, (int32_t)sizeof(Particle), nullptr, Effekseer::Backend::StorageBufferUsage::ReadWrite);
+	trailsStorageBuffer_ = graphicsDevice_->CreateStorageBuffer(
+		(int32_t)settings.TrailMaxCount, (int32_t)sizeof(Trail), nullptr, Effekseer::Backend::StorageBufferUsage::ReadWrite);
 
 	vertexLayout_ = EffekseerRenderer::GetModelRendererVertexLayout(graphicsDevice_);
 
@@ -322,7 +324,7 @@ bool GpuParticleSystem::InitSystem(const Settings& settings)
 
 	{
 		GpuParticles::EmitPoint dummyData = {};
-		dummyEmitPoints_ = graphicsDevice_->CreateComputeBuffer(1, sizeof(dummyData), &dummyData, true);
+		dummyEmitPoints_ = graphicsDevice_->CreateStorageBuffer(1, sizeof(dummyData), &dummyData, Effekseer::Backend::StorageBufferUsage::ReadOnly);
 	}
 
 	return true;
@@ -352,6 +354,8 @@ void GpuParticleSystem::SetShaders(const Shaders& shaders)
 void GpuParticleSystem::ComputeFrame(const Context& context)
 {
 	using namespace Effekseer::GpuParticles;
+	constexpr auto StorageReadOnly = Effekseer::Backend::StorageBufferAccess::ReadOnly;
+	constexpr auto StorageReadWrite = Effekseer::Backend::StorageBufferAccess::ReadWrite;
 
 	{
 		GpuParticles::ComputeConstants cdata{};
@@ -371,7 +375,7 @@ void GpuParticleSystem::ComputeFrame(const Context& context)
 		command.UniformBufferPtrs[0] = computeConstantsUniformBuffer_;
 		command.UniformBufferPtrs[1] = emitter.Resource->ParamBuffer;
 		command.UniformBufferPtrs[2] = emitter.Buffer;
-		command.SetComputeBuffer(0, particlesComputeBuffer_, false);
+		command.SetStorageBuffer(0, particlesStorageBuffer_, StorageReadWrite);
 
 		command.GroupCount = {(int32_t)emitter.Data.ParticleSize / 256, 1, 1};
 		command.ThreadCount = {256, 1, 1};
@@ -427,8 +431,8 @@ void GpuParticleSystem::ComputeFrame(const Context& context)
 							pcgen.Generate(PointCount, 1);
 
 							emitter.Resource->EmitPointCount = (uint32_t)points.size();
-							emitter.Resource->EmitPoints = graphicsDevice_->CreateComputeBuffer(
-								(int32_t)points.size(), (int32_t)sizeof(GpuParticles::EmitPoint), points.data(), true);
+							emitter.Resource->EmitPoints = graphicsDevice_->CreateStorageBuffer(
+								(int32_t)points.size(), (int32_t)sizeof(GpuParticles::EmitPoint), points.data(), Effekseer::Backend::StorageBufferUsage::ReadOnly);
 						}
 					}
 					emitter.Data.EmitPointCount = emitter.Resource->EmitPointCount;
@@ -445,8 +449,8 @@ void GpuParticleSystem::ComputeFrame(const Context& context)
 				command.UniformBufferPtrs[0] = computeConstantsUniformBuffer_;
 				command.UniformBufferPtrs[1] = emitter.Resource->ParamBuffer;
 				command.UniformBufferPtrs[2] = emitter.Buffer;
-				command.SetComputeBuffer(0, particlesComputeBuffer_, false);
-				command.SetComputeBuffer(1, (emitter.Resource->EmitPoints) ? emitter.Resource->EmitPoints : dummyEmitPoints_, true);
+				command.SetStorageBuffer(0, particlesStorageBuffer_, StorageReadWrite);
+				command.SetStorageBuffer(1, (emitter.Resource->EmitPoints) ? emitter.Resource->EmitPoints : dummyEmitPoints_, StorageReadOnly);
 
 				command.GroupCount = {(int32_t)emitter.Data.NextEmitCount, 1, 1};
 				command.ThreadCount = {1, 1, 1};
@@ -473,8 +477,8 @@ void GpuParticleSystem::ComputeFrame(const Context& context)
 			command.UniformBufferPtrs[0] = computeConstantsUniformBuffer_;
 			command.UniformBufferPtrs[1] = emitter.Resource->ParamBuffer;
 			command.UniformBufferPtrs[2] = emitter.Buffer;
-			command.SetComputeBuffer(0, particlesComputeBuffer_, false);
-			command.SetComputeBuffer(1, trailsComputeBuffer_, false);
+			command.SetStorageBuffer(0, particlesStorageBuffer_, StorageReadWrite);
+			command.SetStorageBuffer(1, trailsStorageBuffer_, StorageReadWrite);
 
 			command.SetTexture(2, (emitter.Resource->NoiseTexture) ? emitter.Resource->NoiseTexture : dummyVectorTexture_, Effekseer::Backend::TextureWrapType::Repeat, Effekseer::Backend::TextureSamplingType::Linear);
 			command.SetTexture(3, (emitter.Resource->FieldTexture) ? emitter.Resource->FieldTexture : dummyVectorTexture_, Effekseer::Backend::TextureWrapType::Repeat, Effekseer::Backend::TextureSamplingType::Linear);
@@ -561,8 +565,8 @@ void GpuParticleSystem::RenderFrame(const Context& context)
 			drawParams.VertexUniformBufferPtrs[1] = drawParams.PixelUniformBufferPtrs[1] = emitter.Resource->ParamBuffer;
 			drawParams.VertexUniformBufferPtrs[2] = emitter.Buffer;
 
-			drawParams.SetComputeBuffer(0, particlesComputeBuffer_);
-			drawParams.SetComputeBuffer(1, trailsComputeBuffer_);
+			drawParams.SetStorageBuffer(0, particlesStorageBuffer_);
+			drawParams.SetStorageBuffer(1, trailsStorageBuffer_);
 
 			auto setTexture = [&](int32_t slot, Effekseer::TextureRef texture, GpuParticles::TextureRef defaultTexture)
 			{

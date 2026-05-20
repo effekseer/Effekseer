@@ -40,6 +40,20 @@ LLGI::TextureMinMagFilter ToLLGITextureMinMagFilter(Effekseer::Backend::TextureS
 	}
 }
 
+LLGI::ShaderResourceAccess ToLLGIShaderResourceAccess(Effekseer::Backend::StorageBufferAccess access)
+{
+	switch (access)
+	{
+	case Effekseer::Backend::StorageBufferAccess::ReadOnly:
+		return LLGI::ShaderResourceAccess::ReadOnly;
+	case Effekseer::Backend::StorageBufferAccess::ReadWrite:
+		return LLGI::ShaderResourceAccess::ReadWrite;
+	default:
+		assert(0);
+		return LLGI::ShaderResourceAccess::ReadOnly;
+	}
+}
+
 bool CanGenerateMipMap(const LLGI::TextureParameter& param)
 {
 	return param.MipLevelCount > 1 &&
@@ -524,37 +538,37 @@ void UniformBuffer::UpdateData(const void* src, int32_t size, int32_t offset)
 	}
 }
 
-ComputeBuffer::ComputeBuffer(GraphicsDevice* graphicsDevice)
+StorageBuffer::StorageBuffer(GraphicsDevice* graphicsDevice)
 	: graphicsDevice_(graphicsDevice)
 {
 	ES_SAFE_ADDREF(graphicsDevice_);
 	graphicsDevice_->Register(this);
 }
 
-ComputeBuffer::~ComputeBuffer()
+StorageBuffer::~StorageBuffer()
 {
 	graphicsDevice_->Unregister(this);
 	Effekseer::SafeRelease(graphicsDevice_);
 }
 
-bool ComputeBuffer::Init(int32_t stride, int32_t size, const void* initialData, bool readOnly)
+bool StorageBuffer::Init(int32_t stride, int32_t size, const void* initialData, Effekseer::Backend::StorageBufferUsage usage)
 {
 	stride_ = stride;
-	readOnly_ = readOnly;
+	usage_ = usage;
 
-	LLGI::BufferUsageType usageType = LLGI::BufferUsageType::ComputeRead;
-	if (readOnly)
+	LLGI::BufferUsageType usageType = LLGI::BufferUsageType::StorageRead;
+	if (usage == Effekseer::Backend::StorageBufferUsage::ReadOnly)
 	{
-		usageType = usageType | LLGI::BufferUsageType::ComputeWrite | LLGI::BufferUsageType::CopyDst;
+		usageType = usageType | LLGI::BufferUsageType::StorageWrite | LLGI::BufferUsageType::CopyDst;
 	}
 	else
 	{
-		usageType = usageType | LLGI::BufferUsageType::ComputeWrite;
+		usageType = usageType | LLGI::BufferUsageType::StorageWrite;
 	}
 
 	buffer_ = LLGI::CreateSharedPtr(graphicsDevice_->GetGraphics()->CreateBuffer(usageType, size));
 
-	if (readOnly && initialData)
+	if (usage == Effekseer::Backend::StorageBufferUsage::ReadOnly && initialData)
 	{
 		UpdateData(initialData, size, 0);
 	}
@@ -562,29 +576,33 @@ bool ComputeBuffer::Init(int32_t stride, int32_t size, const void* initialData, 
 	return buffer_ != nullptr;
 }
 
-void ComputeBuffer::UpdateData(const void* src, int32_t size, int32_t offset)
+bool StorageBuffer::UpdateData(const void* src, int32_t size, int32_t offset)
 {
-	if (!buffer_)
+	if (!buffer_ || src == nullptr || size <= 0)
 	{
-		return;
+		return false;
 	}
 
-	if (readOnly_)
+	if (usage_ == Effekseer::Backend::StorageBufferUsage::ReadOnly)
 	{
-		if (offset == 0)
+		if (offset != 0)
 		{
-			graphicsDevice_->QueueBufferUpload(buffer_, src, size);
+			return false;
 		}
-		return;
+
+		graphicsDevice_->QueueBufferUpload(buffer_, src, size);
+		return true;
 	}
 
-	if (buffer_)
+	void* dst = buffer_->Lock(offset, size);
+	if (dst == nullptr)
 	{
-		void* dst = buffer_->Lock(offset, size);
-		assert(dst != nullptr);
-		memcpy(dst, src, size);
-		buffer_->Unlock();
+		return false;
 	}
+
+	memcpy(dst, src, size);
+	buffer_->Unlock();
+	return true;
 }
 
 PipelineState::PipelineState(GraphicsDevice* graphicsDevice)
@@ -670,9 +688,9 @@ LLGI::PipelineState* PipelineState::GetOrCreatePipelineState(LLGI::RenderPassPip
 	return nullptr;
 }
 
-GraphicsDevice::GraphicsDevice(LLGI::Graphics* graphics, bool usesRawComputeBufferStride)
+GraphicsDevice::GraphicsDevice(LLGI::Graphics* graphics, bool usesImmediateBufferUpload)
 	: graphics_(graphics)
-	, usesRawComputeBufferStride_(usesRawComputeBufferStride)
+	, usesImmediateBufferUpload_(usesImmediateBufferUpload)
 {
 	ES_SAFE_ADDREF(graphics_);
 }
@@ -703,14 +721,41 @@ LLGI::Graphics* GraphicsDevice::GetGraphics()
 	return graphics_;
 }
 
-int32_t GraphicsDevice::GetComputeBufferBindingStride(const ComputeBuffer* buffer) const
+int32_t GraphicsDevice::GetStorageBufferBindingStride(const StorageBuffer* buffer) const
 {
 	if (buffer == nullptr)
 	{
 		return 0;
 	}
 
-	return usesRawComputeBufferStride_ ? static_cast<int32_t>(sizeof(uint32_t)) : buffer->GetStride();
+	return buffer->GetStride();
+}
+
+void GraphicsDevice::BindResourceBinders(const std::array<Effekseer::Backend::ResourceBinder, Effekseer::Backend::DrawParameter::ResourceSlotCount>& resourceBinders)
+{
+	static_assert(Effekseer::Backend::DrawParameter::ResourceSlotCount == Effekseer::Backend::DispatchParameter::ResourceSlotCount,
+				  "Draw and dispatch resource binders must use the same slot count.");
+
+	for (int32_t slot = 0; slot < (int32_t)resourceBinders.size(); slot++)
+	{
+		auto& binder = resourceBinders[slot];
+		if (auto textureBinder = std::get_if<Effekseer::Backend::TextureBinder>(&binder))
+		{
+			auto tex = textureBinder->Texture.DownCast<Backend::Texture>();
+			commandList_->SetTexture((tex) ? tex->GetTexture().get() : nullptr,
+									 ToLLGITextureWrapMode(textureBinder->WrapType),
+									 ToLLGITextureMinMagFilter(textureBinder->SamplingType),
+									 slot);
+		}
+		else if (auto storageBufferBinder = std::get_if<Effekseer::Backend::StorageBufferBinder>(&binder))
+		{
+			auto buf = storageBufferBinder->StorageBuffer.DownCast<Backend::StorageBuffer>();
+			commandList_->SetStorageBuffer((buf) ? buf->GetBuffer() : nullptr,
+										   GetStorageBufferBindingStride(buf.Get()),
+										   slot,
+										   ToLLGIShaderResourceAccess(storageBufferBinder->Access));
+		}
+	}
 }
 
 void GraphicsDevice::QueueMipMapGeneration(LLGI::Texture* texture)
@@ -741,7 +786,7 @@ void GraphicsDevice::QueueBufferUpload(const std::shared_ptr<LLGI::Buffer>& dest
 		memcpy(dst, data, size);
 		upload->Unlock();
 
-		if (usesRawComputeBufferStride_)
+		if (usesImmediateBufferUpload_)
 		{
 			auto memoryPool = LLGI::CreateSharedPtr(graphics_->CreateSingleFrameMemoryPool(std::max(size, 1024), 1));
 			auto uploadCommandList = LLGI::CreateSharedPtr(graphics_->CreateCommandList(memoryPool.get()));
@@ -924,11 +969,11 @@ Effekseer::Backend::UniformBufferRef GraphicsDevice::CreateUniformBuffer(int32_t
 	return ret;
 }
 
-Effekseer::Backend::ComputeBufferRef GraphicsDevice::CreateComputeBuffer(int32_t elementCount, int32_t elementSize, const void* initialData, bool readOnly)
+Effekseer::Backend::StorageBufferRef GraphicsDevice::CreateStorageBuffer(int32_t elementCount, int32_t elementSize, const void* initialData, Effekseer::Backend::StorageBufferUsage usage)
 {
-	auto ret = Effekseer::MakeRefPtr<ComputeBuffer>(this);
+	auto ret = Effekseer::MakeRefPtr<StorageBuffer>(this);
 
-	if (!ret->Init(elementSize, elementCount * elementSize, initialData, readOnly))
+	if (!ret->Init(elementSize, elementCount * elementSize, initialData, usage))
 	{
 		return nullptr;
 	}
@@ -986,31 +1031,12 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 		auto buf = drawParam.VertexUniformBufferPtrs[slot].DownCast<Backend::UniformBuffer>();
 		commandList_->SetConstantBuffer((buf) ? buf->GetBuffer() : nullptr, slot);
 	}
-	for (int32_t slot = 0; slot < (int32_t)drawParam.ResourceSlotCount; slot++)
-	{
-		auto& binder = drawParam.ResourceBinders[slot];
-		if (auto textureBinder = std::get_if<Effekseer::Backend::TextureBinder>(&binder))
-		{
-			auto tex = textureBinder->Texture.DownCast<Backend::Texture>();
-			commandList_->SetTexture((tex) ? tex->GetTexture().get() : nullptr,
-									 ToLLGITextureWrapMode(textureBinder->WrapType),
-									 ToLLGITextureMinMagFilter(textureBinder->SamplingType),
-									 slot);
-		}
-		else if (auto computeBufferBinder = std::get_if<Effekseer::Backend::ComputeBufferBinder>(&binder))
-		{
-			auto buf = computeBufferBinder->ComputeBuffer.DownCast<Backend::ComputeBuffer>();
-			commandList_->SetComputeBuffer((buf) ? buf->GetBuffer() : nullptr,
-										   GetComputeBufferBindingStride(buf.Get()),
-										   slot,
-										   computeBufferBinder->ReadOnly);
-		}
-	}
+	BindResourceBinders(drawParam.ResourceBinders);
 
 	commandList_->Draw(drawParam.PrimitiveCount, drawParam.InstanceCount);
 
 	commandList_->ResetTextures();
-	commandList_->ResetComputeBuffer();
+	commandList_->ResetStorageBuffers();
 }
 
 void GraphicsDevice::BeginRenderPass(Effekseer::Backend::RenderPassRef& renderPass, bool isColorCleared, bool isDepthCleared, Effekseer::Color clearColor)
@@ -1059,33 +1085,14 @@ void GraphicsDevice::Dispatch(const Effekseer::Backend::DispatchParameter& dispa
 		}
 	}
 
-	for (int32_t slot = 0; slot < (int32_t)dispatchParam.ResourceSlotCount; slot++)
-	{
-		auto& binder = dispatchParam.ResourceBinders[slot];
-		if (auto textureBinder = std::get_if<Effekseer::Backend::TextureBinder>(&binder))
-		{
-			auto tex = textureBinder->Texture.DownCast<Backend::Texture>();
-			commandList_->SetTexture((tex) ? tex->GetTexture().get() : nullptr,
-									 ToLLGITextureWrapMode(textureBinder->WrapType),
-									 ToLLGITextureMinMagFilter(textureBinder->SamplingType),
-									 slot);
-		}
-		else if (auto computeBufferBinder = std::get_if<Effekseer::Backend::ComputeBufferBinder>(&binder))
-		{
-			auto buf = computeBufferBinder->ComputeBuffer.DownCast<Backend::ComputeBuffer>();
-			commandList_->SetComputeBuffer((buf) ? buf->GetBuffer() : nullptr,
-										   GetComputeBufferBindingStride(buf.Get()),
-										   slot,
-										   computeBufferBinder->ReadOnly);
-		}
-	}
+	BindResourceBinders(dispatchParam.ResourceBinders);
 
 	auto gc = dispatchParam.GroupCount;
 	auto tc = dispatchParam.ThreadCount;
 	commandList_->Dispatch(gc[0], gc[1], gc[2], tc[0], tc[1], tc[2]);
 
 	commandList_->ResetTextures();
-	commandList_->ResetComputeBuffer();
+	commandList_->ResetStorageBuffers();
 }
 
 void GraphicsDevice::BeginComputePass()
@@ -1114,18 +1121,16 @@ bool GraphicsDevice::UpdateUniformBuffer(Effekseer::Backend::UniformBufferRef& b
 	return true;
 }
 
-bool GraphicsDevice::UpdateComputeBuffer(Effekseer::Backend::ComputeBufferRef& buffer, int32_t size, int32_t offset, const void* data)
+bool GraphicsDevice::UpdateStorageBuffer(Effekseer::Backend::StorageBufferRef& buffer, int32_t size, int32_t offset, const void* data)
 {
 	if (buffer == nullptr)
 	{
 		return false;
 	}
 
-	auto b = buffer.DownCast<Backend::ComputeBuffer>();
+	auto b = buffer.DownCast<Backend::StorageBuffer>();
 
-	b->UpdateData(data, size, offset);
-
-	return true;
+	return b->UpdateData(data, size, offset);
 }
 
 } // namespace Backend
