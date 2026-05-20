@@ -37,6 +37,8 @@ public:
 
 	void Generate(uint32_t pointCount, uint32_t seed);
 
+	void GenerateFrame(uint32_t pointCount, uint32_t seed, int32_t frameIndex);
+
 private:
 	uintptr_t pointBuffer_{};
 	size_t pointStride_{};
@@ -45,6 +47,7 @@ private:
 
 	ModelRef model_;
 	CustomVector<CustomVector<float>> modelFaceAreas_;
+	CustomVector<float> modelTotalAreas_;
 	float totalArea_ = 0.0f;
 };
 

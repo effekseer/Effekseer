@@ -416,7 +416,7 @@ void GpuParticleSystem::ComputeFrame(const Context& context)
 
 				if (paramSet.EmitShape.Type == EmitShapeT::Model)
 				{
-					if (!emitter.Resource->EmitPoints)
+					if (emitter.Resource->EmitPointBuffers.empty())
 					{
 						if (auto model = emitter.Resource->Effect->GetModel(paramSet.EmitShape.Model.Index))
 						{
@@ -426,16 +426,35 @@ void GpuParticleSystem::ComputeFrame(const Context& context)
 
 							Effekseer::PointCacheGenerator pcgen;
 							pcgen.SetSourceModel(model);
-							pcgen.SetPointBuffer(&points[0].Position, sizeof(GpuParticles::EmitPoint));
-							pcgen.SetAttributeBuffer(&points[0].Normal, sizeof(GpuParticles::EmitPoint));
-							pcgen.Generate(PointCount, 1);
 
-							emitter.Resource->EmitPointCount = (uint32_t)points.size();
-							emitter.Resource->EmitPoints = graphicsDevice_->CreateStorageBuffer(
-								(int32_t)points.size(), (int32_t)sizeof(GpuParticles::EmitPoint), points.data(), Effekseer::Backend::StorageBufferUsage::ReadOnly);
+							const int32_t frameCount = model->GetFrameCount();
+							if (frameCount <= 0)
+							{
+								emitter.Resource->EmitPointCount = 0;
+							}
+							else
+							{
+								emitter.Resource->EmitPointBuffers.resize(frameCount);
+
+								for (int32_t frameIndex = 0; frameIndex < frameCount; frameIndex++)
+								{
+									pcgen.SetPointBuffer(&points[0].Position, sizeof(GpuParticles::EmitPoint));
+									pcgen.SetAttributeBuffer(&points[0].Normal, sizeof(GpuParticles::EmitPoint));
+									pcgen.GenerateFrame(PointCount, 1, frameIndex);
+
+									emitter.Resource->EmitPointBuffers[frameIndex] = graphicsDevice_->CreateStorageBuffer(
+										(int32_t)points.size(), (int32_t)sizeof(GpuParticles::EmitPoint), points.data(), Effekseer::Backend::StorageBufferUsage::ReadOnly);
+								}
+
+								emitter.Resource->EmitPointCount = (uint32_t)points.size();
+								if (!emitter.Resource->EmitPointBuffers.empty())
+								{
+									emitter.Resource->EmitPoints = emitter.Resource->EmitPointBuffers[0];
+								}
+							}
 						}
 					}
-					emitter.Data.EmitPointCount = emitter.Resource->EmitPointCount;
+					emitter.Data.EmitPointCount = emitter.Resource->EmitPointBuffers.empty() ? 0 : emitter.Resource->EmitPointCount;
 				}
 			}
 
@@ -450,7 +469,13 @@ void GpuParticleSystem::ComputeFrame(const Context& context)
 				command.UniformBufferPtrs[1] = emitter.Resource->ParamBuffer;
 				command.UniformBufferPtrs[2] = emitter.Buffer;
 				command.SetStorageBuffer(0, particlesStorageBuffer_, StorageReadWrite);
-				command.SetStorageBuffer(1, (emitter.Resource->EmitPoints) ? emitter.Resource->EmitPoints : dummyEmitPoints_, StorageReadOnly);
+				auto emitPoints = emitter.Resource->EmitPoints;
+				if (!emitter.Resource->EmitPointBuffers.empty())
+				{
+					const auto frameIndex = static_cast<size_t>(static_cast<int32_t>(emitter.Data.TimeCount) % static_cast<int32_t>(emitter.Resource->EmitPointBuffers.size()));
+					emitPoints = emitter.Resource->EmitPointBuffers[frameIndex];
+				}
+				command.SetStorageBuffer(1, emitPoints ? emitPoints : dummyEmitPoints_, StorageReadOnly);
 
 				command.GroupCount = {(int32_t)emitter.Data.NextEmitCount, 1, 1};
 				command.ThreadCount = {1, 1, 1};

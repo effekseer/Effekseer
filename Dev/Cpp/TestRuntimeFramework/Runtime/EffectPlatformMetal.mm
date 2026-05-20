@@ -223,6 +223,27 @@ void EffectPlatformMetal::DestroyDevice()
 	EffectPlatformLLGI::DestroyDevice();
 }
 
+void EffectPlatformMetal::BeginCompute()
+{
+	EffectPlatformLLGI::BeginCompute();
+
+	auto cl = static_cast<LLGI::CommandListMetal*>(commandList_.get());
+	commandList_->BeginComputePass();
+	EffekseerRendererMetal::BeginCommandList(commandListEfk_);
+	GetRenderer()->SetCommandList(commandListEfk_);
+	EffekseerRendererMetal::BeginComputePass(commandListEfk_, cl->GetComputeCommandEncorder());
+}
+
+void EffectPlatformMetal::EndCompute()
+{
+	EffekseerRendererMetal::EndComputePass(commandListEfk_);
+	GetRenderer()->SetCommandList(nullptr);
+	EffekseerRendererMetal::EndCommandList(commandListEfk_);
+	commandList_->EndComputePass();
+
+	EffectPlatformLLGI::EndCompute();
+}
+
 void EffectPlatformMetal::BeginRendering()
 {
 	EffectPlatformLLGI::BeginRendering();

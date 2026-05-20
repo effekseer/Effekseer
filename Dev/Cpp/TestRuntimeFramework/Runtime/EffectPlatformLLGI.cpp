@@ -285,16 +285,14 @@ std::vector<uint8_t> EffectPlatformLLGI::CaptureScreenPixels()
 {
 	commandList_->WaitUntilCompleted();
 
-	LLGI::Color8 color;
-	color.R = 255;
-	color.G = 255;
-	color.B = 255;
-	color.A = 255;
-
-	auto texture = platform_->GetCurrentScreen(color, true)->GetRenderTexture(0);
+	auto texture = colorBuffer_;
+	if (texture == nullptr)
+	{
+		return {};
+	}
 	auto data = graphics_->CaptureRenderTarget(texture);
 
-	if (screenFormat_ == LLGI::TextureFormatType::B8G8R8A8_UNORM)
+	if (texture->GetFormat() == LLGI::TextureFormatType::B8G8R8A8_UNORM)
 	{
 		for (size_t i = 0; i < data.size(); i += 4)
 		{
@@ -315,6 +313,10 @@ bool EffectPlatformLLGI::TakeScreenshot(const char* path)
 	if (data.empty())
 	{
 		return false;
+	}
+	for (size_t i = 3; i < data.size(); i += 4)
+	{
+		data[i] = 255;
 	}
 
 	stbi_write_png(path, initParam_.WindowSize[0], initParam_.WindowSize[1], 4, data.data(), initParam_.WindowSize[0] * 4);

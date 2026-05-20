@@ -38,6 +38,12 @@ bool GpuParticleSystem::InitSystem(const Settings& settings)
 	shaders.RsParticleRender = graphics->CreateShaderFromBinary(
 		vsRender.data(), (int32_t)vsRender.size(), psRender.data(), (int32_t)psRender.size());
 
+	if (shaders.CsParticleClear == nullptr || shaders.CsParticleSpawn == nullptr || shaders.CsParticleUpdate == nullptr ||
+		shaders.RsParticleRender == nullptr)
+	{
+		return false;
+	}
+
 	SetShaders(shaders);
 
 	return true;

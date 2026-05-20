@@ -64,6 +64,7 @@ public:
 	TextureRef FieldTexture;
 	TextureRef GradientTexture;
 	StorageBufferRef EmitPoints;
+	Effekseer::CustomVector<StorageBufferRef> EmitPointBuffers;
 	uint32_t EmitPointCount = 0;
 };
 using ResourceRef = Effekseer::RefPtr<Resource>;

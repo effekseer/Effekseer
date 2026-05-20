@@ -89,9 +89,11 @@ void PointCacheGenerator::SetAttributeBuffer(void* buffer, size_t stride)
 void PointCacheGenerator::SetSourceModel(ModelRef model)
 {
 	model_ = model;
+	totalArea_ = 0.0f;
 
 	int32_t frameCount = model_->GetFrameCount();
 	modelFaceAreas_.resize((size_t)frameCount);
+	modelTotalAreas_.resize((size_t)frameCount);
 
 	// Calculate the area of all faces
 	for (int32_t frameIndex = 0; frameIndex < frameCount; frameIndex++)
@@ -103,6 +105,7 @@ void PointCacheGenerator::SetSourceModel(ModelRef model)
 
 		auto& faceAreas = modelFaceAreas_[frameIndex];
 		faceAreas.resize((size_t)faceCount);
+		float frameTotalArea = 0.0f;
 
 		for (int32_t faceIndex = 0; faceIndex < faceCount; faceIndex++)
 		{
@@ -115,8 +118,10 @@ void PointCacheGenerator::SetSourceModel(ModelRef model)
 			float s = (r0 + r1 + r2) / 2.0f;
 			float area = sqrt(s * (s - r0) * (s - r1) * (s - r2));
 			totalArea_ += area;
+			frameTotalArea += area;
 			faceAreas[faceIndex] = area;
 		}
+		modelTotalAreas_[frameIndex] = frameTotalArea;
 	}
 }
 
@@ -157,6 +162,60 @@ void PointCacheGenerator::Generate(uint32_t pointCount, uint32_t seed)
 				attrib->PackedColor = PackColor(RandomTriangle<SIMD::Vec4f>(random, v0.VColor, v1.VColor, v2.VColor));
 				pointIndex += 1;
 			}
+		}
+	}
+}
+
+void PointCacheGenerator::GenerateFrame(uint32_t pointCount, uint32_t seed, int32_t frameIndex)
+{
+	Random random(seed);
+
+	int32_t frameCount = static_cast<int32_t>(modelFaceAreas_.size());
+	if (frameCount == 0 || pointCount == 0)
+	{
+		return;
+	}
+
+	frameIndex = frameIndex % frameCount;
+	if (frameIndex < 0)
+	{
+		frameIndex += frameCount;
+	}
+
+	const float frameTotalArea = modelTotalAreas_[frameIndex];
+	if (frameTotalArea <= 0.0f)
+	{
+		return;
+	}
+
+	uint32_t pointIndex = 0;
+	float summedArea = 0.0f;
+
+	auto vertexes = model_->GetVertexes(frameIndex);
+	auto faces = model_->GetFaces(frameIndex);
+	int32_t faceCount = model_->GetFaceCount(frameIndex);
+
+	auto& faceAreas = modelFaceAreas_[frameIndex];
+
+	for (int32_t faceIndex = 0; faceIndex < faceCount; faceIndex++)
+	{
+		auto& v0 = vertexes[faces[faceIndex].Indexes[0]];
+		auto& v1 = vertexes[faces[faceIndex].Indexes[1]];
+		auto& v2 = vertexes[faces[faceIndex].Indexes[2]];
+
+		summedArea += faceAreas[faceIndex];
+
+		uint32_t genCount = (uint32_t)(summedArea / frameTotalArea * pointCount) - pointIndex;
+		for (uint32_t i = 0; i < genCount; i++)
+		{
+			Point* point = reinterpret_cast<Point*>(pointBuffer_ + pointIndex * pointStride_);
+			Attribute* attrib = reinterpret_cast<Attribute*>(attribBuffer_ + pointIndex * attribStride_);
+			point->Position = SIMD::ToStruct(RandomTriangle<SIMD::Vec3f>(random, v0.Position, v1.Position, v2.Position));
+			attrib->PackedNormal = PackNormal(RandomTriangle<SIMD::Vec3f>(random, v0.Normal, v1.Normal, v2.Normal));
+			attrib->PackedTangent = PackNormal(RandomTriangle<SIMD::Vec3f>(random, v0.Tangent, v1.Tangent, v2.Tangent));
+			attrib->PackedUV = PackUV(RandomTriangle<SIMD::Vec2f>(random, v0.UV1, v1.UV1, v2.UV1));
+			attrib->PackedColor = PackColor(RandomTriangle<SIMD::Vec4f>(random, v0.VColor, v1.VColor, v2.VColor));
+			pointIndex += 1;
 		}
 	}
 }
