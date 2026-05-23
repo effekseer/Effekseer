@@ -1851,19 +1851,28 @@ void ManagerImplemented::Draw(const Manager::DrawParameter& drawParameter)
 {
 	PROFILER_BLOCK("Manager::Draw", profiler::colors::Blue);
 
+	Manager::DrawTime drawTimeBreakdown;
+	const auto totalBeginTime = ::Effekseer::GetTime();
+
+	const auto workerThreadWaitBeginTime = ::Effekseer::GetTime();
 	if (workerThreads_.size() > 0)
 	{
 		workerThreads_[0].WaitForComplete();
 	}
+	drawTimeBreakdown.WorkerThreadWait = static_cast<int32_t>(::Effekseer::GetTime() - workerThreadWaitBeginTime);
 
+	const auto mutexLockBeginTime = ::Effekseer::GetTime();
 	std::lock_guard<std::recursive_mutex> lock(renderingMutex_);
+	drawTimeBreakdown.MutexLock = static_cast<int32_t>(::Effekseer::GetTime() - mutexLockBeginTime);
 
 	// start to record a time
 	int64_t beginTime = ::Effekseer::GetTime();
 
 	ScopedGpuStage gpuPass(gpuTimer_, GpuStage::Draw);
 
+	const auto cullingBeginTime = ::Effekseer::GetTime();
 	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, GetSetting()->GetCoordinateSystem());
+	drawTimeBreakdown.Culling = static_cast<int32_t>(::Effekseer::GetTime() - cullingBeginTime);
 
 	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void
 	{
@@ -1895,44 +1904,61 @@ void ManagerImplemented::Draw(const Manager::DrawParameter& drawParameter)
 
 	if (drawParameter.IsSortingEffectsEnabled)
 	{
+		const auto sortingBeginTime = ::Effekseer::GetTime();
 		StoreSortingDrawSets(drawParameter);
+		drawTimeBreakdown.Sorting = static_cast<int32_t>(::Effekseer::GetTime() - sortingBeginTime);
 
+		const auto drawSetsBeginTime = ::Effekseer::GetTime();
 		for (auto& drawSet : sortedRenderingDrawSets_)
 		{
 			render(drawSet);
 		}
+		drawTimeBreakdown.DrawSets = static_cast<int32_t>(::Effekseer::GetTime() - drawSetsBeginTime);
 	}
 	else
 	{
+		const auto drawSetsBeginTime = ::Effekseer::GetTime();
 		for (size_t i = 0; i < renderingDrawSets_.size(); i++)
 		{
 			render(renderingDrawSets_[i]);
 		}
+		drawTimeBreakdown.DrawSets = static_cast<int32_t>(::Effekseer::GetTime() - drawSetsBeginTime);
 	}
 
 	if (auto gpuParticleSystem = GetGpuParticleSystem())
 	{
+		const auto gpuParticlesBeginTime = ::Effekseer::GetTime();
 		ScopedGpuTime gpuTime(gpuTimer_, gpuParticleSystem.Get());
 
 		GpuParticleSystem::Context context{};
 		context.CoordinateReversed = GetCoordinateSystem() != CoordinateSystem::RH;
 		gpuParticleSystem->RenderFrame(context);
+		drawTimeBreakdown.GpuParticles = static_cast<int32_t>(::Effekseer::GetTime() - gpuParticlesBeginTime);
 	}
 
 	// calculate a time
 	drawTime_ = (int)(Effekseer::GetTime() - beginTime);
+	drawTimeBreakdown.Total = static_cast<int32_t>(::Effekseer::GetTime() - totalBeginTime);
+	drawTimeBreakdown_ = drawTimeBreakdown;
 }
 
 void ManagerImplemented::DrawBack(const Manager::DrawParameter& drawParameter)
 {
+	Manager::DrawTime drawTimeBreakdown;
+	const auto totalBeginTime = ::Effekseer::GetTime();
+
+	const auto mutexLockBeginTime = ::Effekseer::GetTime();
 	std::lock_guard<std::recursive_mutex> lock(renderingMutex_);
+	drawTimeBreakdown.MutexLock = static_cast<int32_t>(::Effekseer::GetTime() - mutexLockBeginTime);
 
 	// start to record a time
 	int64_t beginTime = ::Effekseer::GetTime();
 
 	ScopedGpuStage gpuPass(gpuTimer_, GpuStage::DrawBack);
 
+	const auto cullingBeginTime = ::Effekseer::GetTime();
 	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, GetSetting()->GetCoordinateSystem());
+	drawTimeBreakdown.Culling = static_cast<int32_t>(::Effekseer::GetTime() - cullingBeginTime);
 
 	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void
 	{
@@ -1958,35 +1984,50 @@ void ManagerImplemented::DrawBack(const Manager::DrawParameter& drawParameter)
 
 	if (drawParameter.IsSortingEffectsEnabled)
 	{
+		const auto sortingBeginTime = ::Effekseer::GetTime();
 		StoreSortingDrawSets(drawParameter);
+		drawTimeBreakdown.Sorting = static_cast<int32_t>(::Effekseer::GetTime() - sortingBeginTime);
 
+		const auto drawSetsBeginTime = ::Effekseer::GetTime();
 		for (auto& drawSet : sortedRenderingDrawSets_)
 		{
 			render(drawSet);
 		}
+		drawTimeBreakdown.DrawSets = static_cast<int32_t>(::Effekseer::GetTime() - drawSetsBeginTime);
 	}
 	else
 	{
+		const auto drawSetsBeginTime = ::Effekseer::GetTime();
 		for (size_t i = 0; i < renderingDrawSets_.size(); i++)
 		{
 			render(renderingDrawSets_[i]);
 		}
+		drawTimeBreakdown.DrawSets = static_cast<int32_t>(::Effekseer::GetTime() - drawSetsBeginTime);
 	}
 
 	// calculate a time
 	drawTime_ = (int)(Effekseer::GetTime() - beginTime);
+	drawTimeBreakdown.Total = static_cast<int32_t>(::Effekseer::GetTime() - totalBeginTime);
+	drawTimeBreakdown_ = drawTimeBreakdown;
 }
 
 void ManagerImplemented::DrawFront(const Manager::DrawParameter& drawParameter)
 {
+	Manager::DrawTime drawTimeBreakdown;
+	const auto totalBeginTime = ::Effekseer::GetTime();
+
+	const auto mutexLockBeginTime = ::Effekseer::GetTime();
 	std::lock_guard<std::recursive_mutex> lock(renderingMutex_);
+	drawTimeBreakdown.MutexLock = static_cast<int32_t>(::Effekseer::GetTime() - mutexLockBeginTime);
 
 	// start to record a time
 	int64_t beginTime = ::Effekseer::GetTime();
 
 	ScopedGpuStage gpuPass(gpuTimer_, GpuStage::DrawFront);
 
+	const auto cullingBeginTime = ::Effekseer::GetTime();
 	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, GetSetting()->GetCoordinateSystem());
+	drawTimeBreakdown.Culling = static_cast<int32_t>(::Effekseer::GetTime() - cullingBeginTime);
 
 	const auto render = [this, &drawParameter, &cullingPlanes](DrawSet& drawSet) -> void
 	{
@@ -2019,32 +2060,42 @@ void ManagerImplemented::DrawFront(const Manager::DrawParameter& drawParameter)
 
 	if (drawParameter.IsSortingEffectsEnabled)
 	{
+		const auto sortingBeginTime = ::Effekseer::GetTime();
 		StoreSortingDrawSets(drawParameter);
+		drawTimeBreakdown.Sorting = static_cast<int32_t>(::Effekseer::GetTime() - sortingBeginTime);
 
+		const auto drawSetsBeginTime = ::Effekseer::GetTime();
 		for (auto& drawSet : sortedRenderingDrawSets_)
 		{
 			render(drawSet);
 		}
+		drawTimeBreakdown.DrawSets = static_cast<int32_t>(::Effekseer::GetTime() - drawSetsBeginTime);
 	}
 	else
 	{
+		const auto drawSetsBeginTime = ::Effekseer::GetTime();
 		for (size_t i = 0; i < renderingDrawSets_.size(); i++)
 		{
 			render(renderingDrawSets_[i]);
 		}
+		drawTimeBreakdown.DrawSets = static_cast<int32_t>(::Effekseer::GetTime() - drawSetsBeginTime);
 	}
 
 	if (auto gpuParticleSystem = GetGpuParticleSystem())
 	{
+		const auto gpuParticlesBeginTime = ::Effekseer::GetTime();
 		ScopedGpuTime gpuTime(gpuTimer_, gpuParticleSystem.Get());
 
 		GpuParticleSystem::Context context{};
 		context.CoordinateReversed = GetCoordinateSystem() != CoordinateSystem::RH;
 		gpuParticleSystem->RenderFrame(context);
+		drawTimeBreakdown.GpuParticles = static_cast<int32_t>(::Effekseer::GetTime() - gpuParticlesBeginTime);
 	}
 
 	// calculate a time
 	drawTime_ = (int)(Effekseer::GetTime() - beginTime);
+	drawTimeBreakdown.Total = static_cast<int32_t>(::Effekseer::GetTime() - totalBeginTime);
+	drawTimeBreakdown_ = drawTimeBreakdown;
 }
 
 Handle ManagerImplemented::Play(const EffectRef& effect, float x, float y, float z)
@@ -2269,6 +2320,11 @@ int ManagerImplemented::GetUpdateTime() const
 int ManagerImplemented::GetDrawTime() const
 {
 	return drawTime_;
+}
+
+Manager::DrawTime ManagerImplemented::GetDrawTimeBreakdown() const
+{
+	return drawTimeBreakdown_;
 }
 
 int32_t ManagerImplemented::GetGpuTime() const

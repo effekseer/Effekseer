@@ -168,6 +168,7 @@ private:
 	int updateTime_;
 	int computeTime_;
 	int drawTime_;
+	Manager::DrawTime drawTimeBreakdown_;
 
 	uint32_t sequenceNumber_;
 
@@ -459,6 +460,8 @@ public:
 	int GetUpdateTime() const override;
 
 	int GetDrawTime() const override;
+
+	Manager::DrawTime GetDrawTimeBreakdown() const override;
 
 	int32_t GetGpuTime() const override;
 

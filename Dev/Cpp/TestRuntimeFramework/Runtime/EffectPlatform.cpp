@@ -1,6 +1,17 @@
 
 #include "EffectPlatform.h"
 #include <assert.h>
+#include <chrono>
+
+namespace
+{
+
+int64_t GetTimeMicroseconds()
+{
+	return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
+}
+
+} // namespace
 
 void EffectPlatform::CreateBackgroundPattern(int width, int height, uint32_t* pixels)
 {
@@ -215,14 +226,18 @@ Effekseer::Handle EffectPlatform::Play(const char16_t* path, Effekseer::Vector3D
 	return handle;
 }
 
-bool EffectPlatform::Update()
+bool EffectPlatform::Update(EffectPlatformMeasuredTime* measuredTime)
 {
+	const auto totalBeginTime = GetTimeMicroseconds();
+
 	if (!DoEvent())
 		return false;
 
 	Effekseer::Manager::LayerParameter layerParameter;
 	layerParameter.ViewerPosition = renderer_ != nullptr ? renderer_->GetCameraPosition() : Effekseer::Vector3D(0.0, 0.0, 0.0);
 	manager_->SetLayerParameter(0, layerParameter);
+
+	const auto updateBeginTime = GetTimeMicroseconds();
 
 	if (this->initParam_.IsUpdatedByHandle)
 	{
@@ -241,11 +256,30 @@ bool EffectPlatform::Update()
 		updateParameter.UpdateInterval = 0.0;
 		manager_->Update(updateParameter);
 	}
+
+	if (measuredTime != nullptr)
+	{
+		measuredTime->ManagerUpdate = static_cast<int32_t>(GetTimeMicroseconds() - updateBeginTime);
+	}
+
+	const auto computeBeginTime = GetTimeMicroseconds();
+
 	BeginCompute();
 	manager_->Compute();
 	EndCompute();
 
+	if (measuredTime != nullptr)
+	{
+		measuredTime->Compute = static_cast<int32_t>(GetTimeMicroseconds() - computeBeginTime);
+	}
+
+	const auto platformBeginRenderingBeginTime = GetTimeMicroseconds();
 	BeginRendering();
+
+	if (measuredTime != nullptr)
+	{
+		measuredTime->PlatformBeginRendering = static_cast<int32_t>(GetTimeMicroseconds() - platformBeginRenderingBeginTime);
+	}
 
 	if (renderer_ != nullptr)
 	{
@@ -255,16 +289,60 @@ bool EffectPlatform::Update()
 		param.ZFar = 1.0f;
 
 		renderer_->SetTime(time_);
+		const auto rendererBeginTime = GetTimeMicroseconds();
 		renderer_->BeginRendering();
+
+		if (measuredTime != nullptr)
+		{
+			measuredTime->RendererBegin = static_cast<int32_t>(GetTimeMicroseconds() - rendererBeginTime);
+		}
+
+		const auto drawBeginTime = GetTimeMicroseconds();
 		manager_->Draw(param);
+
+		if (measuredTime != nullptr)
+		{
+			measuredTime->ManagerDraw = static_cast<int32_t>(GetTimeMicroseconds() - drawBeginTime);
+			const auto drawTimeBreakdown = manager_->GetDrawTimeBreakdown();
+			measuredTime->ManagerDrawWorkerThreadWait = drawTimeBreakdown.WorkerThreadWait;
+			measuredTime->ManagerDrawMutexLock = drawTimeBreakdown.MutexLock;
+			measuredTime->ManagerDrawCulling = drawTimeBreakdown.Culling;
+			measuredTime->ManagerDrawSorting = drawTimeBreakdown.Sorting;
+			measuredTime->ManagerDrawDrawSets = drawTimeBreakdown.DrawSets;
+			measuredTime->ManagerDrawGpuParticles = drawTimeBreakdown.GpuParticles;
+			measuredTime->ManagerDrawTotal = drawTimeBreakdown.Total;
+		}
+
+		const auto rendererEndTime = GetTimeMicroseconds();
 		renderer_->EndRendering();
+
+		if (measuredTime != nullptr)
+		{
+			measuredTime->RendererEnd = static_cast<int32_t>(GetTimeMicroseconds() - rendererEndTime);
+		}
 	}
 
+	const auto platformEndRenderingBeginTime = GetTimeMicroseconds();
 	EndRendering();
 
+	if (measuredTime != nullptr)
+	{
+		const auto beforePresentTime = GetTimeMicroseconds();
+		measuredTime->PlatformEndRendering = static_cast<int32_t>(beforePresentTime - platformEndRenderingBeginTime);
+		measuredTime->FrameWithoutPresent = static_cast<int32_t>(beforePresentTime - totalBeginTime);
+	}
+
+	const auto presentBeginTime = GetTimeMicroseconds();
 	Present();
 
 	time_ += 1.0f / 60.0f;
+
+	if (measuredTime != nullptr)
+	{
+		const auto totalEndTime = GetTimeMicroseconds();
+		measuredTime->Present = static_cast<int32_t>(totalEndTime - presentBeginTime);
+		measuredTime->Frame = static_cast<int32_t>(totalEndTime - totalBeginTime);
+	}
 
 	return true;
 }

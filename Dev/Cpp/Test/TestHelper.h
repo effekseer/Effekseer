@@ -42,6 +42,8 @@ private:
 public:
 	static ParsedArgs ParseArg(int argc, char* argv[]);
 
+	static const std::vector<std::string>& GetCommandLineArgs();
+
 	static void Run(const ParsedArgs& args);
 
 	static void RegisterTest(const char* name, std::function<void()> func, TestExecutionMode executionMode = TestExecutionMode::Default);

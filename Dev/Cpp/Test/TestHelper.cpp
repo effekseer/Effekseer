@@ -80,6 +80,7 @@ struct InternalTestHelper
 {
 	std::string Root;
 	bool IsCaptureRequired = false;
+	std::vector<std::string> CommandLineArgs;
 
 	struct TestEntry
 	{
@@ -99,6 +100,8 @@ std::shared_ptr<InternalTestHelper> TestHelper::Get()
 ParsedArgs TestHelper::ParseArg(int argc, char* argv[])
 {
 	ParsedArgs args{};
+	auto helper = Get();
+	helper->CommandLineArgs.clear();
 
 	using namespace std::literals;
 	constexpr auto filterPrefix = "--filter="sv;
@@ -106,6 +109,7 @@ ParsedArgs TestHelper::ParseArg(int argc, char* argv[])
 	for (int i = 0; i < argc; i++)
 	{
 		const std::string_view arg(argv[i]);
+		helper->CommandLineArgs.emplace_back(arg);
 
 		if (arg == "--list")
 		{
@@ -127,6 +131,11 @@ ParsedArgs TestHelper::ParseArg(int argc, char* argv[])
 	}
 
 	return args;
+}
+
+const std::vector<std::string>& TestHelper::GetCommandLineArgs()
+{
+	return Get()->CommandLineArgs;
 }
 
 void TestHelper::Run(const ParsedArgs& args)

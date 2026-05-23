@@ -25,6 +25,27 @@ struct EffectPlatformInitializingParameter
 	BackgroundPatternType BackgroundPattern = BackgroundPatternType::Checkered;
 };
 
+struct EffectPlatformMeasuredTime
+{
+	int32_t ManagerUpdate = 0;
+	int32_t Compute = 0;
+	int32_t PlatformBeginRendering = 0;
+	int32_t RendererBegin = 0;
+	int32_t ManagerDraw = 0;
+	int32_t ManagerDrawWorkerThreadWait = 0;
+	int32_t ManagerDrawMutexLock = 0;
+	int32_t ManagerDrawCulling = 0;
+	int32_t ManagerDrawSorting = 0;
+	int32_t ManagerDrawDrawSets = 0;
+	int32_t ManagerDrawGpuParticles = 0;
+	int32_t ManagerDrawTotal = 0;
+	int32_t RendererEnd = 0;
+	int32_t PlatformEndRendering = 0;
+	int32_t FrameWithoutPresent = 0;
+	int32_t Present = 0;
+	int32_t Frame = 0;
+};
+
 class EffectPlatform
 {
 private:
@@ -99,7 +120,7 @@ public:
 
 	Effekseer::Handle Play(const char16_t* path, Effekseer::Vector3D position = Effekseer::Vector3D(), int32_t startFrame = 0);
 
-	bool Update();
+	bool Update(EffectPlatformMeasuredTime* measuredTime = nullptr);
 
 	bool Draw();
 

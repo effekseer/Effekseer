@@ -138,6 +138,17 @@ public:
 		DrawParameter();
 	};
 
+	struct DrawTime
+	{
+		int32_t WorkerThreadWait = 0;
+		int32_t MutexLock = 0;
+		int32_t Culling = 0;
+		int32_t Sorting = 0;
+		int32_t DrawSets = 0;
+		int32_t GpuParticles = 0;
+		int32_t Total = 0;
+	};
+
 	/**
 		@brief
 		\~English Parameters of Manager::SetLayerParameter to be set for each layer index.
@@ -994,6 +1005,13 @@ public:
 		\~Japanese	Draw処理にかかるCPU時間を取得する。
 	*/
 	virtual int GetDrawTime() const = 0;
+
+	/**
+		@brief
+		\~English	Gets the detailed CPU time required for the Draw process.
+		\~Japanese	Draw処理にかかるCPU時間の内訳を取得する。
+	*/
+	virtual DrawTime GetDrawTimeBreakdown() const = 0;
 
 	/**
 		@brief
