@@ -6,6 +6,7 @@
 // Include
 //----------------------------------------------------------------------------------
 #include "Effekseer.Base.h"
+#include "Effekseer.EffectNodeRibbon.h"
 #include "Effekseer.EffectNodeTrack.h"
 #include "Effekseer.IntrusiveList.h"
 #include "SIMD/Mat43f.h"
@@ -82,6 +83,7 @@ public:
 	*/
 	union
 	{
+		EffectNodeRibbon::InstanceGroupValues ribbon;
 		EffectNodeTrack::InstanceGroupValues track;
 	} rendererValues;
 

@@ -151,6 +151,8 @@ void EffectNodeRibbon::BeginRenderingGroup(InstanceGroup* group, Manager* manage
 	RibbonRendererRef renderer = manager->GetRibbonRenderer();
 	if (renderer != nullptr)
 	{
+		auto& groupValues = group->rendererValues.ribbon;
+
 		m_instanceParameter.InstanceCount = group->GetInstanceCount();
 		m_instanceParameter.InstanceIndex = 0;
 
@@ -176,14 +178,15 @@ void EffectNodeRibbon::BeginRenderingGroup(InstanceGroup* group, Manager* manage
 				assert(false);
 			}
 
-			m_instanceParameter.UV = groupFirst->GetUV(0, livingTime, livedTime);
-			m_instanceParameter.AlphaUV = groupFirst->GetUV(1, livingTime, livedTime);
-			m_instanceParameter.UVDistortionUV = groupFirst->GetUV(2, livingTime, livedTime);
-			m_instanceParameter.BlendUV = groupFirst->GetUV(3, livingTime, livedTime);
-			m_instanceParameter.BlendAlphaUV = groupFirst->GetUV(4, livingTime, livedTime);
-			m_instanceParameter.BlendUVDistortionUV = groupFirst->GetUV(5, livingTime, livedTime);
+			auto& uvAnimationCache = groupValues.UVAnimationCache;
+			m_instanceParameter.UV = GetTrailUV(uvAnimationCache, groupFirst, RendererCommon, 0, livingTime, livedTime);
+			m_instanceParameter.AlphaUV = GetTrailUV(uvAnimationCache, groupFirst, RendererCommon, 1, livingTime, livedTime);
+			m_instanceParameter.UVDistortionUV = GetTrailUV(uvAnimationCache, groupFirst, RendererCommon, 2, livingTime, livedTime);
+			m_instanceParameter.BlendUV = GetTrailUV(uvAnimationCache, groupFirst, RendererCommon, 3, livingTime, livedTime);
+			m_instanceParameter.BlendAlphaUV = GetTrailUV(uvAnimationCache, groupFirst, RendererCommon, 4, livingTime, livedTime);
+			m_instanceParameter.BlendUVDistortionUV = GetTrailUV(uvAnimationCache, groupFirst, RendererCommon, 5, livingTime, livedTime);
 
-			m_instanceParameter.FlipbookIndexAndNextRate = groupFirst->GetFlipbookIndexAndNextRate();
+			m_instanceParameter.FlipbookIndexAndNextRate = GetTrailFlipbookIndexAndNextRate(uvAnimationCache, groupFirst, RendererCommon);
 
 			m_instanceParameter.AlphaThreshold = groupFirst->alphaThreshold_;
 
@@ -299,6 +302,13 @@ void EffectNodeRibbon::EndRendering(Manager* manager, void* userData)
 	{
 		renderer->EndRendering(m_nodeParameter, userData);
 	}
+}
+
+void EffectNodeRibbon::InitializeRenderedInstanceGroup(InstanceGroup& instanceGroup, Manager* manager)
+{
+	auto& instValues = instanceGroup.rendererValues.ribbon;
+
+	InitializeTrailUVAnimationCache(instValues.UVAnimationCache);
 }
 
 void EffectNodeRibbon::InitializeRenderedInstance(Instance& instance, InstanceGroup& instanceGroup, Manager* manager)

@@ -111,7 +111,8 @@ void EffectNodeTrack::BeginRenderingGroup(InstanceGroup* group, Manager* manager
 	TrackRendererRef renderer = manager->GetTrackRenderer();
 	if (renderer != nullptr)
 	{
-		m_currentGroupValues = group->rendererValues.track;
+		auto& groupValues = group->rendererValues.track;
+		m_currentGroupValues = groupValues;
 
 		m_instanceParameter.InstanceCount = group->GetInstanceCount();
 		m_instanceParameter.InstanceIndex = 0;
@@ -139,14 +140,15 @@ void EffectNodeTrack::BeginRenderingGroup(InstanceGroup* group, Manager* manager
 			}
 			bool isParentAlived = true;
 
-			m_instanceParameter.UV = groupFirst->GetUV(0, livingTime, livedTime);
-			m_instanceParameter.AlphaUV = groupFirst->GetUV(1, livingTime, livedTime);
-			m_instanceParameter.UVDistortionUV = groupFirst->GetUV(2, livingTime, livedTime);
-			m_instanceParameter.BlendUV = groupFirst->GetUV(3, livingTime, livedTime);
-			m_instanceParameter.BlendAlphaUV = groupFirst->GetUV(4, livingTime, livedTime);
-			m_instanceParameter.BlendUVDistortionUV = groupFirst->GetUV(5, livingTime, livedTime);
+			auto& uvAnimationCache = groupValues.UVAnimationCache;
+			m_instanceParameter.UV = GetTrailUV(uvAnimationCache, groupFirst, RendererCommon, 0, livingTime, livedTime);
+			m_instanceParameter.AlphaUV = GetTrailUV(uvAnimationCache, groupFirst, RendererCommon, 1, livingTime, livedTime);
+			m_instanceParameter.UVDistortionUV = GetTrailUV(uvAnimationCache, groupFirst, RendererCommon, 2, livingTime, livedTime);
+			m_instanceParameter.BlendUV = GetTrailUV(uvAnimationCache, groupFirst, RendererCommon, 3, livingTime, livedTime);
+			m_instanceParameter.BlendAlphaUV = GetTrailUV(uvAnimationCache, groupFirst, RendererCommon, 4, livingTime, livedTime);
+			m_instanceParameter.BlendUVDistortionUV = GetTrailUV(uvAnimationCache, groupFirst, RendererCommon, 5, livingTime, livedTime);
 
-			m_instanceParameter.FlipbookIndexAndNextRate = groupFirst->GetFlipbookIndexAndNextRate();
+			m_instanceParameter.FlipbookIndexAndNextRate = GetTrailFlipbookIndexAndNextRate(uvAnimationCache, groupFirst, RendererCommon);
 
 			m_instanceParameter.AlphaThreshold = groupFirst->alphaThreshold_;
 
@@ -234,6 +236,8 @@ void EffectNodeTrack::InitializeRenderedInstanceGroup(InstanceGroup& instanceGro
 	InitializeValues(instValues.SizeFor, TrackSizeFor, manager);
 	InitializeValues(instValues.SizeBack, TrackSizeBack, manager);
 	InitializeValues(instValues.SizeMiddle, TrackSizeMiddle, manager);
+
+	InitializeTrailUVAnimationCache(instValues.UVAnimationCache);
 }
 
 void EffectNodeTrack::InitializeRenderedInstance(Instance& instance, InstanceGroup& instanceGroup, Manager* manager)

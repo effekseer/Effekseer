@@ -53,6 +53,8 @@ public:
 		Size SizeFor;
 		Size SizeMiddle;
 		Size SizeBack;
+
+		TrailUVAnimationCache UVAnimationCache;
 	};
 
 	struct InstanceValues
