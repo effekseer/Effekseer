@@ -209,12 +209,17 @@ if(BUILD_WEBGPU_BROWSER_TEST)
   enable_testing()
   find_program(NODE_EXE node)
   if(NODE_EXE)
-    add_test(
-      NAME Effekseer_WebGPU_Browser
-      COMMAND
+    set(effekseer_webgpu_browser_test_command
         ${NODE_EXE}
         ${CMAKE_CURRENT_SOURCE_DIR}/../3rdParty/LLGI/src_test/browser/run_webgpu_browser_test.mjs
         $<TARGET_FILE:TestCpp> --filter=Runtime.WebGPUBrowser.*)
+    if(BUILD_WEBGPU_BROWSER_THREADS)
+      list(APPEND effekseer_webgpu_browser_test_command
+           --cross-origin-isolated)
+    endif()
+    add_test(
+      NAME Effekseer_WebGPU_Browser
+      COMMAND ${effekseer_webgpu_browser_test_command})
   endif()
 endif()
 

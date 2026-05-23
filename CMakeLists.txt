@@ -36,6 +36,32 @@ option(BUILD_GL "Build OpenGL" ON)
 option(BUILD_VULKAN "Build vulkan modules" OFF)
 option(BUILD_WEBGPU "Build WebGPU modules" OFF)
 option(BUILD_WEBGPU_BROWSER_TEST "Build browser WebGPU tests with Emscripten" OFF)
+option(BUILD_WEBGPU_BROWSER_SIMD "Build browser WebGPU tests with WebAssembly SIMD" OFF)
+option(BUILD_WEBGPU_BROWSER_THREADS "Build browser WebGPU tests with WebAssembly threads" OFF)
+set(BUILD_WEBGPU_BROWSER_PTHREAD_POOL_SIZE
+    "4"
+    CACHE STRING "Initial pthread pool size for browser WebGPU tests")
+
+if((BUILD_WEBGPU_BROWSER_SIMD OR BUILD_WEBGPU_BROWSER_THREADS)
+   AND NOT BUILD_WEBGPU_BROWSER_TEST)
+  message(
+    FATAL_ERROR
+      "BUILD_WEBGPU_BROWSER_SIMD and BUILD_WEBGPU_BROWSER_THREADS require BUILD_WEBGPU_BROWSER_TEST=ON."
+  )
+endif()
+
+if(BUILD_WEBGPU_BROWSER_TEST AND EMSCRIPTEN)
+  if(BUILD_WEBGPU_BROWSER_SIMD)
+    add_compile_options(-msimd128 -msse2)
+    add_link_options(-msimd128 -msse2)
+  endif()
+
+  if(BUILD_WEBGPU_BROWSER_THREADS)
+    add_compile_options(-pthread)
+    add_link_options(-pthread "-sPTHREAD_POOL_SIZE=${BUILD_WEBGPU_BROWSER_PTHREAD_POOL_SIZE}")
+    add_compile_definitions(EFFEKSEER_WEBGPU_BROWSER_ENABLE_WORKER_THREADS=1)
+  endif()
+endif()
 
 if(BUILD_WEBGPU_BROWSER_TEST)
   enable_testing()

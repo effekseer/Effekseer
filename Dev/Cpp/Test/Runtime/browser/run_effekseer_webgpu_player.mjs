@@ -8,6 +8,11 @@ const args = process.argv.slice(2);
 const htmlPath = args[0];
 const effectPath = args[1] && !args[1].startsWith('--') ? args[1] : '/TestData/Effects/10/SimpleLaser.efk';
 const optionArgs = args.slice(args[1] && !args[1].startsWith('--') ? 2 : 1);
+const useCrossOriginIsolation =
+	optionArgs.includes('--cross-origin-isolated') ||
+	process.env.EFFEKSEER_WEBGPU_CROSS_ORIGIN_ISOLATED === '1' ||
+	process.env.LLGI_WEBGPU_CROSS_ORIGIN_ISOLATED === '1';
+const playerOptionArgs = optionArgs.filter((option) => option !== '--cross-origin-isolated');
 
 if (!htmlPath) {
 	console.error('Usage: node run_effekseer_webgpu_player.mjs <EffekseerWebGPUBrowserPlayer.html> [/TestData/Effects/10/SimpleLaser.efk] [--width=640] [--height=360] [--loopFrame=180]');
@@ -53,6 +58,23 @@ function contentType(filePath) {
 	return 'application/octet-stream';
 }
 
+function responseHeaders(filePath) {
+	const headers = {
+		'Content-Type': contentType(filePath),
+		'Cache-Control': 'no-store, max-age=0',
+		'Pragma': 'no-cache',
+		'Expires': '0',
+	};
+
+	if (useCrossOriginIsolation) {
+		headers['Cross-Origin-Opener-Policy'] = 'same-origin';
+		headers['Cross-Origin-Embedder-Policy'] = 'require-corp';
+		headers['Cross-Origin-Resource-Policy'] = 'same-origin';
+	}
+
+	return headers;
+}
+
 const server = http.createServer((request, response) => {
 	const requestUrl = new URL(request.url, 'http://127.0.0.1');
 	if (requestUrl.pathname === '/favicon.ico') {
@@ -71,12 +93,7 @@ const server = http.createServer((request, response) => {
 		return;
 	}
 
-	response.writeHead(200, {
-		'Content-Type': contentType(filePath),
-		'Cache-Control': 'no-store, max-age=0',
-		'Pragma': 'no-cache',
-		'Expires': '0',
-	});
+	response.writeHead(200, responseHeaders(filePath));
 	fs.createReadStream(filePath).pipe(response);
 });
 
@@ -85,7 +102,7 @@ const {port} = server.address();
 
 const params = new URLSearchParams();
 params.set('effect', effectPath);
-for (const option of optionArgs) {
+for (const option of playerOptionArgs) {
 	if (!option.startsWith('--')) {
 		continue;
 	}

@@ -61,6 +61,20 @@ Configure the browser WebGPU test build:
 emcmake cmake -S . -B build_effekseer_webgpu_browser -DBUILD_TEST=ON -DBUILD_WEBGPU=ON -DBUILD_WEBGPU_BROWSER_TEST=ON -DBUILD_GL=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TOOLS=OFF -DUSE_OPENAL=OFF
 ```
 
+To test the WebAssembly SIMD build, add `-DBUILD_WEBGPU_BROWSER_SIMD=ON`:
+
+```powershell
+emcmake cmake -S . -B build_effekseer_webgpu_browser_simd -DBUILD_TEST=ON -DBUILD_WEBGPU=ON -DBUILD_WEBGPU_BROWSER_TEST=ON -DBUILD_WEBGPU_BROWSER_SIMD=ON -DBUILD_GL=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TOOLS=OFF -DUSE_OPENAL=OFF
+```
+
+To test WebAssembly SIMD plus pthreads, also enable browser threads:
+
+```powershell
+emcmake cmake -S . -B build_effekseer_webgpu_browser_threads -DBUILD_TEST=ON -DBUILD_WEBGPU=ON -DBUILD_WEBGPU_BROWSER_TEST=ON -DBUILD_WEBGPU_BROWSER_SIMD=ON -DBUILD_WEBGPU_BROWSER_THREADS=ON -DBUILD_WEBGPU_BROWSER_PTHREAD_POOL_SIZE=4 -DBUILD_GL=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TOOLS=OFF -DUSE_OPENAL=OFF
+```
+
+When `BUILD_WEBGPU_BROWSER_THREADS=ON`, the CTest browser runner serves the generated files with COOP/COEP headers so `SharedArrayBuffer` is available.
+
 Build the browser test target:
 
 ```powershell
@@ -107,6 +121,8 @@ Open an effect in the browser player:
 ```powershell
 node Dev\Cpp\Test\Runtime\browser\run_effekseer_webgpu_player.mjs build_effekseer_webgpu_browser\Dev\Cpp\Test\EffekseerWebGPUBrowserPlayer.html /TestData/Effects/10/SimpleLaser.efk --width=640 --height=360 --loopFrame=180
 ```
+
+For a pthreads build, add `--cross-origin-isolated` to the player runner command.
 
 Try a distortion effect:
 

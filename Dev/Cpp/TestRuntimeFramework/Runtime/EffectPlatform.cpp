@@ -161,7 +161,7 @@ void EffectPlatform::Initialize(const EffectPlatformInitializingParameter& param
 
 	manager_->SetCoordinateSystem(param.CoordinateSyatem);
 
-#if !defined(__EMSCRIPTEN__)
+#if !defined(__EMSCRIPTEN__) || defined(EFFEKSEER_WEBGPU_BROWSER_ENABLE_WORKER_THREADS)
 	// support multithread in 1.6
 	manager_->LaunchWorkerThreads(4);
 #endif

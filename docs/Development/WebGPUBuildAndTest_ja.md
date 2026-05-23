@@ -61,6 +61,20 @@ Pop-Location
 emcmake cmake -S . -B build_effekseer_webgpu_browser -DBUILD_TEST=ON -DBUILD_WEBGPU=ON -DBUILD_WEBGPU_BROWSER_TEST=ON -DBUILD_GL=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TOOLS=OFF -DUSE_OPENAL=OFF
 ```
 
+WebAssembly SIMD 版をテストする場合は、`-DBUILD_WEBGPU_BROWSER_SIMD=ON` を追加します。
+
+```powershell
+emcmake cmake -S . -B build_effekseer_webgpu_browser_simd -DBUILD_TEST=ON -DBUILD_WEBGPU=ON -DBUILD_WEBGPU_BROWSER_TEST=ON -DBUILD_WEBGPU_BROWSER_SIMD=ON -DBUILD_GL=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TOOLS=OFF -DUSE_OPENAL=OFF
+```
+
+WebAssembly SIMD と pthreads を併用する場合は、ブラウザスレッドも有効にします。
+
+```powershell
+emcmake cmake -S . -B build_effekseer_webgpu_browser_threads -DBUILD_TEST=ON -DBUILD_WEBGPU=ON -DBUILD_WEBGPU_BROWSER_TEST=ON -DBUILD_WEBGPU_BROWSER_SIMD=ON -DBUILD_WEBGPU_BROWSER_THREADS=ON -DBUILD_WEBGPU_BROWSER_PTHREAD_POOL_SIZE=4 -DBUILD_GL=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TOOLS=OFF -DUSE_OPENAL=OFF
+```
+
+`BUILD_WEBGPU_BROWSER_THREADS=ON` の場合、CTest のブラウザランナーは生成されたファイルを COOP/COEP ヘッダー付きで配信し、`SharedArrayBuffer` を利用できるようにします。
+
 ブラウザテストターゲットをビルドします。
 
 ```powershell
@@ -107,6 +121,8 @@ cmake --build build_effekseer_webgpu_browser --target EffekseerWebGPUBrowserPlay
 ```powershell
 node Dev\Cpp\Test\Runtime\browser\run_effekseer_webgpu_player.mjs build_effekseer_webgpu_browser\Dev\Cpp\Test\EffekseerWebGPUBrowserPlayer.html /TestData/Effects/10/SimpleLaser.efk --width=640 --height=360 --loopFrame=180
 ```
+
+pthreads 版では、プレイヤーランナーのコマンドに `--cross-origin-isolated` を追加してください。
 
 歪みエフェクトを開く例です。
 
