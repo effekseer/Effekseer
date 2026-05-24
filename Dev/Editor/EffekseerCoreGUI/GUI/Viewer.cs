@@ -696,13 +696,18 @@ namespace Effekseer.GUI
 		public void StepViewer(float frame, bool isLooping)
 		{
 			var next = Current + frame;
+			var isLooped = false;
 
 			if (isLooping)
 			{
-				if (next > Core.EndFrame) next = 0;
+				if (next > Core.EndFrame)
+				{
+					next = 0;
+					isLooped = true;
+				}
 			}
 
-			MoveFrame(next);
+			MoveFrame(next, isLooped);
 		}
 
 		public void BackStepViewer()
@@ -873,6 +878,11 @@ namespace Effekseer.GUI
 
 		unsafe void MoveFrame(float new_frame)
 		{
+			MoveFrame(new_frame, false);
+		}
+
+		unsafe void MoveFrame(float new_frame, bool renewRandomSeedOnRewind)
+		{
 			// Same frame
 			if (current == new_frame) return;
 
@@ -913,7 +923,14 @@ namespace Effekseer.GUI
 					else if ((int)current > (int)new_frame)
 					{
 						EffectRenderer.ResetEffect();
-						RenewRandomSeed();
+						if (renewRandomSeedOnRewind)
+						{
+							RenewRandomSeed();
+						}
+						else
+						{
+							EffectRenderer.RandomSeed = random_seed;
+						}
 						EffectRenderer.PlayEffect();
 						StepEffectFrame((int)new_frame);
 					}
