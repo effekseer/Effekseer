@@ -61,6 +61,11 @@ struct RibbonPositionParameter
 class EffectNodeRibbon : public EffectNodeImplemented
 {
 public:
+	struct InstanceGroupValues
+	{
+		TrailUVAnimationCache UVAnimationCache;
+	};
+
 	struct InstanceValues
 	{
 		Color _color;
@@ -114,6 +119,8 @@ public:
 	void Rendering(const Instance& instance, const Instance* next_instance, int index, Manager* manager, void* userData) override;
 
 	void EndRendering(Manager* manager, void* userData) override;
+
+	void InitializeRenderedInstanceGroup(InstanceGroup& instanceGroup, Manager* manager) override;
 
 	void InitializeRenderedInstance(Instance& instance, InstanceGroup& instanceGroup, Manager* manager) override;
 

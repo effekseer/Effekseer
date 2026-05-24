@@ -33,6 +33,13 @@
 //----------------------------------------------------------------------------------
 namespace Effekseer
 {
+namespace
+{
+bool IsInfiniteUVAnimation(const UVParameter& uv)
+{
+	return uv.Type == UVAnimationType::Animation && UVFunctions::IsInfiniteValue(uv.Animation.FrameLength);
+}
+} // namespace
 
 //----------------------------------------------------------------------------------
 //
@@ -369,6 +376,63 @@ void EffectNodeImplemented::ApplyRendererCommonUVHorizontalFlip(Instance& instan
 	}
 
 	instance.SetUVFlippedH(isFlipped);
+}
+
+void EffectNodeImplemented::InitializeTrailUVAnimationCache(TrailUVAnimationCache& cache)
+{
+	for (int32_t i = 0; i < ParameterRendererCommon::UVParameterNum; i++)
+	{
+		cache.IsInfiniteUVInitialized[i] = false;
+	}
+
+	cache.InfiniteFlipbookIndexAndNextRate = 0.0f;
+	cache.IsInfiniteFlipbookIndexAndNextRateInitialized = false;
+}
+
+RectF EffectNodeImplemented::GetTrailUV(TrailUVAnimationCache& cache,
+										Instance* groupFirst,
+										const ParameterRendererCommon& rendererCommon,
+										int32_t index,
+										float livingTime,
+										float livedTime)
+{
+	if (IsInfiniteUVAnimation(rendererCommon.UVs[index]))
+	{
+		if (!cache.IsInfiniteUVInitialized[index])
+		{
+			const auto uv = groupFirst->GetUV(index, livingTime, livedTime);
+			cache.InfiniteUVs[index][0] = uv.X;
+			cache.InfiniteUVs[index][1] = uv.Y;
+			cache.InfiniteUVs[index][2] = uv.Width;
+			cache.InfiniteUVs[index][3] = uv.Height;
+			cache.IsInfiniteUVInitialized[index] = true;
+		}
+
+		return RectF(cache.InfiniteUVs[index][0],
+					 cache.InfiniteUVs[index][1],
+					 cache.InfiniteUVs[index][2],
+					 cache.InfiniteUVs[index][3]);
+	}
+
+	return groupFirst->GetUV(index, livingTime, livedTime);
+}
+
+float EffectNodeImplemented::GetTrailFlipbookIndexAndNextRate(TrailUVAnimationCache& cache,
+															  Instance* groupFirst,
+															  const ParameterRendererCommon& rendererCommon)
+{
+	if (IsInfiniteUVAnimation(rendererCommon.UVs[0]))
+	{
+		if (!cache.IsInfiniteFlipbookIndexAndNextRateInitialized)
+		{
+			cache.InfiniteFlipbookIndexAndNextRate = groupFirst->GetFlipbookIndexAndNextRate();
+			cache.IsInfiniteFlipbookIndexAndNextRateInitialized = true;
+		}
+
+		return cache.InfiniteFlipbookIndexAndNextRate;
+	}
+
+	return groupFirst->GetFlipbookIndexAndNextRate();
 }
 
 bool EffectNodeImplemented::Traverse(const std::function<bool(EffectNodeImplemented*)>& visitor)

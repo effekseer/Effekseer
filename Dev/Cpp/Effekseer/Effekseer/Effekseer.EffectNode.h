@@ -431,6 +431,14 @@ struct ParameterRendererCommon
 	}
 };
 
+struct TrailUVAnimationCache
+{
+	float InfiniteUVs[ParameterRendererCommon::UVParameterNum][4];
+	bool IsInfiniteUVInitialized[ParameterRendererCommon::UVParameterNum];
+	float InfiniteFlipbookIndexAndNextRate;
+	bool IsInfiniteFlipbookIndexAndNextRateInitialized;
+};
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -477,6 +485,19 @@ protected:
 	void CalcCustomData(const Instance* instance, std::array<float, 4>& customData1, std::array<float, 4>& customData2);
 
 	void ApplyRendererCommonUVHorizontalFlip(Instance& instance, IRandObject& rand) const;
+
+	static void InitializeTrailUVAnimationCache(TrailUVAnimationCache& cache);
+
+	static RectF GetTrailUV(TrailUVAnimationCache& cache,
+							Instance* groupFirst,
+							const ParameterRendererCommon& rendererCommon,
+							int32_t index,
+							float livingTime,
+							float livedTime);
+
+	static float GetTrailFlipbookIndexAndNextRate(TrailUVAnimationCache& cache,
+												  Instance* groupFirst,
+												  const ParameterRendererCommon& rendererCommon);
 
 public:
 	/**

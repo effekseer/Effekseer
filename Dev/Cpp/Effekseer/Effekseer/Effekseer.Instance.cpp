@@ -910,7 +910,15 @@ float Instance::GetFlipbookIndexAndNextRate(const UVAnimationType& UVType, const
 			}
 		}
 
-		float fFrameNum = time / (float)UV.Animation.FrameLength;
+		float fFrameNum = 0.0f;
+		if (UVFunctions::IsInfiniteValue(UV.Animation.FrameLength))
+		{
+			fFrameNum = static_cast<float>(data.uvTimeOffset);
+		}
+		else
+		{
+			fFrameNum = time / (float)UV.Animation.FrameLength;
+		}
 		int32_t frameNum = (int32_t)fFrameNum;
 		int32_t frameCount = UV.Animation.FrameCountX * UV.Animation.FrameCountY;
 
