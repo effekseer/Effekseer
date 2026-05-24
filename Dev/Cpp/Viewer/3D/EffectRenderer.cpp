@@ -664,6 +664,7 @@ void EffectRenderer::PlayEffect()
 	}
 
 	m_time = 0;
+	initialFrameUpdated_ = false;
 	m_rootLocation.X = behavior_.PositionX;
 	m_rootLocation.Y = behavior_.PositionY;
 	m_rootLocation.Z = behavior_.PositionZ;
@@ -832,39 +833,53 @@ void EffectRenderer::Update(int32_t frame)
 		manager_->SetGpuTimer(nullptr);
 	}
 
-	if (frame <= 0)
+	auto updateInitialFrame = [this]()
 	{
 		Effekseer::Manager::UpdateParameter updateParameter;
 		updateParameter.DeltaFrame = 0.0f;
 		updateParameter.UpdateInterval = 0.0;
 		manager_->Update(updateParameter);
-	}
-	else if (frame == 1)
+		initialFrameUpdated_ = true;
+	};
+
+	if (frame <= 0)
 	{
-		Update();
+		updateInitialFrame();
 	}
 	else
 	{
-		for (size_t i = 0; i < handles_.size(); i++)
+		if (m_time == 0 && !initialFrameUpdated_)
 		{
-			manager_->SetShown(handles_[i].Handle, false);
+			updateInitialFrame();
 		}
 
-		const auto updatingTime = Effekseer::Max(0, frame - m_step);
-
-		for (int i = 0; i < updatingTime; i++)
+		if (frame == 1)
 		{
 			Update();
 		}
-
-		for (size_t i = 0; i < handles_.size(); i++)
+		else
 		{
-			manager_->SetShown(handles_[i].Handle, true);
-		}
+			for (size_t i = 0; i < handles_.size(); i++)
+			{
+				manager_->SetShown(handles_[i].Handle, false);
+			}
 
-		for (int i = 0; i < frame - updatingTime; i++)
-		{
-			Update();
+			const auto updatingTime = Effekseer::Max(0, frame - m_step);
+
+			for (int i = 0; i < updatingTime; i++)
+			{
+				Update();
+			}
+
+			for (size_t i = 0; i < handles_.size(); i++)
+			{
+				manager_->SetShown(handles_[i].Handle, true);
+			}
+
+			for (int i = 0; i < frame - updatingTime; i++)
+			{
+				Update();
+			}
 		}
 	}
 

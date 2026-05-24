@@ -267,6 +267,17 @@ public:
 	SIMD::Vec3f GetGlobalDirection() const;
 
 private:
+	SIMD::Vec3f CalculateLocalAcceleration(const SIMD::Vec3f& localPosition,
+										   SIMD::Vec3f& steeringVec,
+										   InstanceTranslationState& translationState,
+										   RandObject& randObj,
+										   float livingTime,
+										   float livedTime,
+										   float deltaFrame,
+										   CoordinateSystem coordinateSystem);
+
+	void InitializeGlobalDirection();
+
 	void UpdateTransform(float deltaFrame);
 
 	void UpdateParentMatrix(float deltaFrame);

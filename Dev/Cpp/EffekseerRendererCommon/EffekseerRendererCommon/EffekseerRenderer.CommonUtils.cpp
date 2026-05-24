@@ -151,9 +151,21 @@ void CalcBillboard(::Effekseer::BillboardType billboardType,
 			{
 				U = Effekseer::SIMD::Vec3f(0.0f, 1.0f, 0.0f);
 			}
+			else
+			{
+				U = U.GetNormal();
+			}
 
 			F = frontDir;
-			R = ::Effekseer::SIMD::Vec3f::Cross(U, F).GetNormal();
+			R = ::Effekseer::SIMD::Vec3f::Cross(U, F);
+			if (R.IsZero())
+			{
+				const auto fallbackAxis = fabsf(U.GetY()) < 0.999f
+											  ? Effekseer::SIMD::Vec3f(0.0f, 1.0f, 0.0f)
+											  : Effekseer::SIMD::Vec3f(1.0f, 0.0f, 0.0f);
+				R = ::Effekseer::SIMD::Vec3f::Cross(U, fallbackAxis);
+			}
+			R = R.GetNormal();
 			F = ::Effekseer::SIMD::Vec3f::Cross(R, U).GetNormal();
 		}
 

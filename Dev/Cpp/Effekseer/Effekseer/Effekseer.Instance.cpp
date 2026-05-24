@@ -386,6 +386,7 @@ void Instance::FirstUpdate()
 
 	prevGlobalPosition_ = SIMD::Vec3f::Transform(prevPosition_, parentMatrix_);
 	prevLocalVelocity_ = SIMD::Vec3f(0, 0, 0);
+	InitializeGlobalDirection();
 
 	m_pEffectNode->InitializeRenderedInstance(*this, *ownGroup_, m_pManager);
 
@@ -624,6 +625,139 @@ SIMD::Vec3f Instance::GetGlobalDirection() const
 	return globalDirection_;
 }
 
+SIMD::Vec3f Instance::CalculateLocalAcceleration(const SIMD::Vec3f& localPosition,
+												 SIMD::Vec3f& steeringVec,
+												 InstanceTranslationState& translationState,
+												 RandObject& randObj,
+												 float livingTime,
+												 float livedTime,
+												 float deltaFrame,
+												 CoordinateSystem coordinateSystem)
+{
+	SIMD::Vec3f acc = SIMD::Vec3f(0, 0, 0);
+
+	if (m_pEffectNode->CommonValues.TranslationBindType == TranslationParentBindType::NotBind_FollowParent ||
+		m_pEffectNode->CommonValues.TranslationBindType == TranslationParentBindType::WhenCreating_FollowParent)
+	{
+		SIMD::Vec3f worldPos = SIMD::Vec3f::Transform(localPosition, parentMatrix_);
+		SIMD::Vec3f toTarget = parentPosition_ - worldPos;
+
+		if (toTarget.GetLength() > followParentParam.maxFollowSpeed)
+		{
+			toTarget = toTarget.GetNormal();
+			toTarget *= followParentParam.maxFollowSpeed;
+		}
+
+		auto prevSteering = steeringVec;
+		SIMD::Vec3f vSteering = toTarget - steeringVec;
+		vSteering *= followParentParam.steeringSpeed;
+
+		steeringVec += vSteering * deltaFrame;
+
+		if (steeringVec.GetLength() > followParentParam.maxFollowSpeed)
+		{
+			steeringVec = steeringVec.GetNormal();
+			steeringVec *= followParentParam.maxFollowSpeed;
+		}
+
+		acc = (steeringVec - prevSteering) * m_pEffectNode->m_effect->GetMaginification();
+	}
+	else
+	{
+		acc = m_pEffectNode->TranslationParam.CalculateTranslationState(
+			translationState,
+			randObj,
+			m_pEffectNode->GetEffect(),
+			m_pContainer->GetRootInstance(),
+			livingTime,
+			livedTime,
+			deltaFrame,
+			m_pParent,
+			coordinateSystem,
+			m_pEffectNode->DynamicFactor);
+
+		if (m_pEffectNode->GenerationLocation.EffectsRotation)
+		{
+			// TODO : check rotation(It seems has bugs and it can optimize it)
+			acc = SIMD::Vec3f::Transform(acc, generationLocation_.Get3x3SubMatrix());
+		}
+	}
+
+	return acc;
+}
+
+void Instance::InitializeGlobalDirection()
+{
+	if (m_pEffectNode->GetType() == EffectNodeType::Root)
+	{
+		return;
+	}
+
+	constexpr float deltaFrame = 1.0f;
+	const auto coordinateSystem = m_pEffectNode->GetEffect()->GetSetting()->GetCoordinateSystem();
+	const auto accelerationDelta = deltaFrame;
+
+	// Estimate the first frame displacement without advancing mutable instance state.
+	auto localPosition = prevPosition_;
+	auto localVelocity = prevLocalVelocity_;
+
+	auto steeringVec = steering_vec_;
+	auto translationState = translation_state_;
+	auto randObj = m_randObject;
+	auto forceField = forceField_;
+	auto localAcc = CalculateLocalAcceleration(
+		localPosition,
+		steeringVec,
+		translationState,
+		randObj,
+		livingTime_ + deltaFrame,
+		livedTime_,
+		deltaFrame,
+		coordinateSystem);
+
+	if (m_pEffectNode->LocalForceField.HasValue)
+	{
+		auto newLocalPosition = localPosition + (localVelocity * deltaFrame + localAcc * accelerationDelta);
+
+		localAcc += forceField.Update(
+			m_pEffectNode->LocalForceField,
+			newLocalPosition,
+			localVelocity,
+			m_pEffectNode->GetEffect()->GetMaginification(),
+			deltaFrame,
+			coordinateSystem);
+	}
+
+	auto estimatedLocalPosition = localPosition + (localVelocity * deltaFrame + localAcc * accelerationDelta);
+	auto estimatedGlobalPosition = estimatedLocalPosition;
+
+	if (m_pEffectNode->TranslationParam.TranslationType != ParameterTranslationType_ViewOffset)
+	{
+		estimatedGlobalPosition = SIMD::Vec3f::Transform(estimatedGlobalPosition, parentMatrix_);
+	}
+
+	auto globalDisplacement = estimatedGlobalPosition - prevGlobalPosition_;
+
+	if (m_pEffectNode->LocalForceField.IsGlobalEnabled)
+	{
+		InstanceGlobal* instanceGlobal = m_pContainer->GetRootInstance();
+		const auto globalAcc = forceField.UpdateGlobal(
+			m_pEffectNode->LocalForceField,
+			prevGlobalPosition_,
+			m_pEffectNode->GetEffect()->GetMaginification(),
+			instanceGlobal->GetTargetLocation(),
+			deltaFrame,
+			coordinateSystem);
+
+		globalDisplacement += velocity_modify_global_ * deltaFrame + globalAcc * accelerationDelta;
+	}
+
+	if (!globalDisplacement.IsZero())
+	{
+		globalDirection_ = globalDisplacement.GetNormal();
+	}
+}
+
 void Instance::UpdateTransform(float deltaFrame)
 {
 	// 計算済なら終了
@@ -653,51 +787,15 @@ void Instance::UpdateTransform(float deltaFrame)
 		SIMD::Vec3f localPosition = prevPosition_;
 		SIMD::Vec3f localVelocity = prevLocalVelocity_;
 
-		const auto calculate_acc = [&](SIMD::Vec3f& steeringVec, InstanceTranslationState& translation_state, RandObject& rand_obj, float living_time, float deltaFrame)
-		{
-			SIMD::Vec3f acc = SIMD::Vec3f(0, 0, 0);
-
-			if (m_pEffectNode->CommonValues.TranslationBindType == TranslationParentBindType::NotBind_FollowParent ||
-				m_pEffectNode->CommonValues.TranslationBindType == TranslationParentBindType::WhenCreating_FollowParent)
-			{
-				SIMD::Vec3f worldPos = SIMD::Vec3f::Transform(localPosition, parentMatrix_);
-				SIMD::Vec3f toTarget = parentPosition_ - worldPos;
-
-				if (toTarget.GetLength() > followParentParam.maxFollowSpeed)
-				{
-					toTarget = toTarget.GetNormal();
-					toTarget *= followParentParam.maxFollowSpeed;
-				}
-
-				auto prevSteering = steeringVec;
-				SIMD::Vec3f vSteering = toTarget - steeringVec;
-				vSteering *= followParentParam.steeringSpeed;
-
-				steeringVec += vSteering * deltaFrame;
-
-				if (steeringVec.GetLength() > followParentParam.maxFollowSpeed)
-				{
-					steeringVec = steeringVec.GetNormal();
-					steeringVec *= followParentParam.maxFollowSpeed;
-				}
-
-				acc = (steeringVec - prevSteering) * m_pEffectNode->m_effect->GetMaginification();
-			}
-			else
-			{
-				acc = m_pEffectNode->TranslationParam.CalculateTranslationState(translation_state, rand_obj, m_pEffectNode->GetEffect(), m_pContainer->GetRootInstance(), living_time, livedTime_, deltaFrame, m_pParent, coordinateSystem, m_pEffectNode->DynamicFactor);
-
-				if (m_pEffectNode->GenerationLocation.EffectsRotation)
-				{
-					// TODO : check rotation(It seems has bugs and it can optimize it)
-					acc = SIMD::Vec3f::Transform(acc, generationLocation_.Get3x3SubMatrix());
-				}
-			}
-
-			return acc;
-		};
-
-		auto local_acc = calculate_acc(steering_vec_, translation_state_, m_randObject, livingTime_, deltaFrame);
+		auto local_acc = CalculateLocalAcceleration(
+			localPosition,
+			steering_vec_,
+			translation_state_,
+			m_randObject,
+			livingTime_,
+			livedTime_,
+			deltaFrame,
+			coordinateSystem);
 
 		// accelaration for rotation of velocity to avoid that a velocity is zero
 		SIMD::Vec3f local_acc_rot = SIMD::Vec3f(0, 0, 0);
@@ -707,7 +805,15 @@ void Instance::UpdateTransform(float deltaFrame)
 			auto steering_vec_temp = steering_vec_;
 			auto translation_state_temp = translation_state_;
 			auto rand_obj_temp = m_randObject;
-			local_acc_rot = calculate_acc(steering_vec_temp, translation_state_temp, rand_obj_temp, livingTime_ + delta_plus, delta_plus);
+			local_acc_rot = CalculateLocalAcceleration(
+				localPosition,
+				steering_vec_temp,
+				translation_state_temp,
+				rand_obj_temp,
+				livingTime_ + delta_plus,
+				livedTime_,
+				delta_plus,
+				coordinateSystem);
 		}
 
 		SIMD::Mat43f matRot = SIMD::Mat43f::Identity;
