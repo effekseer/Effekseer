@@ -441,8 +441,9 @@ namespace Effekseer.GUI
 			var selected = Core.SelectedNode;
 			if (selected != null)
 			{
-				var renameNode = new GUI.Dialog.RenameNode();
-				renameNode.Show(selected);
+				//var renameNode = new GUI.Dialog.RenameNode();
+				//renameNode.Show(selected);
+				Core.RenameNode(selected);
 				return true;
 			}
 			return false;

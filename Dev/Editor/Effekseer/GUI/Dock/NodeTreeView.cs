@@ -36,6 +36,7 @@ namespace Effekseer.GUI.Dock
 			Core.OnAfterNew += OnRenew;
 			Core.OnAfterLoad += OnRenew;
 			Core.OnAfterSelectNode += OnAfterSelect;
+			Core.OnRenameNodeRequest += OnRenameNodeRequest;
 
 			Menu.MenuItem create_menu_item_from_commands(Func<bool> a)
 			{
@@ -259,30 +260,55 @@ namespace Effekseer.GUI.Dock
 			Renew();
 		}
 
+		NodeTreeViewNode FindTreeViewNode(NodeBase dataNode, Utils.DelayedList<NodeTreeViewNode> treeNodes)
+		{
+			if (dataNode == null) return null;
+
+			for (int i = 0; i < treeNodes.Count; i++)
+			{
+				if (treeNodes[i].Node == dataNode) return treeNodes[i];
+				var ret = FindTreeViewNode(dataNode, treeNodes[i].Children);
+				if (ret != null) return ret;
+			}
+			return null;
+		}
+
+		NodeTreeViewNode FindFocusedViewNode(Utils.DelayedList<NodeTreeViewNode> treeNodes)
+		{
+			for (int i = 0; i < treeNodes.Count; i++)
+			{
+				if (treeNodes[i].IsFocused) return treeNodes[i];
+				var ret = FindFocusedViewNode(treeNodes[i].Children);
+				if (ret != null) return ret;
+			}
+			return null;
+		}
+
 		void ReadSelect()
 		{
-			Func<Data.NodeBase, Utils.DelayedList<NodeTreeViewNode>, NodeTreeViewNode> search_node = null;
-			search_node = (searched_node, treenodes) =>
-			{
-				if (search_node == null) return null;
-
-				for (int i = 0; i < treenodes.Count; i++)
-				{
-					if (treenodes[i].Node == searched_node) return treenodes[i];
-					var ret = search_node(searched_node, treenodes[i].Children);
-					if (ret != null) return ret;
-				}
-				return null;
-			};
-
-			var node = search_node(Core.SelectedNode, Children);
-
-			SelectedNode = node;
+			SelectedNode = FindTreeViewNode(Core.SelectedNode, Children);
 		}
 
 		void OnAfterSelect(object sender, EventArgs e)
 		{
 			ReadSelect();
+		}
+
+		void OnRenameNodeRequest(object sender, EventArgs e)
+		{
+			var viewNode = FindFocusedViewNode(Children);
+			if (viewNode != null)
+			{
+				viewNode.RequestRename();
+				return;
+			}
+
+			viewNode = FindTreeViewNode(Core.SelectedNode, Children);
+			if (viewNode != null)
+			{
+				viewNode.RequestRename();
+				return;
+			}
 		}
 	}
 
@@ -312,7 +338,15 @@ namespace Effekseer.GUI.Dock
 
 		bool requiredToExpand = false;
 
+		bool startToRename = false;
+
+		bool finishToRename = false;
+
 		public bool IsExpanding = false;
+
+		public bool IsRenaming = false;
+
+		public bool IsFocused = false;
 
 		public int TreeNodeIndex = 0;
 
@@ -349,6 +383,12 @@ namespace Effekseer.GUI.Dock
 		public void Expand()
 		{
 			requiredToExpand = true;
+		}
+
+		public void RequestRename()
+		{
+			startToRename = true;
+			IsRenaming = true;
 		}
 
 		public void ChangeVisible(bool recursion, bool value)
@@ -629,17 +669,61 @@ namespace Effekseer.GUI.Dock
 				requiredToExpand = false;
 			}
 
+			if (finishToRename)
+			{
+				IsRenaming = false;
+				finishToRename = false;
+			}
+
 			if (TreeNodeIndex % 2 == 1)
 			{
 				Manager.NativeManager.DrawLineBackground(Manager.NativeManager.GetTextLineHeight(), 0x0cffffff);
 			}
 
-			var label = GetNodeIcon() + " " + Node.Name + id;
+			float cursorPosX = Manager.NativeManager.GetCursorPosX();
+			var label = GetNodeIcon() + " " + (IsRenaming ? "" : Node.Name) + id;
 			IsExpanding = Manager.NativeManager.TreeNodeEx(label, GetTreeNodeFlags());
+			IsFocused = Manager.NativeManager.IsItemFocused();
 
-			SelectNodeIfClicked();
-			treeView.Popup();
-			UpdateDragDropSourceAndTarget();
+			if (IsRenaming)
+			{
+				Manager.NativeManager.SameLine();
+
+				var fontSize = Manager.NativeManager.GetFrameHeight();
+				var prefixSize = Manager.NativeManager.CalcTextSize(GetNodeIcon() + " ");
+				Manager.NativeManager.SetCursorPosX(cursorPosX + fontSize + prefixSize.X);
+
+				Manager.NativeManager.SetNextItemWidth(-1);
+				
+				var framePadding = Manager.NativeManager.GetStyleVar2(ImGuiStyleVarFlags.FramePadding);
+				Manager.NativeManager.PushStyleVar(ImGuiStyleVarFlags.FramePadding, new swig.Vec2(framePadding.X, 0.0f));
+
+				if (startToRename)
+				{
+					Manager.NativeManager.SetKeyboardFocusHere();
+					startToRename = false;
+				}
+
+				bool edited = Manager.NativeManager.InputText("###RenameNodeInput", Node.Name, InputTextFlags.EnterReturnsTrue | InputTextFlags.AutoSelectAll);
+				if (edited || Manager.NativeManager.IsItemDeactivated())
+				{
+					Node.Name.Value = Manager.NativeManager.GetInputTextResult();
+					finishToRename = true;
+				}
+				
+				Manager.NativeManager.PopStyleVar();
+
+				if (Manager.NativeManager.IsKeyPressed(Manager.NativeManager.GetKeyIndex(swig.Key.Escape)))
+				{
+					finishToRename = true;
+				}
+			}
+			else
+			{
+				SelectNodeIfClicked();
+				treeView.Popup();
+				UpdateDragDropSourceAndTarget();
+			}
 		}
 
 		private void UpdateDragDropSourceAndTarget()
