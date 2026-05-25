@@ -2,6 +2,8 @@
 
 #include "../TestHelper.h"
 
+#include <cmath>
+
 namespace EffekseerRenderer
 {
 
@@ -69,5 +71,39 @@ void VertexTest()
 	// VertexTest<EffekseerRenderer::VertexDistortion>(false);
 	VertexTest<EffekseerRenderer::DynamicVertex>(false);
 }
+
+void DirectionalBillboardParallelDirectionTest()
+{
+	using namespace Effekseer::SIMD;
+
+	Effekseer::SIMD::Mat43f dst;
+	Effekseer::SIMD::Vec3f s;
+	Effekseer::SIMD::Vec3f R;
+	Effekseer::SIMD::Vec3f F;
+
+	EffekseerRenderer::CalcBillboard(
+		Effekseer::BillboardType::DirectionalBillboard,
+		dst,
+		s,
+		R,
+		F,
+		Effekseer::SIMD::Mat43f::Identity,
+		Effekseer::SIMD::Vec3f(0.0f, 1.0f, 0.0f),
+		Effekseer::SIMD::Vec3f(0.0f, 1.0f, 0.0f));
+
+	const auto isFinite = [](const Effekseer::SIMD::Vec3f& v) {
+		return std::isfinite(v.GetX()) && std::isfinite(v.GetY()) && std::isfinite(v.GetZ());
+	};
+
+	EXPECT_TRUE(isFinite(R));
+	EXPECT_TRUE(isFinite(F));
+	EXPECT_TRUE(!R.IsZero());
+	EXPECT_TRUE(!F.IsZero());
+	EXPECT_EQUAL_NEAR(Effekseer::SIMD::Vec3f::Dot(R, Effekseer::SIMD::Vec3f(0.0f, 1.0f, 0.0f)), 0.0f, 0.0001f);
+	EXPECT_EQUAL_NEAR(Effekseer::SIMD::Vec3f::Dot(F, Effekseer::SIMD::Vec3f(0.0f, 1.0f, 0.0f)), 0.0f, 0.0001f);
+}
+
 TestRegister Runtime_VertexTest("Runtime.Vertex", []() -> void
 								{ VertexTest(); });
+TestRegister Runtime_DirectionalBillboardParallelDirectionTest("Runtime.DirectionalBillboardParallelDirection", []() -> void
+															  { DirectionalBillboardParallelDirectionTest(); });

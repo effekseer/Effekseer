@@ -159,6 +159,7 @@ protected:
 	::Effekseer::Vector3D m_rootRotation;
 	::Effekseer::Vector3D m_rootScale;
 	int32_t m_time = 0;
+	bool initialFrameUpdated_ = false;
 	int m_step = 1;
 	std::vector<HandleHolder> handles_;
 
