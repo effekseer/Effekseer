@@ -303,6 +303,11 @@ namespace Effekseer
 		/// </summary>
 		public static event EventHandler OnReload;
 
+		/// <summary>
+		/// Rename Request Event
+		/// </summary>
+		public static event EventHandler OnRenameNodeRequest;
+
 		static Core()
 		{
 			ResourceCache = new Utils.ResourceCache();
@@ -1627,6 +1632,15 @@ namespace Effekseer
 		public static string GetToolReferenceURL(string docPage)
 		{
 			return GetToolHelpURL() + "ToolReference/" + docPage;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="node"></param>
+		public static void RenameNode(Data.NodeBase node)
+		{
+			OnRenameNodeRequest?.Invoke(null, null);
 		}
 	}
 }
