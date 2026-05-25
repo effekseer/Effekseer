@@ -87,17 +87,14 @@ void ReadIndexData(std::vector<MeshFace>& faces, const uint8_t* indexData, size_
 
 Mat43 ConvertMatrix(const std::vector<double>& src)
 {
-	if (src.size() == 0)
+	Mat43 dst;
+	constexpr size_t RequiredElements = sizeof(dst.v) / sizeof(double);
+	if (src.size() < RequiredElements)
 	{
 		return Mat43::Identity();
 	}
-	else
-	{
-		assert(src.size() >= 12);
-		Mat43 dst;
-		memcpy(&dst.v, src.data(), sizeof(dst.v));
-		return dst;
-	}
+	memcpy(&dst.v, src.data(), sizeof(dst.v));
+	return dst;
 }
 
 } // namespace
