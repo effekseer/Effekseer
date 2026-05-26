@@ -20,6 +20,7 @@ else()
       TestHelper.cpp
       Runtime/BasicRendering.h
       Runtime/BasicRendering.cpp
+      Runtime/FCurves.cpp
       Runtime/RuntimeTest.cpp
       Runtime/Performance.cpp
       Runtime/TextureFormats.cpp
