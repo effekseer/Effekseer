@@ -126,7 +126,7 @@ float FCurve::GetValue(float living, float life, FCurveTimelineType type) const
 	{
 		return keys_[keys_.size() - 1];
 	}
-	else if (ind == keys_.size() - 1)
+	else if (ind == keys_.size() - 2)
 	{
 		float subF = (float)(len_ - ind * freq_);
 		float subV = keys_[ind + 1] - keys_[ind];
