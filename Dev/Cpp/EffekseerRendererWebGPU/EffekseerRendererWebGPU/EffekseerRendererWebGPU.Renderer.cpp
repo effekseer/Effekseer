@@ -86,11 +86,15 @@ static void CreateFixedShaderForWebGPU(EffekseerRendererLLGI::FixedShader* shade
 }
 
 ::EffekseerRenderer::RendererRef
-Create(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, RenderPassInformation renderPassInformation, int32_t squareMaxCount)
+Create(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
+	   RenderPassInformation renderPassInformation,
+	   int32_t squareMaxCount,
+	   bool isPremultipliedAlphaEnabled)
 {
 	auto gd = graphicsDevice.DownCast<EffekseerRendererLLGI::Backend::GraphicsDevice>();
 	auto renderer = Effekseer::MakeRefPtr<::EffekseerRendererLLGI::RendererImplemented>(squareMaxCount);
 	CreateFixedShaderForWebGPU(&renderer->fixedShader_);
+	renderer->GetImpl()->IsPremultipliedAlphaEnabled = isPremultipliedAlphaEnabled;
 
 	LLGI::RenderPassPipelineStateKey key;
 	key.RenderTargetFormats.resize(renderPassInformation.RenderTextureCount);
@@ -114,17 +118,25 @@ Create(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, RenderPassInforma
 	return renderer;
 }
 
-::EffekseerRenderer::RendererRef Create(wgpu::Device device, RenderPassInformation renderPassInformation, int32_t squareMaxCount)
+::EffekseerRenderer::RendererRef
+Create(wgpu::Device device,
+	   RenderPassInformation renderPassInformation,
+	   int32_t squareMaxCount,
+	   bool isPremultipliedAlphaEnabled)
 {
 	auto graphicDevice = CreateGraphicsDevice(device);
-	return Create(graphicDevice, renderPassInformation, squareMaxCount);
+	return Create(graphicDevice, renderPassInformation, squareMaxCount, isPremultipliedAlphaEnabled);
 }
 
 ::EffekseerRenderer::RendererRef
-Create(wgpu::Device device, wgpu::Instance instance, RenderPassInformation renderPassInformation, int32_t squareMaxCount)
+Create(wgpu::Device device,
+	   wgpu::Instance instance,
+	   RenderPassInformation renderPassInformation,
+	   int32_t squareMaxCount,
+	   bool isPremultipliedAlphaEnabled)
 {
 	auto graphicDevice = CreateGraphicsDevice(device, instance);
-	return Create(graphicDevice, renderPassInformation, squareMaxCount);
+	return Create(graphicDevice, renderPassInformation, squareMaxCount, isPremultipliedAlphaEnabled);
 }
 
 void BeginCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList)

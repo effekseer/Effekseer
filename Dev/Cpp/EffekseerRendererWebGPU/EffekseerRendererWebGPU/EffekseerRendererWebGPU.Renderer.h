@@ -21,12 +21,23 @@ struct RenderPassInformation
 ::Effekseer::Backend::GraphicsDeviceRef CreateGraphicsDevice(wgpu::Device device, wgpu::Instance instance);
 
 ::EffekseerRenderer::RendererRef
-Create(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, RenderPassInformation renderPassInformation, int32_t squareMaxCount);
-
-::EffekseerRenderer::RendererRef Create(wgpu::Device device, RenderPassInformation renderPassInformation, int32_t squareMaxCount);
+Create(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
+	   RenderPassInformation renderPassInformation,
+	   int32_t squareMaxCount,
+	   bool isPremultipliedAlphaEnabled = false);
 
 ::EffekseerRenderer::RendererRef
-Create(wgpu::Device device, wgpu::Instance instance, RenderPassInformation renderPassInformation, int32_t squareMaxCount);
+Create(wgpu::Device device,
+	   RenderPassInformation renderPassInformation,
+	   int32_t squareMaxCount,
+	   bool isPremultipliedAlphaEnabled = false);
+
+::EffekseerRenderer::RendererRef
+Create(wgpu::Device device,
+	   wgpu::Instance instance,
+	   RenderPassInformation renderPassInformation,
+	   int32_t squareMaxCount,
+	   bool isPremultipliedAlphaEnabled = false);
 
 void BeginCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList);
 

@@ -291,11 +291,7 @@ RendererImplemented::~RendererImplemented()
 	// to prevent objects to be disposed before finish renderings.
 	GetGraphics()->WaitFinish();
 
-	for (auto p : piplineStates_)
-	{
-		p.second->Release();
-	}
-	piplineStates_.clear();
+	ResetPiplineStates();
 
 	commandList_.Reset();
 	GetImpl()->DeleteProxyTextures(this);
@@ -309,6 +305,15 @@ RendererImplemented::~RendererImplemented()
 		materialCompiler_->Release();
 		materialCompiler_ = nullptr;
 	}
+}
+
+void RendererImplemented::ResetPiplineStates()
+{
+	for (auto p : piplineStates_)
+	{
+		p.second->Release();
+	}
+	piplineStates_.clear();
 }
 
 void RendererImplemented::OnLostDevice()

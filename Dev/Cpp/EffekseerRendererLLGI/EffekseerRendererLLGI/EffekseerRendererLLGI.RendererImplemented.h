@@ -104,6 +104,8 @@ public:
 
 	void ChangeRenderPassPipelineState(LLGI::RenderPassPipelineStateKey key);
 
+	void ResetPiplineStates();
+
 	bool BeginRendering() override;
 
 	bool EndRendering() override;
