@@ -152,7 +152,15 @@ public:
 	virtual void OnResetDevice() = 0;
 
 	/**
-		@brief	ステートを復帰するかどうかのフラグを設定する。
+		@brief
+		\~English	Sets whether the renderer saves and restores graphics API state around effect rendering.
+		\~Japanese	エフェクト描画の前後でグラフィックスAPIのステートを保存・復元するかどうかを設定する。
+		@param flag
+		\~English	true to restore state in BeginRendering and EndRendering. If false, the application must manage any changed states.
+		\~Japanese	true の場合、BeginRendering と EndRendering でステートを復元する。false の場合、変更されたステートはアプリケーション側で管理する必要がある。
+		\note
+		\~English	DirectX 9, DirectX 11, and OpenGL use this flag to control state restoration. Other backends accept it for interface compatibility and currently do not restore state here.
+		\~Japanese	DirectX 9、DirectX 11、OpenGL ではこのフラグでステート復元を制御する。それ以外のバックエンドではインターフェース互換性のために受け取るが、現在ここではステート復元を行わない。
 	*/
 	virtual void SetRestorationOfStatesFlag(bool flag) = 0;
 

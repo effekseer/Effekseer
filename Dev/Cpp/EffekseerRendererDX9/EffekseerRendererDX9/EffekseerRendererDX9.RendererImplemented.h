@@ -118,7 +118,7 @@ public:
 
 	bool Initialize(Backend::GraphicsDeviceRef graphicsDevice);
 
-	void SetRestorationOfStatesFlag(bool flag);
+	void SetRestorationOfStatesFlag(bool flag) override;
 
 	/**
 		@brief	描画開始

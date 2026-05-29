@@ -108,7 +108,7 @@ public:
 
 	bool Initialize(Backend::GraphicsDeviceRef graphicsDevice, D3D11_COMPARISON_FUNC depthFunc, bool isMSAAEnabled);
 
-	void SetRestorationOfStatesFlag(bool flag);
+	void SetRestorationOfStatesFlag(bool flag) override;
 
 	bool BeginRendering();
 
