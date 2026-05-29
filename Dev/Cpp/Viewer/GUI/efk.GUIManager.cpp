@@ -120,6 +120,11 @@ float GetWindowFramebufferScale(const std::shared_ptr<Effekseer::MainWindow>& ma
 	return static_cast<float>(framebufferWidth) / static_cast<float>(windowWidth);
 }
 
+float GetScaledFontSize(float size, float dpiScale)
+{
+	return ImGui::GetRoundedFontSize(size * dpiScale);
+}
+
 ImGuiKey NormalizeUserKeyIndex(int user_key_index)
 {
 	if (user_key_index <= 0)
@@ -1155,7 +1160,7 @@ float GUIManager::GetDpiScale() const
 
 void GUIManager::SetFontSizeBase(float size)
 {
-	const float fontSize = size * GetDpiScale();
+	const float fontSize = GetScaledFontSize(size, GetDpiScale());
 
 	auto& style = ImGui::GetStyle();
 	style.FontSizeBase = fontSize;
@@ -1909,6 +1914,7 @@ void GUIManager::AddFontFromAtlasImage(const char16_t* filename, uint16_t baseCo
 	{
 		fontSize = 13.0f;
 	}
+	fontSize = ImGui::GetRoundedFontSize(fontSize);
 
 	// Merge icon glyphs into the current UI font so menu labels and icons share
 	// the same baked font entry.
@@ -1931,6 +1937,7 @@ void GUIManager::AddFontFromAtlasImage(const char16_t* filename, uint16_t baseCo
 	}
 	font->CurrentRasterizerDensity = rasterizerDensity;
 	font->GetFontBaked(fontSize, rasterizerDensity);
+	font->Flags |= ImFontFlags_LockBakedSizes;
 
 	int glyphSizeX = static_cast<int>(fontSize);
 	int glyphSizeY = static_cast<int>(fontSize);
