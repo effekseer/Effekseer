@@ -24,9 +24,23 @@ namespace TestCSharp
 
 			var compressed2 = Effekseer.Utils.Zlib.Compress(decompressed1);
 			var decompressed2 = Effekseer.Utils.Zlib.Decompress(compressed1);
+			var decompressed3 = Effekseer.Utils.Zlib.Decompress(compressed2);
+			var decompressed4 = DecompressByZLibStream(compressed2);
 
-			TestUtils.CompareBytes(decompressed1, decompressed2);
-			TestUtils.CompareBytes(compressed1, compressed2);
+			TestUtils.CompareBytes(decompressed1, decompressed2, name + ": failed to decompress python zlib data.");
+			TestUtils.CompareBytes(decompressed1, decompressed3, name + ": failed to round-trip csharp zlib data.");
+			TestUtils.CompareBytes(decompressed1, decompressed4, name + ": failed to decompress csharp zlib data with ZLibStream.");
+		}
+
+		static byte[] DecompressByZLibStream(byte[] compressed)
+		{
+			using (var input = new System.IO.MemoryStream(compressed))
+			using (var zlib = new System.IO.Compression.ZLibStream(input, System.IO.Compression.CompressionMode.Decompress))
+			using (var output = new System.IO.MemoryStream())
+			{
+				zlib.CopyTo(output);
+				return output.ToArray();
+			}
 		}
 	}
 }
