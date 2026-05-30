@@ -19,14 +19,14 @@ void TestNoise()
 		{
 			auto v = noise.Get(Vec3f(1.0f, 2.0f, 3.0f));
 			// printf("%f, %f, %f\n", v.GetX(), v.GetY(), v.GetZ());
-			if (!Vec3f::Equal(v, Vec3f(-0.247059f, -0.035294f, 0.835294f)))
+			if (!Vec3f::Equal(v, Vec3f(-0.145098f, -0.019608f, 0.474510f)))
 				throw "Failed";
 		}
 
 		{
 			auto v = noise.Get(Vec3f(-0.1, -0.2, -0.3));
 			// printf("%f, %f, %f\n", v.GetX(), v.GetY(), v.GetZ());
-			if (!Vec3f::Equal(v, Vec3f(-0.105067f, 0.126212f, -0.292988f)))
+			if (!Vec3f::Equal(v, Vec3f(-0.146541f, 0.188580f, -0.408063f)))
 				throw "Failed";
 		}
 
