@@ -7,6 +7,12 @@
 namespace Effekseer
 {
 
+namespace
+{
+// Normalize directions while keeping the old light-noise average magnitude.
+constexpr float LightCurlNoiseCompatibilityScale = 0.5f;
+}
+
 const int32_t LightCurlNoise::GridSize;
 const int32_t LightCurlNoise::GridBits;
 const int32_t LightCurlNoise::GridBitMask;
@@ -76,8 +82,7 @@ LightCurlNoise::LightCurlNoise(int32_t seed, float scale, int32_t octave)
 					v.SetZ(0.1f);
 				}
 
-				// It is better to normalize.
-				// v = v.GetNormal();
+				v = v.GetNormal() * LightCurlNoiseCompatibilityScale;
 
 				vectorField_[z][y][x] = Pack(v);
 			}
