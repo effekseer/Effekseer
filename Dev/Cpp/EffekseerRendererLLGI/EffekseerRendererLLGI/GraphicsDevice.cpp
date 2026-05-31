@@ -279,6 +279,10 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param, const Effe
 	{
 		texParam.Format = LLGI::TextureFormatType::B8G8R8A8_UNORM;
 	}
+	else if (param.Format == Effekseer::Backend::TextureFormatType::RG11B10_UFLOAT)
+	{
+		texParam.Format = LLGI::TextureFormatType::RG11B10_UFLOAT;
+	}
 	else if (param.Format == Effekseer::Backend::TextureFormatType::R8_UNORM)
 	{
 		texParam.Format = LLGI::TextureFormatType::R8_UNORM;
