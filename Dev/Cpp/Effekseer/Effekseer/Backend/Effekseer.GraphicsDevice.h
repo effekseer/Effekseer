@@ -73,6 +73,9 @@ enum class TextureFormatType
 
 	//! You don't need to implement DepthTexture for a runtime
 	D32S8,
+
+	RG11B10_UFLOAT,
+
 	Unknown,
 };
 

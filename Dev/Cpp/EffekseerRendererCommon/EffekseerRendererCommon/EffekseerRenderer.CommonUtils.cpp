@@ -517,6 +517,11 @@ void CalculateAlignedTextureInformation(Effekseer::Backend::TextureFormatType fo
 		sizePerWidth = 4 * size[0];
 		height = size[1];
 	}
+	else if (format == Effekseer::Backend::TextureFormatType::RG11B10_UFLOAT)
+	{
+		sizePerWidth = 4 * size[0];
+		height = size[1];
+	}
 	else if (format == Effekseer::Backend::TextureFormatType::R8_UNORM)
 	{
 		sizePerWidth = 1 * size[0];

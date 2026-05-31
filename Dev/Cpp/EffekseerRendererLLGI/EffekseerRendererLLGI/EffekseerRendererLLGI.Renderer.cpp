@@ -64,6 +64,9 @@ LLGI::TextureFormatType ConvertTextureFormat(Effekseer::Backend::TextureFormatTy
 	case Effekseer::Backend::TextureFormatType::B8G8R8A8_UNORM:
 		return LLGI::TextureFormatType::B8G8R8A8_UNORM;
 		break;
+	case Effekseer::Backend::TextureFormatType::RG11B10_UFLOAT:
+		return LLGI::TextureFormatType::RG11B10_UFLOAT;
+		break;
 	case Effekseer::Backend::TextureFormatType::R8_UNORM:
 		return LLGI::TextureFormatType::R8_UNORM;
 		break;
