@@ -326,6 +326,7 @@ private:
 	std::vector<std::shared_ptr<LLGI::Texture>> pendingMipMapTextures_;
 	std::vector<PendingBufferUpload> pendingBufferUploads_;
 	bool usesImmediateBufferUpload_ = false;
+	LLGI::DeviceType deviceType_ = LLGI::DeviceType::Default;
 
 	void FlushPendingMipMapGenerations();
 	void FlushPendingBufferUploads();
@@ -333,7 +334,7 @@ private:
 	void BindResourceBinders(const std::array<Effekseer::Backend::ResourceBinder, Effekseer::Backend::DrawParameter::ResourceSlotCount>& resourceBinders);
 
 public:
-	GraphicsDevice(LLGI::Graphics* graphics, bool usesImmediateBufferUpload = false);
+	GraphicsDevice(LLGI::Graphics* graphics, bool usesImmediateBufferUpload = false, LLGI::DeviceType deviceType = LLGI::DeviceType::Default);
 
 	~GraphicsDevice() override;
 
@@ -342,6 +343,8 @@ public:
 	void ResetDevice();
 
 	LLGI::Graphics* GetGraphics();
+
+	LLGI::DeviceType GetDeviceType() const;
 
 	void QueueMipMapGeneration(LLGI::Texture* texture);
 	void QueueBufferUpload(const std::shared_ptr<LLGI::Buffer>& destination, const void* data, int32_t size);
@@ -393,6 +396,8 @@ public:
 	bool UpdateUniformBuffer(Effekseer::Backend::UniformBufferRef& buffer, int32_t size, int32_t offset, const void* data) override;
 
 	bool UpdateStorageBuffer(Effekseer::Backend::StorageBufferRef& buffer, int32_t size, int32_t offset, const void* data) override;
+
+	std::string GetDeviceName() const override;
 };
 
 } // namespace Backend

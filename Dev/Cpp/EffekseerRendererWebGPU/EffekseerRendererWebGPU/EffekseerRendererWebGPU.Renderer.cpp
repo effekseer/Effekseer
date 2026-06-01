@@ -70,7 +70,7 @@ static void CreateFixedShaderForWebGPU(EffekseerRendererLLGI::FixedShader* shade
 ::Effekseer::Backend::GraphicsDeviceRef CreateGraphicsDevice(wgpu::Device device)
 {
 	auto graphics = new LLGI::GraphicsWebGPU(device);
-	auto ret = Effekseer::MakeRefPtr<EffekseerRendererLLGI::Backend::GraphicsDevice>(graphics);
+	auto ret = Effekseer::MakeRefPtr<EffekseerRendererLLGI::Backend::GraphicsDevice>(graphics, false, LLGI::DeviceType::WebGPU);
 	ES_SAFE_RELEASE(graphics);
 	return ret;
 }
@@ -78,7 +78,7 @@ static void CreateFixedShaderForWebGPU(EffekseerRendererLLGI::FixedShader* shade
 ::Effekseer::Backend::GraphicsDeviceRef CreateGraphicsDevice(wgpu::Device device, wgpu::Instance instance)
 {
 	auto graphics = new LLGI::GraphicsWebGPU(device, instance);
-	auto ret = Effekseer::MakeRefPtr<EffekseerRendererLLGI::Backend::GraphicsDevice>(graphics);
+	auto ret = Effekseer::MakeRefPtr<EffekseerRendererLLGI::Backend::GraphicsDevice>(graphics, false, LLGI::DeviceType::WebGPU);
 	ES_SAFE_RELEASE(graphics);
 	return ret;
 }

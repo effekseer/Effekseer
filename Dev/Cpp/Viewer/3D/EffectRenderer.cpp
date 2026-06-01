@@ -51,120 +51,12 @@ namespace PostEffect_Overdraw_PS
 #include <EffekseerRendererGL/ShaderHeader/sprite_unlit_vs.h>
 
 #include "../GUI/RenderImage.h"
+#include <EffekseerToolRuntime/DepthRendering.h>
 
 namespace Effekseer
 {
 namespace Tool
 {
-
-bool GroundRenderer::Initialize(Effekseer::RefPtr<Effekseer::Backend::GraphicsDevice> graphicsDevice)
-{
-	groudMeshRenderer_ = Effekseer::Tool::StaticMeshRenderer::Create(graphicsDevice);
-
-	if (groudMeshRenderer_ == nullptr)
-	{
-		return false;
-	}
-
-	Effekseer::CustomVector<Effekseer::Tool::StaticMeshVertex> vbData(4);
-	Effekseer::CustomVector<int32_t> ibData = {0, 1, 2, 0, 2, 3};
-
-	auto groudMesh = Effekseer::Tool::StaticMesh::Create(graphicsDevice, vbData, ibData, true);
-
-	// Create checker patterns
-	Effekseer::Backend::TextureParameter texParams;
-	texParams.Format = Effekseer::Backend::TextureFormatType::R8G8B8A8_UNORM;
-	texParams.Size = {128, 128};
-
-	Effekseer::CustomVector<uint8_t> initialData;
-	initialData.resize(texParams.Size[0] * texParams.Size[1] * 4);
-
-	for (size_t i = 0; i < initialData.size() / 4; i++)
-	{
-		const size_t x = i % texParams.Size[0] * 2 / texParams.Size[0];
-		const size_t y = i / texParams.Size[1] * 2 / texParams.Size[1];
-		if (x ^ y == 0)
-		{
-			initialData[i * 4 + 0] = 90;
-			initialData[i * 4 + 1] = 90;
-			initialData[i * 4 + 2] = 90;
-			initialData[i * 4 + 3] = 255;
-		}
-		else
-		{
-			initialData[i * 4 + 0] = 60;
-			initialData[i * 4 + 1] = 60;
-			initialData[i * 4 + 2] = 60;
-			initialData[i * 4 + 3] = 255;
-		}
-	}
-	groudMesh->Texture = graphicsDevice->CreateTexture(texParams, initialData);
-
-	groudMeshRenderer_->SetStaticMesh(groudMesh);
-
-	UpdateGround();
-
-	return true;
-}
-
-void GroundRenderer::SetExtent(int32_t extent)
-{
-	if (GroundExtent == extent)
-	{
-		return;
-	}
-
-	GroundExtent = extent;
-	UpdateGround();
-}
-
-void GroundRenderer::UpdateGround()
-{
-	std::array<Effekseer::Tool::StaticMeshVertex, 4> vbData;
-
-	vbData[0].Pos = {-(float)GroundExtent, 0.0f, -(float)GroundExtent};
-	vbData[0].VColor = {255, 255, 255, 255};
-	vbData[0].UV = {0.0f, 0.0f};
-	vbData[1].Pos = {(float)GroundExtent, 0.0f, -(float)GroundExtent};
-	vbData[1].VColor = {255, 255, 255, 255};
-	vbData[1].UV = {(float)GroundExtent, 0.0f};
-	vbData[2].Pos = {(float)GroundExtent, 0.0f, (float)GroundExtent};
-	vbData[2].VColor = {255, 255, 255, 255};
-	vbData[2].UV = {(float)GroundExtent, (float)GroundExtent};
-	vbData[3].Pos = {-(float)GroundExtent, 0.0f, (float)GroundExtent};
-	vbData[3].VColor = {255, 255, 255, 255};
-	vbData[3].UV = {0.0f, (float)GroundExtent};
-
-	for (auto& vb : vbData)
-	{
-		vb.Normal = {0.0f, 1.0f, 0.0f};
-	}
-
-	groudMeshRenderer_->GetStaticMesh()->GetVertexBuffer()->UpdateData(
-		vbData.data(), static_cast<int32_t>(vbData.size() * sizeof(Effekseer::Tool::StaticMeshVertex)), 0);
-}
-
-void GroundRenderer::Render(EffekseerRenderer::RendererRef renderer)
-{
-	Effekseer::Tool::RendererParameter param{};
-	param.CameraMatrix = renderer->GetCameraMatrix();
-	param.ProjectionMatrix = renderer->GetProjectionMatrix();
-	param.WorldMatrix.Translation(0.0f, GroundHeight, 0.0f);
-	param.DirectionalLightDirection = renderer->GetLightDirection().ToFloat4();
-	param.DirectionalLightColor = renderer->GetLightColor().ToFloat4();
-	param.AmbientLightColor = renderer->GetLightAmbientColor().ToFloat4();
-	groudMeshRenderer_->Render(param);
-}
-
-std::shared_ptr<GroundRenderer> GroundRenderer::Create(Effekseer::RefPtr<Effekseer::Backend::GraphicsDevice> graphicsDevice)
-{
-	auto ret = std::make_shared<GroundRenderer>();
-	if (ret->Initialize(graphicsDevice))
-	{
-		return ret;
-	}
-	return nullptr;
-}
 
 EffectRenderer::DistortingCallback::DistortingCallback(efk::Graphics* graphics, EffectRenderer* generator)
 	: graphics_(graphics)
@@ -184,52 +76,6 @@ bool EffectRenderer::DistortingCallback::OnDistorting(EffekseerRenderer::Rendere
 	}
 
 	return IsEnabled;
-}
-
-bool EffectRenderer::UpdateBackgroundMesh(const Color& backgroundColor)
-{
-	if (backgroundMesh_ != nullptr && !(backgroundColor != backgroundMeshColor_))
-		return true;
-
-	backgroundMeshColor_ = backgroundColor;
-
-	const float eps = 0.00001f;
-
-	Effekseer::CustomVector<Effekseer::Tool::StaticMeshVertex> vbData;
-	vbData.resize(4);
-	vbData[0].Pos = {-1.0f, 1.0f, 1.0f - eps};
-	vbData[1].Pos = {1.0f, 1.0f, 1.0f - eps};
-	vbData[2].Pos = {1.0f, -1.0f, 1.0f - eps};
-	vbData[3].Pos = {-1.0f, -1.0f, 1.0f - eps};
-
-	for (auto& vb : vbData)
-	{
-		vb.UV[0] = (vb.Pos[0] + 1.0f) / 2.0f;
-		vb.UV[1] = 1.0f - (vb.Pos[1] + 1.0f) / 2.0f;
-
-		vb.Normal = {0.0f, 1.0f, 0.0f};
-		vb.VColor = backgroundMeshColor_;
-	}
-	Effekseer::CustomVector<int32_t> ibData;
-	ibData.resize(6);
-	ibData[0] = 0;
-	ibData[1] = 1;
-	ibData[2] = 2;
-	ibData[3] = 0;
-	ibData[4] = 2;
-	ibData[5] = 3;
-
-	backgroundMesh_ = Effekseer::Tool::StaticMesh::Create(graphics_->GetGraphics()->GetGraphicsDevice(), vbData, ibData);
-	if (!backgroundMesh_)
-	{
-		return false;
-	}
-
-	backgroundMesh_->IsLit = false;
-
-	backgroundRenderer_->SetStaticMesh(backgroundMesh_);
-
-	return true;
 }
 
 void EffectRenderer::CopyToBack()
@@ -377,9 +223,9 @@ bool EffectRenderer::Initialize(std::shared_ptr<GraphicsDevice> graphicsDevice,
 	if (graphics_->GetGraphics()->GetGraphicsDevice() != nullptr)
 	{
 
-		backgroundRenderer_ = Effekseer::Tool::StaticMeshRenderer::Create(graphics_->GetGraphics()->GetGraphicsDevice());
+		backgroundRenderer_ = Effekseer::Tool::BackgroundRenderer::Create(graphics_->GetGraphics()->GetGraphicsDevice());
 
-		if (backgroundRenderer_ != nullptr && UpdateBackgroundMesh(parameter_.BackgroundColor))
+		if (backgroundRenderer_ != nullptr && backgroundRenderer_->UpdateMesh(parameter_.BackgroundColor))
 		{
 			spdlog::trace("OK : Background");
 		}
@@ -897,17 +743,17 @@ void EffectRenderer::SetLODDistanceBias(float distanceBias)
 void EffectRenderer::Render(std::shared_ptr<RenderImage> renderImage)
 {
 	// Clear a destination texture
-	if (parameter_.RenderingMethod == RenderingMethodType::Overdraw)
+	if (backgroundRenderer_ != nullptr && parameter_.RenderingMethod == RenderingMethodType::Overdraw)
 	{
-		UpdateBackgroundMesh({0, 0, 0, 0});
+		backgroundRenderer_->UpdateMesh({0, 0, 0, 0});
 	}
-	else if (backgroundTexture_ != nullptr && backgroundTexture_->GetBackend() != nullptr)
+	else if (backgroundRenderer_ != nullptr && backgroundTexture_ != nullptr && backgroundTexture_->GetBackend() != nullptr)
 	{
-		UpdateBackgroundMesh({255, 255, 255, 255});
+		backgroundRenderer_->UpdateMesh({255, 255, 255, 255});
 	}
-	else
+	else if (backgroundRenderer_ != nullptr)
 	{
-		UpdateBackgroundMesh(parameter_.BackgroundColor);
+		backgroundRenderer_->UpdateMesh(parameter_.BackgroundColor);
 	}
 
 	auto renderTargetImage = renderImage->GetTexture();
@@ -945,22 +791,18 @@ void EffectRenderer::Render(std::shared_ptr<RenderImage> renderImage)
 	renderer_->SetLightColor(parameter_.LightColor);
 	renderer_->SetLightAmbientColor(parameter_.LightAmbientColor);
 
-	if (backgroundRenderer_ != nullptr && backgroundMesh_ != nullptr)
+	if (backgroundRenderer_ != nullptr)
 	{
 		if (backgroundTexture_ != nullptr)
 		{
-			backgroundMesh_->Texture = backgroundTexture_->GetBackend();
+			backgroundRenderer_->SetTexture(backgroundTexture_->GetBackend());
 		}
 		else
 		{
-			backgroundMesh_->Texture = nullptr;
+			backgroundRenderer_->SetTexture(nullptr);
 		}
 
-		Effekseer::Tool::RendererParameter param{};
-		param.CameraMatrix.Indentity();
-		param.ProjectionMatrix.Indentity();
-		param.WorldMatrix.Indentity();
-		backgroundRenderer_->Render(param);
+		backgroundRenderer_->Render();
 	}
 
 	if (parameter_.RenderingMethod != RenderingMethodType::Overdraw)
@@ -987,13 +829,7 @@ void EffectRenderer::Render(std::shared_ptr<RenderImage> renderImage)
 		graphics_->GetGraphics()->ResolveRenderTarget(depthRenderTextureMSAA, depthRenderTexture);
 	}
 
-	EffekseerRenderer::DepthReconstructionParameter reconstructionParam;
-	reconstructionParam.DepthBufferScale = 1.0f;
-	reconstructionParam.DepthBufferOffset = 0.0f;
-	reconstructionParam.ProjectionMatrix33 = parameter_.ProjectionMatrix.Value.Values[2][2];
-	reconstructionParam.ProjectionMatrix43 = parameter_.ProjectionMatrix.Value.Values[2][3];
-	reconstructionParam.ProjectionMatrix34 = parameter_.ProjectionMatrix.Value.Values[3][2];
-	reconstructionParam.ProjectionMatrix44 = parameter_.ProjectionMatrix.Value.Values[3][3];
+	const auto reconstructionParam = Effekseer::ToolRuntime::CreateDepthReconstructionParameter(parameter_.ProjectionMatrix.Value);
 
 	renderer_->SetDepth(depthRenderTexture, reconstructionParam);
 

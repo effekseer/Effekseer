@@ -2,6 +2,7 @@
 
 #include "../../EffekseerRendererDX9/EffekseerRendererDX9.h"
 #include "EffectPlatformGLFW.h"
+#include <EffekseerToolRuntime/GroundRendering.h>
 
 struct IDirect3DVertexDeclaration9;
 struct IDirect3DVertexShader9;
@@ -50,7 +51,7 @@ private:
 	void CreateCheckedSurface();
 	bool CreateGroundResources();
 	void ReleaseGroundResources();
-	void DrawGround(bool writesDepthTexture);
+	void DrawGround(Effekseer::ToolRuntime::GroundRenderPass pass);
 
 protected:
 	void UpdateBackgroundTexture() override;

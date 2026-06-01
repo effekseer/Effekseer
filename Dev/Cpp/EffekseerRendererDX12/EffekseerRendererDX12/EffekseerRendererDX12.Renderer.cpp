@@ -157,7 +157,7 @@ namespace EffekseerRendererDX12
 	auto graphics = new LLGI::GraphicsDX12(
 		device, getScreenFunc, []() -> void {}, commandQueue, swapBufferCount);
 
-	auto ret = Effekseer::MakeRefPtr<EffekseerRendererLLGI::Backend::GraphicsDevice>(graphics, true);
+	auto ret = Effekseer::MakeRefPtr<EffekseerRendererLLGI::Backend::GraphicsDevice>(graphics, true, LLGI::DeviceType::DirectX12);
 	ES_SAFE_RELEASE(graphics);
 	return ret;
 }

@@ -10,6 +10,8 @@
 #include "../Math/Vector2I.h"
 #include "../Math/Vector3F.h"
 #include <Effekseer.h>
+#include <EffekseerToolRuntime/BackgroundPlaneRenderer.h>
+#include <EffekseerToolRuntime/GroundPlaneRenderer.h>
 
 namespace Effekseer
 {
@@ -60,26 +62,8 @@ struct EffectRendererParameter
 };
 
 #if !defined(SWIG)
-
-class GroundRenderer
-{
-private:
-	std::shared_ptr<Effekseer::Tool::StaticMeshRenderer> groudMeshRenderer_;
-	bool Initialize(Effekseer::RefPtr<Effekseer::Backend::GraphicsDevice> graphicsDevice);
-	int32_t GroundExtent = 10;
-
-public:
-	float GroundHeight = 0.0f;
-
-	void SetExtent(int32_t extent);
-
-	static std::shared_ptr<GroundRenderer> Create(Effekseer::RefPtr<Effekseer::Backend::GraphicsDevice> graphicsDevice);
-
-	void UpdateGround();
-
-	void Render(EffekseerRenderer::RendererRef renderer);
-};
-
+using BackgroundRenderer = Effekseer::ToolRuntime::BackgroundPlaneRenderer;
+using GroundRenderer = Effekseer::ToolRuntime::GroundPlaneRenderer;
 #endif
 
 class EffectRenderer
@@ -125,10 +109,8 @@ protected:
 	EffekseerRenderer::RendererRef renderer_;
 	std::shared_ptr<Effekseer::Tool::Effect> effect_;
 
-	std::shared_ptr<Effekseer::Tool::StaticMesh> backgroundMesh_;
-	std::shared_ptr<Effekseer::Tool::StaticMeshRenderer> backgroundRenderer_;
+	std::shared_ptr<BackgroundRenderer> backgroundRenderer_;
 	Effekseer::TextureRef backgroundTexture_;
-	Effekseer::Color backgroundMeshColor_{};
 
 	Vector2I screenSize_;
 	ViewerEffectBehavior behavior_;
@@ -176,8 +158,6 @@ protected:
 	Effekseer::Tool::PostEffectParameter postEffectParameter_;
 
 	float lodDistanceBias_ = 0.0f;
-
-	bool UpdateBackgroundMesh(const Color& backgroundColor);
 
 	void CopyToBack();
 

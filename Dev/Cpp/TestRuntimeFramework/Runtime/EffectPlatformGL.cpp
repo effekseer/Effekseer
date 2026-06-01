@@ -1,5 +1,6 @@
 #include "EffectPlatformGL.h"
 #include "../../3rdParty/stb/stb_image_write.h"
+#include <EffekseerToolRuntime/GroundRendering.h>
 #include <EffekseerRendererGL.h>
 #include <EffekseerRendererGL/EffekseerRendererGL.GLExtension.h>
 #include <OpenGLExtensions.h>
@@ -7,50 +8,6 @@ namespace GL = EffekseerRendererGL::GLExt;
 
 namespace
 {
-
-const auto ground_vs_gl = R"(
-#version 330
-
-layout(location = 0) in vec4 input_Position;
-layout(location = 1) in vec2 input_WorldXZ;
-out vec2 output_WorldXZ;
-
-void main()
-{
-	gl_Position = input_Position;
-	output_WorldXZ = input_WorldXZ;
-}
-)";
-
-const auto ground_ps_gl = R"(
-#version 330
-
-in vec2 output_WorldXZ;
-layout(location = 0) out vec4 output_Color;
-
-void main()
-{
-	float checker = fract((floor(output_WorldXZ.x) + floor(output_WorldXZ.y)) * 0.5);
-	vec3 darkColor = vec3(0.24, 0.32, 0.27);
-	vec3 brightColor = vec3(0.39, 0.50, 0.42);
-	vec3 color = mix(darkColor, brightColor, step(0.5, checker));
-	float distanceFade = clamp(length(output_WorldXZ) * 0.025, 0.0, 1.0);
-	color *= 1.0 - distanceFade * 0.35;
-	output_Color = vec4(color, 1.0);
-}
-)";
-
-const auto ground_depth_ps_gl = R"(
-#version 330
-
-in vec2 output_WorldXZ;
-layout(location = 0) out vec4 output_Color;
-
-void main()
-{
-	output_Color = vec4(gl_FragCoord.z, 1.0, 1.0, 1.0);
-}
-)";
 
 GLuint CompileShader(GLenum type, const char* code)
 {
@@ -174,8 +131,9 @@ bool EffectPlatformGL::CreateGroundResources()
 		return true;
 	}
 
-	groundProgram_ = CreateProgram(ground_vs_gl, ground_ps_gl);
-	groundDepthProgram_ = CreateProgram(ground_vs_gl, ground_depth_ps_gl);
+	const auto& shaderCode = Effekseer::ToolRuntime::GetGroundShaderCode(Effekseer::ToolRuntime::GroundShaderBackend::OpenGL);
+	groundProgram_ = CreateProgram(shaderCode.Vertex, shaderCode.Pixel);
+	groundDepthProgram_ = CreateProgram(shaderCode.Vertex, shaderCode.DepthPixel);
 	if (groundProgram_ == 0 || groundDepthProgram_ == 0)
 	{
 		ReleaseGroundResources();
@@ -267,8 +225,9 @@ void EffectPlatformGL::UpdateGroundVertexBuffer()
 	GL::glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void EffectPlatformGL::DrawGround(GLuint program)
+void EffectPlatformGL::DrawGround(Effekseer::ToolRuntime::GroundRenderPass pass)
 {
+	const auto program = pass == Effekseer::ToolRuntime::GroundRenderPass::Depth ? groundDepthProgram_ : groundProgram_;
 	GL::glUseProgram(program);
 	GL::glBindBuffer(GL_ARRAY_BUFFER, groundVertexBuffer_);
 	GL::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, groundIndexBuffer_);
@@ -317,13 +276,13 @@ void EffectPlatformGL::BeginRendering()
 		glDepthFunc(GL_LESS);
 		glDisable(GL_CULL_FACE);
 		glDisable(GL_BLEND);
-		DrawGround(groundDepthProgram_);
+		DrawGround(Effekseer::ToolRuntime::GroundRenderPass::Depth);
 
 		GL::glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glClearColor(22.0f / 255.0f, 34.0f / 255.0f, 48.0f / 255.0f, 1.0f);
 		glClearDepth(1.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		DrawGround(groundProgram_);
+		DrawGround(Effekseer::ToolRuntime::GroundRenderPass::Color);
 	}
 	else
 	{

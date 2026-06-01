@@ -1,6 +1,7 @@
 #include "EffectPlatformDX9.h"
 #include "../../EffekseerRendererDX9/EffekseerRendererDX9/GraphicsDevice.h"
 #include "../../3rdParty/stb/stb_image_write.h"
+#include <EffekseerToolRuntime/GroundRendering.h>
 #include <assert.h>
 #include <d3dcompiler.h>
 #include <cstring>
@@ -9,60 +10,6 @@
 
 namespace
 {
-
-const auto ground_vs_dx9 = R"(
-struct VS_INPUT
-{
-	float4 Position : POSITION0;
-	float2 WorldXZ : TEXCOORD0;
-};
-
-struct VS_OUTPUT
-{
-	float4 Position : POSITION0;
-	float2 WorldXZ : TEXCOORD0;
-	float4 Clip : TEXCOORD1;
-};
-
-VS_OUTPUT main(VS_INPUT input)
-{
-	VS_OUTPUT output;
-	output.Position = input.Position;
-	output.WorldXZ = input.WorldXZ;
-	output.Clip = input.Position;
-	return output;
-}
-)";
-
-const auto ground_ps_dx9 = R"(
-struct PS_INPUT
-{
-	float2 WorldXZ : TEXCOORD0;
-};
-
-float4 main(PS_INPUT input) : COLOR0
-{
-	float checker = frac((floor(input.WorldXZ.x) + floor(input.WorldXZ.y)) * 0.5);
-	float3 darkColor = float3(0.24, 0.32, 0.27);
-	float3 brightColor = float3(0.39, 0.50, 0.42);
-	float3 color = lerp(darkColor, brightColor, checker >= 0.5 ? 1.0 : 0.0);
-	float distanceFade = saturate(length(input.WorldXZ) * 0.025);
-	color *= 1.0 - distanceFade * 0.35;
-	return float4(color, 1.0);
-}
-)";
-
-const auto ground_depth_ps_dx9 = R"(
-struct PS_INPUT
-{
-	float4 Clip : TEXCOORD1;
-};
-
-float4 main(PS_INPUT input) : COLOR0
-{
-	return float4(input.Clip.z / input.Clip.w, 1.0, 1.0, 1.0);
-}
-)";
 
 bool CompileGroundShader(const char* code, const char* target, ID3DBlob** shader)
 {
@@ -187,9 +134,10 @@ bool EffectPlatformDX9::CreateGroundResources()
 	ID3DBlob* vs = nullptr;
 	ID3DBlob* ps = nullptr;
 	ID3DBlob* depthPs = nullptr;
-	if (!CompileGroundShader(ground_vs_dx9, "vs_3_0", &vs) ||
-		!CompileGroundShader(ground_ps_dx9, "ps_3_0", &ps) ||
-		!CompileGroundShader(ground_depth_ps_dx9, "ps_3_0", &depthPs))
+	const auto& shaderCode = Effekseer::ToolRuntime::GetGroundShaderCode(Effekseer::ToolRuntime::GroundShaderBackend::DirectX9);
+	if (!CompileGroundShader(shaderCode.Vertex, shaderCode.VertexProfile, &vs) ||
+		!CompileGroundShader(shaderCode.Pixel, shaderCode.PixelProfile, &ps) ||
+		!CompileGroundShader(shaderCode.DepthPixel, shaderCode.PixelProfile, &depthPs))
 	{
 		ES_SAFE_RELEASE(vs);
 		ES_SAFE_RELEASE(ps);
@@ -291,14 +239,14 @@ void EffectPlatformDX9::ReleaseGroundResources()
 	usesGpuGroundDepth_ = false;
 }
 
-void EffectPlatformDX9::DrawGround(bool writesDepthTexture)
+void EffectPlatformDX9::DrawGround(Effekseer::ToolRuntime::GroundRenderPass pass)
 {
 	const auto vertices = CreateGroundPlaneVertices();
 	const auto indices = CreateGroundPlaneIndices();
 
 	device_->SetVertexDeclaration(groundVertexDeclaration_);
 	device_->SetVertexShader(groundVertexShader_);
-	device_->SetPixelShader(writesDepthTexture ? groundDepthPixelShader_ : groundPixelShader_);
+	device_->SetPixelShader(pass == Effekseer::ToolRuntime::GroundRenderPass::Depth ? groundDepthPixelShader_ : groundPixelShader_);
 	device_->SetTexture(0, nullptr);
 	device_->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 	device_->SetRenderState(D3DRS_ZENABLE, TRUE);
@@ -387,13 +335,13 @@ void EffectPlatformDX9::BeginRendering()
 		device_->SetRenderTarget(0, groundDepthSurface_);
 		device_->SetDepthStencilSurface(groundDepthStencilSurface_);
 		device_->Clear(0, nullptr, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_COLORVALUE(1.0f, 1.0f, 1.0f, 1.0f), 1.0f, 0);
-		DrawGround(true);
+		DrawGround(Effekseer::ToolRuntime::GroundRenderPass::Depth);
 
 		UnbindTextures(device_);
 		device_->SetRenderTarget(0, targetSurface);
 		device_->SetDepthStencilSurface(depthSurface);
 		device_->Clear(0, nullptr, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(22, 34, 48), 1.0f, 0);
-		DrawGround(false);
+		DrawGround(Effekseer::ToolRuntime::GroundRenderPass::Color);
 
 		ES_SAFE_RELEASE(depthSurface);
 		ES_SAFE_RELEASE(targetSurface);

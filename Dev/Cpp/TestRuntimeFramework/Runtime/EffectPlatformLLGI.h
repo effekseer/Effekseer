@@ -3,6 +3,7 @@
 #include "../3rdParty/LLGI/src/LLGI.Base.h"
 #include "../3rdParty/LLGI/src/LLGI.Graphics.h"
 #include "../3rdParty/LLGI/src/Utils/LLGI.CommandListPool.h"
+#include <EffekseerToolRuntime/GroundRendering.h>
 
 #include "EffectPlatform.h"
 
@@ -100,8 +101,7 @@ protected:
 	void CreateCheckedTexture();
 	void CreateGroundResources();
 	void UpdateGroundVertexBuffer();
-	void DrawGround();
-	void DrawGroundDepthTexture();
+	void DrawGround(Effekseer::ToolRuntime::GroundRenderPass pass);
 	void UpdateBackgroundTexture() override;
 	virtual Effekseer::Backend::TextureRef CreateEffekseerTexture(LLGI::Texture* texture);
 

@@ -87,7 +87,7 @@ static void CreateFixedShaderForVulkan(EffekseerRendererLLGI::FixedShader* shade
 		nullptr,
 		nullptr);
 
-	auto ret = Effekseer::MakeRefPtr<EffekseerRendererLLGI::Backend::GraphicsDevice>(graphics);
+	auto ret = Effekseer::MakeRefPtr<EffekseerRendererLLGI::Backend::GraphicsDevice>(graphics, false, LLGI::DeviceType::Vulkan);
 	ES_SAFE_RELEASE(graphics);
 	return ret;
 }

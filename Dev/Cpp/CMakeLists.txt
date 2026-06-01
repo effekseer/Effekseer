@@ -172,6 +172,11 @@ if(BUILD_VIEWER OR (BUILD_TEST AND NOT BUILD_WEBGPU_BROWSER_TEST))
   set_target_properties(OpenGLHelper PROPERTIES FOLDER Libraries)
 endif()
 
+if(BUILD_VIEWER OR BUILD_TEST)
+  add_subdirectory("EffekseerToolRuntime")
+  set_target_properties(EffekseerToolRuntime PROPERTIES FOLDER Libraries)
+endif()
+
 if(BUILD_VIEWER)
   add_subdirectory("EditorCommon")
   set_target_properties(EditorCommon PROPERTIES FOLDER Editor)
