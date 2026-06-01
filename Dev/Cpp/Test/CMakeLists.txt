@@ -213,7 +213,8 @@ if(BUILD_WEBGPU_BROWSER_TEST)
     set(effekseer_webgpu_browser_test_command
         ${NODE_EXE}
         ${CMAKE_CURRENT_SOURCE_DIR}/../3rdParty/LLGI/src_test/browser/run_webgpu_browser_test.mjs
-        $<TARGET_FILE:TestCpp> --filter=Runtime.WebGPUBrowser.*)
+        $<TARGET_FILE:TestCpp> --filter=Runtime.WebGPUBrowser.*
+        --screenshot-dir=$<TARGET_FILE_DIR:TestCpp>)
     if(BUILD_WEBGPU_BROWSER_THREADS)
       list(APPEND effekseer_webgpu_browser_test_command
            --cross-origin-isolated)

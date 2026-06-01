@@ -1119,6 +1119,8 @@ struct ShaderParameterCollector
 
 			if (IsDepthRequired)
 			{
+				TextureFilterTypes[TextureCount] = Effekseer::TextureFilterType::Nearest;
+				TextureWrapTypes[TextureCount] = Effekseer::TextureWrapType::Clamp;
 				DepthIndex = TextureCount;
 				TextureCount += 1;
 			}
@@ -1169,7 +1171,7 @@ struct ShaderParameterCollector
 			if (IsDepthRequired)
 			{
 				// Store from external
-				TextureFilterTypes[TextureCount] = Effekseer::TextureFilterType::Linear;
+				TextureFilterTypes[TextureCount] = Effekseer::TextureFilterType::Nearest;
 				TextureWrapTypes[TextureCount] = Effekseer::TextureWrapType::Clamp;
 				DepthIndex = TextureCount;
 				TextureCount += 1;
@@ -1190,6 +1192,8 @@ struct ShaderParameterCollector
 
 				if (IsDepthRequired)
 				{
+					TextureFilterTypes[TextureCount] = Effekseer::TextureFilterType::Nearest;
+					TextureWrapTypes[TextureCount] = Effekseer::TextureWrapType::Clamp;
 					DepthIndex = TextureCount;
 					TextureCount += 1;
 				}
@@ -1207,6 +1211,8 @@ struct ShaderParameterCollector
 
 				if (IsDepthRequired)
 				{
+					TextureFilterTypes[TextureCount] = Effekseer::TextureFilterType::Nearest;
+					TextureWrapTypes[TextureCount] = Effekseer::TextureWrapType::Clamp;
 					DepthIndex = TextureCount;
 					TextureCount += 1;
 				}

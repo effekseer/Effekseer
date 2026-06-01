@@ -3,6 +3,10 @@
 #include "../../EffekseerRendererDX9/EffekseerRendererDX9.h"
 #include "EffectPlatformGLFW.h"
 
+struct IDirect3DVertexDeclaration9;
+struct IDirect3DVertexShader9;
+struct IDirect3DPixelShader9;
+
 class DistortingCallbackDX9 : public EffekseerRenderer::DistortingCallback
 {
 	LPDIRECT3DDEVICE9 device = nullptr;
@@ -33,10 +37,23 @@ private:
 	bool fullscreen_ = false;
 	IDirect3DSurface9* checkedSurface_ = nullptr;
 	DistortingCallbackDX9* distorting_ = nullptr;
+	LPDIRECT3DTEXTURE9 groundDepthTexture_ = nullptr;
+	IDirect3DSurface9* groundDepthSurface_ = nullptr;
+	IDirect3DSurface9* groundDepthStencilSurface_ = nullptr;
+	IDirect3DVertexDeclaration9* groundVertexDeclaration_ = nullptr;
+	IDirect3DVertexShader9* groundVertexShader_ = nullptr;
+	IDirect3DPixelShader9* groundPixelShader_ = nullptr;
+	IDirect3DPixelShader9* groundDepthPixelShader_ = nullptr;
+	Effekseer::Backend::TextureRef groundDepthTextureForEffekseer_ = nullptr;
+	bool usesGpuGroundDepth_ = false;
 
 	void CreateCheckedSurface();
+	bool CreateGroundResources();
+	void ReleaseGroundResources();
+	void DrawGround(bool writesDepthTexture);
 
 protected:
+	void UpdateBackgroundTexture() override;
 	EffekseerRenderer::RendererRef CreateRenderer() override;
 
 public:
@@ -53,6 +70,8 @@ public:
 	void Present() override;
 	bool TakeScreenshot(const char* path) override;
 	bool SetFullscreen(bool isFullscreen) override;
+	void ResetBackgroundPattern() override;
+	void GenerateGroundDepth() override;
 
 	void ResetDevice();
 };

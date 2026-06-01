@@ -209,6 +209,17 @@ EffekseerRenderer::RendererRef EffectPlatformMetal::CreateRenderer()
 	return renderer;
 }
 
+Effekseer::Backend::TextureRef EffectPlatformMetal::CreateEffekseerTexture(LLGI::Texture* texture)
+{
+	auto metalTexture = static_cast<LLGI::TextureMetal*>(texture);
+	if (metalTexture == nullptr)
+	{
+		return nullptr;
+	}
+
+	return EffekseerRendererMetal::CreateTexture(GetRenderer()->GetGraphicsDevice(), metalTexture->GetTexture());
+}
+
 EffectPlatformMetal::~EffectPlatformMetal()
 {
 }

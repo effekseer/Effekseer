@@ -95,8 +95,15 @@ protected:
 	virtual void CreateShaders()
 	{
 	}
+	void CreateGroundShaders();
 	void CreateResources();
 	void CreateCheckedTexture();
+	void CreateGroundResources();
+	void UpdateGroundVertexBuffer();
+	void DrawGround();
+	void DrawGroundDepthTexture();
+	void UpdateBackgroundTexture() override;
+	virtual Effekseer::Backend::TextureRef CreateEffekseerTexture(LLGI::Texture* texture);
 
 	LLGI::Window* llgiWindow_ = nullptr;
 
@@ -112,14 +119,29 @@ protected:
 	LLGI::RenderPass* renderPass_ = nullptr;
 	LLGI::Texture* colorBuffer_ = nullptr;
 	LLGI::Texture* depthBuffer_ = nullptr;
+	LLGI::RenderPass* groundDepthRenderPass_ = nullptr;
+	LLGI::Texture* groundDepthColorBuffer_ = nullptr;
+	LLGI::Texture* groundDepthBuffer_ = nullptr;
 	LLGI::Shader* shader_vs_ = nullptr;
 	LLGI::Shader* shader_ps_ = nullptr;
+	LLGI::Shader* groundShader_vs_ = nullptr;
+	LLGI::Shader* groundShader_ps_ = nullptr;
+	LLGI::Shader* groundDepthShader_vs_ = nullptr;
+	LLGI::Shader* groundDepthShader_ps_ = nullptr;
 	LLGI::Buffer* vb_ = nullptr;
 	LLGI::Buffer* ib_ = nullptr;
 	LLGI::PipelineState* pip_ = nullptr;
 	LLGI::PipelineState* screenPip_ = nullptr;
+	LLGI::PipelineState* groundPip_ = nullptr;
+	LLGI::PipelineState* groundDepthPip_ = nullptr;
 	LLGI::RenderPassPipelineState* rppip_ = nullptr;
+	LLGI::RenderPassPipelineState* groundRppip_ = nullptr;
+	LLGI::RenderPassPipelineState* groundDepthRppip_ = nullptr;
 	LLGI::Texture* checkTexture_ = nullptr;
+	LLGI::Buffer* groundVb_ = nullptr;
+	LLGI::Buffer* groundIb_ = nullptr;
+	Effekseer::Backend::TextureRef groundDepthTextureForEffekseer_ = nullptr;
+	bool usesGpuGroundDepth_ = false;
 	LLGI::TextureFormatType screenFormat_ = LLGI::TextureFormatType::R8G8B8A8_UNORM;
 	LLGI::DeviceType deviceType_;
 	bool isCommandListBegun_ = false;
@@ -138,6 +160,8 @@ public:
 	virtual void EndCompute() override;
 	virtual void BeginRendering() override;
 	virtual void EndRendering() override;
+	void ResetBackgroundPattern() override;
+	void GenerateGroundDepth() override;
 
 	std::vector<uint8_t> CaptureScreenPixels();
 	bool TakeScreenshot(const char* path) override;

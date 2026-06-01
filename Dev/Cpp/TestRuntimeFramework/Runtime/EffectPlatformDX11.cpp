@@ -1,6 +1,87 @@
 #include "EffectPlatformDX11.h"
 
 #include "../../3rdParty/stb/stb_image_write.h"
+#include <d3dcompiler.h>
+#include <cstring>
+
+#pragma comment(lib, "d3dcompiler.lib")
+
+namespace
+{
+
+const auto ground_vs_dx11 = R"(
+struct VS_INPUT
+{
+	float4 Position : POSITION0;
+	float2 WorldXZ : TEXCOORD0;
+};
+
+struct VS_OUTPUT
+{
+	float4 Position : SV_POSITION;
+	float2 WorldXZ : TEXCOORD0;
+};
+
+VS_OUTPUT main(VS_INPUT input)
+{
+	VS_OUTPUT output;
+	output.Position = input.Position;
+	output.WorldXZ = input.WorldXZ;
+	return output;
+}
+)";
+
+const auto ground_ps_dx11 = R"(
+struct PS_INPUT
+{
+	float4 Position : SV_POSITION;
+	float2 WorldXZ : TEXCOORD0;
+};
+
+float4 main(PS_INPUT input) : SV_TARGET
+{
+	float checker = frac((floor(input.WorldXZ.x) + floor(input.WorldXZ.y)) * 0.5);
+	float3 darkColor = float3(0.24, 0.32, 0.27);
+	float3 brightColor = float3(0.39, 0.50, 0.42);
+	float3 color = lerp(darkColor, brightColor, checker >= 0.5 ? 1.0 : 0.0);
+	float distanceFade = saturate(length(input.WorldXZ) * 0.025);
+	color *= 1.0 - distanceFade * 0.35;
+	return float4(color, 1.0);
+}
+)";
+
+const auto ground_depth_ps_dx11 = R"(
+struct PS_INPUT
+{
+	float4 Position : SV_POSITION;
+	float2 WorldXZ : TEXCOORD0;
+};
+
+float4 main(PS_INPUT input) : SV_TARGET
+{
+	return float4(input.Position.z, 1.0, 1.0, 1.0);
+}
+)";
+
+bool CompileGroundShader(const char* code, const char* target, ID3DBlob** shader)
+{
+	ID3DBlob* error = nullptr;
+	auto hr = D3DCompile(code, strlen(code), nullptr, nullptr, nullptr, "main", target, 0, 0, shader, &error);
+	if (FAILED(hr))
+	{
+		if (error != nullptr)
+		{
+			OutputDebugStringA(static_cast<const char*>(error->GetBufferPointer()));
+			error->Release();
+		}
+		return false;
+	}
+
+	ES_SAFE_RELEASE(error);
+	return true;
+}
+
+} // namespace
 
 class DistortingCallbackDX11 : public EffekseerRenderer::DistortingCallback
 {
@@ -143,6 +224,220 @@ void EffectPlatformDX11::CreateCheckedTexture()
 	context_->Unmap(checkedTexture_, sr);
 }
 
+void EffectPlatformDX11::UpdateBackgroundTexture()
+{
+	ES_SAFE_RELEASE(checkedTexture_);
+	CreateCheckedTexture();
+}
+
+bool EffectPlatformDX11::CreateGroundResources()
+{
+	if (groundDepthTexture_ != nullptr)
+	{
+		return true;
+	}
+
+	ID3DBlob* vs = nullptr;
+	ID3DBlob* ps = nullptr;
+	ID3DBlob* depthPs = nullptr;
+	if (!CompileGroundShader(ground_vs_dx11, "vs_4_0", &vs) ||
+		!CompileGroundShader(ground_ps_dx11, "ps_4_0", &ps) ||
+		!CompileGroundShader(ground_depth_ps_dx11, "ps_4_0", &depthPs))
+	{
+		ES_SAFE_RELEASE(vs);
+		ES_SAFE_RELEASE(ps);
+		ES_SAFE_RELEASE(depthPs);
+		return false;
+	}
+
+	auto hr = device_->CreateVertexShader(vs->GetBufferPointer(), vs->GetBufferSize(), nullptr, &groundVertexShader_);
+	if (FAILED(hr))
+	{
+		ES_SAFE_RELEASE(vs);
+		ES_SAFE_RELEASE(ps);
+		ES_SAFE_RELEASE(depthPs);
+		return false;
+	}
+
+	hr = device_->CreatePixelShader(ps->GetBufferPointer(), ps->GetBufferSize(), nullptr, &groundPixelShader_);
+	if (FAILED(hr))
+	{
+		ES_SAFE_RELEASE(vs);
+		ES_SAFE_RELEASE(ps);
+		ES_SAFE_RELEASE(depthPs);
+		return false;
+	}
+
+	hr = device_->CreatePixelShader(depthPs->GetBufferPointer(), depthPs->GetBufferSize(), nullptr, &groundDepthPixelShader_);
+	if (FAILED(hr))
+	{
+		ES_SAFE_RELEASE(vs);
+		ES_SAFE_RELEASE(ps);
+		ES_SAFE_RELEASE(depthPs);
+		return false;
+	}
+
+	const D3D11_INPUT_ELEMENT_DESC inputElements[] = {
+		{"POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 4, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	};
+	hr = device_->CreateInputLayout(inputElements, 2, vs->GetBufferPointer(), vs->GetBufferSize(), &groundInputLayout_);
+	ES_SAFE_RELEASE(vs);
+	ES_SAFE_RELEASE(ps);
+	ES_SAFE_RELEASE(depthPs);
+	if (FAILED(hr))
+	{
+		return false;
+	}
+
+	D3D11_BUFFER_DESC vbDesc{};
+	vbDesc.ByteWidth = sizeof(GroundPlaneVertex) * 4;
+	vbDesc.Usage = D3D11_USAGE_DEFAULT;
+	vbDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	hr = device_->CreateBuffer(&vbDesc, nullptr, &groundVertexBuffer_);
+	if (FAILED(hr))
+	{
+		return false;
+	}
+
+	const auto indices = CreateGroundPlaneIndices();
+	D3D11_BUFFER_DESC ibDesc{};
+	ibDesc.ByteWidth = sizeof(indices);
+	ibDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	ibDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	D3D11_SUBRESOURCE_DATA ibData{};
+	ibData.pSysMem = indices.data();
+	hr = device_->CreateBuffer(&ibDesc, &ibData, &groundIndexBuffer_);
+	if (FAILED(hr))
+	{
+		return false;
+	}
+
+	D3D11_TEXTURE2D_DESC depthColorDesc{};
+	depthColorDesc.Width = initParam_.WindowSize[0];
+	depthColorDesc.Height = initParam_.WindowSize[1];
+	depthColorDesc.MipLevels = 1;
+	depthColorDesc.ArraySize = 1;
+	depthColorDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	depthColorDesc.SampleDesc.Count = 1;
+	depthColorDesc.Usage = D3D11_USAGE_DEFAULT;
+	depthColorDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	hr = device_->CreateTexture2D(&depthColorDesc, nullptr, &groundDepthTexture_);
+	if (FAILED(hr))
+	{
+		depthColorDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+		hr = device_->CreateTexture2D(&depthColorDesc, nullptr, &groundDepthTexture_);
+	}
+	if (FAILED(hr))
+	{
+		return false;
+	}
+
+	hr = device_->CreateRenderTargetView(groundDepthTexture_, nullptr, &groundDepthRenderTargetView_);
+	if (FAILED(hr))
+	{
+		return false;
+	}
+	hr = device_->CreateShaderResourceView(groundDepthTexture_, nullptr, &groundDepthShaderResourceView_);
+	if (FAILED(hr))
+	{
+		return false;
+	}
+
+	D3D11_TEXTURE2D_DESC depthDesc{};
+	depthDesc.Width = initParam_.WindowSize[0];
+	depthDesc.Height = initParam_.WindowSize[1];
+	depthDesc.MipLevels = 1;
+	depthDesc.ArraySize = 1;
+	depthDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depthDesc.SampleDesc.Count = 1;
+	depthDesc.Usage = D3D11_USAGE_DEFAULT;
+	depthDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	hr = device_->CreateTexture2D(&depthDesc, nullptr, &groundDepthBuffer_);
+	if (FAILED(hr))
+	{
+		return false;
+	}
+	hr = device_->CreateDepthStencilView(groundDepthBuffer_, nullptr, &groundDepthStencilView_);
+	if (FAILED(hr))
+	{
+		return false;
+	}
+
+	D3D11_RASTERIZER_DESC rasterizerDesc{};
+	rasterizerDesc.FillMode = D3D11_FILL_SOLID;
+	rasterizerDesc.CullMode = D3D11_CULL_NONE;
+	rasterizerDesc.DepthClipEnable = TRUE;
+	hr = device_->CreateRasterizerState(&rasterizerDesc, &groundRasterizerState_);
+	if (FAILED(hr))
+	{
+		return false;
+	}
+
+	D3D11_DEPTH_STENCIL_DESC depthStencilDesc{};
+	depthStencilDesc.DepthEnable = TRUE;
+	depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+	hr = device_->CreateDepthStencilState(&depthStencilDesc, &groundDepthStencilState_);
+	if (FAILED(hr))
+	{
+		return false;
+	}
+
+	D3D11_BLEND_DESC blendDesc{};
+	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	hr = device_->CreateBlendState(&blendDesc, &groundBlendState_);
+	return SUCCEEDED(hr);
+}
+
+void EffectPlatformDX11::ReleaseGroundResources()
+{
+	groundDepthTextureForEffekseer_.Reset();
+	ES_SAFE_RELEASE(groundBlendState_);
+	ES_SAFE_RELEASE(groundDepthStencilState_);
+	ES_SAFE_RELEASE(groundRasterizerState_);
+	ES_SAFE_RELEASE(groundIndexBuffer_);
+	ES_SAFE_RELEASE(groundVertexBuffer_);
+	ES_SAFE_RELEASE(groundInputLayout_);
+	ES_SAFE_RELEASE(groundDepthPixelShader_);
+	ES_SAFE_RELEASE(groundPixelShader_);
+	ES_SAFE_RELEASE(groundVertexShader_);
+	ES_SAFE_RELEASE(groundDepthStencilView_);
+	ES_SAFE_RELEASE(groundDepthBuffer_);
+	ES_SAFE_RELEASE(groundDepthShaderResourceView_);
+	ES_SAFE_RELEASE(groundDepthRenderTargetView_);
+	ES_SAFE_RELEASE(groundDepthTexture_);
+	usesGpuGroundDepth_ = false;
+}
+
+void EffectPlatformDX11::UpdateGroundVertexBuffer(ID3D11DeviceContext* context)
+{
+	const auto vertices = CreateGroundPlaneVertices();
+	context->UpdateSubresource(groundVertexBuffer_, 0, nullptr, vertices.data(), 0, 0);
+}
+
+void EffectPlatformDX11::DrawGround(ID3D11DeviceContext* context, bool writesDepthTexture)
+{
+	if (groundVertexBuffer_ == nullptr || groundIndexBuffer_ == nullptr)
+	{
+		return;
+	}
+
+	const UINT stride = sizeof(GroundPlaneVertex);
+	const UINT offset = 0;
+	context->IASetInputLayout(groundInputLayout_);
+	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	context->IASetVertexBuffers(0, 1, &groundVertexBuffer_, &stride, &offset);
+	context->IASetIndexBuffer(groundIndexBuffer_, DXGI_FORMAT_R16_UINT, 0);
+	context->VSSetShader(groundVertexShader_, nullptr, 0);
+	context->PSSetShader(writesDepthTexture ? groundDepthPixelShader_ : groundPixelShader_, nullptr, 0);
+	context->RSSetState(groundRasterizerState_);
+	context->OMSetDepthStencilState(groundDepthStencilState_, 0);
+	const float blendFactor[4] = {};
+	context->OMSetBlendState(groundBlendState_, blendFactor, 0xffffffff);
+	context->DrawIndexed(6, 0, 0);
+}
+
 EffekseerRenderer::RendererRef EffectPlatformDX11::CreateRenderer()
 {
 	ID3D11DeviceContext* context = nullptr;
@@ -165,6 +460,7 @@ EffekseerRenderer::RendererRef EffectPlatformDX11::CreateRenderer()
 
 EffectPlatformDX11::~EffectPlatformDX11()
 {
+	ReleaseGroundResources();
 	ES_SAFE_RELEASE(checkedTexture_);
 	ES_SAFE_RELEASE(renderTargetView_);
 	ES_SAFE_RELEASE(backBuffer_);
@@ -311,11 +607,43 @@ void EffectPlatformDX11::BeginRendering()
 		context = context_;
 	}
 
-	float ClearColor[] = {0.0f, 0.0f, 0.0f, 1.0f};
-	context->ClearRenderTargetView(renderTargetView_, ClearColor);
-	context->ClearDepthStencilView(depthStencilView_, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	if (usesGpuGroundDepth_)
+	{
+		UpdateGroundVertexBuffer(context);
 
-	context->CopyResource(backBuffer_, checkedTexture_);
+		ID3D11ShaderResourceView* nullSRVs[8] = {};
+		context->PSSetShaderResources(0, 8, nullSRVs);
+
+		D3D11_VIEWPORT vp;
+		vp.TopLeftX = 0;
+		vp.TopLeftY = 0;
+		vp.Width = (float)initParam_.WindowSize[0];
+		vp.Height = (float)initParam_.WindowSize[1];
+		vp.MinDepth = 0.0f;
+		vp.MaxDepth = 1.0f;
+
+		context->OMSetRenderTargets(1, &groundDepthRenderTargetView_, groundDepthStencilView_);
+		context->RSSetViewports(1, &vp);
+		float DepthClearColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
+		context->ClearRenderTargetView(groundDepthRenderTargetView_, DepthClearColor);
+		context->ClearDepthStencilView(groundDepthStencilView_, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+		DrawGround(context, true);
+
+		context->OMSetRenderTargets(1, &renderTargetView_, depthStencilView_);
+		context->RSSetViewports(1, &vp);
+		float ClearColor[] = {22.0f / 255.0f, 34.0f / 255.0f, 48.0f / 255.0f, 1.0f};
+		context->ClearRenderTargetView(renderTargetView_, ClearColor);
+		context->ClearDepthStencilView(depthStencilView_, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+		DrawGround(context, false);
+	}
+	else
+	{
+		float ClearColor[] = {0.0f, 0.0f, 0.0f, 1.0f};
+		context->ClearRenderTargetView(renderTargetView_, ClearColor);
+		context->ClearDepthStencilView(depthStencilView_, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+		context->CopyResource(backBuffer_, checkedTexture_);
+	}
 }
 
 void EffectPlatformDX11::EndRendering()
@@ -390,4 +718,39 @@ bool EffectPlatformDX11::TakeScreenshot(const char* path)
 	stbi_write_png(path, initParam_.WindowSize[0], initParam_.WindowSize[1], 4, data.data(), initParam_.WindowSize[0] * 4);
 
 	return true;
+}
+
+void EffectPlatformDX11::ResetBackgroundPattern()
+{
+	usesGpuGroundDepth_ = false;
+	EffectPlatform::ResetBackgroundPattern();
+}
+
+void EffectPlatformDX11::GenerateGroundDepth()
+{
+	isGroundDepthEnabled_ = true;
+	usesGpuGroundDepth_ = false;
+
+	if (!CreateGroundResources())
+	{
+		ReleaseGroundResources();
+		EffectPlatform::GenerateGroundDepth();
+		return;
+	}
+
+	if (groundDepthTextureForEffekseer_ == nullptr)
+	{
+		groundDepthTextureForEffekseer_ =
+			EffekseerRendererDX11::CreateTexture(GetRenderer()->GetGraphicsDevice(), groundDepthShaderResourceView_, nullptr, nullptr);
+	}
+
+	if (groundDepthTextureForEffekseer_ == nullptr)
+	{
+		ReleaseGroundResources();
+		EffectPlatform::GenerateGroundDepth();
+		return;
+	}
+
+	usesGpuGroundDepth_ = true;
+	GetRenderer()->SetDepth(groundDepthTextureForEffekseer_, CreateGroundDepthReconstructionParameter());
 }

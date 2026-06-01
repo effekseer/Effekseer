@@ -141,6 +141,17 @@ EffekseerRenderer::RendererRef EffectPlatformDX12::CreateRenderer()
 	return renderer;
 }
 
+Effekseer::Backend::TextureRef EffectPlatformDX12::CreateEffekseerTexture(LLGI::Texture* texture)
+{
+	auto dx12Texture = static_cast<LLGI::TextureDX12*>(texture);
+	if (dx12Texture == nullptr)
+	{
+		return nullptr;
+	}
+
+	return EffekseerRendererDX12::CreateTexture(GetRenderer()->GetGraphicsDevice(), dx12Texture->Get());
+}
+
 EffectPlatformDX12::~EffectPlatformDX12()
 {
 }

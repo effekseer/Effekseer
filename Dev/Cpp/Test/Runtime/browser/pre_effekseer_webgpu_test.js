@@ -3,6 +3,10 @@ if (typeof Module === 'undefined') {
 }
 
 Module.__llgiTestResult = Module.llgiTestResult || null;
+Module.llgiWebGPUCaptureEnabled = false;
+Module.llgiWebGPUCaptureRequests = Module.llgiWebGPUCaptureRequests || [];
+Module.llgiWebGPUCaptureResults = Module.llgiWebGPUCaptureResults || {};
+Module.llgiWebGPUCaptureNextId = Module.llgiWebGPUCaptureNextId || 1;
 Object.defineProperty(Module, 'llgiTestResult', {
 	configurable: true,
 	get: function() {
@@ -25,6 +29,7 @@ Module.arguments = Module.arguments || (function() {
 		if (filter) {
 			args[1] = '--filter=' + filter;
 		}
+		Module.llgiWebGPUCaptureEnabled = params.get('webgpu_capture') === '1';
 	}
 	return args;
 })();

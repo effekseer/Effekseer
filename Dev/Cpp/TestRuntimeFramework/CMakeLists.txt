@@ -73,7 +73,10 @@ if(WIN32)
   include_directories(${EFK_THIRDPARTY_INCLUDES} ../EffekseerRendererDX11/)
 endif()
 
-if(BUILD_WEBGPU)
+if(BUILD_DX12
+   OR BUILD_METAL
+   OR BUILD_VULKAN
+   OR BUILD_WEBGPU)
   include_directories(../3rdParty/LLGI/src)
 endif()
 
