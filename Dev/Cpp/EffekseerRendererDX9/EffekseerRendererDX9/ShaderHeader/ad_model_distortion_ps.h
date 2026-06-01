@@ -16,28 +16,28 @@
 //   sampler2D Sampler_sampler_colorTex;
 //   sampler2D Sampler_sampler_depthTex;
 //   sampler2D Sampler_sampler_uvDistortionTex;
-//   float4 _314_fBlendTextureParameter;
-//   float4 _314_fFlipbookParameter;
-//   float4 _314_fUVDistortionParameter;
-//   float4 _314_g_scale;
-//   float4 _314_mUVInversedBack;
-//   float4 _314_reconstructionParam1;
-//   float4 _314_reconstructionParam2;
-//   float4 _314_softParticleParam;
+//   float4 _393_fBlendTextureParameter;
+//   float4 _393_fFlipbookParameter;
+//   float4 _393_fUVDistortionParameter;
+//   float4 _393_g_scale;
+//   float4 _393_mUVInversedBack;
+//   float4 _393_reconstructionParam1;
+//   float4 _393_reconstructionParam2;
+//   float4 _393_softParticleParam;
 //
 //
 // Registers:
 //
 //   Name                                 Reg   Size
 //   ------------------------------------ ----- ----
-//   _314_g_scale                         c0       1
-//   _314_mUVInversedBack                 c1       1
-//   _314_fFlipbookParameter              c2       1
-//   _314_fUVDistortionParameter          c3       1
-//   _314_fBlendTextureParameter          c4       1
-//   _314_softParticleParam               c5       1
-//   _314_reconstructionParam1            c6       1
-//   _314_reconstructionParam2            c7       1
+//   _393_g_scale                         c0       1
+//   _393_mUVInversedBack                 c1       1
+//   _393_fFlipbookParameter              c2       1
+//   _393_fUVDistortionParameter          c3       1
+//   _393_fBlendTextureParameter          c4       1
+//   _393_softParticleParam               c5       1
+//   _393_reconstructionParam1            c6       1
+//   _393_reconstructionParam2            c7       1
 //   Sampler_sampler_colorTex             s0       1
 //   Sampler_sampler_backTex              s1       1
 //   Sampler_sampler_alphaTex             s2       1
@@ -279,7 +279,7 @@ const BYTE g_ps30_main[] =
      84, 101, 120,   0,   4,   0, 
      12,   0,   1,   0,   1,   0, 
       1,   0,   0,   0,   0,   0, 
-      0,   0,  95,  51,  49,  52, 
+      0,   0,  95,  51,  57,  51, 
      95, 102,  66, 108, 101, 110, 
     100,  84, 101, 120, 116, 117, 
     114, 101,  80,  97, 114,  97, 
@@ -287,30 +287,30 @@ const BYTE g_ps30_main[] =
       1,   0,   3,   0,   1,   0, 
       4,   0,   1,   0,   0,   0, 
       0,   0,   0,   0,  95,  51, 
-     49,  52,  95, 102,  70, 108, 
+     57,  51,  95, 102,  70, 108, 
     105, 112,  98, 111, 111, 107, 
      80,  97, 114,  97, 109, 101, 
     116, 101, 114,   0,  95,  51, 
-     49,  52,  95, 102,  85,  86, 
+     57,  51,  95, 102,  85,  86, 
      68, 105, 115, 116, 111, 114, 
     116, 105, 111, 110,  80,  97, 
     114,  97, 109, 101, 116, 101, 
-    114,   0,  95,  51,  49,  52, 
+    114,   0,  95,  51,  57,  51, 
      95, 103,  95, 115,  99,  97, 
-    108, 101,   0,  95,  51,  49, 
-     52,  95, 109,  85,  86,  73, 
+    108, 101,   0,  95,  51,  57, 
+     51,  95, 109,  85,  86,  73, 
     110, 118, 101, 114, 115, 101, 
     100,  66,  97,  99, 107,   0, 
-     95,  51,  49,  52,  95, 114, 
+     95,  51,  57,  51,  95, 114, 
     101,  99, 111, 110, 115, 116, 
     114, 117,  99, 116, 105, 111, 
     110,  80,  97, 114,  97, 109, 
-     49,   0,  95,  51,  49,  52, 
+     49,   0,  95,  51,  57,  51, 
      95, 114, 101,  99, 111, 110, 
     115, 116, 114, 117,  99, 116, 
     105, 111, 110,  80,  97, 114, 
      97, 109,  50,   0,  95,  51, 
-     49,  52,  95, 115, 111, 102, 
+     57,  51,  95, 115, 111, 102, 
     116,  80,  97, 114, 116, 105, 
      99, 108, 101,  80,  97, 114, 
      97, 109,   0, 112, 115,  95, 

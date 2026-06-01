@@ -15,42 +15,42 @@
 //   sampler2D Sampler_sampler_colorTex;
 //   sampler2D Sampler_sampler_depthTex;
 //   sampler2D Sampler_sampler_uvDistortionTex;
-//   float4 _354_fBlendTextureParameter;
-//   float4 _354_fCameraFrontDirection;
-//   float4 _354_fEdgeColor;
-//   float4 _354_fEdgeParameter;
-//   float4 _354_fEmissiveScaling;
-//   float4 _354_fFalloffBeginColor;
-//   float4 _354_fFalloffEndColor;
-//   float4 _354_fFalloffParameter;
-//   float4 _354_fFlipbookParameter;
-//   float4 _354_fUVDistortionParameter;
-//   float4 _354_mUVInversedBack;
-//   float4 _354_miscFlags;
-//   float4 _354_reconstructionParam1;
-//   float4 _354_reconstructionParam2;
-//   float4 _354_softParticleParam;
+//   float4 _433_fBlendTextureParameter;
+//   float4 _433_fCameraFrontDirection;
+//   float4 _433_fEdgeColor;
+//   float4 _433_fEdgeParameter;
+//   float4 _433_fEmissiveScaling;
+//   float4 _433_fFalloffBeginColor;
+//   float4 _433_fFalloffEndColor;
+//   float4 _433_fFalloffParameter;
+//   float4 _433_fFlipbookParameter;
+//   float4 _433_fUVDistortionParameter;
+//   float4 _433_mUVInversedBack;
+//   float4 _433_miscFlags;
+//   float4 _433_reconstructionParam1;
+//   float4 _433_reconstructionParam2;
+//   float4 _433_softParticleParam;
 //
 //
 // Registers:
 //
 //   Name                                 Reg   Size
 //   ------------------------------------ ----- ----
-//   _354_fFlipbookParameter              c3       1
-//   _354_fUVDistortionParameter          c4       1
-//   _354_fBlendTextureParameter          c5       1
-//   _354_fCameraFrontDirection           c6       1
-//   _354_fFalloffParameter               c7       1
-//   _354_fFalloffBeginColor              c8       1
-//   _354_fFalloffEndColor                c9       1
-//   _354_fEmissiveScaling                c10      1
-//   _354_fEdgeColor                      c11      1
-//   _354_fEdgeParameter                  c12      1
-//   _354_softParticleParam               c13      1
-//   _354_reconstructionParam1            c14      1
-//   _354_reconstructionParam2            c15      1
-//   _354_mUVInversedBack                 c16      1
-//   _354_miscFlags                       c17      1
+//   _433_fFlipbookParameter              c3       1
+//   _433_fUVDistortionParameter          c4       1
+//   _433_fBlendTextureParameter          c5       1
+//   _433_fCameraFrontDirection           c6       1
+//   _433_fFalloffParameter               c7       1
+//   _433_fFalloffBeginColor              c8       1
+//   _433_fFalloffEndColor                c9       1
+//   _433_fEmissiveScaling                c10      1
+//   _433_fEdgeColor                      c11      1
+//   _433_fEdgeParameter                  c12      1
+//   _433_softParticleParam               c13      1
+//   _433_reconstructionParam1            c14      1
+//   _433_reconstructionParam2            c15      1
+//   _433_mUVInversedBack                 c16      1
+//   _433_miscFlags                       c17      1
 //   Sampler_sampler_colorTex             s0       1
 //   Sampler_sampler_alphaTex             s1       1
 //   Sampler_sampler_uvDistortionTex      s2       1
@@ -383,64 +383,64 @@ const BYTE g_ps30_main[] =
     111, 110,  84, 101, 120,   0, 
       4,   0,  12,   0,   1,   0, 
       1,   0,   1,   0,   0,   0, 
-      0,   0,   0,   0,  95,  51, 
-     53,  52,  95, 102,  66, 108, 
+      0,   0,   0,   0,  95,  52, 
+     51,  51,  95, 102,  66, 108, 
     101, 110, 100,  84, 101, 120, 
     116, 117, 114, 101,  80,  97, 
     114,  97, 109, 101, 116, 101, 
     114,   0,   1,   0,   3,   0, 
       1,   0,   4,   0,   1,   0, 
       0,   0,   0,   0,   0,   0, 
-     95,  51,  53,  52,  95, 102, 
+     95,  52,  51,  51,  95, 102, 
      67,  97, 109, 101, 114,  97, 
      70, 114, 111, 110, 116,  68, 
     105, 114, 101,  99, 116, 105, 
-    111, 110,   0,  95,  51,  53, 
-     52,  95, 102,  69, 100, 103, 
+    111, 110,   0,  95,  52,  51, 
+     51,  95, 102,  69, 100, 103, 
     101,  67, 111, 108, 111, 114, 
-      0,  95,  51,  53,  52,  95, 
+      0,  95,  52,  51,  51,  95, 
     102,  69, 100, 103, 101,  80, 
      97, 114,  97, 109, 101, 116, 
-    101, 114,   0,  95,  51,  53, 
-     52,  95, 102,  69, 109, 105, 
+    101, 114,   0,  95,  52,  51, 
+     51,  95, 102,  69, 109, 105, 
     115, 115, 105, 118, 101,  83, 
      99,  97, 108, 105, 110, 103, 
-      0,  95,  51,  53,  52,  95, 
+      0,  95,  52,  51,  51,  95, 
     102,  70,  97, 108, 108, 111, 
     102, 102,  66, 101, 103, 105, 
     110,  67, 111, 108, 111, 114, 
-      0,  95,  51,  53,  52,  95, 
+      0,  95,  52,  51,  51,  95, 
     102,  70,  97, 108, 108, 111, 
     102, 102,  69, 110, 100,  67, 
     111, 108, 111, 114,   0,  95, 
-     51,  53,  52,  95, 102,  70, 
+     52,  51,  51,  95, 102,  70, 
      97, 108, 108, 111, 102, 102, 
      80,  97, 114,  97, 109, 101, 
-    116, 101, 114,   0,  95,  51, 
-     53,  52,  95, 102,  70, 108, 
+    116, 101, 114,   0,  95,  52, 
+     51,  51,  95, 102,  70, 108, 
     105, 112,  98, 111, 111, 107, 
      80,  97, 114,  97, 109, 101, 
-    116, 101, 114,   0,  95,  51, 
-     53,  52,  95, 102,  85,  86, 
+    116, 101, 114,   0,  95,  52, 
+     51,  51,  95, 102,  85,  86, 
      68, 105, 115, 116, 111, 114, 
     116, 105, 111, 110,  80,  97, 
     114,  97, 109, 101, 116, 101, 
-    114,   0,  95,  51,  53,  52, 
+    114,   0,  95,  52,  51,  51, 
      95, 109,  85,  86,  73, 110, 
     118, 101, 114, 115, 101, 100, 
      66,  97,  99, 107,   0,  95, 
-     51,  53,  52,  95, 109, 105, 
+     52,  51,  51,  95, 109, 105, 
     115,  99,  70, 108,  97, 103, 
-    115,   0,  95,  51,  53,  52, 
+    115,   0,  95,  52,  51,  51, 
      95, 114, 101,  99, 111, 110, 
     115, 116, 114, 117,  99, 116, 
     105, 111, 110,  80,  97, 114, 
-     97, 109,  49,   0,  95,  51, 
-     53,  52,  95, 114, 101,  99, 
+     97, 109,  49,   0,  95,  52, 
+     51,  51,  95, 114, 101,  99, 
     111, 110, 115, 116, 114, 117, 
      99, 116, 105, 111, 110,  80, 
      97, 114,  97, 109,  50,   0, 
-     95,  51,  53,  52,  95, 115, 
+     95,  52,  51,  51,  95, 115, 
     111, 102, 116,  80,  97, 114, 
     116, 105,  99, 108, 101,  80, 
      97, 114,  97, 109,   0, 112, 

@@ -236,7 +236,6 @@ VS_Output _main(VS_Input Input)
     Output.UV_Others.y = uv1.y;
     float4 worldPos = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
     Output.PosVS = mul(_262_mCameraProj, worldPos);
-    Output.PosP = Output.PosVS;
     Output.WorldN = worldNormal.xyz;
     Output.WorldB = worldBinormal.xyz;
     Output.WorldT = worldTangent.xyz;
@@ -245,6 +244,7 @@ VS_Output _main(VS_Input Input)
     VS_Output param_1 = Output;
     CalculateAndStoreAdvancedParameter(param, param_1);
     Output = param_1;
+    Output.PosP = Output.PosVS;
     return Output;
 }
 

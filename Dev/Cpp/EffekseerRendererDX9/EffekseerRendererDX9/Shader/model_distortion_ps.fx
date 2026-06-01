@@ -10,21 +10,19 @@ struct PS_Input
 
 cbuffer PS_ConstantBuffer : register(b1)
 {
-    float4 _73_g_scale : register(c0);
-    float4 _73_mUVInversedBack : register(c1);
-    float4 _73_fFlipbookParameter : register(c2);
-    float4 _73_fUVDistortionParameter : register(c3);
-    float4 _73_fBlendTextureParameter : register(c4);
-    float4 _73_softParticleParam : register(c5);
-    float4 _73_reconstructionParam1 : register(c6);
-    float4 _73_reconstructionParam2 : register(c7);
+    float4 _155_g_scale : register(c0);
+    float4 _155_mUVInversedBack : register(c1);
+    float4 _155_fFlipbookParameter : register(c2);
+    float4 _155_fUVDistortionParameter : register(c3);
+    float4 _155_fBlendTextureParameter : register(c4);
+    float4 _155_softParticleParam : register(c5);
+    float4 _155_reconstructionParam1 : register(c6);
+    float4 _155_reconstructionParam2 : register(c7);
 };
 
 uniform sampler2D Sampler_sampler_colorTex : register(s0);
 uniform sampler2D Sampler_sampler_backTex : register(s1);
 uniform sampler2D Sampler_sampler_depthTex : register(s2);
-
-#include "SoftParticle_PS.fx"
 
 static float4 gl_FragCoord;
 static float2 Input_UV;
@@ -49,6 +47,22 @@ struct SPIRV_Cross_Output
     float4 _entryPointOutput : COLOR0;
 };
 
+float SoftParticle(float backgroundZ, float meshZ, float4 softparticleParam, float4 reconstruct1, float4 reconstruct2)
+{
+    float distanceFar = softparticleParam.x;
+    float distanceNear = softparticleParam.y;
+    float distanceNearOffset = softparticleParam.z;
+    float2 rescale = reconstruct1.xy;
+    float4 params = reconstruct2;
+    float2 zs = float2((backgroundZ * rescale.x) + rescale.y, meshZ);
+    float2 depth = ((zs * params.w) - params.y.xx) / (params.x.xx - (zs * params.z));
+    float dir = sign(depth.x);
+    depth *= dir;
+    float alphaFar = (depth.x - depth.y) / distanceFar;
+    float alphaNear = (depth.y - distanceNearOffset) / distanceNear;
+    return min(max(min(alphaFar, alphaNear), 0.0f), 1.0f);
+}
+
 float4 _main(PS_Input Input)
 {
     float4 Output = tex2D(Sampler_sampler_colorTex, Input.UV);
@@ -56,23 +70,28 @@ float4 _main(PS_Input Input)
     float2 pos = Input.PosP.xy / Input.PosP.w.xx;
     float2 posR = Input.ProjTangent.xy / Input.ProjTangent.w.xx;
     float2 posU = Input.ProjBinormal.xy / Input.ProjBinormal.w.xx;
-    float xscale = (((Output.x * 2.0f) - 1.0f) * Input.Color.x) * _73_g_scale.x;
-    float yscale = (((Output.y * 2.0f) - 1.0f) * Input.Color.y) * _73_g_scale.x;
+    float xscale = (((Output.x * 2.0f) - 1.0f) * Input.Color.x) * _155_g_scale.x;
+    float yscale = (((Output.y * 2.0f) - 1.0f) * Input.Color.y) * _155_g_scale.x;
     float2 uv = (pos + ((posR - pos) * xscale)) + ((posU - pos) * yscale);
     uv.x = (uv.x + 1.0f) * 0.5f;
     uv.y = 1.0f - ((uv.y + 1.0f) * 0.5f);
-    uv.y = _73_mUVInversedBack.x + (_73_mUVInversedBack.y * uv.y);
+    uv.y = _155_mUVInversedBack.x + (_155_mUVInversedBack.y * uv.y);
     float3 color = float3(tex2D(Sampler_sampler_backTex, uv).xyz);
     Output.x = color.x;
     Output.y = color.y;
     Output.z = color.z;
-    float4 screenPos = Input.PosP / Input.PosP.w;
-    float2 screenUV = (screenPos.xy + 1.0f.xx) / 2.0f;
+    float4 screenPos = Input.PosP / Input.PosP.w.xxxx;
+    float2 screenUV = (screenPos.xy + 1.0f.xx) / 2.0f.xx;
     screenUV.y = 1.0f - screenUV.y;
-    if (_73_softParticleParam.w != 0.0f)
+    if (_155_softParticleParam.w != 0.0f)
     {
         float backgroundZ = tex2D(Sampler_sampler_depthTex, screenUV).x;
-        Output.w *= SoftParticle(backgroundZ, screenPos.z, _73_softParticleParam, _73_reconstructionParam1, _73_reconstructionParam2);
+        float param = backgroundZ;
+        float param_1 = screenPos.z;
+        float4 param_2 = _155_softParticleParam;
+        float4 param_3 = _155_reconstructionParam1;
+        float4 param_4 = _155_reconstructionParam2;
+        Output.w *= SoftParticle(param, param_1, param_2, param_3, param_4);
     }
     if (Output.w == 0.0f)
     {
@@ -90,8 +109,8 @@ void frag_main()
     Input.ProjTangent = Input_ProjTangent;
     Input.PosP = Input_PosP;
     Input.Color = Input_Color;
-    float4 _183 = _main(Input);
-    _entryPointOutput = _183;
+    float4 _314 = _main(Input);
+    _entryPointOutput = _314;
 }
 
 SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)

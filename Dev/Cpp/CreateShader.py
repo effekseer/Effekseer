@@ -1,5 +1,4 @@
 import os
-import shutil
 import subprocess
 import sys
 
@@ -39,10 +38,6 @@ frags = [
         root_path + 'model_unlit_ps.fx',
         root_path + 'model_lit_ps.fx',
         root_path + 'model_distortion_ps.fx',
-]
-
-dx9_includes = [
-        root_path + 'SoftParticle_PS.fx',
 ]
 
 gpu_particles_verts = [
@@ -92,11 +87,6 @@ def transpile_dx9(shaderType, shaderModel, sources):
             fix_dx9_vs(dx9_root_path + os.path.basename(f))
 
 
-def copy_dx9_includes(sources):
-    for f in sources:
-        shutil.copyfile(f, dx9_root_path + os.path.basename(f))
-
-
 def transpile_dx12(shaderType, shaderModel, sources):
     for f in (sources):
         print('Converting {}'.format(f))
@@ -138,7 +128,6 @@ def transpile_gl(shaderType, glver, sources):
 # Standard Shaders
 transpile_dx9("vert", "30", verts)
 transpile_dx9("frag", "30", frags)
-copy_dx9_includes(dx9_includes)
 
 transpile_dx12("vert", "40", verts)
 transpile_dx12("frag", "40", frags)
