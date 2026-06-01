@@ -4,11 +4,6 @@ project(EffekseerRendererWebGPU)
 file(GLOB_RECURSE LOCAL_HEADERS_WebGPU *.h)
 file(GLOB_RECURSE LOCAL_SOURCES_WebGPU *.cpp)
 
-if(BUILD_WEBGPU_BROWSER_TEST)
-  list(FILTER LOCAL_SOURCES_WebGPU EXCLUDE REGEX
-       "EffekseerMaterialCompilerWebGPU\\.cpp$")
-endif()
-
 list(APPEND LOCAL_HEADERS_WebGPU
      ../EffekseerMaterialCompiler/WGSLGenerator/ShaderGenerator.h)
 list(APPEND LOCAL_SOURCES_WebGPU

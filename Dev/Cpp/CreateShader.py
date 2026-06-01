@@ -1,4 +1,5 @@
 import os
+import shutil
 import subprocess
 import sys
 
@@ -40,6 +41,10 @@ frags = [
         root_path + 'model_distortion_ps.fx',
 ]
 
+dx9_includes = [
+        root_path + 'SoftParticle_PS.fx',
+]
+
 gpu_particles_verts = [
         root_path + 'gpu_particles_render_vs.fx',
 ]
@@ -71,7 +76,7 @@ except:
     print('Please put ShaderTranspiler from https://github.com/altseed/LLGI/tree/master/tools')
     sys.exit(1)
 
-dx9_common_flags = ['-I', include_path, '-D', '__INST__', '10', '-D', 'ENABLE_DIVISOR', '1', '-D', 'DISABLED_SOFT_PARTICLE', '1']
+dx9_common_flags = ['-I', include_path, '-D', '__INST__', '10', '-D', 'ENABLE_DIVISOR', '1']
 llgi_common_flags = ['-I', include_path, '-D', '__INST__', '40']
 
 gl_common_flags = ['-I', include_path, '-D', '__INST__', '10', '-D', '__OPENGL__', '1', '--plain']
@@ -85,6 +90,11 @@ def transpile_dx9(shaderType, shaderModel, sources):
                         f, '--output', dx9_root_path + os.path.basename(f)] + dx9_common_flags)
         if shaderType == "vert":
             fix_dx9_vs(dx9_root_path + os.path.basename(f))
+
+
+def copy_dx9_includes(sources):
+    for f in sources:
+        shutil.copyfile(f, dx9_root_path + os.path.basename(f))
 
 
 def transpile_dx12(shaderType, shaderModel, sources):
@@ -128,6 +138,7 @@ def transpile_gl(shaderType, glver, sources):
 # Standard Shaders
 transpile_dx9("vert", "30", verts)
 transpile_dx9("frag", "30", frags)
+copy_dx9_includes(dx9_includes)
 
 transpile_dx12("vert", "40", verts)
 transpile_dx12("frag", "40", frags)

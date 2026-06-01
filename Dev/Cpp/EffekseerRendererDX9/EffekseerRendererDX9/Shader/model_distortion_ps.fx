@@ -22,6 +22,9 @@ cbuffer PS_ConstantBuffer : register(b1)
 
 uniform sampler2D Sampler_sampler_colorTex : register(s0);
 uniform sampler2D Sampler_sampler_backTex : register(s1);
+uniform sampler2D Sampler_sampler_depthTex : register(s2);
+
+#include "SoftParticle_PS.fx"
 
 static float4 gl_FragCoord;
 static float2 Input_UV;
@@ -63,6 +66,14 @@ float4 _main(PS_Input Input)
     Output.x = color.x;
     Output.y = color.y;
     Output.z = color.z;
+    float4 screenPos = Input.PosP / Input.PosP.w;
+    float2 screenUV = (screenPos.xy + 1.0f.xx) / 2.0f;
+    screenUV.y = 1.0f - screenUV.y;
+    if (_73_softParticleParam.w != 0.0f)
+    {
+        float backgroundZ = tex2D(Sampler_sampler_depthTex, screenUV).x;
+        Output.w *= SoftParticle(backgroundZ, screenPos.z, _73_softParticleParam, _73_reconstructionParam1, _73_reconstructionParam2);
+    }
     if (Output.w == 0.0f)
     {
         discard;

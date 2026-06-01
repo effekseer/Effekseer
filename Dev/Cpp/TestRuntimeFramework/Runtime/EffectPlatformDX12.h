@@ -10,6 +10,7 @@ class EffectPlatformDX12 final : public EffectPlatformLLGI
 protected:
 	void CreateShaders() override;
 	EffekseerRenderer::RendererRef CreateRenderer() override;
+	Effekseer::Backend::TextureRef CreateEffekseerTexture(LLGI::Texture* texture) override;
 
 public:
 	EffectPlatformDX12()

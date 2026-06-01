@@ -42,6 +42,9 @@ uniform sampler2D Sampler_sampler_blendUVDistortionTex : register(s6);
 uniform sampler2D Sampler_sampler_blendTex : register(s4);
 uniform sampler2D Sampler_sampler_blendAlphaTex : register(s5);
 uniform sampler2D Sampler_sampler_backTex : register(s1);
+uniform sampler2D Sampler_sampler_depthTex : register(s7);
+
+#include "SoftParticle_PS.fx"
 
 static float4 gl_FragCoord;
 static float4 Input_UV_Others;
@@ -239,6 +242,14 @@ float4 _main(PS_Input Input)
     Output.x = color.x;
     Output.y = color.y;
     Output.z = color.z;
+    float4 screenPos = Input.PosP / Input.PosP.w;
+    float2 screenUV = (screenPos.xy + 1.0f.xx) / 2.0f;
+    screenUV.y = 1.0f - screenUV.y;
+    if (_314_softParticleParam.w != 0.0f)
+    {
+        float backgroundZ = tex2D(Sampler_sampler_depthTex, screenUV).x;
+        Output.w *= SoftParticle(backgroundZ, screenPos.z, _314_softParticleParam, _314_reconstructionParam1, _314_reconstructionParam2);
+    }
     return Output;
 }
 

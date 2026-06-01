@@ -199,6 +199,21 @@ EffekseerRenderer::RendererRef EffectPlatformVulkan::CreateRenderer()
 	return renderer;
 }
 
+Effekseer::Backend::TextureRef EffectPlatformVulkan::CreateEffekseerTexture(LLGI::Texture* texture)
+{
+	auto vulkanTexture = static_cast<LLGI::TextureVulkan*>(texture);
+	if (vulkanTexture == nullptr)
+	{
+		return nullptr;
+	}
+
+	EffekseerRendererVulkan::VulkanImageInfo info;
+	info.image = static_cast<VkImage>(vulkanTexture->GetImage());
+	info.format = static_cast<VkFormat>(vulkanTexture->GetVulkanFormat());
+	info.aspect = VK_IMAGE_ASPECT_COLOR_BIT;
+	return EffekseerRendererVulkan::CreateTexture(GetRenderer()->GetGraphicsDevice(), info);
+}
+
 EffectPlatformVulkan::~EffectPlatformVulkan()
 {
 }

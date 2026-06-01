@@ -55,7 +55,7 @@ struct BasicRenderingCase
 	BasicRenderingCamera Camera = BasicRenderingCamera::Default;
 	EffekseerRenderer::UVStyle BackgroundTextureUVStyle = EffekseerRenderer::UVStyle::Normal;
 	bool OverridesBackgroundTextureUVStyle = false;
-	bool GenerateDepth = false;
+	bool UseGroundDepth = false;
 };
 
 const std::vector<BasicRenderingCase>& GetBasicRenderingCases()
@@ -179,11 +179,11 @@ void SetBasicRenderingCamera(const EffectPlatformInitializingParameter& param, E
 	case BasicRenderingCamera::SoftParticle:
 		if (param.CoordinateSyatem == Effekseer::CoordinateSystem::RH)
 		{
-			mat.LookAtRH({0, 0, 10}, {0, 0, 0}, {0, 1, 0});
+			mat.LookAtRH({0, 3, 10}, {0, 0, 0}, {0, 1, 0});
 		}
 		else
 		{
-			mat.LookAtLH({0, 0, -10}, {0, 0, 0}, {0, 1, 0});
+			mat.LookAtLH({0, 3, -10}, {0, 0, 0}, {0, 1, 0});
 		}
 		break;
 	default:
@@ -218,9 +218,9 @@ void RunBasicRenderingCase(
 	{
 		renderer->SetBackgroundTextureUVStyle(testCase.BackgroundTextureUVStyle);
 	}
-	if (testCase.GenerateDepth)
+	if (testCase.UseGroundDepth)
 	{
-		platform->GenerateDepth();
+		platform->GenerateGroundDepth();
 	}
 
 	srand(0);
@@ -244,6 +244,10 @@ void RunBasicRenderingCase(
 	if (testCase.OverridesBackgroundTextureUVStyle)
 	{
 		renderer->SetBackgroundTextureUVStyle(backgroundTextureUVStyle);
+	}
+	if (testCase.UseGroundDepth)
+	{
+		platform->ResetBackgroundPattern();
 	}
 	renderer->SetBackground(background);
 	renderer->SetDepth(depthTexture, depthReconstructionParam);

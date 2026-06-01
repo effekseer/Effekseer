@@ -91,13 +91,9 @@ struct EmitPoints {
   m_1 : array<u32>,
 }
 
-@group(2) @binding(1) var<storage, read> EmitPoints_1 : EmitPoints;
+@group(2) @binding(1) var<storage, read_write> EmitPoints_1 : EmitPoints;
 
-struct Particles {
-  m_2 : array<u32>,
-}
-
-@group(2) @binding(0) var<storage, read_write> Particles_1 : Particles;
+@group(2) @binding(0) var<storage, read_write> Particles : EmitPoints;
 
 var<private> gl_GlobalInvocationID : vec3<u32>;
 
@@ -575,63 +571,63 @@ fn v_33(dtid : ptr<function, vec3<u32>>) {
   particle.Velocity = v_29(&(param_47));
   byteAddrTemp_1 = bitcast<i32>((((particleID * 80u) + 0u) >> bitcast<u32>(2i)));
   let v_64 = byteAddrTemp_1;
-  Particles_1.m_2[v_64] = particle.FlagBits;
+  Particles.m_1[v_64] = particle.FlagBits;
   byteAddrTemp_2 = bitcast<i32>((((particleID * 80u) + 4u) >> bitcast<u32>(2i)));
   let v_65 = byteAddrTemp_2;
-  Particles_1.m_2[v_65] = particle.Seed;
+  Particles.m_1[v_65] = particle.Seed;
   byteAddrTemp_3 = bitcast<i32>((((particleID * 80u) + 8u) >> bitcast<u32>(2i)));
   let v_66 = byteAddrTemp_3;
-  Particles_1.m_2[v_66] = bitcast<u32>(particle.LifeAge);
+  Particles.m_1[v_66] = bitcast<u32>(particle.LifeAge);
   byteAddrTemp_4 = bitcast<i32>((((particleID * 80u) + 12u) >> bitcast<u32>(2i)));
   let v_67 = byteAddrTemp_4;
-  Particles_1.m_2[v_67] = particle.InheritColor;
+  Particles.m_1[v_67] = particle.InheritColor;
   byteAddrTemp_5 = bitcast<i32>((((particleID * 80u) + 16u) >> bitcast<u32>(2i)));
   let v_68 = byteAddrTemp_5;
-  Particles_1.m_2[v_68] = particle.Color;
+  Particles.m_1[v_68] = particle.Color;
   byteAddrTemp_6 = bitcast<i32>((((particleID * 80u) + 20u) >> bitcast<u32>(2i)));
   let v_69 = byteAddrTemp_6;
-  Particles_1.m_2[v_69] = particle.Direction;
+  Particles.m_1[v_69] = particle.Direction;
   byteAddrTemp_7 = bitcast<i32>((((particleID * 80u) + 24u) >> bitcast<u32>(2i)));
   let v_70 = byteAddrTemp_7;
-  Particles_1.m_2[v_70] = particle.Velocity.x;
+  Particles.m_1[v_70] = particle.Velocity.x;
   let v_71 = (byteAddrTemp_7 + 1i);
-  Particles_1.m_2[v_71] = particle.Velocity.y;
+  Particles.m_1[v_71] = particle.Velocity.y;
   byteAddrTemp_8 = bitcast<i32>((((particleID * 80u) + 32u) >> bitcast<u32>(2i)));
   let v_72 = byteAddrTemp_8;
-  Particles_1.m_2[v_72] = bitcast<u32>(particle.Transform[0i].x);
+  Particles.m_1[v_72] = bitcast<u32>(particle.Transform[0i].x);
   byteAddrTemp_9 = bitcast<i32>((((particleID * 80u) + 36u) >> bitcast<u32>(2i)));
   let v_73 = byteAddrTemp_9;
-  Particles_1.m_2[v_73] = bitcast<u32>(particle.Transform[1i].x);
+  Particles.m_1[v_73] = bitcast<u32>(particle.Transform[1i].x);
   byteAddrTemp_10 = bitcast<i32>((((particleID * 80u) + 40u) >> bitcast<u32>(2i)));
   let v_74 = byteAddrTemp_10;
-  Particles_1.m_2[v_74] = bitcast<u32>(particle.Transform[2i].x);
+  Particles.m_1[v_74] = bitcast<u32>(particle.Transform[2i].x);
   byteAddrTemp_11 = bitcast<i32>((((particleID * 80u) + 44u) >> bitcast<u32>(2i)));
   let v_75 = byteAddrTemp_11;
-  Particles_1.m_2[v_75] = bitcast<u32>(particle.Transform[3i].x);
+  Particles.m_1[v_75] = bitcast<u32>(particle.Transform[3i].x);
   byteAddrTemp_12 = bitcast<i32>((((particleID * 80u) + 48u) >> bitcast<u32>(2i)));
   let v_76 = byteAddrTemp_12;
-  Particles_1.m_2[v_76] = bitcast<u32>(particle.Transform[0i].y);
+  Particles.m_1[v_76] = bitcast<u32>(particle.Transform[0i].y);
   byteAddrTemp_13 = bitcast<i32>((((particleID * 80u) + 52u) >> bitcast<u32>(2i)));
   let v_77 = byteAddrTemp_13;
-  Particles_1.m_2[v_77] = bitcast<u32>(particle.Transform[1i].y);
+  Particles.m_1[v_77] = bitcast<u32>(particle.Transform[1i].y);
   byteAddrTemp_14 = bitcast<i32>((((particleID * 80u) + 56u) >> bitcast<u32>(2i)));
   let v_78 = byteAddrTemp_14;
-  Particles_1.m_2[v_78] = bitcast<u32>(particle.Transform[2i].y);
+  Particles.m_1[v_78] = bitcast<u32>(particle.Transform[2i].y);
   byteAddrTemp_15 = bitcast<i32>((((particleID * 80u) + 60u) >> bitcast<u32>(2i)));
   let v_79 = byteAddrTemp_15;
-  Particles_1.m_2[v_79] = bitcast<u32>(particle.Transform[3i].y);
+  Particles.m_1[v_79] = bitcast<u32>(particle.Transform[3i].y);
   byteAddrTemp_16 = bitcast<i32>((((particleID * 80u) + 64u) >> bitcast<u32>(2i)));
   let v_80 = byteAddrTemp_16;
-  Particles_1.m_2[v_80] = bitcast<u32>(particle.Transform[0i].z);
+  Particles.m_1[v_80] = bitcast<u32>(particle.Transform[0i].z);
   byteAddrTemp_17 = bitcast<i32>((((particleID * 80u) + 68u) >> bitcast<u32>(2i)));
   let v_81 = byteAddrTemp_17;
-  Particles_1.m_2[v_81] = bitcast<u32>(particle.Transform[1i].z);
+  Particles.m_1[v_81] = bitcast<u32>(particle.Transform[1i].z);
   byteAddrTemp_18 = bitcast<i32>((((particleID * 80u) + 72u) >> bitcast<u32>(2i)));
   let v_82 = byteAddrTemp_18;
-  Particles_1.m_2[v_82] = bitcast<u32>(particle.Transform[2i].z);
+  Particles.m_1[v_82] = bitcast<u32>(particle.Transform[2i].z);
   byteAddrTemp_19 = bitcast<i32>((((particleID * 80u) + 76u) >> bitcast<u32>(2i)));
   let v_83 = byteAddrTemp_19;
-  Particles_1.m_2[v_83] = bitcast<u32>(particle.Transform[3i].z);
+  Particles.m_1[v_83] = bitcast<u32>(particle.Transform[3i].z);
 }
 
 fn v_84() {

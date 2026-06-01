@@ -116,6 +116,8 @@ void WebGPUScreenshotSmokeTest()
 				"Material_UV1",
 				"Material_CustomData1",
 				"Material_CustomDataMax",
+				"SoftParticle01_NotFlipped",
+				"SoftParticle01_Flipped",
 			},
 			"Smoke_");
 

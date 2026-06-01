@@ -7,6 +7,7 @@ struct PS_Input
     float4 Alpha_Dist_UV;
     float4 Blend_Alpha_Dist_UV;
     float4 Blend_FBNextIndex_UV;
+    float4 PosP;
 };
 
 struct AdvancedParameter
@@ -49,6 +50,9 @@ uniform sampler2D Sampler_sampler_alphaTex : register(s1);
 uniform sampler2D Sampler_sampler_blendUVDistortionTex : register(s5);
 uniform sampler2D Sampler_sampler_blendTex : register(s3);
 uniform sampler2D Sampler_sampler_blendAlphaTex : register(s4);
+uniform sampler2D Sampler_sampler_depthTex : register(s6);
+
+#include "SoftParticle_PS.fx"
 
 static float4 gl_FragCoord;
 static float4 Input_Color;
@@ -57,6 +61,7 @@ static float3 Input_WorldN;
 static float4 Input_Alpha_Dist_UV;
 static float4 Input_Blend_Alpha_Dist_UV;
 static float4 Input_Blend_FBNextIndex_UV;
+static float4 Input_PosP;
 static float4 _entryPointOutput;
 
 struct SPIRV_Cross_Input
@@ -67,6 +72,7 @@ struct SPIRV_Cross_Input
     float4 Input_Alpha_Dist_UV : TEXCOORD3;
     float4 Input_Blend_Alpha_Dist_UV : TEXCOORD4;
     float4 Input_Blend_FBNextIndex_UV : TEXCOORD5;
+    float4 Input_PosP : TEXCOORD6;
     float4 gl_FragCoord : VPOS;
 };
 
@@ -296,6 +302,15 @@ float4 _main(PS_Input Input)
     Output.x = _600.x;
     Output.y = _600.y;
     Output.z = _600.z;
+    float4 screenPos = Input.PosP / Input.PosP.w;
+    float2 screenUV = (screenPos.xy + 1.0f.xx) / 2.0f;
+    screenUV.y = 1.0f - screenUV.y;
+    screenUV.y = _354_mUVInversedBack.x + (_354_mUVInversedBack.y * screenUV.y);
+    if (_354_softParticleParam.w != 0.0f)
+    {
+        float backgroundZ = tex2D(Sampler_sampler_depthTex, screenUV).x;
+        Output.w *= SoftParticle(backgroundZ, screenPos.z, _354_softParticleParam, _354_reconstructionParam1, _354_reconstructionParam2);
+    }
     if (Output.w <= max(0.0f, advancedParam.AlphaThreshold))
     {
         discard;
@@ -321,6 +336,7 @@ void frag_main()
     Input.Alpha_Dist_UV = Input_Alpha_Dist_UV;
     Input.Blend_Alpha_Dist_UV = Input_Blend_Alpha_Dist_UV;
     Input.Blend_FBNextIndex_UV = Input_Blend_FBNextIndex_UV;
+    Input.PosP = Input_PosP;
     float4 _677 = _main(Input);
     _entryPointOutput = _677;
 }
@@ -334,6 +350,7 @@ SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
     Input_Alpha_Dist_UV = stage_input.Input_Alpha_Dist_UV;
     Input_Blend_Alpha_Dist_UV = stage_input.Input_Blend_Alpha_Dist_UV;
     Input_Blend_FBNextIndex_UV = stage_input.Input_Blend_FBNextIndex_UV;
+    Input_PosP = stage_input.Input_PosP;
     frag_main();
     SPIRV_Cross_Output stage_output;
     stage_output._entryPointOutput = float4(_entryPointOutput);
