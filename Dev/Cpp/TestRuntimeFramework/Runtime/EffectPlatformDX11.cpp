@@ -1,6 +1,7 @@
 #include "EffectPlatformDX11.h"
 
 #include "../../3rdParty/stb/stb_image_write.h"
+#include <EffekseerToolRuntime/GroundRendering.h>
 #include <d3dcompiler.h>
 #include <cstring>
 
@@ -8,60 +9,6 @@
 
 namespace
 {
-
-const auto ground_vs_dx11 = R"(
-struct VS_INPUT
-{
-	float4 Position : POSITION0;
-	float2 WorldXZ : TEXCOORD0;
-};
-
-struct VS_OUTPUT
-{
-	float4 Position : SV_POSITION;
-	float2 WorldXZ : TEXCOORD0;
-};
-
-VS_OUTPUT main(VS_INPUT input)
-{
-	VS_OUTPUT output;
-	output.Position = input.Position;
-	output.WorldXZ = input.WorldXZ;
-	return output;
-}
-)";
-
-const auto ground_ps_dx11 = R"(
-struct PS_INPUT
-{
-	float4 Position : SV_POSITION;
-	float2 WorldXZ : TEXCOORD0;
-};
-
-float4 main(PS_INPUT input) : SV_TARGET
-{
-	float checker = frac((floor(input.WorldXZ.x) + floor(input.WorldXZ.y)) * 0.5);
-	float3 darkColor = float3(0.24, 0.32, 0.27);
-	float3 brightColor = float3(0.39, 0.50, 0.42);
-	float3 color = lerp(darkColor, brightColor, checker >= 0.5 ? 1.0 : 0.0);
-	float distanceFade = saturate(length(input.WorldXZ) * 0.025);
-	color *= 1.0 - distanceFade * 0.35;
-	return float4(color, 1.0);
-}
-)";
-
-const auto ground_depth_ps_dx11 = R"(
-struct PS_INPUT
-{
-	float4 Position : SV_POSITION;
-	float2 WorldXZ : TEXCOORD0;
-};
-
-float4 main(PS_INPUT input) : SV_TARGET
-{
-	return float4(input.Position.z, 1.0, 1.0, 1.0);
-}
-)";
 
 bool CompileGroundShader(const char* code, const char* target, ID3DBlob** shader)
 {
@@ -240,9 +187,10 @@ bool EffectPlatformDX11::CreateGroundResources()
 	ID3DBlob* vs = nullptr;
 	ID3DBlob* ps = nullptr;
 	ID3DBlob* depthPs = nullptr;
-	if (!CompileGroundShader(ground_vs_dx11, "vs_4_0", &vs) ||
-		!CompileGroundShader(ground_ps_dx11, "ps_4_0", &ps) ||
-		!CompileGroundShader(ground_depth_ps_dx11, "ps_4_0", &depthPs))
+	const auto& shaderCode = Effekseer::ToolRuntime::GetGroundShaderCode(Effekseer::ToolRuntime::GroundShaderBackend::DirectX11);
+	if (!CompileGroundShader(shaderCode.Vertex, shaderCode.VertexProfile, &vs) ||
+		!CompileGroundShader(shaderCode.Pixel, shaderCode.PixelProfile, &ps) ||
+		!CompileGroundShader(shaderCode.DepthPixel, shaderCode.PixelProfile, &depthPs))
 	{
 		ES_SAFE_RELEASE(vs);
 		ES_SAFE_RELEASE(ps);
@@ -416,7 +364,7 @@ void EffectPlatformDX11::UpdateGroundVertexBuffer(ID3D11DeviceContext* context)
 	context->UpdateSubresource(groundVertexBuffer_, 0, nullptr, vertices.data(), 0, 0);
 }
 
-void EffectPlatformDX11::DrawGround(ID3D11DeviceContext* context, bool writesDepthTexture)
+void EffectPlatformDX11::DrawGround(ID3D11DeviceContext* context, Effekseer::ToolRuntime::GroundRenderPass pass)
 {
 	if (groundVertexBuffer_ == nullptr || groundIndexBuffer_ == nullptr)
 	{
@@ -430,7 +378,7 @@ void EffectPlatformDX11::DrawGround(ID3D11DeviceContext* context, bool writesDep
 	context->IASetVertexBuffers(0, 1, &groundVertexBuffer_, &stride, &offset);
 	context->IASetIndexBuffer(groundIndexBuffer_, DXGI_FORMAT_R16_UINT, 0);
 	context->VSSetShader(groundVertexShader_, nullptr, 0);
-	context->PSSetShader(writesDepthTexture ? groundDepthPixelShader_ : groundPixelShader_, nullptr, 0);
+	context->PSSetShader(pass == Effekseer::ToolRuntime::GroundRenderPass::Depth ? groundDepthPixelShader_ : groundPixelShader_, nullptr, 0);
 	context->RSSetState(groundRasterizerState_);
 	context->OMSetDepthStencilState(groundDepthStencilState_, 0);
 	const float blendFactor[4] = {};
@@ -627,14 +575,14 @@ void EffectPlatformDX11::BeginRendering()
 		float DepthClearColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
 		context->ClearRenderTargetView(groundDepthRenderTargetView_, DepthClearColor);
 		context->ClearDepthStencilView(groundDepthStencilView_, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-		DrawGround(context, true);
+		DrawGround(context, Effekseer::ToolRuntime::GroundRenderPass::Depth);
 
 		context->OMSetRenderTargets(1, &renderTargetView_, depthStencilView_);
 		context->RSSetViewports(1, &vp);
 		float ClearColor[] = {22.0f / 255.0f, 34.0f / 255.0f, 48.0f / 255.0f, 1.0f};
 		context->ClearRenderTargetView(renderTargetView_, ClearColor);
 		context->ClearDepthStencilView(depthStencilView_, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-		DrawGround(context, false);
+		DrawGround(context, Effekseer::ToolRuntime::GroundRenderPass::Color);
 	}
 	else
 	{

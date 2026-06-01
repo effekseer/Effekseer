@@ -115,7 +115,7 @@ if(BUILD_WEBGPU)
   list(APPEND common_lib EffekseerRendererWebGPU)
 endif()
 
-list(APPEND common_lib Effekseer)
+list(APPEND common_lib Effekseer EffekseerToolRuntime)
 if(NOT BUILD_WEBGPU_BROWSER_TEST)
   list(APPEND common_lib OpenGLHelper)
 endif()

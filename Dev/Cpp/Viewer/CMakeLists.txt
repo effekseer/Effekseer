@@ -150,6 +150,7 @@ if(CLANG_FORMAT_ENABLED)
 endif()
 
 target_link_libraries(Viewer PRIVATE Effekseer EffekseerSoundOSMixer IPC nfd)
+target_link_libraries(Viewer PRIVATE EffekseerToolRuntime)
 
 if(WIN32)
 

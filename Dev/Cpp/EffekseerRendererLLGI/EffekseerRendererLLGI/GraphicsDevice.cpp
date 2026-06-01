@@ -692,9 +692,10 @@ LLGI::PipelineState* PipelineState::GetOrCreatePipelineState(LLGI::RenderPassPip
 	return nullptr;
 }
 
-GraphicsDevice::GraphicsDevice(LLGI::Graphics* graphics, bool usesImmediateBufferUpload)
+GraphicsDevice::GraphicsDevice(LLGI::Graphics* graphics, bool usesImmediateBufferUpload, LLGI::DeviceType deviceType)
 	: graphics_(graphics)
 	, usesImmediateBufferUpload_(usesImmediateBufferUpload)
+	, deviceType_(deviceType)
 {
 	ES_SAFE_ADDREF(graphics_);
 }
@@ -723,6 +724,11 @@ void GraphicsDevice::ResetDevice()
 LLGI::Graphics* GraphicsDevice::GetGraphics()
 {
 	return graphics_;
+}
+
+LLGI::DeviceType GraphicsDevice::GetDeviceType() const
+{
+	return deviceType_;
 }
 
 int32_t GraphicsDevice::GetStorageBufferBindingStride(const StorageBuffer* buffer) const
@@ -1135,6 +1141,23 @@ bool GraphicsDevice::UpdateStorageBuffer(Effekseer::Backend::StorageBufferRef& b
 	auto b = buffer.DownCast<Backend::StorageBuffer>();
 
 	return b->UpdateData(data, size, offset);
+}
+
+std::string GraphicsDevice::GetDeviceName() const
+{
+	switch (deviceType_)
+	{
+	case LLGI::DeviceType::DirectX12:
+		return "DirectX12";
+	case LLGI::DeviceType::Metal:
+		return "Metal";
+	case LLGI::DeviceType::Vulkan:
+		return "Vulkan";
+	case LLGI::DeviceType::WebGPU:
+		return "WebGPU";
+	default:
+		return "LLGI";
+	}
 }
 
 } // namespace Backend

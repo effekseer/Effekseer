@@ -1,283 +1,19 @@
 #include "EffectPlatformLLGI.h"
 #include "../3rdParty/LLGI/src/LLGI.Buffer.h"
 #include "../3rdParty/LLGI/src/LLGI.CommandList.h"
-#include "../3rdParty/LLGI/src/LLGI.Compiler.h"
 #include "../3rdParty/LLGI/src/LLGI.Graphics.h"
 #include "../3rdParty/LLGI/src/LLGI.PipelineState.h"
 #include "../3rdParty/LLGI/src/LLGI.Platform.h"
 #include "../3rdParty/LLGI/src/LLGI.Shader.h"
 #include "../3rdParty/LLGI/src/LLGI.Texture.h"
 
-#ifdef __EFFEKSEER_BUILD_DX12__
-#include "../../3rdParty/LLGI/src/DX12/LLGI.CompilerDX12.h"
-#endif
-#ifdef __EFFEKSEER_BUILD_VULKAN__
-#include "../../3rdParty/LLGI/src/Vulkan/LLGI.CompilerVulkan.h"
-#endif
-#ifdef __EFFEKSEER_BUILD_WEBGPU__
-#include "../../3rdParty/LLGI/src/WebGPU/LLGI.CompilerWebGPU.h"
-#endif
-#ifdef __APPLE__
-#include "../../3rdParty/LLGI/src/Metal/LLGI.CompilerMetal.h"
-#endif
-
 #include "../../EffekseerRendererLLGI/EffekseerRendererLLGI/GraphicsDevice.h"
 #include "../../3rdParty/stb/stb_image_write.h"
+#include <EffekseerToolRuntime/GroundRendering.h>
+#include <EffekseerToolRuntime/LLGIShaderCompiler.h>
 
 #include <cassert>
 #include <cstdio>
-
-namespace
-{
-
-const auto ground_vs_dx12 = R"(
-struct VS_INPUT
-{
-	float4 Position : POSITION0;
-	float2 WorldXZ : UV0;
-};
-
-struct VS_OUTPUT
-{
-	float4 Position : SV_POSITION;
-	float2 WorldXZ : UV0;
-};
-
-VS_OUTPUT main(VS_INPUT input)
-{
-	VS_OUTPUT output;
-	output.Position = input.Position;
-	output.WorldXZ = input.WorldXZ;
-	return output;
-}
-)";
-
-const auto ground_ps_dx12 = R"(
-struct PS_INPUT
-{
-	float4 Position : SV_POSITION;
-	float2 WorldXZ : UV0;
-};
-
-float4 main(PS_INPUT input) : SV_TARGET
-{
-	float checker = frac((floor(input.WorldXZ.x) + floor(input.WorldXZ.y)) * 0.5);
-	float3 darkColor = float3(0.24, 0.32, 0.27);
-	float3 brightColor = float3(0.39, 0.50, 0.42);
-	float3 color = lerp(darkColor, brightColor, step(0.5, checker));
-	float distanceFade = saturate(length(input.WorldXZ) * 0.025);
-	color *= 1.0 - distanceFade * 0.35;
-	return float4(color, 1.0);
-}
-)";
-
-const auto ground_depth_ps_dx12 = R"(
-struct PS_INPUT
-{
-	float4 Position : SV_POSITION;
-	float2 WorldXZ : UV0;
-};
-
-float4 main(PS_INPUT input) : SV_TARGET
-{
-	return float4(input.Position.z, 1.0, 1.0, 1.0);
-}
-)";
-
-const auto ground_vs_vulkan = R"(
-#version 420
-
-layout(location = 0) in vec4 input_Position;
-layout(location = 1) in vec2 input_WorldXZ;
-layout(location = 0) out vec2 output_WorldXZ;
-
-void main()
-{
-	vec4 position = input_Position;
-	position.y = -position.y;
-	gl_Position = position;
-	output_WorldXZ = input_WorldXZ;
-}
-)";
-
-const auto ground_ps_vulkan = R"(
-#version 420
-
-layout(location = 0) in vec2 input_WorldXZ;
-layout(location = 0) out vec4 output_Color;
-
-void main()
-{
-	float checker = fract((floor(input_WorldXZ.x) + floor(input_WorldXZ.y)) * 0.5);
-	vec3 darkColor = vec3(0.24, 0.32, 0.27);
-	vec3 brightColor = vec3(0.39, 0.50, 0.42);
-	vec3 color = mix(darkColor, brightColor, step(0.5, checker));
-	float distanceFade = clamp(length(input_WorldXZ) * 0.025, 0.0, 1.0);
-	color *= 1.0 - distanceFade * 0.35;
-	output_Color = vec4(color, 1.0);
-}
-)";
-
-const auto ground_depth_ps_vulkan = R"(
-#version 420
-
-layout(location = 0) in vec2 input_WorldXZ;
-layout(location = 0) out vec4 output_Color;
-
-void main()
-{
-	output_Color = vec4(gl_FragCoord.z, 1.0, 1.0, 1.0);
-}
-)";
-
-const auto ground_vs_metal = R"(
-#include <metal_stdlib>
-#include <simd/simd.h>
-
-using namespace metal;
-
-struct main0_in
-{
-	float4 Position [[attribute(0)]];
-	float2 WorldXZ [[attribute(1)]];
-};
-
-struct main0_out
-{
-	float2 WorldXZ [[user(locn0)]];
-	float4 Position [[position]];
-};
-
-vertex main0_out main0(main0_in input [[stage_in]])
-{
-	main0_out output = {};
-	output.Position = input.Position;
-	output.WorldXZ = input.WorldXZ;
-	return output;
-}
-)";
-
-const auto ground_ps_metal = R"(
-#include <metal_stdlib>
-#include <simd/simd.h>
-
-using namespace metal;
-
-struct main0_in
-{
-	float2 WorldXZ [[user(locn0)]];
-};
-
-fragment float4 main0(main0_in input [[stage_in]])
-{
-	float checker = fract((floor(input.WorldXZ.x) + floor(input.WorldXZ.y)) * 0.5);
-	float3 darkColor = float3(0.24, 0.32, 0.27);
-	float3 brightColor = float3(0.39, 0.50, 0.42);
-	float3 color = mix(darkColor, brightColor, step(0.5, checker));
-	float distanceFade = clamp(length(input.WorldXZ) * 0.025, 0.0, 1.0);
-	color *= 1.0 - distanceFade * 0.35;
-	return float4(color, 1.0);
-}
-)";
-
-const auto ground_depth_ps_metal = R"(
-#include <metal_stdlib>
-#include <simd/simd.h>
-
-using namespace metal;
-
-struct main0_in
-{
-	float2 WorldXZ [[user(locn0)]];
-};
-
-fragment float4 main0(main0_in input [[stage_in]], float4 position [[position]])
-{
-	return float4(position.z, 1.0, 1.0, 1.0);
-}
-)";
-
-const auto ground_vs_webgpu = R"(
-struct VSOutput {
-	@builtin(position) position: vec4<f32>,
-	@location(0) worldXZ: vec2<f32>,
-};
-
-@vertex
-fn main(
-	@location(0) position: vec4<f32>,
-	@location(1) worldXZ: vec2<f32>
-) -> VSOutput {
-	var output: VSOutput;
-	output.position = position;
-	output.worldXZ = worldXZ;
-	return output;
-}
-)";
-
-const auto ground_ps_webgpu = R"(
-struct PSInput {
-	@location(0) worldXZ: vec2<f32>,
-};
-
-@fragment
-fn main(input: PSInput) -> @location(0) vec4<f32> {
-	let checker = fract((floor(input.worldXZ.x) + floor(input.worldXZ.y)) * 0.5);
-	let darkColor = vec3<f32>(0.24, 0.32, 0.27);
-	let brightColor = vec3<f32>(0.39, 0.50, 0.42);
-	var color = mix(darkColor, brightColor, step(0.5, checker));
-	let distanceFade = clamp(length(input.worldXZ) * 0.025, 0.0, 1.0);
-	color *= 1.0 - distanceFade * 0.35;
-	return vec4<f32>(color, 1.0);
-}
-)";
-
-const auto ground_depth_ps_webgpu = R"(
-struct PSInput {
-	@builtin(position) position: vec4<f32>,
-	@location(0) worldXZ: vec2<f32>,
-};
-
-@fragment
-fn main(input: PSInput) -> @location(0) vec4<f32> {
-	return vec4<f32>(input.position.z, 1.0, 1.0, 1.0);
-}
-)";
-
-LLGI::Compiler* CreateGroundCompiler(LLGI::DeviceType deviceType)
-{
-	switch (deviceType)
-	{
-	case LLGI::DeviceType::DirectX12:
-#ifdef __EFFEKSEER_BUILD_DX12__
-		return new LLGI::CompilerDX12();
-#else
-		return nullptr;
-#endif
-	case LLGI::DeviceType::Vulkan:
-#ifdef __EFFEKSEER_BUILD_VULKAN__
-		return new LLGI::CompilerVulkan();
-#else
-		return nullptr;
-#endif
-	case LLGI::DeviceType::Metal:
-#ifdef __APPLE__
-		return new LLGI::CompilerMetal();
-#else
-		return nullptr;
-#endif
-	case LLGI::DeviceType::WebGPU:
-#ifdef __EFFEKSEER_BUILD_WEBGPU__
-		return new LLGI::CompilerWebGPU();
-#else
-		return nullptr;
-#endif
-	default:
-		return nullptr;
-	}
-}
-
-} // namespace
 
 void EffectPlatformLLGI::CreateCheckedTexture()
 {
@@ -305,110 +41,58 @@ void EffectPlatformLLGI::UpdateBackgroundTexture()
 
 void EffectPlatformLLGI::CreateGroundShaders()
 {
-	const char* vsCode = nullptr;
-	const char* depthVsCode = nullptr;
-	const char* psCode = nullptr;
-	const char* depthPsCode = nullptr;
+	Effekseer::ToolRuntime::GroundShaderBackend shaderBackend = Effekseer::ToolRuntime::GroundShaderBackend::DirectX12;
 
 	switch (deviceType_)
 	{
 	case LLGI::DeviceType::DirectX12:
-		vsCode = ground_vs_dx12;
-		psCode = ground_ps_dx12;
-		depthPsCode = ground_depth_ps_dx12;
+		shaderBackend = Effekseer::ToolRuntime::GroundShaderBackend::DirectX12;
 		break;
 	case LLGI::DeviceType::Vulkan:
-		vsCode = ground_vs_vulkan;
-		psCode = ground_ps_vulkan;
-		depthPsCode = ground_depth_ps_vulkan;
+		shaderBackend = Effekseer::ToolRuntime::GroundShaderBackend::Vulkan;
 		break;
 	case LLGI::DeviceType::Metal:
-		vsCode = ground_vs_metal;
-		psCode = ground_ps_metal;
-		depthPsCode = ground_depth_ps_metal;
+		shaderBackend = Effekseer::ToolRuntime::GroundShaderBackend::Metal;
 		break;
 	case LLGI::DeviceType::WebGPU:
-		vsCode = ground_vs_webgpu;
-		psCode = ground_ps_webgpu;
-		depthPsCode = ground_depth_ps_webgpu;
+		shaderBackend = Effekseer::ToolRuntime::GroundShaderBackend::WebGPU;
 		break;
 	default:
 		assert(false);
 		return;
 	}
+	const auto& shaderCode = Effekseer::ToolRuntime::GetGroundShaderCode(shaderBackend);
+	const auto vsCode = shaderCode.Vertex;
+	const auto depthVsCode = shaderCode.DepthVertex != nullptr ? shaderCode.DepthVertex : shaderCode.Vertex;
+	const auto psCode = shaderCode.Pixel;
+	const auto depthPsCode = shaderCode.DepthPixel;
 
-	auto compiler = CreateGroundCompiler(deviceType_);
-	if (compiler == nullptr)
-	{
-		printf("Failed to create an LLGI shader compiler for the ground depth test.\n");
-		return;
-	}
-	if (depthVsCode == nullptr)
-	{
-		depthVsCode = vsCode;
-	}
-	compiler->Initialize();
+	Effekseer::ToolRuntime::LLGIShaderCompileInput inputs[4];
+	inputs[0].Name = "VS";
+	inputs[0].Code = vsCode;
+	inputs[0].Stage = LLGI::ShaderStageType::Vertex;
+	inputs[1].Name = "Depth VS";
+	inputs[1].Code = depthVsCode;
+	inputs[1].Stage = LLGI::ShaderStageType::Vertex;
+	inputs[2].Name = "PS";
+	inputs[2].Code = psCode;
+	inputs[2].Stage = LLGI::ShaderStageType::Pixel;
+	inputs[3].Name = "Depth PS";
+	inputs[3].Code = depthPsCode;
+	inputs[3].Stage = LLGI::ShaderStageType::Pixel;
 
-	LLGI::CompilerResult resultVs;
-	LLGI::CompilerResult resultDepthVs;
-	LLGI::CompilerResult resultPs;
-	LLGI::CompilerResult resultDepthPs;
-	compiler->Compile(resultVs, vsCode, LLGI::ShaderStageType::Vertex);
-	compiler->Compile(resultDepthVs, depthVsCode, LLGI::ShaderStageType::Vertex);
-	compiler->Compile(resultPs, psCode, LLGI::ShaderStageType::Pixel);
-	compiler->Compile(resultDepthPs, depthPsCode, LLGI::ShaderStageType::Pixel);
-
-	if (!resultVs.Message.empty() || !resultDepthVs.Message.empty() || !resultPs.Message.empty() || !resultDepthPs.Message.empty())
+	Effekseer::ToolRuntime::LLGICompiledShader compiledShaders[4];
+	std::string message;
+	if (!Effekseer::ToolRuntime::CompileLLGIShaders(deviceType_, inputs, 4, compiledShaders, message))
 	{
-		printf("Failed to compile ground shaders.\nVS: %s\nDepth VS: %s\nPS: %s\nDepth PS: %s\n",
-			   resultVs.Message.c_str(),
-			   resultDepthVs.Message.c_str(),
-			   resultPs.Message.c_str(),
-			   resultDepthPs.Message.c_str());
-		compiler->Release();
+		printf("Failed to compile ground shaders.\n%s\n", message.c_str());
 		return;
 	}
 
-	if (resultVs.Binary.empty() || resultDepthVs.Binary.empty() || resultPs.Binary.empty() || resultDepthPs.Binary.empty())
-	{
-		printf("Failed to compile ground shaders: a shader binary is empty.\n");
-		compiler->Release();
-		return;
-	}
-	compiler->Release();
-
-	std::vector<LLGI::DataStructure> dataVs;
-	std::vector<LLGI::DataStructure> dataDepthVs;
-	std::vector<LLGI::DataStructure> dataPs;
-	std::vector<LLGI::DataStructure> dataDepthPs;
-	for (auto& binary : resultVs.Binary)
-	{
-		LLGI::DataStructure data;
-		data.Data = binary.data();
-		data.Size = static_cast<int32_t>(binary.size());
-		dataVs.push_back(data);
-	}
-	for (auto& binary : resultDepthVs.Binary)
-	{
-		LLGI::DataStructure data;
-		data.Data = binary.data();
-		data.Size = static_cast<int32_t>(binary.size());
-		dataDepthVs.push_back(data);
-	}
-	for (auto& binary : resultPs.Binary)
-	{
-		LLGI::DataStructure data;
-		data.Data = binary.data();
-		data.Size = static_cast<int32_t>(binary.size());
-		dataPs.push_back(data);
-	}
-	for (auto& binary : resultDepthPs.Binary)
-	{
-		LLGI::DataStructure data;
-		data.Data = binary.data();
-		data.Size = static_cast<int32_t>(binary.size());
-		dataDepthPs.push_back(data);
-	}
+	auto dataVs = compiledShaders[0].GetDataStructures();
+	auto dataDepthVs = compiledShaders[1].GetDataStructures();
+	auto dataPs = compiledShaders[2].GetDataStructures();
+	auto dataDepthPs = compiledShaders[3].GetDataStructures();
 
 	groundShader_vs_ = graphics_->CreateShader(dataVs.data(), static_cast<int32_t>(dataVs.size()));
 	groundDepthShader_vs_ = graphics_->CreateShader(dataDepthVs.data(), static_cast<int32_t>(dataDepthVs.size()));
@@ -525,30 +209,22 @@ void EffectPlatformLLGI::UpdateGroundVertexBuffer()
 	groundVb_->Unlock();
 }
 
-void EffectPlatformLLGI::DrawGround()
+void EffectPlatformLLGI::DrawGround(Effekseer::ToolRuntime::GroundRenderPass pass)
 {
-	if (groundPip_ == nullptr || groundVb_ == nullptr || groundIb_ == nullptr)
+	auto pipeline = pass == Effekseer::ToolRuntime::GroundRenderPass::Depth ? groundDepthPip_ : groundPip_;
+	if (pipeline == nullptr || groundVb_ == nullptr || groundIb_ == nullptr)
 	{
 		return;
 	}
 
-	UpdateGroundVertexBuffer();
-	commandList_->SetVertexBuffer(groundVb_, sizeof(GroundPlaneVertex), 0);
-	commandList_->SetIndexBuffer(groundIb_, 2);
-	commandList_->SetPipelineState(groundPip_);
-	commandList_->Draw(2);
-}
-
-void EffectPlatformLLGI::DrawGroundDepthTexture()
-{
-	if (groundDepthPip_ == nullptr || groundVb_ == nullptr || groundIb_ == nullptr)
+	if (pass == Effekseer::ToolRuntime::GroundRenderPass::Color)
 	{
-		return;
+		UpdateGroundVertexBuffer();
 	}
 
 	commandList_->SetVertexBuffer(groundVb_, sizeof(GroundPlaneVertex), 0);
 	commandList_->SetIndexBuffer(groundIb_, 2);
-	commandList_->SetPipelineState(groundDepthPip_);
+	commandList_->SetPipelineState(pipeline);
 	commandList_->Draw(2);
 }
 
@@ -794,7 +470,7 @@ void EffectPlatformLLGI::BeginRendering()
 		groundDepthRenderPass_->SetIsColorCleared(true);
 		groundDepthRenderPass_->SetIsDepthCleared(true);
 		commandList_->BeginRenderPass(groundDepthRenderPass_);
-		DrawGroundDepthTexture();
+		DrawGround(Effekseer::ToolRuntime::GroundRenderPass::Depth);
 		commandList_->EndRenderPass();
 	}
 
@@ -805,7 +481,7 @@ void EffectPlatformLLGI::BeginRendering()
 
 	if (usesGpuGroundDepth_)
 	{
-		DrawGround();
+		DrawGround(Effekseer::ToolRuntime::GroundRenderPass::Color);
 	}
 	else
 	{

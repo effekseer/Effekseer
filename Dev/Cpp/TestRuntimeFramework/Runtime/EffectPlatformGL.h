@@ -2,6 +2,7 @@
 
 #include "../../EffekseerRendererGL/EffekseerRendererGL.h"
 #include "EffectPlatformGLFW.h"
+#include <EffekseerToolRuntime/GroundRendering.h>
 
 class EffectPlatformGL final : public EffectPlatformGLFW
 {
@@ -22,7 +23,7 @@ private:
 	bool CreateGroundResources();
 	void ReleaseGroundResources();
 	void UpdateGroundVertexBuffer();
-	void DrawGround(GLuint program);
+	void DrawGround(Effekseer::ToolRuntime::GroundRenderPass pass);
 
 protected:
 	void UpdateBackgroundTexture() override;

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using TestCSharp.Misc;
 
@@ -6,8 +7,6 @@ namespace TestCSharp
 {
 	class MaterialCacheGeneratorTest
 	{
-		const int WebGPUPlatform = (int)Effekseer.Utils.CompiledMaterialPlatformType.WebGPU;
-
 		public static void Test()
 		{
 			var testDirectory = Path.Combine(Directory.GetCurrentDirectory(), "MaterialCacheGeneratorTest");
@@ -51,43 +50,50 @@ namespace TestCSharp
 			reader.ReadUInt64();
 
 			var platformCount = reader.ReadInt32();
-			var hasWebGPU = false;
+			TestUtils.Assert(platformCount > 0, "Compiled material does not contain platform data.");
+
+			var platforms = new HashSet<int>();
 			for (int i = 0; i < platformCount; i++)
 			{
-				hasWebGPU |= reader.ReadInt32() == WebGPUPlatform;
+				var platform = reader.ReadInt32();
+				TestUtils.Assert(platforms.Add(platform), "Compiled material contains duplicated platform data.");
 			}
-			TestUtils.Assert(hasWebGPU, "Compiled material does not contain WebGPU platform data.");
 
 			var originalDataSize = reader.ReadInt32();
+			TestUtils.Assert(originalDataSize > 0, "Compiled material does not contain original material data.");
 			stream.Seek(originalDataSize, SeekOrigin.Current);
 
+			var chunkPlatforms = new HashSet<int>();
 			while (stream.Position < stream.Length)
 			{
 				var platform = reader.ReadInt32();
 				var chunkSize = reader.ReadInt32();
 				var nextChunkPosition = stream.Position + chunkSize;
+				TestUtils.Assert(platforms.Contains(platform), "Compiled material contains an undeclared platform chunk.");
+				TestUtils.Assert(chunkPlatforms.Add(platform), "Compiled material contains duplicated platform chunks.");
+				TestUtils.Assert(chunkSize >= sizeof(int) * 8, "Compiled material platform chunk is too small.");
+				TestUtils.Assert(nextChunkPosition <= stream.Length, "Compiled material platform chunk exceeds file size.");
 
-				if (platform == WebGPUPlatform)
+				var shaderSizes = new int[8];
+				for (int i = 0; i < shaderSizes.Length; i++)
 				{
-					var standardVSSize = reader.ReadInt32();
-					stream.Seek(standardVSSize, SeekOrigin.Current);
-					var standardPSSize = reader.ReadInt32();
-					stream.Seek(standardPSSize, SeekOrigin.Current);
-					var modelVSSize = reader.ReadInt32();
-					stream.Seek(modelVSSize, SeekOrigin.Current);
-					var modelPSSize = reader.ReadInt32();
-
-					TestUtils.Assert(standardVSSize > 0, "WebGPU standard vertex shader is empty.");
-					TestUtils.Assert(standardPSSize > 0, "WebGPU standard pixel shader is empty.");
-					TestUtils.Assert(modelVSSize > 0, "WebGPU model vertex shader is empty.");
-					TestUtils.Assert(modelPSSize > 0, "WebGPU model pixel shader is empty.");
-					return;
+					TestUtils.Assert(stream.Position + sizeof(int) <= nextChunkPosition, "Compiled material shader size exceeds chunk size.");
+					shaderSizes[i] = reader.ReadInt32();
+					TestUtils.Assert(shaderSizes[i] >= 0, "Compiled material shader size is invalid.");
+					TestUtils.Assert(stream.Position + shaderSizes[i] <= nextChunkPosition, "Compiled material shader data exceeds chunk size.");
+					stream.Seek(shaderSizes[i], SeekOrigin.Current);
 				}
+
+				TestUtils.Assert(shaderSizes[0] > 0, "Compiled material standard vertex shader is empty.");
+				TestUtils.Assert(shaderSizes[1] > 0, "Compiled material standard pixel shader is empty.");
+				TestUtils.Assert(shaderSizes[2] > 0, "Compiled material model vertex shader is empty.");
+				TestUtils.Assert(shaderSizes[3] > 0, "Compiled material model pixel shader is empty.");
+				TestUtils.Assert(stream.Position == nextChunkPosition, "Compiled material platform chunk size is inconsistent.");
 
 				stream.Seek(nextChunkPosition, SeekOrigin.Begin);
 			}
 
-			TestUtils.Assert(false, "WebGPU compiled material chunk was not found.");
+			TestUtils.Equals(platforms.Count, chunkPlatforms.Count, "Compiled material platform header and chunks are inconsistent.");
 		}
 	}
 }

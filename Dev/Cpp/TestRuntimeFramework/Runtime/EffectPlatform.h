@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <vector>
 
+#include <EffekseerToolRuntime/DepthRendering.h>
 #include <EffekseerRendererCommon/EffekseerRenderer.Renderer.h>
 
 enum class BackgroundPatternType
@@ -71,12 +72,7 @@ protected:
 	bool isBackgroundFlipped_ = false;
 	bool isGroundDepthEnabled_ = false;
 
-	struct GroundPlaneVertex
-	{
-		std::array<float, 4> Pos;
-		std::array<float, 2> WorldXZ;
-	};
-
+	using GroundPlaneVertex = Effekseer::ToolRuntime::GroundPlaneClipVertex;
 	std::array<GroundPlaneVertex, 4> CreateGroundPlaneVertices() const;
 	std::array<uint16_t, 6> CreateGroundPlaneIndices() const;
 	std::array<std::array<float, 4>, 4> CreateGroundViewProjectionColumns() const;

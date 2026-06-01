@@ -117,7 +117,7 @@ EffekseerRenderer::RendererRef EffectPlatformWebGPU::CreateRenderer()
 	renderPassInfo.RenderTextureFormats[0] = wgpu::TextureFormat::RGBA8Unorm;
 	renderPassInfo.DepthFormat = wgpu::TextureFormat::Depth32Float;
 
-	auto graphicsDevice = Effekseer::MakeRefPtr<EffekseerRendererLLGI::Backend::GraphicsDevice>(graphics_);
+	auto graphicsDevice = Effekseer::MakeRefPtr<EffekseerRendererLLGI::Backend::GraphicsDevice>(graphics_, false, LLGI::DeviceType::WebGPU);
 	auto renderer = ::EffekseerRendererWebGPU::Create(graphicsDevice, renderPassInfo, initParam_.SpriteCount);
 
 	renderer->SetDistortingCallback(new DistortingCallbackWebGPU(this));

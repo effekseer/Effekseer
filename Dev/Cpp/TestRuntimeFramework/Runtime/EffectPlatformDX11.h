@@ -2,6 +2,7 @@
 
 #include "../../EffekseerRendererDX11/EffekseerRendererDX11.h"
 #include "EffectPlatformGLFW.h"
+#include <EffekseerToolRuntime/GroundRendering.h>
 
 class EffectPlatformDX11 final : public EffectPlatformGLFW
 {
@@ -41,7 +42,7 @@ private:
 	bool CreateGroundResources();
 	void ReleaseGroundResources();
 	void UpdateGroundVertexBuffer(ID3D11DeviceContext* context);
-	void DrawGround(ID3D11DeviceContext* context, bool writesDepthTexture);
+	void DrawGround(ID3D11DeviceContext* context, Effekseer::ToolRuntime::GroundRenderPass pass);
 
 protected:
 	void UpdateBackgroundTexture() override;
