@@ -244,7 +244,6 @@ VS_Output _main(VS_Input Input)
     float4 localPosition = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
     float4 worldPos = mul(mModel, localPosition);
     Output.PosVS = mul(_372_mCameraProj, worldPos);
-    Output.PosP = Output.PosVS;
     float2 outputUV = Input.UV1;
     outputUV.x = (outputUV.x * uv.z) + uv.x;
     outputUV.y = (outputUV.y * uv.w) + uv.y;
@@ -267,6 +266,7 @@ VS_Output _main(VS_Input Input)
     VS_Output param_9 = Output;
     CalculateAndStoreAdvancedParameter(param, param_1, param_2, param_3, param_4, param_5, param_6, param_7, param_8, param_9);
     Output = param_9;
+    Output.PosP = Output.PosVS;
     return Output;
 }
 

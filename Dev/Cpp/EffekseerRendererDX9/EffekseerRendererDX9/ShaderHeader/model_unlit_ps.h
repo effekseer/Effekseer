@@ -10,24 +10,24 @@
 //
 //   sampler2D Sampler_sampler_colorTex;
 //   sampler2D Sampler_sampler_depthTex;
-//   float4 _141_fEmissiveScaling;
-//   float4 _141_mUVInversedBack;
-//   float4 _141_miscFlags;
-//   float4 _141_reconstructionParam1;
-//   float4 _141_reconstructionParam2;
-//   float4 _141_softParticleParam;
+//   float4 _225_fEmissiveScaling;
+//   float4 _225_mUVInversedBack;
+//   float4 _225_miscFlags;
+//   float4 _225_reconstructionParam1;
+//   float4 _225_reconstructionParam2;
+//   float4 _225_softParticleParam;
 //
 //
 // Registers:
 //
 //   Name                      Reg   Size
 //   ------------------------- ----- ----
-//   _141_fEmissiveScaling     c10      1
-//   _141_softParticleParam    c13      1
-//   _141_reconstructionParam1 c14      1
-//   _141_reconstructionParam2 c15      1
-//   _141_mUVInversedBack      c16      1
-//   _141_miscFlags            c17      1
+//   _225_fEmissiveScaling     c10      1
+//   _225_softParticleParam    c13      1
+//   _225_reconstructionParam1 c14      1
+//   _225_reconstructionParam2 c15      1
+//   _225_mUVInversedBack      c16      1
+//   _225_miscFlags            c17      1
 //   Sampler_sampler_colorTex  s0       1
 //   Sampler_sampler_depthTex  s1       1
 //
@@ -144,28 +144,28 @@ const BYTE g_ps30_main[] =
     171, 171,   4,   0,  12,   0, 
       1,   0,   1,   0,   1,   0, 
       0,   0,   0,   0,   0,   0, 
-     95,  49,  52,  49,  95, 102, 
+     95,  50,  50,  53,  95, 102, 
      69, 109, 105, 115, 115, 105, 
     118, 101,  83,  99,  97, 108, 
     105, 110, 103,   0, 171, 171, 
       1,   0,   3,   0,   1,   0, 
       4,   0,   1,   0,   0,   0, 
-      0,   0,   0,   0,  95,  49, 
-     52,  49,  95, 109,  85,  86, 
+      0,   0,   0,   0,  95,  50, 
+     50,  53,  95, 109,  85,  86, 
      73, 110, 118, 101, 114, 115, 
     101, 100,  66,  97,  99, 107, 
-      0,  95,  49,  52,  49,  95, 
+      0,  95,  50,  50,  53,  95, 
     109, 105, 115,  99,  70, 108, 
-     97, 103, 115,   0,  95,  49, 
-     52,  49,  95, 114, 101,  99, 
+     97, 103, 115,   0,  95,  50, 
+     50,  53,  95, 114, 101,  99, 
     111, 110, 115, 116, 114, 117, 
      99, 116, 105, 111, 110,  80, 
      97, 114,  97, 109,  49,   0, 
-     95,  49,  52,  49,  95, 114, 
+     95,  50,  50,  53,  95, 114, 
     101,  99, 111, 110, 115, 116, 
     114, 117,  99, 116, 105, 111, 
     110,  80,  97, 114,  97, 109, 
-     50,   0,  95,  49,  52,  49, 
+     50,   0,  95,  50,  50,  53, 
      95, 115, 111, 102, 116,  80, 
      97, 114, 116, 105,  99, 108, 
     101,  80,  97, 114,  97, 109, 
