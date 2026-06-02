@@ -1159,12 +1159,13 @@ struct ShaderParameterCollector
 				TextureWrapTypes[i] = MaterialDataPtr->TextureWrapTypes[i];
 			}
 
-			// Material shaders always reserve the background slot after user textures.
-			// Keep it bound even when the current material does not sample refraction.
-			TextureFilterTypes[TextureCount] = Effekseer::TextureFilterType::Linear;
-			TextureWrapTypes[TextureCount] = Effekseer::TextureWrapType::Clamp;
-			Textures[TextureCount] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);
-			BackgroundIndex = TextureCount;
+			if (IsBackgroundRequiredOnFirstPass)
+			{
+				// Store from external
+				TextureFilterTypes[TextureCount] = Effekseer::TextureFilterType::Linear;
+				TextureWrapTypes[TextureCount] = Effekseer::TextureWrapType::Clamp;
+				BackgroundIndex = TextureCount;
+			}
 			TextureCount += 1;
 
 			if (IsDepthRequired)
