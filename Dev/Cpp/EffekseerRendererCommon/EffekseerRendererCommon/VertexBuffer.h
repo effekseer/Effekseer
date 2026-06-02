@@ -22,6 +22,10 @@ public:
 	virtual Effekseer::Backend::VertexBufferRef Upload() = 0;
 	virtual Effekseer::Backend::VertexBufferRef GetCurrentBuffer() = 0;
 
+	virtual void BeginWrite()
+	{
+	}
+
 	virtual void RenewBuffer() = 0;
 
 	virtual int32_t GetSize() const
@@ -59,6 +63,7 @@ public:
 
 class VertexBufferRing : public VertexBuffer
 {
+	Effekseer::Backend::GraphicsDeviceRef graphicsDevice_;
 	int currentIndex_ = 0;
 	int offset_ = 0;
 	int previous_offset_ = 0;
@@ -77,6 +82,8 @@ public:
 	Effekseer::Backend::VertexBufferRef Upload() override;
 
 	Effekseer::Backend::VertexBufferRef GetCurrentBuffer() override;
+
+	void BeginWrite() override;
 
 	void RenewBuffer() override;
 };
