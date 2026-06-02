@@ -24,6 +24,7 @@ else()
       Runtime/RuntimeTest.cpp
       Runtime/Performance.cpp
       Runtime/TextureFormats.cpp
+      Runtime/ToolRuntime.cpp
       Runtime/Vertex.cpp
       Runtime/ResourceManager.cpp
       Runtime/String.cpp

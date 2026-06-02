@@ -138,6 +138,8 @@ public:
 
 	bool Draw();
 
+	bool BeginFrame();
+
 	void StopAllEffects();
 	void ClearLoadedEffects();
 

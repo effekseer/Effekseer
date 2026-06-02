@@ -451,6 +451,11 @@ bool EffectPlatform::Draw()
 	return true;
 }
 
+bool EffectPlatform::BeginFrame()
+{
+	return DoEvent();
+}
+
 void EffectPlatform::StopAllEffects()
 {
 	if (manager_ != nullptr)

@@ -555,6 +555,17 @@ void EffectPlatformDX11::BeginRendering()
 		context = context_;
 	}
 
+	context->OMSetRenderTargets(1, &renderTargetView_, depthStencilView_);
+
+	D3D11_VIEWPORT vp;
+	vp.TopLeftX = 0;
+	vp.TopLeftY = 0;
+	vp.Width = (float)initParam_.WindowSize[0];
+	vp.Height = (float)initParam_.WindowSize[1];
+	vp.MinDepth = 0.0f;
+	vp.MaxDepth = 1.0f;
+	context->RSSetViewports(1, &vp);
+
 	if (usesGpuGroundDepth_)
 	{
 		UpdateGroundVertexBuffer(context);
