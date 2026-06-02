@@ -259,7 +259,12 @@ namespace Effekseer.GUI
 			effectSetting = swig.EffectSetting.Create(hardwareDevice.GraphicsDevice, hardwareDevice.SoundDevice);
 
 			EffectRenderer = new swig.MainScreenEffectRenderer();
-			EffectRenderer.Initialize(hardwareDevice.GraphicsDevice, hardwareDevice.SoundDevice, effectSetting, spriteCount, hardwareDevice.GraphicsDevice.GetIsSRGBMode());
+			if (!EffectRenderer.Initialize(hardwareDevice.GraphicsDevice, hardwareDevice.SoundDevice, effectSetting, spriteCount, hardwareDevice.GraphicsDevice.GetIsSRGBMode()))
+			{
+				EffectRenderer.Dispose();
+				EffectRenderer = null;
+				return false;
+			}
 			EffectRenderer.Callback = this;
 
 			ViewPointController = new swig.ViewPointController();
