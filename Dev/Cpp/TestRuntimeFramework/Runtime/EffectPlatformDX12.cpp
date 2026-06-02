@@ -4,6 +4,7 @@
 #include "../../3rdParty/LLGI/src/DX12/LLGI.CompilerDX12.h"
 #include "../../3rdParty/LLGI/src/DX12/LLGI.GraphicsDX12.h"
 #include "../../3rdParty/LLGI/src/DX12/LLGI.PlatformDX12.h"
+#include "../../EffekseerRendererLLGI/EffekseerRendererLLGI/EffekseerRendererLLGI.Renderer.h"
 #include "../3rdParty/LLGI/src/LLGI.CommandList.h"
 
 #include "../../3rdParty/LLGI/src/LLGI.Compiler.h"
@@ -217,6 +218,7 @@ LLGI::Texture* EffectPlatformDX12::GetBackgroundTexture()
 void EffectPlatformDX12::UpdateBackgroundTextureForDistortion()
 {
 	auto background = GetBackgroundTexture();
+	auto efkCommandList = static_cast<EffekseerRendererLLGI::CommandList*>(commandListEfk_.Get())->GetInternal();
 
 	commandList_->EndRenderPass();
 	commandList_->CopyTexture(colorBuffer_, background);
@@ -224,4 +226,5 @@ void EffectPlatformDX12::UpdateBackgroundTextureForDistortion()
 	renderPass_->SetIsColorCleared(false);
 	renderPass_->SetIsDepthCleared(false);
 	commandList_->BeginRenderPass(renderPass_);
+	efkCommandList->BeginRenderPassWithPlatformPtr(nullptr);
 }

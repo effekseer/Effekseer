@@ -354,6 +354,7 @@ void EffectPlatformLLGI::InitializeWindow()
 void EffectPlatformLLGI::Present()
 {
 	graphics_->Execute(commandList_.get());
+	hasUnsubmittedCommandList_ = false;
 	platform_->Present();
 }
 
@@ -478,6 +479,11 @@ void EffectPlatformLLGI::BeginRendering()
 	renderPass_->SetIsColorCleared(true);
 	renderPass_->SetIsDepthCleared(true);
 	commandList_->BeginRenderPass(renderPass_);
+	if (auto graphicsDevice = GetRenderer()->GetGraphicsDevice().DownCast<EffekseerRendererLLGI::Backend::GraphicsDevice>())
+	{
+		graphicsDevice->SetCommandList(commandList_.get());
+		graphicsDevice->SetRenderPassPipelineState(rppip_);
+	}
 
 	if (usesGpuGroundDepth_)
 	{
@@ -535,6 +541,7 @@ void EffectPlatformLLGI::EndRendering()
 
 	commandList_->End();
 	isCommandListBegun_ = false;
+	hasUnsubmittedCommandList_ = true;
 }
 
 void EffectPlatformLLGI::ResetBackgroundPattern()
@@ -573,6 +580,11 @@ void EffectPlatformLLGI::GenerateGroundDepth()
 
 std::vector<uint8_t> EffectPlatformLLGI::CaptureScreenPixels()
 {
+	if (hasUnsubmittedCommandList_ && graphics_ != nullptr && commandList_ != nullptr)
+	{
+		Present();
+	}
+
 	commandList_->WaitUntilCompleted();
 
 	auto texture = colorBuffer_;

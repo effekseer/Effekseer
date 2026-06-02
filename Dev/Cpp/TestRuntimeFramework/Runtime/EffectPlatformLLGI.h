@@ -145,6 +145,7 @@ protected:
 	LLGI::TextureFormatType screenFormat_ = LLGI::TextureFormatType::R8G8B8A8_UNORM;
 	LLGI::DeviceType deviceType_;
 	bool isCommandListBegun_ = false;
+	bool hasUnsubmittedCommandList_ = false;
 
 	void InitializeWindow() override;
 	void Present() override;
