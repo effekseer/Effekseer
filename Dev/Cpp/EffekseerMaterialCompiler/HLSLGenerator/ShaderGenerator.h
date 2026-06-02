@@ -64,6 +64,8 @@ protected:
 					MaterialShaderType shaderType,
 					const std::string& baseCode);
 
+	void RemovePixelScreenPosition(ShaderData& shaderData);
+
 public:
 	ShaderGenerator(ShaderGeneratorTarget target);
 

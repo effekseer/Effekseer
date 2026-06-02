@@ -1225,17 +1225,17 @@ std::string ShaderGenerator::GeneratePixelShader(MaterialFile* materialFile,
 	let airRefraction = 1.0;
 	var dir = (v.cameraMat * vec4<f32>(pixelNormalDir, 0.0)).xyz;
 	dir.y = -dir.y;
-	var distortUV = dir.xy * (refraction - airRefraction);
+	var distortUV = dir.xy * (refraction - airRefraction) * opacity;
 	distortUV = distortUV + screenUV;
 	distortUV = GetUVBack(distortUV);
-	let Output = textureSample(efk_background_texture, efk_background_sampler, distortUV);
 	if (opacityMask <= 0.0) {
 		discard;
 	}
 	if (opacity <= 0.0) {
 		discard;
 	}
-	return Output;
+	let Output = textureSample(efk_background_texture, efk_background_sampler, distortUV);
+	return vec4<f32>(Output.rgb, Output.a * opacity);
 }
 )";
 	}

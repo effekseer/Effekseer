@@ -658,16 +658,17 @@ static const char g_material_fs_src_suf2_refraction[] =
 #ifdef _REFRACTION_Y_INVERTED_
 	dir.y = -dir.y;
 #endif
-	vec2 distortUV = dir.xy * (refraction - airRefraction);
+	vec2 distortUV = dir.xy * (refraction - airRefraction) * opacity;
 
 	distortUV += screenUV;
 	distortUV = GetUVBack(distortUV);	
 
-	vec4 bg = TEX2D(efk_background, distortUV);
-	FRAGCOLOR = bg;
-
 	if(opacityMask <= 0.0) discard;
 	if(opacity <= 0.0) discard;
+
+	vec4 bg = TEX2D(efk_background, distortUV);
+	bg.a *= opacity;
+	FRAGCOLOR = bg;
 }
 
 )";
