@@ -11,6 +11,17 @@ set(srcs
     EffekseerToolRuntime/GroundRendering.cpp
     EffekseerToolRuntime/GroundPlaneRenderer.h
     EffekseerToolRuntime/GroundPlaneRenderer.cpp
+    EffekseerToolRuntime/Image.h
+    EffekseerToolRuntime/ImageRenderer.h
+    EffekseerToolRuntime/ImageRenderer.cpp
+    EffekseerToolRuntime/LineRenderer.h
+    EffekseerToolRuntime/LineRenderer.cpp
+    EffekseerToolRuntime/PostEffects.h
+    EffekseerToolRuntime/PostEffects.cpp
+    EffekseerToolRuntime/PostProcess.h
+    EffekseerToolRuntime/PostProcess.cpp
+    EffekseerToolRuntime/RenderImage.h
+    EffekseerToolRuntime/RenderImage.cpp
     EffekseerToolRuntime/StaticMeshRenderer.h
     EffekseerToolRuntime/StaticMeshRenderer.cpp)
 
@@ -31,6 +42,11 @@ if(TARGET EffekseerRendererLLGI)
   target_compile_definitions(${PROJECT_NAME}
                              PRIVATE EFFEKSEER_TOOL_RUNTIME_WITH_LLGI)
   target_link_libraries(${PROJECT_NAME} PUBLIC EffekseerRendererLLGI LLGI)
+
+  if(BUILD_VULKAN)
+    find_package(Vulkan REQUIRED)
+    target_include_directories(${PROJECT_NAME} PRIVATE ${Vulkan_INCLUDE_DIRS})
+  endif()
 endif()
 
 set_target_properties(${PROJECT_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)

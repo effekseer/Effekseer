@@ -138,9 +138,9 @@ bool EffectRenderer::Initialize(std::shared_ptr<GraphicsDevice> graphicsDevice,
 	renderer_->SetDistortingCallback(m_distortionCallback);
 
 	// create postprocessings
-	bloomEffect_ = std::make_unique<BloomPostEffect>(graphics->GetGraphicsDevice());
-	linearToSRGBEffect_ = std::make_unique<LinearToSRGBPostEffect>(graphics->GetGraphicsDevice());
-	tonemapEffect_ = std::make_unique<TonemapPostEffect>(graphics->GetGraphicsDevice());
+	bloomEffect_ = std::make_unique<Effekseer::ToolRuntime::BloomPostEffect>(graphics->GetGraphicsDevice());
+	linearToSRGBEffect_ = std::make_unique<Effekseer::ToolRuntime::LinearToSRGBPostEffect>(graphics->GetGraphicsDevice());
+	tonemapEffect_ = std::make_unique<Effekseer::ToolRuntime::TonemapPostEffect>(graphics->GetGraphicsDevice());
 
 	if (!(bloomEffect_ != nullptr && bloomEffect_->GetIsValid() &&
 		  tonemapEffect_ != nullptr && tonemapEffect_->GetIsValid() &&
@@ -269,7 +269,7 @@ bool EffectRenderer::Initialize(std::shared_ptr<GraphicsDevice> graphicsDevice,
 			PostEffect_Overdraw_PS::g_main,
 			sizeof(PostEffect_Overdraw_PS::g_main));
 
-		overdrawEffect_ = std::make_unique<PostProcess>(graphics_->GetGraphics()->GetGraphicsDevice(), shader, 0, 0);
+				overdrawEffect_ = std::make_unique<Effekseer::ToolRuntime::PostProcess>(graphics_->GetGraphics()->GetGraphicsDevice(), shader, 0, 0);
 #endif
 	}
 	else if (graphics->GetGraphicsDevice()->GetDeviceName() == "OpenGL")
@@ -310,7 +310,7 @@ bool EffectRenderer::Initialize(std::shared_ptr<GraphicsDevice> graphicsDevice,
 				{gl_postfx_overdraw_ps},
 				uniformLayoutUnlitAd);
 
-			overdrawEffect_ = std::make_unique<PostProcess>(graphics_->GetGraphics()->GetGraphicsDevice(), shader, 0, 0);
+			overdrawEffect_ = std::make_unique<Effekseer::ToolRuntime::PostProcess>(graphics_->GetGraphics()->GetGraphicsDevice(), shader, 0, 0);
 		}
 	}
 	else
@@ -1074,7 +1074,7 @@ void EffectRenderer::SetPostEffectParameter(const Effekseer::Tool::PostEffectPar
 	if (tonemapEffect_ != nullptr)
 	{
 		tonemapEffect_->SetEnabled(param.ToneMapAlgorithm != 0);
-		tonemapEffect_->SetParameters((Effekseer::Tool::TonemapPostEffect::Algorithm)param.ToneMapAlgorithm, param.ToneMapExposure);
+		tonemapEffect_->SetParameters((Effekseer::ToolRuntime::TonemapPostEffect::Algorithm)param.ToneMapAlgorithm, param.ToneMapExposure);
 	}
 
 	postEffectParameter_ = param;

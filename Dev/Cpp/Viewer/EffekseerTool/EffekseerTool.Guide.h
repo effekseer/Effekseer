@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../Graphics/ImageRenderer.h"
+#include <EffekseerToolRuntime/ImageRenderer.h>
 
 namespace EffekseerRenderer
 {
@@ -8,7 +8,7 @@ namespace EffekseerRenderer
 class Guide
 {
 private:
-	std::shared_ptr<Effekseer::Tool::ImageRenderer> imageRenderer_ = nullptr;
+	std::shared_ptr<Effekseer::ToolRuntime::ImageRenderer> imageRenderer_ = nullptr;
 
 	Guide(Effekseer::Backend::GraphicsDeviceRef graphicsDevice);
 

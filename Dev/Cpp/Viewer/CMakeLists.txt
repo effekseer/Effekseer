@@ -36,25 +36,13 @@ list(
   3D/FileInterface.cpp
   3D/MainScreenEffectRenderer.cpp
   3D/ViewPointController.cpp
-  Graphics/StaticMeshRenderer.cpp
-  Graphics/LineRenderer.cpp
-  Graphics/ImageRenderer.cpp
-  Graphics/PostProcess.cpp
-  Graphics/PostEffects.cpp
-  Graphics/GraphicsDevice.cpp
-  GUI/Image.cpp
-  GUI/ReloadableImage.cpp
-  GUI/RenderImage.cpp
-  GUI/GradientHDRState.cpp
-  GUI/efk.GUIManagerValidation.cpp
   Network/Network.cpp
   Recorder/EffectRecorder.cpp
   Recorder/AVIExporter.cpp
   Recorder/GifHelper.cpp
   Recorder/PNGHelper.cpp
   Sound/SoundDevice.cpp
-  Utils/Logger.cpp
-  ProcessConnector.cpp)
+  Utils/Logger.cpp)
 
 list(
   APPEND
@@ -66,25 +54,13 @@ list(
   3D/FileInterface.h
   3D/MainScreenEffectRenderer.h
   3D/ViewPointController.h
-  Graphics/Color.h
-  Graphics/StaticMeshRenderer.h
-  Graphics/LineRenderer.h
-  Graphics/ImageRenderer.h
-  Graphics/PostProcess.h
-  Graphics/PostEffects.h
-  Graphics/GraphicsDevice.h
-  GUI/Image.h
-  GUI/ReloadableImage.h
-  GUI/RenderImage.h
-  GUI/GradientHDRState.h
   Network/Network.h
   Math/Matrix44F.h
   Math/Vector2I.h
   Math/Vector3F.h
   Recorder/EffectRecorder.h
   Sound/SoundDevice.h
-  Utils/Logger.h
-  ProcessConnector.h)
+  Utils/Logger.h)
 
 # OS Dependency
 if(WIN32)

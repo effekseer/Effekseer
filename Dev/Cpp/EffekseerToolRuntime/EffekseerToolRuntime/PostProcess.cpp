@@ -2,7 +2,7 @@
 
 namespace Effekseer
 {
-namespace Tool
+namespace ToolRuntime
 {
 
 PostProcess::PostProcess(Backend::GraphicsDeviceRef graphicsDevice, Backend::ShaderRef shader, size_t uniformBufferVSSize, size_t uniformBufferPSSize, PostProcessBlendType blendType)
@@ -36,13 +36,13 @@ PostProcess::PostProcess(Backend::GraphicsDeviceRef graphicsDevice, Backend::Sha
 	vertexLayoutElements[1].SemanticIndex = 0;
 	vertexLayoutElements[1].SemanticName = "TEXCOORD";
 
-	auto vertexLayout = graphicsDevice->CreateVertexLayout(vertexLayoutElements.data(), static_cast<int32_t>(vertexLayoutElements.size()));
+	vertexLayout_ = graphicsDevice->CreateVertexLayout(vertexLayoutElements.data(), static_cast<int32_t>(vertexLayoutElements.size()));
 
 	Backend::PipelineStateParameter pipParam;
 
 	// OpenGL doesn't require it
 	pipParam.FrameBufferPtr = nullptr;
-	pipParam.VertexLayoutPtr = vertexLayout;
+	pipParam.VertexLayoutPtr = vertexLayout_;
 	pipParam.ShaderPtr = shader;
 	pipParam.IsDepthTestEnabled = false;
 	pipParam.IsDepthWriteEnabled = false;
@@ -95,6 +95,7 @@ PostProcess::PostProcess(Backend::GraphicsDeviceRef graphicsDevice, Backend::Sha
 	drawParam_.PipelineStatePtr = pip_;
 	drawParam_.VertexUniformBufferPtrs[0] = uniformBufferVS_;
 	drawParam_.PixelUniformBufferPtrs[0] = uniformBufferPS_;
+	drawParam_.VertexStride = sizeof(Vertex);
 	drawParam_.PrimitiveCount = 2;
 	drawParam_.InstanceCount = 1;
 }
@@ -104,5 +105,5 @@ void PostProcess::Render()
 	graphicsDevice_->Draw(drawParam_);
 }
 
-} // namespace Tool
+} // namespace ToolRuntime
 } // namespace Effekseer

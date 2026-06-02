@@ -6,7 +6,7 @@ namespace EffekseerRenderer
 
 Guide::Guide(Effekseer::Backend::GraphicsDeviceRef graphicsDevice)
 {
-	imageRenderer_ = Effekseer::Tool::ImageRenderer::Create(graphicsDevice);
+	imageRenderer_ = Effekseer::ToolRuntime::ImageRenderer::Create(graphicsDevice);
 }
 
 Guide::~Guide()

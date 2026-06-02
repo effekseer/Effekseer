@@ -92,6 +92,31 @@ namespace Effekseer
 namespace ToolRuntime
 {
 
+bool TryGetLLGIDeviceType(
+	Effekseer::RefPtr<Effekseer::Backend::GraphicsDevice> graphicsDevice,
+	LLGI::DeviceType& deviceType)
+{
+	if (graphicsDevice == nullptr)
+	{
+		return false;
+	}
+
+	const auto deviceName = graphicsDevice->GetDeviceName();
+	if (deviceName != "DirectX12" && deviceName != "Vulkan" && deviceName != "Metal" && deviceName != "WebGPU" && deviceName != "LLGI")
+	{
+		return false;
+	}
+
+	auto llgiGraphicsDevice = graphicsDevice.DownCast<EffekseerRendererLLGI::Backend::GraphicsDevice>();
+	if (llgiGraphicsDevice == nullptr)
+	{
+		return false;
+	}
+
+	deviceType = llgiGraphicsDevice->GetDeviceType();
+	return true;
+}
+
 bool LLGICompiledShader::IsEmpty() const
 {
 	return Binary.empty();

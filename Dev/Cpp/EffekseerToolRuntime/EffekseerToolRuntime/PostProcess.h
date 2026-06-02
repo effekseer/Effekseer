@@ -5,7 +5,7 @@
 
 namespace Effekseer
 {
-namespace Tool
+namespace ToolRuntime
 {
 
 enum class PostProcessBlendType
@@ -38,6 +38,11 @@ public:
 	PostProcess(Backend::GraphicsDeviceRef graphicsDevice, Backend::ShaderRef shader, size_t uniformBufferVSSize, size_t uniformBufferPSSize, PostProcessBlendType blendType = PostProcessBlendType::None);
 	void Render();
 
+	bool GetIsValid() const
+	{
+		return graphicsDevice_ != nullptr && shader_ != nullptr && vb_ != nullptr && ib_ != nullptr && vertexLayout_ != nullptr && pip_ != nullptr;
+	}
+
 	Backend::UniformBufferRef GetUniformBufferVS()
 	{
 		return uniformBufferVS_;
@@ -55,5 +60,5 @@ public:
 	}
 };
 
-} // namespace Tool
+} // namespace ToolRuntime
 } // namespace Effekseer

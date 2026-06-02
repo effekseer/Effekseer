@@ -2,9 +2,6 @@
 #pragma once
 
 #include "../Graphics/Color.h"
-#include "../Graphics/PostEffects.h"
-#include "../Graphics/PostProcess.h"
-#include "../Graphics/StaticMeshRenderer.h"
 #include "../Graphics/efk.Graphics.h"
 #include "../Math/Matrix44F.h"
 #include "../Math/Vector2I.h"
@@ -12,6 +9,8 @@
 #include <Effekseer.h>
 #include <EffekseerToolRuntime/BackgroundPlaneRenderer.h>
 #include <EffekseerToolRuntime/GroundPlaneRenderer.h>
+#include <EffekseerToolRuntime/PostEffects.h>
+#include <EffekseerToolRuntime/PostProcess.h>
 
 namespace Effekseer
 {
@@ -128,10 +127,10 @@ protected:
 	Effekseer::Backend::TextureRef backTexture;
 	Effekseer::Backend::TextureRef viewRenderTexture;
 
-	std::unique_ptr<PostProcess> overdrawEffect_;
-	std::unique_ptr<BloomPostEffect> bloomEffect_;
-	std::unique_ptr<LinearToSRGBPostEffect> linearToSRGBEffect_;
-	std::unique_ptr<TonemapPostEffect> tonemapEffect_;
+	std::unique_ptr<Effekseer::ToolRuntime::PostProcess> overdrawEffect_;
+	std::unique_ptr<Effekseer::ToolRuntime::BloomPostEffect> bloomEffect_;
+	std::unique_ptr<Effekseer::ToolRuntime::LinearToSRGBPostEffect> linearToSRGBEffect_;
+	std::unique_ptr<Effekseer::ToolRuntime::TonemapPostEffect> tonemapEffect_;
 
 	bool m_isSRGBMode = false;
 	uint32_t msaaSamples = 4;
