@@ -652,7 +652,7 @@ inline std::string GetMaterialPS_Suf2_Refraction(ShaderGeneratorTarget type)
 	float3 dir = mul((float3x3)cameraMat, pixelNormalDir);
 	dir.y = -dir.y;
 
-	float2 distortUV = 	dir.xy * (refraction - airRefraction) * opacity;
+	float2 distortUV = 	dir.xy * (refraction - airRefraction);
 
 	distortUV += screenUV;
 	distortUV = GetUVBack(distortUV);	
@@ -673,11 +673,10 @@ inline std::string GetMaterialPS_Suf2_Refraction(ShaderGeneratorTarget type)
 	}
 
 	ss << R"(
+	float4 Output = bg;
+
 	if(opacityMask <= 0.0) discard;
 	if(opacity <= 0.0) discard;
-
-	float4 Output = bg;
-	Output.a *= opacity;
 
 	return Output;
 }
