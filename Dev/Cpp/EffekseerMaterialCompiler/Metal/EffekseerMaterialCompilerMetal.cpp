@@ -580,16 +580,17 @@ static const char g_material_fs_src_suf2_refraction[] =
     tmpvar_1[2] = u.cameraMat[2].xyz;
 
     float3 dir = float3x3(tmpvar_1) * pixelNormalDir;
-    float2 distortUV = dir.xy * (refraction - airRefraction);
+    float2 distortUV = dir.xy * (refraction - airRefraction) * opacity;
 
     distortUV += screenUV_distort;
     distortUV = float2(distortUV.x, u.mUVInversedBack.z + u.mUVInversedBack.w * distortUV.y);
     distortUV.y = 1.0 - distortUV.y;
-    float4 bg = efk_background.sample(s_efk_background, distortUV);
-    o.gl_FragColor = bg;
-
     if(opacityMask <= 0.0) discard_fragment();
     if(opacity <= 0.0) discard_fragment();
+    float4 bg = efk_background.sample(s_efk_background, distortUV);
+    bg.a *= opacity;
+    o.gl_FragColor = bg;
+
     return o;
 }
 )";

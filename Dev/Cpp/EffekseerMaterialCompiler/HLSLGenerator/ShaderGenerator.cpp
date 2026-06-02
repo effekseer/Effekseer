@@ -652,7 +652,7 @@ inline std::string GetMaterialPS_Suf2_Refraction(ShaderGeneratorTarget type)
 	float3 dir = mul((float3x3)cameraMat, pixelNormalDir);
 	dir.y = -dir.y;
 
-	float2 distortUV = 	dir.xy * (refraction - airRefraction);
+	float2 distortUV = 	dir.xy * (refraction - airRefraction) * opacity;
 
 	distortUV += screenUV;
 	distortUV = GetUVBack(distortUV);	
@@ -673,10 +673,11 @@ inline std::string GetMaterialPS_Suf2_Refraction(ShaderGeneratorTarget type)
 	}
 
 	ss << R"(
-	float4 Output = bg;
-
 	if(opacityMask <= 0.0) discard;
 	if(opacity <= 0.0) discard;
+
+	float4 Output = bg;
+	Output.a *= opacity;
 
 	return Output;
 }
@@ -687,6 +688,19 @@ inline std::string GetMaterialPS_Suf2_Refraction(ShaderGeneratorTarget type)
 }
 
 } // namespace HLSL
+
+bool RequiresPixelScreenPosition(MaterialFile* materialFile, bool isRefraction)
+{
+	if (isRefraction)
+	{
+		return true;
+	}
+
+	const auto code = std::string(materialFile->GetGenericCode());
+	return code.find("CalcDepthFade") != std::string::npos ||
+		   code.find("screenUV") != std::string::npos ||
+		   code.find("meshZ") != std::string::npos;
+}
 
 std::string ShaderGenerator::Replace(std::string target, std::string from_, std::string to_)
 {
@@ -699,6 +713,21 @@ std::string ShaderGenerator::Replace(std::string target, std::string from_, std:
 	}
 
 	return target;
+}
+
+void ShaderGenerator::RemovePixelScreenPosition(ShaderData& shaderData)
+{
+	shaderData.CodeVS = Replace(shaderData.CodeVS, "\n\tfloat4 PosP : TEXCOORD6;", "");
+	shaderData.CodeVS = Replace(shaderData.CodeVS, "\n\t//float2 ScreenUV : TEXCOORD6;", "");
+	shaderData.CodeVS = Replace(shaderData.CodeVS, "\n\tOutput.PosP = Output.Position;", "");
+	shaderData.CodeVS = Replace(shaderData.CodeVS, "\n\t//Output.ScreenUV = Output.Position.xy / Output.Position.w;", "");
+	shaderData.CodeVS = Replace(shaderData.CodeVS, "\n\t//Output.ScreenUV.xy = float2(Output.ScreenUV.x + 1.0, 1.0 - Output.ScreenUV.y) * 0.5;", "");
+
+	shaderData.CodePS = Replace(shaderData.CodePS, "\n\tfloat4 PosP : TEXCOORD6;", "");
+	shaderData.CodePS = Replace(shaderData.CodePS, "\n\t//float2 ScreenUV : TEXCOORD6;", "");
+	shaderData.CodePS = Replace(shaderData.CodePS,
+								"\n\tfloat2 screenUV = Input.PosP.xy / Input.PosP.w;\n\tfloat meshZ =  Input.PosP.z / Input.PosP.w;\n\tscreenUV.xy = float2(screenUV.x + 1.0, 1.0 - screenUV.y) * 0.5;",
+								"\n\tfloat2 screenUV = float2(0.0, 0.0);\n\tfloat meshZ = 0.0f;");
 }
 
 std::string ShaderGenerator::GetType(int32_t i)
@@ -977,6 +1006,7 @@ ShaderData ShaderGenerator::GenerateShader(MaterialFile* materialFile,
 	bool isSprite = shaderType == MaterialShaderType::Standard || shaderType == MaterialShaderType::Refraction;
 	bool isRefrection = materialFile->GetHasRefraction() &&
 						(shaderType == MaterialShaderType::Refraction || shaderType == MaterialShaderType::RefractionModel);
+	bool requiresPixelScreenPosition = RequiresPixelScreenPosition(materialFile, isRefrection);
 
 	for (int stage = 0; stage < 2; stage++)
 	{
@@ -1187,6 +1217,11 @@ ShaderData ShaderGenerator::GenerateShader(MaterialFile* materialFile,
 		{
 			shaderData.CodePS = maincode.str();
 		}
+	}
+
+	if (target_ == ShaderGeneratorTarget::DirectX9 && !requiresPixelScreenPosition)
+	{
+		RemovePixelScreenPosition(shaderData);
 	}
 
 	// custom data
