@@ -21,7 +21,6 @@
 
 namespace EffekseerRendererLLGI
 {
-
 bool PiplineStateKey::operator<(const PiplineStateKey& v) const
 {
 	if (shader != v.shader)
@@ -350,7 +349,10 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 
 	// Generate vertex buffer
 	{
-		GetImpl()->InternalVertexBuffer = std::make_shared<EffekseerRenderer::VertexBufferRing>(graphicsDevice_, EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * squareMaxCount_ * 4, 3);
+		GetImpl()->InternalVertexBuffer = std::make_shared<EffekseerRenderer::VertexBufferRing>(
+			graphicsDevice_,
+			EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * squareMaxCount_ * 4,
+			3);
 		if (!GetImpl()->InternalVertexBuffer->GetIsValid())
 		{
 			GetImpl()->InternalVertexBuffer = nullptr;
@@ -560,6 +562,11 @@ bool RendererImplemented::EndRendering()
 void RendererImplemented::SetCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList)
 {
 	commandList_ = commandList;
+
+	if (commandList_ != nullptr && GetImpl()->InternalVertexBuffer != nullptr)
+	{
+		GetImpl()->InternalVertexBuffer->BeginWrite();
+	}
 
 	auto device = GetGraphicsDevice().DownCast<Backend::GraphicsDevice>();
 	auto cl = commandList_.DownCast<CommandList>();
