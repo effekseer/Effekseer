@@ -2,9 +2,9 @@
 #pragma once
 
 #include "../3D/EffectRenderer.h"
-#include "../Graphics/LineRenderer.h"
 #include "../Math/Vector3F.h"
 #include <Effekseer.h>
+#include <EffekseerToolRuntime/LineRenderer.h>
 #include <functional>
 #include <string>
 
@@ -23,7 +23,7 @@ class MainScreenEffectRenderer : public Effekseer::Tool::EffectRenderer
 private:
 	std::shared_ptr<::EffekseerRenderer::Guide> guide_;
 
-	std::shared_ptr<Effekseer::Tool::LineRenderer> lineRenderer_;
+	std::shared_ptr<Effekseer::ToolRuntime::LineRenderer> lineRenderer_;
 
 	Effekseer::TextureLoaderRef textureLoader_;
 	std::u16string backgroundPath;

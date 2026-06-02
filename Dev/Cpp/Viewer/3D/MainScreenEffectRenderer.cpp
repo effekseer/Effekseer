@@ -37,9 +37,10 @@ bool MainScreenEffectRenderer::OnAfterInitialize()
 
 	spdlog::trace("OK Guide");
 
-	lineRenderer_ = std::make_shared<LineRenderer>(graphics_->GetGraphics()->GetGraphicsDevice());
-	if (lineRenderer_ == nullptr)
+	lineRenderer_ = std::make_shared<Effekseer::ToolRuntime::LineRenderer>(graphics_->GetGraphics()->GetGraphicsDevice());
+	if (lineRenderer_ == nullptr || !lineRenderer_->GetIsValid())
 	{
+		spdlog::warn("FAIL Generic Line Renderer");
 		return false;
 	}
 
@@ -52,16 +53,31 @@ bool MainScreenEffectRenderer::OnAfterInitialize()
 
 void MainScreenEffectRenderer::StartRenderingLines()
 {
+	if (lineRenderer_ == nullptr)
+	{
+		return;
+	}
+
 	lineRenderer_->ClearCache();
 }
 
 void MainScreenEffectRenderer::AddLine(float p0x, float p0y, float p0z, float p1x, float p1y, float p1z, Effekseer::Tool::Color color)
 {
+	if (lineRenderer_ == nullptr)
+	{
+		return;
+	}
+
 	lineRenderer_->DrawLine(Vector3D{p0x, p0y, p0z}, Vector3D{p1x, p1y, p1z}, color);
 }
 
 void MainScreenEffectRenderer::EndRenderingLines(const Effekseer::Tool::Matrix44F& cameraMatrix, const Effekseer::Tool::Matrix44F& projectionMatrix)
 {
+	if (lineRenderer_ == nullptr)
+	{
+		return;
+	}
+
 	lineRenderer_->Render(cameraMatrix, projectionMatrix);
 }
 

@@ -2,7 +2,6 @@
 
 #ifdef EFFEKSEER_TOOL_RUNTIME_WITH_LLGI
 #include "LLGIShaderCompiler.h"
-#include <EffekseerRendererLLGI/GraphicsDevice.h>
 #endif
 
 #include <vector>
@@ -648,12 +647,6 @@ Effekseer::Backend::ShaderRef CreateStaticMeshShaderForLLGI(
 	return shader;
 }
 
-EffekseerRendererLLGI::Backend::GraphicsDeviceRef GetLLGIGraphicsDevice(
-	Effekseer::RefPtr<Effekseer::Backend::GraphicsDevice> graphicsDevice)
-{
-	return graphicsDevice.DownCast<EffekseerRendererLLGI::Backend::GraphicsDevice>();
-}
-
 #endif
 
 } // namespace
@@ -725,9 +718,10 @@ std::shared_ptr<StaticMeshRenderer> StaticMeshRenderer::Create(RefPtr<Backend::G
 	Effekseer::Backend::ShaderRef shader;
 
 #ifdef EFFEKSEER_TOOL_RUNTIME_WITH_LLGI
-	if (auto llgiGraphicsDevice = GetLLGIGraphicsDevice(graphicsDevice))
+	LLGI::DeviceType deviceType = LLGI::DeviceType::Default;
+	if (TryGetLLGIDeviceType(graphicsDevice, deviceType))
 	{
-		shader = CreateStaticMeshShaderForLLGI(graphicsDevice, llgiGraphicsDevice->GetDeviceType());
+		shader = CreateStaticMeshShaderForLLGI(graphicsDevice, deviceType);
 	}
 	else
 #endif
@@ -853,7 +847,8 @@ void StaticMeshRenderer::Render(const RendererParameter& rendererParameter)
 	drawParam.VertexStride = sizeof(StaticMeshVertex);
 	drawParam.VertexUniformBufferPtrs[0] = uniformBufferVS_;
 #ifdef EFFEKSEER_TOOL_RUNTIME_WITH_LLGI
-	if (GetLLGIGraphicsDevice(graphicsDevice_) != nullptr)
+	LLGI::DeviceType deviceType = LLGI::DeviceType::Default;
+	if (TryGetLLGIDeviceType(graphicsDevice_, deviceType))
 	{
 		drawParam.VertexUniformBufferPtrs[1] = uniformBufferPS_;
 	}

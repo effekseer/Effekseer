@@ -3,7 +3,7 @@
 #include "PostProcess.h"
 #include <memory>
 
-namespace Effekseer::Tool
+namespace Effekseer::ToolRuntime
 {
 
 class BloomPostEffect
@@ -137,4 +137,4 @@ public:
 	bool GetIsValid() const;
 };
 
-} // namespace Effekseer::Tool
+} // namespace Effekseer::ToolRuntime

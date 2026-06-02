@@ -20,10 +20,10 @@
 #include <EditorCommon/GUI/MainWindow.h>
 
 #include "../Graphics/GraphicsDevice.h"
+#include "Image.h"
 
 namespace Effekseer::Tool
 {
-class Image;
 class GraphicsDevice;
 class GradientHDRState;
 class GradientHDRGUIState;

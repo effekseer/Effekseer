@@ -22,7 +22,7 @@ namespace PS
 
 } // namespace
 
-namespace Effekseer::Tool
+namespace Effekseer::ToolRuntime
 {
 
 std::shared_ptr<ImageRenderer> ImageRenderer::Create(RefPtr<Backend::GraphicsDevice> graphicsDevice)
@@ -94,6 +94,11 @@ std::shared_ptr<ImageRenderer> ImageRenderer::Create(RefPtr<Backend::GraphicsDev
 
 	auto pip = graphicsDevice->CreatePipelineState(pipParam);
 
+	if (shader == nullptr || vertexLayout == nullptr || pip == nullptr)
+	{
+		return nullptr;
+	}
+
 	auto ret = std::make_shared<ImageRenderer>();
 
 	ret->vb_ = vb;
@@ -125,6 +130,14 @@ void ImageRenderer::Draw(const Effekseer::Vector3D positions[],
 						 const Effekseer::Color colors[],
 						 ::Effekseer::TextureRef texturePtr)
 {
+	DrawBackendTexture(positions, uvs, colors, texturePtr != nullptr ? texturePtr->GetBackend() : nullptr);
+}
+
+void ImageRenderer::DrawBackendTexture(const Effekseer::Vector3D positions[],
+									   const Effekseer::Vector2D uvs[],
+									   const Effekseer::Color colors[],
+									   Backend::TextureRef texturePtr)
+{
 	Sprite s;
 
 	for (int32_t i = 0; i < 4; i++)
@@ -153,11 +166,12 @@ void ImageRenderer::Render()
 
 		Effekseer::Backend::DrawParameter drawParam;
 
-		drawParam.SetTexture(0, sprite.TexturePtr != nullptr ? sprite.TexturePtr->GetBackend() : dummyTexture_, Backend::TextureWrapType::Repeat, Backend::TextureSamplingType::Linear);
+		drawParam.SetTexture(0, sprite.TexturePtr != nullptr ? sprite.TexturePtr : dummyTexture_, Backend::TextureWrapType::Repeat, Backend::TextureSamplingType::Linear);
 
 		drawParam.VertexBufferPtr = vb_;
 		drawParam.IndexBufferPtr = ib_;
 		drawParam.PipelineStatePtr = pip_;
+		drawParam.VertexStride = sizeof(Vertex);
 		drawParam.PrimitiveCount = 2;
 		drawParam.InstanceCount = 1;
 		drawParam.IndexOffset = i * 6;
@@ -171,4 +185,9 @@ void ImageRenderer::ClearCache()
 	sprites_.clear();
 }
 
-} // namespace Effekseer::Tool
+bool ImageRenderer::GetIsValid() const
+{
+	return graphicsDevice_ != nullptr && shader_ != nullptr && pip_ != nullptr && vertexLayout_ != nullptr && vb_ != nullptr && ib_ != nullptr && dummyTexture_ != nullptr;
+}
+
+} // namespace Effekseer::ToolRuntime

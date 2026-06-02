@@ -1,30 +1,22 @@
-import os
-import subprocess
 import sys
 from pathlib import Path
 
-transpiler_path = 'ShaderTranspiler'
-root_path = Path('Viewer/Shaders/HLSL_DX11/')
-gl_root_path = Path('Viewer/Shaders/GLSL_GL/')
+sys.dont_write_bytecode = True
 
-verts = root_path.glob("*_vs.fx")
-frags = root_path.glob("*_ps.fx")
+from CreateShader_Common import find_shader_transpiler, generate_gl_headers, transpile_gl_330
 
-try:
-    subprocess.call(['ShaderTranspiler'])
-except:
-    print('Please put ShaderTranspiler from https://github.com/altseed/LLGI/tree/master/tools')
-    sys.exit(1)
 
-gl_common_flags = ['-D', '__OPENGL__', '1', '--plain']
+def main():
+    script_dir = Path(__file__).resolve().parent
+    shader_root_path = script_dir / 'Viewer/Shaders/'
 
-# OpenGL
-for f in (verts):
-    print('Converting {}'.format(f))
-    subprocess.call(['ShaderTranspiler', '--vert', '-G', '--sm', '330', '--input',
-                     f, '--output', str(gl_root_path) + '/'  + os.path.basename(f)] + gl_common_flags)
+    transpiler_path = find_shader_transpiler(script_dir)
+    gl_root_path = shader_root_path / 'GLSL_GL/'
+    gl_header_root_path = shader_root_path / 'GLSL_GL_Header/'
 
-for f in (frags):
-    print('Converting {}'.format(f))
-    subprocess.call(['ShaderTranspiler', '--frag', '-G', '--sm', '330', '--input',
-                     f, '--output', str(gl_root_path) + '/' + os.path.basename(f)] + gl_common_flags)
+    transpile_gl_330(shader_root_path / 'HLSL_DX11/', gl_root_path, transpiler_path)
+    generate_gl_headers(gl_root_path, gl_header_root_path)
+
+
+if __name__ == '__main__':
+    main()

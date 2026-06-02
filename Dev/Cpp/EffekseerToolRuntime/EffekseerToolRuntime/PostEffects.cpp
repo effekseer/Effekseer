@@ -1,5 +1,6 @@
 #include "PostEffects.h"
-#include "../Math/Vector2I.h"
+
+#include <algorithm>
 
 namespace
 {
@@ -76,7 +77,7 @@ static
 
 } // namespace
 
-namespace Effekseer::Tool
+namespace Effekseer::ToolRuntime
 {
 
 BloomPostEffect::BloomPostEffect(Backend::GraphicsDeviceRef graphicsDevice)
@@ -173,11 +174,22 @@ BloomPostEffect::BloomPostEffect(Backend::GraphicsDeviceRef graphicsDevice)
 	{
 		extract_ = std::make_unique<PostProcess>(graphicsDevice, shaderExtract, 0, sizeof(float) * 8);
 	}
-
-	downsample_ = std::make_unique<PostProcess>(graphicsDevice, shaderDownsample, 0, sizeof(float) * 4);
-	blend_ = std::make_unique<PostProcess>(graphicsDevice, shaderBlend, 0, 0, PostProcessBlendType::Add);
-	blurH_ = std::make_unique<PostProcess>(graphicsDevice, shaderBlurH, 0, sizeof(float) * 4);
-	blurV_ = std::make_unique<PostProcess>(graphicsDevice, shaderBlurV, 0, sizeof(float) * 4);
+	if (shaderDownsample != nullptr)
+	{
+		downsample_ = std::make_unique<PostProcess>(graphicsDevice, shaderDownsample, 0, sizeof(float) * 4);
+	}
+	if (shaderBlend != nullptr)
+	{
+		blend_ = std::make_unique<PostProcess>(graphicsDevice, shaderBlend, 0, 0, PostProcessBlendType::Add);
+	}
+	if (shaderBlurH != nullptr)
+	{
+		blurH_ = std::make_unique<PostProcess>(graphicsDevice, shaderBlurH, 0, sizeof(float) * 4);
+	}
+	if (shaderBlurV != nullptr)
+	{
+		blurV_ = std::make_unique<PostProcess>(graphicsDevice, shaderBlurV, 0, sizeof(float) * 4);
+	}
 }
 
 void BloomPostEffect::Render(Effekseer::Backend::TextureRef dst, Effekseer::Backend::TextureRef src)
@@ -303,12 +315,12 @@ void BloomPostEffect::Render(Effekseer::Backend::TextureRef dst, Effekseer::Back
 
 void BloomPostEffect::SetupBuffers(int32_t width, int32_t height)
 {
-	const auto createRenderTexture = [&](Effekseer::Tool::Vector2I size, Effekseer::Backend::TextureFormatType format)
+	const auto createRenderTexture = [&](int32_t width, int32_t height, Effekseer::Backend::TextureFormatType format)
 	{
 		Effekseer::Backend::TextureParameter param;
 		param.Format = format;
-		param.Size[0] = size.X;
-		param.Size[1] = size.Y;
+		param.Size[0] = width;
+		param.Size[1] = height;
 		param.Usage = Effekseer::Backend::TextureUsageType::RenderTarget;
 		return graphicsDevice_->CreateTexture(param);
 	};
@@ -329,20 +341,20 @@ void BloomPostEffect::SetupBuffers(int32_t width, int32_t height)
 
 	// Create high brightness extraction buffer
 	{
-		auto bufferSize = Effekseer::Tool::Vector2I(width, height);
-		extractBuffer = createRenderTexture(bufferSize, Effekseer::Backend::TextureFormatType::R16G16B16A16_FLOAT);
+		extractBuffer = createRenderTexture(width, height, Effekseer::Backend::TextureFormatType::R16G16B16A16_FLOAT);
 		renderPassExtract_ = createRenderPass(extractBuffer);
 	}
 
 	// Create low-resolution buffers
 	for (int i = 0; i < BlurBuffers; i++)
 	{
-		auto bufferSize = Effekseer::Tool::Vector2I(width, height);
+		auto bufferWidth = width;
+		auto bufferHeight = height;
 		for (int j = 0; j < BlurIterations; j++)
 		{
-			bufferSize.X = std::max(1, (bufferSize.X + 1) / 2);
-			bufferSize.Y = std::max(1, (bufferSize.Y + 1) / 2);
-			lowresBuffers[i][j] = createRenderTexture(bufferSize, Effekseer::Backend::TextureFormatType::R16G16B16A16_FLOAT);
+			bufferWidth = std::max(1, (bufferWidth + 1) / 2);
+			bufferHeight = std::max(1, (bufferHeight + 1) / 2);
+			lowresBuffers[i][j] = createRenderTexture(bufferWidth, bufferHeight, Effekseer::Backend::TextureFormatType::R16G16B16A16_FLOAT);
 		}
 	}
 
@@ -372,7 +384,11 @@ void BloomPostEffect::ReleaseBuffers()
 
 bool BloomPostEffect::GetIsValid() const
 {
-	return extract_ != nullptr && blend_ != nullptr && downsample_ != nullptr && blurH_ != nullptr && blurV_ != nullptr;
+	return extract_ != nullptr && extract_->GetIsValid() &&
+		   blend_ != nullptr && blend_->GetIsValid() &&
+		   downsample_ != nullptr && downsample_->GetIsValid() &&
+		   blurH_ != nullptr && blurH_->GetIsValid() &&
+		   blurV_ != nullptr && blurV_->GetIsValid();
 }
 
 TonemapPostEffect::TonemapPostEffect(Backend::GraphicsDeviceRef graphicsDevice)
@@ -469,7 +485,8 @@ void TonemapPostEffect::Render(Effekseer::Backend::TextureRef dst, Effekseer::Ba
 
 bool TonemapPostEffect::GetIsValid() const
 {
-	return postProcessCopy_ != nullptr;
+	return postProcessCopy_ != nullptr && postProcessCopy_->GetIsValid() &&
+		   postProcessTone_ != nullptr && postProcessTone_->GetIsValid();
 }
 
 LinearToSRGBPostEffect::LinearToSRGBPostEffect(Backend::GraphicsDeviceRef graphicsDevice)
@@ -530,7 +547,7 @@ void LinearToSRGBPostEffect::Render(Effekseer::Backend::TextureRef dst, Effeksee
 
 bool LinearToSRGBPostEffect::GetIsValid() const
 {
-	return postProcess_ != nullptr;
+	return postProcess_ != nullptr && postProcess_->GetIsValid();
 }
 
-} // namespace Effekseer::Tool
+} // namespace Effekseer::ToolRuntime

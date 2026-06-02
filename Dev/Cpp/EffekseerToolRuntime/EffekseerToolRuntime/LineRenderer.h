@@ -3,7 +3,12 @@
 
 #include <Effekseer.h>
 
-namespace Effekseer::Tool
+#include <memory>
+#include <vector>
+
+namespace Effekseer
+{
+namespace ToolRuntime
 {
 
 class LineRenderer
@@ -31,6 +36,8 @@ private:
 public:
 	LineRenderer(const Backend::GraphicsDeviceRef graphicsDevice);
 
+	bool GetIsValid() const;
+
 	void DrawLine(const Effekseer::Vector3D& p1, const Effekseer::Vector3D& p2, const Effekseer::Color& c);
 
 	void Render(const Effekseer::Matrix44& cameraMatrix, const Effekseer::Matrix44& projectionMatrix);
@@ -38,4 +45,5 @@ public:
 	void ClearCache();
 };
 
-} // namespace Effekseer::Tool
+} // namespace ToolRuntime
+} // namespace Effekseer

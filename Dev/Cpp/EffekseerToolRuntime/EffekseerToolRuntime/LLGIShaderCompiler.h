@@ -29,6 +29,10 @@ struct LLGIShaderCompileInput
 	LLGI::ShaderStageType Stage = LLGI::ShaderStageType::Vertex;
 };
 
+bool TryGetLLGIDeviceType(
+	Effekseer::RefPtr<Effekseer::Backend::GraphicsDevice> graphicsDevice,
+	LLGI::DeviceType& deviceType);
+
 bool CompileLLGIShaders(
 	LLGI::DeviceType deviceType,
 	const LLGIShaderCompileInput* inputs,
