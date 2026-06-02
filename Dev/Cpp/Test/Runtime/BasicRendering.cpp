@@ -34,6 +34,7 @@ enum class BasicRenderingCaseRoot
 {
 	TestDataEffects,
 	ResourceData00Basic,
+	ResourceDataSamples,
 };
 
 enum class BasicRenderingCamera
@@ -41,6 +42,12 @@ enum class BasicRenderingCamera
 	Default,
 	Fireworks,
 	SoftParticle,
+};
+
+enum class BasicRenderingPlayMode
+{
+	Single,
+	PerformanceGrid,
 };
 
 struct BasicRenderingCase
@@ -56,12 +63,14 @@ struct BasicRenderingCase
 	EffekseerRenderer::UVStyle BackgroundTextureUVStyle = EffekseerRenderer::UVStyle::Normal;
 	bool OverridesBackgroundTextureUVStyle = false;
 	bool UseGroundDepth = false;
+	BasicRenderingPlayMode PlayMode = BasicRenderingPlayMode::Single;
 };
 
 const std::vector<BasicRenderingCase>& GetBasicRenderingCases()
 {
 	static const std::vector<BasicRenderingCase> cases = {
 		{"Simple_Turbulence_Fireworks", BasicRenderingCaseRoot::ResourceData00Basic, nullptr, u"Simple_Turbulence_Fireworks", u".efkefc", "Simple_Turbulence_Fireworks", 180, BasicRenderingCamera::Fireworks},
+		{"hit_hanmado_0409", BasicRenderingCaseRoot::ResourceDataSamples, u"03_Hanmado01/Effect", u"hit_hanmado_0409", u".efkefc", "hit_hanmado_0409", 30, BasicRenderingCamera::Default, EffekseerRenderer::UVStyle::Normal, false, false, BasicRenderingPlayMode::PerformanceGrid},
 
 		{"SimpleLaser", BasicRenderingCaseRoot::TestDataEffects, u"10", u"SimpleLaser", u".efk", "SimpleLaser"},
 		{"FCurve_Parameters1", BasicRenderingCaseRoot::TestDataEffects, u"10", u"FCurve_Parameters1", u".efk", "FCurve_Parameters1"},
@@ -157,8 +166,34 @@ std::u16string MakeBasicRenderingEffectPath(const BasicRenderingCase& testCase)
 	{
 		return directory + u"../../../../ResourceData/samples/00_Basic/" + testCase.EffectName + testCase.Extension;
 	}
+	if (testCase.Root == BasicRenderingCaseRoot::ResourceDataSamples)
+	{
+		return directory + u"../../../../ResourceData/samples/" + testCase.Directory + u"/" + testCase.EffectName + testCase.Extension;
+	}
 
 	return directory + u"../../../../TestData/Effects/" + testCase.Directory + u"/" + testCase.EffectName + testCase.Extension;
+}
+
+void PlayBasicRenderingEffect(EffectPlatform* platform, const BasicRenderingCase& testCase, const std::u16string& path)
+{
+	if (testCase.PlayMode == BasicRenderingPlayMode::PerformanceGrid)
+	{
+		constexpr float gridMin = -2.0f;
+		constexpr float gridMax = 2.0f;
+		constexpr float gridStep = 2.0f;
+		constexpr float eps = 0.0001f;
+
+		for (float y = gridMin; y <= gridMax + eps; y += gridStep)
+		{
+			for (float x = gridMin; x <= gridMax + eps; x += gridStep)
+			{
+				platform->Play(path.c_str(), {x, y, 0.0f});
+			}
+		}
+		return;
+	}
+
+	platform->Play(path.c_str());
 }
 
 void SetBasicRenderingCamera(const EffectPlatformInitializingParameter& param, EffectPlatform* platform, BasicRenderingCamera camera)
@@ -225,7 +260,7 @@ void RunBasicRenderingCase(
 
 	srand(0);
 	const auto path = MakeBasicRenderingEffectPath(testCase);
-	platform->Play(path.c_str());
+	PlayBasicRenderingEffect(platform, testCase, path);
 
 	for (int32_t i = 0; i < testCase.FrameCount; i++)
 	{
