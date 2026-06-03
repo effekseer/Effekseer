@@ -37,7 +37,7 @@ bool MainScreenEffectRenderer::OnAfterInitialize()
 
 	spdlog::trace("OK Guide");
 
-	lineRenderer_ = std::make_shared<Effekseer::ToolRuntime::LineRenderer>(graphics_->GetGraphics()->GetGraphicsDevice());
+	lineRenderer_ = std::make_shared<Effekseer::ToolRuntime::LineRenderer>(graphics_->GetGraphics()->GetGraphicsDevice(), true);
 	if (lineRenderer_ == nullptr || !lineRenderer_->GetIsValid())
 	{
 		spdlog::warn("FAIL Generic Line Renderer");

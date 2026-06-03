@@ -34,7 +34,7 @@ private:
 	Backend::UniformBufferRef uniformBufferVS_;
 
 public:
-	LineRenderer(const Backend::GraphicsDeviceRef graphicsDevice);
+	LineRenderer(const Backend::GraphicsDeviceRef graphicsDevice, bool isDepthTestEnabled = false);
 
 	bool GetIsValid() const;
 
