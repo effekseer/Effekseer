@@ -50,7 +50,8 @@ void RenderLineOnce(const std::shared_ptr<RenderingEnvironment>& window)
 		projectionMatrix.PerspectiveFovRH_OpenGL(30.0f * 3.1415926535f / 180.0f, 1.0f, 0.1f, 100.0f);
 	}
 
-	graphicsDevice->BeginRenderPass(window->GetScreenRenderPass(), true, true, Effekseer::Color(0, 0, 0, 255));
+	auto screenRenderPass = window->GetScreenRenderPass();
+	graphicsDevice->BeginRenderPass(screenRenderPass, true, true, Effekseer::Color(0, 0, 0, 255));
 	lineRenderer->ClearCache();
 	lineRenderer->DrawLine({-0.5f, 0.0f, 0.0f}, {0.5f, 0.0f, 0.0f}, Effekseer::Color(255, 255, 255, 255));
 	lineRenderer->Render(cameraMatrix, projectionMatrix);
@@ -316,7 +317,8 @@ void RenderImageRendererOnce(const std::shared_ptr<RenderingEnvironment>& window
 		Effekseer::Color(255, 255, 255, 255),
 	};
 
-	graphicsDevice->BeginRenderPass(window->GetScreenRenderPass(), true, true, Effekseer::Color(0, 0, 0, 255));
+	auto screenRenderPass = window->GetScreenRenderPass();
+	graphicsDevice->BeginRenderPass(screenRenderPass, true, true, Effekseer::Color(0, 0, 0, 255));
 	imageRenderer->ClearCache();
 	imageRenderer->Draw(positions, uvs, colors, nullptr);
 	imageRenderer->Render();
