@@ -480,7 +480,7 @@ namespace Effekseer
 namespace ToolRuntime
 {
 
-LineRenderer::LineRenderer(const Backend::GraphicsDeviceRef graphicsDevice)
+LineRenderer::LineRenderer(const Backend::GraphicsDeviceRef graphicsDevice, bool isDepthTestEnabled)
 {
 	auto vb = graphicsDevice->CreateVertexBuffer(static_cast<int32_t>(sizeof(Vertex) * 2 * 1024), nullptr, true);
 
@@ -552,7 +552,7 @@ LineRenderer::LineRenderer(const Backend::GraphicsDeviceRef graphicsDevice)
 	pipParam.FrameBufferPtr = nullptr;
 	pipParam.VertexLayoutPtr = vertexLayout;
 	pipParam.ShaderPtr = shader;
-	pipParam.IsDepthTestEnabled = false;
+	pipParam.IsDepthTestEnabled = isDepthTestEnabled;
 	pipParam.IsDepthWriteEnabled = false;
 	pipParam.IsBlendEnabled = true;
 	pipParam.IsMSAAEnabled = true;
