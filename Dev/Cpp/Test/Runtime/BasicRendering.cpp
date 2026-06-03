@@ -70,7 +70,13 @@ const std::vector<BasicRenderingCase>& GetBasicRenderingCases()
 {
 	static const std::vector<BasicRenderingCase> cases = {
 		{"Simple_Turbulence_Fireworks", BasicRenderingCaseRoot::ResourceData00Basic, nullptr, u"Simple_Turbulence_Fireworks", u".efkefc", "Simple_Turbulence_Fireworks", 180, BasicRenderingCamera::Fireworks},
+		{"ManyRings1", BasicRenderingCaseRoot::TestDataEffects, u"Performance", u"ManyRings1", u".efkefc", "ManyRings1", 30, BasicRenderingCamera::Default, EffekseerRenderer::UVStyle::Normal, false, false, BasicRenderingPlayMode::PerformanceGrid},
+		{"ManyRings2", BasicRenderingCaseRoot::TestDataEffects, u"Performance", u"ManyRings2", u".efkefc", "ManyRings2", 30, BasicRenderingCamera::Default, EffekseerRenderer::UVStyle::Normal, false, false, BasicRenderingPlayMode::PerformanceGrid},
+		{"ManySprites1", BasicRenderingCaseRoot::TestDataEffects, u"Performance", u"ManySprites1", u".efkefc", "ManySprites1", 30, BasicRenderingCamera::Default, EffekseerRenderer::UVStyle::Normal, false, false, BasicRenderingPlayMode::PerformanceGrid},
+		{"ManySpritesAdvance1", BasicRenderingCaseRoot::TestDataEffects, u"Performance", u"ManySpritesAdvance1", u".efkefc", "ManySpritesAdvance1", 30, BasicRenderingCamera::Default, EffekseerRenderer::UVStyle::Normal, false, false, BasicRenderingPlayMode::PerformanceGrid},
+		{"Benediction", BasicRenderingCaseRoot::TestDataEffects, u"Performance", u"Benediction", u".efkefc", "Benediction", 30, BasicRenderingCamera::Default, EffekseerRenderer::UVStyle::Normal, false, false, BasicRenderingPlayMode::PerformanceGrid},
 		{"hit_hanmado_0409", BasicRenderingCaseRoot::ResourceDataSamples, u"03_Hanmado01/Effect", u"hit_hanmado_0409", u".efkefc", "hit_hanmado_0409", 30, BasicRenderingCamera::Default, EffekseerRenderer::UVStyle::Normal, false, false, BasicRenderingPlayMode::PerformanceGrid},
+		{"ToonWater", BasicRenderingCaseRoot::ResourceDataSamples, u"02_Tktk03", u"ToonWater", u".efkefc", "ToonWater", 30, BasicRenderingCamera::Default, EffekseerRenderer::UVStyle::Normal, false, false, BasicRenderingPlayMode::PerformanceGrid},
 
 		{"SimpleLaser", BasicRenderingCaseRoot::TestDataEffects, u"10", u"SimpleLaser", u".efk", "SimpleLaser"},
 		{"FCurve_Parameters1", BasicRenderingCaseRoot::TestDataEffects, u"10", u"FCurve_Parameters1", u".efk", "FCurve_Parameters1"},
