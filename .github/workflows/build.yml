@@ -120,14 +120,11 @@ jobs:
         run: |
           python3.12 -m pip install setuptools pillow
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           submodules: true
           fetch-depth: 1
-
-      - run: |
-          git lfs install
-          git lfs pull
+          lfs: true
 
       - uses: actions/setup-dotnet@v3
         with:
