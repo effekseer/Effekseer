@@ -167,6 +167,10 @@ if(UNIX AND NOT APPLE AND NOT BUILD_WEBGPU_BROWSER_TEST)
   target_link_libraries(TestCpp PRIVATE ${X11_LIBRARIES})
   find_package(Threads REQUIRED)
   target_link_libraries(TestCpp PRIVATE ${CMAKE_THREAD_LIBS_INIT})
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU"
+     AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 9.0)
+    target_link_libraries(TestCpp PRIVATE stdc++fs)
+  endif()
 endif()
 
 if(FROM_CI)
