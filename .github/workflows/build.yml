@@ -102,8 +102,8 @@ jobs:
           dnf install -y dnf-plugins-core epel-release
           dnf config-manager --set-enabled powertools
           dnf install -y \
-               alsa-lib-devel cmake curl file gcc gcc-c++ git git-lfs gzip make ninja-build python3.12 \
-               python3.12-pip tar unzip which \
+               alsa-lib-devel ca-certificates cmake curl file findutils gcc gcc-c++ git git-lfs gzip \
+               icu krb5-libs make ninja-build openssl-libs python3.12 python3.12-pip tar unzip which zlib \
                libglvnd-devel libX11-devel libXcursor-devel libXi-devel libXinerama-devel libXrandr-devel \
                libXxf86vm-devel libxcb-devel libxkbcommon-devel libxkbcommon-x11-devel xcb-util-devel \
                xcb-util-keysyms-devel xorg-x11-xkb-utils mesa-libEGL-devel mesa-libGL-devel mesa-libGLU-devel \
