@@ -51,13 +51,17 @@ void ProcessConnector::OpenOrCreateMaterial(const char16_t* path)
 	if (commandQueueToMaterialEditor_ == nullptr)
 		return;
 
-	char u8path[260];
+	char u8path[1024];
 
-	Effekseer::ConvertUtf16ToUtf8(u8path, 260, path);
+	Effekseer::ConvertUtf16ToUtf8(u8path, 1024, path);
 
 	IPC::CommandData commandData;
 	commandData.Type = IPC::CommandType::OpenOrCreateMaterial;
-	commandData.SetStr(u8path);
+	if (!commandData.SetStr(u8path))
+	{
+		spdlog::warn("IPC - Failed to send OpenOrCreateMaterial because the path is too long.");
+		return;
+	}
 	commandQueueToMaterialEditor_->Enqueue(&commandData);
 
 	spdlog::trace("ICP - Send - OpenOrCreateMaterial : {}", u8path);

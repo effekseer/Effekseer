@@ -1,12 +1,89 @@
 #include "MainWindow.h"
 #include "../Common/StringHelper.h"
 
+#include <algorithm>
+
 #ifdef _WIN32
 #include <windows.h>
 #endif
 
 namespace Effekseer
 {
+namespace
+{
+
+bool GetPrimaryWorkarea(int& x, int& y, int& width, int& height)
+{
+	auto monitor = glfwGetPrimaryMonitor();
+	if (monitor == nullptr)
+	{
+		return false;
+	}
+
+	glfwGetMonitorWorkarea(monitor, &x, &y, &width, &height);
+	return width > 0 && height > 0;
+}
+
+bool HasVisibleAreaInAnyMonitor(const MainWindowState& state)
+{
+	int count = 0;
+	auto monitors = glfwGetMonitors(&count);
+	if (monitors == nullptr)
+	{
+		return false;
+	}
+
+	for (int i = 0; i < count; i++)
+	{
+		int x = 0;
+		int y = 0;
+		int width = 0;
+		int height = 0;
+		glfwGetMonitorWorkarea(monitors[i], &x, &y, &width, &height);
+
+		const auto visibleWidth = (std::min)(state.PosX + state.Width, x + width) - (std::max)(state.PosX, x);
+		const auto visibleHeight = (std::min)(state.PosY + state.Height, y + height) - (std::max)(state.PosY, y);
+		const auto requiredVisibleWidth = (std::min)(state.Width, 64);
+		const auto requiredVisibleHeight = (std::min)(state.Height, 64);
+
+		if (visibleWidth >= requiredVisibleWidth && visibleHeight >= requiredVisibleHeight)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void NormalizeWindowState(MainWindowState& state)
+{
+	int workareaX = 0;
+	int workareaY = 0;
+	int workareaWidth = 0;
+	int workareaHeight = 0;
+	if (!GetPrimaryWorkarea(workareaX, workareaY, workareaWidth, workareaHeight))
+	{
+		return;
+	}
+
+	state.Width = (std::max)(1, (std::min)(state.Width, workareaWidth));
+	state.Height = (std::max)(1, (std::min)(state.Height, workareaHeight));
+
+	if (state.IsMaximumMode || state.PosX <= -1000)
+	{
+		return;
+	}
+
+	if (HasVisibleAreaInAnyMonitor(state))
+	{
+		return;
+	}
+
+	state.PosX = workareaX + (workareaWidth - state.Width) / 2;
+	state.PosY = workareaY + (workareaHeight - state.Height) / 2;
+}
+
+} // namespace
 
 void MainWindow::GLFW_ContentScaleCallback(GLFWwindow* w, float xscale, float yscale)
 {
@@ -48,6 +125,8 @@ bool MainWindow::InitializeInternal(const char16_t* title, MainWindowState state
 	{
 		glfwWindowHint(GLFW_SRGB_CAPABLE, GL_TRUE);
 	}
+
+	NormalizeWindowState(state);
 
 	isFrameless = state.IsFrameless;
 	glfwWindowHint(GLFW_DECORATED, state.IsFrameless ? 0 : 1);
