@@ -91,6 +91,21 @@ jobs:
         run: python Script/test_screenshot.py
         shell: cmd
 
+      - name: Test DirectX12 screenshots
+        id: dx12_screenshots
+        run: |
+         cd build/Dev/Cpp/Test/Release/
+         TestCpp.exe --filter=Runtime\.BasicRendering\.DX12
+        shell: cmd
+
+      - name: Upload DirectX12 screenshots
+        if: always() && steps.dx12_screenshots.outcome != 'skipped'
+        uses: actions/upload-artifact@v4
+        with:
+          name: DirectX12Screenshots
+          path: build/Dev/Cpp/Test/Release/*_DX12.png
+          if-no-files-found: error
+
   BuildLinux:
     name: Build on linux
     runs-on: ubuntu-22.04

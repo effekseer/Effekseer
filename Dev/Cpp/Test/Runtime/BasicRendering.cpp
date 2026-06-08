@@ -312,6 +312,9 @@ struct BasicRenderingCaseTestRegistration
 	{
 #ifdef _WIN32
 		RegisterBasicRuntimeTestPlatformCasesFor<EffectPlatformDX11>("DX11", "_DX11");
+#ifdef __EFFEKSEER_BUILD_DX12__
+		RegisterBasicRuntimeTestPlatformCasesFor<EffectPlatformDX12>("DX12", "_DX12");
+#endif
 #endif
 
 #if !defined(__FROM_CI__)
@@ -320,9 +323,6 @@ struct BasicRenderingCaseTestRegistration
 #endif
 
 #ifdef _WIN32
-#ifdef __EFFEKSEER_BUILD_DX12__
-		RegisterBasicRuntimeTestPlatformCasesFor<EffectPlatformDX12>("DX12", "_DX12");
-#endif
 		RegisterBasicRuntimeTestPlatformCasesFor<EffectPlatformDX9>("DX9", "_DX9");
 		RegisterBasicRuntimeTestPlatformCasesFor<EffectPlatformGL>("GL", "_GL");
 #elif defined(__APPLE__)
