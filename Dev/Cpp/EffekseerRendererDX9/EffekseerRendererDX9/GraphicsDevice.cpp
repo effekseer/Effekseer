@@ -504,8 +504,10 @@ VertexLayout::~VertexLayout()
 	ES_SAFE_RELEASE(graphicsDevice_);
 }
 
-void VertexLayout::MakeGenerated()
+void VertexLayout::MakeGenerated(bool hasInstanceIndex)
 {
+	hasInstanceIndex_ = hasInstanceIndex;
+
 	for (size_t i = 0; i < elements_.size(); i++)
 	{
 		elements_[i].SemanticName = "TEXCOORD";
@@ -562,6 +564,18 @@ bool VertexLayout::Generate()
 
 		layoutOffset += Effekseer::Backend::GetVertexLayoutFormatSize(e.Format);
 
+		elements.emplace_back(e9);
+	}
+
+	if (hasInstanceIndex_)
+	{
+		D3DVERTEXELEMENT9 e9;
+		e9.Stream = 1;
+		e9.Offset = 0;
+		e9.Type = D3DDECLTYPE_FLOAT1;
+		e9.Method = D3DDECLMETHOD_DEFAULT;
+		e9.Usage = D3DDECLUSAGE_TEXCOORD;
+		e9.UsageIndex = static_cast<BYTE>(elements_.size());
 		elements.emplace_back(e9);
 	}
 

@@ -179,6 +179,7 @@ private:
 	GraphicsDevice* graphicsDevice_ = nullptr;
 	Effekseer::CustomVector<Effekseer::Backend::VertexLayoutElement> elements_;
 	Direct3DVertexDeclaration9Ptr vertexDeclaration_;
+	bool hasInstanceIndex_ = false;
 
 	bool Generate();
 
@@ -186,7 +187,7 @@ public:
 	VertexLayout(GraphicsDevice* graphicsDevice);
 	~VertexLayout() override;
 
-	void MakeGenerated();
+	void MakeGenerated(bool hasInstanceIndex = false);
 
 	bool Init(const Effekseer::Backend::VertexLayoutElement* elements, int32_t elementCount);
 

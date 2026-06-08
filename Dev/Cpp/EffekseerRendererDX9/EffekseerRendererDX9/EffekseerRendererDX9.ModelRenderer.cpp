@@ -167,7 +167,7 @@ ModelRendererRef ModelRenderer::Create(const RendererImplementedRef& renderer)
 	auto graphicsDevice = renderer->GetGraphicsDevice();
 
 	auto vl = EffekseerRenderer::GetModelRendererVertexLayout(graphicsDevice).DownCast<Backend::VertexLayout>();
-	vl->MakeGenerated();
+	vl->MakeGenerated(true);
 
 	Shader* shader_ad_lit = Shader::Create(graphicsDevice,
 										   graphicsDevice->CreateShaderFromBinary(
