@@ -109,18 +109,6 @@ cd Dev/release
 ./Effekseer
 ```
 
-Run the tests
--------------
-
-After building you can run the included unit test suite from the repository root with:
-
-```
-python3 -m unittest Script/test_screenshot.py -v
-```
-
-This command checks generated screenshots against the reference data and reports
-the results.
-
 ## How to release
 
 * Windows

@@ -23,7 +23,10 @@
 
 #include "BasicRendering.h"
 #include "../TestHelper.h"
+#include <filesystem>
+#include <fstream>
 #include <iostream>
+#include <set>
 #include <utility>
 #include <vector>
 
@@ -64,6 +67,13 @@ struct BasicRenderingCase
 	bool OverridesBackgroundTextureUVStyle = false;
 	bool UseGroundDepth = false;
 	BasicRenderingPlayMode PlayMode = BasicRenderingPlayMode::Single;
+};
+
+struct BasicRenderingBackendOutput
+{
+	std::string BackendName;
+	std::filesystem::path Directory;
+	std::filesystem::path ManifestPath;
 };
 
 const std::vector<BasicRenderingCase>& GetBasicRenderingCases()
@@ -165,6 +175,112 @@ std::string MakeBasicRenderingSuffix(const EffectPlatformInitializingParameter& 
 	return suffix;
 }
 
+std::string MakeBasicRenderingBackendName(std::string suffix)
+{
+	while (!suffix.empty() && suffix.front() == '_')
+	{
+		suffix.erase(suffix.begin());
+	}
+	if (suffix.empty())
+	{
+		return "unknown";
+	}
+
+	for (auto& c : suffix)
+	{
+		const auto isAlpha = ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z');
+		const auto isDigit = '0' <= c && c <= '9';
+		if (!isAlpha && !isDigit && c != '_' && c != '-' && c != '.')
+		{
+			c = '_';
+		}
+	}
+	return suffix;
+}
+
+std::filesystem::path MakeBasicRenderingBaseOutputPath(const std::string& baseResultPath)
+{
+	return baseResultPath.empty() ? std::filesystem::path(".") : std::filesystem::path(baseResultPath);
+}
+
+std::string EscapeBasicRenderingCsvValue(const std::string& value)
+{
+	if (value.find_first_of(",\"\r\n") == std::string::npos)
+	{
+		return value;
+	}
+
+	std::string escaped = "\"";
+	for (const auto c : value)
+	{
+		if (c == '"')
+		{
+			escaped += "\"\"";
+		}
+		else
+		{
+			escaped += c;
+		}
+	}
+	escaped += "\"";
+	return escaped;
+}
+
+BasicRenderingBackendOutput PrepareBasicRenderingBackendOutput(const std::string& baseResultPath, const std::string& suffix)
+{
+	BasicRenderingBackendOutput output;
+	output.BackendName = MakeBasicRenderingBackendName(suffix);
+	output.Directory = MakeBasicRenderingBaseOutputPath(baseResultPath) / "screenshots_by_backend" / output.BackendName;
+	output.ManifestPath = output.Directory / "manifest.csv";
+
+	std::error_code ec;
+	std::filesystem::create_directories(output.Directory, ec);
+	if (ec)
+	{
+		printf("Failed to create screenshot directory %s: %s\n", output.Directory.string().c_str(), ec.message().c_str());
+	}
+	EXPECT_TRUE(!ec);
+
+	static std::set<std::string> initializedManifestPaths;
+	if (initializedManifestPaths.insert(output.ManifestPath.string()).second)
+	{
+		std::ofstream manifest(output.ManifestPath, std::ios::trunc);
+		EXPECT_TRUE(manifest.is_open());
+		manifest << "case,screenshot,backend,flat_path,backend_path\n";
+	}
+	return output;
+}
+
+void CopyBasicRenderingScreenshotForBackend(
+	const BasicRenderingBackendOutput& output,
+	const BasicRenderingCase& testCase,
+	const std::string& screenshotPrefix,
+	const std::filesystem::path& flatPath)
+{
+	const auto screenshotName = screenshotPrefix + testCase.ScreenshotName;
+	const auto backendPath = output.Directory / (screenshotName + ".png");
+
+	std::error_code ec;
+	std::filesystem::copy_file(flatPath, backendPath, std::filesystem::copy_options::overwrite_existing, ec);
+	if (ec)
+	{
+		printf(
+			"Failed to copy screenshot %s to %s: %s\n",
+			flatPath.string().c_str(),
+			backendPath.string().c_str(),
+			ec.message().c_str());
+	}
+	EXPECT_TRUE(!ec);
+
+	std::ofstream manifest(output.ManifestPath, std::ios::app);
+	EXPECT_TRUE(manifest.is_open());
+	manifest << EscapeBasicRenderingCsvValue(testCase.Name) << ","
+			 << EscapeBasicRenderingCsvValue(screenshotName) << ","
+			 << EscapeBasicRenderingCsvValue(output.BackendName) << ","
+			 << EscapeBasicRenderingCsvValue(flatPath.generic_string()) << ","
+			 << EscapeBasicRenderingCsvValue(backendPath.generic_string()) << "\n";
+}
+
 std::u16string MakeBasicRenderingEffectPath(const BasicRenderingCase& testCase)
 {
 	const auto directory = GetDirectoryPathAsU16(__FILE__);
@@ -240,7 +356,8 @@ void RunBasicRenderingCase(
 	const std::string& baseResultPath,
 	const std::string& suffix,
 	const BasicRenderingCase& testCase,
-	const std::string& screenshotPrefix)
+	const std::string& screenshotPrefix,
+	const BasicRenderingBackendOutput& backendOutput)
 {
 	const auto renderer = platform->GetRenderer();
 	const auto cameraMat = renderer->GetCameraMatrix();
@@ -274,7 +391,8 @@ void RunBasicRenderingCase(
 	}
 
 	const auto screenshotPath = baseResultPath + screenshotPrefix + testCase.ScreenshotName + suffix + ".png";
-	platform->TakeScreenshot(screenshotPath.c_str());
+	EXPECT_TRUE(platform->TakeScreenshot(screenshotPath.c_str()));
+	CopyBasicRenderingScreenshotForBackend(backendOutput, testCase, screenshotPrefix, screenshotPath);
 	platform->StopAllEffects();
 	platform->ClearLoadedEffects();
 
@@ -345,10 +463,11 @@ void BasicRuntimeTestPlatform(EffectPlatformInitializingParameter param, EffectP
 {
 	platform->Initialize(param);
 	suffix = MakeBasicRenderingSuffix(param, std::move(suffix));
+	const auto backendOutput = PrepareBasicRenderingBackendOutput(baseResultPath, suffix);
 
 	for (const auto& testCase : GetBasicRenderingCases())
 	{
-		RunBasicRenderingCase(param, platform, baseResultPath, suffix, testCase, "");
+		RunBasicRenderingCase(param, platform, baseResultPath, suffix, testCase, "", backendOutput);
 	}
 }
 
@@ -372,12 +491,13 @@ void BasicRuntimeTestPlatformCases(
 {
 	platform->Initialize(param);
 	suffix = MakeBasicRenderingSuffix(param, std::move(suffix));
+	const auto backendOutput = PrepareBasicRenderingBackendOutput(baseResultPath, suffix);
 
 	for (const auto caseName : caseNames)
 	{
 		const auto testCase = FindBasicRenderingCase(caseName);
 		EXPECT_TRUE(testCase != nullptr);
-		RunBasicRenderingCase(param, platform, baseResultPath, suffix, *testCase, screenshotPrefix);
+		RunBasicRenderingCase(param, platform, baseResultPath, suffix, *testCase, screenshotPrefix, backendOutput);
 	}
 }
 
@@ -400,17 +520,19 @@ void RegisterBasicRuntimeTestPlatformCases(
 
 	for (const auto& testCase : GetBasicRenderingCases())
 	{
+		std::function<void()> runCase = [caseName = std::string(testCase.Name), suffix = std::string(suffix), createPlatform]() -> void
+		{
+			EffectPlatformInitializingParameter param;
+			auto platform = createPlatform();
+			BasicRuntimeTestPlatformCase(param, platform.get(), "", suffix, caseName);
+			platform->Terminate();
+		};
+
 		const auto testName = std::string("Runtime.BasicRendering.") + platformName + "." + testCase.Name;
-		TestHelper::RegisterTest(
-			testName.c_str(),
-			[caseName = std::string(testCase.Name), suffix = std::string(suffix), createPlatform]() -> void
-			{
-				EffectPlatformInitializingParameter param;
-				auto platform = createPlatform();
-				BasicRuntimeTestPlatformCase(param, platform.get(), "", suffix, caseName);
-				platform->Terminate();
-			},
-			TestExecutionMode::FilterOnly);
+		TestHelper::RegisterTest(testName.c_str(), runCase, TestExecutionMode::FilterOnly);
+
+		const auto caseFirstTestName = std::string("Runtime.BasicRendering.Case.") + testCase.Name + "." + platformName;
+		TestHelper::RegisterTest(caseFirstTestName.c_str(), runCase, TestExecutionMode::FilterOnly);
 	}
 }
 
