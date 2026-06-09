@@ -183,15 +183,37 @@ def write_diff_report(output_dir, images, backends):
     return path, rows
 
 
-def write_baseline_report(output_dir, images, baseline_dir):
+def find_baseline_image(path, baseline_dir, backends):
+    expected = baseline_dir / path.name
+    if expected.exists():
+        return expected
+
+    stem = path.stem
+    for backend in backends:
+        suffix = "_" + backend
+        if not stem.endswith(suffix):
+            continue
+
+        case_name = stem[: -len(suffix)]
+        for baseline_backend in backends:
+            fallback = baseline_dir / f"{case_name}_{baseline_backend}{path.suffix}"
+            if fallback.exists():
+                return fallback
+        break
+
+    return expected
+
+
+def write_baseline_report(output_dir, images, baseline_dir, backends):
     rows = []
     for by_backend in images.values():
         for path in sorted(by_backend.values()):
-            expected = baseline_dir / path.name
+            expected = find_baseline_image(path, baseline_dir, backends)
             if not expected.exists():
                 rows.append(
                     {
                         "name": path.name,
+                        "baseline_name": "",
                         "baseline_exists": "false",
                         "same_size": "",
                         "changed_pixels": "",
@@ -206,6 +228,7 @@ def write_baseline_report(output_dir, images, baseline_dir):
             rows.append(
                 {
                     "name": path.name,
+                    "baseline_name": expected.name,
                     "baseline_exists": "true",
                     "same_size": str(stats["same_size"]).lower(),
                     "changed_pixels": stats["changed_pixels"],
@@ -753,7 +776,10 @@ def main():
     baseline_rows = None
     baseline_report_path = None
     if args.baseline_dir:
-        baseline_report_path, baseline_rows = write_baseline_report(output_dir, images, Path(args.baseline_dir))
+        baseline_backends = list(dict.fromkeys(active_backends + DEFAULT_BACKENDS))
+        baseline_report_path, baseline_rows = write_baseline_report(
+            output_dir, images, Path(args.baseline_dir), baseline_backends
+        )
 
     colors = make_colors()
     ranked_cases = rank_cases(images, active_backends)

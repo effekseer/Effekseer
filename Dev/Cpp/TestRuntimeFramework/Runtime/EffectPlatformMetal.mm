@@ -146,9 +146,11 @@ public:
 
 	bool OnDistorting(EffekseerRenderer::Renderer* renderer) override
 	{
+		platform_->UpdateBackgroundTextureForDistortion();
+
 		if (texture_ == nullptr)
 		{
-			auto tex = (LLGI::TextureMetal*)(platform_->GetCheckedTexture());
+			auto tex = (LLGI::TextureMetal*)(platform_->GetBackgroundTexture());
 			texture_ = EffekseerRendererMetal::CreateTexture(renderer->GetGraphicsDevice(), tex->GetTexture());
 		}
 
@@ -231,6 +233,8 @@ void EffectPlatformMetal::InitializeDevice(const EffectPlatformInitializingParam
 
 void EffectPlatformMetal::DestroyDevice()
 {
+	ES_SAFE_RELEASE(backgroundTexture_);
+
 	EffectPlatformLLGI::DestroyDevice();
 }
 
@@ -273,6 +277,33 @@ void EffectPlatformMetal::EndRendering()
 	GetRenderer()->SetCommandList(nullptr);
 	EffekseerRendererMetal::EndCommandList(commandListEfk_);
 	EffectPlatformLLGI::EndRendering();
+}
+
+LLGI::Texture* EffectPlatformMetal::GetBackgroundTexture()
+{
+	if (backgroundTexture_ == nullptr)
+	{
+		LLGI::TextureParameter param;
+		param.Size = LLGI::Vec3I(initParam_.WindowSize[0], initParam_.WindowSize[1], 1);
+		backgroundTexture_ = graphics_->CreateTexture(param);
+	}
+
+	return backgroundTexture_;
+}
+
+void EffectPlatformMetal::UpdateBackgroundTextureForDistortion()
+{
+	auto background = GetBackgroundTexture();
+	auto cl = static_cast<LLGI::CommandListMetal*>(commandList_.get());
+
+	EffekseerRendererMetal::EndRenderPass(commandListEfk_);
+	commandList_->EndRenderPass();
+	commandList_->CopyTexture(colorBuffer_, background);
+
+	renderPass_->SetIsColorCleared(false);
+	renderPass_->SetIsDepthCleared(false);
+	commandList_->BeginRenderPass(renderPass_);
+	EffekseerRendererMetal::BeginRenderPass(commandListEfk_, cl->GetRenderCommandEncorder());
 }
 
 LLGI::Texture* EffectPlatformMetal::GetCheckedTexture() const
