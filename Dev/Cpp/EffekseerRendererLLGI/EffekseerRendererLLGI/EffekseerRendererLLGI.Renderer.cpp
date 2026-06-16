@@ -352,7 +352,8 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 		GetImpl()->InternalVertexBuffer = std::make_shared<EffekseerRenderer::VertexBufferRing>(
 			graphicsDevice_,
 			EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * squareMaxCount_ * 4,
-			3);
+			3,
+			EffekseerRenderer::VertexBufferRingMode::ExpandableForCommandList);
 		if (!GetImpl()->InternalVertexBuffer->GetIsValid())
 		{
 			GetImpl()->InternalVertexBuffer = nullptr;
@@ -565,7 +566,7 @@ void RendererImplemented::SetCommandList(Effekseer::RefPtr<EffekseerRenderer::Co
 
 	if (commandList_ != nullptr && GetImpl()->InternalVertexBuffer != nullptr)
 	{
-		GetImpl()->InternalVertexBuffer->BeginWrite();
+		GetImpl()->InternalVertexBuffer->BeginWriteForCommandList();
 	}
 
 	auto device = GetGraphicsDevice().DownCast<Backend::GraphicsDevice>();

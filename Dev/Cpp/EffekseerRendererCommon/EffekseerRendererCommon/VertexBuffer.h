@@ -9,6 +9,12 @@
 namespace EffekseerRenderer
 {
 
+enum class VertexBufferRingMode
+{
+	Fixed,
+	ExpandableForCommandList,
+};
+
 class VertexBuffer
 {
 protected:
@@ -22,7 +28,7 @@ public:
 	virtual Effekseer::Backend::VertexBufferRef Upload() = 0;
 	virtual Effekseer::Backend::VertexBufferRef GetCurrentBuffer() = 0;
 
-	virtual void BeginWrite()
+	virtual void BeginWriteForCommandList()
 	{
 	}
 
@@ -67,11 +73,16 @@ class VertexBufferRing : public VertexBuffer
 	int currentIndex_ = 0;
 	int offset_ = 0;
 	int previous_offset_ = 0;
+	VertexBufferRingMode mode_ = VertexBufferRingMode::Fixed;
 	Effekseer::CustomAlignedVector<uint8_t> buffer_;
 	std::vector<Effekseer::Backend::VertexBufferRef> vertexBuffers_;
 
 public:
-	VertexBufferRing(Effekseer::Backend::GraphicsDeviceRef graphicsDevice, int32_t size, int32_t ringCount);
+	VertexBufferRing(
+		Effekseer::Backend::GraphicsDeviceRef graphicsDevice,
+		int32_t size,
+		int32_t ringCount,
+		VertexBufferRingMode mode = VertexBufferRingMode::Fixed);
 
 	bool GetIsValid() const override;
 
@@ -83,7 +94,7 @@ public:
 
 	Effekseer::Backend::VertexBufferRef GetCurrentBuffer() override;
 
-	void BeginWrite() override;
+	void BeginWriteForCommandList() override;
 
 	void RenewBuffer() override;
 };
