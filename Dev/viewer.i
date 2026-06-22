@@ -13,10 +13,9 @@
 #include "Sound/SoundDevice.h"
 #include "GUI/efk.GUIManager.h"
 #include "GUI/efk.FileDialog.h"
-#include "GUI/Image.h"
 #include "GUI/ReloadableImage.h"
-#include "GUI/RenderImage.h"
 #include "GUI/GradientHDRState.h"
+#include <EffekseerToolRuntime/RenderImage.h>
 #include "Utils/Logger.h"
 #include "CompiledMaterialGenerator.h"
 #include "../EditorCommon/Platform/PlatformMisc.h"
@@ -116,9 +115,9 @@ class"
 %shared_ptr(Effekseer::StaticFile);
 %shared_ptr(Effekseer::IO);
 %shared_ptr(Effekseer::IOCallback);
+%shared_ptr(Effekseer::ToolRuntime::Image);
+%shared_ptr(Effekseer::ToolRuntime::RenderImage);
 %shared_ptr(Effekseer::Tool::EffectRecorder);
-%shared_ptr(Effekseer::Tool::Image);
-%shared_ptr(Effekseer::Tool::RenderImage);
 %shared_ptr(Effekseer::Tool::ReloadableImage);
 %shared_ptr(Effekseer::Tool::ViewPointController);
 %shared_ptr(Effekseer::Tool::Effect);
@@ -152,6 +151,18 @@ class"
 %include "Cpp/Viewer/Graphics/GraphicsDevice.h"
 %include "Cpp/Viewer/Sound/SoundDevice.h"
 
+%include "Cpp/EffekseerToolRuntime/EffekseerToolRuntime/Image.h"
+%ignore Effekseer::ToolRuntime::RenderImage::RenderImage;
+%include "Cpp/EffekseerToolRuntime/EffekseerToolRuntime/RenderImage.h"
+
+%extend Effekseer::ToolRuntime::RenderImage
+{
+	static std::shared_ptr<Effekseer::ToolRuntime::RenderImage> Create(std::shared_ptr<Effekseer::Tool::GraphicsDevice> graphicsDevice)
+	{
+		return Effekseer::ToolRuntime::RenderImage::Create(graphicsDevice->GetGraphics()->GetGraphicsDevice());
+	}
+}
+
 %include "Cpp/Viewer/3D/ViewPointController.h"
 %include "Cpp/Viewer/3D/Effect.h"
 %include "Cpp/Viewer/3D/EffectSetting.h"
@@ -166,10 +177,8 @@ class"
 
 %include "Cpp/Viewer/GUI/efk.GUIManager.h"
 %include "Cpp/Viewer/GUI/efk.FileDialog.h"
-%include "Cpp/Viewer/GUI/Image.h"
 %include "Cpp/Viewer/GUI/GradientHDRState.h"
 %include "Cpp/Viewer/GUI/ReloadableImage.h"
-%include "Cpp/Viewer/GUI/RenderImage.h"
 %include "Cpp/Viewer/CompiledMaterialGenerator.h"
 
 %include "Cpp/EditorCommon/Platform/PlatformMisc.h"

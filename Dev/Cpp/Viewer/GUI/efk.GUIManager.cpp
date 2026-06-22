@@ -11,7 +11,6 @@
 #include "../3rdParty/imgui_addon/fcurve/fcurve.h"
 #include "../3rdParty/imgui_addon/implot/implot.h"
 
-#include "Image.h"
 #include "NodeFrameTimeline.h"
 #include "efk.GUIManager.h"
 
@@ -338,7 +337,7 @@ struct utf8str
 	}
 };
 
-static ImTextureID ToImTextureID(std::shared_ptr<Effekseer::Tool::Image> image)
+static ImTextureID ToImTextureID(std::shared_ptr<Effekseer::ToolRuntime::Image> image)
 {
 	if (image != nullptr)
 	{
@@ -1303,18 +1302,18 @@ bool GUIManager::Button(const char16_t* label, float size_x, float size_y)
 	return ImGui::Button(utf8str<256>(label), ImVec2(size_x, size_y));
 }
 
-void GUIManager::ImageData(std::shared_ptr<Effekseer::Tool::Image> user_texture_id, float x, float y, float uv0_x, float uv0_y, float uv1_x, float uv1_y)
+void GUIManager::ImageData(std::shared_ptr<Effekseer::ToolRuntime::Image> user_texture_id, float x, float y, float uv0_x, float uv0_y, float uv1_x, float uv1_y)
 {
 	ImGui::Image(ToImTextureID(user_texture_id), ImVec2(x, y), {uv0_x, uv0_y}, {uv1_x, uv1_y});
 }
 
-bool GUIManager::ImageButton(std::shared_ptr<Effekseer::Tool::Image> user_texture_id, float x, float y)
+bool GUIManager::ImageButton(std::shared_ptr<Effekseer::ToolRuntime::Image> user_texture_id, float x, float y)
 {
 	return ImGui::ImageButton_(
 		ToImTextureID(user_texture_id), ImVec2(x, y), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1));
 }
 
-bool GUIManager::ImageButtonOriginal(std::shared_ptr<Effekseer::Tool::Image> user_texture_id, float x, float y)
+bool GUIManager::ImageButtonOriginal(std::shared_ptr<Effekseer::ToolRuntime::Image> user_texture_id, float x, float y)
 {
 	ImGui::PushID(user_texture_id.get());
 	ImGuiWindow* window = ImGui::GetCurrentWindow();
@@ -1434,7 +1433,7 @@ void GUIManager::ProgressBar(float fraction, const Vec2& size)
 	ImGui::ProgressBar(fraction, ImVec2(size.X, size.Y));
 }
 
-bool GUIManager::BeginCombo(const char16_t* label, const char16_t* preview_value, ComboFlags flags, std::shared_ptr<Effekseer::Tool::Image> user_texture_id)
+bool GUIManager::BeginCombo(const char16_t* label, const char16_t* preview_value, ComboFlags flags, std::shared_ptr<Effekseer::ToolRuntime::Image> user_texture_id)
 {
 	return ImGui::BeginCombo(utf8str<256>(label), utf8str<256>(preview_value), (int)flags /*, ToImTextureID(user_texture_id)*/);
 }
@@ -1717,7 +1716,7 @@ bool GUIManager::Selectable(const char16_t* label, bool selected, SelectableFlag
 	return ImGui::Selectable(utf8str<256>(label), selected, (int)flags, ImVec2(0, 0));
 }
 
-bool GUIManager::SelectableContent(const char16_t* idstr, const char16_t* label, bool selected, std::shared_ptr<Effekseer::Tool::Image> thumbnail, float size_x, float size_y, SelectableFlags flags)
+bool GUIManager::SelectableContent(const char16_t* idstr, const char16_t* label, bool selected, std::shared_ptr<Effekseer::ToolRuntime::Image> thumbnail, float size_x, float size_y, SelectableFlags flags)
 {
 	ImVec2 cursorPos = ImGui::GetCursorScreenPos();
 	ImDrawList* drawList = ImGui::GetWindowDrawList();

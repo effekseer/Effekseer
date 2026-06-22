@@ -4,6 +4,7 @@
 #include "../Graphics/efk.Graphics.h"
 #include "../Parameters.h"
 #include "RecordingParameter.h"
+#include <EffekseerToolRuntime/RenderImage.h>
 
 namespace Effekseer
 {
@@ -29,7 +30,7 @@ private:
 	bool completed = false;
 
 	std::shared_ptr<Effekseer::Tool::GraphicsDevice> graphicsDevice_ = nullptr;
-	std::shared_ptr<Effekseer::Tool::RenderImage> renderTarget_;
+	std::shared_ptr<Effekseer::ToolRuntime::RenderImage> renderTarget_;
 	std::shared_ptr<Effekseer::Tool::EffectRenderer> generator_;
 	std::vector<Effekseer::Tool::ViewerExternalModel> externalModels_;
 

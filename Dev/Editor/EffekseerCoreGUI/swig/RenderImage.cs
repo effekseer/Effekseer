@@ -36,9 +36,6 @@ public class RenderImage : Image {
     }
   }
 
-  public RenderImage() : this(EffekseerNativePINVOKE.new_RenderImage(), true) {
-  }
-
   public void Resize(int width, int height) {
     EffekseerNativePINVOKE.RenderImage_Resize(swigCPtr, width, height);
     if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();

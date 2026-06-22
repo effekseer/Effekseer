@@ -1,4 +1,5 @@
 #include "EffectRenderer.h"
+#include "../Graphics/GraphicsDevice.h"
 #include "../Sound/SoundDevice.h"
 #include "Effect.h"
 #include "EffectSetting.h"
@@ -50,7 +51,6 @@ namespace PostEffect_Overdraw_PS
 #include <EffekseerRendererGL/ShaderHeader/model_unlit_vs.h>
 #include <EffekseerRendererGL/ShaderHeader/sprite_unlit_vs.h>
 
-#include "../GUI/RenderImage.h"
 #include <EffekseerToolRuntime/DepthRendering.h>
 
 namespace Effekseer
@@ -740,7 +740,7 @@ void EffectRenderer::SetLODDistanceBias(float distanceBias)
 	lodDistanceBias_ = distanceBias;
 }
 
-void EffectRenderer::Render(std::shared_ptr<RenderImage> renderImage)
+void EffectRenderer::Render(std::shared_ptr<Effekseer::ToolRuntime::RenderImage> renderImage)
 {
 	// Clear a destination texture
 	if (backgroundRenderer_ != nullptr && parameter_.RenderingMethod == RenderingMethodType::Overdraw)

@@ -1,12 +1,11 @@
 #include "EffectRecorder.h"
+#include "../Graphics/GraphicsDevice.h"
 #include "RecorderCallback.h"
 
 #ifdef _WIN32
 #include "../Graphics/Platform/DX11/efk.GraphicsDX11.h"
 #include "Windows/RecorderCallbackH264.h"
 #endif
-
-#include "../GUI/RenderImage.h"
 
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/spdlog.h>
@@ -414,7 +413,7 @@ bool EffectRecorder::Begin(int32_t squareMaxCount,
 		return false;
 	}
 
-	renderTarget_ = Effekseer::Tool::RenderImage::Create(graphicsDevice_);
+	renderTarget_ = Effekseer::ToolRuntime::RenderImage::Create(graphicsDevice_->GetGraphics()->GetGraphicsDevice());
 	renderTarget_->Resize(imageSize_.X, imageSize_.Y);
 	generator_->ResizeScreen(imageSize_);
 

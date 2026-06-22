@@ -11,6 +11,7 @@
 #include <EffekseerToolRuntime/GroundPlaneRenderer.h>
 #include <EffekseerToolRuntime/PostEffects.h>
 #include <EffekseerToolRuntime/PostProcess.h>
+#include <EffekseerToolRuntime/RenderImage.h>
 
 namespace Effekseer
 {
@@ -21,7 +22,6 @@ class GraphicsDevice;
 class SoundDevice;
 class Effect;
 class EffectSetting;
-class RenderImage;
 
 /**
  * \brief Can be used by the editor for additional rendering during effect rendering
@@ -197,7 +197,7 @@ public:
 	void UpdatePaused();
 	void Update();
 	void Update(int32_t frame);
-	void Render(std::shared_ptr<RenderImage> renderImage);
+	void Render(std::shared_ptr<Effekseer::ToolRuntime::RenderImage> renderImage);
 
 	void SetLODDistanceBias(float distanceBias);
 

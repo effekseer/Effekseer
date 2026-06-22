@@ -20,7 +20,7 @@
 #include <EditorCommon/GUI/MainWindow.h>
 
 #include "../Graphics/GraphicsDevice.h"
-#include "Image.h"
+#include <EffekseerToolRuntime/Image.h>
 
 namespace Effekseer::Tool
 {
@@ -726,11 +726,11 @@ public:
 	// Main
 	bool Button(const char16_t* label, float size_x = 0.0f, float size_y = 0.0f);
 
-	void ImageData(std::shared_ptr<Effekseer::Tool::Image> user_texture_id, float x, float y, float uv0_x = 0.0f, float uv0_y = 0.0f, float uv1_x = 1.0f, float uv1_y = 1.0f);
+	void ImageData(std::shared_ptr<Effekseer::ToolRuntime::Image> user_texture_id, float x, float y, float uv0_x = 0.0f, float uv0_y = 0.0f, float uv1_x = 1.0f, float uv1_y = 1.0f);
 
-	bool ImageButton(std::shared_ptr<Effekseer::Tool::Image> user_texture_id, float x, float y);
+	bool ImageButton(std::shared_ptr<Effekseer::ToolRuntime::Image> user_texture_id, float x, float y);
 
-	bool ImageButtonOriginal(std::shared_ptr<Effekseer::Tool::Image> user_texture_id, float x, float y);
+	bool ImageButtonOriginal(std::shared_ptr<Effekseer::ToolRuntime::Image> user_texture_id, float x, float y);
 
 	bool IconButton(const char16_t* icon, float size = 0.0f);
 
@@ -747,7 +747,7 @@ public:
 	void ProgressBar(float fraction, const Vec2& size);
 
 	// Widgets: Combo Box
-	bool BeginCombo(const char16_t* label, const char16_t* preview_value, ComboFlags flags, std::shared_ptr<Effekseer::Tool::Image> user_texture_id = nullptr);
+	bool BeginCombo(const char16_t* label, const char16_t* preview_value, ComboFlags flags, std::shared_ptr<Effekseer::ToolRuntime::Image> user_texture_id = nullptr);
 	void EndCombo(); // only call EndCombo() if BeginCombo() returns true!
 
 	// Drags
@@ -878,7 +878,7 @@ public:
 	// Widgets: Selectable / Lists
 	bool Selectable(const char16_t* label, bool selected = false, SelectableFlags flags = SelectableFlags::None);
 
-	bool SelectableContent(const char16_t* idstr, const char16_t* label, bool selected, std::shared_ptr<Effekseer::Tool::Image> thumbnail, float size_x, float size_y, SelectableFlags flags = SelectableFlags::None);
+	bool SelectableContent(const char16_t* idstr, const char16_t* label, bool selected, std::shared_ptr<Effekseer::ToolRuntime::Image> thumbnail, float size_x, float size_y, SelectableFlags flags = SelectableFlags::None);
 
 	// Tooltips
 	void SetTooltip(const char16_t* text);

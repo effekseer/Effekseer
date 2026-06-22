@@ -1,12 +1,12 @@
 #pragma once
 
 #include "../Graphics/GraphicsDevice.h"
-#include "Image.h"
+#include <EffekseerToolRuntime/Image.h>
 
 namespace Effekseer::Tool
 {
 
-class ReloadableImage : public Image
+class ReloadableImage : public Effekseer::ToolRuntime::Image
 {
 private:
 	Effekseer::TextureLoaderRef loader_;
