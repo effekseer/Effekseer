@@ -6,6 +6,12 @@
 #include <png.h>
 #else
 #define STB_IMAGE_EFFEKSEER_IMPLEMENTATION
+// stb's x86 SIMD path requires SSE2; disable it only for 32-bit x86 targets without SSE2.
+#if !defined(STBI_NO_SIMD) && \
+	((defined(_M_IX86) && (!defined(_M_IX86_FP) || _M_IX86_FP < 2)) || \
+	 ((defined(__i386) || defined(__i386__)) && !defined(__SSE2__)))
+#define STBI_NO_SIMD
+#endif
 #include "../3rdParty/stb_effekseer/stb_image_effekseer.h"
 
 #endif
