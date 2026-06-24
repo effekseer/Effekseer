@@ -54,12 +54,36 @@ LLGI::ShaderResourceAccess ToLLGIShaderResourceAccess(Effekseer::Backend::Storag
 	}
 }
 
+LLGI::TextureUsageType ToLLGITextureUsage(Effekseer::Backend::TextureUsageType usage)
+{
+	LLGI::TextureUsageType result = LLGI::TextureUsageType::NoneFlag;
+
+	if ((usage & Effekseer::Backend::TextureUsageType::RenderTarget) != Effekseer::Backend::TextureUsageType::None)
+	{
+		result = result | LLGI::TextureUsageType::RenderTarget;
+	}
+
+	if ((usage & Effekseer::Backend::TextureUsageType::Array) != Effekseer::Backend::TextureUsageType::None)
+	{
+		result = result | LLGI::TextureUsageType::Array;
+	}
+
+	if ((usage & Effekseer::Backend::TextureUsageType::External) != Effekseer::Backend::TextureUsageType::None)
+	{
+		result = result | LLGI::TextureUsageType::External;
+	}
+
+	return result;
+}
+
 bool CanGenerateMipMap(const LLGI::TextureParameter& param)
 {
-	return param.MipLevelCount > 1 &&
+	return param.IsMipmapGenerationEnabled &&
+		   param.MipLevelCount > 1 &&
 		   param.Dimension == 2 &&
 		   param.Size.Z == 1 &&
 		   param.SampleCount == 1 &&
+		   !LLGI::IsBlockCompressedFormat(param.Format) &&
 		   !LLGI::IsDepthFormat(param.Format);
 }
 } // namespace
@@ -260,13 +284,17 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param, const Effe
 	}
 
 	LLGI::TextureParameter texParam;
+	texParam.Usage = ToLLGITextureUsage(param.Usage);
 	texParam.Dimension = param.Dimension;
 	texParam.Size = LLGI::Vec3I(param.Size[0], param.Size[1], param.Size[2]);
 	texParam.MipLevelCount = param.MipLevelCount < 1 ? count : param.MipLevelCount;
+	texParam.SampleCount = param.SampleCount;
+	texParam.IsMipmapGenerationEnabled = param.MipLevelCount < 1;
 
-	if (!graphicsDevice_->GetGraphics()->GetIsMipmapGenerationSupportedOnTextureLoad())
+	if (texParam.IsMipmapGenerationEnabled && !graphicsDevice_->GetGraphics()->GetIsMipmapGenerationSupportedOnTextureLoad())
 	{
 		texParam.MipLevelCount = 1;
+		texParam.IsMipmapGenerationEnabled = false;
 	}
 
 	LLGI::TextureFormatType format = LLGI::TextureFormatType::R8G8B8A8_UNORM;
@@ -351,7 +379,8 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param, const Effe
 
 	if (initialData.size() > 0)
 	{
-		const auto textureMemorySize = LLGI::GetTextureMemorySize(texParam.Format, texParam.Size);
+		const auto preserveDepth = (texParam.Usage & LLGI::TextureUsageType::Array) != LLGI::TextureUsageType::NoneFlag;
+		const auto textureMemorySize = LLGI::GetTextureMemorySize(texParam.Format, texParam.Size, texParam.MipLevelCount, preserveDepth);
 		const auto copySize = (std::min)(initialData.size(), static_cast<size_t>(textureMemorySize));
 		memcpy(buf, initialData.data(), copySize);
 	}

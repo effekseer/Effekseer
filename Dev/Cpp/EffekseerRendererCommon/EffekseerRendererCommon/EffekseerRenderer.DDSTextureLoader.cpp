@@ -70,7 +70,8 @@ bool DDSTextureLoader::Load(const void* data, int32_t size)
 		uint32_t miscFlags2;
 	};
 
-	auto p = (uint8_t*)data;
+	auto p = static_cast<const uint8_t*>(data);
+	const auto end = p + size;
 	// const uint32_t FOURCC_DXT1 = 0x31545844; //(MAKEFOURCC('D','X','T','1'))
 	// const uint32_t FOURCC_DXT3 = 0x33545844; //(MAKEFOURCC('D','X','T','3'))
 	// const uint32_t FOURCC_DXT5 = 0x35545844; //(MAKEFOURCC('D','X','T','5'))
@@ -103,6 +104,11 @@ bool DDSTextureLoader::Load(const void* data, int32_t size)
 	bool hasDX10Flag = false;
 	if (dds.ddspf.dwFourCC == MakeFourCC('D', 'X', '1', '0'))
 	{
+		if (static_cast<size_t>(end - p) < sizeof(DDS_HEADER_DXT10))
+		{
+			return false;
+		}
+
 		hasDX10Flag = true;
 		memcpy(&dds_dxt10, p, sizeof(DDS_HEADER_DXT10));
 		p += sizeof(DDS_HEADER_DXT10);
@@ -251,6 +257,11 @@ bool DDSTextureLoader::Load(const void* data, int32_t size)
 		else
 		{
 			textureSize = width * height * blockSize;
+		}
+
+		if (textureSize < 0 || static_cast<size_t>(end - p) < static_cast<size_t>(textureSize))
+		{
+			return false;
 		}
 
 		::Effekseer::CustomVector<uint8_t> textureData;

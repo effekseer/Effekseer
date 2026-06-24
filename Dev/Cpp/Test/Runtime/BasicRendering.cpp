@@ -144,6 +144,7 @@ const std::vector<BasicRenderingCase>& GetBasicRenderingCases()
 		{"LocalTime", BasicRenderingCaseRoot::TestDataEffects, u"17", u"LocalTime", u".efkefc", "LocalTime", 60},
 		{"Noise1", BasicRenderingCaseRoot::TestDataEffects, u"17", u"Noise1", u".efkefc", "Noise1", 60},
 
+		{"BC7", BasicRenderingCaseRoot::TestDataEffects, u"18", u"BC7", u".efkefc", "BC7"},
 		{"Collisions", BasicRenderingCaseRoot::TestDataEffects, u"18", u"Collisions", u".efkefc", "Collisions"},
 		{"GpuParticles_emit_mesh", BasicRenderingCaseRoot::TestDataEffects, u"18", u"GpuParticles_emit_mesh", u".efkefc", "GpuParticles_emit_mesh", 120},
 		{"GpuParticles_sprite_simple", BasicRenderingCaseRoot::TestDataEffects, u"18", u"GpuParticles_sprite_simple", u".efkefc", "GpuParticles_sprite_simple", 120},

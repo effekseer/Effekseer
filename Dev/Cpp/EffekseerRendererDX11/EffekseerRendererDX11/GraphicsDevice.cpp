@@ -181,6 +181,14 @@ DXGI_FORMAT GetTextureFormatType(Effekseer::Backend::TextureFormatType format)
 	return DXGI_FORMAT_UNKNOWN;
 }
 
+int32_t GetTextureDataSize(Effekseer::Backend::TextureFormatType format, int32_t width, int32_t height, int32_t depth = 1)
+{
+	int32_t sizePerWidth = 0;
+	int32_t alignedHeight = 0;
+	EffekseerRenderer::CalculateAlignedTextureInformation(format, {width, height}, sizePerWidth, alignedHeight);
+	return sizePerWidth * alignedHeight * depth;
+}
+
 D3D11InputLayoutPtr CreateInputLayout(GraphicsDevice& graphicsDevice, VertexLayoutRef vertexLayout, const void* vertexBufferData, int32_t vertexBufferSize)
 {
 	Effekseer::CustomAlignedVector<D3D11_INPUT_ELEMENT_DESC> elements;
@@ -625,9 +633,17 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param, const Effe
 		return false;
 	}
 
+	const int32_t baseTextureSize = GetTextureDataSize(
+		param.Format,
+		param.Size[0],
+		param.Size[1],
+		param.Dimension == 2 ? Effekseer::Max(1, param.Size[2]) : param.Size[2]);
+	const bool hasProvidedMipData = param.MipLevelCount > 1 && initialData.size() > static_cast<size_t>(baseTextureSize);
+	const bool shouldGenerateMips = param.MipLevelCount < 1 || (param.MipLevelCount > 1 && !hasProvidedMipData);
+
 	UINT bindFlag = D3D11_BIND_SHADER_RESOURCE;
 
-	if (param.MipLevelCount < 1 || (param.Usage & Effekseer::Backend::TextureUsageType::RenderTarget) != Effekseer::Backend::TextureUsageType::None)
+	if (shouldGenerateMips || (param.Usage & Effekseer::Backend::TextureUsageType::RenderTarget) != Effekseer::Backend::TextureUsageType::None)
 	{
 		bindFlag = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
 	}
@@ -649,7 +665,7 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param, const Effe
 		texDesc.BindFlags = bindFlag;
 		texDesc.CPUAccessFlags = 0;
 
-		if (param.MipLevelCount != 1)
+		if (shouldGenerateMips)
 		{
 			texDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
 		}
@@ -665,16 +681,42 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param, const Effe
 
 		if (hasInitData)
 		{
-			data.resize(texDesc.ArraySize);
-			for (int i = 0; i < texDesc.ArraySize; i++)
+			if (hasProvidedMipData)
 			{
-				data[i].pSysMem = initialData.data() + (sizePerWidth * height * i);
-				data[i].SysMemPitch = sizePerWidth;
-				data[i].SysMemSlicePitch = sizePerWidth * height;
+				const int32_t mipLevelCount = Effekseer::Max(1, param.MipLevelCount);
+				data.resize(texDesc.ArraySize * mipLevelCount);
+				size_t offset = 0;
+				for (int arrayIndex = 0; arrayIndex < static_cast<int>(texDesc.ArraySize); arrayIndex++)
+				{
+					for (int mipLevel = 0; mipLevel < mipLevelCount; mipLevel++)
+					{
+						const int32_t mipWidth = Effekseer::Max(param.Size[0] >> mipLevel, 1);
+						const int32_t mipHeight = Effekseer::Max(param.Size[1] >> mipLevel, 1);
+						int32_t mipSizePerWidth = 0;
+						int32_t mipHeightCount = 0;
+						EffekseerRenderer::CalculateAlignedTextureInformation(param.Format, {mipWidth, mipHeight}, mipSizePerWidth, mipHeightCount);
+
+						const auto subresourceIndex = mipLevel + arrayIndex * mipLevelCount;
+						data[subresourceIndex].pSysMem = initialData.data() + offset;
+						data[subresourceIndex].SysMemPitch = mipSizePerWidth;
+						data[subresourceIndex].SysMemSlicePitch = mipSizePerWidth * mipHeightCount;
+						offset += static_cast<size_t>(mipSizePerWidth) * mipHeightCount;
+					}
+				}
+			}
+			else
+			{
+				data.resize(texDesc.ArraySize);
+				for (int i = 0; i < texDesc.ArraySize; i++)
+				{
+					data[i].pSysMem = initialData.data() + (sizePerWidth * height * i);
+					data[i].SysMemPitch = sizePerWidth;
+					data[i].SysMemSlicePitch = sizePerWidth * height;
+				}
 			}
 		}
 
-		HRESULT hr = device->CreateTexture2D(&texDesc, hasInitData && param.MipLevelCount == 1 ? data.data() : nullptr, &texture);
+		HRESULT hr = device->CreateTexture2D(&texDesc, hasInitData && !shouldGenerateMips ? data.data() : nullptr, &texture);
 
 		if (FAILED(hr))
 		{
@@ -708,7 +750,7 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param, const Effe
 		}
 
 		// Generate mipmap
-		if (param.MipLevelCount != 1)
+		if (shouldGenerateMips)
 		{
 			if (hasInitData)
 			{
@@ -742,7 +784,7 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param, const Effe
 		texDesc.BindFlags = bindFlag;
 		texDesc.CPUAccessFlags = 0;
 
-		if (param.MipLevelCount != 1)
+		if (shouldGenerateMips)
 		{
 			texDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
 		}
@@ -752,18 +794,42 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param, const Effe
 		}
 
 		ID3D11Texture3D* texture = nullptr;
-		D3D11_SUBRESOURCE_DATA data = {};
+		std::vector<D3D11_SUBRESOURCE_DATA> data;
 
 		bool hasInitiData = initialData.size() > 0;
 
 		if (hasInitiData)
 		{
-			data.pSysMem = initialData.data();
-			data.SysMemPitch = sizePerWidth;
-			data.SysMemSlicePitch = sizePerWidth * height;
+			if (hasProvidedMipData)
+			{
+				const int32_t mipLevelCount = Effekseer::Max(1, param.MipLevelCount);
+				data.resize(mipLevelCount);
+				size_t offset = 0;
+				for (int mipLevel = 0; mipLevel < mipLevelCount; mipLevel++)
+				{
+					const int32_t mipWidth = Effekseer::Max(param.Size[0] >> mipLevel, 1);
+					const int32_t mipHeight = Effekseer::Max(param.Size[1] >> mipLevel, 1);
+					const int32_t mipDepth = Effekseer::Max(param.Size[2] >> mipLevel, 1);
+					int32_t mipSizePerWidth = 0;
+					int32_t mipHeightCount = 0;
+					EffekseerRenderer::CalculateAlignedTextureInformation(param.Format, {mipWidth, mipHeight}, mipSizePerWidth, mipHeightCount);
+
+					data[mipLevel].pSysMem = initialData.data() + offset;
+					data[mipLevel].SysMemPitch = mipSizePerWidth;
+					data[mipLevel].SysMemSlicePitch = mipSizePerWidth * mipHeightCount;
+					offset += static_cast<size_t>(mipSizePerWidth) * mipHeightCount * mipDepth;
+				}
+			}
+			else
+			{
+				data.resize(1);
+				data[0].pSysMem = initialData.data();
+				data[0].SysMemPitch = sizePerWidth;
+				data[0].SysMemSlicePitch = sizePerWidth * height;
+			}
 		}
 
-		HRESULT hr = device->CreateTexture3D(&texDesc, hasInitiData && param.MipLevelCount == 1 ? &data : nullptr, &texture);
+		HRESULT hr = device->CreateTexture3D(&texDesc, hasInitiData && !shouldGenerateMips ? data.data() : nullptr, &texture);
 
 		if (FAILED(hr))
 		{
@@ -785,11 +851,11 @@ bool Texture::Init(const Effekseer::Backend::TextureParameter& param, const Effe
 		}
 
 		// Generate mipmap
-		if (param.MipLevelCount != 1)
+		if (shouldGenerateMips)
 		{
 			if (hasInitiData)
 			{
-				context->UpdateSubresource(texture, 0, 0, data.pSysMem, data.SysMemPitch, data.SysMemSlicePitch);
+				context->UpdateSubresource(texture, 0, 0, data[0].pSysMem, data[0].SysMemPitch, data[0].SysMemSlicePitch);
 			}
 			context->GenerateMips(srv);
 		}
