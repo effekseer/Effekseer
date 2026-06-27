@@ -1164,6 +1164,13 @@ void GUIManager::SetFontSizeBase(float size)
 	auto& style = ImGui::GetStyle();
 	style.FontSizeBase = fontSize;
 	style._NextFrameFontSizeBase = fontSize;
+
+	if (ImGui::GetCurrentContext() != nullptr)
+	{
+		ImGuiContext& g = *GImGui;
+		g.FontSizeBase = fontSize;
+		ImGui::UpdateCurrentFontSize(0.0f);
+	}
 }
 
 int GUIManager::GetItemID()
