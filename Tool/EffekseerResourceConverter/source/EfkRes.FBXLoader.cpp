@@ -190,6 +190,11 @@ std::optional<Model> LoadModelFromScene(const ufbx_scene* scene)
 		if (srcNode->mesh)
 		{
 			auto it = std::find(scene->meshes.begin(), scene->meshes.end(), srcNode->mesh);
+			if (it == scene->meshes.end())
+			{
+				continue;
+			}
+
 			auto meshIndex = std::distance(scene->meshes.begin(), it);
 			dstNode.mesh = &model.meshes[meshIndex];
 		}
@@ -216,6 +221,9 @@ std::optional<std::vector<Model>> FBXLoader::LoadModelSequence(std::string_view 
 	ufbx_load_opts opts{};
 	opts.evaluate_skinning = true;
 	opts.evaluate_caches = true;
+	opts.generate_missing_normals = true;
+	opts.normalize_normals = true;
+	opts.normalize_tangents = true;
 	opts.target_axes = ufbx_axes_right_handed_y_up;
 
 	ufbx_error error{};

@@ -5,19 +5,39 @@
 #include "EfkRes.GLTFLoader.h"
 #include "EfkRes.MQOLoader.h"
 #include "EfkRes.Math.h"
+#include <algorithm>
 #include <charconv>
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
 #include <vector>
 
+namespace
+{
+
+std::string GetLowerExtension(const std::string& path)
+{
+	size_t index = path.find_last_of('.');
+	if (index == path.npos)
+	{
+		return "";
+	}
+
+	std::string ext = path.substr(index);
+	std::transform(ext.begin(), ext.end(), ext.begin(), [](unsigned char c) { return static_cast<char>(tolower(c)); });
+	return ext;
+}
+
+} // namespace
+
 struct MainArgs
 {
 public:
 	std::string inputFile;
-	std::string_view inputFileExt;
+	std::string inputFileExt;
 	std::string outputFile;
-	std::string_view outputFileExt;
+	std::string outputFileExt;
 	double modelScale = 1.0f;
 
 public:
@@ -54,10 +74,7 @@ public:
 		{
 			return false;
 		}
-		if (size_t index = inputFile.find_last_of('.'); index != inputFile.npos)
-		{
-			inputFileExt = std::string_view(inputFile.data() + index, inputFile.size() - index);
-		}
+		inputFileExt = GetLowerExtension(inputFile);
 		if (outputFile.empty())
 		{
 			outputFile = inputFile;
@@ -68,10 +85,7 @@ public:
 			}
 			outputFile += ".efkmodel";
 		}
-		if (size_t index = outputFile.find_last_of('.'); index != outputFile.npos)
-		{
-			outputFileExt = std::string_view(outputFile.data() + index, outputFile.size() - index);
-		}
+		outputFileExt = GetLowerExtension(outputFile);
 
 		return true;
 	}

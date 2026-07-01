@@ -45,6 +45,10 @@ struct Vec3
 	Vec3 Normalized() const
 	{
 		double length = Length();
+		if (length == 0.0)
+		{
+			return {0.0, 0.0, 0.0};
+		}
 		return {x / length, y / length, z / length};
 	}
 

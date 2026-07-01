@@ -63,8 +63,14 @@ void SaveFrame(BinaryWriter& writer, const Model& model, int32_t version, float 
 	int32_t vertexCount = 0;
 	int32_t faceCount = 0;
 
-	for (auto& mesh : model.meshes)
+	for (auto& node : model.nodes)
 	{
+		if (node.mesh == nullptr)
+		{
+			continue;
+		}
+
+		auto& mesh = *node.mesh;
 		vertexCount += static_cast<int32_t>(mesh.vertices.size());
 		faceCount += static_cast<int32_t>(mesh.faces.size());
 	}
