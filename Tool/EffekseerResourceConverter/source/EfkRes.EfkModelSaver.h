@@ -4,6 +4,7 @@
 #include <optional>
 #include <stdint.h>
 #include <string_view>
+#include <vector>
 
 namespace efkres
 {
@@ -15,6 +16,7 @@ public:
 	~EfkModelSaver() = default;
 
 	bool Save(std::string_view filepath, const Model& model);
+	bool Save(std::string_view filepath, const std::vector<Model>& frames);
 
 	void SetModelScale(double scale) { m_scale = scale; }
 

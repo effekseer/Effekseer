@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
+#include <vector>
 
 struct MainArgs
 {
@@ -102,30 +103,45 @@ int main(int argc, char* argv[])
 
 	if (args.outputFileExt == ".efkmodel")
 	{
-		std::optional<Model> model;
+		std::optional<std::vector<Model>> modelFrames;
 
 		if (args.inputFileExt == ".fbx" || args.inputFileExt == ".obj")
 		{
 			FBXLoader fbxLoader;
-			model = fbxLoader.LoadModel(args.inputFile);
+			modelFrames = fbxLoader.LoadModelSequence(args.inputFile);
 		}
 		else if (args.inputFileExt == ".gltf" || args.inputFileExt == ".glb")
 		{
 			GLTFLoader gltfLoader;
-			model = gltfLoader.LoadModel(args.inputFile);
+			auto model = gltfLoader.LoadModel(args.inputFile);
+			if (model.has_value())
+			{
+				modelFrames.emplace();
+				modelFrames->emplace_back(std::move(model.value()));
+			}
 		}
 		else if (args.inputFileExt == ".mqo")
 		{
 			MQOLoader mqoLoader;
-			model = mqoLoader.LoadModel(args.inputFile);
+			auto model = mqoLoader.LoadModel(args.inputFile);
+			if (model.has_value())
+			{
+				modelFrames.emplace();
+				modelFrames->emplace_back(std::move(model.value()));
+			}
 		}
 		else if (args.inputFileExt == ".geo" || args.inputFileExt == ".bgeo")
 		{
 			GEOLoader geoLoader;
-			model = geoLoader.LoadModel(args.inputFile);
+			auto model = geoLoader.LoadModel(args.inputFile);
+			if (model.has_value())
+			{
+				modelFrames.emplace();
+				modelFrames->emplace_back(std::move(model.value()));
+			}
 		}
 
-		if (!model.has_value())
+		if (!modelFrames.has_value())
 		{
 			fprintf(stderr, "Failed to load: %s\n", args.inputFile.c_str());
 			return -1;
@@ -134,7 +150,7 @@ int main(int argc, char* argv[])
 		{
 			EfkModelSaver efkModelSaver;
 			efkModelSaver.SetModelScale(args.modelScale);
-			if (!efkModelSaver.Save(args.outputFile, model.value()))
+			if (!efkModelSaver.Save(args.outputFile, modelFrames.value()))
 			{
 				fprintf(stderr, "Failed to save: %s\n", args.outputFile.c_str());
 				return -1;

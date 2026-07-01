@@ -1,6 +1,7 @@
 #include "EfkRes.FBXLoader.h"
 #include "EfkRes.Utils.h"
 #include <algorithm>
+#include <cmath>
 #include <string.h>
 #include <ufbx.h>
 
@@ -11,6 +12,10 @@ namespace
 {
 
 Vec2 Convert(ufbx_vec2 v) { return {v.x, v.y}; }
+
+Vec2 ConvertUV(ufbx_vec2 v) { return {v.x, 1.0 - v.y}; }
+
+Vec2 GenerateUV(Vec3 position) { return {position.x + position.z, position.y}; }
 
 Vec3 Convert(ufbx_vec3 v) { return {v.x, v.y, v.z}; }
 
@@ -23,18 +28,8 @@ Mat43 Convert(ufbx_matrix src)
 	return dst;
 }
 
-} // namespace
-
-std::optional<Model> FBXLoader::LoadModel(std::string_view filepath)
+std::optional<Model> LoadModelFromScene(const ufbx_scene* scene)
 {
-	ufbx_load_opts opts{};
-	ufbx_error error{};
-	ufbx_scene* scene = ufbx_load_file(ufbx_string_view(filepath.data(), filepath.size()), &opts, &error);
-	if (!scene)
-	{
-		return std::nullopt;
-	}
-
 	Model model;
 	model.meshes.resize(scene->meshes.count);
 
@@ -42,14 +37,16 @@ std::optional<Model> FBXLoader::LoadModel(std::string_view filepath)
 	{
 		Mesh& dstMesh = model.meshes[meshIndex];
 		const ufbx_mesh* srcMesh = scene->meshes[meshIndex];
+		const ufbx_vertex_vec3& positionAttr = srcMesh->skinned_position.exists ? srcMesh->skinned_position : srcMesh->vertex_position;
+		dstMesh.positionsAreLocal = !(srcMesh->skinned_position.exists && !srcMesh->skinned_is_local);
 
-		if (srcMesh->vertex_position.exists)
+		if (positionAttr.exists)
 		{
-			size_t numVertices = srcMesh->vertex_position.indices.count;
+			size_t numVertices = positionAttr.indices.count;
 			dstMesh.vertices.resize(numVertices);
 
-			const ufbx_vec3* fbxPositionValues = srcMesh->vertex_position.values.data;
-			const uint32_t* fbxPositionIndices = srcMesh->vertex_position.indices.data;
+			const ufbx_vec3* fbxPositionValues = positionAttr.values.data;
+			const uint32_t* fbxPositionIndices = positionAttr.indices.data;
 			for (size_t vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
 			{
 				dstMesh.vertices[vertexIndex].position = Convert(fbxPositionValues[fbxPositionIndices[vertexIndex]]);
@@ -62,7 +59,7 @@ std::optional<Model> FBXLoader::LoadModel(std::string_view filepath)
 
 		if (srcMesh->vertex_color.exists)
 		{
-			size_t numVertices = srcMesh->vertex_color.indices.count;
+			size_t numVertices = std::min(srcMesh->vertex_color.indices.count, dstMesh.vertices.size());
 			const ufbx_vec4* fbxColorValues = srcMesh->vertex_color.values.data;
 			const uint32_t* fbxColorIndices = srcMesh->vertex_color.indices.data;
 			for (size_t vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
@@ -73,40 +70,59 @@ std::optional<Model> FBXLoader::LoadModel(std::string_view filepath)
 
 		if (srcMesh->vertex_uv.exists)
 		{
-			size_t numVertices = srcMesh->vertex_uv.indices.count;
+			size_t numVertices = std::min(srcMesh->vertex_uv.indices.count, dstMesh.vertices.size());
 			const ufbx_vec2* fbxUV1Values = srcMesh->vertex_uv.values.data;
 			const uint32_t* fbxUV1Indices = srcMesh->vertex_uv.indices.data;
 			for (size_t vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
 			{
-				dstMesh.vertices[vertexIndex].uv1 = Convert(fbxUV1Values[fbxUV1Indices[vertexIndex]]);
+				dstMesh.vertices[vertexIndex].uv1 = ConvertUV(fbxUV1Values[fbxUV1Indices[vertexIndex]]);
+			}
+		}
+		else
+		{
+			for (auto& vertex : dstMesh.vertices)
+			{
+				vertex.uv1 = GenerateUV(vertex.position);
 			}
 		}
 
-		if (srcMesh->uv_sets.count >= 2)
+		if (srcMesh->uv_sets.count >= 2 && srcMesh->uv_sets[1].vertex_uv.exists)
 		{
-			size_t numVertices = srcMesh->uv_sets[1].vertex_uv.indices.count;
+			size_t numVertices = std::min(srcMesh->uv_sets[1].vertex_uv.indices.count, dstMesh.vertices.size());
 			const ufbx_vec2* fbxUV2Values = srcMesh->uv_sets[1].vertex_uv.values.data;
 			const uint32_t* fbxUV2Indices = srcMesh->uv_sets[1].vertex_uv.indices.data;
 			for (size_t vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
 			{
-				dstMesh.vertices[vertexIndex].uv2 = Convert(fbxUV2Values[fbxUV2Indices[vertexIndex]]);
+				dstMesh.vertices[vertexIndex].uv2 = ConvertUV(fbxUV2Values[fbxUV2Indices[vertexIndex]]);
+			}
+		}
+		else
+		{
+			for (auto& vertex : dstMesh.vertices)
+			{
+				vertex.uv2 = vertex.uv1;
 			}
 		}
 
-		if (srcMesh->vertex_normal.exists)
+		const ufbx_vertex_vec3& normalAttr = srcMesh->skinned_normal.exists ? srcMesh->skinned_normal : srcMesh->vertex_normal;
+		const bool hasNormal = normalAttr.exists;
+		const bool hasTangent = srcMesh->vertex_tangent.exists && dstMesh.positionsAreLocal;
+		const bool hasBitangent = srcMesh->vertex_bitangent.exists && dstMesh.positionsAreLocal;
+
+		if (hasNormal)
 		{
-			size_t numVertices = srcMesh->vertex_normal.indices.count;
-			const ufbx_vec3* fbxNormalValues = srcMesh->vertex_normal.values.data;
-			const uint32_t* fbxNormalIndices = srcMesh->vertex_normal.indices.data;
+			size_t numVertices = std::min(normalAttr.indices.count, dstMesh.vertices.size());
+			const ufbx_vec3* fbxNormalValues = normalAttr.values.data;
+			const uint32_t* fbxNormalIndices = normalAttr.indices.data;
 			for (size_t vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
 			{
 				dstMesh.vertices[vertexIndex].normal = Convert(fbxNormalValues[fbxNormalIndices[vertexIndex]]).Normalized();
 			}
 		}
 
-		if (srcMesh->vertex_tangent.exists)
+		if (hasTangent)
 		{
-			size_t numVertices = srcMesh->vertex_tangent.indices.count;
+			size_t numVertices = std::min(srcMesh->vertex_tangent.indices.count, dstMesh.vertices.size());
 			const ufbx_vec3* fbxTangentValues = srcMesh->vertex_tangent.values.data;
 			const uint32_t* fbxTangentIndices = srcMesh->vertex_tangent.indices.data;
 			for (size_t vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
@@ -115,9 +131,9 @@ std::optional<Model> FBXLoader::LoadModel(std::string_view filepath)
 			}
 		}
 
-		if (srcMesh->vertex_bitangent.exists)
+		if (hasBitangent)
 		{
-			size_t numVertices = srcMesh->vertex_bitangent.indices.count;
+			size_t numVertices = std::min(srcMesh->vertex_bitangent.indices.count, dstMesh.vertices.size());
 			const ufbx_vec3* fbxBitangentValues = srcMesh->vertex_bitangent.values.data;
 			const uint32_t* fbxBitangentIndices = srcMesh->vertex_bitangent.indices.data;
 			for (size_t vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
@@ -144,14 +160,14 @@ std::optional<Model> FBXLoader::LoadModel(std::string_view filepath)
 			}
 		}
 
-		if (srcMesh->vertex_normal.exists && srcMesh->vertex_tangent.exists && !srcMesh->vertex_bitangent.exists)
+		if (hasNormal && hasTangent && !hasBitangent)
 		{
 			for (auto& vertex : dstMesh.vertices)
 			{
 				vertex.binormal = CrossProduct(vertex.normal, vertex.tangent).Normalized();
 			}
 		}
-		else if (srcMesh->vertex_normal.exists && !srcMesh->vertex_tangent.exists && !srcMesh->vertex_bitangent.exists)
+		else if (hasNormal && (!hasTangent || !hasBitangent))
 		{
 			for (auto& face : dstMesh.faces)
 			{
@@ -179,8 +195,82 @@ std::optional<Model> FBXLoader::LoadModel(std::string_view filepath)
 		}
 	}
 
-	ufbx_free_scene(scene);
 	return std::move(model);
+}
+
+} // namespace
+
+std::optional<Model> FBXLoader::LoadModel(std::string_view filepath)
+{
+	auto sequence = LoadModelSequence(filepath);
+	if (!sequence.has_value() || sequence->empty())
+	{
+		return std::nullopt;
+	}
+
+	return std::move(sequence.value()[0]);
+}
+
+std::optional<std::vector<Model>> FBXLoader::LoadModelSequence(std::string_view filepath)
+{
+	ufbx_load_opts opts{};
+	opts.evaluate_skinning = true;
+	opts.evaluate_caches = true;
+	opts.target_axes = ufbx_axes_right_handed_y_up;
+
+	ufbx_error error{};
+	ufbx_scene* scene = ufbx_load_file(ufbx_string_view(filepath.data(), filepath.size()), &opts, &error);
+	if (!scene)
+	{
+		return std::nullopt;
+	}
+
+	std::vector<Model> models;
+	const ufbx_anim_stack* animStack = scene->anim_stacks.count > 0 ? scene->anim_stacks[0] : nullptr;
+	const ufbx_anim* anim = animStack != nullptr ? animStack->anim : nullptr;
+	const double timeBegin = animStack != nullptr ? animStack->time_begin : 0.0;
+	const double timeEnd = animStack != nullptr ? animStack->time_end : 0.0;
+	const int32_t frameCount = static_cast<int32_t>(std::round(std::max(0.0, timeEnd - timeBegin) * 60.0));
+
+	if (anim != nullptr && frameCount > 0)
+	{
+		models.reserve(frameCount);
+		ufbx_evaluate_opts evaluateOpts{};
+		evaluateOpts.evaluate_skinning = true;
+		evaluateOpts.evaluate_caches = true;
+
+		for (int32_t frame = 0; frame < frameCount; frame++)
+		{
+			double time = timeBegin + static_cast<double>(frame) / 60.0;
+			ufbx_scene* evaluatedScene = ufbx_evaluate_scene(scene, anim, time, &evaluateOpts, &error);
+			if (evaluatedScene == nullptr)
+			{
+				ufbx_free_scene(scene);
+				return std::nullopt;
+			}
+
+			auto model = LoadModelFromScene(evaluatedScene);
+			ufbx_free_scene(evaluatedScene);
+			if (!model.has_value())
+			{
+				ufbx_free_scene(scene);
+				return std::nullopt;
+			}
+
+			models.emplace_back(std::move(model.value()));
+		}
+	}
+	else
+	{
+		auto model = LoadModelFromScene(scene);
+		if (model.has_value())
+		{
+			models.emplace_back(std::move(model.value()));
+		}
+	}
+
+	ufbx_free_scene(scene);
+	return std::move(models);
 }
 
 std::optional<Curve> FBXLoader::LoadCurve(std::string_view filepath)

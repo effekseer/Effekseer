@@ -58,26 +58,8 @@ std::array<uint16_t, 2> QuantizeUnorm16(Vec2 v)
 	};
 }
 
-} // namespace
-
-bool EfkModelSaver::Save(std::string_view filepath, const Model& model)
+void SaveFrame(BinaryWriter& writer, const Model& model, int32_t version, float modelScale)
 {
-	const int32_t version = 6;
-	float modelScale = m_scale;
-	int32_t modelCount = 1;
-	int32_t frameCount = 1;
-
-	BinaryWriter writer;
-	if (!writer.Open(std::string(filepath).c_str()))
-	{
-		return false;
-	}
-
-	writer.Write(version);
-	writer.Write(modelScale);
-	writer.Write(modelCount);
-	writer.Write(frameCount);
-
 	int32_t vertexCount = 0;
 	int32_t faceCount = 0;
 
@@ -97,15 +79,16 @@ bool EfkModelSaver::Save(std::string_view filepath, const Model& model)
 		}
 
 		auto& mesh = *node.mesh;
+		Mat43 transform = mesh.positionsAreLocal ? node.transform : Mat43::Identity();
 
 		if (version <= 5)
 		{
 			for (auto& vertex : mesh.vertices)
 			{
-				auto position = QuantizeFloat32(node.transform.TransformPosition(vertex.position * modelScale));
-				auto normal = QuantizeFloat32(node.transform.TransformDirection(vertex.normal));
-				auto binormal = QuantizeFloat32(node.transform.TransformDirection(vertex.binormal));
-				auto tangent = QuantizeFloat32(node.transform.TransformDirection(vertex.tangent));
+				auto position = QuantizeFloat32(transform.TransformPosition(vertex.position * modelScale));
+				auto normal = QuantizeFloat32(transform.TransformDirection(vertex.normal));
+				auto binormal = QuantizeFloat32(transform.TransformDirection(vertex.binormal));
+				auto tangent = QuantizeFloat32(transform.TransformDirection(vertex.tangent));
 				auto uv = QuantizeFloat32(vertex.uv1);
 				auto color = QuantizeUnorm8(vertex.color);
 
@@ -121,10 +104,10 @@ bool EfkModelSaver::Save(std::string_view filepath, const Model& model)
 		{
 			for (auto& vertex : mesh.vertices)
 			{
-				auto position = QuantizeFloat32(node.transform.TransformPosition(vertex.position * modelScale));
-				auto normal = QuantizeFloat32(node.transform.TransformDirection(vertex.normal));
-				auto binormal = QuantizeFloat32(node.transform.TransformDirection(vertex.binormal));
-				auto tangent = QuantizeFloat32(node.transform.TransformDirection(vertex.tangent));
+				auto position = QuantizeFloat32(transform.TransformPosition(vertex.position * modelScale));
+				auto normal = QuantizeFloat32(transform.TransformDirection(vertex.normal));
+				auto binormal = QuantizeFloat32(transform.TransformDirection(vertex.binormal));
+				auto tangent = QuantizeFloat32(transform.TransformDirection(vertex.tangent));
 				auto uv1 = QuantizeFloat32(vertex.uv1);
 				auto uv2 = QuantizeFloat32(vertex.uv2);
 				auto color = QuantizeUnorm8(vertex.color);
@@ -161,8 +144,55 @@ bool EfkModelSaver::Save(std::string_view filepath, const Model& model)
 
 		faceOffset += static_cast<int32_t>(mesh.vertices.size());
 	}
+}
+
+bool SaveModels(std::string_view filepath, const std::vector<const Model*>& frames, double scale)
+{
+	if (frames.empty())
+	{
+		return false;
+	}
+
+	const int32_t version = 6;
+	float modelScale = static_cast<float>(scale);
+	int32_t modelCount = 1;
+	int32_t frameCount = static_cast<int32_t>(frames.size());
+
+	BinaryWriter writer;
+	if (!writer.Open(std::string(filepath).c_str()))
+	{
+		return false;
+	}
+
+	writer.Write(version);
+	writer.Write(modelScale);
+	writer.Write(modelCount);
+	writer.Write(frameCount);
+
+	for (auto frame : frames)
+	{
+		SaveFrame(writer, *frame, version, modelScale);
+	}
 
 	return true;
+}
+
+} // namespace
+
+bool EfkModelSaver::Save(std::string_view filepath, const Model& model)
+{
+	return SaveModels(filepath, std::vector<const Model*>{&model}, m_scale);
+}
+
+bool EfkModelSaver::Save(std::string_view filepath, const std::vector<Model>& frames)
+{
+	std::vector<const Model*> framePtrs;
+	framePtrs.reserve(frames.size());
+	for (auto& frame : frames)
+	{
+		framePtrs.push_back(&frame);
+	}
+	return SaveModels(filepath, framePtrs, m_scale);
 }
 
 } // namespace efkres

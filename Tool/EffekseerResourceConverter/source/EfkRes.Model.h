@@ -28,6 +28,7 @@ struct Mesh
 {
 	std::vector<MeshVertex> vertices;
 	std::vector<MeshFace> faces;
+	bool positionsAreLocal = true;
 };
 
 struct Node

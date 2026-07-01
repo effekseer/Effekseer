@@ -5,6 +5,7 @@
 #include <optional>
 #include <stdint.h>
 #include <string_view>
+#include <vector>
 
 namespace efkres
 {
@@ -16,6 +17,7 @@ public:
 	~FBXLoader() = default;
 
 	std::optional<Model> LoadModel(std::string_view filepath);
+	std::optional<std::vector<Model>> LoadModelSequence(std::string_view filepath);
 	std::optional<Curve> LoadCurve(std::string_view filepath);
 };
 
