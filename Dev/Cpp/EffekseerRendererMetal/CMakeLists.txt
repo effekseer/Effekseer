@@ -38,7 +38,7 @@ set(PublicHeaders
 
 add_library(${PROJECT_NAME} STATIC ${LOCAL_SOURCES})
 target_include_directories(
-  ${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/../3rdparty/LLGI/src
+  ${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/../3rdParty/LLGI/src
                           ${EFK_THIRDPARTY_INCLUDES})
 set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER
                                                  "${PublicHeaders}")

@@ -34,7 +34,7 @@ filterfolder("${LocalSources}")
 add_library(${PROJECT_NAME} STATIC ${PublicHeaders} ${LocalHeaders}
                                    ${LocalSources})
 target_include_directories(
-  ${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/../3rdparty/LLGI/src
+  ${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/../3rdParty/LLGI/src
                           ${EFK_THIRDPARTY_INCLUDES})
 target_link_libraries(${PROJECT_NAME} PUBLIC Effekseer EffekseerRendererCommon
                                              LLGI)
