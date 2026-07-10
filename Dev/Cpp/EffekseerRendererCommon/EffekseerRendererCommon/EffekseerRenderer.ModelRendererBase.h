@@ -339,15 +339,15 @@ protected:
 		if (param.DepthParameterPtr->ZSort != Effekseer::ZSortType::None)
 		{
 			keyValues_.resize(matrixes_.size());
+			auto frontDirection = renderer->GetCameraFrontDirection();
+			if (!param.IsRightHand)
+			{
+				frontDirection = -frontDirection;
+			}
+
 			for (size_t i = 0; i < keyValues_.size(); i++)
 			{
 				efkVector3D t(matrixes_[i].Values[3][0], matrixes_[i].Values[3][1], matrixes_[i].Values[3][2]);
-
-				auto frontDirection = renderer->GetCameraFrontDirection();
-				if (!param.IsRightHand)
-				{
-					frontDirection = -frontDirection;
-				}
 
 				keyValues_[i].Key = Effekseer::SIMD::Vec3f::Dot(t, frontDirection);
 				keyValues_[i].Value = static_cast<int32_t>(i);
@@ -421,21 +421,21 @@ protected:
 				}
 			}
 
-			matrixes_ = matrixesSorted_;
-			uv_ = uvSorted_;
-			alphaUv_ = alphaUVSorted_;
-			uvDistortionUv_ = uvDistortionUVSorted_;
-			blendUv_ = blendUVSorted_;
-			blendAlphaUv_ = blendAlphaUVSorted_;
-			blendUvDistortionUv_ = blendUVDistortionUVSorted_;
-			flipbookIndexAndNextRate_ = flipbookIndexAndNextRateSorted_;
-			alphaThreshold_ = alphaThresholdSorted_;
-			viewOffsetDistance_ = viewOffsetDistanceSorted_;
-			colors_ = colorsSorted_;
-			times_ = timesSorted_;
-			particleTimes_ = particleTimesSorted_;
-			customData1_ = customData1Sorted_;
-			customData2_ = customData2Sorted_;
+			matrixes_.swap(matrixesSorted_);
+			uv_.swap(uvSorted_);
+			alphaUv_.swap(alphaUVSorted_);
+			uvDistortionUv_.swap(uvDistortionUVSorted_);
+			blendUv_.swap(blendUVSorted_);
+			blendAlphaUv_.swap(blendAlphaUVSorted_);
+			blendUvDistortionUv_.swap(blendUVDistortionUVSorted_);
+			flipbookIndexAndNextRate_.swap(flipbookIndexAndNextRateSorted_);
+			alphaThreshold_.swap(alphaThresholdSorted_);
+			viewOffsetDistance_.swap(viewOffsetDistanceSorted_);
+			colors_.swap(colorsSorted_);
+			times_.swap(timesSorted_);
+			particleTimes_.swap(particleTimesSorted_);
+			customData1_.swap(customData1Sorted_);
+			customData2_.swap(customData2Sorted_);
 		}
 	}
 
@@ -749,6 +749,24 @@ public:
 		customData1_.clear();
 		customData2_.clear();
 
+		if (count > 0)
+		{
+			const auto instanceCount = static_cast<size_t>(count);
+			matrixes_.reserve(instanceCount);
+			uv_.reserve(instanceCount);
+			alphaUv_.reserve(instanceCount);
+			uvDistortionUv_.reserve(instanceCount);
+			blendUv_.reserve(instanceCount);
+			blendAlphaUv_.reserve(instanceCount);
+			blendUvDistortionUv_.reserve(instanceCount);
+			flipbookIndexAndNextRate_.reserve(instanceCount);
+			alphaThreshold_.reserve(instanceCount);
+			viewOffsetDistance_.reserve(instanceCount);
+			colors_.reserve(instanceCount);
+			times_.reserve(instanceCount);
+			particleTimes_.reserve(instanceCount);
+		}
+
 		matrixesSorted_.clear();
 		uvSorted_.clear();
 		alphaUVSorted_.clear();
@@ -778,6 +796,16 @@ public:
 		{
 			customData1Count_ = 0;
 			customData2Count_ = 0;
+		}
+
+		if (count > 0 && customData1Count_ > 0)
+		{
+			customData1_.reserve(static_cast<size_t>(count));
+		}
+
+		if (count > 0 && customData2Count_ > 0)
+		{
+			customData2_.reserve(static_cast<size_t>(count));
 		}
 
 		renderer->GetStandardRenderer()->ResetAndRenderingIfRequired();

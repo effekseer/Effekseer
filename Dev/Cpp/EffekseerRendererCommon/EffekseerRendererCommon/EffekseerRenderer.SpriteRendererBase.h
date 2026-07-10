@@ -47,6 +47,9 @@ protected:
 	int32_t instanceMaxCount_ = 0;
 	int32_t customData1Count_ = 0;
 	int32_t customData2Count_ = 0;
+	::Effekseer::SIMD::Mat44f cameraMatrix_;
+	efkVector3D cameraFrontDirection_;
+	efkVector3D cameraPosition_;
 
 public:
 	SpriteRendererBase(RENDERER* renderer)
@@ -101,6 +104,10 @@ protected:
 
 	void BeginRendering_(RENDERER* renderer, int32_t count, const efkSpriteNodeParam& param, void* userData)
 	{
+		cameraMatrix_ = ::Effekseer::SIMD::Mat44f(renderer->GetCameraMatrix());
+		cameraFrontDirection_ = efkVector3D(renderer->GetCameraFrontDirection());
+		cameraPosition_ = efkVector3D(renderer->GetCameraPosition());
+
 		EffekseerRenderer::StandardRendererState state;
 		state.CullingType = ::Effekseer::CullingType::Double;
 		state.DepthTest = param.ZTest;
@@ -158,10 +165,9 @@ protected:
 	{
 		if (parameter.ZSort == Effekseer::ZSortType::None)
 		{
-			auto cameraMat = renderer_->GetCameraMatrix();
 			const auto& state = renderer_->GetStandardRenderer()->GetState();
 
-			RenderingInstance(instanceParameter, parameter, state, cameraMat);
+			RenderingInstance(instanceParameter, parameter, state, cameraMatrix_);
 		}
 		else
 		{
@@ -293,11 +299,11 @@ protected:
 
 				ApplyViewOffset(instMat, camera, instanceParameter.ViewOffsetDistance);
 
-				CalcBillboard(parameter.Billboard, mat_rot, s, R, F, instMat, renderer_->GetCameraFrontDirection(), instanceParameter.Direction);
+				CalcBillboard(parameter.Billboard, mat_rot, s, R, F, instMat, cameraFrontDirection_, instanceParameter.Direction);
 			}
 			else
 			{
-				CalcBillboard(parameter.Billboard, mat_rot, s, R, F, instanceParameter.SRTMatrix43, renderer_->GetCameraFrontDirection(), instanceParameter.Direction);
+				CalcBillboard(parameter.Billboard, mat_rot, s, R, F, instanceParameter.SRTMatrix43, cameraFrontDirection_, instanceParameter.Direction);
 			}
 
 			for (int i = 0; i < 4; i++)
@@ -307,8 +313,8 @@ protected:
 			}
 
 			ApplyDepthParameters(mat_rot,
-								 renderer_->GetCameraFrontDirection(),
-								 renderer_->GetCameraPosition(),
+								 cameraFrontDirection_,
+								 cameraPosition_,
 								 s,
 								 parameter.DepthParameterPtr,
 								 parameter.IsRightHand);
@@ -342,8 +348,8 @@ protected:
 			}
 
 			ApplyDepthParameters(mat,
-								 renderer_->GetCameraFrontDirection(),
-								 renderer_->GetCameraPosition(),
+								 cameraFrontDirection_,
+								 cameraPosition_,
 								 parameter.DepthParameterPtr,
 								 parameter.IsRightHand);
 
@@ -403,15 +409,15 @@ protected:
 	{
 		if (param.ZSort != Effekseer::ZSortType::None)
 		{
+			auto frontDirection = cameraFrontDirection_;
+			if (!param.IsRightHand)
+			{
+				frontDirection = -frontDirection;
+			}
+
 			for (auto& kv : instances)
 			{
 				efkVector3D t = kv.Value.SRTMatrix43.GetTranslation();
-
-				auto frontDirection = renderer_->GetCameraFrontDirection();
-				if (!param.IsRightHand)
-				{
-					frontDirection = -frontDirection;
-				}
 
 				kv.Key = Effekseer::SIMD::Vec3f::Dot(t, frontDirection);
 			}
@@ -427,12 +433,10 @@ protected:
 						  { return a.Key > b.Key; });
 			}
 
+			const auto& state = renderer->GetStandardRenderer()->GetState();
 			for (auto& kv : instances)
 			{
-				auto camera = renderer_->GetCameraMatrix();
-				const auto& state = renderer->GetStandardRenderer()->GetState();
-
-				RenderingInstance(kv.Value, param, state, camera);
+				RenderingInstance(kv.Value, param, state, cameraMatrix_);
 			}
 		}
 
@@ -451,7 +455,7 @@ public:
 			return;
 		if (spriteCount_ == renderer_->GetSquareMaxCount())
 			return;
-		Rendering_(parameter, instanceParameter, renderer_->GetCameraMatrix());
+		Rendering_(parameter, instanceParameter, cameraMatrix_);
 	}
 
 	void EndRendering(const efkSpriteNodeParam& parameter, void* userData) override
