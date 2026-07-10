@@ -17,9 +17,6 @@ on:
       - 16x_ex
       - 17x
 
-env:
-  EFFEKSEER_VERSION: 1.80.5
-
 jobs:
   win_x86_build:
     name: Build Windows(x86)
@@ -126,6 +123,13 @@ jobs:
           fetch-depth: 1
           lfs: true
 
+      - name: Resolve Effekseer version
+        id: version
+        shell: bash
+        run: |
+          VERSION="$(python3.12 -c 'import build; print(build.get_editor_version())')"
+          echo "value=$VERSION" >> "$GITHUB_OUTPUT"
+
       - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '9.0.x'
@@ -142,7 +146,7 @@ jobs:
       - name: Upload linux Tool
         uses: actions/upload-artifact@v4
         with:
-          name: Effekseer${{ env.EFFEKSEER_VERSION }}Linux
+          name: Effekseer${{ steps.version.outputs.value }}Linux
           path: EffekseerTool
 
   Build:
@@ -177,6 +181,13 @@ jobs:
           submodules: true
           fetch-depth: 1
 
+      - name: Resolve Effekseer version
+        id: version
+        shell: bash
+        run: |
+          VERSION="$(python3 -c 'import build; print(build.get_editor_version())' 2>/dev/null || python -c 'import build; print(build.get_editor_version())')"
+          echo "value=$VERSION" >> "$GITHUB_OUTPUT"
+
       - run: |
           git lfs install
           git lfs pull
@@ -195,8 +206,46 @@ jobs:
           fi
           python3 build.py || python build.py
 
-      - name: Validate macOS notarization secrets
+      - name: Validate architecture-specific macOS packages
         if: matrix.name == 'mac'
+        shell: bash
+        run: |
+          EDITOR_VERSION="$(python3 -c 'import build; print(build.get_editor_version())')"
+          for ARCH in arm64 x64
+          do
+            RID="osx-$ARCH"
+            APP="build/macos-packaging/$RID/Effekseer.app"
+            RESOURCES="$APP/Contents/Resources"
+
+            test -d "$APP"
+            test -f "EffekseerTool/Mac-$ARCH/Effekseer.dmg"
+            test "$(plutil -extract CFBundleShortVersionString raw "$APP/Contents/Info.plist")" = "$EDITOR_VERSION"
+            test "$(plutil -extract CFBundleVersion raw "$APP/Contents/Info.plist")" = "$EDITOR_VERSION"
+            test "$(plutil -extract LSMinimumSystemVersion raw "$APP/Contents/Info.plist")" = "12.0"
+            grep -q "$RID" "$RESOURCES/Effekseer.deps.json"
+
+            if [ "$ARCH" = "arm64" ]; then
+              EXPECTED_MACHO_ARCH="arm64"
+              EXPECTED_MANAGED_ARCH="Aarch64"
+            else
+              EXPECTED_MACHO_ARCH="x86_64"
+              EXPECTED_MANAGED_ARCH="x86-64"
+            fi
+
+            for FILE in Effekseer libhostfxr.dylib libcoreclr.dylib
+            do
+              file "$RESOURCES/$FILE" | grep -q "$EXPECTED_MACHO_ARCH"
+            done
+            file "$RESOURCES/Effekseer.dll" | grep -q "$EXPECTED_MANAGED_ARCH"
+
+            if find "$RESOURCES" -maxdepth 1 -type d -name 'osx-*' | grep -q .; then
+              echo "A RID-specific intermediate directory leaked into $APP" >&2
+              exit 1
+            fi
+          done
+
+      - name: Validate macOS notarization secrets
+        if: matrix.name == 'mac' && github.event_name != 'pull_request'
         shell: bash
         env:
           APPLE_CERT_P12_BASE64: ${{ secrets.APPLE_CERT_P12_BASE64 }}
@@ -221,7 +270,7 @@ jobs:
           done
 
       - name: Setup macOS signing keychain
-        if: matrix.name == 'mac'
+        if: matrix.name == 'mac' && github.event_name != 'pull_request'
         shell: bash
         env:
           APPLE_CERT_P12_BASE64: ${{ secrets.APPLE_CERT_P12_BASE64 }}
@@ -240,7 +289,7 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
 
       - name: Notarize macOS tool
-        if: matrix.name == 'mac'
+        if: matrix.name == 'mac' && github.event_name != 'pull_request'
         shell: bash
         env:
           APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
@@ -249,30 +298,40 @@ jobs:
           APPLE_NOTARY_APP_PASSWORD: ${{ secrets.APPLE_NOTARY_APP_PASSWORD }}
           NOTARYTOOL_PROFILE: effekseer-notarytool-ci
         run: |
-          SIGN_WORKDIR="$RUNNER_TEMP/notarization"
-          rm -rf "$SIGN_WORKDIR"
-          mkdir -p "$SIGN_WORKDIR/Effekseer"
-          cp Script/Notarization_Mac/* "$SIGN_WORKDIR/"
-          cp -R Dev/Mac/Effekseer.app "$SIGN_WORKDIR/Effekseer/"
-          (
-            cd "$SIGN_WORKDIR"
-            sh Effekseer_notarytool_setup.sh \
-              "$APPLE_NOTARY_APPLE_ID" \
-              "$APPLE_NOTARY_TEAM_ID" \
-              "$APPLE_NOTARY_APP_PASSWORD" \
-              "$NOTARYTOOL_PROFILE"
-            sh Effekseer_cert.sh "$APPLE_SIGNING_IDENTITY" "$NOTARYTOOL_PROFILE"
-          )
-          cp "$SIGN_WORKDIR/Effekseer.dmg" "EffekseerTool/Effekseer.dmg"
+          for ARCH in arm64 x64
+          do
+            RID="osx-$ARCH"
+            SIGN_WORKDIR="$RUNNER_TEMP/notarization-$ARCH"
+            rm -rf "$SIGN_WORKDIR"
+            mkdir -p "$SIGN_WORKDIR/Effekseer"
+            cp \
+              Script/Notarization_Mac/Effekseer_cert.sh \
+              Script/Notarization_Mac/Effekseer_notarytool_setup.sh \
+              Script/Notarization_Mac/entitlements.plist \
+              "$SIGN_WORKDIR/"
+            cp -R "build/macos-packaging/$RID/Effekseer.app" "$SIGN_WORKDIR/Effekseer/"
+            (
+              cd "$SIGN_WORKDIR"
+              sh Effekseer_notarytool_setup.sh \
+                "$APPLE_NOTARY_APPLE_ID" \
+                "$APPLE_NOTARY_TEAM_ID" \
+                "$APPLE_NOTARY_APP_PASSWORD" \
+                "$NOTARYTOOL_PROFILE"
+              sh Effekseer_cert.sh "$APPLE_SIGNING_IDENTITY" "$NOTARYTOOL_PROFILE"
+            )
+            cp "$SIGN_WORKDIR/Effekseer.dmg" "EffekseerTool/Mac-$ARCH/Effekseer.dmg"
+          done
 
       - name: Upload macOS notarization logs
-        if: failure() && matrix.name == 'mac'
+        if: failure() && matrix.name == 'mac' && github.event_name != 'pull_request'
         uses: actions/upload-artifact@v4
         with:
           name: EffekseerNotarizationLogs
           path: |
-            ${{ runner.temp }}/notarization/Effekseer-app-notarytool-log.json
-            ${{ runner.temp }}/notarization/Effekseer-dmg-notarytool-log.json
+            ${{ runner.temp }}/notarization-arm64/Effekseer-app-notarytool-log.json
+            ${{ runner.temp }}/notarization-arm64/Effekseer-dmg-notarytool-log.json
+            ${{ runner.temp }}/notarization-x64/Effekseer-app-notarytool-log.json
+            ${{ runner.temp }}/notarization-x64/Effekseer-dmg-notarytool-log.json
           if-no-files-found: ignore
 
       - name: Prepare ForCpp
@@ -291,54 +350,85 @@ jobs:
         if: matrix.name == 'windows_x64'
         uses: actions/upload-artifact@v4
         with:
-          name: EffekseerForCpp${{ env.EFFEKSEER_VERSION }}
+          name: EffekseerForCpp${{ steps.version.outputs.value }}
           path: EffekseerForCpp
 
-      - name: Upload ${{matrix.name}} Tool
+      - name: Upload Windows Tool
+        if: matrix.name == 'windows_x64'
         uses: actions/upload-artifact@v4
         with:
-          name: Effekseer${{ env.EFFEKSEER_VERSION }}${{matrix.label}}
+          name: Effekseer${{ steps.version.outputs.value }}Win
           path: EffekseerTool
+
+      - name: Upload macOS arm64 Tool
+        if: matrix.name == 'mac'
+        uses: actions/upload-artifact@v4
+        with:
+          name: Effekseer${{ steps.version.outputs.value }}Mac-arm64
+          path: EffekseerTool/Mac-arm64
+
+      - name: Upload macOS x64 Tool
+        if: matrix.name == 'mac'
+        uses: actions/upload-artifact@v4
+        with:
+          name: Effekseer${{ steps.version.outputs.value }}Mac-x64
+          path: EffekseerTool/Mac-x64
 
   Deploy:
     needs: [tests,BuildLinux,Build]
     runs-on: ubuntu-latest
     steps:
-     
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Resolve Effekseer version
+        id: version
+        shell: bash
+        run: |
+          VERSION="$(python3 -c 'import build; print(build.get_editor_version())')"
+          echo "value=$VERSION" >> "$GITHUB_OUTPUT"
+
       - uses: actions/download-artifact@v4
         with:
-          name: Effekseer${{ env.EFFEKSEER_VERSION }}Win
-          path: dist/Effekseer${{ env.EFFEKSEER_VERSION }}Win
+          name: Effekseer${{ steps.version.outputs.value }}Win
+          path: dist/Effekseer${{ steps.version.outputs.value }}Win
                 
       - uses: actions/download-artifact@v4
         with:
-          name: Effekseer${{ env.EFFEKSEER_VERSION }}Linux
-          path: dist/Effekseer${{ env.EFFEKSEER_VERSION }}Linux
+          name: Effekseer${{ steps.version.outputs.value }}Linux
+          path: dist/Effekseer${{ steps.version.outputs.value }}Linux
       
       - uses: actions/download-artifact@v4
         with:
-          name: EffekseerForCpp${{ env.EFFEKSEER_VERSION }}
-          path: dist/EffekseerForCpp${{ env.EFFEKSEER_VERSION }}
+          name: EffekseerForCpp${{ steps.version.outputs.value }}
+          path: dist/EffekseerForCpp${{ steps.version.outputs.value }}
       
       - uses: actions/download-artifact@v4
         with:
-          name: Effekseer${{ env.EFFEKSEER_VERSION }}Mac
-          path: dist/Effekseer${{ env.EFFEKSEER_VERSION }}Mac
+          name: Effekseer${{ steps.version.outputs.value }}Mac-arm64
+          path: dist/Effekseer${{ steps.version.outputs.value }}Mac-arm64
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: Effekseer${{ steps.version.outputs.value }}Mac-x64
+          path: dist/Effekseer${{ steps.version.outputs.value }}Mac-x64
       
       - name: Prepare Release
         run: |
           mkdir -p pub
           chmod +x \
-            dist/Effekseer${{ env.EFFEKSEER_VERSION }}Linux/Tool/Effekseer \
-            dist/Effekseer${{ env.EFFEKSEER_VERSION }}Linux/Tool/bin/Effekseer \
-            dist/Effekseer${{ env.EFFEKSEER_VERSION }}Linux/Tool/bin/EffekseerMaterialEditor \
-            dist/Effekseer${{ env.EFFEKSEER_VERSION }}Linux/Tool/bin/tools/EffekseerResourceConverter || true
+            dist/Effekseer${{ steps.version.outputs.value }}Linux/Tool/Effekseer \
+            dist/Effekseer${{ steps.version.outputs.value }}Linux/Tool/bin/Effekseer \
+            dist/Effekseer${{ steps.version.outputs.value }}Linux/Tool/bin/EffekseerMaterialEditor \
+            dist/Effekseer${{ steps.version.outputs.value }}Linux/Tool/bin/tools/EffekseerResourceConverter || true
           cd dist
           for asset in \
-            "Effekseer${{ env.EFFEKSEER_VERSION }}Win" \
-            "Effekseer${{ env.EFFEKSEER_VERSION }}Linux" \
-            "Effekseer${{ env.EFFEKSEER_VERSION }}Mac" \
-            "EffekseerForCpp${{ env.EFFEKSEER_VERSION }}"
+            "Effekseer${{ steps.version.outputs.value }}Win" \
+            "Effekseer${{ steps.version.outputs.value }}Linux" \
+            "Effekseer${{ steps.version.outputs.value }}Mac-arm64" \
+            "Effekseer${{ steps.version.outputs.value }}Mac-x64" \
+            "EffekseerForCpp${{ steps.version.outputs.value }}"
           do
             zip -r "../pub/$asset.zip" "$asset"
           done
@@ -355,10 +445,11 @@ jobs:
           releaseId=$(jq --raw-output '.release.id' ${GITHUB_EVENT_PATH})
           echo "Upload to release $releaseId"
           for filename in \
-            "Effekseer${{ env.EFFEKSEER_VERSION }}Win.zip" \
-            "Effekseer${{ env.EFFEKSEER_VERSION }}Linux.zip" \
-            "Effekseer${{ env.EFFEKSEER_VERSION }}Mac.zip" \
-            "EffekseerForCpp${{ env.EFFEKSEER_VERSION }}.zip"
+            "Effekseer${{ steps.version.outputs.value }}Win.zip" \
+            "Effekseer${{ steps.version.outputs.value }}Linux.zip" \
+            "Effekseer${{ steps.version.outputs.value }}Mac-arm64.zip" \
+            "Effekseer${{ steps.version.outputs.value }}Mac-x64.zip" \
+            "EffekseerForCpp${{ steps.version.outputs.value }}.zip"
           do
             url="https://uploads.github.com/repos/${GITHUB_REPOSITORY}/releases/$releaseId/assets?name=$(basename $filename)"
             echo "Upload $filename to $url"

@@ -24,7 +24,7 @@
     <key>CFBundleIconFile</key>
     <string>Icon.icns</string>
     <key>LSMinimumSystemVersion</key>
-    <string>10.15</string>
+    <string>12.0</string>
     <key>NSPrincipalClass</key>
     <string>NSApplication</string>
   </dict>

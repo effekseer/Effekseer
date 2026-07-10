@@ -13,8 +13,8 @@ from pathlib import Path
 def run_command(cmd, env=None):
     """Run a shell command and raise an exception if it fails."""
 
-    print(cmd)
-    completed = subprocess.run(cmd, shell=True, env=env)
+    print(cmd if isinstance(cmd, str) else subprocess.list2cmdline(cmd))
+    completed = subprocess.run(cmd, shell=isinstance(cmd, str), env=env)
     if completed.returncode != 0:
         raise RuntimeError(f"Failed {cmd}")
 
@@ -105,6 +105,154 @@ def update_mac_bundle_version(plist_path, version):
         plistlib.dump(info, fp, sort_keys=False)
 
 
+MAC_RUNTIME_IDENTIFIERS = {
+    'arm64': 'osx-arm64',
+    'x64': 'osx-x64',
+}
+
+MAC_SHARED_RELEASE_PATHS = [
+    'Effekseer.config.Dock.xml',
+    'EffekseerCore.deps.json',
+    'EffekseerCoreGUI.deps.json',
+    'EffekseerMaterialEditor',
+    'config.network.xml',
+    'config.option.xml',
+    'config.recent.xml',
+    'libViewer.dylib',
+    'resources',
+    'scripts',
+    'tools',
+]
+
+
+def get_mac_publish_dir(runtime_identifier):
+    return Path('build/macos-publish') / runtime_identifier
+
+
+def prepare_mac_publish_dir(runtime_identifier):
+    """Create a self-contained editor tree for one macOS architecture."""
+
+    publish_dir = get_mac_publish_dir(runtime_identifier)
+    if publish_dir.exists():
+        shutil.rmtree(publish_dir)
+
+    # The project's OutputPath causes dotnet to leave RID-specific
+    # intermediates under Dev/release even when --output is supplied. Do not
+    # let an earlier RID leak into the next architecture's package.
+    for rid in MAC_RUNTIME_IDENTIFIERS.values():
+        intermediate_dir = Path('Dev/release') / rid
+        if intermediate_dir.exists():
+            shutil.rmtree(intermediate_dir)
+
+    run_command([
+        'dotnet',
+        'publish',
+        'Dev/Editor/Effekseer/Effekseer.csproj',
+        '-c',
+        'Release',
+        '--self-contained',
+        '-r',
+        runtime_identifier,
+        '--output',
+        str(publish_dir),
+    ])
+
+    intermediate_dir = Path('Dev/release') / runtime_identifier
+    if intermediate_dir.exists():
+        shutil.rmtree(intermediate_dir)
+
+    # Native tools and resources are emitted into Dev/release by the C++ and
+    # regular .NET builds. Add only files that dotnet publish did not produce;
+    # overwriting an existing file can replace a RID-specific runtime with a
+    # stale artifact from a previous local build.
+    shared_dir = Path('Dev/release')
+    for shared_relative in MAC_SHARED_RELEASE_PATHS:
+        shared_path = shared_dir / shared_relative
+        if not shared_path.exists():
+            continue
+
+        sources = shared_path.rglob('*') if shared_path.is_dir() else [shared_path]
+        for source in sources:
+            relative = source.relative_to(shared_dir)
+            destination = publish_dir / relative
+            if source.is_dir():
+                destination.mkdir(parents=True, exist_ok=True)
+            elif not destination.exists():
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(source, destination)
+
+
+def make_mac_app(runtime_identifier, editor_version):
+    """Build an unsigned, architecture-specific app ready for signing."""
+
+    package_root = Path('build/macos-packaging') / runtime_identifier
+    app_path = package_root / 'Effekseer.app'
+    if package_root.exists():
+        shutil.rmtree(package_root)
+
+    shutil.copytree('Dev/Mac/Effekseer.app', app_path)
+    resources_dir = app_path / 'Contents/Resources'
+    resources_dir.mkdir(parents=True, exist_ok=True)
+    shutil.copytree(get_mac_publish_dir(runtime_identifier), resources_dir, dirs_exist_ok=True)
+
+    macos_dir = app_path / 'Contents/MacOS'
+    macos_dir.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(
+        'Tool/EffekseerLauncher/build_macosx/EffekseerLauncher',
+        macos_dir / 'EffekseerLauncher')
+
+    update_mac_bundle_version(app_path / 'Contents/Info.plist', editor_version)
+
+    for executable in [
+        macos_dir / 'EffekseerLauncher',
+        resources_dir / 'Effekseer',
+        resources_dir / 'EffekseerMaterialEditor',
+        resources_dir / 'createdump',
+        resources_dir / 'tools/EffekseerResourceConverter',
+    ]:
+        if executable.exists():
+            executable.chmod(executable.stat().st_mode | 0o111)
+
+    return app_path
+
+
+def populate_mac_tool_dir(tool_dir, app_path):
+    """Create one architecture-specific macOS distribution directory."""
+
+    if tool_dir.exists():
+        shutil.rmtree(tool_dir)
+    tool_dir.mkdir(parents=True)
+
+    dmg_staging = app_path.parent / 'dmg-staging'
+    if dmg_staging.exists():
+        shutil.rmtree(dmg_staging)
+    dmg_staging.mkdir()
+    shutil.copytree(app_path, dmg_staging / 'Effekseer.app')
+    (dmg_staging / 'Applications').symlink_to('/Applications', target_is_directory=True)
+
+    run_command([
+        'hdiutil',
+        'create',
+        '-ov',
+        str(tool_dir / 'Effekseer.dmg'),
+        '-volname',
+        'Effekseer',
+        '-srcfolder',
+        str(dmg_staging),
+    ])
+
+    shutil.copy('docs/Help_Ja.html', tool_dir)
+    shutil.copy('docs/Help_En.html', tool_dir)
+    shutil.copy('LICENSE_TOOL', tool_dir / 'LICENSE_TOOL')
+    shutil.copy('readme_tool_mac.txt', tool_dir / 'readme.txt')
+
+    sample_dir = tool_dir / 'Sample'
+    sample_dir.mkdir(parents=True)
+    copy_tree('Release/Sample', sample_dir)
+    copy_tree('ResourceData/samples', sample_dir)
+    shutil.copy('docs/readme_sample.txt', sample_dir / 'readme.txt')
+
+
 class CurrentDir:
     def __init__(self, path):
         self.prev = os.getcwd()
@@ -176,47 +324,8 @@ def main():
 
         if is_mac():
             run_command('dotnet build Dev/Editor/Effekseer/Effekseer.csproj')
-            run_command('dotnet publish Dev/Editor/Effekseer/Effekseer.csproj -c Release --self-contained -r osx-arm64')
-            run_command('dotnet publish Dev/Editor/Effekseer/Effekseer.csproj -c Release --self-contained -r osx-x64')
-
-            arm64_dir = Path('Dev/release/osx-arm64/publish')
-            x64_dir = Path('Dev/release/osx-x64/publish')
-            dst_dir = Path('Dev/release')
-
-            shutil.copytree(arm64_dir, dst_dir, dirs_exist_ok=True)
-
-            for arm64_file in arm64_dir.rglob('*'):
-                if not arm64_file.is_file():
-                    continue
-                rel = arm64_file.relative_to(arm64_dir)
-                x64_file = x64_dir / rel
-                if not x64_file.exists():
-                    continue
-                dst_file = dst_dir / rel
-
-                # Only merge native Mach-O binaries; managed .NET DLLs are
-                # architecture-independent and were already copied above.
-                file_type = subprocess.run(
-                    ['file', str(arm64_file)],
-                    capture_output=True, text=True).stdout
-                if 'Mach-O' not in file_type:
-                    continue
-
-                result = subprocess.run(
-                    ['lipo', '-create', str(arm64_file), str(x64_file), '-output', str(dst_file)],
-                    capture_output=True, text=True)
-                if result.returncode == 0:
-                    print(f'Lipo merged: {rel}')
-                else:
-                    print(f'Lipo merge failed: {rel}')
-                    if result.stdout:
-                        print(result.stdout)
-                    if result.stderr:
-                        print(result.stderr, file=sys.stderr)
-                    raise RuntimeError(f'Failed to merge universal binary: {rel}')
-
-            shutil.rmtree('Dev/release/osx-arm64')
-            shutil.rmtree('Dev/release/osx-x64')
+            for runtime_identifier in MAC_RUNTIME_IDENTIFIERS.values():
+                prepare_mac_publish_dir(runtime_identifier)
 
         elif is_windows():
             run_command('dotnet build Dev/Editor/Effekseer/Effekseer.csproj')
@@ -237,42 +346,17 @@ def main():
 
     if env['PACKAGEING_FOR_MAC'] == '1' and is_mac():
         editor_version = get_editor_version()
-        cd('Dev')
-        mkdir('Mac/Effekseer.app/Contents/Resources/')
-        copy_tree('release/', 'Mac/Effekseer.app/Contents/Resources/')
+        for architecture, runtime_identifier in MAC_RUNTIME_IDENTIFIERS.items():
+            publish_dir = get_mac_publish_dir(runtime_identifier)
+            if not publish_dir.exists():
+                raise RuntimeError(
+                    f'Missing {publish_dir}. Run build.py without IGNORE_BUILD first.')
 
-        mkdir('Mac/Effekseer.app/Contents/MacOS/')
-        shutil.copy('../Tool/EffekseerLauncher/build_macosx/EffekseerLauncher', 'Mac/Effekseer.app/Contents/MacOS/')
-
-        run_command('chmod +x Mac/Effekseer.app/Contents/Resources/tools/EffekseerResourceConverter')
-        # run_command('chmod +x Mac/Effekseer.app/Contents/Resources/tools/fbxToEffekseerCurveConverter')
-        # run_command('chmod +x Mac/Effekseer.app/Contents/Resources/tools/fbxToEffekseerModelConverter')
-
-        os.makedirs('Mac/Package', exist_ok=True)
-
-        copy_tree('Mac/Effekseer.app', 'Mac/Package/Effekseer.app')
-        update_mac_bundle_version(Path('Mac/Package/Effekseer.app/Contents/Info.plist'), editor_version)
-        link = Path('Applications')
-        if link.exists() or link.is_symlink():
-            link.unlink()
-        link.symlink_to('/Applications', target_is_directory=True)
-        shutil.move('Applications', 'Mac/Package/')
-        run_command('hdiutil create Effekseer.dmg -volname "Effekseer" -srcfolder "Mac/Package"')
-
-        cd('../')
-        os.makedirs('EffekseerTool', exist_ok=True)
-        shutil.copy('Dev/Effekseer.dmg', 'EffekseerTool/')
-        shutil.copy('docs/Help_Ja.html', 'EffekseerTool/')
-        shutil.copy('docs/Help_En.html', 'EffekseerTool/')
-        shutil.copy('LICENSE_TOOL', 'EffekseerTool/LICENSE_TOOL')
-        shutil.copy('readme_tool_mac.txt', 'EffekseerTool/readme.txt')
-
-        os.makedirs('EffekseerTool/Sample/', exist_ok=True)
-        copy_tree('Release/Sample', 'EffekseerTool/Sample')
-        copy_tree('ResourceData/samples', 'EffekseerTool/Sample')
-        shutil.copy('docs/readme_sample.txt', 'EffekseerTool/Sample/readme.txt')
+            app_path = make_mac_app(runtime_identifier, editor_version)
+            populate_mac_tool_dir(
+                Path('EffekseerTool') / f'Mac-{architecture}',
+                app_path)
 
 
 if __name__ == '__main__':
     main()
-

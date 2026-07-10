@@ -14,13 +14,11 @@ When playing in the game, please download other runtime, Unity, DX library etc p
 
 * Operating environment
 
-- macOS 10.12 Sierra or later PC
+- macOS 12 Monterey or later PC
 
-*Required runtime
+* Required runtime
 
-If this application doesn't run, please install mono from a bellow link.
-
-https://www.mono-project.com
+No additional runtime installation is required.
 
 
 * Directory structure
@@ -39,8 +37,6 @@ Help that describes how to use the tool (Online).
 
 Let's open Effekseer.dmg and install it.
 Let's start Effekseer.
-
-If it not run, please download mono to satisfy the operating environment.
 
 I think that you do not know the meaning at first when a lot of parameters exist, but let's push the playback button (triangle mark) at the bottom left for the time being.
 Then a square was displayed on the screen. This is the simplest effect.
@@ -69,14 +65,12 @@ Effekseerをダウンロードしていただきありがとうございます�
 
 
 ■　動作環境
--macOS 10.12 Sierra以降のPC
+-macOS 12 Monterey以降のPC
 
 
 ■　必要ランタイム
 
-もし起動しない場合は下記のリンクからmonoをインストールしてください。
-
-https://www.mono-project.com
+追加のランタイムをインストールする必要はありません。
 
 
 ■　ディレクトリ構成
@@ -94,8 +88,6 @@ https://www.mono-project.com
 
 まずはEffekseer.dmgを開き、Effekseerをインストールしましょう。
 そしてEffekseerを起動してみましょう。
-
-もし起動しないならmonoをダウンロードしましょう。
 
 沢山パラメーターが存在して最初は意味がわからないと思いますが、とりあえず左下の再生ボタン(三角のマーク)を押してみましょう。
 そうすると、画面に四角が表示されました。これは一番シンプルなエフェクトになります。

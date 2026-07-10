@@ -26,6 +26,11 @@ Effekseer/
   Effekseer.app
 ```
 
+Run the signing script separately for the arm64 and x64 app bundles. The CI
+workflow takes the version-updated apps from `build/macos-packaging/osx-arm64`
+and `build/macos-packaging/osx-x64`, signs and notarizes each one, and publishes
+separate `Mac-arm64` and `Mac-x64` artifacts.
+
 First, store your notarization credentials in the Keychain:
 
 ```bash
@@ -139,6 +144,11 @@ log show --last 1h --predicate 'process == "syspolicyd"'
 Effekseer/
   Effekseer.app
 ```
+
+arm64 と x64 の app bundle は、それぞれ個別に署名スクリプトへ渡します。CI は
+`build/macos-packaging/osx-arm64` と `build/macos-packaging/osx-x64` に生成された
+バージョン更新済み app を個別に署名・公証し、`Mac-arm64` と `Mac-x64` の2つの
+artifact として出力します。
 
 最初に、Notarization 用の認証情報をキーチェーンへ保存します。
 

@@ -1,5 +1,6 @@
 #include "Logger.h"
 
+#include <Common/StringHelper.h>
 #include <Effekseer.h>
 #if defined(_WIN32)
 #include <filesystem>
@@ -20,8 +21,7 @@ void Logger::SetFileLogger(const char16_t* path)
 	auto wpath = std::filesystem::path(reinterpret_cast<const wchar_t*>(path));
 	auto fileLogger = spdlog::basic_logger_mt("logger", wpath.generic_string().c_str());
 #else
-	char cpath[512];
-	Effekseer::ConvertUtf16ToUtf8(cpath, 512, path);
+	auto cpath = Effekseer::Tool::StringHelper::ConvertUtf16ToUtf8(path);
 	auto fileLogger = spdlog::basic_logger_mt("logger", cpath);
 #endif
 

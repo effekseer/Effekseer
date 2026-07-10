@@ -1,14 +1,20 @@
-#include <array>
+#include <cerrno>
+#include <cstring>
 #include <iostream>
 #include <stdio.h>
 #include <string>
+#include <vector>
 
 #ifdef WIN32
 #include <direct.h>
 #include <windows.h>
 #else
+#include <spawn.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
+
+extern char** environ;
 #endif
 
 #if defined(__APPLE__)
@@ -17,43 +23,58 @@
 
 std::string GetDirectoryName(const std::string& path)
 {
-	const std::string::size_type pos =
-		std::max<int32_t>(path.find_last_of('/'), path.find_last_of('\\'));
+	const std::string::size_type pos = path.find_last_of("/\\");
 	return (pos == std::string::npos) ? std::string() : path.substr(0, pos + 1);
 }
 
 std::string GetExecutingDirectory()
 {
-	char buf[260];
-
 #ifdef _WIN32
-	int len = GetModuleFileNameA(nullptr, buf, 260);
-	if (len <= 0)
-		return "";
-#elif defined(__APPLE__)
-	uint32_t size = 260;
-	if (_NSGetExecutablePath(buf, &size) != 0)
+	std::vector<char> buffer(1024);
+	for (;;)
 	{
-		buf[0] = 0;
+		const auto len = GetModuleFileNameA(nullptr, buffer.data(), static_cast<DWORD>(buffer.size()));
+		if (len == 0)
+			return {};
+		if (len < buffer.size() - 1)
+			return GetDirectoryName(buffer.data());
+		buffer.resize(buffer.size() * 2);
 	}
+#elif defined(__APPLE__)
+	std::vector<char> buffer(1024);
+	uint32_t size = static_cast<uint32_t>(buffer.size());
+	if (_NSGetExecutablePath(buffer.data(), &size) != 0)
+	{
+		buffer.resize(size);
+		if (_NSGetExecutablePath(buffer.data(), &size) != 0)
+			return {};
+	}
+	return GetDirectoryName(buffer.data());
 #else
-
 	char temp[32];
 	sprintf(temp, "/proc/%d/exe", getpid());
-	int bytes = std::min((int)readlink(temp, buf, 260), 260 - 1);
-	if (bytes >= 0)
-		buf[bytes] = '\0';
+	std::vector<char> buffer(1024);
+	for (;;)
+	{
+		const auto bytes = readlink(temp, buffer.data(), buffer.size() - 1);
+		if (bytes < 0)
+			return {};
+		if (static_cast<size_t>(bytes) < buffer.size() - 1)
+		{
+			buffer[bytes] = '\0';
+			return GetDirectoryName(buffer.data());
+		}
+		buffer.resize(buffer.size() * 2);
+	}
 #endif
-
-	return GetDirectoryName(buf);
 }
 
-void SetCurrentDir(const char* path)
+bool SetCurrentDir(const char* path)
 {
 #ifdef _WIN32
-	_chdir(path);
+	return _chdir(path) == 0;
 #else
-	chdir(path);
+	return chdir(path) == 0;
 #endif
 }
 
@@ -88,43 +109,57 @@ struct Platform
 #else
 struct Platform
 {
-	FILE* fp = nullptr;
+	pid_t pid = -1;
 	Platform() = default;
 	~Platform()
 	{
-		if (fp != nullptr)
-		{
-			pclose(fp);
-		}
+		Wait();
 	}
 
-	bool Execute(const char* cmd)
+	bool Execute(const std::string& executable, const std::vector<std::string>& arguments)
 	{
-		fp = popen(cmd, "r");
-		if (fp == nullptr)
+		std::vector<char*> argv;
+		argv.reserve(arguments.size() + 2);
+		argv.push_back(const_cast<char*>(executable.c_str()));
+		for (const auto& argument : arguments)
 		{
+			argv.push_back(const_cast<char*>(argument.c_str()));
+		}
+		argv.push_back(nullptr);
+
+		const auto result = posix_spawn(&pid, executable.c_str(), nullptr, nullptr, argv.data(), environ);
+		if (result != 0)
+		{
+			pid = -1;
+			std::cerr << "posix_spawn failed: " << std::strerror(result) << std::endl;
 			return false;
 		}
+
 		return true;
 	}
 
 	void Wait()
 	{
-		std::array<char, 256> buffer;
-		while (!feof(fp))
-		{
-			fgets(buffer.data(), buffer.size(), fp);
-			std::cout << buffer.data();
-		}
+		if (pid < 0)
+			return;
 
-		pclose(fp);
+		int status = 0;
+		while (waitpid(pid, &status, 0) < 0 && errno == EINTR)
+		{
+		}
+		pid = -1;
 	}
 };
 #endif
 
 int mainLoop(int argc, char* argv[])
 {
-	SetCurrentDir(GetExecutingDirectory().c_str());
+	const auto executingDirectory = GetExecutingDirectory();
+	if (executingDirectory.empty() || !SetCurrentDir(executingDirectory.c_str()))
+	{
+		std::cerr << "Failed to set the executing directory." << std::endl;
+		return 1;
+	}
 
 	std::string cmd;
 
@@ -136,18 +171,34 @@ int mainLoop(int argc, char* argv[])
 	cmd = "./bin/Effekseer";
 #endif
 
+#ifdef _WIN32
 	for (int i = 1; i < argc; i++)
 	{
 		cmd = cmd + " \"" + argv[i] + "\"";
 	}
+#else
+	std::vector<std::string> arguments;
+	arguments.reserve(argc > 1 ? static_cast<size_t>(argc - 1) : 0);
+	for (int i = 1; i < argc; i++)
+	{
+		arguments.emplace_back(argv[i]);
+	}
+#endif
 
 	Platform platform;
+#ifdef _WIN32
 	if (!platform.Execute(cmd.c_str()))
+#else
+	if (!platform.Execute(cmd, arguments))
+#endif
 	{
 		std::cout << "Failed to call " << cmd << std::endl;
 		return 1;
 	}
 
+#ifndef _WIN32
+	platform.Wait();
+#endif
 	std::cout << "Finished " << cmd << std::endl;
 	return 0;
 }

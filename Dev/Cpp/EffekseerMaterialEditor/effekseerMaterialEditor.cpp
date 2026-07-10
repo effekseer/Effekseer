@@ -41,6 +41,7 @@
 #include <filesystem>
 #include <iostream>
 #include <sstream>
+#include <vector>
 
 #ifdef WIN32
 #include <direct.h>
@@ -74,44 +75,67 @@ public:
 
 std::string GetDirectoryName(const std::string& path)
 {
-	const std::string::size_type pos = std::max<int32_t>(path.find_last_of('/'), path.find_last_of('\\'));
+	const std::string::size_type pos = path.find_last_of("/\\");
 	return (pos == std::string::npos) ? std::string() : path.substr(0, pos + 1);
 }
 
 std::string GetExecutingDirectory()
 {
-	char buf[260];
-
 #ifdef _WIN32
-	int len = GetModuleFileNameA(nullptr, buf, 260);
-	if (len <= 0)
-		return "";
-#elif defined(__APPLE__)
-	uint32_t size = 260;
-	if (_NSGetExecutablePath(buf, &size) != 0)
+	std::vector<char> buffer(1024);
+	for (;;)
 	{
-		buf[0] = 0;
+		const auto len = GetModuleFileNameA(nullptr, buffer.data(), static_cast<DWORD>(buffer.size()));
+		if (len == 0)
+			return {};
+		if (len < buffer.size() - 1)
+			return GetDirectoryName(buffer.data());
+		buffer.resize(buffer.size() * 2);
 	}
+#elif defined(__APPLE__)
+	std::vector<char> buffer(1024);
+	uint32_t size = static_cast<uint32_t>(buffer.size());
+	if (_NSGetExecutablePath(buffer.data(), &size) != 0)
+	{
+		buffer.resize(size);
+		if (_NSGetExecutablePath(buffer.data(), &size) != 0)
+			return {};
+	}
+	return GetDirectoryName(buffer.data());
 #else
-
 	char temp[32];
 	sprintf(temp, "/proc/%d/exe", getpid());
-	int bytes = std::min((int)readlink(temp, buf, 260), 260 - 1);
-	if (bytes >= 0)
-		buf[bytes] = '\0';
+	std::vector<char> buffer(1024);
+	for (;;)
+	{
+		const auto bytes = readlink(temp, buffer.data(), buffer.size() - 1);
+		if (bytes < 0)
+			return {};
+		if (static_cast<size_t>(bytes) < buffer.size() - 1)
+		{
+			buffer[bytes] = '\0';
+			return GetDirectoryName(buffer.data());
+		}
+		buffer.resize(buffer.size() * 2);
+	}
 #endif
-
-	return GetDirectoryName(buf);
 }
 
 void SetCurrentDir(const char* path)
 {
 #ifdef _WIN32
-	_chdir(path);
+	const auto result = _chdir(path);
 #else
-	chdir(path);
+	const auto result = chdir(path);
 #endif
-	spdlog::info("SetCurrentDir : {}", path);
+	if (result == 0)
+	{
+		spdlog::info("SetCurrentDir : {}", path);
+	}
+	else
+	{
+		spdlog::error("Failed to set current directory : {}", path);
+	}
 }
 
 std::vector<std::shared_ptr<EffekseerMaterial::Dialog>> newDialogs;
