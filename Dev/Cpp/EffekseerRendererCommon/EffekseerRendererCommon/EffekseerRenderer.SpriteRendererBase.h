@@ -424,12 +424,12 @@ protected:
 
 			if (param.ZSort == Effekseer::ZSortType::NormalOrder)
 			{
-				std::sort(instances.begin(), instances.end(), [](const KeyValue& a, const KeyValue& b) -> bool
+				std::stable_sort(instances.begin(), instances.end(), [](const KeyValue& a, const KeyValue& b) -> bool
 						  { return a.Key < b.Key; });
 			}
 			else
 			{
-				std::sort(instances.begin(), instances.end(), [](const KeyValue& a, const KeyValue& b) -> bool
+				std::stable_sort(instances.begin(), instances.end(), [](const KeyValue& a, const KeyValue& b) -> bool
 						  { return a.Key > b.Key; });
 			}
 

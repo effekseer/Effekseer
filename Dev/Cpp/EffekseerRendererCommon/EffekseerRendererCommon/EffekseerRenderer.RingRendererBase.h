@@ -807,12 +807,12 @@ protected:
 
 			if (param.DepthParameterPtr->ZSort == Effekseer::ZSortType::NormalOrder)
 			{
-				std::sort(instances_.begin(), instances_.end(), [](const KeyValue& a, const KeyValue& b) -> bool
+				std::stable_sort(instances_.begin(), instances_.end(), [](const KeyValue& a, const KeyValue& b) -> bool
 						  { return a.Key < b.Key; });
 			}
 			else
 			{
-				std::sort(instances_.begin(), instances_.end(), [](const KeyValue& a, const KeyValue& b) -> bool
+				std::stable_sort(instances_.begin(), instances_.end(), [](const KeyValue& a, const KeyValue& b) -> bool
 						  { return a.Key > b.Key; });
 			}
 

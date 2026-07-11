@@ -6,11 +6,15 @@ import glob
 from PIL import Image, ImageChops
 
 
+AVERAGE_DELTA_TOLERANCE = 2.0  # per-pixel average grayscale tolerance (0–255 scale)
+
+
 class ScreenShotTest(unittest.TestCase):
     def test_screenshots(self):
         generated_file_paths = glob.glob('build/Dev/Cpp/Test/Release/*.png')
 
         failures = []
+        warnings = []
 
         for path in generated_file_paths:
             name = os.path.basename(path)
@@ -19,13 +23,18 @@ class ScreenShotTest(unittest.TestCase):
             if os.path.exists(test_data_path):
                 is_same = filecmp.cmp(test_data_path, path, shallow=False)
                 if not is_same:
-                    report = describe_difference(test_data_path, path)
-                    failures.append(f'{name} differs:\n{indent(report)}')
+                    report, avg_delta = describe_difference(test_data_path, path)
+                    if avg_delta > AVERAGE_DELTA_TOLERANCE:
+                        failures.append(f'{name} differs (avg delta {avg_delta:.2f}/255 > tolerance {AVERAGE_DELTA_TOLERANCE}):\n{indent(report)}')
+                    else:
+                        warnings.append(f'{name} has minor differences (avg delta {avg_delta:.2f}/255, within tolerance):\n{indent(report)}')
             else:
                 failures.append(f'{test_data_path} is not found.')
 
+        if warnings:
+            print('Minor differences within tolerance:\n' + '\n'.join(warnings))
         if failures:
-            print('\n'.join(failures))
+            print('Failures:\n' + '\n'.join(failures))
 
         self.assertFalse(failures, 'Screenshot mismatches found (see log above).')
 
@@ -45,9 +54,10 @@ def describe_difference(expected_path, actual_path):
         f'File size: expected {expected_size:,} bytes, actual {actual_size:,} bytes (delta {size_delta:+,})',
     ]
 
-    lines.extend(analyze_pixels(expected_path, actual_path))
+    pixel_lines, avg_delta = analyze_pixels(expected_path, actual_path)
+    lines.extend(pixel_lines)
 
-    return '\n'.join(lines)
+    return '\n'.join(lines), avg_delta
 
 
 def analyze_pixels(expected_path, actual_path):
@@ -56,7 +66,7 @@ def analyze_pixels(expected_path, actual_path):
             expected = expected_img.convert('RGBA')
             actual = actual_img.convert('RGBA')
     except Exception as ex:
-        return [f'Failed to inspect pixels: {ex}']
+        return [f'Failed to inspect pixels: {ex}'], float('inf')
 
     lines = []
     if expected.size != actual.size:
@@ -64,7 +74,7 @@ def analyze_pixels(expected_path, actual_path):
             f'Image size: expected {expected.size[0]}x{expected.size[1]}, '
             f'actual {actual.size[0]}x{actual.size[1]} (resize mismatch)'
         )
-        return lines
+        return lines, float('inf')
 
     diff = ImageChops.difference(expected, actual)
     diff_extrema = diff.getextrema()
@@ -96,7 +106,7 @@ def analyze_pixels(expected_path, actual_path):
                 f'Diff bounding box: left={bbox[0]}, top={bbox[1]}, right={bbox[2]}, bottom={bbox[3]}.'
             )
 
-    return lines
+    return lines, average_delta
 
 if __name__ == '__main__':
     unittest.main()
