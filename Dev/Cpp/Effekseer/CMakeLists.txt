@@ -167,8 +167,14 @@ set(effekseer_src
     Effekseer/VectorField/Effekseer.VectorField.cpp
     Effekseer/VectorField/Effekseer.VectorFieldLoader.cpp)
 
+set(effekseer_others)
+
+if(MSVC)
+  list(APPEND effekseer_others ${CMAKE_CURRENT_SOURCE_DIR}/../Visualizers/Effekseer.natvis)
+endif()
+
 add_library(${PROJECT_NAME} STATIC ${effekseer_public_h} ${effekseer_h}
-                                   ${effekseer_src})
+                                   ${effekseer_src} ${effekseer_others})
 
 set(files ${effekseer_public_h} ${effekseer_h} ${effekseer_src})
 

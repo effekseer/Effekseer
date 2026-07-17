@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+  <Type Name="Effekseer::SIMD::Int4">
+    <DisplayString>({s.m128i_i32[0]}, {s.m128i_i32[1]}, {s.m128i_i32[2]}, {s.m128i_i32[3]})</DisplayString>
+    <Expand>
+      <Item Name="[0]">s.m128i_i32[0]</Item>
+      <Item Name="[1]">s.m128i_i32[1]</Item>
+      <Item Name="[2]">s.m128i_i32[2]</Item>
+      <Item Name="[3]">s.m128i_i32[3]</Item>
+    </Expand>
+  </Type>
+  <Type Name="Effekseer::SIMD::Float4">
+    <DisplayString>({s.m128_f32[0]}, {s.m128_f32[1]}, {s.m128_f32[2]}, {s.m128_f32[3]})</DisplayString>
+    <Expand>
+      <Item Name="[0]">s.m128_f32[0]</Item>
+      <Item Name="[1]">s.m128_f32[1]</Item>
+      <Item Name="[2]">s.m128_f32[2]</Item>
+      <Item Name="[3]">s.m128_f32[3]</Item>
+    </Expand>
+  </Type>
+  <Type Name="Effekseer::SIMD::Vec2f">
+    <DisplayString>({s.s.m128_f32[0]}, {s.s.m128_f32[1]})</DisplayString>
+    <Expand>
+      <Item Name="X">s.s.m128_f32[0]</Item>
+      <Item Name="Y">s.s.m128_f32[1]</Item>
+    </Expand>
+  </Type>
+  <Type Name="Effekseer::SIMD::Vec3f">
+    <DisplayString>({s.s.m128_f32[0]}, {s.s.m128_f32[1]}, {s.s.m128_f32[2]})</DisplayString>
+    <Expand>
+      <Item Name="X">s.s.m128_f32[0]</Item>
+      <Item Name="Y">s.s.m128_f32[1]</Item>
+      <Item Name="Z">s.s.m128_f32[2]</Item>
+    </Expand>
+  </Type>
+  <Type Name="Effekseer::SIMD::Vec4f">
+    <DisplayString>({s.s.m128_f32[0]}, {s.s.m128_f32[1]}, {s.s.m128_f32[2]}, {s.s.m128_f32[3]})</DisplayString>
+    <Expand>
+      <Item Name="X">s.s.m128_f32[0]</Item>
+      <Item Name="Y">s.s.m128_f32[1]</Item>
+      <Item Name="Z">s.s.m128_f32[2]</Item>
+      <Item Name="W">s.s.m128_f32[3]</Item>
+    </Expand>
+  </Type>
+  <Type Name="Effekseer::SIMD::Quaternionf">
+    <DisplayString>({s.s.m128_f32[0]}, {s.s.m128_f32[1]}, {s.s.m128_f32[2]}, {s.s.m128_f32[3]})</DisplayString>
+    <Expand>
+      <Item Name="X">s.s.m128_f32[0]</Item>
+      <Item Name="Y">s.s.m128_f32[1]</Item>
+      <Item Name="Z">s.s.m128_f32[2]</Item>
+      <Item Name="W">s.s.m128_f32[3]</Item>
+    </Expand>
+  </Type>
+</AutoVisualizer>
