@@ -52,10 +52,10 @@ int main(int argc, char* argv[])
 	//   TestCpp --filter=Runtime.BasicRendering.WebGPU.SimpleLaser
 	//   TestCpp --list --filter=Runtime.BasicRendering.WebGPU.*
 	auto parsed = TestHelper::ParseArg(argc, argv);
-	TestHelper::Run(parsed);
+	const auto succeeded = TestHelper::Run(parsed);
 
 #ifdef __EMSCRIPTEN__
-	effekseer_report_test_result(0, "completed");
+	effekseer_report_test_result(succeeded ? 0 : 1, succeeded ? "completed" : "failed");
 #endif
 
 #if _WIN32
@@ -65,5 +65,5 @@ int main(int argc, char* argv[])
 #ifdef BUILD_WITH_EASY_PROFILER
 	profiler::dumpBlocksToFile("effekseer_profile.prof");
 #endif
-	return 0;
+	return succeeded ? 0 : 1;
 }

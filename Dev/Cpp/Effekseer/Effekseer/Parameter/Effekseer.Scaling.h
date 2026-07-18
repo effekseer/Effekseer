@@ -150,7 +150,10 @@ struct ScalingParameter
 		{
 			memcpy(&size, pos, sizeof(int));
 			pos += sizeof(int);
-			const auto expectedSize = version >= 14 ? sizeof(ParameterScalingPVA) : sizeof(ScalingPVA.Position);
+			// Versions before 14 store three consecutive random_vector3d values without dynamic equation references.
+			const auto expectedSize = version >= 14
+								  ? sizeof(ParameterScalingPVA)
+								  : sizeof(ScalingPVA.Position) + sizeof(ScalingPVA.Velocity) + sizeof(ScalingPVA.Acceleration);
 			if (size != expectedSize)
 				return;
 			if (version >= 14)

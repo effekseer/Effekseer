@@ -189,7 +189,7 @@ const std::vector<std::string>& TestHelper::GetCommandLineArgs()
 	return Get()->CommandLineArgs;
 }
 
-void TestHelper::Run(const ParsedArgs& args)
+bool TestHelper::Run(const ParsedArgs& args)
 {
 	const auto helper = Get();
 	const auto& filter = args.FilterPattern;
@@ -223,18 +223,34 @@ void TestHelper::Run(const ParsedArgs& args)
 		catch (const std::exception& e)
 		{
 			std::cerr << "Exception while running " << name << ": " << e.what() << std::endl;
-			throw;
+			currentTestName = "<none>";
+			return false;
+		}
+		catch (const std::string& e)
+		{
+			std::cerr << "Exception while running " << name << ": " << e << std::endl;
+			currentTestName = "<none>";
+			return false;
+		}
+		catch (const char* e)
+		{
+			std::cerr << "Exception while running " << name << ": " << (e != nullptr ? e : "<null>") << std::endl;
+			currentTestName = "<none>";
+			return false;
 		}
 		catch (...)
 		{
 			std::cerr << "Unknown exception while running " << name << std::endl;
-			throw;
+			currentTestName = "<none>";
+			return false;
 		}
 		const auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
 			std::chrono::steady_clock::now() - startedAt);
 		std::cout << "Finish: " << name << " (" << elapsed.count() << " ms)" << std::endl;
 		currentTestName = "<none>";
 	}
+
+	return true;
 }
 
 void TestHelper::RegisterTest(const char* name, std::function<void()> func, TestExecutionMode executionMode)

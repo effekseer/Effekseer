@@ -215,7 +215,10 @@ public:
 			{
 				memcpy(&size, pos, sizeof(int));
 				pos += sizeof(int);
-				if (size < 0 || size > sizeof(TranslationPVA.location))
+				// Versions before 14 store three consecutive random_vector3d values without dynamic equation references.
+				const auto expectedSize =
+					sizeof(TranslationPVA.location) + sizeof(TranslationPVA.velocity) + sizeof(TranslationPVA.acceleration);
+				if (size != expectedSize)
 					return;
 				memcpy(&TranslationPVA.location, pos, size);
 				pos += size;

@@ -98,7 +98,20 @@ void TestValidEffect()
 {
 	auto setting = Effekseer::Setting::Create();
 	const auto basePath = GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/";
-	for (const auto* relativePath : {u"15/Update_Easing.efkefc", u"16/ForceFieldLocal03.efkefc", u"Update_17x/Sprite.efkefc", u"18/Collisions.efkefc"})
+	for (const auto* relativePath : {
+			 u"10/Distortions1.efk",
+			 u"10/FCurve_Parameters1.efk",
+			 u"10/Parents1.efk",
+			 u"10/Ribbon_Parameters1.efk",
+			 u"10/Ring_Parameters1.efk",
+			 u"10/SimpleLaser.efk",
+			 u"10/Sprite_Parameters1.efk",
+			 u"10/Track_Parameters1.efk",
+			 u"14/Model_Parameters1.efk",
+			 u"15/Update_Easing.efkefc",
+			 u"16/ForceFieldLocal03.efkefc",
+			 u"Update_17x/Sprite.efkefc",
+			 u"18/Collisions.efkefc"})
 	{
 		auto data = LoadFile((basePath + relativePath).c_str());
 		EXPECT_TRUE(!data.empty());

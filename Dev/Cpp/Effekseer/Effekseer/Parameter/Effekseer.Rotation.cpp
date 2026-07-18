@@ -44,7 +44,10 @@ void RotationParameter::Load(unsigned char*& pos, int version)
 	{
 		memcpy(&size, pos, sizeof(int));
 		pos += sizeof(int);
-		const auto expectedSize = version >= 14 ? sizeof(ParameterRotationPVA) : sizeof(RotationPVA.rotation);
+		// Versions before 14 store three consecutive random_vector3d values without dynamic equation references.
+		const auto expectedSize = version >= 14
+								  ? sizeof(ParameterRotationPVA)
+								  : sizeof(RotationPVA.rotation) + sizeof(RotationPVA.velocity) + sizeof(RotationPVA.acceleration);
 		if (size != expectedSize)
 			return;
 		if (version >= 14)
