@@ -15,6 +15,7 @@
 #include "Effekseer/Effekseer.Matrix43.h"
 #include "Effekseer/Effekseer.Matrix44.h"
 #include "Effekseer/Effekseer.RectF.h"
+#include "Effekseer/Effekseer.RenderingTransform.h"
 #include "Effekseer/Effekseer.Resource.h"
 #include "Effekseer/Effekseer.Setting.h"
 #include "Effekseer/Effekseer.SoundLoader.h"

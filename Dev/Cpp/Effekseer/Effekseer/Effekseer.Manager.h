@@ -8,6 +8,7 @@
 #include "Effekseer.Base.Pre.h"
 #include "Effekseer.ExternalModel.h"
 #include "Effekseer.Matrix44.h"
+#include "Effekseer.RenderingTransform.h"
 #include "Effekseer.Vector3D.h"
 
 //----------------------------------------------------------------------------------
@@ -187,6 +188,7 @@ public:
 		Vector3D Scale = {1.0f, 1.0f, 1.0f};
 		int32_t StartFrame = 0;
 		std::vector<ExternalModel> ExternalModels;
+		EffectFlipParameter Flip;
 	};
 
 protected:
@@ -606,6 +608,17 @@ public:
 		@param	z		[in]	Z方向拡大率
 	*/
 	virtual void SetScale(Handle handle, float x, float y, float z) = 0;
+
+	/**
+		@brief Gets the rendering-only root-local flip of a playing effect.
+	*/
+	virtual EffectFlipParameter GetEffectFlip(Handle handle) const = 0;
+
+	/**
+		@brief Sets a rendering-only root-local flip of a playing effect.
+		@note This does not change simulation matrices or particle state.
+	*/
+	virtual void SetEffectFlip(Handle handle, const EffectFlipParameter& flip) = 0;
 
 	/**
 	@brief

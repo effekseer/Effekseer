@@ -320,6 +320,12 @@ protected:
 			}
 		}
 
+		StrideView<VERTEX> transformedVertices(ringBufferData_, stride_, vertexCount_);
+		if (parameter.RenderingTransform.IsEnabled)
+		{
+			TransformVertexes(transformedVertices, vertexCount_, parameter.RenderingTransform.Transform);
+		}
+
 		if (VertexNormalRequired<VERTEX>())
 		{
 			StrideView<VERTEX> vs_(ringBufferData_, stride_, vertexCount_);
@@ -360,6 +366,10 @@ protected:
 				normal = SafeNormalize(normal);
 
 				if (!parameter.IsRightHand)
+				{
+					normal = -normal;
+				}
+				if (parameter.RenderingTransform.ReversesWinding)
 				{
 					normal = -normal;
 				}

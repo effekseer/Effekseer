@@ -3,7 +3,10 @@
 #include <assert.h>
 #include <algorithm>
 #include <chrono>
+#include <cstdio>
 #include <cstring>
+#include <limits>
+#include <stdexcept>
 
 namespace
 {
@@ -277,23 +280,72 @@ Effekseer::Handle EffectPlatform::Play(const char16_t* path, Effekseer::Vector3D
 
 	if (filePtr == nullptr)
 	{
-		printf("Failed to load %s./n", path8);
-		assert(0);
+		throw std::runtime_error(std::string("Failed to open effect file: ") + path8);
 	}
 
-	fseek(filePtr, 0, SEEK_END);
-	auto size = ftell(filePtr);
-	fseek(filePtr, 0, SEEK_SET);
+	if (fseek(filePtr, 0, SEEK_END) != 0)
+	{
+		fclose(filePtr);
+		throw std::runtime_error(std::string("Failed to seek effect file: ") + path8);
+	}
+
+	const auto fileSize = ftell(filePtr);
+	if (fileSize <= 0 || fileSize > std::numeric_limits<int32_t>::max())
+	{
+		fclose(filePtr);
+		throw std::runtime_error(
+			std::string("Invalid effect file size: path=") + path8 + ", bytes=" + std::to_string(fileSize));
+	}
+
+	if (fseek(filePtr, 0, SEEK_SET) != 0)
+	{
+		fclose(filePtr);
+		throw std::runtime_error(std::string("Failed to rewind effect file: ") + path8);
+	}
 
 	std::vector<uint8_t> data;
-	data.resize(size);
-	fread(data.data(), 1, size, filePtr);
+	data.resize(static_cast<size_t>(fileSize));
+	const auto readSize = fread(data.data(), 1, data.size(), filePtr);
 	fclose(filePtr);
+	if (readSize != data.size())
+	{
+		throw std::runtime_error(
+			std::string("Failed to read effect file completely: path=") + path8 +
+			", expected=" + std::to_string(data.size()) + ", actual=" + std::to_string(readSize));
+	}
 
 	auto effect = Effekseer::Effect::Create(manager_, path);
 	if (effect == nullptr)
 	{
-		assert(0);
+		const auto setting = manager_->GetSetting();
+		const auto factoryCount = setting != nullptr ? setting->GetEffectFactoryCount() : 0;
+		int32_t supportingFactoryCount = 0;
+		for (int32_t i = 0; i < factoryCount; i++)
+		{
+			const auto factory = setting->GetEffectFactory(i);
+			if (factory != nullptr && factory->OnCheckIsBinarySupported(data.data(), static_cast<int32_t>(data.size())))
+			{
+				supportingFactoryCount++;
+			}
+		}
+
+		char header[3 * 8 + 1] = {};
+		const auto headerSize = std::min<size_t>(data.size(), 8);
+		for (size_t i = 0; i < headerSize; i++)
+		{
+			snprintf(
+				header + i * 3,
+				sizeof(header) - i * 3,
+				i + 1 < headerSize ? "%02X " : "%02X",
+				static_cast<unsigned int>(data[i]));
+		}
+
+		throw std::runtime_error(
+			std::string("Effect::Create failed: path=") + path8 +
+			", bytes=" + std::to_string(data.size()) +
+			", header=" + header +
+			", factories=" + std::to_string(factoryCount) +
+			", supportingFactories=" + std::to_string(supportingFactoryCount));
 	}
 
 	buffers_.push_back(data);

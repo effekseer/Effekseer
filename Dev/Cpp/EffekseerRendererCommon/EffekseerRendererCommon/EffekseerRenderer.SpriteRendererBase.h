@@ -330,6 +330,12 @@ protected:
 					R = -R;
 				}
 
+				if (parameter.RenderingTransform.IsEnabled)
+				{
+					F = SafeNormalize(TransformDirection(F, parameter.RenderingTransform.Transform));
+					R = SafeNormalize(TransformDirection(R, parameter.RenderingTransform.Transform));
+				}
+
 				StrideView<VERTEX> vs(verteies.pointerOrigin_, stride_, 4);
 				for (auto i = 0; i < 4; i++)
 				{
@@ -364,6 +370,11 @@ protected:
 					StrideView<VERTEX> vs(verteies.pointerOrigin_, stride_, 4);
 					auto tangentX = efkVector3D(mat.X.GetX(), mat.Y.GetX(), mat.Z.GetX());
 					auto tangentZ = efkVector3D(mat.X.GetZ(), mat.Y.GetZ(), mat.Z.GetZ());
+					if (parameter.RenderingTransform.IsEnabled)
+					{
+						tangentX = TransformDirection(tangentX, parameter.RenderingTransform.Transform);
+						tangentZ = TransformDirection(tangentZ, parameter.RenderingTransform.Transform);
+					}
 					tangentX = tangentX.GetNormal();
 					tangentZ = tangentZ.GetNormal();
 
@@ -378,6 +389,11 @@ protected:
 					vs[i].SetPackedTangent(PackVector3DF(tangentX), FLIP_RGB);
 				}
 			}
+		}
+
+		if (parameter.RenderingTransform.IsEnabled)
+		{
+			TransformVertexes(verteies, 4, parameter.RenderingTransform.Transform);
 		}
 
 		// custom parameter
@@ -418,6 +434,10 @@ protected:
 			for (auto& kv : instances)
 			{
 				efkVector3D t = kv.Value.SRTMatrix43.GetTranslation();
+				if (param.RenderingTransform.IsEnabled)
+				{
+					t = Effekseer::SIMD::Vec3f::Transform(t, param.RenderingTransform.Transform);
+				}
 
 				kv.Key = Effekseer::SIMD::Vec3f::Dot(t, frontDirection);
 			}

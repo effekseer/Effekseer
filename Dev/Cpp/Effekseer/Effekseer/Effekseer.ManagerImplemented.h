@@ -44,6 +44,7 @@ public:
 
 		Matrix43 Rotation;
 		Vector3D Scaling = {1.f, 1.f, 1.f};
+		EffectFlipParameter EffectFlip;
 
 		SIMD::Mat43f BaseMatrix;
 
@@ -345,6 +346,10 @@ public:
 	void SetRotation(Handle handle, const Vector3D& axis, float angle) override;
 
 	void SetScale(Handle handle, float x, float y, float z) override;
+
+	EffectFlipParameter GetEffectFlip(Handle handle) const override;
+
+	void SetEffectFlip(Handle handle, const EffectFlipParameter& flip) override;
 
 	void SetAllColor(Handle handle, Color color) override;
 

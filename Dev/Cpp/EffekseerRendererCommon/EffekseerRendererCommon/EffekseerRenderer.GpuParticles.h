@@ -100,6 +100,7 @@ public:
 	{
 		GpuParticles::EmitterData Data;
 		GpuParticles::UniformBufferRef Buffer;
+		GpuParticles::UniformBufferRef RenderConstantsBuffer;
 		Effekseer::RefPtr<GpuParticles::Resource> Resource;
 		Effekseer::InstanceGlobal* InstanceGlobal;
 
@@ -200,7 +201,6 @@ protected:
 	BlockAllocator trailAllocator_;
 
 	GpuParticles::UniformBufferRef computeConstantsUniformBuffer_;
-	GpuParticles::UniformBufferRef renderConstantsUniformBuffer_;
 
 	GpuParticles::StorageBufferRef particlesStorageBuffer_;
 	GpuParticles::StorageBufferRef trailsStorageBuffer_;

@@ -9,6 +9,7 @@
 #include "Effekseer.Color.h"
 #include "Effekseer.ExternalModel.h"
 #include "Effekseer.Random.h"
+#include "Effekseer.RenderingTransform.h"
 #include "SIMD/Mat43f.h"
 #include "SIMD/Mat44f.h"
 #include "SIMD/Vec3f.h"
@@ -71,6 +72,7 @@ public:
 	SIMD::Mat44f EffectGlobalMatrix;
 	// Used for collision detection by kill rules
 	SIMD::Mat44f InvertedEffectGlobalMatrix;
+	EffectRenderingTransformParameter RenderingTransform;
 
 	bool IsUsingGpuParticles = false;
 

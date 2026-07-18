@@ -1,7 +1,10 @@
 #include "Effekseer/Geometry/Effekseer.GeometryUtility.h"
 #include "Effekseer/Parameter/Effekseer.Collisions.h"
+#include "Effekseer.h"
 
 #include "../TestHelper.h"
+
+#include <array>
 
 void TestGeometryUtility()
 {
@@ -303,8 +306,119 @@ void TestExternalCollisionUsesSurfaceNormal()
 	EXPECT_EQUAL_NEAR(result.VelocityChange.GetZ(), 0.0f, 0.0001f);
 }
 
+void TestEffectFlip()
+{
+	{
+		auto manager = Effekseer::Manager::Create(1);
+		Effekseer::Manager::PlayParameter playParameter;
+		playParameter.Flip = {true, false, true};
+		const Effekseer::EffectFlipParameter expectedFlip{true, false, true};
+		EXPECT_TRUE(playParameter.Flip == expectedFlip);
+		manager->SetEffectFlip(-1, playParameter.Flip);
+		const Effekseer::EffectFlipParameter defaultFlip{};
+		EXPECT_TRUE(manager->GetEffectFlip(-1) == defaultFlip);
+	}
+	{
+		struct EffectFlipTestCase
+		{
+			const char16_t* Path;
+			Effekseer::EffectFlipParameter InitialFlip;
+			Effekseer::EffectFlipParameter ChangedFlip;
+		};
+
+		const std::array<EffectFlipTestCase, 6> testCases = {{
+			{u"TestData/Effects/Update_17x/Sprite.efkefc", {true, false, false}, {false, true, true}},
+			{u"ResourceData/samples/00_Basic/Simple_Ribbon_Sword.efkefc", {false, true, false}, {true, false, true}},
+			{u"ResourceData/samples/00_Basic/Simple_Ring_Shape1.efkefc", {false, false, true}, {true, true, false}},
+			{u"TestData/Effects/Update_17x/Track.efkefc", {true, true, false}, {false, false, true}},
+			{u"TestData/Effects/Update_17x/Model.efkefc", {true, false, true}, {false, true, false}},
+			{u"TestData/Effects/18/GpuParticles_sprite_simple.efkefc", {false, true, true}, {true, false, false}},
+		}};
+
+		auto manager = Effekseer::Manager::Create(256);
+		const auto rootPath = GetDirectoryPathAsU16(__FILE__) + u"../../../../";
+		std::array<Effekseer::EffectRef, testCases.size()> effects;
+		std::array<Effekseer::Handle, testCases.size()> handles;
+		std::array<Effekseer::Matrix43, testCases.size()> simulationMatrices;
+
+		for (size_t i = 0; i < testCases.size(); i++)
+		{
+			const auto path = rootPath + testCases[i].Path;
+			effects[i] = Effekseer::Effect::Create(manager, path.c_str());
+			EXPECT_TRUE(effects[i] != nullptr);
+
+			Effekseer::Manager::PlayParameter playParameter;
+			playParameter.Effect = effects[i];
+			playParameter.Position = {
+				static_cast<float>(i * 10 + 1),
+				static_cast<float>(i * 10 + 2),
+				static_cast<float>(i * 10 + 3)};
+			playParameter.Flip = testCases[i].InitialFlip;
+			handles[i] = manager->Play(playParameter);
+			EXPECT_TRUE(handles[i] >= 0);
+			EXPECT_TRUE(manager->GetEffectFlip(handles[i]) == testCases[i].InitialFlip);
+			simulationMatrices[i] = manager->GetMatrix(handles[i]);
+		}
+
+		for (size_t changedIndex = 0; changedIndex < testCases.size(); changedIndex++)
+		{
+			manager->SetEffectFlip(handles[changedIndex], testCases[changedIndex].ChangedFlip);
+
+			for (size_t i = 0; i < testCases.size(); i++)
+			{
+				const auto expectedFlip = i <= changedIndex ? testCases[i].ChangedFlip : testCases[i].InitialFlip;
+				EXPECT_TRUE(manager->GetEffectFlip(handles[i]) == expectedFlip);
+
+				const auto unchangedSimulationMatrix = manager->GetMatrix(handles[i]);
+				EXPECT_TRUE(memcmp(&simulationMatrices[i], &unchangedSimulationMatrix, sizeof(unchangedSimulationMatrix)) == 0);
+			}
+		}
+
+		manager->StopAllEffects();
+	}
+
+	const auto rootMatrix = Effekseer::SIMD::Mat43f::SRT(
+		Effekseer::SIMD::Vec3f(2.0f, 3.0f, 4.0f),
+		Effekseer::SIMD::Mat43f::RotationZXY(0.4f, -0.2f, 0.7f),
+		Effekseer::SIMD::Vec3f(10.0f, 20.0f, 30.0f));
+	const Effekseer::SIMD::Vec3f localPoint(1.0f, 2.0f, 3.0f);
+	const auto worldPoint = Effekseer::SIMD::Vec3f::Transform(localPoint, rootMatrix);
+
+	for (int32_t bits = 0; bits < 8; bits++)
+	{
+		Effekseer::EffectFlipParameter flip;
+		flip.FlipX = (bits & 1) != 0;
+		flip.FlipY = (bits & 2) != 0;
+		flip.FlipZ = (bits & 4) != 0;
+
+		const auto renderingTransform = Effekseer::CalculateEffectRenderingTransform(rootMatrix, flip);
+		EXPECT_TRUE(renderingTransform.IsEnabled == (bits != 0));
+		const auto transformed = Effekseer::SIMD::Vec3f::Transform(worldPoint, renderingTransform.Transform);
+		const auto expected = Effekseer::SIMD::Vec3f::Transform(
+			Effekseer::SIMD::Vec3f(
+				flip.FlipX ? -localPoint.GetX() : localPoint.GetX(),
+				flip.FlipY ? -localPoint.GetY() : localPoint.GetY(),
+				flip.FlipZ ? -localPoint.GetZ() : localPoint.GetZ()),
+			rootMatrix);
+		EXPECT_EQUAL_NEAR(transformed.GetX(), expected.GetX(), 0.0001f);
+		EXPECT_EQUAL_NEAR(transformed.GetY(), expected.GetY(), 0.0001f);
+		EXPECT_EQUAL_NEAR(transformed.GetZ(), expected.GetZ(), 0.0001f);
+		EXPECT_TRUE(renderingTransform.ReversesWinding == (flip.FlipX ^ flip.FlipY ^ flip.FlipZ));
+	}
+
+	EXPECT_TRUE(Effekseer::SIMD::Mat43f::Equal(
+		rootMatrix,
+		Effekseer::SIMD::Mat43f::SRT(
+			Effekseer::SIMD::Vec3f(2.0f, 3.0f, 4.0f),
+			Effekseer::SIMD::Mat43f::RotationZXY(0.4f, -0.2f, 0.7f),
+			Effekseer::SIMD::Vec3f(10.0f, 20.0f, 30.0f))));
+}
+
 TestRegister Misc_TestGeometryUtility("Misc.TestGeometryUtility", []() -> void
 									  { TestGeometryUtility(); });
 
 TestRegister Misc_TestExternalCollisionUsesSurfaceNormal("Misc.TestExternalCollisionUsesSurfaceNormal", []() -> void
-														 { TestExternalCollisionUsesSurfaceNormal(); });
+													 { TestExternalCollisionUsesSurfaceNormal(); });
+
+TestRegister Misc_TestEffectFlip("Misc.TestEffectFlip", []() -> void
+								   { TestEffectFlip(); });

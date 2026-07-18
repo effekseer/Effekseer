@@ -21,6 +21,7 @@ set(effekseer_public_h
     Effekseer/Effekseer.Matrix44.h
     Effekseer/Effekseer.Resource.h
     Effekseer/Effekseer.RectF.h
+    Effekseer/Effekseer.RenderingTransform.h
     Effekseer/Effekseer.Setting.h
     Effekseer/Effekseer.Vector2D.h
     Effekseer/Effekseer.Vector3D.h
@@ -132,6 +133,7 @@ set(effekseer_src
     Effekseer/Effekseer.Matrix44.cpp
     Effekseer/Effekseer.Random.cpp
     Effekseer/Effekseer.RectF.cpp
+    Effekseer/Effekseer.RenderingTransform.cpp
     Effekseer/Effekseer.Resource.cpp
     Effekseer/Effekseer.ResourceManager.cpp
     Effekseer/Effekseer.Setting.cpp

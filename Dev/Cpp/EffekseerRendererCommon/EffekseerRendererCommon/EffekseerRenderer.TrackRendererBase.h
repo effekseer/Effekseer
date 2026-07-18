@@ -422,12 +422,24 @@ protected:
 					vr.Pos = ToStruct(-R * vr.Pos.X + pos);
 				}
 
+				if (parameter.RenderingTransform.IsEnabled)
+				{
+					vl.Pos = ToStruct(Effekseer::SIMD::Vec3f::Transform(vl.Pos, parameter.RenderingTransform.Transform));
+					vm.Pos = ToStruct(Effekseer::SIMD::Vec3f::Transform(vm.Pos, parameter.RenderingTransform.Transform));
+					vr.Pos = ToStruct(Effekseer::SIMD::Vec3f::Transform(vr.Pos, parameter.RenderingTransform.Transform));
+					axis = SafeNormalize(TransformDirection(axis, parameter.RenderingTransform.Transform));
+				}
+
 				if (VertexNormalRequired<VERTEX>())
 				{
 					::Effekseer::SIMD::Vec3f tangent = SafeNormalize(Effekseer::SIMD::Vec3f(vl.Pos - vr.Pos));
 					Effekseer::SIMD::Vec3f normal = SafeNormalize(Effekseer::SIMD::Vec3f::Cross(tangent, axis));
 
 					if (!parameter.IsRightHand)
+					{
+						normal = -normal;
+					}
+					if (parameter.RenderingTransform.ReversesWinding)
 					{
 						normal = -normal;
 					}

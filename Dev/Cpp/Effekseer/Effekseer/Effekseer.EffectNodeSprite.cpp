@@ -319,6 +319,7 @@ SpriteRenderer::NodeParameter EffectNodeSprite::GetNodeParameter(const Manager* 
 	nodeParameter.Maginification = GetEffect()->GetMaginification();
 
 	nodeParameter.UserData = GetRenderingUserData();
+	nodeParameter.RenderingTransform = global->RenderingTransform;
 
 	nodeParameter.EnableViewOffset = (TranslationParam.TranslationType == ParameterTranslationType_ViewOffset);
 

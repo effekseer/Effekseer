@@ -847,6 +847,11 @@ public:
 			mat44 = Effekseer::SIMD::Mat44f::Scaling(::Effekseer::SIMD::Vec3f(parameter.Magnification)) * mat44;
 		}
 
+		if (parameter.RenderingTransform.IsEnabled)
+		{
+			mat44 *= Effekseer::SIMD::Mat44f(parameter.RenderingTransform.Transform);
+		}
+
 		if (!parameter.IsRightHand)
 		{
 			mat44 = Effekseer::SIMD::Mat44f::Scaling(1.0f, 1.0f, -1.0f) * mat44;
@@ -1097,6 +1102,17 @@ public:
 		state.DepthWrite = param.ZWrite;
 		state.AlphaBlend = param.BasicParameterPtr->AlphaBlend;
 		state.CullingType = param.Culling;
+		if (param.RenderingTransform.ReversesWinding)
+		{
+			if (state.CullingType == ::Effekseer::CullingType::Front)
+			{
+				state.CullingType = ::Effekseer::CullingType::Back;
+			}
+			else if (state.CullingType == ::Effekseer::CullingType::Back)
+			{
+				state.CullingType = ::Effekseer::CullingType::Front;
+			}
+		}
 
 		// TODO : refactor in 1.7
 		if (renderer->GetExternalShaderSettings() != nullptr)

@@ -141,6 +141,7 @@ void EffectNodeRibbon::BeginRendering(int32_t count, Manager* manager, const Ins
 
 		m_nodeParameter.EnableViewOffset = (TranslationParam.TranslationType == ParameterTranslationType_ViewOffset);
 		m_nodeParameter.UserData = GetRenderingUserData();
+		m_nodeParameter.RenderingTransform = global->RenderingTransform;
 
 		renderer->BeginRendering(m_nodeParameter, count, userData);
 	}

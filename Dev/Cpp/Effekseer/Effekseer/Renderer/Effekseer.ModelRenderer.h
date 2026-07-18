@@ -9,6 +9,7 @@
 #include "../Effekseer.Color.h"
 #include "../Effekseer.Matrix43.h"
 #include "../Effekseer.RectF.h"
+#include "../Effekseer.RenderingTransform.h"
 #include "../Effekseer.Vector2D.h"
 #include "../Effekseer.Vector3D.h"
 #include "../Parameter/Effekseer.Parameters.h"
@@ -57,6 +58,7 @@ public:
 		SIMD::Mat43f ExternalModelTransform = SIMD::Mat43f::Identity;
 
 		RefPtr<RenderingUserData> UserData;
+		EffectRenderingTransformParameter RenderingTransform;
 	};
 
 	struct InstanceParameter

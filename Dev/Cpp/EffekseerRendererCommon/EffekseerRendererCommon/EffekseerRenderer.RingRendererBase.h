@@ -656,6 +656,11 @@ protected:
 				v[vi].SetParticleTime(instanceParameter.ParticleTimes[0], instanceParameter.ParticleTimes[1]);
 			}
 
+			if (parameter.RenderingTransform.IsEnabled)
+			{
+				TransformVertexes(v, 8, parameter.RenderingTransform.Transform);
+			}
+
 			if (VertexNormalRequired<VERTEX>())
 			{
 				StrideView<VERTEX> vs(&verteies[i], stride_, 8);
@@ -683,6 +688,11 @@ protected:
 
 				auto tangentCurrent = (tangent0 + tangent1) / 2.0f;
 				auto tangentNext = (tangent1 + tangent2) / 2.0f;
+				if (parameter.RenderingTransform.IsEnabled)
+				{
+					tangentCurrent = TransformDirection(tangentCurrent, parameter.RenderingTransform.Transform);
+					tangentNext = TransformDirection(tangentNext, parameter.RenderingTransform.Transform);
+				}
 
 				auto binormalCurrent = v[5].Pos - v[0].Pos;
 				auto binormalNext = v[7].Pos - v[2].Pos;
@@ -694,6 +704,11 @@ protected:
 				normalNext = ::Effekseer::SIMD::Vec3f::Cross(tangentNext, binormalNext);
 
 				if (!parameter.IsRightHand)
+				{
+					normalCurrent = -normalCurrent;
+					normalNext = -normalNext;
+				}
+				if (parameter.RenderingTransform.ReversesWinding)
 				{
 					normalCurrent = -normalCurrent;
 					normalNext = -normalNext;
@@ -795,6 +810,10 @@ protected:
 			for (auto& kv : instances_)
 			{
 				efkVector3D t = kv.Value.SRTMatrix43.GetTranslation();
+				if (param.RenderingTransform.IsEnabled)
+				{
+					t = Effekseer::SIMD::Vec3f::Transform(t, param.RenderingTransform.Transform);
+				}
 
 				Effekseer::SIMD::Vec3f frontDirection = renderer_->GetCameraFrontDirection();
 				if (!param.IsRightHand)

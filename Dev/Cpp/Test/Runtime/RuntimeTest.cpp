@@ -29,6 +29,12 @@
 void BasicRuntimeDeviceLostTest()
 {
 #ifdef _WIN32
+	auto logStage = [](const std::string& stage)
+	{
+		std::cout << "[DeviceLost] " << stage << std::endl;
+	};
+
+	logStage("create DX9 platform");
 	auto platform = std::make_shared<EffectPlatformDX9>();
 
 	srand(0);
@@ -36,35 +42,47 @@ void BasicRuntimeDeviceLostTest()
 	EffectPlatformInitializingParameter param;
 	// To make fullscreen enabled
 	param.WindowSize = {640, 480};
+	logStage("initialize DX9 platform");
 	platform->Initialize(param);
 
+	logStage("play SimpleLaser.efk");
 	platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/SimpleLaser.efk").c_str());
+	logStage("play Model_Parameters1.efk");
 	platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/14/Model_Parameters1.efk").c_str());
+	logStage("play ProcedualModel01.efkefc");
 	platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/16/ProcedualModel01.efkefc").c_str());
 
-	for (size_t i = 0; i < 20; i++)
+	auto updateFrames = [&](const char* phase)
 	{
-		platform->Update();
-	}
+		logStage(std::string("update phase=") + phase + " begin");
+		for (size_t i = 0; i < 20; i++)
+		{
+			platform->Update();
+		}
+		logStage(std::string("update phase=") + phase + " complete");
+	};
+
+	updateFrames("windowed-before-reset");
+	logStage("take screenshot 0_Lost1.png");
 	platform->TakeScreenshot("0_Lost1.png");
 
+	logStage("set fullscreen=true");
 	platform->SetFullscreen(true);
 
-	for (size_t i = 0; i < 20; i++)
-	{
-		platform->Update();
-	}
+	updateFrames("fullscreen-after-reset");
+	logStage("take screenshot 0_Lost2.png");
 	platform->TakeScreenshot("0_Lost2.png");
 
+	logStage("set fullscreen=false");
 	platform->SetFullscreen(false);
 
-	for (size_t i = 0; i < 20; i++)
-	{
-		platform->Update();
-	}
+	updateFrames("windowed-after-reset");
+	logStage("take screenshot 0_Lost3.png");
 	platform->TakeScreenshot("0_Lost3.png");
 
+	logStage("terminate DX9 platform");
 	platform->Terminate();
+	logStage("completed");
 #endif
 }
 

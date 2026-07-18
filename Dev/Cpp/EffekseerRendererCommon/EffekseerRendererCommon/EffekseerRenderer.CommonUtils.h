@@ -762,6 +762,13 @@ inline void TransformVertexes(Vertex& vertexes, int32_t count, const ::Effekseer
 	}
 }
 
+inline Effekseer::SIMD::Vec3f TransformDirection(
+	const Effekseer::SIMD::Vec3f& direction,
+	const Effekseer::SIMD::Mat43f& transform)
+{
+	return Effekseer::SIMD::Vec3f::Transform(direction, transform.Get3x3SubMatrix());
+}
+
 inline Effekseer::SIMD::Vec3f SafeNormalize(const Effekseer::SIMD::Vec3f& v)
 {
 	auto lengthSq = v.GetSquaredLength();

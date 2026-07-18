@@ -9,6 +9,7 @@
 #include "../Effekseer.Color.h"
 #include "../Effekseer.Matrix43.h"
 #include "../Effekseer.RectF.h"
+#include "../Effekseer.RenderingTransform.h"
 #include "../Effekseer.Vector2D.h"
 #include "../Effekseer.Vector3D.h"
 #include "../SIMD/Mat43f.h"
@@ -51,6 +52,7 @@ public:
 		TrailSmoothingType SmoothingType = TrailSmoothingType::Off;
 
 		RefPtr<RenderingUserData> UserData;
+		EffectRenderingTransformParameter RenderingTransform;
 	};
 
 	struct InstanceGroupParameter

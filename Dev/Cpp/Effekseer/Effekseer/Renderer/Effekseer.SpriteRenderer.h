@@ -9,6 +9,7 @@
 #include "../Effekseer.Color.h"
 #include "../Effekseer.Matrix43.h"
 #include "../Effekseer.RectF.h"
+#include "../Effekseer.RenderingTransform.h"
 #include "../Effekseer.Vector2D.h"
 #include "../SIMD/Mat43f.h"
 #include "../SIMD/Vec2f.h"
@@ -44,6 +45,7 @@ public:
 		bool EnableViewOffset = false;
 
 		RefPtr<RenderingUserData> UserData;
+		EffectRenderingTransformParameter RenderingTransform;
 	};
 
 	struct InstanceParameter

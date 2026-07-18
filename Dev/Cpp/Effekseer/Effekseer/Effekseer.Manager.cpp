@@ -988,6 +988,26 @@ void ManagerImplemented::SetScale(Handle handle, float x, float y, float z)
 	}
 }
 
+EffectFlipParameter ManagerImplemented::GetEffectFlip(Handle handle) const
+{
+	auto it = drawSets_.find(handle);
+	if (it != drawSets_.end())
+	{
+		return it->second.EffectFlip;
+	}
+
+	return {};
+}
+
+void ManagerImplemented::SetEffectFlip(Handle handle, const EffectFlipParameter& flip)
+{
+	auto it = drawSets_.find(handle);
+	if (it != drawSets_.end())
+	{
+		it->second.EffectFlip = flip;
+	}
+}
+
 void ManagerImplemented::SetAllColor(Handle handle, Color color)
 {
 	if (drawSets_.count(handle) > 0)
@@ -1309,6 +1329,13 @@ void ManagerImplemented::Flip()
 			{
 				continue;
 			}
+
+			auto renderingRoot = ds.GetGlobalMatrix();
+			if (ds.DoUseBaseMatrix)
+			{
+				renderingRoot *= ds.BaseMatrix;
+			}
+			ds.GlobalPointer->RenderingTransform = CalculateEffectRenderingTransform(renderingRoot, ds.EffectFlip);
 
 			if (ds.IsParameterChanged)
 			{
@@ -2173,6 +2200,7 @@ Handle ManagerImplemented::Play(const Manager::PlayParameter& parameter)
 	drawSet.Scaling = parameter.Scale;
 	drawSet.Rotation.RotationZXY(parameter.Rotation.Z, parameter.Rotation.X, parameter.Rotation.Y);
 	drawSet.SetGlobalMatrix(SIMD::Mat43f::SRT(SIMD::Vec3f(drawSet.Scaling), drawSet.Rotation, SIMD::Vec3f(parameter.Position)));
+	drawSet.EffectFlip = parameter.Flip;
 	drawSet.GlobalPointer->SetExternalModels(parameter.ExternalModels);
 
 	return handle;

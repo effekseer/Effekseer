@@ -3,6 +3,7 @@
 #include "../../3rdParty/stb/stb_image_write.h"
 #include <EffekseerToolRuntime/GroundRendering.h>
 #include <assert.h>
+#include <cstdio>
 #include <d3dcompiler.h>
 #include <cstring>
 
@@ -487,19 +488,40 @@ bool EffectPlatformDX9::SetFullscreen(bool isFullscreen)
 
 void EffectPlatformDX9::ResetDevice()
 {
+	auto logResetStage = [](const char* stage)
+	{
+		printf("[DeviceLost][DX9 Reset] %s\n", stage);
+		fflush(stdout);
+	};
+
+	printf(
+		"[DeviceLost][DX9 Reset] begin d3d=%p device=%p distorting=%p effects=%zu\n",
+		static_cast<void*>(d3d_),
+		static_cast<void*>(device_),
+		static_cast<void*>(distorting_),
+		effects_.size());
+	fflush(stdout);
+
 	const auto wasGroundDepthEnabled = isGroundDepthEnabled_;
+	logResetStage("release checked and ground resources");
 	ES_SAFE_RELEASE(checkedSurface_);
 	ReleaseGroundResources();
 
+	logResetStage("notify distortion lost");
 	distorting_->Lost();
 
 	auto renderer = static_cast<EffekseerRendererDX9::Renderer*>(GetRenderer().Get());
+	printf("[DeviceLost][DX9 Reset] renderer=%p\n", static_cast<void*>(renderer));
+	fflush(stdout);
 
 	for (size_t i = 0; i < effects_.size(); i++)
 	{
+		printf("[DeviceLost][DX9 Reset] unload effect %zu/%zu effect=%p\n", i + 1, effects_.size(), static_cast<void*>(effects_[i].Get()));
+		fflush(stdout);
 		effects_[i]->UnloadResources();
 	}
 
+	logResetStage("notify renderer lost");
 	renderer->OnLostDevice();
 
 	HRESULT hr;
@@ -524,19 +546,30 @@ void EffectPlatformDX9::ResetDevice()
 
 	if (newDevice)
 	{
+		logResetStage("detach distortion device");
 		distorting_->ChangeDevice(nullptr);
+		logResetStage("detach renderer device");
 		renderer->ChangeDevice(nullptr);
+		logResetStage("release old D3D9 device");
 		device_->Release();
 
+		logResetStage("create new D3D9 device");
 		hr =
 			d3d_->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, (HWND)GetNativePtr(0), D3DCREATE_HARDWARE_VERTEXPROCESSING, &d3dp, &device_);
+		printf(
+			"[DeviceLost][DX9 Reset] CreateDevice result=0x%08lX device=%p\n",
+			static_cast<unsigned long>(hr),
+			static_cast<void*>(device_));
+		fflush(stdout);
 
 		if (FAILED(hr))
 		{
 			throw "Failed : CreateDevice";
 		}
 
+		logResetStage("attach renderer device");
 		renderer->ChangeDevice(device_);
+		logResetStage("attach distortion device");
 		distorting_->ChangeDevice(device_);
 	}
 	else
@@ -550,18 +583,24 @@ void EffectPlatformDX9::ResetDevice()
 		}
 	}
 
+	logResetStage("reset distortion resources");
 	distorting_->Reset();
 
+	logResetStage("notify renderer reset");
 	renderer->OnResetDevice();
 
 	for (size_t i = 0; i < effects_.size(); i++)
 	{
+		printf("[DeviceLost][DX9 Reset] reload effect %zu/%zu effect=%p\n", i + 1, effects_.size(), static_cast<void*>(effects_[i].Get()));
+		fflush(stdout);
 		effects_[i]->ReloadResources(buffers_[i].data(), static_cast<int32_t>(buffers_[i].size()));
 	}
 
+	logResetStage("create checked surface");
 	CreateCheckedSurface();
 	if (wasGroundDepthEnabled)
 	{
 		GenerateGroundDepth();
 	}
+	logResetStage("completed");
 }
