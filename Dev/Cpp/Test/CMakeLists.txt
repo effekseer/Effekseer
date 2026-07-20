@@ -36,6 +36,7 @@ else()
       Runtime/Geometry.cpp
       Runtime/Model.cpp
       Runtime/RenderingTransform.cpp
+      Runtime/RenderingTransformScreenshot.cpp
       Runtime/VectorField.cpp
       Backend/Helper.h
       Backend/Helper.cpp

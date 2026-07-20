@@ -53,12 +53,6 @@ enum class BasicRenderingPlayMode
 	PerformanceGrid,
 };
 
-enum class BasicRenderingCoordinateTransform
-{
-	Identity,
-	ReflectY,
-};
-
 struct BasicRenderingCase
 {
 	const char* Name = nullptr;
@@ -73,9 +67,6 @@ struct BasicRenderingCase
 	bool OverridesBackgroundTextureUVStyle = false;
 	bool UseGroundDepth = false;
 	BasicRenderingPlayMode PlayMode = BasicRenderingPlayMode::Single;
-	Effekseer::EffectFlipParameter Flip;
-	BasicRenderingCoordinateTransform RenderingCoordinateTransform = BasicRenderingCoordinateTransform::Identity;
-	Effekseer::Vector3D Position;
 };
 
 struct BasicRenderingBackendOutput
@@ -160,22 +151,6 @@ const std::vector<BasicRenderingCase>& GetBasicRenderingCases()
 		{"GpuParticles_trails_simple", BasicRenderingCaseRoot::TestDataEffects, u"18", u"GpuParticles_trails_simple", u".efkefc", "GpuParticles_trails_simple", 120},
 		{"Materials1", BasicRenderingCaseRoot::TestDataEffects, u"18", u"Materials1", u".efkefc", "Materials1"},
 		{"Materials2", BasicRenderingCaseRoot::TestDataEffects, u"18", u"Materials2", u".efkefc", "Materials2"},
-
-		// Screenshot coverage for emitter-level flip across each renderer type.
-		{"EffectFlip_Sprite_X", BasicRenderingCaseRoot::TestDataEffects, u"Update_17x", u"Sprite", u".efkefc", "EffectFlip_Sprite_X", 30, BasicRenderingCamera::Default, EffekseerRenderer::UVStyle::Normal, false, false, BasicRenderingPlayMode::Single, {true, false, false}},
-		{"EffectFlip_Ribbon_Y", BasicRenderingCaseRoot::TestDataEffects, u"10", u"Ribbon_Parameters1", u".efk", "EffectFlip_Ribbon_Y", 30, BasicRenderingCamera::Default, EffekseerRenderer::UVStyle::Normal, false, false, BasicRenderingPlayMode::Single, {false, true, false}},
-		{"EffectFlip_Ring_Z", BasicRenderingCaseRoot::TestDataEffects, u"10", u"Ring_Parameters1", u".efk", "EffectFlip_Ring_Z", 30, BasicRenderingCamera::Default, EffekseerRenderer::UVStyle::Normal, false, false, BasicRenderingPlayMode::Single, {false, false, true}},
-		{"EffectFlip_Track_XY", BasicRenderingCaseRoot::TestDataEffects, u"Update_17x", u"Track", u".efkefc", "EffectFlip_Track_XY", 30, BasicRenderingCamera::Default, EffekseerRenderer::UVStyle::Normal, false, false, BasicRenderingPlayMode::Single, {true, true, false}},
-		{"EffectFlip_Model_XZ", BasicRenderingCaseRoot::TestDataEffects, u"Update_17x", u"Model", u".efkefc", "EffectFlip_Model_XZ", 30, BasicRenderingCamera::Default, EffekseerRenderer::UVStyle::Normal, false, false, BasicRenderingPlayMode::Single, {true, false, true}},
-		{"EffectFlip_GpuParticles_YZ", BasicRenderingCaseRoot::TestDataEffects, u"18", u"GpuParticles_sprite_simple", u".efkefc", "EffectFlip_GpuParticles_YZ", 120, BasicRenderingCamera::Default, EffekseerRenderer::UVStyle::Normal, false, false, BasicRenderingPlayMode::Single, {false, true, true}},
-
-		// Screenshot coverage for draw-path coordinate transforms across each renderer type.
-		{"RenderingCoordinate_Sprite_ReflectY", BasicRenderingCaseRoot::TestDataEffects, u"Update_17x", u"Sprite", u".efkefc", "RenderingCoordinate_Sprite_ReflectY", 30, BasicRenderingCamera::Default, EffekseerRenderer::UVStyle::Normal, false, false, BasicRenderingPlayMode::Single, {}, BasicRenderingCoordinateTransform::ReflectY, {2.0f, 1.0f, 0.0f}},
-		{"RenderingCoordinate_Ribbon_ReflectY", BasicRenderingCaseRoot::TestDataEffects, u"10", u"Ribbon_Parameters1", u".efk", "RenderingCoordinate_Ribbon_ReflectY", 30, BasicRenderingCamera::Default, EffekseerRenderer::UVStyle::Normal, false, false, BasicRenderingPlayMode::Single, {}, BasicRenderingCoordinateTransform::ReflectY, {2.0f, 1.0f, 0.0f}},
-		{"RenderingCoordinate_Ring_ReflectY", BasicRenderingCaseRoot::TestDataEffects, u"10", u"Ring_Parameters1", u".efk", "RenderingCoordinate_Ring_ReflectY", 30, BasicRenderingCamera::Default, EffekseerRenderer::UVStyle::Normal, false, false, BasicRenderingPlayMode::Single, {}, BasicRenderingCoordinateTransform::ReflectY, {2.0f, 1.0f, 0.0f}},
-		{"RenderingCoordinate_Track_ReflectY", BasicRenderingCaseRoot::TestDataEffects, u"Update_17x", u"Track", u".efkefc", "RenderingCoordinate_Track_ReflectY", 30, BasicRenderingCamera::Default, EffekseerRenderer::UVStyle::Normal, false, false, BasicRenderingPlayMode::Single, {}, BasicRenderingCoordinateTransform::ReflectY, {2.0f, 1.0f, 0.0f}},
-		{"RenderingCoordinate_Model_ReflectY", BasicRenderingCaseRoot::TestDataEffects, u"Update_17x", u"Model", u".efkefc", "RenderingCoordinate_Model_ReflectY", 30, BasicRenderingCamera::Default, EffekseerRenderer::UVStyle::Normal, false, false, BasicRenderingPlayMode::Single, {}, BasicRenderingCoordinateTransform::ReflectY, {2.0f, 1.0f, 0.0f}},
-		{"RenderingCoordinate_GpuParticles_ReflectY", BasicRenderingCaseRoot::TestDataEffects, u"18", u"GpuParticles_sprite_simple", u".efkefc", "RenderingCoordinate_GpuParticles_ReflectY", 120, BasicRenderingCamera::Default, EffekseerRenderer::UVStyle::Normal, false, false, BasicRenderingPlayMode::Single, {}, BasicRenderingCoordinateTransform::ReflectY, {2.0f, 1.0f, 0.0f}},
 	};
 	return cases;
 }
@@ -341,22 +316,7 @@ void PlayBasicRenderingEffect(EffectPlatform* platform, const BasicRenderingCase
 		return;
 	}
 
-	const auto handle = platform->Play(path.c_str(), testCase.Position);
-	if (testCase.Flip != Effekseer::EffectFlipParameter{})
-	{
-		platform->GetManager()->SetEffectFlip(handle, testCase.Flip);
-		EXPECT_TRUE(platform->GetManager()->GetEffectFlip(handle) == testCase.Flip);
-	}
-}
-
-Effekseer::Matrix44 MakeRenderingCoordinateMatrix(BasicRenderingCoordinateTransform transform)
-{
-	Effekseer::Matrix44 matrix;
-	if (transform == BasicRenderingCoordinateTransform::ReflectY)
-	{
-		matrix.Scaling(1.0f, -1.0f, 1.0f);
-	}
-	return matrix;
+	platform->Play(path.c_str());
 }
 
 void SetBasicRenderingCamera(const EffectPlatformInitializingParameter& param, EffectPlatform* platform, BasicRenderingCamera camera)
@@ -403,7 +363,6 @@ void RunBasicRenderingCase(
 	const auto renderer = platform->GetRenderer();
 	const auto cameraMat = renderer->GetCameraMatrix();
 	const auto backgroundTextureUVStyle = renderer->GetBackgroundTextureUVStyle();
-	const auto renderingCoordinateMatrix = platform->GetRenderingCoordinateMatrix();
 	auto background = renderer->GetBackground();
 	::Effekseer::Backend::TextureRef depthTexture;
 	::EffekseerRenderer::DepthReconstructionParameter depthReconstructionParam{};
@@ -422,8 +381,6 @@ void RunBasicRenderingCase(
 	{
 		platform->GenerateGroundDepth();
 	}
-	platform->SetRenderingCoordinateMatrix(MakeRenderingCoordinateMatrix(testCase.RenderingCoordinateTransform));
-
 	srand(0);
 	const auto path = MakeBasicRenderingEffectPath(testCase);
 	PlayBasicRenderingEffect(platform, testCase, path);
@@ -451,7 +408,6 @@ void RunBasicRenderingCase(
 	{
 		platform->ResetBackgroundPattern();
 	}
-	platform->SetRenderingCoordinateMatrix(renderingCoordinateMatrix);
 	renderer->SetBackground(background);
 	renderer->SetDepth(depthTexture, depthReconstructionParam);
 }
