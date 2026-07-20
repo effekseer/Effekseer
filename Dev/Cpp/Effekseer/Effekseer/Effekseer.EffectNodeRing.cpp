@@ -243,6 +243,7 @@ void EffectNodeRing::BeginRendering(int32_t count, Manager* manager, const Insta
 		nodeParameter_.EnableViewOffset = (TranslationParam.TranslationType == ParameterTranslationType_ViewOffset);
 
 		nodeParameter_.UserData = GetRenderingUserData();
+		nodeParameter_.RenderingCoordinateTransform = global->RenderingCoordinateTransform;
 		nodeParameter_.RenderingTransform = global->RenderingTransform;
 
 		renderer->BeginRendering(nodeParameter_, count, userData);

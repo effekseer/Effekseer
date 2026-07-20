@@ -1021,7 +1021,8 @@ std::string ShaderGenerator::GenerateVertexShader(MaterialFile* materialFile,
 	var worldPos = atPosition;
 	var worldNormal = (atNormal.xyz - vec3<f32>(0.5)) * 2.0;
 	var worldTangent = (atTangent.xyz - vec3<f32>(0.5)) * 2.0;
-	var worldBinormal = cross(worldNormal, worldTangent);
+	let tangentHandedness = atTangent.w * 2.0 - 1.0;
+	var worldBinormal = cross(worldNormal, worldTangent) * tangentHandedness;
 	var objectScale = vec3<f32>(1.0);
 	var uv1 = atTexCoord;
 	var uv2 = atTexCoord2;

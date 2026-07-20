@@ -52,6 +52,7 @@ public:
 		TrailSmoothingType SmoothingType = TrailSmoothingType::Off;
 
 		RefPtr<RenderingUserData> UserData;
+		EffectRenderingTransformParameter RenderingCoordinateTransform;
 		EffectRenderingTransformParameter RenderingTransform;
 	};
 

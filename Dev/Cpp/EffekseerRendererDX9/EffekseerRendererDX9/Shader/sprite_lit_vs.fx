@@ -23,10 +23,10 @@ static const VS_Output _22 = { 0.0f.xxxx, 0.0f.xxxx, 0.0f.xx, 0.0f.xxx, 0.0f.xxx
 
 cbuffer VS_ConstantBuffer : register(b0)
 {
-    column_major float4x4 _73_mCamera : register(c0);
-    column_major float4x4 _73_mCameraProj : register(c4);
-    float4 _73_mUVInversed : register(c8);
-    float4 _73_mflipbookParameter : register(c9);
+    column_major float4x4 _81_mCamera : register(c0);
+    column_major float4x4 _81_mCameraProj : register(c4);
+    float4 _81_mUVInversed : register(c8);
+    float4 _81_mflipbookParameter : register(c9);
 };
 
 static const float4 gl_HalfPixel = 0.0f.xxxx;
@@ -71,12 +71,13 @@ VS_Output _main(VS_Input Input)
     VS_Output Output = _22;
     float4 worldNormal = float4((Input.Normal.xyz - 0.5f.xxx) * 2.0f, 0.0f);
     float4 worldTangent = float4((Input.Tangent.xyz - 0.5f.xxx) * 2.0f, 0.0f);
-    float4 worldBinormal = float4(cross(worldNormal.xyz, worldTangent.xyz), 0.0f);
+    float tangentHandedness = (Input.Tangent.w * 2.0f) - 1.0f;
+    float4 worldBinormal = float4(cross(worldNormal.xyz, worldTangent.xyz) * tangentHandedness, 0.0f);
     float4 worldPos = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0f);
-    Output.PosVS = mul(_73_mCameraProj, worldPos);
+    Output.PosVS = mul(_81_mCameraProj, worldPos);
     Output.Color = Input.Color;
     float2 uv1 = Input.UV1;
-    uv1.y = _73_mUVInversed.x + (_73_mUVInversed.y * uv1.y);
+    uv1.y = _81_mUVInversed.x + (_81_mUVInversed.y * uv1.y);
     Output.UV = uv1;
     Output.WorldN = worldNormal.xyz;
     Output.WorldB = worldBinormal.xyz;

@@ -104,9 +104,15 @@ protected:
 
 	void BeginRendering_(RENDERER* renderer, int32_t count, const efkSpriteNodeParam& param, void* userData)
 	{
-		cameraMatrix_ = ::Effekseer::SIMD::Mat44f(renderer->GetCameraMatrix());
-		cameraFrontDirection_ = efkVector3D(renderer->GetCameraFrontDirection());
-		cameraPosition_ = efkVector3D(renderer->GetCameraPosition());
+		cameraMatrix_ = TransformCameraMatrixToEffectSpace(
+			::Effekseer::SIMD::Mat44f(renderer->GetCameraMatrix()),
+			param.RenderingCoordinateTransform);
+		cameraFrontDirection_ = TransformCameraVectorToEffectSpace(
+			efkVector3D(renderer->GetCameraFrontDirection()),
+			param.RenderingCoordinateTransform);
+		cameraPosition_ = TransformCameraVectorToEffectSpace(
+			efkVector3D(renderer->GetCameraPosition()),
+			param.RenderingCoordinateTransform);
 
 		EffekseerRenderer::StandardRendererState state;
 		state.CullingType = ::Effekseer::CullingType::Double;
@@ -340,7 +346,7 @@ protected:
 				for (auto i = 0; i < 4; i++)
 				{
 					vs[i].SetPackedNormal(PackVector3DF(F), FLIP_RGB);
-					vs[i].SetPackedTangent(PackVector3DF(R), FLIP_RGB);
+					vs[i].SetPackedTangent(PackTangent(R, parameter.RenderingTransform.ReversesWinding), FLIP_RGB);
 				}
 			}
 		}
@@ -386,7 +392,7 @@ protected:
 					}
 
 					vs[i].SetPackedNormal(PackVector3DF(tangentZ), FLIP_RGB);
-					vs[i].SetPackedTangent(PackVector3DF(tangentX), FLIP_RGB);
+					vs[i].SetPackedTangent(PackTangent(tangentX, parameter.RenderingTransform.ReversesWinding), FLIP_RGB);
 				}
 			}
 		}
@@ -425,7 +431,7 @@ protected:
 	{
 		if (param.ZSort != Effekseer::ZSortType::None)
 		{
-			auto frontDirection = cameraFrontDirection_;
+			auto frontDirection = efkVector3D(renderer->GetCameraFrontDirection());
 			if (!param.IsRightHand)
 			{
 				frontDirection = -frontDirection;

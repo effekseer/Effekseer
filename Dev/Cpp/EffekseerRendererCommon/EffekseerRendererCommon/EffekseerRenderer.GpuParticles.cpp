@@ -591,12 +591,41 @@ void GpuParticleSystem::RenderFrame(const Context& context)
 		if (emitter.IsAlive())
 		{
 			auto renderConstants = baseRenderConstants;
+			if (emitter.InstanceGlobal != nullptr && emitter.InstanceGlobal->RenderingCoordinateTransform.IsEnabled)
+			{
+				const auto& coordinateTransform = emitter.InstanceGlobal->RenderingCoordinateTransform;
+				const auto cameraForRendering = TransformCameraMatrixToEffectSpace(
+					Effekseer::SIMD::Mat44f(baseRenderConstants.CameraMat), coordinateTransform);
+				const auto cameraPosition = TransformCameraVectorToEffectSpace(
+					Effekseer::SIMD::Vec3f(
+						baseRenderConstants.CameraPos.x, baseRenderConstants.CameraPos.y, baseRenderConstants.CameraPos.z),
+					coordinateTransform);
+				const auto cameraFront = TransformCameraVectorToEffectSpace(
+					Effekseer::SIMD::Vec3f(
+						baseRenderConstants.CameraFront.x, baseRenderConstants.CameraFront.y, baseRenderConstants.CameraFront.z),
+					coordinateTransform);
+				renderConstants.CameraPos = Effekseer::GpuParticles::float3(
+					cameraPosition.GetX(), cameraPosition.GetY(), cameraPosition.GetZ());
+				renderConstants.CameraFront = Effekseer::GpuParticles::float3(
+					cameraFront.GetX(), cameraFront.GetY(), cameraFront.GetZ());
+
+				Effekseer::Matrix44 inverseCamera{};
+				Effekseer::Matrix44::Inverse(inverseCamera, Effekseer::SIMD::ToStruct(cameraForRendering));
+				renderConstants.BillboardMat = {
+					float4{inverseCamera.Values[0][0], inverseCamera.Values[1][0], inverseCamera.Values[2][0], 0.0f},
+					float4{inverseCamera.Values[0][1], inverseCamera.Values[1][1], inverseCamera.Values[2][1], 0.0f},
+					float4{inverseCamera.Values[0][2], inverseCamera.Values[1][2], inverseCamera.Values[2][2], 0.0f}};
+				renderConstants.YAxisFixedMat = {
+					float4{inverseCamera.Values[0][0], 0.0f, inverseCamera.Values[2][0], 0.0f},
+					float4{inverseCamera.Values[0][1], 1.0f, inverseCamera.Values[2][1], 0.0f},
+					float4{inverseCamera.Values[0][2], 0.0f, inverseCamera.Values[2][2], 0.0f}};
+			}
 			if (emitter.InstanceGlobal != nullptr && emitter.InstanceGlobal->RenderingTransform.IsEnabled)
 			{
 				const auto& renderingTransform = emitter.InstanceGlobal->RenderingTransform.Transform;
 				renderConstants.CameraMat = Effekseer::SIMD::ToStruct(
 					Effekseer::SIMD::Mat44f(renderingTransform) * Effekseer::SIMD::Mat44f(renderConstants.CameraMat));
-				auto lightDirection = TransformDirection(
+				auto lightDirection = InverseTransformDirection(
 					Effekseer::SIMD::Vec3f(
 						renderConstants.LightDir.x, renderConstants.LightDir.y, renderConstants.LightDir.z),
 					renderingTransform);

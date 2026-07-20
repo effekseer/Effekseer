@@ -39,6 +39,15 @@ inline Effekseer::Color PackVector3DF(const Effekseer::SIMD::Vec3f& v)
 	return ret;
 }
 
+inline Effekseer::Color PackTangent(const Effekseer::SIMD::Vec3f& v, bool reversesWinding)
+{
+	auto ret = PackVector3DF(v);
+	// The alpha channel is otherwise unused. Preserve the tangent-space handedness
+	// so shaders can reconstruct the binormal after a reflection.
+	ret.A = reversesWinding ? 0 : 255;
+	return ret;
+}
+
 inline Effekseer::Vector3D UnpackVector3DF(const Effekseer::Color& v)
 {
 	Effekseer::Vector3D ret;
@@ -767,6 +776,46 @@ inline Effekseer::SIMD::Vec3f TransformDirection(
 	const Effekseer::SIMD::Mat43f& transform)
 {
 	return Effekseer::SIMD::Vec3f::Transform(direction, transform.Get3x3SubMatrix());
+}
+
+inline Effekseer::SIMD::Vec3f InverseTransformDirection(
+	const Effekseer::SIMD::Vec3f& direction,
+	const Effekseer::SIMD::Mat43f& transform)
+{
+	// Rendering coordinate transforms are orthogonal. Mat43f stores its basis
+	// vectors as columns, so passing those columns as constructor rows builds
+	// the transpose, which is also the inverse.
+	const auto rotation = transform.Get3x3SubMatrix();
+	const Effekseer::SIMD::Mat43f inverse(
+		rotation.X.GetX(), rotation.X.GetY(), rotation.X.GetZ(),
+		rotation.Y.GetX(), rotation.Y.GetY(), rotation.Y.GetZ(),
+		rotation.Z.GetX(), rotation.Z.GetY(), rotation.Z.GetZ(),
+		0.0f, 0.0f, 0.0f);
+	return Effekseer::SIMD::Vec3f::Transform(direction, inverse);
+}
+
+inline Effekseer::SIMD::Vec3f TransformCameraVectorToEffectSpace(
+	const Effekseer::SIMD::Vec3f& value,
+	const Effekseer::EffectRenderingTransformParameter& renderingCoordinateTransform)
+{
+	if (!renderingCoordinateTransform.IsEnabled)
+	{
+		return value;
+	}
+
+	return InverseTransformDirection(value, renderingCoordinateTransform.Transform);
+}
+
+inline Effekseer::SIMD::Mat44f TransformCameraMatrixToEffectSpace(
+	const Effekseer::SIMD::Mat44f& camera,
+	const Effekseer::EffectRenderingTransformParameter& renderingCoordinateTransform)
+{
+	if (!renderingCoordinateTransform.IsEnabled)
+	{
+		return camera;
+	}
+
+	return Effekseer::SIMD::Mat44f(renderingCoordinateTransform.Transform) * camera;
 }
 
 inline Effekseer::SIMD::Vec3f SafeNormalize(const Effekseer::SIMD::Vec3f& v)

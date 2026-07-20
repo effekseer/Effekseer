@@ -837,7 +837,9 @@ public:
 			Effekseer::SIMD::Vec3f R;
 			Effekseer::SIMD::Vec3f F;
 
-			CalcBillboard(btype, mat43, s, R, F, baseMatrix, renderer->GetCameraFrontDirection(), instanceParameter.Direction);
+			const auto cameraFrontForRendering = TransformCameraVectorToEffectSpace(
+				::Effekseer::SIMD::Vec3f(renderer->GetCameraFrontDirection()), parameter.RenderingCoordinateTransform);
+			CalcBillboard(btype, mat43, s, R, F, baseMatrix, cameraFrontForRendering, instanceParameter.Direction);
 
 			mat44 = ::Effekseer::SIMD::Mat43f::Scaling(s) * mat43;
 		}

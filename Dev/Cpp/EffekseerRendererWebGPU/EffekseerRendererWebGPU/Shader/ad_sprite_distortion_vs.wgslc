@@ -363,7 +363,8 @@ fn v_27(Input : ptr<function, VS_Input>) -> VS_Output {
   worldNormal = vec4<f32>(v_28.x, v_28.y, v_28.z, 0.0f);
   let v_29 = (((*(Input)).Tangent.xyz - vec3<f32>(0.5f)) * 2.0f);
   worldTangent = vec4<f32>(v_29.x, v_29.y, v_29.z, 0.0f);
-  let v_30 = cross(worldNormal.xyz, worldTangent.xyz);
+  let tangentHandedness = (((*(Input)).Tangent.w * 2.0f) - 1.0f);
+  let v_30 = cross(worldNormal.xyz, worldTangent.xyz) * tangentHandedness;
   worldBinormal = vec4<f32>(v_30.x, v_30.y, v_30.z, 0.0f);
   uv1 = (*(Input)).UV1;
   uv1.y = (v._262_mUVInversed.x + (v._262_mUVInversed.y * uv1.y));

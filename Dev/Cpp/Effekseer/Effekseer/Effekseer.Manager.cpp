@@ -471,6 +471,7 @@ void ManagerImplemented::ApplyRenderingCoordinateTransform(
 	DrawSet& drawSet,
 	const EffectRenderingTransformParameter& renderingCoordinateTransform)
 {
+	drawSet.GlobalPointer->RenderingCoordinateTransform = renderingCoordinateTransform;
 	drawSet.GlobalPointer->RenderingTransform = ComposeRenderingTransforms(
 		drawSet.GlobalPointer->EffectRenderingTransform,
 		renderingCoordinateTransform);
@@ -1385,6 +1386,7 @@ void ManagerImplemented::Flip()
 				renderingRoot *= ds.BaseMatrix;
 			}
 			ds.GlobalPointer->EffectRenderingTransform = CalculateEffectRenderingTransform(renderingRoot, ds.EffectFlip);
+			ds.GlobalPointer->RenderingCoordinateTransform = {};
 			ds.GlobalPointer->RenderingTransform = ds.GlobalPointer->EffectRenderingTransform;
 
 			if (ds.IsParameterChanged)

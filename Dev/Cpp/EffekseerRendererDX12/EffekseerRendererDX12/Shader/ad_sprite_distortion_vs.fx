@@ -225,7 +225,8 @@ VS_Output _main(VS_Input Input)
     VS_Output Output = _368;
     float4 worldNormal = float4((Input.Normal.xyz - 0.5f.xxx) * 2.0f, 0.0f);
     float4 worldTangent = float4((Input.Tangent.xyz - 0.5f.xxx) * 2.0f, 0.0f);
-    float4 worldBinormal = float4(cross(worldNormal.xyz, worldTangent.xyz), 0.0f);
+    float tangentHandedness = (Input.Tangent.w * 2.0f) - 1.0f;
+    float4 worldBinormal = float4(cross(worldNormal.xyz, worldTangent.xyz) * tangentHandedness, 0.0f);
     float2 uv1 = Input.UV1;
     uv1.y = _262_mUVInversed.x + (_262_mUVInversed.y * uv1.y);
     Output.UV_Others.x = uv1.x;

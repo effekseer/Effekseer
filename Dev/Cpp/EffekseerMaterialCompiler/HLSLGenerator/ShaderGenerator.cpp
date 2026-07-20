@@ -236,8 +236,9 @@ VS_Output main( const VS_Input Input )
 	VS_Output Output = (VS_Output)0;
 	float3 worldPos = Input.Pos;
 	float3 worldNormal = (Input.Normal - float3(0.5, 0.5, 0.5)) * 2.0;
-	float3 worldTangent = (Input.Tangent - float3(0.5, 0.5, 0.5)) * 2.0;
-	float3 worldBinormal = cross(worldNormal, worldTangent);
+	float3 worldTangent = (Input.Tangent.xyz - float3(0.5, 0.5, 0.5)) * 2.0;
+	float tangentHandedness = Input.Tangent.w * 2.0 - 1.0;
+	float3 worldBinormal = cross(worldNormal, worldTangent) * tangentHandedness;
 	float3 objectScale = float3(1.0, 1.0, 1.0);
 
 	// UV

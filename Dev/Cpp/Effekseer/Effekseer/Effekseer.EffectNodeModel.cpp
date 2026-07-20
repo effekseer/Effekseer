@@ -287,6 +287,7 @@ ModelRenderer::NodeParameter EffectNodeModel::GetNodeParameter(const Manager* ma
 	}
 
 	nodeParameter.UserData = GetRenderingUserData();
+	nodeParameter.RenderingCoordinateTransform = global->RenderingCoordinateTransform;
 	nodeParameter.RenderingTransform = global->RenderingTransform;
 
 	return nodeParameter;

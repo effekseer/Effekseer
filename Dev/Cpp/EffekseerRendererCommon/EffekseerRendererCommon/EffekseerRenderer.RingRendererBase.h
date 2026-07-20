@@ -292,6 +292,12 @@ protected:
 					   const ::Effekseer::SIMD::Mat44f& camera,
 					   ::Effekseer::SIMD::Mat43f& mat43)
 	{
+		const auto cameraForRendering = TransformCameraMatrixToEffectSpace(camera, parameter.RenderingCoordinateTransform);
+		const auto cameraFrontForRendering = TransformCameraVectorToEffectSpace(
+			::Effekseer::SIMD::Vec3f(renderer_->GetCameraFrontDirection()), parameter.RenderingCoordinateTransform);
+		const auto cameraPositionForRendering = TransformCameraVectorToEffectSpace(
+			::Effekseer::SIMD::Vec3f(renderer_->GetCameraPosition()), parameter.RenderingCoordinateTransform);
+
 		if (parameter.Billboard != ::Effekseer::BillboardType::Fixed)
 		{
 			Effekseer::SIMD::Vec3f s;
@@ -302,18 +308,18 @@ protected:
 			{
 				Effekseer::SIMD::Mat43f instMat = instanceParameter.SRTMatrix43;
 
-				ApplyViewOffset(instMat, camera, instanceParameter.ViewOffsetDistance);
+				ApplyViewOffset(instMat, cameraForRendering, instanceParameter.ViewOffsetDistance);
 
-				CalcBillboard(parameter.Billboard, mat43, s, R, F, instMat, renderer_->GetCameraFrontDirection(), instanceParameter.Direction);
+				CalcBillboard(parameter.Billboard, mat43, s, R, F, instMat, cameraFrontForRendering, instanceParameter.Direction);
 			}
 			else
 			{
-				CalcBillboard(parameter.Billboard, mat43, s, R, F, instanceParameter.SRTMatrix43, renderer_->GetCameraFrontDirection(), instanceParameter.Direction);
+				CalcBillboard(parameter.Billboard, mat43, s, R, F, instanceParameter.SRTMatrix43, cameraFrontForRendering, instanceParameter.Direction);
 			}
 
 			ApplyDepthParameters(mat43,
-								 renderer_->GetCameraFrontDirection(),
-								 renderer_->GetCameraPosition(),
+								 cameraFrontForRendering,
+								 cameraPositionForRendering,
 								 s,
 								 parameter.DepthParameterPtr,
 								 parameter.IsRightHand);
@@ -326,12 +332,12 @@ protected:
 
 			if (parameter.EnableViewOffset)
 			{
-				ApplyViewOffset(mat43, camera, instanceParameter.ViewOffsetDistance);
+				ApplyViewOffset(mat43, cameraForRendering, instanceParameter.ViewOffsetDistance);
 			}
 
 			ApplyDepthParameters(mat43,
-								 renderer_->GetCameraFrontDirection(),
-								 renderer_->GetCameraPosition(),
+								 cameraFrontForRendering,
+								 cameraPositionForRendering,
 								 parameter.DepthParameterPtr,
 								 parameter.IsRightHand);
 		}
@@ -722,8 +728,8 @@ protected:
 
 				const auto packedNormalCurrent = PackVector3DF(normalCurrent);
 				const auto packedNormalNext = PackVector3DF(normalNext);
-				const auto packedTangentCurrent = PackVector3DF(tangentCurrent);
-				const auto packedTangentNext = PackVector3DF(tangentNext);
+				const auto packedTangentCurrent = PackTangent(tangentCurrent, parameter.RenderingTransform.ReversesWinding);
+				const auto packedTangentNext = PackTangent(tangentNext, parameter.RenderingTransform.ReversesWinding);
 
 				vs[0].SetPackedNormal(packedNormalCurrent, FLIP_RGB);
 				vs[1].SetPackedNormal(packedNormalCurrent, FLIP_RGB);

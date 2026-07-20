@@ -54,25 +54,26 @@ struct main0_in
 };
 
 static inline __attribute__((always_inline))
-VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& _72)
+VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& _80)
 {
     VS_Output Output = VS_Output{ float4(0.0), float2(0.0), float4(0.0), float4(0.0), float4(0.0), float4(0.0) };
     float4 worldNormal = float4((Input.Normal.xyz - float3(0.5)) * 2.0, 0.0);
     float4 worldTangent = float4((Input.Tangent.xyz - float3(0.5)) * 2.0, 0.0);
-    float4 worldBinormal = float4(cross(worldNormal.xyz, worldTangent.xyz), 0.0);
+    float tangentHandedness = (Input.Tangent.w * 2.0) - 1.0;
+    float4 worldBinormal = float4(cross(worldNormal.xyz, worldTangent.xyz) * tangentHandedness, 0.0);
     float4 worldPos = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    Output.PosVS = _72.mCameraProj * worldPos;
+    Output.PosVS = _80.mCameraProj * worldPos;
     Output.Color = Input.Color;
     float2 uv1 = Input.UV1;
-    uv1.y = _72.mUVInversed.x + (_72.mUVInversed.y * uv1.y);
+    uv1.y = _80.mUVInversed.x + (_80.mUVInversed.y * uv1.y);
     Output.UV = uv1;
-    Output.ProjTangent = _72.mCameraProj * (worldPos + worldTangent);
-    Output.ProjBinormal = _72.mCameraProj * (worldPos + worldBinormal);
+    Output.ProjTangent = _80.mCameraProj * (worldPos + worldTangent);
+    Output.ProjBinormal = _80.mCameraProj * (worldPos + worldBinormal);
     Output.PosP = Output.PosVS;
     return Output;
 }
 
-vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& _72 [[buffer(0)]])
+vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& _80 [[buffer(0)]])
 {
     main0_out out = {};
     VS_Input Input;
@@ -82,7 +83,7 @@ vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& _72
     Input.Tangent = in.Input_Tangent;
     Input.UV1 = in.Input_UV1;
     Input.UV2 = in.Input_UV2;
-    VS_Output flattenTemp = _main(Input, _72);
+    VS_Output flattenTemp = _main(Input, _80);
     out.gl_Position = flattenTemp.PosVS;
     out._entryPointOutput_UV = flattenTemp.UV;
     out._entryPointOutput_ProjBinormal = flattenTemp.ProjBinormal;

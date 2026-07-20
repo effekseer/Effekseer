@@ -56,6 +56,12 @@ protected:
 			return;
 		}
 
+		const auto cameraForRendering = TransformCameraMatrixToEffectSpace(camera, parameter.RenderingCoordinateTransform);
+		const auto cameraFrontForRendering = TransformCameraVectorToEffectSpace(
+			::Effekseer::SIMD::Vec3f(renderer_->GetCameraFrontDirection()), parameter.RenderingCoordinateTransform);
+		const auto cameraPositionForRendering = TransformCameraVectorToEffectSpace(
+			::Effekseer::SIMD::Vec3f(renderer_->GetCameraPosition()), parameter.RenderingCoordinateTransform);
+
 		if (parameter.SmoothingType == Effekseer::TrailSmoothingType::On)
 		{
 			// Calculate rotations
@@ -76,7 +82,7 @@ protected:
 				}
 
 				auto U = SafeNormalize(axis);
-				auto F = ::Effekseer::SIMD::Vec3f(renderer_->GetCameraFrontDirection());
+				auto F = cameraFrontForRendering;
 				auto R = SafeNormalize(::Effekseer::SIMD::Vec3f::Cross(U, F));
 				U = ::Effekseer::SIMD::Vec3f::Cross(F, R);
 
@@ -121,12 +127,12 @@ protected:
 
 				if (parameter.EnableViewOffset == true)
 				{
-					ApplyViewOffset(mat, camera, param.ViewOffsetDistance);
+					ApplyViewOffset(mat, cameraForRendering, param.ViewOffsetDistance);
 				}
 
 				ApplyDepthParameters(mat,
-									 renderer_->GetCameraFrontDirection(),
-									 renderer_->GetCameraPosition(),
+									 cameraFrontForRendering,
+									 cameraPositionForRendering,
 									 // s,
 									 parameter.DepthParameterPtr,
 									 parameter.IsRightHand);
@@ -150,7 +156,7 @@ protected:
 
 				if (parameter.EnableViewOffset == true)
 				{
-					ApplyViewOffset(mat, camera, param.ViewOffsetDistance);
+					ApplyViewOffset(mat, cameraForRendering, param.ViewOffsetDistance);
 				}
 
 				::Effekseer::SIMD::Vec3f s;
@@ -161,8 +167,8 @@ protected:
 				ApplyDepthParameters(r,
 									 t,
 									 s,
-									 renderer_->GetCameraFrontDirection(),
-									 renderer_->GetCameraPosition(),
+									 cameraFrontForRendering,
+									 cameraPositionForRendering,
 									 parameter.DepthParameterPtr,
 									 parameter.IsRightHand);
 
@@ -398,7 +404,7 @@ protected:
 					/*
 					U = axis;
 
-					F = ::Effekseer::SIMD::Vec3f(renderer_->GetCameraFrontDirection()).Normalize();
+					F = cameraFrontForRendering.Normalize();
 					R = ::Effekseer::SIMD::Vec3f::Cross(U, F).Normalize();
 					F = ::Effekseer::SIMD::Vec3f::Cross(R, U).Normalize();
 
@@ -414,7 +420,7 @@ protected:
 					*/
 
 					U = axis;
-					F = renderer_->GetCameraFrontDirection();
+					F = cameraFrontForRendering;
 					R = SafeNormalize(::Effekseer::SIMD::Vec3f::Cross(U, F));
 
 					vl.Pos = ToStruct(-R * vl.Pos.X + pos);
@@ -445,7 +451,7 @@ protected:
 					}
 
 					Effekseer::Color normal_ = PackVector3DF(normal);
-					Effekseer::Color tangent_ = PackVector3DF(tangent);
+					Effekseer::Color tangent_ = PackTangent(tangent, parameter.RenderingTransform.ReversesWinding);
 
 					vl.SetPackedNormal(normal_, FLIP_RGB);
 					vm.SetPackedNormal(normal_, FLIP_RGB);

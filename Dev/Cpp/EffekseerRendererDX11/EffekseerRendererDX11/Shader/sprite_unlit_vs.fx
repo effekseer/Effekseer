@@ -70,7 +70,8 @@ VS_Output main(const VS_Input Input)
 #if defined(ENABLE_LIGHTING) || defined(ENABLE_DISTORTION)
 	float4 worldNormal = float4((Input.Normal.xyz - float3(0.5, 0.5, 0.5)) * 2.0, 0.0);
 	float4 worldTangent = float4((Input.Tangent.xyz - float3(0.5, 0.5, 0.5)) * 2.0, 0.0);
-	float4 worldBinormal = float4(cross(worldNormal.xyz, worldTangent.xyz), 0.0);
+	float tangentHandedness = Input.Tangent.w * 2.0 - 1.0;
+	float4 worldBinormal = float4(cross(worldNormal.xyz, worldTangent.xyz) * tangentHandedness, 0.0);
 #endif
 
 	float4 worldPos = {Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0};

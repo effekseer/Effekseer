@@ -103,7 +103,57 @@ void DirectionalBillboardParallelDirectionTest()
 	EXPECT_EQUAL_NEAR(Effekseer::SIMD::Vec3f::Dot(F, Effekseer::SIMD::Vec3f(0.0f, 1.0f, 0.0f)), 0.0f, 0.0001f);
 }
 
+void PackedTangentHandednessTest()
+{
+	using namespace Effekseer::SIMD;
+
+	const Vec3f transformedNormal(0.0f, 0.0f, 1.0f);
+	const Vec3f transformedTangent(-1.0f, 0.0f, 0.0f);
+	const auto regularTangent = EffekseerRenderer::PackTangent(transformedTangent, false);
+	const auto reflectedTangent = EffekseerRenderer::PackTangent(transformedTangent, true);
+
+	EXPECT_TRUE(regularTangent.A == 255);
+	EXPECT_TRUE(reflectedTangent.A == 0);
+
+	const float handedness = static_cast<float>(reflectedTangent.A) / 255.0f * 2.0f - 1.0f;
+	const auto reconstructedBinormal = Vec3f::Cross(transformedNormal, transformedTangent) * handedness;
+	const Vec3f expectedReflectedBinormal(0.0f, 1.0f, 0.0f);
+	EXPECT_EQUAL_NEAR(reconstructedBinormal.GetX(), expectedReflectedBinormal.GetX(), 0.0001f);
+	EXPECT_EQUAL_NEAR(reconstructedBinormal.GetY(), expectedReflectedBinormal.GetY(), 0.0001f);
+	EXPECT_EQUAL_NEAR(reconstructedBinormal.GetZ(), expectedReflectedBinormal.GetZ(), 0.0001f);
+}
+
+void RenderingCoordinateCameraTransformTest()
+{
+	using namespace Effekseer::SIMD;
+
+	Effekseer::Matrix44 coordinateMatrix;
+	coordinateMatrix.RotationX(0.7f);
+	const auto coordinateTransform = Effekseer::CalculateRenderingCoordinateTransform(coordinateMatrix);
+
+	const Vec3f externalFront(0.0f, 0.0f, -1.0f);
+	const auto internalFront = EffekseerRenderer::TransformCameraVectorToEffectSpace(externalFront, coordinateTransform);
+	const auto roundTrippedFront = EffekseerRenderer::TransformDirection(internalFront, coordinateTransform.Transform);
+	EXPECT_EQUAL_NEAR(roundTrippedFront.GetX(), externalFront.GetX(), 0.0001f);
+	EXPECT_EQUAL_NEAR(roundTrippedFront.GetY(), externalFront.GetY(), 0.0001f);
+	EXPECT_EQUAL_NEAR(roundTrippedFront.GetZ(), externalFront.GetZ(), 0.0001f);
+
+	const Mat44f externalCamera = Mat44f::RotationY(-0.35f) * Mat44f::Translation(1.0f, 2.0f, 3.0f);
+	const auto internalCamera = EffekseerRenderer::TransformCameraMatrixToEffectSpace(externalCamera, coordinateTransform);
+	const Vec3f internalPoint(2.0f, -3.0f, 4.0f);
+	const auto transformedBeforeCamera = Vec3f::Transform(
+		Vec3f::Transform(internalPoint, coordinateTransform.Transform), externalCamera);
+	const auto transformedWithInternalCamera = Vec3f::Transform(internalPoint, internalCamera);
+	EXPECT_EQUAL_NEAR(transformedWithInternalCamera.GetX(), transformedBeforeCamera.GetX(), 0.0001f);
+	EXPECT_EQUAL_NEAR(transformedWithInternalCamera.GetY(), transformedBeforeCamera.GetY(), 0.0001f);
+	EXPECT_EQUAL_NEAR(transformedWithInternalCamera.GetZ(), transformedBeforeCamera.GetZ(), 0.0001f);
+}
+
 TestRegister Runtime_VertexTest("Runtime.Vertex", []() -> void
 								{ VertexTest(); });
 TestRegister Runtime_DirectionalBillboardParallelDirectionTest("Runtime.DirectionalBillboardParallelDirection", []() -> void
-															  { DirectionalBillboardParallelDirectionTest(); });
+																  { DirectionalBillboardParallelDirectionTest(); });
+TestRegister Runtime_PackedTangentHandednessTest("Runtime.PackedTangentHandedness", []() -> void
+													 { PackedTangentHandednessTest(); });
+TestRegister Runtime_RenderingCoordinateCameraTransformTest("Runtime.RenderingCoordinateCameraTransform", []() -> void
+														 { RenderingCoordinateCameraTransformTest(); });

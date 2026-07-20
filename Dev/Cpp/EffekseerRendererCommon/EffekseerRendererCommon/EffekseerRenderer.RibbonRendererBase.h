@@ -55,6 +55,12 @@ protected:
 			return;
 		}
 
+		const auto cameraForRendering = TransformCameraMatrixToEffectSpace(camera, parameter.RenderingCoordinateTransform);
+		const auto cameraFrontForRendering = TransformCameraVectorToEffectSpace(
+			::Effekseer::SIMD::Vec3f(renderer_->GetCameraFrontDirection()), parameter.RenderingCoordinateTransform);
+		const auto cameraPositionForRendering = TransformCameraVectorToEffectSpace(
+			::Effekseer::SIMD::Vec3f(renderer_->GetCameraPosition()), parameter.RenderingCoordinateTransform);
+
 		// Calculate spline
 		if (parameter.SplineDivision > 1)
 		{
@@ -74,7 +80,7 @@ protected:
 
 					if (parameter.EnableViewOffset)
 					{
-						ApplyViewOffset(mat, camera, param.ViewOffsetDistance);
+						ApplyViewOffset(mat, cameraForRendering, param.ViewOffsetDistance);
 					}
 
 					::Effekseer::SIMD::Vec3f s;
@@ -85,8 +91,8 @@ protected:
 					ApplyDepthParameters(r,
 										 t,
 										 s,
-										 renderer_->GetCameraFrontDirection(),
-										 renderer_->GetCameraPosition(),
+										 cameraFrontForRendering,
+										 cameraPositionForRendering,
 										 parameter.DepthParameterPtr,
 										 parameter.IsRightHand);
 
@@ -99,7 +105,7 @@ protected:
 					::Effekseer::SIMD::Vec3f U;
 
 					U = ::Effekseer::SIMD::Vec3f(r.X.GetY(), r.Y.GetY(), r.X.GetY());
-					F = ::Effekseer::SIMD::Vec3f(-renderer_->GetCameraFrontDirection()).GetNormal();
+					F = -cameraFrontForRendering.GetNormal();
 					R = ::Effekseer::SIMD::Vec3f::Cross(U, F).GetNormal();
 					F = ::Effekseer::SIMD::Vec3f::Cross(R, U).GetNormal();
 
@@ -128,12 +134,12 @@ protected:
 
 					if (parameter.EnableViewOffset == true)
 					{
-						ApplyViewOffset(mat, camera, param.ViewOffsetDistance);
+						ApplyViewOffset(mat, cameraForRendering, param.ViewOffsetDistance);
 					}
 
 					ApplyDepthParameters(mat,
-										 renderer_->GetCameraFrontDirection(),
-										 renderer_->GetCameraPosition(),
+										 cameraFrontForRendering,
+										 cameraPositionForRendering,
 										 // s,
 										 parameter.DepthParameterPtr,
 										 parameter.IsRightHand);
@@ -207,7 +213,7 @@ protected:
 
 					if (parameter.EnableViewOffset)
 					{
-						ApplyViewOffset(mat, camera, param.ViewOffsetDistance);
+						ApplyViewOffset(mat, cameraForRendering, param.ViewOffsetDistance);
 					}
 
 					::Effekseer::SIMD::Vec3f s;
@@ -218,8 +224,8 @@ protected:
 					ApplyDepthParameters(r,
 										 t,
 										 s,
-										 renderer_->GetCameraFrontDirection(),
-										 renderer_->GetCameraPosition(),
+										 cameraFrontForRendering,
+										 cameraPositionForRendering,
 										 parameter.DepthParameterPtr,
 										 parameter.IsRightHand);
 
@@ -239,7 +245,7 @@ protected:
 
 						U = ::Effekseer::SIMD::Vec3f(r.X.GetY(), r.Y.GetY(), r.Z.GetY());
 
-						F = ::Effekseer::SIMD::Vec3f(-renderer_->GetCameraFrontDirection()).GetNormal();
+						F = -cameraFrontForRendering.GetNormal();
 						R = ::Effekseer::SIMD::Vec3f::Cross(U, F).GetNormal();
 						F = ::Effekseer::SIMD::Vec3f::Cross(R, U).GetNormal();
 
@@ -273,12 +279,12 @@ protected:
 
 						if (parameter.EnableViewOffset == true)
 						{
-							ApplyViewOffset(mat, camera, param.ViewOffsetDistance);
+							ApplyViewOffset(mat, cameraForRendering, param.ViewOffsetDistance);
 						}
 
 						ApplyDepthParameters(mat,
-											 renderer_->GetCameraFrontDirection(),
-											 renderer_->GetCameraPosition(),
+											 cameraFrontForRendering,
+											 cameraPositionForRendering,
 											 // s,
 											 parameter.DepthParameterPtr,
 											 parameter.IsRightHand);
@@ -377,7 +383,7 @@ protected:
 				if (isFirst_)
 				{
 					const auto packedNormal = PackVector3DF(normal);
-					const auto packedTangent = PackVector3DF(tangent);
+					const auto packedTangent = PackTangent(tangent, parameter.RenderingTransform.ReversesWinding);
 					vs_[0].SetPackedNormal(packedNormal, FLIP_RGB);
 					vs_[0].SetPackedTangent(packedTangent, FLIP_RGB);
 					vs_[1].SetPackedNormal(packedNormal, FLIP_RGB);
@@ -392,7 +398,7 @@ protected:
 				else if (isLast_)
 				{
 					const auto packedNormal = PackVector3DF(normal);
-					const auto packedTangent = PackVector3DF(tangent);
+					const auto packedTangent = PackTangent(tangent, parameter.RenderingTransform.ReversesWinding);
 					vs_[0].SetPackedNormal(packedNormal, FLIP_RGB);
 					vs_[0].SetPackedTangent(packedTangent, FLIP_RGB);
 					vs_[1].SetPackedNormal(packedNormal, FLIP_RGB);
@@ -407,7 +413,7 @@ protected:
 				else
 				{
 					const auto packedNormal = PackVector3DF(normal);
-					const auto packedTangent = PackVector3DF(tangent);
+					const auto packedTangent = PackTangent(tangent, parameter.RenderingTransform.ReversesWinding);
 					for (int offset : {0, 6})
 					{
 						vs_[0 + offset].SetPackedNormal(packedNormal, FLIP_RGB);

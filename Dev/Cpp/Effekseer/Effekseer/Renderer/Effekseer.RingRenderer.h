@@ -50,6 +50,7 @@ public:
 		bool EnableViewOffset = false;
 
 		RefPtr<RenderingUserData> UserData;
+		EffectRenderingTransformParameter RenderingCoordinateTransform;
 		EffectRenderingTransformParameter RenderingTransform;
 	};
 

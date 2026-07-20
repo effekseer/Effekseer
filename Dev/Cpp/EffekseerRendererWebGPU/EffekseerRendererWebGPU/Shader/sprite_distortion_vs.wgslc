@@ -118,7 +118,8 @@ fn v_14(Input : ptr<function, VS_Input>) -> VS_Output {
   worldNormal = vec4<f32>(v_15.x, v_15.y, v_15.z, 0.0f);
   let v_16 = (((*(Input)).Tangent.xyz - vec3<f32>(0.5f)) * 2.0f);
   worldTangent = vec4<f32>(v_16.x, v_16.y, v_16.z, 0.0f);
-  let v_17 = cross(worldNormal.xyz, worldTangent.xyz);
+  let tangentHandedness = (((*(Input)).Tangent.w * 2.0f) - 1.0f);
+  let v_17 = cross(worldNormal.xyz, worldTangent.xyz) * tangentHandedness;
   worldBinormal = vec4<f32>(v_17.x, v_17.y, v_17.z, 0.0f);
   worldPos = vec4<f32>((*(Input)).Pos.x, (*(Input)).Pos.y, (*(Input)).Pos.z, 1.0f);
   Output.PosVS = (v._72_mCameraProj * worldPos);

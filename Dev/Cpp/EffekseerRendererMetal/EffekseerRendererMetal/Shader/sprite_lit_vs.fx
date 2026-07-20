@@ -56,17 +56,18 @@ struct main0_in
 };
 
 static inline __attribute__((always_inline))
-VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& _73)
+VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& _81)
 {
     VS_Output Output = VS_Output{ float4(0.0), float4(0.0), float2(0.0), float3(0.0), float3(0.0), float3(0.0), float4(0.0) };
     float4 worldNormal = float4((Input.Normal.xyz - float3(0.5)) * 2.0, 0.0);
     float4 worldTangent = float4((Input.Tangent.xyz - float3(0.5)) * 2.0, 0.0);
-    float4 worldBinormal = float4(cross(worldNormal.xyz, worldTangent.xyz), 0.0);
+    float tangentHandedness = (Input.Tangent.w * 2.0) - 1.0;
+    float4 worldBinormal = float4(cross(worldNormal.xyz, worldTangent.xyz) * tangentHandedness, 0.0);
     float4 worldPos = float4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    Output.PosVS = _73.mCameraProj * worldPos;
+    Output.PosVS = _81.mCameraProj * worldPos;
     Output.Color = Input.Color;
     float2 uv1 = Input.UV1;
-    uv1.y = _73.mUVInversed.x + (_73.mUVInversed.y * uv1.y);
+    uv1.y = _81.mUVInversed.x + (_81.mUVInversed.y * uv1.y);
     Output.UV = uv1;
     Output.WorldN = worldNormal.xyz;
     Output.WorldB = worldBinormal.xyz;
@@ -75,7 +76,7 @@ VS_Output _main(VS_Input Input, constant VS_ConstantBuffer& _73)
     return Output;
 }
 
-vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& _73 [[buffer(0)]])
+vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& _81 [[buffer(0)]])
 {
     main0_out out = {};
     VS_Input Input;
@@ -85,7 +86,7 @@ vertex main0_out main0(main0_in in [[stage_in]], constant VS_ConstantBuffer& _73
     Input.Tangent = in.Input_Tangent;
     Input.UV1 = in.Input_UV1;
     Input.UV2 = in.Input_UV2;
-    VS_Output flattenTemp = _main(Input, _73);
+    VS_Output flattenTemp = _main(Input, _81);
     out.gl_Position = flattenTemp.PosVS;
     out._entryPointOutput_Color = flattenTemp.Color;
     out._entryPointOutput_UV = flattenTemp.UV;

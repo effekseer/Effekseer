@@ -27,7 +27,7 @@ layout(set = 0, binding = 0, std140) uniform VS_ConstantBuffer
     layout(row_major) mat4 mCameraProj;
     vec4 mUVInversed;
     vec4 mflipbookParameter;
-} _73;
+} _81;
 
 layout(location = 0) in vec3 Input_Pos;
 layout(location = 1) in vec4 Input_Color;
@@ -47,12 +47,13 @@ VS_Output _main(VS_Input Input)
     VS_Output Output = VS_Output(vec4(0.0), vec4(0.0), vec2(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec4(0.0));
     vec4 worldNormal = vec4((Input.Normal.xyz - vec3(0.5)) * 2.0, 0.0);
     vec4 worldTangent = vec4((Input.Tangent.xyz - vec3(0.5)) * 2.0, 0.0);
-    vec4 worldBinormal = vec4(cross(worldNormal.xyz, worldTangent.xyz), 0.0);
+    float tangentHandedness = (Input.Tangent.w * 2.0) - 1.0;
+    vec4 worldBinormal = vec4(cross(worldNormal.xyz, worldTangent.xyz) * tangentHandedness, 0.0);
     vec4 worldPos = vec4(Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0);
-    Output.PosVS = worldPos * _73.mCameraProj;
+    Output.PosVS = worldPos * _81.mCameraProj;
     Output.Color = Input.Color;
     vec2 uv1 = Input.UV1;
-    uv1.y = _73.mUVInversed.x + (_73.mUVInversed.y * uv1.y);
+    uv1.y = _81.mUVInversed.x + (_81.mUVInversed.y * uv1.y);
     Output.UV = uv1;
     Output.WorldN = worldNormal.xyz;
     Output.WorldB = worldBinormal.xyz;

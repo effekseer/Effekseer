@@ -279,7 +279,7 @@ static const char g_material_sprite_vs_src_pre[] =
 LAYOUT(0) IN vec4 atPosition;
 LAYOUT(1) IN vec4 atColor;
 LAYOUT(2) IN vec3 atNormal;
-LAYOUT(3) IN vec3 atTangent;
+LAYOUT(3) IN vec4 atTangent;
 LAYOUT(4) IN vec2 atTexCoord;
 LAYOUT(5) IN vec2 atTexCoord2;
 LAYOUT(6) IN vec2 atParticleTime;
@@ -388,8 +388,9 @@ void main() {
 
 	// NBT
 	vec3 worldNormal = (atNormal - vec3(0.5, 0.5, 0.5)) * 2.0;
-	vec3 worldTangent = (atTangent - vec3(0.5, 0.5, 0.5)) * 2.0;
-	vec3 worldBinormal = cross(worldNormal, worldTangent);
+	vec3 worldTangent = (atTangent.xyz - vec3(0.5, 0.5, 0.5)) * 2.0;
+	float tangentHandedness = atTangent.w * 2.0 - 1.0;
+	vec3 worldBinormal = cross(worldNormal, worldTangent) * tangentHandedness;
 
 	v_WorldN_PX.xyz = worldNormal;
 	v_WorldB_PY.xyz = worldBinormal;

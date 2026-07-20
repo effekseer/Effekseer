@@ -8,6 +8,23 @@
 namespace
 {
 
+void ExpectOrthogonalLinearPart(const Effekseer::SIMD::Mat43f& matrix)
+{
+	const auto value = Effekseer::SIMD::ToStruct(matrix);
+	for (int32_t row = 0; row < 3; row++)
+	{
+		for (int32_t other = row; other < 3; other++)
+		{
+			float dot = 0.0f;
+			for (int32_t column = 0; column < 3; column++)
+			{
+				dot += value.Value[row][column] * value.Value[other][column];
+			}
+			EXPECT_EQUAL_NEAR(dot, row == other ? 1.0f : 0.0f, 0.0001f);
+		}
+	}
+}
+
 void TestEffectFlip()
 {
 	{
@@ -114,6 +131,35 @@ void TestEffectFlip()
 			Effekseer::SIMD::Vec3f(2.0f, 3.0f, 4.0f),
 			Effekseer::SIMD::Mat43f::RotationZXY(0.4f, -0.2f, 0.7f),
 			Effekseer::SIMD::Vec3f(10.0f, 20.0f, 30.0f))));
+
+	// GlobalMatrix and BaseMatrix can each be a proper SRT while their product
+	// contains shear. The resulting emitter flip must still be a rigid reflection.
+	const auto globalMatrix = Effekseer::SIMD::Mat43f::SRT(
+		Effekseer::SIMD::Vec3f(2.0f, 1.0f, 1.0f),
+		Effekseer::SIMD::Mat43f::RotationZ(0.7f),
+		Effekseer::SIMD::Vec3f(5.0f, 6.0f, 7.0f));
+	const auto baseMatrix = Effekseer::SIMD::Mat43f::SRT(
+		Effekseer::SIMD::Vec3f(1.0f, 3.0f, 1.0f),
+		Effekseer::SIMD::Mat43f::RotationX(0.4f),
+		Effekseer::SIMD::Vec3f(-2.0f, 1.0f, 4.0f));
+	const auto shearedRoot = globalMatrix * baseMatrix;
+	EXPECT_TRUE(!Effekseer::SIMD::ToStruct(shearedRoot).IsProperSRT());
+	const auto shearedRootFlip = Effekseer::CalculateEffectRenderingTransform(shearedRoot, {true, false, false});
+	ExpectOrthogonalLinearPart(shearedRootFlip.Transform);
+	EXPECT_TRUE(shearedRootFlip.ReversesWinding);
+
+	const auto rootOrigin = Effekseer::SIMD::Vec3f::Transform(Effekseer::SIMD::Vec3f(0.0f), shearedRoot);
+	const auto fixedOrigin = Effekseer::SIMD::Vec3f::Transform(rootOrigin, shearedRootFlip.Transform);
+	EXPECT_EQUAL_NEAR(fixedOrigin.GetX(), rootOrigin.GetX(), 0.0001f);
+	EXPECT_EQUAL_NEAR(fixedOrigin.GetY(), rootOrigin.GetY(), 0.0001f);
+	EXPECT_EQUAL_NEAR(fixedOrigin.GetZ(), rootOrigin.GetZ(), 0.0001f);
+
+	const Effekseer::SIMD::Vec3f arbitraryPoint(3.0f, -4.0f, 8.0f);
+	const auto reflectedPoint = Effekseer::SIMD::Vec3f::Transform(arbitraryPoint, shearedRootFlip.Transform);
+	const auto reflectedTwice = Effekseer::SIMD::Vec3f::Transform(reflectedPoint, shearedRootFlip.Transform);
+	EXPECT_EQUAL_NEAR(reflectedTwice.GetX(), arbitraryPoint.GetX(), 0.0001f);
+	EXPECT_EQUAL_NEAR(reflectedTwice.GetY(), arbitraryPoint.GetY(), 0.0001f);
+	EXPECT_EQUAL_NEAR(reflectedTwice.GetZ(), arbitraryPoint.GetZ(), 0.0001f);
 }
 
 void TestRenderingCoordinateTransform()
@@ -186,10 +232,12 @@ void TestRenderingCoordinateTransform()
 	{
 	public:
 		std::vector<Effekseer::EffectRenderingTransformParameter> Transforms;
+		std::vector<Effekseer::EffectRenderingTransformParameter> CoordinateTransforms;
 
 		void BeginRendering(const NodeParameter& parameter, int32_t count, void* userData) override
 		{
 			Transforms.emplace_back(parameter.RenderingTransform);
+			CoordinateTransforms.emplace_back(parameter.RenderingCoordinateTransform);
 		}
 	};
 
@@ -208,28 +256,49 @@ void TestRenderingCoordinateTransform()
 	playParameter.Flip = {true, false, false};
 	const auto handle = manager->Play(playParameter);
 	EXPECT_TRUE(handle >= 0);
+	Effekseer::Matrix43 baseMatrix;
+	Effekseer::Matrix43 baseRotation;
+	baseRotation.RotationZ(0.6f);
+	baseMatrix.SetSRT(
+		{1.0f, 3.0f, 2.0f},
+		baseRotation,
+		{-2.0f, 1.0f, 4.0f});
+	manager->SetBaseMatrix(handle, baseMatrix);
 	manager->Update(0.0f);
 
 	Effekseer::Manager::DrawParameter drawParameter;
 	manager->DrawHandle(handle, drawParameter);
 	EXPECT_TRUE(!spriteRenderer->Transforms.empty());
 	const auto firstDrawTransform = spriteRenderer->Transforms.front();
+	const auto firstCoordinateTransform = spriteRenderer->CoordinateTransforms.front();
 	spriteRenderer->Transforms.clear();
+	spriteRenderer->CoordinateTransforms.clear();
 
 	drawParameter.RenderingCoordinateMatrix = reflectY;
 	manager->DrawHandle(handle, drawParameter);
 	EXPECT_TRUE(!spriteRenderer->Transforms.empty());
 	const auto reflectedDrawTransform = spriteRenderer->Transforms.front();
+	const auto reflectedCoordinateTransform = spriteRenderer->CoordinateTransforms.front();
 	spriteRenderer->Transforms.clear();
+	spriteRenderer->CoordinateTransforms.clear();
 
 	drawParameter.RenderingCoordinateMatrix = identity;
 	manager->DrawHandle(handle, drawParameter);
 	EXPECT_TRUE(!spriteRenderer->Transforms.empty());
 	const auto secondIdentityDrawTransform = spriteRenderer->Transforms.front();
+	const auto secondIdentityCoordinateTransform = spriteRenderer->CoordinateTransforms.front();
 
 	EXPECT_TRUE(firstDrawTransform.ReversesWinding);
+	EXPECT_TRUE(!firstCoordinateTransform.IsEnabled);
+	ExpectOrthogonalLinearPart(firstDrawTransform.Transform);
 	EXPECT_TRUE(!reflectedDrawTransform.ReversesWinding);
+	EXPECT_TRUE(reflectedCoordinateTransform.IsEnabled);
+	EXPECT_TRUE(reflectedCoordinateTransform.ReversesWinding);
+	EXPECT_TRUE(Effekseer::SIMD::Mat43f::Equal(
+		reflectYTransform.Transform,
+		reflectedCoordinateTransform.Transform));
 	EXPECT_TRUE(secondIdentityDrawTransform.ReversesWinding);
+	EXPECT_TRUE(!secondIdentityCoordinateTransform.IsEnabled);
 	EXPECT_TRUE(Effekseer::SIMD::Mat43f::Equal(
 		firstDrawTransform.Transform,
 		secondIdentityDrawTransform.Transform));

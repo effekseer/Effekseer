@@ -58,6 +58,7 @@ public:
 		SIMD::Mat43f ExternalModelTransform = SIMD::Mat43f::Identity;
 
 		RefPtr<RenderingUserData> UserData;
+		EffectRenderingTransformParameter RenderingCoordinateTransform;
 		EffectRenderingTransformParameter RenderingTransform;
 	};
 

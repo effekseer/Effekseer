@@ -102,6 +102,7 @@ void EffectNodeTrack::BeginRendering(int32_t count, Manager* manager, const Inst
 		m_nodeParameter.EnableViewOffset = (TranslationParam.TranslationType == ParameterTranslationType_ViewOffset);
 		m_nodeParameter.SmoothingType = SmoothingType;
 		m_nodeParameter.UserData = GetRenderingUserData();
+		m_nodeParameter.RenderingCoordinateTransform = global->RenderingCoordinateTransform;
 		m_nodeParameter.RenderingTransform = global->RenderingTransform;
 		renderer->BeginRendering(m_nodeParameter, count, userData);
 	}

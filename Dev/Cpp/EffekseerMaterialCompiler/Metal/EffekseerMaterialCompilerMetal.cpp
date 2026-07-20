@@ -283,7 +283,7 @@ struct ShaderInput1 {
   float4 atPosition [[attribute(0)]];
   float4 atColor [[attribute(1)]];
   float3 atNormal [[attribute(2)]];
-  float3 atTangent [[attribute(3)]];
+  float4 atTangent [[attribute(3)]];
   float2 atTexCoord [[attribute(4)]];
   float2 atTexCoord2 [[attribute(5)]];
   float2 atParticleTime [[attribute(6)]];
@@ -365,8 +365,9 @@ vertex ShaderOutput1 main0 (ShaderInput1 i [[stage_in]], constant ShaderUniform1
 
     // NBT
     float3 worldNormal = (i.atNormal - float3(0.5, 0.5, 0.5)) * 2.0;
-    float3 worldTangent = (i.atTangent - float3(0.5, 0.5, 0.5)) * 2.0;
-    float3 worldBinormal = cross(worldNormal, worldTangent);
+    float3 worldTangent = (i.atTangent.xyz - float3(0.5, 0.5, 0.5)) * 2.0;
+    float tangentHandedness = i.atTangent.w * 2.0 - 1.0;
+    float3 worldBinormal = cross(worldNormal, worldTangent) * tangentHandedness;
 
     o.v_WorldN = worldNormal;
     o.v_WorldB = worldBinormal;
