@@ -39,7 +39,7 @@ private:
 	bool listening_ = false;
 
 	std::thread thread_;
-	std::mutex clientsMutex_;
+	mutable std::mutex clientsMutex_;
 
 	std::vector<std::unique_ptr<InternalClient>> clients_;
 	std::map<std::u16string, EffectParameter> effects_;

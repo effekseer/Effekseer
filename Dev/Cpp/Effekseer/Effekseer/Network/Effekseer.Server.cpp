@@ -254,6 +254,7 @@ void ServerImplemented::SetMaterialPath(const char16_t* materialPath)
 
 bool ServerImplemented::IsConnected() const
 {
+	std::lock_guard<std::mutex> lock(clientsMutex_);
 	return clients_.size() > 0;
 }
 

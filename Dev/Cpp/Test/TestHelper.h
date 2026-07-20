@@ -57,19 +57,31 @@ struct TestRegister
 	}
 };
 
-#define EXPECT_TRUE(condition)                                          \
-	if (!(condition))                                                   \
-	{                                                                   \
-		printf("%s(%d): FAILED: " #condition "\n", __FILE__, __LINE__); \
-		abort();                                                        \
-	}
+[[noreturn]] inline void FailTestExpectation(const char* file, int line, const char* expression)
+{
+	fprintf(stderr, "%s(%d): FAILED: %s\n", file, line, expression);
+	fflush(stdout);
+	fflush(stderr);
+	abort();
+}
 
-#define EXPECT_EQUAL_NEAR(v1, v2, error)                                 \
-	if (!(std::abs(v1 - v2) <= error))                                   \
-	{                                                                    \
-		printf("%s(%d): FAILED: " #v1 " " #v2 "\n", __FILE__, __LINE__); \
-		abort();                                                         \
-	}
+#define EXPECT_TRUE(condition)                              \
+	do                                                        \
+	{                                                         \
+		if (!(condition))                                       \
+		{                                                       \
+			FailTestExpectation(__FILE__, __LINE__, #condition); \
+		}                                                       \
+	} while (false);
+
+#define EXPECT_EQUAL_NEAR(v1, v2, error)                       \
+	do                                                           \
+	{                                                            \
+		if (!(std::abs(v1 - v2) <= error))                         \
+		{                                                        \
+			FailTestExpectation(__FILE__, __LINE__, #v1 " " #v2); \
+		}                                                        \
+	} while (false);
 
 struct Performance
 {
