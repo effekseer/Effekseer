@@ -5,6 +5,7 @@
 #include "../TestHelper.h"
 
 #include <array>
+#include <vector>
 
 void TestGeometryUtility()
 {
@@ -414,6 +415,129 @@ void TestEffectFlip()
 			Effekseer::SIMD::Vec3f(10.0f, 20.0f, 30.0f))));
 }
 
+void TestRenderingCoordinateTransform()
+{
+	Effekseer::Matrix43 properSRT;
+	properSRT.Indentity();
+	EXPECT_TRUE(properSRT.IsProperSRT());
+
+	Effekseer::Matrix43 improperSRT;
+	improperSRT.Scaling(-1.0f, 1.0f, 1.0f);
+	EXPECT_TRUE(!improperSRT.IsProperSRT());
+	improperSRT.Scaling(0.0f, 1.0f, 1.0f);
+	EXPECT_TRUE(!improperSRT.IsProperSRT());
+	improperSRT.Indentity();
+	improperSRT.Value[0][1] = 0.25f;
+	EXPECT_TRUE(!improperSRT.IsProperSRT());
+
+	Effekseer::Matrix44 identity;
+	EXPECT_TRUE(Effekseer::IsValidRenderingCoordinateMatrix(identity));
+	const auto identityTransform = Effekseer::CalculateRenderingCoordinateTransform(identity);
+	EXPECT_TRUE(!identityTransform.IsEnabled);
+	EXPECT_TRUE(!identityTransform.ReversesWinding);
+
+	Effekseer::Matrix44 reflectY;
+	reflectY.Scaling(1.0f, -1.0f, 1.0f);
+	EXPECT_TRUE(Effekseer::IsValidRenderingCoordinateMatrix(reflectY));
+	const auto reflectYTransform = Effekseer::CalculateRenderingCoordinateTransform(reflectY);
+	EXPECT_TRUE(reflectYTransform.IsEnabled);
+	EXPECT_TRUE(reflectYTransform.ReversesWinding);
+
+	Effekseer::Matrix44 exchangeYZ;
+	exchangeYZ.Values[1][1] = 0.0f;
+	exchangeYZ.Values[1][2] = 1.0f;
+	exchangeYZ.Values[2][1] = 1.0f;
+	exchangeYZ.Values[2][2] = 0.0f;
+	EXPECT_TRUE(Effekseer::IsValidRenderingCoordinateMatrix(exchangeYZ));
+	EXPECT_TRUE(Effekseer::CalculateRenderingCoordinateTransform(exchangeYZ).ReversesWinding);
+
+	Effekseer::Matrix44 translated;
+	translated.Translation(1.0f, 2.0f, 3.0f);
+	EXPECT_TRUE(!Effekseer::IsValidRenderingCoordinateMatrix(translated));
+
+	Effekseer::Matrix44 scaled;
+	scaled.Scaling(1.0f, 2.0f, 1.0f);
+	EXPECT_TRUE(!Effekseer::IsValidRenderingCoordinateMatrix(scaled));
+
+	Effekseer::Matrix44 sheared;
+	sheared.Values[0][1] = 0.25f;
+	EXPECT_TRUE(!Effekseer::IsValidRenderingCoordinateMatrix(sheared));
+
+	const auto rootMatrix = Effekseer::SIMD::Mat43f::SRT(
+		Effekseer::SIMD::Vec3f(2.0f, 3.0f, 4.0f),
+		Effekseer::SIMD::Mat43f::RotationZXY(0.4f, -0.2f, 0.7f),
+		Effekseer::SIMD::Vec3f(10.0f, 20.0f, 30.0f));
+	const auto effectTransform = Effekseer::CalculateEffectRenderingTransform(rootMatrix, {true, false, false});
+	const auto composedTransform = Effekseer::ComposeRenderingTransforms(effectTransform, reflectYTransform);
+	EXPECT_TRUE(composedTransform.IsEnabled);
+	EXPECT_TRUE(!composedTransform.ReversesWinding);
+
+	const Effekseer::SIMD::Vec3f point(3.0f, 5.0f, 7.0f);
+	const auto composedPoint = Effekseer::SIMD::Vec3f::Transform(point, composedTransform.Transform);
+	const auto sequentialPoint = Effekseer::SIMD::Vec3f::Transform(
+		Effekseer::SIMD::Vec3f::Transform(point, effectTransform.Transform),
+		reflectYTransform.Transform);
+	EXPECT_EQUAL_NEAR(composedPoint.GetX(), sequentialPoint.GetX(), 0.0001f);
+	EXPECT_EQUAL_NEAR(composedPoint.GetY(), sequentialPoint.GetY(), 0.0001f);
+	EXPECT_EQUAL_NEAR(composedPoint.GetZ(), sequentialPoint.GetZ(), 0.0001f);
+
+	class CaptureSpriteRenderer final : public Effekseer::SpriteRenderer
+	{
+	public:
+		std::vector<Effekseer::EffectRenderingTransformParameter> Transforms;
+
+		void BeginRendering(const NodeParameter& parameter, int32_t count, void* userData) override
+		{
+			Transforms.emplace_back(parameter.RenderingTransform);
+		}
+	};
+
+	auto manager = Effekseer::Manager::Create(256);
+	auto spriteRenderer = Effekseer::MakeRefPtr<CaptureSpriteRenderer>();
+	manager->SetSpriteRenderer(spriteRenderer);
+	const auto rootPath = GetDirectoryPathAsU16(__FILE__) + u"../../../../";
+	auto effect = Effekseer::Effect::Create(manager, (rootPath + u"TestData/Effects/Update_17x/Sprite.efkefc").c_str());
+	EXPECT_TRUE(effect != nullptr);
+
+	Effekseer::Manager::PlayParameter playParameter;
+	playParameter.Effect = effect;
+	playParameter.Position = {10.0f, 20.0f, 30.0f};
+	playParameter.Rotation = {0.2f, 0.4f, -0.3f};
+	playParameter.Scale = {2.0f, 3.0f, 4.0f};
+	playParameter.Flip = {true, false, false};
+	const auto handle = manager->Play(playParameter);
+	EXPECT_TRUE(handle >= 0);
+	manager->Update(0.0f);
+
+	Effekseer::Manager::DrawParameter drawParameter;
+	manager->DrawHandle(handle, drawParameter);
+	EXPECT_TRUE(!spriteRenderer->Transforms.empty());
+	const auto firstDrawTransform = spriteRenderer->Transforms.front();
+	spriteRenderer->Transforms.clear();
+
+	drawParameter.RenderingCoordinateMatrix = reflectY;
+	manager->DrawHandle(handle, drawParameter);
+	EXPECT_TRUE(!spriteRenderer->Transforms.empty());
+	const auto reflectedDrawTransform = spriteRenderer->Transforms.front();
+	spriteRenderer->Transforms.clear();
+
+	drawParameter.RenderingCoordinateMatrix = identity;
+	manager->DrawHandle(handle, drawParameter);
+	EXPECT_TRUE(!spriteRenderer->Transforms.empty());
+	const auto secondIdentityDrawTransform = spriteRenderer->Transforms.front();
+
+	EXPECT_TRUE(firstDrawTransform.ReversesWinding);
+	EXPECT_TRUE(!reflectedDrawTransform.ReversesWinding);
+	EXPECT_TRUE(secondIdentityDrawTransform.ReversesWinding);
+	EXPECT_TRUE(Effekseer::SIMD::Mat43f::Equal(
+		firstDrawTransform.Transform,
+		secondIdentityDrawTransform.Transform));
+	EXPECT_TRUE(Effekseer::SIMD::Mat43f::Equal(
+		firstDrawTransform.Transform * reflectYTransform.Transform,
+		reflectedDrawTransform.Transform));
+	manager->StopAllEffects();
+}
+
 TestRegister Misc_TestGeometryUtility("Misc.TestGeometryUtility", []() -> void
 									  { TestGeometryUtility(); });
 
@@ -422,3 +546,6 @@ TestRegister Misc_TestExternalCollisionUsesSurfaceNormal("Misc.TestExternalColli
 
 TestRegister Misc_TestEffectFlip("Misc.TestEffectFlip", []() -> void
 								   { TestEffectFlip(); });
+
+TestRegister Misc_TestRenderingCoordinateTransform("Misc.TestRenderingCoordinateTransform", []() -> void
+												 { TestRenderingCoordinateTransform(); });

@@ -58,6 +58,7 @@ private:
 	Effekseer::ManagerRef manager_;
 	EffekseerRenderer::RendererRef renderer_ = nullptr;
 	std::vector<Effekseer::Handle> effectHandles_;
+	Effekseer::Matrix44 renderingCoordinateMatrix_;
 
 	void CreateBackgroundPattern(int width, int height, uint32_t* pixels);
 
@@ -159,6 +160,16 @@ public:
 	}
 
 	EffekseerRenderer::RendererRef GetRenderer() const;
+
+	void SetRenderingCoordinateMatrix(const Effekseer::Matrix44& matrix)
+	{
+		renderingCoordinateMatrix_ = matrix;
+	}
+
+	const Effekseer::Matrix44& GetRenderingCoordinateMatrix() const
+	{
+		return renderingCoordinateMatrix_;
+	}
 
 	virtual void GenerateGroundDepth();
 

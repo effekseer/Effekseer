@@ -210,9 +210,19 @@ private:
 
 	void ExecuteSounds();
 
-	void StoreSortingDrawSets(const Manager::DrawParameter& drawParameter);
+	void StoreSortingDrawSets(
+		const Manager::DrawParameter& drawParameter,
+		const EffectRenderingTransformParameter& renderingCoordinateTransform);
 
-	static bool CanDraw(const DrawSet& drawSet, const Manager::DrawParameter& drawParameter, const std::array<Plane, 6>& planes);
+	static bool CanDraw(
+		const DrawSet& drawSet,
+		const Manager::DrawParameter& drawParameter,
+		const std::array<Plane, 6>& planes,
+		const EffectRenderingTransformParameter& renderingCoordinateTransform);
+
+	static void ApplyRenderingCoordinateTransform(
+		DrawSet& drawSet,
+		const EffectRenderingTransformParameter& renderingCoordinateTransform);
 
 public:
 	ManagerImplemented(int instance_max, bool autoFlip);
@@ -431,7 +441,11 @@ private:
 	void Preupdate(DrawSet& drawSet);
 
 	//! whether container is disabled while rendering because of a distance between the effect and a camera
-	bool IsClippedWithDepth(DrawSet& drawSet, InstanceContainer* container, const Manager::DrawParameter& drawParameter);
+	bool IsClippedWithDepth(
+		DrawSet& drawSet,
+		InstanceContainer* container,
+		const Manager::DrawParameter& drawParameter,
+		const EffectRenderingTransformParameter& renderingCoordinateTransform);
 
 	void StopWithoutRemoveDrawSet(DrawSet& drawSet);
 

@@ -10,6 +10,7 @@
 #include "Effekseer.ManagerImplemented.h"
 #include "Effekseer.Setting.h"
 #include "Model/Effekseer.Model.h"
+#include "SIMD/Utils.h"
 
 namespace Effekseer
 {
@@ -64,6 +65,9 @@ SIMD::Mat43f TimeSeriesMatrix::Get(float time) const
 	SIMD::Vec3f s_previous;
 	SIMD::Mat43f r_previous;
 	SIMD::Vec3f t_previous;
+
+	EFK_ASSERT(SIMD::ToStruct(previous_).IsProperSRT());
+	EFK_ASSERT(SIMD::ToStruct(current_).IsProperSRT());
 
 	previous_.GetSRT(s_previous, r_previous, t_previous);
 

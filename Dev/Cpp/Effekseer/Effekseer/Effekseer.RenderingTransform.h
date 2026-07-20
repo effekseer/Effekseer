@@ -1,6 +1,7 @@
 #ifndef __EFFEKSEER_RENDERING_TRANSFORM_H__
 #define __EFFEKSEER_RENDERING_TRANSFORM_H__
 
+#include "Effekseer.Matrix44.h"
 #include "SIMD/Mat43f.h"
 
 namespace Effekseer
@@ -42,6 +43,28 @@ struct EffectRenderingTransformParameter
 EffectRenderingTransformParameter CalculateEffectRenderingTransform(
 	const SIMD::Mat43f& rootMatrix,
 	const EffectFlipParameter& flip);
+
+/**
+	@brief Returns whether a matrix can be used as a rendering coordinate transform.
+
+	A rendering coordinate transform is restricted to an orthogonal axis transform.
+	It may exchange or reflect axes, but must not contain translation, scale, shear,
+	or perspective.
+*/
+bool IsValidRenderingCoordinateMatrix(const Matrix44& matrix, float epsilon = 0.0001f);
+
+/**
+	@brief Converts a draw-path coordinate matrix to the internal renderer parameter.
+	@note The matrix must satisfy IsValidRenderingCoordinateMatrix().
+*/
+EffectRenderingTransformParameter CalculateRenderingCoordinateTransform(const Matrix44& matrix);
+
+/**
+	@brief Composes rendering transforms in row-vector application order.
+*/
+EffectRenderingTransformParameter ComposeRenderingTransforms(
+	const EffectRenderingTransformParameter& first,
+	const EffectRenderingTransformParameter& second);
 
 } // namespace Effekseer
 

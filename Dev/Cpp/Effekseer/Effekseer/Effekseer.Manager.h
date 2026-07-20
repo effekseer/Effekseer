@@ -104,6 +104,14 @@ public:
 	struct DrawParameter
 	{
 		Matrix44 ViewProjectionMatrix;
+
+		/**
+			@brief
+			\~English An orthogonal coordinate transform applied only to this draw call
+			\~Japanese この描画呼び出しだけに適用する直交座標系変換
+		*/
+		Matrix44 RenderingCoordinateMatrix;
+
 		float ZNear = 0.0f;
 		float ZFar = 0.0f;
 

@@ -72,6 +72,7 @@ public:
 	SIMD::Mat44f EffectGlobalMatrix;
 	// Used for collision detection by kill rules
 	SIMD::Mat44f InvertedEffectGlobalMatrix;
+	EffectRenderingTransformParameter EffectRenderingTransform;
 	EffectRenderingTransformParameter RenderingTransform;
 
 	bool IsUsingGpuParticles = false;

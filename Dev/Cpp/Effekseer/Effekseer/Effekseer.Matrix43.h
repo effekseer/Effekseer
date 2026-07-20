@@ -237,6 +237,13 @@ public:
 	bool IsValid() const;
 
 	/**
+		@brief
+		\~English Check whether this matrix is a non-singular SRT with a proper rotation and no shear.
+		\~Japanese この行列が特異でなく、proper rotationを持ち、shearを含まないSRTか確認する。
+	*/
+	bool IsProperSRT(float epsilon = 0.0001f) const;
+
+	/**
 	@if English
 		@brief	Matrix multiplication
 		@param	out	[out]	result

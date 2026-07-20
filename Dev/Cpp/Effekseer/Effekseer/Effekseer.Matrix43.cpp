@@ -527,6 +527,54 @@ bool Matrix43::IsValid() const
 	return true;
 }
 
+bool Matrix43::IsProperSRT(float epsilon) const
+{
+	if (!IsValid())
+	{
+		return false;
+	}
+
+	float axes[3][3];
+	for (int32_t row = 0; row < 3; row++)
+	{
+		const float lengthSquared =
+			Value[row][0] * Value[row][0] +
+			Value[row][1] * Value[row][1] +
+			Value[row][2] * Value[row][2];
+		if (lengthSquared <= epsilon * epsilon)
+		{
+			return false;
+		}
+
+		const float inverseLength = 1.0f / std::sqrt(lengthSquared);
+		for (int32_t column = 0; column < 3; column++)
+		{
+			axes[row][column] = Value[row][column] * inverseLength;
+		}
+	}
+
+	for (int32_t row = 0; row < 3; row++)
+	{
+		for (int32_t other = row + 1; other < 3; other++)
+		{
+			const float dot =
+				axes[row][0] * axes[other][0] +
+				axes[row][1] * axes[other][1] +
+				axes[row][2] * axes[other][2];
+			if (std::abs(dot) > epsilon)
+			{
+				return false;
+			}
+		}
+	}
+
+	const float determinant =
+		axes[0][0] * (axes[1][1] * axes[2][2] - axes[1][2] * axes[2][1]) -
+		axes[0][1] * (axes[1][0] * axes[2][2] - axes[1][2] * axes[2][0]) +
+		axes[0][2] * (axes[1][0] * axes[2][1] - axes[1][1] * axes[2][0]);
+	return std::abs(determinant - 1.0f) <= epsilon;
+}
+
 void Matrix43::Multiple(Matrix43& out, const Matrix43& in1, const Matrix43& in2)
 {
 #if defined(EFK_SSE2)

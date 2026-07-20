@@ -414,6 +414,7 @@ bool EffectPlatform::Update(EffectPlatformMeasuredTime* measuredTime)
 	{
 		Effekseer::Manager::DrawParameter param;
 		param.ViewProjectionMatrix = renderer_->GetCameraProjectionMatrix();
+		param.RenderingCoordinateMatrix = renderingCoordinateMatrix_;
 		param.ZNear = 0.0f;
 		param.ZFar = 1.0f;
 
@@ -487,6 +488,7 @@ bool EffectPlatform::Draw()
 	{
 		Effekseer::Manager::DrawParameter param;
 		param.ViewProjectionMatrix = renderer_->GetCameraProjectionMatrix();
+		param.RenderingCoordinateMatrix = renderingCoordinateMatrix_;
 		param.ZNear = 0.0f;
 		param.ZFar = 1.0f;
 
