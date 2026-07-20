@@ -59,12 +59,19 @@ struct CoordinateSystemScreenshotVariant
 	bool ReflectDrawX = false;
 };
 
-struct CoordinateSystemScreenshotEffect
+enum class OrthographicView
 {
+	FrontXY,
+	XZ,
+};
+
+struct CoordinateSystemScreenshotCase
+{
+	const char* Name;
 	const char16_t* EffectPath;
-	Effekseer::Vector3D Position;
-	Effekseer::Vector3D Rotation;
-	Effekseer::Vector3D Scale;
+	int32_t FrameCount;
+	OrthographicView View;
+	float OrthographicHeight;
 };
 
 const std::array<RenderingTransformScreenshotCase, 11> ScreenshotCases = {{
@@ -118,11 +125,30 @@ const std::array<CoordinateSystemScreenshotVariant, 6> CoordinateSystemScreensho
 	{"LH+REFLECT-X", Effekseer::CoordinateSystem::LH, Effekseer::CoordinateSystemMode::ExternalConversion, false, true},
 }};
 
-const std::array<CoordinateSystemScreenshotEffect, 4> CoordinateSystemScreenshotEffects = {{
-	{u"TestData/Effects/Update_17x/Sprite.efkefc", {-8.0f, 0.0f, -5.0f}, {0.0f, 0.25f, 0.0f}, {1.2f, 0.8f, 0.7f}},
-	{u"TestData/Effects/10/Ribbon_Parameters1.efk", {-6.0f, 0.0f, 5.0f}, {0.0f, -0.5f, 0.0f}, {0.5f, 0.8f, 0.65f}},
-	{u"TestData/Effects/10/Ring_Parameters1.efk", {7.0f, 0.0f, -4.0f}, {0.0f, 0.7f, 0.0f}, {0.45f, 0.7f, 0.35f}},
-	{u"TestData/Effects/Update_17x/Model.efkefc", {6.0f, 0.0f, 5.0f}, {0.0f, -0.8f, 0.0f}, {0.7f, 1.1f, 0.5f}},
+// These include the renderer types and parameter families that historically
+// needed individual LH/RH fixes. Each case is compared in the same six-panel
+// image instead of producing unrelated RH and LH screenshots.
+const std::array<CoordinateSystemScreenshotCase, 20> CoordinateSystemScreenshotCases = {{
+	{"Sprite", u"TestData/Effects/Update_17x/Sprite.efkefc", 30, OrthographicView::FrontXY, 12.0f},
+	{"Ribbon", u"TestData/Effects/10/Ribbon_Parameters1.efk", 30, OrthographicView::XZ, 20.0f},
+	{"Ring", u"TestData/Effects/10/Ring_Parameters1.efk", 30, OrthographicView::XZ, 28.0f},
+	{"Track", u"TestData/Effects/Update_17x/Track.efkefc", 30, OrthographicView::FrontXY, 20.0f},
+	{"Model", u"TestData/Effects/Update_17x/Model.efkefc", 30, OrthographicView::XZ, 24.0f},
+	{"SimpleLaser", u"TestData/Effects/10/SimpleLaser.efk", 30, OrthographicView::XZ, 24.0f},
+	{"FCurve", u"TestData/Effects/10/FCurve_Parameters1.efk", 30, OrthographicView::FrontXY, 16.0f},
+	{"SpawnMethod", u"TestData/Effects/15/SpawnMethodParameter1.efkefc", 30, OrthographicView::XZ, 24.0f},
+	{"ForceFieldTurbulence", u"TestData/Effects/15/ForceFieldLocal_Turbulence1.efkefc", 45, OrthographicView::FrontXY, 24.0f},
+	{"ForceFieldOld", u"TestData/Effects/15/ForceFieldLocal_Old.efkefc", 45, OrthographicView::XZ, 24.0f},
+	{"ForceField02", u"TestData/Effects/16/ForceFieldLocal02.efkefc", 45, OrthographicView::FrontXY, 24.0f},
+	{"ForceField03", u"TestData/Effects/16/ForceFieldLocal03.efkefc", 45, OrthographicView::FrontXY, 24.0f},
+	{"FollowParent", u"TestData/Effects/16/FollowParent01.efkefc", 45, OrthographicView::FrontXY, 24.0f},
+	{"RotateScale", u"TestData/Effects/16/RotateScale01.efkefc", 45, OrthographicView::FrontXY, 18.0f},
+	{"ProceduralModel", u"TestData/Effects/16/ProcedualModel01.efkefc", 30, OrthographicView::XZ, 24.0f},
+	{"Distortion", u"TestData/Effects/10/Distortions1.efk", 30, OrthographicView::FrontXY, 18.0f},
+	{"Collision", u"TestData/Effects/18/Collisions.efkefc", 45, OrthographicView::FrontXY, 24.0f},
+	{"GpuParticlesSprite", u"TestData/Effects/18/GpuParticles_sprite_simple.efkefc", 120, OrthographicView::XZ, 24.0f},
+	{"GpuParticlesTrail", u"TestData/Effects/18/GpuParticles_trails_simple.efkefc", 120, OrthographicView::XZ, 24.0f},
+	{"GpuParticlesMesh", u"TestData/Effects/18/GpuParticles_emit_mesh.efkefc", 120, OrthographicView::XZ, 24.0f},
 }};
 
 Effekseer::Matrix44 MakeRenderingCoordinateMatrix(RenderingTransformScreenshotVariant::RenderingCoordinateTransform transform)
@@ -190,12 +216,6 @@ void LogGpuParticleParameters(const Effekseer::EffectRef& effect, const char* ca
 		});
 }
 
-enum class OrthographicView
-{
-	FrontXY,
-	XZ,
-};
-
 void ConfigureOrthographicCamera(EffectPlatform& platform, OrthographicView view, float orthographicHeight)
 {
 	constexpr float AspectRatio = 4.0f / 3.0f;
@@ -215,27 +235,34 @@ void ConfigureOrthographicCamera(EffectPlatform& platform, OrthographicView view
 
 void ConfigureCoordinateSystemComparisonCamera(
 	EffectPlatform& platform,
-	Effekseer::CoordinateSystem coordinateSystem)
+	Effekseer::CoordinateSystem coordinateSystem,
+	OrthographicView view,
+	float orthographicHeight)
 {
 	constexpr float AspectRatio = 4.0f / 3.0f;
-	constexpr float OrthographicHeight = 28.0f;
-	const Effekseer::Vector3D cameraPosition(0.0f, -30.0f, 0.0f);
+	const auto cameraPosition = view == OrthographicView::FrontXY
+		? (coordinateSystem == Effekseer::CoordinateSystem::RH
+			? Effekseer::Vector3D(0.0f, 0.0f, 30.0f)
+			: Effekseer::Vector3D(0.0f, 0.0f, -30.0f))
+		: Effekseer::Vector3D(0.0f, -30.0f, 0.0f);
 	const Effekseer::Vector3D cameraTarget(0.0f, 0.0f, 0.0f);
-	const Effekseer::Vector3D cameraUp(0.0f, 0.0f, 1.0f);
+	const auto cameraUp = view == OrthographicView::FrontXY
+		? Effekseer::Vector3D(0.0f, 1.0f, 0.0f)
+		: Effekseer::Vector3D(0.0f, 0.0f, 1.0f);
 
 	if (coordinateSystem == Effekseer::CoordinateSystem::RH)
 	{
 		platform.GetRenderer()->SetCameraMatrix(
 			Effekseer::Matrix44().LookAtRH(cameraPosition, cameraTarget, cameraUp));
 		platform.GetRenderer()->SetProjectionMatrix(
-			Effekseer::Matrix44().OrthographicRH(OrthographicHeight * AspectRatio, OrthographicHeight, 1.0f, 100.0f));
+			Effekseer::Matrix44().OrthographicRH(orthographicHeight * AspectRatio, orthographicHeight, 1.0f, 100.0f));
 	}
 	else
 	{
 		platform.GetRenderer()->SetCameraMatrix(
 			Effekseer::Matrix44().LookAtLH(cameraPosition, cameraTarget, cameraUp));
 		platform.GetRenderer()->SetProjectionMatrix(
-			Effekseer::Matrix44().OrthographicLH(OrthographicHeight * AspectRatio, OrthographicHeight, 1.0f, 100.0f));
+			Effekseer::Matrix44().OrthographicLH(orthographicHeight * AspectRatio, orthographicHeight, 1.0f, 100.0f));
 	}
 }
 
@@ -258,7 +285,9 @@ Effekseer::CoordinateSystemTransform MakeAxisExchangeCoordinateSystemTransform()
 
 void ConfigureCoordinateSystemVariant(
 	EffectPlatform& platform,
-	const CoordinateSystemScreenshotVariant& variant)
+	const CoordinateSystemScreenshotVariant& variant,
+	OrthographicView view,
+	float orthographicHeight)
 {
 	auto manager = platform.GetManager();
 	manager->SetCoordinateSystemMode(Effekseer::CoordinateSystemMode::LegacySimulation);
@@ -278,7 +307,7 @@ void ConfigureCoordinateSystemVariant(
 		renderingCoordinateMatrix.Scaling(-1.0f, 1.0f, 1.0f);
 	}
 	platform.SetRenderingCoordinateMatrix(renderingCoordinateMatrix);
-	ConfigureCoordinateSystemComparisonCamera(platform, variant.CoordinateSystem);
+	ConfigureCoordinateSystemComparisonCamera(platform, variant.CoordinateSystem, view, orthographicHeight);
 	platform.GetRenderer()->SetLightDirection({0.3f, -0.6f, 0.7f});
 }
 
@@ -288,48 +317,45 @@ void CaptureCoordinateSystemComparison(
 	const std::filesystem::path& sourceRoot,
 	const std::u16string& rootPath)
 {
-	const auto caseDirectory = sourceRoot / "DX11" / "CoordinateSystemBoundary";
-	std::filesystem::create_directories(caseDirectory);
-
-	for (size_t variantIndex = 0; variantIndex < CoordinateSystemScreenshotVariants.size(); variantIndex++)
+	for (const auto& screenshotCase : CoordinateSystemScreenshotCases)
 	{
-		const auto& variant = CoordinateSystemScreenshotVariants[variantIndex];
-		printf("[RenderingTransformScreenshot] coordinate-system variant=%s\n", variant.Label);
-		ConfigureCoordinateSystemVariant(platform, variant);
-		srand(0);
-
-		for (const auto& screenshotEffect : CoordinateSystemScreenshotEffects)
+		const auto caseDirectory = sourceRoot / "DX11" / "CoordinateSystemBoundary" / screenshotCase.Name;
+		std::filesystem::create_directories(caseDirectory);
+		for (size_t variantIndex = 0; variantIndex < CoordinateSystemScreenshotVariants.size(); variantIndex++)
 		{
+			const auto& variant = CoordinateSystemScreenshotVariants[variantIndex];
+			printf("[RenderingTransformScreenshot] coordinate-system case=%s variant=%s frames=%d\n",
+				screenshotCase.Name,
+				variant.Label,
+				screenshotCase.FrameCount);
+			ConfigureCoordinateSystemVariant(platform, variant, screenshotCase.View, screenshotCase.OrthographicHeight);
+			srand(0);
+
+			const auto position = screenshotCase.View == OrthographicView::FrontXY
+				? Effekseer::Vector3D(2.0f, 1.0f, 0.0f)
+				: Effekseer::Vector3D(2.0f, 0.0f, 1.0f);
 			const auto handle = platform.Play(
-				(rootPath + screenshotEffect.EffectPath).c_str(),
-				screenshotEffect.Position);
+				(rootPath + screenshotCase.EffectPath).c_str(),
+				position);
 			EXPECT_TRUE(handle >= 0);
-			platform.GetManager()->SetRotation(
-				handle,
-				screenshotEffect.Rotation.X,
-				screenshotEffect.Rotation.Y,
-				screenshotEffect.Rotation.Z);
-			platform.GetManager()->SetScale(
-				handle,
-				screenshotEffect.Scale.X,
-				screenshotEffect.Scale.Y,
-				screenshotEffect.Scale.Z);
+			platform.GetManager()->SetRotation(handle, 0.15f, 0.45f, -0.2f);
+			platform.GetManager()->SetScale(handle, 1.1f, 0.8f, 0.7f);
+
+			for (int32_t frame = 0; frame < screenshotCase.FrameCount; frame++)
+			{
+				EXPECT_TRUE(platform.Update());
+			}
+			EXPECT_TRUE(platform.Draw());
+
+			const auto sourcePath = caseDirectory /
+				(std::to_string(variantIndex) + "_" + variant.Label + ".png");
+			EXPECT_TRUE(platform.TakeScreenshot(sourcePath.string().c_str()));
+			manifest << "CoordinateSystemBoundaryComparison_" << screenshotCase.Name << "_DX11.png,"
+					 << variantIndex << "," << variant.Label << "," << sourcePath.generic_string() << "\n";
+
+			platform.StopAllEffects();
+			platform.ClearLoadedEffects();
 		}
-
-		for (int32_t frame = 0; frame < 30; frame++)
-		{
-			EXPECT_TRUE(platform.Update());
-		}
-		EXPECT_TRUE(platform.Draw());
-
-		const auto sourcePath = caseDirectory /
-			(std::to_string(variantIndex) + "_" + variant.Label + ".png");
-		EXPECT_TRUE(platform.TakeScreenshot(sourcePath.string().c_str()));
-		manifest << "CoordinateSystemBoundaryComparison_DX11.png,"
-				 << variantIndex << "," << variant.Label << "," << sourcePath.generic_string() << "\n";
-
-		platform.StopAllEffects();
-		platform.ClearLoadedEffects();
 	}
 
 	platform.SetRenderingCoordinateMatrix(Effekseer::Matrix44());
