@@ -78,15 +78,16 @@ jobs:
          TestCpp.exe
         shell: cmd
 
+      - name: Test screenshots
+        run: python Script/test_screenshot.py
+        shell: cmd
+
       - name: Upload Test
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: Test
           path: build/Dev/Cpp/Test/Release/
-
-      - name: Test
-        run: python Script/test_screenshot.py
-        shell: cmd
 
   BuildLinux:
     name: Build on linux
