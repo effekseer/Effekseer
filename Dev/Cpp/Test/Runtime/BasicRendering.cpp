@@ -67,6 +67,7 @@ struct BasicRenderingCase
 	bool OverridesBackgroundTextureUVStyle = false;
 	bool UseGroundDepth = false;
 	BasicRenderingPlayMode PlayMode = BasicRenderingPlayMode::Single;
+	Effekseer::EffectFlipParameter Flip;
 };
 
 struct BasicRenderingBackendOutput
@@ -151,6 +152,14 @@ const std::vector<BasicRenderingCase>& GetBasicRenderingCases()
 		{"GpuParticles_trails_simple", BasicRenderingCaseRoot::TestDataEffects, u"18", u"GpuParticles_trails_simple", u".efkefc", "GpuParticles_trails_simple", 120},
 		{"Materials1", BasicRenderingCaseRoot::TestDataEffects, u"18", u"Materials1", u".efkefc", "Materials1"},
 		{"Materials2", BasicRenderingCaseRoot::TestDataEffects, u"18", u"Materials2", u".efkefc", "Materials2"},
+
+		// Screenshot coverage for emitter-level flip across each renderer type.
+		{"EffectFlip_Sprite_X", BasicRenderingCaseRoot::TestDataEffects, u"Update_17x", u"Sprite", u".efkefc", "EffectFlip_Sprite_X", 30, BasicRenderingCamera::Default, EffekseerRenderer::UVStyle::Normal, false, false, BasicRenderingPlayMode::Single, {true, false, false}},
+		{"EffectFlip_Ribbon_Y", BasicRenderingCaseRoot::TestDataEffects, u"10", u"Ribbon_Parameters1", u".efk", "EffectFlip_Ribbon_Y", 30, BasicRenderingCamera::Default, EffekseerRenderer::UVStyle::Normal, false, false, BasicRenderingPlayMode::Single, {false, true, false}},
+		{"EffectFlip_Ring_Z", BasicRenderingCaseRoot::TestDataEffects, u"10", u"Ring_Parameters1", u".efk", "EffectFlip_Ring_Z", 30, BasicRenderingCamera::Default, EffekseerRenderer::UVStyle::Normal, false, false, BasicRenderingPlayMode::Single, {false, false, true}},
+		{"EffectFlip_Track_XY", BasicRenderingCaseRoot::TestDataEffects, u"Update_17x", u"Track", u".efkefc", "EffectFlip_Track_XY", 30, BasicRenderingCamera::Default, EffekseerRenderer::UVStyle::Normal, false, false, BasicRenderingPlayMode::Single, {true, true, false}},
+		{"EffectFlip_Model_XZ", BasicRenderingCaseRoot::TestDataEffects, u"Update_17x", u"Model", u".efkefc", "EffectFlip_Model_XZ", 30, BasicRenderingCamera::Default, EffekseerRenderer::UVStyle::Normal, false, false, BasicRenderingPlayMode::Single, {true, false, true}},
+		{"EffectFlip_GpuParticles_YZ", BasicRenderingCaseRoot::TestDataEffects, u"18", u"GpuParticles_sprite_simple", u".efkefc", "EffectFlip_GpuParticles_YZ", 120, BasicRenderingCamera::Default, EffekseerRenderer::UVStyle::Normal, false, false, BasicRenderingPlayMode::Single, {false, true, true}},
 	};
 	return cases;
 }
@@ -316,7 +325,12 @@ void PlayBasicRenderingEffect(EffectPlatform* platform, const BasicRenderingCase
 		return;
 	}
 
-	platform->Play(path.c_str());
+	const auto handle = platform->Play(path.c_str());
+	if (testCase.Flip != Effekseer::EffectFlipParameter{})
+	{
+		platform->GetManager()->SetEffectFlip(handle, testCase.Flip);
+		EXPECT_TRUE(platform->GetManager()->GetEffectFlip(handle) == testCase.Flip);
+	}
 }
 
 void SetBasicRenderingCamera(const EffectPlatformInitializingParameter& param, EffectPlatform* platform, BasicRenderingCamera camera)
