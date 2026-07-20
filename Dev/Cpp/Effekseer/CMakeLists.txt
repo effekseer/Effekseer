@@ -12,6 +12,7 @@ set(effekseer_public_h
     Effekseer/Effekseer.Base.h
     Effekseer/Effekseer.Effect.h
     Effekseer/Effekseer.Color.h
+    Effekseer/Effekseer.CoordinateSystem.h
     Effekseer/Effekseer.DefaultFile.h
     Effekseer/Effekseer.File.h
     Effekseer/Effekseer.Manager.h
@@ -110,6 +111,7 @@ file(
 
 set(effekseer_src
     Effekseer/Effekseer.Color.cpp
+    Effekseer/Effekseer.CoordinateSystem.cpp
     Effekseer/Effekseer.CurveLoader.cpp
     Effekseer/Effekseer.DefaultEffectLoader.cpp
     Effekseer/Effekseer.DefaultFile.cpp

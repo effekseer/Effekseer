@@ -93,7 +93,7 @@ void EffectNodeTrack::BeginRendering(int32_t count, Manager* manager, const Inst
 		m_nodeParameter.SplineDivision = SplineDivision;
 		m_nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
 		m_nodeParameter.TextureUVTypeParameterPtr = &TextureUVType;
-		m_nodeParameter.IsRightHand = manager->GetCoordinateSystem() == CoordinateSystem::RH;
+		m_nodeParameter.IsRightHand = manager->GetSetting()->GetCoordinateSystem() == CoordinateSystem::RH;
 
 		auto scale = global->EffectGlobalMatrix.GetScale();
 		m_nodeParameter.GlobalScale = (scale.GetX() + scale.GetY() + scale.GetZ()) / 3.0f;

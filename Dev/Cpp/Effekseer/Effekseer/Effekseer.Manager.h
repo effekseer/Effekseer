@@ -6,6 +6,7 @@
 // Include
 //----------------------------------------------------------------------------------
 #include "Effekseer.Base.Pre.h"
+#include "Effekseer.CoordinateSystem.h"
 #include "Effekseer.ExternalModel.h"
 #include "Effekseer.Matrix44.h"
 #include "Effekseer.RenderingTransform.h"
@@ -268,6 +269,29 @@ public:
 		エフェクトファイルを読み込む前に設定する必要がある。
 	*/
 	virtual void SetCoordinateSystem(CoordinateSystem coordinateSystem) = 0;
+
+	/**
+		@brief Gets how the coordinate-system setting is applied.
+	*/
+	virtual CoordinateSystemMode GetCoordinateSystemMode() const = 0;
+
+	/**
+		@brief Selects legacy simulation conversion or boundary conversion.
+		@note Set this before loading effects. ExternalConversion keeps effect loading and simulation in RH space.
+	*/
+	virtual void SetCoordinateSystemMode(CoordinateSystemMode mode) = 0;
+
+	/**
+		@brief Gets the internal-RH to external coordinate transform.
+	*/
+	virtual CoordinateSystemTransform GetCoordinateSystemTransform() const = 0;
+
+	/**
+		@brief Sets the internal-RH to external coordinate transform.
+		@return false when the matrix is not a signed axis permutation.
+		@note Set this before loading effects. It takes effect at the Manager boundary only in ExternalConversion mode.
+	*/
+	virtual bool SetCoordinateSystemTransform(const CoordinateSystemTransform& transform) = 0;
 
 	/**
 		@brief	スプライト描画機能を取得する。

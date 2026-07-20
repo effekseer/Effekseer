@@ -50,6 +50,23 @@ struct RenderingTransformScreenshotVariant
 	} CoordinateTransform;
 };
 
+struct CoordinateSystemScreenshotVariant
+{
+	const char* Label;
+	Effekseer::CoordinateSystem CoordinateSystem;
+	Effekseer::CoordinateSystemMode Mode;
+	bool UseAxisExchange = false;
+	bool ReflectDrawX = false;
+};
+
+struct CoordinateSystemScreenshotEffect
+{
+	const char16_t* EffectPath;
+	Effekseer::Vector3D Position;
+	Effekseer::Vector3D Rotation;
+	Effekseer::Vector3D Scale;
+};
+
 const std::array<RenderingTransformScreenshotCase, 11> ScreenshotCases = {{
 	{"Sprite", u"TestData/Effects/Update_17x/Sprite.efkefc", 30, 12.0f, 0.0f, false, false},
 	{"SpriteLighting", u"TestData/Effects/15/Material_Lighting.efkefc", 30, 12.0f, 0.0f, true, false},
@@ -90,6 +107,22 @@ const std::array<RenderingTransformScreenshotVariant, 6> XZScreenshotVariants = 
 	{"REFLECT-Z", {}, RenderingTransformScreenshotVariant::RenderingCoordinateTransform::ReflectZ},
 	{"TURN-Y", {}, RenderingTransformScreenshotVariant::RenderingCoordinateTransform::TurnY},
 	{"FLIP-Z+REFLECT-Z", {false, false, true}, RenderingTransformScreenshotVariant::RenderingCoordinateTransform::ReflectZ},
+}};
+
+const std::array<CoordinateSystemScreenshotVariant, 6> CoordinateSystemScreenshotVariants = {{
+	{"RH-LEGACY", Effekseer::CoordinateSystem::RH, Effekseer::CoordinateSystemMode::LegacySimulation},
+	{"RH-EXTERNAL", Effekseer::CoordinateSystem::RH, Effekseer::CoordinateSystemMode::ExternalConversion},
+	{"LH-EXCHANGE", Effekseer::CoordinateSystem::LH, Effekseer::CoordinateSystemMode::ExternalConversion, true, false},
+	{"LH-LEGACY", Effekseer::CoordinateSystem::LH, Effekseer::CoordinateSystemMode::LegacySimulation},
+	{"LH-EXTERNAL", Effekseer::CoordinateSystem::LH, Effekseer::CoordinateSystemMode::ExternalConversion},
+	{"LH+REFLECT-X", Effekseer::CoordinateSystem::LH, Effekseer::CoordinateSystemMode::ExternalConversion, false, true},
+}};
+
+const std::array<CoordinateSystemScreenshotEffect, 4> CoordinateSystemScreenshotEffects = {{
+	{u"TestData/Effects/Update_17x/Sprite.efkefc", {-8.0f, 0.0f, -5.0f}, {0.0f, 0.25f, 0.0f}, {1.2f, 0.8f, 0.7f}},
+	{u"TestData/Effects/10/Ribbon_Parameters1.efk", {-6.0f, 0.0f, 5.0f}, {0.0f, -0.5f, 0.0f}, {0.5f, 0.8f, 0.65f}},
+	{u"TestData/Effects/10/Ring_Parameters1.efk", {7.0f, 0.0f, -4.0f}, {0.0f, 0.7f, 0.0f}, {0.45f, 0.7f, 0.35f}},
+	{u"TestData/Effects/Update_17x/Model.efkefc", {6.0f, 0.0f, 5.0f}, {0.0f, -0.8f, 0.0f}, {0.7f, 1.1f, 0.5f}},
 }};
 
 Effekseer::Matrix44 MakeRenderingCoordinateMatrix(RenderingTransformScreenshotVariant::RenderingCoordinateTransform transform)
@@ -178,6 +211,128 @@ void ConfigureOrthographicCamera(EffectPlatform& platform, OrthographicView view
 		Effekseer::Matrix44().LookAtRH(cameraPosition, cameraTarget, cameraUp));
 	platform.GetRenderer()->SetProjectionMatrix(
 		Effekseer::Matrix44().OrthographicRH(orthographicHeight * AspectRatio, orthographicHeight, 1.0f, 50.0f));
+}
+
+void ConfigureCoordinateSystemComparisonCamera(
+	EffectPlatform& platform,
+	Effekseer::CoordinateSystem coordinateSystem)
+{
+	constexpr float AspectRatio = 4.0f / 3.0f;
+	constexpr float OrthographicHeight = 28.0f;
+	const Effekseer::Vector3D cameraPosition(0.0f, -30.0f, 0.0f);
+	const Effekseer::Vector3D cameraTarget(0.0f, 0.0f, 0.0f);
+	const Effekseer::Vector3D cameraUp(0.0f, 0.0f, 1.0f);
+
+	if (coordinateSystem == Effekseer::CoordinateSystem::RH)
+	{
+		platform.GetRenderer()->SetCameraMatrix(
+			Effekseer::Matrix44().LookAtRH(cameraPosition, cameraTarget, cameraUp));
+		platform.GetRenderer()->SetProjectionMatrix(
+			Effekseer::Matrix44().OrthographicRH(OrthographicHeight * AspectRatio, OrthographicHeight, 1.0f, 100.0f));
+	}
+	else
+	{
+		platform.GetRenderer()->SetCameraMatrix(
+			Effekseer::Matrix44().LookAtLH(cameraPosition, cameraTarget, cameraUp));
+		platform.GetRenderer()->SetProjectionMatrix(
+			Effekseer::Matrix44().OrthographicLH(OrthographicHeight * AspectRatio, OrthographicHeight, 1.0f, 100.0f));
+	}
+}
+
+Effekseer::CoordinateSystemTransform MakeAxisExchangeCoordinateSystemTransform()
+{
+	// internal (x, y, z) -> external (z, y, x), determinant = -1
+	Effekseer::CoordinateSystemTransform transform;
+	for (int32_t row = 0; row < 3; row++)
+	{
+		for (int32_t column = 0; column < 3; column++)
+		{
+			transform.ToExternal.Values[row][column] = 0.0f;
+		}
+	}
+	transform.ToExternal.Values[0][2] = 1.0f;
+	transform.ToExternal.Values[1][1] = 1.0f;
+	transform.ToExternal.Values[2][0] = 1.0f;
+	return transform;
+}
+
+void ConfigureCoordinateSystemVariant(
+	EffectPlatform& platform,
+	const CoordinateSystemScreenshotVariant& variant)
+{
+	auto manager = platform.GetManager();
+	manager->SetCoordinateSystemMode(Effekseer::CoordinateSystemMode::LegacySimulation);
+	manager->SetCoordinateSystem(variant.CoordinateSystem);
+	if (variant.Mode == Effekseer::CoordinateSystemMode::ExternalConversion)
+	{
+		manager->SetCoordinateSystemMode(Effekseer::CoordinateSystemMode::ExternalConversion);
+		if (variant.UseAxisExchange)
+		{
+			EXPECT_TRUE(manager->SetCoordinateSystemTransform(MakeAxisExchangeCoordinateSystemTransform()));
+		}
+	}
+
+	Effekseer::Matrix44 renderingCoordinateMatrix;
+	if (variant.ReflectDrawX)
+	{
+		renderingCoordinateMatrix.Scaling(-1.0f, 1.0f, 1.0f);
+	}
+	platform.SetRenderingCoordinateMatrix(renderingCoordinateMatrix);
+	ConfigureCoordinateSystemComparisonCamera(platform, variant.CoordinateSystem);
+	platform.GetRenderer()->SetLightDirection({0.3f, -0.6f, 0.7f});
+}
+
+void CaptureCoordinateSystemComparison(
+	EffectPlatform& platform,
+	std::ofstream& manifest,
+	const std::filesystem::path& sourceRoot,
+	const std::u16string& rootPath)
+{
+	const auto caseDirectory = sourceRoot / "DX11" / "CoordinateSystemBoundary";
+	std::filesystem::create_directories(caseDirectory);
+
+	for (size_t variantIndex = 0; variantIndex < CoordinateSystemScreenshotVariants.size(); variantIndex++)
+	{
+		const auto& variant = CoordinateSystemScreenshotVariants[variantIndex];
+		printf("[RenderingTransformScreenshot] coordinate-system variant=%s\n", variant.Label);
+		ConfigureCoordinateSystemVariant(platform, variant);
+		srand(0);
+
+		for (const auto& screenshotEffect : CoordinateSystemScreenshotEffects)
+		{
+			const auto handle = platform.Play(
+				(rootPath + screenshotEffect.EffectPath).c_str(),
+				screenshotEffect.Position);
+			EXPECT_TRUE(handle >= 0);
+			platform.GetManager()->SetRotation(
+				handle,
+				screenshotEffect.Rotation.X,
+				screenshotEffect.Rotation.Y,
+				screenshotEffect.Rotation.Z);
+			platform.GetManager()->SetScale(
+				handle,
+				screenshotEffect.Scale.X,
+				screenshotEffect.Scale.Y,
+				screenshotEffect.Scale.Z);
+		}
+
+		for (int32_t frame = 0; frame < 30; frame++)
+		{
+			EXPECT_TRUE(platform.Update());
+		}
+		EXPECT_TRUE(platform.Draw());
+
+		const auto sourcePath = caseDirectory /
+			(std::to_string(variantIndex) + "_" + variant.Label + ".png");
+		EXPECT_TRUE(platform.TakeScreenshot(sourcePath.string().c_str()));
+		manifest << "CoordinateSystemBoundaryComparison_DX11.png,"
+				 << variantIndex << "," << variant.Label << "," << sourcePath.generic_string() << "\n";
+
+		platform.StopAllEffects();
+		platform.ClearLoadedEffects();
+	}
+
+	platform.SetRenderingCoordinateMatrix(Effekseer::Matrix44());
 }
 
 void CaptureOrthographicComparisons(
@@ -290,6 +445,7 @@ void RunRenderingTransformScreenshotTest()
 	platform.Initialize(initializingParameter);
 	CaptureOrthographicComparisons(platform, manifest, sourceRoot, rootPath, OrthographicView::FrontXY);
 	CaptureOrthographicComparisons(platform, manifest, sourceRoot, rootPath, OrthographicView::XZ);
+	CaptureCoordinateSystemComparison(platform, manifest, sourceRoot, rootPath);
 	platform.Terminate();
 }
 

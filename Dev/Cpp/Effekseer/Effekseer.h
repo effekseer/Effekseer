@@ -4,6 +4,7 @@
 #include "Effekseer/Backend/Effekseer.GraphicsDevice.h"
 #include "Effekseer/Effekseer.Base.Pre.h"
 #include "Effekseer/Effekseer.Color.h"
+#include "Effekseer/Effekseer.CoordinateSystem.h"
 #include "Effekseer/Effekseer.Curve.h"
 #include "Effekseer/Effekseer.CurveLoader.h"
 #include "Effekseer/Effekseer.DefaultFile.h"

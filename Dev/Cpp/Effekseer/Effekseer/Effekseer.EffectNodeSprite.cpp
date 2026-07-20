@@ -307,7 +307,7 @@ SpriteRenderer::NodeParameter EffectNodeSprite::GetNodeParameter(const Manager* 
 	nodeParameter.ZWrite = RendererCommon.ZWrite;
 	nodeParameter.Billboard = Billboard;
 	nodeParameter.EffectPointer = GetEffect();
-	nodeParameter.IsRightHand = manager->GetCoordinateSystem() == CoordinateSystem::RH;
+	nodeParameter.IsRightHand = manager->GetSetting()->GetCoordinateSystem() == CoordinateSystem::RH;
 	nodeParameter.LocalTime = global->GetUpdatedFrame() / 60.0f;
 
 	nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;

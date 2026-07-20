@@ -341,7 +341,7 @@ void Instance::FirstUpdate()
 		m_InstanceNumber,
 		parentTime,
 		magnification,
-		m_pManager->GetCoordinateSystem(),
+		m_pEffectNode->GetEffect()->GetSetting()->GetCoordinateSystem(),
 		rand);
 
 	if (m_pEffectNode->Sound.SoundType == ParameterSoundType_Use)
@@ -823,7 +823,7 @@ void Instance::UpdateTransform(float deltaFrame)
 		SIMD::Mat43f matRot = SIMD::Mat43f::Identity;
 		if (!RotationFunctions::CalculateInGlobal(m_pEffectNode->RotationParam))
 		{
-			matRot = RotationFunctions::CalculateRotation(rotation_values, m_pEffectNode->RotationParam, m_randObject, m_pEffectNode->GetEffect(), m_pContainer->GetRootInstance(), livingTime_, livedTime_, m_pParent, m_pEffectNode->DynamicFactor, m_pManager->GetLayerParameter(GetInstanceGlobal()->GetLayer()).ViewerPosition);
+			matRot = RotationFunctions::CalculateRotation(rotation_values, m_pEffectNode->RotationParam, m_randObject, m_pEffectNode->GetEffect(), m_pContainer->GetRootInstance(), livingTime_, livedTime_, m_pParent, m_pEffectNode->DynamicFactor, static_cast<ManagerImplemented*>(m_pManager)->GetInternalLayerParameter(GetInstanceGlobal()->GetLayer()).ViewerPosition);
 		}
 		auto scaling = ScalingFunctions::UpdateScaling(scaling_values, m_pEffectNode->ScalingParam, m_randObject, m_pEffectNode->GetEffect(), m_pContainer->GetRootInstance(), livingTime_, livedTime_, m_pParent, m_pEffectNode->DynamicFactor);
 
@@ -900,7 +900,7 @@ void Instance::UpdateTransform(float deltaFrame)
 				vel,
 				instanceGlobal->EffectGlobalMatrix.GetTranslation(),
 				m_pEffectNode->GetEffect()->GetMaginification(),
-				static_cast<ManagerImplemented*>(m_pManager)->GetCollisionCallback());
+				static_cast<ManagerImplemented*>(m_pManager)->GetInternalCollisionCallback());
 			location_modify_global_ += result.PositionChange;
 			acc_global_sum += result.VelocityChange;
 

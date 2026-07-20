@@ -165,6 +165,11 @@ private:
 	bool isLockedWithRenderingMutex_ = false;
 
 	SettingRef setting_;
+	CoordinateSystemMode coordinateSystemMode_ = CoordinateSystemMode::LegacySimulation;
+	CoordinateSystem externalCoordinateSystem_ = CoordinateSystem::RH;
+	CoordinateSystemTransform coordinateSystemTransform_;
+	CoordinateSystemConverter coordinateSystemConverter_;
+	bool hasCustomCoordinateSystemTransform_ = false;
 
 	int updateTime_;
 	int computeTime_;
@@ -191,8 +196,10 @@ private:
 
 	RandFunc randFunc_;
 	CollisionCallback collisionCallback_;
+	CollisionCallback internalCollisionCallback_;
 
 	std::array<LayerParameter, LayerCount> layerParameters_;
+	std::array<LayerParameter, LayerCount> externalLayerParameters_;
 
 	std::queue<std::pair<SoundTag, SoundPlayer::InstanceParameter>> requestedSounds_;
 	std::mutex soundMutex_;
@@ -224,6 +231,24 @@ private:
 		DrawSet& drawSet,
 		const EffectRenderingTransformParameter& renderingCoordinateTransform);
 
+	void RefreshCoordinateSystemBoundaryState();
+
+	EffectRenderingTransformParameter CalculateDrawRenderingCoordinateTransform(const Matrix44& drawCoordinateMatrix) const;
+
+	void SetMatrixInternal(Handle handle, const Matrix43& mat);
+
+	void SetLocationInternal(Handle handle, const Vector3D& location);
+
+	void AddLocationInternal(Handle handle, const Vector3D& location);
+
+	void SetRotationInternal(Handle handle, const Matrix43& rotation);
+
+	void SetScaleInternal(Handle handle, const Vector3D& scale);
+
+	void SetTargetLocationInternal(Handle handle, const Vector3D& location);
+
+	Handle PlayInternal(const EffectRef& effect, const Vector3D& position, int32_t startFrame);
+
 public:
 	ManagerImplemented(int instance_max, bool autoFlip);
 
@@ -252,9 +277,19 @@ public:
 
 	void SetCoordinateSystem(CoordinateSystem coordinateSystem) override;
 
+	CoordinateSystemMode GetCoordinateSystemMode() const override;
+
+	void SetCoordinateSystemMode(CoordinateSystemMode mode) override;
+
+	CoordinateSystemTransform GetCoordinateSystemTransform() const override;
+
+	bool SetCoordinateSystemTransform(const CoordinateSystemTransform& transform) override;
+
 	void SetCollisionCallback(CollisionCallback callback) override;
 
 	CollisionCallback GetCollisionCallback() const override;
+
+	CollisionCallback GetInternalCollisionCallback() const;
 
 	SpriteRendererRef GetSpriteRenderer() override;
 
@@ -339,6 +374,8 @@ public:
 	int GetCurrentLOD(Handle handle) override;
 
 	const LayerParameter& GetLayerParameter(int32_t layer) const override;
+
+	const LayerParameter& GetInternalLayerParameter(int32_t layer) const;
 
 	void SetLayerParameter(int32_t layer, const LayerParameter& layerParameter) override;
 

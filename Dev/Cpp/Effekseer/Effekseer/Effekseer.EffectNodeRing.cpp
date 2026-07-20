@@ -232,7 +232,7 @@ void EffectNodeRing::BeginRendering(int32_t count, Manager* manager, const Insta
 		nodeParameter_.ZWrite = RendererCommon.ZWrite;
 		nodeParameter_.Billboard = Billboard;
 		nodeParameter_.VertexCount = VertexCount;
-		nodeParameter_.IsRightHand = manager->GetCoordinateSystem() == CoordinateSystem::RH;
+		nodeParameter_.IsRightHand = manager->GetSetting()->GetCoordinateSystem() == CoordinateSystem::RH;
 		nodeParameter_.Maginification = GetEffect()->GetMaginification();
 
 		nodeParameter_.DepthParameterPtr = &DepthValues.DepthParameter;

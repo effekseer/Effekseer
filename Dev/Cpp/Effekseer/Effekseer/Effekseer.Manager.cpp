@@ -493,6 +493,10 @@ ManagerImplemented::ManagerImplemented(int instance_max, bool autoFlip)
 	, randFunc_(nullptr)
 {
 	setting_ = Setting::Create();
+	externalCoordinateSystem_ = setting_->GetCoordinateSystem();
+	coordinateSystemTransform_.ToExternal = CoordinateSystemConverter::FromCoordinateSystem(externalCoordinateSystem_).GetInternalToExternal();
+	coordinateSystemConverter_ = CoordinateSystemConverter::FromMatrix(coordinateSystemTransform_.ToExternal);
+	RefreshCoordinateSystemBoundaryState();
 
 	SetRandFunc(Rand);
 
@@ -613,6 +617,7 @@ void ManagerImplemented::SetRandFunc(RandFunc func)
 void ManagerImplemented::SetCollisionCallback(CollisionCallback callback)
 {
 	collisionCallback_ = callback;
+	RefreshCoordinateSystemBoundaryState();
 }
 
 CollisionCallback ManagerImplemented::GetCollisionCallback() const
@@ -620,14 +625,149 @@ CollisionCallback ManagerImplemented::GetCollisionCallback() const
 	return collisionCallback_;
 }
 
+CollisionCallback ManagerImplemented::GetInternalCollisionCallback() const
+{
+	return internalCollisionCallback_;
+}
+
 CoordinateSystem ManagerImplemented::GetCoordinateSystem() const
 {
-	return setting_->GetCoordinateSystem();
+	return coordinateSystemMode_ == CoordinateSystemMode::LegacySimulation
+		? setting_->GetCoordinateSystem()
+		: externalCoordinateSystem_;
 }
 
 void ManagerImplemented::SetCoordinateSystem(CoordinateSystem coordinateSystem)
 {
-	setting_->SetCoordinateSystem(coordinateSystem);
+	externalCoordinateSystem_ = coordinateSystem;
+	hasCustomCoordinateSystemTransform_ = false;
+	coordinateSystemConverter_ = CoordinateSystemConverter::FromCoordinateSystem(coordinateSystem);
+	coordinateSystemTransform_.ToExternal = coordinateSystemConverter_.GetInternalToExternal();
+	if (coordinateSystemMode_ == CoordinateSystemMode::LegacySimulation)
+	{
+		setting_->SetCoordinateSystem(coordinateSystem);
+	}
+	RefreshCoordinateSystemBoundaryState();
+}
+
+CoordinateSystemMode ManagerImplemented::GetCoordinateSystemMode() const
+{
+	return coordinateSystemMode_;
+}
+
+void ManagerImplemented::SetCoordinateSystemMode(CoordinateSystemMode mode)
+{
+	if (coordinateSystemMode_ == mode)
+	{
+		return;
+	}
+
+	if (mode == CoordinateSystemMode::ExternalConversion)
+	{
+		if (!hasCustomCoordinateSystemTransform_)
+		{
+			externalCoordinateSystem_ = setting_->GetCoordinateSystem();
+			coordinateSystemConverter_ = CoordinateSystemConverter::FromCoordinateSystem(externalCoordinateSystem_);
+			coordinateSystemTransform_.ToExternal = coordinateSystemConverter_.GetInternalToExternal();
+		}
+		else
+		{
+			coordinateSystemConverter_ = CoordinateSystemConverter::FromMatrix(coordinateSystemTransform_.ToExternal);
+			externalCoordinateSystem_ = coordinateSystemConverter_.ReversesWinding() ? CoordinateSystem::LH : CoordinateSystem::RH;
+		}
+	}
+	else
+	{
+		setting_->SetCoordinateSystem(externalCoordinateSystem_);
+	}
+
+	coordinateSystemMode_ = mode;
+	RefreshCoordinateSystemBoundaryState();
+}
+
+CoordinateSystemTransform ManagerImplemented::GetCoordinateSystemTransform() const
+{
+	return coordinateSystemTransform_;
+}
+
+bool ManagerImplemented::SetCoordinateSystemTransform(const CoordinateSystemTransform& transform)
+{
+	auto converter = CoordinateSystemConverter::FromMatrix(transform.ToExternal);
+	if (!converter.IsValid())
+	{
+		return false;
+	}
+
+	coordinateSystemTransform_ = transform;
+	coordinateSystemConverter_ = converter;
+	hasCustomCoordinateSystemTransform_ = true;
+	if (coordinateSystemMode_ == CoordinateSystemMode::ExternalConversion)
+	{
+		externalCoordinateSystem_ = converter.ReversesWinding() ? CoordinateSystem::LH : CoordinateSystem::RH;
+	}
+	RefreshCoordinateSystemBoundaryState();
+	return true;
+}
+
+void ManagerImplemented::RefreshCoordinateSystemBoundaryState()
+{
+	if (coordinateSystemMode_ == CoordinateSystemMode::ExternalConversion)
+	{
+		setting_->SetCoordinateSystem(CoordinateSystem::RH);
+	}
+	else
+	{
+		externalCoordinateSystem_ = setting_->GetCoordinateSystem();
+		coordinateSystemConverter_ = CoordinateSystemConverter();
+	}
+
+	for (int32_t layer = 0; layer < LayerCount; layer++)
+	{
+		layerParameters_[layer] = externalLayerParameters_[layer];
+		layerParameters_[layer].ViewerPosition = coordinateSystemConverter_.ToInternalPosition(externalLayerParameters_[layer].ViewerPosition);
+	}
+
+	if (!collisionCallback_)
+	{
+		internalCollisionCallback_ = nullptr;
+	}
+	else if (coordinateSystemMode_ == CoordinateSystemMode::ExternalConversion)
+	{
+		const auto callback = collisionCallback_;
+		const auto converter = coordinateSystemConverter_;
+		internalCollisionCallback_ = [callback, converter](const Vector3D& startPosition,
+													 const Vector3D& endPosition,
+													 Vector3D& collisionPosition,
+													 Vector3D& collisionNormal) -> bool
+		{
+			auto externalCollisionPosition = Vector3D();
+			auto externalCollisionNormal = Vector3D();
+			const auto collided = callback(
+				converter.ToExternalPosition(startPosition),
+				converter.ToExternalPosition(endPosition),
+				externalCollisionPosition,
+				externalCollisionNormal);
+			collisionPosition = converter.ToInternalPosition(externalCollisionPosition);
+			collisionNormal = converter.ToInternalDirection(externalCollisionNormal);
+			return collided;
+		};
+	}
+	else
+	{
+		internalCollisionCallback_ = collisionCallback_;
+	}
+}
+
+EffectRenderingTransformParameter ManagerImplemented::CalculateDrawRenderingCoordinateTransform(const Matrix44& drawCoordinateMatrix) const
+{
+	const auto drawTransform = CalculateRenderingCoordinateTransform(drawCoordinateMatrix);
+	if (coordinateSystemMode_ != CoordinateSystemMode::ExternalConversion)
+	{
+		return drawTransform;
+	}
+
+	const auto boundaryTransform = CalculateRenderingCoordinateTransform(coordinateSystemTransform_.ToExternal);
+	return ComposeRenderingTransforms(boundaryTransform, drawTransform);
 }
 
 SpriteRendererRef ManagerImplemented::GetSpriteRenderer()
@@ -748,6 +888,14 @@ const SettingRef& ManagerImplemented::GetSetting() const
 void ManagerImplemented::SetSetting(const SettingRef& setting)
 {
 	setting_ = setting;
+	if (coordinateSystemMode_ == CoordinateSystemMode::LegacySimulation)
+	{
+		externalCoordinateSystem_ = setting_->GetCoordinateSystem();
+		hasCustomCoordinateSystemTransform_ = false;
+		coordinateSystemConverter_ = CoordinateSystemConverter::FromCoordinateSystem(externalCoordinateSystem_);
+		coordinateSystemTransform_.ToExternal = coordinateSystemConverter_.GetInternalToExternal();
+	}
+	RefreshCoordinateSystemBoundaryState();
 }
 
 EffectLoaderRef ManagerImplemented::GetEffectLoader()
@@ -909,6 +1057,15 @@ const Manager::LayerParameter& ManagerImplemented::GetLayerParameter(int32_t lay
 {
 	if (layer >= 0 && layer < LayerCount)
 	{
+		return externalLayerParameters_[layer];
+	}
+	return externalLayerParameters_[0];
+}
+
+const Manager::LayerParameter& ManagerImplemented::GetInternalLayerParameter(int32_t layer) const
+{
+	if (layer >= 0 && layer < LayerCount)
+	{
 		return layerParameters_[layer];
 	}
 	return layerParameters_[0];
@@ -918,7 +1075,9 @@ void ManagerImplemented::SetLayerParameter(int32_t layer, const LayerParameter& 
 {
 	if (layer >= 0 && layer < LayerCount)
 	{
+		externalLayerParameters_[layer] = layerParameter;
 		layerParameters_[layer] = layerParameter;
+		layerParameters_[layer].ViewerPosition = coordinateSystemConverter_.ToInternalPosition(layerParameter.ViewerPosition);
 	}
 }
 
@@ -927,13 +1086,18 @@ Matrix43 ManagerImplemented::GetMatrix(Handle handle)
 	if (drawSets_.count(handle) > 0)
 	{
 		DrawSet& drawSet = drawSets_[handle];
-		return ToStruct(drawSet.GetGlobalMatrix());
+		return coordinateSystemConverter_.ToExternalTransform(ToStruct(drawSet.GetGlobalMatrix()));
 	}
 
 	return Matrix43();
 }
 
 void ManagerImplemented::SetMatrix(Handle handle, const Matrix43& mat)
+{
+	SetMatrixInternal(handle, coordinateSystemConverter_.ToInternalTransform(mat));
+}
+
+void ManagerImplemented::SetMatrixInternal(Handle handle, const Matrix43& mat)
 {
 	if (drawSets_.count(handle) > 0)
 	{
@@ -958,30 +1122,40 @@ Vector3D ManagerImplemented::GetLocation(Handle handle)
 		location.Z = mat.Z.GetW();
 	}
 
-	return location;
+	return coordinateSystemConverter_.ToExternalPosition(location);
 }
 
 void ManagerImplemented::SetLocation(Handle handle, float x, float y, float z)
+{
+	SetLocation(handle, Vector3D(x, y, z));
+}
+
+void ManagerImplemented::SetLocation(Handle handle, const Vector3D& location)
+{
+	SetLocationInternal(handle, coordinateSystemConverter_.ToInternalPosition(location));
+}
+
+void ManagerImplemented::SetLocationInternal(Handle handle, const Vector3D& location)
 {
 	if (drawSets_.count(handle) > 0)
 	{
 		DrawSet& drawSet = drawSets_[handle];
 		auto mat = drawSet.GetGlobalMatrix();
 
-		mat.X.SetW(x);
-		mat.Y.SetW(y);
-		mat.Z.SetW(z);
+		mat.X.SetW(location.X);
+		mat.Y.SetW(location.Y);
+		mat.Z.SetW(location.Z);
 
 		drawSet.SetGlobalMatrix(mat);
 	}
 }
 
-void ManagerImplemented::SetLocation(Handle handle, const Vector3D& location)
+void ManagerImplemented::AddLocation(Handle handle, const Vector3D& location)
 {
-	SetLocation(handle, location.X, location.Y, location.Z);
+	AddLocationInternal(handle, coordinateSystemConverter_.ToInternalDirection(location));
 }
 
-void ManagerImplemented::AddLocation(Handle handle, const Vector3D& location)
+void ManagerImplemented::AddLocationInternal(Handle handle, const Vector3D& location)
 {
 	if (drawSets_.count(handle) > 0)
 	{
@@ -996,21 +1170,19 @@ void ManagerImplemented::AddLocation(Handle handle, const Vector3D& location)
 
 void ManagerImplemented::SetRotation(Handle handle, float x, float y, float z)
 {
-	if (drawSets_.count(handle) > 0)
-	{
-		DrawSet& drawSet = drawSets_[handle];
-
-		auto mat = drawSet.GetGlobalMatrix();
-
-		const auto t = mat.GetTranslation();
-
-		drawSet.Rotation.RotationZXY(z, x, y);
-
-		drawSet.SetGlobalMatrix(SIMD::Mat43f::SRT(drawSet.Scaling, drawSet.Rotation, t));
-	}
+	Matrix43 rotation;
+	rotation.RotationZXY(z, x, y);
+	SetRotationInternal(handle, coordinateSystemConverter_.ToInternalRotation(rotation));
 }
 
 void ManagerImplemented::SetRotation(Handle handle, const Vector3D& axis, float angle)
+{
+	Matrix43 rotation;
+	rotation.RotationAxis(axis, angle);
+	SetRotationInternal(handle, coordinateSystemConverter_.ToInternalRotation(rotation));
+}
+
+void ManagerImplemented::SetRotationInternal(Handle handle, const Matrix43& rotation)
 {
 	if (drawSets_.count(handle) > 0)
 	{
@@ -1019,13 +1191,18 @@ void ManagerImplemented::SetRotation(Handle handle, const Vector3D& axis, float 
 		auto mat = drawSet.GetGlobalMatrix();
 		const auto t = mat.GetTranslation();
 
-		drawSet.Rotation.RotationAxis(axis, angle);
+		drawSet.Rotation = rotation;
 		drawSet.SetGlobalMatrix(SIMD::Mat43f::SRT(drawSet.Scaling, drawSet.Rotation, t));
 	}
 }
 
 void ManagerImplemented::SetScale(Handle handle, float x, float y, float z)
 {
+	SetScaleInternal(handle, coordinateSystemConverter_.ToInternalScale(Vector3D(x, y, z)));
+}
+
+void ManagerImplemented::SetScaleInternal(Handle handle, const Vector3D& scale)
+{
 	if (drawSets_.count(handle) > 0)
 	{
 		DrawSet& drawSet = drawSets_[handle];
@@ -1033,7 +1210,7 @@ void ManagerImplemented::SetScale(Handle handle, float x, float y, float z)
 		auto mat = drawSet.GetGlobalMatrix();
 		const auto t = mat.GetTranslation();
 
-		drawSet.Scaling = {x, y, z};
+		drawSet.Scaling = scale;
 		drawSet.SetGlobalMatrix(SIMD::Mat43f::SRT(drawSet.Scaling, drawSet.Rotation, t));
 	}
 }
@@ -1075,6 +1252,11 @@ void ManagerImplemented::SetTargetLocation(Handle handle, float x, float y, floa
 }
 
 void ManagerImplemented::SetTargetLocation(Handle handle, const Vector3D& location)
+{
+	SetTargetLocationInternal(handle, coordinateSystemConverter_.ToInternalPosition(location));
+}
+
+void ManagerImplemented::SetTargetLocationInternal(Handle handle, const Vector3D& location)
 {
 	if (drawSets_.count(handle) > 0)
 	{
@@ -1133,7 +1315,7 @@ Matrix43 ManagerImplemented::GetBaseMatrix(Handle handle)
 {
 	if (drawSets_.count(handle) > 0)
 	{
-		return ToStruct(drawSets_[handle].BaseMatrix);
+		return coordinateSystemConverter_.ToExternalTransform(ToStruct(drawSets_[handle].BaseMatrix));
 	}
 
 	return Matrix43();
@@ -1143,7 +1325,7 @@ void ManagerImplemented::SetBaseMatrix(Handle handle, const Matrix43& mat)
 {
 	if (drawSets_.count(handle) > 0)
 	{
-		drawSets_[handle].BaseMatrix = mat;
+		drawSets_[handle].BaseMatrix = coordinateSystemConverter_.ToInternalTransform(mat);
 		drawSets_[handle].DoUseBaseMatrix = true;
 		drawSets_[handle].IsParameterChanged = true;
 	}
@@ -1921,7 +2103,7 @@ void ManagerImplemented::Compute()
 		ScopedGpuTime gpuTime(gpuTimer_, gpuParticleSystem.Get());
 
 		GpuParticleSystem::Context context{};
-		context.CoordinateReversed = GetCoordinateSystem() != CoordinateSystem::RH;
+		context.CoordinateReversed = setting_->GetCoordinateSystem() != CoordinateSystem::RH;
 
 		for (int i = 0; i < nextComputeCount_; i++)
 		{
@@ -1953,7 +2135,7 @@ void ManagerImplemented::Draw(const Manager::DrawParameter& drawParameter)
 
 	ScopedGpuStage gpuPass(gpuTimer_, GpuStage::Draw);
 
-	const auto renderingCoordinateTransform = CalculateRenderingCoordinateTransform(drawParameter.RenderingCoordinateMatrix);
+	const auto renderingCoordinateTransform = CalculateDrawRenderingCoordinateTransform(drawParameter.RenderingCoordinateMatrix);
 	const auto renderingCoordinateSystem = GetRenderingCoordinateSystem(GetSetting()->GetCoordinateSystem(), renderingCoordinateTransform);
 	const auto cullingBeginTime = ::Effekseer::GetTime();
 	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, renderingCoordinateSystem);
@@ -2018,7 +2200,7 @@ void ManagerImplemented::Draw(const Manager::DrawParameter& drawParameter)
 		ScopedGpuTime gpuTime(gpuTimer_, gpuParticleSystem.Get());
 
 		GpuParticleSystem::Context context{};
-		context.CoordinateReversed = GetCoordinateSystem() != CoordinateSystem::RH;
+		context.CoordinateReversed = renderingCoordinateSystem != CoordinateSystem::RH;
 		gpuParticleSystem->RenderFrame(context);
 		drawTimeBreakdown.GpuParticles = static_cast<int32_t>(::Effekseer::GetTime() - gpuParticlesBeginTime);
 	}
@@ -2043,7 +2225,7 @@ void ManagerImplemented::DrawBack(const Manager::DrawParameter& drawParameter)
 
 	ScopedGpuStage gpuPass(gpuTimer_, GpuStage::DrawBack);
 
-	const auto renderingCoordinateTransform = CalculateRenderingCoordinateTransform(drawParameter.RenderingCoordinateMatrix);
+	const auto renderingCoordinateTransform = CalculateDrawRenderingCoordinateTransform(drawParameter.RenderingCoordinateMatrix);
 	const auto renderingCoordinateSystem = GetRenderingCoordinateSystem(GetSetting()->GetCoordinateSystem(), renderingCoordinateTransform);
 	const auto cullingBeginTime = ::Effekseer::GetTime();
 	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, renderingCoordinateSystem);
@@ -2116,7 +2298,7 @@ void ManagerImplemented::DrawFront(const Manager::DrawParameter& drawParameter)
 
 	ScopedGpuStage gpuPass(gpuTimer_, GpuStage::DrawFront);
 
-	const auto renderingCoordinateTransform = CalculateRenderingCoordinateTransform(drawParameter.RenderingCoordinateMatrix);
+	const auto renderingCoordinateTransform = CalculateDrawRenderingCoordinateTransform(drawParameter.RenderingCoordinateMatrix);
 	const auto renderingCoordinateSystem = GetRenderingCoordinateSystem(GetSetting()->GetCoordinateSystem(), renderingCoordinateTransform);
 	const auto cullingBeginTime = ::Effekseer::GetTime();
 	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, renderingCoordinateSystem);
@@ -2182,7 +2364,7 @@ void ManagerImplemented::DrawFront(const Manager::DrawParameter& drawParameter)
 		ScopedGpuTime gpuTime(gpuTimer_, gpuParticleSystem.Get());
 
 		GpuParticleSystem::Context context{};
-		context.CoordinateReversed = GetCoordinateSystem() != CoordinateSystem::RH;
+		context.CoordinateReversed = renderingCoordinateSystem != CoordinateSystem::RH;
 		gpuParticleSystem->RenderFrame(context);
 		drawTimeBreakdown.GpuParticles = static_cast<int32_t>(::Effekseer::GetTime() - gpuParticlesBeginTime);
 	}
@@ -2199,6 +2381,11 @@ Handle ManagerImplemented::Play(const EffectRef& effect, float x, float y, float
 }
 
 Handle ManagerImplemented::Play(const EffectRef& effect, const Vector3D& position, int32_t startFrame)
+{
+	return PlayInternal(effect, coordinateSystemConverter_.ToInternalPosition(position), startFrame);
+}
+
+Handle ManagerImplemented::PlayInternal(const EffectRef& effect, const Vector3D& position, int32_t startFrame)
 {
 	if (effect == nullptr)
 		return -1;
@@ -2252,7 +2439,8 @@ Handle ManagerImplemented::Play(const Manager::PlayParameter& parameter)
 		return -1;
 	}
 
-	auto handle = Play(parameter.Effect, parameter.Position, parameter.StartFrame);
+	const auto internalPosition = coordinateSystemConverter_.ToInternalPosition(parameter.Position);
+	auto handle = PlayInternal(parameter.Effect, internalPosition, parameter.StartFrame);
 	if (handle < 0)
 	{
 		return handle;
@@ -2265,11 +2453,18 @@ Handle ManagerImplemented::Play(const Manager::PlayParameter& parameter)
 	}
 
 	auto& drawSet = it->second;
-	drawSet.Scaling = parameter.Scale;
-	drawSet.Rotation.RotationZXY(parameter.Rotation.Z, parameter.Rotation.X, parameter.Rotation.Y);
-	drawSet.SetGlobalMatrix(SIMD::Mat43f::SRT(SIMD::Vec3f(drawSet.Scaling), drawSet.Rotation, SIMD::Vec3f(parameter.Position)));
+	drawSet.Scaling = coordinateSystemConverter_.ToInternalScale(parameter.Scale);
+	Matrix43 externalRotation;
+	externalRotation.RotationZXY(parameter.Rotation.Z, parameter.Rotation.X, parameter.Rotation.Y);
+	drawSet.Rotation = coordinateSystemConverter_.ToInternalRotation(externalRotation);
+	drawSet.SetGlobalMatrix(SIMD::Mat43f::SRT(SIMD::Vec3f(drawSet.Scaling), drawSet.Rotation, SIMD::Vec3f(internalPosition)));
 	drawSet.EffectFlip = parameter.Flip;
-	drawSet.GlobalPointer->SetExternalModels(parameter.ExternalModels);
+	auto internalExternalModels = parameter.ExternalModels;
+	for (auto& externalModel : internalExternalModels)
+	{
+		externalModel.Transform = coordinateSystemConverter_.ToInternalTransform(externalModel.Transform);
+	}
+	drawSet.GlobalPointer->SetExternalModels(internalExternalModels);
 
 	return handle;
 }
@@ -2296,7 +2491,7 @@ void ManagerImplemented::DrawHandle(Handle handle, const Manager::DrawParameter&
 
 	std::lock_guard<std::recursive_mutex> lock(renderingMutex_);
 
-	const auto renderingCoordinateTransform = CalculateRenderingCoordinateTransform(drawParameter.RenderingCoordinateMatrix);
+	const auto renderingCoordinateTransform = CalculateDrawRenderingCoordinateTransform(drawParameter.RenderingCoordinateMatrix);
 	const auto renderingCoordinateSystem = GetRenderingCoordinateSystem(GetSetting()->GetCoordinateSystem(), renderingCoordinateTransform);
 	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, renderingCoordinateSystem);
 
@@ -2337,7 +2532,7 @@ void ManagerImplemented::DrawHandleBack(Handle handle, const Manager::DrawParame
 
 	std::lock_guard<std::recursive_mutex> lock(renderingMutex_);
 
-	const auto renderingCoordinateTransform = CalculateRenderingCoordinateTransform(drawParameter.RenderingCoordinateMatrix);
+	const auto renderingCoordinateTransform = CalculateDrawRenderingCoordinateTransform(drawParameter.RenderingCoordinateMatrix);
 	const auto renderingCoordinateSystem = GetRenderingCoordinateSystem(GetSetting()->GetCoordinateSystem(), renderingCoordinateTransform);
 	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, renderingCoordinateSystem);
 
@@ -2372,7 +2567,7 @@ void ManagerImplemented::DrawHandleFront(Handle handle, const Manager::DrawParam
 
 	std::lock_guard<std::recursive_mutex> lock(renderingMutex_);
 
-	const auto renderingCoordinateTransform = CalculateRenderingCoordinateTransform(drawParameter.RenderingCoordinateMatrix);
+	const auto renderingCoordinateTransform = CalculateDrawRenderingCoordinateTransform(drawParameter.RenderingCoordinateMatrix);
 	const auto renderingCoordinateSystem = GetRenderingCoordinateSystem(GetSetting()->GetCoordinateSystem(), renderingCoordinateTransform);
 	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, renderingCoordinateSystem);
 
@@ -2407,7 +2602,7 @@ void ManagerImplemented::DrawHandleFront(Handle handle, const Manager::DrawParam
 
 bool ManagerImplemented::GetIsCulled(Handle handle, const Manager::DrawParameter& drawParameter)
 {
-	const auto renderingCoordinateTransform = CalculateRenderingCoordinateTransform(drawParameter.RenderingCoordinateMatrix);
+	const auto renderingCoordinateTransform = CalculateDrawRenderingCoordinateTransform(drawParameter.RenderingCoordinateMatrix);
 	const auto renderingCoordinateSystem = GetRenderingCoordinateSystem(GetSetting()->GetCoordinateSystem(), renderingCoordinateTransform);
 	const auto cullingPlanes = GeometryUtility::CalculateFrustumPlanes(drawParameter.ViewProjectionMatrix, drawParameter.ZNear, drawParameter.ZFar, renderingCoordinateSystem);
 
@@ -2544,7 +2739,7 @@ void ManagerImplemented::RequestToPlaySound(Instance* instance, const EffectNode
 		parameter.Pan = node->Sound.Pan.getValue(rand);
 
 		parameter.Mode3D = (node->Sound.PanType == ParameterSoundPanType_3D);
-		parameter.Position = ToStruct(instance->GetGlobalMatrix().GetCurrent().GetTranslation());
+		parameter.Position = coordinateSystemConverter_.ToExternalPosition(ToStruct(instance->GetGlobalMatrix().GetCurrent().GetTranslation()));
 		parameter.Distance = node->Sound.Distance;
 		parameter.UserData = instanceGlobal->GetUserData();
 

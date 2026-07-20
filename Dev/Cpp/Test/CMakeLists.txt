@@ -35,6 +35,7 @@ else()
       Runtime/Collisions.cpp
       Runtime/Geometry.cpp
       Runtime/Model.cpp
+      Runtime/CoordinateSystem.cpp
       Runtime/RenderingTransform.cpp
       Runtime/RenderingTransformScreenshot.cpp
       Runtime/VectorField.cpp
