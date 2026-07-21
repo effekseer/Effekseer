@@ -1103,18 +1103,7 @@ public:
 		state.DepthTest = param.ZTest;
 		state.DepthWrite = param.ZWrite;
 		state.AlphaBlend = param.BasicParameterPtr->AlphaBlend;
-		state.CullingType = param.Culling;
-		if (param.RenderingTransform.ReversesWinding)
-		{
-			if (state.CullingType == ::Effekseer::CullingType::Front)
-			{
-				state.CullingType = ::Effekseer::CullingType::Back;
-			}
-			else if (state.CullingType == ::Effekseer::CullingType::Back)
-			{
-				state.CullingType = ::Effekseer::CullingType::Front;
-			}
-		}
+		state.CullingType = ::Effekseer::GetTransformedCullingType(param.Culling, param.RenderingTransform);
 
 		// TODO : refactor in 1.7
 		if (renderer->GetExternalShaderSettings() != nullptr)

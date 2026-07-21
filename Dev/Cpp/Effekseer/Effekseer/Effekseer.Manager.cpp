@@ -766,7 +766,11 @@ EffectRenderingTransformParameter ManagerImplemented::CalculateDrawRenderingCoor
 		return drawTransform;
 	}
 
-	const auto boundaryTransform = CalculateRenderingCoordinateTransform(coordinateSystemTransform_.ToExternal);
+	auto boundaryTransform = CalculateRenderingCoordinateTransform(coordinateSystemTransform_.ToExternal);
+	// The external view/projection uses the same coordinate system as this
+	// boundary. Its parity must still reach normals, tangents, frustum culling,
+	// and camera-vector conversion, but it must not exchange rendered faces.
+	boundaryTransform.ReversesCulling = false;
 	return ComposeRenderingTransforms(boundaryTransform, drawTransform);
 }
 

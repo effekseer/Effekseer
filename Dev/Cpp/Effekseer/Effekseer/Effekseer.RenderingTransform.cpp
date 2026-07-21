@@ -106,6 +106,7 @@ EffectRenderingTransformParameter CalculateEffectRenderingTransform(
 	EffectRenderingTransformParameter result;
 	result.IsEnabled = flip.FlipX || flip.FlipY || flip.FlipZ;
 	result.ReversesWinding = flip.FlipX ^ flip.FlipY ^ flip.FlipZ;
+	result.ReversesCulling = result.ReversesWinding;
 
 	if (!result.IsEnabled)
 	{
@@ -185,6 +186,7 @@ EffectRenderingTransformParameter CalculateRenderingCoordinateTransform(const Ma
 		matrix.Values[0][1] * (matrix.Values[1][0] * matrix.Values[2][2] - matrix.Values[1][2] * matrix.Values[2][0]) +
 		matrix.Values[0][2] * (matrix.Values[1][0] * matrix.Values[2][1] - matrix.Values[1][1] * matrix.Values[2][0]);
 	result.ReversesWinding = determinant < 0.0f;
+	result.ReversesCulling = result.ReversesWinding;
 	return result;
 }
 
@@ -205,7 +207,28 @@ EffectRenderingTransformParameter ComposeRenderingTransforms(
 	result.Transform = first.Transform * second.Transform;
 	result.IsEnabled = true;
 	result.ReversesWinding = first.ReversesWinding ^ second.ReversesWinding;
+	result.ReversesCulling = first.ReversesCulling ^ second.ReversesCulling;
 	return result;
+}
+
+CullingType GetTransformedCullingType(
+	CullingType cullingType,
+	const EffectRenderingTransformParameter& transform)
+{
+	if (!transform.ReversesCulling)
+	{
+		return cullingType;
+	}
+
+	if (cullingType == CullingType::Front)
+	{
+		return CullingType::Back;
+	}
+	if (cullingType == CullingType::Back)
+	{
+		return CullingType::Front;
+	}
+	return CullingType::Double;
 }
 
 } // namespace Effekseer

@@ -3,6 +3,7 @@
 
 #include "../TestHelper.h"
 
+#include <array>
 #include <vector>
 
 namespace
@@ -262,6 +263,8 @@ void TestManagerAutomaticRenderingTransform()
 	EXPECT_TRUE(automaticParameter.IsRightHand);
 	EXPECT_TRUE(automaticParameter.RenderingCoordinateTransform.IsEnabled);
 	EXPECT_TRUE(automaticParameter.RenderingCoordinateTransform.ReversesWinding);
+	EXPECT_TRUE(!automaticParameter.RenderingCoordinateTransform.ReversesCulling);
+	EXPECT_TRUE(!automaticParameter.RenderingTransform.ReversesCulling);
 	Effekseer::Matrix44 reflectZ;
 	reflectZ.Scaling(1.0f, 1.0f, -1.0f);
 	EXPECT_TRUE(Effekseer::SIMD::Mat43f::Equal(
@@ -275,12 +278,32 @@ void TestManagerAutomaticRenderingTransform()
 	const auto composedParameter = spriteRenderer->Parameters.back();
 	EXPECT_TRUE(composedParameter.RenderingCoordinateTransform.IsEnabled);
 	EXPECT_TRUE(!composedParameter.RenderingCoordinateTransform.ReversesWinding);
+	EXPECT_TRUE(composedParameter.RenderingCoordinateTransform.ReversesCulling);
+	EXPECT_TRUE(composedParameter.RenderingTransform.ReversesCulling);
 	const auto expectedComposed = Effekseer::ComposeRenderingTransforms(
 		Effekseer::CalculateRenderingCoordinateTransform(reflectZ),
 		Effekseer::CalculateRenderingCoordinateTransform(drawParameter.RenderingCoordinateMatrix));
 	EXPECT_TRUE(Effekseer::SIMD::Mat43f::Equal(
 		composedParameter.RenderingCoordinateTransform.Transform,
 		expectedComposed.Transform));
+
+	manager->SetEffectFlip(handle, {true, false, false});
+	manager->Update(0.0f);
+	spriteRenderer->Parameters.clear();
+	drawParameter.RenderingCoordinateMatrix.Indentity();
+	manager->DrawHandle(handle, drawParameter);
+	EXPECT_TRUE(!spriteRenderer->Parameters.empty());
+	const auto flippedBoundaryParameter = spriteRenderer->Parameters.back();
+	EXPECT_TRUE(!flippedBoundaryParameter.RenderingTransform.ReversesWinding);
+	EXPECT_TRUE(flippedBoundaryParameter.RenderingTransform.ReversesCulling);
+
+	spriteRenderer->Parameters.clear();
+	drawParameter.RenderingCoordinateMatrix.Scaling(1.0f, -1.0f, 1.0f);
+	manager->DrawHandle(handle, drawParameter);
+	EXPECT_TRUE(!spriteRenderer->Parameters.empty());
+	const auto flippedComposedParameter = spriteRenderer->Parameters.back();
+	EXPECT_TRUE(flippedComposedParameter.RenderingTransform.ReversesWinding);
+	EXPECT_TRUE(!flippedComposedParameter.RenderingTransform.ReversesCulling);
 	manager->StopAllEffects();
 
 	const auto renderLegacyComparison = [&](bool externalConversion) -> std::vector<Effekseer::Vector3D>
@@ -319,6 +342,97 @@ void TestManagerAutomaticRenderingTransform()
 	}
 }
 
+void TestModelBoundaryCulling()
+{
+	class CaptureModelRenderer final : public Effekseer::ModelRenderer
+	{
+	public:
+		std::vector<NodeParameter> Parameters;
+
+		void BeginRendering(const NodeParameter& parameter, int32_t count, void* userData) override
+		{
+			Parameters.emplace_back(parameter);
+		}
+	};
+
+	struct TestCase
+	{
+		const char16_t* Path;
+		int32_t FrameCount;
+	};
+
+	const std::array<TestCase, 9> testCases = {{
+		{u"TestData/Effects/14/Model_Parameters1.efk", 30},
+		{u"TestData/Effects/15/Model_Culling.efkefc", 30},
+		{u"TestData/Effects/15/Update_MultiModel.efkefc", 30},
+		{u"TestData/Effects/16/AnimatedModel01.efkefc", 30},
+		{u"TestData/Effects/16/DrawWithoutInstancing.efkefc", 30},
+		{u"TestData/Effects/16/ProcedualModel01.efkefc", 30},
+		{u"TestData/Effects/16/ProcedualModel02.efkefc", 30},
+		{u"TestData/Effects/16/ProcedualModel03.efkefc", 30},
+		{u"TestData/Effects/Update_17x/Model.efkefc", 30},
+	}};
+
+	const auto rootPath = GetDirectoryPathAsU16(__FILE__) + u"../../../../";
+	int32_t cullingTypes = 0;
+	bool sawProceduralModel = false;
+	bool sawRegularModel = false;
+
+	for (const auto& testCase : testCases)
+	{
+		auto manager = Effekseer::Manager::Create(2048);
+		manager->SetRandFunc([]() -> int { return 12345; });
+		manager->SetCoordinateSystem(Effekseer::CoordinateSystem::LH);
+		manager->SetCoordinateSystemMode(Effekseer::CoordinateSystemMode::ExternalConversion);
+		auto renderer = Effekseer::MakeRefPtr<CaptureModelRenderer>();
+		manager->SetModelRenderer(renderer);
+
+		auto effect = Effekseer::Effect::Create(manager, (rootPath + testCase.Path).c_str());
+		EXPECT_TRUE(effect != nullptr);
+		const auto handle = manager->Play(effect, {2.0f, 0.0f, 1.0f});
+		EXPECT_TRUE(handle >= 0);
+		manager->SetRotation(handle, 0.15f, 0.45f, -0.2f);
+		manager->SetScale(handle, 1.1f, 0.8f, 0.7f);
+		for (int32_t frame = 0; frame < testCase.FrameCount; frame++)
+		{
+			manager->Update();
+		}
+
+		manager->DrawHandle(handle, {});
+		EXPECT_TRUE(!renderer->Parameters.empty());
+		for (const auto& parameter : renderer->Parameters)
+		{
+			EXPECT_TRUE(parameter.RenderingCoordinateTransform.ReversesWinding);
+			EXPECT_TRUE(!parameter.RenderingCoordinateTransform.ReversesCulling);
+			EXPECT_TRUE(!parameter.RenderingTransform.ReversesCulling);
+			EXPECT_TRUE(Effekseer::GetTransformedCullingType(parameter.Culling, parameter.RenderingTransform) == parameter.Culling);
+			cullingTypes |= 1 << static_cast<int32_t>(parameter.Culling);
+			sawProceduralModel |= parameter.IsProceduralMode;
+			sawRegularModel |= !parameter.IsProceduralMode;
+		}
+
+		manager->SetEffectFlip(handle, {true, false, false});
+		manager->Update(0.0f);
+		renderer->Parameters.clear();
+		manager->DrawHandle(handle, {});
+		EXPECT_TRUE(!renderer->Parameters.empty());
+		for (const auto& parameter : renderer->Parameters)
+		{
+			EXPECT_TRUE(parameter.RenderingTransform.ReversesCulling);
+			const auto expected = parameter.Culling == Effekseer::CullingType::Front
+				? Effekseer::CullingType::Back
+				: parameter.Culling == Effekseer::CullingType::Back
+					? Effekseer::CullingType::Front
+					: Effekseer::CullingType::Double;
+			EXPECT_TRUE(Effekseer::GetTransformedCullingType(parameter.Culling, parameter.RenderingTransform) == expected);
+		}
+	}
+
+	EXPECT_TRUE(cullingTypes == 0b111);
+	EXPECT_TRUE(sawProceduralModel);
+	EXPECT_TRUE(sawRegularModel);
+}
+
 TestRegister CoordinateSystem_Converter(
 	"CoordinateSystem.Converter",
 	[]() -> void { TestCoordinateSystemConverter(); });
@@ -330,5 +444,9 @@ TestRegister CoordinateSystem_ManagerBoundary(
 TestRegister CoordinateSystem_AutomaticRenderingTransform(
 	"CoordinateSystem.AutomaticRenderingTransform",
 	[]() -> void { TestManagerAutomaticRenderingTransform(); });
+
+TestRegister CoordinateSystem_ModelBoundaryCulling(
+	"CoordinateSystem.ModelBoundaryCulling",
+	[]() -> void { TestModelBoundaryCulling(); });
 
 } // namespace

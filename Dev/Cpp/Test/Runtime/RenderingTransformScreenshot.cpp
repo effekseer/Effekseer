@@ -128,12 +128,23 @@ const std::array<CoordinateSystemScreenshotVariant, 6> CoordinateSystemScreensho
 // These include the renderer types and parameter families that historically
 // needed individual LH/RH fixes. Each case is compared in the same six-panel
 // image instead of producing unrelated RH and LH screenshots.
-const std::array<CoordinateSystemScreenshotCase, 20> CoordinateSystemScreenshotCases = {{
+const std::array<CoordinateSystemScreenshotCase, 36> CoordinateSystemScreenshotCases = {{
 	{"Sprite", u"TestData/Effects/Update_17x/Sprite.efkefc", 30, OrthographicView::FrontXY, 12.0f},
 	{"Ribbon", u"TestData/Effects/10/Ribbon_Parameters1.efk", 30, OrthographicView::XZ, 20.0f},
 	{"Ring", u"TestData/Effects/10/Ring_Parameters1.efk", 30, OrthographicView::XZ, 28.0f},
 	{"Track", u"TestData/Effects/Update_17x/Track.efkefc", 30, OrthographicView::FrontXY, 20.0f},
 	{"Model", u"TestData/Effects/Update_17x/Model.efkefc", 30, OrthographicView::XZ, 24.0f},
+	{"ModelFront", u"TestData/Effects/Update_17x/Model.efkefc", 30, OrthographicView::FrontXY, 24.0f},
+	{"ModelParametersFront", u"TestData/Effects/14/Model_Parameters1.efk", 30, OrthographicView::FrontXY, 24.0f},
+	{"ModelParametersXZ", u"TestData/Effects/14/Model_Parameters1.efk", 30, OrthographicView::XZ, 24.0f},
+	{"ModelCullingFront", u"TestData/Effects/15/Model_Culling.efkefc", 30, OrthographicView::FrontXY, 24.0f},
+	{"ModelCullingXZ", u"TestData/Effects/15/Model_Culling.efkefc", 30, OrthographicView::XZ, 24.0f},
+	{"MultiModelFront", u"TestData/Effects/15/Update_MultiModel.efkefc", 30, OrthographicView::FrontXY, 24.0f},
+	{"MultiModelXZ", u"TestData/Effects/15/Update_MultiModel.efkefc", 30, OrthographicView::XZ, 24.0f},
+	{"AnimatedModelFront", u"TestData/Effects/16/AnimatedModel01.efkefc", 30, OrthographicView::FrontXY, 24.0f},
+	{"AnimatedModelXZ", u"TestData/Effects/16/AnimatedModel01.efkefc", 30, OrthographicView::XZ, 24.0f},
+	{"ModelWithoutInstancingFront", u"TestData/Effects/16/DrawWithoutInstancing.efkefc", 30, OrthographicView::FrontXY, 24.0f},
+	{"ModelWithoutInstancingXZ", u"TestData/Effects/16/DrawWithoutInstancing.efkefc", 30, OrthographicView::XZ, 24.0f},
 	{"SimpleLaser", u"TestData/Effects/10/SimpleLaser.efk", 30, OrthographicView::XZ, 24.0f},
 	{"FCurve", u"TestData/Effects/10/FCurve_Parameters1.efk", 30, OrthographicView::FrontXY, 16.0f},
 	{"SpawnMethod", u"TestData/Effects/15/SpawnMethodParameter1.efkefc", 30, OrthographicView::XZ, 24.0f},
@@ -143,7 +154,12 @@ const std::array<CoordinateSystemScreenshotCase, 20> CoordinateSystemScreenshotC
 	{"ForceField03", u"TestData/Effects/16/ForceFieldLocal03.efkefc", 45, OrthographicView::FrontXY, 24.0f},
 	{"FollowParent", u"TestData/Effects/16/FollowParent01.efkefc", 45, OrthographicView::FrontXY, 24.0f},
 	{"RotateScale", u"TestData/Effects/16/RotateScale01.efkefc", 45, OrthographicView::FrontXY, 18.0f},
-	{"ProceduralModel", u"TestData/Effects/16/ProcedualModel01.efkefc", 30, OrthographicView::XZ, 24.0f},
+	{"ProceduralModel01Front", u"TestData/Effects/16/ProcedualModel01.efkefc", 30, OrthographicView::FrontXY, 24.0f},
+	{"ProceduralModel01XZ", u"TestData/Effects/16/ProcedualModel01.efkefc", 30, OrthographicView::XZ, 24.0f},
+	{"ProceduralModel02Front", u"TestData/Effects/16/ProcedualModel02.efkefc", 30, OrthographicView::FrontXY, 24.0f},
+	{"ProceduralModel02XZ", u"TestData/Effects/16/ProcedualModel02.efkefc", 30, OrthographicView::XZ, 24.0f},
+	{"ProceduralModel03Front", u"TestData/Effects/16/ProcedualModel03.efkefc", 30, OrthographicView::FrontXY, 24.0f},
+	{"ProceduralModel03XZ", u"TestData/Effects/16/ProcedualModel03.efkefc", 30, OrthographicView::XZ, 24.0f},
 	{"Distortion", u"TestData/Effects/10/Distortions1.efk", 30, OrthographicView::FrontXY, 18.0f},
 	{"Collision", u"TestData/Effects/18/Collisions.efkefc", 45, OrthographicView::FrontXY, 24.0f},
 	{"GpuParticlesSprite", u"TestData/Effects/18/GpuParticles_sprite_simple.efkefc", 120, OrthographicView::XZ, 24.0f},

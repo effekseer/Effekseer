@@ -123,6 +123,7 @@ void TestEffectFlip()
 		EXPECT_EQUAL_NEAR(transformed.GetY(), expected.GetY(), 0.0001f);
 		EXPECT_EQUAL_NEAR(transformed.GetZ(), expected.GetZ(), 0.0001f);
 		EXPECT_TRUE(renderingTransform.ReversesWinding == (flip.FlipX ^ flip.FlipY ^ flip.FlipZ));
+		EXPECT_TRUE(renderingTransform.ReversesCulling == renderingTransform.ReversesWinding);
 	}
 
 	EXPECT_TRUE(Effekseer::SIMD::Mat43f::Equal(
@@ -147,6 +148,7 @@ void TestEffectFlip()
 	const auto shearedRootFlip = Effekseer::CalculateEffectRenderingTransform(shearedRoot, {true, false, false});
 	ExpectOrthogonalLinearPart(shearedRootFlip.Transform);
 	EXPECT_TRUE(shearedRootFlip.ReversesWinding);
+	EXPECT_TRUE(shearedRootFlip.ReversesCulling);
 
 	const auto rootOrigin = Effekseer::SIMD::Vec3f::Transform(Effekseer::SIMD::Vec3f(0.0f), shearedRoot);
 	const auto fixedOrigin = Effekseer::SIMD::Vec3f::Transform(rootOrigin, shearedRootFlip.Transform);
@@ -182,6 +184,7 @@ void TestRenderingCoordinateTransform()
 	const auto identityTransform = Effekseer::CalculateRenderingCoordinateTransform(identity);
 	EXPECT_TRUE(!identityTransform.IsEnabled);
 	EXPECT_TRUE(!identityTransform.ReversesWinding);
+	EXPECT_TRUE(!identityTransform.ReversesCulling);
 
 	Effekseer::Matrix44 reflectY;
 	reflectY.Scaling(1.0f, -1.0f, 1.0f);
@@ -189,6 +192,15 @@ void TestRenderingCoordinateTransform()
 	const auto reflectYTransform = Effekseer::CalculateRenderingCoordinateTransform(reflectY);
 	EXPECT_TRUE(reflectYTransform.IsEnabled);
 	EXPECT_TRUE(reflectYTransform.ReversesWinding);
+	EXPECT_TRUE(reflectYTransform.ReversesCulling);
+	EXPECT_TRUE(Effekseer::GetTransformedCullingType(Effekseer::CullingType::Front, reflectYTransform) == Effekseer::CullingType::Back);
+	EXPECT_TRUE(Effekseer::GetTransformedCullingType(Effekseer::CullingType::Back, reflectYTransform) == Effekseer::CullingType::Front);
+	EXPECT_TRUE(Effekseer::GetTransformedCullingType(Effekseer::CullingType::Double, reflectYTransform) == Effekseer::CullingType::Double);
+	auto coordinateBoundaryTransform = reflectYTransform;
+	coordinateBoundaryTransform.ReversesCulling = false;
+	EXPECT_TRUE(Effekseer::GetTransformedCullingType(Effekseer::CullingType::Front, coordinateBoundaryTransform) == Effekseer::CullingType::Front);
+	EXPECT_TRUE(Effekseer::GetTransformedCullingType(Effekseer::CullingType::Back, coordinateBoundaryTransform) == Effekseer::CullingType::Back);
+	EXPECT_TRUE(Effekseer::GetTransformedCullingType(Effekseer::CullingType::Double, coordinateBoundaryTransform) == Effekseer::CullingType::Double);
 
 	Effekseer::Matrix44 exchangeYZ;
 	exchangeYZ.Values[1][1] = 0.0f;
@@ -196,7 +208,9 @@ void TestRenderingCoordinateTransform()
 	exchangeYZ.Values[2][1] = 1.0f;
 	exchangeYZ.Values[2][2] = 0.0f;
 	EXPECT_TRUE(Effekseer::IsValidRenderingCoordinateMatrix(exchangeYZ));
-	EXPECT_TRUE(Effekseer::CalculateRenderingCoordinateTransform(exchangeYZ).ReversesWinding);
+	const auto exchangeYZTransform = Effekseer::CalculateRenderingCoordinateTransform(exchangeYZ);
+	EXPECT_TRUE(exchangeYZTransform.ReversesWinding);
+	EXPECT_TRUE(exchangeYZTransform.ReversesCulling);
 
 	Effekseer::Matrix44 translated;
 	translated.Translation(1.0f, 2.0f, 3.0f);
@@ -218,6 +232,7 @@ void TestRenderingCoordinateTransform()
 	const auto composedTransform = Effekseer::ComposeRenderingTransforms(effectTransform, reflectYTransform);
 	EXPECT_TRUE(composedTransform.IsEnabled);
 	EXPECT_TRUE(!composedTransform.ReversesWinding);
+	EXPECT_TRUE(!composedTransform.ReversesCulling);
 
 	const Effekseer::SIMD::Vec3f point(3.0f, 5.0f, 7.0f);
 	const auto composedPoint = Effekseer::SIMD::Vec3f::Transform(point, composedTransform.Transform);
@@ -289,15 +304,19 @@ void TestRenderingCoordinateTransform()
 	const auto secondIdentityCoordinateTransform = spriteRenderer->CoordinateTransforms.front();
 
 	EXPECT_TRUE(firstDrawTransform.ReversesWinding);
+	EXPECT_TRUE(firstDrawTransform.ReversesCulling);
 	EXPECT_TRUE(!firstCoordinateTransform.IsEnabled);
 	ExpectOrthogonalLinearPart(firstDrawTransform.Transform);
 	EXPECT_TRUE(!reflectedDrawTransform.ReversesWinding);
+	EXPECT_TRUE(!reflectedDrawTransform.ReversesCulling);
 	EXPECT_TRUE(reflectedCoordinateTransform.IsEnabled);
 	EXPECT_TRUE(reflectedCoordinateTransform.ReversesWinding);
+	EXPECT_TRUE(reflectedCoordinateTransform.ReversesCulling);
 	EXPECT_TRUE(Effekseer::SIMD::Mat43f::Equal(
 		reflectYTransform.Transform,
 		reflectedCoordinateTransform.Transform));
 	EXPECT_TRUE(secondIdentityDrawTransform.ReversesWinding);
+	EXPECT_TRUE(secondIdentityDrawTransform.ReversesCulling);
 	EXPECT_TRUE(!secondIdentityCoordinateTransform.IsEnabled);
 	EXPECT_TRUE(Effekseer::SIMD::Mat43f::Equal(
 		firstDrawTransform.Transform,

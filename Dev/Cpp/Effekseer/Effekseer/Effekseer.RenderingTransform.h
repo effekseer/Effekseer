@@ -37,7 +37,12 @@ struct EffectRenderingTransformParameter
 {
 	SIMD::Mat43f Transform = SIMD::Mat43f::Identity;
 	bool IsEnabled = false;
+	// Geometric parity used for coordinate-system, normal, and tangent handling.
 	bool ReversesWinding = false;
+	// Whether renderers must exchange front- and back-face culling. A coordinate
+	// boundary paired with an external camera reverses geometric parity without
+	// reversing the projected face convention.
+	bool ReversesCulling = false;
 };
 
 EffectRenderingTransformParameter CalculateEffectRenderingTransform(
@@ -65,6 +70,13 @@ EffectRenderingTransformParameter CalculateRenderingCoordinateTransform(const Ma
 EffectRenderingTransformParameter ComposeRenderingTransforms(
 	const EffectRenderingTransformParameter& first,
 	const EffectRenderingTransformParameter& second);
+
+/**
+	@brief Applies the renderer-side face-culling parity of a rendering transform.
+*/
+CullingType GetTransformedCullingType(
+	CullingType cullingType,
+	const EffectRenderingTransformParameter& transform);
 
 } // namespace Effekseer
 
