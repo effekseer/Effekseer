@@ -55,8 +55,12 @@ struct CoordinateSystemScreenshotVariant
 	const char* Label;
 	Effekseer::CoordinateSystem CoordinateSystem;
 	Effekseer::CoordinateSystemMode Mode;
-	bool UseAxisExchange = false;
-	bool ReflectDrawX = false;
+	enum class CoordinateTransform
+	{
+		Default,
+		RightHandedAxisMap,
+		LeftHandedAxisMap,
+	} Transform = CoordinateTransform::Default;
 };
 
 enum class OrthographicView
@@ -116,13 +120,15 @@ const std::array<RenderingTransformScreenshotVariant, 6> XZScreenshotVariants = 
 	{"FLIP-Z+REFLECT-Z", {false, false, true}, RenderingTransformScreenshotVariant::RenderingCoordinateTransform::ReflectZ},
 }};
 
+// Each row renders one canonical RH scene through equivalent external views.
+// The third column also verifies a non-default external axis mapping.
 const std::array<CoordinateSystemScreenshotVariant, 6> CoordinateSystemScreenshotVariants = {{
 	{"RH-LEGACY", Effekseer::CoordinateSystem::RH, Effekseer::CoordinateSystemMode::LegacySimulation},
 	{"RH-EXTERNAL", Effekseer::CoordinateSystem::RH, Effekseer::CoordinateSystemMode::ExternalConversion},
-	{"LH-EXCHANGE", Effekseer::CoordinateSystem::LH, Effekseer::CoordinateSystemMode::ExternalConversion, true, false},
+	{"RH-EXCHANGE", Effekseer::CoordinateSystem::RH, Effekseer::CoordinateSystemMode::ExternalConversion, CoordinateSystemScreenshotVariant::CoordinateTransform::RightHandedAxisMap},
 	{"LH-LEGACY", Effekseer::CoordinateSystem::LH, Effekseer::CoordinateSystemMode::LegacySimulation},
 	{"LH-EXTERNAL", Effekseer::CoordinateSystem::LH, Effekseer::CoordinateSystemMode::ExternalConversion},
-	{"LH+REFLECT-X", Effekseer::CoordinateSystem::LH, Effekseer::CoordinateSystemMode::ExternalConversion, false, true},
+	{"LH-EXCHANGE", Effekseer::CoordinateSystem::LH, Effekseer::CoordinateSystemMode::ExternalConversion, CoordinateSystemScreenshotVariant::CoordinateTransform::LeftHandedAxisMap},
 }};
 
 // These include the renderer types and parameter families that historically
@@ -251,22 +257,31 @@ void ConfigureOrthographicCamera(EffectPlatform& platform, OrthographicView view
 
 void ConfigureCoordinateSystemComparisonCamera(
 	EffectPlatform& platform,
-	Effekseer::CoordinateSystem coordinateSystem,
 	OrthographicView view,
 	float orthographicHeight)
 {
+	// Define the view once in Effekseer's canonical RH space, then move the
+	// camera through the same coordinate boundaries as the rendered effect.
+	// Every panel should therefore have the same screen-space appearance;
+	// visible differences indicate a conversion error rather than a camera
+	// convention difference.
 	constexpr float AspectRatio = 4.0f / 3.0f;
-	const auto cameraPosition = view == OrthographicView::FrontXY
-		? (coordinateSystem == Effekseer::CoordinateSystem::RH
-			? Effekseer::Vector3D(0.0f, 0.0f, 30.0f)
-			: Effekseer::Vector3D(0.0f, 0.0f, -30.0f))
+	const auto canonicalCameraPosition = view == OrthographicView::FrontXY
+		? Effekseer::Vector3D(0.0f, 0.0f, 30.0f)
 		: Effekseer::Vector3D(0.0f, -30.0f, 0.0f);
-	const Effekseer::Vector3D cameraTarget(0.0f, 0.0f, 0.0f);
-	const auto cameraUp = view == OrthographicView::FrontXY
+	const Effekseer::Vector3D canonicalCameraTarget(0.0f, 0.0f, 0.0f);
+	const auto canonicalCameraUp = view == OrthographicView::FrontXY
 		? Effekseer::Vector3D(0.0f, 1.0f, 0.0f)
 		: Effekseer::Vector3D(0.0f, 0.0f, 1.0f);
 
-	if (coordinateSystem == Effekseer::CoordinateSystem::RH)
+	const auto converter = Effekseer::CoordinateSystemConverter::FromMatrix(
+		platform.GetManager()->GetCoordinateSystemTransform().ToExternal);
+	EXPECT_TRUE(converter.IsValid());
+	const auto cameraPosition = converter.ToExternalPosition(canonicalCameraPosition);
+	const auto cameraTarget = converter.ToExternalPosition(canonicalCameraTarget);
+	const auto cameraUp = converter.ToExternalDirection(canonicalCameraUp);
+
+	if (!converter.ReversesWinding())
 	{
 		platform.GetRenderer()->SetCameraMatrix(
 			Effekseer::Matrix44().LookAtRH(cameraPosition, cameraTarget, cameraUp));
@@ -280,9 +295,12 @@ void ConfigureCoordinateSystemComparisonCamera(
 		platform.GetRenderer()->SetProjectionMatrix(
 			Effekseer::Matrix44().OrthographicLH(orthographicHeight * AspectRatio, orthographicHeight, 1.0f, 100.0f));
 	}
+
+	platform.GetRenderer()->SetLightDirection(
+		converter.ToExternalDirection({0.3f, -0.6f, 0.7f}));
 }
 
-Effekseer::CoordinateSystemTransform MakeAxisExchangeCoordinateSystemTransform()
+Effekseer::CoordinateSystemTransform MakeLeftHandedAxisMap()
 {
 	// internal (x, y, z) -> external (z, y, x), determinant = -1
 	Effekseer::CoordinateSystemTransform transform;
@@ -299,6 +317,23 @@ Effekseer::CoordinateSystemTransform MakeAxisExchangeCoordinateSystemTransform()
 	return transform;
 }
 
+Effekseer::CoordinateSystemTransform MakeRightHandedAxisMap()
+{
+	// internal (x, y, z) -> external (z, x, y), determinant = +1
+	Effekseer::CoordinateSystemTransform transform;
+	for (int32_t row = 0; row < 3; row++)
+	{
+		for (int32_t column = 0; column < 3; column++)
+		{
+			transform.ToExternal.Values[row][column] = 0.0f;
+		}
+	}
+	transform.ToExternal.Values[0][1] = 1.0f;
+	transform.ToExternal.Values[1][2] = 1.0f;
+	transform.ToExternal.Values[2][0] = 1.0f;
+	return transform;
+}
+
 void ConfigureCoordinateSystemVariant(
 	EffectPlatform& platform,
 	const CoordinateSystemScreenshotVariant& variant,
@@ -311,20 +346,19 @@ void ConfigureCoordinateSystemVariant(
 	if (variant.Mode == Effekseer::CoordinateSystemMode::ExternalConversion)
 	{
 		manager->SetCoordinateSystemMode(Effekseer::CoordinateSystemMode::ExternalConversion);
-		if (variant.UseAxisExchange)
+		if (variant.Transform == CoordinateSystemScreenshotVariant::CoordinateTransform::LeftHandedAxisMap)
 		{
-			EXPECT_TRUE(manager->SetCoordinateSystemTransform(MakeAxisExchangeCoordinateSystemTransform()));
+			EXPECT_TRUE(manager->SetCoordinateSystemTransform(MakeLeftHandedAxisMap()));
+		}
+		else if (variant.Transform == CoordinateSystemScreenshotVariant::CoordinateTransform::RightHandedAxisMap)
+		{
+			EXPECT_TRUE(manager->SetCoordinateSystemTransform(MakeRightHandedAxisMap()));
 		}
 	}
 
 	Effekseer::Matrix44 renderingCoordinateMatrix;
-	if (variant.ReflectDrawX)
-	{
-		renderingCoordinateMatrix.Scaling(-1.0f, 1.0f, 1.0f);
-	}
 	platform.SetRenderingCoordinateMatrix(renderingCoordinateMatrix);
-	ConfigureCoordinateSystemComparisonCamera(platform, variant.CoordinateSystem, view, orthographicHeight);
-	platform.GetRenderer()->SetLightDirection({0.3f, -0.6f, 0.7f});
+	ConfigureCoordinateSystemComparisonCamera(platform, view, orthographicHeight);
 }
 
 void CaptureCoordinateSystemComparison(
@@ -347,15 +381,24 @@ void CaptureCoordinateSystemComparison(
 			ConfigureCoordinateSystemVariant(platform, variant, screenshotCase.View, screenshotCase.OrthographicHeight);
 			srand(0);
 
-			const auto position = screenshotCase.View == OrthographicView::FrontXY
+			// Public transform inputs belong to the selected external coordinate
+			// space. Derive them from one canonical RH transform so the variants
+			// describe the same emitter pose.
+			const auto canonicalPosition = screenshotCase.View == OrthographicView::FrontXY
 				? Effekseer::Vector3D(2.0f, 1.0f, 0.0f)
 				: Effekseer::Vector3D(2.0f, 0.0f, 1.0f);
+			const auto inputConverter = Effekseer::CoordinateSystemConverter::FromMatrix(
+				platform.GetManager()->GetCoordinateSystemTransform().ToExternal);
+			EXPECT_TRUE(inputConverter.IsValid());
 			const auto handle = platform.Play(
 				(rootPath + screenshotCase.EffectPath).c_str(),
-				position);
+				{});
 			EXPECT_TRUE(handle >= 0);
-			platform.GetManager()->SetRotation(handle, 0.15f, 0.45f, -0.2f);
-			platform.GetManager()->SetScale(handle, 1.1f, 0.8f, 0.7f);
+			Effekseer::Matrix43 canonicalRotation;
+			canonicalRotation.RotationZXY(-0.2f, 0.15f, 0.45f);
+			Effekseer::Matrix43 canonicalTransform;
+			canonicalTransform.SetSRT({1.1f, 0.8f, 0.7f}, canonicalRotation, canonicalPosition);
+			platform.GetManager()->SetMatrix(handle, inputConverter.ToExternalTransform(canonicalTransform));
 
 			for (int32_t frame = 0; frame < screenshotCase.FrameCount; frame++)
 			{
