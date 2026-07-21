@@ -339,11 +339,10 @@ protected:
 		if (param.DepthParameterPtr->ZSort != Effekseer::ZSortType::None)
 		{
 			keyValues_.resize(matrixes_.size());
-			auto frontDirection = renderer->GetCameraFrontDirection();
-			if (!param.IsRightHand)
-			{
-				frontDirection = -frontDirection;
-			}
+			const auto frontDirection = NormalizeCameraFrontForRenderingSpace(
+				Effekseer::SIMD::Vec3f(renderer->GetCameraFrontDirection()),
+				param.IsRightHand,
+				param.RenderingCoordinateTransform);
 
 			for (size_t i = 0; i < keyValues_.size(); i++)
 			{
@@ -676,14 +675,12 @@ protected:
 				pcb->SetModelUVDistortionParameter(param.BasicParameterPtr->UVDistortionIntensity, param.BasicParameterPtr->BlendUVDistortionIntensity, {uvInversed[0], uvInversed[1]});
 				pcb->SetModelBlendTextureParameter(static_cast<float>(param.BasicParameterPtr->TextureBlendType));
 
-				::Effekseer::Vector3D CameraFront = renderer->GetCameraFrontDirection();
+				const auto cameraFront = NormalizeCameraFrontForRenderingSpace(
+					Effekseer::SIMD::Vec3f(renderer->GetCameraFrontDirection()),
+					param.IsRightHand,
+					param.RenderingCoordinateTransform);
 
-				if (!param.IsRightHand)
-				{
-					CameraFront = -CameraFront;
-				}
-
-				pcb->SetCameraFrontDirection(-CameraFront.X, -CameraFront.Y, -CameraFront.Z);
+				pcb->SetCameraFrontDirection(-cameraFront.GetX(), -cameraFront.GetY(), -cameraFront.GetZ());
 				pcb->SetFalloffParameter(
 					static_cast<float>(param.EnableFalloff),
 					static_cast<float>(param.FalloffParam.ColorBlendType),
@@ -837,7 +834,7 @@ public:
 			Effekseer::SIMD::Vec3f R;
 			Effekseer::SIMD::Vec3f F;
 
-			const auto cameraFrontForRendering = TransformCameraVectorToEffectSpace(
+			const auto cameraFrontForRendering = TransformCameraFrontToEffectSpace(
 				::Effekseer::SIMD::Vec3f(renderer->GetCameraFrontDirection()), parameter.RenderingCoordinateTransform);
 			CalcBillboard(btype, mat43, s, R, F, baseMatrix, cameraFrontForRendering, instanceParameter.Direction);
 
@@ -1210,7 +1207,10 @@ public:
 					}
 
 					ApplyDepthParameters(modelMatrix,
-										 renderer->GetCameraFrontDirection(),
+										 NormalizeCameraFrontForRenderingSpace(
+											 Effekseer::SIMD::Vec3f(renderer->GetCameraFrontDirection()),
+											 param.IsRightHand,
+											 param.RenderingCoordinateTransform),
 										 renderer->GetCameraPosition(),
 										 param.DepthParameterPtr,
 										 param.IsRightHand);
@@ -1326,7 +1326,10 @@ public:
 				}
 
 				ApplyDepthParameters(modelMatrix,
-									 renderer->GetCameraFrontDirection(),
+									 NormalizeCameraFrontForRenderingSpace(
+										 Effekseer::SIMD::Vec3f(renderer->GetCameraFrontDirection()),
+										 param.IsRightHand,
+										 param.RenderingCoordinateTransform),
 									 renderer->GetCameraPosition(),
 									 param.DepthParameterPtr,
 									 param.IsRightHand);

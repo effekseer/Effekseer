@@ -263,7 +263,9 @@ void TestManagerAutomaticRenderingTransform()
 	EXPECT_TRUE(automaticParameter.IsRightHand);
 	EXPECT_TRUE(automaticParameter.RenderingCoordinateTransform.IsEnabled);
 	EXPECT_TRUE(automaticParameter.RenderingCoordinateTransform.ReversesWinding);
+	EXPECT_TRUE(automaticParameter.RenderingCoordinateTransform.ReversesCameraFront);
 	EXPECT_TRUE(!automaticParameter.RenderingCoordinateTransform.ReversesCulling);
+	EXPECT_TRUE(automaticParameter.RenderingTransform.ReversesCameraFront);
 	EXPECT_TRUE(!automaticParameter.RenderingTransform.ReversesCulling);
 	Effekseer::Matrix44 reflectZ;
 	reflectZ.Scaling(1.0f, 1.0f, -1.0f);
@@ -278,7 +280,9 @@ void TestManagerAutomaticRenderingTransform()
 	const auto composedParameter = spriteRenderer->Parameters.back();
 	EXPECT_TRUE(composedParameter.RenderingCoordinateTransform.IsEnabled);
 	EXPECT_TRUE(!composedParameter.RenderingCoordinateTransform.ReversesWinding);
+	EXPECT_TRUE(composedParameter.RenderingCoordinateTransform.ReversesCameraFront);
 	EXPECT_TRUE(composedParameter.RenderingCoordinateTransform.ReversesCulling);
+	EXPECT_TRUE(composedParameter.RenderingTransform.ReversesCameraFront);
 	EXPECT_TRUE(composedParameter.RenderingTransform.ReversesCulling);
 	const auto expectedComposed = Effekseer::ComposeRenderingTransforms(
 		Effekseer::CalculateRenderingCoordinateTransform(reflectZ),
@@ -295,6 +299,7 @@ void TestManagerAutomaticRenderingTransform()
 	EXPECT_TRUE(!spriteRenderer->Parameters.empty());
 	const auto flippedBoundaryParameter = spriteRenderer->Parameters.back();
 	EXPECT_TRUE(!flippedBoundaryParameter.RenderingTransform.ReversesWinding);
+	EXPECT_TRUE(flippedBoundaryParameter.RenderingTransform.ReversesCameraFront);
 	EXPECT_TRUE(flippedBoundaryParameter.RenderingTransform.ReversesCulling);
 
 	spriteRenderer->Parameters.clear();
@@ -303,6 +308,7 @@ void TestManagerAutomaticRenderingTransform()
 	EXPECT_TRUE(!spriteRenderer->Parameters.empty());
 	const auto flippedComposedParameter = spriteRenderer->Parameters.back();
 	EXPECT_TRUE(flippedComposedParameter.RenderingTransform.ReversesWinding);
+	EXPECT_TRUE(flippedComposedParameter.RenderingTransform.ReversesCameraFront);
 	EXPECT_TRUE(!flippedComposedParameter.RenderingTransform.ReversesCulling);
 	manager->StopAllEffects();
 
@@ -403,7 +409,9 @@ void TestModelBoundaryCulling()
 		for (const auto& parameter : renderer->Parameters)
 		{
 			EXPECT_TRUE(parameter.RenderingCoordinateTransform.ReversesWinding);
+			EXPECT_TRUE(parameter.RenderingCoordinateTransform.ReversesCameraFront);
 			EXPECT_TRUE(!parameter.RenderingCoordinateTransform.ReversesCulling);
+			EXPECT_TRUE(parameter.RenderingTransform.ReversesCameraFront);
 			EXPECT_TRUE(!parameter.RenderingTransform.ReversesCulling);
 			EXPECT_TRUE(Effekseer::GetTransformedCullingType(parameter.Culling, parameter.RenderingTransform) == parameter.Culling);
 			cullingTypes |= 1 << static_cast<int32_t>(parameter.Culling);
@@ -418,6 +426,7 @@ void TestModelBoundaryCulling()
 		EXPECT_TRUE(!renderer->Parameters.empty());
 		for (const auto& parameter : renderer->Parameters)
 		{
+			EXPECT_TRUE(parameter.RenderingTransform.ReversesCameraFront);
 			EXPECT_TRUE(parameter.RenderingTransform.ReversesCulling);
 			const auto expected = parameter.Culling == Effekseer::CullingType::Front
 				? Effekseer::CullingType::Back

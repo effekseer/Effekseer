@@ -293,9 +293,9 @@ protected:
 					   ::Effekseer::SIMD::Mat43f& mat43)
 	{
 		const auto cameraForRendering = TransformCameraMatrixToEffectSpace(camera, parameter.RenderingCoordinateTransform);
-		const auto cameraFrontForRendering = TransformCameraVectorToEffectSpace(
+		const auto cameraFrontForRendering = TransformCameraFrontToEffectSpace(
 			::Effekseer::SIMD::Vec3f(renderer_->GetCameraFrontDirection()), parameter.RenderingCoordinateTransform);
-		const auto cameraPositionForRendering = TransformCameraVectorToEffectSpace(
+		const auto cameraPositionForRendering = TransformCameraPositionToEffectSpace(
 			::Effekseer::SIMD::Vec3f(renderer_->GetCameraPosition()), parameter.RenderingCoordinateTransform);
 
 		if (parameter.Billboard != ::Effekseer::BillboardType::Fixed)
@@ -821,11 +821,10 @@ protected:
 					t = Effekseer::SIMD::Vec3f::Transform(t, param.RenderingTransform.Transform);
 				}
 
-				Effekseer::SIMD::Vec3f frontDirection = renderer_->GetCameraFrontDirection();
-				if (!param.IsRightHand)
-				{
-					frontDirection = -frontDirection;
-				}
+				const auto frontDirection = NormalizeCameraFrontForRenderingSpace(
+					Effekseer::SIMD::Vec3f(renderer_->GetCameraFrontDirection()),
+					param.IsRightHand,
+					param.RenderingCoordinateTransform);
 
 				kv.Key = Effekseer::SIMD::Vec3f::Dot(t, frontDirection);
 			}

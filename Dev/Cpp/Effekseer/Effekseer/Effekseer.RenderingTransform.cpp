@@ -207,6 +207,7 @@ EffectRenderingTransformParameter ComposeRenderingTransforms(
 	result.Transform = first.Transform * second.Transform;
 	result.IsEnabled = true;
 	result.ReversesWinding = first.ReversesWinding ^ second.ReversesWinding;
+	result.ReversesCameraFront = first.ReversesCameraFront ^ second.ReversesCameraFront;
 	result.ReversesCulling = first.ReversesCulling ^ second.ReversesCulling;
 	return result;
 }

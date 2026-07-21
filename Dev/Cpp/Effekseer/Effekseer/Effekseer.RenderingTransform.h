@@ -39,6 +39,9 @@ struct EffectRenderingTransformParameter
 	bool IsEnabled = false;
 	// Geometric parity used for coordinate-system, normal, and tangent handling.
 	bool ReversesWinding = false;
+	// Whether the paired camera matrix uses the opposite handedness convention.
+	// Unlike ReversesWinding, this is not changed by an effect-only reflection.
+	bool ReversesCameraFront = false;
 	// Whether renderers must exchange front- and back-face culling. A coordinate
 	// boundary paired with an external camera reverses geometric parity without
 	// reversing the projected face convention.

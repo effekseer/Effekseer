@@ -133,8 +133,10 @@ const std::array<CoordinateSystemScreenshotVariant, 6> CoordinateSystemScreensho
 
 // These include the renderer types and parameter families that historically
 // needed individual LH/RH fixes. Each case is compared in the same six-panel
-// image instead of producing unrelated RH and LH screenshots.
-const std::array<CoordinateSystemScreenshotCase, 36> CoordinateSystemScreenshotCases = {{
+// image instead of producing unrelated RH and LH screenshots. Effects whose
+// materials display coordinate-axis components as RGB are not suitable for
+// pixel equality; model culling is covered by CoordinateSystem.ModelBoundaryCulling.
+const std::array<CoordinateSystemScreenshotCase, 34> CoordinateSystemScreenshotCases = {{
 	{"Sprite", u"TestData/Effects/Update_17x/Sprite.efkefc", 30, OrthographicView::FrontXY, 12.0f},
 	{"Ribbon", u"TestData/Effects/10/Ribbon_Parameters1.efk", 30, OrthographicView::XZ, 20.0f},
 	{"Ring", u"TestData/Effects/10/Ring_Parameters1.efk", 30, OrthographicView::XZ, 28.0f},
@@ -143,8 +145,6 @@ const std::array<CoordinateSystemScreenshotCase, 36> CoordinateSystemScreenshotC
 	{"ModelFront", u"TestData/Effects/Update_17x/Model.efkefc", 30, OrthographicView::FrontXY, 24.0f},
 	{"ModelParametersFront", u"TestData/Effects/14/Model_Parameters1.efk", 30, OrthographicView::FrontXY, 24.0f},
 	{"ModelParametersXZ", u"TestData/Effects/14/Model_Parameters1.efk", 30, OrthographicView::XZ, 24.0f},
-	{"ModelCullingFront", u"TestData/Effects/15/Model_Culling.efkefc", 30, OrthographicView::FrontXY, 24.0f},
-	{"ModelCullingXZ", u"TestData/Effects/15/Model_Culling.efkefc", 30, OrthographicView::XZ, 24.0f},
 	{"MultiModelFront", u"TestData/Effects/15/Update_MultiModel.efkefc", 30, OrthographicView::FrontXY, 24.0f},
 	{"MultiModelXZ", u"TestData/Effects/15/Update_MultiModel.efkefc", 30, OrthographicView::XZ, 24.0f},
 	{"AnimatedModelFront", u"TestData/Effects/16/AnimatedModel01.efkefc", 30, OrthographicView::FrontXY, 24.0f},
@@ -371,13 +371,13 @@ void CaptureCoordinateSystemComparison(
 	{
 		const auto caseDirectory = sourceRoot / "DX11" / "CoordinateSystemBoundary" / screenshotCase.Name;
 		std::filesystem::create_directories(caseDirectory);
-		for (size_t variantIndex = 0; variantIndex < CoordinateSystemScreenshotVariants.size(); variantIndex++)
+		const auto renderVariant = [&](const CoordinateSystemScreenshotVariant& variant, size_t variantIndex, bool capture)
 		{
-			const auto& variant = CoordinateSystemScreenshotVariants[variantIndex];
-			printf("[RenderingTransformScreenshot] coordinate-system case=%s variant=%s frames=%d\n",
+			printf("[RenderingTransformScreenshot] coordinate-system case=%s variant=%s frames=%d%s\n",
 				screenshotCase.Name,
 				variant.Label,
-				screenshotCase.FrameCount);
+				screenshotCase.FrameCount,
+				capture ? "" : " warmup");
 			ConfigureCoordinateSystemVariant(platform, variant, screenshotCase.View, screenshotCase.OrthographicHeight);
 			srand(0);
 
@@ -406,14 +406,26 @@ void CaptureCoordinateSystemComparison(
 			}
 			EXPECT_TRUE(platform.Draw());
 
-			const auto sourcePath = caseDirectory /
-				(std::to_string(variantIndex) + "_" + variant.Label + ".png");
-			EXPECT_TRUE(platform.TakeScreenshot(sourcePath.string().c_str()));
-			manifest << "CoordinateSystemBoundaryComparison_" << screenshotCase.Name << "_DX11.png,"
-					 << variantIndex << "," << variant.Label << "," << sourcePath.generic_string() << "\n";
+			if (capture)
+			{
+				const auto sourcePath = caseDirectory /
+					(std::to_string(variantIndex) + "_" + variant.Label + ".png");
+				EXPECT_TRUE(platform.TakeScreenshot(sourcePath.string().c_str()));
+				manifest << "CoordinateSystemBoundaryComparison_" << screenshotCase.Name << "_DX11.png,"
+						 << variantIndex << "," << variant.Label << "," << sourcePath.generic_string() << "\n";
+			}
 
 			platform.StopAllEffects();
 			platform.ClearLoadedEffects();
+		};
+
+		// Some renderer resources are initialized lazily on their first draw.
+		// Discard one ordinary pass for every effect so the compared panels all
+		// start from the same initialized renderer state.
+		renderVariant(CoordinateSystemScreenshotVariants.front(), 0, false);
+		for (size_t variantIndex = 0; variantIndex < CoordinateSystemScreenshotVariants.size(); variantIndex++)
+		{
+			renderVariant(CoordinateSystemScreenshotVariants[variantIndex], variantIndex, true);
 		}
 	}
 

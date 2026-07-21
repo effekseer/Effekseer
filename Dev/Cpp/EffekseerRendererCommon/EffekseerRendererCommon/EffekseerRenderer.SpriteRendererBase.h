@@ -107,10 +107,10 @@ protected:
 		cameraMatrix_ = TransformCameraMatrixToEffectSpace(
 			::Effekseer::SIMD::Mat44f(renderer->GetCameraMatrix()),
 			param.RenderingCoordinateTransform);
-		cameraFrontDirection_ = TransformCameraVectorToEffectSpace(
+		cameraFrontDirection_ = TransformCameraFrontToEffectSpace(
 			efkVector3D(renderer->GetCameraFrontDirection()),
 			param.RenderingCoordinateTransform);
-		cameraPosition_ = TransformCameraVectorToEffectSpace(
+		cameraPosition_ = TransformCameraPositionToEffectSpace(
 			efkVector3D(renderer->GetCameraPosition()),
 			param.RenderingCoordinateTransform);
 
@@ -431,11 +431,10 @@ protected:
 	{
 		if (param.ZSort != Effekseer::ZSortType::None)
 		{
-			auto frontDirection = efkVector3D(renderer->GetCameraFrontDirection());
-			if (!param.IsRightHand)
-			{
-				frontDirection = -frontDirection;
-			}
+			const auto frontDirection = NormalizeCameraFrontForRenderingSpace(
+				efkVector3D(renderer->GetCameraFrontDirection()),
+				param.IsRightHand,
+				param.RenderingCoordinateTransform);
 
 			for (auto& kv : instances)
 			{

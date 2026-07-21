@@ -771,6 +771,7 @@ EffectRenderingTransformParameter ManagerImplemented::CalculateDrawRenderingCoor
 	// boundary. Its parity must still reach normals, tangents, frustum culling,
 	// and camera-vector conversion, but it must not exchange rendered faces.
 	boundaryTransform.ReversesCulling = false;
+	boundaryTransform.ReversesCameraFront = boundaryTransform.ReversesWinding;
 	return ComposeRenderingTransforms(boundaryTransform, drawTransform);
 }
 

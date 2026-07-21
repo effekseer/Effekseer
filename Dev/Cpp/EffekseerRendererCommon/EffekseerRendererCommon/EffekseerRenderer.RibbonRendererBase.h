@@ -56,9 +56,9 @@ protected:
 		}
 
 		const auto cameraForRendering = TransformCameraMatrixToEffectSpace(camera, parameter.RenderingCoordinateTransform);
-		const auto cameraFrontForRendering = TransformCameraVectorToEffectSpace(
+		const auto cameraFrontForRendering = TransformCameraFrontToEffectSpace(
 			::Effekseer::SIMD::Vec3f(renderer_->GetCameraFrontDirection()), parameter.RenderingCoordinateTransform);
-		const auto cameraPositionForRendering = TransformCameraVectorToEffectSpace(
+		const auto cameraPositionForRendering = TransformCameraPositionToEffectSpace(
 			::Effekseer::SIMD::Vec3f(renderer_->GetCameraPosition()), parameter.RenderingCoordinateTransform);
 
 		// Calculate spline

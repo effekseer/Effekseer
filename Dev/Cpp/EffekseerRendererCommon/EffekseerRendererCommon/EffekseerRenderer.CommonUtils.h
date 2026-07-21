@@ -794,7 +794,7 @@ inline Effekseer::SIMD::Vec3f InverseTransformDirection(
 	return Effekseer::SIMD::Vec3f::Transform(direction, inverse);
 }
 
-inline Effekseer::SIMD::Vec3f TransformCameraVectorToEffectSpace(
+inline Effekseer::SIMD::Vec3f TransformCameraPositionToEffectSpace(
 	const Effekseer::SIMD::Vec3f& value,
 	const Effekseer::EffectRenderingTransformParameter& renderingCoordinateTransform)
 {
@@ -804,6 +804,29 @@ inline Effekseer::SIMD::Vec3f TransformCameraVectorToEffectSpace(
 	}
 
 	return InverseTransformDirection(value, renderingCoordinateTransform.Transform);
+}
+
+inline Effekseer::SIMD::Vec3f TransformCameraFrontToEffectSpace(
+	const Effekseer::SIMD::Vec3f& value,
+	const Effekseer::EffectRenderingTransformParameter& renderingCoordinateTransform)
+{
+	auto result = TransformCameraPositionToEffectSpace(value, renderingCoordinateTransform);
+	return renderingCoordinateTransform.ReversesCameraFront ? -result : result;
+}
+
+inline bool IsRenderingCameraRightHanded(
+	bool isSimulationRightHanded,
+	const Effekseer::EffectRenderingTransformParameter& renderingCoordinateTransform)
+{
+	return isSimulationRightHanded != renderingCoordinateTransform.ReversesCameraFront;
+}
+
+inline Effekseer::SIMD::Vec3f NormalizeCameraFrontForRenderingSpace(
+	const Effekseer::SIMD::Vec3f& value,
+	bool isSimulationRightHanded,
+	const Effekseer::EffectRenderingTransformParameter& renderingCoordinateTransform)
+{
+	return IsRenderingCameraRightHanded(isSimulationRightHanded, renderingCoordinateTransform) ? value : -value;
 }
 
 inline Effekseer::SIMD::Mat44f TransformCameraMatrixToEffectSpace(
