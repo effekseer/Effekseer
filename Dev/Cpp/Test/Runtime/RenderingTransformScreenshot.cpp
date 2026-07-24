@@ -258,7 +258,8 @@ void ConfigureOrthographicCamera(EffectPlatform& platform, OrthographicView view
 void ConfigureCoordinateSystemComparisonCamera(
 	EffectPlatform& platform,
 	OrthographicView view,
-	float orthographicHeight)
+	float orthographicHeight,
+	const Effekseer::CoordinateSystemConverter& converter)
 {
 	// Define the view once in Effekseer's canonical RH space, then move the
 	// camera through the same coordinate boundaries as the rendered effect.
@@ -274,8 +275,6 @@ void ConfigureCoordinateSystemComparisonCamera(
 		? Effekseer::Vector3D(0.0f, 1.0f, 0.0f)
 		: Effekseer::Vector3D(0.0f, 0.0f, 1.0f);
 
-	const auto converter = Effekseer::CoordinateSystemConverter::FromMatrix(
-		platform.GetManager()->GetCoordinateSystemTransform().ToExternal);
 	EXPECT_TRUE(converter.IsValid());
 	const auto cameraPosition = converter.ToExternalPosition(canonicalCameraPosition);
 	const auto cameraTarget = converter.ToExternalPosition(canonicalCameraTarget);
@@ -334,7 +333,21 @@ Effekseer::CoordinateSystemTransform MakeRightHandedAxisMap()
 	return transform;
 }
 
-void ConfigureCoordinateSystemVariant(
+Effekseer::CoordinateSystemConverter MakeExpectedCoordinateSystemConverter(
+	const CoordinateSystemScreenshotVariant& variant)
+{
+	if (variant.Transform == CoordinateSystemScreenshotVariant::CoordinateTransform::LeftHandedAxisMap)
+	{
+		return Effekseer::CoordinateSystemConverter::FromMatrix(MakeLeftHandedAxisMap().ToExternal);
+	}
+	if (variant.Transform == CoordinateSystemScreenshotVariant::CoordinateTransform::RightHandedAxisMap)
+	{
+		return Effekseer::CoordinateSystemConverter::FromMatrix(MakeRightHandedAxisMap().ToExternal);
+	}
+	return Effekseer::CoordinateSystemConverter::FromCoordinateSystem(variant.CoordinateSystem);
+}
+
+Effekseer::CoordinateSystemConverter ConfigureCoordinateSystemVariant(
 	EffectPlatform& platform,
 	const CoordinateSystemScreenshotVariant& variant,
 	OrthographicView view,
@@ -358,7 +371,9 @@ void ConfigureCoordinateSystemVariant(
 
 	Effekseer::Matrix44 renderingCoordinateMatrix;
 	platform.SetRenderingCoordinateMatrix(renderingCoordinateMatrix);
-	ConfigureCoordinateSystemComparisonCamera(platform, view, orthographicHeight);
+	const auto expectedConverter = MakeExpectedCoordinateSystemConverter(variant);
+	ConfigureCoordinateSystemComparisonCamera(platform, view, orthographicHeight, expectedConverter);
+	return expectedConverter;
 }
 
 void CaptureCoordinateSystemComparison(
@@ -378,7 +393,11 @@ void CaptureCoordinateSystemComparison(
 				variant.Label,
 				screenshotCase.FrameCount,
 				capture ? "" : " warmup");
-			ConfigureCoordinateSystemVariant(platform, variant, screenshotCase.View, screenshotCase.OrthographicHeight);
+			const auto inputConverter = ConfigureCoordinateSystemVariant(
+				platform,
+				variant,
+				screenshotCase.View,
+				screenshotCase.OrthographicHeight);
 			srand(0);
 
 			// Public transform inputs belong to the selected external coordinate
@@ -387,8 +406,9 @@ void CaptureCoordinateSystemComparison(
 			const auto canonicalPosition = screenshotCase.View == OrthographicView::FrontXY
 				? Effekseer::Vector3D(2.0f, 1.0f, 0.0f)
 				: Effekseer::Vector3D(2.0f, 0.0f, 1.0f);
-			const auto inputConverter = Effekseer::CoordinateSystemConverter::FromMatrix(
-				platform.GetManager()->GetCoordinateSystemTransform().ToExternal);
+			// Keep every component non-zero and asymmetric so reflections and axis
+			// exchanges in the SetTargetLocation input boundary are observable.
+			const Effekseer::Vector3D canonicalTargetLocation(4.0f, -3.0f, 5.0f);
 			EXPECT_TRUE(inputConverter.IsValid());
 			const auto handle = platform.Play(
 				(rootPath + screenshotCase.EffectPath).c_str(),
@@ -399,6 +419,9 @@ void CaptureCoordinateSystemComparison(
 			Effekseer::Matrix43 canonicalTransform;
 			canonicalTransform.SetSRT({1.1f, 0.8f, 0.7f}, canonicalRotation, canonicalPosition);
 			platform.GetManager()->SetMatrix(handle, inputConverter.ToExternalTransform(canonicalTransform));
+			platform.GetManager()->SetTargetLocation(
+				handle,
+				inputConverter.ToExternalPosition(canonicalTargetLocation));
 
 			for (int32_t frame = 0; frame < screenshotCase.FrameCount; frame++)
 			{
