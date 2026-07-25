@@ -1,4 +1,5 @@
 #include "Effekseer.h"
+#include "Effekseer/Effekseer.Instance.h"
 
 #include "../TestHelper.h"
 
@@ -338,8 +339,39 @@ void TestRenderingCoordinateTransform()
 	manager->StopAllEffects();
 }
 
+void TestMirroredMatrixInterpolation()
+{
+	// A negative scale is a valid authoring parameter, so a mirrored matrix must be
+	// interpolated between frames without losing the reflection.
+	const auto makeMirroredMatrix = [](float angle) -> Effekseer::SIMD::Mat43f
+	{
+		return Effekseer::SIMD::Mat43f::SRT(
+			Effekseer::SIMD::Vec3f(1.0f, -1.0f, 1.0f),
+			Effekseer::SIMD::Mat43f::RotationZ(angle),
+			Effekseer::SIMD::Vec3f(1.0f, 2.0f, 3.0f));
+	};
+
+	{
+		const auto mirrored = makeMirroredMatrix(0.3f);
+		Effekseer::TimeSeriesMatrix timeSeries;
+		timeSeries.Reset(mirrored, 0.0f);
+		timeSeries.Step(mirrored, 1.0f);
+		EXPECT_TRUE(Effekseer::SIMD::Mat43f::Equal(timeSeries.Get(0.5f), mirrored, 0.001f));
+	}
+
+	{
+		Effekseer::TimeSeriesMatrix timeSeries;
+		timeSeries.Reset(makeMirroredMatrix(0.0f), 0.0f);
+		timeSeries.Step(makeMirroredMatrix(0.8f), 1.0f);
+		EXPECT_TRUE(Effekseer::SIMD::Mat43f::Equal(timeSeries.Get(0.5f), makeMirroredMatrix(0.4f), 0.001f));
+	}
+}
+
 TestRegister RenderingTransform_TestEffectFlip("RenderingTransform.TestEffectFlip", []() -> void
 											 { TestEffectFlip(); });
+
+TestRegister RenderingTransform_TestMirroredMatrixInterpolation("RenderingTransform.TestMirroredMatrixInterpolation", []() -> void
+																{ TestMirroredMatrixInterpolation(); });
 
 TestRegister RenderingTransform_TestRenderingCoordinateTransform("RenderingTransform.TestRenderingCoordinateTransform", []() -> void
 																	 { TestRenderingCoordinateTransform(); });

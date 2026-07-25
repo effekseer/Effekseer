@@ -15,6 +15,36 @@
 namespace Effekseer
 {
 
+namespace
+{
+
+//! Decompose a matrix into a signed scale and a proper rotation.
+//! GetSRT() returns axis lengths, so a mirrored matrix (a negative scale) leaves an
+//! improper rotation which cannot be converted into a quaternion. Move the reflection
+//! into the scale of the first axis instead. Both endpoints are decomposed in the same
+//! way, so an interpolation between them stays continuous.
+void GetSignedSRT(const SIMD::Mat43f& matrix, SIMD::Vec3f& s, SIMD::Mat43f& r, SIMD::Vec3f& t)
+{
+	matrix.GetSRT(s, r, t);
+
+	const auto rotation = SIMD::ToStruct(r);
+	const float determinant =
+		rotation.Value[0][0] * (rotation.Value[1][1] * rotation.Value[2][2] - rotation.Value[1][2] * rotation.Value[2][1]) -
+		rotation.Value[0][1] * (rotation.Value[1][0] * rotation.Value[2][2] - rotation.Value[1][2] * rotation.Value[2][0]) +
+		rotation.Value[0][2] * (rotation.Value[1][0] * rotation.Value[2][1] - rotation.Value[1][1] * rotation.Value[2][0]);
+
+	if (determinant < 0.0f)
+	{
+		const SIMD::Float4 mirror(-1.0f, 1.0f, 1.0f, 1.0f);
+		r.X = r.X * mirror;
+		r.Y = r.Y * mirror;
+		r.Z = r.Z * mirror;
+		s.SetX(-s.GetX());
+	}
+}
+
+} // namespace
+
 void TimeSeriesMatrix::Reset(const SIMD::Mat43f& matrix, float time)
 {
 	previous_ = matrix;
@@ -66,16 +96,13 @@ SIMD::Mat43f TimeSeriesMatrix::Get(float time) const
 	SIMD::Mat43f r_previous;
 	SIMD::Vec3f t_previous;
 
-	EFK_ASSERT(SIMD::ToStruct(previous_).IsProperSRT());
-	EFK_ASSERT(SIMD::ToStruct(current_).IsProperSRT());
-
-	previous_.GetSRT(s_previous, r_previous, t_previous);
+	GetSignedSRT(previous_, s_previous, r_previous, t_previous);
 
 	SIMD::Vec3f s_current;
 	SIMD::Mat43f r_current;
 	SIMD::Vec3f t_current;
 
-	current_.GetSRT(s_current, r_current, t_current);
+	GetSignedSRT(current_, s_current, r_current, t_current);
 
 	const auto q_previous = SIMD::Quaternionf::FromMatrix(r_previous);
 	const auto q_current = SIMD::Quaternionf::FromMatrix(r_current);
