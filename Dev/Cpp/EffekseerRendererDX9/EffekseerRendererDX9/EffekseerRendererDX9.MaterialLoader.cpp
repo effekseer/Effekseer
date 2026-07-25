@@ -136,7 +136,7 @@ MaterialLoader ::~MaterialLoader()
 		}
 
 		if (shader == nullptr)
-			return false;
+			return nullptr;
 
 		auto vertexUniformSize = parameterGenerator.VertexShaderUniformBufferSize;
 		auto pixelUniformSize = parameterGenerator.PixelShaderUniformBufferSize;
@@ -175,7 +175,7 @@ MaterialLoader ::~MaterialLoader()
 										 binary->GetPixelShaderSize(shaderTypesModel[st])),
 									 vl);
 		if (shader == nullptr)
-			return false;
+			return nullptr;
 
 		auto vertexUniformSize = parameterGenerator.VertexShaderUniformBufferSize;
 		auto pixelUniformSize = parameterGenerator.PixelShaderUniformBufferSize;

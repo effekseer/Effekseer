@@ -42,6 +42,8 @@ if(CLANG_FORMAT_ENABLED)
   clang_format(${PROJECT_NAME})
 endif()
 
+warnerror(${PROJECT_NAME})
+
 # --------------------
 # Install
 

@@ -650,14 +650,14 @@ bool Shader::GenerateShaders()
 
 	if (FAILED(hr))
 	{
-		return nullptr;
+		return false;
 	}
 
 	hr = device->CreatePixelShader((const DWORD*)pixelShaderData_.data(), &pixelShader_);
 
 	if (FAILED(hr))
 	{
-		return nullptr;
+		return false;
 	}
 
 	return true;

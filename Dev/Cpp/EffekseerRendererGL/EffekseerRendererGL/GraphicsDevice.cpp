@@ -1847,11 +1847,11 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 
 	if (drawParam.InstanceCount > 1)
 	{
-		GLExt::glDrawElementsInstanced(primitiveMode, indexPerPrimitive * drawParam.PrimitiveCount, indexStrideType, (void*)(drawParam.IndexOffset * indexStride), drawParam.InstanceCount);
+		GLExt::glDrawElementsInstanced(primitiveMode, indexPerPrimitive * drawParam.PrimitiveCount, indexStrideType, reinterpret_cast<void*>(static_cast<size_t>(drawParam.IndexOffset) * indexStride), drawParam.InstanceCount);
 	}
 	else
 	{
-		glDrawElements(primitiveMode, indexPerPrimitive * drawParam.PrimitiveCount, indexStrideType, (void*)(drawParam.IndexOffset * indexStride));
+		glDrawElements(primitiveMode, indexPerPrimitive * drawParam.PrimitiveCount, indexStrideType, reinterpret_cast<void*>(static_cast<size_t>(drawParam.IndexOffset) * indexStride));
 	}
 
 	DisableLayouts(pip->GetAttribLocations());

@@ -11,9 +11,31 @@ project(Effekseer C CXX)
 # C++ version
 set(CMAKE_CXX_STANDARD 17)
 
+# Turns sloppy constructs into errors. In addition to the warnings, standard
+# conformance is enforced so that invalid implicit conversions are rejected
+# instead of being silently accepted (e.g. returning "false" from a function
+# whose return type is a pointer or a RefPtr, which MSVC accepts only in its
+# non-conforming default mode).
 function(WarnError target)
   if(MSVC)
-    target_compile_options(${target} PRIVATE /we4267 /we4456 /we4458 /we4715)
+    # /permissive- : disable the legacy rule that treats "false" / "0" as a
+    # generic null pointer constant. C4302/C4311/C4312 : pointer truncation and
+    # integer <-> pointer conversions.
+    target_compile_options(${target} PRIVATE /we4267 /we4456 /we4458 /we4715
+                                             /permissive- /we4302 /we4311
+                                             /we4312)
+  elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+    target_compile_options(
+      ${target}
+      PRIVATE $<$<COMPILE_LANGUAGE:CXX>:-Werror=return-type>
+              $<$<COMPILE_LANGUAGE:CXX>:-Werror=conversion-null>
+              $<$<COMPILE_LANGUAGE:CXX>:-Werror=int-to-pointer-cast>)
+  elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    target_compile_options(
+      ${target}
+      PRIVATE $<$<COMPILE_LANGUAGE:CXX>:-Werror=return-type>
+              $<$<COMPILE_LANGUAGE:CXX>:-Werror=null-conversion>
+              $<$<COMPILE_LANGUAGE:CXX>:-Werror=int-to-pointer-cast>)
   endif()
 endfunction()
 
