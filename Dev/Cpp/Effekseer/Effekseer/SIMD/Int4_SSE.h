@@ -51,15 +51,15 @@ struct alignas(16) Int4
 	}
 	int32_t GetY() const
 	{
-		return _mm_cvtsi128_si32(Swizzle<1, 1, 1, 1>(s).s);
+		return _mm_cvtsi128_si32((Swizzle<1, 1, 1, 1>(s).s));
 	}
 	int32_t GetZ() const
 	{
-		return _mm_cvtsi128_si32(Swizzle<2, 2, 2, 2>(s).s);
+		return _mm_cvtsi128_si32((Swizzle<2, 2, 2, 2>(s).s));
 	}
 	int32_t GetW() const
 	{
-		return _mm_cvtsi128_si32(Swizzle<3, 3, 3, 3>(s).s);
+		return _mm_cvtsi128_si32((Swizzle<3, 3, 3, 3>(s).s));
 	}
 
 	void SetX(int32_t i)
@@ -68,15 +68,15 @@ struct alignas(16) Int4
 	}
 	void SetY(int32_t i)
 	{
-		s = Swizzle<1, 0, 2, 3>(_mm_castps_si128(_mm_move_ss(_mm_castsi128_ps(Swizzle<1, 0, 2, 3>(s).s), _mm_castsi128_ps(_mm_cvtsi32_si128(i))))).s;
+		s = Swizzle<1, 0, 2, 3>(_mm_castps_si128(_mm_move_ss(_mm_castsi128_ps((Swizzle<1, 0, 2, 3>(s).s)), _mm_castsi128_ps(_mm_cvtsi32_si128(i))))).s;
 	}
 	void SetZ(int32_t i)
 	{
-		s = Swizzle<2, 1, 0, 3>(_mm_castps_si128(_mm_move_ss(_mm_castsi128_ps(Swizzle<2, 1, 0, 3>(s).s), _mm_castsi128_ps(_mm_cvtsi32_si128(i))))).s;
+		s = Swizzle<2, 1, 0, 3>(_mm_castps_si128(_mm_move_ss(_mm_castsi128_ps((Swizzle<2, 1, 0, 3>(s).s)), _mm_castsi128_ps(_mm_cvtsi32_si128(i))))).s;
 	}
 	void SetW(int32_t i)
 	{
-		s = Swizzle<3, 1, 2, 0>(_mm_castps_si128(_mm_move_ss(_mm_castsi128_ps(Swizzle<3, 1, 2, 0>(s).s), _mm_castsi128_ps(_mm_cvtsi32_si128(i))))).s;
+		s = Swizzle<3, 1, 2, 0>(_mm_castps_si128(_mm_move_ss(_mm_castsi128_ps((Swizzle<3, 1, 2, 0>(s).s)), _mm_castsi128_ps(_mm_cvtsi32_si128(i))))).s;
 	}
 
 	Float4 Convert4f() const;

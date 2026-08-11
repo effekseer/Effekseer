@@ -62,15 +62,15 @@ struct alignas(16) Float4
 	}
 	float GetY() const
 	{
-		return _mm_cvtss_f32(Swizzle<1, 1, 1, 1>(s).s);
+		return _mm_cvtss_f32((Swizzle<1, 1, 1, 1>(s).s));
 	}
 	float GetZ() const
 	{
-		return _mm_cvtss_f32(Swizzle<2, 2, 2, 2>(s).s);
+		return _mm_cvtss_f32((Swizzle<2, 2, 2, 2>(s).s));
 	}
 	float GetW() const
 	{
-		return _mm_cvtss_f32(Swizzle<3, 3, 3, 3>(s).s);
+		return _mm_cvtss_f32((Swizzle<3, 3, 3, 3>(s).s));
 	}
 
 	void SetX(float i)
@@ -79,15 +79,15 @@ struct alignas(16) Float4
 	}
 	void SetY(float i)
 	{
-		s = Swizzle<1, 0, 2, 3>(_mm_move_ss(Swizzle<1, 0, 2, 3>(s).s, _mm_set_ss(i))).s;
+		s = Swizzle<1, 0, 2, 3>(_mm_move_ss((Swizzle<1, 0, 2, 3>(s).s), _mm_set_ss(i))).s;
 	}
 	void SetZ(float i)
 	{
-		s = Swizzle<2, 1, 0, 3>(_mm_move_ss(Swizzle<2, 1, 0, 3>(s).s, _mm_set_ss(i))).s;
+		s = Swizzle<2, 1, 0, 3>(_mm_move_ss((Swizzle<2, 1, 0, 3>(s).s), _mm_set_ss(i))).s;
 	}
 	void SetW(float i)
 	{
-		s = Swizzle<3, 1, 2, 0>(_mm_move_ss(Swizzle<3, 1, 2, 0>(s).s, _mm_set_ss(i))).s;
+		s = Swizzle<3, 1, 2, 0>(_mm_move_ss((Swizzle<3, 1, 2, 0>(s).s), _mm_set_ss(i))).s;
 	}
 
 	template <size_t LANE>
@@ -363,7 +363,7 @@ template <size_t LANE>
 Float4 Float4::MulLane(const Float4& lhs, const Float4& rhs)
 {
 	static_assert(LANE < 4, "LANE is must be less than 4.");
-	return _mm_mul_ps(lhs.s, Swizzle<LANE, LANE, LANE, LANE>(rhs).s);
+	return _mm_mul_ps(lhs.s, (Swizzle<LANE, LANE, LANE, LANE>(rhs).s));
 }
 
 template <size_t LANE>
@@ -371,9 +371,9 @@ Float4 Float4::MulAddLane(const Float4& a, const Float4& b, const Float4& c)
 {
 	static_assert(LANE < 4, "LANE is must be less than 4.");
 #if defined(EFK_SIMD_AVX2)
-	return _mm_fmadd_ps(b.s, Swizzle<LANE, LANE, LANE, LANE>(c).s, a.s);
+	return _mm_fmadd_ps(b.s, (Swizzle<LANE, LANE, LANE, LANE>(c).s), a.s);
 #else
-	return _mm_add_ps(a.s, _mm_mul_ps(b.s, Swizzle<LANE, LANE, LANE, LANE>(c).s));
+	return _mm_add_ps(a.s, _mm_mul_ps(b.s, (Swizzle<LANE, LANE, LANE, LANE>(c).s)));
 #endif
 }
 
@@ -382,9 +382,9 @@ Float4 Float4::MulSubLane(const Float4& a, const Float4& b, const Float4& c)
 {
 	static_assert(LANE < 4, "LANE is must be less than 4.");
 #if defined(EFK_SIMD_AVX2)
-	return _mm_fnmadd_ps(b.s, Swizzle<LANE, LANE, LANE, LANE>(c).s, a.s);
+	return _mm_fnmadd_ps(b.s, (Swizzle<LANE, LANE, LANE, LANE>(c).s), a.s);
 #else
-	return _mm_sub_ps(a.s, _mm_mul_ps(b.s, Swizzle<LANE, LANE, LANE, LANE>(c).s));
+	return _mm_sub_ps(a.s, _mm_mul_ps(b.s, (Swizzle<LANE, LANE, LANE, LANE>(c).s)));
 #endif
 }
 
@@ -406,7 +406,7 @@ Float4 Float4::Swizzle(const Float4& v)
 inline Float4 Float4::Dot3(const Float4& lhs, const Float4& rhs)
 {
 	Float4 muled = lhs * rhs;
-	return _mm_add_ss(_mm_add_ss(muled.s, Float4::Swizzle<1, 1, 1, 1>(muled).s), Float4::Swizzle<2, 2, 2, 2>(muled).s);
+	return _mm_add_ss(_mm_add_ss(muled.s, (Float4::Swizzle<1, 1, 1, 1>(muled).s)), (Float4::Swizzle<2, 2, 2, 2>(muled).s));
 }
 
 inline Float4 Float4::Cross3(const Float4& lhs, const Float4& rhs)

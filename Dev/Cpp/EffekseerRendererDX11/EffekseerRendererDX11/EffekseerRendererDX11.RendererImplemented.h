@@ -12,7 +12,12 @@
 #include <EffekseerRendererCommon/EffekseerRenderer.StandardRenderer.h>
 
 #ifdef _WIN32
-#include <xmmintrin.h>
+	//On ARM64/ARM64EC, <xmmintrin.h> must be included indirectly through <intrin.h>.
+	#if defined(_M_IX86) || defined(_M_X64) // x86 or x64
+		#include <xmmintrin.h>
+	#elif defined(_M_ARM64) || defined(_M_ARM64EC) // ARM64 or ARM64EC
+		#include <intrin.h>
+	#endif
 #endif
 
 namespace EffekseerRendererDX11

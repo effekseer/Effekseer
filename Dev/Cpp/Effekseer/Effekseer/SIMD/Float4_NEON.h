@@ -38,10 +38,13 @@ struct alignas(16) Float4
 	{
 		s = rhs;
 	}
+	// MSVC ARM64/ARM64EC treats float32x4_t and uint32x4_t as the same type.
+	#if !(defined(_MSC_VER) && (defined(_M_ARM64) || defined(_M_ARM64EC)))
 	Float4(uint32x4_t rhs)
 	{
 		s = vreinterpretq_f32_u32(rhs);
 	}
+	#endif
 	Float4(float x, float y, float z, float w)
 	{
 		const float f[4] = {x, y, z, w};

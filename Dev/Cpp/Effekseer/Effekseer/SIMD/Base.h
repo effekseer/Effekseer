@@ -6,12 +6,16 @@
 #include <cmath>
 #include <cstdint>
 
-#if defined(__ARM_NEON__) || defined(__ARM_NEON)
+#if defined(__ARM_NEON__) || defined(__ARM_NEON) || defined(_M_ARM64) || defined(_M_ARM64EC) || defined(_M_ARM)
 // ARMv7/ARM64 NEON
+
+// MSVC uses _M_ARM, _M_ARM64, and _M_ARM64EC to identify Windows on ARM targets.
+// ARM64EC also defines _M_X64, so ARM targets must be checked before the x64/SSE branch.
+// See: https://learn.microsoft.com/en-us/cpp/preprocessor/predefined-macros?view=msvc-170 and https://techcommunity.microsoft.com/blog/windowsosplatform/getting-to-know-arm64ec-defines-and-intrinsic-functions/2957235
 
 #define EFK_SIMD_NEON
 
-#if defined(_M_ARM64) || defined(__aarch64__)
+#if defined(_M_ARM64) || defined(_M_ARM64EC) || defined(__aarch64__) 
 #define EFK_SIMD_NEON_ARM64
 #endif
 
