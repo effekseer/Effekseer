@@ -1,4 +1,5 @@
-﻿#include "Effekseer.EffectNodeRibbon.h"
+﻿#include "Utils/Effekseer.BinaryReader.h"
+#include "Effekseer.EffectNodeRibbon.h"
 
 #include "Effekseer.Effect.h"
 #include "Effekseer.EffectNode.h"
@@ -17,12 +18,18 @@
 namespace Effekseer
 {
 
-void EffectNodeRibbon::LoadRendererParameter(unsigned char*& pos, const SettingRef& setting)
+void EffectNodeRibbon::LoadRendererParameter(BinaryReader<true>& pos, const SettingRef& setting)
 {
 	EffectNodeType type = EffectNodeType::NoneType;
-	memcpy(&type, pos, sizeof(int));
-	pos += sizeof(int);
-	assert(type == GetType());
+	if (!pos.Peek(&type, sizeof(int)))
+	{
+		return pos.MarkFailed();
+	}
+	pos.Skip(sizeof(int));
+	if (type != GetType())
+	{
+		return pos.MarkFailed();
+	}
 	EffekseerPrintDebug("Renderer : Ribbon\n");
 
 	if (m_effect->GetVersion() >= 15)
@@ -32,8 +39,11 @@ void EffectNodeRibbon::LoadRendererParameter(unsigned char*& pos, const SettingR
 
 	if (m_effect->GetVersion() >= Version17Alpha1)
 	{
-		memcpy(&TimeType, pos, sizeof(int32_t));
-		pos += sizeof(int32_t);
+		if (!pos.Peek(&TimeType, sizeof(int32_t)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int32_t));
 	}
 
 	if (m_effect->GetVersion() >= 3)
@@ -42,17 +52,26 @@ void EffectNodeRibbon::LoadRendererParameter(unsigned char*& pos, const SettingR
 	else
 	{
 		int32_t AlphaBlend = 0;
-		memcpy(&AlphaBlend, pos, sizeof(int));
-		pos += sizeof(int);
+		if (!pos.Peek(&AlphaBlend, sizeof(int)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int));
 	}
 
-	memcpy(&ViewpointDependent, pos, sizeof(int));
-	pos += sizeof(int);
+	if (!pos.Peek(&ViewpointDependent, sizeof(int)))
+	{
+		return pos.MarkFailed();
+	}
+	pos.Skip(sizeof(int));
 
 	RibbonAllColor.load(pos, m_effect->GetVersion());
 
-	memcpy(&RibbonColor.type, pos, sizeof(int));
-	pos += sizeof(int);
+	if (!pos.Peek(&RibbonColor.type, sizeof(int)))
+	{
+		return pos.MarkFailed();
+	}
+	pos.Skip(sizeof(int));
 	EffekseerPrintDebug("RibbonColorType : %d\n", RibbonColor.type);
 
 	if (RibbonColor.type == RibbonColor.Default)
@@ -60,33 +79,48 @@ void EffectNodeRibbon::LoadRendererParameter(unsigned char*& pos, const SettingR
 	}
 	else if (RibbonColor.type == RibbonColor.Fixed)
 	{
-		memcpy(&RibbonColor.fixed, pos, sizeof(RibbonColor.fixed));
-		pos += sizeof(RibbonColor.fixed);
+		if (!pos.Peek(&RibbonColor.fixed, sizeof(RibbonColor.fixed)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(RibbonColor.fixed));
 	}
 
-	memcpy(&RibbonPosition.type, pos, sizeof(int));
-	pos += sizeof(int);
+	if (!pos.Peek(&RibbonPosition.type, sizeof(int)))
+	{
+		return pos.MarkFailed();
+	}
+	pos.Skip(sizeof(int));
 	EffekseerPrintDebug("RibbonPosition : %d\n", RibbonPosition.type);
 
 	if (RibbonPosition.type == RibbonPosition.Default)
 	{
 		if (m_effect->GetVersion() >= 8)
 		{
-			memcpy(&RibbonPosition.fixed, pos, sizeof(RibbonPosition.fixed));
-			pos += sizeof(RibbonPosition.fixed);
+			if (!pos.Peek(&RibbonPosition.fixed, sizeof(RibbonPosition.fixed)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(RibbonPosition.fixed));
 			RibbonPosition.type = RibbonPosition.Fixed;
 		}
 	}
 	else if (RibbonPosition.type == RibbonPosition.Fixed)
 	{
-		memcpy(&RibbonPosition.fixed, pos, sizeof(RibbonPosition.fixed));
-		pos += sizeof(RibbonPosition.fixed);
+		if (!pos.Peek(&RibbonPosition.fixed, sizeof(RibbonPosition.fixed)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(RibbonPosition.fixed));
 	}
 
 	if (m_effect->GetVersion() >= 13)
 	{
-		memcpy(&SplineDivision, pos, sizeof(int32_t));
-		pos += sizeof(int32_t);
+		if (!pos.Peek(&SplineDivision, sizeof(int32_t)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int32_t));
 	}
 
 	if (m_effect->GetVersion() >= 3)
@@ -95,8 +129,11 @@ void EffectNodeRibbon::LoadRendererParameter(unsigned char*& pos, const SettingR
 	else
 	{
 		int RibbonTexture = 0;
-		memcpy(&RibbonTexture, pos, sizeof(int));
-		pos += sizeof(int);
+		if (!pos.Peek(&RibbonTexture, sizeof(int)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int));
 	}
 
 	// 右手系左手系変換

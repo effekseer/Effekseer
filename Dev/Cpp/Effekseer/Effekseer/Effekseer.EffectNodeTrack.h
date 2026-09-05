@@ -2,6 +2,7 @@
 #ifndef __EFFEKSEER_ParameterNODE_TRACK_H__
 #define __EFFEKSEER_ParameterNODE_TRACK_H__
 
+#include "Utils/Effekseer.BinaryReader.h"
 #include "Effekseer.EffectNode.h"
 #include "Renderer/Effekseer.TrackRenderer.h"
 
@@ -105,14 +106,14 @@ public:
 	TrailSmoothingType SmoothingType = TrailSmoothingType::Off;
 	TrailTimeType TimeType = TrailTimeType::FirstParticle;
 
-	EffectNodeTrack(Effect* effect, unsigned char*& pos)
+	EffectNodeTrack(Effect* effect, BinaryReader<true>& pos)
 		: EffectNodeImplemented(effect, pos)
 	{
 	}
 
 	~EffectNodeTrack() = default;
 
-	void LoadRendererParameter(unsigned char*& pos, const SettingRef& setting) override;
+	void LoadRendererParameter(BinaryReader<true>& pos, const SettingRef& setting) override;
 
 	void BeginRendering(int32_t count, Manager* manager, const InstanceGlobal* global, void* userData) override;
 
@@ -143,7 +144,7 @@ public:
 				   int32_t time,
 				   int32_t livedTime);
 	void SetValues(float& s, InstanceGroupValues::Size& value, TrackSizeParameter& param, float time);
-	void LoadValues(TrackSizeParameter& param, unsigned char*& pos);
+	void LoadValues(TrackSizeParameter& param, BinaryReader<true>& pos);
 };
 
 } // namespace Effekseer

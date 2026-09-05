@@ -35,6 +35,27 @@ private:
 	}
 
 public:
+	void MarkFailed()
+	{
+		Fail();
+	}
+
+	// Inspect a serialized field without advancing past its enclosing block.
+	// Validate the destination as well: block lengths come from the input file.
+	template <typename T>
+	bool Peek(T* value, size_t length)
+	{
+		if (length > sizeof(T) || !CanRead(length) || (length > 0 && (data_ == nullptr || value == nullptr)))
+		{
+			return Fail();
+		}
+		if (length > 0)
+		{
+			memcpy(value, data_ + offset, length);
+		}
+		return true;
+	}
+
 	BinaryReader(const uint8_t* data, size_t size)
 	{
 		data_ = data;

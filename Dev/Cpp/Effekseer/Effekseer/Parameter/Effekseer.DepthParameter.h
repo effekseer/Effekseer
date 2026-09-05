@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Utils/Effekseer.BinaryReader.h"
 #include "../Effekseer.Base.h"
 #include "../Effekseer.Curve.h"
 #include "../Effekseer.EffectImplemented.h"
@@ -23,45 +24,69 @@ struct ParameterDepthValues
 
 	NodeRendererDepthParameter DepthParameter;
 
-	void Load(unsigned char*& pos, int version)
+	void Load(BinaryReader<true>& pos, int version)
 	{
 		if (version >= 12)
 		{
-			memcpy(&DepthOffset, pos, sizeof(float));
-			pos += sizeof(float);
+			if (!pos.Peek(&DepthOffset, sizeof(float)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(float));
 
 			auto isDepthOffsetScaledWithCamera = 0;
-			memcpy(&isDepthOffsetScaledWithCamera, pos, sizeof(int32_t));
-			pos += sizeof(int32_t);
+			if (!pos.Peek(&isDepthOffsetScaledWithCamera, sizeof(int32_t)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(int32_t));
 
 			IsDepthOffsetScaledWithCamera = isDepthOffsetScaledWithCamera > 0;
 
 			auto isDepthOffsetScaledWithParticleScale = 0;
-			memcpy(&isDepthOffsetScaledWithParticleScale, pos, sizeof(int32_t));
-			pos += sizeof(int32_t);
+			if (!pos.Peek(&isDepthOffsetScaledWithParticleScale, sizeof(int32_t)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(int32_t));
 
 			IsDepthOffsetScaledWithParticleScale = isDepthOffsetScaledWithParticleScale > 0;
 
 			if (version >= 15)
 			{
-				memcpy(&DepthParameter.SuppressionOfScalingByDepth, pos, sizeof(float));
-				pos += sizeof(float);
+				if (!pos.Peek(&DepthParameter.SuppressionOfScalingByDepth, sizeof(float)))
+				{
+					return pos.MarkFailed();
+				}
+				pos.Skip(sizeof(float));
 
-				memcpy(&DepthParameter.DepthClipping, pos, sizeof(float));
-				pos += sizeof(float);
+				if (!pos.Peek(&DepthParameter.DepthClipping, sizeof(float)))
+				{
+					return pos.MarkFailed();
+				}
+				pos.Skip(sizeof(float));
 			}
 
 			if (version >= 13)
 			{
-				memcpy(&ZSort, pos, sizeof(int32_t));
-				pos += sizeof(int32_t);
+				if (!pos.Peek(&ZSort, sizeof(int32_t)))
+				{
+					return pos.MarkFailed();
+				}
+				pos.Skip(sizeof(int32_t));
 
-				memcpy(&DrawingPriority, pos, sizeof(int32_t));
-				pos += sizeof(int32_t);
+				if (!pos.Peek(&DrawingPriority, sizeof(int32_t)))
+				{
+					return pos.MarkFailed();
+				}
+				pos.Skip(sizeof(int32_t));
 			}
 
-			memcpy(&SoftParticle, pos, sizeof(float));
-			pos += sizeof(float);
+			if (!pos.Peek(&SoftParticle, sizeof(float)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(float));
 		}
 	}
 };

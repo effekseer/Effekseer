@@ -2,6 +2,7 @@
 #ifndef __EFFEKSEER_EFFECTNODE_H__
 #define __EFFEKSEER_EFFECTNODE_H__
 
+#include "Utils/Effekseer.BinaryReader.h"
 #include "Effekseer.Base.h"
 #include "Effekseer.Color.h"
 #include "Effekseer.FCurves.h"
@@ -130,14 +131,17 @@ struct ParameterRendererCommon
 		// memset(this, 0, sizeof(ParameterRendererCommon));
 	}
 
-	void load(uint8_t*& pos, int32_t version)
+	void load(BinaryReader<true>& pos, int32_t version)
 	{
 		// memset(this, 0, sizeof(ParameterRendererCommon));
 
 		if (version >= 15)
 		{
-			memcpy(&MaterialType, pos, sizeof(int));
-			pos += sizeof(int);
+			if (!pos.Peek(&MaterialType, sizeof(int)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(int));
 
 			Distortion = MaterialType == RendererMaterialType::BackDistortion;
 
@@ -145,8 +149,11 @@ struct ParameterRendererCommon
 			{
 				if (version >= 1600)
 				{
-					memcpy(&EmissiveScaling, pos, sizeof(float));
-					pos += sizeof(float);
+					if (!pos.Peek(&EmissiveScaling, sizeof(float)))
+					{
+						return pos.MarkFailed();
+					}
+					pos.Skip(sizeof(float));
 				}
 				else
 				{
@@ -157,69 +164,98 @@ struct ParameterRendererCommon
 			if (MaterialType == RendererMaterialType::Default || MaterialType == RendererMaterialType::BackDistortion ||
 				MaterialType == RendererMaterialType::Lighting)
 			{
-				memcpy(&TextureIndexes[static_cast<size_t>(RendererTextureType::Color)], pos, sizeof(int));
-				pos += sizeof(int);
+				if (!pos.Peek(&TextureIndexes[static_cast<size_t>(RendererTextureType::Color)], sizeof(int)))
+				{
+					return pos.MarkFailed();
+				}
+				pos.Skip(sizeof(int));
 
-				memcpy(&TextureIndexes[static_cast<size_t>(RendererTextureType::Normal)], pos, sizeof(int));
-				pos += sizeof(int);
+				if (!pos.Peek(&TextureIndexes[static_cast<size_t>(RendererTextureType::Normal)], sizeof(int)))
+				{
+					return pos.MarkFailed();
+				}
+				pos.Skip(sizeof(int));
 
 				if (version >= 1600)
 				{
-					memcpy(&TextureIndexes[static_cast<size_t>(RendererTextureType::Alpha)], pos, sizeof(int));
-					pos += sizeof(int);
+					if (!pos.Peek(&TextureIndexes[static_cast<size_t>(RendererTextureType::Alpha)], sizeof(int)))
+					{
+						return pos.MarkFailed();
+					}
+					pos.Skip(sizeof(int));
 
-					memcpy(&TextureIndexes[static_cast<size_t>(RendererTextureType::UVDistortion)], pos, sizeof(int));
-					pos += sizeof(int);
+					if (!pos.Peek(&TextureIndexes[static_cast<size_t>(RendererTextureType::UVDistortion)], sizeof(int)))
+					{
+						return pos.MarkFailed();
+					}
+					pos.Skip(sizeof(int));
 
-					memcpy(&TextureIndexes[static_cast<size_t>(RendererTextureType::Blend)], pos, sizeof(int));
-					pos += sizeof(int);
+					if (!pos.Peek(&TextureIndexes[static_cast<size_t>(RendererTextureType::Blend)], sizeof(int)))
+					{
+						return pos.MarkFailed();
+					}
+					pos.Skip(sizeof(int));
 
-					memcpy(&TextureIndexes[static_cast<size_t>(RendererTextureType::BlendAlpha)], pos, sizeof(int));
-					pos += sizeof(int);
+					if (!pos.Peek(&TextureIndexes[static_cast<size_t>(RendererTextureType::BlendAlpha)], sizeof(int)))
+					{
+						return pos.MarkFailed();
+					}
+					pos.Skip(sizeof(int));
 
-					memcpy(&TextureIndexes[static_cast<size_t>(RendererTextureType::BlendUVDistortion)], pos, sizeof(int));
-					pos += sizeof(int);
+					if (!pos.Peek(&TextureIndexes[static_cast<size_t>(RendererTextureType::BlendUVDistortion)], sizeof(int)))
+					{
+						return pos.MarkFailed();
+					}
+					pos.Skip(sizeof(int));
 				}
 			}
 			else
 			{
-				memcpy(&MaterialData.MaterialIndex, pos, sizeof(int));
-				pos += sizeof(int);
+				if (!pos.Peek(&MaterialData.MaterialIndex, sizeof(int)))
+				{
+					return pos.MarkFailed();
+				}
+				pos.Skip(sizeof(int));
 
 				int32_t textures = 0;
 				int32_t uniforms = 0;
 
-				memcpy(&textures, pos, sizeof(int));
-				pos += sizeof(int);
+				if (!pos.Peek(&textures, sizeof(int)))
+				{
+					return pos.MarkFailed();
+				}
+				pos.Skip(sizeof(int));
 				if (textures < 0 || textures > 1024)
-					return;
+					return pos.MarkFailed();
 
-				MaterialData.MaterialTextures.resize(textures);
-				if (MaterialData.MaterialTextures.size() > 0)
+				if (!pos.Read(MaterialData.MaterialTextures, textures))
 				{
-					memcpy(MaterialData.MaterialTextures.data(), pos, sizeof(MaterialTextureParameter) * textures);
+					return pos.MarkFailed();
 				}
-				pos += (sizeof(MaterialTextureParameter) * textures);
 
-				memcpy(&uniforms, pos, sizeof(int));
-				pos += sizeof(int);
+				if (!pos.Peek(&uniforms, sizeof(int)))
+				{
+					return pos.MarkFailed();
+				}
+				pos.Skip(sizeof(int));
 				if (uniforms < 0 || uniforms > 1024)
-					return;
+					return pos.MarkFailed();
 
-				MaterialData.MaterialUniforms.resize(uniforms);
-				if (MaterialData.MaterialUniforms.size() > 0)
+				if (!pos.Read(MaterialData.MaterialUniforms, uniforms))
 				{
-					memcpy(MaterialData.MaterialUniforms.data(), pos, sizeof(float) * 4 * uniforms);
+					return pos.MarkFailed();
 				}
-				pos += (sizeof(float) * 4 * uniforms);
 
 				if (version >= Version17Alpha4)
 				{
 					int gradients = 0;
-					memcpy(&gradients, pos, sizeof(int));
-					pos += sizeof(int);
+					if (!pos.Peek(&gradients, sizeof(int)))
+					{
+						return pos.MarkFailed();
+					}
+					pos.Skip(sizeof(int));
 					if (gradients < 0 || gradients > 1024)
-						return;
+						return pos.MarkFailed();
 
 					MaterialData.MaterialGradients.resize(gradients);
 					for (size_t i = 0; i < MaterialData.MaterialGradients.size(); i++)
@@ -232,26 +268,44 @@ struct ParameterRendererCommon
 		}
 		else
 		{
-			memcpy(&TextureIndexes[static_cast<size_t>(RendererTextureType::Color)], pos, sizeof(int));
-			pos += sizeof(int);
+			if (!pos.Peek(&TextureIndexes[static_cast<size_t>(RendererTextureType::Color)], sizeof(int)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(int));
 		}
 
-		memcpy(&AlphaBlend, pos, sizeof(int));
-		pos += sizeof(int);
+		if (!pos.Peek(&AlphaBlend, sizeof(int)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int));
 
-		memcpy(&TextureFilters[0], pos, sizeof(int));
-		pos += sizeof(int);
+		if (!pos.Peek(&TextureFilters[0], sizeof(int)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int));
 
-		memcpy(&TextureWraps[0], pos, sizeof(int));
-		pos += sizeof(int);
+		if (!pos.Peek(&TextureWraps[0], sizeof(int)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int));
 
 		if (version >= 15)
 		{
-			memcpy(&TextureFilters[1], pos, sizeof(int));
-			pos += sizeof(int);
+			if (!pos.Peek(&TextureFilters[1], sizeof(int)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(int));
 
-			memcpy(&TextureWraps[1], pos, sizeof(int));
-			pos += sizeof(int);
+			if (!pos.Peek(&TextureWraps[1], sizeof(int)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(int));
 		}
 		else
 		{
@@ -263,11 +317,17 @@ struct ParameterRendererCommon
 		{
 			for (size_t i = 2; i < 7; i++)
 			{
-				memcpy(&TextureFilters[i], pos, sizeof(int));
-				pos += sizeof(int);
+				if (!pos.Peek(&TextureFilters[i], sizeof(int)))
+				{
+					return pos.MarkFailed();
+				}
+				pos.Skip(sizeof(int));
 
-				memcpy(&TextureWraps[i], pos, sizeof(int));
-				pos += sizeof(int);
+				if (!pos.Peek(&TextureWraps[i], sizeof(int)))
+				{
+					return pos.MarkFailed();
+				}
+				pos.Skip(sizeof(int));
 			}
 		}
 		else
@@ -283,11 +343,17 @@ struct ParameterRendererCommon
 		{
 			int32_t zwrite, ztest = 0;
 
-			memcpy(&ztest, pos, sizeof(int32_t));
-			pos += sizeof(int32_t);
+			if (!pos.Peek(&ztest, sizeof(int32_t)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(int32_t));
 
-			memcpy(&zwrite, pos, sizeof(int32_t));
-			pos += sizeof(int32_t);
+			if (!pos.Peek(&zwrite, sizeof(int32_t)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(int32_t));
 
 			ZWrite = zwrite != 0;
 			ZTest = ztest != 0;
@@ -298,22 +364,34 @@ struct ParameterRendererCommon
 			ZTest = true;
 		}
 
-		memcpy(&FadeInType, pos, sizeof(int));
-		pos += sizeof(int);
+		if (!pos.Peek(&FadeInType, sizeof(int)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int));
 
 		if (FadeInType != FADEIN_OFF)
 		{
-			memcpy(&FadeIn, pos, sizeof(FadeIn));
-			pos += sizeof(FadeIn);
+			if (!pos.Peek(&FadeIn, sizeof(FadeIn)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(FadeIn));
 		}
 
-		memcpy(&FadeOutType, pos, sizeof(int));
-		pos += sizeof(int);
+		if (!pos.Peek(&FadeOutType, sizeof(int)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int));
 
 		if (FadeOutType != FADEOUT_NONE)
 		{
-			memcpy(&FadeOut, pos, sizeof(FadeOut));
-			pos += sizeof(FadeOut);
+			if (!pos.Peek(&FadeOut, sizeof(FadeOut)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(FadeOut));
 		}
 
 		UVs[0].Load(pos, version, 0);
@@ -325,8 +403,11 @@ struct ParameterRendererCommon
 				UVs[i].Load(pos, version, i);
 			}
 
-			memcpy(&UVDistortionIntensity, pos, sizeof(float));
-			pos += sizeof(float);
+			if (!pos.Peek(&UVDistortionIntensity, sizeof(float)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(float));
 			if (TextureIndexes[static_cast<size_t>(RendererTextureType::UVDistortion)] < 0)
 			{
 				UVDistortionIntensity = 0.0f;
@@ -334,8 +415,11 @@ struct ParameterRendererCommon
 
 			UVs[3].Load(pos, version, 3);
 
-			memcpy(&TextureBlendType, pos, sizeof(int));
-			pos += sizeof(int);
+			if (!pos.Peek(&TextureBlendType, sizeof(int)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(int));
 
 			for (int i = 4; i < 6; i++)
 			{
@@ -343,8 +427,11 @@ struct ParameterRendererCommon
 			}
 
 			// blend uv distortion intensity
-			memcpy(&BlendUVDistortionIntensity, pos, sizeof(float));
-			pos += sizeof(float);
+			if (!pos.Peek(&BlendUVDistortionIntensity, sizeof(float)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(float));
 			if (TextureIndexes[static_cast<size_t>(RendererTextureType::BlendUVDistortion)] < 0)
 			{
 				BlendUVDistortionIntensity = 0.0f;
@@ -353,8 +440,11 @@ struct ParameterRendererCommon
 
 		if (version >= Version18Alpha2)
 		{
-			memcpy(&UVHorizontalFlipProbability, pos, sizeof(int32_t));
-			pos += sizeof(int32_t);
+			if (!pos.Peek(&UVHorizontalFlipProbability, sizeof(int32_t)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(int32_t));
 		}
 		else
 		{
@@ -363,8 +453,11 @@ struct ParameterRendererCommon
 
 		if (version >= 10)
 		{
-			memcpy(&ColorBindType, pos, sizeof(int32_t));
-			pos += sizeof(int32_t);
+			if (!pos.Peek(&ColorBindType, sizeof(int32_t)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(int32_t));
 		}
 		else
 		{
@@ -377,8 +470,11 @@ struct ParameterRendererCommon
 			{
 				int32_t distortion = 0;
 
-				memcpy(&distortion, pos, sizeof(int32_t));
-				pos += sizeof(int32_t);
+				if (!pos.Peek(&distortion, sizeof(int32_t)))
+				{
+					return pos.MarkFailed();
+				}
+				pos.Skip(sizeof(int32_t));
 
 				Distortion = distortion > 0;
 
@@ -388,8 +484,11 @@ struct ParameterRendererCommon
 				}
 			}
 
-			memcpy(&DistortionIntensity, pos, sizeof(float));
-			pos += sizeof(float);
+			if (!pos.Peek(&DistortionIntensity, sizeof(float)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(float));
 		}
 
 		if (version >= 15)
@@ -480,13 +579,13 @@ protected:
 
 	RefPtr<RenderingUserData> renderingUserData_;
 
-	EffectNodeImplemented(Effect* effect, unsigned char*& pos);
+	EffectNodeImplemented(Effect* effect, BinaryReader<true>& pos);
 
 	virtual ~EffectNodeImplemented();
 
 	void AdjustSettings(const SettingRef& setting);
 
-	void LoadParameter(unsigned char*& pos, EffectNode* parent, const SettingRef& setting);
+	void LoadParameter(BinaryReader<true>& pos, EffectNode* parent, const SettingRef& setting);
 
 	//! calculate custom data
 	void CalcCustomData(const Instance* instance, std::array<float, 4>& customData1, std::array<float, 4>& customData2);
@@ -572,7 +671,7 @@ public:
 
 	EffectModelParameter GetEffectModelParameter() override;
 
-	virtual void LoadRendererParameter(unsigned char*& pos, const SettingRef& setting);
+	virtual void LoadRendererParameter(BinaryReader<true>& pos, const SettingRef& setting);
 
 	virtual void BeginRendering(int32_t count, Manager* manager, const InstanceGlobal* global, void* userData);
 
@@ -612,7 +711,7 @@ public:
 	/**
 	@brief	エフェクトノード生成
 	*/
-	static EffectNodeImplemented* Create(Effect* effect, EffectNode* parent, unsigned char*& pos);
+	static EffectNodeImplemented* Create(Effect* effect, EffectNode* parent, BinaryReader<true>& pos);
 
 	/**
 	@brief	ノードの種類取得

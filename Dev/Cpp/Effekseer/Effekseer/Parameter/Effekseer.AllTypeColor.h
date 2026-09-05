@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Utils/Effekseer.BinaryReader.h"
 #include "../Effekseer.Base.h"
 
 #include "../Effekseer.FCurves.h"
@@ -64,15 +65,21 @@ public:
 		}
 	}
 
-	void load(uint8_t*& pos, int32_t version)
+	void load(BinaryReader<true>& pos, int32_t version)
 	{
-		memcpy(&type, pos, sizeof(int));
-		pos += sizeof(int);
+		if (!pos.Peek(&type, sizeof(int)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int));
 
 		if (type == Fixed)
 		{
-			memcpy(&fixed, pos, sizeof(fixed));
-			pos += sizeof(fixed);
+			if (!pos.Peek(&fixed, sizeof(fixed)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(fixed));
 		}
 		else if (type == Random)
 		{
@@ -86,7 +93,7 @@ public:
 		{
 			fcurve_rgba.FCurve = new FCurveVectorColor();
 			int32_t size = fcurve_rgba.FCurve->Load(pos, version);
-			pos += size;
+			pos.Skip(size);
 		}
 		else if (type == Gradient_)
 		{

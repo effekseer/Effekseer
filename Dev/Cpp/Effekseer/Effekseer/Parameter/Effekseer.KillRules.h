@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Utils/Effekseer.BinaryReader.h"
 #include "../Effekseer.InstanceGlobal.h"
 #include "../Effekseer.InternalStruct.h"
 #include "../SIMD/Vec3f.h"
@@ -44,7 +45,7 @@ struct KillRulesParameter
 		} Sphere;
 	};
 
-	void Load(unsigned char*& pos, int version);
+	void Load(BinaryReader<true>& pos, int version);
 
 	void Magnify(float magnification);
 

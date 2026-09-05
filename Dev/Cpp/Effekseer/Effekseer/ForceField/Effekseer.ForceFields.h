@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Utils/Effekseer.BinaryReader.h"
 #include <array>
 #include <memory>
 #include <random>
@@ -419,7 +420,7 @@ struct LocalForceFieldElementParameter
 
 	bool HasValue = false;
 
-	bool Load(uint8_t*& pos, int32_t version);
+	bool Load(BinaryReader<true>& pos, int32_t version);
 };
 
 struct LocalForceFieldParameter
@@ -430,7 +431,7 @@ struct LocalForceFieldParameter
 
 	bool IsGlobalEnabled = false;
 
-	bool Load(uint8_t*& pos, int32_t version);
+	bool Load(BinaryReader<true>& pos, int32_t version);
 
 	void MaintainGravityCompatibility(const SIMD::Vec3f& gravity);
 

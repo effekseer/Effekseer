@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Utils/Effekseer.BinaryReader.h"
 #include "../Effekseer.Base.h"
 #include "../Effekseer.FCurves.h"
 #include "../Effekseer.InternalScript.h"
@@ -51,60 +52,87 @@ struct ParameterAlphaCutoff
 	Color EdgeColor = Color(0, 0, 0, 0);
 	float EdgeColorScaling = 0.0f;
 
-	void load(uint8_t*& pos, int32_t version)
+	void load(BinaryReader<true>& pos, int32_t version)
 	{
-		memcpy(&Type, pos, sizeof(int32_t));
-		pos += sizeof(int32_t);
+		if (!pos.Peek(&Type, sizeof(int32_t)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int32_t));
 
 		int32_t BufferSize = 0;
-		memcpy(&BufferSize, pos, sizeof(int32_t));
-		pos += sizeof(int32_t);
+		if (!pos.Peek(&BufferSize, sizeof(int32_t)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int32_t));
 
 		switch (Type)
 		{
 		case Effekseer::ParameterAlphaCutoff::EType::FIXED:
 			if (BufferSize != sizeof(Fixed))
-				return;
-			memcpy(&Fixed, pos, BufferSize);
+				return pos.MarkFailed();
+			if (!pos.Peek(&Fixed, BufferSize))
+			{
+				return pos.MarkFailed();
+			}
 			break;
 		case Effekseer::ParameterAlphaCutoff::EType::FPI:
 			if (BufferSize != sizeof(FourPointInterpolation))
-				return;
-			memcpy(&FourPointInterpolation, pos, BufferSize);
+				return pos.MarkFailed();
+			if (!pos.Peek(&FourPointInterpolation, BufferSize))
+			{
+				return pos.MarkFailed();
+			}
 			break;
 		case Effekseer::ParameterAlphaCutoff::EType::EASING:
 			if (BufferSize < 0 || BufferSize > 64 * 1024)
-				return;
+				return pos.MarkFailed();
 			Easing.Load(pos, BufferSize, version);
 			break;
 		case Effekseer::ParameterAlphaCutoff::EType::F_CURVE:
 			if (BufferSize < 0 || BufferSize > 1024 * 1024)
-				return;
+				return pos.MarkFailed();
 			FCurve.Threshold = std::make_unique<FCurveScalar>();
-			FCurve.Threshold->Load(pos, version);
+			if (FCurve.Threshold->Load(pos, version) < 0)
+			{
+				return pos.MarkFailed();
+			}
 			break;
 		default:
-			return;
+			return pos.MarkFailed();
 		}
 
-		pos += BufferSize;
+		pos.Skip(BufferSize);
 
-		memcpy(&EdgeThreshold, pos, sizeof(int32_t));
-		pos += sizeof(int32_t);
+		if (!pos.Peek(&EdgeThreshold, sizeof(int32_t)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int32_t));
 
-		memcpy(&EdgeColor, pos, sizeof(Color));
-		pos += sizeof(int32_t);
+		if (!pos.Peek(&EdgeColor, sizeof(Color)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int32_t));
 
 		if (version >= Version16Alpha7)
 		{
-			memcpy(&EdgeColorScaling, pos, sizeof(float));
-			pos += sizeof(float);
+			if (!pos.Peek(&EdgeColorScaling, sizeof(float)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(float));
 		}
 		else
 		{
 			int32_t temp = 0;
-			memcpy(&temp, pos, sizeof(int32_t));
-			pos += sizeof(int32_t);
+			if (!pos.Peek(&temp, sizeof(int32_t)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(int32_t));
 			EdgeColorScaling = static_cast<float>(temp);
 		}
 	}

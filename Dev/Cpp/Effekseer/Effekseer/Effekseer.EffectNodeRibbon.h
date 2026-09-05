@@ -2,6 +2,7 @@
 #ifndef __EFFEKSEER_ParameterNODE_RIBBON_H__
 #define __EFFEKSEER_ParameterNODE_RIBBON_H__
 
+#include "Utils/Effekseer.BinaryReader.h"
 #include "Effekseer.EffectNode.h"
 #include "Renderer/Effekseer.RibbonRenderer.h"
 
@@ -101,14 +102,14 @@ public:
 
 	NodeRendererTextureUVTypeParameter TextureUVType;
 
-	EffectNodeRibbon(Effect* effect, unsigned char*& pos)
+	EffectNodeRibbon(Effect* effect, BinaryReader<true>& pos)
 		: EffectNodeImplemented(effect, pos)
 	{
 	}
 
 	~EffectNodeRibbon() = default;
 
-	void LoadRendererParameter(unsigned char*& pos, const SettingRef& setting) override;
+	void LoadRendererParameter(BinaryReader<true>& pos, const SettingRef& setting) override;
 
 	void BeginRendering(int32_t count, Manager* manager, const InstanceGlobal* global, void* userData) override;
 

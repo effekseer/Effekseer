@@ -1,37 +1,59 @@
+#include "../Utils/Effekseer.BinaryReader.h"
 #include "Effekseer.KillRules.h"
 #include "../SIMD/Mat44f.h"
 
 namespace Effekseer
 {
 
-void KillRulesParameter::Load(unsigned char*& pos, int version)
+void KillRulesParameter::Load(BinaryReader<true>& pos, int version)
 {
 	if (version >= Version17Alpha5)
 	{
-		memcpy(&Type, pos, sizeof(int32_t));
-		pos += sizeof(int32_t);
+		if (!pos.Peek(&Type, sizeof(int32_t)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int32_t));
 
-		memcpy(&IsScaleAndRotationApplied, pos, sizeof(int));
-		pos += sizeof(int);
+		if (!pos.Peek(&IsScaleAndRotationApplied, sizeof(int)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int));
 
 		if (Type == KillType::Box)
 		{
-			memcpy(&Box.Center, pos, sizeof(Vector3D));
-			pos += sizeof(Vector3D);
+			if (!pos.Peek(&Box.Center, sizeof(Vector3D)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(Vector3D));
 
-			memcpy(&Box.Size, pos, sizeof(Vector3D));
-			pos += sizeof(Vector3D);
+			if (!pos.Peek(&Box.Size, sizeof(Vector3D)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(Vector3D));
 
-			memcpy(&Box.IsKillInside, pos, sizeof(int));
-			pos += sizeof(int);
+			if (!pos.Peek(&Box.IsKillInside, sizeof(int)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(int));
 		}
 		else if (Type == KillType::Plane)
 		{
-			memcpy(&Plane.PlaneAxis, pos, sizeof(Vector3D));
-			pos += sizeof(Vector3D);
+			if (!pos.Peek(&Plane.PlaneAxis, sizeof(Vector3D)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(Vector3D));
 
-			memcpy(&Plane.PlaneOffset, pos, sizeof(float));
-			pos += sizeof(float);
+			if (!pos.Peek(&Plane.PlaneOffset, sizeof(float)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(float));
 
 			const auto length = Vector3D::Length(Vector3D{Plane.PlaneAxis.x, Plane.PlaneAxis.y, Plane.PlaneAxis.z});
 			Plane.PlaneAxis.x /= length;
@@ -40,14 +62,23 @@ void KillRulesParameter::Load(unsigned char*& pos, int version)
 		}
 		else if (Type == KillType::Sphere)
 		{
-			memcpy(&Sphere.Center, pos, sizeof(Vector3D));
-			pos += sizeof(Vector3D);
+			if (!pos.Peek(&Sphere.Center, sizeof(Vector3D)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(Vector3D));
 
-			memcpy(&Sphere.Radius, pos, sizeof(float));
-			pos += sizeof(float);
+			if (!pos.Peek(&Sphere.Radius, sizeof(float)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(float));
 
-			memcpy(&Sphere.IsKillInside, pos, sizeof(int));
-			pos += sizeof(int);
+			if (!pos.Peek(&Sphere.IsKillInside, sizeof(int)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(int));
 		}
 	}
 	else

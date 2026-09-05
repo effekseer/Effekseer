@@ -1,4 +1,5 @@
-﻿#include "Effekseer.EffectNodeModel.h"
+﻿#include "Utils/Effekseer.BinaryReader.h"
+#include "Effekseer.EffectNodeModel.h"
 
 #include "Effekseer.Effect.h"
 #include "Effekseer.EffectNode.h"
@@ -16,18 +17,27 @@
 namespace Effekseer
 {
 
-void EffectNodeModel::LoadRendererParameter(unsigned char*& pos, const SettingRef& setting)
+void EffectNodeModel::LoadRendererParameter(BinaryReader<true>& pos, const SettingRef& setting)
 {
 	EffectNodeType type = EffectNodeType::NoneType;
-	memcpy(&type, pos, sizeof(int));
-	pos += sizeof(int);
-	assert(type == GetType());
+	if (!pos.Peek(&type, sizeof(int)))
+	{
+		return pos.MarkFailed();
+	}
+	pos.Skip(sizeof(int));
+	if (type != GetType())
+	{
+		return pos.MarkFailed();
+	}
 	EffekseerPrintDebug("Renderer : Model\n");
 
 	if (m_effect->GetVersion() >= Version16Alpha3)
 	{
-		memcpy(&Mode, pos, sizeof(int));
-		pos += sizeof(int);
+		if (!pos.Peek(&Mode, sizeof(int)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int));
 	}
 	else
 	{
@@ -41,18 +51,27 @@ void EffectNodeModel::LoadRendererParameter(unsigned char*& pos, const SettingRe
 		if (m_effect->GetVersion() >= 7)
 		{
 			float Magnification;
-			memcpy(&Magnification, pos, sizeof(float));
-			pos += sizeof(float);
+			if (!pos.Peek(&Magnification, sizeof(float)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(float));
 		}
 
-		memcpy(&ModelIndex, pos, sizeof(int));
-		pos += sizeof(int);
+		if (!pos.Peek(&ModelIndex, sizeof(int)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int));
 
 		if (m_effect->GetVersion() < 15)
 		{
 			int NormalTextureIndex = 0;
-			memcpy(&NormalTextureIndex, pos, sizeof(int));
-			pos += sizeof(int);
+			if (!pos.Peek(&NormalTextureIndex, sizeof(int)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(int));
 			EffekseerPrintDebug("NormalTextureIndex : %d\n", NormalTextureIndex);
 			RendererCommon.TextureIndexes[1] = NormalTextureIndex;
 			RendererCommon.BasicParameter.TextureIndexes[1] = NormalTextureIndex;
@@ -62,22 +81,31 @@ void EffectNodeModel::LoadRendererParameter(unsigned char*& pos, const SettingRe
 	}
 	else if (Mode == ModelReferenceType::Procedural)
 	{
-		memcpy(&ModelIndex, pos, sizeof(int));
-		pos += sizeof(int);
+		if (!pos.Peek(&ModelIndex, sizeof(int)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int));
 	}
 	else if (Mode == ModelReferenceType::External)
 	{
 		if (m_effect->GetVersion() >= Version18Alpha3)
 		{
-			memcpy(&ModelIndex, pos, sizeof(int));
-			pos += sizeof(int);
+			if (!pos.Peek(&ModelIndex, sizeof(int)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(int));
 		}
 	}
 
 	if (m_effect->GetVersion() >= 12)
 	{
-		memcpy(&Billboard, pos, sizeof(int));
-		pos += sizeof(int);
+		if (!pos.Peek(&Billboard, sizeof(int)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int));
 	}
 	else
 	{
@@ -87,8 +115,11 @@ void EffectNodeModel::LoadRendererParameter(unsigned char*& pos, const SettingRe
 	if (m_effect->GetVersion() < 15)
 	{
 		int32_t lighting;
-		memcpy(&lighting, pos, sizeof(int));
-		pos += sizeof(int);
+		if (!pos.Peek(&lighting, sizeof(int)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int));
 		const auto Lighting = lighting > 0;
 
 		if (Lighting && !RendererCommon.Distortion)
@@ -98,22 +129,31 @@ void EffectNodeModel::LoadRendererParameter(unsigned char*& pos, const SettingRe
 		}
 	}
 
-	memcpy(&Culling, pos, sizeof(int));
-	pos += sizeof(int);
+	if (!pos.Peek(&Culling, sizeof(int)))
+	{
+		return pos.MarkFailed();
+	}
+	pos.Skip(sizeof(int));
 
 	AllColor.load(pos, m_effect->GetVersion());
 
 	if (Version16Alpha3 > m_effect->GetVersion() && m_effect->GetVersion() >= Version16Alpha1)
 	{
 		int FalloffFlag = 0;
-		memcpy(&FalloffFlag, pos, sizeof(int));
-		pos += sizeof(int);
+		if (!pos.Peek(&FalloffFlag, sizeof(int)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int));
 		EnableFalloff = (FalloffFlag == 1);
 
 		if (EnableFalloff)
 		{
-			memcpy(&FalloffParam, pos, sizeof(FalloffParameter));
-			pos += sizeof(FalloffParameter);
+			if (!pos.Peek(&FalloffParam, sizeof(FalloffParameter)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(FalloffParameter));
 		}
 	}
 }

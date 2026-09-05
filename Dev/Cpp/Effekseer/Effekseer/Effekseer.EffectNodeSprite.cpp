@@ -1,4 +1,5 @@
-﻿#include "Effekseer.EffectNodeSprite.h"
+﻿#include "Utils/Effekseer.BinaryReader.h"
+#include "Effekseer.EffectNodeSprite.h"
 
 #include "Effekseer.Effect.h"
 #include "Effekseer.EffectImplemented.h"
@@ -18,18 +19,27 @@
 namespace Effekseer
 {
 
-void EffectNodeSprite::LoadRendererParameter(unsigned char*& pos, const SettingRef& setting)
+void EffectNodeSprite::LoadRendererParameter(BinaryReader<true>& pos, const SettingRef& setting)
 {
 	EffectNodeType type = EffectNodeType::NoneType;
-	memcpy(&type, pos, sizeof(int));
-	pos += sizeof(int);
-	assert(type == GetType());
+	if (!pos.Peek(&type, sizeof(int)))
+	{
+		return pos.MarkFailed();
+	}
+	pos.Skip(sizeof(int));
+	if (type != GetType())
+	{
+		return pos.MarkFailed();
+	}
 	EffekseerPrintDebug("Renderer : Sprite\n");
 
 	auto ef = (EffectImplemented*)m_effect;
 
-	memcpy(&RenderingOrder, pos, sizeof(int));
-	pos += sizeof(int);
+	if (!pos.Peek(&RenderingOrder, sizeof(int)))
+	{
+		return pos.MarkFailed();
+	}
+	pos.Skip(sizeof(int));
 
 	if (m_effect->GetVersion() >= 3)
 	{
@@ -37,20 +47,29 @@ void EffectNodeSprite::LoadRendererParameter(unsigned char*& pos, const SettingR
 	}
 	else
 	{
-		memcpy(&AlphaBlend, pos, sizeof(int));
-		pos += sizeof(int);
+		if (!pos.Peek(&AlphaBlend, sizeof(int)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int));
 		RendererCommon.AlphaBlend = AlphaBlend;
 		RendererCommon.BasicParameter.AlphaBlend = AlphaBlend;
 	}
 
-	memcpy(&Billboard, pos, sizeof(int));
-	pos += sizeof(int);
+	if (!pos.Peek(&Billboard, sizeof(int)))
+	{
+		return pos.MarkFailed();
+	}
+	pos.Skip(sizeof(int));
 
 	SpriteAllColor.load(pos, m_effect->GetVersion());
 	EffekseerPrintDebug("SpriteColorAllType : %d\n", SpriteAllColor.type);
 
-	memcpy(&SpriteColor.type, pos, sizeof(int));
-	pos += sizeof(int);
+	if (!pos.Peek(&SpriteColor.type, sizeof(int)))
+	{
+		return pos.MarkFailed();
+	}
+	pos.Skip(sizeof(int));
 	EffekseerPrintDebug("SpriteColorType : %d\n", SpriteColor.type);
 
 	if (SpriteColor.type == SpriteColor.Default)
@@ -58,12 +77,18 @@ void EffectNodeSprite::LoadRendererParameter(unsigned char*& pos, const SettingR
 	}
 	else if (SpriteColor.type == SpriteColor.Fixed)
 	{
-		memcpy(&SpriteColor.fixed, pos, sizeof(SpriteColor.fixed));
-		pos += sizeof(SpriteColor.fixed);
+		if (!pos.Peek(&SpriteColor.fixed, sizeof(SpriteColor.fixed)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(SpriteColor.fixed));
 	}
 
-	memcpy(&SpritePosition.type, pos, sizeof(int));
-	pos += sizeof(int);
+	if (!pos.Peek(&SpritePosition.type, sizeof(int)))
+	{
+		return pos.MarkFailed();
+	}
+	pos.Skip(sizeof(int));
 	EffekseerPrintDebug("SpritePosition : %d\n", SpritePosition.type);
 
 	if (SpritePosition.type == SpritePosition.Default)
@@ -71,7 +96,10 @@ void EffectNodeSprite::LoadRendererParameter(unsigned char*& pos, const SettingR
 		if (m_effect->GetVersion() >= 8)
 		{
 			std::array<Vector2D, 4> fixed;
-			memcpy(fixed.data(), pos, sizeof(Vector2D) * 4);
+			if (!pos.Peek(&fixed, sizeof(Vector2D) * 4))
+			{
+				return pos.MarkFailed();
+			}
 
 			// This code causes bugs on asmjs
 			// const Vector2D* fixed = (const Vector2D*)pos;
@@ -79,7 +107,7 @@ void EffectNodeSprite::LoadRendererParameter(unsigned char*& pos, const SettingR
 			SpritePosition.fixed.lr = fixed[1];
 			SpritePosition.fixed.ul = fixed[2];
 			SpritePosition.fixed.ur = fixed[3];
-			pos += sizeof(Vector2D) * 4;
+			pos.Skip(sizeof(Vector2D) * 4);
 			SpritePosition.type = SpritePosition.Fixed;
 		}
 		else
@@ -94,7 +122,10 @@ void EffectNodeSprite::LoadRendererParameter(unsigned char*& pos, const SettingR
 	else if (SpritePosition.type == SpritePosition.Fixed)
 	{
 		std::array<Vector2D, 4> fixed;
-		memcpy(fixed.data(), pos, sizeof(Vector2D) * 4);
+		if (!pos.Peek(&fixed, sizeof(Vector2D) * 4))
+		{
+			return pos.MarkFailed();
+		}
 
 		// This code causes bugs on asmjs
 		// const Vector2D* fixed = (const Vector2D*)pos;
@@ -102,7 +133,7 @@ void EffectNodeSprite::LoadRendererParameter(unsigned char*& pos, const SettingR
 		SpritePosition.fixed.lr = fixed[1];
 		SpritePosition.fixed.ul = fixed[2];
 		SpritePosition.fixed.ur = fixed[3];
-		pos += sizeof(Vector2D) * 4;
+		pos.Skip(sizeof(Vector2D) * 4);
 	}
 
 	if (m_effect->GetVersion() >= 3)
@@ -111,8 +142,11 @@ void EffectNodeSprite::LoadRendererParameter(unsigned char*& pos, const SettingR
 	else
 	{
 		int SpriteTexture = -1;
-		memcpy(&SpriteTexture, pos, sizeof(int));
-		pos += sizeof(int);
+		if (!pos.Peek(&SpriteTexture, sizeof(int)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int));
 		RendererCommon.TextureIndexes[0] = SpriteTexture;
 		RendererCommon.BasicParameter.TextureIndexes[0] = SpriteTexture;
 	}

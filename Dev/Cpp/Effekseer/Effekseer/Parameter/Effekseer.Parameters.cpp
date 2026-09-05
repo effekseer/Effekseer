@@ -1,4 +1,5 @@
-﻿#include "Effekseer.Parameters.h"
+﻿#include "../Utils/Effekseer.BinaryReader.h"
+#include "Effekseer.Parameters.h"
 #include "../Effekseer.EffectImplemented.h"
 #include "../Effekseer.Instance.h"
 #include "../Effekseer.InstanceGlobal.h"
@@ -11,13 +12,6 @@ namespace Effekseer
 {
 
 const int Gradient::KeyMax;
-
-void LoadGradient(Gradient& gradient, uint8_t*& pos, int32_t version)
-{
-	BinaryReader<true> reader(pos, std::numeric_limits<int>::max());
-	LoadGradient(gradient, reader, version);
-	pos += reader.GetOffset();
-}
 
 bool LoadGradient(Gradient& gradient, BinaryReader<true>& reader, int32_t version)
 {
@@ -34,32 +28,50 @@ bool LoadGradient(Gradient& gradient, BinaryReader<true>& reader, int32_t versio
 	return true;
 }
 
-void NodeRendererTextureUVTypeParameter::Load(uint8_t*& pos, int32_t version)
+void NodeRendererTextureUVTypeParameter::Load(BinaryReader<true>& pos, int32_t version)
 {
-	memcpy(&Type, pos, sizeof(int));
-	pos += sizeof(int);
+	if (!pos.Peek(&Type, sizeof(int)))
+	{
+		return pos.MarkFailed();
+	}
+	pos.Skip(sizeof(int));
 
 	if (Type == TextureUVType::Strech)
 	{
 	}
 	else if (Type == TextureUVType::TilePerParticle)
 	{
-		memcpy(&TileEdgeHead, pos, sizeof(TileEdgeHead));
-		pos += sizeof(TileEdgeHead);
+		if (!pos.Peek(&TileEdgeHead, sizeof(TileEdgeHead)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(TileEdgeHead));
 
-		memcpy(&TileEdgeTail, pos, sizeof(TileEdgeTail));
-		pos += sizeof(TileEdgeTail);
+		if (!pos.Peek(&TileEdgeTail, sizeof(TileEdgeTail)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(TileEdgeTail));
 
-		memcpy(&TileLoopAreaBegin, pos, sizeof(TileLoopAreaBegin));
-		pos += sizeof(TileLoopAreaBegin);
+		if (!pos.Peek(&TileLoopAreaBegin, sizeof(TileLoopAreaBegin)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(TileLoopAreaBegin));
 
-		memcpy(&TileLoopAreaEnd, pos, sizeof(TileLoopAreaEnd));
-		pos += sizeof(TileLoopAreaEnd);
+		if (!pos.Peek(&TileLoopAreaEnd, sizeof(TileLoopAreaEnd)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(TileLoopAreaEnd));
 	}
 	else if (Type == TextureUVType::Tile)
 	{
-		memcpy(&TileLength, pos, sizeof(TileLength));
-		pos += sizeof(TileLength);
+		if (!pos.Peek(&TileLength, sizeof(TileLength)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(TileLength));
 	}
 }
 

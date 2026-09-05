@@ -1,4 +1,5 @@
-﻿#include "Effekseer.EffectNodeTrack.h"
+﻿#include "Utils/Effekseer.BinaryReader.h"
+#include "Effekseer.EffectNodeTrack.h"
 #include "Effekseer.Effect.h"
 #include "Effekseer.EffectNode.h"
 #include "Effekseer.Manager.h"
@@ -16,12 +17,18 @@
 namespace Effekseer
 {
 
-void EffectNodeTrack::LoadRendererParameter(unsigned char*& pos, const SettingRef& setting)
+void EffectNodeTrack::LoadRendererParameter(BinaryReader<true>& pos, const SettingRef& setting)
 {
 	EffectNodeType type = EffectNodeType::NoneType;
-	memcpy(&type, pos, sizeof(int));
-	pos += sizeof(int);
-	assert(type == GetType());
+	if (!pos.Peek(&type, sizeof(int)))
+	{
+		return pos.MarkFailed();
+	}
+	pos.Skip(sizeof(int));
+	if (type != GetType())
+	{
+		return pos.MarkFailed();
+	}
 	EffekseerPrintDebug("Renderer : Track\n");
 
 	if (m_effect->GetVersion() >= 15)
@@ -35,17 +42,26 @@ void EffectNodeTrack::LoadRendererParameter(unsigned char*& pos, const SettingRe
 
 	if (m_effect->GetVersion() >= 13)
 	{
-		memcpy(&SplineDivision, pos, sizeof(int32_t));
-		pos += sizeof(int32_t);
+		if (!pos.Peek(&SplineDivision, sizeof(int32_t)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int32_t));
 	}
 
 	if (m_effect->GetVersion() >= Version17Alpha1)
 	{
-		memcpy(&SmoothingType, pos, sizeof(int32_t));
-		pos += sizeof(int32_t);
+		if (!pos.Peek(&SmoothingType, sizeof(int32_t)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int32_t));
 
-		memcpy(&TimeType, pos, sizeof(int32_t));
-		pos += sizeof(int32_t);
+		if (!pos.Peek(&TimeType, sizeof(int32_t)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int32_t));
 	}
 
 	TrackColorLeft.load(pos, m_effect->GetVersion());
@@ -316,15 +332,21 @@ void EffectNodeTrack::SetValues(float& s, InstanceGroupValues::Size& value, Trac
 	}
 }
 
-void EffectNodeTrack::LoadValues(TrackSizeParameter& param, unsigned char*& pos)
+void EffectNodeTrack::LoadValues(TrackSizeParameter& param, BinaryReader<true>& pos)
 {
-	memcpy(&param.type, pos, sizeof(int));
-	pos += sizeof(int);
+	if (!pos.Peek(&param.type, sizeof(int)))
+	{
+		return pos.MarkFailed();
+	}
+	pos.Skip(sizeof(int));
 
 	if (param.type == TrackSizeParameter::Fixed)
 	{
-		memcpy(&param.fixed, pos, sizeof(param.fixed));
-		pos += sizeof(param.fixed);
+		if (!pos.Peek(&param.fixed, sizeof(param.fixed)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(param.fixed));
 	}
 }
 

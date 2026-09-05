@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Utils/Effekseer.BinaryReader.h"
 #include "../Effekseer.Base.h"
 #include "../Effekseer.Curve.h"
 #include "../Effekseer.EffectImplemented.h"
@@ -182,21 +183,27 @@ struct ParameterCommonValues
 		Removal.TriggerToRemove = {};
 	}
 
-	void Load(unsigned char*& pos, const EffectImplemented* ef)
+	void Load(BinaryReader<true>& pos, const EffectImplemented* ef)
 	{
 		int32_t size = 0;
 
-		memcpy(&size, pos, sizeof(int));
-		pos += sizeof(int);
+		if (!pos.Peek(&size, sizeof(int)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int));
 		if (size < 0 || size > 64 * 1024)
-			return;
+			return pos.MarkFailed();
 
 		if (ef->GetVersion() >= Version18Alpha3)
 		{
 			ParameterCommonValues_18 param{};
 			auto copySize = Min<int32_t>(size, static_cast<int32_t>(sizeof(ParameterCommonValues_18)));
-			memcpy(&param, pos, copySize);
-			pos += size;
+			if (!pos.Peek(&param, copySize))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(size);
 
 			RefEqMaxGeneration = param.RefEqMaxGeneration;
 			RefEqLife = param.RefEqLife;
@@ -233,10 +240,13 @@ struct ParameterCommonValues
 		else if (ef->GetVersion() >= 14)
 		{
 			if (size != sizeof(ParameterCommonValues_BackCompatibility_17))
-				return;
+				return pos.MarkFailed();
 			ParameterCommonValues_BackCompatibility_17 param_17;
-			memcpy(&param_17, pos, size);
-			pos += size;
+			if (!pos.Peek(&param_17, size))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(size);
 
 			RefEqMaxGeneration = param_17.RefEqMaxGeneration;
 			RefEqLife = param_17.RefEqLife;
@@ -277,10 +287,13 @@ struct ParameterCommonValues
 		else if (ef->GetVersion() >= 9)
 		{
 			if (size != sizeof(ParameterCommonValues_BackCompatibility_9))
-				return;
+				return pos.MarkFailed();
 			ParameterCommonValues_BackCompatibility_9 param_9{};
-			memcpy(&param_9, pos, size);
-			pos += size;
+			if (!pos.Peek(&param_9, size))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(size);
 
 			RefEqMaxGeneration = -1;
 			RefEqLife.Max = -1;
@@ -324,10 +337,13 @@ struct ParameterCommonValues
 		else
 		{
 			if (size != sizeof(ParameterCommonValues_BackCompatibility_8))
-				return;
+				return pos.MarkFailed();
 			ParameterCommonValues_BackCompatibility_8 param_8;
-			memcpy(&param_8, pos, size);
-			pos += size;
+			if (!pos.Peek(&param_8, size))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(size);
 
 			RefEqMaxGeneration = -1;
 			RefEqLife.Max = -1;

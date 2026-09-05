@@ -1,4 +1,5 @@
-﻿#include "Effekseer.EffectNodeRing.h"
+﻿#include "Utils/Effekseer.BinaryReader.h"
+#include "Effekseer.EffectNodeRing.h"
 #include "Effekseer.Effect.h"
 #include "Effekseer.EffectNode.h"
 #include "Effekseer.Instance.h"
@@ -14,16 +15,25 @@
 namespace Effekseer
 {
 
-void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, const SettingRef& setting)
+void EffectNodeRing::LoadRendererParameter(BinaryReader<true>& pos, const SettingRef& setting)
 {
 	EffectNodeType type = EffectNodeType::NoneType;
-	memcpy(&type, pos, sizeof(int));
-	pos += sizeof(int);
-	assert(type == GetType());
+	if (!pos.Peek(&type, sizeof(int)))
+	{
+		return pos.MarkFailed();
+	}
+	pos.Skip(sizeof(int));
+	if (type != GetType())
+	{
+		return pos.MarkFailed();
+	}
 	EffekseerPrintDebug("Renderer : Ring\n");
 
-	memcpy(&RenderingOrder, pos, sizeof(int));
-	pos += sizeof(int);
+	if (!pos.Peek(&RenderingOrder, sizeof(int)))
+	{
+		return pos.MarkFailed();
+	}
+	pos.Skip(sizeof(int));
 
 	if (m_effect->GetVersion() >= 3)
 	{
@@ -31,18 +41,27 @@ void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, const SettingRef
 	}
 	else
 	{
-		memcpy(&AlphaBlend, pos, sizeof(int));
-		pos += sizeof(int);
+		if (!pos.Peek(&AlphaBlend, sizeof(int)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int));
 	}
 
-	memcpy(&Billboard, pos, sizeof(int));
-	pos += sizeof(int);
+	if (!pos.Peek(&Billboard, sizeof(int)))
+	{
+		return pos.MarkFailed();
+	}
+	pos.Skip(sizeof(int));
 
 	if (m_effect->GetVersion() >= 15)
 	{
 		int32_t ringShape = 0;
-		memcpy(&ringShape, pos, sizeof(int));
-		pos += sizeof(int);
+		if (!pos.Peek(&ringShape, sizeof(int)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int));
 
 		Shape.Type = static_cast<RingShapeType>(ringShape);
 
@@ -55,18 +74,27 @@ void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, const SettingRef
 		}
 		else if (Shape.Type == RingShapeType::Cresient)
 		{
-			memcpy(&Shape.StartingFade, pos, sizeof(float));
-			pos += sizeof(float);
-			memcpy(&Shape.EndingFade, pos, sizeof(float));
-			pos += sizeof(float);
+			if (!pos.Peek(&Shape.StartingFade, sizeof(float)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(float));
+			if (!pos.Peek(&Shape.EndingFade, sizeof(float)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(float));
 
 			LoadSingleParameter(pos, Shape.StartingAngle, m_effect->GetVersion());
 			LoadSingleParameter(pos, Shape.EndingAngle, m_effect->GetVersion());
 		}
 	}
 
-	memcpy(&VertexCount, pos, sizeof(int));
-	pos += sizeof(int);
+	if (!pos.Peek(&VertexCount, sizeof(int)))
+	{
+		return pos.MarkFailed();
+	}
+	pos.Skip(sizeof(int));
 
 	// compatiblity
 	{
@@ -124,8 +152,11 @@ void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, const SettingRef
 	else
 	{
 		int RingTexture = 0;
-		memcpy(&RingTexture, pos, sizeof(int));
-		pos += sizeof(int);
+		if (!pos.Peek(&RingTexture, sizeof(int)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int));
 	}
 
 	// 右手系左手系変換
@@ -415,20 +446,29 @@ void EffectNodeRing::UpdateRenderedInstance(Instance& instance, InstanceGroup& i
 	instance.ColorInheritance = instValues.centerColor.current;
 }
 
-void EffectNodeRing::LoadSingleParameter(unsigned char*& pos, RingSingleParameter& param, int version)
+void EffectNodeRing::LoadSingleParameter(BinaryReader<true>& pos, RingSingleParameter& param, int version)
 {
-	memcpy(&param.type, pos, sizeof(int));
-	pos += sizeof(int);
+	if (!pos.Peek(&param.type, sizeof(int)))
+	{
+		return pos.MarkFailed();
+	}
+	pos.Skip(sizeof(int));
 
 	if (param.type == RingSingleParameter::Fixed)
 	{
-		memcpy(&param.fixed, pos, sizeof(float));
-		pos += sizeof(float);
+		if (!pos.Peek(&param.fixed, sizeof(float)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(float));
 	}
 	else if (param.type == RingSingleParameter::Random)
 	{
-		memcpy(&param.random, pos, sizeof(param.random));
-		pos += sizeof(param.random);
+		if (!pos.Peek(&param.random, sizeof(param.random)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(param.random));
 	}
 	else if (param.type == RingSingleParameter::Easing)
 	{
@@ -436,25 +476,37 @@ void EffectNodeRing::LoadSingleParameter(unsigned char*& pos, RingSingleParamete
 	}
 }
 
-void EffectNodeRing::LoadLocationParameter(unsigned char*& pos, RingLocationParameter& param)
+void EffectNodeRing::LoadLocationParameter(BinaryReader<true>& pos, RingLocationParameter& param)
 {
-	memcpy(&param.type, pos, sizeof(int));
-	pos += sizeof(int);
+	if (!pos.Peek(&param.type, sizeof(int)))
+	{
+		return pos.MarkFailed();
+	}
+	pos.Skip(sizeof(int));
 
 	if (param.type == RingLocationParameter::Fixed)
 	{
-		memcpy(&param.fixed, pos, sizeof(param.fixed));
-		pos += sizeof(param.fixed);
+		if (!pos.Peek(&param.fixed, sizeof(param.fixed)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(param.fixed));
 	}
 	else if (param.type == RingLocationParameter::PVA)
 	{
-		memcpy(&param.pva, pos, sizeof(param.pva));
-		pos += sizeof(param.pva);
+		if (!pos.Peek(&param.pva, sizeof(param.pva)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(param.pva));
 	}
 	else if (param.type == RingLocationParameter::Easing)
 	{
-		memcpy(&param.easing, pos, sizeof(param.easing));
-		pos += sizeof(param.easing);
+		if (!pos.Peek(&param.easing, sizeof(param.easing)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(param.easing));
 	}
 }
 

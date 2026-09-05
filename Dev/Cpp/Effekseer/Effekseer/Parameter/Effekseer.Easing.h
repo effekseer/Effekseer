@@ -464,9 +464,13 @@ public:
 	bool isIndividualEnabled = false;
 	std::array<Easing3Type, ElemNum> types;
 
-	void Load(uint8_t* pos, int32_t size, int32_t version)
+	void Load(BinaryReader<true>& pos, int32_t size, int32_t version)
 	{
-		BinaryReader<true> reader(pos, size);
+		if (size < 0 || !pos.CanRead(static_cast<size_t>(size)))
+		{
+			return pos.MarkFailed();
+		}
+		BinaryReader<true> reader(pos.GetCurrentData(), static_cast<size_t>(size));
 
 		if (version >= minDynamicParameterVersion_)
 		{
@@ -549,6 +553,10 @@ public:
 					reader.Read<Easing3Type>(types[i]);
 				}
 			}
+		}
+		if (reader.GetStatus() == BinaryReaderStatus::Failed)
+		{
+			pos.MarkFailed();
 		}
 	}
 

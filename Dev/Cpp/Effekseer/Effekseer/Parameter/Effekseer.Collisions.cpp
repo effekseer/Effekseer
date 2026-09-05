@@ -1,3 +1,4 @@
+#include "../Utils/Effekseer.BinaryReader.h"
 #include "Effekseer.Collisions.h"
 #include "../Effekseer.Random.h"
 #include <algorithm>
@@ -6,7 +7,7 @@
 namespace Effekseer
 {
 
-void CollisionsParameter::Load(unsigned char*& pos, int version)
+void CollisionsParameter::Load(BinaryReader<true>& pos, int version)
 {
 	if (version < Version18Alpha2)
 	{
@@ -14,36 +15,57 @@ void CollisionsParameter::Load(unsigned char*& pos, int version)
 	}
 
 	int collisionEnabled = 0;
-	memcpy(&collisionEnabled, pos, sizeof(int));
-	pos += sizeof(int);
+	if (!pos.Peek(&collisionEnabled, sizeof(int)))
+	{
+		return pos.MarkFailed();
+	}
+	pos.Skip(sizeof(int));
 
 	int sceneCollisionEnabled = 0;
-	memcpy(&sceneCollisionEnabled, pos, sizeof(int));
-	pos += sizeof(int);
+	if (!pos.Peek(&sceneCollisionEnabled, sizeof(int)))
+	{
+		return pos.MarkFailed();
+	}
+	pos.Skip(sizeof(int));
 
 	IsGroundCollisionEnabled = collisionEnabled > 0;
 	IsSceneCollisionWithExternal = sceneCollisionEnabled > 0;
 
 	random_float bounceCandidate{};
-	memcpy(&bounceCandidate, pos, sizeof(random_float));
-	pos += sizeof(random_float);
+	if (!pos.Peek(&bounceCandidate, sizeof(random_float)))
+	{
+		return pos.MarkFailed();
+	}
+	pos.Skip(sizeof(random_float));
 
 	float heightCandidate = 0.0f;
-	memcpy(&heightCandidate, pos, sizeof(float));
-	pos += sizeof(float);
+	if (!pos.Peek(&heightCandidate, sizeof(float)))
+	{
+		return pos.MarkFailed();
+	}
+	pos.Skip(sizeof(float));
 
 	random_float frictionCandidate{};
-	memcpy(&frictionCandidate, pos, sizeof(random_float));
-	pos += sizeof(random_float);
+	if (!pos.Peek(&frictionCandidate, sizeof(random_float)))
+	{
+		return pos.MarkFailed();
+	}
+	pos.Skip(sizeof(random_float));
 
 	random_float lifetimeReductionCandidate{};
 
-	memcpy(&lifetimeReductionCandidate, pos, sizeof(random_float));
-	pos += sizeof(random_float);
+	if (!pos.Peek(&lifetimeReductionCandidate, sizeof(random_float)))
+	{
+		return pos.MarkFailed();
+	}
+	pos.Skip(sizeof(random_float));
 
 	int worldCandidate = 0;
-	memcpy(&worldCandidate, pos, sizeof(int));
-	pos += sizeof(int);
+	if (!pos.Peek(&worldCandidate, sizeof(int)))
+	{
+		return pos.MarkFailed();
+	}
+	pos.Skip(sizeof(int));
 
 	Bounce = bounceCandidate;
 	Height = heightCandidate;

@@ -1,14 +1,18 @@
+#include "../Utils/Effekseer.BinaryReader.h"
 #include "Effekseer.GpuParticlesParameter.h"
 
 namespace Effekseer
 {
 
 template <class T>
-inline T Read(uint8_t*& pos)
+inline T Read(BinaryReader<true>& pos)
 {
 	T data;
-	memcpy(&data, pos, sizeof(T));
-	pos += sizeof(T);
+	if (!pos.Peek(&data, sizeof(T)))
+	{
+		return {};
+	}
+	pos.Skip(sizeof(T));
 	return data;
 }
 
@@ -28,7 +32,7 @@ static inline void SwapCoordinateSystemRotation(float& r)
 	r = -r;
 }
 
-GpuParticles::ParamSet LoadGpuParticlesParameter(uint8_t*& pos, int32_t version, float magnification, CoordinateSystem coordinateSystem)
+GpuParticles::ParamSet LoadGpuParticlesParameter(BinaryReader<true>& pos, int32_t version, float magnification, CoordinateSystem coordinateSystem)
 {
 	using namespace Effekseer::GpuParticles;
 
@@ -88,7 +92,7 @@ GpuParticles::ParamSet LoadGpuParticlesParameter(uint8_t*& pos, int32_t version,
 
 	paramSet.Scale.Type = (ScaleType)Read<uint8_t>(pos);
 
-	auto ReadScale4 = [](uint8_t*& pos)
+	auto ReadScale4 = [](BinaryReader<true>& pos)
 	{
 		float s0 = Read<float>(pos);
 		float s1 = Read<float>(pos);
@@ -107,8 +111,8 @@ GpuParticles::ParamSet LoadGpuParticlesParameter(uint8_t*& pos, int32_t version,
 		paramSet.Scale.Easing.Speed = Read<float3>(pos);
 		break;
 	default:
-		assert(false);
-		break;
+		pos.MarkFailed();
+		return paramSet;
 	}
 
 	paramSet.Force.Gravity = Read<float3>(pos) * magnification;
@@ -151,7 +155,8 @@ GpuParticles::ParamSet LoadGpuParticlesParameter(uint8_t*& pos, int32_t version,
 		paramSet.RenderColor.ColorAll.Gradient.Pixels = Read<std::array<Color, 32>>(pos);
 		break;
 	default:
-		assert(false);
+		pos.MarkFailed();
+		return paramSet;
 	}
 
 	paramSet.RenderColor.Emissive = Read<float>(pos);

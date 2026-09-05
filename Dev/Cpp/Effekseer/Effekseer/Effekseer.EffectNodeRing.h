@@ -2,6 +2,7 @@
 #ifndef __EFFEKSEER_ParameterNODE_RING_H__
 #define __EFFEKSEER_ParameterNODE_RING_H__
 
+#include "Utils/Effekseer.BinaryReader.h"
 #include "Effekseer.EffectNode.h"
 #include "Renderer/Effekseer.RingRenderer.h"
 
@@ -161,14 +162,14 @@ public:
 	AllTypeColorParameter CenterColor;
 	AllTypeColorParameter InnerColor;
 
-	EffectNodeRing(Effect* effect, unsigned char*& pos)
+	EffectNodeRing(Effect* effect, BinaryReader<true>& pos)
 		: EffectNodeImplemented(effect, pos)
 	{
 	}
 
 	~EffectNodeRing() = default;
 
-	void LoadRendererParameter(unsigned char*& pos, const SettingRef& setting) override;
+	void LoadRendererParameter(BinaryReader<true>& pos, const SettingRef& setting) override;
 
 	void BeginRendering(int32_t count, Manager* manager, const InstanceGlobal* global, void* userData) override;
 
@@ -188,9 +189,9 @@ public:
 private:
 	RingRenderer::NodeParameter nodeParameter_;
 
-	void LoadSingleParameter(unsigned char*& pos, RingSingleParameter& param, int version);
+	void LoadSingleParameter(BinaryReader<true>& pos, RingSingleParameter& param, int version);
 
-	void LoadLocationParameter(unsigned char*& pos, RingLocationParameter& param);
+	void LoadLocationParameter(BinaryReader<true>& pos, RingLocationParameter& param);
 
 	void InitializeSingleValues(const RingSingleParameter& param, RingSingleValues& values, Manager* manager, IRandObject* rand);
 

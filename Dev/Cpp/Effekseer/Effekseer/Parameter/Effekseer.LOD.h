@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Utils/Effekseer.BinaryReader.h"
 #include "../Effekseer.InternalStruct.h"
 
 namespace Effekseer
@@ -17,12 +18,15 @@ struct ParameterLODs
 	int MatchingLODs = 0b1111;
 	NonMatchingLODBehaviour LODBehaviour = NonMatchingLODBehaviour::Hide;
 
-	void Load(unsigned char*& pos, int version)
+	void Load(BinaryReader<true>& pos, int version)
 	{
 		if (version >= Version17Alpha3)
 		{
-			memcpy(this, pos, sizeof(ParameterLODs));
-			pos += sizeof(ParameterLODs);
+			if (!pos.Peek(this, sizeof(ParameterLODs)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(ParameterLODs));
 		}
 	}
 };

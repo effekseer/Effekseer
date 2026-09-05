@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Utils/Effekseer.BinaryReader.h"
 #include "../Effekseer.InternalStruct.h"
 #include "../Effekseer.Vector3D.h"
 #include "../SIMD/Vec3f.h"
@@ -45,7 +46,7 @@ struct CollisionsParameter
 		LifetimeReductionPerCollision.min = 0.0f;
 	}
 
-	void Load(unsigned char*& pos, int version);
+	void Load(BinaryReader<true>& pos, int version);
 };
 
 struct CollisionsFunctions

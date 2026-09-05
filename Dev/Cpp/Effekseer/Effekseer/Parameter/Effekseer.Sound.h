@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Utils/Effekseer.BinaryReader.h"
 #include "../Effekseer.InternalStruct.h"
 
 namespace Effekseer
@@ -32,30 +33,54 @@ struct ParameterSound
 	float Distance;
 	random_int Delay;
 
-	void Load(unsigned char*& pos, int version)
+	void Load(BinaryReader<true>& pos, int version)
 	{
 		if (version >= 1)
 		{
-			memcpy(&SoundType, pos, sizeof(int));
-			pos += sizeof(int);
+			if (!pos.Peek(&SoundType, sizeof(int)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(int));
 		}
 
 		if (SoundType == ParameterSoundType_Use)
 		{
-			memcpy(&WaveId, pos, sizeof(int32_t));
-			pos += sizeof(int32_t);
-			memcpy(&Volume, pos, sizeof(random_float));
-			pos += sizeof(random_float);
-			memcpy(&Pitch, pos, sizeof(random_float));
-			pos += sizeof(random_float);
-			memcpy(&PanType, pos, sizeof(ParameterSoundPanType));
-			pos += sizeof(ParameterSoundPanType);
-			memcpy(&Pan, pos, sizeof(random_float));
-			pos += sizeof(random_float);
-			memcpy(&Distance, pos, sizeof(float));
-			pos += sizeof(float);
-			memcpy(&Delay, pos, sizeof(random_int));
-			pos += sizeof(random_int);
+			if (!pos.Peek(&WaveId, sizeof(int32_t)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(int32_t));
+			if (!pos.Peek(&Volume, sizeof(random_float)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(random_float));
+			if (!pos.Peek(&Pitch, sizeof(random_float)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(random_float));
+			if (!pos.Peek(&PanType, sizeof(ParameterSoundPanType)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(ParameterSoundPanType));
+			if (!pos.Peek(&Pan, sizeof(random_float)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(random_float));
+			if (!pos.Peek(&Distance, sizeof(float)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(float));
+			if (!pos.Peek(&Delay, sizeof(random_int)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(random_int));
 		}
 	}
 };

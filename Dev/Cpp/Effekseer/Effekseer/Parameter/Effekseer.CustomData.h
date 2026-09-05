@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Utils/Effekseer.BinaryReader.h"
 #include "../Effekseer.Base.h"
 #include "../Effekseer.FCurves.h"
 #include "../Effekseer.InstanceGlobal.h"
@@ -77,43 +78,58 @@ struct ParameterCustomData
 		}
 	}
 
-	void load(uint8_t*& pos, int32_t version)
+	void load(BinaryReader<true>& pos, int32_t version)
 	{
-		memcpy(&Type, pos, sizeof(int));
-		pos += sizeof(int);
+		if (!pos.Peek(&Type, sizeof(int)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int));
 
 		if (Type == ParameterCustomDataType::None)
 		{
 		}
 		else if (Type == ParameterCustomDataType::Fixed2D)
 		{
-			memcpy(&Fixed.Values, pos, sizeof(Fixed));
-			pos += sizeof(Fixed);
+			if (!pos.Peek(&Fixed.Values, sizeof(Fixed)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(Fixed));
 		}
 		else if (Type == ParameterCustomDataType::Random2D)
 		{
-			memcpy(&Random.Values, pos, sizeof(Random));
-			pos += sizeof(Random);
+			if (!pos.Peek(&Random.Values, sizeof(Random)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(Random));
 		}
 		else if (Type == ParameterCustomDataType::Easing2D)
 		{
-			memcpy(&Easing.Values, pos, sizeof(Easing));
-			pos += sizeof(Easing);
+			if (!pos.Peek(&Easing.Values, sizeof(Easing)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(Easing));
 		}
 		else if (Type == ParameterCustomDataType::FCurve2D)
 		{
 			FCurve.Values = new FCurveVector2D();
-			pos += FCurve.Values->Load(pos, version);
+			pos.Skip(FCurve.Values->Load(pos, version));
 		}
 		else if (Type == ParameterCustomDataType::Fixed4D)
 		{
-			memcpy(Fixed4D.data(), pos, sizeof(float) * 4);
-			pos += sizeof(float) * 4;
+			if (!pos.Peek(&Fixed4D, sizeof(float) * 4))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(float) * 4);
 		}
 		else if (Type == ParameterCustomDataType::FCurveColor)
 		{
 			FCurveColor.Values = new FCurveVectorColor();
-			pos += FCurveColor.Values->Load(pos, version);
+			pos.Skip(FCurveColor.Values->Load(pos, version));
 		}
 		else if (Type == ParameterCustomDataType::DynamicInput)
 		{

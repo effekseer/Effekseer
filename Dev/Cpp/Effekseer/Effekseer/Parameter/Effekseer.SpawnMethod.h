@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Utils/Effekseer.BinaryReader.h"
 #include "../Effekseer.Base.h"
 #include "../Effekseer.InstanceGlobal.h"
 #include "../Effekseer.InternalStruct.h"
@@ -158,23 +159,35 @@ struct ParameterGenerationLocation
 		}
 	}
 
-	void load(uint8_t*& pos, int32_t version)
+	void load(BinaryReader<true>& pos, int32_t version)
 	{
-		memcpy(&EffectsRotation, pos, sizeof(int));
-		pos += sizeof(int);
+		if (!pos.Peek(&EffectsRotation, sizeof(int)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int));
 
-		memcpy(&type, pos, sizeof(int));
-		pos += sizeof(int);
+		if (!pos.Peek(&type, sizeof(int)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int));
 
 		if (type == TYPE_POINT)
 		{
-			memcpy(&point, pos, sizeof(point));
-			pos += sizeof(point);
+			if (!pos.Peek(&point, sizeof(point)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(point));
 		}
 		else if (type == TYPE_SPHERE)
 		{
-			memcpy(&sphere, pos, sizeof(sphere));
-			pos += sizeof(sphere);
+			if (!pos.Peek(&sphere, sizeof(sphere)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(sphere));
 		}
 		else if (type == TYPE_MODEL)
 		{
@@ -183,42 +196,63 @@ struct ParameterGenerationLocation
 
 			if (version >= Version16Alpha3)
 			{
-				memcpy(&model.Reference, pos, sizeof(int32_t));
-				pos += sizeof(int32_t);
+				if (!pos.Peek(&model.Reference, sizeof(int32_t)))
+				{
+					return pos.MarkFailed();
+				}
+				pos.Skip(sizeof(int32_t));
 			}
 
-			memcpy(&model.index, pos, sizeof(int32_t));
-			pos += sizeof(int32_t);
+			if (!pos.Peek(&model.index, sizeof(int32_t)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(int32_t));
 
-			memcpy(&model.type, pos, sizeof(int32_t));
-			pos += sizeof(int32_t);
+			if (!pos.Peek(&model.type, sizeof(int32_t)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(int32_t));
 
 			if (version >= Version18Alpha3)
 			{
-				memcpy(&model.Coordinate, pos, sizeof(int32_t));
-				pos += sizeof(int32_t);
+				if (!pos.Peek(&model.Coordinate, sizeof(int32_t)))
+				{
+					return pos.MarkFailed();
+				}
+				pos.Skip(sizeof(int32_t));
 			}
 		}
 		else if (type == TYPE_CIRCLE)
 		{
 			if (version < 10)
 			{
-				memcpy(&circle, pos, sizeof(circle) - sizeof(circle.axisDirection) - sizeof(circle.angle_noize));
-				pos += sizeof(circle) - sizeof(circle.axisDirection) - sizeof(circle.angle_noize);
+				if (!pos.Peek(&circle, sizeof(circle) - sizeof(circle.axisDirection) - sizeof(circle.angle_noize)))
+				{
+					return pos.MarkFailed();
+				}
+				pos.Skip(sizeof(circle) - sizeof(circle.axisDirection) - sizeof(circle.angle_noize));
 				circle.axisDirection = AxisType::Z;
 				circle.angle_noize.max = 0;
 				circle.angle_noize.min = 0;
 			}
 			else
 			{
-				memcpy(&circle, pos, sizeof(circle));
-				pos += sizeof(circle);
+				if (!pos.Peek(&circle, sizeof(circle)))
+				{
+					return pos.MarkFailed();
+				}
+				pos.Skip(sizeof(circle));
 			}
 		}
 		else if (type == TYPE_LINE)
 		{
-			memcpy(&line, pos, sizeof(line));
-			pos += sizeof(line);
+			if (!pos.Peek(&line, sizeof(line)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(line));
 		}
 	}
 

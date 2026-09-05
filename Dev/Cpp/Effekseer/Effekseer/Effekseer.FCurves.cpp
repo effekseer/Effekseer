@@ -1,4 +1,4 @@
-﻿
+
 
 #include "Effekseer.FCurves.h"
 #include "Effekseer.InstanceGlobal.h"
@@ -14,61 +14,21 @@ FCurve::FCurve(float defaultValue)
 
 int32_t FCurve::Load(const void* data, int32_t version)
 {
-	int32_t size = 0;
-	const uint8_t* p = (const uint8_t*)data;
+	return Load(BinaryReader<true>(static_cast<const uint8_t*>(data), std::numeric_limits<int32_t>::max()), version);
+}
 
-	memcpy(&start_, p, sizeof(int32_t));
-	p += sizeof(int32_t);
-	size += sizeof(int32_t);
-
-	memcpy(&end_, p, sizeof(int32_t));
-	p += sizeof(int32_t);
-	size += sizeof(int32_t);
-
-	memcpy(&offsetMax_, p, sizeof(float));
-	p += sizeof(float);
-	size += sizeof(float);
-
-	memcpy(&offsetMin_, p, sizeof(float));
-	p += sizeof(float);
-	size += sizeof(float);
-
-	memcpy(&offset_, p, sizeof(int32_t));
-	p += sizeof(int32_t);
-	size += sizeof(int32_t);
-
-	memcpy(&len_, p, sizeof(int32_t));
-	p += sizeof(int32_t);
-	size += sizeof(int32_t);
-
-	memcpy(&freq_, p, sizeof(int32_t));
-	p += sizeof(int32_t);
-	size += sizeof(int32_t);
-
+int32_t FCurve::Load(BinaryReader<true> reader, int32_t version)
+{
+	const auto begin = reader.GetOffset();
 	int32_t count = 0;
-	memcpy(&count, p, sizeof(int32_t));
-	p += sizeof(int32_t);
-	size += sizeof(int32_t);
-	if (count < 0 || count > 65536 || freq_ <= 0)
+	if (!reader.Read(start_) || !reader.Read(end_) || !reader.Read(offsetMax_) || !reader.Read(offsetMin_) ||
+		!reader.Read(offset_) || !reader.Read(len_) || !reader.Read(freq_) || !reader.Read(count) ||
+		count < 0 || count > 65536 || (count > 0 && freq_ <= 0) || !reader.Read(keys_, count))
 	{
 		keys_.clear();
-		return size;
+		return -1;
 	}
-
-	keys_.clear();
-	keys_.reserve(static_cast<size_t>(count));
-	for (int32_t i = 0; i < count; i++)
-	{
-		float value = 0;
-
-		memcpy(&value, p, sizeof(float));
-		p += sizeof(float);
-		size += sizeof(float);
-
-		keys_.push_back(value);
-	}
-
-	return size;
+	return static_cast<int32_t>(reader.GetOffset() - begin);
 }
 
 float FCurve::GetValue(float living, float life, FCurveTimelineType type) const
@@ -176,21 +136,26 @@ void FCurve::Maginify(float value)
 
 int32_t FCurveScalar::Load(const void* data, int32_t version)
 {
-	int32_t size = 0;
-	const uint8_t* p = (const uint8_t*)data;
+	return Load(BinaryReader<true>(static_cast<const uint8_t*>(data), std::numeric_limits<int32_t>::max()), version);
+}
 
-	if (version >= 1600)
+int32_t FCurveScalar::Load(BinaryReader<true> reader, int32_t version)
+{
+	const auto begin = reader.GetOffset();
+	if (version >= 1600 && !reader.Read(Timeline))
 	{
-		memcpy(&Timeline, p, sizeof(int32_t));
-		size += sizeof(int32_t);
-		p += sizeof(int32_t);
+		return -1;
 	}
 
-	int32_t s_size = S.Load(p, version);
-	size += s_size;
-	p += s_size;
-
-	return size;
+	for (auto* curve : {&S})
+	{
+		const auto size = curve->Load(reader, version);
+		if (size < 0 || !reader.Skip(size))
+		{
+			return -1;
+		}
+	}
+	return static_cast<int32_t>(reader.GetOffset() - begin);
 }
 
 float FCurveScalar::GetValues(float living, float life) const
@@ -205,25 +170,26 @@ float FCurveScalar::GetOffsets(IRandObject& g) const
 
 int32_t FCurveVector2D::Load(const void* data, int32_t version)
 {
-	int32_t size = 0;
-	const uint8_t* p = (const uint8_t*)data;
+	return Load(BinaryReader<true>(static_cast<const uint8_t*>(data), std::numeric_limits<int32_t>::max()), version);
+}
 
-	if (version >= 15)
+int32_t FCurveVector2D::Load(BinaryReader<true> reader, int32_t version)
+{
+	const auto begin = reader.GetOffset();
+	if (version >= 15 && !reader.Read(Timeline))
 	{
-		memcpy(&Timeline, p, sizeof(int32_t));
-		size += sizeof(int);
-		p += sizeof(int);
+		return -1;
 	}
 
-	int32_t x_size = X.Load(p, version);
-	size += x_size;
-	p += x_size;
-
-	int32_t y_size = Y.Load(p, version);
-	size += y_size;
-	p += y_size;
-
-	return size;
+	for (auto* curve : {&X, &Y})
+	{
+		const auto size = curve->Load(reader, version);
+		if (size < 0 || !reader.Skip(size))
+		{
+			return -1;
+		}
+	}
+	return static_cast<int32_t>(reader.GetOffset() - begin);
 }
 
 SIMD::Vec2f FCurveVector2D::GetValues(float living, float life) const
@@ -242,29 +208,26 @@ SIMD::Vec2f FCurveVector2D::GetOffsets(IRandObject& g) const
 
 int32_t FCurveVector3D::Load(const void* data, int32_t version)
 {
-	int32_t size = 0;
-	const uint8_t* p = (const uint8_t*)data;
+	return Load(BinaryReader<true>(static_cast<const uint8_t*>(data), std::numeric_limits<int32_t>::max()), version);
+}
 
-	if (version >= 15)
+int32_t FCurveVector3D::Load(BinaryReader<true> reader, int32_t version)
+{
+	const auto begin = reader.GetOffset();
+	if (version >= 15 && !reader.Read(Timeline))
 	{
-		memcpy(&Timeline, p, sizeof(int32_t));
-		size += sizeof(int);
-		p += sizeof(int);
+		return -1;
 	}
 
-	int32_t x_size = X.Load(p, version);
-	size += x_size;
-	p += x_size;
-
-	int32_t y_size = Y.Load(p, version);
-	size += y_size;
-	p += y_size;
-
-	int32_t z_size = Z.Load(p, version);
-	size += z_size;
-	p += z_size;
-
-	return size;
+	for (auto* curve : {&X, &Y, &Z})
+	{
+		const auto size = curve->Load(reader, version);
+		if (size < 0 || !reader.Skip(size))
+		{
+			return -1;
+		}
+	}
+	return static_cast<int32_t>(reader.GetOffset() - begin);
 }
 
 SIMD::Vec3f FCurveVector3D::GetValues(float living, float life) const
@@ -285,33 +248,26 @@ SIMD::Vec3f FCurveVector3D::GetOffsets(IRandObject& g) const
 
 int32_t FCurveVectorColor::Load(const void* data, int32_t version)
 {
-	int32_t size = 0;
-	const uint8_t* p = (const uint8_t*)data;
+	return Load(BinaryReader<true>(static_cast<const uint8_t*>(data), std::numeric_limits<int32_t>::max()), version);
+}
 
-	if (version >= 15)
+int32_t FCurveVectorColor::Load(BinaryReader<true> reader, int32_t version)
+{
+	const auto begin = reader.GetOffset();
+	if (version >= 15 && !reader.Read(Timeline))
 	{
-		memcpy(&Timeline, p, sizeof(int32_t));
-		size += sizeof(int);
-		p += sizeof(int);
+		return -1;
 	}
 
-	int32_t x_size = R.Load(p, version);
-	size += x_size;
-	p += x_size;
-
-	int32_t y_size = G.Load(p, version);
-	size += y_size;
-	p += y_size;
-
-	int32_t z_size = B.Load(p, version);
-	size += z_size;
-	p += z_size;
-
-	int32_t w_size = A.Load(p, version);
-	size += w_size;
-	p += w_size;
-
-	return size;
+	for (auto* curve : {&R, &G, &B, &A})
+	{
+		const auto size = curve->Load(reader, version);
+		if (size < 0 || !reader.Skip(size))
+		{
+			return -1;
+		}
+	}
+	return static_cast<int32_t>(reader.GetOffset() - begin);
 }
 
 std::array<float, 4> FCurveVectorColor::GetValues(float living, float life) const

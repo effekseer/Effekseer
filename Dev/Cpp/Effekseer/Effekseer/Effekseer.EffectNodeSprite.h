@@ -2,6 +2,7 @@
 #ifndef __EFFEKSEER_ParameterNODE_SPRITE_H__
 #define __EFFEKSEER_ParameterNODE_SPRITE_H__
 
+#include "Utils/Effekseer.BinaryReader.h"
 #include "Effekseer.EffectNode.h"
 #include "Renderer/Effekseer.SpriteRenderer.h"
 
@@ -96,12 +97,12 @@ public:
 	SpriteColorParameter SpriteColor;
 	SpritePositionParameter SpritePosition;
 
-	EffectNodeSprite(Effect* effect, unsigned char*& pos)
+	EffectNodeSprite(Effect* effect, BinaryReader<true>& pos)
 		: EffectNodeImplemented(effect, pos)
 	{
 	}
 
-	void LoadRendererParameter(unsigned char*& pos, const SettingRef& setting) override;
+	void LoadRendererParameter(BinaryReader<true>& pos, const SettingRef& setting) override;
 
 	void BeginRendering(int32_t count, Manager* manager, const InstanceGlobal* global, void* userData) override;
 

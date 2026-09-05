@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Utils/Effekseer.BinaryReader.h"
 #include "../Effekseer.Base.h"
 
 #include <stdint.h>
@@ -111,31 +112,43 @@ struct ScalingParameter
 	std::unique_ptr<FCurveVector3D> ScalingFCurve = nullptr;
 	std::unique_ptr<FCurveScalar> ScalingSingleFCurve = nullptr;
 
-	void Load(unsigned char*& pos, int version)
+	void Load(BinaryReader<true>& pos, int version)
 	{
 		int32_t size = 0;
 
-		memcpy(&ScalingType, pos, sizeof(int));
-		pos += sizeof(int);
+		if (!pos.Peek(&ScalingType, sizeof(int)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int));
 		EffekseerPrintDebug("ScalingType %d\n", ScalingType);
 		if (ScalingType == ParameterScalingType::ParameterScalingType_Fixed)
 		{
-			memcpy(&size, pos, sizeof(int));
-			pos += sizeof(int);
+			if (!pos.Peek(&size, sizeof(int)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(int));
 			const auto expectedSize = version >= 14 ? sizeof(ParameterScalingFixed) : sizeof(ScalingFixed.Position);
 			if (size != expectedSize)
-				return;
+				return pos.MarkFailed();
 
 			if (version >= 14)
 			{
 				assert(size == sizeof(ParameterScalingFixed));
-				memcpy(&ScalingFixed, pos, size);
-				pos += size;
+				if (!pos.Peek(&ScalingFixed, size))
+				{
+					return pos.MarkFailed();
+				}
+				pos.Skip(size);
 			}
 			else
 			{
-				memcpy(&ScalingFixed.Position, pos, size);
-				pos += size;
+				if (!pos.Peek(&ScalingFixed.Position, size))
+				{
+					return pos.MarkFailed();
+				}
+				pos.Skip(size);
 			}
 
 			// make invalid
@@ -148,75 +161,106 @@ struct ScalingParameter
 		}
 		else if (ScalingType == ParameterScalingType::ParameterScalingType_PVA)
 		{
-			memcpy(&size, pos, sizeof(int));
-			pos += sizeof(int);
+			if (!pos.Peek(&size, sizeof(int)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(int));
 			// Versions before 14 store three consecutive random_vector3d values without dynamic equation references.
 			const auto expectedSize = version >= 14
 								  ? sizeof(ParameterScalingPVA)
 								  : sizeof(ScalingPVA.Position) + sizeof(ScalingPVA.Velocity) + sizeof(ScalingPVA.Acceleration);
 			if (size != expectedSize)
-				return;
+				return pos.MarkFailed();
 			if (version >= 14)
 			{
 				assert(size == sizeof(ParameterScalingPVA));
-				memcpy(&ScalingPVA, pos, size);
+				if (!pos.Peek(&ScalingPVA, size))
+				{
+					return pos.MarkFailed();
+				}
 			}
 			else
 			{
-				memcpy(&ScalingPVA.Position, pos, size);
+				std::array<random_vector3d, 3> values;
+				if (!pos.Peek(&values, size))
+				{
+					return pos.MarkFailed();
+				}
+				ScalingPVA.Position = values[0];
+				ScalingPVA.Velocity = values[1];
+				ScalingPVA.Acceleration = values[2];
 			}
-			pos += size;
+			pos.Skip(size);
 		}
 		else if (ScalingType == ParameterScalingType::ParameterScalingType_Easing)
 		{
-			memcpy(&size, pos, sizeof(int));
-			pos += sizeof(int);
+			if (!pos.Peek(&size, sizeof(int)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(int));
 			if (size < 0 || size > 64 * 1024)
-				return;
+				return pos.MarkFailed();
 			ScalingEasing.Load(pos, size, version);
-			pos += size;
+			pos.Skip(size);
 		}
 		else if (ScalingType == ParameterScalingType::ParameterScalingType_SinglePVA)
 		{
-			memcpy(&size, pos, sizeof(int));
-			pos += sizeof(int);
+			if (!pos.Peek(&size, sizeof(int)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(int));
 			if (size != sizeof(ParameterScalingSinglePVA))
-				return;
-			memcpy(&ScalingSinglePVA, pos, size);
-			pos += size;
+				return pos.MarkFailed();
+			if (!pos.Peek(&ScalingSinglePVA, size))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(size);
 		}
 		else if (ScalingType == ParameterScalingType::ParameterScalingType_SingleEasing)
 		{
-			memcpy(&size, pos, sizeof(int));
-			pos += sizeof(int);
+			if (!pos.Peek(&size, sizeof(int)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(int));
 			if (size < 0 || size > 64 * 1024)
-				return;
+				return pos.MarkFailed();
 
 			ScalingSingleEasing.Load(pos, size, version);
-			pos += size;
+			pos.Skip(size);
 		}
 		else if (ScalingType == ParameterScalingType::ParameterScalingType_FCurve)
 		{
-			memcpy(&size, pos, sizeof(int));
-			pos += sizeof(int);
+			if (!pos.Peek(&size, sizeof(int)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(int));
 			if (size < 0 || size > 1024 * 1024)
-				return;
+				return pos.MarkFailed();
 
 			ScalingFCurve = std::make_unique<FCurveVector3D>();
-			pos += ScalingFCurve->Load(pos, version);
+			pos.Skip(ScalingFCurve->Load(pos, version));
 			ScalingFCurve->X.SetDefaultValue(1.0f);
 			ScalingFCurve->Y.SetDefaultValue(1.0f);
 			ScalingFCurve->Z.SetDefaultValue(1.0f);
 		}
 		else if (ScalingType == ParameterScalingType::ParameterScalingType_SingleFCurve)
 		{
-			memcpy(&size, pos, sizeof(int));
-			pos += sizeof(int);
+			if (!pos.Peek(&size, sizeof(int)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(int));
 			if (size < 0 || size > 1024 * 1024)
-				return;
+				return pos.MarkFailed();
 
 			ScalingSingleFCurve = std::make_unique<FCurveScalar>();
-			pos += ScalingSingleFCurve->Load(pos, version);
+			pos.Skip(ScalingSingleFCurve->Load(pos, version));
 			ScalingSingleFCurve->S.SetDefaultValue(1.0f);
 		}
 	}

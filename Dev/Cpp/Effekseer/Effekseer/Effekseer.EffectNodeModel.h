@@ -2,6 +2,7 @@
 #ifndef __EFFEKSEER_ParameterNODE_MODEL_H__
 #define __EFFEKSEER_ParameterNODE_MODEL_H__
 
+#include "Utils/Effekseer.BinaryReader.h"
 #include "Effekseer.EffectNode.h"
 #include "Renderer/Effekseer.ModelRenderer.h"
 
@@ -36,14 +37,14 @@ public:
 
 	ModelReferenceType Mode = ModelReferenceType::File;
 
-	EffectNodeModel(Effect* effect, unsigned char*& pos)
+	EffectNodeModel(Effect* effect, BinaryReader<true>& pos)
 		: EffectNodeImplemented(effect, pos)
 	{
 	}
 
 	~EffectNodeModel() = default;
 
-	void LoadRendererParameter(unsigned char*& pos, const SettingRef& setting) override;
+	void LoadRendererParameter(BinaryReader<true>& pos, const SettingRef& setting) override;
 
 	void BeginRendering(int32_t count, Manager* manager, const InstanceGlobal* global, void* userData) override;
 

@@ -50,28 +50,52 @@ ForceFieldTurbulenceParameter::ForceFieldTurbulenceParameter(ForceFieldTurbulenc
 	Power = strength;
 }
 
-bool LocalForceFieldElementParameter::Load(uint8_t*& pos, int32_t version)
+bool LocalForceFieldElementParameter::Load(BinaryReader<true>& pos, int32_t version)
 {
-	auto br = BinaryReader<false>(pos, std::numeric_limits<int>::max());
+	auto& br = pos;
 
 	LocalForceFieldType type{};
-	br.Read(type);
+	if (!br.Read(type))
+	{
+		return false;
+	}
 
 	HasValue = true;
 	float power = 1.0f;
 
 	if (version >= 1600)
 	{
-		br.Read(power);
+		if (!br.Read(power))
+		{
+			return false;
+		}
 
-		br.Read(Position.X);
-		br.Read(Position.Y);
-		br.Read(Position.Z);
+		if (!br.Read(Position.X))
+		{
+			return false;
+		}
+		if (!br.Read(Position.Y))
+		{
+			return false;
+		}
+		if (!br.Read(Position.Z))
+		{
+			return false;
+		}
 
 		Vector3D rotation;
-		br.Read(rotation.X);
-		br.Read(rotation.Y);
-		br.Read(rotation.Z);
+		if (!br.Read(rotation.X))
+		{
+			return false;
+		}
+		if (!br.Read(rotation.Y))
+		{
+			return false;
+		}
+		if (!br.Read(rotation.Z))
+		{
+			return false;
+		}
 
 		IsRotated = rotation.X != 0.0f || rotation.Y != 0.0f || rotation.Z != 0.0f;
 
@@ -86,7 +110,10 @@ bool LocalForceFieldElementParameter::Load(uint8_t*& pos, int32_t version)
 	if (type == LocalForceFieldType::Force)
 	{
 		int gravitation = 0;
-		br.Read(gravitation);
+		if (!br.Read(gravitation))
+		{
+			return false;
+		}
 
 		// convert it by frames
 		power /= 60.0f;
@@ -123,7 +150,10 @@ bool LocalForceFieldElementParameter::Load(uint8_t*& pos, int32_t version)
 		}
 		else
 		{
-			br.Read(ftype);
+			if (!br.Read(ftype))
+			{
+				return false;
+			}
 		}
 
 		auto ff = new ForceFieldVortexParameter();
@@ -145,15 +175,27 @@ bool LocalForceFieldElementParameter::Load(uint8_t*& pos, int32_t version)
 		}
 		else
 		{
-			br.Read(ftype);
+			if (!br.Read(ftype))
+			{
+				return false;
+			}
 		}
 
-		br.Read(seed);
-		br.Read(scale);
+		if (!br.Read(seed))
+		{
+			return false;
+		}
+		if (!br.Read(scale))
+		{
+			return false;
+		}
 
 		if (version < Version16Alpha2)
 		{
-			br.Read(strength);
+			if (!br.Read(strength))
+			{
+				return false;
+			}
 			strength *= 10.0f;
 		}
 		else
@@ -161,7 +203,10 @@ bool LocalForceFieldElementParameter::Load(uint8_t*& pos, int32_t version)
 			strength = power;
 		}
 
-		br.Read(octave);
+		if (!br.Read(octave))
+		{
+			return false;
+		}
 
 		scale = 1.0f / scale;
 
@@ -181,7 +226,10 @@ bool LocalForceFieldElementParameter::Load(uint8_t*& pos, int32_t version)
 	else if (type == LocalForceFieldType::Gravity)
 	{
 		std::array<float, 3> values;
-		br.Read(values);
+		if (!br.Read(values))
+		{
+			return false;
+		}
 		SIMD::Vec3f gravity{values};
 		Gravity = std::make_unique<ForceFieldGravityParameter>();
 		Gravity->Gravity = gravity;
@@ -191,9 +239,18 @@ bool LocalForceFieldElementParameter::Load(uint8_t*& pos, int32_t version)
 	{
 		AttractiveForce = std::make_unique<ForceFieldAttractiveForceParameter>();
 		AttractiveForce->Force = power;
-		br.Read(AttractiveForce->Control);
-		br.Read(AttractiveForce->MinRange);
-		br.Read(AttractiveForce->MaxRange);
+		if (!br.Read(AttractiveForce->Control))
+		{
+			return false;
+		}
+		if (!br.Read(AttractiveForce->MinRange))
+		{
+			return false;
+		}
+		if (!br.Read(AttractiveForce->MaxRange))
+		{
+			return false;
+		}
 		IsGlobal = true;
 	}
 	else
@@ -204,14 +261,26 @@ bool LocalForceFieldElementParameter::Load(uint8_t*& pos, int32_t version)
 	if (version >= 1600)
 	{
 		LocalForceFieldFalloffType ffType{};
-		br.Read(ffType);
+		if (!br.Read(ffType))
+		{
+			return false;
+		}
 
 		if (ffType != LocalForceFieldFalloffType::None)
 		{
 			FalloffCommon = std::make_unique<ForceFieldFalloffCommonParameter>();
-			br.Read(FalloffCommon->Power);
-			br.Read(FalloffCommon->MaxDistance);
-			br.Read(FalloffCommon->MinDistance);
+			if (!br.Read(FalloffCommon->Power))
+			{
+				return false;
+			}
+			if (!br.Read(FalloffCommon->MaxDistance))
+			{
+				return false;
+			}
+			if (!br.Read(FalloffCommon->MinDistance))
+			{
+				return false;
+			}
 		}
 
 		if (ffType == LocalForceFieldFalloffType::None)
@@ -224,16 +293,34 @@ bool LocalForceFieldElementParameter::Load(uint8_t*& pos, int32_t version)
 		else if (ffType == LocalForceFieldFalloffType::Tube)
 		{
 			FalloffTube = std::make_unique<ForceFieldFalloffTubeParameter>();
-			br.Read(FalloffTube->RadiusPower);
-			br.Read(FalloffTube->MaxRadius);
-			br.Read(FalloffTube->MinRadius);
+			if (!br.Read(FalloffTube->RadiusPower))
+			{
+				return false;
+			}
+			if (!br.Read(FalloffTube->MaxRadius))
+			{
+				return false;
+			}
+			if (!br.Read(FalloffTube->MinRadius))
+			{
+				return false;
+			}
 		}
 		else if (ffType == LocalForceFieldFalloffType::Cone)
 		{
 			FalloffCone = std::make_unique<ForceFieldFalloffConeParameter>();
-			br.Read(FalloffCone->AnglePower);
-			br.Read(FalloffCone->MaxAngle);
-			br.Read(FalloffCone->MinAngle);
+			if (!br.Read(FalloffCone->AnglePower))
+			{
+				return false;
+			}
+			if (!br.Read(FalloffCone->MaxAngle))
+			{
+				return false;
+			}
+			if (!br.Read(FalloffCone->MinAngle))
+			{
+				return false;
+			}
 		}
 		else
 		{
@@ -245,18 +332,19 @@ bool LocalForceFieldElementParameter::Load(uint8_t*& pos, int32_t version)
 		IsRotated = false;
 	}
 
-	pos += br.GetOffset();
-
 	return true;
 }
 
-bool LocalForceFieldParameter::Load(uint8_t*& pos, int32_t version)
+bool LocalForceFieldParameter::Load(BinaryReader<true>& pos, int32_t version)
 {
 	if (version >= 1500)
 	{
 		int32_t count = 0;
-		memcpy(&count, pos, sizeof(int));
-		pos += sizeof(int);
+		if (!pos.Peek(&count, sizeof(int)))
+		{
+			return false;
+		}
+		pos.Skip(sizeof(int));
 		if (count < 0 || count > static_cast<int32_t>(LocalForceFields.size()))
 		{
 			return false;
@@ -290,36 +378,57 @@ bool LocalForceFieldParameter::Load(uint8_t*& pos, int32_t version)
 		LocationAbsParameter LocationAbs;
 		int32_t size = 0;
 
-		memcpy(&LocationAbs.type, pos, sizeof(int));
-		pos += sizeof(int);
+		if (!pos.Peek(&LocationAbs.type, sizeof(int)))
+		{
+			return false;
+		}
+		pos.Skip(sizeof(int));
 
 		// Calc attraction forces
 		if (LocationAbs.type == LocationAbsType::None)
 		{
-			memcpy(&size, pos, sizeof(int));
-			pos += sizeof(int);
+			if (!pos.Peek(&size, sizeof(int)))
+			{
+				return false;
+			}
+			pos.Skip(sizeof(int));
 			if (size != 0)
 				return false;
-			memcpy(&LocationAbs.none, pos, size);
-			pos += size;
+			if (!pos.Peek(&LocationAbs.none, size))
+			{
+				return false;
+			}
+			pos.Skip(size);
 		}
 		else if (LocationAbs.type == LocationAbsType::Gravity)
 		{
-			memcpy(&size, pos, sizeof(int));
-			pos += sizeof(int);
+			if (!pos.Peek(&size, sizeof(int)))
+			{
+				return false;
+			}
+			pos.Skip(sizeof(int));
 			if (size != sizeof(vector3d))
 				return false;
-			memcpy(&LocationAbs.gravity, pos, size);
-			pos += size;
+			if (!pos.Peek(&LocationAbs.gravity, size))
+			{
+				return false;
+			}
+			pos.Skip(size);
 		}
 		else if (LocationAbs.type == LocationAbsType::AttractiveForce)
 		{
-			memcpy(&size, pos, sizeof(int));
-			pos += sizeof(int);
+			if (!pos.Peek(&size, sizeof(int)))
+			{
+				return false;
+			}
+			pos.Skip(sizeof(int));
 			if (size != sizeof(LocationAbs.attractiveForce))
 				return false;
-			memcpy(&LocationAbs.attractiveForce, pos, size);
-			pos += size;
+			if (!pos.Peek(&LocationAbs.attractiveForce, size))
+			{
+				return false;
+			}
+			pos.Skip(size);
 		}
 
 		if (LocationAbs.type == LocationAbsType::Gravity)

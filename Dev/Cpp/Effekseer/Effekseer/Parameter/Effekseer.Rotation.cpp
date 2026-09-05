@@ -1,3 +1,4 @@
+#include "../Utils/Effekseer.BinaryReader.h"
 #include "Effekseer.Rotation.h"
 #include "../Effekseer.Instance.h"
 #include "../Effekseer.Setting.h"
@@ -6,31 +7,43 @@
 namespace Effekseer
 {
 
-void RotationParameter::Load(unsigned char*& pos, int version)
+void RotationParameter::Load(BinaryReader<true>& pos, int version)
 {
 	int32_t size = 0;
 
-	memcpy(&RotationType, pos, sizeof(int));
-	pos += sizeof(int);
+	if (!pos.Peek(&RotationType, sizeof(int)))
+	{
+		return pos.MarkFailed();
+	}
+	pos.Skip(sizeof(int));
 	EffekseerPrintDebug("RotationType %d\n", RotationType);
 	if (RotationType == ParameterRotationType::ParameterRotationType_Fixed)
 	{
-		memcpy(&size, pos, sizeof(int));
-		pos += sizeof(int);
+		if (!pos.Peek(&size, sizeof(int)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int));
 		const auto expectedSize = version >= 14 ? sizeof(ParameterRotationFixed) : sizeof(RotationFixed.Position);
 		if (size != expectedSize)
-			return;
+			return pos.MarkFailed();
 
 		if (version >= 14)
 		{
 			assert(size == sizeof(ParameterRotationFixed));
-			memcpy(&RotationFixed, pos, size);
+			if (!pos.Peek(&RotationFixed, size))
+			{
+				return pos.MarkFailed();
+			}
 		}
 		else
 		{
-			memcpy(&RotationFixed.Position, pos, size);
+			if (!pos.Peek(&RotationFixed.Position, size))
+			{
+				return pos.MarkFailed();
+			}
 		}
-		pos += size;
+		pos.Skip(size);
 
 		// make invalid
 		if (RotationFixed.RefEq < 0 && RotationFixed.Position.X == 0.0f && RotationFixed.Position.Y == 0.0f &&
@@ -42,81 +55,121 @@ void RotationParameter::Load(unsigned char*& pos, int version)
 	}
 	else if (RotationType == ParameterRotationType::ParameterRotationType_PVA)
 	{
-		memcpy(&size, pos, sizeof(int));
-		pos += sizeof(int);
+		if (!pos.Peek(&size, sizeof(int)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int));
 		// Versions before 14 store three consecutive random_vector3d values without dynamic equation references.
 		const auto expectedSize = version >= 14
 								  ? sizeof(ParameterRotationPVA)
 								  : sizeof(RotationPVA.rotation) + sizeof(RotationPVA.velocity) + sizeof(RotationPVA.acceleration);
 		if (size != expectedSize)
-			return;
+			return pos.MarkFailed();
 		if (version >= 14)
 		{
 			assert(size == sizeof(ParameterRotationPVA));
-			memcpy(&RotationPVA, pos, size);
+			if (!pos.Peek(&RotationPVA, size))
+			{
+				return pos.MarkFailed();
+			}
 		}
 		else
 		{
-			memcpy(&RotationPVA.rotation, pos, size);
+			std::array<random_vector3d, 3> values;
+			if (!pos.Peek(&values, size))
+			{
+				return pos.MarkFailed();
+			}
+			RotationPVA.rotation = values[0];
+			RotationPVA.velocity = values[1];
+			RotationPVA.acceleration = values[2];
 		}
-		pos += size;
+		pos.Skip(size);
 	}
 	else if (RotationType == ParameterRotationType::ParameterRotationType_Easing)
 	{
-		memcpy(&size, pos, sizeof(int));
-		pos += sizeof(int);
+		if (!pos.Peek(&size, sizeof(int)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int));
 		if (size < 0 || size > 64 * 1024)
-			return;
+			return pos.MarkFailed();
 		RotationEasing.Load(pos, size, version);
-		pos += size;
+		pos.Skip(size);
 	}
 	else if (RotationType == ParameterRotationType::ParameterRotationType_AxisPVA)
 	{
-		memcpy(&size, pos, sizeof(int));
-		pos += sizeof(int);
+		if (!pos.Peek(&size, sizeof(int)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int));
 		if (size != sizeof(ParameterRotationAxisPVA))
-			return;
-		memcpy(&RotationAxisPVA, pos, size);
-		pos += size;
+			return pos.MarkFailed();
+		if (!pos.Peek(&RotationAxisPVA, size))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(size);
 	}
 	else if (RotationType == ParameterRotationType::ParameterRotationType_AxisEasing)
 	{
-		memcpy(&size, pos, sizeof(int));
-		pos += sizeof(int);
+		if (!pos.Peek(&size, sizeof(int)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int));
 		if (size < 0 || size > 1024 * 1024)
-			return;
+			return pos.MarkFailed();
 
-		memcpy(&RotationAxisEasing.axis, pos, sizeof(RotationAxisEasing.axis));
-		pos += sizeof(RotationAxisEasing.axis);
+		if (!pos.Peek(&RotationAxisEasing.axis, sizeof(RotationAxisEasing.axis)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(RotationAxisEasing.axis));
 
 		LoadFloatEasing(RotationAxisEasing.easing, pos, version);
 	}
 	else if (RotationType == ParameterRotationType::ParameterRotationType_FCurve)
 	{
-		memcpy(&size, pos, sizeof(int));
-		pos += sizeof(int);
+		if (!pos.Peek(&size, sizeof(int)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int));
 		if (size < 0 || size > 1024 * 1024)
-			return;
+			return pos.MarkFailed();
 
 		RotationFCurve = std::make_unique<FCurveVector3D>();
-		pos += RotationFCurve->Load(pos, version);
+		pos.Skip(RotationFCurve->Load(pos, version));
 	}
 	else if (RotationType == ParameterRotationType::ParameterRotationType_RotateToViewpoint)
 	{
-		memcpy(&size, pos, sizeof(int));
-		pos += sizeof(int);
+		if (!pos.Peek(&size, sizeof(int)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int));
 		if (size < 0 || size > 64 * 1024)
-			return;
+			return pos.MarkFailed();
 	}
 	else if (RotationType == ParameterRotationType::ParameterRotationType_Velocity)
 	{
-		memcpy(&size, pos, sizeof(int));
-		pos += sizeof(int);
+		if (!pos.Peek(&size, sizeof(int)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int));
 		if (size < static_cast<int32_t>(sizeof(DirectionalAxisType)) || size > 64 * 1024)
-			return;
+			return pos.MarkFailed();
 
-		memcpy(&RotationVelocity.axis, pos, sizeof(DirectionalAxisType));
-		pos += sizeof(int);
+		if (!pos.Peek(&RotationVelocity.axis, sizeof(DirectionalAxisType)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int));
 	}
 }
 

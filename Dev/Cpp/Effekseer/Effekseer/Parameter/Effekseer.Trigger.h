@@ -2,6 +2,7 @@
 #ifndef __EFFEKSEER_PARAMETER_TRIGGER_H__
 #define __EFFEKSEER_PARAMETER_TRIGGER_H__
 
+#include "../Utils/Effekseer.BinaryReader.h"
 #include "../Effekseer.Base.h"
 
 namespace Effekseer
@@ -30,7 +31,7 @@ struct TriggerParameter
 	TriggerValues ToStopGeneration;
 	TriggerValues ToRemove;
 
-	void Load(uint8_t*& pos, int32_t version);
+	void Load(BinaryReader<true>& pos, int32_t version);
 };
 
 bool IsTriggerActivated(const TriggerValues& trigger, InstanceGlobal* global, Instance* parent);

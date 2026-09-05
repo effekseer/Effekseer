@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Utils/Effekseer.BinaryReader.h"
 #include "../Effekseer.Base.h"
 #include "../Effekseer.Curve.h"
 #include "../Effekseer.EffectImplemented.h"
@@ -167,28 +168,40 @@ public:
 		}
 	}
 
-	void Load(unsigned char*& pos, int version)
+	void Load(BinaryReader<true>& pos, int version)
 	{
 		int32_t size = 0;
-		memcpy(&TranslationType, pos, sizeof(int));
-		pos += sizeof(int);
+		if (!pos.Peek(&TranslationType, sizeof(int)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int));
 
 		if (TranslationType == ParameterTranslationType_Fixed)
 		{
 			int32_t translationSize = 0;
-			memcpy(&translationSize, pos, sizeof(int));
-			pos += sizeof(int);
+			if (!pos.Peek(&translationSize, sizeof(int)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(int));
 			const auto expectedSize = version >= 14 ? sizeof(ParameterTranslationFixed) : sizeof(float) * 3;
 			if (translationSize != expectedSize)
-				return;
+				return pos.MarkFailed();
 
 			if (version >= 14)
 			{
-				memcpy(&TranslationFixed, pos, sizeof(ParameterTranslationFixed));
+				if (!pos.Peek(&TranslationFixed, sizeof(ParameterTranslationFixed)))
+				{
+					return pos.MarkFailed();
+				}
 			}
 			else
 			{
-				memcpy(&(TranslationFixed.Position), pos, sizeof(float) * 3);
+				if (!pos.Peek(&(TranslationFixed.Position), sizeof(float) * 3))
+				{
+					return pos.MarkFailed();
+				}
 
 				// make invalid
 				if (TranslationFixed.Position.X == 0.0f && TranslationFixed.Position.Y == 0.0f && TranslationFixed.Position.Z == 0.0f)
@@ -198,60 +211,88 @@ public:
 				}
 			}
 
-			pos += translationSize;
+			pos.Skip(translationSize);
 		}
 		else if (TranslationType == ParameterTranslationType_PVA)
 		{
 			if (version >= 14)
 			{
-				memcpy(&size, pos, sizeof(int));
-				pos += sizeof(int);
+				if (!pos.Peek(&size, sizeof(int)))
+				{
+					return pos.MarkFailed();
+				}
+				pos.Skip(sizeof(int));
 				if (size != sizeof(ParameterTranslationPVA))
-					return;
-				memcpy(&TranslationPVA, pos, size);
-				pos += size;
+					return pos.MarkFailed();
+				if (!pos.Peek(&TranslationPVA, size))
+				{
+					return pos.MarkFailed();
+				}
+				pos.Skip(size);
 			}
 			else
 			{
-				memcpy(&size, pos, sizeof(int));
-				pos += sizeof(int);
+				if (!pos.Peek(&size, sizeof(int)))
+				{
+					return pos.MarkFailed();
+				}
+				pos.Skip(sizeof(int));
 				// Versions before 14 store three consecutive random_vector3d values without dynamic equation references.
 				const auto expectedSize =
 					sizeof(TranslationPVA.location) + sizeof(TranslationPVA.velocity) + sizeof(TranslationPVA.acceleration);
 				if (size != expectedSize)
-					return;
-				memcpy(&TranslationPVA.location, pos, size);
-				pos += size;
+					return pos.MarkFailed();
+				std::array<random_vector3d, 3> values;
+				if (!pos.Peek(&values, size))
+				{
+					return pos.MarkFailed();
+				}
+				TranslationPVA.location = values[0];
+				TranslationPVA.velocity = values[1];
+				TranslationPVA.acceleration = values[2];
+				pos.Skip(size);
 			}
 		}
 		else if (TranslationType == ParameterTranslationType_Easing)
 		{
-			memcpy(&size, pos, sizeof(int));
-			pos += sizeof(int);
+			if (!pos.Peek(&size, sizeof(int)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(int));
 			if (size < 0 || size > 64 * 1024)
-				return;
+				return pos.MarkFailed();
 			TranslationEasing.Load(pos, size, version);
-			pos += size;
+			pos.Skip(size);
 		}
 		else if (TranslationType == ParameterTranslationType_FCurve)
 		{
-			memcpy(&size, pos, sizeof(int));
-			pos += sizeof(int);
+			if (!pos.Peek(&size, sizeof(int)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(int));
 			if (size < 0 || size > 1024 * 1024)
-				return;
+				return pos.MarkFailed();
 
 			TranslationFCurve = std::make_unique<FCurveVector3D>();
-			pos += TranslationFCurve->Load(pos, version);
+			pos.Skip(TranslationFCurve->Load(pos, version));
 		}
 		else if (TranslationType == ParameterTranslationType_NurbsCurve)
 		{
-			memcpy(&TranslationNurbsCurve, pos, sizeof(ParameterTranslationNurbsCurve));
-			pos += sizeof(ParameterTranslationNurbsCurve);
+			if (!pos.Peek(&TranslationNurbsCurve, sizeof(ParameterTranslationNurbsCurve)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(ParameterTranslationNurbsCurve));
 		}
 		else if (TranslationType == ParameterTranslationType_ViewOffset)
 		{
-			memcpy(&TranslationViewOffset, pos, sizeof(ParameterTranslationViewOffset));
-			pos += sizeof(ParameterTranslationViewOffset);
+			if (!pos.Peek(&TranslationViewOffset, sizeof(ParameterTranslationViewOffset)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(ParameterTranslationViewOffset));
 		}
 	}
 

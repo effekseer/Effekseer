@@ -2,6 +2,7 @@
 #ifndef __EFFEKSEER_FCURVES_H__
 #define __EFFEKSEER_FCURVES_H__
 
+#include "Utils/Effekseer.BinaryReader.h"
 #include "Effekseer.Base.Pre.h"
 #include "Effekseer.InternalStruct.h"
 #include "Effekseer.Random.h"
@@ -42,6 +43,7 @@ private:
 public:
 	FCurve(float defaultValue);
 	int32_t Load(const void* data, int32_t version);
+	int32_t Load(BinaryReader<true> reader, int32_t version);
 
 	float GetValue(float living, float life, FCurveTimelineType type) const;
 
@@ -64,6 +66,7 @@ public:
 	FCurve S = FCurve(0);
 
 	int32_t Load(const void* data, int32_t version);
+	int32_t Load(BinaryReader<true> reader, int32_t version);
 
 	float GetValues(float living, float life) const;
 	float GetOffsets(IRandObject& g) const;
@@ -77,6 +80,7 @@ public:
 	FCurve Y = FCurve(0);
 
 	int32_t Load(const void* data, int32_t version);
+	int32_t Load(BinaryReader<true> reader, int32_t version);
 
 	SIMD::Vec2f GetValues(float living, float life) const;
 	SIMD::Vec2f GetOffsets(IRandObject& g) const;
@@ -91,6 +95,7 @@ public:
 	FCurve Z = FCurve(0);
 
 	int32_t Load(const void* data, int32_t version);
+	int32_t Load(BinaryReader<true> reader, int32_t version);
 
 	SIMD::Vec3f GetValues(float living, float life) const;
 	SIMD::Vec3f GetOffsets(IRandObject& g) const;
@@ -106,6 +111,7 @@ public:
 	FCurve A = FCurve(255);
 
 	int32_t Load(const void* data, int32_t version);
+	int32_t Load(BinaryReader<true> reader, int32_t version);
 
 	std::array<float, 4> GetValues(float living, float life) const;
 	std::array<float, 4> GetOffsets(IRandObject& g) const;

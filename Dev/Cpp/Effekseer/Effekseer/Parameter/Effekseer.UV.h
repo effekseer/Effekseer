@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Utils/Effekseer.BinaryReader.h"
 #include "../Effekseer.Base.h"
 #include "../Effekseer.FCurves.h"
 #include "Effekseer.Easing.h"
@@ -93,43 +94,70 @@ struct UVParameter
 		}
 	}
 
-	void Load(uint8_t*& pos, int32_t version, int uvIndex)
+	void Load(BinaryReader<true>& pos, int32_t version, int uvIndex)
 	{
-		memcpy(&Type, pos, sizeof(int));
-		pos += sizeof(int);
+		if (!pos.Peek(&Type, sizeof(int)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(int));
 
 		if (Type == UVAnimationType::Default)
 		{
 		}
 		else if (Type == UVAnimationType::Fixed)
 		{
-			memcpy(&Fixed, pos, sizeof(Fixed));
-			pos += sizeof(Fixed);
+			if (!pos.Peek(&Fixed, sizeof(Fixed)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(Fixed));
 		}
 		else if (Type == UVAnimationType::Animation)
 		{
-			memcpy(&Animation.Position, pos, sizeof(Animation.Position));
-			pos += sizeof(Animation.Position);
+			if (!pos.Peek(&Animation.Position, sizeof(Animation.Position)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(Animation.Position));
 
-			memcpy(&Animation.FrameLength, pos, sizeof(Animation.FrameLength));
-			pos += sizeof(Animation.FrameLength);
+			if (!pos.Peek(&Animation.FrameLength, sizeof(Animation.FrameLength)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(Animation.FrameLength));
 
-			memcpy(&Animation.FrameCountX, pos, sizeof(Animation.FrameCountX));
-			pos += sizeof(Animation.FrameCountX);
+			if (!pos.Peek(&Animation.FrameCountX, sizeof(Animation.FrameCountX)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(Animation.FrameCountX));
 
-			memcpy(&Animation.FrameCountY, pos, sizeof(Animation.FrameCountY));
-			pos += sizeof(Animation.FrameCountY);
+			if (!pos.Peek(&Animation.FrameCountY, sizeof(Animation.FrameCountY)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(Animation.FrameCountY));
 
-			memcpy(&Animation.LoopType, pos, sizeof(Animation.LoopType));
-			pos += sizeof(Animation.LoopType);
+			if (!pos.Peek(&Animation.LoopType, sizeof(Animation.LoopType)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(Animation.LoopType));
 
-			memcpy(&Animation.StartFrame, pos, sizeof(Animation.StartFrame));
-			pos += sizeof(Animation.StartFrame);
+			if (!pos.Peek(&Animation.StartFrame, sizeof(Animation.StartFrame)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(Animation.StartFrame));
 
 			if (version >= 1600 && uvIndex == 0)
 			{
-				memcpy(&Animation.InterpolationType, pos, sizeof(Animation.InterpolationType));
-				pos += sizeof(Animation.InterpolationType);
+				if (!pos.Peek(&Animation.InterpolationType, sizeof(Animation.InterpolationType)))
+				{
+					return pos.MarkFailed();
+				}
+				pos.Skip(sizeof(Animation.InterpolationType));
 			}
 			else
 			{
@@ -138,15 +166,18 @@ struct UVParameter
 		}
 		else if (Type == UVAnimationType::Scroll)
 		{
-			memcpy(&Scroll, pos, sizeof(Scroll));
-			pos += sizeof(Scroll);
+			if (!pos.Peek(&Scroll, sizeof(Scroll)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(Scroll));
 		}
 		else if (Type == UVAnimationType::FCurve)
 		{
 			FCurve.Position = new FCurveVector2D();
 			FCurve.Size = new FCurveVector2D();
-			pos += FCurve.Position->Load(pos, version);
-			pos += FCurve.Size->Load(pos, version);
+			pos.Skip(FCurve.Position->Load(pos, version));
+			pos.Skip(FCurve.Size->Load(pos, version));
 		}
 	}
 };

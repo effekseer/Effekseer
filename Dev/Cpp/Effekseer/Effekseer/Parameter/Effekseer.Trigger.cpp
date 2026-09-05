@@ -1,4 +1,5 @@
 ﻿
+#include "../Utils/Effekseer.BinaryReader.h"
 #include "Effekseer.Trigger.h"
 
 #include "../Effekseer.Instance.h"
@@ -11,7 +12,7 @@
 namespace Effekseer
 {
 
-void TriggerParameter::Load(uint8_t*& pos, int32_t version)
+void TriggerParameter::Load(BinaryReader<true>& pos, int32_t version)
 {
 	ToStartGeneration = {};
 	ToStopGeneration = {};
@@ -23,13 +24,19 @@ void TriggerParameter::Load(uint8_t*& pos, int32_t version)
 	}
 
 	uint8_t flags = 0;
-	memcpy(&flags, pos, sizeof(uint8_t));
-	pos += sizeof(uint8_t);
+	if (!pos.Peek(&flags, sizeof(uint8_t)))
+	{
+		return pos.MarkFailed();
+	}
+	pos.Skip(sizeof(uint8_t));
 
 	auto loadValue = [&pos](TriggerValues& dst)
 	{
-		memcpy(&dst, pos, sizeof(TriggerValues));
-		pos += sizeof(TriggerValues);
+		if (!pos.Peek(&dst, sizeof(TriggerValues)))
+		{
+			return pos.MarkFailed();
+		}
+		pos.Skip(sizeof(TriggerValues));
 	};
 
 	if (flags & (1 << 0))

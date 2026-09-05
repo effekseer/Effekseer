@@ -9,7 +9,6 @@
 namespace Effekseer
 {
 
-void LoadGradient(Gradient& gradient, uint8_t*& pos, int32_t version);
 bool LoadGradient(Gradient& gradient, BinaryReader<true>& reader, int32_t version);
 
 /**
@@ -37,7 +36,7 @@ struct NodeRendererTextureUVTypeParameter
 	float TileLoopAreaBegin = 0.0f;
 	float TileLoopAreaEnd = 0.0f;
 
-	void Load(uint8_t*& pos, int32_t version);
+	void Load(BinaryReader<true>& pos, int32_t version);
 };
 
 struct FalloffParameter

@@ -1,6 +1,7 @@
 
 #pragma once
 
+#include "../Utils/Effekseer.BinaryReader.h"
 #include "../Effekseer.Base.h"
 
 #include "../Effekseer.FCurves.h"
@@ -140,7 +141,7 @@ struct RotationParameter
 
 	ParameterRotationVelocity RotationVelocity;
 
-	void Load(unsigned char*& pos, int version);
+	void Load(BinaryReader<true>& pos, int version);
 
 	void MakeCoordinateSystemLH();
 };

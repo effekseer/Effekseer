@@ -21,6 +21,7 @@ else()
       Runtime/BasicRendering.h
       Runtime/BasicRendering.cpp
       Runtime/BinaryLoading.cpp
+      Runtime/EffectLoading.cpp
       Runtime/Curve.cpp
       Runtime/FCurves.cpp
       Runtime/RuntimeTest.cpp

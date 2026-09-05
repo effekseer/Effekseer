@@ -44,7 +44,7 @@ bool IsInfiniteUVAnimation(const UVParameter& uv)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-EffectNodeImplemented::EffectNodeImplemented(Effect* effect, unsigned char*& pos)
+EffectNodeImplemented::EffectNodeImplemented(Effect* effect, BinaryReader<true>& pos)
 	: m_effect(effect)
 {
 }
@@ -144,7 +144,7 @@ void EffectNodeImplemented::AdjustSettings(const SettingRef& setting)
 #endif // !__EFFEKSEER_FOR_UE4__
 }
 
-void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* parent, const SettingRef& setting)
+void EffectNodeImplemented::LoadParameter(BinaryReader<true>& pos, EffectNode* parent, const SettingRef& setting)
 {
 	int size = 0;
 	int node_type = 0;
@@ -159,8 +159,11 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		generation_ = 0;
 	}
 
-	memcpy(&node_type, pos, sizeof(int));
-	pos += sizeof(int);
+	if (!pos.Peek(&node_type, sizeof(int)))
+	{
+		return pos.MarkFailed();
+	}
+	pos.Skip(sizeof(int));
 
 	if (node_type == -1)
 	{
@@ -177,8 +180,11 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		if (m_effect->GetVersion() >= 10)
 		{
 			int32_t rendered = 0;
-			memcpy(&rendered, pos, sizeof(int32_t));
-			pos += sizeof(int32_t);
+			if (!pos.Peek(&rendered, sizeof(int32_t)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(int32_t));
 
 			IsRendered = rendered != 0;
 		}
@@ -186,8 +192,11 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		// To render with priority, nodes are assigned a list.
 		if (m_effect->GetVersion() >= 13)
 		{
-			memcpy(&RenderingPriority, pos, sizeof(int32_t));
-			pos += sizeof(int32_t);
+			if (!pos.Peek(&RenderingPriority, sizeof(int32_t)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(int32_t));
 		}
 		else
 		{
@@ -201,8 +210,11 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			if (CommonValues.TranslationBindType == TranslationParentBindType::NotBind_FollowParent ||
 				CommonValues.TranslationBindType == TranslationParentBindType::WhenCreating_FollowParent)
 			{
-				memcpy(&SteeringBehaviorParam, pos, sizeof(SteeringBehaviorParameter));
-				pos += sizeof(SteeringBehaviorParameter);
+				if (!pos.Peek(&SteeringBehaviorParam, sizeof(SteeringBehaviorParameter)))
+				{
+					return pos.MarkFailed();
+				}
+				pos.Skip(sizeof(SteeringBehaviorParameter));
 			}
 		}
 
@@ -223,7 +235,10 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 
 		LODsParam.Load(pos, ef->GetVersion());
 		TranslationParam.Load(pos, ef->GetVersion());
-		LocalForceField.Load(pos, ef->GetVersion());
+		if (!LocalForceField.Load(pos, ef->GetVersion()))
+		{
+			return pos.MarkFailed();
+		}
 		RotationParam.Load(pos, ef->GetVersion());
 		ScalingParam.Load(pos, ef->GetVersion());
 		GenerationLocation.load(pos, ef->GetVersion());
@@ -247,8 +262,11 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			if (m_effect->GetVersion() >= Version16Alpha6)
 			{
 				int32_t AlphaCutoffFlag = 0;
-				memcpy(&AlphaCutoffFlag, pos, sizeof(int));
-				pos += sizeof(int);
+				if (!pos.Peek(&AlphaCutoffFlag, sizeof(int)))
+				{
+					return pos.MarkFailed();
+				}
+				pos.Skip(sizeof(int));
 				alphaCutoffEnabled = (AlphaCutoffFlag == 1);
 			}
 			RendererCommon.BasicParameter.IsAlphaCutoffEnabled = alphaCutoffEnabled;
@@ -270,29 +288,44 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		if (m_effect->GetVersion() >= Version16Alpha3)
 		{
 			int FalloffFlag = 0;
-			memcpy(&FalloffFlag, pos, sizeof(int));
-			pos += sizeof(int);
+			if (!pos.Peek(&FalloffFlag, sizeof(int)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(int));
 			EnableFalloff = (FalloffFlag == 1);
 
 			if (EnableFalloff)
 			{
-				memcpy(&FalloffParam, pos, sizeof(FalloffParameter));
-				pos += sizeof(FalloffParameter);
+				if (!pos.Peek(&FalloffParam, sizeof(FalloffParameter)))
+				{
+					return pos.MarkFailed();
+				}
+				pos.Skip(sizeof(FalloffParameter));
 			}
 		}
 
 		if (m_effect->GetVersion() >= Version16Alpha4)
 		{
-			memcpy(&RendererCommon.BasicParameter.SoftParticleDistanceFar, pos, sizeof(float));
-			pos += sizeof(float);
+			if (!pos.Peek(&RendererCommon.BasicParameter.SoftParticleDistanceFar, sizeof(float)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(float));
 		}
 
 		if (m_effect->GetVersion() >= Version16Alpha5)
 		{
-			memcpy(&RendererCommon.BasicParameter.SoftParticleDistanceNear, pos, sizeof(float));
-			pos += sizeof(float);
-			memcpy(&RendererCommon.BasicParameter.SoftParticleDistanceNearOffset, pos, sizeof(float));
-			pos += sizeof(float);
+			if (!pos.Peek(&RendererCommon.BasicParameter.SoftParticleDistanceNear, sizeof(float)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(float));
+			if (!pos.Peek(&RendererCommon.BasicParameter.SoftParticleDistanceNearOffset, sizeof(float)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(float));
 		}
 
 		LoadRendererParameter(pos, m_effect->GetSetting());
@@ -302,12 +335,20 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		if (m_effect->GetVersion() >= Version18Alpha1)
 		{
 			int gpuParticleEnabled = 0;
-			memcpy(&gpuParticleEnabled, pos, sizeof(int));
-			pos += sizeof(int);
+			if (!pos.Peek(&gpuParticleEnabled, sizeof(int)))
+			{
+				return pos.MarkFailed();
+			}
+			pos.Skip(sizeof(int));
 
 			if (gpuParticleEnabled)
 			{
 				auto gpuParticlesParamSet = LoadGpuParticlesParameter(pos, ef->GetVersion(), m_effect->GetMaginification(), setting->GetCoordinateSystem());
+
+				if (pos.GetStatus() == BinaryReaderStatus::Failed)
+				{
+					return pos.MarkFailed();
+				}
 
 				if (auto factory = setting->GetGpuParticleFactory())
 				{
@@ -320,12 +361,15 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 	}
 
 	int nodeCount = 0;
-	memcpy(&nodeCount, pos, sizeof(int));
-	pos += sizeof(int);
-	if (nodeCount < 0 || nodeCount > 1024)
+	if (!pos.Peek(&nodeCount, sizeof(int)))
+	{
+		return pos.MarkFailed();
+	}
+	pos.Skip(sizeof(int));
+	if (nodeCount < 0 || nodeCount > 1024 || !pos.CanReadElements(nodeCount, sizeof(int32_t) * 2))
 	{
 		isLoadingValid_ = false;
-		return;
+		return pos.MarkFailed();
 	}
 	EffekseerPrintDebug("ChildrenCount : %d\n", nodeCount);
 	m_Nodes.resize(nodeCount);
@@ -336,7 +380,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		{
 			m_Nodes.resize(i);
 			isLoadingValid_ = false;
-			return;
+			return pos.MarkFailed();
 		}
 	}
 }
@@ -595,12 +639,18 @@ EffectModelParameter EffectNodeImplemented::GetEffectModelParameter()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeImplemented::LoadRendererParameter(unsigned char*& pos, const SettingRef& setting)
+void EffectNodeImplemented::LoadRendererParameter(BinaryReader<true>& pos, const SettingRef& setting)
 {
 	EffectNodeType type = EffectNodeType::NoneType;
-	memcpy(&type, pos, sizeof(int));
-	pos += sizeof(int);
-	assert(type == GetType());
+	if (!pos.Peek(&type, sizeof(int)))
+	{
+		return pos.MarkFailed();
+	}
+	pos.Skip(sizeof(int));
+	if (type != GetType())
+	{
+		return pos.MarkFailed();
+	}
 	EffekseerPrintDebug("Renderer : None\n");
 }
 
@@ -832,12 +882,22 @@ EffectInstanceTerm EffectNodeImplemented::CalculateInstanceTerm(EffectInstanceTe
 	return ret;
 }
 
-EffectNodeImplemented* EffectNodeImplemented::Create(Effect* effect, EffectNode* parent, unsigned char*& pos)
+EffectNodeImplemented* EffectNodeImplemented::Create(Effect* effect, EffectNode* parent, BinaryReader<true>& pos)
 {
+	// Keep malformed recursive trees from exhausting the stack.
+	if (parent != nullptr && parent->GetGeneration() >= 255)
+	{
+		pos.MarkFailed();
+		return nullptr;
+	}
+
 	EffectNodeImplemented* effectnode = nullptr;
 
 	EffectNodeType node_type = EffectNodeType::NoneType;
-	memcpy(&node_type, pos, sizeof(int));
+	if (!pos.Peek(&node_type, sizeof(int)))
+	{
+		return nullptr;
+	}
 
 	if (node_type == EffectNodeType::Root)
 	{
@@ -882,7 +942,7 @@ EffectNodeImplemented* EffectNodeImplemented::Create(Effect* effect, EffectNode*
 	if (effectnode == nullptr)
 		return nullptr;
 	effectnode->LoadParameter(pos, parent, effect->GetSetting());
-	if (!effectnode->isLoadingValid_)
+	if (!effectnode->isLoadingValid_ || pos.GetStatus() == BinaryReaderStatus::Failed)
 	{
 		delete effectnode;
 		return nullptr;

@@ -13,6 +13,7 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
+#include "Utils/Effekseer.BinaryReader.h"
 #include "Effekseer.Base.h"
 #include "Effekseer.Color.h"
 #include "Effekseer.Manager.h"
@@ -29,10 +30,13 @@ namespace Effekseer
 {
 
 template <typename T>
-void ReadData(T& dst, unsigned char*& pos)
+void ReadData(T& dst, BinaryReader<true>& pos)
 {
-	memcpy(&dst, pos, sizeof(T));
-	pos += sizeof(T);
+	if (!pos.Peek(&dst, sizeof(T)))
+	{
+		return pos.MarkFailed();
+	}
+	pos.Skip(sizeof(T));
 }
 
 //----------------------------------------------------------------------------------
@@ -346,14 +350,14 @@ struct random_color
 		return r;
 	}
 
-	void load(int version, unsigned char*& pos)
+	void load(int version, BinaryReader<true>& pos)
 	{
 		if (version >= 4)
 		{
 			uint8_t mode_ = 0;
 			ReadData<uint8_t>(mode_, pos);
 			mode = static_cast<ColorMode>(mode_);
-			pos++; // reserved
+			pos.Skip(1); // reserved
 		}
 		else
 		{
@@ -396,7 +400,7 @@ struct easing_color
 		return end.getDirectValue(g);
 	}
 
-	void load(int version, unsigned char*& pos)
+	void load(int version, BinaryReader<true>& pos)
 	{
 		start.load(version, pos);
 		end.load(version, pos);
