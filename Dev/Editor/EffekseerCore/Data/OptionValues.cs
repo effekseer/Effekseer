@@ -242,6 +242,14 @@ namespace Effekseer.Data
 			private set;
 		}
 
+		[Key(key = "Options_TexturePreviewLines")]
+		[Undo(Undo = false)]
+		public Value.Int TexturePreviewLines
+		{
+			get;
+			private set;
+		}
+
 		[Key(key = "Options_FloatFormatDigits")]
 		[Undo(Undo = false)]
 		public Value.Int FloatFormatDigits
@@ -295,6 +303,8 @@ namespace Effekseer.Data
 
 			FileBrowserViewMode = new Value.Enum<FileViewMode>(FileViewMode.IconView);
 			FileBrowserIconSize = new Value.Int(96, 512, 48);
+			// 行数で持つと文字の大きさに追従する。既定は 3 行。
+			TexturePreviewLines = new Value.Int(3, 10, 2);
 			FloatFormatDigits =  new Value.Int(3, 9, 1);
 			AutoSaveIntervalMin = new Value.Int(2, 60, 0);
 		}

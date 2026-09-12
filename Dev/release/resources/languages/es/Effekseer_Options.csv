@@ -1,4 +1,4 @@
-Options_RenderingMode_Name,Modo renderizado
+﻿Options_RenderingMode_Name,Modo renderizado
 Options_RenderingMode_Desc,Modo renderizado de efectos
 Options_ViewerMode_Name,Modo de vista
 Options_ViewerMode_Desc,Modo de vista de la pantalla de visualización.
@@ -75,3 +75,5 @@ FileBrowser_ViewMode_ListView_Name,Vista de la lista
 Options_FloatFormatDigits_Desc,Cantidad de dígitos después del punto decimal
 RenderMode_NormalWithWireframe_Name,Normal+Malla de alambre
 RenderMode_Overdraw_Name,Sobredibujo
+Options_TexturePreviewLines_Name,Tamaño de la vista previa de textura
+Options_TexturePreviewLines_Desc,"Altura de la vista previa de textura en los paneles de parámetros, medida en líneas de texto"

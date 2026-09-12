@@ -72,3 +72,5 @@ MouseMappingType_Blender_Name,Blender
 MouseMappingType_Maya_Name,Maya
 FileBrowser_ViewMode_IconView_Name,Icon view
 FileBrowser_ViewMode_ListView_Name,List view
+Options_TexturePreviewLines_Name,Texture preview size
+Options_TexturePreviewLines_Desc,"Height of the texture preview in the parameter panels, counted in text lines"

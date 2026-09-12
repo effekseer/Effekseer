@@ -1,4 +1,4 @@
-Options_RenderingMode_Name,描画モード
+﻿Options_RenderingMode_Name,描画モード
 Options_RenderingMode_Desc,ビュワーのエフェクト描画モードの設定
 Options_ViewerMode_Name,表示モード
 Options_ViewerMode_Desc,ビュワーの表示モードの設定
@@ -71,3 +71,5 @@ MouseMappingType_Blender_Name,Blender
 MouseMappingType_Maya_Name,Maya
 FileBrowser_ViewMode_IconView_Name,アイコン表示
 FileBrowser_ViewMode_ListView_Name,リスト表示
+Options_TexturePreviewLines_Name,テクスチャのプレビューの大きさ
+Options_TexturePreviewLines_Desc,パラメーター欄に出るテクスチャのプレビューの高さ。文字の行数で指定する

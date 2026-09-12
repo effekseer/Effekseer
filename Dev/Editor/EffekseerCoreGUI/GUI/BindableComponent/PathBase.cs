@@ -116,7 +116,9 @@ namespace Effekseer.GUI.BindableComponent
 			float itemSpacing = 4;
 			float lineHeight = Manager.NativeManager.GetFrameHeight();
 			float lineSpacing = Manager.NativeManager.GetFrameHeightWithSpacing() - lineHeight;
-			float imageSize = lineHeight * 2 + lineSpacing;
+			// 画像の大きさは文字の行数で決める。文字を大きくしても比率が崩れない。
+			int previewLines = Math.Max(2, Core.Option.TexturePreviewLines.GetValue());
+			float imageSize = lineHeight * previewLines + lineSpacing * (previewLines - 1);
 			float buttonSizeX = lineHeight;
 
 			float cursorX = Manager.NativeManager.GetCursorPosX();
