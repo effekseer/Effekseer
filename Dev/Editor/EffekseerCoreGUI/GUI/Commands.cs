@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.IO;
 
@@ -42,6 +43,11 @@ namespace Effekseer.GUI
 			register(InsertNode);
 			register(RemoveNode);
 			register(RenameNode);
+
+			register(FlipX);
+			register(FlipY);
+			register(FlipZ);
+			register(ReverseTimeline);
 		}
 
 		[Name(value = "InternalNew")]
@@ -305,6 +311,88 @@ namespace Effekseer.GUI
 		{
 			Command.CommandManager.Redo();
 			return true;
+		}
+
+		[Name(value = "InternalFlipX")]
+		[UniqueName(value = "Internal.FlipX")]
+		public static bool FlipX()
+		{
+			return Flip(Utils.TransformAxis.X);
+		}
+
+		[Name(value = "InternalFlipY")]
+		[UniqueName(value = "Internal.FlipY")]
+		public static bool FlipY()
+		{
+			return Flip(Utils.TransformAxis.Y);
+		}
+
+		[Name(value = "InternalFlipZ")]
+		[UniqueName(value = "Internal.FlipZ")]
+		public static bool FlipZ()
+		{
+			return Flip(Utils.TransformAxis.Z);
+		}
+
+		[Name(value = "InternalReverseTimeline")]
+		[UniqueName(value = "Internal.ReverseTimeline")]
+		public static bool ReverseTimeline()
+		{
+			var result = Utils.EffectTransformer.ReverseTimeline(Core.Root);
+			ReportTransform(result, "Transform_ReverseTimeline_Skipped");
+			return true;
+		}
+
+		static bool Flip(Utils.TransformAxis axis)
+		{
+			var result = Utils.EffectTransformer.Flip(Core.Root, axis);
+			ReportTransform(result, "Transform_Flip_Skipped");
+			return true;
+		}
+
+		/// <summary>
+		/// 変換できなかったパラメーターがある場合のみ知らせる。
+		/// 黙って一部だけ変換されると、利用者は気付かないまま保存してしまう。
+		/// </summary>
+		static void ReportTransform(Utils.EffectTransformResult result, string messageKey)
+		{
+			var sections = new System.Collections.Generic.List<string>();
+
+			if (result.Skipped.Count > 0)
+			{
+				sections.Add(string.Format(
+					MultiLanguageTextProvider.GetText(messageKey),
+					FormatParameters(result.Skipped)));
+			}
+
+			if (result.Approximated.Count > 0)
+			{
+				sections.Add(string.Format(
+					MultiLanguageTextProvider.GetText("Transform_Approximated"),
+					FormatParameters(result.Approximated)));
+			}
+
+			if (sections.Count == 0) return;
+
+			swig.GUIManager.show(
+				string.Join("\n\n", sections),
+				MultiLanguageTextProvider.GetText("Transform_Title"),
+				swig.DialogStyle.Info,
+				swig.DialogButtons.OK);
+		}
+
+		/// <summary>
+		/// "分類キー|項目キー" の組を翻訳して箇条書きにする。
+		/// </summary>
+		static string FormatParameters(System.Collections.Generic.IEnumerable<string> pairs)
+		{
+			return pairs
+				.Select(pair => pair.Split('|'))
+				.Select(keys => "- "
+					+ MultiLanguageTextProvider.GetText(keys[0])
+					+ ": "
+					+ MultiLanguageTextProvider.GetText(keys[1]))
+				.Aggregate((a, b) => a + "\n" + b);
 		}
 
 		[Name(value = "InternalCopy")]

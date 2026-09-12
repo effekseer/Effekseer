@@ -179,6 +179,12 @@ namespace Effekseer.GUI
 				AddShortcut(new Shortcut("Internal.InsertNode", true, false, false, (int)ShortcutKeys.I, null));
 				AddShortcut(new Shortcut("Internal.RemoveNode", true, false, false, (int)ShortcutKeys.R, null));
 				AddShortcut(new Shortcut("Internal.RenameNode", false, false, false, (int)ShortcutKeys.F2, null));
+
+				// 既定のキーは割り当てない。誤って押すとエフェクト全体が変わるため。
+				AddShortcut(new Shortcut("Internal.FlipX", false, false, false, 0, null));
+				AddShortcut(new Shortcut("Internal.FlipY", false, false, false, 0, null));
+				AddShortcut(new Shortcut("Internal.FlipZ", false, false, false, 0, null));
+				AddShortcut(new Shortcut("Internal.ReverseTimeline", false, false, false, 0, null));
 			}
 		}
 

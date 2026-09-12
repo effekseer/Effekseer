@@ -1,4 +1,4 @@
-AboutEffekseer,关于Effekseer
+﻿AboutEffekseer,关于Effekseer
 System_FailedToInitialize,初始化渲染屏幕失败。可能存在DirectX版本问题、内存不足和显卡设置错误等问题。
 AttractionForces,力场 (Local)
 AutoConnect,自动连接
@@ -348,3 +348,17 @@ ImportMergeSameFiles,重命名相同的文件使之导出为同一个文件
 ImportUseRootDir,使用根文件夹
 ,
 SendTrigger_Desc,向正在播放的特效发送一个触发器信号
+InternalFlipX,沿 X 轴翻转
+InternalFlipY,沿 Y 轴翻转
+InternalFlipZ,沿 Z 轴翻转
+InternalReverseTimeline,反转时间轴
+Transform_Title,变换特效
+Transform_Flip_Skipped,"特效已翻转，但以下参数没有镜像对应，未作更改：
+{0}"
+Transform_ReverseTimeline_Skipped,"时间轴已反转，但以下参数不随时间定义，未作更改：
+{0}"
+Transform_Flip_Desc,沿此轴镜像特效的所有节点。可用 Ctrl+Z 撤销。
+Transform_ReverseTimeline_Desc,让所有节点的曲线和缓动倒放。生成数量和存活时间无法反转。
+Transform_Flip_Label,翻转特效：
+Transform_Approximated,"以下参数为近似反转。随机值无法逐个粒子对应，因此平均运动会反转，但离散范围不会：
+{0}"

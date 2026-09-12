@@ -1,4 +1,4 @@
-AboutEffekseer,О Effekseer
+﻿AboutEffekseer,О Effekseer
 System_FailedToInitialize,"Не удалось создать экран рендеринга. Проблемы с версией DirectX, нехватка памяти, характеристики видеокарты и т.д."
 AttractionForces,Силовое поле (Лок.)
 AutoConnect,Автоподключение
@@ -349,3 +349,17 @@ ImportMergeSameFiles,Переименовать одинаковые файлы,
 ImportUseRootDir,Использовать корневую папку
 
 SendTrigger_Desc,Отправить триггер на текущий воспроизводимый эффект
+InternalFlipX,Отразить по оси X
+InternalFlipY,Отразить по оси Y
+InternalFlipZ,Отразить по оси Z
+InternalReverseTimeline,Обратить шкалу времени
+Transform_Title,Преобразование эффекта
+Transform_Flip_Skipped,"Эффект отражён, но у этих параметров нет зеркального отражения, и они остались без изменений:
+{0}"
+Transform_ReverseTimeline_Skipped,"Шкала времени обращена, но эти параметры не заданы во времени и остались без изменений:
+{0}"
+Transform_Flip_Desc,Отражает все узлы эффекта по этой оси. Отмена — Ctrl+Z.
+Transform_ReverseTimeline_Desc,Проигрывает кривые и плавные переходы в обратную сторону во всех узлах. Количество порождаемых частиц и время их жизни обратить нельзя.
+Transform_Flip_Label,Отразить эффект:
+Transform_Approximated,"Эти параметры обращены приблизительно. Случайные значения нельзя сопоставить частица к частице, поэтому среднее движение обращается, а разброс — нет:
+{0}"

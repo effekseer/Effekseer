@@ -1,4 +1,4 @@
-AboutEffekseer,Sobre Effekseer
+﻿AboutEffekseer,Sobre Effekseer
 System_FailedToInitialize,"Fallo en generar la pantalla de dibujo. Problemas con la versión de DirectX, falta de memoria, especificaciones de la tarjeta de vídeo, etc.."
 AttractionForces,Campo de fuerza (Local)
 AutoConnect,Auto-conectar
@@ -368,3 +368,17 @@ ImportRemoveDirPath,Quitar los nombres de directorio de la ruta
 ImportAvoidOverwrite,Renombrar para evitar sobrescritura
 ImportMergeSameFiles,Renombrar archivos iguales para compartirlos
 ImportUseRootDir,Usar el directorio raíz
+InternalFlipX,Voltear en el eje X
+InternalFlipY,Voltear en el eje Y
+InternalFlipZ,Voltear en el eje Z
+InternalReverseTimeline,Invertir la línea de tiempo
+Transform_Title,Transformar efecto
+Transform_Flip_Skipped,"El efecto se volteó, pero estos parámetros no tienen imagen especular y no se modificaron:
+{0}"
+Transform_ReverseTimeline_Skipped,"La línea de tiempo se invirtió, pero estos parámetros no están definidos a lo largo del tiempo y no se modificaron:
+{0}"
+Transform_Flip_Desc,Refleja todos los nodos del efecto en este eje. Deshacer con Ctrl+Z.
+Transform_ReverseTimeline_Desc,Reproduce las curvas y las interpolaciones al revés en todos los nodos. La cantidad de partículas generadas y su duración no se pueden invertir.
+Transform_Flip_Label,Voltear efecto:
+Transform_Approximated,"Estos parámetros se invirtieron de forma aproximada. Los valores aleatorios no se pueden emparejar partícula por partícula, de modo que el movimiento medio se invierte pero la dispersión no:
+{0}"

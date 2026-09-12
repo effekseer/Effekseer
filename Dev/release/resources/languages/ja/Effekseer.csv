@@ -1,4 +1,4 @@
-AboutEffekseer,Effekseerについて
+﻿AboutEffekseer,Effekseerについて
 System_FailedToInitialize,描画画面の生成に失敗しました。DirectXのバージョンの問題、メモリの不足、ビデオカードの仕様等が考えられます。
 AttractionForces,力場(ローカル)
 AutoConnect,切断時、自動接続を一定時間ごとに行う
@@ -353,3 +353,17 @@ ImportMergeSameFiles,同一ファイルを共通化するように名前を変�
 ImportUseRootDir,ルートディレクトリの使用
 ,
 SendTrigger_Desc,再生中のエフェクトにトリガーを送信します
+InternalFlipX,X軸で反転
+InternalFlipY,Y軸で反転
+InternalFlipZ,Z軸で反転
+InternalReverseTimeline,時間を反転
+Transform_Title,エフェクトの変換
+Transform_Flip_Skipped,"エフェクトを反転しました。ただし次のパラメーターは鏡映できないため、変更していません。
+{0}"
+Transform_ReverseTimeline_Skipped,"時間を反転しました。ただし次のパラメーターは時間に沿って定義されていないため、変更していません。
+{0}"
+Transform_Flip_Desc,全ノードをこの軸で鏡映します。Ctrl+Z で元に戻せます。
+Transform_ReverseTimeline_Desc,全ノードのカーブとイージングを逆再生します。発生数や寿命は反転できません。
+Transform_Flip_Label,エフェクトの反転:
+Transform_Approximated,"次のパラメーターは近似で反転しました。乱数を含む値は粒子ごとに対応付けられないため、平均的な動きは反転しますが、ばらつきは反転しません。
+{0}"

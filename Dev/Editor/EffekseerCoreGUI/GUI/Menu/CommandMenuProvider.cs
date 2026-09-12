@@ -62,6 +62,13 @@ namespace Effekseer.GUI.Menu
 
 				new MenuSeparator(),
 
+				CreateMenuItemFromCommands(Commands.FlipX),
+				CreateMenuItemFromCommands(Commands.FlipY),
+				CreateMenuItemFromCommands(Commands.FlipZ),
+				CreateMenuItemFromCommands(Commands.ReverseTimeline),
+
+				new MenuSeparator(),
+
 				CreateMenuItemFromCommands(Commands.Undo),
 				CreateMenuItemFromCommands(Commands.Redo),
 			});

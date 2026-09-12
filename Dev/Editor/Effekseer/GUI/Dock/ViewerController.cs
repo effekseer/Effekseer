@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -133,6 +133,53 @@ namespace Effekseer.GUI.Dock
 				if (Manager.NativeManager.IsItemHovered())
 				{
 					Manager.NativeManager.SetTooltip(MultiLanguageTextProvider.GetText("LOD_Bias_Description"));
+				}
+			}
+
+			UpdateTransformButtons();
+		}
+
+		/// <summary>
+		/// エフェクト全体を反転するボタン。
+		/// 各ノードを手作業で編集せずに済むよう、プレビューの隣に置く。
+		/// </summary>
+		void UpdateTransformButtons()
+		{
+			Manager.NativeManager.Separator();
+
+			float spacing = Manager.NativeManager.GetStyleVar2(swig.ImGuiStyleVarFlags.ItemSpacing).X;
+			float buttonWidth = Manager.NativeManager.GetTextLineHeightWithSpacing() * 1.4f;
+
+			Manager.NativeManager.Text(MultiLanguageTextProvider.GetText("Transform_Flip_Label"));
+
+			FlipButton("X###FlipX", Commands.FlipX, spacing);
+			FlipButton("Y###FlipY", Commands.FlipY, spacing);
+			FlipButton("Z###FlipZ", Commands.FlipZ, spacing);
+
+			Manager.NativeManager.SameLine(0.0f, spacing * 2.0f);
+
+			if (Manager.NativeManager.Button(MultiLanguageTextProvider.GetText("InternalReverseTimeline")))
+			{
+				Commands.ReverseTimeline();
+			}
+
+			if (Manager.NativeManager.IsItemHovered())
+			{
+				Manager.NativeManager.SetTooltip(MultiLanguageTextProvider.GetText("Transform_ReverseTimeline_Desc"));
+			}
+
+			void FlipButton(string label, Func<bool> command, float gap)
+			{
+				Manager.NativeManager.SameLine(0.0f, gap);
+
+				if (Manager.NativeManager.Button(label, buttonWidth))
+				{
+					command();
+				}
+
+				if (Manager.NativeManager.IsItemHovered())
+				{
+					Manager.NativeManager.SetTooltip(MultiLanguageTextProvider.GetText("Transform_Flip_Desc"));
 				}
 			}
 		}

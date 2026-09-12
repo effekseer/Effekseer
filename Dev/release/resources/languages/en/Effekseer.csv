@@ -1,4 +1,4 @@
-AboutEffekseer,About Effekseer
+﻿AboutEffekseer,About Effekseer
 System_FailedToInitialize,"Failed to generate drawing screen. DirectX version problems, memory shortage, Video Card Specifications, and so on."
 AttractionForces,Force field (Local)
 AutoConnect,Auto-connect
@@ -353,3 +353,17 @@ ImportMergeSameFiles,Rename same files to make them common
 ImportUseRootDir,Use the root directory
 ,
 SendTrigger_Desc,Send a trigger to the currently playing effect
+InternalFlipX,Flip on X axis
+InternalFlipY,Flip on Y axis
+InternalFlipZ,Flip on Z axis
+InternalReverseTimeline,Reverse timeline
+Transform_Title,Transform effect
+Transform_Flip_Skipped,"The effect was flipped, but these parameters have no mirror image and were left unchanged:
+{0}"
+Transform_ReverseTimeline_Skipped,"The timeline was reversed, but these parameters are not defined over time and were left unchanged:
+{0}"
+Transform_Flip_Desc,Mirror every node of the effect on this axis. Undo with Ctrl+Z.
+Transform_ReverseTimeline_Desc,Play curves and easing backwards on every node. Emission counts and lifetimes cannot be reversed.
+Transform_Flip_Label,Flip effect:
+Transform_Approximated,"These parameters were reversed approximately. Randomised values cannot be matched up particle by particle, so the average motion reverses but the spread does not:
+{0}"
