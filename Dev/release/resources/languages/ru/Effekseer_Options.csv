@@ -72,3 +72,5 @@ MouseMappingType_Blender_Name,Blender
 MouseMappingType_Maya_Name,Maya
 FileBrowser_ViewMode_IconView_Name,Значки
 FileBrowser_ViewMode_ListView_Name,Список
+Options_TexturePreviewLines_Name,Размер предпросмотра текстуры
+Options_TexturePreviewLines_Desc,"Высота предпросмотра текстуры на панелях параметров, измеряется в строках текста"
