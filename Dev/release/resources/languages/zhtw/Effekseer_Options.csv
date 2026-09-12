@@ -1,4 +1,4 @@
-Options_RenderingMode_Name,渲染模式
+﻿Options_RenderingMode_Name,渲染模式
 Options_RenderingMode_Desc,特效的渲染模式
 Options_ViewerMode_Name,檢視模式
 Options_ViewerMode_Desc,特效視窗的檢視模式
@@ -72,3 +72,5 @@ MouseMappingType_Blender_Name,Blender
 MouseMappingType_Maya_Name,Maya
 FileBrowser_ViewMode_IconView_Name,顯示圖示
 FileBrowser_ViewMode_ListView_Name,顯示列表
+Options_TexturePreviewLines_Name,紋理預覽尺寸
+Options_TexturePreviewLines_Desc,參數面板中紋理預覽的高度，以文字行數計算
