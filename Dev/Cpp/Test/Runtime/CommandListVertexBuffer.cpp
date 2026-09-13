@@ -1,22 +1,9 @@
 #include "../TestHelper.h"
 #include <EffekseerRendererLLGI/EffekseerRendererLLGI.Renderer.h>
 
-#include <cstring>
-
-#ifdef __EFFEKSEER_BUILD_DX12__
-#include <DX12/LLGI.CommandListDX12.h>
-#include <EffekseerRendererDX12.h>
-#include <EffekseerRendererLLGI/EffekseerRendererLLGI.RendererImplemented.h>
-#include <dxgi1_4.h>
-#include <d3d12sdklayers.h>
 #include <LLGI.Platform.h>
-#include <DX12/LLGI.GraphicsDX12.h>
-#include <condition_variable>
-#include <mutex>
-#include <thread>
-#include <wrl/client.h>
-#pragma comment(lib, "dxgi.lib")
-#endif
+#include <array>
+#include <cstring>
 
 namespace
 {
@@ -109,200 +96,156 @@ void CommandListVertexBufferLifetime()
 TestRegister registerCommandListVertexBufferLifetime(
 	"Runtime.CommandListVertexBufferLifetime", CommandListVertexBufferLifetime);
 
-#ifdef __EFFEKSEER_BUILD_DX12__
-void CommandListVertexBufferDX12(bool useExternalCommandList)
+// The same GPU readback scenario runs on every LLGI backend. Native API
+// integration checks live separately in CommandListDX12.cpp.
+class ReadbackVertexBuffer : public Effekseer::Backend::VertexBuffer
 {
-	using Microsoft::WRL::ComPtr;
-	ComPtr<IDXGIFactory4> factory;
-	EXPECT_TRUE(SUCCEEDED(CreateDXGIFactory1(IID_PPV_ARGS(&factory))));
-	ComPtr<IDXGIAdapter> adapter;
-	EXPECT_TRUE(SUCCEEDED(factory->EnumWarpAdapter(IID_PPV_ARGS(&adapter))));
-	ComPtr<ID3D12Device> device;
-	EXPECT_TRUE(SUCCEEDED(D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&device))));
-	D3D12_COMMAND_QUEUE_DESC queueDesc{};
-	ComPtr<ID3D12CommandQueue> queue;
-	EXPECT_TRUE(SUCCEEDED(device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&queue))));
-	auto graphicsDevice = EffekseerRendererDX12::CreateGraphicsDevice(device.Get(), queue.Get(), 3);
-	DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	auto renderer = EffekseerRendererDX12::Create(graphicsDevice, &format, 1, DXGI_FORMAT_UNKNOWN, false, 16);
-	EXPECT_TRUE(renderer != nullptr);
-	auto pool = EffekseerRenderer::CreateSingleFrameMemoryPool(graphicsDevice);
-	auto graphics = graphicsDevice.DownCast<EffekseerRendererLLGI::Backend::GraphicsDevice>()->GetGraphics();
-	std::array<Effekseer::RefPtr<EffekseerRenderer::CommandList>, 2> lists;
-	std::array<std::shared_ptr<LLGI::CommandList>, 2> nativeLists;
-	std::array<std::shared_ptr<LLGI::Buffer>, 2> readbacks;
-	for (size_t i = 0; i < lists.size(); i++)
+public:
+	std::shared_ptr<LLGI::Buffer> Buffer;
+
+	ReadbackVertexBuffer(LLGI::Graphics* graphics, int32_t size)
 	{
-		lists[i] = EffekseerRenderer::CreateCommandList(graphicsDevice, pool);
-		if (useExternalCommandList)
-		{
-			nativeLists[i] = LLGI::CreateSharedPtr(graphics->CreateCommandList(
-				pool.DownCast<EffekseerRendererLLGI::SingleFrameMemoryPool>()->GetInternal()));
-		}
-		readbacks[i] = LLGI::CreateSharedPtr(graphics->CreateBuffer(
-			LLGI::BufferUsageType::MapRead | LLGI::BufferUsageType::CopyDst, 16));
-		EXPECT_TRUE(readbacks[i] != nullptr);
+		// Production vertex buffers need not support copies on every API.
+		// Enable CopySrc only for these test buffers to inspect GPU-visible bytes.
+		Buffer = LLGI::CreateSharedPtr(graphics->CreateBuffer(
+			LLGI::BufferUsageType::Vertex | LLGI::BufferUsageType::MapWrite | LLGI::BufferUsageType::CopySrc, size));
+		EXPECT_TRUE(Buffer != nullptr);
 	}
 
-	for (int round = 0; round < 3; round++)
+	void UpdateData(const void* src, int32_t size, int32_t offset) override
 	{
-		// Deliberately record BOTH frames before executing either, as in the report.
-		for (size_t i = 0; i < lists.size(); i++)
-		{
-			pool->NewFrame();
-			ID3D12GraphicsCommandList* nativeList = nullptr;
-			if (useExternalCommandList)
-			{
-				nativeLists[i]->Begin();
-				nativeList = static_cast<LLGI::CommandListDX12*>(nativeLists[i].get())->GetCommandList();
-			}
-			EffekseerRendererDX12::BeginCommandList(lists[i], nativeList);
-			renderer->SetCommandList(lists[i]);
-			auto ring = renderer->GetImpl()->InternalVertexBuffer;
-			std::tuple<void*, int32_t> allocation;
-			EXPECT_TRUE(ring->Allocate(16, 1, allocation));
-			EXPECT_TRUE(std::get<1>(allocation) == 0);
-			memset(std::get<0>(allocation), static_cast<int>(i) + 1 + round * 2, 16);
-			auto vertexBuffer = ring->Upload().DownCast<EffekseerRendererLLGI::Backend::VertexBuffer>();
-			lists[i].DownCast<EffekseerRendererLLGI::CommandList>()->GetInternal()->CopyBuffer(
-				vertexBuffer->GetBuffer(), readbacks[i].get());
-			renderer->SetCommandList(nullptr);
-			EffekseerRendererDX12::EndCommandList(lists[i]);
-			if (useExternalCommandList)
-			{
-				nativeLists[i]->End();
-			}
-		}
-
-		for (size_t i = 0; i < lists.size(); i++)
-		{
-			if (useExternalCommandList)
-			{
-				graphics->Execute(nativeLists[i].get());
-			}
-			else
-			{
-				EffekseerRendererDX12::ExecuteCommandList(lists[i]);
-			}
-		}
-		for (size_t i = 0; i < lists.size(); i++)
-		{
-			auto submitted = useExternalCommandList ? nativeLists[i].get()
-				: lists[i].DownCast<EffekseerRendererLLGI::CommandList>()->GetInternal();
-			submitted->WaitUntilCompleted();
-			auto data = static_cast<const uint8_t*>(readbacks[i]->Lock());
-			EXPECT_TRUE(data != nullptr);
-			for (int j = 0; j < 16; j++)
-			{
-				EXPECT_TRUE(data[j] == static_cast<uint8_t>(i + 1 + round * 2));
-			}
-			readbacks[i]->Unlock();
-		}
+		auto dst = Buffer->Lock(offset, size);
+		EXPECT_TRUE(dst != nullptr);
+		memcpy(dst, src, size);
+		Buffer->Unlock();
 	}
-}
+};
 
-TestRegister registerCommandListVertexBufferDX12(
-	"Runtime.CommandListVertexBufferDX12", [] { CommandListVertexBufferDX12(false); });
-TestRegister registerCommandListVertexBufferDX12External(
-	"Runtime.CommandListVertexBufferDX12.External", [] { CommandListVertexBufferDX12(true); });
-
-void PlatformFramesDX12()
+class ReadbackGraphicsDevice : public Effekseer::Backend::GraphicsDevice
 {
-	using Microsoft::WRL::ComPtr;
-	ComPtr<ID3D12Debug> debug;
-	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debug))))
+	std::shared_ptr<LLGI::Graphics> graphics_;
+
+public:
+	explicit ReadbackGraphicsDevice(std::shared_ptr<LLGI::Graphics> graphics) : graphics_(graphics) {}
+
+	Effekseer::Backend::VertexBufferRef CreateVertexBuffer(int32_t size, const void*, bool) override
 	{
-		debug->EnableDebugLayer();
+		return Effekseer::MakeRefPtr<ReadbackVertexBuffer>(graphics_.get(), size);
 	}
-	auto window = std::unique_ptr<LLGI::Window>(LLGI::CreateWindow("DX12 frame reuse test", {64, 64}));
+};
+
+void CommandListVertexBufferGPU(LLGI::DeviceType deviceType)
+{
+	auto window = std::unique_ptr<LLGI::Window>(LLGI::CreateWindow("Command list vertex buffers", {64, 64}));
 	EXPECT_TRUE(window != nullptr);
-	ShowWindow(static_cast<HWND>(window->GetNativePtr(0)), SW_HIDE);
 	LLGI::PlatformParameter parameters;
-	parameters.Device = LLGI::DeviceType::DirectX12;
+	parameters.Device = deviceType;
 	parameters.WaitVSync = false;
 	auto platform = LLGI::CreateSharedPtr(LLGI::CreatePlatform(parameters, window.get()));
 	EXPECT_TRUE(platform != nullptr);
 	auto graphics = LLGI::CreateSharedPtr(platform->CreateGraphics());
+	EXPECT_TRUE(graphics != nullptr);
+	auto device = Effekseer::MakeRefPtr<ReadbackGraphicsDevice>(graphics);
 	auto pool = LLGI::CreateSharedPtr(graphics->CreateSingleFrameMemoryPool(4096, 16));
-	std::vector<std::shared_ptr<LLGI::CommandList>> lists(platform->GetMaxFrameCount());
-	for (auto& list : lists)
+	EXPECT_TRUE(pool != nullptr);
+	struct Frame
 	{
-		list = LLGI::CreateSharedPtr(graphics->CreateCommandList(pool.get()));
-	}
-	ComPtr<ID3D12InfoQueue> infoQueue;
-	static_cast<LLGI::GraphicsDX12*>(graphics.get())->GetDevice()->QueryInterface(IID_PPV_ARGS(&infoQueue));
-	if (infoQueue)
+		std::shared_ptr<LLGI::CommandList> Native;
+		Effekseer::RefPtr<EffekseerRendererLLGI::CommandList> CommandList;
+		std::array<std::shared_ptr<LLGI::Buffer>, 2> Readbacks;
+		std::array<Effekseer::Backend::VertexBufferRef, 2> Pages;
+	};
+	std::array<Frame, 3> frames;
+	for (auto& frame : frames)
 	{
-		infoQueue->ClearStoredMessages();
-	}
-	for (size_t frame = 0; frame < 24; frame++)
-	{
-		EXPECT_TRUE(platform->NewFrame());
-		auto& list = lists[frame % lists.size()];
-		if (frame >= lists.size())
+		frame.Native = LLGI::CreateSharedPtr(graphics->CreateCommandList(pool.get()));
+		EXPECT_TRUE(frame.Native != nullptr);
+		frame.CommandList = Effekseer::MakeRefPtr<EffekseerRendererLLGI::CommandList>(graphics.get(), frame.Native.get(), pool.get());
+		for (auto& readback : frame.Readbacks)
 		{
-			list->WaitUntilCompleted();
+			readback = LLGI::CreateSharedPtr(graphics->CreateBuffer(LLGI::BufferUsageType::MapRead | LLGI::BufferUsageType::CopyDst, 16));
+			EXPECT_TRUE(readback != nullptr);
 		}
-		pool->NewFrame();
-		list->Begin();
-		list->BeginRenderPass(platform->GetCurrentScreen({0, 32, 64, 255}, true, false));
-		list->EndRenderPass();
-		list->End();
-		graphics->Execute(list.get());
-		if (frame == 0)
+	}
+	for (int round = 0; round < 3; round++)
+	{
+		// Record all frames before submitting any, including overflow pages and
+		// a second binding within each recording. Each half has distinct bytes.
+		for (size_t i = 0; i < frames.size(); i++)
 		{
-			// Hold the presentation commands on the GPU. Async Present must return
-			// before we release them, rather than waiting for the whole queue.
-			auto dx12 = static_cast<LLGI::GraphicsDX12*>(graphics.get());
-			ComPtr<ID3D12Fence> gate;
-			EXPECT_TRUE(SUCCEEDED(dx12->GetDevice()->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&gate))));
-			EXPECT_TRUE(SUCCEEDED(dx12->GetCommandQueue()->Wait(gate.Get(), 1)));
-			std::mutex mutex;
-			std::condition_variable condition;
-			bool returned = false;
-			bool timedOut = false;
-			std::thread release([&]
+			auto& frame = frames[i];
+			pool->NewFrame();
+			frame.Native->Begin();
+			frame.CommandList->ResetVertexBuffers();
+			auto ring = frame.CommandList->GetVertexBuffer(device, 16);
+			for (size_t page = 0; page < frame.Readbacks.size(); page++)
 			{
-				std::unique_lock<std::mutex> lock(mutex);
-				timedOut = !condition.wait_for(lock, std::chrono::seconds(5), [&] { return returned; });
-				gate->Signal(1);
-			});
-			platform->Present();
-			{
-				std::lock_guard<std::mutex> lock(mutex);
-				returned = true;
+				if (page > 0)
+				{
+					EXPECT_TRUE(!ring->CanAllocate(1, 1));
+					ring->RenewBuffer();
+				}
+				Effekseer::Backend::VertexBufferRef uploaded;
+				for (int half = 0; half < 2; half++)
+				{
+					EXPECT_TRUE(frame.CommandList->GetVertexBuffer(device, 16) == ring);
+					std::tuple<void*, int32_t> allocation;
+					EXPECT_TRUE(ring->Allocate(8, 1, allocation));
+					EXPECT_TRUE(std::get<1>(allocation) == half * 8);
+					memset(std::get<0>(allocation), 1 + round * 12 + i * 4 + page * 2 + half, 8);
+					uploaded = ring->Upload();
+				}
+				if (round == 0)
+				{
+					frame.Pages[page] = uploaded;
+				}
+				else
+				{
+					EXPECT_TRUE(frame.Pages[page] == uploaded);
+				}
+				auto buffer = uploaded.DownCast<ReadbackVertexBuffer>();
+				frame.Native->CopyBuffer(buffer->Buffer.get(), frame.Readbacks[page].get());
 			}
-			condition.notify_one();
-			release.join();
-			EXPECT_TRUE(!timedOut);
-			// Keep the gate alive until the queue has passed its Wait operation.
-			graphics->WaitFinish();
+			frame.Native->End();
 		}
-		else
+		for (auto& frame : frames)
 		{
-			platform->Present();
+			graphics->Execute(frame.Native.get());
+		}
+		// Complete all submitted recordings and readbacks before reusing pages.
+		for (size_t i = 0; i < frames.size(); i++)
+		{
+			auto& frame = frames[i];
+			frame.Native->WaitUntilCompleted();
+			for (size_t page = 0; page < frame.Readbacks.size(); page++)
+			{
+				const auto data = static_cast<const uint8_t*>(frame.Readbacks[page]->Lock());
+				EXPECT_TRUE(data != nullptr);
+				for (int byte = 0; byte < 16; byte++)
+				{
+					EXPECT_TRUE(data[byte] == static_cast<uint8_t>(1 + round * 12 + i * 4 + page * 2 + byte / 8));
+				}
+				frame.Readbacks[page]->Unlock();
+			}
 		}
 	}
 	graphics->WaitFinish();
-	if (infoQueue)
-	{
-		for (UINT64 i = 0; i < infoQueue->GetNumStoredMessages(); i++)
-		{
-			SIZE_T size = 0;
-			infoQueue->GetMessage(i, nullptr, &size);
-			std::vector<uint8_t> storage(size);
-			auto message = reinterpret_cast<D3D12_MESSAGE*>(storage.data());
-			infoQueue->GetMessage(i, message, &size);
-			if (message->Severity <= D3D12_MESSAGE_SEVERITY_ERROR)
-			{
-				fprintf(stderr, "%s\n", message->pDescription);
-				EXPECT_TRUE(false);
-			}
-		}
-	}
 }
 
-TestRegister registerPlatformFramesDX12(
-	"Runtime.PlatformFramesDX12", PlatformFramesDX12, TestExecutionMode::FilterOnly);
+#ifdef __EFFEKSEER_BUILD_DX12__
+TestRegister registerCommandListVertexBufferGPUDX12("Runtime.CommandListVertexBufferGPU.DX12",
+	[] { CommandListVertexBufferGPU(LLGI::DeviceType::DirectX12); }, TestExecutionMode::FilterOnly);
+#endif
+#ifdef __EFFEKSEER_BUILD_VULKAN__
+TestRegister registerCommandListVertexBufferGPUVulkan("Runtime.CommandListVertexBufferGPU.Vulkan",
+	[] { CommandListVertexBufferGPU(LLGI::DeviceType::Vulkan); }, TestExecutionMode::FilterOnly);
+#endif
+#ifdef __EFFEKSEER_BUILD_METAL__
+TestRegister registerCommandListVertexBufferGPUMetal("Runtime.CommandListVertexBufferGPU.Metal",
+	[] { CommandListVertexBufferGPU(LLGI::DeviceType::Metal); }, TestExecutionMode::FilterOnly);
+#endif
+#ifdef __EFFEKSEER_BUILD_WEBGPU__
+TestRegister registerCommandListVertexBufferGPUWebGPU("Runtime.CommandListVertexBufferGPU.WebGPU",
+	[] { CommandListVertexBufferGPU(LLGI::DeviceType::WebGPU); }, TestExecutionMode::FilterOnly);
 #endif
 } // namespace

@@ -1,6 +1,5 @@
 #include "EffectPlatformDX12.h"
 #include "../../3rdParty/LLGI/src/DX12/LLGI.BufferDX12.h"
-#include "../../3rdParty/LLGI/src/DX12/LLGI.CommandListDX12.h"
 #include "../../3rdParty/LLGI/src/DX12/LLGI.CompilerDX12.h"
 #include "../../3rdParty/LLGI/src/DX12/LLGI.GraphicsDX12.h"
 #include "../../3rdParty/LLGI/src/DX12/LLGI.PlatformDX12.h"
@@ -135,7 +134,6 @@ EffekseerRenderer::RendererRef EffectPlatformDX12::CreateRenderer()
 	renderer->SetDistortingCallback(new DistortingCallbackDX12(this));
 
 	sfMemoryPoolEfk_ = EffekseerRenderer::CreateSingleFrameMemoryPool(renderer->GetGraphicsDevice());
-	commandListEfk_ = EffekseerRenderer::CreateCommandList(renderer->GetGraphicsDevice(), sfMemoryPoolEfk_);
 
 	CreateResources();
 
@@ -169,40 +167,6 @@ void EffectPlatformDX12::DestroyDevice()
 	EffectPlatformLLGI::DestroyDevice();
 }
 
-void EffectPlatformDX12::BeginCompute()
-{
-	EffectPlatformLLGI::BeginCompute();
-
-	auto cl = static_cast<LLGI::CommandListDX12*>(commandList_.get());
-	EffekseerRendererDX12::BeginCommandList(commandListEfk_, cl->GetCommandList());
-	GetRenderer()->SetCommandList(commandListEfk_);
-}
-
-void EffectPlatformDX12::EndCompute()
-{
-	GetRenderer()->SetCommandList(nullptr);
-	EffekseerRendererDX12::EndCommandList(commandListEfk_);
-
-	EffectPlatformLLGI::EndCompute();
-}
-
-void EffectPlatformDX12::BeginRendering()
-{
-	EffectPlatformLLGI::BeginRendering();
-
-	auto cl = static_cast<LLGI::CommandListDX12*>(commandList_.get());
-	EffekseerRendererDX12::BeginCommandList(commandListEfk_, cl->GetCommandList());
-	GetRenderer()->SetCommandList(commandListEfk_);
-}
-
-void EffectPlatformDX12::EndRendering()
-{
-	GetRenderer()->SetCommandList(nullptr);
-	EffekseerRendererDX12::EndCommandList(commandListEfk_);
-
-	EffectPlatformLLGI::EndRendering();
-}
-
 LLGI::Texture* EffectPlatformDX12::GetBackgroundTexture()
 {
 	if (backgroundTexture_ == nullptr)
@@ -217,14 +181,5 @@ LLGI::Texture* EffectPlatformDX12::GetBackgroundTexture()
 
 void EffectPlatformDX12::UpdateBackgroundTextureForDistortion()
 {
-	auto background = GetBackgroundTexture();
-	auto efkCommandList = static_cast<EffekseerRendererLLGI::CommandList*>(commandListEfk_.Get())->GetInternal();
-
-	commandList_->EndRenderPass();
-	commandList_->CopyTexture(colorBuffer_, background);
-
-	renderPass_->SetIsColorCleared(false);
-	renderPass_->SetIsDepthCleared(false);
-	commandList_->BeginRenderPass(renderPass_);
-	efkCommandList->BeginRenderPassWithPlatformPtr(nullptr);
+	CopyBackgroundTexture(GetBackgroundTexture());
 }

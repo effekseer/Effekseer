@@ -1,25 +1,6 @@
-#ifdef _WIN32
-
-#ifdef __EFFEKSEER_BUILD_DX12__
-#include <Runtime/EffectPlatformDX12.h>
-#endif
-
-#include <Runtime/EffectPlatformDX11.h>
-#include <Runtime/EffectPlatformDX9.h>
-#include <Runtime/EffectPlatformGL.h>
-#elif defined(__APPLE__)
-#include <Runtime/EffectPlatformGL.h>
-#include <Runtime/EffectPlatformMetal.h>
-#else
-#include <Runtime/EffectPlatformGL.h>
-#endif
-
-#ifdef __EFFEKSEER_BUILD_VULKAN__
-#include <Runtime/EffectPlatformVulkan.h>
-#endif
-
 #include "../Effekseer/Effekseer/Effekseer.Base.h"
 #include "../TestHelper.h"
+#include "TestPlatforms.h"
 #include <iostream>
 
 void TextureFormatsPlatform(EffectPlatform* platform, std::string baseResultPath, std::string suffix)
@@ -34,9 +15,9 @@ void TextureFormatsPlatform(EffectPlatform* platform, std::string baseResultPath
 
 		for (size_t i = 0; i < 30; i++)
 		{
-			platform->Update();
+			EXPECT_TRUE(platform->Update());
 		}
-		platform->TakeScreenshot((std::string(baseResultPath) + savename + suffix + ".png").c_str());
+		EXPECT_TRUE(platform->TakeScreenshot((std::string(baseResultPath) + savename + suffix + ".png").c_str()));
 		platform->StopAllEffects();
 	};
 
@@ -47,9 +28,9 @@ void TextureFormatsPlatform(EffectPlatform* platform, std::string baseResultPath
 
 		for (size_t i = 0; i < 30; i++)
 		{
-			platform->Update();
+			EXPECT_TRUE(platform->Update());
 		}
-		platform->TakeScreenshot((std::string(baseResultPath) + savename + suffix + ".png").c_str());
+		EXPECT_TRUE(platform->TakeScreenshot((std::string(baseResultPath) + savename + suffix + ".png").c_str()));
 		platform->StopAllEffects();
 	};
 
@@ -57,75 +38,21 @@ void TextureFormatsPlatform(EffectPlatform* platform, std::string baseResultPath
 	single16Test(u"TGA01", "TGA01");
 }
 
-void TextureFormatsTest()
+namespace
 {
-
-#ifdef _WIN32
+struct RegisterTextureFormatTests
+{
+	RegisterTextureFormatTests()
 	{
-		auto platform = std::make_shared<EffectPlatformDX11>();
-		TextureFormatsPlatform(platform.get(), "", "_DX11");
-		platform->Terminate();
+		ForEachTestPlatform([](auto type, const char* backend)
+							{
+			using Platform = typename decltype(type)::Type;
+			const std::string name = backend;
+			TestHelper::RegisterTest(("Runtime.TextureFormats." + name).c_str(), [name] {
+				Platform platform;
+				TextureFormatsPlatform(&platform, "", "_" + name);
+				platform.Terminate();
+			}, TestExecutionMode::FilterOnly); });
 	}
-#endif
-
-#if !defined(__FROM_CI__)
-	// #ifdef __EFFEKSEER_BUILD_VULKAN__
-	//	{
-	//		auto platform = std::make_shared<EffectPlatformVulkan>();
-	//		BasicRuntimeTestPlatform(platform.get(), "", "_Vulkan");
-	//		platform->Terminate();
-	//	}
-	// #endif
-
-#ifdef _WIN32
-	{
-
-#ifdef __EFFEKSEER_BUILD_DX12__
-		//	{
-		//		auto platform = std::make_shared<EffectPlatformDX12>();
-		//		TextureFormatsPlatform(platform.get(), "", "_DX12");
-		//		platform->Terminate();
-		//	}
-#endif
-
-		{
-			auto platform = std::make_shared<EffectPlatformDX9>();
-			TextureFormatsPlatform(platform.get(), "", "_DX9");
-			platform->Terminate();
-		}
-
-		{
-			auto platform = std::make_shared<EffectPlatformGL>();
-			TextureFormatsPlatform(platform.get(), "", "_GL");
-			platform->Terminate();
-		}
-	}
-
-#elif defined(__APPLE__)
-
-	{
-		auto platform = std::make_shared<EffectPlatformMetal>();
-		TextureFormatsPlatform(platform.get(), "", "_Metal");
-		platform->Terminate();
-	}
-
-	{
-		auto platform = std::make_shared<EffectPlatformGL>();
-		TextureFormatsPlatform(platform.get(), "", "_GL");
-		platform->Terminate();
-	}
-
-#else
-#ifndef __EFFEKSEER_BUILD_VERSION16__
-	{
-		auto platform = std::make_shared<EffectPlatformGL>();
-		TextureFormatsPlatform(platform.get(), "", "_GL");
-		platform->Terminate();
-	}
-#endif
-#endif
-#endif
+} registerTextureFormatTests;
 }
-
-TestRegister Runtime_TextureFormatsTest("Runtime.TextureFormatsTest", []() -> void
-										{ TextureFormatsTest(); });

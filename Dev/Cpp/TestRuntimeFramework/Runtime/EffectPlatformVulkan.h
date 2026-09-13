@@ -22,10 +22,6 @@ public:
 
 	void InitializeDevice(const EffectPlatformInitializingParameter& param) override;
 	void DestroyDevice() override;
-	void BeginCompute() override;
-	void EndCompute() override;
-	void BeginRendering() override;
-	void EndRendering() override;
 
 	LLGI::Texture* GetBackgroundTexture();
 	void UpdateBackgroundTextureForDistortion();

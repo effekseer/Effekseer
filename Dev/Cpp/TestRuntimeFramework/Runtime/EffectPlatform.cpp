@@ -136,6 +136,7 @@ void EffectPlatform::Initialize(const EffectPlatformInitializingParameter& param
 	manager_ = ::Effekseer::Manager::Create(param.InstanceCount);
 
 	renderer_ = CreateRenderer();
+	OnRendererCreated();
 
 	if (renderer_ != nullptr)
 	{

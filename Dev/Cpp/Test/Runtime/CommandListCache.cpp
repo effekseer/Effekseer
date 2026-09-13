@@ -1,16 +1,27 @@
 #include "../TestHelper.h"
+#include <Runtime/EffectPlatformLLGI.h>
+#ifdef __EFFEKSEER_BUILD_DX12__
+#include <Runtime/EffectPlatformDX12.h>
+#endif
+#ifdef __EFFEKSEER_BUILD_VULKAN__
+#include <Runtime/EffectPlatformVulkan.h>
+#endif
+#ifdef __EFFEKSEER_BUILD_METAL__
+#include <Runtime/EffectPlatformMetal.h>
+#endif
+#ifdef __EFFEKSEER_BUILD_WEBGPU__
 #include <Runtime/EffectPlatformWebGPU.h>
+#endif
 #include <EffekseerRendererCommon/EffekseerRenderer.Renderer_Impl.h>
 #include <EffekseerRendererCommon/VertexBuffer.h>
 
-#include <array>
+#include <unordered_map>
 #include <cstring>
 
 namespace
 {
-void CommandListCacheWebGPU()
+void CommandListCache(EffectPlatformLLGI& platform)
 {
-	EffectPlatformWebGPU platform;
 	EffectPlatformInitializingParameter parameters;
 	parameters.VSync = false;
 	platform.Initialize(parameters);
@@ -19,8 +30,9 @@ void CommandListCacheWebGPU()
 	EXPECT_TRUE(!background.empty());
 	platform.Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/SimpleLaser.efk").c_str());
 
-	// The framework's native command-list pool contains three entries.
-	std::array<std::weak_ptr<EffekseerRenderer::VertexBuffer>, 3> buffers;
+	// Track buffers by native recording slot, independent of pool size.
+	std::unordered_map<LLGI::CommandList*, std::weak_ptr<EffekseerRenderer::VertexBuffer>> buffers;
+	int reuseCount = 0;
 	bool effectVisible = false;
 	for (int frame = 0; frame < 18; frame++)
 	{
@@ -33,6 +45,7 @@ void CommandListCacheWebGPU()
 			platform.BeginCompute();
 			platform.GetManager()->Compute();
 			computeBuffer = platform.GetRenderer()->GetImpl()->InternalVertexBuffer;
+			EXPECT_TRUE(computeBuffer != nullptr);
 			std::tuple<void*, int32_t> allocation;
 			EXPECT_TRUE(computeBuffer->Allocate(16, 1, allocation));
 			EXPECT_TRUE(std::get<1>(allocation) == 0);
@@ -52,13 +65,21 @@ void CommandListCacheWebGPU()
 		EXPECT_TRUE(buffer->Allocate(16, 1, allocation));
 		EXPECT_TRUE(std::get<1>(allocation) == (withCompute ? 16 : 0));
 		memset(std::get<0>(allocation), 0, 16);
-		if (frame < 3)
+		auto native = platform.GetCurrentCommandList();
+		EXPECT_TRUE(native != nullptr);
+		auto found = buffers.find(native);
+		if (found == buffers.end())
 		{
-			buffers[frame] = buffer;
+			for (const auto& entry : buffers)
+			{
+				EXPECT_TRUE(entry.second.lock() != buffer);
+			}
+			buffers.emplace(native, buffer);
 		}
 		else
 		{
-			EXPECT_TRUE(buffers[frame % 3].lock() == buffer);
+			EXPECT_TRUE(found->second.lock() == buffer);
+			reuseCount++;
 		}
 
 		EXPECT_TRUE(renderer->BeginRendering());
@@ -75,13 +96,36 @@ void CommandListCacheWebGPU()
 		effectVisible |= pixels != background;
 	}
 	EXPECT_TRUE(effectVisible);
+	EXPECT_TRUE(buffers.size() > 1);
+	EXPECT_TRUE(reuseCount > 0);
 	platform.Terminate();
 	for (const auto& buffer : buffers)
 	{
-		EXPECT_TRUE(buffer.expired());
+		EXPECT_TRUE(buffer.second.expired());
 	}
 }
 
-TestRegister registerCommandListCacheWebGPU(
-	"Runtime.CommandListCacheWebGPU", CommandListCacheWebGPU, TestExecutionMode::FilterOnly);
+template <class Platform>
+void RunCommandListCache()
+{
+	Platform platform;
+	CommandListCache(platform);
+}
+
+#ifdef __EFFEKSEER_BUILD_DX12__
+TestRegister registerCommandListCacheDX12("Runtime.CommandListCache.DX12",
+	RunCommandListCache<EffectPlatformDX12>, TestExecutionMode::FilterOnly);
+#endif
+#ifdef __EFFEKSEER_BUILD_VULKAN__
+TestRegister registerCommandListCacheVulkan("Runtime.CommandListCache.Vulkan",
+	RunCommandListCache<EffectPlatformVulkan>, TestExecutionMode::FilterOnly);
+#endif
+#ifdef __EFFEKSEER_BUILD_METAL__
+TestRegister registerCommandListCacheMetal("Runtime.CommandListCache.Metal",
+	RunCommandListCache<EffectPlatformMetal>, TestExecutionMode::FilterOnly);
+#endif
+#ifdef __EFFEKSEER_BUILD_WEBGPU__
+TestRegister registerCommandListCacheWebGPU("Runtime.CommandListCache.WebGPU",
+	RunCommandListCache<EffectPlatformWebGPU>, TestExecutionMode::FilterOnly);
+#endif
 } // namespace

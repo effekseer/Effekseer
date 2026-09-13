@@ -20,6 +20,8 @@ else()
       TestHelper.cpp
       Runtime/BasicRendering.h
       Runtime/BasicRendering.cpp
+      Runtime/RenderingSmoke.cpp
+      Runtime/TestPlatforms.h
       Runtime/BinaryLoading.cpp
       Runtime/EffectLoading.cpp
       Runtime/Curve.cpp
@@ -74,17 +76,22 @@ if(BUILD_DX12
    OR BUILD_WEBGPU)
   list(APPEND common_lib LLGI)
   if(NOT BUILD_WEBGPU_BROWSER_TEST)
-    list(APPEND effekseer_test_src Runtime/CommandListVertexBuffer.cpp)
+    list(APPEND effekseer_test_src Runtime/CommandListVertexBuffer.cpp Runtime/CommandListCache.cpp)
     set_source_files_properties(Runtime/CommandListVertexBuffer.cpp PROPERTIES
       INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/../3rdParty/LLGI/src)
   endif()
 endif()
 
 if(BUILD_DX12)
+  list(APPEND effekseer_test_src Runtime/CommandListDX12.cpp)
+  set_source_files_properties(Runtime/CommandListDX12.cpp PROPERTIES
+    INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/../3rdParty/LLGI/src)
   list(APPEND common_lib EffekseerRendererDX12)
 endif()
 
 if(BUILD_METAL)
+  set_property(SOURCE Runtime/CommandListVertexBuffer.cpp Runtime/CommandListCache.cpp Runtime/BasicRendering.cpp Runtime/RenderingSmoke.cpp Runtime/RenderingTransformScreenshot.cpp Runtime/TextureFormats.cpp Runtime/ToolRuntime.cpp APPEND PROPERTY
+    COMPILE_DEFINITIONS __EFFEKSEER_BUILD_METAL__)
   list(APPEND common_lib EffekseerRendererMetal)
 endif()
 
@@ -94,7 +101,6 @@ endif()
 
 if(BUILD_WEBGPU AND NOT BUILD_WEBGPU_BROWSER_TEST)
   list(APPEND effekseer_test_src Runtime/BasicRenderingWebGPU.cpp)
-  list(APPEND effekseer_test_src Runtime/CommandListCacheWebGPU.cpp)
   list(APPEND common_lib EffekseerRendererWebGPU)
 elseif(BUILD_WEBGPU)
   list(APPEND common_lib EffekseerRendererWebGPU)

@@ -136,69 +136,11 @@ void EffectPlatformWebGPU::InitializeDevice(const EffectPlatformInitializingPara
 	CreateCheckedTexture();
 }
 
-void EffectPlatformWebGPU::PreDestroyDevice()
-{
-	// The base waits for GPU completion before releasing the active recording.
-	EffectPlatformLLGI::PreDestroyDevice();
-	commandListsEfk_.clear();
-}
-
 void EffectPlatformWebGPU::DestroyDevice()
 {
 	ES_SAFE_RELEASE(backgroundTexture_);
 
 	EffectPlatformLLGI::DestroyDevice();
-}
-
-void EffectPlatformWebGPU::BindCommandList(bool newRecording)
-{
-	auto& cached = commandListsEfk_[commandList_.get()];
-	if (cached == nullptr)
-	{
-		auto memoryPool = static_cast<EffekseerRendererLLGI::SingleFrameMemoryPool*>(sfMemoryPoolEfk_.Get());
-		cached = Effekseer::MakeRefPtr<EffekseerRendererLLGI::CommandList>(graphics_, commandList_.get(), memoryPool->GetInternal());
-	}
-	commandListEfk_ = cached;
-	if (newRecording)
-	{
-		// The previous recording is submitted before this list is reused. WebGPU
-		// orders subsequent WriteBuffer calls after that submission on the same queue.
-		// Reset once per recording, preserving allocations across passes.
-		static_cast<EffekseerRendererLLGI::CommandList*>(commandListEfk_.Get())->ResetVertexBuffers();
-	}
-	GetRenderer()->SetCommandList(commandListEfk_);
-}
-
-void EffectPlatformWebGPU::BeginCompute()
-{
-	const bool newRecording = !isCommandListBegun_;
-	EffectPlatformLLGI::BeginCompute();
-	BindCommandList(newRecording);
-	GetRenderer()->GetGraphicsDevice()->BeginComputePass();
-}
-
-void EffectPlatformWebGPU::EndCompute()
-{
-	GetRenderer()->GetGraphicsDevice()->EndComputePass();
-	GetRenderer()->SetCommandList(nullptr);
-	commandListEfk_.Reset();
-
-	EffectPlatformLLGI::EndCompute();
-}
-
-void EffectPlatformWebGPU::BeginRendering()
-{
-	const bool newRecording = !isCommandListBegun_;
-	EffectPlatformLLGI::BeginRendering();
-	BindCommandList(newRecording);
-}
-
-void EffectPlatformWebGPU::EndRendering()
-{
-	GetRenderer()->SetCommandList(nullptr);
-	commandListEfk_.Reset();
-
-	EffectPlatformLLGI::EndRendering();
 }
 
 LLGI::Texture* EffectPlatformWebGPU::GetBackgroundTexture()
@@ -215,12 +157,5 @@ LLGI::Texture* EffectPlatformWebGPU::GetBackgroundTexture()
 
 void EffectPlatformWebGPU::UpdateBackgroundTextureForDistortion()
 {
-	auto background = GetBackgroundTexture();
-
-	commandList_->EndRenderPass();
-	commandList_->CopyTexture(colorBuffer_, background);
-
-	renderPass_->SetIsColorCleared(false);
-	renderPass_->SetIsDepthCleared(false);
-	commandList_->BeginRenderPass(renderPass_);
+	CopyBackgroundTexture(GetBackgroundTexture());
 }

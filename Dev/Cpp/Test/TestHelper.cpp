@@ -1,4 +1,5 @@
 #include "TestHelper.h"
+#include "../TestRuntimeFramework/Runtime/TestDiagnostics.h"
 #include <Effekseer.h>
 #ifdef _WIN32
 #include <windows.h>
@@ -214,11 +215,18 @@ bool TestHelper::Run(const ParsedArgs& args)
 			continue;
 		}
 		currentTestName = name.c_str();
+		TestDiagnostics::Reset();
 		std::cout << "Start : " << name << std::endl;
 		const auto startedAt = std::chrono::steady_clock::now();
 		try
 		{
 			test.Func();
+			if (TestDiagnostics::GetErrorCount() != 0)
+			{
+				std::cerr << "GPU errors while running " << name << ": " << TestDiagnostics::GetErrorCount() << std::endl;
+				currentTestName = "<none>";
+				return false;
+			}
 		}
 		catch (const std::exception& e)
 		{

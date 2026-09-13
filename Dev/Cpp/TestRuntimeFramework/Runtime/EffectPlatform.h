@@ -95,6 +95,9 @@ protected:
 	virtual void InitializeWindow()
 	{
 	}
+	virtual void OnRendererCreated()
+	{
+	}
 
 	virtual void InitializeDevice(const EffectPlatformInitializingParameter& param)
 	{

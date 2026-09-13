@@ -132,11 +132,19 @@ def compose_group(output_directory, composite_name, panels):
 
 def compose_screenshot_comparisons(output_directory):
     output_directory = Path(output_directory)
-    manifest_path = output_directory / 'screenshot_comparison_sources' / 'manifest.csv'
-    if not manifest_path.exists():
-        return []
+    source_directory = output_directory / 'screenshot_comparison_sources'
+    manifest_paths = sorted(source_directory.glob('manifest_*.csv'))
+    # Prefer current captures over a stale manifest from an older test run.
+    if not manifest_paths:
+        legacy_manifest = source_directory / 'manifest.csv'
+        manifest_paths = [legacy_manifest] if legacy_manifest.exists() else []
 
-    groups = load_manifest(manifest_path)
+    groups = {}
+    for manifest_path in manifest_paths:
+        for name, panels in load_manifest(manifest_path).items():
+            if name in groups:
+                raise ValueError(f'{manifest_path}: duplicate composite name: {name}')
+            groups[name] = panels
     return [
         compose_group(output_directory, composite_name, panels)
         for composite_name, panels in sorted(groups.items())
@@ -151,7 +159,7 @@ def main():
         'output_directory',
         nargs='?',
         default='build/Dev/Cpp/Test/Release',
-        help='Directory containing screenshot_comparison_sources/manifest.csv',
+        help='Directory containing screenshot_comparison_sources/manifest_<backend>.csv',
     )
     args = parser.parse_args()
 

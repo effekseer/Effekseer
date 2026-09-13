@@ -2,9 +2,7 @@
 #define NOMINMAX
 #endif
 
-#ifdef _WIN32
-#include <Runtime/EffectPlatformDX11.h>
-#endif
+#include "TestPlatforms.h"
 
 #include <Runtime/EffectPlatform.h>
 
@@ -22,7 +20,6 @@
 namespace
 {
 
-#ifdef _WIN32
 
 struct RenderingTransformScreenshotCase
 {
@@ -33,6 +30,7 @@ struct RenderingTransformScreenshotCase
 	float XZOrthographicHeight;
 	bool UseLightingVariants;
 	bool ForceGpuLighting;
+	bool RequiresGpuParticles = false;
 };
 
 struct RenderingTransformScreenshotVariant
@@ -76,6 +74,7 @@ struct CoordinateSystemScreenshotCase
 	int32_t FrameCount;
 	OrthographicView View;
 	float OrthographicHeight;
+	bool RequiresGpuParticles = false;
 };
 
 const std::array<RenderingTransformScreenshotCase, 11> ScreenshotCases = {{
@@ -87,10 +86,10 @@ const std::array<RenderingTransformScreenshotCase, 11> ScreenshotCases = {{
 	{"Ring", u"TestData/Effects/10/Ring_Parameters1.efk", 30, 28.0f, 28.0f, false, false},
 	{"Track", u"TestData/Effects/Update_17x/Track.efkefc", 30, 20.0f, 0.0f, false, false},
 	{"Model", u"TestData/Effects/Update_17x/Model.efkefc", 30, 24.0f, 24.0f, false, false},
-	{"GpuParticlesSprite", u"TestData/Effects/18/GpuParticles_sprite_simple.efkefc", 120, 24.0f, 24.0f, true, false},
-	{"GpuParticlesTrail", u"TestData/Effects/18/GpuParticles_trails_simple.efkefc", 120, 24.0f, 24.0f, false, false},
-	{"GpuParticlesMesh", u"TestData/Effects/18/GpuParticles_emit_mesh.efkefc", 120, 24.0f, 24.0f, false, false},
-	{"GpuParticlesLighting", u"TestData/Effects/18/GpuParticles_sprite_simple.efkefc", 120, 24.0f, 0.0f, true, true},
+	{"GpuParticlesSprite", u"TestData/Effects/18/GpuParticles_sprite_simple.efkefc", 120, 24.0f, 24.0f, true, false, true},
+	{"GpuParticlesTrail", u"TestData/Effects/18/GpuParticles_trails_simple.efkefc", 120, 24.0f, 24.0f, false, false, true},
+	{"GpuParticlesMesh", u"TestData/Effects/18/GpuParticles_emit_mesh.efkefc", 120, 24.0f, 24.0f, false, false, true},
+	{"GpuParticlesLighting", u"TestData/Effects/18/GpuParticles_sprite_simple.efkefc", 120, 24.0f, 0.0f, true, true, true},
 }};
 
 const std::array<RenderingTransformScreenshotVariant, 6> ScreenshotVariants = {{
@@ -168,9 +167,9 @@ const std::array<CoordinateSystemScreenshotCase, 34> CoordinateSystemScreenshotC
 	{"ProceduralModel03XZ", u"TestData/Effects/16/ProcedualModel03.efkefc", 30, OrthographicView::XZ, 24.0f},
 	{"Distortion", u"TestData/Effects/10/Distortions1.efk", 30, OrthographicView::FrontXY, 18.0f},
 	{"Collision", u"TestData/Effects/18/Collisions.efkefc", 45, OrthographicView::FrontXY, 24.0f},
-	{"GpuParticlesSprite", u"TestData/Effects/18/GpuParticles_sprite_simple.efkefc", 120, OrthographicView::XZ, 24.0f},
-	{"GpuParticlesTrail", u"TestData/Effects/18/GpuParticles_trails_simple.efkefc", 120, OrthographicView::XZ, 24.0f},
-	{"GpuParticlesMesh", u"TestData/Effects/18/GpuParticles_emit_mesh.efkefc", 120, OrthographicView::XZ, 24.0f},
+	{"GpuParticlesSprite", u"TestData/Effects/18/GpuParticles_sprite_simple.efkefc", 120, OrthographicView::XZ, 24.0f, true},
+	{"GpuParticlesTrail", u"TestData/Effects/18/GpuParticles_trails_simple.efkefc", 120, OrthographicView::XZ, 24.0f, true},
+	{"GpuParticlesMesh", u"TestData/Effects/18/GpuParticles_emit_mesh.efkefc", 120, OrthographicView::XZ, 24.0f, true},
 }};
 
 Effekseer::Matrix44 MakeRenderingCoordinateMatrix(RenderingTransformScreenshotVariant::RenderingCoordinateTransform transform)
@@ -380,11 +379,17 @@ void CaptureCoordinateSystemComparison(
 	EffectPlatform& platform,
 	std::ofstream& manifest,
 	const std::filesystem::path& sourceRoot,
-	const std::u16string& rootPath)
+	const std::u16string& rootPath,
+	const std::string& backend)
 {
 	for (const auto& screenshotCase : CoordinateSystemScreenshotCases)
 	{
-		const auto caseDirectory = sourceRoot / "DX11" / "CoordinateSystemBoundary" / screenshotCase.Name;
+		if (screenshotCase.RequiresGpuParticles && platform.GetManager()->GetGpuParticleSystem() == nullptr)
+		{
+			printf("[RenderingTransformScreenshot] case=%s skipped: GPU particles are unavailable\n", screenshotCase.Name);
+			continue;
+		}
+		const auto caseDirectory = sourceRoot / backend / "CoordinateSystemBoundary" / screenshotCase.Name;
 		std::filesystem::create_directories(caseDirectory);
 		const auto renderVariant = [&](const CoordinateSystemScreenshotVariant& variant, size_t variantIndex, bool capture)
 		{
@@ -434,7 +439,7 @@ void CaptureCoordinateSystemComparison(
 				const auto sourcePath = caseDirectory /
 					(std::to_string(variantIndex) + "_" + variant.Label + ".png");
 				EXPECT_TRUE(platform.TakeScreenshot(sourcePath.string().c_str()));
-				manifest << "CoordinateSystemBoundaryComparison_" << screenshotCase.Name << "_DX11.png,"
+				manifest << "CoordinateSystemBoundaryComparison_" << screenshotCase.Name << "_" << backend << ".png,"
 						 << variantIndex << "," << variant.Label << "," << sourcePath.generic_string() << "\n";
 			}
 
@@ -460,7 +465,8 @@ void CaptureOrthographicComparisons(
 	std::ofstream& manifest,
 	const std::filesystem::path& sourceRoot,
 	const std::u16string& rootPath,
-	OrthographicView view)
+	OrthographicView view,
+	const std::string& backend)
 {
 	const bool isFrontXY = view == OrthographicView::FrontXY;
 	const char* viewName = isFrontXY ? "FrontOrthographic" : "XZOrthographic";
@@ -470,6 +476,11 @@ void CaptureOrthographicComparisons(
 
 	for (const auto& screenshotCase : ScreenshotCases)
 	{
+		if (screenshotCase.RequiresGpuParticles && platform.GetManager()->GetGpuParticleSystem() == nullptr)
+		{
+			printf("[RenderingTransformScreenshot] case=%s skipped: GPU particles are unavailable\n", screenshotCase.Name);
+			continue;
+		}
 		const float orthographicHeight = isFrontXY
 			? screenshotCase.FrontOrthographicHeight
 			: screenshotCase.XZOrthographicHeight;
@@ -484,7 +495,7 @@ void CaptureOrthographicComparisons(
 			viewName,
 			screenshotCase.Name,
 			screenshotCase.FrameCount);
-		const auto caseDirectory = sourceRoot / "DX11" / viewName / screenshotCase.Name;
+		const auto caseDirectory = sourceRoot / backend / viewName / screenshotCase.Name;
 		std::filesystem::create_directories(caseDirectory);
 
 		srand(0);
@@ -536,7 +547,7 @@ void CaptureOrthographicComparisons(
 				(std::to_string(variantIndex) + "_" + variant.Label + ".png");
 			EXPECT_TRUE(platform.TakeScreenshot(sourcePath.string().c_str()));
 
-			manifest << compositePrefix << screenshotCase.Name << "_DX11.png,"
+			manifest << compositePrefix << screenshotCase.Name << "_" << backend << ".png,"
 					 << variantIndex << "," << variant.Label << "," << sourcePath.generic_string() << "\n";
 		}
 
@@ -547,10 +558,11 @@ void CaptureOrthographicComparisons(
 	}
 }
 
-void RunRenderingTransformScreenshotTest()
+template <class Platform>
+void RunRenderingTransformScreenshotTest(const std::string& backend)
 {
 	const std::filesystem::path sourceRoot = "screenshot_comparison_sources";
-	const auto manifestPath = sourceRoot / "manifest.csv";
+	const auto manifestPath = sourceRoot / ("manifest_" + backend + ".csv");
 	std::filesystem::create_directories(sourceRoot);
 
 	std::ofstream manifest(manifestPath, std::ios::trunc);
@@ -561,19 +573,24 @@ void RunRenderingTransformScreenshotTest()
 
 	EffectPlatformInitializingParameter initializingParameter;
 	initializingParameter.BackgroundPattern = BackgroundPatternType::NonPeriodicGradient;
-	EffectPlatformDX11 platform;
+	Platform platform;
 	platform.Initialize(initializingParameter);
-	CaptureOrthographicComparisons(platform, manifest, sourceRoot, rootPath, OrthographicView::FrontXY);
-	CaptureOrthographicComparisons(platform, manifest, sourceRoot, rootPath, OrthographicView::XZ);
-	CaptureCoordinateSystemComparison(platform, manifest, sourceRoot, rootPath);
+	CaptureOrthographicComparisons(platform, manifest, sourceRoot, rootPath, OrthographicView::FrontXY, backend);
+	CaptureOrthographicComparisons(platform, manifest, sourceRoot, rootPath, OrthographicView::XZ, backend);
+	CaptureCoordinateSystemComparison(platform, manifest, sourceRoot, rootPath, backend);
 	platform.Terminate();
 }
 
-TestRegister Runtime_RenderingTransformScreenshot_DX11(
-	"Runtime.RenderingTransformScreenshot.DX11",
-	[]() -> void
-	{ RunRenderingTransformScreenshotTest(); });
-
-#endif
-
+struct RegisterTransformScreenshots
+{
+	RegisterTransformScreenshots()
+	{
+		ForEachTestPlatform([](auto type, const char* backend)
+							{
+			using Platform = typename decltype(type)::Type;
+			const std::string name = backend;
+			TestHelper::RegisterTest(("Runtime.RenderingTransformScreenshot." + name).c_str(),
+				[name] { RunRenderingTransformScreenshotTest<Platform>(name); }, TestExecutionMode::FilterOnly); });
+	}
+} registerTransformScreenshots;
 } // namespace

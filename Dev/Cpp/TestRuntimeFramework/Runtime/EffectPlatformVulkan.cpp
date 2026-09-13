@@ -1,5 +1,4 @@
 #include "EffectPlatformVulkan.h"
-#include "../../3rdParty/LLGI/src/Vulkan/LLGI.CommandListVulkan.h"
 #include "../../3rdParty/LLGI/src/Vulkan/LLGI.CompilerVulkan.h"
 #include "../../3rdParty/LLGI/src/Vulkan/LLGI.GraphicsVulkan.h"
 #include "../../3rdParty/LLGI/src/Vulkan/LLGI.PlatformVulkan.h"
@@ -192,7 +191,6 @@ EffekseerRenderer::RendererRef EffectPlatformVulkan::CreateRenderer()
 	renderer->SetDistortingCallback(new DistortingCallbackVulkan(this));
 
 	sfMemoryPoolEfk_ = EffekseerRenderer::CreateSingleFrameMemoryPool(renderer->GetGraphicsDevice());
-	commandListEfk_ = EffekseerRenderer::CreateCommandList(renderer->GetGraphicsDevice(), sfMemoryPoolEfk_);
 
 	CreateResources();
 
@@ -230,42 +228,6 @@ void EffectPlatformVulkan::DestroyDevice()
 	EffectPlatformLLGI::DestroyDevice();
 }
 
-void EffectPlatformVulkan::BeginCompute()
-{
-	EffectPlatformLLGI::BeginCompute();
-
-	auto cl = static_cast<LLGI::CommandListVulkan*>(commandList_.get());
-	EffekseerRendererVulkan::BeginCommandList(commandListEfk_, static_cast<VkCommandBuffer>(cl->GetCommandBuffer()));
-	GetRenderer()->SetCommandList(commandListEfk_);
-	GetRenderer()->GetGraphicsDevice()->BeginComputePass();
-}
-
-void EffectPlatformVulkan::EndCompute()
-{
-	GetRenderer()->GetGraphicsDevice()->EndComputePass();
-	GetRenderer()->SetCommandList(nullptr);
-	EffekseerRendererVulkan::EndCommandList(commandListEfk_);
-
-	EffectPlatformLLGI::EndCompute();
-}
-
-void EffectPlatformVulkan::BeginRendering()
-{
-	EffectPlatformLLGI::BeginRendering();
-
-	auto cl = static_cast<LLGI::CommandListVulkan*>(commandList_.get());
-	EffekseerRendererVulkan::BeginCommandList(commandListEfk_, static_cast<VkCommandBuffer>(cl->GetCommandBuffer()));
-	GetRenderer()->SetCommandList(commandListEfk_);
-}
-
-void EffectPlatformVulkan::EndRendering()
-{
-	GetRenderer()->SetCommandList(nullptr);
-	EffekseerRendererVulkan::EndCommandList(commandListEfk_);
-
-	EffectPlatformLLGI::EndRendering();
-}
-
 LLGI::Texture* EffectPlatformVulkan::GetBackgroundTexture()
 {
 	if (backgroundTexture_ == nullptr)
@@ -280,15 +242,5 @@ LLGI::Texture* EffectPlatformVulkan::GetBackgroundTexture()
 
 void EffectPlatformVulkan::UpdateBackgroundTextureForDistortion()
 {
-	auto background = GetBackgroundTexture();
-	auto efkCommandList = static_cast<EffekseerRendererLLGI::CommandList*>(commandListEfk_.Get())->GetInternal();
-
-	efkCommandList->EndRenderPassWithPlatformPtr();
-	commandList_->EndRenderPass();
-	commandList_->CopyTexture(colorBuffer_, background);
-
-	renderPass_->SetIsColorCleared(false);
-	renderPass_->SetIsDepthCleared(false);
-	commandList_->BeginRenderPass(renderPass_);
-	efkCommandList->BeginRenderPassWithPlatformPtr(nullptr);
+	CopyBackgroundTexture(GetBackgroundTexture());
 }

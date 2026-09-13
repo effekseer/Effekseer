@@ -1,28 +1,6 @@
-#ifdef _WIN32
-
-#ifdef __EFFEKSEER_BUILD_DX12__
-#include <Runtime/EffectPlatformDX12.h>
-#endif
-
-#include <Runtime/EffectPlatformDX11.h>
-#include <Runtime/EffectPlatformDX9.h>
-#elif defined(__APPLE__)
-#include <Runtime/EffectPlatformMetal.h>
-#else
-#endif
-
-#include <Runtime/EffectPlatformGL.h>
-
-#ifdef __EFFEKSEER_BUILD_VULKAN__
-#include <Runtime/EffectPlatformVulkan.h>
-#endif
-
-#ifdef __EFFEKSEER_BUILD_WEBGPU__
-#include <Runtime/EffectPlatformWebGPU.h>
-#endif
-
 #include "BasicRendering.h"
 #include "../TestHelper.h"
+#include "TestPlatforms.h"
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -428,30 +406,13 @@ struct BasicRenderingCaseTestRegistration
 {
 	BasicRenderingCaseTestRegistration()
 	{
-#ifdef _WIN32
-		RegisterBasicRuntimeTestPlatformCasesFor<EffectPlatformDX11>("DX11", "_DX11");
+		ForEachTestPlatform([](auto type, const char* name)
+							{
+#if defined(__FROM_CI__)
+			if (std::string(name) != "DX11") return;
 #endif
-
-#if !defined(__FROM_CI__)
-#ifdef __EFFEKSEER_BUILD_VULKAN__
-		RegisterBasicRuntimeTestPlatformCasesFor<EffectPlatformVulkan>("Vulkan", "_Vulkan");
-#endif
-
-#ifdef _WIN32
-#ifdef __EFFEKSEER_BUILD_DX12__
-		RegisterBasicRuntimeTestPlatformCasesFor<EffectPlatformDX12>("DX12", "_DX12");
-#endif
-		RegisterBasicRuntimeTestPlatformCasesFor<EffectPlatformDX9>("DX9", "_DX9");
-		RegisterBasicRuntimeTestPlatformCasesFor<EffectPlatformGL>("GL", "_GL");
-#elif defined(__APPLE__)
-		RegisterBasicRuntimeTestPlatformCasesFor<EffectPlatformMetal>("Metal", "_Metal");
-		RegisterBasicRuntimeTestPlatformCasesFor<EffectPlatformGL>("GL", "_GL");
-#else
-#ifndef __EFFEKSEER_BUILD_VERSION16__
-		RegisterBasicRuntimeTestPlatformCasesFor<EffectPlatformGL>("GL", "_GL");
-#endif
-#endif
-#endif
+			using Platform = typename decltype(type)::Type;
+			RegisterBasicRuntimeTestPlatformCasesFor<Platform>(name, ("_" + std::string(name)).c_str()); });
 	}
 };
 
@@ -486,7 +447,7 @@ void BasicRuntimeTestPlatformCases(
 	EffectPlatform* platform,
 	std::string baseResultPath,
 	std::string suffix,
-	std::initializer_list<std::string_view> caseNames,
+	const std::vector<std::string_view>& caseNames,
 	std::string screenshotPrefix)
 {
 	platform->Initialize(param);
@@ -547,63 +508,13 @@ void RunBasicRuntimeTestOnPlatform(const EffectPlatformInitializingParameter& pa
 void BasicRuntimeTest()
 {
 	EffectPlatformInitializingParameter param;
-	// param.CoordinateSyatem = Effekseer::CoordinateSystem::LH;
-
-#ifdef _WIN32
-	{
-		RunBasicRuntimeTestOnPlatform<EffectPlatformDX11>(param, "_DX11");
-	}
+	ForEachTestPlatform([&](auto type, const char* name)
+						{
+#if defined(__FROM_CI__)
+		if (std::string(name) != "DX11") return;
 #endif
-
-#if !defined(__FROM_CI__)
-#ifdef __EFFEKSEER_BUILD_VULKAN__
-	{
-		RunBasicRuntimeTestOnPlatform<EffectPlatformVulkan>(param, "_Vulkan");
-	}
-#endif
-
-#ifdef __EFFEKSEER_BUILD_WEBGPU__
-	{
-		RunBasicRuntimeTestOnPlatform<EffectPlatformWebGPU>(param, "_WebGPU");
-	}
-#endif
-
-#ifdef _WIN32
-	{
-
-#ifdef __EFFEKSEER_BUILD_DX12__
-		{
-			RunBasicRuntimeTestOnPlatform<EffectPlatformDX12>(param, "_DX12");
-		}
-#endif
-
-		{
-			RunBasicRuntimeTestOnPlatform<EffectPlatformDX9>(param, "_DX9");
-		}
-
-		{
-			RunBasicRuntimeTestOnPlatform<EffectPlatformGL>(param, "_GL");
-		}
-	}
-
-#elif defined(__APPLE__)
-
-	{
-		RunBasicRuntimeTestOnPlatform<EffectPlatformMetal>(param, "_Metal");
-	}
-
-	{
-		RunBasicRuntimeTestOnPlatform<EffectPlatformGL>(param, "_GL");
-	}
-
-#else
-#ifndef __EFFEKSEER_BUILD_VERSION16__
-	{
-		RunBasicRuntimeTestOnPlatform<EffectPlatformGL>(param, "_GL");
-	}
-#endif
-#endif
-#endif
+		using Platform = typename decltype(type)::Type;
+		RunBasicRuntimeTestOnPlatform<Platform>(param, ("_" + std::string(name)).c_str()); });
 }
 
 TestRegister Runtime_BasicRuntimeTest("Runtime.BasicRuntimeTest", []() -> void

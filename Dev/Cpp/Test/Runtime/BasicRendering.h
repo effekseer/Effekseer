@@ -6,6 +6,7 @@
 #include <memory>
 #include <string>
 #include <string_view>
+#include <vector>
 
 void BasicRuntimeTestPlatform(EffectPlatformInitializingParameter param, EffectPlatform* platform, std::string baseResultPath, std::string suffix);
 void BasicRuntimeTestPlatformCase(
@@ -19,7 +20,7 @@ void BasicRuntimeTestPlatformCases(
 	EffectPlatform* platform,
 	std::string baseResultPath,
 	std::string suffix,
-	std::initializer_list<std::string_view> caseNames,
+	const std::vector<std::string_view>& caseNames,
 	std::string screenshotPrefix = "");
 void RegisterBasicRuntimeTestPlatformCases(
 	const char* platformName,

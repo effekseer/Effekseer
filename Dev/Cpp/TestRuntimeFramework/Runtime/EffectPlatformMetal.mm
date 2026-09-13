@@ -1,5 +1,4 @@
 #include "EffectPlatformMetal.h"
-#include "../../3rdParty/LLGI/src/Metal/LLGI.CommandListMetal.h"
 #include "../../3rdParty/LLGI/src/Metal/LLGI.CompilerMetal.h"
 #include "../../3rdParty/LLGI/src/Metal/LLGI.GraphicsMetal.h"
 #include "../../3rdParty/LLGI/src/Metal/LLGI.Metal_Impl.h"
@@ -204,7 +203,6 @@ EffekseerRenderer::RendererRef EffectPlatformMetal::CreateRenderer()
 	renderer->SetDistortingCallback(new DistortingCallbackMetal(this));
 
 	sfMemoryPoolEfk_ = EffekseerRenderer::CreateSingleFrameMemoryPool(renderer->GetGraphicsDevice());
-	commandListEfk_ = EffekseerRenderer::CreateCommandList(renderer->GetGraphicsDevice(), sfMemoryPoolEfk_);
 
 	CreateResources();
 
@@ -238,47 +236,6 @@ void EffectPlatformMetal::DestroyDevice()
 	EffectPlatformLLGI::DestroyDevice();
 }
 
-void EffectPlatformMetal::BeginCompute()
-{
-	EffectPlatformLLGI::BeginCompute();
-
-	auto cl = static_cast<LLGI::CommandListMetal*>(commandList_.get());
-	commandList_->BeginComputePass();
-	EffekseerRendererMetal::BeginCommandList(commandListEfk_);
-	GetRenderer()->SetCommandList(commandListEfk_);
-	EffekseerRendererMetal::BeginComputePass(commandListEfk_, cl->GetComputeCommandEncorder());
-}
-
-void EffectPlatformMetal::EndCompute()
-{
-	EffekseerRendererMetal::EndComputePass(commandListEfk_);
-	GetRenderer()->SetCommandList(nullptr);
-	EffekseerRendererMetal::EndCommandList(commandListEfk_);
-	commandList_->EndComputePass();
-
-	EffectPlatformLLGI::EndCompute();
-}
-
-void EffectPlatformMetal::BeginRendering()
-{
-	EffectPlatformLLGI::BeginRendering();
-
-	auto cl = static_cast<LLGI::CommandListMetal*>(commandList_.get());
-	EffekseerRendererMetal::BeginCommandList(commandListEfk_);
-	GetRenderer()->SetCommandList(commandListEfk_);
-
-	EffekseerRendererMetal::BeginRenderPass(commandListEfk_, cl->GetRenderCommandEncorder());
-}
-
-void EffectPlatformMetal::EndRendering()
-{
-	EffekseerRendererMetal::EndRenderPass(commandListEfk_);
-
-	GetRenderer()->SetCommandList(nullptr);
-	EffekseerRendererMetal::EndCommandList(commandListEfk_);
-	EffectPlatformLLGI::EndRendering();
-}
-
 LLGI::Texture* EffectPlatformMetal::GetBackgroundTexture()
 {
 	if (backgroundTexture_ == nullptr)
@@ -293,17 +250,7 @@ LLGI::Texture* EffectPlatformMetal::GetBackgroundTexture()
 
 void EffectPlatformMetal::UpdateBackgroundTextureForDistortion()
 {
-	auto background = GetBackgroundTexture();
-	auto cl = static_cast<LLGI::CommandListMetal*>(commandList_.get());
-
-	EffekseerRendererMetal::EndRenderPass(commandListEfk_);
-	commandList_->EndRenderPass();
-	commandList_->CopyTexture(colorBuffer_, background);
-
-	renderPass_->SetIsColorCleared(false);
-	renderPass_->SetIsDepthCleared(false);
-	commandList_->BeginRenderPass(renderPass_);
-	EffekseerRendererMetal::BeginRenderPass(commandListEfk_, cl->GetRenderCommandEncorder());
+	CopyBackgroundTexture(GetBackgroundTexture());
 }
 
 LLGI::Texture* EffectPlatformMetal::GetCheckedTexture() const

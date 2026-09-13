@@ -1,4 +1,5 @@
 #include "EffectPlatformLLGI.h"
+#include "TestDiagnostics.h"
 #include "../3rdParty/LLGI/src/LLGI.Buffer.h"
 #include "../3rdParty/LLGI/src/LLGI.CommandList.h"
 #include "../3rdParty/LLGI/src/LLGI.Graphics.h"
@@ -8,12 +9,34 @@
 #include "../3rdParty/LLGI/src/LLGI.Texture.h"
 
 #include "../../EffekseerRendererLLGI/EffekseerRendererLLGI/GraphicsDevice.h"
+#include "../../EffekseerRendererLLGI/EffekseerRendererLLGI/EffekseerRendererLLGI.Renderer.h"
+#include "../../EffekseerRendererLLGI/EffekseerRendererLLGI/EffekseerRendererLLGI.RendererImplemented.h"
 #include "../../3rdParty/stb/stb_image_write.h"
 #include <EffekseerToolRuntime/GroundRendering.h>
 #include <EffekseerToolRuntime/LLGIShaderCompiler.h>
 
 #include <cassert>
 #include <cstdio>
+
+namespace
+{
+void InstallTestLogger()
+{
+	LLGI::SetLogger([](LLGI::LogType type, const std::string& message) {
+		fprintf(stderr, "[LLGI] %s\n", message.c_str());
+		if (type == LLGI::LogType::Error)
+		{
+			TestDiagnostics::ReportError();
+		}
+	});
+}
+}
+
+void EffectPlatformLLGI::OnRendererCreated()
+{
+	// Renderer initialization replaces the LLGI logger; reinstall our test logger.
+	InstallTestLogger();
+}
 
 void EffectPlatformLLGI::CreateCheckedTexture()
 {
@@ -317,6 +340,7 @@ EffectPlatformLLGI ::~EffectPlatformLLGI()
 
 void EffectPlatformLLGI::InitializeWindow()
 {
+	InstallTestLogger();
 #if defined(__EMSCRIPTEN__)
 	llgiWindow_ = LLGI::CreateWindow("Effekseer WebGPU Browser Test", LLGI::Vec2I(initParam_.WindowSize[0], initParam_.WindowSize[1]));
 	if (llgiWindow_ == nullptr)
@@ -379,6 +403,7 @@ void EffectPlatformLLGI::PreDestroyDevice()
 
 	// Vulkan requires to release before destroy devices
 	commandListEfk_.Reset();
+	commandListsEfk_.clear();
 	sfMemoryPoolEfk_.Reset();
 }
 
@@ -430,22 +455,47 @@ void EffectPlatformLLGI::DestroyDevice()
 	commandList_.reset();
 }
 
+void EffectPlatformLLGI::BindCommandList(bool newRecording)
+{
+	auto& cached = commandListsEfk_[commandList_.get()];
+	if (cached == nullptr)
+	{
+		auto memoryPool = sfMemoryPoolEfk_.DownCast<EffekseerRendererLLGI::SingleFrameMemoryPool>();
+		cached = Effekseer::MakeRefPtr<EffekseerRendererLLGI::CommandList>(graphics_, commandList_.get(), memoryPool->GetInternal());
+	}
+	commandListEfk_ = cached;
+	if (newRecording)
+	{
+		// DoEvent waits before reusing the native slot. Reset once per recording,
+		// preserving allocations when switching from compute to rendering.
+		commandListEfk_.DownCast<EffekseerRendererLLGI::CommandList>()->ResetVertexBuffers();
+	}
+	GetRenderer()->SetCommandList(commandListEfk_);
+}
+
 void EffectPlatformLLGI::BeginCompute()
 {
+	const bool newRecording = !isCommandListBegun_;
 	if (!isCommandListBegun_)
 	{
 		commandList_->Begin();
 		sfMemoryPoolEfk_->NewFrame();
 		isCommandListBegun_ = true;
 	}
+	BindCommandList(newRecording);
+	GetRenderer()->GetGraphicsDevice()->BeginComputePass();
 }
 
 void EffectPlatformLLGI::EndCompute()
 {
+	GetRenderer()->GetGraphicsDevice()->EndComputePass();
+	GetRenderer()->SetCommandList(nullptr);
+	commandListEfk_.Reset();
 }
 
 void EffectPlatformLLGI::BeginRendering()
 {
+	const bool newRecording = !isCommandListBegun_;
 	LLGI::Color8 color;
 	color.R = usesGpuGroundDepth_ ? 22 : 64;
 	color.G = usesGpuGroundDepth_ ? 34 : 64;
@@ -497,10 +547,24 @@ void EffectPlatformLLGI::BeginRendering()
 		commandList_->SetTexture(checkTexture_, LLGI::TextureWrapMode::Repeat, LLGI::TextureMinMagFilter::Nearest, 0);
 		commandList_->Draw(2);
 	}
+	GetRenderer().DownCast<EffekseerRendererLLGI::RendererImplemented>()->ChangeRenderPassPipelineState(renderPass_->GetKey());
+	BindCommandList(newRecording);
+}
+
+void EffectPlatformLLGI::CopyBackgroundTexture(LLGI::Texture* destination)
+{
+	commandList_->EndRenderPass();
+	commandList_->CopyTexture(colorBuffer_, destination);
+	renderPass_->SetIsColorCleared(false);
+	renderPass_->SetIsDepthCleared(false);
+	commandList_->BeginRenderPass(renderPass_);
+	GetRenderer().DownCast<EffekseerRendererLLGI::RendererImplemented>()->ChangeRenderPassPipelineState(renderPass_->GetKey());
 }
 
 void EffectPlatformLLGI::EndRendering()
 {
+	GetRenderer()->SetCommandList(nullptr);
+	commandListEfk_.Reset();
 	commandList_->EndRenderPass();
 
 	auto currentScreen = platform_->GetCurrentScreen(LLGI::Color8(), true);

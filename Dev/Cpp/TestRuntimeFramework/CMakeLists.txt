@@ -25,6 +25,8 @@ else()
       Runtime/EffectPlatformGL.cpp)
 endif()
 
+list(APPEND effekseer_test_src Runtime/TestDiagnostics.h)
+
 if(BUILD_DX12
    OR BUILD_METAL
    OR BUILD_VULKAN

@@ -1,3 +1,4 @@
+#include "TestPlatforms.h"
 #include "../TestHelper.h"
 
 #include <EffekseerToolRuntime/ImageRenderer.h>
@@ -421,220 +422,57 @@ void InitializeLineRendererOnEffectPlatform()
 
 } // namespace
 
-TestRegister ToolRuntime_LineRenderer_GL(
-	"ToolRuntime.LineRenderer.GL",
-	[]() -> void
-	{
-		RenderLineOnce(std::make_shared<RenderingEnvironmentGL>(std::array<int, 2>({64, 64}), "ToolRuntime.LineRenderer.GL"));
-	},
-	TestExecutionMode::FilterOnly);
 
-TestRegister ToolRuntime_RenderImage_GL(
-	"ToolRuntime.RenderImage.GL",
-	[]() -> void
+namespace
+{
+template <class Environment, class Platform>
+void RegisterToolRuntimeTests(const std::string& backend)
+{
+	auto registerEnvironmentTest = [&backend](const char* test, auto run)
 	{
-		ResizeRenderImageOnce(std::make_shared<RenderingEnvironmentGL>(std::array<int, 2>({64, 64}), "ToolRuntime.RenderImage.GL"));
-	},
-	TestExecutionMode::FilterOnly);
-
-TestRegister ToolRuntime_ImageRenderer_GL(
-	"ToolRuntime.ImageRenderer.GL",
-	[]() -> void
+		const auto name = "ToolRuntime." + std::string(test) + "." + backend;
+		TestHelper::RegisterTest(name.c_str(), [run, name]
+								 { run(std::make_shared<Environment>(std::array<int, 2>({64, 64}), name.c_str())); },
+								 TestExecutionMode::FilterOnly);
+	};
+	registerEnvironmentTest("LineRenderer", RenderLineOnce);
+	registerEnvironmentTest("RenderImage", ResizeRenderImageOnce);
+	registerEnvironmentTest("ImageRenderer", RenderImageRendererOnce);
+	registerEnvironmentTest("PostEffects", RenderPostEffectsOnce);
+	registerEnvironmentTest("PostEffects.LinearToSRGB", RenderLinearToSRGBOnce);
+	registerEnvironmentTest("PostEffects.Tonemap", RenderTonemapOnce);
+	registerEnvironmentTest("PostEffects.Bloom", RenderBloomOnce);
+	auto registerScreenshot = [&backend](const char* test, void (*run)(const char*))
 	{
-		RenderImageRendererOnce(std::make_shared<RenderingEnvironmentGL>(std::array<int, 2>({64, 64}), "ToolRuntime.ImageRenderer.GL"));
-	},
-	TestExecutionMode::FilterOnly);
+		const auto name = "ToolRuntime.RenderingComparison." + std::string(test) + "." + backend;
+		const auto path = "ToolRuntime_" + std::string(test) + "_" + backend + ".png";
+		TestHelper::RegisterTest(name.c_str(), [run, path]
+								 { run(path.c_str()); },
+								 TestExecutionMode::FilterOnly);
+	};
+	registerScreenshot("Line", RenderLineComparisonToScreenshot<Platform>);
+	registerScreenshot("ImageRenderer", RenderImageRendererComparisonToScreenshot<Platform>);
+	registerScreenshot("PostEffects", RenderPostEffectsComparisonToScreenshot<Platform>);
+}
 
-TestRegister ToolRuntime_PostEffects_GL(
-	"ToolRuntime.PostEffects.GL",
-	[]() -> void
+struct RegisterToolTests
+{
+	RegisterToolTests()
 	{
-		RenderPostEffectsOnce(std::make_shared<RenderingEnvironmentGL>(std::array<int, 2>({64, 64}), "ToolRuntime.PostEffects.GL"));
-	},
-	TestExecutionMode::FilterOnly);
-
-TestRegister ToolRuntime_PostEffects_LinearToSRGB_GL(
-	"ToolRuntime.PostEffects.LinearToSRGB.GL",
-	[]() -> void
-	{
-		RenderLinearToSRGBOnce(std::make_shared<RenderingEnvironmentGL>(std::array<int, 2>({64, 64}), "ToolRuntime.PostEffects.LinearToSRGB.GL"));
-	},
-	TestExecutionMode::FilterOnly);
-
-TestRegister ToolRuntime_PostEffects_Tonemap_GL(
-	"ToolRuntime.PostEffects.Tonemap.GL",
-	[]() -> void
-	{
-		RenderTonemapOnce(std::make_shared<RenderingEnvironmentGL>(std::array<int, 2>({64, 64}), "ToolRuntime.PostEffects.Tonemap.GL"));
-	},
-	TestExecutionMode::FilterOnly);
-
-TestRegister ToolRuntime_PostEffects_Bloom_GL(
-	"ToolRuntime.PostEffects.Bloom.GL",
-	[]() -> void
-	{
-		RenderBloomOnce(std::make_shared<RenderingEnvironmentGL>(std::array<int, 2>({64, 64}), "ToolRuntime.PostEffects.Bloom.GL"));
-	},
-	TestExecutionMode::FilterOnly);
-
-TestRegister ToolRuntime_RenderingComparison_Line_GL(
-	"ToolRuntime.RenderingComparison.Line.GL",
-	[]() -> void
-	{
-		RenderLineComparisonToScreenshot<EffectPlatformGL>("ToolRuntime_Line_GL.png");
-	},
-	TestExecutionMode::FilterOnly);
-
-TestRegister ToolRuntime_RenderingComparison_ImageRenderer_GL(
-	"ToolRuntime.RenderingComparison.ImageRenderer.GL",
-	[]() -> void
-	{
-		RenderImageRendererComparisonToScreenshot<EffectPlatformGL>("ToolRuntime_ImageRenderer_GL.png");
-	},
-	TestExecutionMode::FilterOnly);
-
-TestRegister ToolRuntime_RenderingComparison_PostEffects_GL(
-	"ToolRuntime.RenderingComparison.PostEffects.GL",
-	[]() -> void
-	{
-		RenderPostEffectsComparisonToScreenshot<EffectPlatformGL>("ToolRuntime_PostEffects_GL.png");
-	},
-	TestExecutionMode::FilterOnly);
-
+		RegisterToolRuntimeTests<RenderingEnvironmentGL, EffectPlatformGL>("GL");
 #ifdef _WIN32
-TestRegister ToolRuntime_LineRenderer_DX11(
-	"ToolRuntime.LineRenderer.DX11",
-	[]() -> void
-	{
-		RenderLineOnce(std::make_shared<RenderingEnvironmentDX11>(std::array<int, 2>({64, 64}), "ToolRuntime.LineRenderer.DX11"));
-	},
-	TestExecutionMode::FilterOnly);
-
-TestRegister ToolRuntime_RenderImage_DX11(
-	"ToolRuntime.RenderImage.DX11",
-	[]() -> void
-	{
-		ResizeRenderImageOnce(std::make_shared<RenderingEnvironmentDX11>(std::array<int, 2>({64, 64}), "ToolRuntime.RenderImage.DX11"));
-	},
-	TestExecutionMode::FilterOnly);
-
-TestRegister ToolRuntime_ImageRenderer_DX11(
-	"ToolRuntime.ImageRenderer.DX11",
-	[]() -> void
-	{
-		RenderImageRendererOnce(std::make_shared<RenderingEnvironmentDX11>(std::array<int, 2>({64, 64}), "ToolRuntime.ImageRenderer.DX11"));
-	},
-	TestExecutionMode::FilterOnly);
-
-TestRegister ToolRuntime_PostEffects_DX11(
-	"ToolRuntime.PostEffects.DX11",
-	[]() -> void
-	{
-		RenderPostEffectsOnce(std::make_shared<RenderingEnvironmentDX11>(std::array<int, 2>({64, 64}), "ToolRuntime.PostEffects.DX11"));
-	},
-	TestExecutionMode::FilterOnly);
-
-TestRegister ToolRuntime_PostEffects_LinearToSRGB_DX11(
-	"ToolRuntime.PostEffects.LinearToSRGB.DX11",
-	[]() -> void
-	{
-		RenderLinearToSRGBOnce(std::make_shared<RenderingEnvironmentDX11>(std::array<int, 2>({64, 64}), "ToolRuntime.PostEffects.LinearToSRGB.DX11"));
-	},
-	TestExecutionMode::FilterOnly);
-
-TestRegister ToolRuntime_PostEffects_Tonemap_DX11(
-	"ToolRuntime.PostEffects.Tonemap.DX11",
-	[]() -> void
-	{
-		RenderTonemapOnce(std::make_shared<RenderingEnvironmentDX11>(std::array<int, 2>({64, 64}), "ToolRuntime.PostEffects.Tonemap.DX11"));
-	},
-	TestExecutionMode::FilterOnly);
-
-TestRegister ToolRuntime_PostEffects_Bloom_DX11(
-	"ToolRuntime.PostEffects.Bloom.DX11",
-	[]() -> void
-	{
-		RenderBloomOnce(std::make_shared<RenderingEnvironmentDX11>(std::array<int, 2>({64, 64}), "ToolRuntime.PostEffects.Bloom.DX11"));
-	},
-	TestExecutionMode::FilterOnly);
-
-TestRegister ToolRuntime_RenderingComparison_Line_DX11(
-	"ToolRuntime.RenderingComparison.Line.DX11",
-	[]() -> void
-	{
-		RenderLineComparisonToScreenshot<EffectPlatformDX11>("ToolRuntime_Line_DX11.png");
-	},
-	TestExecutionMode::FilterOnly);
-
-TestRegister ToolRuntime_RenderingComparison_ImageRenderer_DX11(
-	"ToolRuntime.RenderingComparison.ImageRenderer.DX11",
-	[]() -> void
-	{
-		RenderImageRendererComparisonToScreenshot<EffectPlatformDX11>("ToolRuntime_ImageRenderer_DX11.png");
-	},
-	TestExecutionMode::FilterOnly);
-
-TestRegister ToolRuntime_RenderingComparison_PostEffects_DX11(
-	"ToolRuntime.RenderingComparison.PostEffects.DX11",
-	[]() -> void
-	{
-		RenderPostEffectsComparisonToScreenshot<EffectPlatformDX11>("ToolRuntime_PostEffects_DX11.png");
-	},
-	TestExecutionMode::FilterOnly);
+		RegisterToolRuntimeTests<RenderingEnvironmentDX11, EffectPlatformDX11>("DX11");
 #endif
-
-#ifdef __EFFEKSEER_BUILD_DX12__
-TestRegister ToolRuntime_LineRenderer_DX12(
-	"ToolRuntime.LineRenderer.DX12",
-	[]() -> void
-	{
-		InitializeLineRendererOnEffectPlatform<EffectPlatformDX12>();
-	},
-	TestExecutionMode::FilterOnly);
-
-TestRegister ToolRuntime_RenderingComparison_Line_DX12(
-	"ToolRuntime.RenderingComparison.Line.DX12",
-	[]() -> void
-	{
-		RenderLineComparisonToScreenshot<EffectPlatformDX12>("ToolRuntime_Line_DX12.png");
-	},
-	TestExecutionMode::FilterOnly);
-#endif
-
-#ifdef __EFFEKSEER_BUILD_VULKAN__
-TestRegister ToolRuntime_LineRenderer_Vulkan(
-	"ToolRuntime.LineRenderer.Vulkan",
-	[]() -> void
-	{
-		InitializeLineRendererOnEffectPlatform<EffectPlatformVulkan>();
-	},
-	TestExecutionMode::FilterOnly);
-
-TestRegister ToolRuntime_RenderingComparison_Line_Vulkan(
-	"ToolRuntime.RenderingComparison.Line.Vulkan",
-	[]() -> void
-	{
-		RenderLineComparisonToScreenshot<EffectPlatformVulkan>("ToolRuntime_Line_Vulkan.png");
-	},
-	TestExecutionMode::FilterOnly);
-#endif
-
-#ifdef __EFFEKSEER_BUILD_WEBGPU__
-TestRegister ToolRuntime_LineRenderer_WebGPU(
-	"ToolRuntime.LineRenderer.WebGPU",
-	[]() -> void
-	{
-		InitializeLineRendererOnEffectPlatform<EffectPlatformWebGPU>();
-	},
-	TestExecutionMode::FilterOnly);
-#endif
-
-#ifdef __APPLE__
-TestRegister ToolRuntime_LineRenderer_Metal(
-	"ToolRuntime.LineRenderer.Metal",
-	[]() -> void
-	{
-		InitializeLineRendererOnEffectPlatform<EffectPlatformMetal>();
-	},
-	TestExecutionMode::FilterOnly);
-#endif
+		ForEachLLGITestPlatform([](auto type, const char* backend)
+								{
+			using Platform = typename decltype(type)::Type;
+			const std::string name = backend;
+			TestHelper::RegisterTest(("ToolRuntime.LineRenderer." + name).c_str(),
+				InitializeLineRendererOnEffectPlatform<Platform>, TestExecutionMode::FilterOnly);
+			if (name == "DX12" || name == "Vulkan")
+				TestHelper::RegisterTest(("ToolRuntime.RenderingComparison.Line." + name).c_str(), [name] {
+					RenderLineComparisonToScreenshot<Platform>(("ToolRuntime_Line_" + name + ".png").c_str());
+				}, TestExecutionMode::FilterOnly); });
+	}
+} registerToolTests;
+} // namespace
