@@ -357,6 +357,8 @@ InternalFlipX,X軸で反転
 InternalFlipY,Y軸で反転
 InternalFlipZ,Z軸で反転
 InternalReverseTimeline,時間を反転
+Transform_EntireNode,ノード全体
+Transform_ModelShape,モデルの形状
 Transform_Title,エフェクトの変換
 Transform_Flip_Skipped,"エフェクトを反転しました。ただし次のパラメーターは鏡映できないため、変更していません。
 {0}"

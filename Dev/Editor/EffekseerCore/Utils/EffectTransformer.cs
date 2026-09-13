@@ -326,6 +326,7 @@ namespace Effekseer.Utils
 					FlipForceFields(node, axis, result);
 					FlipRotation(node, axis);
 					FlipGenerationLocation(node, axis, result);
+					ReportFlipLimits(node, result);
 					result.NodeCount++;
 				}
 			}
@@ -375,6 +376,7 @@ namespace Effekseer.Utils
 
 				case LocationValues.ParamaterType.Easing:
 					TryNegateAxis(location.Easing.Start, axis);
+					TryNegateAxis(location.Easing.Middle, axis);
 					TryNegateAxis(location.Easing.End, axis);
 					break;
 
@@ -468,6 +470,7 @@ namespace Effekseer.Utils
 
 				case RotationValues.ParamaterType.Easing:
 					MirrorRotation(rotation.Easing.Start, axis);
+					MirrorRotation(rotation.Easing.Middle, axis);
 					MirrorRotation(rotation.Easing.End, axis);
 					break;
 
@@ -541,6 +544,77 @@ namespace Effekseer.Utils
 				case AxisType.YAxis: return TransformAxis.Y;
 				default: return TransformAxis.Z;
 			}
+		}
+
+		/// <summary>
+		/// パラメーターの書き換えだけでは鏡映できないものを知らせる。
+		/// </summary>
+		static void ReportFlipLimits(Node node, EffectTransformResult result)
+		{
+			// 式が有効な値は、実行時に式の結果で置き換えられる。
+			// 数値は反転してあるが、式そのものは書き換えられない。
+			if (UsesEquation(node.LocationValues))
+			{
+				result.Skip("Position", "DynamicEquation");
+			}
+
+			if (UsesEquation(node.RotationValues))
+			{
+				result.Skip("Rotation", "DynamicEquation");
+			}
+
+			// GPU パーティクルは発生形状や速度を別のパラメーターで持ち、ここでは扱わない。
+			if (node.GpuParticles.Enabled.Value)
+			{
+				result.Skip("GpuParticles", "Transform_EntireNode");
+			}
+
+			// モデルの頂点は反転できない。左右非対称な形状は元の向きのまま残る。
+			if (node.DrawingValues.Type.Value == RendererValues.ParamaterType.Model)
+			{
+				result.Skip("RenderSettings", "Transform_ModelShape");
+			}
+		}
+
+		static bool UsesEquation(LocationValues location)
+		{
+			switch (location.Type.Value)
+			{
+				case LocationValues.ParamaterType.Fixed:
+					return location.Fixed.Location.IsDynamicEquationEnabled.Value;
+				case LocationValues.ParamaterType.PVA:
+					return UsesEquation(location.PVA.Location, location.PVA.Velocity, location.PVA.Acceleration);
+				case LocationValues.ParamaterType.Easing:
+					return UsesEquation(location.Easing);
+				default:
+					return false;
+			}
+		}
+
+		static bool UsesEquation(RotationValues rotation)
+		{
+			switch (rotation.Type.Value)
+			{
+				case RotationValues.ParamaterType.Fixed:
+					return rotation.Fixed.Rotation.IsDynamicEquationEnabled.Value;
+				case RotationValues.ParamaterType.PVA:
+					return UsesEquation(rotation.PVA.Rotation, rotation.PVA.Velocity, rotation.PVA.Acceleration);
+				case RotationValues.ParamaterType.Easing:
+					return UsesEquation(rotation.Easing);
+				default:
+					return false;
+			}
+		}
+
+		static bool UsesEquation(Vector3DEasingParamater easing)
+		{
+			return UsesEquation(easing.Start, easing.End)
+				|| (easing.IsMiddleEnabled.Value && easing.Middle.IsDynamicEquationEnabled.Value);
+		}
+
+		static bool UsesEquation(params Vector3DWithRandom[] values)
+		{
+			return values.Any(v => v.IsDynamicEquationEnabled.Value);
 		}
 
 		#endregion

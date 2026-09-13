@@ -353,8 +353,10 @@ InternalFlipX,Отразить по оси X
 InternalFlipY,Отразить по оси Y
 InternalFlipZ,Отразить по оси Z
 InternalReverseTimeline,Обратить шкалу времени
+Transform_EntireNode,Весь узел
+Transform_ModelShape,Форма модели
 Transform_Title,Преобразование эффекта
-Transform_Flip_Skipped,"Эффект отражён, но у этих параметров нет зеркального отражения, и они остались без изменений:
+Transform_Flip_Skipped,"Эффект отражён, но эти параметры не удалось отразить, и они остались без изменений:
 {0}"
 Transform_ReverseTimeline_Skipped,"Шкала времени обращена, но эти параметры не заданы во времени и остались без изменений:
 {0}"

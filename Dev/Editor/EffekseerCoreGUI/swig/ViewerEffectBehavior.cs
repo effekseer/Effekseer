@@ -417,6 +417,36 @@ public class ViewerEffectBehavior : global::System.IDisposable {
     } 
   }
 
+  public bool FlipX {
+    set {
+      EffekseerNativePINVOKE.ViewerEffectBehavior_FlipX_set(swigCPtr, value);
+    } 
+    get {
+      bool ret = EffekseerNativePINVOKE.ViewerEffectBehavior_FlipX_get(swigCPtr);
+      return ret;
+    } 
+  }
+
+  public bool FlipY {
+    set {
+      EffekseerNativePINVOKE.ViewerEffectBehavior_FlipY_set(swigCPtr, value);
+    } 
+    get {
+      bool ret = EffekseerNativePINVOKE.ViewerEffectBehavior_FlipY_get(swigCPtr);
+      return ret;
+    } 
+  }
+
+  public bool FlipZ {
+    set {
+      EffekseerNativePINVOKE.ViewerEffectBehavior_FlipZ_set(swigCPtr, value);
+    } 
+    get {
+      bool ret = EffekseerNativePINVOKE.ViewerEffectBehavior_FlipZ_get(swigCPtr);
+      return ret;
+    } 
+  }
+
   public bool TriggerInput0 {
     set {
       EffekseerNativePINVOKE.ViewerEffectBehavior_TriggerInput0_set(swigCPtr, value);

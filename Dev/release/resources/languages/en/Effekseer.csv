@@ -357,8 +357,10 @@ InternalFlipX,Flip on X axis
 InternalFlipY,Flip on Y axis
 InternalFlipZ,Flip on Z axis
 InternalReverseTimeline,Reverse timeline
+Transform_EntireNode,Entire node
+Transform_ModelShape,Model shape
 Transform_Title,Transform effect
-Transform_Flip_Skipped,"The effect was flipped, but these parameters have no mirror image and were left unchanged:
+Transform_Flip_Skipped,"The effect was flipped, but these parameters could not be mirrored and were left unchanged:
 {0}"
 Transform_ReverseTimeline_Skipped,"The timeline was reversed, but these parameters are not defined over time and were left unchanged:
 {0}"

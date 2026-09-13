@@ -119,6 +119,18 @@ namespace Effekseer.Data
 			private set;
 		}
 
+		[Key(key = "EffectBehavior_FlipX")]
+		[Undo(Undo = false)]
+		public Value.Boolean FlipX { get; private set; } = new Value.Boolean(false);
+
+		[Key(key = "EffectBehavior_FlipY")]
+		[Undo(Undo = false)]
+		public Value.Boolean FlipY { get; private set; } = new Value.Boolean(false);
+
+		[Key(key = "EffectBehavior_FlipZ")]
+		[Undo(Undo = false)]
+		public Value.Boolean FlipZ { get; private set; } = new Value.Boolean(false);
+
 		[Key(key = "EffectBehavior_TargetLocation")]
 		[Undo(Undo = false)]
 		public Value.Vector3D TargetLocation
@@ -211,6 +223,10 @@ namespace Effekseer.Data
 			ColorAll.A.SetValueDirectly(255);
 
 			PlaybackSpeed.SetValueDirectly(1);
+
+			FlipX.SetValueDirectly(false);
+			FlipY.SetValueDirectly(false);
+			FlipZ.SetValueDirectly(false);
 
 			TargetLocation.X.SetValueDirectly(0.0f);
 			TargetLocation.Y.SetValueDirectly(0.0f);

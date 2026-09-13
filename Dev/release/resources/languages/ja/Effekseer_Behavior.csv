@@ -24,6 +24,12 @@ EffectBehavior_TimeSpan_Name,生成間隔(フレーム)
 EffectBehavior_TimeSpan_Desc,1以上の場合、指定された時間ごとにエフェクトを生成する。
 EffectBehavior_ColorAll_Name,全体色
 EffectBehavior_PlaybackSpeed_Name,再生速度
+EffectBehavior_FlipX_Name,プレビュー反転 X
+EffectBehavior_FlipX_Desc,プレビューだけをX軸で反転します。エフェクトのデータは変更しません。
+EffectBehavior_FlipY_Name,プレビュー反転 Y
+EffectBehavior_FlipY_Desc,プレビューだけをY軸で反転します。エフェクトのデータは変更しません。
+EffectBehavior_FlipZ_Name,プレビュー反転 Z
+EffectBehavior_FlipZ_Desc,プレビューだけをZ軸で反転します。エフェクトのデータは変更しません。
 EffectBehavior_TargetLocation_Name,ターゲット位置
 EffectBehavior_TargetLocation_Desc,ターゲット位置または引力位置
 EffectBehavior_ExternalModels_Name,外部モデル

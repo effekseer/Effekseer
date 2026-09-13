@@ -124,6 +124,11 @@ struct ViewerEffectBehavior
 
 	float PlaybackSpeed = 1.0f;
 
+	// Rendering-only mirror of the preview. The effect data is not changed.
+	bool FlipX = false;
+	bool FlipY = false;
+	bool FlipZ = false;
+
 	bool TriggerInput0 = false;
 	bool TriggerInput1 = false;
 	bool TriggerInput2 = false;

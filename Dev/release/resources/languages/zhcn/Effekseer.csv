@@ -352,8 +352,10 @@ InternalFlipX,沿 X 轴翻转
 InternalFlipY,沿 Y 轴翻转
 InternalFlipZ,沿 Z 轴翻转
 InternalReverseTimeline,反转时间轴
+Transform_EntireNode,整个节点
+Transform_ModelShape,模型形状
 Transform_Title,变换特效
-Transform_Flip_Skipped,"特效已翻转，但以下参数没有镜像对应，未作更改：
+Transform_Flip_Skipped,"特效已翻转，但以下参数无法镜像，未作更改：
 {0}"
 Transform_ReverseTimeline_Skipped,"时间轴已反转，但以下参数不随时间定义，未作更改：
 {0}"

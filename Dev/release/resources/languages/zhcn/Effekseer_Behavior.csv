@@ -24,6 +24,12 @@ EffectBehavior_TimeSpan_Name,生成的时间间隔（帧）
 EffectBehavior_TimeSpan_Desc,如果值大于1，则每间隔指定的时间都会生成特效。
 EffectBehavior_ColorAll_Name,整体颜色
 EffectBehavior_PlaybackSpeed_Name,播放速度
+EffectBehavior_FlipX_Name,预览翻转 X
+EffectBehavior_FlipX_Desc,仅在预览中沿X轴翻转，不修改特效数据。
+EffectBehavior_FlipY_Name,预览翻转 Y
+EffectBehavior_FlipY_Desc,仅在预览中沿Y轴翻转，不修改特效数据。
+EffectBehavior_FlipZ_Name,预览翻转 Z
+EffectBehavior_FlipZ_Desc,仅在预览中沿Z轴翻转，不修改特效数据。
 EffectBehavior_TargetLocation_Name,引力点
 EffectBehavior_TargetLocation_Desc,实例会被吸引到空间中的该点
 EffectBehavior_ExternalModels_Name,外部模型

@@ -3562,6 +3562,72 @@ SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewerEffectBehavior_Playback
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerEffectBehavior_FlipX_set___(void * jarg1, unsigned int jarg2) {
+  Effekseer::Tool::ViewerEffectBehavior *arg1 = 0 ;
+  bool arg2 ;
+  
+  arg1 = (Effekseer::Tool::ViewerEffectBehavior *)jarg1; 
+  arg2 = jarg2 ? true : false; 
+  if (arg1) (arg1)->FlipX = arg2;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_ViewerEffectBehavior_FlipX_get___(void * jarg1) {
+  unsigned int jresult ;
+  Effekseer::Tool::ViewerEffectBehavior *arg1 = 0 ;
+  bool result;
+  
+  arg1 = (Effekseer::Tool::ViewerEffectBehavior *)jarg1; 
+  result = (bool) ((arg1)->FlipX);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerEffectBehavior_FlipY_set___(void * jarg1, unsigned int jarg2) {
+  Effekseer::Tool::ViewerEffectBehavior *arg1 = 0 ;
+  bool arg2 ;
+  
+  arg1 = (Effekseer::Tool::ViewerEffectBehavior *)jarg1; 
+  arg2 = jarg2 ? true : false; 
+  if (arg1) (arg1)->FlipY = arg2;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_ViewerEffectBehavior_FlipY_get___(void * jarg1) {
+  unsigned int jresult ;
+  Effekseer::Tool::ViewerEffectBehavior *arg1 = 0 ;
+  bool result;
+  
+  arg1 = (Effekseer::Tool::ViewerEffectBehavior *)jarg1; 
+  result = (bool) ((arg1)->FlipY);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerEffectBehavior_FlipZ_set___(void * jarg1, unsigned int jarg2) {
+  Effekseer::Tool::ViewerEffectBehavior *arg1 = 0 ;
+  bool arg2 ;
+  
+  arg1 = (Effekseer::Tool::ViewerEffectBehavior *)jarg1; 
+  arg2 = jarg2 ? true : false; 
+  if (arg1) (arg1)->FlipZ = arg2;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_ViewerEffectBehavior_FlipZ_get___(void * jarg1) {
+  unsigned int jresult ;
+  Effekseer::Tool::ViewerEffectBehavior *arg1 = 0 ;
+  bool result;
+  
+  arg1 = (Effekseer::Tool::ViewerEffectBehavior *)jarg1; 
+  result = (bool) ((arg1)->FlipZ);
+  jresult = result; 
+  return jresult;
+}
+
+
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerEffectBehavior_TriggerInput0_set___(void * jarg1, unsigned int jarg2) {
   Effekseer::Tool::ViewerEffectBehavior *arg1 = 0 ;
   bool arg2 ;

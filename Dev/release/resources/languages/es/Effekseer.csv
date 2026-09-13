@@ -372,8 +372,10 @@ InternalFlipX,Voltear en el eje X
 InternalFlipY,Voltear en el eje Y
 InternalFlipZ,Voltear en el eje Z
 InternalReverseTimeline,Invertir la línea de tiempo
+Transform_EntireNode,Nodo completo
+Transform_ModelShape,Forma del modelo
 Transform_Title,Transformar efecto
-Transform_Flip_Skipped,"El efecto se volteó, pero estos parámetros no tienen imagen especular y no se modificaron:
+Transform_Flip_Skipped,"El efecto se volteó, pero estos parámetros no se pudieron reflejar y no se modificaron:
 {0}"
 Transform_ReverseTimeline_Skipped,"La línea de tiempo se invirtió, pero estos parámetros no están definidos a lo largo del tiempo y no se modificaron:
 {0}"

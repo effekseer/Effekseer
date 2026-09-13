@@ -478,6 +478,9 @@ void EffectRenderer::PlayEffect()
 				playParameter.Rotation = {m_rootRotation.X, m_rootRotation.Y, m_rootRotation.Z};
 				playParameter.Scale = {m_rootScale.X, m_rootScale.Y, m_rootScale.Z};
 				playParameter.ExternalModels = externalModels;
+				playParameter.Flip.FlipX = behavior_.FlipX;
+				playParameter.Flip.FlipY = behavior_.FlipY;
+				playParameter.Flip.FlipZ = behavior_.FlipZ;
 
 				HandleHolder handleHolder(manager_->Play(playParameter));
 
@@ -1009,6 +1012,20 @@ void EffectRenderer::SetBehavior(const ViewerEffectBehavior& behavior)
 {
 	behavior_ = behavior;
 	externalModels_ = behavior_.ExternalModels;
+
+	// The flip only affects rendering, so effects that are already playing can take it immediately.
+	if (manager_ != nullptr)
+	{
+		Effekseer::EffectFlipParameter flip;
+		flip.FlipX = behavior_.FlipX;
+		flip.FlipY = behavior_.FlipY;
+		flip.FlipZ = behavior_.FlipZ;
+
+		for (const auto& handle : handles_)
+		{
+			manager_->SetEffectFlip(handle.Handle, flip);
+		}
+	}
 }
 
 int EffectRenderer::GetCurrentLOD() const

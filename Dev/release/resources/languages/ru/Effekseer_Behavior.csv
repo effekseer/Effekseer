@@ -26,6 +26,12 @@ EffectBehavior_TimeSpan_Name,Интервал генерации (кадры)
 EffectBehavior_TimeSpan_Desc,"Если значение больше 1, эффекты генерируются через указанный интервал"
 EffectBehavior_ColorAll_Name,Общий цвет
 EffectBehavior_PlaybackSpeed_Name,Скорость воспроизведения
+EffectBehavior_FlipX_Name,Отразить предпросмотр X
+EffectBehavior_FlipX_Desc,Отражает предпросмотр по оси X. Данные эффекта не изменяются.
+EffectBehavior_FlipY_Name,Отразить предпросмотр Y
+EffectBehavior_FlipY_Desc,Отражает предпросмотр по оси Y. Данные эффекта не изменяются.
+EffectBehavior_FlipZ_Name,Отразить предпросмотр Z
+EffectBehavior_FlipZ_Desc,Отражает предпросмотр по оси Z. Данные эффекта не изменяются.
 EffectBehavior_TargetLocation_Name,"Точка
 притяжения"
 EffectBehavior_TargetLocation_Desc,Точка в пространстве, к которой притягиваются экземпляры

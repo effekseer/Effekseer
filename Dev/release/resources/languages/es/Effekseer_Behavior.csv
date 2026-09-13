@@ -28,6 +28,12 @@ EffectBehavior_ColorAll_Name,Color global
 EffectBehavior_PlaybackSpeed_Name,Velocidad global
 EffectBehavior_PlaybackSpeed_Desc,"Velocidad global de todos los nodulos
 1 = Velocidad normal"
+EffectBehavior_FlipX_Name,Voltear vista previa X
+EffectBehavior_FlipX_Desc,Refleja la vista previa en el eje X. Los datos del efecto no cambian.
+EffectBehavior_FlipY_Name,Voltear vista previa Y
+EffectBehavior_FlipY_Desc,Refleja la vista previa en el eje Y. Los datos del efecto no cambian.
+EffectBehavior_FlipZ_Name,Voltear vista previa Z
+EffectBehavior_FlipZ_Desc,Refleja la vista previa en el eje Z. Los datos del efecto no cambian.
 EffectBehavior_TargetLocation_Name,Atracción
 EffectBehavior_TargetLocation_Desc,Punto de atracción global
 EffectBehavior_ExternalModels_Name,Modelos externos

@@ -26,6 +26,12 @@ EffectBehavior_TimeSpan_Name,Generating time span(Frame)
 EffectBehavior_TimeSpan_Desc,"If the value is larger than 1, effects are generated every specified time"
 EffectBehavior_ColorAll_Name,Color All
 EffectBehavior_PlaybackSpeed_Name,Playback Speed
+EffectBehavior_FlipX_Name,Preview flip X
+EffectBehavior_FlipX_Desc,Mirror the preview on the X axis. The effect data is not changed.
+EffectBehavior_FlipY_Name,Preview flip Y
+EffectBehavior_FlipY_Desc,Mirror the preview on the Y axis. The effect data is not changed.
+EffectBehavior_FlipZ_Name,Preview flip Z
+EffectBehavior_FlipZ_Desc,Mirror the preview on the Z axis. The effect data is not changed.
 EffectBehavior_TargetLocation_Name,"Point of
 Attraction"
 EffectBehavior_TargetLocation_Desc,Point in space the instances are drawn to

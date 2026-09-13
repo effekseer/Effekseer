@@ -908,6 +908,24 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerEffectBehavior_PlaybackSpeed_get___")]
   public static extern float ViewerEffectBehavior_PlaybackSpeed_get(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerEffectBehavior_FlipX_set___")]
+  public static extern void ViewerEffectBehavior_FlipX_set(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerEffectBehavior_FlipX_get___")]
+  public static extern bool ViewerEffectBehavior_FlipX_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerEffectBehavior_FlipY_set___")]
+  public static extern void ViewerEffectBehavior_FlipY_set(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerEffectBehavior_FlipY_get___")]
+  public static extern bool ViewerEffectBehavior_FlipY_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerEffectBehavior_FlipZ_set___")]
+  public static extern void ViewerEffectBehavior_FlipZ_set(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerEffectBehavior_FlipZ_get___")]
+  public static extern bool ViewerEffectBehavior_FlipZ_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerEffectBehavior_TriggerInput0_set___")]
   public static extern void ViewerEffectBehavior_TriggerInput0_set(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2);
 

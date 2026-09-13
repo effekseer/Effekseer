@@ -776,6 +776,10 @@ namespace Effekseer.GUI
 
 			behavior.PlaybackSpeed = Core.EffectBehavior.PlaybackSpeed.Value;
 
+			behavior.FlipX = Core.EffectBehavior.FlipX.Value;
+			behavior.FlipY = Core.EffectBehavior.FlipY.Value;
+			behavior.FlipZ = Core.EffectBehavior.FlipZ.Value;
+
 			behavior.TimeSpan = Core.EffectBehavior.TimeSpan;
 			behavior.Distance = Core.EffectBehavior.Distance;
 

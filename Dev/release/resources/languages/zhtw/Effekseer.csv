@@ -352,8 +352,10 @@ InternalFlipX,沿 X 軸翻轉
 InternalFlipY,沿 Y 軸翻轉
 InternalFlipZ,沿 Z 軸翻轉
 InternalReverseTimeline,反轉時間軸
+Transform_EntireNode,整個節點
+Transform_ModelShape,模型形狀
 Transform_Title,變換特效
-Transform_Flip_Skipped,"特效已翻轉，但以下參數沒有鏡像對應，未作變更：
+Transform_Flip_Skipped,"特效已翻轉，但以下參數無法鏡像，未作變更：
 {0}"
 Transform_ReverseTimeline_Skipped,"時間軸已反轉，但以下參數不隨時間定義，未作變更：
 {0}"
