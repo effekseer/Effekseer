@@ -73,6 +73,11 @@ if(BUILD_DX12
    OR BUILD_VULKAN
    OR BUILD_WEBGPU)
   list(APPEND common_lib LLGI)
+  if(NOT BUILD_WEBGPU_BROWSER_TEST)
+    list(APPEND effekseer_test_src Runtime/CommandListVertexBuffer.cpp)
+    set_source_files_properties(Runtime/CommandListVertexBuffer.cpp PROPERTIES
+      INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/../3rdParty/LLGI/src)
+  endif()
 endif()
 
 if(BUILD_DX12)
@@ -89,6 +94,7 @@ endif()
 
 if(BUILD_WEBGPU AND NOT BUILD_WEBGPU_BROWSER_TEST)
   list(APPEND effekseer_test_src Runtime/BasicRenderingWebGPU.cpp)
+  list(APPEND effekseer_test_src Runtime/CommandListCacheWebGPU.cpp)
   list(APPEND common_lib EffekseerRendererWebGPU)
 elseif(BUILD_WEBGPU)
   list(APPEND common_lib EffekseerRendererWebGPU)

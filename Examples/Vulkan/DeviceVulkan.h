@@ -1,12 +1,13 @@
 #pragma once
 
+#include <vector>
+
 #include "../Utils/Input.h"
 #include "../Utils/Window.h"
 #include <EffekseerRendererVulkan.h>
 #include <LLGI.Compiler.h>
 #include <LLGI.Graphics.h>
 #include <LLGI.Platform.h>
-#include <Utils/LLGI.CommandListPool.h>
 #include <Vulkan/LLGI.CommandListVulkan.h>
 #include <Vulkan/LLGI.GraphicsVulkan.h>
 
@@ -17,7 +18,14 @@ private:
 	std::shared_ptr<LLGI::Platform> platform;
 	std::shared_ptr<LLGI::Graphics> graphics;
 	std::shared_ptr<LLGI::SingleFrameMemoryPool> memoryPool;
-	std::shared_ptr<LLGI::CommandListPool> commandListPool;
+	struct FrameResources
+	{
+		std::shared_ptr<LLGI::CommandList> Native;
+		::Effekseer::RefPtr<EffekseerRenderer::CommandList> Effekseer;
+		bool Submitted = false;
+	};
+	std::vector<FrameResources> frames;
+	size_t nextFrame = 0;
 	LLGI::CommandList* commandList = nullptr;
 
 	::EffekseerRenderer::RendererRef efkRenderer;
@@ -64,7 +72,7 @@ public:
 
 	int GetSwapBufferCount()
 	{
-		return 3;
+		return static_cast<int>(frames.size());
 	}
 
 	bool Initialize(const char* windowTitle, Utils::Vec2I windowSize);

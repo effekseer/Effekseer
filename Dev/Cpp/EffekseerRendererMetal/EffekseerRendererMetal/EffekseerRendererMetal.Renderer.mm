@@ -155,6 +155,7 @@ void BeginCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandL
 	assert(commandList != nullptr);
 
 	auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList.Get());
+	c->ResetVertexBuffers();
 	c->GetInternal()->BeginWithPlatform(nullptr);
 }
 

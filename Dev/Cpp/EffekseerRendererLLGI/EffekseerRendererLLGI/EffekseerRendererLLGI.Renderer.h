@@ -4,6 +4,8 @@
 
 #include "EffekseerRendererLLGI.Base.h"
 #include <EffekseerRendererCommon/EffekseerRenderer.Renderer.h>
+#include <EffekseerRendererCommon/VertexBuffer.h>
+#include <stdexcept>
 
 #include "GraphicsDevice.h"
 #include <LLGI.Buffer.h>
@@ -115,6 +117,7 @@ private:
 	LLGI::CommandList* commandList_ = nullptr;
 	LLGI::SingleFrameMemoryPool* memoryPool_ = nullptr;
 	CommandListState state_ = CommandListState::Wait;
+	std::vector<std::shared_ptr<EffekseerRenderer::VertexBufferRing>> vertexBuffers_;
 
 public:
 	CommandList(LLGI::Graphics* graphics, LLGI::CommandList* commandList, LLGI::SingleFrameMemoryPool* memoryPool)
@@ -152,6 +155,37 @@ public:
 	CommandListState GetState() const
 	{
 		return state_;
+	}
+
+	// Call only when starting a new recording, after the previous GPU use has completed.
+	void ResetVertexBuffers()
+	{
+		for (auto& buffer : vertexBuffers_)
+		{
+			buffer->BeginWriteForCommandList();
+		}
+	}
+
+	std::shared_ptr<EffekseerRenderer::VertexBufferRing> GetVertexBuffer(
+		Effekseer::Backend::GraphicsDeviceRef graphicsDevice, int32_t size)
+	{
+		for (auto& buffer : vertexBuffers_)
+		{
+			if (buffer->GetSize() == size)
+			{
+				return buffer;
+			}
+		}
+
+		// Each recording owns its pages, including commands not yet submitted to the GPU.
+		auto buffer = std::make_shared<EffekseerRenderer::VertexBufferRing>(
+			graphicsDevice, size, 1, EffekseerRenderer::VertexBufferRingMode::ExpandableForCommandList);
+		if (!buffer->GetIsValid())
+		{
+			throw std::runtime_error("Failed to allocate a command list vertex buffer.");
+		}
+		vertexBuffers_.emplace_back(buffer);
+		return buffer;
 	}
 
 	void SetState(CommandListState state)

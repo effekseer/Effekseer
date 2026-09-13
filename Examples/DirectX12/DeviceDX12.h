@@ -8,9 +8,9 @@
 #include <LLGI.Compiler.h>
 #include <LLGI.Graphics.h>
 #include <LLGI.Platform.h>
-#include <Utils/LLGI.CommandListPool.h>
 #include <XAudio2.h>
 #include <d3d12.h>
+#include <vector>
 #include <wrl/client.h>
 
 #include "../Utils/Window.h"
@@ -25,7 +25,14 @@ private:
 	std::shared_ptr<LLGI::Platform> platform;
 	std::shared_ptr<LLGI::Graphics> graphics;
 	std::shared_ptr<LLGI::SingleFrameMemoryPool> memoryPool;
-	std::shared_ptr<LLGI::CommandListPool> commandListPool;
+	struct FrameResources
+	{
+		std::shared_ptr<LLGI::CommandList> Native;
+		::Effekseer::RefPtr<EffekseerRenderer::CommandList> Effekseer;
+		bool Submitted = false;
+	};
+	std::vector<FrameResources> frames;
+	size_t nextFrame = 0;
 	LLGI::CommandList* commandList = nullptr;
 
 	ComPtr<IXAudio2> xa2Device;

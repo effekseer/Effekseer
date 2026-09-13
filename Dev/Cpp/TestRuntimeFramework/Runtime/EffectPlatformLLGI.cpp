@@ -367,8 +367,8 @@ bool EffectPlatformLLGI::DoEvent()
 	glfwPollEvents();
 #endif
 
-	sfMemoryPool_->NewFrame();
 	commandList_ = LLGI::CreateSharedPtr(commandListPool_->Get(true));
+	sfMemoryPool_->NewFrame();
 
 	return true;
 }

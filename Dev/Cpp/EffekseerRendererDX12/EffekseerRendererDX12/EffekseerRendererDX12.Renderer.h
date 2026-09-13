@@ -85,6 +85,10 @@ CommandListProperty GetCommandListProperty(Effekseer::RefPtr<EffekseerRenderer::
 	@note
 	\~English	dx12CommandList can be null. In this case, it need to call ExecuteCommandList
 	\~Japanese	dx12CommandList はnullにできる。その場合、ExecuteCommandListを呼ぶ必要がある。
+	\~English	Reuse commandList only after its previous recording has finished executing on the GPU.
+	Use a separate Effekseer commandList for each pending recording, even when native command lists are different.
+	\~Japanese	commandList の再利用前に、前回記録したコマンドのGPU実行完了を待つ必要がある。
+	ネイティブのコマンドリストが異なる場合でも、未実行・実行中の記録ごとに別のEffekseerのcommandListを使用する。
 */
 void BeginCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList, ID3D12GraphicsCommandList* dx12CommandList);
 
