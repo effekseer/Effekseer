@@ -27,7 +27,9 @@
 #include <GLFW/glfw3native.h>
 
 #ifdef __linux__
+// X11 macros must not collide with Effekseer enum values in later includes.
 #undef Always
+#undef None
 #endif
 
 class LLGIWindow : public LLGI::Window
