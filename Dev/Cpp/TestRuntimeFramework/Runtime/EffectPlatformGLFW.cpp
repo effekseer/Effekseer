@@ -1,4 +1,5 @@
 #include "EffectPlatformGLFW.h"
+#include "../GLFWNativeWindow.h"
 
 #include <cstdlib>
 #include <iostream>
@@ -24,29 +25,7 @@ void GLAPIENTRY glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum seve
 
 void* EffectPlatformGLFW::GetNativePtr(int32_t index)
 {
-#ifdef _WIN32
-	if (index == 0)
-	{
-		return glfwGetWin32Window(glfwWindow_);
-	}
-
-	return (HINSTANCE)GetModuleHandle(0);
-#endif
-
-#ifdef __APPLE__
-	return glfwGetCocoaWindow(glfwWindow_);
-#endif
-
-#ifdef __linux__
-	if (index == 0)
-	{
-		return glfwGetX11Display();
-	}
-
-	return reinterpret_cast<void*>(glfwGetX11Window(glfwWindow_));
-#endif
-
-	return nullptr;
+	return GetGLFWNativeWindowPointer(glfwWindow_, index);
 }
 
 EffectPlatformGLFW::EffectPlatformGLFW(bool isOpenGLMode)

@@ -1,60 +1,17 @@
 
 #include "RenderingEnvironment.h"
+#include "../GLFWNativeWindow.h"
 
 #include <EffekseerRendererGL/EffekseerRendererGL.GLExtension.h>
 #include <OpenGLExtensions.h>
 
-#if defined(WIN32) || defined(__APPLE__) || defined(__linux__)
-
-#ifdef _WIN32
-#define GLFW_EXPOSE_NATIVE_WIN32 1
-#endif
-
-#ifdef __APPLE__
-#define GLFW_EXPOSE_NATIVE_COCOA 1
-#endif
-
-#ifdef __linux__
-#define GLFW_EXPOSE_NATIVE_X11 1
-#undef Always
-#endif
-
 #include <GLFW/glfw3.h>
-#include <GLFW/glfw3native.h>
-
-#ifdef __linux__
-#undef Always
-#endif
-
-#endif
 
 namespace GL = EffekseerRendererGL::GLExt;
 
 void* RenderingEnvironment::GetNativePtr(int32_t index)
 {
-#ifdef _WIN32
-	if (index == 0)
-	{
-		return glfwGetWin32Window(glfwWindow_);
-	}
-
-	return (HINSTANCE)GetModuleHandle(0);
-#endif
-
-#ifdef __APPLE__
-	return glfwGetCocoaWindow(glfwWindow_);
-#endif
-
-#ifdef __linux__
-	if (index == 0)
-	{
-		return glfwGetX11Display();
-	}
-
-	return reinterpret_cast<void*>(glfwGetX11Window(glfwWindow_));
-#endif
-
-	return nullptr;
+	return GetGLFWNativeWindowPointer(glfwWindow_, index);
 }
 
 RenderingEnvironment::RenderingEnvironment(bool isOpenGLMode, std::array<int32_t, 2> windowSize, const char* title)

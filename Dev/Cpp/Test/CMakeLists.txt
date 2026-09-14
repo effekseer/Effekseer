@@ -22,6 +22,7 @@ else()
       Runtime/BasicRendering.cpp
       Runtime/RenderingSmoke.cpp
       Runtime/TestPlatforms.h
+      Runtime/PlatformHeaderIsolation.cpp
       Runtime/BinaryLoading.cpp
       Runtime/EffectLoading.cpp
       Runtime/Curve.cpp

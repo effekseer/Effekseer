@@ -13,6 +13,8 @@ if(BUILD_WEBGPU_BROWSER_TEST)
   set(effekseer_test_src Runtime/EffectPlatform.h Runtime/EffectPlatform.cpp)
 else()
   set(effekseer_test_src
+      GLFWNativeWindow.h
+      GLFWNativeWindow.cpp
       RenderingEnvironment/RenderingEnvironment.h
       RenderingEnvironment/RenderingEnvironment.cpp
       RenderingEnvironment/RenderingEnvironmentGL.h
