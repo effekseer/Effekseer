@@ -28,6 +28,7 @@ else()
       Runtime/Curve.cpp
       Runtime/FCurves.cpp
       Runtime/RuntimeTest.cpp
+      Runtime/InstanceUpdateDispatcher.cpp
       Runtime/Performance.cpp
       Runtime/TextureFormats.cpp
       Runtime/ToolRuntime.cpp
