@@ -21,7 +21,7 @@
 namespace
 {
 #ifdef __EFFEKSEER_BUILD_DX12__
-void CommandListVertexBufferDX12(bool useExternalCommandList)
+void CommandListVertexBufferDX12(bool useExternalCommandList, bool sharedWrapper = false, bool sameFrame = false, int frameCount = 3)
 {
 	using Microsoft::WRL::ComPtr;
 	ComPtr<IDXGIFactory4> factory;
@@ -33,7 +33,7 @@ void CommandListVertexBufferDX12(bool useExternalCommandList)
 	D3D12_COMMAND_QUEUE_DESC queueDesc{};
 	ComPtr<ID3D12CommandQueue> queue;
 	EXPECT_TRUE(SUCCEEDED(device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&queue))));
-	auto graphicsDevice = EffekseerRendererDX12::CreateGraphicsDevice(device.Get(), queue.Get(), 3);
+	auto graphicsDevice = EffekseerRendererDX12::CreateGraphicsDevice(device.Get(), queue.Get(), frameCount);
 	DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	auto renderer = EffekseerRendererDX12::Create(graphicsDevice, &format, 1, DXGI_FORMAT_UNKNOWN, false, 16);
 	EXPECT_TRUE(renderer != nullptr);
@@ -42,9 +42,10 @@ void CommandListVertexBufferDX12(bool useExternalCommandList)
 	std::array<Effekseer::RefPtr<EffekseerRenderer::CommandList>, 2> lists;
 	std::array<std::shared_ptr<LLGI::CommandList>, 2> nativeLists;
 	std::array<std::shared_ptr<LLGI::Buffer>, 2> readbacks;
+	std::array<std::shared_ptr<LLGI::Buffer>, 2> overflowReadbacks;
 	for (size_t i = 0; i < lists.size(); i++)
 	{
-		lists[i] = EffekseerRenderer::CreateCommandList(graphicsDevice, pool);
+		lists[i] = sharedWrapper && i > 0 ? lists[0] : EffekseerRenderer::CreateCommandList(graphicsDevice, pool);
 		if (useExternalCommandList)
 		{
 			nativeLists[i] = LLGI::CreateSharedPtr(graphics->CreateCommandList(
@@ -53,14 +54,17 @@ void CommandListVertexBufferDX12(bool useExternalCommandList)
 		readbacks[i] = LLGI::CreateSharedPtr(graphics->CreateBuffer(
 			LLGI::BufferUsageType::MapRead | LLGI::BufferUsageType::CopyDst, 16));
 		EXPECT_TRUE(readbacks[i] != nullptr);
+		overflowReadbacks[i] = LLGI::CreateSharedPtr(graphics->CreateBuffer(
+			LLGI::BufferUsageType::MapRead | LLGI::BufferUsageType::CopyDst, 16));
+		EXPECT_TRUE(overflowReadbacks[i] != nullptr);
 	}
 
-	for (int round = 0; round < 3; round++)
+	for (int round = 0; round < 9; round++)
 	{
 		// Deliberately record BOTH frames before executing either, as in the report.
 		for (size_t i = 0; i < lists.size(); i++)
 		{
-			pool->NewFrame();
+			if (!sameFrame || i == 0) pool->NewFrame();
 			ID3D12GraphicsCommandList* nativeList = nullptr;
 			if (useExternalCommandList)
 			{
@@ -69,14 +73,29 @@ void CommandListVertexBufferDX12(bool useExternalCommandList)
 			}
 			EffekseerRendererDX12::BeginCommandList(lists[i], nativeList);
 			renderer->SetCommandList(lists[i]);
+			EXPECT_TRUE(renderer->BeginRendering());
 			auto ring = renderer->GetImpl()->InternalVertexBuffer;
 			std::tuple<void*, int32_t> allocation;
-			EXPECT_TRUE(ring->Allocate(16, 1, allocation));
+			if (sameFrame && i > 0) ring->RenewBuffer();
+			EXPECT_TRUE(ring->Allocate(ring->GetSize(), 1, allocation));
 			EXPECT_TRUE(std::get<1>(allocation) == 0);
 			memset(std::get<0>(allocation), static_cast<int>(i) + 1 + round * 2, 16);
 			auto vertexBuffer = ring->Upload().DownCast<EffekseerRendererLLGI::Backend::VertexBuffer>();
 			lists[i].DownCast<EffekseerRendererLLGI::CommandList>()->GetInternal()->CopyBuffer(
 				vertexBuffer->GetBuffer(), readbacks[i].get());
+			// Rebinding and another render pass must retain the offset in this frame.
+			EXPECT_TRUE(renderer->EndRendering());
+			renderer->SetCommandList(lists[i]);
+			EXPECT_TRUE(renderer->BeginRendering());
+			EXPECT_TRUE(renderer->GetImpl()->InternalVertexBuffer == ring);
+			EXPECT_TRUE(!ring->CanAllocate(1, 1));
+			ring->RenewBuffer();
+			EXPECT_TRUE(ring->Allocate(16, 1, allocation));
+			memset(std::get<0>(allocation), static_cast<int>(i) + 101 + round * 2, 16);
+			auto overflow = ring->Upload().DownCast<EffekseerRendererLLGI::Backend::VertexBuffer>();
+			lists[i].DownCast<EffekseerRendererLLGI::CommandList>()->GetInternal()->CopyBuffer(
+				overflow->GetBuffer(), overflowReadbacks[i].get());
+			EXPECT_TRUE(renderer->EndRendering());
 			renderer->SetCommandList(nullptr);
 			EffekseerRendererDX12::EndCommandList(lists[i]);
 			if (useExternalCommandList)
@@ -108,6 +127,13 @@ void CommandListVertexBufferDX12(bool useExternalCommandList)
 				EXPECT_TRUE(data[j] == static_cast<uint8_t>(i + 1 + round * 2));
 			}
 			readbacks[i]->Unlock();
+			data = static_cast<const uint8_t*>(overflowReadbacks[i]->Lock());
+			EXPECT_TRUE(data != nullptr);
+			for (int j = 0; j < 16; j++)
+			{
+				EXPECT_TRUE(data[j] == static_cast<uint8_t>(i + 101 + round * 2));
+			}
+			overflowReadbacks[i]->Unlock();
 		}
 	}
 }
@@ -116,6 +142,16 @@ TestRegister registerCommandListVertexBufferDX12(
 	"Runtime.CommandListVertexBufferDX12", [] { CommandListVertexBufferDX12(false); });
 TestRegister registerCommandListVertexBufferDX12External(
 	"Runtime.CommandListVertexBufferDX12.External", [] { CommandListVertexBufferDX12(true); });
+
+TestRegister registerCommandListVertexBufferDX12Shared(
+	"Runtime.CommandListVertexBufferDX12.Shared", [] { CommandListVertexBufferDX12(true, true); });
+TestRegister registerCommandListVertexBufferDX12SameFrame(
+	"Runtime.CommandListVertexBufferDX12.SameFrame", [] { CommandListVertexBufferDX12(true, true, true); });
+
+TestRegister registerCommandListVertexBufferDX12TwoFrames(
+	"Runtime.CommandListVertexBufferDX12.TwoFrames", [] { CommandListVertexBufferDX12(true, true, false, 2); });
+TestRegister registerCommandListVertexBufferDX12FourFrames(
+	"Runtime.CommandListVertexBufferDX12.FourFrames", [] { CommandListVertexBufferDX12(true, true, false, 4); });
 
 void PlatformFramesDX12()
 {

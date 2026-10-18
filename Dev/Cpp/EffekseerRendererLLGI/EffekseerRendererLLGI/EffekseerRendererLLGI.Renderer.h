@@ -64,6 +64,7 @@ public:
 class SingleFrameMemoryPool : public ::EffekseerRenderer::SingleFrameMemoryPool, public ::Effekseer::ReferenceObject
 {
 	LLGI::SingleFrameMemoryPool* memoryPool_ = nullptr;
+	uint64_t frameNumber_ = 0;
 
 public:
 	SingleFrameMemoryPool(LLGI::SingleFrameMemoryPool* memoryPool)
@@ -80,7 +81,10 @@ public:
 	void NewFrame() override
 	{
 		memoryPool_->NewFrame();
+		frameNumber_++;
 	}
+
+	uint64_t GetFrameNumber() const { return frameNumber_; }
 
 	LLGI::SingleFrameMemoryPool* GetInternal()
 	{
@@ -115,6 +119,7 @@ private:
 	LLGI::CommandList* commandList_ = nullptr;
 	LLGI::SingleFrameMemoryPool* memoryPool_ = nullptr;
 	CommandListState state_ = CommandListState::Wait;
+	Effekseer::RefPtr<SingleFrameMemoryPool> framePool_;
 
 public:
 	CommandList(LLGI::Graphics* graphics, LLGI::CommandList* commandList, LLGI::SingleFrameMemoryPool* memoryPool)
@@ -133,6 +138,9 @@ public:
 		ES_SAFE_RELEASE(commandList_);
 		ES_SAFE_RELEASE(memoryPool_);
 	}
+
+	void SetFramePool(Effekseer::RefPtr<SingleFrameMemoryPool> pool) { framePool_ = pool; }
+	SingleFrameMemoryPool* GetFramePool() const { return framePool_.Get(); }
 
 	LLGI::Graphics* GetGraphics()
 	{

@@ -326,6 +326,16 @@ void RendererImplemented::OnResetDevice()
 {
 }
 
+std::shared_ptr<EffekseerRenderer::VertexBuffer> RendererImplemented::CreateVertexBuffer(int32_t ringCount)
+{
+	auto buffer = std::make_shared<EffekseerRenderer::VertexBufferRing>(
+		graphicsDevice_,
+		EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * squareMaxCount_ * 4,
+		ringCount,
+		EffekseerRenderer::VertexBufferRingMode::ExpandableForCommandList);
+	return buffer->GetIsValid() ? buffer : nullptr;
+}
+
 bool RendererImplemented::Initialize(LLGI::Graphics* graphics, LLGI::RenderPassPipelineStateKey key, bool isReversedDepth)
 {
 
@@ -347,19 +357,12 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 	LLGI::SetLogger([](LLGI::LogType type, const std::string& message)
 					{ std::cout << message << std::endl; });
 
-	// Generate vertex buffer
+	GetImpl()->InternalVertexBuffer = CreateVertexBuffer(3);
+	if (!GetImpl()->InternalVertexBuffer)
 	{
-		GetImpl()->InternalVertexBuffer = std::make_shared<EffekseerRenderer::VertexBufferRing>(
-			graphicsDevice_,
-			EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * squareMaxCount_ * 4,
-			3,
-			EffekseerRenderer::VertexBufferRingMode::ExpandableForCommandList);
-		if (!GetImpl()->InternalVertexBuffer->GetIsValid())
-		{
-			GetImpl()->InternalVertexBuffer = nullptr;
-			return false;
-		}
+		return false;
 	}
+	vertexBuffers_.push_back(GetImpl()->InternalVertexBuffer);
 
 	if (!EffekseerRenderer::GenerateIndexDataStride<int16_t>(graphicsDevice_, squareMaxCount_, indexBuffer_, indexBufferForWireframe_))
 	{
@@ -531,6 +534,39 @@ bool RendererImplemented::BeginRendering()
 		return false;
 	}
 
+	// Vertex pages follow the memory-pool frames, independently of command-list wrappers.
+	// As with the pool's constants, the caller must finish GPU use before reusing a slot.
+	auto pool = commandList_.DownCast<CommandList>()->GetFramePool();
+	if (pool)
+	{
+		const auto frame = pool->GetFrameNumber();
+		const auto count = pool->GetInternal()->GetSwapBufferCount();
+		if (frame == 0 || count <= 0)
+		{
+			return false;
+		}
+		vertexBuffers_.resize(count);
+		auto& buffer = vertexBuffers_[(frame - 1) % count];
+		if (!buffer)
+		{
+			buffer = CreateVertexBuffer(1);
+			if (!buffer)
+			{
+				return false;
+			}
+		}
+		GetImpl()->InternalVertexBuffer = buffer;
+		if (vertexBufferFrame_ != frame)
+		{
+			buffer->BeginWriteForCommandList();
+			vertexBufferFrame_ = frame;
+		}
+	}
+	else
+	{
+		GetImpl()->InternalVertexBuffer->BeginWriteForCommandList();
+	}
+
 	impl->CalculateCameraProjectionMatrix();
 
 	// initialize states
@@ -563,11 +599,6 @@ bool RendererImplemented::EndRendering()
 void RendererImplemented::SetCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList)
 {
 	commandList_ = commandList;
-
-	if (commandList_ != nullptr && GetImpl()->InternalVertexBuffer != nullptr)
-	{
-		GetImpl()->InternalVertexBuffer->BeginWriteForCommandList();
-	}
 
 	auto device = GetGraphicsDevice().DownCast<Backend::GraphicsDevice>();
 	auto cl = commandList_.DownCast<CommandList>();
