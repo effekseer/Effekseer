@@ -37,11 +37,7 @@ bool DeviceDX12::Initialize(const char* windowTitle, Utils::Vec2I windowSize)
 	}
 
 	memoryPool = LLGI::CreateSharedPtr(graphics->CreateSingleFrameMemoryPool(1024 * 1024, 128));
-	frames.resize(platform->GetMaxFrameCount());
-	for (auto& frame : frames)
-	{
-		frame.Native = LLGI::CreateSharedPtr(graphics->CreateCommandList(memoryPool.get()));
-	}
+	commandListPool = std::make_shared<LLGI::CommandListPool>(graphics.get(), memoryPool.get(), 3);
 
 	// Initialize COM
 	// Initialize XAudio
@@ -54,11 +50,6 @@ bool DeviceDX12::Initialize(const char* windowTitle, Utils::Vec2I windowSize)
 
 void DeviceDX12::Terminate()
 {
-	if (graphics)
-	{
-		graphics->WaitFinish();
-	}
-
 	// Release XAudio2
 	// XAudio2の解放
 	if (xa2MasterVoice != nullptr)
@@ -69,12 +60,10 @@ void DeviceDX12::Terminate()
 	xa2Device.Detach();
 
 	efkCommandList.Reset();
-	frames.clear();
-	commandList = nullptr;
-	nextFrame = 0;
 	efkMemoryPool.Reset();
 	efkRenderer.Reset();
 
+	commandListPool.reset();
 	memoryPool.reset();
 	graphics.reset();
 	platform.reset();
@@ -90,16 +79,9 @@ bool DeviceDX12::NewFrame()
 	if (!platform->NewFrame())
 		return false;
 
-	// Both memory pools advance in the same order as these frame slots.
-	// Wait only for the slot being reused, not for other in-flight frames.
-	auto& frame = frames[nextFrame];
-	if (frame.Submitted)
-	{
-		frame.Native->WaitUntilCompleted();
-	}
-	commandList = frame.Native.get();
-	efkCommandList = frame.Effekseer;
 	memoryPool->NewFrame();
+
+	commandList = commandListPool->Get();
 
 	// Call on starting of a frame
 	// フレームの開始時に呼ぶ
@@ -153,10 +135,8 @@ void DeviceDX12::PresentDevice()
 	commandList->End();
 
 	graphics->Execute(commandList);
-	frames[nextFrame].Submitted = true;
 
 	platform->Present();
-	nextFrame = (nextFrame + 1) % frames.size();
 }
 
 void DeviceDX12::SetupEffekseerModules(::Effekseer::ManagerRef efkManager, bool usingProfiler)
@@ -164,7 +144,7 @@ void DeviceDX12::SetupEffekseerModules(::Effekseer::ManagerRef efkManager, bool 
 	// Create a  graphics device
 	// 描画デバイスの作成
 	::Effekseer::Backend::GraphicsDeviceRef graphicsDevice;
-	graphicsDevice = ::EffekseerRendererDX12::CreateGraphicsDevice(GetID3D12Device(), GetCommandQueue(), static_cast<int32_t>(frames.size()));
+	graphicsDevice = ::EffekseerRendererDX12::CreateGraphicsDevice(GetID3D12Device(), GetCommandQueue(), 3);
 
 	// Create a renderer of effects
 	// エフェクトのレンダラーの作成
@@ -179,11 +159,9 @@ void DeviceDX12::SetupEffekseerModules(::Effekseer::ManagerRef efkManager, bool 
 	// メモリプールの作成
 	efkMemoryPool = EffekseerRenderer::CreateSingleFrameMemoryPool(efkRenderer->GetGraphicsDevice());
 
-	// Pair vertex buffers and descriptors with the native command list for each slot.
-	for (auto& frame : frames)
-	{
-		frame.Effekseer = EffekseerRenderer::CreateCommandList(efkRenderer->GetGraphicsDevice(), efkMemoryPool);
-	}
+	// Create a command list
+	// コマンドリストの作成
+	efkCommandList = EffekseerRenderer::CreateCommandList(efkRenderer->GetGraphicsDevice(), efkMemoryPool);
 
 	// Sprcify rendering modules
 	// 描画モジュールの設定

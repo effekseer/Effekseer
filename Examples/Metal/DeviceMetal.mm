@@ -83,12 +83,7 @@ bool DeviceMetal::Initialize(const char* windowTitle, Utils::Vec2I windowSize)
 	}
 
 	memoryPool = LLGI::CreateSharedPtr(graphics->CreateSingleFrameMemoryPool(1024 * 1024, 128));
-	frames.resize(3);
-	for (auto& frame : frames)
-	{
-		frame.Native = LLGI::CreateSharedPtr(graphics->CreateCommandList(memoryPool.get()));
-	}
-
+	commandListPool = std::make_shared<LLGI::CommandListPool>(graphics.get(), memoryPool.get(), 3);
 
 	return true;
 }
@@ -104,12 +99,10 @@ void DeviceMetal::Terminate()
 	}
 
 	efkCommandList.Reset();
-	frames.clear();
-	commandList = nullptr;
-	nextFrame = 0;
 	efkMemoryPool.Reset();
 	efkRenderer.Reset();
 
+	commandListPool.reset();
 	memoryPool.reset();
 	graphics.reset();
 	platform.reset();
@@ -138,16 +131,9 @@ bool DeviceMetal::NewFrame()
 		return false;
 	}
 
-	// Both memory pools advance in the same order as these frame slots.
-	// Wait only for the slot being reused, not for other in-flight frames.
-	auto& frame = frames[nextFrame];
-	if (frame.Submitted)
-	{
-		frame.Native->WaitUntilCompleted();
-	}
-	commandList = frame.Native.get();
-	efkCommandList = frame.Effekseer;
 	memoryPool->NewFrame();
+
+	commandList = commandListPool->Get();
 
 	// Call on starting of a frame
 	// フレームの開始時に呼ぶ
@@ -198,10 +184,8 @@ void DeviceMetal::PresentDevice()
 	commandList->End();
 
 	graphics->Execute(commandList);
-	frames[nextFrame].Submitted = true;
 
 	platform->Present();
-	nextFrame = (nextFrame + 1) % frames.size();
 }
 
 void DeviceMetal::SetupEffekseerModules(::Effekseer::ManagerRef efkManager, bool usingProfiler)
@@ -219,11 +203,9 @@ void DeviceMetal::SetupEffekseerModules(::Effekseer::ManagerRef efkManager, bool
 	// メモリプールの作成
 	efkMemoryPool = EffekseerRenderer::CreateSingleFrameMemoryPool(efkRenderer->GetGraphicsDevice());
 
-	// Pair vertex buffers and descriptors with the native command list for each slot.
-	for (auto& frame : frames)
-	{
-		frame.Effekseer = EffekseerRenderer::CreateCommandList(efkRenderer->GetGraphicsDevice(), efkMemoryPool);
-	}
+	// Create a command list
+	// コマンドリストの作成
+	efkCommandList = EffekseerRenderer::CreateCommandList(efkRenderer->GetGraphicsDevice(), efkMemoryPool);
 
 	// Sprcify rendering modules
 	// 描画モジュールの設定

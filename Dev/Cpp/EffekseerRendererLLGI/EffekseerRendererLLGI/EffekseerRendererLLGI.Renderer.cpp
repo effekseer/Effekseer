@@ -347,7 +347,19 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 	LLGI::SetLogger([](LLGI::LogType type, const std::string& message)
 					{ std::cout << message << std::endl; });
 
-	// Dynamic vertex buffers are allocated by the command list on first use.
+	// Generate vertex buffer
+	{
+		GetImpl()->InternalVertexBuffer = std::make_shared<EffekseerRenderer::VertexBufferRing>(
+			graphicsDevice_,
+			EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * squareMaxCount_ * 4,
+			3,
+			EffekseerRenderer::VertexBufferRingMode::ExpandableForCommandList);
+		if (!GetImpl()->InternalVertexBuffer->GetIsValid())
+		{
+			GetImpl()->InternalVertexBuffer = nullptr;
+			return false;
+		}
+	}
 
 	if (!EffekseerRenderer::GenerateIndexDataStride<int16_t>(graphicsDevice_, squareMaxCount_, indexBuffer_, indexBufferForWireframe_))
 	{
@@ -552,10 +564,13 @@ void RendererImplemented::SetCommandList(Effekseer::RefPtr<EffekseerRenderer::Co
 {
 	commandList_ = commandList;
 
+	if (commandList_ != nullptr && GetImpl()->InternalVertexBuffer != nullptr)
+	{
+		GetImpl()->InternalVertexBuffer->BeginWriteForCommandList();
+	}
+
 	auto device = GetGraphicsDevice().DownCast<Backend::GraphicsDevice>();
 	auto cl = commandList_.DownCast<CommandList>();
-	GetImpl()->InternalVertexBuffer = cl ? cl->GetVertexBuffer(
-		graphicsDevice_, EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * squareMaxCount_ * 4) : nullptr;
 	device->SetCommandList((cl) ? cl->GetInternal() : nullptr);
 }
 

@@ -391,8 +391,8 @@ bool EffectPlatformLLGI::DoEvent()
 	glfwPollEvents();
 #endif
 
-	commandList_ = LLGI::CreateSharedPtr(commandListPool_->Get(true));
 	sfMemoryPool_->NewFrame();
+	commandList_ = LLGI::CreateSharedPtr(commandListPool_->Get(true));
 
 	return true;
 }
@@ -403,7 +403,6 @@ void EffectPlatformLLGI::PreDestroyDevice()
 
 	// Vulkan requires to release before destroy devices
 	commandListEfk_.Reset();
-	commandListsEfk_.clear();
 	sfMemoryPoolEfk_.Reset();
 }
 
@@ -455,34 +454,22 @@ void EffectPlatformLLGI::DestroyDevice()
 	commandList_.reset();
 }
 
-void EffectPlatformLLGI::BindCommandList(bool newRecording)
+void EffectPlatformLLGI::BindCommandList()
 {
-	auto& cached = commandListsEfk_[commandList_.get()];
-	if (cached == nullptr)
-	{
-		auto memoryPool = sfMemoryPoolEfk_.DownCast<EffekseerRendererLLGI::SingleFrameMemoryPool>();
-		cached = Effekseer::MakeRefPtr<EffekseerRendererLLGI::CommandList>(graphics_, commandList_.get(), memoryPool->GetInternal());
-	}
-	commandListEfk_ = cached;
-	if (newRecording)
-	{
-		// DoEvent waits before reusing the native slot. Reset once per recording,
-		// preserving allocations when switching from compute to rendering.
-		commandListEfk_.DownCast<EffekseerRendererLLGI::CommandList>()->ResetVertexBuffers();
-	}
+	auto memoryPool = sfMemoryPoolEfk_.DownCast<EffekseerRendererLLGI::SingleFrameMemoryPool>();
+	commandListEfk_ = Effekseer::MakeRefPtr<EffekseerRendererLLGI::CommandList>(graphics_, commandList_.get(), memoryPool->GetInternal());
 	GetRenderer()->SetCommandList(commandListEfk_);
 }
 
 void EffectPlatformLLGI::BeginCompute()
 {
-	const bool newRecording = !isCommandListBegun_;
 	if (!isCommandListBegun_)
 	{
 		commandList_->Begin();
 		sfMemoryPoolEfk_->NewFrame();
 		isCommandListBegun_ = true;
 	}
-	BindCommandList(newRecording);
+	BindCommandList();
 	GetRenderer()->GetGraphicsDevice()->BeginComputePass();
 }
 
@@ -495,7 +482,6 @@ void EffectPlatformLLGI::EndCompute()
 
 void EffectPlatformLLGI::BeginRendering()
 {
-	const bool newRecording = !isCommandListBegun_;
 	LLGI::Color8 color;
 	color.R = usesGpuGroundDepth_ ? 22 : 64;
 	color.G = usesGpuGroundDepth_ ? 34 : 64;
@@ -548,7 +534,7 @@ void EffectPlatformLLGI::BeginRendering()
 		commandList_->Draw(2);
 	}
 	GetRenderer().DownCast<EffekseerRendererLLGI::RendererImplemented>()->ChangeRenderPassPipelineState(renderPass_->GetKey());
-	BindCommandList(newRecording);
+	BindCommandList();
 }
 
 void EffectPlatformLLGI::CopyBackgroundTexture(LLGI::Texture* destination)

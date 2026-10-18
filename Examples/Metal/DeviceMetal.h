@@ -1,7 +1,5 @@
 #pragma once
 
-#include <vector>
-
 #include "../Utils/Input.h"
 #include "../Utils/Window.h"
 #include <EffekseerRendererMetal.h>
@@ -10,6 +8,7 @@
 #include <LLGI.Platform.h>
 #include <Metal/LLGI.CommandListMetal.h>
 #include <Metal/LLGI.GraphicsMetal.h>
+#include <Utils/LLGI.CommandListPool.h>
 
 class DeviceMetal
 {
@@ -18,14 +17,7 @@ private:
 	std::shared_ptr<LLGI::Platform> platform;
 	std::shared_ptr<LLGI::Graphics> graphics;
 	std::shared_ptr<LLGI::SingleFrameMemoryPool> memoryPool;
-	struct FrameResources
-	{
-		std::shared_ptr<LLGI::CommandList> Native;
-		::Effekseer::RefPtr<EffekseerRenderer::CommandList> Effekseer;
-		bool Submitted = false;
-	};
-	std::vector<FrameResources> frames;
-	size_t nextFrame = 0;
+	std::shared_ptr<LLGI::CommandListPool> commandListPool;
 	LLGI::CommandList* commandList = nullptr;
 
 	::EffekseerRenderer::RendererRef efkRenderer;
