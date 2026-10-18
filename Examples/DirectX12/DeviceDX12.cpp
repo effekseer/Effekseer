@@ -50,6 +50,11 @@ bool DeviceDX12::Initialize(const char* windowTitle, Utils::Vec2I windowSize)
 
 void DeviceDX12::Terminate()
 {
+	if (commandListPool)
+	{
+		commandListPool->WaitUntilCompleted();
+	}
+
 	// Release XAudio2
 	// XAudio2の解放
 	if (xa2MasterVoice != nullptr)

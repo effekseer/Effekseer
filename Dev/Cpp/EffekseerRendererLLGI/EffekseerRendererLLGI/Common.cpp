@@ -36,8 +36,16 @@ Effekseer::RefPtr<EffekseerRenderer::CommandList> CreateCommandList(::Effekseer:
 	auto g = static_cast<LLGI::Graphics*>(gd->GetGraphics());
 	auto mp = static_cast<::EffekseerRendererLLGI::SingleFrameMemoryPool*>(memoryPool.Get());
 	auto commandList = g->CreateCommandList(mp->GetInternal());
+	if (!commandList)
+	{
+		return nullptr;
+	}
 	auto ret = Effekseer::MakeRefPtr<EffekseerRendererLLGI::CommandList>(g, commandList, mp->GetInternal());
 	ES_SAFE_RELEASE(commandList);
+	if (!ret->Initialize(mp->GetInternal()->GetSwapBufferCount()))
+	{
+		return nullptr;
+	}
 	return ret;
 }
 

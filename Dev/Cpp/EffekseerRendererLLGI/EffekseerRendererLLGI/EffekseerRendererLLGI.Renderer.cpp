@@ -347,20 +347,6 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 	LLGI::SetLogger([](LLGI::LogType type, const std::string& message)
 					{ std::cout << message << std::endl; });
 
-	// Generate vertex buffer
-	{
-		GetImpl()->InternalVertexBuffer = std::make_shared<EffekseerRenderer::VertexBufferRing>(
-			graphicsDevice_,
-			EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * squareMaxCount_ * 4,
-			3,
-			EffekseerRenderer::VertexBufferRingMode::ExpandableForCommandList);
-		if (!GetImpl()->InternalVertexBuffer->GetIsValid())
-		{
-			GetImpl()->InternalVertexBuffer = nullptr;
-			return false;
-		}
-	}
-
 	if (!EffekseerRenderer::GenerateIndexDataStride<int16_t>(graphicsDevice_, squareMaxCount_, indexBuffer_, indexBufferForWireframe_))
 	{
 		return false;
@@ -531,6 +517,13 @@ bool RendererImplemented::BeginRendering()
 		return false;
 	}
 
+	GetImpl()->InternalVertexBuffer = commandList_.DownCast<CommandList>()->GetVertexBuffer(
+		graphicsDevice_, EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * squareMaxCount_ * 4);
+	if (!GetImpl()->InternalVertexBuffer)
+	{
+		return false;
+	}
+
 	impl->CalculateCameraProjectionMatrix();
 
 	// initialize states
@@ -563,11 +556,6 @@ bool RendererImplemented::EndRendering()
 void RendererImplemented::SetCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList)
 {
 	commandList_ = commandList;
-
-	if (commandList_ != nullptr && GetImpl()->InternalVertexBuffer != nullptr)
-	{
-		GetImpl()->InternalVertexBuffer->BeginWriteForCommandList();
-	}
 
 	auto device = GetGraphicsDevice().DownCast<Backend::GraphicsDevice>();
 	auto cl = commandList_.DownCast<CommandList>();

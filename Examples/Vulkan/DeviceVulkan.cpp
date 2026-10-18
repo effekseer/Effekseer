@@ -42,6 +42,11 @@ bool DeviceVulkan::Initialize(const char* windowTitle, Utils::Vec2I windowSize)
 
 void DeviceVulkan::Terminate()
 {
+	if (commandListPool)
+	{
+		commandListPool->WaitUntilCompleted();
+	}
+
 	// Release Vulkan
 	// Vulkanの解放
 
