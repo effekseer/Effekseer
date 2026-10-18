@@ -40,6 +40,13 @@ namespace EffekseerRendererMetal
 
 Effekseer::Backend::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, id<MTLTexture> texture);
 
+/**
+ * Dynamic vertex buffers are retained per memory-pool frame.
+ * Call the memory pool's NewFrame once per frame. Before reusing a pool slot,
+ * submit all recordings in that slot and wait for their GPU completion.
+ * Native command-list and descriptor lifetimes remain the caller's responsibility.
+ * EndCommandList finishes recording, not GPU execution.
+ */
 void BeginCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList);
 
 void EndCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList);

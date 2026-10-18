@@ -85,10 +85,15 @@ CommandListProperty GetCommandListProperty(Effekseer::RefPtr<EffekseerRenderer::
 	@note
 	\~English	dx12CommandList can be null. In this case, it need to call ExecuteCommandList
 	\~Japanese	dx12CommandList はnullにできる。その場合、ExecuteCommandListを呼ぶ必要がある。
-	\~English	Reuse commandList only after its previous recording has finished executing on the GPU.
-	Use a separate Effekseer commandList for each pending recording, even when native command lists are different.
-	\~Japanese	commandList の再利用前に、前回記録したコマンドのGPU実行完了を待つ必要がある。
-	ネイティブのコマンドリストが異なる場合でも、未実行・実行中の記録ごとに別のEffekseerのcommandListを使用する。
+	\~English	For external commands, call the memory pool's NewFrame once per frame.
+	Before NewFrame reuses a slot (after swapBufferCount frames), submit and wait for all recordings in that slot.
+	Dynamic vertex buffers follow the memory-pool frame lifetime. Native command lists and descriptors are unchanged.
+	EndCommandList does not mean GPU completion.
+	For internal commands (dx12CommandList is null), submit and wait before reusing commandList.
+	\~Japanese	外部コマンド使用時はフレームごとにメモリプールのNewFrameを呼ぶ。
+	swapBufferCountフレーム後に同じ枠を再利用するNewFrameの前に、その枠の全記録を送信しGPU完了を待つ。
+	Effekseer側のcommandListは共用できる。EndCommandListはGPU完了を意味しない。
+	dx12CommandListがnullの場合は、commandListの再利用前に送信しGPU完了を待つ。
 */
 void BeginCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList, ID3D12GraphicsCommandList* dx12CommandList);
 

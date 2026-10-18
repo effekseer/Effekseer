@@ -1,4 +1,4 @@
-﻿
+
 #ifndef __EFFEKSEERRENDERER_VULKAN_RENDERER_H__
 #define __EFFEKSEERRENDERER_VULKAN_RENDERER_H__
 
@@ -47,6 +47,13 @@ Create(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, RenderPassInforma
 
 Effekseer::Backend::TextureRef CreateTexture(::Effekseer::Backend::GraphicsDeviceRef graphicsDevice, const VulkanImageInfo& info);
 
+/**
+ * Dynamic vertex buffers are retained per memory-pool frame.
+ * Call the memory pool's NewFrame once per frame. Before reusing a pool slot,
+ * submit all recordings in that slot and wait for their GPU completion.
+ * Native command-list and descriptor lifetimes remain the caller's responsibility.
+ * EndCommandList finishes recording, not GPU execution.
+ */
 void BeginCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList, VkCommandBuffer nativeCommandList);
 
 void EndCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList);

@@ -39,6 +39,13 @@ Create(wgpu::Device device,
 	   int32_t squareMaxCount,
 	   bool isPremultipliedAlphaEnabled = false);
 
+/**
+ * Dynamic vertex buffers are retained per memory-pool frame.
+ * Call NewFrame once per frame, and submit every recording before the next NewFrame.
+ * Call ExecuteCommandList after EndCommandList and before the next BeginCommandList.
+ * WebGPU queue ordering protects submitted buffers from subsequent writes;
+ * unsubmitted command buffers are not protected by queue ordering.
+ */
 void BeginCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList);
 
 void EndCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList);

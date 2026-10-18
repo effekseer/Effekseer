@@ -66,6 +66,7 @@ public:
 class SingleFrameMemoryPool : public ::EffekseerRenderer::SingleFrameMemoryPool, public ::Effekseer::ReferenceObject
 {
 	LLGI::SingleFrameMemoryPool* memoryPool_ = nullptr;
+	uint64_t frameNumber_ = 0;
 
 public:
 	SingleFrameMemoryPool(LLGI::SingleFrameMemoryPool* memoryPool)
@@ -82,7 +83,10 @@ public:
 	void NewFrame() override
 	{
 		memoryPool_->NewFrame();
+		++frameNumber_;
 	}
+
+	uint64_t GetFrameNumber() const { return frameNumber_; }
 
 	LLGI::SingleFrameMemoryPool* GetInternal()
 	{
@@ -118,6 +122,9 @@ private:
 	LLGI::SingleFrameMemoryPool* memoryPool_ = nullptr;
 	CommandListState state_ = CommandListState::Wait;
 	std::vector<std::shared_ptr<EffekseerRenderer::VertexBufferRing>> vertexBuffers_;
+	Effekseer::RefPtr<SingleFrameMemoryPool> framePool_;
+	std::vector<std::vector<std::shared_ptr<EffekseerRenderer::VertexBufferRing>>> frameVertexBuffers_;
+	uint64_t vertexBufferFrame_ = 0;
 
 public:
 	CommandList(LLGI::Graphics* graphics, LLGI::CommandList* commandList, LLGI::SingleFrameMemoryPool* memoryPool)
@@ -147,6 +154,8 @@ public:
 		return commandList_;
 	}
 
+	void SetFramePool(Effekseer::RefPtr<SingleFrameMemoryPool> pool) { framePool_ = pool; }
+
 	LLGI::SingleFrameMemoryPool* GetMemoryPool()
 	{
 		return memoryPool_;
@@ -160,6 +169,8 @@ public:
 	// Call only when starting a new recording, after the previous GPU use has completed.
 	void ResetVertexBuffers()
 	{
+		// Pooled vertex pages are reset only when their frame slot is reused.
+		if (framePool_) return;
 		for (auto& buffer : vertexBuffers_)
 		{
 			buffer->BeginWriteForCommandList();
@@ -169,7 +180,23 @@ public:
 	std::shared_ptr<EffekseerRenderer::VertexBufferRing> GetVertexBuffer(
 		Effekseer::Backend::GraphicsDeviceRef graphicsDevice, int32_t size)
 	{
-		for (auto& buffer : vertexBuffers_)
+		auto* buffers = &vertexBuffers_;
+		if (framePool_)
+		{
+			const auto frame = framePool_->GetFrameNumber();
+			if (frame == 0)
+			{
+				throw std::runtime_error("Call memoryPool->NewFrame() before writing vertices.");
+			}
+			frameVertexBuffers_.resize(memoryPool_->GetSwapBufferCount());
+			buffers = &frameVertexBuffers_[(frame - 1) % frameVertexBuffers_.size()];
+			if (vertexBufferFrame_ != frame)
+			{
+				for (auto& buffer : *buffers) buffer->BeginWriteForCommandList();
+				vertexBufferFrame_ = frame;
+			}
+		}
+		for (auto& buffer : *buffers)
 		{
 			if (buffer->GetSize() == size)
 			{
@@ -177,14 +204,14 @@ public:
 			}
 		}
 
-		// Each recording owns its pages, including commands not yet submitted to the GPU.
+		// Grow within a frame instead of overwriting pages used by earlier draws.
 		auto buffer = std::make_shared<EffekseerRenderer::VertexBufferRing>(
 			graphicsDevice, size, 1, EffekseerRenderer::VertexBufferRingMode::ExpandableForCommandList);
 		if (!buffer->GetIsValid())
 		{
 			throw std::runtime_error("Failed to allocate a command list vertex buffer.");
 		}
-		vertexBuffers_.emplace_back(buffer);
+		buffers->emplace_back(buffer);
 		return buffer;
 	}
 

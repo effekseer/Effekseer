@@ -4,6 +4,7 @@
 #include <LLGI.Platform.h>
 #include <array>
 #include <cstring>
+#include <unordered_map>
 
 namespace
 {
@@ -134,7 +135,7 @@ public:
 	}
 };
 
-void CommandListVertexBufferGPU(LLGI::DeviceType deviceType)
+void CommandListVertexBufferGPU(LLGI::DeviceType deviceType, bool shareWrapper = false, bool sameFrame = false)
 {
 	auto window = std::unique_ptr<LLGI::Window>(LLGI::CreateWindow("Command list vertex buffers", {64, 64}));
 	EXPECT_TRUE(window != nullptr);
@@ -153,9 +154,12 @@ void CommandListVertexBufferGPU(LLGI::DeviceType deviceType)
 		std::shared_ptr<LLGI::CommandList> Native;
 		Effekseer::RefPtr<EffekseerRendererLLGI::CommandList> CommandList;
 		std::array<std::shared_ptr<LLGI::Buffer>, 2> Readbacks;
-		std::array<Effekseer::Backend::VertexBufferRef, 2> Pages;
 	};
-	std::array<Frame, 3> frames;
+	auto framePool = Effekseer::MakeRefPtr<EffekseerRendererLLGI::SingleFrameMemoryPool>(pool.get());
+	auto shared = Effekseer::MakeRefPtr<EffekseerRendererLLGI::CommandList>(graphics.get(), nullptr, pool.get());
+	shared->SetFramePool(framePool);
+	std::vector<Frame> frames(shareWrapper && !sameFrame ? pool->GetSwapBufferCount() : 3);
+	std::unordered_map<EffekseerRenderer::VertexBufferRing*, std::vector<Effekseer::Backend::VertexBufferRef>> savedPages;
 	for (auto& frame : frames)
 	{
 		frame.Native = LLGI::CreateSharedPtr(graphics->CreateCommandList(pool.get()));
@@ -167,20 +171,28 @@ void CommandListVertexBufferGPU(LLGI::DeviceType deviceType)
 			EXPECT_TRUE(readback != nullptr);
 		}
 	}
-	for (int round = 0; round < 3; round++)
+	for (int round = 0; round < 6; round++)
 	{
 		// Record all frames before submitting any, including overflow pages and
 		// a second binding within each recording. Each half has distinct bytes.
 		for (size_t i = 0; i < frames.size(); i++)
 		{
 			auto& frame = frames[i];
-			pool->NewFrame();
+			if (shareWrapper)
+			{
+				if (!sameFrame || i == 0) framePool->NewFrame();
+				frame.CommandList = shared;
+			}
+			else
+			{
+				pool->NewFrame();
+				frame.CommandList->ResetVertexBuffers();
+			}
 			frame.Native->Begin();
-			frame.CommandList->ResetVertexBuffers();
 			auto ring = frame.CommandList->GetVertexBuffer(device, 16);
 			for (size_t page = 0; page < frame.Readbacks.size(); page++)
 			{
-				if (page > 0)
+				if (!ring->CanAllocate(16, 1))
 				{
 					EXPECT_TRUE(!ring->CanAllocate(1, 1));
 					ring->RenewBuffer();
@@ -195,13 +207,16 @@ void CommandListVertexBufferGPU(LLGI::DeviceType deviceType)
 					memset(std::get<0>(allocation), 1 + round * 12 + i * 4 + page * 2 + half, 8);
 					uploaded = ring->Upload();
 				}
-				if (round == 0)
+				auto& pages = savedPages[ring.get()];
+				pages.resize(frames.size() * 2);
+				auto& saved = pages[shareWrapper && sameFrame ? i * 2 + page : page];
+				if (saved)
 				{
-					frame.Pages[page] = uploaded;
+					EXPECT_TRUE(saved == uploaded);
 				}
 				else
 				{
-					EXPECT_TRUE(frame.Pages[page] == uploaded);
+					saved = uploaded;
 				}
 				auto buffer = uploaded.DownCast<ReadbackVertexBuffer>();
 				frame.Native->CopyBuffer(buffer->Buffer.get(), frame.Readbacks[page].get());
@@ -233,18 +248,34 @@ void CommandListVertexBufferGPU(LLGI::DeviceType deviceType)
 }
 
 #ifdef __EFFEKSEER_BUILD_DX12__
+TestRegister registerSharedFrameVertexBufferDX12("Runtime.SharedFrameVertexBuffer.DX12",
+	[] { CommandListVertexBufferGPU(LLGI::DeviceType::DirectX12, true); }, TestExecutionMode::FilterOnly);
+TestRegister registerSharedFrameVertexBufferSameFrameDX12("Runtime.SharedFrameVertexBuffer.SameFrame.DX12",
+	[] { CommandListVertexBufferGPU(LLGI::DeviceType::DirectX12, true, true); }, TestExecutionMode::FilterOnly);
 TestRegister registerCommandListVertexBufferGPUDX12("Runtime.CommandListVertexBufferGPU.DX12",
 	[] { CommandListVertexBufferGPU(LLGI::DeviceType::DirectX12); }, TestExecutionMode::FilterOnly);
 #endif
 #ifdef __EFFEKSEER_BUILD_VULKAN__
+TestRegister registerSharedFrameVertexBufferVulkan("Runtime.SharedFrameVertexBuffer.Vulkan",
+	[] { CommandListVertexBufferGPU(LLGI::DeviceType::Vulkan, true); }, TestExecutionMode::FilterOnly);
+TestRegister registerSharedFrameVertexBufferSameFrameVulkan("Runtime.SharedFrameVertexBuffer.SameFrame.Vulkan",
+	[] { CommandListVertexBufferGPU(LLGI::DeviceType::Vulkan, true, true); }, TestExecutionMode::FilterOnly);
 TestRegister registerCommandListVertexBufferGPUVulkan("Runtime.CommandListVertexBufferGPU.Vulkan",
 	[] { CommandListVertexBufferGPU(LLGI::DeviceType::Vulkan); }, TestExecutionMode::FilterOnly);
 #endif
 #ifdef __EFFEKSEER_BUILD_METAL__
+TestRegister registerSharedFrameVertexBufferMetal("Runtime.SharedFrameVertexBuffer.Metal",
+	[] { CommandListVertexBufferGPU(LLGI::DeviceType::Metal, true); }, TestExecutionMode::FilterOnly);
+TestRegister registerSharedFrameVertexBufferSameFrameMetal("Runtime.SharedFrameVertexBuffer.SameFrame.Metal",
+	[] { CommandListVertexBufferGPU(LLGI::DeviceType::Metal, true, true); }, TestExecutionMode::FilterOnly);
 TestRegister registerCommandListVertexBufferGPUMetal("Runtime.CommandListVertexBufferGPU.Metal",
 	[] { CommandListVertexBufferGPU(LLGI::DeviceType::Metal); }, TestExecutionMode::FilterOnly);
 #endif
 #ifdef __EFFEKSEER_BUILD_WEBGPU__
+TestRegister registerSharedFrameVertexBufferWebGPU("Runtime.SharedFrameVertexBuffer.WebGPU",
+	[] { CommandListVertexBufferGPU(LLGI::DeviceType::WebGPU, true); }, TestExecutionMode::FilterOnly);
+TestRegister registerSharedFrameVertexBufferSameFrameWebGPU("Runtime.SharedFrameVertexBuffer.SameFrame.WebGPU",
+	[] { CommandListVertexBufferGPU(LLGI::DeviceType::WebGPU, true, true); }, TestExecutionMode::FilterOnly);
 TestRegister registerCommandListVertexBufferGPUWebGPU("Runtime.CommandListVertexBufferGPU.WebGPU",
 	[] { CommandListVertexBufferGPU(LLGI::DeviceType::WebGPU); }, TestExecutionMode::FilterOnly);
 #endif
