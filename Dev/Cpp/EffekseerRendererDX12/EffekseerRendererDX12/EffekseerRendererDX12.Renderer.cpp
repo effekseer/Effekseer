@@ -303,13 +303,11 @@ void BeginCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandL
 		LLGI::PlatformContextDX12 context;
 		context.commandList = dx12CommandList;
 
-		c->GetInternal()->BeginWithPlatform(&context);
-		c->SetState(EffekseerRendererLLGI::CommandListState::RunningWithPlatformCommandList);
+		c->BeginWithPlatform(&context);
 	}
 	else
 	{
-		c->GetInternal()->Begin();
-		c->SetState(EffekseerRendererLLGI::CommandListState::Running);
+		c->Begin();
 	}
 
 	c->GetInternal()->BeginComputePass();

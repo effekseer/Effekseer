@@ -90,6 +90,11 @@ bool DeviceMetal::Initialize(const char* windowTitle, Utils::Vec2I windowSize)
 
 void DeviceMetal::Terminate()
 {
+	if (commandListPool)
+	{
+		commandListPool->WaitUntilCompleted();
+	}
+
 	// Release Metal
 	// Metalの解放
 

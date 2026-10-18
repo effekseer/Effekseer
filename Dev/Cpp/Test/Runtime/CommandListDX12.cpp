@@ -9,6 +9,7 @@
 #include <EffekseerRendererLLGI/EffekseerRendererLLGI.RendererImplemented.h>
 #include <dxgi1_4.h>
 #include <d3d12sdklayers.h>
+#include <d3dcompiler.h>
 #include <LLGI.Platform.h>
 #include <DX12/LLGI.GraphicsDX12.h>
 #include <condition_variable>
@@ -21,7 +22,7 @@
 namespace
 {
 #ifdef __EFFEKSEER_BUILD_DX12__
-void CommandListVertexBufferDX12(bool useExternalCommandList, bool sharedWrapper = false, bool sameFrame = false, int frameCount = 3)
+void CommandListVertexBufferDX12(bool useExternalCommandList, bool sameFrame = false, int frameCount = 3, bool sharedWrapper = false)
 {
 	using Microsoft::WRL::ComPtr;
 	ComPtr<IDXGIFactory4> factory;
@@ -41,6 +42,7 @@ void CommandListVertexBufferDX12(bool useExternalCommandList, bool sharedWrapper
 	auto graphics = graphicsDevice.DownCast<EffekseerRendererLLGI::Backend::GraphicsDevice>()->GetGraphics();
 	std::array<Effekseer::RefPtr<EffekseerRenderer::CommandList>, 2> lists;
 	std::array<std::shared_ptr<LLGI::CommandList>, 2> nativeLists;
+	std::array<LLGI::CommandList*, 2> recordedLists{};
 	std::array<std::shared_ptr<LLGI::Buffer>, 2> readbacks;
 	std::array<std::shared_ptr<LLGI::Buffer>, 2> overflowReadbacks;
 	for (size_t i = 0; i < lists.size(); i++)
@@ -72,11 +74,11 @@ void CommandListVertexBufferDX12(bool useExternalCommandList, bool sharedWrapper
 				nativeList = static_cast<LLGI::CommandListDX12*>(nativeLists[i].get())->GetCommandList();
 			}
 			EffekseerRendererDX12::BeginCommandList(lists[i], nativeList);
+			recordedLists[i] = lists[i].DownCast<EffekseerRendererLLGI::CommandList>()->GetInternal();
 			renderer->SetCommandList(lists[i]);
 			EXPECT_TRUE(renderer->BeginRendering());
 			auto ring = renderer->GetImpl()->InternalVertexBuffer;
 			std::tuple<void*, int32_t> allocation;
-			if (sameFrame && i > 0) ring->RenewBuffer();
 			EXPECT_TRUE(ring->Allocate(ring->GetSize(), 1, allocation));
 			EXPECT_TRUE(std::get<1>(allocation) == 0);
 			memset(std::get<0>(allocation), static_cast<int>(i) + 1 + round * 2, 16);
@@ -112,13 +114,13 @@ void CommandListVertexBufferDX12(bool useExternalCommandList, bool sharedWrapper
 			}
 			else
 			{
-				EffekseerRendererDX12::ExecuteCommandList(lists[i]);
+				graphics->Execute(recordedLists[i]);
 			}
 		}
 		for (size_t i = 0; i < lists.size(); i++)
 		{
 			auto submitted = useExternalCommandList ? nativeLists[i].get()
-				: lists[i].DownCast<EffekseerRendererLLGI::CommandList>()->GetInternal();
+				: recordedLists[i];
 			submitted->WaitUntilCompleted();
 			auto data = static_cast<const uint8_t*>(readbacks[i]->Lock());
 			EXPECT_TRUE(data != nullptr);
@@ -143,15 +145,153 @@ TestRegister registerCommandListVertexBufferDX12(
 TestRegister registerCommandListVertexBufferDX12External(
 	"Runtime.CommandListVertexBufferDX12.External", [] { CommandListVertexBufferDX12(true); });
 
-TestRegister registerCommandListVertexBufferDX12Shared(
-	"Runtime.CommandListVertexBufferDX12.Shared", [] { CommandListVertexBufferDX12(true, true); });
 TestRegister registerCommandListVertexBufferDX12SameFrame(
-	"Runtime.CommandListVertexBufferDX12.SameFrame", [] { CommandListVertexBufferDX12(true, true, true); });
+	"Runtime.CommandListVertexBufferDX12.SameFrame", [] { CommandListVertexBufferDX12(true, true); });
 
+TestRegister registerCommandListVertexBufferDX12Shared(
+	"Runtime.CommandListVertexBufferDX12.Shared", [] { CommandListVertexBufferDX12(true, false, 3, true); });
 TestRegister registerCommandListVertexBufferDX12TwoFrames(
-	"Runtime.CommandListVertexBufferDX12.TwoFrames", [] { CommandListVertexBufferDX12(true, true, false, 2); });
+	"Runtime.CommandListVertexBufferDX12.TwoFrames", [] { CommandListVertexBufferDX12(true, false, 2, true); });
 TestRegister registerCommandListVertexBufferDX12FourFrames(
-	"Runtime.CommandListVertexBufferDX12.FourFrames", [] { CommandListVertexBufferDX12(true, true, false, 4); });
+	"Runtime.CommandListVertexBufferDX12.FourFrames", [] { CommandListVertexBufferDX12(true, false, 4, true); });
+
+// Each recording uses a different constant-buffer descriptor. Record all of
+// them before submission to verify that one Effekseer wrapper retains all frame slots.
+void CommandListDescriptorsDX12(int frameCount)
+{
+	using Microsoft::WRL::ComPtr;
+	ComPtr<ID3D12Debug> debug;
+	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debug)))) debug->EnableDebugLayer();
+	ComPtr<IDXGIFactory4> factory;
+	EXPECT_TRUE(SUCCEEDED(CreateDXGIFactory1(IID_PPV_ARGS(&factory))));
+	ComPtr<IDXGIAdapter> adapter;
+	EXPECT_TRUE(SUCCEEDED(factory->EnumWarpAdapter(IID_PPV_ARGS(&adapter))));
+	ComPtr<ID3D12Device> device;
+	EXPECT_TRUE(SUCCEEDED(D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&device))));
+	D3D12_COMMAND_QUEUE_DESC queueDesc{};
+	ComPtr<ID3D12CommandQueue> queue;
+	EXPECT_TRUE(SUCCEEDED(device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&queue))));
+	auto wait = [&] {
+		ComPtr<ID3D12Fence> fence;
+		EXPECT_TRUE(SUCCEEDED(device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence))));
+		auto event = CreateEvent(nullptr, FALSE, FALSE, nullptr);
+		EXPECT_TRUE(event != nullptr);
+		EXPECT_TRUE(SUCCEEDED(queue->Signal(fence.Get(), 1)));
+		EXPECT_TRUE(SUCCEEDED(fence->SetEventOnCompletion(1, event)));
+		EXPECT_TRUE(WaitForSingleObject(event, INFINITE) == WAIT_OBJECT_0);
+		CloseHandle(event);
+	};
+	auto graphics = LLGI::CreateSharedPtr(new LLGI::GraphicsDX12(device.Get(),
+		[] { return std::tuple<D3D12_CPU_DESCRIPTOR_HANDLE, LLGI::Texture*>(); }, wait, queue.Get(), frameCount));
+	auto pool = LLGI::CreateSharedPtr(graphics->CreateSingleFrameMemoryPool(4096, 16));
+	auto first = LLGI::CreateSharedPtr(graphics->CreateCommandList(pool.get()));
+	auto wrapper = Effekseer::MakeRefPtr<EffekseerRendererLLGI::CommandList>(graphics.get(), first.get(), pool.get());
+	EXPECT_TRUE(wrapper->Initialize(frameCount));
+	auto compile = [&](const char* source, const char* profile) {
+		ComPtr<ID3DBlob> binary, errors;
+		EXPECT_TRUE(SUCCEEDED(D3DCompile(source, strlen(source), nullptr, nullptr, nullptr,
+			"main", profile, 0, 0, &binary, &errors)));
+		LLGI::DataStructure data;
+		data.Data = binary->GetBufferPointer();
+		data.Size = static_cast<int32_t>(binary->GetBufferSize());
+		return LLGI::CreateSharedPtr(graphics->CreateShader(&data, 1));
+	};
+	auto vs = compile("float4 main(float3 p : POSITION) : SV_POSITION { return float4(p,1); }", "vs_5_0");
+	auto ps = compile("cbuffer C : register(b1) { float4 color; }; float4 main() : SV_TARGET { return color; }", "ps_5_0");
+	const float vertices[] = {-1, -1, 0, -1, 3, 0, 3, -1, 0};
+	const uint16_t indices[] = {0, 1, 2};
+	auto vb = LLGI::CreateSharedPtr(graphics->CreateBuffer(LLGI::BufferUsageType::Vertex | LLGI::BufferUsageType::MapWrite, sizeof(vertices)));
+	auto ib = LLGI::CreateSharedPtr(graphics->CreateBuffer(LLGI::BufferUsageType::Index | LLGI::BufferUsageType::MapWrite, sizeof(indices)));
+	memcpy(vb->Lock(), vertices, sizeof(vertices));
+	vb->Unlock();
+	memcpy(ib->Lock(), indices, sizeof(indices));
+	ib->Unlock();
+	std::vector<std::shared_ptr<LLGI::CommandList>> native(frameCount);
+	std::vector<std::shared_ptr<LLGI::Texture>> targets(frameCount);
+	std::vector<std::shared_ptr<LLGI::RenderPass>> passes(frameCount);
+	for (int i = 0; i < frameCount; i++)
+	{
+		native[i] = LLGI::CreateSharedPtr(graphics->CreateCommandList(pool.get()));
+		LLGI::RenderTextureInitializationParameter parameter;
+		parameter.Size = {16, 16};
+		targets[i] = LLGI::CreateSharedPtr(graphics->CreateRenderTexture(parameter));
+		auto texture = targets[i].get();
+		passes[i] = LLGI::CreateSharedPtr(graphics->CreateRenderPass(&texture, 1, nullptr));
+		passes[i]->SetIsColorCleared(true);
+		passes[i]->SetClearColor({0, 0, 0, 255});
+	}
+	auto renderState = LLGI::CreateSharedPtr(graphics->CreateRenderPassPipelineState(passes[0].get()));
+	auto pipeline = LLGI::CreateSharedPtr(graphics->CreatePiplineState());
+	pipeline->VertexLayoutCount = 1;
+	pipeline->VertexLayouts[0] = LLGI::VertexLayoutFormat::R32G32B32_FLOAT;
+	pipeline->VertexLayoutNames[0] = "POSITION";
+	pipeline->Culling = LLGI::CullingMode::DoubleSide;
+	pipeline->SetShader(LLGI::ShaderStageType::Vertex, vs.get());
+	pipeline->SetShader(LLGI::ShaderStageType::Pixel, ps.get());
+	pipeline->SetRenderPassPipelineState(renderState.get());
+	EXPECT_TRUE(pipeline->Compile());
+	for (int round = 0; round < 4; round++)
+	{
+		for (int i = 0; i < frameCount; i++)
+		{
+			pool->NewFrame();
+			native[i]->Begin();
+			LLGI::PlatformContextDX12 context;
+			context.commandList = static_cast<LLGI::CommandListDX12*>(native[i].get())->GetCommandList();
+			wrapper->BeginWithPlatform(&context);
+			auto recorded = wrapper->GetInternal();
+			auto constant = LLGI::CreateSharedPtr(pool->CreateConstantBuffer(16));
+			const float color[] = {(i + 1) * 40.0f / 255.0f, round * 40.0f / 255.0f, 0, 1};
+			memcpy(constant->Lock(), color, sizeof(color));
+			constant->Unlock();
+			native[i]->BeginRenderPass(passes[i].get());
+			recorded->SetPipelineState(pipeline.get());
+			recorded->SetVertexBuffer(vb.get(), 12, 0);
+			recorded->SetIndexBuffer(ib.get(), 2);
+			recorded->SetConstantBuffer(constant.get(), 1);
+			recorded->Draw(1);
+			native[i]->EndRenderPass();
+			recorded->EndWithPlatform();
+			native[i]->End();
+		}
+		for (auto& list : native) graphics->Execute(list.get());
+		graphics->WaitFinish();
+		ComPtr<ID3D12InfoQueue> info;
+		device->QueryInterface(IID_PPV_ARGS(&info));
+		if (info)
+		{
+			for (UINT64 j = 0; j < info->GetNumStoredMessages(); j++)
+			{
+				SIZE_T size = 0;
+				info->GetMessage(j, nullptr, &size);
+				std::vector<uint8_t> bytes(size);
+				auto message = reinterpret_cast<D3D12_MESSAGE*>(bytes.data());
+				info->GetMessage(j, message, &size);
+				if (message->Severity <= D3D12_MESSAGE_SEVERITY_ERROR)
+				{
+					fprintf(stderr, "%s\n", message->pDescription);
+					EXPECT_TRUE(false);
+				}
+			}
+		}
+
+		for (int i = 0; i < frameCount; i++)
+		{
+			const auto pixels = graphics->CaptureRenderTarget(targets[i].get());
+			EXPECT_TRUE(pixels.size() == 16 * 16 * 4);
+			const int center = (8 * 16 + 8) * 4;
+			EXPECT_TRUE(abs(static_cast<int>(pixels[center]) - (i + 1) * 40) <= 1);
+			EXPECT_TRUE(abs(static_cast<int>(pixels[center + 1]) - round * 40) <= 1);
+		}
+	}
+}
+
+TestRegister registerCommandListDescriptorsDX12TwoFrames(
+	"Runtime.CommandListDescriptorsDX12.TwoFrames", [] { CommandListDescriptorsDX12(2); });
+TestRegister registerCommandListDescriptorsDX12ThreeFrames(
+	"Runtime.CommandListDescriptorsDX12.ThreeFrames", [] { CommandListDescriptorsDX12(3); });
+TestRegister registerCommandListDescriptorsDX12FourFrames(
+	"Runtime.CommandListDescriptorsDX12.FourFrames", [] { CommandListDescriptorsDX12(4); });
 
 void PlatformFramesDX12()
 {

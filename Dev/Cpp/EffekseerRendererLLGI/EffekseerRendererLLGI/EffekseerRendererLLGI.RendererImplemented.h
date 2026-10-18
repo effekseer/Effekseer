@@ -37,8 +37,6 @@ class RendererImplemented : public Renderer, public ::Effekseer::ReferenceObject
 
 protected:
 	std::map<PiplineStateKey, LLGI::PipelineState*> piplineStates_;
-	std::vector<std::shared_ptr<EffekseerRenderer::VertexBuffer>> vertexBuffers_;
-	uint64_t vertexBufferFrame_ = 0;
 	LLGI::Buffer* currentVertexBuffer_ = nullptr;
 	int32_t currentVertexBufferStride_ = 0;
 	LLGI::TopologyType currentTopologyType_ = LLGI::TopologyType::Triangle;
@@ -77,8 +75,6 @@ protected:
 	Effekseer::RenderMode renderMode_ = Effekseer::RenderMode::Normal;
 
 	Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList_ = nullptr;
-
-	std::shared_ptr<EffekseerRenderer::VertexBuffer> CreateVertexBuffer(int32_t ringCount);
 
 	LLGI::CommandList* GetCurrentCommandList();
 

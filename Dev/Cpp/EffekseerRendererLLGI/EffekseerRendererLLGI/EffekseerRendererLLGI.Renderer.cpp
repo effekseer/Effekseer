@@ -326,16 +326,6 @@ void RendererImplemented::OnResetDevice()
 {
 }
 
-std::shared_ptr<EffekseerRenderer::VertexBuffer> RendererImplemented::CreateVertexBuffer(int32_t ringCount)
-{
-	auto buffer = std::make_shared<EffekseerRenderer::VertexBufferRing>(
-		graphicsDevice_,
-		EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * squareMaxCount_ * 4,
-		ringCount,
-		EffekseerRenderer::VertexBufferRingMode::ExpandableForCommandList);
-	return buffer->GetIsValid() ? buffer : nullptr;
-}
-
 bool RendererImplemented::Initialize(LLGI::Graphics* graphics, LLGI::RenderPassPipelineStateKey key, bool isReversedDepth)
 {
 
@@ -356,14 +346,6 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 
 	LLGI::SetLogger([](LLGI::LogType type, const std::string& message)
 					{ std::cout << message << std::endl; });
-
-	// Preserve the original allocation for command lists without a frame pool.
-	GetImpl()->InternalVertexBuffer = CreateVertexBuffer(3);
-	if (!GetImpl()->InternalVertexBuffer)
-	{
-		return false;
-	}
-	vertexBuffers_.push_back(GetImpl()->InternalVertexBuffer);
 
 	if (!EffekseerRenderer::GenerateIndexDataStride<int16_t>(graphicsDevice_, squareMaxCount_, indexBuffer_, indexBufferForWireframe_))
 	{
@@ -535,37 +517,11 @@ bool RendererImplemented::BeginRendering()
 		return false;
 	}
 
-	// Select this frame's vertex buffer. Reset it only once per frame.
-	auto pool = commandList_.DownCast<CommandList>()->GetFramePool();
-	if (pool)
+	GetImpl()->InternalVertexBuffer = commandList_.DownCast<CommandList>()->GetVertexBuffer(
+		graphicsDevice_, EffekseerRenderer::GetMaximumVertexSizeInAllTypes() * squareMaxCount_ * 4);
+	if (!GetImpl()->InternalVertexBuffer)
 	{
-		const auto frame = pool->GetFrameNumber();
-		const auto count = pool->GetInternal()->GetSwapBufferCount();
-		if (frame == 0 || count <= 0)
-		{
-			return false;
-		}
-		vertexBuffers_.resize(count);
-		auto& buffer = vertexBuffers_[(frame - 1) % count];
-		if (!buffer)
-		{
-			buffer = CreateVertexBuffer(1);
-		}
-		if (!buffer)
-		{
-			return false;
-		}
-		GetImpl()->InternalVertexBuffer = buffer;
-		if (vertexBufferFrame_ != frame)
-		{
-			buffer->BeginWriteForCommandList();
-			vertexBufferFrame_ = frame;
-		}
-	}
-	else
-	{
-		// Fallback for command lists created without an Effekseer frame pool.
-		GetImpl()->InternalVertexBuffer->BeginWriteForCommandList();
+		return false;
 	}
 
 	impl->CalculateCameraProjectionMatrix();

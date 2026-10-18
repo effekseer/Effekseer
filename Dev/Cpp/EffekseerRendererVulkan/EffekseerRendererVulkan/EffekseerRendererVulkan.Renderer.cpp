@@ -161,7 +161,7 @@ void BeginCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandL
 	LLGI::PlatformContextVulkan context;
 	context.commandBuffer = nativeCommandList;
 
-	static_cast<LLGI::CommandListVulkan*>(c->GetInternal())->BeginWithPlatform(&context);
+	c->BeginWithPlatform(&context);
 	c->GetInternal()->BeginRenderPassWithPlatformPtr(nullptr);
 }
 
