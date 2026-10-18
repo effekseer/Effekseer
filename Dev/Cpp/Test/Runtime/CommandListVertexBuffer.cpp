@@ -1,10 +1,10 @@
 #include "../TestHelper.h"
 #include <EffekseerRendererLLGI/EffekseerRendererLLGI.Renderer.h>
+#include <EffekseerRendererCommon/VertexBuffer.h>
 
 #include <LLGI.Platform.h>
 #include <array>
 #include <cstring>
-#include <unordered_map>
 
 namespace
 {
@@ -41,61 +41,45 @@ Effekseer::RefPtr<MemoryVertexBuffer> Write(
 	return ring->Upload().DownCast<MemoryVertexBuffer>();
 }
 
-void CommandListVertexBufferLifetime()
+void RendererVertexBufferLifetime()
 {
-	auto device = Effekseer::MakeRefPtr<MemoryGraphicsDevice>();
-	// Native objects are unnecessary: this test inspects bytes before GPU submission.
-	auto first = Effekseer::MakeRefPtr<EffekseerRendererLLGI::CommandList>(nullptr, nullptr, nullptr);
-	auto second = Effekseer::MakeRefPtr<EffekseerRendererLLGI::CommandList>(nullptr, nullptr, nullptr);
-	first->ResetVertexBuffers();
-	auto firstRing = first->GetVertexBuffer(device, 16);
-	auto recordedFirst = Write(firstRing, 8, 0x11);
-
-	// Rebinding within the same recording must append, including across renderers/views.
-	auto rebound = first->GetVertexBuffer(device, 16);
-	EXPECT_TRUE(rebound == firstRing);
-	Write(rebound, 8, 0x22);
-	EXPECT_TRUE(recordedFirst->data == std::vector<uint8_t>({
-		0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11,
-		0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22}));
-
-	// Recording the next frame before submitting the first must preserve its bytes.
-	second->ResetVertexBuffers();
-	auto secondRing = second->GetVertexBuffer(device, 16);
-	auto recordedSecond = Write(secondRing, 16, 0x33);
-	EXPECT_TRUE(recordedFirst.Get() != recordedSecond.Get());
-	EXPECT_TRUE(recordedFirst->data[0] == 0x11 && recordedFirst->data[8] == 0x22);
-	EXPECT_TRUE(device->allocationCount == 2);
-
-	// Overflow within a recording must grow rather than overwrite earlier draws.
-	EXPECT_TRUE(!firstRing->CanAllocate(1, 1));
-	firstRing->RenewBuffer();
-	auto overflow = Write(firstRing, 16, 0x44);
-	EXPECT_TRUE(overflow.Get() != recordedFirst.Get());
-	EXPECT_TRUE(recordedFirst->data[0] == 0x11);
-	EXPECT_TRUE(device->allocationCount == 3);
-
-	// Simulate completion of the first recording. Its pages can now be reused,
-	// while the second recording must remain intact. Allocation must stabilize.
-	for (int i = 0; i < 10; i++)
+	for (int count : {2, 3, 4})
 	{
-		first->ResetVertexBuffers();
-		auto reused = Write(first->GetVertexBuffer(device, 16), 16, 0x55);
-		EXPECT_TRUE(reused.Get() == recordedFirst.Get());
-		firstRing->RenewBuffer();
-		EXPECT_TRUE(Write(firstRing, 16, 0x66).Get() == overflow.Get());
-		EXPECT_TRUE(recordedSecond->data == std::vector<uint8_t>(16, 0x33));
-		EXPECT_TRUE(device->allocationCount == 3);
+		auto device = Effekseer::MakeRefPtr<MemoryGraphicsDevice>();
+		auto ring = std::make_shared<EffekseerRenderer::VertexBufferRing>(device, 16, 3,
+			EffekseerRenderer::VertexBufferRingMode::ExpandableForCommandList);
+		std::vector<Effekseer::RefPtr<MemoryVertexBuffer>> pages;
+		for (int frame = 1; frame <= count; frame++)
+		{
+			int allocations = device->allocationCount;
+			ring->BeginWriteForFrame(frame, count);
+			EXPECT_TRUE(device->allocationCount == allocations);
+			auto first = Write(ring, 8, frame);
+			ring->BeginWriteForFrame(frame, count);
+			EXPECT_TRUE(Write(ring, 8, frame) == first);
+			pages.push_back(first);
+			ring->RenewBuffer();
+			pages.push_back(Write(ring, 16, frame + 10));
+		}
+		for (int frame = 0; frame < count; frame++)
+		{
+			EXPECT_TRUE(pages[frame * 2]->data == std::vector<uint8_t>(16, frame + 1));
+			EXPECT_TRUE(pages[frame * 2 + 1]->data == std::vector<uint8_t>(16, frame + 11));
+		}
+		int allocations = device->allocationCount;
+		for (int frame = 1; frame <= count; frame++)
+		{
+			ring->BeginWriteForFrame(frame + count, count);
+			EXPECT_TRUE(Write(ring, 16, 0x55) == pages[(frame - 1) * 2]);
+			ring->RenewBuffer();
+			EXPECT_TRUE(Write(ring, 16, 0x66) == pages[(frame - 1) * 2 + 1]);
+		}
+		EXPECT_TRUE(device->allocationCount == allocations);
 	}
-
-	// Different renderer capacities in one recording keep separate pages.
-	auto smaller = first->GetVertexBuffer(device, 8);
-	Write(smaller, 8, 0x77);
-	EXPECT_TRUE(recordedFirst->data == std::vector<uint8_t>(16, 0x55));
 }
 
-TestRegister registerCommandListVertexBufferLifetime(
-	"Runtime.CommandListVertexBufferLifetime", CommandListVertexBufferLifetime);
+TestRegister registerRendererVertexBufferLifetime(
+	"Runtime.RendererVertexBufferLifetime", RendererVertexBufferLifetime);
 
 // The same GPU readback scenario runs on every LLGI backend. Native API
 // integration checks live separately in CommandListDX12.cpp.
@@ -135,7 +119,7 @@ public:
 	}
 };
 
-void CommandListVertexBufferGPU(LLGI::DeviceType deviceType, bool shareWrapper = false, bool sameFrame = false)
+void CommandListVertexBufferGPU(LLGI::DeviceType deviceType, bool sameFrame = false)
 {
 	auto window = std::unique_ptr<LLGI::Window>(LLGI::CreateWindow("Command list vertex buffers", {64, 64}));
 	EXPECT_TRUE(window != nullptr);
@@ -152,19 +136,16 @@ void CommandListVertexBufferGPU(LLGI::DeviceType deviceType, bool shareWrapper =
 	struct Frame
 	{
 		std::shared_ptr<LLGI::CommandList> Native;
-		Effekseer::RefPtr<EffekseerRendererLLGI::CommandList> CommandList;
 		std::array<std::shared_ptr<LLGI::Buffer>, 2> Readbacks;
 	};
 	auto framePool = Effekseer::MakeRefPtr<EffekseerRendererLLGI::SingleFrameMemoryPool>(pool.get());
-	auto shared = Effekseer::MakeRefPtr<EffekseerRendererLLGI::CommandList>(graphics.get(), nullptr, pool.get());
-	shared->SetFramePool(framePool);
-	std::vector<Frame> frames(shareWrapper && !sameFrame ? pool->GetSwapBufferCount() : 3);
-	std::unordered_map<EffekseerRenderer::VertexBufferRing*, std::vector<Effekseer::Backend::VertexBufferRef>> savedPages;
+	auto ring = std::make_shared<EffekseerRenderer::VertexBufferRing>(device, 16, 3,
+		EffekseerRenderer::VertexBufferRingMode::ExpandableForCommandList);
+	std::vector<Frame> frames(sameFrame ? 3 : pool->GetSwapBufferCount());
 	for (auto& frame : frames)
 	{
 		frame.Native = LLGI::CreateSharedPtr(graphics->CreateCommandList(pool.get()));
 		EXPECT_TRUE(frame.Native != nullptr);
-		frame.CommandList = Effekseer::MakeRefPtr<EffekseerRendererLLGI::CommandList>(graphics.get(), frame.Native.get(), pool.get());
 		for (auto& readback : frame.Readbacks)
 		{
 			readback = LLGI::CreateSharedPtr(graphics->CreateBuffer(LLGI::BufferUsageType::MapRead | LLGI::BufferUsageType::CopyDst, 16));
@@ -178,18 +159,9 @@ void CommandListVertexBufferGPU(LLGI::DeviceType deviceType, bool shareWrapper =
 		for (size_t i = 0; i < frames.size(); i++)
 		{
 			auto& frame = frames[i];
-			if (shareWrapper)
-			{
-				if (!sameFrame || i == 0) framePool->NewFrame();
-				frame.CommandList = shared;
-			}
-			else
-			{
-				pool->NewFrame();
-				frame.CommandList->ResetVertexBuffers();
-			}
+			if (!sameFrame || i == 0) framePool->NewFrame();
 			frame.Native->Begin();
-			auto ring = frame.CommandList->GetVertexBuffer(device, 16);
+			ring->BeginWriteForFrame(framePool->GetFrameNumber(), pool->GetSwapBufferCount());
 			for (size_t page = 0; page < frame.Readbacks.size(); page++)
 			{
 				if (!ring->CanAllocate(16, 1))
@@ -200,23 +172,12 @@ void CommandListVertexBufferGPU(LLGI::DeviceType deviceType, bool shareWrapper =
 				Effekseer::Backend::VertexBufferRef uploaded;
 				for (int half = 0; half < 2; half++)
 				{
-					EXPECT_TRUE(frame.CommandList->GetVertexBuffer(device, 16) == ring);
+					ring->BeginWriteForFrame(framePool->GetFrameNumber(), pool->GetSwapBufferCount());
 					std::tuple<void*, int32_t> allocation;
 					EXPECT_TRUE(ring->Allocate(8, 1, allocation));
 					EXPECT_TRUE(std::get<1>(allocation) == half * 8);
 					memset(std::get<0>(allocation), 1 + round * 12 + i * 4 + page * 2 + half, 8);
 					uploaded = ring->Upload();
-				}
-				auto& pages = savedPages[ring.get()];
-				pages.resize(frames.size() * 2);
-				auto& saved = pages[shareWrapper && sameFrame ? i * 2 + page : page];
-				if (saved)
-				{
-					EXPECT_TRUE(saved == uploaded);
-				}
-				else
-				{
-					saved = uploaded;
 				}
 				auto buffer = uploaded.DownCast<ReadbackVertexBuffer>();
 				frame.Native->CopyBuffer(buffer->Buffer.get(), frame.Readbacks[page].get());
@@ -249,34 +210,26 @@ void CommandListVertexBufferGPU(LLGI::DeviceType deviceType, bool shareWrapper =
 
 #ifdef __EFFEKSEER_BUILD_DX12__
 TestRegister registerSharedFrameVertexBufferDX12("Runtime.SharedFrameVertexBuffer.DX12",
-	[] { CommandListVertexBufferGPU(LLGI::DeviceType::DirectX12, true); }, TestExecutionMode::FilterOnly);
-TestRegister registerSharedFrameVertexBufferSameFrameDX12("Runtime.SharedFrameVertexBuffer.SameFrame.DX12",
-	[] { CommandListVertexBufferGPU(LLGI::DeviceType::DirectX12, true, true); }, TestExecutionMode::FilterOnly);
-TestRegister registerCommandListVertexBufferGPUDX12("Runtime.CommandListVertexBufferGPU.DX12",
 	[] { CommandListVertexBufferGPU(LLGI::DeviceType::DirectX12); }, TestExecutionMode::FilterOnly);
+TestRegister registerSharedFrameVertexBufferSameFrameDX12("Runtime.SharedFrameVertexBuffer.SameFrame.DX12",
+	[] { CommandListVertexBufferGPU(LLGI::DeviceType::DirectX12, true); }, TestExecutionMode::FilterOnly);
 #endif
 #ifdef __EFFEKSEER_BUILD_VULKAN__
 TestRegister registerSharedFrameVertexBufferVulkan("Runtime.SharedFrameVertexBuffer.Vulkan",
-	[] { CommandListVertexBufferGPU(LLGI::DeviceType::Vulkan, true); }, TestExecutionMode::FilterOnly);
-TestRegister registerSharedFrameVertexBufferSameFrameVulkan("Runtime.SharedFrameVertexBuffer.SameFrame.Vulkan",
-	[] { CommandListVertexBufferGPU(LLGI::DeviceType::Vulkan, true, true); }, TestExecutionMode::FilterOnly);
-TestRegister registerCommandListVertexBufferGPUVulkan("Runtime.CommandListVertexBufferGPU.Vulkan",
 	[] { CommandListVertexBufferGPU(LLGI::DeviceType::Vulkan); }, TestExecutionMode::FilterOnly);
+TestRegister registerSharedFrameVertexBufferSameFrameVulkan("Runtime.SharedFrameVertexBuffer.SameFrame.Vulkan",
+	[] { CommandListVertexBufferGPU(LLGI::DeviceType::Vulkan, true); }, TestExecutionMode::FilterOnly);
 #endif
 #ifdef __EFFEKSEER_BUILD_METAL__
 TestRegister registerSharedFrameVertexBufferMetal("Runtime.SharedFrameVertexBuffer.Metal",
-	[] { CommandListVertexBufferGPU(LLGI::DeviceType::Metal, true); }, TestExecutionMode::FilterOnly);
-TestRegister registerSharedFrameVertexBufferSameFrameMetal("Runtime.SharedFrameVertexBuffer.SameFrame.Metal",
-	[] { CommandListVertexBufferGPU(LLGI::DeviceType::Metal, true, true); }, TestExecutionMode::FilterOnly);
-TestRegister registerCommandListVertexBufferGPUMetal("Runtime.CommandListVertexBufferGPU.Metal",
 	[] { CommandListVertexBufferGPU(LLGI::DeviceType::Metal); }, TestExecutionMode::FilterOnly);
+TestRegister registerSharedFrameVertexBufferSameFrameMetal("Runtime.SharedFrameVertexBuffer.SameFrame.Metal",
+	[] { CommandListVertexBufferGPU(LLGI::DeviceType::Metal, true); }, TestExecutionMode::FilterOnly);
 #endif
 #ifdef __EFFEKSEER_BUILD_WEBGPU__
 TestRegister registerSharedFrameVertexBufferWebGPU("Runtime.SharedFrameVertexBuffer.WebGPU",
-	[] { CommandListVertexBufferGPU(LLGI::DeviceType::WebGPU, true); }, TestExecutionMode::FilterOnly);
-TestRegister registerSharedFrameVertexBufferSameFrameWebGPU("Runtime.SharedFrameVertexBuffer.SameFrame.WebGPU",
-	[] { CommandListVertexBufferGPU(LLGI::DeviceType::WebGPU, true, true); }, TestExecutionMode::FilterOnly);
-TestRegister registerCommandListVertexBufferGPUWebGPU("Runtime.CommandListVertexBufferGPU.WebGPU",
 	[] { CommandListVertexBufferGPU(LLGI::DeviceType::WebGPU); }, TestExecutionMode::FilterOnly);
+TestRegister registerSharedFrameVertexBufferSameFrameWebGPU("Runtime.SharedFrameVertexBuffer.SameFrame.WebGPU",
+	[] { CommandListVertexBufferGPU(LLGI::DeviceType::WebGPU, true); }, TestExecutionMode::FilterOnly);
 #endif
 } // namespace

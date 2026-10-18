@@ -166,7 +166,8 @@ void DeviceDX12::SetupEffekseerModules(::Effekseer::ManagerRef efkManager, bool 
 	// メモリプールの作成
 	efkMemoryPool = EffekseerRenderer::CreateSingleFrameMemoryPool(efkRenderer->GetGraphicsDevice());
 
-	// Vertex buffers are retained per memory-pool frame internally.
+	// Create a command list
+	// コマンドリストの作成
 	efkCommandList = EffekseerRenderer::CreateCommandList(efkRenderer->GetGraphicsDevice(), efkMemoryPool);
 
 	// Sprcify rendering modules

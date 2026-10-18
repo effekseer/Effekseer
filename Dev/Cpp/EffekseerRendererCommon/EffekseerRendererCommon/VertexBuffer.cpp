@@ -112,7 +112,7 @@ bool VertexBufferRing::CanAllocate(int32_t size, int32_t alignment)
 
 bool VertexBufferRing::Allocate(int32_t size, int32_t alignment, std::tuple<void*, int32_t>& result)
 {
-	if (!CanAllocate(size, alignment))
+	if (!CanAllocate(size, alignment) || !EnsureCurrentBuffer())
 	{
 		return false;
 	}
@@ -136,6 +136,29 @@ Effekseer::Backend::VertexBufferRef VertexBufferRing::GetCurrentBuffer()
 	return vertexBuffers_[currentIndex_];
 }
 
+bool VertexBufferRing::EnsureCurrentBuffer()
+{
+	while (currentIndex_ >= static_cast<int>(vertexBuffers_.size()))
+	{
+		auto buffer = graphicsDevice_->CreateVertexBuffer(size_, nullptr, true);
+		if (!buffer) return false;
+		vertexBuffers_.emplace_back(buffer);
+	}
+	return vertexBuffers_[currentIndex_] != nullptr;
+}
+
+void VertexBufferRing::BeginWriteForFrame(uint64_t frameNumber, int32_t frameCount)
+{
+	assert(frameNumber > 0 && frameCount > 0);
+	assert(frameCount_ == 0 || frameCount_ == frameCount);
+	if (frameNumber_ == frameNumber) return;
+	frameNumber_ = frameNumber;
+	frameCount_ = frameCount;
+	currentIndex_ = static_cast<int>((frameNumber - 1) % frameCount);
+	offset_ = 0;
+	previous_offset_ = 0;
+}
+
 void VertexBufferRing::BeginWriteForCommandList()
 {
 	currentIndex_ = 0;
@@ -145,20 +168,16 @@ void VertexBufferRing::BeginWriteForCommandList()
 
 void VertexBufferRing::RenewBuffer()
 {
-	currentIndex_++;
-	if (currentIndex_ >= static_cast<int>(vertexBuffers_.size()))
+	// Each frame owns indices slot, slot + frameCount, ... including overflow.
+	currentIndex_ += frameCount_ > 0 ? frameCount_ : 1;
+	if (frameCount_ == 0 && mode_ == VertexBufferRingMode::Fixed)
 	{
-		if (mode_ == VertexBufferRingMode::ExpandableForCommandList)
-		{
-			// Grow instead of wrapping while recorded draws can still reference earlier pages.
-			vertexBuffers_.emplace_back(graphicsDevice_->CreateVertexBuffer(size_, nullptr, true));
-		}
-		else
-		{
-			currentIndex_ %= vertexBuffers_.size();
-		}
+		currentIndex_ %= vertexBuffers_.size();
 	}
-
+	else
+	{
+		EnsureCurrentBuffer();
+	}
 	offset_ = 0;
 	previous_offset_ = 0;
 }

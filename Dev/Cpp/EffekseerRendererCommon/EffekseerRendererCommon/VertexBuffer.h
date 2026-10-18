@@ -71,6 +71,9 @@ class VertexBufferRing : public VertexBuffer
 {
 	Effekseer::Backend::GraphicsDeviceRef graphicsDevice_;
 	int currentIndex_ = 0;
+	uint64_t frameNumber_ = 0;
+	int32_t frameCount_ = 0;
+	bool EnsureCurrentBuffer();
 	int offset_ = 0;
 	int previous_offset_ = 0;
 	VertexBufferRingMode mode_ = VertexBufferRingMode::Fixed;
@@ -93,6 +96,9 @@ public:
 	Effekseer::Backend::VertexBufferRef Upload() override;
 
 	Effekseer::Backend::VertexBufferRef GetCurrentBuffer() override;
+
+	// Reuse a frame slot only after its GPU work has completed.
+	void BeginWriteForFrame(uint64_t frameNumber, int32_t frameCount);
 
 	void BeginWriteForCommandList() override;
 

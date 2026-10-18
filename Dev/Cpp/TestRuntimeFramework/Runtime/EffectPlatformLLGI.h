@@ -6,7 +6,6 @@
 #include <EffekseerToolRuntime/GroundRendering.h>
 
 #include "EffectPlatform.h"
-#include <unordered_map>
 
 #if defined(WIN32) || defined(__APPLE__) || defined(__linux__)
 
@@ -78,8 +77,7 @@ protected:
 	std::shared_ptr<LLGI::CommandListPool> commandListPool_ = nullptr;
 
 	Effekseer::RefPtr<EffekseerRenderer::CommandList> commandListEfk_ = nullptr;
-	std::unordered_map<LLGI::CommandList*, Effekseer::RefPtr<EffekseerRenderer::CommandList>> commandListsEfk_;
-	void BindCommandList(bool newRecording);
+	void BindCommandList();
 	void OnRendererCreated() override;
 	void CopyBackgroundTexture(LLGI::Texture* destination);
 	Effekseer::RefPtr<EffekseerRenderer::SingleFrameMemoryPool> sfMemoryPoolEfk_ = nullptr;

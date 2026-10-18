@@ -206,7 +206,8 @@ void DeviceMetal::SetupEffekseerModules(::Effekseer::ManagerRef efkManager, bool
 	// メモリプールの作成
 	efkMemoryPool = EffekseerRenderer::CreateSingleFrameMemoryPool(efkRenderer->GetGraphicsDevice());
 
-	// One wrapper retains vertex buffers in memory-pool frame slots.
+	// Create a command list
+	// コマンドリストの作成
 	efkCommandList = EffekseerRenderer::CreateCommandList(efkRenderer->GetGraphicsDevice(), efkMemoryPool);
 
 	// Sprcify rendering modules
