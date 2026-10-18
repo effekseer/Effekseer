@@ -357,6 +357,7 @@ bool RendererImplemented::Initialize(Backend::GraphicsDeviceRef graphicsDevice,
 	LLGI::SetLogger([](LLGI::LogType type, const std::string& message)
 					{ std::cout << message << std::endl; });
 
+	// Preserve the original allocation for command lists without a frame pool.
 	GetImpl()->InternalVertexBuffer = CreateVertexBuffer(3);
 	if (!GetImpl()->InternalVertexBuffer)
 	{
@@ -534,8 +535,7 @@ bool RendererImplemented::BeginRendering()
 		return false;
 	}
 
-	// Vertex pages follow the memory-pool frames, independently of command-list wrappers.
-	// As with the pool's constants, the caller must finish GPU use before reusing a slot.
+	// Select this frame's vertex buffer. Reset it only once per frame.
 	auto pool = commandList_.DownCast<CommandList>()->GetFramePool();
 	if (pool)
 	{
@@ -550,10 +550,10 @@ bool RendererImplemented::BeginRendering()
 		if (!buffer)
 		{
 			buffer = CreateVertexBuffer(1);
-			if (!buffer)
-			{
-				return false;
-			}
+		}
+		if (!buffer)
+		{
+			return false;
 		}
 		GetImpl()->InternalVertexBuffer = buffer;
 		if (vertexBufferFrame_ != frame)
@@ -564,6 +564,7 @@ bool RendererImplemented::BeginRendering()
 	}
 	else
 	{
+		// Fallback for command lists created without an Effekseer frame pool.
 		GetImpl()->InternalVertexBuffer->BeginWriteForCommandList();
 	}
 
