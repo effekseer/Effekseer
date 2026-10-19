@@ -118,6 +118,7 @@ public:
 
 private:
 	CustomVector<WorkerThread> workerThreads_;
+	InstanceUpdateDispatcher instanceUpdateDispatcher_;
 
 	//! whether does rendering and update handle flipped automatically
 	bool autoFlip_ = true;
@@ -264,6 +265,8 @@ public:
 	void ReleaseInstanceContainer(InstanceContainer* container);
 
 	void LaunchWorkerThreads(uint32_t threadCount) override;
+
+	void SetInstanceUpdateDispatcher(InstanceUpdateDispatcher dispatcher) override;
 
 	ThreadNativeHandleType GetWorkerThreadHandle(uint32_t threadID) override;
 

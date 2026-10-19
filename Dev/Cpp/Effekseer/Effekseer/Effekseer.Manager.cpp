@@ -590,6 +590,11 @@ void ManagerImplemented::LaunchWorkerThreads(uint32_t threadCount)
 	}
 }
 
+void ManagerImplemented::SetInstanceUpdateDispatcher(InstanceUpdateDispatcher dispatcher)
+{
+	instanceUpdateDispatcher_ = std::move(dispatcher);
+}
+
 ThreadNativeHandleType ManagerImplemented::GetWorkerThreadHandle(uint32_t threadID)
 {
 	if (threadID < workerThreads_.size())
@@ -1756,7 +1761,19 @@ void ManagerImplemented::DoUpdate(const UpdateParameter& parameter, int times)
 			// wakeup threads and wait to complete threads are hevery, so multithread the updates if you have a large number of instances.
 			const size_t multithreadingChunkThreshold = 4;
 
-			if (workerThreads_.size() >= 2 && chunks.size() >= multithreadingChunkThreshold)
+			if (instanceUpdateDispatcher_ && chunks.size() >= multithreadingChunkThreshold)
+			{
+				instanceUpdateDispatcher_(chunks.size(), [](void* context, size_t begin, size_t end)
+										  {
+						auto& batch = *static_cast<std::vector<InstanceChunk*>*>(context);
+						assert(begin <= end && end <= batch.size());
+						for (size_t i = begin; i < end; i++)
+						{
+							batch[i]->UpdateInstances();
+						} },
+										  &chunks);
+			}
+			else if (workerThreads_.size() >= 2 && chunks.size() >= multithreadingChunkThreshold)
 			{
 				const uint32_t chunkStep = (uint32_t)workerThreads_.size();
 
