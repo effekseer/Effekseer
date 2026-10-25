@@ -18,6 +18,10 @@ namespace Backend
 {
 
 class GraphicsDevice;
+
+// The command list retains the returned allocation after SetConstantBuffer.
+std::shared_ptr<LLGI::Buffer> CreateUniformBufferSnapshot(
+	LLGI::Graphics* graphics, LLGI::SingleFrameMemoryPool* memoryPool, const void* data, int32_t size);
 class VertexBuffer;
 class IndexBuffer;
 class UniformBuffer;
@@ -239,7 +243,7 @@ class UniformBuffer
 	: public DeviceObject,
 	  public Effekseer::Backend::UniformBuffer
 {
-	std::shared_ptr<LLGI::Buffer> buffer_;
+	std::vector<uint8_t> data_;
 	GraphicsDevice* graphicsDevice_ = nullptr;
 	std::function<void()> onDisposed_;
 
@@ -249,10 +253,8 @@ public:
 
 	bool Init(int32_t size, const void* initialData);
 
-	LLGI::Buffer* GetBuffer() const
-	{
-		return buffer_.get();
-	}
+	// Each recorded command owns a snapshot, independent of subsequent updates.
+	std::shared_ptr<LLGI::Buffer> CreateSnapshot(LLGI::SingleFrameMemoryPool* memoryPool) const;
 
 	void UpdateData(const void* src, int32_t size, int32_t offset);
 };
@@ -322,6 +324,7 @@ private:
 	std::set<DeviceObject*> objects_;
 	LLGI::Graphics* graphics_ = nullptr;
 	LLGI::CommandList* commandList_ = nullptr;
+	LLGI::SingleFrameMemoryPool* memoryPool_ = nullptr;
 	LLGI::RenderPassPipelineState* renderPassPipelineState_ = nullptr;
 	std::vector<std::shared_ptr<LLGI::Texture>> pendingMipMapTextures_;
 	std::vector<PendingBufferUpload> pendingBufferUploads_;
@@ -381,7 +384,9 @@ public:
 
 	Effekseer::Backend::RenderPassRef CreateRenderPass(Effekseer::FixedSizeVector<Effekseer::Backend::TextureRef, Effekseer::Backend::RenderTargetMax>& textures, Effekseer::Backend::TextureRef& depthTexture) override;
 
-	void SetCommandList(LLGI::CommandList* commandList);
+	// The owner must keep the pool alive and finish GPU use before recycling its frame slot.
+	// Without a pool, uniform snapshots use command-list-owned dedicated allocations.
+	void SetCommandList(LLGI::CommandList* commandList, LLGI::SingleFrameMemoryPool* memoryPool = nullptr);
 
 	void SetRenderPassPipelineState(LLGI::RenderPassPipelineState* renderPassPipelineState);
 

@@ -101,6 +101,7 @@ struct RegisterRenderingSmokeTests
 				}, TestExecutionMode::FilterOnly);
 			};
 			registerCases("ModelColor", {"Model_Parameters1"});
+			registerCases("GpuParticles", {"GpuParticles_emit_mesh", "GpuParticles_sprite_simple", "GpuParticles_trails_simple"});
 			registerCases("MaterialUV", {"Material_UV1", "Material_UV2"});
 			registerCases("Screenshots", {"SimpleLaser", "Ribbon_Parameters1", "Ring_Parameters1", "Track_Parameters1", "Sprite_Parameters1",
 				"Distortions1", "Model_Parameters1", "Lighing_Parameters1", "DynamicParameter1", "BasicRenderSettings_Blend",

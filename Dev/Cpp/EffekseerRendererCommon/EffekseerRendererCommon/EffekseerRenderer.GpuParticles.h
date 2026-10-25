@@ -101,12 +101,6 @@ public:
 		GpuParticles::EmitterData Data;
 		GpuParticles::UniformBufferRef Buffer;
 		GpuParticles::UniformBufferRef RenderConstantsBuffer;
-		// Ring buffer: Buffers[f] is used when currentFrameIndex == f
-		Effekseer::CustomVector<GpuParticles::UniformBufferRef> Buffers;
-		Effekseer::CustomVector<GpuParticles::UniformBufferRef> RenderConstantsBuffers;
-		int32_t BufferFrameCount = 0;    // ring buffer size (0 = single buffer)
-		int32_t currentFrameIndex = 0;   // which ring buffer slot is active
-		int32_t currentBufferIndex = 0;  // monotonically incremented for ring rotation
 		Effekseer::RefPtr<GpuParticles::Resource> Resource;
 		Effekseer::InstanceGlobal* InstanceGlobal;
 

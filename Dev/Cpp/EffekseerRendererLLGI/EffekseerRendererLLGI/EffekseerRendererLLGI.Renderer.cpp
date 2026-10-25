@@ -559,7 +559,7 @@ void RendererImplemented::SetCommandList(Effekseer::RefPtr<EffekseerRenderer::Co
 
 	auto device = GetGraphicsDevice().DownCast<Backend::GraphicsDevice>();
 	auto cl = commandList_.DownCast<CommandList>();
-	device->SetCommandList((cl) ? cl->GetInternal() : nullptr);
+	device->SetCommandList((cl) ? cl->GetInternal() : nullptr, (cl) ? cl->GetMemoryPool() : nullptr);
 }
 
 Effekseer::Backend::IndexBufferRef RendererImplemented::GetIndexBuffer()
@@ -705,30 +705,34 @@ void RendererImplemented::SetLayout(Shader* shader)
 	}
 }
 
+bool RendererImplemented::UploadShaderConstantBuffers()
+{
+	auto cl = commandList_.DownCast<CommandList>();
+	const int32_t sizes[] = {currentShader->GetVertexConstantBufferSize(), currentShader->GetPixelConstantBufferSize()};
+	const void* data[] = {currentShader->GetVertexConstantBuffer(), currentShader->GetPixelConstantBuffer()};
+	for (int32_t slot = 0; slot < 2; slot++)
+	{
+		if (sizes[slot] <= 0)
+		{
+			continue;
+		}
+		auto buffer = Backend::CreateUniformBufferSnapshot(cl->GetGraphics(), cl->GetMemoryPool(), data[slot], sizes[slot]);
+		if (!buffer)
+		{
+			LLGI::Log(LLGI::LogType::Error, "Draw: failed to allocate shader constant buffer snapshot.");
+			return false;
+		}
+		// Retained by the command list, including allocations outside the frame pool.
+		GetCurrentCommandList()->SetConstantBuffer(buffer.get(), slot);
+	}
+	return true;
+}
+
 void RendererImplemented::DrawSprites(int32_t spriteCount, int32_t vertexOffset)
 {
-	// constant buffer
-	LLGI::Buffer* constantBufferVS = nullptr;
-	LLGI::Buffer* constantBufferPS = nullptr;
-
-	auto cl = commandList_.DownCast<CommandList>();
-
-	if (currentShader->GetVertexConstantBufferSize() > 0)
+	if (!UploadShaderConstantBuffers())
 	{
-		constantBufferVS = cl->GetMemoryPool()->CreateConstantBuffer(currentShader->GetVertexConstantBufferSize());
-		assert(constantBufferVS != nullptr);
-		memcpy(constantBufferVS->Lock(), currentShader->GetVertexConstantBuffer(), currentShader->GetVertexConstantBufferSize());
-		constantBufferVS->Unlock();
-		GetCurrentCommandList()->SetConstantBuffer(constantBufferVS, 0);
-	}
-
-	if (currentShader->GetPixelConstantBufferSize() > 0)
-	{
-		constantBufferPS = cl->GetMemoryPool()->CreateConstantBuffer(currentShader->GetPixelConstantBufferSize());
-		assert(constantBufferPS != nullptr);
-		memcpy(constantBufferPS->Lock(), currentShader->GetPixelConstantBuffer(), currentShader->GetPixelConstantBufferSize());
-		constantBufferPS->Unlock();
-		GetCurrentCommandList()->SetConstantBuffer(constantBufferPS, 1);
+		return;
 	}
 
 	auto piplineState = GetOrCreatePiplineState();
@@ -750,8 +754,6 @@ void RendererImplemented::DrawSprites(int32_t spriteCount, int32_t vertexOffset)
 		GetCurrentCommandList()->Draw(spriteCount * 4);
 	}
 
-	LLGI::SafeRelease(constantBufferVS);
-	LLGI::SafeRelease(constantBufferPS);
 }
 
 void RendererImplemented::DrawPolygon(int32_t vertexCount, int32_t indexCount)
@@ -761,28 +763,9 @@ void RendererImplemented::DrawPolygon(int32_t vertexCount, int32_t indexCount)
 
 void RendererImplemented::DrawPolygonInstanced(int32_t vertexCount, int32_t indexCount, int32_t instanceCount)
 {
-	// constant buffer
-	LLGI::Buffer* constantBufferVS = nullptr;
-	LLGI::Buffer* constantBufferPS = nullptr;
-
-	auto cl = commandList_.DownCast<CommandList>();
-
-	if (currentShader->GetVertexConstantBufferSize() > 0)
+	if (!UploadShaderConstantBuffers())
 	{
-		constantBufferVS = cl->GetMemoryPool()->CreateConstantBuffer(currentShader->GetVertexConstantBufferSize());
-		assert(constantBufferVS != nullptr);
-		memcpy(constantBufferVS->Lock(), currentShader->GetVertexConstantBuffer(), currentShader->GetVertexConstantBufferSize());
-		constantBufferVS->Unlock();
-		GetCurrentCommandList()->SetConstantBuffer(constantBufferVS, 0);
-	}
-
-	if (currentShader->GetPixelConstantBufferSize() > 0)
-	{
-		constantBufferPS = cl->GetMemoryPool()->CreateConstantBuffer(currentShader->GetPixelConstantBufferSize());
-		assert(constantBufferPS != nullptr);
-		memcpy(constantBufferPS->Lock(), currentShader->GetPixelConstantBuffer(), currentShader->GetPixelConstantBufferSize());
-		constantBufferPS->Unlock();
-		GetCurrentCommandList()->SetConstantBuffer(constantBufferPS, 1);
+		return;
 	}
 
 	auto piplineState = GetOrCreatePiplineState();
@@ -794,8 +777,6 @@ void RendererImplemented::DrawPolygonInstanced(int32_t vertexCount, int32_t inde
 	GetCurrentCommandList()->SetVertexBuffer(currentVertexBuffer_, currentVertexBufferStride_, 0);
 	GetCurrentCommandList()->Draw(indexCount / 3, instanceCount);
 
-	LLGI::SafeRelease(constantBufferVS);
-	LLGI::SafeRelease(constantBufferPS);
 }
 
 void RendererImplemented::BeginShader(Shader* shader)

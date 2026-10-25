@@ -22,30 +22,8 @@ bool GpuParticleSystem::InitSystem(const Settings& settings)
 		return false;
 	}
 
-	// Allocate ring buffer. Each slot corresponds to one frame that can be in-flight.
 	auto renderer = (RendererImplemented*)renderer_;
 	auto graphics = renderer->GetGraphicsDevice();
-	int32_t swapBufferCount = graphics->GetGraphics()->GetSwapBufferCount();
-
-	for (uint32_t index = 0; index < settings.EmitterMaxCount; index++)
-	{
-		emitters_[index].BufferFrameCount = swapBufferCount;
-		emitters_[index].currentBufferIndex = 0;
-		emitters_[index].currentFrameIndex = 0;
-
-		// Free the single buffers created by base class
-		emitters_[index].Buffer.Reset();
-		emitters_[index].RenderConstantsBuffer.Reset();
-
-		// Create ring buffer
-		for (int f = 0; f < swapBufferCount; f++)
-		{
-			emitters_[index].Buffers.push_back(
-				graphicsDevice_->CreateUniformBuffer(sizeof(GpuParticles::EmitterData), nullptr));
-			emitters_[index].RenderConstantsBuffers.push_back(
-				graphicsDevice_->CreateUniformBuffer(sizeof(GpuParticles::RenderConstants), nullptr));
-		}
-	}
 
 	const auto& csClear = Backend::Serialize(renderer->fixedShader_.GpuParticles_Clear_CS);
 	const auto& csSpawn = Backend::Serialize(renderer->fixedShader_.GpuParticles_Spawn_CS);

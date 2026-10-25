@@ -559,26 +559,54 @@ UniformBuffer::~UniformBuffer()
 
 bool UniformBuffer::Init(int32_t size, const void* initialData)
 {
-	buffer_ = LLGI::CreateSharedPtr(graphicsDevice_->GetGraphics()->CreateBuffer(
-		LLGI::BufferUsageType::Constant | LLGI::BufferUsageType::MapWrite, size));
+	if (size <= 0)
+	{
+		return false;
+	}
+	data_.resize(size);
 
 	if (initialData)
 	{
 		UpdateData(initialData, size, 0);
 	}
 
-	return buffer_ != nullptr;
+	return true;
 }
 
 void UniformBuffer::UpdateData(const void* src, int32_t size, int32_t offset)
 {
-	if (buffer_)
+	assert(offset >= 0 && size >= 0 && static_cast<size_t>(offset) + size <= data_.size());
+	memcpy(data_.data() + offset, src, size);
+}
+
+std::shared_ptr<LLGI::Buffer> UniformBuffer::CreateSnapshot(LLGI::SingleFrameMemoryPool* memoryPool) const
+{
+	return CreateUniformBufferSnapshot(graphicsDevice_->GetGraphics(), memoryPool, data_.data(), static_cast<int32_t>(data_.size()));
+}
+
+std::shared_ptr<LLGI::Buffer> CreateUniformBufferSnapshot(
+	LLGI::Graphics* graphics, LLGI::SingleFrameMemoryPool* memoryPool, const void* data, int32_t size)
+{
+	auto buffer = LLGI::CreateSharedPtr(memoryPool ? memoryPool->CreateConstantBuffer(size) : nullptr);
+	if (!buffer)
 	{
-		void* dst = buffer_->Lock(offset, size);
-		assert(dst != nullptr);
-		memcpy(dst, src, size);
-		buffer_->Unlock();
+		// The frame pool has a fixed capacity. Overflow (or a raw command list
+		// without a pool) gets a dedicated allocation, never a reused live region.
+		buffer = LLGI::CreateSharedPtr(graphics->CreateBuffer(
+			LLGI::BufferUsageType::Constant | LLGI::BufferUsageType::MapWrite, size));
 	}
+	if (!buffer)
+	{
+		return nullptr;
+	}
+	auto dst = buffer->Lock();
+	if (!dst)
+	{
+		return nullptr;
+	}
+	memcpy(dst, data, size);
+	buffer->Unlock();
+	return buffer;
 }
 
 StorageBuffer::StorageBuffer(GraphicsDevice* graphicsDevice)
@@ -1061,9 +1089,10 @@ Effekseer::Backend::RenderPassRef GraphicsDevice::CreateRenderPass(Effekseer::Fi
 	return ret;
 }
 
-void GraphicsDevice::SetCommandList(LLGI::CommandList* commandList)
+void GraphicsDevice::SetCommandList(LLGI::CommandList* commandList, LLGI::SingleFrameMemoryPool* memoryPool)
 {
 	commandList_ = commandList;
+	memoryPool_ = commandList ? memoryPool : nullptr;
 }
 
 void GraphicsDevice::SetRenderPassPipelineState(LLGI::RenderPassPipelineState* renderPassPipelineState)
@@ -1085,7 +1114,14 @@ void GraphicsDevice::Draw(const Effekseer::Backend::DrawParameter& drawParam)
 	for (int32_t slot = 0; slot < (int32_t)drawParam.BufferSlotCount; slot++)
 	{
 		auto buf = drawParam.VertexUniformBufferPtrs[slot].DownCast<Backend::UniformBuffer>();
-		commandList_->SetConstantBuffer((buf) ? buf->GetBuffer() : nullptr, slot);
+		auto snapshot = buf ? buf->CreateSnapshot(memoryPool_) : nullptr;
+		if (buf && !snapshot)
+		{
+			LLGI::Log(LLGI::LogType::Error, "Draw: failed to allocate uniform buffer snapshot.");
+			return;
+		}
+		// SetConstantBuffer retains the allocation until the command list is recycled.
+		commandList_->SetConstantBuffer(snapshot.get(), slot);
 	}
 	BindResourceBinders(drawParam.ResourceBinders);
 
@@ -1133,7 +1169,13 @@ void GraphicsDevice::Dispatch(const Effekseer::Backend::DispatchParameter& dispa
 	{
 		if (auto uniformBuffer = dispatchParam.UniformBufferPtrs[slot].DownCast<UniformBuffer>())
 		{
-			commandList_->SetConstantBuffer(uniformBuffer->GetBuffer(), slot);
+			auto snapshot = uniformBuffer->CreateSnapshot(memoryPool_);
+			if (!snapshot)
+			{
+				LLGI::Log(LLGI::LogType::Error, "Dispatch: failed to allocate uniform buffer snapshot.");
+				return;
+			}
+			commandList_->SetConstantBuffer(snapshot.get(), slot);
 		}
 		else
 		{
