@@ -79,7 +79,6 @@ protected:
 	LLGI::CommandList* GetCurrentCommandList();
 
 	LLGI::PipelineState* GetOrCreatePiplineState();
-	bool UploadShaderConstantBuffers();
 
 public:
 	//! shaders (todo implemented)

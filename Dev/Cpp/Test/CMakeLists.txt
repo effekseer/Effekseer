@@ -78,10 +78,6 @@ if(BUILD_DX12
   list(APPEND common_lib LLGI)
 endif()
 
-if(BUILD_DX11)
-  list(APPEND effekseer_test_src Backend/UniformBufferDX11.cpp)
-endif()
-
 if(BUILD_DX12)
   list(APPEND effekseer_test_src Runtime/CommandListDX12.cpp)
   set_source_files_properties(Runtime/CommandListDX12.cpp PROPERTIES

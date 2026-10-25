@@ -374,18 +374,29 @@ void GpuParticleSystem::ComputeFrame(const Context& context)
 		graphicsDevice_->UpdateUniformBuffer(computeConstantsUniformBuffer_, sizeof(GpuParticles::ComputeConstants), 0, &cdata);
 	}
 
+	// Select ring buffer slot for every emitter that will be processed this frame.
+	// Each emitter gets a consistent index across all three phases (Clear/Spawn/Update).
+	for (EmitterID emitterID = 0; emitterID < (EmitterID)emitters_.size(); emitterID++)
+	{
+		emitters_[emitterID].currentFrameIndex = emitters_[emitterID].currentBufferIndex++ % emitters_[emitterID].BufferFrameCount;
+	}
+
+	// Helper to get active buffer pointer for an emitter
+	auto getActiveBuffer = [](Emitter& emitter) -> GpuParticles::UniformBufferRef { return emitter.Buffers[emitter.currentFrameIndex]; };
+
 	for (auto emitterID : newEmitterIds_)
 	{
 		// Initialize particle data region
 		auto& emitter = emitters_[emitterID];
-		graphicsDevice_->UpdateUniformBuffer(emitter.Buffer, sizeof(GpuParticles::EmitterData), 0, &emitter.Data);
+		auto activeBuffer = getActiveBuffer(emitter);
+		graphicsDevice_->UpdateUniformBuffer(activeBuffer.Get(), sizeof(GpuParticles::EmitterData), 0, &emitter.Data);
 
 		GpuParticles::ComputeCommand command;
 		command.PipelineStatePtr = pipelineParticleClear_;
 
 		command.UniformBufferPtrs[0] = computeConstantsUniformBuffer_;
 		command.UniformBufferPtrs[1] = emitter.Resource->ParamBuffer;
-		command.UniformBufferPtrs[2] = emitter.Buffer;
+		command.UniformBufferPtrs[2] = activeBuffer;
 		command.SetStorageBuffer(0, particlesStorageBuffer_, StorageReadWrite);
 
 		command.GroupCount = {(int32_t)emitter.Data.ParticleSize / 256, 1, 1};
@@ -469,7 +480,9 @@ void GpuParticleSystem::ComputeFrame(const Context& context)
 				}
 			}
 
-			graphicsDevice_->UpdateUniformBuffer(emitter.Buffer, sizeof(GpuParticles::EmitterData), 0, &emitter.Data);
+			// Write emitter data to the active ring buffer slot
+			auto emitterActiveBuffer = getActiveBuffer(emitter);
+			graphicsDevice_->UpdateUniformBuffer(emitterActiveBuffer.Get(), sizeof(GpuParticles::EmitterData), 0, &emitter.Data);
 
 			if (emitter.Data.NextEmitCount > 0)
 			{
@@ -478,7 +491,7 @@ void GpuParticleSystem::ComputeFrame(const Context& context)
 
 				command.UniformBufferPtrs[0] = computeConstantsUniformBuffer_;
 				command.UniformBufferPtrs[1] = emitter.Resource->ParamBuffer;
-				command.UniformBufferPtrs[2] = emitter.Buffer;
+				command.UniformBufferPtrs[2] = emitterActiveBuffer;
 				command.SetStorageBuffer(0, particlesStorageBuffer_, StorageReadWrite);
 				auto emitPoints = emitter.Resource->EmitPoints;
 				if (!emitter.Resource->EmitPointBuffers.empty())
@@ -507,12 +520,15 @@ void GpuParticleSystem::ComputeFrame(const Context& context)
 		{
 			auto& paramSet = emitter.Resource->ParamSet;
 
+			// Reuse the same ring buffer index selected at the top of ComputeFrame
+			auto emitterActiveBuffer = getActiveBuffer(emitter);
+
 			GpuParticles::ComputeCommand command;
 			command.PipelineStatePtr = pipelineParticleUpdate_;
 
 			command.UniformBufferPtrs[0] = computeConstantsUniformBuffer_;
 			command.UniformBufferPtrs[1] = emitter.Resource->ParamBuffer;
-			command.UniformBufferPtrs[2] = emitter.Buffer;
+			command.UniformBufferPtrs[2] = emitterActiveBuffer;
 			command.SetStorageBuffer(0, particlesStorageBuffer_, StorageReadWrite);
 			command.SetStorageBuffer(1, trailsStorageBuffer_, StorageReadWrite);
 
@@ -590,6 +606,9 @@ void GpuParticleSystem::RenderFrame(const Context& context)
 		auto& emitter = emitters_[emitterID];
 		if (emitter.IsAlive())
 		{
+			auto renderConstantsBuffer = emitter.RenderConstantsBuffers[emitter.currentFrameIndex];
+			auto emitterDataBuffer = emitter.Buffers[emitter.currentFrameIndex];
+
 			auto renderConstants = baseRenderConstants;
 			if (emitter.InstanceGlobal != nullptr && emitter.InstanceGlobal->RenderingCoordinateTransform.IsEnabled)
 			{
@@ -634,7 +653,7 @@ void GpuParticleSystem::RenderFrame(const Context& context)
 					lightDirection.GetX(), lightDirection.GetY(), lightDirection.GetZ());
 			}
 			graphicsDevice_->UpdateUniformBuffer(
-				emitter.RenderConstantsBuffer, sizeof(GpuParticles::RenderConstants), 0, &renderConstants);
+				renderConstantsBuffer.Get(), sizeof(GpuParticles::RenderConstants), 0, &renderConstants);
 
 			auto effect = emitter.Resource->Effect;
 			auto& paramSet = emitter.Resource->ParamSet;
@@ -642,9 +661,9 @@ void GpuParticleSystem::RenderFrame(const Context& context)
 			Effekseer::Backend::DrawParameter drawParams;
 			drawParams.PipelineStatePtr = GetOrCreatePipelineState(emitter.Resource->GPUPipelineStateKey);
 
-			drawParams.VertexUniformBufferPtrs[0] = drawParams.PixelUniformBufferPtrs[0] = emitter.RenderConstantsBuffer;
+			drawParams.VertexUniformBufferPtrs[0] = drawParams.PixelUniformBufferPtrs[0] = renderConstantsBuffer;
 			drawParams.VertexUniformBufferPtrs[1] = drawParams.PixelUniformBufferPtrs[1] = emitter.Resource->ParamBuffer;
-			drawParams.VertexUniformBufferPtrs[2] = emitter.Buffer;
+			drawParams.VertexUniformBufferPtrs[2] = emitterDataBuffer;
 
 			drawParams.SetStorageBuffer(0, particlesStorageBuffer_);
 			drawParams.SetStorageBuffer(1, trailsStorageBuffer_);

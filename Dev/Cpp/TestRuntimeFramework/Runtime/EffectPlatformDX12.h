@@ -3,8 +3,7 @@
 #include "../../EffekseerRendererDX12/EffekseerRendererDX12.h"
 #include "EffectPlatformLLGI.h"
 
-// Tests may specialize frame setup to exercise resource exhaustion and multi-step compute.
-class EffectPlatformDX12 : public EffectPlatformLLGI
+class EffectPlatformDX12 final : public EffectPlatformLLGI
 {
 	LLGI::Texture* backgroundTexture_ = nullptr;
 
