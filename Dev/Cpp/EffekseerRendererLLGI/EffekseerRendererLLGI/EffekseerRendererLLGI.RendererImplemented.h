@@ -111,6 +111,7 @@ public:
 	bool EndRendering() override;
 
 	void SetCommandList(Effekseer::RefPtr<EffekseerRenderer::CommandList> commandList) override;
+	CommandList* GetCommandList() const { return commandList_.DownCast<CommandList>().Get(); }
 
 	Effekseer::Backend::GraphicsDeviceRef GetGraphicsDevice() const override
 	{

@@ -5,13 +5,53 @@
 namespace EffekseerRendererLLGI
 {
 
-GpuParticleSystem::GpuParticleSystem(RendererImplemented* renderer)
+GpuParticleSystem::GpuParticleSystem(RendererImplemented* renderer, int32_t constantBufferSize)
 	: EffekseerRenderer::GpuParticleSystem(renderer)
+	, constantBufferSize_(constantBufferSize)
 {
 }
 
 GpuParticleSystem::~GpuParticleSystem()
 {
+}
+
+bool GpuParticleSystem::UploadConstants(Effekseer::Backend::UniformBufferRef& buffer, int32_t size, const void* data)
+{
+	auto renderer = static_cast<RendererImplemented*>(renderer_);
+	auto commandList = renderer->GetCommandList();
+	auto frameID = commandList ? commandList->GetFrameID() : nullptr;
+	if (!frameID) return false;
+	auto& pool = constantPools_[frameID];
+	if (!pool.Memory)
+	{
+		pool.Memory = LLGI::CreateSharedPtr(renderer->GetGraphics()->CreateSingleFrameMemoryPool(constantBufferSize_, 128));
+		if (!pool.Memory || pool.Memory->GetSwapBufferCount() < commandList->GetMemoryPool()->GetSwapBufferCount())
+		{
+			pool.Memory.reset();
+			return false;
+		}
+		pool.Memory->NewFrame();
+		pool.Frame = *frameID;
+	}
+	else if (pool.Frame != *frameID)
+	{
+		// Advance only with the application's frame pool, never per ComputeFrame.
+		pool.Memory->NewFrame();
+		pool.Frame = *frameID;
+	}
+
+	auto allocation = LLGI::CreateSharedPtr(pool.Memory->CreateConstantBuffer(size));
+	if (!allocation) return false; // Fixed capacity: abandon this compute/draw on exhaustion.
+	auto dst = allocation->Lock();
+	if (!dst) return false;
+	memcpy(dst, data, size);
+	allocation->Unlock();
+	if (!buffer)
+	{
+		buffer = Effekseer::MakeRefPtr<Backend::UniformBuffer>(renderer->GetGraphicsDeviceInternal().Get());
+	}
+	buffer.DownCast<Backend::UniformBuffer>()->SetBuffer(std::move(allocation));
+	return true;
 }
 
 bool GpuParticleSystem::InitSystem(const Settings& settings)

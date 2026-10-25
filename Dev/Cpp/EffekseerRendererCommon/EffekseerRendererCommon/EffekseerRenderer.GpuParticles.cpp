@@ -371,14 +371,15 @@ void GpuParticleSystem::ComputeFrame(const Context& context)
 	{
 		GpuParticles::ComputeConstants cdata{};
 		cdata.CoordinateReversed = context.CoordinateReversed;
-		graphicsDevice_->UpdateUniformBuffer(computeConstantsUniformBuffer_, sizeof(GpuParticles::ComputeConstants), 0, &cdata);
+		if (!UploadConstants(computeConstantsUniformBuffer_, sizeof(GpuParticles::ComputeConstants), &cdata)) return;
 	}
 
 	for (auto emitterID : newEmitterIds_)
 	{
 		// Initialize particle data region
 		auto& emitter = emitters_[emitterID];
-		graphicsDevice_->UpdateUniformBuffer(emitter.Buffer, sizeof(GpuParticles::EmitterData), 0, &emitter.Data);
+		emitter.RenderData = emitter.Data;
+		if (!UploadConstants(emitter.Buffer, sizeof(GpuParticles::EmitterData), &emitter.RenderData)) return;
 
 		GpuParticles::ComputeCommand command;
 		command.PipelineStatePtr = pipelineParticleClear_;
@@ -469,7 +470,8 @@ void GpuParticleSystem::ComputeFrame(const Context& context)
 				}
 			}
 
-			graphicsDevice_->UpdateUniformBuffer(emitter.Buffer, sizeof(GpuParticles::EmitterData), 0, &emitter.Data);
+			emitter.RenderData = emitter.Data;
+			if (!UploadConstants(emitter.Buffer, sizeof(GpuParticles::EmitterData), &emitter.RenderData)) return;
 
 			if (emitter.Data.NextEmitCount > 0)
 			{
@@ -633,8 +635,9 @@ void GpuParticleSystem::RenderFrame(const Context& context)
 				renderConstants.LightDir = Effekseer::GpuParticles::float3(
 					lightDirection.GetX(), lightDirection.GetY(), lightDirection.GetZ());
 			}
-			graphicsDevice_->UpdateUniformBuffer(
-				emitter.RenderConstantsBuffer, sizeof(GpuParticles::RenderConstants), 0, &renderConstants);
+			// A draw may occur in a later frame without another ComputeFrame.
+			if (!UploadConstants(emitter.Buffer, sizeof(GpuParticles::EmitterData), &emitter.RenderData) ||
+				!UploadConstants(emitter.RenderConstantsBuffer, sizeof(GpuParticles::RenderConstants), &renderConstants)) return;
 
 			auto effect = emitter.Resource->Effect;
 			auto& paramSet = emitter.Resource->ParamSet;

@@ -40,7 +40,7 @@ Effekseer::RefPtr<EffekseerRenderer::CommandList> CreateCommandList(::Effekseer:
 	{
 		return nullptr;
 	}
-	auto ret = Effekseer::MakeRefPtr<EffekseerRendererLLGI::CommandList>(g, commandList, mp->GetInternal());
+	auto ret = Effekseer::MakeRefPtr<EffekseerRendererLLGI::CommandList>(g, commandList, mp->GetInternal(), mp->GetFrameID());
 	ES_SAFE_RELEASE(commandList);
 	if (!ret->Initialize(mp->GetInternal()->GetSwapBufferCount()))
 	{

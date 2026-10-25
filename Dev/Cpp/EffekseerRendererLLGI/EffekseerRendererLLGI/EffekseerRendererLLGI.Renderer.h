@@ -65,6 +65,7 @@ public:
 class SingleFrameMemoryPool : public ::EffekseerRenderer::SingleFrameMemoryPool, public ::Effekseer::ReferenceObject
 {
 	LLGI::SingleFrameMemoryPool* memoryPool_ = nullptr;
+	std::shared_ptr<uint64_t> frameID_ = std::make_shared<uint64_t>(0);
 
 public:
 	SingleFrameMemoryPool(LLGI::SingleFrameMemoryPool* memoryPool)
@@ -81,7 +82,10 @@ public:
 	void NewFrame() override
 	{
 		memoryPool_->NewFrame();
+		++*frameID_;
 	}
+
+	std::shared_ptr<uint64_t> GetFrameID() const { return frameID_; }
 
 	LLGI::SingleFrameMemoryPool* GetInternal()
 	{
@@ -122,11 +126,14 @@ private:
 	size_t frameIndex_ = 0;
 	LLGI::SingleFrameMemoryPool* memoryPool_ = nullptr;
 	CommandListState state_ = CommandListState::Wait;
+	std::shared_ptr<uint64_t> frameID_;
 
 public:
-	CommandList(LLGI::Graphics* graphics, LLGI::CommandList* commandList, LLGI::SingleFrameMemoryPool* memoryPool)
+	CommandList(LLGI::Graphics* graphics, LLGI::CommandList* commandList, LLGI::SingleFrameMemoryPool* memoryPool,
+		std::shared_ptr<uint64_t> frameID = nullptr)
 		: graphics_(graphics)
 		, memoryPool_(memoryPool)
+		, frameID_(std::move(frameID))
 	{
 		ES_SAFE_ADDREF(graphics_);
 		ES_SAFE_ADDREF(commandList);
@@ -218,6 +225,8 @@ public:
 	{
 		return state_;
 	}
+
+	std::shared_ptr<uint64_t> GetFrameID() const { return frameID_; }
 
 	void SetState(CommandListState state)
 	{
