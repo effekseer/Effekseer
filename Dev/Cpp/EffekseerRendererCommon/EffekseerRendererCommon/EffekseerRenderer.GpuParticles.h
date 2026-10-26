@@ -99,8 +99,6 @@ public:
 	struct Emitter
 	{
 		GpuParticles::EmitterData Data;
-		// Preserve the values used by Compute (including its trail phase) for later draws.
-		GpuParticles::EmitterData RenderData{};
 		GpuParticles::UniformBufferRef Buffer;
 		GpuParticles::UniformBufferRef RenderConstantsBuffer;
 		Effekseer::RefPtr<GpuParticles::Resource> Resource;
@@ -188,10 +186,6 @@ private:
 
 protected:
 	static constexpr uint32_t EmitterUnitSize = 16;
-	virtual bool UploadConstants(GpuParticles::UniformBufferRef& buffer, int32_t size, const void* data)
-	{
-		return graphicsDevice_->UpdateUniformBuffer(buffer, size, 0, data);
-	}
 	static constexpr uint32_t ParticleUnitSize = 256;
 
 	GpuParticles::PipelineStateRef GetOrCreatePipelineState(GpuParticles::PipelineStateKey key);
