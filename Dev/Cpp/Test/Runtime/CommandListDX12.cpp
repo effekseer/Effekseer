@@ -5,7 +5,9 @@
 
 #ifdef __EFFEKSEER_BUILD_DX12__
 #include <DX12/LLGI.CommandListDX12.h>
+#include <DX12/LLGI.BufferDX12.h>
 #include <EffekseerRendererDX12.h>
+#include <EffekseerRendererLLGI/EffekseerRendererLLGI.GpuParticles.h>
 #include <EffekseerRendererLLGI/EffekseerRendererLLGI.RendererImplemented.h>
 #include <dxgi1_4.h>
 #include <d3d12sdklayers.h>
@@ -292,6 +294,131 @@ TestRegister registerCommandListDescriptorsDX12ThreeFrames(
 	"Runtime.CommandListDescriptorsDX12.ThreeFrames", [] { CommandListDescriptorsDX12(3); });
 TestRegister registerCommandListDescriptorsDX12FourFrames(
 	"Runtime.CommandListDescriptorsDX12.FourFrames", [] { CommandListDescriptorsDX12(4); });
+
+class TestGpuParticleSystem : public EffekseerRendererLLGI::GpuParticleSystem
+{
+public:
+	using GpuParticleSystem::GpuParticleSystem;
+	using GpuParticleSystem::UploadConstants;
+};
+
+// Record distinct constants across three unsubmitted frames, fill the pool,
+// then reuse its regions only after GPU completion.
+void GpuParticleConstantsDX12()
+{
+	using Microsoft::WRL::ComPtr;
+	ComPtr<IDXGIFactory4> factory;
+	EXPECT_TRUE(SUCCEEDED(CreateDXGIFactory1(IID_PPV_ARGS(&factory))));
+	ComPtr<IDXGIAdapter> adapter;
+	EXPECT_TRUE(SUCCEEDED(factory->EnumWarpAdapter(IID_PPV_ARGS(&adapter))));
+	ComPtr<ID3D12Device> device;
+	EXPECT_TRUE(SUCCEEDED(D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&device))));
+	D3D12_COMMAND_QUEUE_DESC queueDesc{};
+	ComPtr<ID3D12CommandQueue> queue;
+	EXPECT_TRUE(SUCCEEDED(device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&queue))));
+	auto backend = EffekseerRendererDX12::CreateGraphicsDevice(device.Get(), queue.Get(), 3);
+	auto graphicsDevice = backend.DownCast<EffekseerRendererLLGI::Backend::GraphicsDevice>();
+	auto graphics = graphicsDevice->GetGraphics();
+	constexpr int Steps = 12;
+	auto rendererPool = LLGI::CreateSharedPtr(graphics->CreateSingleFrameMemoryPool(4096, 32));
+	auto constantPool = LLGI::CreateSharedPtr(graphics->CreateSingleFrameMemoryPool(Steps * 256, 128));
+	auto pool = Effekseer::MakeRefPtr<EffekseerRendererLLGI::SingleFrameMemoryPool>(rendererPool.get(), constantPool);
+	DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	auto renderer = EffekseerRendererDX12::Create(backend, &format, 1, DXGI_FORMAT_UNKNOWN, false, 16);
+	auto particles = Effekseer::MakeRefPtr<TestGpuParticleSystem>(renderer.DownCast<EffekseerRendererLLGI::RendererImplemented>().Get());
+	const char* source =
+		"cbuffer C : register(b0) { uint index; uint value; uint2 padding; };"
+		"RWStructuredBuffer<uint> output : register(u0);"
+		"[numthreads(1,1,1)] void main() { output[index] = value; }";
+	ComPtr<ID3DBlob> binary, errors;
+	EXPECT_TRUE(SUCCEEDED(D3DCompile(source, strlen(source), nullptr, nullptr, nullptr,
+		"main", "cs_5_0", 0, 0, &binary, &errors)));
+	LLGI::DataStructure data;
+	data.Data = binary->GetBufferPointer();
+	data.Size = static_cast<int32_t>(binary->GetBufferSize());
+	auto serialized = EffekseerRendererLLGI::Backend::Serialize({data});
+	auto shader = graphicsDevice->CreateComputeShader(serialized.data(), static_cast<int32_t>(serialized.size()));
+	Effekseer::Backend::PipelineStateParameter pipelineParameter;
+	pipelineParameter.ShaderPtr = shader;
+	auto pipeline = graphicsDevice->CreatePipelineState(pipelineParameter);
+	EXPECT_TRUE(pipeline != nullptr);
+	std::array<uint32_t, 4> values = {0, 0, 123, 456};
+	auto uniform = graphicsDevice->CreateUniformBuffer(sizeof(values), values.data());
+	std::array<std::shared_ptr<LLGI::CommandList>, 3> lists;
+	std::array<Effekseer::Backend::StorageBufferRef, 3> outputs;
+	std::array<ComPtr<ID3D12Resource>, 3> readbacks;
+	for (int frame = 0; frame < 3; frame++)
+	{
+		lists[frame] = LLGI::CreateSharedPtr(graphics->CreateCommandList(pool->GetInternal()));
+		outputs[frame] = graphicsDevice->CreateStorageBuffer(Steps, sizeof(uint32_t), nullptr,
+			Effekseer::Backend::StorageBufferUsage::ReadWrite);
+		D3D12_HEAP_PROPERTIES heap{};
+		heap.Type = D3D12_HEAP_TYPE_READBACK;
+		D3D12_RESOURCE_DESC desc{};
+		desc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+		desc.Width = Steps * sizeof(uint32_t);
+		desc.Height = 1;
+		desc.DepthOrArraySize = 1;
+		desc.MipLevels = 1;
+		desc.SampleDesc.Count = 1;
+		desc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+		EXPECT_TRUE(SUCCEEDED(device->CreateCommittedResource(&heap, D3D12_HEAP_FLAG_NONE, &desc,
+			D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(&readbacks[frame]))));
+	}
+	for (uint32_t round = 0; round < 3; round++)
+	{
+		for (uint32_t frame = 0; frame < 3; frame++)
+		{
+			pool->NewFrame();
+			auto list = lists[frame].get();
+			list->Begin();
+			auto wrapper = Effekseer::MakeRefPtr<EffekseerRendererLLGI::CommandList>(graphics, list, pool->GetInternal(), pool->GetGpuParticleMemoryPool());
+			renderer->SetCommandList(wrapper);
+			Effekseer::Backend::DispatchParameter dispatch;
+			dispatch.PipelineStatePtr = pipeline;
+			dispatch.UniformBufferPtrs[0] = uniform;
+			dispatch.SetStorageBuffer(0, outputs[frame], Effekseer::Backend::StorageBufferAccess::ReadWrite);
+			dispatch.GroupCount = {1, 1, 1};
+			dispatch.ThreadCount = {1, 1, 1};
+			for (uint32_t step = 0; step < Steps; step++)
+			{
+				values[0] = step;
+				values[1] = 1000 * round + 100 * frame + step + 1;
+				EXPECT_TRUE(particles->UploadConstants(uniform, sizeof(values), values.data()));
+				graphicsDevice->Dispatch(dispatch);
+			}
+			// Exhaustion must fail without overwriting earlier dispatches' constants.
+			values.fill(0);
+			EXPECT_TRUE(!particles->UploadConstants(uniform, sizeof(values), values.data()));
+			auto native = static_cast<LLGI::CommandListDX12*>(list)->GetCommandList();
+			auto output = static_cast<LLGI::BufferDX12*>(outputs[frame].DownCast<EffekseerRendererLLGI::Backend::StorageBuffer>()->GetBuffer());
+			output->ResourceBarrier(native, D3D12_RESOURCE_STATE_COPY_SOURCE);
+			native->CopyBufferRegion(readbacks[frame].Get(), 0, output->Get(), 0, Steps * sizeof(uint32_t));
+			list->End();
+		}
+		values.fill(0);
+		// No GPU work can observe any constants until every update is finished.
+		for (auto& list : lists) graphics->Execute(list.get());
+		for (auto& list : lists) list->WaitUntilCompleted();
+		for (uint32_t frame = 0; frame < 3; frame++)
+		{
+			uint32_t* actual = nullptr;
+			EXPECT_TRUE(SUCCEEDED(readbacks[frame]->Map(0, nullptr, reinterpret_cast<void**>(&actual))));
+			for (uint32_t step = 0; step < Steps; step++)
+			{
+				if (actual[step] != 1000 * round + 100 * frame + step + 1)
+				{
+					fprintf(stderr, "round=%u frame=%u step=%u actual=%u\n", round, frame, step, actual[step]);
+				}
+				EXPECT_TRUE(actual[step] == 1000 * round + 100 * frame + step + 1);
+			}
+			readbacks[frame]->Unmap(0, nullptr);
+		}
+	}
+	renderer->SetCommandList(nullptr);
+}
+
+TestRegister registerGpuParticleConstantsDX12("Runtime.GpuParticleConstantsDX12", GpuParticleConstantsDX12);
 
 void PlatformFramesDX12()
 {

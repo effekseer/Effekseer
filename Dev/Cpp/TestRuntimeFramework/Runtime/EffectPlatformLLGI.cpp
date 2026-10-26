@@ -457,7 +457,7 @@ void EffectPlatformLLGI::DestroyDevice()
 void EffectPlatformLLGI::BindCommandList()
 {
 	auto memoryPool = sfMemoryPoolEfk_.DownCast<EffekseerRendererLLGI::SingleFrameMemoryPool>();
-	commandListEfk_ = Effekseer::MakeRefPtr<EffekseerRendererLLGI::CommandList>(graphics_, commandList_.get(), memoryPool->GetInternal());
+	commandListEfk_ = Effekseer::MakeRefPtr<EffekseerRendererLLGI::CommandList>(graphics_, commandList_.get(), memoryPool->GetInternal(), memoryPool->GetGpuParticleMemoryPool());
 	GetRenderer()->SetCommandList(commandListEfk_);
 }
 

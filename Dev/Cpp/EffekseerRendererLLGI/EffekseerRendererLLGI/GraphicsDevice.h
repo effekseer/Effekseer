@@ -249,6 +249,8 @@ public:
 
 	bool Init(int32_t size, const void* initialData);
 
+	void SetBuffer(std::shared_ptr<LLGI::Buffer> buffer) { buffer_ = std::move(buffer); }
+
 	LLGI::Buffer* GetBuffer() const
 	{
 		return buffer_.get();

@@ -65,9 +65,12 @@ public:
 class SingleFrameMemoryPool : public ::EffekseerRenderer::SingleFrameMemoryPool, public ::Effekseer::ReferenceObject
 {
 	LLGI::SingleFrameMemoryPool* memoryPool_ = nullptr;
+	std::shared_ptr<LLGI::SingleFrameMemoryPool> gpuParticleMemoryPool_;
 
 public:
-	SingleFrameMemoryPool(LLGI::SingleFrameMemoryPool* memoryPool)
+	SingleFrameMemoryPool(LLGI::SingleFrameMemoryPool* memoryPool,
+		std::shared_ptr<LLGI::SingleFrameMemoryPool> gpuParticleMemoryPool = nullptr)
+		: gpuParticleMemoryPool_(std::move(gpuParticleMemoryPool))
 	{
 		memoryPool_ = memoryPool;
 		ES_SAFE_ADDREF(memoryPool_);
@@ -81,7 +84,10 @@ public:
 	void NewFrame() override
 	{
 		memoryPool_->NewFrame();
+		if (gpuParticleMemoryPool_) gpuParticleMemoryPool_->NewFrame();
 	}
+
+	std::shared_ptr<LLGI::SingleFrameMemoryPool> GetGpuParticleMemoryPool() const { return gpuParticleMemoryPool_; }
 
 	LLGI::SingleFrameMemoryPool* GetInternal()
 	{
@@ -122,11 +128,14 @@ private:
 	size_t frameIndex_ = 0;
 	LLGI::SingleFrameMemoryPool* memoryPool_ = nullptr;
 	CommandListState state_ = CommandListState::Wait;
+	std::shared_ptr<LLGI::SingleFrameMemoryPool> gpuParticleMemoryPool_;
 
 public:
-	CommandList(LLGI::Graphics* graphics, LLGI::CommandList* commandList, LLGI::SingleFrameMemoryPool* memoryPool)
+	CommandList(LLGI::Graphics* graphics, LLGI::CommandList* commandList, LLGI::SingleFrameMemoryPool* memoryPool,
+		std::shared_ptr<LLGI::SingleFrameMemoryPool> gpuParticleMemoryPool = nullptr)
 		: graphics_(graphics)
 		, memoryPool_(memoryPool)
+		, gpuParticleMemoryPool_(std::move(gpuParticleMemoryPool))
 	{
 		ES_SAFE_ADDREF(graphics_);
 		ES_SAFE_ADDREF(commandList);
@@ -223,6 +232,8 @@ public:
 	{
 		state_ = state;
 	}
+
+	LLGI::SingleFrameMemoryPool* GetGpuParticleMemoryPool() const { return gpuParticleMemoryPool_.get(); }
 
 	virtual int GetRef() override
 	{

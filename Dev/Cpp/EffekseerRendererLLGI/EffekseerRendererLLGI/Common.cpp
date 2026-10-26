@@ -40,7 +40,7 @@ Effekseer::RefPtr<EffekseerRenderer::CommandList> CreateCommandList(::Effekseer:
 	{
 		return nullptr;
 	}
-	auto ret = Effekseer::MakeRefPtr<EffekseerRendererLLGI::CommandList>(g, commandList, mp->GetInternal());
+	auto ret = Effekseer::MakeRefPtr<EffekseerRendererLLGI::CommandList>(g, commandList, mp->GetInternal(), mp->GetGpuParticleMemoryPool());
 	ES_SAFE_RELEASE(commandList);
 	if (!ret->Initialize(mp->GetInternal()->GetSwapBufferCount()))
 	{
@@ -54,7 +54,14 @@ Effekseer::RefPtr<EffekseerRenderer::SingleFrameMemoryPool> CreateSingleFrameMem
 	auto gd = static_cast<::EffekseerRendererLLGI::Backend::GraphicsDevice*>(graphicsDevice.Get());
 	auto g = static_cast<LLGI::Graphics*>(gd->GetGraphics());
 	auto mp = g->CreateSingleFrameMemoryPool(1024 * 1024 * 8, 128);
-	auto ret = Effekseer::MakeRefPtr<EffekseerRendererLLGI::SingleFrameMemoryPool>(mp);
+	// Reserve 8 MiB per frame for GPU particle constants, independently of renderer allocations.
+	auto gpuParticleMemoryPool = LLGI::CreateSharedPtr(g->CreateSingleFrameMemoryPool(1024 * 1024 * 8, 128));
+	if (!mp || !gpuParticleMemoryPool)
+	{
+		ES_SAFE_RELEASE(mp);
+		return nullptr;
+	}
+	auto ret = Effekseer::MakeRefPtr<EffekseerRendererLLGI::SingleFrameMemoryPool>(mp, std::move(gpuParticleMemoryPool));
 	ES_SAFE_RELEASE(mp);
 	return ret;
 }

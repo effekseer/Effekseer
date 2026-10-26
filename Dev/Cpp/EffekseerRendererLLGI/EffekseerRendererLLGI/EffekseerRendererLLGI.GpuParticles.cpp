@@ -14,6 +14,26 @@ GpuParticleSystem::~GpuParticleSystem()
 {
 }
 
+bool GpuParticleSystem::UploadConstants(Effekseer::Backend::UniformBufferRef& buffer, int32_t size, const void* data)
+{
+	auto renderer = static_cast<RendererImplemented*>(renderer_);
+	auto commandList = renderer->GetCommandList();
+	auto pool = commandList ? commandList->GetGpuParticleMemoryPool() : nullptr;
+	if (!pool) return false;
+	auto allocation = LLGI::CreateSharedPtr(pool->CreateConstantBuffer(size));
+	if (!allocation) return false; // Skip this compute/draw when the fixed pool is exhausted.
+	auto dst = allocation->Lock();
+	if (!dst) return false;
+	memcpy(dst, data, size);
+	allocation->Unlock();
+	if (!buffer)
+	{
+		buffer = Effekseer::MakeRefPtr<Backend::UniformBuffer>(renderer->GetGraphicsDeviceInternal().Get());
+	}
+	buffer.DownCast<Backend::UniformBuffer>()->SetBuffer(std::move(allocation));
+	return true;
+}
+
 bool GpuParticleSystem::InitSystem(const Settings& settings)
 {
 	bool result = EffekseerRenderer::GpuParticleSystem::InitSystem(settings);

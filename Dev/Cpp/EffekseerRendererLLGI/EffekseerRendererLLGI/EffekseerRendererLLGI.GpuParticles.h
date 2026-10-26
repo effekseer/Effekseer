@@ -9,6 +9,9 @@ namespace EffekseerRendererLLGI
 class GpuParticleSystem
 	: public EffekseerRenderer::GpuParticleSystem
 {
+protected:
+	bool UploadConstants(Effekseer::Backend::UniformBufferRef& buffer, int32_t size, const void* data) override;
+
 public:
 	GpuParticleSystem(RendererImplemented* renderer);
 
