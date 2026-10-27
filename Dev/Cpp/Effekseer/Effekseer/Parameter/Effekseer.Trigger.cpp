@@ -1,6 +1,6 @@
 ﻿
-#include "../Utils/Effekseer.BinaryReader.h"
 #include "Effekseer.Trigger.h"
+#include "../Utils/Effekseer.BinaryReader.h"
 
 #include "../Effekseer.Instance.h"
 #include "../Effekseer.InstanceGlobal.h"

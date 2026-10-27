@@ -1,5 +1,5 @@
-#include "../Utils/Effekseer.BinaryReader.h"
 #include "Effekseer.KillRules.h"
+#include "../Utils/Effekseer.BinaryReader.h"
 #include "../SIMD/Mat44f.h"
 
 namespace Effekseer

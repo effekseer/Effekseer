@@ -1,5 +1,5 @@
-#include "../Utils/Effekseer.BinaryReader.h"
 #include "Effekseer.GpuParticlesParameter.h"
+#include "../Utils/Effekseer.BinaryReader.h"
 
 namespace Effekseer
 {

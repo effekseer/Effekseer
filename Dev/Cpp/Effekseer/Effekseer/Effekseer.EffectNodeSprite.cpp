@@ -1,5 +1,5 @@
-﻿#include "Utils/Effekseer.BinaryReader.h"
-#include "Effekseer.EffectNodeSprite.h"
+﻿#include "Effekseer.EffectNodeSprite.h"
+#include "Utils/Effekseer.BinaryReader.h"
 
 #include "Effekseer.Effect.h"
 #include "Effekseer.EffectImplemented.h"
