@@ -1,5 +1,9 @@
 ﻿#include "Effekseer.CustomAllocator.h"
 
+#if defined(_WIN32)
+#include <xmmintrin.h>
+#endif
+
 #if defined(__MINGW32__)
 #include <malloc.h>
 #endif
