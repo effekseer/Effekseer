@@ -159,23 +159,37 @@ jobs:
           - name: windows_x64
             os: windows-2022
             label: Win
+            python_arch: x64
           - name: mac
-            os: macos-14
+            os: macos-26
             label: Mac
+            python_arch: arm64
 
     name: Build on ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
     steps:
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-          architecture: 'x64'
+          architecture: ${{ matrix.python_arch }}
 
       - name: Pip
         run: |
           python -m pip install setuptools pillow
           python3 -m pip install setuptools pillow
+
+      - name: Setup macOS build tools
+        if: matrix.name == 'mac'
+        shell: bash
+        run: |
+          # Keep CMake 4 policy removals separate from the runner migration.
+          python -m pip install cmake==3.31.6
+          # Use the supported Xcode shipped as the image default.
+          sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
+          xcodebuild -version
+          xcrun --sdk macosx --show-sdk-version
+          cmake --version
 
       - uses: actions/checkout@v2
         with:
@@ -203,7 +217,6 @@ jobs:
           if [ "${{ matrix.name }}" = "mac" ];
           then
               export PACKAGEING_FOR_MAC=1
-              sudo xcode-select --switch /Applications/Xcode_15.0.1.app
           fi
           python3 build.py || python build.py
 
