@@ -30,6 +30,8 @@ jobs:
     steps:
       - run: dnf install -y git
       - uses: actions/checkout@v4
+      - name: Trust checkout for container build steps
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - name: Install pinned launcher toolchain
         run: sh Script/install_linux_toolchain.sh
       - name: Build and test in a fresh directory
@@ -145,6 +147,9 @@ jobs:
           fetch-depth: 1
           lfs: true
 
+      - name: Trust checkout for container build steps
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
       - name: Resolve Effekseer version
         id: version
         shell: bash
@@ -163,7 +168,8 @@ jobs:
         shell: bash
         run: |
           test "$(dotnet --version)" = '9.0.320'
-          echo "SOURCE_DATE_EPOCH=$(git log -1 --format=%ct)" >> "$GITHUB_ENV"
+          SOURCE_DATE_EPOCH=$(git log -1 --format=%ct)
+          echo "SOURCE_DATE_EPOCH=$SOURCE_DATE_EPOCH" >> "$GITHUB_ENV"
           echo "TZ=UTC" >> "$GITHUB_ENV"
           echo "LC_ALL=C" >> "$GITHUB_ENV"
           echo "CC=gcc" >> "$GITHUB_ENV"

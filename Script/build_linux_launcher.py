@@ -17,7 +17,7 @@ def main():
     args = parser.parse_args()
     root = Path(__file__).resolve().parent.parent
     env = dict(os.environ, LC_ALL="C", TZ="UTC")
-    if "SOURCE_DATE_EPOCH" not in env:
+    if not env.get("SOURCE_DATE_EPOCH"):
         env["SOURCE_DATE_EPOCH"] = subprocess.check_output(
             ["git", "log", "-1", "--format=%ct"], cwd=root, text=True).strip()
     args.output.mkdir(parents=True, exist_ok=True)
