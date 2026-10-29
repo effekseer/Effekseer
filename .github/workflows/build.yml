@@ -18,22 +18,43 @@ on:
       - 17x
 
 jobs:
+  linux_launcher:
+    name: Check Linux launcher (${{ matrix.copy }})
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        copy: [a, b]
+    container:
+      # Official rockylinux:8 manifest; keep in sync with BuildLinux.
+      image: rockylinux:8@sha256:9794037624aaa6212aeada1d28861ef5e0a935adaf93e4ef79837119f2a2d04c
+    steps:
+      - run: dnf install -y git
+      - uses: actions/checkout@v4
+      - name: Install pinned launcher toolchain
+        run: sh Script/install_linux_toolchain.sh
+      - name: Build and test in a fresh directory
+        run: python3.12 Script/build_linux_launcher.py launcher-${{ matrix.copy }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: LinuxLauncher-${{ matrix.copy }}
+          path: launcher-${{ matrix.copy }}
+
   win_x86_build:
     name: Build Windows(x86)
     runs-on: windows-2022
     steps:
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - run: |
          git submodule update --init
          git lfs install
          git lfs pull
 
-      - uses: actions/setup-dotnet@v3
+      - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '9.0.x'
 
@@ -48,7 +69,7 @@ jobs:
     runs-on: windows-2022
     steps:
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: '3.12'
           architecture: 'x64'
@@ -58,13 +79,13 @@ jobs:
          python -m pip install setuptools pillow
         shell: cmd
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - run: |
          git submodule update --init
          git lfs install
          git lfs pull
 
-      - uses: actions/setup-dotnet@v3
+      - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '9.0.x'
 
@@ -93,14 +114,14 @@ jobs:
     name: Build on linux
     runs-on: ubuntu-22.04
     container:
-      image: rockylinux:8
+      image: rockylinux:8@sha256:9794037624aaa6212aeada1d28861ef5e0a935adaf93e4ef79837119f2a2d04c
     steps:
       - name: Install Linux Dependencies
         run: |
           dnf install -y dnf-plugins-core epel-release
           dnf config-manager --set-enabled powertools
           dnf install -y \
-               alsa-lib-devel ca-certificates cmake curl file findutils gcc gcc-c++ git git-lfs gzip \
+               alsa-lib-devel ca-certificates curl file findutils git git-lfs gzip \
                icu krb5-libs make ninja-build openssl-libs python3.12 python3.12-pip tar unzip which \
                libglvnd-devel libX11-devel libXcursor-devel libXi-devel libXinerama-devel libXrandr-devel \
                libXxf86vm-devel libxcb-devel libxkbcommon-devel libxkbcommon-x11-devel xcb-util-devel \
@@ -131,9 +152,22 @@ jobs:
           VERSION="$(python3.12 -c 'import build; print(build.get_editor_version())')"
           echo "value=$VERSION" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/setup-dotnet@v3
+      - name: Install pinned Linux toolchain
+        run: sh Script/install_linux_toolchain.sh
+
+      - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '9.0.x'
+          dotnet-version: '9.0.320'
+
+      - name: Set reproducible build environment
+        shell: bash
+        run: |
+          test "$(dotnet --version)" = '9.0.320'
+          echo "SOURCE_DATE_EPOCH=$(git log -1 --format=%ct)" >> "$GITHUB_ENV"
+          echo "TZ=UTC" >> "$GITHUB_ENV"
+          echo "LC_ALL=C" >> "$GITHUB_ENV"
+          echo "CC=gcc" >> "$GITHUB_ENV"
+          echo "CXX=g++" >> "$GITHUB_ENV"
 
       - name: Build
         shell: bash
@@ -143,6 +177,15 @@ jobs:
       - name: Prepare Linux Tool
         run: |
           python3.12 release_tool.py
+          python3.12 Script/test_launcher.py EffekseerTool/Tool/Effekseer
+          python3.12 Script/smoke_test_editor.py EffekseerTool/Tool/Effekseer
+          python3.12 -m unittest discover -s Script -p test_package_release.py
+          python3.12 -m unittest discover -s Script/Notarization_Mac -p 'test_*.py'
+          mkdir -p EffekseerTool/build-info
+          rpm -qa | LC_ALL=C sort > EffekseerTool/build-info/rpm-packages.txt
+          cmake --version > EffekseerTool/build-info/cmake.txt
+          dotnet --info > EffekseerTool/build-info/dotnet.txt
+          git rev-parse HEAD > EffekseerTool/build-info/commit.txt
 
       - name: Upload linux Tool
         uses: actions/upload-artifact@v4
@@ -191,7 +234,7 @@ jobs:
           xcrun --sdk macosx --show-sdk-version
           cmake --version
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           submodules: true
           fetch-depth: 1
@@ -207,7 +250,7 @@ jobs:
           git lfs install
           git lfs pull
 
-      - uses: actions/setup-dotnet@v3
+      - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '9.0.x'
 
@@ -256,6 +299,20 @@ jobs:
               echo "A RID-specific intermediate directory leaked into $APP" >&2
               exit 1
             fi
+          done
+
+      - name: Test macOS signing policy without credentials
+        if: matrix.name == 'mac'
+        shell: bash
+        run: |
+          python3 -m unittest discover -s Script/Notarization_Mac -p 'test_*.py'
+          python3 Script/test_launcher.py Tool/EffekseerLauncher/build_macosx/EffekseerLauncher
+          for ARCH in arm64 x64
+          do
+            APP="$RUNNER_TEMP/signing-policy-$ARCH/Effekseer.app"
+            mkdir -p "$(dirname "$APP")"
+            cp -R "build/macos-packaging/osx-$ARCH/Effekseer.app" "$APP"
+            python3 Script/Notarization_Mac/sign_app.py "$APP" -
           done
 
       - name: Validate macOS notarization secrets
@@ -320,8 +377,9 @@ jobs:
             mkdir -p "$SIGN_WORKDIR/Effekseer"
             cp \
               Script/Notarization_Mac/Effekseer_cert.sh \
+              Script/Notarization_Mac/sign_app.py \
               Script/Notarization_Mac/Effekseer_notarytool_setup.sh \
-              Script/Notarization_Mac/entitlements.plist \
+              Script/Notarization_Mac/entitlements-dotnet.plist \
               "$SIGN_WORKDIR/"
             cp -R "build/macos-packaging/$RID/Effekseer.app" "$SIGN_WORKDIR/Effekseer/"
             (
@@ -334,10 +392,16 @@ jobs:
               sh Effekseer_cert.sh "$APPLE_SIGNING_IDENTITY" "$NOTARYTOOL_PROFILE"
             )
             cp "$SIGN_WORKDIR/Effekseer.dmg" "EffekseerTool/Mac-$ARCH/Effekseer.dmg"
+            # Exercise a copy: the editor may write settings inside its bundle.
+            SMOKE_DIR="$RUNNER_TEMP/smoke-$ARCH"
+            mkdir -p "$SMOKE_DIR"
+            cp -R "$SIGN_WORKDIR/Effekseer/Effekseer.app" "$SMOKE_DIR/"
+            python3 Script/smoke_test_editor.py \
+              "$SMOKE_DIR/Effekseer.app/Contents/MacOS/EffekseerLauncher"
           done
 
       - name: Upload macOS notarization logs
-        if: failure() && matrix.name == 'mac' && github.event_name != 'pull_request'
+        if: always() && matrix.name == 'mac' && github.event_name != 'pull_request'
         uses: actions/upload-artifact@v4
         with:
           name: EffekseerNotarizationLogs
@@ -389,8 +453,12 @@ jobs:
           path: EffekseerTool/Mac-x64
 
   Deploy:
-    needs: [tests,BuildLinux,Build]
+    needs: [tests,BuildLinux,Build,linux_launcher]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -412,6 +480,23 @@ jobs:
         with:
           name: Effekseer${{ steps.version.outputs.value }}Linux
           path: dist/Effekseer${{ steps.version.outputs.value }}Linux
+
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: LinuxLauncher-*
+          path: launcher-checks
+
+      - name: Compare independent Linux launcher builds and packaged launcher
+        shell: bash
+        run: |
+          for CONFIG in Release RelWithDebInfo
+          do
+            cmp "launcher-checks/LinuxLauncher-a/$CONFIG/EffekseerLauncher" \
+                "launcher-checks/LinuxLauncher-b/$CONFIG/EffekseerLauncher"
+            sha256sum launcher-checks/LinuxLauncher-*/"$CONFIG"/EffekseerLauncher
+          done
+          cmp launcher-checks/LinuxLauncher-a/Release/EffekseerLauncher \
+              "dist/Effekseer${{ steps.version.outputs.value }}Linux/Tool/Effekseer"
       
       - uses: actions/download-artifact@v4
         with:
@@ -435,18 +520,25 @@ jobs:
             dist/Effekseer${{ steps.version.outputs.value }}Linux/Tool/Effekseer \
             dist/Effekseer${{ steps.version.outputs.value }}Linux/Tool/bin/Effekseer \
             dist/Effekseer${{ steps.version.outputs.value }}Linux/Tool/bin/EffekseerMaterialEditor \
-            dist/Effekseer${{ steps.version.outputs.value }}Linux/Tool/bin/tools/EffekseerResourceConverter || true
-          cd dist
-          for asset in \
-            "Effekseer${{ steps.version.outputs.value }}Win" \
-            "Effekseer${{ steps.version.outputs.value }}Linux" \
-            "Effekseer${{ steps.version.outputs.value }}Mac-arm64" \
-            "Effekseer${{ steps.version.outputs.value }}Mac-x64" \
-            "EffekseerForCpp${{ steps.version.outputs.value }}"
-          do
-            zip -r "../pub/$asset.zip" "$asset"
-          done
-          
+            dist/Effekseer${{ steps.version.outputs.value }}Linux/Tool/bin/createdump \
+            dist/Effekseer${{ steps.version.outputs.value }}Linux/Tool/bin/tools/EffekseerResourceConverter
+          python3 Script/package_release.py dist pub --epoch "$(git log -1 --format=%ct)"
+
+      - name: Attest release archives and checksums
+        if: github.event_name != 'pull_request'
+        id: provenance
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4
+        with:
+          subject-path: |
+            pub/*.zip
+            pub/SHA256SUMS
+
+      - name: Include verification bundle
+        if: github.event_name != 'pull_request'
+        env:
+          BUNDLE_PATH: ${{ steps.provenance.outputs.bundle-path }}
+        run: cp "$BUNDLE_PATH" pub/provenance.sigstore.json
+
       - name: Upload Release artifact
         uses: actions/upload-artifact@v4
         with:
@@ -458,16 +550,12 @@ jobs:
         run: |
           releaseId=$(jq --raw-output '.release.id' ${GITHUB_EVENT_PATH})
           echo "Upload to release $releaseId"
-          for filename in \
-            "Effekseer${{ steps.version.outputs.value }}Win.zip" \
-            "Effekseer${{ steps.version.outputs.value }}Linux.zip" \
-            "Effekseer${{ steps.version.outputs.value }}Mac-arm64.zip" \
-            "Effekseer${{ steps.version.outputs.value }}Mac-x64.zip" \
-            "EffekseerForCpp${{ steps.version.outputs.value }}.zip"
+          for filepath in pub/*
           do
+            filename=$(basename "$filepath")
             url="https://uploads.github.com/repos/${GITHUB_REPOSITORY}/releases/$releaseId/assets?name=$(basename $filename)"
             echo "Upload $filename to $url"
-            curl -L \
+            curl --fail-with-body -L \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Content-Type: application/binary" \
             --data-binary @"pub/$filename" \

@@ -27,6 +27,16 @@ To play effects in a game, download the runtime or plug-in for your engine separ
 Run `Tool/Effekseer`. If execution permissions were lost while extracting the archive,
 run `chmod +x Tool/Effekseer Tool/bin/Effekseer` first.
 
+* Verifying the download
+
+Download SHA256SUMS and provenance.sigstore.json alongside the release ZIP.
+Check the archive with `sha256sum --check --ignore-missing SHA256SUMS`.
+Authenticate its origin with GitHub CLI (replace VERSION with the release version):
+
+gh attestation verify EffekseerVERSIONLinux.zip --repo effekseer/Effekseer --signer-workflow effekseer/Effekseer/.github/workflows/build.yml --bundle provenance.sigstore.json
+
+The build-info directory records the source commit and build tool versions.
+
 
 日本語
 ==========================
@@ -54,3 +64,11 @@ Effekseerをダウンロードしていただきありがとうございます�
 
 `Tool/Effekseer`を実行してください。アーカイブ展開時に実行権限が失われた場合は、
 先に`chmod +x Tool/Effekseer Tool/bin/Effekseer`を実行してください。
+
+■ ダウンロードの検証
+
+リリース ZIP と同時に SHA256SUMS と provenance.sigstore.json をダウンロードしてください。
+`sha256sum --check --ignore-missing SHA256SUMS`でハッシュを検証できます。
+配布元の確認には GitHub CLI で上記の`gh attestation verify`コマンドを実行してください。
+VERSION はダウンロードしたバージョンに置き換えてください。
+build-info ディレクトリにはソースのコミットとビルドツールのバージョンが記録されています。

@@ -110,6 +110,7 @@ def main():
         linux_executables = [
             bin_dir / "Effekseer",
             bin_dir / "EffekseerMaterialEditor",
+            bin_dir / "createdump",
             tools_dir / "EffekseerResourceConverter",
         ]
         for executable in linux_executables:

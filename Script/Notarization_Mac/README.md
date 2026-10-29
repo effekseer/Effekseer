@@ -4,18 +4,43 @@
 
 This folder contains helper scripts for codesigning, notarizing, and stapling the macOS build of Effekseer.
 
+### Entitlement policy
+
+The self-contained .NET 9 host uses `allow-jit`. Its runtime uses `MAP_JIT`
+when Hardened Runtime restricts executable memory; see the
+[.NET memory allocator](https://github.com/dotnet/runtime/blob/v9.0.10/src/coreclr/pal/src/map/virtual.cpp)
+and [double mapping implementation](https://github.com/dotnet/runtime/blob/v9.0.10/src/coreclr/minipal/Unix/doublemapping.cpp).
+All bundled native libraries are signed with the same Developer ID, so library
+validation stays enabled. No process receives unsigned executable memory,
+executable-page-protection, or DYLD-environment exceptions. Effekseer does not
+enable App Sandbox; sandbox file and network entitlements are therefore omitted.
+
+For a local signature audit without Developer ID credentials, use a disposable
+copy of the app and run `python3 sign_app.py /path/to/Effekseer.app -`.
+Ad hoc signatures cannot validate same-Team-ID library loading and do not replace
+Developer ID runtime testing, Gatekeeper, or notarization checks.
+
+CI audits ad hoc signatures on pull requests, and runs `Script/smoke_test_editor.py`
+on disposable copies of both Developer ID signed packages on push/release builds.
+The smoke test starts the .NET host through the launcher, saves and reloads a
+project using a Unicode path, and compares binary exports. GUI editing, Material
+Editor, networking, and Intel hardware checks remain release checks; see
+[ReleaseGuide.md](../../docs/Development/ReleaseGuide.md).
+
 ### Files
 
 - `Effekseer_cert.sh`
-  - Signs bundled executables that have any executable bit set with the app entitlements, signs `.dylib` files without entitlements, then signs the app bundle, creates a temporary zip for app notarization, recreates `Effekseer.dmg` with the app bundle and an `Applications` symlink, and submits both for notarization with `xcrun notarytool` using a Keychain profile.
+  - Signs all bundled Mach-O files with `sign_app.py`, then signs the app bundle without entitlements, creates a temporary zip for app notarization, recreates `Effekseer.dmg` with the app bundle and an `Applications` symlink, and submits both for notarization with `xcrun notarytool` using a Keychain profile.
 - `Effekseer_cert_check.sh`
   - Checks the notarization status using the request ID with `xcrun notarytool` and the same Keychain profile.
 - `Effekseer_notarytool_setup.sh`
   - Stores App Store Connect credentials in the Keychain for later use by `notarytool`.
 - `Effekseer_notarytool_log.sh`
   - Downloads the notarization log for a submission ID.
-- `entitlements.plist`
-  - Entitlements used when signing the app and its bundled binaries.
+- `sign_app.py`
+  - Signs every Mach-O file, including libraries without executable bits, and audits each architecture for the expected entitlements and Hardened Runtime. Signing or verification failures stop packaging.
+- `entitlements-dotnet.plist`
+  - Grants only `com.apple.security.cs.allow-jit` to `Contents/Resources/Effekseer`. The launcher, app bundle, `createdump`, Material Editor, resource converter, and native libraries receive no entitlements.
 
 ### Usage
 
@@ -70,7 +95,7 @@ Notes:
 - `notarytool` does not accept a raw `.app` bundle, so the script creates a temporary zip archive for app notarization and removes it afterward.
 - `Effekseer_notarytool_setup.sh` is the only script that handles the App-specific password, and it stores that secret in the Keychain for reuse.
 - `Effekseer_notarytool_log.sh` is useful when `notarytool submit` returns a rejection and you need the JSON issue report.
-- When `Effekseer_cert.sh` fails, it writes notarization logs to `Effekseer-app-notarytool-log.json` or `Effekseer-dmg-notarytool-log.json` if a request ID can be recovered.
+- `Effekseer_cert.sh` saves both notarization logs, requires an Accepted status without issues, validates both stapled tickets, and checks Gatekeeper for the app. CI uploads logs on success and failure.
 - `Effekseer_cert.sh` now performs this full order: notarize app, staple app, recreate the DMG from the stapled app and an `Applications` symlink, notarize DMG, staple DMG.
 - `Effekseer_cert.sh` signs bundled executables and `.dylib` files first, then signs the app bundle and the DMG.
 - If the app still shows the Gatekeeper warning, check whether the bundle was modified after signing or whether the quarantine attribute is still present.
@@ -130,11 +155,13 @@ log show --last 1h --predicate 'process == "syspolicyd"'
 ### ファイル
 
 - `Effekseer_cert.sh`
-  - 実行ビットが付いた同梱ファイルには app の entitlements を付けて署名し、`.dylib` は entitlements なしで署名します。その後でアプリ本体に署名し、アプリ本体と `Applications` シンボリックリンクを含む `Effekseer.dmg` を再作成して `xcrun notarytool` で Notarization を申請します。
+  - `sign_app.py` で全 Mach-O ファイルを署名します。.NET ホストにだけ JIT 権限を付け、ランチャーやネイティブツールには権限を付けません。その後でアプリ本体に署名し、アプリ本体と `Applications` シンボリックリンクを含む `Effekseer.dmg` を再作成して `xcrun notarytool` で Notarization を申請します。
 - `Effekseer_cert_check.sh`
   - Request ID を使って `xcrun notarytool` で Notarization の状況を確認します。
-- `entitlements.plist`
-  - 署名時に使用する entitlements です。
+- `sign_app.py`
+  - 実行ビットの有無によらず全 Mach-O ファイルを検出して署名し、各アーキテクチャの権限と Hardened Runtime を検査します。署名・検査の失敗時は処理を中止します。
+- `entitlements-dotnet.plist`
+  - `Contents/Resources/Effekseer` にだけ `com.apple.security.cs.allow-jit` を付与します。ランチャー、app bundle、`createdump`、Material Editor、ResourceConverter、ネイティブライブラリには権限を付けません。
 
 ### 使い方
 
@@ -189,11 +216,11 @@ sh Effekseer_notarytool_log.sh "Request ID" "effekseer-notarytool" "notarytool_l
 - `notarytool` は `.app` 直送を受け付けないため、スクリプトは一時的に zip 化してから app を notarize し、終了後に削除します。
 - `Effekseer_notarytool_setup.sh` だけが App-specific password を扱い、その後はキーチェーン内の profile を再利用します。
 - `Effekseer_notarytool_log.sh` は、`notarytool submit` が拒否されたときの JSON 形式の issue report を確認するのに便利です。
-- `Effekseer_cert.sh` が失敗した場合、Request ID を取得できれば `Effekseer-app-notarytool-log.json` または `Effekseer-dmg-notarytool-log.json` にログを保存します。
+- `Effekseer_cert.sh` は成功時も両方の公証ログを保存し、Accepted かつ issues がないことを確認します。app と DMG の staple、app の Gatekeeper 検証も必須です。CI は成功・失敗の両方でログを保存します。
 - `Effekseer_cert.sh` は、`app` を Notarization → staple → `Applications` リンク付き DMG 再作成 → DMG Notarization → DMG staple の順で処理します。
 - `Effekseer_cert.sh` は、まず leaf バイナリを `--options runtime` と `--timestamp` 付きで署名し、その後に app bundle を署名します。
-- `Effekseer_cert.sh` は、`-perm -u+x -o -perm -g+x -o -perm -o+x` で拾える実行ビット付きファイルを署名対象にします。
-- `Effekseer_cert.sh` は、`Effekseer` のような Rosetta 下で動く leaf 実行ファイルに `com.apple.security.cs.allow-jit` などの entitlements を付けます。
+- `Effekseer_cert.sh` は、ファイルの Mach-O ヘッダーを調べて署名対象を選びます。実行ビット付きスクリプトやデータは対象外です。
+- `.NET` ホストだけに JIT 権限を付け、全ネイティブライブラリを同じ Developer ID で再署名します。
 - 起動できない場合は、署名の破損、Gatekeeper の拒否、quarantine 属性の残存を順に確認してください。
 
 ### GitHub Actions
@@ -233,7 +260,7 @@ xattr -lr "Effekseer/Effekseer.app"
 見方:
 
 - `codesign` で失敗する場合は、署名後に中身が変わっているか、同梱ファイルの署名が不完全です。
-- `.NET` ベースの実行ファイルが起動直後に `EXC_BAD_ACCESS` で落ちる場合は、その実行ファイルに app entitlements が付いているか確認してください。`Effekseer` のような Rosetta 変換された leaf プロセスは、`allow-jit` などがないと起動時にクラッシュすることがあります。
+- `.NET` ベースの実行ファイルが起動直後に `EXC_BAD_ACCESS` で落ちる場合は、`Contents/Resources/Effekseer` に `allow-jit` が付いているか確認してください。ライブラリ検証で失敗した場合は、全 Mach-O ファイルが同じ Developer ID で署名されていることを確認してください。
 - `createdump` のような同梱バイナリで notarization が止まる場合は、leaf バイナリの署名が ad hoc のままか、Developer ID 署名・timestamp・hardened runtime のいずれかが不足しています。app bundle の前に leaf バイナリを再署名してください。
 - `spctl` で失敗する場合は、Gatekeeper が配布物を許可していません。
 - `stapler validate` で失敗する場合は、app または dmg に notarization ticket が付いていません。

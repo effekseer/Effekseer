@@ -64,4 +64,15 @@ elseif(WIN32)
   endif()
 elseif(UNIX)
   add_executable(EffekseerLauncher src/main.cpp)
+
+  # Keep source/build paths and wall-clock time out of Linux artifacts, including
+  # debug information. A content-derived build ID remains useful to debuggers.
+  if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    target_compile_options(
+      EffekseerLauncher PRIVATE
+      "-ffile-prefix-map=${CMAKE_CURRENT_SOURCE_DIR}=/usr/src/effekseer-launcher"
+      "-ffile-prefix-map=${CMAKE_CURRENT_BINARY_DIR}=/usr/src/effekseer-launcher/build"
+      -Werror=date-time)
+    target_link_options(EffekseerLauncher PRIVATE "-Wl,--build-id=sha1")
+  endif()
 endif()
