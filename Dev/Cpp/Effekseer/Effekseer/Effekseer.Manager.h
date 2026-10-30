@@ -30,6 +30,18 @@ struct Color;
 using RandFunc = std::function<int()>;
 
 /**
+	@brief Updates the half-open range [begin, end) of an instance update batch.
+*/
+using InstanceUpdateTask = void (*)(void* context, size_t begin, size_t end);
+
+/**
+	@brief Dispatches instance updates through an external scheduler.
+	@note Update every index in [0, count) exactly once, then wait for all tasks before returning.
+	The task and context are valid only until the dispatcher returns. Do not retain them or call manager methods from tasks.
+*/
+using InstanceUpdateDispatcher = std::function<void(size_t count, InstanceUpdateTask task, void* context)>;
+
+/**
 	@brief
 	\~English Callback event when an instance of an effect is destroyed
 	\~Japanese エフェクトのインスタンス破棄時のコールバックイベント
@@ -223,6 +235,15 @@ public:
 		\~Japanese 指定した数のワーカースレッドを起動する
 	*/
 	virtual void LaunchWorkerThreads(uint32_t threadCount) = 0;
+
+	/**
+		@brief Sets an external dispatcher for instance chunk updates.
+		@note Configure only when no update is running. An empty dispatcher restores the native update path.
+		Small batches use the existing serial path. The dispatcher runs on the thread executing the update.
+		Leave native workers disabled to execute update preparation on the caller's thread.
+		Child generation and later update phases start after the dispatcher returns.
+	*/
+	virtual void SetInstanceUpdateDispatcher(InstanceUpdateDispatcher dispatcher) = 0;
 
 	/**
 		@brief
