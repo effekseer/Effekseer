@@ -161,20 +161,28 @@ namespace Effekseer.GUI.Dock
 
 				if (!string.IsNullOrEmpty(result))
 				{
-					var viewPoint = Data.ViewPoint.Load(result);
-					if (viewPoint != null)
-					{
-						ctrl.SetFocusPosition(new swig.Vector3F(viewPoint.FocusX, viewPoint.FocusY, viewPoint.FocusZ));
-						ctrl.SetDistance(viewPoint.Distance);
-						ctrl.SetProjectionType(viewPoint.CameraMode == 0 ? swig.ProjectionType.Perspective : swig.ProjectionType.Orthographic);
-						ctrl.SetAngleX(viewPoint.AngleX);
-						ctrl.SetAngleY(viewPoint.AngleY);
-						ctrl.ClippingStart = viewPoint.ClippingStart;
-						ctrl.ClippingEnd = viewPoint.ClippingEnd;
-						ctrl.RateOfMagnification = viewPoint.RateOfMagnification;
-					}
+					LoadCameraSettings(result);
 				}
 			}
+		}
+
+		internal static void LoadCameraSettings(string path)
+		{
+			var viewPoint = Data.ViewPoint.Load(path);
+			if (viewPoint == null)
+			{
+				return;
+			}
+
+			var ctrl = Manager.Viewer.ViewPointController;
+			ctrl.SetFocusPosition(new swig.Vector3F(viewPoint.FocusX, viewPoint.FocusY, viewPoint.FocusZ));
+			ctrl.SetDistance(viewPoint.Distance);
+			ctrl.SetProjectionType(viewPoint.CameraMode == 0 ? swig.ProjectionType.Perspective : swig.ProjectionType.Orthographic);
+			ctrl.SetAngleX(viewPoint.AngleX);
+			ctrl.SetAngleY(viewPoint.AngleY);
+			ctrl.ClippingStart = viewPoint.ClippingStart;
+			ctrl.ClippingEnd = viewPoint.ClippingEnd;
+			ctrl.RateOfMagnification = viewPoint.RateOfMagnification;
 		}
 	}
 }

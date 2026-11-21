@@ -76,6 +76,17 @@ namespace Effekseer
 		{
 		}
 
+		protected override void OnUnhandledFileDrop(string path)
+		{
+			if (string.Equals(System.IO.Path.GetExtension(path), ".view", StringComparison.OrdinalIgnoreCase))
+			{
+				Dock.ViewPoint.LoadCameraSettings(path);
+				return;
+			}
+
+			base.OnUnhandledFileDrop(path);
+		}
+
 		protected override void OnCreateMainMenu()
 		{
 			var mainMenu = new GUI.Menu.MainMenu();
