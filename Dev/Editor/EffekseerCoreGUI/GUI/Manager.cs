@@ -49,7 +49,7 @@ namespace Effekseer.GUI
 
 			if (!handle)
 			{
-				Commands.Open(this.GetPath());
+				Application.Current.OnUnhandledFileDrop(path);
 			}
 		}
 

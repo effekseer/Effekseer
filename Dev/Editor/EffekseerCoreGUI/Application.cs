@@ -215,6 +215,14 @@ namespace Effekseer
 		}
 
 
+		/// <summary>
+		/// Open files not handled by any editor control.
+		/// </summary>
+		protected internal virtual void OnUnhandledFileDrop(string path)
+		{
+			GUI.Commands.Open(path);
+		}
+
 		private static void ChangeLanguage()
 		{
 			MultiLanguageTextProvider.RootDirectory = GUI.Manager.GetEntryDirectory() + "/";

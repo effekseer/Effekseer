@@ -49,9 +49,14 @@ namespace Effekseer.Data
 				return null;
 			}
 
-			var v = JsonConvert.DeserializeObject<ViewPoint>(json);
-
-			return v;
+			try
+			{
+				return JsonConvert.DeserializeObject<ViewPoint>(json);
+			}
+			catch (JsonException)
+			{
+				return null;
+			}
 		}
 	}
 }
